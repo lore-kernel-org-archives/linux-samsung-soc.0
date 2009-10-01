@@ -1,54 +1,43 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: clock sourcing suggestion
-Date: Wed, 30 Sep 2009 22:13:44 +0100
-Message-ID: <20090930211343.GA28928@trinity.fluff.org>
-References: <1b68c6790909291936s9fc10c2t8385f094980ef13a@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] S3C64xx: Fix S3C6400_EPLL_ MDIV_MASK, PDIV_MASK, and SDIV_MASK value
+Date: Thu,  1 Oct 2009 18:22:48 +0900
+Message-ID: <1254388968-28146-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:58721 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754569AbZI3VNk (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:38404 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754371AbZJAJXr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Sep 2009 17:13:40 -0400
-Content-Disposition: inline
-In-Reply-To: <1b68c6790909291936s9fc10c2t8385f094980ef13a@mail.gmail.com>
+	Thu, 1 Oct 2009 05:23:47 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jassi brar <jassisinghbrar@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-On Wed, Sep 30, 2009 at 11:36:27AM +0900, jassi brar wrote:
-> Hi,
-> 
->  I2S audio-bus[0,1] in s3c6410 can source clock, among other options,
->  from dedicated pcm_cdclk[0,1] respectively.
->  Whereas in s3c6400, both I2S audio-bus[0,1]  share one common pcm_cdclk.
-> 
-> The arch/arm/plat-s3c64xx/s3c6400-clock.c  makes audio-bus-0,1 share the same
-> pcm_cdclk(s3c6400 case).
-> 
-> Should we use #ifdef CPU_S3C6410 to assign proper clock sources ?
-> But I am afraid that might come in the way of building common kernel
-> for 6400 and 6410.
-> 
-> What should be the solution, please suggest?
+Fix the values of S3C6400_EPLL_MDIV_MASK, S3C6400_EPLL_PDIV_MASK, and
+S3C6400_EPLL_SDIV_MASK.
 
-A quick think would suggest two solutions:
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/plat-s3c64xx/include/plat/pll.h |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-1) Change the clocks before registering in the relevant init function
-
-2) Moving those clocks out of the common clock code and registering
-   s3c6400 version in s3c6400 clock setup and s3c6410 in s3c6410 clock
-   setup.
-
-I can have a look tommorow at the code if any further info is required.
-
-(2) is probably the best thing to do.
-
+diff --git a/arch/arm/plat-s3c64xx/include/plat/pll.h b/arch/arm/plat-s3c64xx/include/plat/pll.h
+index 90bbd72..3a59d3b 100644
+--- a/arch/arm/plat-s3c64xx/include/plat/pll.h
++++ b/arch/arm/plat-s3c64xx/include/plat/pll.h
+@@ -37,9 +37,9 @@ static inline unsigned long s3c6400_get_pll(unsigned long baseclk,
+ 	return (unsigned long)fvco;
+ }
+ 
+-#define S3C6400_EPLL_MDIV_MASK	((1 << (23-16)) - 1)
+-#define S3C6400_EPLL_PDIV_MASK	((1 << (13-8)) - 1)
+-#define S3C6400_EPLL_SDIV_MASK	((1 << (2-0)) - 1)
++#define S3C6400_EPLL_MDIV_MASK	((1 << (23-16+1)) - 1)
++#define S3C6400_EPLL_PDIV_MASK	((1 << (13-8+1)) - 1)
++#define S3C6400_EPLL_SDIV_MASK	((1 << (2-0+1)) - 1)
+ #define S3C6400_EPLL_MDIV_SHIFT	(16)
+ #define S3C6400_EPLL_PDIV_SHIFT	(8)
+ #define S3C6400_EPLL_SDIV_SHIFT	(0)
 -- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+1.5.3.4
 
