@@ -1,32 +1,29 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 0/5] S3C: sdhci: Update Samsung 6410 SDHCI driver.
-Date: Fri, 2 Oct 2009 11:19:08 +0100
-Message-ID: <20091002101907.GB14249@rakim.wolfsonmicro.main>
-References: <33519709.339161254183501956.JavaMail.weblogic@epml10>
- <20091001125238.GD14417@sirena.org.uk>
- <003c01ca431b$87785a30$96690e90$%kim@samsung.com>
+Subject: Samsung git trees?
+Date: Wed, 7 Oct 2009 12:12:34 +0100
+Message-ID: <20091007111234.GF19135@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:36239 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753757AbZJBKTG (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:36877 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753944AbZJGLNM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Oct 2009 06:19:06 -0400
+	Wed, 7 Oct 2009 07:13:12 -0400
+Received: from broonie by cassiel.sirena.org.uk with local (Exim 4.69)
+	(envelope-from <broonie@sirena.org.uk>)
+	id 1MvURe-0006v6-Ti
+	for linux-samsung-soc@vger.kernel.org; Wed, 07 Oct 2009 12:12:34 +0100
 Content-Disposition: inline
-In-Reply-To: <003c01ca431b$87785a30$96690e90$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'THOMAS P ABRAHAM' <thomas.ab@samsung.com>, 'Peter Korsgaard' <jacmet@sunsite.dk>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 02, 2009 at 01:48:03PM +0900, Kukjin Kim wrote:
+I'd been following the Samsung kernel tree at
 
-> When required, Ben can be copied in the email if Ben's attention is required
-> for the patch.
+   git://git.kernel.org/pub/scm/linux/kernel/git/kki_ap/linux-2.6-samsung.git
 
-So the intention is still to also send things via the normal routes to
-the subsystems?  The reason I asked for clarification was that one of
-the patches was an isolated patch (not part of a series) - the only
-difference from a normal patch submission was that linux-arm-kernel had
-been replaced with this list.
+but that seems to have been removed from kernel.org, as have the older
+samsung-ap trees which were there.  Is there a new tree somewhere which
+we should be following to see the latest work in progress stuff?  I
+can't see anything obvious on kernel.org or the Samsung site.
