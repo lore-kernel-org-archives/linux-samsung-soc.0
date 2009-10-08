@@ -1,29 +1,33 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Samsung git trees?
-Date: Wed, 7 Oct 2009 12:12:34 +0100
-Message-ID: <20091007111234.GF19135@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: thomas.ab@samsung.com
+Subject: [PATCH 0/7] S3C64XX: Add platform support for Samsung S3C IDE controller driver
+Date: Thu,  8 Oct 2009 15:28:56 +0900
+Message-ID: <1254983336-22571-1-git-send-email-thomas.ab@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:36877 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753944AbZJGLNM (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:46808 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751603AbZJHGbV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Oct 2009 07:13:12 -0400
-Received: from broonie by cassiel.sirena.org.uk with local (Exim 4.69)
-	(envelope-from <broonie@sirena.org.uk>)
-	id 1MvURe-0006v6-Ti
-	for linux-samsung-soc@vger.kernel.org; Wed, 07 Oct 2009 12:12:34 +0100
-Content-Disposition: inline
+	Thu, 8 Oct 2009 02:31:21 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-I'd been following the Samsung kernel tree at
+From: Thomas Abraham <thomas.ab@samsung.com>
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/kki_ap/linux-2.6-samsung.git
+This patch set adds platform support for Samsung's S3C IDE controller 
+driver. This patch set includes the following patches.
 
-but that seems to have been removed from kernel.org, as have the older
-samsung-ap trees which were there.  Is there a new tree somewhere which
-we should be following to see the latest work in progress stuff?  I
-can't see anything obvious on kernel.org or the Samsung site.
+[PATCH 1/7] S3C64XX: Add physical address definition for Compact Flash controller
+[PATCH 2/7] S3C64XX: Add MEM_SYS_CFG register definition
+[PATCH 3/7] S3C64XX: Add IDE controller register definitions
+[PATCH 4/7] S3C64XX: Add clock source definition for IDE controller
+[PATCH 5/7] S3C64XX: Add platform data and driver resources for IDE controller driver
+[PATCH 6/7] S3C6410: Add platform data for S3C IDE controller driver
+[PATCH 7/7] S3C64XX: Include IDE device code in compilation
+
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+-- 
+1.5.3.4
+
