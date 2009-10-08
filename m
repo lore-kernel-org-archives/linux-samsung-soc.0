@@ -1,13 +1,13 @@
 From: thomas.ab@samsung.com
-Subject: [PATCH 2/7] S3C64XX: Add MEM_SYS_CFG register definition.
-Date: Thu,  8 Oct 2009 15:35:29 +0900
-Message-ID: <1254983729-17317-1-git-send-email-thomas.ab@samsung.com>
+Subject: [PATCH 3/7] S3C64XX: Add IDE controller register definitions.
+Date: Thu,  8 Oct 2009 15:40:47 +0900
+Message-ID: <1254984047-27825-1-git-send-email-thomas.ab@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:50768 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:58858 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751590AbZJHGlV (ORCPT
+	with ESMTP id S1751559AbZJHGqU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Oct 2009 02:41:21 -0400
+	Thu, 8 Oct 2009 02:46:20 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
@@ -15,36 +15,77 @@ Cc: Thomas Abraham <thomas.ab@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.
 
 From: Thomas Abraham <thomas.ab@samsung.com>
 
-This patch adds the definition of MEM_SYS_CFG register for
-S3C64xx platform.
+This patch adds the register definitions for S3C IDE controller.
 
 Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 ---
- arch/arm/plat-s3c64xx/include/plat/regs-clock.h |    3 +++
- 1 files changed, 3 insertions(+), 0 deletions(-)
+ arch/arm/plat-s3c/include/plat/regs-ide.h |   56 +++++++++++++++++++++++++++++
+ 1 files changed, 56 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/plat-s3c/include/plat/regs-ide.h
 
-diff --git a/arch/arm/plat-s3c64xx/include/plat/regs-clock.h b/arch/arm/plat-s3c64xx/include/plat/regs-clock.h
-index 2c3224c..ad0823e 100644
---- a/arch/arm/plat-s3c64xx/include/plat/regs-clock.h
-+++ b/arch/arm/plat-s3c64xx/include/plat/regs-clock.h
-@@ -15,6 +15,8 @@
- #ifndef __PLAT_REGS_CLOCK_H
- #define __PLAT_REGS_CLOCK_H __FILE__
- 
-+#include <plat/map-base.h>
+diff --git a/arch/arm/plat-s3c/include/plat/regs-ide.h b/arch/arm/plat-s3c/include/plat/regs-ide.h
+new file mode 100644
+index 0000000..2624619
+--- /dev/null
++++ b/arch/arm/plat-s3c/include/plat/regs-ide.h
+@@ -0,0 +1,56 @@
++/* arch/arm/plat-s3c/include/plat/regs-ide.h
++ *
++ * Copyright (C) 2009 Samsung Electronics
++ * 	http://samsungsemi.com/
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * S3C64XX IDE register definitions
++*/
 +
- #define S3C_CLKREG(x)		(S3C_VA_SYS + (x))
- 
- #define S3C_APLL_LOCK		S3C_CLKREG(0x00)
-@@ -34,6 +36,7 @@
- #define S3C_SCLK_GATE		S3C_CLKREG(0x38)
- #define S3C_MEM0_GATE		S3C_CLKREG(0x3C)
- #define S3C_OTHERS		S3C_CLKREG(0x900)
-+#define S3C_MEM_SYS_CFG         S3C_CLKREG(0x120)
- 
- /* CLKDIV0 */
- #define S3C6400_CLKDIV0_MFC_MASK	(0xf << 28)
++#ifndef __ASM_ARM_REGS_IDE
++#define __ASM_ARM_REGS_IDE __FILE__
++
++#define S3C_CFATA_REG(x) (x)
++
++#define S3C_CFATA_MUX           S3C_CFATA_REG(0x1800)
++
++#define S3C_ATA_CTRL            S3C_CFATA_REG(0x1900)
++#define S3C_ATA_STATUS          S3C_CFATA_REG(0x1904)
++#define S3C_ATA_CMD             S3C_CFATA_REG(0x1908)
++#define S3C_ATA_SWRST           S3C_CFATA_REG(0x190c)
++#define S3C_ATA_IRQ             S3C_CFATA_REG(0x1910)
++#define S3C_ATA_IRQ_MSK         S3C_CFATA_REG(0x1914)
++#define S3C_ATA_CFG             S3C_CFATA_REG(0x1918)
++
++#define S3C_ATA_PIO_TIME        S3C_CFATA_REG(0x192c)
++#define S3C_ATA_UDMA_TIME       S3C_CFATA_REG(0x1930)
++#define S3C_ATA_XFR_NUM         S3C_CFATA_REG(0x1934)
++#define S3C_ATA_XFR_CNT         S3C_CFATA_REG(0x1938)
++#define S3C_ATA_TBUF_START      S3C_CFATA_REG(0x193c)
++#define S3C_ATA_TBUF_SIZE       S3C_CFATA_REG(0x1940)
++#define S3C_ATA_SBUF_START      S3C_CFATA_REG(0x1944)
++#define S3C_ATA_SBUF_SIZE       S3C_CFATA_REG(0x1948)
++#define S3C_ATA_CADR_TBUF       S3C_CFATA_REG(0x194c)
++#define S3C_ATA_CADR_SBUF       S3C_CFATA_REG(0x1950)
++#define S3C_ATA_PIO_DTR         S3C_CFATA_REG(0x1954)
++#define S3C_ATA_PIO_FED         S3C_CFATA_REG(0x1958)
++#define S3C_ATA_PIO_SCR         S3C_CFATA_REG(0x195c)
++#define S3C_ATA_PIO_LLR         S3C_CFATA_REG(0x1960)
++#define S3C_ATA_PIO_LMR         S3C_CFATA_REG(0x1964)
++#define S3C_ATA_PIO_LHR         S3C_CFATA_REG(0x1968)
++#define S3C_ATA_PIO_DVR         S3C_CFATA_REG(0x196c)
++#define S3C_ATA_PIO_CSD         S3C_CFATA_REG(0x1970)
++#define S3C_ATA_PIO_DAD         S3C_CFATA_REG(0x1974)
++#define S3C_ATA_PIO_RDATA       S3C_CFATA_REG(0x197c)
++#define S3C_BUS_FIFO_STATUS     S3C_CFATA_REG(0x1990)
++#define S3C_ATA_FIFO_STATUS     S3C_CFATA_REG(0x1994)
++
++#define S3C_CFATA_MUX_TRUEIDE	0x01
++#define S3C_ATA_CFG_SWAP	0x40
++#define S3C_ATA_CFG_IORDYEN	0x02
++
++#endif /* __ASM_ARM_REGS_IDE */
++
 -- 
 1.5.3.4
 
