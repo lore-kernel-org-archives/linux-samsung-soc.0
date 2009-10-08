@@ -1,13 +1,13 @@
 From: thomas.ab@samsung.com
-Subject: [PATCH 3/7] S3C64XX: Add IDE controller register definitions.
-Date: Thu,  8 Oct 2009 15:40:47 +0900
-Message-ID: <1254984047-27825-1-git-send-email-thomas.ab@samsung.com>
+Subject: [PATCH 5/7] S3C64XX: Add platform data and driver resources for IDE controller driver.
+Date: Thu,  8 Oct 2009 15:48:47 +0900
+Message-ID: <1254984527-5541-1-git-send-email-thomas.ab@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:58858 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:46319 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751559AbZJHGqU (ORCPT
+	with ESMTP id S1753821AbZJHGvV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Oct 2009 02:46:20 -0400
+	Thu, 8 Oct 2009 02:51:21 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
@@ -15,76 +15,170 @@ Cc: Thomas Abraham <thomas.ab@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.
 
 From: Thomas Abraham <thomas.ab@samsung.com>
 
-This patch adds the register definitions for S3C IDE controller.
+This patch adds the following for S3C IDE driver.
+	- IDE plafrom data strucure definition
+	- IDE driver resources
+	- IDE controller GPIO setup code
+	- IDE platform data setup code
+	- IDE platform device definition
 
 Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 ---
- arch/arm/plat-s3c/include/plat/regs-ide.h |   56 +++++++++++++++++++++++++++++
- 1 files changed, 56 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/plat-s3c/include/plat/regs-ide.h
+ arch/arm/plat-s3c/include/plat/devs.h |    1 +
+ arch/arm/plat-s3c/include/plat/ide.h  |   36 +++++++++++++
+ arch/arm/plat-s3c64xx/dev-ide.c       |   88 +++++++++++++++++++++++++++++++++
+ 3 files changed, 125 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/plat-s3c/include/plat/ide.h
+ create mode 100644 arch/arm/plat-s3c64xx/dev-ide.c
 
-diff --git a/arch/arm/plat-s3c/include/plat/regs-ide.h b/arch/arm/plat-s3c/include/plat/regs-ide.h
+diff --git a/arch/arm/plat-s3c/include/plat/devs.h b/arch/arm/plat-s3c/include/plat/devs.h
+index 0f540ea..4ae0c6a 100644
+--- a/arch/arm/plat-s3c/include/plat/devs.h
++++ b/arch/arm/plat-s3c/include/plat/devs.h
+@@ -52,6 +52,7 @@ extern struct platform_device s3c_device_nand;
+ 
+ extern struct platform_device s3c_device_usbgadget;
+ extern struct platform_device s3c_device_usb_hsotg;
++extern struct platform_device s3c_device_cfcon;
+ 
+ /* s3c2440 specific devices */
+ 
+diff --git a/arch/arm/plat-s3c/include/plat/ide.h b/arch/arm/plat-s3c/include/plat/ide.h
 new file mode 100644
-index 0000000..2624619
+index 0000000..3983891
 --- /dev/null
-+++ b/arch/arm/plat-s3c/include/plat/regs-ide.h
-@@ -0,0 +1,56 @@
-+/* arch/arm/plat-s3c/include/plat/regs-ide.h
++++ b/arch/arm/plat-s3c/include/plat/ide.h
+@@ -0,0 +1,36 @@
++/* linux/arch/arm/plat-s3c/include/plat/ide.h
 + *
 + * Copyright (C) 2009 Samsung Electronics
-+ * 	http://samsungsemi.com/
++ * 	http://samsungsemi.com
++ *
++ * S3C IDE Platform data definitions
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
-+ *
-+ * S3C64XX IDE register definitions
 +*/
 +
-+#ifndef __ASM_ARM_REGS_IDE
-+#define __ASM_ARM_REGS_IDE __FILE__
++#ifndef __PLAT_S3C_IDE_H
++#define __PLAT_S3C_IDE_H __FILE__
 +
-+#define S3C_CFATA_REG(x) (x)
++/**
++ * struct s3c_ide_platdata - S3C IDE driver platform data.
++ * @setup_gpio: Platform specific ide gpio setup function.
++ *
++ */
++struct s3c_ide_platdata {
++	void 	(*setup_gpio)(void);
++};
 +
-+#define S3C_CFATA_MUX           S3C_CFATA_REG(0x1800)
++/*
++ * s3c_ide_set_platdata() - Setup the platform specifc data for IDE driver.
++ * @pdata: Platform data for IDE driver.
++ */
++extern void s3c_ide_set_platdata(struct s3c_ide_platdata *pdata);
 +
-+#define S3C_ATA_CTRL            S3C_CFATA_REG(0x1900)
-+#define S3C_ATA_STATUS          S3C_CFATA_REG(0x1904)
-+#define S3C_ATA_CMD             S3C_CFATA_REG(0x1908)
-+#define S3C_ATA_SWRST           S3C_CFATA_REG(0x190c)
-+#define S3C_ATA_IRQ             S3C_CFATA_REG(0x1910)
-+#define S3C_ATA_IRQ_MSK         S3C_CFATA_REG(0x1914)
-+#define S3C_ATA_CFG             S3C_CFATA_REG(0x1918)
++/*
++ * s3c64xx_ide_setup_gpio() - Platform specific ide gpio setup function.
++ */
++extern void s3c64xx_ide_setup_gpio(void);
 +
-+#define S3C_ATA_PIO_TIME        S3C_CFATA_REG(0x192c)
-+#define S3C_ATA_UDMA_TIME       S3C_CFATA_REG(0x1930)
-+#define S3C_ATA_XFR_NUM         S3C_CFATA_REG(0x1934)
-+#define S3C_ATA_XFR_CNT         S3C_CFATA_REG(0x1938)
-+#define S3C_ATA_TBUF_START      S3C_CFATA_REG(0x193c)
-+#define S3C_ATA_TBUF_SIZE       S3C_CFATA_REG(0x1940)
-+#define S3C_ATA_SBUF_START      S3C_CFATA_REG(0x1944)
-+#define S3C_ATA_SBUF_SIZE       S3C_CFATA_REG(0x1948)
-+#define S3C_ATA_CADR_TBUF       S3C_CFATA_REG(0x194c)
-+#define S3C_ATA_CADR_SBUF       S3C_CFATA_REG(0x1950)
-+#define S3C_ATA_PIO_DTR         S3C_CFATA_REG(0x1954)
-+#define S3C_ATA_PIO_FED         S3C_CFATA_REG(0x1958)
-+#define S3C_ATA_PIO_SCR         S3C_CFATA_REG(0x195c)
-+#define S3C_ATA_PIO_LLR         S3C_CFATA_REG(0x1960)
-+#define S3C_ATA_PIO_LMR         S3C_CFATA_REG(0x1964)
-+#define S3C_ATA_PIO_LHR         S3C_CFATA_REG(0x1968)
-+#define S3C_ATA_PIO_DVR         S3C_CFATA_REG(0x196c)
-+#define S3C_ATA_PIO_CSD         S3C_CFATA_REG(0x1970)
-+#define S3C_ATA_PIO_DAD         S3C_CFATA_REG(0x1974)
-+#define S3C_ATA_PIO_RDATA       S3C_CFATA_REG(0x197c)
-+#define S3C_BUS_FIFO_STATUS     S3C_CFATA_REG(0x1990)
-+#define S3C_ATA_FIFO_STATUS     S3C_CFATA_REG(0x1994)
++#endif
+diff --git a/arch/arm/plat-s3c64xx/dev-ide.c b/arch/arm/plat-s3c64xx/dev-ide.c
+new file mode 100644
+index 0000000..946d323
+--- /dev/null
++++ b/arch/arm/plat-s3c64xx/dev-ide.c
+@@ -0,0 +1,88 @@
++/* linux/arch/arm/plat-s3c/include/plat/ide.h
++ *
++ * Copyright (C) 2009 Samsung Electronics
++ * 	http://samsungsemi.com
++ *
++ * S3C IDE device definition.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
-+#define S3C_CFATA_MUX_TRUEIDE	0x01
-+#define S3C_ATA_CFG_SWAP	0x40
-+#define S3C_ATA_CFG_IORDYEN	0x02
++#include <linux/kernel.h>
++#include <linux/types.h>
++#include <linux/interrupt.h>
++#include <linux/list.h>
++#include <linux/platform_device.h>
++#include <linux/io.h>
++#include <linux/ata.h>
++#include <asm/mach/arch.h>
++#include <asm/mach/irq.h>
++#include <mach/hardware.h>
++#include <mach/map.h>
++#include <plat/regs-clock.h>
++#include <plat/devs.h>
++#include <plat/gpio-cfg.h>
++#include <mach/gpio.h>
++#include <plat/ide.h>
 +
-+#endif /* __ASM_ARM_REGS_IDE */
++static struct resource s3c_cfcon_resource[] = {
++	[0] = {
++		.start  = S3C64XX_PA_CFCON,
++		.end    = S3C64XX_PA_CFCON + SZ_1M - 1,
++		.flags  = IORESOURCE_MEM,
++	},
++	[1] = {
++		.start  = IRQ_CFCON,
++		.end    = IRQ_CFCON,
++		.flags  = IORESOURCE_IRQ,
++	},
++};
++
++struct platform_device s3c_device_cfcon = {
++	.name           = "s3c-ide",
++	.id             = 0,
++	.num_resources  = ARRAY_SIZE(s3c_cfcon_resource),
++	.resource       = s3c_cfcon_resource,
++};
++EXPORT_SYMBOL(s3c_device_cfcon);
++
++void s3c_ide_set_platdata(struct s3c_ide_platdata *pdata)
++{
++	struct s3c_ide_platdata *pd;
++
++	pd = (struct s3c_ide_platdata *)kmemdup(pdata,
++		sizeof(struct s3c_ide_platdata), GFP_KERNEL);
++	if (!pd) {
++		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
++		return;
++	}
++	s3c_device_cfcon.dev.platform_data = pd;
++}
++
++void s3c64xx_ide_setup_gpio(void)
++{
++	u32 reg;
++	u8 i;
++
++	reg = __raw_readl(S3C_MEM_SYS_CFG) & (~0x3f);
++	 __raw_writel(reg | 0x4030, S3C_MEM_SYS_CFG);
++
++	s3c_gpio_cfgpin(S3C64XX_GPB(4), S3C_GPIO_SFN(4));
++
++	/* Set XhiDATA[15:0] pins as CF Data[15:0] */
++	for (i = 0; i < 16; i++)
++		s3c_gpio_cfgpin(S3C64XX_GPK(i), S3C_GPIO_SFN(5));
++
++	/* Set XhiADDR[2:0] pins as CF ADDR[2:0] */
++	for (i = 0; i < 3; i++)
++		s3c_gpio_cfgpin(S3C64XX_GPL(i), S3C_GPIO_SFN(6));
++
++	/* Set Xhi ctrl pins as CF ctrl pins(IORDY, IOWR, IORD, CE[0:1]) */
++	s3c_gpio_cfgpin(S3C64XX_GPM(5), S3C_GPIO_SFN(0));
++	for (i = 0; i < 5; i++)
++		s3c_gpio_cfgpin(S3C64XX_GPM(i), S3C_GPIO_SFN(6));
++}
++
 +
 -- 
 1.5.3.4
