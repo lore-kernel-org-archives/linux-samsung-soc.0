@@ -1,39 +1,61 @@
-From: Marc Zyngier <maz@misterjones.org>
-Subject: Re: [PATCH] S3C: ide: Add Samsung S3C IDE controller driver
-Date: Mon, 12 Oct 2009 10:55:38 +0200
-Message-ID: <20091012105538.140abb1c@life-in-the-fast-lane>
-References: <1254985168-21720-1-git-send-email-thomas.ab@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 14/17] drivers: i2c: s3c2410-i2c also on S5PC1XX platform
+Date: Tue, 13 Oct 2009 10:11:19 +0200
+Message-ID: <1255421482-26455-15-git-send-email-m.szyprowski@samsung.com>
+References: <1255421482-26455-1-git-send-email-m.szyprowski@samsung.com>
+	<1255421482-26455-2-git-send-email-m.szyprowski@samsung.com>
+	<1255421482-26455-3-git-send-email-m.szyprowski@samsung.com>
+	<1255421482-26455-4-git-send-email-m.szyprowski@samsung.com>
+	<1255421482-26455-5-git-send-email-m.szyprowski@samsung.com>
+	<1255421482-26455-6-git-send-email-m.szyprowski@samsung.com>
+	<1255421482-26455-7-git-send-email-m.szyprowski@samsung.com>
+	<1255421482-26455-8-git-send-email-m.szyprowski@samsung.com>
+	<1255421482-26455-9-git-send-email-m.szyprowski@samsung.com>
+	<1255421482-26455-10-git-send-email-m.szyprowski@samsung.com>
+	<1255421482-26455-11-git-send-email-m.szyprowski@samsung.com>
+	<1255421482-26455-12-git-send-email-m.szyprowski@samsung.com>
+	<1255421482-26455-13-git-send-email-m.szyprowski@samsung.com>
+	<1255421482-26455-14-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from inca-roads.misterjones.org ([213.251.177.50]:46640 "EHLO
-	inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754838AbZJLJHp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Oct 2009 05:07:45 -0400
-In-Reply-To: <1254985168-21720-1-git-send-email-thomas.ab@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1255421482-26455-14-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kyungmin.park@samsung.com, bhmin@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: thomas.ab@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, Abhilash Kesavan <a.kesavan@samsung.com>
 
-On Thu,  8 Oct 2009 15:59:28 +0900
-thomas.ab@samsung.com wrote:
+Samsung S5PC100 SoC has I2C controllers directly compatible to the one
+known from S3C24x0 SoCs. Enable support for s3c-i2c driver also on S5PC1xx
+platform.
 
-> +irqreturn_t s3c_irq_handler(int irq, void *dev_id)
-> +{
-> +	ide_hwif_t *hwif = (ide_hwif_t *)dev_id;
-> +	struct s3c_ide_device *ide_dev =
-> +			(struct s3c_ide_device *)hwif->hwif_data;
-> +	u32 reg = ide_readl(S3C_ATA_IRQ);
-> +
-> +	ide_writel(reg, S3C_ATA_IRQ);
-> +	return ide_intr(irq, dev_id);
-> +}
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/i2c/busses/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-On top of what Jassi already mentioned, please make this static.
-
-	M.
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 737335f..5b173f3 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -494,7 +494,7 @@ config I2C_PXA_SLAVE
+ 
+ config I2C_S3C2410
+ 	tristate "S3C2410 I2C Driver"
+-	depends on ARCH_S3C2410 || ARCH_S3C64XX
++	depends on ARCH_S3C2410 || ARCH_S3C64XX || ARCH_S5PC1XX
+ 	help
+ 	  Say Y here to include support for I2C controller in the
+ 	  Samsung S3C2410 based System-on-Chip devices.
 -- 
-Fast. Cheap. Reliable. Pick two.
+1.6.4
