@@ -1,28 +1,11 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 16/17] SMDKC100: add SDHCI controllers 0, 1 and 2 support
-Date: Tue, 13 Oct 2009 10:11:21 +0200
-Message-ID: <1255421482-26455-17-git-send-email-m.szyprowski@samsung.com>
-References: <1255421482-26455-1-git-send-email-m.szyprowski@samsung.com>
-	<1255421482-26455-2-git-send-email-m.szyprowski@samsung.com>
-	<1255421482-26455-3-git-send-email-m.szyprowski@samsung.com>
-	<1255421482-26455-4-git-send-email-m.szyprowski@samsung.com>
-	<1255421482-26455-5-git-send-email-m.szyprowski@samsung.com>
-	<1255421482-26455-6-git-send-email-m.szyprowski@samsung.com>
-	<1255421482-26455-7-git-send-email-m.szyprowski@samsung.com>
-	<1255421482-26455-8-git-send-email-m.szyprowski@samsung.com>
-	<1255421482-26455-9-git-send-email-m.szyprowski@samsung.com>
-	<1255421482-26455-10-git-send-email-m.szyprowski@samsung.com>
-	<1255421482-26455-11-git-send-email-m.szyprowski@samsung.com>
-	<1255421482-26455-12-git-send-email-m.szyprowski@samsung.com>
-	<1255421482-26455-13-git-send-email-m.szyprowski@samsung.com>
-	<1255421482-26455-14-git-send-email-m.szyprowski@samsung.com>
-	<1255421482-26455-15-git-send-email-m.szyprowski@samsung.com>
-	<1255421482-26455-16-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH] Update Samsung S5PC100 SoC support
+Date: Tue, 13 Oct 2009 10:11:05 +0200
+Message-ID: <1255421482-26455-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1255421482-26455-16-git-send-email-m.szyprowski@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
 	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -36,47 +19,43 @@ To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: kyungmin.park@samsung.com, bhmin@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add required machine definitions for SDHCI controller 0, 1 and 2. SMDKC100
-has 2 SDHCI/MMC ports. Port 1 is directly connected to controller 0. Port
-1 can be conntected to controler 1 or 2, depending on jumper setup.
+Hello,
 
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/mach-s5pc100/Kconfig         |    4 ++++
- arch/arm/mach-s5pc100/mach-smdkc100.c |    3 +++
- 2 files changed, 7 insertions(+), 0 deletions(-)
+This patch series updates Samsung S5PC100 SoC support. S5PC100 platform
+core has been extended with new clocks hierarchy implementation, gpio lib,
+support for external and gpio interrupts and some basics of power
+management (cpu idle and system reset). Also platform helpers for
+s3c framebuffer, i2c and hsmmc drivers has been added.
 
-diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
-index 21b1821..0dd2b8c 100644
---- a/arch/arm/mach-s5pc100/Kconfig
-+++ b/arch/arm/mach-s5pc100/Kconfig
-@@ -25,8 +25,12 @@ config MACH_SMDKC100
- 	select CPU_S5PC100
- 	select S3C_DEV_FB
- 	select S3C_DEV_I2C1
-+	select S3C_DEV_HSMMC
-+	select S3C_DEV_HSMMC1
-+	select S3C_DEV_HSMMC2
- 	select S5PC1XX_SETUP_I2C0
- 	select S5PC1XX_SETUP_I2C1
- 	select S5PC1XX_SETUP_FB_24BPP
-+	select S5PC100_SETUP_SDHCI
- 	help
- 	  Machine support for the Samsung SMDKC100
-diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-s5pc100/mach-smdkc100.c
-index 2c0119f..8dee48e 100644
---- a/arch/arm/mach-s5pc100/mach-smdkc100.c
-+++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
-@@ -147,6 +147,9 @@ static struct platform_device *smdkc100_devices[] __initdata = {
- 	&s3c_device_i2c0,
- 	&s3c_device_i2c1,
- 	&s3c_device_fb,
-+	&s3c_device_hsmmc0,
-+	&s3c_device_hsmmc1,
-+	&s3c_device_hsmmc2,
- 	&smdkc100_lcd_powerdev,
- };
- 
--- 
-1.6.4
+All these patches has been tested on SMDKC100 board.
+
+This patch series has been prepared against latest ARM Kernel tree from
+http://ftp.arm.linux.org.uk/pub/linux/arm/kernel/git-cur/linux-2.6-arm.git/
+
+(I'm really sorry for double-posting this patch series, but at the first
+attepmt I used the old address of the ARM Kernel mailing list)
+
+This patch series includes:
+
+[PATCH 01/17] ARM: MM: use 64bytes of L1 cache on plat S5PC1xx
+[PATCH 02/17] ARM: S5PC1XX: registers rename
+[PATCH 03/17] ARM: S5PC1XX: clock registers rename
+[PATCH 04/17] ARM: S5PC1XX: clocks reimplementation
+[PATCH 05/17] ARM: S5PC1XX: add GPIO L banks to register definition
+[PATCH 06/17] ARM: S5PC1XX: GPIO registers rename
+[PATCH 07/17] ARM: S5PC1xx: add gpiolib and external/gpio interrupt support
+[PATCH 08/17] ARM: S5PC1XX: add cpu idle and system reset support
+[PATCH 09/17] ARM: S5PC1xx: add platform helpers for s3c-fb device
+[PATCH 10/17] SMDKC100: enable S3C FrameBuffer
+[PATCH 11/17] drivers: fb: enable S3C FrameBuffer on S5PC1XX platform
+[PATCH 12/17] ARM: S5PC1xx: add platform helpers for i2c adapter devices
+[PATCH 13/17] SMDKC100: add I2C0 and I2C1 buses support
+[PATCH 14/17] drivers: i2c: s3c2410-i2c also on S5PC1XX platform
+[PATCH 15/17] ARM: S5PC1xx: add platform helpers for SDHCI host controllers
+[PATCH 16/17] SMDKC100: add SDHCI controllers 0, 1 and 2 support
+[PATCH 17/17] drivers: MMC: enable SDHCI-S3C on S5PC1XX platform
+
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
