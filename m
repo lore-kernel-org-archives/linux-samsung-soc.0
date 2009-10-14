@@ -1,13 +1,13 @@
 From: Thomas Abraham <thomas.ab@samsung.com>
-Subject: [PATCH v2] S3C: ide: Add Samsung S3C IDE controller driver
-Date: Wed, 14 Oct 2009 16:33:27 +0900
-Message-ID: <1255505607-26195-1-git-send-email-thomas.ab@samsung.com>
+Subject: [PATCH v3] S3C: ide: Add Samsung S3C IDE controller driver
+Date: Wed, 14 Oct 2009 17:10:47 +0900
+Message-ID: <1255507847-5401-1-git-send-email-thomas.ab@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:55874 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:52776 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755168AbZJNHiD (ORCPT
+	with ESMTP id S1755186AbZJNISD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Oct 2009 03:38:03 -0400
+	Wed, 14 Oct 2009 04:18:03 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
@@ -16,39 +16,23 @@ Cc: Abhilash Kesavan <a.kesavan@samsung.com>, Thomas Abraham <thomas.ab@samsung.
 This patch adds Samsung S3C IDE controller driver. This driver supports
 PIO and UDMA modes of data transfer.
 
-Note: This patch includes suggested changes by Jassi and Marc Zyngier. 
+Note: This patch includes suggested changes by Jassi and Marc Zyngier.
 The UDMA support has also been added in this patch.
+
+Please ignore the following patch.
+[PATCH v2] S3C: ide: Add Samsung S3C IDE controller driver.
 
 Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 ---
- arch/arm/plat-s3c/Makefile |    5 +-
- drivers/ide/Kconfig        |   22 ++-
- drivers/ide/ide-proc.c     |    1 +
- drivers/ide/s3c-ide.c      |  810 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/ide.h        |    2 +-
- 5 files changed, 836 insertions(+), 4 deletions(-)
+ drivers/ide/Kconfig    |   22 ++-
+ drivers/ide/Makefile   |    1 +
+ drivers/ide/ide-proc.c |    1 +
+ drivers/ide/s3c-ide.c  |  810 ++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/ide.h    |    2 +-
+ 5 files changed, 834 insertions(+), 2 deletions(-)
  create mode 100644 drivers/ide/s3c-ide.c
 
-diff --git a/arch/arm/plat-s3c/Makefile b/arch/arm/plat-s3c/Makefile
-index 3c09109..d34d411 100644
---- a/arch/arm/plat-s3c/Makefile
-+++ b/arch/arm/plat-s3c/Makefile
-@@ -34,11 +34,12 @@ obj-$(CONFIG_HAVE_PWM)		+= pwm.o
- 
- # devices
- 
--obj-$(CONFIG_S3C_DEV_HSMMC)	+= dev-hsmmc.o
--obj-$(CONFIG_S3C_DEV_HSMMC1)	+= dev-hsmmc1.o
-+#obj-$(CONFIG_S3C_DEV_HSMMC)	+= dev-hsmmc.o
-+#obj-$(CONFIG_S3C_DEV_HSMMC1)	+= dev-hsmmc1.o
- obj-y				+= dev-i2c0.o
- obj-$(CONFIG_S3C_DEV_I2C1)	+= dev-i2c1.o
- obj-$(CONFIG_S3C_DEV_FB)	+= dev-fb.o
- obj-$(CONFIG_S3C_DEV_USB_HOST)	+= dev-usb.o
- obj-$(CONFIG_S3C_DEV_USB_HSOTG)	+= dev-usb-hsotg.o
- obj-$(CONFIG_S3C_DEV_NAND)	+= dev-nand.o
-+obj-y				+= dev-onenand.o
 diff --git a/drivers/ide/Kconfig b/drivers/ide/Kconfig
 index 9a5d0aa..f6a728f 100644
 --- a/drivers/ide/Kconfig
@@ -89,6 +73,18 @@ index 9a5d0aa..f6a728f 100644
  	select IDE_XFER_MODE
  
  endif # IDE
+diff --git a/drivers/ide/Makefile b/drivers/ide/Makefile
+index 81df925..a64a723 100644
+--- a/drivers/ide/Makefile
++++ b/drivers/ide/Makefile
+@@ -64,6 +64,7 @@ obj-$(CONFIG_BLK_DEV_SIIMAGE)		+= siimage.o
+ obj-$(CONFIG_BLK_DEV_SIS5513)		+= sis5513.o
+ obj-$(CONFIG_BLK_DEV_SL82C105)		+= sl82c105.o
+ obj-$(CONFIG_BLK_DEV_SLC90E66)		+= slc90e66.o
++obj-$(CONFIG_BLK_DEV_IDE_S3C)		+= s3c-ide.o
+ obj-$(CONFIG_BLK_DEV_TC86C001)		+= tc86c001.o
+ obj-$(CONFIG_BLK_DEV_TRIFLEX)		+= triflex.o
+ obj-$(CONFIG_BLK_DEV_TRM290)		+= trm290.o
 diff --git a/drivers/ide/ide-proc.c b/drivers/ide/ide-proc.c
 index 3242698..d18478f 100644
 --- a/drivers/ide/ide-proc.c
