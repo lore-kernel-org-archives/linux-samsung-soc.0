@@ -1,45 +1,47 @@
-From: Peter Korsgaard <jacmet@sunsite.dk>
-Subject: Re: [PATCH v3] S3C: ide: Add Samsung S3C IDE controller driver
-Date: Wed, 14 Oct 2009 23:25:41 +0200
-Message-ID: <87ljjd1xd6.fsf@macbook.be.48ers.dk>
-References: <1255507847-5401-1-git-send-email-thomas.ab@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Thomas Abraham <thomas.ab@samsung.com>
+Subject: [PATCH v2 0/4] S3C: sdhci: Update Samsung 6410 SDHCI driver.
+Date: Thu, 15 Oct 2009 14:22:57 +0900
+Message-ID: <1255584177-4520-1-git-send-email-thomas.ab@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from fg-out-1718.google.com ([72.14.220.153]:16158 "EHLO
-	fg-out-1718.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750746AbZJNV1f (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:46260 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751498AbZJOF2R (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Oct 2009 17:27:35 -0400
-Received: by fg-out-1718.google.com with SMTP id 16so146783fgg.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Oct 2009 14:25:46 -0700 (PDT)
-In-Reply-To: <1255507847-5401-1-git-send-email-thomas.ab@samsung.com> (Thomas Abraham's message of "Wed\, 14 Oct 2009 17\:10\:47 +0900")
+	Thu, 15 Oct 2009 01:28:17 -0400
+Received: from uucp by ganesha.gnumonks.org with local-bsmtp (Exim 4.63)
+	(envelope-from <thomas.ab@samsung.com>)
+	id 1MyIsG-0005nG-HG
+	for linux-samsung-soc@vger.kernel.org; Thu, 15 Oct 2009 07:27:40 +0200
+Received: from localhost ([127.0.0.1] helo=localhost.localdomain)
+	by meercat.kr.gnumonks.org with esmtp (Exim 4.68)
+	(envelope-from <thomas.ab@samsung.com>)
+	id 1MyInh-0001Co-BM
+	for linux-samsung-soc@vger.kernel.org; Thu, 15 Oct 2009 14:22:57 +0900
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Abhilash Kesavan <a.kesavan@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
 
->>>>> "Thomas" == Thomas Abraham <thomas.ab@samsung.com> writes:
+This patch set is updated version of the patch set
+"[PATCH 0/8] s3c6410: sdhci: Update Samsung 6410 SDHCI driver". All the
+comments from Ben Dooks and Jassi have been addressed in this patch set.
 
-Hi,
+This patch set updates Samsung's 6410 SDHCI driver. This patch set
+adds SDHCI controller clock configuration code, adds ADMA support and
+adds module exit functionality. This patch set includes the following
+patches
 
- Thomas> diff --git a/drivers/ide/Kconfig b/drivers/ide/Kconfig
- Thomas> index 9a5d0aa..f6a728f 100644
- Thomas> --- a/drivers/ide/Kconfig
- Thomas> +++ b/drivers/ide/Kconfig
- Thomas> @@ -292,6 +292,26 @@ config BLK_DEV_IDEPNP
- Thomas>  	  would like the kernel to automatically detect and activate
- Thomas>  	  it, say Y here.
- 
- Thomas> +config BLK_DEV_IDE_S3C
- Thomas> +        tristate "Samsung S3C IDE Controller"
- Thomas> +	depends on PLAT_S3C64XX
- Thomas> +        help
- Thomas> +          Say Y here if you want to support using CF controller on SMDK(Samsung)
- Thomas> +	  development board. It will be configured for true IDE mode.
- 
-Indentation is wrong. Kconfig files are indented with a <tab> (and help
-text with <tab><space><space>).
+[PATCH v2 1/4] S3C: sdhci: Fix incorrect clock option for SDHCI base clock.
+[PATCH v2 2/4] S3C: sdhci: Update sdhci platform data.
+[PATCH v2 3/4] S3C: sdhci: Configure clock source and populate module exit function. 
+[PATCH v2 4/4] S3C: sdhci: Enable ADMA feature in S3C sdhci controller. 
 
--- 
-Bye, Peter Korsgaard
+This patch sets depends on the following patches for proper functioning.
+
+[PATCH 1/4] s3c6410: use correct divider_shift in setrate_clksrc()
+[PATCH 2/4] s3c6410: update clk->parent when setting clock source
+[PATCH 3/4] s3c6410: Fix divider value calculation in s3c64xx_roundrate_clksrc
+[PATCH 4/4] s3c6410: Remove redundant mpll parent assignment
+[PATCH] sdhci: Add new quirk in sdhci driver and update ADMA descriptor build
+
+--
+1.5.3.4
