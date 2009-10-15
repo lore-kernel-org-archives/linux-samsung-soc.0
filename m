@@ -1,47 +1,47 @@
 From: Thomas Abraham <thomas.ab@samsung.com>
-Subject: [PATCH v2 0/4] S3C: sdhci: Update Samsung 6410 SDHCI driver.
-Date: Thu, 15 Oct 2009 14:22:57 +0900
-Message-ID: <1255584177-4520-1-git-send-email-thomas.ab@samsung.com>
+Subject: [PATCH v2 1/4] S3C: sdhci: Fix incorrect clock option for SDHCI base clock.
+Date: Thu, 15 Oct 2009 14:48:18 +0900
+Message-ID: <1255585698-31029-1-git-send-email-thomas.ab@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:46260 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:32874 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751498AbZJOF2R (ORCPT
+	with ESMTP id S1753161AbZJOFxR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Oct 2009 01:28:17 -0400
+	Thu, 15 Oct 2009 01:53:17 -0400
 Received: from uucp by ganesha.gnumonks.org with local-bsmtp (Exim 4.63)
 	(envelope-from <thomas.ab@samsung.com>)
-	id 1MyIsG-0005nG-HG
-	for linux-samsung-soc@vger.kernel.org; Thu, 15 Oct 2009 07:27:40 +0200
+	id 1MyJGS-0006Pr-Tl
+	for linux-samsung-soc@vger.kernel.org; Thu, 15 Oct 2009 07:52:40 +0200
 Received: from localhost ([127.0.0.1] helo=localhost.localdomain)
 	by meercat.kr.gnumonks.org with esmtp (Exim 4.68)
 	(envelope-from <thomas.ab@samsung.com>)
-	id 1MyInh-0001Co-BM
-	for linux-samsung-soc@vger.kernel.org; Thu, 15 Oct 2009 14:22:57 +0900
+	id 1MyJCE-00084k-6F
+	for linux-samsung-soc@vger.kernel.org; Thu, 15 Oct 2009 14:48:18 +0900
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 
-This patch set is updated version of the patch set
-"[PATCH 0/8] s3c6410: sdhci: Update Samsung 6410 SDHCI driver". All the
-comments from Ben Dooks and Jassi have been addressed in this patch set.
+The third base clock option for SDHCI controller in S3C64XX is
+mout_epll. This patch removes mmc_bus clock and uses mout_epll
+as the third clock option for SDHCI base clock.
 
-This patch set updates Samsung's 6410 SDHCI driver. This patch set
-adds SDHCI controller clock configuration code, adds ADMA support and
-adds module exit functionality. This patch set includes the following
-patches
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+---
+ arch/arm/mach-s3c6410/setup-sdhci.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-[PATCH v2 1/4] S3C: sdhci: Fix incorrect clock option for SDHCI base clock.
-[PATCH v2 2/4] S3C: sdhci: Update sdhci platform data.
-[PATCH v2 3/4] S3C: sdhci: Configure clock source and populate module exit function. 
-[PATCH v2 4/4] S3C: sdhci: Enable ADMA feature in S3C sdhci controller. 
-
-This patch sets depends on the following patches for proper functioning.
-
-[PATCH 1/4] s3c6410: use correct divider_shift in setrate_clksrc()
-[PATCH 2/4] s3c6410: update clk->parent when setting clock source
-[PATCH 3/4] s3c6410: Fix divider value calculation in s3c64xx_roundrate_clksrc
-[PATCH 4/4] s3c6410: Remove redundant mpll parent assignment
-[PATCH] sdhci: Add new quirk in sdhci driver and update ADMA descriptor build
-
---
+diff --git a/arch/arm/mach-s3c6410/setup-sdhci.c b/arch/arm/mach-s3c6410/setup-sdhci.c
+index 20666f3..aaac505 100644
+--- a/arch/arm/mach-s3c6410/setup-sdhci.c
++++ b/arch/arm/mach-s3c6410/setup-sdhci.c
+@@ -29,7 +29,7 @@
+ char *s3c6410_hsmmc_clksrcs[4] = {
+ 	[0] = "hsmmc",
+ 	[1] = "hsmmc",
+-	[2] = "mmc_bus",
++	[2] = "mout_epll",
+ 	/* [3] = "48m", - note not succesfully used yet */
+ };
+ 
+-- 
 1.5.3.4
