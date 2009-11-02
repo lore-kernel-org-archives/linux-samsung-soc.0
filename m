@@ -1,44 +1,57 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: S3C64XX DSP support added
-Date: Mon, 2 Nov 2009 11:23:58 +0000
-Message-ID: <20091102112358.GC29351@sirena.org.uk>
-References: <1257127774-5564-1-git-send-email-jassisinghbrar@gmail.com> <20091102104211.GA29351@sirena.org.uk> <1b68c6790911020310u18dbae52u89063b311e671d@mail.gmail.com>
+From: Ben Dooks <ben@trinity.fluff.org>
+Subject: Re: [PATCH 4/4] S3C64XX DSP: Added the CPU driver for PCM
+	controllers
+Date: Mon, 2 Nov 2009 11:39:32 +0000
+Message-ID: <20091102113932.GB23772@trinity.fluff.org>
+References: <1257127791-5595-1-git-send-email-jassisinghbrar@gmail.com> <1257127791-5595-2-git-send-email-jassisinghbrar@gmail.com> <1257127791-5595-3-git-send-email-jassisinghbrar@gmail.com> <1257127791-5595-4-git-send-email-jassisinghbrar@gmail.com> <20091102111753.GB29351@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:51379 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754404AbZKBLXy (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:55755 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754443AbZKBLje (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Nov 2009 06:23:54 -0500
+	Mon, 2 Nov 2009 06:39:34 -0500
 Content-Disposition: inline
-In-Reply-To: <1b68c6790911020310u18dbae52u89063b311e671d@mail.gmail.com>
+In-Reply-To: <20091102111753.GB29351@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jassi brar <jassisinghbrar@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: jassisinghbrar@gmail.com, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>
 
-On Mon, Nov 02, 2009 at 08:10:07PM +0900, jassi brar wrote:
 
-> The codec drivers use the term DSP (DSP_A/DSP_B) for what our PCM
-> controller does.
+> > +	dai->private_data = dsp;
+> > +
+> > +	if (!base) {
+> > +		struct resource *res = platform_get_resource(pdev,
+> > +							     IORESOURCE_MEM,
+> > +							     0);
+> > +		if (!res) {
+> > +			dev_err(dev, "Unable to get register resource\n");
+> > +			return -ENXIO;
+> > +		}
+> > +
+> > +		if (!request_mem_region(res->start, resource_size(res),
+> > +					"s3c64xx-dsp")) {
+> > +			dev_err(dev, "Unable to request register region\n");
+> > +			return -EBUSY;
+> > +		}
+> > +
+> > +		base = res->start;
+> > +	}
 
-I know; this is a bit unfortunate but not too much of an issue since
-it's only ever mentioned in the context of a DAIFMT constant so it's
-clear what's being talked about.  In this case it's particularly
-confusing because the hardware is always talked about as being PCM and
-from the sounds of it some of the current S5P processors already have
-some basic DSP stuff in them.
+I would like to see platform_devices with their proper resources being
+mandatory for new drivers. We could do with this lot proplerly following
+the device driver model.
 
-> I used 'DSP' for things related to ALSA and 'PCM' for h/w specific things.
+> > +/* Module information */
+> > +MODULE_AUTHOR("Jaswinder Singh, <jassi.brar@samsung.com>");
+> > +MODULE_DESCRIPTION("S3C64XX PCM Controller Driver");
 
-I'm having a hard time following your logic here?  This is a hardware
-driver after all.
+no module license.
 
-> > You might want to rename the existing PCM driver to DMA.
-> Could do that, but still 'PCM' is used at other places in the stack as well.
-> Would that be fine?
+-- 
+Ben
 
-Probably, yes.  The use of PCM for DMA drivers is there mostly because
-in older systems the PCM interface offered no software control at all so
-all you needed to drive them was the DMA driver.
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
