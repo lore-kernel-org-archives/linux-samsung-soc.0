@@ -1,45 +1,30 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: Ben Dooks' git tree location
-Date: Mon, 2 Nov 2009 11:42:38 +0000
-Message-ID: <20091102114238.GC23772@trinity.fluff.org>
-References: <20091102070537.GG4170@prithivi.gnumonks.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 4/4] S3C64XX DSP: Added the CPU driver for PCM
+	controllers
+Date: Mon, 2 Nov 2009 11:56:55 +0000
+Message-ID: <20091102115654.GH29351@sirena.org.uk>
+References: <1257127791-5595-1-git-send-email-jassisinghbrar@gmail.com> <1257127791-5595-2-git-send-email-jassisinghbrar@gmail.com> <1257127791-5595-3-git-send-email-jassisinghbrar@gmail.com> <1257127791-5595-4-git-send-email-jassisinghbrar@gmail.com> <20091102111753.GB29351@sirena.org.uk> <20091102113932.GB23772@trinity.fluff.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:55855 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754606AbZKBLmf (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:53897 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754297AbZKBL4v (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Nov 2009 06:42:35 -0500
+	Mon, 2 Nov 2009 06:56:51 -0500
 Content-Disposition: inline
-In-Reply-To: <20091102070537.GG4170@prithivi.gnumonks.org>
+In-Reply-To: <20091102113932.GB23772@trinity.fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Harald Welte <laforge@gnumonks.org>
-Cc: Jaswinder Brar <jassi.brar@samsung.com>, linux-samsung-soc@vger.kernel.org
+To: Ben Dooks <ben@trinity.fluff.org>
+Cc: jassisinghbrar@gmail.com, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>
 
-On Mon, Nov 02, 2009 at 04:05:37PM +0900, Harald Welte wrote:
-> Hi all!
-> 
-> As Ben has announced some time ago, and some folks like Jassi have noted:
-> 
-> Ben's s3c-linux git tree has moved its location some time ago.
-> 
-> you can find a gitweb interface at
-> 	http://git.fluff.org/gitweb?p=bjdooks/linux.git;a=summary
-> 
-> you can clone it from the following URL:
-> 	git clone git://git.fluff.org/bjdooks/linux.git
-> 
-> I don't know if there is any http URL available.  In any case,
-> even from inside Samsung, you can use the socat based method
-> to access a git:// style URL, as per instructions from:
-> http://www.emilsit.net/blog/archives/how-to-use-the-git-protocol-through-a-http-connect-proxy/
+On Mon, Nov 02, 2009 at 11:39:32AM +0000, Ben Dooks wrote:
 
-http://www.fluff.org/git/bjdooks/linux.git
+> I would like to see platform_devices with their proper resources being
+> mandatory for new drivers. We could do with this lot proplerly following
+> the device driver model.
 
--- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+Actually, from that point of view the whole probe function should just
+be rolled into one anyway - there is exactly one caller of the sub
+function.
