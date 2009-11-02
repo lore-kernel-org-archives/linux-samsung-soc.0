@@ -1,51 +1,37 @@
-From: jassi brar <jassisinghbrar@gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: S3C64XX DSP support added
-Date: Mon, 2 Nov 2009 20:59:44 +0900
-Message-ID: <1b68c6790911020359u49e9f369hcefaab9b28aeaa27@mail.gmail.com>
+Date: Mon, 2 Nov 2009 12:07:33 +0000
+Message-ID: <20091102120732.GA7485@rakim.wolfsonmicro.main>
 References: <1257127774-5564-1-git-send-email-jassisinghbrar@gmail.com>
-	 <20091102104211.GA29351@sirena.org.uk>
-	 <1b68c6790911020310u18dbae52u89063b311e671d@mail.gmail.com>
-	 <20091102112358.GC29351@sirena.org.uk>
+ <20091102104211.GA29351@sirena.org.uk>
+ <1b68c6790911020310u18dbae52u89063b311e671d@mail.gmail.com>
+ <20091102112358.GC29351@sirena.org.uk>
+ <1b68c6790911020359u49e9f369hcefaab9b28aeaa27@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-px0-f179.google.com ([209.85.216.179]:63291 "EHLO
-	mail-px0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754488AbZKBL7k convert rfc822-to-8bit (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:59448 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754578AbZKBMHc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Nov 2009 06:59:40 -0500
-Received: by pxi9 with SMTP id 9so3130971pxi.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Nov 2009 03:59:45 -0800 (PST)
-In-Reply-To: <20091102112358.GC29351@sirena.org.uk>
+	Mon, 2 Nov 2009 07:07:32 -0500
+Content-Disposition: inline
+In-Reply-To: <1b68c6790911020359u49e9f369hcefaab9b28aeaa27@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: jassi brar <jassisinghbrar@gmail.com>
 Cc: linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>
 
-On Mon, Nov 2, 2009 at 8:23 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Mon, Nov 02, 2009 at 08:10:07PM +0900, jassi brar wrote:
+On Mon, Nov 02, 2009 at 08:59:44PM +0900, jassi brar wrote:
 
->> I used 'DSP' for things related to ALSA and 'PCM' for h/w specific t=
-hings.
->
-> I'm having a hard time following your logic here? =C2=A0This is a har=
-dware
-> driver after all.
-Register and bit definitions, DMA and other platform resources are all
-using 'PCM',
-while ALSA related stuff : CPU driver, DAI name etc are using 'DSP'.
+> Okay, will rename s3c24xx-pcm.c to s3c24xx-dma.c and call this driver
+> as s3c64xx-pcm.c
 
->> > You might want to rename the existing PCM driver to DMA.
->> Could do that, but still 'PCM' is used at other places in the stack =
-as well.
->> Would that be fine?
->
-> Probably, yes. =C2=A0The use of PCM for DMA drivers is there mostly b=
-ecause
-> in older systems the PCM interface offered no software control at all=
- so
-> all you needed to drive them was the DMA driver.
-Okay, will rename s3c24xx-pcm.c to s3c24xx-dma.c and call this driver
-as s3c64xx-pcm.c
+Is there a PCM controller on the s3c24xx chips?  I know you're not
+particularly intersted in them but if there is I'd be surprised if the
+same driver wouldn't work for both and someone else might want to add
+the s3c24xx specific stuff (probably mostly under arch/arm).  If that is
+the case then s3c-pcm might be better.
+
+It'd be nice to do that for the DMA driver too if it is getting renamed
+anyway.
