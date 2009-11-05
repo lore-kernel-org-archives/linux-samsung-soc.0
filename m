@@ -1,50 +1,35 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: Revised patches for PCM Controller driver
-Date: Wed, 4 Nov 2009 14:03:11 +0000
-Message-ID: <20091104140310.GB27652@rakim.wolfsonmicro.main>
-References: <1257323264-18363-1-git-send-email-jassisinghbrar@gmail.com>
- <20091104110512.GB25044@sirena.org.uk>
- <1b68c6790911040414jced4bf1i8852a9ce84c3ddf5@mail.gmail.com>
+From: jassi brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH 2/7] S3C AUDIO: Rename s3c24xx-pcm driver to generic
+	s3c_audio
+Date: Thu, 5 Nov 2009 09:13:04 +0900
+Message-ID: <1b68c6790911041613m231a77f8t4ba72ad3a2a16b2b@mail.gmail.com>
+References: <1257323349-18481-1-git-send-email-jassisinghbrar@gmail.com>
+	 <1257323349-18481-2-git-send-email-jassisinghbrar@gmail.com>
+	 <20091104110625.GC25044@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:48360 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1756070AbZKDODH (ORCPT
+Received: from mail-pw0-f42.google.com ([209.85.160.42]:41022 "EHLO
+	mail-pw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751915AbZKEAM7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Nov 2009 09:03:07 -0500
-Content-Disposition: inline
-In-Reply-To: <1b68c6790911040414jced4bf1i8852a9ce84c3ddf5@mail.gmail.com>
+	Wed, 4 Nov 2009 19:12:59 -0500
+Received: by pwj9 with SMTP id 9so3520940pwj.21
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Nov 2009 16:13:05 -0800 (PST)
+In-Reply-To: <20091104110625.GC25044@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jassi brar <jassisinghbrar@gmail.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Cc: linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>
 
-On Wed, Nov 04, 2009 at 09:14:45PM +0900, jassi brar wrote:
-
-> One of the purposes of this list was to catch trivial mistakes in the
-> patches before they are sent upstream for maintainer review. That should help
-> save maintainers time and keep them 'receptive' to samsung's patches.
-
-Speaking as one of these upstreams it's not surprising to see issues in
-submissions, especially where the drivers are from people who are not
-regular contributors to the subsystem.  Like I say, there are some
-things where a lot of cleanup is required where not posting does make
-sense but much of the code that is being posted is of a perfectly
-reasonable standard.  For example, even with posting initially to this
-list the first response wasn't raising fundamental issues so there
-should be no reason not to have moved upstream with the second round.
-
-Some of the other SoCs have followed an approach similar to this one -
-it tends to cause bad experiences with code never getting merged and
-with developers becoming reluctant to work with the general kernel
-community since they become used to the platform-specific environment
-which gives limited subsystem-specific feedback.
-
-> Second purpose being peer review withing samsung.
-
-Sure, and it does make sense to also send the patches to this list when
-submitting upstream - it's also useful for people outside Samsung to
-keep up to speed on all the latest kernel support for their boards.  I
-think it's a really good idea to have the list and keep it in the loop
-like that.
+On Wed, Nov 4, 2009 at 8:06 PM, Mark Brown
+<broonie@opensource.wolfsonmicro.com> wrote:
+> On Wed, Nov 04, 2009 at 05:29:04PM +0900, jassisinghbrar@gmail.com wrote:
+>> From: Jassi Brar <jassi.brar@samsung.com>
+>>
+>> Following the s3c24xx_pcm prefix rename, the driver is also renamed.
+>
+> This needs to be part of the previous patch, without these changes the
+> previous patch will cause the code to fail to build.
+The changes in the previous patch(1/7) are all local to s3c24xx-pcm.c
+besides I have verified that.
