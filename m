@@ -1,35 +1,412 @@
-From: jassi brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 2/7] S3C AUDIO: Rename s3c24xx-pcm driver to generic
-	s3c_audio
-Date: Thu, 5 Nov 2009 09:13:04 +0900
-Message-ID: <1b68c6790911041613m231a77f8t4ba72ad3a2a16b2b@mail.gmail.com>
-References: <1257323349-18481-1-git-send-email-jassisinghbrar@gmail.com>
-	 <1257323349-18481-2-git-send-email-jassisinghbrar@gmail.com>
-	 <20091104110625.GC25044@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: aditya.ps@samsung.com
+Subject: [PATCH] [ARM] [S3C64XX] Add support for hr timer
+Date: Fri,  6 Nov 2009 09:45:45 +0900
+Message-ID: <1257468345-18021-1-git-send-email-aditya.ps@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pw0-f42.google.com ([209.85.160.42]:41022 "EHLO
-	mail-pw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751915AbZKEAM7 (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:55473 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756728AbZKFAsm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Nov 2009 19:12:59 -0500
-Received: by pwj9 with SMTP id 9so3520940pwj.21
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Nov 2009 16:13:05 -0800 (PST)
-In-Reply-To: <20091104110625.GC25044@sirena.org.uk>
+	Thu, 5 Nov 2009 19:48:42 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: aditya <aditya.ps@samsung.com>
 
-On Wed, Nov 4, 2009 at 8:06 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Wed, Nov 04, 2009 at 05:29:04PM +0900, jassisinghbrar@gmail.com wrote:
->> From: Jassi Brar <jassi.brar@samsung.com>
->>
->> Following the s3c24xx_pcm prefix rename, the driver is also renamed.
->
-> This needs to be part of the previous patch, without these changes the
-> previous patch will cause the code to fail to build.
-The changes in the previous patch(1/7) are all local to s3c24xx-pcm.c
-besides I have verified that.
+From: aditya <aditya.ps@samsung.com>
+
+This patch add support for the S3C64XX hr timer (tick timer and sched timer).
+
+Signed-off-by: Aditya Pratap Sharma <aditya.ps@samsung.com>
+---
+ arch/arm/plat-s3c/Kconfig                   |   18 ++
+ arch/arm/plat-s3c/Makefile                  |   10 +
+ arch/arm/plat-s3c/hr-time.c                 |  305 +++++++++++++++++++++++++++
+ arch/arm/plat-s3c/include/plat/regs-timer.h |   11 +
+ 4 files changed, 344 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/plat-s3c/hr-time.c
+
+diff --git a/arch/arm/plat-s3c/Kconfig b/arch/arm/plat-s3c/Kconfig
+index 8931c5f..6568c21 100644
+--- a/arch/arm/plat-s3c/Kconfig
++++ b/arch/arm/plat-s3c/Kconfig
+@@ -203,4 +203,22 @@ config S3C_DEV_NAND
+ 	help
+ 	  Compile in platform device definition for NAND controller
+ 
++#option for OS tick timer (fixed/dynamic)
++
++choice
++	prompt "OS Timer support"
++	depends on PLAT_S3C64XX
++	default DYNAMIC_TIMER
++
++config FIXED_TIMER
++	bool "Fixed Tick timer"
++
++config DYNAMIC_TIMER
++	bool "Tickless and HR Timer"
++	select GENERIC_TIME
++	select GENERIC_CLOCKEVENTS
++
++endchoice
++
++
+ endif
+diff --git a/arch/arm/plat-s3c/Makefile b/arch/arm/plat-s3c/Makefile
+index 3c09109..6c612aa 100644
+--- a/arch/arm/plat-s3c/Makefile
++++ b/arch/arm/plat-s3c/Makefile
+@@ -12,7 +12,17 @@ obj-				:=
+ # Core support for all Samsung SoCs
+ 
+ obj-y				+=  init.o
++ifdef CONFIG_NO_HZ
++obj-y				+= hr-time.o
++else
++
++ifndef CONFIG_HIGH_RES_TIMERS
+ obj-y				+= time.o
++else
++obj-y				+= hr-time.o
++endif
++
++endif
+ obj-y				+= clock.o
+ obj-y				+= pwm-clock.o
+ obj-y				+= gpio.o
+diff --git a/arch/arm/plat-s3c/hr-time.c b/arch/arm/plat-s3c/hr-time.c
+new file mode 100644
+index 0000000..10cd159
+--- /dev/null
++++ b/arch/arm/plat-s3c/hr-time.c
+@@ -0,0 +1,305 @@
++/*
++ * linux/arch/arm/plat-s3c/hr-time.c
++ *
++ * S3C6410 high resolution Timers
++ *
++ * Copyright (c) 2006 Samsung Electronics
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++ */
++
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/delay.h>
++#include <linux/interrupt.h>
++#include <linux/sched.h>
++#include <linux/spinlock.h>
++#include <linux/clk.h>
++#include <linux/err.h>
++#include <linux/clocksource.h>
++#include <linux/clockchips.h>
++#include <linux/io.h>
++#include <linux/leds.h>
++#include <asm/system.h>
++#include <asm/irq.h>
++#include <asm/mach/irq.h>
++#include <asm/mach/time.h>
++#include <asm/mach-types.h>
++#include <mach/hardware.h>
++#include <mach/map.h>
++#include <mach/regs-irq.h>
++#include <mach/tick.h>
++#include <plat/regs-timer.h>
++#include <plat/clock.h>
++#include <plat/cpu.h>
++
++
++static void s3c64xx_timer_setup(void);
++
++static inline void s3c64xx_tick_set_autoreset(void)
++{
++	unsigned long tcon;
++	tcon  = __raw_readl(S3C2410_TCON);
++	tcon |= (S3C2410_TCON_T4RELOAD);
++	__raw_writel(tcon, S3C2410_TCON);
++}
++
++static inline void s3c64xx_tick_remove_autoreset(void)
++{
++	unsigned long tcon;
++	tcon  = __raw_readl(S3C2410_TCON);
++	tcon &= ~(S3C2410_TCON_T4RELOAD);
++	__raw_writel(tcon, S3C2410_TCON);
++}
++
++static void s3c64xx_tick_timer_start(unsigned long load_val,
++					int autoreset)
++{
++	unsigned long tcon;
++	unsigned long tcfg1;
++	unsigned long tcfg0;
++	unsigned long tcstat;
++
++	tcon  = __raw_readl(S3C2410_TCON);
++	tcfg1 = __raw_readl(S3C2410_TCFG1);
++	tcfg0 = __raw_readl(S3C2410_TCFG0);
++
++	tcstat = __raw_readl(S3C64XX_TINT_CSTAT);
++	tcstat |=  S3C_TINT_CSTAT_T4INTEN;
++	__raw_writel(tcstat, S3C64XX_TINT_CSTAT);
++	__raw_writel(load_val - 1, S3C2410_TCNTB(4));
++
++	tcfg1 &= ~S3C2410_TCFG1_MUX4_MASK;
++	tcfg1 |= S3C2410_TCFG1_MUX4_DIV2;
++
++	tcfg0 &= ~S3C2410_TCFG_PRESCALER1_MASK;
++	tcfg0 |= (0) << S3C2410_TCFG_PRESCALER1_SHIFT;
++
++	__raw_writel(tcfg1, S3C2410_TCFG1);
++	__raw_writel(tcfg0, S3C2410_TCFG0);
++
++	tcon &= ~(S3C2410_TCON_T4START|S3C2410_TCON_T4MANUALUPD
++					|S3C2410_TCON_T4RELOAD);
++	tcon |= S3C2410_TCON_T4MANUALUPD;
++	if (autoreset)
++		tcon |= S3C2410_TCON_T4RELOAD;
++	__raw_writel(tcon, S3C2410_TCON);
++
++	/* start the timer running */
++	tcon |= S3C2410_TCON_T4START;
++	tcon &= ~S3C2410_TCON_T4MANUALUPD;
++	__raw_writel(tcon, S3C2410_TCON);
++}
++
++static inline void s3c64xx_tick_timer_stop(void)
++{
++	unsigned long tcon;
++	tcon  = __raw_readl(S3C2410_TCON);
++	tcon &= ~(S3C2410_TCON_T4START);
++	__raw_writel(tcon, S3C2410_TCON);
++}
++
++static void s3c64xx_sched_timer_start(unsigned long load_val,
++					int autoreset)
++{
++	unsigned long tcon;
++	unsigned long tcfg1;
++	unsigned long tcfg0;
++	unsigned long tcstat;
++
++	tcstat = __raw_readl(S3C64XX_TINT_CSTAT);
++	tcstat |=  S3C_TINT_CSTAT_T2INTEN;
++	__raw_writel(tcstat, S3C64XX_TINT_CSTAT);
++
++	tcon  = __raw_readl(S3C2410_TCON);
++	tcfg1 = __raw_readl(S3C2410_TCFG1);
++	tcfg0 = __raw_readl(S3C2410_TCFG0);
++
++	__raw_writel(load_val - 1, S3C2410_TCNTB(2));
++	__raw_writel(load_val - 1, S3C2410_TCMPB(2));
++
++	tcon &= ~(S3C2410_TCON_T2RELOAD|(!S3C2410_TCON_T2INVERT)
++			|S3C2410_TCON_T2MANUALUPD|S3C2410_TCON_T2START);
++	if (autoreset)
++		tcon |= S3C2410_TCON_T2RELOAD;
++	tcon |= S3C2410_TCON_T2MANUALUPD;
++	__raw_writel(tcon, S3C2410_TCON);
++
++	/* start the timer running */
++	tcon |= S3C2410_TCON_T2START;
++	tcon &= ~S3C2410_TCON_T2MANUALUPD;
++	__raw_writel(tcon, S3C2410_TCON);
++}
++
++/*
++ * ---------------------------------------------------------------------------
++ * PWM timer 4 ... count down to zero, interrupt, reload
++ * ---------------------------------------------------------------------------
++ */
++static int s3c64xx_tick_set_next_event(unsigned long cycles,
++				   struct clock_event_device *evt)
++{
++	s3c64xx_tick_timer_start(cycles, 0);
++	return 0;
++}
++static void s3c64xx_tick_set_mode(enum clock_event_mode mode,
++			      struct clock_event_device *evt)
++{
++	switch (mode) {
++	case CLOCK_EVT_MODE_PERIODIC:
++		s3c64xx_tick_set_autoreset();
++		break;
++	case CLOCK_EVT_MODE_ONESHOT:
++		s3c64xx_tick_timer_stop();
++		s3c64xx_tick_remove_autoreset();
++		break;
++	case CLOCK_EVT_MODE_UNUSED:
++	case CLOCK_EVT_MODE_SHUTDOWN:
++		break;
++	case CLOCK_EVT_MODE_RESUME:
++		s3c64xx_timer_setup();
++		break;
++	}
++}
++
++static struct clock_event_device clockevent_tick_timer = {
++	.name		= "pwm_timer4",
++	.features	= CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
++	.shift		= 32,
++	.set_next_event	= s3c64xx_tick_set_next_event,
++	.set_mode	= s3c64xx_tick_set_mode,
++};
++
++irqreturn_t s3c64xx_tick_timer_interrupt(int irq, void *dev_id)
++{
++	struct clock_event_device *evt = &clockevent_tick_timer;
++	evt->event_handler(evt);
++	return IRQ_HANDLED;
++}
++
++static struct irqaction s3c64xx_tick_timer_irq = {
++	.name		= "pwm_timer4",
++	.flags		= IRQF_DISABLED | IRQF_TIMER | IRQF_IRQPOLL,
++	.handler	= s3c64xx_tick_timer_interrupt,
++};
++
++static void __init s3c64xx_init_dynamic_tick_timer(unsigned long rate)
++{
++	s3c64xx_tick_timer_start((rate / HZ) - 1, 1);
++	clockevent_tick_timer.mult = div_sc(rate, NSEC_PER_SEC,
++					    clockevent_tick_timer.shift);
++	clockevent_tick_timer.max_delta_ns =
++		clockevent_delta2ns(-1, &clockevent_tick_timer);
++	clockevent_tick_timer.min_delta_ns =
++		clockevent_delta2ns(1, &clockevent_tick_timer);
++
++	clockevent_tick_timer.cpumask = get_cpu_mask(0);
++	clockevents_register_device(&clockevent_tick_timer);
++}
++
++/*
++ * ---------------------------------------------------------------------------
++ * PWM timer 2 ... free running 32-bit clock source and scheduler clock
++ * ---------------------------------------------------------------------------
++ */
++static unsigned long s3c64xx_mpu_timer2_overflows;
++
++irqreturn_t s3c64xx_mpu_timer2_interrupt(int irq, void *dev_id)
++{
++	s3c64xx_mpu_timer2_overflows++;
++	return IRQ_HANDLED;
++}
++
++struct irqaction s3c64xx_timer2_irq = {
++	.name		= "pwm_timer2",
++	.flags		= IRQF_DISABLED ,
++	.handler	= s3c64xx_mpu_timer2_interrupt,
++};
++
++
++/* Read timer 2 Count Observation Register */
++static cycle_t s3c64xx_sched_timer_read(struct clocksource *cs)
++{
++	return (cycle_t)~__raw_readl(S3C_TIMERREG(0x2c));
++}
++
++struct clocksource clocksource_s3c64xx = {
++	.name		= "clock_source_timer2",
++	.rating		= 300,
++	.read		= s3c64xx_sched_timer_read,
++	.mask		= CLOCKSOURCE_MASK(32),
++	.shift		= 20,
++	.flags		= CLOCK_SOURCE_IS_CONTINUOUS ,
++};
++
++static void __init s3c64xx_init_clocksource(unsigned long rate)
++{
++	static char err[] __initdata = KERN_ERR
++			"%s: can't register clocksource!\n";
++	clocksource_s3c64xx.mult
++		= clocksource_khz2mult(rate/1000, clocksource_s3c64xx.shift);
++	s3c64xx_sched_timer_start(~0, 1);
++
++	if (clocksource_register(&clocksource_s3c64xx))
++		printk(err, clocksource_s3c64xx.name);
++}
++
++/*
++ * ---------------------------------------------------------------------------
++ *  Tick Timer initialization
++ * ---------------------------------------------------------------------------
++ */
++static void s3c64xx_dynamic_timer_setup(void)
++{
++	struct clk	*ck_ref = clk_get(NULL, "timers");
++	unsigned long	rate;
++
++	if (IS_ERR(ck_ref))
++		panic("failed to get clock for system timer");
++
++	rate = clk_get_rate(ck_ref);
++	clk_put(ck_ref);
++
++	s3c64xx_init_dynamic_tick_timer(rate);
++	s3c64xx_init_clocksource(rate);
++}
++
++static void s3c64xx_timer_setup(void)
++{
++	struct clk	*ck_ref = clk_get(NULL, "timers");
++	unsigned long	rate;
++
++	if (IS_ERR(ck_ref))
++		panic("failed to get clock for system timer");
++
++	rate = clk_get_rate(ck_ref);
++	clk_put(ck_ref);
++	s3c64xx_tick_timer_start((rate / HZ) - 1, 1);
++	s3c64xx_sched_timer_start(~0, 1);
++}
++
++
++static void __init s3c64xx_dynamic_timer_init(void)
++{
++	s3c64xx_dynamic_timer_setup();
++	setup_irq(IRQ_TIMER2, &s3c64xx_timer2_irq);
++	setup_irq(IRQ_TIMER4, &s3c64xx_tick_timer_irq);
++}
++
++
++struct sys_timer s3c24xx_timer = {
++	.init		= s3c64xx_dynamic_timer_init,
++};
++
+diff --git a/arch/arm/plat-s3c/include/plat/regs-timer.h b/arch/arm/plat-s3c/include/plat/regs-timer.h
+index d097d92..e9994db 100644
+--- a/arch/arm/plat-s3c/include/plat/regs-timer.h
++++ b/arch/arm/plat-s3c/include/plat/regs-timer.h
+@@ -117,6 +117,17 @@
+ #define S3C2410_TCON_T0INVERT	  (1<<2)
+ #define S3C2410_TCON_T0MANUALUPD  (1<<1)
+ #define S3C2410_TCON_T0START	  (1<<0)
++/* Interrupt Control and Status register*/
++#define S3C_TINT_CSTAT_T4INT	(1<<9)
++#define S3C_TINT_CSTAT_T3INT	(1<<8)
++#define S3C_TINT_CSTAT_T2INT	(1<<7)
++#define S3C_TINT_CSTAT_T1INT	(1<<6)
++#define S3C_TINT_CSTAT_T0INT	(1<<5)
++#define S3C_TINT_CSTAT_T4INTEN	(1<<4)
++#define S3C_TINT_CSTAT_T3INTEN	(1<<3)
++#define S3C_TINT_CSTAT_T2INTEN	(1<<2)
++#define S3C_TINT_CSTAT_T1INTEN	(1<<1)
++#define S3C_TINT_CSTAT_T0INTEN	(1<<0)
+ 
+ #endif /*  __ASM_ARCH_REGS_TIMER_H */
+ 
+-- 
+1.6.2.5
