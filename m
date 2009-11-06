@@ -1,30 +1,30 @@
 From: Harald Welte <laforge@gnumonks.org>
-Subject: Re: [PATCH 01/17] ARM: MM: use 64bytes of L1 cache on plat S5PC1xx
-Date: Fri, 6 Nov 2009 11:32:23 +0900
-Message-ID: <20091106023222.GF3913@prithivi.gnumonks.org>
-References: <1255421482-26455-1-git-send-email-m.szyprowski@samsung.com> <1255421482-26455-2-git-send-email-m.szyprowski@samsung.com>
+Subject: Re: [PATCH 10/17] SMDKC100: enable S3C FrameBuffer
+Date: Fri, 6 Nov 2009 12:29:35 +0900
+Message-ID: <20091106032935.GN3913@prithivi.gnumonks.org>
+References: <1255421482-26455-2-git-send-email-m.szyprowski@samsung.com> <1255421482-26455-3-git-send-email-m.szyprowski@samsung.com> <1255421482-26455-4-git-send-email-m.szyprowski@samsung.com> <1255421482-26455-5-git-send-email-m.szyprowski@samsung.com> <1255421482-26455-6-git-send-email-m.szyprowski@samsung.com> <1255421482-26455-7-git-send-email-m.szyprowski@samsung.com> <1255421482-26455-8-git-send-email-m.szyprowski@samsung.com> <1255421482-26455-9-git-send-email-m.szyprowski@samsung.com> <1255421482-26455-10-git-send-email-m.szyprowski@samsung.com> <1255421482-26455-11-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:60357 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:60360 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755102AbZKFDdE (ORCPT
+	with ESMTP id S1755244AbZKFDdF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Nov 2009 22:33:04 -0500
+	Thu, 5 Nov 2009 22:33:05 -0500
 Content-Disposition: inline
-In-Reply-To: <1255421482-26455-2-git-send-email-m.szyprowski@samsung.com>
+In-Reply-To: <1255421482-26455-11-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org, bhmin@samsung.com
 
-Hi Marek,
+On Tue, Oct 13, 2009 at 10:11:15AM +0200, Marek Szyprowski wrote:
+> Add required machine definitions for s3c-fb device.
+> A 800x480 lcd device (simmilar to the one known from SMDK6410 boards) has
+> been defined. The lcd controller is attached to GPIO lines and can be
+> enabled/disabled with platform-lcd driver.
 
-> Samsung S5PC1xx SoCs are Coretex8 based, so use 64 bytes of L1 cache
-> line instead of the default 32 bytes.
-
-this is an obvious fix, and I'd recommend Ben should merge it asap (if he
-didn't already)
+looks fine to me.
 -- 
 - Harald Welte <laforge@gnumonks.org>           http://laforge.gnumonks.org/
 ============================================================================
