@@ -1,132 +1,121 @@
-From: Harald Welte <laforge@gnumonks.org>
-Subject: Re: [PATCH] [ARM] [S3C64XX] Add support for hr timer
-Date: Fri, 6 Nov 2009 14:58:50 +0900
-Message-ID: <20091106055850.GD4117@prithivi.gnumonks.org>
-References: <1257468345-18021-1-git-send-email-aditya.ps@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH 02/17] ARM: S5PC1XX: registers rename
+Date: Fri, 06 Nov 2009 16:02:17 +0100
+Message-ID: <000401ca5ef2$24a09240$6de1b6c0$%szyprowski@samsung.com>
+References: <1255421482-26455-1-git-send-email-m.szyprowski@samsung.com>
+	<1255421482-26455-2-git-send-email-m.szyprowski@samsung.com>
+	<1255421482-26455-3-git-send-email-m.szyprowski@samsung.com>
+	<20091106031845.GG3913@prithivi.gnumonks.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:50587 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754869AbZKFF67 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Nov 2009 00:58:59 -0500
-Content-Disposition: inline
-In-Reply-To: <1257468345-18021-1-git-send-email-aditya.ps@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <20091106031845.GG3913@prithivi.gnumonks.org>
+Content-language: pl
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Harald Welte' <laforge@gnumonks.org>
+Cc: linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, bhmin@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: aditya.ps@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org
 
-Hi Aditya,
+Hello,
 
-thanks for your [first] patch :)
+On Friday, November 06, 2009 4:19 AM, Harald Welte wrote:
+ 
+> Hi Marek,
+> 
+> On Tue, Oct 13, 2009 at 10:11:07AM +0200, Marek Szyprowski wrote:
+> 
+> > S5PC110 and S5PC100 register maps differs in many places, rename all
+> > defined registers to be S5PC100 specific. System map has been also updated
+> > to cover more integrated peripherals.
+> 
+> The general idea of this patch is fine.  However, I have some questions:
+> 
+> >  /* System */
+> > -#define S5PC100_PA_SYS		(0xE0100000)
+> > -#define S5PC100_PA_CLK		(S5PC100_PA_SYS + 0x0)
+> > -#define S5PC100_PA_PWR		(S5PC100_PA_SYS + 0x8000)
+> > +#define S5PC100_PA_CLK		(0xE0100000)
+> > +#define S5PC100_PA_CLK_OTHER	(0xE0200000)
+> > +#define S5PC100_PA_PWR		(0xE0108000)
+> 
+> this is more like a rename.  Why was this done?  It would be good to explain in
+> the commitlog
 
-On Fri, Nov 06, 2009 at 09:45:45AM +0900, aditya.ps@samsung.com wrote:
-> +
-> +choice
-> +	prompt "OS Timer support"
-> +	depends on PLAT_S3C64XX
-> +	default DYNAMIC_TIMER
-> +
-> +config FIXED_TIMER
-> +	bool "Fixed Tick timer"
-> +
-> +config DYNAMIC_TIMER
-> +	bool "Tickless and HR Timer"
-> +	select GENERIC_TIME
-> +	select GENERIC_CLOCKEVENTS
+I renamed these registers to better match the chip specification. The 'SYS'
+register name was borrowed from S3C64XX series and is a bit inadequate in C100.
+ 
+> > +/* GPIO */
+> > +#define S5PC100_PA_GPIO		(0xE0300000)
+> > +#define S5PC1XX_PA_GPIO		S5PC100_PA_GPIO
+> > +#define S5PC1XX_VA_GPIO		S3C_ADDR(0x00500000)
+> 
+> If the address is different for c100 and c110: why do we need a S5CP1XX_*
+> definition?  In my personal opinion, all those compile-time defines are a
+> kludge and we should not introduce more of them.  They will bite us in the back
+> if we ever in the future want to build a kernel that can boot on both c100 and
+> c110.
 
-I think those should probably be prefixed with S3C_ as the Kconfig namespace
-is global.  Like with symbol names, we should not use generic names unless
-we are implementing generic code.
+These C1XX defines were the first step to prepare the code for C110 support. 
 
->  obj-y				+=  init.o
-> +ifdef CONFIG_NO_HZ
-> +obj-y				+= hr-time.o
-> +else
-> +
-> +ifndef CONFIG_HIGH_RES_TIMERS
->  obj-y				+= time.o
-> +else
-> +obj-y				+= hr-time.o
-> +endif
+S5PC110 register map differs completely from the S5PC100 one. These two SOCs
+cannot be easily handled by the same kernel binary image without some hacks and
+runtime fixups if we place them in the one kernel platform. Creating yet another
+kernel platform just because of these differences would unnecessarily duplicate
+a lot of code and would not use the potential of the current kernel
+infrastructure (separate include directories, resource&device driver model, etc).
 
-Mh.  This means the actual timer code depends only on CONFIG_NO_HZ and
-CONFIG_HIGH_RES_TIMERS.
+My idea was to introduce a sub-platforms in plat-s5pc1xx. Such sub-platforms
+would be exclusive - one for C100 and one for C110. Each of the sub-platforms would
+have its own include files (in mach-s5pc100 and mach-s5pc110 directories
+respectively) and most of the chip differences can be handled in compile time by
+proper macros. Macros for the common resources would use 'C1XX' names. In this
+approach common resources (GPIO, DMA, io space and so on) can be easily defined
+with C1XX defines. This also perfectly matches the current convention of common
+S3C_XXX defines (i.e. S3C_PA_UART, S3C_PA_FB, S3C_VA_VICn, S3C_PA_HSMMCn, and so
+on), so most of the code from arch/arm/plat-s3c/ can be reused without any
+modifications. I assume that the S3C prefix would be renamed to SAMSUNG sometime
+later.
 
-The two Kconfig choices FIXED_TIMER and DYNAMIC_TIMER are not really used
-anywhere.
+Sub-platform can be easily defined by a simple choice command in
+arch/arm/plat-s5pc1xx/Kconfig:
 
-At last to me, it is unclear how this all works together. I think the choices
-are either
++choice
++        prompt "S5PC1xx SoC Type"
++        default ARCH_S5PC100
++
++config ARCH_S5PC100
++        bool "S5PC100"
++
++config ARCH_S5PC110
++        bool "S5PC110"
++
++endchoice
 
-1) you build the timer code solely on core kernel configuration options like
-   GENERIC_TIME, GENERIC_CLOCKEVENTS, HIGH_RES_TIMERS, NO_HZ or the like
+Then each sub-platform can be easily defined basing on the CONFIG_ARCH_S5PC100
+and CONFIG_ARCH_S5PC110 defines.
 
-or
+Similar approach is used in OMAP platform (there is only one platform directory,
+and the chip series is defined by a Kconfig choice option).
 
-2) you have a private (s3c-specific) Kconfig option to select it.  In this case,
-   dependent options need to be selected (like you do).  But then, the Makefile
-   should still reflect the s3c-specific Kconfig.
+> >  	.io_pg_offst	= (((u32)S5PC1XX_VA_UART) >> 18) & 0xfffc,
+> > -	.boot_params	= S5PC100_PA_SDRAM + 0x100,
+> > +	.boot_params	= S5PC1XX_PA_SDRAM + 0x100,
+> 
+> This is the wrong kind of change, from my point of view.  We don't know yet
+> if all future s5pc1xx products will also have the same address, do we?
 
-Mixing both does not really seem to make sense to me.
+Right, I missed this one.
 
-So as I can see, there are the three following possible cases:
-
-a) the regular/old timer code is used.  No high-res and no tickless.
-
-b) the high-resolution timer is used but not tickless (NO_HZ not set)
-
-c) the high-resolution timer are used tickless.
-
-If you configure+build yoru code, each of those three options has to work
-as expected.  
-
-> +static struct clock_event_device clockevent_tick_timer = {
-> +	.name		= "pwm_timer4",
-> +	.features	= CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
-> +	.shift		= 32,
-> +	.set_next_event	= s3c64xx_tick_set_next_event,
-> +	.set_mode	= s3c64xx_tick_set_mode,
-> +};
-
-if you give this static variable a shorter name, (like clkevt_tick_tmr or even
-only tick_timer), then you can probably avoid some line wraps further down the
-code:
-
-> +	clockevent_tick_timer.mult = div_sc(rate, NSEC_PER_SEC,
-> +					    clockevent_tick_timer.shift);
-> +	clockevent_tick_timer.max_delta_ns =
-> +		clockevent_delta2ns(-1, &clockevent_tick_timer);
-> +	clockevent_tick_timer.min_delta_ns =
-> +		clockevent_delta2ns(1, &clockevent_tick_timer);
-
-Also, we typically don't define a static string and then printk'
-
-> +	static char err[] __initdata = KERN_ERR
-> +			"%s: can't register clocksource!\n";
-> +		printk(err, clocksource_s3c64xx.name);
-
-why not simply 
-		printk(KERN_ERR "%s: can't register clocksource\n",
-			clocksource_s3c64xx.name);
-
-> +	if (IS_ERR(ck_ref))
-> +		panic("failed to get clock for system timer");
-
-here we panic.  Is this failure really more severe than the failure above
-where we simply printk(KERN_ERR) ?
-
-Yes, I think if we can't get the clocks for the system timer, then we should
-panic since the kernel will not be able to function.  But is failing the
-clocksource registration any less severe? (this is a real question, you
-probably know better than I do)
-
-Regards,
-	Harald
--- 
-- Harald Welte <laforge@gnumonks.org>           http://laforge.gnumonks.org/
-============================================================================
-"Privacy in residential applications is a desirable marketing option."
-                                                  (ETSI EN 300 175-7 Ch. A6)
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
