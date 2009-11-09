@@ -1,85 +1,56 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH 01/17] ARM: MM: use 64bytes of L1 cache on plat S5PC1xx
-Date: Mon, 9 Nov 2009 11:41:19 +0900
-Message-ID: <9c9fda240911081841t978292ch52befaf0fd5e510f@mail.gmail.com>
-References: <1255421482-26455-1-git-send-email-m.szyprowski@samsung.com>
-	 <1255421482-26455-2-git-send-email-m.szyprowski@samsung.com>
-	 <20091108235847.GE4808@trinity.fluff.org>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: [PULL] pull request for fixes-s3c-2632-rc6
+Date: Mon, 9 Nov 2009 23:56:23 +0000
+Message-ID: <20091109235623.GA13968@fluff.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f192.google.com ([209.85.212.192]:41513 "EHLO
-	mail-vw0-f192.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752779AbZKIClO convert rfc822-to-8bit (ORCPT
+Received: from aeryn.fluff.org.uk ([87.194.8.8]:33291 "EHLO
+	kira.home.fluff.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750954AbZKIX4W (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 8 Nov 2009 21:41:14 -0500
-Received: by vws30 with SMTP id 30so770908vws.33
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Nov 2009 18:41:20 -0800 (PST)
-In-Reply-To: <20091108235847.GE4808@trinity.fluff.org>
+	Mon, 9 Nov 2009 18:56:22 -0500
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, bhmin@samsung.com
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi,
+Pull request for fixes for the current kernel release.
 
-It's missing of "From".
+The following changes since commit 799dd75b1a8380a967c929a4551895788c374b31:
+  Linus Torvalds (1):
+        Merge branch 'i2c-for-linus' of git://git.kernel.org/.../jdelvare/staging
 
-Actually I don't care who send and from. I just want to merge the
-s5pc1xx series patches to mainline ASAP .
+are available in the git repository at:
 
-Thank you,
-Kyungmin Park
+  git://git.fluff.org/bjdooks/linux fixes-s3c-2632-rc6
 
-On Mon, Nov 9, 2009 at 8:58 AM, Ben Dooks <ben-linux@fluff.org> wrote:
-> On Tue, Oct 13, 2009 at 10:11:06AM +0200, Marek Szyprowski wrote:
->> Samsung S5PC1xx SoCs are Coretex8 based, so use 64 bytes of L1 cache
->> line instead of the default 32 bytes.
->>
->> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->
-> This worries me, either this patch was from 'Kyungmin Park' and thus
-> should have either been sent by, or have an 'From:' line at the top
-> of the description. If this has been appraised by Kyungmin then the
-> signoff should either be after Marek's (as this is the sender) or be
-> something other than a signed-off-by.
->
->> ---
->> =A0arch/arm/mm/Kconfig | =A0 =A02 +-
->> =A01 files changed, 1 insertions(+), 1 deletions(-)
->>
->> diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
->> index e993140..9cf7706 100644
->> --- a/arch/arm/mm/Kconfig
->> +++ b/arch/arm/mm/Kconfig
->> @@ -777,5 +777,5 @@ config CACHE_XSC3L2
->>
->> =A0config ARM_L1_CACHE_SHIFT
->> =A0 =A0 =A0 int
->> - =A0 =A0 default 6 if ARCH_OMAP3
->> + =A0 =A0 default 6 if ARCH_OMAP3 || ARCH_S5PC1XX
->> =A0 =A0 =A0 default 5
->> --
->> 1.6.4
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
-> --
-> --
-> Ben
->
-> Q: =A0 =A0 =A0What's a light-year?
-> A: =A0 =A0 =A0One-third less calories than a regular year.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+Ben Dooks (2):
+      ARM: S3C64XX: Tidy definition and comments in s3c_dma_has_circular()
+      ARM: S3C: Merge fixes-s3c64xx-dma
+
+Jassi Brar (5):
+      ARM: S3C64XX: DMA: Protect buffer pointers while manipulation
+      ARM: S3C64XX: DMA: Unify callback functions for success/failure
+      ARM: S3C64XX: DMA: Make src and dst transfer size same
+      ARM: S3C64XX: DMA: Callback with correct buffer pointer
+      ARM: S3C64XX: DMA: Free node for non-circular queues
+
+Mark Brown (2):
+      ARM: SMDK6410: Configure GPIO pull up for WM835x IRQ line
+      ARM: SMDK6410: Allocate more GPIO space for WM1190-EV1
+
+Maurus Cuelenaere (1):
+      ARM: S3C64XX: Remove duplicate s3c_dma_has_circular() definition for S3C64xx.
+
+ arch/arm/mach-s3c6400/include/mach/dma.h |   12 +----
+ arch/arm/mach-s3c6410/Kconfig            |    1 +
+ arch/arm/mach-s3c6410/mach-smdk6410.c    |    3 +
+ arch/arm/plat-s3c64xx/dma.c              |   76 ++++++++++++++++++++---------
+ 4 files changed, 58 insertions(+), 34 deletions(-)
+
+
+-- 
+Ben (ben@fluff.org, http://www.fluff.org/)
+
+  'a smiley only costs 4 bytes'
