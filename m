@@ -1,86 +1,34 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH] ARM: SAMSUNG: Add plat-samsung as starting point for plat-s3c* moves
-Date: Tue, 10 Nov 2009 00:20:06 +0000
-Message-ID: <1257812406-17360-1-git-send-email-ben-linux@fluff.org>
+Subject: plat-samsung and other code changes for next merge window
+Date: Tue, 10 Nov 2009 00:22:22 +0000
+Message-ID: <20091110002222.GJ4808@trinity.fluff.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from aeryn.fluff.org.uk ([87.194.8.8]:33438 "EHLO
-	kira.home.fluff.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1755720AbZKJAUO (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:35415 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753872AbZKJAWR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Nov 2009 19:20:14 -0500
+	Mon, 9 Nov 2009 19:22:17 -0500
+Received: from ben by trinity.fluff.org with local (Exim 4.69)
+	(envelope-from <ben@trinity.fluff.org>)
+	id 1N7eV4-00024X-DL
+	for linux-samsung-soc@vger.kernel.org; Tue, 10 Nov 2009 00:22:22 +0000
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Ben Dooks <ben-linux@fluff.org>
+To: linux-samsung-soc@vger.kernel.org
 
-We inted to re-organise the plat-s3c/plat-s3c24xx/plat-s3c64xx into a
-more generic plat-samsung with less code in the other plat- directories
-to make it easier to port new devices and try and clear up some of the
-naming issues with newer devices.
+Sorry for the delay, but I am finally getting the code for the
+plat-samsung updates sorted out. I will be releasing some further
+fix branches for review as soon as possible followed by the updates
+for the clock and device initialisation for testing by the end of
+this comming weekend.
 
-Start by creating a small arch/arm/plat-samsung with no actuall code in
-so we can move items in as we process them.
+Full documentation will be provided with the patch-set for review.
 
-Signed-off-by: Ben Dooks <ben-linux@fluff.org>
----
- arch/arm/Kconfig               |    1 +
- arch/arm/plat-samsung/Kconfig  |   17 +++++++++++++++++
- arch/arm/plat-samsung/Makefile |   11 +++++++++++
- 3 files changed, 29 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/plat-samsung/Kconfig
- create mode 100644 arch/arm/plat-samsung/Makefile
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 1c4119c..51a454b 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -747,6 +747,7 @@ source "arch/arm/mach-orion5x/Kconfig"
- 
- source "arch/arm/mach-kirkwood/Kconfig"
- 
-+source "arch/arm/plat-samsung/Kconfig"
- source "arch/arm/plat-s3c24xx/Kconfig"
- source "arch/arm/plat-s3c64xx/Kconfig"
- source "arch/arm/plat-s3c/Kconfig"
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-new file mode 100644
-index 0000000..d5ac9be
---- /dev/null
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -0,0 +1,17 @@
-+# arch/arm/plat-samsung/Kconfig
-+#
-+# Copyright 2009 Simtec Electronics
-+#
-+# Licensed under GPLv2
-+
-+config PLAT_SAMSUNG
-+	bool
-+	depends on ARCH_S3C2410 || ARCH_S3C24A0 || ARCH_S3C64XX
-+	default y
-+	help
-+	  Base platform code for all Samsung SoC based systems
-+
-+if PLAT_SAMSUNG
-+
-+
-+endif
-diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-new file mode 100644
-index 0000000..4478b9f
---- /dev/null
-+++ b/arch/arm/plat-samsung/Makefile
-@@ -0,0 +1,11 @@
-+# arch/arm/plat-s3c64xx/Makefile
-+#
-+# Copyright 2009 Simtec Electronics
-+#
-+# Licensed under GPLv2
-+
-+obj-y				:=
-+obj-m				:=
-+obj-n				:= dummy.o
-+obj-				:=
-+
 -- 
-1.6.5
+Ben
+
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
