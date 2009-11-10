@@ -1,327 +1,58 @@
-From: Ben Dooks <ben@simtec.co.uk>
-Subject: [patch 2/3] OSIRIS: DVS (Dynamic Voltage Scaling) supoort.
-Date: Tue, 10 Nov 2009 23:07:28 +0000
-Message-ID: <20091110230749.063443100@fluff.org.uk>
-References: <20091110230726.129283187@fluff.org.uk>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: [PATCH 1/4] H1940: Correct name of the local platform devices for LED and Bluetooth
+Date: Tue, 10 Nov 2009 23:21:53 +0000
+Message-ID: <1257895316-9156-2-git-send-email-ben-linux@fluff.org>
+References: <1257895316-9156-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from aeryn.fluff.org.uk ([87.194.8.8]:39469 "EHLO
+Received: from aeryn.fluff.org.uk ([87.194.8.8]:51192 "EHLO
 	kira.home.fluff.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1758453AbZKJXHo (ORCPT
+	with ESMTP id S1758570AbZKJXVy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Nov 2009 18:07:44 -0500
-Content-Disposition: inline; filename=simtec/ready/osiris-initial-dvs.patch
+	Tue, 10 Nov 2009 18:21:54 -0500
+In-Reply-To: <1257895316-9156-1-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, Simtec Linux Team <linux@simtec.co.uk>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Ben Dooks <ben-linux@fluff.org>
 
-Add a driver to provide DVS for the Simtec Osiris module to reduce
-the power consumption whilst idling.
+The mach-h1940.c file was using s3c_device_ where it really should be
+calling these local definitions h1940_device to ensure they are not
+mistaken for real s3c_devices when the device change is done.
 
-The DVS driver alters the voltage supplied to the ARM core depending
-on the frequency it is running at. The driver itself does not do any
-of the frequency alteration, which is left up to the cpufreq driver.
-
-Signed-off-by: Ben Dooks <ben@simtec.co.uk>
-Signed-off-by: Simtec Linux Team <linux@simtec.co.uk>
-
+Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/mach-s3c2440/Kconfig           |   13 ++
- arch/arm/mach-s3c2440/Makefile          |    4 
- arch/arm/mach-s3c2440/mach-osiris-dvs.c |  194 ++++++++++++++++++++++++++++++++
- arch/arm/mach-s3c2440/mach-osiris.c     |   34 +++++
- 4 files changed, 245 insertions(+)
+ arch/arm/mach-s3c2410/mach-h1940.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-Index: b/arch/arm/mach-s3c2440/Kconfig
-===================================================================
---- a/arch/arm/mach-s3c2440/Kconfig	2009-11-10 16:44:53.000000000 +0000
-+++ b/arch/arm/mach-s3c2440/Kconfig	2009-11-10 16:58:25.000000000 +0000
-@@ -53,6 +53,19 @@ config MACH_OSIRIS
- 	  Say Y here if you are using the Simtec IM2440D20 module, also
- 	  known as the Osiris.
- 
-+config MACH_OSIRIS_DVS
-+	tristate "Simtec IM2440D20 (OSIRIS) Dynamic Voltage Scaling driver"
-+	depends on MACH_OSIRIS
-+	select TPS65010
-+	help
-+	  Say Y/M here if you want to have dynamic voltage scaling support
-+	  on the Simtec IM2440D20 (OSIRIS) module via the TPS65011.
-+
-+	  The DVS driver alters the voltage supplied to the ARM core
-+	  depending on the frequency it is running at. The driver itself
-+	  does not do any of the frequency alteration, which is left up
-+	  to the cpufreq driver.
-+
- config MACH_RX3715
- 	bool "HP iPAQ rx3715"
- 	select CPU_S3C2440
-Index: b/arch/arm/mach-s3c2440/Makefile
-===================================================================
---- a/arch/arm/mach-s3c2440/Makefile	2009-11-10 16:44:53.000000000 +0000
-+++ b/arch/arm/mach-s3c2440/Makefile	2009-11-10 16:57:51.000000000 +0000
-@@ -23,3 +23,7 @@ obj-$(CONFIG_ARCH_S3C2440)	+= mach-smdk2
- obj-$(CONFIG_MACH_NEXCODER_2440) += mach-nexcoder.o
- obj-$(CONFIG_MACH_AT2440EVB) += mach-at2440evb.o
- obj-$(CONFIG_MACH_MINI2440) += mach-mini2440.o
-+
-+# extra machine support
-+
-+obj-$(CONFIG_MACH_OSIRIS_DVS)	+= mach-osiris-dvs.o
-Index: b/arch/arm/mach-s3c2440/mach-osiris.c
-===================================================================
---- a/arch/arm/mach-s3c2440/mach-osiris.c	2009-11-10 16:44:52.000000000 +0000
-+++ b/arch/arm/mach-s3c2440/mach-osiris.c	2009-11-10 16:56:08.000000000 +0000
-@@ -23,6 +23,8 @@
- #include <linux/i2c.h>
- #include <linux/io.h>
- 
-+#include <linux/i2c/tps65010.h>
-+
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
- #include <asm/mach/irq.h>
-@@ -326,12 +328,44 @@ static struct sys_device osiris_pm_sysde
- 	.cls		= &osiris_pm_sysclass,
+diff --git a/arch/arm/mach-s3c2410/mach-h1940.c b/arch/arm/mach-s3c2410/mach-h1940.c
+index d9cd5dd..20f3400 100644
+--- a/arch/arm/mach-s3c2410/mach-h1940.c
++++ b/arch/arm/mach-s3c2410/mach-h1940.c
+@@ -171,12 +171,12 @@ static struct s3c2410fb_mach_info h1940_fb_info __initdata = {
+ 	.gpdup_mask=	0xffffffff,
  };
  
-+/* Link for DVS driver to TPS65011 */
-+
-+static void osiris_tps_release(struct device *dev)
-+{
-+	/* static device, do not need to release anything */
-+}
-+
-+static struct platform_device osiris_tps_device = {
-+	.name	= "osiris-dvs",
-+	.id	= -1,
-+	.dev.release = osiris_tps_release,
-+};
-+
-+static int osiris_tps_setup(struct i2c_client *client, void *context)
-+{
-+	osiris_tps_device.dev.parent = &client->dev;
-+	return platform_device_register(&osiris_tps_device);
-+}
-+
-+static int osiris_tps_remove(struct i2c_client *client, void *context)
-+{
-+	platform_device_unregister(&osiris_tps_device);
-+	return 0;
-+}
-+
-+static struct tps65010_board osiris_tps_board = {
-+	.base		= -1,	/* GPIO can go anywhere at the moment */
-+	.setup		= osiris_tps_setup,
-+	.teardown	= osiris_tps_remove,
-+};
-+
- /* I2C devices fitted. */
- 
- static struct i2c_board_info osiris_i2c_devs[] __initdata = {
- 	{
- 		I2C_BOARD_INFO("tps65011", 0x48),
- 		.irq	= IRQ_EINT20,
-+		.platform_data = &osiris_tps_board,
- 	},
+-static struct platform_device s3c_device_leds = {
++static struct platform_device h1940_device_leds = {
+ 	.name             = "h1940-leds",
+ 	.id               = -1,
  };
  
-Index: b/arch/arm/mach-s3c2440/mach-osiris-dvs.c
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ b/arch/arm/mach-s3c2440/mach-osiris-dvs.c	2009-11-10 16:56:08.000000000 +0000
-@@ -0,0 +1,194 @@
-+/* linux/arch/arm/mach-s3c2440/mach-osiris-dvs.c
-+ *
-+ * Copyright (c) 2009 Simtec Electronics
-+ *	http://armlinux.simtec.co.uk/
-+ *	Ben Dooks <ben@simtec.co.uk>
-+ *
-+ * Simtec Osiris Dynamic Voltage Scaling support.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/cpufreq.h>
-+#include <linux/gpio.h>
-+
-+#include <linux/i2c/tps65010.h>
-+
-+#include <plat/cpu-freq.h>
-+
-+#define OSIRIS_GPIO_DVS	S3C2410_GPB(5)
-+
-+static bool dvs_en;
-+
-+static void osiris_dvs_tps_setdvs(bool on)
-+{
-+	unsigned vregs1 = 0, vdcdc2 = 0;
-+
-+	if (!on) {
-+		vdcdc2 = TPS_VCORE_DISCH | TPS_LP_COREOFF;
-+		vregs1 = TPS_LDO1_OFF;	/* turn off in low-power mode */
-+	}
-+
-+	dvs_en = on;
-+	vdcdc2 |= TPS_VCORE_1_3V | TPS_VCORE_LP_1_0V;
-+	vregs1 |= TPS_LDO2_ENABLE | TPS_LDO1_ENABLE;
-+
-+	tps65010_config_vregs1(vregs1);
-+	tps65010_config_vdcdc2(vdcdc2);
-+}
-+
-+static bool is_dvs(struct s3c_freq *f)
-+{
-+	/* at the moment, we assume ARMCLK = HCLK => DVS */
-+	return f->armclk == f->hclk;
-+}
-+
-+/* keep track of current state */
-+static bool cur_dvs = false;
-+
-+static int osiris_dvs_notify(struct notifier_block *nb,
-+			      unsigned long val, void *data)
-+{
-+	struct cpufreq_freqs *cf = data;
-+	struct s3c_cpufreq_freqs *freqs = to_s3c_cpufreq(cf);
-+	bool old_dvs = is_dvs(&freqs->old);
-+	bool new_dvs = is_dvs(&freqs->new);
-+	int ret = 0;
-+
-+	if (!dvs_en)
-+		return 0;
-+
-+	printk(KERN_DEBUG "%s: old %ld,%ld new %ld,%ld\n", __func__,
-+	       freqs->old.armclk, freqs->old.hclk,
-+	       freqs->new.armclk, freqs->new.hclk);
-+
-+	switch (val) {
-+	case CPUFREQ_PRECHANGE:
-+		if (old_dvs & !new_dvs ||
-+		    cur_dvs & !new_dvs) {
-+			pr_debug("%s: exiting dvs\n", __func__);
-+			cur_dvs = false;
-+			gpio_set_value(OSIRIS_GPIO_DVS, 1);
-+		}
-+		break;
-+	case CPUFREQ_POSTCHANGE:
-+		if (!old_dvs & new_dvs ||
-+		    !cur_dvs & new_dvs) {
-+			pr_debug("entering dvs\n");
-+			cur_dvs = true;
-+			gpio_set_value(OSIRIS_GPIO_DVS, 0);
-+		}
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+static struct notifier_block osiris_dvs_nb = {
-+	.notifier_call	= osiris_dvs_notify,
-+};
-+
-+static int __devinit osiris_dvs_probe(struct platform_device *pdev)
-+{
-+	int ret;
-+
-+	dev_info(&pdev->dev, "initialising\n");
-+
-+	ret = gpio_request(OSIRIS_GPIO_DVS, "osiris-dvs");
-+	if (ret) {
-+		dev_err(&pdev->dev, "cannot claim gpio\n");
-+		goto err_nogpio;
-+	}
-+
-+	/* start with dvs disabled */
-+	gpio_direction_output(OSIRIS_GPIO_DVS, 1);
-+
-+	ret = cpufreq_register_notifier(&osiris_dvs_nb,
-+					CPUFREQ_TRANSITION_NOTIFIER);
-+	if (ret) {
-+		dev_err(&pdev->dev, "failed to register with cpufreq\n");
-+		goto err_nofreq;
-+	}
-+
-+	osiris_dvs_tps_setdvs(true);
-+
-+	return 0;
-+
-+err_nofreq:
-+	gpio_free(OSIRIS_GPIO_DVS);
-+
-+err_nogpio:
-+	return ret;
-+}
-+
-+static int __devexit osiris_dvs_remove(struct platform_device *pdev)
-+{
-+	dev_info(&pdev->dev, "exiting\n");
-+
-+	/* disable any current dvs */
-+	gpio_set_value(OSIRIS_GPIO_DVS, 1);
-+	osiris_dvs_tps_setdvs(false);
-+
-+	cpufreq_unregister_notifier(&osiris_dvs_nb,
-+				    CPUFREQ_TRANSITION_NOTIFIER);
-+
-+	gpio_free(OSIRIS_GPIO_DVS);
-+
-+	return 0;
-+}
-+
-+/* the CONFIG_PM block is so small, it isn't worth actaully compiling it
-+ * out if the configuration isn't set. */
-+
-+static int osiris_dvs_suspend(struct device *dev)
-+{
-+	gpio_set_value(OSIRIS_GPIO_DVS, 1);
-+	osiris_dvs_tps_setdvs(false);
-+	cur_dvs = false;
-+
-+	return 0;
-+}
-+
-+static int osiris_dvs_resume(struct device *dev)
-+{
-+	osiris_dvs_tps_setdvs(true);
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops osiris_dvs_pm = {
-+	.suspend	= osiris_dvs_suspend,
-+	.resume		= osiris_dvs_resume,
-+};
-+
-+static struct platform_driver osiris_dvs_driver = {
-+	.probe		= osiris_dvs_probe,
-+	.remove		= __devexit_p(osiris_dvs_remove),
-+	.driver		= {
-+		.name	= "osiris-dvs",
-+		.owner	= THIS_MODULE,
-+		.pm	= &osiris_dvs_pm,
-+	},
-+};
-+
-+static int __init osiris_dvs_init(void)
-+{
-+	return platform_driver_register(&osiris_dvs_driver);
-+}
-+
-+static void __exit osiris_dvs_exit(void)
-+{
-+	platform_driver_unregister(&osiris_dvs_driver);
-+}
-+
-+module_init(osiris_dvs_init);
-+module_exit(osiris_dvs_exit);
-+
-+MODULE_DESCRIPTION("Simtec OSIRIS DVS support");
-+MODULE_AUTHOR("Ben Dooks <ben@simtec.co.uk>");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:osiris-dvs");
+-static struct platform_device s3c_device_bluetooth = {
++static struct platform_device h1940_device_bluetooth = {
+ 	.name             = "h1940-bt",
+ 	.id               = -1,
+ };
+@@ -188,8 +188,8 @@ static struct platform_device *h1940_devices[] __initdata = {
+ 	&s3c_device_i2c0,
+ 	&s3c_device_iis,
+ 	&s3c_device_usbgadget,
+-	&s3c_device_leds,
+-	&s3c_device_bluetooth,
++	&h1940_device_leds,
++	&h1940_device_bluetooth,
+ };
+ 
+ static void __init h1940_map_io(void)
+-- 
+1.6.5
