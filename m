@@ -1,34 +1,49 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: plat-samsung and other code changes for next merge window
-Date: Tue, 10 Nov 2009 00:22:22 +0000
-Message-ID: <20091110002222.GJ4808@trinity.fluff.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: plat-samsung and other code changes for next merge window
+Date: Tue, 10 Nov 2009 10:10:57 +0900
+Message-ID: <000801ca61a2$a8f4eb60$fadec220$%kim@samsung.com>
+References: <20091110002222.GJ4808@trinity.fluff.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:35415 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753872AbZKJAWR (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:55845 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755282AbZKJBJK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Nov 2009 19:22:17 -0500
-Received: from ben by trinity.fluff.org with local (Exim 4.69)
-	(envelope-from <ben@trinity.fluff.org>)
-	id 1N7eV4-00024X-DL
-	for linux-samsung-soc@vger.kernel.org; Tue, 10 Nov 2009 00:22:22 +0000
-Content-Disposition: inline
+	Mon, 9 Nov 2009 20:09:10 -0500
+Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0KSV004RZCJDQD@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 10 Nov 2009 10:09:13 +0900 (KST)
+Received: from kgenekim ([12.23.109.129])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0KSV00HF4CJD2G@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 10 Nov 2009 10:09:13 +0900 (KST)
+In-reply-to: <20091110002222.GJ4808@trinity.fluff.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: 'Ben Dooks' <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org
 
-Sorry for the delay, but I am finally getting the code for the
-plat-samsung updates sorted out. I will be releasing some further
-fix branches for review as soon as possible followed by the updates
-for the clock and device initialisation for testing by the end of
-this comming weekend.
+Hi Ben,
 
-Full documentation will be provided with the patch-set for review.
+On Tue, Nov 10, 2009 at 9:22AM +0900, Ben Dooks wrote:
+> Sorry for the delay, but I am finally getting the code for the
+> plat-samsung updates sorted out. I will be releasing some further
+> fix branches for review as soon as possible followed by the updates
+> for the clock and device initialisation for testing by the end of
+> this comming weekend.
+Good, thanks.
+Samsung SYS.LSI are creating plat-s5p, and soon will be submitted.
 
--- 
-Ben
+> Full documentation will be provided with the patch-set for review.
+Ok.
 
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+Thanks.
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+System LSI Division, SAMSUNG ELECTRONICS CO., LTD.
