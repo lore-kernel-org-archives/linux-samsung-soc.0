@@ -1,109 +1,193 @@
-From: Harald Welte <laforge@gnumonks.org>
-Subject: Re: [PATCH] ARM: SAMSUNG: Add plat-samsung as starting point for
-	plat-s3c* moves
-Date: Wed, 11 Nov 2009 13:58:35 +0900
-Message-ID: <20091111045835.GO4047@prithivi.gnumonks.org>
-References: <1257812406-17360-1-git-send-email-ben-linux@fluff.org> <000a01ca61a5$c573d000$505b7000$%kim@samsung.com> <9c9fda240911091927m46ed0fccyfbbc8873eb9c5da9@mail.gmail.com> <20091110094756.GN4048@prithivi.gnumonks.org> <000001ca620b$2141c080$63c54180$%szyprowski@samsung.com>
+From: Aditya Sharma <adityaps789@gmail.com>
+Subject: Re: [PATCH] [ARM] [S3C64XX] Add support for hr timer
+Date: Wed, 11 Nov 2009 14:38:04 +0900
+Message-ID: <da7d6d700911102138w2a057803wb49f25197eb8740f@mail.gmail.com>
+References: <1257468345-18021-1-git-send-email-aditya.ps@samsung.com>
+	 <20091106055850.GD4117@prithivi.gnumonks.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:43742 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750755AbZKKFGk (ORCPT
+Received: from mail-pw0-f42.google.com ([209.85.160.42]:46947 "EHLO
+	mail-pw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750905AbZKKFh7 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Nov 2009 00:06:40 -0500
-Content-Disposition: inline
-In-Reply-To: <000001ca620b$2141c080$63c54180$%szyprowski@samsung.com>
+	Wed, 11 Nov 2009 00:37:59 -0500
+Received: by pwi3 with SMTP id 3so488312pwi.21
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Nov 2009 21:38:04 -0800 (PST)
+In-Reply-To: <20091106055850.GD4117@prithivi.gnumonks.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: 'Kyungmin Park' <kmpark@infradead.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Tomasz Fujak <t.fujak@samsung.com>
+To: Harald Welte <laforge@gnumonks.org>
+Cc: linux-samsung-soc@vger.kernel.org
 
-Hi Marek,
+Hi Harald,
 
-On Tue, Nov 10, 2009 at 02:38:42PM +0100, Marek Szyprowski wrote:
-> > 
-> > Of course.  The code for the C100, C110, V210, etc. is also subject to
-> > this.  Maybe Ben simply wanted to be polite and indicate he does not
-> > intend to interfere with your current codebase.  After all, DMC is the
-> > maintainer of the C100 support in mainline, and we hope we can have your
-> > cooperation with this new structure.  But since we did not ask you yet,
-> > we couldn't assume that you would agree.
-> 
-> We are also interested in improving mainline support for C100 series as
-> well as upcoming C110.
+On Fri, Nov 6, 2009 at 2:58 PM, Harald Welte <laforge@gnumonks.org> wro=
+te:
+> Hi Aditya,
+>
+> thanks for your [first] patch :)
+>
+> On Fri, Nov 06, 2009 at 09:45:45AM +0900, aditya.ps@samsung.com wrote=
+:
+>> +
+>> +choice
+>> + =A0 =A0 prompt "OS Timer support"
+>> + =A0 =A0 depends on PLAT_S3C64XX
+>> + =A0 =A0 default DYNAMIC_TIMER
+>> +
+>> +config FIXED_TIMER
+>> + =A0 =A0 bool "Fixed Tick timer"
+>> +
+>> +config DYNAMIC_TIMER
+>> + =A0 =A0 bool "Tickless and HR Timer"
+>> + =A0 =A0 select GENERIC_TIME
+>> + =A0 =A0 select GENERIC_CLOCKEVENTS
+>
+> I think those should probably be prefixed with S3C_ as the Kconfig na=
+mespace
+> is global. =A0Like with symbol names, we should not use generic names=
+ unless
+> we are implementing generic code.
+>
+>> =A0obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0+=3D =A0init.o
+>> +ifdef CONFIG_NO_HZ
+>> +obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
++=3D hr-time.o
+>> +else
+>> +
+>> +ifndef CONFIG_HIGH_RES_TIMERS
+>> =A0obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0+=3D time.o
+>> +else
+>> +obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
++=3D hr-time.o
+>> +endif
+>
+> Mh. =A0This means the actual timer code depends only on CONFIG_NO_HZ =
+and
+> CONFIG_HIGH_RES_TIMERS.
+>
+> The two Kconfig choices FIXED_TIMER and DYNAMIC_TIMER are not really =
+used
+> anywhere.
+>
+> At last to me, it is unclear how this all works together. I think the=
+ choices
+> are either
+>
+> 1) you build the timer code solely on core kernel configuration optio=
+ns like
+> =A0 GENERIC_TIME, GENERIC_CLOCKEVENTS, HIGH_RES_TIMERS, NO_HZ or the =
+like
+>
 
-Ok.  The general goal of the work that Ben and me have been discussing
-and initiating is to remove the amount of code duplication when
-introducing support for a new SoC.  Right now, the c100 code contains a
-number of copies of the 6410 code, and the 6440 code also copies a lot
-from 6410.
+Yes, selected the GENERIC_TIME, GENERIC_CLOCKEVENTS during machine
+configuration.
 
-A lot of copying was identified in things like the platform device files
-(*-dev.c) and the *-clock.c files - which is why that was the starting
-point.
+> or
+>
+> 2) you have a private (s3c-specific) Kconfig option to select it. =A0=
+In this case,
+> =A0 dependent options need to be selected (like you do). =A0But then,=
+ the Makefile
+> =A0 should still reflect the s3c-specific Kconfig.
+>
+> Mixing both does not really seem to make sense to me.
+>
+> So as I can see, there are the three following possible cases:
+>
+> a) the regular/old timer code is used. =A0No high-res and no tickless=
+=2E
+>
+> b) the high-resolution timer is used but not tickless (NO_HZ not set)
+>
+> c) the high-resolution timer are used tickless.
+>
+> If you configure+build yoru code, each of those three options has to =
+work
+> as expected.
+>
+>> +static struct clock_event_device clockevent_tick_timer =3D {
+>> + =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "pwm_timer4",
+>> + =A0 =A0 .features =A0 =A0 =A0 =3D CLOCK_EVT_FEAT_PERIODIC | CLOCK_=
+EVT_FEAT_ONESHOT,
+>> + =A0 =A0 .shift =A0 =A0 =A0 =A0 =A0=3D 32,
+>> + =A0 =A0 .set_next_event =3D s3c64xx_tick_set_next_event,
+>> + =A0 =A0 .set_mode =A0 =A0 =A0 =3D s3c64xx_tick_set_mode,
+>> +};
+>
+> if you give this static variable a shorter name, (like clkevt_tick_tm=
+r or even
+> only tick_timer), then you can probably avoid some line wraps further=
+ down the
+> code:
+>
+>> + =A0 =A0 clockevent_tick_timer.mult =3D div_sc(rate, NSEC_PER_SEC,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 clockevent_tick_timer.shift);
+>> + =A0 =A0 clockevent_tick_timer.max_delta_ns =3D
+>> + =A0 =A0 =A0 =A0 =A0 =A0 clockevent_delta2ns(-1, &clockevent_tick_t=
+imer);
+>> + =A0 =A0 clockevent_tick_timer.min_delta_ns =3D
+>> + =A0 =A0 =A0 =A0 =A0 =A0 clockevent_delta2ns(1, &clockevent_tick_ti=
+mer);
+>
+> Also, we typically don't define a static string and then printk'
+>
+>> + =A0 =A0 static char err[] __initdata =3D KERN_ERR
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "%s: can't register clocks=
+ource!\n";
+>> + =A0 =A0 =A0 =A0 =A0 =A0 printk(err, clocksource_s3c64xx.name);
+>
+> why not simply
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR "%s: can't register cl=
+ocksource\n",
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0clocksource_s3c64xx.na=
+me);
+>
 
-There may also be other files up to something like sleep.S where again
-much duplication is visible (see my 6440 review mail recently)
+i have made these changes in the new patch.
 
-> > plat-samsung is intended for stuff that's shared between all the various
-> > arm9/arm11/a8 based SoCs.  This is so far in plat-s3c, even though it's
-> > not only used (and will not only be used) by s3c parts.
-> 
-> So most of the current code from plat-s3c (mainly common dev-* platform
-> resources, clocks, uart and gpio core functions) would be moved to
-> plat-samsung? Right?
+>> + =A0 =A0 if (IS_ERR(ck_ref))
+>> + =A0 =A0 =A0 =A0 =A0 =A0 panic("failed to get clock for system time=
+r");
+>
+> here we panic. =A0Is this failure really more severe than the failure=
+ above
+> where we simply printk(KERN_ERR) ?
+>
+> Yes, I think if we can't get the clocks for the system timer, then we=
+ should
+> panic since the kernel will not be able to function. =A0But is failin=
+g the
+> clocksource registration any less severe? (this is a real question, y=
+ou
+> probably know better than I do)
+>
+> Regards,
+> =A0 =A0 =A0 =A0Harald
+> --
+> - Harald Welte <laforge@gnumonks.org> =A0 =A0 =A0 =A0 =A0 http://lafo=
+rge.gnumonks.org/
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> "Privacy in residential applications is a desirable marketing option.=
+"
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 =A0(ETSI EN 300 175-7 Ch. A6)
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
 
-I think this is the goal, yes.  I personally don't care too much about
-correct naming or correct directory name.  The most important goal is to
-prevent/remove copy+paste style code and really have every function only
-once, if it is the same or 99% the same on multiple SoCs.
 
-> > Also, don't you think it is somewhat weird that soon samsung would have
-> > as many plat-* directories as all other ARM SoC makers together?
-> 
-> These multiple plat-* directories for all Samsung chip series are in
-> fact a big overhead for kernel tree. I assume that You want to end with
-> only one plat-samsung directory. 
-
-I think currently having 3 directories: plat-samsung, plat-s3c and
-plat-s5p are in the discussion.
-
-> Am I right? What about multiple mach-* directories (mach-s3c2400, ...,
-> mach-s3c24a0, mach-s3c6400, mach-s3c6410, mach-s5pc100, ...)? Do you
-> plan to keep them? Maybe a multilevel structure would be more
-> aproperiate? (mach-samsung/s3c2400, mach-samsung/s3c6400, and so on)?
-
-I think at the moment we're focusing on the plat-* directories first and
-try not to change everything at the same time.  I would not propose
-freely renaming / moving all directories if this does not at the same
-time mean that we can remove code duplication.
-
-> How do you plan to handle different includes, register map, register
-> offset defines, etc in each chip series? Would this result in moving
-> the series specific include directories to mach-* directories?
-
-I think the details will be worked out while the task is being done.
-The actual base addresses for each integrated peripheral will be
-provided through a soc-specific table that is passed to the platform
-device handling code that ben is working on.
- 
-> How can we adapt the current plat-s5pcxx code to better match the
-> migration to common plat-samsung directory?
-
-I think it is best to first wait for those changes to appear on the
-24xx/6410 code in mainline.  We are working with System LSI to add the
-6440.  Once that has been implemented and is known to work in next-s3c,
-I think you can adapt your code and e.g. remove some code from
-s5pc100-clock.c
-
-So for right now, I would recommend to be a bit patient until the core
-changes have emerged and stabilized, to avoid wasting your time to
-change to a moving target.  
-
-Regards,
--- 
-- Harald Welte <laforge@gnumonks.org>           http://laforge.gnumonks.org/
-============================================================================
-"Privacy in residential applications is a desirable marketing option."
-                                                  (ETSI EN 300 175-7 Ch. A6)
+--=20
+Thanks and best regards
+Aditya
