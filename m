@@ -1,128 +1,63 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH] ARM: SAMSUNG: Add plat-samsung as starting point for
-	plat-s3c* moves
-Date: Wed, 11 Nov 2009 23:08:11 +0000
-Message-ID: <20091111230811.GL4808@trinity.fluff.org>
-References: <1257812406-17360-1-git-send-email-ben-linux@fluff.org> <000a01ca61a5$c573d000$505b7000$%kim@samsung.com> <9c9fda240911091927m46ed0fccyfbbc8873eb9c5da9@mail.gmail.com> <20091110094756.GN4048@prithivi.gnumonks.org> <000001ca620b$2141c080$63c54180$%szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] Update Samsung S5PC100 SoC support
+Date: Thu, 12 Nov 2009 09:21:44 +0100
+Message-ID: <1258014122-18185-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:56091 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759486AbZKKXIM convert rfc822-to-8bit (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:46028 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752126AbZKLIWk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Nov 2009 18:08:12 -0500
-Content-Disposition: inline
-In-Reply-To: <000001ca620b$2141c080$63c54180$%szyprowski@samsung.com>
+	Thu, 12 Nov 2009 03:22:40 -0500
+Received: from eu_spt1 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0KSZ001MRLXV8P@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 12 Nov 2009 08:22:43 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0KSZ00HAZLXUOC@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 12 Nov 2009 08:22:43 +0000 (GMT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: 'Harald Welte' <laforge@gnumonks.org>, 'Kyungmin Park' <kmpark@infradead.org>, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, 'Ben Dooks' <ben-linux@fluff.org>, Tomasz Fujak <t.fujak@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, bhmin@samsung.com, laforge@gnumonks.org
 
-On Tue, Nov 10, 2009 at 02:38:42PM +0100, Marek Szyprowski wrote:
-> Hello,
-> 
-> On Tuesday, November 10, 2009 10:48 AM, Harald Welte wrote:
-> 
-> > Dear Kyungmin,
-> > 
-> > On Tue, Nov 10, 2009 at 12:27:15PM +0900, Kyungmin Park wrote:
-> > > >
-> > > >> We inted to re-organise the plat-s3c/plat-s3c24xx/plat-s3c64xx into a
-> > > >> more generic plat-samsung with less code in the other plat- directories
-> > > >> to make it easier to port new devices and try and clear up some of the
-> > > >> naming issues with newer devices.
-> > >
-> > > Why do you miss the plat-s5pc1xx? Also add the plat-s5pc1xx series.
-> > 
-> > Of course.  The code for the C100, C110, V210, etc. is also subject to
-> > this.  Maybe Ben simply wanted to be polite and indicate he does not
-> > intend to interfere with your current codebase.  After all, DMC is the
-> > maintainer of the C100 support in mainline, and we hope we can have your
-> > cooperation with this new structure.  But since we did not ask you yet,
-> > we couldn't assume that you would agree.
-> 
-> We are also interested in improving mainline support for C100 series as
-> well as upcoming C110.
+Hello,
 
-Did you see my comments on the last series you submitted?
- 
-> > > Why new plat-s5p is required? The main goal of plat-* directory is
-> > > support the SoC common codes.
-> > 
-> > plat-samsung is intended for stuff that's shared between all the various
-> > arm9/arm11/a8 based SoCs.  This is so far in plat-s3c, even though it's
-> > not only used (and will not only be used) by s3c parts.
-> 
-> So most of the current code from plat-s3c (mainly common dev-* platform
-> resources, clocks, uart and gpio core functions) would be moved to
-> plat-samsung? Right?
+This patch series updates Samsung S5PC100 SoC support. S5PC100 platform
+core has been extended with new clocks hierarchy implementation, gpio lib,
+support for external and gpio interrupts and some basics of power
+management (cpu idle and system reset). Also platform helpers for
+s3c framebuffer, i2c and hsmmc drivers has been added.
 
-As much as possible.
- 
-> > > Of course s5pc100 and s5pc110 is different features and different IPs
-> > > but no need to create each plat directory.
-> > 
-> > The 6440 shares some things with the c100, and the 6442 shares again
-> > some things with the c110.  So putting all those files into one
-> > directory seems to make it much easier to share code between the
-> > different parts as needed.  Also, it means that we have to do less
-> > moving around.
-> > 
-> > Imagine we continue with one plat-s5p64xx and plat-s5pc1xx, etc. for
-> > each new SoC.  Later we detect there is some sharing with an earlier
-> > product, then we need to move the file to plat-s5p.  This moving around
-> > of files causes breakage in patches that people are having in their
-> > private trees before they can move it mainline.
-> > 
-> > Also, don't you think it is somewhat weird that soon samsung would have
-> > as many plat-* directories as all other ARM SoC makers together?
-> 
-> These multiple plat-* directories for all Samsung chip series are in
-> fact a big overhead for kernel tree. I assume that You want to end with
-> only one plat-samsung directory. Am I right? What about multiple mach-*
-> directories (mach-s3c2400, ..., mach-s3c24a0, mach-s3c6400, mach-s3c6410,
-> mach-s5pc100, ...)? Do you plan to keep them? Maybe a multilevel structure
-> would be more aproperiate? (mach-samsung/s3c2400, mach-samsung/s3c6400, 
-> and so on)?
+All these patches has been tested on SMDKC100 board.
 
-I'm not sure what you mean by 'big overhead', could you elaborate on
-that statement.
+This patch series has been prepared against latest ARM Kernel tree from
+http://ftp.arm.linux.org.uk/pub/linux/arm/kernel/git-cur/linux-2.6-arm.git/
 
-I personally do not think multiple plat- directories are much of a problem
-and much prefer them to some form of heirarchy as you are discussing here
-although there are probably merits either way.
+This is a second version of this patch series. I've tried to address all
+the issues reported here on the mailing list.
 
-> How do you plan to handle different includes, register map, register
-> offset defines, etc in each chip series? Would this result in moving
-> the series specific include directories to mach-* directories?
+This patch series includes:
 
-No, each driver header carries all the necessary defines for the
-version, since if the driver needs updating it is likely the header
-file for that driver will need updating too.
-
-For the maps, these are much more chip specific and will probably
-be changed to a more specific name to make them easier to find if
-they need to be common.
-
-Part of the device change will be to move to a table based system
-where there will be less need to have things defined in header
-files.
-
-We also want to try and ensure that <plat/xxx.h> xxx.h items are
-unique as possible to avoid finding a large number of matches
-for xxx.h in the header files and having to work out which one is
-being included.
- 
-> How can we adapt the current plat-s5pcxx code to better match the
-> migration to common plat-samsung directory?
-
-Have a look at the documentation in the pre-release and then make
-some comments then (if you need to).
-
--- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+[PATCH 01/18] ARM: MM: use 64bytes of L1 cache on plat S5PC1xx
+[PATCH 02/18] ARM: S5PC1XX: registers rename
+[PATCH 03/18] ARM: S5PC1XX: clock registers rename
+[PATCH 04/18] ARM: S5PC1XX: clocks reimplementation
+[PATCH 05/18] ARM: S5PC1XX: add GPIO L banks to register definition
+[PATCH 06/18] ARM: S5PC1XX: GPIO registers rename
+[PATCH 07/18] ARM: S5PC1xx: add gpiolib and external/gpio interrupt support
+[PATCH 08/18] ARM: S5PC1XX: add cpu idle and system reset support
+[PATCH 09/18] ARM: S3C: Prepare s3c64xx-specific s3c-fb register definition for reuse
+[PATCH 10/18] ARM: S5PC1xx: add platform helpers for s3c-fb device
+[PATCH 11/18] SMDKC100: enable S3C FrameBuffer
+[PATCH 12/18] drivers: fb: enable S3C FrameBuffer on S5PC1XX platform
+[PATCH 13/18] ARM: S5PC1xx: add platform helpers for i2c adapter devices
+[PATCH 14/18] SMDKC100: add I2C0 and I2C1 buses support
+[PATCH 15/18] drivers: i2c: s3c2410-i2c also on S5PC1XX platform
+[PATCH 16/18] ARM: S5PC1xx: add platform helpers for SDHCI host controllers
+[PATCH 17/18] SMDKC100: add SDHCI controllers 0, 1 and 2 support
+[PATCH 18/18] drivers: MMC: enable SDHCI-S3C on S5PC1XX platform
