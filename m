@@ -1,42 +1,28 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 17/18] SMDKC100: add SDHCI controllers 0, 1 and 2 support
-Date: Thu, 12 Nov 2009 09:22:01 +0100
-Message-ID: <1258014122-18185-18-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 02/18] ARM: S5PC1XX: registers rename
+Date: Thu, 12 Nov 2009 09:21:46 +0100
+Message-ID: <1258014122-18185-3-git-send-email-m.szyprowski@samsung.com>
 References: <1258014122-18185-1-git-send-email-m.szyprowski@samsung.com>
  <1258014122-18185-2-git-send-email-m.szyprowski@samsung.com>
- <1258014122-18185-3-git-send-email-m.szyprowski@samsung.com>
- <1258014122-18185-4-git-send-email-m.szyprowski@samsung.com>
- <1258014122-18185-5-git-send-email-m.szyprowski@samsung.com>
- <1258014122-18185-6-git-send-email-m.szyprowski@samsung.com>
- <1258014122-18185-7-git-send-email-m.szyprowski@samsung.com>
- <1258014122-18185-8-git-send-email-m.szyprowski@samsung.com>
- <1258014122-18185-9-git-send-email-m.szyprowski@samsung.com>
- <1258014122-18185-10-git-send-email-m.szyprowski@samsung.com>
- <1258014122-18185-11-git-send-email-m.szyprowski@samsung.com>
- <1258014122-18185-12-git-send-email-m.szyprowski@samsung.com>
- <1258014122-18185-13-git-send-email-m.szyprowski@samsung.com>
- <1258014122-18185-14-git-send-email-m.szyprowski@samsung.com>
- <1258014122-18185-15-git-send-email-m.szyprowski@samsung.com>
- <1258014122-18185-16-git-send-email-m.szyprowski@samsung.com>
- <1258014122-18185-17-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:41055 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752449AbZKLIXF (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:11717 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752583AbZKLIWv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Nov 2009 03:23:05 -0500
-Received: from eu_spt2 ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0KSZ003FXLYLX040@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 12 Nov 2009 08:23:09 +0000 (GMT)
+	Thu, 12 Nov 2009 03:22:51 -0500
+Received: from eu_spt1 (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0KSZ00LDMLY7PE@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 12 Nov 2009 08:22:56 +0000 (GMT)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0KSZ003UCLYLO5@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 12 Nov 2009 08:23:09 +0000 (GMT)
-In-reply-to: <1258014122-18185-17-git-send-email-m.szyprowski@samsung.com>
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0KSZ00MPQLY7ZR@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 12 Nov 2009 08:22:55 +0000 (GMT)
+In-reply-to: <1258014122-18185-2-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
@@ -46,47 +32,173 @@ From: Kyungmin Park <kyungmin.park@samsung.com>
 
 From: Kyungmin Park <kyungmin.park@samsung.com>
 
-Add required machine definitions for SDHCI controller 0, 1 and 2. SMDKC100
-has 2 SDHCI/MMC ports. Port 1 is directly connected to controller 0. Port
-1 can be conntected to controler 1 or 2, depending on jumper setup.
+S5PC110 and S5PC100 register maps differs in many places, rename all
+defined registers to be S5PC100 specific. PA_SYS register known from
+S3C64XX series has been renamed to more adequate PA_CLK. Also system map
+has been also updated to cover more integrated peripherals.
 
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/mach-s5pc100/Kconfig         |    4 ++++
- arch/arm/mach-s5pc100/mach-smdkc100.c |    3 +++
- 2 files changed, 7 insertions(+), 0 deletions(-)
+ arch/arm/mach-s5pc100/include/mach/map.h |   87 +++++++++++++++++++++++++++--
+ arch/arm/mach-s5pc100/mach-smdkc100.c    |    4 +-
+ 2 files changed, 83 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
-index 21b1821..0dd2b8c 100644
---- a/arch/arm/mach-s5pc100/Kconfig
-+++ b/arch/arm/mach-s5pc100/Kconfig
-@@ -25,8 +25,12 @@ config MACH_SMDKC100
- 	select CPU_S5PC100
- 	select S3C_DEV_FB
- 	select S3C_DEV_I2C1
-+	select S3C_DEV_HSMMC
-+	select S3C_DEV_HSMMC1
-+	select S3C_DEV_HSMMC2
- 	select S5PC1XX_SETUP_I2C0
- 	select S5PC1XX_SETUP_I2C1
- 	select S5PC1XX_SETUP_FB_24BPP
-+	select S5PC100_SETUP_SDHCI
- 	help
- 	  Machine support for the Samsung SMDKC100
+diff --git a/arch/arm/mach-s5pc100/include/mach/map.h b/arch/arm/mach-s5pc100/include/mach/map.h
+index 9e9f391..4681ebe 100644
+--- a/arch/arm/mach-s5pc100/include/mach/map.h
++++ b/arch/arm/mach-s5pc100/include/mach/map.h
+@@ -17,6 +17,19 @@
+ 
+ #include <plat/map-base.h>
+ 
++/*
++ * map-base.h has already defined virtual memory address
++ * S3C_VA_IRQ		S3C_ADDR(0x00000000)	irq controller(s)
++ * S3C_VA_SYS		S3C_ADDR(0x00100000)	system control
++ * S3C_VA_MEM		S3C_ADDR(0x00200000)	system control (not used)
++ * S3C_VA_TIMER		S3C_ADDR(0x00300000)	timer block
++ * S3C_VA_WATCHDOG	S3C_ADDR(0x00400000)	watchdog
++ * S3C_VA_UART		S3C_ADDR(0x01000000)	UART
++ *
++ * S5PC100 specific virtual memory address can be defined here
++ * S5PC1XX_VA_GPIO	S3C_ADDR(0x00500000)	GPIO
++ *
++ */
+ 
+ /* Chip ID */
+ #define S5PC100_PA_CHIPID	(0xE0000000)
+@@ -24,13 +37,20 @@
+ #define S5PC1XX_VA_CHIPID	S3C_VA_SYS
+ 
+ /* System */
+-#define S5PC100_PA_SYS		(0xE0100000)
+-#define S5PC100_PA_CLK		(S5PC100_PA_SYS + 0x0)
+-#define S5PC100_PA_PWR		(S5PC100_PA_SYS + 0x8000)
++#define S5PC100_PA_CLK		(0xE0100000)
++#define S5PC100_PA_CLK_OTHER	(0xE0200000)
++#define S5PC100_PA_PWR		(0xE0108000)
+ #define S5PC1XX_PA_CLK		S5PC100_PA_CLK
+ #define S5PC1XX_PA_PWR		S5PC100_PA_PWR
++#define S5PC1XX_PA_CLK_OTHER	S5PC100_PA_CLK_OTHER
+ #define S5PC1XX_VA_CLK		(S3C_VA_SYS + 0x10000)
+ #define S5PC1XX_VA_PWR		(S3C_VA_SYS + 0x20000)
++#define S5PC1XX_VA_CLK_OTHER	(S3C_VA_SYS + 0x30000)
++
++/* GPIO */
++#define S5PC100_PA_GPIO		(0xE0300000)
++#define S5PC1XX_PA_GPIO		S5PC100_PA_GPIO
++#define S5PC1XX_VA_GPIO		S3C_ADDR(0x00500000)
+ 
+ /* Interrupt */
+ #define S5PC100_PA_VIC		(0xE4000000)
+@@ -40,23 +60,64 @@
+ #define S5PC1XX_PA_VIC(x)	(S5PC100_PA_VIC + ((x) * S5PC100_PA_VIC_OFFSET))
+ #define S5PC1XX_VA_VIC(x)	(S5PC100_VA_VIC + ((x) * S5PC100_VA_VIC_OFFSET))
+ 
++/* DMA */
++#define S5PC100_PA_MDMA		(0xE8100000)
++#define S5PC100_PA_PDMA0	(0xE9000000)
++#define S5PC100_PA_PDMA1	(0xE9200000)
++
+ /* Timer */
+ #define S5PC100_PA_TIMER	(0xEA000000)
+ #define S5PC1XX_PA_TIMER	S5PC100_PA_TIMER
+ #define S5PC1XX_VA_TIMER	S3C_VA_TIMER
+ 
++/* RTC */
++#define S5PC100_PA_RTC		(0xEA300000)
++
+ /* UART */
+ #define S5PC100_PA_UART		(0xEC000000)
+ #define S5PC1XX_PA_UART		S5PC100_PA_UART
+ #define S5PC1XX_VA_UART		S3C_VA_UART
+ 
+-/* IIC */
+-#define S5PC100_PA_IIC		(0xEC100000)
++/* I2C */
++#define S5PC100_PA_I2C		(0xEC100000)
++#define S5PC100_PA_I2C1		(0xEC200000)
++
++/* USB HS OTG */
++#define S5PC100_PA_USB_HSOTG	(0xED200000)
++#define S5PC100_PA_USB_HSPHY	(0xED300000)
++
++/* SD/MMC */
++#define S5PC100_PA_HSMMC(x)	(0xED800000 + ((x) * 0x100000))
++#define S5PC100_PA_HSMMC0	S5PC100_PA_HSMMC(0)
++#define S5PC100_PA_HSMMC1	S5PC100_PA_HSMMC(1)
++#define S5PC100_PA_HSMMC2	S5PC100_PA_HSMMC(2)
++
++/* LCD */
++#define S5PC100_PA_FB		(0xEE000000)
++
++/* Multimedia */
++#define S5PC100_PA_G2D		(0xEE800000)
++#define S5PC100_PA_JPEG		(0xEE500000)
++#define S5PC100_PA_ROTATOR	(0xEE100000)
++#define S5PC100_PA_G3D		(0xEF000000)
++
++/* I2S */
++#define S5PC100_PA_I2S0		(0xF2000000)
++#define S5PC100_PA_I2S1		(0xF2100000)
++#define S5PC100_PA_I2S2		(0xF2200000)
++
++/* KEYPAD */
++#define S5PC100_PA_KEYPAD	(0xF3100000)
++
++/* ADC & TouchScreen */
++#define S5PC100_PA_TSADC	(0xF3000000)
+ 
+ /* ETC */
+ #define S5PC100_PA_SDRAM	(0x20000000)
++#define S5PC1XX_PA_SDRAM	S5PC100_PA_SDRAM
+ 
+ /* compatibility defines. */
++#define S3C_PA_RTC		S5PC100_PA_RTC
+ #define S3C_PA_UART		S5PC100_PA_UART
+ #define S3C_PA_UART0		(S5PC100_PA_UART + 0x0)
+ #define S3C_PA_UART1		(S5PC100_PA_UART + 0x400)
+@@ -67,9 +128,23 @@
+ #define S3C_VA_UART2		(S3C_VA_UART + 0x800)
+ #define S3C_VA_UART3		(S3C_VA_UART + 0xC00)
+ #define S3C_UART_OFFSET		0x400
++#define S3C_VA_UARTx(x)		(S3C_VA_UART + ((x) * S3C_UART_OFFSET))
++#define S3C_PA_FB		S5PC100_PA_FB
++#define S3C_PA_G2D		S5PC100_PA_G2D
++#define S3C_PA_G3D		S5PC100_PA_G3D
++#define S3C_PA_JPEG		S5PC100_PA_JPEG
++#define S3C_PA_ROTATOR		S5PC100_PA_ROTATOR
+ #define S3C_VA_VIC0		(S3C_VA_IRQ + 0x0)
+ #define S3C_VA_VIC1		(S3C_VA_IRQ + 0x10000)
+ #define S3C_VA_VIC2		(S3C_VA_IRQ + 0x20000)
+-#define S3C_PA_IIC		S5PC100_PA_IIC
++#define S3C_PA_IIC		S5PC100_PA_I2C
++#define S3C_PA_IIC1		S5PC100_PA_I2C1
++#define S3C_PA_USB_HSOTG	S5PC100_PA_USB_HSOTG
++#define S3C_PA_USB_HSPHY	S5PC100_PA_USB_HSPHY
++#define S3C_PA_HSMMC0		S5PC100_PA_HSMMC0
++#define S3C_PA_HSMMC1		S5PC100_PA_HSMMC1
++#define S3C_PA_HSMMC2		S5PC100_PA_HSMMC2
++#define S3C_PA_KEYPAD		S5PC100_PA_KEYPAD
++#define S3C_PA_TSADC		S5PC100_PA_TSADC
+ 
+ #endif /* __ASM_ARCH_C100_MAP_H */
 diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-s5pc100/mach-smdkc100.c
-index 2c0119f..8dee48e 100644
+index 214093c..05bb20a 100644
 --- a/arch/arm/mach-s5pc100/mach-smdkc100.c
 +++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
-@@ -147,6 +147,9 @@ static struct platform_device *smdkc100_devices[] __initdata = {
- 	&s3c_device_i2c0,
- 	&s3c_device_i2c1,
- 	&s3c_device_fb,
-+	&s3c_device_hsmmc0,
-+	&s3c_device_hsmmc1,
-+	&s3c_device_hsmmc2,
- 	&smdkc100_lcd_powerdev,
- };
+@@ -92,9 +92,9 @@ static void __init smdkc100_machine_init(void)
  
+ MACHINE_START(SMDKC100, "SMDKC100")
+ 	/* Maintainer: Byungho Min <bhmin@samsung.com> */
+-	.phys_io	= S5PC1XX_PA_UART & 0xfff00000,
++	.phys_io	= S5PC100_PA_UART & 0xfff00000,
+ 	.io_pg_offst	= (((u32)S5PC1XX_VA_UART) >> 18) & 0xfffc,
+-	.boot_params	= S5PC100_PA_SDRAM + 0x100,
++	.boot_params	= S5PC1XX_PA_SDRAM + 0x100,
+ 
+ 	.init_irq	= s5pc100_init_irq,
+ 	.map_io		= smdkc100_map_io,
 -- 
 1.6.5
