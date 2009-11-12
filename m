@@ -1,8 +1,7 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 13/18] ARM: S5PC1xx: add platform helpers for i2c adapter
- devices
-Date: Thu, 12 Nov 2009 09:21:57 +0100
-Message-ID: <1258014122-18185-14-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 14/18] SMDKC100: add I2C0 and I2C1 buses support
+Date: Thu, 12 Nov 2009 09:21:58 +0100
+Message-ID: <1258014122-18185-15-git-send-email-m.szyprowski@samsung.com>
 References: <1258014122-18185-1-git-send-email-m.szyprowski@samsung.com>
  <1258014122-18185-2-git-send-email-m.szyprowski@samsung.com>
  <1258014122-18185-3-git-send-email-m.szyprowski@samsung.com>
@@ -16,25 +15,25 @@ References: <1258014122-18185-1-git-send-email-m.szyprowski@samsung.com>
  <1258014122-18185-11-git-send-email-m.szyprowski@samsung.com>
  <1258014122-18185-12-git-send-email-m.szyprowski@samsung.com>
  <1258014122-18185-13-git-send-email-m.szyprowski@samsung.com>
+ <1258014122-18185-14-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:11746 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752633AbZKLIXB (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:41055 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752620AbZKLIXB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Thu, 12 Nov 2009 03:23:01 -0500
-Received: from eu_spt2 (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0KSZ00JQFLYINP@mailout2.w1.samsung.com> for
+Received: from eu_spt2 ([210.118.77.13]) by mailout3.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0KSZ004Z2LYID640@mailout3.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Thu, 12 Nov 2009 08:23:06 +0000 (GMT)
 Received: from linux.samsung.com ([106.116.38.10])
  by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0KSZ00FLRLYHW3@spt2.w1.samsung.com> for
+ 2004)) with ESMTPA id <0KSZ00L25LYI4K@spt2.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Thu, 12 Nov 2009 08:23:06 +0000 (GMT)
-In-reply-to: <1258014122-18185-13-git-send-email-m.szyprowski@samsung.com>
+In-reply-to: <1258014122-18185-14-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
@@ -44,108 +43,77 @@ From: Kyungmin Park <kyungmin.park@samsung.com>
 
 From: Kyungmin Park <kyungmin.park@samsung.com>
 
-Samsung S5PC100 has I2C bus controller compatible with the one known from
-previous SoCs series. Add required platform setup and support code that
-it can be used with s3c2410-i2c driver.
+Add required machine definitions for I2C 0 and 1 bus controllers.
+Currently no I2C device are defined yet.
 
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/mach-s5pc100/cpu.c        |    4 ++++
- arch/arm/plat-s5pc1xx/Kconfig      |    4 ++--
- arch/arm/plat-s5pc1xx/Makefile     |    4 ++--
- arch/arm/plat-s5pc1xx/setup-i2c0.c |    7 ++++++-
- arch/arm/plat-s5pc1xx/setup-i2c1.c |    7 ++++++-
- 5 files changed, 20 insertions(+), 6 deletions(-)
+ arch/arm/mach-s5pc100/Kconfig         |    2 ++
+ arch/arm/mach-s5pc100/mach-smdkc100.c |   17 +++++++++++++++++
+ 2 files changed, 19 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-s5pc100/cpu.c b/arch/arm/mach-s5pc100/cpu.c
-index a23ca57..1319e3d 100644
---- a/arch/arm/mach-s5pc100/cpu.c
-+++ b/arch/arm/mach-s5pc100/cpu.c
-@@ -75,6 +75,10 @@ void __init s5pc100_map_io(void)
- 	iotable_init(s5pc100_iodesc, ARRAY_SIZE(s5pc100_iodesc));
+diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
+index 5e6b9a3..36e7e00 100644
+--- a/arch/arm/mach-s5pc100/Kconfig
++++ b/arch/arm/mach-s5pc100/Kconfig
+@@ -18,6 +18,8 @@ config MACH_SMDKC100
+ 	bool "SMDKC100"
+ 	select CPU_S5PC100
+ 	select S3C_DEV_FB
++	select S3C_DEV_I2C1
++	select S5PC1XX_SETUP_I2C0
+ 	select S5PC1XX_SETUP_I2C1
+ 	select S5PC1XX_SETUP_FB_24BPP
+ 	help
+diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-s5pc100/mach-smdkc100.c
+index 098956d..2c0119f 100644
+--- a/arch/arm/mach-s5pc100/mach-smdkc100.c
++++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
+@@ -42,6 +42,7 @@
+ #include <plat/cpu.h>
+ #include <plat/s5pc100.h>
+ #include <plat/fb.h>
++#include <plat/iic.h>
  
- 	/* initialise device information early */
+ #define UCON (S3C2410_UCON_DEFAULT | S3C2410_UCON_UCLK)
+ #define ULCON (S3C2410_LCON_CS8 | S3C2410_LCON_PNONE | S3C2410_LCON_STOPB)
+@@ -78,6 +79,14 @@ static struct s3c2410_uartcfg smdkc100_uartcfgs[] __initdata = {
+ 	},
+ };
+ 
++/* I2C0 */
++static struct i2c_board_info i2c_devs0[] __initdata = {
++};
 +
-+	/* the i2c devices are directly compatible with s3c2440 */
-+	s3c_i2c0_setname("s3c2440-i2c");
-+	s3c_i2c1_setname("s3c2440-i2c");
- }
++/* I2C1 */
++static struct i2c_board_info i2c_devs1[] __initdata = {
++};
++
+ /* LCD power controller */
+ static void smdkc100_lcd_power_set(struct plat_lcd_data *pd,
+ 				   unsigned int power)
+@@ -135,6 +144,8 @@ static struct s3c_fb_platdata smdkc100_lcd_pdata __initdata = {
+ static struct map_desc smdkc100_iodesc[] = {};
  
- void __init s5pc100_init_clocks(int xtal)
-diff --git a/arch/arm/plat-s5pc1xx/Kconfig b/arch/arm/plat-s5pc1xx/Kconfig
-index 6ac48a6..1fc25b9 100644
---- a/arch/arm/plat-s5pc1xx/Kconfig
-+++ b/arch/arm/plat-s5pc1xx/Kconfig
-@@ -42,7 +42,7 @@ config S5PC1XX_SETUP_FB_24BPP
- 	help
-           Common setup code for S5PC1XX with an 24bpp RGB display helper.
+ static struct platform_device *smdkc100_devices[] __initdata = {
++	&s3c_device_i2c0,
++	&s3c_device_i2c1,
+ 	&s3c_device_fb,
+ 	&smdkc100_lcd_powerdev,
+ };
+@@ -148,6 +159,12 @@ static void __init smdkc100_map_io(void)
  
--config S5PC100_SETUP_I2C0
-+config S5PC1XX_SETUP_I2C0
- 	bool
- 	default y
- 	help
-@@ -51,7 +51,7 @@ config S5PC100_SETUP_I2C0
- 	  Note, currently since i2c0 is always compiled, this setup helper
- 	  is always compiled with it.
- 
--config S5PC100_SETUP_I2C1
-+config S5PC1XX_SETUP_I2C1
- 	bool
- 	help
- 	  Common setup code for i2c bus 1.
-diff --git a/arch/arm/plat-s5pc1xx/Makefile b/arch/arm/plat-s5pc1xx/Makefile
-index 3d2ac71..40ee957 100644
---- a/arch/arm/plat-s5pc1xx/Makefile
-+++ b/arch/arm/plat-s5pc1xx/Makefile
-@@ -26,5 +26,5 @@ obj-$(CONFIG_CPU_S5PC100_CLOCK)	+= s5pc100-clock.o
- 
- obj-$(CONFIG_S5P_GPIO_CFG_S5PC1XX) += gpio-config.o
- obj-$(CONFIG_S5PC1XX_SETUP_FB_24BPP) += setup-fb-24bpp.o
--obj-$(CONFIG_S5PC100_SETUP_I2C0) += setup-i2c0.o
--obj-$(CONFIG_S5PC100_SETUP_I2C1) += setup-i2c1.o
-+obj-$(CONFIG_S5PC1XX_SETUP_I2C0) += setup-i2c0.o
-+obj-$(CONFIG_S5PC1XX_SETUP_I2C1) += setup-i2c1.o
-diff --git a/arch/arm/plat-s5pc1xx/setup-i2c0.c b/arch/arm/plat-s5pc1xx/setup-i2c0.c
-index 3d00c02..09d5a2d 100644
---- a/arch/arm/plat-s5pc1xx/setup-i2c0.c
-+++ b/arch/arm/plat-s5pc1xx/setup-i2c0.c
-@@ -17,9 +17,14 @@
- 
- struct platform_device; /* don't need the contents */
- 
-+#include <mach/gpio.h>
- #include <plat/iic.h>
-+#include <plat/gpio-cfg.h>
- 
- void s3c_i2c0_cfg_gpio(struct platform_device *dev)
+ static void __init smdkc100_machine_init(void)
  {
--	/* Pin configuration would be needed */
-+	s3c_gpio_cfgpin(S5PC100_GPD(3), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(S5PC100_GPD(3), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgpin(S5PC100_GPD(4), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(S5PC100_GPD(4), S3C_GPIO_PULL_UP);
- }
-diff --git a/arch/arm/plat-s5pc1xx/setup-i2c1.c b/arch/arm/plat-s5pc1xx/setup-i2c1.c
-index c8f3ca4..3c13613 100644
---- a/arch/arm/plat-s5pc1xx/setup-i2c1.c
-+++ b/arch/arm/plat-s5pc1xx/setup-i2c1.c
-@@ -17,9 +17,14 @@
++	/* I2C */
++	s3c_i2c0_set_platdata(NULL);
++	s3c_i2c1_set_platdata(NULL);
++	i2c_register_board_info(0, i2c_devs0, ARRAY_SIZE(i2c_devs0));
++	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
++
+ 	s3c_fb_set_platdata(&smdkc100_lcd_pdata);
  
- struct platform_device; /* don't need the contents */
- 
-+#include <mach/gpio.h>
- #include <plat/iic.h>
-+#include <plat/gpio-cfg.h>
- 
- void s3c_i2c1_cfg_gpio(struct platform_device *dev)
- {
--	/* Pin configuration would be needed */
-+	s3c_gpio_cfgpin(S5PC100_GPD(5), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(S5PC100_GPD(5), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgpin(S5PC100_GPD(6), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(S5PC100_GPD(6), S3C_GPIO_PULL_UP);
- }
+ 	/* LCD init */
 -- 
 1.6.5
