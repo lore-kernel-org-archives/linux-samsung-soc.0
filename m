@@ -1,204 +1,318 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 02/18] ARM: S5PC1XX: registers rename
-Date: Thu, 12 Nov 2009 09:21:46 +0100
-Message-ID: <1258014122-18185-3-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 10/18] ARM: S5PC1xx: add platform helpers for s3c-fb device
+Date: Thu, 12 Nov 2009 09:21:54 +0100
+Message-ID: <1258014122-18185-11-git-send-email-m.szyprowski@samsung.com>
 References: <1258014122-18185-1-git-send-email-m.szyprowski@samsung.com>
  <1258014122-18185-2-git-send-email-m.szyprowski@samsung.com>
+ <1258014122-18185-3-git-send-email-m.szyprowski@samsung.com>
+ <1258014122-18185-4-git-send-email-m.szyprowski@samsung.com>
+ <1258014122-18185-5-git-send-email-m.szyprowski@samsung.com>
+ <1258014122-18185-6-git-send-email-m.szyprowski@samsung.com>
+ <1258014122-18185-7-git-send-email-m.szyprowski@samsung.com>
+ <1258014122-18185-8-git-send-email-m.szyprowski@samsung.com>
+ <1258014122-18185-9-git-send-email-m.szyprowski@samsung.com>
+ <1258014122-18185-10-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:11717 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752583AbZKLIWv (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:15899 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752626AbZKLIXE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Nov 2009 03:22:51 -0500
-Received: from eu_spt1 (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0KSZ00LDMLY7PE@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 12 Nov 2009 08:22:56 +0000 (GMT)
+	Thu, 12 Nov 2009 03:23:04 -0500
+Received: from eu_spt2 ([210.118.77.14]) by mailout4.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0KSZ001ROLYFEI40@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 12 Nov 2009 08:23:03 +0000 (GMT)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0KSZ00MPQLY7ZR@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 12 Nov 2009 08:22:55 +0000 (GMT)
-In-reply-to: <1258014122-18185-2-git-send-email-m.szyprowski@samsung.com>
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0KSZ00L1LLYF4K@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 12 Nov 2009 08:23:03 +0000 (GMT)
+In-reply-to: <1258014122-18185-10-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, bhmin@samsung.com, laforge@gnumonks.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, bhmin@samsung.com, laforge@gnumonks.org, Pawel Osciak <p.osciak@samsung.com>
 
-From: Kyungmin Park <kyungmin.park@samsung.com>
+From: Pawel Osciak <p.osciak@samsung.com>
 
-From: Kyungmin Park <kyungmin.park@samsung.com>
+From: Pawel Osciak <p.osciak@samsung.com>
 
-S5PC110 and S5PC100 register maps differs in many places, rename all
-defined registers to be S5PC100 specific. PA_SYS register known from
-S3C64XX series has been renamed to more adequate PA_CLK. Also system map
-has been also updated to cover more integrated peripherals.
+Samsung S5PC100 has LCD-controller compatible with the one known from
+previous SoCs series. Add required platform setup and support code that
+it can be used with s3c-fb driver.
 
+Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/mach-s5pc100/include/mach/map.h |   87 +++++++++++++++++++++++++++--
- arch/arm/mach-s5pc100/mach-smdkc100.c    |    4 +-
- 2 files changed, 83 insertions(+), 8 deletions(-)
+ arch/arm/mach-s5pc100/include/mach/irqs.h    |    5 +
+ arch/arm/mach-s5pc100/include/mach/regs-fb.h |  139 ++++++++++++++++++++++++++
+ arch/arm/plat-s3c/include/plat/fb.h          |    7 ++
+ arch/arm/plat-s5pc1xx/Kconfig                |    5 +
+ arch/arm/plat-s5pc1xx/Makefile               |    1 +
+ arch/arm/plat-s5pc1xx/setup-fb-24bpp.c       |   49 +++++++++
+ 6 files changed, 206 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5pc100/include/mach/regs-fb.h
+ create mode 100644 arch/arm/plat-s5pc1xx/setup-fb-24bpp.c
 
-diff --git a/arch/arm/mach-s5pc100/include/mach/map.h b/arch/arm/mach-s5pc100/include/mach/map.h
-index 9e9f391..4681ebe 100644
---- a/arch/arm/mach-s5pc100/include/mach/map.h
-+++ b/arch/arm/mach-s5pc100/include/mach/map.h
-@@ -17,6 +17,19 @@
+diff --git a/arch/arm/mach-s5pc100/include/mach/irqs.h b/arch/arm/mach-s5pc100/include/mach/irqs.h
+index 622720d..b53fa48 100644
+--- a/arch/arm/mach-s5pc100/include/mach/irqs.h
++++ b/arch/arm/mach-s5pc100/include/mach/irqs.h
+@@ -11,4 +11,9 @@
  
- #include <plat/map-base.h>
+ #include <plat/irqs.h>
  
-+/*
-+ * map-base.h has already defined virtual memory address
-+ * S3C_VA_IRQ		S3C_ADDR(0x00000000)	irq controller(s)
-+ * S3C_VA_SYS		S3C_ADDR(0x00100000)	system control
-+ * S3C_VA_MEM		S3C_ADDR(0x00200000)	system control (not used)
-+ * S3C_VA_TIMER		S3C_ADDR(0x00300000)	timer block
-+ * S3C_VA_WATCHDOG	S3C_ADDR(0x00400000)	watchdog
-+ * S3C_VA_UART		S3C_ADDR(0x01000000)	UART
-+ *
-+ * S5PC100 specific virtual memory address can be defined here
-+ * S5PC1XX_VA_GPIO	S3C_ADDR(0x00500000)	GPIO
-+ *
-+ */
- 
- /* Chip ID */
- #define S5PC100_PA_CHIPID	(0xE0000000)
-@@ -24,13 +37,20 @@
- #define S5PC1XX_VA_CHIPID	S3C_VA_SYS
- 
- /* System */
--#define S5PC100_PA_SYS		(0xE0100000)
--#define S5PC100_PA_CLK		(S5PC100_PA_SYS + 0x0)
--#define S5PC100_PA_PWR		(S5PC100_PA_SYS + 0x8000)
-+#define S5PC100_PA_CLK		(0xE0100000)
-+#define S5PC100_PA_CLK_OTHER	(0xE0200000)
-+#define S5PC100_PA_PWR		(0xE0108000)
- #define S5PC1XX_PA_CLK		S5PC100_PA_CLK
- #define S5PC1XX_PA_PWR		S5PC100_PA_PWR
-+#define S5PC1XX_PA_CLK_OTHER	S5PC100_PA_CLK_OTHER
- #define S5PC1XX_VA_CLK		(S3C_VA_SYS + 0x10000)
- #define S5PC1XX_VA_PWR		(S3C_VA_SYS + 0x20000)
-+#define S5PC1XX_VA_CLK_OTHER	(S3C_VA_SYS + 0x30000)
-+
-+/* GPIO */
-+#define S5PC100_PA_GPIO		(0xE0300000)
-+#define S5PC1XX_PA_GPIO		S5PC100_PA_GPIO
-+#define S5PC1XX_VA_GPIO		S3C_ADDR(0x00500000)
- 
- /* Interrupt */
- #define S5PC100_PA_VIC		(0xE4000000)
-@@ -40,23 +60,64 @@
- #define S5PC1XX_PA_VIC(x)	(S5PC100_PA_VIC + ((x) * S5PC100_PA_VIC_OFFSET))
- #define S5PC1XX_VA_VIC(x)	(S5PC100_VA_VIC + ((x) * S5PC100_VA_VIC_OFFSET))
- 
-+/* DMA */
-+#define S5PC100_PA_MDMA		(0xE8100000)
-+#define S5PC100_PA_PDMA0	(0xE9000000)
-+#define S5PC100_PA_PDMA1	(0xE9200000)
-+
- /* Timer */
- #define S5PC100_PA_TIMER	(0xEA000000)
- #define S5PC1XX_PA_TIMER	S5PC100_PA_TIMER
- #define S5PC1XX_VA_TIMER	S3C_VA_TIMER
- 
-+/* RTC */
-+#define S5PC100_PA_RTC		(0xEA300000)
-+
- /* UART */
- #define S5PC100_PA_UART		(0xEC000000)
- #define S5PC1XX_PA_UART		S5PC100_PA_UART
- #define S5PC1XX_VA_UART		S3C_VA_UART
- 
--/* IIC */
--#define S5PC100_PA_IIC		(0xEC100000)
-+/* I2C */
-+#define S5PC100_PA_I2C		(0xEC100000)
-+#define S5PC100_PA_I2C1		(0xEC200000)
-+
-+/* USB HS OTG */
-+#define S5PC100_PA_USB_HSOTG	(0xED200000)
-+#define S5PC100_PA_USB_HSPHY	(0xED300000)
-+
-+/* SD/MMC */
-+#define S5PC100_PA_HSMMC(x)	(0xED800000 + ((x) * 0x100000))
-+#define S5PC100_PA_HSMMC0	S5PC100_PA_HSMMC(0)
-+#define S5PC100_PA_HSMMC1	S5PC100_PA_HSMMC(1)
-+#define S5PC100_PA_HSMMC2	S5PC100_PA_HSMMC(2)
-+
 +/* LCD */
-+#define S5PC100_PA_FB		(0xEE000000)
++#define IRQ_LCD_FIFO		IRQ_LCD0
++#define IRQ_LCD_VSYNC		IRQ_LCD1
++#define IRQ_LCD_SYSTEM		IRQ_LCD2
 +
-+/* Multimedia */
-+#define S5PC100_PA_G2D		(0xEE800000)
-+#define S5PC100_PA_JPEG		(0xEE500000)
-+#define S5PC100_PA_ROTATOR	(0xEE100000)
-+#define S5PC100_PA_G3D		(0xEF000000)
+ #endif /* __ASM_ARCH_IRQ_H */
+diff --git a/arch/arm/mach-s5pc100/include/mach/regs-fb.h b/arch/arm/mach-s5pc100/include/mach/regs-fb.h
+new file mode 100644
+index 0000000..1732cd2
+--- /dev/null
++++ b/arch/arm/mach-s5pc100/include/mach/regs-fb.h
+@@ -0,0 +1,139 @@
++/* arch/arm/mach-s5pc100/include/mach/regs-fb.h
++ *
++ * Copyright 2009 Samsung Electronics Co.
++ *   Pawel Osciak <p.osciak@samsung.com>
++ *
++ * Framebuffer register definitions for Samsung S5PC100.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
-+/* I2S */
-+#define S5PC100_PA_I2S0		(0xF2000000)
-+#define S5PC100_PA_I2S1		(0xF2100000)
-+#define S5PC100_PA_I2S2		(0xF2200000)
++#ifndef __ASM_ARCH_REGS_FB_H
++#define __ASM_ARCH_REGS_FB_H __FILE__
 +
-+/* KEYPAD */
-+#define S5PC100_PA_KEYPAD	(0xF3100000)
++#include <plat/regs-fb-v4.h>
 +
-+/* ADC & TouchScreen */
-+#define S5PC100_PA_TSADC	(0xF3000000)
++/* VP1 interface timing control */
++#define VP1CON0						(0x118)
++#define VP1_RATECON_EN					(1 << 31)
++#define VP1_CLKRATE_MASK				(0xff)
++
++#define VP1CON1						(0x11c)
++#define VP1_VTREGCON_EN					(1 << 31)
++#define VP1_VBPD_MASK					(0xfff)
++#define VP1_VBPD_SHIFT					(16)
++
++
++#define WPALCON_H					(0x19c)
++#define WPALCON_L					(0x1a0)
++
++/* Pallete contro for WPAL0 and WPAL1 is the same as in S3C64xx, but
++ * different for WPAL2-4
++ */
++/* In WPALCON_L (aka WPALCON) */
++#define WPALCON_W1PAL_32BPP_A888			(0x7 << 3)
++#define WPALCON_W0PAL_32BPP_A888			(0x7 << 0)
++
++/* To set W2PAL-W4PAL consist of one bit from WPALCON_L and two from WPALCON_H,
++ * e.g. W2PAL[2..0] is made of (WPALCON_H[10..9], WPALCON_L[6]).
++ */
++#define WPALCON_L_WxPAL_L_MASK				(0x1)
++#define WPALCON_L_W2PAL_L_SHIFT				(6)
++#define WPALCON_L_W3PAL_L_SHIFT				(7)
++#define WPALCON_L_W4PAL_L_SHIFT				(8)
++
++#define WPALCON_L_WxPAL_H_MASK				(0x3)
++#define WPALCON_H_W2PAL_H_SHIFT				(9)
++#define WPALCON_H_W3PAL_H_SHIFT				(13)
++#define WPALCON_H_W4PAL_H_SHIFT				(17)
++
++/* Per-window alpha value registers */
++/* For window 0 8-bit alpha values are in VIDW0ALPHAx,
++ * for windows 1-4 alpha values consist of two parts, the 4 low bits are
++ * taken from VIDWxALPHAx and 4 high bits are from VIDOSDxC,
++ * e.g. WIN1_ALPHA0_B[7..0] = (VIDOSD1C[3..0], VIDW1ALPHA0[3..0])
++ */
++#define VIDWxALPHA0(_win)				(0x200 + (_win * 8))
++#define VIDWxALPHA1(_win)				(0x204 + (_win * 8))
++
++/* Only for window 0 in VIDW0ALPHAx. */
++#define VIDW0ALPHAx_R(_x)				((_x) << 16)
++#define VIDW0ALPHAx_R_MASK				(0xff << 16)
++#define VIDW0ALPHAx_R_SHIFT				(16)
++#define VIDW0ALPHAx_G(_x)				((_x) << 8)
++#define VIDW0ALPHAx_G_MASK				(0xff << 8)
++#define VIDW0ALPHAx_G_SHIFT				(8)
++#define VIDW0ALPHAx_B(_x)				((_x) << 0)
++#define VIDW0ALPHAx_B_MASK				(0xff << 0)
++#define VIDW0ALPHAx_B_SHIFT				(0)
++
++/* Low 4 bits of alpha0-1 for windows 1-4 */
++#define VIDW14ALPHAx_R_L(_x)				((_x) << 16)
++#define VIDW14ALPHAx_R_L_MASK				(0xf << 16)
++#define VIDW14ALPHAx_R_L_SHIFT				(16)
++#define VIDW14ALPHAx_G_L(_x)				((_x) << 8)
++#define VIDW14ALPHAx_G_L_MASK				(0xf << 8)
++#define VIDW14ALPHAx_G_L_SHIFT				(8)
++#define VIDW14ALPHAx_B_L(_x)				((_x) << 0)
++#define VIDW14ALPHAx_B_L_MASK				(0xf << 0)
++#define VIDW14ALPHAx_B_L_SHIFT				(0)
++
++
++/* Per-window blending equation control registers */
++#define BLENDEQx(_win)					(0x244 + ((_win) * 4))
++#define BLENDEQ1					(0x244)
++#define BLENDEQ2					(0x248)
++#define BLENDEQ3					(0x24c)
++#define BLENDEQ4					(0x250)
++
++#define BLENDEQx_Q_FUNC(_x)				((_x) << 18)
++#define BLENDEQx_Q_FUNC_MASK				(0xf << 18)
++#define BLENDEQx_P_FUNC(_x)				((_x) << 12)
++#define BLENDEQx_P_FUNC_MASK				(0xf << 12)
++#define BLENDEQx_B_FUNC(_x)				((_x) << 6)
++#define BLENDEQx_B_FUNC_MASK				(0xf << 6)
++#define BLENDEQx_A_FUNC(_x)				((_x) << 0)
++#define BLENDEQx_A_FUNC_MASK				(0xf << 0)
++
++#define BLENDCON					(0x260)
++#define BLENDCON_8BIT_ALPHA				(1 << 0)
++
++/* Per-window palette base addresses (start of palette memory).
++ * Each window palette area consists of 256 32-bit entries.
++ * START is the first address (entry 0th), END is the address of 255th entry.
++ */
++#define WIN0_PAL_BASE					(0x2400)
++#define WIN0_PAL_END					(0x27fc)
++#define WIN1_PAL_BASE					(0x2800)
++#define WIN1_PAL_END					(0x2bfc)
++#define WIN2_PAL_BASE					(0x2c00)
++#define WIN2_PAL_END					(0x2ffc)
++#define WIN3_PAL_BASE					(0x3000)
++#define WIN3_PAL_END					(0x33fc)
++#define WIN4_PAL_BASE					(0x3400)
++#define WIN4_PAL_END					(0x37fc)
++
++#define WIN0_PAL(_entry)			(WIN0_PAL_BASE + ((_entry) * 4))
++#define WIN1_PAL(_entry)			(WIN1_PAL_BASE + ((_entry) * 4))
++#define WIN2_PAL(_entry)			(WIN2_PAL_BASE + ((_entry) * 4))
++#define WIN3_PAL(_entry)			(WIN3_PAL_BASE + ((_entry) * 4))
++#define WIN4_PAL(_entry)			(WIN4_PAL_BASE + ((_entry) * 4))
++
++static inline unsigned int s3c_fb_pal_reg(unsigned int window, int reg)
++{
++	switch (window) {
++	case 0: return WIN0_PAL(reg);
++	case 1: return WIN1_PAL(reg);
++	case 2: return WIN2_PAL(reg);
++	case 3: return WIN3_PAL(reg);
++	case 4: return WIN4_PAL(reg);
++	}
++
++	BUG();
++}
++
++
++#endif /* __ASM_ARCH_REGS_FB_H */
++
+diff --git a/arch/arm/plat-s3c/include/plat/fb.h b/arch/arm/plat-s3c/include/plat/fb.h
+index 214ff56..f8db879 100644
+--- a/arch/arm/plat-s3c/include/plat/fb.h
++++ b/arch/arm/plat-s3c/include/plat/fb.h
+@@ -70,4 +70,11 @@ extern void s3c_fb_set_platdata(struct s3c_fb_platdata *pd);
+  */
+ extern void s3c64xx_fb_gpio_setup_24bpp(void);
  
- /* ETC */
- #define S5PC100_PA_SDRAM	(0x20000000)
-+#define S5PC1XX_PA_SDRAM	S5PC100_PA_SDRAM
++/**
++ * s5pc100_fb_gpio_setup_24bpp() - S5PC100 setup function for 24bpp LCD
++ *
++ * Initialise the GPIO for an 24bpp LCD display on the RGB interface.
++ */
++extern void s5pc100_fb_gpio_setup_24bpp(void);
++
+ #endif /* __PLAT_S3C_FB_H */
+diff --git a/arch/arm/plat-s5pc1xx/Kconfig b/arch/arm/plat-s5pc1xx/Kconfig
+index 86edd27..6ac48a6 100644
+--- a/arch/arm/plat-s5pc1xx/Kconfig
++++ b/arch/arm/plat-s5pc1xx/Kconfig
+@@ -37,6 +37,11 @@ config CPU_S5PC100_CLOCK
  
- /* compatibility defines. */
-+#define S3C_PA_RTC		S5PC100_PA_RTC
- #define S3C_PA_UART		S5PC100_PA_UART
- #define S3C_PA_UART0		(S5PC100_PA_UART + 0x0)
- #define S3C_PA_UART1		(S5PC100_PA_UART + 0x400)
-@@ -67,9 +128,23 @@
- #define S3C_VA_UART2		(S3C_VA_UART + 0x800)
- #define S3C_VA_UART3		(S3C_VA_UART + 0xC00)
- #define S3C_UART_OFFSET		0x400
-+#define S3C_VA_UARTx(x)		(S3C_VA_UART + ((x) * S3C_UART_OFFSET))
-+#define S3C_PA_FB		S5PC100_PA_FB
-+#define S3C_PA_G2D		S5PC100_PA_G2D
-+#define S3C_PA_G3D		S5PC100_PA_G3D
-+#define S3C_PA_JPEG		S5PC100_PA_JPEG
-+#define S3C_PA_ROTATOR		S5PC100_PA_ROTATOR
- #define S3C_VA_VIC0		(S3C_VA_IRQ + 0x0)
- #define S3C_VA_VIC1		(S3C_VA_IRQ + 0x10000)
- #define S3C_VA_VIC2		(S3C_VA_IRQ + 0x20000)
--#define S3C_PA_IIC		S5PC100_PA_IIC
-+#define S3C_PA_IIC		S5PC100_PA_I2C
-+#define S3C_PA_IIC1		S5PC100_PA_I2C1
-+#define S3C_PA_USB_HSOTG	S5PC100_PA_USB_HSOTG
-+#define S3C_PA_USB_HSPHY	S5PC100_PA_USB_HSPHY
-+#define S3C_PA_HSMMC0		S5PC100_PA_HSMMC0
-+#define S3C_PA_HSMMC1		S5PC100_PA_HSMMC1
-+#define S3C_PA_HSMMC2		S5PC100_PA_HSMMC2
-+#define S3C_PA_KEYPAD		S5PC100_PA_KEYPAD
-+#define S3C_PA_TSADC		S5PC100_PA_TSADC
+ # platform specific device setup
  
- #endif /* __ASM_ARCH_C100_MAP_H */
-diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-s5pc100/mach-smdkc100.c
-index 214093c..05bb20a 100644
---- a/arch/arm/mach-s5pc100/mach-smdkc100.c
-+++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
-@@ -92,9 +92,9 @@ static void __init smdkc100_machine_init(void)
++config S5PC1XX_SETUP_FB_24BPP
++	bool
++	help
++          Common setup code for S5PC1XX with an 24bpp RGB display helper.
++
+ config S5PC100_SETUP_I2C0
+ 	bool
+ 	default y
+diff --git a/arch/arm/plat-s5pc1xx/Makefile b/arch/arm/plat-s5pc1xx/Makefile
+index e860813..3d2ac71 100644
+--- a/arch/arm/plat-s5pc1xx/Makefile
++++ b/arch/arm/plat-s5pc1xx/Makefile
+@@ -25,5 +25,6 @@ obj-$(CONFIG_CPU_S5PC100_CLOCK)	+= s5pc100-clock.o
+ # Device setup
  
- MACHINE_START(SMDKC100, "SMDKC100")
- 	/* Maintainer: Byungho Min <bhmin@samsung.com> */
--	.phys_io	= S5PC1XX_PA_UART & 0xfff00000,
-+	.phys_io	= S5PC100_PA_UART & 0xfff00000,
- 	.io_pg_offst	= (((u32)S5PC1XX_VA_UART) >> 18) & 0xfffc,
--	.boot_params	= S5PC100_PA_SDRAM + 0x100,
-+	.boot_params	= S5PC1XX_PA_SDRAM + 0x100,
- 
- 	.init_irq	= s5pc100_init_irq,
- 	.map_io		= smdkc100_map_io,
+ obj-$(CONFIG_S5P_GPIO_CFG_S5PC1XX) += gpio-config.o
++obj-$(CONFIG_S5PC1XX_SETUP_FB_24BPP) += setup-fb-24bpp.o
+ obj-$(CONFIG_S5PC100_SETUP_I2C0) += setup-i2c0.o
+ obj-$(CONFIG_S5PC100_SETUP_I2C1) += setup-i2c1.o
+diff --git a/arch/arm/plat-s5pc1xx/setup-fb-24bpp.c b/arch/arm/plat-s5pc1xx/setup-fb-24bpp.c
+new file mode 100644
+index 0000000..b63f33e
+--- /dev/null
++++ b/arch/arm/plat-s5pc1xx/setup-fb-24bpp.c
+@@ -0,0 +1,49 @@
++/*
++ * linux/arch/arm/plat-s5pc100/setup-fb-24bpp.c
++ *
++ * Copyright 2009 Samsung Electronics
++ *
++ * Base S5PC1XX setup information for 24bpp LCD framebuffer
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/kernel.h>
++#include <linux/types.h>
++#include <linux/fb.h>
++
++#include <mach/regs-fb.h>
++#include <mach/gpio.h>
++#include <mach/map.h>
++#include <plat/fb.h>
++#include <plat/gpio-cfg.h>
++#include <plat/gpio-cfg-s5pc1xx.h>
++
++#define DISR_OFFSET	0x7008
++
++void s5pc100_fb_gpio_setup_24bpp(void)
++{
++	unsigned int gpio = 0;
++
++	for (gpio = S5PC100_GPF0(0); gpio <= S5PC100_GPF0(7); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++	}
++
++	for (gpio = S5PC100_GPF1(0); gpio <= S5PC100_GPF1(7); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++	}
++
++	for (gpio = S5PC100_GPF2(0); gpio <= S5PC100_GPF2(7); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++	}
++
++	for (gpio = S5PC100_GPF3(0); gpio <= S5PC100_GPF3(3); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++	}
++}
 -- 
 1.6.5
