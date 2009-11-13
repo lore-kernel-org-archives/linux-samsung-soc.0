@@ -1,339 +1,162 @@
 From: Ben Dooks <ben@simtec.co.uk>
-Subject: [patch 3/3] ARM: S3C: Update Simtec copyright statements from , to - [2]
-Date: Fri, 13 Nov 2009 22:54:45 +0000
-Message-ID: <20091113225514.307605452@fluff.org.uk>
+Subject: [patch 1/3] ARM: S3C: Fix Simtec copyright statements in Documentation/S3C24XX
+Date: Fri, 13 Nov 2009 22:54:43 +0000
+Message-ID: <20091113225514.015935853@fluff.org.uk>
 References: <20091113225442.869542648@fluff.org.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from aeryn.fluff.org.uk ([87.194.8.8]:45361 "EHLO
+Received: from aeryn.fluff.org.uk ([87.194.8.8]:45363 "EHLO
 	kira.home.fluff.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932406AbZKMWzN (ORCPT
+	with ESMTP id S932350AbZKMWzO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Nov 2009 17:55:13 -0500
-Content-Disposition: inline; filename=copyright-fix4.patch
+	Fri, 13 Nov 2009 17:55:14 -0500
+Content-Disposition: inline; filename=copyright-fix1.patch
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Simtec Linux Team <linux@simtec.co.uk>
 
-There are a number of statements of the form A, B or A, B, C where
-the numbers A,B,C are not consecutive. However, referencing [1] it
-is the correct thing to replace these with A-B or A-C as apropriate.
+The (c) alone is not a sufficient copyright statement, nor is it a
+good replacement for the proper encircled &copy; symbol [1]. Add the
+word copyright to the apropriate places and remove the (c) symbol.
 
 [1] http://www.copyrightservice.co.uk/copyright/p03_copyright_notices
-    section 4iii 'Year of publication'
+    section 4 'What does a notice consist of?'
 
 Signed-off-by: Ben Dooks <ben@simtec.co.uk>
 Signed-off-by: Simtec Linux Team <linux@simtec.co.uk>
 
 ---
- arch/arm/mach-s3c2400/include/mach/map.h           |    2 +-
- arch/arm/mach-s3c2410/bast-irq.c                   |    2 +-
- arch/arm/mach-s3c2410/cpu-freq.c                   |    2 +-
- arch/arm/mach-s3c2410/include/mach/dma.h           |    2 +-
- arch/arm/mach-s3c2410/include/mach/gpio-fns.h      |    2 +-
- arch/arm/mach-s3c2410/include/mach/uncompress.h    |    3 +--
- arch/arm/mach-s3c2410/mach-bast.c                  |    4 ++--
- arch/arm/mach-s3c2410/mach-vr1000.c                |    2 +-
- arch/arm/mach-s3c2440/mach-osiris.c                |    2 +-
- arch/arm/mach-s3c24a0/include/mach/map.h           |    2 +-
- arch/arm/plat-s3c/dma.c                            |    2 +-
- arch/arm/plat-s3c/include/plat/dma.h               |    2 +-
- arch/arm/plat-s3c/include/plat/iic.h               |    2 +-
- arch/arm/plat-s3c/pm-check.c                       |    2 +-
- arch/arm/plat-s3c/pm.c                             |    2 +-
- arch/arm/plat-s3c24xx/clock-dclk.c                 |    2 +-
- arch/arm/plat-s3c24xx/include/plat/cpu-freq-core.h |    2 +-
- arch/arm/plat-s3c24xx/include/plat/regs-dma.h      |    2 +-
- arch/arm/plat-s3c24xx/pm.c                         |    2 +-
- arch/arm/plat-s3c24xx/s3c2410-iotiming.c           |    2 +-
- arch/arm/plat-s3c24xx/s3c2412-iotiming.c           |    2 +-
- arch/arm/plat-s3c24xx/s3c2440-cpufreq.c            |    2 +-
- arch/arm/plat-s3c24xx/s3c244x-clock.c              |    2 +-
- drivers/serial/s3c2410.c                           |    2 +-
- drivers/serial/s3c2412.c                           |    2 +-
- drivers/serial/s3c2440.c                           |    2 +-
- drivers/serial/s3c24a0.c                           |    2 +-
- drivers/serial/samsung.c                           |    2 +-
- drivers/serial/samsung.h                           |    2 +-
- 29 files changed, 30 insertions(+), 31 deletions(-)
+ Documentation/arm/Samsung-S3C24XX/EB2410ITX.txt |    2 +-
+ Documentation/arm/Samsung-S3C24XX/GPIO.txt      |    2 +-
+ Documentation/arm/Samsung-S3C24XX/Overview.txt  |    2 +-
+ Documentation/arm/Samsung-S3C24XX/S3C2412.txt   |    2 +-
+ Documentation/arm/Samsung-S3C24XX/S3C2413.txt   |    2 +-
+ Documentation/arm/Samsung-S3C24XX/Suspend.txt   |    2 +-
+ Documentation/arm/Samsung-S3C24XX/USB-Host.txt  |    2 +-
+ arch/arm/mach-s3c2410/bast-irq.c                |    4 ++--
+ arch/arm/mach-s3c2410/include/mach/osiris-map.h |    2 +-
+ arch/arm/mach-s3c2410/mach-bast.c               |    4 ++--
+ arch/arm/mach-s3c2410/usb-simtec.c              |    4 ++--
+ arch/arm/mach-s3c2440/mach-anubis.c             |    4 ++--
+ arch/arm/plat-s3c/clock.c                       |    4 ++--
+ arch/arm/plat-s3c/include/plat/regs-serial.h    |    2 +-
+ arch/arm/plat-s3c24xx/dma.c                     |    4 ++--
+ arch/arm/plat-s3c24xx/pm-simtec.c               |    4 ++--
+ 16 files changed, 23 insertions(+), 23 deletions(-)
 
-
-Index: b/arch/arm/plat-s3c24xx/clock-dclk.c
+Index: b/Documentation/arm/Samsung-S3C24XX/GPIO.txt
 ===================================================================
---- a/arch/arm/plat-s3c24xx/clock-dclk.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/plat-s3c24xx/clock-dclk.c	2009-11-13 22:52:53.000000000 +0000
-@@ -1,6 +1,6 @@
- /* linux/arch/arm/plat-s3c24xx/clock-dclk.c
-  *
-- * Copyright (c) 2004,2008 Simtec Electronics
-+ * Copyright (c) 2004-2008 Simtec Electronics
-  *	Ben Dooks <ben@simtec.co.uk>
-  *	http://armlinux.simtec.co.uk/
-  *
-Index: b/arch/arm/plat-s3c24xx/include/plat/cpu-freq-core.h
+--- a/Documentation/arm/Samsung-S3C24XX/GPIO.txt	2009-11-10 15:53:56.000000000 +0000
++++ b/Documentation/arm/Samsung-S3C24XX/GPIO.txt	2009-11-10 15:54:04.000000000 +0000
+@@ -134,4 +134,4 @@ Authour
+ 
+ 
+ Ben Dooks, 03 October 2004
+-(c) 2004 Ben Dooks, Simtec Electronics
++Copyright 2004 Ben Dooks, Simtec Electronics
+Index: b/Documentation/arm/Samsung-S3C24XX/Overview.txt
 ===================================================================
---- a/arch/arm/plat-s3c24xx/include/plat/cpu-freq-core.h	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/plat-s3c24xx/include/plat/cpu-freq-core.h	2009-11-13 22:52:53.000000000 +0000
-@@ -1,6 +1,6 @@
- /* arch/arm/plat-s3c/include/plat/cpu-freq.h
-  *
-- * Copyright (c) 2006,2007,2009 Simtec Electronics
-+ * Copyright (c) 2006-2009 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-Index: b/arch/arm/plat-s3c24xx/pm.c
+--- a/Documentation/arm/Samsung-S3C24XX/Overview.txt	2009-11-10 15:53:56.000000000 +0000
++++ b/Documentation/arm/Samsung-S3C24XX/Overview.txt	2009-11-10 15:54:04.000000000 +0000
+@@ -299,4 +299,4 @@ Port Contributors
+ Document Author
+ ---------------
+ 
+-Ben Dooks, (c) 2004-2005,2006 Simtec Electronics
++Ben Dooks, Copyright 2004-2005,2006 Simtec Electronics
+Index: b/Documentation/arm/Samsung-S3C24XX/EB2410ITX.txt
 ===================================================================
---- a/arch/arm/plat-s3c24xx/pm.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/plat-s3c24xx/pm.c	2009-11-13 22:52:53.000000000 +0000
-@@ -1,6 +1,6 @@
- /* linux/arch/arm/plat-s3c24xx/pm.c
-  *
-- * Copyright (c) 2004,2006 Simtec Electronics
-+ * Copyright (c) 2004-2006 Simtec Electronics
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-  * S3C24XX Power Manager (Suspend-To-RAM) support
-Index: b/arch/arm/plat-s3c24xx/s3c2440-cpufreq.c
+--- a/Documentation/arm/Samsung-S3C24XX/EB2410ITX.txt	2009-11-10 15:53:56.000000000 +0000
++++ b/Documentation/arm/Samsung-S3C24XX/EB2410ITX.txt	2009-11-10 15:54:04.000000000 +0000
+@@ -55,4 +55,4 @@ Maintainers
+   This board is maintained by Simtec Electronics.
+ 
+ 
+-(c) 2004 Ben Dooks, Simtec Electronics
++Copyright 2004 Ben Dooks, Simtec Electronics
+Index: b/Documentation/arm/Samsung-S3C24XX/S3C2412.txt
 ===================================================================
---- a/arch/arm/plat-s3c24xx/s3c2440-cpufreq.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/plat-s3c24xx/s3c2440-cpufreq.c	2009-11-13 22:52:53.000000000 +0000
-@@ -1,6 +1,6 @@
- /* linux/arch/arm/plat-s3c24xx/s3c2440-cpufreq.c
-  *
-- * Copyright (c) 2006,2008,2009 Simtec Electronics
-+ * Copyright (c) 2006-2009 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
-  *	Ben Dooks <ben@simtec.co.uk>
-  *	Vincent Sanders <vince@simtec.co.uk>
-Index: b/arch/arm/mach-s3c2410/include/mach/uncompress.h
+--- a/Documentation/arm/Samsung-S3C24XX/S3C2412.txt	2009-11-10 15:53:56.000000000 +0000
++++ b/Documentation/arm/Samsung-S3C24XX/S3C2412.txt	2009-11-10 15:54:04.000000000 +0000
+@@ -117,4 +117,4 @@ ATA
+ Document Author
+ ---------------
+ 
+-Ben Dooks, (c) 2006 Simtec Electronics
++Ben Dooks, Copyright 2006 Simtec Electronics
+Index: b/Documentation/arm/Samsung-S3C24XX/S3C2413.txt
 ===================================================================
---- a/arch/arm/mach-s3c2410/include/mach/uncompress.h	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/mach-s3c2410/include/mach/uncompress.h	2009-11-13 22:52:53.000000000 +0000
-@@ -1,7 +1,6 @@
--
- /* arch/arm/mach-s3c2410/include/mach/uncompress.h
-  *
-- * Copyright (c) 2003, 2007 Simtec Electronics
-+ * Copyright (c) 2003-2007 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-Index: b/arch/arm/mach-s3c2410/cpu-freq.c
+--- a/Documentation/arm/Samsung-S3C24XX/S3C2413.txt	2009-11-10 15:53:56.000000000 +0000
++++ b/Documentation/arm/Samsung-S3C24XX/S3C2413.txt	2009-11-10 15:54:04.000000000 +0000
+@@ -18,4 +18,4 @@ Camera Interface
+ Document Author
+ ---------------
+ 
+-Ben Dooks, (c) 2006 Simtec Electronics
++Ben Dooks, Copyright 2006 Simtec Electronics
+Index: b/Documentation/arm/Samsung-S3C24XX/Suspend.txt
 ===================================================================
---- a/arch/arm/mach-s3c2410/cpu-freq.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/mach-s3c2410/cpu-freq.c	2009-11-13 22:52:53.000000000 +0000
-@@ -1,6 +1,6 @@
- /* linux/arch/arm/mach-s3c2410/cpu-freq.c
-  *
-- * Copyright (c) 2006,2008 Simtec Electronics
-+ * Copyright (c) 2006-2008 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-Index: b/arch/arm/mach-s3c2410/mach-vr1000.c
+--- a/Documentation/arm/Samsung-S3C24XX/Suspend.txt	2009-11-10 15:53:56.000000000 +0000
++++ b/Documentation/arm/Samsung-S3C24XX/Suspend.txt	2009-11-10 15:54:04.000000000 +0000
+@@ -133,5 +133,5 @@ Configuration
+ Document Author
+ ---------------
+ 
+-Ben Dooks, (c) 2004 Simtec Electronics
++Ben Dooks, Copyright 2004 Simtec Electronics
+ 
+Index: b/Documentation/arm/Samsung-S3C24XX/USB-Host.txt
 ===================================================================
---- a/arch/arm/mach-s3c2410/mach-vr1000.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/mach-s3c2410/mach-vr1000.c	2009-11-13 22:52:53.000000000 +0000
-@@ -1,6 +1,6 @@
- /* linux/arch/arm/mach-s3c2410/mach-vr1000.c
-  *
-- * Copyright (c) 2003-2005,2008 Simtec Electronics
-+ * Copyright (c) 2003-2008 Simtec Electronics
-  *   Ben Dooks <ben@simtec.co.uk>
-  *
-  * Machine support for Thorcom VR1000 board. Designed for Thorcom by
-Index: b/arch/arm/plat-s3c/dma.c
-===================================================================
---- a/arch/arm/plat-s3c/dma.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/plat-s3c/dma.c	2009-11-13 22:52:53.000000000 +0000
-@@ -1,6 +1,6 @@
- /* linux/arch/arm/plat-s3c/dma.c
-  *
-- * Copyright (c) 2003-2005,2006,2009 Simtec Electronics
-+ * Copyright (c) 2003-2009 Simtec Electronics
-  *	Ben Dooks <ben@simtec.co.uk>
-  *	http://armlinux.simtec.co.uk/
-  *
-Index: b/arch/arm/plat-s3c/pm-check.c
-===================================================================
---- a/arch/arm/plat-s3c/pm-check.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/plat-s3c/pm-check.c	2009-11-13 22:52:54.000000000 +0000
-@@ -1,7 +1,7 @@
- /* linux/arch/arm/plat-s3c/pm-check.c
-  *  originally in linux/arch/arm/plat-s3c24xx/pm.c
-  *
-- * Copyright (c) 2004,2006,2008 Simtec Electronics
-+ * Copyright (c) 2004-2008 Simtec Electronics
-  *	http://armlinux.simtec.co.uk
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-Index: b/arch/arm/mach-s3c24a0/include/mach/map.h
-===================================================================
---- a/arch/arm/mach-s3c24a0/include/mach/map.h	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/mach-s3c24a0/include/mach/map.h	2009-11-13 22:52:54.000000000 +0000
-@@ -1,6 +1,6 @@
- /* linux/arch/arm/mach-s3c24a0/include/mach/map.h
-  *
-- * Copyright 2003,2007  Simtec Electronics
-+ * Copyright 2003-2007  Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-Index: b/arch/arm/mach-s3c2410/include/mach/gpio-fns.h
-===================================================================
---- a/arch/arm/mach-s3c2410/include/mach/gpio-fns.h	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/mach-s3c2410/include/mach/gpio-fns.h	2009-11-13 22:52:54.000000000 +0000
-@@ -1,6 +1,6 @@
- /* arch/arm/mach-s3c2410/include/mach/gpio-fns.h
-  *
-- * Copyright (c) 2003,2009 Simtec Electronics
-+ * Copyright (c) 2003-2009 Simtec Electronics
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-  * S3C2410 - hardware
-Index: b/arch/arm/mach-s3c2410/include/mach/dma.h
-===================================================================
---- a/arch/arm/mach-s3c2410/include/mach/dma.h	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/mach-s3c2410/include/mach/dma.h	2009-11-13 22:52:54.000000000 +0000
-@@ -1,6 +1,6 @@
- /* arch/arm/mach-s3c2410/include/mach/dma.h
-  *
-- * Copyright (C) 2003,2004,2006 Simtec Electronics
-+ * Copyright (C) 2003-2006 Simtec Electronics
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-  * Samsung S3C24XX DMA support
+--- a/Documentation/arm/Samsung-S3C24XX/USB-Host.txt	2009-11-10 15:53:56.000000000 +0000
++++ b/Documentation/arm/Samsung-S3C24XX/USB-Host.txt	2009-11-10 15:54:04.000000000 +0000
+@@ -90,4 +90,4 @@ Platform Data
+ Document Author
+ ---------------
+ 
+-Ben Dooks, (c) 2005 Simtec Electronics
++Ben Dooks, Copyright 2005 Simtec Electronics
 Index: b/arch/arm/mach-s3c2410/bast-irq.c
 ===================================================================
---- a/arch/arm/mach-s3c2410/bast-irq.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/mach-s3c2410/bast-irq.c	2009-11-13 22:52:54.000000000 +0000
+--- a/arch/arm/mach-s3c2410/bast-irq.c	2009-11-10 15:53:56.000000000 +0000
++++ b/arch/arm/mach-s3c2410/bast-irq.c	2009-11-10 15:54:04.000000000 +0000
 @@ -1,6 +1,6 @@
  /* linux/arch/arm/mach-s3c2410/bast-irq.c
   *
-- * Copyright 2003,2005 Simtec Electronics
-+ * Copyright 2003-2005 Simtec Electronics
+- * Copyright (c) 2003,2005 Simtec Electronics
++ * Copyright 2003,2005 Simtec Electronics
   *   Ben Dooks <ben@simtec.co.uk>
   *
   * http://www.simtec.co.uk/products/EB2410ITX/
-Index: b/arch/arm/plat-s3c/include/plat/iic.h
+@@ -141,7 +141,7 @@ static __init int bast_irq_init(void)
+ 	unsigned int i;
+ 
+ 	if (machine_is_bast()) {
+-		printk(KERN_INFO "BAST PC104 IRQ routing, (c) 2005 Simtec Electronics\n");
++		printk(KERN_INFO "BAST PC104 IRQ routing, Copyright 2005 Simtec Electronics\n");
+ 
+ 		/* zap all the IRQs */
+ 
+Index: b/arch/arm/mach-s3c2410/include/mach/osiris-map.h
 ===================================================================
---- a/arch/arm/plat-s3c/include/plat/iic.h	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/plat-s3c/include/plat/iic.h	2009-11-13 22:52:54.000000000 +0000
+--- a/arch/arm/mach-s3c2410/include/mach/osiris-map.h	2009-11-10 15:53:56.000000000 +0000
++++ b/arch/arm/mach-s3c2410/include/mach/osiris-map.h	2009-11-10 15:54:04.000000000 +0000
 @@ -1,6 +1,6 @@
- /* arch/arm/plat-s3c/include/plat/iic.h
+ /* arch/arm/mach-s3c2410/include/mach/osiris-map.h
   *
-- * Copyright 2004,2009 Simtec Electronics
-+ * Copyright 2004-2009 Simtec Electronics
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-  * S3C - I2C Controller platform_device info
-Index: b/arch/arm/plat-s3c/include/plat/dma.h
-===================================================================
---- a/arch/arm/plat-s3c/include/plat/dma.h	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/plat-s3c/include/plat/dma.h	2009-11-13 22:52:54.000000000 +0000
-@@ -1,6 +1,6 @@
- /* arch/arm/plat-s3c/include/plat/dma.h
-  *
-- * Copyright (C) 2003,2004,2006 Simtec Electronics
-+ * Copyright (C) 2003-2006 Simtec Electronics
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-  * Samsung S3C DMA support
-Index: b/arch/arm/plat-s3c/pm.c
-===================================================================
---- a/arch/arm/plat-s3c/pm.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/plat-s3c/pm.c	2009-11-13 22:52:54.000000000 +0000
-@@ -1,7 +1,7 @@
- /* linux/arch/arm/plat-s3c/pm.c
-  *
-  * Copyright 2008 Openmoko, Inc.
-- * Copyright 2004,2006,2008 Simtec Electronics
-+ * Copyright 2004-2008 Simtec Electronics
-  *	Ben Dooks <ben@simtec.co.uk>
-  *	http://armlinux.simtec.co.uk/
-  *
-Index: b/arch/arm/plat-s3c24xx/include/plat/regs-dma.h
-===================================================================
---- a/arch/arm/plat-s3c24xx/include/plat/regs-dma.h	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/plat-s3c24xx/include/plat/regs-dma.h	2009-11-13 22:52:54.000000000 +0000
-@@ -1,6 +1,6 @@
- /* arch/arm/mach-s3c2410/include/mach/dma.h
-  *
-- * Copyright (C) 2003,2004,2006 Simtec Electronics
-+ * Copyright (C) 2003-2006 Simtec Electronics
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-  * Samsung S3C24XX DMA support
-Index: b/arch/arm/plat-s3c24xx/s3c2412-iotiming.c
-===================================================================
---- a/arch/arm/plat-s3c24xx/s3c2412-iotiming.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/plat-s3c24xx/s3c2412-iotiming.c	2009-11-13 22:52:54.000000000 +0000
-@@ -1,6 +1,6 @@
- /* linux/arch/arm/plat-s3c24xx/s3c2412-iotiming.c
-  *
-- * Copyright (c) 2006,2008 Simtec Electronics
-+ * Copyright (c) 2006-2008 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-Index: b/arch/arm/mach-s3c2440/mach-osiris.c
-===================================================================
---- a/arch/arm/mach-s3c2440/mach-osiris.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/mach-s3c2440/mach-osiris.c	2009-11-13 22:52:54.000000000 +0000
-@@ -1,6 +1,6 @@
- /* linux/arch/arm/mach-s3c2440/mach-osiris.c
-  *
-- * Copyright (c) 2005,2008 Simtec Electronics
-+ * Copyright (c) 2005-2008 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-Index: b/arch/arm/plat-s3c24xx/s3c2410-iotiming.c
-===================================================================
---- a/arch/arm/plat-s3c24xx/s3c2410-iotiming.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/plat-s3c24xx/s3c2410-iotiming.c	2009-11-13 22:52:54.000000000 +0000
-@@ -1,6 +1,6 @@
- /* linux/arch/arm/plat-s3c24xx/s3c2410-iotiming.c
-  *
-- * Copyright (c) 2006,2008,2009 Simtec Electronics
-+ * Copyright (c) 2006-2009 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-Index: b/arch/arm/plat-s3c24xx/s3c244x-clock.c
-===================================================================
---- a/arch/arm/plat-s3c24xx/s3c244x-clock.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/plat-s3c24xx/s3c244x-clock.c	2009-11-13 22:52:54.000000000 +0000
-@@ -1,6 +1,6 @@
- /* linux/arch/arm/plat-s3c24xx/s3c24xx-clock.c
-  *
-- * Copyright (c) 2004-2005,2008 Simtec Electronics
-+ * Copyright (c) 2004-2008 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-Index: b/arch/arm/mach-s3c2400/include/mach/map.h
-===================================================================
---- a/arch/arm/mach-s3c2400/include/mach/map.h	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/mach-s3c2400/include/mach/map.h	2009-11-13 22:52:54.000000000 +0000
-@@ -1,6 +1,6 @@
- /* arch/arm/mach-s3c2400/include/mach/map.h
-  *
-- * Copyright 2003,2007  Simtec Electronics
-+ * Copyright 2003-2007 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
+- * (c) 2005 Simtec Electronics
++ * Copyright 2005 Simtec Electronics
+  *	http://www.simtec.co.uk/products/
   *	Ben Dooks <ben@simtec.co.uk>
   *
 Index: b/arch/arm/mach-s3c2410/mach-bast.c
 ===================================================================
---- a/arch/arm/mach-s3c2410/mach-bast.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/arch/arm/mach-s3c2410/mach-bast.c	2009-11-13 22:52:54.000000000 +0000
+--- a/arch/arm/mach-s3c2410/mach-bast.c	2009-11-10 15:53:56.000000000 +0000
++++ b/arch/arm/mach-s3c2410/mach-bast.c	2009-11-10 15:54:04.000000000 +0000
 @@ -1,6 +1,6 @@
  /* linux/arch/arm/mach-s3c2410/mach-bast.c
   *
-- * Copyright 2003-2005,2008 Simtec Electronics
-+ * Copyright 2003-2008 Simtec Electronics
+- * Copyright (c) 2003-2005,2008 Simtec Electronics
++ * Copyright 2003-2005,2008 Simtec Electronics
   *   Ben Dooks <ben@simtec.co.uk>
   *
   * http://www.simtec.co.uk/products/EB2410ITX/
@@ -341,86 +164,126 @@ Index: b/arch/arm/mach-s3c2410/mach-bast.c
  #include "usb-simtec.h"
  #include "nor-simtec.h"
  
--#define COPYRIGHT ", Copyright 2004-2005 Simtec Electronics"
-+#define COPYRIGHT ", Copyright 2004-2008 Simtec Electronics"
+-#define COPYRIGHT ", (c) 2004-2005 Simtec Electronics"
++#define COPYRIGHT ", Copyright 2004-2005 Simtec Electronics"
  
  /* macros for virtual address mods for the io space entries */
  #define VA_C5(item) ((unsigned long)(item) + BAST_VAM_CS5)
-Index: b/drivers/serial/s3c2440.c
+Index: b/arch/arm/mach-s3c2410/usb-simtec.c
 ===================================================================
---- a/drivers/serial/s3c2440.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/drivers/serial/s3c2440.c	2009-11-13 22:52:54.000000000 +0000
-@@ -2,7 +2,7 @@
+--- a/arch/arm/mach-s3c2410/usb-simtec.c	2009-11-10 15:53:56.000000000 +0000
++++ b/arch/arm/mach-s3c2410/usb-simtec.c	2009-11-10 15:54:04.000000000 +0000
+@@ -1,6 +1,6 @@
+ /* linux/arch/arm/mach-s3c2410/usb-simtec.c
   *
-  * Driver for Samsung S3C2440 and S3C2442 SoC onboard UARTs.
+- * Copyright (c) 2004,2005 Simtec Electronics
++ * Copyright 2004,2005 Simtec Electronics
+  *   Ben Dooks <ben@simtec.co.uk>
   *
-- * Ben Dooks, Copyright (c) 2003-2005,2008 Simtec Electronics
-+ * Ben Dooks, Copyright (c) 2003-2008 Simtec Electronics
+  * http://www.simtec.co.uk/products/EB2410ITX/
+@@ -108,7 +108,7 @@ int usb_simtec_init(void)
+ {
+ 	int ret;
+ 
+-	printk("USB Power Control, (c) 2004 Simtec Electronics\n");
++	printk("USB Power Control, Copyright 2004 Simtec Electronics\n");
+ 
+ 	ret = gpio_request(S3C2410_GPB(4), "USB power control");
+ 	if (ret < 0) {
+Index: b/arch/arm/mach-s3c2440/mach-anubis.c
+===================================================================
+--- a/arch/arm/mach-s3c2440/mach-anubis.c	2009-11-10 15:53:56.000000000 +0000
++++ b/arch/arm/mach-s3c2440/mach-anubis.c	2009-11-10 15:54:04.000000000 +0000
+@@ -1,6 +1,6 @@
+ /* linux/arch/arm/mach-s3c2440/mach-anubis.c
+  *
+- * Copyright (c) 2003-2005,2008 Simtec Electronics
++ * Copyright 2003-2009 Simtec Electronics
   *	http://armlinux.simtec.co.uk/
+  *	Ben Dooks <ben@simtec.co.uk>
   *
-  * This program is free software; you can redistribute it and/or modify
-Index: b/drivers/serial/s3c24a0.c
+@@ -55,7 +55,7 @@
+ #include <plat/cpu.h>
+ #include <plat/audio-simtec.h>
+ 
+-#define COPYRIGHT ", (c) 2005-2009 Simtec Electronics"
++#define COPYRIGHT ", Copyright 2005-2009 Simtec Electronics"
+ 
+ static struct map_desc anubis_iodesc[] __initdata = {
+   /* ISA IO areas */
+Index: b/arch/arm/plat-s3c/clock.c
 ===================================================================
---- a/drivers/serial/s3c24a0.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/drivers/serial/s3c24a0.c	2009-11-13 22:52:54.000000000 +0000
+--- a/arch/arm/plat-s3c/clock.c	2009-11-10 15:53:56.000000000 +0000
++++ b/arch/arm/plat-s3c/clock.c	2009-11-10 15:54:04.000000000 +0000
+@@ -1,6 +1,6 @@
+ /* linux/arch/arm/plat-s3c24xx/clock.c
+  *
+- * Copyright (c) 2004-2005 Simtec Electronics
++ * Copyright 2004-2005 Simtec Electronics
+  *	Ben Dooks <ben@simtec.co.uk>
+  *
+  * S3C24XX Core clock control support
+@@ -337,7 +337,7 @@ int s3c24xx_register_clocks(struct clk *
+ 
+ int __init s3c24xx_register_baseclocks(unsigned long xtal)
+ {
+-	printk(KERN_INFO "S3C24XX Clocks, (c) 2004 Simtec Electronics\n");
++	printk(KERN_INFO "S3C24XX Clocks, Copyright 2004 Simtec Electronics\n");
+ 
+ 	clk_xtal.rate = xtal;
+ 
+Index: b/arch/arm/plat-s3c/include/plat/regs-serial.h
+===================================================================
+--- a/arch/arm/plat-s3c/include/plat/regs-serial.h	2009-11-10 15:53:56.000000000 +0000
++++ b/arch/arm/plat-s3c/include/plat/regs-serial.h	2009-11-10 15:54:04.000000000 +0000
 @@ -6,7 +6,7 @@
   *
-  * Author: Sandeep Patil <sandeep.patil@azingo.com>
+  *  Copyright (C) 2002 Shane Nay (shane@minirl.com)
   *
-- * Ben Dooks, Copyright (c) 2003-2005,2008 Simtec Electronics
-+ * Ben Dooks, Copyright (c) 2003-2008 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
+- *  Additional defines, (c) 2003 Simtec Electronics (linux@simtec.co.uk)
++ *  Additional defines, Copyright 2003 Simtec Electronics (linux@simtec.co.uk)
   *
-  * This program is free software; you can redistribute it and/or modify
-Index: b/drivers/serial/samsung.c
+  *  Adapted from:
+  *
+Index: b/arch/arm/plat-s3c24xx/dma.c
 ===================================================================
---- a/drivers/serial/samsung.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/drivers/serial/samsung.c	2009-11-13 22:52:54.000000000 +0000
-@@ -2,7 +2,7 @@
+--- a/arch/arm/plat-s3c24xx/dma.c	2009-11-10 15:53:56.000000000 +0000
++++ b/arch/arm/plat-s3c24xx/dma.c	2009-11-10 15:54:04.000000000 +0000
+@@ -1,6 +1,6 @@
+ /* linux/arch/arm/plat-s3c24xx/dma.c
   *
-  * Driver core for Samsung SoC onboard UARTs.
+- * Copyright (c) 2003-2005,2006 Simtec Electronics
++ * Copyright 2003-2005,2006 Simtec Electronics
+  *	Ben Dooks <ben@simtec.co.uk>
   *
-- * Ben Dooks, Copyright (c) 2003-2005,2008 Simtec Electronics
-+ * Ben Dooks, Copyright (c) 2003-2008 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
-  *
-  * This program is free software; you can redistribute it and/or modify
-Index: b/drivers/serial/samsung.h
+  * S3C2410 DMA core
+@@ -1310,7 +1310,7 @@ int __init s3c24xx_dma_init(unsigned int
+ 	int channel;
+ 	int ret;
+ 
+-	printk("S3C24XX DMA Driver, (c) 2003-2004,2006 Simtec Electronics\n");
++	printk("S3C24XX DMA Driver, Copyright 2003-2004,2006 Simtec Electronics\n");
+ 
+ 	dma_channels = channels;
+ 
+Index: b/arch/arm/plat-s3c24xx/pm-simtec.c
 ===================================================================
---- a/drivers/serial/samsung.h	2009-11-13 22:51:56.000000000 +0000
-+++ b/drivers/serial/samsung.h	2009-11-13 22:52:54.000000000 +0000
-@@ -2,7 +2,7 @@
+--- a/arch/arm/plat-s3c24xx/pm-simtec.c	2009-11-10 15:53:56.000000000 +0000
++++ b/arch/arm/plat-s3c24xx/pm-simtec.c	2009-11-10 15:54:04.000000000 +0000
+@@ -1,6 +1,6 @@
+ /* linux/arch/arm/plat-s3c24xx/pm-simtec.c
   *
-  * Driver for Samsung SoC onboard UARTs.
+- * Copyright (c) 2004 Simtec Electronics
++ * Copyright 2004 Simtec Electronics
+  *	Ben Dooks <ben@simtec.co.uk>
   *
-- * Ben Dooks, Copyright (c) 2003-2005,2008 Simtec Electronics
-+ * Ben Dooks, Copyright (c) 2003-2008 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
+  * http://armlinux.simtec.co.uk/
+@@ -35,7 +35,7 @@
+ 
+ #include <plat/pm.h>
+ 
+-#define COPYRIGHT ", (c) 2005 Simtec Electronics"
++#define COPYRIGHT ", Copyright 2005 Simtec Electronics"
+ 
+ /* pm_simtec_init
   *
-  * This program is free software; you can redistribute it and/or modify
-Index: b/drivers/serial/s3c2410.c
-===================================================================
---- a/drivers/serial/s3c2410.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/drivers/serial/s3c2410.c	2009-11-13 22:52:54.000000000 +0000
-@@ -2,7 +2,7 @@
-  *
-  * Driver for Samsung S3C2410 SoC onboard UARTs.
-  *
-- * Ben Dooks, Copyright (c) 2003-2005,2008 Simtec Electronics
-+ * Ben Dooks, Copyright (c) 2003-2008 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
-  *
-  * This program is free software; you can redistribute it and/or modify
-Index: b/drivers/serial/s3c2412.c
-===================================================================
---- a/drivers/serial/s3c2412.c	2009-11-13 22:51:56.000000000 +0000
-+++ b/drivers/serial/s3c2412.c	2009-11-13 22:52:54.000000000 +0000
-@@ -2,7 +2,7 @@
-  *
-  * Driver for Samsung S3C2412 and S3C2413 SoC onboard UARTs.
-  *
-- * Ben Dooks, Copyright (c) 2003-2005,2008 Simtec Electronics
-+ * Ben Dooks, Copyright (c) 2003-2008 Simtec Electronics
-  *	http://armlinux.simtec.co.uk/
-  *
-  * This program is free software; you can redistribute it and/or modify
