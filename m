@@ -1,48 +1,40 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH] drivers: MMC: enable SDHCI-S3C on S5PC1XX platform
-Date: Tue, 17 Nov 2009 13:01:18 +0000
-Message-ID: <20091117130116.GY23772@trinity.fluff.org>
-References: <1258444374-21479-1-git-send-email-m.szyprowski@samsung.com> <20091117121143.09246257@life-in-the-fast-lane>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: arnaud.patard@rtp-net.org
+Subject: [patch 2/4] h1940: enable rtc
+Date: Tue, 17 Nov 2009 14:54:57 +0100
+Message-ID: <20091117140418.345089182@rtp-net.org>
+References: <20091117135455.913565760@rtp-net.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:60724 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750772AbZKQNBU (ORCPT
+Received: from sat78-1-82-232-42-61.fbx.proxad.net ([82.232.42.61]:57540 "EHLO
+	jules.rtp-net.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752242AbZKQOM5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Nov 2009 08:01:20 -0500
-Content-Disposition: inline
-In-Reply-To: <20091117121143.09246257@life-in-the-fast-lane>
+	Tue, 17 Nov 2009 09:12:57 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marc Zyngier <maz@misterjones.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org
+To: ben-linux@fluff.org
+Cc: linux-samsung-soc@vger.kernel.org, Arnaud Patard <arnaud.patard@rtp-net.org>
 
-On Tue, Nov 17, 2009 at 12:11:43PM +0100, Marc Zyngier wrote:
-> On Tue, 17 Nov 2009 08:52:54 +0100
-> Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> 
-> I think it was Ben that suggested once to introduce a HAVE_SDHCI_S3C
-> symbol, selected by interested parties (S3C, S5P, S5PC...).
+Hi,
+Content-Disposition: inline; filename=rtc.patch
 
-Yes, I did mention this and it is an option to either replace the patch
-now or to do at a later date to tidy things up. I'm not going to reject
-this patch now (or force a rewrite at this late stage)
+Enable 2410 rtc on h1940
 
-I'll try and look at acking the last set of SDHCI patches Thomas sent
-and see if akpm will pick them up for linux-mmc.
+Signed-off-by: Arnaud Patard <arnaud.patard@rtp-net.org>
+---
+ arch/arm/mach-s3c2410/mach-h1940.c |    1 	1 +	0 -	0 !
+ 1 file changed, 1 insertion(+)
 
-> Given the way Samsung SoCs are assembled (from an IP point of view), it
-> would make sense for one SoC to describe its features in
-> "HAVE_FEATURE_FOO" terms rather than each subsystem depending an ever
-> growing list of SoC.
-
-Yes, I was feeling that this is something that we should probably discuss
-either on linux-arm-kernel or to a wide audience. It might not suit
-everyone's taste, etc.
+Index: linux/arch/arm/mach-s3c2410/mach-h1940.c
+===================================================================
+--- linux.orig/arch/arm/mach-s3c2410/mach-h1940.c	2009-11-17 14:04:21.000000000 +0100
++++ linux/arch/arm/mach-s3c2410/mach-h1940.c	2009-11-17 14:06:06.000000000 +0100
+@@ -205,6 +205,7 @@ static struct platform_device *h1940_dev
+ 	&h1940_device_leds,
+ 	&h1940_device_bluetooth,
+ 	&s3c_device_sdi,
++	&s3c_device_rtc,
+ };
+ 
+ static void __init h1940_map_io(void)
 
 -- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
