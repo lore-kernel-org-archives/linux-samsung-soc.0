@@ -1,31 +1,41 @@
-From: arnaud.patard@rtp-net.org
-Subject: [patch 0/4] [RFC] h1940 updates
-Date: Tue, 17 Nov 2009 14:54:55 +0100
-Message-ID: <20091117135455.913565760@rtp-net.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] ARM: MM: use 64bytes of L1 cache on plat S5PC1xx
+Date: Tue, 17 Nov 2009 17:05:19 +0000
+Message-ID: <20091117170519.GA1494@n2100.arm.linux.org.uk>
+References: <1258444074-20679-1-git-send-email-m.szyprowski@samsung.com> <20091117091024.187d7cda@hina.wild-wind.fr.eu.org> <000701ca6766$90fbb2e0$b2f318a0$%szyprowski@samsung.com> <20091117120018.583b6374@life-in-the-fast-lane>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sat78-1-82-232-42-61.fbx.proxad.net ([82.232.42.61]:57541 "EHLO
-	jules.rtp-net.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752203AbZKQOM5 (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:34076 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755226AbZKQRFk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Nov 2009 09:12:57 -0500
+	Tue, 17 Nov 2009 12:05:40 -0500
+Content-Disposition: inline
+In-Reply-To: <20091117120018.583b6374@life-in-the-fast-lane>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org
-Cc: linux-samsung-soc@vger.kernel.org
+To: Marc Zyngier <maz@misterjones.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org, bhmin@samsung.com
 
-Hi,
+On Tue, Nov 17, 2009 at 12:00:18PM +0100, Marc Zyngier wrote:
+> Then what about introducing a CORTEX_A8 symbol, selected by ARCH_OMAP3,
+> ARCH_S5PC1XX and others to come, and that would select the right cache
+> line value? We really want to avoid those ever growing dependency lines
+> that lead to conflicts when applying patches from multiple sources.
+> 
+> Unless we can have a Cortex-A8 implementation with a cache line that is
+> not 64 bytes?
 
-This patchset gives an update to h1940 support. It contains:
+CPUs of the same family can have different cache line sizes.  The only
+way to be sure is if you read the cache type registers and work it out.
 
-- add mmc host device
-- add rtc device
-- add a lcd and backlight devices using platform-lcd and pwm-backlight
-- converts the bluetooth support to use the rfkill framework
+However, L1_CACHE_SHIFT must be a compile time constant - it can't be
+run-time calculated.  So, we chose to set L1_CACHE_SHIFT to be the
+largest size found for the SoC concerned.
 
-This has been tested on a 2.6.31 and build tested on your next-s3c24xx-dev-updates branch.
+So, setting it to 64 for CPU_V7 makes no sense, since such CPUs can have
+larger or smaller cache line sizes - and that's about the same as trying
+to select the cache line size according to a CORTEX_A8 symbol...
 
-Please, also note that I'm not really good at giving patch descriptions so feel
-free to correct them if needed.
-
-Thanks,
-Arnaud
+The original patch seems to be the only sensible solution to this.
