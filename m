@@ -1,85 +1,118 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH] Update Samsung S5PC100 SoC support
-Date: Mon, 16 Nov 2009 12:10:55 +0100
-Message-ID: <002101ca66ad$7a50a000$6ef1e000$%szyprowski@samsung.com>
-References: <1258014122-18185-1-git-send-email-m.szyprowski@samsung.com>
- <20091113235317.GY4808@trinity.fluff.org>
+Subject: [PATCH 04/14] ARM: S5PC1XX: add GPIO L banks to register definition
+Date: Tue, 17 Nov 2009 08:41:14 +0100
+Message-ID: <1258443684-19525-5-git-send-email-m.szyprowski@samsung.com>
+References: <1258443684-19525-1-git-send-email-m.szyprowski@samsung.com>
+ <1258443684-19525-2-git-send-email-m.szyprowski@samsung.com>
+ <1258443684-19525-3-git-send-email-m.szyprowski@samsung.com>
+ <1258443684-19525-4-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:42230 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751043AbZKPLNW (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:39059 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754248AbZKQHmE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Nov 2009 06:13:22 -0500
-Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
- by mailout1.samsung.com
+	Tue, 17 Nov 2009 02:42:04 -0500
+Received: from eu_spt1 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
  (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0KT700ISE8ID93@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 16 Nov 2009 20:13:25 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0KT700KHY8HTF1@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 16 Nov 2009 20:13:25 +0900 (KST)
-In-reply-to: <20091113235317.GY4808@trinity.fluff.org>
-Content-language: pl
+ with ESMTP id <0KT800D96TE6R9@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 17 Nov 2009 07:42:06 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0KT800M06TE5NT@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 17 Nov 2009 07:42:06 +0000 (GMT)
+In-reply-to: <1258443684-19525-4-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Ben Dooks' <ben-linux@fluff.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, laforge@gnumonks.org, kyungmin.park@samsung.com, bhmin@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, bhmin@samsung.com
 
-Hello,
+From: Kyungmin Park <kyungmin.park@samsung.com>
 
-On Saturday, November 14, 2009 12:53 AM Ben Dooks wrote:
+Add GPIO L0-L4 banks to register definition.
+
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/mach-s5pc100/include/mach/gpio.h |   30 ++++++++++++++++++++++------
+ 1 files changed, 23 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm/mach-s5pc100/include/mach/gpio.h b/arch/arm/mach-s5pc100/include/mach/gpio.h
+index c74fc93..5d22961 100644
+--- a/arch/arm/mach-s5pc100/include/mach/gpio.h
++++ b/arch/arm/mach-s5pc100/include/mach/gpio.h
+@@ -47,6 +47,11 @@
+ #define S5PC1XX_GPIO_K1_NR	(6)
+ #define S5PC1XX_GPIO_K2_NR	(8)
+ #define S5PC1XX_GPIO_K3_NR	(8)
++#define S5PC1XX_GPIO_L0_NR	(8)
++#define S5PC1XX_GPIO_L1_NR	(8)
++#define S5PC1XX_GPIO_L2_NR	(8)
++#define S5PC1XX_GPIO_L3_NR	(8)
++#define S5PC1XX_GPIO_L4_NR	(8)
+ #define S5PC1XX_GPIO_MP00_NR	(8)
+ #define S5PC1XX_GPIO_MP01_NR	(8)
+ #define S5PC1XX_GPIO_MP02_NR	(8)
+@@ -64,9 +69,9 @@
+ 	((__gpio##_START) + (__gpio##_NR) + CONFIG_S3C_GPIO_SPACE + 1)
  
-> On Thu, Nov 12, 2009 at 09:21:44AM +0100, Marek Szyprowski wrote:
-> > Hello,
-> >
-> > This patch series updates Samsung S5PC100 SoC support. S5PC100 platform
-> > core has been extended with new clocks hierarchy implementation, gpio lib,
-> > support for external and gpio interrupts and some basics of power
-> > management (cpu idle and system reset). Also platform helpers for
-> > s3c framebuffer, i2c and hsmmc drivers has been added.
-> 
-> As such, a new branch git://git.fluff.org/bjdooks/linux next-s5pc1xx
-> has been created. This branch hasn't yet been build tested, or had the
-> patches that failed to apply on them.
-> 
-> The following from the series still need fixups before applying due to
-> the missing FB updates:
-> 
-> Applying: ARM: S5PC1xx: add platform helpers for SDHCI host controllers
-> Applying: ARM: S5PC1xx: add platform helpers for i2c adapter devices
-> 
-> I'll look at fixing these up tomorrow if the FB items haven't been sorted
-> out.
-> 
-> The shortlog is:
-> 
-> Kyungmin Park (9):
->       ARM: SMDKC100: enable S3C FrameBuffer
->       ARM: S5PC1XX: registers rename
->       ARM: S5PC1XX: clock registers rename
->       ARM: S5PC1XX: clocks reimplementation
->       ARM: S5PC1XX: add GPIO L banks to register definition
->       ARM: S5PC1XX: GPIO registers rename
->       ARM: S5PC1XX: add cpu idle and system reset support
->       ARM: SMDKC100: add I2C0 and I2C1 buses support
->       ARM: SMDKC100: add SDHCI controllers 0, 1 and 2 support
-> 
-> If there are any problems, please let me know as soon as possible, as I
-> will be looking to merge these into my main next branch in the next day or
-> so to begin the final stages of the device and clock reworks.
-
-This version does not compile without fb patches. I will send an updated
-version (with your last remarks addressed) of the whole patch series soon.
-Is there a chance you would accept that fb patch?
-
-I'm really curious of the device and clock reworks. I hope you will manage
-to get it working soon and prepare a pre-release version.
-
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+ enum s3c_gpio_number {
+-	S5PC1XX_GPIO_A0_START 	= 0,
+-	S5PC1XX_GPIO_A1_START 	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_A0),
+-	S5PC1XX_GPIO_B_START 	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_A1),
++	S5PC1XX_GPIO_A0_START	= 0,
++	S5PC1XX_GPIO_A1_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_A0),
++	S5PC1XX_GPIO_B_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_A1),
+ 	S5PC1XX_GPIO_C_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_B),
+ 	S5PC1XX_GPIO_D_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_C),
+ 	S5PC1XX_GPIO_E0_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_D),
+@@ -93,11 +98,17 @@ enum s3c_gpio_number {
+ 	S5PC1XX_GPIO_K1_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_K0),
+ 	S5PC1XX_GPIO_K2_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_K1),
+ 	S5PC1XX_GPIO_K3_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_K2),
+-	S5PC1XX_GPIO_MP00_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_K3),
++	S5PC1XX_GPIO_L0_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_K3),
++	S5PC1XX_GPIO_L1_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_L0),
++	S5PC1XX_GPIO_L2_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_L1),
++	S5PC1XX_GPIO_L3_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_L2),
++	S5PC1XX_GPIO_L4_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_L3),
++	S5PC1XX_GPIO_MP00_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_L4),
+ 	S5PC1XX_GPIO_MP01_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_MP00),
+ 	S5PC1XX_GPIO_MP02_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_MP01),
+ 	S5PC1XX_GPIO_MP03_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_MP02),
+ 	S5PC1XX_GPIO_MP04_START	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_MP03),
++	S5PC1XX_GPIO_END	= S5PC1XX_GPIO_NEXT(S5PC1XX_GPIO_MP04),
+ };
+ 
+ /* S5PC1XX GPIO number definitions. */
+@@ -130,17 +141,22 @@ enum s3c_gpio_number {
+ #define S5PC1XX_GPK1(_nr)	(S5PC1XX_GPIO_K1_START + (_nr))
+ #define S5PC1XX_GPK2(_nr)	(S5PC1XX_GPIO_K2_START + (_nr))
+ #define S5PC1XX_GPK3(_nr)	(S5PC1XX_GPIO_K3_START + (_nr))
++#define S5PC1XX_GPL0(_nr)	(S5PC1XX_GPIO_L0_START + (_nr))
++#define S5PC1XX_GPL1(_nr)	(S5PC1XX_GPIO_L1_START + (_nr))
++#define S5PC1XX_GPL2(_nr)	(S5PC1XX_GPIO_L2_START + (_nr))
++#define S5PC1XX_GPL3(_nr)	(S5PC1XX_GPIO_L3_START + (_nr))
++#define S5PC1XX_GPL4(_nr)	(S5PC1XX_GPIO_L4_START + (_nr))
+ #define S5PC1XX_MP00(_nr)	(S5PC1XX_GPIO_MP00_START + (_nr))
+ #define S5PC1XX_MP01(_nr)	(S5PC1XX_GPIO_MP01_START + (_nr))
+ #define S5PC1XX_MP02(_nr)	(S5PC1XX_GPIO_MP02_START + (_nr))
+ #define S5PC1XX_MP03(_nr)	(S5PC1XX_GPIO_MP03_START + (_nr))
+ #define S5PC1XX_MP04(_nr)	(S5PC1XX_GPIO_MP04_START + (_nr))
++#define S5PC1XX_MP05(_nr)	(S5PC1XX_GPIO_MP05_START + (_nr))
+ 
+-/* the end of the S5PC1XX specific gpios */
+-#define S5PC1XX_GPIO_END	(S5PC1XX_MP04(S5PC1XX_GPIO_MP04_NR) + 1)
++/* It used the end of the S5PC1XX gpios */
+ #define S3C_GPIO_END		S5PC1XX_GPIO_END
+ 
+ /* define the number of gpios we need to the one after the MP04() range */
+-#define ARCH_NR_GPIOS	(S5PC1XX_MP04(S5PC1XX_GPIO_MP04_NR) + 1)
++#define ARCH_NR_GPIOS		(S5PC1XX_GPIO_END + 1)
+ 
+ #include <asm-generic/gpio.h>
+-- 
+1.6.4
