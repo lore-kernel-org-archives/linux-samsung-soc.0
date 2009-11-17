@@ -1,45 +1,56 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] drivers: MMC: enable SDHCI-S3C on S5PC1XX platform
-Date: Tue, 17 Nov 2009 08:52:54 +0100
-Message-ID: <1258444374-21479-1-git-send-email-m.szyprowski@samsung.com>
+From: Marc Zyngier <maz@misterjones.org>
+Subject: Re: [PATCH] ARM: MM: use 64bytes of L1 cache on plat S5PC1xx
+Date: Tue, 17 Nov 2009 09:10:24 +0100
+Message-ID: <20091117091024.187d7cda@hina.wild-wind.fr.eu.org>
+References: <1258444074-20679-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:12823 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754147AbZKQHxV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Nov 2009 02:53:21 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1258444074-20679-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, kyungmin.park@samsung.com, bhmin@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org
 
-From: Kyungmin Park <kyungmin.park@samsung.com>
+On Tue, 17 Nov 2009 08:47:54 +0100
+Marek Szyprowski <m.szyprowski@samsung.com> wrote:
 
-Samsung S5PC100 SoC has SDHCI controller compatible to the one known from
-S3C64xx SoCs. Enable support for sdhci-s3c driver also on S5PC1xx platform.
+> From: Kyungmin Park <kyungmin.park@samsung.com>
+> 
+> Samsung S5PC1xx SoCs are Coretex8 based, so use 64 bytes of L1 cache
+> line instead of the default 32 bytes.
+> 
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/mm/Kconfig |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
+> index 9264d81..7b7d4c3 100644
+> --- a/arch/arm/mm/Kconfig
+> +++ b/arch/arm/mm/Kconfig
+> @@ -774,5 +774,5 @@ config CACHE_XSC3L2
+>  
+>  config ARM_L1_CACHE_SHIFT
+>  	int
+> -	default 6 if ARCH_OMAP3
+> +	default 6 if ARCH_OMAP3 || ARCH_S5PC1XX
+>  	default 5
 
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Ben Dooks <ben-linux@fluff.org>
----
- drivers/mmc/host/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+If this feature is related to the S5PC1xx being a CortexA8, why not
+depend on CPU_V7 rather that adding each and every new CortexA8
+implementation to this list?
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 432ae83..faddf82 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -96,7 +96,7 @@ config MMC_SDHCI_PLTFM
- 
- config MMC_SDHCI_S3C
- 	tristate "SDHCI support on Samsung S3C SoC"
--	depends on MMC_SDHCI && (PLAT_S3C24XX || PLAT_S3C64XX)
-+	depends on MMC_SDHCI && (PLAT_S3C24XX || PLAT_S3C64XX || PLAT_S5PC1XX)
- 	help
- 	  This selects the Secure Digital Host Controller Interface (SDHCI)
- 	  often referrered to as the HSMMC block in some of the Samsung S3C
+	M.
 -- 
-1.6.4
+And if you don't know where you're going, any road will take you
+there...
