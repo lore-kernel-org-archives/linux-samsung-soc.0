@@ -1,41 +1,39 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] ARM: MM: use 64bytes of L1 cache on plat S5PC1xx
-Date: Tue, 17 Nov 2009 17:05:19 +0000
-Message-ID: <20091117170519.GA1494@n2100.arm.linux.org.uk>
-References: <1258444074-20679-1-git-send-email-m.szyprowski@samsung.com> <20091117091024.187d7cda@hina.wild-wind.fr.eu.org> <000701ca6766$90fbb2e0$b2f318a0$%szyprowski@samsung.com> <20091117120018.583b6374@life-in-the-fast-lane>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: [PATCH v3] Update Samsung S5PC100 SoC support
+Date: Tue, 17 Nov 2009 23:53:11 +0000
+Message-ID: <20091117235311.GZ23772@trinity.fluff.org>
+References: <1258443684-19525-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:34076 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755226AbZKQRFk (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:38483 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750772AbZKQXxJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Nov 2009 12:05:40 -0500
+	Tue, 17 Nov 2009 18:53:09 -0500
 Content-Disposition: inline
-In-Reply-To: <20091117120018.583b6374@life-in-the-fast-lane>
+In-Reply-To: <1258443684-19525-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marc Zyngier <maz@misterjones.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org, bhmin@samsung.com
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org, bhmin@samsung.com
 
-On Tue, Nov 17, 2009 at 12:00:18PM +0100, Marc Zyngier wrote:
-> Then what about introducing a CORTEX_A8 symbol, selected by ARCH_OMAP3,
-> ARCH_S5PC1XX and others to come, and that would select the right cache
-> line value? We really want to avoid those ever growing dependency lines
-> that lead to conflicts when applying patches from multiple sources.
+On Tue, Nov 17, 2009 at 08:41:10AM +0100, Marek Szyprowski wrote:
+> Hello,
 > 
-> Unless we can have a Cortex-A8 implementation with a cache line that is
-> not 64 bytes?
+> This patch series updates Samsung S5PC100 SoC support. S5PC100 platform
+> core has been extended with new clocks hierarchy implementation, gpio lib,
+> support for external and gpio interrupts and some basics of power
+> management (cpu idle and system reset). Also platform helpers for
+> s3c framebuffer, i2c and hsmmc drivers has been added.
+> 
+> All these patches has been tested on SMDKC100 board.
 
-CPUs of the same family can have different cache line sizes.  The only
-way to be sure is if you read the cache type registers and work it out.
+Hi, next time, --no-chain-reply-to please so that we don't end up
+with messages wandering off the edge of the screen.
 
-However, L1_CACHE_SHIFT must be a compile time constant - it can't be
-run-time calculated.  So, we chose to set L1_CACHE_SHIFT to be the
-largest size found for the SoC concerned.
+-- 
+Ben
 
-So, setting it to 64 for CPU_V7 makes no sense, since such CPUs can have
-larger or smaller cache line sizes - and that's about the same as trying
-to select the cache line size according to a CORTEX_A8 symbol...
-
-The original patch seems to be the only sensible solution to this.
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
