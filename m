@@ -1,51 +1,48 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [patch 0/4] [RFC] h1940 updates
-Date: Wed, 18 Nov 2009 00:13:46 +0000
-Message-ID: <20091118001346.GD23772@trinity.fluff.org>
-References: <20091117135455.913565760@rtp-net.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH v3] Update Samsung S5PC100 SoC support
+Date: Wed, 18 Nov 2009 11:42:20 +0100
+Message-ID: <004301ca683b$d0761840$716248c0$%szyprowski@samsung.com>
+References: <1258443684-19525-1-git-send-email-m.szyprowski@samsung.com>
+ <20091117235914.GZ4808@trinity.fluff.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:60054 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756398AbZKRANl (ORCPT
+Received: from mailout5.samsung.com ([203.254.224.35]:36380 "EHLO
+	mailout5.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754895AbZKRKpR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Nov 2009 19:13:41 -0500
-Content-Disposition: inline
-In-Reply-To: <20091117135455.913565760@rtp-net.org>
+	Wed, 18 Nov 2009 05:45:17 -0500
+Received: from epmmp2 (mailout5.samsung.com [203.254.224.35])
+ by mailout1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0KTA0099TWJL47@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 18 Nov 2009 19:45:21 +0900 (KST)
+Received: from AMDC159 ([106.116.37.153])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0KTA00F3LWI8Q5@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 18 Nov 2009 19:45:21 +0900 (KST)
+In-reply-to: <20091117235914.GZ4808@trinity.fluff.org>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: arnaud.patard@rtp-net.org
-Cc: ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
+To: 'Ben Dooks' <ben-linux@fluff.org>
+Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, bhmin@samsung.com, linux-arm-kernel@lists.infradead.org
 
-On Tue, Nov 17, 2009 at 02:54:55PM +0100, arnaud.patard@rtp-net.org wrote:
-> Hi,
+Hello,
+
+On Wednesday, November 18, 2009 12:59 AM Ben Dooks wrote:
+
+> On Tue, Nov 17, 2009 at 08:41:10AM +0100, Marek Szyprowski wrote:
+> > Hello,
 > 
-> This patchset gives an update to h1940 support. It contains:
+> ok, series applied and pushed to git.fluff.org.
 > 
-> - add mmc host device
-> - add rtc device
-> - add a lcd and backlight devices using platform-lcd and pwm-backlight
-> - converts the bluetooth support to use the rfkill framework
-> 
-> This has been tested on a 2.6.31 and build tested on your next-s3c24xx-dev-updates branch.
-> 
-> Please, also note that I'm not really good at giving patch descriptions so feel
-> free to correct them if needed.
+> Will do a quick build test and then get on with other stuff.
 
-I've put these in a branch, howerver it showing your realname
-as 'arnaud.patard@rtp-net.org' so if you want this changing please
-resubmit (privately will be ok) with a better realname in the email
+Thanks. Let me know if you get any problems.
 
-Also, it left 'Content-Disposition: inline; filename=h1940_lcd_backlight.patch
-' in the patch.
-
-Please also wrap descriptions to 77 or less characters per line.
-
-If possible, prefix subjects with 'ARM: H1940' instead of 'h1940:'
-
--- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
