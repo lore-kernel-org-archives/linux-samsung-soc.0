@@ -1,48 +1,72 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH v3] Update Samsung S5PC100 SoC support
-Date: Wed, 18 Nov 2009 11:42:20 +0100
-Message-ID: <004301ca683b$d0761840$716248c0$%szyprowski@samsung.com>
-References: <1258443684-19525-1-git-send-email-m.szyprowski@samsung.com>
- <20091117235914.GZ4808@trinity.fluff.org>
+Subject: [PATCH] Add Samsung S5PC110 SoC support
+Date: Wed, 18 Nov 2009 14:32:55 +0100
+Message-ID: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout5.samsung.com ([203.254.224.35]:36380 "EHLO
-	mailout5.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754895AbZKRKpR (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:22391 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757007AbZKRNdo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Nov 2009 05:45:17 -0500
-Received: from epmmp2 (mailout5.samsung.com [203.254.224.35])
- by mailout1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0KTA0099TWJL47@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 18 Nov 2009 19:45:21 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0KTA00F3LWI8Q5@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 18 Nov 2009 19:45:21 +0900 (KST)
-In-reply-to: <20091117235914.GZ4808@trinity.fluff.org>
-Content-language: pl
+	Wed, 18 Nov 2009 08:33:44 -0500
+Received: from eu_spt2 ([210.118.77.13]) by mailout3.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0KTB003154CCJT90@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 18 Nov 2009 13:33:48 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0KTB00ETE4CBC9@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 18 Nov 2009 13:33:48 +0000 (GMT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Ben Dooks' <ben-linux@fluff.org>
-Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, bhmin@samsung.com, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org
 
 Hello,
 
-On Wednesday, November 18, 2009 12:59 AM Ben Dooks wrote:
+This preliminary patch series adds support for Samsung S5PC110 SoC.
+S5PC110 belongs to S5PC1XX family (CortexA8 ARM core), but differs in
+many places from the S5PC100 SoC: new memory map, different clock
+hierarchy, new gpio banks and much more powerful integrated peripherals.
+Such differences cannot be easily handled in the current Samsung
+machine&platform framework. To avoid duplication of code and adding yet
+another plat-* directory, we decided to introduce sub-platforms in
+the current s5pc1xx platform.
 
-> On Tue, Nov 17, 2009 at 08:41:10AM +0100, Marek Szyprowski wrote:
-> > Hello,
-> 
-> ok, series applied and pushed to git.fluff.org.
-> 
-> Will do a quick build test and then get on with other stuff.
+First 8 patches prepare s5pc1xx platform code for introduction of the
+new sub-platform approach. Then in the next 11 patches all core
+functions and drivers are subsequently added, so S5PC110 sub-platform
+gets similar level of support as S5PC100.
 
-Thanks. Let me know if you get any problems.
+This patch series has been prepared against latest ARM Kernel tree from
+http://ftp.arm.linux.org.uk/pub/linux/arm/kernel/git-cur/linux-2.6-arm.git/
 
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+I know that Ben is working hard on new Samsung SoC platform framework,
+but stabilizing it and porting all the existing Samsung platforms would
+take time. This sub-platform solution is already prepared and until the
+new framework will be available and merged, we would like to use our
+approach.
+
+This patch series includes:
+
+[PATCH 01/19] ARM: S5PC100: use 0x30008000 as memory base
+[PATCH 02/19] ARM: S5PC1XX: create sub-platform for S5PC100 SoCs
+[PATCH 03/19] ARM: S5PC1XX: prepare common cpu&clocks code for S5PC110 sub-platform
+[PATCH 04/19] ARM: S5PC1XX: prepare common gpiolib code for S5PC110 sub-platform
+[PATCH 05/19] ARM: S5PC1XX: move common s5pc1xx mach/* includes to plat-s5pc1xx/include/mach
+[PATCH 06/19] ARM: S5PC1XX: cleanup of s5pc1xx common code
+[PATCH 07/19] ARM: S5PC1XX: move s5pc100 specific device helpers to mach-s5pc100 dir
+[PATCH 08/19] ARM: S5PC1XX: move common s5pc1xx s3c-fb regs to platform directory
+[PATCH 09/19] drivers: serial: add support for Samsung S5PC110 SoC uart
+[PATCH 10/19] ARM: S5PC1XX: add S5PC110 memory map
+[PATCH 11/19] ARM: S5PC1XX: add S5PC110 cpu initialization code
+[PATCH 12/19] ARM: S5PC1XX: add support for s5pc110 plls and clocks
+[PATCH 13/19] ARM: S5PC1XX: add support for s5pc110 irqs
+[PATCH 14/19] ARM: S5PC1XX: add support for s5pc110 gpio
+[PATCH 15/19] ARM: S5PC1XX: add i2c platform helpers on s5pc110 sub-platform
+[PATCH 16/19] ARM: S5PC1XX: enable S5PC110 sub-platform
+[PATCH 17/19] ARM: S5PC1XX: add sdhci platform helpers for s5pc110 sub-platform
+[PATCH 18/19] ARM: S5PC1XX: add framebuffer platform helpers for s5pc110 sub-platform
+[PATCH 19/19] ARM: S5PC1XX: add support for SMDKC110 board
