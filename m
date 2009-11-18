@@ -1,323 +1,347 @@
-From: jassi brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 09/19] drivers: serial: add support for Samsung S5PC110
-	SoC uart
-Date: Wed, 18 Nov 2009 23:14:52 +0900
-Message-ID: <1b68c6790911180614y355f656fs828177ecc845ec8e@mail.gmail.com>
-References: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
-	 <1258551194-16018-10-git-send-email-m.szyprowski@samsung.com>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: [PATCH 08/19] ARM: S5PC1XX: move common s5pc1xx s3c-fb regs to
+	platform directory
+Date: Wed, 18 Nov 2009 19:56:25 +0000
+Message-ID: <20091118195625.GE23772@trinity.fluff.org>
+References: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com> <1258551194-16018-9-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-px0-f180.google.com ([209.85.216.180]:55383 "EHLO
-	mail-px0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753780AbZKROOt convert rfc822-to-8bit (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:45109 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758268AbZKRT4V (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Nov 2009 09:14:49 -0500
-Received: by pxi10 with SMTP id 10so830615pxi.33
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Nov 2009 06:14:55 -0800 (PST)
-In-Reply-To: <1258551194-16018-10-git-send-email-m.szyprowski@samsung.com>
+	Wed, 18 Nov 2009 14:56:21 -0500
+Content-Disposition: inline
+In-Reply-To: <1258551194-16018-9-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org, Pawel Osciak <p.osciak@samsung.com>
 
-On Wed, Nov 18, 2009 at 10:33 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> From: Kyungmin Park <kyungmin.park@samsung.com>
->
-> Samsung S5PC110 SoCs have UART that differs a bit from the one known
-> from the previous Samsung SoCs. This patch adds support for this new
-> driver.
->
+On Wed, Nov 18, 2009 at 02:33:03PM +0100, Marek Szyprowski wrote:
+> From: Pawel Osciak <p.osciak@samsung.com>
+> 
+> From: Pawel Osciak <p.osciak@samsung.com>
+> 
+> Frame buffer register block on S5PC100 and S5PC110 differs slightly.
+> This patch moves all register definitions that are common for S5PC100
+> and S5PC110 to plat-s3c/plat/regs-fb-v5.h.
+
+From: Pawel Osciak <p.osciak@samsung.com> but no signoff from him.
+ 
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->
->
+> 
 > ---
-> =C2=A0arch/arm/plat-s3c/include/plat/regs-serial.h | =C2=A0 31 ++++++
-> =C2=A0drivers/serial/Kconfig =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 | =C2=A0 =C2=A07 ++
-> =C2=A0drivers/serial/Makefile =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0| =C2=A0 =C2=A01 +
-> =C2=A0drivers/serial/s5pc110.c =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 | =C2=A0143 ++++++++++++++++++++++++++
-> =C2=A04 files changed, 182 insertions(+), 0 deletions(-)
-> =C2=A0create mode 100644 drivers/serial/s5pc110.c
->
-> diff --git a/arch/arm/plat-s3c/include/plat/regs-serial.h b/arch/arm/=
-plat-s3c/include/plat/regs-serial.h
-> index 66af75a..910cfba 100644
-> --- a/arch/arm/plat-s3c/include/plat/regs-serial.h
-> +++ b/arch/arm/plat-s3c/include/plat/regs-serial.h
-> @@ -194,6 +194,37 @@
-> =C2=A0#define S3C64XX_UINTSP =C2=A0 =C2=A0 =C2=A0 =C2=A0 0x34
-> =C2=A0#define S3C64XX_UINTM =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A00x38
->
-> +/* S5PC110 UCON */
-> +#define S5PC110_UCON_CLKMASK =C2=A0 (1<<10)
-> +#define S5PC110_UCON_PCLK =C2=A0 =C2=A0 =C2=A0(0<<10)
-> +#define S5PC110_UCON_SCLK_UART (1<<10)
-> +
-> +/* S5PC110 FIFO trigger levels */
-> +#define S5PC110_UFCON_RXTRIG1 =C2=A0(0<<4)
-> +#define S5PC110_UFCON_RXTRIG4 =C2=A0(1<<4)
-> +#define S5PC110_UFCON_RXTRIG8 =C2=A0(2<<4)
-> +#define S5PC110_UFCON_RXTRIG16 (3<<4)
-> +#define S5PC110_UFCON_RXTRIG32 (4<<4)
-> +#define S5PC110_UFCON_RXTRIG64 (5<<4)
-> +#define S5PC110_UFCON_RXTRIG128 =C2=A0 =C2=A0 =C2=A0 =C2=A0(6<<4)
-> +#define S5PC110_UFCON_RXTRIG256 =C2=A0 =C2=A0 =C2=A0 =C2=A0(7<<4)
-> +
-> +#define S5PC110_UFCON_TXTRIG1 =C2=A0(0<<8)
-> +#define S5PC110_UFCON_TXTRIG4 =C2=A0(1<<8)
-> +#define S5PC110_UFCON_TXTRIG8 =C2=A0(2<<8)
-> +#define S5PC110_UFCON_TXTRIG16 (3<<8)
-> +#define S5PC110_UFCON_TXTRIG32 (4<<8)
-> +#define S5PC110_UFCON_TXTRIG64 (5<<8)
-> +#define S5PC110_UFCON_TXTRIG128 =C2=A0 =C2=A0 =C2=A0 =C2=A0(6<<8)
-> +#define S5PC110_UFCON_TXTRIG256 =C2=A0 =C2=A0 =C2=A0 =C2=A0(7<<8)
-> +
-> +#define S5PC110_UFSTAT_TXFULL =C2=A0(1<<24)
-> +#define S5PC110_UFSTAT_RXFULL =C2=A0(1<<8)
-> +#define S5PC110_UFSTAT_TXSHIFT (16)
-> +#define S5PC110_UFSTAT_RXSHIFT (0)
-> +#define S5PC110_UFSTAT_TXMASK =C2=A0(255<<16)
-> +#define S5PC110_UFSTAT_RXMASK =C2=A0(255)
-> +
-> =C2=A0#ifndef __ASSEMBLY__
->
-> =C2=A0/* struct s3c24xx_uart_clksrc
-> diff --git a/drivers/serial/Kconfig b/drivers/serial/Kconfig
-> index e522572..d119cac 100644
-> --- a/drivers/serial/Kconfig
-> +++ b/drivers/serial/Kconfig
-> @@ -540,6 +540,13 @@ config SERIAL_S5PC100
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0help
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0Serial port support for the Samsung=
- S5PC100 SoCs
->
-> +config SERIAL_S5PC110
-> + =C2=A0 =C2=A0 =C2=A0 tristate "Samsung S5PC110 Serial port support"
-> + =C2=A0 =C2=A0 =C2=A0 depends on SERIAL_SAMSUNG && CPU_S5PC110
-> + =C2=A0 =C2=A0 =C2=A0 default y
-> + =C2=A0 =C2=A0 =C2=A0 help
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 Serial port support for the Samsung S5P=
-C110 SoCs
-> +
-> =C2=A0config SERIAL_MAX3100
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0tristate "MAX3100 support"
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0depends on SPI
-> diff --git a/drivers/serial/Makefile b/drivers/serial/Makefile
-> index d21d5dd..43d6123 100644
-> --- a/drivers/serial/Makefile
-> +++ b/drivers/serial/Makefile
-> @@ -45,6 +45,7 @@ obj-$(CONFIG_SERIAL_S3C2440) +=3D s3c2440.o
-> =C2=A0obj-$(CONFIG_SERIAL_S3C24A0) +=3D s3c24a0.o
-> =C2=A0obj-$(CONFIG_SERIAL_S3C6400) +=3D s3c6400.o
-> =C2=A0obj-$(CONFIG_SERIAL_S5PC100) +=3D s3c6400.o
-> +obj-$(CONFIG_SERIAL_S5PC110) +=3D s5pc110.o
-> =C2=A0obj-$(CONFIG_SERIAL_MAX3100) +=3D max3100.o
-> =C2=A0obj-$(CONFIG_SERIAL_IP22_ZILOG) +=3D ip22zilog.o
-> =C2=A0obj-$(CONFIG_SERIAL_MUX) +=3D mux.o
-> diff --git a/drivers/serial/s5pc110.c b/drivers/serial/s5pc110.c
-> new file mode 100644
-> index 0000000..1e1e229
-> --- /dev/null
-> +++ b/drivers/serial/s5pc110.c
-> @@ -0,0 +1,143 @@
+>  arch/arm/mach-s5pc100/include/mach/regs-fb.h |  133 ++-----------------------
+>  arch/arm/plat-s3c/include/plat/regs-fb-v5.h  |  138 ++++++++++++++++++++++++++
+>  2 files changed, 146 insertions(+), 125 deletions(-)
+>  create mode 100644 arch/arm/plat-s3c/include/plat/regs-fb-v5.h
+> 
+> diff --git a/arch/arm/mach-s5pc100/include/mach/regs-fb.h b/arch/arm/mach-s5pc100/include/mach/regs-fb.h
+> index 1732cd2..49764cb 100644
+> --- a/arch/arm/mach-s5pc100/include/mach/regs-fb.h
+> +++ b/arch/arm/mach-s5pc100/include/mach/regs-fb.h
+> @@ -1,139 +1,22 @@
+> -/* arch/arm/mach-s5pc100/include/mach/regs-fb.h
+> - *
 > +/*
-> + * linux/drivers/serial/s5pc110.c
+>   * Copyright 2009 Samsung Electronics Co.
+>   *   Pawel Osciak <p.osciak@samsung.com>
+>   *
+> - * Framebuffer register definitions for Samsung S5PC100.
+> + * Machine-specific framebuffer definitions for Samsung S5PC100.
+>   *
+>   * This program is free software; you can redistribute it and/or modify
+>   * it under the terms of the GNU General Public License version 2 as
+>   * published by the Free Software Foundation.
+> -*/
+> -
+> -#ifndef __ASM_ARCH_REGS_FB_H
+> -#define __ASM_ARCH_REGS_FB_H __FILE__
+> -
+> -#include <plat/regs-fb-v4.h>
+> -
+> -/* VP1 interface timing control */
+> -#define VP1CON0						(0x118)
+> -#define VP1_RATECON_EN					(1 << 31)
+> -#define VP1_CLKRATE_MASK				(0xff)
+> -
+> -#define VP1CON1						(0x11c)
+> -#define VP1_VTREGCON_EN					(1 << 31)
+> -#define VP1_VBPD_MASK					(0xfff)
+> -#define VP1_VBPD_SHIFT					(16)
+> -
+> -
+> -#define WPALCON_H					(0x19c)
+> -#define WPALCON_L					(0x1a0)
+> -
+> -/* Pallete contro for WPAL0 and WPAL1 is the same as in S3C64xx, but
+> - * different for WPAL2-4
+> - */
+> -/* In WPALCON_L (aka WPALCON) */
+> -#define WPALCON_W1PAL_32BPP_A888			(0x7 << 3)
+> -#define WPALCON_W0PAL_32BPP_A888			(0x7 << 0)
+> -
+> -/* To set W2PAL-W4PAL consist of one bit from WPALCON_L and two from WPALCON_H,
+> - * e.g. W2PAL[2..0] is made of (WPALCON_H[10..9], WPALCON_L[6]).
+> - */
+> -#define WPALCON_L_WxPAL_L_MASK				(0x1)
+> -#define WPALCON_L_W2PAL_L_SHIFT				(6)
+> -#define WPALCON_L_W3PAL_L_SHIFT				(7)
+> -#define WPALCON_L_W4PAL_L_SHIFT				(8)
+> -
+> -#define WPALCON_L_WxPAL_H_MASK				(0x3)
+> -#define WPALCON_H_W2PAL_H_SHIFT				(9)
+> -#define WPALCON_H_W3PAL_H_SHIFT				(13)
+> -#define WPALCON_H_W4PAL_H_SHIFT				(17)
+> -
+> -/* Per-window alpha value registers */
+> -/* For window 0 8-bit alpha values are in VIDW0ALPHAx,
+> - * for windows 1-4 alpha values consist of two parts, the 4 low bits are
+> - * taken from VIDWxALPHAx and 4 high bits are from VIDOSDxC,
+> - * e.g. WIN1_ALPHA0_B[7..0] = (VIDOSD1C[3..0], VIDW1ALPHA0[3..0])
+> - */
+> -#define VIDWxALPHA0(_win)				(0x200 + (_win * 8))
+> -#define VIDWxALPHA1(_win)				(0x204 + (_win * 8))
+> -
+> -/* Only for window 0 in VIDW0ALPHAx. */
+> -#define VIDW0ALPHAx_R(_x)				((_x) << 16)
+> -#define VIDW0ALPHAx_R_MASK				(0xff << 16)
+> -#define VIDW0ALPHAx_R_SHIFT				(16)
+> -#define VIDW0ALPHAx_G(_x)				((_x) << 8)
+> -#define VIDW0ALPHAx_G_MASK				(0xff << 8)
+> -#define VIDW0ALPHAx_G_SHIFT				(8)
+> -#define VIDW0ALPHAx_B(_x)				((_x) << 0)
+> -#define VIDW0ALPHAx_B_MASK				(0xff << 0)
+> -#define VIDW0ALPHAx_B_SHIFT				(0)
+> -
+> -/* Low 4 bits of alpha0-1 for windows 1-4 */
+> -#define VIDW14ALPHAx_R_L(_x)				((_x) << 16)
+> -#define VIDW14ALPHAx_R_L_MASK				(0xf << 16)
+> -#define VIDW14ALPHAx_R_L_SHIFT				(16)
+> -#define VIDW14ALPHAx_G_L(_x)				((_x) << 8)
+> -#define VIDW14ALPHAx_G_L_MASK				(0xf << 8)
+> -#define VIDW14ALPHAx_G_L_SHIFT				(8)
+> -#define VIDW14ALPHAx_B_L(_x)				((_x) << 0)
+> -#define VIDW14ALPHAx_B_L_MASK				(0xf << 0)
+> -#define VIDW14ALPHAx_B_L_SHIFT				(0)
+> -
+> -
+> -/* Per-window blending equation control registers */
+> -#define BLENDEQx(_win)					(0x244 + ((_win) * 4))
+> -#define BLENDEQ1					(0x244)
+> -#define BLENDEQ2					(0x248)
+> -#define BLENDEQ3					(0x24c)
+> -#define BLENDEQ4					(0x250)
+> -
+> -#define BLENDEQx_Q_FUNC(_x)				((_x) << 18)
+> -#define BLENDEQx_Q_FUNC_MASK				(0xf << 18)
+> -#define BLENDEQx_P_FUNC(_x)				((_x) << 12)
+> -#define BLENDEQx_P_FUNC_MASK				(0xf << 12)
+> -#define BLENDEQx_B_FUNC(_x)				((_x) << 6)
+> -#define BLENDEQx_B_FUNC_MASK				(0xf << 6)
+> -#define BLENDEQx_A_FUNC(_x)				((_x) << 0)
+> -#define BLENDEQx_A_FUNC_MASK				(0xf << 0)
+> -
+> -#define BLENDCON					(0x260)
+> -#define BLENDCON_8BIT_ALPHA				(1 << 0)
+> -
+> -/* Per-window palette base addresses (start of palette memory).
+> - * Each window palette area consists of 256 32-bit entries.
+> - * START is the first address (entry 0th), END is the address of 255th entry.
+>   */
+> -#define WIN0_PAL_BASE					(0x2400)
+> -#define WIN0_PAL_END					(0x27fc)
+> -#define WIN1_PAL_BASE					(0x2800)
+> -#define WIN1_PAL_END					(0x2bfc)
+> -#define WIN2_PAL_BASE					(0x2c00)
+> -#define WIN2_PAL_END					(0x2ffc)
+> -#define WIN3_PAL_BASE					(0x3000)
+> -#define WIN3_PAL_END					(0x33fc)
+> -#define WIN4_PAL_BASE					(0x3400)
+> -#define WIN4_PAL_END					(0x37fc)
+>  
+> -#define WIN0_PAL(_entry)			(WIN0_PAL_BASE + ((_entry) * 4))
+> -#define WIN1_PAL(_entry)			(WIN1_PAL_BASE + ((_entry) * 4))
+> -#define WIN2_PAL(_entry)			(WIN2_PAL_BASE + ((_entry) * 4))
+> -#define WIN3_PAL(_entry)			(WIN3_PAL_BASE + ((_entry) * 4))
+> -#define WIN4_PAL(_entry)			(WIN4_PAL_BASE + ((_entry) * 4))
+> +#ifndef __ASM_ARCH_MACH_REGS_FB_H
+> +#define __ASM_ARCH_MACH_REGS_FB_H __FILE__
+>  
+> -static inline unsigned int s3c_fb_pal_reg(unsigned int window, int reg)
+> -{
+> -	switch (window) {
+> -	case 0: return WIN0_PAL(reg);
+> -	case 1: return WIN1_PAL(reg);
+> -	case 2: return WIN2_PAL(reg);
+> -	case 3: return WIN3_PAL(reg);
+> -	case 4: return WIN4_PAL(reg);
+> -	}
+> +#include <plat/regs-fb-v5.h>
+>  
+> -	BUG();
+> -}
+> +#define PRTCON						(0xc)
+> +#define PRTCON_PROTECT					(1 << 11)
+>  
+>  
+> -#endif /* __ASM_ARCH_REGS_FB_H */
+> +#endif /* __ASM_ARCH_MACH_REGS_FB_H */
+>  
+> diff --git a/arch/arm/plat-s3c/include/plat/regs-fb-v5.h b/arch/arm/plat-s3c/include/plat/regs-fb-v5.h
+> new file mode 100644
+> index 0000000..198c7f5
+> --- /dev/null
+> +++ b/arch/arm/plat-s3c/include/plat/regs-fb-v5.h
+> @@ -0,0 +1,138 @@
+> +/*
+> + * Copyright 2009 Samsung Electronics Co.
+> + *   Pawel Osciak <p.osciak@samsung.com>
 > + *
-> + * Driver for Samsung S5PC110 SoC onboard UARTs.
+> + * Framebuffer register definitions for Samsung S5PC1xx.
 > + *
-> + * =C2=A0Copyright 2009 Samsung Electronics
-> + * =C2=A0Kyungin Park <kyungmin.park@samsung.com>
-> + *
-> + * This program is free software; you can redistribute it and/or mod=
-ify
+> + * This program is free software; you can redistribute it and/or modify
 > + * it under the terms of the GNU General Public License version 2 as
 > + * published by the Free Software Foundation.
 > + */
 > +
-> +#include <linux/module.h>
-> +#include <linux/ioport.h>
-> +#include <linux/io.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/init.h>
-> +#include <linux/serial_core.h>
-> +#include <linux/serial.h>
+> +#ifndef __ASM_ARCH_REGS_FB_V5_H
+> +#define __ASM_ARCH_REGS_FB_V5_H __FILE__
 > +
-> +#include <asm/irq.h>
-> +#include <mach/hardware.h>
+> +#include <plat/regs-fb-v4.h>
 > +
-> +#include <plat/regs-serial.h>
+> +/* VP1 interface timing control */
+> +#define VP1CON0						(0x118)
+> +#define VP1_RATECON_EN					(1 << 31)
+> +#define VP1_CLKRATE_MASK				(0xff)
 > +
-> +#include "samsung.h"
+> +#define VP1CON1						(0x11c)
+> +#define VP1_VTREGCON_EN					(1 << 31)
+> +#define VP1_VBPD_MASK					(0xfff)
+> +#define VP1_VBPD_SHIFT					(16)
 > +
-> +static int s5pc110_serial_setsource(struct uart_port *port,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct s3c24xx_uart_c=
-lksrc *clk)
+> +
+> +#define WPALCON_H					(0x19c)
+> +#define WPALCON_L					(0x1a0)
+> +
+> +/* Pallete contro for WPAL0 and WPAL1 is the same as in S3C64xx, but
+> + * different for WPAL2-4
+> + */
+> +/* In WPALCON_L (aka WPALCON) */
+> +#define WPALCON_W1PAL_32BPP_A888			(0x7 << 3)
+> +#define WPALCON_W0PAL_32BPP_A888			(0x7 << 0)
+> +
+> +/* W2PAL-W4PAL consist of one bit from WPALCON_L and two from WPALCON_H,
+> + * e.g. W2PAL[2..0] is made of (WPALCON_H[10..9], WPALCON_L[6]).
+> + */
+> +#define WPALCON_L_WxPAL_L_MASK				(0x1)
+> +#define WPALCON_L_W2PAL_L_SHIFT				(6)
+> +#define WPALCON_L_W3PAL_L_SHIFT				(7)
+> +#define WPALCON_L_W4PAL_L_SHIFT				(8)
+> +
+> +#define WPALCON_L_WxPAL_H_MASK				(0x3)
+> +#define WPALCON_H_W2PAL_H_SHIFT				(9)
+> +#define WPALCON_H_W3PAL_H_SHIFT				(13)
+> +#define WPALCON_H_W4PAL_H_SHIFT				(17)
+> +
+> +/* Per-window alpha value registers */
+> +/* For window 0 8-bit alpha values are in VIDW0ALPHAx,
+> + * for windows 1-4 alpha values consist of two parts, the 4 low bits are
+> + * taken from VIDWxALPHAx and 4 high bits are from VIDOSDxC,
+> + * e.g. WIN1_ALPHA0_B[7..0] = (VIDOSD1C[3..0], VIDW1ALPHA0[3..0])
+> + */
+> +#define VIDWxALPHA0(_win)				(0x200 + (_win * 8))
+> +#define VIDWxALPHA1(_win)				(0x204 + (_win * 8))
+> +
+> +/* Only for window 0 in VIDW0ALPHAx. */
+> +#define VIDW0ALPHAx_R(_x)				((_x) << 16)
+> +#define VIDW0ALPHAx_R_MASK				(0xff << 16)
+> +#define VIDW0ALPHAx_R_SHIFT				(16)
+> +#define VIDW0ALPHAx_G(_x)				((_x) << 8)
+> +#define VIDW0ALPHAx_G_MASK				(0xff << 8)
+> +#define VIDW0ALPHAx_G_SHIFT				(8)
+> +#define VIDW0ALPHAx_B(_x)				((_x) << 0)
+> +#define VIDW0ALPHAx_B_MASK				(0xff << 0)
+> +#define VIDW0ALPHAx_B_SHIFT				(0)
+> +
+> +/* Low 4 bits of alpha0-1 for windows 1-4 */
+> +#define VIDW14ALPHAx_R_L(_x)				((_x) << 16)
+> +#define VIDW14ALPHAx_R_L_MASK				(0xf << 16)
+> +#define VIDW14ALPHAx_R_L_SHIFT				(16)
+> +#define VIDW14ALPHAx_G_L(_x)				((_x) << 8)
+> +#define VIDW14ALPHAx_G_L_MASK				(0xf << 8)
+> +#define VIDW14ALPHAx_G_L_SHIFT				(8)
+> +#define VIDW14ALPHAx_B_L(_x)				((_x) << 0)
+> +#define VIDW14ALPHAx_B_L_MASK				(0xf << 0)
+> +#define VIDW14ALPHAx_B_L_SHIFT				(0)
+> +
+> +
+> +/* Per-window blending equation control registers */
+> +#define BLENDEQx(_win)					(0x244 + ((_win) * 4))
+> +#define BLENDEQ1					(0x244)
+> +#define BLENDEQ2					(0x248)
+> +#define BLENDEQ3					(0x24c)
+> +#define BLENDEQ4					(0x250)
+> +
+> +#define BLENDEQx_Q_FUNC(_x)				((_x) << 18)
+> +#define BLENDEQx_Q_FUNC_MASK				(0xf << 18)
+> +#define BLENDEQx_P_FUNC(_x)				((_x) << 12)
+> +#define BLENDEQx_P_FUNC_MASK				(0xf << 12)
+> +#define BLENDEQx_B_FUNC(_x)				((_x) << 6)
+> +#define BLENDEQx_B_FUNC_MASK				(0xf << 6)
+> +#define BLENDEQx_A_FUNC(_x)				((_x) << 0)
+> +#define BLENDEQx_A_FUNC_MASK				(0xf << 0)
+> +
+> +#define BLENDCON					(0x260)
+> +#define BLENDCON_8BIT_ALPHA				(1 << 0)
+> +
+> +/* Per-window palette base addresses (start of palette memory).
+> + * Each window palette area consists of 256 32-bit entries.
+> + * START is the first address (entry 0th), END is the address of 255th entry.
+> + */
+> +#define WIN0_PAL_BASE					(0x2400)
+> +#define WIN0_PAL_END					(0x27fc)
+> +#define WIN1_PAL_BASE					(0x2800)
+> +#define WIN1_PAL_END					(0x2bfc)
+> +#define WIN2_PAL_BASE					(0x2c00)
+> +#define WIN2_PAL_END					(0x2ffc)
+> +#define WIN3_PAL_BASE					(0x3000)
+> +#define WIN3_PAL_END					(0x33fc)
+> +#define WIN4_PAL_BASE					(0x3400)
+> +#define WIN4_PAL_END					(0x37fc)
+> +
+> +#define WIN0_PAL(_entry)			(WIN0_PAL_BASE + ((_entry) * 4))
+> +#define WIN1_PAL(_entry)			(WIN1_PAL_BASE + ((_entry) * 4))
+> +#define WIN2_PAL(_entry)			(WIN2_PAL_BASE + ((_entry) * 4))
+> +#define WIN3_PAL(_entry)			(WIN3_PAL_BASE + ((_entry) * 4))
+> +#define WIN4_PAL(_entry)			(WIN4_PAL_BASE + ((_entry) * 4))
+> +
+> +static inline unsigned int s3c_fb_pal_reg(unsigned int window, int reg)
 > +{
-> + =C2=A0 =C2=A0 =C2=A0 unsigned long ucon =3D rd_regl(port, S3C2410_U=
-CON);
+> +	switch (window) {
+> +	case 0: return WIN0_PAL(reg);
+> +	case 1: return WIN1_PAL(reg);
+> +	case 2: return WIN2_PAL(reg);
+> +	case 3: return WIN3_PAL(reg);
+> +	case 4: return WIN4_PAL(reg);
+> +	}
 > +
-> + =C2=A0 =C2=A0 =C2=A0 if (strcmp(clk->name, "uclk0") =3D=3D 0)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ucon |=3D S5PC110_=
-UCON_SCLK_UART;
-> + =C2=A0 =C2=A0 =C2=A0 else if (strcmp(clk->name, "pclk") =3D=3D 0)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* See notes about=
- transitioning from UCLK to PCLK */
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ucon &=3D ~S5PC110=
-_UCON_SCLK_UART;
-> + =C2=A0 =C2=A0 =C2=A0 else {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 printk(KERN_ERR "u=
-nknown clock source %s\n", clk->name);
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -EINVAL;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 wr_regl(port, S3C2410_UCON, ucon);
-> + =C2=A0 =C2=A0 =C2=A0 return 0;
-> +}
-Not just about this c110 patch: I think this string comparison thing
-isn't very neat.
-I think we'd better be doing it by indexing into an array of clock
-names(which can be
-defined in some platform specific code).
-
-> +static int s5pc110_serial_getsource(struct uart_port *port,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct s3c24xx_uart_c=
-lksrc *clk)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 u32 ucon =3D rd_regl(port, S3C2410_UCON);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 clk->divisor =3D 1;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 switch (ucon & S5PC110_UCON_CLKMASK) {
-> + =C2=A0 =C2=A0 =C2=A0 case S5PC110_UCON_SCLK_UART:
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 clk->name =3D "ucl=
-k0";
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 case S5PC110_UCON_PCLK:
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 clk->name =3D "pcl=
-k";
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 return 0;
-> +}
-> +
-> +static int s5pc110_serial_resetport(struct uart_port *port,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct s3c2410_uartcf=
-g *cfg)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 unsigned long ucon =3D rd_regl(port, S3C2410_U=
-CON);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 dbg("s5pc110_serial_resetport: port=3D%p (%08l=
-x), cfg=3D%p\n",
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 port, port->mapbase, cfg);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 /* ensure we don't change the clock settings..=
-=2E */
-> +
-> + =C2=A0 =C2=A0 =C2=A0 ucon &=3D S5PC110_UCON_CLKMASK;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 wr_regl(port, S3C2410_UCON, =C2=A0ucon | cfg->=
-ucon);
-> + =C2=A0 =C2=A0 =C2=A0 wr_regl(port, S3C2410_ULCON, cfg->ulcon);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 /* reset both fifos */
-> +
-> + =C2=A0 =C2=A0 =C2=A0 wr_regl(port, S3C2410_UFCON, cfg->ufcon | S3C2=
-410_UFCON_RESETBOTH);
-> + =C2=A0 =C2=A0 =C2=A0 wr_regl(port, S3C2410_UFCON, cfg->ufcon);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 return 0;
-> +}
-> +
-> +static struct s3c24xx_uart_info s5pc110_uart_inf =3D {
-> + =C2=A0 =C2=A0 =C2=A0 .name =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D "=
-Samsung S5PC110 UART",
-> + =C2=A0 =C2=A0 =C2=A0 .type =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D P=
-ORT_S3C6400,
-> + =C2=A0 =C2=A0 =C2=A0 .fifosize =C2=A0 =C2=A0 =C2=A0 =3D 16,
-> + =C2=A0 =C2=A0 =C2=A0 .has_divslot =C2=A0 =C2=A0=3D 1,
-> + =C2=A0 =C2=A0 =C2=A0 .rx_fifomask =C2=A0 =C2=A0=3D S5PC110_UFSTAT_R=
-XMASK,
-> + =C2=A0 =C2=A0 =C2=A0 .rx_fifoshift =C2=A0 =3D S5PC110_UFSTAT_RXSHIF=
-T,
-> + =C2=A0 =C2=A0 =C2=A0 .rx_fifofull =C2=A0 =C2=A0=3D S5PC110_UFSTAT_R=
-XFULL,
-> + =C2=A0 =C2=A0 =C2=A0 .tx_fifofull =C2=A0 =C2=A0=3D S5PC110_UFSTAT_T=
-XFULL,
-> + =C2=A0 =C2=A0 =C2=A0 .tx_fifomask =C2=A0 =C2=A0=3D S5PC110_UFSTAT_T=
-XMASK,
-> + =C2=A0 =C2=A0 =C2=A0 .tx_fifoshift =C2=A0 =3D S5PC110_UFSTAT_TXSHIF=
-T,
-> + =C2=A0 =C2=A0 =C2=A0 .get_clksrc =C2=A0 =C2=A0 =3D s5pc110_serial_g=
-etsource,
-> + =C2=A0 =C2=A0 =C2=A0 .set_clksrc =C2=A0 =C2=A0 =3D s5pc110_serial_s=
-etsource,
-> + =C2=A0 =C2=A0 =C2=A0 .reset_port =C2=A0 =C2=A0 =3D s5pc110_serial_r=
-esetport,
-> +};
-> +
-> +/* device management */
-> +
-> +static int s5pc110_serial_probe(struct platform_device *dev)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 dbg("s5pc110_serial_probe: dev=3D%p\n", dev);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 return s3c24xx_serial_probe(dev, &s5pc110_uart=
-_inf);
+> +	BUG();
 > +}
 > +
-> +static struct platform_driver s5pc110_serial_driver =3D {
-> + =C2=A0 =C2=A0 =C2=A0 .probe =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s=
-5pc110_serial_probe,
-> + =C2=A0 =C2=A0 =C2=A0 .remove =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D __deve=
-xit_p(s3c24xx_serial_remove),
-> + =C2=A0 =C2=A0 =C2=A0 .driver =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .name =C2=A0 =3D "=
-s5pc110-uart",
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .owner =C2=A0=3D T=
-HIS_MODULE,
-> + =C2=A0 =C2=A0 =C2=A0 },
-> +};
 > +
-> +s3c24xx_console_init(&s5pc110_serial_driver, &s5pc110_uart_inf);
+> +#endif /* __ASM_ARCH_REGS_FB_V5_H */
 > +
-> +static int __init s5pc110_serial_init(void)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 return s3c24xx_serial_init(&s5pc110_serial_dri=
-ver, &s5pc110_uart_inf);
-> +}
-> +
-> +static void __exit s5pc110_serial_exit(void)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 platform_driver_unregister(&s5pc110_serial_dri=
-ver);
-> +}
-> +
-> +module_init(s5pc110_serial_init);
-> +module_exit(s5pc110_serial_exit);
-> +
-> +MODULE_DESCRIPTION("Samsung S5PC110 SoC Serial port driver");
-> +MODULE_AUTHOR("Kyungmin Park <kyungmin.park@samsung.com>");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_ALIAS("platform:s5pc110-uart");
-> --
+> -- 
 > 1.6.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.ht=
-ml
->
+> 
+
+-- 
+-- 
+Ben
+
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
