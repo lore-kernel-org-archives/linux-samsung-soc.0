@@ -1,25 +1,26 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 06/19] ARM: S5PC1XX: cleanup of s5pc1xx common code
-Date: Wed, 18 Nov 2009 14:33:01 +0100
-Message-ID: <1258551194-16018-7-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 16/19] ARM: S5PC1XX: enable S5PC110 sub-platform
+Date: Wed, 18 Nov 2009 14:33:11 +0100
+Message-ID: <1258551194-16018-17-git-send-email-m.szyprowski@samsung.com>
 References: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:22545 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756721AbZKRNfj (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:17098 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756948AbZKRNfk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Nov 2009 08:35:39 -0500
-Received: from eu_spt1 ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0KTB000DO4FKJU70@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 18 Nov 2009 13:35:44 +0000 (GMT)
+	Wed, 18 Nov 2009 08:35:40 -0500
+Received: from eu_spt1 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0KTB008RF4FL60@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 18 Nov 2009 13:35:45 +0000 (GMT)
 Received: from linux.samsung.com ([106.116.38.10])
  by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0KTB005Z94FKX8@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 18 Nov 2009 13:35:44 +0000 (GMT)
+ 2004)) with ESMTPA id <0KTB00D4Y4FLAM@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 18 Nov 2009 13:35:45 +0000 (GMT)
 In-reply-to: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -28,219 +29,56 @@ Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org
 
 From: Kyungmin Park <kyungmin.park@samsung.com>
 
-This patch removes all useless definitions from plat/s5pc100.h and
-introduces new common plat/s5pc1xx.h include.
+Samsung S5PC110 SoC are newer Samsung SoCs. Like S5PC100 they are based
+on CortexA8 ARM CPU, but have much more powerfull integrated periperals.
+This patch enables S5PC110 sub-platform.
 
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
 ---
- arch/arm/mach-s5pc100/cpu.c                     |    2 +-
- arch/arm/mach-s5pc100/include/plat/regs-clock.h |    8 ++--
- arch/arm/mach-s5pc100/mach-smdkc100.c           |    2 +-
- arch/arm/plat-s5pc1xx/cpu.c                     |    2 +-
- arch/arm/plat-s5pc1xx/include/plat/s5pc100.h    |   51 ++++++-----------------
- arch/arm/plat-s5pc1xx/include/plat/s5pc1xx.h    |   21 +++++++++
- arch/arm/plat-s5pc1xx/s5pc100-init.c            |    7 ++-
- arch/arm/plat-s5pc1xx/s5pc100-plls.c            |    2 +-
- 8 files changed, 46 insertions(+), 49 deletions(-)
- create mode 100644 arch/arm/plat-s5pc1xx/include/plat/s5pc1xx.h
+ arch/arm/Kconfig              |    1 +
+ arch/arm/Makefile             |    1 +
+ arch/arm/plat-s5pc1xx/Kconfig |    3 +++
+ 3 files changed, 5 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-s5pc100/cpu.c b/arch/arm/mach-s5pc100/cpu.c
-index 41fdecf..f383e33 100644
---- a/arch/arm/mach-s5pc100/cpu.c
-+++ b/arch/arm/mach-s5pc100/cpu.c
-@@ -41,7 +41,7 @@
- #include <plat/clock.h>
- #include <plat/sdhci.h>
- #include <plat/iic-core.h>
--#include <plat/s5pc100.h>
-+#include <plat/s5pc1xx.h>
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 1c4119c..280c38e 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -770,6 +770,7 @@ source "arch/arm/plat-stmp3xxx/Kconfig"
  
- /* Initial IO mappings */
+ if ARCH_S5PC1XX
+ source "arch/arm/mach-s5pc100/Kconfig"
++source "arch/arm/mach-s5pc110/Kconfig"
+ endif
  
-diff --git a/arch/arm/mach-s5pc100/include/plat/regs-clock.h b/arch/arm/mach-s5pc100/include/plat/regs-clock.h
-index f0a007b..637ff71 100644
---- a/arch/arm/mach-s5pc100/include/plat/regs-clock.h
-+++ b/arch/arm/mach-s5pc100/include/plat/regs-clock.h
-@@ -341,10 +341,10 @@
- #define S5PC100_HDMI_PHY_CON0	S5PC100_CLKREG_OTHER(0x420)
+ source "arch/arm/mach-lh7a40x/Kconfig"
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index daea150..d9daa45 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -161,6 +161,7 @@ machine-$(CONFIG_ARCH_S3C2410)		:= s3c2410 s3c2400 s3c2412 s3c2440 s3c2442 s3c24
+ machine-$(CONFIG_ARCH_S3C24A0)		:= s3c24a0
+ machine-$(CONFIG_ARCH_S3C64XX)		:= s3c6400 s3c6410
+ machine-$(CONFIG_ARCH_S5PC100)		:= s5pc100
++machine-$(CONFIG_ARCH_S5PC110)		:= s5pc110
+ machine-$(CONFIG_ARCH_SA1100)		:= sa1100
+ machine-$(CONFIG_ARCH_SHARK)		:= shark
+ machine-$(CONFIG_ARCH_STMP378X)		:= stmp378x
+diff --git a/arch/arm/plat-s5pc1xx/Kconfig b/arch/arm/plat-s5pc1xx/Kconfig
+index 898cd82..137371f 100644
+--- a/arch/arm/plat-s5pc1xx/Kconfig
++++ b/arch/arm/plat-s5pc1xx/Kconfig
+@@ -30,6 +30,9 @@ choice
+ config ARCH_S5PC100
+ 	bool "S5PC100"
  
- #define S5PC100_SWRESET_RESETVAL	0xc100
--#define S5PC100_OTHER_SYS_INT	24
--#define S5PC100_OTHER_STA_TYPE	23
--#define STA_TYPE_EXPON		0
--#define STA_TYPE_SFR		1
-+#define S5PC100_OTHERS_PMU_INT_DISALBE		(1 << 24)
-+#define S5PC100_OTHERS_STABLE_COUNTER_TYPE_MASK	(1 << 23)
-+#define S5PC100_OTHERS_STABLE_COUNTER_TYPE_SFR	(1 << 23)
-+#define S5PC100_OTHERS_STABLE_COUNTER_TYPE_EXP	(0 << 23)
- 
- #define S5PC100_SLEEP_CFG_OSC_EN	0
- 
-diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-s5pc100/mach-smdkc100.c
-index ae3c52c..29b95f1 100644
---- a/arch/arm/mach-s5pc100/mach-smdkc100.c
-+++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
-@@ -40,7 +40,7 @@
- #include <plat/clock.h>
- #include <plat/devs.h>
- #include <plat/cpu.h>
--#include <plat/s5pc100.h>
-+#include <plat/s5pc1xx.h>
- #include <plat/fb.h>
- #include <plat/iic.h>
- 
-diff --git a/arch/arm/plat-s5pc1xx/cpu.c b/arch/arm/plat-s5pc1xx/cpu.c
-index ecd6d38..d30998d 100644
---- a/arch/arm/plat-s5pc1xx/cpu.c
-+++ b/arch/arm/plat-s5pc1xx/cpu.c
-@@ -31,7 +31,7 @@
- #include <plat/devs.h>
- #include <plat/clock.h>
- 
--#include <plat/s5pc100.h>
-+#include <plat/s5pc1xx.h>
- 
- /* table of supported CPUs */
- 
-diff --git a/arch/arm/plat-s5pc1xx/include/plat/s5pc100.h b/arch/arm/plat-s5pc1xx/include/plat/s5pc100.h
-index 2531f34..32eb6e7 100644
---- a/arch/arm/plat-s5pc1xx/include/plat/s5pc100.h
-+++ b/arch/arm/plat-s5pc1xx/include/plat/s5pc100.h
-@@ -13,52 +13,27 @@
- */
- 
- /* Common init code for S5PC100 related SoCs */
++config ARCH_S5PC110
++	bool "S5PC110"
 +
-+#ifdef CONFIG_CPU_S5PC100
-+
- extern  int s5pc100_init(void);
- extern void s5pc100_map_io(void);
- extern void s5pc100_init_clocks(int xtal);
- extern  int s5pc100_register_baseclocks(unsigned long xtal);
- extern void s5pc100_init_irq(void);
- extern void s5pc100_init_io(struct map_desc *mach_desc, int size);
--extern void s5pc100_common_init_uarts(struct s3c2410_uartcfg *cfg, int no);
-+extern void s5pc100_init_uarts(struct s3c2410_uartcfg *cfg, int no);
- extern void s5pc100_register_clocks(void);
- extern void s5pc100_setup_clocks(void);
--extern struct sysdev_class s5pc100_sysclass;
--
--#define s5pc100_init_uarts s5pc100_common_init_uarts
--
--/* Some day, belows will be moved to plat-s5pc/include/plat/cpu.h */
--extern void s5pc1xx_init_irq(u32 *vic_valid, int num);
--extern void s5pc1xx_init_io(struct map_desc *mach_desc, int size);
--
--/* Some day, belows will be moved to plat-s5pc/include/plat/clock.h */
--extern struct clk clk_hpll;
--extern struct clk clk_hd0;
--extern struct clk clk_pd0;
-+extern  int s5pc100_sclk0_ctrl(struct clk *clk, int enable);
-+extern  int s5pc100_sclk1_ctrl(struct clk *clk, int enable);
- extern struct clk clk_54m;
--extern void s5pc1xx_register_clocks(void);
--extern int s5pc100_sclk0_ctrl(struct clk *clk, int enable);
--extern int s5pc100_sclk1_ctrl(struct clk *clk, int enable);
+ endchoice
  
--/* Some day, belows will be moved to plat-s5pc/include/plat/devs.h */
--extern struct s3c24xx_uart_resources s5pc1xx_uart_resources[];
--extern struct platform_device s3c_device_g2d;
--extern struct platform_device s3c_device_g3d;
--extern struct platform_device s3c_device_vpp;
--extern struct platform_device s3c_device_tvenc;
--extern struct platform_device s3c_device_tvscaler;
--extern struct platform_device s3c_device_rotator;
--extern struct platform_device s3c_device_jpeg;
--extern struct platform_device s3c_device_onenand;
--extern struct platform_device s3c_device_usb_otghcd;
--extern struct platform_device s3c_device_keypad;
--extern struct platform_device s3c_device_ts;
--extern struct platform_device s3c_device_g3d;
--extern struct platform_device s3c_device_smc911x;
--extern struct platform_device s3c_device_fimc0;
--extern struct platform_device s3c_device_fimc1;
--extern struct platform_device s3c_device_mfc;
--extern struct platform_device s3c_device_ac97;
--extern struct platform_device s3c_device_fimc0;
--extern struct platform_device s3c_device_fimc1;
--extern struct platform_device s3c_device_fimc2;
-+#else
-+
-+#define s5pc100_map_io NULL
-+#define s5pc100_init_clocks NULL
-+#define s5pc100_init_uarts NULL
-+#define s5pc100_init NULL
  
-+#endif
-diff --git a/arch/arm/plat-s5pc1xx/include/plat/s5pc1xx.h b/arch/arm/plat-s5pc1xx/include/plat/s5pc1xx.h
-new file mode 100644
-index 0000000..398251f
---- /dev/null
-+++ b/arch/arm/plat-s5pc1xx/include/plat/s5pc1xx.h
-@@ -0,0 +1,21 @@
-+/* arch/arm/plat-s5pc1xx/include/plat/s5pc100.h
-+ *
-+ * Copyright 2009 Samsung Electronics Co.
-+ *	Marek Szyprowski <m.szyprowski@samsung.com>
-+ *
-+ * Header file for s5pc1xx cpu support
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/* Common init code for S5PC1XX related SoCs */
-+
-+extern void s5pc1xx_init_irq(u32 *vic_valid, int num);
-+extern void s5pc1xx_init_io(struct map_desc *mach_desc, int size);
-+extern void s5pc1xx_register_clocks(void);
-+
-+extern struct s3c24xx_uart_resources s5pc1xx_uart_resources[];
-+
-+#include <plat/s5pc100.h>
-diff --git a/arch/arm/plat-s5pc1xx/s5pc100-init.c b/arch/arm/plat-s5pc1xx/s5pc100-init.c
-index c587108..24b57b9 100644
---- a/arch/arm/plat-s5pc1xx/s5pc100-init.c
-+++ b/arch/arm/plat-s5pc1xx/s5pc100-init.c
-@@ -1,4 +1,4 @@
--/* linux/arch/arm/plat-s5pc1xx/s5pc100-init.c
-+/* linux/arch/arm/plat-s5pc100/s5pc100-init.c
-  *
-  * Copyright 2009 Samsung Electronics Co.
-  *      Byungho Min <bhmin@samsung.com>
-@@ -13,14 +13,15 @@
- #include <linux/kernel.h>
- #include <linux/types.h>
- #include <linux/init.h>
-+#include <linux/clk.h>
- 
- #include <plat/cpu.h>
- #include <plat/devs.h>
--#include <plat/s5pc100.h>
-+#include <plat/s5pc1xx.h>
- 
- /* uart registration process */
- 
--void __init s5pc100_common_init_uarts(struct s3c2410_uartcfg *cfg, int no)
-+void __init s5pc100_init_uarts(struct s3c2410_uartcfg *cfg, int no)
- {
- 	/* The driver name is s3c6400-uart to reuse s3c6400_serial_drv  */
- 	s3c24xx_init_uartdevs("s3c6400-uart", s5pc1xx_uart_resources, cfg, no);
-diff --git a/arch/arm/plat-s5pc1xx/s5pc100-plls.c b/arch/arm/plat-s5pc1xx/s5pc100-plls.c
-index e620bf2..45f073e 100644
---- a/arch/arm/plat-s5pc1xx/s5pc100-plls.c
-+++ b/arch/arm/plat-s5pc1xx/s5pc100-plls.c
-@@ -32,7 +32,7 @@
- #include <plat/cpu.h>
- #include <plat/pll.h>
- #include <plat/devs.h>
--#include <plat/s5pc100.h>
-+#include <plat/s5pc1xx.h>
- 
- /* fin_apll, fin_mpll and fin_epll are all the same clock, which we call
-  * ext_xtal_mux for want of an actual name from the manual.
 -- 
 1.6.4
