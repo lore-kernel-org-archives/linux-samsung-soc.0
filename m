@@ -1,7 +1,7 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 09/19] drivers: serial: add support for Samsung S5PC110 SoC uart
-Date: Wed, 18 Nov 2009 14:33:04 +0100
-Message-ID: <1258551194-16018-10-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 02/19] ARM: S5PC1XX: create sub-platform for S5PC100 SoCs
+Date: Wed, 18 Nov 2009 14:32:57 +0100
+Message-ID: <1258551194-16018-3-git-send-email-m.szyprowski@samsung.com>
 References: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -9,18 +9,18 @@ Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout2.w1.samsung.com ([210.118.77.12]:49329 "EHLO
 	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757079AbZKRNfp (ORCPT
+	with ESMTP id S1757054AbZKRNfm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Nov 2009 08:35:45 -0500
-Received: from eu_spt1 (mailout2.w1.samsung.com [210.118.77.12])
+	Wed, 18 Nov 2009 08:35:42 -0500
+Received: from eu_spt2 (mailout2.w1.samsung.com [210.118.77.12])
  by mailout2.w1.samsung.com
  (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0KTB002XW4FLH8@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 18 Nov 2009 13:35:45 +0000 (GMT)
+ with ESMTP id <0KTB009MJ4FKGS@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 18 Nov 2009 13:35:44 +0000 (GMT)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0KTB0044K4FKLJ@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 18 Nov 2009 13:35:45 +0000 (GMT)
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0KTB000BN4FJ66@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 18 Nov 2009 13:35:44 +0000 (GMT)
 In-reply-to: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -29,242 +29,74 @@ Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org
 
 From: Kyungmin Park <kyungmin.park@samsung.com>
 
-Samsung S5PC110 SoCs have UART that differs a bit from the one known
-from the previous Samsung SoCs. This patch adds support for this new
-driver.
+Samsung S5PC100 and S5PC110 SoCs differs a lot in register map and other
+core platform definitions, so it is not possible to have both SoCs in
+the current platform framework without runtime hacks. To address this
+issue a sub-platform has been introduced, so each SoC in sub-platform
+can have its own set of include files (register map, irq&gpio
+definitions, etc)
 
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-
 ---
- arch/arm/plat-s3c/include/plat/regs-serial.h |   31 ++++++
- drivers/serial/Kconfig                       |    7 ++
- drivers/serial/Makefile                      |    1 +
- drivers/serial/s5pc110.c                     |  143 ++++++++++++++++++++++++++
- 4 files changed, 182 insertions(+), 0 deletions(-)
- create mode 100644 drivers/serial/s5pc110.c
+ arch/arm/Makefile             |    2 +-
+ arch/arm/mach-s5pc100/Kconfig |    4 ++++
+ arch/arm/plat-s5pc1xx/Kconfig |   10 ++++++++++
+ 3 files changed, 15 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/plat-s3c/include/plat/regs-serial.h b/arch/arm/plat-s3c/include/plat/regs-serial.h
-index 66af75a..910cfba 100644
---- a/arch/arm/plat-s3c/include/plat/regs-serial.h
-+++ b/arch/arm/plat-s3c/include/plat/regs-serial.h
-@@ -194,6 +194,37 @@
- #define S3C64XX_UINTSP		0x34
- #define S3C64XX_UINTM		0x38
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index a73caaf..daea150 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -160,7 +160,7 @@ machine-$(CONFIG_ARCH_RPC)		:= rpc
+ machine-$(CONFIG_ARCH_S3C2410)		:= s3c2410 s3c2400 s3c2412 s3c2440 s3c2442 s3c2443
+ machine-$(CONFIG_ARCH_S3C24A0)		:= s3c24a0
+ machine-$(CONFIG_ARCH_S3C64XX)		:= s3c6400 s3c6410
+-machine-$(CONFIG_ARCH_S5PC1XX)		:= s5pc100
++machine-$(CONFIG_ARCH_S5PC100)		:= s5pc100
+ machine-$(CONFIG_ARCH_SA1100)		:= sa1100
+ machine-$(CONFIG_ARCH_SHARK)		:= shark
+ machine-$(CONFIG_ARCH_STMP378X)		:= stmp378x
+diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
+index 0dd2b8c..d72f881 100644
+--- a/arch/arm/mach-s5pc100/Kconfig
++++ b/arch/arm/mach-s5pc100/Kconfig
+@@ -5,6 +5,8 @@
+ #
+ # Licensed under GPLv2
  
-+/* S5PC110 UCON */
-+#define S5PC110_UCON_CLKMASK	(1<<10)
-+#define S5PC110_UCON_PCLK	(0<<10)
-+#define S5PC110_UCON_SCLK_UART	(1<<10)
++if ARCH_S5PC100
 +
-+/* S5PC110 FIFO trigger levels */
-+#define S5PC110_UFCON_RXTRIG1	(0<<4)
-+#define S5PC110_UFCON_RXTRIG4	(1<<4)
-+#define S5PC110_UFCON_RXTRIG8	(2<<4)
-+#define S5PC110_UFCON_RXTRIG16	(3<<4)
-+#define S5PC110_UFCON_RXTRIG32	(4<<4)
-+#define S5PC110_UFCON_RXTRIG64	(5<<4)
-+#define S5PC110_UFCON_RXTRIG128	(6<<4)
-+#define S5PC110_UFCON_RXTRIG256	(7<<4)
-+
-+#define S5PC110_UFCON_TXTRIG1	(0<<8)
-+#define S5PC110_UFCON_TXTRIG4	(1<<8)
-+#define S5PC110_UFCON_TXTRIG8	(2<<8)
-+#define S5PC110_UFCON_TXTRIG16	(3<<8)
-+#define S5PC110_UFCON_TXTRIG32	(4<<8)
-+#define S5PC110_UFCON_TXTRIG64	(5<<8)
-+#define S5PC110_UFCON_TXTRIG128	(6<<8)
-+#define S5PC110_UFCON_TXTRIG256	(7<<8)
-+
-+#define S5PC110_UFSTAT_TXFULL	(1<<24)
-+#define S5PC110_UFSTAT_RXFULL	(1<<8)
-+#define S5PC110_UFSTAT_TXSHIFT	(16)
-+#define S5PC110_UFSTAT_RXSHIFT	(0)
-+#define S5PC110_UFSTAT_TXMASK	(255<<16)
-+#define S5PC110_UFSTAT_RXMASK	(255)
-+
- #ifndef __ASSEMBLY__
+ # Configuration options for the S5PC100 CPU
  
- /* struct s3c24xx_uart_clksrc
-diff --git a/drivers/serial/Kconfig b/drivers/serial/Kconfig
-index e522572..d119cac 100644
---- a/drivers/serial/Kconfig
-+++ b/drivers/serial/Kconfig
-@@ -540,6 +540,13 @@ config SERIAL_S5PC100
+ config CPU_S5PC100
+@@ -34,3 +36,5 @@ config MACH_SMDKC100
+ 	select S5PC100_SETUP_SDHCI
  	help
- 	  Serial port support for the Samsung S5PC100 SoCs
+ 	  Machine support for the Samsung SMDKC100
++
++endif
+diff --git a/arch/arm/plat-s5pc1xx/Kconfig b/arch/arm/plat-s5pc1xx/Kconfig
+index 1608e62..eee2abb 100644
+--- a/arch/arm/plat-s5pc1xx/Kconfig
++++ b/arch/arm/plat-s5pc1xx/Kconfig
+@@ -23,6 +23,16 @@ config PLAT_S5PC1XX
  
-+config SERIAL_S5PC110
-+	tristate "Samsung S5PC110 Serial port support"
-+	depends on SERIAL_SAMSUNG && CPU_S5PC110
-+	default y
-+	help
-+	  Serial port support for the Samsung S5PC110 SoCs
+ if PLAT_S5PC1XX
+ 
++choice
++	prompt "S5PC1xx SoC Type"
++	default ARCH_S5PC100
 +
- config SERIAL_MAX3100
- 	tristate "MAX3100 support"
- 	depends on SPI
-diff --git a/drivers/serial/Makefile b/drivers/serial/Makefile
-index d21d5dd..43d6123 100644
---- a/drivers/serial/Makefile
-+++ b/drivers/serial/Makefile
-@@ -45,6 +45,7 @@ obj-$(CONFIG_SERIAL_S3C2440) += s3c2440.o
- obj-$(CONFIG_SERIAL_S3C24A0) += s3c24a0.o
- obj-$(CONFIG_SERIAL_S3C6400) += s3c6400.o
- obj-$(CONFIG_SERIAL_S5PC100) += s3c6400.o
-+obj-$(CONFIG_SERIAL_S5PC110) += s5pc110.o
- obj-$(CONFIG_SERIAL_MAX3100) += max3100.o
- obj-$(CONFIG_SERIAL_IP22_ZILOG) += ip22zilog.o
- obj-$(CONFIG_SERIAL_MUX) += mux.o
-diff --git a/drivers/serial/s5pc110.c b/drivers/serial/s5pc110.c
-new file mode 100644
-index 0000000..1e1e229
---- /dev/null
-+++ b/drivers/serial/s5pc110.c
-@@ -0,0 +1,143 @@
-+/*
-+ * linux/drivers/serial/s5pc110.c
-+ *
-+ * Driver for Samsung S5PC110 SoC onboard UARTs.
-+ *
-+ *  Copyright 2009 Samsung Electronics
-+ *  Kyungin Park <kyungmin.park@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
++config ARCH_S5PC100
++	bool "S5PC100"
 +
-+#include <linux/module.h>
-+#include <linux/ioport.h>
-+#include <linux/io.h>
-+#include <linux/platform_device.h>
-+#include <linux/init.h>
-+#include <linux/serial_core.h>
-+#include <linux/serial.h>
++endchoice
 +
-+#include <asm/irq.h>
-+#include <mach/hardware.h>
 +
-+#include <plat/regs-serial.h>
-+
-+#include "samsung.h"
-+
-+static int s5pc110_serial_setsource(struct uart_port *port,
-+				    struct s3c24xx_uart_clksrc *clk)
-+{
-+	unsigned long ucon = rd_regl(port, S3C2410_UCON);
-+
-+	if (strcmp(clk->name, "uclk0") == 0)
-+		ucon |= S5PC110_UCON_SCLK_UART;
-+	else if (strcmp(clk->name, "pclk") == 0)
-+		/* See notes about transitioning from UCLK to PCLK */
-+		ucon &= ~S5PC110_UCON_SCLK_UART;
-+	else {
-+		printk(KERN_ERR "unknown clock source %s\n", clk->name);
-+		return -EINVAL;
-+	}
-+
-+	wr_regl(port, S3C2410_UCON, ucon);
-+	return 0;
-+}
-+
-+static int s5pc110_serial_getsource(struct uart_port *port,
-+				    struct s3c24xx_uart_clksrc *clk)
-+{
-+	u32 ucon = rd_regl(port, S3C2410_UCON);
-+
-+	clk->divisor = 1;
-+
-+	switch (ucon & S5PC110_UCON_CLKMASK) {
-+	case S5PC110_UCON_SCLK_UART:
-+		clk->name = "uclk0";
-+		break;
-+
-+	case S5PC110_UCON_PCLK:
-+		clk->name = "pclk";
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static int s5pc110_serial_resetport(struct uart_port *port,
-+				    struct s3c2410_uartcfg *cfg)
-+{
-+	unsigned long ucon = rd_regl(port, S3C2410_UCON);
-+
-+	dbg("s5pc110_serial_resetport: port=%p (%08lx), cfg=%p\n",
-+	    port, port->mapbase, cfg);
-+
-+	/* ensure we don't change the clock settings... */
-+
-+	ucon &= S5PC110_UCON_CLKMASK;
-+
-+	wr_regl(port, S3C2410_UCON,  ucon | cfg->ucon);
-+	wr_regl(port, S3C2410_ULCON, cfg->ulcon);
-+
-+	/* reset both fifos */
-+
-+	wr_regl(port, S3C2410_UFCON, cfg->ufcon | S3C2410_UFCON_RESETBOTH);
-+	wr_regl(port, S3C2410_UFCON, cfg->ufcon);
-+
-+	return 0;
-+}
-+
-+static struct s3c24xx_uart_info s5pc110_uart_inf = {
-+	.name		= "Samsung S5PC110 UART",
-+	.type		= PORT_S3C6400,
-+	.fifosize	= 16,
-+	.has_divslot	= 1,
-+	.rx_fifomask	= S5PC110_UFSTAT_RXMASK,
-+	.rx_fifoshift	= S5PC110_UFSTAT_RXSHIFT,
-+	.rx_fifofull	= S5PC110_UFSTAT_RXFULL,
-+	.tx_fifofull	= S5PC110_UFSTAT_TXFULL,
-+	.tx_fifomask	= S5PC110_UFSTAT_TXMASK,
-+	.tx_fifoshift	= S5PC110_UFSTAT_TXSHIFT,
-+	.get_clksrc	= s5pc110_serial_getsource,
-+	.set_clksrc	= s5pc110_serial_setsource,
-+	.reset_port	= s5pc110_serial_resetport,
-+};
-+
-+/* device management */
-+
-+static int s5pc110_serial_probe(struct platform_device *dev)
-+{
-+	dbg("s5pc110_serial_probe: dev=%p\n", dev);
-+
-+	return s3c24xx_serial_probe(dev, &s5pc110_uart_inf);
-+}
-+
-+static struct platform_driver s5pc110_serial_driver = {
-+	.probe		= s5pc110_serial_probe,
-+	.remove		= __devexit_p(s3c24xx_serial_remove),
-+	.driver		= {
-+		.name	= "s5pc110-uart",
-+		.owner	= THIS_MODULE,
-+	},
-+};
-+
-+s3c24xx_console_init(&s5pc110_serial_driver, &s5pc110_uart_inf);
-+
-+static int __init s5pc110_serial_init(void)
-+{
-+	return s3c24xx_serial_init(&s5pc110_serial_driver, &s5pc110_uart_inf);
-+}
-+
-+static void __exit s5pc110_serial_exit(void)
-+{
-+	platform_driver_unregister(&s5pc110_serial_driver);
-+}
-+
-+module_init(s5pc110_serial_init);
-+module_exit(s5pc110_serial_exit);
-+
-+MODULE_DESCRIPTION("Samsung S5PC110 SoC Serial port driver");
-+MODULE_AUTHOR("Kyungmin Park <kyungmin.park@samsung.com>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:s5pc110-uart");
+ # Configuration options shared by all S3C64XX implementations
+ 
+ config CPU_S5PC100_INIT
 -- 
 1.6.4
