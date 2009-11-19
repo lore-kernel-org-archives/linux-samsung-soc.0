@@ -1,113 +1,62 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [patch 1/1] TOUCHSCREEN: S3C24XX touchscreen driver from Arnaud
-	Patard.
-Date: Thu, 19 Nov 2009 09:14:23 -0800
-Message-ID: <20091119171423.GD15647@core.coreip.homeip.net>
-References: <20091118232939.201290297@fluff.org.uk> <20091118232948.063635416@fluff.org.uk> <20091119025930.GA20172@core.coreip.homeip.net> <4B052D50.2070002@simtec.co.uk>
+From: Ben Dooks <ben@simtec.co.uk>
+Subject: Re: [patch 1/1] TOUCHSCREEN: S3C24XX touchscreen driver from	Arnaud
+  Patard.
+Date: Thu, 19 Nov 2009 17:48:24 +0000
+Message-ID: <4B0584E8.3040800@simtec.co.uk>
+References: <20091118232939.201290297@fluff.org.uk>	<20091118232948.063635416@fluff.org.uk>	<20091119025930.GA20172@core.coreip.homeip.net>	<4B052D50.2070002@simtec.co.uk>	<20091119135236.GB5535@digital-scurf.org> <20091119170321.GB15647@core.coreip.homeip.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pw0-f42.google.com ([209.85.160.42]:40290 "EHLO
-	mail-pw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752285AbZKSROV (ORCPT
+Received: from hull.simtec.co.uk ([78.105.113.97]:52865 "EHLO
+	ben-laptop.fluff.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752877AbZKSRsV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Nov 2009 12:14:21 -0500
-Content-Disposition: inline
-In-Reply-To: <4B052D50.2070002@simtec.co.uk>
+	Thu, 19 Nov 2009 12:48:21 -0500
+In-Reply-To: <20091119170321.GB15647@core.coreip.homeip.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben@simtec.co.uk>
-Cc: Simtec Linux Team <linux@simtec.co.uk>, linux-samsung-soc@vger.kernel.org, Arnaud Patard <arnaud.patard@rtp-net.org>, linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Daniel Silverstone <dsilvers@simtec.co.uk>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, Simtec Linux Team <linux@simtec.co.uk>, Arnaud Patard <arnaud.patard@rtp-net.org>
 
-On Thu, Nov 19, 2009 at 11:34:40AM +0000, Ben Dooks wrote:
-> Dmitry Torokhov wrote:
->
->>> +
->>> +static char *s3c2410ts_name = "s3c2410 TouchScreen";
-
-Btw, "static char s3c2410ts_name[]" will save you a pointer. But, it
-looks like it is used only once, in probe(), so just put it there.
-
->>> +
->>> +/* Per-touchscreen data. */
->>> +
->>> +/**
->>> + * struct s3c2410ts - driver touchscreen state.
->>> + * @client: The ADC client we registered with the core driver.
->>> + * @dev: The device we are bound to.
->>> + * @input: The input device we registered with the input subsystem.
->>> + * @clock: The clock for the adc.
->>> + * @io: Pointer to the IO base.
->>> + * @xp: The accumulated X position data.
->>> + * @yp: The accumulated Y position data.
->>> + * @irq_tc: The interrupt number for pen up/down interrupt
->>> + * @count: The number of samples collected.
->>> + * @shift: The log2 of the maximum count to read in one go.
->>> + */
+Dmitry Torokhov wrote:
+> On Thu, Nov 19, 2009 at 01:52:36PM +0000, Daniel Silverstone wrote:
+>> On Thu, Nov 19, 2009 at 11:34:40AM +0000, Ben Dooks wrote:
+>>>>> +		input_report_key(ts.input, BTN_TOUCH, 1);
+>>>>> +		input_report_abs(ts.input, ABS_PRESSURE, 1);
+>>>> No fake pressure events please, BTN_TOUCH should be enough.
+>>> I'd have to check, IIRC tslib needs these to function properly.
+>> Indeed it does -- otherwise it won't work.  Yes you could try going around and
+>> patching TSLIB but so many people use it that it is principle-of-least-surprise
+>> to produce pressure events.
 >>
->> These sructures are driver-internal and so don't need to be kernel-doc-ed.
->> Same goes for the driver-private functions.
->
-> I like having the documentation, and I would much prefer to leave it
-> in as useful.
->
-
-Ah, I wasn't requiesting to remove the documentation, I was just saying
-that since these data structures and fucntions are driver-provate they
-don't need to use kernel-doc style.
-
->>> +
->>> +		input_report_key(ts.input, BTN_TOUCH, 1);
->>> +		input_report_abs(ts.input, ABS_PRESSURE, 1);
+>>>>> +	ts.input->keybit[BIT_WORD(BTN_TOUCH)] = BIT_MASK(BTN_TOUCH);
+>>>>> +	input_set_abs_params(ts.input, ABS_X, 0, 0x3FF, 0, 0);
+>>>>> +	input_set_abs_params(ts.input, ABS_Y, 0, 0x3FF, 0, 0);
+>>>>> +	input_set_abs_params(ts.input, ABS_PRESSURE, 0, 1, 0, 0);
+>>>> Drop ABS_PRESSURE.
+>>> ok, see above.
+>> The same applies here -- claim ABS_PRESSURE or tslib won't operate with the
+>> touchscreen.
 >>
->> No fake pressure events please, BTN_TOUCH should be enough.
->
-> I'd have to check, IIRC tslib needs these to function properly.
->
-
-Just update your tslib, the issue was fixed there last November.
-
->>> +{
->>> +	struct s3c2410_ts_mach_info *info;
->>> +	struct device *dev = &pdev->dev;
->>> +	struct input_dev *input_dev;
->>> +	struct resource *res;
->>> +	int ret = -EINVAL;
+>> While it is tempting to be 100% exactly correct to what the hardware reports
+>> (which is only TOUCH not PRESSURE) it is preferable to work with the software
+>> which the majority of people use -- namely tslib.
 >>
->> Can we call it "error" (since that's what you use it for).
->
-> Is it really necessary to change this?
->
+>> I would strongly argue against removing the ABS_PRESSURE stuff personally,
+>> despite it being essentially a lie.
 
-No, it is my personal preference/style. In case when it is used like:
+ok, i'll remove it and anyone who can't be bothered to update their
+tslib can hack in their own solution if they really care about it.
 
-	var = blah();
-	if (var)
-		goto err_unblah;
+> And I would strongly argue that you just need to update your tslib,
+> especially given the fact that this issue was dealt with there about a
+> year ago.  And if you really need that fix to be in released (read
+> 'tagged') version of tslib - please speak to its maintainer.
 
-	return 0;
+> Why everyone thinks that it is a good idea to pile workarounds for
+> software issues in the kernel but updating the other parts of software
+> stack is a big no-no?
 
-err_unblah:
-	unblah();
-	return var;
-}
-
-I prefer that var called 'error'. If the value is returned on both error
-and success paths then I call it 'ret', 'retval', etc.
-
-But no, if you prefer 'ret' that is fine too.
-
->>
->>> +	.suspend	= s3c2410ts_suspend,
->>> +	.resume		= s3c2410ts_resume,
->>
->> Switch to pm_ops.
->
-> ok, will do. may as well remove the #ifdef CONFIG_PM
-> for such small amount of code too.
->
-
-As long as it does not break when CONFIG_PM is not set...
-
--- 
-Dmitry
+it can be much more difficult to update a userland than to hack the
+kernel...
