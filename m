@@ -1,86 +1,44 @@
-From: Shine Liu <liuxian@redflag-linux.com>
-Subject: Re: [patch 1/1] TOUCHSCREEN: S3C24XX touchscreen driver from
- Arnaud Patard.
-Date: Thu, 19 Nov 2009 14:15:31 +0800
-Message-ID: <1258611331.2676.53.camel@shinel>
-References: <20091118232939.201290297@fluff.org.uk>
-	 <20091118232948.063635416@fluff.org.uk>
-	 <20091119025930.GA20172@core.coreip.homeip.net>
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: Re: [patch 1/1] TOUCHSCREEN: S3C24XX touchscreen driver from Arnaud Patard.
+Date: Thu, 19 Nov 2009 10:04:10 +0200
+Message-ID: <200911191004.16315.anarsoul@gmail.com>
+References: <20091118232939.201290297@fluff.org.uk> <20091118232948.063635416@fluff.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed;
+  boundary="nextPart14824763.EWBjEhg6hX";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20091119025930.GA20172@core.coreip.homeip.net>
+In-Reply-To: <20091118232948.063635416@fluff.org.uk>
 Sender: linux-input-owner@vger.kernel.org
-To: Ben Dooks <ben@simtec.co.uk>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Arnaud Patard <arnaud.patard@rtp-net.org>, Simtec Linux Team <linux@simtec.co.uk>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Ben Dooks <ben@simtec.co.uk>, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Arnaud Patard <arnaud.patard@rtp-net.org>, Simtec Linux Team <linux@simtec.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Ben,
+--nextPart14824763.EWBjEhg6hX
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: base64
 
-On Wed, 2009-11-18 at 18:59 -0800, Dmitry Torokhov wrote:
+0JIg0YHQvtC+0LHRidC10L3QuNC4INC+0YIgMTkg0L3QvtGP0LHRgNGPIDIwMDkgMToyOTo0MCDQ
+sNCy0YLQvtGAIEJlbiBEb29rcyDQvdCw0L/QuNGB0LDQuzoKPHNraXBwZWQ+Cj4gKwkvKiBJbml0
+aWFsaXNlIHJlZ2lzdGVycyAqLwo+ICsJaWYgKChpbmZvLT5kZWxheSAmIDB4ZmZmZikgPiAwKQo+
+ICsJCXdyaXRlbChpbmZvLT5kZWxheSAmIDB4ZmZmZiwgdHMuaW8gKyBTM0MyNDEwX0FEQ0RMWSk7
+CgpBcyBmb3IgbWUsIGl0J3Mgbm90IE9LIHRvIG1vZGl0eSBBREMtcmVsYXRlZCByZWdpc3RlcnMg
+aW4gdG91Y2hzY3JlZW4gZHJpdmVyLCAKYWRjIGRyaXZlciBzaG91bGQgYmUgbW9kaWZpZWQgdG8g
+c3VwcG9ydCBkZWxheS4KClJlZ2FyZHMKVmFzaWx5Cg==
 
-> > +#ifdef CONFIG_PM
-> > +static int s3c2410ts_suspend(struct platform_device *pdev, pm_message_t state)
-> > +{
-> > +	writel(TSC_SLEEP, ts.io + S3C2410_ADCTSC);
-> > +	disable_irq(ts.irq_tc);
-> > +	clk_disable(ts.clock);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int s3c2410ts_resume(struct platform_device *pdev)
-> > +{
-> > +	struct s3c2410_ts_mach_info *info = pdev->dev.platform_data;
-> > +
-> > +	clk_enable(ts.clock);
-> > +
-> > +	/* Initialise registers */
-> > +	if ((info->delay & 0xffff) > 0)
-> > +		writel(info->delay & 0xffff, ts.io + S3C2410_ADCDLY);
-> > +
-> > +	writel(WAIT4INT | INT_DOWN, ts.io + S3C2410_ADCTSC);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +#else
-> > +#define s3c2410ts_suspend NULL
-> > +#define s3c2410ts_resume  NULL
-> > +#endif
-> > +
-> > +static struct platform_device_id s3cts_driver_ids[] = {
-> > +	{ "s3c2410-ts", 0 },
-> > +	{ "s3c2440-ts", 1 },
-> > +	{ }
-> > +};
-> > +MODULE_DEVICE_TABLE(platform, s3cts_driver_ids);
-> > +
-> > +static struct platform_driver s3c_ts_driver = {
-> > +	.driver         = {
-> > +		.name   = "s3c24xx-ts",
-> > +		.owner  = THIS_MODULE,
-> > +	},
-> > +	.id_table	= s3cts_driver_ids,
-> > +	.probe		= s3c2410ts_probe,
-> > +	.remove		= s3c2410ts_remove,
-> 
-> __devexit_p()
-> 
-> > +	.suspend	= s3c2410ts_suspend,
-> > +	.resume		= s3c2410ts_resume,
-> 
-> Switch to pm_ops.
+--nextPart14824763.EWBjEhg6hX
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
 
-For these comments from Dmitry I have implemented in my patch last month
-send to linux-input. You can refer
-http://patchwork.kernel.org/patch/54933/ which maybe save some time for
-you.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
 
+iEYEABECAAYFAksE+/oACgkQRM6pQpltKE4wwgCfaNlQTgZeMVCCe99MY28UT5Vy
+lMYAoI7E81mlkl6spn9gXxkhg9TZ9lJ/
+=ylpF
+-----END PGP SIGNATURE-----
 
-Regards,
-
-Shine Liu
-
-
+--nextPart14824763.EWBjEhg6hX--
