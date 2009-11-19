@@ -1,44 +1,34 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: Re: [patch 1/1] TOUCHSCREEN: S3C24XX touchscreen driver from Arnaud Patard.
-Date: Thu, 19 Nov 2009 10:04:10 +0200
-Message-ID: <200911191004.16315.anarsoul@gmail.com>
-References: <20091118232939.201290297@fluff.org.uk> <20091118232948.063635416@fluff.org.uk>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH 10/19] ARM: S5PC1XX: add S5PC110 memory map
+Date: Thu, 19 Nov 2009 17:23:23 +0900
+Message-ID: <9c9fda240911190023l4bcf544cg55e4cca8a9cb7a6a@mail.gmail.com>
+References: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
+	 <1258551194-16018-11-git-send-email-m.szyprowski@samsung.com>
+	 <20091118200032.GF23772@trinity.fluff.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart14824763.EWBjEhg6hX";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20091118232948.063635416@fluff.org.uk>
-Sender: linux-input-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Ben Dooks <ben@simtec.co.uk>, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Arnaud Patard <arnaud.patard@rtp-net.org>, Simtec Linux Team <linux@simtec.co.uk>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vw0-f192.google.com ([209.85.212.192]:52644 "EHLO
+	mail-vw0-f192.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753013AbZKSIXR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 19 Nov 2009 03:23:17 -0500
+Received: by vws30 with SMTP id 30so537935vws.33
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2009 00:23:23 -0800 (PST)
+In-Reply-To: <20091118200032.GF23772@trinity.fluff.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
---nextPart14824763.EWBjEhg6hX
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: base64
+Hi,
 
-0JIg0YHQvtC+0LHRidC10L3QuNC4INC+0YIgMTkg0L3QvtGP0LHRgNGPIDIwMDkgMToyOTo0MCDQ
-sNCy0YLQvtGAIEJlbiBEb29rcyDQvdCw0L/QuNGB0LDQuzoKPHNraXBwZWQ+Cj4gKwkvKiBJbml0
-aWFsaXNlIHJlZ2lzdGVycyAqLwo+ICsJaWYgKChpbmZvLT5kZWxheSAmIDB4ZmZmZikgPiAwKQo+
-ICsJCXdyaXRlbChpbmZvLT5kZWxheSAmIDB4ZmZmZiwgdHMuaW8gKyBTM0MyNDEwX0FEQ0RMWSk7
-CgpBcyBmb3IgbWUsIGl0J3Mgbm90IE9LIHRvIG1vZGl0eSBBREMtcmVsYXRlZCByZWdpc3RlcnMg
-aW4gdG91Y2hzY3JlZW4gZHJpdmVyLCAKYWRjIGRyaXZlciBzaG91bGQgYmUgbW9kaWZpZWQgdG8g
-c3VwcG9ydCBkZWxheS4KClJlZ2FyZHMKVmFzaWx5Cg==
+On Thu, Nov 19, 2009 at 5:00 AM, Ben Dooks <ben-linux@fluff.org> wrote:
+> There's stuff in here from 'Byungho Min <bhmin@samsung.com>'
+> but no mention of an ack or signoff from this person.
 
---nextPart14824763.EWBjEhg6hX
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
+Mr. Min also works together with me. He knows that this changes since
+we use the same git.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.9 (GNU/Linux)
-
-iEYEABECAAYFAksE+/oACgkQRM6pQpltKE4wwgCfaNlQTgZeMVCCe99MY28UT5Vy
-lMYAoI7E81mlkl6spn9gXxkhg9TZ9lJ/
-=ylpF
------END PGP SIGNATURE-----
-
---nextPart14824763.EWBjEhg6hX--
+Thank you,
+Kyungmin Park
