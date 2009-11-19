@@ -1,34 +1,31 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH 10/19] ARM: S5PC1XX: add S5PC110 memory map
-Date: Thu, 19 Nov 2009 17:23:23 +0900
-Message-ID: <9c9fda240911190023l4bcf544cg55e4cca8a9cb7a6a@mail.gmail.com>
-References: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
-	 <1258551194-16018-11-git-send-email-m.szyprowski@samsung.com>
-	 <20091118200032.GF23772@trinity.fluff.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 01/18] ARM: MM: use 64bytes of L1 cache on plat S5PC1xx
+Date: Thu, 19 Nov 2009 09:39:08 +0000
+Message-ID: <20091119093908.GE13376@n2100.arm.linux.org.uk>
+References: <1258014122-18185-1-git-send-email-m.szyprowski@samsung.com> <1258014122-18185-2-git-send-email-m.szyprowski@samsung.com> <20091113231903.GO4808@trinity.fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f192.google.com ([209.85.212.192]:52644 "EHLO
-	mail-vw0-f192.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753013AbZKSIXR (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:39727 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753004AbZKSJj1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Nov 2009 03:23:17 -0500
-Received: by vws30 with SMTP id 30so537935vws.33
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Nov 2009 00:23:23 -0800 (PST)
-In-Reply-To: <20091118200032.GF23772@trinity.fluff.org>
+	Thu, 19 Nov 2009 04:39:27 -0500
+Content-Disposition: inline
+In-Reply-To: <20091113231903.GO4808@trinity.fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Ben Dooks <ben-linux@fluff.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, laforge@gnumonks.org, kyungmin.park@samsung.com, bhmin@samsung.com, linux-arm-kernel@lists.infradead.org
 
-Hi,
+On Fri, Nov 13, 2009 at 11:19:03PM +0000, Ben Dooks wrote:
+> On Thu, Nov 12, 2009 at 09:21:45AM +0100, Marek Szyprowski wrote:
+> > From: Kyungmin Park <kyungmin.park@samsung.com>
+> > 
+> > From: Kyungmin Park <kyungmin.park@samsung.com>
+> 
+> This one i'll keep out of the series, as it either needs to go to Russell's
+> patch tracker on be on a branch for Russell to merge into the main arm
+> tree.
 
-On Thu, Nov 19, 2009 at 5:00 AM, Ben Dooks <ben-linux@fluff.org> wrote:
-> There's stuff in here from 'Byungho Min <bhmin@samsung.com>'
-> but no mention of an ack or signoff from this person.
-
-Mr. Min also works together with me. He knows that this changes since
-we use the same git.
-
-Thank you,
-Kyungmin Park
+FYI, I haven't seen it there yet.
