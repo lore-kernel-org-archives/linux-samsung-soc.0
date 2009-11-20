@@ -1,25 +1,25 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 15/20] ARM: S5PC1XX: add i2c platform helpers on s5pc110
- sub-platform
-Date: Fri, 20 Nov 2009 14:42:47 +0100
-Message-ID: <1258724572-19176-16-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 10/20] ARM: S5PC1XX: add S5PC110 memory map
+Date: Fri, 20 Nov 2009 14:42:42 +0100
+Message-ID: <1258724572-19176-11-git-send-email-m.szyprowski@samsung.com>
 References: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:9459 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753617AbZKTNnE (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:36715 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753464AbZKTNm6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Nov 2009 08:43:04 -0500
-Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0KTE005H5U3QOP30@mailout4.w1.samsung.com> for
+	Fri, 20 Nov 2009 08:42:58 -0500
+Received: from eu_spt2 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0KTE005KLU3QPC@mailout1.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Fri, 20 Nov 2009 13:43:02 +0000 (GMT)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0KTE00J3EU3PNA@spt1.w1.samsung.com> for
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0KTE00C3BU3PFQ@spt2.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Fri, 20 Nov 2009 13:43:02 +0000 (GMT)
 In-reply-to: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -31,313 +31,175 @@ From: Kyungmin Park <kyungmin.park@samsung.com>
 
 Samsung S5PC110 SoC are newer Samsung SoCs. Like S5PC100 they are based
 on CortexA8 ARM CPU, but have much more powerfull integrated periperals.
-This patch adds required I2C platform helpers. S5PC110 SoCs has 3 I2C
-controllers.
+This patch adds register map for S5PC110 sub-platform.
 
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 Signed-off-by: Byungho Min <bhmin@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/mach-s5pc110/Kconfig        |   18 +++++++++
- arch/arm/mach-s5pc110/Makefile       |    3 +
- arch/arm/mach-s5pc110/cpu.c          |    3 +
- arch/arm/mach-s5pc110/setup-i2c0.c   |   31 +++++++++++++++
- arch/arm/mach-s5pc110/setup-i2c1.c   |   31 +++++++++++++++
- arch/arm/mach-s5pc110/setup-i2c2.c   |   32 ++++++++++++++++
- arch/arm/plat-s3c/Kconfig            |    5 ++
- arch/arm/plat-s3c/Makefile           |    1 +
- arch/arm/plat-s3c/dev-i2c2.c         |   69 ++++++++++++++++++++++++++++++++++
- arch/arm/plat-s3c/include/plat/iic.h |    2 +
- 10 files changed, 195 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s5pc110/setup-i2c0.c
- create mode 100644 arch/arm/mach-s5pc110/setup-i2c1.c
- create mode 100644 arch/arm/mach-s5pc110/setup-i2c2.c
- create mode 100644 arch/arm/plat-s3c/dev-i2c2.c
+ arch/arm/mach-s5pc110/include/mach/map.h |  154 ++++++++++++++++++++++++++++++
+ 1 files changed, 154 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5pc110/include/mach/map.h
 
-diff --git a/arch/arm/mach-s5pc110/Kconfig b/arch/arm/mach-s5pc110/Kconfig
-index 4257b96..6b4d977 100644
---- a/arch/arm/mach-s5pc110/Kconfig
-+++ b/arch/arm/mach-s5pc110/Kconfig
-@@ -14,4 +14,22 @@ config CPU_S5PC110
- 	help
- 	  Enable S5PC110 CPU support
- 
-+config S5PC110_SETUP_I2C0
-+	bool
-+	default y
-+	help
-+	  Common setup code for i2c bus 0.
-+
-+	  Note, currently since i2c0 is always compiled, this setup helper
-+	  is always compiled with it.
-+
-+config S5PC110_SETUP_I2C1
-+	bool
-+	help
-+	  Common setup code for i2c bus 1.
-+
-+config S5PC110_SETUP_I2C2
-+	bool
-+	help
-+	  Common setup code for i2c bus 2.
- endif
-diff --git a/arch/arm/mach-s5pc110/Makefile b/arch/arm/mach-s5pc110/Makefile
-index 3849e27..93311b3 100644
---- a/arch/arm/mach-s5pc110/Makefile
-+++ b/arch/arm/mach-s5pc110/Makefile
-@@ -18,5 +18,8 @@ obj-$(CONFIG_CPU_S5PC110)	+= plls.o
- obj-$(CONFIG_CPU_S5PC110)	+= uarts.o
- 
- # Helper and device support
-+obj-$(CONFIG_S5PC110_SETUP_I2C0)	+= setup-i2c0.o
-+obj-$(CONFIG_S5PC110_SETUP_I2C1)	+= setup-i2c1.o
-+obj-$(CONFIG_S5PC110_SETUP_I2C2)	+= setup-i2c2.o
- 
- # machine support
-diff --git a/arch/arm/mach-s5pc110/cpu.c b/arch/arm/mach-s5pc110/cpu.c
-index 3ea26ff..d16ba68 100644
---- a/arch/arm/mach-s5pc110/cpu.c
-+++ b/arch/arm/mach-s5pc110/cpu.c
-@@ -86,6 +86,9 @@ void __init s5pc110_map_io(void)
- 	iotable_init(s5pc110_iodesc, ARRAY_SIZE(s5pc110_iodesc));
- 
- 	/* initialise device information early */
-+	/* the i2c devices are directly compatible with s3c2440 */
-+	s3c_i2c0_setname("s3c2440-i2c");
-+	s3c_i2c1_setname("s3c2440-i2c");
- }
- 
- void __init s5pc110_init_clocks(int xtal)
-diff --git a/arch/arm/mach-s5pc110/setup-i2c0.c b/arch/arm/mach-s5pc110/setup-i2c0.c
+diff --git a/arch/arm/mach-s5pc110/include/mach/map.h b/arch/arm/mach-s5pc110/include/mach/map.h
 new file mode 100644
-index 0000000..596b139
+index 0000000..af9ce84
 --- /dev/null
-+++ b/arch/arm/mach-s5pc110/setup-i2c0.c
-@@ -0,0 +1,31 @@
-+/*
-+ * linux/arch/arm/mach-s5pc110/setup-i2c2.c
++++ b/arch/arm/mach-s5pc110/include/mach/map.h
+@@ -0,0 +1,154 @@
++/* linux/arch/arm/mach-s5pc110/include/mach/map.h
 + *
 + * Copyright 2009 Samsung Electronics Co.
 + *	Byungho Min <bhmin@samsung.com>
 + *
-+ * Base S5PC110 I2C bus 0 gpio configuration
++ * Based on mach-s3c6400/include/mach/map.h
 + *
-+ * Based on plat-s3c64xx/setup-i2c0.c
++ * S5PC110 - Memory map definitions
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 +*/
 +
-+#include <linux/kernel.h>
-+#include <linux/types.h>
++#ifndef __ASM_ARCH_MAP_H
++#define __ASM_ARCH_MAP_H __FILE__
 +
-+struct platform_device; /* don't need the contents */
++#include <plat/map-base.h>
 +
-+#include <mach/gpio.h>
-+#include <plat/iic.h>
-+#include <plat/gpio-cfg.h>
-+
-+void s3c_i2c0_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgpin(S5PC110_GPD1(0), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(S5PC110_GPD1(0), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgpin(S5PC110_GPD1(1), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(S5PC110_GPD1(1), S3C_GPIO_PULL_UP);
-+}
-diff --git a/arch/arm/mach-s5pc110/setup-i2c1.c b/arch/arm/mach-s5pc110/setup-i2c1.c
-new file mode 100644
-index 0000000..cd9649b
---- /dev/null
-+++ b/arch/arm/mach-s5pc110/setup-i2c1.c
-@@ -0,0 +1,31 @@
 +/*
-+ * linux/arch/arm/mach-s5pc110/setup-i2c1.c
++ * map-base.h has already defined virtual memory address
++ * S3C_VA_IRQ		S3C_ADDR(0x00000000)	irq controller(s)
++ * S3C_VA_SYS		S3C_ADDR(0x00100000)	system control
++ * S3C_VA_MEM		S3C_ADDR(0x00200000)	system control (not used)
++ * S3C_VA_TIMER		S3C_ADDR(0x00300000)	timer block
++ * S3C_VA_WATCHDOG	S3C_ADDR(0x00400000)	watchdog
++ * S3C_VA_UART		S3C_ADDR(0x01000000)	UART
 + *
-+ * Copyright 2009 Samsung Electronics Co.
-+ *	Byungho Min <bhmin@samsung.com>
-+ *
-+ * Base S5PC110 I2C bus 1 gpio configuration
-+ *
-+ * Based on plat-s3c64xx/setup-i2c1.c
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/types.h>
-+
-+struct platform_device; /* don't need the contents */
-+
-+#include <mach/gpio.h>
-+#include <plat/iic.h>
-+#include <plat/gpio-cfg.h>
-+
-+void s3c_i2c1_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgpin(S5PC110_GPD1(2), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(S5PC110_GPD1(2), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgpin(S5PC110_GPD1(3), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(S5PC110_GPD1(3), S3C_GPIO_PULL_UP);
-+}
-diff --git a/arch/arm/mach-s5pc110/setup-i2c2.c b/arch/arm/mach-s5pc110/setup-i2c2.c
-new file mode 100644
-index 0000000..aa20628
---- /dev/null
-+++ b/arch/arm/mach-s5pc110/setup-i2c2.c
-@@ -0,0 +1,32 @@
-+/*
-+ * linux/arch/arm/mach-s5pc110/setup-i2c2.c
-+ *
-+ * Copyright (C) 2009 Samsung Electronics Co.Ltd
-+ *	Byungho Min <bhmin@samsung.com>
-+ *
-+ * Base S5PC110 I2C bus 2 gpio configuration
-+ *
-+ * Based on plat-s3c64xx/setup-i2c1.c
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
++ * S5PC110 specific virtual memory address can be defined here
++ * S5PC1XX_VA_GPIO	S3C_ADDR(0x00500000)	GPIO
 + *
 + */
 +
-+#include <linux/kernel.h>
-+#include <linux/types.h>
++/* Chip ID */
++#define S5PC110_PA_CHIPID	(0xE0000000)
++#define S5PC1XX_PA_CHIPID	S5PC110_PA_CHIPID
++#define S5PC1XX_VA_CHIPID	S3C_VA_SYS
 +
-+struct platform_device; /* don't need the contents */
++/* System */
++#define S5PC110_PA_CLK		(0xE0100000)
++#define S5PC110_PA_PWR		(0xE010C000)
++#define S5PC1XX_PA_CLK		S5PC110_PA_CLK
++#define S5PC1XX_PA_PWR		S5PC110_PA_PWR
++#define S5PC1XX_VA_CLK		(S3C_VA_SYS + 0x10000)
++#define S5PC1XX_VA_PWR		(S3C_VA_SYS + 0x20000)
++#define S5PC1XX_SZ_CLK		SZ_32K
++#define S5PC1XX_SZ_PWR		SZ_16K
 +
-+#include <mach/gpio.h>
-+#include <plat/iic.h>
-+#include <plat/gpio-cfg.h>
++/* GPIO */
++#define S5PC110_PA_GPIO		(0xE0200000)
++#define S5PC1XX_PA_GPIO		S5PC110_PA_GPIO
++#define S5PC1XX_VA_GPIO		S3C_ADDR(0x00500000)
 +
-+void s3c_i2c2_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgpin(S5PC110_GPD1(4), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(S5PC110_GPD1(4), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgpin(S5PC110_GPD1(5), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(S5PC110_GPD1(5), S3C_GPIO_PULL_UP);
-+}
-diff --git a/arch/arm/plat-s3c/Kconfig b/arch/arm/plat-s3c/Kconfig
-index e139a72..afdfca2 100644
---- a/arch/arm/plat-s3c/Kconfig
-+++ b/arch/arm/plat-s3c/Kconfig
-@@ -194,6 +194,11 @@ config S3C_DEV_I2C1
- 	help
- 	  Compile in platform device definitions for I2C channel 1
- 
-+config S3C_DEV_I2C2
-+	bool
-+	help
-+	  Compile in platform device definitions for I2C channel 2
++/* Interrupt */
++#define S5PC110_PA_VIC		(0xF2000000)
++#define S5PC110_PA_VIC_OFFSET	0x100000
++#define S5PC1XX_PA_VIC(x)	(S5PC110_PA_VIC + ((x) * S5PC110_PA_VIC_OFFSET))
++#define S5PC110_VA_VIC		S3C_VA_IRQ
++#define S5PC110_VA_VIC_OFFSET	0x10000
++#define S5PC1XX_VA_VIC(x)	(S5PC110_VA_VIC + ((x) * S5PC110_VA_VIC_OFFSET))
 +
- config S3C_DEV_FB
- 	bool
- 	help
-diff --git a/arch/arm/plat-s3c/Makefile b/arch/arm/plat-s3c/Makefile
-index 50444da..c40e312 100644
---- a/arch/arm/plat-s3c/Makefile
-+++ b/arch/arm/plat-s3c/Makefile
-@@ -39,6 +39,7 @@ obj-$(CONFIG_S3C_DEV_HSMMC1)	+= dev-hsmmc1.o
- obj-$(CONFIG_S3C_DEV_HSMMC2)	+= dev-hsmmc2.o
- obj-y				+= dev-i2c0.o
- obj-$(CONFIG_S3C_DEV_I2C1)	+= dev-i2c1.o
-+obj-$(CONFIG_S3C_DEV_I2C2)	+= dev-i2c2.o
- obj-$(CONFIG_S3C_DEV_FB)	+= dev-fb.o
- obj-$(CONFIG_S3C_DEV_USB_HOST)	+= dev-usb.o
- obj-$(CONFIG_S3C_DEV_USB_HSOTG)	+= dev-usb-hsotg.o
-diff --git a/arch/arm/plat-s3c/dev-i2c2.c b/arch/arm/plat-s3c/dev-i2c2.c
-new file mode 100644
-index 0000000..49ec279
---- /dev/null
-+++ b/arch/arm/plat-s3c/dev-i2c2.c
-@@ -0,0 +1,69 @@
-+/*
-+ * linux/arch/arm/plat-s3c/dev-i2c2.c
-+ *
-+ * Copyright (C) 2009 Samsung Electronics Co.Ltd
-+ *	Byungho Min <bhmin@samsung.com>
-+ *
-+ * S3C series device definition for i2c device 2
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
++/* DMA */
++#define S5PC110_PA_MDMA		(0xFA200000)
++#define S5PC110_PA_PDMA0	(0xE0900000)
++#define S5PC110_PA_PDMA1	(0xE0A00000)
 +
-+#include <linux/kernel.h>
-+#include <linux/string.h>
-+#include <linux/platform_device.h>
++/* Timer */
++#define S5PC110_PA_TIMER	(0xE2500000)
++#define S5PC1XX_PA_TIMER	S5PC110_PA_TIMER
++#define S5PC1XX_VA_TIMER	S3C_VA_TIMER
 +
-+#include <mach/cpu.h>
-+#include <mach/irqs.h>
-+#include <mach/map.h>
++/* RTC */
++#define S5PC110_PA_RTC		(0xE2800000)
++#define S5PC1XX_PA_RTC		S5PC110_PA_RTC
 +
-+#include <plat/regs-iic.h>
-+#include <plat/iic.h>
-+#include <plat/devs.h>
++/* UART */
++#define S5PC110_PA_UART		(0xE2900000)
++#define S5PC1XX_PA_UART		S5PC110_PA_UART
++#define S5PC110_PA_UART0	(S5PC110_PA_UART + 0x0)
++#define S5PC110_PA_UART1	(S5PC110_PA_UART + 0x400)
++#define S5PC110_PA_UART2	(S5PC110_PA_UART + 0x800)
++#define S5PC110_PA_UART3	(S5PC110_PA_UART + 0xC00)
++#define S5PC1XX_VA_UART		S3C_VA_UART
 +
-+static struct resource s3c_i2c_resource[] = {
-+	[0] = {
-+		.start = S3C_PA_IIC2,
-+		.end   = S3C_PA_IIC2 + SZ_4K - 1,
-+		.flags = IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start = IRQ_I2C_PMIC_LINK,
-+		.end   = IRQ_I2C_PMIC_LINK,
-+		.flags = IORESOURCE_IRQ,
-+	},
-+};
++/* I2C */
++#define S5PC110_PA_I2C		(0xE1800000)
++#define S5PC110_PA_I2C1		(0xFAB00000)
++#define S5PC110_PA_I2C2		(0xE1A00000)
 +
-+struct platform_device s3c_device_i2c2 = {
-+	.name		  = "s3c2440-i2c",
-+	.id		  = 2,
-+	.num_resources	  = ARRAY_SIZE(s3c_i2c_resource),
-+	.resource	  = s3c_i2c_resource,
-+};
++/* USB HS OTG */
++#define S5PC110_PA_USB_HSOTG	(0xEC000000)
++#define S5PC110_PA_USB_HSPHY	(0xEC100000)
 +
-+static struct s3c2410_platform_i2c default_i2c_data2 __initdata = {
-+	.flags		= 0,
-+	.bus_num	= 2,
-+	.slave_addr	= 0x10,
-+	.frequency	= 400*1000,
-+	.sda_delay	= 100,
-+};
++/* SD/MMC */
++#define S5PC110_PA_HSMMC(x)	(0xEB000000 + ((x) * 0x100000))
++#define S5PC110_PA_HSMMC0	S5PC110_PA_HSMMC(0)
++#define S5PC110_PA_HSMMC1	S5PC110_PA_HSMMC(1)
++#define S5PC110_PA_HSMMC2	S5PC110_PA_HSMMC(2)
++#define S5PC110_PA_HSMMC3	S5PC110_PA_HSMMC(2)
 +
-+void __init s3c_i2c2_set_platdata(struct s3c2410_platform_i2c *pd)
-+{
-+	struct s3c2410_platform_i2c *npd;
++/* LCD */
++#define S5PC110_PA_FB		(0xF8000000)
 +
-+	if (!pd)
-+		pd = &default_i2c_data2;
++/* Multimedia */
++#define S5PC110_PA_MFC		(0xF1700000)
++#define S5PC110_SZ_MFC		(0x0000FFFF)
 +
-+	npd = kmemdup(pd, sizeof(struct s3c2410_platform_i2c), GFP_KERNEL);
-+	if (!npd)
-+		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
-+	else if (!npd->cfg_gpio)
-+		npd->cfg_gpio = s3c_i2c2_cfg_gpio;
++/* I2S */
++#define S5PC110_PA_I2S0		(0xEEE30000)
++#define S5PC110_PA_I2S1		(0xE2100000)
++#define S5PC110_PA_I2S2		(0xE2A00000)
 +
-+	s3c_device_i2c2.dev.platform_data = npd;
-+}
-diff --git a/arch/arm/plat-s3c/include/plat/iic.h b/arch/arm/plat-s3c/include/plat/iic.h
-index 67450f1..9f22675 100644
---- a/arch/arm/plat-s3c/include/plat/iic.h
-+++ b/arch/arm/plat-s3c/include/plat/iic.h
-@@ -54,9 +54,11 @@ struct s3c2410_platform_i2c {
-  */
- extern void s3c_i2c0_set_platdata(struct s3c2410_platform_i2c *i2c);
- extern void s3c_i2c1_set_platdata(struct s3c2410_platform_i2c *i2c);
-+extern void s3c_i2c2_set_platdata(struct s3c2410_platform_i2c *i2c);
- 
- /* defined by architecture to configure gpio */
- extern void s3c_i2c0_cfg_gpio(struct platform_device *dev);
- extern void s3c_i2c1_cfg_gpio(struct platform_device *dev);
-+extern void s3c_i2c2_cfg_gpio(struct platform_device *dev);
- 
- #endif /* __ASM_ARCH_IIC_H */
++/* KEYPAD */
++#define S5PC110_PA_KEYPAD	(0xE1600000)
++
++/* ADC & TouchScreen */
++#define S5PC110_PA_TSADC	(0xE1700000)
++
++/* ETC */
++#define S5PC110_PA_SDRAM	(0x30000000)
++#define S5PC1XX_PA_SDRAM	S5PC110_PA_SDRAM
++
++/* compatibility defines. */
++#define S3C_PA_RTC		S5PC1XX_PA_RTC
++#define S3C_PA_UART		S5PC1XX_PA_UART
++#define S3C_PA_UART0		S5PC110_PA_UART0
++#define S3C_PA_UART1		S5PC110_PA_UART1
++#define S3C_PA_UART2		S5PC110_PA_UART2
++#define S3C_PA_UART3		S5PC110_PA_UART3
++
++#define S3C_VA_UART0		(S3C_VA_UART + 0x0)
++#define S3C_VA_UART1		(S3C_VA_UART + 0x400)
++#define S3C_VA_UART2		(S3C_VA_UART + 0x800)
++#define S3C_VA_UART3		(S3C_VA_UART + 0xC00)
++#define S3C_UART_OFFSET		0x400
++#define S3C_VA_UARTx(x)		(S3C_VA_UART + ((x) * S3C_UART_OFFSET))
++
++#define S3C_PA_FB		S5PC110_PA_FB
++#define S3C_VA_VIC0		(S3C_VA_IRQ + 0x0)
++#define S3C_VA_VIC1		(S3C_VA_IRQ + 0x10000)
++#define S3C_VA_VIC2		(S3C_VA_IRQ + 0x20000)
++#define S3C_VA_VIC3		(S3C_VA_IRQ + 0x30000)
++#define S3C_PA_IIC		S5PC110_PA_I2C
++#define S3C_PA_IIC1		S5PC110_PA_I2C1
++#define S3C_PA_IIC2		S5PC110_PA_I2C2
++#define S3C_PA_USB_HSOTG	S5PC110_PA_USB_HSOTG
++#define S3C_PA_USB_HSPHY	S5PC110_PA_USB_HSPHY
++#define S3C_PA_HSMMC0		S5PC110_PA_HSMMC0
++#define S3C_PA_HSMMC1		S5PC110_PA_HSMMC1
++#define S3C_PA_HSMMC2		S5PC110_PA_HSMMC2
++#define S3C_PA_KEYPAD		S5PC110_PA_KEYPAD
++#define S3C_PA_TSADC		S5PC110_PA_TSADC
++
++#endif /* __ASM_ARCH_C100_MAP_H */
 -- 
 1.6.4
