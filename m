@@ -1,7 +1,8 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 10/20] ARM: S5PC1XX: add S5PC110 memory map
-Date: Fri, 20 Nov 2009 14:42:42 +0100
-Message-ID: <1258724572-19176-11-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 18/20] ARM: S5PC1XX: add framebuffer platform helpers for
+ s5pc110 sub-platform
+Date: Fri, 20 Nov 2009 14:42:50 +0100
+Message-ID: <1258724572-19176-19-git-send-email-m.szyprowski@samsung.com>
 References: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -9,197 +10,257 @@ Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout1.w1.samsung.com ([210.118.77.11]:36715 "EHLO
 	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753464AbZKTNm6 (ORCPT
+	with ESMTP id S1753049AbZKTNnI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Nov 2009 08:42:58 -0500
+	Fri, 20 Nov 2009 08:43:08 -0500
 Received: from eu_spt2 (mailout1.w1.samsung.com [210.118.77.11])
  by mailout1.w1.samsung.com
  (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0KTE005KLU3QPC@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Nov 2009 13:43:02 +0000 (GMT)
+ with ESMTP id <0KTE00LMLU3R7A@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 20 Nov 2009 13:43:03 +0000 (GMT)
 Received: from linux.samsung.com ([106.116.38.10])
  by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0KTE00C3BU3PFQ@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Nov 2009 13:43:02 +0000 (GMT)
+ 2004)) with ESMTPA id <0KTE007MUU3QLT@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 20 Nov 2009 13:43:03 +0000 (GMT)
 In-reply-to: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, Byungho Min <bhmin@samsung.com>
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, Pawel Osciak <p.osciak@samsung.com>
 
-From: Kyungmin Park <kyungmin.park@samsung.com>
+From: Pawel Osciak <p.osciak@samsung.com>
 
 Samsung S5PC110 SoC are newer Samsung SoCs. Like S5PC100 they are based
 on CortexA8 ARM CPU, but have much more powerfull integrated periperals.
-This patch adds register map for S5PC110 sub-platform.
+This patch adds common framebuffer device helpers and register defines
+for S5PC110 sub-platform.
 
+Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Byungho Min <bhmin@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/mach-s5pc110/include/mach/map.h |  154 ++++++++++++++++++++++++++++++
- 1 files changed, 154 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s5pc110/include/mach/map.h
+ arch/arm/mach-s5pc110/Kconfig                |    5 ++
+ arch/arm/mach-s5pc110/Makefile               |    1 +
+ arch/arm/mach-s5pc110/include/mach/regs-fb.h |   91 ++++++++++++++++++++++++++
+ arch/arm/mach-s5pc110/setup-fb-24bpp.c       |   67 +++++++++++++++++++
+ arch/arm/plat-s3c/include/plat/fb.h          |    7 ++
+ 5 files changed, 171 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5pc110/include/mach/regs-fb.h
+ create mode 100644 arch/arm/mach-s5pc110/setup-fb-24bpp.c
 
-diff --git a/arch/arm/mach-s5pc110/include/mach/map.h b/arch/arm/mach-s5pc110/include/mach/map.h
+diff --git a/arch/arm/mach-s5pc110/Kconfig b/arch/arm/mach-s5pc110/Kconfig
+index 0e13f54..ef2f940 100644
+--- a/arch/arm/mach-s5pc110/Kconfig
++++ b/arch/arm/mach-s5pc110/Kconfig
+@@ -14,6 +14,11 @@ config CPU_S5PC110
+ 	help
+ 	  Enable S5PC110 CPU support
+ 
++config S5PC110_SETUP_FB_24BPP
++	bool
++	help
++          Common setup code for S5PC110 with an 24bpp RGB display helper.
++
+ config S5PC110_SETUP_I2C0
+ 	bool
+ 	default y
+diff --git a/arch/arm/mach-s5pc110/Makefile b/arch/arm/mach-s5pc110/Makefile
+index cf8f4ef..d7e03b6 100644
+--- a/arch/arm/mach-s5pc110/Makefile
++++ b/arch/arm/mach-s5pc110/Makefile
+@@ -18,6 +18,7 @@ obj-$(CONFIG_CPU_S5PC110)	+= plls.o
+ obj-$(CONFIG_CPU_S5PC110)	+= uarts.o
+ 
+ # Helper and device support
++obj-$(CONFIG_S5PC110_SETUP_FB_24BPP)	+= setup-fb-24bpp.o
+ obj-$(CONFIG_S5PC110_SETUP_I2C0)	+= setup-i2c0.o
+ obj-$(CONFIG_S5PC110_SETUP_I2C1)	+= setup-i2c1.o
+ obj-$(CONFIG_S5PC110_SETUP_I2C2)	+= setup-i2c2.o
+diff --git a/arch/arm/mach-s5pc110/include/mach/regs-fb.h b/arch/arm/mach-s5pc110/include/mach/regs-fb.h
 new file mode 100644
-index 0000000..af9ce84
+index 0000000..27fa497
 --- /dev/null
-+++ b/arch/arm/mach-s5pc110/include/mach/map.h
-@@ -0,0 +1,154 @@
-+/* linux/arch/arm/mach-s5pc110/include/mach/map.h
-+ *
++++ b/arch/arm/mach-s5pc110/include/mach/regs-fb.h
+@@ -0,0 +1,91 @@
++/*
 + * Copyright 2009 Samsung Electronics Co.
-+ *	Byungho Min <bhmin@samsung.com>
++ *   Pawel Osciak <p.osciak@samsung.com>
 + *
-+ * Based on mach-s3c6400/include/mach/map.h
-+ *
-+ * S5PC110 - Memory map definitions
++ * Machine-specific framebuffer definitions for Samsung S5PC110.
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __ASM_ARCH_MAP_H
-+#define __ASM_ARCH_MAP_H __FILE__
-+
-+#include <plat/map-base.h>
-+
-+/*
-+ * map-base.h has already defined virtual memory address
-+ * S3C_VA_IRQ		S3C_ADDR(0x00000000)	irq controller(s)
-+ * S3C_VA_SYS		S3C_ADDR(0x00100000)	system control
-+ * S3C_VA_MEM		S3C_ADDR(0x00200000)	system control (not used)
-+ * S3C_VA_TIMER		S3C_ADDR(0x00300000)	timer block
-+ * S3C_VA_WATCHDOG	S3C_ADDR(0x00400000)	watchdog
-+ * S3C_VA_UART		S3C_ADDR(0x01000000)	UART
-+ *
-+ * S5PC110 specific virtual memory address can be defined here
-+ * S5PC1XX_VA_GPIO	S3C_ADDR(0x00500000)	GPIO
-+ *
 + */
 +
-+/* Chip ID */
-+#define S5PC110_PA_CHIPID	(0xE0000000)
-+#define S5PC1XX_PA_CHIPID	S5PC110_PA_CHIPID
-+#define S5PC1XX_VA_CHIPID	S3C_VA_SYS
++#ifndef __ASM_ARCH_MACH_REGS_FB_H
++#define __ASM_ARCH_MACH_REGS_FB_H __FILE__
 +
-+/* System */
-+#define S5PC110_PA_CLK		(0xE0100000)
-+#define S5PC110_PA_PWR		(0xE010C000)
-+#define S5PC1XX_PA_CLK		S5PC110_PA_CLK
-+#define S5PC1XX_PA_PWR		S5PC110_PA_PWR
-+#define S5PC1XX_VA_CLK		(S3C_VA_SYS + 0x10000)
-+#define S5PC1XX_VA_PWR		(S3C_VA_SYS + 0x20000)
-+#define S5PC1XX_SZ_CLK		SZ_32K
-+#define S5PC1XX_SZ_PWR		SZ_16K
++#include <plat/regs-fb-v5.h>
 +
-+/* GPIO */
-+#define S5PC110_PA_GPIO		(0xE0200000)
-+#define S5PC1XX_PA_GPIO		S5PC110_PA_GPIO
-+#define S5PC1XX_VA_GPIO		S3C_ADDR(0x00500000)
++/* WINCONx */
++#define WINCONx_BUFSTATUS_H				(1 << 31)
++#define WINCONx_BUFSEL_H				(1 << 30)
++#define WINCONx_LIMIT_ON				(1 << 29)
++#define WINCONx_EQ709					(1 << 28)
 +
-+/* Interrupt */
-+#define S5PC110_PA_VIC		(0xF2000000)
-+#define S5PC110_PA_VIC_OFFSET	0x100000
-+#define S5PC1XX_PA_VIC(x)	(S5PC110_PA_VIC + ((x) * S5PC110_PA_VIC_OFFSET))
-+#define S5PC110_VA_VIC		S3C_VA_IRQ
-+#define S5PC110_VA_VIC_OFFSET	0x10000
-+#define S5PC1XX_VA_VIC(x)	(S5PC110_VA_VIC + ((x) * S5PC110_VA_VIC_OFFSET))
 +
-+/* DMA */
-+#define S5PC110_PA_MDMA		(0xFA200000)
-+#define S5PC110_PA_PDMA0	(0xE0900000)
-+#define S5PC110_PA_PDMA1	(0xE0A00000)
++/* VIDCON3 */
++#define VIDCON3						(0x0c)
++#define VIDCON3_VE_ON					(1 << 20)
++#define VIDCON3_CG_ON					(1 << 18)
++#define VIDCON3_GM_ON					(1 << 16)
++#define VIDCON3_HU_CSC_F_NARROW				(1 << 14)
++#define VIDCON3_HU_CSC_F_EQ709				(1 << 13)
++#define VIDCON3_HU_CSC_F_EN				(1 << 12)
++#define VIDCON3_HU_CSC_B_NARROW				(1 << 10)
++#define VIDCON3_HU_CSC_B_EQ709				(1 << 9)
++#define VIDCON3_HU_CSC_B_EN				(1 << 8)
++#define VIDCON3_HUE_EN					(1 << 7)
++#define VIDCON3_PC_DIR_NEG				(1 << 1)
++#define VIDCON3_PC_EN					(1 << 0)
 +
-+/* Timer */
-+#define S5PC110_PA_TIMER	(0xE2500000)
-+#define S5PC1XX_PA_TIMER	S5PC110_PA_TIMER
-+#define S5PC1XX_VA_TIMER	S3C_VA_TIMER
 +
-+/* RTC */
-+#define S5PC110_PA_RTC		(0xE2800000)
-+#define S5PC1XX_PA_RTC		S5PC110_PA_RTC
++/* VIDTCON3 */
++#define VIDTCON3					(0x1c)
++#define VIDTCON3_VSYNC_EN				(1 << 31)
++#define VIDTCON3_FRM_EN					(1 << 29)
++#define VIDTCON3_INVFRM_LOW				(1 << 28)
++#define VIDTCON3_FRMVRATE_MASK				0xf
++#define VIDTCON3_FRMVRATE_SHIFT				(24)
++#define VIDTCON3_FRMVFPD_MASK				0xff
++#define VIDTCON3_FRMVFPD_SHIFT				(8)
++#define VIDTCON3_FRMVSPW_MASK				0xff
++#define VIDTCON3_FRMVSPW_SHIFT				(0)
 +
-+/* UART */
-+#define S5PC110_PA_UART		(0xE2900000)
-+#define S5PC1XX_PA_UART		S5PC110_PA_UART
-+#define S5PC110_PA_UART0	(S5PC110_PA_UART + 0x0)
-+#define S5PC110_PA_UART1	(S5PC110_PA_UART + 0x400)
-+#define S5PC110_PA_UART2	(S5PC110_PA_UART + 0x800)
-+#define S5PC110_PA_UART3	(S5PC110_PA_UART + 0xC00)
-+#define S5PC1XX_VA_UART		S3C_VA_UART
 +
-+/* I2C */
-+#define S5PC110_PA_I2C		(0xE1800000)
-+#define S5PC110_PA_I2C1		(0xFAB00000)
-+#define S5PC110_PA_I2C2		(0xE1A00000)
++#define SHADOWCON					(0x34)
++/* Set to disable window 4-0 shadow registers' update */
++#define SHADOWCON_W4_PROTECT				(1 << 14)
++#define SHADOWCON_W3_PROTECT				(1 << 13)
++#define SHADOWCON_W2_PROTECT				(1 << 12)
++#define SHADOWCON_W1_PROTECT				(1 << 11)
++#define SHADOWCON_W0_PROTECT				(1 << 10)
 +
-+/* USB HS OTG */
-+#define S5PC110_PA_USB_HSOTG	(0xEC000000)
-+#define S5PC110_PA_USB_HSPHY	(0xEC100000)
 +
-+/* SD/MMC */
-+#define S5PC110_PA_HSMMC(x)	(0xEB000000 + ((x) * 0x100000))
-+#define S5PC110_PA_HSMMC0	S5PC110_PA_HSMMC(0)
-+#define S5PC110_PA_HSMMC1	S5PC110_PA_HSMMC(1)
-+#define S5PC110_PA_HSMMC2	S5PC110_PA_HSMMC(2)
-+#define S5PC110_PA_HSMMC3	S5PC110_PA_HSMMC(2)
++/* Video buffer address shadow registers (read-only) */
++#define VIDW_BUF_START_SHADOW(_buf)			(0x20a0 + ((_buf) * 8))
++#define VIDW_BUF_END_SHADOW(_buf)			(0x20d0 + ((_buf) * 8))
 +
-+/* LCD */
-+#define S5PC110_PA_FB		(0xF8000000)
++/* For windows 1-4 */
++#define WxKEY_ALPHA(_win)				(0x160 + ((_win) * 4))
 +
-+/* Multimedia */
-+#define S5PC110_PA_MFC		(0xF1700000)
-+#define S5PC110_SZ_MFC		(0x0000FFFF)
++#define COLORGAINCON					(0x1c0)
++#define VESFRCON0					(0x1c4)
++#define VESFRCON1					(0x1c8)
++#define VESFRCON2					(0x1cc)
 +
-+/* I2S */
-+#define S5PC110_PA_I2S0		(0xEEE30000)
-+#define S5PC110_PA_I2S1		(0xE2100000)
-+#define S5PC110_PA_I2S2		(0xE2A00000)
++/* Hue matrix coefficients */
++#define HUECOEF00					(0x1ec)
++#define HUECOEF01					(0x1f0)
++#define HUECOEF10					(0x1f4)
++#define HUECOEF11					(0x1f8)
++#define HUEOFFSET					(0x1fc)
 +
-+/* KEYPAD */
-+#define S5PC110_PA_KEYPAD	(0xE1600000)
++/* RTQOS control for windows 0-4*/
++#define WxRTQOSCON(_win)				(0x264 + ((_win) * 4))
 +
-+/* ADC & TouchScreen */
-+#define S5PC110_PA_TSADC	(0xE1700000)
++/* Gamma LUT data for index I1 and I0, where
++ * I0 = _index, I1 = _index + 1.
++ */
++#define GAMMALUT_BASE					(0x37c)
++#define GAMMALUT_I1I0(_index)			(GAMMALUT_BASE + ((_index) * 4))
 +
-+/* ETC */
-+#define S5PC110_PA_SDRAM	(0x30000000)
-+#define S5PC1XX_PA_SDRAM	S5PC110_PA_SDRAM
++#endif /* __ASM_ARCH_MACH_REGS_FB_H */
 +
-+/* compatibility defines. */
-+#define S3C_PA_RTC		S5PC1XX_PA_RTC
-+#define S3C_PA_UART		S5PC1XX_PA_UART
-+#define S3C_PA_UART0		S5PC110_PA_UART0
-+#define S3C_PA_UART1		S5PC110_PA_UART1
-+#define S3C_PA_UART2		S5PC110_PA_UART2
-+#define S3C_PA_UART3		S5PC110_PA_UART3
+diff --git a/arch/arm/mach-s5pc110/setup-fb-24bpp.c b/arch/arm/mach-s5pc110/setup-fb-24bpp.c
+new file mode 100644
+index 0000000..993504e
+--- /dev/null
++++ b/arch/arm/mach-s5pc110/setup-fb-24bpp.c
+@@ -0,0 +1,67 @@
++/*
++ * linux/arch/arm/plat-s5pc100/setup-fb-24bpp.c
++ *
++ * Copyright 2009 Samsung Electronics
++ *
++ * Base S5PC110 setup information for 24bpp LCD framebuffer
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
 +
-+#define S3C_VA_UART0		(S3C_VA_UART + 0x0)
-+#define S3C_VA_UART1		(S3C_VA_UART + 0x400)
-+#define S3C_VA_UART2		(S3C_VA_UART + 0x800)
-+#define S3C_VA_UART3		(S3C_VA_UART + 0xC00)
-+#define S3C_UART_OFFSET		0x400
-+#define S3C_VA_UARTx(x)		(S3C_VA_UART + ((x) * S3C_UART_OFFSET))
++#include <linux/kernel.h>
++#include <linux/types.h>
++#include <linux/fb.h>
 +
-+#define S3C_PA_FB		S5PC110_PA_FB
-+#define S3C_VA_VIC0		(S3C_VA_IRQ + 0x0)
-+#define S3C_VA_VIC1		(S3C_VA_IRQ + 0x10000)
-+#define S3C_VA_VIC2		(S3C_VA_IRQ + 0x20000)
-+#define S3C_VA_VIC3		(S3C_VA_IRQ + 0x30000)
-+#define S3C_PA_IIC		S5PC110_PA_I2C
-+#define S3C_PA_IIC1		S5PC110_PA_I2C1
-+#define S3C_PA_IIC2		S5PC110_PA_I2C2
-+#define S3C_PA_USB_HSOTG	S5PC110_PA_USB_HSOTG
-+#define S3C_PA_USB_HSPHY	S5PC110_PA_USB_HSPHY
-+#define S3C_PA_HSMMC0		S5PC110_PA_HSMMC0
-+#define S3C_PA_HSMMC1		S5PC110_PA_HSMMC1
-+#define S3C_PA_HSMMC2		S5PC110_PA_HSMMC2
-+#define S3C_PA_KEYPAD		S5PC110_PA_KEYPAD
-+#define S3C_PA_TSADC		S5PC110_PA_TSADC
++#include <mach/regs-fb.h>
++#include <mach/gpio.h>
++#include <mach/map.h>
++#include <plat/fb.h>
++#include <plat/regs-clock.h>
++#include <plat/gpio-cfg.h>
++#include <plat/gpio-cfg-s5pc1xx.h>
 +
-+#endif /* __ASM_ARCH_C100_MAP_H */
++void s5pc110_fb_gpio_setup_24bpp(void)
++{
++	unsigned int gpio = 0;
++
++	for (gpio = S5PC110_GPF0(0); gpio <= S5PC110_GPF0(7); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++		s5p_gpio_set_drvstr(gpio, gpio-S5PC110_GPF0(0),
++				    S5P_GPIO_DRVSTR_LV4);
++	}
++
++	for (gpio = S5PC110_GPF1(0); gpio <= S5PC110_GPF1(7); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++		s5p_gpio_set_drvstr(gpio, gpio-S5PC110_GPF1(0),
++				    S5P_GPIO_DRVSTR_LV4);
++	}
++
++	for (gpio = S5PC110_GPF2(0); gpio <= S5PC110_GPF2(7); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++		s5p_gpio_set_drvstr(gpio, gpio-S5PC110_GPF2(0),
++				    S5P_GPIO_DRVSTR_LV4);
++	}
++
++	for (gpio = S5PC110_GPF3(0); gpio <= S5PC110_GPF3(3); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++		s5p_gpio_set_drvstr(gpio, gpio-S5PC110_GPF3(0),
++				    S5P_GPIO_DRVSTR_LV4);
++	}
++
++	/* Set DISPLAY_CONTROL register for Display path selection.
++	 *
++	 * ouput   |   RGB   |   I80   |   ITU
++	 * -----------------------------------
++	 *  00     |   MIE   |  FIMD   |  FIMD
++	 *  01     | MDNIE   | MDNIE   |  FIMD
++	 *  10     |  FIMD   |  FIMD   |  FIMD
++	 *  11     |  FIMD   |  FIMD   |  FIMD
++	 */
++	writel(0x2, S5PC110_MDNIE_SEL);
++}
+diff --git a/arch/arm/plat-s3c/include/plat/fb.h b/arch/arm/plat-s3c/include/plat/fb.h
+index f8db879..ee5cdd0 100644
+--- a/arch/arm/plat-s3c/include/plat/fb.h
++++ b/arch/arm/plat-s3c/include/plat/fb.h
+@@ -77,4 +77,11 @@ extern void s3c64xx_fb_gpio_setup_24bpp(void);
+  */
+ extern void s5pc100_fb_gpio_setup_24bpp(void);
+ 
++/**
++ * s5pc110_fb_gpio_setup_24bpp() - S5PC110 setup function for 24bpp LCD
++ *
++ * Initialise the GPIO for an 24bpp LCD display on the RGB interface.
++ */
++extern void s5pc110_fb_gpio_setup_24bpp(void);
++
+ #endif /* __PLAT_S3C_FB_H */
 -- 
 1.6.4
