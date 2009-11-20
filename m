@@ -1,25 +1,26 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 07/20] ARM: S5PC1XX: move s5pc100 specific device helpers to
- mach-s5pc100 dir
-Date: Fri, 20 Nov 2009 14:42:39 +0100
-Message-ID: <1258724572-19176-8-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 05/20] ARM: S5PC1XX: move common s5pc1xx mach/* includes to
+ plat-s5pc1xx/include/mach
+Date: Fri, 20 Nov 2009 14:42:37 +0100
+Message-ID: <1258724572-19176-6-git-send-email-m.szyprowski@samsung.com>
 References: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:45543 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753491AbZKTNm5 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:36715 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753527AbZKTNm5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 20 Nov 2009 08:42:57 -0500
-Received: from eu_spt1 ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0KTE00LSGU3PYL10@mailout3.w1.samsung.com> for
+Received: from eu_spt1 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0KTE009V0U3P6Q@mailout1.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Fri, 20 Nov 2009 13:43:01 +0000 (GMT)
 Received: from linux.samsung.com ([106.116.38.10])
  by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0KTE006SQU3OK9@spt1.w1.samsung.com> for
+ 2004)) with ESMTPA id <0KTE006SPU3OK9@spt1.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Fri, 20 Nov 2009 13:43:01 +0000 (GMT)
 In-reply-to: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -29,158 +30,118 @@ Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org
 
 From: Kyungmin Park <kyungmin.park@samsung.com>
 
-All device helpers that are defined in plat-s5pc1xx are S5PC100
-specific. This patch moves them to mach-s5pc100 directory to make use of
-newly created sub-platform support.
+All includes that are common for S5PC100 and S5PC110 are moved to
+plat-s5pc1xx/include/mach, so they can be used by both sub-platforms.
 
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/mach-s5pc100/Kconfig                      |   32 +++++++++++++++++--
- arch/arm/mach-s5pc100/Makefile                     |    4 ++
- .../setup-fb-24bpp.c                               |    0
- .../{plat-s5pc1xx => mach-s5pc100}/setup-i2c0.c    |    0
- .../{plat-s5pc1xx => mach-s5pc100}/setup-i2c1.c    |    0
- .../setup-sdhci-gpio.c                             |    0
- arch/arm/plat-s5pc1xx/Kconfig                      |   24 ---------------
- arch/arm/plat-s5pc1xx/Makefile                     |    4 --
- 8 files changed, 32 insertions(+), 32 deletions(-)
- rename arch/arm/{plat-s5pc1xx => mach-s5pc100}/setup-fb-24bpp.c (100%)
- rename arch/arm/{plat-s5pc1xx => mach-s5pc100}/setup-i2c0.c (100%)
- rename arch/arm/{plat-s5pc1xx => mach-s5pc100}/setup-i2c1.c (100%)
- rename arch/arm/{plat-s5pc1xx => mach-s5pc100}/setup-sdhci-gpio.c (100%)
+ .../include/mach/gpio-core.h                       |    2 +-
+ .../include/mach/hardware.h                        |    2 +-
+ .../include/mach/irqs.h                            |    2 +-
+ .../include/mach/memory.h                          |    2 +-
+ .../include/mach/pwm-clock.h                       |    2 +-
+ .../include/mach/tick.h                            |    2 +-
+ .../include/mach/uncompress.h                      |    2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
+ rename arch/arm/{mach-s5pc100 => plat-s5pc1xx}/include/mach/gpio-core.h (91%)
+ rename arch/arm/{mach-s5pc100 => plat-s5pc1xx}/include/mach/hardware.h (83%)
+ rename arch/arm/{mach-s5pc100 => plat-s5pc1xx}/include/mach/irqs.h (87%)
+ rename arch/arm/{mach-s5pc100 => plat-s5pc1xx}/include/mach/memory.h (89%)
+ rename arch/arm/{mach-s5pc100 => plat-s5pc1xx}/include/mach/pwm-clock.h (96%)
+ rename arch/arm/{mach-s5pc100 => plat-s5pc1xx}/include/mach/tick.h (93%)
+ rename arch/arm/{mach-s5pc100 => plat-s5pc1xx}/include/mach/uncompress.h (92%)
 
-diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
-index 1dbb5f1..6749d5e 100644
---- a/arch/arm/mach-s5pc100/Kconfig
-+++ b/arch/arm/mach-s5pc100/Kconfig
-@@ -14,12 +14,36 @@ config CPU_S5PC100
- 	help
- 	  Enable S5PC100 CPU support
- 
-+config S5PC100_SETUP_FB_24BPP
-+	bool
-+	help
-+          Common setup code for S5PC1XX with an 24bpp RGB display helper.
-+
-+config S5PC100_SETUP_I2C0
-+	bool
-+	default y
-+	help
-+	  Common setup code for i2c bus 0.
-+
-+	  Note, currently since i2c0 is always compiled, this setup helper
-+	  is always compiled with it.
-+
-+config S5PC100_SETUP_I2C1
-+	bool
-+	help
-+	  Common setup code for i2c bus 1.
-+
- config S5PC100_SETUP_SDHCI
-         bool
--        select S5PC1XX_SETUP_SDHCI_GPIO
-+        select S5PC100_SETUP_SDHCI_GPIO
-         help
-           Internal helper functions for S5PC100 based SDHCI systems
- 
-+config S5PC100_SETUP_SDHCI_GPIO
-+	bool
-+	help
-+	  Common setup code for SDHCI gpio.
-+
- config MACH_SMDKC100
- 	bool "SMDKC100"
- 	select CPU_S5PC100
-@@ -28,9 +52,9 @@ config MACH_SMDKC100
- 	select S3C_DEV_HSMMC
- 	select S3C_DEV_HSMMC1
- 	select S3C_DEV_HSMMC2
--	select S5PC1XX_SETUP_I2C0
--	select S5PC1XX_SETUP_I2C1
--	select S5PC1XX_SETUP_FB_24BPP
-+	select S5PC100_SETUP_I2C0
-+	select S5PC100_SETUP_I2C1
-+	select S5PC100_SETUP_FB_24BPP
- 	select S5PC100_SETUP_SDHCI
- 	help
- 	  Machine support for the Samsung SMDKC100
-diff --git a/arch/arm/mach-s5pc100/Makefile b/arch/arm/mach-s5pc100/Makefile
-index 8d29ea1..b0664ce 100644
---- a/arch/arm/mach-s5pc100/Makefile
-+++ b/arch/arm/mach-s5pc100/Makefile
-@@ -19,7 +19,11 @@ obj-$(CONFIG_CPU_S5PC100)	+= uarts.o
- 
- # Helper and device support
- 
-+obj-$(CONFIG_S5PC100_SETUP_FB_24BPP)	+= setup-fb-24bpp.o
-+obj-$(CONFIG_S5PC100_SETUP_I2C0)	+= setup-i2c0.o
-+obj-$(CONFIG_S5PC100_SETUP_I2C1)	+= setup-i2c1.o
- obj-$(CONFIG_S5PC100_SETUP_SDHCI)       += setup-sdhci.o
-+obj-$(CONFIG_S5PC100_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
- 
- # machine support
- obj-$(CONFIG_MACH_SMDKC100)	+= mach-smdkc100.o
-diff --git a/arch/arm/plat-s5pc1xx/setup-fb-24bpp.c b/arch/arm/mach-s5pc100/setup-fb-24bpp.c
-similarity index 100%
-rename from arch/arm/plat-s5pc1xx/setup-fb-24bpp.c
-rename to arch/arm/mach-s5pc100/setup-fb-24bpp.c
-diff --git a/arch/arm/plat-s5pc1xx/setup-i2c0.c b/arch/arm/mach-s5pc100/setup-i2c0.c
-similarity index 100%
-rename from arch/arm/plat-s5pc1xx/setup-i2c0.c
-rename to arch/arm/mach-s5pc100/setup-i2c0.c
-diff --git a/arch/arm/plat-s5pc1xx/setup-i2c1.c b/arch/arm/mach-s5pc100/setup-i2c1.c
-similarity index 100%
-rename from arch/arm/plat-s5pc1xx/setup-i2c1.c
-rename to arch/arm/mach-s5pc100/setup-i2c1.c
-diff --git a/arch/arm/plat-s5pc1xx/setup-sdhci-gpio.c b/arch/arm/mach-s5pc100/setup-sdhci-gpio.c
-similarity index 100%
-rename from arch/arm/plat-s5pc1xx/setup-sdhci-gpio.c
-rename to arch/arm/mach-s5pc100/setup-sdhci-gpio.c
-diff --git a/arch/arm/plat-s5pc1xx/Kconfig b/arch/arm/plat-s5pc1xx/Kconfig
-index 7131ce9..4a3347d 100644
---- a/arch/arm/plat-s5pc1xx/Kconfig
-+++ b/arch/arm/plat-s5pc1xx/Kconfig
-@@ -37,28 +37,4 @@ endchoice
- 
- # platform specific device setup
- 
--config S5PC1XX_SETUP_FB_24BPP
--	bool
--	help
--          Common setup code for S5PC1XX with an 24bpp RGB display helper.
--
--config S5PC1XX_SETUP_I2C0
--	bool
--	default y
--	help
--	  Common setup code for i2c bus 0.
--
--	  Note, currently since i2c0 is always compiled, this setup helper
--	  is always compiled with it.
--
--config S5PC1XX_SETUP_I2C1
--	bool
--	help
--	  Common setup code for i2c bus 1.
--
--config S5PC1XX_SETUP_SDHCI_GPIO
--	bool
--	help
--	  Common setup code for SDHCI gpio.
--
- endif
-diff --git a/arch/arm/plat-s5pc1xx/Makefile b/arch/arm/plat-s5pc1xx/Makefile
-index 39dd0a1..ad187b2 100644
---- a/arch/arm/plat-s5pc1xx/Makefile
-+++ b/arch/arm/plat-s5pc1xx/Makefile
-@@ -21,7 +21,3 @@ obj-y				+= gpiolib.o
- # Device setup
- 
- obj-$(CONFIG_S5P_GPIO_CFG_S5PC1XX) += gpio-config.o
--obj-$(CONFIG_S5PC1XX_SETUP_FB_24BPP) += setup-fb-24bpp.o
--obj-$(CONFIG_S5PC1XX_SETUP_I2C0) += setup-i2c0.o
--obj-$(CONFIG_S5PC1XX_SETUP_I2C1) += setup-i2c1.o
--obj-$(CONFIG_S5PC1XX_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
+diff --git a/arch/arm/mach-s5pc100/include/mach/gpio-core.h b/arch/arm/plat-s5pc1xx/include/mach/gpio-core.h
+similarity index 91%
+rename from arch/arm/mach-s5pc100/include/mach/gpio-core.h
+rename to arch/arm/plat-s5pc1xx/include/mach/gpio-core.h
+index ad28d8e..6364800 100644
+--- a/arch/arm/mach-s5pc100/include/mach/gpio-core.h
++++ b/arch/arm/plat-s5pc1xx/include/mach/gpio-core.h
+@@ -1,4 +1,4 @@
+-/* arch/arm/mach-s5pc100/include/mach/gpio-core.h
++/* arch/arm/plat-s5pc1xx/include/mach/gpio-core.h
+  *
+  * Copyright 2009 Samsung Electronics Co.
+  *      Byungho Min <bhmin@samsung.com>
+diff --git a/arch/arm/mach-s5pc100/include/mach/hardware.h b/arch/arm/plat-s5pc1xx/include/mach/hardware.h
+similarity index 83%
+rename from arch/arm/mach-s5pc100/include/mach/hardware.h
+rename to arch/arm/plat-s5pc1xx/include/mach/hardware.h
+index 6b38618..c47affb 100644
+--- a/arch/arm/mach-s5pc100/include/mach/hardware.h
++++ b/arch/arm/plat-s5pc1xx/include/mach/hardware.h
+@@ -1,4 +1,4 @@
+-/* linux/arch/arm/mach-s5pc100/include/mach/hardware.h
++/* linux/arch/arm/plat-s5pc1xx/include/mach/hardware.h
+  *
+  * Copyright 2009 Samsung Electronics Co.
+  *      Byungho Min <bhmin@samsung.com>
+diff --git a/arch/arm/mach-s5pc100/include/mach/irqs.h b/arch/arm/plat-s5pc1xx/include/mach/irqs.h
+similarity index 87%
+rename from arch/arm/mach-s5pc100/include/mach/irqs.h
+rename to arch/arm/plat-s5pc1xx/include/mach/irqs.h
+index b53fa48..198cff8 100644
+--- a/arch/arm/mach-s5pc100/include/mach/irqs.h
++++ b/arch/arm/plat-s5pc1xx/include/mach/irqs.h
+@@ -1,4 +1,4 @@
+-/* linux/arch/arm/mach-s5pc100/include/mach/irqs.h
++/* linux/arch/arm/plat-s5pc1xx/include/mach/irqs.h
+  *
+  * Copyright 2009 Samsung Electronics Co.
+  *      Byungho Min <bhmin@samsung.com>
+diff --git a/arch/arm/mach-s5pc100/include/mach/memory.h b/arch/arm/plat-s5pc1xx/include/mach/memory.h
+similarity index 89%
+rename from arch/arm/mach-s5pc100/include/mach/memory.h
+rename to arch/arm/plat-s5pc1xx/include/mach/memory.h
+index 21cc182..d378f45 100644
+--- a/arch/arm/mach-s5pc100/include/mach/memory.h
++++ b/arch/arm/plat-s5pc1xx/include/mach/memory.h
+@@ -1,4 +1,4 @@
+-/* arch/arm/mach-s5pc100/include/mach/memory.h
++/* linux/arch/arm/plat-s5pc1xx/include/mach/memory.h
+  *
+  * Copyright 2008 Samsung Electronics Co.
+  *      Byungho Min <bhmin@samsung.com>
+diff --git a/arch/arm/mach-s5pc100/include/mach/pwm-clock.h b/arch/arm/plat-s5pc1xx/include/mach/pwm-clock.h
+similarity index 96%
+rename from arch/arm/mach-s5pc100/include/mach/pwm-clock.h
+rename to arch/arm/plat-s5pc1xx/include/mach/pwm-clock.h
+index b34d2f7..09a2834 100644
+--- a/arch/arm/mach-s5pc100/include/mach/pwm-clock.h
++++ b/arch/arm/plat-s5pc1xx/include/mach/pwm-clock.h
+@@ -1,4 +1,4 @@
+-/* linux/arch/arm/mach-s5pc100/include/mach/pwm-clock.h
++/* linux/arch/arm/plat-s5pc1xx/include/mach/pwm-clock.h
+  *
+  * Copyright 2009 Samsung Electronics Co.
+  *      Byungho Min <bhmin@samsung.com>
+diff --git a/arch/arm/mach-s5pc100/include/mach/tick.h b/arch/arm/plat-s5pc1xx/include/mach/tick.h
+similarity index 93%
+rename from arch/arm/mach-s5pc100/include/mach/tick.h
+rename to arch/arm/plat-s5pc1xx/include/mach/tick.h
+index d3de0f3..e43d1fd 100644
+--- a/arch/arm/mach-s5pc100/include/mach/tick.h
++++ b/arch/arm/plat-s5pc1xx/include/mach/tick.h
+@@ -1,4 +1,4 @@
+-/* linux/arch/arm/mach-s5pc100/include/mach/tick.h
++/* linux/arch/arm/plat-s5pc1xx/include/mach/tick.h
+  *
+  * Copyright 2009 Samsung Electronics Co.
+  *	Byungho Min <bhmin@samsung.com>
+diff --git a/arch/arm/mach-s5pc100/include/mach/uncompress.h b/arch/arm/plat-s5pc1xx/include/mach/uncompress.h
+similarity index 92%
+rename from arch/arm/mach-s5pc100/include/mach/uncompress.h
+rename to arch/arm/plat-s5pc1xx/include/mach/uncompress.h
+index 01ccf53..e9ee0be 100644
+--- a/arch/arm/mach-s5pc100/include/mach/uncompress.h
++++ b/arch/arm/plat-s5pc1xx/include/mach/uncompress.h
+@@ -1,4 +1,4 @@
+-/* arch/arm/mach-s5pc100/include/mach/uncompress.h
++/* linux/arch/arm/plat-s5pc1xx/include/mach/uncompress.h
+  *
+  * Copyright 2009 Samsung Electronics Co.
+  *	Byungho Min <bhmin@samsung.com>
 -- 
 1.6.4
