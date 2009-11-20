@@ -1,62 +1,79 @@
-From: Ben Dooks <ben@simtec.co.uk>
-Subject: Re: [patch 1/1] TOUCHSCREEN: S3C24XX touchscreen driver from	Arnaud
-  Patard.
-Date: Thu, 19 Nov 2009 17:48:24 +0000
-Message-ID: <4B0584E8.3040800@simtec.co.uk>
-References: <20091118232939.201290297@fluff.org.uk>	<20091118232948.063635416@fluff.org.uk>	<20091119025930.GA20172@core.coreip.homeip.net>	<4B052D50.2070002@simtec.co.uk>	<20091119135236.GB5535@digital-scurf.org> <20091119170321.GB15647@core.coreip.homeip.net>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 01/20] ARM: S5PC100: use 0x30008000 as memory base
+Date: Fri, 20 Nov 2009 14:42:33 +0100
+Message-ID: <1258724572-19176-2-git-send-email-m.szyprowski@samsung.com>
+References: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from hull.simtec.co.uk ([78.105.113.97]:52865 "EHLO
-	ben-laptop.fluff.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752877AbZKSRsV (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:9459 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753438AbZKTNm4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Nov 2009 12:48:21 -0500
-In-Reply-To: <20091119170321.GB15647@core.coreip.homeip.net>
+	Fri, 20 Nov 2009 08:42:56 -0500
+Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0KTE0056QU3OQ320@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 20 Nov 2009 13:43:00 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0KTE006SCU3OK9@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 20 Nov 2009 13:43:00 +0000 (GMT)
+In-reply-to: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Daniel Silverstone <dsilvers@simtec.co.uk>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org, Simtec Linux Team <linux@simtec.co.uk>, Arnaud Patard <arnaud.patard@rtp-net.org>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org
 
-Dmitry Torokhov wrote:
-> On Thu, Nov 19, 2009 at 01:52:36PM +0000, Daniel Silverstone wrote:
->> On Thu, Nov 19, 2009 at 11:34:40AM +0000, Ben Dooks wrote:
->>>>> +		input_report_key(ts.input, BTN_TOUCH, 1);
->>>>> +		input_report_abs(ts.input, ABS_PRESSURE, 1);
->>>> No fake pressure events please, BTN_TOUCH should be enough.
->>> I'd have to check, IIRC tslib needs these to function properly.
->> Indeed it does -- otherwise it won't work.  Yes you could try going around and
->> patching TSLIB but so many people use it that it is principle-of-least-surprise
->> to produce pressure events.
->>
->>>>> +	ts.input->keybit[BIT_WORD(BTN_TOUCH)] = BIT_MASK(BTN_TOUCH);
->>>>> +	input_set_abs_params(ts.input, ABS_X, 0, 0x3FF, 0, 0);
->>>>> +	input_set_abs_params(ts.input, ABS_Y, 0, 0x3FF, 0, 0);
->>>>> +	input_set_abs_params(ts.input, ABS_PRESSURE, 0, 1, 0, 0);
->>>> Drop ABS_PRESSURE.
->>> ok, see above.
->> The same applies here -- claim ABS_PRESSURE or tslib won't operate with the
->> touchscreen.
->>
->> While it is tempting to be 100% exactly correct to what the hardware reports
->> (which is only TOUCH not PRESSURE) it is preferable to work with the software
->> which the majority of people use -- namely tslib.
->>
->> I would strongly argue against removing the ABS_PRESSURE stuff personally,
->> despite it being essentially a lie.
+From: Kyungmin Park <kyungmin.park@samsung.com>
 
-ok, i'll remove it and anyone who can't be bothered to update their
-tslib can hack in their own solution if they really care about it.
+We decided to use 0x3000'0000 as base memory address on S5PC1XX SoCs
+(s5pc100 and s5pc110).
+A patch to u-boot that configures SMDKC100 board and sets base memory
+as 0x3000'0000 has been already posted.
 
-> And I would strongly argue that you just need to update your tslib,
-> especially given the fact that this issue was dealt with there about a
-> year ago.  And if you really need that fix to be in released (read
-> 'tagged') version of tslib - please speak to its maintainer.
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/mach-s5pc100/Makefile.boot         |    4 ++--
+ arch/arm/mach-s5pc100/include/mach/map.h    |    2 +-
+ arch/arm/mach-s5pc100/include/mach/memory.h |    2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-> Why everyone thinks that it is a good idea to pile workarounds for
-> software issues in the kernel but updating the other parts of software
-> stack is a big no-no?
-
-it can be much more difficult to update a userland than to hack the
-kernel...
+diff --git a/arch/arm/mach-s5pc100/Makefile.boot b/arch/arm/mach-s5pc100/Makefile.boot
+index ff90aa1..b0909e3 100644
+--- a/arch/arm/mach-s5pc100/Makefile.boot
++++ b/arch/arm/mach-s5pc100/Makefile.boot
+@@ -1,2 +1,2 @@
+-   zreladdr-y	:= 0x20008000
+-params_phys-y	:= 0x20000100
++   zreladdr-y	:= 0x30008000
++params_phys-y	:= 0x30000100
+diff --git a/arch/arm/mach-s5pc100/include/mach/map.h b/arch/arm/mach-s5pc100/include/mach/map.h
+index 4681ebe..f90c033 100644
+--- a/arch/arm/mach-s5pc100/include/mach/map.h
++++ b/arch/arm/mach-s5pc100/include/mach/map.h
+@@ -113,7 +113,7 @@
+ #define S5PC100_PA_TSADC	(0xF3000000)
+ 
+ /* ETC */
+-#define S5PC100_PA_SDRAM	(0x20000000)
++#define S5PC100_PA_SDRAM	(0x30000000)
+ #define S5PC1XX_PA_SDRAM	S5PC100_PA_SDRAM
+ 
+ /* compatibility defines. */
+diff --git a/arch/arm/mach-s5pc100/include/mach/memory.h b/arch/arm/mach-s5pc100/include/mach/memory.h
+index 4b60d18..21cc182 100644
+--- a/arch/arm/mach-s5pc100/include/mach/memory.h
++++ b/arch/arm/mach-s5pc100/include/mach/memory.h
+@@ -13,6 +13,6 @@
+ #ifndef __ASM_ARCH_MEMORY_H
+ #define __ASM_ARCH_MEMORY_H
+ 
+-#define PHYS_OFFSET     	UL(0x20000000)
++#define PHYS_OFFSET     	UL(0x30000000)
+ 
+ #endif
+-- 
+1.6.4
