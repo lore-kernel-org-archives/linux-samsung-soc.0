@@ -1,323 +1,237 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 13/20] ARM: S5PC1XX: add support for s5pc110 irqs
-Date: Fri, 20 Nov 2009 14:42:45 +0100
-Message-ID: <1258724572-19176-14-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 06/20] ARM: S5PC1XX: cleanup of s5pc1xx common code
+Date: Fri, 20 Nov 2009 14:42:38 +0100
+Message-ID: <1258724572-19176-7-git-send-email-m.szyprowski@samsung.com>
 References: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:45543 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753595AbZKTNnC (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:9459 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753540AbZKTNnD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Nov 2009 08:43:02 -0500
-Received: from eu_spt1 ([210.118.77.13]) by mailout3.w1.samsung.com
+	Fri, 20 Nov 2009 08:43:03 -0500
+Received: from eu_spt2 ([210.118.77.14]) by mailout4.w1.samsung.com
  (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0KTE00LSIU3QYL10@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Nov 2009 13:43:02 +0000 (GMT)
+ with ESMTP id <0KTE002CHU3P7K20@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 20 Nov 2009 13:43:01 +0000 (GMT)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0KTE001DVU3PHD@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Nov 2009 13:43:02 +0000 (GMT)
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0KTE007MFU3OLT@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 20 Nov 2009 13:43:01 +0000 (GMT)
 In-reply-to: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, Byungho Min <bhmin@samsung.com>
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org
 
-From: Kyungmin Park <kyungmin.park@samsung.com>
+This patch removes all useless definitions from plat/s5pc100.h and
+introduces new common plat/s5pc1xx.h include.
 
-Samsung S5PC110 SoC are newer Samsung SoCs. Like S5PC100 they are based
-on CortexA8 ARM CPU, but have much more powerfull integrated periperals.
-This patch adds interrupt support on S5PC110 SoCs. Unlike S5PC100,
-S5PC110 has 4 VICs, so the S5PC110 specifi virtual memory area is
-extended to cover VIC3 register block.
-
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Byungho Min <bhmin@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-s5pc110/cpu.c                   |   10 ++
- arch/arm/mach-s5pc110/include/mach/regs-irq.h |   25 +++
- arch/arm/mach-s5pc110/include/plat/irqs.h     |  209 +++++++++++++++++++++++++
- 3 files changed, 244 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s5pc110/include/mach/regs-irq.h
- create mode 100644 arch/arm/mach-s5pc110/include/plat/irqs.h
+ arch/arm/mach-s5pc100/cpu.c                     |    2 +-
+ arch/arm/mach-s5pc100/include/plat/regs-clock.h |    8 ++--
+ arch/arm/mach-s5pc100/mach-smdkc100.c           |    2 +-
+ arch/arm/mach-s5pc100/plls.c                    |    2 +-
+ arch/arm/mach-s5pc100/uarts.c                   |    5 +-
+ arch/arm/plat-s5pc1xx/cpu.c                     |    2 +-
+ arch/arm/plat-s5pc1xx/include/plat/s5pc100.h    |   51 ++++++-----------------
+ arch/arm/plat-s5pc1xx/include/plat/s5pc1xx.h    |   21 +++++++++
+ 8 files changed, 45 insertions(+), 48 deletions(-)
+ create mode 100644 arch/arm/plat-s5pc1xx/include/plat/s5pc1xx.h
 
-diff --git a/arch/arm/mach-s5pc110/cpu.c b/arch/arm/mach-s5pc110/cpu.c
-index 6c9ebcb..3ea26ff 100644
---- a/arch/arm/mach-s5pc110/cpu.c
-+++ b/arch/arm/mach-s5pc110/cpu.c
-@@ -43,6 +43,12 @@
+diff --git a/arch/arm/mach-s5pc100/cpu.c b/arch/arm/mach-s5pc100/cpu.c
+index 41fdecf..f383e33 100644
+--- a/arch/arm/mach-s5pc100/cpu.c
++++ b/arch/arm/mach-s5pc100/cpu.c
+@@ -41,7 +41,7 @@
+ #include <plat/clock.h>
+ #include <plat/sdhci.h>
+ #include <plat/iic-core.h>
+-#include <plat/s5pc100.h>
++#include <plat/s5pc1xx.h>
+ 
  /* Initial IO mappings */
  
- static struct map_desc s5pc110_iodesc[] __initdata = {
-+	{
-+		.virtual	= (unsigned long)S5PC1XX_VA_VIC(3),
-+		.pfn		= __phys_to_pfn(S5PC1XX_PA_VIC(3)),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	},
- };
+diff --git a/arch/arm/mach-s5pc100/include/plat/regs-clock.h b/arch/arm/mach-s5pc100/include/plat/regs-clock.h
+index f0a007b..637ff71 100644
+--- a/arch/arm/mach-s5pc100/include/plat/regs-clock.h
++++ b/arch/arm/mach-s5pc100/include/plat/regs-clock.h
+@@ -341,10 +341,10 @@
+ #define S5PC100_HDMI_PHY_CON0	S5PC100_CLKREG_OTHER(0x420)
  
- static void s5pc110_idle(void)
-@@ -93,6 +99,10 @@ void __init s5pc110_init_clocks(int xtal)
+ #define S5PC100_SWRESET_RESETVAL	0xc100
+-#define S5PC100_OTHER_SYS_INT	24
+-#define S5PC100_OTHER_STA_TYPE	23
+-#define STA_TYPE_EXPON		0
+-#define STA_TYPE_SFR		1
++#define S5PC100_OTHERS_PMU_INT_DISALBE		(1 << 24)
++#define S5PC100_OTHERS_STABLE_COUNTER_TYPE_MASK	(1 << 23)
++#define S5PC100_OTHERS_STABLE_COUNTER_TYPE_SFR	(1 << 23)
++#define S5PC100_OTHERS_STABLE_COUNTER_TYPE_EXP	(0 << 23)
  
- void __init s5pc110_init_irq(void)
+ #define S5PC100_SLEEP_CFG_OSC_EN	0
+ 
+diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-s5pc100/mach-smdkc100.c
+index ae3c52c..29b95f1 100644
+--- a/arch/arm/mach-s5pc100/mach-smdkc100.c
++++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
+@@ -40,7 +40,7 @@
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+-#include <plat/s5pc100.h>
++#include <plat/s5pc1xx.h>
+ #include <plat/fb.h>
+ #include <plat/iic.h>
+ 
+diff --git a/arch/arm/mach-s5pc100/plls.c b/arch/arm/mach-s5pc100/plls.c
+index cd3f6a7..970f49d 100644
+--- a/arch/arm/mach-s5pc100/plls.c
++++ b/arch/arm/mach-s5pc100/plls.c
+@@ -32,7 +32,7 @@
+ #include <plat/cpu.h>
+ #include <plat/pll.h>
+ #include <plat/devs.h>
+-#include <plat/s5pc100.h>
++#include <plat/s5pc1xx.h>
+ 
+ /* fin_apll, fin_mpll and fin_epll are all the same clock, which we call
+  * ext_xtal_mux for want of an actual name from the manual.
+diff --git a/arch/arm/mach-s5pc100/uarts.c b/arch/arm/mach-s5pc100/uarts.c
+index 32972f2..6bab6d2 100644
+--- a/arch/arm/mach-s5pc100/uarts.c
++++ b/arch/arm/mach-s5pc100/uarts.c
+@@ -13,14 +13,15 @@
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <linux/init.h>
++#include <linux/clk.h>
+ 
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+-#include <plat/s5pc100.h>
++#include <plat/s5pc1xx.h>
+ 
+ /* uart registration process */
+ 
+-void __init s5pc100_common_init_uarts(struct s3c2410_uartcfg *cfg, int no)
++void __init s5pc100_init_uarts(struct s3c2410_uartcfg *cfg, int no)
  {
-+	u32 vic_valid[] = {~0, ~0, ~0, ~0};
-+
-+	/* VIC0, VIC1, VIC2, and VIC3 are fully populated. */
-+	s5pc1xx_init_irq(vic_valid, ARRAY_SIZE(vic_valid));
- }
+ 	/* The driver name is s3c6400-uart to reuse s3c6400_serial_drv  */
+ 	s3c24xx_init_uartdevs("s3c6400-uart", s5pc1xx_uart_resources, cfg, no);
+diff --git a/arch/arm/plat-s5pc1xx/cpu.c b/arch/arm/plat-s5pc1xx/cpu.c
+index ecd6d38..d30998d 100644
+--- a/arch/arm/plat-s5pc1xx/cpu.c
++++ b/arch/arm/plat-s5pc1xx/cpu.c
+@@ -31,7 +31,7 @@
+ #include <plat/devs.h>
+ #include <plat/clock.h>
  
- struct sysdev_class s5pc110_sysclass = {
-diff --git a/arch/arm/mach-s5pc110/include/mach/regs-irq.h b/arch/arm/mach-s5pc110/include/mach/regs-irq.h
+-#include <plat/s5pc100.h>
++#include <plat/s5pc1xx.h>
+ 
+ /* table of supported CPUs */
+ 
+diff --git a/arch/arm/plat-s5pc1xx/include/plat/s5pc100.h b/arch/arm/plat-s5pc1xx/include/plat/s5pc100.h
+index 2531f34..32eb6e7 100644
+--- a/arch/arm/plat-s5pc1xx/include/plat/s5pc100.h
++++ b/arch/arm/plat-s5pc1xx/include/plat/s5pc100.h
+@@ -13,52 +13,27 @@
+ */
+ 
+ /* Common init code for S5PC100 related SoCs */
++
++#ifdef CONFIG_CPU_S5PC100
++
+ extern  int s5pc100_init(void);
+ extern void s5pc100_map_io(void);
+ extern void s5pc100_init_clocks(int xtal);
+ extern  int s5pc100_register_baseclocks(unsigned long xtal);
+ extern void s5pc100_init_irq(void);
+ extern void s5pc100_init_io(struct map_desc *mach_desc, int size);
+-extern void s5pc100_common_init_uarts(struct s3c2410_uartcfg *cfg, int no);
++extern void s5pc100_init_uarts(struct s3c2410_uartcfg *cfg, int no);
+ extern void s5pc100_register_clocks(void);
+ extern void s5pc100_setup_clocks(void);
+-extern struct sysdev_class s5pc100_sysclass;
+-
+-#define s5pc100_init_uarts s5pc100_common_init_uarts
+-
+-/* Some day, belows will be moved to plat-s5pc/include/plat/cpu.h */
+-extern void s5pc1xx_init_irq(u32 *vic_valid, int num);
+-extern void s5pc1xx_init_io(struct map_desc *mach_desc, int size);
+-
+-/* Some day, belows will be moved to plat-s5pc/include/plat/clock.h */
+-extern struct clk clk_hpll;
+-extern struct clk clk_hd0;
+-extern struct clk clk_pd0;
++extern  int s5pc100_sclk0_ctrl(struct clk *clk, int enable);
++extern  int s5pc100_sclk1_ctrl(struct clk *clk, int enable);
+ extern struct clk clk_54m;
+-extern void s5pc1xx_register_clocks(void);
+-extern int s5pc100_sclk0_ctrl(struct clk *clk, int enable);
+-extern int s5pc100_sclk1_ctrl(struct clk *clk, int enable);
+ 
+-/* Some day, belows will be moved to plat-s5pc/include/plat/devs.h */
+-extern struct s3c24xx_uart_resources s5pc1xx_uart_resources[];
+-extern struct platform_device s3c_device_g2d;
+-extern struct platform_device s3c_device_g3d;
+-extern struct platform_device s3c_device_vpp;
+-extern struct platform_device s3c_device_tvenc;
+-extern struct platform_device s3c_device_tvscaler;
+-extern struct platform_device s3c_device_rotator;
+-extern struct platform_device s3c_device_jpeg;
+-extern struct platform_device s3c_device_onenand;
+-extern struct platform_device s3c_device_usb_otghcd;
+-extern struct platform_device s3c_device_keypad;
+-extern struct platform_device s3c_device_ts;
+-extern struct platform_device s3c_device_g3d;
+-extern struct platform_device s3c_device_smc911x;
+-extern struct platform_device s3c_device_fimc0;
+-extern struct platform_device s3c_device_fimc1;
+-extern struct platform_device s3c_device_mfc;
+-extern struct platform_device s3c_device_ac97;
+-extern struct platform_device s3c_device_fimc0;
+-extern struct platform_device s3c_device_fimc1;
+-extern struct platform_device s3c_device_fimc2;
++#else
++
++#define s5pc100_map_io NULL
++#define s5pc100_init_clocks NULL
++#define s5pc100_init_uarts NULL
++#define s5pc100_init NULL
+ 
++#endif
+diff --git a/arch/arm/plat-s5pc1xx/include/plat/s5pc1xx.h b/arch/arm/plat-s5pc1xx/include/plat/s5pc1xx.h
 new file mode 100644
-index 0000000..b467e3b
+index 0000000..398251f
 --- /dev/null
-+++ b/arch/arm/mach-s5pc110/include/mach/regs-irq.h
-@@ -0,0 +1,25 @@
-+/* linux/arch/arm/mach-s5pc110/include/mach/regs-irq.h
++++ b/arch/arm/plat-s5pc1xx/include/plat/s5pc1xx.h
+@@ -0,0 +1,21 @@
++/* arch/arm/plat-s5pc1xx/include/plat/s5pc100.h
 + *
 + * Copyright 2009 Samsung Electronics Co.
-+ *	Byungho Min <bhmin@samsung.com>
++ *	Marek Szyprowski <m.szyprowski@samsung.com>
 + *
-+ * S5PC110 - IRQ register definitions
++ * Header file for s5pc1xx cpu support
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 +*/
 +
-+#ifndef __ASM_ARCH_REGS_IRQ_H
-+#define __ASM_ARCH_REGS_IRQ_H __FILE__
++/* Common init code for S5PC1XX related SoCs */
 +
-+#include <mach/map.h>
-+#include <asm/hardware/vic.h>
++extern void s5pc1xx_init_irq(u32 *vic_valid, int num);
++extern void s5pc1xx_init_io(struct map_desc *mach_desc, int size);
++extern void s5pc1xx_register_clocks(void);
 +
-+/* interrupt controller */
-+#define S5PC1XX_VIC0REG(x)          		((x) + S5PC1XX_VA_VIC(0))
-+#define S5PC1XX_VIC1REG(x)          		((x) + S5PC1XX_VA_VIC(1))
-+#define S5PC1XX_VIC2REG(x)         		((x) + S5PC1XX_VA_VIC(2))
-+#define S5PC1XX_VIC3REG(x)         		((x) + S5PC1XX_VA_VIC(3))
++extern struct s3c24xx_uart_resources s5pc1xx_uart_resources[];
 +
-+#endif /* __ASM_ARCH_REGS_IRQ_H */
-diff --git a/arch/arm/mach-s5pc110/include/plat/irqs.h b/arch/arm/mach-s5pc110/include/plat/irqs.h
-new file mode 100644
-index 0000000..d1a2a21
---- /dev/null
-+++ b/arch/arm/mach-s5pc110/include/plat/irqs.h
-@@ -0,0 +1,209 @@
-+/* linux/arch/arm/plat-s5pc1xx/include/plat/irqs.h
-+ *
-+ * Copyright 2009 Samsung Electronics Co.
-+ *      Byungho Min <bhmin@samsung.com>
-+ *
-+ * S5PC110 - Common IRQ support
-+ *
-+ * Based on plat-s3c64xx/include/plat/irqs.h
-+ */
-+
-+#ifndef __ASM_PLAT_S5PC110_IRQS_H
-+#define __ASM_PLAT_S5PC110_IRQS_H __FILE__
-+
-+/* we keep the first set of CPU IRQs out of the range of
-+ * the ISA space, so that the PC104 has them to itself
-+ * and we don't end up having to do horrible things to the
-+ * standard ISA drivers....
-+ *
-+ * note, since we're using the VICs, our start must be a
-+ * mulitple of 32 to allow the common code to work
-+ */
-+
-+#define S3C_IRQ_OFFSET		(32)
-+
-+#define S3C_IRQ(x)		((x) + S3C_IRQ_OFFSET)
-+
-+#define S3C_VIC0_BASE		S3C_IRQ(0)
-+#define S3C_VIC1_BASE		S3C_IRQ(32)
-+#define S3C_VIC2_BASE		S3C_IRQ(64)
-+#define S3C_VIC3_BASE		S3C_IRQ(96)
-+
-+/* UART interrupts, each UART has 4 interupts per channel so
-+ * use the space between the ISA and S3C main interrupts. Note, these
-+ * are not in the same order as the S3C24XX series! */
-+
-+#define IRQ_S3CUART_BASE0	(16)
-+#define IRQ_S3CUART_BASE1	(20)
-+#define IRQ_S3CUART_BASE2	(24)
-+#define IRQ_S3CUART_BASE3	(28)
-+
-+#define UART_IRQ_RXD		(0)
-+#define UART_IRQ_ERR		(1)
-+#define UART_IRQ_TXD		(2)
-+#define UART_IRQ_MODEM		(3)
-+
-+#define IRQ_S3CUART_RX0		(IRQ_S3CUART_BASE0 + UART_IRQ_RXD)
-+#define IRQ_S3CUART_TX0		(IRQ_S3CUART_BASE0 + UART_IRQ_TXD)
-+#define IRQ_S3CUART_ERR0	(IRQ_S3CUART_BASE0 + UART_IRQ_ERR)
-+
-+#define IRQ_S3CUART_RX1		(IRQ_S3CUART_BASE1 + UART_IRQ_RXD)
-+#define IRQ_S3CUART_TX1		(IRQ_S3CUART_BASE1 + UART_IRQ_TXD)
-+#define IRQ_S3CUART_ERR1	(IRQ_S3CUART_BASE1 + UART_IRQ_ERR)
-+
-+#define IRQ_S3CUART_RX2		(IRQ_S3CUART_BASE2 + UART_IRQ_RXD)
-+#define IRQ_S3CUART_TX2		(IRQ_S3CUART_BASE2 + UART_IRQ_TXD)
-+#define IRQ_S3CUART_ERR2	(IRQ_S3CUART_BASE2 + UART_IRQ_ERR)
-+
-+#define IRQ_S3CUART_RX3		(IRQ_S3CUART_BASE3 + UART_IRQ_RXD)
-+#define IRQ_S3CUART_TX3		(IRQ_S3CUART_BASE3 + UART_IRQ_TXD)
-+#define IRQ_S3CUART_ERR3	(IRQ_S3CUART_BASE3 + UART_IRQ_ERR)
-+
-+/* VIC based IRQs */
-+
-+#define S5PC1XX_IRQ_VIC0(x)	(S3C_VIC0_BASE + (x))
-+#define S5PC1XX_IRQ_VIC1(x)	(S3C_VIC1_BASE + (x))
-+#define S5PC1XX_IRQ_VIC2(x)	(S3C_VIC2_BASE + (x))
-+#define S5PC110_IRQ_VIC3(x)	(S3C_VIC3_BASE + (x))
-+
-+/*
-+ * VIC0: system, DMA, timer
-+ */
-+#define IRQ_EINT0		S5PC1XX_IRQ_VIC0(0)
-+#define IRQ_EINT1		S5PC1XX_IRQ_VIC0(1)
-+#define IRQ_EINT2		S5PC1XX_IRQ_VIC0(2)
-+#define IRQ_EINT3		S5PC1XX_IRQ_VIC0(3)
-+#define IRQ_EINT4		S5PC1XX_IRQ_VIC0(4)
-+#define IRQ_EINT5		S5PC1XX_IRQ_VIC0(5)
-+#define IRQ_EINT6		S5PC1XX_IRQ_VIC0(6)
-+#define IRQ_EINT7		S5PC1XX_IRQ_VIC0(7)
-+#define IRQ_EINT8		S5PC1XX_IRQ_VIC0(8)
-+#define IRQ_EINT9		S5PC1XX_IRQ_VIC0(9)
-+#define IRQ_EINT10		S5PC1XX_IRQ_VIC0(10)
-+#define IRQ_EINT11		S5PC1XX_IRQ_VIC0(11)
-+#define IRQ_EINT12		S5PC1XX_IRQ_VIC0(12)
-+#define IRQ_EINT13		S5PC1XX_IRQ_VIC0(13)
-+#define IRQ_EINT14		S5PC1XX_IRQ_VIC0(14)
-+#define IRQ_EINT15		S5PC1XX_IRQ_VIC0(15)
-+#define IRQ_EINT16_31		S5PC1XX_IRQ_VIC0(16)
-+#define IRQ_BATF		S5PC1XX_IRQ_VIC0(17)
-+#define IRQ_MDMA		S5PC1XX_IRQ_VIC0(18)
-+#define IRQ_PDMA0		S5PC1XX_IRQ_VIC0(19)
-+#define IRQ_PDMA1		S5PC1XX_IRQ_VIC0(20)
-+#define IRQ_TIMER0		S5PC1XX_IRQ_VIC0(21)
-+#define IRQ_TIMER1		S5PC1XX_IRQ_VIC0(22)
-+#define IRQ_TIMER2		S5PC1XX_IRQ_VIC0(23)
-+#define IRQ_TIMER3		S5PC1XX_IRQ_VIC0(24)
-+#define IRQ_TIMER4		S5PC1XX_IRQ_VIC0(25)
-+#define IRQ_SYSTIMER		S5PC1XX_IRQ_VIC0(26)
-+#define IRQ_WDT			S5PC1XX_IRQ_VIC0(27)
-+#define IRQ_RTC_ALARM		S5PC1XX_IRQ_VIC0(28)
-+#define IRQ_RTC			IRQ_RTC_ALARM
-+#define IRQ_RTC_TIC		S5PC1XX_IRQ_VIC0(29)
-+#define IRQ_TICK		IRQ_RTC_TIC
-+#define IRQ_GPIOINT		S5PC1XX_IRQ_VIC0(30)
-+#define IRQ_FIMC3		S5PC1XX_IRQ_VIC0(31)
-+
-+/*
-+ * VIC1: ARM, power, memory, connectivity
-+ */
-+#define IRQ_CORTEX0		S5PC1XX_IRQ_VIC1(0)
-+#define IRQ_CORTEX1		S5PC1XX_IRQ_VIC1(1)
-+#define IRQ_CORTEX2		S5PC1XX_IRQ_VIC1(2)
-+#define IRQ_CORTEX3		S5PC1XX_IRQ_VIC1(3)
-+#define IRQ_CORTEX4		S5PC1XX_IRQ_VIC1(4)
-+#define IRQ_IEMAPC		S5PC1XX_IRQ_VIC1(5)
-+#define IRQ_IEMIEC		S5PC1XX_IRQ_VIC1(6)
-+#define IRQ_NFC			S5PC1XX_IRQ_VIC1(8)
-+#define IRQ_CFC			S5PC1XX_IRQ_VIC1(9)
-+#define IRQ_UART0		S5PC1XX_IRQ_VIC1(10)
-+#define IRQ_UART1		S5PC1XX_IRQ_VIC1(11)
-+#define IRQ_UART2		S5PC1XX_IRQ_VIC1(12)
-+#define IRQ_UART3		S5PC1XX_IRQ_VIC1(13)
-+#define IRQ_IIC			S5PC1XX_IRQ_VIC1(14)
-+#define IRQ_SPI0		S5PC1XX_IRQ_VIC1(15)
-+#define IRQ_SPI1		S5PC1XX_IRQ_VIC1(16)
-+#define IRQ_SPI2		S5PC1XX_IRQ_VIC1(17)
-+#define IRQ_IRDA		S5PC1XX_IRQ_VIC1(18)
-+#define IRQ_I2C_PMIC_LINK	S5PC1XX_IRQ_VIC1(19)
-+#define IRQ_I2C_HDMI_PHY	S5PC1XX_IRQ_VIC1(20)
-+#define IRQ_HSIRX		S5PC1XX_IRQ_VIC1(21)
-+#define IRQ_HSITX		S5PC1XX_IRQ_VIC1(22)
-+#define IRQ_UHOST		S5PC1XX_IRQ_VIC1(23)
-+#define IRQ_OTG			S5PC1XX_IRQ_VIC1(24)
-+#define IRQ_MSM			S5PC1XX_IRQ_VIC1(25)
-+#define IRQ_HSMMC0		S5PC1XX_IRQ_VIC1(26)
-+#define IRQ_HSMMC1		S5PC1XX_IRQ_VIC1(27)
-+#define IRQ_HSMMC2		S5PC1XX_IRQ_VIC1(28)
-+#define IRQ_MIPICSI		S5PC1XX_IRQ_VIC1(29)
-+#define IRQ_MIPIDSI		S5PC1XX_IRQ_VIC1(30)
-+#define IRQ_ONENAND_AUDI	S5PC1XX_IRQ_VIC1(31)
-+
-+/*
-+ * VIC2: multimedia, audio, security
-+ */
-+#define IRQ_LCD0		S5PC1XX_IRQ_VIC2(0)
-+#define IRQ_LCD1		S5PC1XX_IRQ_VIC2(1)
-+#define IRQ_LCD2		S5PC1XX_IRQ_VIC2(2)
-+#define IRQ_LCD3		S5PC1XX_IRQ_VIC2(3)
-+#define IRQ_ROTATOR		S5PC1XX_IRQ_VIC2(4)
-+#define IRQ_FIMC0		S5PC1XX_IRQ_VIC2(5)
-+#define IRQ_FIMC1		S5PC1XX_IRQ_VIC2(6)
-+#define IRQ_FIMC2		S5PC1XX_IRQ_VIC2(7)
-+#define IRQ_JPEG		S5PC1XX_IRQ_VIC2(8)
-+#define IRQ_2D			S5PC1XX_IRQ_VIC2(9)
-+#define IRQ_3D			S5PC1XX_IRQ_VIC2(10)
-+#define IRQ_MIXER		S5PC1XX_IRQ_VIC2(11)
-+#define IRQ_HDMI		S5PC1XX_IRQ_VIC2(12)
-+#define IRQ_IIC1		S5PC1XX_IRQ_VIC2(13)
-+#define IRQ_HDMI_I2C		S5PC1XX_IRQ_VIC2(13)
-+#define IRQ_MFC			S5PC1XX_IRQ_VIC2(14)
-+#define IRQ_TVENC		S5PC1XX_IRQ_VIC2(15)
-+#define IRQ_I2S0		S5PC1XX_IRQ_VIC2(16)
-+#define IRQ_I2S1		S5PC1XX_IRQ_VIC2(17)
-+#define IRQ_AC97		S5PC1XX_IRQ_VIC2(19)
-+#define IRQ_PCM0		S5PC1XX_IRQ_VIC2(20)
-+#define IRQ_PCM1		S5PC1XX_IRQ_VIC2(21)
-+#define IRQ_SPDIF		S5PC1XX_IRQ_VIC2(22)
-+#define IRQ_ADC			S5PC1XX_IRQ_VIC2(23)
-+#define IRQ_PENDN		S5PC1XX_IRQ_VIC2(24)
-+#define IRQ_TC			IRQ_PENDN
-+#define IRQ_KEYPAD		S5PC1XX_IRQ_VIC2(25)
-+#define IRQ_CG			S5PC1XX_IRQ_VIC2(26)
-+#define IRQ_SEC			S5PC1XX_IRQ_VIC2(27)
-+#define IRQ_SECRX		S5PC1XX_IRQ_VIC2(28)
-+#define IRQ_SECTX		S5PC1XX_IRQ_VIC2(29)
-+#define IRQ_SDMIRQ		S5PC1XX_IRQ_VIC2(30)
-+#define IRQ_SDMFIQ		S5PC1XX_IRQ_VIC2(31)
-+
-+/* VIC3 used at S5PC110 */
-+#define IRQ_IPC			S5PC110_IRQ_VIC3(0)
-+#define IRQ_HOSTIF		S5PC110_IRQ_VIC3(1)
-+#define IRQ_MMC3		S5PC110_IRQ_VIC3(2)
-+#define IRQ_CEC			S5PC110_IRQ_VIC3(3)
-+#define IRQ_TSI			S5PC110_IRQ_VIC3(4)
-+#define IRQ_MDNIE0		S5PC110_IRQ_VIC3(5)
-+#define IRQ_MDNIE1		S5PC110_IRQ_VIC3(6)
-+#define IRQ_MDNIE2		S5PC110_IRQ_VIC3(7)
-+#define IRQ_MDNIE3		S5PC110_IRQ_VIC3(8)
-+#define IRQ_ADC1		S5PC110_IRQ_VIC3(9)
-+#define IRQ_PENDN1		S5PC110_IRQ_VIC3(10)
-+
-+/* External interrupt */
-+#define S3C_IRQ_EINT_BASE	(S5PC110_IRQ_VIC3(31) + 1)
-+
-+#define S3C_EINT(x)		(S3C_IRQ_EINT_BASE + ((x) - 16))
-+#define IRQ_EINT(x)		((x) < 16 ? IRQ_EINT0 + (x) : S3C_EINT(x))
-+#define IRQ_EINT_BIT(x)	((x) < IRQ_EINT16_31 ? (x) - IRQ_EINT0 : (x) - S3C_EINT(0))
-+
-+/* GPIO interrupt */
-+#define S3C_IRQ_GPIO_BASE	(IRQ_EINT(31) + 1)
-+#define S3C_IRQ_GPIO(x)		(S3C_IRQ_GPIO_BASE + (x))
-+
-+/*
-+ * Until MP04 Groups -> 40 (exactly 39) Groups * 8 ~= 320 GPIOs
-+ */
-+#define NR_IRQS			(S3C_IRQ_GPIO(320) + 1)
-+
-+#endif /* __ASM_PLAT_S5PC1XX_IRQS_H */
-+
++#include <plat/s5pc100.h>
 -- 
 1.6.4
