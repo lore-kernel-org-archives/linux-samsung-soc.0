@@ -1,24 +1,24 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 01/20] ARM: S5PC100: use 0x30008000 as memory base
-Date: Fri, 20 Nov 2009 14:42:33 +0100
-Message-ID: <1258724572-19176-2-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 02/20] ARM: S5PC1XX: create sub-platform for S5PC100 SoCs
+Date: Fri, 20 Nov 2009 14:42:34 +0100
+Message-ID: <1258724572-19176-3-git-send-email-m.szyprowski@samsung.com>
 References: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:9459 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753438AbZKTNm4 (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:45543 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753464AbZKTNm4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 20 Nov 2009 08:42:56 -0500
-Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
+Received: from eu_spt2 ([210.118.77.13]) by mailout3.w1.samsung.com
  (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0KTE0056QU3OQ320@mailout4.w1.samsung.com> for
+ with ESMTP id <0KTE00M3PU3OXA30@mailout3.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Fri, 20 Nov 2009 13:43:00 +0000 (GMT)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0KTE006SCU3OK9@spt1.w1.samsung.com> for
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0KTE00C34U3OFQ@spt2.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Fri, 20 Nov 2009 13:43:00 +0000 (GMT)
 In-reply-to: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -28,52 +28,73 @@ Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org
 
 From: Kyungmin Park <kyungmin.park@samsung.com>
 
-We decided to use 0x3000'0000 as base memory address on S5PC1XX SoCs
-(s5pc100 and s5pc110).
-A patch to u-boot that configures SMDKC100 board and sets base memory
-as 0x3000'0000 has been already posted.
+Samsung S5PC100 and S5PC110 SoCs differs a lot in register map and other
+core platform definitions, so it is not possible to have both SoCs in
+the current platform framework without runtime hacks. To address this
+issue a sub-platform has been introduced, so each SoC in sub-platform
+can have its own set of include files (register map, irq&gpio
+definitions, etc)
 
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/mach-s5pc100/Makefile.boot         |    4 ++--
- arch/arm/mach-s5pc100/include/mach/map.h    |    2 +-
- arch/arm/mach-s5pc100/include/mach/memory.h |    2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/Makefile             |    2 +-
+ arch/arm/mach-s5pc100/Kconfig |    4 ++++
+ arch/arm/plat-s5pc1xx/Kconfig |   10 ++++++++++
+ 3 files changed, 15 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-s5pc100/Makefile.boot b/arch/arm/mach-s5pc100/Makefile.boot
-index ff90aa1..b0909e3 100644
---- a/arch/arm/mach-s5pc100/Makefile.boot
-+++ b/arch/arm/mach-s5pc100/Makefile.boot
-@@ -1,2 +1,2 @@
--   zreladdr-y	:= 0x20008000
--params_phys-y	:= 0x20000100
-+   zreladdr-y	:= 0x30008000
-+params_phys-y	:= 0x30000100
-diff --git a/arch/arm/mach-s5pc100/include/mach/map.h b/arch/arm/mach-s5pc100/include/mach/map.h
-index 4681ebe..f90c033 100644
---- a/arch/arm/mach-s5pc100/include/mach/map.h
-+++ b/arch/arm/mach-s5pc100/include/mach/map.h
-@@ -113,7 +113,7 @@
- #define S5PC100_PA_TSADC	(0xF3000000)
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index a73caaf..daea150 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -160,7 +160,7 @@ machine-$(CONFIG_ARCH_RPC)		:= rpc
+ machine-$(CONFIG_ARCH_S3C2410)		:= s3c2410 s3c2400 s3c2412 s3c2440 s3c2442 s3c2443
+ machine-$(CONFIG_ARCH_S3C24A0)		:= s3c24a0
+ machine-$(CONFIG_ARCH_S3C64XX)		:= s3c6400 s3c6410
+-machine-$(CONFIG_ARCH_S5PC1XX)		:= s5pc100
++machine-$(CONFIG_ARCH_S5PC100)		:= s5pc100
+ machine-$(CONFIG_ARCH_SA1100)		:= sa1100
+ machine-$(CONFIG_ARCH_SHARK)		:= shark
+ machine-$(CONFIG_ARCH_STMP378X)		:= stmp378x
+diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
+index 0dd2b8c..d72f881 100644
+--- a/arch/arm/mach-s5pc100/Kconfig
++++ b/arch/arm/mach-s5pc100/Kconfig
+@@ -5,6 +5,8 @@
+ #
+ # Licensed under GPLv2
  
- /* ETC */
--#define S5PC100_PA_SDRAM	(0x20000000)
-+#define S5PC100_PA_SDRAM	(0x30000000)
- #define S5PC1XX_PA_SDRAM	S5PC100_PA_SDRAM
++if ARCH_S5PC100
++
+ # Configuration options for the S5PC100 CPU
  
- /* compatibility defines. */
-diff --git a/arch/arm/mach-s5pc100/include/mach/memory.h b/arch/arm/mach-s5pc100/include/mach/memory.h
-index 4b60d18..21cc182 100644
---- a/arch/arm/mach-s5pc100/include/mach/memory.h
-+++ b/arch/arm/mach-s5pc100/include/mach/memory.h
-@@ -13,6 +13,6 @@
- #ifndef __ASM_ARCH_MEMORY_H
- #define __ASM_ARCH_MEMORY_H
+ config CPU_S5PC100
+@@ -34,3 +36,5 @@ config MACH_SMDKC100
+ 	select S5PC100_SETUP_SDHCI
+ 	help
+ 	  Machine support for the Samsung SMDKC100
++
++endif
+diff --git a/arch/arm/plat-s5pc1xx/Kconfig b/arch/arm/plat-s5pc1xx/Kconfig
+index 1608e62..eee2abb 100644
+--- a/arch/arm/plat-s5pc1xx/Kconfig
++++ b/arch/arm/plat-s5pc1xx/Kconfig
+@@ -23,6 +23,16 @@ config PLAT_S5PC1XX
  
--#define PHYS_OFFSET     	UL(0x20000000)
-+#define PHYS_OFFSET     	UL(0x30000000)
+ if PLAT_S5PC1XX
  
- #endif
++choice
++	prompt "S5PC1xx SoC Type"
++	default ARCH_S5PC100
++
++config ARCH_S5PC100
++	bool "S5PC100"
++
++endchoice
++
++
+ # Configuration options shared by all S3C64XX implementations
+ 
+ config CPU_S5PC100_INIT
 -- 
 1.6.4
