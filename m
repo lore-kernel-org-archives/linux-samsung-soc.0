@@ -1,93 +1,113 @@
-From: jassi brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 01/20] ARM: S5PC100: use 0x30008000 as memory base
-Date: Fri, 20 Nov 2009 23:42:36 +0900
-Message-ID: <1b68c6790911200642j792834e9q47d605b80c2e36d2@mail.gmail.com>
-References: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
-	 <1258724572-19176-2-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Jassi Brar <jassi.brar@samsung.com>
+Subject: [PATCH 6/6] SMDK6410 SPI: Added spidev support as an example
+Date: Sat, 21 Nov 2009 11:52:28 +0900
+Message-ID: <1258771948-14276-1-git-send-email-jassi.brar@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f171.google.com ([209.85.222.171]:63906 "EHLO
-	mail-pz0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753800AbZKTOma convert rfc822-to-8bit (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:38605 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754087AbZKUC5E (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Nov 2009 09:42:30 -0500
-Received: by pzk1 with SMTP id 1so2438745pzk.33
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Nov 2009 06:42:37 -0800 (PST)
-In-Reply-To: <1258724572-19176-2-git-send-email-m.szyprowski@samsung.com>
+	Fri, 20 Nov 2009 21:57:04 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Jassi Brar <jassi.brar@samsung.com>
 
-On Fri, Nov 20, 2009 at 10:42 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> From: Kyungmin Park <kyungmin.park@samsung.com>
->
-> We decided to use 0x3000'0000 as base memory address on S5PC1XX SoCs
-> (s5pc100 and s5pc110).
-you might as well want to explain the reason behind it, if any?
+As an illustration of using the newly implemented SPI driver,
+'spidev' master device has been enabled on SMDK6410.
 
-> A patch to u-boot that configures SMDKC100 board and sets base memory
-> as 0x3000'0000 has been already posted.
->
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> =C2=A0arch/arm/mach-s5pc100/Makefile.boot =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- | =C2=A0 =C2=A04 ++--
-> =C2=A0arch/arm/mach-s5pc100/include/mach/map.h =C2=A0 =C2=A0| =C2=A0 =
-=C2=A02 +-
-> =C2=A0arch/arm/mach-s5pc100/include/mach/memory.h | =C2=A0 =C2=A02 +-
-> =C2=A03 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/arm/mach-s5pc100/Makefile.boot b/arch/arm/mach-s5pc=
-100/Makefile.boot
-> index ff90aa1..b0909e3 100644
-> --- a/arch/arm/mach-s5pc100/Makefile.boot
-> +++ b/arch/arm/mach-s5pc100/Makefile.boot
-> @@ -1,2 +1,2 @@
-> - =C2=A0 zreladdr-y =C2=A0:=3D 0x20008000
-> -params_phys-y =C2=A0:=3D 0x20000100
-> + =C2=A0 zreladdr-y =C2=A0:=3D 0x30008000
-> +params_phys-y =C2=A0:=3D 0x30000100
-> diff --git a/arch/arm/mach-s5pc100/include/mach/map.h b/arch/arm/mach=
--s5pc100/include/mach/map.h
-> index 4681ebe..f90c033 100644
-> --- a/arch/arm/mach-s5pc100/include/mach/map.h
-> +++ b/arch/arm/mach-s5pc100/include/mach/map.h
-> @@ -113,7 +113,7 @@
-> =C2=A0#define S5PC100_PA_TSADC =C2=A0 =C2=A0 =C2=A0 (0xF3000000)
->
-> =C2=A0/* ETC */
-> -#define S5PC100_PA_SDRAM =C2=A0 =C2=A0 =C2=A0 (0x20000000)
-> +#define S5PC100_PA_SDRAM =C2=A0 =C2=A0 =C2=A0 (0x30000000)
-> =C2=A0#define S5PC1XX_PA_SDRAM =C2=A0 =C2=A0 =C2=A0 S5PC100_PA_SDRAM
->
-> =C2=A0/* compatibility defines. */
-> diff --git a/arch/arm/mach-s5pc100/include/mach/memory.h b/arch/arm/m=
-ach-s5pc100/include/mach/memory.h
-> index 4b60d18..21cc182 100644
-> --- a/arch/arm/mach-s5pc100/include/mach/memory.h
-> +++ b/arch/arm/mach-s5pc100/include/mach/memory.h
-> @@ -13,6 +13,6 @@
-> =C2=A0#ifndef __ASM_ARCH_MEMORY_H
-> =C2=A0#define __ASM_ARCH_MEMORY_H
->
-> -#define PHYS_OFFSET =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0UL(0x20=
-000000)
-> +#define PHYS_OFFSET =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0UL(0x30=
-000000)
->
-> =C2=A0#endif
-> --
-> 1.6.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.ht=
-ml
->
+Signed-off-by: Jassi Brar <jassi.brar@samsung.com>
+---
+ arch/arm/mach-s3c6410/mach-smdk6410.c |   47 +++++++++++++++++++++++++++++++++
+ 1 files changed, 47 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-s3c6410/mach-smdk6410.c b/arch/arm/mach-s3c6410/mach-smdk6410.c
+index ea51dbe..1230fa9 100644
+--- a/arch/arm/mach-s3c6410/mach-smdk6410.c
++++ b/arch/arm/mach-s3c6410/mach-smdk6410.c
+@@ -25,6 +25,7 @@
+ #include <linux/gpio.h>
+ #include <linux/delay.h>
+ #include <linux/smsc911x.h>
++#include <linux/spi/spi.h>
+ 
+ #ifdef CONFIG_SMDK6410_WM1190_EV1
+ #include <linux/mfd/wm8350/core.h>
+@@ -49,8 +50,10 @@
+ #include <plat/regs-gpio.h>
+ #include <plat/regs-sys.h>
+ #include <plat/iic.h>
++#include <plat/spi.h>
+ #include <plat/fb.h>
+ #include <plat/gpio-cfg.h>
++#include <plat/gpio-bank-c.h>
+ 
+ #include <plat/s3c6410.h>
+ #include <plat/clock.h>
+@@ -193,6 +196,7 @@ static struct platform_device *smdk6410_devices[] __initdata = {
+ #ifdef CONFIG_SMDK6410_SD_CH1
+ 	&s3c_device_hsmmc1,
+ #endif
++	&s3c64xx_device_spi0,
+ 	&s3c_device_i2c0,
+ 	&s3c_device_i2c1,
+ 	&s3c_device_fb,
+@@ -351,6 +355,40 @@ static struct i2c_board_info i2c_devs1[] __initdata = {
+ 	{ I2C_BOARD_INFO("24c128", 0x57), },	/* Samsung S524AD0XD1 */
+ };
+ 
++static void smdk6410_spidev_cs_set_level(int high)
++{
++	u32 val;
++
++	val = readl(S3C64XX_GPCDAT);
++
++	if (high)
++		val |= (1<<3);
++	else
++		val &= ~(1<<3);
++
++	writel(val, S3C64XX_GPCDAT);
++}
++
++#define SMDK6410_SPIDEV_CS 0
++
++static struct s3c64xx_spi_csinfo smdk6410_spi0_csi[] = {
++	[SMDK6410_SPIDEV_CS] = {
++		.set_level = smdk6410_spidev_cs_set_level,
++		.fb_delay = 0x3, /* 9ns feedback delay */
++	},
++};
++
++static struct spi_board_info smdk6410_spi_devices[] __initdata = {
++	{
++		.modalias	 = "spidev",
++		.mode		 = SPI_MODE_0,
++		.max_speed_hz    = 4000000,
++		.bus_num	 = 0,
++		.chip_select	 = 0,
++		.controller_data = &smdk6410_spi1_csi[SMDK6410_SPIDEV_CS],
++	},
++};
++
+ static void __init smdk6410_map_io(void)
+ {
+ 	u32 tmp;
+@@ -385,6 +423,15 @@ static void __init smdk6410_machine_init(void)
+ 	i2c_register_board_info(0, i2c_devs0, ARRAY_SIZE(i2c_devs0));
+ 	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
+ 
++	/* SPI Controller-0 generates its clocks from PCLK and
++	 * emulates ARRAY_SIZE(smdk6410_spi0_csi) chipselects.
++	 */
++	s3c64xx_spi_set_info(BUSNUM(0), S3C64XX_SPI_SRCCLK_PCLK,
++					 ARRAY_SIZE(smdk6410_spi0_csi));
++
++	spi_register_board_info(smdk6410_spi_devices,
++					ARRAY_SIZE(smdk6410_spi_devices));
++
+ 	platform_add_devices(smdk6410_devices, ARRAY_SIZE(smdk6410_devices));
+ }
+ 
+-- 
+1.6.2.5
