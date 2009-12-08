@@ -1,57 +1,160 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 01/20] ARM: S5PC100: use 0x30008000 as memory base
-Date: Fri, 04 Dec 2009 08:46:28 +0100
-Message-ID: <004601ca74b5$e5d84920$b188db60$%szyprowski@samsung.com>
-References: <1258551194-16018-1-git-send-email-m.szyprowski@samsung.com>
- <1258724572-19176-2-git-send-email-m.szyprowski@samsung.com>
- <1b68c6790911200642j792834e9q47d605b80c2e36d2@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7BIT
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: [[clock v2]] ARM: S3C64XX: Fixup .reg_src and .reg_div with named initialisers
+Date: Tue,  8 Dec 2009 02:07:25 +0000
+Message-ID: <1260238045-12694-9-git-send-email-ben-linux@fluff.org>
+References: <1260238045-12694-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:25704 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753692AbZLDHqo (ORCPT
+Received: from aeryn.fluff.org.uk ([87.194.8.8]:60021 "EHLO
+	teyla.home.fluff.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S934933AbZLHCGI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Dec 2009 02:46:44 -0500
-Received: from epmmp2 (mailout3.samsung.com [203.254.224.33])
- by mailout1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0KU400JWGAY1IU@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 Dec 2009 16:46:49 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0KU400IEBAXX4B@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 Dec 2009 16:46:49 +0900 (KST)
-In-reply-to: <1b68c6790911200642j792834e9q47d605b80c2e36d2@mail.gmail.com>
-Content-language: pl
+	Mon, 7 Dec 2009 21:06:08 -0500
+In-Reply-To: <1260238045-12694-1-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'jassi brar' <jassisinghbrar@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hello,
+Change these two fields to have named initialisers as per the
+review comments from Kyungmin Park.
 
-On Friday, November 20, 2009 3:43 PM jassi brar wrote:
+sed used:
 
-> On Fri, Nov 20, 2009 at 10:42 PM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
-> > From: Kyungmin Park <kyungmin.park@samsung.com>
-> >
-> > We decided to use 0x3000'0000 as base memory address on S5PC1XX SoCs
-> > (s5pc100 and s5pc110).
-> you might as well want to explain the reason behind it, if any?
+s@\.reg_src\(.*\)=\(.*\){\(.*\),\(.*\),\(.*\)}@.reg_src\1=\2{ .reg =\3, .shift =\4, .size =\5 }@g
 
-We decided to change the base memory address to 0x30000000 to be able to
-support systems with 512MB in the second bank (DRAM1) without using HIMEM.
-In first bank (DRAM0), which is integrated with SOC (POP) we would always
-have no more than 256MB of memory. If we would leave the first bank at
-0x2000'0000, we would lose 256MB of kernel virtual address space for
-useless memory hole. With this patch (and proper u-boot) we can run kernel
-on systems with max 256MB + 512MB of memory in 1GB kernel/3GB userspace
-address space configuration.
+Signed-off-by: Ben Dooks <ben-linux@fluff.org>
+---
+ arch/arm/plat-s3c64xx/s3c6400-clock.c |   28 ++++++++++++++--------------
+ 1 files changed, 14 insertions(+), 14 deletions(-)
 
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+diff --git a/arch/arm/plat-s3c64xx/s3c6400-clock.c b/arch/arm/plat-s3c64xx/s3c6400-clock.c
+index 79e4bd7..8f6a0d1 100644
+--- a/arch/arm/plat-s3c64xx/s3c6400-clock.c
++++ b/arch/arm/plat-s3c64xx/s3c6400-clock.c
+@@ -68,7 +68,7 @@ static struct clksrc_clk clk_mout_apll = {
+ 		.name		= "mout_apll",
+ 		.id		= -1,
+ 	},
+-	.reg_src	= { S3C_CLK_SRC, 0, 1 },
++	.reg_src	= { .reg = S3C_CLK_SRC, .shift = 0, .size = 1  },
+ 	.sources	= &clk_src_apll,
+ };
+ 
+@@ -92,7 +92,7 @@ static struct clksrc_clk clk_mout_epll = {
+ 		.name		= "mout_epll",
+ 		.id		= -1,
+ 	},
+-	.reg_src	= { S3C_CLK_SRC, 2, 1 },
++	.reg_src	= { .reg = S3C_CLK_SRC, .shift = 2, .size = 1  },
+ 	.sources	= &clk_src_epll,
+ };
+ 
+@@ -111,7 +111,7 @@ static struct clksrc_clk clk_mout_mpll = {
+ 		.name		= "mout_mpll",
+ 		.id		= -1,
+ 	},
+-	.reg_src	= { S3C_CLK_SRC, 1, 1 },
++	.reg_src	= { .reg = S3C_CLK_SRC, .shift = 1, .size = 1  },
+ 	.sources	= &clk_src_mpll,
+ };
+ 
+@@ -317,7 +317,7 @@ static struct clksrc_clk clksrcs[] = {
+ 			.ctrlbit        = S3C_CLKCON_SCLK_MMC0,
+ 			.enable		= s3c64xx_sclk_ctrl,
+ 		},
+-		.reg_src	= { S3C_CLK_SRC, 18, 2 },
++		.reg_src	= { .reg = S3C_CLK_SRC, .shift = 18, .size = 2  },
+ 		.reg_div	= { S3C_CLK_DIV1, 0, 4 },
+ 		.sources	= &clkset_spi_mmc,
+ 	}, {
+@@ -327,7 +327,7 @@ static struct clksrc_clk clksrcs[] = {
+ 			.ctrlbit        = S3C_CLKCON_SCLK_MMC1,
+ 			.enable		= s3c64xx_sclk_ctrl,
+ 		},
+-		.reg_src	= { S3C_CLK_SRC, 20, 2 },
++		.reg_src	= { .reg = S3C_CLK_SRC, .shift = 20, .size = 2  },
+ 		.reg_div	= { S3C_CLK_DIV1, 4, 4 },
+ 		.sources	= &clkset_spi_mmc,
+ 	}, {
+@@ -337,7 +337,7 @@ static struct clksrc_clk clksrcs[] = {
+ 			.ctrlbit        = S3C_CLKCON_SCLK_MMC2,
+ 			.enable		= s3c64xx_sclk_ctrl,
+ 		},
+-		.reg_src	= { S3C_CLK_SRC, 22, 2 },
++		.reg_src	= { .reg = S3C_CLK_SRC, .shift = 22, .size = 2  },
+ 		.reg_div 	= { S3C_CLK_DIV1, 8, 4 },
+ 		.sources	= &clkset_spi_mmc,
+ 	}, {
+@@ -347,7 +347,7 @@ static struct clksrc_clk clksrcs[] = {
+ 			.ctrlbit        = S3C_CLKCON_SCLK_UHOST,
+ 			.enable		= s3c64xx_sclk_ctrl,
+ 		},
+-		.reg_src 	= { S3C_CLK_SRC, 5, 2 },
++		.reg_src 	= { .reg = S3C_CLK_SRC, .shift = 5, .size = 2  },
+ 		.reg_div	= { S3C_CLK_DIV1, 20, 4 },
+ 		.sources	= &clkset_uhost,
+ 	}, {
+@@ -357,7 +357,7 @@ static struct clksrc_clk clksrcs[] = {
+ 			.ctrlbit        = S3C_CLKCON_SCLK_UART,
+ 			.enable		= s3c64xx_sclk_ctrl,
+ 		},
+-		.reg_src	= { S3C_CLK_SRC, 13, 1 },
++		.reg_src	= { .reg = S3C_CLK_SRC, .shift = 13, .size = 1  },
+ 		.reg_div	= { S3C_CLK_DIV2, 16, 4 },
+ 		.sources	= &clkset_uart,
+ 	}, {
+@@ -368,7 +368,7 @@ static struct clksrc_clk clksrcs[] = {
+ 			.ctrlbit        = S3C_CLKCON_SCLK_SPI0,
+ 			.enable		= s3c64xx_sclk_ctrl,
+ 		},
+-		.reg_src	= { S3C_CLK_SRC, 14, 2 },
++		.reg_src	= { .reg = S3C_CLK_SRC, .shift = 14, .size = 2  },
+ 		.reg_div	= { S3C_CLK_DIV2, 0, 4 },
+ 		.sources	= &clkset_spi_mmc,
+ 	}, {
+@@ -378,7 +378,7 @@ static struct clksrc_clk clksrcs[] = {
+ 			.ctrlbit        = S3C_CLKCON_SCLK_SPI1,
+ 			.enable		= s3c64xx_sclk_ctrl,
+ 		},
+-		.reg_src	= { S3C_CLK_SRC, 16, 2 },
++		.reg_src	= { .reg = S3C_CLK_SRC, .shift = 16, .size = 2  },
+ 		.reg_div	= { S3C_CLK_DIV2, 4, 4 },
+ 		.sources	= &clkset_spi_mmc,
+ 	}, {
+@@ -388,7 +388,7 @@ static struct clksrc_clk clksrcs[] = {
+ 			.ctrlbit        = S3C_CLKCON_SCLK_AUDIO0,
+ 			.enable		= s3c64xx_sclk_ctrl,
+ 		},
+-		.reg_src	= { S3C_CLK_SRC, 7, 3 },
++		.reg_src	= { .reg = S3C_CLK_SRC, .shift = 7, .size = 3  },
+ 		.reg_div	= { S3C_CLK_DIV2, 8, 4 },
+ 		.sources	= &clkset_audio0,
+ 	}, {
+@@ -398,7 +398,7 @@ static struct clksrc_clk clksrcs[] = {
+ 			.ctrlbit        = S3C_CLKCON_SCLK_AUDIO1,
+ 			.enable		= s3c64xx_sclk_ctrl,
+ 		},
+-		.reg_src	= { S3C_CLK_SRC, 10, 3 },
++		.reg_src	= { .reg = S3C_CLK_SRC, .shift = 10, .size = 3  },
+ 		.reg_div	= { S3C_CLK_DIV2, 12, 4 },
+ 		.sources	= &clkset_audio1,
+ 	}, {
+@@ -408,7 +408,7 @@ static struct clksrc_clk clksrcs[] = {
+ 			.ctrlbit        = S3C_CLKCON_SCLK_IRDA,
+ 			.enable		= s3c64xx_sclk_ctrl,
+ 		},
+-		.reg_src	= { S3C_CLK_SRC, 24, 2 },
++		.reg_src	= { .reg = S3C_CLK_SRC, .shift = 24, .size = 2  },
+ 		.reg_div	= { S3C_CLK_DIV2, 20, 4 },
+ 		.sources	= &clkset_irda,
+ 	}, {
+@@ -419,7 +419,7 @@ static struct clksrc_clk clksrcs[] = {
+ 			.enable		= s3c64xx_sclk_ctrl,
+ 		},
+ 		.reg_div	= { S3C_CLK_DIV0, 20, 4 },
+-		.reg_src	= { NULL, 0, 0 },
++		.reg_src	= { .reg = NULL, .shift = 0, .size = 0  },
+ 		.sources	= &clkset_camif,
+ 	},
+ };
+-- 
+1.5.6.5
