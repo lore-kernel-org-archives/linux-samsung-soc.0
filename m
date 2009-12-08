@@ -1,166 +1,220 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [[clock v2]] ARM: S3C64XX: Cleanup common init code in s3c6400-clock.c
-Date: Tue,  8 Dec 2009 02:07:19 +0000
-Message-ID: <1260238045-12694-3-git-send-email-ben-linux@fluff.org>
+Subject: [[clock v2]] ARM: SAMSUNG: Move <plat/clock.h> to plat-samsung
+Date: Tue,  8 Dec 2009 02:07:18 +0000
+Message-ID: <1260238045-12694-2-git-send-email-ben-linux@fluff.org>
 References: <1260238045-12694-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from aeryn.fluff.org.uk ([87.194.8.8]:60010 "EHLO
+Received: from aeryn.fluff.org.uk ([87.194.8.8]:60026 "EHLO
 	teyla.home.fluff.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S935755AbZLHCGM (ORCPT
+	with ESMTP id S965342AbZLHCGN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Dec 2009 21:06:12 -0500
+	Mon, 7 Dec 2009 21:06:13 -0500
 In-Reply-To: <1260238045-12694-1-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Remove the four fields from clksrc_clk.clk which are always the same
-and init them when the clock is registered. This helps remove the amount
-of repeated code.
-
-This is a re-work of Harald Welte's clock changes for the latest kernel.
+Move the <plat/clock.h> header to plat-samsung where it can be used by all
+the platforms, and readies it for the next round of clock updates where
+the clock code will be amalgamated.
 
 Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/plat-s3c64xx/s3c6400-clock.c |   49 +++-----------------------------
- 1 files changed, 5 insertions(+), 44 deletions(-)
+ arch/arm/plat-s3c/include/plat/clock.h     |   89 ----------------------------
+ arch/arm/plat-samsung/include/plat/clock.h |   89 ++++++++++++++++++++++++++++
+ 2 files changed, 89 insertions(+), 89 deletions(-)
+ delete mode 100644 arch/arm/plat-s3c/include/plat/clock.h
+ create mode 100644 arch/arm/plat-samsung/include/plat/clock.h
 
-diff --git a/arch/arm/plat-s3c64xx/s3c6400-clock.c b/arch/arm/plat-s3c64xx/s3c6400-clock.c
-index 6ffa21e..5882470 100644
---- a/arch/arm/plat-s3c64xx/s3c6400-clock.c
-+++ b/arch/arm/plat-s3c64xx/s3c6400-clock.c
-@@ -364,10 +364,6 @@ static struct clksrc_clk clk_mmc0 = {
- 		.id		= 0,
- 		.ctrlbit        = S3C_CLKCON_SCLK_MMC0,
- 		.enable		= s3c64xx_sclk_ctrl,
--		.set_parent	= s3c64xx_setparent_clksrc,
--		.get_rate	= s3c64xx_getrate_clksrc,
--		.set_rate	= s3c64xx_setrate_clksrc,
--		.round_rate	= s3c64xx_roundrate_clksrc,
- 	},
- 	.shift		= S3C6400_CLKSRC_MMC0_SHIFT,
- 	.mask		= S3C6400_CLKSRC_MMC0_MASK,
-@@ -382,10 +378,6 @@ static struct clksrc_clk clk_mmc1 = {
- 		.id		= 1,
- 		.ctrlbit        = S3C_CLKCON_SCLK_MMC1,
- 		.enable		= s3c64xx_sclk_ctrl,
--		.get_rate	= s3c64xx_getrate_clksrc,
--		.set_rate	= s3c64xx_setrate_clksrc,
--		.set_parent	= s3c64xx_setparent_clksrc,
--		.round_rate	= s3c64xx_roundrate_clksrc,
- 	},
- 	.shift		= S3C6400_CLKSRC_MMC1_SHIFT,
- 	.mask		= S3C6400_CLKSRC_MMC1_MASK,
-@@ -400,10 +392,6 @@ static struct clksrc_clk clk_mmc2 = {
- 		.id		= 2,
- 		.ctrlbit        = S3C_CLKCON_SCLK_MMC2,
- 		.enable		= s3c64xx_sclk_ctrl,
--		.get_rate	= s3c64xx_getrate_clksrc,
--		.set_rate	= s3c64xx_setrate_clksrc,
--		.set_parent	= s3c64xx_setparent_clksrc,
--		.round_rate	= s3c64xx_roundrate_clksrc,
- 	},
- 	.shift		= S3C6400_CLKSRC_MMC2_SHIFT,
- 	.mask		= S3C6400_CLKSRC_MMC2_MASK,
-@@ -418,10 +406,6 @@ static struct clksrc_clk clk_usbhost = {
- 		.id		= -1,
- 		.ctrlbit        = S3C_CLKCON_SCLK_UHOST,
- 		.enable		= s3c64xx_sclk_ctrl,
--		.set_parent	= s3c64xx_setparent_clksrc,
--		.get_rate	= s3c64xx_getrate_clksrc,
--		.set_rate	= s3c64xx_setrate_clksrc,
--		.round_rate	= s3c64xx_roundrate_clksrc,
- 	},
- 	.shift		= S3C6400_CLKSRC_UHOST_SHIFT,
- 	.mask		= S3C6400_CLKSRC_UHOST_MASK,
-@@ -436,10 +420,6 @@ static struct clksrc_clk clk_uart_uclk1 = {
- 		.id		= -1,
- 		.ctrlbit        = S3C_CLKCON_SCLK_UART,
- 		.enable		= s3c64xx_sclk_ctrl,
--		.set_parent	= s3c64xx_setparent_clksrc,
--		.get_rate	= s3c64xx_getrate_clksrc,
--		.set_rate	= s3c64xx_setrate_clksrc,
--		.round_rate	= s3c64xx_roundrate_clksrc,
- 	},
- 	.shift		= S3C6400_CLKSRC_UART_SHIFT,
- 	.mask		= S3C6400_CLKSRC_UART_MASK,
-@@ -456,10 +436,6 @@ static struct clksrc_clk clk_spi0 = {
- 		.id		= 0,
- 		.ctrlbit        = S3C_CLKCON_SCLK_SPI0,
- 		.enable		= s3c64xx_sclk_ctrl,
--		.set_parent	= s3c64xx_setparent_clksrc,
--		.get_rate	= s3c64xx_getrate_clksrc,
--		.set_rate	= s3c64xx_setrate_clksrc,
--		.round_rate	= s3c64xx_roundrate_clksrc,
- 	},
- 	.shift		= S3C6400_CLKSRC_SPI0_SHIFT,
- 	.mask		= S3C6400_CLKSRC_SPI0_MASK,
-@@ -474,10 +450,6 @@ static struct clksrc_clk clk_spi1 = {
- 		.id		= 1,
- 		.ctrlbit        = S3C_CLKCON_SCLK_SPI1,
- 		.enable		= s3c64xx_sclk_ctrl,
--		.set_parent	= s3c64xx_setparent_clksrc,
--		.get_rate	= s3c64xx_getrate_clksrc,
--		.set_rate	= s3c64xx_setrate_clksrc,
--		.round_rate	= s3c64xx_roundrate_clksrc,
- 	},
- 	.shift		= S3C6400_CLKSRC_SPI1_SHIFT,
- 	.mask		= S3C6400_CLKSRC_SPI1_MASK,
-@@ -520,10 +492,6 @@ static struct clksrc_clk clk_audio0 = {
- 		.id		= 0,
- 		.ctrlbit        = S3C_CLKCON_SCLK_AUDIO0,
- 		.enable		= s3c64xx_sclk_ctrl,
--		.set_parent	= s3c64xx_setparent_clksrc,
--		.get_rate	= s3c64xx_getrate_clksrc,
--		.set_rate	= s3c64xx_setrate_clksrc,
--		.round_rate	= s3c64xx_roundrate_clksrc,
- 	},
- 	.shift		= S3C6400_CLKSRC_AUDIO0_SHIFT,
- 	.mask		= S3C6400_CLKSRC_AUDIO0_MASK,
-@@ -551,10 +519,6 @@ static struct clksrc_clk clk_audio1 = {
- 		.id		= 1,
- 		.ctrlbit        = S3C_CLKCON_SCLK_AUDIO1,
- 		.enable		= s3c64xx_sclk_ctrl,
--		.set_parent	= s3c64xx_setparent_clksrc,
--		.get_rate	= s3c64xx_getrate_clksrc,
--		.set_rate	= s3c64xx_setrate_clksrc,
--		.round_rate	= s3c64xx_roundrate_clksrc,
- 	},
- 	.shift		= S3C6400_CLKSRC_AUDIO1_SHIFT,
- 	.mask		= S3C6400_CLKSRC_AUDIO1_MASK,
-@@ -569,10 +533,6 @@ static struct clksrc_clk clk_irda = {
- 		.id		= 0,
- 		.ctrlbit        = S3C_CLKCON_SCLK_IRDA,
- 		.enable		= s3c64xx_sclk_ctrl,
--		.set_parent	= s3c64xx_setparent_clksrc,
--		.get_rate	= s3c64xx_getrate_clksrc,
--		.set_rate	= s3c64xx_setrate_clksrc,
--		.round_rate	= s3c64xx_roundrate_clksrc,
- 	},
- 	.shift		= S3C6400_CLKSRC_IRDA_SHIFT,
- 	.mask		= S3C6400_CLKSRC_IRDA_MASK,
-@@ -596,10 +556,6 @@ static struct clksrc_clk clk_camif = {
- 		.id		= -1,
- 		.ctrlbit        = S3C_CLKCON_SCLK_CAM,
- 		.enable		= s3c64xx_sclk_ctrl,
--		.set_parent	= s3c64xx_setparent_clksrc,
--		.get_rate	= s3c64xx_getrate_clksrc,
--		.set_rate	= s3c64xx_setrate_clksrc,
--		.round_rate	= s3c64xx_roundrate_clksrc,
- 	},
- 	.shift		= 0,
- 	.mask		= 0,
-@@ -641,6 +597,11 @@ static void __init_or_cpufreq s3c6400_set_clksrc(struct clksrc_clk *clk)
- 		return;
- 	}
- 
-+	clk->clk.get_rate = s3c64xx_getrate_clksrc;
-+	clk->clk.set_rate = s3c64xx_setrate_clksrc;
-+	clk->clk.set_parent = s3c64xx_setparent_clksrc;
-+	clk->clk.round_rate = s3c64xx_roundrate_clksrc;
+diff --git a/arch/arm/plat-s3c/include/plat/clock.h b/arch/arm/plat-s3c/include/plat/clock.h
+deleted file mode 100644
+index d86af84..0000000
+--- a/arch/arm/plat-s3c/include/plat/clock.h
++++ /dev/null
+@@ -1,89 +0,0 @@
+-/* linux/arch/arm/plat-s3c/include/plat/clock.h
+- *
+- * Copyright (c) 2004-2005 Simtec Electronics
+- *	http://www.simtec.co.uk/products/SWLINUX/
+- *	Written by Ben Dooks, <ben@simtec.co.uk>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#include <linux/spinlock.h>
+-
+-struct clk {
+-	struct list_head      list;
+-	struct module        *owner;
+-	struct clk           *parent;
+-	const char           *name;
+-	int		      id;
+-	int		      usage;
+-	unsigned long         rate;
+-	unsigned long         ctrlbit;
+-
+-	int		    (*enable)(struct clk *, int enable);
+-	int		    (*set_rate)(struct clk *c, unsigned long rate);
+-	unsigned long	    (*get_rate)(struct clk *c);
+-	unsigned long	    (*round_rate)(struct clk *c, unsigned long rate);
+-	int		    (*set_parent)(struct clk *c, struct clk *parent);
+-};
+-
+-/* other clocks which may be registered by board support */
+-
+-extern struct clk s3c24xx_dclk0;
+-extern struct clk s3c24xx_dclk1;
+-extern struct clk s3c24xx_clkout0;
+-extern struct clk s3c24xx_clkout1;
+-extern struct clk s3c24xx_uclk;
+-
+-extern struct clk clk_usb_bus;
+-
+-/* core clock support */
+-
+-extern struct clk clk_f;
+-extern struct clk clk_h;
+-extern struct clk clk_p;
+-extern struct clk clk_mpll;
+-extern struct clk clk_upll;
+-extern struct clk clk_epll;
+-extern struct clk clk_xtal;
+-extern struct clk clk_ext;
+-
+-/* S3C64XX specific clocks */
+-extern struct clk clk_h2;
+-extern struct clk clk_27m;
+-extern struct clk clk_48m;
+-
+-/* exports for arch/arm/mach-s3c2410
+- *
+- * Please DO NOT use these outside of arch/arm/mach-s3c2410
+-*/
+-
+-extern spinlock_t clocks_lock;
+-
+-extern int s3c2410_clkcon_enable(struct clk *clk, int enable);
+-
+-extern int s3c24xx_register_clock(struct clk *clk);
+-extern int s3c24xx_register_clocks(struct clk **clk, int nr_clks);
+-
+-extern int s3c24xx_register_baseclocks(unsigned long xtal);
+-
+-extern void s3c64xx_register_clocks(void);
+-
+-extern void s3c24xx_setup_clocks(unsigned long fclk,
+-				 unsigned long hclk,
+-				 unsigned long pclk);
+-
+-extern void s3c2410_setup_clocks(void);
+-extern void s3c2412_setup_clocks(void);
+-extern void s3c244x_setup_clocks(void);
+-extern void s3c2443_setup_clocks(void);
+-
+-/* S3C64XX specific functions and clocks */
+-
+-extern int s3c64xx_sclk_ctrl(struct clk *clk, int enable);
+-
+-/* Init for pwm clock code */
+-
+-extern void s3c_pwmclk_init(void);
+-
+diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-samsung/include/plat/clock.h
+new file mode 100644
+index 0000000..d86af84
+--- /dev/null
++++ b/arch/arm/plat-samsung/include/plat/clock.h
+@@ -0,0 +1,89 @@
++/* linux/arch/arm/plat-s3c/include/plat/clock.h
++ *
++ * Copyright (c) 2004-2005 Simtec Electronics
++ *	http://www.simtec.co.uk/products/SWLINUX/
++ *	Written by Ben Dooks, <ben@simtec.co.uk>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
- 	clk->clk.parent = srcs->sources[clksrc];
- 
- 	printk(KERN_INFO "%s: source is %s (%d), rate is %ld\n",
++#include <linux/spinlock.h>
++
++struct clk {
++	struct list_head      list;
++	struct module        *owner;
++	struct clk           *parent;
++	const char           *name;
++	int		      id;
++	int		      usage;
++	unsigned long         rate;
++	unsigned long         ctrlbit;
++
++	int		    (*enable)(struct clk *, int enable);
++	int		    (*set_rate)(struct clk *c, unsigned long rate);
++	unsigned long	    (*get_rate)(struct clk *c);
++	unsigned long	    (*round_rate)(struct clk *c, unsigned long rate);
++	int		    (*set_parent)(struct clk *c, struct clk *parent);
++};
++
++/* other clocks which may be registered by board support */
++
++extern struct clk s3c24xx_dclk0;
++extern struct clk s3c24xx_dclk1;
++extern struct clk s3c24xx_clkout0;
++extern struct clk s3c24xx_clkout1;
++extern struct clk s3c24xx_uclk;
++
++extern struct clk clk_usb_bus;
++
++/* core clock support */
++
++extern struct clk clk_f;
++extern struct clk clk_h;
++extern struct clk clk_p;
++extern struct clk clk_mpll;
++extern struct clk clk_upll;
++extern struct clk clk_epll;
++extern struct clk clk_xtal;
++extern struct clk clk_ext;
++
++/* S3C64XX specific clocks */
++extern struct clk clk_h2;
++extern struct clk clk_27m;
++extern struct clk clk_48m;
++
++/* exports for arch/arm/mach-s3c2410
++ *
++ * Please DO NOT use these outside of arch/arm/mach-s3c2410
++*/
++
++extern spinlock_t clocks_lock;
++
++extern int s3c2410_clkcon_enable(struct clk *clk, int enable);
++
++extern int s3c24xx_register_clock(struct clk *clk);
++extern int s3c24xx_register_clocks(struct clk **clk, int nr_clks);
++
++extern int s3c24xx_register_baseclocks(unsigned long xtal);
++
++extern void s3c64xx_register_clocks(void);
++
++extern void s3c24xx_setup_clocks(unsigned long fclk,
++				 unsigned long hclk,
++				 unsigned long pclk);
++
++extern void s3c2410_setup_clocks(void);
++extern void s3c2412_setup_clocks(void);
++extern void s3c244x_setup_clocks(void);
++extern void s3c2443_setup_clocks(void);
++
++/* S3C64XX specific functions and clocks */
++
++extern int s3c64xx_sclk_ctrl(struct clk *clk, int enable);
++
++/* Init for pwm clock code */
++
++extern void s3c_pwmclk_init(void);
++
 -- 
 1.5.6.5
