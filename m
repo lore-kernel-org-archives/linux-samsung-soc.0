@@ -1,854 +1,274 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 2/7] ARM: S5P6440: CPU initialization
-Date: Fri, 11 Dec 2009 18:54:10 +0900
-Message-ID: <1260525250-4160-1-git-send-email-kgene.kim@samsung.com>
+From: Marc Zyngier <maz@misterjones.org>
+Subject: Re: [PATCH 3/7] ARM: S5P6440: Clock and PLL support
+Date: Fri, 11 Dec 2009 11:35:12 +0100
+Message-ID: <20091211113512.4c7d5b1e@life-in-the-fast-lane>
+References: <1260525271-4194-1-git-send-email-kgene.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:37661 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756302AbZLKKBg (ORCPT
+Received: from inca-roads.misterjones.org ([213.251.177.50]:36687 "EHLO
+	inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754156AbZLKKgI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Dec 2009 05:01:36 -0500
+	Fri, 11 Dec 2009 05:36:08 -0500
+In-Reply-To: <1260525271-4194-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, Adityapratap Sharma <aditya.ps@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Atul Dahiya <atul.dahiya@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, Adityapratap Sharma <aditya.ps@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Atul Dahiya <atul.dahiya@samsung.com>
 
-This patch adds S5P6440 support.
+On Fri, 11 Dec 2009 18:54:31 +0900
+Kukjin Kim <kgene.kim@samsung.com> wrote:
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Adityapratap Sharma <aditya.ps@samsung.com>
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
----
- arch/arm/mach-s5p6440/cpu.c                      |  120 ++++++++++++++++++++++
- arch/arm/mach-s5p6440/include/mach/debug-macro.S |   37 +++++++
- arch/arm/mach-s5p6440/include/mach/entry-macro.S |   42 ++++++++
- arch/arm/mach-s5p6440/include/mach/gpio-core.h   |   19 ++++
- arch/arm/mach-s5p6440/include/mach/gpio.h        |   79 ++++++++++++++
- arch/arm/mach-s5p6440/include/mach/hardware.h    |   18 ++++
- arch/arm/mach-s5p6440/include/mach/idle.h        |   23 ++++
- arch/arm/mach-s5p6440/include/mach/map.h         |  100 ++++++++++++++++++
- arch/arm/mach-s5p6440/include/mach/memory.h      |   22 ++++
- arch/arm/mach-s5p6440/include/mach/system.h      |   40 +++++++
- arch/arm/mach-s5p6440/include/mach/uncompress.h  |   24 +++++
- arch/arm/plat-s3c/include/plat/cpu.h             |    2 +
- arch/arm/plat-s5p/cpu.c                          |   88 ++++++++++++++++
- arch/arm/plat-s5p/include/plat/s5p6440.h         |   33 ++++++
- arch/arm/plat-s5p/s5p6440-init.c                 |   23 ++++
- arch/arm/plat-s5p/setup-i2c0.c                   |   23 ++++
- 16 files changed, 693 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s5p6440/cpu.c
- create mode 100644 arch/arm/mach-s5p6440/include/mach/debug-macro.S
- create mode 100644 arch/arm/mach-s5p6440/include/mach/entry-macro.S
- create mode 100644 arch/arm/mach-s5p6440/include/mach/gpio-core.h
- create mode 100644 arch/arm/mach-s5p6440/include/mach/gpio.h
- create mode 100644 arch/arm/mach-s5p6440/include/mach/hardware.h
- create mode 100644 arch/arm/mach-s5p6440/include/mach/idle.h
- create mode 100644 arch/arm/mach-s5p6440/include/mach/map.h
- create mode 100644 arch/arm/mach-s5p6440/include/mach/memory.h
- create mode 100644 arch/arm/mach-s5p6440/include/mach/system.h
- create mode 100644 arch/arm/mach-s5p6440/include/mach/uncompress.h
- create mode 100644 arch/arm/plat-s5p/cpu.c
- create mode 100644 arch/arm/plat-s5p/include/plat/s5p6440.h
- create mode 100644 arch/arm/plat-s5p/s5p6440-init.c
- create mode 100644 arch/arm/plat-s5p/setup-i2c0.c
+A few problems spotted here:
 
-diff --git a/arch/arm/mach-s5p6440/cpu.c b/arch/arm/mach-s5p6440/cpu.c
-new file mode 100644
-index 0000000..6aab6d2
---- /dev/null
-+++ b/arch/arm/mach-s5p6440/cpu.c
-@@ -0,0 +1,120 @@
-+/* linux/arch/arm/mach-s5p6440/cpu.c
-+ *
-+ * Copyright (c) 2009 Samsung Electronics
-+ *		http://www.samsung.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/types.h>
-+#include <linux/interrupt.h>
-+#include <linux/list.h>
-+#include <linux/timer.h>
-+#include <linux/init.h>
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+#include <linux/sysdev.h>
-+#include <linux/serial_core.h>
-+#include <linux/platform_device.h>
-+
-+#include <asm/mach/arch.h>
-+#include <asm/mach/map.h>
-+#include <asm/mach/irq.h>
-+
-+#include <asm/proc-fns.h>
-+#include <mach/idle.h>
-+
-+#include <mach/hardware.h>
-+#include <mach/map.h>
-+#include <asm/irq.h>
-+
-+#include <plat/regs-serial.h>
-+#include <mach/regs-clock.h>
-+
-+#include <plat/cpu.h>
-+#include <plat/devs.h>
-+#include <plat/clock.h>
-+#include <plat/s5p6440.h>
-+
-+/* Initial IO mappings */
-+
-+static struct map_desc s5p6440_iodesc[] __initdata = {
-+};
-+
-+static void s5p6440_idle(void)
-+{
-+	unsigned long val;
-+
-+	val = __raw_readl(S5P_PWR_CFG);
-+	val &= ~(0x3<<5);
-+	val |= (0x1<<5);
-+	__raw_writel(val, S5P_PWR_CFG);
-+
-+	cpu_do_idle();
-+}
-+
-+/* s5p6440_map_io
-+ *
-+ * register the standard cpu IO areas
-+*/
-+
-+void __init s5p6440_map_io(void)
-+{
-+	iotable_init(s5p6440_iodesc, ARRAY_SIZE(s5p6440_iodesc));
-+
-+	/* set idle function */
-+	s5p6440_idle_fn = s5p6440_idle;
-+
-+	/* initialize device information early */
-+}
-+
-+void __init s5p6440_init_clocks(int xtal)
-+{
-+	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
-+
-+	s3c24xx_register_baseclocks(xtal);
-+	s5p_register_clocks(xtal);
-+	s5p6440_register_clocks();
-+	s5p6440_setup_clocks();
-+}
-+
-+void __init s5p6440_init_irq(void)
-+{
-+	/* S5P6440 supports only 2 VIC */
-+	int num_vic = 2;
-+	u32 vic[num_vic];
-+
-+	/*
-+	 * VIC0 is missing IRQ_VIC0[3, 4, 8, 10, (12-22)]
-+	 * VIC1 is missing IRQ VIC1[1, 3, 4, 10, 11, 12, 14, 15, 22]
-+	 */
-+	vic[0] = 0xff800ae7;
-+	vic[1] = 0xffbf23e5;
-+
-+	s5p_init_irq(vic, num_vic);
-+}
-+
-+struct sysdev_class s5p6440_sysclass = {
-+	.name	= "s5p6440-core",
-+};
-+
-+static struct sys_device s5p6440_sysdev = {
-+	.cls	= &s5p6440_sysclass,
-+};
-+
-+static int __init s5p6440_core_init(void)
-+{
-+	return sysdev_class_register(&s5p6440_sysclass);
-+}
-+
-+core_initcall(s5p6440_core_init);
-+
-+int __init s5p6440_init(void)
-+{
-+	printk("S5P6440: Initializing architecture\n");
-+
-+	return sysdev_register(&s5p6440_sysdev);
-+}
-diff --git a/arch/arm/mach-s5p6440/include/mach/debug-macro.S b/arch/arm/mach-s5p6440/include/mach/debug-macro.S
-new file mode 100644
-index 0000000..2947407
---- /dev/null
-+++ b/arch/arm/mach-s5p6440/include/mach/debug-macro.S
-@@ -0,0 +1,37 @@
-+/* linux/arch/arm/mach-s5p6440/include/mach/debug-macro.S
-+ *
-+ * Copyright (c) 2009 Samsung Electronics
-+ *		http://www.samsung.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/* pull in the relevant register and map files. */
-+
-+#include <mach/map.h>
-+#include <plat/regs-serial.h>
-+
-+	/* note, for the boot process to work we have to keep the UART
-+	 * virtual address aligned to an 1MiB boundary for the L1
-+	 * mapping the head code makes. We keep the UART virtual address
-+	 * aligned and add in the offset when we load the value here.
-+	 */
-+
-+	.macro addruart, rx
-+		mrc	p15, 0, \rx, c1, c0
-+		tst	\rx, #1
-+		ldreq	\rx, = S5P_PA_UART
-+		ldrne	\rx, = (S5P_VA_UART + S5P_PA_UART & 0xfffff)
-+#if CONFIG_DEBUG_S3C_UART != 0
-+		add	\rx, \rx, #(0x400 * CONFIG_DEBUG_S3C_UART)
-+#endif
-+	.endm
-+
-+/* include the reset of the code which will do the work, we're only
-+ * compiling for a single cpu processor type so the default of s3c2440
-+ * will be fine with us.
-+ */
-+
-+#include <plat/debug-macro.S>
-diff --git a/arch/arm/mach-s5p6440/include/mach/entry-macro.S b/arch/arm/mach-s5p6440/include/mach/entry-macro.S
-new file mode 100644
-index 0000000..ded1e1f
---- /dev/null
-+++ b/arch/arm/mach-s5p6440/include/mach/entry-macro.S
-@@ -0,0 +1,42 @@
-+/* linux/arch/arm/mach-s5p6440/include/mach/entry-macro.S
-+ *
-+ * Copyright (c) 2009 Samsung Electronics
-+ *		http://www.samsung.com/
-+ *
-+ * Low-level IRQ helper macros for the Samsung S5P6440
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <asm/hardware/vic.h>
-+#include <mach/map.h>
-+#include <plat/irqs.h>
-+
-+	.macro	disable_fiq
-+	.endm
-+
-+	.macro	get_irqnr_preamble, base, tmp
-+	ldr	\base, =S5P_VA_VIC0
-+	.endm
-+
-+	.macro	arch_ret_to_user, tmp1, tmp2
-+	.endm
-+
-+	.macro	get_irqnr_and_base, irqnr, irqstat, base, tmp
-+
-+	@ check the vic0
-+	mov	\irqnr, # S5P_IRQ_OFFSET + 31
-+	ldr	\irqstat, [ \base, # VIC_IRQ_STATUS ]
-+	teq	\irqstat, #0
-+
-+	@ otherwise try vic1
-+	addeq	\tmp, \base, #(S5P_VA_VIC1 - S5P_VA_VIC0)
-+	addeq	\irqnr, \irqnr, #32
-+	ldreq	\irqstat, [ \tmp, # VIC_IRQ_STATUS ]
-+	teqeq	\irqstat, #0
-+
-+	clzne	\irqstat, \irqstat
-+	subne	\irqnr, \irqnr, \irqstat
-+	.endm
-diff --git a/arch/arm/mach-s5p6440/include/mach/gpio-core.h b/arch/arm/mach-s5p6440/include/mach/gpio-core.h
-new file mode 100644
-index 0000000..054d982
---- /dev/null
-+++ b/arch/arm/mach-s5p6440/include/mach/gpio-core.h
-@@ -0,0 +1,19 @@
-+/* linux/arch/arm/mach-s5p6440/include/mach/gpio-core.h
-+ *
-+ * Copyright (c) 2009 Samsung Electronics
-+ *		http://www.samsung.com/
-+ *
-+ * S5P6440 - GPIO core support
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __ASM_ARCH_GPIO_CORE_H
-+#define __ASM_ARCH_GPIO_CORE_H __FILE__
-+
-+/* currently we just include the platform support */
-+#include <plat/gpio-core.h>
-+
-+#endif /* __ASM_ARCH_GPIO_CORE_H */
-diff --git a/arch/arm/mach-s5p6440/include/mach/gpio.h b/arch/arm/mach-s5p6440/include/mach/gpio.h
-new file mode 100644
-index 0000000..35e7e29
---- /dev/null
-+++ b/arch/arm/mach-s5p6440/include/mach/gpio.h
-@@ -0,0 +1,79 @@
-+/* linux/arch/arm/mach-s5p6440/include/mach/gpio.h
-+ *
-+ * Copyright (c) 2009 Samsung Electronics
-+ *		http://www.samsung.com/
-+ *
-+ * S5P6440 - GPIO lib support
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __ASM_ARCH_GPIO_H
-+#define __ASM_ARCH_GPIO_H __FILE__
-+
-+#define gpio_get_value	__gpio_get_value
-+#define gpio_set_value	__gpio_set_value
-+#define gpio_cansleep	__gpio_cansleep
-+#define gpio_to_irq	__gpio_to_irq
-+
-+/* GPIO bank sizes */
-+#define S5P6440_GPIO_A_NR	(6)
-+#define S5P6440_GPIO_B_NR	(7)
-+#define S5P6440_GPIO_C_NR	(8)
-+#define S5P6440_GPIO_F_NR	(2)
-+#define S5P6440_GPIO_G_NR	(7)
-+#define S5P6440_GPIO_H_NR	(10)
-+#define S5P6440_GPIO_I_NR	(16)
-+#define S5P6440_GPIO_J_NR	(12)
-+#define S5P6440_GPIO_N_NR	(16)
-+#define S5P6440_GPIO_P_NR	(8)
-+#define S5P6440_GPIO_R_NR	(15)
-+
-+/* GPIO bank numbers */
-+
-+/* CONFIG_S3C_GPIO_SPACE allows the user to select extra
-+ * space for debugging purposes so that any accidental
-+ * change from one gpio bank to another can be caught.
-+*/
-+#define S5P6440_GPIO_NEXT(__gpio) \
-+	((__gpio##_START) + (__gpio##_NR) + CONFIG_S3C_GPIO_SPACE + 1)
-+
-+enum s5p_gpio_number {
-+	S5P6440_GPIO_A_START = 0,
-+	S5P6440_GPIO_B_START = S5P6440_GPIO_NEXT(S5P6440_GPIO_A),
-+	S5P6440_GPIO_C_START = S5P6440_GPIO_NEXT(S5P6440_GPIO_B),
-+	S5P6440_GPIO_F_START = S5P6440_GPIO_NEXT(S5P6440_GPIO_C),
-+	S5P6440_GPIO_G_START = S5P6440_GPIO_NEXT(S5P6440_GPIO_F),
-+	S5P6440_GPIO_H_START = S5P6440_GPIO_NEXT(S5P6440_GPIO_G),
-+	S5P6440_GPIO_I_START = S5P6440_GPIO_NEXT(S5P6440_GPIO_H),
-+	S5P6440_GPIO_J_START = S5P6440_GPIO_NEXT(S5P6440_GPIO_I),
-+	S5P6440_GPIO_N_START = S5P6440_GPIO_NEXT(S5P6440_GPIO_J),
-+	S5P6440_GPIO_P_START = S5P6440_GPIO_NEXT(S5P6440_GPIO_N),
-+	S5P6440_GPIO_R_START = S5P6440_GPIO_NEXT(S5P6440_GPIO_P),
-+};
-+
-+/* S5P6440 GPIO number definitions. */
-+#define S5P6440_GPA(_nr)	(S5P6440_GPIO_A_START + (_nr))
-+#define S5P6440_GPB(_nr)	(S5P6440_GPIO_B_START + (_nr))
-+#define S5P6440_GPC(_nr)	(S5P6440_GPIO_C_START + (_nr))
-+#define S5P6440_GPF(_nr)	(S5P6440_GPIO_F_START + (_nr))
-+#define S5P6440_GPG(_nr)	(S5P6440_GPIO_G_START + (_nr))
-+#define S5P6440_GPH(_nr)	(S5P6440_GPIO_H_START + (_nr))
-+#define S5P6440_GPI(_nr)	(S5P6440_GPIO_I_START + (_nr))
-+#define S5P6440_GPJ(_nr)	(S5P6440_GPIO_J_START + (_nr))
-+#define S5P6440_GPN(_nr)	(S5P6440_GPIO_N_START + (_nr))
-+#define S5P6440_GPP(_nr)	(S5P6440_GPIO_P_START + (_nr))
-+#define S5P6440_GPR(_nr)	(S5P6440_GPIO_R_START + (_nr))
-+
-+/* the end of the S5P6440 specific gpios */
-+#define S5P6440_GPIO_END	(S5P6440_GPR(S5P6440_GPIO_R_NR) + 1)
-+#define S3C_GPIO_END		S5P6440_GPIO_END
-+
-+/* define the number of gpios we need to the one after the GPR() range */
-+#define ARCH_NR_GPIOS		(S5P6440_GPR(S5P6440_GPIO_R_NR) + 1)
-+
-+#include <asm-generic/gpio.h>
-+
-+#endif /* __ASM_ARCH_GPIO_H */
-diff --git a/arch/arm/mach-s5p6440/include/mach/hardware.h b/arch/arm/mach-s5p6440/include/mach/hardware.h
-new file mode 100644
-index 0000000..9d3f9eb
---- /dev/null
-+++ b/arch/arm/mach-s5p6440/include/mach/hardware.h
-@@ -0,0 +1,18 @@
-+/* linux/arch/arm/mach-s5p6440/include/mach/hardware.h
-+ *
-+ * Copyright (c) 2009 Samsung Electronics
-+ *		http://www.samsung.com/
-+ *
-+ * S5P6440 - Hardware support
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __ASM_ARCH_HARDWARE_H
-+#define __ASM_ARCH_HARDWARE_H __FILE__
-+
-+/* currently nothing here, placeholder */
-+
-+#endif /* __ASM_ARCH_HARDWARE_H */
-diff --git a/arch/arm/mach-s5p6440/include/mach/idle.h b/arch/arm/mach-s5p6440/include/mach/idle.h
-new file mode 100644
-index 0000000..1d012a1
---- /dev/null
-+++ b/arch/arm/mach-s5p6440/include/mach/idle.h
-@@ -0,0 +1,23 @@
-+/* linux/arch/arm/mach-s5p6440/include/mach/idle.h
-+ *
-+ * Copyright (c) 2009 Samsung Electronics
-+ *		http://www.samsung.com/
-+ *
-+ * S5P6440 - Idle support
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __ASM_ARCH_IDLE_H
-+#define __ASM_ARCH_IDLE_H __FILE__
-+
-+/*
-+ * This allows the over-ride of the default idle code, in case there
-+ * is any other things to be done over idle (like DVS)
-+*/
-+extern void (*s5p6440_idle_fn)(void);
-+extern void s5p6440_default_idle(void);
-+
-+#endif /* __ASM_ARCH_IDLE_H */
-diff --git a/arch/arm/mach-s5p6440/include/mach/map.h b/arch/arm/mach-s5p6440/include/mach/map.h
-new file mode 100644
-index 0000000..ac6b07c
---- /dev/null
-+++ b/arch/arm/mach-s5p6440/include/mach/map.h
-@@ -0,0 +1,100 @@
-+/* linux/arch/arm/mach-s5p6440/include/mach/map.h
-+ *
-+ * Copyright (c) 2009 Samsung Electronics
-+ *		http://www.samsung.com/
-+ *
-+ * S5P6440 - Memory map definitions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __ASM_ARCH_MAP_H
-+#define __ASM_ARCH_MAP_H __FILE__
-+
-+#include <plat/map-base.h>
-+
-+/* SYSCON */
-+#define S5P6440_PA_SYSCON	(0xE0100000)
-+#define S5P_PA_SYSCON		S5P6440_PA_SYSCON
-+#define S5P_VA_SYSCON		S3C_VA_SYS
-+
-+#define S5P6440_PA_CLK		(S5P6440_PA_SYSCON + 0x0)
-+#define S5P_PA_CLK		S5P6440_PA_CLK
-+#define S5P_VA_CLK		(S5P_VA_SYSCON + 0x0)
-+
-+#define S5P6440_PA_OTHER	(S5P6440_PA_SYSCON + 0x100)
-+#define S5P_PA_OTHER		S5P6440_PA_OTHER
-+#define S5P_VA_OTHER		(S5P_VA_SYSCON + 0x100)
-+
-+#define S5P6440_PA_PWR		(S5P6440_PA_SYSCON + 0x800)
-+#define S5P_PA_PWR		S5P6440_PA_PWR
-+#define S5P_VA_PWR		(S5P_VA_SYSCON + 0x800)
-+
-+/* GPIO */
-+#define S5P6440_PA_GPIO		(0xE0308000)
-+#define S5P_PA_GPIO		S5P6440_PA_GPIO
-+#define S5P_VA_GPIO		S3C_ADDR(0x00500000)
-+
-+/* VIC0 */
-+#define S5P6440_PA_VIC0		(0xE4000000)
-+#define S5P_PA_VIC0		S5P6440_PA_VIC0
-+#define S5P_VA_VIC0		(S3C_VA_IRQ + 0x0)
-+
-+/* VIC1 */
-+#define S5P6440_PA_VIC1		(0xE4100000)
-+#define S5P_PA_VIC1		S5P6440_PA_VIC1
-+#define S5P_VA_VIC1		(S3C_VA_IRQ + 0x10000)
-+
-+/* Timer */
-+#define S5P6440_PA_TIMER	(0xEA000000)
-+#define S5P_PA_TIMER		S5P6440_PA_TIMER
-+#define S5P_VA_TIMER		S3C_VA_TIMER
-+
-+/* RTC */
-+#define S5P6440_PA_RTC		(0xEA100000)
-+#define S5P_PA_RTC		S5P6440_PA_RTC
-+#define S5P_VA_RTC		S3C_ADDR(0x00600000)
-+
-+/* WDT */
-+#define S5P6440_PA_WDT		(0xEA200000)
-+#define S5P_PA_WDT		S5P6440_PA_WDT
-+#define S5p_VA_WDT		S3C_VA_WATCHDOG
-+
-+/* UART */
-+#define S5P6440_PA_UART		(0xEC000000)
-+#define S5P_PA_UART		S5P6440_PA_UART
-+#define S5P_VA_UART		S3C_VA_UART
-+
-+#define S5P_PA_UART0		(S5P_PA_UART + 0x0)
-+#define S5P_PA_UART1		(S5P_PA_UART + 0x400)
-+#define S5P_PA_UART2		(S5P_PA_UART + 0x800)
-+#define S5P_PA_UART3		(S5P_PA_UART + 0xC00)
-+#define S5P_UART_OFFSET		(0x400)
-+
-+#define S5P_VA_UARTx(x)		(S5P_VA_UART + (S5P_PA_UART & 0xfffff) \
-+				+ ((x) * S5P_UART_OFFSET))
-+
-+#define S5P_VA_UART0		S5P_VA_UARTx(0)
-+#define S5P_VA_UART1		S5P_VA_UARTx(1)
-+#define S5P_VA_UART2		S5P_VA_UARTx(2)
-+#define S5P_VA_UART3		S5P_VA_UARTx(3)
-+#define S5P_SZ_UART		SZ_256
-+
-+/* I2C */
-+#define S5P6440_PA_IIC0		(0xEC104000)
-+#define S5P_PA_IIC0		S5P6440_PA_IIC0
-+#define S5p_VA_IIC0		S3C_ADDR(0x00700000)
-+
-+/* SDRAM */
-+#define S5P6440_PA_SDRAM	(0x20000000)
-+#define S5P_PA_SDRAM		S5P6440_PA_SDRAM
-+
-+/* compatibiltiy defines. */
-+#define S3C_PA_UART		S5P_PA_UART
-+#define S3C_UART_OFFSET		S5P_UART_OFFSET
-+#define S3C_PA_TIMER		S5P_PA_TIMER
-+#define S3C_PA_IIC		S5P_PA_IIC0
-+
-+#endif /* __ASM_ARCH_MAP_H */
-diff --git a/arch/arm/mach-s5p6440/include/mach/memory.h b/arch/arm/mach-s5p6440/include/mach/memory.h
-new file mode 100644
-index 0000000..f0666a3
---- /dev/null
-+++ b/arch/arm/mach-s5p6440/include/mach/memory.h
-@@ -0,0 +1,22 @@
-+/* linux/arch/arm/mach-s5p6440/include/mach/memory.h
-+ *
-+ * Copyright (c) 2009 Samsung Electronics
-+ *		http://www.samsung.com/
-+ *
-+ * S5P6440 - Memory definitions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __ASM_ARCH_MEMORY_H
-+#define __ASM_ARCH_MEMORY_H
-+
-+#define PHYS_OFFSET     	UL(0x20000000)
-+#define CONSISTENT_DMA_SIZE	SZ_8M
-+
-+#define __virt_to_bus(x) 	__virt_to_phys(x)
-+#define __bus_to_virt(x) 	__phys_to_virt(x)
-+
-+#endif /* __ASM_ARCH_MEMORY_H */
-diff --git a/arch/arm/mach-s5p6440/include/mach/system.h b/arch/arm/mach-s5p6440/include/mach/system.h
-new file mode 100644
-index 0000000..2ec9618
---- /dev/null
-+++ b/arch/arm/mach-s5p6440/include/mach/system.h
-@@ -0,0 +1,40 @@
-+/* linux/arch/arm/mach-s5p6440/include/mach/system.h
-+ *
-+ * Copyright (c) 2009 Samsung Electronics
-+ *		http://www.samsung.com/
-+ *
-+ * S5P6440 - system implementation
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __ASM_ARCH_SYSTEM_H
-+#define __ASM_ARCH_SYSTEM_H __FILE__
-+
-+#include <linux/io.h>
-+#include <mach/map.h>
-+
-+void (*s5p6440_idle_fn)(void);
-+void (*s5p6440_reset_hook_fn)(void);
-+
-+void s5p6440_default_idle(void)
-+{
-+	/* nothing here yet */
-+}
-+
-+static void arch_idle(void)
-+{
-+	if (s5p6440_idle_fn != NULL)
-+		(s5p6440_idle_fn)();
-+	else
-+		s5p6440_default_idle();
-+}
-+
-+static void arch_reset(char mode, const char *cmd)
-+{
-+	/* nothing here yet */
-+}
-+
-+#endif /* __ASM_ARCH_SYSTEM_H */
-diff --git a/arch/arm/mach-s5p6440/include/mach/uncompress.h b/arch/arm/mach-s5p6440/include/mach/uncompress.h
-new file mode 100644
-index 0000000..42e6694
---- /dev/null
-+++ b/arch/arm/mach-s5p6440/include/mach/uncompress.h
-@@ -0,0 +1,24 @@
-+/* linux/arch/arm/mach-s5p6440/include/mach/uncompress.h
-+ *
-+ * Copyright (c) 2009 Samsung Electronics
-+ *		http://www.samsung.com/
-+ *
-+ * S5P6440 - uncompress code
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __ASM_ARCH_UNCOMPRESS_H
-+#define __ASM_ARCH_UNCOMPRESS_H
-+
-+#include <mach/map.h>
-+#include <plat/uncompress.h>
-+
-+static void arch_detect_cpu(void)
-+{
-+	/* we do not need to do any cpu detection here at the moment. */
-+}
-+
-+#endif /* __ASM_ARCH_UNCOMPRESS_H */
-diff --git a/arch/arm/plat-s3c/include/plat/cpu.h b/arch/arm/plat-s3c/include/plat/cpu.h
-index fbc3d49..3aa53f0 100644
---- a/arch/arm/plat-s3c/include/plat/cpu.h
-+++ b/arch/arm/plat-s3c/include/plat/cpu.h
-@@ -45,9 +45,11 @@ extern void s3c_init_cpu(unsigned long idcode,
- 
- extern void s3c24xx_init_irq(void);
- extern void s3c64xx_init_irq(u32 vic0, u32 vic1);
-+extern void s5p_init_irq(u32 *vic, u32 num_vic);
- 
- extern void s3c24xx_init_io(struct map_desc *mach_desc, int size);
- extern void s3c64xx_init_io(struct map_desc *mach_desc, int size);
-+extern void s5p_init_io(struct map_desc *mach_desc, int size);
- 
- extern void s3c24xx_init_uarts(struct s3c2410_uartcfg *cfg, int no);
- 
-diff --git a/arch/arm/plat-s5p/cpu.c b/arch/arm/plat-s5p/cpu.c
-new file mode 100644
-index 0000000..007d1a5
---- /dev/null
-+++ b/arch/arm/plat-s5p/cpu.c
-@@ -0,0 +1,88 @@
-+/* linux/arch/arm/plat-s5p/cpu.c
-+ *
-+ * Copyright (c) 2009 Samsung Electronics
-+ *		http://www.samsung.com/
-+ *
-+ * S5P CPU Support
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <mach/map.h>
-+#include <asm/mach/arch.h>
-+#include <asm/mach/map.h>
-+#include <mach/regs-clock.h>
-+#include <plat/cpu.h>
-+#include <plat/s5p6440.h>
-+
-+/* table of supported CPUs */
-+
-+static const char name_s5p6440[] = "S5P6440";
-+
-+static struct cpu_table cpu_ids[] __initdata = {
-+	{
-+		.idcode		= 0x56440100,
-+		.idmask		= 0xffffff00,
-+		.map_io		= s5p6440_map_io,
-+		.init_clocks	= s5p6440_init_clocks,
-+		.init_uarts	= s5p6440_init_uarts,
-+		.init		= s5p6440_init,
-+		.name		= name_s5p6440,
-+	},
-+};
-+
-+/* minimal IO mapping */
-+
-+#define UART_OFFS (S5P_PA_UART & 0xfffff)
-+
-+static struct map_desc s5p_iodesc[] __initdata = {
-+	{
-+		.virtual	= (unsigned long)S5P_VA_SYSCON,
-+		.pfn		= __phys_to_pfn(S5P_PA_SYSCON),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)(S5P_VA_UART + UART_OFFS),
-+		.pfn		= __phys_to_pfn(S5P_PA_UART),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S5P_VA_VIC0,
-+		.pfn		= __phys_to_pfn(S5P_PA_VIC0),
-+		.length		= SZ_16K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S5P_VA_VIC1,
-+		.pfn		= __phys_to_pfn(S5P_PA_VIC1),
-+		.length		= SZ_16K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S5P_VA_TIMER,
-+		.pfn		= __phys_to_pfn(S5P_PA_TIMER),
-+		.length		= SZ_16K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S5P_VA_GPIO,
-+		.pfn		= __phys_to_pfn(S5P_PA_GPIO),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	},
-+};
-+
-+/* read cpu identification code */
-+
-+void __init s5p_init_io(struct map_desc *mach_desc, int size)
-+{
-+	unsigned long idcode;
-+
-+	/* initialize the io descriptors we need for initialization */
-+	iotable_init(s5p_iodesc, ARRAY_SIZE(s5p_iodesc));
-+	iotable_init(mach_desc, size);
-+
-+	idcode = __raw_readl(S5P_SYS_ID);
-+	s3c_init_cpu(idcode, cpu_ids, ARRAY_SIZE(cpu_ids));
-+}
-diff --git a/arch/arm/plat-s5p/include/plat/s5p6440.h b/arch/arm/plat-s5p/include/plat/s5p6440.h
-new file mode 100644
-index 0000000..dfda4b2
---- /dev/null
-+++ b/arch/arm/plat-s5p/include/plat/s5p6440.h
-@@ -0,0 +1,33 @@
-+/* arch/arm/plat-s5p/include/plat/s5p6440.h
-+ *
-+ * Copyright (c) 2009 Samsung Electronics
-+ *		http://www.samsung.com/
-+ *
-+ * Header file for s5p6440 cpu support
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+ /* Common init code for S5P6440 related SoCs */
-+
-+extern void s5p6440_common_init_uarts(struct s3c2410_uartcfg *cfg, int no);
-+extern void s5p6440_register_clocks(void);
-+extern void s5p6440_setup_clocks(void);
-+
-+#ifdef CONFIG_CPU_S5P6440
-+
-+extern  int s5p6440_init(void);
-+extern void s5p6440_init_irq(void);
-+extern void s5p6440_map_io(void);
-+extern void s5p6440_init_clocks(int xtal);
-+
-+#define s5p6440_init_uarts s5p6440_common_init_uarts
-+
-+#else
-+#define s5p6440_init_clocks NULL
-+#define s5p6440_init_uarts NULL
-+#define s5p6440_map_io NULL
-+#define s5p6440_init NULL
-+#endif
-diff --git a/arch/arm/plat-s5p/s5p6440-init.c b/arch/arm/plat-s5p/s5p6440-init.c
-new file mode 100644
-index 0000000..36f004e
---- /dev/null
-+++ b/arch/arm/plat-s5p/s5p6440-init.c
-@@ -0,0 +1,23 @@
-+/* linux/arch/arm/plat-s5p/s5p6440-init.c
-+ *
-+ * Copyright (c) 2009 Samsung Electronics
-+ *		http://www.samsung.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/types.h>
-+#include <linux/init.h>
-+
-+#include <plat/cpu.h>
-+#include <plat/devs.h>
-+#include <plat/s5p6440.h>
-+
-+/* uart registration process */
-+void __init s5p6440_common_init_uarts(struct s3c2410_uartcfg *cfg, int no)
-+{
-+	s3c24xx_init_uartdevs("s3c6400-uart", s5p_uart_resources, cfg, no);
-+}
-diff --git a/arch/arm/plat-s5p/setup-i2c0.c b/arch/arm/plat-s5p/setup-i2c0.c
-new file mode 100644
-index 0000000..c913377
---- /dev/null
-+++ b/arch/arm/plat-s5p/setup-i2c0.c
-@@ -0,0 +1,23 @@
-+/* linux/arch/arm/plat-s5p/setup-i2c0.c
-+ *
-+ * Copyright (c) 2009 Samsung Electronics
-+ *		http://www.samsung.com/
-+ *
-+ * I2C0 GPIO configuration.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/types.h>
-+
-+struct platform_device; /* don't need the contents */
-+
-+#include <plat/iic.h>
-+
-+void s3c_i2c0_cfg_gpio(struct platform_device *dev)
-+{
-+	/* Will be populated later */
-+}
+> +static struct clk init_clocks_disable[] = {
+> +	{
+> +		.name		= "nand",
+> +		.id		= -1,
+> +		.parent		= &clk_h,
+> +		.enable		= s5p6440_mem_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_MEM0_HCLK_NFCON,
+> +	}, {
+> +		.name		= "adc",
+> +		.id		= -1,
+> +		.parent		= &clk_p,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_TSADC,
+> +	}, {
+> +		.name		= "i2c",
+> +		.id		= -1,
+> +		.parent		= &clk_p,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_IIC0,
+> +	}, {
+> +		.name		= "i2s_v40",
+> +		.id		= 0,
+> +		.parent		= &clk_p,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_IIS2,
+> +	}, {
+> +		.name		= "spi",
+> +		.id		= 0,
+> +		.parent		= &clk_p,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_SPI0,
+> +	}, {
+> +		.name		= "spi",
+> +		.id		= 1,
+> +		.parent		= &clk_p,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_SPI1,
+> +	}, {
+> +		.name		= "sclk_spi_48",
+> +		.id		= 0,
+> +		.parent		= &clk_48m,
+> +		.enable		= s5p6440_sclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_SCLK0_SPI0_48,
+> +	}, {
+> +		.name		= "sclk_spi_48",
+> +		.id		= 1,
+> +		.parent		= &clk_48m,
+> +		.enable		= s5p6440_sclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_SCLK0_SPI1_48,
+> +	}, {
+> +		.name		= "48m",
+> +		.id		= 0,
+> +		.parent		= &clk_48m,
+> +		.enable		= s5p6440_sclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_SCLK0_MMC0_48,
+> +	}, {
+> +		.name		= "48m",
+> +		.id		= 1,
+> +		.parent		= &clk_48m,
+> +		.enable		= s5p6440_sclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_SCLK0_MMC1_48,
+> +	}, {
+> +		.name		= "48m",
+> +		.id		= 2,
+> +		.parent		= &clk_48m,
+> +		.enable		= s5p6440_sclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_SCLK0_MMC2_48,
+> +	}, {
+> +		.name    	= "otg",
+> +		.id	   	= -1,
+> +		.parent  	= &clk_h,
+> +		.enable  	= s5p6440_hclk0_ctrl,
+> +		.ctrlbit 	= S5P_CLKCON_HCLK0_USB
+> +	}, {
+> +		.name    	= "post",
+> +		.id	   	= -1,
+> +		.parent  	= &clk_h,
+> +		.enable  	= s5p6440_hclk0_ctrl,
+> +		.ctrlbit 	= S5P_CLKCON_HCLK0_POST0
+> +	}, {
+> +		.name		= "lcd",
+> +		.id		= -1,
+> +		.parent		= &clk_h,
+> +		.enable		= s5p6440_hclk1_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_HCLK1_DISPCON,
+> +	}, {
+> +		.name		= "hsmmc",
+> +		.id		= 0,
+> +		.parent		= &clk_h,
+> +		.enable		= s5p6440_hclk0_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_HCLK0_HSMMC0,
+> +	}, {
+> +		.name		= "hsmmc",
+> +		.id		= 1,
+> +		.parent		= &clk_h,
+> +		.enable		= s5p6440_hclk0_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_HCLK0_HSMMC1,
+> +	}, {
+> +		.name		= "hsmmc",
+> +		.id		= 2,
+> +		.parent		= &clk_h,
+> +		.enable		= s5p6440_hclk0_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_HCLK0_HSMMC2,
+> +	}, {
+> +		.name		= "rtc",
+> +		.id		= -1,
+> +		.parent		= &clk_p,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_RTC,
+> +	}, {
+> +		.name		= "watchdog",
+> +		.id		= -1,
+> +		.parent		= &clk_p,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_WDT,
+> +	}
+> +};
+>
+> +/*
+> + * The following clocks will be enabled during clock initialization.
+> + */
+> +static struct clk init_clocks[] = {
+> +	{
+> +		.name		= "gpio",
+> +		.id		= -1,
+> +		.parent		= &clk_p,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_GPIO,
+> +	}, {
+> +		.name		= "timers",
+> +		.id		= -1,
+> +		.parent		= &clk_p,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_PWM,
+> +	}, {
+> +		.name		= "uart",
+> +		.id		= 0,
+> +		.parent		= &clk_p,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_UART0,
+> +	}, {
+> +		.name		= "uart",
+> +		.id		= 1,
+> +		.parent		= &clk_p,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_UART1,
+> +	}, {
+> +		.name		= "uart",
+> +		.id		= 2,
+> +		.parent		= &clk_p,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_UART2,
+> +	}, {
+> +		.name		= "uart",
+> +		.id		= 3,
+> +		.parent		= &clk_p,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_UART3,
+> +	}
+> +};
+
+The parent for most of these clocks are wrong. Looking at the user
+manual, they are connected to the low frequency domain (PCLK_LOW or
+HCLK_LOW). The parent must then be set to clk_p_low or clk_h_low.
+
+Failure to do so leads to some "interesting" situations when HCLK and
+HCLK_LOW have different rates...
+
+> +void __init_or_cpufreq s5p6440_setup_clocks(void)
+> +{
+> +	struct clk *xtal_clk;
+> +	unsigned long xtal;
+> +	unsigned long fclk;
+> +	unsigned long hclk;
+> +	unsigned long hclk_low;
+> +	unsigned long pclk;
+> +	unsigned long pclk_low;
+> +	unsigned long epll;
+> +	unsigned long apll;
+> +	unsigned long mpll;
+> +	unsigned int ptr;
+> +	u32 clkdiv0;
+> +	u32 clkdiv3;
+> +
+> +	/* Set S5P6440 functions for clk_fout_epll */
+> +	clk_fout_epll.enable = s5p6440_epll_enable;
+> +	clk_fout_epll.ops = &s5p6440_epll_ops;
+> +
+> +	/* Set S5P6440 functions for arm clock */
+> +	clk_arm.parent = &clk_mout_apll.clk;
+> +	clk_arm.ops = &s5p6440_clkarm_ops;
+> +
+> +	clkdiv0 = __raw_readl(S5P_CLK_DIV0);
+> +	clkdiv3 = __raw_readl(S5P_CLK_DIV3);
+> +
+> +	xtal_clk = clk_get(NULL, "ext_xtal");
+> +	BUG_ON(IS_ERR(xtal_clk));
+> +
+> +	xtal = clk_get_rate(xtal_clk);
+> +	clk_put(xtal_clk);
+> +
+> +	epll = s5p6440_get_epll(xtal);
+> +	mpll = s5p_get_pll(xtal, __raw_readl(S5P_MPLL_CON));
+> +	apll = s5p_get_pll(xtal, __raw_readl(S5P_APLL_CON));
+> +
+> +	printk(KERN_INFO "S5P6440: PLL settings, A=%ld.%ldMHz, M=%ld.%ldMHz," \
+> +			" E=%ld.%ldMHz\n",
+> +			print_mhz(apll), print_mhz(mpll), print_mhz(epll));
+> +
+> +	fclk = apll / GET_DIV(clkdiv0, S5P_CLKDIV0_ARM);
+> +	hclk = fclk / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK);
+> +	pclk = hclk / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK);
+> +
+> +	if (__raw_readl(S5P_OTHERS) & S5P_OTHERS_HCLK_LOW_SEL_MPLL) {
+> +		/* Synchronous mode */
+> +		hclk_low = apll / GET_DIV(clkdiv3, S5P_CLKDIV3_HCLK_LOW);
+> +	} else {
+> +		/* Asynchronous mode */
+> +		hclk_low = mpll / GET_DIV(clkdiv3, S5P_CLKDIV3_HCLK_LOW);
+> +	}
+
+The test is inverted. S5P_OTHERS::S5P_OTHERS_HCLK_LOW_SEL_MPLL is set
+when MPLL is the source clock for HCLK_LOW.
+
+> +	pclk_low = hclk_low / GET_DIV(clkdiv3, S5P_CLKDIV3_PCLK_LOW);
+> +
+> +	printk(KERN_INFO "S5P6440: HCLK=%ld.%ldMHz, HCLK_LOW=%ld.%ldMHz," \
+> +			" PCLK=%ld.%ldMHz, PCLK_LOW=%ld.%ldMHz\n",
+> +			print_mhz(hclk), print_mhz(hclk_low),
+> +			print_mhz(pclk), print_mhz(pclk_low));
+> +
+> +	clk_fout_mpll.rate = mpll;
+> +	clk_fout_epll.rate = epll;
+> +	clk_fout_apll.rate = apll;
+> +
+> +	clk_f.rate = fclk;
+> +	clk_h.rate = hclk;
+> +	clk_p.rate = pclk;
+> +	clk_h_low.rate = hclk_low;
+> +	clk_p_low.rate = pclk_low;
+> +
+> +	for (ptr = 0; ptr < ARRAY_SIZE(init_parents); ptr++)
+> +		s3c_set_clksrc(init_parents[ptr]);
+> +
+> +	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
+> +		s3c_set_clksrc(&clksrcs[ptr]);
+> +}
+
 -- 
-1.6.2.5
+Fast. Cheap. Reliable. Pick two.
