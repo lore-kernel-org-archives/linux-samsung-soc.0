@@ -1,267 +1,79 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v2 7/7] ARM: S5P6440: Add serial port support
-Date: Wed, 16 Dec 2009 19:08:46 +0900
-Message-ID: <1260958126-31515-1-git-send-email-kgene.kim@samsung.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Regulator framework usage in suspend/resume contex.
+Date: Thu, 17 Dec 2009 17:54:21 +0100
+Message-ID: <000301ca7f39$96047b60$c20d7220$%majewski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:51964 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755621AbZLPKRl (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:36742 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752415AbZLQQy6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Dec 2009 05:17:41 -0500
+	Thu, 17 Dec 2009 11:54:58 -0500
+Received: from eu_spt2 ([210.118.77.14]) by mailout4.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0KUT00FLN2ZHVR50@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 17 Dec 2009 16:54:53 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0KUT00LBZ2ZHIZ@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 17 Dec 2009 16:54:53 +0000 (GMT)
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, Adityapratap Sharma <aditya.ps@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Atul Dahiya <atul.dahiya@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, Tomasz Fujak <t.fujak@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-This patch adds UART serial port support for S5P6440 CPU. Most of the
-serial support of Samsung's 6440 CPU is reused for 6440 CPU.
+Hello all,
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Adityapratap Sharma <aditya.ps@samsung.com>
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
----
- arch/arm/plat-s3c/include/plat/devs.h        |    1 +
- arch/arm/plat-s3c/include/plat/regs-serial.h |    1 +
- arch/arm/plat-s5p/dev-uart.c                 |  165 ++++++++++++++++++++++++++
- drivers/serial/Kconfig                       |    9 ++-
- drivers/serial/Makefile                      |    1 +
- 5 files changed, 176 insertions(+), 1 deletions(-)
- create mode 100644 arch/arm/plat-s5p/dev-uart.c
+I'm trying to use the regulator framework in conjunction with suspend/resume
+(code based on a s3c Samsung SoC platform).
+My goal is to change values of regulators output before going to sleep and
+restore their values after resume.
 
-diff --git a/arch/arm/plat-s3c/include/plat/devs.h b/arch/arm/plat-s3c/include/plat/devs.h
-index 0f540ea..34e3c39 100644
---- a/arch/arm/plat-s3c/include/plat/devs.h
-+++ b/arch/arm/plat-s3c/include/plat/devs.h
-@@ -18,6 +18,7 @@ struct s3c24xx_uart_resources {
- 
- extern struct s3c24xx_uart_resources s3c2410_uart_resources[];
- extern struct s3c24xx_uart_resources s3c64xx_uart_resources[];
-+extern struct s3c24xx_uart_resources s5p_uart_resources[];
- 
- extern struct platform_device *s3c24xx_uart_devs[];
- extern struct platform_device *s3c24xx_uart_src[];
-diff --git a/arch/arm/plat-s3c/include/plat/regs-serial.h b/arch/arm/plat-s3c/include/plat/regs-serial.h
-index 66af75a..64b6025 100644
---- a/arch/arm/plat-s3c/include/plat/regs-serial.h
-+++ b/arch/arm/plat-s3c/include/plat/regs-serial.h
-@@ -193,6 +193,7 @@
- #define S3C64XX_UINTP		0x30
- #define S3C64XX_UINTSP		0x34
- #define S3C64XX_UINTM		0x38
-+#define S3C64XX_ULCON_WORD_8BIT (3 << 0)
- 
- #ifndef __ASSEMBLY__
- 
-diff --git a/arch/arm/plat-s5p/dev-uart.c b/arch/arm/plat-s5p/dev-uart.c
-new file mode 100644
-index 0000000..af726f4
---- /dev/null
-+++ b/arch/arm/plat-s5p/dev-uart.c
-@@ -0,0 +1,165 @@
-+/* linux/arch/arm/plat-s5p/dev-uart.c
-+ *
-+ * Copyright (c) 2009 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * Base S5P UART resource and device definitions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/types.h>
-+#include <linux/interrupt.h>
-+#include <linux/list.h>
-+#include <linux/platform_device.h>
-+
-+#include <asm/mach/arch.h>
-+#include <asm/mach/irq.h>
-+#include <mach/hardware.h>
-+#include <mach/map.h>
-+
-+#include <plat/devs.h>
-+
-+ /* Serial port registrations */
-+
-+static struct resource s5p_uart0_resource[] = {
-+	[0] = {
-+		.start	= S5P_PA_UART0,
-+		.end	= S5P_PA_UART0 + S5P_SZ_UART,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start	= IRQ_S5P_UART_RX0,
-+		.end	= IRQ_S5P_UART_RX0,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	[2] = {
-+		.start	= IRQ_S5P_UART_TX0,
-+		.end	= IRQ_S5P_UART_TX0,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	[3] = {
-+		.start	= IRQ_S5P_UART_ERR0,
-+		.end	= IRQ_S5P_UART_ERR0,
-+		.flags	= IORESOURCE_IRQ,
-+	}
-+};
-+
-+static struct resource s5p_uart1_resource[] = {
-+	[0] = {
-+		.start	= S5P_PA_UART1,
-+		.end	= S5P_PA_UART1 + S5P_SZ_UART,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start	= IRQ_S5P_UART_RX1,
-+		.end	= IRQ_S5P_UART_RX1,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	[2] = {
-+		.start	= IRQ_S5P_UART_TX1,
-+		.end	= IRQ_S5P_UART_TX1,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	[3] = {
-+		.start	= IRQ_S5P_UART_ERR1,
-+		.end	= IRQ_S5P_UART_ERR1,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+};
-+
-+static struct resource s5p_uart2_resource[] = {
-+	[0] = {
-+		.start	= S5P_PA_UART2,
-+		.end	= S5P_PA_UART2 + S5P_SZ_UART,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start	= IRQ_S5P_UART_RX2,
-+		.end	= IRQ_S5P_UART_RX2,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	[2] = {
-+		.start	= IRQ_S5P_UART_TX2,
-+		.end	= IRQ_S5P_UART_TX2,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	[3] = {
-+		.start	= IRQ_S5P_UART_ERR2,
-+		.end	= IRQ_S5P_UART_ERR2,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+};
-+
-+static struct resource s5p_uart3_resource[] = {
-+	[0] = {
-+		.start	= S5P_PA_UART3,
-+		.end	= S5P_PA_UART3 + S5P_SZ_UART,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start	= IRQ_S5P_UART_RX3,
-+		.end	= IRQ_S5P_UART_RX3,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	[2] = {
-+		.start	= IRQ_S5P_UART_TX3,
-+		.end	= IRQ_S5P_UART_TX3,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	[3] = {
-+		.start	= IRQ_S5P_UART_ERR3,
-+		.end	= IRQ_S5P_UART_ERR3,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+};
-+
-+struct s3c24xx_uart_resources s5p_uart_resources[] __initdata = {
-+	[0] = {
-+		.resources	= s5p_uart0_resource,
-+		.nr_resources	= ARRAY_SIZE(s5p_uart0_resource),
-+	},
-+	[1] = {
-+		.resources	= s5p_uart1_resource,
-+		.nr_resources	= ARRAY_SIZE(s5p_uart1_resource),
-+	},
-+	[2] = {
-+		.resources	= s5p_uart2_resource,
-+		.nr_resources	= ARRAY_SIZE(s5p_uart2_resource),
-+	},
-+	[3] = {
-+		.resources	= s5p_uart3_resource,
-+		.nr_resources	= ARRAY_SIZE(s5p_uart3_resource),
-+	},
-+};
-+
-+/* uart devices */
-+
-+static struct platform_device s5p_uart_device0 = {
-+	.id		= 0,
-+};
-+
-+static struct platform_device s5p_uart_device1 = {
-+	.id		= 1,
-+};
-+
-+static struct platform_device s5p_uart_device2 = {
-+	.id		= 2,
-+};
-+
-+static struct platform_device s5p_uart_device3 = {
-+	.id		= 3,
-+};
-+
-+struct platform_device *s3c24xx_uart_src[4] = {
-+	&s5p_uart_device0,
-+	&s5p_uart_device1,
-+	&s5p_uart_device2,
-+	&s5p_uart_device3,
-+};
-+
-+struct platform_device *s3c24xx_uart_devs[4] = {
-+};
-diff --git a/drivers/serial/Kconfig b/drivers/serial/Kconfig
-index 03422ce..d1bd171 100644
---- a/drivers/serial/Kconfig
-+++ b/drivers/serial/Kconfig
-@@ -459,7 +459,7 @@ config SERIAL_SAMSUNG_UARTS
- 	int
- 	depends on ARM && PLAT_S3C
- 	default 2 if ARCH_S3C2400
--	default 4 if ARCH_S5PC1XX || ARCH_S3C64XX || CPU_S3C2443
-+	default 4 if ARCH_S5P6440 || ARCH_S5PC1XX || ARCH_S3C64XX || CPU_S3C2443
- 	default 3
- 	help
- 	  Select the number of available UART ports for the Samsung S3C
-@@ -533,6 +533,13 @@ config SERIAL_S3C6400
- 	  Serial port support for the Samsung S3C6400 and S3C6410
- 	  SoCs
- 
-+config SERIAL_S5P
-+        tristate "Samsung S5P Serial port support"
-+        depends on SERIAL_SAMSUNG && CPU_S5P6440
-+        default y
-+        help
-+          Serial port support for Samsung's S5P Family of SoC's
-+
- config SERIAL_S5PC100
- 	tristate "Samsung S5PC100 Serial port support"
- 	depends on SERIAL_SAMSUNG && CPU_S5PC100
-diff --git a/drivers/serial/Makefile b/drivers/serial/Makefile
-index 97f6fcc..aa87fbe 100644
---- a/drivers/serial/Makefile
-+++ b/drivers/serial/Makefile
-@@ -43,6 +43,7 @@ obj-$(CONFIG_SERIAL_S3C2412) += s3c2412.o
- obj-$(CONFIG_SERIAL_S3C2440) += s3c2440.o
- obj-$(CONFIG_SERIAL_S3C24A0) += s3c24a0.o
- obj-$(CONFIG_SERIAL_S3C6400) += s3c6400.o
-+obj-$(CONFIG_SERIAL_S5P) += s3c6400.o
- obj-$(CONFIG_SERIAL_S5PC100) += s3c6400.o
- obj-$(CONFIG_SERIAL_MAX3100) += max3100.o
- obj-$(CONFIG_SERIAL_IP22_ZILOG) += ip22zilog.o
--- 
-1.6.2.5
+I use echo mem > /sys/power/state to suspend to RAM.
+I've implemented platform_suspend_ops' .begin method and from it I'm calling
+the regulator_suspend_prepare(state) function from regulator framework
+(declared at include/linux/regulator/machine.h, defined at core.c).
+After this step I'm going to sleep. And it seems that voltage values are
+changed/disabled as they should (according to .constraints->.state_mem
+struct fields).
+
+The problem is when I disable normally enabled source or change its voltage
+value to new_value when entering the suspend to RAM state.
+
+.state_mem      = {
+	.enabled= 0,
+},
+
+Or
+
+.state_mem      = {
+	.uV= new_value,
+	.enabled= 1,
+},
+
+I don't know how to enable this source again after resume or restore source
+microvolts setting as before suspend?
+
+As I suppose, the preferred place for performing this would be a .finish
+method from platform_suspend_ops' structure (declared in
+include/linux/suspend.h).
+
+It looks like some relevant method is missing in the framework, or I haven't
+look deep enough to spot one :-).
+
+One possible workaround would be to reinitialize all regulators with
+regulator_init_complete(void) function, but I'm not sure if then old
+microvolt settings would be restored. Probably not...
+Does anybody have any idea how to solve this problem?
+
+I was grepping a little and it looks, that regulator_suspend_prepare()
+method is not used by any suspend/resume driver in the kernel linux tree (at
+least up to kernel version 2.6.32-rc8), so there is no reference code.
+
+
+
+Thanks in advance,
+Lukasz Majewski
