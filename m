@@ -1,468 +1,206 @@
 From: Pawel Osciak <p.osciak@samsung.com>
-Subject: [EXAMPLE v2] Mem-to-mem userspace test application.
-Date: Wed, 23 Dec 2009 11:07:34 +0100
-Message-ID: <1261562854-26507-4-git-send-email-p.osciak@samsung.com>
-References: <1261562854-26507-1-git-send-email-p.osciak@samsung.com>
+Subject: [PATCH 1/2] [ARM] samsung-rotator: Add rotator device platform
+ definitions.
+Date: Wed, 23 Dec 2009 11:08:51 +0100
+Message-ID: <1261562933-26987-2-git-send-email-p.osciak@samsung.com>
+References: <1261562933-26987-1-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1261562854-26507-1-git-send-email-p.osciak@samsung.com>
+In-reply-to: <1261562933-26987-1-git-send-email-p.osciak@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: p.osciak@samsung.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com
+Cc: p.osciak@samsung.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This is an example application for testing mem-to-mem framework using
-mem2mem-testdev device.
-
-It is intended to be executed multiple times in parallel to test multi-instance
-operation and scheduling. Each process can be configured differently using
-command-line arguments.
-
-The application opens video test device and framebuffer, sets up params,
-queues src/dst buffers and displays processed results on the framebuffer.
-
-Configurable parameters: starting point on the framebuffer, width/height of
-buffers, transaction length (in buffers), transaction duration, total number
-of frames to be processed.
-
-
-Tested on a 800x480 framebuffer with the following script:
-
-#!/bin/bash
-for i in {0..3}
-do
-    ((x=$i * 100))
-    ./process-vmalloc 0 $(($i + 1)) $((2000 - $i * 500)) $((($i+1) * 4)) \
-        $x $x 100 100 &
-done
-
+Add S3C/S5P rotator platform device.
 
 Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
+ arch/arm/mach-s3c6400/include/mach/map.h      |    2 +
+ arch/arm/plat-s3c/Kconfig                     |    5 ++
+ arch/arm/plat-s3c/Makefile                    |    1 +
+ arch/arm/plat-s3c/dev-rotator.c               |   42 +++++++++++++++++
+ arch/arm/plat-s3c/include/plat/devs.h         |    2 +
+ arch/arm/plat-s3c/include/plat/regs-rotator.h |   62 +++++++++++++++++++++++++
+ 6 files changed, 114 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/plat-s3c/dev-rotator.c
+ create mode 100644 arch/arm/plat-s3c/include/plat/regs-rotator.h
 
---- /dev/null	2009-11-17 07:51:25.574927259 +0100
-+++ process-vmalloc.c	2009-11-26 11:00:26.000000000 +0100
-@@ -0,0 +1,420 @@
-+/**
-+ * process-vmalloc.c
-+ * Capture+output (process) V4L2 device tester.
+diff --git a/arch/arm/mach-s3c6400/include/mach/map.h b/arch/arm/mach-s3c6400/include/mach/map.h
+index 106ee13..718438e 100644
+--- a/arch/arm/mach-s3c6400/include/mach/map.h
++++ b/arch/arm/mach-s3c6400/include/mach/map.h
+@@ -40,6 +40,7 @@
+ 
+ #define S3C64XX_PA_NAND		(0x70200000)
+ #define S3C64XX_PA_FB		(0x77100000)
++#define S3C64XX_PA_ROTATOR      (0x77200000)
+ #define S3C64XX_PA_USB_HSOTG	(0x7C000000)
+ #define S3C64XX_PA_WATCHDOG	(0x7E004000)
+ #define S3C64XX_PA_SYSCON	(0x7E00F000)
+@@ -85,5 +86,6 @@
+ #define S3C_PA_USBHOST		S3C64XX_PA_USBHOST
+ #define S3C_PA_USB_HSOTG	S3C64XX_PA_USB_HSOTG
+ #define S3C_VA_USB_HSPHY	S3C64XX_VA_USB_HSPHY
++#define S3C_PA_ROTATOR          S3C64XX_PA_ROTATOR
+ 
+ #endif /* __ASM_ARCH_6400_MAP_H */
+diff --git a/arch/arm/plat-s3c/Kconfig b/arch/arm/plat-s3c/Kconfig
+index 9e9d028..668c80d 100644
+--- a/arch/arm/plat-s3c/Kconfig
++++ b/arch/arm/plat-s3c/Kconfig
+@@ -212,4 +212,9 @@ config S3C_DEV_NAND
+ 	help
+ 	  Compile in platform device definition for NAND controller
+ 
++config S3C_DEV_ROTATOR
++	bool
++	help
++	  Compile in platform device definition for image rotator
++
+ endif
+diff --git a/arch/arm/plat-s3c/Makefile b/arch/arm/plat-s3c/Makefile
+index 50444da..a827cfe 100644
+--- a/arch/arm/plat-s3c/Makefile
++++ b/arch/arm/plat-s3c/Makefile
+@@ -43,3 +43,4 @@ obj-$(CONFIG_S3C_DEV_FB)	+= dev-fb.o
+ obj-$(CONFIG_S3C_DEV_USB_HOST)	+= dev-usb.o
+ obj-$(CONFIG_S3C_DEV_USB_HSOTG)	+= dev-usb-hsotg.o
+ obj-$(CONFIG_S3C_DEV_NAND)	+= dev-nand.o
++obj-$(CONFIG_S3C_DEV_ROTATOR)	+= dev-rotator.o
+diff --git a/arch/arm/plat-s3c/dev-rotator.c b/arch/arm/plat-s3c/dev-rotator.c
+new file mode 100644
+index 0000000..8409f70
+--- /dev/null
++++ b/arch/arm/plat-s3c/dev-rotator.c
+@@ -0,0 +1,42 @@
++/*
++ * Samsung S3C/S5P image rotator resource and device definitions.
 + *
-+ * Pawel Osciak, p.osciak@samsung.com
-+ * 2009, Samsung Electronics Co., Ltd.
++ * Copyright (c) 2009 Samsung Electronics Co., Ltd.
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License as published by the
-+ * Free Software Foundation; either version 2 of the License, or (at your
-+ * option) any later version
++ * Free Software Foundation; either version 2 of the
++ * License, or (at your option) any later version
++ */
++#include <linux/kernel.h>
++#include <linux/interrupt.h>
++#include <linux/platform_device.h>
++#include <linux/ioport.h>
++
++#include <mach/map.h>
++#include <plat/map-base.h>
++#include <plat/devs.h>
++#include <plat/irqs.h>
++
++static struct resource s3c_rotator_resource[] = {
++	[0] = {
++		.start  = S3C_PA_ROTATOR,
++		.end    = S3C_PA_ROTATOR + SZ_4K - 1,
++		.flags  = IORESOURCE_MEM,
++	},
++	[1] = {
++		.start  = IRQ_ROTATOR,
++		.end    = IRQ_ROTATOR,
++		.flags  = IORESOURCE_IRQ,
++	}
++};
++
++struct platform_device s3c_device_rotator = {
++	.name		= "s3c-rotator",
++	.id		= -1,
++	.num_resources	= ARRAY_SIZE(s3c_rotator_resource),
++	.resource	= s3c_rotator_resource,
++};
++
++EXPORT_SYMBOL(s3c_device_rotator);
++
+diff --git a/arch/arm/plat-s3c/include/plat/devs.h b/arch/arm/plat-s3c/include/plat/devs.h
+index 932cbbb..ff912a9 100644
+--- a/arch/arm/plat-s3c/include/plat/devs.h
++++ b/arch/arm/plat-s3c/include/plat/devs.h
+@@ -56,6 +56,8 @@ extern struct platform_device s3c_device_nand;
+ extern struct platform_device s3c_device_usbgadget;
+ extern struct platform_device s3c_device_usb_hsotg;
+ 
++extern struct platform_device s3c_device_rotator;
++
+ /* s3c2440 specific devices */
+ 
+ #ifdef CONFIG_CPU_S3C2440
+diff --git a/arch/arm/plat-s3c/include/plat/regs-rotator.h b/arch/arm/plat-s3c/include/plat/regs-rotator.h
+new file mode 100644
+index 0000000..6cd1cc9
+--- /dev/null
++++ b/arch/arm/plat-s3c/include/plat/regs-rotator.h
+@@ -0,0 +1,62 @@
++/*
++ * Copyright (c) 2009 Samsung Electronics
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ * S3C/S5P image rotator register map
 + */
 +
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <assert.h>
-+#include <time.h>
-+#include <errno.h>
-+
-+#include <fcntl.h>
-+#include <unistd.h>
-+#include <sys/ioctl.h>
-+#include <sys/types.h>
-+#include <stdint.h>
-+
-+#include <linux/fb.h>
-+#include <linux/videodev2.h>
-+
-+#include <sys/mman.h>
-+
-+#define V4L2_CID_TRANS_TIME_MSEC        (V4L2_CID_PRIVATE_BASE)
-+#define V4L2_CID_TRANS_NUM_BUFS         (V4L2_CID_PRIVATE_BASE + 1)
-+
-+#define VIDEO_DEV_NAME	"/dev/video0"
-+#define FB_DEV_NAME	"/dev/fb0"
-+#define NUM_BUFS	4
-+#define NUM_FRAMES	16
-+
-+#define perror_exit(cond, func)\
-+	if (cond) {\
-+		fprintf(stderr, "%s:%d: ", __func__, __LINE__);\
-+		perror(func);\
-+		exit(EXIT_FAILURE);\
-+	}
-+
-+#define error_exit(cond, func)\
-+	if (cond) {\
-+		fprintf(stderr, "%s:%d: failed\n", func, __LINE__);\
-+		exit(EXIT_FAILURE);\
-+	}
-+
-+#define perror_ret(cond, func)\
-+	if (cond) {\
-+		fprintf(stderr, "%s:%d: ", __func__, __LINE__);\
-+		perror(func);\
-+		return ret;\
-+	}
-+
-+#define memzero(x)\
-+	memset(&(x), 0, sizeof (x));
-+
-+#define PROCESS_DEBUG 1
-+#ifdef PROCESS_DEBUG
-+#define debug(msg, ...)\
-+	fprintf(stderr, "%s: " msg, __func__, ##__VA_ARGS__);
-+#else
-+#define debug(msg, ...)
-+#endif
-+
-+static int vid_fd, fb_fd;
-+static void *fb_addr;
-+static char *p_src_buf[NUM_BUFS], *p_dst_buf[NUM_BUFS];
-+static size_t src_buf_size[NUM_BUFS], dst_buf_size[NUM_BUFS];
-+static uint32_t num_src_bufs = 0, num_dst_bufs = 0;
-+
-+/* Command-line params */
-+int initial_delay = 0;
-+int fb_x, fb_y, width, height;
-+int translen = 1;
-+/* For displaying multi-buffer transaction simulations, indicates current
-+ * buffer in an ongoing transaction */
-+int curr_buf = 0;
-+int transtime = 1000;
-+int num_frames = 0;
-+off_t fb_off, fb_line_w, fb_buf_w;
-+struct fb_var_screeninfo fbinfo;
-+
-+static void init_video_dev(void)
-+{
-+	int ret;
-+	struct v4l2_capability cap;
-+	struct v4l2_format fmt;
-+	struct v4l2_control ctrl;
-+
-+	vid_fd = open(VIDEO_DEV_NAME, O_RDWR | O_NONBLOCK, 0);
-+	perror_exit(vid_fd < 0, "open");
-+
-+	ctrl.id = V4L2_CID_TRANS_TIME_MSEC;
-+	ctrl.value = transtime;
-+	ret = ioctl(vid_fd, VIDIOC_S_CTRL, &ctrl);
-+	perror_exit(ret != 0, "ioctl");
-+
-+	ctrl.id = V4L2_CID_TRANS_NUM_BUFS;
-+	ctrl.value = translen;
-+	ret = ioctl(vid_fd, VIDIOC_S_CTRL, &ctrl);
-+	perror_exit(ret != 0, "ioctl");
-+
-+	ret = ioctl(vid_fd, VIDIOC_QUERYCAP, &cap);
-+	perror_exit(ret != 0, "ioctl");
-+
-+	if (!(cap.capabilities & V4L2_CAP_VIDEO_CAPTURE)) {
-+		fprintf(stderr, "Device does not support capture\n");
-+		exit(EXIT_FAILURE);
-+	}
-+	if (!(cap.capabilities & V4L2_CAP_VIDEO_OUTPUT)) {
-+		fprintf(stderr, "Device does not support output\n");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	/* Set format for capture */
-+	fmt.type		= V4L2_BUF_TYPE_VIDEO_CAPTURE;
-+	fmt.fmt.pix.width	= width;
-+	fmt.fmt.pix.height	= height;
-+	fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB565X;
-+	fmt.fmt.pix.field	= V4L2_FIELD_ANY;
-+
-+	ret = ioctl(vid_fd, VIDIOC_S_FMT, &fmt);
-+	perror_exit(ret != 0, "ioctl");
-+
-+	/* The same format for output */
-+	fmt.type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
-+	fmt.fmt.pix.width	= width;
-+	fmt.fmt.pix.height	= height;
-+	fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB565X;
-+	fmt.fmt.pix.field	= V4L2_FIELD_ANY;
-+	
-+	ret = ioctl(vid_fd, VIDIOC_S_FMT, &fmt);
-+	perror_exit(ret != 0, "ioctl");
-+}
-+
-+static void gen_src_buf(void *p, size_t size)
-+{
-+	uint8_t val;
-+
-+	val = rand() % 256;
-+	memset(p, val, size);
-+}
-+
-+static void gen_dst_buf(void *p, size_t size)
-+{
-+	/* White */
-+	memset(p, 255, 0);
-+}
-+
-+static int read_frame(int last)
-+{
-+	struct v4l2_buffer buf;
-+	int ret;
-+	int j;
-+	char * p_fb = fb_addr + fb_off;
-+
-+	memzero(buf);
-+
-+	buf.type	= V4L2_BUF_TYPE_VIDEO_OUTPUT;
-+	buf.memory	= V4L2_MEMORY_MMAP;
-+
-+	ret = ioctl(vid_fd, VIDIOC_DQBUF, &buf);
-+	debug("Dequeued source buffer, index: %d\n", buf.index);
-+	if (ret) {
-+		switch (errno) {
-+		case EAGAIN:
-+			debug("Got EAGAIN\n");
-+			return 0;
-+
-+		case EIO:
-+			debug("Got EIO\n");
-+			return 0;
-+
-+		default:
-+			perror("ioctl");
-+			return 0;
-+		}
-+	}
-+
-+	/* Verify we've got a correct buffer */
-+	assert(buf.index < num_src_bufs);
-+
-+	/* Enqueue back the buffer (note that the index is preserved) */
-+	if (!last) {
-+		gen_src_buf(p_src_buf[buf.index], src_buf_size[buf.index]);
-+		buf.type	= V4L2_BUF_TYPE_VIDEO_OUTPUT;
-+		buf.memory	= V4L2_MEMORY_MMAP;
-+		ret = ioctl(vid_fd, VIDIOC_QBUF, &buf);
-+		perror_ret(ret != 0, "ioctl");
-+	}
-+
-+
-+	buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-+
-+	debug("Dequeuing destination buffer\n");
-+	ret = ioctl(vid_fd, VIDIOC_DQBUF, &buf);
-+	if (ret) {
-+		switch (errno) {
-+		case EAGAIN:
-+			debug("Got EAGAIN\n");
-+			return 0;
-+
-+		case EIO:
-+			debug("Got EIO\n");
-+			return 0;
-+
-+		default:
-+			perror("ioctl");
-+			return 1;
-+		}
-+	}
-+	debug("Dequeued dst buffer, index: %d\n", buf.index);
-+	/* Verify we've got a correct buffer */
-+	assert(buf.index < num_dst_bufs);
-+
-+	debug("Current buffer in the transaction: %d\n", curr_buf);
-+	p_fb += curr_buf * (height / translen) * fb_line_w;
-+	++curr_buf;
-+	if (curr_buf >= translen)
-+		curr_buf = 0;
-+
-+	/* Display results */
-+	for (j = 0; j < height / translen; ++j) {
-+		memcpy(p_fb, (void *)p_dst_buf[buf.index], fb_buf_w);
-+		p_fb += fb_line_w;
-+	}
-+
-+	/* Enqueue back the buffer */
-+	if (!last) {
-+		gen_dst_buf(p_dst_buf[buf.index], dst_buf_size[buf.index]);
-+		ret = ioctl(vid_fd, VIDIOC_QBUF, &buf);
-+		perror_ret(ret != 0, "ioctl");
-+		debug("Enqueued back dst buffer\n");
-+	}
-+
-+	return 0;
-+}
-+
-+void init_usage(int argc, char *argv[])
-+{
-+	if (argc != 9) {
-+		printf("Usage: %s initial_delay bufs_per_transaction "
-+			"trans_length_msec num_frames fb_offset_x fb_offset_y "
-+			"width height\n", argv[0]);
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	initial_delay = atoi(argv[1]);
-+	translen = atoi(argv[2]);
-+	transtime = atoi(argv[3]);
-+	num_frames = atoi(argv[4]);
-+	fb_x = atoi(argv[5]);
-+	fb_y = atoi(argv[6]);
-+	width = atoi(argv[7]);
-+	height = atoi(argv[8]);
-+	debug("NEW PROCESS: fb_x: %d, fb_y: %d, width: %d, height: %d, "
-+		"translen: %d, transtime: %d, num_frames: %d\n",
-+		fb_x, fb_y, width, height, translen, transtime, num_frames);
-+}
-+
-+void init_fb(void)
-+{
-+	int ret;
-+	size_t map_size;
-+
-+	fb_fd = open(FB_DEV_NAME, O_RDWR, 0);
-+	perror_exit(fb_fd < 0, "open");
-+
-+	ret = ioctl(fb_fd, FBIOGET_VSCREENINFO, &fbinfo);
-+	perror_exit(ret != 0, "ioctl");
-+	debug("fbinfo: xres: %d, xres_virt: %d, yres: %d, yres_virt: %d\n",
-+		fbinfo.xres, fbinfo.xres_virtual,
-+		fbinfo.yres, fbinfo.yres_virtual);
-+
-+	fb_line_w= fbinfo.xres_virtual * (fbinfo.bits_per_pixel >> 3);
-+	fb_off = fb_y * fb_line_w + fb_x * (fbinfo.bits_per_pixel >> 3);
-+	fb_buf_w = width * (fbinfo.bits_per_pixel >> 3);
-+	map_size = fb_line_w * fbinfo.yres_virtual;
-+
-+	fb_addr = mmap(0, map_size, PROT_WRITE | PROT_READ,
-+			MAP_SHARED, fb_fd, 0);
-+	perror_exit(fb_addr == MAP_FAILED, "mmap");
-+}
-+
-+int main(int argc, char *argv[])
-+{
-+	int ret = 0;
-+	int i;
-+	struct v4l2_buffer buf;
-+	struct v4l2_requestbuffers reqbuf;
-+	enum v4l2_buf_type type;
-+	int last = 0;
-+
-+	init_usage(argc, argv);
-+	init_fb();
-+
-+	srand(time(NULL) ^ getpid());
-+	sleep(initial_delay);
-+
-+	init_video_dev();
-+
-+	memzero(reqbuf);
-+	reqbuf.count	= NUM_BUFS;
-+	reqbuf.type	= V4L2_BUF_TYPE_VIDEO_OUTPUT;
-+	type		= V4L2_BUF_TYPE_VIDEO_OUTPUT;
-+	reqbuf.memory	= V4L2_MEMORY_MMAP;
-+	ret = ioctl(vid_fd, VIDIOC_REQBUFS, &reqbuf);
-+	perror_exit(ret != 0, "ioctl");
-+	num_src_bufs = reqbuf.count;
-+	debug("Got %d src buffers\n", num_src_bufs);
-+
-+	reqbuf.count	= NUM_BUFS;
-+	reqbuf.type	= V4L2_BUF_TYPE_VIDEO_CAPTURE;
-+	type		= V4L2_BUF_TYPE_VIDEO_CAPTURE;
-+	ret = ioctl(vid_fd, VIDIOC_REQBUFS, &reqbuf);
-+	perror_exit(ret != 0, "ioctl");
-+	num_dst_bufs = reqbuf.count;
-+	debug("Got %d dst buffers\n", num_dst_bufs);
-+
-+	for (i = 0; i < num_src_bufs; ++i) {
-+		buf.type	= V4L2_BUF_TYPE_VIDEO_OUTPUT;
-+		buf.memory	= V4L2_MEMORY_MMAP;
-+		buf.index	= i;
-+
-+		ret = ioctl(vid_fd, VIDIOC_QUERYBUF, &buf);
-+		perror_exit(ret != 0, "ioctl");
-+		debug("QUERYBUF returned offset: %x\n", buf.m.offset);
-+
-+		src_buf_size[i] = buf.length;
-+		p_src_buf[i] = mmap(NULL, buf.length,
-+				    PROT_READ | PROT_WRITE, MAP_SHARED,
-+				    vid_fd, buf.m.offset);
-+		perror_exit(MAP_FAILED == p_src_buf[i], "mmap");
-+	}
-+
-+	for (i = 0; i < num_dst_bufs; ++i) {
-+		buf.type	= V4L2_BUF_TYPE_VIDEO_CAPTURE;
-+		buf.memory	= V4L2_MEMORY_MMAP;
-+		buf.index	= i;
-+
-+		ret = ioctl(vid_fd, VIDIOC_QUERYBUF, &buf);
-+		perror_exit(ret != 0, "ioctl");
-+		debug("QUERYBUF returned offset: %x\n", buf.m.offset);
-+
-+		dst_buf_size[i] = buf.length;
-+		p_dst_buf[i] = mmap(NULL, buf.length,
-+				    PROT_READ | PROT_WRITE, MAP_SHARED,
-+				    vid_fd, buf.m.offset);
-+		perror_exit(MAP_FAILED == p_dst_buf[i], "mmap");
-+	}
-+
-+	for (i = 0; i < num_src_bufs; ++i) {
-+
-+		gen_src_buf(p_src_buf[i], src_buf_size[i]);
-+
-+		memzero(buf);
-+		buf.type	= V4L2_BUF_TYPE_VIDEO_OUTPUT;
-+		buf.memory	= V4L2_MEMORY_MMAP;
-+		buf.index	= i;
-+
-+		ret = ioctl(vid_fd, VIDIOC_QBUF, &buf);
-+		perror_exit(ret != 0, "ioctl");
-+	}
-+
-+	for (i = 0; i < num_dst_bufs; ++i) {
-+		memzero(buf);
-+		buf.type	= V4L2_BUF_TYPE_VIDEO_CAPTURE;
-+		buf.memory	= V4L2_MEMORY_MMAP;
-+		buf.index	= i;
-+
-+		ret = ioctl(vid_fd, VIDIOC_QBUF, &buf);
-+		perror_exit(ret != 0, "ioctl");
-+	}
-+
-+	ret = ioctl(vid_fd, VIDIOC_STREAMON, &type);
-+	debug("STREAMON (%d): %d\n", VIDIOC_STREAMON, ret);
-+	perror_exit(ret != 0, "ioctl");
-+
-+	while (num_frames) {
-+		fd_set read_fds;
-+		int r;
-+
-+		FD_ZERO(&read_fds);
-+		FD_SET(vid_fd, &read_fds);
-+
-+		debug("Before select");
-+		r = select(vid_fd + 1, &read_fds, NULL, NULL, 0);
-+		perror_exit(r < 0, "select");
-+		debug("After select");
-+
-+		if (num_frames == 1)
-+			last = 1;
-+		if (read_frame(last)) {
-+			fprintf(stderr, "Read frame failed\n");
-+			break;
-+		}
-+		--num_frames;
-+		printf("FRAMES LEFT: %d\n", num_frames);
-+	}
-+
-+
-+done:
-+	close(vid_fd);
-+	close(fb_fd);
-+
-+	for (i = 0; i < num_src_bufs; ++i)
-+		munmap(p_src_buf[i], src_buf_size[i]);
-+
-+	for (i = 0; i < num_dst_bufs; ++i)
-+		munmap(p_dst_buf[i], dst_buf_size[i]);
-+
-+	return ret;
-+}
-+
++#ifndef __ASM_ARCH_PLAT_S3C_ROTATOR_H
++#define __ASM_ARCH_PLAT_S3C_ROTATOR_H __FILE__
++
++#define S3C_ROT_SRC_WIDTH(x)				(((x) << 0) & 0xFFFF)
++#define S3C_ROT_SRC_HEIGHT(x)				((x) << 16)
++
++#define S3C_ROTATOR_CTRLREG_INT_MASK			(1 << 24)
++#define S3C_ROTATOR_CTRLREG_FORMAT_MASK			(7 << 13)
++#define S3C_ROTATOR_CTRLREG_ROT_DEG_MASK		(3 << 6)
++#define S3C_ROTATOR_CTRLREG_FLIP_MASK			(3 << 4)
++#define S3C_ROTATOR_CTRLREG_START_MASK			(1 << 0)
++
++#define S3C_ROTATOR_CTRLREG_MASK	( S3C_ROTATOR_CTRLREG_INT_MASK     \
++					| S3C_ROTATOR_CTRLREG_FORMAT_MASK  \
++					| S3C_ROTATOR_CTRLREG_ROT_DEG_MASK \
++					| S3C_ROTATOR_CTRLREG_FLIP_MASK    \
++					| S3C_ROTATOR_CTRLREG_START_MASK   \
++					| S3C_ROTATOR_CTRLREG_ENABLE_INT )
++
++#define S3C_ROTATOR_CTRLREG_ENABLE_INT			(1 << 24)
++#define S3C_ROTATOR_CTRLREG_SRC_YCBCR420		(0 << 13)
++#define S3C_ROTATOR_CTRLREG_SRC_YCBCR422		(3 << 13)
++#define S3C_ROTATOR_CTRLREG_SRC_RGB565			(4 << 13)
++#define S3C_ROTATOR_CTRLREG_SRC_RGB888			(5 << 13)
++
++#define S3C_ROTATOR_CTRLREG_DEGREE_90			(1 << 6)
++#define S3C_ROTATOR_CTRLREG_DEGREE_180			(2 << 6)
++#define S3C_ROTATOR_CTRLREG_DEGREE_270			(3 << 6)
++
++#define S3C_ROTATOR_CTRLREG_FLIP_VERT			(2 << 4)
++#define S3C_ROTATOR_CTRLREG_FLIP_HORIZ			(3 << 4)
++#define S3C_ROTATOR_CTRLREG_START			(1 << 0)
++
++#define S3C_ROTATOR_STATREG_STATUS_IDLE			(0 << 0)
++#define S3C_ROTATOR_CTRLREG_START_ROTATE		(1 << 0)
++#define S3C_ROTATOR_STATREG_STATUS_BUSY			(2 << 0)
++#define S3C_ROTATOR_STATREG_STATUS_BUSY_MORE		(3 << 0)
++#define S3C_ROTATOR_STATREG_INT_PEND			(1 << 8)
++
++
++#define S3C_ROTATOR_CTRLREG				(0x0)
++#define S3C_ROTATOR_SRCADDRREG0				(0x4)
++#define S3C_ROTATOR_SRCADDRREG1				(0x8)
++#define S3C_ROTATOR_SRCADDRREG2				(0xC)
++#define S3C_ROTATOR_SRCSIZEREG				(0x10)
++#define S3C_ROTATOR_DESTADDRREG0			(0x18)
++#define S3C_ROTATOR_DESTADDRREG1			(0x1C)
++#define S3C_ROTATOR_DESTADDRREG2			(0x20)
++#define S3C_ROTATOR_STATREG				(0x2C)
++
++#endif /* __ASM_ARCH_PLAT_S3C_ROTATOR_H */
++
+-- 
+1.6.4.2.253.g0b1fac
