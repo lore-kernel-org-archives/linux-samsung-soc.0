@@ -1,310 +1,259 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH/RFC v2.1 0/2] Mem-to-mem device framework
-Date: Wed, 23 Dec 2009 16:05:43 +0100
-Message-ID: <200912231605.44181.hverkuil@xs4all.nl>
-References: <1261574255-23386-1-git-send-email-p.osciak@samsung.com>
+From: Alexey Klimov <klimov.linux@gmail.com>
+Subject: Re: [PATCH 2/2] [ARM] samsung-rotator: Add Samsung S3C/S5P rotator
+	driver
+Date: Thu, 24 Dec 2009 01:29:17 +0300
+Message-ID: <208cbae30912231429o4821ca2fm9722532b0b277865@mail.gmail.com>
+References: <1261562933-26987-1-git-send-email-p.osciak@samsung.com>
+	 <1261562933-26987-3-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp-vbr3.xs4all.nl ([194.109.24.23]:2153 "EHLO
-	smtp-vbr3.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752052AbZLWPF6 (ORCPT
+Received: from mail-pw0-f42.google.com ([209.85.160.42]:50040 "EHLO
+	mail-pw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752654AbZLWW3S convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Dec 2009 10:05:58 -0500
-In-Reply-To: <1261574255-23386-1-git-send-email-p.osciak@samsung.com>
-Content-Disposition: inline
+	Wed, 23 Dec 2009 17:29:18 -0500
+In-Reply-To: <1261562933-26987-3-git-send-email-p.osciak@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Pawel Osciak <p.osciak@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, Vaibhav Hiremath <hvaibhav@ti.com>, Muralidharan Karicheri <m-karicheri2@ti.com>, Guru Raj <gururaj.nagendra@intel.com>, Xiaolin Zhang <xiaolin.zhang@intel.com>, Magnus Damm <magnus.damm@gmail.com>, Sakari Ailus <sakari.ailus@maxwell.research.nokia.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Wednesday 23 December 2009 14:17:32 Pawel Osciak wrote:
-> Hello,
-> 
-> this is the second version of the proposed implementation for mem-to-mem memory
-> device framework. Your comments are very welcome.
+Hello,
 
-Hi Pawel,
+On Wed, Dec 23, 2009 at 1:08 PM, Pawel Osciak <p.osciak@samsung.com> wr=
+ote:
+> The rotator device present on Samsung S3C and S5P series SoCs allows =
+image
+> rotation and flipping. It requires contiguous memory buffers to opera=
+te,
+> as it does not have scatter-gather support. It is also an example of
+> a memory-to-memory device, and so uses the mem-2-mem device V4L2 fram=
+ework.
 
-Thank you for working on this! It's much appreciated. Now I've noticed that
-patches regarding memory-to-memory and memory pool tend to get very few comments.
-I suspect that the main reason is that these are SoC-specific features that do
-not occur in consumer-type products. So most v4l developers do not have the
-interest and motivation (and time!) to look into this.
+[...]
 
-I'm CC-ing this reply to developers from Intel, TI, Nokia and Renesas in the
-hope that they will find some time to review and think about this since this will
-affect all of them.
+> +
+> +static const struct v4l2_file_operations s3c_rotator_fops =3D {
+> + =A0 =A0 =A0 .owner =A0 =A0 =A0 =A0 =A0=3D THIS_MODULE,
+> + =A0 =A0 =A0 .open =A0 =A0 =A0 =A0 =A0 =3D s3c_rotator_open,
+> + =A0 =A0 =A0 .release =A0 =A0 =A0 =A0=3D s3c_rotator_release,
+> + =A0 =A0 =A0 .poll =A0 =A0 =A0 =A0 =A0 =3D s3c_rotator_poll,
+> + =A0 =A0 =A0 .ioctl =A0 =A0 =A0 =A0 =A0=3D video_ioctl2,
+> + =A0 =A0 =A0 .mmap =A0 =A0 =A0 =A0 =A0 =3D s3c_rotator_mmap,
+> +};
+> +
+> +static struct video_device m2mtest_videodev =3D {
+> + =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D S3C_ROTATOR_NAME,
+> + =A0 =A0 =A0 .fops =A0 =A0 =A0 =A0 =A0 =3D &s3c_rotator_fops,
+> + =A0 =A0 =A0 .ioctl_ops =A0 =A0 =A0=3D &s3c_rotator_ioctl_ops,
+> + =A0 =A0 =A0 .minor =A0 =A0 =A0 =A0 =A0=3D -1,
+> + =A0 =A0 =A0 .release =A0 =A0 =A0 =A0=3D video_device_release,
+> +};
+> +
+> +static struct v4l2_m2m_ops m2m_ops =3D {
+> + =A0 =A0 =A0 .device_run =A0 =A0 =3D device_run,
+> + =A0 =A0 =A0 .job_abort =A0 =A0 =A0=3D job_abort,
+> +};
+> +
+> +static int s3c_rotator_probe(struct platform_device *pdev)
+> +{
+> + =A0 =A0 =A0 struct s3c_rotator_dev *dev;
+> + =A0 =A0 =A0 struct video_device *vfd;
+> + =A0 =A0 =A0 struct resource *res;
+> + =A0 =A0 =A0 int ret =3D -ENOENT;
 
-One thing that I am missing is a high-level overview of what we want. Currently
-there are patches/RFCs floating around for memory-to-memory support, multiplanar
-support and memory-pool support.
+Here ^^^ (see below please for comments)
 
-What I would like to see is a RFC that ties this all together from the point of
-view of the public API. I.e. what are the requirements? Possibly solutions? Open
-questions? Forget about how to implement it for the moment, that will follow
-from the chosen solutions.
+> +
+> + =A0 =A0 =A0 dev =3D kzalloc(sizeof *dev, GFP_KERNEL);
+> + =A0 =A0 =A0 if (!dev)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -ENOMEM;
+> +
+> + =A0 =A0 =A0 spin_lock_init(&dev->irqlock);
+> + =A0 =A0 =A0 ret =3D -ENOENT;
 
-Note that I would suggest though that the memory-pool part is split into two
-parts: how to actually allocate the memory is pretty much separate from how v4l
-will use it. The actual allocation part is probably quite complex and might
-even be hardware dependent and should be discussed separately. But how to use
-it is something that can be discussed without needing to know how it was
-allocated.
+It's probably bad pedantic part of me speaking but looks like you set
+ret equals to -ENOENT two times. Most likely you don't need
+assignment second time.
 
-The lack of discussion in this area does worry me a bit. IMHO this is a very
-important area that needs a lot more work. The initiative should be with the
-SoC companies and right now it seems only Samsung is active.
 
-BTW, what is the status of the multiplanar RFC? I later realized that that RFC
-might be very useful for adding meta-data to buffers. There are several cases
-where that is useful: sensors that provide meta-data when capturing a frame and
-imagepipelines (particularly in memory-to-memory cases) that want to have all
-parameters as part of the meta-data associated with the image. There may well
-be more of those.
-
-Regards,
-
-	Hans
-
-> 
-> In v2.1:
-> I am very sorry for the resend, but somehow an orphaned endif found its way to
-> Kconfig during the rebase.
-> 
-> Changes since v1:
-> - v4l2_m2m_buf_queue() now requires m2m_ctx as its argument
-> - video_queue private data stores driver private data
-> - a new submenu in kconfig for mem-to-mem devices
-> - minor rebase leftovers cleanup
-> 
-> A second patch series followed v2 with a new driver for a real device -
-> Samsung S3C/S5P image rotator, utilizing this framework.
-> 
-> 
-> This series contains:
-> 
-> [PATCH v2.1 1/2] V4L: Add memory-to-memory device helper framework for V4L2.
-> [PATCH v2.1 2/2] V4L: Add a mem-to-mem V4L2 framework test device.
-> [EXAMPLE v2] Mem-to-mem userspace test application.
-> 
-> 
-> Previous discussion and RFC on this topic:
-> http://thread.gmane.org/gmane.linux.drivers.video-input-infrastructure/10668
-> 
-> 
-> A mem-to-mem device is a device that uses memory buffers passed by
-> userspace applications for both source and destination. This is
-> different from existing drivers that use memory buffers for only one
-> of those at once.
-> In terms of V4L2 such a device would be both of OUTPUT and CAPTURE type.
-> Although no such devices are present in the V4L2 framework, a demand for such
-> a model exists, e.g. for 'resizer devices'.
-> 
-> 
-> -------------------------------------------------------------------------------
-> Mem-to-mem devices
-> -------------------------------------------------------------------------------
-> In the previous discussion we concluded that we should use one video node with
-> two queues, an output (V4L2_BUF_TYPE_VIDEO_OUTPUT) queue for source buffers and
-> a capture queue (V4L2_BUF_TYPE_VIDEO_CAPTURE) for destination buffers.
-> 
-> 
-> Each instance has its own set of queues: 2 videobuf_queues, each with a ready
-> buffer queue, managed by the framework. Everything is encapsulated in the
-> queue context struct:
-> 
-> struct v4l2_m2m_queue_ctx {
->         struct videobuf_queue   q;
->      /* ... */
->         /* Queue for buffers ready to be processed as soon as this
->          * instance receives access to the device */
->         struct list_head        rdy_queue;
->      /* ... */
-> };
-> 
-> struct v4l2_m2m_ctx {
->      /* ... */
->         /* Capture (output to memory) queue context */
->         struct v4l2_m2m_queue_ctx       cap_q_ctx;
-> 
->         /* Output (input from memory) queue context */
->         struct v4l2_m2m_queue_ctx       out_q_ctx;
->      /* ... */
-> };
-> 
-> Streamon can be called for all instances and will not sleep if another instance
-> is streaming.
-> 
-> vidioc_querycap() should report V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_VIDEO_OUTPUT.
-> 
-> -------------------------------------------------------------------------------
-> Queuing and dequeuing buffers
-> -------------------------------------------------------------------------------
-> Applications can queue as many buffers as they want and it is not required to
-> queue an equal number of source and destination buffers. If there is not enough
-> buffers of any type, a new transaction will simply not be scheduled.
-> 
-> -------------------------------------------------------------------------------
-> Source and destination formats
-> -------------------------------------------------------------------------------
-> Should be set per queue. A helper function to access queues depending on the
-> passed type - v4l2_m2m_get_vq() - is supplied. Most of the format-handling code
-> is normally located in drivers anyway. The only exception is the "field" member
-> of the videobuf_queue struct, which has to be set directly. It breaks
-> encapsulation a little bit, but nothing can be done with it.
-> 
-> -------------------------------------------------------------------------------
-> Scheduling
-> -------------------------------------------------------------------------------
-> Requirements/assumptions:
-> 1. More than one instance can be open at the same time.
-> 2. Each instance periodically receives exclusive access to the device, performs
-> an operation (operations) and yields back the device in a state that allows
-> other instances to use it.
-> 3. When an instance gets access to the device, it performs a
-> "transaction"/"job". A transaction/job is defined as the shortest operation
-> that cannot/should not be further divided without having to restart it from
-> scratch, or without having to perform expensive reconfiguration of a device,
-> etc.
-> 4. Transactions can use multiple source/destination buffers.
-> 5. Only a driver can tell when it is ready to perform a transaction, so
-> a optional callback is provided for that purpose (job_ready()).
-> 
-> 
-> There are three common requirements for a transaction to be ready to run:
-> - at least one source buffer ready
-> - at least one destination buffer ready
-> - streaming on
-> - (optional) driver-specific requirements (driver-specific callback function)
-> 
-> So when buffers are queued by qbuf() or streaming is turned on with
-> streamon(), the framework calls v4l2_m2m_try_schedule().
-> 
-> v4l2_m2m_try_schedule()
-> 1. Checks for the above conditions.
-> 2. Checks for driver-specific conditions by calling job_ready() callback, if
-> supplied.
-> 3. If all the checks succeed, it calls v4l2_m2m_schedule() to schedule the
-> transaction.
-> 
-> v4l2_m2m_schedule()
-> 1. Checks whether the transaction is already on job queue and schedules it
-> if not (by adding it to the job queue).
-> 2. Calls v4l2_m2m_try_run().
-> 
-> v4l2_m2m_try_run()
-> 1. Runs a job if and is pending and none is currently running by calling
-> device_run() callback.
-> 
-> When the device_run() callback is called, the driver has to begin the
-> transaction. When it is finished, the driver has to call v4l2_m2m_job_finish().
-> 
-> v4l2_m2m_job_finish()
-> 1. Removes the currently running transaction from the job queue and calls
-> v4l2_m2m_try_run to (possibly) run the next pending transaction.
-> 
-> There is also support for forced transaction aborting (when an application
-> gets killed). The framework calls job_abort() callback and the driver has
-> to abort the transaction as soon as possible and call v4l2_m2m_job_finish()
-> to indicate that the transaction has been aborted.
-> 
-> 
-> Additionally, some kind of timeout for transactions could be added to prevent
-> instances from claiming the device for too long.
-> 
-> -------------------------------------------------------------------------------
-> Acquiring ready buffers to process
-> -------------------------------------------------------------------------------
-> Ready buffers can be acquired using v4l2_m2m_next_src_buf()/
-> v4l2_m2m_next_dst_buf(). After the transaction they are removed from the queues
-> with v4l2_m2m_dst_buf_remove()/v4l2_m2m_src_buf_remove(). This is not
-> multi-buffer-transaction-safe. It will have to be modified, but ideally after
-> we decide how to handle multi-buffer transactions in videobuf core.
-> 
-> -------------------------------------------------------------------------------
-> poll()
-> -------------------------------------------------------------------------------
-> We cannot have poll() for multiple queues on one node, so we use poll() for the
-> destination queue only.
-> 
-> -------------------------------------------------------------------------------
-> mmap()
-> -------------------------------------------------------------------------------
-> Requirements:
-> - allow mapping buffers from different queues
-> - retain "magic" offset values so videobuf can still match buffers by offsets
-> 
-> The proposed solution involves a querybuf() and mmap() multiplexers:
-> 
-> a) When a driver calls querybuf(), we have access to the type and we can
-> detect which queue to call videobuf_querybuf() on:
-> 
->         vq = v4l2_m2m_get_vq(m2m_ctx, buf->type);
->         ret = videobuf_querybuf(vq, buf);
-> 
-> The offsets returned from videobuf_querybuf() for one of the queues are further
-> offset by a predefined constant (DST_QUEUE_OFF_BASE). This way the driver
-> (and applications) receive different offsets for the same buffer indexes of
-> each queue:
-> 
->         if (buf->memory == V4L2_MEMORY_MMAP
->             && vq->type == V4L2_BUF_TYPE_VIDEO_CAPTURE) {
->                 buf->m.offset += DST_QUEUE_OFF_BASE;
->         }
-> 
-> 
-> b) When the application (driver) calls mmap(), the offsets which were modified
-> in querybuf() are detected and the proper queue for them chosen based on that.
-> Finally, the modified offsets are passed to videobuf_mmap_mapper() for proper
-> queues with their offsets changed back to values recognizable by videobuf:
-> 
->         unsigned long offset = vma->vm_pgoff << PAGE_SHIFT;
->         struct videobuf_queue *vq;
-> 
->         if (offset < DST_QUEUE_OFF_BASE) {
->                 vq = v4l2_m2m_get_src_vq(m2m_ctx);
->         } else {
->                 vq = v4l2_m2m_get_dst_vq(m2m_ctx);
->                 vma->vm_pgoff -= (DST_QUEUE_OFF_BASE >> PAGE_SHIFT);
->         }
-> 
->         return videobuf_mmap_mapper(vq, vma);
-> 
-> 
-> -------------------------------------------------------------------------------
-> Test device and a userspace application
-> -------------------------------------------------------------------------------
-> mem2mem_testdev.c is a test driver for the framework. It uses timers for fake
-> interrupts and allows testing transaction with different number of buffers
-> and transaction durations simultaneously.
-> 
-> process-vmalloc.c is a capture+output test application for the test device.
-> 
-> -------------------------------------------------------------------------------
-> Future work
-> -------------------------------------------------------------------------------
-> - read/write support
-> - transaction/abort timeouts
-> - extracting more common code to the framework? (e.g. per-queue format details,
-> transaction length, etc.)
-> 
-> 
-> Best regards
-> --
-> Pawel Osciak
-> Linux Platform Group
-> Samsung Poland R&D Center
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> + =A0 =A0 =A0 dev->irq =3D platform_get_irq(pdev, 0);
+> + =A0 =A0 =A0 if (dev->irq <=3D 0) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev, "Failed to acquire =
+irq\n");
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto free_dev;
+> + =A0 =A0 =A0 }
+> +
+> + =A0 =A0 =A0 res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> + =A0 =A0 =A0 if (!res) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "Failed to acquire memo=
+ry region resource\n");
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto free_irq;
+> + =A0 =A0 =A0 }
+> +
+> + =A0 =A0 =A0 dev->regs_res =3D request_mem_region(res->start, resour=
+ce_size(res),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0dev_name(&pdev->dev));
+> + =A0 =A0 =A0 if (!dev->regs_res) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev, "Failed to reserve =
+memory region\n");
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto free_irq;
+> + =A0 =A0 =A0 }
+> +
+> + =A0 =A0 =A0 dev->regs_base =3D ioremap(res->start, resource_size(re=
+s));
+> + =A0 =A0 =A0 if (!dev->regs_base) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev, "Ioremap failed\n")=
+;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -ENXIO;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto rel_res;
+> + =A0 =A0 =A0 }
+> +
+> + =A0 =A0 =A0 ret =3D request_irq(dev->irq, s3c_rotator_isr, 0,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S3C_ROTATOR_NAME, d=
+ev);
+> + =A0 =A0 =A0 if (ret) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev, "Requesting irq fai=
+led\n");
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto regs_unmap;
+> + =A0 =A0 =A0 }
+> +
+> + =A0 =A0 =A0 ret =3D v4l2_device_register(&pdev->dev, &dev->v4l2_dev=
+);
+> + =A0 =A0 =A0 if (ret)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto regs_unmap;
+> +
+> + =A0 =A0 =A0 atomic_set(&dev->num_inst, 0);
+> +
+> + =A0 =A0 =A0 vfd =3D video_device_alloc();
+> + =A0 =A0 =A0 if (!vfd) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 v4l2_err(&dev->v4l2_dev, "Failed to all=
+ocate video device\n");
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto unreg_dev;
+> + =A0 =A0 =A0 }
+> +
+> + =A0 =A0 =A0 *vfd =3D m2mtest_videodev;
+> +
+> + =A0 =A0 =A0 ret =3D video_register_device(vfd, VFL_TYPE_GRABBER, 0)=
+;
+> + =A0 =A0 =A0 if (ret) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 v4l2_err(&dev->v4l2_dev, "Failed to reg=
+ister video device\n");
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto rel_vdev;
+> + =A0 =A0 =A0 }
+> +
+> + =A0 =A0 =A0 video_set_drvdata(vfd, dev);
+> + =A0 =A0 =A0 snprintf(vfd->name, sizeof(vfd->name), "%s", m2mtest_vi=
+deodev.name);
+> + =A0 =A0 =A0 dev->vfd =3D vfd;
+> + =A0 =A0 =A0 v4l2_info(&dev->v4l2_dev,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "Device registered as /=
+dev/video%d\n", vfd->num);
+> +
+> + =A0 =A0 =A0 platform_set_drvdata(pdev, dev);
+> +
+> + =A0 =A0 =A0 dev->m2m_dev =3D v4l2_m2m_init(&m2m_ops);
+> + =A0 =A0 =A0 if (IS_ERR(dev->m2m_dev)) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 v4l2_err(&dev->v4l2_dev, "Failed to ini=
+t mem2mem device\n");
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D PTR_ERR(dev->m2m_dev);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err_m2m;
+> + =A0 =A0 =A0 }
+> +
+> + =A0 =A0 =A0 return 0;
+> +
+> +err_m2m:
+> + =A0 =A0 =A0 video_unregister_device(dev->vfd);
+> +rel_vdev:
+> + =A0 =A0 =A0 video_device_release(vfd);
+> +unreg_dev:
+> + =A0 =A0 =A0 v4l2_device_unregister(&dev->v4l2_dev);
+> +regs_unmap:
+> + =A0 =A0 =A0 iounmap(dev->regs_base);
+> +rel_res:
+> + =A0 =A0 =A0 release_resource(dev->regs_res);
+> + =A0 =A0 =A0 kfree(dev->regs_res);
+> +free_irq:
+> + =A0 =A0 =A0 free_irq(dev->irq, dev);
+> +free_dev:
+> + =A0 =A0 =A0 kfree(dev);
+> +
+> + =A0 =A0 =A0 return ret;
+> +}
+> +
+> +static int s3c_rotator_remove(struct platform_device *pdev)
+> +{
+> + =A0 =A0 =A0 struct s3c_rotator_dev *dev =3D
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 (struct s3c_rotator_dev *)platform_get_=
+drvdata(pdev);
+> +
+> + =A0 =A0 =A0 v4l2_info(&dev->v4l2_dev, "Removing %s\n", S3C_ROTATOR_=
+NAME);
+> +
+> + =A0 =A0 =A0 v4l2_m2m_release(dev->m2m_dev);
+> + =A0 =A0 =A0 video_unregister_device(dev->vfd);
+> + =A0 =A0 =A0 v4l2_device_unregister(&dev->v4l2_dev);
+> + =A0 =A0 =A0 iounmap(dev->regs_base);
+> + =A0 =A0 =A0 release_resource(dev->regs_res);
+> + =A0 =A0 =A0 kfree(dev->regs_res);
+> + =A0 =A0 =A0 free_irq(dev->irq, dev);
+> + =A0 =A0 =A0 kfree(dev);
+> +
+> + =A0 =A0 =A0 return 0;
+> +}
+> +
+> +static int s3c_rotator_suspend(struct device *dev)
+> +{
+> + =A0 =A0 =A0 return 0;
+> +}
+> +
+> +static int s3c_rotator_resume(struct device *dev)
+> +{
+> + =A0 =A0 =A0 return 0;
+> +}
+> +
+> +static struct dev_pm_ops s3c_rotator_pm_ops =3D {
+> + =A0 =A0 =A0 .suspend =3D s3c_rotator_suspend,
+> + =A0 =A0 =A0 .resume =3D s3c_rotator_resume,
+> +};
+> +
+> +static struct platform_driver s3c_rotator_pdrv =3D {
+> + =A0 =A0 =A0 .probe =A0 =A0 =A0 =A0 =A0=3D s3c_rotator_probe,
+> + =A0 =A0 =A0 .remove =A0 =A0 =A0 =A0 =3D s3c_rotator_remove,
+> + =A0 =A0 =A0 .driver =A0 =A0 =A0 =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =3D S3C_ROTATOR_NAME,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .owner =A0=3D THIS_MODULE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pm =A0 =A0 =3D &s3c_rotator_pm_ops
+> + =A0 =A0 =A0 },
+> +};
+> +
+> +static char banner[] __initdata =3D
+> + =A0 =A0 =A0 KERN_INFO "S3C Rotator V4L2 Driver, (c) 2009 Samsung El=
+ectronics\n";
+> +
+> +static int __init s3c_rotator_init(void)
+> +{
+> + =A0 =A0 =A0 printk(banner);
+> + =A0 =A0 =A0 return platform_driver_register(&s3c_rotator_pdrv);
+> +}
+> +
+> +static void __devexit s3c_rotator_exit(void)
+> +{
+> + =A0 =A0 =A0 platform_driver_unregister(&s3c_rotator_pdrv);
+> +}
+> +
+> +module_init(s3c_rotator_init);
+> +module_exit(s3c_rotator_exit);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Pawel Osciak <p.osciak@samsung.com>");
+> +MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
 
 
 
--- 
-Hans Verkuil - video4linux developer - sponsored by TANDBERG
+--=20
+Best regards, Klimov Alexey
