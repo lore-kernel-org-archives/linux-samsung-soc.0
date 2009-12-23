@@ -1,77 +1,241 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: Regulator framework usage in suspend/resume contex.
-Date: Fri, 18 Dec 2009 11:13:37 +0000
-Message-ID: <20091218111337.GB21706@rakim.wolfsonmicro.main>
-References: <000301ca7f39$96047b60$c20d7220$%majewski@samsung.com>
+From: Pawel Osciak <p.osciak@samsung.com>
+Subject: [PATCH/RFC v2 0/2] Mem-to-mem device framework
+Date: Wed, 23 Dec 2009 11:07:31 +0100
+Message-ID: <1261562854-26507-1-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:54111 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750847AbZLRLNj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Dec 2009 06:13:39 -0500
-Content-Disposition: inline
-In-Reply-To: <000301ca7f39$96047b60$c20d7220$%majewski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: p.osciak@samsung.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, Tomasz Fujak <t.fujak@samsung.com>
 
-On Thu, Dec 17, 2009 at 05:54:21PM +0100, Lukasz Majewski wrote:
+Hello,
 
-In general if you want advice on a kernel subsystem it's best to CC the
-maintainers of the relevant subsystem - messages posted only to mailing
-lists (particularly high volume ones such as this) can easily get lost
-in the flow.
+this is the second version of the proposed implementation for mem-to-mem memory
+device framework. Your comments are very welcome.
 
-> I'm trying to use the regulator framework in conjunction with suspend/resume
-> (code based on a s3c Samsung SoC platform).
-> My goal is to change values of regulators output before going to sleep and
-> restore their values after resume.
+Changes since v1:
+- v4l2_m2m_buf_queue() now requires m2m_ctx as its argument
+- video_queue private data stores driver private data
+- a new submenu in kconfig for mem-to-mem devices
+- minor rebase leftovers cleanup
 
-Which PMIC are you using for this?
+A second patch series will follow (right after this one) with a new driver for
+a real device - Samsung S3C/S5P image rotator, utilizing this framework.
 
-> The problem is when I disable normally enabled source or change its voltage
-> value to new_value when entering the suspend to RAM state.
 
-It'd be useful to see the driver here...
+This series contains:
 
-> I don't know how to enable this source again after resume or restore source
-> microvolts setting as before suspend?
+[PATCH v2 1/2] V4L: Add memory-to-memory device helper framework for V4L2.
+[PATCH v2 2/2] V4L: Add a mem-to-mem V4L2 framework test device.
+[EXAMPLE v2] Mem-to-mem userspace test application.
 
-The expecation of the API is that your suspend state configuration will
-not impact the state used for the running system so no work should be
-required by software to restore the state.  Hardware tends to want this
-since the suspend mode will normally involve powering down the CPU and
-therefore needs some hardware handshake between the CPU and the PMIC.
-If the regulator driver is doing something too different to this then it
-probably shouldn't be implementing the suspend mode APIs at all.
 
-There's also a general idea that consumer drivers should be turning off
-their supplies when they suspend, if only to allow them to better take
-advantage of runtime PM schemes as they come along (though currently
-they all use different callbacks).
+Previous discussion and RFC on this topic:
+http://thread.gmane.org/gmane.linux.drivers.video-input-infrastructure/10668
 
-There's currently no support for restoring the state of regulators that
-don't have the hardware handshaking for entering and exiting suspend,
-mostly due to lack of demand.  That may be best handled by the
-individual regulators from their suspend and resume methods, probably
-using a core helper, but I've not fully thought that through.
 
-> It looks like some relevant method is missing in the framework, or I haven't
-> look deep enough to spot one :-).
+A mem-to-mem device is a device that uses memory buffers passed by
+userspace applications for both source and destination. This is
+different from existing drivers that use memory buffers for only one
+of those at once.
+In terms of V4L2 such a device would be both of OUTPUT and CAPTURE type.
+Although no such devices are present in the V4L2 framework, a demand for such
+a model exists, e.g. for 'resizer devices'.
 
-It's a bit academic anyway for ARM platforms since suspend to disk isn't
-supported by the architecture at present so most systems will never do
-anything except suspend to RAM so there's no real need to select which
-mode to use at runtime.
 
-> I was grepping a little and it looks, that regulator_suspend_prepare()
-> method is not used by any suspend/resume driver in the kernel linux tree (at
-> least up to kernel version 2.6.32-rc8), so there is no reference code.
+-------------------------------------------------------------------------------
+Mem-to-mem devices
+-------------------------------------------------------------------------------
+In the previous discussion we concluded that we should use one video node with
+two queues, an output (V4L2_BUF_TYPE_VIDEO_OUTPUT) queue for source buffers and
+a capture queue (V4L2_BUF_TYPE_VIDEO_CAPTURE) for destination buffers.
 
-That's correct, it should probably be hooked in for the 1133-EV1 i.MX
-support but IIRC that was merged prior to the platform supporting
-suspend and like I say the suspend mode configuration for ARM is a bit
-academic.
+
+Each instance has its own set of queues: 2 videobuf_queues, each with a ready
+buffer queue, managed by the framework. Everything is encapsulated in the
+queue context struct:
+
+struct v4l2_m2m_queue_ctx {
+        struct videobuf_queue   q;
+     /* ... */
+        /* Queue for buffers ready to be processed as soon as this
+         * instance receives access to the device */
+        struct list_head        rdy_queue;
+     /* ... */
+};
+
+struct v4l2_m2m_ctx {
+     /* ... */
+        /* Capture (output to memory) queue context */
+        struct v4l2_m2m_queue_ctx       cap_q_ctx;
+
+        /* Output (input from memory) queue context */
+        struct v4l2_m2m_queue_ctx       out_q_ctx;
+     /* ... */
+};
+
+Streamon can be called for all instances and will not sleep if another instance
+is streaming.
+
+vidioc_querycap() should report V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_VIDEO_OUTPUT.
+
+-------------------------------------------------------------------------------
+Queuing and dequeuing buffers
+-------------------------------------------------------------------------------
+Applications can queue as many buffers as they want and it is not required to
+queue an equal number of source and destination buffers. If there is not enough
+buffers of any type, a new transaction will simply not be scheduled.
+
+-------------------------------------------------------------------------------
+Source and destination formats
+-------------------------------------------------------------------------------
+Should be set per queue. A helper function to access queues depending on the
+passed type - v4l2_m2m_get_vq() - is supplied. Most of the format-handling code
+is normally located in drivers anyway. The only exception is the "field" member
+of the videobuf_queue struct, which has to be set directly. It breaks
+encapsulation a little bit, but nothing can be done with it.
+
+-------------------------------------------------------------------------------
+Scheduling
+-------------------------------------------------------------------------------
+Requirements/assumptions:
+1. More than one instance can be open at the same time.
+2. Each instance periodically receives exclusive access to the device, performs
+an operation (operations) and yields back the device in a state that allows
+other instances to use it.
+3. When an instance gets access to the device, it performs a
+"transaction"/"job". A transaction/job is defined as the shortest operation
+that cannot/should not be further divided without having to restart it from
+scratch, or without having to perform expensive reconfiguration of a device,
+etc.
+4. Transactions can use multiple source/destination buffers.
+5. Only a driver can tell when it is ready to perform a transaction, so
+a optional callback is provided for that purpose (job_ready()).
+
+
+There are three common requirements for a transaction to be ready to run:
+- at least one source buffer ready
+- at least one destination buffer ready
+- streaming on
+- (optional) driver-specific requirements (driver-specific callback function)
+
+So when buffers are queued by qbuf() or streaming is turned on with
+streamon(), the framework calls v4l2_m2m_try_schedule().
+
+v4l2_m2m_try_schedule()
+1. Checks for the above conditions.
+2. Checks for driver-specific conditions by calling job_ready() callback, if
+supplied.
+3. If all the checks succeed, it calls v4l2_m2m_schedule() to schedule the
+transaction.
+
+v4l2_m2m_schedule()
+1. Checks whether the transaction is already on job queue and schedules it
+if not (by adding it to the job queue).
+2. Calls v4l2_m2m_try_run().
+
+v4l2_m2m_try_run()
+1. Runs a job if and is pending and none is currently running by calling
+device_run() callback.
+
+When the device_run() callback is called, the driver has to begin the
+transaction. When it is finished, the driver has to call v4l2_m2m_job_finish().
+
+v4l2_m2m_job_finish()
+1. Removes the currently running transaction from the job queue and calls
+v4l2_m2m_try_run to (possibly) run the next pending transaction.
+
+There is also support for forced transaction aborting (when an application
+gets killed). The framework calls job_abort() callback and the driver has
+to abort the transaction as soon as possible and call v4l2_m2m_job_finish()
+to indicate that the transaction has been aborted.
+
+
+Additionally, some kind of timeout for transactions could be added to prevent
+instances from claiming the device for too long.
+
+-------------------------------------------------------------------------------
+Acquiring ready buffers to process
+-------------------------------------------------------------------------------
+Ready buffers can be acquired using v4l2_m2m_next_src_buf()/
+v4l2_m2m_next_dst_buf(). After the transaction they are removed from the queues
+with v4l2_m2m_dst_buf_remove()/v4l2_m2m_src_buf_remove(). This is not
+multi-buffer-transaction-safe. It will have to be modified, but ideally after
+we decide how to handle multi-buffer transactions in videobuf core.
+
+-------------------------------------------------------------------------------
+poll()
+-------------------------------------------------------------------------------
+We cannot have poll() for multiple queues on one node, so we use poll() for the
+destination queue only.
+
+-------------------------------------------------------------------------------
+mmap()
+-------------------------------------------------------------------------------
+Requirements:
+- allow mapping buffers from different queues
+- retain "magic" offset values so videobuf can still match buffers by offsets
+
+The proposed solution involves a querybuf() and mmap() multiplexers:
+
+a) When a driver calls querybuf(), we have access to the type and we can
+detect which queue to call videobuf_querybuf() on:
+
+        vq = v4l2_m2m_get_vq(m2m_ctx, buf->type);
+        ret = videobuf_querybuf(vq, buf);
+
+The offsets returned from videobuf_querybuf() for one of the queues are further
+offset by a predefined constant (DST_QUEUE_OFF_BASE). This way the driver
+(and applications) receive different offsets for the same buffer indexes of
+each queue:
+
+        if (buf->memory == V4L2_MEMORY_MMAP
+            && vq->type == V4L2_BUF_TYPE_VIDEO_CAPTURE) {
+                buf->m.offset += DST_QUEUE_OFF_BASE;
+        }
+
+
+b) When the application (driver) calls mmap(), the offsets which were modified
+in querybuf() are detected and the proper queue for them chosen based on that.
+Finally, the modified offsets are passed to videobuf_mmap_mapper() for proper
+queues with their offsets changed back to values recognizable by videobuf:
+
+        unsigned long offset = vma->vm_pgoff << PAGE_SHIFT;
+        struct videobuf_queue *vq;
+
+        if (offset < DST_QUEUE_OFF_BASE) {
+                vq = v4l2_m2m_get_src_vq(m2m_ctx);
+        } else {
+                vq = v4l2_m2m_get_dst_vq(m2m_ctx);
+                vma->vm_pgoff -= (DST_QUEUE_OFF_BASE >> PAGE_SHIFT);
+        }
+
+        return videobuf_mmap_mapper(vq, vma);
+
+
+-------------------------------------------------------------------------------
+Test device and a userspace application
+-------------------------------------------------------------------------------
+mem2mem_testdev.c is a test driver for the framework. It uses timers for fake
+interrupts and allows testing transaction with different number of buffers
+and transaction durations simultaneously.
+
+process-vmalloc.c is a capture+output test application for the test device.
+
+-------------------------------------------------------------------------------
+Future work
+-------------------------------------------------------------------------------
+- read/write support
+- transaction/abort timeouts
+- extracting more common code to the framework? (e.g. per-queue format details,
+transaction length, etc.)
+
+
+Best regards
+--
+Pawel Osciak
+Linux Platform Group
+Samsung Poland R&D Center
