@@ -1,54 +1,48 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: request pull: bjdooks' samsung fixes
-Date: Mon, 4 Jan 2010 10:27:13 +0900
-Message-ID: <20100104012713.GA29175@ben-laptop.fluff.org>
+From: Webmaster <noreply@ebuppies.com>
+Subject: Request for confirmation
+Date: Mon, 4 Jan 2010 17:21:36 -0500
+Message-ID: <29c0a8615fe442baf78071394353119f@mail.ebuppies.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from [121.136.51.252] ([121.136.51.252]:47227 "EHLO ben-laptop"
-	rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751359Ab0ADCCg (ORCPT
+Received: from alona.agustinaradleylinux.net ([216.246.1.26]:38350 "EHLO
+	server.ebuppies.com" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
+	with ESMTP id S1754002Ab0ADWVk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 Jan 2010 21:02:36 -0500
-Content-Disposition: inline
+	Mon, 4 Jan 2010 17:21:40 -0500
+Received: from localhost ([127.0.0.1]:44786 helo=mail.ebuppies.com)
+	by server.ebuppies.com with esmtpa (Exim 4.69)
+	(envelope-from <bounces@ebuppies.com>)
+	id 1NRvIu-0007Iu-A9
+	for linux-samsung-soc@vger.kernel.org; Mon, 04 Jan 2010 17:21:36 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.arm.linux.org.uk, linux-samsung-soc@vger.kernel.org, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-Fixes for a couple of problems with the current ARM Samsung builds:
+Sorry to bother you: we are cleaning up our database and it appears that
+you have previously signed up to eBuppies.com mailinglists and not
+confirmed your subscription.We would like to give you the opportunity to
+re-confirm your subscription. The instructions on how to confirm are below.
+ 
 
-- touchscreen driver missing header files
-- osiris and bast printing errors on non-existant custom fit nand devices
+  Almost welcome to our newsletter(s) ...
 
-This is a slimed-down version of the previous pull request that seems to
-have been ignored.
+  Someone, hopefully you, has subscribed your email address to the
+following newsletters:
+  
+  
 
-The following changes since commit 45d28b097280a78893ce25a5d0db41e6a2717853:
-  Linus Torvalds (1):
-        Merge branch 'reiserfs/kill-bkl' of git://git.kernel.org/.../frederic/random-tracing
+  If this is correct, please click the following link to confirm your
+subscription.
+  Without this confirmation, you will not receive any newsletters.
+  
+ 
+http://ebuppies.com/emailserv/?p=confirm&uid=aa3b3769ff4fc6b90e014f9b15a21a5a
+  
+  If this is not correct, you do not need to do anything, simply delete
+this message.
 
-are available in the git repository at:
-
-  git://git.fluff.org/bjdooks/linux.git for-linus/samsung
-
-Arnaud Patard (2):
-      ARM: S3C24XX: touchscreen device definition
-      ARM: S3C24XX: touchscreen device definition
-
-Ben Dooks (5):
-      ARM: mach-osiris: add NAND_SCAN_SILENT_NODEV to optional devices
-      ARM: mach-bast: add NAND_SCAN_SILENT_NODEV to optional devices
-      ARM: S3C: Fix NAND device registration by s3c_nand_set_platdata().
-      ARM: Merge next-simtec
-      ARM: Merge s3c24xx-updates2
-
- arch/arm/mach-s3c2410/include/mach/ts.h |   21 +++++++++++++++++++++
- arch/arm/mach-s3c2410/mach-bast.c       |    3 +++
- arch/arm/mach-s3c2410/mach-h1940.c      |    8 ++++++++
- arch/arm/mach-s3c2440/mach-osiris.c     |    2 ++
- arch/arm/plat-s3c/dev-nand.c            |    4 +++-
- arch/arm/plat-s3c/include/plat/devs.h   |    1 +
- arch/arm/plat-s3c24xx/devs.c            |   18 ++++++++++++++++++
- arch/arm/plat-s3c24xx/s3c244x.c         |    1 +
- 8 files changed, 57 insertions(+), 1 deletions(-)
- create mode 100644 arch/arm/mach-s3c2410/include/mach/ts.h
+  Thank you
+  
+    
