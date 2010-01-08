@@ -1,12 +1,12 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [S3C-CLK] ARM: SAMSUNG: Add core clock implementation for clksrc based clocks
-Date: Fri,  8 Jan 2010 02:30:13 +0000
-Message-ID: <1262917822-26004-6-git-send-email-ben-linux@fluff.org>
+Subject: [S3C-CLK] ARM: S3C64XX: Compress s3c6400-clock.c code
+Date: Fri,  8 Jan 2010 02:30:12 +0000
+Message-ID: <1262917822-26004-5-git-send-email-ben-linux@fluff.org>
 References: <1262917822-26004-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:57247 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:57258 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752181Ab0AHCa1 (ORCPT
+	id S1751076Ab0AHCa1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Thu, 7 Jan 2010 21:30:27 -0500
 In-Reply-To: <1262917822-26004-1-git-send-email-ben-linux@fluff.org>
@@ -14,314 +14,429 @@ Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-From: Harald Welte <laforge@gnumonks.org>
+The individually named clocks are all static to the code
+and thus can be compressed into a single array and then
+the array can be referenced. This removes the need for
+a seperate array of pointers to clocks.
 
-Add a core for the clksrc clock implementation, which is found in many of
-the newer Samsung SoCs into plat-samsung.
+Fix a minor problem of re-initialising the pointers in
+s3c6400_set_clksrc() as this is also called by the cpufreq
+code. Move these initialisations to the code that does the
+registration.
 
-Signed-off-by: Harald Welte <laforge@gnumonks.org>
-[ben-linux@fluff.org: split from original patch to make change smaller]
-[ben-linux@fluff.org: split clk and clksrc changes]
-[ben-linux@fluff.org: moved to plat-samsung from plat-s3c]
-[ben-linux@fluff.org: re-wrote headers after splits]
-[ben-linux@fluff.org: added better documentation to headers]
+Based on Harald Welte's original clock changes patch.
+
 Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/plat-samsung/Kconfig                     |    5 +
- arch/arm/plat-samsung/Makefile                    |    1 +
- arch/arm/plat-samsung/clock-clksrc.c              |  177 +++++++++++++++++++++
- arch/arm/plat-samsung/include/plat/clock-clksrc.h |   75 +++++++++
- 4 files changed, 258 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/plat-samsung/clock-clksrc.c
- create mode 100644 arch/arm/plat-samsung/include/plat/clock-clksrc.h
+ arch/arm/plat-s3c64xx/s3c6400-clock.c |  334 +++++++++++++++------------------
+ 1 files changed, 154 insertions(+), 180 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 486a0d6..e3ae684 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -13,5 +13,10 @@ config PLAT_SAMSUNG
+diff --git a/arch/arm/plat-s3c64xx/s3c6400-clock.c b/arch/arm/plat-s3c64xx/s3c6400-clock.c
+index aba08c7..6fde910 100644
+--- a/arch/arm/plat-s3c64xx/s3c6400-clock.c
++++ b/arch/arm/plat-s3c64xx/s3c6400-clock.c
+@@ -255,7 +255,6 @@ static struct clk_sources clkset_uhost = {
+ 	.nr_sources	= ARRAY_SIZE(clkset_uhost_list),
+ };
  
- if PLAT_SAMSUNG
+-
+ /* The peripheral clocks are all controlled via clocksource followed
+  * by an optional divider and gate stage. We currently roll this into
+  * one clock which hides the intermediate clock from the mux.
+@@ -354,105 +353,7 @@ static unsigned long s3c64xx_roundrate_clksrc(struct clk *clk,
+ 	return rate;
+ }
  
-+config SAMSUNG_CLKSRC
-+	bool
-+	help
-+	  Select the clock code for the clksrc implementation
-+	  used by newer systems such as the S3C64XX.
+-static struct clksrc_clk clk_mmc0 = {
+-	.clk	= {
+-		.name		= "mmc_bus",
+-		.id		= 0,
+-		.ctrlbit        = S3C_CLKCON_SCLK_MMC0,
+-		.enable		= s3c64xx_sclk_ctrl,
+-	},
+-	.shift		= S3C6400_CLKSRC_MMC0_SHIFT,
+-	.mask		= S3C6400_CLKSRC_MMC0_MASK,
+-	.sources	= &clkset_spi_mmc,
+-	.divider_shift	= S3C6400_CLKDIV1_MMC0_SHIFT,
+-	.reg_divider	= S3C_CLK_DIV1,
+-};
+-
+-static struct clksrc_clk clk_mmc1 = {
+-	.clk	= {
+-		.name		= "mmc_bus",
+-		.id		= 1,
+-		.ctrlbit        = S3C_CLKCON_SCLK_MMC1,
+-		.enable		= s3c64xx_sclk_ctrl,
+-	},
+-	.shift		= S3C6400_CLKSRC_MMC1_SHIFT,
+-	.mask		= S3C6400_CLKSRC_MMC1_MASK,
+-	.sources	= &clkset_spi_mmc,
+-	.divider_shift	= S3C6400_CLKDIV1_MMC1_SHIFT,
+-	.reg_divider	= S3C_CLK_DIV1,
+-};
+-
+-static struct clksrc_clk clk_mmc2 = {
+-	.clk	= {
+-		.name		= "mmc_bus",
+-		.id		= 2,
+-		.ctrlbit        = S3C_CLKCON_SCLK_MMC2,
+-		.enable		= s3c64xx_sclk_ctrl,
+-	},
+-	.shift		= S3C6400_CLKSRC_MMC2_SHIFT,
+-	.mask		= S3C6400_CLKSRC_MMC2_MASK,
+-	.sources	= &clkset_spi_mmc,
+-	.divider_shift	= S3C6400_CLKDIV1_MMC2_SHIFT,
+-	.reg_divider	= S3C_CLK_DIV1,
+-};
+-
+-static struct clksrc_clk clk_usbhost = {
+-	.clk	= {
+-		.name		= "usb-bus-host",
+-		.id		= -1,
+-		.ctrlbit        = S3C_CLKCON_SCLK_UHOST,
+-		.enable		= s3c64xx_sclk_ctrl,
+-	},
+-	.shift		= S3C6400_CLKSRC_UHOST_SHIFT,
+-	.mask		= S3C6400_CLKSRC_UHOST_MASK,
+-	.sources	= &clkset_uhost,
+-	.divider_shift	= S3C6400_CLKDIV1_UHOST_SHIFT,
+-	.reg_divider	= S3C_CLK_DIV1,
+-};
+-
+-static struct clksrc_clk clk_uart_uclk1 = {
+-	.clk	= {
+-		.name		= "uclk1",
+-		.id		= -1,
+-		.ctrlbit        = S3C_CLKCON_SCLK_UART,
+-		.enable		= s3c64xx_sclk_ctrl,
+-	},
+-	.shift		= S3C6400_CLKSRC_UART_SHIFT,
+-	.mask		= S3C6400_CLKSRC_UART_MASK,
+-	.sources	= &clkset_uart,
+-	.divider_shift	= S3C6400_CLKDIV2_UART_SHIFT,
+-	.reg_divider	= S3C_CLK_DIV2,
+-};
+-
+-/* Where does UCLK0 come from? */
+-
+-static struct clksrc_clk clk_spi0 = {
+-	.clk	= {
+-		.name		= "spi-bus",
+-		.id		= 0,
+-		.ctrlbit        = S3C_CLKCON_SCLK_SPI0,
+-		.enable		= s3c64xx_sclk_ctrl,
+-	},
+-	.shift		= S3C6400_CLKSRC_SPI0_SHIFT,
+-	.mask		= S3C6400_CLKSRC_SPI0_MASK,
+-	.sources	= &clkset_spi_mmc,
+-	.divider_shift	= S3C6400_CLKDIV2_SPI0_SHIFT,
+-	.reg_divider	= S3C_CLK_DIV2,
+-};
+-
+-static struct clksrc_clk clk_spi1 = {
+-	.clk	= {
+-		.name		= "spi-bus",
+-		.id		= 1,
+-		.ctrlbit        = S3C_CLKCON_SCLK_SPI1,
+-		.enable		= s3c64xx_sclk_ctrl,
+-	},
+-	.shift		= S3C6400_CLKSRC_SPI1_SHIFT,
+-	.mask		= S3C6400_CLKSRC_SPI1_MASK,
+-	.sources	= &clkset_spi_mmc,
+-	.divider_shift	= S3C6400_CLKDIV2_SPI1_SHIFT,
+-	.reg_divider	= S3C_CLK_DIV2,
+-};
++/* clocks that feed other parts of the clock source tree */
  
- endif
-diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-index 4478b9f..ce736ce 100644
---- a/arch/arm/plat-samsung/Makefile
-+++ b/arch/arm/plat-samsung/Makefile
-@@ -9,3 +9,4 @@ obj-m				:=
- obj-n				:= dummy.o
- obj-				:=
+ static struct clk clk_iis_cd0 = {
+ 	.name		= "iis_cdclk0",
+@@ -482,20 +383,6 @@ static struct clk_sources clkset_audio0 = {
+ 	.nr_sources	= ARRAY_SIZE(clkset_audio0_list),
+ };
  
-+obj-$(CONFIG_SAMSUNG_CLKSRC)	+= clock-clksrc.o
-diff --git a/arch/arm/plat-samsung/clock-clksrc.c b/arch/arm/plat-samsung/clock-clksrc.c
-new file mode 100644
-index 0000000..5872f0b
---- /dev/null
-+++ b/arch/arm/plat-samsung/clock-clksrc.c
-@@ -0,0 +1,177 @@
-+/* linux/arch/arm/plat-samsung/clock-clksrc.c
-+ *
-+ * Copyright 2008 Simtec Electronics
-+ *	Ben Dooks <ben@simtec.co.uk>
-+ *	http://armlinux.simtec.co.uk/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
+-static struct clksrc_clk clk_audio0 = {
+-	.clk	= {
+-		.name		= "audio-bus",
+-		.id		= 0,
+-		.ctrlbit        = S3C_CLKCON_SCLK_AUDIO0,
+-		.enable		= s3c64xx_sclk_ctrl,
+-	},
+-	.shift		= S3C6400_CLKSRC_AUDIO0_SHIFT,
+-	.mask		= S3C6400_CLKSRC_AUDIO0_MASK,
+-	.sources	= &clkset_audio0,
+-	.divider_shift	= S3C6400_CLKDIV2_AUDIO0_SHIFT,
+-	.reg_divider	= S3C_CLK_DIV2,
+-};
+-
+ static struct clk *clkset_audio1_list[] = {
+ 	[0] = &clk_mout_epll.clk,
+ 	[1] = &clk_dout_mpll,
+@@ -509,34 +396,6 @@ static struct clk_sources clkset_audio1 = {
+ 	.nr_sources	= ARRAY_SIZE(clkset_audio1_list),
+ };
+ 
+-static struct clksrc_clk clk_audio1 = {
+-	.clk	= {
+-		.name		= "audio-bus",
+-		.id		= 1,
+-		.ctrlbit        = S3C_CLKCON_SCLK_AUDIO1,
+-		.enable		= s3c64xx_sclk_ctrl,
+-	},
+-	.shift		= S3C6400_CLKSRC_AUDIO1_SHIFT,
+-	.mask		= S3C6400_CLKSRC_AUDIO1_MASK,
+-	.sources	= &clkset_audio1,
+-	.divider_shift	= S3C6400_CLKDIV2_AUDIO1_SHIFT,
+-	.reg_divider	= S3C_CLK_DIV2,
+-};
+-
+-static struct clksrc_clk clk_irda = {
+-	.clk	= {
+-		.name		= "irda-bus",
+-		.id		= 0,
+-		.ctrlbit        = S3C_CLKCON_SCLK_IRDA,
+-		.enable		= s3c64xx_sclk_ctrl,
+-	},
+-	.shift		= S3C6400_CLKSRC_IRDA_SHIFT,
+-	.mask		= S3C6400_CLKSRC_IRDA_MASK,
+-	.sources	= &clkset_irda,
+-	.divider_shift	= S3C6400_CLKDIV2_IRDA_SHIFT,
+-	.reg_divider	= S3C_CLK_DIV2,
+-};
+-
+ static struct clk *clkset_camif_list[] = {
+ 	&clk_h2,
+ };
+@@ -546,18 +405,141 @@ static struct clk_sources clkset_camif = {
+ 	.nr_sources	= ARRAY_SIZE(clkset_camif_list),
+ };
+ 
+-static struct clksrc_clk clk_camif = {
+-	.clk	= {
+-		.name		= "camera",
+-		.id		= -1,
+-		.ctrlbit        = S3C_CLKCON_SCLK_CAM,
+-		.enable		= s3c64xx_sclk_ctrl,
++static struct clksrc_clk clksrcs[] = {
++	{
++		.clk	= {
++			.name		= "mmc_bus",
++			.id		= 0,
++			.ctrlbit        = S3C_CLKCON_SCLK_MMC0,
++			.enable		= s3c64xx_sclk_ctrl,
++		},
++		.shift		= S3C6400_CLKSRC_MMC0_SHIFT,
++		.mask		= S3C6400_CLKSRC_MMC0_MASK,
++		.sources	= &clkset_spi_mmc,
++		.divider_shift	= S3C6400_CLKDIV1_MMC0_SHIFT,
++		.reg_divider	= S3C_CLK_DIV1,
++	}, {
++		.clk	= {
++			.name		= "mmc_bus",
++			.id		= 1,
++			.ctrlbit        = S3C_CLKCON_SCLK_MMC1,
++			.enable		= s3c64xx_sclk_ctrl,
++		},
++		.shift		= S3C6400_CLKSRC_MMC1_SHIFT,
++		.mask		= S3C6400_CLKSRC_MMC1_MASK,
++		.sources	= &clkset_spi_mmc,
++		.divider_shift	= S3C6400_CLKDIV1_MMC1_SHIFT,
++		.reg_divider	= S3C_CLK_DIV1,
++	}, {
++		.clk	= {
++			.name		= "mmc_bus",
++			.id		= 2,
++			.ctrlbit        = S3C_CLKCON_SCLK_MMC2,
++			.enable		= s3c64xx_sclk_ctrl,
++		},
++		.shift		= S3C6400_CLKSRC_MMC2_SHIFT,
++		.mask		= S3C6400_CLKSRC_MMC2_MASK,
++		.sources	= &clkset_spi_mmc,
++		.divider_shift	= S3C6400_CLKDIV1_MMC2_SHIFT,
++		.reg_divider	= S3C_CLK_DIV1,
++	}, {
++		.clk	= {
++			.name		= "usb-bus-host",
++			.id		= -1,
++			.ctrlbit        = S3C_CLKCON_SCLK_UHOST,
++			.enable		= s3c64xx_sclk_ctrl,
++		},
++		.shift		= S3C6400_CLKSRC_UHOST_SHIFT,
++		.mask		= S3C6400_CLKSRC_UHOST_MASK,
++		.sources	= &clkset_uhost,
++		.divider_shift	= S3C6400_CLKDIV1_UHOST_SHIFT,
++		.reg_divider	= S3C_CLK_DIV1,
++	}, {
++		.clk	= {
++			.name		= "uclk1",
++			.id		= -1,
++			.ctrlbit        = S3C_CLKCON_SCLK_UART,
++			.enable		= s3c64xx_sclk_ctrl,
++		},
++		.shift		= S3C6400_CLKSRC_UART_SHIFT,
++		.mask		= S3C6400_CLKSRC_UART_MASK,
++		.sources	= &clkset_uart,
++		.divider_shift	= S3C6400_CLKDIV2_UART_SHIFT,
++		.reg_divider	= S3C_CLK_DIV2,
++	}, {
++/* Where does UCLK0 come from? */
++		.clk	= {
++			.name		= "spi-bus",
++			.id		= 0,
++			.ctrlbit        = S3C_CLKCON_SCLK_SPI0,
++			.enable		= s3c64xx_sclk_ctrl,
++		},
++		.shift		= S3C6400_CLKSRC_SPI0_SHIFT,
++		.mask		= S3C6400_CLKSRC_SPI0_MASK,
++		.sources	= &clkset_spi_mmc,
++		.divider_shift	= S3C6400_CLKDIV2_SPI0_SHIFT,
++		.reg_divider	= S3C_CLK_DIV2,
++	}, {
++		.clk	= {
++			.name		= "spi-bus",
++			.id		= 1,
++			.ctrlbit        = S3C_CLKCON_SCLK_SPI1,
++			.enable		= s3c64xx_sclk_ctrl,
++		},
++		.shift		= S3C6400_CLKSRC_SPI1_SHIFT,
++		.mask		= S3C6400_CLKSRC_SPI1_MASK,
++		.sources	= &clkset_spi_mmc,
++		.divider_shift	= S3C6400_CLKDIV2_SPI1_SHIFT,
++		.reg_divider	= S3C_CLK_DIV2,
++	}, {
++		.clk	= {
++			.name		= "audio-bus",
++			.id		= 0,
++			.ctrlbit        = S3C_CLKCON_SCLK_AUDIO0,
++			.enable		= s3c64xx_sclk_ctrl,
++		},
++		.shift		= S3C6400_CLKSRC_AUDIO0_SHIFT,
++		.mask		= S3C6400_CLKSRC_AUDIO0_MASK,
++		.sources	= &clkset_audio0,
++		.divider_shift	= S3C6400_CLKDIV2_AUDIO0_SHIFT,
++		.reg_divider	= S3C_CLK_DIV2,
++	}, {
++		.clk	= {
++			.name		= "audio-bus",
++			.id		= 1,
++			.ctrlbit        = S3C_CLKCON_SCLK_AUDIO1,
++			.enable		= s3c64xx_sclk_ctrl,
++		},
++		.shift		= S3C6400_CLKSRC_AUDIO1_SHIFT,
++		.mask		= S3C6400_CLKSRC_AUDIO1_MASK,
++		.sources	= &clkset_audio1,
++		.divider_shift	= S3C6400_CLKDIV2_AUDIO1_SHIFT,
++		.reg_divider	= S3C_CLK_DIV2,
++	}, {
++		.clk	= {
++			.name		= "irda-bus",
++			.id		= 0,
++			.ctrlbit        = S3C_CLKCON_SCLK_IRDA,
++			.enable		= s3c64xx_sclk_ctrl,
++		},
++		.shift		= S3C6400_CLKSRC_IRDA_SHIFT,
++		.mask		= S3C6400_CLKSRC_IRDA_MASK,
++		.sources	= &clkset_irda,
++		.divider_shift	= S3C6400_CLKDIV2_IRDA_SHIFT,
++		.reg_divider	= S3C_CLK_DIV2,
++	}, {
++		.clk	= {
++			.name		= "camera",
++			.id		= -1,
++			.ctrlbit        = S3C_CLKCON_SCLK_CAM,
++			.enable		= s3c64xx_sclk_ctrl,
++		},
++		.shift		= 0,
++		.mask		= 0,
++		.sources	= &clkset_camif,
++		.divider_shift	= S3C6400_CLKDIV0_CAM_SHIFT,
++		.reg_divider	= S3C_CLK_DIV0,
+ 	},
+-	.shift		= 0,
+-	.mask		= 0,
+-	.sources	= &clkset_camif,
+-	.divider_shift	= S3C6400_CLKDIV0_CAM_SHIFT,
+-	.reg_divider	= S3C_CLK_DIV0,
+ };
+ 
+ /* Clock initialisation code */
+@@ -566,17 +548,6 @@ static struct clksrc_clk *init_parents[] = {
+ 	&clk_mout_apll,
+ 	&clk_mout_epll,
+ 	&clk_mout_mpll,
+-	&clk_mmc0,
+-	&clk_mmc1,
+-	&clk_mmc2,
+-	&clk_usbhost,
+-	&clk_uart_uclk1,
+-	&clk_spi0,
+-	&clk_spi1,
+-	&clk_audio0,
+-	&clk_audio1,
+-	&clk_irda,
+-	&clk_camif,
+ };
+ 
+ static void __init_or_cpufreq s3c6400_set_clksrc(struct clksrc_clk *clk)
+@@ -593,11 +564,6 @@ static void __init_or_cpufreq s3c6400_set_clksrc(struct clksrc_clk *clk)
+ 		return;
+ 	}
+ 
+-	clk->clk.get_rate = s3c64xx_getrate_clksrc;
+-	clk->clk.set_rate = s3c64xx_setrate_clksrc;
+-	clk->clk.set_parent = s3c64xx_setparent_clksrc;
+-	clk->clk.round_rate = s3c64xx_roundrate_clksrc;
+-
+ 	clk->clk.parent = srcs->sources[clksrc];
+ 
+ 	printk(KERN_INFO "%s: source is %s (%d), rate is %ld\n",
+@@ -664,6 +630,9 @@ void __init_or_cpufreq s3c6400_setup_clocks(void)
+ 
+ 	for (ptr = 0; ptr < ARRAY_SIZE(init_parents); ptr++)
+ 		s3c6400_set_clksrc(init_parents[ptr]);
 +
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/list.h>
-+#include <linux/errno.h>
-+#include <linux/err.h>
-+#include <linux/clk.h>
-+#include <linux/sysdev.h>
-+#include <linux/io.h>
++	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
++		s3c6400_set_clksrc(&clksrcs[ptr]);
+ }
+ 
+ static struct clk *clks[] __initdata = {
+@@ -674,17 +643,6 @@ static struct clk *clks[] __initdata = {
+ 	&clk_mout_epll.clk,
+ 	&clk_mout_mpll.clk,
+ 	&clk_dout_mpll,
+-	&clk_mmc0.clk,
+-	&clk_mmc1.clk,
+-	&clk_mmc2.clk,
+-	&clk_usbhost.clk,
+-	&clk_uart_uclk1.clk,
+-	&clk_spi0.clk,
+-	&clk_spi1.clk,
+-	&clk_audio0.clk,
+-	&clk_audio1.clk,
+-	&clk_irda.clk,
+-	&clk_camif.clk,
+ 	&clk_arm,
+ };
+ 
+@@ -716,4 +674,20 @@ void __init s3c6400_register_clocks(unsigned armclk_divlimit)
+ 			       clkp->name, ret);
+ 		}
+ 	}
 +
-+#include <plat/clock.h>
-+#include <plat/clock-clksrc.h>
-+#include <plat/cpu-freq.h>
++	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++) {
++		clkp = &clksrcs[ptr].clk;
 +
-+static inline struct clksrc_clk *to_clksrc(struct clk *clk)
-+{
-+	return container_of(clk, struct clksrc_clk, clk);
-+}
++		/* all clksrc clocks have these */
++		clkp->get_rate = s3c64xx_getrate_clksrc;
++		clkp->set_rate = s3c64xx_setrate_clksrc;
++		clkp->set_parent = s3c64xx_setparent_clksrc;
++		clkp->round_rate = s3c64xx_roundrate_clksrc;
 +
-+static inline u32 bit_mask(u32 shift, u32 nr_bits)
-+{
-+	u32 mask = 0xffffffff >> (32 - nr_bits);
-+
-+	return mask << shift;
-+}
-+
-+static unsigned long s3c_getrate_clksrc(struct clk *clk)
-+{
-+	struct clksrc_clk *sclk = to_clksrc(clk);
-+	unsigned long rate = clk_get_rate(clk->parent);
-+	u32 clkdiv = __raw_readl(sclk->reg_div.reg);
-+	u32 mask = bit_mask(sclk->reg_div.shift, sclk->reg_div.size);
-+
-+	clkdiv &= mask;
-+	clkdiv >>= sclk->reg_div.shift;
-+	clkdiv++;
-+
-+	rate /= clkdiv;
-+	return rate;
-+}
-+
-+static int s3c_setrate_clksrc(struct clk *clk, unsigned long rate)
-+{
-+	struct clksrc_clk *sclk = to_clksrc(clk);
-+	void __iomem *reg = sclk->reg_div.reg;
-+	unsigned int div;
-+	u32 mask = bit_mask(sclk->reg_div.shift, sclk->reg_div.size);
-+	u32 val;
-+
-+	rate = clk_round_rate(clk, rate);
-+	div = clk_get_rate(clk->parent) / rate;
-+	if (div > 16)
-+		return -EINVAL;
-+
-+	val = __raw_readl(reg);
-+	val &= ~mask;
-+	val |= (div - 1) << sclk->reg_div.shift;
-+	__raw_writel(val, reg);
-+
-+	return 0;
-+}
-+
-+static int s3c_setparent_clksrc(struct clk *clk, struct clk *parent)
-+{
-+	struct clksrc_clk *sclk = to_clksrc(clk);
-+	struct clksrc_sources *srcs = sclk->sources;
-+	u32 clksrc = __raw_readl(sclk->reg_src.reg);
-+	u32 mask = bit_mask(sclk->reg_src.shift, sclk->reg_src.size);
-+	int src_nr = -1;
-+	int ptr;
-+
-+	for (ptr = 0; ptr < srcs->nr_sources; ptr++)
-+		if (srcs->sources[ptr] == parent) {
-+			src_nr = ptr;
-+			break;
-+		}
-+
-+	if (src_nr >= 0 && sclk->reg_src.reg) {
-+		clk->parent = parent;
-+
-+		clksrc &= ~mask;
-+		clksrc |= src_nr << sclk->reg_src.shift;
-+
-+		__raw_writel(clksrc, sclk->reg_src.reg);
-+		return 0;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static unsigned long s3c_roundrate_clksrc(struct clk *clk,
-+					      unsigned long rate)
-+{
-+	unsigned long parent_rate = clk_get_rate(clk->parent);
-+	int div;
-+
-+	if (rate >= parent_rate)
-+		rate = parent_rate;
-+	else {
-+		div = parent_rate / rate;
-+		if (parent_rate % rate)
-+			div++;
-+
-+		if (div == 0)
-+			div = 1;
-+		if (div > 16)
-+			div = 16;
-+
-+		rate = parent_rate / div;
-+	}
-+
-+	return rate;
-+}
-+
-+/* Clock initialisation code */
-+
-+void __init_or_cpufreq s3c_set_clksrc(struct clksrc_clk *clk)
-+{
-+	struct clksrc_sources *srcs = clk->sources;
-+	u32 mask = bit_mask(clk->reg_src.shift, clk->reg_src.size);
-+	u32 clksrc = 0;
-+
-+	if (clk->reg_src.reg)
-+		clksrc = __raw_readl(clk->reg_src.reg);
-+
-+	clksrc &= mask;
-+	clksrc >>= clk->reg_src.shift;
-+
-+	if (clksrc > srcs->nr_sources || !srcs->sources[clksrc]) {
-+		printk(KERN_ERR "%s: bad source %d\n",
-+		       clk->clk.name, clksrc);
-+		return;
-+	}
-+
-+	clk->clk.parent = srcs->sources[clksrc];
-+
-+	printk(KERN_INFO "%s: source is %s (%d), rate is %ld\n",
-+	       clk->clk.name, clk->clk.parent->name, clksrc,
-+	       clk_get_rate(&clk->clk));
-+}
-+
-+void __init s3c_register_clksrc(struct clksrc_clk *clksrc, int size)
-+{
-+	int ret;
-+
-+	for (; size > 0; size--, clksrc++) {
-+		/* fill in the default functions */
-+		if (!clksrc->clk.set_parent)
-+			clksrc->clk.set_parent = s3c_setparent_clksrc;
-+		if (!clksrc->clk.get_rate)
-+			clksrc->clk.get_rate = s3c_getrate_clksrc;
-+		if (!clksrc->clk.set_rate)
-+			clksrc->clk.set_rate = s3c_setrate_clksrc;
-+		if (!clksrc->clk.round_rate)
-+			clksrc->clk.round_rate = s3c_roundrate_clksrc;
-+
-+		s3c_set_clksrc(clksrc);
-+
-+		ret = s3c24xx_register_clock(&clksrc->clk);
-+
++		ret = s3c24xx_register_clock(clkp);
 +		if (ret < 0) {
-+			printk(KERN_ERR "%s: failed to register %s (%d)\n",
-+			       __func__, clksrc->clk.name, ret);
++			printk(KERN_ERR "Failed to register clock %s (%d)\n",
++			       clkp->name, ret);
 +		}
 +	}
-+}
-diff --git a/arch/arm/plat-samsung/include/plat/clock-clksrc.h b/arch/arm/plat-samsung/include/plat/clock-clksrc.h
-new file mode 100644
-index 0000000..283dfa0
---- /dev/null
-+++ b/arch/arm/plat-samsung/include/plat/clock-clksrc.h
-@@ -0,0 +1,75 @@
-+/* linux/arch/arm/plat-samsung/include/plat/clock-clksrc.h
-+ *
-+ * Parts taken from arch/arm/plat-s3c64xx/clock.c
-+ *	Copyright 2008 Openmoko, Inc.
-+ *	Copyright 2008 Simtec Electronics
-+ *		Ben Dooks <ben@simtec.co.uk>
-+ *		http://armlinux.simtec.co.uk/
-+ *
-+ * Copyright 2009 Ben Dooks <ben-linux@fluff.org>
-+ * Copyright 2009 Harald Welte
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/**
-+ * struct clksrc_sources - list of sources for a given clock
-+ * @sources: array of pointers to clocks
-+ * @nr_sources: The size of @sources
-+ */
-+struct clksrc_sources {
-+	unsigned int	nr_sources;
-+	struct clk	**sources;
-+};
-+
-+/**
-+ * struct clksrc_reg - register definition for clock control bits
-+ * @reg: pointer to the register in virtual memory.
-+ * @shift: the shift in bits to where the bitfield is.
-+ * @size: the size in bits of the bitfield.
-+ *
-+ * This specifies the size and position of the bits we are interested
-+ * in within the register specified by @reg.
-+ */
-+struct clksrc_reg {
-+	void __iomem		*reg;
-+	unsigned short		shift;
-+	unsigned short		size;
-+};
-+
-+/**
-+ * struct clksrc_clk - class of clock for newer style samsung devices.
-+ * @clk: the standard clock representation
-+ * @sources: the sources for this clock
-+ * @reg_src: the register definition for selecting the clock's source
-+ * @reg_div: the register definition for the clock's output divisor
-+ *
-+ * This clock implements the features required by the newer SoCs where
-+ * the standard clock block provides an input mux and a post-mux divisor
-+ * to provide the periperhal's clock.
-+ *
-+ * The array of @sources provides the mapping of mux position to the
-+ * clock, and @reg_src shows the code where to modify to change the mux
-+ * position. The @reg_div defines how to change the divider settings on
-+ * the output.
-+ */
-+struct clksrc_clk {
-+	struct clk		clk;
-+	struct clksrc_sources	*sources;
-+
-+	struct clksrc_reg	reg_src;
-+	struct clksrc_reg	reg_div;
-+};
-+
-+extern void s3c_set_clksrc(struct clksrc_clk *clk);
-+
-+/**
-+ * s3c_register_clksrc() register clocks from an array of clksrc clocks
-+ * @srcs: The array of clocks to register
-+ * @size: The size of the @srcs array.
-+ *
-+ * Initialise and register the array of clocks described by @srcs.
-+ */
-+extern void s3c_register_clksrc(struct clksrc_clk *srcs, int size);
+ }
 -- 
 1.6.0.4
