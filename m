@@ -1,12 +1,12 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [S3C-CLK] ARM: S3C64XX: Compress s3c6400-clock.c code
-Date: Fri,  8 Jan 2010 02:30:12 +0000
-Message-ID: <1262917822-26004-5-git-send-email-ben-linux@fluff.org>
+Subject: [S3C-CLK] ARM: S3C64XX: Cleanup common init code in s3c6400-clock.c
+Date: Fri,  8 Jan 2010 02:30:11 +0000
+Message-ID: <1262917822-26004-4-git-send-email-ben-linux@fluff.org>
 References: <1262917822-26004-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:57258 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:57255 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751076Ab0AHCa1 (ORCPT
+	id S1752280Ab0AHCa1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Thu, 7 Jan 2010 21:30:27 -0500
 In-Reply-To: <1262917822-26004-1-git-send-email-ben-linux@fluff.org>
@@ -14,429 +14,153 @@ Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-The individually named clocks are all static to the code
-and thus can be compressed into a single array and then
-the array can be referenced. This removes the need for
-a seperate array of pointers to clocks.
+Remove the four fields from clksrc_clk.clk which are always the same
+and init them when the clock is registered. This helps remove the amount
+of repeated code.
 
-Fix a minor problem of re-initialising the pointers in
-s3c6400_set_clksrc() as this is also called by the cpufreq
-code. Move these initialisations to the code that does the
-registration.
-
-Based on Harald Welte's original clock changes patch.
+This is a re-work of Harald Welte's clock changes for the latest kernel.
 
 Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/plat-s3c64xx/s3c6400-clock.c |  334 +++++++++++++++------------------
- 1 files changed, 154 insertions(+), 180 deletions(-)
+ arch/arm/plat-s3c64xx/s3c6400-clock.c |   49 +++-----------------------------
+ 1 files changed, 5 insertions(+), 44 deletions(-)
 
 diff --git a/arch/arm/plat-s3c64xx/s3c6400-clock.c b/arch/arm/plat-s3c64xx/s3c6400-clock.c
-index aba08c7..6fde910 100644
+index ffd56de..aba08c7 100644
 --- a/arch/arm/plat-s3c64xx/s3c6400-clock.c
 +++ b/arch/arm/plat-s3c64xx/s3c6400-clock.c
-@@ -255,7 +255,6 @@ static struct clk_sources clkset_uhost = {
- 	.nr_sources	= ARRAY_SIZE(clkset_uhost_list),
- };
- 
--
- /* The peripheral clocks are all controlled via clocksource followed
-  * by an optional divider and gate stage. We currently roll this into
-  * one clock which hides the intermediate clock from the mux.
-@@ -354,105 +353,7 @@ static unsigned long s3c64xx_roundrate_clksrc(struct clk *clk,
- 	return rate;
- }
- 
--static struct clksrc_clk clk_mmc0 = {
--	.clk	= {
--		.name		= "mmc_bus",
--		.id		= 0,
--		.ctrlbit        = S3C_CLKCON_SCLK_MMC0,
--		.enable		= s3c64xx_sclk_ctrl,
--	},
--	.shift		= S3C6400_CLKSRC_MMC0_SHIFT,
--	.mask		= S3C6400_CLKSRC_MMC0_MASK,
--	.sources	= &clkset_spi_mmc,
--	.divider_shift	= S3C6400_CLKDIV1_MMC0_SHIFT,
--	.reg_divider	= S3C_CLK_DIV1,
--};
--
--static struct clksrc_clk clk_mmc1 = {
--	.clk	= {
--		.name		= "mmc_bus",
--		.id		= 1,
--		.ctrlbit        = S3C_CLKCON_SCLK_MMC1,
--		.enable		= s3c64xx_sclk_ctrl,
--	},
--	.shift		= S3C6400_CLKSRC_MMC1_SHIFT,
--	.mask		= S3C6400_CLKSRC_MMC1_MASK,
--	.sources	= &clkset_spi_mmc,
--	.divider_shift	= S3C6400_CLKDIV1_MMC1_SHIFT,
--	.reg_divider	= S3C_CLK_DIV1,
--};
--
--static struct clksrc_clk clk_mmc2 = {
--	.clk	= {
--		.name		= "mmc_bus",
--		.id		= 2,
--		.ctrlbit        = S3C_CLKCON_SCLK_MMC2,
--		.enable		= s3c64xx_sclk_ctrl,
--	},
--	.shift		= S3C6400_CLKSRC_MMC2_SHIFT,
--	.mask		= S3C6400_CLKSRC_MMC2_MASK,
--	.sources	= &clkset_spi_mmc,
--	.divider_shift	= S3C6400_CLKDIV1_MMC2_SHIFT,
--	.reg_divider	= S3C_CLK_DIV1,
--};
--
--static struct clksrc_clk clk_usbhost = {
--	.clk	= {
--		.name		= "usb-bus-host",
--		.id		= -1,
--		.ctrlbit        = S3C_CLKCON_SCLK_UHOST,
--		.enable		= s3c64xx_sclk_ctrl,
--	},
--	.shift		= S3C6400_CLKSRC_UHOST_SHIFT,
--	.mask		= S3C6400_CLKSRC_UHOST_MASK,
--	.sources	= &clkset_uhost,
--	.divider_shift	= S3C6400_CLKDIV1_UHOST_SHIFT,
--	.reg_divider	= S3C_CLK_DIV1,
--};
--
--static struct clksrc_clk clk_uart_uclk1 = {
--	.clk	= {
--		.name		= "uclk1",
--		.id		= -1,
--		.ctrlbit        = S3C_CLKCON_SCLK_UART,
--		.enable		= s3c64xx_sclk_ctrl,
--	},
--	.shift		= S3C6400_CLKSRC_UART_SHIFT,
--	.mask		= S3C6400_CLKSRC_UART_MASK,
--	.sources	= &clkset_uart,
--	.divider_shift	= S3C6400_CLKDIV2_UART_SHIFT,
--	.reg_divider	= S3C_CLK_DIV2,
--};
--
--/* Where does UCLK0 come from? */
--
--static struct clksrc_clk clk_spi0 = {
--	.clk	= {
--		.name		= "spi-bus",
--		.id		= 0,
--		.ctrlbit        = S3C_CLKCON_SCLK_SPI0,
--		.enable		= s3c64xx_sclk_ctrl,
--	},
--	.shift		= S3C6400_CLKSRC_SPI0_SHIFT,
--	.mask		= S3C6400_CLKSRC_SPI0_MASK,
--	.sources	= &clkset_spi_mmc,
--	.divider_shift	= S3C6400_CLKDIV2_SPI0_SHIFT,
--	.reg_divider	= S3C_CLK_DIV2,
--};
--
--static struct clksrc_clk clk_spi1 = {
--	.clk	= {
--		.name		= "spi-bus",
--		.id		= 1,
--		.ctrlbit        = S3C_CLKCON_SCLK_SPI1,
--		.enable		= s3c64xx_sclk_ctrl,
--	},
--	.shift		= S3C6400_CLKSRC_SPI1_SHIFT,
--	.mask		= S3C6400_CLKSRC_SPI1_MASK,
--	.sources	= &clkset_spi_mmc,
--	.divider_shift	= S3C6400_CLKDIV2_SPI1_SHIFT,
--	.reg_divider	= S3C_CLK_DIV2,
--};
-+/* clocks that feed other parts of the clock source tree */
- 
- static struct clk clk_iis_cd0 = {
- 	.name		= "iis_cdclk0",
-@@ -482,20 +383,6 @@ static struct clk_sources clkset_audio0 = {
- 	.nr_sources	= ARRAY_SIZE(clkset_audio0_list),
- };
- 
--static struct clksrc_clk clk_audio0 = {
--	.clk	= {
--		.name		= "audio-bus",
--		.id		= 0,
--		.ctrlbit        = S3C_CLKCON_SCLK_AUDIO0,
--		.enable		= s3c64xx_sclk_ctrl,
--	},
--	.shift		= S3C6400_CLKSRC_AUDIO0_SHIFT,
--	.mask		= S3C6400_CLKSRC_AUDIO0_MASK,
--	.sources	= &clkset_audio0,
--	.divider_shift	= S3C6400_CLKDIV2_AUDIO0_SHIFT,
--	.reg_divider	= S3C_CLK_DIV2,
--};
--
- static struct clk *clkset_audio1_list[] = {
- 	[0] = &clk_mout_epll.clk,
- 	[1] = &clk_dout_mpll,
-@@ -509,34 +396,6 @@ static struct clk_sources clkset_audio1 = {
- 	.nr_sources	= ARRAY_SIZE(clkset_audio1_list),
- };
- 
--static struct clksrc_clk clk_audio1 = {
--	.clk	= {
--		.name		= "audio-bus",
--		.id		= 1,
--		.ctrlbit        = S3C_CLKCON_SCLK_AUDIO1,
--		.enable		= s3c64xx_sclk_ctrl,
--	},
--	.shift		= S3C6400_CLKSRC_AUDIO1_SHIFT,
--	.mask		= S3C6400_CLKSRC_AUDIO1_MASK,
--	.sources	= &clkset_audio1,
--	.divider_shift	= S3C6400_CLKDIV2_AUDIO1_SHIFT,
--	.reg_divider	= S3C_CLK_DIV2,
--};
--
--static struct clksrc_clk clk_irda = {
--	.clk	= {
--		.name		= "irda-bus",
--		.id		= 0,
--		.ctrlbit        = S3C_CLKCON_SCLK_IRDA,
--		.enable		= s3c64xx_sclk_ctrl,
--	},
--	.shift		= S3C6400_CLKSRC_IRDA_SHIFT,
--	.mask		= S3C6400_CLKSRC_IRDA_MASK,
--	.sources	= &clkset_irda,
--	.divider_shift	= S3C6400_CLKDIV2_IRDA_SHIFT,
--	.reg_divider	= S3C_CLK_DIV2,
--};
--
- static struct clk *clkset_camif_list[] = {
- 	&clk_h2,
- };
-@@ -546,18 +405,141 @@ static struct clk_sources clkset_camif = {
- 	.nr_sources	= ARRAY_SIZE(clkset_camif_list),
- };
- 
--static struct clksrc_clk clk_camif = {
--	.clk	= {
--		.name		= "camera",
--		.id		= -1,
--		.ctrlbit        = S3C_CLKCON_SCLK_CAM,
--		.enable		= s3c64xx_sclk_ctrl,
-+static struct clksrc_clk clksrcs[] = {
-+	{
-+		.clk	= {
-+			.name		= "mmc_bus",
-+			.id		= 0,
-+			.ctrlbit        = S3C_CLKCON_SCLK_MMC0,
-+			.enable		= s3c64xx_sclk_ctrl,
-+		},
-+		.shift		= S3C6400_CLKSRC_MMC0_SHIFT,
-+		.mask		= S3C6400_CLKSRC_MMC0_MASK,
-+		.sources	= &clkset_spi_mmc,
-+		.divider_shift	= S3C6400_CLKDIV1_MMC0_SHIFT,
-+		.reg_divider	= S3C_CLK_DIV1,
-+	}, {
-+		.clk	= {
-+			.name		= "mmc_bus",
-+			.id		= 1,
-+			.ctrlbit        = S3C_CLKCON_SCLK_MMC1,
-+			.enable		= s3c64xx_sclk_ctrl,
-+		},
-+		.shift		= S3C6400_CLKSRC_MMC1_SHIFT,
-+		.mask		= S3C6400_CLKSRC_MMC1_MASK,
-+		.sources	= &clkset_spi_mmc,
-+		.divider_shift	= S3C6400_CLKDIV1_MMC1_SHIFT,
-+		.reg_divider	= S3C_CLK_DIV1,
-+	}, {
-+		.clk	= {
-+			.name		= "mmc_bus",
-+			.id		= 2,
-+			.ctrlbit        = S3C_CLKCON_SCLK_MMC2,
-+			.enable		= s3c64xx_sclk_ctrl,
-+		},
-+		.shift		= S3C6400_CLKSRC_MMC2_SHIFT,
-+		.mask		= S3C6400_CLKSRC_MMC2_MASK,
-+		.sources	= &clkset_spi_mmc,
-+		.divider_shift	= S3C6400_CLKDIV1_MMC2_SHIFT,
-+		.reg_divider	= S3C_CLK_DIV1,
-+	}, {
-+		.clk	= {
-+			.name		= "usb-bus-host",
-+			.id		= -1,
-+			.ctrlbit        = S3C_CLKCON_SCLK_UHOST,
-+			.enable		= s3c64xx_sclk_ctrl,
-+		},
-+		.shift		= S3C6400_CLKSRC_UHOST_SHIFT,
-+		.mask		= S3C6400_CLKSRC_UHOST_MASK,
-+		.sources	= &clkset_uhost,
-+		.divider_shift	= S3C6400_CLKDIV1_UHOST_SHIFT,
-+		.reg_divider	= S3C_CLK_DIV1,
-+	}, {
-+		.clk	= {
-+			.name		= "uclk1",
-+			.id		= -1,
-+			.ctrlbit        = S3C_CLKCON_SCLK_UART,
-+			.enable		= s3c64xx_sclk_ctrl,
-+		},
-+		.shift		= S3C6400_CLKSRC_UART_SHIFT,
-+		.mask		= S3C6400_CLKSRC_UART_MASK,
-+		.sources	= &clkset_uart,
-+		.divider_shift	= S3C6400_CLKDIV2_UART_SHIFT,
-+		.reg_divider	= S3C_CLK_DIV2,
-+	}, {
-+/* Where does UCLK0 come from? */
-+		.clk	= {
-+			.name		= "spi-bus",
-+			.id		= 0,
-+			.ctrlbit        = S3C_CLKCON_SCLK_SPI0,
-+			.enable		= s3c64xx_sclk_ctrl,
-+		},
-+		.shift		= S3C6400_CLKSRC_SPI0_SHIFT,
-+		.mask		= S3C6400_CLKSRC_SPI0_MASK,
-+		.sources	= &clkset_spi_mmc,
-+		.divider_shift	= S3C6400_CLKDIV2_SPI0_SHIFT,
-+		.reg_divider	= S3C_CLK_DIV2,
-+	}, {
-+		.clk	= {
-+			.name		= "spi-bus",
-+			.id		= 1,
-+			.ctrlbit        = S3C_CLKCON_SCLK_SPI1,
-+			.enable		= s3c64xx_sclk_ctrl,
-+		},
-+		.shift		= S3C6400_CLKSRC_SPI1_SHIFT,
-+		.mask		= S3C6400_CLKSRC_SPI1_MASK,
-+		.sources	= &clkset_spi_mmc,
-+		.divider_shift	= S3C6400_CLKDIV2_SPI1_SHIFT,
-+		.reg_divider	= S3C_CLK_DIV2,
-+	}, {
-+		.clk	= {
-+			.name		= "audio-bus",
-+			.id		= 0,
-+			.ctrlbit        = S3C_CLKCON_SCLK_AUDIO0,
-+			.enable		= s3c64xx_sclk_ctrl,
-+		},
-+		.shift		= S3C6400_CLKSRC_AUDIO0_SHIFT,
-+		.mask		= S3C6400_CLKSRC_AUDIO0_MASK,
-+		.sources	= &clkset_audio0,
-+		.divider_shift	= S3C6400_CLKDIV2_AUDIO0_SHIFT,
-+		.reg_divider	= S3C_CLK_DIV2,
-+	}, {
-+		.clk	= {
-+			.name		= "audio-bus",
-+			.id		= 1,
-+			.ctrlbit        = S3C_CLKCON_SCLK_AUDIO1,
-+			.enable		= s3c64xx_sclk_ctrl,
-+		},
-+		.shift		= S3C6400_CLKSRC_AUDIO1_SHIFT,
-+		.mask		= S3C6400_CLKSRC_AUDIO1_MASK,
-+		.sources	= &clkset_audio1,
-+		.divider_shift	= S3C6400_CLKDIV2_AUDIO1_SHIFT,
-+		.reg_divider	= S3C_CLK_DIV2,
-+	}, {
-+		.clk	= {
-+			.name		= "irda-bus",
-+			.id		= 0,
-+			.ctrlbit        = S3C_CLKCON_SCLK_IRDA,
-+			.enable		= s3c64xx_sclk_ctrl,
-+		},
-+		.shift		= S3C6400_CLKSRC_IRDA_SHIFT,
-+		.mask		= S3C6400_CLKSRC_IRDA_MASK,
-+		.sources	= &clkset_irda,
-+		.divider_shift	= S3C6400_CLKDIV2_IRDA_SHIFT,
-+		.reg_divider	= S3C_CLK_DIV2,
-+	}, {
-+		.clk	= {
-+			.name		= "camera",
-+			.id		= -1,
-+			.ctrlbit        = S3C_CLKCON_SCLK_CAM,
-+			.enable		= s3c64xx_sclk_ctrl,
-+		},
-+		.shift		= 0,
-+		.mask		= 0,
-+		.sources	= &clkset_camif,
-+		.divider_shift	= S3C6400_CLKDIV0_CAM_SHIFT,
-+		.reg_divider	= S3C_CLK_DIV0,
+@@ -360,10 +360,6 @@ static struct clksrc_clk clk_mmc0 = {
+ 		.id		= 0,
+ 		.ctrlbit        = S3C_CLKCON_SCLK_MMC0,
+ 		.enable		= s3c64xx_sclk_ctrl,
+-		.set_parent	= s3c64xx_setparent_clksrc,
+-		.get_rate	= s3c64xx_getrate_clksrc,
+-		.set_rate	= s3c64xx_setrate_clksrc,
+-		.round_rate	= s3c64xx_roundrate_clksrc,
  	},
--	.shift		= 0,
--	.mask		= 0,
--	.sources	= &clkset_camif,
--	.divider_shift	= S3C6400_CLKDIV0_CAM_SHIFT,
--	.reg_divider	= S3C_CLK_DIV0,
- };
- 
- /* Clock initialisation code */
-@@ -566,17 +548,6 @@ static struct clksrc_clk *init_parents[] = {
- 	&clk_mout_apll,
- 	&clk_mout_epll,
- 	&clk_mout_mpll,
--	&clk_mmc0,
--	&clk_mmc1,
--	&clk_mmc2,
--	&clk_usbhost,
--	&clk_uart_uclk1,
--	&clk_spi0,
--	&clk_spi1,
--	&clk_audio0,
--	&clk_audio1,
--	&clk_irda,
--	&clk_camif,
- };
- 
- static void __init_or_cpufreq s3c6400_set_clksrc(struct clksrc_clk *clk)
-@@ -593,11 +564,6 @@ static void __init_or_cpufreq s3c6400_set_clksrc(struct clksrc_clk *clk)
+ 	.shift		= S3C6400_CLKSRC_MMC0_SHIFT,
+ 	.mask		= S3C6400_CLKSRC_MMC0_MASK,
+@@ -378,10 +374,6 @@ static struct clksrc_clk clk_mmc1 = {
+ 		.id		= 1,
+ 		.ctrlbit        = S3C_CLKCON_SCLK_MMC1,
+ 		.enable		= s3c64xx_sclk_ctrl,
+-		.get_rate	= s3c64xx_getrate_clksrc,
+-		.set_rate	= s3c64xx_setrate_clksrc,
+-		.set_parent	= s3c64xx_setparent_clksrc,
+-		.round_rate	= s3c64xx_roundrate_clksrc,
+ 	},
+ 	.shift		= S3C6400_CLKSRC_MMC1_SHIFT,
+ 	.mask		= S3C6400_CLKSRC_MMC1_MASK,
+@@ -396,10 +388,6 @@ static struct clksrc_clk clk_mmc2 = {
+ 		.id		= 2,
+ 		.ctrlbit        = S3C_CLKCON_SCLK_MMC2,
+ 		.enable		= s3c64xx_sclk_ctrl,
+-		.get_rate	= s3c64xx_getrate_clksrc,
+-		.set_rate	= s3c64xx_setrate_clksrc,
+-		.set_parent	= s3c64xx_setparent_clksrc,
+-		.round_rate	= s3c64xx_roundrate_clksrc,
+ 	},
+ 	.shift		= S3C6400_CLKSRC_MMC2_SHIFT,
+ 	.mask		= S3C6400_CLKSRC_MMC2_MASK,
+@@ -414,10 +402,6 @@ static struct clksrc_clk clk_usbhost = {
+ 		.id		= -1,
+ 		.ctrlbit        = S3C_CLKCON_SCLK_UHOST,
+ 		.enable		= s3c64xx_sclk_ctrl,
+-		.set_parent	= s3c64xx_setparent_clksrc,
+-		.get_rate	= s3c64xx_getrate_clksrc,
+-		.set_rate	= s3c64xx_setrate_clksrc,
+-		.round_rate	= s3c64xx_roundrate_clksrc,
+ 	},
+ 	.shift		= S3C6400_CLKSRC_UHOST_SHIFT,
+ 	.mask		= S3C6400_CLKSRC_UHOST_MASK,
+@@ -432,10 +416,6 @@ static struct clksrc_clk clk_uart_uclk1 = {
+ 		.id		= -1,
+ 		.ctrlbit        = S3C_CLKCON_SCLK_UART,
+ 		.enable		= s3c64xx_sclk_ctrl,
+-		.set_parent	= s3c64xx_setparent_clksrc,
+-		.get_rate	= s3c64xx_getrate_clksrc,
+-		.set_rate	= s3c64xx_setrate_clksrc,
+-		.round_rate	= s3c64xx_roundrate_clksrc,
+ 	},
+ 	.shift		= S3C6400_CLKSRC_UART_SHIFT,
+ 	.mask		= S3C6400_CLKSRC_UART_MASK,
+@@ -452,10 +432,6 @@ static struct clksrc_clk clk_spi0 = {
+ 		.id		= 0,
+ 		.ctrlbit        = S3C_CLKCON_SCLK_SPI0,
+ 		.enable		= s3c64xx_sclk_ctrl,
+-		.set_parent	= s3c64xx_setparent_clksrc,
+-		.get_rate	= s3c64xx_getrate_clksrc,
+-		.set_rate	= s3c64xx_setrate_clksrc,
+-		.round_rate	= s3c64xx_roundrate_clksrc,
+ 	},
+ 	.shift		= S3C6400_CLKSRC_SPI0_SHIFT,
+ 	.mask		= S3C6400_CLKSRC_SPI0_MASK,
+@@ -470,10 +446,6 @@ static struct clksrc_clk clk_spi1 = {
+ 		.id		= 1,
+ 		.ctrlbit        = S3C_CLKCON_SCLK_SPI1,
+ 		.enable		= s3c64xx_sclk_ctrl,
+-		.set_parent	= s3c64xx_setparent_clksrc,
+-		.get_rate	= s3c64xx_getrate_clksrc,
+-		.set_rate	= s3c64xx_setrate_clksrc,
+-		.round_rate	= s3c64xx_roundrate_clksrc,
+ 	},
+ 	.shift		= S3C6400_CLKSRC_SPI1_SHIFT,
+ 	.mask		= S3C6400_CLKSRC_SPI1_MASK,
+@@ -516,10 +488,6 @@ static struct clksrc_clk clk_audio0 = {
+ 		.id		= 0,
+ 		.ctrlbit        = S3C_CLKCON_SCLK_AUDIO0,
+ 		.enable		= s3c64xx_sclk_ctrl,
+-		.set_parent	= s3c64xx_setparent_clksrc,
+-		.get_rate	= s3c64xx_getrate_clksrc,
+-		.set_rate	= s3c64xx_setrate_clksrc,
+-		.round_rate	= s3c64xx_roundrate_clksrc,
+ 	},
+ 	.shift		= S3C6400_CLKSRC_AUDIO0_SHIFT,
+ 	.mask		= S3C6400_CLKSRC_AUDIO0_MASK,
+@@ -547,10 +515,6 @@ static struct clksrc_clk clk_audio1 = {
+ 		.id		= 1,
+ 		.ctrlbit        = S3C_CLKCON_SCLK_AUDIO1,
+ 		.enable		= s3c64xx_sclk_ctrl,
+-		.set_parent	= s3c64xx_setparent_clksrc,
+-		.get_rate	= s3c64xx_getrate_clksrc,
+-		.set_rate	= s3c64xx_setrate_clksrc,
+-		.round_rate	= s3c64xx_roundrate_clksrc,
+ 	},
+ 	.shift		= S3C6400_CLKSRC_AUDIO1_SHIFT,
+ 	.mask		= S3C6400_CLKSRC_AUDIO1_MASK,
+@@ -565,10 +529,6 @@ static struct clksrc_clk clk_irda = {
+ 		.id		= 0,
+ 		.ctrlbit        = S3C_CLKCON_SCLK_IRDA,
+ 		.enable		= s3c64xx_sclk_ctrl,
+-		.set_parent	= s3c64xx_setparent_clksrc,
+-		.get_rate	= s3c64xx_getrate_clksrc,
+-		.set_rate	= s3c64xx_setrate_clksrc,
+-		.round_rate	= s3c64xx_roundrate_clksrc,
+ 	},
+ 	.shift		= S3C6400_CLKSRC_IRDA_SHIFT,
+ 	.mask		= S3C6400_CLKSRC_IRDA_MASK,
+@@ -592,10 +552,6 @@ static struct clksrc_clk clk_camif = {
+ 		.id		= -1,
+ 		.ctrlbit        = S3C_CLKCON_SCLK_CAM,
+ 		.enable		= s3c64xx_sclk_ctrl,
+-		.set_parent	= s3c64xx_setparent_clksrc,
+-		.get_rate	= s3c64xx_getrate_clksrc,
+-		.set_rate	= s3c64xx_setrate_clksrc,
+-		.round_rate	= s3c64xx_roundrate_clksrc,
+ 	},
+ 	.shift		= 0,
+ 	.mask		= 0,
+@@ -637,6 +593,11 @@ static void __init_or_cpufreq s3c6400_set_clksrc(struct clksrc_clk *clk)
  		return;
  	}
  
--	clk->clk.get_rate = s3c64xx_getrate_clksrc;
--	clk->clk.set_rate = s3c64xx_setrate_clksrc;
--	clk->clk.set_parent = s3c64xx_setparent_clksrc;
--	clk->clk.round_rate = s3c64xx_roundrate_clksrc;
--
++	clk->clk.get_rate = s3c64xx_getrate_clksrc;
++	clk->clk.set_rate = s3c64xx_setrate_clksrc;
++	clk->clk.set_parent = s3c64xx_setparent_clksrc;
++	clk->clk.round_rate = s3c64xx_roundrate_clksrc;
++
  	clk->clk.parent = srcs->sources[clksrc];
  
  	printk(KERN_INFO "%s: source is %s (%d), rate is %ld\n",
-@@ -664,6 +630,9 @@ void __init_or_cpufreq s3c6400_setup_clocks(void)
- 
- 	for (ptr = 0; ptr < ARRAY_SIZE(init_parents); ptr++)
- 		s3c6400_set_clksrc(init_parents[ptr]);
-+
-+	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
-+		s3c6400_set_clksrc(&clksrcs[ptr]);
- }
- 
- static struct clk *clks[] __initdata = {
-@@ -674,17 +643,6 @@ static struct clk *clks[] __initdata = {
- 	&clk_mout_epll.clk,
- 	&clk_mout_mpll.clk,
- 	&clk_dout_mpll,
--	&clk_mmc0.clk,
--	&clk_mmc1.clk,
--	&clk_mmc2.clk,
--	&clk_usbhost.clk,
--	&clk_uart_uclk1.clk,
--	&clk_spi0.clk,
--	&clk_spi1.clk,
--	&clk_audio0.clk,
--	&clk_audio1.clk,
--	&clk_irda.clk,
--	&clk_camif.clk,
- 	&clk_arm,
- };
- 
-@@ -716,4 +674,20 @@ void __init s3c6400_register_clocks(unsigned armclk_divlimit)
- 			       clkp->name, ret);
- 		}
- 	}
-+
-+	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++) {
-+		clkp = &clksrcs[ptr].clk;
-+
-+		/* all clksrc clocks have these */
-+		clkp->get_rate = s3c64xx_getrate_clksrc;
-+		clkp->set_rate = s3c64xx_setrate_clksrc;
-+		clkp->set_parent = s3c64xx_setparent_clksrc;
-+		clkp->round_rate = s3c64xx_roundrate_clksrc;
-+
-+		ret = s3c24xx_register_clock(clkp);
-+		if (ret < 0) {
-+			printk(KERN_ERR "Failed to register clock %s (%d)\n",
-+			       clkp->name, ret);
-+		}
-+	}
- }
 -- 
 1.6.0.4
