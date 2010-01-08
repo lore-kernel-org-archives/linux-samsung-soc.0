@@ -1,43 +1,42 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH] gpiolib: add gpio_lookup_chip() to get chip
-	information for gpio
-Date: Fri, 8 Jan 2010 08:28:26 +0000
-Message-ID: <20100108082826.GC1224@trinity.fluff.org>
-References: <1262932348-2888-1-git-send-email-ben-linux@fluff.org> <1262932348-2888-2-git-send-email-ben-linux@fluff.org> <f17812d71001072330t7a9f7607v8b55b2fc346745e5@mail.gmail.com>
+Subject: Re: Please pull bjdooks' for-linus/samsung
+Date: Fri, 8 Jan 2010 08:29:38 +0000
+Message-ID: <20100108082938.GD1224@trinity.fluff.org>
+References: <E1NT4JR-0006WN-6J@trinity.fluff.org> <4B46E3C3.2080303@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:48224 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:44356 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752729Ab0AHI2b (ORCPT
+	id S1750920Ab0AHI3k (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Jan 2010 03:28:31 -0500
+	Fri, 8 Jan 2010 03:29:40 -0500
 Content-Disposition: inline
-In-Reply-To: <f17812d71001072330t7a9f7607v8b55b2fc346745e5@mail.gmail.com>
+In-Reply-To: <4B46E3C3.2080303@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eric Miao <eric.y.miao@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Paulius Zaleckas <paulius.zaleckas@gmail.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Fri, Jan 08, 2010 at 03:30:36PM +0800, Eric Miao wrote:
-> On Fri, Jan 8, 2010 at 2:32 PM, Ben Dooks <ben-linux@fluff.org> wrote:
-> > Add a call to get the 'struct gpio_chip' pointer for a given gpio, so
-> > that core implementations which want to use gpiolib gpio numbering for
-> > things like mux configuration can get back to the gpio_chip that they
-> > registered without having to have their own list of gpio.
-> >
-> > This is especially useful for the Samsung S3C64XX series where the GPIO
-> > bank sizes can vary from 32 down to 3, making it difficult to store an
-> > array to convert a number to chip.
-> >
-> 
-> I think this is generally a good idea. Will most likely be useful to
-> pxa platforms as well. Not sure though if you want to export this
-> symbol as well since we do allow gpio chip drivers to be modules.
+On Fri, Jan 08, 2010 at 09:50:27AM +0200, Paulius Zaleckas wrote:
+> On 01/08/2010 04:10 AM, Ben Dooks wrote:
+>> The following changes since commit c5974b835a909ff15c3b7e6cf6789b5eb919f419:
+>>    Linus Torvalds (1):
+>>          Merge branch 'limits_cleanup' of git://decibel.fi.muni.cz/~xslaby/linux
+>>
+>> are available in the git repository at:
+>>
+>>    git://git.fluff.org/bjdooks/linux.git for-linus/samsung
+>>
+>> Ben Dooks (1):
+>>        ARM: S3C64XX: Fix possible clock look in EPLL and MPLL clock chains
+>
+> Spelling look/lock
 
-Probably not, since all the gpio call methods pass gpio_chip as their
-first parameter. This is only in the case we want to use gpios for
-something other than in/out/irq.
+should have been loop.
+
+turns out that in certain situations the clock can become parented to
+itself, thus causing bad-things(tm) to happen.
 
 -- 
 Ben
