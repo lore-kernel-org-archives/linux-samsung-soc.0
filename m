@@ -1,45 +1,53 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: Please pull bjdooks' for-linus/samsung
-Date: Fri, 8 Jan 2010 08:29:38 +0000
-Message-ID: <20100108082938.GD1224@trinity.fluff.org>
-References: <E1NT4JR-0006WN-6J@trinity.fluff.org> <4B46E3C3.2080303@gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: S5p6440 dev
+Date: Sat, 09 Jan 2010 21:07:10 +0900
+Message-ID: <000901ca9124$46232900$d2697b00$%kim@samsung.com>
+References: <a6f9b16b1001072053h6ba1d495re974579ad8bac4d8@mail.gmail.com>
+ <a6f9b16b1001072058k2b01fa1bg2fb70aebc864c992@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:44356 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750920Ab0AHI3k (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:38483 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753424Ab0AIMFU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Jan 2010 03:29:40 -0500
-Content-Disposition: inline
-In-Reply-To: <4B46E3C3.2080303@gmail.com>
+	Sat, 9 Jan 2010 07:05:20 -0500
+Received: from epmmp2 (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0KVZ00C5CAWT65@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 09 Jan 2010 21:05:17 +0900 (KST)
+Received: from kgenekim ([12.23.109.129])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0KVZ00G3JAWT2W@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 09 Jan 2010 21:05:17 +0900 (KST)
+In-reply-to: <a6f9b16b1001072058k2b01fa1bg2fb70aebc864c992@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paulius Zaleckas <paulius.zaleckas@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'cpuwolf' <cpuwolf@gmail.com>, linux-samsung-soc@vger.kernel.org
 
-On Fri, Jan 08, 2010 at 09:50:27AM +0200, Paulius Zaleckas wrote:
-> On 01/08/2010 04:10 AM, Ben Dooks wrote:
->> The following changes since commit c5974b835a909ff15c3b7e6cf6789b5eb919f419:
->>    Linus Torvalds (1):
->>          Merge branch 'limits_cleanup' of git://decibel.fi.muni.cz/~xslaby/linux
->>
->> are available in the git repository at:
->>
->>    git://git.fluff.org/bjdooks/linux.git for-linus/samsung
->>
->> Ben Dooks (1):
->>        ARM: S3C64XX: Fix possible clock look in EPLL and MPLL clock chains
->
-> Spelling look/lock
+cpuwolf wrote:
+> I want to start developing on s5p6440, which branch I will checkout?
+Hi,
 
-should have been loop.
+Ok, but we didn't push s5p6440-arch patches to below branch yet.
 
-turns out that in certain situations the clock can become parented to
-itself, thus causing bad-things(tm) to happen.
+> and is samsung git tree is:
+> git://git.kernel.org/pub/scm/linux/kernel/git/kki_ap/linux-2.6-samsung.git
 
--- 
-Ben
+Yes, right. Samsung git tree is that.
 
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+We are in the process of submitting an updated patch set for S5P6440.
+And we are hoping that those patches will be merged in Ben's git branch.
+So you could check sometime next week on linux-samsung-soc and Ben's git
+tree.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+System LSI Division, SAMSUNG ELECTRONICS CO., LTD.
