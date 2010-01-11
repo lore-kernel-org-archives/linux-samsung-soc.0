@@ -1,1140 +1,1190 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH v3 6/7] ARM: S5P6440: Add Board and configuration file
-Date: Mon, 11 Jan 2010 06:25:32 +0000
-Message-ID: <20100111062532.GH3738@trinity.fluff.org>
-References: <1263182115-14556-1-git-send-email-kgene.kim@samsung.com>
+Subject: Re: [PATCH v3 2/7] ARM: S5P6440: Add Clock and PLL support
+Date: Mon, 11 Jan 2010 06:39:17 +0000
+Message-ID: <20100111063917.GI3738@trinity.fluff.org>
+References: <1263182094-14425-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:37029 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:37155 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751832Ab0AKGZe (ORCPT
+	id S1751105Ab0AKGjX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Jan 2010 01:25:34 -0500
+	Mon, 11 Jan 2010 01:39:23 -0500
 Content-Disposition: inline
-In-Reply-To: <1263182115-14556-1-git-send-email-kgene.kim@samsung.com>
+In-Reply-To: <1263182094-14425-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Adityapratap Sharma <aditya.ps@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Atul Dahiya <atul.dahiya@samsung.com>
 
-On Mon, Jan 11, 2010 at 12:55:15PM +0900, Kukjin Kim wrote:
-> This patch adds Samsung's SMDK6440 board support and default configuration file.
+On Mon, Jan 11, 2010 at 12:54:54PM +0900, Kukjin Kim wrote:
+> This patch adds clock and pll support for S5P6440. This patch are based on
+> Harald Welte's patches and Ben's plat-samsung.
 > 
 > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > Signed-off-by: Adityapratap Sharma <aditya.ps@samsung.com>
 > Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 > Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
 > ---
->  arch/arm/configs/s5p6440_defconfig    |  969 +++++++++++++++++++++++++++++++++
->  arch/arm/mach-s5p6440/mach-smdk6440.c |  114 ++++
->  2 files changed, 1083 insertions(+), 0 deletions(-)
-
-Hi, next time please add the defconfig seperately. It makes reviewing
-the machine addition difficult as it requires wading through a lot of
-addition I don't really want to review thoroughly before finding the
-bits I really want to check.
-
->  create mode 100644 arch/arm/configs/s5p6440_defconfig
->  create mode 100644 arch/arm/mach-s5p6440/mach-smdk6440.c
+>  arch/arm/mach-s5p6440/include/mach/regs-clock.h |  130 +++++
+>  arch/arm/plat-s5p/clock.c                       |  137 +++++
+>  arch/arm/plat-s5p/include/plat/pll.h            |   83 +++
+>  arch/arm/plat-s5p/include/plat/s5p-clock.h      |   38 ++
+>  arch/arm/plat-s5p/s5p6440-clock.c               |  705 +++++++++++++++++++++++
+>  arch/arm/plat-samsung/include/plat/clock.h      |    1 +
+>  6 files changed, 1094 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm/mach-s5p6440/include/mach/regs-clock.h
+>  create mode 100644 arch/arm/plat-s5p/clock.c
+>  create mode 100644 arch/arm/plat-s5p/include/plat/pll.h
+>  create mode 100644 arch/arm/plat-s5p/include/plat/s5p-clock.h
+>  create mode 100644 arch/arm/plat-s5p/s5p6440-clock.c
 > 
-> diff --git a/arch/arm/configs/s5p6440_defconfig b/arch/arm/configs/s5p6440_defconfig
+> diff --git a/arch/arm/mach-s5p6440/include/mach/regs-clock.h b/arch/arm/mach-s5p6440/include/mach/regs-clock.h
 > new file mode 100644
-> index 0000000..279a15e
+> index 0000000..b7af283
 > --- /dev/null
-> +++ b/arch/arm/configs/s5p6440_defconfig
-> @@ -0,0 +1,969 @@
-> +#
-> +# Automatically generated make config: don't edit
-> +# Linux kernel version: 2.6.33-rc2
-> +# Sat Jan  9 16:33:55 2010
-> +#
-> +CONFIG_ARM=y
-> +CONFIG_SYS_SUPPORTS_APM_EMULATION=y
-> +CONFIG_GENERIC_GPIO=y
-> +CONFIG_NO_IOPORT=y
-> +CONFIG_GENERIC_HARDIRQS=y
-> +CONFIG_STACKTRACE_SUPPORT=y
-> +CONFIG_HAVE_LATENCYTOP_SUPPORT=y
-> +CONFIG_LOCKDEP_SUPPORT=y
-> +CONFIG_TRACE_IRQFLAGS_SUPPORT=y
-> +CONFIG_HARDIRQS_SW_RESEND=y
-> +CONFIG_GENERIC_IRQ_PROBE=y
-> +CONFIG_RWSEM_GENERIC_SPINLOCK=y
-> +CONFIG_GENERIC_HWEIGHT=y
-> +CONFIG_GENERIC_CALIBRATE_DELAY=y
-> +CONFIG_GENERIC_HARDIRQS_NO__DO_IRQ=y
-> +CONFIG_VECTORS_BASE=0xffff0000
-> +CONFIG_DEFCONFIG_LIST="/lib/modules/$UNAME_RELEASE/.config"
-> +CONFIG_CONSTRUCTORS=y
-> +
-> +#
-> +# General setup
-> +#
-> +CONFIG_EXPERIMENTAL=y
-> +CONFIG_BROKEN_ON_SMP=y
-> +CONFIG_INIT_ENV_ARG_LIMIT=32
-> +CONFIG_LOCALVERSION=""
-> +CONFIG_LOCALVERSION_AUTO=y
-> +CONFIG_SWAP=y
-> +# CONFIG_SYSVIPC is not set
-> +# CONFIG_BSD_PROCESS_ACCT is not set
-> +
-> +#
-> +# RCU Subsystem
-> +#
-> +CONFIG_TREE_RCU=y
-> +# CONFIG_TREE_PREEMPT_RCU is not set
-> +# CONFIG_TINY_RCU is not set
-> +# CONFIG_RCU_TRACE is not set
-> +CONFIG_RCU_FANOUT=32
-> +# CONFIG_RCU_FANOUT_EXACT is not set
-> +# CONFIG_TREE_RCU_TRACE is not set
-> +# CONFIG_IKCONFIG is not set
-> +CONFIG_LOG_BUF_SHIFT=17
-> +# CONFIG_GROUP_SCHED is not set
-> +# CONFIG_CGROUPS is not set
-> +CONFIG_SYSFS_DEPRECATED=y
-> +CONFIG_SYSFS_DEPRECATED_V2=y
-> +# CONFIG_RELAY is not set
-> +CONFIG_NAMESPACES=y
-> +# CONFIG_UTS_NS is not set
-> +# CONFIG_USER_NS is not set
-> +# CONFIG_PID_NS is not set
-> +CONFIG_BLK_DEV_INITRD=y
-> +CONFIG_INITRAMFS_SOURCE=""
-> +CONFIG_RD_GZIP=y
-> +CONFIG_RD_BZIP2=y
-> +CONFIG_RD_LZMA=y
-> +CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-> +CONFIG_SYSCTL=y
-> +CONFIG_ANON_INODES=y
-> +# CONFIG_EMBEDDED is not set
-> +CONFIG_UID16=y
-> +CONFIG_SYSCTL_SYSCALL=y
-> +CONFIG_KALLSYMS=y
-> +CONFIG_KALLSYMS_ALL=y
-> +# CONFIG_KALLSYMS_EXTRA_PASS is not set
-> +CONFIG_HOTPLUG=y
-> +CONFIG_PRINTK=y
-> +CONFIG_BUG=y
-> +CONFIG_ELF_CORE=y
-> +CONFIG_BASE_FULL=y
-> +CONFIG_FUTEX=y
-> +CONFIG_EPOLL=y
-> +CONFIG_SIGNALFD=y
-> +CONFIG_TIMERFD=y
-> +CONFIG_EVENTFD=y
-> +CONFIG_SHMEM=y
-> +CONFIG_AIO=y
-> +
-> +#
-> +# Kernel Performance Events And Counters
-> +#
-> +CONFIG_VM_EVENT_COUNTERS=y
-> +CONFIG_SLUB_DEBUG=y
-> +CONFIG_COMPAT_BRK=y
-> +# CONFIG_SLAB is not set
-> +CONFIG_SLUB=y
-> +# CONFIG_SLOB is not set
-> +# CONFIG_PROFILING is not set
-> +CONFIG_HAVE_OPROFILE=y
-> +# CONFIG_KPROBES is not set
-> +CONFIG_HAVE_KPROBES=y
-> +CONFIG_HAVE_KRETPROBES=y
-> +CONFIG_HAVE_CLK=y
-> +
-> +#
-> +# GCOV-based kernel profiling
-> +#
-> +# CONFIG_SLOW_WORK is not set
-> +CONFIG_HAVE_GENERIC_DMA_COHERENT=y
-> +CONFIG_SLABINFO=y
-> +CONFIG_RT_MUTEXES=y
-> +CONFIG_BASE_SMALL=0
-> +CONFIG_MODULES=y
-> +# CONFIG_MODULE_FORCE_LOAD is not set
-> +CONFIG_MODULE_UNLOAD=y
-> +# CONFIG_MODULE_FORCE_UNLOAD is not set
-> +# CONFIG_MODVERSIONS is not set
-> +# CONFIG_MODULE_SRCVERSION_ALL is not set
-> +CONFIG_BLOCK=y
-> +CONFIG_LBDAF=y
-> +# CONFIG_BLK_DEV_BSG is not set
-> +# CONFIG_BLK_DEV_INTEGRITY is not set
-> +
-> +#
-> +# IO Schedulers
-> +#
-> +CONFIG_IOSCHED_NOOP=y
-> +CONFIG_IOSCHED_DEADLINE=y
-> +CONFIG_IOSCHED_CFQ=y
-> +# CONFIG_DEFAULT_DEADLINE is not set
-> +CONFIG_DEFAULT_CFQ=y
-> +# CONFIG_DEFAULT_NOOP is not set
-> +CONFIG_DEFAULT_IOSCHED="cfq"
-> +# CONFIG_INLINE_SPIN_TRYLOCK is not set
-> +# CONFIG_INLINE_SPIN_TRYLOCK_BH is not set
-> +# CONFIG_INLINE_SPIN_LOCK is not set
-> +# CONFIG_INLINE_SPIN_LOCK_BH is not set
-> +# CONFIG_INLINE_SPIN_LOCK_IRQ is not set
-> +# CONFIG_INLINE_SPIN_LOCK_IRQSAVE is not set
-> +# CONFIG_INLINE_SPIN_UNLOCK is not set
-> +# CONFIG_INLINE_SPIN_UNLOCK_BH is not set
-> +# CONFIG_INLINE_SPIN_UNLOCK_IRQ is not set
-> +# CONFIG_INLINE_SPIN_UNLOCK_IRQRESTORE is not set
-> +# CONFIG_INLINE_READ_TRYLOCK is not set
-> +# CONFIG_INLINE_READ_LOCK is not set
-> +# CONFIG_INLINE_READ_LOCK_BH is not set
-> +# CONFIG_INLINE_READ_LOCK_IRQ is not set
-> +# CONFIG_INLINE_READ_LOCK_IRQSAVE is not set
-> +# CONFIG_INLINE_READ_UNLOCK is not set
-> +# CONFIG_INLINE_READ_UNLOCK_BH is not set
-> +# CONFIG_INLINE_READ_UNLOCK_IRQ is not set
-> +# CONFIG_INLINE_READ_UNLOCK_IRQRESTORE is not set
-> +# CONFIG_INLINE_WRITE_TRYLOCK is not set
-> +# CONFIG_INLINE_WRITE_LOCK is not set
-> +# CONFIG_INLINE_WRITE_LOCK_BH is not set
-> +# CONFIG_INLINE_WRITE_LOCK_IRQ is not set
-> +# CONFIG_INLINE_WRITE_LOCK_IRQSAVE is not set
-> +# CONFIG_INLINE_WRITE_UNLOCK is not set
-> +# CONFIG_INLINE_WRITE_UNLOCK_BH is not set
-> +# CONFIG_INLINE_WRITE_UNLOCK_IRQ is not set
-> +# CONFIG_INLINE_WRITE_UNLOCK_IRQRESTORE is not set
-> +# CONFIG_MUTEX_SPIN_ON_OWNER is not set
-> +# CONFIG_FREEZER is not set
-> +
-> +#
-> +# System Type
-> +#
-> +CONFIG_MMU=y
-> +# CONFIG_ARCH_AAEC2000 is not set
-> +# CONFIG_ARCH_INTEGRATOR is not set
-> +# CONFIG_ARCH_REALVIEW is not set
-> +# CONFIG_ARCH_VERSATILE is not set
-> +# CONFIG_ARCH_AT91 is not set
-> +# CONFIG_ARCH_CLPS711X is not set
-> +# CONFIG_ARCH_GEMINI is not set
-> +# CONFIG_ARCH_EBSA110 is not set
-> +# CONFIG_ARCH_EP93XX is not set
-> +# CONFIG_ARCH_FOOTBRIDGE is not set
-> +# CONFIG_ARCH_MXC is not set
-> +# CONFIG_ARCH_STMP3XXX is not set
-> +# CONFIG_ARCH_NETX is not set
-> +# CONFIG_ARCH_H720X is not set
-> +# CONFIG_ARCH_NOMADIK is not set
-> +# CONFIG_ARCH_IOP13XX is not set
-> +# CONFIG_ARCH_IOP32X is not set
-> +# CONFIG_ARCH_IOP33X is not set
-> +# CONFIG_ARCH_IXP23XX is not set
-> +# CONFIG_ARCH_IXP2000 is not set
-> +# CONFIG_ARCH_IXP4XX is not set
-> +# CONFIG_ARCH_L7200 is not set
-> +# CONFIG_ARCH_DOVE is not set
-> +# CONFIG_ARCH_KIRKWOOD is not set
-> +# CONFIG_ARCH_LOKI is not set
-> +# CONFIG_ARCH_MV78XX0 is not set
-> +# CONFIG_ARCH_ORION5X is not set
-> +# CONFIG_ARCH_MMP is not set
-> +# CONFIG_ARCH_KS8695 is not set
-> +# CONFIG_ARCH_NS9XXX is not set
-> +# CONFIG_ARCH_W90X900 is not set
-> +# CONFIG_ARCH_PNX4008 is not set
-> +# CONFIG_ARCH_PXA is not set
-> +# CONFIG_ARCH_MSM is not set
-> +# CONFIG_ARCH_RPC is not set
-> +# CONFIG_ARCH_SA1100 is not set
-> +# CONFIG_ARCH_S3C2410 is not set
-> +# CONFIG_ARCH_S3C64XX is not set
-> +CONFIG_ARCH_S5P6440=y
-> +# CONFIG_ARCH_S5PC1XX is not set
-> +# CONFIG_ARCH_SHARK is not set
-> +# CONFIG_ARCH_LH7A40X is not set
-> +# CONFIG_ARCH_U300 is not set
-> +# CONFIG_ARCH_DAVINCI is not set
-> +# CONFIG_ARCH_OMAP is not set
-> +# CONFIG_ARCH_BCMRING is not set
-> +# CONFIG_ARCH_U8500 is not set
-> +CONFIG_PLAT_SAMSUNG=y
-> +CONFIG_SAMSUNG_CLKSRC=y
-> +CONFIG_SAMSUNG_IRQ_VIC_TIMER=y
-> +CONFIG_SAMSUNG_IRQ_UART=y
-> +CONFIG_SAMSUNG_GPIO_EXTRA=0
-> +CONFIG_PLAT_S3C=y
-> +
-> +#
-> +# Boot options
-> +#
-> +CONFIG_S3C_BOOT_ERROR_RESET=y
-> +CONFIG_S3C_BOOT_UART_FORCE_FIFO=y
-> +
-> +#
-> +# Power management
-> +#
-> +CONFIG_S3C_LOWLEVEL_UART_PORT=1
-> +CONFIG_S3C_GPIO_SPACE=0
-> +CONFIG_S3C_GPIO_TRACK=y
-> +CONFIG_PLAT_S5P=y
-> +CONFIG_CPU_S5P6440_INIT=y
-> +CONFIG_CPU_S5P6440_CLOCK=y
-> +CONFIG_CPU_S5P6440=y
-> +CONFIG_MACH_SMDK6440=y
-> +
-> +#
-> +# Processor Type
-> +#
-> +CONFIG_CPU_V6=y
-> +CONFIG_CPU_32v6K=y
-> +CONFIG_CPU_32v6=y
-> +CONFIG_CPU_ABRT_EV6=y
-> +CONFIG_CPU_PABRT_V6=y
-> +CONFIG_CPU_CACHE_V6=y
-> +CONFIG_CPU_CACHE_VIPT=y
-> +CONFIG_CPU_COPY_V6=y
-> +CONFIG_CPU_TLB_V6=y
-> +CONFIG_CPU_HAS_ASID=y
-> +CONFIG_CPU_CP15=y
-> +CONFIG_CPU_CP15_MMU=y
-> +
-> +#
-> +# Processor Features
-> +#
-> +CONFIG_ARM_THUMB=y
-> +# CONFIG_CPU_ICACHE_DISABLE is not set
-> +# CONFIG_CPU_DCACHE_DISABLE is not set
-> +# CONFIG_CPU_BPREDICT_DISABLE is not set
-> +CONFIG_ARM_L1_CACHE_SHIFT=5
-> +# CONFIG_ARM_ERRATA_411920 is not set
-> +CONFIG_ARM_VIC=y
-> +CONFIG_ARM_VIC_NR=2
-> +
-> +#
-> +# Bus support
-> +#
-> +# CONFIG_PCI_SYSCALL is not set
-> +# CONFIG_ARCH_SUPPORTS_MSI is not set
-> +# CONFIG_PCCARD is not set
-> +
-> +#
-> +# Kernel Features
-> +#
-> +CONFIG_VMSPLIT_3G=y
-> +# CONFIG_VMSPLIT_2G is not set
-> +# CONFIG_VMSPLIT_1G is not set
-> +CONFIG_PAGE_OFFSET=0xC0000000
-> +CONFIG_PREEMPT_NONE=y
-> +# CONFIG_PREEMPT_VOLUNTARY is not set
-> +# CONFIG_PREEMPT is not set
-> +CONFIG_HZ=200
-> +CONFIG_AEABI=y
-> +CONFIG_OABI_COMPAT=y
-> +# CONFIG_ARCH_SPARSEMEM_DEFAULT is not set
-> +# CONFIG_ARCH_SELECT_MEMORY_MODEL is not set
-> +# CONFIG_HIGHMEM is not set
-> +CONFIG_SELECT_MEMORY_MODEL=y
-> +CONFIG_FLATMEM_MANUAL=y
-> +# CONFIG_DISCONTIGMEM_MANUAL is not set
-> +# CONFIG_SPARSEMEM_MANUAL is not set
-> +CONFIG_FLATMEM=y
-> +CONFIG_FLAT_NODE_MEM_MAP=y
-> +CONFIG_PAGEFLAGS_EXTENDED=y
-> +CONFIG_SPLIT_PTLOCK_CPUS=999999
-> +# CONFIG_PHYS_ADDR_T_64BIT is not set
-> +CONFIG_ZONE_DMA_FLAG=0
-> +CONFIG_VIRT_TO_BUS=y
-> +# CONFIG_KSM is not set
-> +CONFIG_DEFAULT_MMAP_MIN_ADDR=4096
-> +CONFIG_ALIGNMENT_TRAP=y
-> +# CONFIG_UACCESS_WITH_MEMCPY is not set
-> +
-> +#
-> +# Boot options
-> +#
-> +CONFIG_ZBOOT_ROM_TEXT=0
-> +CONFIG_ZBOOT_ROM_BSS=0
-> +CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x20800000,8M console=ttySAC1,115200 init=/linuxrc"
-> +# CONFIG_XIP_KERNEL is not set
-> +# CONFIG_KEXEC is not set
-> +
-> +#
-> +# CPU Power Management
-> +#
-> +# CONFIG_CPU_IDLE is not set
-> +
-> +#
-> +# Floating point emulation
-> +#
-> +
-> +#
-> +# At least one emulation must be selected
-> +#
-> +CONFIG_FPE_NWFPE=y
-> +# CONFIG_FPE_NWFPE_XP is not set
-> +# CONFIG_FPE_FASTFPE is not set
-> +# CONFIG_VFP is not set
-> +
-> +#
-> +# Userspace binary formats
-> +#
-> +CONFIG_BINFMT_ELF=y
-> +# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
-> +CONFIG_HAVE_AOUT=y
-> +# CONFIG_BINFMT_AOUT is not set
-> +# CONFIG_BINFMT_MISC is not set
-> +
-> +#
-> +# Power management options
-> +#
-> +# CONFIG_PM is not set
-> +CONFIG_ARCH_SUSPEND_POSSIBLE=y
-> +# CONFIG_NET is not set
-> +
-> +#
-> +# Device Drivers
-> +#
-> +
-> +#
-> +# Generic Driver Options
-> +#
-> +CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
-> +# CONFIG_DEVTMPFS is not set
-> +CONFIG_STANDALONE=y
-> +# CONFIG_PREVENT_FIRMWARE_BUILD is not set
-> +CONFIG_FW_LOADER=y
-> +CONFIG_FIRMWARE_IN_KERNEL=y
-> +CONFIG_EXTRA_FIRMWARE=""
-> +# CONFIG_DEBUG_DRIVER is not set
-> +# CONFIG_DEBUG_DEVRES is not set
-> +# CONFIG_SYS_HYPERVISOR is not set
-> +# CONFIG_MTD is not set
-> +# CONFIG_PARPORT is not set
-> +CONFIG_BLK_DEV=y
-> +# CONFIG_BLK_DEV_COW_COMMON is not set
-> +# CONFIG_BLK_DEV_LOOP is not set
-> +
-> +#
-> +# DRBD disabled because PROC_FS, INET or CONNECTOR not selected
-> +#
-> +CONFIG_BLK_DEV_RAM=y
-> +CONFIG_BLK_DEV_RAM_COUNT=16
-> +CONFIG_BLK_DEV_RAM_SIZE=8192
-> +# CONFIG_BLK_DEV_XIP is not set
-> +# CONFIG_CDROM_PKTCDVD is not set
-> +# CONFIG_MG_DISK is not set
-> +# CONFIG_MISC_DEVICES is not set
-> +CONFIG_HAVE_IDE=y
-> +# CONFIG_IDE is not set
-> +
-> +#
-> +# SCSI device support
-> +#
-> +# CONFIG_RAID_ATTRS is not set
-> +CONFIG_SCSI=y
-> +CONFIG_SCSI_DMA=y
-> +# CONFIG_SCSI_TGT is not set
-> +# CONFIG_SCSI_NETLINK is not set
-> +CONFIG_SCSI_PROC_FS=y
-> +
-> +#
-> +# SCSI support type (disk, tape, CD-ROM)
-> +#
-> +CONFIG_BLK_DEV_SD=y
-> +# CONFIG_CHR_DEV_ST is not set
-> +# CONFIG_CHR_DEV_OSST is not set
-> +# CONFIG_BLK_DEV_SR is not set
-> +CONFIG_CHR_DEV_SG=y
-> +# CONFIG_CHR_DEV_SCH is not set
-> +# CONFIG_SCSI_MULTI_LUN is not set
-> +# CONFIG_SCSI_CONSTANTS is not set
-> +# CONFIG_SCSI_LOGGING is not set
-> +# CONFIG_SCSI_SCAN_ASYNC is not set
-> +CONFIG_SCSI_WAIT_SCAN=m
-> +
-> +#
-> +# SCSI Transports
-> +#
-> +# CONFIG_SCSI_SPI_ATTRS is not set
-> +# CONFIG_SCSI_FC_ATTRS is not set
-> +# CONFIG_SCSI_SAS_LIBSAS is not set
-> +# CONFIG_SCSI_SRP_ATTRS is not set
-> +CONFIG_SCSI_LOWLEVEL=y
-> +# CONFIG_LIBFC is not set
-> +# CONFIG_LIBFCOE is not set
-> +# CONFIG_SCSI_DEBUG is not set
-> +# CONFIG_SCSI_DH is not set
-> +# CONFIG_SCSI_OSD_INITIATOR is not set
-> +# CONFIG_ATA is not set
-> +# CONFIG_MD is not set
-> +# CONFIG_PHONE is not set
-> +
-> +#
-> +# Input device support
-> +#
-> +CONFIG_INPUT=y
-> +# CONFIG_INPUT_FF_MEMLESS is not set
-> +# CONFIG_INPUT_POLLDEV is not set
-> +# CONFIG_INPUT_SPARSEKMAP is not set
-> +
-> +#
-> +# Userland interfaces
-> +#
-> +CONFIG_INPUT_MOUSEDEV=y
-> +CONFIG_INPUT_MOUSEDEV_PSAUX=y
-> +CONFIG_INPUT_MOUSEDEV_SCREEN_X=1024
-> +CONFIG_INPUT_MOUSEDEV_SCREEN_Y=768
-> +# CONFIG_INPUT_JOYDEV is not set
-> +CONFIG_INPUT_EVDEV=y
-> +# CONFIG_INPUT_EVBUG is not set
-> +
-> +#
-> +# Input Device Drivers
-> +#
-> +CONFIG_INPUT_KEYBOARD=y
-> +CONFIG_KEYBOARD_ATKBD=y
-> +# CONFIG_KEYBOARD_LKKBD is not set
-> +# CONFIG_KEYBOARD_GPIO is not set
-> +# CONFIG_KEYBOARD_MATRIX is not set
-> +# CONFIG_KEYBOARD_NEWTON is not set
-> +# CONFIG_KEYBOARD_OPENCORES is not set
-> +# CONFIG_KEYBOARD_STOWAWAY is not set
-> +# CONFIG_KEYBOARD_SUNKBD is not set
-> +# CONFIG_KEYBOARD_XTKBD is not set
-> +CONFIG_INPUT_MOUSE=y
-> +CONFIG_MOUSE_PS2=y
-> +CONFIG_MOUSE_PS2_ALPS=y
-> +CONFIG_MOUSE_PS2_LOGIPS2PP=y
-> +CONFIG_MOUSE_PS2_SYNAPTICS=y
-> +CONFIG_MOUSE_PS2_TRACKPOINT=y
-> +# CONFIG_MOUSE_PS2_ELANTECH is not set
-> +# CONFIG_MOUSE_PS2_SENTELIC is not set
-> +# CONFIG_MOUSE_PS2_TOUCHKIT is not set
-> +# CONFIG_MOUSE_SERIAL is not set
-> +# CONFIG_MOUSE_VSXXXAA is not set
-> +# CONFIG_MOUSE_GPIO is not set
-> +# CONFIG_INPUT_JOYSTICK is not set
-> +# CONFIG_INPUT_TABLET is not set
-> +CONFIG_INPUT_TOUCHSCREEN=y
-> +# CONFIG_TOUCHSCREEN_AD7879 is not set
-> +# CONFIG_TOUCHSCREEN_DYNAPRO is not set
-> +# CONFIG_TOUCHSCREEN_FUJITSU is not set
-> +# CONFIG_TOUCHSCREEN_GUNZE is not set
-> +# CONFIG_TOUCHSCREEN_ELO is not set
-> +# CONFIG_TOUCHSCREEN_WACOM_W8001 is not set
-> +# CONFIG_TOUCHSCREEN_MTOUCH is not set
-> +# CONFIG_TOUCHSCREEN_INEXIO is not set
-> +# CONFIG_TOUCHSCREEN_MK712 is not set
-> +# CONFIG_TOUCHSCREEN_PENMOUNT is not set
-> +# CONFIG_TOUCHSCREEN_TOUCHRIGHT is not set
-> +# CONFIG_TOUCHSCREEN_TOUCHWIN is not set
-> +# CONFIG_TOUCHSCREEN_TOUCHIT213 is not set
-> +# CONFIG_TOUCHSCREEN_W90X900 is not set
-> +# CONFIG_INPUT_MISC is not set
-> +
-> +#
-> +# Hardware I/O ports
-> +#
-> +CONFIG_SERIO=y
-> +CONFIG_SERIO_SERPORT=y
-> +CONFIG_SERIO_LIBPS2=y
-> +# CONFIG_SERIO_RAW is not set
-> +# CONFIG_SERIO_ALTERA_PS2 is not set
-> +# CONFIG_GAMEPORT is not set
-> +
-> +#
-> +# Character devices
-> +#
-> +CONFIG_VT=y
-> +CONFIG_CONSOLE_TRANSLATIONS=y
-> +CONFIG_VT_CONSOLE=y
-> +CONFIG_HW_CONSOLE=y
-> +# CONFIG_VT_HW_CONSOLE_BINDING is not set
-> +CONFIG_DEVKMEM=y
-> +# CONFIG_SERIAL_NONSTANDARD is not set
-> +
-> +#
-> +# Serial drivers
-> +#
-> +CONFIG_SERIAL_8250=y
-> +# CONFIG_SERIAL_8250_CONSOLE is not set
-> +CONFIG_SERIAL_8250_NR_UARTS=3
-> +CONFIG_SERIAL_8250_RUNTIME_UARTS=3
-> +# CONFIG_SERIAL_8250_EXTENDED is not set
-> +
-> +#
-> +# Non-8250 serial port support
-> +#
-> +CONFIG_SERIAL_SAMSUNG=y
-> +CONFIG_SERIAL_SAMSUNG_UARTS=4
-> +# CONFIG_SERIAL_SAMSUNG_DEBUG is not set
-> +CONFIG_SERIAL_SAMSUNG_CONSOLE=y
-> +CONFIG_SERIAL_S5P6440=y
-> +CONFIG_SERIAL_CORE=y
-> +CONFIG_SERIAL_CORE_CONSOLE=y
-> +CONFIG_UNIX98_PTYS=y
-> +# CONFIG_DEVPTS_MULTIPLE_INSTANCES is not set
-> +CONFIG_LEGACY_PTYS=y
-> +CONFIG_LEGACY_PTY_COUNT=256
-> +# CONFIG_IPMI_HANDLER is not set
-> +CONFIG_HW_RANDOM=y
-> +# CONFIG_HW_RANDOM_TIMERIOMEM is not set
-> +# CONFIG_R3964 is not set
-> +# CONFIG_RAW_DRIVER is not set
-> +# CONFIG_TCG_TPM is not set
-> +# CONFIG_I2C is not set
-> +# CONFIG_SPI is not set
-> +
-> +#
-> +# PPS support
-> +#
-> +# CONFIG_PPS is not set
-> +CONFIG_ARCH_REQUIRE_GPIOLIB=y
-> +CONFIG_GPIOLIB=y
-> +# CONFIG_DEBUG_GPIO is not set
-> +# CONFIG_GPIO_SYSFS is not set
-> +
-> +#
-> +# Memory mapped GPIO expanders:
-> +#
-> +
-> +#
-> +# I2C GPIO expanders:
-> +#
-> +
-> +#
-> +# PCI GPIO expanders:
-> +#
-> +
-> +#
-> +# SPI GPIO expanders:
-> +#
-> +
-> +#
-> +# AC97 GPIO expanders:
-> +#
-> +# CONFIG_W1 is not set
-> +# CONFIG_POWER_SUPPLY is not set
-> +# CONFIG_HWMON is not set
-> +# CONFIG_THERMAL is not set
-> +# CONFIG_WATCHDOG is not set
-> +CONFIG_SSB_POSSIBLE=y
-> +
-> +#
-> +# Sonics Silicon Backplane
-> +#
-> +# CONFIG_SSB is not set
-> +
-> +#
-> +# Multifunction device drivers
-> +#
-> +# CONFIG_MFD_CORE is not set
-> +# CONFIG_MFD_SM501 is not set
-> +# CONFIG_MFD_ASIC3 is not set
-> +# CONFIG_HTC_EGPIO is not set
-> +# CONFIG_HTC_PASIC3 is not set
-> +# CONFIG_MFD_TMIO is not set
-> +# CONFIG_MFD_T7L66XB is not set
-> +# CONFIG_MFD_TC6387XB is not set
-> +# CONFIG_MFD_TC6393XB is not set
-> +# CONFIG_REGULATOR is not set
-> +# CONFIG_MEDIA_SUPPORT is not set
-> +
-> +#
-> +# Graphics support
-> +#
-> +# CONFIG_VGASTATE is not set
-> +# CONFIG_VIDEO_OUTPUT_CONTROL is not set
-> +# CONFIG_FB is not set
-> +# CONFIG_BACKLIGHT_LCD_SUPPORT is not set
-> +
-> +#
-> +# Display device support
-> +#
-> +CONFIG_DISPLAY_SUPPORT=y
-> +
-> +#
-> +# Display hardware drivers
-> +#
-> +
-> +#
-> +# Console display driver support
-> +#
-> +# CONFIG_VGA_CONSOLE is not set
-> +CONFIG_DUMMY_CONSOLE=y
-> +# CONFIG_SOUND is not set
-> +# CONFIG_HID_SUPPORT is not set
-> +# CONFIG_USB_SUPPORT is not set
-> +# CONFIG_MMC is not set
-> +# CONFIG_MEMSTICK is not set
-> +# CONFIG_NEW_LEDS is not set
-> +# CONFIG_ACCESSIBILITY is not set
-> +CONFIG_RTC_LIB=y
-> +# CONFIG_RTC_CLASS is not set
-> +# CONFIG_DMADEVICES is not set
-> +# CONFIG_AUXDISPLAY is not set
-> +# CONFIG_UIO is not set
-> +
-> +#
-> +# TI VLYNQ
-> +#
-> +# CONFIG_STAGING is not set
-> +
-> +#
-> +# File systems
-> +#
-> +CONFIG_EXT2_FS=y
-> +# CONFIG_EXT2_FS_XATTR is not set
-> +# CONFIG_EXT2_FS_XIP is not set
-> +CONFIG_EXT3_FS=y
-> +# CONFIG_EXT3_DEFAULTS_TO_ORDERED is not set
-> +CONFIG_EXT3_FS_XATTR=y
-> +CONFIG_EXT3_FS_POSIX_ACL=y
-> +CONFIG_EXT3_FS_SECURITY=y
-> +# CONFIG_EXT4_FS is not set
-> +CONFIG_JBD=y
-> +CONFIG_FS_MBCACHE=y
-> +# CONFIG_REISERFS_FS is not set
-> +# CONFIG_JFS_FS is not set
-> +CONFIG_FS_POSIX_ACL=y
-> +# CONFIG_XFS_FS is not set
-> +# CONFIG_GFS2_FS is not set
-> +# CONFIG_BTRFS_FS is not set
-> +# CONFIG_NILFS2_FS is not set
-> +CONFIG_FILE_LOCKING=y
-> +CONFIG_FSNOTIFY=y
-> +CONFIG_DNOTIFY=y
-> +CONFIG_INOTIFY=y
-> +CONFIG_INOTIFY_USER=y
-> +# CONFIG_QUOTA is not set
-> +# CONFIG_AUTOFS_FS is not set
-> +# CONFIG_AUTOFS4_FS is not set
-> +# CONFIG_FUSE_FS is not set
-> +CONFIG_GENERIC_ACL=y
-> +
-> +#
-> +# Caches
-> +#
-> +# CONFIG_FSCACHE is not set
-> +
-> +#
-> +# CD-ROM/DVD Filesystems
-> +#
-> +# CONFIG_ISO9660_FS is not set
-> +# CONFIG_UDF_FS is not set
-> +
-> +#
-> +# DOS/FAT/NT Filesystems
-> +#
-> +CONFIG_FAT_FS=y
-> +CONFIG_MSDOS_FS=y
-> +CONFIG_VFAT_FS=y
-> +CONFIG_FAT_DEFAULT_CODEPAGE=437
-> +CONFIG_FAT_DEFAULT_IOCHARSET="iso8859-1"
-> +# CONFIG_NTFS_FS is not set
-> +
-> +#
-> +# Pseudo filesystems
-> +#
-> +CONFIG_PROC_FS=y
-> +CONFIG_PROC_SYSCTL=y
-> +CONFIG_PROC_PAGE_MONITOR=y
-> +CONFIG_SYSFS=y
-> +CONFIG_TMPFS=y
-> +CONFIG_TMPFS_POSIX_ACL=y
-> +# CONFIG_HUGETLB_PAGE is not set
-> +# CONFIG_CONFIGFS_FS is not set
-> +CONFIG_MISC_FILESYSTEMS=y
-> +# CONFIG_ADFS_FS is not set
-> +# CONFIG_AFFS_FS is not set
-> +# CONFIG_HFS_FS is not set
-> +# CONFIG_HFSPLUS_FS is not set
-> +# CONFIG_BEFS_FS is not set
-> +# CONFIG_BFS_FS is not set
-> +# CONFIG_EFS_FS is not set
-> +CONFIG_CRAMFS=y
-> +# CONFIG_SQUASHFS is not set
-> +# CONFIG_VXFS_FS is not set
-> +# CONFIG_MINIX_FS is not set
-> +# CONFIG_OMFS_FS is not set
-> +# CONFIG_HPFS_FS is not set
-> +# CONFIG_QNX4FS_FS is not set
-> +CONFIG_ROMFS_FS=y
-> +CONFIG_ROMFS_BACKED_BY_BLOCK=y
-> +# CONFIG_ROMFS_BACKED_BY_MTD is not set
-> +# CONFIG_ROMFS_BACKED_BY_BOTH is not set
-> +CONFIG_ROMFS_ON_BLOCK=y
-> +# CONFIG_SYSV_FS is not set
-> +# CONFIG_UFS_FS is not set
-> +
-> +#
-> +# Partition Types
-> +#
-> +# CONFIG_PARTITION_ADVANCED is not set
-> +CONFIG_MSDOS_PARTITION=y
-> +CONFIG_NLS=y
-> +CONFIG_NLS_DEFAULT="iso8859-1"
-> +CONFIG_NLS_CODEPAGE_437=y
-> +# CONFIG_NLS_CODEPAGE_737 is not set
-> +# CONFIG_NLS_CODEPAGE_775 is not set
-> +# CONFIG_NLS_CODEPAGE_850 is not set
-> +# CONFIG_NLS_CODEPAGE_852 is not set
-> +# CONFIG_NLS_CODEPAGE_855 is not set
-> +# CONFIG_NLS_CODEPAGE_857 is not set
-> +# CONFIG_NLS_CODEPAGE_860 is not set
-> +# CONFIG_NLS_CODEPAGE_861 is not set
-> +# CONFIG_NLS_CODEPAGE_862 is not set
-> +# CONFIG_NLS_CODEPAGE_863 is not set
-> +# CONFIG_NLS_CODEPAGE_864 is not set
-> +# CONFIG_NLS_CODEPAGE_865 is not set
-> +# CONFIG_NLS_CODEPAGE_866 is not set
-> +# CONFIG_NLS_CODEPAGE_869 is not set
-> +# CONFIG_NLS_CODEPAGE_936 is not set
-> +# CONFIG_NLS_CODEPAGE_950 is not set
-> +# CONFIG_NLS_CODEPAGE_932 is not set
-> +# CONFIG_NLS_CODEPAGE_949 is not set
-> +# CONFIG_NLS_CODEPAGE_874 is not set
-> +# CONFIG_NLS_ISO8859_8 is not set
-> +# CONFIG_NLS_CODEPAGE_1250 is not set
-> +# CONFIG_NLS_CODEPAGE_1251 is not set
-> +CONFIG_NLS_ASCII=y
-> +CONFIG_NLS_ISO8859_1=y
-> +# CONFIG_NLS_ISO8859_2 is not set
-> +# CONFIG_NLS_ISO8859_3 is not set
-> +# CONFIG_NLS_ISO8859_4 is not set
-> +# CONFIG_NLS_ISO8859_5 is not set
-> +# CONFIG_NLS_ISO8859_6 is not set
-> +# CONFIG_NLS_ISO8859_7 is not set
-> +# CONFIG_NLS_ISO8859_9 is not set
-> +# CONFIG_NLS_ISO8859_13 is not set
-> +# CONFIG_NLS_ISO8859_14 is not set
-> +# CONFIG_NLS_ISO8859_15 is not set
-> +# CONFIG_NLS_KOI8_R is not set
-> +# CONFIG_NLS_KOI8_U is not set
-> +# CONFIG_NLS_UTF8 is not set
-> +
-> +#
-> +# Kernel hacking
-> +#
-> +# CONFIG_PRINTK_TIME is not set
-> +CONFIG_ENABLE_WARN_DEPRECATED=y
-> +CONFIG_ENABLE_MUST_CHECK=y
-> +CONFIG_FRAME_WARN=1024
-> +CONFIG_MAGIC_SYSRQ=y
-> +# CONFIG_STRIP_ASM_SYMS is not set
-> +# CONFIG_UNUSED_SYMBOLS is not set
-> +# CONFIG_DEBUG_FS is not set
-> +# CONFIG_HEADERS_CHECK is not set
-> +CONFIG_DEBUG_KERNEL=y
-> +# CONFIG_DEBUG_SHIRQ is not set
-> +CONFIG_DETECT_SOFTLOCKUP=y
-> +# CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC is not set
-> +CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC_VALUE=0
-> +CONFIG_DETECT_HUNG_TASK=y
-> +# CONFIG_BOOTPARAM_HUNG_TASK_PANIC is not set
-> +CONFIG_BOOTPARAM_HUNG_TASK_PANIC_VALUE=0
-> +CONFIG_SCHED_DEBUG=y
-> +# CONFIG_SCHEDSTATS is not set
-> +# CONFIG_TIMER_STATS is not set
-> +# CONFIG_DEBUG_OBJECTS is not set
-> +# CONFIG_SLUB_DEBUG_ON is not set
-> +# CONFIG_SLUB_STATS is not set
-> +# CONFIG_DEBUG_KMEMLEAK is not set
-> +CONFIG_DEBUG_RT_MUTEXES=y
-> +CONFIG_DEBUG_PI_LIST=y
-> +# CONFIG_RT_MUTEX_TESTER is not set
-> +CONFIG_DEBUG_SPINLOCK=y
-> +CONFIG_DEBUG_MUTEXES=y
-> +# CONFIG_DEBUG_LOCK_ALLOC is not set
-> +# CONFIG_PROVE_LOCKING is not set
-> +# CONFIG_LOCK_STAT is not set
-> +CONFIG_DEBUG_SPINLOCK_SLEEP=y
-> +# CONFIG_DEBUG_LOCKING_API_SELFTESTS is not set
-> +# CONFIG_DEBUG_KOBJECT is not set
-> +CONFIG_DEBUG_BUGVERBOSE=y
-> +CONFIG_DEBUG_INFO=y
-> +# CONFIG_DEBUG_VM is not set
-> +# CONFIG_DEBUG_WRITECOUNT is not set
-> +CONFIG_DEBUG_MEMORY_INIT=y
-> +# CONFIG_DEBUG_LIST is not set
-> +# CONFIG_DEBUG_SG is not set
-> +# CONFIG_DEBUG_NOTIFIERS is not set
-> +# CONFIG_DEBUG_CREDENTIALS is not set
-> +# CONFIG_BOOT_PRINTK_DELAY is not set
-> +# CONFIG_RCU_TORTURE_TEST is not set
-> +# CONFIG_RCU_CPU_STALL_DETECTOR is not set
-> +# CONFIG_BACKTRACE_SELF_TEST is not set
-> +# CONFIG_DEBUG_BLOCK_EXT_DEVT is not set
-> +# CONFIG_DEBUG_FORCE_WEAK_PER_CPU is not set
-> +# CONFIG_FAULT_INJECTION is not set
-> +# CONFIG_LATENCYTOP is not set
-> +CONFIG_SYSCTL_SYSCALL_CHECK=y
-> +# CONFIG_PAGE_POISONING is not set
-> +CONFIG_HAVE_FUNCTION_TRACER=y
-> +CONFIG_TRACING_SUPPORT=y
-> +CONFIG_FTRACE=y
-> +# CONFIG_FUNCTION_TRACER is not set
-> +# CONFIG_SCHED_TRACER is not set
-> +# CONFIG_ENABLE_DEFAULT_TRACERS is not set
-> +# CONFIG_BOOT_TRACER is not set
-> +CONFIG_BRANCH_PROFILE_NONE=y
-> +# CONFIG_PROFILE_ANNOTATED_BRANCHES is not set
-> +# CONFIG_PROFILE_ALL_BRANCHES is not set
-> +# CONFIG_STACK_TRACER is not set
-> +# CONFIG_KMEMTRACE is not set
-> +# CONFIG_WORKQUEUE_TRACER is not set
-> +# CONFIG_BLK_DEV_IO_TRACE is not set
-> +# CONFIG_SAMPLES is not set
-> +CONFIG_HAVE_ARCH_KGDB=y
-> +# CONFIG_KGDB is not set
-> +CONFIG_ARM_UNWIND=y
-> +CONFIG_DEBUG_USER=y
-> +CONFIG_DEBUG_ERRORS=y
-> +# CONFIG_DEBUG_STACK_USAGE is not set
-> +CONFIG_DEBUG_LL=y
-> +# CONFIG_EARLY_PRINTK is not set
-> +# CONFIG_DEBUG_ICEDCC is not set
-> +# CONFIG_OC_ETM is not set
-> +CONFIG_DEBUG_S3C_UART=1
-> +
-> +#
-> +# Security options
-> +#
-> +# CONFIG_KEYS is not set
-> +# CONFIG_SECURITY is not set
-> +# CONFIG_SECURITYFS is not set
-> +# CONFIG_DEFAULT_SECURITY_SELINUX is not set
-> +# CONFIG_DEFAULT_SECURITY_SMACK is not set
-> +# CONFIG_DEFAULT_SECURITY_TOMOYO is not set
-> +CONFIG_DEFAULT_SECURITY_DAC=y
-> +CONFIG_DEFAULT_SECURITY=""
-> +CONFIG_CRYPTO=y
-> +
-> +#
-> +# Crypto core or helper
-> +#
-> +# CONFIG_CRYPTO_MANAGER is not set
-> +# CONFIG_CRYPTO_MANAGER2 is not set
-> +# CONFIG_CRYPTO_GF128MUL is not set
-> +# CONFIG_CRYPTO_NULL is not set
-> +# CONFIG_CRYPTO_CRYPTD is not set
-> +# CONFIG_CRYPTO_AUTHENC is not set
-> +# CONFIG_CRYPTO_TEST is not set
-> +
-> +#
-> +# Authenticated Encryption with Associated Data
-> +#
-> +# CONFIG_CRYPTO_CCM is not set
-> +# CONFIG_CRYPTO_GCM is not set
-> +# CONFIG_CRYPTO_SEQIV is not set
-> +
-> +#
-> +# Block modes
-> +#
-> +# CONFIG_CRYPTO_CBC is not set
-> +# CONFIG_CRYPTO_CTR is not set
-> +# CONFIG_CRYPTO_CTS is not set
-> +# CONFIG_CRYPTO_ECB is not set
-> +# CONFIG_CRYPTO_LRW is not set
-> +# CONFIG_CRYPTO_PCBC is not set
-> +# CONFIG_CRYPTO_XTS is not set
-> +
-> +#
-> +# Hash modes
-> +#
-> +# CONFIG_CRYPTO_HMAC is not set
-> +# CONFIG_CRYPTO_XCBC is not set
-> +# CONFIG_CRYPTO_VMAC is not set
-> +
-> +#
-> +# Digest
-> +#
-> +# CONFIG_CRYPTO_CRC32C is not set
-> +# CONFIG_CRYPTO_GHASH is not set
-> +# CONFIG_CRYPTO_MD4 is not set
-> +# CONFIG_CRYPTO_MD5 is not set
-> +# CONFIG_CRYPTO_MICHAEL_MIC is not set
-> +# CONFIG_CRYPTO_RMD128 is not set
-> +# CONFIG_CRYPTO_RMD160 is not set
-> +# CONFIG_CRYPTO_RMD256 is not set
-> +# CONFIG_CRYPTO_RMD320 is not set
-> +# CONFIG_CRYPTO_SHA1 is not set
-> +# CONFIG_CRYPTO_SHA256 is not set
-> +# CONFIG_CRYPTO_SHA512 is not set
-> +# CONFIG_CRYPTO_TGR192 is not set
-> +# CONFIG_CRYPTO_WP512 is not set
-> +
-> +#
-> +# Ciphers
-> +#
-> +# CONFIG_CRYPTO_AES is not set
-> +# CONFIG_CRYPTO_ANUBIS is not set
-> +# CONFIG_CRYPTO_ARC4 is not set
-> +# CONFIG_CRYPTO_BLOWFISH is not set
-> +# CONFIG_CRYPTO_CAMELLIA is not set
-> +# CONFIG_CRYPTO_CAST5 is not set
-> +# CONFIG_CRYPTO_CAST6 is not set
-> +# CONFIG_CRYPTO_DES is not set
-> +# CONFIG_CRYPTO_FCRYPT is not set
-> +# CONFIG_CRYPTO_KHAZAD is not set
-> +# CONFIG_CRYPTO_SALSA20 is not set
-> +# CONFIG_CRYPTO_SEED is not set
-> +# CONFIG_CRYPTO_SERPENT is not set
-> +# CONFIG_CRYPTO_TEA is not set
-> +# CONFIG_CRYPTO_TWOFISH is not set
-> +
-> +#
-> +# Compression
-> +#
-> +# CONFIG_CRYPTO_DEFLATE is not set
-> +# CONFIG_CRYPTO_ZLIB is not set
-> +# CONFIG_CRYPTO_LZO is not set
-> +
-> +#
-> +# Random Number Generation
-> +#
-> +# CONFIG_CRYPTO_ANSI_CPRNG is not set
-> +CONFIG_CRYPTO_HW=y
-> +# CONFIG_BINARY_PRINTF is not set
-> +
-> +#
-> +# Library routines
-> +#
-> +CONFIG_BITREVERSE=y
-> +CONFIG_GENERIC_FIND_LAST_BIT=y
-> +CONFIG_CRC_CCITT=y
-> +# CONFIG_CRC16 is not set
-> +# CONFIG_CRC_T10DIF is not set
-> +# CONFIG_CRC_ITU_T is not set
-> +CONFIG_CRC32=y
-> +# CONFIG_CRC7 is not set
-> +# CONFIG_LIBCRC32C is not set
-> +CONFIG_ZLIB_INFLATE=y
-> +CONFIG_DECOMPRESS_GZIP=y
-> +CONFIG_DECOMPRESS_BZIP2=y
-> +CONFIG_DECOMPRESS_LZMA=y
-> +CONFIG_HAS_IOMEM=y
-> +CONFIG_HAS_DMA=y
-> diff --git a/arch/arm/mach-s5p6440/mach-smdk6440.c b/arch/arm/mach-s5p6440/mach-smdk6440.c
-> new file mode 100644
-> index 0000000..911f79e
-> --- /dev/null
-> +++ b/arch/arm/mach-s5p6440/mach-smdk6440.c
-> @@ -0,0 +1,114 @@
-> +/* linux/arch/arm/mach-s5p6440/mach-smdk6440.c
+> +++ b/arch/arm/mach-s5p6440/include/mach/regs-clock.h
+> @@ -0,0 +1,130 @@
+> +/* linux/arch/arm/mach-s5p6440/include/mach/regs-clock.h
 > + *
 > + * Copyright (c) 2009 Samsung Electronics Co., Ltd.
 > + *		http://www.samsung.com/
+> + *
+> + * S5P6440 - Clock register definitions
 > + *
 > + * This program is free software; you can redistribute it and/or modify
 > + * it under the terms of the GNU General Public License version 2 as
 > + * published by the Free Software Foundation.
 > +*/
 > +
-> +#include <linux/kernel.h>
-> +#include <linux/types.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/list.h>
-> +#include <linux/timer.h>
-> +#include <linux/delay.h>
+> +#ifndef __ASM_ARCH_REGS_CLOCK_H
+> +#define __ASM_ARCH_REGS_CLOCK_H __FILE__
+> +
+> +#include <mach/map.h>
+> +
+> +#define S5P_CLKREG(x)		(S5P_VA_CLK + (x))
+> +
+> +#define S5P_APLL_LOCK		S5P_CLKREG(0x00)
+> +#define S5P_MPLL_LOCK		S5P_CLKREG(0x04)
+> +#define S5P_EPLL_LOCK		S5P_CLKREG(0x08)
+> +#define S5P_APLL_CON		S5P_CLKREG(0x0C)
+> +#define S5P_MPLL_CON		S5P_CLKREG(0x10)
+> +#define S5P_EPLL_CON		S5P_CLKREG(0x14)
+> +#define S5P_EPLL_CON_K		S5P_CLKREG(0x18)
+> +#define S5P_CLK_SRC0		S5P_CLKREG(0x1C)
+> +#define S5P_CLK_DIV0		S5P_CLKREG(0x20)
+> +#define S5P_CLK_DIV1		S5P_CLKREG(0x24)
+> +#define S5P_CLK_DIV2		S5P_CLKREG(0x28)
+> +#define S5P_CLK_OUT		S5P_CLKREG(0x2C)
+> +#define S5P_CLK_GATE_HCLK0	S5P_CLKREG(0x30)
+> +#define S5P_CLK_GATE_PCLK	S5P_CLKREG(0x34)
+> +#define S5P_CLK_GATE_SCLK0	S5P_CLKREG(0x38)
+> +#define S5P_CLK_GATE_MEM0	S5P_CLKREG(0x3C)
+> +#define S5P_CLK_DIV3		S5P_CLKREG(0x40)
+> +#define S5P_CLK_GATE_HCLK1	S5P_CLKREG(0x44)
+> +#define S5P_CLK_GATE_SCLK1	S5P_CLKREG(0x48)
+> +#define S5P_AHB_CON0           	S5P_CLKREG(0x100)
+> +#define S5P_CLK_SRC1           	S5P_CLKREG(0x10C)
+> +#define S5P_SWRESET		S5P_CLKREG(0x114)
+> +#define S5P_SYS_ID		S5P_CLKREG(0x118)
+> +#define S5P_SYS_OTHERS		S5P_CLKREG(0x11C)
+> +#define S5P_MEM_CFG_STAT	S5P_CLKREG(0x12C)
+> +#define S5P_PWR_CFG		S5P_CLKREG(0x804)
+> +#define S5P_EINT_WAKEUP_MASK	S5P_CLKREG(0x808)
+> +#define S5P_NORMAL_CFG		S5P_CLKREG(0x810)
+> +#define S5P_STOP_CFG		S5P_CLKREG(0x814)
+> +#define S5P_SLEEP_CFG		S5P_CLKREG(0x818)
+> +#define S5P_OSC_FREQ		S5P_CLKREG(0x820)
+> +#define S5P_OSC_STABLE		S5P_CLKREG(0x824)
+> +#define S5P_PWR_STABLE		S5P_CLKREG(0x828)
+> +#define S5P_MTC_STABLE		S5P_CLKREG(0x830)
+> +#define S5P_OTHERS		S5P_CLKREG(0x900)
+> +#define S5P_RST_STAT		S5P_CLKREG(0x904)
+> +#define S5P_WAKEUP_STAT		S5P_CLKREG(0x908)
+> +#define S5P_SLPEN		S5P_CLKREG(0x930)
+> +#define S5P_INFORM0		S5P_CLKREG(0xA00)
+> +#define S5P_INFORM1		S5P_CLKREG(0xA04)
+> +#define S5P_INFORM2		S5P_CLKREG(0xA08)
+> +#define S5P_INFORM3		S5P_CLKREG(0xA0C)
+> +
+> +/* CLKDIV0 */
+> +#define S5P_CLKDIV0_PCLK_MASK		(0xf << 12)
+> +#define S5P_CLKDIV0_PCLK_SHIFT		(12)
+> +#define S5P_CLKDIV0_HCLK_MASK		(0xf << 8)
+> +#define S5P_CLKDIV0_HCLK_SHIFT		(8)
+> +#define S5P_CLKDIV0_MPLL_MASK		(0x1 << 4)
+> +#define S5P_CLKDIV0_ARM_MASK		(0xf << 0)
+> +#define S5P_CLKDIV0_ARM_SHIFT		(0)
+> +
+> +/* CLKDIV3 */
+> +#define S5P_CLKDIV3_PCLK_LOW_MASK	(0xf << 12)
+> +#define S5P_CLKDIV3_PCLK_LOW_SHIFT	(12)
+> +#define S5P_CLKDIV3_HCLK_LOW_MASK	(0xf << 8)
+> +#define S5P_CLKDIV3_HCLK_LOW_SHIFT	(8)
+> +
+> +/* HCLK0 GATE Registers */
+> +#define S5P_CLKCON_HCLK0_USB		(1<<20)
+> +#define S5P_CLKCON_HCLK0_HSMMC2		(1<<19)
+> +#define S5P_CLKCON_HCLK0_HSMMC1		(1<<18)
+> +#define S5P_CLKCON_HCLK0_HSMMC0		(1<<17)
+> +#define S5P_CLKCON_HCLK0_POST0		(1<<5)
+> +
+> +/* HCLK1 GATE Registers */
+> +#define S5P_CLKCON_HCLK1_DISPCON	(1<<1)
+> +
+> +/* PCLK GATE Registers */
+> +#define S5P_CLKCON_PCLK_IIS2		(1<<26)
+> +#define S5P_CLKCON_PCLK_SPI1		(1<<22)
+> +#define S5P_CLKCON_PCLK_SPI0		(1<<21)
+> +#define S5P_CLKCON_PCLK_GPIO		(1<<18)
+> +#define S5P_CLKCON_PCLK_IIC0		(1<<17)
+> +#define S5P_CLKCON_PCLK_TSADC		(1<<12)
+> +#define S5P_CLKCON_PCLK_PWM		(1<<7)
+> +#define S5P_CLKCON_PCLK_RTC		(1<<6)
+> +#define S5P_CLKCON_PCLK_WDT		(1<<5)
+> +#define S5P_CLKCON_PCLK_UART3		(1<<4)
+> +#define S5P_CLKCON_PCLK_UART2		(1<<3)
+> +#define S5P_CLKCON_PCLK_UART1		(1<<2)
+> +#define S5P_CLKCON_PCLK_UART0		(1<<1)
+> +
+> +/* SCLK0 GATE Registers */
+> +#define S5P_CLKCON_SCLK0_MMC2_48	(1<<29)
+> +#define S5P_CLKCON_SCLK0_MMC1_48	(1<<28)
+> +#define S5P_CLKCON_SCLK0_MMC0_48	(1<<27)
+> +#define S5P_CLKCON_SCLK0_MMC2		(1<<26)
+> +#define S5P_CLKCON_SCLK0_MMC1		(1<<25)
+> +#define S5P_CLKCON_SCLK0_MMC0		(1<<24)
+> +#define S5P_CLKCON_SCLK0_SPI1_48 	(1<<23)
+> +#define S5P_CLKCON_SCLK0_SPI0_48 	(1<<22)
+> +#define S5P_CLKCON_SCLK0_SPI1		(1<<21)
+> +#define S5P_CLKCON_SCLK0_SPI0		(1<<20)
+> +#define S5P_CLKCON_SCLK0_UART		(1<<5)
+> +
+> +/* SCLK1 GATE Registers */
+> +
+> +/* MEM0 GATE Registers */
+> +#define S5P_CLKCON_MEM0_HCLK_NFCON	(1<<2)
+> +
+> +/*OTHERS Resgister */
+> +#define S5P_OTHERS_USB_SIG_MASK		(1<<16)
+> +#define S5P_OTHERS_HCLK_LOW_SEL_MPLL	(1<<6)
+> +
+> +/* Compatibility defines */
+> +#define ARM_CLK_DIV			S5P_CLK_DIV0
+> +#define ARM_DIV_RATIO_SHIFT		0
+> +#define ARM_DIV_MASK			(0xf << ARM_DIV_RATIO_SHIFT)
+> +
+> +#endif /* __ASM_ARCH_REGS_CLOCK_H */
+> diff --git a/arch/arm/plat-s5p/clock.c b/arch/arm/plat-s5p/clock.c
+> new file mode 100644
+> index 0000000..2cd0238
+> --- /dev/null
+> +++ b/arch/arm/plat-s5p/clock.c
+> @@ -0,0 +1,137 @@
+> +/* linux/arch/arm/plat-s5p/clock.c
+> + *
+> + * Copyright 2009 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com/
+> + *
+> + * S5P - Common clock support
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
 > +#include <linux/init.h>
-> +#include <linux/serial_core.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/io.h>
 > +#include <linux/module.h>
+> +#include <linux/kernel.h>
+> +#include <linux/list.h>
+> +#include <linux/errno.h>
+> +#include <linux/err.h>
+> +#include <linux/clk.h>
+> +#include <linux/sysdev.h>
+> +#include <linux/io.h>
+> +#include <asm/div64.h>
+> +
+> +#include <plat/clock.h>
+> +#include <plat/clock-clksrc.h>
+> +#include <plat/s5p-clock.h>
+> +
+> +/* fin_apll, fin_mpll and fin_epll are all the same clock, which we call
+> + * clk_ext_xtal_mux.
+> +*/
+> +struct clk clk_ext_xtal_mux = {
+> +	.name		= "ext_xtal",
+> +	.id		= -1,
+> +};
+> +
+> +/* 48MHz USB Phy clock output */
+> +struct clk clk_48m = {
+> +	.name		= "clk_48m",
+> +	.id		= -1,
+> +	.rate		= 48000000,
+> +	.enable		= s5p6440_clk48m_ctrl,
+> +};
+> +
+> +/* APLL clock output
+> + * No need .ctrlbit, this is always on
+> +*/
+> +struct clk clk_fout_apll = {
+> +	.name		= "fout_apll",
+> +	.id		= -1,
+> +};
+> +
+> +/* MPLL clock output
+> + * No need .ctrlbit, this is always on
+> +*/
+> +struct clk clk_fout_mpll = {
+> +	.name		= "fout_mpll",
+> +	.id		= -1,
+> +};
+> +
+> +/* EPLL clock output */
+> +struct clk clk_fout_epll = {
+> +	.name		= "fout_epll",
+> +	.id		= -1,
+> +	.ctrlbit	= (1 << 31),
+> +};
+> +
+> +/* ARM clock */
+> +struct clk clk_arm = {
+> +	.name		= "armclk",
+> +	.id		= -1,
+> +	.rate		= 0,
+> +	.ctrlbit	= 0,
+> +};
+> +
+> +/* Possible clock sources for APLL Mux */
+> +static struct clk *clk_src_apll_list[] = {
+> +	[0] = &clk_fin_apll,
+> +	[1] = &clk_fout_apll,
+> +};
+> +
+> +struct clksrc_sources clk_src_apll = {
+> +	.sources	= clk_src_apll_list,
+> +	.nr_sources	= ARRAY_SIZE(clk_src_apll_list),
+> +};
+> +
+> +/* Possible clock sources for MPLL Mux */
+> +static struct clk *clk_src_mpll_list[] = {
+> +	[0] = &clk_fin_mpll,
+> +	[1] = &clk_fout_mpll,
+> +};
+> +
+> +struct clksrc_sources clk_src_mpll = {
+> +	.sources	= clk_src_mpll_list,
+> +	.nr_sources	= ARRAY_SIZE(clk_src_mpll_list),
+> +};
+> +
+> +/* Possible clock sources for EPLL Mux */
+> +static struct clk *clk_src_epll_list[] = {
+> +	[0] = &clk_fin_epll,
+> +	[1] = &clk_fout_epll,
+> +};
+> +
+> +struct clksrc_sources clk_src_epll = {
+> +	.sources	= clk_src_epll_list,
+> +	.nr_sources	= ARRAY_SIZE(clk_src_epll_list),
+> +};
+> +
+> +int s5p_gatectrl(void __iomem *reg, struct clk *clk, int enable)
+> +{
+> +	unsigned int ctrlbit = clk->ctrlbit;
+> +	u32 con;
+> +
+> +	con = __raw_readl(reg);
+> +	con = enable ? (con | ctrlbit) : (con & ~ctrlbit);
+> +	__raw_writel(con, reg);
+> +	return 0;
+> +}
+> +
+> +static struct clk *s5p_clks[] __initdata = {
+> +	&clk_ext_xtal_mux,
+> +	&clk_48m,
+> +	&clk_fout_apll,
+> +	&clk_fout_mpll,
+> +	&clk_fout_epll,
+> +	&clk_arm,
+> +};
+> +
+> +void __init s5p_register_clocks(unsigned long xtal_freq)
+> +{
+> +	int ret;
+> +
+> +	clk_ext_xtal_mux.rate = xtal_freq;
+> +
+> +	ret = s3c24xx_register_clocks(s5p_clks, ARRAY_SIZE(s5p_clks));
+> +	if (ret > 0)
+> +		printk(KERN_ERR "Failed to register s5p clocks\n");
+> +}
+> diff --git a/arch/arm/plat-s5p/include/plat/pll.h b/arch/arm/plat-s5p/include/plat/pll.h
+> new file mode 100644
+> index 0000000..582c1d9
+> --- /dev/null
+> +++ b/arch/arm/plat-s5p/include/plat/pll.h
+> @@ -0,0 +1,83 @@
+> +/* arch/arm/plat-s5p/include/plat/pll.h
+> + *
+> + * Copyright (c) 2009 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com/
+> + *
+> + * S5P PLL code
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+
+It would be nice to have a 'based on' since there's still bits of my code
+floating around in this file (including one rather large comment on
+the fractional divisor).
+
+This is a big improvement and hopefulyl can be used elsewhere
+to deal with the PLLs.
+
+> +#define PLL45XX_MDIV_MASK	(0x3FF)
+> +#define PLL45XX_PDIV_MASK	(0x3F)
+> +#define PLL45XX_SDIV_MASK	(0x7)
+> +#define PLL45XX_MDIV_SHIFT	(16)
+> +#define PLL45XX_PDIV_SHIFT	(8)
+> +#define PLL45XX_SDIV_SHIFT	(0)
+> +
+> +#include <asm/div64.h>
+> +
+> +enum pll45xx_type_t {
+> +	pll_4500,
+> +	pll_4502,
+> +	pll_4508
+> +};
+> +
+> +static inline unsigned long s5p_get_pll45xx(unsigned long baseclk,
+> +					    u32 pllcon,
+> +					    enum pll45xx_type_t pll_type)
+> +{
+> +	u32 mdiv, pdiv, sdiv;
+> +	u64 fvco = baseclk;
+> +
+> +	mdiv = (pllcon >> PLL45XX_MDIV_SHIFT) & PLL45XX_MDIV_MASK;
+> +	pdiv = (pllcon >> PLL45XX_PDIV_SHIFT) & PLL45XX_PDIV_MASK;
+> +	sdiv = (pllcon >> PLL45XX_SDIV_SHIFT) & PLL45XX_SDIV_MASK;
+> +
+> +	if (pll_type == pll_4508)
+> +		sdiv = sdiv - 1;
+> +
+> +	fvco *= mdiv;
+> +	do_div(fvco, (pdiv << sdiv));
+> +
+> +	return (unsigned long)fvco;
+> +}
+> +
+> +#define PLL90XX_MDIV_MASK	(0xFF)
+> +#define PLL90XX_PDIV_MASK	(0x3F)
+> +#define PLL90XX_SDIV_MASK	(0x7)
+> +#define PLL90XX_KDIV_MASK	(0xffff)
+> +#define PLL90XX_MDIV_SHIFT	(16)
+> +#define PLL90XX_PDIV_SHIFT	(8)
+> +#define PLL90XX_SDIV_SHIFT	(0)
+> +#define PLL90XX_KDIV_SHIFT	(0)
+> +
+> +static inline unsigned long s5p_get_pll90xx(unsigned long baseclk)
+> +{
+> +	unsigned long result;
+> +	u32 epll_con = __raw_readl(S5P_EPLL_CON);
+> +	u32 epll_con_k = __raw_readl(S5P_EPLL_CON_K);
+> +	u32 mdiv, pdiv, sdiv, kdiv;
+> +	u64 tmp;
+> +
+> +	mdiv = (epll_con >> PLL90XX_MDIV_SHIFT) & PLL90XX_MDIV_MASK;
+> +	pdiv = (epll_con >> PLL90XX_PDIV_SHIFT) & PLL90XX_PDIV_MASK;
+> +	sdiv = (epll_con >> PLL90XX_SDIV_SHIFT) & PLL90XX_SDIV_MASK;
+> +	kdiv = epll_con_k & PLL90XX_KDIV_MASK;
+> +
+> +	/* We need to multiple baseclk by mdiv (the integer part) and kdiv
+> +	 * which is in 2^16ths, so shift mdiv up (does not overflow) and
+> +	 * add kdiv before multiplying. The use of tmp is to avoid any
+> +	 * overflows before shifting bac down into result when multipling
+> +	 * by the mdiv and kdiv pair.
+> +	 */
+> +
+> +	tmp = baseclk;
+> +	tmp *= (mdiv << 16) + kdiv;
+> +	do_div(tmp, (pdiv << sdiv));
+> +	result = tmp >> 16;
+> +
+> +	return result;
+> +}
+> diff --git a/arch/arm/plat-s5p/include/plat/s5p-clock.h b/arch/arm/plat-s5p/include/plat/s5p-clock.h
+> new file mode 100644
+> index 0000000..e1a7444
+> --- /dev/null
+> +++ b/arch/arm/plat-s5p/include/plat/s5p-clock.h
+> @@ -0,0 +1,38 @@
+> +/* linux/arch/arm/plat-s5p/include/plat/s5p-clock.h
+> + *
+> + * Copyright 2009 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com/
+> + *
+> + * Header file for s5p clock support
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#ifndef __ASM_PLAT_S5P_CLOCK_H
+> +#define __ASM_PLAT_S5P_CLOCK_H __FILE__
+> +
 > +#include <linux/clk.h>
 > +
-> +#include <asm/mach/arch.h>
-> +#include <asm/mach/map.h>
+> +#define GET_DIV(clk, field) ((((clk) & field##_MASK) >> field##_SHIFT) + 1)
+> +
+> +#define clk_fin_apll clk_ext_xtal_mux
+> +#define clk_fin_mpll clk_ext_xtal_mux
+> +#define clk_fin_epll clk_ext_xtal_mux
+> +
+> +extern struct clk clk_ext_xtal_mux;
+> +extern struct clk clk_48m;
+> +extern struct clk clk_fout_apll;
+> +extern struct clk clk_fout_mpll;
+> +extern struct clk clk_fout_epll;
+> +extern struct clk clk_arm;
+> +
+> +extern struct clksrc_sources clk_src_apll;
+> +extern struct clksrc_sources clk_src_mpll;
+> +extern struct clksrc_sources clk_src_epll;
+> +
+> +extern int s5p6440_clk48m_ctrl(struct clk *clk, int enable);
+> +extern int s5p_gatectrl(void __iomem *reg, struct clk *clk, int enable);
+> +
+> +#endif /* __ASM_PLAT_S5P_CLOCK_H */
+> diff --git a/arch/arm/plat-s5p/s5p6440-clock.c b/arch/arm/plat-s5p/s5p6440-clock.c
+> new file mode 100644
+> index 0000000..8553b2e
+> --- /dev/null
+> +++ b/arch/arm/plat-s5p/s5p6440-clock.c
+> @@ -0,0 +1,705 @@
+> +/* linux/arch/arm/plat-s5p/s5p6440-clock.c
+> + *
+> + * Copyright (c) 2009 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com/
+> + *
+> + * S5P6440 - Clock support
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#include <linux/init.h>
+> +#include <linux/module.h>
+> +#include <linux/kernel.h>
+> +#include <linux/list.h>
+> +#include <linux/errno.h>
+> +#include <linux/err.h>
+> +#include <linux/clk.h>
+> +#include <linux/sysdev.h>
+> +#include <linux/io.h>
 > +
 > +#include <mach/hardware.h>
 > +#include <mach/map.h>
 > +
-> +#include <asm/irq.h>
-> +#include <asm/mach-types.h>
-> +
-> +#include <plat/regs-serial.h>
-> +
-> +#include <plat/s5p6440.h>
-> +#include <plat/clock.h>
+> +#include <plat/cpu-freq.h>
 > +#include <mach/regs-clock.h>
-> +#include <plat/devs.h>
+> +#include <plat/clock.h>
 > +#include <plat/cpu.h>
+> +#include <plat/clock-clksrc.h>
+> +#include <plat/s5p-clock.h>
 > +#include <plat/pll.h>
-> +
-> +#define S5P6440_UCON_DEFAULT    (S3C2410_UCON_TXILEVEL |	\
-> +				S3C2410_UCON_RXILEVEL |		\
-> +				S3C2410_UCON_TXIRQMODE |	\
-> +				S3C2410_UCON_RXIRQMODE |	\
-> +				S3C2410_UCON_RXFIFO_TOI |	\
-> +				S3C2443_UCON_RXERR_IRQEN)
-> +
-> +#define S5P6440_ULCON_DEFAULT   S3C64XX_ULCON_WORD_8BIT
-> +
-> +#define S5P6440_UFCON_DEFAULT   (S3C2410_UFCON_FIFOMODE |	\
-> +				S3C2440_UFCON_TXTRIG16 |	\
-> +				S3C2410_UFCON_RXTRIG8)
-> +
-> +static struct s3c2410_uartcfg smdk6440_uartcfgs[] __initdata = {
-> +	[0] = {
-> +		.hwport	     = 0,
-> +		.flags	     = 0,
-> +		.ucon	     = S5P6440_UCON_DEFAULT,
-> +		.ulcon	     = S5P6440_ULCON_DEFAULT,
-> +		.ufcon	     = S5P6440_UFCON_DEFAULT,
-> +	},
-> +	[1] = {
-> +		.hwport	     = 1,
-> +		.flags	     = 0,
-> +		.ucon	     = S5P6440_UCON_DEFAULT,
-> +		.ulcon	     = S5P6440_ULCON_DEFAULT,
-> +		.ufcon	     = S5P6440_UFCON_DEFAULT,
-> +	},
-> +	[2] = {
-> +		.hwport	     = 2,
-> +		.flags	     = 0,
-> +		.ucon	     = S5P6440_UCON_DEFAULT,
-> +		.ulcon	     = S5P6440_ULCON_DEFAULT,
-> +		.ufcon	     = S5P6440_UFCON_DEFAULT,
-> +	},
-> +	[3] = {
-> +		.hwport	     = 3,
-> +		.flags	     = 0,
-> +		.ucon	     = S5P6440_UCON_DEFAULT,
-> +		.ulcon	     = S5P6440_ULCON_DEFAULT,
-> +		.ufcon	     = S5P6440_UFCON_DEFAULT,
-> +	},
-> +};
-> +
-> +static struct map_desc smdk6440_iodesc[] = {
-> +};
+> +#include <asm/div64.h>
 
-do we really need an empty iodesc here?
+shouldn't need <asm/div64.h> anymore, <plat/pll.h> includes this
+for you. please remove.
 
-> +static struct platform_device *smdk6440_devices[] __initdata = {
+> +/* APLL Mux output clock */
+> +static struct clksrc_clk clk_mout_apll = {
+> +	.clk    = {
+> +		.name           = "mout_apll",
+> +		.id             = -1,
+> +	},
+> +	.sources        = &clk_src_apll,
+> +	.reg_src        = { .reg = S5P_CLK_SRC0, .shift = 0, .size = 1 },
 > +};
 > +
-> +static void __init smdk6440_map_io(void)
+> +static int s5p6440_epll_enable(struct clk *clk, int enable)
 > +{
-> +	s5p_init_io(smdk6440_iodesc, ARRAY_SIZE(smdk6440_iodesc));
-> +	s3c24xx_init_clocks(12000000);
-> +	s3c24xx_init_uarts(smdk6440_uartcfgs, ARRAY_SIZE(smdk6440_uartcfgs));
+> +	unsigned int ctrlbit = clk->ctrlbit;
+> +	unsigned int epll_con = __raw_readl(S5P_EPLL_CON) & ~ctrlbit;
+> +
+> +	if (enable)
+> +		__raw_writel(epll_con | ctrlbit, S5P_EPLL_CON);
+> +	else
+> +		__raw_writel(epll_con, S5P_EPLL_CON);
+> +
+> +	return 0;
 > +}
 > +
-> +static void __init smdk6440_machine_init(void)
+> +unsigned long s5p6440_epll_get_rate(struct clk *clk)
 > +{
-> +	platform_add_devices(smdk6440_devices, ARRAY_SIZE(smdk6440_devices));
+> +	return clk->rate;
 > +}
 > +
-> +MACHINE_START(SMDK6440, "SMDK6440")
-> +	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
-> +	.phys_io	= S5P_PA_UART & 0xfff00000,
-> +	.io_pg_offst	= (((u32)S5P_VA_UART) >> 18) & 0xfffc,
-> +	.boot_params	= S5P_PA_SDRAM + 0x100,
+> +static u32 epll_div[][5] = {
+> +	{ 36000000,	0,	48, 1, 4 },
+> +	{ 48000000,	0,	32, 1, 3 },
+> +	{ 60000000,	0,	40, 1, 3 },
+> +	{ 72000000,	0,	48, 1, 3 },
+> +	{ 84000000,	0,	28, 1, 2 },
+> +	{ 96000000,	0,	32, 1, 2 },
+> +	{ 32768000,	45264,	43, 1, 4 },
+> +	{ 45158000,	6903,	30, 1, 3 },
+> +	{ 49152000,	50332,	32, 1, 3 },
+> +	{ 67738000,	10398,	45, 1, 3 },
+> +	{ 73728000,	9961,	49, 1, 3 }
+> +};
 > +
-> +	.init_irq	= s5p6440_init_irq,
-> +	.map_io		= smdk6440_map_io,
-> +	.init_machine	= smdk6440_machine_init,
-> +	.timer		= &s3c24xx_timer,
-> +MACHINE_END
+> +static int s5p6440_epll_set_rate(struct clk *clk, unsigned long rate)
+> +{
+> +	unsigned int epll_con, epll_con_k;
+> +	unsigned int i;
+> +
+> +	if (clk->rate == rate)	/* Return if nothing changed */
+> +		return 0;
+> +
+> +	epll_con = __raw_readl(S5P_EPLL_CON);
+> +	epll_con_k = __raw_readl(S5P_EPLL_CON_K);
+> +
+> +	epll_con_k &= ~(PLL90XX_KDIV_MASK);
+> +	epll_con &= ~(PLL90XX_MDIV_MASK | PLL90XX_PDIV_MASK | PLL90XX_SDIV_MASK);
+> +
+> +	for (i = 0; i < ARRAY_SIZE(epll_div); i++) {
+> +		 if (epll_div[i][0] == rate) {
+> +			epll_con_k |= (epll_div[i][1] << PLL90XX_KDIV_SHIFT);
+> +			epll_con |= (epll_div[i][2] << PLL90XX_MDIV_SHIFT) |
+> +				    (epll_div[i][3] << PLL90XX_PDIV_SHIFT) |
+> +				    (epll_div[i][4] << PLL90XX_SDIV_SHIFT);
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (i == ARRAY_SIZE(epll_div)) {
+> +		printk(KERN_ERR "%s: Invalid Clock EPLL Frequency\n", __func__);
+> +		return -EINVAL;
+> +	}
+> +
+> +	__raw_writel(epll_con, S5P_EPLL_CON);
+> +	__raw_writel(epll_con_k, S5P_EPLL_CON_K);
+> +
+> +	clk->rate = rate;
+> +
+> +	return 0;
+> +}
+> +
+> +static struct clk_ops s5p6440_epll_ops = {
+> +	.get_rate = s5p6440_epll_get_rate,
+> +	.set_rate = s5p6440_epll_set_rate,
+> +};
+> +
+> +static struct clksrc_clk clk_mout_epll = {
+> +	.clk    = {
+> +		.name           = "mout_epll",
+> +		.id             = -1,
+> +	},
+> +	.sources        = &clk_src_epll,
+> +	.reg_src        = { .reg = S5P_CLK_SRC0, .shift = 2, .size = 1 },
+> +};
+> +
+> +static struct clksrc_clk clk_mout_mpll = {
+> +	.clk = {
+> +		.name           = "mout_mpll",
+> +		.id             = -1,
+> +	},
+> +	.sources        = &clk_src_mpll,
+> +	.reg_src        = { .reg = S5P_CLK_SRC0, .shift = 1, .size = 1 },
+> +};
+> +
+> +struct clk clk_h_low = {
+> +	.name		= "hclk_low",
+> +	.id		= -1,
+> +	.rate		= 0,
+> +	.parent		= NULL,
+> +	.ctrlbit	= 0,
+> +	.ops		= &clk_ops_def_setrate,
+> +};
+> +
+> +struct clk clk_p_low = {
+> +	.name		= "pclk_low",
+> +	.id		= -1,
+> +	.rate		= 0,
+> +	.parent		= NULL,
+> +	.ctrlbit	= 0,
+> +	.ops		= &clk_ops_def_setrate,
+> +};
+> +
+> +enum perf_level {
+> +	L0 = 532*1000,
+> +	L1 = 266*1000,
+> +	L2 = 133*1000,
+> +};
+> +
+> +static const u32 clock_table[][3] = {
+> +	/*{ARM_CLK, DIVarm, DIVhclk}*/
+> +	{L0 * 1000, (0 << ARM_DIV_RATIO_SHIFT), (3 << S5P_CLKDIV0_HCLK_SHIFT)},
+> +	{L1 * 1000, (1 << ARM_DIV_RATIO_SHIFT), (1 << S5P_CLKDIV0_HCLK_SHIFT)},
+> +	{L2 * 1000, (3 << ARM_DIV_RATIO_SHIFT), (0 << S5P_CLKDIV0_HCLK_SHIFT)},
+> +};
+> +
+> +static unsigned long s5p6440_armclk_get_rate(struct clk *clk)
+> +{
+> +	unsigned long rate = clk_get_rate(clk->parent);
+> +	u32 clkdiv;
+> +
+> +	/* divisor mask starts at bit0, so no need to shift */
+> +	clkdiv = __raw_readl(ARM_CLK_DIV) & ARM_DIV_MASK;
+> +
+> +	return rate / (clkdiv + 1);
+> +}
+> +
+> +static unsigned long s5p6440_armclk_round_rate(struct clk *clk,
+> +						unsigned long rate)
+> +{
+> +	u32 iter;
+> +
+> +	for (iter = 1 ; iter < ARRAY_SIZE(clock_table) ; iter++) {
+> +		if (rate > clock_table[iter][0])
+> +			return clock_table[iter-1][0];
+> +	}
+> +
+> +	return clock_table[ARRAY_SIZE(clock_table) - 1][0];
+> +}
+> +
+> +static int s5p6440_armclk_set_rate(struct clk *clk, unsigned long rate)
+> +{
+> +	u32 round_tmp;
+> +	u32 iter;
+> +	u32 clk_div0_tmp;
+> +	u32 cur_rate = clk->ops->get_rate(clk);
+> +	unsigned long flags;
+> +
+> +	round_tmp = clk->ops->round_rate(clk, rate);
+> +	if (round_tmp == cur_rate)
+> +		return 0;
+> +
+> +
+> +	for (iter = 0 ; iter < ARRAY_SIZE(clock_table) ; iter++) {
+> +		if (round_tmp == clock_table[iter][0])
+> +			break;
+> +	}
+> +
+> +	if (iter >= ARRAY_SIZE(clock_table))
+> +		iter = ARRAY_SIZE(clock_table) - 1;
+> +
+> +	local_irq_save(flags);
+> +	if (cur_rate > round_tmp) {
+> +		/* Frequency Down */
+> +		clk_div0_tmp = __raw_readl(ARM_CLK_DIV) & ~(ARM_DIV_MASK);
+> +		clk_div0_tmp |= clock_table[iter][1];
+> +		__raw_writel(clk_div0_tmp, ARM_CLK_DIV);
+> +
+> +		clk_div0_tmp = __raw_readl(ARM_CLK_DIV) &
+> +				~(S5P_CLKDIV0_HCLK_MASK);
+> +		clk_div0_tmp |= clock_table[iter][2];
+> +		__raw_writel(clk_div0_tmp, ARM_CLK_DIV);
+> +
+> +
+> +	} else {
+> +		/* Frequency Up */
+> +		clk_div0_tmp = __raw_readl(ARM_CLK_DIV) &
+> +				~(S5P_CLKDIV0_HCLK_MASK);
+> +		clk_div0_tmp |= clock_table[iter][2];
+> +		__raw_writel(clk_div0_tmp, ARM_CLK_DIV);
+> +
+> +		clk_div0_tmp = __raw_readl(ARM_CLK_DIV) & ~(ARM_DIV_MASK);
+> +		clk_div0_tmp |= clock_table[iter][1];
+> +		__raw_writel(clk_div0_tmp, ARM_CLK_DIV);
+> +		}
+> +	local_irq_restore(flags);
+> +
+> +	clk->rate = clock_table[iter][0];
+> +
+> +	return 0;
+> +}
+> +
+> +static struct clk_ops s5p6440_clkarm_ops = {
+> +	.get_rate	= s5p6440_armclk_get_rate,
+> +	.set_rate	= s5p6440_armclk_set_rate,
+> +	.round_rate	= s5p6440_armclk_round_rate,
+> +};
+> +
+> +static unsigned long s5p6440_clk_doutmpll_get_rate(struct clk *clk)
+> +{
+> +	unsigned long rate = clk_get_rate(clk->parent);
+> +
+> +	if (__raw_readl(S5P_CLK_DIV0) & S5P_CLKDIV0_MPLL_MASK)
+> +		rate /= 2;
+> +
+> +	return rate;
+> +}
+> +
+> +struct clk clk_dout_mpll = {
+> +	.name		= "dout_mpll",
+> +	.id		= -1,
+> +	.parent		= &clk_mout_mpll.clk,
+> +	.ops            = &(struct clk_ops) {
+> +		.get_rate	= s5p6440_clk_doutmpll_get_rate,
+> +	},
+> +};
+> +
+> +int s5p6440_clk48m_ctrl(struct clk *clk, int enable)
+> +{
+> +	unsigned long flags;
+> +	u32 val;
+> +
+> +	/* can't rely on clock lock, this register has other usages */
+> +	local_irq_save(flags);
+> +
+> +	val = __raw_readl(S5P_OTHERS);
+> +	if (enable)
+> +		val |= S5P_OTHERS_USB_SIG_MASK;
+> +	else
+> +		val &= ~S5P_OTHERS_USB_SIG_MASK;
+> +
+> +	__raw_writel(val, S5P_OTHERS);
+> +
+> +	local_irq_restore(flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static int s5p6440_pclk_ctrl(struct clk *clk, int enable)
+> +{
+> +	return s5p_gatectrl(S5P_CLK_GATE_PCLK, clk, enable);
+> +}
+> +
+> +static int s5p6440_hclk0_ctrl(struct clk *clk, int enable)
+> +{
+> +	return s5p_gatectrl(S5P_CLK_GATE_HCLK0, clk, enable);
+> +}
+> +
+> +static int s5p6440_hclk1_ctrl(struct clk *clk, int enable)
+> +{
+> +	return s5p_gatectrl(S5P_CLK_GATE_HCLK1, clk, enable);
+> +}
+> +
+> +static int s5p6440_sclk_ctrl(struct clk *clk, int enable)
+> +{
+> +	return s5p_gatectrl(S5P_CLK_GATE_SCLK0, clk, enable);
+> +}
+> +
+> +static int s5p6440_mem_ctrl(struct clk *clk, int enable)
+> +{
+> +	return s5p_gatectrl(S5P_CLK_GATE_MEM0, clk, enable);
+> +}
+> +
+> +/*
+> + * The following clocks will be disabled during clock initialization. It is
+> + * recommended to keep the following clocks disabled until the driver requests
+> + * for enabling the clock.
+> + */
+> +static struct clk init_clocks_disable[] = {
+> +	{
+> +		.name		= "nand",
+> +		.id		= -1,
+> +		.parent		= &clk_h,
+> +		.enable		= s5p6440_mem_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_MEM0_HCLK_NFCON,
+> +	}, {
+> +		.name		= "adc",
+> +		.id		= -1,
+> +		.parent		= &clk_p_low,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_TSADC,
+> +	}, {
+> +		.name		= "i2c",
+> +		.id		= -1,
+> +		.parent		= &clk_p_low,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_IIC0,
+> +	}, {
+> +		.name		= "i2s_v40",
+> +		.id		= 0,
+> +		.parent		= &clk_p_low,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_IIS2,
+> +	}, {
+> +		.name		= "spi",
+> +		.id		= 0,
+> +		.parent		= &clk_p_low,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_SPI0,
+> +	}, {
+> +		.name		= "spi",
+> +		.id		= 1,
+> +		.parent		= &clk_p_low,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_SPI1,
+> +	}, {
+> +		.name		= "sclk_spi_48",
+> +		.id		= 0,
+> +		.parent		= &clk_48m,
+> +		.enable		= s5p6440_sclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_SCLK0_SPI0_48,
+> +	}, {
+> +		.name		= "sclk_spi_48",
+> +		.id		= 1,
+> +		.parent		= &clk_48m,
+> +		.enable		= s5p6440_sclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_SCLK0_SPI1_48,
+> +	}, {
+> +		.name		= "mmc_48m",
+> +		.id		= 0,
+> +		.parent		= &clk_48m,
+> +		.enable		= s5p6440_sclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_SCLK0_MMC0_48,
+> +	}, {
+> +		.name		= "mmc_48m",
+> +		.id		= 1,
+> +		.parent		= &clk_48m,
+> +		.enable		= s5p6440_sclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_SCLK0_MMC1_48,
+> +	}, {
+> +		.name		= "mmc_48m",
+> +		.id		= 2,
+> +		.parent		= &clk_48m,
+> +		.enable		= s5p6440_sclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_SCLK0_MMC2_48,
+> +	}, {
+> +		.name    	= "otg",
+> +		.id	   	= -1,
+> +		.parent  	= &clk_h_low,
+> +		.enable  	= s5p6440_hclk0_ctrl,
+> +		.ctrlbit 	= S5P_CLKCON_HCLK0_USB
+> +	}, {
+> +		.name    	= "post",
+> +		.id	   	= -1,
+> +		.parent  	= &clk_h_low,
+> +		.enable  	= s5p6440_hclk0_ctrl,
+> +		.ctrlbit 	= S5P_CLKCON_HCLK0_POST0
+> +	}, {
+> +		.name		= "lcd",
+> +		.id		= -1,
+> +		.parent		= &clk_h_low,
+> +		.enable		= s5p6440_hclk1_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_HCLK1_DISPCON,
+> +	}, {
+> +		.name		= "hsmmc",
+> +		.id		= 0,
+> +		.parent		= &clk_h_low,
+> +		.enable		= s5p6440_hclk0_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_HCLK0_HSMMC0,
+> +	}, {
+> +		.name		= "hsmmc",
+> +		.id		= 1,
+> +		.parent		= &clk_h_low,
+> +		.enable		= s5p6440_hclk0_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_HCLK0_HSMMC1,
+> +	}, {
+> +		.name		= "hsmmc",
+> +		.id		= 2,
+> +		.parent		= &clk_h_low,
+> +		.enable		= s5p6440_hclk0_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_HCLK0_HSMMC2,
+> +	}, {
+> +		.name		= "rtc",
+> +		.id		= -1,
+> +		.parent		= &clk_p_low,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_RTC,
+> +	}, {
+> +		.name		= "watchdog",
+> +		.id		= -1,
+> +		.parent		= &clk_p_low,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_WDT,
+> +	}, {
+> +		.name		= "timers",
+> +		.id		= -1,
+> +		.parent		= &clk_p_low,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_PWM,
+> +	}
+> +};
+> +
+> +/*
+> + * The following clocks will be enabled during clock initialization.
+> + */
+> +static struct clk init_clocks[] = {
+> +	{
+> +		.name		= "gpio",
+> +		.id		= -1,
+> +		.parent		= &clk_p_low,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_GPIO,
+> +	}, {
+> +		.name		= "uart",
+> +		.id		= 0,
+> +		.parent		= &clk_p_low,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_UART0,
+> +	}, {
+> +		.name		= "uart",
+> +		.id		= 1,
+> +		.parent		= &clk_p_low,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_UART1,
+> +	}, {
+> +		.name		= "uart",
+> +		.id		= 2,
+> +		.parent		= &clk_p_low,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_UART2,
+> +	}, {
+> +		.name		= "uart",
+> +		.id		= 3,
+> +		.parent		= &clk_p_low,
+> +		.enable		= s5p6440_pclk_ctrl,
+> +		.ctrlbit	= S5P_CLKCON_PCLK_UART3,
+> +	}
+> +};
+> +
+> +static struct clk clk_iis_cd_v40 = {
+> +	.name		= "iis_cdclk_v40",
+> +	.id		= -1,
+> +};
+> +
+> +static struct clk clk_pcm_cd = {
+> +	.name		= "pcm_cdclk",
+> +	.id		= -1,
+> +};
+> +
+> +static struct clk *clkset_spi_mmc_list[] = {
+> +	&clk_mout_epll.clk,
+> +	&clk_dout_mpll,
+> +	&clk_fin_epll,
+> +};
+> +
+> +static struct clksrc_sources clkset_spi_mmc = {
+> +	.sources	= clkset_spi_mmc_list,
+> +	.nr_sources	= ARRAY_SIZE(clkset_spi_mmc_list),
+> +};
+> +
+> +static struct clk *clkset_uart_list[] = {
+> +	&clk_mout_epll.clk,
+> +	&clk_dout_mpll
+> +};
+> +
+> +static struct clksrc_sources clkset_uart = {
+> +	.sources	= clkset_uart_list,
+> +	.nr_sources	= ARRAY_SIZE(clkset_uart_list),
+> +};
+> +
+> +static struct clksrc_clk clksrcs[] = {
+> +	{
+> +		.clk	= {
+> +			.name		= "mmc_bus",
+> +			.id		= 0,
+> +			.ctrlbit        = S5P_CLKCON_SCLK0_MMC0,
+> +			.enable		= s5p6440_sclk_ctrl,
+> +		},
+> +		.sources = &clkset_spi_mmc,
+> +		.reg_src = { .reg = S5P_CLK_SRC0, .shift = 18, .size = 2 },
+> +		.reg_div = { .reg = S5P_CLK_DIV1, .shift = 0, .size = 4 },
+> +	}, {
+> +		.clk	= {
+> +			.name		= "mmc_bus",
+> +			.id		= 1,
+> +			.ctrlbit        = S5P_CLKCON_SCLK0_MMC1,
+> +			.enable		= s5p6440_sclk_ctrl,
+> +		},
+> +		.sources = &clkset_spi_mmc,
+> +		.reg_src = { .reg = S5P_CLK_SRC0, .shift = 20, .size = 2 },
+> +		.reg_div = { .reg = S5P_CLK_DIV1, .shift = 4, .size = 4 },
+> +	}, {
+> +		.clk	= {
+> +			.name		= "mmc_bus",
+> +			.id		= 2,
+> +			.ctrlbit        = S5P_CLKCON_SCLK0_MMC2,
+> +			.enable		= s5p6440_sclk_ctrl,
+> +		},
+> +		.sources = &clkset_spi_mmc,
+> +		.reg_src = { .reg = S5P_CLK_SRC0, .shift = 22, .size = 2 },
+> +		.reg_div = { .reg = S5P_CLK_DIV1, .shift = 8, .size = 4 },
+> +	}, {
+> +		.clk	= {
+> +			.name		= "uclk1",
+> +			.id		= -1,
+> +			.ctrlbit        = S5P_CLKCON_SCLK0_UART,
+> +			.enable		= s5p6440_sclk_ctrl,
+> +		},
+> +		.sources = &clkset_uart,
+> +		.reg_src = { .reg = S5P_CLK_SRC0, .shift = 13, .size = 1 },
+> +		.reg_div = { .reg = S5P_CLK_DIV2, .shift = 16, .size = 4 },
+> +	}, {
+> +		.clk	= {
+> +			.name		= "spi_epll",
+> +			.id		= 0,
+> +			.ctrlbit        = S5P_CLKCON_SCLK0_SPI0,
+> +			.enable		= s5p6440_sclk_ctrl,
+> +		},
+> +		.sources = &clkset_spi_mmc,
+> +		.reg_src = { .reg = S5P_CLK_SRC0, .shift = 14, .size = 2 },
+> +		.reg_div = { .reg = S5P_CLK_DIV2, .shift = 0, .size = 4 },
+> +	}, {
+> +		.clk	= {
+> +			.name		= "spi_epll",
+> +			.id		= 1,
+> +			.ctrlbit        = S5P_CLKCON_SCLK0_SPI1,
+> +			.enable		= s5p6440_sclk_ctrl,
+> +		},
+> +		.sources = &clkset_spi_mmc,
+> +		.reg_src = { .reg = S5P_CLK_SRC0, .shift = 16, .size = 2 },
+> +		.reg_div = { .reg = S5P_CLK_DIV2, .shift = 4, .size = 4 },
+> +	}
+> +};
+> +
+> +/* Clock initialisation code */
+> +static struct clksrc_clk *init_parents[] = {
+> +	&clk_mout_apll,
+> +	&clk_mout_epll,
+> +	&clk_mout_mpll,
+> +};
+> +
+> +void __init_or_cpufreq s5p6440_setup_clocks(void)
+> +{
+> +	struct clk *xtal_clk;
+> +	unsigned long xtal;
+> +	unsigned long fclk;
+> +	unsigned long hclk;
+> +	unsigned long hclk_low;
+> +	unsigned long pclk;
+> +	unsigned long pclk_low;
+> +	unsigned long epll;
+> +	unsigned long apll;
+> +	unsigned long mpll;
+> +	unsigned int ptr;
+> +	u32 clkdiv0;
+> +	u32 clkdiv3;
+> +
+> +	/* Set S5P6440 functions for clk_fout_epll */
+> +	clk_fout_epll.enable = s5p6440_epll_enable;
+> +	clk_fout_epll.ops = &s5p6440_epll_ops;
+> +
+> +	/* Set S5P6440 functions for arm clock */
+> +	clk_arm.parent = &clk_mout_apll.clk;
+> +	clk_arm.ops = &s5p6440_clkarm_ops;
+> +
+> +	clkdiv0 = __raw_readl(S5P_CLK_DIV0);
+> +	clkdiv3 = __raw_readl(S5P_CLK_DIV3);
+> +
+> +	xtal_clk = clk_get(NULL, "ext_xtal");
+> +	BUG_ON(IS_ERR(xtal_clk));
+> +
+> +	xtal = clk_get_rate(xtal_clk);
+> +	clk_put(xtal_clk);
+> +
+> +	epll = s5p_get_pll90xx(xtal);
+> +	mpll = s5p_get_pll45xx(xtal, __raw_readl(S5P_MPLL_CON), pll_4502);
+> +	apll = s5p_get_pll45xx(xtal, __raw_readl(S5P_APLL_CON), pll_4502);
+> +
+> +	printk(KERN_INFO "S5P6440: PLL settings, A=%ld.%ldMHz, M=%ld.%ldMHz," \
+> +			" E=%ld.%ldMHz\n",
+> +			print_mhz(apll), print_mhz(mpll), print_mhz(epll));
+> +
+> +	fclk = apll / GET_DIV(clkdiv0, S5P_CLKDIV0_ARM);
+> +	hclk = fclk / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK);
+> +	pclk = hclk / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK);
+> +
+> +	if (__raw_readl(S5P_OTHERS) & S5P_OTHERS_HCLK_LOW_SEL_MPLL) {
+> +		/* Asynchronous mode */
+> +		hclk_low = mpll / GET_DIV(clkdiv3, S5P_CLKDIV3_HCLK_LOW);
+> +	} else {
+> +		/* Synchronous mode */
+> +		hclk_low = apll / GET_DIV(clkdiv3, S5P_CLKDIV3_HCLK_LOW);
+> +	}
+> +
+> +	pclk_low = hclk_low / GET_DIV(clkdiv3, S5P_CLKDIV3_PCLK_LOW);
+> +
+> +	printk(KERN_INFO "S5P6440: HCLK=%ld.%ldMHz, HCLK_LOW=%ld.%ldMHz," \
+> +			" PCLK=%ld.%ldMHz, PCLK_LOW=%ld.%ldMHz\n",
+> +			print_mhz(hclk), print_mhz(hclk_low),
+> +			print_mhz(pclk), print_mhz(pclk_low));
+> +
+> +	clk_fout_mpll.rate = mpll;
+> +	clk_fout_epll.rate = epll;
+> +	clk_fout_apll.rate = apll;
+> +
+> +	clk_f.rate = fclk;
+> +	clk_h.rate = hclk;
+> +	clk_p.rate = pclk;
+> +	clk_h_low.rate = hclk_low;
+> +	clk_p_low.rate = pclk_low;
+> +
+> +	for (ptr = 0; ptr < ARRAY_SIZE(init_parents); ptr++)
+> +		s3c_set_clksrc(init_parents[ptr], true);
+> +
+> +	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
+> +		s3c_set_clksrc(&clksrcs[ptr], true);
+> +}
+> +
+> +static struct clk *clks[] __initdata = {
+> +	&clk_ext,
+> +	&clk_mout_epll.clk,
+> +	&clk_mout_mpll.clk,
+> +	&clk_dout_mpll,
+> +	&clk_iis_cd_v40,
+> +	&clk_pcm_cd,
+> +	&clk_p_low,
+> +	&clk_h_low,
+> +};
+> +
+> +void __init s5p6440_register_clocks(void)
+> +{
+> +	struct clk *clkp;
+> +	int ret;
+> +	int ptr;
+> +
+> +	ret = s3c24xx_register_clocks(clks, ARRAY_SIZE(clks));
+> +	if (ret > 0)
+> +		printk(KERN_ERR "Failed to register %u clocks\n", ret);
+> +
+> +	s3c_register_clksrc(clksrcs, ARRAY_SIZE(clksrcs));
+> +
+> +	clkp = init_clocks;
+> +	for (ptr = 0; ptr < ARRAY_SIZE(init_clocks); ptr++, clkp++) {
+> +		ret = s3c24xx_register_clock(clkp);
+> +		if (ret < 0) {
+> +			printk(KERN_ERR "Failed to register clock %s (%d)\n",
+> +			       clkp->name, ret);
+> +		}
+> +		(clkp->enable)(clkp, 1);
+> +	}
+> +
+> +	clkp = init_clocks_disable;
+> +	for (ptr = 0; ptr < ARRAY_SIZE(init_clocks_disable); ptr++, clkp++) {
+> +
+> +		ret = s3c24xx_register_clock(clkp);
+> +		if (ret < 0) {
+> +			printk(KERN_ERR "Failed to register clock %s (%d)\n",
+> +			       clkp->name, ret);
+> +		}
+> +		(clkp->enable)(clkp, 0);
+> +	}
+> +
+> +	s3c_pwmclk_init();
+> +}
+> diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-samsung/include/plat/clock.h
+> index 22e0114..ba9a1cd 100644
+> --- a/arch/arm/plat-samsung/include/plat/clock.h
+> +++ b/arch/arm/plat-samsung/include/plat/clock.h
+> @@ -95,6 +95,7 @@ extern void s3c_register_clocks(struct clk *clk, int nr_clks);
+>  extern int s3c24xx_register_baseclocks(unsigned long xtal);
+>  
+>  extern void s3c64xx_register_clocks(void);
+> +extern void s5p_register_clocks(unsigned long xtal_freq);
+>  
+>  extern void s3c24xx_setup_clocks(unsigned long fclk,
+>  				 unsigned long hclk,
 > -- 
 > 1.6.2.5
 > 
