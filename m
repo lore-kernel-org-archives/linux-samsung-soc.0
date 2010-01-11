@@ -1,11 +1,11 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v3 4/7] ARM: S5P6440: Add Timer support
-Date: Mon, 11 Jan 2010 12:55:02 +0900
-Message-ID: <1263182102-14490-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH v3 7/7] ARM: S5P6440: Add serial port support
+Date: Mon, 11 Jan 2010 12:55:19 +0900
+Message-ID: <1263182119-14588-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:53051 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:53053 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750876Ab0AKEDa (ORCPT
+	with ESMTP id S1751532Ab0AKEDa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Sun, 10 Jan 2010 23:03:30 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -13,116 +13,255 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, Adityapratap Sharma <aditya.ps@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Atul Dahiya <atul.dahiya@samsung.com>
 
-This patch adds timer support for S5P6440 CPU.
+This patch adds UART serial port support for S5P6440 CPU. Most of the
+serial support of Samsung's 6400 CPU is reused for 6440 CPU.
 
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 Signed-off-by: Adityapratap Sharma <aditya.ps@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
 ---
- arch/arm/mach-s5p6440/include/mach/pwm-clock.h |   62 ++++++++++++++++++++++++
- arch/arm/mach-s5p6440/include/mach/tick.h      |   24 +++++++++
- 2 files changed, 86 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s5p6440/include/mach/pwm-clock.h
- create mode 100644 arch/arm/mach-s5p6440/include/mach/tick.h
+ arch/arm/plat-s3c/include/plat/devs.h        |    1 +
+ arch/arm/plat-s3c/include/plat/regs-serial.h |    1 +
+ arch/arm/plat-s5p/dev-uart.c                 |  165 ++++++++++++++++++++++++++
+ drivers/serial/Kconfig                       |    9 ++-
+ drivers/serial/Makefile                      |    1 +
+ 5 files changed, 176 insertions(+), 1 deletions(-)
+ create mode 100644 arch/arm/plat-s5p/dev-uart.c
 
-diff --git a/arch/arm/mach-s5p6440/include/mach/pwm-clock.h b/arch/arm/mach-s5p6440/include/mach/pwm-clock.h
+diff --git a/arch/arm/plat-s3c/include/plat/devs.h b/arch/arm/plat-s3c/include/plat/devs.h
+index c1c20b0..8a4153b 100644
+--- a/arch/arm/plat-s3c/include/plat/devs.h
++++ b/arch/arm/plat-s3c/include/plat/devs.h
+@@ -18,6 +18,7 @@ struct s3c24xx_uart_resources {
+ 
+ extern struct s3c24xx_uart_resources s3c2410_uart_resources[];
+ extern struct s3c24xx_uart_resources s3c64xx_uart_resources[];
++extern struct s3c24xx_uart_resources s5p_uart_resources[];
+ 
+ extern struct platform_device *s3c24xx_uart_devs[];
+ extern struct platform_device *s3c24xx_uart_src[];
+diff --git a/arch/arm/plat-s3c/include/plat/regs-serial.h b/arch/arm/plat-s3c/include/plat/regs-serial.h
+index 85d8904..243a17e 100644
+--- a/arch/arm/plat-s3c/include/plat/regs-serial.h
++++ b/arch/arm/plat-s3c/include/plat/regs-serial.h
+@@ -193,6 +193,7 @@
+ #define S3C64XX_UINTP		0x30
+ #define S3C64XX_UINTSP		0x34
+ #define S3C64XX_UINTM		0x38
++#define S3C64XX_ULCON_WORD_8BIT (3 << 0)
+ 
+ #ifndef __ASSEMBLY__
+ 
+diff --git a/arch/arm/plat-s5p/dev-uart.c b/arch/arm/plat-s5p/dev-uart.c
 new file mode 100644
-index 0000000..c4bb7c5
+index 0000000..af726f4
 --- /dev/null
-+++ b/arch/arm/mach-s5p6440/include/mach/pwm-clock.h
-@@ -0,0 +1,62 @@
-+/* linux/arch/arm/mach-s5p6440/include/mach/pwm-clock.h
-+ *
-+ * Copyright 2008 Simtec Electronics
-+ *      Ben Dooks <ben@simtec.co.uk>
-+ *      http://armlinux.simtec.co.uk/
-+ *
-+ * Copyright 2009 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * S5P6440 - pwm clock and timer support
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/**
-+ * pwm_cfg_src_is_tclk() - return whether the given mux config is a tclk
-+ * @cfg: The timer TCFG1 register bits shifted down to 0.
-+ *
-+ * Return true if the given configuration from TCFG1 is a TCLK instead
-+ * any of the TDIV clocks.
-+ */
-+static inline int pwm_cfg_src_is_tclk(unsigned long tcfg)
-+{
-+	return tcfg == S3C2410_TCFG1_MUX_TCLK;
-+}
-+
-+/**
-+ * tcfg_to_divisor() - convert tcfg1 setting to a divisor
-+ * @tcfg1: The tcfg1 setting, shifted down.
-+ *
-+ * Get the divisor value for the given tcfg1 setting. We assume the
-+ * caller has already checked to see if this is not a TCLK source.
-+ */
-+static inline unsigned long tcfg_to_divisor(unsigned long tcfg1)
-+{
-+	return 1 << (1 + tcfg1);
-+}
-+
-+/**
-+ * pwm_tdiv_has_div1() - does the tdiv setting have a /1
-+ *
-+ * Return true if we have a /1 in the tdiv setting.
-+ */
-+static inline unsigned int pwm_tdiv_has_div1(void)
-+{
-+	return 0;
-+}
-+
-+/**
-+ * pwm_tdiv_div_bits() - calculate TCFG1 divisor value.
-+ * @div: The divisor to calculate the bit information for.
-+ *
-+ * Turn a divisor into the necessary bit field for TCFG1.
-+ */
-+static inline unsigned long pwm_tdiv_div_bits(unsigned int div)
-+{
-+	return ilog2(div) - 1;
-+}
-+
-+#define S3C_TCFG1_MUX_TCLK S3C2410_TCFG1_MUX_TCLK
-diff --git a/arch/arm/mach-s5p6440/include/mach/tick.h b/arch/arm/mach-s5p6440/include/mach/tick.h
-new file mode 100644
-index 0000000..0815aeb
---- /dev/null
-+++ b/arch/arm/mach-s5p6440/include/mach/tick.h
-@@ -0,0 +1,24 @@
-+/* linux/arch/arm/mach-s5p6440/include/mach/tick.h
++++ b/arch/arm/plat-s5p/dev-uart.c
+@@ -0,0 +1,165 @@
++/* linux/arch/arm/plat-s5p/dev-uart.c
 + *
 + * Copyright (c) 2009 Samsung Electronics Co., Ltd.
 + *		http://www.samsung.com/
 + *
-+ * S5P6440 - Timer tick support definitions
++ * Base S5P UART resource and device definitions
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 +*/
 +
-+#ifndef __ASM_ARCH_TICK_H
-+#define __ASM_ARCH_TICK_H __FILE__
++#include <linux/kernel.h>
++#include <linux/types.h>
++#include <linux/interrupt.h>
++#include <linux/list.h>
++#include <linux/platform_device.h>
 +
-+static inline u32 s3c24xx_ostimer_pending(void)
-+{
-+	u32 pend = __raw_readl(S5P_VA_VIC0 + VIC_RAW_STATUS);
-+	return pend & (1 << (IRQ_TIMER4_VIC - S5P_IRQ_VIC0(0)));
-+}
++#include <asm/mach/arch.h>
++#include <asm/mach/irq.h>
++#include <mach/hardware.h>
++#include <mach/map.h>
 +
-+#define TICK_MAX	(0xffffffff)
++#include <plat/devs.h>
 +
-+#endif /* __ASM_ARCH_TICK_H */
++ /* Serial port registrations */
++
++static struct resource s5p_uart0_resource[] = {
++	[0] = {
++		.start	= S5P_PA_UART0,
++		.end	= S5P_PA_UART0 + S5P_SZ_UART,
++		.flags	= IORESOURCE_MEM,
++	},
++	[1] = {
++		.start	= IRQ_S5P_UART_RX0,
++		.end	= IRQ_S5P_UART_RX0,
++		.flags	= IORESOURCE_IRQ,
++	},
++	[2] = {
++		.start	= IRQ_S5P_UART_TX0,
++		.end	= IRQ_S5P_UART_TX0,
++		.flags	= IORESOURCE_IRQ,
++	},
++	[3] = {
++		.start	= IRQ_S5P_UART_ERR0,
++		.end	= IRQ_S5P_UART_ERR0,
++		.flags	= IORESOURCE_IRQ,
++	}
++};
++
++static struct resource s5p_uart1_resource[] = {
++	[0] = {
++		.start	= S5P_PA_UART1,
++		.end	= S5P_PA_UART1 + S5P_SZ_UART,
++		.flags	= IORESOURCE_MEM,
++	},
++	[1] = {
++		.start	= IRQ_S5P_UART_RX1,
++		.end	= IRQ_S5P_UART_RX1,
++		.flags	= IORESOURCE_IRQ,
++	},
++	[2] = {
++		.start	= IRQ_S5P_UART_TX1,
++		.end	= IRQ_S5P_UART_TX1,
++		.flags	= IORESOURCE_IRQ,
++	},
++	[3] = {
++		.start	= IRQ_S5P_UART_ERR1,
++		.end	= IRQ_S5P_UART_ERR1,
++		.flags	= IORESOURCE_IRQ,
++	},
++};
++
++static struct resource s5p_uart2_resource[] = {
++	[0] = {
++		.start	= S5P_PA_UART2,
++		.end	= S5P_PA_UART2 + S5P_SZ_UART,
++		.flags	= IORESOURCE_MEM,
++	},
++	[1] = {
++		.start	= IRQ_S5P_UART_RX2,
++		.end	= IRQ_S5P_UART_RX2,
++		.flags	= IORESOURCE_IRQ,
++	},
++	[2] = {
++		.start	= IRQ_S5P_UART_TX2,
++		.end	= IRQ_S5P_UART_TX2,
++		.flags	= IORESOURCE_IRQ,
++	},
++	[3] = {
++		.start	= IRQ_S5P_UART_ERR2,
++		.end	= IRQ_S5P_UART_ERR2,
++		.flags	= IORESOURCE_IRQ,
++	},
++};
++
++static struct resource s5p_uart3_resource[] = {
++	[0] = {
++		.start	= S5P_PA_UART3,
++		.end	= S5P_PA_UART3 + S5P_SZ_UART,
++		.flags	= IORESOURCE_MEM,
++	},
++	[1] = {
++		.start	= IRQ_S5P_UART_RX3,
++		.end	= IRQ_S5P_UART_RX3,
++		.flags	= IORESOURCE_IRQ,
++	},
++	[2] = {
++		.start	= IRQ_S5P_UART_TX3,
++		.end	= IRQ_S5P_UART_TX3,
++		.flags	= IORESOURCE_IRQ,
++	},
++	[3] = {
++		.start	= IRQ_S5P_UART_ERR3,
++		.end	= IRQ_S5P_UART_ERR3,
++		.flags	= IORESOURCE_IRQ,
++	},
++};
++
++struct s3c24xx_uart_resources s5p_uart_resources[] __initdata = {
++	[0] = {
++		.resources	= s5p_uart0_resource,
++		.nr_resources	= ARRAY_SIZE(s5p_uart0_resource),
++	},
++	[1] = {
++		.resources	= s5p_uart1_resource,
++		.nr_resources	= ARRAY_SIZE(s5p_uart1_resource),
++	},
++	[2] = {
++		.resources	= s5p_uart2_resource,
++		.nr_resources	= ARRAY_SIZE(s5p_uart2_resource),
++	},
++	[3] = {
++		.resources	= s5p_uart3_resource,
++		.nr_resources	= ARRAY_SIZE(s5p_uart3_resource),
++	},
++};
++
++/* uart devices */
++
++static struct platform_device s5p_uart_device0 = {
++	.id		= 0,
++};
++
++static struct platform_device s5p_uart_device1 = {
++	.id		= 1,
++};
++
++static struct platform_device s5p_uart_device2 = {
++	.id		= 2,
++};
++
++static struct platform_device s5p_uart_device3 = {
++	.id		= 3,
++};
++
++struct platform_device *s3c24xx_uart_src[4] = {
++	&s5p_uart_device0,
++	&s5p_uart_device1,
++	&s5p_uart_device2,
++	&s5p_uart_device3,
++};
++
++struct platform_device *s3c24xx_uart_devs[4] = {
++};
+diff --git a/drivers/serial/Kconfig b/drivers/serial/Kconfig
+index 9ff47db..5e9bc3a 100644
+--- a/drivers/serial/Kconfig
++++ b/drivers/serial/Kconfig
+@@ -459,7 +459,7 @@ config SERIAL_SAMSUNG_UARTS
+ 	int
+ 	depends on ARM && PLAT_S3C
+ 	default 2 if ARCH_S3C2400
+-	default 4 if ARCH_S5PC1XX || ARCH_S3C64XX || CPU_S3C2443
++	default 4 if ARCH_S5P6440 || ARCH_S5PC1XX || ARCH_S3C64XX || CPU_S3C2443
+ 	default 3
+ 	help
+ 	  Select the number of available UART ports for the Samsung S3C
+@@ -533,6 +533,13 @@ config SERIAL_S3C6400
+ 	  Serial port support for the Samsung S3C6400 and S3C6410
+ 	  SoCs
+ 
++config SERIAL_S5P6440
++        tristate "Samsung S5P Serial port support"
++	depends on SERIAL_SAMSUNG && CPU_S5P6440
++	default y
++	help
++	  Serial port support for Samsung's S5P6440 SoC.
++
+ config SERIAL_S5PC100
+ 	tristate "Samsung S5PC100 Serial port support"
+ 	depends on SERIAL_SAMSUNG && CPU_S5PC100
+diff --git a/drivers/serial/Makefile b/drivers/serial/Makefile
+index 5548fe7..899d5cb 100644
+--- a/drivers/serial/Makefile
++++ b/drivers/serial/Makefile
+@@ -44,6 +44,7 @@ obj-$(CONFIG_SERIAL_S3C2412) += s3c2412.o
+ obj-$(CONFIG_SERIAL_S3C2440) += s3c2440.o
+ obj-$(CONFIG_SERIAL_S3C24A0) += s3c24a0.o
+ obj-$(CONFIG_SERIAL_S3C6400) += s3c6400.o
++obj-$(CONFIG_SERIAL_S5P6440) += s3c6400.o
+ obj-$(CONFIG_SERIAL_S5PC100) += s3c6400.o
+ obj-$(CONFIG_SERIAL_MAX3100) += max3100.o
+ obj-$(CONFIG_SERIAL_IP22_ZILOG) += ip22zilog.o
 -- 
 1.6.2.5
