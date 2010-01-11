@@ -1,17 +1,17 @@
 From: Ben Dooks <ben-linux@fluff.org>
 Subject: Re: [PATCH 1/3] ARM: SAMSUNG: Add config option for number of
 	additional GPIO pins.
-Date: Mon, 11 Jan 2010 06:59:53 +0000
-Message-ID: <20100111065953.GM3738@trinity.fluff.org>
+Date: Mon, 11 Jan 2010 07:34:16 +0000
+Message-ID: <20100111073416.GO3738@trinity.fluff.org>
 References: <1263180113-31605-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:39331 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:57362 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751397Ab0AKG7y (ORCPT
+	id S1751070Ab0AKHeY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Jan 2010 01:59:54 -0500
+	Mon, 11 Jan 2010 02:34:24 -0500
 Content-Disposition: inline
 In-Reply-To: <1263180113-31605-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -24,8 +24,12 @@ On Mon, Jan 11, 2010 at 12:21:51PM +0900, Kukjin Kim wrote:
 > of additional GPIO pins to be used in addition to the GPIO pins
 > supported onchip.
 
-looks fine, will apply. 
+It would have been nice to get the S3C24XX_GPIO_EXTRA replaced as well,
+but there's no currently good way for each board to set a minimum
+value (unless there's something I've missed.)
 
+I will apply this patch and then look at fixing upthe S3C24XX case myself.
+ 
 > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > Signed-off-by: Adityapratap Sharma <aditya.ps@samsung.com>
 > Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
