@@ -1,157 +1,497 @@
 From: Ben Dooks <ben@trinity.fluff.org>
-Subject: [PATCH] ARM: S5PC1XX: Remove definitions deleted by previous clksrc changes
-Date: Tue, 12 Jan 2010 04:20:16 +0000
-Message-ID: <1263270017-25155-8-git-send-email-ben@trinity.fluff.org>
+Subject: [PATCH] ARM: S5PC1XX: Change clksrc_clks to use array of clocks
+Date: Tue, 12 Jan 2010 04:20:14 +0000
+Message-ID: <1263270017-25155-6-git-send-email-ben@trinity.fluff.org>
 References: <1263270017-25155-1-git-send-email-ben@trinity.fluff.org>
  <1263270017-25155-2-git-send-email-ben@trinity.fluff.org>
  <1263270017-25155-3-git-send-email-ben@trinity.fluff.org>
  <1263270017-25155-4-git-send-email-ben@trinity.fluff.org>
  <1263270017-25155-5-git-send-email-ben@trinity.fluff.org>
- <1263270017-25155-6-git-send-email-ben@trinity.fluff.org>
- <1263270017-25155-7-git-send-email-ben@trinity.fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:40853 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:40852 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753320Ab0ALEUW (ORCPT
+	id S1753621Ab0ALEUW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Mon, 11 Jan 2010 23:20:22 -0500
 Received: from ben by trinity.fluff.org with local (Exim 4.69)
 	(envelope-from <ben@trinity.fluff.org>)
-	id 1NUYEr-0006a8-Q2
+	id 1NUYEr-0006a4-Li
 	for linux-samsung-soc@vger.kernel.org; Tue, 12 Jan 2010 04:20:17 +0000
-In-Reply-To: <1263270017-25155-7-git-send-email-ben@trinity.fluff.org>
+In-Reply-To: <1263270017-25155-5-git-send-email-ben@trinity.fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 
 From: Ben Dooks <ben-linux@fluff.org>
 
-Remove the definitions we've deleted in the previous updates to the
-clksrc_clk for arch/arm/plat-s5pc1xx/include/plat/regs-clock.h.
+Remove the individual 'struct clksrc_clks' and place them into an array
+so that we can simply use s3c_register_clksrcs to register tham all in one
+go.
+
+Since the spdif clock relies on the audio clock, move the audio clocks
+into their own arrary.
 
 Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/plat-s5pc1xx/include/plat/regs-clock.h |   60 -----------------------
- 1 files changed, 0 insertions(+), 60 deletions(-)
+ arch/arm/plat-s5pc1xx/s5pc100-clock.c |  411 ++++++++++++++-------------------
+ 1 files changed, 174 insertions(+), 237 deletions(-)
 
-diff --git a/arch/arm/plat-s5pc1xx/include/plat/regs-clock.h b/arch/arm/plat-s5pc1xx/include/plat/regs-clock.h
-index c5cc86e..e88562e 100644
---- a/arch/arm/plat-s5pc1xx/include/plat/regs-clock.h
-+++ b/arch/arm/plat-s5pc1xx/include/plat/regs-clock.h
-@@ -62,53 +62,16 @@
- #define S5PC100_EPLLVAL(_m, _p, _s)	((_m) << 16 | ((_p) << 8) | ((_s)))
+diff --git a/arch/arm/plat-s5pc1xx/s5pc100-clock.c b/arch/arm/plat-s5pc1xx/s5pc100-clock.c
+index cf71f2c..d36ab40 100644
+--- a/arch/arm/plat-s5pc1xx/s5pc100-clock.c
++++ b/arch/arm/plat-s5pc1xx/s5pc100-clock.c
+@@ -534,14 +534,44 @@ static struct clksrc_sources clkset_audio2 = {
+ 	.nr_sources	= ARRAY_SIZE(clkset_audio2_list),
+ };
  
- /* CLKSRC0 */
--#define S5PC100_CLKSRC0_APLL_MASK		(0x1<<0)
--#define S5PC100_CLKSRC0_APLL_SHIFT		(0)
--#define S5PC100_CLKSRC0_MPLL_MASK		(0x1<<4)
--#define S5PC100_CLKSRC0_MPLL_SHIFT		(4)
--#define S5PC100_CLKSRC0_EPLL_MASK		(0x1<<8)
--#define S5PC100_CLKSRC0_EPLL_SHIFT		(8)
--#define S5PC100_CLKSRC0_HPLL_MASK		(0x1<<12)
--#define S5PC100_CLKSRC0_HPLL_SHIFT		(12)
--#define S5PC100_CLKSRC0_AMMUX_MASK		(0x1<<16)
--#define S5PC100_CLKSRC0_AMMUX_SHIFT		(16)
- #define S5PC100_CLKSRC0_HREF_MASK		(0x1<<20)
- #define S5PC100_CLKSRC0_HREF_SHIFT		(20)
--#define S5PC100_CLKSRC0_ONENAND_MASK	(0x1<<24)
--#define S5PC100_CLKSRC0_ONENAND_SHIFT	(24)
+-static struct clksrc_clk clk_audio0;
+-static struct clksrc_clk clk_audio1;
+-static struct clksrc_clk clk_audio2;
++static struct clksrc_clk clksrc_audio[] = {
++	{
++		.clk	= {
++			.name		= "audio-bus",
++			.id		= 0,
++			.ctrlbit	= S5PC100_CLKGATE_SCLK1_AUDIO0,
++			.enable		= s5pc100_sclk1_ctrl,
++		},
++		.sources = &clkset_audio0,
++		.reg_div = { .reg = S5PC100_CLKDIV4, .shift = 12, .size = 4, },
++		.reg_src = { .reg = S5PC100_CLKSRC3, .shift = 12, .size = 3, },
++	}, {
++		.clk	= {
++			.name		= "audio-bus",
++			.id		= 1,
++			.ctrlbit	= S5PC100_CLKGATE_SCLK1_AUDIO1,
++			.enable		= s5pc100_sclk1_ctrl,
++		},
++		.sources = &clkset_audio1,
++		.reg_div = { .reg = S5PC100_CLKDIV4, .shift = 16, .size = 4, },
++		.reg_src = { .reg = S5PC100_CLKSRC3, .shift = 16, .size = 3, },
++	}, {
++		.clk	= {
++			.name		= "audio-bus",
++			.id		= 2,
++			.ctrlbit	= S5PC100_CLKGATE_SCLK1_AUDIO2,
++			.enable		= s5pc100_sclk1_ctrl,
++		},
++		.sources = &clkset_audio2,
++		.reg_div = { .reg = S5PC100_CLKDIV4, .shift = 20, .size = 4, },
++		.reg_src = { .reg = S5PC100_CLKSRC3, .shift = 20, .size = 3, },
++	},
++};
+ 
+ static struct clk *clkset_spdif_list[] = {
+-	&clk_audio0.clk,
+-	&clk_audio1.clk,
+-	&clk_audio2.clk,
++	&clksrc_audio[0].clk,
++	&clksrc_audio[1].clk,
++	&clksrc_audio[2].clk,
+ };
+ 
+ static struct clksrc_sources clkset_spdif = {
+@@ -585,195 +615,136 @@ static struct clksrc_sources clkset_usbhost = {
+ 	.nr_sources	= ARRAY_SIZE(clkset_usbhost_list),
+ };
+ 
+-static struct clksrc_clk clk_spi0 = {
+-	.clk	= {
+-		.name		= "spi_bus",
+-		.id		= 0,
+-		.ctrlbit	= S5PC100_CLKGATE_SCLK0_SPI0,
+-		.enable		= s5pc100_sclk0_ctrl,
 -
+-	},
+-	.sources = &clkset_spi,
+-	.reg_div = { .reg = S5PC100_CLKDIV2, .shift = 4, .size = 4, },
+-	.reg_src = { .reg = S5PC100_CLKSRC1, .shift = 4, .size = 2, },
+-};
+-
+-static struct clksrc_clk clk_spi1 = {
+-	.clk	= {
+-		.name		= "spi_bus",
+-		.id		= 1,
+-		.ctrlbit	= S5PC100_CLKGATE_SCLK0_SPI1,
+-		.enable		= s5pc100_sclk0_ctrl,
+-	},
+-	.sources = &clkset_spi,
+-	.reg_div = { .reg = S5PC100_CLKDIV2, .shift = 8, .size = 4, },
+-	.reg_src = { .reg = S5PC100_CLKSRC1, .shift = 8, .size = 2, },
+-};
+-
+-static struct clksrc_clk clk_spi2 = {
+-	.clk	= {
+-		.name		= "spi_bus",
+-		.id		= 2,
+-		.ctrlbit	= S5PC100_CLKGATE_SCLK0_SPI2,
+-		.enable		= s5pc100_sclk0_ctrl,
+-	},
+-	.sources = &clkset_spi,
+-	.reg_div = { .reg = S5PC100_CLKDIV2, .shift = 12, .size = 4, },
+-	.reg_src = { .reg = S5PC100_CLKSRC1, .shift = 12, .size = 2, },
+-};
+-
+-static struct clksrc_clk clk_uart_uclk1 = {
+-	.clk	= {
+-		.name		= "uclk1",
+-		.id		= -1,
+-		.ctrlbit        = S5PC100_CLKGATE_SCLK0_UART,
+-		.enable		= s5pc100_sclk0_ctrl,
+-	},
+-	.sources = &clkset_uart,
+-	.reg_div = { .reg = S5PC100_CLKDIV2, .shift = 0, .size = 3, },
+-	.reg_src = { .reg = S5PC100_CLKSRC1, .shift = 0, .size = 1, },
+-};
+-
+-static struct clksrc_clk clk_audio0 = {
+-	.clk	= {
+-		.name		= "audio-bus",
+-		.id		= 0,
+-		.ctrlbit	= S5PC100_CLKGATE_SCLK1_AUDIO0,
+-		.enable		= s5pc100_sclk1_ctrl,
+-	},
+-	.sources = &clkset_audio0,
+-	.reg_div = { .reg = S5PC100_CLKDIV4, .shift = 12, .size = 4, },
+-	.reg_src = { .reg = S5PC100_CLKSRC3, .shift = 12, .size = 3, },
+-};
+-
+-static struct clksrc_clk clk_audio1 = {
+-	.clk	= {
+-		.name		= "audio-bus",
+-		.id		= 1,
+-		.ctrlbit	= S5PC100_CLKGATE_SCLK1_AUDIO1,
+-		.enable		= s5pc100_sclk1_ctrl,
+-	},
+-	.sources = &clkset_audio1,
+-	.reg_div = { .reg = S5PC100_CLKDIV4, .shift = 16, .size = 4, },
+-	.reg_src = { .reg = S5PC100_CLKSRC3, .shift = 16, .size = 3, },
+-};
+-
+-
+-static struct clksrc_clk clk_audio2 = {
+-	.clk	= {
+-		.name		= "audio-bus",
+-		.id		= 2,
+-		.ctrlbit	= S5PC100_CLKGATE_SCLK1_AUDIO2,
+-		.enable		= s5pc100_sclk1_ctrl,
+-	},
+-	.sources = &clkset_audio2,
+-	.reg_div = { .reg = S5PC100_CLKDIV4, .shift = 20, .size = 4, },
+-	.reg_src = { .reg = S5PC100_CLKSRC3, .shift = 20, .size = 3, },
+-};
+-
+-static struct clksrc_clk clk_spdif = {
+-	.clk	= {
+-		.name		= "spdif",
+-		.id		= -1,
+-	},
+-	.sources	= &clkset_spdif,
+-	.reg_src = { .reg = S5PC100_CLKSRC3, .shift = 24, .size = 2, },
+-};
+-
+-static struct clksrc_clk clk_lcd = {
+-	.clk	= {
+-		.name		= "lcd",
+-		.id		= -1,
+-		.ctrlbit	= S5PC100_CLKGATE_SCLK1_LCD,
+-		.enable		= s5pc100_sclk1_ctrl,
+-	},
+-	.sources = &clkset_lcd_fimc,
+-	.reg_div = { .reg = S5PC100_CLKDIV3, .shift = 12, .size = 4, },
+-	.reg_src = { .reg = S5PC100_CLKSRC2, .shift = 12, .size = 2, },
+-};
+-
+-static struct clksrc_clk clk_fimc0 = {
+-	.clk	= {
+-		.name		= "fimc",
+-		.id		= 0,
+-		.ctrlbit	= S5PC100_CLKGATE_SCLK1_FIMC0,
+-		.enable		= s5pc100_sclk1_ctrl,
+-	},
+-	.sources = &clkset_lcd_fimc,
+-	.reg_div = { .reg = S5PC100_CLKDIV3, .shift = 16, .size = 4, },
+-	.reg_src = { .reg = S5PC100_CLKSRC2, .shift = 16, .size = 2, },
+-};
+-
+-static struct clksrc_clk clk_fimc1 = {
+-	.clk	= {
+-		.name		= "fimc",
+-		.id		= 1,
+-		.ctrlbit	= S5PC100_CLKGATE_SCLK1_FIMC1,
+-		.enable		= s5pc100_sclk1_ctrl,
+-	},
+-	.sources	= &clkset_lcd_fimc,
+-	.reg_div = { .reg = S5PC100_CLKDIV3, .shift = 20, .size = 4, },
+-	.reg_src = { .reg = S5PC100_CLKSRC2, .shift = 20, .size = 2, },
+-};
+-
+-static struct clksrc_clk clk_fimc2 = {
+-	.clk	= {
+-		.name		= "fimc",
+-		.id		= 2,
+-		.ctrlbit	= S5PC100_CLKGATE_SCLK1_FIMC2,
+-		.enable		= s5pc100_sclk1_ctrl,
+-	},
+-	.sources = &clkset_lcd_fimc,
+-	.reg_div = { .reg = S5PC100_CLKDIV3, .shift = 24, .size = 4, },
+-	.reg_src = { .reg = S5PC100_CLKSRC2, .shift = 24, .size = 2, },
+-};
+-
+-static struct clksrc_clk clk_mmc0 = {
+-	.clk	= {
+-		.name		= "mmc_bus",
+-		.id		= 0,
+-		.ctrlbit	= S5PC100_CLKGATE_SCLK0_MMC0,
+-		.enable		= s5pc100_sclk0_ctrl,
+-	},
+-	.sources = &clkset_mmc,
+-	.reg_div = { .reg = S5PC100_CLKDIV3, .shift = 0, .size = 4, },
+-	.reg_src = { .reg = S5PC100_CLKSRC2, .shift = 0, .size = 2, },
+-};
+-
+-static struct clksrc_clk clk_mmc1 = {
+-	.clk	= {
+-		.name		= "mmc_bus",
+-		.id		= 1,
+-		.ctrlbit	= S5PC100_CLKGATE_SCLK0_MMC1,
+-		.enable		= s5pc100_sclk0_ctrl,
+-	},
+-	.sources = &clkset_mmc,
+-	.reg_div = { .reg = S5PC100_CLKDIV3, .shift = 4, .size = 4, },
+-	.reg_src = { .reg = S5PC100_CLKSRC2, .shift = 4, .size = 2, },
+-};
+-
+-static struct clksrc_clk clk_mmc2 = {
+-	.clk	= {
+-		.name		= "mmc_bus",
+-		.id		= 2,
+-		.ctrlbit	= S5PC100_CLKGATE_SCLK0_MMC2,
+-		.enable		= s5pc100_sclk0_ctrl,
+-	},
+-	.sources	= &clkset_mmc,
+-	.reg_div = { .reg = S5PC100_CLKDIV3, .shift = 8, .size = 4, },
+-	.reg_src = { .reg = S5PC100_CLKSRC2, .shift = 8, .size = 2, },
+-};
+-
+-static struct clksrc_clk clk_usbhost = {
+-	.clk	= {
+-		.name		= "usbhost",
+-		.id		= -1,
+-		.ctrlbit        = S5PC100_CLKGATE_SCLK0_USBHOST,
+-		.enable		= s5pc100_sclk0_ctrl,
+-	},
+-	.sources = &clkset_usbhost,
+-	.reg_div = { .reg = S5PC100_CLKDIV2, .shift = 20, .size = 4, },
+-	.reg_src = { .reg = S5PC100_CLKSRC1, .shift = 20, .size = 2, },
++static struct clksrc_clk clksrc_clks[] = {
++	{
++		.clk	= {
++			.name		= "spi_bus",
++			.id		= 0,
++			.ctrlbit	= S5PC100_CLKGATE_SCLK0_SPI0,
++			.enable		= s5pc100_sclk0_ctrl,
++
++		},
++		.sources = &clkset_spi,
++		.reg_div = { .reg = S5PC100_CLKDIV2, .shift = 4, .size = 4, },
++		.reg_src = { .reg = S5PC100_CLKSRC1, .shift = 4, .size = 2, },
++	}, {
++		.clk	= {
++			.name		= "spi_bus",
++			.id		= 1,
++			.ctrlbit	= S5PC100_CLKGATE_SCLK0_SPI1,
++			.enable		= s5pc100_sclk0_ctrl,
++		},
++		.sources = &clkset_spi,
++		.reg_div = { .reg = S5PC100_CLKDIV2, .shift = 8, .size = 4, },
++		.reg_src = { .reg = S5PC100_CLKSRC1, .shift = 8, .size = 2, },
++	}, {
++		.clk	= {
++			.name		= "spi_bus",
++			.id		= 2,
++			.ctrlbit	= S5PC100_CLKGATE_SCLK0_SPI2,
++			.enable		= s5pc100_sclk0_ctrl,
++		},
++		.sources = &clkset_spi,
++		.reg_div = { .reg = S5PC100_CLKDIV2, .shift = 12, .size = 4, },
++		.reg_src = { .reg = S5PC100_CLKSRC1, .shift = 12, .size = 2, },
++	}, {
++		.clk	= {
++			.name		= "uclk1",
++			.id		= -1,
++			.ctrlbit        = S5PC100_CLKGATE_SCLK0_UART,
++			.enable		= s5pc100_sclk0_ctrl,
++		},
++		.sources = &clkset_uart,
++		.reg_div = { .reg = S5PC100_CLKDIV2, .shift = 0, .size = 3, },
++		.reg_src = { .reg = S5PC100_CLKSRC1, .shift = 0, .size = 1, },
++	}, {
++		.clk	= {
++			.name		= "spdif",
++			.id		= -1,
++		},
++		.sources	= &clkset_spdif,
++		.reg_src = { .reg = S5PC100_CLKSRC3, .shift = 24, .size = 2, },
++	}, {
++		.clk	= {
++			.name		= "lcd",
++			.id		= -1,
++			.ctrlbit	= S5PC100_CLKGATE_SCLK1_LCD,
++			.enable		= s5pc100_sclk1_ctrl,
++		},
++		.sources = &clkset_lcd_fimc,
++		.reg_div = { .reg = S5PC100_CLKDIV3, .shift = 12, .size = 4, },
++		.reg_src = { .reg = S5PC100_CLKSRC2, .shift = 12, .size = 2, },
++	}, {
++		.clk	= {
++			.name		= "fimc",
++			.id		= 0,
++			.ctrlbit	= S5PC100_CLKGATE_SCLK1_FIMC0,
++			.enable		= s5pc100_sclk1_ctrl,
++		},
++		.sources = &clkset_lcd_fimc,
++		.reg_div = { .reg = S5PC100_CLKDIV3, .shift = 16, .size = 4, },
++		.reg_src = { .reg = S5PC100_CLKSRC2, .shift = 16, .size = 2, },
++	}, {
++		.clk	= {
++			.name		= "fimc",
++			.id		= 1,
++			.ctrlbit	= S5PC100_CLKGATE_SCLK1_FIMC1,
++			.enable		= s5pc100_sclk1_ctrl,
++		},
++		.sources	= &clkset_lcd_fimc,
++		.reg_div = { .reg = S5PC100_CLKDIV3, .shift = 20, .size = 4, },
++		.reg_src = { .reg = S5PC100_CLKSRC2, .shift = 20, .size = 2, },
++	}, {
++		.clk	= {
++			.name		= "fimc",
++			.id		= 2,
++			.ctrlbit	= S5PC100_CLKGATE_SCLK1_FIMC2,
++			.enable		= s5pc100_sclk1_ctrl,
++		},
++		.sources = &clkset_lcd_fimc,
++		.reg_div = { .reg = S5PC100_CLKDIV3, .shift = 24, .size = 4, },
++		.reg_src = { .reg = S5PC100_CLKSRC2, .shift = 24, .size = 2, },
++	}, {
++		.clk	= {
++			.name		= "mmc_bus",
++			.id		= 0,
++			.ctrlbit	= S5PC100_CLKGATE_SCLK0_MMC0,
++			.enable		= s5pc100_sclk0_ctrl,
++		},
++		.sources = &clkset_mmc,
++		.reg_div = { .reg = S5PC100_CLKDIV3, .shift = 0, .size = 4, },
++		.reg_src = { .reg = S5PC100_CLKSRC2, .shift = 0, .size = 2, },
++	}, {
++		.clk	= {
++			.name		= "mmc_bus",
++			.id		= 1,
++			.ctrlbit	= S5PC100_CLKGATE_SCLK0_MMC1,
++			.enable		= s5pc100_sclk0_ctrl,
++		},
++		.sources = &clkset_mmc,
++		.reg_div = { .reg = S5PC100_CLKDIV3, .shift = 4, .size = 4, },
++		.reg_src = { .reg = S5PC100_CLKSRC2, .shift = 4, .size = 2, },
++	}, {
++		.clk	= {
++			.name		= "mmc_bus",
++			.id		= 2,
++			.ctrlbit	= S5PC100_CLKGATE_SCLK0_MMC2,
++			.enable		= s5pc100_sclk0_ctrl,
++		},
++		.sources	= &clkset_mmc,
++		.reg_div = { .reg = S5PC100_CLKDIV3, .shift = 8, .size = 4, },
++		.reg_src = { .reg = S5PC100_CLKSRC2, .shift = 8, .size = 2, },
++	}, {
++		.clk	= {
++			.name		= "usbhost",
++			.id		= -1,
++			.ctrlbit        = S5PC100_CLKGATE_SCLK0_USBHOST,
++			.enable		= s5pc100_sclk0_ctrl,
++		},
++		.sources = &clkset_usbhost,
++		.reg_div = { .reg = S5PC100_CLKDIV2, .shift = 20, .size = 4, },
++		.reg_src = { .reg = S5PC100_CLKSRC1, .shift = 20, .size = 2, },
++	}
+ };
  
- /* CLKSRC1 */
--#define S5PC100_CLKSRC1_UART_MASK		(0x1<<0)
--#define S5PC100_CLKSRC1_UART_SHIFT		(0)
--#define S5PC100_CLKSRC1_SPI0_MASK		(0x3<<4)
--#define S5PC100_CLKSRC1_SPI0_SHIFT		(4)
--#define S5PC100_CLKSRC1_SPI1_MASK		(0x3<<8)
--#define S5PC100_CLKSRC1_SPI1_SHIFT		(8)
--#define S5PC100_CLKSRC1_SPI2_MASK		(0x3<<12)
--#define S5PC100_CLKSRC1_SPI2_SHIFT		(12)
- #define S5PC100_CLKSRC1_IRDA_MASK		(0x3<<16)
- #define S5PC100_CLKSRC1_IRDA_SHIFT		(16)
--#define S5PC100_CLKSRC1_UHOST_MASK		(0x3<<20)
--#define S5PC100_CLKSRC1_UHOST_SHIFT		(20)
- #define S5PC100_CLKSRC1_CLK48M_MASK		(0x1<<24)
- #define S5PC100_CLKSRC1_CLK48M_SHIFT	(24)
+ /* Clock initialisation code */
+@@ -785,22 +756,6 @@ static struct clksrc_clk *init_parents[] = {
+ 	&clk_mout_onenand,
+ 	&clk_mout_epll,
+ 	&clk_mout_hpll,
+-	&clk_spi0,
+-	&clk_spi1,
+-	&clk_spi2,
+-	&clk_uart_uclk1,
+-	&clk_audio0,
+-	&clk_audio1,
+-	&clk_audio2,
+-	&clk_spdif,
+-	&clk_lcd,
+-	&clk_fimc0,
+-	&clk_fimc1,
+-	&clk_fimc2,
+-	&clk_mmc0,
+-	&clk_mmc1,
+-	&clk_mmc2,
+-	&clk_usbhost,
+ };
  
- /* CLKSRC2 */
--#define S5PC100_CLKSRC2_MMC0_MASK		(0x3<<0)
--#define S5PC100_CLKSRC2_MMC0_SHIFT		(0)
--#define S5PC100_CLKSRC2_MMC1_MASK		(0x3<<4)
--#define S5PC100_CLKSRC2_MMC1_SHIFT		(4)
--#define S5PC100_CLKSRC2_MMC2_MASK		(0x3<<8)
--#define S5PC100_CLKSRC2_MMC2_SHIFT		(8)
--#define S5PC100_CLKSRC2_LCD_MASK		(0x3<<12)
--#define S5PC100_CLKSRC2_LCD_SHIFT		(12)
--#define S5PC100_CLKSRC2_FIMC0_MASK		(0x3<<16)
--#define S5PC100_CLKSRC2_FIMC0_SHIFT		(16)
--#define S5PC100_CLKSRC2_FIMC1_MASK		(0x3<<20)
--#define S5PC100_CLKSRC2_FIMC1_SHIFT		(20)
--#define S5PC100_CLKSRC2_FIMC2_MASK		(0x3<<24)
--#define S5PC100_CLKSRC2_FIMC2_SHIFT		(24)
- #define S5PC100_CLKSRC2_MIXER_MASK		(0x3<<28)
- #define S5PC100_CLKSRC2_MIXER_SHIFT		(28)
+ #define GET_DIV(clk, field) ((((clk) & field##_MASK) >> field##_SHIFT) + 1)
+@@ -867,6 +822,12 @@ void __init_or_cpufreq s5pc100_setup_clocks(void)
  
-@@ -119,14 +82,6 @@
- #define S5PC100_CLKSRC3_HCLKD2_SHIFT	(4)
- #define S5PC100_CLKSRC3_I2SD2_MASK		(0x3<<8)
- #define S5PC100_CLKSRC3_I2SD2_SHIFT		(8)
--#define S5PC100_CLKSRC3_AUDIO0_MASK		(0x7<<12)
--#define S5PC100_CLKSRC3_AUDIO0_SHIFT	(12)
--#define S5PC100_CLKSRC3_AUDIO1_MASK		(0x7<<16)
--#define S5PC100_CLKSRC3_AUDIO1_SHIFT	(16)
--#define S5PC100_CLKSRC3_AUDIO2_MASK		(0x7<<20)
--#define S5PC100_CLKSRC3_AUDIO2_SHIFT	(20)
--#define S5PC100_CLKSRC3_SPDIF_MASK		(0x3<<24)
--#define S5PC100_CLKSRC3_SPDIF_SHIFT		(24)
+ 	for (ptr = 0; ptr < ARRAY_SIZE(init_parents); ptr++)
+ 	  s3c_set_clksrc(init_parents[ptr], true);
++
++	for (ptr = 0; ptr < ARRAY_SIZE(clksrc_audio); ptr++)
++		s3c_set_clksrc(clksrc_audio + ptr, true);
++
++	for (ptr = 0; ptr < ARRAY_SIZE(clksrc_clks); ptr++)
++		s3c_set_clksrc(clksrc_clks + ptr, true);
+ }
  
- /* CLKDIV0 */
- #define S5PC100_CLKDIV0_APLL_MASK		(0x1<<0)
-@@ -158,33 +113,21 @@
+ static struct clk *clks[] __initdata = {
+@@ -890,30 +851,6 @@ static struct clk *clks[] __initdata = {
+ 	&clk_arm,
+ };
  
- /* CLKDIV2 */
- #define S5PC100_CLKDIV2_UART_MASK		(0x7<<0)
--#define S5PC100_CLKDIV2_UART_SHIFT		(0)
- #define S5PC100_CLKDIV2_SPI0_MASK		(0xf<<4)
--#define S5PC100_CLKDIV2_SPI0_SHIFT		(4)
- #define S5PC100_CLKDIV2_SPI1_MASK		(0xf<<8)
--#define S5PC100_CLKDIV2_SPI1_SHIFT		(8)
- #define S5PC100_CLKDIV2_SPI2_MASK		(0xf<<12)
--#define S5PC100_CLKDIV2_SPI2_SHIFT		(12)
- #define S5PC100_CLKDIV2_IRDA_MASK		(0xf<<16)
- #define S5PC100_CLKDIV2_IRDA_SHIFT		(16)
- #define S5PC100_CLKDIV2_UHOST_MASK		(0xf<<20)
--#define S5PC100_CLKDIV2_UHOST_SHIFT		(20)
+-/* simplest change - will aggregate clocks later */
+-static struct clksrc_clk *clks_src[] = {
+-	&clk_mout_apll,
+-	&clk_mout_mpll,
+-	&clk_mout_onenand,
+-	&clk_mout_epll,
+-	&clk_spi0,
+-	&clk_spi1,
+-	&clk_spi2,
+-	&clk_uart_uclk1,
+-	&clk_audio0,
+-	&clk_audio1,
+-	&clk_audio2,
+-	&clk_spdif,
+-	&clk_lcd,
+-	&clk_fimc0,
+-	&clk_fimc1,
+-	&clk_fimc2,
+-	&clk_mmc0,
+-	&clk_mmc1,
+-	&clk_mmc2,
+-	&clk_usbhost,
+-};
+-
+ void __init s5pc100_register_clocks(void)
+ {
+ 	struct clk *clkp;
+@@ -929,6 +866,6 @@ void __init s5pc100_register_clocks(void)
+ 		}
+ 	}
  
- /* CLKDIV3 */
- #define S5PC100_CLKDIV3_MMC0_MASK		(0xf<<0)
--#define S5PC100_CLKDIV3_MMC0_SHIFT		(0)
- #define S5PC100_CLKDIV3_MMC1_MASK		(0xf<<4)
--#define S5PC100_CLKDIV3_MMC1_SHIFT		(4)
- #define S5PC100_CLKDIV3_MMC2_MASK		(0xf<<8)
--#define S5PC100_CLKDIV3_MMC2_SHIFT		(8)
- #define S5PC100_CLKDIV3_LCD_MASK		(0xf<<12)
--#define S5PC100_CLKDIV3_LCD_SHIFT		(12)
- #define S5PC100_CLKDIV3_FIMC0_MASK		(0xf<<16)
--#define S5PC100_CLKDIV3_FIMC0_SHIFT		(16)
- #define S5PC100_CLKDIV3_FIMC1_MASK		(0xf<<20)
--#define S5PC100_CLKDIV3_FIMC1_SHIFT		(20)
- #define S5PC100_CLKDIV3_FIMC2_MASK		(0xf<<24)
--#define S5PC100_CLKDIV3_FIMC2_SHIFT		(24)
- #define S5PC100_CLKDIV3_HDMI_MASK		(0xf<<28)
- #define S5PC100_CLKDIV3_HDMI_SHIFT		(28)
- 
-@@ -196,11 +139,8 @@
- #define S5PC100_CLKDIV4_I2SD2_MASK		(0xf<<8)
- #define S5PC100_CLKDIV4_I2SD2_SHIFT		(8)
- #define S5PC100_CLKDIV4_AUDIO0_MASK		(0xf<<12)
--#define S5PC100_CLKDIV4_AUDIO0_SHIFT	(12)
- #define S5PC100_CLKDIV4_AUDIO1_MASK		(0xf<<16)
--#define S5PC100_CLKDIV4_AUDIO1_SHIFT	(16)
- #define S5PC100_CLKDIV4_AUDIO2_MASK		(0xf<<20)
--#define S5PC100_CLKDIV4_AUDIO2_SHIFT	(20)
- 
- /* HCLKD0/PCLKD0 Clock Gate 0 Registers */
- #define S5PC100_CLKGATE_D00_INTC		(1<<0)
+-	for (ptr = 0; ptr < ARRAY_SIZE(clks_src); ptr++)
+-		s3c_register_clksrc(clks_src[ptr], 1);
++	s3c_register_clksrc(clksrc_audio, ARRAY_SIZE(clksrc_audio));
++	s3c_register_clksrc(clksrc_clks, ARRAY_SIZE(clksrc_clks));
+ }
 -- 
 1.6.0.4
