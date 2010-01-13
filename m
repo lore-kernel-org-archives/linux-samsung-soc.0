@@ -1,49 +1,28 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: Samsung SoC clock updates
-Date: Wed, 13 Jan 2010 11:57:46 +0000
-Message-ID: <20100113115746.GA27473@rakim.wolfsonmicro.main>
-References: <1262917822-26004-1-git-send-email-ben-linux@fluff.org>
- <20100112091608.GD26435@n2100.arm.linux.org.uk>
- <20100112220351.GG18532@trinity.fluff.org>
- <20100112224833.GA19957@sirena.org.uk>
- <20100112235019.GH18532@trinity.fluff.org>
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Subject: [PATCH 0/2] plat-samsung ADC driver
+Date: Thu, 14 Jan 2010 00:30:27 +0100
+Message-ID: <b2e8f9f71001131530rc90fe3dk4f4f227677f4db48@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:59862 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752192Ab0AML5s (ORCPT
+Received: from mail-bw0-f227.google.com ([209.85.218.227]:51033 "EHLO
+	mail-bw0-f227.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751328Ab0AMXas (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Jan 2010 06:57:48 -0500
-Content-Disposition: inline
-In-Reply-To: <20100112235019.GH18532@trinity.fluff.org>
+	Wed, 13 Jan 2010 18:30:48 -0500
+Received: by bwz27 with SMTP id 27so2477376bwz.21
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Jan 2010 15:30:47 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Ben Dooks <ben-linux@fluff.org>
 
-On Tue, Jan 12, 2010 at 11:50:19PM +0000, Ben Dooks wrote:
-> On Tue, Jan 12, 2010 at 10:48:34PM +0000, Mark Brown wrote:
+Hi,
 
-> > I don't understand what the problem is with that?  That's exactly what
-> > I'd expect to see a driver doing (possibly with NULL instead of a
-> > specific name).
+these patches move the S3C24XX ADC driver to plat-samsung and add S3C64XX
+support.
 
-> From what I've looked at, the driver _should_ use clk_get(dev, NULL) for
-> the bus clock, and use named clocks only for extra clocks it may need
-> such as a codec clock for an audio device. I belive this is what Russell's
-> initial complaint about the implementation is.
+Please note that these have only been built-tested.
 
-AFAICT that's a relatively cosmetic issue, but I don't know how Russell
-feels about that one.  If the block has multiple clocks it can actually
-get a bit confusing trying to remember what the default clock should be.
-
-The issues I've noticed have been that at the minute the lookups are
-essentially using a global namespace for the clocks (since the only bit
-of the struct device that gets looked at when doing lookups is the id
-field) and that the muxes for clock sources are handled in individual
-drivers (which means the drivers need to know about the clock tree of
-the SoC they're running on).  Given the way the Samsung SoCs structure
-their clock trees the name issue isn't quite so pressing as it might be,
-it'd probably only really bite if Samsung decide to change the names of
-the clocks.
+Regards,
+Maurus Cuelenaere
