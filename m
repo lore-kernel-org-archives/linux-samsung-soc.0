@@ -1,139 +1,49 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH] S3C: serial: Modify UART low-level debug port
-	initialization procedure.
-Date: Wed, 13 Jan 2010 01:11:31 +0000
-Message-ID: <20100113011131.GD3738@trinity.fluff.org>
-References: <1263341420-10771-1-git-send-email-thomas.ab@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: Samsung SoC clock updates
+Date: Wed, 13 Jan 2010 11:57:46 +0000
+Message-ID: <20100113115746.GA27473@rakim.wolfsonmicro.main>
+References: <1262917822-26004-1-git-send-email-ben-linux@fluff.org>
+ <20100112091608.GD26435@n2100.arm.linux.org.uk>
+ <20100112220351.GG18532@trinity.fluff.org>
+ <20100112224833.GA19957@sirena.org.uk>
+ <20100112235019.GH18532@trinity.fluff.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:57343 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751038Ab0AMBLh (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:59862 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752192Ab0AML5s (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Jan 2010 20:11:37 -0500
+	Wed, 13 Jan 2010 06:57:48 -0500
 Content-Disposition: inline
-In-Reply-To: <1263341420-10771-1-git-send-email-thomas.ab@samsung.com>
+In-Reply-To: <20100112235019.GH18532@trinity.fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
 
-On Wed, Jan 13, 2010 at 09:10:20AM +0900, Thomas Abraham wrote:
-> The s3c24xx_serial_init_ports function is called only during low-level
-> debug port initialization. This function intializes all the available
-> uart ports when called, but it can be reduced to initializing just the
-> port needed for debug message output.
-> 
-> This patch modifies the s3c24xx_serial_init_ports to initialize only the
-> uart port that will be used for low-level debug output. The UART port
-> that is used for low-level debug output is found from the config option
-> S3C_LOWLEVEL_UART_PORT.
+On Tue, Jan 12, 2010 at 11:50:19PM +0000, Ben Dooks wrote:
+> On Tue, Jan 12, 2010 at 10:48:34PM +0000, Mark Brown wrote:
 
-Not always, console=ttySAC<x> could also be used to find the console.
+> > I don't understand what the problem is with that?  That's exactly what
+> > I'd expect to see a driver doing (possibly with NULL instead of a
+> > specific name).
 
-We could change the s3c24xx_serial_initconsole() call to take a
-'struct s3c24xx_uart_info **info'and change init_ports to take the
-same. This does unfortunately mean that each of the s3cxxx.c serial
-drivers will need to be changed.
+> From what I've looked at, the driver _should_ use clk_get(dev, NULL) for
+> the bus clock, and use named clocks only for extra clocks it may need
+> such as a codec clock for an audio device. I belive this is what Russell's
+> initial complaint about the implementation is.
 
-You could change s3c24xx_console_init() to fill an array of info before
-calling s3c24xx_serial_initconsole() in drivers/serial/samsung.h and
-then have the s5pc110 serial code do its own console initialisation
-without using the s3c24xx_console_init() macro.
+AFAICT that's a relatively cosmetic issue, but I don't know how Russell
+feels about that one.  If the block has multiple clocks it can actually
+get a bit confusing trying to remember what the default clock should be.
 
-If you don't want to change s3c24xx_console_init() to create an array,
-then you could always change s3c24xx_serial_initconsole() to take
-a third argument, so it would be:
-
-s3c24xx_serial_initconsole(struct platform_driver *drv,
-		           struct s3c24xx_uart_info *info,
-			   struct s3c24xx_uart_info *infos)
-
-and then change the behaviour of s3c24xx_serial_init_ports() if infos is
-NULL, use the info field, otherwise take the info from infos+hwport.
- 
-There may of course be other options.
-
-> Since the functionlity of the s3c24xx_serial_init_ports function has
-> changed, it has been renamed as s3c24xx_serial_init_console_port by
-> this patch.
-> 
-> This patch is required on platforms that use different platform
-> configuration for available instances of UART module. For instance,
-> FIFO sizes could be different for each instance of UART. Such platforms
-> pass mutiple instances of platform configuration to the serial driver
-> instead of just one. The serial console init can then be specified as
-> below in the platform specific code.
-> 
-> s3c24xx_console_init(&s5p_serial_drv, \
-> 	&s5p_uart_inf[CONFIG_S3C_LOWLEVEL_UART_PORT]);
-> 
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> ---
->  drivers/serial/samsung.c |   22 ++++++++++------------
->  1 files changed, 10 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/serial/samsung.c b/drivers/serial/samsung.c
-> index 52e3df1..dc9c51e 100644
-> --- a/drivers/serial/samsung.c
-> +++ b/drivers/serial/samsung.c
-> @@ -1368,26 +1368,24 @@ s3c24xx_serial_get_options(struct uart_port *port, int *baud,
->  
->  }
->  
-> -/* s3c24xx_serial_init_ports
-> +/* s3c24xx_serial_init_console_port
->   *
-> - * initialise the serial ports from the machine provided initialisation
-> - * data.
-> + * initialise the serial port, which used as console, from the machine 
-> + * provided initialisation data.
->  */
->  
-> -static int s3c24xx_serial_init_ports(struct s3c24xx_uart_info *info)
-> +static int s3c24xx_serial_init_console_port(struct s3c24xx_uart_info *info)
->  {
->  	struct s3c24xx_uart_port *ptr = s3c24xx_serial_ports;
->  	struct platform_device **platdev_ptr;
-> -	int i;
->  
-> -	dbg("s3c24xx_serial_init_ports: initialising ports...\n");
-> +	dbg("s3c24xx_serial_init_console_port: initialising ports...\n");
->  
->  	platdev_ptr = s3c24xx_uart_devs;
-> -
-> -	for (i = 0; i < CONFIG_SERIAL_SAMSUNG_UARTS; i++, ptr++, platdev_ptr++) {
-> -		s3c24xx_serial_init_port(ptr, info, *platdev_ptr);
-> -	}
-> -
-> +	ptr += CONFIG_S3C_LOWLEVEL_UART_PORT;
-> +	platdev_ptr += CONFIG_S3C_LOWLEVEL_UART_PORT;
-> +	
-> +	s3c24xx_serial_init_port(ptr, info, *platdev_ptr);
->  	return 0;
->  }
->  
-> @@ -1469,7 +1467,7 @@ int s3c24xx_serial_initconsole(struct platform_driver *drv,
->  		return 0;
->  
->  	s3c24xx_serial_console.data = &s3c24xx_uart_drv;
-> -	s3c24xx_serial_init_ports(info);
-> +	s3c24xx_serial_init_console_port(info);
->  
->  	register_console(&s3c24xx_serial_console);
->  	return 0;
-> -- 
-> 1.6.3.3
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
--- 
--- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+The issues I've noticed have been that at the minute the lookups are
+essentially using a global namespace for the clocks (since the only bit
+of the struct device that gets looked at when doing lookups is the id
+field) and that the muxes for clock sources are handled in individual
+drivers (which means the drivers need to know about the clock tree of
+the SoC they're running on).  Given the way the Samsung SoCs structure
+their clock trees the name issue isn't quite so pressing as it might be,
+it'd probably only really bite if Samsung decide to change the names of
+the clocks.
