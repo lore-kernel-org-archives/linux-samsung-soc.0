@@ -1,204 +1,232 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 11/21] ARM: S5PC1XX: add S5PC110 memory map
-Date: Thu, 14 Jan 2010 12:29:29 +0100
-Message-ID: <1263468579-5732-12-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 07/21] ARM: S5PC1XX: cleanup of s5pc1xx common code
+Date: Thu, 14 Jan 2010 12:29:25 +0100
+Message-ID: <1263468579-5732-8-git-send-email-m.szyprowski@samsung.com>
 References: <1263468579-5732-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:28265 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752823Ab0ANL34 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Jan 2010 06:29:56 -0500
-Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0KW800A9KILQF330@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 14 Jan 2010 11:29:51 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0KW8002S0ILQM1@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 14 Jan 2010 11:29:51 +0000 (GMT)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1263468579-5732-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, Byungho Min <bhmin@samsung.com>
+Cc: kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Kyungmin Park <kyungmin.park@samsung.com>
+This patch removes all useless definitions from plat/s5pc100.h and
+introduces new common plat/s5pc1xx.h include.
 
-Samsung S5PC110 SoC are newer Samsung SoCs. Like S5PC100 they are based
-on CortexA8 ARM CPU, but have much more powerfull integrated periperals.
-This patch adds register map for S5PC110 sub-platform.
-
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Byungho Min <bhmin@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-s5pc110/include/mach/map.h |  154 ++++++++++++++++++++++++++++++
- 1 files changed, 154 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s5pc110/include/mach/map.h
+ arch/arm/mach-s5pc100/cpu.c                     |    2 +-
+ arch/arm/mach-s5pc100/include/plat/regs-clock.h |    8 ++--
+ arch/arm/mach-s5pc100/mach-smdkc100.c           |    2 +-
+ arch/arm/mach-s5pc100/plls.c                    |    2 +-
+ arch/arm/mach-s5pc100/uarts.c                   |    5 +-
+ arch/arm/plat-s5pc1xx/cpu.c                     |    2 +-
+ arch/arm/plat-s5pc1xx/include/plat/s5pc100.h    |   51 ++++++-----------------
+ arch/arm/plat-s5pc1xx/include/plat/s5pc1xx.h    |   21 +++++++++
+ 8 files changed, 45 insertions(+), 48 deletions(-)
+ create mode 100644 arch/arm/plat-s5pc1xx/include/plat/s5pc1xx.h
 
-diff --git a/arch/arm/mach-s5pc110/include/mach/map.h b/arch/arm/mach-s5pc110/include/mach/map.h
+diff --git a/arch/arm/mach-s5pc100/cpu.c b/arch/arm/mach-s5pc100/cpu.c
+index 41fdecf..f383e33 100644
+--- a/arch/arm/mach-s5pc100/cpu.c
++++ b/arch/arm/mach-s5pc100/cpu.c
+@@ -41,7 +41,7 @@
+ #include <plat/clock.h>
+ #include <plat/sdhci.h>
+ #include <plat/iic-core.h>
+-#include <plat/s5pc100.h>
++#include <plat/s5pc1xx.h>
+ 
+ /* Initial IO mappings */
+ 
+diff --git a/arch/arm/mach-s5pc100/include/plat/regs-clock.h b/arch/arm/mach-s5pc100/include/plat/regs-clock.h
+index fc6ec1b..03ecc0c 100644
+--- a/arch/arm/mach-s5pc100/include/plat/regs-clock.h
++++ b/arch/arm/mach-s5pc100/include/plat/regs-clock.h
+@@ -234,10 +234,10 @@
+ #define S5PC100_HDMI_PHY_CON0	S5PC100_CLKREG_OTHER(0x420)
+ 
+ #define S5PC100_SWRESET_RESETVAL	0xc100
+-#define S5PC100_OTHER_SYS_INT	24
+-#define S5PC100_OTHER_STA_TYPE	23
+-#define STA_TYPE_EXPON		0
+-#define STA_TYPE_SFR		1
++#define S5PC100_OTHERS_PMU_INT_DISALBE		(1 << 24)
++#define S5PC100_OTHERS_STABLE_COUNTER_TYPE_MASK	(1 << 23)
++#define S5PC100_OTHERS_STABLE_COUNTER_TYPE_SFR	(1 << 23)
++#define S5PC100_OTHERS_STABLE_COUNTER_TYPE_EXP	(0 << 23)
+ 
+ #define S5PC100_SLEEP_CFG_OSC_EN	0
+ 
+diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-s5pc100/mach-smdkc100.c
+index ae3c52c..29b95f1 100644
+--- a/arch/arm/mach-s5pc100/mach-smdkc100.c
++++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
+@@ -40,7 +40,7 @@
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+-#include <plat/s5pc100.h>
++#include <plat/s5pc1xx.h>
+ #include <plat/fb.h>
+ #include <plat/iic.h>
+ 
+diff --git a/arch/arm/mach-s5pc100/plls.c b/arch/arm/mach-s5pc100/plls.c
+index 49c51a0..32fb0ca 100644
+--- a/arch/arm/mach-s5pc100/plls.c
++++ b/arch/arm/mach-s5pc100/plls.c
+@@ -33,7 +33,7 @@
+ #include <plat/cpu.h>
+ #include <plat/pll.h>
+ #include <plat/devs.h>
+-#include <plat/s5pc100.h>
++#include <plat/s5pc1xx.h>
+ 
+ /* fin_apll, fin_mpll and fin_epll are all the same clock, which we call
+  * ext_xtal_mux for want of an actual name from the manual.
+diff --git a/arch/arm/mach-s5pc100/uarts.c b/arch/arm/mach-s5pc100/uarts.c
+index 32972f2..6bab6d2 100644
+--- a/arch/arm/mach-s5pc100/uarts.c
++++ b/arch/arm/mach-s5pc100/uarts.c
+@@ -13,14 +13,15 @@
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <linux/init.h>
++#include <linux/clk.h>
+ 
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+-#include <plat/s5pc100.h>
++#include <plat/s5pc1xx.h>
+ 
+ /* uart registration process */
+ 
+-void __init s5pc100_common_init_uarts(struct s3c2410_uartcfg *cfg, int no)
++void __init s5pc100_init_uarts(struct s3c2410_uartcfg *cfg, int no)
+ {
+ 	/* The driver name is s3c6400-uart to reuse s3c6400_serial_drv  */
+ 	s3c24xx_init_uartdevs("s3c6400-uart", s5pc1xx_uart_resources, cfg, no);
+diff --git a/arch/arm/plat-s5pc1xx/cpu.c b/arch/arm/plat-s5pc1xx/cpu.c
+index ecd6d38..d30998d 100644
+--- a/arch/arm/plat-s5pc1xx/cpu.c
++++ b/arch/arm/plat-s5pc1xx/cpu.c
+@@ -31,7 +31,7 @@
+ #include <plat/devs.h>
+ #include <plat/clock.h>
+ 
+-#include <plat/s5pc100.h>
++#include <plat/s5pc1xx.h>
+ 
+ /* table of supported CPUs */
+ 
+diff --git a/arch/arm/plat-s5pc1xx/include/plat/s5pc100.h b/arch/arm/plat-s5pc1xx/include/plat/s5pc100.h
+index 2531f34..32eb6e7 100644
+--- a/arch/arm/plat-s5pc1xx/include/plat/s5pc100.h
++++ b/arch/arm/plat-s5pc1xx/include/plat/s5pc100.h
+@@ -13,52 +13,27 @@
+ */
+ 
+ /* Common init code for S5PC100 related SoCs */
++
++#ifdef CONFIG_CPU_S5PC100
++
+ extern  int s5pc100_init(void);
+ extern void s5pc100_map_io(void);
+ extern void s5pc100_init_clocks(int xtal);
+ extern  int s5pc100_register_baseclocks(unsigned long xtal);
+ extern void s5pc100_init_irq(void);
+ extern void s5pc100_init_io(struct map_desc *mach_desc, int size);
+-extern void s5pc100_common_init_uarts(struct s3c2410_uartcfg *cfg, int no);
++extern void s5pc100_init_uarts(struct s3c2410_uartcfg *cfg, int no);
+ extern void s5pc100_register_clocks(void);
+ extern void s5pc100_setup_clocks(void);
+-extern struct sysdev_class s5pc100_sysclass;
+-
+-#define s5pc100_init_uarts s5pc100_common_init_uarts
+-
+-/* Some day, belows will be moved to plat-s5pc/include/plat/cpu.h */
+-extern void s5pc1xx_init_irq(u32 *vic_valid, int num);
+-extern void s5pc1xx_init_io(struct map_desc *mach_desc, int size);
+-
+-/* Some day, belows will be moved to plat-s5pc/include/plat/clock.h */
+-extern struct clk clk_hpll;
+-extern struct clk clk_hd0;
+-extern struct clk clk_pd0;
++extern  int s5pc100_sclk0_ctrl(struct clk *clk, int enable);
++extern  int s5pc100_sclk1_ctrl(struct clk *clk, int enable);
+ extern struct clk clk_54m;
+-extern void s5pc1xx_register_clocks(void);
+-extern int s5pc100_sclk0_ctrl(struct clk *clk, int enable);
+-extern int s5pc100_sclk1_ctrl(struct clk *clk, int enable);
+ 
+-/* Some day, belows will be moved to plat-s5pc/include/plat/devs.h */
+-extern struct s3c24xx_uart_resources s5pc1xx_uart_resources[];
+-extern struct platform_device s3c_device_g2d;
+-extern struct platform_device s3c_device_g3d;
+-extern struct platform_device s3c_device_vpp;
+-extern struct platform_device s3c_device_tvenc;
+-extern struct platform_device s3c_device_tvscaler;
+-extern struct platform_device s3c_device_rotator;
+-extern struct platform_device s3c_device_jpeg;
+-extern struct platform_device s3c_device_onenand;
+-extern struct platform_device s3c_device_usb_otghcd;
+-extern struct platform_device s3c_device_keypad;
+-extern struct platform_device s3c_device_ts;
+-extern struct platform_device s3c_device_g3d;
+-extern struct platform_device s3c_device_smc911x;
+-extern struct platform_device s3c_device_fimc0;
+-extern struct platform_device s3c_device_fimc1;
+-extern struct platform_device s3c_device_mfc;
+-extern struct platform_device s3c_device_ac97;
+-extern struct platform_device s3c_device_fimc0;
+-extern struct platform_device s3c_device_fimc1;
+-extern struct platform_device s3c_device_fimc2;
++#else
++
++#define s5pc100_map_io NULL
++#define s5pc100_init_clocks NULL
++#define s5pc100_init_uarts NULL
++#define s5pc100_init NULL
+ 
++#endif
+diff --git a/arch/arm/plat-s5pc1xx/include/plat/s5pc1xx.h b/arch/arm/plat-s5pc1xx/include/plat/s5pc1xx.h
 new file mode 100644
-index 0000000..af9ce84
+index 0000000..398251f
 --- /dev/null
-+++ b/arch/arm/mach-s5pc110/include/mach/map.h
-@@ -0,0 +1,154 @@
-+/* linux/arch/arm/mach-s5pc110/include/mach/map.h
++++ b/arch/arm/plat-s5pc1xx/include/plat/s5pc1xx.h
+@@ -0,0 +1,21 @@
++/* arch/arm/plat-s5pc1xx/include/plat/s5pc100.h
 + *
 + * Copyright 2009 Samsung Electronics Co.
-+ *	Byungho Min <bhmin@samsung.com>
++ *	Marek Szyprowski <m.szyprowski@samsung.com>
 + *
-+ * Based on mach-s3c6400/include/mach/map.h
-+ *
-+ * S5PC110 - Memory map definitions
++ * Header file for s5pc1xx cpu support
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 +*/
 +
-+#ifndef __ASM_ARCH_MAP_H
-+#define __ASM_ARCH_MAP_H __FILE__
++/* Common init code for S5PC1XX related SoCs */
 +
-+#include <plat/map-base.h>
++extern void s5pc1xx_init_irq(u32 *vic_valid, int num);
++extern void s5pc1xx_init_io(struct map_desc *mach_desc, int size);
++extern void s5pc1xx_register_clocks(void);
 +
-+/*
-+ * map-base.h has already defined virtual memory address
-+ * S3C_VA_IRQ		S3C_ADDR(0x00000000)	irq controller(s)
-+ * S3C_VA_SYS		S3C_ADDR(0x00100000)	system control
-+ * S3C_VA_MEM		S3C_ADDR(0x00200000)	system control (not used)
-+ * S3C_VA_TIMER		S3C_ADDR(0x00300000)	timer block
-+ * S3C_VA_WATCHDOG	S3C_ADDR(0x00400000)	watchdog
-+ * S3C_VA_UART		S3C_ADDR(0x01000000)	UART
-+ *
-+ * S5PC110 specific virtual memory address can be defined here
-+ * S5PC1XX_VA_GPIO	S3C_ADDR(0x00500000)	GPIO
-+ *
-+ */
++extern struct s3c24xx_uart_resources s5pc1xx_uart_resources[];
 +
-+/* Chip ID */
-+#define S5PC110_PA_CHIPID	(0xE0000000)
-+#define S5PC1XX_PA_CHIPID	S5PC110_PA_CHIPID
-+#define S5PC1XX_VA_CHIPID	S3C_VA_SYS
-+
-+/* System */
-+#define S5PC110_PA_CLK		(0xE0100000)
-+#define S5PC110_PA_PWR		(0xE010C000)
-+#define S5PC1XX_PA_CLK		S5PC110_PA_CLK
-+#define S5PC1XX_PA_PWR		S5PC110_PA_PWR
-+#define S5PC1XX_VA_CLK		(S3C_VA_SYS + 0x10000)
-+#define S5PC1XX_VA_PWR		(S3C_VA_SYS + 0x20000)
-+#define S5PC1XX_SZ_CLK		SZ_32K
-+#define S5PC1XX_SZ_PWR		SZ_16K
-+
-+/* GPIO */
-+#define S5PC110_PA_GPIO		(0xE0200000)
-+#define S5PC1XX_PA_GPIO		S5PC110_PA_GPIO
-+#define S5PC1XX_VA_GPIO		S3C_ADDR(0x00500000)
-+
-+/* Interrupt */
-+#define S5PC110_PA_VIC		(0xF2000000)
-+#define S5PC110_PA_VIC_OFFSET	0x100000
-+#define S5PC1XX_PA_VIC(x)	(S5PC110_PA_VIC + ((x) * S5PC110_PA_VIC_OFFSET))
-+#define S5PC110_VA_VIC		S3C_VA_IRQ
-+#define S5PC110_VA_VIC_OFFSET	0x10000
-+#define S5PC1XX_VA_VIC(x)	(S5PC110_VA_VIC + ((x) * S5PC110_VA_VIC_OFFSET))
-+
-+/* DMA */
-+#define S5PC110_PA_MDMA		(0xFA200000)
-+#define S5PC110_PA_PDMA0	(0xE0900000)
-+#define S5PC110_PA_PDMA1	(0xE0A00000)
-+
-+/* Timer */
-+#define S5PC110_PA_TIMER	(0xE2500000)
-+#define S5PC1XX_PA_TIMER	S5PC110_PA_TIMER
-+#define S5PC1XX_VA_TIMER	S3C_VA_TIMER
-+
-+/* RTC */
-+#define S5PC110_PA_RTC		(0xE2800000)
-+#define S5PC1XX_PA_RTC		S5PC110_PA_RTC
-+
-+/* UART */
-+#define S5PC110_PA_UART		(0xE2900000)
-+#define S5PC1XX_PA_UART		S5PC110_PA_UART
-+#define S5PC110_PA_UART0	(S5PC110_PA_UART + 0x0)
-+#define S5PC110_PA_UART1	(S5PC110_PA_UART + 0x400)
-+#define S5PC110_PA_UART2	(S5PC110_PA_UART + 0x800)
-+#define S5PC110_PA_UART3	(S5PC110_PA_UART + 0xC00)
-+#define S5PC1XX_VA_UART		S3C_VA_UART
-+
-+/* I2C */
-+#define S5PC110_PA_I2C		(0xE1800000)
-+#define S5PC110_PA_I2C1		(0xFAB00000)
-+#define S5PC110_PA_I2C2		(0xE1A00000)
-+
-+/* USB HS OTG */
-+#define S5PC110_PA_USB_HSOTG	(0xEC000000)
-+#define S5PC110_PA_USB_HSPHY	(0xEC100000)
-+
-+/* SD/MMC */
-+#define S5PC110_PA_HSMMC(x)	(0xEB000000 + ((x) * 0x100000))
-+#define S5PC110_PA_HSMMC0	S5PC110_PA_HSMMC(0)
-+#define S5PC110_PA_HSMMC1	S5PC110_PA_HSMMC(1)
-+#define S5PC110_PA_HSMMC2	S5PC110_PA_HSMMC(2)
-+#define S5PC110_PA_HSMMC3	S5PC110_PA_HSMMC(2)
-+
-+/* LCD */
-+#define S5PC110_PA_FB		(0xF8000000)
-+
-+/* Multimedia */
-+#define S5PC110_PA_MFC		(0xF1700000)
-+#define S5PC110_SZ_MFC		(0x0000FFFF)
-+
-+/* I2S */
-+#define S5PC110_PA_I2S0		(0xEEE30000)
-+#define S5PC110_PA_I2S1		(0xE2100000)
-+#define S5PC110_PA_I2S2		(0xE2A00000)
-+
-+/* KEYPAD */
-+#define S5PC110_PA_KEYPAD	(0xE1600000)
-+
-+/* ADC & TouchScreen */
-+#define S5PC110_PA_TSADC	(0xE1700000)
-+
-+/* ETC */
-+#define S5PC110_PA_SDRAM	(0x30000000)
-+#define S5PC1XX_PA_SDRAM	S5PC110_PA_SDRAM
-+
-+/* compatibility defines. */
-+#define S3C_PA_RTC		S5PC1XX_PA_RTC
-+#define S3C_PA_UART		S5PC1XX_PA_UART
-+#define S3C_PA_UART0		S5PC110_PA_UART0
-+#define S3C_PA_UART1		S5PC110_PA_UART1
-+#define S3C_PA_UART2		S5PC110_PA_UART2
-+#define S3C_PA_UART3		S5PC110_PA_UART3
-+
-+#define S3C_VA_UART0		(S3C_VA_UART + 0x0)
-+#define S3C_VA_UART1		(S3C_VA_UART + 0x400)
-+#define S3C_VA_UART2		(S3C_VA_UART + 0x800)
-+#define S3C_VA_UART3		(S3C_VA_UART + 0xC00)
-+#define S3C_UART_OFFSET		0x400
-+#define S3C_VA_UARTx(x)		(S3C_VA_UART + ((x) * S3C_UART_OFFSET))
-+
-+#define S3C_PA_FB		S5PC110_PA_FB
-+#define S3C_VA_VIC0		(S3C_VA_IRQ + 0x0)
-+#define S3C_VA_VIC1		(S3C_VA_IRQ + 0x10000)
-+#define S3C_VA_VIC2		(S3C_VA_IRQ + 0x20000)
-+#define S3C_VA_VIC3		(S3C_VA_IRQ + 0x30000)
-+#define S3C_PA_IIC		S5PC110_PA_I2C
-+#define S3C_PA_IIC1		S5PC110_PA_I2C1
-+#define S3C_PA_IIC2		S5PC110_PA_I2C2
-+#define S3C_PA_USB_HSOTG	S5PC110_PA_USB_HSOTG
-+#define S3C_PA_USB_HSPHY	S5PC110_PA_USB_HSPHY
-+#define S3C_PA_HSMMC0		S5PC110_PA_HSMMC0
-+#define S3C_PA_HSMMC1		S5PC110_PA_HSMMC1
-+#define S3C_PA_HSMMC2		S5PC110_PA_HSMMC2
-+#define S3C_PA_KEYPAD		S5PC110_PA_KEYPAD
-+#define S3C_PA_TSADC		S5PC110_PA_TSADC
-+
-+#endif /* __ASM_ARCH_C100_MAP_H */
++#include <plat/s5pc100.h>
 -- 
 1.6.4
