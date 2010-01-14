@@ -1,13 +1,13 @@
 From: Thomas Abraham <thomas.ab@samsung.com>
 Subject: [PATCH] S3C: serial: Modify console initialization.
-Date: Thu, 14 Jan 2010 14:53:35 +0900
-Message-ID: <1263448415-27721-1-git-send-email-thomas.ab@samsung.com>
+Date: Thu, 14 Jan 2010 15:05:38 +0900
+Message-ID: <1263449138-8199-1-git-send-email-thomas.ab@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:55100 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:53434 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755404Ab0ANF7K (ORCPT
+	with ESMTP id S1750837Ab0ANGOE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Jan 2010 00:59:10 -0500
+	Thu, 14 Jan 2010 01:14:04 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
@@ -21,6 +21,8 @@ information structures would be needed.
 
 This patch also modifies the s3c24xx_console_init macro since it wraps the
 call to the s3c24xx_serial_initconsole function.
+
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 ---
  drivers/serial/samsung.c |    6 +++---
  drivers/serial/samsung.h |   19 ++++++++++++-------
@@ -33,7 +35,7 @@ index 52e3df1..6982243 100644
 @@ -1374,7 +1374,7 @@ s3c24xx_serial_get_options(struct uart_port *port, int *baud,
   * data.
  */
- 
+
 -static int s3c24xx_serial_init_ports(struct s3c24xx_uart_info *info)
 +static int s3c24xx_serial_init_ports(struct s3c24xx_uart_info **info)
  {
@@ -41,20 +43,20 @@ index 52e3df1..6982243 100644
  	struct platform_device **platdev_ptr;
 @@ -1385,7 +1385,7 @@ static int s3c24xx_serial_init_ports(struct s3c24xx_uart_info *info)
  	platdev_ptr = s3c24xx_uart_devs;
- 
+
  	for (i = 0; i < CONFIG_SERIAL_SAMSUNG_UARTS; i++, ptr++, platdev_ptr++) {
 -		s3c24xx_serial_init_port(ptr, info, *platdev_ptr);
 +		s3c24xx_serial_init_port(ptr, info[i], *platdev_ptr);
  	}
- 
+
  	return 0;
 @@ -1451,7 +1451,7 @@ static struct console s3c24xx_serial_console = {
  };
- 
+
  int s3c24xx_serial_initconsole(struct platform_driver *drv,
 -			       struct s3c24xx_uart_info *info)
 +			       struct s3c24xx_uart_info **info)
- 
+
  {
  	struct platform_device *dev = s3c24xx_uart_devs[0];
 diff --git a/drivers/serial/samsung.h b/drivers/serial/samsung.h
@@ -63,16 +65,16 @@ index 1fb2234..0ac06a0 100644
 +++ b/drivers/serial/samsung.h
 @@ -75,19 +75,24 @@ extern int s3c24xx_serial_probe(struct platform_device *dev,
  extern int __devexit s3c24xx_serial_remove(struct platform_device *dev);
- 
+
  extern int s3c24xx_serial_initconsole(struct platform_driver *drv,
 -				      struct s3c24xx_uart_info *uart);
 +				      struct s3c24xx_uart_info **uart);
- 
+
  extern int s3c24xx_serial_init(struct platform_driver *drv,
  			       struct s3c24xx_uart_info *info);
- 
+
  #ifdef CONFIG_SERIAL_SAMSUNG_CONSOLE
- 
+
 -#define s3c24xx_console_init(__drv, __inf)			\
 -static int __init s3c_serial_console_init(void)			\
 -{								\
@@ -91,7 +93,7 @@ index 1fb2234..0ac06a0 100644
 +}									\
 +									\
  console_initcall(s3c_serial_console_init)
- 
+
  #else
--- 
+--
 1.6.3.3
