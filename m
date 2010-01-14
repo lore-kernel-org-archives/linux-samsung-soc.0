@@ -1,8 +1,7 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 06/21] ARM: S5PC1XX: move common s5pc1xx mach/* includes to
- plat-s5pc1xx/include/mach
-Date: Thu, 14 Jan 2010 12:29:24 +0100
-Message-ID: <1263468579-5732-7-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 11/21] ARM: S5PC1XX: add S5PC110 memory map
+Date: Thu, 14 Jan 2010 12:29:29 +0100
+Message-ID: <1263468579-5732-12-git-send-email-m.szyprowski@samsung.com>
 References: <1263468579-5732-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -10,514 +9,196 @@ Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout4.w1.samsung.com ([210.118.77.14]:28265 "EHLO
 	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751049Ab0ANL3x (ORCPT
+	with ESMTP id S1752823Ab0ANL34 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Jan 2010 06:29:53 -0500
+	Thu, 14 Jan 2010 06:29:56 -0500
 Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
  (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
  with ESMTP id <0KW800A9KILQF330@mailout4.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Thu, 14 Jan 2010 11:29:51 +0000 (GMT)
 Received: from linux.samsung.com ([106.116.38.10])
  by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0KW800M4YILQE9@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 14 Jan 2010 11:29:50 +0000 (GMT)
+ 2004)) with ESMTPA id <0KW8002S0ILQM1@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 14 Jan 2010 11:29:51 +0000 (GMT)
 In-reply-to: <1263468579-5732-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, Byungho Min <bhmin@samsung.com>
 
 From: Kyungmin Park <kyungmin.park@samsung.com>
 
-All includes that are common for S5PC100 and S5PC110 are moved to
-plat-s5pc1xx/include/mach, so they can be used by both sub-platforms.
+Samsung S5PC110 SoC are newer Samsung SoCs. Like S5PC100 they are based
+on CortexA8 ARM CPU, but have much more powerfull integrated periperals.
+This patch adds register map for S5PC110 sub-platform.
 
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Byungho Min <bhmin@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/mach-s5pc100/include/mach/gpio-core.h  |   21 ---------
- arch/arm/mach-s5pc100/include/mach/hardware.h   |   14 ------
- arch/arm/mach-s5pc100/include/mach/irqs.h       |   19 --------
- arch/arm/mach-s5pc100/include/mach/memory.h     |   18 -------
- arch/arm/mach-s5pc100/include/mach/pwm-clock.h  |   56 -----------------------
- arch/arm/mach-s5pc100/include/mach/tick.h       |   29 ------------
- arch/arm/mach-s5pc100/include/mach/uncompress.h |   28 -----------
- arch/arm/plat-s5pc1xx/include/mach/gpio-core.h  |   21 +++++++++
- arch/arm/plat-s5pc1xx/include/mach/hardware.h   |   14 ++++++
- arch/arm/plat-s5pc1xx/include/mach/irqs.h       |   19 ++++++++
- arch/arm/plat-s5pc1xx/include/mach/memory.h     |   18 +++++++
- arch/arm/plat-s5pc1xx/include/mach/pwm-clock.h  |   56 +++++++++++++++++++++++
- arch/arm/plat-s5pc1xx/include/mach/tick.h       |   29 ++++++++++++
- arch/arm/plat-s5pc1xx/include/mach/uncompress.h |   28 +++++++++++
- 14 files changed, 185 insertions(+), 185 deletions(-)
- delete mode 100644 arch/arm/mach-s5pc100/include/mach/gpio-core.h
- delete mode 100644 arch/arm/mach-s5pc100/include/mach/hardware.h
- delete mode 100644 arch/arm/mach-s5pc100/include/mach/irqs.h
- delete mode 100644 arch/arm/mach-s5pc100/include/mach/memory.h
- delete mode 100644 arch/arm/mach-s5pc100/include/mach/pwm-clock.h
- delete mode 100644 arch/arm/mach-s5pc100/include/mach/tick.h
- delete mode 100644 arch/arm/mach-s5pc100/include/mach/uncompress.h
- create mode 100644 arch/arm/plat-s5pc1xx/include/mach/gpio-core.h
- create mode 100644 arch/arm/plat-s5pc1xx/include/mach/hardware.h
- create mode 100644 arch/arm/plat-s5pc1xx/include/mach/irqs.h
- create mode 100644 arch/arm/plat-s5pc1xx/include/mach/memory.h
- create mode 100644 arch/arm/plat-s5pc1xx/include/mach/pwm-clock.h
- create mode 100644 arch/arm/plat-s5pc1xx/include/mach/tick.h
- create mode 100644 arch/arm/plat-s5pc1xx/include/mach/uncompress.h
+ arch/arm/mach-s5pc110/include/mach/map.h |  154 ++++++++++++++++++++++++++++++
+ 1 files changed, 154 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5pc110/include/mach/map.h
 
-diff --git a/arch/arm/mach-s5pc100/include/mach/gpio-core.h b/arch/arm/mach-s5pc100/include/mach/gpio-core.h
-deleted file mode 100644
-index ad28d8e..0000000
---- a/arch/arm/mach-s5pc100/include/mach/gpio-core.h
-+++ /dev/null
-@@ -1,21 +0,0 @@
--/* arch/arm/mach-s5pc100/include/mach/gpio-core.h
-- *
-- * Copyright 2009 Samsung Electronics Co.
-- *      Byungho Min <bhmin@samsung.com>
-- *
-- * S5PC100 - GPIO core support
-- *
-- * Based on mach-s3c6400/include/mach/gpio-core.h
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_GPIO_CORE_H
--#define __ASM_ARCH_GPIO_CORE_H __FILE__
--
--/* currently we just include the platform support */
--#include <plat/gpio-core.h>
--
--#endif /* __ASM_ARCH_GPIO_CORE_H */
-diff --git a/arch/arm/mach-s5pc100/include/mach/hardware.h b/arch/arm/mach-s5pc100/include/mach/hardware.h
-deleted file mode 100644
-index 6b38618..0000000
---- a/arch/arm/mach-s5pc100/include/mach/hardware.h
-+++ /dev/null
-@@ -1,14 +0,0 @@
--/* linux/arch/arm/mach-s5pc100/include/mach/hardware.h
-- *
-- * Copyright 2009 Samsung Electronics Co.
-- *      Byungho Min <bhmin@samsung.com>
-- *
-- * S5PC100 - Hardware support
-- */
--
--#ifndef __ASM_ARCH_HARDWARE_H
--#define __ASM_ARCH_HARDWARE_H __FILE__
--
--/* currently nothing here, placeholder */
--
--#endif /* __ASM_ARCH_HARDWARE_H */
-diff --git a/arch/arm/mach-s5pc100/include/mach/irqs.h b/arch/arm/mach-s5pc100/include/mach/irqs.h
-deleted file mode 100644
-index b53fa48..0000000
---- a/arch/arm/mach-s5pc100/include/mach/irqs.h
-+++ /dev/null
-@@ -1,19 +0,0 @@
--/* linux/arch/arm/mach-s5pc100/include/mach/irqs.h
-- *
-- * Copyright 2009 Samsung Electronics Co.
-- *      Byungho Min <bhmin@samsung.com>
-- *
-- * S5PC100 - IRQ definitions
-- */
--
--#ifndef __ASM_ARCH_IRQS_H
--#define __ASM_ARCH_IRQS_H __FILE__
--
--#include <plat/irqs.h>
--
--/* LCD */
--#define IRQ_LCD_FIFO		IRQ_LCD0
--#define IRQ_LCD_VSYNC		IRQ_LCD1
--#define IRQ_LCD_SYSTEM		IRQ_LCD2
--
--#endif /* __ASM_ARCH_IRQ_H */
-diff --git a/arch/arm/mach-s5pc100/include/mach/memory.h b/arch/arm/mach-s5pc100/include/mach/memory.h
-deleted file mode 100644
-index 21cc182..0000000
---- a/arch/arm/mach-s5pc100/include/mach/memory.h
-+++ /dev/null
-@@ -1,18 +0,0 @@
--/* arch/arm/mach-s5pc100/include/mach/memory.h
-- *
-- * Copyright 2008 Samsung Electronics Co.
-- *      Byungho Min <bhmin@samsung.com>
-- *
-- * Based on mach-s3c6400/include/mach/memory.h
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_MEMORY_H
--#define __ASM_ARCH_MEMORY_H
--
--#define PHYS_OFFSET     	UL(0x30000000)
--
--#endif
-diff --git a/arch/arm/mach-s5pc100/include/mach/pwm-clock.h b/arch/arm/mach-s5pc100/include/mach/pwm-clock.h
-deleted file mode 100644
-index b34d2f7..0000000
---- a/arch/arm/mach-s5pc100/include/mach/pwm-clock.h
-+++ /dev/null
-@@ -1,56 +0,0 @@
--/* linux/arch/arm/mach-s5pc100/include/mach/pwm-clock.h
-- *
-- * Copyright 2009 Samsung Electronics Co.
-- *      Byungho Min <bhmin@samsung.com>
-- *
-- * S5PC100 - pwm clock and timer support
-- *
-- * Based on mach-s3c6400/include/mach/pwm-clock.h
-- */
--
--/**
-- * pwm_cfg_src_is_tclk() - return whether the given mux config is a tclk
-- * @tcfg: The timer TCFG1 register bits shifted down to 0.
-- *
-- * Return true if the given configuration from TCFG1 is a TCLK instead
-- * any of the TDIV clocks.
-- */
--static inline int pwm_cfg_src_is_tclk(unsigned long tcfg)
--{
--	return tcfg >= S3C64XX_TCFG1_MUX_TCLK;
--}
--
--/**
-- * tcfg_to_divisor() - convert tcfg1 setting to a divisor
-- * @tcfg1: The tcfg1 setting, shifted down.
-- *
-- * Get the divisor value for the given tcfg1 setting. We assume the
-- * caller has already checked to see if this is not a TCLK source.
-- */
--static inline unsigned long tcfg_to_divisor(unsigned long tcfg1)
--{
--	return 1 << tcfg1;
--}
--
--/**
-- * pwm_tdiv_has_div1() - does the tdiv setting have a /1
-- *
-- * Return true if we have a /1 in the tdiv setting.
-- */
--static inline unsigned int pwm_tdiv_has_div1(void)
--{
--	return 1;
--}
--
--/**
-- * pwm_tdiv_div_bits() - calculate TCFG1 divisor value.
-- * @div: The divisor to calculate the bit information for.
-- *
-- * Turn a divisor into the necessary bit field for TCFG1.
-- */
--static inline unsigned long pwm_tdiv_div_bits(unsigned int div)
--{
--	return ilog2(div);
--}
--
--#define S3C_TCFG1_MUX_TCLK S3C64XX_TCFG1_MUX_TCLK
-diff --git a/arch/arm/mach-s5pc100/include/mach/tick.h b/arch/arm/mach-s5pc100/include/mach/tick.h
-deleted file mode 100644
-index f338c9e..0000000
---- a/arch/arm/mach-s5pc100/include/mach/tick.h
-+++ /dev/null
-@@ -1,29 +0,0 @@
--/* linux/arch/arm/mach-s5pc100/include/mach/tick.h
-- *
-- * Copyright 2009 Samsung Electronics Co.
-- *	Byungho Min <bhmin@samsung.com>
-- *
-- * S3C64XX - Timer tick support definitions
-- *
-- * Based on mach-s3c6400/include/mach/tick.h
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_TICK_H
--#define __ASM_ARCH_TICK_H __FILE__
--
--/* note, the timer interrutps turn up in 2 places, the vic and then
-- * the timer block. We take the VIC as the base at the moment.
-- */
--static inline u32 s3c24xx_ostimer_pending(void)
--{
--	u32 pend = __raw_readl(S3C_VA_VIC0 + VIC_RAW_STATUS);
--	return pend & 1 << (IRQ_TIMER4_VIC - S5PC1XX_IRQ_VIC0(0));
--}
--
--#define TICK_MAX	(0xffffffff)
--
--#endif /* __ASM_ARCH_TICK_H */
-diff --git a/arch/arm/mach-s5pc100/include/mach/uncompress.h b/arch/arm/mach-s5pc100/include/mach/uncompress.h
-deleted file mode 100644
-index 01ccf53..0000000
---- a/arch/arm/mach-s5pc100/include/mach/uncompress.h
-+++ /dev/null
-@@ -1,28 +0,0 @@
--/* arch/arm/mach-s5pc100/include/mach/uncompress.h
-- *
-- * Copyright 2009 Samsung Electronics Co.
-- *	Byungho Min <bhmin@samsung.com>
-- *
-- * S5PC100 - uncompress code
-- *
-- * Based on mach-s3c6400/include/mach/uncompress.h
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_UNCOMPRESS_H
--#define __ASM_ARCH_UNCOMPRESS_H
--
--#include <mach/map.h>
--#include <plat/uncompress.h>
--
--static void arch_detect_cpu(void)
--{
--	/* we do not need to do any cpu detection here at the moment. */
--	fifo_mask = S3C2440_UFSTAT_TXMASK;
--	fifo_max = 63 << S3C2440_UFSTAT_TXSHIFT;
--}
--
--#endif /* __ASM_ARCH_UNCOMPRESS_H */
-diff --git a/arch/arm/plat-s5pc1xx/include/mach/gpio-core.h b/arch/arm/plat-s5pc1xx/include/mach/gpio-core.h
+diff --git a/arch/arm/mach-s5pc110/include/mach/map.h b/arch/arm/mach-s5pc110/include/mach/map.h
 new file mode 100644
-index 0000000..6364800
+index 0000000..af9ce84
 --- /dev/null
-+++ b/arch/arm/plat-s5pc1xx/include/mach/gpio-core.h
-@@ -0,0 +1,21 @@
-+/* arch/arm/plat-s5pc1xx/include/mach/gpio-core.h
++++ b/arch/arm/mach-s5pc110/include/mach/map.h
+@@ -0,0 +1,154 @@
++/* linux/arch/arm/mach-s5pc110/include/mach/map.h
 + *
 + * Copyright 2009 Samsung Electronics Co.
-+ *      Byungho Min <bhmin@samsung.com>
++ *	Byungho Min <bhmin@samsung.com>
 + *
-+ * S5PC100 - GPIO core support
++ * Based on mach-s3c6400/include/mach/map.h
 + *
-+ * Based on mach-s3c6400/include/mach/gpio-core.h
++ * S5PC110 - Memory map definitions
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 +*/
 +
-+#ifndef __ASM_ARCH_GPIO_CORE_H
-+#define __ASM_ARCH_GPIO_CORE_H __FILE__
++#ifndef __ASM_ARCH_MAP_H
++#define __ASM_ARCH_MAP_H __FILE__
 +
-+/* currently we just include the platform support */
-+#include <plat/gpio-core.h>
++#include <plat/map-base.h>
 +
-+#endif /* __ASM_ARCH_GPIO_CORE_H */
-diff --git a/arch/arm/plat-s5pc1xx/include/mach/hardware.h b/arch/arm/plat-s5pc1xx/include/mach/hardware.h
-new file mode 100644
-index 0000000..c47affb
---- /dev/null
-+++ b/arch/arm/plat-s5pc1xx/include/mach/hardware.h
-@@ -0,0 +1,14 @@
-+/* linux/arch/arm/plat-s5pc1xx/include/mach/hardware.h
++/*
++ * map-base.h has already defined virtual memory address
++ * S3C_VA_IRQ		S3C_ADDR(0x00000000)	irq controller(s)
++ * S3C_VA_SYS		S3C_ADDR(0x00100000)	system control
++ * S3C_VA_MEM		S3C_ADDR(0x00200000)	system control (not used)
++ * S3C_VA_TIMER		S3C_ADDR(0x00300000)	timer block
++ * S3C_VA_WATCHDOG	S3C_ADDR(0x00400000)	watchdog
++ * S3C_VA_UART		S3C_ADDR(0x01000000)	UART
 + *
-+ * Copyright 2009 Samsung Electronics Co.
-+ *      Byungho Min <bhmin@samsung.com>
++ * S5PC110 specific virtual memory address can be defined here
++ * S5PC1XX_VA_GPIO	S3C_ADDR(0x00500000)	GPIO
 + *
-+ * S5PC100 - Hardware support
 + */
 +
-+#ifndef __ASM_ARCH_HARDWARE_H
-+#define __ASM_ARCH_HARDWARE_H __FILE__
++/* Chip ID */
++#define S5PC110_PA_CHIPID	(0xE0000000)
++#define S5PC1XX_PA_CHIPID	S5PC110_PA_CHIPID
++#define S5PC1XX_VA_CHIPID	S3C_VA_SYS
 +
-+/* currently nothing here, placeholder */
++/* System */
++#define S5PC110_PA_CLK		(0xE0100000)
++#define S5PC110_PA_PWR		(0xE010C000)
++#define S5PC1XX_PA_CLK		S5PC110_PA_CLK
++#define S5PC1XX_PA_PWR		S5PC110_PA_PWR
++#define S5PC1XX_VA_CLK		(S3C_VA_SYS + 0x10000)
++#define S5PC1XX_VA_PWR		(S3C_VA_SYS + 0x20000)
++#define S5PC1XX_SZ_CLK		SZ_32K
++#define S5PC1XX_SZ_PWR		SZ_16K
 +
-+#endif /* __ASM_ARCH_HARDWARE_H */
-diff --git a/arch/arm/plat-s5pc1xx/include/mach/irqs.h b/arch/arm/plat-s5pc1xx/include/mach/irqs.h
-new file mode 100644
-index 0000000..198cff8
---- /dev/null
-+++ b/arch/arm/plat-s5pc1xx/include/mach/irqs.h
-@@ -0,0 +1,19 @@
-+/* linux/arch/arm/plat-s5pc1xx/include/mach/irqs.h
-+ *
-+ * Copyright 2009 Samsung Electronics Co.
-+ *      Byungho Min <bhmin@samsung.com>
-+ *
-+ * S5PC100 - IRQ definitions
-+ */
++/* GPIO */
++#define S5PC110_PA_GPIO		(0xE0200000)
++#define S5PC1XX_PA_GPIO		S5PC110_PA_GPIO
++#define S5PC1XX_VA_GPIO		S3C_ADDR(0x00500000)
 +
-+#ifndef __ASM_ARCH_IRQS_H
-+#define __ASM_ARCH_IRQS_H __FILE__
++/* Interrupt */
++#define S5PC110_PA_VIC		(0xF2000000)
++#define S5PC110_PA_VIC_OFFSET	0x100000
++#define S5PC1XX_PA_VIC(x)	(S5PC110_PA_VIC + ((x) * S5PC110_PA_VIC_OFFSET))
++#define S5PC110_VA_VIC		S3C_VA_IRQ
++#define S5PC110_VA_VIC_OFFSET	0x10000
++#define S5PC1XX_VA_VIC(x)	(S5PC110_VA_VIC + ((x) * S5PC110_VA_VIC_OFFSET))
 +
-+#include <plat/irqs.h>
++/* DMA */
++#define S5PC110_PA_MDMA		(0xFA200000)
++#define S5PC110_PA_PDMA0	(0xE0900000)
++#define S5PC110_PA_PDMA1	(0xE0A00000)
++
++/* Timer */
++#define S5PC110_PA_TIMER	(0xE2500000)
++#define S5PC1XX_PA_TIMER	S5PC110_PA_TIMER
++#define S5PC1XX_VA_TIMER	S3C_VA_TIMER
++
++/* RTC */
++#define S5PC110_PA_RTC		(0xE2800000)
++#define S5PC1XX_PA_RTC		S5PC110_PA_RTC
++
++/* UART */
++#define S5PC110_PA_UART		(0xE2900000)
++#define S5PC1XX_PA_UART		S5PC110_PA_UART
++#define S5PC110_PA_UART0	(S5PC110_PA_UART + 0x0)
++#define S5PC110_PA_UART1	(S5PC110_PA_UART + 0x400)
++#define S5PC110_PA_UART2	(S5PC110_PA_UART + 0x800)
++#define S5PC110_PA_UART3	(S5PC110_PA_UART + 0xC00)
++#define S5PC1XX_VA_UART		S3C_VA_UART
++
++/* I2C */
++#define S5PC110_PA_I2C		(0xE1800000)
++#define S5PC110_PA_I2C1		(0xFAB00000)
++#define S5PC110_PA_I2C2		(0xE1A00000)
++
++/* USB HS OTG */
++#define S5PC110_PA_USB_HSOTG	(0xEC000000)
++#define S5PC110_PA_USB_HSPHY	(0xEC100000)
++
++/* SD/MMC */
++#define S5PC110_PA_HSMMC(x)	(0xEB000000 + ((x) * 0x100000))
++#define S5PC110_PA_HSMMC0	S5PC110_PA_HSMMC(0)
++#define S5PC110_PA_HSMMC1	S5PC110_PA_HSMMC(1)
++#define S5PC110_PA_HSMMC2	S5PC110_PA_HSMMC(2)
++#define S5PC110_PA_HSMMC3	S5PC110_PA_HSMMC(2)
 +
 +/* LCD */
-+#define IRQ_LCD_FIFO		IRQ_LCD0
-+#define IRQ_LCD_VSYNC		IRQ_LCD1
-+#define IRQ_LCD_SYSTEM		IRQ_LCD2
++#define S5PC110_PA_FB		(0xF8000000)
 +
-+#endif /* __ASM_ARCH_IRQ_H */
-diff --git a/arch/arm/plat-s5pc1xx/include/mach/memory.h b/arch/arm/plat-s5pc1xx/include/mach/memory.h
-new file mode 100644
-index 0000000..d378f45
---- /dev/null
-+++ b/arch/arm/plat-s5pc1xx/include/mach/memory.h
-@@ -0,0 +1,18 @@
-+/* linux/arch/arm/plat-s5pc1xx/include/mach/memory.h
-+ *
-+ * Copyright 2008 Samsung Electronics Co.
-+ *      Byungho Min <bhmin@samsung.com>
-+ *
-+ * Based on mach-s3c6400/include/mach/memory.h
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
++/* Multimedia */
++#define S5PC110_PA_MFC		(0xF1700000)
++#define S5PC110_SZ_MFC		(0x0000FFFF)
 +
-+#ifndef __ASM_ARCH_MEMORY_H
-+#define __ASM_ARCH_MEMORY_H
++/* I2S */
++#define S5PC110_PA_I2S0		(0xEEE30000)
++#define S5PC110_PA_I2S1		(0xE2100000)
++#define S5PC110_PA_I2S2		(0xE2A00000)
 +
-+#define PHYS_OFFSET     	UL(0x30000000)
++/* KEYPAD */
++#define S5PC110_PA_KEYPAD	(0xE1600000)
 +
-+#endif
-diff --git a/arch/arm/plat-s5pc1xx/include/mach/pwm-clock.h b/arch/arm/plat-s5pc1xx/include/mach/pwm-clock.h
-new file mode 100644
-index 0000000..09a2834
---- /dev/null
-+++ b/arch/arm/plat-s5pc1xx/include/mach/pwm-clock.h
-@@ -0,0 +1,56 @@
-+/* linux/arch/arm/plat-s5pc1xx/include/mach/pwm-clock.h
-+ *
-+ * Copyright 2009 Samsung Electronics Co.
-+ *      Byungho Min <bhmin@samsung.com>
-+ *
-+ * S5PC100 - pwm clock and timer support
-+ *
-+ * Based on mach-s3c6400/include/mach/pwm-clock.h
-+ */
++/* ADC & TouchScreen */
++#define S5PC110_PA_TSADC	(0xE1700000)
 +
-+/**
-+ * pwm_cfg_src_is_tclk() - return whether the given mux config is a tclk
-+ * @tcfg: The timer TCFG1 register bits shifted down to 0.
-+ *
-+ * Return true if the given configuration from TCFG1 is a TCLK instead
-+ * any of the TDIV clocks.
-+ */
-+static inline int pwm_cfg_src_is_tclk(unsigned long tcfg)
-+{
-+	return tcfg >= S3C64XX_TCFG1_MUX_TCLK;
-+}
++/* ETC */
++#define S5PC110_PA_SDRAM	(0x30000000)
++#define S5PC1XX_PA_SDRAM	S5PC110_PA_SDRAM
 +
-+/**
-+ * tcfg_to_divisor() - convert tcfg1 setting to a divisor
-+ * @tcfg1: The tcfg1 setting, shifted down.
-+ *
-+ * Get the divisor value for the given tcfg1 setting. We assume the
-+ * caller has already checked to see if this is not a TCLK source.
-+ */
-+static inline unsigned long tcfg_to_divisor(unsigned long tcfg1)
-+{
-+	return 1 << tcfg1;
-+}
++/* compatibility defines. */
++#define S3C_PA_RTC		S5PC1XX_PA_RTC
++#define S3C_PA_UART		S5PC1XX_PA_UART
++#define S3C_PA_UART0		S5PC110_PA_UART0
++#define S3C_PA_UART1		S5PC110_PA_UART1
++#define S3C_PA_UART2		S5PC110_PA_UART2
++#define S3C_PA_UART3		S5PC110_PA_UART3
 +
-+/**
-+ * pwm_tdiv_has_div1() - does the tdiv setting have a /1
-+ *
-+ * Return true if we have a /1 in the tdiv setting.
-+ */
-+static inline unsigned int pwm_tdiv_has_div1(void)
-+{
-+	return 1;
-+}
++#define S3C_VA_UART0		(S3C_VA_UART + 0x0)
++#define S3C_VA_UART1		(S3C_VA_UART + 0x400)
++#define S3C_VA_UART2		(S3C_VA_UART + 0x800)
++#define S3C_VA_UART3		(S3C_VA_UART + 0xC00)
++#define S3C_UART_OFFSET		0x400
++#define S3C_VA_UARTx(x)		(S3C_VA_UART + ((x) * S3C_UART_OFFSET))
 +
-+/**
-+ * pwm_tdiv_div_bits() - calculate TCFG1 divisor value.
-+ * @div: The divisor to calculate the bit information for.
-+ *
-+ * Turn a divisor into the necessary bit field for TCFG1.
-+ */
-+static inline unsigned long pwm_tdiv_div_bits(unsigned int div)
-+{
-+	return ilog2(div);
-+}
++#define S3C_PA_FB		S5PC110_PA_FB
++#define S3C_VA_VIC0		(S3C_VA_IRQ + 0x0)
++#define S3C_VA_VIC1		(S3C_VA_IRQ + 0x10000)
++#define S3C_VA_VIC2		(S3C_VA_IRQ + 0x20000)
++#define S3C_VA_VIC3		(S3C_VA_IRQ + 0x30000)
++#define S3C_PA_IIC		S5PC110_PA_I2C
++#define S3C_PA_IIC1		S5PC110_PA_I2C1
++#define S3C_PA_IIC2		S5PC110_PA_I2C2
++#define S3C_PA_USB_HSOTG	S5PC110_PA_USB_HSOTG
++#define S3C_PA_USB_HSPHY	S5PC110_PA_USB_HSPHY
++#define S3C_PA_HSMMC0		S5PC110_PA_HSMMC0
++#define S3C_PA_HSMMC1		S5PC110_PA_HSMMC1
++#define S3C_PA_HSMMC2		S5PC110_PA_HSMMC2
++#define S3C_PA_KEYPAD		S5PC110_PA_KEYPAD
++#define S3C_PA_TSADC		S5PC110_PA_TSADC
 +
-+#define S3C_TCFG1_MUX_TCLK S3C64XX_TCFG1_MUX_TCLK
-diff --git a/arch/arm/plat-s5pc1xx/include/mach/tick.h b/arch/arm/plat-s5pc1xx/include/mach/tick.h
-new file mode 100644
-index 0000000..c12f925
---- /dev/null
-+++ b/arch/arm/plat-s5pc1xx/include/mach/tick.h
-@@ -0,0 +1,29 @@
-+/* linux/arch/arm/plat-s5pc1xx/include/mach/tick.h
-+ *
-+ * Copyright 2009 Samsung Electronics Co.
-+ *	Byungho Min <bhmin@samsung.com>
-+ *
-+ * S3C64XX - Timer tick support definitions
-+ *
-+ * Based on mach-s3c6400/include/mach/tick.h
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __ASM_ARCH_TICK_H
-+#define __ASM_ARCH_TICK_H __FILE__
-+
-+/* note, the timer interrutps turn up in 2 places, the vic and then
-+ * the timer block. We take the VIC as the base at the moment.
-+ */
-+static inline u32 s3c24xx_ostimer_pending(void)
-+{
-+	u32 pend = __raw_readl(S3C_VA_VIC0 + VIC_RAW_STATUS);
-+	return pend & 1 << (IRQ_TIMER4_VIC - S5PC1XX_IRQ_VIC0(0));
-+}
-+
-+#define TICK_MAX	(0xffffffff)
-+
-+#endif /* __ASM_ARCH_TICK_H */
-diff --git a/arch/arm/plat-s5pc1xx/include/mach/uncompress.h b/arch/arm/plat-s5pc1xx/include/mach/uncompress.h
-new file mode 100644
-index 0000000..e9ee0be
---- /dev/null
-+++ b/arch/arm/plat-s5pc1xx/include/mach/uncompress.h
-@@ -0,0 +1,28 @@
-+/* linux/arch/arm/plat-s5pc1xx/include/mach/uncompress.h
-+ *
-+ * Copyright 2009 Samsung Electronics Co.
-+ *	Byungho Min <bhmin@samsung.com>
-+ *
-+ * S5PC100 - uncompress code
-+ *
-+ * Based on mach-s3c6400/include/mach/uncompress.h
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __ASM_ARCH_UNCOMPRESS_H
-+#define __ASM_ARCH_UNCOMPRESS_H
-+
-+#include <mach/map.h>
-+#include <plat/uncompress.h>
-+
-+static void arch_detect_cpu(void)
-+{
-+	/* we do not need to do any cpu detection here at the moment. */
-+	fifo_mask = S3C2440_UFSTAT_TXMASK;
-+	fifo_max = 63 << S3C2440_UFSTAT_TXSHIFT;
-+}
-+
-+#endif /* __ASM_ARCH_UNCOMPRESS_H */
++#endif /* __ASM_ARCH_C100_MAP_H */
 -- 
 1.6.4
