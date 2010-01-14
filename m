@@ -1,7 +1,7 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 20/21] ARM: S5PC1XX: add support for SMDKC110 board
-Date: Thu, 14 Jan 2010 12:29:38 +0100
-Message-ID: <1263468579-5732-21-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 03/21] ARM: S5PC1XX: create sub-platform for S5PC100 SoCs
+Date: Thu, 14 Jan 2010 12:29:21 +0100
+Message-ID: <1263468579-5732-4-git-send-email-m.szyprowski@samsung.com>
 References: <1263468579-5732-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -23,151 +23,73 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Kyungmin Park <kyungmin.park@samsung.com>
 
-Samsung S5PC110 SoC are newer Samsung SoCs. Like S5PC100 they are based
-on CortexA8 ARM CPU, but have much more powerfull integrated periperals.
-This patch adds support for SMDKC110 evaluation board. The board can be
-obtained from Meritech (http://www.meritech.co.kr).
+Samsung S5PC100 and S5PC110 SoCs differs a lot in register map and other
+core platform definitions, so it is not possible to have both SoCs in
+the current platform framework without runtime hacks. To address this
+issue a sub-platform has been introduced, so each SoC in sub-platform
+can have its own set of include files (register map, irq&gpio
+definitions, etc)
 
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/mach-s5pc110/Kconfig         |    6 ++
- arch/arm/mach-s5pc110/Makefile        |    1 +
- arch/arm/mach-s5pc110/mach-smdkc110.c |  102 +++++++++++++++++++++++++++++++++
- 3 files changed, 109 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s5pc110/mach-smdkc110.c
+ arch/arm/Makefile             |    2 +-
+ arch/arm/mach-s5pc100/Kconfig |    4 ++++
+ arch/arm/plat-s5pc1xx/Kconfig |   10 ++++++++++
+ 3 files changed, 15 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-s5pc110/Kconfig b/arch/arm/mach-s5pc110/Kconfig
-index ef2f940..b2374fd 100644
---- a/arch/arm/mach-s5pc110/Kconfig
-+++ b/arch/arm/mach-s5pc110/Kconfig
-@@ -49,4 +49,10 @@ config S5PC110_SETUP_SDHCI_GPIO
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index e9da084..f00d2d8 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -161,7 +161,7 @@ machine-$(CONFIG_ARCH_RPC)		:= rpc
+ machine-$(CONFIG_ARCH_S3C2410)		:= s3c2410 s3c2400 s3c2412 s3c2440 s3c2442 s3c2443
+ machine-$(CONFIG_ARCH_S3C24A0)		:= s3c24a0
+ machine-$(CONFIG_ARCH_S3C64XX)		:= s3c6400 s3c6410
+-machine-$(CONFIG_ARCH_S5PC1XX)		:= s5pc100
++machine-$(CONFIG_ARCH_S5PC100)		:= s5pc100
+ machine-$(CONFIG_ARCH_SA1100)		:= sa1100
+ machine-$(CONFIG_ARCH_SHARK)		:= shark
+ machine-$(CONFIG_ARCH_STMP378X)		:= stmp378x
+diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
+index 27ec167..0628bc3 100644
+--- a/arch/arm/mach-s5pc100/Kconfig
++++ b/arch/arm/mach-s5pc100/Kconfig
+@@ -3,6 +3,8 @@
+ #
+ # Licensed under GPLv2
+ 
++if ARCH_S5PC100
++
+ # Configuration options for the S5PC100 CPU
+ 
+ config CPU_S5PC100
+@@ -32,3 +34,5 @@ config MACH_SMDKC100
+ 	select S5PC100_SETUP_SDHCI
  	help
- 	  Common setup code for SDHCI gpio.
+ 	  Machine support for the Samsung SMDKC100
++
++endif
+diff --git a/arch/arm/plat-s5pc1xx/Kconfig b/arch/arm/plat-s5pc1xx/Kconfig
+index c7ccdf2..38f8998 100644
+--- a/arch/arm/plat-s5pc1xx/Kconfig
++++ b/arch/arm/plat-s5pc1xx/Kconfig
+@@ -24,6 +24,16 @@ config PLAT_S5PC1XX
  
-+config MACH_SMDKC110
-+	bool "SMDKC110"
-+	select CPU_S5PC110
-+	help
-+	  Machine support for the SMDKC110 board
-+
- endif
-diff --git a/arch/arm/mach-s5pc110/Makefile b/arch/arm/mach-s5pc110/Makefile
-index d7e03b6..3017ddd 100644
---- a/arch/arm/mach-s5pc110/Makefile
-+++ b/arch/arm/mach-s5pc110/Makefile
-@@ -26,3 +26,4 @@ obj-$(CONFIG_S5PC110_SETUP_SDHCI)       += setup-sdhci.o
- obj-$(CONFIG_S5PC110_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
+ if PLAT_S5PC1XX
  
- # machine support
-+obj-$(CONFIG_MACH_SMDKC110)	+= mach-smdkc110.o
-diff --git a/arch/arm/mach-s5pc110/mach-smdkc110.c b/arch/arm/mach-s5pc110/mach-smdkc110.c
-new file mode 100644
-index 0000000..2d39dfb
---- /dev/null
-+++ b/arch/arm/mach-s5pc110/mach-smdkc110.c
-@@ -0,0 +1,102 @@
-+/*
-+ * linux/arch/arm/mach-s5pc110/mach-smdkc110.c
-+ *
-+ *  Copyright (C) 2009 Samsung Electronics Co.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+*/
++choice
++	prompt "S5PC1xx SoC Type"
++	default ARCH_S5PC100
 +
-+#include <linux/kernel.h>
-+#include <linux/types.h>
-+#include <linux/interrupt.h>
-+#include <linux/list.h>
-+#include <linux/timer.h>
-+#include <linux/init.h>
-+#include <linux/serial_core.h>
-+#include <linux/platform_device.h>
-+#include <linux/io.h>
-+#include <linux/gpio.h>
-+#include <linux/i2c.h>
-+#include <linux/fb.h>
-+#include <linux/delay.h>
++config ARCH_S5PC100
++	bool "S5PC100"
 +
-+#include <asm/mach/arch.h>
-+#include <asm/mach/map.h>
++endchoice
 +
-+#include <mach/map.h>
 +
-+#include <asm/irq.h>
-+#include <asm/mach-types.h>
-+
-+#include <plat/regs-serial.h>
-+
-+#include <plat/clock.h>
-+#include <plat/devs.h>
-+#include <plat/cpu.h>
-+#include <plat/s5pc1xx.h>
-+
-+#define UCON	(S3C2410_UCON_DEFAULT | S3C2410_UCON_UCLK)
-+#define ULCON	(S3C2410_LCON_CS8 | S3C2410_LCON_PNONE | S3C2410_LCON_STOPB)
-+#define UFCON	(S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE)
-+
-+static struct s3c2410_uartcfg universal_uartcfgs[] __initdata = {
-+	[0] = {
-+		.hwport	     = 0,
-+		.flags	     = 0,
-+		.ucon	     = 0x3c5,
-+		.ulcon	     = 0x03,
-+		.ufcon	     = 0x51,
-+	},
-+	[1] = {
-+		.hwport	     = 1,
-+		.flags	     = 0,
-+		.ucon	     = 0x3c5,
-+		.ulcon	     = 0x03,
-+		.ufcon	     = 0x51,
-+	},
-+	[2] = {
-+		.hwport	     = 2,
-+		.flags	     = 0,
-+		.ucon	     = 0x3c5,
-+		.ulcon	     = 0x03,
-+		.ufcon	     = 0x51,
-+	},
-+	[3] = {
-+		.hwport	     = 3,
-+		.flags	     = 0,
-+		.ucon	     = 0x3c5,
-+		.ulcon	     = 0x03,
-+		.ufcon	     = 0x51,
-+	},
-+};
-+
-+static struct platform_device *universal_devices[] __initdata = {
-+};
-+
-+static struct map_desc universal_iodesc[] = {};
-+
-+static void __init universal_map_io(void)
-+{
-+	s5pc1xx_init_io(universal_iodesc, ARRAY_SIZE(universal_iodesc));
-+	s3c24xx_init_clocks(24000000);
-+	s3c24xx_init_uarts(universal_uartcfgs, ARRAY_SIZE(universal_uartcfgs));
-+}
-+
-+static void __init universal_machine_init(void)
-+{
-+	platform_add_devices(universal_devices, ARRAY_SIZE(universal_devices));
-+}
-+
-+MACHINE_START(SMDKC110, "SMDKC110")
-+	/* Maintainer: Samsung Electronics */
-+	.phys_io	= S5PC110_PA_UART & 0xfff00000,
-+	.io_pg_offst	= (((u32)S5PC1XX_VA_UART) >> 18) & 0xfffc,
-+	.boot_params	= S5PC110_PA_SDRAM + 0x100,
-+	.init_irq	= s5pc110_init_irq,
-+	.map_io		= universal_map_io,
-+	.init_machine	= universal_machine_init,
-+	.timer		= &s3c24xx_timer,
-+MACHINE_END
+ # Configuration options shared by all S3C64XX implementations
+ 
+ config CPU_S5PC100_INIT
 -- 
 1.6.4
