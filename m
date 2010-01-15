@@ -1,39 +1,16 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH] ARM: S3C2412: Fixup commented out device in SMDK2413
-Date: Fri, 15 Jan 2010 10:39:33 +0000
-Message-ID: <1263551977-15090-3-git-send-email-ben-linux@fluff.org>
-References: <1263551977-15090-1-git-send-email-ben-linux@fluff.org>
+Subject: Samsung SoC device updates round 1
+Date: Fri, 15 Jan 2010 10:39:31 +0000
+Message-ID: <1263551977-15090-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:46158 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:46154 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753394Ab0AOKji (ORCPT
+	id S1751920Ab0AOKji (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 15 Jan 2010 05:39:38 -0500
-In-Reply-To: <1263551977-15090-1-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Ben Dooks <ben-linux@fluff.org>
 
-The SMDK2413 has a commented out device that does not have any setup
-data for it, so remove it for now.
-
-Signed-off-by: Ben Dooks <ben-linux@fluff.org>
----
- arch/arm/mach-s3c2412/mach-smdk2413.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
-
-diff --git a/arch/arm/mach-s3c2412/mach-smdk2413.c b/arch/arm/mach-s3c2412/mach-smdk2413.c
-index 437c087..0392065 100644
---- a/arch/arm/mach-s3c2412/mach-smdk2413.c
-+++ b/arch/arm/mach-s3c2412/mach-smdk2413.c
-@@ -105,7 +105,6 @@ static struct s3c2410_udc_mach_info smdk2413_udc_cfg __initdata = {
- 
- static struct platform_device *smdk2413_devices[] __initdata = {
- 	&s3c_device_ohci,
--	//&s3c_device_lcd,
- 	&s3c_device_wdt,
- 	&s3c_device_i2c0,
- 	&s3c_device_iis,
--- 
-1.6.0.4
+Some cleanups and moves preparing for updating the device handling
+on the Samsung SoC line.
