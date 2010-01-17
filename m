@@ -1,51 +1,43 @@
-From: Barry Song <21cnbao@gmail.com>
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
 Subject: Re: s3c-hsotg driver problem
-Date: Sun, 17 Jan 2010 10:00:10 +0800
-Message-ID: <3c17e3571001161800m14ca30cas1cca155f9880513d@mail.gmail.com>
-References: <4B51B36C.6040308@gmail.com>
+Date: Sun, 17 Jan 2010 13:57:04 +0100
+Message-ID: <4B530920.5020901@gmail.com>
+References: <4B51B36C.6040308@gmail.com> <3c17e3571001161800m14ca30cas1cca155f9880513d@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f187.google.com ([209.85.210.187]:38716 "EHLO
-	mail-yx0-f187.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753199Ab0AQCAb (ORCPT
+Received: from mail-ew0-f219.google.com ([209.85.219.219]:41080 "EHLO
+	mail-ew0-f219.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751758Ab0AQM5H (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 16 Jan 2010 21:00:31 -0500
-Received: by yxe17 with SMTP id 17so2185782yxe.33
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 16 Jan 2010 18:00:30 -0800 (PST)
-In-Reply-To: <4B51B36C.6040308@gmail.com>
+	Sun, 17 Jan 2010 07:57:07 -0500
+Received: by ewy19 with SMTP id 19so2393054ewy.21
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 17 Jan 2010 04:57:05 -0800 (PST)
+In-Reply-To: <3c17e3571001161800m14ca30cas1cca155f9880513d@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Maurus Cuelenaere <mcuelenaere@gmail.com>
+To: Barry Song <21cnbao@gmail.com>
 Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>
 
-In fact, I once used 12Mhz  external crystal, after setting PHYCLK
-right,  both USB 1.1 as host and 2.0 as gadget can work. The kernel
-version I used is 2.6.28.
+Op 17-01-10 03:00, Barry Song schreef:
+> In fact, I once used 12Mhz  external crystal, after setting PHYCLK
+> right,  both USB 1.1 as host and 2.0 as gadget can work. The kernel
+> version I used is 2.6.28.
+>    
 
-On Sat, Jan 16, 2010 at 8:39 PM, Maurus Cuelenaere
-<mcuelenaere@gmail.com> wrote:
-> Hi,
->
-> I'm trying to get the USB OTG port working on my device (S3C6410 board), but
-> am running into problems.
-> This board doesn't have a 48Mhz clock, so I set the reference clock in the
-> USB PLL to a 12Mhz external crystal (see patch).
->
-> Still, I'm having trouble getting it to work; I'm seeing these messages (see
-> attachment for full log):
->
-> s3c-hsotg s3c-hsotg: s3c_hsotg_rx_data: FIFO 8 bytes on ep0 but no req
-> (DxEPCTl=0x00028000)
-> hub 1-0:1.0: connect-debounce failed, port 2 disabled
->
-> This looks like the hardware is configured correctly, but the
-> currently-in-use gadget isn't setting up an EP0 RX transfer?
-> I've tried Mass Storage, serial, Ethernet, ... gadgets and they all give the
-> same errors.
->
-> Any hints/pointers would be welcome!
->
-> Thanks,
-> Maurus Cuelenaere
->
+You say the kernel version you used is 2.6.28, I'm betting you weren't 
+using Ben Dooks' driver then and this was Samsung's tree?
+The kernel that is currently shipped with the device I'm porting for 
+(SmartQ 7) is using 2.6.24, which also has Samsung's patches applied 
+(and uses other drivers than in mainline).
+
+AFAIK there are 2 (?) 'main' trees floating around with Samsung patches: 
+2.6.24 and 2.6.28, then there are 2.6.29 and 2.6.31 (and newer) trees 
+which contain patches from a mix of both and mainline.
+
+What I'm looking for is getting everything to work with *mainline* 
+drivers, so in the end I can push the SmartQ boards to mainline.
+
+Regards,
+Maurus Cuelenaere
