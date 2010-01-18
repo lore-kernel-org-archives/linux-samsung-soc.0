@@ -1,146 +1,545 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH] ARM: SAMSUNG: s3c_set_clksrc returns for single parent
-	clock.
-Date: Mon, 18 Jan 2010 01:46:30 +0000
-Message-ID: <20100118014630.GE10014@trinity.fluff.org>
-References: <1263775097-16062-1-git-send-email-thomas.ab@samsung.com> <20100118011028.GC10014@trinity.fluff.org> <84c135f51001171734l3f731217gbee1fb482fafbe1d@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM: SAMSUNG: Move GPIO common functions to
+	plat-samsung for Samsung's SoCs
+Date: Mon, 18 Jan 2010 01:52:20 +0000
+Message-ID: <20100118015220.GF10014@trinity.fluff.org>
+References: <1263552730-16187-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:58752 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:54302 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751463Ab0ARBqc (ORCPT
+	id S1752136Ab0ARBwW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 17 Jan 2010 20:46:32 -0500
+	Sun, 17 Jan 2010 20:52:22 -0500
 Content-Disposition: inline
-In-Reply-To: <84c135f51001171734l3f731217gbee1fb482fafbe1d@mail.gmail.com>
+In-Reply-To: <1263552730-16187-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Aditya Pratap Sharma <adityaps@samsung.com>, Atul Dahiya <atul.dahiya@samsung.com>
 
-On Mon, Jan 18, 2010 at 10:34:29AM +0900, Thomas Abraham wrote:
-> Hi Ben,
->=20
-> On Mon, Jan 18, 2010 at 10:10 AM, Ben Dooks <ben-linux@fluff.org> wro=
-te:
-> > On Mon, Jan 18, 2010 at 09:38:17AM +0900, Thomas Abraham wrote:
-> >> The function s3c_set_clksrc should return if the clksrc_clk clock =
-has
-> >> only one possible parent clock.
-> >
-> > Does this actually relate to a real bug or is this something that y=
-ou've
-> > come across whilst reading the code?
->=20
-> This is required in cases where a clock has a divider but no mux. In
-> s3c_register_clksrc function, after the default set of clock
-> operations are assigned, the parent clock set function s3c_set_clksrc
-> is called. For clocks that do not have mux, the call to s3c_set_clksr=
-c
-> is incorrect.
+On Fri, Jan 15, 2010 at 07:52:10PM +0900, Kukjin Kim wrote:
+> This patch moves GPIO common functions (from plat-s3c64xx) into plat-samsung.
+> and adds the config option to build the plat-samsung/gpiolib for Samsung SoCs.
+> 
+> Changes since v1:
+> 
+> Address comments from Ben
+> 
+> Signed-off-by: Aditya Pratap Sharma <adityaps@samsung.com>
+> Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
 
-If you have a look at s3c_set_clksrc() , you will find it already
-checks to see if clk->reg_src.reg is set. It also doesn't call the
-setparent directly either, as it only needs to set clk->clk.parent
-field before exiting.
+Please in future place the changes from review after the '---' so that
+they are removed before the final commit (unless they are really important
+and then the description field should have been altered to reflect the
+changes as well).
 
-   132          u32 clksrc =3D 0;
-   133 =20
-   134          if (clk->reg_src.reg)
-   135                  clksrc =3D __raw_readl(clk->reg_src.reg);
-   136 =20
-   137          clksrc &=3D mask;
-   138          clksrc >>=3D clk->reg_src.shift;
-   139 =20
-   140          if (clksrc > srcs->nr_sources || !srcs->sources[clksrc]=
-) {
-   141                  printk(KERN_ERR "%s: bad source %d\n",
-   142                         clk->clk.name, clksrc);
-   143                  return;
-   144          }
-   145 =20
-   146          clk->clk.parent =3D srcs->sources[clksrc];
+currently I have:
 
-This allows us to do some basic verification that the clksrc's sources
-data is valud (such that srcs->nr_sources at least contains one source
-and that it is not NULL).
-=20
-> >
-> > From arch/arm/plat-samnsung/clock-clksrc.c:
-> >
-> > =A0 181 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (!clk=
-src->reg_div.reg)
-> > =A0 182 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0clksrc->clk.ops =3D &clksrc_ops_nodiv;
-> > =A0 183 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0else if =
-(!clksrc->reg_src.reg)
-> > =A0 184 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0clksrc->clk.ops =3D &clksrc_ops_nosrc;
-> > =A0 185 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0else
-> > =A0 186 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0clksrc->clk.ops =3D &clksrc_ops;
-> >
-> > So we change the ops dependant on which register(s) we have availal=
-be.
-> >
-> >> Signed-of-by: =A0Thomas Abraham <thomas.ab@samsung.com>
-> >> ---
-> >> =A0arch/arm/plat-samsung/clock-clksrc.c | =A0 =A05 +++--
-> >> =A01 files changed, 3 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/arch/arm/plat-samsung/clock-clksrc.c b/arch/arm/plat-=
-samsung/clock-clksrc.c
-> >> index 33c633a..80da4c4 100644
-> >> --- a/arch/arm/plat-samsung/clock-clksrc.c
-> >> +++ b/arch/arm/plat-samsung/clock-clksrc.c
-> >> @@ -131,9 +131,10 @@ void __init_or_cpufreq s3c_set_clksrc(struct =
-clksrc_clk *clk, bool announce)
-> >> =A0 =A0 =A0 u32 mask =3D bit_mask(clk->reg_src.shift, clk->reg_src=
-=2Esize);
-> >> =A0 =A0 =A0 u32 clksrc =3D 0;
-> >>
-> >> - =A0 =A0 if (clk->reg_src.reg)
-> >> - =A0 =A0 =A0 =A0 =A0 =A0 clksrc =3D __raw_readl(clk->reg_src.reg)=
-;
-> >> + =A0 =A0 if (!clk->reg_src.reg)
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 return;
-> >>
-> >> + =A0 =A0 clksrc =3D __raw_readl(clk->reg_src.reg);
-> >> =A0 =A0 =A0 clksrc &=3D mask;
-> >> =A0 =A0 =A0 clksrc >>=3D clk->reg_src.shift;
-> >>
-> >> --
-> >> 1.6.3.3
-> >>
-> >
-> > --
-> > --
-> > Ben
-> >
-> > Q: =A0 =A0 =A0What's a light-year?
-> > A: =A0 =A0 =A0One-third less calories than a regular year.
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-sam=
-sung-soc" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at =A0http://vger.kernel.org/majordomo-info.htm=
-l
-> >
->=20
->=20
-> Thanks,
-> Thomas.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+commit d26924416ccfa137589116a93f46fd5826752ab6
+Author: Kukjin Kim <kgene.kim@samsung.com>
+Date:   Fri Jan 15 19:52:10 2010 +0900
 
---=20
---=20
+    ARM: SAMSUNG: Move GPIO common functions to plat-samsung for Samsung's SoCs
+    
+    This patch moves GPIO common functions (from plat-s3c64xx) into plat-samsung
+    and adds the config option to build the plat-samsung/gpiolib for Samsung SoC
+    
+    Changes since v1:
+    
+    Address comments from Ben
+
+I'll change this to
+
+commit 78f2bdede137c73d869d3c9137a70a6b78d78e58
+Author: Kukjin Kim <kgene.kim@samsung.com>
+Date:   Fri Jan 15 19:52:10 2010 +0900
+
+    ARM: SAMSUNG: Move GPIO common functions to plat-samsung for Samsung's SoCs
+    
+    This patch moves GPIO common functions (from plat-s3c64xx) into plat-samsung
+    and adds the config option to build the plat-samsung/gpiolib for Samsung SoC
+    
+    Signed-off-by: Aditya Pratap Sharma <adityaps@samsung.com>
+    Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
+    Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+    [ben-linux@fluff.org: remove uncessary changelogs from internal dev]
+    Signed-off-by: Ben Dooks <ben-linux@fluff.org>
+
+Also, the title could have been shortened by removing the 'Samsung's SoCs'
+from the end, since we're pretty sure plat-samsung is for Samsung SoCs.
+
+>  arch/arm/plat-s3c/include/plat/gpio-core.h |    3 +
+>  arch/arm/plat-s3c64xx/Kconfig              |    1 +
+>  arch/arm/plat-s3c64xx/gpiolib.c            |  162 +----------------------
+>  arch/arm/plat-samsung/Kconfig              |    7 +
+>  arch/arm/plat-samsung/Makefile             |    1 +
+>  arch/arm/plat-samsung/gpiolib.c            |  202 ++++++++++++++++++++++++++++
+>  6 files changed, 216 insertions(+), 160 deletions(-)
+>  create mode 100644 arch/arm/plat-samsung/gpiolib.c
+> 
+> diff --git a/arch/arm/plat-s3c/include/plat/gpio-core.h b/arch/arm/plat-s3c/include/plat/gpio-core.h
+> index 32af612..92c3829 100644
+> --- a/arch/arm/plat-s3c/include/plat/gpio-core.h
+> +++ b/arch/arm/plat-s3c/include/plat/gpio-core.h
+> @@ -80,6 +80,9 @@ extern void s3c_gpiolib_add(struct s3c_gpio_chip *chip);
+>   * and any other necessary functions.
+>   */
+>  
+> +extern void samsung_gpiolib_add_4bit(struct s3c_gpio_chip *chip);
+> +extern void samsung_gpiolib_add_4bit2(struct s3c_gpio_chip *chip);
+> +
+>  #ifdef CONFIG_S3C_GPIO_TRACK
+>  extern struct s3c_gpio_chip *s3c_gpios[S3C_GPIO_END];
+>  
+> diff --git a/arch/arm/plat-s3c64xx/Kconfig b/arch/arm/plat-s3c64xx/Kconfig
+> index 0fba1f9..b0808f7 100644
+> --- a/arch/arm/plat-s3c64xx/Kconfig
+> +++ b/arch/arm/plat-s3c64xx/Kconfig
+> @@ -22,6 +22,7 @@ config PLAT_S3C64XX
+>  	select S3C_GPIO_CFG_S3C64XX
+>  	select S3C_DEV_NAND
+>  	select USB_ARCH_HAS_OHCI
+> +	select SAMSUNG_GPIOLIB
+>  	help
+>  	  Base platform code for any Samsung S3C64XX device
+>  
+> diff --git a/arch/arm/plat-s3c64xx/gpiolib.c b/arch/arm/plat-s3c64xx/gpiolib.c
+> index 7785604..265e23b 100644
+> --- a/arch/arm/plat-s3c64xx/gpiolib.c
+> +++ b/arch/arm/plat-s3c64xx/gpiolib.c
+> @@ -49,150 +49,6 @@
+>   * [2] BANK has two control registers, GPxCON0 and GPxCON1
+>   */
+>  
+> -#define OFF_GPCON	(0x00)
+> -#define OFF_GPDAT	(0x04)
+> -
+> -#define con_4bit_shift(__off) ((__off) * 4)
+> -
+> -#if 1
+> -#define gpio_dbg(x...) do { } while(0)
+> -#else
+> -#define gpio_dbg(x...) printk(KERN_DEBUG x)
+> -#endif
+> -
+> -/* The s3c64xx_gpiolib_4bit routines are to control the gpio banks where
+> - * the gpio configuration register (GPxCON) has 4 bits per GPIO, as the
+> - * following example:
+> - *
+> - * base + 0x00: Control register, 4 bits per gpio
+> - *	        gpio n: 4 bits starting at (4*n)
+> - *		0000 = input, 0001 = output, others mean special-function
+> - * base + 0x04: Data register, 1 bit per gpio
+> - *		bit n: data bit n
+> - *
+> - * Note, since the data register is one bit per gpio and is at base + 0x4
+> - * we can use s3c_gpiolib_get and s3c_gpiolib_set to change the state of
+> - * the output.
+> -*/
+> -
+> -static int s3c64xx_gpiolib_4bit_input(struct gpio_chip *chip, unsigned offset)
+> -{
+> -	struct s3c_gpio_chip *ourchip = to_s3c_gpio(chip);
+> -	void __iomem *base = ourchip->base;
+> -	unsigned long con;
+> -
+> -	con = __raw_readl(base + OFF_GPCON);
+> -	con &= ~(0xf << con_4bit_shift(offset));
+> -	__raw_writel(con, base + OFF_GPCON);
+> -
+> -	gpio_dbg("%s: %p: CON now %08lx\n", __func__, base, con);
+> -
+> -	return 0;
+> -}
+> -
+> -static int s3c64xx_gpiolib_4bit_output(struct gpio_chip *chip,
+> -				       unsigned offset, int value)
+> -{
+> -	struct s3c_gpio_chip *ourchip = to_s3c_gpio(chip);
+> -	void __iomem *base = ourchip->base;
+> -	unsigned long con;
+> -	unsigned long dat;
+> -
+> -	con = __raw_readl(base + OFF_GPCON);
+> -	con &= ~(0xf << con_4bit_shift(offset));
+> -	con |= 0x1 << con_4bit_shift(offset);
+> -
+> -	dat = __raw_readl(base + OFF_GPDAT);
+> -	if (value)
+> -		dat |= 1 << offset;
+> -	else
+> -		dat &= ~(1 << offset);
+> -
+> -	__raw_writel(dat, base + OFF_GPDAT);
+> -	__raw_writel(con, base + OFF_GPCON);
+> -	__raw_writel(dat, base + OFF_GPDAT);
+> -
+> -	gpio_dbg("%s: %p: CON %08lx, DAT %08lx\n", __func__, base, con, dat);
+> -
+> -	return 0;
+> -}
+> -
+> -/* The next set of routines are for the case where the GPIO configuration
+> - * registers are 4 bits per GPIO but there is more than one register (the
+> - * bank has more than 8 GPIOs.
+> - *
+> - * This case is the similar to the 4 bit case, but the registers are as
+> - * follows:
+> - *
+> - * base + 0x00: Control register, 4 bits per gpio (lower 8 GPIOs)
+> - *	        gpio n: 4 bits starting at (4*n)
+> - *		0000 = input, 0001 = output, others mean special-function
+> - * base + 0x04: Control register, 4 bits per gpio (up to 8 additions GPIOs)
+> - *	        gpio n: 4 bits starting at (4*n)
+> - *		0000 = input, 0001 = output, others mean special-function
+> - * base + 0x08: Data register, 1 bit per gpio
+> - *		bit n: data bit n
+> - *
+> - * To allow us to use the s3c_gpiolib_get and s3c_gpiolib_set routines we
+> - * store the 'base + 0x4' address so that these routines see the data
+> - * register at ourchip->base + 0x04.
+> -*/
+> -
+> -static int s3c64xx_gpiolib_4bit2_input(struct gpio_chip *chip, unsigned offset)
+> -{
+> -	struct s3c_gpio_chip *ourchip = to_s3c_gpio(chip);
+> -	void __iomem *base = ourchip->base;
+> -	void __iomem *regcon = base;
+> -	unsigned long con;
+> -
+> -	if (offset > 7)
+> -		offset -= 8;
+> -	else
+> -		regcon -= 4;
+> -
+> -	con = __raw_readl(regcon);
+> -	con &= ~(0xf << con_4bit_shift(offset));
+> -	__raw_writel(con, regcon);
+> -
+> -	gpio_dbg("%s: %p: CON %08lx\n", __func__, base, con);
+> -
+> -	return 0;
+> -
+> -}
+> -
+> -static int s3c64xx_gpiolib_4bit2_output(struct gpio_chip *chip,
+> -				       unsigned offset, int value)
+> -{
+> -	struct s3c_gpio_chip *ourchip = to_s3c_gpio(chip);
+> -	void __iomem *base = ourchip->base;
+> -	void __iomem *regcon = base;
+> -	unsigned long con;
+> -	unsigned long dat;
+> -
+> -	if (offset > 7)
+> -		offset -= 8;
+> -	else
+> -		regcon -= 4;
+> -
+> -	con = __raw_readl(regcon);
+> -	con &= ~(0xf << con_4bit_shift(offset));
+> -	con |= 0x1 << con_4bit_shift(offset);
+> -
+> -	dat = __raw_readl(base + OFF_GPDAT);
+> -	if (value)
+> -		dat |= 1 << offset;
+> -	else
+> -		dat &= ~(1 << offset);
+> -
+> -	__raw_writel(dat, base + OFF_GPDAT);
+> -	__raw_writel(con, regcon);
+> -	__raw_writel(dat, base + OFF_GPDAT);
+> -
+> -	gpio_dbg("%s: %p: CON %08lx, DAT %08lx\n", __func__, base, con, dat);
+> -
+> -	return 0;
+> -}
+> -
+>  static struct s3c_gpio_cfg gpio_4bit_cfg_noint = {
+>  	.set_config	= s3c_gpio_setcfg_s3c64xx_4bit,
+>  	.set_pull	= s3c_gpio_setpull_updown,
+> @@ -399,20 +255,6 @@ static struct s3c_gpio_chip gpio_2bit[] = {
+>  	},
+>  };
+>  
+> -static __init void s3c64xx_gpiolib_add_4bit(struct s3c_gpio_chip *chip)
+> -{
+> -	chip->chip.direction_input = s3c64xx_gpiolib_4bit_input;
+> -	chip->chip.direction_output = s3c64xx_gpiolib_4bit_output;
+> -	chip->pm = __gpio_pm(&s3c_gpio_pm_4bit);
+> -}
+> -
+> -static __init void s3c64xx_gpiolib_add_4bit2(struct s3c_gpio_chip *chip)
+> -{
+> -	chip->chip.direction_input = s3c64xx_gpiolib_4bit2_input;
+> -	chip->chip.direction_output = s3c64xx_gpiolib_4bit2_output;
+> -	chip->pm = __gpio_pm(&s3c_gpio_pm_4bit);
+> -}
+> -
+>  static __init void s3c64xx_gpiolib_add_2bit(struct s3c_gpio_chip *chip)
+>  {
+>  	chip->pm = __gpio_pm(&s3c_gpio_pm_2bit);
+> @@ -432,10 +274,10 @@ static __init void s3c64xx_gpiolib_add(struct s3c_gpio_chip *chips,
+>  static __init int s3c64xx_gpiolib_init(void)
+>  {
+>  	s3c64xx_gpiolib_add(gpio_4bit, ARRAY_SIZE(gpio_4bit),
+> -			    s3c64xx_gpiolib_add_4bit);
+> +			    samsung_gpiolib_add_4bit);
+>  
+>  	s3c64xx_gpiolib_add(gpio_4bit2, ARRAY_SIZE(gpio_4bit2),
+> -			    s3c64xx_gpiolib_add_4bit2);
+> +			    samsung_gpiolib_add_4bit2);
+>  
+>  	s3c64xx_gpiolib_add(gpio_2bit, ARRAY_SIZE(gpio_2bit),
+>  			    s3c64xx_gpiolib_add_2bit);
+> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+> index faec4b8..b8288a9 100644
+> --- a/arch/arm/plat-samsung/Kconfig
+> +++ b/arch/arm/plat-samsung/Kconfig
+> @@ -33,6 +33,13 @@ config SAMSUNG_IRQ_UART
+>  
+>  # options for gpio configuration support
+>  
+> +config SAMSUNG_GPIOLIB
+> +	bool
+> +	help
+> +	  GPIOlib file contains the 4 bit modification functions for gpio
+> +	  configuration. GPIOlib shall be compiled only for S3C64XX and S5P
+> +	  series of processors.
+> +
+>  config S3C_GPIO_CFG_S3C24XX
+>  	bool
+>  	help
+> diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+> index aeb7e12..f0ed20b 100644
+> --- a/arch/arm/plat-samsung/Makefile
+> +++ b/arch/arm/plat-samsung/Makefile
+> @@ -15,6 +15,7 @@ obj-y				+= clock.o
+>  obj-y				+= pwm-clock.o
+>  obj-y				+= gpio-config.o
+>  
+> +obj-$(CONFIG_SAMSUNG_GPIOLIB)	+= gpiolib.o
+>  obj-$(CONFIG_SAMSUNG_CLKSRC)	+= clock-clksrc.o
+>  
+>  obj-$(CONFIG_SAMSUNG_IRQ_UART)	+= irq-uart.o
+> diff --git a/arch/arm/plat-samsung/gpiolib.c b/arch/arm/plat-samsung/gpiolib.c
+> new file mode 100644
+> index 0000000..c1ecc94
+> --- /dev/null
+> +++ b/arch/arm/plat-samsung/gpiolib.c
+> @@ -0,0 +1,202 @@
+> +/* arch/arm/plat-samsung/gpiolib.c
+> + *
+> + * Copyright 2008 Openmoko, Inc.
+> + * Copyright 2008 Simtec Electronics
+> + *      Ben Dooks <ben@simtec.co.uk>
+> + *      http://armlinux.simtec.co.uk/
+> + *
+> + * Copyright (c) 2009 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com/
+> + *
+> + * SAMSUNG - GPIOlib support
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/irq.h>
+> +#include <linux/io.h>
+> +#include <mach/gpio.h>
+> +#include <mach/gpio-core.h>
+> +#include <plat/gpio-cfg.h>
+> +#include <plat/gpio-cfg-helpers.h>
+> +
+> +#define GPIOCON_OFF	(0x00)
+> +#define GPIODAT_OFF	(0x04)
+> +
+> +#define con_4bit_shift(__off) ((__off) * 4)
+> +
+> +#ifndef DEBUG_GPIO
+> +#define gpio_dbg(x...) do { } while (0)
+> +#else
+> +#define gpio_dbg(x...) printk(KERN_DEBUG x)
+> +#endif
+> +
+> +/* The samsung_gpiolib_4bit routines are to control the gpio banks where
+> + * the gpio configuration register (GPxCON) has 4 bits per GPIO, as the
+> + * following example:
+> + *
+> + * base + 0x00: Control register, 4 bits per gpio
+> + *		gpio n: 4 bits starting at (4*n)
+> + *		0000 = input, 0001 = output, others mean special-function
+> + * base + 0x04: Data register, 1 bit per gpio
+> + *		bit n: data bit n
+> + *
+> + * Note, since the data register is one bit per gpio and is at base + 0x4
+> + * we can use s3c_gpiolib_get and s3c_gpiolib_set to change the state of
+> + * the output.
+> +*/
+> +
+> +int samsung_gpiolib_4bit_input(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +	struct s3c_gpio_chip *ourchip = to_s3c_gpio(chip);
+> +	void __iomem *base = ourchip->base;
+> +	unsigned long con;
+> +
+> +	con = __raw_readl(base + GPIOCON_OFF);
+> +	con &= ~(0xf << con_4bit_shift(offset));
+> +	__raw_writel(con, base + GPIOCON_OFF);
+> +
+> +	gpio_dbg("%s: %p: CON now %08lx\n", __func__, base, con);
+> +
+> +	return 0;
+> +}
+> +
+> +int samsung_gpiolib_4bit_output(struct gpio_chip *chip,
+> +				unsigned int offset, int value)
+> +{
+> +	struct s3c_gpio_chip *ourchip = to_s3c_gpio(chip);
+> +	void __iomem *base = ourchip->base;
+> +	unsigned long con;
+> +	unsigned long dat;
+> +
+> +	con = __raw_readl(base + GPIOCON_OFF);
+> +	con &= ~(0xf << con_4bit_shift(offset));
+> +	con |= 0x1 << con_4bit_shift(offset);
+> +
+> +	dat = __raw_readl(base + GPIODAT_OFF);
+> +
+> +	if (value)
+> +		dat |= 1 << offset;
+> +	else
+> +		dat &= ~(1 << offset);
+> +
+> +	__raw_writel(dat, base + GPIODAT_OFF);
+> +	__raw_writel(con, base + GPIOCON_OFF);
+> +	__raw_writel(dat, base + GPIODAT_OFF);
+> +
+> +	gpio_dbg("%s: %p: CON %08lx, DAT %08lx\n", __func__, base, con, dat);
+> +
+> +	return 0;
+> +}
+> +
+> +/* The next set of routines are for the case where the GPIO configuration
+> + * registers are 4 bits per GPIO but there is more than one register (the
+> + * bank has more than 8 GPIOs.
+> + *
+> + * This case is the similar to the 4 bit case, but the registers are as
+> + * follows:
+> + *
+> + * base + 0x00: Control register, 4 bits per gpio (lower 8 GPIOs)
+> + *		gpio n: 4 bits starting at (4*n)
+> + *		0000 = input, 0001 = output, others mean special-function
+> + * base + 0x04: Control register, 4 bits per gpio (up to 8 additions GPIOs)
+> + *		gpio n: 4 bits starting at (4*n)
+> + *		0000 = input, 0001 = output, others mean special-function
+> + * base + 0x08: Data register, 1 bit per gpio
+> + *		bit n: data bit n
+> + *
+> + * To allow us to use the s3c_gpiolib_get and s3c_gpiolib_set routines we
+> + * store the 'base + 0x4' address so that these routines see the data
+> + * register at ourchip->base + 0x04.
+> +*/
+> +
+> +int samsung_gpiolib_4bit2_input(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +	struct s3c_gpio_chip *ourchip = to_s3c_gpio(chip);
+> +	void __iomem *base = ourchip->base;
+> +	void __iomem *regcon = base;
+> +	unsigned long con;
+> +
+> +	if (offset > 7)
+> +		offset -= 8;
+> +	else
+> +		regcon -= 4;
+> +
+> +	con = __raw_readl(regcon);
+> +	con &= ~(0xf << con_4bit_shift(offset));
+> +	__raw_writel(con, regcon);
+> +
+> +	gpio_dbg("%s: %p: CON %08lx\n", __func__, base, con);
+> +
+> +	return 0;
+> +}
+> +
+> +int samsung_gpiolib_4bit2_output(struct gpio_chip *chip,
+> +				 unsigned int offset, int value)
+> +{
+> +	struct s3c_gpio_chip *ourchip = to_s3c_gpio(chip);
+> +	void __iomem *base = ourchip->base;
+> +	void __iomem *regcon = base;
+> +	unsigned long con;
+> +	unsigned long dat;
+> +	unsigned con_offset = offset;
+> +
+> +	if (con_offset > 7)
+> +		con_offset -= 8;
+> +	else
+> +		regcon -= 4;
+> +
+> +	con = __raw_readl(regcon);
+> +	con &= ~(0xf << con_4bit_shift(con_offset));
+> +	con |= 0x1 << con_4bit_shift(con_offset);
+> +
+> +	dat = __raw_readl(base + GPIODAT_OFF);
+> +
+> +	if (value)
+> +		dat |= 1 << offset;
+> +	else
+> +		dat &= ~(1 << offset);
+> +
+> +	__raw_writel(dat, base + GPIODAT_OFF);
+> +	__raw_writel(con, regcon);
+> +	__raw_writel(dat, base + GPIODAT_OFF);
+> +
+> +	gpio_dbg("%s: %p: CON %08lx, DAT %08lx\n", __func__, base, con, dat);
+> +
+> +	return 0;
+> +}
+> +
+> +void __init samsung_gpiolib_add_4bit(struct s3c_gpio_chip *chip)
+> +{
+> +	chip->chip.direction_input = samsung_gpiolib_4bit_input;
+> +	chip->chip.direction_output = samsung_gpiolib_4bit_output;
+> +	chip->pm = __gpio_pm(&s3c_gpio_pm_4bit);
+> +}
+> +
+> +void __init samsung_gpiolib_add_4bit2(struct s3c_gpio_chip *chip)
+> +{
+> +	chip->chip.direction_input = samsung_gpiolib_4bit2_input;
+> +	chip->chip.direction_output = samsung_gpiolib_4bit2_output;
+> +	chip->pm = __gpio_pm(&s3c_gpio_pm_4bit);
+> +}
+> +
+> +void __init samsung_gpiolib_add_4bit_chips(struct s3c_gpio_chip *chip,
+> +					   int nr_chips)
+> +{
+> +	for (; nr_chips > 0; nr_chips--, chip++) {
+> +		samsung_gpiolib_add_4bit(chip);
+> +		s3c_gpiolib_add(chip);
+> +	}
+> +}
+> +
+> +void __init samsung_gpiolib_add_4bit2_chips(struct s3c_gpio_chip *chip,
+> +					    int nr_chips)
+> +{
+> +	for (; nr_chips > 0; nr_chips--, chip++) {
+> +		samsung_gpiolib_add_4bit2(chip);
+> +		s3c_gpiolib_add(chip);
+> +	}
+> +}
+> -- 
+> 1.6.2.5
+> 
+
+-- 
+-- 
 Ben
 
 Q:      What's a light-year?
