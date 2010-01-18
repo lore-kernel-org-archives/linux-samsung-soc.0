@@ -1,53 +1,97 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH] ARM: SAMSUNG: Fix clksrc-clk's checks for bad register settings
-Date: Mon, 18 Jan 2010 08:42:55 +0000
-Message-ID: <1263804176-8417-4-git-send-email-ben-linux@fluff.org>
-References: <1263804176-8417-1-git-send-email-ben-linux@fluff.org>
+Subject: [PATCH] ARM: SAMSUNG: Add initial documentation directory and overview
+Date: Mon, 18 Jan 2010 08:45:13 +0000
+Message-ID: <1263804317-8996-4-git-send-email-ben-linux@fluff.org>
+References: <1263804317-8996-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:60072 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:34056 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753661Ab0ARIm6 (ORCPT
+	id S1755424Ab0ARIpS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Jan 2010 03:42:58 -0500
-In-Reply-To: <1263804176-8417-1-git-send-email-ben-linux@fluff.org>
+	Mon, 18 Jan 2010 03:45:18 -0500
+In-Reply-To: <1263804317-8996-1-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Ben Dooks <ben-linux@fluff.org>
 
-The WARN_ON() was only checking the first clock in the array, instead of
-being executed for each clksrc clock being registered.
-
-Since this is an array of clocks, WARN_ON() does not provide a lot of
-useful information about the problem, so change to using printk(KERN_ERR)
-to report the problem to the console.
-
-As a note, we still try and register the clock even if these problems are
-present just in case and to avoid changing the behaviour of the registration
-process.
+Start Documentation/arm/Samsung and add an initial overview file
+which whilst is not complete, is better than nothing.
 
 Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/plat-samsung/clock-clksrc.c |    6 ++++--
- 1 files changed, 4 insertions(+), 2 deletions(-)
+ Documentation/arm/Samsung/Overview.txt |   63 ++++++++++++++++++++++++++++++++
+ 1 files changed, 63 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/arm/Samsung/Overview.txt
 
-diff --git a/arch/arm/plat-samsung/clock-clksrc.c b/arch/arm/plat-samsung/clock-clksrc.c
-index 98c6b88..656c70e 100644
---- a/arch/arm/plat-samsung/clock-clksrc.c
-+++ b/arch/arm/plat-samsung/clock-clksrc.c
-@@ -177,9 +177,11 @@ void __init s3c_register_clksrc(struct clksrc_clk *clksrc, int size)
- {
- 	int ret;
- 
--	WARN_ON(!clksrc->reg_div.reg && !clksrc->reg_src.reg);
--
- 	for (; size > 0; size--, clksrc++) {
-+		if (!clksrc->reg_div.reg && !clksrc->reg_src.reg)
-+			printk(KERN_ERR "%s: clock %s has no registers set\n",
-+			       __func__, clksrc->clk.name);
+diff --git a/Documentation/arm/Samsung/Overview.txt b/Documentation/arm/Samsung/Overview.txt
+new file mode 100644
+index 0000000..c3d2f44
+--- /dev/null
++++ b/Documentation/arm/Samsung/Overview.txt
+@@ -0,0 +1,63 @@
++		Samsung ARM Linux Overview
++		==========================
 +
- 		/* fill in the default functions */
- 
- 		if (!clksrc->clk.ops) {
++Introduction
++------------
++
++  The Samsung range of ARM SoCs spans many similar devices, from the initial
++  ARM9 through to the newest ARM cores. This document shows an overview of
++  the current kernel support, how to use it and where to find the code
++  that supports this.
++
++  The currently supported SoCs are:
++
++  - S3C24XX: See Documentation/arm/Samsung-S3C24XX/Overview.txt for full list
++  - S3C64XX: S3C6400 and S3C6410
++
++  S5PC100 and S5PC110 support is currently being merged
++
++
++S3C24XX Systems
++---------------
++
++  There is still documentation in Docuemntation/arm/Samsung-S3C24XX/ which
++  deals with the architecture and drivers specific to these devices.
++
++  See Documentation/arm/Samsung-S3C24XX/Overview.txt for more information
++  on the implementation details and specific support.
++
++
++Configuration
++-------------
++
++  A number of configurations are supplied, as there is no current way of
++  unifying all the SoCs into one kernel.
++
++  [ to finish ]
++
++Layout
++------
++
++  [ to finish ]
++
++
++Port Contributors
++-----------------
++
++  Ben Dooks (BJD)
++  Vincent Sanders
++  Herbert Potzl
++  Arnaud Patard (RTP)
++  Roc Wu
++  Klaus Fetscher
++  Dimitry Andric
++  Shannon Holland
++  Guillaume Gourat (NexVision)
++  Christer Weinigel (wingel) (Acer N30)
++  Lucas Correia Villa Real (S3C2400 port)
++
++
++Document Author
++---------------
++
++Copyright 2009 Ben Dooks <ben-linux@fluff.org>
 -- 
 1.6.0.4
