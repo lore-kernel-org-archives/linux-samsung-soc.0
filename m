@@ -1,12 +1,12 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH] ARM: SAMSUNG: Add platform data registration for OHCI
-Date: Mon, 18 Jan 2010 08:45:15 +0000
-Message-ID: <1263804317-8996-6-git-send-email-ben-linux@fluff.org>
+Subject: [PATCH] ARM: S3C24XX: Add mci platform data set call s3c24xx_mci_set_platdata().
+Date: Mon, 18 Jan 2010 08:45:17 +0000
+Message-ID: <1263804317-8996-8-git-send-email-ben-linux@fluff.org>
 References: <1263804317-8996-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:34060 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:34064 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755449Ab0ARIpS (ORCPT
+	id S1755461Ab0ARIpS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Mon, 18 Jan 2010 03:45:18 -0500
 In-Reply-To: <1263804317-8996-1-git-send-email-ben-linux@fluff.org>
@@ -15,107 +15,138 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Ben Dooks <ben-linux@fluff.org>
 
-Add a platform data helper for the OHCI device
+Add a s3c24xx_mci_set_platdata() call for all the machine files that have
+platform data for the MCI driver. This brings the MCI device into line with
+the other devices with __initdata and a specific call to ensure the right
+structure type is being passed.
 
 Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/mach-s3c2410/usb-simtec.c           |    4 ++--
- arch/arm/mach-s3c2442/mach-gta02.c           |    5 ++---
- arch/arm/plat-s3c/include/plat/usb-control.h |    2 ++
- arch/arm/plat-samsung/dev-usb.c              |   21 ++++++++++++++++++++-
- 4 files changed, 26 insertions(+), 6 deletions(-)
+ arch/arm/mach-s3c2410/mach-h1940.c       |    5 ++---
+ arch/arm/mach-s3c2440/mach-at2440evb.c   |    5 ++---
+ arch/arm/mach-s3c2440/mach-mini2440.c    |    3 +--
+ arch/arm/plat-s3c24xx/devs.c             |   12 ++++++++++++
+ arch/arm/plat-s3c24xx/include/plat/mci.h |    9 +++++++++
+ 5 files changed, 26 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/mach-s3c2410/usb-simtec.c b/arch/arm/mach-s3c2410/usb-simtec.c
-index 199bb4f..29bd3d9 100644
---- a/arch/arm/mach-s3c2410/usb-simtec.c
-+++ b/arch/arm/mach-s3c2410/usb-simtec.c
-@@ -91,7 +91,7 @@ static void usb_simtec_enableoc(struct s3c2410_hcd_info *info, int on)
- 	}
- }
- 
--static struct s3c2410_hcd_info usb_simtec_info = {
-+static struct s3c2410_hcd_info usb_simtec_info __initdata = {
- 	.port[0]	= {
- 		.flags	= S3C_HCDFLG_USED
- 	},
-@@ -127,6 +127,6 @@ int usb_simtec_init(void)
- 	gpio_direction_output(S3C2410_GPB(4), 1);
- 	gpio_direction_input(S3C2410_GPG(10));
- 
--	s3c_device_ohci.dev.platform_data = &usb_simtec_info;
-+	s3c_ohci_set_platdata(&usb_simtec_info);
- 	return 0;
- }
-diff --git a/arch/arm/mach-s3c2442/mach-gta02.c b/arch/arm/mach-s3c2442/mach-gta02.c
-index 825800b..45799c6 100644
---- a/arch/arm/mach-s3c2442/mach-gta02.c
-+++ b/arch/arm/mach-s3c2442/mach-gta02.c
-@@ -544,7 +544,7 @@ static struct platform_device gta02_bl_dev = {
- 
- 
- /* USB */
--static struct s3c2410_hcd_info gta02_usb_info = {
-+static struct s3c2410_hcd_info gta02_usb_info __initdata = {
- 	.port[0]	= {
- 		.flags	= S3C_HCDFLG_USED,
- 	},
-@@ -623,9 +623,8 @@ static void __init gta02_machine_init(void)
- 	INIT_DELAYED_WORK(&gta02_charger_work, gta02_charger_worker);
- #endif
- 
--	s3c_device_ohci.dev.platform_data = &gta02_usb_info;
--
- 	s3c24xx_udc_set_platdata(&gta02_udc_cfg);
-+	s3c_ohci_set_platdata(&gta02_usb_info);
- 	s3c_nand_set_platdata(&gta02_nand_info);
- 	s3c_i2c0_set_platdata(NULL);
- 
-diff --git a/arch/arm/plat-s3c/include/plat/usb-control.h b/arch/arm/plat-s3c/include/plat/usb-control.h
-index 822c87f..a6a57bf 100644
---- a/arch/arm/plat-s3c/include/plat/usb-control.h
-+++ b/arch/arm/plat-s3c/include/plat/usb-control.h
-@@ -38,4 +38,6 @@ static void inline s3c2410_usb_report_oc(struct s3c2410_hcd_info *info, int port
- 	}
- }
- 
-+extern void s3c_ohci_set_platdata(struct s3c2410_hcd_info *info);
-+
- #endif /*__ASM_ARCH_USBCONTROL_H */
-diff --git a/arch/arm/plat-samsung/dev-usb.c b/arch/arm/plat-samsung/dev-usb.c
-index 431ae5d..8816565 100644
---- a/arch/arm/plat-samsung/dev-usb.c
-+++ b/arch/arm/plat-samsung/dev-usb.c
-@@ -19,7 +19,7 @@
- #include <mach/map.h>
- 
- #include <plat/devs.h>
--
-+#include <plat/usb-control.h>
- 
- static struct resource s3c_usb_resource[] = {
- 	[0] = {
-@@ -48,3 +48,22 @@ struct platform_device s3c_device_ohci = {
+diff --git a/arch/arm/mach-s3c2410/mach-h1940.c b/arch/arm/mach-s3c2410/mach-h1940.c
+index 3f9217d..fbedd07 100644
+--- a/arch/arm/mach-s3c2410/mach-h1940.c
++++ b/arch/arm/mach-s3c2410/mach-h1940.c
+@@ -196,7 +196,7 @@ static struct platform_device h1940_device_bluetooth = {
+ 	.id               = -1,
  };
  
- EXPORT_SYMBOL(s3c_device_ohci);
+-static struct s3c24xx_mci_pdata h1940_mmc_cfg = {
++static struct s3c24xx_mci_pdata h1940_mmc_cfg __initdata = {
+ 	.gpio_detect   = S3C2410_GPF(5),
+ 	.gpio_wprotect = S3C2410_GPH(8),
+ 	.set_power     = NULL,
+@@ -311,12 +311,11 @@ static void __init h1940_init(void)
+ 	u32 tmp;
+ 
+ 	s3c24xx_fb_set_platdata(&h1940_fb_info);
++	s3c24xx_mci_set_platdata(&h1940_mmc_cfg);
+  	s3c24xx_udc_set_platdata(&h1940_udc_cfg);
+ 	s3c24xx_ts_set_platdata(&h1940_ts_cfg);
+ 	s3c_i2c0_set_platdata(NULL);
+ 
+-	s3c_device_sdi.dev.platform_data = &h1940_mmc_cfg;
+-
+ 	/* Turn off suspend on both USB ports, and switch the
+ 	 * selectable USB port to USB device mode. */
+ 
+diff --git a/arch/arm/mach-s3c2440/mach-at2440evb.c b/arch/arm/mach-s3c2440/mach-at2440evb.c
+index 0defde6..8472579 100644
+--- a/arch/arm/mach-s3c2440/mach-at2440evb.c
++++ b/arch/arm/mach-s3c2440/mach-at2440evb.c
+@@ -165,7 +165,7 @@ static struct platform_device at2440evb_device_eth = {
+ 	},
+ };
+ 
+-static struct s3c24xx_mci_pdata at2440evb_mci_pdata = {
++static struct s3c24xx_mci_pdata at2440evb_mci_pdata __initdata = {
+ 	.gpio_detect	= S3C2410_GPG(10),
+ };
+ 
+@@ -216,8 +216,6 @@ static struct platform_device *at2440evb_devices[] __initdata = {
+ 
+ static void __init at2440evb_map_io(void)
+ {
+-	s3c_device_sdi.dev.platform_data = &at2440evb_mci_pdata;
+-
+ 	s3c24xx_init_io(at2440evb_iodesc, ARRAY_SIZE(at2440evb_iodesc));
+ 	s3c24xx_init_clocks(16934400);
+ 	s3c24xx_init_uarts(at2440evb_uartcfgs, ARRAY_SIZE(at2440evb_uartcfgs));
+@@ -226,6 +224,7 @@ static void __init at2440evb_map_io(void)
+ static void __init at2440evb_init(void)
+ {
+ 	s3c24xx_fb_set_platdata(&at2440evb_fb_info);
++	s3c24xx_mci_set_platdata(&at2440evb_mci_pdata);
+ 	s3c_nand_set_platdata(&at2440evb_nand_info);
+ 	s3c_i2c0_set_platdata(NULL);
+ 
+diff --git a/arch/arm/mach-s3c2440/mach-mini2440.c b/arch/arm/mach-s3c2440/mach-mini2440.c
+index 65ea3b5..571b176 100644
+--- a/arch/arm/mach-s3c2440/mach-mini2440.c
++++ b/arch/arm/mach-s3c2440/mach-mini2440.c
+@@ -528,8 +528,6 @@ static void __init mini2440_map_io(void)
+ 	s3c24xx_init_io(mini2440_iodesc, ARRAY_SIZE(mini2440_iodesc));
+ 	s3c24xx_init_clocks(12000000);
+ 	s3c24xx_init_uarts(mini2440_uartcfgs, ARRAY_SIZE(mini2440_uartcfgs));
+-
+-	s3c_device_sdi.dev.platform_data = &mini2440_mmc_cfg;
+ }
+ 
+ /*
+@@ -675,6 +673,7 @@ static void __init mini2440_init(void)
+ 	}
+ 
+ 	s3c24xx_udc_set_platdata(&mini2440_udc_cfg);
++	s3c24xx_mci_set_platdata(&mini2440_mmc_cfg);
+ 	s3c_nand_set_platdata(&mini2440_nand_info);
+ 	s3c_i2c0_set_platdata(NULL);
+ 
+diff --git a/arch/arm/plat-s3c24xx/devs.c b/arch/arm/plat-s3c24xx/devs.c
+index 38c358c..3acb534 100644
+--- a/arch/arm/plat-s3c24xx/devs.c
++++ b/arch/arm/plat-s3c24xx/devs.c
+@@ -351,6 +351,18 @@ struct platform_device s3c_device_sdi = {
+ 
+ EXPORT_SYMBOL(s3c_device_sdi);
+ 
++void s3c24xx_mci_set_platdata(struct s3c24xx_mci_pdata *pdata)
++{
++	struct s3c24xx_mci_pdata *npd;
 +
++	npd = kmemdup(pdata, sizeof(struct s3c24xx_mci_pdata), GFP_KERNEL);
++	if (!npd)
++		printk(KERN_ERR "%s: no memory to copy pdata", __func__);
++
++	s3c_device_sdi.dev.platform_data = npd;
++}
++
++
+ /* SPI (0) */
+ 
+ static struct resource s3c_spi0_resource[] = {
+diff --git a/arch/arm/plat-s3c24xx/include/plat/mci.h b/arch/arm/plat-s3c24xx/include/plat/mci.h
+index 36aaa10..2ac2b21 100644
+--- a/arch/arm/plat-s3c24xx/include/plat/mci.h
++++ b/arch/arm/plat-s3c24xx/include/plat/mci.h
+@@ -40,4 +40,13 @@ struct s3c24xx_mci_pdata {
+ 				     unsigned short vdd);
+ };
+ 
 +/**
-+ * s3c_ohci_set_platdata - initialise OHCI device platform data
-+ * @info: The platform data.
++ * s3c24xx_mci_set_platdata - set platform data for mmc/sdi device
++ * @pdata: The platform data
 + *
-+ * This call copies the @info passed in and sets the device .platform_data
-+ * field to that copy. The @info is copied so that the original can be marked
++ * Copy the platform data supplied by @pdata so that this can be marked
 + * __initdata.
 + */
-+void __init s3c_ohci_set_platdata(struct s3c2410_hcd_info *info)
-+{
-+	struct s3c2410_hcd_info *npd;
++extern void s3c24xx_mci_set_platdata(struct s3c24xx_mci_pdata *pdata);
 +
-+	npd = kmemdup(info, sizeof(struct s3c2410_hcd_info), GFP_KERNEL);
-+	if (!npd)
-+		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
-+
-+	s3c_device_ohci.dev.platform_data = npd;
-+}
+ #endif /* _ARCH_NCI_H */
 -- 
 1.6.0.4
