@@ -1,74 +1,122 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH] ARM: SAMSUNG: Add check to ensure that clksrc_clk does
-	have multiple clock sources
-Date: Mon, 18 Jan 2010 04:49:23 +0000
-Message-ID: <20100118044923.GK10014@trinity.fluff.org>
-References: <1263789143-2720-1-git-send-email-thomas.ab@samsung.com>
+Subject: Re: [PATCH] ARM: SAMSUNG: Add initial documentation directory and
+	overview
+Date: Mon, 18 Jan 2010 05:15:13 +0000
+Message-ID: <20100118051513.GA26562@trinity.fluff.org>
+References: <1263551977-15090-1-git-send-email-ben-linux@fluff.org> <1263551977-15090-4-git-send-email-ben-linux@fluff.org> <4B504A6B.5020101@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:50792 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:34689 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752855Ab0AREt1 (ORCPT
+	id S1750780Ab0ARFPT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 17 Jan 2010 23:49:27 -0500
+	Mon, 18 Jan 2010 00:15:19 -0500
 Content-Disposition: inline
-In-Reply-To: <1263789143-2720-1-git-send-email-thomas.ab@samsung.com>
+In-Reply-To: <4B504A6B.5020101@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Mon, Jan 18, 2010 at 01:32:23PM +0900, Thomas Abraham wrote:
-> Adds a additional check in s3c_set_clksrc function to ensure that the clksrc_clk 
-> does have a choice of multiple clock sources. In addition to this, a check is 
-> added to ensure that a parent is assigned to the clksrc_clk in case it does not 
-> have a choice of parent clocks.
+On Fri, Jan 15, 2010 at 11:58:51AM +0100, Maurus Cuelenaere wrote:
+> Op 15-01-10 11:39, Ben Dooks schreef:
+>> Start Documentation/arm/Samsung and add an initial overview file
+>> which whilst is not complete, is better than nothing.
+>>
+>> Signed-off-by: Ben Dooks<ben-linux@fluff.org>
 
-$ git am -s  tab-clk-fix
-Applying: ARM: SAMSUNG: Add check to ensure that clksrc_clk does have multiple clock sources
-/home/linux/bjd.git/.git/rebase-apply/patch:23: trailing whitespace, space before tab in indent.
-                return;
-/home/linux/bjd.git/.git/rebase-apply/patch:25: trailing whitespace.
+Thanks, although this shouldn't really have been in this series in the
+first place.
 
-warning: 2 lines add whitespace errors.
-
-Please fix
-Please also send with cc: to linux-arm-kernel list as well.
- 
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> ---
->  arch/arm/plat-samsung/clock-clksrc.c |   13 +++++++++----
->  1 files changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/clock-clksrc.c b/arch/arm/plat-samsung/clock-clksrc.c
-> index 33c633a..835921d 100644
-> --- a/arch/arm/plat-samsung/clock-clksrc.c
-> +++ b/arch/arm/plat-samsung/clock-clksrc.c
-> @@ -129,11 +129,16 @@ void __init_or_cpufreq s3c_set_clksrc(struct clksrc_clk *clk, bool announce)
->  {
->  	struct clksrc_sources *srcs = clk->sources;
->  	u32 mask = bit_mask(clk->reg_src.shift, clk->reg_src.size);
-> -	u32 clksrc = 0;
-> -
-> -	if (clk->reg_src.reg)
-> -		clksrc = __raw_readl(clk->reg_src.reg);
-> +	u32 clksrc;
->  
-> +	if (!clk->reg_src.reg) {
-> +		if (!clk->clk.parent)
-> +		       printk(KERN_ERR "%s: no parent clock specified\n",
-> +				clk->clk.name);
-> + 		return;		
-> +	}
-> +	
-> +	clksrc = __raw_readl(clk->reg_src.reg);
->  	clksrc &= mask;
->  	clksrc >>= clk->reg_src.shift;
->  
-> -- 
-> 1.6.3.3
-> 
+>> ---
+>>   Documentation/arm/Samsung/Overview.txt |   63 ++++++++++++++++++++++++++++++++
+>>   1 files changed, 63 insertions(+), 0 deletions(-)
+>>   create mode 100644 Documentation/arm/Samsung/Overview.txt
+>>
+>> diff --git a/Documentation/arm/Samsung/Overview.txt b/Documentation/arm/Samsung/Overview.txt
+>> new file mode 100644
+>> index 0000000..c3d2f44
+>> --- /dev/null
+>> +++ b/Documentation/arm/Samsung/Overview.txt
+>> @@ -0,0 +1,63 @@
+>> +		Samsung ARM Linux Overview
+>> +		==========================
+>> +
+>> +Introduction
+>> +------------
+>> +
+>> +  The Samsung range of ARM SoCs spans many similar devices, from the initial
+>> +  ARM9 through to the newest ARM cores. This document shows an overview of
+>> +  the current kernel support, how to use it and where to find the code
+>> +  that supports this.
+>> +
+>> +  The currently supported SoCs are:
+>> +
+>> +  - S3C24XX: See Documentation/arm/Samsung-S3C24XX/Overview.txt for full list
+>> +  - S3C64XX: S3C6400 and S3C6410
+>> +
+>> +  S5PC100 and S5PC110 support is currently being merged
+>> +
+>> +
+>> +S3C24XX Systems
+>> +---------------
+>> +
+>> +  There is still documentation in Docuemntation/arm/Samsung-S3C24XX/ which
+>>    
+>
+> Typo: Docuemntation -> Documentation
+>> +  deals with the architecture and drivers specific to these devices.
+>> +
+>> +  See Documentation/arm/Samsung-S3C24XX/Overview.txt for more information
+>> +  on the implementation details and specific support.
+>> +
+>> +
+>> +Configuration
+>> +-------------
+>> +
+>> +  A number of configurations are supplied, as there is no current way of
+>> +  unifying all the SoCs into one kernel.
+>> +
+>> +  [ to finish ]
+>> +
+>> +Layout
+>> +------
+>> +
+>> +  [ to finish ]
+>> +
+>> +
+>> +Port Contributors
+>> +-----------------
+>> +
+>> +  Ben Dooks (BJD)
+>> +  Vincent Sanders
+>> +  Herbert Potzl
+>> +  Arnaud Patard (RTP)
+>> +  Roc Wu
+>> +  Klaus Fetscher
+>> +  Dimitry Andric
+>> +  Shannon Holland
+>> +  Guillaume Gourat (NexVision)
+>> +  Christer Weinigel (wingel) (Acer N30)
+>> +  Lucas Correia Villa Real (S3C2400 port)
+>> +
+>> +
+>> +Document Author
+>> +---------------
+>> +
+>> +Copyright 2009 Ben Dooks<ben-linux@fluff.org>
+>>    
+>
+>
+> Regards,
+> Maurus Cuelenaere
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
 -- 
 -- 
