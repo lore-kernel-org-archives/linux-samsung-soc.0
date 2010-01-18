@@ -1,136 +1,111 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH] ARM: S3C64XX: SPI: Header for passing platform data
-Date: Mon, 18 Jan 2010 09:32:21 +0000
-Message-ID: <1263807142-13186-4-git-send-email-ben-linux@fluff.org>
-References: <1263807142-13186-1-git-send-email-ben-linux@fluff.org>
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Subject: Re: [PATCH] ARM: SAMSUNG: Add initial documentation directory and
+ overview
+Date: Mon, 18 Jan 2010 12:13:34 +0100
+Message-ID: <4B54425E.8020400@gmail.com>
+References: <1263804317-8996-1-git-send-email-ben-linux@fluff.org> <1263804317-8996-4-git-send-email-ben-linux@fluff.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:55722 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753118Ab0ARJcn (ORCPT
+Received: from mail-ew0-f219.google.com ([209.85.219.219]:63801 "EHLO
+	mail-ew0-f219.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750898Ab0ARLNh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Jan 2010 04:32:43 -0500
-In-Reply-To: <1263807142-13186-1-git-send-email-ben-linux@fluff.org>
+	Mon, 18 Jan 2010 06:13:37 -0500
+Received: by ewy19 with SMTP id 19so392910ewy.21
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Jan 2010 03:13:36 -0800 (PST)
+In-Reply-To: <1263804317-8996-4-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Jassi Brar <jassi.brar@samsung.com>, Ben Dooks <ben-linux@fluff.org>
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-From: Jassi Brar <jassi.brar@samsung.com>
+Op 18-01-10 09:45, Ben Dooks schreef:
+> Start Documentation/arm/Samsung and add an initial overview file
+> which whilst is not complete, is better than nothing.
+>
+> Signed-off-by: Ben Dooks<ben-linux@fluff.org>
+> ---
+>   Documentation/arm/Samsung/Overview.txt |   63 ++++++++++++++++++++++++++++++++
+>   1 files changed, 63 insertions(+), 0 deletions(-)
+>   create mode 100644 Documentation/arm/Samsung/Overview.txt
+>
+> diff --git a/Documentation/arm/Samsung/Overview.txt b/Documentation/arm/Samsung/Overview.txt
+> new file mode 100644
+> index 0000000..c3d2f44
+> --- /dev/null
+> +++ b/Documentation/arm/Samsung/Overview.txt
+> @@ -0,0 +1,63 @@
+> +		Samsung ARM Linux Overview
+> +		==========================
+> +
+> +Introduction
+> +------------
+> +
+> +  The Samsung range of ARM SoCs spans many similar devices, from the initial
+> +  ARM9 through to the newest ARM cores. This document shows an overview of
+> +  the current kernel support, how to use it and where to find the code
+> +  that supports this.
+> +
+> +  The currently supported SoCs are:
+> +
+> +  - S3C24XX: See Documentation/arm/Samsung-S3C24XX/Overview.txt for full list
+> +  - S3C64XX: S3C6400 and S3C6410
+> +
+> +  S5PC100 and S5PC110 support is currently being merged
+> +
+> +
+> +S3C24XX Systems
+> +---------------
+> +
+> +  There is still documentation in Docuemntation/arm/Samsung-S3C24XX/ which
+>    
 
-We need a way to pass controller specific information to the SPI driver.
-For that purpose new headers are made.
+Same typo as before? Docuemntation ->  Documentation
 
-SPI Controller is assumed 'type-s3c64xx' and can be defined for newer SoCs.
- Hence, that part is placed under plat-samsung to be shared across newer SoCs.
 
-SoC specific part - spi source clocks, will be placed
-under plat-<soc>/include/plat/
+> +  deals with the architecture and drivers specific to these devices.
+> +
+> +  See Documentation/arm/Samsung-S3C24XX/Overview.txt for more information
+> +  on the implementation details and specific support.
+> +
+> +
+> +Configuration
+> +-------------
+> +
+> +  A number of configurations are supplied, as there is no current way of
+> +  unifying all the SoCs into one kernel.
+> +
+> +  [ to finish ]
+> +
+> +Layout
+> +------
+> +
+> +  [ to finish ]
+> +
+> +
+> +Port Contributors
+> +-----------------
+> +
+> +  Ben Dooks (BJD)
+> +  Vincent Sanders
+> +  Herbert Potzl
+> +  Arnaud Patard (RTP)
+> +  Roc Wu
+> +  Klaus Fetscher
+> +  Dimitry Andric
+> +  Shannon Holland
+> +  Guillaume Gourat (NexVision)
+> +  Christer Weinigel (wingel) (Acer N30)
+> +  Lucas Correia Villa Real (S3C2400 port)
+> +
+> +
+> +Document Author
+> +---------------
+> +
+> +Copyright 2009 Ben Dooks<ben-linux@fluff.org>
+>    
 
-Signed-off-by: Jassi Brar <jassi.brar@samsung.com>
-Signed-off-by: Ben Dooks <ben-linux@fluff.org>
----
- arch/arm/plat-s3c64xx/include/plat/spi-clocks.h  |   18 ++++++
- arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |   67 ++++++++++++++++++++++
- 2 files changed, 85 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/plat-s3c64xx/include/plat/spi-clocks.h
- create mode 100644 arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
-
-diff --git a/arch/arm/plat-s3c64xx/include/plat/spi-clocks.h b/arch/arm/plat-s3c64xx/include/plat/spi-clocks.h
-new file mode 100644
-index 0000000..524bdae
---- /dev/null
-+++ b/arch/arm/plat-s3c64xx/include/plat/spi-clocks.h
-@@ -0,0 +1,18 @@
-+/* linux/arch/arm/plat-s3c64xx/include/plat/spi-clocks.h
-+ *
-+ * Copyright (C) 2009 Samsung Electronics Ltd.
-+ *	Jaswinder Singh <jassi.brar@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef __S3C64XX_PLAT_SPI_CLKS_H
-+#define __S3C64XX_PLAT_SPI_CLKS_H __FILE__
-+
-+#define S3C64XX_SPI_SRCCLK_PCLK		0
-+#define S3C64XX_SPI_SRCCLK_SPIBUS	1
-+#define S3C64XX_SPI_SRCCLK_48M		2
-+
-+#endif /* __S3C64XX_PLAT_SPI_CLKS_H */
-diff --git a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
-new file mode 100644
-index 0000000..d177241
---- /dev/null
-+++ b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
-@@ -0,0 +1,67 @@
-+/* linux/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
-+ *
-+ * Copyright (C) 2009 Samsung Electronics Ltd.
-+ *	Jaswinder Singh <jassi.brar@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef __S3C64XX_PLAT_SPI_H
-+#define __S3C64XX_PLAT_SPI_H
-+
-+/**
-+ * struct s3c64xx_spi_csinfo - ChipSelect description
-+ * @fb_delay: Slave specific feedback delay.
-+ *            Refer to FB_CLK_SEL register definition in SPI chapter.
-+ * @line: Custom 'identity' of the CS line.
-+ * @set_level: CS line control.
-+ *
-+ * This is per SPI-Slave Chipselect information.
-+ * Allocate and initialize one in machine init code and make the
-+ * spi_board_info.controller_data point to it.
-+ */
-+struct s3c64xx_spi_csinfo {
-+	u8 fb_delay;
-+	unsigned line;
-+	void (*set_level)(unsigned line_id, int lvl);
-+};
-+
-+/**
-+ * struct s3c64xx_spi_info - SPI Controller defining structure
-+ * @src_clk_nr: Clock source index for the CLK_CFG[SPI_CLKSEL] field.
-+ * @src_clk_name: Platform name of the corresponding clock.
-+ * @num_cs: Number of CS this controller emulates.
-+ * @cfg_gpio: Configure pins for this SPI controller.
-+ * @fifo_lvl_mask: All tx fifo_lvl fields start at offset-6
-+ * @rx_lvl_offset: Depends on tx fifo_lvl field and bus number
-+ * @high_speed: If the controller supports HIGH_SPEED_EN bit
-+ */
-+struct s3c64xx_spi_info {
-+	int src_clk_nr;
-+	char *src_clk_name;
-+
-+	int num_cs;
-+
-+	int (*cfg_gpio)(struct platform_device *pdev);
-+
-+	/* Following two fields are for future compatibility */
-+	int fifo_lvl_mask;
-+	int rx_lvl_offset;
-+	int high_speed;
-+};
-+
-+/**
-+ * s3c64xx_spi_set_info - SPI Controller configure callback by the board
-+ *				initialization code.
-+ * @cntrlr: SPI controller number the configuration is for.
-+ * @src_clk_nr: Clock the SPI controller is to use to generate SPI clocks.
-+ * @num_cs: Number of elements in the 'cs' array.
-+ *
-+ * Call this from machine init code for each SPI Controller that
-+ * has some chips attached to it.
-+ */
-+extern void s3c64xx_spi_set_info(int cntrlr, int src_clk_nr, int num_cs);
-+
-+#endif /* __S3C64XX_PLAT_SPI_H */
--- 
-1.6.0.4
+Regards,
+Maurus Cuelenaere
