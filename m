@@ -1,926 +1,1054 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 09/10] ARM: S5PV210: Add S5PC110 configuration file
-Date: Tue, 19 Jan 2010 11:28:30 +0900
-Message-ID: <1263868110-32054-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 02/10] ARM: S5PV210: Add clock support for S5PV210
+Date: Tue, 19 Jan 2010 11:27:36 +0900
+Message-ID: <1263868056-30680-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:45638 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:45644 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753377Ab0ASCfQ (ORCPT
+	with ESMTP id S1752892Ab0ASCfR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Jan 2010 21:35:16 -0500
+	Mon, 18 Jan 2010 21:35:17 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>
 
-This patch adds S5PC110 default configuration file.
+This patch adds clock support for S5PV210. This patch adds the clock
+register definitions and the various system clocks in S5PV210.
+Clocks that are common to other S5P SoC'c are added in the common
+S5P clock support.
 
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/configs/s5pc110_defconfig |  895 ++++++++++++++++++++++++++++++++++++
- 1 files changed, 895 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/configs/s5pc110_defconfig
+ arch/arm/mach-s5pv210/include/mach/regs-clock.h |  453 +++++++++++++++++++++
+ arch/arm/plat-s5p/clock.c                       |   13 +
+ arch/arm/plat-s5p/include/plat/s5p-clock.h      |    2 +
+ arch/arm/plat-s5p/s5pv210-clock.c               |  494 +++++++++++++++++++++++
+ 4 files changed, 962 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5pv210/include/mach/regs-clock.h
+ create mode 100755 arch/arm/plat-s5p/s5pv210-clock.c
 
-diff --git a/arch/arm/configs/s5pc110_defconfig b/arch/arm/configs/s5pc110_defconfig
+diff --git a/arch/arm/mach-s5pv210/include/mach/regs-clock.h b/arch/arm/mach-s5pv210/include/mach/regs-clock.h
 new file mode 100644
-index 0000000..3956edc
+index 0000000..e022d0e
 --- /dev/null
-+++ b/arch/arm/configs/s5pc110_defconfig
-@@ -0,0 +1,895 @@
-+#
-+# Automatically generated make config: don't edit
-+# Linux kernel version: 2.6.33-rc4
-+# Tue Jan 19 11:14:43 2010
-+#
-+CONFIG_ARM=y
-+CONFIG_SYS_SUPPORTS_APM_EMULATION=y
-+CONFIG_GENERIC_GPIO=y
-+CONFIG_NO_IOPORT=y
-+CONFIG_GENERIC_HARDIRQS=y
-+CONFIG_STACKTRACE_SUPPORT=y
-+CONFIG_HAVE_LATENCYTOP_SUPPORT=y
-+CONFIG_LOCKDEP_SUPPORT=y
-+CONFIG_TRACE_IRQFLAGS_SUPPORT=y
-+CONFIG_HARDIRQS_SW_RESEND=y
-+CONFIG_GENERIC_IRQ_PROBE=y
-+CONFIG_RWSEM_GENERIC_SPINLOCK=y
-+CONFIG_GENERIC_HWEIGHT=y
-+CONFIG_GENERIC_CALIBRATE_DELAY=y
-+CONFIG_GENERIC_HARDIRQS_NO__DO_IRQ=y
-+CONFIG_VECTORS_BASE=0xffff0000
-+CONFIG_DEFCONFIG_LIST="/lib/modules/$UNAME_RELEASE/.config"
-+CONFIG_CONSTRUCTORS=y
++++ b/arch/arm/mach-s5pv210/include/mach/regs-clock.h
+@@ -0,0 +1,453 @@
++/* linux/arch/arm/mach-s5pv210/include/mach/regs-clock.h
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * S5PV210 - Clock register definitions
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
-+#
-+# General setup
-+#
-+CONFIG_EXPERIMENTAL=y
-+CONFIG_BROKEN_ON_SMP=y
-+CONFIG_LOCK_KERNEL=y
-+CONFIG_INIT_ENV_ARG_LIMIT=32
-+CONFIG_LOCALVERSION=""
-+CONFIG_LOCALVERSION_AUTO=y
-+CONFIG_HAVE_KERNEL_GZIP=y
-+CONFIG_HAVE_KERNEL_LZO=y
-+CONFIG_KERNEL_GZIP=y
-+# CONFIG_KERNEL_BZIP2 is not set
-+# CONFIG_KERNEL_LZMA is not set
-+# CONFIG_KERNEL_LZO is not set
-+CONFIG_SWAP=y
-+# CONFIG_SYSVIPC is not set
-+# CONFIG_BSD_PROCESS_ACCT is not set
++#ifndef __ASM_ARCH_REGS_CLOCK_H
++#define __ASM_ARCH_REGS_CLOCK_H __FILE__
 +
-+#
-+# RCU Subsystem
-+#
-+CONFIG_TREE_RCU=y
-+# CONFIG_TREE_PREEMPT_RCU is not set
-+# CONFIG_TINY_RCU is not set
-+# CONFIG_RCU_TRACE is not set
-+CONFIG_RCU_FANOUT=32
-+# CONFIG_RCU_FANOUT_EXACT is not set
-+# CONFIG_TREE_RCU_TRACE is not set
-+# CONFIG_IKCONFIG is not set
-+CONFIG_LOG_BUF_SHIFT=17
-+# CONFIG_GROUP_SCHED is not set
-+# CONFIG_CGROUPS is not set
-+CONFIG_SYSFS_DEPRECATED=y
-+CONFIG_SYSFS_DEPRECATED_V2=y
-+# CONFIG_RELAY is not set
-+CONFIG_NAMESPACES=y
-+# CONFIG_UTS_NS is not set
-+# CONFIG_USER_NS is not set
-+# CONFIG_PID_NS is not set
-+CONFIG_BLK_DEV_INITRD=y
-+CONFIG_INITRAMFS_SOURCE=""
-+CONFIG_RD_GZIP=y
-+CONFIG_RD_BZIP2=y
-+CONFIG_RD_LZMA=y
-+CONFIG_RD_LZO=y
-+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-+CONFIG_SYSCTL=y
-+CONFIG_ANON_INODES=y
-+# CONFIG_EMBEDDED is not set
-+CONFIG_UID16=y
-+CONFIG_SYSCTL_SYSCALL=y
-+CONFIG_KALLSYMS=y
-+CONFIG_KALLSYMS_ALL=y
-+# CONFIG_KALLSYMS_EXTRA_PASS is not set
-+CONFIG_HOTPLUG=y
-+CONFIG_PRINTK=y
-+CONFIG_BUG=y
-+CONFIG_ELF_CORE=y
-+CONFIG_BASE_FULL=y
-+CONFIG_FUTEX=y
-+CONFIG_EPOLL=y
-+CONFIG_SIGNALFD=y
-+CONFIG_TIMERFD=y
-+CONFIG_EVENTFD=y
-+CONFIG_SHMEM=y
-+CONFIG_AIO=y
++#include <mach/map.h>
 +
-+#
-+# Kernel Performance Events And Counters
-+#
-+CONFIG_VM_EVENT_COUNTERS=y
-+CONFIG_SLUB_DEBUG=y
-+CONFIG_COMPAT_BRK=y
-+# CONFIG_SLAB is not set
-+CONFIG_SLUB=y
-+# CONFIG_SLOB is not set
-+# CONFIG_PROFILING is not set
-+CONFIG_HAVE_OPROFILE=y
-+# CONFIG_KPROBES is not set
-+CONFIG_HAVE_KPROBES=y
-+CONFIG_HAVE_KRETPROBES=y
-+CONFIG_HAVE_CLK=y
++#define S5P_CLKREG(x)		(S5P_VA_SYSCON + (x))
 +
-+#
-+# GCOV-based kernel profiling
-+#
-+# CONFIG_SLOW_WORK is not set
-+CONFIG_HAVE_GENERIC_DMA_COHERENT=y
-+CONFIG_SLABINFO=y
-+CONFIG_RT_MUTEXES=y
-+CONFIG_BASE_SMALL=0
-+CONFIG_MODULES=y
-+# CONFIG_MODULE_FORCE_LOAD is not set
-+CONFIG_MODULE_UNLOAD=y
-+# CONFIG_MODULE_FORCE_UNLOAD is not set
-+# CONFIG_MODVERSIONS is not set
-+# CONFIG_MODULE_SRCVERSION_ALL is not set
-+CONFIG_BLOCK=y
-+CONFIG_LBDAF=y
-+# CONFIG_BLK_DEV_BSG is not set
-+# CONFIG_BLK_DEV_INTEGRITY is not set
++#define S5P_APLL_LOCK		S5P_CLKREG(0x00)
++#define S5P_MPLL_LOCK		S5P_CLKREG(0x08)
++#define S5P_EPLL_LOCK		S5P_CLKREG(0x10)
++#define S5P_VPLL_LOCK		S5P_CLKREG(0x20)
 +
-+#
-+# IO Schedulers
-+#
-+CONFIG_IOSCHED_NOOP=y
-+CONFIG_IOSCHED_DEADLINE=y
-+CONFIG_IOSCHED_CFQ=y
-+# CONFIG_DEFAULT_DEADLINE is not set
-+CONFIG_DEFAULT_CFQ=y
-+# CONFIG_DEFAULT_NOOP is not set
-+CONFIG_DEFAULT_IOSCHED="cfq"
-+# CONFIG_INLINE_SPIN_TRYLOCK is not set
-+# CONFIG_INLINE_SPIN_TRYLOCK_BH is not set
-+# CONFIG_INLINE_SPIN_LOCK is not set
-+# CONFIG_INLINE_SPIN_LOCK_BH is not set
-+# CONFIG_INLINE_SPIN_LOCK_IRQ is not set
-+# CONFIG_INLINE_SPIN_LOCK_IRQSAVE is not set
-+# CONFIG_INLINE_SPIN_UNLOCK is not set
-+# CONFIG_INLINE_SPIN_UNLOCK_BH is not set
-+# CONFIG_INLINE_SPIN_UNLOCK_IRQ is not set
-+# CONFIG_INLINE_SPIN_UNLOCK_IRQRESTORE is not set
-+# CONFIG_INLINE_READ_TRYLOCK is not set
-+# CONFIG_INLINE_READ_LOCK is not set
-+# CONFIG_INLINE_READ_LOCK_BH is not set
-+# CONFIG_INLINE_READ_LOCK_IRQ is not set
-+# CONFIG_INLINE_READ_LOCK_IRQSAVE is not set
-+# CONFIG_INLINE_READ_UNLOCK is not set
-+# CONFIG_INLINE_READ_UNLOCK_BH is not set
-+# CONFIG_INLINE_READ_UNLOCK_IRQ is not set
-+# CONFIG_INLINE_READ_UNLOCK_IRQRESTORE is not set
-+# CONFIG_INLINE_WRITE_TRYLOCK is not set
-+# CONFIG_INLINE_WRITE_LOCK is not set
-+# CONFIG_INLINE_WRITE_LOCK_BH is not set
-+# CONFIG_INLINE_WRITE_LOCK_IRQ is not set
-+# CONFIG_INLINE_WRITE_LOCK_IRQSAVE is not set
-+# CONFIG_INLINE_WRITE_UNLOCK is not set
-+# CONFIG_INLINE_WRITE_UNLOCK_BH is not set
-+# CONFIG_INLINE_WRITE_UNLOCK_IRQ is not set
-+# CONFIG_INLINE_WRITE_UNLOCK_IRQRESTORE is not set
-+# CONFIG_MUTEX_SPIN_ON_OWNER is not set
-+# CONFIG_FREEZER is not set
++#define S5P_APLL_CON		S5P_CLKREG(0x100)
++#define S5P_MPLL_CON		S5P_CLKREG(0x108)
++#define S5P_EPLL_CON		S5P_CLKREG(0x110)
++#define S5P_VPLL_CON		S5P_CLKREG(0x120)
 +
-+#
-+# System Type
-+#
-+CONFIG_MMU=y
-+# CONFIG_ARCH_AAEC2000 is not set
-+# CONFIG_ARCH_INTEGRATOR is not set
-+# CONFIG_ARCH_REALVIEW is not set
-+# CONFIG_ARCH_VERSATILE is not set
-+# CONFIG_ARCH_AT91 is not set
-+# CONFIG_ARCH_CLPS711X is not set
-+# CONFIG_ARCH_GEMINI is not set
-+# CONFIG_ARCH_EBSA110 is not set
-+# CONFIG_ARCH_EP93XX is not set
-+# CONFIG_ARCH_FOOTBRIDGE is not set
-+# CONFIG_ARCH_MXC is not set
-+# CONFIG_ARCH_STMP3XXX is not set
-+# CONFIG_ARCH_NETX is not set
-+# CONFIG_ARCH_H720X is not set
-+# CONFIG_ARCH_NOMADIK is not set
-+# CONFIG_ARCH_IOP13XX is not set
-+# CONFIG_ARCH_IOP32X is not set
-+# CONFIG_ARCH_IOP33X is not set
-+# CONFIG_ARCH_IXP23XX is not set
-+# CONFIG_ARCH_IXP2000 is not set
-+# CONFIG_ARCH_IXP4XX is not set
-+# CONFIG_ARCH_L7200 is not set
-+# CONFIG_ARCH_DOVE is not set
-+# CONFIG_ARCH_KIRKWOOD is not set
-+# CONFIG_ARCH_LOKI is not set
-+# CONFIG_ARCH_MV78XX0 is not set
-+# CONFIG_ARCH_ORION5X is not set
-+# CONFIG_ARCH_MMP is not set
-+# CONFIG_ARCH_KS8695 is not set
-+# CONFIG_ARCH_NS9XXX is not set
-+# CONFIG_ARCH_W90X900 is not set
-+# CONFIG_ARCH_PNX4008 is not set
-+# CONFIG_ARCH_PXA is not set
-+# CONFIG_ARCH_MSM is not set
-+# CONFIG_ARCH_RPC is not set
-+# CONFIG_ARCH_SA1100 is not set
-+# CONFIG_ARCH_S3C2410 is not set
-+# CONFIG_ARCH_S3C64XX is not set
-+# CONFIG_ARCH_S5P6440 is not set
-+# CONFIG_ARCH_S5PC1XX is not set
-+CONFIG_ARCH_S5PV210=y
-+# CONFIG_ARCH_SHARK is not set
-+# CONFIG_ARCH_LH7A40X is not set
-+# CONFIG_ARCH_U300 is not set
-+# CONFIG_ARCH_DAVINCI is not set
-+# CONFIG_ARCH_OMAP is not set
-+# CONFIG_ARCH_BCMRING is not set
-+# CONFIG_ARCH_U8500 is not set
-+CONFIG_PLAT_SAMSUNG=y
-+CONFIG_SAMSUNG_CLKSRC=y
-+CONFIG_SAMSUNG_IRQ_VIC_TIMER=y
-+CONFIG_SAMSUNG_IRQ_UART=y
-+CONFIG_SAMSUNG_GPIO_EXTRA=0
-+# CONFIG_S3C_ADC is not set
-+CONFIG_PLAT_S3C=y
++#define S5P_CLK_SRC0		S5P_CLKREG(0x200)
++#define S5P_CLK_SRC1		S5P_CLKREG(0x204)
++#define S5P_CLK_SRC2		S5P_CLKREG(0x208)
++#define S5P_CLK_SRC3		S5P_CLKREG(0x20C)
++#define S5P_CLK_SRC4		S5P_CLKREG(0x210)
++#define S5P_CLK_SRC5		S5P_CLKREG(0x214)
++#define S5P_CLK_SRC6		S5P_CLKREG(0x218)
 +
-+#
-+# Boot options
-+#
-+# CONFIG_S3C_BOOT_ERROR_RESET is not set
-+CONFIG_S3C_BOOT_UART_FORCE_FIFO=y
++#define S5P_CLK_SRC_MASK0	S5P_CLKREG(0x280)
++#define S5P_CLK_SRC_MASK1	S5P_CLKREG(0x284)
 +
-+#
-+# Power management
-+#
-+CONFIG_S3C_LOWLEVEL_UART_PORT=1
-+CONFIG_S3C_GPIO_SPACE=0
-+CONFIG_S3C_GPIO_TRACK=y
-+CONFIG_PLAT_S5P=y
-+CONFIG_CPU_S5PV210_INIT=y
-+CONFIG_CPU_S5PV210_CLOCK=y
-+CONFIG_CPU_S5PV210=y
-+# CONFIG_MACH_SMDKV210 is not set
-+CONFIG_MACH_SMDKC110=y
-+CONFIG_S5PC110_B_TYPE=y
-+# CONFIG_S5PC110_D_TYPE is not set
-+# CONFIG_S5PC110_H_TYPE is not set
++#define S5P_CLK_DIV0		S5P_CLKREG(0x300)
++#define S5P_CLK_DIV1		S5P_CLKREG(0x304)
++#define S5P_CLK_DIV2		S5P_CLKREG(0x308)
++#define S5P_CLK_DIV3		S5P_CLKREG(0x30C)
++#define S5P_CLK_DIV4		S5P_CLKREG(0x310)
++#define S5P_CLK_DIV5		S5P_CLKREG(0x314)
++#define S5P_CLK_DIV6		S5P_CLKREG(0x318)
++#define S5P_CLK_DIV7		S5P_CLKREG(0x31C)
 +
-+#
-+# Processor Type
-+#
-+CONFIG_CPU_32v6K=y
-+CONFIG_CPU_V7=y
-+CONFIG_CPU_32v7=y
-+CONFIG_CPU_ABRT_EV7=y
-+CONFIG_CPU_PABRT_V7=y
-+CONFIG_CPU_CACHE_V7=y
-+CONFIG_CPU_CACHE_VIPT=y
-+CONFIG_CPU_COPY_V6=y
-+CONFIG_CPU_TLB_V7=y
-+CONFIG_CPU_HAS_ASID=y
-+CONFIG_CPU_CP15=y
-+CONFIG_CPU_CP15_MMU=y
++#define S5P_CLKGATE_MAIN0	S5P_CLKREG(0x400)
++#define S5P_CLKGATE_MAIN1	S5P_CLKREG(0x404)
++#define S5P_CLKGATE_MAIN2	S5P_CLKREG(0x408)
 +
-+#
-+# Processor Features
-+#
-+CONFIG_ARM_THUMB=y
-+# CONFIG_ARM_THUMBEE is not set
-+# CONFIG_CPU_ICACHE_DISABLE is not set
-+# CONFIG_CPU_DCACHE_DISABLE is not set
-+# CONFIG_CPU_BPREDICT_DISABLE is not set
-+CONFIG_HAS_TLS_REG=y
-+CONFIG_ARM_L1_CACHE_SHIFT=5
-+# CONFIG_ARM_ERRATA_430973 is not set
-+# CONFIG_ARM_ERRATA_458693 is not set
-+# CONFIG_ARM_ERRATA_460075 is not set
-+CONFIG_ARM_VIC=y
-+CONFIG_ARM_VIC_NR=2
++#define S5P_CLKGATE_PERI0	S5P_CLKREG(0x420)
++#define S5P_CLKGATE_PERI1	S5P_CLKREG(0x424)
 +
-+#
-+# Bus support
-+#
-+# CONFIG_PCI_SYSCALL is not set
-+# CONFIG_ARCH_SUPPORTS_MSI is not set
-+# CONFIG_PCCARD is not set
++#define S5P_CLKGATE_SCLK0	S5P_CLKREG(0x440)
++#define S5P_CLKGATE_SCLK1	S5P_CLKREG(0x444)
++#define S5P_CLKGATE_IP0		S5P_CLKREG(0x460)
++#define S5P_CLKGATE_IP1		S5P_CLKREG(0x464)
++#define S5P_CLKGATE_IP2		S5P_CLKREG(0x468)
++#define S5P_CLKGATE_IP3		S5P_CLKREG(0x46C)
++#define S5P_CLKGATE_IP4		S5P_CLKREG(0x470)
 +
-+#
-+# Kernel Features
-+#
-+# CONFIG_VMSPLIT_3G is not set
-+CONFIG_VMSPLIT_2G=y
-+# CONFIG_VMSPLIT_1G is not set
-+CONFIG_PAGE_OFFSET=0x80000000
-+# CONFIG_PREEMPT_NONE is not set
-+# CONFIG_PREEMPT_VOLUNTARY is not set
-+CONFIG_PREEMPT=y
-+CONFIG_HZ=200
-+# CONFIG_THUMB2_KERNEL is not set
-+CONFIG_AEABI=y
-+CONFIG_OABI_COMPAT=y
-+CONFIG_ARCH_DISCONTIGMEM_ENABLE=y
-+# CONFIG_ARCH_SPARSEMEM_DEFAULT is not set
-+# CONFIG_ARCH_SELECT_MEMORY_MODEL is not set
-+CONFIG_NODES_SHIFT=2
-+# CONFIG_HIGHMEM is not set
-+CONFIG_SELECT_MEMORY_MODEL=y
-+# CONFIG_FLATMEM_MANUAL is not set
-+CONFIG_DISCONTIGMEM_MANUAL=y
-+# CONFIG_SPARSEMEM_MANUAL is not set
-+CONFIG_DISCONTIGMEM=y
-+CONFIG_FLAT_NODE_MEM_MAP=y
-+CONFIG_NEED_MULTIPLE_NODES=y
-+CONFIG_PAGEFLAGS_EXTENDED=y
-+CONFIG_SPLIT_PTLOCK_CPUS=999999
-+# CONFIG_PHYS_ADDR_T_64BIT is not set
-+CONFIG_ZONE_DMA_FLAG=0
-+CONFIG_VIRT_TO_BUS=y
-+# CONFIG_KSM is not set
-+CONFIG_DEFAULT_MMAP_MIN_ADDR=4096
-+CONFIG_ALIGNMENT_TRAP=y
-+# CONFIG_UACCESS_WITH_MEMCPY is not set
++#define S5P_CLKGATE_BLOCK	S5P_CLKREG(0x480)
++#define S5P_CLKGATE_BUS0	S5P_CLKREG(0x484)
++#define S5P_CLKGATE_BUS1	S5P_CLKREG(0x488)
++#define S5P_CLK_OUT		S5P_CLKREG(0x500)
 +
-+#
-+# Boot options
-+#
-+CONFIG_ZBOOT_ROM_TEXT=0
-+CONFIG_ZBOOT_ROM_BSS=0
-+CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x20800000,8M console=ttySAC1,115200 init=/linuxrc"
-+# CONFIG_XIP_KERNEL is not set
-+# CONFIG_KEXEC is not set
++/* CLKSRC0 */
++#define S5P_CLKSRC0_MUX200_MASK		(0x1<<16)
++#define S5P_CLKSRC0_MUX166_MASK		(0x1<<20)
++#define S5P_CLKSRC0_MUX133_MASK		(0x1<<24)
 +
-+#
-+# CPU Power Management
-+#
-+# CONFIG_CPU_IDLE is not set
++/* CLKDIV0 */
++#define S5P_CLKDIV0_APLL_SHIFT		(0)
++#define S5P_CLKDIV0_APLL_MASK		(0x7 << S5P_CLKDIV0_APLL_SHIFT)
++#define S5P_CLKDIV0_A2M_SHIFT		(4)
++#define S5P_CLKDIV0_A2M_MASK		(0x7 << S5P_CLKDIV0_A2M_SHIFT)
++#define S5P_CLKDIV0_HCLK200_SHIFT	(8)
++#define S5P_CLKDIV0_HCLK200_MASK	(0x7 << S5P_CLKDIV0_HCLK200_SHIFT)
++#define S5P_CLKDIV0_PCLK100_SHIFT	(12)
++#define S5P_CLKDIV0_PCLK100_MASK	(0x7 << S5P_CLKDIV0_PCLK100_SHIFT)
++#define S5P_CLKDIV0_HCLK166_SHIFT	(16)
++#define S5P_CLKDIV0_HCLK166_MASK	(0xF << S5P_CLKDIV0_HCLK166_SHIFT)
++#define S5P_CLKDIV0_PCLK83_SHIFT	(20)
++#define S5P_CLKDIV0_PCLK83_MASK		(0x7 << S5P_CLKDIV0_PCLK83_SHIFT)
++#define S5P_CLKDIV0_HCLK133_SHIFT	(24)
++#define S5P_CLKDIV0_HCLK133_MASK	(0xF << S5P_CLKDIV0_HCLK133_SHIFT)
++#define S5P_CLKDIV0_PCLK66_SHIFT	(28)
++#define S5P_CLKDIV0_PCLK66_MASK		(0x7 << S5P_CLKDIV0_PCLK66_SHIFT)
 +
-+#
-+# Floating point emulation
-+#
++/* Clock Gate Main0 Registers */
++#define S5P_CLKGATE_MAIN0_IPC		(1<<30)
++#define S5P_CLKGATE_MAIN0_ROTATOR	(1<<29)
++#define S5P_CLKGATE_MAIN0_JPEG		(1<<28)
++#define S5P_CLKGATE_MAIN0_FIMC2		(1<<26)
++#define S5P_CLKGATE_MAIN0_FIMC1		(1<<25)
++#define S5P_CLKGATE_MAIN0_FIMC0		(1<<24)
++#define S5P_CLKGATE_MAIN0_G3D		(1<<8)
++#define S5P_CLKGATE_MAIN0_IMEM		(1<<5)
++#define S5P_CLKGATE_MAIN0_PDMA1		(1<<4)
++#define S5P_CLKGATE_MAIN0_PDMA0		(1<<3)
++#define S5P_CLKGATE_MAIN0_MDMA		(1<<2)
++#define S5P_CLKGATE_MAIN0_DMC1		(1<<1)
++#define S5P_CLKGATE_MAIN0_DMC0		(1<<0)
 +
-+#
-+# At least one emulation must be selected
-+#
-+# CONFIG_FPE_NWFPE is not set
-+# CONFIG_FPE_FASTFPE is not set
-+CONFIG_VFP=y
-+CONFIG_VFPv3=y
-+CONFIG_NEON=y
++/* Clock Gate Main1 Registers */
++#define S5P_CLKGATE_MAIN1_NFCON		(1<<28)
++#define S5P_CLKGATE_MAIN1_SROMC		(1<<26)
++#define S5P_CLKGATE_MAIN1_CFCON		(1<<25)
++#define S5P_CLKGATE_MAIN1_NANDXL	(1<<24)
++#define S5P_CLKGATE_MAIN1_USBHOST	(1<<17)
++#define S5P_CLKGATE_MAIN1_USBOTG	(1<<16)
++#define S5P_CLKGATE_MAIN1_TVENC		(1<<10)
++#define S5P_CLKGATE_MAIN1_MIXER		(1<<9)
++#define S5P_CLKGATE_MAIN1_VP		(1<<8)
++#define S5P_CLKGATE_MAIN1_MIE		(1<<1)
++#define S5P_CLKGATE_MAIN1_FIMD		(1<<0)
 +
-+#
-+# Userspace binary formats
-+#
-+CONFIG_BINFMT_ELF=y
-+# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
-+CONFIG_HAVE_AOUT=y
-+# CONFIG_BINFMT_AOUT is not set
-+# CONFIG_BINFMT_MISC is not set
++/* Clock Gate Main2 Registers */
++#define S5P_CLKGATE_MAIN2_TZIC3		(1<<31)
++#define S5P_CLKGATE_MAIN2_TZIC2		(1<<30)
++#define S5P_CLKGATE_MAIN2_TZIC1		(1<<29)
++#define S5P_CLKGATE_MAIN2_TZIC0		(1<<28)
++#define S5P_CLKGATE_MAIN2_VIC3		(1<<27)
++#define S5P_CLKGATE_MAIN2_VIC2		(1<<26)
++#define S5P_CLKGATE_MAIN2_VIC1		(1<<25)
++#define S5P_CLKGATE_MAIN2_VIC0		(1<<24)
++#define S5P_CLKGATE_MAIN2_TSI		(1<<20)
++#define S5P_CLKGATE_MAIN2_HSMMC3	(1<<19)
++#define S5P_CLKGATE_MAIN2_HSMMC2	(1<<18)
++#define S5P_CLKGATE_MAIN2_HSMMC1	(1<<17)
++#define S5P_CLKGATE_MAIN2_HSMMC0	(1<<16)
++#define S5P_CLKGATE_MAIN2_HOSTIF	(1<<10)
++#define S5P_CLKGATE_MAIN2_MODEM		(1<<9)
++#define S5P_CLKGATE_MAIN2_CORESIGHT	(1<<8)
++#define S5P_CLKGATE_MAIN2_SDM		(1<<1)
++#define S5P_CLKGATE_MAIN2_SECSS		(1<<0)
 +
-+#
-+# Power management options
-+#
-+# CONFIG_PM is not set
-+CONFIG_ARCH_SUSPEND_POSSIBLE=y
-+# CONFIG_NET is not set
++/* Clock Gate Peri0 Registers */
++#define S5P_CLKGATE_PERI0_PCM2		(1<<30)
++#define S5P_CLKGATE_PERI0_PCM1		(1<<29)
++#define S5P_CLKGATE_PERI0_PCM0		(1<<28)
++#define S5P_CLKGATE_PERI0_SYSCON	(1<<27)
++#define S5P_CLKGATE_PERI0_GPIO		(1<<26)
++#define S5P_CLKGATE_PERI0_TSADC		(1<<24)
++#define S5P_CLKGATE_PERI0_PWM		(1<<23)
++#define S5P_CLKGATE_PERI0_WDT		(1<<22)
++#define S5P_CLKGATE_PERI0_KEYIF		(1<<21)
++#define S5P_CLKGATE_PERI0_UART3		(1<<20)
++#define S5P_CLKGATE_PERI0_UART2		(1<<19)
++#define S5P_CLKGATE_PERI0_UART1		(1<<18)
++#define S5P_CLKGATE_PERI0_UART0		(1<<17)
++#define S5P_CLKGATE_PERI0_SYSTIMER	(1<<16)
++#define S5P_CLKGATE_PERI0_RTC		(1<<15)
++#define S5P_CLKGATE_PERI0_SPI2		(1<<14)
++#define S5P_CLKGATE_PERI0_SPI1		(1<<13)
++#define S5P_CLKGATE_PERI0_SPI0		(1<<12)
++#define S5P_CLKGATE_PERI0_I2C_HDMI_PHY	(1<<11)
++#define S5P_CLKGATE_PERI0_I2C_HDMI_DDC	(1<<10)
++#define S5P_CLKGATE_PERI0_I2C2		(1<<9)
++#define S5P_CLKGATE_PERI0_I2C1		(1<<8)
++#define S5P_CLKGATE_PERI0_I2C0		(1<<7)
++#define S5P_CLKGATE_PERI0_I2S2		(1<<6)
++#define S5P_CLKGATE_PERI0_I2S1		(1<<5)
++#define S5P_CLKGATE_PERI0_I2S0		(1<<4)
++#define S5P_CLKGATE_PERI0_AC97		(1<<1)
++#define S5P_CLKGATE_PERI0_SPDIF		(1<<0)
 +
-+#
-+# Device Drivers
-+#
++/* Clock Gate Peri1 Registers */
++#define S5P_CLKGATE_PERI1_MFC		(1<<19)
++#define S5P_CLKGATE_PERI1_DMC1		(1<<18)
++#define S5P_CLKGATE_PERI1_DMC0		(1<<17)
++#define S5P_CLKGATE_PERI1_MDMA		(1<<16)
++#define S5P_CLKGATE_PERI1_PDMA1		(1<<15)
++#define S5P_CLKGATE_PERI1_PDMA0		(1<<14)
++#define S5P_CLKGATE_PERI1_CSIS		(1<<13)
++#define S5P_CLKGATE_PERI1_DSIM		(1<<12)
++#define S5P_CLKGATE_PERI1_HDMI		(1<<11)
++#define S5P_CLKGATE_PERI1_CORESIGHT	(1<<10)
++#define S5P_CLKGATE_PERI1_SECJTAG	(1<<9)
++#define S5P_CLKGATE_PERI1_TZPC3		(1<<8)
++#define S5P_CLKGATE_PERI1_TZPC2		(1<<7)
++#define S5P_CLKGATE_PERI1_TZPC1		(1<<6)
++#define S5P_CLKGATE_PERI1_TZPC0		(1<<5)
++#define S5P_CLKGATE_PERI1_SDM		(1<<4)
++#define S5P_CLKGATE_PERI1_SECKEY	(1<<3)
++#define S5P_CLKGATE_PERI1_IEM_APC	(1<<2)
++#define S5P_CLKGATE_PERI1_IEM_IEC	(1<<1)
++#define S5P_CLKGATE_PERI1_CHIP_ID	(1<<0)
 +
-+#
-+# Generic Driver Options
-+#
-+CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
-+# CONFIG_DEVTMPFS is not set
-+CONFIG_STANDALONE=y
-+CONFIG_PREVENT_FIRMWARE_BUILD=y
-+CONFIG_FW_LOADER=y
-+CONFIG_FIRMWARE_IN_KERNEL=y
-+CONFIG_EXTRA_FIRMWARE=""
-+# CONFIG_DEBUG_DRIVER is not set
-+# CONFIG_DEBUG_DEVRES is not set
-+# CONFIG_SYS_HYPERVISOR is not set
-+# CONFIG_MTD is not set
-+# CONFIG_PARPORT is not set
-+CONFIG_BLK_DEV=y
-+# CONFIG_BLK_DEV_COW_COMMON is not set
-+CONFIG_BLK_DEV_LOOP=y
-+# CONFIG_BLK_DEV_CRYPTOLOOP is not set
++/* Special Clock Gate 0 Registers */
++#define S5P_CLKGATE_SCLK0_EBI		(1<<31)
++#define S5P_CLKGATE_SCLK0_NANDXL	(1<<30)
++#define S5P_CLKGATE_SCLK0_MFC		(1<<29)
++#define S5P_CLKGATE_SCLK0_G3D		(1<<28)
++#define S5P_CLKGATE_SCLK0_FIMC		(1<<27)
++#define S5P_CLKGATE_SCLK0_CSIS		(1<<26)
++#define S5P_CLKGATE_SCLK0_FIMD		(1<<25)
++#define S5P_CLKGATE_SCLK0_CAM1		(1<<24)
++#define S5P_CLKGATE_SCLK0_CAM0		(1<<23)
++#define S5P_CLKGATE_SCLK0_TVENC		(1<<22)
++#define S5P_CLKGATE_SCLK0_DAC		(1<<21)
++#define S5P_CLKGATE_SCLK0_MIXER		(1<<20)
++#define S5P_CLKGATE_SCLK0_HDMI		(1<<19)
++#define S5P_CLKGATE_SCLK0_SPDIF1	(1<<18)
++#define S5P_CLKGATE_SCLK0_AUDIO2	(1<<17)
++#define S5P_CLKGATE_SCLK0_AUDIO1	(1<<16)
++#define S5P_CLKGATE_SCLK0_AUDIO0	(1<<15)
++#define S5P_CLKGATE_SCLK0_PWM		(1<<14)
++#define S5P_CLKGATE_SCLK0_SPI2		(1<<13)
++#define S5P_CLKGATE_SCLK0_SPI1		(1<<12)
++#define S5P_CLKGATE_SCLK0_SPI0		(1<<11)
++#define S5P_CLKGATE_SCLK0_UART3		(1<<10)
++#define S5P_CLKGATE_SCLK0_UART2		(1<<9)
++#define S5P_CLKGATE_SCLK0_UART1		(1<<8)
++#define S5P_CLKGATE_SCLK0_UART0		(1<<7)
++#define S5P_CLKGATE_SCLK0_MMC3		(1<<6)
++#define S5P_CLKGATE_SCLK0_MMC2		(1<<5)
++#define S5P_CLKGATE_SCLK0_MMC1		(1<<4)
++#define S5P_CLKGATE_SCLK0_MMC0		(1<<3)
++#define S5P_CLKGATE_SCLK0_PWI		(1<<1)
++#define S5P_CLKGATE_SCLK0_HPM		(1<<0)
 +
-+#
-+# DRBD disabled because PROC_FS, INET or CONNECTOR not selected
-+#
-+CONFIG_BLK_DEV_RAM=y
-+CONFIG_BLK_DEV_RAM_COUNT=16
-+CONFIG_BLK_DEV_RAM_SIZE=8192
-+# CONFIG_BLK_DEV_XIP is not set
-+# CONFIG_CDROM_PKTCDVD is not set
-+# CONFIG_MG_DISK is not set
-+# CONFIG_MISC_DEVICES is not set
-+CONFIG_HAVE_IDE=y
-+# CONFIG_IDE is not set
++/* Special Clock Gate 1 Registers */
++#define S5P_CLKGATE_SCLK1_FIMC2_LCLK	(1<<5)
++#define S5P_CLKGATE_SCLK1_FIMC1_LCLK	(1<<4)
++#define S5P_CLKGATE_SCLK1_FIMC0_LCLK	(1<<3)
++#define S5P_CLKGATE_SCLK1_MDNIE_PWM	(1<<2)
++#define S5P_CLKGATE_SCLK1_MDNIE		(1<<1)
++#define S5P_CLKGATE_SCLK1_PIXEL		(1<<0)
 +
-+#
-+# SCSI device support
-+#
-+# CONFIG_RAID_ATTRS is not set
-+CONFIG_SCSI=y
-+CONFIG_SCSI_DMA=y
-+# CONFIG_SCSI_TGT is not set
-+# CONFIG_SCSI_NETLINK is not set
-+CONFIG_SCSI_PROC_FS=y
++/* IP Clock Gate 0 Registers */
++#define S5P_CLKGATE_IP0_CSIS		(1<<31)
++#define S5P_CLKGATE_IP0_IPC		(1<<30)
++#define S5P_CLKGATE_IP0_ROTATOR		(1<<29)
++#define S5P_CLKGATE_IP0_JPEG		(1<<28)
++#define S5P_CLKGATE_IP0_FIMC2		(1<<26)
++#define S5P_CLKGATE_IP0_FIMC1		(1<<25)
++#define S5P_CLKGATE_IP0_FIMC0		(1<<24)
++#define S5P_CLKGATE_IP0_MFC		(1<<16)
++#define S5P_CLKGATE_IP0_G3D		(1<<8)
++#define S5P_CLKGATE_IP0_IMEM		(1<<5)
++#define S5P_CLKGATE_IP0_PDMA1		(1<<4)
++#define S5P_CLKGATE_IP0_PDMA0		(1<<3)
++#define S5P_CLKGATE_IP0_MDMA		(1<<2)
++#define S5P_CLKGATE_IP0_DMC1		(1<<1)
++#define S5P_CLKGATE_IP0_DMC0		(1<<0)
++#define S5P_CLKGATE_IP0_RESERVED	(0x8FEFEC0)
++#define S5P_CLKGATE_IP0_ALWAYS_ON	(S5P_CLKGATE_IP0_PDMA1 |	\
++					S5P_CLKGATE_IP0_PDMA0 |		\
++					S5P_CLKGATE_IP0_MDMA |		\
++					S5P_CLKGATE_IP0_DMC1 |		\
++					S5P_CLKGATE_IP0_DMC0 |		\
++					S5P_CLKGATE_IP0_IMEM |		\
++					S5P_CLKGATE_IP0_G3D)
 +
-+#
-+# SCSI support type (disk, tape, CD-ROM)
-+#
-+CONFIG_BLK_DEV_SD=y
-+# CONFIG_CHR_DEV_ST is not set
-+# CONFIG_CHR_DEV_OSST is not set
-+# CONFIG_BLK_DEV_SR is not set
-+CONFIG_CHR_DEV_SG=y
-+# CONFIG_CHR_DEV_SCH is not set
-+# CONFIG_SCSI_MULTI_LUN is not set
-+# CONFIG_SCSI_CONSTANTS is not set
-+# CONFIG_SCSI_LOGGING is not set
-+# CONFIG_SCSI_SCAN_ASYNC is not set
-+CONFIG_SCSI_WAIT_SCAN=m
++/* IP Clock Gate 1 Registers */
++#define S5P_CLKGATE_IP1_NFCON		(1<<28)
++#define S5P_CLKGATE_IP1_SROMC		(1<<26)
++#define S5P_CLKGATE_IP1_CFCON		(1<<25)
++#define S5P_CLKGATE_IP1_NANDXL		(1<<24)
++#define S5P_CLKGATE_IP1_USBHOST		(1<<17)
++#define S5P_CLKGATE_IP1_USBOTG		(1<<16)
++#define S5P_CLKGATE_IP1_HDMI		(1<<11)
++#define S5P_CLKGATE_IP1_TVENC		(1<<10)
++#define S5P_CLKGATE_IP1_MIXER		(1<<9)
++#define S5P_CLKGATE_IP1_VP		(1<<8)
++#define S5P_CLKGATE_IP1_DSIM		(1<<2)
++#define S5P_CLKGATE_IP1_MIE		(1<<1)
++#define S5P_CLKGATE_IP1_FIMD		(1<<0)
++#define S5P_CLKGATE_IP1_RESERVED	(0xE8FCF0F8)
++#define S5P_CLKGATE_IP1_ALWAYS_ON	(S5P_CLKGATE_IP1_SROMC |	\
++					S5P_CLKGATE_IP1_NANDXL)
 +
-+#
-+# SCSI Transports
-+#
-+# CONFIG_SCSI_SPI_ATTRS is not set
-+# CONFIG_SCSI_FC_ATTRS is not set
-+# CONFIG_SCSI_SAS_LIBSAS is not set
-+# CONFIG_SCSI_SRP_ATTRS is not set
-+CONFIG_SCSI_LOWLEVEL=y
-+# CONFIG_LIBFC is not set
-+# CONFIG_LIBFCOE is not set
-+# CONFIG_SCSI_DEBUG is not set
-+# CONFIG_SCSI_DH is not set
-+# CONFIG_SCSI_OSD_INITIATOR is not set
-+# CONFIG_ATA is not set
-+# CONFIG_MD is not set
-+# CONFIG_PHONE is not set
++/* IP Clock Gate 2 Registers */
++#define S5P_CLKGATE_IP2_TZIC3		(1<<31)
++#define S5P_CLKGATE_IP2_TZIC2		(1<<30)
++#define S5P_CLKGATE_IP2_TZIC1		(1<<29)
++#define S5P_CLKGATE_IP2_TZIC0		(1<<28)
++#define S5P_CLKGATE_IP2_VIC3		(1<<27)
++#define S5P_CLKGATE_IP2_VIC2		(1<<26)
++#define S5P_CLKGATE_IP2_VIC1		(1<<25)
++#define S5P_CLKGATE_IP2_VIC0		(1<<24)
++#define S5P_CLKGATE_IP2_TSI		(1<<20)
++#define S5P_CLKGATE_IP2_HSMMC3		(1<<19)
++#define S5P_CLKGATE_IP2_HSMMC2		(1<<18)
++#define S5P_CLKGATE_IP2_HSMMC1		(1<<17)
++#define S5P_CLKGATE_IP2_HSMMC0		(1<<16)
++#define S5P_CLKGATE_IP2_SECJTAG		(1<<11)
++#define S5P_CLKGATE_IP2_HOSTIF		(1<<10)
++#define S5P_CLKGATE_IP2_MODEM		(1<<9)
++#define S5P_CLKGATE_IP2_CORESIGHT	(1<<8)
++#define S5P_CLKGATE_IP2_SDM		(1<<1)
++#define S5P_CLKGATE_IP2_SECSS		(1<<0)
++#define S5P_CLKGATE_IP2_RESERVED	(0xE0F0FC)
++#define S5P_CLKGATE_IP2_ALWAYS_ON	(S5P_CLKGATE_IP2_TZIC3 |	\
++					S5P_CLKGATE_IP2_TZIC2 |		\
++					S5P_CLKGATE_IP2_TZIC1 |		\
++					S5P_CLKGATE_IP2_TZIC0 |		\
++					S5P_CLKGATE_IP2_VIC3 |		\
++					S5P_CLKGATE_IP2_VIC2 |		\
++					S5P_CLKGATE_IP2_VIC1 |		\
++					S5P_CLKGATE_IP2_VIC0 |		\
++					S5P_CLKGATE_IP2_SECJTAG |	\
++					S5P_CLKGATE_IP2_CORESIGHT |	\
++					S5P_CLKGATE_IP2_SDM |		\
++					S5P_CLKGATE_IP2_SECSS)
 +
-+#
-+# Input device support
-+#
-+CONFIG_INPUT=y
-+# CONFIG_INPUT_FF_MEMLESS is not set
-+# CONFIG_INPUT_POLLDEV is not set
-+# CONFIG_INPUT_SPARSEKMAP is not set
++/* IP Clock Gate 3 Registers */
++#define S5P_CLKGATE_IP3_PCM2		(1<<30)
++#define S5P_CLKGATE_IP3_PCM1		(1<<29)
++#define S5P_CLKGATE_IP3_PCM0		(1<<28)
++#define S5P_CLKGATE_IP3_SYSCON		(1<<27)
++#define S5P_CLKGATE_IP3_GPIO		(1<<26)
++#define S5P_CLKGATE_IP3_TSADC		(1<<24)
++#define S5P_CLKGATE_IP3_PWM		(1<<23)
++#define S5P_CLKGATE_IP3_WDT		(1<<22)
++#define S5P_CLKGATE_IP3_KEYIF		(1<<21)
++#define S5P_CLKGATE_IP3_UART3		(1<<20)
++#define S5P_CLKGATE_IP3_UART2		(1<<19)
++#define S5P_CLKGATE_IP3_UART1		(1<<18)
++#define S5P_CLKGATE_IP3_UART0		(1<<17)
++#define S5P_CLKGATE_IP3_SYSTIMER	(1<<16)
++#define S5P_CLKGATE_IP3_RTC		(1<<15)
++#define S5P_CLKGATE_IP3_SPI2		(1<<14)
++#define S5P_CLKGATE_IP3_SPI1		(1<<13)
++#define S5P_CLKGATE_IP3_SPI0		(1<<12)
++#define S5P_CLKGATE_IP3_I2C_HDMI_PHY	(1<<11)
++#define S5P_CLKGATE_IP3_I2C_HDMI_DDC	(1<<10)
++#define S5P_CLKGATE_IP3_I2C2		(1<<9)
++#define S5P_CLKGATE_IP3_I2C1		(1<<8)
++#define S5P_CLKGATE_IP3_I2C0		(1<<7)
++#define S5P_CLKGATE_IP3_I2S2		(1<<6)
++#define S5P_CLKGATE_IP3_I2S1		(1<<5)
++#define S5P_CLKGATE_IP3_I2S0		(1<<4)
++#define S5P_CLKGATE_IP3_AC97		(1<<1)
++#define S5P_CLKGATE_IP3_SPDIF		(1<<0)
++#define S5P_CLKGATE_IP3_RESERVED	(0x8200000C)
++#define S5P_CLKGATE_IP3_ALWAYS_ON	(S5P_CLKGATE_IP3_SYSCON |	\
++					S5P_CLKGATE_IP3_GPIO |		\
++					S5P_CLKGATE_IP3_UART0 |		\
++					S5P_CLKGATE_IP3_UART1 |		\
++					S5P_CLKGATE_IP3_UART2 |		\
++					S5P_CLKGATE_IP3_UART3)
 +
-+#
-+# Userland interfaces
-+#
-+CONFIG_INPUT_MOUSEDEV=y
-+CONFIG_INPUT_MOUSEDEV_PSAUX=y
-+CONFIG_INPUT_MOUSEDEV_SCREEN_X=1024
-+CONFIG_INPUT_MOUSEDEV_SCREEN_Y=768
-+# CONFIG_INPUT_JOYDEV is not set
-+CONFIG_INPUT_EVDEV=y
-+# CONFIG_INPUT_EVBUG is not set
++/* IP Clock Gate 4 Registers */
++#define S5P_CLKGATE_IP4_TZPC3		(1<<8)
++#define S5P_CLKGATE_IP4_TZPC2		(1<<7)
++#define S5P_CLKGATE_IP4_TZPC1		(1<<6)
++#define S5P_CLKGATE_IP4_TZPC0		(1<<5)
++#define S5P_CLKGATE_IP4_SECKEY		(1<<3)
++#define S5P_CLKGATE_IP4_IEM_APC		(1<<2)
++#define S5P_CLKGATE_IP4_IEM_IEC		(1<<1)
++#define S5P_CLKGATE_IP4_CHIP_ID		(1<<0)
++#define S5P_CLKGATE_IP4_RESERVED	(0xFFFFFE10)
++#define S5P_CLKGATE_IP4_ALWAYS_ON	(S5P_CLKGATE_IP4_TZPC3 |	\
++					S5P_CLKGATE_IP4_TZPC2 |		\
++					S5P_CLKGATE_IP4_TZPC1 |		\
++					S5P_CLKGATE_IP4_TZPC0 |		\
++					S5P_CLKGATE_IP4_CHIP_ID)
 +
-+#
-+# Input Device Drivers
-+#
-+# CONFIG_INPUT_KEYBOARD is not set
-+# CONFIG_INPUT_MOUSE is not set
-+# CONFIG_INPUT_JOYSTICK is not set
-+# CONFIG_INPUT_TABLET is not set
-+CONFIG_INPUT_TOUCHSCREEN=y
-+# CONFIG_TOUCHSCREEN_AD7879 is not set
-+# CONFIG_TOUCHSCREEN_DYNAPRO is not set
-+# CONFIG_TOUCHSCREEN_FUJITSU is not set
-+# CONFIG_TOUCHSCREEN_GUNZE is not set
-+# CONFIG_TOUCHSCREEN_ELO is not set
-+# CONFIG_TOUCHSCREEN_WACOM_W8001 is not set
-+# CONFIG_TOUCHSCREEN_MTOUCH is not set
-+# CONFIG_TOUCHSCREEN_INEXIO is not set
-+# CONFIG_TOUCHSCREEN_MK712 is not set
-+# CONFIG_TOUCHSCREEN_PENMOUNT is not set
-+# CONFIG_TOUCHSCREEN_TOUCHRIGHT is not set
-+# CONFIG_TOUCHSCREEN_TOUCHWIN is not set
-+# CONFIG_TOUCHSCREEN_TOUCHIT213 is not set
-+# CONFIG_TOUCHSCREEN_W90X900 is not set
-+# CONFIG_INPUT_MISC is not set
++/* Block Clock Gate Registers */
++#define S5P_CLKGATE_BLOCK_INTC		(1<<10)
++#define S5P_CLKGATE_BLOCK_HSMMC		(1<<9)
++#define S5P_CLKGATE_BLOCK_DEBUG		(1<<8)
++#define S5P_CLKGATE_BLOCK_SECURITY	(1<<7)
++#define S5P_CLKGATE_BLOCK_MEMORY	(1<<6)
++#define S5P_CLKGATE_BLOCK_USB		(1<<5)
++#define S5P_CLKGATE_BLOCK_TV		(1<<4)
++#define S5P_CLKGATE_BLOCK_LCD		(1<<3)
++#define S5P_CLKGATE_BLOCK_IMG		(1<<2)
++#define S5P_CLKGATE_BLOCK_MFC		(1<<1)
++#define S5P_CLKGATE_BLOCK_G3D		(1<<0)
 +
-+#
-+# Hardware I/O ports
-+#
-+CONFIG_SERIO=y
-+CONFIG_SERIO_SERPORT=y
-+# CONFIG_SERIO_RAW is not set
-+# CONFIG_SERIO_ALTERA_PS2 is not set
-+# CONFIG_GAMEPORT is not set
++/* Registers related to power management */
++#define S5P_PWR_CFG		S5P_CLKREG(0xC000)
++#define S5P_EINT_WAKEUP_MASK	S5P_CLKREG(0xC004)
++#define S5P_WAKEUP_MASK 	S5P_CLKREG(0xC008)
++#define S5P_PWR_MODE		S5P_CLKREG(0xC00C)
++#define S5P_NORMAL_CFG		S5P_CLKREG(0xC010)
++#define S5P_IDLE_CFG		S5P_CLKREG(0xC020)
++#define S5P_STOP_CFG		S5P_CLKREG(0xC030)
++#define S5P_STOP_MEM_CFG	S5P_CLKREG(0xC034)
++#define S5P_SLEEP_CFG		S5P_CLKREG(0xC040)
 +
-+#
-+# Character devices
-+#
-+CONFIG_VT=y
-+CONFIG_CONSOLE_TRANSLATIONS=y
-+CONFIG_VT_CONSOLE=y
-+CONFIG_HW_CONSOLE=y
-+# CONFIG_VT_HW_CONSOLE_BINDING is not set
-+CONFIG_DEVKMEM=y
-+# CONFIG_SERIAL_NONSTANDARD is not set
++#define S5P_OSC_FREQ		S5P_CLKREG(0xC100)
++#define S5P_OSC_STABLE		S5P_CLKREG(0xC104)
++#define S5P_PWR_STABLE		S5P_CLKREG(0xC108)
++#define S5P_MTC_STABLE		S5P_CLKREG(0xC110)
++#define S5P_CLAMP_STABLE	S5P_CLKREG(0xC114)
 +
-+#
-+# Serial drivers
-+#
-+CONFIG_SERIAL_8250=y
-+# CONFIG_SERIAL_8250_CONSOLE is not set
-+CONFIG_SERIAL_8250_NR_UARTS=4
-+CONFIG_SERIAL_8250_RUNTIME_UARTS=4
-+# CONFIG_SERIAL_8250_EXTENDED is not set
++#define S5P_WAKEUP_STAT		S5P_CLKREG(0xC200)
++#define S5P_BLK_PWR_STAT	S5P_CLKREG(0xC204)
 +
-+#
-+# Non-8250 serial port support
-+#
-+CONFIG_SERIAL_SAMSUNG=y
-+CONFIG_SERIAL_SAMSUNG_UARTS=4
-+# CONFIG_SERIAL_SAMSUNG_DEBUG is not set
-+CONFIG_SERIAL_SAMSUNG_CONSOLE=y
-+CONFIG_SERIAL_S5PV210=y
-+CONFIG_SERIAL_CORE=y
-+CONFIG_SERIAL_CORE_CONSOLE=y
-+CONFIG_UNIX98_PTYS=y
-+# CONFIG_DEVPTS_MULTIPLE_INSTANCES is not set
-+CONFIG_LEGACY_PTYS=y
-+CONFIG_LEGACY_PTY_COUNT=256
-+# CONFIG_IPMI_HANDLER is not set
-+CONFIG_HW_RANDOM=y
-+# CONFIG_HW_RANDOM_TIMERIOMEM is not set
-+# CONFIG_R3964 is not set
-+# CONFIG_RAW_DRIVER is not set
-+# CONFIG_TCG_TPM is not set
-+# CONFIG_I2C is not set
-+# CONFIG_SPI is not set
++#define S5P_OTHERS		S5P_CLKREG(0xE000)
++#define S5P_OM_STAT		S5P_CLKREG(0xE100)
++#define S5P_USB_PHY_CONTROL	S5P_CLKREG(0xE80C)
++#define S5P_DAC_CONTROL		S5P_CLKREG(0xE810)
 +
-+#
-+# PPS support
-+#
-+# CONFIG_PPS is not set
-+CONFIG_ARCH_REQUIRE_GPIOLIB=y
-+CONFIG_GPIOLIB=y
-+# CONFIG_DEBUG_GPIO is not set
-+# CONFIG_GPIO_SYSFS is not set
++#define S5P_INFORM0		S5P_CLKREG(0xF000)
++#define S5P_INFORM1		S5P_CLKREG(0xF004)
++#define S5P_INFORM2		S5P_CLKREG(0xF008)
++#define S5P_INFORM3		S5P_CLKREG(0xF00C)
++#define S5P_INFORM4		S5P_CLKREG(0xF010)
++#define S5P_INFORM5		S5P_CLKREG(0xF014)
++#define S5P_INFORM6		S5P_CLKREG(0xF018)
++#define S5P_INFORM7		S5P_CLKREG(0xF01C)
 +
-+#
-+# Memory mapped GPIO expanders:
-+#
++#define S5P_RST_STAT		S5P_CLKREG(0xA000)
++#define S5P_OSC_CON		S5P_CLKREG(0x8000)
++#define S5P_MIPI_PHY_CON0	S5P_CLKREG(0x7200)
++#define S5P_MIPI_PHY_CON1	S5P_CLKREG(0x7204)
++#define S5P_MIPI_CONTROL	S5P_CLKREG(0xE814)
 +
-+#
-+# I2C GPIO expanders:
-+#
++#define S5P_IDLE_CFG_TL_MASK	(3 << 30)
++#define S5P_IDLE_CFG_TM_MASK	(3 << 28)
++#define S5P_IDLE_CFG_TL_ON	(2 << 30)
++#define S5P_IDLE_CFG_TM_ON	(2 << 28)
++#define S5P_IDLE_CFG_DIDLE	(1 << 0)
 +
-+#
-+# PCI GPIO expanders:
-+#
++#define S5P_CFG_WFI_CLEAN		(~(3 << 8))
++#define S5P_CFG_WFI_IDLE		(1 << 8)
++#define S5P_CFG_WFI_STOP		(2 << 8)
++#define S5P_CFG_WFI_SLEEP		(3 << 8)
 +
-+#
-+# SPI GPIO expanders:
-+#
++#define S5P_OTHER_SYS_INT		24
++#define S5P_OTHER_STA_TYPE		23
++#define S5P_OTHER_SYSC_INTOFF		(1 << 0)
++#define STA_TYPE_EXPON			0
++#define STA_TYPE_SFR			1
 +
-+#
-+# AC97 GPIO expanders:
-+#
-+# CONFIG_W1 is not set
-+# CONFIG_POWER_SUPPLY is not set
-+# CONFIG_HWMON is not set
-+# CONFIG_THERMAL is not set
-+# CONFIG_WATCHDOG is not set
-+CONFIG_SSB_POSSIBLE=y
++#define S5P_PWR_STA_EXP_SCALE		0
++#define S5P_PWR_STA_CNT			4
 +
-+#
-+# Sonics Silicon Backplane
-+#
-+# CONFIG_SSB is not set
++#define S5P_PWR_STABLE_COUNT		85500
 +
-+#
-+# Multifunction device drivers
-+#
-+# CONFIG_MFD_CORE is not set
-+# CONFIG_MFD_SM501 is not set
-+# CONFIG_MFD_ASIC3 is not set
-+# CONFIG_HTC_EGPIO is not set
-+# CONFIG_HTC_PASIC3 is not set
-+# CONFIG_MFD_TMIO is not set
-+# CONFIG_MFD_T7L66XB is not set
-+# CONFIG_MFD_TC6387XB is not set
-+# CONFIG_MFD_TC6393XB is not set
-+# CONFIG_REGULATOR is not set
-+# CONFIG_MEDIA_SUPPORT is not set
++#define S5P_SLEEP_CFG_OSC_EN		(1 << 0)
++#define S5P_SLEEP_CFG_USBOSC_EN		(1 << 1)
 +
-+#
-+# Graphics support
-+#
-+# CONFIG_VGASTATE is not set
-+# CONFIG_VIDEO_OUTPUT_CONTROL is not set
-+# CONFIG_FB is not set
-+# CONFIG_BACKLIGHT_LCD_SUPPORT is not set
++/* OTHERS Resgister */
++#define S5P_OTHERS_USB_SIG_MASK		(1 << 16)
++#define S5P_OTHERS_MIPI_DPHY_EN		(1 << 28)
 +
-+#
-+# Display device support
-+#
-+# CONFIG_DISPLAY_SUPPORT is not set
++/* MIPI */
++#define S5P_MIPI_DPHY_EN		(3)
 +
-+#
-+# Console display driver support
-+#
-+# CONFIG_VGA_CONSOLE is not set
-+CONFIG_DUMMY_CONSOLE=y
-+# CONFIG_SOUND is not set
-+# CONFIG_HID_SUPPORT is not set
-+# CONFIG_USB_SUPPORT is not set
-+# CONFIG_MMC is not set
-+# CONFIG_MEMSTICK is not set
-+# CONFIG_NEW_LEDS is not set
-+# CONFIG_ACCESSIBILITY is not set
-+CONFIG_RTC_LIB=y
-+# CONFIG_RTC_CLASS is not set
-+# CONFIG_DMADEVICES is not set
-+# CONFIG_AUXDISPLAY is not set
-+# CONFIG_UIO is not set
++/* S5P_DAC_CONTROL */
++#define S5P_DAC_ENABLE			(1)
++#define S5P_DAC_DISABLE			(0)
 +
-+#
-+# TI VLYNQ
-+#
-+# CONFIG_STAGING is not set
++#endif /* __ASM_ARCH_REGS_CLOCK_H */
+diff --git a/arch/arm/plat-s5p/clock.c b/arch/arm/plat-s5p/clock.c
+index 3d3c0f1..519cdb4 100644
+--- a/arch/arm/plat-s5p/clock.c
++++ b/arch/arm/plat-s5p/clock.c
+@@ -33,6 +33,12 @@ struct clk clk_ext_xtal_mux = {
+ 	.id		= -1,
+ };
+ 
++struct clk clk_27m = {
++	.name		= "clk_27m",
++	.id		= -1,
++	.rate		= 27000000,
++};
 +
-+#
-+# File systems
-+#
-+CONFIG_EXT2_FS=y
-+# CONFIG_EXT2_FS_XATTR is not set
-+# CONFIG_EXT2_FS_XIP is not set
-+# CONFIG_EXT3_FS is not set
-+# CONFIG_EXT4_FS is not set
-+# CONFIG_REISERFS_FS is not set
-+# CONFIG_JFS_FS is not set
-+CONFIG_FS_POSIX_ACL=y
-+# CONFIG_XFS_FS is not set
-+# CONFIG_GFS2_FS is not set
-+# CONFIG_BTRFS_FS is not set
-+# CONFIG_NILFS2_FS is not set
-+CONFIG_FILE_LOCKING=y
-+CONFIG_FSNOTIFY=y
-+CONFIG_DNOTIFY=y
-+CONFIG_INOTIFY=y
-+CONFIG_INOTIFY_USER=y
-+# CONFIG_QUOTA is not set
-+# CONFIG_AUTOFS_FS is not set
-+# CONFIG_AUTOFS4_FS is not set
-+# CONFIG_FUSE_FS is not set
-+CONFIG_GENERIC_ACL=y
+ /* 48MHz USB Phy clock output */
+ struct clk clk_48m = {
+ 	.name		= "clk_48m",
+@@ -104,6 +110,11 @@ struct clksrc_sources clk_src_epll = {
+ 	.nr_sources	= ARRAY_SIZE(clk_src_epll_list),
+ };
+ 
++struct clk clk_vpll = {
++	.name		= "vpll",
++	.id		= -1,
++};
 +
-+#
-+# Caches
-+#
-+# CONFIG_FSCACHE is not set
+ int s5p_gatectrl(void __iomem *reg, struct clk *clk, int enable)
+ {
+ 	unsigned int ctrlbit = clk->ctrlbit;
+@@ -118,10 +129,12 @@ int s5p_gatectrl(void __iomem *reg, struct clk *clk, int enable)
+ static struct clk *s5p_clks[] __initdata = {
+ 	&clk_ext_xtal_mux,
+ 	&clk_48m,
++	&clk_27m,
+ 	&clk_fout_apll,
+ 	&clk_fout_mpll,
+ 	&clk_fout_epll,
+ 	&clk_arm,
++	&clk_vpll,
+ };
+ 
+ void __init s5p_register_clocks(unsigned long xtal_freq)
+diff --git a/arch/arm/plat-s5p/include/plat/s5p-clock.h b/arch/arm/plat-s5p/include/plat/s5p-clock.h
+index e1a7444..56fb8b4 100644
+--- a/arch/arm/plat-s5p/include/plat/s5p-clock.h
++++ b/arch/arm/plat-s5p/include/plat/s5p-clock.h
+@@ -20,6 +20,7 @@
+ #define clk_fin_apll clk_ext_xtal_mux
+ #define clk_fin_mpll clk_ext_xtal_mux
+ #define clk_fin_epll clk_ext_xtal_mux
++#define clk_fin_vpll clk_ext_xtal_mux
+ 
+ extern struct clk clk_ext_xtal_mux;
+ extern struct clk clk_48m;
+@@ -27,6 +28,7 @@ extern struct clk clk_fout_apll;
+ extern struct clk clk_fout_mpll;
+ extern struct clk clk_fout_epll;
+ extern struct clk clk_arm;
++extern struct clk clk_vpll;
+ 
+ extern struct clksrc_sources clk_src_apll;
+ extern struct clksrc_sources clk_src_mpll;
+diff --git a/arch/arm/plat-s5p/s5pv210-clock.c b/arch/arm/plat-s5p/s5pv210-clock.c
+new file mode 100755
+index 0000000..1d43e9b
+--- /dev/null
++++ b/arch/arm/plat-s5p/s5pv210-clock.c
+@@ -0,0 +1,494 @@
++/* linux/arch/arm/plat-s5p/s5pv210-clock.c
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * S5PV210 - Clock support
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
-+#
-+# CD-ROM/DVD Filesystems
-+#
-+# CONFIG_ISO9660_FS is not set
-+# CONFIG_UDF_FS is not set
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/list.h>
++#include <linux/errno.h>
++#include <linux/err.h>
++#include <linux/clk.h>
++#include <linux/sysdev.h>
++#include <linux/io.h>
 +
-+#
-+# DOS/FAT/NT Filesystems
-+#
-+CONFIG_FAT_FS=y
-+CONFIG_MSDOS_FS=y
-+CONFIG_VFAT_FS=y
-+CONFIG_FAT_DEFAULT_CODEPAGE=437
-+CONFIG_FAT_DEFAULT_IOCHARSET="iso8859-1"
-+# CONFIG_NTFS_FS is not set
++#include <mach/map.h>
 +
-+#
-+# Pseudo filesystems
-+#
-+CONFIG_PROC_FS=y
-+CONFIG_PROC_SYSCTL=y
-+CONFIG_PROC_PAGE_MONITOR=y
-+CONFIG_SYSFS=y
-+CONFIG_TMPFS=y
-+CONFIG_TMPFS_POSIX_ACL=y
-+# CONFIG_HUGETLB_PAGE is not set
-+# CONFIG_CONFIGFS_FS is not set
-+CONFIG_MISC_FILESYSTEMS=y
-+# CONFIG_ADFS_FS is not set
-+# CONFIG_AFFS_FS is not set
-+# CONFIG_HFS_FS is not set
-+# CONFIG_HFSPLUS_FS is not set
-+# CONFIG_BEFS_FS is not set
-+# CONFIG_BFS_FS is not set
-+# CONFIG_EFS_FS is not set
-+CONFIG_CRAMFS=y
-+# CONFIG_SQUASHFS is not set
-+# CONFIG_VXFS_FS is not set
-+# CONFIG_MINIX_FS is not set
-+# CONFIG_OMFS_FS is not set
-+# CONFIG_HPFS_FS is not set
-+# CONFIG_QNX4FS_FS is not set
-+CONFIG_ROMFS_FS=y
-+CONFIG_ROMFS_BACKED_BY_BLOCK=y
-+# CONFIG_ROMFS_BACKED_BY_MTD is not set
-+# CONFIG_ROMFS_BACKED_BY_BOTH is not set
-+CONFIG_ROMFS_ON_BLOCK=y
-+# CONFIG_SYSV_FS is not set
-+# CONFIG_UFS_FS is not set
++#include <plat/cpu-freq.h>
++#include <mach/regs-clock.h>
++#include <plat/clock.h>
++#include <plat/cpu.h>
++#include <plat/pll.h>
++#include <plat/s5p-clock.h>
++#include <plat/clock-clksrc.h>
++#include <plat/s5pv210.h>
 +
-+#
-+# Partition Types
-+#
-+CONFIG_PARTITION_ADVANCED=y
-+# CONFIG_ACORN_PARTITION is not set
-+# CONFIG_OSF_PARTITION is not set
-+# CONFIG_AMIGA_PARTITION is not set
-+# CONFIG_ATARI_PARTITION is not set
-+# CONFIG_MAC_PARTITION is not set
-+CONFIG_MSDOS_PARTITION=y
-+CONFIG_BSD_DISKLABEL=y
-+# CONFIG_MINIX_SUBPARTITION is not set
-+CONFIG_SOLARIS_X86_PARTITION=y
-+# CONFIG_UNIXWARE_DISKLABEL is not set
-+# CONFIG_LDM_PARTITION is not set
-+# CONFIG_SGI_PARTITION is not set
-+# CONFIG_ULTRIX_PARTITION is not set
-+# CONFIG_SUN_PARTITION is not set
-+# CONFIG_KARMA_PARTITION is not set
-+# CONFIG_EFI_PARTITION is not set
-+# CONFIG_SYSV68_PARTITION is not set
-+CONFIG_NLS=y
-+CONFIG_NLS_DEFAULT="iso8859-1"
-+CONFIG_NLS_CODEPAGE_437=y
-+# CONFIG_NLS_CODEPAGE_737 is not set
-+# CONFIG_NLS_CODEPAGE_775 is not set
-+# CONFIG_NLS_CODEPAGE_850 is not set
-+# CONFIG_NLS_CODEPAGE_852 is not set
-+# CONFIG_NLS_CODEPAGE_855 is not set
-+# CONFIG_NLS_CODEPAGE_857 is not set
-+# CONFIG_NLS_CODEPAGE_860 is not set
-+# CONFIG_NLS_CODEPAGE_861 is not set
-+# CONFIG_NLS_CODEPAGE_862 is not set
-+# CONFIG_NLS_CODEPAGE_863 is not set
-+# CONFIG_NLS_CODEPAGE_864 is not set
-+# CONFIG_NLS_CODEPAGE_865 is not set
-+# CONFIG_NLS_CODEPAGE_866 is not set
-+# CONFIG_NLS_CODEPAGE_869 is not set
-+# CONFIG_NLS_CODEPAGE_936 is not set
-+# CONFIG_NLS_CODEPAGE_950 is not set
-+# CONFIG_NLS_CODEPAGE_932 is not set
-+# CONFIG_NLS_CODEPAGE_949 is not set
-+# CONFIG_NLS_CODEPAGE_874 is not set
-+# CONFIG_NLS_ISO8859_8 is not set
-+# CONFIG_NLS_CODEPAGE_1250 is not set
-+# CONFIG_NLS_CODEPAGE_1251 is not set
-+CONFIG_NLS_ASCII=y
-+CONFIG_NLS_ISO8859_1=y
-+# CONFIG_NLS_ISO8859_2 is not set
-+# CONFIG_NLS_ISO8859_3 is not set
-+# CONFIG_NLS_ISO8859_4 is not set
-+# CONFIG_NLS_ISO8859_5 is not set
-+# CONFIG_NLS_ISO8859_6 is not set
-+# CONFIG_NLS_ISO8859_7 is not set
-+# CONFIG_NLS_ISO8859_9 is not set
-+# CONFIG_NLS_ISO8859_13 is not set
-+# CONFIG_NLS_ISO8859_14 is not set
-+# CONFIG_NLS_ISO8859_15 is not set
-+# CONFIG_NLS_KOI8_R is not set
-+# CONFIG_NLS_KOI8_U is not set
-+# CONFIG_NLS_UTF8 is not set
++static int s5pv210_clk_ip0_ctrl(struct clk *clk, int enable)
++{
++	if ((clk->ctrlbit) & (S5P_CLKGATE_IP0_RESERVED |	\
++				S5P_CLKGATE_IP0_ALWAYS_ON))
++		return 0;
 +
-+#
-+# Kernel hacking
-+#
-+# CONFIG_PRINTK_TIME is not set
-+CONFIG_ENABLE_WARN_DEPRECATED=y
-+CONFIG_ENABLE_MUST_CHECK=y
-+CONFIG_FRAME_WARN=1024
-+CONFIG_MAGIC_SYSRQ=y
-+# CONFIG_STRIP_ASM_SYMS is not set
-+# CONFIG_UNUSED_SYMBOLS is not set
-+# CONFIG_DEBUG_FS is not set
-+# CONFIG_HEADERS_CHECK is not set
-+CONFIG_DEBUG_KERNEL=y
-+# CONFIG_DEBUG_SHIRQ is not set
-+CONFIG_DETECT_SOFTLOCKUP=y
-+# CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC is not set
-+CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC_VALUE=0
-+CONFIG_DETECT_HUNG_TASK=y
-+# CONFIG_BOOTPARAM_HUNG_TASK_PANIC is not set
-+CONFIG_BOOTPARAM_HUNG_TASK_PANIC_VALUE=0
-+CONFIG_SCHED_DEBUG=y
-+# CONFIG_SCHEDSTATS is not set
-+# CONFIG_TIMER_STATS is not set
-+# CONFIG_DEBUG_OBJECTS is not set
-+# CONFIG_SLUB_DEBUG_ON is not set
-+# CONFIG_SLUB_STATS is not set
-+# CONFIG_DEBUG_KMEMLEAK is not set
-+# CONFIG_DEBUG_PREEMPT is not set
-+CONFIG_DEBUG_RT_MUTEXES=y
-+CONFIG_DEBUG_PI_LIST=y
-+# CONFIG_RT_MUTEX_TESTER is not set
-+CONFIG_DEBUG_SPINLOCK=y
-+CONFIG_DEBUG_MUTEXES=y
-+# CONFIG_DEBUG_LOCK_ALLOC is not set
-+# CONFIG_PROVE_LOCKING is not set
-+# CONFIG_LOCK_STAT is not set
-+CONFIG_DEBUG_SPINLOCK_SLEEP=y
-+# CONFIG_DEBUG_LOCKING_API_SELFTESTS is not set
-+# CONFIG_DEBUG_KOBJECT is not set
-+CONFIG_DEBUG_BUGVERBOSE=y
-+CONFIG_DEBUG_INFO=y
-+# CONFIG_DEBUG_VM is not set
-+# CONFIG_DEBUG_WRITECOUNT is not set
-+CONFIG_DEBUG_MEMORY_INIT=y
-+# CONFIG_DEBUG_LIST is not set
-+# CONFIG_DEBUG_SG is not set
-+# CONFIG_DEBUG_NOTIFIERS is not set
-+# CONFIG_DEBUG_CREDENTIALS is not set
-+# CONFIG_BOOT_PRINTK_DELAY is not set
-+# CONFIG_RCU_TORTURE_TEST is not set
-+# CONFIG_RCU_CPU_STALL_DETECTOR is not set
-+# CONFIG_BACKTRACE_SELF_TEST is not set
-+# CONFIG_DEBUG_BLOCK_EXT_DEVT is not set
-+# CONFIG_DEBUG_FORCE_WEAK_PER_CPU is not set
-+# CONFIG_FAULT_INJECTION is not set
-+# CONFIG_LATENCYTOP is not set
-+CONFIG_SYSCTL_SYSCALL_CHECK=y
-+# CONFIG_PAGE_POISONING is not set
-+CONFIG_HAVE_FUNCTION_TRACER=y
-+CONFIG_TRACING_SUPPORT=y
-+CONFIG_FTRACE=y
-+# CONFIG_FUNCTION_TRACER is not set
-+# CONFIG_SCHED_TRACER is not set
-+# CONFIG_ENABLE_DEFAULT_TRACERS is not set
-+# CONFIG_BOOT_TRACER is not set
-+CONFIG_BRANCH_PROFILE_NONE=y
-+# CONFIG_PROFILE_ANNOTATED_BRANCHES is not set
-+# CONFIG_PROFILE_ALL_BRANCHES is not set
-+# CONFIG_STACK_TRACER is not set
-+# CONFIG_KMEMTRACE is not set
-+# CONFIG_WORKQUEUE_TRACER is not set
-+# CONFIG_BLK_DEV_IO_TRACE is not set
-+# CONFIG_SAMPLES is not set
-+CONFIG_HAVE_ARCH_KGDB=y
-+# CONFIG_KGDB is not set
-+CONFIG_ARM_UNWIND=y
-+CONFIG_DEBUG_USER=y
-+CONFIG_DEBUG_ERRORS=y
-+# CONFIG_DEBUG_STACK_USAGE is not set
-+CONFIG_DEBUG_LL=y
-+CONFIG_EARLY_PRINTK=y
-+# CONFIG_DEBUG_ICEDCC is not set
-+# CONFIG_OC_ETM is not set
-+CONFIG_DEBUG_S3C_UART=1
++	return s5p_gatectrl(S5P_CLKGATE_IP0, clk, enable);
++}
 +
-+#
-+# Security options
-+#
-+# CONFIG_KEYS is not set
-+# CONFIG_SECURITY is not set
-+# CONFIG_SECURITYFS is not set
-+# CONFIG_DEFAULT_SECURITY_SELINUX is not set
-+# CONFIG_DEFAULT_SECURITY_SMACK is not set
-+# CONFIG_DEFAULT_SECURITY_TOMOYO is not set
-+CONFIG_DEFAULT_SECURITY_DAC=y
-+CONFIG_DEFAULT_SECURITY=""
-+# CONFIG_CRYPTO is not set
-+# CONFIG_BINARY_PRINTF is not set
++static int s5pv210_clk_ip1_ctrl(struct clk *clk, int enable)
++{
++	if ((clk->ctrlbit) & (S5P_CLKGATE_IP1_RESERVED |	\
++				S5P_CLKGATE_IP1_ALWAYS_ON))
++		return 0;
 +
-+#
-+# Library routines
-+#
-+CONFIG_BITREVERSE=y
-+CONFIG_GENERIC_FIND_LAST_BIT=y
-+CONFIG_CRC_CCITT=y
-+# CONFIG_CRC16 is not set
-+# CONFIG_CRC_T10DIF is not set
-+# CONFIG_CRC_ITU_T is not set
-+CONFIG_CRC32=y
-+# CONFIG_CRC7 is not set
-+# CONFIG_LIBCRC32C is not set
-+CONFIG_ZLIB_INFLATE=y
-+CONFIG_LZO_DECOMPRESS=y
-+CONFIG_DECOMPRESS_GZIP=y
-+CONFIG_DECOMPRESS_BZIP2=y
-+CONFIG_DECOMPRESS_LZMA=y
-+CONFIG_DECOMPRESS_LZO=y
-+CONFIG_HAS_IOMEM=y
-+CONFIG_HAS_DMA=y
++	return s5p_gatectrl(S5P_CLKGATE_IP1, clk, enable);
++}
++
++static int s5pv210_clk_ip2_ctrl(struct clk *clk, int enable)
++{
++	if ((clk->ctrlbit) & (S5P_CLKGATE_IP2_RESERVED |	\
++				S5P_CLKGATE_IP2_ALWAYS_ON))
++		return 0;
++
++	return s5p_gatectrl(S5P_CLKGATE_IP2, clk, enable);
++}
++
++static int s5pv210_clk_ip3_ctrl(struct clk *clk, int enable)
++{
++	if ((clk->ctrlbit) & (S5P_CLKGATE_IP3_RESERVED |	\
++				S5P_CLKGATE_IP3_ALWAYS_ON))
++		return 0;
++
++	return s5p_gatectrl(S5P_CLKGATE_IP3, clk, enable);
++}
++
++static struct clk clk_h200 = {
++	.name		= "hclk200",
++	.id		= -1,
++	.rate		= 0,
++	.parent		= NULL,
++	.ctrlbit	= 0,
++};
++
++static struct clk clk_h100 = {
++	.name		= "hclk100",
++	.id		= -1,
++	.rate		= 0,
++	.parent		= NULL,
++	.ctrlbit	= 0,
++};
++
++static struct clk clk_h166 = {
++	.name		= "hclk166",
++	.id		= -1,
++	.rate		= 0,
++	.parent		= NULL,
++	.ctrlbit	= 0,
++};
++
++static struct clk clk_h133 = {
++	.name		= "hclk133",
++	.id		= -1,
++	.rate		= 0,
++	.parent		= NULL,
++	.ctrlbit	= 0,
++};
++
++static struct clk clk_p100 = {
++	.name		= "pclk100",
++	.id		= -1,
++	.rate		= 0,
++	.parent		= NULL,
++	.ctrlbit	= 0,
++};
++
++static struct clk clk_p83 = {
++	.name		= "pclk83",
++	.id		= -1,
++	.rate		= 0,
++	.parent		= NULL,
++	.ctrlbit	= 0,
++};
++
++static struct clk clk_p66 = {
++	.name		= "pclk66",
++	.id		= -1,
++	.rate		= 0,
++	.parent		= NULL,
++	.ctrlbit	= 0,
++};
++
++static struct clk *sys_clks[] = {
++	&clk_h200,
++	&clk_h100,
++	&clk_h166,
++	&clk_h133,
++	&clk_p100,
++	&clk_p83,
++	&clk_p66
++};
++
++static struct clk init_clocks_disable[] = {
++	{
++		.name		= "rot",
++		.id		= -1,
++		.parent		= &clk_h166,
++		.enable		= s5pv210_clk_ip0_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP0_ROTATOR,
++	}, {
++		.name		= "otg",
++		.id		= -1,
++		.parent		= &clk_h133,
++		.enable		= s5pv210_clk_ip1_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP1_USBOTG,
++	}, {
++		.name		= "usb-host",
++		.id		= -1,
++		.parent		= &clk_h133,
++		.enable		= s5pv210_clk_ip1_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP1_USBHOST,
++	}, {
++		.name		= "lcd",
++		.id		= -1,
++		.parent		= &clk_h166,
++		.enable		= s5pv210_clk_ip1_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP1_FIMD,
++	}, {
++		.name		= "cfcon",
++		.id		= 0,
++		.parent		= &clk_h133,
++		.enable		= s5pv210_clk_ip1_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP1_CFCON,
++	}, {
++		.name		= "hsmmc",
++		.id		= 0,
++		.parent		= &clk_h133,
++		.enable		= s5pv210_clk_ip2_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP2_HSMMC0,
++	}, {
++		.name		= "hsmmc",
++		.id		= 1,
++		.parent		= &clk_h133,
++		.enable		= s5pv210_clk_ip2_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP2_HSMMC1,
++	}, {
++		.name		= "hsmmc",
++		.id		= 2,
++		.parent		= &clk_h133,
++		.enable		= s5pv210_clk_ip2_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP2_HSMMC2,
++	}, {
++		.name		= "hsmmc",
++		.id		= 3,
++		.parent		= &clk_h133,
++		.enable		= s5pv210_clk_ip2_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP2_HSMMC3,
++	}, {
++		.name		= "systimer",
++		.id		= -1,
++		.parent		= &clk_p66,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_SYSTIMER,
++	}, {
++		.name		= "watchdog",
++		.id		= -1,
++		.parent		= &clk_p66,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_WDT,
++	}, {
++		.name		= "rtc",
++		.id		= -1,
++		.parent		= &clk_p66,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_RTC,
++	}, {
++		.name		= "uart",
++		.id		= 0,
++		.parent		= &clk_p66,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_UART0,
++	}, {
++		.name		= "uart",
++		.id		= 1,
++		.parent		= &clk_p66,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_UART1,
++	}, {
++		.name		= "uart",
++		.id		= 2,
++		.parent		= &clk_p66,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_UART2,
++	}, {
++		.name		= "uart",
++		.id		= 3,
++		.parent		= &clk_p66,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_UART3,
++	}, {
++		.name		= "i2c",
++		.id		= 0,
++		.parent		= &clk_p66,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_I2C0,
++	}, {
++		.name		= "i2c",
++		.id		= 1,
++		.parent		= &clk_p66,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_I2C1,
++	}, {
++		.name		= "i2c",
++		.id		= 2,
++		.parent		= &clk_p66,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_I2C2,
++	}, {
++		.name		= "spi",
++		.id		= 0,
++		.parent		= &clk_p66,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_SPI0,
++	}, {
++		.name		= "spi",
++		.id		= 1,
++		.parent		= &clk_p66,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_SPI1,
++	}, {
++		.name		= "spi",
++		.id		= 2,
++		.parent		= &clk_p66,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_SPI2,
++	}, {
++		.name		= "timers",
++		.id		= -1,
++		.parent		= &clk_p66,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_PWM,
++	}, {
++		.name		= "adc",
++		.id		= -1,
++		.parent		= &clk_p66,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_TSADC,
++	}, {
++		.name		= "keypad",
++		.id		= -1,
++		.parent		= &clk_p66,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_KEYIF,
++	}, {
++		.name		= "i2s_v50",
++		.id		= 0,
++		.parent		= &clk_p,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_I2S0, /* I2S0 is v5.0 */
++	}, {
++		.name		= "i2s_v32",
++		.id		= 0,
++		.parent		= &clk_p,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_I2S0, /* I2S1 is v3.2 */
++	}, {
++		.name		= "i2s_v32",
++		.id		= 1,
++		.parent		= &clk_p,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= S5P_CLKGATE_IP3_I2S0, /* I2S2 is v3.2 */
++	}
++};
++
++static struct clksrc_clk clk_mout_apll = {
++	.clk	= {
++		.name		= "mout_apll",
++		.id		= -1,
++	},
++	.sources	= &clk_src_apll,
++	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 0, .size = 1 },
++};
++
++static struct clksrc_clk clk_mout_epll = {
++	.clk	= {
++		.name		= "mout_epll",
++		.id		= -1,
++	},
++	.sources	= &clk_src_epll,
++	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 8, .size = 1 },
++};
++
++static struct clksrc_clk clk_mout_mpll = {
++	.clk = {
++		.name		= "mout_mpll",
++		.id		= -1,
++	},
++	.sources	= &clk_src_mpll,
++	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 4, .size = 1 },
++};
++
++static struct clk *clkset_uart_list[] = {
++	NULL,
++	NULL,
++	NULL,
++	NULL,
++	NULL,
++	NULL,
++	&clk_mout_mpll.clk,
++	&clk_mout_epll.clk,
++	NULL,
++	NULL,
++};
++
++static struct clksrc_sources clkset_uart = {
++	.sources	= clkset_uart_list,
++	.nr_sources	= ARRAY_SIZE(clkset_uart_list),
++};
++
++static struct clksrc_clk clksrcs[] = {
++	{
++		.clk	= {
++			.name		= "uclk1",
++			.id		= -1,
++			.ctrlbit	= S5P_CLKGATE_IP3_UART0,
++			.enable		= s5pv210_clk_ip3_ctrl,
++		},
++		.sources = &clkset_uart,
++		.reg_src = { .reg = S5P_CLK_SRC4, .shift = 16, .size = 4 },
++		.reg_div = { .reg = S5P_CLK_DIV4, .shift = 16, .size = 4 },
++	}
++};
++
++/* Clock initialisation code */
++static struct clksrc_clk *init_parents[] = {
++	&clk_mout_apll,
++	&clk_mout_epll,
++	&clk_mout_mpll,
++};
++
++#define GET_DIV(clk, field) ((((clk) & field##_MASK) >> field##_SHIFT) + 1)
++
++void __init_or_cpufreq s5pv210_setup_clocks(void)
++{
++	struct clk *xtal_clk;
++	unsigned long xtal;
++	unsigned long armclk;
++	unsigned long hclk200;
++	unsigned long hclk166;
++	unsigned long hclk133;
++	unsigned long pclk100;
++	unsigned long pclk83;
++	unsigned long pclk66;
++	unsigned long apll;
++	unsigned long mpll;
++	unsigned long epll;
++	unsigned int ptr;
++	u32 clkdiv0, clkdiv1;
++
++	printk(KERN_DEBUG "%s: registering clocks\n", __func__);
++
++	clkdiv0 = __raw_readl(S5P_CLK_DIV0);
++	clkdiv1 = __raw_readl(S5P_CLK_DIV1);
++
++	printk(KERN_DEBUG "%s: clkdiv0 = %08x, clkdiv1 = %08x\n",
++				__func__, clkdiv0, clkdiv1);
++
++	xtal_clk = clk_get(NULL, "xtal");
++	BUG_ON(IS_ERR(xtal_clk));
++
++	xtal = clk_get_rate(xtal_clk);
++	clk_put(xtal_clk);
++
++	printk(KERN_DEBUG "%s: xtal is %ld\n", __func__, xtal);
++
++	apll = s5p_get_pll45xx(xtal, __raw_readl(S5P_APLL_CON), pll_4508);
++	mpll = s5p_get_pll45xx(xtal, __raw_readl(S5P_MPLL_CON), pll_4502);
++	epll = s5p_get_pll45xx(xtal, __raw_readl(S5P_EPLL_CON), pll_4500);
++
++	printk(KERN_INFO "S5PV210: PLL settings, A=%ld, M=%ld, E=%ld",
++			apll, mpll, epll);
++
++	armclk = apll / GET_DIV(clkdiv0, S5P_CLKDIV0_APLL);
++	if (__raw_readl(S5P_CLK_SRC0) & S5P_CLKSRC0_MUX200_MASK)
++		hclk200 = mpll / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK200);
++	else
++		hclk200 = armclk / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK200);
++
++	if (__raw_readl(S5P_CLK_SRC0) & S5P_CLKSRC0_MUX166_MASK) {
++		hclk166 = apll / GET_DIV(clkdiv0, S5P_CLKDIV0_A2M);
++		hclk166 = hclk166 / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK166);
++	} else
++		hclk166 = mpll / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK166);
++
++	if (__raw_readl(S5P_CLK_SRC0) & S5P_CLKSRC0_MUX133_MASK) {
++		hclk133 = apll / GET_DIV(clkdiv0, S5P_CLKDIV0_A2M);
++		hclk133 = hclk133 / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK133);
++	} else
++		hclk133 = mpll / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK133);
++
++	pclk100 = hclk200 / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK100);
++	pclk83 = hclk166 / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK83);
++	pclk66 = hclk133 / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK66);
++
++	printk(KERN_INFO "S5PV210: ARMCLK=%ld, HCLKM=%ld, HCLKD=%ld, \
++			HCLKP=%ld, PCLKM=%ld, PCLKD=%ld, PCLKP=%ld\n",
++	       armclk, hclk200, hclk166, hclk133, pclk100, pclk83, pclk66);
++
++	clk_fout_apll.rate = apll;
++	clk_fout_mpll.rate = mpll;
++	clk_fout_epll.rate = epll;
++
++	clk_f.rate = armclk;
++	clk_h.rate = hclk133;
++	clk_p.rate = pclk66;
++	clk_p66.rate = pclk66;
++	clk_p83.rate = pclk83;
++	clk_h133.rate = hclk133;
++	clk_h166.rate = hclk166;
++	clk_h200.rate = hclk200;
++
++	for (ptr = 0; ptr < ARRAY_SIZE(init_parents); ptr++)
++		s3c_set_clksrc(init_parents[ptr], true);
++
++	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
++		s3c_set_clksrc(&clksrcs[ptr], true);
++}
++
++static struct clk *clks[] __initdata = {
++	&clk_mout_epll.clk,
++	&clk_mout_mpll.clk,
++};
++
++void __init s5pv210_register_clocks(void)
++{
++	struct clk *clkp;
++	int ret;
++	int ptr;
++
++	ret = s3c24xx_register_clocks(clks, ARRAY_SIZE(clks));
++	if (ret > 0)
++		printk(KERN_ERR "Failed to register %u clocks\n", ret);
++
++	s3c_register_clksrc(clksrcs, ARRAY_SIZE(clksrcs));
++
++	ret = s3c24xx_register_clocks(sys_clks, ARRAY_SIZE(sys_clks));
++	if (ret > 0)
++		printk(KERN_ERR "Failed to register system clocks\n");
++
++	clkp = init_clocks_disable;
++	for (ptr = 0; ptr < ARRAY_SIZE(init_clocks_disable); ptr++, clkp++) {
++		ret = s3c24xx_register_clock(clkp);
++		if (ret < 0) {
++			printk(KERN_ERR "Failed to register clock %s (%d)\n",
++			       clkp->name, ret);
++		}
++		(clkp->enable)(clkp, 0);
++	}
++
++	s3c_pwmclk_init();
++}
 -- 
 1.6.2.5
