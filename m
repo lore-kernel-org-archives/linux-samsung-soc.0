@@ -1,125 +1,40 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH] ARM: SAMSUNG: Add initial documentation directory and
-	overview
-Date: Tue, 19 Jan 2010 00:35:21 +0000
-Message-ID: <20100119003520.GB26562@trinity.fluff.org>
-References: <1263804317-8996-1-git-send-email-ben-linux@fluff.org> <1263804317-8996-4-git-send-email-ben-linux@fluff.org> <4B54425E.8020400@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: S5P6440: Add IO descriptor for ChipID block.
+Date: Tue, 19 Jan 2010 11:21:39 +0900
+Message-ID: <1263867699-28672-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:42209 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751638Ab0ASAfX (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:45833 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751674Ab0ASCaL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Jan 2010 19:35:23 -0500
-Content-Disposition: inline
-In-Reply-To: <4B54425E.8020400@gmail.com>
+	Mon, 18 Jan 2010 21:30:11 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-On Mon, Jan 18, 2010 at 12:13:34PM +0100, Maurus Cuelenaere wrote:
-> Op 18-01-10 09:45, Ben Dooks schreef:
->> Start Documentation/arm/Samsung and add an initial overview file
->> which whilst is not complete, is better than nothing.
->>
->> Signed-off-by: Ben Dooks<ben-linux@fluff.org>
->> ---
->>   Documentation/arm/Samsung/Overview.txt |   63 ++++++++++++++++++++++++++++++++
->>   1 files changed, 63 insertions(+), 0 deletions(-)
->>   create mode 100644 Documentation/arm/Samsung/Overview.txt
->>
->> diff --git a/Documentation/arm/Samsung/Overview.txt b/Documentation/arm/Samsung/Overview.txt
->> new file mode 100644
->> index 0000000..c3d2f44
->> --- /dev/null
->> +++ b/Documentation/arm/Samsung/Overview.txt
->> @@ -0,0 +1,63 @@
->> +		Samsung ARM Linux Overview
->> +		==========================
->> +
->> +Introduction
->> +------------
->> +
->> +  The Samsung range of ARM SoCs spans many similar devices, from the initial
->> +  ARM9 through to the newest ARM cores. This document shows an overview of
->> +  the current kernel support, how to use it and where to find the code
->> +  that supports this.
->> +
->> +  The currently supported SoCs are:
->> +
->> +  - S3C24XX: See Documentation/arm/Samsung-S3C24XX/Overview.txt for full list
->> +  - S3C64XX: S3C6400 and S3C6410
->> +
->> +  S5PC100 and S5PC110 support is currently being merged
->> +
->> +
->> +S3C24XX Systems
->> +---------------
->> +
->> +  There is still documentation in Docuemntation/arm/Samsung-S3C24XX/ which
->>    
->
-> Same typo as before? Docuemntation ->  Documentation
+This patch adds the IO descriptor for ChipID block in S5P6440.
 
-Fixed in next-samsung-doc1 branch, forgot to remove this one from this
-series.
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s5p6440/include/mach/map.h |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
->> +  deals with the architecture and drivers specific to these devices.
->> +
->> +  See Documentation/arm/Samsung-S3C24XX/Overview.txt for more information
->> +  on the implementation details and specific support.
->> +
->> +
->> +Configuration
->> +-------------
->> +
->> +  A number of configurations are supplied, as there is no current way of
->> +  unifying all the SoCs into one kernel.
->> +
->> +  [ to finish ]
->> +
->> +Layout
->> +------
->> +
->> +  [ to finish ]
->> +
->> +
->> +Port Contributors
->> +-----------------
->> +
->> +  Ben Dooks (BJD)
->> +  Vincent Sanders
->> +  Herbert Potzl
->> +  Arnaud Patard (RTP)
->> +  Roc Wu
->> +  Klaus Fetscher
->> +  Dimitry Andric
->> +  Shannon Holland
->> +  Guillaume Gourat (NexVision)
->> +  Christer Weinigel (wingel) (Acer N30)
->> +  Lucas Correia Villa Real (S3C2400 port)
->> +
->> +
->> +Document Author
->> +---------------
->> +
->> +Copyright 2009 Ben Dooks<ben-linux@fluff.org>
->>    
->
-> Regards,
-> Maurus Cuelenaere
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
+diff --git a/arch/arm/mach-s5p6440/include/mach/map.h b/arch/arm/mach-s5p6440/include/mach/map.h
+index b370329..dc922d6 100644
+--- a/arch/arm/mach-s5p6440/include/mach/map.h
++++ b/arch/arm/mach-s5p6440/include/mach/map.h
+@@ -15,6 +15,11 @@
+ 
+ #include <plat/map-base.h>
+ 
++/* Chip ID */
++#define S5P6440_PA_CHIPID	(0xE0000000)
++#define S5P_PA_CHIPID		S5P6440_PA_CHIPID
++#define S5P_VA_CHIPID		S3C_ADDR(0x00700000)
++
+ /* SYSCON */
+ #define S5P6440_PA_SYSCON	(0xE0100000)
+ #define S5P_PA_SYSCON		S5P6440_PA_SYSCON
 -- 
--- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+1.6.2.5
