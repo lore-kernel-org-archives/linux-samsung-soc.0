@@ -1,831 +1,1082 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH 01/10] ARM: S5PV210: Add Samsung S5PV210 CPU support
-Date: Tue, 19 Jan 2010 03:35:24 +0000
-Message-ID: <20100119033524.GA3971@trinity.fluff.org>
-References: <1263868047-30646-1-git-send-email-kgene.kim@samsung.com>
+Subject: Re: [PATCH 02/10] ARM: S5PV210: Add clock support for S5PV210
+Date: Tue, 19 Jan 2010 03:43:24 +0000
+Message-ID: <20100119034324.GB3971@trinity.fluff.org>
+References: <1263868056-30680-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:55064 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:55674 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752123Ab0ASDfa (ORCPT
+	id S1752960Ab0ASDn0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Jan 2010 22:35:30 -0500
+	Mon, 18 Jan 2010 22:43:26 -0500
 Content-Disposition: inline
-In-Reply-To: <1263868047-30646-1-git-send-email-kgene.kim@samsung.com>
+In-Reply-To: <1263868056-30680-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Thomas Abraham <thomas.ab@samsung.com>
 
-On Tue, Jan 19, 2010 at 11:27:27AM +0900, Kukjin Kim wrote:
-> This patch adds support for Samsung S5PV210 CPU. This patch also adds
-> an entry for S5PV210 cpu in plat-s5p cpu table.
+On Tue, Jan 19, 2010 at 11:27:36AM +0900, Kukjin Kim wrote:
+> This patch adds clock support for S5PV210. This patch adds the clock
+> register definitions and the various system clocks in S5PV210.
+> Clocks that are common to other S5P SoC'c are added in the common
+> S5P clock support.
 > 
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > ---
->  arch/arm/mach-s5pv210/cpu.c                      |  126 +++++++++++++++++++++
->  arch/arm/mach-s5pv210/include/mach/debug-macro.S |   39 +++++++
->  arch/arm/mach-s5pv210/include/mach/entry-macro.S |   54 +++++++++
->  arch/arm/mach-s5pv210/include/mach/gpio-core.h   |   19 +++
->  arch/arm/mach-s5pv210/include/mach/gpio.h        |  129 ++++++++++++++++++++++
->  arch/arm/mach-s5pv210/include/mach/hardware.h    |   18 +++
->  arch/arm/mach-s5pv210/include/mach/map.h         |  102 +++++++++++++++++
->  arch/arm/mach-s5pv210/include/mach/memory.h      |   20 ++++
->  arch/arm/mach-s5pv210/include/mach/system.h      |   26 +++++
->  arch/arm/mach-s5pv210/include/mach/uncompress.h  |   24 ++++
->  arch/arm/plat-s5p/cpu.c                          |   15 +++
->  arch/arm/plat-s5p/include/plat/s5pv210.h         |   37 ++++++
->  arch/arm/plat-s5p/s5pv210-init.c                 |   44 ++++++++
->  13 files changed, 653 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-s5pv210/cpu.c
->  create mode 100644 arch/arm/mach-s5pv210/include/mach/debug-macro.S
->  create mode 100644 arch/arm/mach-s5pv210/include/mach/entry-macro.S
->  create mode 100644 arch/arm/mach-s5pv210/include/mach/gpio-core.h
->  create mode 100644 arch/arm/mach-s5pv210/include/mach/gpio.h
->  create mode 100644 arch/arm/mach-s5pv210/include/mach/hardware.h
->  create mode 100644 arch/arm/mach-s5pv210/include/mach/map.h
->  create mode 100644 arch/arm/mach-s5pv210/include/mach/memory.h
->  create mode 100644 arch/arm/mach-s5pv210/include/mach/system.h
->  create mode 100644 arch/arm/mach-s5pv210/include/mach/uncompress.h
->  create mode 100644 arch/arm/plat-s5p/include/plat/s5pv210.h
->  create mode 100644 arch/arm/plat-s5p/s5pv210-init.c
+>  arch/arm/mach-s5pv210/include/mach/regs-clock.h |  453 +++++++++++++++++++++
+>  arch/arm/plat-s5p/clock.c                       |   13 +
+>  arch/arm/plat-s5p/include/plat/s5p-clock.h      |    2 +
+>  arch/arm/plat-s5p/s5pv210-clock.c               |  494 +++++++++++++++++++++++
+>  4 files changed, 962 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm/mach-s5pv210/include/mach/regs-clock.h
+>  create mode 100755 arch/arm/plat-s5p/s5pv210-clock.c
 > 
-> diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
+> diff --git a/arch/arm/mach-s5pv210/include/mach/regs-clock.h b/arch/arm/mach-s5pv210/include/mach/regs-clock.h
 > new file mode 100644
-> index 0000000..778d2dc
+> index 0000000..e022d0e
 > --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/cpu.c
-> @@ -0,0 +1,126 @@
-> +/* linux/arch/arm/mach-s5pv210/cpu.c
+> +++ b/arch/arm/mach-s5pv210/include/mach/regs-clock.h
+> @@ -0,0 +1,453 @@
+> +/* linux/arch/arm/mach-s5pv210/include/mach/regs-clock.h
 > + *
 > + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
 > + *		http://www.samsung.com/
+> + *
+> + * S5PV210 - Clock register definitions
 > + *
 > + * This program is free software; you can redistribute it and/or modify
 > + * it under the terms of the GNU General Public License version 2 as
 > + * published by the Free Software Foundation.
 > +*/
 > +
-> +#include <linux/kernel.h>
-> +#include <linux/types.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/list.h>
-> +#include <linux/timer.h>
-> +#include <linux/init.h>
-> +#include <linux/module.h>
-> +#include <linux/clk.h>
-> +#include <linux/io.h>
-> +#include <linux/sysdev.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include <asm/mach/arch.h>
-> +#include <asm/mach/map.h>
-> +#include <asm/mach/irq.h>
-> +
-> +#include <asm/proc-fns.h>
-> +#include <mach/map.h>
-> +#include <mach/regs-clock.h>
-> +
-> +#include <plat/cpu.h>
-> +#include <plat/devs.h>
-> +#include <plat/clock.h>
-> +#include <plat/s5pv210.h>
-> +
-> +/* Initial IO mappings */
-> +
-> +static struct map_desc s5pv210_iodesc[] __initdata = {
-> +	{
-> +		.virtual	= (unsigned long)S5P_VA_SYSTIMER,
-> +		.pfn		= __phys_to_pfn(S5P_PA_SYSTIMER),
-> +		.length		= SZ_1M,
-> +		.type		= MT_DEVICE,
-> +	}, {
-> +		.virtual	= (unsigned long)S5P_VA_VIC2,
-> +		.pfn		= __phys_to_pfn(S5P_PA_VIC2),
-> +		.length		= SZ_16K,
-> +		.type		= MT_DEVICE,
-> +	}, {
-> +		.virtual	= (unsigned long)S5P_VA_VIC3,
-> +		.pfn		= __phys_to_pfn(S5P_PA_VIC3),
-> +		.length		= SZ_16K,
-> +		.type		= MT_DEVICE,
-> +	}, {
-> +		.virtual	= (unsigned long)S5P_VA_SROMC,
-> +		.pfn		= __phys_to_pfn(S5P_PA_SROMC),
-> +		.length		= SZ_4K,
-> +		.type		= MT_DEVICE,
-> +	}
-> +};
-
-Since this table is in s5pv210 specific code, let's call the PA
-addresses such as S5P_PA_VIC2 S5PV210_PA_VIC2 to distinguish them
-from the other platform's variants.
-
-> +static void s5pv210_idle(void)
-> +{
-> +	if (!need_resched())
-> +		cpu_do_idle();
-> +
-> +	local_irq_enable();
-> +}
-> +
-> +/* s5pv210_map_io
-> + *
-> + * register the standard cpu IO areas
-> +*/
-> +
-> +void __init s5pv210_map_io(void)
-> +{
-> +	iotable_init(s5pv210_iodesc, ARRAY_SIZE(s5pv210_iodesc));
-> +}
-> +
-> +void __init s5pv210_init_clocks(int xtal)
-> +{
-> +	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
-> +
-> +	s3c24xx_register_baseclocks(xtal);
-> +	s5p_register_clocks(xtal);
-> +	s5pv210_register_clocks();
-> +	s5pv210_setup_clocks();
-> +}
-> +
-> +void __init s5pv210_init_irq(void)
-> +{
-> +	u32 vic[4];	/* S5PV210 supports 4 VIC */
-> +
-> +	/* All the VICs are fully populated. */
-> +	vic[0] = ~0;
-> +	vic[1] = ~0;
-> +	vic[2] = ~0;
-> +	vic[3] = ~0;
-> +
-> +	s5p_init_irq(vic, ARRAY_SIZE(vic));
-> +}
-
-I'm begining to think we should move the vic initialisation to these
-functions and avoid having to pass an array and size about. I'll think
-about this one, maybe somethign to change once we've merged support for
-these systems.
-
-> +static struct sysdev_class s5pv210_sysclass = {
-> +	.name	= "s5pv210-core",
-> +};
-> +
-> +static struct sys_device s5pv210_sysdev = {
-> +	.cls	= &s5pv210_sysclass,
-> +};
-> +
-> +static int __init s5pv210_core_init(void)
-> +{
-> +	return sysdev_class_register(&s5pv210_sysclass);
-> +}
-> +
-> +core_initcall(s5pv210_core_init);
-> +
-> +int __init s5pv210_init(void)
-> +{
-> +	printk(KERN_INFO "S5PV210: Initializing architecture\n");
-> +
-> +	/* set idle function */
-> +	pm_idle = s5pv210_idle;
-> +
-> +	return sysdev_register(&s5pv210_sysdev);
-> +}
-> diff --git a/arch/arm/mach-s5pv210/include/mach/debug-macro.S b/arch/arm/mach-s5pv210/include/mach/debug-macro.S
-> new file mode 100644
-> index 0000000..3c568a3
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/include/mach/debug-macro.S
-> @@ -0,0 +1,39 @@
-> +/* linux/arch/arm/mach-s5pv210/include/mach/debug-macro.S
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * Based on arch/arm/mach-s3c6400/include/mach/debug-macro.S
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +/* pull in the relevant register and map files. */
+> +#ifndef __ASM_ARCH_REGS_CLOCK_H
+> +#define __ASM_ARCH_REGS_CLOCK_H __FILE__
 > +
 > +#include <mach/map.h>
-> +#include <plat/regs-serial.h>
 > +
-> +	/* note, for the boot process to work we have to keep the UART
-> +	 * virtual address aligned to an 1MiB boundary for the L1
-> +	 * mapping the head code makes. We keep the UART virtual address
-> +	 * aligned and add in the offset when we load the value here.
-> +	 */
+> +#define S5P_CLKREG(x)		(S5P_VA_SYSCON + (x))
 > +
-> +	.macro addruart, rx
-> +		mrc	p15, 0, \rx, c1, c0
-> +		tst	\rx, #1
-> +		ldreq	\rx, = S5P_PA_UART
-> +		ldrne	\rx, = (S5P_VA_UART + S5P_PA_UART & 0xfffff)
-> +#if CONFIG_DEBUG_S3C_UART != 0
-> +		add	\rx, \rx, #(0x400 * CONFIG_DEBUG_S3C_UART)
-> +#endif
-> +	.endm
+> +#define S5P_APLL_LOCK		S5P_CLKREG(0x00)
+> +#define S5P_MPLL_LOCK		S5P_CLKREG(0x08)
+> +#define S5P_EPLL_LOCK		S5P_CLKREG(0x10)
+> +#define S5P_VPLL_LOCK		S5P_CLKREG(0x20)
 > +
-> +/* include the reset of the code which will do the work, we're only
-> + * compiling for a single cpu processor type so the default of s3c2440
-> + * will be fine with us.
-> + */
+> +#define S5P_APLL_CON		S5P_CLKREG(0x100)
+> +#define S5P_MPLL_CON		S5P_CLKREG(0x108)
+> +#define S5P_EPLL_CON		S5P_CLKREG(0x110)
+> +#define S5P_VPLL_CON		S5P_CLKREG(0x120)
 > +
-> +#include <plat/debug-macro.S>
-> diff --git a/arch/arm/mach-s5pv210/include/mach/entry-macro.S b/arch/arm/mach-s5pv210/include/mach/entry-macro.S
-> new file mode 100644
-> index 0000000..503c1ec
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/include/mach/entry-macro.S
-> @@ -0,0 +1,54 @@
-> +/* linux/arch/arm/mach-s5pv210/include/mach/entry-macro.S
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * Low-level IRQ helper macros for the Samsung S5PV210
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
+> +#define S5P_CLK_SRC0		S5P_CLKREG(0x200)
+> +#define S5P_CLK_SRC1		S5P_CLKREG(0x204)
+> +#define S5P_CLK_SRC2		S5P_CLKREG(0x208)
+> +#define S5P_CLK_SRC3		S5P_CLKREG(0x20C)
+> +#define S5P_CLK_SRC4		S5P_CLKREG(0x210)
+> +#define S5P_CLK_SRC5		S5P_CLKREG(0x214)
+> +#define S5P_CLK_SRC6		S5P_CLKREG(0x218)
 > +
-> +#include <asm/hardware/vic.h>
-> +#include <mach/map.h>
-> +#include <plat/irqs.h>
+> +#define S5P_CLK_SRC_MASK0	S5P_CLKREG(0x280)
+> +#define S5P_CLK_SRC_MASK1	S5P_CLKREG(0x284)
 > +
-> +	.macro	disable_fiq
-> +	.endm
+> +#define S5P_CLK_DIV0		S5P_CLKREG(0x300)
+> +#define S5P_CLK_DIV1		S5P_CLKREG(0x304)
+> +#define S5P_CLK_DIV2		S5P_CLKREG(0x308)
+> +#define S5P_CLK_DIV3		S5P_CLKREG(0x30C)
+> +#define S5P_CLK_DIV4		S5P_CLKREG(0x310)
+> +#define S5P_CLK_DIV5		S5P_CLKREG(0x314)
+> +#define S5P_CLK_DIV6		S5P_CLKREG(0x318)
+> +#define S5P_CLK_DIV7		S5P_CLKREG(0x31C)
 > +
-> +	.macro	get_irqnr_preamble, base, tmp
-> +	ldr	\base, =S5P_VA_VIC0
-> +	.endm
+> +#define S5P_CLKGATE_MAIN0	S5P_CLKREG(0x400)
+> +#define S5P_CLKGATE_MAIN1	S5P_CLKREG(0x404)
+> +#define S5P_CLKGATE_MAIN2	S5P_CLKREG(0x408)
 > +
-> +	.macro	arch_ret_to_user, tmp1, tmp2
-> +	.endm
+> +#define S5P_CLKGATE_PERI0	S5P_CLKREG(0x420)
+> +#define S5P_CLKGATE_PERI1	S5P_CLKREG(0x424)
 > +
-> +	.macro	get_irqnr_and_base, irqnr, irqstat, base, tmp
+> +#define S5P_CLKGATE_SCLK0	S5P_CLKREG(0x440)
+> +#define S5P_CLKGATE_SCLK1	S5P_CLKREG(0x444)
+> +#define S5P_CLKGATE_IP0		S5P_CLKREG(0x460)
+> +#define S5P_CLKGATE_IP1		S5P_CLKREG(0x464)
+> +#define S5P_CLKGATE_IP2		S5P_CLKREG(0x468)
+> +#define S5P_CLKGATE_IP3		S5P_CLKREG(0x46C)
+> +#define S5P_CLKGATE_IP4		S5P_CLKREG(0x470)
 > +
-> +	@ check the vic0
-> +	mov	\irqnr, # S5P_IRQ_OFFSET + 31
-> +	ldr	\irqstat, [ \base, # VIC_IRQ_STATUS ]
-> +	teq	\irqstat, #0
+> +#define S5P_CLKGATE_BLOCK	S5P_CLKREG(0x480)
+> +#define S5P_CLKGATE_BUS0	S5P_CLKREG(0x484)
+> +#define S5P_CLKGATE_BUS1	S5P_CLKREG(0x488)
+> +#define S5P_CLK_OUT		S5P_CLKREG(0x500)
 > +
-> +	@ otherwise try vic1
-> +	addeq	\tmp, \base, #(S5P_VA_VIC1 - S5P_VA_VIC0)
-> +	addeq	\irqnr, \irqnr, #32
-> +	ldreq	\irqstat, [ \tmp, # VIC_IRQ_STATUS ]
-> +	teqeq	\irqstat, #0
+> +/* CLKSRC0 */
+> +#define S5P_CLKSRC0_MUX200_MASK		(0x1<<16)
+> +#define S5P_CLKSRC0_MUX166_MASK		(0x1<<20)
+> +#define S5P_CLKSRC0_MUX133_MASK		(0x1<<24)
 > +
-> +	@ otherwise try vic2
-> +	addeq	\tmp, \base, #(S5P_VA_VIC2 - S5P_VA_VIC0)
-> +	addeq	\irqnr, \irqnr, #32
-> +	ldreq	\irqstat, [ \tmp, # VIC_IRQ_STATUS ]
-> +	teqeq	\irqstat, #0
+> +/* CLKDIV0 */
+> +#define S5P_CLKDIV0_APLL_SHIFT		(0)
+> +#define S5P_CLKDIV0_APLL_MASK		(0x7 << S5P_CLKDIV0_APLL_SHIFT)
+> +#define S5P_CLKDIV0_A2M_SHIFT		(4)
+> +#define S5P_CLKDIV0_A2M_MASK		(0x7 << S5P_CLKDIV0_A2M_SHIFT)
+> +#define S5P_CLKDIV0_HCLK200_SHIFT	(8)
+> +#define S5P_CLKDIV0_HCLK200_MASK	(0x7 << S5P_CLKDIV0_HCLK200_SHIFT)
+> +#define S5P_CLKDIV0_PCLK100_SHIFT	(12)
+> +#define S5P_CLKDIV0_PCLK100_MASK	(0x7 << S5P_CLKDIV0_PCLK100_SHIFT)
+> +#define S5P_CLKDIV0_HCLK166_SHIFT	(16)
+> +#define S5P_CLKDIV0_HCLK166_MASK	(0xF << S5P_CLKDIV0_HCLK166_SHIFT)
+> +#define S5P_CLKDIV0_PCLK83_SHIFT	(20)
+> +#define S5P_CLKDIV0_PCLK83_MASK		(0x7 << S5P_CLKDIV0_PCLK83_SHIFT)
+> +#define S5P_CLKDIV0_HCLK133_SHIFT	(24)
+> +#define S5P_CLKDIV0_HCLK133_MASK	(0xF << S5P_CLKDIV0_HCLK133_SHIFT)
+> +#define S5P_CLKDIV0_PCLK66_SHIFT	(28)
+> +#define S5P_CLKDIV0_PCLK66_MASK		(0x7 << S5P_CLKDIV0_PCLK66_SHIFT)
 > +
-> +	@ otherwise try vic3
-> +	addeq	\tmp, \base, #(S5P_VA_VIC3 - S5P_VA_VIC0)
-> +	addeq	\irqnr, \irqnr, #32
-> +	ldreq	\irqstat, [ \tmp, # VIC_IRQ_STATUS ]
-> +	teqeq	\irqstat, #0
+> +/* Clock Gate Main0 Registers */
+> +#define S5P_CLKGATE_MAIN0_IPC		(1<<30)
+> +#define S5P_CLKGATE_MAIN0_ROTATOR	(1<<29)
+> +#define S5P_CLKGATE_MAIN0_JPEG		(1<<28)
+> +#define S5P_CLKGATE_MAIN0_FIMC2		(1<<26)
+> +#define S5P_CLKGATE_MAIN0_FIMC1		(1<<25)
+> +#define S5P_CLKGATE_MAIN0_FIMC0		(1<<24)
+> +#define S5P_CLKGATE_MAIN0_G3D		(1<<8)
+> +#define S5P_CLKGATE_MAIN0_IMEM		(1<<5)
+> +#define S5P_CLKGATE_MAIN0_PDMA1		(1<<4)
+> +#define S5P_CLKGATE_MAIN0_PDMA0		(1<<3)
+> +#define S5P_CLKGATE_MAIN0_MDMA		(1<<2)
+> +#define S5P_CLKGATE_MAIN0_DMC1		(1<<1)
+> +#define S5P_CLKGATE_MAIN0_DMC0		(1<<0)
 > +
-> +	clzne	\irqstat, \irqstat
-> +	subne	\irqnr, \irqnr, \irqstat
-> +	.endm
-> diff --git a/arch/arm/mach-s5pv210/include/mach/gpio-core.h b/arch/arm/mach-s5pv210/include/mach/gpio-core.h
-> new file mode 100644
-> index 0000000..acb6a1e
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/include/mach/gpio-core.h
-> @@ -0,0 +1,19 @@
-> +/* linux/arch/arm/mach-s5pv210/include/mach/gpio-core.h
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * S5PV210 - GPIO core support
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
+> +/* Clock Gate Main1 Registers */
+> +#define S5P_CLKGATE_MAIN1_NFCON		(1<<28)
+> +#define S5P_CLKGATE_MAIN1_SROMC		(1<<26)
+> +#define S5P_CLKGATE_MAIN1_CFCON		(1<<25)
+> +#define S5P_CLKGATE_MAIN1_NANDXL	(1<<24)
+> +#define S5P_CLKGATE_MAIN1_USBHOST	(1<<17)
+> +#define S5P_CLKGATE_MAIN1_USBOTG	(1<<16)
+> +#define S5P_CLKGATE_MAIN1_TVENC		(1<<10)
+> +#define S5P_CLKGATE_MAIN1_MIXER		(1<<9)
+> +#define S5P_CLKGATE_MAIN1_VP		(1<<8)
+> +#define S5P_CLKGATE_MAIN1_MIE		(1<<1)
+> +#define S5P_CLKGATE_MAIN1_FIMD		(1<<0)
 > +
-> +#ifndef __ASM_ARCH_GPIO_CORE_H
-> +#define __ASM_ARCH_GPIO_CORE_H __FILE__
+> +/* Clock Gate Main2 Registers */
+> +#define S5P_CLKGATE_MAIN2_TZIC3		(1<<31)
+> +#define S5P_CLKGATE_MAIN2_TZIC2		(1<<30)
+> +#define S5P_CLKGATE_MAIN2_TZIC1		(1<<29)
+> +#define S5P_CLKGATE_MAIN2_TZIC0		(1<<28)
+> +#define S5P_CLKGATE_MAIN2_VIC3		(1<<27)
+> +#define S5P_CLKGATE_MAIN2_VIC2		(1<<26)
+> +#define S5P_CLKGATE_MAIN2_VIC1		(1<<25)
+> +#define S5P_CLKGATE_MAIN2_VIC0		(1<<24)
+> +#define S5P_CLKGATE_MAIN2_TSI		(1<<20)
+> +#define S5P_CLKGATE_MAIN2_HSMMC3	(1<<19)
+> +#define S5P_CLKGATE_MAIN2_HSMMC2	(1<<18)
+> +#define S5P_CLKGATE_MAIN2_HSMMC1	(1<<17)
+> +#define S5P_CLKGATE_MAIN2_HSMMC0	(1<<16)
+> +#define S5P_CLKGATE_MAIN2_HOSTIF	(1<<10)
+> +#define S5P_CLKGATE_MAIN2_MODEM		(1<<9)
+> +#define S5P_CLKGATE_MAIN2_CORESIGHT	(1<<8)
+> +#define S5P_CLKGATE_MAIN2_SDM		(1<<1)
+> +#define S5P_CLKGATE_MAIN2_SECSS		(1<<0)
 > +
-> +/* currently we just include the platform support */
-> +#include <plat/gpio-core.h>
+> +/* Clock Gate Peri0 Registers */
+> +#define S5P_CLKGATE_PERI0_PCM2		(1<<30)
+> +#define S5P_CLKGATE_PERI0_PCM1		(1<<29)
+> +#define S5P_CLKGATE_PERI0_PCM0		(1<<28)
+> +#define S5P_CLKGATE_PERI0_SYSCON	(1<<27)
+> +#define S5P_CLKGATE_PERI0_GPIO		(1<<26)
+> +#define S5P_CLKGATE_PERI0_TSADC		(1<<24)
+> +#define S5P_CLKGATE_PERI0_PWM		(1<<23)
+> +#define S5P_CLKGATE_PERI0_WDT		(1<<22)
+> +#define S5P_CLKGATE_PERI0_KEYIF		(1<<21)
+> +#define S5P_CLKGATE_PERI0_UART3		(1<<20)
+> +#define S5P_CLKGATE_PERI0_UART2		(1<<19)
+> +#define S5P_CLKGATE_PERI0_UART1		(1<<18)
+> +#define S5P_CLKGATE_PERI0_UART0		(1<<17)
+> +#define S5P_CLKGATE_PERI0_SYSTIMER	(1<<16)
+> +#define S5P_CLKGATE_PERI0_RTC		(1<<15)
+> +#define S5P_CLKGATE_PERI0_SPI2		(1<<14)
+> +#define S5P_CLKGATE_PERI0_SPI1		(1<<13)
+> +#define S5P_CLKGATE_PERI0_SPI0		(1<<12)
+> +#define S5P_CLKGATE_PERI0_I2C_HDMI_PHY	(1<<11)
+> +#define S5P_CLKGATE_PERI0_I2C_HDMI_DDC	(1<<10)
+> +#define S5P_CLKGATE_PERI0_I2C2		(1<<9)
+> +#define S5P_CLKGATE_PERI0_I2C1		(1<<8)
+> +#define S5P_CLKGATE_PERI0_I2C0		(1<<7)
+> +#define S5P_CLKGATE_PERI0_I2S2		(1<<6)
+> +#define S5P_CLKGATE_PERI0_I2S1		(1<<5)
+> +#define S5P_CLKGATE_PERI0_I2S0		(1<<4)
+> +#define S5P_CLKGATE_PERI0_AC97		(1<<1)
+> +#define S5P_CLKGATE_PERI0_SPDIF		(1<<0)
 > +
-> +#endif /* __ASM_ARCH_GPIO_CORE_H */
-
-I'm hoping we can eliminate the gpio-core.h before merging.
-
-> diff --git a/arch/arm/mach-s5pv210/include/mach/gpio.h b/arch/arm/mach-s5pv210/include/mach/gpio.h
-> new file mode 100644
-> index 0000000..533b020
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/include/mach/gpio.h
-> @@ -0,0 +1,129 @@
-> +/* linux/arch/arm/mach-s5pv210/include/mach/gpio.h
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * S5PV210 - GPIO lib support
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
+> +/* Clock Gate Peri1 Registers */
+> +#define S5P_CLKGATE_PERI1_MFC		(1<<19)
+> +#define S5P_CLKGATE_PERI1_DMC1		(1<<18)
+> +#define S5P_CLKGATE_PERI1_DMC0		(1<<17)
+> +#define S5P_CLKGATE_PERI1_MDMA		(1<<16)
+> +#define S5P_CLKGATE_PERI1_PDMA1		(1<<15)
+> +#define S5P_CLKGATE_PERI1_PDMA0		(1<<14)
+> +#define S5P_CLKGATE_PERI1_CSIS		(1<<13)
+> +#define S5P_CLKGATE_PERI1_DSIM		(1<<12)
+> +#define S5P_CLKGATE_PERI1_HDMI		(1<<11)
+> +#define S5P_CLKGATE_PERI1_CORESIGHT	(1<<10)
+> +#define S5P_CLKGATE_PERI1_SECJTAG	(1<<9)
+> +#define S5P_CLKGATE_PERI1_TZPC3		(1<<8)
+> +#define S5P_CLKGATE_PERI1_TZPC2		(1<<7)
+> +#define S5P_CLKGATE_PERI1_TZPC1		(1<<6)
+> +#define S5P_CLKGATE_PERI1_TZPC0		(1<<5)
+> +#define S5P_CLKGATE_PERI1_SDM		(1<<4)
+> +#define S5P_CLKGATE_PERI1_SECKEY	(1<<3)
+> +#define S5P_CLKGATE_PERI1_IEM_APC	(1<<2)
+> +#define S5P_CLKGATE_PERI1_IEM_IEC	(1<<1)
+> +#define S5P_CLKGATE_PERI1_CHIP_ID	(1<<0)
 > +
-> +#ifndef __ASM_ARCH_GPIO_H
-> +#define __ASM_ARCH_GPIO_H __FILE__
+> +/* Special Clock Gate 0 Registers */
+> +#define S5P_CLKGATE_SCLK0_EBI		(1<<31)
+> +#define S5P_CLKGATE_SCLK0_NANDXL	(1<<30)
+> +#define S5P_CLKGATE_SCLK0_MFC		(1<<29)
+> +#define S5P_CLKGATE_SCLK0_G3D		(1<<28)
+> +#define S5P_CLKGATE_SCLK0_FIMC		(1<<27)
+> +#define S5P_CLKGATE_SCLK0_CSIS		(1<<26)
+> +#define S5P_CLKGATE_SCLK0_FIMD		(1<<25)
+> +#define S5P_CLKGATE_SCLK0_CAM1		(1<<24)
+> +#define S5P_CLKGATE_SCLK0_CAM0		(1<<23)
+> +#define S5P_CLKGATE_SCLK0_TVENC		(1<<22)
+> +#define S5P_CLKGATE_SCLK0_DAC		(1<<21)
+> +#define S5P_CLKGATE_SCLK0_MIXER		(1<<20)
+> +#define S5P_CLKGATE_SCLK0_HDMI		(1<<19)
+> +#define S5P_CLKGATE_SCLK0_SPDIF1	(1<<18)
+> +#define S5P_CLKGATE_SCLK0_AUDIO2	(1<<17)
+> +#define S5P_CLKGATE_SCLK0_AUDIO1	(1<<16)
+> +#define S5P_CLKGATE_SCLK0_AUDIO0	(1<<15)
+> +#define S5P_CLKGATE_SCLK0_PWM		(1<<14)
+> +#define S5P_CLKGATE_SCLK0_SPI2		(1<<13)
+> +#define S5P_CLKGATE_SCLK0_SPI1		(1<<12)
+> +#define S5P_CLKGATE_SCLK0_SPI0		(1<<11)
+> +#define S5P_CLKGATE_SCLK0_UART3		(1<<10)
+> +#define S5P_CLKGATE_SCLK0_UART2		(1<<9)
+> +#define S5P_CLKGATE_SCLK0_UART1		(1<<8)
+> +#define S5P_CLKGATE_SCLK0_UART0		(1<<7)
+> +#define S5P_CLKGATE_SCLK0_MMC3		(1<<6)
+> +#define S5P_CLKGATE_SCLK0_MMC2		(1<<5)
+> +#define S5P_CLKGATE_SCLK0_MMC1		(1<<4)
+> +#define S5P_CLKGATE_SCLK0_MMC0		(1<<3)
+> +#define S5P_CLKGATE_SCLK0_PWI		(1<<1)
+> +#define S5P_CLKGATE_SCLK0_HPM		(1<<0)
 > +
-> +#define gpio_get_value	__gpio_get_value
-> +#define gpio_set_value	__gpio_set_value
-> +#define gpio_cansleep	__gpio_cansleep
-> +#define gpio_to_irq	__gpio_to_irq
+> +/* Special Clock Gate 1 Registers */
+> +#define S5P_CLKGATE_SCLK1_FIMC2_LCLK	(1<<5)
+> +#define S5P_CLKGATE_SCLK1_FIMC1_LCLK	(1<<4)
+> +#define S5P_CLKGATE_SCLK1_FIMC0_LCLK	(1<<3)
+> +#define S5P_CLKGATE_SCLK1_MDNIE_PWM	(1<<2)
+> +#define S5P_CLKGATE_SCLK1_MDNIE		(1<<1)
+> +#define S5P_CLKGATE_SCLK1_PIXEL		(1<<0)
 > +
-> +/* GPIO bank sizes */
-> +#define S5PV210_GPIO_A0_NR	(8)
-> +#define S5PV210_GPIO_A1_NR	(4)
-> +#define S5PV210_GPIO_B_NR	(8)
-> +#define S5PV210_GPIO_C0_NR	(5)
-> +#define S5PV210_GPIO_C1_NR	(5)
-> +#define S5PV210_GPIO_D0_NR	(4)
-> +#define S5PV210_GPIO_D1_NR	(6)
-> +#define S5PV210_GPIO_E0_NR	(8)
-> +#define S5PV210_GPIO_E1_NR	(5)
-> +#define S5PV210_GPIO_F0_NR	(8)
-> +#define S5PV210_GPIO_F1_NR	(8)
-> +#define S5PV210_GPIO_F2_NR	(8)
-> +#define S5PV210_GPIO_F3_NR	(6)
-> +#define S5PV210_GPIO_G0_NR	(7)
-> +#define S5PV210_GPIO_G1_NR	(7)
-> +#define S5PV210_GPIO_G2_NR	(7)
-> +#define S5PV210_GPIO_G3_NR	(7)
-> +#define S5PV210_GPIO_H0_NR	(8)
-> +#define S5PV210_GPIO_H1_NR	(8)
-> +#define S5PV210_GPIO_H2_NR	(8)
-> +#define S5PV210_GPIO_H3_NR	(8)
-> +#define S5PV210_GPIO_I_NR	(7)
-> +#define S5PV210_GPIO_J0_NR	(8)
-> +#define S5PV210_GPIO_J1_NR	(6)
-> +#define S5PV210_GPIO_J2_NR	(8)
-> +#define S5PV210_GPIO_J3_NR	(8)
-> +#define S5PV210_GPIO_J4_NR	(5)
+> +/* IP Clock Gate 0 Registers */
+> +#define S5P_CLKGATE_IP0_CSIS		(1<<31)
+> +#define S5P_CLKGATE_IP0_IPC		(1<<30)
+> +#define S5P_CLKGATE_IP0_ROTATOR		(1<<29)
+> +#define S5P_CLKGATE_IP0_JPEG		(1<<28)
+> +#define S5P_CLKGATE_IP0_FIMC2		(1<<26)
+> +#define S5P_CLKGATE_IP0_FIMC1		(1<<25)
+> +#define S5P_CLKGATE_IP0_FIMC0		(1<<24)
+> +#define S5P_CLKGATE_IP0_MFC		(1<<16)
+> +#define S5P_CLKGATE_IP0_G3D		(1<<8)
+> +#define S5P_CLKGATE_IP0_IMEM		(1<<5)
+> +#define S5P_CLKGATE_IP0_PDMA1		(1<<4)
+> +#define S5P_CLKGATE_IP0_PDMA0		(1<<3)
+> +#define S5P_CLKGATE_IP0_MDMA		(1<<2)
+> +#define S5P_CLKGATE_IP0_DMC1		(1<<1)
+> +#define S5P_CLKGATE_IP0_DMC0		(1<<0)
+> +#define S5P_CLKGATE_IP0_RESERVED	(0x8FEFEC0)
+> +#define S5P_CLKGATE_IP0_ALWAYS_ON	(S5P_CLKGATE_IP0_PDMA1 |	\
+> +					S5P_CLKGATE_IP0_PDMA0 |		\
+> +					S5P_CLKGATE_IP0_MDMA |		\
+> +					S5P_CLKGATE_IP0_DMC1 |		\
+> +					S5P_CLKGATE_IP0_DMC0 |		\
+> +					S5P_CLKGATE_IP0_IMEM |		\
+> +					S5P_CLKGATE_IP0_G3D)
 > +
-> +/* GPIO bank numbers */
+> +/* IP Clock Gate 1 Registers */
+> +#define S5P_CLKGATE_IP1_NFCON		(1<<28)
+> +#define S5P_CLKGATE_IP1_SROMC		(1<<26)
+> +#define S5P_CLKGATE_IP1_CFCON		(1<<25)
+> +#define S5P_CLKGATE_IP1_NANDXL		(1<<24)
+> +#define S5P_CLKGATE_IP1_USBHOST		(1<<17)
+> +#define S5P_CLKGATE_IP1_USBOTG		(1<<16)
+> +#define S5P_CLKGATE_IP1_HDMI		(1<<11)
+> +#define S5P_CLKGATE_IP1_TVENC		(1<<10)
+> +#define S5P_CLKGATE_IP1_MIXER		(1<<9)
+> +#define S5P_CLKGATE_IP1_VP		(1<<8)
+> +#define S5P_CLKGATE_IP1_DSIM		(1<<2)
+> +#define S5P_CLKGATE_IP1_MIE		(1<<1)
+> +#define S5P_CLKGATE_IP1_FIMD		(1<<0)
+> +#define S5P_CLKGATE_IP1_RESERVED	(0xE8FCF0F8)
+> +#define S5P_CLKGATE_IP1_ALWAYS_ON	(S5P_CLKGATE_IP1_SROMC |	\
+> +					S5P_CLKGATE_IP1_NANDXL)
 > +
-> +/* CONFIG_S3C_GPIO_SPACE allows the user to select extra
-> + * space for debugging purposes so that any accidental
-> + * change from one gpio bank to another can be caught.
-> +*/
+> +/* IP Clock Gate 2 Registers */
+> +#define S5P_CLKGATE_IP2_TZIC3		(1<<31)
+> +#define S5P_CLKGATE_IP2_TZIC2		(1<<30)
+> +#define S5P_CLKGATE_IP2_TZIC1		(1<<29)
+> +#define S5P_CLKGATE_IP2_TZIC0		(1<<28)
+> +#define S5P_CLKGATE_IP2_VIC3		(1<<27)
+> +#define S5P_CLKGATE_IP2_VIC2		(1<<26)
+> +#define S5P_CLKGATE_IP2_VIC1		(1<<25)
+> +#define S5P_CLKGATE_IP2_VIC0		(1<<24)
+> +#define S5P_CLKGATE_IP2_TSI		(1<<20)
+> +#define S5P_CLKGATE_IP2_HSMMC3		(1<<19)
+> +#define S5P_CLKGATE_IP2_HSMMC2		(1<<18)
+> +#define S5P_CLKGATE_IP2_HSMMC1		(1<<17)
+> +#define S5P_CLKGATE_IP2_HSMMC0		(1<<16)
+> +#define S5P_CLKGATE_IP2_SECJTAG		(1<<11)
+> +#define S5P_CLKGATE_IP2_HOSTIF		(1<<10)
+> +#define S5P_CLKGATE_IP2_MODEM		(1<<9)
+> +#define S5P_CLKGATE_IP2_CORESIGHT	(1<<8)
+> +#define S5P_CLKGATE_IP2_SDM		(1<<1)
+> +#define S5P_CLKGATE_IP2_SECSS		(1<<0)
+> +#define S5P_CLKGATE_IP2_RESERVED	(0xE0F0FC)
+> +#define S5P_CLKGATE_IP2_ALWAYS_ON	(S5P_CLKGATE_IP2_TZIC3 |	\
+> +					S5P_CLKGATE_IP2_TZIC2 |		\
+> +					S5P_CLKGATE_IP2_TZIC1 |		\
+> +					S5P_CLKGATE_IP2_TZIC0 |		\
+> +					S5P_CLKGATE_IP2_VIC3 |		\
+> +					S5P_CLKGATE_IP2_VIC2 |		\
+> +					S5P_CLKGATE_IP2_VIC1 |		\
+> +					S5P_CLKGATE_IP2_VIC0 |		\
+> +					S5P_CLKGATE_IP2_SECJTAG |	\
+> +					S5P_CLKGATE_IP2_CORESIGHT |	\
+> +					S5P_CLKGATE_IP2_SDM |		\
+> +					S5P_CLKGATE_IP2_SECSS)
 > +
-> +#define S5PV210_GPIO_NEXT(__gpio) \
-> +	((__gpio##_START) + (__gpio##_NR) + CONFIG_S3C_GPIO_SPACE + 1)
+> +/* IP Clock Gate 3 Registers */
+> +#define S5P_CLKGATE_IP3_PCM2		(1<<30)
+> +#define S5P_CLKGATE_IP3_PCM1		(1<<29)
+> +#define S5P_CLKGATE_IP3_PCM0		(1<<28)
+> +#define S5P_CLKGATE_IP3_SYSCON		(1<<27)
+> +#define S5P_CLKGATE_IP3_GPIO		(1<<26)
+> +#define S5P_CLKGATE_IP3_TSADC		(1<<24)
+> +#define S5P_CLKGATE_IP3_PWM		(1<<23)
+> +#define S5P_CLKGATE_IP3_WDT		(1<<22)
+> +#define S5P_CLKGATE_IP3_KEYIF		(1<<21)
+> +#define S5P_CLKGATE_IP3_UART3		(1<<20)
+> +#define S5P_CLKGATE_IP3_UART2		(1<<19)
+> +#define S5P_CLKGATE_IP3_UART1		(1<<18)
+> +#define S5P_CLKGATE_IP3_UART0		(1<<17)
+> +#define S5P_CLKGATE_IP3_SYSTIMER	(1<<16)
+> +#define S5P_CLKGATE_IP3_RTC		(1<<15)
+> +#define S5P_CLKGATE_IP3_SPI2		(1<<14)
+> +#define S5P_CLKGATE_IP3_SPI1		(1<<13)
+> +#define S5P_CLKGATE_IP3_SPI0		(1<<12)
+> +#define S5P_CLKGATE_IP3_I2C_HDMI_PHY	(1<<11)
+> +#define S5P_CLKGATE_IP3_I2C_HDMI_DDC	(1<<10)
+> +#define S5P_CLKGATE_IP3_I2C2		(1<<9)
+> +#define S5P_CLKGATE_IP3_I2C1		(1<<8)
+> +#define S5P_CLKGATE_IP3_I2C0		(1<<7)
+> +#define S5P_CLKGATE_IP3_I2S2		(1<<6)
+> +#define S5P_CLKGATE_IP3_I2S1		(1<<5)
+> +#define S5P_CLKGATE_IP3_I2S0		(1<<4)
+> +#define S5P_CLKGATE_IP3_AC97		(1<<1)
+> +#define S5P_CLKGATE_IP3_SPDIF		(1<<0)
+> +#define S5P_CLKGATE_IP3_RESERVED	(0x8200000C)
+> +#define S5P_CLKGATE_IP3_ALWAYS_ON	(S5P_CLKGATE_IP3_SYSCON |	\
+> +					S5P_CLKGATE_IP3_GPIO |		\
+> +					S5P_CLKGATE_IP3_UART0 |		\
+> +					S5P_CLKGATE_IP3_UART1 |		\
+> +					S5P_CLKGATE_IP3_UART2 |		\
+> +					S5P_CLKGATE_IP3_UART3)
 > +
-> +enum s5p_gpio_number {
-> +	S5PV210_GPIO_A0_START	= 0,
-> +	S5PV210_GPIO_A1_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_A0),
-> +	S5PV210_GPIO_B_START 	= S5PV210_GPIO_NEXT(S5PV210_GPIO_A1),
-> +	S5PV210_GPIO_C0_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_B),
-> +	S5PV210_GPIO_C1_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_C0),
-> +	S5PV210_GPIO_D0_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_C1),
-> +	S5PV210_GPIO_D1_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_D0),
-> +	S5PV210_GPIO_E0_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_D1),
-> +	S5PV210_GPIO_E1_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_E0),
-> +	S5PV210_GPIO_F0_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_E1),
-> +	S5PV210_GPIO_F1_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_F0),
-> +	S5PV210_GPIO_F2_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_F1),
-> +	S5PV210_GPIO_F3_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_F2),
-> +	S5PV210_GPIO_G0_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_F3),
-> +	S5PV210_GPIO_G1_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_G0),
-> +	S5PV210_GPIO_G2_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_G1),
-> +	S5PV210_GPIO_G3_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_G2),
-> +	S5PV210_GPIO_H0_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_G3),
-> +	S5PV210_GPIO_H1_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_H0),
-> +	S5PV210_GPIO_H2_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_H1),
-> +	S5PV210_GPIO_H3_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_H2),
-> +	S5PV210_GPIO_I_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_H3),
-> +	S5PV210_GPIO_J0_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_I),
-> +	S5PV210_GPIO_J1_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_J0),
-> +	S5PV210_GPIO_J2_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_J1),
-> +	S5PV210_GPIO_J3_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_J2),
-> +	S5PV210_GPIO_J4_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_J3),
-> +};
+> +/* IP Clock Gate 4 Registers */
+> +#define S5P_CLKGATE_IP4_TZPC3		(1<<8)
+> +#define S5P_CLKGATE_IP4_TZPC2		(1<<7)
+> +#define S5P_CLKGATE_IP4_TZPC1		(1<<6)
+> +#define S5P_CLKGATE_IP4_TZPC0		(1<<5)
+> +#define S5P_CLKGATE_IP4_SECKEY		(1<<3)
+> +#define S5P_CLKGATE_IP4_IEM_APC		(1<<2)
+> +#define S5P_CLKGATE_IP4_IEM_IEC		(1<<1)
+> +#define S5P_CLKGATE_IP4_CHIP_ID		(1<<0)
+> +#define S5P_CLKGATE_IP4_RESERVED	(0xFFFFFE10)
+> +#define S5P_CLKGATE_IP4_ALWAYS_ON	(S5P_CLKGATE_IP4_TZPC3 |	\
+> +					S5P_CLKGATE_IP4_TZPC2 |		\
+> +					S5P_CLKGATE_IP4_TZPC1 |		\
+> +					S5P_CLKGATE_IP4_TZPC0 |		\
+> +					S5P_CLKGATE_IP4_CHIP_ID)
 > +
-> +/* S5PV210 GPIO number definitions */
-> +#define S5PV210_GPA0(_nr)	(S5PV210_GPIO_A0_START + (_nr))
-> +#define S5PV210_GPA1(_nr)	(S5PV210_GPIO_A1_START + (_nr))
-> +#define S5PV210_GPB(_nr)	(S5PV210_GPIO_B_START + (_nr))
-> +#define S5PV210_GPC0(_nr)	(S5PV210_GPIO_C0_START + (_nr))
-> +#define S5PV210_GPC1(_nr)	(S5PV210_GPIO_C1_START + (_nr))
-> +#define S5PV210_GPD0(_nr)	(S5PV210_GPIO_D0_START + (_nr))
-> +#define S5PV210_GPD1(_nr)	(S5PV210_GPIO_D1_START + (_nr))
-> +#define S5PV210_GPE0(_nr)	(S5PV210_GPIO_E0_START + (_nr))
-> +#define S5PV210_GPE1(_nr)	(S5PV210_GPIO_E1_START + (_nr))
-> +#define S5PV210_GPF0(_nr)	(S5PV210_GPIO_F0_START + (_nr))
-> +#define S5PV210_GPF1(_nr)	(S5PV210_GPIO_F1_START + (_nr))
-> +#define S5PV210_GPF2(_nr)	(S5PV210_GPIO_F2_START + (_nr))
-> +#define S5PV210_GPF3(_nr)	(S5PV210_GPIO_F3_START + (_nr))
-> +#define S5PV210_GPG0(_nr)	(S5PV210_GPIO_G0_START + (_nr))
-> +#define S5PV210_GPG1(_nr)	(S5PV210_GPIO_G1_START + (_nr))
-> +#define S5PV210_GPG2(_nr)	(S5PV210_GPIO_G2_START + (_nr))
-> +#define S5PV210_GPG3(_nr)	(S5PV210_GPIO_G3_START + (_nr))
-> +#define S5PV210_GPH0(_nr)	(S5PV210_GPIO_H0_START + (_nr))
-> +#define S5PV210_GPH1(_nr)	(S5PV210_GPIO_H1_START + (_nr))
-> +#define S5PV210_GPH2(_nr)	(S5PV210_GPIO_H2_START + (_nr))
-> +#define S5PV210_GPH3(_nr)	(S5PV210_GPIO_H3_START + (_nr))
-> +#define S5PV210_GPI(_nr)	(S5PV210_GPIO_I_START + (_nr))
-> +#define S5PV210_GPJ0(_nr)	(S5PV210_GPIO_J0_START + (_nr))
-> +#define S5PV210_GPJ1(_nr)	(S5PV210_GPIO_J1_START + (_nr))
-> +#define S5PV210_GPJ2(_nr)	(S5PV210_GPIO_J2_START + (_nr))
-> +#define S5PV210_GPJ3(_nr)	(S5PV210_GPIO_J3_START + (_nr))
-> +#define S5PV210_GPJ4(_nr)	(S5PV210_GPIO_J4_START + (_nr))
+> +/* Block Clock Gate Registers */
+> +#define S5P_CLKGATE_BLOCK_INTC		(1<<10)
+> +#define S5P_CLKGATE_BLOCK_HSMMC		(1<<9)
+> +#define S5P_CLKGATE_BLOCK_DEBUG		(1<<8)
+> +#define S5P_CLKGATE_BLOCK_SECURITY	(1<<7)
+> +#define S5P_CLKGATE_BLOCK_MEMORY	(1<<6)
+> +#define S5P_CLKGATE_BLOCK_USB		(1<<5)
+> +#define S5P_CLKGATE_BLOCK_TV		(1<<4)
+> +#define S5P_CLKGATE_BLOCK_LCD		(1<<3)
+> +#define S5P_CLKGATE_BLOCK_IMG		(1<<2)
+> +#define S5P_CLKGATE_BLOCK_MFC		(1<<1)
+> +#define S5P_CLKGATE_BLOCK_G3D		(1<<0)
 > +
-> +/* the end of the S5PV210 specific gpios */
-> +#define S5PV210_GPIO_END	(S5PV210_GPJ4(S5PV210_GPIO_J4_NR) + 1)
-> +#define S3C_GPIO_END		S5PV210_GPIO_END
+> +/* Registers related to power management */
+> +#define S5P_PWR_CFG		S5P_CLKREG(0xC000)
+> +#define S5P_EINT_WAKEUP_MASK	S5P_CLKREG(0xC004)
+> +#define S5P_WAKEUP_MASK 	S5P_CLKREG(0xC008)
+> +#define S5P_PWR_MODE		S5P_CLKREG(0xC00C)
+> +#define S5P_NORMAL_CFG		S5P_CLKREG(0xC010)
+> +#define S5P_IDLE_CFG		S5P_CLKREG(0xC020)
+> +#define S5P_STOP_CFG		S5P_CLKREG(0xC030)
+> +#define S5P_STOP_MEM_CFG	S5P_CLKREG(0xC034)
+> +#define S5P_SLEEP_CFG		S5P_CLKREG(0xC040)
 > +
-> +/* define the number of gpios we need to the one after the GPJ4() range */
-> +#define ARCH_NR_GPIOS		(S5PV210_GPJ4(S5PV210_GPIO_J4_NR) +	\
-> +				 CONFIG_SAMSUNG_GPIO_EXTRA + 1)
+> +#define S5P_OSC_FREQ		S5P_CLKREG(0xC100)
+> +#define S5P_OSC_STABLE		S5P_CLKREG(0xC104)
+> +#define S5P_PWR_STABLE		S5P_CLKREG(0xC108)
+> +#define S5P_MTC_STABLE		S5P_CLKREG(0xC110)
+> +#define S5P_CLAMP_STABLE	S5P_CLKREG(0xC114)
 > +
-> +#include <asm-generic/gpio.h>
+> +#define S5P_WAKEUP_STAT		S5P_CLKREG(0xC200)
+> +#define S5P_BLK_PWR_STAT	S5P_CLKREG(0xC204)
 > +
-> +#endif /* __ASM_ARCH_GPIO_H */
-> diff --git a/arch/arm/mach-s5pv210/include/mach/hardware.h b/arch/arm/mach-s5pv210/include/mach/hardware.h
-> new file mode 100644
-> index 0000000..fada7a3
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/include/mach/hardware.h
-> @@ -0,0 +1,18 @@
-> +/* linux/arch/arm/mach-s5pv210/include/mach/hardware.h
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * S5PV210 - Hardware support
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
+> +#define S5P_OTHERS		S5P_CLKREG(0xE000)
+> +#define S5P_OM_STAT		S5P_CLKREG(0xE100)
+> +#define S5P_USB_PHY_CONTROL	S5P_CLKREG(0xE80C)
+> +#define S5P_DAC_CONTROL		S5P_CLKREG(0xE810)
 > +
-> +#ifndef __ASM_ARCH_HARDWARE_H
-> +#define __ASM_ARCH_HARDWARE_H __FILE__
+> +#define S5P_INFORM0		S5P_CLKREG(0xF000)
+> +#define S5P_INFORM1		S5P_CLKREG(0xF004)
+> +#define S5P_INFORM2		S5P_CLKREG(0xF008)
+> +#define S5P_INFORM3		S5P_CLKREG(0xF00C)
+> +#define S5P_INFORM4		S5P_CLKREG(0xF010)
+> +#define S5P_INFORM5		S5P_CLKREG(0xF014)
+> +#define S5P_INFORM6		S5P_CLKREG(0xF018)
+> +#define S5P_INFORM7		S5P_CLKREG(0xF01C)
 > +
-> +/* currently nothing here, placeholder */
+> +#define S5P_RST_STAT		S5P_CLKREG(0xA000)
+> +#define S5P_OSC_CON		S5P_CLKREG(0x8000)
+> +#define S5P_MIPI_PHY_CON0	S5P_CLKREG(0x7200)
+> +#define S5P_MIPI_PHY_CON1	S5P_CLKREG(0x7204)
+> +#define S5P_MIPI_CONTROL	S5P_CLKREG(0xE814)
 > +
-> +#endif /* __ASM_ARCH_HARDWARE_H */
-> diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
-> new file mode 100644
-> index 0000000..dd5a811
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/include/mach/map.h
-> @@ -0,0 +1,102 @@
-> +/* linux/arch/arm/mach-s5pv210/include/mach/map.h
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * S5PV210 - Memory map definitions
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
+> +#define S5P_IDLE_CFG_TL_MASK	(3 << 30)
+> +#define S5P_IDLE_CFG_TM_MASK	(3 << 28)
+> +#define S5P_IDLE_CFG_TL_ON	(2 << 30)
+> +#define S5P_IDLE_CFG_TM_ON	(2 << 28)
+> +#define S5P_IDLE_CFG_DIDLE	(1 << 0)
 > +
-> +#ifndef __ASM_ARCH_MAP_H
-> +#define __ASM_ARCH_MAP_H __FILE__
+> +#define S5P_CFG_WFI_CLEAN		(~(3 << 8))
+> +#define S5P_CFG_WFI_IDLE		(1 << 8)
+> +#define S5P_CFG_WFI_STOP		(2 << 8)
+> +#define S5P_CFG_WFI_SLEEP		(3 << 8)
 > +
-> +#include <plat/map-base.h>
+> +#define S5P_OTHER_SYS_INT		24
+> +#define S5P_OTHER_STA_TYPE		23
+> +#define S5P_OTHER_SYSC_INTOFF		(1 << 0)
+> +#define STA_TYPE_EXPON			0
+> +#define STA_TYPE_SFR			1
 > +
-> +/* Chip ID */
-> +#define S5PV210_PA_CHIPID	(0xE0000000)
-> +#define S5P_PA_CHIPID		S5PV210_PA_CHIPID
-> +#define S5P_VA_CHIPID		S3C_ADDR(0x00700000)
+> +#define S5P_PWR_STA_EXP_SCALE		0
+> +#define S5P_PWR_STA_CNT			4
 > +
-> +/* SYSCON */
-> +#define S5PV210_PA_SYSCON	(0xE0100000)
-> +#define S5P_PA_SYSCON		S5PV210_PA_SYSCON
-> +#define S5P_VA_SYSCON		S3C_VA_SYS
+> +#define S5P_PWR_STABLE_COUNT		85500
 > +
-> +/* GPIO */
-> +#define S5PV210_PA_GPIO		(0xE0200000)
-> +#define S5P_PA_GPIO		S5PV210_PA_GPIO
-> +#define S5P_VA_GPIO		S3C_ADDR(0x00500000)
+> +#define S5P_SLEEP_CFG_OSC_EN		(1 << 0)
+> +#define S5P_SLEEP_CFG_USBOSC_EN		(1 << 1)
 > +
-> +/* I2C 0 */
-> +#define S5PV210_PA_IIC0		(0xE1800000)
-> +#define S5P_PA_IIC0		S5PV210_PA_IIC0
+> +/* OTHERS Resgister */
+> +#define S5P_OTHERS_USB_SIG_MASK		(1 << 16)
+> +#define S5P_OTHERS_MIPI_DPHY_EN		(1 << 28)
 > +
-> +/* Timer */
-> +#define S5PV210_PA_TIMER	(0xE2500000)
-> +#define S5P_PA_TIMER		S5PV210_PA_TIMER
-> +#define S5P_VA_TIMER		S3C_VA_TIMER
+> +/* MIPI */
+> +#define S5P_MIPI_DPHY_EN		(3)
 > +
-> +/* SYSTEM TIMER */
-> +#define S5PV210_PA_SYSTIMER	(0xE2600000)
-> +#define S5P_PA_SYSTIMER		S5PV210_PA_SYSTIMER
-> +#define S5P_VA_SYSTIMER		S3C_ADDR(0x01200000)
+> +/* S5P_DAC_CONTROL */
+> +#define S5P_DAC_ENABLE			(1)
+> +#define S5P_DAC_DISABLE			(0)
 > +
-> +/* UART */
-> +#define S5PV210_PA_UART		(0xE2900000)
-> +#define S5P_PA_UART		S5PV210_PA_UART
-> +#define S5P_VA_UART		S3C_VA_UART
-> +
-> +#define S5P_PA_UART0		(S5P_PA_UART + 0x0)
-> +#define S5P_PA_UART1		(S5P_PA_UART + 0x400)
-> +#define S5P_PA_UART2		(S5P_PA_UART + 0x800)
-> +#define S5P_PA_UART3		(S5P_PA_UART + 0xC00)
-> +#define S5P_UART_OFFSET		(0x400)
-> +
-> +#define S5P_VA_UARTx(x)		(S5P_VA_UART + (S5P_PA_UART & 0xfffff) \
-> +				+ ((x) * S5P_UART_OFFSET))
-> +
-> +#define S5P_VA_UART0		S5P_VA_UARTx(0)
-> +#define S5P_VA_UART1		S5P_VA_UARTx(1)
-> +#define S5P_VA_UART2		S5P_VA_UARTx(2)
-> +#define S5P_VA_UART3		S5P_VA_UARTx(3)
-> +#define S5P_SZ_UART		SZ_256
-> +
-> +/* SROMC */
-> +#define S5PV210_PA_SROMC	(0xE8000000)
-> +#define S5P_PA_SROMC		S5PV210_PA_SROMC
-> +#define S5P_VA_SROMC		S3C_ADDR(0x01100000)
-> +
-> +/* VIC 0 */
-> +#define S5PV210_PA_VIC0		(0xF2000000)
-> +#define S5P_PA_VIC0		S5PV210_PA_VIC0
-> +#define S5P_VA_VIC0		(S3C_VA_IRQ + 0x0)
-> +
-> +/* VIC 1 */
-> +#define S5PV210_PA_VIC1		(0xF2100000)
-> +#define S5P_PA_VIC1		S5PV210_PA_VIC1
-> +#define S5P_VA_VIC1		(S3C_VA_IRQ + 0x10000)
-> +
-> +/* VIC 2 */
-> +#define S5PV210_PA_VIC2		(0xF2200000)
-> +#define S5P_PA_VIC2		S5PV210_PA_VIC2
-> +#define S5P_VA_VIC2		(S3C_VA_IRQ + 0x20000)
-> +
-> +/* VIC 3 */
-> +#define S5PV210_PA_VIC3		(0xF2300000)
-> +#define S5P_PA_VIC3		S5PV210_PA_VIC3
-> +#define S5P_VA_VIC3		(S3C_VA_IRQ + 0x30000)
-> +
-> +/* SDRAM */
-> +#define S5PV210_PA_SDRAM	(0x20000000)
-> +#define S5P_PA_SDRAM		S5PV210_PA_SDRAM
-> +
-> +/* compatibiltiy defines. */
-> +#define S3C_PA_UART		S5P_PA_UART
-> +#define S3C_UART_OFFSET		S5P_UART_OFFSET
-> +#define S3C_PA_TIMER		S5P_PA_TIMER
-> +#define S3C_PA_IIC		S5P_PA_IIC0
-> +
-> +#endif /* __ASM_ARCH_MAP_H */
-
-I'd realy like to move away from defining these S5P_ addresses at compile
-time even if this may mean making the per-cpu support a bit bigger by
-including a copy of the iodesc table used to initialise the IO mappings.
-
-However this might be something to deal with once this is merged.
-
-> diff --git a/arch/arm/mach-s5pv210/include/mach/memory.h b/arch/arm/mach-s5pv210/include/mach/memory.h
-> new file mode 100644
-> index 0000000..0f07793
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/include/mach/memory.h
-> @@ -0,0 +1,20 @@
-> +/* linux/arch/arm/mach-s5pv210/include/mach/memory.h
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * S5PV210 - Memory definitions
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#ifndef __ASM_ARCH_MEMORY_H
-> +#define __ASM_ARCH_MEMORY_H
-> +
-> +#define PHYS_OFFSET		UL(0x20000000)
-> +#define CONSISTENT_DMA_SIZE	(SZ_8M + SZ_4M + SZ_2M)
-> +#define NODE_MEM_SIZE_BITS	28
-> +
-> +#endif /* __ASM_ARCH_MEMORY_H */
-> diff --git a/arch/arm/mach-s5pv210/include/mach/system.h b/arch/arm/mach-s5pv210/include/mach/system.h
-> new file mode 100644
-> index 0000000..1ca04d5
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/include/mach/system.h
-> @@ -0,0 +1,26 @@
-> +/* linux/arch/arm/mach-s5pv210/include/mach/system.h
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * S5PV210 - system support header
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#ifndef __ASM_ARCH_SYSTEM_H
-> +#define __ASM_ARCH_SYSTEM_H __FILE__
-> +
-> +static void arch_idle(void)
-> +{
-> +	/* nothing here yet */
-> +}
-> +
-> +static void arch_reset(char mode, const char *cmd)
-> +{
-> +	/* nothing here yet */
-> +}
-> +
-> +#endif /* __ASM_ARCH_SYSTEM_H */
-> diff --git a/arch/arm/mach-s5pv210/include/mach/uncompress.h b/arch/arm/mach-s5pv210/include/mach/uncompress.h
-> new file mode 100644
-> index 0000000..08ff2fd
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/include/mach/uncompress.h
-> @@ -0,0 +1,24 @@
-> +/* linux/arch/arm/mach-s5pv210/include/mach/uncompress.h
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * S5PV210 - uncompress code
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#ifndef __ASM_ARCH_UNCOMPRESS_H
-> +#define __ASM_ARCH_UNCOMPRESS_H
-> +
-> +#include <mach/map.h>
-> +#include <plat/uncompress.h>
-> +
-> +static void arch_detect_cpu(void)
-> +{
-> +	/* we do not need to do any cpu detection here at the moment. */
-> +}
-> +
-> +#endif /* __ASM_ARCH_UNCOMPRESS_H */
-> diff --git a/arch/arm/plat-s5p/cpu.c b/arch/arm/plat-s5p/cpu.c
-> index 0895a77..b322e4c 100644
-> --- a/arch/arm/plat-s5p/cpu.c
-> +++ b/arch/arm/plat-s5p/cpu.c
-> @@ -18,10 +18,12 @@
->  #include <mach/regs-clock.h>
->  #include <plat/cpu.h>
->  #include <plat/s5p6440.h>
-> +#include <plat/s5pv210.h>
->  
->  /* table of supported CPUs */
->  
->  static const char name_s5p6440[] = "S5P6440";
-> +static const char name_s5pv210[] = "S5PV210/S5PC110";
->  
->  static struct cpu_table cpu_ids[] __initdata = {
->  	{
-> @@ -32,6 +34,14 @@ static struct cpu_table cpu_ids[] __initdata = {
->  		.init_uarts	= s5p6440_init_uarts,
->  		.init		= s5p6440_init,
->  		.name		= name_s5p6440,
-> +	}, {
-> +		.idcode		= 0x43110000,
-> +		.idmask		= 0xfffff000,
-> +		.map_io		= s5pv210_map_io,
-> +		.init_clocks	= s5pv210_init_clocks,
-> +		.init_uarts	= s5pv210_init_uarts,
-> +		.init		= s5pv210_init,
-> +		.name		= name_s5pv210,
->  	},
+> +#endif /* __ASM_ARCH_REGS_CLOCK_H */
+> diff --git a/arch/arm/plat-s5p/clock.c b/arch/arm/plat-s5p/clock.c
+> index 3d3c0f1..519cdb4 100644
+> --- a/arch/arm/plat-s5p/clock.c
+> +++ b/arch/arm/plat-s5p/clock.c
+> @@ -33,6 +33,12 @@ struct clk clk_ext_xtal_mux = {
+>  	.id		= -1,
 >  };
 >  
-> @@ -41,6 +51,11 @@ static struct cpu_table cpu_ids[] __initdata = {
->  
->  static struct map_desc s5p_iodesc[] __initdata = {
->  	{
-> +		.virtual	= (unsigned long)S5P_VA_CHIPID,
-> +		.pfn		= __phys_to_pfn(S5P_PA_CHIPID),
-> +		.length		= SZ_4K,
-> +		.type		= MT_DEVICE,
-> +	}, {
->  		.virtual	= (unsigned long)S5P_VA_SYSCON,
->  		.pfn		= __phys_to_pfn(S5P_PA_SYSCON),
->  		.length		= SZ_64K,
-> diff --git a/arch/arm/plat-s5p/include/plat/s5pv210.h b/arch/arm/plat-s5p/include/plat/s5pv210.h
-> new file mode 100644
-> index 0000000..db1399c
-> --- /dev/null
-> +++ b/arch/arm/plat-s5p/include/plat/s5pv210.h
-> @@ -0,0 +1,37 @@
-> +/* linux/arch/arm/plat-s5p/include/plat/s5pv210.h
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * Header file for s5pv210 cpu support
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +/* Common init code for S5PV210 related SoCs */
-> +
-> +extern void s5pv210_common_init_uarts(struct s3c2410_uartcfg *cfg, int no);
-> +extern void s5pv210_register_clocks(void);
-> +extern void s5pv210_setup_clocks(void);
-> +
-> +#ifdef CONFIG_CPU_S5PV210
-> +
-> +extern  int s5pv210_init(void);
-> +extern void s5pv210_init_irq(void);
-> +extern void s5pv210_map_io(void);
-> +extern void s5pv210_init_clocks(int xtal);
-> +
-> +#define s5pv210_init_uarts s5pv210_common_init_uarts
-> +
-> +#else
-> +#define s5pv210_init_clocks NULL
-> +#define s5pv210_init_uarts NULL
-> +#define s5pv210_map_io NULL
-> +#define s5pv210_init NULL
-> +#endif
-> +
-> +/* S5PV210 timer */
-> +
-> +extern struct sys_timer s5pv210_timer;
-> diff --git a/arch/arm/plat-s5p/s5pv210-init.c b/arch/arm/plat-s5p/s5pv210-init.c
-> new file mode 100644
-> index 0000000..619d058
-> --- /dev/null
-> +++ b/arch/arm/plat-s5p/s5pv210-init.c
-> @@ -0,0 +1,44 @@
-> +/* linux/arch/arm/plat-s5p/s5pv210-init.c
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/types.h>
-> +#include <linux/init.h>
-> +#include <linux/serial_core.h>
-> +
-> +#include <plat/cpu.h>
-> +#include <plat/devs.h>
-> +#include <plat/s5pv210.h>
-> +#include <plat/regs-serial.h>
-> +
-> +static struct s3c24xx_uart_clksrc s5pv210_serial_clocks[] = {
-> +	[0] = {
-> +		.name		= "pclk",
-> +		.divisor	= 1,
-> +		.min_baud	= 0,
-> +		.max_baud	= 0,
-> +	},
+> +struct clk clk_27m = {
+> +	.name		= "clk_27m",
+> +	.id		= -1,
+> +	.rate		= 27000000,
 > +};
 > +
-> +/* uart registration process */
-> +void __init s5pv210_common_init_uarts(struct s3c2410_uartcfg *cfg, int no)
-> +{
-> +	struct s3c2410_uartcfg *tcfg = cfg;
-> +	u32 ucnt;
+>  /* 48MHz USB Phy clock output */
+>  struct clk clk_48m = {
+>  	.name		= "clk_48m",
+> @@ -104,6 +110,11 @@ struct clksrc_sources clk_src_epll = {
+>  	.nr_sources	= ARRAY_SIZE(clk_src_epll_list),
+>  };
+>  
+> +struct clk clk_vpll = {
+> +	.name		= "vpll",
+> +	.id		= -1,
+> +};
 > +
-> +	for (ucnt = 0; ucnt < no; ucnt++, tcfg++) {
-> +		if (!tcfg->clocks) {
-> +			tcfg->clocks = s5pv210_serial_clocks;
-> +			tcfg->clocks_size = ARRAY_SIZE(s5pv210_serial_clocks);
+>  int s5p_gatectrl(void __iomem *reg, struct clk *clk, int enable)
+>  {
+>  	unsigned int ctrlbit = clk->ctrlbit;
+> @@ -118,10 +129,12 @@ int s5p_gatectrl(void __iomem *reg, struct clk *clk, int enable)
+>  static struct clk *s5p_clks[] __initdata = {
+>  	&clk_ext_xtal_mux,
+>  	&clk_48m,
+> +	&clk_27m,
+>  	&clk_fout_apll,
+>  	&clk_fout_mpll,
+>  	&clk_fout_epll,
+>  	&clk_arm,
+> +	&clk_vpll,
+>  };
+>  
+>  void __init s5p_register_clocks(unsigned long xtal_freq)
+> diff --git a/arch/arm/plat-s5p/include/plat/s5p-clock.h b/arch/arm/plat-s5p/include/plat/s5p-clock.h
+> index e1a7444..56fb8b4 100644
+> --- a/arch/arm/plat-s5p/include/plat/s5p-clock.h
+> +++ b/arch/arm/plat-s5p/include/plat/s5p-clock.h
+> @@ -20,6 +20,7 @@
+>  #define clk_fin_apll clk_ext_xtal_mux
+>  #define clk_fin_mpll clk_ext_xtal_mux
+>  #define clk_fin_epll clk_ext_xtal_mux
+> +#define clk_fin_vpll clk_ext_xtal_mux
+>  
+>  extern struct clk clk_ext_xtal_mux;
+>  extern struct clk clk_48m;
+> @@ -27,6 +28,7 @@ extern struct clk clk_fout_apll;
+>  extern struct clk clk_fout_mpll;
+>  extern struct clk clk_fout_epll;
+>  extern struct clk clk_arm;
+> +extern struct clk clk_vpll;
+>  
+>  extern struct clksrc_sources clk_src_apll;
+>  extern struct clksrc_sources clk_src_mpll;
+> diff --git a/arch/arm/plat-s5p/s5pv210-clock.c b/arch/arm/plat-s5p/s5pv210-clock.c
+> new file mode 100755
+> index 0000000..1d43e9b
+> --- /dev/null
+> +++ b/arch/arm/plat-s5p/s5pv210-clock.c
+> @@ -0,0 +1,494 @@
+> +/* linux/arch/arm/plat-s5p/s5pv210-clock.c
+> + *
+> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com/
+> + *
+> + * S5PV210 - Clock support
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#include <linux/init.h>
+> +#include <linux/module.h>
+> +#include <linux/kernel.h>
+> +#include <linux/list.h>
+> +#include <linux/errno.h>
+> +#include <linux/err.h>
+> +#include <linux/clk.h>
+> +#include <linux/sysdev.h>
+> +#include <linux/io.h>
+> +
+> +#include <mach/map.h>
+> +
+> +#include <plat/cpu-freq.h>
+> +#include <mach/regs-clock.h>
+> +#include <plat/clock.h>
+> +#include <plat/cpu.h>
+> +#include <plat/pll.h>
+> +#include <plat/s5p-clock.h>
+> +#include <plat/clock-clksrc.h>
+> +#include <plat/s5pv210.h>
+> +
+> +static int s5pv210_clk_ip0_ctrl(struct clk *clk, int enable)
+> +{
+> +	if ((clk->ctrlbit) & (S5P_CLKGATE_IP0_RESERVED |	\
+
+no need for () around clk->ctrlbit.
+
+> +				S5P_CLKGATE_IP0_ALWAYS_ON))
+> +		return 0;
+> +
+> +	return s5p_gatectrl(S5P_CLKGATE_IP0, clk, enable);
+> +}
+
+Why is S5P_CLKGATE_IP0_RESERVED in here? Surely you should not
+registering clocks with reserved control bits in the first place?
+
+As for S5P_CLKGATE_IP0_ALWAYS_ON, why not simply avoid putting a ctrlbit
+or enable function in those clocks?
+
+> +static int s5pv210_clk_ip1_ctrl(struct clk *clk, int enable)
+> +{
+> +	if ((clk->ctrlbit) & (S5P_CLKGATE_IP1_RESERVED |	\
+> +				S5P_CLKGATE_IP1_ALWAYS_ON))
+> +		return 0;
+> +
+> +	return s5p_gatectrl(S5P_CLKGATE_IP1, clk, enable);
+> +}
+> +
+> +static int s5pv210_clk_ip2_ctrl(struct clk *clk, int enable)
+> +{
+> +	if ((clk->ctrlbit) & (S5P_CLKGATE_IP2_RESERVED |	\
+> +				S5P_CLKGATE_IP2_ALWAYS_ON))
+> +		return 0;
+> +
+> +	return s5p_gatectrl(S5P_CLKGATE_IP2, clk, enable);
+> +}
+> +
+> +static int s5pv210_clk_ip3_ctrl(struct clk *clk, int enable)
+> +{
+> +	if ((clk->ctrlbit) & (S5P_CLKGATE_IP3_RESERVED |	\
+> +				S5P_CLKGATE_IP3_ALWAYS_ON))
+> +		return 0;
+> +
+> +	return s5p_gatectrl(S5P_CLKGATE_IP3, clk, enable);
+> +}
+
+same comment as for above...
+
+> +static struct clk clk_h200 = {
+> +	.name		= "hclk200",
+> +	.id		= -1,
+> +	.rate		= 0,
+> +	.parent		= NULL,
+> +	.ctrlbit	= 0,
+> +};
+> +
+> +static struct clk clk_h100 = {
+> +	.name		= "hclk100",
+> +	.id		= -1,
+> +	.rate		= 0,
+> +	.parent		= NULL,
+> +	.ctrlbit	= 0,
+> +};
+> +
+> +static struct clk clk_h166 = {
+> +	.name		= "hclk166",
+> +	.id		= -1,
+> +	.rate		= 0,
+> +	.parent		= NULL,
+> +	.ctrlbit	= 0,
+> +};
+> +
+> +static struct clk clk_h133 = {
+> +	.name		= "hclk133",
+> +	.id		= -1,
+> +	.rate		= 0,
+> +	.parent		= NULL,
+> +	.ctrlbit	= 0,
+> +};
+> +
+> +static struct clk clk_p100 = {
+> +	.name		= "pclk100",
+> +	.id		= -1,
+> +	.rate		= 0,
+> +	.parent		= NULL,
+> +	.ctrlbit	= 0,
+> +};
+> +
+> +static struct clk clk_p83 = {
+> +	.name		= "pclk83",
+> +	.id		= -1,
+> +	.rate		= 0,
+> +	.parent		= NULL,
+> +	.ctrlbit	= 0,
+> +};
+> +
+> +static struct clk clk_p66 = {
+> +	.name		= "pclk66",
+> +	.id		= -1,
+> +	.rate		= 0,
+> +	.parent		= NULL,
+> +	.ctrlbit	= 0,
+> +};
+> +
+> +static struct clk *sys_clks[] = {
+> +	&clk_h200,
+> +	&clk_h100,
+> +	&clk_h166,
+> +	&clk_h133,
+> +	&clk_p100,
+> +	&clk_p83,
+> +	&clk_p66
+> +};
+> +
+> +static struct clk init_clocks_disable[] = {
+> +	{
+> +		.name		= "rot",
+> +		.id		= -1,
+> +		.parent		= &clk_h166,
+> +		.enable		= s5pv210_clk_ip0_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP0_ROTATOR,
+> +	}, {
+> +		.name		= "otg",
+> +		.id		= -1,
+> +		.parent		= &clk_h133,
+> +		.enable		= s5pv210_clk_ip1_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP1_USBOTG,
+> +	}, {
+> +		.name		= "usb-host",
+> +		.id		= -1,
+> +		.parent		= &clk_h133,
+> +		.enable		= s5pv210_clk_ip1_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP1_USBHOST,
+> +	}, {
+> +		.name		= "lcd",
+> +		.id		= -1,
+> +		.parent		= &clk_h166,
+> +		.enable		= s5pv210_clk_ip1_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP1_FIMD,
+> +	}, {
+> +		.name		= "cfcon",
+> +		.id		= 0,
+> +		.parent		= &clk_h133,
+> +		.enable		= s5pv210_clk_ip1_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP1_CFCON,
+> +	}, {
+> +		.name		= "hsmmc",
+> +		.id		= 0,
+> +		.parent		= &clk_h133,
+> +		.enable		= s5pv210_clk_ip2_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP2_HSMMC0,
+> +	}, {
+> +		.name		= "hsmmc",
+> +		.id		= 1,
+> +		.parent		= &clk_h133,
+> +		.enable		= s5pv210_clk_ip2_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP2_HSMMC1,
+> +	}, {
+> +		.name		= "hsmmc",
+> +		.id		= 2,
+> +		.parent		= &clk_h133,
+> +		.enable		= s5pv210_clk_ip2_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP2_HSMMC2,
+> +	}, {
+> +		.name		= "hsmmc",
+> +		.id		= 3,
+> +		.parent		= &clk_h133,
+> +		.enable		= s5pv210_clk_ip2_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP2_HSMMC3,
+> +	}, {
+> +		.name		= "systimer",
+> +		.id		= -1,
+> +		.parent		= &clk_p66,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_SYSTIMER,
+> +	}, {
+> +		.name		= "watchdog",
+> +		.id		= -1,
+> +		.parent		= &clk_p66,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_WDT,
+> +	}, {
+> +		.name		= "rtc",
+> +		.id		= -1,
+> +		.parent		= &clk_p66,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_RTC,
+> +	}, {
+> +		.name		= "uart",
+> +		.id		= 0,
+> +		.parent		= &clk_p66,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_UART0,
+> +	}, {
+> +		.name		= "uart",
+> +		.id		= 1,
+> +		.parent		= &clk_p66,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_UART1,
+> +	}, {
+> +		.name		= "uart",
+> +		.id		= 2,
+> +		.parent		= &clk_p66,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_UART2,
+> +	}, {
+> +		.name		= "uart",
+> +		.id		= 3,
+> +		.parent		= &clk_p66,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_UART3,
+> +	}, {
+> +		.name		= "i2c",
+> +		.id		= 0,
+> +		.parent		= &clk_p66,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_I2C0,
+> +	}, {
+> +		.name		= "i2c",
+> +		.id		= 1,
+> +		.parent		= &clk_p66,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_I2C1,
+> +	}, {
+> +		.name		= "i2c",
+> +		.id		= 2,
+> +		.parent		= &clk_p66,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_I2C2,
+> +	}, {
+> +		.name		= "spi",
+> +		.id		= 0,
+> +		.parent		= &clk_p66,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_SPI0,
+> +	}, {
+> +		.name		= "spi",
+> +		.id		= 1,
+> +		.parent		= &clk_p66,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_SPI1,
+> +	}, {
+> +		.name		= "spi",
+> +		.id		= 2,
+> +		.parent		= &clk_p66,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_SPI2,
+> +	}, {
+> +		.name		= "timers",
+> +		.id		= -1,
+> +		.parent		= &clk_p66,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_PWM,
+> +	}, {
+> +		.name		= "adc",
+> +		.id		= -1,
+> +		.parent		= &clk_p66,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_TSADC,
+> +	}, {
+> +		.name		= "keypad",
+> +		.id		= -1,
+> +		.parent		= &clk_p66,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_KEYIF,
+> +	}, {
+> +		.name		= "i2s_v50",
+> +		.id		= 0,
+> +		.parent		= &clk_p,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_I2S0, /* I2S0 is v5.0 */
+> +	}, {
+> +		.name		= "i2s_v32",
+> +		.id		= 0,
+> +		.parent		= &clk_p,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_I2S0, /* I2S1 is v3.2 */
+> +	}, {
+> +		.name		= "i2s_v32",
+> +		.id		= 1,
+> +		.parent		= &clk_p,
+> +		.enable		= s5pv210_clk_ip3_ctrl,
+> +		.ctrlbit	= S5P_CLKGATE_IP3_I2S0, /* I2S2 is v3.2 */
+> +	}
+> +};
+
+What I'd prefer to start seing in these files is just avoid the
+#defines for things like S5P_CLKGATE_IP3_I2S0, if they are only being
+used in one place then simply used the (1 << x) to set .ctrlbit directly.
+
+> +static struct clksrc_clk clk_mout_apll = {
+> +	.clk	= {
+> +		.name		= "mout_apll",
+> +		.id		= -1,
+> +	},
+> +	.sources	= &clk_src_apll,
+> +	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 0, .size = 1 },
+> +};
+> +
+> +static struct clksrc_clk clk_mout_epll = {
+> +	.clk	= {
+> +		.name		= "mout_epll",
+> +		.id		= -1,
+> +	},
+> +	.sources	= &clk_src_epll,
+> +	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 8, .size = 1 },
+> +};
+> +
+> +static struct clksrc_clk clk_mout_mpll = {
+> +	.clk = {
+> +		.name		= "mout_mpll",
+> +		.id		= -1,
+> +	},
+> +	.sources	= &clk_src_mpll,
+> +	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 4, .size = 1 },
+> +};
+> +
+> +static struct clk *clkset_uart_list[] = {
+> +	NULL,
+> +	NULL,
+> +	NULL,
+> +	NULL,
+> +	NULL,
+> +	NULL,
+> +	&clk_mout_mpll.clk,
+> +	&clk_mout_epll.clk,
+> +	NULL,
+> +	NULL,
+> +};
+
+Please yse numbered initialisers here, it is easier to read and avoids
+positiional mistakes from mis-counting. Plus it makes it look nicer.
+
+> +static struct clksrc_sources clkset_uart = {
+> +	.sources	= clkset_uart_list,
+> +	.nr_sources	= ARRAY_SIZE(clkset_uart_list),
+> +};
+> +
+> +static struct clksrc_clk clksrcs[] = {
+> +	{
+> +		.clk	= {
+> +			.name		= "uclk1",
+> +			.id		= -1,
+> +			.ctrlbit	= S5P_CLKGATE_IP3_UART0,
+> +			.enable		= s5pv210_clk_ip3_ctrl,
+> +		},
+> +		.sources = &clkset_uart,
+> +		.reg_src = { .reg = S5P_CLK_SRC4, .shift = 16, .size = 4 },
+> +		.reg_div = { .reg = S5P_CLK_DIV4, .shift = 16, .size = 4 },
+> +	}
+> +};
+> +
+> +/* Clock initialisation code */
+> +static struct clksrc_clk *init_parents[] = {
+> +	&clk_mout_apll,
+> +	&clk_mout_epll,
+> +	&clk_mout_mpll,
+> +};
+> +
+> +#define GET_DIV(clk, field) ((((clk) & field##_MASK) >> field##_SHIFT) + 1)
+> +
+> +void __init_or_cpufreq s5pv210_setup_clocks(void)
+> +{
+> +	struct clk *xtal_clk;
+> +	unsigned long xtal;
+> +	unsigned long armclk;
+> +	unsigned long hclk200;
+> +	unsigned long hclk166;
+> +	unsigned long hclk133;
+> +	unsigned long pclk100;
+> +	unsigned long pclk83;
+> +	unsigned long pclk66;
+> +	unsigned long apll;
+> +	unsigned long mpll;
+> +	unsigned long epll;
+> +	unsigned int ptr;
+> +	u32 clkdiv0, clkdiv1;
+> +
+> +	printk(KERN_DEBUG "%s: registering clocks\n", __func__);
+> +
+> +	clkdiv0 = __raw_readl(S5P_CLK_DIV0);
+> +	clkdiv1 = __raw_readl(S5P_CLK_DIV1);
+> +
+> +	printk(KERN_DEBUG "%s: clkdiv0 = %08x, clkdiv1 = %08x\n",
+> +				__func__, clkdiv0, clkdiv1);
+> +
+> +	xtal_clk = clk_get(NULL, "xtal");
+> +	BUG_ON(IS_ERR(xtal_clk));
+> +
+> +	xtal = clk_get_rate(xtal_clk);
+> +	clk_put(xtal_clk);
+> +
+> +	printk(KERN_DEBUG "%s: xtal is %ld\n", __func__, xtal);
+> +
+> +	apll = s5p_get_pll45xx(xtal, __raw_readl(S5P_APLL_CON), pll_4508);
+> +	mpll = s5p_get_pll45xx(xtal, __raw_readl(S5P_MPLL_CON), pll_4502);
+> +	epll = s5p_get_pll45xx(xtal, __raw_readl(S5P_EPLL_CON), pll_4500);
+> +
+> +	printk(KERN_INFO "S5PV210: PLL settings, A=%ld, M=%ld, E=%ld",
+> +			apll, mpll, epll);
+> +
+> +	armclk = apll / GET_DIV(clkdiv0, S5P_CLKDIV0_APLL);
+> +	if (__raw_readl(S5P_CLK_SRC0) & S5P_CLKSRC0_MUX200_MASK)
+> +		hclk200 = mpll / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK200);
+> +	else
+> +		hclk200 = armclk / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK200);
+> +
+> +	if (__raw_readl(S5P_CLK_SRC0) & S5P_CLKSRC0_MUX166_MASK) {
+> +		hclk166 = apll / GET_DIV(clkdiv0, S5P_CLKDIV0_A2M);
+> +		hclk166 = hclk166 / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK166);
+> +	} else
+> +		hclk166 = mpll / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK166);
+> +
+> +	if (__raw_readl(S5P_CLK_SRC0) & S5P_CLKSRC0_MUX133_MASK) {
+> +		hclk133 = apll / GET_DIV(clkdiv0, S5P_CLKDIV0_A2M);
+> +		hclk133 = hclk133 / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK133);
+> +	} else
+> +		hclk133 = mpll / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK133);
+> +
+> +	pclk100 = hclk200 / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK100);
+> +	pclk83 = hclk166 / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK83);
+> +	pclk66 = hclk133 / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK66);
+> +
+> +	printk(KERN_INFO "S5PV210: ARMCLK=%ld, HCLKM=%ld, HCLKD=%ld, \
+> +			HCLKP=%ld, PCLKM=%ld, PCLKD=%ld, PCLKP=%ld\n",
+> +	       armclk, hclk200, hclk166, hclk133, pclk100, pclk83, pclk66);
+> +
+> +	clk_fout_apll.rate = apll;
+> +	clk_fout_mpll.rate = mpll;
+> +	clk_fout_epll.rate = epll;
+> +
+> +	clk_f.rate = armclk;
+> +	clk_h.rate = hclk133;
+> +	clk_p.rate = pclk66;
+> +	clk_p66.rate = pclk66;
+> +	clk_p83.rate = pclk83;
+> +	clk_h133.rate = hclk133;
+> +	clk_h166.rate = hclk166;
+> +	clk_h200.rate = hclk200;
+> +
+> +	for (ptr = 0; ptr < ARRAY_SIZE(init_parents); ptr++)
+> +		s3c_set_clksrc(init_parents[ptr], true);
+> +
+> +	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
+> +		s3c_set_clksrc(&clksrcs[ptr], true);
+> +}
+> +
+> +static struct clk *clks[] __initdata = {
+> +	&clk_mout_epll.clk,
+> +	&clk_mout_mpll.clk,
+> +};
+> +
+> +void __init s5pv210_register_clocks(void)
+> +{
+> +	struct clk *clkp;
+> +	int ret;
+> +	int ptr;
+> +
+> +	ret = s3c24xx_register_clocks(clks, ARRAY_SIZE(clks));
+> +	if (ret > 0)
+> +		printk(KERN_ERR "Failed to register %u clocks\n", ret);
+> +
+> +	s3c_register_clksrc(clksrcs, ARRAY_SIZE(clksrcs));
+> +
+> +	ret = s3c24xx_register_clocks(sys_clks, ARRAY_SIZE(sys_clks));
+> +	if (ret > 0)
+> +		printk(KERN_ERR "Failed to register system clocks\n");
+> +
+> +	clkp = init_clocks_disable;
+> +	for (ptr = 0; ptr < ARRAY_SIZE(init_clocks_disable); ptr++, clkp++) {
+> +		ret = s3c24xx_register_clock(clkp);
+> +		if (ret < 0) {
+> +			printk(KERN_ERR "Failed to register clock %s (%d)\n",
+> +			       clkp->name, ret);
 > +		}
+> +		(clkp->enable)(clkp, 0);
 > +	}
 > +
-> +	s3c24xx_init_uartdevs("s5pv210-uart", s5p_uart_resources, cfg, no);
+> +	s3c_pwmclk_init();
 > +}
-> -- 
-> 1.6.2.5
+
+I'll add a s3c24xx_register_clocks_disable() call to my tree to collect
+these cases.
 
 -- 
 Ben
