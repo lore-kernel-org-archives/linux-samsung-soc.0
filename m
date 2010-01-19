@@ -1,238 +1,25 @@
 From: Ben Dooks <ben-linux@fluff.org>
 Subject: Re: [PATCH 03/10] ARM: S5PV210: Add IRQ support
-Date: Tue, 19 Jan 2010 03:44:17 +0000
-Message-ID: <20100119034417.GC3971@trinity.fluff.org>
-References: <1263868062-30713-1-git-send-email-kgene.kim@samsung.com>
+Date: Tue, 19 Jan 2010 03:45:48 +0000
+Message-ID: <20100119034548.GD3971@trinity.fluff.org>
+References: <1263868067-30746-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:56334 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:56366 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753360Ab0ASDoS (ORCPT
+	id S1753709Ab0ASDpu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Jan 2010 22:44:18 -0500
+	Mon, 18 Jan 2010 22:45:50 -0500
 Content-Disposition: inline
-In-Reply-To: <1263868062-30713-1-git-send-email-kgene.kim@samsung.com>
+In-Reply-To: <1263868067-30746-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On Tue, Jan 19, 2010 at 11:27:42AM +0900, Kukjin Kim wrote:
-> This patch adds IRQ support for S5PV210. This patch adds interrupt
-> register definitions, IRQ definitions for various interrupt sources
-> and new VIC base for VIC2 and VIC3 in plat-s5p common irq code.
-> 
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
->  arch/arm/mach-s5pv210/include/mach/irqs.h     |  146 +++++++++++++++++++++++++
->  arch/arm/mach-s5pv210/include/mach/regs-irq.h |   19 +++
->  arch/arm/plat-s5p/include/plat/irqs.h         |    4 +
->  3 files changed, 169 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-s5pv210/include/mach/irqs.h
->  create mode 100644 arch/arm/mach-s5pv210/include/mach/regs-irq.h
-> 
-> diff --git a/arch/arm/mach-s5pv210/include/mach/irqs.h b/arch/arm/mach-s5pv210/include/mach/irqs.h
-> new file mode 100644
-> index 0000000..82bf5e2
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/include/mach/irqs.h
-> @@ -0,0 +1,146 @@
-> +/* linux/arch/arm/mach-s5pv210/include/mach/irqs.h
-> + *
-> + * Copyright 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * S5PV210 - IRQ definitions
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#ifndef __ASM_ARCH_IRQS_H
-> +#define __ASM_ARCH_IRQS_H __FILE__
-> +
-> +#include <plat/irqs.h>
-> +
-> +/* VIC0: System, DMA, Timer */
-> +
-> +#define IRQ_EINT0		S5P_IRQ_VIC0(0)
-> +#define IRQ_EINT1		S5P_IRQ_VIC0(1)
-> +#define IRQ_EINT2		S5P_IRQ_VIC0(2)
-> +#define IRQ_EINT3		S5P_IRQ_VIC0(3)
-> +#define IRQ_EINT4		S5P_IRQ_VIC0(4)
-> +#define IRQ_EINT5		S5P_IRQ_VIC0(5)
-> +#define IRQ_EINT6		S5P_IRQ_VIC0(6)
-> +#define IRQ_EINT7		S5P_IRQ_VIC0(7)
-> +#define IRQ_EINT8		S5P_IRQ_VIC0(8)
-> +#define IRQ_EINT9		S5P_IRQ_VIC0(9)
-> +#define IRQ_EINT10		S5P_IRQ_VIC0(10)
-> +#define IRQ_EINT11		S5P_IRQ_VIC0(11)
-> +#define IRQ_EINT12		S5P_IRQ_VIC0(12)
-> +#define IRQ_EINT13		S5P_IRQ_VIC0(13)
-> +#define IRQ_EINT14		S5P_IRQ_VIC0(14)
-> +#define IRQ_EINT15		S5P_IRQ_VIC0(15)
-> +#define IRQ_EINT16_31		S5P_IRQ_VIC0(16)
-> +#define IRQ_BATF		S5P_IRQ_VIC0(17)
-> +#define IRQ_MDMA		S5P_IRQ_VIC0(18)
-> +#define IRQ_PDMA0		S5P_IRQ_VIC0(19)
-> +#define IRQ_PDMA1		S5P_IRQ_VIC0(20)
-> +#define IRQ_TIMER0_VIC		S5P_IRQ_VIC0(21)
-> +#define IRQ_TIMER1_VIC		S5P_IRQ_VIC0(22)
-> +#define IRQ_TIMER2_VIC		S5P_IRQ_VIC0(23)
-> +#define IRQ_TIMER3_VIC		S5P_IRQ_VIC0(24)
-> +#define IRQ_TIMER4_VIC		S5P_IRQ_VIC0(25)
-> +#define IRQ_SYSTIMER		S5P_IRQ_VIC0(26)
-> +#define IRQ_WDT			S5P_IRQ_VIC0(27)
-> +#define IRQ_RTC_ALARM		S5P_IRQ_VIC0(28)
-> +#define IRQ_RTC_TIC		S5P_IRQ_VIC0(29)
-> +#define IRQ_GPIOINT		S5P_IRQ_VIC0(30)
-> +#define IRQ_FIMC3		S5P_IRQ_VIC0(31)
-> +
-> +/* VIC1: ARM, Power, Memory, Connectivity, Storage */
-> +
-> +#define IRQ_CORTEX0		S5P_IRQ_VIC1(0)
-> +#define IRQ_CORTEX1		S5P_IRQ_VIC1(1)
-> +#define IRQ_CORTEX2		S5P_IRQ_VIC1(2)
-> +#define IRQ_CORTEX3		S5P_IRQ_VIC1(3)
-> +#define IRQ_CORTEX4		S5P_IRQ_VIC1(4)
-> +#define IRQ_IEMAPC		S5P_IRQ_VIC1(5)
-> +#define IRQ_IEMIEC		S5P_IRQ_VIC1(6)
-> +#define IRQ_ONENAND		S5P_IRQ_VIC1(7)
-> +#define IRQ_NFC			S5P_IRQ_VIC1(8)
-> +#define IRQ_CFC			S5P_IRQ_VIC1(9)
-> +#define IRQ_UART0		S5P_IRQ_VIC1(10)
-> +#define IRQ_UART1		S5P_IRQ_VIC1(11)
-> +#define IRQ_UART2		S5P_IRQ_VIC1(12)
-> +#define IRQ_UART3		S5P_IRQ_VIC1(13)
-> +#define IRQ_IIC			S5P_IRQ_VIC1(14)
-> +#define IRQ_SPI0		S5P_IRQ_VIC1(15)
-> +#define IRQ_SPI1		S5P_IRQ_VIC1(16)
-> +#define IRQ_SPI2		S5P_IRQ_VIC1(17)
-> +#define IRQ_IRDA		S5P_IRQ_VIC1(18)
-> +#define IRQ_CAN0		S5P_IRQ_VIC1(19)
-> +#define IRQ_CAN1		S5P_IRQ_VIC1(20)
-> +#define IRQ_HSIRX		S5P_IRQ_VIC1(21)
-> +#define IRQ_HSITX		S5P_IRQ_VIC1(22)
-> +#define IRQ_UHOST		S5P_IRQ_VIC1(23)
-> +#define IRQ_OTG			S5P_IRQ_VIC1(24)
-> +#define IRQ_MSM			S5P_IRQ_VIC1(25)
-> +#define IRQ_HSMMC0		S5P_IRQ_VIC1(26)
-> +#define IRQ_HSMMC1		S5P_IRQ_VIC1(27)
-> +#define IRQ_HSMMC2		S5P_IRQ_VIC1(28)
-> +#define IRQ_MIPICSI		S5P_IRQ_VIC1(29)
-> +#define IRQ_MIPIDSI		S5P_IRQ_VIC1(30)
-> +#define IRQ_ONENAND_AUDI	S5P_IRQ_VIC1(31)
-> +
-> +/* VIC2: Multimedia, Audio, Security */
-> +
-> +#define IRQ_LCD0		S5P_IRQ_VIC2(0)
-> +#define IRQ_LCD1		S5P_IRQ_VIC2(1)
-> +#define IRQ_LCD2		S5P_IRQ_VIC2(2)
-> +#define IRQ_LCD3		S5P_IRQ_VIC2(3)
-> +#define IRQ_ROTATOR		S5P_IRQ_VIC2(4)
-> +#define IRQ_FIMC0		S5P_IRQ_VIC2(5)
-> +#define IRQ_FIMC1		S5P_IRQ_VIC2(6)
-> +#define IRQ_FIMC2		S5P_IRQ_VIC2(7)
-> +#define IRQ_JPEG		S5P_IRQ_VIC2(8)
-> +#define IRQ_2D			S5P_IRQ_VIC2(9)
-> +#define IRQ_3D			S5P_IRQ_VIC2(10)
-> +#define IRQ_MIXER		S5P_IRQ_VIC2(11)
-> +#define IRQ_HDMI		S5P_IRQ_VIC2(12)
-> +#define IRQ_IIC1		S5P_IRQ_VIC2(13)
-> +#define IRQ_MFC			S5P_IRQ_VIC2(14)
-> +#define IRQ_TVENC		S5P_IRQ_VIC2(15)
-> +#define IRQ_I2S0		S5P_IRQ_VIC2(16)
-> +#define IRQ_I2S1		S5P_IRQ_VIC2(17)
-> +#define IRQ_I2S2		S5P_IRQ_VIC2(18)
-> +#define IRQ_AC97		S5P_IRQ_VIC2(19)
-> +#define IRQ_PCM0		S5P_IRQ_VIC2(20)
-> +#define IRQ_PCM1		S5P_IRQ_VIC2(21)
-> +#define IRQ_SPDIF		S5P_IRQ_VIC2(22)
-> +#define IRQ_ADC			S5P_IRQ_VIC2(23)
-> +#define IRQ_PENDN		S5P_IRQ_VIC2(24)
-> +#define IRQ_TC			IRQ_PENDN
-> +#define IRQ_KEYPAD		S5P_IRQ_VIC2(25)
-> +#define IRQ_CG			S5P_IRQ_VIC2(26)
-> +#define IRQ_SEC			S5P_IRQ_VIC2(27)
-> +#define IRQ_SECRX		S5P_IRQ_VIC2(28)
-> +#define IRQ_SECTX		S5P_IRQ_VIC2(29)
-> +#define IRQ_SDMIRQ		S5P_IRQ_VIC2(30)
-> +#define IRQ_SDMFIQ		S5P_IRQ_VIC2(31)
-> +
-> +/* VIC3: Etc */
-> +
-> +#define IRQ_IPC			S5P_IRQ_VIC3(0)
-> +#define IRQ_HOSTIF		S5P_IRQ_VIC3(1)
-> +#define IRQ_MMC3		S5P_IRQ_VIC3(2)
-> +#define IRQ_CEC			S5P_IRQ_VIC3(3)
-> +#define IRQ_TSI			S5P_IRQ_VIC3(4)
-> +#define IRQ_MDNIE0		S5P_IRQ_VIC3(5)
-> +#define IRQ_MDNIE1		S5P_IRQ_VIC3(6)
-> +#define IRQ_MDNIE2		S5P_IRQ_VIC3(7)
-> +#define IRQ_MDNIE3		S5P_IRQ_VIC3(8)
-> +#define IRQ_VIC_END		S5P_IRQ_VIC3(31)
-> +
-> +#define S5P_IRQ_EINT_BASE	(IRQ_VIC_END + 1)
-> +
-> +#define S5P_EINT(x)		((x) + S5P_IRQ_EINT_BASE)
-> +#define IRQ_EINT(x)		S5P_EINT(x)
-> +
-> +/* Set the default NR_IRQS */
-> +
-> +#define NR_IRQS 		(IRQ_EINT(31) + 1)
-> +
-> +#endif /* ASM_ARCH_IRQS_H */
-> diff --git a/arch/arm/mach-s5pv210/include/mach/regs-irq.h b/arch/arm/mach-s5pv210/include/mach/regs-irq.h
-> new file mode 100644
-> index 0000000..5c3b104
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/include/mach/regs-irq.h
-> @@ -0,0 +1,19 @@
-> +/* linux/arch/arm/mach-s5pv210/include/mach/regs-irq.h
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * S5PV210 - IRQ register definitions
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#ifndef __ASM_ARCH_REGS_IRQ_H
-> +#define __ASM_ARCH_REGS_IRQ_H __FILE__
-> +
-> +#include <asm/hardware/vic.h>
-> +#include <mach/map.h>
-> +
-> +#endif /* __ASM_ARCH_REGS_IRQ_H */
-> diff --git a/arch/arm/plat-s5p/include/plat/irqs.h b/arch/arm/plat-s5p/include/plat/irqs.h
-> index 5d7937d..f2647ad 100644
-> --- a/arch/arm/plat-s5p/include/plat/irqs.h
-> +++ b/arch/arm/plat-s5p/include/plat/irqs.h
-> @@ -28,6 +28,8 @@
->  
->  #define S5P_VIC0_BASE		S5P_IRQ(0)
->  #define S5P_VIC1_BASE		S5P_IRQ(32)
-> +#define S5P_VIC2_BASE		S5P_IRQ(64)
-> +#define S5P_VIC3_BASE		S5P_IRQ(96)
->  
->  #define IRQ_VIC0_BASE		S5P_VIC0_BASE
->  #define IRQ_VIC1_BASE		S5P_VIC1_BASE
-> @@ -71,6 +73,8 @@
->  
->  #define S5P_IRQ_VIC0(x)		(S5P_VIC0_BASE + (x))
->  #define S5P_IRQ_VIC1(x)		(S5P_VIC1_BASE + (x))
-> +#define S5P_IRQ_VIC2(x)		(S5P_VIC2_BASE + (x))
-> +#define S5P_IRQ_VIC3(x)		(S5P_VIC3_BASE + (x))
->  
->  #define S5P_TIMER_IRQ(x)	S5P_IRQ(64 + (x))
+looks fine
 
-surely S5P_TIMER_IRQ() and S5P_VIC2_BASE are now going to overlap?
- 
 -- 
 Ben
 
