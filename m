@@ -1,81 +1,88 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: too much memory for node
-Date: Wed, 20 Jan 2010 15:34:11 +0000
-Message-ID: <20100120153411.GG26562@trinity.fluff.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: too much memory for node
+Date: Wed, 20 Jan 2010 15:55:10 +0000
+Message-ID: <20100120155510.GB27507@n2100.arm.linux.org.uk>
+References: <20100120153411.GG26562@trinity.fluff.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:45691 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751340Ab0ATPeM (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:39377 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751237Ab0ATPzd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jan 2010 10:34:12 -0500
+	Wed, 20 Jan 2010 10:55:33 -0500
 Content-Disposition: inline
+In-Reply-To: <20100120153411.GG26562@trinity.fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-arm-kernel@lists.infradead.org, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
 
-I've been looking at support for a new machine type where the
-current system is using DISCONTIGMEM as the 1G memory map has
-4x256M RAM ranges which may not all be filled.
+On Wed, Jan 20, 2010 at 03:34:11PM +0000, Ben Dooks wrote:
+> I've been looking at support for a new machine type where the
+> current system is using DISCONTIGMEM as the 1G memory map has
+> 4x256M RAM ranges which may not all be filled.
 
-After removing a hack in the machine support file which fills in
-its own memory table thus obliteratign the bootloader supplied ATAG_MEM
-I found a problem. The board has the full complement of memory and is
-being passed a single ATAG_MEM from the bootloader for all 1G.
+Firstly, use sparsemem, unless you intentionally want to spend more
+cycles in the kernel.
 
-This causes arm_add_memory to add a membank that has more memory
-than the bank.node it is describing and thus the memory setup code
-is then failing.
+> After removing a hack in the machine support file which fills in
+> its own memory table thus obliteratign the bootloader supplied ATAG_MEM
+> I found a problem. The board has the full complement of memory and is
+> being passed a single ATAG_MEM from the bootloader for all 1G.
 
-My current hack to get this working is to do a check for the end
-of memory being in the same node as the start, as so:
+You're into the classic problem which happens when you don't tackle
+these kinds of issues as soon as the first one occurs.  If you allow
+them to persist for any time, getting rid of them later becomes very
+difficult.  I suspect that you're rather stuck now.
 
-diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-index c6c57b6..a5f7b21 100644
---- a/arch/arm/kernel/setup.c
-+++ b/arch/arm/kernel/setup.c
-@@ -410,6 +410,21 @@ static int __init arm_add_memory(unsigned long start, unsigned long size)
- 		return -EINVAL;
- 
- 	meminfo.nr_banks++;
-+
-+	if (PHYS_TO_NID(start + size) != bank->node) {
-+		/* more memory than a single node can handle */
-+
-+		unsigned long next = (1024*1024);
-+
-+		while (PHYS_TO_NID(start + next) == bank->node) 
-+			next += (1024*1024); 
-+
-+		bank->size = next;
-+		printk(KERN_INFO "adding new bank 0x%08x size 0x%08x\n",
-+				start + next, size - next);
-+		arm_add_memory(start + next, size - next);
-+	}
-+
- 	return 0;
- }
- 
-Note, this code uses a search as I couldn't find a good way of calculating
-how mucch space was left in a node given a starting address.
+> diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
+> index c6c57b6..a5f7b21 100644
+> --- a/arch/arm/kernel/setup.c
+> +++ b/arch/arm/kernel/setup.c
+> @@ -410,6 +410,21 @@ static int __init arm_add_memory(unsigned long start, unsigned long size)
+>  		return -EINVAL;
+>  
+>  	meminfo.nr_banks++;
+> +
+> +	if (PHYS_TO_NID(start + size) != bank->node) {
+> +		/* more memory than a single node can handle */
+> +
+> +		unsigned long next = (1024*1024);
+> +
+> +		while (PHYS_TO_NID(start + next) == bank->node) 
+> +			next += (1024*1024); 
+> +
+> +		bank->size = next;
+> +		printk(KERN_INFO "adding new bank 0x%08x size 0x%08x\n",
+> +				start + next, size - next);
+> +		arm_add_memory(start + next, size - next);
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> Note, this code uses a search as I couldn't find a good way of calculating
+> how mucch space was left in a node given a starting address.
 
-Another option is to do similar to sanity_check_meminfo() in the mmu
-setup code (we would still need some form of nodemask or similar from
-the memory.h). Is NODE_MEM_SIZE_MASK usable if !CONIFG_DISCONTIGMEM
-to allow us to avoid the search and still have compilable code?
+There is no way to do this in the kernel.
 
-A third option is to add some code to the specific cpu type to sanitise
-the memory info in the machine fixups, but this is getting into hack
-teritory.
+> Another option is to do similar to sanity_check_meminfo() in the mmu
+> setup code (we would still need some form of nodemask or similar from
+> the memory.h). Is NODE_MEM_SIZE_MASK usable if !CONIFG_DISCONTIGMEM
+> to allow us to avoid the search and still have compilable code?
 
-There is the option of changing the bootloader, but this would required
-updating a number of extant boards and would also require the kernel to
-at least warn if the problems happens instead of stopping before the
-console is started.
+NODE_MEM_SIZE_MASK is DISCONTIGMEM specific; it doesn't exist for
+flatmem nor sparsemem (where it's not relevant.)
 
--- 
-Ben
+It's also complicated by platforms which compress their physical RAM
+space to fit inside the virtual mappings, eg:
 
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+ * 256MB @ 0x00000000 -> PAGE_OFFSET
+ * 512MB @ 0x20000000 -> PAGE_OFFSET + 0x10000000
+ * 256MB @ 0x80000000 -> PAGE_OFFSET + 0x30000000
+
+The only other solution would be for platforms to declare valid areas
+of physical memory back to the setup_arch() code, so that it can
+verify the parameters passed - but that's an awful lot of effort just
+to fix idiotically implemented boot loaders.
