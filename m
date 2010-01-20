@@ -1,59 +1,81 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: git pre-commit hook running checkpatch.pl
-Date: Wed, 20 Jan 2010 16:30:27 +0100
-Message-ID: <20100120153027.GB20271@pengutronix.de>
-References: <20100120020202.GE26562@trinity.fluff.org> <20100120100155.GA851@sirena.org.uk>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: too much memory for node
+Date: Wed, 20 Jan 2010 15:34:11 +0000
+Message-ID: <20100120153411.GG26562@trinity.fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:50364 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753285Ab0ATPab (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:45691 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751340Ab0ATPeM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jan 2010 10:30:31 -0500
+	Wed, 20 Jan 2010 10:34:12 -0500
 Content-Disposition: inline
-In-Reply-To: <20100120100155.GA851@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
 
-On Wed, Jan 20, 2010 at 10:01:55AM +0000, Mark Brown wrote:
-> On Wed, Jan 20, 2010 at 02:02:02AM +0000, Ben Dooks wrote:
->=20
-> > I've written a git pre-commit[1] hook which stops any commits happe=
-ning if
-> > checkpatch.pl reports problems with the patch. Any comments?
->=20
-> > [1] http://www.fluff.org/ben/linux/githooks/pre-commit
->=20
-> Checkpatch does sometimes generate the occasional false positive whic=
-h
-> can be annoying when they trigger.  It can also be a problem when doi=
-ng
-> bugfixes IME - if an existing file has lots of checkpatch issues then=
- a
-> fix which maintains the same coding style as the surrounding code can
-> trigger checkpatch issues which would if fixed make the code not fit =
-in
-> with the rest of the file.  Obviously it'd be desirable to fix the fi=
-le
-> but that's a bit unreasonable for people submitting bug fixes,
-> especially when pushing fixes to Linus and stable.
->=20
-> That said, monitoring for checkpatch issues is useful.
-Maybe only print the warnings instead of stopping a commit?  I'd not
-like me stopping here not only for the reasons pointed out by Mark and
-Russell, but also as I frequently do wip-commits that not necessarily
-are checkpatch-clean.
+I've been looking at support for a new machine type where the
+current system is using DISCONTIGMEM as the 1G memory map has
+4x256M RAM ranges which may not all be filled.
 
-Best regards
-Uwe
+After removing a hack in the machine support file which fills in
+its own memory table thus obliteratign the bootloader supplied ATAG_MEM
+I found a problem. The board has the full complement of memory and is
+being passed a single ATAG_MEM from the bootloader for all 1G.
 
---=20
-Pengutronix e.K.                              | Uwe Kleine-K=F6nig     =
-       |
-Industrial Linux Solutions                    | http://www.pengutronix.=
-de/  |
+This causes arm_add_memory to add a membank that has more memory
+than the bank.node it is describing and thus the memory setup code
+is then failing.
+
+My current hack to get this working is to do a check for the end
+of memory being in the same node as the start, as so:
+
+diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
+index c6c57b6..a5f7b21 100644
+--- a/arch/arm/kernel/setup.c
++++ b/arch/arm/kernel/setup.c
+@@ -410,6 +410,21 @@ static int __init arm_add_memory(unsigned long start, unsigned long size)
+ 		return -EINVAL;
+ 
+ 	meminfo.nr_banks++;
++
++	if (PHYS_TO_NID(start + size) != bank->node) {
++		/* more memory than a single node can handle */
++
++		unsigned long next = (1024*1024);
++
++		while (PHYS_TO_NID(start + next) == bank->node) 
++			next += (1024*1024); 
++
++		bank->size = next;
++		printk(KERN_INFO "adding new bank 0x%08x size 0x%08x\n",
++				start + next, size - next);
++		arm_add_memory(start + next, size - next);
++	}
++
+ 	return 0;
+ }
+ 
+Note, this code uses a search as I couldn't find a good way of calculating
+how mucch space was left in a node given a starting address.
+
+Another option is to do similar to sanity_check_meminfo() in the mmu
+setup code (we would still need some form of nodemask or similar from
+the memory.h). Is NODE_MEM_SIZE_MASK usable if !CONIFG_DISCONTIGMEM
+to allow us to avoid the search and still have compilable code?
+
+A third option is to add some code to the specific cpu type to sanitise
+the memory info in the machine fixups, but this is getting into hack
+teritory.
+
+There is the option of changing the bootloader, but this would required
+updating a number of extant boards and would also require the kernel to
+at least warn if the problems happens instead of stopping before the
+console is started.
+
+-- 
+Ben
+
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
