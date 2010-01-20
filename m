@@ -1,69 +1,133 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 09/10] ARM: S5PV210: Add S5PC110 configuration file
-Date: Thu, 21 Jan 2010 09:07:19 +0900
-Message-ID: <003101ca9a2d$b2c12a50$18437ef0$%kim@samsung.com>
-References: <1263868110-32054-1-git-send-email-kgene.kim@samsung.com>
- <9c9fda241001191920q3d815c1cq955f7f0b6b3f0122@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [PATCH v2 04/10] ARM: S5PV210: Add Timer support
+Date: Thu, 21 Jan 2010 08:57:01 +0900
+Message-ID: <1264031821-2069-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:52335 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754019Ab0AUAF0 convert rfc822-to-8bit (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:54642 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753688Ab0AUAFm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jan 2010 19:05:26 -0500
-Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
- by mailout1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0KWK00GZPLL0ER@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jan 2010 09:05:24 +0900 (KST)
-Received: from kgenekim ([12.23.109.129])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0KWK000CALKZA5@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jan 2010 09:05:23 +0900 (KST)
-In-reply-to: <9c9fda241001191920q3d815c1cq955f7f0b6b3f0122@mail.gmail.com>
-Content-language: ko
+	Wed, 20 Jan 2010 19:05:42 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kyungmin Park' <kmpark@infradead.org>
-Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Kyungmin Park wrote:
-> On Tue, Jan 19, 2010 at 11:28 AM, Kukjin Kim <kgene.kim@samsung.com> =
-wrote:
-> > This patch adds S5PC110 default configuration file.
-> >
-> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> > ---
-> > =A0arch/arm/configs/s5pc110_defconfig | =A0895
-> ++++++++++++++++++++++++++++++++++++
-> > =A01 files changed, 895 insertions(+), 0 deletions(-)
->=20
-> I don't like this ambiguous name.
->=20
+This patch adds timer support for S5PV210. S5PV210 uses the PWM timer
+for the system clock ticks and so S5PV210 reuses the s3c implementation
+of the timer. This patch also adds support definitions required by the
+s3c timer implementation.
 
-> How about specify the correct name such as s5pc110_smdkc110_defconfig=
-=2E
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s5pv210/include/mach/pwm-clock.h |   67 ++++++++++++++++++++++++
+ arch/arm/mach-s5pv210/include/mach/tick.h      |   24 +++++++++
+ 2 files changed, 91 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5pv210/include/mach/pwm-clock.h
+ create mode 100644 arch/arm/mach-s5pv210/include/mach/tick.h
 
-The s5pc110_defconfig means that it is default configuration file for S=
-MDK
-board like s5pc100, and s5p6440. Other boards can use different name.
-
-> > diff --git a/arch/arm/configs/s5pc110_defconfig
-> b/arch/arm/configs/s5pc110_defconfig
-> > new file mode 100644
-> > index 0000000..3956edc
-> > --- /dev/null
-> > +++ b/arch/arm/configs/s5pc110_defconfig
-> > @@ -0,0 +1,895 @@
-
-(snip)
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-System LSI Division, SAMSUNG ELECTRONICS CO., LTD.
+diff --git a/arch/arm/mach-s5pv210/include/mach/pwm-clock.h b/arch/arm/mach-s5pv210/include/mach/pwm-clock.h
+new file mode 100644
+index 0000000..4781f2f
+--- /dev/null
++++ b/arch/arm/mach-s5pv210/include/mach/pwm-clock.h
+@@ -0,0 +1,67 @@
++/* linux/arch/arm/mach-s5pv210/include/mach/pwm-clock.h
++ *
++ * Copyright 2008 Simtec Electronics
++ *      Ben Dooks <ben@simtec.co.uk>
++ *      http://armlinux.simtec.co.uk/
++ *
++ * Copyright 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * S5PV210 - pwm clock and timer support
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __ASM_ARCH_PWMCLK_H
++#define __ASM_ARCH_PWMCLK_H __FILE__
++
++/**
++ * pwm_cfg_src_is_tclk() - return whether the given mux config is a tclk
++ * @cfg: The timer TCFG1 register bits shifted down to 0.
++ *
++ * Return true if the given configuration from TCFG1 is a TCLK instead
++ * any of the TDIV clocks.
++ */
++static inline int pwm_cfg_src_is_tclk(unsigned long tcfg)
++{
++	return tcfg == S3C2410_TCFG1_MUX_TCLK;
++}
++
++/**
++ * tcfg_to_divisor() - convert tcfg1 setting to a divisor
++ * @tcfg1: The tcfg1 setting, shifted down.
++ *
++ * Get the divisor value for the given tcfg1 setting. We assume the
++ * caller has already checked to see if this is not a TCLK source.
++ */
++static inline unsigned long tcfg_to_divisor(unsigned long tcfg1)
++{
++	return 1 << (1 + tcfg1);
++}
++
++/**
++ * pwm_tdiv_has_div1() - does the tdiv setting have a /1
++ *
++ * Return true if we have a /1 in the tdiv setting.
++ */
++static inline unsigned int pwm_tdiv_has_div1(void)
++{
++	return 0;
++}
++
++/**
++ * pwm_tdiv_div_bits() - calculate TCFG1 divisor value.
++ * @div: The divisor to calculate the bit information for.
++ *
++ * Turn a divisor into the necessary bit field for TCFG1.
++ */
++static inline unsigned long pwm_tdiv_div_bits(unsigned int div)
++{
++	return ilog2(div) - 1;
++}
++
++#define S3C_TCFG1_MUX_TCLK S3C2410_TCFG1_MUX_TCLK
++
++#endif /* __ASM_ARCH_PWMCLK_H */
+diff --git a/arch/arm/mach-s5pv210/include/mach/tick.h b/arch/arm/mach-s5pv210/include/mach/tick.h
+new file mode 100644
+index 0000000..6abcb6a
+--- /dev/null
++++ b/arch/arm/mach-s5pv210/include/mach/tick.h
+@@ -0,0 +1,24 @@
++/* linux/arch/arm/mach-s5pv210/include/mach/tick.h
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * S5PV210 - Timer tick support definitions
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __ASM_ARCH_TICK_H
++#define __ASM_ARCH_TICK_H __FILE__
++
++static inline u32 s3c24xx_ostimer_pending(void)
++{
++	u32 pend = __raw_readl(S5P_VA_VIC0 + VIC_RAW_STATUS);
++	return pend & (1 << (IRQ_TIMER4_VIC - S5P_IRQ_VIC0(0)));
++}
++
++#define TICK_MAX	(0xffffffff)
++
++#endif /* __ASM_ARCH_TICK_H */
+-- 
+1.6.2.5
