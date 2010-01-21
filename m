@@ -1,142 +1,299 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH v2 07/10] ARM: S5PV210: Add SMDKC110 board support file
-Date: Thu, 21 Jan 2010 02:29:41 +0000
-Message-ID: <20100121022941.GF10592@trinity.fluff.org>
-References: <1264031855-2236-1-git-send-email-kgene.kim@samsung.com>
+Subject: Re: [PATCH v2 10/10] ARM: S5PV210: Add serial port support
+Date: Thu, 21 Jan 2010 02:35:33 +0000
+Message-ID: <20100121023533.GG10592@trinity.fluff.org>
+References: <1264031878-2362-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:48868 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:59207 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751200Ab0AUC3l (ORCPT
+	id S1752134Ab0AUCfi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jan 2010 21:29:41 -0500
+	Wed, 20 Jan 2010 21:35:38 -0500
 Content-Disposition: inline
-In-Reply-To: <1264031855-2236-1-git-send-email-kgene.kim@samsung.com>
+In-Reply-To: <1264031878-2362-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Thomas Abraham <thomas.ab@samsung.com>
 
-On Thu, Jan 21, 2010 at 08:57:35AM +0900, Kukjin Kim wrote:
-> This patch adds SMDKC110 board support file.
+On Thu, Jan 21, 2010 at 08:57:58AM +0900, Kukjin Kim wrote:
+> This patch adds UART serial port support for S5PV210.
 > 
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > ---
->  arch/arm/mach-s5pv210/mach-smdkc110.c |   98 +++++++++++++++++++++++++++++++++
-
-Please ensure the necessary Makefile and Kconfig chanegs are submitted
-with the addition of thesre machine files.
-
->  1 files changed, 98 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-s5pv210/mach-smdkc110.c
+>  arch/arm/plat-s3c/include/plat/regs-serial.h |   30 +++++
+>  drivers/serial/Kconfig                       |    9 ++-
+>  drivers/serial/Makefile                      |    1 +
+>  drivers/serial/s5pv210.c                     |  149 ++++++++++++++++++++++++++
+>  4 files changed, 188 insertions(+), 1 deletions(-)
+>  create mode 100644 drivers/serial/s5pv210.c
 > 
-> diff --git a/arch/arm/mach-s5pv210/mach-smdkc110.c b/arch/arm/mach-s5pv210/mach-smdkc110.c
+> diff --git a/arch/arm/plat-s3c/include/plat/regs-serial.h b/arch/arm/plat-s3c/include/plat/regs-serial.h
+> index 85d8904..60d6604 100644
+> --- a/arch/arm/plat-s3c/include/plat/regs-serial.h
+> +++ b/arch/arm/plat-s3c/include/plat/regs-serial.h
+> @@ -194,6 +194,36 @@
+>  #define S3C64XX_UINTSP		0x34
+>  #define S3C64XX_UINTM		0x38
+>  
+> +/* Following are specific to S5PV210 and S5P6442 */
+> +#define S5PV210_UCON_CLKMASK	(1<<10)
+> +#define S5PV210_UCON_PCLK	(0<<10)
+> +#define S5PV210_UCON_UCLK	(1<<10)
+> +
+> +#define S5PV210_UFCON_TXTRIG0	(0<<8)
+> +#define S5PV210_UFCON_TXTRIG4	(1<<8)
+> +#define S5PV210_UFCON_TXTRIG8	(2<<8)
+> +#define S5PV210_UFCON_TXTRIG16	(3<<8)
+> +#define S5PV210_UFCON_TXTRIG32	(4<<8)
+> +#define S5PV210_UFCON_TXTRIG64	(5<<8)
+> +#define S5PV210_UFCON_TXTRIG128 (6<<8)
+> +#define S5PV210_UFCON_TXTRIG256 (7<<8)
+> +
+> +#define S5PV210_UFCON_RXTRIG1	(0<<4)
+> +#define S5PV210_UFCON_RXTRIG4	(1<<4)
+> +#define S5PV210_UFCON_RXTRIG8	(2<<4)
+> +#define S5PV210_UFCON_RXTRIG16	(3<<4)
+> +#define S5PV210_UFCON_RXTRIG32	(4<<4)
+> +#define S5PV210_UFCON_RXTRIG64	(5<<4)
+> +#define S5PV210_UFCON_RXTRIG128	(6<<4)
+> +#define S5PV210_UFCON_RXTRIG256	(7<<4)
+> +
+> +#define S5PV210_UFSTAT_TXFULL	(1<<24)
+> +#define S5PV210_UFSTAT_RXFULL	(1<<8)
+> +#define S5PV210_UFSTAT_TXMASK	(255<<16)
+> +#define S5PV210_UFSTAT_TXSHIFT	(16)
+> +#define S5PV210_UFSTAT_RXMASK	(255<<0)
+> +#define S5PV210_UFSTAT_RXSHIFT	(0)
+> +
+>  #ifndef __ASSEMBLY__
+>  
+>  /* struct s3c24xx_uart_clksrc
+> diff --git a/drivers/serial/Kconfig b/drivers/serial/Kconfig
+> index d7d687f..ebdd2b9 100644
+> --- a/drivers/serial/Kconfig
+> +++ b/drivers/serial/Kconfig
+> @@ -459,7 +459,7 @@ config SERIAL_SAMSUNG_UARTS
+>  	int
+>  	depends on ARM && PLAT_S3C
+>  	default 2 if ARCH_S3C2400
+> -	default 4 if ARCH_S5P6440 || ARCH_S5PC1XX || ARCH_S3C64XX || CPU_S3C2443
+> +	default 4 if ARCH_S5P6440 || ARCH_S5PC1XX || ARCH_S5PV210 || ARCH_S3C64XX || CPU_S3C2443
+>  	default 3
+
+I think we can tidy this up with an intermediate configuration for the
+case wherer we have 4 UARTS, although this doesn't need to be done now,
+example being:
+
+config SERIAL_SAMSUNG_4UARTS
+        bool
+        depends on ARM && PLAT_S3C
+	help
+	  Internal node to say we have 4 YARTS
+
+config SERIAL_SAMSUNG_UARTS
+       depends on ARM && PLAT_S3C
+       default 2 if ARCH_S3C2400
+       default 4 if SERIAL_SAMSUNG_4UARTS
+       default 3
+       ...
+
+and then select SERIAL_SAMSUNG_4UARTS as necessary.
+
+>  	help
+>  	  Select the number of available UART ports for the Samsung S3C
+> @@ -540,6 +540,13 @@ config SERIAL_S5PC100
+>  	help
+>  	  Serial port support for the Samsung S5PC100 SoCs
+>  
+> +config SERIAL_S5PV210
+> +	tristate "Samsung S5PV210 Serial port support"
+> +	depends on SERIAL_SAMSUNG && CPU_S5PV210
+> +	default y
+> +	help
+> +	  Serial port support for Samsung's S5P Family of SoC's
+> +
+>  config SERIAL_MAX3100
+>  	tristate "MAX3100 support"
+>  	depends on SPI
+> diff --git a/drivers/serial/Makefile b/drivers/serial/Makefile
+> index 5548fe7..6aa4723 100644
+> --- a/drivers/serial/Makefile
+> +++ b/drivers/serial/Makefile
+> @@ -45,6 +45,7 @@ obj-$(CONFIG_SERIAL_S3C2440) += s3c2440.o
+>  obj-$(CONFIG_SERIAL_S3C24A0) += s3c24a0.o
+>  obj-$(CONFIG_SERIAL_S3C6400) += s3c6400.o
+>  obj-$(CONFIG_SERIAL_S5PC100) += s3c6400.o
+> +obj-$(CONFIG_SERIAL_S5PV210) += s5pv210.o
+>  obj-$(CONFIG_SERIAL_MAX3100) += max3100.o
+>  obj-$(CONFIG_SERIAL_IP22_ZILOG) += ip22zilog.o
+>  obj-$(CONFIG_SERIAL_MUX) += mux.o
+> diff --git a/drivers/serial/s5pv210.c b/drivers/serial/s5pv210.c
 > new file mode 100644
-> index 0000000..aba7b7f
+> index 0000000..0064a77
 > --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/mach-smdkc110.c
-> @@ -0,0 +1,98 @@
-> +/* linux/arch/arm/mach-s5pv210/mach-smdkc110.c
+> +++ b/drivers/serial/s5pv210.c
+> @@ -0,0 +1,149 @@
+> +/* linux/drivers/serial/s5pv210.c
 > + *
 > + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
 > + *		http://www.samsung.com/
+> + *
+> + * Based on drivers/serial/s3c6400.c
+> + *
+> + * Driver for Samsung S5PV210 SoC UARTs.
 > + *
 > + * This program is free software; you can redistribute it and/or modify
 > + * it under the terms of the GNU General Public License version 2 as
 > + * published by the Free Software Foundation.
 > +*/
 > +
-> +#include <linux/kernel.h>
-> +#include <linux/types.h>
+> +#include <linux/module.h>
+> +#include <linux/ioport.h>
+> +#include <linux/io.h>
+> +#include <linux/platform_device.h>
 > +#include <linux/init.h>
 > +#include <linux/serial_core.h>
+> +#include <linux/serial.h>
 > +
-> +#include <asm/mach/arch.h>
-> +#include <asm/mach/map.h>
-> +#include <asm/setup.h>
-> +#include <asm/mach-types.h>
-> +
-> +#include <mach/map.h>
-> +#include <mach/regs-clock.h>
-> +
+> +#include <asm/irq.h>
+> +#include <mach/hardware.h>
 > +#include <plat/regs-serial.h>
-> +#include <plat/s5pv210.h>
-> +#include <plat/devs.h>
-> +#include <plat/cpu.h>
+> +#include "samsung.h"
 > +
-> +/* Following are default values for UCON, ULCON and UFCON UART registers */
-> +#define S5PV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-> +				 S3C2410_UCON_RXILEVEL |	\
-> +				 S3C2410_UCON_TXIRQMODE |	\
-> +				 S3C2410_UCON_RXIRQMODE |	\
-> +				 S3C2410_UCON_RXFIFO_TOI |	\
-> +				 S3C2443_UCON_RXERR_IRQEN)
-> +
-> +#define S5PV210_ULCON_DEFAULT	S3C2410_LCON_CS8
-> +
-> +#define S5PV210_UFCON_DEFAULT	(S3C2410_UFCON_FIFOMODE |	\
-> +				 S5PV210_UFCON_TXTRIG4 |	\
-> +				 S5PV210_UFCON_RXTRIG4)
-> +
-> +static struct s3c2410_uartcfg smdkv210_uartcfgs[] __initdata = {
-> +	[0] = {
-> +		.hwport		= 0,
-> +		.flags		= 0,
-> +		.ucon		= S5PV210_UCON_DEFAULT,
-> +		.ulcon		= S5PV210_ULCON_DEFAULT,
-> +		.ufcon		= S5PV210_UFCON_DEFAULT,
-> +	},
-> +	[1] = {
-> +		.hwport		= 1,
-> +		.flags		= 0,
-> +		.ucon		= S5PV210_UCON_DEFAULT,
-> +		.ulcon		= S5PV210_ULCON_DEFAULT,
-> +		.ufcon		= S5PV210_UFCON_DEFAULT,
-> +	},
-> +	[2] = {
-> +		.hwport		= 2,
-> +		.flags		= 0,
-> +		.ucon		= S5PV210_UCON_DEFAULT,
-> +		.ulcon		= S5PV210_ULCON_DEFAULT,
-> +		.ufcon		= S5PV210_UFCON_DEFAULT,
-> +	},
-> +	[3] = {
-> +		.hwport		= 3,
-> +		.flags		= 0,
-> +		.ucon		= S5PV210_UCON_DEFAULT,
-> +		.ulcon		= S5PV210_ULCON_DEFAULT,
-> +		.ufcon		= S5PV210_UFCON_DEFAULT,
-> +	},
-> +};
-> +
-> +static struct platform_device *smdkc110_devices[] __initdata = {
-> +};
-> +
-> +static void __init smdkc110_map_io(void)
+> +static int s5pv210_serial_setsource(struct uart_port *port,
+> +					struct s3c24xx_uart_clksrc *clk)
 > +{
-> +	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
-> +	s3c24xx_init_clocks(24000000);
-> +	s3c24xx_init_uarts(smdkv210_uartcfgs, ARRAY_SIZE(smdkv210_uartcfgs));
+> +	unsigned long ucon = rd_regl(port, S3C2410_UCON);
+> +
+> +	if (strcmp(clk->name, "pclk") == 0)
+> +		ucon &= ~S5PV210_UCON_CLKMASK;
+> +	else if (strcmp(clk->name, "uclk1") == 0)
+> +		ucon |= S5PV210_UCON_CLKMASK;
+> +	else {
+> +		printk(KERN_ERR "unknown clock source %s\n", clk->name);
+> +		return -EINVAL;
+> +	}
+> +
+> +	wr_regl(port, S3C2410_UCON, ucon);
+> +	return 0;
 > +}
 > +
-> +static void __init smdkc110_machine_init(void)
+> +
+> +static int s5pv210_serial_getsource(struct uart_port *port,
+> +					struct s3c24xx_uart_clksrc *clk)
 > +{
-> +	platform_add_devices(smdkc110_devices, ARRAY_SIZE(smdkc110_devices));
+> +	u32 ucon = rd_regl(port, S3C2410_UCON);
+> +
+> +	clk->divisor = 1;
+> +
+> +	switch (ucon & S5PV210_UCON_CLKMASK) {
+> +	case S5PV210_UCON_PCLK:
+> +		clk->name = "pclk";
+> +		break;
+> +	case S5PV210_UCON_UCLK:
+> +		clk->name = "uclk1";
+> +		break;
+> +	}
+> +
+> +	return 0;
 > +}
 > +
-> +MACHINE_START(SMDKC110, "SMDKC110")
-> +	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
-> +	.phys_io	= S5P_PA_UART & 0xfff00000,
-> +	.io_pg_offst	= (((u32)S5P_VA_UART) >> 18) & 0xfffc,
-> +	.boot_params	= S5P_PA_SDRAM + 0x100,
-> +	.init_irq	= s5pv210_init_irq,
-> +	.map_io		= smdkc110_map_io,
-> +	.init_machine	= smdkc110_machine_init,
-> +	.timer		= &s3c24xx_timer,
-> +MACHINE_END
+> +static int s5pv210_serial_resetport(struct uart_port *port,
+> +					struct s3c2410_uartcfg *cfg)
+> +{
+> +	unsigned long ucon = rd_regl(port, S3C2410_UCON);
+> +
+> +	ucon &= S5PV210_UCON_CLKMASK;
+> +	wr_regl(port, S3C2410_UCON,  ucon | cfg->ucon);
+> +	wr_regl(port, S3C2410_ULCON, cfg->ulcon);
+> +
+> +	/* reset both fifos */
+> +	wr_regl(port, S3C2410_UFCON, cfg->ufcon | S3C2410_UFCON_RESETBOTH);
+> +	wr_regl(port, S3C2410_UFCON, cfg->ufcon);
+> +
+> +	return 0;
+> +}
+> +
+> +#define S5PV210_UART_DEFAULT_INFO(FIFO_SIZE) 	{		\
+> +		.name		= "Samsung S5PV210 UART0",	\
+> +		.type		= PORT_S3C6400,			\
+> +		.fifosize	= FIFO_SIZE,			\
+> +		.has_divslot	= 1,				\
+> +		.rx_fifomask	= S5PV210_UFSTAT_RXMASK,	\
+> +		.rx_fifoshift	= S5PV210_UFSTAT_RXSHIFT,	\
+> +		.rx_fifofull	= S5PV210_UFSTAT_RXFULL,	\
+> +		.tx_fifofull	= S5PV210_UFSTAT_TXFULL,	\
+> +		.tx_fifomask	= S5PV210_UFSTAT_TXMASK,	\
+> +		.tx_fifoshift	= S5PV210_UFSTAT_TXSHIFT,	\
+> +		.get_clksrc	= s5pv210_serial_getsource,	\
+> +		.set_clksrc	= s5pv210_serial_setsource,	\
+> +		.reset_port	= s5pv210_serial_resetport,	\
+> +	}
+> +
+> +static struct s3c24xx_uart_info s5p_uart_inf[] = {
+> +	[0] = S5PV210_UART_DEFAULT_INFO(256),
+> +	[1] = S5PV210_UART_DEFAULT_INFO(64),
+> +	[2] = S5PV210_UART_DEFAULT_INFO(16),
+> +	[3] = S5PV210_UART_DEFAULT_INFO(16),
+> +};
+> +
+> +/* device management */
+> +static int s5p_serial_probe(struct platform_device *pdev)
+> +{
+> +	return s3c24xx_serial_probe(pdev, &s5p_uart_inf[pdev->id]);
+> +}
 
-Same comments as for the S5PV210 machine support.
+I'll check if this is correct, can't remember if pdev->id is a 1:1 mapping
+to the uart port or not.
+
+> +static struct platform_driver s5p_serial_drv = {
+> +	.probe		= s5p_serial_probe,
+> +	.remove		= s3c24xx_serial_remove,
+> +	.driver		= {
+> +		.name	= "s5pv210-uart",
+> +		.owner	= THIS_MODULE,
+> +	},
+> +};
+> +
+> +static int __init s5pv210_serial_console_init(void)
+> +{
+> +	struct s3c24xx_uart_info *uinfo[CONFIG_SERIAL_SAMSUNG_UARTS];
+> +	int i;
+> +
+> +	for (i = 0; i < CONFIG_SERIAL_SAMSUNG_UARTS; i++)
+> +		uinfo[i] = &s5p_uart_inf[i];
+
+surely you don't need to copy here, just do
+       return s3c24xx_serial_initconsole(&s5p_serial_drv, s5p_uart_inf);
+
+> +	return s3c24xx_serial_initconsole(&s5p_serial_drv, uinfo);
+> +}
+> +
+> +console_initcall(s5pv210_serial_console_init);
+> +
+> +static int __init s5p_serial_init(void)
+> +{
+> +	return s3c24xx_serial_init(&s5p_serial_drv, s5p_uart_inf);
+> +}
+> +
+> +static void __exit s5p_serial_exit(void)
+> +{
+> +	platform_driver_unregister(&s5p_serial_drv);
+> +}
+> +
+> +module_init(s5p_serial_init);
+> +module_exit(s5p_serial_exit);
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_ALIAS("platform:s5pv210-uart");
+> +MODULE_DESCRIPTION("Samsung S5PV210 UART Driver support");
+> +MODULE_AUTHOR("Thomas Abraham <thomas.ab@samsung.com>");
+> -- 
+> 1.6.2.5
 
 -- 
 Ben
