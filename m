@@ -1,16 +1,16 @@
 From: Ben Dooks <ben-linux@fluff.org>
 Subject: Re: [PATCH v2 10/10] ARM: S5PV210: Add serial port support
-Date: Thu, 21 Jan 2010 02:35:33 +0000
-Message-ID: <20100121023533.GG10592@trinity.fluff.org>
+Date: Thu, 21 Jan 2010 04:10:49 +0000
+Message-ID: <20100121041049.GA14987@trinity.fluff.org>
 References: <1264031878-2362-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:59207 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:46254 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752134Ab0AUCfi (ORCPT
+	id S1751806Ab0AUEKv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jan 2010 21:35:38 -0500
+	Wed, 20 Jan 2010 23:10:51 -0500
 Content-Disposition: inline
 In-Reply-To: <1264031878-2362-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -83,26 +83,6 @@ On Thu, Jan 21, 2010 at 08:57:58AM +0900, Kukjin Kim wrote:
 > -	default 4 if ARCH_S5P6440 || ARCH_S5PC1XX || ARCH_S3C64XX || CPU_S3C2443
 > +	default 4 if ARCH_S5P6440 || ARCH_S5PC1XX || ARCH_S5PV210 || ARCH_S3C64XX || CPU_S3C2443
 >  	default 3
-
-I think we can tidy this up with an intermediate configuration for the
-case wherer we have 4 UARTS, although this doesn't need to be done now,
-example being:
-
-config SERIAL_SAMSUNG_4UARTS
-        bool
-        depends on ARM && PLAT_S3C
-	help
-	  Internal node to say we have 4 YARTS
-
-config SERIAL_SAMSUNG_UARTS
-       depends on ARM && PLAT_S3C
-       default 2 if ARCH_S3C2400
-       default 4 if SERIAL_SAMSUNG_4UARTS
-       default 3
-       ...
-
-and then select SERIAL_SAMSUNG_4UARTS as necessary.
-
 >  	help
 >  	  Select the number of available UART ports for the Samsung S3C
 > @@ -540,6 +540,13 @@ config SERIAL_S5PC100
@@ -222,6 +202,9 @@ and then select SERIAL_SAMSUNG_4UARTS as necessary.
 > +		.name		= "Samsung S5PV210 UART0",	\
 > +		.type		= PORT_S3C6400,			\
 > +		.fifosize	= FIFO_SIZE,			\
+
+for style, this should be lowercase (FIFO_SIZE)
+
 > +		.has_divslot	= 1,				\
 > +		.rx_fifomask	= S5PV210_UFSTAT_RXMASK,	\
 > +		.rx_fifoshift	= S5PV210_UFSTAT_RXSHIFT,	\
@@ -240,19 +223,50 @@ and then select SERIAL_SAMSUNG_4UARTS as necessary.
 > +	[2] = S5PV210_UART_DEFAULT_INFO(16),
 > +	[3] = S5PV210_UART_DEFAULT_INFO(16),
 > +};
-> +
+
+ok, having thought a bit more about this, how about the following
+to make life easier when passing data to s3c24xx_serial_initconsole()
+
+static struct s3c24xx_uart_info s5p_port_fifo256 = {
+       S5PV210_UART_DEFAULT_INFO(256),
+};
+
+static struct s3c24xx_uart_info s5p_port_fifo64 = {
+       S5PV210_UART_DEFAULT_INFO(64),
+};
+
+static struct s3c24xx_uart_info s5p_port_fifo16 = {
+       S5PV210_UART_DEFAULT_INFO(16),
+};
+
+static struct s3c24xx_uart_info *s5p_uart_inf[] = {
+       [0] = &s5p_port_fifo256,
+       [0] = &s5p_port_fifo64,
+       [0] = &s5p_port_fifo16,
+       [0] = &s5p_port_fifo166,
+};
+
+now can be directly passed to s3c24xx_serial_initconsole() and as
+a bonus you now have one less s3c24xx_uart_info structure in memory.
+
 > +/* device management */
 > +static int s5p_serial_probe(struct platform_device *pdev)
 > +{
 > +	return s3c24xx_serial_probe(pdev, &s5p_uart_inf[pdev->id]);
 > +}
 
-I'll check if this is correct, can't remember if pdev->id is a 1:1 mapping
-to the uart port or not.
+Ok, having checked I believe this is correct.
+
+I'll look into removal of the hwport field from the cfg structure
+as I don't belive that anyone is really using this as it looks as if
+the current samsung seri
 
 > +static struct platform_driver s5p_serial_drv = {
 > +	.probe		= s5p_serial_probe,
 > +	.remove		= s3c24xx_serial_remove,
+
+this field should be __devexit_p() wrapped, as in drivers/serial/s3c2410.c
+
 > +	.driver		= {
 > +		.name	= "s5pv210-uart",
 > +		.owner	= THIS_MODULE,
@@ -266,10 +280,7 @@ to the uart port or not.
 > +
 > +	for (i = 0; i < CONFIG_SERIAL_SAMSUNG_UARTS; i++)
 > +		uinfo[i] = &s5p_uart_inf[i];
-
-surely you don't need to copy here, just do
-       return s3c24xx_serial_initconsole(&s5p_serial_drv, s5p_uart_inf);
-
+> +
 > +	return s3c24xx_serial_initconsole(&s5p_serial_drv, uinfo);
 > +}
 > +
@@ -292,8 +303,6 @@ surely you don't need to copy here, just do
 > +MODULE_ALIAS("platform:s5pv210-uart");
 > +MODULE_DESCRIPTION("Samsung S5PV210 UART Driver support");
 > +MODULE_AUTHOR("Thomas Abraham <thomas.ab@samsung.com>");
-> -- 
-> 1.6.2.5
 
 -- 
 Ben
