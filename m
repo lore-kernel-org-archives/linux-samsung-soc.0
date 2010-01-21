@@ -1,152 +1,115 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH v2 04/10] ARM: S5PV210: Add Timer support
-Date: Thu, 21 Jan 2010 02:22:44 +0000
-Message-ID: <20100121022244.GC10592@trinity.fluff.org>
-References: <1264031821-2069-1-git-send-email-kgene.kim@samsung.com>
+Subject: Re: [PATCH v2 05/10] ARM: S5PV210: Update Kconfig and Makefiles
+Date: Thu, 21 Jan 2010 02:27:20 +0000
+Message-ID: <20100121022720.GD10592@trinity.fluff.org>
+References: <1264031830-2167-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:43442 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:33364 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751439Ab0AUCWu (ORCPT
+	id S1751774Ab0AUC1V (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jan 2010 21:22:50 -0500
+	Wed, 20 Jan 2010 21:27:21 -0500
 Content-Disposition: inline
-In-Reply-To: <1264031821-2069-1-git-send-email-kgene.kim@samsung.com>
+In-Reply-To: <1264031830-2167-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On Thu, Jan 21, 2010 at 08:57:01AM +0900, Kukjin Kim wrote:
-> This patch adds timer support for S5PV210. S5PV210 uses the PWM timer
-> for the system clock ticks and so S5PV210 reuses the s3c implementation
-> of the timer. This patch also adds support definitions required by the
-> s3c timer implementation.
+On Thu, Jan 21, 2010 at 08:57:10AM +0900, Kukjin Kim wrote:
+> Updates arch/arm Kconfig and Makefile for building the S5PV210 support.
+> Also modifies the plat-s5p Kconfig file to include the support for plat-s5p
+> for S5PV210 SoC.
 > 
 > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > ---
->  arch/arm/mach-s5pv210/include/mach/pwm-clock.h |   67 ++++++++++++++++++++++++
->  arch/arm/mach-s5pv210/include/mach/tick.h      |   24 +++++++++
->  2 files changed, 91 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-s5pv210/include/mach/pwm-clock.h
->  create mode 100644 arch/arm/mach-s5pv210/include/mach/tick.h
+>  arch/arm/Kconfig          |   12 +++++++++++-
+>  arch/arm/Makefile         |    1 +
+>  arch/arm/plat-s5p/Kconfig |    2 +-
+>  3 files changed, 13 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/arm/mach-s5pv210/include/mach/pwm-clock.h b/arch/arm/mach-s5pv210/include/mach/pwm-clock.h
-> new file mode 100644
-> index 0000000..4781f2f
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/include/mach/pwm-clock.h
-> @@ -0,0 +1,67 @@
-> +/* linux/arch/arm/mach-s5pv210/include/mach/pwm-clock.h
-> + *
-> + * Copyright 2008 Simtec Electronics
-> + *      Ben Dooks <ben@simtec.co.uk>
-> + *      http://armlinux.simtec.co.uk/
-> + *
-> + * Copyright 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * S5PV210 - pwm clock and timer support
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 3bc5169..6212c5b 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -649,6 +649,14 @@ config ARCH_S5PC1XX
+>  	help
+>  	  Samsung S5PC1XX series based systems
+>  
+> +config ARCH_S5PV210
+> +	bool "Samsung S5PV210/S5PC110"
+> +	select GENERIC_GPIO
+> +	select HAVE_CLK
+> +	select CPU_V7
+> +	help
+> +	  Samsung S5PV210/S5PC110 series based systems
 > +
-> +#ifndef __ASM_ARCH_PWMCLK_H
-> +#define __ASM_ARCH_PWMCLK_H __FILE__
+>  config ARCH_SHARK
+>  	bool "Shark"
+>  	select CPU_SA110
+> @@ -811,6 +819,8 @@ if ARCH_S5PC1XX
+>  source "arch/arm/mach-s5pc100/Kconfig"
+>  endif
+>  
+> +source "arch/arm/mach-s5pv210/Kconfig"
 > +
-> +/**
-> + * pwm_cfg_src_is_tclk() - return whether the given mux config is a tclk
-> + * @cfg: The timer TCFG1 register bits shifted down to 0.
-> + *
-> + * Return true if the given configuration from TCFG1 is a TCLK instead
-> + * any of the TDIV clocks.
-> + */
-> +static inline int pwm_cfg_src_is_tclk(unsigned long tcfg)
-> +{
-> +	return tcfg == S3C2410_TCFG1_MUX_TCLK;
-> +}
-> +
-> +/**
-> + * tcfg_to_divisor() - convert tcfg1 setting to a divisor
-> + * @tcfg1: The tcfg1 setting, shifted down.
-> + *
-> + * Get the divisor value for the given tcfg1 setting. We assume the
-> + * caller has already checked to see if this is not a TCLK source.
-> + */
-> +static inline unsigned long tcfg_to_divisor(unsigned long tcfg1)
-> +{
-> +	return 1 << (1 + tcfg1);
-> +}
-> +
-> +/**
-> + * pwm_tdiv_has_div1() - does the tdiv setting have a /1
-> + *
-> + * Return true if we have a /1 in the tdiv setting.
-> + */
-> +static inline unsigned int pwm_tdiv_has_div1(void)
-> +{
-> +	return 0;
-> +}
-> +
-> +/**
-> + * pwm_tdiv_div_bits() - calculate TCFG1 divisor value.
-> + * @div: The divisor to calculate the bit information for.
-> + *
-> + * Turn a divisor into the necessary bit field for TCFG1.
-> + */
-> +static inline unsigned long pwm_tdiv_div_bits(unsigned int div)
-> +{
-> +	return ilog2(div) - 1;
-> +}
-> +
-> +#define S3C_TCFG1_MUX_TCLK S3C2410_TCFG1_MUX_TCLK
-> +
-> +#endif /* __ASM_ARCH_PWMCLK_H */
+>  source "arch/arm/mach-lh7a40x/Kconfig"
+>  
+>  source "arch/arm/mach-h720x/Kconfig"
+> @@ -1085,7 +1095,7 @@ source kernel/Kconfig.preempt
+>  config HZ
+>  	int
+>  	default 128 if ARCH_L7200
+> -	default 200 if ARCH_EBSA110 || ARCH_S3C2410 || ARCH_S5P6440
+> +	default 200 if ARCH_EBSA110 || ARCH_S3C2410 || ARCH_S5P6440 || ARCH_S5PV210
 
-this looks like arch/arm/mach-s5p6440/include/mach/pwm-clock.h, even
-worse it also looks like arch/arm/plat-s3c24xx/include/mach/pwm-clock.h
-as well.
+For fthe future, we should think about chnging this to something each
+architecture can select... such as:
 
-For the moment, it would be better to add arch/arm/plat-s5p/include/mach
-and move the extant implementation here so everyone can use it before we
-decided what to do next.
+config HZ_DEFAULT_200
+       bool
 
-> diff --git a/arch/arm/mach-s5pv210/include/mach/tick.h b/arch/arm/mach-s5pv210/include/mach/tick.h
-> new file mode 100644
-> index 0000000..6abcb6a
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/include/mach/tick.h
-> @@ -0,0 +1,24 @@
-> +/* linux/arch/arm/mach-s5pv210/include/mach/tick.h
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * S5PV210 - Timer tick support definitions
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#ifndef __ASM_ARCH_TICK_H
-> +#define __ASM_ARCH_TICK_H __FILE__
-> +
-> +static inline u32 s3c24xx_ostimer_pending(void)
-> +{
-> +	u32 pend = __raw_readl(S5P_VA_VIC0 + VIC_RAW_STATUS);
-> +	return pend & (1 << (IRQ_TIMER4_VIC - S5P_IRQ_VIC0(0)));
-> +}
-> +
-> +#define TICK_MAX	(0xffffffff)
-> +
-> +#endif /* __ASM_ARCH_TICK_H */
+config HZ
+       int
+       default 128 if ARCH_L7200
+       default 200 if HZ_DEFAULT_200
+       ...
 
-Again, this looks like the S5P6440 implementation copied and named S5PV210
-instead. See the previous comment about moving to plat-s5p/include/mach.
+Note, not necessary for this round.
+
+>  	default OMAP_32K_TIMER_HZ if ARCH_OMAP && OMAP_32K_TIMER
+>  	default AT91_TIMER_HZ if ARCH_AT91
+>  	default 100
+> diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+> index bbcd512..c968bde 100644
+> --- a/arch/arm/Makefile
+> +++ b/arch/arm/Makefile
+> @@ -163,6 +163,7 @@ machine-$(CONFIG_ARCH_S3C24A0)		:= s3c24a0
+>  machine-$(CONFIG_ARCH_S3C64XX)		:= s3c6400 s3c6410
+>  machine-$(CONFIG_ARCH_S5P6440)		:= s5p6440
+>  machine-$(CONFIG_ARCH_S5PC1XX)		:= s5pc100
+> +machine-$(CONFIG_ARCH_S5PV210)		:= s5pv210
+>  machine-$(CONFIG_ARCH_SA1100)		:= sa1100
+>  machine-$(CONFIG_ARCH_SHARK)		:= shark
+>  machine-$(CONFIG_ARCH_STMP378X)		:= stmp378x
+> diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
+> index e7c31e7..7a91c93 100644
+> --- a/arch/arm/plat-s5p/Kconfig
+> +++ b/arch/arm/plat-s5p/Kconfig
+> @@ -7,7 +7,7 @@
+>  
+>  config PLAT_S5P
+>  	bool
+> -	depends on ARCH_S5P6440
+> +	depends on (ARCH_S5P6440 || ARCH_S5PV210)
+>  	default y
+>  	select PLAT_S3C
+>  	select ARM_VIC
+
+Let's change to select PLAT_S5P in all machines that need it and
+remove the 'default y' statement from this.
 
 -- 
 Ben
