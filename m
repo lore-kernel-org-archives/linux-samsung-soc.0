@@ -1,39 +1,43 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH v2 06/10] ARM: S5PV210: Add SMDKV210 board support file
-Date: Thu, 21 Jan 2010 02:28:34 +0000
-Message-ID: <20100121022834.GE10592@trinity.fluff.org>
-References: <1264031845-2201-1-git-send-email-kgene.kim@samsung.com>
+Subject: Re: [PATCH v2 07/10] ARM: S5PV210: Add SMDKC110 board support file
+Date: Thu, 21 Jan 2010 02:29:41 +0000
+Message-ID: <20100121022941.GF10592@trinity.fluff.org>
+References: <1264031855-2236-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:33433 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:48868 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751439Ab0AUC2f (ORCPT
+	id S1751200Ab0AUC3l (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jan 2010 21:28:35 -0500
+	Wed, 20 Jan 2010 21:29:41 -0500
 Content-Disposition: inline
-In-Reply-To: <1264031845-2201-1-git-send-email-kgene.kim@samsung.com>
+In-Reply-To: <1264031855-2236-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On Thu, Jan 21, 2010 at 08:57:25AM +0900, Kukjin Kim wrote:
-> This patch adds SMDKV210 board support file.
+On Thu, Jan 21, 2010 at 08:57:35AM +0900, Kukjin Kim wrote:
+> This patch adds SMDKC110 board support file.
 > 
 > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > ---
->  arch/arm/mach-s5pv210/mach-smdkv210.c |   98 +++++++++++++++++++++++++++++++++
+>  arch/arm/mach-s5pv210/mach-smdkc110.c |   98 +++++++++++++++++++++++++++++++++
+
+Please ensure the necessary Makefile and Kconfig chanegs are submitted
+with the addition of thesre machine files.
+
 >  1 files changed, 98 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-s5pv210/mach-smdkv210.c
+>  create mode 100644 arch/arm/mach-s5pv210/mach-smdkc110.c
 > 
-> diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
+> diff --git a/arch/arm/mach-s5pv210/mach-smdkc110.c b/arch/arm/mach-s5pv210/mach-smdkc110.c
 > new file mode 100644
-> index 0000000..93d9d99
+> index 0000000..aba7b7f
 > --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
+> +++ b/arch/arm/mach-s5pv210/mach-smdkc110.c
 > @@ -0,0 +1,98 @@
-> +/* linux/arch/arm/mach-s5pv210/mach-smdkv210.c
+> +/* linux/arch/arm/mach-s5pv210/mach-smdkc110.c
 > + *
 > + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
 > + *		http://www.samsung.com/
@@ -106,34 +110,33 @@ On Thu, Jan 21, 2010 at 08:57:25AM +0900, Kukjin Kim wrote:
 > +	},
 > +};
 > +
-> +static struct platform_device *smdkv210_devices[] __initdata = {
+> +static struct platform_device *smdkc110_devices[] __initdata = {
 > +};
 > +
-> +static void __init smdkv210_map_io(void)
+> +static void __init smdkc110_map_io(void)
 > +{
 > +	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
 > +	s3c24xx_init_clocks(24000000);
 > +	s3c24xx_init_uarts(smdkv210_uartcfgs, ARRAY_SIZE(smdkv210_uartcfgs));
 > +}
 > +
-> +static void __init smdkv210_machine_init(void)
+> +static void __init smdkc110_machine_init(void)
 > +{
-> +	platform_add_devices(smdkv210_devices, ARRAY_SIZE(smdkv210_devices));
+> +	platform_add_devices(smdkc110_devices, ARRAY_SIZE(smdkc110_devices));
 > +}
 > +
-> +MACHINE_START(SMDKV210, "SMDKV210")
+> +MACHINE_START(SMDKC110, "SMDKC110")
 > +	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
 > +	.phys_io	= S5P_PA_UART & 0xfff00000,
 > +	.io_pg_offst	= (((u32)S5P_VA_UART) >> 18) & 0xfffc,
 > +	.boot_params	= S5P_PA_SDRAM + 0x100,
 > +	.init_irq	= s5pv210_init_irq,
-> +	.map_io		= smdkv210_map_io,
-> +	.init_machine	= smdkv210_machine_init,
+> +	.map_io		= smdkc110_map_io,
+> +	.init_machine	= smdkc110_machine_init,
 > +	.timer		= &s3c24xx_timer,
+> +MACHINE_END
 
-I take it we've decided to remove the fixup entirely for the moment?
-
-Has the system been tested with SPARSEMEM yet?
+Same comments as for the S5PV210 machine support.
 
 -- 
 Ben
