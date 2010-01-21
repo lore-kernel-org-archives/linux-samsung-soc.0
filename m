@@ -1,68 +1,240 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] gpiolib: add gpio_lookup_chip() to get chip information
- for gpio
-Date: Wed, 20 Jan 2010 22:12:31 -0800
-Message-ID: <20100120221231.573ebca6.akpm@linux-foundation.org>
-References: <1262932348-2888-1-git-send-email-ben-linux@fluff.org>
-	<1262932348-2888-2-git-send-email-ben-linux@fluff.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: S5P: Add Timer support
+Date: Thu, 21 Jan 2010 16:53:03 +0900
+Message-ID: <1264060383-10107-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:41478 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751599Ab0AUGNE (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:36496 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754725Ab0AUIAk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jan 2010 01:13:04 -0500
-In-Reply-To: <1262932348-2888-2-git-send-email-ben-linux@fluff.org>
+	Thu, 21 Jan 2010 03:00:40 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, David Brownell <david-b@pacbell.net>
+To: linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-On Fri,  8 Jan 2010 06:32:28 +0000 Ben Dooks <ben-linux@fluff.org> wrote:
+This patch adds timer support common functions for S5P. Samsung S5P
+SoC uses the PWM timer for the system clock ticks and so reuses the
+s3c implementation of the timer. This patch also adds support
+definitions required by the s3c timer implementation.
+And files of same function remove in the mach-s5p6440/include/mach.
 
-> Add a call to get the 'struct gpio_chip' pointer for a given gpio, so
-> that core implementations which want to use gpiolib gpio numbering for
-> things like mux configuration can get back to the gpio_chip that they
-> registered without having to have their own list of gpio.
-> 
-> This is especially useful for the Samsung S3C64XX series where the GPIO
-> bank sizes can vary from 32 down to 3, making it difficult to store an
-> array to convert a number to chip.
-> 
-> ...
->  
-> +/**
-> + * gpio_lookup_chip - return the chip for a given gpio
-> + * @gpio: The GPIO number to lookup
-> + *
-> + * Returns NULL if the GPIO chip is not valid or there is no chip registered
-> + * for that GPIO. This call is available for core code to turn a GPIO number
-> + * into a chip so that further information can be looked up.
-> + *
-> + * This call makes no guarantees about the actuall gpio_chip's state, or
-> + * whether the @gpio itself is requested.
-> + */
-> +struct gpio_chip *gpio_lookup_chip(unsigned gpio)
-> +{
-> +	struct gpio_chip *chip;
-> +	unsigned long flags;
-> +
-> +	if (!gpio_is_valid(gpio))
-> +		return NULL;
-> +
-> +	spin_lock_irqsave(&gpio_lock, flags);
-> +	chip = gpio_to_chip(gpio);
-> +	spin_unlock_irqrestore(&gpio_lock, flags);
-> +
-> +	return chip;
-> +}
-> +
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s5p6440/include/mach/pwm-clock.h |   62 ---------------------
+ arch/arm/mach-s5p6440/include/mach/tick.h      |   24 --------
+ arch/arm/plat-s5p/include/mach/pwm-clock.h     |   69 ++++++++++++++++++++++++
+ arch/arm/plat-s5p/include/mach/tick.h          |   26 +++++++++
+ 4 files changed, 95 insertions(+), 86 deletions(-)
+ delete mode 100644 arch/arm/mach-s5p6440/include/mach/pwm-clock.h
+ delete mode 100644 arch/arm/mach-s5p6440/include/mach/tick.h
+ create mode 100644 arch/arm/plat-s5p/include/mach/pwm-clock.h
+ create mode 100644 arch/arm/plat-s5p/include/mach/tick.h
 
-The locking looks fishy.  What's the point in locking the array lookup and
-then returning the thing which was looked up after dropping the lock?
-
-Should this function have been exported to modules?
-
-Please cc myself and David Brownell on gpio patches.
+diff --git a/arch/arm/mach-s5p6440/include/mach/pwm-clock.h b/arch/arm/mach-s5p6440/include/mach/pwm-clock.h
+deleted file mode 100644
+index c4bb7c5..0000000
+--- a/arch/arm/mach-s5p6440/include/mach/pwm-clock.h
++++ /dev/null
+@@ -1,62 +0,0 @@
+-/* linux/arch/arm/mach-s5p6440/include/mach/pwm-clock.h
+- *
+- * Copyright 2008 Simtec Electronics
+- *      Ben Dooks <ben@simtec.co.uk>
+- *      http://armlinux.simtec.co.uk/
+- *
+- * Copyright 2009 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com/
+- *
+- * S5P6440 - pwm clock and timer support
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-/**
+- * pwm_cfg_src_is_tclk() - return whether the given mux config is a tclk
+- * @cfg: The timer TCFG1 register bits shifted down to 0.
+- *
+- * Return true if the given configuration from TCFG1 is a TCLK instead
+- * any of the TDIV clocks.
+- */
+-static inline int pwm_cfg_src_is_tclk(unsigned long tcfg)
+-{
+-	return tcfg == S3C2410_TCFG1_MUX_TCLK;
+-}
+-
+-/**
+- * tcfg_to_divisor() - convert tcfg1 setting to a divisor
+- * @tcfg1: The tcfg1 setting, shifted down.
+- *
+- * Get the divisor value for the given tcfg1 setting. We assume the
+- * caller has already checked to see if this is not a TCLK source.
+- */
+-static inline unsigned long tcfg_to_divisor(unsigned long tcfg1)
+-{
+-	return 1 << (1 + tcfg1);
+-}
+-
+-/**
+- * pwm_tdiv_has_div1() - does the tdiv setting have a /1
+- *
+- * Return true if we have a /1 in the tdiv setting.
+- */
+-static inline unsigned int pwm_tdiv_has_div1(void)
+-{
+-	return 0;
+-}
+-
+-/**
+- * pwm_tdiv_div_bits() - calculate TCFG1 divisor value.
+- * @div: The divisor to calculate the bit information for.
+- *
+- * Turn a divisor into the necessary bit field for TCFG1.
+- */
+-static inline unsigned long pwm_tdiv_div_bits(unsigned int div)
+-{
+-	return ilog2(div) - 1;
+-}
+-
+-#define S3C_TCFG1_MUX_TCLK S3C2410_TCFG1_MUX_TCLK
+diff --git a/arch/arm/mach-s5p6440/include/mach/tick.h b/arch/arm/mach-s5p6440/include/mach/tick.h
+deleted file mode 100644
+index 0815aeb..0000000
+--- a/arch/arm/mach-s5p6440/include/mach/tick.h
++++ /dev/null
+@@ -1,24 +0,0 @@
+-/* linux/arch/arm/mach-s5p6440/include/mach/tick.h
+- *
+- * Copyright (c) 2009 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com/
+- *
+- * S5P6440 - Timer tick support definitions
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#ifndef __ASM_ARCH_TICK_H
+-#define __ASM_ARCH_TICK_H __FILE__
+-
+-static inline u32 s3c24xx_ostimer_pending(void)
+-{
+-	u32 pend = __raw_readl(S5P_VA_VIC0 + VIC_RAW_STATUS);
+-	return pend & (1 << (IRQ_TIMER4_VIC - S5P_IRQ_VIC0(0)));
+-}
+-
+-#define TICK_MAX	(0xffffffff)
+-
+-#endif /* __ASM_ARCH_TICK_H */
+diff --git a/arch/arm/plat-s5p/include/mach/pwm-clock.h b/arch/arm/plat-s5p/include/mach/pwm-clock.h
+new file mode 100644
+index 0000000..6d35cc5
+--- /dev/null
++++ b/arch/arm/plat-s5p/include/mach/pwm-clock.h
+@@ -0,0 +1,69 @@
++/* linux/arch/arm/plat-s5p/include/mach/pwm-clock.h
++ *
++ * Copyright 2008 Simtec Electronics
++ *      Ben Dooks <ben@simtec.co.uk>
++ *      http://armlinux.simtec.co.uk/
++ *
++ * Copyright (c) 2009 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * Based on arch/arm/plat-s3c24xx/include/mach/pwm-clock.h
++ *
++ * S5P pwm clock and timer support
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __ASM_ARCH_PWMCLK_H
++#define __ASM_ARCH_PWMCLK_H __FILE__
++
++/**
++ * pwm_cfg_src_is_tclk() - return whether the given mux config is a tclk
++ * @cfg: The timer TCFG1 register bits shifted down to 0.
++ *
++ * Return true if the given configuration from TCFG1 is a TCLK instead
++ * any of the TDIV clocks.
++ */
++static inline int pwm_cfg_src_is_tclk(unsigned long tcfg)
++{
++	return tcfg == S3C2410_TCFG1_MUX_TCLK;
++}
++
++/**
++ * tcfg_to_divisor() - convert tcfg1 setting to a divisor
++ * @tcfg1: The tcfg1 setting, shifted down.
++ *
++ * Get the divisor value for the given tcfg1 setting. We assume the
++ * caller has already checked to see if this is not a TCLK source.
++ */
++static inline unsigned long tcfg_to_divisor(unsigned long tcfg1)
++{
++	return 1 << (1 + tcfg1);
++}
++
++/**
++ * pwm_tdiv_has_div1() - does the tdiv setting have a /1
++ *
++ * Return true if we have a /1 in the tdiv setting.
++ */
++static inline unsigned int pwm_tdiv_has_div1(void)
++{
++	return 0;
++}
++
++/**
++ * pwm_tdiv_div_bits() - calculate TCFG1 divisor value.
++ * @div: The divisor to calculate the bit information for.
++ *
++ * Turn a divisor into the necessary bit field for TCFG1.
++ */
++static inline unsigned long pwm_tdiv_div_bits(unsigned int div)
++{
++	return ilog2(div) - 1;
++}
++
++#define S3C_TCFG1_MUX_TCLK S3C2410_TCFG1_MUX_TCLK
++
++#endif /* __ASM_ARCH_PWMCLK_H */
+diff --git a/arch/arm/plat-s5p/include/mach/tick.h b/arch/arm/plat-s5p/include/mach/tick.h
+new file mode 100644
+index 0000000..9ab0c19
+--- /dev/null
++++ b/arch/arm/plat-s5p/include/mach/tick.h
+@@ -0,0 +1,26 @@
++/* linux/arch/arm/plat-s5pv210/include/mach/tick.h
++ *
++ * Copyright (c) 2009 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * Based on arch/arm/mach-s3c6400/include/mach/tick.h
++ *
++ * S5P Timer tick support definitions
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __ASM_ARCH_TICK_H
++#define __ASM_ARCH_TICK_H __FILE__
++
++static inline u32 s3c24xx_ostimer_pending(void)
++{
++	u32 pend = __raw_readl(S5P_VA_VIC0 + VIC_RAW_STATUS);
++	return pend & (1 << (IRQ_TIMER4_VIC - S5P_IRQ_VIC0(0)));
++}
++
++#define TICK_MAX	(0xffffffff)
++
++#endif /* __ASM_ARCH_TICK_H */
+-- 
+1.6.2.5
