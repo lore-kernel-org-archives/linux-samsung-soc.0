@@ -1,101 +1,68 @@
-From: jassi brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH] ARM: S3C64XX: Tidy up common code in s3c64xx_spi_set_info()
-Date: Thu, 21 Jan 2010 15:11:05 +0900
-Message-ID: <1b68c6791001202211m7ead63e8i82c186f2e3830241@mail.gmail.com>
-References: <1264051266-18754-1-git-send-email-ben-linux@fluff.org>
-	 <1264051266-18754-2-git-send-email-ben-linux@fluff.org>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] gpiolib: add gpio_lookup_chip() to get chip information
+ for gpio
+Date: Wed, 20 Jan 2010 22:12:31 -0800
+Message-ID: <20100120221231.573ebca6.akpm@linux-foundation.org>
+References: <1262932348-2888-1-git-send-email-ben-linux@fluff.org>
+	<1262932348-2888-2-git-send-email-ben-linux@fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qy0-f202.google.com ([209.85.221.202]:42467 "EHLO
-	mail-qy0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751435Ab0AUGLJ convert rfc822-to-8bit (ORCPT
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:41478 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751599Ab0AUGNE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jan 2010 01:11:09 -0500
-Received: by qyk40 with SMTP id 40so3346959qyk.22
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Jan 2010 22:11:05 -0800 (PST)
-In-Reply-To: <1264051266-18754-2-git-send-email-ben-linux@fluff.org>
+	Thu, 21 Jan 2010 01:13:04 -0500
+In-Reply-To: <1262932348-2888-2-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jassi Brar <jassi.brar@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, David Brownell <david-b@pacbell.net>
 
-On Thu, Jan 21, 2010 at 2:21 PM, Ben Dooks <ben-linux@fluff.org> wrote:
-> The s3c64xx_spi_set_info() sets one of two platform data structures d=
-epending
-> on which controller is being specified. Change to taking a pointer to=
- the
-> relevant platform data structure and then having one set of code to p=
-lace
-> the data into the area being pointed to.
->
-> Cc: Jassi Brar <jassi.brar@samsung.com>
-> Signed-off-by: Ben Dooks <ben-linux@fluff.org>
-> ---
-> =C2=A0arch/arm/plat-s3c64xx/dev-spi.c | =C2=A0 15 +++++++++------
-> =C2=A01 files changed, 9 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/arm/plat-s3c64xx/dev-spi.c b/arch/arm/plat-s3c64xx/=
-dev-spi.c
-> index 6b6d7af..ca10388 100644
-> --- a/arch/arm/plat-s3c64xx/dev-spi.c
-> +++ b/arch/arm/plat-s3c64xx/dev-spi.c
-> @@ -18,6 +18,7 @@
-> =C2=A0#include <mach/gpio.h>
->
-> =C2=A0#include <plat/spi-clocks.h>
+On Fri,  8 Jan 2010 06:32:28 +0000 Ben Dooks <ben-linux@fluff.org> wrote:
+
+> Add a call to get the 'struct gpio_chip' pointer for a given gpio, so
+> that core implementations which want to use gpiolib gpio numbering for
+> things like mux configuration can get back to the gpio_chip that they
+> registered without having to have their own list of gpio.
+> 
+> This is especially useful for the Samsung S3C64XX series where the GPIO
+> bank sizes can vary from 32 down to 3, making it difficult to store an
+> array to convert a number to chip.
+> 
+> ...
+>  
+> +/**
+> + * gpio_lookup_chip - return the chip for a given gpio
+> + * @gpio: The GPIO number to lookup
+> + *
+> + * Returns NULL if the GPIO chip is not valid or there is no chip registered
+> + * for that GPIO. This call is available for core code to turn a GPIO number
+> + * into a chip so that further information can be looked up.
+> + *
+> + * This call makes no guarantees about the actuall gpio_chip's state, or
+> + * whether the @gpio itself is requested.
+> + */
+> +struct gpio_chip *gpio_lookup_chip(unsigned gpio)
+> +{
+> +	struct gpio_chip *chip;
+> +	unsigned long flags;
 > +
-> =C2=A0#include <plat/s3c64xx-spi.h>
-> =C2=A0#include <plat/gpio-bank-c.h>
-> =C2=A0#include <plat/gpio-cfg.h>
-> @@ -154,6 +155,8 @@ EXPORT_SYMBOL(s3c64xx_device_spi1);
->
-> =C2=A0void __init s3c64xx_spi_set_info(int cntrlr, int src_clk_nr, in=
-t num_cs)
-> =C2=A0{
-> + =C2=A0 =C2=A0 =C2=A0 struct s3c64xx_spi_info *pd;
+> +	if (!gpio_is_valid(gpio))
+> +		return NULL;
 > +
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0/* Reject invalid configuration */
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0if (!num_cs || src_clk_nr < 0
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0|| src_clk_nr > S3C64XX_SPI_SRCCLK_48M) {
-> @@ -163,18 +166,18 @@ void __init s3c64xx_spi_set_info(int cntrlr, in=
-t src_clk_nr, int num_cs)
->
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0switch (cntrlr) {
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0case 0:
-> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 s3c64xx_spi0_pdata=
-=2Enum_cs =3D num_cs;
-> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 s3c64xx_spi0_pdata=
-=2Esrc_clk_nr =3D src_clk_nr;
-> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 s3c64xx_spi0_pdata=
-=2Esrc_clk_name =3D spi_src_clks[src_clk_nr];
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pd =3D &s3c64xx_sp=
-i0_pdata;
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0break;
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0case 1:
-> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 s3c64xx_spi1_pdata=
-=2Enum_cs =3D num_cs;
-> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 s3c64xx_spi1_pdata=
-=2Esrc_clk_nr =3D src_clk_nr;
-> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 s3c64xx_spi1_pdata=
-=2Esrc_clk_name =3D spi_src_clks[src_clk_nr];
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pd =3D &s3c64xx_sp=
-i1_pdata;
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0break;
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0default:
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0printk(KERN_ER=
-R "%s: Invalid SPI controller(%d)\n",
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0__func__, cntrlr=
-);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return;
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0}
+> +	spin_lock_irqsave(&gpio_lock, flags);
+> +	chip = gpio_to_chip(gpio);
+> +	spin_unlock_irqrestore(&gpio_lock, flags);
 > +
-> + =C2=A0 =C2=A0 =C2=A0 pd->num_cs =3D num_cs;
-> + =C2=A0 =C2=A0 =C2=A0 pd->src_clk_nr =3D src_clk_nr;
-> + =C2=A0 =C2=A0 =C2=A0 pd->src_clk_name =3D spi_src_clks[src_clk_nr];
-> =C2=A0}
-acked-by: Jassi Brar <jassi.brar@samsung.com>
+> +	return chip;
+> +}
+> +
+
+The locking looks fishy.  What's the point in locking the array lookup and
+then returning the thing which was looked up after dropping the lock?
+
+Should this function have been exported to modules?
+
+Please cc myself and David Brownell on gpio patches.
