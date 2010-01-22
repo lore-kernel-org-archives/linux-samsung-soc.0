@@ -1,32 +1,124 @@
 From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: [PATCH 0/4] Add s3c64xx support to touchscreen driver
-Date: Fri, 22 Jan 2010 23:47:05 +0100
-Message-ID: <b2e8f9f71001221447r56b29abboa81736fb1451cdde@mail.gmail.com>
+Subject: [PATCH 2/4] ARM: SAMSUNG: Rename s3c24xx touchscreen interface to s3c
+Date: Fri, 22 Jan 2010 23:47:11 +0100
+Message-ID: <b2e8f9f71001221447k897b5cfs213447084543ee55@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mail-bw0-f227.google.com ([209.85.218.227]:41709 "EHLO
 	mail-bw0-f227.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752994Ab0AVWr2 (ORCPT
+	with ESMTP id S1753667Ab0AVWrc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Jan 2010 17:47:28 -0500
-Received: by bwz27 with SMTP id 27so1517211bwz.21
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Jan 2010 14:47:26 -0800 (PST)
+	Fri, 22 Jan 2010 17:47:32 -0500
+Received: by mail-bw0-f227.google.com with SMTP id 27so1517211bwz.21
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Jan 2010 14:47:31 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>
 
-Hi,
+ARM: SAMSUNG: Rename s3c24xx touchscreen interface to s3c
 
-these patches add support for the s3c64xx platforms to the touchscreen driver.
-This was based on next-samsung in Ben Dook's tree.
+Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
+---
+ arch/arm/mach-s3c2410/mach-h1940.c      |    4 ++--
+ arch/arm/plat-s3c24xx/devs.c            |   10 +++++-----
+ arch/arm/plat-samsung/include/plat/ts.h |    4 ++--
+ drivers/input/touchscreen/s3c2410_ts.c  |    4 ++--
+ 4 files changed, 11 insertions(+), 11 deletions(-)
 
-These depend on:
-[PATCH] ARM: SAMSUNG: Fix null pointer dereference in ADC driver
+diff --git a/arch/arm/mach-s3c2410/mach-h1940.c
+b/arch/arm/mach-s3c2410/mach-h1940.c
+index 75e3ffb..76392f2 100644
+--- a/arch/arm/mach-s3c2410/mach-h1940.c
++++ b/arch/arm/mach-s3c2410/mach-h1940.c
+@@ -141,7 +141,7 @@ static struct s3c2410_udc_mach_info h1940_udc_cfg
+__initdata = {
+ 	.vbus_pin_inverted	= 1,
+ };
 
-I'm not quite sure regarding the resources in patch 3, perhaps these should be
-somehow shared with the ADC driver? (I also can't seem to figure out how the
-s3c24xx handles this at the moment..)
+-static struct s3c2410_ts_mach_info h1940_ts_cfg __initdata = {
++static struct s3c_ts_mach_info h1940_ts_cfg __initdata = {
+ 		.delay = 10000,
+ 		.presc = 49,
+ 		.oversampling_shift = 2,
+@@ -313,7 +313,7 @@ static void __init h1940_init(void)
+ 	s3c24xx_fb_set_platdata(&h1940_fb_info);
+ 	s3c24xx_mci_set_platdata(&h1940_mmc_cfg);
+  	s3c24xx_udc_set_platdata(&h1940_udc_cfg);
+-	s3c24xx_ts_set_platdata(&h1940_ts_cfg);
++	s3c_ts_set_platdata(&h1940_ts_cfg);
+ 	s3c_i2c0_set_platdata(NULL);
 
-Regards,
-Maurus Cuelenaere
+ 	/* Turn off suspend on both USB ports, and switch the
+diff --git a/arch/arm/plat-s3c24xx/devs.c b/arch/arm/plat-s3c24xx/devs.c
+index 3e55bdd..f1c1426 100644
+--- a/arch/arm/plat-s3c24xx/devs.c
++++ b/arch/arm/plat-s3c24xx/devs.c
+@@ -163,14 +163,14 @@ struct platform_device s3c_device_ts = {
+ };
+ EXPORT_SYMBOL(s3c_device_ts);
+
+-static struct s3c2410_ts_mach_info s3c2410ts_info;
++static struct s3c_ts_mach_info s3c2410ts_info;
+
+-void __init s3c24xx_ts_set_platdata(struct s3c2410_ts_mach_info
+*hard_s3c2410ts_info)
++void __init s3c_ts_set_platdata(struct s3c_ts_mach_info *hard_s3cts_info)
+ {
+-	memcpy(&s3c2410ts_info, hard_s3c2410ts_info, sizeof(struct
+s3c2410_ts_mach_info));
+-	s3c_device_ts.dev.platform_data = &s3c2410ts_info;
++	memcpy(&s3cts_info, hard_s3cts_info, sizeof(struct s3c_ts_mach_info));
++	s3c_device_ts.dev.platform_data = &s3cts_info;
+ }
+-EXPORT_SYMBOL(s3c24xx_ts_set_platdata);
++EXPORT_SYMBOL(s3c_ts_set_platdata);
+
+ /* USB Device (Gadget)*/
+
+diff --git a/arch/arm/plat-samsung/include/plat/ts.h
+b/arch/arm/plat-samsung/include/plat/ts.h
+index 8a51675..ed5a1d7 100644
+--- a/arch/arm/plat-samsung/include/plat/ts.h
++++ b/arch/arm/plat-samsung/include/plat/ts.h
+@@ -10,12 +10,12 @@
+ #ifndef __ASM_ARM_TS_H
+ #define __ASM_ARM_TS_H
+
+-struct s3c2410_ts_mach_info {
++struct s3c_ts_mach_info {
+        int             delay;
+        int             presc;
+        int             oversampling_shift;
+ };
+
+-extern void s3c24xx_ts_set_platdata(struct s3c2410_ts_mach_info *);
++extern void s3c_ts_set_platdata(struct s3c_ts_mach_info *);
+
+ #endif /* __ASM_ARM_TS_H */
+diff --git a/drivers/input/touchscreen/s3c2410_ts.c
+b/drivers/input/touchscreen/s3c2410_ts.c
+index 0cd0ca6..3debbc2 100644
+--- a/drivers/input/touchscreen/s3c2410_ts.c
++++ b/drivers/input/touchscreen/s3c2410_ts.c
+@@ -247,7 +247,7 @@ static void s3c24xx_ts_select(struct
+s3c_adc_client *client, unsigned select)
+  */
+ static int __devinit s3c2410ts_probe(struct platform_device *pdev)
+ {
+-	struct s3c2410_ts_mach_info *info;
++	struct s3c_ts_mach_info *info;
+ 	struct device *dev = &pdev->dev;
+ 	struct input_dev *input_dev;
+ 	struct resource *res;
+@@ -398,7 +398,7 @@ static int s3c2410ts_suspend(struct device *dev)
+ static int s3c2410ts_resume(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+-	struct s3c2410_ts_mach_info *info = pdev->dev.platform_data;
++	struct s3c_ts_mach_info *info = pdev->dev.platform_data;
+
+ 	clk_enable(ts.clock);
+
+-- 
+1.6.6.1
