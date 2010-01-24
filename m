@@ -1,11 +1,11 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 6/6] ARM: S5P6442: Add S5P6442 default configuration file
-Date: Mon, 25 Jan 2010 08:54:18 +0900
-Message-ID: <1264377258-9299-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 1/6] ARM: S5P6442: Add Samsung S5P6442 CPU support
+Date: Mon, 25 Jan 2010 08:53:57 +0900
+Message-ID: <1264377237-9138-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:48344 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:48338 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753998Ab0AYABa (ORCPT
+	with ESMTP id S1753996Ab0AYABa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Sun, 24 Jan 2010 19:01:30 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -13,902 +13,806 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch adds S5P6442 default configuration file.
+This patch adds support for Samsung S5P6442 CPU. This patch also adds
+an entry for S5P6442 cpu in plat-s5p cpu table.
 
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/configs/s5p6442_defconfig |  883 ++++++++++++++++++++++++++++++++++++
- 1 files changed, 883 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/configs/s5p6442_defconfig
+ arch/arm/mach-s5p6442/Kconfig                    |   24 ++++
+ arch/arm/mach-s5p6442/Makefile                   |   19 ++++
+ arch/arm/mach-s5p6442/Makefile.boot              |    2 +
+ arch/arm/mach-s5p6442/cpu.c                      |  124 ++++++++++++++++++++++
+ arch/arm/mach-s5p6442/include/mach/debug-macro.S |   39 +++++++
+ arch/arm/mach-s5p6442/include/mach/entry-macro.S |   48 +++++++++
+ arch/arm/mach-s5p6442/include/mach/gpio.h        |  123 +++++++++++++++++++++
+ arch/arm/mach-s5p6442/include/mach/hardware.h    |   18 +++
+ arch/arm/mach-s5p6442/include/mach/map.h         |   90 ++++++++++++++++
+ arch/arm/mach-s5p6442/include/mach/memory.h      |   19 ++++
+ arch/arm/mach-s5p6442/include/mach/system.h      |   26 +++++
+ arch/arm/mach-s5p6442/include/mach/uncompress.h  |   24 ++++
+ arch/arm/mach-s5p6442/s5p6442-init.c             |   44 ++++++++
+ arch/arm/plat-s5p/cpu.c                          |   15 +++
+ arch/arm/plat-s5p/include/plat/s5p6442.h         |   37 +++++++
+ 15 files changed, 652 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5p6442/Kconfig
+ create mode 100644 arch/arm/mach-s5p6442/Makefile
+ create mode 100644 arch/arm/mach-s5p6442/Makefile.boot
+ create mode 100644 arch/arm/mach-s5p6442/cpu.c
+ create mode 100644 arch/arm/mach-s5p6442/include/mach/debug-macro.S
+ create mode 100644 arch/arm/mach-s5p6442/include/mach/entry-macro.S
+ create mode 100644 arch/arm/mach-s5p6442/include/mach/gpio.h
+ create mode 100644 arch/arm/mach-s5p6442/include/mach/hardware.h
+ create mode 100644 arch/arm/mach-s5p6442/include/mach/map.h
+ create mode 100644 arch/arm/mach-s5p6442/include/mach/memory.h
+ create mode 100644 arch/arm/mach-s5p6442/include/mach/system.h
+ create mode 100644 arch/arm/mach-s5p6442/include/mach/uncompress.h
+ create mode 100644 arch/arm/mach-s5p6442/s5p6442-init.c
+ create mode 100644 arch/arm/plat-s5p/include/plat/s5p6442.h
 
-diff --git a/arch/arm/configs/s5p6442_defconfig b/arch/arm/configs/s5p6442_defconfig
+diff --git a/arch/arm/mach-s5p6442/Kconfig b/arch/arm/mach-s5p6442/Kconfig
 new file mode 100644
-index 0000000..74e20bf
+index 0000000..cc9fc4f
 --- /dev/null
-+++ b/arch/arm/configs/s5p6442_defconfig
-@@ -0,0 +1,883 @@
++++ b/arch/arm/mach-s5p6442/Kconfig
+@@ -0,0 +1,24 @@
++# arch/arm/mach-s5p6442/Kconfig
 +#
-+# Automatically generated make config: don't edit
-+# Linux kernel version: 2.6.33-rc4
-+# Mon Jan 25 08:50:28 2010
++# Copyright (c) 2010 Samsung Electronics Co., Ltd.
++#		http://www.samsung.com/
 +#
-+CONFIG_ARM=y
-+CONFIG_SYS_SUPPORTS_APM_EMULATION=y
-+CONFIG_GENERIC_GPIO=y
-+CONFIG_NO_IOPORT=y
-+CONFIG_GENERIC_HARDIRQS=y
-+CONFIG_STACKTRACE_SUPPORT=y
-+CONFIG_HAVE_LATENCYTOP_SUPPORT=y
-+CONFIG_LOCKDEP_SUPPORT=y
-+CONFIG_TRACE_IRQFLAGS_SUPPORT=y
-+CONFIG_HARDIRQS_SW_RESEND=y
-+CONFIG_GENERIC_IRQ_PROBE=y
-+CONFIG_RWSEM_GENERIC_SPINLOCK=y
-+CONFIG_GENERIC_HWEIGHT=y
-+CONFIG_GENERIC_CALIBRATE_DELAY=y
-+CONFIG_GENERIC_HARDIRQS_NO__DO_IRQ=y
-+CONFIG_VECTORS_BASE=0xffff0000
-+CONFIG_DEFCONFIG_LIST="/lib/modules/$UNAME_RELEASE/.config"
-+CONFIG_CONSTRUCTORS=y
++# Licensed under GPLv2
 +
-+#
-+# General setup
-+#
-+CONFIG_EXPERIMENTAL=y
-+CONFIG_BROKEN_ON_SMP=y
-+CONFIG_INIT_ENV_ARG_LIMIT=32
-+CONFIG_LOCALVERSION=""
-+CONFIG_LOCALVERSION_AUTO=y
-+CONFIG_HAVE_KERNEL_GZIP=y
-+CONFIG_HAVE_KERNEL_LZO=y
-+CONFIG_KERNEL_GZIP=y
-+# CONFIG_KERNEL_BZIP2 is not set
-+# CONFIG_KERNEL_LZMA is not set
-+# CONFIG_KERNEL_LZO is not set
-+CONFIG_SWAP=y
-+# CONFIG_SYSVIPC is not set
-+# CONFIG_BSD_PROCESS_ACCT is not set
++# Configuration options for the S5P6442
 +
-+#
-+# RCU Subsystem
-+#
-+CONFIG_TREE_RCU=y
-+# CONFIG_TREE_PREEMPT_RCU is not set
-+# CONFIG_TINY_RCU is not set
-+# CONFIG_RCU_TRACE is not set
-+CONFIG_RCU_FANOUT=32
-+# CONFIG_RCU_FANOUT_EXACT is not set
-+# CONFIG_TREE_RCU_TRACE is not set
-+# CONFIG_IKCONFIG is not set
-+CONFIG_LOG_BUF_SHIFT=17
-+# CONFIG_GROUP_SCHED is not set
-+# CONFIG_CGROUPS is not set
-+CONFIG_SYSFS_DEPRECATED=y
-+CONFIG_SYSFS_DEPRECATED_V2=y
-+# CONFIG_RELAY is not set
-+CONFIG_NAMESPACES=y
-+# CONFIG_UTS_NS is not set
-+# CONFIG_USER_NS is not set
-+# CONFIG_PID_NS is not set
-+CONFIG_BLK_DEV_INITRD=y
-+CONFIG_INITRAMFS_SOURCE=""
-+CONFIG_RD_GZIP=y
-+CONFIG_RD_BZIP2=y
-+CONFIG_RD_LZMA=y
-+CONFIG_RD_LZO=y
-+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-+CONFIG_SYSCTL=y
-+CONFIG_ANON_INODES=y
-+# CONFIG_EMBEDDED is not set
-+CONFIG_UID16=y
-+CONFIG_SYSCTL_SYSCALL=y
-+CONFIG_KALLSYMS=y
-+CONFIG_KALLSYMS_ALL=y
-+# CONFIG_KALLSYMS_EXTRA_PASS is not set
-+CONFIG_HOTPLUG=y
-+CONFIG_PRINTK=y
-+CONFIG_BUG=y
-+CONFIG_ELF_CORE=y
-+CONFIG_BASE_FULL=y
-+CONFIG_FUTEX=y
-+CONFIG_EPOLL=y
-+CONFIG_SIGNALFD=y
-+CONFIG_TIMERFD=y
-+CONFIG_EVENTFD=y
-+CONFIG_SHMEM=y
-+CONFIG_AIO=y
++if ARCH_S5P6442
 +
-+#
-+# Kernel Performance Events And Counters
-+#
-+CONFIG_VM_EVENT_COUNTERS=y
-+CONFIG_SLUB_DEBUG=y
-+CONFIG_COMPAT_BRK=y
-+# CONFIG_SLAB is not set
-+CONFIG_SLUB=y
-+# CONFIG_SLOB is not set
-+# CONFIG_PROFILING is not set
-+CONFIG_HAVE_OPROFILE=y
-+# CONFIG_KPROBES is not set
-+CONFIG_HAVE_KPROBES=y
-+CONFIG_HAVE_KRETPROBES=y
-+CONFIG_HAVE_CLK=y
++config CPU_S5P6442
++	bool
++	select PLAT_S5P
++	help
++	  Enable S5P6442 CPU support
 +
-+#
-+# GCOV-based kernel profiling
-+#
-+# CONFIG_SLOW_WORK is not set
-+CONFIG_HAVE_GENERIC_DMA_COHERENT=y
-+CONFIG_SLABINFO=y
-+CONFIG_RT_MUTEXES=y
-+CONFIG_BASE_SMALL=0
-+CONFIG_MODULES=y
-+# CONFIG_MODULE_FORCE_LOAD is not set
-+CONFIG_MODULE_UNLOAD=y
-+# CONFIG_MODULE_FORCE_UNLOAD is not set
-+# CONFIG_MODVERSIONS is not set
-+# CONFIG_MODULE_SRCVERSION_ALL is not set
-+CONFIG_BLOCK=y
-+CONFIG_LBDAF=y
-+# CONFIG_BLK_DEV_BSG is not set
-+# CONFIG_BLK_DEV_INTEGRITY is not set
++config MACH_SMDK6442
++	bool "SMDK6442"
++	select CPU_S5P6442
++	help
++	  Machine support for the Samsung SMDK6442
 +
++endif
+diff --git a/arch/arm/mach-s5p6442/Makefile b/arch/arm/mach-s5p6442/Makefile
+new file mode 100644
+index 0000000..b2271c0
+--- /dev/null
++++ b/arch/arm/mach-s5p6442/Makefile
+@@ -0,0 +1,19 @@
++# arch/arm/mach-s5p6442/Makefile
 +#
-+# IO Schedulers
++# Copyright (c) 2010 Samsung Electronics Co., Ltd.
++#		http://www.samsung.com/
 +#
-+CONFIG_IOSCHED_NOOP=y
-+CONFIG_IOSCHED_DEADLINE=y
-+CONFIG_IOSCHED_CFQ=y
-+# CONFIG_DEFAULT_DEADLINE is not set
-+CONFIG_DEFAULT_CFQ=y
-+# CONFIG_DEFAULT_NOOP is not set
-+CONFIG_DEFAULT_IOSCHED="cfq"
-+# CONFIG_INLINE_SPIN_TRYLOCK is not set
-+# CONFIG_INLINE_SPIN_TRYLOCK_BH is not set
-+# CONFIG_INLINE_SPIN_LOCK is not set
-+# CONFIG_INLINE_SPIN_LOCK_BH is not set
-+# CONFIG_INLINE_SPIN_LOCK_IRQ is not set
-+# CONFIG_INLINE_SPIN_LOCK_IRQSAVE is not set
-+# CONFIG_INLINE_SPIN_UNLOCK is not set
-+# CONFIG_INLINE_SPIN_UNLOCK_BH is not set
-+# CONFIG_INLINE_SPIN_UNLOCK_IRQ is not set
-+# CONFIG_INLINE_SPIN_UNLOCK_IRQRESTORE is not set
-+# CONFIG_INLINE_READ_TRYLOCK is not set
-+# CONFIG_INLINE_READ_LOCK is not set
-+# CONFIG_INLINE_READ_LOCK_BH is not set
-+# CONFIG_INLINE_READ_LOCK_IRQ is not set
-+# CONFIG_INLINE_READ_LOCK_IRQSAVE is not set
-+# CONFIG_INLINE_READ_UNLOCK is not set
-+# CONFIG_INLINE_READ_UNLOCK_BH is not set
-+# CONFIG_INLINE_READ_UNLOCK_IRQ is not set
-+# CONFIG_INLINE_READ_UNLOCK_IRQRESTORE is not set
-+# CONFIG_INLINE_WRITE_TRYLOCK is not set
-+# CONFIG_INLINE_WRITE_LOCK is not set
-+# CONFIG_INLINE_WRITE_LOCK_BH is not set
-+# CONFIG_INLINE_WRITE_LOCK_IRQ is not set
-+# CONFIG_INLINE_WRITE_LOCK_IRQSAVE is not set
-+# CONFIG_INLINE_WRITE_UNLOCK is not set
-+# CONFIG_INLINE_WRITE_UNLOCK_BH is not set
-+# CONFIG_INLINE_WRITE_UNLOCK_IRQ is not set
-+# CONFIG_INLINE_WRITE_UNLOCK_IRQRESTORE is not set
-+# CONFIG_MUTEX_SPIN_ON_OWNER is not set
-+# CONFIG_FREEZER is not set
++# Licensed under GPLv2
 +
-+#
-+# System Type
-+#
-+CONFIG_MMU=y
-+# CONFIG_ARCH_AAEC2000 is not set
-+# CONFIG_ARCH_INTEGRATOR is not set
-+# CONFIG_ARCH_REALVIEW is not set
-+# CONFIG_ARCH_VERSATILE is not set
-+# CONFIG_ARCH_AT91 is not set
-+# CONFIG_ARCH_CLPS711X is not set
-+# CONFIG_ARCH_GEMINI is not set
-+# CONFIG_ARCH_EBSA110 is not set
-+# CONFIG_ARCH_EP93XX is not set
-+# CONFIG_ARCH_FOOTBRIDGE is not set
-+# CONFIG_ARCH_MXC is not set
-+# CONFIG_ARCH_STMP3XXX is not set
-+# CONFIG_ARCH_NETX is not set
-+# CONFIG_ARCH_H720X is not set
-+# CONFIG_ARCH_NOMADIK is not set
-+# CONFIG_ARCH_IOP13XX is not set
-+# CONFIG_ARCH_IOP32X is not set
-+# CONFIG_ARCH_IOP33X is not set
-+# CONFIG_ARCH_IXP23XX is not set
-+# CONFIG_ARCH_IXP2000 is not set
-+# CONFIG_ARCH_IXP4XX is not set
-+# CONFIG_ARCH_L7200 is not set
-+# CONFIG_ARCH_DOVE is not set
-+# CONFIG_ARCH_KIRKWOOD is not set
-+# CONFIG_ARCH_LOKI is not set
-+# CONFIG_ARCH_MV78XX0 is not set
-+# CONFIG_ARCH_ORION5X is not set
-+# CONFIG_ARCH_MMP is not set
-+# CONFIG_ARCH_KS8695 is not set
-+# CONFIG_ARCH_NS9XXX is not set
-+# CONFIG_ARCH_W90X900 is not set
-+# CONFIG_ARCH_PNX4008 is not set
-+# CONFIG_ARCH_PXA is not set
-+# CONFIG_ARCH_MSM is not set
-+# CONFIG_ARCH_RPC is not set
-+# CONFIG_ARCH_SA1100 is not set
-+# CONFIG_ARCH_S3C2410 is not set
-+# CONFIG_ARCH_S3C64XX is not set
-+# CONFIG_ARCH_S5P6440 is not set
-+CONFIG_ARCH_S5P6442=y
-+# CONFIG_ARCH_S5PC1XX is not set
-+# CONFIG_ARCH_SHARK is not set
-+# CONFIG_ARCH_LH7A40X is not set
-+# CONFIG_ARCH_U300 is not set
-+# CONFIG_ARCH_DAVINCI is not set
-+# CONFIG_ARCH_OMAP is not set
-+# CONFIG_ARCH_BCMRING is not set
-+# CONFIG_ARCH_U8500 is not set
-+CONFIG_PLAT_SAMSUNG=y
-+CONFIG_SAMSUNG_CLKSRC=y
-+CONFIG_SAMSUNG_IRQ_VIC_TIMER=y
-+CONFIG_SAMSUNG_IRQ_UART=y
-+CONFIG_SAMSUNG_GPIOLIB_4BIT=y
-+CONFIG_S3C_GPIO_CFG_S3C24XX=y
-+CONFIG_S3C_GPIO_CFG_S3C64XX=y
-+CONFIG_S3C_GPIO_PULL_UPDOWN=y
-+CONFIG_SAMSUNG_GPIO_EXTRA=0
-+# CONFIG_S3C_ADC is not set
++obj-y				:=
++obj-m				:=
++obj-n				:=
++obj-				:=
 +
-+#
-+# Power management
-+#
-+CONFIG_PLAT_S3C=y
++# Core support for S5P6442 system
 +
-+#
-+# Boot options
-+#
-+# CONFIG_S3C_BOOT_ERROR_RESET is not set
-+CONFIG_S3C_BOOT_UART_FORCE_FIFO=y
-+CONFIG_S3C_LOWLEVEL_UART_PORT=1
-+CONFIG_S3C_GPIO_SPACE=0
-+CONFIG_S3C_GPIO_TRACK=y
-+CONFIG_PLAT_S5P=y
-+CONFIG_CPU_S5P6442=y
-+CONFIG_MACH_SMDK6442=y
++obj-$(CONFIG_CPU_S5P6442)	+= cpu.o s5p6442-init.o s5p6442-clock.o
 +
-+#
-+# Processor Type
-+#
-+CONFIG_CPU_V6=y
-+CONFIG_CPU_32v6K=y
-+CONFIG_CPU_32v6=y
-+CONFIG_CPU_ABRT_EV6=y
-+CONFIG_CPU_PABRT_V6=y
-+CONFIG_CPU_CACHE_V6=y
-+CONFIG_CPU_CACHE_VIPT=y
-+CONFIG_CPU_COPY_V6=y
-+CONFIG_CPU_TLB_V6=y
-+CONFIG_CPU_HAS_ASID=y
-+CONFIG_CPU_CP15=y
-+CONFIG_CPU_CP15_MMU=y
++# machine support
 +
-+#
-+# Processor Features
-+#
-+CONFIG_ARM_THUMB=y
-+# CONFIG_CPU_ICACHE_DISABLE is not set
-+# CONFIG_CPU_DCACHE_DISABLE is not set
-+# CONFIG_CPU_BPREDICT_DISABLE is not set
-+CONFIG_ARM_L1_CACHE_SHIFT=5
-+# CONFIG_ARM_ERRATA_411920 is not set
-+CONFIG_ARM_VIC=y
-+CONFIG_ARM_VIC_NR=2
++obj-$(CONFIG_MACH_SMDK6442)	+= mach-smdk6442.o
+diff --git a/arch/arm/mach-s5p6442/Makefile.boot b/arch/arm/mach-s5p6442/Makefile.boot
+new file mode 100644
+index 0000000..ff90aa1
+--- /dev/null
++++ b/arch/arm/mach-s5p6442/Makefile.boot
+@@ -0,0 +1,2 @@
++   zreladdr-y	:= 0x20008000
++params_phys-y	:= 0x20000100
+diff --git a/arch/arm/mach-s5p6442/cpu.c b/arch/arm/mach-s5p6442/cpu.c
+new file mode 100644
+index 0000000..c559657
+--- /dev/null
++++ b/arch/arm/mach-s5p6442/cpu.c
+@@ -0,0 +1,124 @@
++/* linux/arch/arm/mach-s5p6442/cpu.c
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
-+#
-+# Bus support
-+#
-+# CONFIG_PCI_SYSCALL is not set
-+# CONFIG_ARCH_SUPPORTS_MSI is not set
-+# CONFIG_PCCARD is not set
++#include <linux/kernel.h>
++#include <linux/types.h>
++#include <linux/interrupt.h>
++#include <linux/list.h>
++#include <linux/timer.h>
++#include <linux/init.h>
++#include <linux/clk.h>
++#include <linux/io.h>
++#include <linux/sysdev.h>
++#include <linux/serial_core.h>
++#include <linux/platform_device.h>
 +
-+#
-+# Kernel Features
-+#
-+CONFIG_VMSPLIT_3G=y
-+# CONFIG_VMSPLIT_2G is not set
-+# CONFIG_VMSPLIT_1G is not set
-+CONFIG_PAGE_OFFSET=0xC0000000
-+CONFIG_PREEMPT_NONE=y
-+# CONFIG_PREEMPT_VOLUNTARY is not set
-+# CONFIG_PREEMPT is not set
-+CONFIG_HZ=200
-+CONFIG_AEABI=y
-+CONFIG_OABI_COMPAT=y
-+# CONFIG_ARCH_SPARSEMEM_DEFAULT is not set
-+# CONFIG_ARCH_SELECT_MEMORY_MODEL is not set
-+# CONFIG_HIGHMEM is not set
-+CONFIG_SELECT_MEMORY_MODEL=y
-+CONFIG_FLATMEM_MANUAL=y
-+# CONFIG_DISCONTIGMEM_MANUAL is not set
-+# CONFIG_SPARSEMEM_MANUAL is not set
-+CONFIG_FLATMEM=y
-+CONFIG_FLAT_NODE_MEM_MAP=y
-+CONFIG_PAGEFLAGS_EXTENDED=y
-+CONFIG_SPLIT_PTLOCK_CPUS=999999
-+# CONFIG_PHYS_ADDR_T_64BIT is not set
-+CONFIG_ZONE_DMA_FLAG=0
-+CONFIG_VIRT_TO_BUS=y
-+# CONFIG_KSM is not set
-+CONFIG_DEFAULT_MMAP_MIN_ADDR=4096
-+CONFIG_ALIGNMENT_TRAP=y
-+# CONFIG_UACCESS_WITH_MEMCPY is not set
++#include <asm/mach/arch.h>
++#include <asm/mach/map.h>
++#include <asm/mach/irq.h>
 +
-+#
-+# Boot options
-+#
-+CONFIG_ZBOOT_ROM_TEXT=0
-+CONFIG_ZBOOT_ROM_BSS=0
-+CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x20800000,8M console=ttySAC1,115200 init=/linuxrc"
-+# CONFIG_XIP_KERNEL is not set
-+# CONFIG_KEXEC is not set
++#include <asm/proc-fns.h>
 +
-+#
-+# CPU Power Management
-+#
-+# CONFIG_CPU_IDLE is not set
++#include <mach/hardware.h>
++#include <mach/map.h>
++#include <asm/irq.h>
 +
-+#
-+# Floating point emulation
-+#
++#include <plat/regs-serial.h>
++#include <mach/regs-clock.h>
 +
-+#
-+# At least one emulation must be selected
-+#
-+CONFIG_FPE_NWFPE=y
-+# CONFIG_FPE_NWFPE_XP is not set
-+# CONFIG_FPE_FASTFPE is not set
-+# CONFIG_VFP is not set
++#include <plat/cpu.h>
++#include <plat/devs.h>
++#include <plat/clock.h>
++#include <plat/s5p6442.h>
 +
-+#
-+# Userspace binary formats
-+#
-+CONFIG_BINFMT_ELF=y
-+# CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
-+CONFIG_HAVE_AOUT=y
-+# CONFIG_BINFMT_AOUT is not set
-+# CONFIG_BINFMT_MISC is not set
++/* Initial IO mappings */
 +
-+#
-+# Power management options
-+#
-+# CONFIG_PM is not set
-+CONFIG_ARCH_SUSPEND_POSSIBLE=y
-+# CONFIG_NET is not set
++static struct map_desc s5p6442_iodesc[] __initdata = {
++	{
++		.virtual	= (unsigned long)S5P_VA_SYSTIMER,
++		.pfn		= __phys_to_pfn(S5P6442_PA_SYSTIMER),
++		.length		= SZ_16K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S5P_VA_VIC2,
++		.pfn		= __phys_to_pfn(S5P6442_PA_VIC2),
++		.length		= SZ_16K,
++		.type		= MT_DEVICE,
++	}
++};
 +
-+#
-+# Device Drivers
-+#
++static void s5p6442_idle(void)
++{
++	if (!need_resched())
++		cpu_do_idle();
 +
-+#
-+# Generic Driver Options
-+#
-+CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
-+# CONFIG_DEVTMPFS is not set
-+CONFIG_STANDALONE=y
-+# CONFIG_PREVENT_FIRMWARE_BUILD is not set
-+CONFIG_FW_LOADER=y
-+CONFIG_FIRMWARE_IN_KERNEL=y
-+CONFIG_EXTRA_FIRMWARE=""
-+# CONFIG_DEBUG_DRIVER is not set
-+# CONFIG_DEBUG_DEVRES is not set
-+# CONFIG_SYS_HYPERVISOR is not set
-+# CONFIG_MTD is not set
-+# CONFIG_PARPORT is not set
-+CONFIG_BLK_DEV=y
-+# CONFIG_BLK_DEV_COW_COMMON is not set
-+CONFIG_BLK_DEV_LOOP=y
-+# CONFIG_BLK_DEV_CRYPTOLOOP is not set
++	local_irq_enable();
++}
 +
-+#
-+# DRBD disabled because PROC_FS, INET or CONNECTOR not selected
-+#
-+CONFIG_BLK_DEV_RAM=y
-+CONFIG_BLK_DEV_RAM_COUNT=16
-+CONFIG_BLK_DEV_RAM_SIZE=8192
-+# CONFIG_BLK_DEV_XIP is not set
-+# CONFIG_CDROM_PKTCDVD is not set
-+# CONFIG_MG_DISK is not set
-+# CONFIG_MISC_DEVICES is not set
-+CONFIG_HAVE_IDE=y
-+# CONFIG_IDE is not set
++/* s5p6442_map_io
++ *
++ * register the standard cpu IO areas
++*/
 +
-+#
-+# SCSI device support
-+#
-+# CONFIG_RAID_ATTRS is not set
-+CONFIG_SCSI=y
-+CONFIG_SCSI_DMA=y
-+# CONFIG_SCSI_TGT is not set
-+# CONFIG_SCSI_NETLINK is not set
-+CONFIG_SCSI_PROC_FS=y
++void __init s5p6442_map_io(void)
++{
++	iotable_init(s5p6442_iodesc, ARRAY_SIZE(s5p6442_iodesc));
++}
 +
-+#
-+# SCSI support type (disk, tape, CD-ROM)
-+#
-+CONFIG_BLK_DEV_SD=y
-+# CONFIG_CHR_DEV_ST is not set
-+# CONFIG_CHR_DEV_OSST is not set
-+# CONFIG_BLK_DEV_SR is not set
-+CONFIG_CHR_DEV_SG=y
-+# CONFIG_CHR_DEV_SCH is not set
-+# CONFIG_SCSI_MULTI_LUN is not set
-+# CONFIG_SCSI_CONSTANTS is not set
-+# CONFIG_SCSI_LOGGING is not set
-+# CONFIG_SCSI_SCAN_ASYNC is not set
-+CONFIG_SCSI_WAIT_SCAN=m
++void __init s5p6442_init_clocks(int xtal)
++{
++	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
 +
-+#
-+# SCSI Transports
-+#
-+# CONFIG_SCSI_SPI_ATTRS is not set
-+# CONFIG_SCSI_FC_ATTRS is not set
-+# CONFIG_SCSI_SAS_LIBSAS is not set
-+# CONFIG_SCSI_SRP_ATTRS is not set
-+CONFIG_SCSI_LOWLEVEL=y
-+# CONFIG_LIBFC is not set
-+# CONFIG_LIBFCOE is not set
-+# CONFIG_SCSI_DEBUG is not set
-+# CONFIG_SCSI_DH is not set
-+# CONFIG_SCSI_OSD_INITIATOR is not set
-+# CONFIG_ATA is not set
-+# CONFIG_MD is not set
-+# CONFIG_PHONE is not set
++	s3c24xx_register_baseclocks(xtal);
++	s5p_register_clocks(xtal);
++	s5p6442_register_clocks();
++	s5p6442_setup_clocks();
++}
 +
-+#
-+# Input device support
-+#
-+CONFIG_INPUT=y
-+# CONFIG_INPUT_FF_MEMLESS is not set
-+# CONFIG_INPUT_POLLDEV is not set
-+# CONFIG_INPUT_SPARSEKMAP is not set
++void __init s5p6442_init_irq(void)
++{
++	u32 vic[3];	/* S5P6442 supports 3 VIC */
 +
-+#
-+# Userland interfaces
-+#
-+CONFIG_INPUT_MOUSEDEV=y
-+CONFIG_INPUT_MOUSEDEV_PSAUX=y
-+CONFIG_INPUT_MOUSEDEV_SCREEN_X=1024
-+CONFIG_INPUT_MOUSEDEV_SCREEN_Y=768
-+# CONFIG_INPUT_JOYDEV is not set
-+CONFIG_INPUT_EVDEV=y
-+# CONFIG_INPUT_EVBUG is not set
++	/* VIC0: some interrupt reserved */
++	vic[0] = 0x7FEFFFFF;
 +
-+#
-+# Input Device Drivers
-+#
-+# CONFIG_INPUT_KEYBOARD is not set
-+# CONFIG_INPUT_MOUSE is not set
-+# CONFIG_INPUT_JOYSTICK is not set
-+# CONFIG_INPUT_TABLET is not set
-+CONFIG_INPUT_TOUCHSCREEN=y
-+# CONFIG_TOUCHSCREEN_AD7879 is not set
-+# CONFIG_TOUCHSCREEN_DYNAPRO is not set
-+# CONFIG_TOUCHSCREEN_FUJITSU is not set
-+# CONFIG_TOUCHSCREEN_GUNZE is not set
-+# CONFIG_TOUCHSCREEN_ELO is not set
-+# CONFIG_TOUCHSCREEN_WACOM_W8001 is not set
-+# CONFIG_TOUCHSCREEN_MTOUCH is not set
-+# CONFIG_TOUCHSCREEN_INEXIO is not set
-+# CONFIG_TOUCHSCREEN_MK712 is not set
-+# CONFIG_TOUCHSCREEN_PENMOUNT is not set
-+# CONFIG_TOUCHSCREEN_TOUCHRIGHT is not set
-+# CONFIG_TOUCHSCREEN_TOUCHWIN is not set
-+# CONFIG_TOUCHSCREEN_TOUCHIT213 is not set
-+# CONFIG_TOUCHSCREEN_W90X900 is not set
-+# CONFIG_INPUT_MISC is not set
++	/* VIC1: some interrupt reserved */
++	vic[1] = 0x7F389C81;
 +
-+#
-+# Hardware I/O ports
-+#
-+CONFIG_SERIO=y
-+CONFIG_SERIO_SERPORT=y
-+# CONFIG_SERIO_RAW is not set
-+# CONFIG_SERIO_ALTERA_PS2 is not set
-+# CONFIG_GAMEPORT is not set
++	/* VIC2: some interrupt reserved */
++	vic[2] = 0x1BBBCFFF;
 +
-+#
-+# Character devices
-+#
-+CONFIG_VT=y
-+CONFIG_CONSOLE_TRANSLATIONS=y
-+CONFIG_VT_CONSOLE=y
-+CONFIG_HW_CONSOLE=y
-+# CONFIG_VT_HW_CONSOLE_BINDING is not set
-+CONFIG_DEVKMEM=y
-+# CONFIG_SERIAL_NONSTANDARD is not set
++	s5p_init_irq(vic, ARRAY_SIZE(vic));
++}
 +
-+#
-+# Serial drivers
-+#
-+CONFIG_SERIAL_8250=y
-+# CONFIG_SERIAL_8250_CONSOLE is not set
-+CONFIG_SERIAL_8250_NR_UARTS=3
-+CONFIG_SERIAL_8250_RUNTIME_UARTS=3
-+# CONFIG_SERIAL_8250_EXTENDED is not set
++static struct sysdev_class s5p6442_sysclass = {
++	.name	= "s5p6442-core",
++};
 +
-+#
-+# Non-8250 serial port support
-+#
-+CONFIG_SERIAL_SAMSUNG=y
-+CONFIG_SERIAL_SAMSUNG_UARTS=3
-+# CONFIG_SERIAL_SAMSUNG_DEBUG is not set
-+CONFIG_SERIAL_SAMSUNG_CONSOLE=y
-+CONFIG_SERIAL_S5PV210=y
-+CONFIG_SERIAL_CORE=y
-+CONFIG_SERIAL_CORE_CONSOLE=y
-+CONFIG_UNIX98_PTYS=y
-+# CONFIG_DEVPTS_MULTIPLE_INSTANCES is not set
-+CONFIG_LEGACY_PTYS=y
-+CONFIG_LEGACY_PTY_COUNT=256
-+# CONFIG_IPMI_HANDLER is not set
-+CONFIG_HW_RANDOM=y
-+# CONFIG_HW_RANDOM_TIMERIOMEM is not set
-+# CONFIG_R3964 is not set
-+# CONFIG_RAW_DRIVER is not set
-+# CONFIG_TCG_TPM is not set
-+# CONFIG_I2C is not set
-+# CONFIG_SPI is not set
++static struct sys_device s5p6442_sysdev = {
++	.cls	= &s5p6442_sysclass,
++};
 +
-+#
-+# PPS support
-+#
-+# CONFIG_PPS is not set
-+CONFIG_ARCH_REQUIRE_GPIOLIB=y
-+CONFIG_GPIOLIB=y
-+# CONFIG_DEBUG_GPIO is not set
-+# CONFIG_GPIO_SYSFS is not set
++static int __init s5p6442_core_init(void)
++{
++	return sysdev_class_register(&s5p6442_sysclass);
++}
 +
-+#
-+# Memory mapped GPIO expanders:
-+#
++core_initcall(s5p6442_core_init);
 +
-+#
-+# I2C GPIO expanders:
-+#
++int __init s5p6442_init(void)
++{
++	printk(KERN_INFO "S5P6442: Initializing architecture\n");
 +
-+#
-+# PCI GPIO expanders:
-+#
++	/* set idle function */
++	pm_idle = s5p6442_idle;
 +
-+#
-+# SPI GPIO expanders:
-+#
++	return sysdev_register(&s5p6442_sysdev);
++}
+diff --git a/arch/arm/mach-s5p6442/include/mach/debug-macro.S b/arch/arm/mach-s5p6442/include/mach/debug-macro.S
+new file mode 100644
+index 0000000..1b3ab4d
+--- /dev/null
++++ b/arch/arm/mach-s5p6442/include/mach/debug-macro.S
+@@ -0,0 +1,39 @@
++/* linux/arch/arm/mach-s5p6442/include/mach/debug-macro.S
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * Based on arch/arm/mach-s3c6400/include/mach/debug-macro.S
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
-+#
-+# AC97 GPIO expanders:
-+#
-+# CONFIG_W1 is not set
-+# CONFIG_POWER_SUPPLY is not set
-+# CONFIG_HWMON is not set
-+# CONFIG_THERMAL is not set
-+# CONFIG_WATCHDOG is not set
-+CONFIG_SSB_POSSIBLE=y
++/* pull in the relevant register and map files. */
 +
-+#
-+# Sonics Silicon Backplane
-+#
-+# CONFIG_SSB is not set
++#include <mach/map.h>
++#include <plat/regs-serial.h>
 +
-+#
-+# Multifunction device drivers
-+#
-+# CONFIG_MFD_CORE is not set
-+# CONFIG_MFD_SM501 is not set
-+# CONFIG_MFD_ASIC3 is not set
-+# CONFIG_HTC_EGPIO is not set
-+# CONFIG_HTC_PASIC3 is not set
-+# CONFIG_MFD_TMIO is not set
-+# CONFIG_MFD_T7L66XB is not set
-+# CONFIG_MFD_TC6387XB is not set
-+# CONFIG_MFD_TC6393XB is not set
-+# CONFIG_REGULATOR is not set
-+# CONFIG_MEDIA_SUPPORT is not set
++	/* note, for the boot process to work we have to keep the UART
++	 * virtual address aligned to an 1MiB boundary for the L1
++	 * mapping the head code makes. We keep the UART virtual address
++	 * aligned and add in the offset when we load the value here.
++	 */
 +
-+#
-+# Graphics support
-+#
-+# CONFIG_VGASTATE is not set
-+# CONFIG_VIDEO_OUTPUT_CONTROL is not set
-+# CONFIG_FB is not set
-+# CONFIG_BACKLIGHT_LCD_SUPPORT is not set
++	.macro addruart, rx
++		mrc	p15, 0, \rx, c1, c0
++		tst	\rx, #1
++		ldreq	\rx, = S5P_PA_UART
++		ldrne	\rx, = (S5P_VA_UART + S5P_PA_UART & 0xfffff)
++#if CONFIG_DEBUG_S3C_UART != 0
++		add	\rx, \rx, #(0x400 * CONFIG_DEBUG_S3C_UART)
++#endif
++	.endm
 +
-+#
-+# Display device support
-+#
-+# CONFIG_DISPLAY_SUPPORT is not set
++/* include the reset of the code which will do the work, we're only
++ * compiling for a single cpu processor type so the default of s3c2440
++ * will be fine with us.
++ */
 +
-+#
-+# Console display driver support
-+#
-+# CONFIG_VGA_CONSOLE is not set
-+CONFIG_DUMMY_CONSOLE=y
-+# CONFIG_SOUND is not set
-+# CONFIG_HID_SUPPORT is not set
-+# CONFIG_USB_SUPPORT is not set
-+# CONFIG_MMC is not set
-+# CONFIG_MEMSTICK is not set
-+# CONFIG_NEW_LEDS is not set
-+# CONFIG_ACCESSIBILITY is not set
-+CONFIG_RTC_LIB=y
-+# CONFIG_RTC_CLASS is not set
-+# CONFIG_DMADEVICES is not set
-+# CONFIG_AUXDISPLAY is not set
-+# CONFIG_UIO is not set
++#include <plat/debug-macro.S>
+diff --git a/arch/arm/mach-s5p6442/include/mach/entry-macro.S b/arch/arm/mach-s5p6442/include/mach/entry-macro.S
+new file mode 100644
+index 0000000..7932f45
+--- /dev/null
++++ b/arch/arm/mach-s5p6442/include/mach/entry-macro.S
+@@ -0,0 +1,48 @@
++/* linux/arch/arm/mach-s5p6442/include/mach/entry-macro.S
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * Low-level IRQ helper macros for the Samsung S5P6442
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
-+#
-+# TI VLYNQ
-+#
-+# CONFIG_STAGING is not set
++#include <asm/hardware/vic.h>
++#include <mach/map.h>
++#include <plat/irqs.h>
 +
-+#
-+# File systems
-+#
-+CONFIG_EXT2_FS=y
-+# CONFIG_EXT2_FS_XATTR is not set
-+# CONFIG_EXT2_FS_XIP is not set
-+# CONFIG_EXT3_FS is not set
-+# CONFIG_EXT4_FS is not set
-+# CONFIG_REISERFS_FS is not set
-+# CONFIG_JFS_FS is not set
-+CONFIG_FS_POSIX_ACL=y
-+# CONFIG_XFS_FS is not set
-+# CONFIG_GFS2_FS is not set
-+# CONFIG_BTRFS_FS is not set
-+# CONFIG_NILFS2_FS is not set
-+CONFIG_FILE_LOCKING=y
-+CONFIG_FSNOTIFY=y
-+CONFIG_DNOTIFY=y
-+CONFIG_INOTIFY=y
-+CONFIG_INOTIFY_USER=y
-+# CONFIG_QUOTA is not set
-+# CONFIG_AUTOFS_FS is not set
-+# CONFIG_AUTOFS4_FS is not set
-+# CONFIG_FUSE_FS is not set
-+CONFIG_GENERIC_ACL=y
++	.macro	disable_fiq
++	.endm
 +
-+#
-+# Caches
-+#
-+# CONFIG_FSCACHE is not set
++	.macro	get_irqnr_preamble, base, tmp
++	ldr	\base, =S5P_VA_VIC0
++	.endm
 +
-+#
-+# CD-ROM/DVD Filesystems
-+#
-+# CONFIG_ISO9660_FS is not set
-+# CONFIG_UDF_FS is not set
++	.macro	arch_ret_to_user, tmp1, tmp2
++	.endm
 +
-+#
-+# DOS/FAT/NT Filesystems
-+#
-+CONFIG_FAT_FS=y
-+CONFIG_MSDOS_FS=y
-+CONFIG_VFAT_FS=y
-+CONFIG_FAT_DEFAULT_CODEPAGE=437
-+CONFIG_FAT_DEFAULT_IOCHARSET="iso8859-1"
-+# CONFIG_NTFS_FS is not set
++	.macro	get_irqnr_and_base, irqnr, irqstat, base, tmp
 +
-+#
-+# Pseudo filesystems
-+#
-+CONFIG_PROC_FS=y
-+CONFIG_PROC_SYSCTL=y
-+CONFIG_PROC_PAGE_MONITOR=y
-+CONFIG_SYSFS=y
-+CONFIG_TMPFS=y
-+CONFIG_TMPFS_POSIX_ACL=y
-+# CONFIG_HUGETLB_PAGE is not set
-+# CONFIG_CONFIGFS_FS is not set
-+CONFIG_MISC_FILESYSTEMS=y
-+# CONFIG_ADFS_FS is not set
-+# CONFIG_AFFS_FS is not set
-+# CONFIG_HFS_FS is not set
-+# CONFIG_HFSPLUS_FS is not set
-+# CONFIG_BEFS_FS is not set
-+# CONFIG_BFS_FS is not set
-+# CONFIG_EFS_FS is not set
-+CONFIG_CRAMFS=y
-+# CONFIG_SQUASHFS is not set
-+# CONFIG_VXFS_FS is not set
-+# CONFIG_MINIX_FS is not set
-+# CONFIG_OMFS_FS is not set
-+# CONFIG_HPFS_FS is not set
-+# CONFIG_QNX4FS_FS is not set
-+CONFIG_ROMFS_FS=y
-+CONFIG_ROMFS_BACKED_BY_BLOCK=y
-+# CONFIG_ROMFS_BACKED_BY_MTD is not set
-+# CONFIG_ROMFS_BACKED_BY_BOTH is not set
-+CONFIG_ROMFS_ON_BLOCK=y
-+# CONFIG_SYSV_FS is not set
-+# CONFIG_UFS_FS is not set
++	@ check the vic0
++	mov	\irqnr, # S5P_IRQ_OFFSET + 31
++	ldr	\irqstat, [ \base, # VIC_IRQ_STATUS ]
++	teq	\irqstat, #0
 +
-+#
-+# Partition Types
-+#
-+CONFIG_PARTITION_ADVANCED=y
-+# CONFIG_ACORN_PARTITION is not set
-+# CONFIG_OSF_PARTITION is not set
-+# CONFIG_AMIGA_PARTITION is not set
-+# CONFIG_ATARI_PARTITION is not set
-+# CONFIG_MAC_PARTITION is not set
-+CONFIG_MSDOS_PARTITION=y
-+CONFIG_BSD_DISKLABEL=y
-+# CONFIG_MINIX_SUBPARTITION is not set
-+CONFIG_SOLARIS_X86_PARTITION=y
-+# CONFIG_UNIXWARE_DISKLABEL is not set
-+# CONFIG_LDM_PARTITION is not set
-+# CONFIG_SGI_PARTITION is not set
-+# CONFIG_ULTRIX_PARTITION is not set
-+# CONFIG_SUN_PARTITION is not set
-+# CONFIG_KARMA_PARTITION is not set
-+# CONFIG_EFI_PARTITION is not set
-+# CONFIG_SYSV68_PARTITION is not set
-+CONFIG_NLS=y
-+CONFIG_NLS_DEFAULT="iso8859-1"
-+CONFIG_NLS_CODEPAGE_437=y
-+# CONFIG_NLS_CODEPAGE_737 is not set
-+# CONFIG_NLS_CODEPAGE_775 is not set
-+# CONFIG_NLS_CODEPAGE_850 is not set
-+# CONFIG_NLS_CODEPAGE_852 is not set
-+# CONFIG_NLS_CODEPAGE_855 is not set
-+# CONFIG_NLS_CODEPAGE_857 is not set
-+# CONFIG_NLS_CODEPAGE_860 is not set
-+# CONFIG_NLS_CODEPAGE_861 is not set
-+# CONFIG_NLS_CODEPAGE_862 is not set
-+# CONFIG_NLS_CODEPAGE_863 is not set
-+# CONFIG_NLS_CODEPAGE_864 is not set
-+# CONFIG_NLS_CODEPAGE_865 is not set
-+# CONFIG_NLS_CODEPAGE_866 is not set
-+# CONFIG_NLS_CODEPAGE_869 is not set
-+# CONFIG_NLS_CODEPAGE_936 is not set
-+# CONFIG_NLS_CODEPAGE_950 is not set
-+# CONFIG_NLS_CODEPAGE_932 is not set
-+# CONFIG_NLS_CODEPAGE_949 is not set
-+# CONFIG_NLS_CODEPAGE_874 is not set
-+# CONFIG_NLS_ISO8859_8 is not set
-+# CONFIG_NLS_CODEPAGE_1250 is not set
-+# CONFIG_NLS_CODEPAGE_1251 is not set
-+CONFIG_NLS_ASCII=y
-+CONFIG_NLS_ISO8859_1=y
-+# CONFIG_NLS_ISO8859_2 is not set
-+# CONFIG_NLS_ISO8859_3 is not set
-+# CONFIG_NLS_ISO8859_4 is not set
-+# CONFIG_NLS_ISO8859_5 is not set
-+# CONFIG_NLS_ISO8859_6 is not set
-+# CONFIG_NLS_ISO8859_7 is not set
-+# CONFIG_NLS_ISO8859_9 is not set
-+# CONFIG_NLS_ISO8859_13 is not set
-+# CONFIG_NLS_ISO8859_14 is not set
-+# CONFIG_NLS_ISO8859_15 is not set
-+# CONFIG_NLS_KOI8_R is not set
-+# CONFIG_NLS_KOI8_U is not set
-+# CONFIG_NLS_UTF8 is not set
++	@ otherwise try vic1
++	addeq	\tmp, \base, #(S5P_VA_VIC1 - S5P_VA_VIC0)
++	addeq	\irqnr, \irqnr, #32
++	ldreq	\irqstat, [ \tmp, # VIC_IRQ_STATUS ]
++	teqeq	\irqstat, #0
 +
-+#
-+# Kernel hacking
-+#
-+# CONFIG_PRINTK_TIME is not set
-+CONFIG_ENABLE_WARN_DEPRECATED=y
-+CONFIG_ENABLE_MUST_CHECK=y
-+CONFIG_FRAME_WARN=1024
-+CONFIG_MAGIC_SYSRQ=y
-+# CONFIG_STRIP_ASM_SYMS is not set
-+# CONFIG_UNUSED_SYMBOLS is not set
-+# CONFIG_DEBUG_FS is not set
-+# CONFIG_HEADERS_CHECK is not set
-+CONFIG_DEBUG_KERNEL=y
-+# CONFIG_DEBUG_SHIRQ is not set
-+CONFIG_DETECT_SOFTLOCKUP=y
-+# CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC is not set
-+CONFIG_BOOTPARAM_SOFTLOCKUP_PANIC_VALUE=0
-+CONFIG_DETECT_HUNG_TASK=y
-+# CONFIG_BOOTPARAM_HUNG_TASK_PANIC is not set
-+CONFIG_BOOTPARAM_HUNG_TASK_PANIC_VALUE=0
-+CONFIG_SCHED_DEBUG=y
-+# CONFIG_SCHEDSTATS is not set
-+# CONFIG_TIMER_STATS is not set
-+# CONFIG_DEBUG_OBJECTS is not set
-+# CONFIG_SLUB_DEBUG_ON is not set
-+# CONFIG_SLUB_STATS is not set
-+# CONFIG_DEBUG_KMEMLEAK is not set
-+CONFIG_DEBUG_RT_MUTEXES=y
-+CONFIG_DEBUG_PI_LIST=y
-+# CONFIG_RT_MUTEX_TESTER is not set
-+CONFIG_DEBUG_SPINLOCK=y
-+CONFIG_DEBUG_MUTEXES=y
-+# CONFIG_DEBUG_LOCK_ALLOC is not set
-+# CONFIG_PROVE_LOCKING is not set
-+# CONFIG_LOCK_STAT is not set
-+CONFIG_DEBUG_SPINLOCK_SLEEP=y
-+# CONFIG_DEBUG_LOCKING_API_SELFTESTS is not set
-+# CONFIG_DEBUG_KOBJECT is not set
-+CONFIG_DEBUG_BUGVERBOSE=y
-+CONFIG_DEBUG_INFO=y
-+# CONFIG_DEBUG_VM is not set
-+# CONFIG_DEBUG_WRITECOUNT is not set
-+CONFIG_DEBUG_MEMORY_INIT=y
-+# CONFIG_DEBUG_LIST is not set
-+# CONFIG_DEBUG_SG is not set
-+# CONFIG_DEBUG_NOTIFIERS is not set
-+# CONFIG_DEBUG_CREDENTIALS is not set
-+CONFIG_FRAME_POINTER=y
-+# CONFIG_BOOT_PRINTK_DELAY is not set
-+# CONFIG_RCU_TORTURE_TEST is not set
-+# CONFIG_RCU_CPU_STALL_DETECTOR is not set
-+# CONFIG_BACKTRACE_SELF_TEST is not set
-+# CONFIG_DEBUG_BLOCK_EXT_DEVT is not set
-+# CONFIG_DEBUG_FORCE_WEAK_PER_CPU is not set
-+# CONFIG_FAULT_INJECTION is not set
-+# CONFIG_LATENCYTOP is not set
-+CONFIG_SYSCTL_SYSCALL_CHECK=y
-+# CONFIG_PAGE_POISONING is not set
-+CONFIG_HAVE_FUNCTION_TRACER=y
-+CONFIG_TRACING_SUPPORT=y
-+CONFIG_FTRACE=y
-+# CONFIG_FUNCTION_TRACER is not set
-+# CONFIG_SCHED_TRACER is not set
-+# CONFIG_ENABLE_DEFAULT_TRACERS is not set
-+# CONFIG_BOOT_TRACER is not set
-+CONFIG_BRANCH_PROFILE_NONE=y
-+# CONFIG_PROFILE_ANNOTATED_BRANCHES is not set
-+# CONFIG_PROFILE_ALL_BRANCHES is not set
-+# CONFIG_STACK_TRACER is not set
-+# CONFIG_KMEMTRACE is not set
-+# CONFIG_WORKQUEUE_TRACER is not set
-+# CONFIG_BLK_DEV_IO_TRACE is not set
-+# CONFIG_SAMPLES is not set
-+CONFIG_HAVE_ARCH_KGDB=y
-+# CONFIG_KGDB is not set
-+# CONFIG_ARM_UNWIND is not set
-+CONFIG_DEBUG_USER=y
-+CONFIG_DEBUG_ERRORS=y
-+# CONFIG_DEBUG_STACK_USAGE is not set
-+CONFIG_DEBUG_LL=y
-+# CONFIG_EARLY_PRINTK is not set
-+# CONFIG_DEBUG_ICEDCC is not set
-+# CONFIG_OC_ETM is not set
-+CONFIG_DEBUG_S3C_UART=1
++	@ otherwise try vic2
++	addeq	\tmp, \base, #(S5P_VA_VIC2 - S5P_VA_VIC0)
++	addeq	\irqnr, \irqnr, #32
++	ldreq	\irqstat, [ \tmp, # VIC_IRQ_STATUS ]
++	teqeq	\irqstat, #0
 +
-+#
-+# Security options
-+#
-+# CONFIG_KEYS is not set
-+# CONFIG_SECURITY is not set
-+# CONFIG_SECURITYFS is not set
-+# CONFIG_DEFAULT_SECURITY_SELINUX is not set
-+# CONFIG_DEFAULT_SECURITY_SMACK is not set
-+# CONFIG_DEFAULT_SECURITY_TOMOYO is not set
-+CONFIG_DEFAULT_SECURITY_DAC=y
-+CONFIG_DEFAULT_SECURITY=""
-+# CONFIG_CRYPTO is not set
-+# CONFIG_BINARY_PRINTF is not set
++	clzne	\irqstat, \irqstat
++	subne	\irqnr, \irqnr, \irqstat
++	.endm
+diff --git a/arch/arm/mach-s5p6442/include/mach/gpio.h b/arch/arm/mach-s5p6442/include/mach/gpio.h
+new file mode 100644
+index 0000000..b8715df
+--- /dev/null
++++ b/arch/arm/mach-s5p6442/include/mach/gpio.h
+@@ -0,0 +1,123 @@
++/* linux/arch/arm/mach-s5p6442/include/mach/gpio.h
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * S5P6442 - GPIO lib support
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
-+#
-+# Library routines
-+#
-+CONFIG_BITREVERSE=y
-+CONFIG_GENERIC_FIND_LAST_BIT=y
-+CONFIG_CRC_CCITT=y
-+# CONFIG_CRC16 is not set
-+# CONFIG_CRC_T10DIF is not set
-+# CONFIG_CRC_ITU_T is not set
-+CONFIG_CRC32=y
-+# CONFIG_CRC7 is not set
-+# CONFIG_LIBCRC32C is not set
-+CONFIG_ZLIB_INFLATE=y
-+CONFIG_LZO_DECOMPRESS=y
-+CONFIG_DECOMPRESS_GZIP=y
-+CONFIG_DECOMPRESS_BZIP2=y
-+CONFIG_DECOMPRESS_LZMA=y
-+CONFIG_DECOMPRESS_LZO=y
-+CONFIG_HAS_IOMEM=y
-+CONFIG_HAS_DMA=y
++#ifndef __ASM_ARCH_GPIO_H
++#define __ASM_ARCH_GPIO_H __FILE__
++
++#define gpio_get_value	__gpio_get_value
++#define gpio_set_value	__gpio_set_value
++#define gpio_cansleep	__gpio_cansleep
++#define gpio_to_irq	__gpio_to_irq
++
++/* GPIO bank sizes */
++#define S5P6442_GPIO_A0_NR	(8)
++#define S5P6442_GPIO_A1_NR	(2)
++#define S5P6442_GPIO_B_NR	(4)
++#define S5P6442_GPIO_C0_NR	(5)
++#define S5P6442_GPIO_C1_NR	(5)
++#define S5P6442_GPIO_D0_NR	(2)
++#define S5P6442_GPIO_D1_NR	(6)
++#define S5P6442_GPIO_E0_NR	(8)
++#define S5P6442_GPIO_E1_NR	(5)
++#define S5P6442_GPIO_F0_NR	(8)
++#define S5P6442_GPIO_F1_NR	(8)
++#define S5P6442_GPIO_F2_NR	(8)
++#define S5P6442_GPIO_F3_NR	(6)
++#define S5P6442_GPIO_G0_NR	(7)
++#define S5P6442_GPIO_G1_NR	(7)
++#define S5P6442_GPIO_G2_NR	(7)
++#define S5P6442_GPIO_H0_NR	(8)
++#define S5P6442_GPIO_H1_NR	(8)
++#define S5P6442_GPIO_H2_NR	(8)
++#define S5P6442_GPIO_H3_NR	(8)
++#define S5P6442_GPIO_J0_NR	(8)
++#define S5P6442_GPIO_J1_NR	(6)
++#define S5P6442_GPIO_J2_NR	(8)
++#define S5P6442_GPIO_J3_NR	(8)
++#define S5P6442_GPIO_J4_NR	(5)
++
++/* GPIO bank numbers */
++
++/* CONFIG_S3C_GPIO_SPACE allows the user to select extra
++ * space for debugging purposes so that any accidental
++ * change from one gpio bank to another can be caught.
++*/
++
++#define S5P6442_GPIO_NEXT(__gpio) \
++	((__gpio##_START) + (__gpio##_NR) + CONFIG_S3C_GPIO_SPACE + 1)
++
++enum s5p_gpio_number {
++	S5P6442_GPIO_A0_START	= 0,
++	S5P6442_GPIO_A1_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_A0),
++	S5P6442_GPIO_B_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_A1),
++	S5P6442_GPIO_C0_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_B),
++	S5P6442_GPIO_C1_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_C0),
++	S5P6442_GPIO_D0_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_C1),
++	S5P6442_GPIO_D1_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_D0),
++	S5P6442_GPIO_E0_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_D1),
++	S5P6442_GPIO_E1_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_E0),
++	S5P6442_GPIO_F0_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_E1),
++	S5P6442_GPIO_F1_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_F0),
++	S5P6442_GPIO_F2_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_F1),
++	S5P6442_GPIO_F3_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_F2),
++	S5P6442_GPIO_G0_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_F3),
++	S5P6442_GPIO_G1_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_G0),
++	S5P6442_GPIO_G2_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_G1),
++	S5P6442_GPIO_H0_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_G2),
++	S5P6442_GPIO_H1_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_H0),
++	S5P6442_GPIO_H2_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_H1),
++	S5P6442_GPIO_H3_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_H2),
++	S5P6442_GPIO_J0_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_H3),
++	S5P6442_GPIO_J1_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_J0),
++	S5P6442_GPIO_J2_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_J1),
++	S5P6442_GPIO_J3_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_J2),
++	S5P6442_GPIO_J4_START	= S5P6442_GPIO_NEXT(S5P6442_GPIO_J3),
++};
++
++/* S5P6442 GPIO number definitions. */
++#define S5P6442_GPA0(_nr)	(S5P6442_GPIO_A0_START + (_nr))
++#define S5P6442_GPA1(_nr)	(S5P6442_GPIO_A1_START + (_nr))
++#define S5P6442_GPB(_nr)	(S5P6442_GPIO_B_START + (_nr))
++#define S5P6442_GPC0(_nr)	(S5P6442_GPIO_C0_START + (_nr))
++#define S5P6442_GPC1(_nr)	(S5P6442_GPIO_C1_START + (_nr))
++#define S5P6442_GPD0(_nr)	(S5P6442_GPIO_D0_START + (_nr))
++#define S5P6442_GPD1(_nr)	(S5P6442_GPIO_D1_START + (_nr))
++#define S5P6442_GPE0(_nr)	(S5P6442_GPIO_E0_START + (_nr))
++#define S5P6442_GPE1(_nr)	(S5P6442_GPIO_E1_START + (_nr))
++#define S5P6442_GPF0(_nr)	(S5P6442_GPIO_F0_START + (_nr))
++#define S5P6442_GPF1(_nr)	(S5P6442_GPIO_F1_START + (_nr))
++#define S5P6442_GPF2(_nr)	(S5P6442_GPIO_F2_START + (_nr))
++#define S5P6442_GPF3(_nr)	(S5P6442_GPIO_F3_START + (_nr))
++#define S5P6442_GPG0(_nr)	(S5P6442_GPIO_G0_START + (_nr))
++#define S5P6442_GPG1(_nr)	(S5P6442_GPIO_G1_START + (_nr))
++#define S5P6442_GPG2(_nr)	(S5P6442_GPIO_G2_START + (_nr))
++#define S5P6442_GPH0(_nr)	(S5P6442_GPIO_H0_START + (_nr))
++#define S5P6442_GPH1(_nr)	(S5P6442_GPIO_H1_START + (_nr))
++#define S5P6442_GPH2(_nr)	(S5P6442_GPIO_H2_START + (_nr))
++#define S5P6442_GPH3(_nr)	(S5P6442_GPIO_H3_START + (_nr))
++#define S5P6442_GPJ0(_nr)	(S5P6442_GPIO_J0_START + (_nr))
++#define S5P6442_GPJ1(_nr)	(S5P6442_GPIO_J1_START + (_nr))
++#define S5P6442_GPJ2(_nr)	(S5P6442_GPIO_J2_START + (_nr))
++#define S5P6442_GPJ3(_nr)	(S5P6442_GPIO_J3_START + (_nr))
++#define S5P6442_GPJ4(_nr)	(S5P6442_GPIO_J4_START + (_nr))
++
++/* the end of the S5P6442 specific gpios */
++#define S5P6442_GPIO_END	(S5P6442_GPJ4(S5P6442_GPIO_J4_NR) + 1)
++#define S3C_GPIO_END		S5P6442_GPIO_END
++
++/* define the number of gpios we need to the one after the GPJ4() range */
++#define ARCH_NR_GPIOS		(S5P6442_GPJ4(S5P6442_GPIO_J4_NR) +	\
++				 CONFIG_SAMSUNG_GPIO_EXTRA + 1)
++
++#include <asm-generic/gpio.h>
++
++#endif /* __ASM_ARCH_GPIO_H */
+diff --git a/arch/arm/mach-s5p6442/include/mach/hardware.h b/arch/arm/mach-s5p6442/include/mach/hardware.h
+new file mode 100644
+index 0000000..8cd7b67
+--- /dev/null
++++ b/arch/arm/mach-s5p6442/include/mach/hardware.h
+@@ -0,0 +1,18 @@
++/* linux/arch/arm/mach-s5p6442/include/mach/hardware.h
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * S5P6442 - Hardware support
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __ASM_ARCH_HARDWARE_H
++#define __ASM_ARCH_HARDWARE_H __FILE__
++
++/* currently nothing here, placeholder */
++
++#endif /* __ASM_ARCH_HARDWARE_H */
+diff --git a/arch/arm/mach-s5p6442/include/mach/map.h b/arch/arm/mach-s5p6442/include/mach/map.h
+new file mode 100644
+index 0000000..1575beb
+--- /dev/null
++++ b/arch/arm/mach-s5p6442/include/mach/map.h
+@@ -0,0 +1,90 @@
++/* linux/arch/arm/mach-s5p6442/include/mach/map.h
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * S5P6442 - Memory map definitions
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __ASM_ARCH_MAP_H
++#define __ASM_ARCH_MAP_H __FILE__
++
++#include <plat/map-base.h>
++
++/* Chip ID */
++#define S5P6442_PA_CHIPID	(0xE0000000)
++#define S5P_PA_CHIPID		S5P6442_PA_CHIPID
++#define S5P_VA_CHIPID		S3C_ADDR(0x00700000)
++
++/* SYSCON */
++#define S5P6442_PA_SYSCON	(0xE0100000)
++#define S5P_PA_SYSCON		S5P6442_PA_SYSCON
++#define S5P_VA_SYSCON		S3C_VA_SYS
++
++/* GPIO */
++#define S5P6442_PA_GPIO		(0xE0200000)
++#define S5P_PA_GPIO		S5P6442_PA_GPIO
++#define S5P_VA_GPIO		S3C_ADDR(0x00500000)
++
++/* VIC0 */
++#define S5P6442_PA_VIC0		(0xE4000000)
++#define S5P_PA_VIC0		S5P6442_PA_VIC0
++#define S5P_VA_VIC0		(S3C_VA_IRQ + 0x00)
++
++/* VIC1 */
++#define S5P6442_PA_VIC1		(0xE4100000)
++#define S5P_PA_VIC1		S5P6442_PA_VIC1
++#define S5P_VA_VIC1		(S3C_VA_IRQ + 0x10000)
++
++/* VIC2 */
++#define S5P6442_PA_VIC2		(0xE4200000)
++#define S5P_PA_VIC2		S5P6442_PA_VIC2
++#define S5P_VA_VIC2		(S3C_VA_IRQ + 0x20000)
++
++/* TIMER */
++#define S5P6442_PA_TIMER	(0xEA000000)
++#define S5P_PA_TIMER		S5P6442_PA_TIMER
++#define S5P_VA_TIMER		S3C_VA_TIMER
++
++/* SYSTEM TIMER */
++#define S5P6442_PA_SYSTIMER   	(0xEA100000)
++#define S5P_PA_SYSTIMER		S5P6442_PA_SYSTIMER
++#define S5P_VA_SYSTIMER     	S3C_ADDR(0x01200000)
++
++/* UART */
++#define S5P6442_PA_UART		(0xEC000000)
++#define S5P_PA_UART		S5P6442_PA_UART
++#define S5P_VA_UART		S3C_VA_UART
++
++#define S5P_PA_UART0		(S5P_PA_UART + 0x0)
++#define S5P_PA_UART1		(S5P_PA_UART + 0x400)
++#define S5P_PA_UART2		(S5P_PA_UART + 0x800)
++#define S5P_UART_OFFSET		(0x400)
++
++#define S5P_VA_UARTx(x)		(S5P_VA_UART + (S5P_PA_UART & 0xfffff) \
++				+ ((x) * S5P_UART_OFFSET))
++
++#define S5P_VA_UART0		S5P_VA_UARTx(0)
++#define S5P_VA_UART1		S5P_VA_UARTx(1)
++#define S5P_VA_UART2		S5P_VA_UARTx(2)
++#define S5P_SZ_UART		SZ_256
++
++/* I2C */
++#define S5P6442_PA_IIC0		(0xEC100000)
++#define S5P_PA_IIC0		S5P6442_PA_IIC0
++
++/* SDRAM */
++#define S5P6442_PA_SDRAM	(0x20000000)
++#define S5P_PA_SDRAM		S5P6442_PA_SDRAM
++
++/* compatibiltiy defines. */
++#define S3C_PA_UART		S5P_PA_UART
++#define S3C_UART_OFFSET		S5P_UART_OFFSET
++#define S3C_PA_TIMER		S5P_PA_TIMER
++#define S3C_PA_IIC		S5P_PA_IIC0
++
++#endif /* __ASM_ARCH_MAP_H */
+diff --git a/arch/arm/mach-s5p6442/include/mach/memory.h b/arch/arm/mach-s5p6442/include/mach/memory.h
+new file mode 100644
+index 0000000..9ddd877
+--- /dev/null
++++ b/arch/arm/mach-s5p6442/include/mach/memory.h
+@@ -0,0 +1,19 @@
++/* linux/arch/arm/mach-s5p6442/include/mach/memory.h
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * S5P6442 - Memory definitions
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __ASM_ARCH_MEMORY_H
++#define __ASM_ARCH_MEMORY_H
++
++#define PHYS_OFFSET		UL(0x20000000)
++#define CONSISTENT_DMA_SIZE	SZ_8M
++
++#endif /* __ASM_ARCH_MEMORY_H */
+diff --git a/arch/arm/mach-s5p6442/include/mach/system.h b/arch/arm/mach-s5p6442/include/mach/system.h
+new file mode 100644
+index 0000000..8bcd8ed
+--- /dev/null
++++ b/arch/arm/mach-s5p6442/include/mach/system.h
+@@ -0,0 +1,26 @@
++/* linux/arch/arm/mach-s5p6442/include/mach/system.h
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * S5P6442 - system support header
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __ASM_ARCH_SYSTEM_H
++#define __ASM_ARCH_SYSTEM_H __FILE__
++
++static void arch_idle(void)
++{
++	/* nothing here yet */
++}
++
++static void arch_reset(char mode, const char *cmd)
++{
++	/* nothing here yet */
++}
++
++#endif /* __ASM_ARCH_SYSTEM_H */
+diff --git a/arch/arm/mach-s5p6442/include/mach/uncompress.h b/arch/arm/mach-s5p6442/include/mach/uncompress.h
+new file mode 100644
+index 0000000..5ac7cbe
+--- /dev/null
++++ b/arch/arm/mach-s5p6442/include/mach/uncompress.h
+@@ -0,0 +1,24 @@
++/* linux/arch/arm/mach-s5p6442/include/mach/uncompress.h
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * S5P6442 - uncompress code
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __ASM_ARCH_UNCOMPRESS_H
++#define __ASM_ARCH_UNCOMPRESS_H
++
++#include <mach/map.h>
++#include <plat/uncompress.h>
++
++static void arch_detect_cpu(void)
++{
++	/* we do not need to do any cpu detection here at the moment. */
++}
++
++#endif /* __ASM_ARCH_UNCOMPRESS_H */
+diff --git a/arch/arm/mach-s5p6442/s5p6442-init.c b/arch/arm/mach-s5p6442/s5p6442-init.c
+new file mode 100644
+index 0000000..1874bdb
+--- /dev/null
++++ b/arch/arm/mach-s5p6442/s5p6442-init.c
+@@ -0,0 +1,44 @@
++/* linux/arch/arm/mach-s5p6442/s5p6442-init.c
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/kernel.h>
++#include <linux/types.h>
++#include <linux/init.h>
++#include <linux/serial_core.h>
++
++#include <plat/cpu.h>
++#include <plat/devs.h>
++#include <plat/s5p6442.h>
++#include <plat/regs-serial.h>
++
++static struct s3c24xx_uart_clksrc s5p6442_serial_clocks[] = {
++	[0] = {
++		.name		= "pclk",
++		.divisor	= 1,
++		.min_baud	= 0,
++		.max_baud	= 0,
++	},
++};
++
++/* uart registration process */
++void __init s5p6442_common_init_uarts(struct s3c2410_uartcfg *cfg, int no)
++{
++	struct s3c2410_uartcfg *tcfg = cfg;
++	u32 ucnt;
++
++	for (ucnt = 0; ucnt < no; ucnt++, tcfg++) {
++		if (!tcfg->clocks) {
++			tcfg->clocks = s5p6442_serial_clocks;
++			tcfg->clocks_size = ARRAY_SIZE(s5p6442_serial_clocks);
++		}
++	}
++
++	s3c24xx_init_uartdevs("s5pv210-uart", s5p_uart_resources, cfg, no);
++}
+diff --git a/arch/arm/plat-s5p/cpu.c b/arch/arm/plat-s5p/cpu.c
+index 0895a77..0ebf269 100644
+--- a/arch/arm/plat-s5p/cpu.c
++++ b/arch/arm/plat-s5p/cpu.c
+@@ -18,10 +18,12 @@
+ #include <mach/regs-clock.h>
+ #include <plat/cpu.h>
+ #include <plat/s5p6440.h>
++#include <plat/s5p6442.h>
+ 
+ /* table of supported CPUs */
+ 
+ static const char name_s5p6440[] = "S5P6440";
++static const char name_s5p6442[] = "S5P6442";
+ 
+ static struct cpu_table cpu_ids[] __initdata = {
+ 	{
+@@ -32,6 +34,14 @@ static struct cpu_table cpu_ids[] __initdata = {
+ 		.init_uarts	= s5p6440_init_uarts,
+ 		.init		= s5p6440_init,
+ 		.name		= name_s5p6440,
++	}, {
++		.idcode		= 0x36442000,
++		.idmask		= 0xffffff00,
++		.map_io		= s5p6442_map_io,
++		.init_clocks	= s5p6442_init_clocks,
++		.init_uarts	= s5p6442_init_uarts,
++		.init		= s5p6442_init,
++		.name		= name_s5p6442,
+ 	},
+ };
+ 
+@@ -41,6 +51,11 @@ static struct cpu_table cpu_ids[] __initdata = {
+ 
+ static struct map_desc s5p_iodesc[] __initdata = {
+ 	{
++		.virtual	= (unsigned long)S5P_VA_CHIPID,
++		.pfn		= __phys_to_pfn(S5P_PA_CHIPID),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	}, {
+ 		.virtual	= (unsigned long)S5P_VA_SYSCON,
+ 		.pfn		= __phys_to_pfn(S5P_PA_SYSCON),
+ 		.length		= SZ_64K,
+diff --git a/arch/arm/plat-s5p/include/plat/s5p6442.h b/arch/arm/plat-s5p/include/plat/s5p6442.h
+new file mode 100644
+index 0000000..40cea40
+--- /dev/null
++++ b/arch/arm/plat-s5p/include/plat/s5p6442.h
+@@ -0,0 +1,37 @@
++/* arch/arm/plat-s5p/include/plat/s5p6442.h
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * Header file for s5p6442 cpu support
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/* Common init code for S5PV210 related SoCs */
++
++extern void s5p6442_common_init_uarts(struct s3c2410_uartcfg *cfg, int no);
++extern void s5p6442_register_clocks(void);
++extern void s5p6442_setup_clocks(void);
++
++#ifdef CONFIG_CPU_S5P6442
++
++extern  int s5p6442_init(void);
++extern void s5p6442_init_irq(void);
++extern void s5p6442_map_io(void);
++extern void s5p6442_init_clocks(int xtal);
++
++#define s5p6442_init_uarts s5p6442_common_init_uarts
++
++#else
++#define s5p6442_init_clocks NULL
++#define s5p6442_init_uarts NULL
++#define s5p6442_map_io NULL
++#define s5p6442_init NULL
++#endif
++
++/* S5P6442 timer */
++
++extern struct sys_timer s5p6442_timer;
 -- 
 1.6.2.5
