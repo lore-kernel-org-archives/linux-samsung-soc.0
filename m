@@ -1,149 +1,63 @@
-From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: [PATCH 4/4] ARM: S3C64XX: Add s3c64xx support to touchscreen driver
-Date: Fri, 22 Jan 2010 23:47:17 +0100
-Message-ID: <b2e8f9f71001221447u550c9713l9f04aeec030c86db@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: S5P: Add 3 UART SoC support
+Date: Mon, 25 Jan 2010 08:43:45 +0900
+Message-ID: <1264376625-7147-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f227.google.com ([209.85.218.227]:41709 "EHLO
-	mail-bw0-f227.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755176Ab0AVWrj (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:36673 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751806Ab0AXXva (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Jan 2010 17:47:39 -0500
-Received: by mail-bw0-f227.google.com with SMTP id 27so1517211bwz.21
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Jan 2010 14:47:38 -0800 (PST)
+	Sun, 24 Jan 2010 18:51:30 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-ARM: S3C64XX: Add s3c64xx support to touchscreen driver
+This patch adds 3 UART S5P SoC support. It has UART0, UART1, and UART2.
 
-This ack's the extra interrupt s3c64xx platforms have in the touchscreen driver.
-
-Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- drivers/input/touchscreen/Kconfig      |    6 +++---
- drivers/input/touchscreen/s3c2410_ts.c |   28 ++++++++++++++++++++++++----
- 2 files changed, 27 insertions(+), 7 deletions(-)
+ arch/arm/plat-s5p/dev-uart.c |    2 ++
+ arch/arm/plat-s5p/irq.c      |    2 ++
+ 2 files changed, 4 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/input/touchscreen/Kconfig
-b/drivers/input/touchscreen/Kconfig
-index dfafc76..0378b3d 100644
---- a/drivers/input/touchscreen/Kconfig
-+++ b/drivers/input/touchscreen/Kconfig
-@@ -146,11 +146,11 @@ config TOUCHSCREEN_FUJITSU
- 	  module will be called fujitsu-ts.
-
- config TOUCHSCREEN_S3C2410
--	tristate "Samsung S3C2410 touchscreen input driver"
--	depends on ARCH_S3C2410
-+	tristate "Samsung S3C touchscreen input driver"
-+	depends on ARCH_S3C2410 || ARCH_S3C64XX
- 	select S3C24XX_ADC
- 	help
--	  Say Y here if you have the s3c2410 touchscreen.
-+	  Say Y here if you have the s3c touchscreen.
-
- 	  If unsure, say N.
-
-diff --git a/drivers/input/touchscreen/s3c2410_ts.c
-b/drivers/input/touchscreen/s3c2410_ts.c
-index 3debbc2..7dfbc38 100644
---- a/drivers/input/touchscreen/s3c2410_ts.c
-+++ b/drivers/input/touchscreen/s3c2410_ts.c
-@@ -40,7 +40,9 @@
- #include <plat/regs-adc.h>
- #include <plat/ts.h>
-
-+#ifdef PLAT_S3C24XX
- #include <mach/regs-gpio.h>
-+#endif
-
- #define TSC_SLEEP  (S3C2410_ADCTSC_PULL_UP_DISABLE | S3C2410_ADCTSC_XY_PST(0))
-
-@@ -88,6 +90,12 @@ struct s3c2410ts {
-
- static struct s3c2410ts ts;
-
-+enum s3c_cpu_type {
-+	TYPE_S3C2410,
-+	TYPE_S3C2440,
-+	TYPE_S3C64XX,
-+};
-+
- /**
-  * s3c2410_ts_connect - configure gpio for s3c2410 systems
-  *
-@@ -95,6 +103,7 @@ static struct s3c2410ts ts;
-  * connected to the device (later systems such as the S3C2440 integrate
-  * these into the device).
- */
-+#ifdef PLAT_S3C24XX
- static inline void s3c2410_ts_connect(void)
- {
- 	s3c2410_gpio_cfgpin(S3C2410_GPG(12), S3C2410_GPG12_XMON);
-@@ -102,6 +111,7 @@ static inline void s3c2410_ts_connect(void)
- 	s3c2410_gpio_cfgpin(S3C2410_GPG(14), S3C2410_GPG14_YMON);
- 	s3c2410_gpio_cfgpin(S3C2410_GPG(15), S3C2410_GPG15_nYPON);
- }
-+#endif
-
- /**
-  * get_down - return the down state of the pen
-@@ -169,6 +179,7 @@ static DEFINE_TIMER(touch_timer, touch_timer_fire, 0, 0);
-  */
- static irqreturn_t stylus_irq(int irq, void *dev_id)
- {
-+	struct platform_device *pdev = to_platform_device(ts.dev);
- 	unsigned long data0;
- 	unsigned long data1;
- 	bool down;
-@@ -187,6 +198,12 @@ static irqreturn_t stylus_irq(int irq, void *dev_id)
- 	else
- 		dev_info(ts.dev, "%s: count=%d\n", __func__, ts.count);
-
-+
-+	if (platform_get_device_id(pdev)->driver_data == TYPE_S3C64XX) {
-+		/* Clear pen down/up interrupt */
-+		writel(0x0, ts.io + S3C64XX_ADCCLRINTPNDNUP);
-+	}
-+
- 	return IRQ_HANDLED;
- }
-
-@@ -295,9 +312,11 @@ static int __devinit s3c2410ts_probe(struct
-platform_device *pdev)
- 		goto err_clk;
- 	}
-
-+#ifdef PLAT_S3C24XX
- 	/* Configure the touchscreen external FETs on the S3C2410 */
--	if (!platform_get_device_id(pdev)->driver_data)
-+	if (platform_get_device_id(pdev)->driver_data == TYPE_S3C2410)
- 		s3c2410_ts_connect();
-+#endif
-
- 	ts.client = s3c_adc_register(pdev, s3c24xx_ts_select,
- 				     s3c24xx_ts_conversion, 1);
-@@ -418,15 +437,16 @@ static struct dev_pm_ops s3c_ts_pmops = {
- #endif
-
- static struct platform_device_id s3cts_driver_ids[] = {
--	{ "s3c2410-ts", 0 },
--	{ "s3c2440-ts", 1 },
-+	{ "s3c2410-ts", TYPE_S3C2410 },
-+	{ "s3c2440-ts", TYPE_S3C2440 },
-+	{ "s3c64xx-ts", TYPE_S3C64XX },
- 	{ }
+diff --git a/arch/arm/plat-s5p/dev-uart.c b/arch/arm/plat-s5p/dev-uart.c
+index 23c7531..a89331e 100644
+--- a/arch/arm/plat-s5p/dev-uart.c
++++ b/arch/arm/plat-s5p/dev-uart.c
+@@ -95,6 +95,7 @@ static struct resource s5p_uart2_resource[] = {
  };
- MODULE_DEVICE_TABLE(platform, s3cts_driver_ids);
-
- static struct platform_driver s3c_ts_driver = {
- 	.driver         = {
--		.name   = "s3c24xx-ts",
-+		.name   = "s3c-ts",
- 		.owner  = THIS_MODULE,
- #ifdef CONFIG_PM
- 		.pm	= &s3c_ts_pmops,
+ 
+ static struct resource s5p_uart3_resource[] = {
++#if CONFIG_SERIAL_SAMSUNG_UARTS > 3
+ 	[0] = {
+ 		.start	= S5P_PA_UART3,
+ 		.end	= S5P_PA_UART3 + S5P_SZ_UART,
+@@ -115,6 +116,7 @@ static struct resource s5p_uart3_resource[] = {
+ 		.end	= IRQ_S5P_UART_ERR3,
+ 		.flags	= IORESOURCE_IRQ,
+ 	},
++#endif
+ };
+ 
+ struct s3c24xx_uart_resources s5p_uart_resources[] __initdata = {
+diff --git a/arch/arm/plat-s5p/irq.c b/arch/arm/plat-s5p/irq.c
+index eada40d..9308f34 100644
+--- a/arch/arm/plat-s5p/irq.c
++++ b/arch/arm/plat-s5p/irq.c
+@@ -48,11 +48,13 @@ static struct s3c_uart_irq uart_irqs[] = {
+ 		.base_irq	= IRQ_S5P_UART_BASE2,
+ 		.parent_irq	= IRQ_UART2,
+ 	},
++#if CONFIG_SERIAL_SAMSUNG_UARTS > 3
+ 	[3] = {
+ 		.regs		= S5P_VA_UART3,
+ 		.base_irq	= IRQ_S5P_UART_BASE3,
+ 		.parent_irq	= IRQ_UART3,
+ 	},
++#endif
+ };
+ 
+ void __init s5p_init_irq(u32 *vic, u32 num_vic)
 -- 
-1.6.6.1
+1.6.2.5
