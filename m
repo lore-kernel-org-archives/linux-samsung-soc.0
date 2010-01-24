@@ -1,11 +1,11 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 4/6] ARM: S5P6442: Update Kconfig and Makefiles
-Date: Mon, 25 Jan 2010 08:54:09 +0900
-Message-ID: <1264377249-9234-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 5/6] ARM: S5P6442: Add SMDK6442 board support file
+Date: Mon, 25 Jan 2010 08:54:14 +0900
+Message-ID: <1264377254-9267-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:48341 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:48346 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753944Ab0AYABa (ORCPT
+	with ESMTP id S1754008Ab0AYABa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Sun, 24 Jan 2010 19:01:30 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -13,92 +13,110 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch adds Kconfig and Makefile for building the S5P6442 SoC support.
-This patch also modifies the plat-s5p Kconfig file to include
-the support for S5P6442.
+This patch adds SMDK6442 board support file.
 
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/Kconfig          |   12 +++++++++++-
- arch/arm/Makefile         |    1 +
- arch/arm/plat-s5p/Kconfig |    2 +-
- drivers/serial/Kconfig    |    2 +-
- 4 files changed, 14 insertions(+), 3 deletions(-)
+ arch/arm/mach-s5p6442/mach-smdk6442.c |   91 +++++++++++++++++++++++++++++++++
+ 1 files changed, 91 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5p6442/mach-smdk6442.c
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 3bc5169..a3b0551 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -641,6 +641,14 @@ config ARCH_S5P6440
- 	help
- 	  Samsung S5P6440 CPU based systems
- 
-+config ARCH_S5P6442
-+	bool "Samsung S5P6442"
-+	select CPU_V6
-+	select GENERIC_GPIO
-+	select HAVE_CLK
-+	help
-+	  Samsung S5P6442 CPU based systems
+diff --git a/arch/arm/mach-s5p6442/mach-smdk6442.c b/arch/arm/mach-s5p6442/mach-smdk6442.c
+new file mode 100644
+index 0000000..1c4fbb0
+--- /dev/null
++++ b/arch/arm/mach-s5p6442/mach-smdk6442.c
+@@ -0,0 +1,91 @@
++/* linux/arch/arm/mach-s5p6442/mach-smdk6442.c
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
- config ARCH_S5PC1XX
- 	bool "Samsung S5PC1XX"
- 	select GENERIC_GPIO
-@@ -805,6 +813,8 @@ endif
- 
- source "arch/arm/mach-s5p6440/Kconfig"
- 
-+source "arch/arm/mach-s5p6442/Kconfig"
++#include <linux/kernel.h>
++#include <linux/types.h>
++#include <linux/init.h>
++#include <linux/serial_core.h>
 +
- source "arch/arm/plat-stmp3xxx/Kconfig"
- 
- if ARCH_S5PC1XX
-@@ -1085,7 +1095,7 @@ source kernel/Kconfig.preempt
- config HZ
- 	int
- 	default 128 if ARCH_L7200
--	default 200 if ARCH_EBSA110 || ARCH_S3C2410 || ARCH_S5P6440
-+	default 200 if ARCH_EBSA110 || ARCH_S3C2410 || ARCH_S5P6440 || ARCH_S5P6442
- 	default OMAP_32K_TIMER_HZ if ARCH_OMAP && OMAP_32K_TIMER
- 	default AT91_TIMER_HZ if ARCH_AT91
- 	default 100
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index bbcd512..553fe62 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -162,6 +162,7 @@ machine-$(CONFIG_ARCH_S3C2410)		:= s3c2410 s3c2400 s3c2412 s3c2440 s3c2442 s3c24
- machine-$(CONFIG_ARCH_S3C24A0)		:= s3c24a0
- machine-$(CONFIG_ARCH_S3C64XX)		:= s3c6400 s3c6410
- machine-$(CONFIG_ARCH_S5P6440)		:= s5p6440
-+machine-$(CONFIG_ARCH_S5P6442)		:= s5p6442
- machine-$(CONFIG_ARCH_S5PC1XX)		:= s5pc100
- machine-$(CONFIG_ARCH_SA1100)		:= sa1100
- machine-$(CONFIG_ARCH_SHARK)		:= shark
-diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-index e7c31e7..f581a76 100644
---- a/arch/arm/plat-s5p/Kconfig
-+++ b/arch/arm/plat-s5p/Kconfig
-@@ -7,7 +7,7 @@
- 
- config PLAT_S5P
- 	bool
--	depends on ARCH_S5P6440
-+	depends on (ARCH_S5P6440 || ARCH_S5P6442)
- 	default y
- 	select PLAT_S3C
- 	select ARM_VIC
-diff --git a/drivers/serial/Kconfig b/drivers/serial/Kconfig
-index ebdd2b9..f587b88 100644
---- a/drivers/serial/Kconfig
-+++ b/drivers/serial/Kconfig
-@@ -542,7 +542,7 @@ config SERIAL_S5PC100
- 
- config SERIAL_S5PV210
- 	tristate "Samsung S5PV210 Serial port support"
--	depends on SERIAL_SAMSUNG && CPU_S5PV210
-+	depends on SERIAL_SAMSUNG && (CPU_S5PV210 || CPU_S5P6442)
- 	default y
- 	help
- 	  Serial port support for Samsung's S5P Family of SoC's
++#include <asm/mach/arch.h>
++#include <asm/mach/map.h>
++#include <asm/setup.h>
++#include <asm/mach-types.h>
++
++#include <mach/map.h>
++#include <mach/regs-clock.h>
++
++#include <plat/regs-serial.h>
++#include <plat/s5p6442.h>
++#include <plat/devs.h>
++#include <plat/cpu.h>
++
++/* Following are default values for UCON, ULCON and UFCON UART registers */
++#define S5P6442_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
++				 S3C2410_UCON_RXILEVEL |	\
++				 S3C2410_UCON_TXIRQMODE |	\
++				 S3C2410_UCON_RXIRQMODE |	\
++				 S3C2410_UCON_RXFIFO_TOI |	\
++				 S3C2443_UCON_RXERR_IRQEN)
++
++#define S5P6442_ULCON_DEFAULT	S3C2410_LCON_CS8
++
++#define S5P6442_UFCON_DEFAULT	(S3C2410_UFCON_FIFOMODE |	\
++				 S5PV210_UFCON_TXTRIG4 |	\
++				 S5PV210_UFCON_RXTRIG4)
++
++static struct s3c2410_uartcfg smdk6442_uartcfgs[] __initdata = {
++	[0] = {
++		.hwport		= 0,
++		.flags		= 0,
++		.ucon		= S5P6442_UCON_DEFAULT,
++		.ulcon		= S5P6442_ULCON_DEFAULT,
++		.ufcon		= S5P6442_UFCON_DEFAULT,
++	},
++	[1] = {
++		.hwport		= 1,
++		.flags		= 0,
++		.ucon		= S5P6442_UCON_DEFAULT,
++		.ulcon		= S5P6442_ULCON_DEFAULT,
++		.ufcon		= S5P6442_UFCON_DEFAULT,
++	},
++	[2] = {
++		.hwport		= 2,
++		.flags		= 0,
++		.ucon		= S5P6442_UCON_DEFAULT,
++		.ulcon		= S5P6442_ULCON_DEFAULT,
++		.ufcon		= S5P6442_UFCON_DEFAULT,
++	},
++};
++
++static struct platform_device *smdk6442_devices[] __initdata = {
++};
++
++static void __init smdk6442_map_io(void)
++{
++	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
++	s3c24xx_init_clocks(12000000);
++	s3c24xx_init_uarts(smdk6442_uartcfgs, ARRAY_SIZE(smdk6442_uartcfgs));
++}
++
++static void __init smdk6442_machine_init(void)
++{
++	platform_add_devices(smdk6442_devices, ARRAY_SIZE(smdk6442_devices));
++}
++
++MACHINE_START(SMDK6442, "SMDK6442")
++	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
++	.phys_io	= S5P_PA_UART & 0xfff00000,
++	.io_pg_offst	= (((u32)S5P_VA_UART) >> 18) & 0xfffc,
++	.boot_params	= S5P_PA_SDRAM + 0x100,
++	.init_irq	= s5p6442_init_irq,
++	.map_io		= smdk6442_map_io,
++	.init_machine	= smdk6442_machine_init,
++	.timer		= &s3c24xx_timer,
++MACHINE_END
 -- 
 1.6.2.5
