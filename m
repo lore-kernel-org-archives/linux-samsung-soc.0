@@ -1,113 +1,45 @@
-From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: Re: [PATCH 4/4] ARM: S3C64XX: Add s3c64xx support to touchscreen
- driver
-Date: Mon, 25 Jan 2010 10:45:19 +0100
-Message-ID: <4B5D682F.2020000@gmail.com>
-References: <b2e8f9f71001221447u550c9713l9f04aeec030c86db@mail.gmail.com> <87aaw2zfd9.fsf@lechat.rtp-net.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: Default machine include placements
+Date: Mon, 25 Jan 2010 10:05:47 +0000
+Message-ID: <20100125100546.GA16340@n2100.arm.linux.org.uk>
+References: <20100125040255.GN26562@trinity.fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f226.google.com ([209.85.219.226]:36007 "EHLO
-	mail-ew0-f226.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753097Ab0AYJpX (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:44410 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932131Ab0AYKGI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Jan 2010 04:45:23 -0500
-Received: by ewy26 with SMTP id 26so2119788ewy.28
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Jan 2010 01:45:21 -0800 (PST)
-In-Reply-To: <87aaw2zfd9.fsf@lechat.rtp-net.org>
+	Mon, 25 Jan 2010 05:06:08 -0500
+Content-Disposition: inline
+In-Reply-To: <20100125040255.GN26562@trinity.fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-arm-kernel@lists.infradead.org, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
 
-Op 25-01-10 10:46, Arnaud Patard (Rtp) schreef:
-> Maurus Cuelenaere<mcuelenaere@gmail.com>  writes:
->
-> Hi,
->
->    
->> ARM: S3C64XX: Add s3c64xx support to touchscreen driver
->>
->> This ack's the extra interrupt s3c64xx platforms have in the touchscreen driver.
->>
->> Signed-off-by: Maurus Cuelenaere<mcuelenaere@gmail.com>
->> ---
->>   drivers/input/touchscreen/Kconfig      |    6 +++---
->>   drivers/input/touchscreen/s3c2410_ts.c |   28 ++++++++++++++++++++++++----
->>   2 files changed, 27 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/input/touchscreen/Kconfig
->> b/drivers/input/touchscreen/Kconfig
->> index dfafc76..0378b3d 100644
->> --- a/drivers/input/touchscreen/Kconfig
->> +++ b/drivers/input/touchscreen/Kconfig
->> @@ -146,11 +146,11 @@ config TOUCHSCREEN_FUJITSU
->>   	  module will be called fujitsu-ts.
->>
->>   config TOUCHSCREEN_S3C2410
->> -	tristate "Samsung S3C2410 touchscreen input driver"
->> -	depends on ARCH_S3C2410
->> +	tristate "Samsung S3C touchscreen input driver"
->> +	depends on ARCH_S3C2410 || ARCH_S3C64XX
->>   	select S3C24XX_ADC
->>   	help
->> -	  Say Y here if you have the s3c2410 touchscreen.
->> +	  Say Y here if you have the s3c touchscreen.
->>
->>   	  If unsure, say N.
->>
->> diff --git a/drivers/input/touchscreen/s3c2410_ts.c
->> b/drivers/input/touchscreen/s3c2410_ts.c
->> index 3debbc2..7dfbc38 100644
->> --- a/drivers/input/touchscreen/s3c2410_ts.c
->> +++ b/drivers/input/touchscreen/s3c2410_ts.c
->> @@ -40,7 +40,9 @@
->>   #include<plat/regs-adc.h>
->>   #include<plat/ts.h>
->>
->> +#ifdef PLAT_S3C24XX
->>   #include<mach/regs-gpio.h>
->> +#endif
->>
->>   #define TSC_SLEEP  (S3C2410_ADCTSC_PULL_UP_DISABLE | S3C2410_ADCTSC_XY_PST(0))
->>
->> @@ -88,6 +90,12 @@ struct s3c2410ts {
->>
->>   static struct s3c2410ts ts;
->>
->> +enum s3c_cpu_type {
->> +	TYPE_S3C2410,
->> +	TYPE_S3C2440,
->> +	TYPE_S3C64XX,
->> +};
->> +
->>   /**
->>    * s3c2410_ts_connect - configure gpio for s3c2410 systems
->>    *
->> @@ -95,6 +103,7 @@ static struct s3c2410ts ts;
->>    * connected to the device (later systems such as the S3C2440 integrate
->>    * these into the device).
->>   */
->> +#ifdef PLAT_S3C24XX
->>   static inline void s3c2410_ts_connect(void)
->>   {
->>   	s3c2410_gpio_cfgpin(S3C2410_GPG(12), S3C2410_GPG12_XMON);
->> @@ -102,6 +111,7 @@ static inline void s3c2410_ts_connect(void)
->>   	s3c2410_gpio_cfgpin(S3C2410_GPG(14), S3C2410_GPG14_YMON);
->>   	s3c2410_gpio_cfgpin(S3C2410_GPG(15), S3C2410_GPG15_nYPON);
->>   }
->> +#endif
->>      
-> Please, remove all theses #ifdef. I don't see the point of them as it's
-> only few lines of C code and they don't get executed when running on
-> other platforms than 2410.
->
-> Arnaud
->    
+On Mon, Jan 25, 2010 at 04:02:56AM +0000, Ben Dooks wrote:
+> Currently in the s3c/s5p familt we're seeing quite a number of the
+> same things being repeated for items like entry-macro.S, hardware.h
+> and so on.
+> 
+> The first question is about adding include/mach directories to
+> eitehr plat-s5p or plat-samsung to mop up the files that keep
+> getting repeated (since the plat-* directories are processed after
+> the machine directory includes the mach-xxx are still free to overide
+> these as necessary)
+> 
+> The second question is whether some of these files should have defaults
+> in arch/arm/include? I think this might be less useful as build failures
+> for new ports ensure that at-least these files are thought about
 
-The problem is that s3c2410_gpio_cfgpin() and S3C2410_* isn't defined on 
-S3C64XX builds so this gives implicit declaration errors.
+No - doing this means it's harder to find out what's going on.  Rather
+than being able to look in arch/arm/mach-*/include for the relevant
+mach header file and know you've got the right one, you have to instead
+consider whether the one you're using is the one found in
+arch/arm/mach-*/include/mach, arch/arm/plat-*/include/mach or
+arch/arm/include/mach.
 
-Regards,
-Maurus Cuelenaere
+Having multiple places where include files can live is a nightmare; you
+only have to look at glibc to know that - where you have to search the
+entire source looking for the header file you want.
