@@ -1,143 +1,107 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v4] ARM: S5P6440: Move CPU specific code in plat-s5p to machine directory
-Date: Mon, 25 Jan 2010 14:24:04 +0900
-Message-ID: <1264397044-21015-1-git-send-email-kgene.kim@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:54846 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751207Ab0AYFbb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Jan 2010 00:31:31 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arnaud Patard (Rtp) <arnaud.patard@rtp-net.org>
+Subject: Re: [PATCH 4/4] ARM: S3C64XX: Add s3c64xx support to touchscreen
+	driver
+Date: Mon, 25 Jan 2010 10:46:26 +0100
+Message-ID: <87aaw2zfd9.fsf@lechat.rtp-net.org>
+References: <b2e8f9f71001221447u550c9713l9f04aeec030c86db@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <b2e8f9f71001221447u550c9713l9f04aeec030c86db@mail.gmail.com>
+	(Maurus Cuelenaere's message of "Fri\,
+	22 Jan 2010 23\:47\:17 +0100")
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-The s5p6440-clock.c and s5p6440-init.c code in the plat-s5p is specific to
-s5p6440 SoC based systems. So these files are being moved to the machine
-directory of s5p6440. And these files are renamed in the machine directory.
+Maurus Cuelenaere <mcuelenaere@gmail.com> writes:
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s5p6440/Kconfig                      |    2 --
- arch/arm/mach-s5p6440/Makefile                     |    2 +-
- .../s5p6440-clock.c => mach-s5p6440/clock.c}       |    2 +-
- arch/arm/mach-s5p6440/{s5p6440-gpio.c => gpio.c}   |    2 +-
- .../s5p6440-init.c => mach-s5p6440/init.c}         |    4 +++-
- arch/arm/plat-s5p/Kconfig                          |   16 ----------------
- arch/arm/plat-s5p/Makefile                         |    5 -----
- 7 files changed, 6 insertions(+), 27 deletions(-)
- rename arch/arm/{plat-s5p/s5p6440-clock.c => mach-s5p6440/clock.c} (99%)
- rename arch/arm/mach-s5p6440/{s5p6440-gpio.c => gpio.c} (99%)
- rename arch/arm/{plat-s5p/s5p6440-init.c => mach-s5p6440/init.c} (94%)
+Hi,
 
-diff --git a/arch/arm/mach-s5p6440/Kconfig b/arch/arm/mach-s5p6440/Kconfig
-index 3aa2462..4c29ff8 100644
---- a/arch/arm/mach-s5p6440/Kconfig
-+++ b/arch/arm/mach-s5p6440/Kconfig
-@@ -9,8 +9,6 @@ if ARCH_S5P6440
- 
- config CPU_S5P6440
- 	bool
--	select CPU_S5P6440_INIT
--	select CPU_S5P6440_CLOCK
- 	help
- 	  Enable S5P6440 CPU support
- 
-diff --git a/arch/arm/mach-s5p6440/Makefile b/arch/arm/mach-s5p6440/Makefile
-index a79b130..1ad894b 100644
---- a/arch/arm/mach-s5p6440/Makefile
-+++ b/arch/arm/mach-s5p6440/Makefile
-@@ -12,7 +12,7 @@ obj-				:=
- 
- # Core support for S5P6440 system
- 
--obj-$(CONFIG_CPU_S5P6440)	+= cpu.o s5p6440-gpio.o
-+obj-$(CONFIG_CPU_S5P6440)	+= cpu.o init.o clock.o gpio.o
- 
- # machine support
- 
-diff --git a/arch/arm/plat-s5p/s5p6440-clock.c b/arch/arm/mach-s5p6440/clock.c
-similarity index 99%
-rename from arch/arm/plat-s5p/s5p6440-clock.c
-rename to arch/arm/mach-s5p6440/clock.c
-index 2f412f8..b2672e1 100644
---- a/arch/arm/plat-s5p/s5p6440-clock.c
-+++ b/arch/arm/mach-s5p6440/clock.c
-@@ -1,4 +1,4 @@
--/* linux/arch/arm/plat-s5p/s5p6440-clock.c
-+/* linux/arch/arm/mach-s5p6440/clock.c
-  *
-  * Copyright (c) 2009 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com/
-diff --git a/arch/arm/mach-s5p6440/s5p6440-gpio.c b/arch/arm/mach-s5p6440/gpio.c
-similarity index 99%
-rename from arch/arm/mach-s5p6440/s5p6440-gpio.c
-rename to arch/arm/mach-s5p6440/gpio.c
-index 742264c..b0ea741 100644
---- a/arch/arm/mach-s5p6440/s5p6440-gpio.c
-+++ b/arch/arm/mach-s5p6440/gpio.c
-@@ -1,4 +1,4 @@
--/* arch/arm/mach-s5p6440/s5p6440-gpio.c
-+/* arch/arm/mach-s5p6440/gpio.c
-  *
-  * Copyright (c) 2009 Samsung Electronics Co., Ltd.
-  * 		http://www.samsung.com/
-diff --git a/arch/arm/plat-s5p/s5p6440-init.c b/arch/arm/mach-s5p6440/init.c
-similarity index 94%
-rename from arch/arm/plat-s5p/s5p6440-init.c
-rename to arch/arm/mach-s5p6440/init.c
-index 9017825..a1f3727 100644
---- a/arch/arm/plat-s5p/s5p6440-init.c
-+++ b/arch/arm/mach-s5p6440/init.c
-@@ -1,8 +1,10 @@
--/* linux/arch/arm/plat-s5p/s5p6440-init.c
-+/* linux/arch/arm/mach-s5p6440/init.c
-  *
-  * Copyright (c) 2009 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com/
-  *
-+ * S5P6440 - Init support
-+ *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
-diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-index e7c31e7..fca6dad 100644
---- a/arch/arm/plat-s5p/Kconfig
-+++ b/arch/arm/plat-s5p/Kconfig
-@@ -24,19 +24,3 @@ config PLAT_S5P
- 	select SAMSUNG_IRQ_UART
- 	help
- 	  Base platform code for Samsung's S5P series SoC.
--
--if (PLAT_S5P && ARCH_S5P6440)
--
--# Configuration options shared by all S5P64XX implementations
--
--config CPU_S5P6440_INIT
--	bool
--	help
--	 Initialisation code for the S5P6440.
--
--config CPU_S5P6440_CLOCK
--	bool
--	help
--	  Clock support code for the S5P6440.
--
--endif
-diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-index 92b6474..a7c54b3 100644
---- a/arch/arm/plat-s5p/Makefile
-+++ b/arch/arm/plat-s5p/Makefile
-@@ -17,8 +17,3 @@ obj-y				+= cpu.o
- obj-y				+= clock.o
- obj-y				+= irq.o
- obj-y				+= setup-i2c0.o
--
--# CPU support
--
--obj-$(CONFIG_CPU_S5P6440_INIT)	+= s5p6440-init.o
--obj-$(CONFIG_CPU_S5P6440_CLOCK)	+= s5p6440-clock.o
--- 
-1.6.2.5
+> ARM: S3C64XX: Add s3c64xx support to touchscreen driver
+>
+> This ack's the extra interrupt s3c64xx platforms have in the touchscreen driver.
+>
+> Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
+> ---
+>  drivers/input/touchscreen/Kconfig      |    6 +++---
+>  drivers/input/touchscreen/s3c2410_ts.c |   28 ++++++++++++++++++++++++----
+>  2 files changed, 27 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/input/touchscreen/Kconfig
+> b/drivers/input/touchscreen/Kconfig
+> index dfafc76..0378b3d 100644
+> --- a/drivers/input/touchscreen/Kconfig
+> +++ b/drivers/input/touchscreen/Kconfig
+> @@ -146,11 +146,11 @@ config TOUCHSCREEN_FUJITSU
+>  	  module will be called fujitsu-ts.
+>
+>  config TOUCHSCREEN_S3C2410
+> -	tristate "Samsung S3C2410 touchscreen input driver"
+> -	depends on ARCH_S3C2410
+> +	tristate "Samsung S3C touchscreen input driver"
+> +	depends on ARCH_S3C2410 || ARCH_S3C64XX
+>  	select S3C24XX_ADC
+>  	help
+> -	  Say Y here if you have the s3c2410 touchscreen.
+> +	  Say Y here if you have the s3c touchscreen.
+>
+>  	  If unsure, say N.
+>
+> diff --git a/drivers/input/touchscreen/s3c2410_ts.c
+> b/drivers/input/touchscreen/s3c2410_ts.c
+> index 3debbc2..7dfbc38 100644
+> --- a/drivers/input/touchscreen/s3c2410_ts.c
+> +++ b/drivers/input/touchscreen/s3c2410_ts.c
+> @@ -40,7 +40,9 @@
+>  #include <plat/regs-adc.h>
+>  #include <plat/ts.h>
+>
+> +#ifdef PLAT_S3C24XX
+>  #include <mach/regs-gpio.h>
+> +#endif
+>
+>  #define TSC_SLEEP  (S3C2410_ADCTSC_PULL_UP_DISABLE | S3C2410_ADCTSC_XY_PST(0))
+>
+> @@ -88,6 +90,12 @@ struct s3c2410ts {
+>
+>  static struct s3c2410ts ts;
+>
+> +enum s3c_cpu_type {
+> +	TYPE_S3C2410,
+> +	TYPE_S3C2440,
+> +	TYPE_S3C64XX,
+> +};
+> +
+>  /**
+>   * s3c2410_ts_connect - configure gpio for s3c2410 systems
+>   *
+> @@ -95,6 +103,7 @@ static struct s3c2410ts ts;
+>   * connected to the device (later systems such as the S3C2440 integrate
+>   * these into the device).
+>  */
+> +#ifdef PLAT_S3C24XX
+>  static inline void s3c2410_ts_connect(void)
+>  {
+>  	s3c2410_gpio_cfgpin(S3C2410_GPG(12), S3C2410_GPG12_XMON);
+> @@ -102,6 +111,7 @@ static inline void s3c2410_ts_connect(void)
+>  	s3c2410_gpio_cfgpin(S3C2410_GPG(14), S3C2410_GPG14_YMON);
+>  	s3c2410_gpio_cfgpin(S3C2410_GPG(15), S3C2410_GPG15_nYPON);
+>  }
+> +#endif
+
+Please, remove all theses #ifdef. I don't see the point of them as it's
+only few lines of C code and they don't get executed when running on
+other platforms than 2410.
+
+Arnaud
