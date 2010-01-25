@@ -1,75 +1,57 @@
-From: Arnaud Patard (Rtp) <arnaud.patard@rtp-net.org>
-Subject: Re: [PATCH 4/4] ARM: S3C64XX: Add s3c64xx support to touchscreen driver
-Date: Mon, 25 Jan 2010 11:22:34 +0100
-Message-ID: <873a1uzdp1.fsf@lechat.rtp-net.org>
-References: <b2e8f9f71001221447u550c9713l9f04aeec030c86db@mail.gmail.com>
-	<87aaw2zfd9.fsf@lechat.rtp-net.org> <4B5D682F.2020000@gmail.com>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: Default machine include placements
+Date: Mon, 25 Jan 2010 10:28:03 +0000
+Message-ID: <20100125102803.GV10014@trinity.fluff.org>
+References: <20100125040255.GN26562@trinity.fluff.org> <20100125100546.GA16340@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lechat.rtp-net.org ([88.191.19.38]:34032 "EHLO
-	lechat.rtp-net.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753297Ab0AYKPt (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:52054 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752415Ab0AYK2J (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Jan 2010 05:15:49 -0500
-In-Reply-To: <4B5D682F.2020000@gmail.com> (Maurus Cuelenaere's message of "Mon\, 25 Jan 2010 10\:45\:19 +0100")
+	Mon, 25 Jan 2010 05:28:09 -0500
+Content-Disposition: inline
+In-Reply-To: <20100125100546.GA16340@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
 
-Maurus Cuelenaere <mcuelenaere@gmail.com> writes:
+On Mon, Jan 25, 2010 at 10:05:47AM +0000, Russell King - ARM Linux wrote:
+> On Mon, Jan 25, 2010 at 04:02:56AM +0000, Ben Dooks wrote:
+> > Currently in the s3c/s5p familt we're seeing quite a number of the
+> > same things being repeated for items like entry-macro.S, hardware.h
+> > and so on.
+> > 
+> > The first question is about adding include/mach directories to
+> > eitehr plat-s5p or plat-samsung to mop up the files that keep
+> > getting repeated (since the plat-* directories are processed after
+> > the machine directory includes the mach-xxx are still free to overide
+> > these as necessary)
+> > 
+> > The second question is whether some of these files should have defaults
+> > in arch/arm/include? I think this might be less useful as build failures
+> > for new ports ensure that at-least these files are thought about
+> 
+> No - doing this means it's harder to find out what's going on.  Rather
+> than being able to look in arch/arm/mach-*/include for the relevant
+> mach header file and know you've got the right one, you have to instead
+> consider whether the one you're using is the one found in
+> arch/arm/mach-*/include/mach, arch/arm/plat-*/include/mach or
+> arch/arm/include/mach.
+> 
+> Having multiple places where include files can live is a nightmare; you
+> only have to look at glibc to know that - where you have to search the
+> entire source looking for the header file you want.
 
-[...]
+Ok, but this is going to make it really interesting once we sort out
+multiple machine building on the s5p series like the s3c24xx series
+currently has. Is there any suggestion about what to do then when
+we may end up including many arch/arm/mach-*/include/mach?
 
->>> @@ -40,7 +40,9 @@
->>>   #include<plat/regs-adc.h>
->>>   #include<plat/ts.h>
->>>
->>> +#ifdef PLAT_S3C24XX
->>>   #include<mach/regs-gpio.h>
->>> +#endif
->>>
->>>   #define TSC_SLEEP  (S3C2410_ADCTSC_PULL_UP_DISABLE | S3C2410_ADCTSC_XY_PST(0))
->>>
->>> @@ -88,6 +90,12 @@ struct s3c2410ts {
->>>
->>>   static struct s3c2410ts ts;
->>>
->>> +enum s3c_cpu_type {
->>> +	TYPE_S3C2410,
->>> +	TYPE_S3C2440,
->>> +	TYPE_S3C64XX,
->>> +};
->>> +
->>>   /**
->>>    * s3c2410_ts_connect - configure gpio for s3c2410 systems
->>>    *
->>> @@ -95,6 +103,7 @@ static struct s3c2410ts ts;
->>>    * connected to the device (later systems such as the S3C2440 integrate
->>>    * these into the device).
->>>   */
->>> +#ifdef PLAT_S3C24XX
->>>   static inline void s3c2410_ts_connect(void)
->>>   {
->>>   	s3c2410_gpio_cfgpin(S3C2410_GPG(12), S3C2410_GPG12_XMON);
->>> @@ -102,6 +111,7 @@ static inline void s3c2410_ts_connect(void)
->>>   	s3c2410_gpio_cfgpin(S3C2410_GPG(14), S3C2410_GPG14_YMON);
->>>   	s3c2410_gpio_cfgpin(S3C2410_GPG(15), S3C2410_GPG15_nYPON);
->>>   }
->>> +#endif
->>>      
->> Please, remove all theses #ifdef. I don't see the point of them as it's
->> only few lines of C code and they don't get executed when running on
->> other platforms than 2410.
->>
->> Arnaud
->>    
->
-> The problem is that s3c2410_gpio_cfgpin() and S3C2410_* isn't defined
-> on S3C64XX builds so this gives implicit declaration errors.
+-- 
+Ben
 
-hmm... I didn't look in details but I thought such kind of issues was
-going to be fixed thanks to the changes in Ben's -next-* branches.
-
-Arnaud
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
