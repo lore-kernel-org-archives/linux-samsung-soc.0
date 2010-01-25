@@ -1,107 +1,113 @@
-From: Arnaud Patard (Rtp) <arnaud.patard@rtp-net.org>
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
 Subject: Re: [PATCH 4/4] ARM: S3C64XX: Add s3c64xx support to touchscreen
-	driver
-Date: Mon, 25 Jan 2010 10:46:26 +0100
-Message-ID: <87aaw2zfd9.fsf@lechat.rtp-net.org>
-References: <b2e8f9f71001221447u550c9713l9f04aeec030c86db@mail.gmail.com>
+ driver
+Date: Mon, 25 Jan 2010 10:45:19 +0100
+Message-ID: <4B5D682F.2020000@gmail.com>
+References: <b2e8f9f71001221447u550c9713l9f04aeec030c86db@mail.gmail.com> <87aaw2zfd9.fsf@lechat.rtp-net.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <b2e8f9f71001221447u550c9713l9f04aeec030c86db@mail.gmail.com>
-	(Maurus Cuelenaere's message of "Fri\,
-	22 Jan 2010 23\:47\:17 +0100")
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ew0-f226.google.com ([209.85.219.226]:36007 "EHLO
+	mail-ew0-f226.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753097Ab0AYJpX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 25 Jan 2010 04:45:23 -0500
+Received: by ewy26 with SMTP id 26so2119788ewy.28
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Jan 2010 01:45:21 -0800 (PST)
+In-Reply-To: <87aaw2zfd9.fsf@lechat.rtp-net.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>
 
-Maurus Cuelenaere <mcuelenaere@gmail.com> writes:
+Op 25-01-10 10:46, Arnaud Patard (Rtp) schreef:
+> Maurus Cuelenaere<mcuelenaere@gmail.com>  writes:
+>
+> Hi,
+>
+>    
+>> ARM: S3C64XX: Add s3c64xx support to touchscreen driver
+>>
+>> This ack's the extra interrupt s3c64xx platforms have in the touchscreen driver.
+>>
+>> Signed-off-by: Maurus Cuelenaere<mcuelenaere@gmail.com>
+>> ---
+>>   drivers/input/touchscreen/Kconfig      |    6 +++---
+>>   drivers/input/touchscreen/s3c2410_ts.c |   28 ++++++++++++++++++++++++----
+>>   2 files changed, 27 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/input/touchscreen/Kconfig
+>> b/drivers/input/touchscreen/Kconfig
+>> index dfafc76..0378b3d 100644
+>> --- a/drivers/input/touchscreen/Kconfig
+>> +++ b/drivers/input/touchscreen/Kconfig
+>> @@ -146,11 +146,11 @@ config TOUCHSCREEN_FUJITSU
+>>   	  module will be called fujitsu-ts.
+>>
+>>   config TOUCHSCREEN_S3C2410
+>> -	tristate "Samsung S3C2410 touchscreen input driver"
+>> -	depends on ARCH_S3C2410
+>> +	tristate "Samsung S3C touchscreen input driver"
+>> +	depends on ARCH_S3C2410 || ARCH_S3C64XX
+>>   	select S3C24XX_ADC
+>>   	help
+>> -	  Say Y here if you have the s3c2410 touchscreen.
+>> +	  Say Y here if you have the s3c touchscreen.
+>>
+>>   	  If unsure, say N.
+>>
+>> diff --git a/drivers/input/touchscreen/s3c2410_ts.c
+>> b/drivers/input/touchscreen/s3c2410_ts.c
+>> index 3debbc2..7dfbc38 100644
+>> --- a/drivers/input/touchscreen/s3c2410_ts.c
+>> +++ b/drivers/input/touchscreen/s3c2410_ts.c
+>> @@ -40,7 +40,9 @@
+>>   #include<plat/regs-adc.h>
+>>   #include<plat/ts.h>
+>>
+>> +#ifdef PLAT_S3C24XX
+>>   #include<mach/regs-gpio.h>
+>> +#endif
+>>
+>>   #define TSC_SLEEP  (S3C2410_ADCTSC_PULL_UP_DISABLE | S3C2410_ADCTSC_XY_PST(0))
+>>
+>> @@ -88,6 +90,12 @@ struct s3c2410ts {
+>>
+>>   static struct s3c2410ts ts;
+>>
+>> +enum s3c_cpu_type {
+>> +	TYPE_S3C2410,
+>> +	TYPE_S3C2440,
+>> +	TYPE_S3C64XX,
+>> +};
+>> +
+>>   /**
+>>    * s3c2410_ts_connect - configure gpio for s3c2410 systems
+>>    *
+>> @@ -95,6 +103,7 @@ static struct s3c2410ts ts;
+>>    * connected to the device (later systems such as the S3C2440 integrate
+>>    * these into the device).
+>>   */
+>> +#ifdef PLAT_S3C24XX
+>>   static inline void s3c2410_ts_connect(void)
+>>   {
+>>   	s3c2410_gpio_cfgpin(S3C2410_GPG(12), S3C2410_GPG12_XMON);
+>> @@ -102,6 +111,7 @@ static inline void s3c2410_ts_connect(void)
+>>   	s3c2410_gpio_cfgpin(S3C2410_GPG(14), S3C2410_GPG14_YMON);
+>>   	s3c2410_gpio_cfgpin(S3C2410_GPG(15), S3C2410_GPG15_nYPON);
+>>   }
+>> +#endif
+>>      
+> Please, remove all theses #ifdef. I don't see the point of them as it's
+> only few lines of C code and they don't get executed when running on
+> other platforms than 2410.
+>
+> Arnaud
+>    
 
-Hi,
+The problem is that s3c2410_gpio_cfgpin() and S3C2410_* isn't defined on 
+S3C64XX builds so this gives implicit declaration errors.
 
-> ARM: S3C64XX: Add s3c64xx support to touchscreen driver
->
-> This ack's the extra interrupt s3c64xx platforms have in the touchscreen driver.
->
-> Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
-> ---
->  drivers/input/touchscreen/Kconfig      |    6 +++---
->  drivers/input/touchscreen/s3c2410_ts.c |   28 ++++++++++++++++++++++++----
->  2 files changed, 27 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/input/touchscreen/Kconfig
-> b/drivers/input/touchscreen/Kconfig
-> index dfafc76..0378b3d 100644
-> --- a/drivers/input/touchscreen/Kconfig
-> +++ b/drivers/input/touchscreen/Kconfig
-> @@ -146,11 +146,11 @@ config TOUCHSCREEN_FUJITSU
->  	  module will be called fujitsu-ts.
->
->  config TOUCHSCREEN_S3C2410
-> -	tristate "Samsung S3C2410 touchscreen input driver"
-> -	depends on ARCH_S3C2410
-> +	tristate "Samsung S3C touchscreen input driver"
-> +	depends on ARCH_S3C2410 || ARCH_S3C64XX
->  	select S3C24XX_ADC
->  	help
-> -	  Say Y here if you have the s3c2410 touchscreen.
-> +	  Say Y here if you have the s3c touchscreen.
->
->  	  If unsure, say N.
->
-> diff --git a/drivers/input/touchscreen/s3c2410_ts.c
-> b/drivers/input/touchscreen/s3c2410_ts.c
-> index 3debbc2..7dfbc38 100644
-> --- a/drivers/input/touchscreen/s3c2410_ts.c
-> +++ b/drivers/input/touchscreen/s3c2410_ts.c
-> @@ -40,7 +40,9 @@
->  #include <plat/regs-adc.h>
->  #include <plat/ts.h>
->
-> +#ifdef PLAT_S3C24XX
->  #include <mach/regs-gpio.h>
-> +#endif
->
->  #define TSC_SLEEP  (S3C2410_ADCTSC_PULL_UP_DISABLE | S3C2410_ADCTSC_XY_PST(0))
->
-> @@ -88,6 +90,12 @@ struct s3c2410ts {
->
->  static struct s3c2410ts ts;
->
-> +enum s3c_cpu_type {
-> +	TYPE_S3C2410,
-> +	TYPE_S3C2440,
-> +	TYPE_S3C64XX,
-> +};
-> +
->  /**
->   * s3c2410_ts_connect - configure gpio for s3c2410 systems
->   *
-> @@ -95,6 +103,7 @@ static struct s3c2410ts ts;
->   * connected to the device (later systems such as the S3C2440 integrate
->   * these into the device).
->  */
-> +#ifdef PLAT_S3C24XX
->  static inline void s3c2410_ts_connect(void)
->  {
->  	s3c2410_gpio_cfgpin(S3C2410_GPG(12), S3C2410_GPG12_XMON);
-> @@ -102,6 +111,7 @@ static inline void s3c2410_ts_connect(void)
->  	s3c2410_gpio_cfgpin(S3C2410_GPG(14), S3C2410_GPG14_YMON);
->  	s3c2410_gpio_cfgpin(S3C2410_GPG(15), S3C2410_GPG15_nYPON);
->  }
-> +#endif
-
-Please, remove all theses #ifdef. I don't see the point of them as it's
-only few lines of C code and they don't get executed when running on
-other platforms than 2410.
-
-Arnaud
+Regards,
+Maurus Cuelenaere
