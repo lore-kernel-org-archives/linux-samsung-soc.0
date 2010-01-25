@@ -1,87 +1,174 @@
-From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: Re: [PATCH 4/4] ARM: S3C64XX: Add s3c64xx support to touchscreen
- driver
-Date: Mon, 25 Jan 2010 11:32:56 +0100
-Message-ID: <4B5D7358.3010609@gmail.com>
-References: <b2e8f9f71001221447u550c9713l9f04aeec030c86db@mail.gmail.com>	<87aaw2zfd9.fsf@lechat.rtp-net.org> <4B5D682F.2020000@gmail.com> <873a1uzdp1.fsf@lechat.rtp-net.org>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: [PATCH] ARM: S5P: Move System support header and Uncompress
+	code
+Date: Mon, 25 Jan 2010 10:39:17 +0000
+Message-ID: <20100125103917.GW10014@trinity.fluff.org>
+References: <1264394661-7469-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f226.google.com ([209.85.219.226]:45959 "EHLO
-	mail-ew0-f226.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752674Ab0AYKc7 (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:38198 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753221Ab0AYKjW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Jan 2010 05:32:59 -0500
-Received: by ewy26 with SMTP id 26so2171234ewy.28
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Jan 2010 02:32:58 -0800 (PST)
-In-Reply-To: <873a1uzdp1.fsf@lechat.rtp-net.org>
+	Mon, 25 Jan 2010 05:39:22 -0500
+Content-Disposition: inline
+In-Reply-To: <1264394661-7469-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-Op 25-01-10 11:22, Arnaud Patard (Rtp) schreef:
-> Maurus Cuelenaere<mcuelenaere@gmail.com>  writes:
->
-> [...]
->
->    
->>>> @@ -40,7 +40,9 @@
->>>>    #include<plat/regs-adc.h>
->>>>    #include<plat/ts.h>
->>>>
->>>> +#ifdef PLAT_S3C24XX
->>>>    #include<mach/regs-gpio.h>
->>>> +#endif
->>>>
->>>>    #define TSC_SLEEP  (S3C2410_ADCTSC_PULL_UP_DISABLE | S3C2410_ADCTSC_XY_PST(0))
->>>>
->>>> @@ -88,6 +90,12 @@ struct s3c2410ts {
->>>>
->>>>    static struct s3c2410ts ts;
->>>>
->>>> +enum s3c_cpu_type {
->>>> +	TYPE_S3C2410,
->>>> +	TYPE_S3C2440,
->>>> +	TYPE_S3C64XX,
->>>> +};
->>>> +
->>>>    /**
->>>>     * s3c2410_ts_connect - configure gpio for s3c2410 systems
->>>>     *
->>>> @@ -95,6 +103,7 @@ static struct s3c2410ts ts;
->>>>     * connected to the device (later systems such as the S3C2440 integrate
->>>>     * these into the device).
->>>>    */
->>>> +#ifdef PLAT_S3C24XX
->>>>    static inline void s3c2410_ts_connect(void)
->>>>    {
->>>>    	s3c2410_gpio_cfgpin(S3C2410_GPG(12), S3C2410_GPG12_XMON);
->>>> @@ -102,6 +111,7 @@ static inline void s3c2410_ts_connect(void)
->>>>    	s3c2410_gpio_cfgpin(S3C2410_GPG(14), S3C2410_GPG14_YMON);
->>>>    	s3c2410_gpio_cfgpin(S3C2410_GPG(15), S3C2410_GPG15_nYPON);
->>>>    }
->>>> +#endif
->>>>
->>>>          
->>> Please, remove all theses #ifdef. I don't see the point of them as it's
->>> only few lines of C code and they don't get executed when running on
->>> other platforms than 2410.
->>>        
->> The problem is that s3c2410_gpio_cfgpin() and S3C2410_* isn't defined
->> on S3C64XX builds so this gives implicit declaration errors.
->>      
-> hmm... I didn't look in details but I thought such kind of issues was
-> going to be fixed thanks to the changes in Ben's -next-* branches.
->    
+On Mon, Jan 25, 2010 at 01:44:21PM +0900, Kukjin Kim wrote:
+> This patch moves system support and uncompress common codes for S5P into
+> plat-s5p/include/mach from mach-s5p6440/include/mach.
 
-Hmm I checked next-samsung but didn't see anything relevant..
-Normally I check Ben's tree pretty regularly (this diff was based on an 
-older next-samsung), so if he changes something I should pickup.
+Russell doesn't like this so we need to revert to the previous policy
+of putting these in arch/arm/mach-xxx/include/mach
+ 
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+>  arch/arm/mach-s5p6440/include/mach/system.h     |   26 -----------------------
+>  arch/arm/mach-s5p6440/include/mach/uncompress.h |   24 ---------------------
+>  arch/arm/plat-s5p/include/mach/system.h         |   26 +++++++++++++++++++++++
+>  arch/arm/plat-s5p/include/mach/uncompress.h     |   24 +++++++++++++++++++++
+>  4 files changed, 50 insertions(+), 50 deletions(-)
+>  delete mode 100644 arch/arm/mach-s5p6440/include/mach/system.h
+>  delete mode 100644 arch/arm/mach-s5p6440/include/mach/uncompress.h
+>  create mode 100644 arch/arm/plat-s5p/include/mach/system.h
+>  create mode 100644 arch/arm/plat-s5p/include/mach/uncompress.h
+> 
+> diff --git a/arch/arm/mach-s5p6440/include/mach/system.h b/arch/arm/mach-s5p6440/include/mach/system.h
+> deleted file mode 100644
+> index d2dd817..0000000
+> --- a/arch/arm/mach-s5p6440/include/mach/system.h
+> +++ /dev/null
+> @@ -1,26 +0,0 @@
+> -/* linux/arch/arm/mach-s5p6440/include/mach/system.h
+> - *
+> - * Copyright (c) 2009 Samsung Electronics Co., Ltd.
+> - *		http://www.samsung.com/
+> - *
+> - * S5P6440 - system support header
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> -*/
+> -
+> -#ifndef __ASM_ARCH_SYSTEM_H
+> -#define __ASM_ARCH_SYSTEM_H __FILE__
+> -
+> -static void arch_idle(void)
+> -{
+> -	/* nothing here yet */
+> -}
+> -
+> -static void arch_reset(char mode, const char *cmd)
+> -{
+> -	/* nothing here yet */
+> -}
+> -
+> -#endif /* __ASM_ARCH_SYSTEM_H */
+> diff --git a/arch/arm/mach-s5p6440/include/mach/uncompress.h b/arch/arm/mach-s5p6440/include/mach/uncompress.h
+> deleted file mode 100644
+> index 7c1f600..0000000
+> --- a/arch/arm/mach-s5p6440/include/mach/uncompress.h
+> +++ /dev/null
+> @@ -1,24 +0,0 @@
+> -/* linux/arch/arm/mach-s5p6440/include/mach/uncompress.h
+> - *
+> - * Copyright (c) 2009 Samsung Electronics Co., Ltd.
+> - *		http://www.samsung.com/
+> - *
+> - * S5P6440 - uncompress code
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> -*/
+> -
+> -#ifndef __ASM_ARCH_UNCOMPRESS_H
+> -#define __ASM_ARCH_UNCOMPRESS_H
+> -
+> -#include <mach/map.h>
+> -#include <plat/uncompress.h>
+> -
+> -static void arch_detect_cpu(void)
+> -{
+> -	/* we do not need to do any cpu detection here at the moment. */
+> -}
+> -
+> -#endif /* __ASM_ARCH_UNCOMPRESS_H */
+> diff --git a/arch/arm/plat-s5p/include/mach/system.h b/arch/arm/plat-s5p/include/mach/system.h
+> new file mode 100644
+> index 0000000..3544536
+> --- /dev/null
+> +++ b/arch/arm/plat-s5p/include/mach/system.h
+> @@ -0,0 +1,26 @@
+> +/* linux/arch/arm/plat-s5p/include/mach/system.h
+> + *
+> + * Copyright (c) 2009 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com/
+> + *
+> + * S5P - system support header
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#ifndef __ASM_ARCH_SYSTEM_H
+> +#define __ASM_ARCH_SYSTEM_H __FILE__
+> +
+> +static void arch_idle(void)
+> +{
+> +	/* nothing here yet */
+> +}
+> +
+> +static void arch_reset(char mode, const char *cmd)
+> +{
+> +	/* nothing here yet */
+> +}
+> +
+> +#endif /* __ASM_ARCH_SYSTEM_H */
+> diff --git a/arch/arm/plat-s5p/include/mach/uncompress.h b/arch/arm/plat-s5p/include/mach/uncompress.h
+> new file mode 100644
+> index 0000000..c673399
+> --- /dev/null
+> +++ b/arch/arm/plat-s5p/include/mach/uncompress.h
+> @@ -0,0 +1,24 @@
+> +/* linux/arch/arm/plat-s5p/include/mach/uncompress.h
+> + *
+> + * Copyright (c) 2009 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com/
+> + *
+> + * S5P - uncompress code
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#ifndef __ASM_ARCH_UNCOMPRESS_H
+> +#define __ASM_ARCH_UNCOMPRESS_H __FILE__
+> +
+> +#include <mach/map.h>
+> +#include <plat/uncompress.h>
+> +
+> +static void arch_detect_cpu(void)
+> +{
+> +	/* we do not need to do any cpu detection here at the moment. */
+> +}
+> +
+> +#endif /* __ASM_ARCH_UNCOMPRESS_H */
+> -- 
+> 1.6.2.5
+> 
 
-I can remove one pair of #ifdef's though, if I move the first one inside 
-s3c2410_ts_connect() there's no need for the second one.
+-- 
+-- 
+Ben
 
-Regards,
-Maurus Cuelenaere
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
