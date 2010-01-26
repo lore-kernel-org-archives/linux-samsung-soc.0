@@ -1,150 +1,55 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 2/3] ASoC: AC97: S3C: Add controller driver
-Date: Tue, 26 Jan 2010 10:47:23 +0000
-Message-ID: <20100126104723.GF15759@rakim.wolfsonmicro.main>
+From: jassi brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH 3/3] ARM: SMDK64XX: Enable AC97 device
+Date: Tue, 26 Jan 2010 19:52:45 +0900
+Message-ID: <1b68c6791001260252t7f43cb97n710381508040f7d4@mail.gmail.com>
 References: <1264485101-13782-1-git-send-email-jassisinghbrar@gmail.com>
- <1264485101-13782-2-git-send-email-jassisinghbrar@gmail.com>
+	<1264485101-13782-2-git-send-email-jassisinghbrar@gmail.com>
+	<1264485101-13782-3-git-send-email-jassisinghbrar@gmail.com>
+	<20100126101921.GE15759@rakim.wolfsonmicro.main>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:37912 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750893Ab0AZKrZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jan 2010 05:47:25 -0500
-Content-Disposition: inline
-In-Reply-To: <1264485101-13782-2-git-send-email-jassisinghbrar@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20100126101921.GE15759@rakim.wolfsonmicro.main>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, lrg@slimlogic.co.uk
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jassisinghbrar@gmail.com
-Cc: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org, lrg@slimlogic.co.uk, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>
 
-On Tue, Jan 26, 2010 at 02:51:40PM +0900, jassisinghbrar@gmail.com wrote:
-
-This looks good overall, just a few smallish issues:
-
-> +static void s3c_ac97_activate(struct snd_ac97 *ac97)
-> +{
-> +	u32 ac_glbctrl, stat;
-> +
-> +	stat = readl(s3c_ac97.regs + S3C_AC97_GLBSTAT) & 0x7;
-> +	switch (stat) {
-> +	case S3C_AC97_GLBSTAT_MAINSTATE_ACTIVE:
-> +		return;
-> +	case S3C_AC97_GLBSTAT_MAINSTATE_READY:
-> +	case S3C_AC97_GLBSTAT_MAINSTATE_INIT:
-> +		break;
-> +	default:
-> +		s3c_ac97_cold_reset(ac97);
-> +		s3c_ac97_warm_reset(ac97);
-> +		break;
-> +	}
-
-This automatic cold and warm reset looks a bit fishy - obviously if this
-code path ever gets hit in normal operation then it's going to seriously
-disrupt things since it'll reset the CODEC registers.  A warm reset by
-itself wouldn't be a problem but I'd rather see explicit cold resets in
-the callers where that's required.
-
-> +	ac_glbctrl = readl(s3c_ac97.regs + S3C_AC97_GLBCTRL);
-> +	ac_glbctrl = S3C_AC97_GLBCTRL_ACLINKON;
-> +	writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GLBCTRL);
-> +	msleep(1);
-
-This also looks a bit odd, ACLINKON sounds like bringing up the link
-which is what a warm reset does.
-
-> +	INIT_COMPLETION(s3c_ac97.done);
-> +
-> +	if (!wait_for_completion_timeout(&s3c_ac97.done, HZ))
-> +		printk(KERN_ERR "AC97: Unable to activate!");
-
-This looks racy - the INIT_COMPLETION() happens after all the hardware
-configuration which suggests that if you're unlucky the event which
-should trigger the completion will have happened before the init.  A
-bunch of interrupts arriving at an inconvenient time could trigger this,
-for example.
-
-The same idiom appears in the register reads and writes.
-
-> +	if (addr != reg)
-> +		printk(KERN_ERR "s3c-ac97: req addr = %02x,"
-> +				" rep addr = %02x\n", reg, addr);
-
-Please don't split error messages over multiple lines, it makes grepping
-for them harder.
-
-> +static irqreturn_t s3c_ac97_irq(int irq, void *dev_id)
-> +{
-> +	u32 ac_glbctrl, ac_glbstat;
-> +
-> +	ac_glbstat = readl(s3c_ac97.regs + S3C_AC97_GLBSTAT);
-> +
-> +	if (ac_glbstat & S3C_AC97_GLBSTAT_CODECREADY) {
-> +
-> +		ac_glbctrl = readl(s3c_ac97.regs + S3C_AC97_GLBCTRL);
-> +		ac_glbctrl &= ~S3C_AC97_GLBCTRL_CODECREADYIE;
-> +		writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GLBCTRL);
-> +
-> +		ac_glbctrl = readl(s3c_ac97.regs + S3C_AC97_GLBCTRL);
-> +		ac_glbctrl |= (1<<30); /* Clear interrupt */
-> +		writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GLBCTRL);
-> +
-> +		complete(&s3c_ac97.done);
-> +	}
-> +
-> +	return IRQ_HANDLED;
-> +}
-
-You should only be returning IRQ_HANDLED if you actually handled an
-interrupt here.
-
-> +#define S3C_AC97_RATES (SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_11025 |\
-> +		SNDRV_PCM_RATE_16000 | SNDRV_PCM_RATE_22050 | \
-> +		SNDRV_PCM_RATE_32000 | SNDRV_PCM_RATE_44100 | \
-> +		SNDRV_PCM_RATE_48000)
-
-SNDRV_PCM_RATE_8000_48000.
-
-> +		.capture = {
-> +			.stream_name = "AC97 Capture",
-> +			/* NOTE: If the codec ouputs just one slot,
-> +			 * it *seems* our AC97 controller reads the only
-> +			 * valid slot(if either 3 or 4) for PCM-In.
-> +			 * For such cases, we record Mono.
-> +			 */
-
-This seems like unsurprising behaviour for an AC97 controller - the slot
-validity information is there for just this purpose.  I'd just remove
-the comment as a result.
-
-> +		.capture = {
-> +			.stream_name = "AC97 Mic Capture",
-> +			.channels_min = 1,
-> +			/* NOTE: If the codec(like WM9713) can't ouput just
-> +			 * one slot, it *seems* our AC97 controller reads
-> +			 * two slots(if one of them is Slot-6) for MIC also.
-> +			 * For such cases, we record Stereo.
-> +			 */
-
-Similarly here.
-
-> +	if (ac97_pdata->cfg_gpio(pdev)) {
-> +		dev_err(&pdev->dev, "Unable to configure gpio\n");
-> +		ret = -EINVAL;
-> +		goto lb3;
-> +	}
-
-Should really check for the function being non-NULL here.
-
-> +lb5:
-> +	free_irq(irq_res->start, NULL);
-
-Perhaps a better name than 'lb' - err, or fail or something.  lb means
-nothing to me at least.
-
-> +	irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-> +	if (irq_res)
-> +		free_irq(irq_res->start, NULL);
-
-This should never get called if the resources aren't allocated.
+T24gVHVlLCBKYW4gMjYsIDIwMTAgYXQgNzoxOSBQTSwgTWFyayBCcm93bgo8YnJvb25pZUBvcGVu
+c291cmNlLndvbGZzb25taWNyby5jb20+IHdyb3RlOgo+IE9uIFR1ZSwgSmFuIDI2LCAyMDEwIGF0
+IDAyOjUxOjQxUE0gKzA5MDAsIGphc3Npc2luZ2hicmFyQGdtYWlsLmNvbSB3cm90ZToKPj4gRnJv
+bTogSmFzc2kgQnJhciA8amFzc2kuYnJhckBzYW1zdW5nLmNvbT4KPj4KPj4gSW1wbGVtZW50aW5n
+IGJhc2ljIHN1cHBvcnQgZm9yIFBsYXliYWNrL0NhcHR1cmUgYnkgU01ESydzIEFDOTcKPj4gY29u
+dHJvbGxlciB3aXRoIFdNOTcxMyBjb2RlYywgdGhpcyBwYXRjaCBhZGRzIHRoZSBBTFNBIG1hY2hp
+bmUKPj4gZHJpdmVyIGZvciBBQzk3IGRldmljZS4KPgo+IE1pZ2h0IGJlIGJldHRlciB0byBzcGxp
+dCB0aGlzIGludG8gYW4gYXJjaC9hcm0gcGF0Y2ggYW5kIGEgc291bmQvc29jCj4gcGF0Y2ggLSB0
+aGV5IGRvbid0IGFwcGVhciB0byBkZXBlbmQgb24gZWFjaCBvdGhlciBzbyBpdCdkIGVhc2UgbWVy
+Z2luZy4Kb2ssIHdpbGwgZG8uCgo+PiArc3RhdGljIGludCBzbWRrX2hpZmlfaHdfcGFyYW1zKHN0
+cnVjdCBzbmRfcGNtX3N1YnN0cmVhbSAqc3Vic3RyZWFtLAo+PiArIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHN0cnVjdCBzbmRfcGNtX2h3X3BhcmFtcyAqcGFyYW1z
+KQo+PiArewo+PiArIMKgIMKgIC8qIENBUFRVUkUgLSBTdGVyZW8gTGluZUluCj4+ICsgwqAgwqAg
+wqAqIEN1cnJlbnRseSB0aGVyZSBpcyBubyBvdGhlciB3YXkgdG8gY2hhbmdlIEFDTGluay1JbiBz
+bG90cwo+PiArIMKgIMKgIMKgKiBvZiBXbTk3MTMsIHNvIHdlIG1ha2UgZG8gd2l0aCB0aGlzIGNh
+bGwuCj4+ICsgwqAgwqAgwqAqLwo+PiArIMKgIMKgIC8qIFNsb3RzLTMsNCovCj4+ICsgwqAgwqAg
+c29jX2FjOTdfb3BzLndyaXRlKE5VTEwsIDB4NWMsIDApOwo+PiArCj4+ICsgwqAgwqAgcmV0dXJu
+IDA7Cj4+ICt9Cj4KPiBUaGlzIG9uZSBuZWVkcyBhIGJpdCBtb3JlIGV4cGxhbmF0aW9uIC0gd2h5
+IGFyZSB5b3UgY2hhbmdpbmcgdGhlIEFDOTcKPiBzbG90PyDCoElzIHRoaXMgYSBnZW5lcmFsIHBy
+b2JsZW0gd2l0aCB0aGUgUzNDIEFDOTcgY29udHJvbGxlcj8gwqBJdCdkCj4gYWxzbyBiZSBiZXR0
+ZXIgdG8gdXNlIHRoZSBzeW1ib2xpYyByZWdpc3RlciBuYW1lIHJhdGhlciB0aGFuIGEgbnVtYmVy
+LgpJdCBpcyBubyBwcm9ibGVtLgp3bTk3MTMgY2FuIGJlIGNvbmZpZ3VyZWQgdG8gcGxhY2UgZGF0
+YSBpbiBvbmUgb2YgZm91ciBwb3NzaWJsZSBwYWlyIG9mIHNsb3RzCjMtNCBvciA2LTkgb3IgNy04
+IG9yIDEwLTExLiBUaGlzIGNhbGwgZW5zdXJlcyB0aGUgc2VsZWN0ZWQgcGFpciBpcyAzLTQoc3Rh
+bmRhcmQKYW5kIGNvbXBhdGlibGUgd2l0aCBTYW1zdW5nIEFDOTcgY29udHJvbGxlcnMpLiBUaG91
+Z2ggd2UgZG9uJ3QgbmVlZCB0bwpleHBsaWNpdGx5IHNldCB0aGlzIGlmIHdlIGRyb3AgbWljIGRh
+aV9saW5rLgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpB
+bHNhLWRldmVsIG1haWxpbmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVjdC5vcmcKaHR0cDov
+L21haWxtYW4uYWxzYS1wcm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Fsc2EtZGV2ZWwK
