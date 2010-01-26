@@ -1,75 +1,171 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 2/3] ASoC: AC97: S3C: Add controller driver
-Date: Tue, 26 Jan 2010 13:00:57 +0000
-Message-ID: <20100126130057.GS15759@rakim.wolfsonmicro.main>
-References: <1264485101-13782-1-git-send-email-jassisinghbrar@gmail.com>
- <1264485101-13782-2-git-send-email-jassisinghbrar@gmail.com>
- <20100126104723.GF15759@rakim.wolfsonmicro.main>
- <1b68c6791001260317k44893521vc0310ea35bac8ee1@mail.gmail.com>
- <20100126115258.GM15759@rakim.wolfsonmicro.main>
- <1b68c6791001260411u2b39d8actf35a0f3541fda92d@mail.gmail.com>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: [PATCH 1/2] ARM: SAMSUNG: Move HWMON from plat-s3c24xx to
+	plat-samsung
+Date: Tue, 26 Jan 2010 14:50:08 +0000
+Message-ID: <20100126145008.GB9153@trinity.fluff.org>
+References: <b2e8f9f71001260316l56cdfc7bv20944b4e3ba3fdf5@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:48500 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751913Ab0AZNA7 (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:39847 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753789Ab0AZOuK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jan 2010 08:00:59 -0500
+	Tue, 26 Jan 2010 09:50:10 -0500
 Content-Disposition: inline
-In-Reply-To: <1b68c6791001260411u2b39d8actf35a0f3541fda92d@mail.gmail.com>
+In-Reply-To: <b2e8f9f71001260316l56cdfc7bv20944b4e3ba3fdf5@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jassi brar <jassisinghbrar@gmail.com>
-Cc: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org, lrg@slimlogic.co.uk, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>
+To: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>
 
-On Tue, Jan 26, 2010 at 09:11:55PM +0900, jassi brar wrote:
-> On Tue, Jan 26, 2010 at 8:52 PM, Mark Brown
+On Tue, Jan 26, 2010 at 12:16:13PM +0100, Maurus Cuelenaere wrote:
+> Move HWMON platform definition from plat-s3c24xx to plat-samsung
+> and adjust mach-bast to use the new s3c_hwmon_set_platdata().
+> 
+> Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
+> ---
+>  arch/arm/mach-s3c2410/mach-bast.c          |    2 +-
+>  arch/arm/plat-s3c24xx/devs.c               |    8 -----
+>  arch/arm/plat-samsung/Kconfig              |    5 +++
+>  arch/arm/plat-samsung/Makefile             |    1 +
+>  arch/arm/plat-samsung/dev-hwmon.c          |   39 ++++++++++++++++++++++++++++
+>  arch/arm/plat-samsung/include/plat/hwmon.h |    2 +
+>  6 files changed, 48 insertions(+), 9 deletions(-)
+>  create mode 100644 arch/arm/plat-samsung/dev-hwmon.c
+> 
+> diff --git a/arch/arm/mach-s3c2410/mach-bast.c
+> b/arch/arm/mach-s3c2410/mach-bast.c
+> index 02b1b62..c8786df 100644
+> --- a/arch/arm/mach-s3c2410/mach-bast.c
+> +++ b/arch/arm/mach-s3c2410/mach-bast.c
+> @@ -634,7 +634,7 @@ static void __init bast_map_io(void)
+> 
+>  	s3c24xx_register_clocks(bast_clocks, ARRAY_SIZE(bast_clocks));
+> 
+> -	s3c_device_hwmon.dev.platform_data = &bast_hwmon_info;
+> +	s3c_hwmon_set_platdata(&bast_hwmon_info);
+> 
+>  	s3c24xx_init_io(bast_iodesc, ARRAY_SIZE(bast_iodesc));
+>  	s3c24xx_init_clocks(0);
+> diff --git a/arch/arm/plat-s3c24xx/devs.c b/arch/arm/plat-s3c24xx/devs.c
+> index 986d4e5..67e0db7 100644
+> --- a/arch/arm/plat-s3c24xx/devs.c
+> +++ b/arch/arm/plat-s3c24xx/devs.c
+> @@ -319,14 +319,6 @@ struct platform_device s3c_device_adc = {
+>  	.resource	  = s3c_adc_resource,
+>  };
+> 
+> -/* HWMON */
+> -
+> -struct platform_device s3c_device_hwmon = {
+> -	.name		= "s3c-hwmon",
+> -	.id		= -1,
+> -	.dev.parent	= &s3c_device_adc.dev,
+> -};
+> -
+>  /* SDI */
+> 
+>  static struct resource s3c_sdi_resource[] = {
+> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+> index 1c2fe91..429fe80 100644
+> --- a/arch/arm/plat-samsung/Kconfig
+> +++ b/arch/arm/plat-samsung/Kconfig
+> @@ -107,6 +107,11 @@ config S3C_DEV_HSMMC2
+>  	help
+>  	  Compile in platform device definitions for HSMMC channel 2
+> 
+> +config S3C_DEV_HWMON
+> +	bool
+> +	help
+> +	    Compile in platform device definitions for HWMON
+> +
+>  config S3C_DEV_I2C1
+>  	bool
+>  	help
+> diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+> index c8c8cae..e0b622e 100644
+> --- a/arch/arm/plat-samsung/Makefile
+> +++ b/arch/arm/plat-samsung/Makefile
+> @@ -31,6 +31,7 @@ obj-$(CONFIG_S3C_ADC)	+= adc.o
+>  obj-$(CONFIG_S3C_DEV_HSMMC)	+= dev-hsmmc.o
+>  obj-$(CONFIG_S3C_DEV_HSMMC1)	+= dev-hsmmc1.o
+>  obj-$(CONFIG_S3C_DEV_HSMMC2)	+= dev-hsmmc2.o
+> +obj-$(CONFIG_S3C_DEV_HWMON)	+= dev-hwmon.o
+>  obj-y				+= dev-i2c0.o
+>  obj-$(CONFIG_S3C_DEV_I2C1)	+= dev-i2c1.o
+>  obj-$(CONFIG_S3C_DEV_FB)	+= dev-fb.o
+> diff --git a/arch/arm/plat-samsung/dev-hwmon.c
+> b/arch/arm/plat-samsung/dev-hwmon.c
+> new file mode 100644
+> index 0000000..2c1080d
+> --- /dev/null
+> +++ b/arch/arm/plat-samsung/dev-hwmon.c
+> @@ -0,0 +1,39 @@
+> +/* linux/arch/arm/plat-samsung/dev-hwmon.c
+> + *
+> + * Copyright 2010 Maurus Cuelenaere
 
-> > That's not addressing the problem, though - the big issue is not
-> > bringing up the AC97 link, it's the fact that you're doing an
-> > uncontrolled cold reset. =A0If we hit this code path it'll revert t=
-he
-> > device registers to default which will upset the drivers for the CO=
-DEC
-> > rather badly. =A0There should be no possibility of that happening, =
-if it
-> > is happening it's something that callers really should know about.
+you've forgotten the copyright attribution from the original source...
 
-> It should never be reached after the link is up and running. Only if =
-something
-> goes wrong at runtime, would the controller state be changed. And
-> this is an attempt to recover from that failure. If the upper layer s=
-hould
-> know of such failure, then maybe we should not do it.
-> I have never seen such runtime error though.
+> + *
+> + * Samsung series device definition for HWMON
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include <plat/devs.h>
+> +#include <plat/hwmon.h>
+> +
+> +struct platform_device s3c_device_hwmon = {
+> +	.name		= "s3c-hwmon",
+> +	.id		= -1,
+> +	.dev.parent	= &s3c_device_adc.dev,
+> +};
+> +
+> +void __init s3c_hwmon_set_platdata(struct s3c_hwmon_pdata *pd)
+> +{
+> +	struct s3c_hwmon_pdata *npd;
+> +
+> +	if (!pd) {
+> +		printk(KERN_ERR "%s: no platform data\n", __func__);
+> +		return;
+> +	}
+> +
+> +	npd = kmemdup(pd, sizeof(struct s3c_hwmon_pdata), GFP_KERNEL);
+> +	if (!npd)
+> +		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+> +
+> +	s3c_device_hwmon.dev.platform_data = npd;
+> +}
+> +EXPORT_SYMBOL(s3c_hwmon_set_platdata);
 
-Sounds like the code should be changed to log and return an error if
-that case is hit?
+you don't need to EXPORT_SYMBOL() this, it is hardly likely to be used
+in anything other than machine support which is compiled into the kernel.
 
->=20
-> >> >> + =A0 =A0 ac_glbctrl =3D S3C_AC97_GLBCTRL_ACLINKON;
-> >> >> + =A0 =A0 writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GLBCTRL);
-> >> >> + =A0 =A0 msleep(1);
+> diff --git a/arch/arm/plat-samsung/include/plat/hwmon.h
+> b/arch/arm/plat-samsung/include/plat/hwmon.h
+> index 1ba88ea..352795b 100644
+> --- a/arch/arm/plat-samsung/include/plat/hwmon.h
+> +++ b/arch/arm/plat-samsung/include/plat/hwmon.h
+> @@ -37,5 +37,7 @@ struct s3c_hwmon_pdata {
+>  	struct s3c_hwmon_chcfg	*in[8];
+>  };
+> 
+> +extern void __init s3c_hwmon_set_platdata(struct s3c_hwmon_pdata *pd);
+> +
+>  #endif /* __ASM_ARCH_ADC_HWMON_H */
 
-=2E..
 
-> I assume the ALSA definition of cold/warm reset is same as that of
-> the AC97 controller. Anything remaining should be done only when nece=
-ssary.
-> For ex, the ALSA might want to leave controller after just cold/warm
-> reset ... as
-> the SoC manual says it's in low-power mode without the AC-link on.
+kerneldoc on this function addition would have been nice.
 
-A warm reset pretty much means "start the AC-link" - it's what you do t=
-o
-exit low power mode and start clocking the link (which is mastered by
-the CODEC), it doesn't have any other effect.  That's a big part of why
-this is confusing, I'd expect a warm reset would also do any setup on
-the controller side that was needed to cope with the clock restarting.
+-- 
+Ben
 
-Due to the way AC97 is structured this stuff is all shared between the
-controller and the CODECs on the bus.  It's not particularly pretty fro=
-m
-a software point of view at the minute.
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
