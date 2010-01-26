@@ -1,109 +1,156 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH 1/6] ARM: S5P6442: Add Samsung S5P6442 CPU support
-Date: Tue, 26 Jan 2010 05:20:59 +0000
-Message-ID: <20100126052059.GX10014@trinity.fluff.org>
-References: <1264377237-9138-1-git-send-email-kgene.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: jassisinghbrar@gmail.com
+Subject: [PATCH 1/3] ARM: S3C64XX: Add AC97 platform resources
+Date: Tue, 26 Jan 2010 14:51:39 +0900
+Message-ID: <1264485101-13782-1-git-send-email-jassisinghbrar@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:40719 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750826Ab0AZFVL (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:38217 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752170Ab0AZGBv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jan 2010 00:21:11 -0500
-Content-Disposition: inline
-In-Reply-To: <1264377237-9138-1-git-send-email-kgene.kim@samsung.com>
+	Tue, 26 Jan 2010 01:01:51 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
+Cc: ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, lrg@slimlogic.co.uk, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>
 
-On Mon, Jan 25, 2010 at 08:53:57AM +0900, Kukjin Kim wrote:
-> This patch adds support for Samsung S5P6442 CPU. This patch also adds
-> an entry for S5P6442 cpu in plat-s5p cpu table.
-> 
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+From: Jassi Brar <jassi.brar@samsung.com>
 
-[snip]
+This patch defines the platform device and the resources: IRQ, DMA and MEM,
+needed by the AC97 controller driver.
 
-This is a clarifction / extra comment on my previous review as
-requested in private. Posted here as it is useful to everyone involved.
+Signed-off-by: Jassi Brar <jassi.brar@samsung.com>
+---
+ arch/arm/plat-s3c/include/plat/audio.h |    8 +++
+ arch/arm/plat-s3c/include/plat/devs.h  |    3 +
+ arch/arm/plat-s3c64xx/dev-audio.c      |   78 ++++++++++++++++++++++++++++++++
+ 3 files changed, 89 insertions(+), 0 deletions(-)
 
-> new file mode 100644
-> index 0000000..1b3ab4d
-> --- /dev/null
-> +++ b/arch/arm/mach-s5p6442/include/mach/debug-macro.S
-> @@ -0,0 +1,39 @@
-> +/* linux/arch/arm/mach-s5p6442/include/mach/debug-macro.S
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * Based on arch/arm/mach-s3c6400/include/mach/debug-macro.S
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +/* pull in the relevant register and map files. */
-> +
-> +#include <mach/map.h>
-> +#include <plat/regs-serial.h>
-> +
-> +	/* note, for the boot process to work we have to keep the UART
-> +	 * virtual address aligned to an 1MiB boundary for the L1
-> +	 * mapping the head code makes. We keep the UART virtual address
-> +	 * aligned and add in the offset when we load the value here.
-> +	 */
-
-If someone had read the above comment before copying this file, they
-would have realised it is un-necessary for the current support as the
-UART blocks in all the s5p6440, s5p6442 and the v210 are aligned on
-one-megabyte boundaries and as such are suitable for mapping on 1MiB
-L1 section boundaries.
-
-This should removed from both the 6442 and s5pv210 before submission.
-
-> +	.macro addruart, rx
-> +		mrc	p15, 0, \rx, c1, c0
-> +		tst	\rx, #1
-> +		ldreq	\rx, = S5P_PA_UART
-> +		ldrne	\rx, = (S5P_VA_UART + S5P_PA_UART & 0xfffff)
-
-again, since we're one a 1MiB boundary we can lose the + S5P_PA_UART & 0xfffff
-from this.
-
-> +#if CONFIG_DEBUG_S3C_UART != 0
-> +		add	\rx, \rx, #(0x400 * CONFIG_DEBUG_S3C_UART)
-> +#endif
-> +	.endm
-> +
-> +/* include the reset of the code which will do the work, we're only
-> + * compiling for a single cpu processor type so the default of s3c2440
-> + * will be fine with us.
-> + */
-> +
-> +#include <plat/debug-macro.S>
-
-As for the debug-macro.S core in arch/arm/plat-s3c/include/plat/debug-macro.S
-you can (and it would be advisable) to add the relevant v210 macros so
-that both the v210 and the 6442 can use them in their local files...
-
-so possibly:
-
-	.macro fifo_full_v210 rd, rx
-	....
-	.endm
-
-	.macro fifo_level_v210 rd, rx
-	....
-	.endm
-
-PS, you will want to edit the v210 code to fix this too.
-
+diff --git a/arch/arm/plat-s3c/include/plat/audio.h b/arch/arm/plat-s3c/include/plat/audio.h
+index f22d23b..e07c941 100644
+--- a/arch/arm/plat-s3c/include/plat/audio.h
++++ b/arch/arm/plat-s3c/include/plat/audio.h
+@@ -8,6 +8,14 @@
+  * published by the Free Software Foundation.
+  */
+ 
++/* The machine init code calls s3c*_ac97_setup_gpio with
++ * one of these defines in order to select appropriate bank
++ * of GPIO for AC97 pins
++ */
++#define S3C64XX_AC97_GPD  0
++#define S3C64XX_AC97_GPE  1
++extern void s3c64xx_ac97_setup_gpio(int);
++
+ /**
+  * struct s3c_audio_pdata - common platform data for audio device drivers
+  * @cfg_gpio: Callback function to setup mux'ed pins in I2S/PCM/AC97 mode
+diff --git a/arch/arm/plat-s3c/include/plat/devs.h b/arch/arm/plat-s3c/include/plat/devs.h
+index c6f9b73..65317eb 100644
+--- a/arch/arm/plat-s3c/include/plat/devs.h
++++ b/arch/arm/plat-s3c/include/plat/devs.h
+@@ -35,7 +35,10 @@ extern struct platform_device s3c64xx_device_spi1;
+ extern struct platform_device s3c64xx_device_pcm0;
+ extern struct platform_device s3c64xx_device_pcm1;
+ 
++extern struct platform_device s3c64xx_device_ac97;
++
+ extern struct platform_device s3c_device_ts;
++
+ extern struct platform_device s3c_device_fb;
+ extern struct platform_device s3c_device_ohci;
+ extern struct platform_device s3c_device_lcd;
+diff --git a/arch/arm/plat-s3c64xx/dev-audio.c b/arch/arm/plat-s3c64xx/dev-audio.c
+index f6b7bfb..63088b7 100644
+--- a/arch/arm/plat-s3c64xx/dev-audio.c
++++ b/arch/arm/plat-s3c64xx/dev-audio.c
+@@ -11,6 +11,7 @@
+ #include <linux/kernel.h>
+ #include <linux/string.h>
+ #include <linux/platform_device.h>
++#include <linux/dma-mapping.h>
+ 
+ #include <mach/irqs.h>
+ #include <mach/map.h>
+@@ -254,3 +255,80 @@ struct platform_device s3c64xx_device_pcm1 = {
+ 	},
+ };
+ EXPORT_SYMBOL(s3c64xx_device_pcm1);
++
++/* AC97 Controller platform devices */
++
++static int s3c64xx_ac97_cfg_gpd(struct platform_device *pdev)
++{
++	s3c_gpio_cfgpin(S3C64XX_GPD(0), S3C64XX_GPD0_AC97_BITCLK);
++	s3c_gpio_cfgpin(S3C64XX_GPD(1), S3C64XX_GPD1_AC97_nRESET);
++	s3c_gpio_cfgpin(S3C64XX_GPD(2), S3C64XX_GPD2_AC97_SYNC);
++	s3c_gpio_cfgpin(S3C64XX_GPD(3), S3C64XX_GPD3_AC97_SDI);
++	s3c_gpio_cfgpin(S3C64XX_GPD(4), S3C64XX_GPD4_AC97_SDO);
++
++	return 0;
++}
++
++static int s3c64xx_ac97_cfg_gpe(struct platform_device *pdev)
++{
++	s3c_gpio_cfgpin(S3C64XX_GPE(0), S3C64XX_GPE0_AC97_BITCLK);
++	s3c_gpio_cfgpin(S3C64XX_GPE(1), S3C64XX_GPE1_AC97_nRESET);
++	s3c_gpio_cfgpin(S3C64XX_GPE(2), S3C64XX_GPE2_AC97_SYNC);
++	s3c_gpio_cfgpin(S3C64XX_GPE(3), S3C64XX_GPE3_AC97_SDI);
++	s3c_gpio_cfgpin(S3C64XX_GPE(4), S3C64XX_GPE4_AC97_SDO);
++
++	return 0;
++}
++
++static struct resource s3c64xx_ac97_resource[] = {
++	[0] = {
++		.start = S3C64XX_PA_AC97,
++		.end   = S3C64XX_PA_AC97 + 0x100 - 1,
++		.flags = IORESOURCE_MEM,
++	},
++	[1] = {
++		.start = DMACH_AC97_PCMOUT,
++		.end   = DMACH_AC97_PCMOUT,
++		.flags = IORESOURCE_DMA,
++	},
++	[2] = {
++		.start = DMACH_AC97_PCMIN,
++		.end   = DMACH_AC97_PCMIN,
++		.flags = IORESOURCE_DMA,
++	},
++	[3] = {
++		.start = DMACH_AC97_MICIN,
++		.end   = DMACH_AC97_MICIN,
++		.flags = IORESOURCE_DMA,
++	},
++	[4] = {
++		.start = IRQ_AC97,
++		.end   = IRQ_AC97,
++		.flags = IORESOURCE_IRQ,
++	},
++};
++
++static struct s3c_audio_pdata s3c_ac97_pdata;
++
++static u64 s3c64xx_ac97_dmamask = DMA_BIT_MASK(32);
++
++struct platform_device s3c64xx_device_ac97 = {
++	.name		  = "s3c-ac97",
++	.id		  = -1,
++	.num_resources	  = ARRAY_SIZE(s3c64xx_ac97_resource),
++	.resource	  = s3c64xx_ac97_resource,
++	.dev = {
++		.platform_data = &s3c_ac97_pdata,
++		.dma_mask = &s3c64xx_ac97_dmamask,
++		.coherent_dma_mask = DMA_BIT_MASK(32),
++	},
++};
++EXPORT_SYMBOL(s3c64xx_device_ac97);
++
++void __init s3c64xx_ac97_setup_gpio(int num)
++{
++	if (num == S3C64XX_AC97_GPD)
++		s3c_ac97_pdata.cfg_gpio = s3c64xx_ac97_cfg_gpd;
++	else
++		s3c_ac97_pdata.cfg_gpio = s3c64xx_ac97_cfg_gpe;
++}
 -- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+1.6.2.5
