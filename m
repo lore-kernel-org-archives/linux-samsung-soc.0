@@ -1,47 +1,47 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 2/3] ASoC: AC97: S3C: Add controller driver
-Date: Tue, 26 Jan 2010 10:53:22 +0000
-Message-ID: <20100126105322.GG15759@rakim.wolfsonmicro.main>
+Subject: Re: [PATCH 3/3] ARM: SMDK64XX: Enable AC97 device
+Date: Tue, 26 Jan 2010 10:59:01 +0000
+Message-ID: <20100126105901.GH15759@rakim.wolfsonmicro.main>
 References: <1264485101-13782-1-git-send-email-jassisinghbrar@gmail.com>
- <1264485101-13782-2-git-send-email-jassisinghbrar@gmail.com>
- <1b68c6791001252332l5ee275c9we39c98691ad7692c@mail.gmail.com>
+	<1264485101-13782-2-git-send-email-jassisinghbrar@gmail.com>
+	<1264485101-13782-3-git-send-email-jassisinghbrar@gmail.com>
+	<20100126101921.GE15759@rakim.wolfsonmicro.main>
+	<1b68c6791001260252t7f43cb97n710381508040f7d4@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:37794 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752056Ab0AZKxY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jan 2010 05:53:24 -0500
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <alsa-devel-bounces@alsa-project.org>
 Content-Disposition: inline
-In-Reply-To: <1b68c6791001252332l5ee275c9we39c98691ad7692c@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1b68c6791001260252t7f43cb97n710381508040f7d4@mail.gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
 To: jassi brar <jassisinghbrar@gmail.com>
-Cc: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org, lrg@slimlogic.co.uk, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, lrg@slimlogic.co.uk
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 26, 2010 at 04:32:45PM +0900, jassi brar wrote:
-> On Tue, Jan 26, 2010 at 2:51 PM,  <jassisinghbrar@gmail.com> wrote:
+On Tue, Jan 26, 2010 at 07:52:45PM +0900, jassi brar wrote:
+> On Tue, Jan 26, 2010 at 7:19 PM, Mark Brown
 
-Please delete irrelevant context when replying to mails, it's much
-easier to find the actual new text in the message that way.
+> > This one needs a bit more explanation - why are you changing the AC97
+> > slot? =A0Is this a general problem with the S3C AC97 controller? =A0It'd
+> > also be better to use the symbolic register name rather than a number.
 
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* NOTE: If the codec=
- ouputs just one slot,
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* it *seems* our A=
-C97 controller reads the only
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* valid slot(if ei=
-ther 3 or 4) for PCM-In.
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* For such cases, =
-we record Mono.
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0*/
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .channels_min =3D 1,
+> It is no problem.
+> wm9713 can be configured to place data in one of four possible pair of sl=
+ots
+> 3-4 or 6-9 or 7-8 or 10-11. This call ensures the selected pair is 3-4(st=
+andard
+> and compatible with Samsung AC97 controllers). Though we don't need to
+> explicitly set this if we drop mic dai_link.
 
->   I would like to remove this anomaly and set channels_min =3D 2
-
-Why?
-
->  And remove the second DAI_LINK in machine driver.
-
-Again, why?
+Ah, OK.  In this case dropping the second DAI link is the better option
+- the CODEC only presents a single stereo ADC pair on the AC97 bus with
+selectable inputs rather than having separate ADC(s) for microphone(s).
+This means you can't run both DAIs in parallel anyway.
