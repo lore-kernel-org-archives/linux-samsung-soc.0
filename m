@@ -1,90 +1,121 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH] ARM: S3C244X: Move S3C2442 code into S3C2440
-Date: Tue, 26 Jan 2010 07:58:03 +0000
-Message-ID: <1264492686-16901-5-git-send-email-ben-linux@fluff.org>
-References: <1264492686-16901-1-git-send-email-ben-linux@fluff.org>
+Subject: [PULL] Please pull bjdooks' for-rmk/samsung3
+Date: Tue, 26 Jan 2010 08:08:23 +0000
+Message-ID: <20100126080823.GA17378@trinity.fluff.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:58729 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:58781 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753325Ab0AZH6H (ORCPT
+	id S1750756Ab0AZIIY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jan 2010 02:58:07 -0500
-In-Reply-To: <1264492686-16901-1-git-send-email-ben-linux@fluff.org>
+	Tue, 26 Jan 2010 03:08:24 -0500
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Ben Dooks <ben-linux@fluff.org>
+To: linux-arm-kernel@lists.infradead.org, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
 
-Move the remaining S3C2442 code into mach-s3c2440 as there is only one
-file currently in there and these two SoCs are very similar.
+Platform moves, some minor bugfixing and updates for S3C64XX support.
 
-Signed-off-by: Ben Dooks <ben-linux@fluff.org>
----
- arch/arm/mach-s3c2440/Kconfig                     |   12 ++++++++++++
- arch/arm/mach-s3c2440/Makefile                    |    2 ++
- arch/arm/{mach-s3c2442 => mach-s3c2440}/s3c2442.c |    0
- arch/arm/mach-s3c2442/Kconfig                     |   11 -----------
- 4 files changed, 14 insertions(+), 11 deletions(-)
- rename arch/arm/{mach-s3c2442 => mach-s3c2440}/s3c2442.c (100%)
+The following changes since commit 54b89177ac533dc7439491afd26baf59464b425c:
+  Ben Dooks (1):
+        ARM: Merge next-samsung-s5p6440-iodec
 
-diff --git a/arch/arm/mach-s3c2440/Kconfig b/arch/arm/mach-s3c2440/Kconfig
-index 45cab7a..f496385 100644
---- a/arch/arm/mach-s3c2440/Kconfig
-+++ b/arch/arm/mach-s3c2440/Kconfig
-@@ -15,6 +15,18 @@ config CPU_S3C2440
- 	help
- 	  Support for S3C2440 Samsung Mobile CPU based systems.
- 
-+config CPU_S3C2442
-+	bool
-+	depends on ARCH_S3C2410
-+	select CPU_ARM920T
-+	select S3C2410_CLOCK
-+	select S3C2410_GPIO
-+	select S3C2410_PM if PM
-+	select CPU_S3C244X
-+	select CPU_LLSERIAL_S3C2440
-+	help
-+	  Support for S3C2442 Samsung Mobile CPU based systems.
-+
- config S3C2440_DMA
- 	bool
- 	depends on ARCH_S3C2410 && CPU_S3C24405B
-diff --git a/arch/arm/mach-s3c2440/Makefile b/arch/arm/mach-s3c2440/Makefile
-index e51497c..e8412b3 100644
---- a/arch/arm/mach-s3c2440/Makefile
-+++ b/arch/arm/mach-s3c2440/Makefile
-@@ -10,6 +10,8 @@ obj-n				:=
- obj-				:=
- 
- obj-$(CONFIG_CPU_S3C2440)	+= s3c2440.o dsc.o
-+obj-$(CONFIG_CPU_S3C2442)	+= s3c2442.o
-+
- obj-$(CONFIG_CPU_S3C2440)	+= irq.o
- obj-$(CONFIG_CPU_S3C2440)	+= clock.o
- obj-$(CONFIG_S3C2440_DMA)	+= dma.o
-diff --git a/arch/arm/mach-s3c2442/s3c2442.c b/arch/arm/mach-s3c2440/s3c2442.c
-similarity index 100%
-rename from arch/arm/mach-s3c2442/s3c2442.c
-rename to arch/arm/mach-s3c2440/s3c2442.c
-diff --git a/arch/arm/mach-s3c2442/Kconfig b/arch/arm/mach-s3c2442/Kconfig
-index 4832cd6..29ef066 100644
---- a/arch/arm/mach-s3c2442/Kconfig
-+++ b/arch/arm/mach-s3c2442/Kconfig
-@@ -2,14 +2,3 @@
- #
- # Licensed under GPLv2
- 
--config CPU_S3C2442
--	bool
--	depends on ARCH_S3C2410
--	select CPU_ARM920T
--	select S3C2410_CLOCK
--	select S3C2410_GPIO
--	select S3C2410_PM if PM
--	select CPU_S3C244X
--	select CPU_LLSERIAL_S3C2440
--	help
--	  Support for S3C2442 Samsung Mobile CPU based systems.
+are available in the git repository at:
+
+  git://git.fluff.org/bjdooks/linux.git for-rmk/samsung3
+
+Ben Dooks (6):
+      ARM: SAMSUNG: Move more support into plat-samsung
+      ARM: SAMSUNG: Move pmw.c to plat-samsung
+      ARM: SAMSUNG: Move pm-check.c to plat-samsung
+      ARM: S3C64XX: Tidy up common code in s3c64xx_spi_set_info()
+      ARM: S5P6440: Add HSMMC and OTG base addresses to map.h
+      ARM: SAMSUNG: Fix bad use of __initdata for s3c_register_clocks()
+
+Mark Brown (4):
+      ARM: SMDK6410: Set up interrupt range for WM835x on 1190-EV1 PMIC board
+      ARM: S3C64XX: Fix dev-audio build
+      ARM: S3C64XX: Staticise audio platform data
+      ARM: SAMSUNG: Staticise gpiolib implementation functions
+
+Maurus Cuelenaere (2):
+      ARM: S3C64XX: Fix typo in s3c-hsotg platform data
+      ARM: SAMSUNG: Fix null pointer dereference in ADC driver
+
+Thomas Abraham (1):
+      ARM: S5PV210: Add serial port support
+
+ arch/arm/configs/mini2440_defconfig                |    4 +-
+ arch/arm/configs/s3c2410_defconfig                 |    4 +-
+ arch/arm/mach-s3c6410/mach-smdk6410.c              |    1 +
+ arch/arm/mach-s5p6440/include/mach/map.h           |    8 +
+ arch/arm/plat-s3c/Kconfig                          |   44 ------
+ arch/arm/plat-s3c/Makefile                         |    5 -
+ arch/arm/plat-s3c/include/plat/pm.h                |    4 +-
+ arch/arm/plat-s3c/include/plat/regs-serial.h       |   30 ++++
+ arch/arm/plat-s3c/pm.c                             |    6 +-
+ arch/arm/plat-s3c64xx/dev-audio.c                  |   12 +-
+ arch/arm/plat-s3c64xx/dev-spi.c                    |   15 +-
+ arch/arm/plat-s3c64xx/include/plat/irqs.h          |    4 +
+ arch/arm/plat-samsung/Kconfig                      |   45 ++++++
+ arch/arm/plat-samsung/Makefile                     |    5 +
+ arch/arm/plat-samsung/adc.c                        |    2 +-
+ arch/arm/plat-samsung/clock.c                      |    2 +-
+ arch/arm/plat-samsung/gpiolib.c                    |   16 +-
+ .../include/plat/dma-core.h                        |    0
+ .../include/plat/hwmon.h                           |    0
+ .../include/plat/iic-core.h                        |    0
+ .../{plat-s3c => plat-samsung}/include/plat/iic.h  |    0
+ .../{plat-s3c => plat-samsung}/include/plat/nand.h |    0
+ .../include/plat/regs-ac97.h                       |    0
+ .../include/plat/regs-adc.h                        |    0
+ .../include/plat/regs-iic.h                        |    0
+ .../include/plat/regs-irqtype.h                    |    0
+ .../include/plat/regs-nand.h                       |    0
+ .../include/plat/regs-rtc.h                        |    0
+ .../include/plat/regs-s3c2412-iis.h                |    0
+ .../include/plat/regs-sdhci.h                      |    0
+ .../include/plat/regs-timer.h                      |    0
+ .../include/plat/regs-usb-hsotg-phy.h              |    0
+ .../include/plat/regs-usb-hsotg.h                  |    0
+ .../include/plat/regs-watchdog.h                   |    0
+ .../include/plat/sdhci.h                           |    0
+ .../include/plat/udc-hs.h                          |    4 +-
+ .../include/plat/watchdog-reset.h                  |    0
+ arch/arm/{plat-s3c => plat-samsung}/pm-check.c     |    8 +-
+ arch/arm/{plat-s3c => plat-samsung}/pwm.c          |    0
+ drivers/serial/Kconfig                             |    9 +-
+ drivers/serial/Makefile                            |    1 +
+ drivers/serial/s5pv210.c                           |  154 ++++++++++++++++++++
+ 42 files changed, 297 insertions(+), 86 deletions(-)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/dma-core.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/hwmon.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/iic-core.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/iic.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/nand.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/regs-ac97.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/regs-adc.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/regs-iic.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/regs-irqtype.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/regs-nand.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/regs-rtc.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/regs-s3c2412-iis.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/regs-sdhci.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/regs-timer.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/regs-usb-hsotg-phy.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/regs-usb-hsotg.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/regs-watchdog.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/sdhci.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/udc-hs.h (93%)
+ rename arch/arm/{plat-s3c => plat-samsung}/include/plat/watchdog-reset.h (100%)
+ rename arch/arm/{plat-s3c => plat-samsung}/pm-check.c (95%)
+ rename arch/arm/{plat-s3c => plat-samsung}/pwm.c (100%)
+ create mode 100644 drivers/serial/s5pv210.c
+
+
 -- 
-1.6.0.4
+Ben
+
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
