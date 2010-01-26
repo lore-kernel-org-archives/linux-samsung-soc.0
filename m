@@ -1,845 +1,375 @@
-From: jassi brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 2/3] ASoC: AC97: S3C: Add controller driver
-Date: Tue, 26 Jan 2010 16:32:45 +0900
-Message-ID: <1b68c6791001252332l5ee275c9we39c98691ad7692c@mail.gmail.com>
-References: <1264485101-13782-1-git-send-email-jassisinghbrar@gmail.com>
-	 <1264485101-13782-2-git-send-email-jassisinghbrar@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: [PATCH] ARM: S3C2442: Merge s3c2442.c and clock.c
+Date: Tue, 26 Jan 2010 07:58:01 +0000
+Message-ID: <1264492686-16901-3-git-send-email-ben-linux@fluff.org>
+References: <1264492686-16901-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from qw-out-2122.google.com ([74.125.92.25]:60294 "EHLO
-	qw-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752655Ab0AZHcq convert rfc822-to-8bit (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:58723 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752009Ab0AZH6I (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jan 2010 02:32:46 -0500
-Received: by qw-out-2122.google.com with SMTP id 8so113471qwh.37
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Jan 2010 23:32:45 -0800 (PST)
-In-Reply-To: <1264485101-13782-2-git-send-email-jassisinghbrar@gmail.com>
+	Tue, 26 Jan 2010 02:58:08 -0500
+In-Reply-To: <1264492686-16901-1-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org
-Cc: ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, lrg@slimlogic.co.uk, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Ben Dooks <ben-linux@fluff.org>
 
-On Tue, Jan 26, 2010 at 2:51 PM,  <jassisinghbrar@gmail.com> wrote:
-> From: Jassi Brar <jassi.brar@samsung.com>
->
-> Add the AC97 controller driver for Samsung SoCs that have one.
->
-> Signed-off-by: Jassi Brar <jassi.brar@samsung.com>
-> ---
-> =C2=A0sound/soc/s3c24xx/Kconfig =C2=A0 =C2=A0| =C2=A0 =C2=A06 +-
-> =C2=A0sound/soc/s3c24xx/Makefile =C2=A0 | =C2=A0 =C2=A03 +-
-> =C2=A0sound/soc/s3c24xx/s3c-ac97.c | =C2=A0535 ++++++++++++++++++++++=
-++++++++++++++++++++
-> =C2=A0sound/soc/s3c24xx/s3c-ac97.h | =C2=A0 23 ++
-> =C2=A04 files changed, 565 insertions(+), 2 deletions(-)
-> =C2=A0create mode 100644 sound/soc/s3c24xx/s3c-ac97.c
-> =C2=A0create mode 100644 sound/soc/s3c24xx/s3c-ac97.h
->
-> diff --git a/sound/soc/s3c24xx/Kconfig b/sound/soc/s3c24xx/Kconfig
-> index b489f1a..ad3690e 100644
-> --- a/sound/soc/s3c24xx/Kconfig
-> +++ b/sound/soc/s3c24xx/Kconfig
-> @@ -32,7 +32,11 @@ config SND_S3C2443_SOC_AC97
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0select S3C2410_DMA
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0select AC97_BUS
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0select SND_SOC_AC97_BUS
-> -
-> +
-> +config SND_S3C_SOC_AC97
-> + =C2=A0 =C2=A0 =C2=A0 tristate
-> + =C2=A0 =C2=A0 =C2=A0 select SND_SOC_AC97_BUS
-> +
-> =C2=A0config SND_S3C24XX_SOC_NEO1973_WM8753
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0tristate "SoC I2S Audio support for NEO197=
-3 - WM8753"
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0depends on SND_S3C24XX_SOC && MACH_NEO1973=
-_GTA01
-> diff --git a/sound/soc/s3c24xx/Makefile b/sound/soc/s3c24xx/Makefile
-> index b744657..b7411bd 100644
-> --- a/sound/soc/s3c24xx/Makefile
-> +++ b/sound/soc/s3c24xx/Makefile
-> @@ -4,12 +4,14 @@ snd-soc-s3c24xx-i2s-objs :=3D s3c24xx-i2s.o
-> =C2=A0snd-soc-s3c2412-i2s-objs :=3D s3c2412-i2s.o
-> =C2=A0snd-soc-s3c64xx-i2s-objs :=3D s3c64xx-i2s.o
-> =C2=A0snd-soc-s3c2443-ac97-objs :=3D s3c2443-ac97.o
-> +snd-soc-s3c-ac97-objs :=3D s3c-ac97.o
-> =C2=A0snd-soc-s3c-i2s-v2-objs :=3D s3c-i2s-v2.o
-> =C2=A0snd-soc-s3c-pcm-objs :=3D s3c-pcm.o
->
-> =C2=A0obj-$(CONFIG_SND_S3C24XX_SOC) +=3D snd-soc-s3c24xx.o
-> =C2=A0obj-$(CONFIG_SND_S3C24XX_SOC_I2S) +=3D snd-soc-s3c24xx-i2s.o
-> =C2=A0obj-$(CONFIG_SND_S3C2443_SOC_AC97) +=3D snd-soc-s3c2443-ac97.o
-> +obj-$(CONFIG_SND_S3C_SOC_AC97) +=3D snd-soc-s3c-ac97.o
-> =C2=A0obj-$(CONFIG_SND_S3C2412_SOC_I2S) +=3D snd-soc-s3c2412-i2s.o
-> =C2=A0obj-$(CONFIG_SND_S3C64XX_SOC_I2S) +=3D snd-soc-s3c64xx-i2s.o
-> =C2=A0obj-$(CONFIG_SND_S3C_I2SV2_SOC) +=3D snd-soc-s3c-i2s-v2.o
-> @@ -37,4 +39,3 @@ obj-$(CONFIG_SND_S3C24XX_SOC_SIMTEC) +=3D snd-soc-s=
-3c24xx-simtec.o
-> =C2=A0obj-$(CONFIG_SND_S3C24XX_SOC_SIMTEC_HERMES) +=3D snd-soc-s3c24x=
-x-simtec-hermes.o
-> =C2=A0obj-$(CONFIG_SND_S3C24XX_SOC_SIMTEC_TLV320AIC23) +=3D snd-soc-s=
-3c24xx-simtec-tlv320aic23.o
-> =C2=A0obj-$(CONFIG_SND_S3C64XX_SOC_WM8580) +=3D snd-soc-smdk64xx-wm85=
-80.o
-> -
-> diff --git a/sound/soc/s3c24xx/s3c-ac97.c b/sound/soc/s3c24xx/s3c-ac9=
-7.c
-> new file mode 100644
-> index 0000000..acb8f51
-> --- /dev/null
-> +++ b/sound/soc/s3c24xx/s3c-ac97.c
-> @@ -0,0 +1,535 @@
-> +/* sound/soc/s3c24xx/s3c-ac97.c
-> + *
-> + * ALSA SoC Audio Layer - S3C AC97 Controller driver
-> + * =C2=A0 =C2=A0 Evolved from s3c2443-ac97.c
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co. Ltd
-> + * =C2=A0 =C2=A0 Author: Jaswinder Singh <jassi.brar@samsung.com>
-> + * =C2=A0 =C2=A0 Credits: Graeme Gregory, Sean Choi
-> + *
-> + * This program is free software; you can redistribute it and/or mod=
-ify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <linux/init.h>
-> +#include <linux/module.h>
-> +#include <linux/io.h>
-> +#include <linux/delay.h>
-> +#include <linux/clk.h>
-> +
-> +#include <sound/soc.h>
-> +
-> +#include <plat/regs-ac97.h>
-> +#include <mach/dma.h>
-> +#include <plat/audio.h>
-> +
-> +#include "s3c-dma.h"
-> +#include "s3c-ac97.h"
-> +
-> +#define AC_CMD_ADDR(x) (x << 16)
-> +#define AC_CMD_DATA(x) (x & 0xffff)
-> +
-> +struct s3c_ac97_info {
-> + =C2=A0 =C2=A0 =C2=A0 unsigned =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 st=
-ate;
-> + =C2=A0 =C2=A0 =C2=A0 struct clk =C2=A0 =C2=A0 =C2=A0 =C2=A0 *ac97_c=
-lk;
-> + =C2=A0 =C2=A0 =C2=A0 void __iomem =C2=A0 =C2=A0 =C2=A0 *regs;
-> + =C2=A0 =C2=A0 =C2=A0 struct mutex =C2=A0 =C2=A0 =C2=A0 lock;
-> + =C2=A0 =C2=A0 =C2=A0 struct completion =C2=A0done;
-> +};
-> +static struct s3c_ac97_info s3c_ac97;
-> +
-> +static struct s3c2410_dma_client s3c_dma_client_out =3D {
-> + =C2=A0 =C2=A0 =C2=A0 .name =3D "AC97 PCMOut"
-> +};
-> +
-> +static struct s3c2410_dma_client s3c_dma_client_in =3D {
-> + =C2=A0 =C2=A0 =C2=A0 .name =3D "AC97 PCMIn"
-> +};
-> +
-> +static struct s3c2410_dma_client s3c_dma_client_micin =3D {
-> + =C2=A0 =C2=A0 =C2=A0 .name =3D "AC97 MicIn"
-> +};
-> +
-> +static struct s3c_dma_params s3c_ac97_pcm_out =3D {
-> + =C2=A0 =C2=A0 =C2=A0 .client =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D &s3c_d=
-ma_client_out,
-> + =C2=A0 =C2=A0 =C2=A0 .dma_size =C2=A0 =C2=A0 =C2=A0 =3D 4,
-> +};
-> +
-> +static struct s3c_dma_params s3c_ac97_pcm_in =3D {
-> + =C2=A0 =C2=A0 =C2=A0 .client =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D &s3c_d=
-ma_client_in,
-> + =C2=A0 =C2=A0 =C2=A0 .dma_size =C2=A0 =C2=A0 =C2=A0 =3D 4,
-> +};
-> +
-> +static struct s3c_dma_params s3c_ac97_mic_in =3D {
-> + =C2=A0 =C2=A0 =C2=A0 .client =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D &s3c_d=
-ma_client_micin,
-> + =C2=A0 =C2=A0 =C2=A0 .dma_size =C2=A0 =C2=A0 =C2=A0 =3D 4,
-> +};
-> +
-> +static void s3c_ac97_cold_reset(struct snd_ac97 *ac97)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 writel(S3C_AC97_GLBCTRL_COLDRESET,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 s3c_ac97.regs + S3C_AC97_GLBCTRL);
-> + =C2=A0 =C2=A0 =C2=A0 msleep(1);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 writel(0, s3c_ac97.regs + S3C_AC97_GLBCTRL);
-> + =C2=A0 =C2=A0 =C2=A0 msleep(1);
-> +}
-> +
-> +static void s3c_ac97_warm_reset(struct snd_ac97 *ac97)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 writel(S3C_AC97_GLBCTRL_WARMRESET, s3c_ac97.re=
-gs + S3C_AC97_GLBCTRL);
-> + =C2=A0 =C2=A0 =C2=A0 msleep(1);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 writel(0, s3c_ac97.regs + S3C_AC97_GLBCTRL);
-> + =C2=A0 =C2=A0 =C2=A0 msleep(1);
-> +}
-> +
-> +static void s3c_ac97_activate(struct snd_ac97 *ac97)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 u32 ac_glbctrl, stat;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 stat =3D readl(s3c_ac97.regs + S3C_AC97_GLBSTA=
-T) & 0x7;
-> + =C2=A0 =C2=A0 =C2=A0 switch (stat) {
-> + =C2=A0 =C2=A0 =C2=A0 case S3C_AC97_GLBSTAT_MAINSTATE_ACTIVE:
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return;
-> + =C2=A0 =C2=A0 =C2=A0 case S3C_AC97_GLBSTAT_MAINSTATE_READY:
-> + =C2=A0 =C2=A0 =C2=A0 case S3C_AC97_GLBSTAT_MAINSTATE_INIT:
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break;
-> + =C2=A0 =C2=A0 =C2=A0 default:
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 s3c_ac97_cold_rese=
-t(ac97);
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 s3c_ac97_warm_rese=
-t(ac97);
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 ac_glbctrl =3D readl(s3c_ac97.regs + S3C_AC97_=
-GLBCTRL);
-> + =C2=A0 =C2=A0 =C2=A0 ac_glbctrl =3D S3C_AC97_GLBCTRL_ACLINKON;
-> + =C2=A0 =C2=A0 =C2=A0 writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GL=
-BCTRL);
-> + =C2=A0 =C2=A0 =C2=A0 msleep(1);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 ac_glbctrl |=3D S3C_AC97_GLBCTRL_TRANSFERDATAE=
-NABLE;
-> + =C2=A0 =C2=A0 =C2=A0 writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GL=
-BCTRL);
-> + =C2=A0 =C2=A0 =C2=A0 msleep(1);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 ac_glbctrl =3D readl(s3c_ac97.regs + S3C_AC97_=
-GLBCTRL);
-> + =C2=A0 =C2=A0 =C2=A0 ac_glbctrl |=3D S3C_AC97_GLBCTRL_CODECREADYIE;
-> + =C2=A0 =C2=A0 =C2=A0 writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GL=
-BCTRL);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 INIT_COMPLETION(s3c_ac97.done);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 if (!wait_for_completion_timeout(&s3c_ac97.don=
-e, HZ))
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 printk(KERN_ERR "A=
-C97: Unable to activate!");
-> +}
-> +
-> +static unsigned short s3c_ac97_read(struct snd_ac97 *ac97,
-> + =C2=A0 =C2=A0 =C2=A0 unsigned short reg)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 u32 ac_glbctrl, ac_codec_cmd;
-> + =C2=A0 =C2=A0 =C2=A0 u32 stat, addr, data;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 mutex_lock(&s3c_ac97.lock);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 s3c_ac97_activate(ac97);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 ac_codec_cmd =3D readl(s3c_ac97.regs + S3C_AC9=
-7_CODEC_CMD);
-> + =C2=A0 =C2=A0 =C2=A0 ac_codec_cmd =3D S3C_AC97_CODEC_CMD_READ | AC_=
-CMD_ADDR(reg);
-> + =C2=A0 =C2=A0 =C2=A0 writel(ac_codec_cmd, s3c_ac97.regs + S3C_AC97_=
-CODEC_CMD);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 udelay(50);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 ac_glbctrl =3D readl(s3c_ac97.regs + S3C_AC97_=
-GLBCTRL);
-> + =C2=A0 =C2=A0 =C2=A0 ac_glbctrl |=3D S3C_AC97_GLBCTRL_CODECREADYIE;
-> + =C2=A0 =C2=A0 =C2=A0 writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GL=
-BCTRL);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 INIT_COMPLETION(s3c_ac97.done);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 if (!wait_for_completion_timeout(&s3c_ac97.don=
-e, HZ))
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 printk(KERN_ERR "A=
-C97: Unable to read!");
-> +
-> + =C2=A0 =C2=A0 =C2=A0 stat =3D readl(s3c_ac97.regs + S3C_AC97_STAT);
-> + =C2=A0 =C2=A0 =C2=A0 addr =3D (stat >> 16) & 0x7f;
-> + =C2=A0 =C2=A0 =C2=A0 data =3D (stat & 0xffff);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 if (addr !=3D reg)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 printk(KERN_ERR "s=
-3c-ac97: req addr =3D %02x,"
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 " rep addr =3D %02x\n", reg, addr);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 mutex_unlock(&s3c_ac97.lock);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 return (unsigned short)data;
-> +}
-> +
-> +static void s3c_ac97_write(struct snd_ac97 *ac97, unsigned short reg=
-,
-> + =C2=A0 =C2=A0 =C2=A0 unsigned short val)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 u32 ac_glbctrl, ac_codec_cmd;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 mutex_lock(&s3c_ac97.lock);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 s3c_ac97_activate(ac97);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 ac_codec_cmd =3D readl(s3c_ac97.regs + S3C_AC9=
-7_CODEC_CMD);
-> + =C2=A0 =C2=A0 =C2=A0 ac_codec_cmd =3D AC_CMD_ADDR(reg) | AC_CMD_DAT=
-A(val);
-> + =C2=A0 =C2=A0 =C2=A0 writel(ac_codec_cmd, s3c_ac97.regs + S3C_AC97_=
-CODEC_CMD);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 udelay(50);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 ac_glbctrl =3D readl(s3c_ac97.regs + S3C_AC97_=
-GLBCTRL);
-> + =C2=A0 =C2=A0 =C2=A0 ac_glbctrl |=3D S3C_AC97_GLBCTRL_CODECREADYIE;
-> + =C2=A0 =C2=A0 =C2=A0 writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GL=
-BCTRL);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 INIT_COMPLETION(s3c_ac97.done);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 if (!wait_for_completion_timeout(&s3c_ac97.don=
-e, HZ))
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 printk(KERN_ERR "A=
-C97: Unable to write!");
-> +
-> + =C2=A0 =C2=A0 =C2=A0 ac_codec_cmd =3D readl(s3c_ac97.regs + S3C_AC9=
-7_CODEC_CMD);
-> + =C2=A0 =C2=A0 =C2=A0 ac_codec_cmd |=3D S3C_AC97_CODEC_CMD_READ;
-> + =C2=A0 =C2=A0 =C2=A0 writel(ac_codec_cmd, s3c_ac97.regs + S3C_AC97_=
-CODEC_CMD);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 mutex_unlock(&s3c_ac97.lock);
-> +}
-> +
-> +static irqreturn_t s3c_ac97_irq(int irq, void *dev_id)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 u32 ac_glbctrl, ac_glbstat;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 ac_glbstat =3D readl(s3c_ac97.regs + S3C_AC97_=
-GLBSTAT);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 if (ac_glbstat & S3C_AC97_GLBSTAT_CODECREADY) =
-{
-> +
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ac_glbctrl =3D rea=
-dl(s3c_ac97.regs + S3C_AC97_GLBCTRL);
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ac_glbctrl &=3D ~S=
-3C_AC97_GLBCTRL_CODECREADYIE;
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 writel(ac_glbctrl,=
- s3c_ac97.regs + S3C_AC97_GLBCTRL);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ac_glbctrl =3D rea=
-dl(s3c_ac97.regs + S3C_AC97_GLBCTRL);
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ac_glbctrl |=3D (1=
-<<30); /* Clear interrupt */
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 writel(ac_glbctrl,=
- s3c_ac97.regs + S3C_AC97_GLBCTRL);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 complete(&s3c_ac97=
-=2Edone);
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 return IRQ_HANDLED;
-> +}
-> +
-> +struct snd_ac97_bus_ops soc_ac97_ops =3D {
-> + =C2=A0 =C2=A0 =C2=A0 .read =C2=A0 =C2=A0 =C2=A0 =3D s3c_ac97_read,
-> + =C2=A0 =C2=A0 =C2=A0 .write =C2=A0 =C2=A0 =C2=A0=3D s3c_ac97_write,
-> + =C2=A0 =C2=A0 =C2=A0 .warm_reset =3D s3c_ac97_warm_reset,
-> + =C2=A0 =C2=A0 =C2=A0 .reset =C2=A0 =C2=A0 =C2=A0=3D s3c_ac97_cold_r=
-eset,
-> +};
-> +EXPORT_SYMBOL_GPL(soc_ac97_ops);
-> +
-> +static int s3c_ac97_hw_params(struct snd_pcm_substream *substream,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct snd_pcm_hw_params *pa=
-rams,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct snd_soc_dai *dai)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 struct snd_soc_pcm_runtime *rtd =3D substream-=
->private_data;
-> + =C2=A0 =C2=A0 =C2=A0 struct snd_soc_dai *cpu_dai =3D rtd->dai->cpu_=
-dai;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 if (substream->stream =3D=3D SNDRV_PCM_STREAM_=
-PLAYBACK)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cpu_dai->dma_data =
-=3D &s3c_ac97_pcm_out;
-> + =C2=A0 =C2=A0 =C2=A0 else
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cpu_dai->dma_data =
-=3D &s3c_ac97_pcm_in;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 return 0;
-> +}
-> +
-> +static int s3c_ac97_trigger(struct snd_pcm_substream *substream, int=
- cmd,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct snd_soc_dai *dai)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 u32 ac_glbctrl;
-> + =C2=A0 =C2=A0 =C2=A0 struct snd_soc_pcm_runtime *rtd =3D substream-=
->private_data;
-> + =C2=A0 =C2=A0 =C2=A0 int channel =3D ((struct s3c_dma_params *)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rtd->dai->c=
-pu_dai->dma_data)->channel;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 ac_glbctrl =3D readl(s3c_ac97.regs + S3C_AC97_=
-GLBCTRL);
-> + =C2=A0 =C2=A0 =C2=A0 if (substream->stream =3D=3D SNDRV_PCM_STREAM_=
-CAPTURE)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ac_glbctrl &=3D ~S=
-3C_AC97_GLBCTRL_PCMINTM_MASK;
-> + =C2=A0 =C2=A0 =C2=A0 else
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ac_glbctrl &=3D ~S=
-3C_AC97_GLBCTRL_PCMOUTTM_MASK;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 switch (cmd) {
-> + =C2=A0 =C2=A0 =C2=A0 case SNDRV_PCM_TRIGGER_START:
-> + =C2=A0 =C2=A0 =C2=A0 case SNDRV_PCM_TRIGGER_RESUME:
-> + =C2=A0 =C2=A0 =C2=A0 case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (substream->str=
-eam =3D=3D SNDRV_PCM_STREAM_CAPTURE)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 ac_glbctrl |=3D S3C_AC97_GLBCTRL_PCMINTM_DMA;
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 else
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 ac_glbctrl |=3D S3C_AC97_GLBCTRL_PCMOUTTM_DMA;
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 case SNDRV_PCM_TRIGGER_STOP:
-> + =C2=A0 =C2=A0 =C2=A0 case SNDRV_PCM_TRIGGER_SUSPEND:
-> + =C2=A0 =C2=A0 =C2=A0 case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GL=
-BCTRL);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 s3c2410_dma_ctrl(channel, S3C2410_DMAOP_STARTE=
-D);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 return 0;
-> +}
-> +
-> +static int s3c_ac97_hw_mic_params(struct snd_pcm_substream *substrea=
-m,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct snd_pcm=
-_hw_params *params,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct snd_soc=
-_dai *dai)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 struct snd_soc_pcm_runtime *rtd =3D substream-=
->private_data;
-> + =C2=A0 =C2=A0 =C2=A0 struct snd_soc_dai *cpu_dai =3D rtd->dai->cpu_=
-dai;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 if (substream->stream =3D=3D SNDRV_PCM_STREAM_=
-PLAYBACK)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -ENODEV;
-> + =C2=A0 =C2=A0 =C2=A0 else
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cpu_dai->dma_data =
-=3D &s3c_ac97_mic_in;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 return 0;
-> +}
-> +
-> +static int s3c_ac97_mic_trigger(struct snd_pcm_substream *substream,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 int cmd, struct snd_s=
-oc_dai *dai)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 u32 ac_glbctrl;
-> + =C2=A0 =C2=A0 =C2=A0 struct snd_soc_pcm_runtime *rtd =3D substream-=
->private_data;
-> + =C2=A0 =C2=A0 =C2=A0 int channel =3D ((struct s3c_dma_params *)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rtd->dai->c=
-pu_dai->dma_data)->channel;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 ac_glbctrl =3D readl(s3c_ac97.regs + S3C_AC97_=
-GLBCTRL);
-> + =C2=A0 =C2=A0 =C2=A0 ac_glbctrl &=3D ~S3C_AC97_GLBCTRL_MICINTM_MASK=
-;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 switch (cmd) {
-> + =C2=A0 =C2=A0 =C2=A0 case SNDRV_PCM_TRIGGER_START:
-> + =C2=A0 =C2=A0 =C2=A0 case SNDRV_PCM_TRIGGER_RESUME:
-> + =C2=A0 =C2=A0 =C2=A0 case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ac_glbctrl |=3D S3=
-C_AC97_GLBCTRL_MICINTM_DMA;
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 case SNDRV_PCM_TRIGGER_STOP:
-> + =C2=A0 =C2=A0 =C2=A0 case SNDRV_PCM_TRIGGER_SUSPEND:
-> + =C2=A0 =C2=A0 =C2=A0 case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GL=
-BCTRL);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 s3c2410_dma_ctrl(channel, S3C2410_DMAOP_STARTE=
-D);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 return 0;
-> +}
-> +
-> +#define S3C_AC97_RATES (SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_11025 |=
-\
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 SNDRV_PCM_RATE_160=
-00 | SNDRV_PCM_RATE_22050 | \
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 SNDRV_PCM_RATE_320=
-00 | SNDRV_PCM_RATE_44100 | \
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 SNDRV_PCM_RATE_480=
-00)
-> +
-> +static struct snd_soc_dai_ops s3c_ac97_dai_ops =3D {
-> + =C2=A0 =C2=A0 =C2=A0 .hw_params =C2=A0 =C2=A0 =C2=A0=3D s3c_ac97_hw=
-_params,
-> + =C2=A0 =C2=A0 =C2=A0 .trigger =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s3c_ac=
-97_trigger,
-> +};
-> +
-> +static struct snd_soc_dai_ops s3c_ac97_mic_dai_ops =3D {
-> + =C2=A0 =C2=A0 =C2=A0 .hw_params =C2=A0 =C2=A0 =C2=A0=3D s3c_ac97_hw=
-_mic_params,
-> + =C2=A0 =C2=A0 =C2=A0 .trigger =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s3c_ac=
-97_mic_trigger,
-> +};
-> +
-> +struct snd_soc_dai s3c_ac97_dai[] =3D {
-> + =C2=A0 =C2=A0 =C2=A0 [S3C_AC97_DAI_PCM] =3D {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .name =3D "s3c-ac9=
-7",
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .id =3D S3C_AC97_D=
-AI_PCM,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .ac97_control =3D =
-1,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .playback =3D {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 .stream_name =3D "AC97 Playback",
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 .channels_min =3D 2,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 .channels_max =3D 2,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 .rates =3D S3C_AC97_RATES,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 .formats =3D SNDRV_PCM_FMTBIT_S16_LE,},
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .capture =3D {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 .stream_name =3D "AC97 Capture",
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 /* NOTE: If the codec ouputs just one slot,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0* it *seems* our AC97 controller reads the only
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0* valid slot(if either 3 or 4) for PCM-In.
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0* For such cases, we record Mono.
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0*/
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 .channels_min =3D 1,
-  I would like to remove this anomaly and set channels_min =3D 2
+Merge s3c2442.c and clock.c as the s3c242.c does not contain much and
+the clock parts are always built for s3c2442 anyway.
 
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 .channels_max =3D 2,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 .rates =3D S3C_AC97_RATES,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 .formats =3D SNDRV_PCM_FMTBIT_S16_LE,},
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .ops =3D &s3c_ac97=
-_dai_ops,
-> + =C2=A0 =C2=A0 =C2=A0 },
-> + =C2=A0 =C2=A0 =C2=A0 [S3C_AC97_DAI_MIC] =3D {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .name =3D "s3c-ac9=
-7-mic",
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .id =3D S3C_AC97_D=
-AI_MIC,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .ac97_control =3D =
-1,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .capture =3D {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 .stream_name =3D "AC97 Mic Capture",
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 .channels_min =3D 1,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 /* NOTE: If the codec(like WM9713) can't ouput just
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0* one slot, it *seems* our AC97 controller reads
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0* two slots(if one of them is Slot-6) for MIC also.
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0* For such cases, we record Stereo.
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0*/
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 .channels_max =3D 2,
-  I would like to remove this anomaly and set channels_max =3D 1
+Signed-off-by: Ben Dooks <ben-linux@fluff.org>
+---
+ arch/arm/mach-s3c2442/Makefile  |    1 -
+ arch/arm/mach-s3c2442/clock.c   |  153 ---------------------------------------
+ arch/arm/mach-s3c2442/s3c2442.c |  153 ++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 142 insertions(+), 165 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c2442/clock.c
 
- And remove the second DAI_LINK in machine driver.
-
-Please continue review and give me other feedback. Thanks.
-
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 .rates =3D S3C_AC97_RATES,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 .formats =3D SNDRV_PCM_FMTBIT_S16_LE,},
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .ops =3D &s3c_ac97=
-_mic_dai_ops,
-> + =C2=A0 =C2=A0 =C2=A0 },
-> +};
-> +EXPORT_SYMBOL_GPL(s3c_ac97_dai);
-> +
-> +static __devinit int s3c_ac97_probe(struct platform_device *pdev)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 struct resource *mem_res, *dmatx_res, *dmarx_r=
-es, *dmamic_res, *irq_res;
-> + =C2=A0 =C2=A0 =C2=A0 struct s3c_audio_pdata *ac97_pdata;
-> + =C2=A0 =C2=A0 =C2=A0 int ret;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 ac97_pdata =3D pdev->dev.platform_data;
-> + =C2=A0 =C2=A0 =C2=A0 if (!ac97_pdata || !ac97_pdata->cfg_gpio) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dev_err(&pdev->dev=
-, "cfg_gpio callback not provided!\n");
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -EINVAL;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 /* Check for availability of necessary resourc=
-e */
-> + =C2=A0 =C2=A0 =C2=A0 dmatx_res =3D platform_get_resource(pdev, IORE=
-SOURCE_DMA, 0);
-> + =C2=A0 =C2=A0 =C2=A0 if (!dmatx_res) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dev_err(&pdev->dev=
-, "Unable to get AC97-TX dma resource\n");
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -ENXIO;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 dmarx_res =3D platform_get_resource(pdev, IORE=
-SOURCE_DMA, 1);
-> + =C2=A0 =C2=A0 =C2=A0 if (!dmarx_res) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dev_err(&pdev->dev=
-, "Unable to get AC97-RX dma resource\n");
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -ENXIO;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 dmamic_res =3D platform_get_resource(pdev, IOR=
-ESOURCE_DMA, 2);
-> + =C2=A0 =C2=A0 =C2=A0 if (!dmamic_res) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dev_err(&pdev->dev=
-, "Unable to get AC97-MIC dma resource\n");
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -ENXIO;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 mem_res =3D platform_get_resource(pdev, IORESO=
-URCE_MEM, 0);
-> + =C2=A0 =C2=A0 =C2=A0 if (!mem_res) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dev_err(&pdev->dev=
-, "Unable to get register resource\n");
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -ENXIO;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 irq_res =3D platform_get_resource(pdev, IORESO=
-URCE_IRQ, 0);
-> + =C2=A0 =C2=A0 =C2=A0 if (!irq_res) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dev_err(&pdev->dev=
-, "AC97 IRQ not provided!\n");
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -ENXIO;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 if (!request_mem_region(mem_res->start,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 resource_size(mem_res), "s3c-ac97")=
-) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dev_err(&pdev->dev=
-, "Unable to request register region\n");
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -EBUSY;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 s3c_ac97_pcm_out.channel =3D dmatx_res->start;
-> + =C2=A0 =C2=A0 =C2=A0 s3c_ac97_pcm_out.dma_addr =3D mem_res->start +=
- S3C_AC97_PCM_DATA;
-> + =C2=A0 =C2=A0 =C2=A0 s3c_ac97_pcm_in.channel =3D dmarx_res->start;
-> + =C2=A0 =C2=A0 =C2=A0 s3c_ac97_pcm_in.dma_addr =3D mem_res->start + =
-S3C_AC97_PCM_DATA;
-> + =C2=A0 =C2=A0 =C2=A0 s3c_ac97_mic_in.channel =3D dmamic_res->start;
-> + =C2=A0 =C2=A0 =C2=A0 s3c_ac97_mic_in.dma_addr =3D mem_res->start + =
-S3C_AC97_MIC_DATA;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 init_completion(&s3c_ac97.done);
-> + =C2=A0 =C2=A0 =C2=A0 mutex_init(&s3c_ac97.lock);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 s3c_ac97.regs =3D ioremap(mem_res->start, reso=
-urce_size(mem_res));
-> + =C2=A0 =C2=A0 =C2=A0 if (s3c_ac97.regs =3D=3D NULL) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dev_err(&pdev->dev=
-, "Unable to ioremap register region\n");
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ret =3D -ENXIO;
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 goto lb1;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 s3c_ac97.ac97_clk =3D clk_get(&pdev->dev, "ac9=
-7");
-> + =C2=A0 =C2=A0 =C2=A0 if (IS_ERR(s3c_ac97.ac97_clk)) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dev_err(&pdev->dev=
-, "s3c-ac97 failed to get ac97_clock\n");
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ret =3D -ENODEV;
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 goto lb2;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> + =C2=A0 =C2=A0 =C2=A0 clk_enable(s3c_ac97.ac97_clk);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 if (ac97_pdata->cfg_gpio(pdev)) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dev_err(&pdev->dev=
-, "Unable to configure gpio\n");
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ret =3D -EINVAL;
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 goto lb3;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 ret =3D request_irq(irq_res->start, s3c_ac97_i=
-rq,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 IRQF_DI=
-SABLED, "AC97", NULL);
-> + =C2=A0 =C2=A0 =C2=A0 if (ret < 0) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 printk(KERN_ERR "s=
-3c-ac97: interrupt request failed.\n");
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 goto lb4;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 s3c_ac97_dai[S3C_AC97_DAI_PCM].dev =3D &pdev->=
-dev;
-> + =C2=A0 =C2=A0 =C2=A0 s3c_ac97_dai[S3C_AC97_DAI_MIC].dev =3D &pdev->=
-dev;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 ret =3D snd_soc_register_dais(s3c_ac97_dai, AR=
-RAY_SIZE(s3c_ac97_dai));
-> + =C2=A0 =C2=A0 =C2=A0 if (ret)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 goto lb5;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 return 0;
-> +
-> +lb5:
-> + =C2=A0 =C2=A0 =C2=A0 free_irq(irq_res->start, NULL);
-> +lb4:
-> +lb3:
-> + =C2=A0 =C2=A0 =C2=A0 clk_disable(s3c_ac97.ac97_clk);
-> + =C2=A0 =C2=A0 =C2=A0 clk_put(s3c_ac97.ac97_clk);
-> +lb2:
-> + =C2=A0 =C2=A0 =C2=A0 iounmap(s3c_ac97.regs);
-> +lb1:
-> + =C2=A0 =C2=A0 =C2=A0 release_mem_region(mem_res->start, resource_si=
-ze(mem_res));
-> +
-> + =C2=A0 =C2=A0 =C2=A0 return ret;
-> +}
-> +
-> +static __devexit int s3c_ac97_remove(struct platform_device *pdev)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 struct resource *mem_res, *irq_res;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 snd_soc_unregister_dais(s3c_ac97_dai, ARRAY_SI=
-ZE(s3c_ac97_dai));
-> +
-> + =C2=A0 =C2=A0 =C2=A0 irq_res =3D platform_get_resource(pdev, IORESO=
-URCE_IRQ, 0);
-> + =C2=A0 =C2=A0 =C2=A0 if (irq_res)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 free_irq(irq_res->=
-start, NULL);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 clk_disable(s3c_ac97.ac97_clk);
-> + =C2=A0 =C2=A0 =C2=A0 clk_put(s3c_ac97.ac97_clk);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 iounmap(s3c_ac97.regs);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 mem_res =3D platform_get_resource(pdev, IORESO=
-URCE_MEM, 0);
-> + =C2=A0 =C2=A0 =C2=A0 if (mem_res)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 release_mem_region=
-(mem_res->start, resource_size(mem_res));
-> +
-> + =C2=A0 =C2=A0 =C2=A0 return 0;
-> +}
-> +
-> +static struct platform_driver s3c_ac97_driver =3D {
-> + =C2=A0 =C2=A0 =C2=A0 .probe =C2=A0=3D s3c_ac97_probe,
-> + =C2=A0 =C2=A0 =C2=A0 .remove =3D s3c_ac97_remove,
-> + =C2=A0 =C2=A0 =C2=A0 .driver =3D {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .name =3D "s3c-ac9=
-7",
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .owner =3D THIS_MO=
-DULE,
-> + =C2=A0 =C2=A0 =C2=A0 },
-> +};
-> +
-> +static int __init s3c_ac97_init(void)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 return platform_driver_register(&s3c_ac97_driv=
-er);
-> +}
-> +module_init(s3c_ac97_init);
-> +
-> +static void __exit s3c_ac97_exit(void)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 platform_driver_unregister(&s3c_ac97_driver);
-> +}
-> +module_exit(s3c_ac97_exit);
-> +
-> +MODULE_AUTHOR("Jaswinder Singh, <jassi.brar@samsung.com>");
-> +MODULE_DESCRIPTION("AC97 driver for the Samsung SoC");
-> +MODULE_LICENSE("GPL");
-> diff --git a/sound/soc/s3c24xx/s3c-ac97.h b/sound/soc/s3c24xx/s3c-ac9=
-7.h
-> new file mode 100644
-> index 0000000..2781983
-> --- /dev/null
-> +++ b/sound/soc/s3c24xx/s3c-ac97.h
-> @@ -0,0 +1,23 @@
-> +/* sound/soc/s3c24xx/s3c-ac97.h
-> + *
-> + * ALSA SoC Audio Layer - S3C AC97 Controller driver
-> + * =C2=A0 =C2=A0 Evolved from s3c2443-ac97.h
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co. Ltd
-> + * =C2=A0 =C2=A0 Author: Jaswinder Singh <jassi.brar@samsung.com>
-> + * =C2=A0 =C2=A0 Credits: Graeme Gregory, Sean Choi
-> + *
-> + * This program is free software; you can redistribute it and/or mod=
-ify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#ifndef __S3C_AC97_H_
-> +#define __S3C_AC97_H_
-> +
-> +#define S3C_AC97_DAI_PCM 0
-> +#define S3C_AC97_DAI_MIC 1
-> +
-> +extern struct snd_soc_dai s3c_ac97_dai[];
-> +
-> +#endif /* __S3C_AC97_H_ */
-> --
-> 1.6.2.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.ht=
-ml
->
+diff --git a/arch/arm/mach-s3c2442/Makefile b/arch/arm/mach-s3c2442/Makefile
+index 2a909c6..7e31ccd 100644
+--- a/arch/arm/mach-s3c2442/Makefile
++++ b/arch/arm/mach-s3c2442/Makefile
+@@ -10,7 +10,6 @@ obj-n				:=
+ obj-				:=
+ 
+ obj-$(CONFIG_CPU_S3C2442)	+= s3c2442.o
+-obj-$(CONFIG_CPU_S3C2442)	+= clock.o
+ 
+ # Machine support
+ 
+diff --git a/arch/arm/mach-s3c2442/clock.c b/arch/arm/mach-s3c2442/clock.c
+deleted file mode 100644
+index d9b692a..0000000
+--- a/arch/arm/mach-s3c2442/clock.c
++++ /dev/null
+@@ -1,153 +0,0 @@
+-/* linux/arch/arm/mach-s3c2442/clock.c
+- *
+- * Copyright (c) 2004-2005 Simtec Electronics
+- *	http://armlinux.simtec.co.uk/
+- *	Ben Dooks <ben@simtec.co.uk>
+- *
+- * S3C2442 Clock support
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+-*/
+-
+-#include <linux/init.h>
+-#include <linux/module.h>
+-#include <linux/kernel.h>
+-#include <linux/list.h>
+-#include <linux/errno.h>
+-#include <linux/err.h>
+-#include <linux/device.h>
+-#include <linux/sysdev.h>
+-#include <linux/interrupt.h>
+-#include <linux/ioport.h>
+-#include <linux/mutex.h>
+-#include <linux/clk.h>
+-#include <linux/io.h>
+-
+-#include <mach/hardware.h>
+-#include <asm/atomic.h>
+-#include <asm/irq.h>
+-
+-#include <mach/regs-clock.h>
+-
+-#include <plat/clock.h>
+-#include <plat/cpu.h>
+-
+-/* S3C2442 extended clock support */
+-
+-static unsigned long s3c2442_camif_upll_round(struct clk *clk,
+-					      unsigned long rate)
+-{
+-	unsigned long parent_rate = clk_get_rate(clk->parent);
+-	int div;
+-
+-	if (rate > parent_rate)
+-		return parent_rate;
+-
+-	div = parent_rate / rate;
+-
+-	if (div == 3)
+-		return parent_rate / 3;
+-
+-	/* note, we remove the +/- 1 calculations for the divisor */
+-
+-	div /= 2;
+-
+-	if (div < 1)
+-		div = 1;
+-	else if (div > 16)
+-		div = 16;
+-
+-	return parent_rate / (div * 2);
+-}
+-
+-static int s3c2442_camif_upll_setrate(struct clk *clk, unsigned long rate)
+-{
+-	unsigned long parent_rate = clk_get_rate(clk->parent);
+-	unsigned long camdivn =  __raw_readl(S3C2440_CAMDIVN);
+-
+-	rate = s3c2442_camif_upll_round(clk, rate);
+-
+-	camdivn &= ~S3C2442_CAMDIVN_CAMCLK_DIV3;
+-
+-	if (rate == parent_rate) {
+-		camdivn &= ~S3C2440_CAMDIVN_CAMCLK_SEL;
+-	} else if ((parent_rate / rate) == 3) {
+-		camdivn |= S3C2440_CAMDIVN_CAMCLK_SEL;
+-		camdivn |= S3C2442_CAMDIVN_CAMCLK_DIV3;
+-	} else {
+-		camdivn &= ~S3C2440_CAMDIVN_CAMCLK_MASK;
+-		camdivn |= S3C2440_CAMDIVN_CAMCLK_SEL;
+-		camdivn |= (((parent_rate / rate) / 2) - 1);
+-	}
+-
+-	__raw_writel(camdivn, S3C2440_CAMDIVN);
+-
+-	return 0;
+-}
+-
+-/* Extra S3C2442 clocks */
+-
+-static struct clk s3c2442_clk_cam = {
+-	.name		= "camif",
+-	.id		= -1,
+-	.enable		= s3c2410_clkcon_enable,
+-	.ctrlbit	= S3C2440_CLKCON_CAMERA,
+-};
+-
+-static struct clk s3c2442_clk_cam_upll = {
+-	.name		= "camif-upll",
+-	.id		= -1,
+-	.ops		= &(struct clk_ops) {
+-		.set_rate	= s3c2442_camif_upll_setrate,
+-		.round_rate	= s3c2442_camif_upll_round,
+-	},
+-};
+-
+-static int s3c2442_clk_add(struct sys_device *sysdev)
+-{
+-	struct clk *clock_upll;
+-	struct clk *clock_h;
+-	struct clk *clock_p;
+-
+-	clock_p = clk_get(NULL, "pclk");
+-	clock_h = clk_get(NULL, "hclk");
+-	clock_upll = clk_get(NULL, "upll");
+-
+-	if (IS_ERR(clock_p) || IS_ERR(clock_h) || IS_ERR(clock_upll)) {
+-		printk(KERN_ERR "S3C2442: Failed to get parent clocks\n");
+-		return -EINVAL;
+-	}
+-
+-	s3c2442_clk_cam.parent = clock_h;
+-	s3c2442_clk_cam_upll.parent = clock_upll;
+-
+-	s3c24xx_register_clock(&s3c2442_clk_cam);
+-	s3c24xx_register_clock(&s3c2442_clk_cam_upll);
+-
+-	clk_disable(&s3c2442_clk_cam);
+-
+-	return 0;
+-}
+-
+-static struct sysdev_driver s3c2442_clk_driver = {
+-	.add	= s3c2442_clk_add,
+-};
+-
+-static __init int s3c2442_clk_init(void)
+-{
+-	return sysdev_driver_register(&s3c2442_sysclass, &s3c2442_clk_driver);
+-}
+-
+-arch_initcall(s3c2442_clk_init);
+diff --git a/arch/arm/mach-s3c2442/s3c2442.c b/arch/arm/mach-s3c2442/s3c2442.c
+index 4663bdc..188ad1e 100644
+--- a/arch/arm/mach-s3c2442/s3c2442.c
++++ b/arch/arm/mach-s3c2442/s3c2442.c
+@@ -1,27 +1,158 @@
+ /* linux/arch/arm/mach-s3c2442/s3c2442.c
+  *
+- * Copyright (c) 2006 Simtec Electronics
+- *   Ben Dooks <ben@simtec.co.uk>
++ * Copyright (c) 2004-2005 Simtec Electronics
++ *	http://armlinux.simtec.co.uk/
++ *	Ben Dooks <ben@simtec.co.uk>
+  *
+- * Samsung S3C2442 Mobile CPU support
++ * S3C2442 core and lock support
+  *
+  * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+ 
++#include <linux/init.h>
++#include <linux/module.h>
+ #include <linux/kernel.h>
+-#include <linux/types.h>
+-#include <linux/interrupt.h>
+ #include <linux/list.h>
+-#include <linux/timer.h>
+-#include <linux/init.h>
+-#include <linux/serial_core.h>
++#include <linux/errno.h>
++#include <linux/err.h>
++#include <linux/device.h>
+ #include <linux/sysdev.h>
++#include <linux/interrupt.h>
++#include <linux/ioport.h>
++#include <linux/mutex.h>
++#include <linux/clk.h>
++#include <linux/io.h>
+ 
+-#include <plat/s3c2442.h>
++#include <mach/hardware.h>
++#include <asm/atomic.h>
++#include <asm/irq.h>
++
++#include <mach/regs-clock.h>
++
++#include <plat/clock.h>
+ #include <plat/cpu.h>
+ 
++/* S3C2442 extended clock support */
++
++static unsigned long s3c2442_camif_upll_round(struct clk *clk,
++					      unsigned long rate)
++{
++	unsigned long parent_rate = clk_get_rate(clk->parent);
++	int div;
++
++	if (rate > parent_rate)
++		return parent_rate;
++
++	div = parent_rate / rate;
++
++	if (div == 3)
++		return parent_rate / 3;
++
++	/* note, we remove the +/- 1 calculations for the divisor */
++
++	div /= 2;
++
++	if (div < 1)
++		div = 1;
++	else if (div > 16)
++		div = 16;
++
++	return parent_rate / (div * 2);
++}
++
++static int s3c2442_camif_upll_setrate(struct clk *clk, unsigned long rate)
++{
++	unsigned long parent_rate = clk_get_rate(clk->parent);
++	unsigned long camdivn =  __raw_readl(S3C2440_CAMDIVN);
++
++	rate = s3c2442_camif_upll_round(clk, rate);
++
++	camdivn &= ~S3C2442_CAMDIVN_CAMCLK_DIV3;
++
++	if (rate == parent_rate) {
++		camdivn &= ~S3C2440_CAMDIVN_CAMCLK_SEL;
++	} else if ((parent_rate / rate) == 3) {
++		camdivn |= S3C2440_CAMDIVN_CAMCLK_SEL;
++		camdivn |= S3C2442_CAMDIVN_CAMCLK_DIV3;
++	} else {
++		camdivn &= ~S3C2440_CAMDIVN_CAMCLK_MASK;
++		camdivn |= S3C2440_CAMDIVN_CAMCLK_SEL;
++		camdivn |= (((parent_rate / rate) / 2) - 1);
++	}
++
++	__raw_writel(camdivn, S3C2440_CAMDIVN);
++
++	return 0;
++}
++
++/* Extra S3C2442 clocks */
++
++static struct clk s3c2442_clk_cam = {
++	.name		= "camif",
++	.id		= -1,
++	.enable		= s3c2410_clkcon_enable,
++	.ctrlbit	= S3C2440_CLKCON_CAMERA,
++};
++
++static struct clk s3c2442_clk_cam_upll = {
++	.name		= "camif-upll",
++	.id		= -1,
++	.ops		= &(struct clk_ops) {
++		.set_rate	= s3c2442_camif_upll_setrate,
++		.round_rate	= s3c2442_camif_upll_round,
++	},
++};
++
++static int s3c2442_clk_add(struct sys_device *sysdev)
++{
++	struct clk *clock_upll;
++	struct clk *clock_h;
++	struct clk *clock_p;
++
++	clock_p = clk_get(NULL, "pclk");
++	clock_h = clk_get(NULL, "hclk");
++	clock_upll = clk_get(NULL, "upll");
++
++	if (IS_ERR(clock_p) || IS_ERR(clock_h) || IS_ERR(clock_upll)) {
++		printk(KERN_ERR "S3C2442: Failed to get parent clocks\n");
++		return -EINVAL;
++	}
++
++	s3c2442_clk_cam.parent = clock_h;
++	s3c2442_clk_cam_upll.parent = clock_upll;
++
++	s3c24xx_register_clock(&s3c2442_clk_cam);
++	s3c24xx_register_clock(&s3c2442_clk_cam_upll);
++
++	clk_disable(&s3c2442_clk_cam);
++
++	return 0;
++}
++
++static struct sysdev_driver s3c2442_clk_driver = {
++	.add	= s3c2442_clk_add,
++};
++
++static __init int s3c2442_clk_init(void)
++{
++	return sysdev_driver_register(&s3c2442_sysclass, &s3c2442_clk_driver);
++}
++
++arch_initcall(s3c2442_clk_init);
++
++
+ static struct sys_device s3c2442_sysdev = {
+ 	.cls		= &s3c2442_sysclass,
+ };
+-- 
+1.6.0.4
