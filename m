@@ -1,28 +1,42 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Limited avaialability starting Friday
-Date: Tue, 26 Jan 2010 15:13:22 +0000
-Message-ID: <20100126151322.GA8652@trinity.fluff.org>
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Subject: Re: [PATCH 2/4] ARM: SAMSUNG: Rename s3c24xx touchscreen interface
+ to s3c
+Date: Tue, 26 Jan 2010 17:02:49 +0100
+Message-ID: <4B5F1229.9030304@gmail.com>
+References: <b2e8f9f71001221447k897b5cfs213447084543ee55@mail.gmail.com> <20100126145558.GE9153@trinity.fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:35729 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754373Ab0AZPNW (ORCPT
+Received: from mail-ew0-f219.google.com ([209.85.219.219]:60512 "EHLO
+	mail-ew0-f219.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752477Ab0AZQCx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jan 2010 10:13:22 -0500
-Content-Disposition: inline
+	Tue, 26 Jan 2010 11:02:53 -0500
+Received: by ewy19 with SMTP id 19so1148095ewy.21
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Jan 2010 08:02:51 -0800 (PST)
+In-Reply-To: <20100126145558.GE9153@trinity.fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-I will be travelling and attending FOSDEM (and other things) from Friday.
-and therefore will have limited availability from 2010-01-29 for about 10
-or 11 days.
+Op 26-01-10 15:55, Ben Dooks schreef:
+> On Fri, Jan 22, 2010 at 11:47:11PM +0100, Maurus Cuelenaere wrote:
+>    
+>> ARM: SAMSUNG: Rename s3c24xx touchscreen interface to s3c
+>>
+>> Signed-off-by: Maurus Cuelenaere<mcuelenaere@gmail.com>
+>>      
+> Renaming for naming sake is in my view just a waste of diff, unless
+> anyone disagrees here.
+>    
 
-I'll still be in contact but will not have access to test machines, etc.
+Well I don't think it's pointless, having s3c24xx_ts_set_platdata() and 
+s3c2410_ts_mach_info instead of their s3c_ equivalents make it look like 
+the API only handles s3c24xx platforms, which isn't true (anymore).
+
+But I can remove this commit, if you want to.
 
 -- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+Maurus Cuelenaere
