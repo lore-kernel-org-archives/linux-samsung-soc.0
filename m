@@ -1,131 +1,66 @@
 From: jassi brar <jassisinghbrar@gmail.com>
 Subject: Re: [PATCH 2/3] ASoC: AC97: S3C: Add controller driver
-Date: Tue, 26 Jan 2010 20:17:25 +0900
-Message-ID: <1b68c6791001260317k44893521vc0310ea35bac8ee1@mail.gmail.com>
+Date: Tue, 26 Jan 2010 20:49:26 +0900
+Message-ID: <1b68c6791001260349s7eed010br51c7c033271bc4d0@mail.gmail.com>
 References: <1264485101-13782-1-git-send-email-jassisinghbrar@gmail.com>
-	<1264485101-13782-2-git-send-email-jassisinghbrar@gmail.com>
-	<20100126104723.GF15759@rakim.wolfsonmicro.main>
+	 <1264485101-13782-2-git-send-email-jassisinghbrar@gmail.com>
+	 <1b68c6791001252332l5ee275c9we39c98691ad7692c@mail.gmail.com>
+	 <20100126105322.GG15759@rakim.wolfsonmicro.main>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20100126104723.GF15759@rakim.wolfsonmicro.main>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, lrg@slimlogic.co.uk
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:54658 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751913Ab0AZLt1 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 26 Jan 2010 06:49:27 -0500
+Received: by vws12 with SMTP id 12so25461vws.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Jan 2010 03:49:26 -0800 (PST)
+In-Reply-To: <20100126105322.GG15759@rakim.wolfsonmicro.main>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org, lrg@slimlogic.co.uk, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>
 
-T24gVHVlLCBKYW4gMjYsIDIwMTAgYXQgNzo0NyBQTSwgTWFyayBCcm93bgo8YnJvb25pZUBvcGVu
-c291cmNlLndvbGZzb25taWNyby5jb20+IHdyb3RlOgo+IE9uIFR1ZSwgSmFuIDI2LCAyMDEwIGF0
-IDAyOjUxOjQwUE0gKzA5MDAsIGphc3Npc2luZ2hicmFyQGdtYWlsLmNvbSB3cm90ZToKPgo+IFRo
-aXMgbG9va3MgZ29vZCBvdmVyYWxsLCBqdXN0IGEgZmV3IHNtYWxsaXNoIGlzc3VlczoKPgo+PiAr
-c3RhdGljIHZvaWQgczNjX2FjOTdfYWN0aXZhdGUoc3RydWN0IHNuZF9hYzk3ICphYzk3KQo+PiAr
-ewo+PiArIMKgIMKgIHUzMiBhY19nbGJjdHJsLCBzdGF0Owo+PiArCj4+ICsgwqAgwqAgc3RhdCA9
-IHJlYWRsKHMzY19hYzk3LnJlZ3MgKyBTM0NfQUM5N19HTEJTVEFUKSAmIDB4NzsKPj4gKyDCoCDC
-oCBzd2l0Y2ggKHN0YXQpIHsKPj4gKyDCoCDCoCBjYXNlIFMzQ19BQzk3X0dMQlNUQVRfTUFJTlNU
-QVRFX0FDVElWRToKPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCByZXR1cm47Cj4+ICsgwqAgwqAgY2Fz
-ZSBTM0NfQUM5N19HTEJTVEFUX01BSU5TVEFURV9SRUFEWToKPj4gKyDCoCDCoCBjYXNlIFMzQ19B
-Qzk3X0dMQlNUQVRfTUFJTlNUQVRFX0lOSVQ6Cj4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgYnJlYWs7
-Cj4+ICsgwqAgwqAgZGVmYXVsdDoKPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCBzM2NfYWM5N19jb2xk
-X3Jlc2V0KGFjOTcpOwo+PiArIMKgIMKgIMKgIMKgIMKgIMKgIHMzY19hYzk3X3dhcm1fcmVzZXQo
-YWM5Nyk7Cj4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgYnJlYWs7Cj4+ICsgwqAgwqAgfQo+Cj4gVGhp
-cyBhdXRvbWF0aWMgY29sZCBhbmQgd2FybSByZXNldCBsb29rcyBhIGJpdCBmaXNoeSAtIG9idmlv
-dXNseSBpZiB0aGlzCj4gY29kZSBwYXRoIGV2ZXIgZ2V0cyBoaXQgaW4gbm9ybWFsIG9wZXJhdGlv
-biB0aGVuIGl0J3MgZ29pbmcgdG8gc2VyaW91c2x5Cj4gZGlzcnVwdCB0aGluZ3Mgc2luY2UgaXQn
-bGwgcmVzZXQgdGhlIENPREVDIHJlZ2lzdGVycy4gwqBBIHdhcm0gcmVzZXQgYnkKPiBpdHNlbGYg
-d291bGRuJ3QgYmUgYSBwcm9ibGVtIGJ1dCBJJ2QgcmF0aGVyIHNlZSBleHBsaWNpdCBjb2xkIHJl
-c2V0cyBpbgo+IHRoZSBjYWxsZXJzIHdoZXJlIHRoYXQncyByZXF1aXJlZC4KQmVmb3JlIHJlYWQv
-d3JpdGUgd2UgbmVlZCB0byBlbnN1cmUgdGhlIGxpbmsgaXMgYWN0aXZlLiBBbmQgdG8gcmVhY2gg
-dGhlCmFjdGl2ZSBzdGF0ZSB3ZSBoYXZlIHRvIGRvIHRoYXQgYXMgc3VnZ2VzdGVkIGJ5IHRoZSBG
-U00gc2hvd24gaW4gU29DcycgTWFudWFsLgpBbHNvLCB0aGlzIGhlbHBzIG5vdCByZWx5aW5nIG9u
-IGNvZGVjL2NvcmUgdG8gcGVyZm9ybSBwYXJ0aWN1bGFyIHN0ZXBzCm9mIGluaXRpYWxpemF0aW9u
-cy4KCj4+ICsgwqAgwqAgYWNfZ2xiY3RybCA9IHJlYWRsKHMzY19hYzk3LnJlZ3MgKyBTM0NfQUM5
-N19HTEJDVFJMKTsKPj4gKyDCoCDCoCBhY19nbGJjdHJsID0gUzNDX0FDOTdfR0xCQ1RSTF9BQ0xJ
-TktPTjsKPj4gKyDCoCDCoCB3cml0ZWwoYWNfZ2xiY3RybCwgczNjX2FjOTcucmVncyArIFMzQ19B
-Qzk3X0dMQkNUUkwpOwo+PiArIMKgIMKgIG1zbGVlcCgxKTsKPgo+IFRoaXMgYWxzbyBsb29rcyBh
-IGJpdCBvZGQsIEFDTElOS09OIHNvdW5kcyBsaWtlIGJyaW5naW5nIHVwIHRoZSBsaW5rCj4gd2hp
-Y2ggaXMgd2hhdCBhIHdhcm0gcmVzZXQgZG9lcy4KQXMgc2hvd24gaW4gRlNNIG9mIFNvQ3MgbWFu
-dWFsLCB0aGlzIHNldHMgdGhlIGNvbnRyb2xsZXIgc3RhdGUgdG8gUkVBRFkuClBsZWFzZSBoYXZl
-IGEgbG9vayBhdCBhbnkgbWFudWFsJ3MgQUM5NyBjaGFwdGVyLgoKPj4gKyDCoCDCoCBJTklUX0NP
-TVBMRVRJT04oczNjX2FjOTcuZG9uZSk7Cj4+ICsKPj4gKyDCoCDCoCBpZiAoIXdhaXRfZm9yX2Nv
-bXBsZXRpb25fdGltZW91dCgmczNjX2FjOTcuZG9uZSwgSFopKQo+PiArIMKgIMKgIMKgIMKgIMKg
-IMKgIHByaW50ayhLRVJOX0VSUiAiQUM5NzogVW5hYmxlIHRvIGFjdGl2YXRlISIpOwo+Cj4gVGhp
-cyBsb29rcyByYWN5IC0gdGhlIElOSVRfQ09NUExFVElPTigpIGhhcHBlbnMgYWZ0ZXIgYWxsIHRo
-ZSBoYXJkd2FyZQo+IGNvbmZpZ3VyYXRpb24gd2hpY2ggc3VnZ2VzdHMgdGhhdCBpZiB5b3UncmUg
-dW5sdWNreSB0aGUgZXZlbnQgd2hpY2gKPiBzaG91bGQgdHJpZ2dlciB0aGUgY29tcGxldGlvbiB3
-aWxsIGhhdmUgaGFwcGVuZWQgYmVmb3JlIHRoZSBpbml0LiDCoEEKPiBidW5jaCBvZiBpbnRlcnJ1
-cHRzIGFycml2aW5nIGF0IGFuIGluY29udmVuaWVudCB0aW1lIGNvdWxkIHRyaWdnZXIgdGhpcywK
-PiBmb3IgZXhhbXBsZS4KWWVzLCBpbml0IG5lZWRzIHRvIGJlIG1vdmVkIGVhcmx5LgoKPiBUaGUg
-c2FtZSBpZGlvbSBhcHBlYXJzIGluIHRoZSByZWdpc3RlciByZWFkcyBhbmQgd3JpdGVzLgo+Cj4+
-ICsgwqAgwqAgaWYgKGFkZHIgIT0gcmVnKQo+PiArIMKgIMKgIMKgIMKgIMKgIMKgIHByaW50ayhL
-RVJOX0VSUiAiczNjLWFjOTc6IHJlcSBhZGRyID0gJTAyeCwiCj4+ICsgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgIiByZXAgYWRkciA9ICUwMnhcbiIsIHJlZywgYWRk
-cik7Cj4KPiBQbGVhc2UgZG9uJ3Qgc3BsaXQgZXJyb3IgbWVzc2FnZXMgb3ZlciBtdWx0aXBsZSBs
-aW5lcywgaXQgbWFrZXMgZ3JlcHBpbmcKPiBmb3IgdGhlbSBoYXJkZXIuCm9rLgoKPj4gK3N0YXRp
-YyBpcnFyZXR1cm5fdCBzM2NfYWM5N19pcnEoaW50IGlycSwgdm9pZCAqZGV2X2lkKQo+PiArewo+
-PiArIMKgIMKgIHUzMiBhY19nbGJjdHJsLCBhY19nbGJzdGF0Owo+PiArCj4+ICsgwqAgwqAgYWNf
-Z2xic3RhdCA9IHJlYWRsKHMzY19hYzk3LnJlZ3MgKyBTM0NfQUM5N19HTEJTVEFUKTsKPj4gKwo+
-PiArIMKgIMKgIGlmIChhY19nbGJzdGF0ICYgUzNDX0FDOTdfR0xCU1RBVF9DT0RFQ1JFQURZKSB7
-Cj4+ICsKPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCBhY19nbGJjdHJsID0gcmVhZGwoczNjX2FjOTcu
-cmVncyArIFMzQ19BQzk3X0dMQkNUUkwpOwo+PiArIMKgIMKgIMKgIMKgIMKgIMKgIGFjX2dsYmN0
-cmwgJj0gflMzQ19BQzk3X0dMQkNUUkxfQ09ERUNSRUFEWUlFOwo+PiArIMKgIMKgIMKgIMKgIMKg
-IMKgIHdyaXRlbChhY19nbGJjdHJsLCBzM2NfYWM5Ny5yZWdzICsgUzNDX0FDOTdfR0xCQ1RSTCk7
-Cj4+ICsKPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCBhY19nbGJjdHJsID0gcmVhZGwoczNjX2FjOTcu
-cmVncyArIFMzQ19BQzk3X0dMQkNUUkwpOwo+PiArIMKgIMKgIMKgIMKgIMKgIMKgIGFjX2dsYmN0
-cmwgfD0gKDE8PDMwKTsgLyogQ2xlYXIgaW50ZXJydXB0ICovCj4+ICsgwqAgwqAgwqAgwqAgwqAg
-wqAgd3JpdGVsKGFjX2dsYmN0cmwsIHMzY19hYzk3LnJlZ3MgKyBTM0NfQUM5N19HTEJDVFJMKTsK
-Pj4gKwo+PiArIMKgIMKgIMKgIMKgIMKgIMKgIGNvbXBsZXRlKCZzM2NfYWM5Ny5kb25lKTsKPj4g
-KyDCoCDCoCB9Cj4+ICsKPj4gKyDCoCDCoCByZXR1cm4gSVJRX0hBTkRMRUQ7Cj4+ICt9Cj4KPiBZ
-b3Ugc2hvdWxkIG9ubHkgYmUgcmV0dXJuaW5nIElSUV9IQU5ETEVEIGlmIHlvdSBhY3R1YWxseSBo
-YW5kbGVkIGFuCj4gaW50ZXJydXB0IGhlcmUuCkknZCByYXRoZXIgbW92ZSB0aGUgaW50ci1jbGVh
-cmluZyBvdXQgb2YgdGhlIGJsb2NrLgoKPj4gKyNkZWZpbmUgUzNDX0FDOTdfUkFURVMgKFNORFJW
-X1BDTV9SQVRFXzgwMDAgfCBTTkRSVl9QQ01fUkFURV8xMTAyNSB8XAo+PiArIMKgIMKgIMKgIMKg
-IMKgIMKgIFNORFJWX1BDTV9SQVRFXzE2MDAwIHwgU05EUlZfUENNX1JBVEVfMjIwNTAgfCBcCj4+
-ICsgwqAgwqAgwqAgwqAgwqAgwqAgU05EUlZfUENNX1JBVEVfMzIwMDAgfCBTTkRSVl9QQ01fUkFU
-RV80NDEwMCB8IFwKPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCBTTkRSVl9QQ01fUkFURV80ODAwMCkK
-Pgo+IFNORFJWX1BDTV9SQVRFXzgwMDBfNDgwMDAuCnllcy4KCj4+ICsgwqAgwqAgwqAgwqAgwqAg
-wqAgLmNhcHR1cmUgPSB7Cj4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLnN0cmVh
-bV9uYW1lID0gIkFDOTcgQ2FwdHVyZSIsCj4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgLyogTk9URTogSWYgdGhlIGNvZGVjIG91cHV0cyBqdXN0IG9uZSBzbG90LAo+PiArIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgKiBpdCAqc2VlbXMqIG91ciBBQzk3IGNvbnRyb2xs
-ZXIgcmVhZHMgdGhlIG9ubHkKPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCog
-dmFsaWQgc2xvdChpZiBlaXRoZXIgMyBvciA0KSBmb3IgUENNLUluLgo+PiArIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgKiBGb3Igc3VjaCBjYXNlcywgd2UgcmVjb3JkIE1vbm8uCj4+
-ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAqLwo+Cj4gVGhpcyBzZWVtcyBsaWtl
-IHVuc3VycHJpc2luZyBiZWhhdmlvdXIgZm9yIGFuIEFDOTcgY29udHJvbGxlciAtIHRoZSBzbG90
-Cj4gdmFsaWRpdHkgaW5mb3JtYXRpb24gaXMgdGhlcmUgZm9yIGp1c3QgdGhpcyBwdXJwb3NlLiDC
-oEknZCBqdXN0IHJlbW92ZQo+IHRoZSBjb21tZW50IGFzIGEgcmVzdWx0Lgo+Cj4+ICsgwqAgwqAg
-wqAgwqAgwqAgwqAgLmNhcHR1cmUgPSB7Cj4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgLnN0cmVhbV9uYW1lID0gIkFDOTcgTWljIENhcHR1cmUiLAo+PiArIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIC5jaGFubmVsc19taW4gPSAxLAo+PiArIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIC8qIE5PVEU6IElmIHRoZSBjb2RlYyhsaWtlIFdNOTcxMykgY2FuJ3Qgb3Vw
-dXQganVzdAo+PiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgKiBvbmUgc2xvdCwg
-aXQgKnNlZW1zKiBvdXIgQUM5NyBjb250cm9sbGVyIHJlYWRzCj4+ICsgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAqIHR3byBzbG90cyhpZiBvbmUgb2YgdGhlbSBpcyBTbG90LTYpIGZv
-ciBNSUMgYWxzby4KPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCogRm9yIHN1
-Y2ggY2FzZXMsIHdlIHJlY29yZCBTdGVyZW8uCj4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAqLwo+Cj4gU2ltaWxhcmx5IGhlcmUuCj4KPj4gKyDCoCDCoCBpZiAoYWM5N19wZGF0
-YS0+Y2ZnX2dwaW8ocGRldikpIHsKPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCBkZXZfZXJyKCZwZGV2
-LT5kZXYsICJVbmFibGUgdG8gY29uZmlndXJlIGdwaW9cbiIpOwo+PiArIMKgIMKgIMKgIMKgIMKg
-IMKgIHJldCA9IC1FSU5WQUw7Cj4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgZ290byBsYjM7Cj4+ICsg
-wqAgwqAgfQo+Cj4gU2hvdWxkIHJlYWxseSBjaGVjayBmb3IgdGhlIGZ1bmN0aW9uIGJlaW5nIG5v
-bi1OVUxMIGhlcmUuCmFscmVhZHkgY2hlY2tlZCBhdCB0aGUgc3RhcnQgYW5kIHByb2JlIGZhaWxz
-IGlmIGl0cyBOVUxMCgo+PiArbGI1Ogo+PiArIMKgIMKgIGZyZWVfaXJxKGlycV9yZXMtPnN0YXJ0
-LCBOVUxMKTsKPgo+IFBlcmhhcHMgYSBiZXR0ZXIgbmFtZSB0aGFuICdsYicgLSBlcnIsIG9yIGZh
-aWwgb3Igc29tZXRoaW5nLiDCoGxiIG1lYW5zCj4gbm90aGluZyB0byBtZSBhdCBsZWFzdC4KbWVh
-bnMgbGFiZWwgdG8gbWUgOikKCj4+ICsgwqAgwqAgaXJxX3JlcyA9IHBsYXRmb3JtX2dldF9yZXNv
-dXJjZShwZGV2LCBJT1JFU09VUkNFX0lSUSwgMCk7Cj4+ICsgwqAgwqAgaWYgKGlycV9yZXMpCj4+
-ICsgwqAgwqAgwqAgwqAgwqAgwqAgZnJlZV9pcnEoaXJxX3Jlcy0+c3RhcnQsIE5VTEwpOwo+Cj4g
-VGhpcyBzaG91bGQgbmV2ZXIgZ2V0IGNhbGxlZCBpZiB0aGUgcmVzb3VyY2VzIGFyZW4ndCBhbGxv
-Y2F0ZWQuCmJ1dCB0aGUgc3RhdGljIGNvZGUgYW5hbHlzZXIgZG9lc24ndCB1bmRlcnN0YW5kIHRo
-YXQuCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkFsc2Et
-ZGV2ZWwgbWFpbGluZyBsaXN0CkFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZwpodHRwOi8vbWFp
-bG1hbi5hbHNhLXByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vYWxzYS1kZXZlbAo=
+On Tue, Jan 26, 2010 at 7:53 PM, Mark Brown
+<broonie@opensource.wolfsonmicro.com> wrote:
+> On Tue, Jan 26, 2010 at 04:32:45PM +0900, jassi brar wrote:
+>> On Tue, Jan 26, 2010 at 2:51 PM, =C2=A0<jassisinghbrar@gmail.com> wr=
+ote:
+>
+> Please delete irrelevant context when replying to mails, it's much
+> easier to find the actual new text in the message that way.
+ok
+
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 /* NOTE: If the codec ouputs just one slot,
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0* it *seems* our AC97 controller reads the only
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0* valid slot(if either 3 or 4) for PCM-In.
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0* For such cases, we record Mono.
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0*/
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 .channels_min =3D 1,
+>
+>> =C2=A0 I would like to remove this anomaly and set channels_min =3D =
+2
+>
+> Why?
+This hypothesis was based on wrong observation that AC97 can record ste=
+reo-mic
+if two slots are marked valid and one of them is 6th.
+I decided to remove it after that observation turned out wrong(testing =
+error).
+Even though this seems logical, but I have not verified it so I wanted
+to remove.
+
+>> =C2=A0And remove the second DAI_LINK in machine driver.
+>
+> Again, why?
+The wm9713 doesn't support mono capture and AC97 controller
+doesn't support stereo MIC capture. So the second dai link
+is improper.
