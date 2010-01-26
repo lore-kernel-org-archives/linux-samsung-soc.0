@@ -1,12 +1,12 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH] ARM: S3C64XX: Move cpu, clock and gpiolib and PM support to mach-s3c64xx
-Date: Tue, 26 Jan 2010 07:03:00 +0000
-Message-ID: <1264489385-13345-10-git-send-email-ben-linux@fluff.org>
+Subject: [PATCH] ARM: S3C64XX: Move GPIO bank number includes into machine include directory
+Date: Tue, 26 Jan 2010 07:02:55 +0000
+Message-ID: <1264489385-13345-5-git-send-email-ben-linux@fluff.org>
 References: <1264489385-13345-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:46316 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:46320 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752121Ab0AZHDS (ORCPT
+	id S1752709Ab0AZHDS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Tue, 26 Jan 2010 02:03:18 -0500
 In-Reply-To: <1264489385-13345-1-git-send-email-ben-linux@fluff.org>
@@ -15,279 +15,308 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Ben Dooks <ben-linux@fluff.org>
 
-Move the core S3C64XX support to mach-s3c64xx as it is unlikely to be used
-outside of this directory. Also move the SoC header files in with it.
+Move the GPIO bank numbering to the machine include directory as it is only
+used by these machines. Fixup the two users in the plat directoy (but do not
+move them yet)
 
 Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/{plat-s3c64xx => mach-s3c6410}/pm.c       |    0
- arch/arm/mach-s3c64xx/Makefile                     |    7 +++++++
- arch/arm/{plat-s3c64xx => mach-s3c64xx}/clock.c    |    2 ++
- arch/arm/{plat-s3c64xx => mach-s3c64xx}/cpu.c      |    4 ++--
- arch/arm/{plat-s3c64xx => mach-s3c64xx}/gpiolib.c  |    0
- .../plat => mach-s3c64xx/include/mach}/pll.h       |    0
- .../plat => mach-s3c64xx/include/mach}/s3c6400.h   |    3 +--
- .../plat => mach-s3c64xx/include/mach}/s3c6410.h   |    2 +-
- arch/arm/mach-s3c64xx/mach-anw6410.c               |    2 +-
- arch/arm/mach-s3c64xx/mach-hmt.c                   |    2 +-
- arch/arm/mach-s3c64xx/mach-ncp.c                   |    2 +-
- arch/arm/mach-s3c64xx/mach-smdk6400.c              |    2 +-
- arch/arm/mach-s3c64xx/mach-smdk6410.c              |    2 +-
- arch/arm/mach-s3c64xx/s3c6400.c                    |    2 +-
- arch/arm/mach-s3c64xx/s3c6410.c                    |    4 ++--
- arch/arm/{plat-s3c64xx => mach-s3c64xx}/sleep.S    |    0
- arch/arm/plat-s3c64xx/Makefile                     |   10 ----------
- arch/arm/plat-s3c64xx/s3c6400-init.c               |    4 ++--
- 18 files changed, 23 insertions(+), 25 deletions(-)
- rename arch/arm/{plat-s3c64xx => mach-s3c6410}/pm.c (100%)
- rename arch/arm/{plat-s3c64xx => mach-s3c64xx}/clock.c (99%)
- rename arch/arm/{plat-s3c64xx => mach-s3c64xx}/cpu.c (98%)
- rename arch/arm/{plat-s3c64xx => mach-s3c64xx}/gpiolib.c (100%)
- rename arch/arm/{plat-s3c64xx/include/plat => mach-s3c64xx/include/mach}/pll.h (100%)
- rename arch/arm/{plat-s3c64xx/include/plat => mach-s3c64xx/include/mach}/s3c6400.h (95%)
- rename arch/arm/{plat-s3c64xx/include/plat => mach-s3c64xx/include/mach}/s3c6410.h (93%)
- rename arch/arm/{plat-s3c64xx => mach-s3c64xx}/sleep.S (100%)
+ .../include/mach}/gpio-bank-a.h                    |    2 +-
+ .../include/mach}/gpio-bank-b.h                    |    2 +-
+ .../include/mach}/gpio-bank-c.h                    |    2 +-
+ .../include/mach}/gpio-bank-d.h                    |    2 +-
+ .../include/mach}/gpio-bank-e.h                    |    2 +-
+ .../include/mach}/gpio-bank-f.h                    |    2 +-
+ .../include/mach}/gpio-bank-g.h                    |    2 +-
+ .../include/mach}/gpio-bank-h.h                    |    2 +-
+ .../include/mach}/gpio-bank-i.h                    |    2 +-
+ .../include/mach}/gpio-bank-j.h                    |    2 +-
+ .../include/mach}/gpio-bank-n.h                    |    2 +-
+ .../include/mach}/gpio-bank-o.h                    |    2 +-
+ .../include/mach}/gpio-bank-p.h                    |    2 +-
+ .../include/mach}/gpio-bank-q.h                    |    2 +-
+ arch/arm/plat-s3c64xx/dev-audio.c                  |    9 +++++----
+ arch/arm/plat-s3c64xx/dev-spi.c                    |    3 +--
+ arch/arm/plat-s3c64xx/pm.c                         |    2 +-
+ arch/arm/plat-s3c64xx/setup-i2c0.c                 |    2 +-
+ arch/arm/plat-s3c64xx/setup-i2c1.c                 |    2 +-
+ 19 files changed, 23 insertions(+), 23 deletions(-)
+ rename arch/arm/{plat-s3c64xx/include/plat => mach-s3c64xx/include/mach}/gpio-bank-a.h (96%)
+ rename arch/arm/{plat-s3c64xx/include/plat => mach-s3c64xx/include/mach}/gpio-bank-b.h (97%)
+ rename arch/arm/{plat-s3c64xx/include/plat => mach-s3c64xx/include/mach}/gpio-bank-c.h (96%)
+ rename arch/arm/{plat-s3c64xx/include/plat => mach-s3c64xx/include/mach}/gpio-bank-d.h (96%)
+ rename arch/arm/{plat-s3c64xx/include/plat => mach-s3c64xx/include/mach}/gpio-bank-e.h (96%)
+ rename arch/arm/{plat-s3c64xx/include/plat => mach-s3c64xx/include/mach}/gpio-bank-f.h (97%)
+ rename arch/arm/{plat-s3c64xx/include/plat => mach-s3c64xx/include/mach}/gpio-bank-g.h (95%)
+ rename arch/arm/{plat-s3c64xx/include/plat => mach-s3c64xx/include/mach}/gpio-bank-h.h (97%)
+ rename arch/arm/{plat-s3c64xx/include/plat => mach-s3c64xx/include/mach}/gpio-bank-i.h (96%)
+ rename arch/arm/{plat-s3c64xx/include/plat => mach-s3c64xx/include/mach}/gpio-bank-j.h (95%)
+ rename arch/arm/{plat-s3c64xx/include/plat => mach-s3c64xx/include/mach}/gpio-bank-n.h (96%)
+ rename arch/arm/{plat-s3c64xx/include/plat => mach-s3c64xx/include/mach}/gpio-bank-o.h (97%)
+ rename arch/arm/{plat-s3c64xx/include/plat => mach-s3c64xx/include/mach}/gpio-bank-p.h (97%)
+ rename arch/arm/{plat-s3c64xx/include/plat => mach-s3c64xx/include/mach}/gpio-bank-q.h (96%)
 
-diff --git a/arch/arm/plat-s3c64xx/pm.c b/arch/arm/mach-s3c6410/pm.c
-similarity index 100%
-rename from arch/arm/plat-s3c64xx/pm.c
-rename to arch/arm/mach-s3c6410/pm.c
-diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
-index 49b71d5..ef8bec8 100644
---- a/arch/arm/mach-s3c64xx/Makefile
-+++ b/arch/arm/mach-s3c64xx/Makefile
-@@ -10,6 +10,11 @@ obj-m				:=
- obj-n				:=
- obj-				:=
- 
-+# Core files
-+obj-y				+= cpu.o
-+obj-y				+= clock.o
-+obj-y				+= gpiolib.o
-+
- # Core support for S3C6400 system
- 
- obj-$(CONFIG_CPU_S3C6400)	+= s3c6400.o
-@@ -28,6 +33,8 @@ obj-$(CONFIG_S3C64XX_SETUP_SDHCI_GPIO) += setup-sdhci-gpio.o
- 
- # PM
- 
-+obj-$(CONFIG_PM)		+= pm.o
-+obj-$(CONFIG_PM)		+= sleep.o
- obj-$(CONFIG_PM)		+= irq-pm.o
- 
- # Machine support
-diff --git a/arch/arm/plat-s3c64xx/clock.c b/arch/arm/mach-s3c64xx/clock.c
-similarity index 99%
-rename from arch/arm/plat-s3c64xx/clock.c
-rename to arch/arm/mach-s3c64xx/clock.c
-index 64439de..229bb3b 100644
---- a/arch/arm/plat-s3c64xx/clock.c
-+++ b/arch/arm/mach-s3c64xx/clock.c
-@@ -23,6 +23,8 @@
- 
- #include <mach/regs-sys.h>
- #include <mach/regs-clock.h>
-+#include <mach/pll.h>
-+
- #include <plat/cpu.h>
- #include <plat/devs.h>
- #include <plat/clock.h>
-diff --git a/arch/arm/plat-s3c64xx/cpu.c b/arch/arm/mach-s3c64xx/cpu.c
-similarity index 98%
-rename from arch/arm/plat-s3c64xx/cpu.c
-rename to arch/arm/mach-s3c64xx/cpu.c
-index bc7ca18..410d688 100644
---- a/arch/arm/plat-s3c64xx/cpu.c
-+++ b/arch/arm/mach-s3c64xx/cpu.c
-@@ -33,8 +33,8 @@
- #include <plat/devs.h>
- #include <plat/clock.h>
- 
--#include <plat/s3c6400.h>
--#include <plat/s3c6410.h>
-+#include <mach/s3c6400.h>
-+#include <mach/s3c6410.h>
- 
- /* table of supported CPUs */
- 
-diff --git a/arch/arm/plat-s3c64xx/gpiolib.c b/arch/arm/mach-s3c64xx/gpiolib.c
-similarity index 100%
-rename from arch/arm/plat-s3c64xx/gpiolib.c
-rename to arch/arm/mach-s3c64xx/gpiolib.c
-diff --git a/arch/arm/plat-s3c64xx/include/plat/pll.h b/arch/arm/mach-s3c64xx/include/mach/pll.h
-similarity index 100%
-rename from arch/arm/plat-s3c64xx/include/plat/pll.h
-rename to arch/arm/mach-s3c64xx/include/mach/pll.h
-diff --git a/arch/arm/plat-s3c64xx/include/plat/s3c6400.h b/arch/arm/mach-s3c64xx/include/mach/s3c6400.h
-similarity index 95%
-rename from arch/arm/plat-s3c64xx/include/plat/s3c6400.h
-rename to arch/arm/mach-s3c64xx/include/mach/s3c6400.h
-index 11f2e1e..2bc7c07 100644
---- a/arch/arm/plat-s3c64xx/include/plat/s3c6400.h
-+++ b/arch/arm/mach-s3c64xx/include/mach/s3c6400.h
+diff --git a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-a.h b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-a.h
+similarity index 96%
+rename from arch/arm/plat-s3c64xx/include/plat/gpio-bank-a.h
+rename to arch/arm/mach-s3c64xx/include/mach/gpio-bank-a.h
+index 9aa0e42..34212e1 100644
+--- a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-a.h
++++ b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-a.h
 @@ -1,4 +1,4 @@
--/* arch/arm/plat-s3c64xx/include/plat/s3c6400.h
-+/* arch/arm/mach-s3c64xx/include/macht/s3c6400.h
+-/* linux/arch/arm/plat-s3c64xx/include/plat/gpio-bank-a.h
++/* linux/arch/arm/mach-s3c64xx/include/mach/gpio-bank-a.h
   *
   * Copyright 2008 Openmoko, Inc.
   * Copyright 2008 Simtec Electronics
-@@ -33,4 +33,3 @@ extern void s3c6400_init_clocks(int xtal);
- #define s3c6400_map_io NULL
- #define s3c6400_init NULL
- #endif
--
-diff --git a/arch/arm/plat-s3c64xx/include/plat/s3c6410.h b/arch/arm/mach-s3c64xx/include/mach/s3c6410.h
-similarity index 93%
-rename from arch/arm/plat-s3c64xx/include/plat/s3c6410.h
-rename to arch/arm/mach-s3c64xx/include/mach/s3c6410.h
-index 50dcdd6..24f1141 100644
---- a/arch/arm/plat-s3c64xx/include/plat/s3c6410.h
-+++ b/arch/arm/mach-s3c64xx/include/mach/s3c6410.h
+diff --git a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-b.h b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-b.h
+similarity index 97%
+rename from arch/arm/plat-s3c64xx/include/plat/gpio-bank-b.h
+rename to arch/arm/mach-s3c64xx/include/mach/gpio-bank-b.h
+index 3933adb..7232c03 100644
+--- a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-b.h
++++ b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-b.h
 @@ -1,4 +1,4 @@
--/* arch/arm/plat-s3c64xx/include/plat/s3c6410.h
-+/* arch/arm/mach-s3c64xx/include/mach/s3c6410.h
+-/* linux/arch/arm/plat-s3c64xx/include/plat/gpio-bank-b.h
++/* linux/arch/arm/mach-s3c64xx/include/mach/gpio-bank-b.h
   *
-  * Copyright 2008 Openmoko,  Inc.
+  * Copyright 2008 Openmoko, Inc.
   * Copyright 2008 Simtec Electronics
-diff --git a/arch/arm/mach-s3c64xx/mach-anw6410.c b/arch/arm/mach-s3c64xx/mach-anw6410.c
-index 06d8fe5..4a0bb24 100644
---- a/arch/arm/mach-s3c64xx/mach-anw6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-anw6410.c
-@@ -45,7 +45,7 @@
- #include <plat/iic.h>
- #include <plat/fb.h>
+diff --git a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-c.h b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-c.h
+similarity index 96%
+rename from arch/arm/plat-s3c64xx/include/plat/gpio-bank-c.h
+rename to arch/arm/mach-s3c64xx/include/mach/gpio-bank-c.h
+index e22b49f..db189ab 100644
+--- a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-c.h
++++ b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-c.h
+@@ -1,4 +1,4 @@
+-/* linux/arch/arm/plat-s3c64xx/include/plat/gpio-bank-c.h
++/* linux/arch/arm/mach-s3c64xx/include/mach/gpio-bank-c.h
+  *
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+diff --git a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-d.h b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-d.h
+similarity index 96%
+rename from arch/arm/plat-s3c64xx/include/plat/gpio-bank-d.h
+rename to arch/arm/mach-s3c64xx/include/mach/gpio-bank-d.h
+index 6fe4a49..1a01cee 100644
+--- a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-d.h
++++ b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-d.h
+@@ -1,4 +1,4 @@
+-/* linux/arch/arm/plat-s3c64xx/include/plat/gpio-bank-d.h
++/* linux/arch/arm/mach-s3c64xx/include/mach/gpio-bank-d.h
+  *
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+diff --git a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-e.h b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-e.h
+similarity index 96%
+rename from arch/arm/plat-s3c64xx/include/plat/gpio-bank-e.h
+rename to arch/arm/mach-s3c64xx/include/mach/gpio-bank-e.h
+index 7fcf3d8..f057adb 100644
+--- a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-e.h
++++ b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-e.h
+@@ -1,4 +1,4 @@
+-/* linux/arch/arm/plat-s3c64xx/include/plat/gpio-bank-e.h
++/* linux/arch/arm/mach-s3c64xx/include/mach/gpio-bank-e.h
+  *
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+diff --git a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-f.h b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-f.h
+similarity index 97%
+rename from arch/arm/plat-s3c64xx/include/plat/gpio-bank-f.h
+rename to arch/arm/mach-s3c64xx/include/mach/gpio-bank-f.h
+index f3faff9..62ab8f5 100644
+--- a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-f.h
++++ b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-f.h
+@@ -1,4 +1,4 @@
+-/* linux/arch/arm/plat-s3c64xx/include/plat/gpio-bank-f.h
++/* linux/arch/arm/mach-s3c64xx/include/mach/gpio-bank-f.h
+  *
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+diff --git a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-g.h b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-g.h
+similarity index 95%
+rename from arch/arm/plat-s3c64xx/include/plat/gpio-bank-g.h
+rename to arch/arm/mach-s3c64xx/include/mach/gpio-bank-g.h
+index 35bbd23..b94954a 100644
+--- a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-g.h
++++ b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-g.h
+@@ -1,4 +1,4 @@
+-/* linux/arch/arm/plat-s3c64xx/include/plat/gpio-bank-g.h
++/* linux/arch/arm/mach-s3c64xx/include/mach/gpio-bank-g.h
+  *
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+diff --git a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-h.h b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-h.h
+similarity index 97%
+rename from arch/arm/plat-s3c64xx/include/plat/gpio-bank-h.h
+rename to arch/arm/mach-s3c64xx/include/mach/gpio-bank-h.h
+index 2ba1767..5d75aaa 100644
+--- a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-h.h
++++ b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-h.h
+@@ -1,4 +1,4 @@
+-/* linux/arch/arm/plat-s3c64xx/include/plat/gpio-bank-h.h
++/* linux/arch/arm/mach-s3c64xx/include/mach/gpio-bank-h.h
+  *
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+diff --git a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-i.h b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-i.h
+similarity index 96%
+rename from arch/arm/plat-s3c64xx/include/plat/gpio-bank-i.h
+rename to arch/arm/mach-s3c64xx/include/mach/gpio-bank-i.h
+index ce9ebe3..4ceaa60 100644
+--- a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-i.h
++++ b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-i.h
+@@ -1,4 +1,4 @@
+-/* linux/arch/arm/plat-s3c64xx/include/plat/gpio-bank-i.h
++/* linux/arch/arm/mach-s3c64xx/include/mach/gpio-bank-i.h
+  *
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+diff --git a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-j.h b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-j.h
+similarity index 95%
+rename from arch/arm/plat-s3c64xx/include/plat/gpio-bank-j.h
+rename to arch/arm/mach-s3c64xx/include/mach/gpio-bank-j.h
+index 21a9062..6f25cd0 100644
+--- a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-j.h
++++ b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-j.h
+@@ -1,4 +1,4 @@
+-/* linux/arch/arm/plat-s3c64xx/include/plat/gpio-bank-j.h
++/* linux/arch/arm/mach-s3c64xx/include/mach/gpio-bank-j.h
+  *
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+diff --git a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-n.h b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-n.h
+similarity index 96%
+rename from arch/arm/plat-s3c64xx/include/plat/gpio-bank-n.h
+rename to arch/arm/mach-s3c64xx/include/mach/gpio-bank-n.h
+index 569e761..d0aeda1 100644
+--- a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-n.h
++++ b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-n.h
+@@ -1,4 +1,4 @@
+-/* linux/arch/arm/plat-s3c64xx/include/plat/gpio-bank-n.h
++/* linux/arch/arm/mach-s3c64xx/include/mach/gpio-bank-n.h
+  *
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+diff --git a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-o.h b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-o.h
+similarity index 97%
+rename from arch/arm/plat-s3c64xx/include/plat/gpio-bank-o.h
+rename to arch/arm/mach-s3c64xx/include/mach/gpio-bank-o.h
+index b09e129..21868fa 100644
+--- a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-o.h
++++ b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-o.h
+@@ -1,4 +1,4 @@
+-/* linux/arch/arm/plat-s3c64xx/include/plat/gpio-bank-o.h
++/* linux/arch/arm/mach-s3c64xx/include/mach/gpio-bank-o.h
+  *
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+diff --git a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-p.h b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-p.h
+similarity index 97%
+rename from arch/arm/plat-s3c64xx/include/plat/gpio-bank-p.h
+rename to arch/arm/mach-s3c64xx/include/mach/gpio-bank-p.h
+index 92f0051..46bcfb6 100644
+--- a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-p.h
++++ b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-p.h
+@@ -1,4 +1,4 @@
+-/* linux/arch/arm/plat-s3c64xx/include/plat/gpio-bank-p.h
++/* linux/arch/arm/mach-s3c64xx/include/mach/gpio-bank-p.h
+  *
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+diff --git a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-q.h b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-q.h
+similarity index 96%
+rename from arch/arm/plat-s3c64xx/include/plat/gpio-bank-q.h
+rename to arch/arm/mach-s3c64xx/include/mach/gpio-bank-q.h
+index 565e60a..1712223 100644
+--- a/arch/arm/plat-s3c64xx/include/plat/gpio-bank-q.h
++++ b/arch/arm/mach-s3c64xx/include/mach/gpio-bank-q.h
+@@ -1,4 +1,4 @@
+-/* linux/arch/arm/plat-s3c64xx/include/plat/gpio-bank-q.h
++/* linux/arch/arm/mach-s3c64xx/include/mach/gpio-bank-q.h
+  *
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+diff --git a/arch/arm/plat-s3c64xx/dev-audio.c b/arch/arm/plat-s3c64xx/dev-audio.c
+index f6b7bfb..aaffb80 100644
+--- a/arch/arm/plat-s3c64xx/dev-audio.c
++++ b/arch/arm/plat-s3c64xx/dev-audio.c
+@@ -19,12 +19,13 @@
  
--#include <plat/s3c6410.h>
-+#include <mach/s3c6410.h>
- #include <plat/clock.h>
  #include <plat/devs.h>
- #include <plat/cpu.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-hmt.c b/arch/arm/mach-s3c64xx/mach-hmt.c
-index 284886c..a6d91c3 100644
---- a/arch/arm/mach-s3c64xx/mach-hmt.c
-+++ b/arch/arm/mach-s3c64xx/mach-hmt.c
-@@ -38,7 +38,7 @@
- #include <plat/fb.h>
- #include <plat/nand.h>
- 
--#include <plat/s3c6410.h>
-+#include <mach/s3c6410.h>
- #include <plat/clock.h>
- #include <plat/devs.h>
- #include <plat/cpu.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-ncp.c b/arch/arm/mach-s3c64xx/mach-ncp.c
-index 9be92dd..bf65747 100644
---- a/arch/arm/mach-s3c64xx/mach-ncp.c
-+++ b/arch/arm/mach-s3c64xx/mach-ncp.c
-@@ -40,7 +40,7 @@
- #include <plat/iic.h>
- #include <plat/fb.h>
- 
--#include <plat/s3c6410.h>
-+#include <mach/s3c6410.h>
- #include <plat/clock.h>
- #include <plat/devs.h>
- #include <plat/cpu.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6400.c b/arch/arm/mach-s3c64xx/mach-smdk6400.c
-index ba8a052..f7b1898 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6400.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6400.c
-@@ -31,7 +31,7 @@
- 
- #include <plat/regs-serial.h>
- 
--#include <plat/s3c6400.h>
-+#include <mach/s3c6400.h>
- #include <plat/clock.h>
- #include <plat/devs.h>
- #include <plat/cpu.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-index 021670e..fdf8f75 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-@@ -54,7 +54,7 @@
- #include <plat/fb.h>
+ #include <plat/audio.h>
+-#include <plat/gpio-bank-c.h>
+-#include <plat/gpio-bank-d.h>
+-#include <plat/gpio-bank-e.h>
+-#include <plat/gpio-bank-h.h>
  #include <plat/gpio-cfg.h>
  
--#include <plat/s3c6410.h>
-+#include <mach/s3c6410.h>
- #include <plat/clock.h>
- #include <plat/devs.h>
- #include <plat/cpu.h>
-diff --git a/arch/arm/mach-s3c64xx/s3c6400.c b/arch/arm/mach-s3c64xx/s3c6400.c
-index 2fba1b2..720d0d1 100644
---- a/arch/arm/mach-s3c64xx/s3c6400.c
-+++ b/arch/arm/mach-s3c64xx/s3c6400.c
-@@ -37,7 +37,7 @@
- #include <plat/clock.h>
- #include <plat/sdhci.h>
- #include <plat/iic-core.h>
--#include <plat/s3c6400.h>
-+#include <mach/s3c6400.h>
- 
- void __init s3c6400_map_io(void)
++#include <mach/gpio-bank-c.h>
++#include <mach/gpio-bank-d.h>
++#include <mach/gpio-bank-e.h>
++#include <mach/gpio-bank-h.h>
++
+ static int s3c64xx_i2sv3_cfg_gpio(struct platform_device *pdev)
  {
-diff --git a/arch/arm/mach-s3c64xx/s3c6410.c b/arch/arm/mach-s3c64xx/s3c6410.c
-index b881d6a..fd457cc 100644
---- a/arch/arm/mach-s3c64xx/s3c6410.c
-+++ b/arch/arm/mach-s3c64xx/s3c6410.c
-@@ -38,8 +38,8 @@
- #include <plat/clock.h>
- #include <plat/sdhci.h>
- #include <plat/iic-core.h>
--#include <plat/s3c6400.h>
--#include <plat/s3c6410.h>
-+#include <mach/s3c6400.h>
-+#include <mach/s3c6410.h>
+ 	switch (pdev->id) {
+diff --git a/arch/arm/plat-s3c64xx/dev-spi.c b/arch/arm/plat-s3c64xx/dev-spi.c
+index ca10388..0c20d27 100644
+--- a/arch/arm/plat-s3c64xx/dev-spi.c
++++ b/arch/arm/plat-s3c64xx/dev-spi.c
+@@ -16,11 +16,10 @@
+ #include <mach/dma.h>
+ #include <mach/map.h>
+ #include <mach/gpio.h>
++#include <mach/gpio-bank-c.h>
  
- void __init s3c6410_map_io(void)
+ #include <plat/spi-clocks.h>
+-
+ #include <plat/s3c64xx-spi.h>
+-#include <plat/gpio-bank-c.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/irqs.h>
+ 
+diff --git a/arch/arm/plat-s3c64xx/pm.c b/arch/arm/plat-s3c64xx/pm.c
+index 47632fc..8ad9ab1 100644
+--- a/arch/arm/plat-s3c64xx/pm.c
++++ b/arch/arm/plat-s3c64xx/pm.c
+@@ -27,7 +27,7 @@
+ #include <plat/regs-gpio-memport.h>
+ 
+ #ifdef CONFIG_S3C_PM_DEBUG_LED_SMDK
+-#include <plat/gpio-bank-n.h>
++#include <mach/gpio-bank-n.h>
+ 
+ void s3c_pm_debug_smdkled(u32 set, u32 clear)
  {
-diff --git a/arch/arm/plat-s3c64xx/sleep.S b/arch/arm/mach-s3c64xx/sleep.S
-similarity index 100%
-rename from arch/arm/plat-s3c64xx/sleep.S
-rename to arch/arm/mach-s3c64xx/sleep.S
-diff --git a/arch/arm/plat-s3c64xx/Makefile b/arch/arm/plat-s3c64xx/Makefile
-index 187b779..60d7990 100644
---- a/arch/arm/plat-s3c64xx/Makefile
-+++ b/arch/arm/plat-s3c64xx/Makefile
-@@ -10,22 +10,12 @@ obj-m				:=
- obj-n				:= dummy.o
- obj-				:=
- 
--# Core files
--obj-y				+= cpu.o
--obj-y				+= clock.o
--obj-y				+= gpiolib.o
--
- # CPU support
- 
- obj-$(CONFIG_CPU_S3C6400_INIT)	+= s3c6400-init.o
- obj-$(CONFIG_CPU_S3C6400_CLOCK)	+= s3c6400-clock.o
- obj-$(CONFIG_CPU_FREQ_S3C64XX)  += cpufreq.o
- 
--# PM support
--
--obj-$(CONFIG_PM)		+= pm.o
--obj-$(CONFIG_PM)		+= sleep.o
--
- # DMA support
- 
- obj-$(CONFIG_S3C64XX_DMA)	+= dma.o
-diff --git a/arch/arm/plat-s3c64xx/s3c6400-init.c b/arch/arm/plat-s3c64xx/s3c6400-init.c
-index 6c28f39..e64caa4 100644
---- a/arch/arm/plat-s3c64xx/s3c6400-init.c
-+++ b/arch/arm/plat-s3c64xx/s3c6400-init.c
+diff --git a/arch/arm/plat-s3c64xx/setup-i2c0.c b/arch/arm/plat-s3c64xx/setup-i2c0.c
+index 3644807..d1b11e6 100644
+--- a/arch/arm/plat-s3c64xx/setup-i2c0.c
++++ b/arch/arm/plat-s3c64xx/setup-i2c0.c
 @@ -18,8 +18,8 @@
+ struct platform_device; /* don't need the contents */
  
- #include <plat/cpu.h>
- #include <plat/devs.h>
--#include <plat/s3c6400.h>
--#include <plat/s3c6410.h>
-+#include <mach/s3c6400.h>
-+#include <mach/s3c6410.h>
+ #include <mach/gpio.h>
++#include <mach/gpio-bank-b.h>
+ #include <plat/iic.h>
+-#include <plat/gpio-bank-b.h>
+ #include <plat/gpio-cfg.h>
  
- /* uart registration process */
+ void s3c_i2c0_cfg_gpio(struct platform_device *dev)
+diff --git a/arch/arm/plat-s3c64xx/setup-i2c1.c b/arch/arm/plat-s3c64xx/setup-i2c1.c
+index bbe229b..2dce57d 100644
+--- a/arch/arm/plat-s3c64xx/setup-i2c1.c
++++ b/arch/arm/plat-s3c64xx/setup-i2c1.c
+@@ -18,8 +18,8 @@
+ struct platform_device; /* don't need the contents */
  
+ #include <mach/gpio.h>
++#include <mach/gpio-bank-b.h>
+ #include <plat/iic.h>
+-#include <plat/gpio-bank-b.h>
+ #include <plat/gpio-cfg.h>
+ 
+ void s3c_i2c1_cfg_gpio(struct platform_device *dev)
 -- 
 1.6.0.4
