@@ -1,12 +1,12 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH] ARM: S3C64XX: Merge s3c6400-init.c into cpu.c
-Date: Tue, 26 Jan 2010 07:03:01 +0000
-Message-ID: <1264489385-13345-11-git-send-email-ben-linux@fluff.org>
+Subject: [PATCH] ARM: S3C64XX: Combine the clock init code
+Date: Tue, 26 Jan 2010 07:03:04 +0000
+Message-ID: <1264489385-13345-14-git-send-email-ben-linux@fluff.org>
 References: <1264489385-13345-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:46307 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:46303 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751865Ab0AZHDM (ORCPT
+	id S1751174Ab0AZHDM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Tue, 26 Jan 2010 02:03:12 -0500
 In-Reply-To: <1264489385-13345-1-git-send-email-ben-linux@fluff.org>
@@ -15,119 +15,163 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Ben Dooks <ben-linux@fluff.org>
 
-Since this file is small, and is compiled for both systems in this
-architecture merge it into the cpu support file and remove the original
-instead of moving it.
+Turn the init sequence of
+	s3c24xx_register_baseclocks(xtal);
+	s3c64xx_register_clocks();
+	s3c6400_register_clocks(S3C6410_CLKDIV0_ARM_MASK);
+
+into a single call as this is now contained within one file.
 
 Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/mach-s3c64xx/Kconfig        |    2 --
- arch/arm/mach-s3c64xx/cpu.c          |    6 ++++++
- arch/arm/plat-s3c64xx/Kconfig        |    6 ------
- arch/arm/plat-s3c64xx/Makefile       |    1 -
- arch/arm/plat-s3c64xx/s3c6400-init.c |   29 -----------------------------
- 5 files changed, 6 insertions(+), 38 deletions(-)
- delete mode 100644 arch/arm/plat-s3c64xx/s3c6400-init.c
+ arch/arm/mach-s3c64xx/clock.c                |   50 ++++++++++----------------
+ arch/arm/mach-s3c64xx/include/mach/s3c6400.h |    3 +-
+ arch/arm/mach-s3c64xx/s3c6400.c              |    5 +--
+ arch/arm/mach-s3c64xx/s3c6410.c              |    4 +--
+ arch/arm/plat-samsung/include/plat/clock.h   |    1 -
+ 5 files changed, 23 insertions(+), 40 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-index 15e065e..495b6e3 100644
---- a/arch/arm/mach-s3c64xx/Kconfig
-+++ b/arch/arm/mach-s3c64xx/Kconfig
-@@ -7,14 +7,12 @@
- 
- config CPU_S3C6400
- 	bool
--	select CPU_S3C6400_INIT
- 	select CPU_S3C6400_CLOCK
- 	help
- 	  Enable S3C6400 CPU support
- 
- config CPU_S3C6410
- 	bool
--	select CPU_S3C6400_INIT
- 	select CPU_S3C6400_CLOCK
- 	help
- 	  Enable S3C6410 CPU support
-diff --git a/arch/arm/mach-s3c64xx/cpu.c b/arch/arm/mach-s3c64xx/cpu.c
-index 410d688..374e45e 100644
---- a/arch/arm/mach-s3c64xx/cpu.c
-+++ b/arch/arm/mach-s3c64xx/cpu.c
-@@ -129,6 +129,12 @@ static struct sys_device s3c64xx_sysdev = {
- 	.cls	= &s3c64xx_sysclass,
+diff --git a/arch/arm/mach-s3c64xx/clock.c b/arch/arm/mach-s3c64xx/clock.c
+index 9b587e2..7f5e1aa 100644
+--- a/arch/arm/mach-s3c64xx/clock.c
++++ b/arch/arm/mach-s3c64xx/clock.c
+@@ -748,19 +748,29 @@ static struct clk *clks1[] __initdata = {
+ 	&clk_arm,
  };
  
-+/* uart registration process */
++static struct clk *clks[] __initdata = {
++	&clk_ext,
++	&clk_epll,
++	&clk_27m,
++	&clk_48m,
++	&clk_h2,
++};
 +
-+void __init s3c6400_common_init_uarts(struct s3c2410_uartcfg *cfg, int no)
-+{
-+	s3c24xx_init_uartdevs("s3c6400-uart", s3c64xx_uart_resources, cfg, no);
-+}
+ /**
+- * s3c6400_register_clocks - register clocks for s3c6400 and above
+- * @armclk_divlimit: Divisor mask for ARMCLK
++ * s3c64xx_register_clocks - register clocks for s3c6400 and s3c6410
++ * @xtal: The rate for the clock crystal feeding the PLLs.
++ * @armclk_divlimit: Divisor mask for ARMCLK.
+  *
+- * Register the clocks for the S3C6400 and above SoC range, such
+- * as ARMCLK and the clocks which have divider chains attached.
++ * Register the clocks for the S3C6400 and S3C6410 SoC range, such
++ * as ARMCLK as well as the necessary parent clocks.
+  *
+  * This call does not setup the clocks, which is left to the
+  * s3c6400_setup_clocks() call which may be needed by the cpufreq
+  * or resume code to re-set the clocks if the bootloader has changed
+  * them.
+  */
+-void __init s3c6400_register_clocks(unsigned armclk_divlimit)
++void __init s3c64xx_register_clocks(unsigned long xtal, 
++				    unsigned armclk_divlimit)
+ {
+ 	struct clk *clkp;
+ 	int ret;
+@@ -768,33 +778,9 @@ void __init s3c6400_register_clocks(unsigned armclk_divlimit)
  
- /* read cpu identification code */
+ 	armclk_mask = armclk_divlimit;
  
-diff --git a/arch/arm/plat-s3c64xx/Kconfig b/arch/arm/plat-s3c64xx/Kconfig
-index 4edb580..6998f85 100644
---- a/arch/arm/plat-s3c64xx/Kconfig
-+++ b/arch/arm/plat-s3c64xx/Kconfig
-@@ -30,12 +30,6 @@ if PLAT_S3C64XX
- 
- # Configuration options shared by all S3C64XX implementations
- 
--config CPU_S3C6400_INIT
--	bool
--	help
--	  Common initialisation code for the S3C6400 that is shared
--	  by other CPUs in the series, such as the S3C6410.
+-	for (ptr = 0; ptr < ARRAY_SIZE(clks1); ptr++) {
+-		clkp = clks1[ptr];
+-		ret = s3c24xx_register_clock(clkp);
+-		if (ret < 0) {
+-			printk(KERN_ERR "Failed to register clock %s (%d)\n",
+-			       clkp->name, ret);
+-		}
+-	}
 -
- config CPU_S3C6400_CLOCK
- 	bool
- 	help
-diff --git a/arch/arm/plat-s3c64xx/Makefile b/arch/arm/plat-s3c64xx/Makefile
-index 60d7990..1d9513c 100644
---- a/arch/arm/plat-s3c64xx/Makefile
-+++ b/arch/arm/plat-s3c64xx/Makefile
-@@ -12,7 +12,6 @@ obj-				:=
- 
- # CPU support
- 
--obj-$(CONFIG_CPU_S3C6400_INIT)	+= s3c6400-init.o
- obj-$(CONFIG_CPU_S3C6400_CLOCK)	+= s3c6400-clock.o
- obj-$(CONFIG_CPU_FREQ_S3C64XX)  += cpufreq.o
- 
-diff --git a/arch/arm/plat-s3c64xx/s3c6400-init.c b/arch/arm/plat-s3c64xx/s3c6400-init.c
-deleted file mode 100644
-index e64caa4..0000000
---- a/arch/arm/plat-s3c64xx/s3c6400-init.c
-+++ /dev/null
-@@ -1,29 +0,0 @@
--/* linux/arch/arm/plat-s3c64xx/s3c6400-init.c
-- *
-- * Copyright 2008 Openmoko, Inc.
-- * Copyright 2008 Simtec Electronics
-- *      Ben Dooks <ben@simtec.co.uk>
-- *      http://armlinux.simtec.co.uk/
-- *
-- * S3C6400 - CPU initialisation (common with other S3C64XX chips)
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--
--#include <linux/kernel.h>
--#include <linux/types.h>
--#include <linux/init.h>
--
--#include <plat/cpu.h>
--#include <plat/devs.h>
--#include <mach/s3c6400.h>
--#include <mach/s3c6410.h>
--
--/* uart registration process */
--
--void __init s3c6400_common_init_uarts(struct s3c2410_uartcfg *cfg, int no)
--{
--	s3c24xx_init_uartdevs("s3c6400-uart", s3c64xx_uart_resources, cfg, no);
+-	s3c_register_clksrc(clksrcs, ARRAY_SIZE(clksrcs));
 -}
+-
+-static struct clk *clks[] __initdata = {
+-	&clk_ext,
+-	&clk_epll,
+-	&clk_27m,
+-	&clk_48m,
+-	&clk_h2,
+-};
+-
+-void __init s3c64xx_register_clocks(void)
+-{
+-	struct clk *clkp;
+-	int ret;
+-	int ptr;
+-
++	s3c24xx_register_baseclocks(xtal);
+ 	s3c24xx_register_clocks(clks, ARRAY_SIZE(clks));
++
+ 	s3c_register_clocks(init_clocks, ARRAY_SIZE(init_clocks));
+ 
+ 	clkp = init_clocks_disable;
+@@ -809,5 +795,7 @@ void __init s3c64xx_register_clocks(void)
+ 		(clkp->enable)(clkp, 0);
+ 	}
+ 
++	s3c24xx_register_clocks(clks1, ARRAY_SIZE(clks1));
++	s3c_register_clksrc(clksrcs, ARRAY_SIZE(clksrcs));
+ 	s3c_pwmclk_init();
+ }
+diff --git a/arch/arm/mach-s3c64xx/include/mach/s3c6400.h b/arch/arm/mach-s3c64xx/include/mach/s3c6400.h
+index 2bc7c07..f86958d 100644
+--- a/arch/arm/mach-s3c64xx/include/mach/s3c6400.h
++++ b/arch/arm/mach-s3c64xx/include/mach/s3c6400.h
+@@ -15,9 +15,10 @@
+ /* Common init code for S3C6400 related SoCs */
+ 
+ extern void s3c6400_common_init_uarts(struct s3c2410_uartcfg *cfg, int no);
+-extern void s3c6400_register_clocks(unsigned armclk_divlimit);
+ extern void s3c6400_setup_clocks(void);
+ 
++extern void s3c64xx_register_clocks(unsigned long xtal, unsigned armclk_limit);
++
+ #ifdef CONFIG_CPU_S3C6400
+ 
+ extern  int s3c6400_init(void);
+diff --git a/arch/arm/mach-s3c64xx/s3c6400.c b/arch/arm/mach-s3c64xx/s3c6400.c
+index 720d0d1..707e34e 100644
+--- a/arch/arm/mach-s3c64xx/s3c6400.c
++++ b/arch/arm/mach-s3c64xx/s3c6400.c
+@@ -55,10 +55,7 @@ void __init s3c6400_map_io(void)
+ 
+ void __init s3c6400_init_clocks(int xtal)
+ {
+-	printk(KERN_DEBUG "%s: initialising clocks\n", __func__);
+-	s3c24xx_register_baseclocks(xtal);
+-	s3c64xx_register_clocks();
+-	s3c6400_register_clocks(S3C6400_CLKDIV0_ARM_MASK);
++	s3c64xx_register_clocks(xtal, S3C6400_CLKDIV0_ARM_MASK);
+ 	s3c6400_setup_clocks();
+ }
+ 
+diff --git a/arch/arm/mach-s3c64xx/s3c6410.c b/arch/arm/mach-s3c64xx/s3c6410.c
+index fd457cc..59635d1 100644
+--- a/arch/arm/mach-s3c64xx/s3c6410.c
++++ b/arch/arm/mach-s3c64xx/s3c6410.c
+@@ -58,9 +58,7 @@ void __init s3c6410_map_io(void)
+ void __init s3c6410_init_clocks(int xtal)
+ {
+ 	printk(KERN_DEBUG "%s: initialising clocks\n", __func__);
+-	s3c24xx_register_baseclocks(xtal);
+-	s3c64xx_register_clocks();
+-	s3c6400_register_clocks(S3C6410_CLKDIV0_ARM_MASK);
++	s3c64xx_register_clocks(xtal, S3C6410_CLKDIV0_ARM_MASK);
+ 	s3c6400_setup_clocks();
+ }
+ 
+diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-samsung/include/plat/clock.h
+index ba9a1cd..60b6269 100644
+--- a/arch/arm/plat-samsung/include/plat/clock.h
++++ b/arch/arm/plat-samsung/include/plat/clock.h
+@@ -94,7 +94,6 @@ extern void s3c_register_clocks(struct clk *clk, int nr_clks);
+ 
+ extern int s3c24xx_register_baseclocks(unsigned long xtal);
+ 
+-extern void s3c64xx_register_clocks(void);
+ extern void s5p_register_clocks(unsigned long xtal_freq);
+ 
+ extern void s3c24xx_setup_clocks(unsigned long fclk,
 -- 
 1.6.0.4
