@@ -1,55 +1,47 @@
-From: jassi brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 3/3] ARM: SMDK64XX: Enable AC97 device
-Date: Tue, 26 Jan 2010 19:52:45 +0900
-Message-ID: <1b68c6791001260252t7f43cb97n710381508040f7d4@mail.gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 2/3] ASoC: AC97: S3C: Add controller driver
+Date: Tue, 26 Jan 2010 10:53:22 +0000
+Message-ID: <20100126105322.GG15759@rakim.wolfsonmicro.main>
 References: <1264485101-13782-1-git-send-email-jassisinghbrar@gmail.com>
-	<1264485101-13782-2-git-send-email-jassisinghbrar@gmail.com>
-	<1264485101-13782-3-git-send-email-jassisinghbrar@gmail.com>
-	<20100126101921.GE15759@rakim.wolfsonmicro.main>
+ <1264485101-13782-2-git-send-email-jassisinghbrar@gmail.com>
+ <1b68c6791001252332l5ee275c9we39c98691ad7692c@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20100126101921.GE15759@rakim.wolfsonmicro.main>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, lrg@slimlogic.co.uk
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:37794 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752056Ab0AZKxY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 26 Jan 2010 05:53:24 -0500
+Content-Disposition: inline
+In-Reply-To: <1b68c6791001252332l5ee275c9we39c98691ad7692c@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: jassi brar <jassisinghbrar@gmail.com>
+Cc: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org, lrg@slimlogic.co.uk, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>
 
-T24gVHVlLCBKYW4gMjYsIDIwMTAgYXQgNzoxOSBQTSwgTWFyayBCcm93bgo8YnJvb25pZUBvcGVu
-c291cmNlLndvbGZzb25taWNyby5jb20+IHdyb3RlOgo+IE9uIFR1ZSwgSmFuIDI2LCAyMDEwIGF0
-IDAyOjUxOjQxUE0gKzA5MDAsIGphc3Npc2luZ2hicmFyQGdtYWlsLmNvbSB3cm90ZToKPj4gRnJv
-bTogSmFzc2kgQnJhciA8amFzc2kuYnJhckBzYW1zdW5nLmNvbT4KPj4KPj4gSW1wbGVtZW50aW5n
-IGJhc2ljIHN1cHBvcnQgZm9yIFBsYXliYWNrL0NhcHR1cmUgYnkgU01ESydzIEFDOTcKPj4gY29u
-dHJvbGxlciB3aXRoIFdNOTcxMyBjb2RlYywgdGhpcyBwYXRjaCBhZGRzIHRoZSBBTFNBIG1hY2hp
-bmUKPj4gZHJpdmVyIGZvciBBQzk3IGRldmljZS4KPgo+IE1pZ2h0IGJlIGJldHRlciB0byBzcGxp
-dCB0aGlzIGludG8gYW4gYXJjaC9hcm0gcGF0Y2ggYW5kIGEgc291bmQvc29jCj4gcGF0Y2ggLSB0
-aGV5IGRvbid0IGFwcGVhciB0byBkZXBlbmQgb24gZWFjaCBvdGhlciBzbyBpdCdkIGVhc2UgbWVy
-Z2luZy4Kb2ssIHdpbGwgZG8uCgo+PiArc3RhdGljIGludCBzbWRrX2hpZmlfaHdfcGFyYW1zKHN0
-cnVjdCBzbmRfcGNtX3N1YnN0cmVhbSAqc3Vic3RyZWFtLAo+PiArIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHN0cnVjdCBzbmRfcGNtX2h3X3BhcmFtcyAqcGFyYW1z
-KQo+PiArewo+PiArIMKgIMKgIC8qIENBUFRVUkUgLSBTdGVyZW8gTGluZUluCj4+ICsgwqAgwqAg
-wqAqIEN1cnJlbnRseSB0aGVyZSBpcyBubyBvdGhlciB3YXkgdG8gY2hhbmdlIEFDTGluay1JbiBz
-bG90cwo+PiArIMKgIMKgIMKgKiBvZiBXbTk3MTMsIHNvIHdlIG1ha2UgZG8gd2l0aCB0aGlzIGNh
-bGwuCj4+ICsgwqAgwqAgwqAqLwo+PiArIMKgIMKgIC8qIFNsb3RzLTMsNCovCj4+ICsgwqAgwqAg
-c29jX2FjOTdfb3BzLndyaXRlKE5VTEwsIDB4NWMsIDApOwo+PiArCj4+ICsgwqAgwqAgcmV0dXJu
-IDA7Cj4+ICt9Cj4KPiBUaGlzIG9uZSBuZWVkcyBhIGJpdCBtb3JlIGV4cGxhbmF0aW9uIC0gd2h5
-IGFyZSB5b3UgY2hhbmdpbmcgdGhlIEFDOTcKPiBzbG90PyDCoElzIHRoaXMgYSBnZW5lcmFsIHBy
-b2JsZW0gd2l0aCB0aGUgUzNDIEFDOTcgY29udHJvbGxlcj8gwqBJdCdkCj4gYWxzbyBiZSBiZXR0
-ZXIgdG8gdXNlIHRoZSBzeW1ib2xpYyByZWdpc3RlciBuYW1lIHJhdGhlciB0aGFuIGEgbnVtYmVy
-LgpJdCBpcyBubyBwcm9ibGVtLgp3bTk3MTMgY2FuIGJlIGNvbmZpZ3VyZWQgdG8gcGxhY2UgZGF0
-YSBpbiBvbmUgb2YgZm91ciBwb3NzaWJsZSBwYWlyIG9mIHNsb3RzCjMtNCBvciA2LTkgb3IgNy04
-IG9yIDEwLTExLiBUaGlzIGNhbGwgZW5zdXJlcyB0aGUgc2VsZWN0ZWQgcGFpciBpcyAzLTQoc3Rh
-bmRhcmQKYW5kIGNvbXBhdGlibGUgd2l0aCBTYW1zdW5nIEFDOTcgY29udHJvbGxlcnMpLiBUaG91
-Z2ggd2UgZG9uJ3QgbmVlZCB0bwpleHBsaWNpdGx5IHNldCB0aGlzIGlmIHdlIGRyb3AgbWljIGRh
-aV9saW5rLgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpB
-bHNhLWRldmVsIG1haWxpbmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVjdC5vcmcKaHR0cDov
-L21haWxtYW4uYWxzYS1wcm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Fsc2EtZGV2ZWwK
+On Tue, Jan 26, 2010 at 04:32:45PM +0900, jassi brar wrote:
+> On Tue, Jan 26, 2010 at 2:51 PM,  <jassisinghbrar@gmail.com> wrote:
+
+Please delete irrelevant context when replying to mails, it's much
+easier to find the actual new text in the message that way.
+
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* NOTE: If the codec=
+ ouputs just one slot,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* it *seems* our A=
+C97 controller reads the only
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* valid slot(if ei=
+ther 3 or 4) for PCM-In.
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* For such cases, =
+we record Mono.
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0*/
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .channels_min =3D 1,
+
+>   I would like to remove this anomaly and set channels_min =3D 2
+
+Why?
+
+>  And remove the second DAI_LINK in machine driver.
+
+Again, why?
