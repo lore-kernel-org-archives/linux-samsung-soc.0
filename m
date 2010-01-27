@@ -1,100 +1,45 @@
 From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: [PATCH 1/4 v2] ARM: SAMSUNG: Move mach/ts.h to plat/ts.h
-Date: Wed, 27 Jan 2010 01:19:21 +0100
-Message-ID: <b2e8f9f71001261619x59555c05w2afac67a47547f87@mail.gmail.com>
-References: <b2e8f9f71001221447r7feb098fx2e5b06126c1556da@mail.gmail.com>
-	<20100126145249.GD9153@trinity.fluff.org>
+Subject: Re: [PATCH 2/4] ARM: SAMSUNG: Rename s3c24xx touchscreen interface
+ to s3c
+Date: Wed, 27 Jan 2010 01:32:24 +0100
+Message-ID: <4B5F8998.90602@gmail.com>
+References: <b2e8f9f71001221447k897b5cfs213447084543ee55@mail.gmail.com> <20100126145558.GE9153@trinity.fluff.org> <4B5F1229.9030304@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f227.google.com ([209.85.218.227]:47587 "EHLO
-	mail-bw0-f227.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752539Ab0A0ATm (ORCPT
+Received: from ey-out-2122.google.com ([74.125.78.27]:27098 "EHLO
+	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752539Ab0A0Ac2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jan 2010 19:19:42 -0500
-Received: by bwz27 with SMTP id 27so4159998bwz.21
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Jan 2010 16:19:41 -0800 (PST)
-In-Reply-To: <20100126145249.GD9153@trinity.fluff.org>
+	Tue, 26 Jan 2010 19:32:28 -0500
+Received: by ey-out-2122.google.com with SMTP id d26so1362086eyd.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Jan 2010 16:32:27 -0800 (PST)
+In-Reply-To: <4B5F1229.9030304@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Ben Dooks <ben-linux@fluff.org>
 Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-This moves mach-s3c2410/include/mach/ts.h to plat-samsung/include/plat/ts.h in
-order to prepare for s3c64xx support in the touchscreen driver.
----
- arch/arm/mach-s3c2410/mach-h1940.c                 |    2 +-
- arch/arm/plat-s3c24xx/devs.c                       |    3 +--
- .../mach => plat-samsung/include/plat}/ts.h        |    2 +-
- drivers/input/touchscreen/s3c2410_ts.c             |    2 +-
- 4 files changed, 4 insertions(+), 5 deletions(-)
- rename arch/arm/{mach-s3c2410/include/mach =>
-plat-samsung/include/plat}/ts.h (92%)
+Op 26-01-10 17:02, Maurus Cuelenaere schreef:
+> Op 26-01-10 15:55, Ben Dooks schreef:
+>> On Fri, Jan 22, 2010 at 11:47:11PM +0100, Maurus Cuelenaere wrote:
+>>> ARM: SAMSUNG: Rename s3c24xx touchscreen interface to s3c
+>>>
+>>> Signed-off-by: Maurus Cuelenaere<mcuelenaere@gmail.com>
+>> Renaming for naming sake is in my view just a waste of diff, unless
+>> anyone disagrees here.
+>
+> Well I don't think it's pointless, having s3c24xx_ts_set_platdata() 
+> and s3c2410_ts_mach_info instead of their s3c_ equivalents make it 
+> look like the API only handles s3c24xx platforms, which isn't true 
+> (anymore).
+>
+> But I can remove this commit, if you want to.
 
-diff --git a/arch/arm/mach-s3c2410/mach-h1940.c
-b/arch/arm/mach-s3c2410/mach-h1940.c
-index fbedd07..75e3ffb 100644
---- a/arch/arm/mach-s3c2410/mach-h1940.c
-+++ b/arch/arm/mach-s3c2410/mach-h1940.c
-@@ -46,7 +46,6 @@
- #include <mach/h1940.h>
- #include <mach/h1940-latch.h>
- #include <mach/fb.h>
--#include <mach/ts.h>
- #include <plat/udc.h>
- #include <plat/iic.h>
-
-@@ -56,6 +55,7 @@
- #include <plat/pll.h>
- #include <plat/pm.h>
- #include <plat/mci.h>
-+#include <plat/ts.h>
-
- static struct map_desc h1940_iodesc[] __initdata = {
- 	[0] = {
-diff --git a/arch/arm/plat-s3c24xx/devs.c b/arch/arm/plat-s3c24xx/devs.c
-index 986d4e5..3e55bdd 100644
---- a/arch/arm/plat-s3c24xx/devs.c
-+++ b/arch/arm/plat-s3c24xx/devs.c
-@@ -37,8 +37,7 @@
- #include <plat/devs.h>
- #include <plat/cpu.h>
- #include <plat/regs-spi.h>
--
--#include <mach/ts.h>
-+#include <plat/ts.h>
-
- /* Serial port registrations */
-
-diff --git a/arch/arm/mach-s3c2410/include/mach/ts.h
-b/arch/arm/plat-samsung/include/plat/ts.h
-similarity index 92%
-rename from arch/arm/mach-s3c2410/include/mach/ts.h
-rename to arch/arm/plat-samsung/include/plat/ts.h
-index dc36170..8a51675 100644
---- a/arch/arm/mach-s3c2410/include/mach/ts.h
-+++ b/arch/arm/plat-samsung/include/plat/ts.h
-@@ -1,4 +1,4 @@
--/* linux/include/asm/arch-s3c2410/ts.h
-+/* arch/arm/plat-samsung/include/plat/ts.h
-  *
-  * Copyright (c) 2005 Arnaud Patard <arnaud.patard@rtp-net.org>
-  *
-diff --git a/drivers/input/touchscreen/s3c2410_ts.c
-b/drivers/input/touchscreen/s3c2410_ts.c
-index 6386b44..0cd0ca6 100644
---- a/drivers/input/touchscreen/s3c2410_ts.c
-+++ b/drivers/input/touchscreen/s3c2410_ts.c
-@@ -38,9 +38,9 @@
-
- #include <plat/adc.h>
- #include <plat/regs-adc.h>
-+#include <plat/ts.h>
-
- #include <mach/regs-gpio.h>
--#include <mach/ts.h>
-
- #define TSC_SLEEP  (S3C2410_ADCTSC_PULL_UP_DISABLE | S3C2410_ADCTSC_XY_PST(0))
+I have removed this commit and rebased the patches in my tree, will 
+repost them when an appropriate solution for the ADC/TS resource sharing 
+has been found.
 
 -- 
-1.6.6.1
+Maurus Cuelenaere
