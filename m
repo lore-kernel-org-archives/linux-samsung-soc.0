@@ -1,37 +1,83 @@
-From: jassi brar <jassisinghbrar@gmail.com>
-Subject: Re: [Rev2]Samsung: New driver for AC97 controllers
-Date: Thu, 28 Jan 2010 08:01:32 +0900
-Message-ID: <1b68c6791001271501vf4db64k6fcd09b333def30d@mail.gmail.com>
-References: <1264571815-14893-1-git-send-email-jassisinghbrar@gmail.com>
-	<20100127204510.GB11601@rakim.wolfsonmicro.main>
+From: Ben Dooks <ben@trinity.fluff.org>
+Subject: Re: [PATCHv2 06/10] ARM: SMDK64XX: Enable AC97 device
+Date: Thu, 28 Jan 2010 03:41:52 +0000
+Message-ID: <20100128034152.GA14154@trinity.fluff.org>
+References: <1264571969-15145-1-git-send-email-jassisinghbrar@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20100127204510.GB11601@rakim.wolfsonmicro.main>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, lrg@slimlogic.co.uk
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from trinity.fluff.org ([89.16.178.74]:47507 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751589Ab0A1DmM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Jan 2010 22:42:12 -0500
+Content-Disposition: inline
+In-Reply-To: <1264571969-15145-1-git-send-email-jassisinghbrar@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: jassisinghbrar@gmail.com
+Cc: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, lrg@slimlogic.co.uk, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>
 
-T24gVGh1LCBKYW4gMjgsIDIwMTAgYXQgNTo0NSBBTSwgTWFyayBCcm93bgo8YnJvb25pZUBvcGVu
-c291cmNlLndvbGZzb25taWNyby5jb20+IHdyb3RlOgo+IE9uIFdlZCwgSmFuIDI3LCAyMDEwIGF0
-IDAyOjU2OjU1UE0gKzA5MDAsIGphc3Npc2luZ2hicmFyQGdtYWlsLmNvbSB3cm90ZToKPgo+PiDC
-oEEgbWFjaGluZSBkcml2ZXIsIGZvciBTTURLcyB3aXRoIHdtOTcxMyBhcyBBQzk3IGNvZGVjIGF0
-dGFjaGVkLCBoYXMgYWxzbwo+PiBiZWVuIGFkZGVkLiBUaGUgZHJpdmVyIGlzIGdlbmVyaWMgZW5v
-dWdoIHRvIGJlIHVzZWQgYXMgc3VjaCB3aXRoIG5ld2VyIFNvQ3MuCj4KPiBPSywgd29ya3MgZm9y
-IG1lIHdpdGggYSBzbW9rZSB0ZXN0IHNvIEkndmUgYXBwbGllZCBhbGwgdGhlIHNvdW5kL3NvYwo+
-IHBhcnRzLiDCoEknbGwgYWRkIGEgY29tbWl0IGRldGFpbGluZyB0aGUgQ0ZHIGp1bXBlciBzZXR0
-aW5ncyBleHBlY3RlZCB0bwo+IG1ha2UgaXQgd29yayBvdXQgb2YgdGhlIGJveCBvbiBTTURLNjQx
-MCBzaW5jZSB0aGF0IGNhdGNoZXMgcXVpdGUgYSBmZXcKPiBwZW9wbGUgb3V0LgpUaGFua3MuCl9f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkFsc2EtZGV2ZWwg
-bWFpbGluZyBsaXN0CkFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZwpodHRwOi8vbWFpbG1hbi5h
-bHNhLXByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vYWxzYS1kZXZlbAo=
+On Wed, Jan 27, 2010 at 02:59:29PM +0900, jassisinghbrar@gmail.com wrote:
+> From: Jassi Brar <jassi.brar@samsung.com>
+> 
+> Add AC97 controller to platform devices and initialize the AC97 gpios.
+
+I'd much rather see platform devices always added unless there is a really
+good reason not to. People can build things as modules and this means you
+end up having to rebuild the core kernel as well as the module if you want
+to change.
+ 
+> Signed-off-by: Jassi Brar <jassi.brar@samsung.com>
+> ---
+>  arch/arm/mach-s3c6410/mach-smdk6410.c |    9 ++++++++-
+>  1 files changed, 8 insertions(+), 1 deletions(-)
+> 
+> diff --git a/arch/arm/mach-s3c6410/mach-smdk6410.c b/arch/arm/mach-s3c6410/mach-smdk6410.c
+> index eba345f..259ebbb 100644
+> --- a/arch/arm/mach-s3c6410/mach-smdk6410.c
+> +++ b/arch/arm/mach-s3c6410/mach-smdk6410.c
+> @@ -55,6 +55,7 @@
+>  #include <plat/gpio-cfg.h>
+>  
+>  #include <plat/s3c6410.h>
+> +#include <plat/audio.h>
+>  #include <plat/clock.h>
+>  #include <plat/devs.h>
+>  #include <plat/cpu.h>
+> @@ -253,7 +254,9 @@ static struct platform_device *smdk6410_devices[] __initdata = {
+>  	&smdk6410_b_pwr_5v,
+>  #endif
+>  	&smdk6410_lcd_powerdev,
+> -
+> +#ifdef CONFIG_SND_SOC_SMDK_WM9713
+> +	&s3c64xx_device_ac97,
+> +#endif
+>  	&smdk6410_smsc911x,
+>  };
+>  
+> @@ -475,6 +478,10 @@ static void __init smdk6410_machine_init(void)
+>  	i2c_register_board_info(0, i2c_devs0, ARRAY_SIZE(i2c_devs0));
+>  	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
+>  
+> +#ifdef CONFIG_SND_SOC_SMDK_WM9713
+> +	s3c64xx_ac97_setup_gpio(S3C64XX_AC97_GPD);
+> +#endif
+> +
+>  	platform_add_devices(smdk6410_devices, ARRAY_SIZE(smdk6410_devices));
+>  }
+>  
+> -- 
+> 1.6.2.5
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+-- 
+-- 
+Ben
+
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
