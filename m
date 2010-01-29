@@ -1,42 +1,47 @@
-From: Shrirang Bagul <shrirang.bagul@gmail.com>
-Subject: S5PC100 suspend to ram debugging
-Date: Fri, 29 Jan 2010 11:43:14 +0800
-Message-ID: <f1a373561001281943j433c31cbx5c89dd9711f94b9a@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: [PATCH] ARM: SAMSUNG: Add DMA masks to hsotg device
+Date: Fri, 29 Jan 2010 04:14:14 +0000
+Message-ID: <1264738459-1972-2-git-send-email-ben-linux@fluff.org>
+References: <1264738459-1972-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f189.google.com ([209.85.222.189]:38571 "EHLO
-	mail-pz0-f189.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932170Ab0A2DnP (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:37375 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755182Ab0A2EOU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Jan 2010 22:43:15 -0500
-Received: by pzk27 with SMTP id 27so1146932pzk.33
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Jan 2010 19:43:14 -0800 (PST)
+	Thu, 28 Jan 2010 23:14:20 -0500
+In-Reply-To: <1264738459-1972-1-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Ben Dooks <ben-linux@fluff.org>
 
-Hi All,
+Add the required DMA masks to the hs-otg device definition to allow DMA
+to work with it.
 
-I am trying to implement/test the "Suspend to RAM" feature on a
-smdkc100 (processor S5PC100) based board. I am unable to see ant debug
-messages when I do the following:
+Signed-off-by: Ben Dooks <ben-linux@fluff.org>
+---
+ arch/arm/plat-samsung/dev-usb-hsotg.c |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
 
-echo "mem" > /sys/power/state
-
-The debug console is assigned to /dev/ttySAC0. My guess is that the
-pm_prepare() function in mach-s5pc100/pm.c should  be implemented in
-this case to view the debug messages.
-Can anyone please guide me as to how this can be done? Also, are there
-any modifications with respect to u-boot for resuming from the suspend
-state in this case?
-
-Thanks.
-
-Best regards,
-Shrirang.
-
+diff --git a/arch/arm/plat-samsung/dev-usb-hsotg.c b/arch/arm/plat-samsung/dev-usb-hsotg.c
+index e2f604b..d8b7870 100644
+--- a/arch/arm/plat-samsung/dev-usb-hsotg.c
++++ b/arch/arm/plat-samsung/dev-usb-hsotg.c
+@@ -33,9 +33,15 @@ static struct resource s3c_usb_hsotg_resources[] = {
+ 	},
+ };
+ 
++static u64 s3c_hsotg_dmamask = 0xffffffffUL;
++
+ struct platform_device s3c_device_usb_hsotg = {
+ 	.name		= "s3c-hsotg",
+ 	.id		= -1,
+ 	.num_resources	= ARRAY_SIZE(s3c_usb_hsotg_resources),
+ 	.resource	= s3c_usb_hsotg_resources,
++	.dev		= {
++		.dma_mask		= &s3c_hsotg_dmamask,
++		.coherent_dma_mask	= 0xffffffffUL,
++	},
+ };
 -- 
-Shrirang Bagul. <shrirang.bagul@gmail.com>,
-Software R&D Engineer, Core Technology Center,
-ASUSTek Computers Inc.
+1.6.0.4
