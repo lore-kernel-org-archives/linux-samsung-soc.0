@@ -1,39 +1,42 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCHv2 05/10] ASoC: AC97: SMDK: Add
-	wm9713	machine driver
-Date: Thu, 28 Jan 2010 12:00:26 +0000
-Message-ID: <20100128120020.GA19270@sirena.org.uk>
-References: <1264571959-15115-1-git-send-email-jassisinghbrar@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <1264571959-15115-1-git-send-email-jassisinghbrar@gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: jassisinghbrar@gmail.com
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, lrg@slimlogic.co.uk
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: S5P: Change S5P_TIMER_IRQ based to 11 for SAMSUNG S5P series.
+Date: Fri, 29 Jan 2010 09:08:28 +0900
+Message-ID: <1264723708-5306-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:39478 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753680Ab0A2ARZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 28 Jan 2010 19:17:25 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Atul Dahiya <atul.dahiya@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Wed, Jan 27, 2010 at 02:59:19PM +0900, jassisinghbrar@gmail.com wrote:
+From: Atul Dahiya <atul.dahiya@samsung.com>
 
-> +	Headphone Playback Switch - On
-> +	$ amixer cset numid=4 1
-> +
+Currently, S5P_TIMER_IRQ is based at the end of VICs. This patch changes
+the S5P_TIMER_IRQ base from end of VICs to 11 in ISA IRQ space.
+No of VICs varies between SOCs. This causes an exception on S5P6442.
 
-Actually, one thing that really needs fixing here - these instructions
-refer to the controls by number.  This is extremely fragile in the face
-of any changes in the CODEC driver since the control numbering is worked
-out at runtime and any change in the set of controls exported by the
-device may change the result.  It is much better to refer to the
-controls by name since the names are much less likely to change.  This
-is also helpful for people using other UIs which don't display the
-control names.
+Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/plat-s5p/include/plat/irqs.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/plat-s5p/include/plat/irqs.h b/arch/arm/plat-s5p/include/plat/irqs.h
+index 878acfe..101038d 100644
+--- a/arch/arm/plat-s5p/include/plat/irqs.h
++++ b/arch/arm/plat-s5p/include/plat/irqs.h
+@@ -74,7 +74,7 @@
+ #define S5P_IRQ_VIC0(x)		(S5P_VIC0_BASE + (x))
+ #define S5P_IRQ_VIC1(x)		(S5P_VIC1_BASE + (x))
+ 
+-#define S5P_TIMER_IRQ(x)	S5P_IRQ(64 + (x))
++#define S5P_TIMER_IRQ(x)	S5P_IRQ(11 + (x))
+ 
+ #define IRQ_TIMER0		S5P_TIMER_IRQ(0)
+ #define IRQ_TIMER1		S5P_TIMER_IRQ(1)
+-- 
+1.6.2.5
