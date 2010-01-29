@@ -1,28 +1,63 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [alsa-devel] [PATCHv2 05/10] ASoC: AC97: SMDK: Add wm9713
-	machine driver
-Date: Fri, 29 Jan 2010 09:55:58 +0000
-Message-ID: <20100129095558.GB19270@sirena.org.uk>
-References: <1264571959-15115-1-git-send-email-jassisinghbrar@gmail.com> <20100128120020.GA19270@sirena.org.uk> <1b68c6791001281708ve324caaoa52581e3ebce09bd@mail.gmail.com>
+From: Sergei Shtylyov <sshtylyov@ru.mvista.com>
+Subject: Re: [PATCH] ARM: SAMSUNG: Add DMA masks to hsotg device
+Date: Fri, 29 Jan 2010 12:56:19 +0300
+Message-ID: <4B62B0C3.2090705@ru.mvista.com>
+References: <1264738459-1972-1-git-send-email-ben-linux@fluff.org>
+	<1264738459-1972-2-git-send-email-ben-linux@fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:38639 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754593Ab0A2J4B (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 29 Jan 2010 04:56:01 -0500
-Content-Disposition: inline
-In-Reply-To: <1b68c6791001281708ve324caaoa52581e3ebce09bd@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1264738459-1972-2-git-send-email-ben-linux@fluff.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jassi brar <jassisinghbrar@gmail.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, lrg@slimlogic.co.uk
 
-On Fri, Jan 29, 2010 at 10:08:04AM +0900, jassi brar wrote:
+Hello.
 
-> I will submit a patch for it, though I used exact control names and their
-> values before every command.
+Ben Dooks wrote:
 
-Normally the renumbering happens as a result of a source code change
-such as the addition of a new control or some change in ALSA core.
+> Add the required DMA masks to the hs-otg device definition to allow DMA
+> to work with it.
+>
+> Signed-off-by: Ben Dooks <ben-linux@fluff.org>
+> ---
+>  arch/arm/plat-samsung/dev-usb-hsotg.c |    6 ++++++
+>  1 files changed, 6 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/plat-samsung/dev-usb-hsotg.c b/arch/arm/plat-samsung/dev-usb-hsotg.c
+> index e2f604b..d8b7870 100644
+> --- a/arch/arm/plat-samsung/dev-usb-hsotg.c
+> +++ b/arch/arm/plat-samsung/dev-usb-hsotg.c
+> @@ -33,9 +33,15 @@ static struct resource s3c_usb_hsotg_resources[] = {
+>  	},
+>  };
+>  
+> +static u64 s3c_hsotg_dmamask = 0xffffffffUL;
+> +
+>   
+
+   Shouldn't this be DMA_BIT_MASK(32)?
+
+>  struct platform_device s3c_device_usb_hsotg = {
+>  	.name		= "s3c-hsotg",
+>  	.id		= -1,
+>  	.num_resources	= ARRAY_SIZE(s3c_usb_hsotg_resources),
+>  	.resource	= s3c_usb_hsotg_resources,
+> +	.dev		= {
+> +		.dma_mask		= &s3c_hsotg_dmamask,
+> +		.coherent_dma_mask	= 0xffffffffUL,
+>   
+
+   Same here...
+
+WBR, Sergei
