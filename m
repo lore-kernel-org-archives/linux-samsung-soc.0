@@ -1,199 +1,28 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH] ARM: SAMSUNG: Move include/mach files out of plat-s3c
-Date: Fri, 29 Jan 2010 09:02:20 +0000
-Message-ID: <1264755741-16184-10-git-send-email-ben-linux@fluff.org>
-References: <1264755741-16184-1-git-send-email-ben-linux@fluff.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [alsa-devel] [PATCHv2 05/10] ASoC: AC97: SMDK: Add wm9713
+	machine driver
+Date: Fri, 29 Jan 2010 09:55:58 +0000
+Message-ID: <20100129095558.GB19270@sirena.org.uk>
+References: <1264571959-15115-1-git-send-email-jassisinghbrar@gmail.com> <20100128120020.GA19270@sirena.org.uk> <1b68c6791001281708ve324caaoa52581e3ebce09bd@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:33772 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756689Ab0A2JCi (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:38639 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754593Ab0A2J4B (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 29 Jan 2010 04:02:38 -0500
-In-Reply-To: <1264755741-16184-1-git-send-email-ben-linux@fluff.org>
+	Fri, 29 Jan 2010 04:56:01 -0500
+Content-Disposition: inline
+In-Reply-To: <1b68c6791001281708ve324caaoa52581e3ebce09bd@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Ben Dooks <ben-linux@fluff.org>
+To: jassi brar <jassisinghbrar@gmail.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, lrg@slimlogic.co.uk
 
-Move the include/mach files out of plat-s3c and into the relevant
-machine files. This does mean copying the files, but there is nowhere
-else to put them.
+On Fri, Jan 29, 2010 at 10:08:04AM +0900, jassi brar wrote:
 
-Signed-off-by: Ben Dooks <ben-linux@fluff.org>
----
- arch/arm/mach-s3c2410/include/mach/timex.h   |   24 ++++++++++++++++++++++++
- arch/arm/mach-s3c2410/include/mach/vmalloc.h |   20 ++++++++++++++++++++
- arch/arm/mach-s3c24a0/include/mach/io.h      |   18 ++++++++++++++++++
- arch/arm/mach-s3c6400/include/mach/io.h      |   18 ++++++++++++++++++
- arch/arm/mach-s3c6400/include/mach/timex.h   |   24 ++++++++++++++++++++++++
- arch/arm/mach-s3c6400/include/mach/vmalloc.h |   20 ++++++++++++++++++++
- 6 files changed, 124 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s3c2410/include/mach/timex.h
- create mode 100644 arch/arm/mach-s3c2410/include/mach/vmalloc.h
- create mode 100644 arch/arm/mach-s3c24a0/include/mach/io.h
- create mode 100644 arch/arm/mach-s3c6400/include/mach/io.h
- create mode 100644 arch/arm/mach-s3c6400/include/mach/timex.h
- create mode 100644 arch/arm/mach-s3c6400/include/mach/vmalloc.h
+> I will submit a patch for it, though I used exact control names and their
+> values before every command.
 
-diff --git a/arch/arm/mach-s3c2410/include/mach/timex.h b/arch/arm/mach-s3c2410/include/mach/timex.h
-new file mode 100644
-index 0000000..fe9ca1f
---- /dev/null
-+++ b/arch/arm/mach-s3c2410/include/mach/timex.h
-@@ -0,0 +1,24 @@
-+/* arch/arm/mach-s3c2410/include/mach/timex.h
-+ *
-+ * Copyright (c) 2003-2005 Simtec Electronics
-+ *	Ben Dooks <ben@simtec.co.uk>
-+ *
-+ * S3C2410 - time parameters
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __ASM_ARCH_TIMEX_H
-+#define __ASM_ARCH_TIMEX_H
-+
-+/* CLOCK_TICK_RATE needs to be evaluatable by the cpp, so making it
-+ * a variable is useless. It seems as long as we make our timers an
-+ * exact multiple of HZ, any value that makes a 1->1 correspondence
-+ * for the time conversion functions to/from jiffies is acceptable.
-+*/
-+
-+#define CLOCK_TICK_RATE 12000000
-+
-+#endif /* __ASM_ARCH_TIMEX_H */
-diff --git a/arch/arm/mach-s3c2410/include/mach/vmalloc.h b/arch/arm/mach-s3c2410/include/mach/vmalloc.h
-new file mode 100644
-index 0000000..315b007
---- /dev/null
-+++ b/arch/arm/mach-s3c2410/include/mach/vmalloc.h
-@@ -0,0 +1,20 @@
-+/* arch/arm/mach-s3c2410/include/mach/vmalloc.h
-+ *
-+ * from arch/arm/mach-iop3xx/include/mach/vmalloc.h
-+ *
-+ * Copyright (c) 2003 Simtec Electronics <linux@simtec.co.uk>
-+ *		      http://www.simtec.co.uk/products/SWLINUX/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * S3C2410 vmalloc definition
-+*/
-+
-+#ifndef __ASM_ARCH_VMALLOC_H
-+#define __ASM_ARCH_VMALLOC_H
-+
-+#define VMALLOC_END	  (0xE0000000)
-+
-+#endif /* __ASM_ARCH_VMALLOC_H */
-diff --git a/arch/arm/mach-s3c24a0/include/mach/io.h b/arch/arm/mach-s3c24a0/include/mach/io.h
-new file mode 100644
-index 0000000..4326c30
---- /dev/null
-+++ b/arch/arm/mach-s3c24a0/include/mach/io.h
-@@ -0,0 +1,18 @@
-+/* arch/arm/mach-s3c24a0/include/mach/io.h
-+ *
-+ * Copyright 2008 Simtec Electronics
-+ *	Ben Dooks <ben-linux@fluff.org>
-+ *
-+ * Default IO routines for S3C24A0
-+ */
-+
-+#ifndef __ASM_ARM_ARCH_IO_H
-+#define __ASM_ARM_ARCH_IO_H
-+
-+/* No current ISA/PCI bus support. */
-+#define __io(a)		__typesafe_io(a)
-+#define __mem_pci(a)	(a)
-+
-+#define IO_SPACE_LIMIT (0xFFFFFFFF)
-+
-+#endif
-diff --git a/arch/arm/mach-s3c6400/include/mach/io.h b/arch/arm/mach-s3c6400/include/mach/io.h
-new file mode 100644
-index 0000000..c02cc0a
---- /dev/null
-+++ b/arch/arm/mach-s3c6400/include/mach/io.h
-@@ -0,0 +1,18 @@
-+/* arch/arm/mach-s3c6400/include/mach/io.h
-+ *
-+ * Copyright 2008 Simtec Electronics
-+ *	Ben Dooks <ben-linux@fluff.org>
-+ *
-+ * Default IO routines for S3C64XX based
-+ */
-+
-+#ifndef __ASM_ARM_ARCH_IO_H
-+#define __ASM_ARM_ARCH_IO_H
-+
-+/* No current ISA/PCI bus support. */
-+#define __io(a)		__typesafe_io(a)
-+#define __mem_pci(a)	(a)
-+
-+#define IO_SPACE_LIMIT (0xFFFFFFFF)
-+
-+#endif
-diff --git a/arch/arm/mach-s3c6400/include/mach/timex.h b/arch/arm/mach-s3c6400/include/mach/timex.h
-new file mode 100644
-index 0000000..cf34deb
---- /dev/null
-+++ b/arch/arm/mach-s3c6400/include/mach/timex.h
-@@ -0,0 +1,24 @@
-+/* arch/arm/mach-s3c6400/include/mach/timex.h
-+ *
-+ * Copyright (c) 2003-2005 Simtec Electronics
-+ *	Ben Dooks <ben@simtec.co.uk>
-+ *
-+ * S3C6400 - time parameters
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __ASM_ARCH_TIMEX_H
-+#define __ASM_ARCH_TIMEX_H
-+
-+/* CLOCK_TICK_RATE needs to be evaluatable by the cpp, so making it
-+ * a variable is useless. It seems as long as we make our timers an
-+ * exact multiple of HZ, any value that makes a 1->1 correspondence
-+ * for the time conversion functions to/from jiffies is acceptable.
-+*/
-+
-+#define CLOCK_TICK_RATE 12000000
-+
-+#endif /* __ASM_ARCH_TIMEX_H */
-diff --git a/arch/arm/mach-s3c6400/include/mach/vmalloc.h b/arch/arm/mach-s3c6400/include/mach/vmalloc.h
-new file mode 100644
-index 0000000..fe54c7e
---- /dev/null
-+++ b/arch/arm/mach-s3c6400/include/mach/vmalloc.h
-@@ -0,0 +1,20 @@
-+/* arch/arm/mach-s3c6400/include/mach/vmalloc.h
-+ *
-+ * from arch/arm/mach-iop3xx/include/mach/vmalloc.h
-+ *
-+ * Copyright (c) 2003 Simtec Electronics <linux@simtec.co.uk>
-+ *		      http://www.simtec.co.uk/products/SWLINUX/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * S3C6400 vmalloc definition
-+*/
-+
-+#ifndef __ASM_ARCH_VMALLOC_H
-+#define __ASM_ARCH_VMALLOC_H
-+
-+#define VMALLOC_END	  (0xE0000000)
-+
-+#endif /* __ASM_ARCH_VMALLOC_H */
--- 
-1.6.0.4
+Normally the renumbering happens as a result of a source code change
+such as the addition of a new control or some change in ALSA core.
