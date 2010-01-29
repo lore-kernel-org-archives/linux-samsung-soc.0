@@ -1,48 +1,55 @@
-From: jassi brar <jassisinghbrar@gmail.com>
-Subject: Re: [alsa-devel] [PATCHv2 05/10] ASoC: AC97: SMDK: Add wm9713 machine
-	driver
-Date: Fri, 29 Jan 2010 10:08:04 +0900
-Message-ID: <1b68c6791001281708ve324caaoa52581e3ebce09bd@mail.gmail.com>
-References: <1264571959-15115-1-git-send-email-jassisinghbrar@gmail.com>
-	 <20100128120020.GA19270@sirena.org.uk>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH v2 0/7] ARM: S5P6442: Add support for Samsung's S5P6442 SoC
+Date: Fri, 29 Jan 2010 11:21:28 +0900
+Message-ID: <000101caa089$c64e1490$52ea3db0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:47692 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756033Ab0A2BII convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:33028 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752694Ab0A2CTi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Jan 2010 20:08:08 -0500
-Received: by vws12 with SMTP id 12so369876vws.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Jan 2010 17:08:04 -0800 (PST)
-In-Reply-To: <20100128120020.GA19270@sirena.org.uk>
+	Thu, 28 Jan 2010 21:19:38 -0500
+Received: from epmmp2 (mailout4.samsung.com [203.254.224.34])
+ by mailout1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0KWZ00HKML4OL7@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 29 Jan 2010 11:19:36 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0KWZ002M4L4NTV@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 29 Jan 2010 11:19:36 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>, ben-linux@fluff.org, lrg@slimlogic.co.uk
+To: linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org
 
-On Thu, Jan 28, 2010 at 9:00 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Wed, Jan 27, 2010 at 02:59:19PM +0900, jassisinghbrar@gmail.com wr=
-ote:
->
->> + =C2=A0 =C2=A0 Headphone Playback Switch - On
->> + =C2=A0 =C2=A0 $ amixer cset numid=3D4 1
->> +
->
-> Actually, one thing that really needs fixing here - these instruction=
-s
-> refer to the controls by number. =C2=A0This is extremely fragile in t=
-he face
-> of any changes in the CODEC driver since the control numbering is wor=
-ked
-> out at runtime and any change in the set of controls exported by the
-> device may change the result. =C2=A0It is much better to refer to the
-> controls by name since the names are much less likely to change. =C2=A0=
-This
-> is also helpful for people using other UIs which don't display the
-> control names.
-I will submit a patch for it, though I used exact control names and the=
-ir
-values before every command.
+Hi All,
+
+This patches add basic support for Samsung's S5P6442 SoC.
+The feature set that is added are clock, timer, uart and interrupts.
+
+[PATCH v2 1/7] ARM: S5P6442: Add Samsung S5P6442 CPU support
+[PATCH v2 2/7] ARM: S5P6442: Add clock support for S5P6442
+[PATCH v2 3/7] ARM: S5P6442: Add IRQ support
+[PATCH v2 4/7] ARM: S5P6442: Update Kconfig and Makefiles
+[PATCH v2 5/7] ARM: S5P6442: Add SMDK6442 board support file
+[PATCH v2 6/7] ARM: S5P6442: Add S5P6442 configuration file
+[PATCH v2 7/7] ARM: S5P6442: Add serial port support
+
+Changes since v1:
+1. Common macros are used such as S3C_PA_XXX and S3C_VA_XXX
+2. Renamed S5P_VA_VICx definitions as VA_VICx
+3. Removed unnecessary definitions in the header files like map.h
+4. Added VIC2 definitions.
+5. Fixed code as per comments from Ben in linux-samsung-soc mailing list.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+System LSI Division, SAMSUNG ELECTRONICS CO., LTD.
