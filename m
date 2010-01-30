@@ -1,50 +1,45 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] sdhci: add adma descriptor set call
-Date: Fri, 29 Jan 2010 15:20:35 -0800
-Message-ID: <20100129152035.e04678a7.akpm@linux-foundation.org>
-References: <1264656597-19965-1-git-send-email-ben-linux@fluff.org>
-	<1264656597-19965-2-git-send-email-ben-linux@fluff.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: [PATCH 4/6] ARM: S3C2443: Update notes on MPLLREF clock
+Date: Sat, 30 Jan 2010 15:11:31 +0200
+Message-ID: <1264857093-4040-5-git-send-email-ben-linux@fluff.org>
+References: <1264857093-4040-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp1.linux-foundation.org ([140.211.169.13]:54394 "EHLO
-	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751247Ab0A2XU7 (ORCPT
+Received: from [82.203.205.227] ([82.203.205.227]:45549 "EHLO ben-laptop"
+	rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1752583Ab0A3NXc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 29 Jan 2010 18:20:59 -0500
-In-Reply-To: <1264656597-19965-2-git-send-email-ben-linux@fluff.org>
+	Sat, 30 Jan 2010 08:23:32 -0500
+In-Reply-To: <1264857093-4040-1-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-samsung-soc@vger.kernel.org, pierre@ossman.eu, linux-mmc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Ben Dooks <ben-linux@fluff.org>
 
-On Thu, 28 Jan 2010 05:29:56 +0000
-Ben Dooks <ben-linux@fluff.org> wrote:
+Add note on MPLLREF clock source and why it cannot be easily removed.
 
-> The code to write the ADMA descriptor into memory is repeated several
-> times throughout sdhci_adma_table_pre, and thus should be moved into a
-> common function. This will also be useful if the patch to make the write
-> more efficient is accepted.
-> 
-> ...
->
-> @@ -499,15 +496,9 @@ static int sdhci_adma_table_pre(struct sdhci_host *host,
->  		/*
->  		* Add a terminating entry.
->  		*/
-> -		desc[7] = 0;
-> -		desc[6] = 0;
-> -		desc[5] = 0;
-> -		desc[4] = 0;
-> -
-> -		desc[3] = 0;
-> -		desc[2] = 0;
-> -		desc[1] = 0x00;
-> -		desc[0] = 0x03; /* nop, end, valid */
-> +
-> +		/* nop, end, valid */
-> +		sdhci_set_adma_desc(desc, 0, 0, 0x3);
->  	}
+Signed-off-by: Ben Dooks <ben-linux@fluff.org>
+---
+ arch/arm/mach-s3c2443/clock.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
 
-What kernel are you patching?  Current mainline is different from the above.
+diff --git a/arch/arm/mach-s3c2443/clock.c b/arch/arm/mach-s3c2443/clock.c
+index 1307f69..3fa37aa 100644
+--- a/arch/arm/mach-s3c2443/clock.c
++++ b/arch/arm/mach-s3c2443/clock.c
+@@ -83,10 +83,12 @@ static int s3c2443_clkcon_enable_s(struct clk *clk, int enable)
+ 	return s3c2443_gate(S3C2443_SCLKCON, clk, enable);
+ }
+ 
+-/* s3c2443_roundate_clksrc is close enough to s3c_roundate_clksrc */
+-
+ /* clock selections */
+ 
++/* mpllref is a direct descendant of clk_xtal by default, but it is not
++ * elided as the EPLL can be either sourced by the XTAL or EXTCLK and as
++ * such directly equating the two source clocks is impossible.
++ */
+ static struct clk clk_mpllref = {
+ 	.name		= "mpllref",
+ 	.parent		= &clk_xtal,
+-- 
+1.6.3.3
