@@ -1,36 +1,58 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 2/4] ARM: SAMSUNG: Rename s3c24xx touchscreen interface
-	to s3c
-Date: Sun, 31 Jan 2010 19:11:49 +0100
-Message-ID: <20100131181148.GA1597@ucw.cz>
-References: <b2e8f9f71001221447k897b5cfs213447084543ee55@mail.gmail.com> <20100126145558.GE9153@trinity.fluff.org>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: [PATCH] sdhci: add adma descriptor set call
+Date: Tue, 2 Feb 2010 09:30:31 +0000
+Message-ID: <20100202093031.GA24864@trinity.fluff.org>
+References: <1264656597-19965-1-git-send-email-ben-linux@fluff.org> <1264656597-19965-2-git-send-email-ben-linux@fluff.org> <20100129152035.e04678a7.akpm@linux-foundation.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49320 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752214Ab0AaSLy (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:44495 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755467Ab0BBJai (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 31 Jan 2010 13:11:54 -0500
+	Tue, 2 Feb 2010 04:30:38 -0500
 Content-Disposition: inline
-In-Reply-To: <20100126145558.GE9153@trinity.fluff.org>
+In-Reply-To: <20100129152035.e04678a7.akpm@linux-foundation.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: Maurus Cuelenaere <mcuelenaere@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, pierre@ossman.eu, linux-mmc@vger.kernel.org
 
-On Tue 2010-01-26 14:55:58, Ben Dooks wrote:
-> On Fri, Jan 22, 2010 at 11:47:11PM +0100, Maurus Cuelenaere wrote:
-> > ARM: SAMSUNG: Rename s3c24xx touchscreen interface to s3c
-> > 
-> > Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
+On Fri, Jan 29, 2010 at 03:20:35PM -0800, Andrew Morton wrote:
+> On Thu, 28 Jan 2010 05:29:56 +0000
+> Ben Dooks <ben-linux@fluff.org> wrote:
 > 
-> Renaming for naming sake is in my view just a waste of diff, unless
-> anyone disagrees here.
+> > The code to write the ADMA descriptor into memory is repeated several
+> > times throughout sdhci_adma_table_pre, and thus should be moved into a
+> > common function. This will also be useful if the patch to make the write
+> > more efficient is accepted.
+> > 
+> > ...
+> >
+> > @@ -499,15 +496,9 @@ static int sdhci_adma_table_pre(struct sdhci_host *host,
+> >  		/*
+> >  		* Add a terminating entry.
+> >  		*/
+> > -		desc[7] = 0;
+> > -		desc[6] = 0;
+> > -		desc[5] = 0;
+> > -		desc[4] = 0;
+> > -
+> > -		desc[3] = 0;
+> > -		desc[2] = 0;
+> > -		desc[1] = 0x00;
+> > -		desc[0] = 0x03; /* nop, end, valid */
+> > +
+> > +		/* nop, end, valid */
+> > +		sdhci_set_adma_desc(desc, 0, 0, 0x3);
+> >  	}
+> 
+> What kernel are you patching?  Current mainline is different from the above.
 
-Non-confusing names that you can actually remember are big plus in my
-eyes...
-								Pavel
+This follows Thomas Abraham's ADMA end fixup quirk.
+
 -- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Ben
+
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
