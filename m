@@ -1,28 +1,70 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PULL] Pull request for for-rmk/samsung5
-Date: Tue, 2 Mar 2010 23:43:22 +0000
-Message-ID: <20100302234322.GB29715@n2100.arm.linux.org.uk>
-References: <20100225000919.GA28433@fluff.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Christian Pellegrin <chripell@fsfe.org>
+Subject: [PATCH v2.6.33] fix CONFIG_MTD_NAND_S3C2410_CLKSTOP
+Date: Wed,  3 Mar 2010 08:43:50 +0100
+Message-ID: <1267602230-9810-1-git-send-email-chripell@fsfe.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:34827 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757588Ab0CBXnp (ORCPT
+Received: from qw-out-2122.google.com ([74.125.92.26]:5843 "EHLO
+	qw-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751486Ab0CCHpx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Mar 2010 18:43:45 -0500
-Content-Disposition: inline
-In-Reply-To: <20100225000919.GA28433@fluff.org.uk>
+	Wed, 3 Mar 2010 02:45:53 -0500
+Received: by qw-out-2122.google.com with SMTP id 8so134135qwh.37
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Mar 2010 23:45:53 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: Christian Pellegrin <chripell@fsfe.org>
 
-On Thu, Feb 25, 2010 at 12:09:19AM +0000, Ben Dooks wrote:
->   git://git.fluff.org/bjdooks/linux.git for-rmk/samsung5
+Option CONFIG_MTD_NAND_S3C2410_CLKSTOP was broken by higher MTD layers
+calling select_chip with -1 twice in a row. This patch fixes the problem
+by making sure that clk_disable is not called too many times.
 
-Conflicts in arch/arm/Kconfig and arch/arm/Makefile - please check
-the resulting merge carefully.
+Signed-off-by: Christian Pellegrin <chripell@fsfe.org>
+---
+ drivers/mtd/nand/s3c2410.c |   10 ++++++++--
+ 1 files changed, 8 insertions(+), 2 deletions(-)
 
-Unfortunately, no patch available since devel-stable has multiple
-ancestors.
+diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
+index fa6e9c7..9adecc6 100644
+--- a/drivers/mtd/nand/s3c2410.c
++++ b/drivers/mtd/nand/s3c2410.c
+@@ -37,6 +37,7 @@
+ #include <linux/slab.h>
+ #include <linux/clk.h>
+ #include <linux/cpufreq.h>
++#include <linux/bitops.h>
+ 
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/nand.h>
+@@ -135,6 +136,9 @@ struct s3c2410_nand_info {
+ #ifdef CONFIG_CPU_FREQ
+ 	struct notifier_block	freq_transition;
+ #endif
++#ifdef CONFIG_MTD_NAND_S3C2410_CLKSTOP
++	unsigned long                   clk_running;
++#endif
+ };
+ 
+ /* conversion functions */
+@@ -333,7 +337,8 @@ static void s3c2410_nand_select_chip(struct mtd_info *mtd, int chip)
+ 	nmtd = this->priv;
+ 	info = nmtd->info;
+ 
+-	if (chip != -1 && allow_clk_stop(info))
++	if (chip != -1 && allow_clk_stop(info) &&
++	    !test_and_set_bit(0, &info->clk_running))
+ 		clk_enable(info->clk);
+ 
+ 	cur = readl(info->sel_reg);
+@@ -356,7 +361,8 @@ static void s3c2410_nand_select_chip(struct mtd_info *mtd, int chip)
+ 
+ 	writel(cur, info->sel_reg);
+ 
+-	if (chip == -1 && allow_clk_stop(info))
++	if (chip == -1 && allow_clk_stop(info) &&
++	    test_and_clear_bit(0, &info->clk_running))
+ 		clk_disable(info->clk);
+ }
+ 
+-- 
+1.5.6.5
