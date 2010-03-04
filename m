@@ -1,68 +1,48 @@
-From: Christian Pellegrin <chripell@fsfe.org>
-Subject: [PATCH v2.6.33] Fix GPIOs bank H and J not being preserved during suspend
-Date: Wed,  3 Mar 2010 08:44:14 +0100
-Message-ID: <1267602254-9860-1-git-send-email-chripell@fsfe.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from qw-out-2122.google.com ([74.125.92.26]:5843 "EHLO
-	qw-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751486Ab0CCHqQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Mar 2010 02:46:16 -0500
-Received: by qw-out-2122.google.com with SMTP id 8so134135qwh.37
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Mar 2010 23:46:16 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: [PULL] Pull request for for-rmk/samsung5
+Date: Thu, 4 Mar 2010 23:16:29 +0000
+Message-ID: <20100304231629.GC24864@trinity.fluff.org>
+References: <20100225000919.GA28433@fluff.org.uk>
+	<20100302234322.GB29715@n2100.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <20100302234322.GB29715@n2100.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Christian Pellegrin <chripell@fsfe.org>
 
-This patch adds bank H and J GPIOs (present on S3C244X CPUs) to the list
-of registers that must be saved/resumed during suspend.
+On Tue, Mar 02, 2010 at 11:43:22PM +0000, Russell King - ARM Linux wrote:
+> On Thu, Feb 25, 2010 at 12:09:19AM +0000, Ben Dooks wrote:
+> >   git://git.fluff.org/bjdooks/linux.git for-rmk/samsung5
+> 
+> Conflicts in arch/arm/Kconfig and arch/arm/Makefile - please check
+> the resulting merge carefully.
+> 
+> Unfortunately, no patch available since devel-stable has multiple
+> ancestors.
 
-Signed-off-by: Christian Pellegrin <chripell@fsfe.org>
----
- arch/arm/mach-s3c2410/include/mach/gpio-core.h |    5 +++++
- arch/arm/plat-s3c/pm-gpio.c                    |    4 ++--
- 2 files changed, 7 insertions(+), 2 deletions(-)
+I've pulled the git tree, and there is one minor problem missed due to
+no default support for in any of the s3c_defconfigs for cpu-freq and
+the s3c6400_defconfig currently fails with missing iisv4 device.
 
-diff --git a/arch/arm/mach-s3c2410/include/mach/gpio-core.h b/arch/arm/mach-s3c2410/include/mach/gpio-core.h
-index f8b879a..de9697c 100644
---- a/arch/arm/mach-s3c2410/include/mach/gpio-core.h
-+++ b/arch/arm/mach-s3c2410/include/mach/gpio-core.h
-@@ -24,8 +24,13 @@ static inline struct s3c_gpio_chip *s3c_gpiolib_getchip(unsigned int pin)
- {
- 	struct s3c_gpio_chip *chip;
- 
-+#ifdef CONFIG_CPU_S3C244X
-+	if (pin > S3C2410_GPJ(15))
-+		return NULL;
-+#else
- 	if (pin > S3C2410_GPG(10))
- 		return NULL;
-+#endif
- 
- 	chip = &s3c24xx_gpios[pin/32];
- 	return (S3C2410_GPIO_OFFSET(pin) < chip->chip.ngpio) ? chip : NULL;
-diff --git a/arch/arm/plat-s3c/pm-gpio.c b/arch/arm/plat-s3c/pm-gpio.c
-index cfd326a..b3cc8db 100644
---- a/arch/arm/plat-s3c/pm-gpio.c
-+++ b/arch/arm/plat-s3c/pm-gpio.c
-@@ -343,7 +343,7 @@ void s3c_pm_save_gpios(void)
- 			  ourchip->pm_save[2],
- 			  ourchip->pm_save[3]);
- 
--		gpio_nr += ourchip->chip.ngpio;
-+		gpio_nr += ourchip->chip.ngpio - 1;
- 		gpio_nr += CONFIG_S3C_GPIO_SPACE;
- 	}
- }
-@@ -374,7 +374,7 @@ void s3c_pm_restore_gpios(void)
- 
- 		s3c_pm_resume_gpio(ourchip);
- 
--		gpio_nr += ourchip->chip.ngpio;
-+		gpio_nr += ourchip->chip.ngpio - 1;
- 		gpio_nr += CONFIG_S3C_GPIO_SPACE;
- 	}
- }
+I can build for-rmk/samsung6 from for-rmk/samsung5 with the fixes for
+the audio driver and the cpu-freq in. I'm just awaiting an OK on whether
+to merge the header file fix for the s3c-hsotg driver in with this.
+
 -- 
-1.5.6.5
+Ben
+
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
