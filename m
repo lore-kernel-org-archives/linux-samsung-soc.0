@@ -1,53 +1,60 @@
-From: Thomas Abraham <thomas.ab@samsung.com>
-Subject: [PATCH] S3C: SDHCI: Modify timeout clock calculation.
-Date: Fri, 05 Mar 2010 12:32:43 +0530
-Message-ID: <1267772563-14846-1-git-send-email-thomas.ab@samsung.com>
-Content-Transfer-Encoding: 7BIT
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: [PULL] please pull bjdooks' for-rmk/samsung6
+Date: Sun, 7 Mar 2010 22:58:59 +0000
+Message-ID: <20100307225859.GA28823@fluff.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:49858 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754204Ab0CEHBg (ORCPT
+Received: from aeryn.fluff.org.uk ([87.194.8.8]:40786 "EHLO
+	teyla.home.fluff.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750832Ab0CGW5F (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Mar 2010 02:01:36 -0500
+	Sun, 7 Mar 2010 17:57:05 -0500
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>
+To: rmk@arm.linux.org.uk, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-In sdhci_s3c_set_clock function of S3C SDHCI controller driver, when a new
-clock source is selected, the timeout clock is recalculated. This patch 
-modifies the calculation of the timeout clock based on the 
-SDHCI_TIMEOUT_CLK_UNIT capability which is determined from the 
-SDHCI_CAPABILITIES register.
+this pull fixes the merge problems and bugs found during testing as well
+as fixing the s3c2443 clock code to use the common samsung clock code.
 
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
----
- drivers/mmc/host/sdhci-s3c.c |    6 +++++-
- 1 files changed, 5 insertions(+), 1 deletions(-)
+The following changes since commit d608c738bb8fb37e5fbfcdef9c566764f2fea086:
+  Mark Brown (1):
+        ARM: S3C64XX: Add initial support for board specific IRQs
 
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index 50997d2..ab4641c 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -181,6 +181,7 @@ static void sdhci_s3c_set_clock(struct sdhci_host *host, unsigned int clock)
- 
- 	if (ourhost->cur_clk != best_src) {
- 		struct clk *clk = ourhost->clk_bus[best_src];
-+		unsigned int caps;
- 
- 		/* turn clock off to card before changing clock source */
- 		writew(0, host->ioaddr + SDHCI_CLOCK_CONTROL);
-@@ -188,7 +189,10 @@ static void sdhci_s3c_set_clock(struct sdhci_host *host, unsigned int clock)
- 		ourhost->cur_clk = best_src;
- 		host->max_clk = clk_get_rate(clk);
- 		host->timeout_clk = sdhci_s3c_get_timeout_clk(host);
--
-+		caps = readl(host->ioaddr + SDHCI_CAPABILITIES);
-+		if (caps & SDHCI_TIMEOUT_CLK_UNIT)
-+			host->timeout_clk *= 1000;
-+
- 		ctrl = readl(host->ioaddr + S3C_SDHCI_CONTROL2);
- 		ctrl &= ~S3C_SDHCI_CTRL2_SELBASECLK_MASK;
- 		ctrl |= best_src << S3C_SDHCI_CTRL2_SELBASECLK_SHIFT;
+are available in the git repository at:
+
+  git://git.fluff.org/bjdooks/linux.git for-rmk/samsung6
+
+Ben Dooks (8):
+      ARM: S3C2443: Use common clock gate code
+      ARM: S3C2440: Fix plat-s3c24xx move of s3c2440/s3c2442 support
+      ARM: S3C2443: Change to using plat-samsung clksrc-clk implementation
+      ARM: S3C2443: Further clksrc-clk conversions
+      ARM: S3C2443: Update notes on MPLLREF clock
+      ARM: S3C2443: Remove #if 0 for clk_mpll
+      ARM: S3C2443: Add set_rate and round_rate calls for armdiv clock
+      ARM: Merge next-samsung-s3c2443-clock
+
+Mark Brown (3):
+      ASoC: Fix S3C64xx IIS driver for Samsung header reorg
+      ARM: S3C64XX: Reintroduce unconditional build of audio device
+      USB: Fix s3c-hsotg build following Samsung platform header moves
+
+ .../mach-s3c2410/include/mach/regs-s3c2443-clock.h |   32 +-
+ .../s3c2440-pll-12000000.c                         |    2 +-
+ .../s3c2440-pll-16934400.c                         |    2 +-
+ arch/arm/mach-s3c2443/Kconfig                      |    1 +
+ arch/arm/mach-s3c2443/clock.c                      |  817 +++++++-------------
+ arch/arm/mach-s3c64xx/Makefile                     |    2 +-
+ drivers/usb/gadget/s3c-hsotg.c                     |    2 +-
+ sound/soc/s3c24xx/s3c64xx-i2s.c                    |    4 +-
+ 8 files changed, 267 insertions(+), 595 deletions(-)
+ rename arch/arm/{plat-s3c24xx => mach-s3c2440}/s3c2440-pll-12000000.c (98%)
+ rename arch/arm/{plat-s3c24xx => mach-s3c2440}/s3c2440-pll-16934400.c (99%)
+
+
 -- 
-1.6.6.rc2
+Ben (ben@fluff.org, http://www.fluff.org/)
+
+  'a smiley only costs 4 bytes'
