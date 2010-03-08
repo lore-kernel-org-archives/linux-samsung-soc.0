@@ -1,53 +1,53 @@
 From: Arnaud Patard (Rtp) <arnaud.patard@rtp-net.org>
-Subject: [PATCH] mach-s3c2410/cpu-freq.c: fix build
-Date: Tue, 09 Mar 2010 00:23:27 +0100
-Message-ID: <87aauio0sw.fsf@lechat.rtp-net.org>
+Subject: [PATCH] s3c2410fb: silence warning
+Date: Tue, 09 Mar 2010 00:33:06 +0100
+Message-ID: <876356o0ct.fsf@lechat.rtp-net.org>
 Mime-Version: 1.0
 Content-Type: multipart/mixed; boundary="=-=-="
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lechat.rtp-net.org ([88.191.19.38]:38473 "EHLO
+Received: from lechat.rtp-net.org ([88.191.19.38]:38477 "EHLO
 	lechat.rtp-net.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751070Ab0CHXbJ (ORCPT
+	with ESMTP id S1755682Ab0CHXbT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Mar 2010 18:31:09 -0500
+	Mon, 8 Mar 2010 18:31:19 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-samsung-soc@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
+Cc: Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org
 
 --=-=-=
 
 
-When CPU_FREQ_S3C24XX_DEBUGFS is set and S3C2410_IOTIMING, I'm getting :
 
-arch/arm/mach-s3c2410/built-in.o:(.data+0x218): undefined reference to `s3c2410_iotiming_debugfs'
+When building s3c2410fb with CPU_FREQ set, one gets :
 
-This patch add missing #ifdef
+drivers/video/s3c2410fb.c: In function 's3c2410fb_cpufreq_transition':
+drivers/video/s3c2410fb.c:769: warning: unused variable 'freqs'
+
+Remove this useless declaration to silence the warning.
 
 Signed-off-by: Arnaud Patard <arnaud.patard@rtp-net.org>
 ---
 
 --=-=-=
 Content-Type: text/x-diff
-Content-Disposition: inline;
- filename=s3c2410_iotiming_debugfs_buildfix.patch
+Content-Disposition: inline; filename=fix_fb_warning.patch
 
- arch/arm/mach-s3c2410/cpu-freq.c |    2 	2 +	0 -	0 !
- 1 file changed, 2 insertions(+)
+---
+ drivers/video/s3c2410fb.c |    1 	0 +	1 -	0 !
+ 1 file changed, 1 deletion(-)
 
-Index: linux-2.6/arch/arm/mach-s3c2410/cpu-freq.c
+Index: linux-2.6/drivers/video/s3c2410fb.c
 ===================================================================
---- linux-2.6.orig/arch/arm/mach-s3c2410/cpu-freq.c	2010-03-09 00:11:48.409640117 +0100
-+++ linux-2.6/arch/arm/mach-s3c2410/cpu-freq.c	2010-03-09 00:15:06.641680942 +0100
-@@ -112,7 +112,9 @@ static struct s3c_cpufreq_info s3c2410_c
- 	.set_divs	= s3c2410_cpufreq_setdivs,
- 	.calc_divs	= s3c2410_cpufreq_calcdivs,
- 
-+#ifdef CONFIG_S3C2410_IOTIMING
- 	.debug_io_show	= s3c_cpufreq_debugfs_call(s3c2410_iotiming_debugfs),
-+#endif
- };
- 
- static int s3c2410_cpufreq_add(struct sys_device *sysdev)
+--- linux-2.6.orig/drivers/video/s3c2410fb.c	2010-03-09 00:22:08.317640239 +0100
++++ linux-2.6/drivers/video/s3c2410fb.c	2010-03-09 00:22:33.117640575 +0100
+@@ -766,7 +766,6 @@ static irqreturn_t s3c2410fb_irq(int irq
+ static int s3c2410fb_cpufreq_transition(struct notifier_block *nb,
+ 					unsigned long val, void *data)
+ {
+-	struct cpufreq_freqs *freqs = data;
+ 	struct s3c2410fb_info *info;
+ 	struct fb_info *fbinfo;
+ 	long delta_f;
 
 --=-=-=--
