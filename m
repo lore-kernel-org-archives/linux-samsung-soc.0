@@ -1,60 +1,65 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PULL] please pull bjdooks' for-rmk/samsung6
-Date: Sun, 7 Mar 2010 22:58:59 +0000
-Message-ID: <20100307225859.GA28823@fluff.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Christian Pellegrin <chripell@fsfe.org>
+Subject: [PATCH v2] Fix GPIOs bank H and J not being preserved during suspend
+Date: Mon,  8 Mar 2010 12:21:28 +0100
+Message-ID: <1268047288-11166-1-git-send-email-chripell@fsfe.org>
+References: <cabda6421003080317t37124990v72ac56906719c091@mail.gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from aeryn.fluff.org.uk ([87.194.8.8]:40786 "EHLO
-	teyla.home.fluff.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750832Ab0CGW5F (ORCPT
+Received: from qw-out-2122.google.com ([74.125.92.27]:8591 "EHLO
+	qw-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754154Ab0CHLXp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 7 Mar 2010 17:57:05 -0500
-Content-Disposition: inline
+	Mon, 8 Mar 2010 06:23:45 -0500
+Received: by qw-out-2122.google.com with SMTP id 5so1036530qwd.37
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Mar 2010 03:23:45 -0800 (PST)
+In-Reply-To: <cabda6421003080317t37124990v72ac56906719c091@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: rmk@arm.linux.org.uk, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Christian Pellegrin <chripell@fsfe.org>
 
-this pull fixes the merge problems and bugs found during testing as well
-as fixing the s3c2443 clock code to use the common samsung clock code.
+This patch adds bank H and J GPIOs (present on S3C244X CPUs) to the list
+of registers that must be saved/resumed during suspend.
 
-The following changes since commit d608c738bb8fb37e5fbfcdef9c566764f2fea086:
-  Mark Brown (1):
-        ARM: S3C64XX: Add initial support for board specific IRQs
+Signed-off-by: Christian Pellegrin <chripell@fsfe.org>
+---
+ arch/arm/mach-s3c2410/include/mach/gpio-core.h |    2 +-
+ arch/arm/plat-s3c/pm-gpio.c                    |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-are available in the git repository at:
-
-  git://git.fluff.org/bjdooks/linux.git for-rmk/samsung6
-
-Ben Dooks (8):
-      ARM: S3C2443: Use common clock gate code
-      ARM: S3C2440: Fix plat-s3c24xx move of s3c2440/s3c2442 support
-      ARM: S3C2443: Change to using plat-samsung clksrc-clk implementation
-      ARM: S3C2443: Further clksrc-clk conversions
-      ARM: S3C2443: Update notes on MPLLREF clock
-      ARM: S3C2443: Remove #if 0 for clk_mpll
-      ARM: S3C2443: Add set_rate and round_rate calls for armdiv clock
-      ARM: Merge next-samsung-s3c2443-clock
-
-Mark Brown (3):
-      ASoC: Fix S3C64xx IIS driver for Samsung header reorg
-      ARM: S3C64XX: Reintroduce unconditional build of audio device
-      USB: Fix s3c-hsotg build following Samsung platform header moves
-
- .../mach-s3c2410/include/mach/regs-s3c2443-clock.h |   32 +-
- .../s3c2440-pll-12000000.c                         |    2 +-
- .../s3c2440-pll-16934400.c                         |    2 +-
- arch/arm/mach-s3c2443/Kconfig                      |    1 +
- arch/arm/mach-s3c2443/clock.c                      |  817 +++++++-------------
- arch/arm/mach-s3c64xx/Makefile                     |    2 +-
- drivers/usb/gadget/s3c-hsotg.c                     |    2 +-
- sound/soc/s3c24xx/s3c64xx-i2s.c                    |    4 +-
- 8 files changed, 267 insertions(+), 595 deletions(-)
- rename arch/arm/{plat-s3c24xx => mach-s3c2440}/s3c2440-pll-12000000.c (98%)
- rename arch/arm/{plat-s3c24xx => mach-s3c2440}/s3c2440-pll-16934400.c (99%)
-
-
+diff --git a/arch/arm/mach-s3c2410/include/mach/gpio-core.h b/arch/arm/mach-s3c2410/include/mach/gpio-core.h
+index f8b879a..7c33ecf 100644
+--- a/arch/arm/mach-s3c2410/include/mach/gpio-core.h
++++ b/arch/arm/mach-s3c2410/include/mach/gpio-core.h
+@@ -24,7 +24,7 @@ static inline struct s3c_gpio_chip *s3c_gpiolib_getchip(unsigned int pin)
+ {
+ 	struct s3c_gpio_chip *chip;
+ 
+-	if (pin > S3C2410_GPG(10))
++	if (pin > S3C_GPIO_END)
+ 		return NULL;
+ 
+ 	chip = &s3c24xx_gpios[pin/32];
+diff --git a/arch/arm/plat-s3c/pm-gpio.c b/arch/arm/plat-s3c/pm-gpio.c
+index cfd326a..b3cc8db 100644
+--- a/arch/arm/plat-s3c/pm-gpio.c
++++ b/arch/arm/plat-s3c/pm-gpio.c
+@@ -343,7 +343,7 @@ void s3c_pm_save_gpios(void)
+ 			  ourchip->pm_save[2],
+ 			  ourchip->pm_save[3]);
+ 
+-		gpio_nr += ourchip->chip.ngpio;
++		gpio_nr += ourchip->chip.ngpio - 1;
+ 		gpio_nr += CONFIG_S3C_GPIO_SPACE;
+ 	}
+ }
+@@ -374,7 +374,7 @@ void s3c_pm_restore_gpios(void)
+ 
+ 		s3c_pm_resume_gpio(ourchip);
+ 
+-		gpio_nr += ourchip->chip.ngpio;
++		gpio_nr += ourchip->chip.ngpio - 1;
+ 		gpio_nr += CONFIG_S3C_GPIO_SPACE;
+ 	}
+ }
 -- 
-Ben (ben@fluff.org, http://www.fluff.org/)
-
-  'a smiley only costs 4 bytes'
+1.5.6.5
