@@ -1,42 +1,139 @@
-From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: Re: [PATCH 1/2 v3] ARM: SAMSUNG: Move HWMON from plat-s3c24xx to
-	plat-samsung
-Date: Mon, 8 Mar 2010 20:46:28 +0100
-Message-ID: <b2e8f9f71003081146rf15d89fx2421561dbe82ff6d@mail.gmail.com>
-References: <b2e8f9f71001260316l56cdfc7bv20944b4e3ba3fdf5@mail.gmail.com>
-	<20100126145008.GB9153@trinity.fluff.org> <b2e8f9f71001261615tf492c27o12a3c358defbe39f@mail.gmail.com>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: [PATCH 4/7] ARM: S3C64XX: Add touchscreen platform device
+	definition
+Date: Mon, 8 Mar 2010 19:59:13 +0000
+Message-ID: <20100308195911.GG24864@trinity.fluff.org>
+References: <b2e8f9f71003081038u441531bfsba40c7a11d302ee0@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f209.google.com ([209.85.218.209]:52591 "EHLO
-	mail-bw0-f209.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754623Ab0CHTqt (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:46256 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754623Ab0CHT7O (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Mar 2010 14:46:49 -0500
-Received: by bwz1 with SMTP id 1so3170391bwz.21
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Mar 2010 11:46:48 -0800 (PST)
-In-Reply-To: <b2e8f9f71001261615tf492c27o12a3c358defbe39f@mail.gmail.com>
+	Mon, 8 Mar 2010 14:59:14 -0500
+Content-Disposition: inline
+In-Reply-To: <b2e8f9f71003081038u441531bfsba40c7a11d302ee0@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>
 
-On Wed, Jan 27, 2010 at 01:15, Maurus Cuelenaere <mcuelenaere@gmail.com> wrote:
-> Move HWMON platform definition from plat-s3c24xx to plat-samsung
-> and adjust mach-bast to use the new s3c_hwmon_set_platdata().
->
+On Mon, Mar 08, 2010 at 07:38:53PM +0100, Maurus Cuelenaere wrote:
+
+please don't send patches with no description.
+
 > Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
 > ---
-> Changes since v2:
-> remove EXPORT_SYMBOL
-> add kerneldoc for s3c_hwmon_set_platdata
-> attribute original copyright holder
->
-> Changes since v1:
-> select S3C_DEV_HWMON for mach-bast config
->
+>  arch/arm/mach-s3c64xx/Makefile |    1 +
+>  arch/arm/mach-s3c64xx/dev-ts.c |   61 ++++++++++++++++++++++++++++++++++++++++
+>  arch/arm/plat-samsung/Kconfig  |    6 ++++
+>  3 files changed, 68 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm/mach-s3c64xx/dev-ts.c
+> 
+> diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
+> index d1d341a..02bc97f 100644
+> --- a/arch/arm/mach-s3c64xx/Makefile
+> +++ b/arch/arm/mach-s3c64xx/Makefile
+> @@ -60,3 +60,4 @@ obj-y				+= dev-rtc.o
+>  obj-$(CONFIG_S3C_ADC)		+= dev-adc.o
+>  obj-$(CONFIG_SND_S3C24XX_SOC)	+= dev-audio.o
+>  obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
+> +obj-$(CONFIG_S3C64XX_DEV_TS)  += dev-ts.o
+> diff --git a/arch/arm/mach-s3c64xx/dev-ts.c b/arch/arm/mach-s3c64xx/dev-ts.c
+> new file mode 100644
+> index 0000000..17cc793
+> --- /dev/null
+> +++ b/arch/arm/mach-s3c64xx/dev-ts.c
+> @@ -0,0 +1,61 @@
+> +/* linux/arch/arm/mach-s3c64xx/dev-ts.c
+> + *
+> + * Copyright (c) 2008 Simtec Electronics
+> + *	http://armlinux.simtec.co.uk/
+> + *	Ben Dooks <ben@simtec.co.uk>, <ben-linux@fluff.org>
+> + *
+> + * Adapted by Maurus Cuelenaere for s3c64xx
+> + *
+> + * S3C64XX series device definition for touchscreen device
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/string.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include <mach/irqs.h>
+> +#include <mach/map.h>
+> +
+> +#include <plat/devs.h>
+> +#include <plat/ts.h>
+> +
+> +static struct resource s3c_ts_resource[] = {
+> +	[0] = {
+> +		.start = S3C64XX_PA_ADC,
+> +		.end   = S3C64XX_PA_ADC + SZ_256 - 1,
+> +		.flags = IORESOURCE_MEM,
+> +	},
+> +	[1] = {
+> +		.start = IRQ_TC,
+> +		.end   = IRQ_TC,
+> +		.flags = IORESOURCE_IRQ,
+> +	},
+> +};
+> +
+> +struct platform_device s3c_device_ts = {
+> +	.name		= "s3c64xx-ts",
+> +	.id		= -1,
+> +	.num_resources	= ARRAY_SIZE(s3c_ts_resource),
+> +	.resource	= s3c_ts_resource,
+> +};
+> +
+> +void __init s3c24xx_ts_set_platdata(struct s3c2410_ts_mach_info *pd)
+> +{
+> +	struct s3c2410_ts_mach_info *npd;
+> +
+> +	if (!pd) {
+> +		printk(KERN_ERR "%s: no platform data\n", __func__);
+> +		return;
+> +	}
+> +
+> +	npd = kmemdup(pd, sizeof(struct s3c2410_ts_mach_info), GFP_KERNEL);
+> +	if (!npd)
+> +		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+> +
+> +	s3c_device_ts.dev.platform_data = npd;
+> +}
+> +EXPORT_SYMBOL(s3c24xx_ts_set_platdata);
+> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+> index d552c65..5d3ef35 100644
+> --- a/arch/arm/plat-samsung/Kconfig
+> +++ b/arch/arm/plat-samsung/Kconfig
+> @@ -191,6 +191,12 @@ config S3C64XX_DEV_SPI
+>  	  Compile in platform device definitions for S3C64XX's type
+>  	  SPI controllers.
+> 
+> +config S3C64XX_DEV_TS
+> +	bool
+> +	help
+> +	    Common in platform device definitions for S3C64XX touchscreen
+> +	    device
+> +
+>  # DMA
+> 
+>  config S3C_DMA
+> -- 
+> 1.7.0.1
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Any updates on this?
+-- 
+-- 
+Ben
 
---
-Maurus Cuelenaere
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
