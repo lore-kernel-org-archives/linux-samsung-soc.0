@@ -1,63 +1,40 @@
-From: Maurus Cuelenaere <mcuelenaere-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 1/7] ARM: S3C64XX: Add clock source frequency as driver data
-	to s3c-hsotg
-Date: Mon, 8 Mar 2010 19:38:44 +0100
-Message-ID: <b2e8f9f71003081038v9d94f4bnb49d7407b2bbe095@mail.gmail.com>
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Subject: [PATCH 2/7] USB: gadget: Increase reset timeout in s3c-hsotg
+Date: Mon, 8 Mar 2010 19:38:47 +0100
+Message-ID: <b2e8f9f71003081038u74e256c8u355692816fbe7807@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bw0-f209.google.com ([209.85.218.209]:43223 "EHLO
+	mail-bw0-f209.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755119Ab0CHSjJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 8 Mar 2010 13:39:09 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org
+Cc: Ben Dooks <ben-linux@fluff.org>
 
-Signed-off-by: Maurus Cuelenaere <mcuelenaere-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Increase the timeout when waiting for CSftRst to become deasserted.
+This removes the "reset failed" message on SmartQ 5/7 machines.
+
+Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
 ---
- arch/arm/plat-s3c/include/plat/udc-hs.h |    8 ++++++++
- drivers/usb/gadget/s3c-hsotg.c          |    1 +
- 2 files changed, 9 insertions(+), 0 deletions(-)
+ drivers/usb/gadget/s3c-hsotg.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/plat-s3c/include/plat/udc-hs.h
-b/arch/arm/plat-s3c/include/plat/udc-hs.h
-index dd04db0..0dd69ca 100644
---- a/arch/arm/plat-s3c/include/plat/udc-hs.h
-+++ b/arch/arm/plat-s3c/include/plat/udc-hs.h
-@@ -18,12 +18,20 @@ enum s3c_hostg_dmamode {
- 	S3C_HSOTG_DMA_DRV,	/* DMA is chosen by driver */
- };
-
-+enum s3c_hsotg_clkfreq {
-+	S3C_HSOTG_CLKFREQ_48MHZ = 0,
-+	S3C_HSOTG_CLKFREQ_12MHZ = 2,
-+	S3C_HSOTG_CLKFREQ_24MHZ = 3,
-+};
-+
- /**
-  * struct s3c_hsotg_plat - platform data for high-speed otg/udc
-  * @dma: Whether to use DMA or not.
-  * @is_osc: The clock source is an oscillator, not a crystal
-+ * @clk_sel: Frequency of the clock source
-  */
- struct s3c_hsotg_plat {
- 	enum s3c_hostg_dmamode	dma;
- 	unsigned int		is_osc : 1;
-+	enum s3c_hsotg_clkfreq	clk_sel;
- };
 diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
-index 4b5dbd0..c6240bb 100644
+index 4b5dbd0..6c04c3c 100644
 --- a/drivers/usb/gadget/s3c-hsotg.c
 +++ b/drivers/usb/gadget/s3c-hsotg.c
-@@ -2699,6 +2699,7 @@ static void s3c_hsotg_otgreset(struct s3c_hsotg *hsotg)
- 	mdelay(1);
+@@ -2397,7 +2397,7 @@ static int s3c_hsotg_corereset(struct s3c_hsotg *hsotg)
+ 		return -EINVAL;
+ 	}
 
- 	osc = hsotg->plat->is_osc ? S3C_PHYCLK_EXT_OSC : 0;
-+	osc |= hsotg->plat->clk_sel;
+-	timeout = 1000;
++	timeout = 10000;
 
- 	writel(osc | 0x10, S3C_PHYCLK);
-
+ 	while (1) {
+ 		u32 grstctl = readl(hsotg->regs + S3C_GRSTCTL);
 -- 
 1.7.0.1
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
