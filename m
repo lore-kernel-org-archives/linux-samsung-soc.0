@@ -1,42 +1,63 @@
-From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: [PATCH 0/7]: Add support for SmartQ 5/7 machines (Samsung S3C6410)
-Date: Mon, 8 Mar 2010 19:38:42 +0100
-Message-ID: <b2e8f9f71003081038xb11250egae36cc975ce3e3f3@mail.gmail.com>
+From: Maurus Cuelenaere <mcuelenaere-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/7] ARM: S3C64XX: Add clock source frequency as driver data
+	to s3c-hsotg
+Date: Mon, 8 Mar 2010 19:38:44 +0100
+Message-ID: <b2e8f9f71003081038v9d94f4bnb49d7407b2bbe095@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f209.google.com ([209.85.218.209]:43223 "EHLO
-	mail-bw0-f209.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755099Ab0CHSjE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Mar 2010 13:39:04 -0500
-Received: by bwz1 with SMTP id 1so3099777bwz.21
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Mar 2010 10:39:02 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Ben Dooks <ben-linux@fluff.org>
 
-Hi,
+Signed-off-by: Maurus Cuelenaere <mcuelenaere-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ arch/arm/plat-s3c/include/plat/udc-hs.h |    8 ++++++++
+ drivers/usb/gadget/s3c-hsotg.c          |    1 +
+ 2 files changed, 9 insertions(+), 0 deletions(-)
 
-These patches add basic support for SmartQ machines.
+diff --git a/arch/arm/plat-s3c/include/plat/udc-hs.h
+b/arch/arm/plat-s3c/include/plat/udc-hs.h
+index dd04db0..0dd69ca 100644
+--- a/arch/arm/plat-s3c/include/plat/udc-hs.h
++++ b/arch/arm/plat-s3c/include/plat/udc-hs.h
+@@ -18,12 +18,20 @@ enum s3c_hostg_dmamode {
+ 	S3C_HSOTG_DMA_DRV,	/* DMA is chosen by driver */
+ };
 
-In order to get wifi working, you'll need to enable multiblock in the sdhci-s3c
-driver; which depends on ADMA (I never got multiblock working in PIO mode).
-I'll submit this patch separately.
++enum s3c_hsotg_clkfreq {
++	S3C_HSOTG_CLKFREQ_48MHZ = 0,
++	S3C_HSOTG_CLKFREQ_12MHZ = 2,
++	S3C_HSOTG_CLKFREQ_24MHZ = 3,
++};
++
+ /**
+  * struct s3c_hsotg_plat - platform data for high-speed otg/udc
+  * @dma: Whether to use DMA or not.
+  * @is_osc: The clock source is an oscillator, not a crystal
++ * @clk_sel: Frequency of the clock source
+  */
+ struct s3c_hsotg_plat {
+ 	enum s3c_hostg_dmamode	dma;
+ 	unsigned int		is_osc : 1;
++	enum s3c_hsotg_clkfreq	clk_sel;
+ };
+diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
+index 4b5dbd0..c6240bb 100644
+--- a/drivers/usb/gadget/s3c-hsotg.c
++++ b/drivers/usb/gadget/s3c-hsotg.c
+@@ -2699,6 +2699,7 @@ static void s3c_hsotg_otgreset(struct s3c_hsotg *hsotg)
+ 	mdelay(1);
 
-All other drivers seem to work, except for s3c-hsotg.
+ 	osc = hsotg->plat->is_osc ? S3C_PHYCLK_EXT_OSC : 0;
++	osc |= hsotg->plat->clk_sel;
 
-Sound support will follow later, haven't got that working fully yet.
+ 	writel(osc | 0x10, S3C_PHYCLK);
 
-Maurus Cuelenaere (7):
-  ARM: S3C64XX: Add clock source frequency as driver data to s3c-hsotg
-  USB: gadget: Increase reset timeout in s3c-hsotg
-  ARM: SAMSUNG: Move mach/ts.h to plat/ts.h
-  ARM: S3C64XX: Add touchscreen platform device definition
-  ARM: S3C64XX: Add s3c64xx support to touchscreen driver
-  ARM: SAMSUNG: Add broken_card_detection field to HSMMC platform data
-  ARM: S3C6410: Add basic support for SmartQ machines
-
+-- 
+1.7.0.1
 --
-Maurus Cuelenaere
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
