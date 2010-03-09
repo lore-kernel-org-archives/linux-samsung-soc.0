@@ -1,89 +1,113 @@
 From: Thomas Abraham <thomas.ab@samsung.com>
-Subject: [PATCH] ARM: S5P: Add SCLK SDHCI configuration functionality
-Date: Tue, 09 Mar 2010 19:09:18 +0530
-Message-ID: <1268141958-10910-1-git-send-email-thomas.ab@samsung.com>
+Subject: [PATCH] S5P6440: Add support for SDHCI interface.
+Date: Tue, 09 Mar 2010 19:09:46 +0530
+Message-ID: <1268141986-10983-1-git-send-email-thomas.ab@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:43008 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752624Ab0CINiX (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:59063 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751306Ab0CINij (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Mar 2010 08:38:23 -0500
-Received: from epmmp2 (mailout1.samsung.com [203.254.224.24])
+	Tue, 9 Mar 2010 08:38:39 -0500
+Received: from epmmp2 (mailout4.samsung.com [203.254.224.34])
  by mailout1.samsung.com
  (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0KZ000ILSOJLF7@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 09 Mar 2010 22:38:10 +0900 (KST)
+ with ESMTP id <0KZ000JWOOKEYG@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 09 Mar 2010 22:38:38 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.37])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0KZ000B8TOJIBI@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 09 Mar 2010 22:38:09 +0900 (KST)
+ with ESMTPA id <0KZ0009BGOKAB7@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 09 Mar 2010 22:38:38 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 
-The SDHCI SCLK clock in Samsung's S5P SoC's can be configured for required
-clock speeds. This patch adds SDHCI SCLK configuration functionality for
-S5P SoC's.
+This patch adds support for SDHCI interface for Samsung's S5P6440 SoC.
 
 Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 ---
- arch/arm/plat-s5p/clock.c                  |   21 +++++++++++++++++++++
- arch/arm/plat-s5p/include/plat/s5p-clock.h |    2 ++
- 2 files changed, 23 insertions(+), 0 deletions(-)
+ arch/arm/mach-s5p6440/Kconfig            |    9 +++++++++
+ arch/arm/mach-s5p6440/cpu.c              |    4 ++++
+ arch/arm/mach-s5p6440/include/mach/map.h |    3 +++
+ arch/arm/plat-s5p/include/plat/s5p6440.h |    1 +
+ drivers/mmc/host/Kconfig                 |    2 +-
+ 5 files changed, 18 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/plat-s5p/clock.c b/arch/arm/plat-s5p/clock.c
-index aa96e33..12970ed 100644
---- a/arch/arm/plat-s5p/clock.c
-+++ b/arch/arm/plat-s5p/clock.c
-@@ -19,11 +19,13 @@
- #include <linux/clk.h>
- #include <linux/sysdev.h>
- #include <linux/io.h>
-+#include <linux/platform_device.h>
- #include <asm/div64.h>
+diff --git a/arch/arm/mach-s5p6440/Kconfig b/arch/arm/mach-s5p6440/Kconfig
+index 4c29ff8..7a73ae2 100644
+--- a/arch/arm/mach-s5p6440/Kconfig
++++ b/arch/arm/mach-s5p6440/Kconfig
+@@ -12,9 +12,18 @@ config CPU_S5P6440
+ 	help
+ 	  Enable S5P6440 CPU support
  
- #include <plat/clock.h>
- #include <plat/clock-clksrc.h>
- #include <plat/s5p-clock.h>
-+#include <plat/sdhci.h>
- 
- /* fin_apll, fin_mpll and fin_epll are all the same clock, which we call
-  * clk_ext_xtal_mux.
-@@ -147,3 +149,22 @@ void __init s5p_register_clocks(unsigned long xtal_freq)
- 	if (ret > 0)
- 		printk(KERN_ERR "Failed to register s5p clocks\n");
- }
++config S5P6440_SETUP_SDHCI
++	bool
++	help
++	  Internal configuration for default SDHCI setup for S5P6440 SoC.
 +
+ config MACH_SMDK6440
+ 	bool "SMDK6440"
+ 	select CPU_S5P6440
++	select S5P6440_SETUP_SDHCI
++	select S3C_DEV_HSMMC
++	select S3C_DEV_HSMMC1
++	select S3C_DEV_HSMMC2
+ 	help
+ 	  Machine support for the Samsung SMDK6440
+ 
+diff --git a/arch/arm/mach-s5p6440/cpu.c b/arch/arm/mach-s5p6440/cpu.c
+index 1794131..16f6f0d 100644
+--- a/arch/arm/mach-s5p6440/cpu.c
++++ b/arch/arm/mach-s5p6440/cpu.c
+@@ -107,6 +107,10 @@ int __init s5p6440_init(void)
+ {
+ 	printk(KERN_INFO "S5P6440: Initializing architecture\n");
+ 
 +#ifdef CONFIG_MMC_SDHCI_S3C
-+int s5p_setup_sdhci_sclk(struct platform_device *pdev, struct clk *parent)
-+{
-+	struct s3c_sdhci_platdata *pdata = pdev->dev.platform_data;
-+	struct device *dev = &pdev->dev;
-+	struct clk *sclk_mmc;
++	s5p6440_setup_sdhci();
++#endif
 +
-+	sclk_mmc = clk_get(dev, "mmc_bus");
-+	if (IS_ERR(sclk_mmc)) {
-+		dev_err(dev, "failed to get mmc_bus clock\n");
-+		return PTR_ERR(sclk_mmc);
-+	}
-+
-+	sclk_mmc->ops->set_parent(sclk_mmc, parent);
-+	sclk_mmc->ops->set_rate(sclk_mmc, pdata->sclk_mmc_freq);
-+	return 0;
-+}
-+#endif /* CONFIG_MMC_SDHCI_S3C */
-diff --git a/arch/arm/plat-s5p/include/plat/s5p-clock.h b/arch/arm/plat-s5p/include/plat/s5p-clock.h
-index 56fb8b4..3855f74 100644
---- a/arch/arm/plat-s5p/include/plat/s5p-clock.h
-+++ b/arch/arm/plat-s5p/include/plat/s5p-clock.h
-@@ -36,5 +36,7 @@ extern struct clksrc_sources clk_src_epll;
+ 	/* set idle function */
+ 	pm_idle = s5p6440_idle;
  
- extern int s5p6440_clk48m_ctrl(struct clk *clk, int enable);
- extern int s5p_gatectrl(void __iomem *reg, struct clk *clk, int enable);
-+extern int s5p_setup_sdhci_sclk(struct platform_device *pdev,
-+					struct clk *parent);
+diff --git a/arch/arm/mach-s5p6440/include/mach/map.h b/arch/arm/mach-s5p6440/include/mach/map.h
+index 8924e5a..abf462b 100644
+--- a/arch/arm/mach-s5p6440/include/mach/map.h
++++ b/arch/arm/mach-s5p6440/include/mach/map.h
+@@ -64,5 +64,8 @@
+ /* compatibiltiy defines. */
+ #define S3C_PA_UART		S5P6440_PA_UART
+ #define S3C_PA_IIC		S5P6440_PA_IIC0
++#define S3C_PA_HSMMC0           S5P6440_PA_HSMMC0
++#define S3C_PA_HSMMC1           S5P6440_PA_HSMMC1
++#define S3C_PA_HSMMC2           S5P6440_PA_HSMMC2
  
- #endif /* __ASM_PLAT_S5P_CLOCK_H */
+ #endif /* __ASM_ARCH_MAP_H */
+diff --git a/arch/arm/plat-s5p/include/plat/s5p6440.h b/arch/arm/plat-s5p/include/plat/s5p6440.h
+index a4cd75a..0ca8daf 100644
+--- a/arch/arm/plat-s5p/include/plat/s5p6440.h
++++ b/arch/arm/plat-s5p/include/plat/s5p6440.h
+@@ -15,6 +15,7 @@
+ extern void s5p6440_common_init_uarts(struct s3c2410_uartcfg *cfg, int no);
+ extern void s5p6440_register_clocks(void);
+ extern void s5p6440_setup_clocks(void);
++extern void s5p6440_setup_sdhci(void);
+ 
+ #ifdef CONFIG_CPU_S5P6440
+ 
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index ce1d288..811d00b 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -127,7 +127,7 @@ config MMC_SDHCI_PLTFM
+ 
+ config MMC_SDHCI_S3C
+ 	tristate "SDHCI support on Samsung S3C SoC"
+-	depends on MMC_SDHCI && (PLAT_S3C24XX || PLAT_S3C64XX)
++	depends on MMC_SDHCI && (PLAT_S3C24XX || PLAT_S3C64XX || PLAT_S5P)
+ 	help
+ 	  This selects the Secure Digital Host Controller Interface (SDHCI)
+ 	  often referrered to as the HSMMC block in some of the Samsung S3C
 -- 
 1.6.6.rc2
