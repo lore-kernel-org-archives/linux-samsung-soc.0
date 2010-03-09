@@ -1,137 +1,158 @@
 From: Thomas Abraham <thomas.ab@samsung.com>
-Subject: [PATCH] S5P6440: Add support for SDHCI on SMDK6440 board.
-Date: Tue, 09 Mar 2010 19:09:57 +0530
-Message-ID: <1268141997-11015-1-git-send-email-thomas.ab@samsung.com>
+Subject: [PATCH] S5P6440: SDHCI: Add SDHCI card and GPIO configuration support
+Date: Tue, 09 Mar 2010 19:09:33 +0530
+Message-ID: <1268141973-10942-1-git-send-email-thomas.ab@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:64604 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752671Ab0CINiy (ORCPT
+Received: from mailout5.samsung.com ([203.254.224.35]:42908 "EHLO
+	mailout5.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751306Ab0CINiv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Mar 2010 08:38:54 -0500
-Received: from epmmp2 (mailout3.samsung.com [203.254.224.33])
+	Tue, 9 Mar 2010 08:38:51 -0500
+Received: from epmmp2 (mailout5.samsung.com [203.254.224.35])
  by mailout1.samsung.com
  (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0KZ0006IXOKSH8@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 09 Mar 2010 22:38:52 +0900 (KST)
+ with ESMTP id <0KZ0006U6OK1EF@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 09 Mar 2010 22:38:25 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.37])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0KZ0009J9OKL3Y@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 09 Mar 2010 22:38:52 +0900 (KST)
+ with ESMTPA id <0KZ000BITOJXIN@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 09 Mar 2010 22:38:24 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 
-This patch adds support for SDHCI interface on SMDK6440 board.
+This patch adds SDHCI card and GPIO configuration support for
+Samsung's S5P6440 SoC.
 
 Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 ---
- arch/arm/mach-s5p6440/mach-smdk6440.c |   69 +++++++++++++++++++++++++++++++++
- 1 files changed, 69 insertions(+), 0 deletions(-)
+ arch/arm/mach-s5p6440/Makefile      |    1 +
+ arch/arm/mach-s5p6440/setup-sdhci.c |  104 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 105 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5p6440/setup-sdhci.c
 
-diff --git a/arch/arm/mach-s5p6440/mach-smdk6440.c b/arch/arm/mach-s5p6440/mach-smdk6440.c
-index 3ae88f2..e039128 100644
---- a/arch/arm/mach-s5p6440/mach-smdk6440.c
-+++ b/arch/arm/mach-s5p6440/mach-smdk6440.c
-@@ -20,6 +20,7 @@
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/clk.h>
-+#include <linux/irq.h>
+diff --git a/arch/arm/mach-s5p6440/Makefile b/arch/arm/mach-s5p6440/Makefile
+index 70fbf32..8110570 100644
+--- a/arch/arm/mach-s5p6440/Makefile
++++ b/arch/arm/mach-s5p6440/Makefile
+@@ -13,6 +13,7 @@ obj-				:=
+ # Core support for S5P6440 system
  
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
-@@ -38,6 +39,12 @@
- #include <plat/devs.h>
- #include <plat/cpu.h>
- #include <plat/pll.h>
+ obj-$(CONFIG_CPU_S5P6440)		+= cpu.o init.o clock.o gpio.o irq-eint.o
++obj-$(CONFIG_S5P6440_SETUP_SDHCI)	+= setup-sdhci.o
+ 
+ # machine support
+ 
+diff --git a/arch/arm/mach-s5p6440/setup-sdhci.c b/arch/arm/mach-s5p6440/setup-sdhci.c
+new file mode 100644
+index 0000000..e1c3b1a
+--- /dev/null
++++ b/arch/arm/mach-s5p6440/setup-sdhci.c
+@@ -0,0 +1,104 @@
++/* linux/arch/arm/mach-s5p6440/setup-sdhci.c
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ * Based on arch/arm/mach-s3c64xx/setup-sdhci.c
++ *
++ * S3C6440 - Helper functions for settign up SDHCI device(s) (HSMMC)
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/kernel.h>
++#include <linux/types.h>
++#include <linux/interrupt.h>
++#include <linux/platform_device.h>
++#include <linux/io.h>
++
++#include <linux/mmc/card.h>
++#include <linux/mmc/host.h>
++
++#include <plat/regs-sdhci.h>
 +#include <plat/sdhci.h>
-+#include <plat/s5p-clock.h>
 +
 +#include <mach/gpio.h>
-+#include <plat/gpio-core.h>
 +#include <plat/gpio-cfg.h>
- 
- #define S5P6440_UCON_DEFAULT    (S3C2410_UCON_TXILEVEL |	\
- 				S3C2410_UCON_RXILEVEL |		\
-@@ -84,6 +91,10 @@ static struct s3c2410_uartcfg smdk6440_uartcfgs[] __initdata = {
- };
- 
- static struct platform_device *smdk6440_devices[] __initdata = {
-+#ifdef CONFIG_MMC_SDHCI_S3C
-+	&s3c_device_hsmmc0,
-+	&s3c_device_hsmmc1,
-+#endif
- };
- 
- static void __init smdk6440_map_io(void)
-@@ -93,9 +104,67 @@ static void __init smdk6440_map_io(void)
- 	s3c24xx_init_uarts(smdk6440_uartcfgs, ARRAY_SIZE(smdk6440_uartcfgs));
- }
- 
-+#ifdef CONFIG_MMC_SDHCI_S3C
-+static void smdk6440_sdhci0_cfg_ext_cd(void)
++#include <mach/regs-gpio.h>
++
++/* clock sources for the mmc bus clock, order as for the ctrl2[5..4] */
++static char *s5p6440_hsmmc_clksrcs[4] = {
++	[0] = "hsmmc",
++	[1] = "hsmmc",
++	[2] = "mmc_bus",
++};
++
++static void s5p6440_setup_sdhci_cfg_card(struct platform_device *dev,
++				  void __iomem *r,
++				  struct mmc_ios *ios,
++				  struct mmc_card *card)
 +{
-+	s3c_gpio_cfgpin(S5P6440_GPN(8), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(S5P6440_GPN(8), S3C_GPIO_PULL_NONE);
-+	set_irq_type(IRQ_EINT(8), IRQ_TYPE_EDGE_BOTH);
++	u32 ctrl2, ctrl3 = 0;
++
++	writel(S3C64XX_SDHCI_CONTROL4_DRIVE_9mA, r + S3C64XX_SDHCI_CONTROL4);
++
++	ctrl2 = readl(r + S3C_SDHCI_CONTROL2);
++	ctrl2 &= S3C_SDHCI_CTRL2_SELBASECLK_MASK;
++	ctrl2 |= (S3C64XX_SDHCI_CTRL2_ENSTAASYNCCLR |
++		  S3C64XX_SDHCI_CTRL2_ENCMDCNFMSK |
++		  S3C_SDHCI_CTRL2_DFCNT_NONE |
++		  S3C_SDHCI_CTRL2_ENCLKOUTHOLD | (2<<4));
++
++	printk(KERN_INFO "%s: CTRL 2=%08x, 3=%08x\n", __func__, ctrl2, ctrl3);
++	writel(ctrl2, r + S3C_SDHCI_CONTROL2);
++	writel(ctrl3, r + S3C_SDHCI_CONTROL3);
 +}
 +
-+static u32 smdk6440_sdhci0_card_detect(void)
++static void s5p6440_setup_sdhci0_cfg_gpio(struct platform_device *dev,
++						int width)
 +{
-+	struct s3c_gpio_chip *chip = s3c_gpiolib_getchip(S5P6440_GPN(8));
-+	struct gpio_chip *gc = &chip->chip;
-+	u32 present;
-+	int offset;
++	unsigned int gpio;
++	unsigned int end;
 +
-+	offset = S5P6440_GPN(8) - chip->chip.base;
-+	present = gc->get(gc, offset);
-+	return !present;
++	end = S5P6440_GPG(2 + width);
++
++	/* Set all the necessary GPG pins to special-function 0 */
++	for (gpio = S5P6440_GPG(0); gpio < end; gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++	}
 +}
 +
-+static void smdk6440_sdhci_setup_clocks(struct platform_device *pdev)
++static void s5p6440_setup_sdhci1_cfg_gpio(struct platform_device *dev,
++						int width)
 +{
-+	struct device *dev = &pdev->dev;
-+	struct clk *parent;
++	unsigned int gpio;
++	unsigned int end;
 +
-+	parent = clk_get(NULL, "dout_mpll");
-+	if (IS_ERR(parent)) {
-+		dev_err(dev, "failed to get parent clock of mmc_bus clock\n");
-+		return;
++	end = S5P6440_GPH(2 + width);
++
++	/* Set all the necessary GPG pins to special-function 0 */
++	for (gpio = S5P6440_GPH(0); gpio < end; gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
 +	}
 +
-+	if (!s5p_setup_sdhci_sclk(pdev, parent))
-+		clk_put(parent);
++	s3c_gpio_setpull(S5P6440_GPG(6), S3C_GPIO_PULL_UP);
++	s3c_gpio_cfgpin(S5P6440_GPG(6), S3C_GPIO_SFN(3));
 +}
 +
-+static void __init smdk6440_sdhci_setup_platdata(void)
++void s5p6440_setup_sdhci(void)
 +{
 +	struct s3c_sdhci_platdata *pdata;
 +
-+	/* SDHCI Slot 0 platform data */
-+	/* SMDK6440 uses EINT(8) for SD/MMC card detection for slot 0 */
 +	pdata = &s3c_hsmmc0_def_platdata;
-+	pdata->cfg_ext_cd = smdk6440_sdhci0_cfg_ext_cd;
-+	pdata->is_card_present = smdk6440_sdhci0_card_detect;
-+	pdata->ext_cd = S5P_EINT(8);
-+	pdata->cfg_clocks = smdk6440_sdhci_setup_clocks;
-+	pdata->sclk_mmc_freq = 50 * MHZ;
++	pdata->clocks = s5p6440_hsmmc_clksrcs;
++	pdata->cfg_gpio = s5p6440_setup_sdhci0_cfg_gpio;
++	pdata->cfg_card = s5p6440_setup_sdhci_cfg_card;
 +
-+	/* SDHCI Slot 1 platform data */
 +	pdata = &s3c_hsmmc1_def_platdata;
-+	s3c_hsmmc1_def_platdata.cfg_clocks = smdk6440_sdhci_setup_clocks;
-+	s3c_hsmmc1_def_platdata.sclk_mmc_freq = 50 * MHZ;
++	pdata->clocks = s5p6440_hsmmc_clksrcs;
++	pdata->cfg_gpio = s5p6440_setup_sdhci1_cfg_gpio;
++	pdata->cfg_card = s5p6440_setup_sdhci_cfg_card;
 +}
-+#endif /* CONFIG_MMC_SDHCI_S3C */
-+
- static void __init smdk6440_machine_init(void)
- {
- 	platform_add_devices(smdk6440_devices, ARRAY_SIZE(smdk6440_devices));
-+#ifdef CONFIG_MMC_SDHCI_S3C
-+	smdk6440_sdhci_setup_platdata();
-+#endif
- }
- 
- MACHINE_START(SMDK6440, "SMDK6440")
 -- 
 1.6.6.rc2
