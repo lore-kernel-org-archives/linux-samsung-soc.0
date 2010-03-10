@@ -1,54 +1,41 @@
-From: "Martin Krause" <Martin.Krause@tqs.de>
-Subject: RE: spi_s3c64xx.c - plat/spi.h: No such file or directory
-Date: Wed, 10 Mar 2010 15:04:23 +0100
-Message-ID: <47F3F98010FF784EBEE6526EAAB078D10635E688@tq-mailsrv.tq-net.de>
-References: <1b68c6791003100040m519ceb3bo8cd8cf987f043c68@mail.gmail.com>
+From: Frans Pop <elendil@planet.nl>
+Subject: Re: spi_s3c64xx.c - plat/spi.h: No such file or directory
+Date: Wed, 10 Mar 2010 17:17:09 +0100
+Message-ID: <201003101717.09810.elendil@planet.nl>
+References: <201003100911.06148.elendil@planet.nl> <1b68c6791003100040m519ceb3bo8cd8cf987f043c68@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.tqs.de ([62.157.136.17]:23340 "EHLO mail.tqs.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753023Ab0CJOQQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Mar 2010 09:16:16 -0500
-Content-class: urn:content-classes:message
+Received: from Cpsmtpm-eml108.kpnxchange.com ([195.121.3.12]:52956 "EHLO
+	CPSMTPM-EML108.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750839Ab0CJQRM convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 10 Mar 2010 11:17:12 -0500
 In-Reply-To: <1b68c6791003100040m519ceb3bo8cd8cf987f043c68@mail.gmail.com>
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jassi brar <jassisinghbrar@gmail.com>, Frans Pop <elendil@planet.nl>
+To: jassi brar <jassisinghbrar@gmail.com>
 Cc: linux-samsung-soc@vger.kernel.org
 
-SGkgRnJhbnMsDQpoaSBKYXNzaSwNCg0KbGludXgtc2Ftc3VuZy1zb2Mtb3duZXJAdmdlci5rZXJu
-ZWwub3JnIHdyb3RlIG9uIFdlZG5lc2RheSwgTWFyY2ggMTAsDQoyMDEwIDk6NDAgQU06IA0KPiBP
-biBXZWQsIE1hciAxMCwgMjAxMCBhdCA1OjExIFBNLCBGcmFucyBQb3AgPGVsZW5kaWxAcGxhbmV0
-Lm5sPiB3cm90ZToNCj4+IFdoZW4gYnVpbGRpbmcgd2l0aCBhbiBTTURLNjQxMCBjb25maWcgd2l0
-aCBDT05GSUdfU1BJX1MzQzY0WFg9bSBJDQo+PiBnZXQgdGhlIGZvbGxvd2luZyBjb21waWxhdGlv
-biBlcnJvcjogDQo+PiANCj4+IENDIFtNXSDCoGRyaXZlcnMvc3BpL3NwaV9zM2M2NHh4Lm8NCj4+
-IGRyaXZlcnMvc3BpL3NwaV9zM2M2NHh4LmM6MzE6MjI6IGVycm9yOiBwbGF0L3NwaS5oOiBObyBz
-dWNoIGZpbGUgb3INCj4+IGRpcmVjdG9yeSANCj4+IA0KPj4gVGhpcyBpcyB3aXRoIEJlbiBEb29r
-cycgbmV4dC1zYW1zdW5nIGJyYW5jaCBtZXJnZWQgaW50byAyLjYuMzMuDQoNCkl0J3MgZnVubnks
-IEkgdHJpZWQgdGhlIHNhbWUgeWVzdGVyZGF5LCB3aXRoIHRoZSBuZXh0LXNhbXN1bmctNjQxMA0K
-a2VybmVsIGFuZCBydW4gaW50byB0aGUgc2FtZSBlcnJvciBtZXNzYWdlLg0KDQpPbiB0aGUgbWFp
-bGluZyBsaXN0IEkgZm91bmQgdGhlIHBhdGNoICJbUEFUQ0ggMy82XSBTM0M2NFhYIFNQSTogSGVh
-ZGVyIA0KZm9yIHBhc3NpbmcgcGxhdGZvcm0gZGF0YSIgZnJvbSAyMXRoIE5vdmVtYmVyIDIwMDks
-IHdoaWNoIEkgdHJpZWQuDQpUaGlzIHNlZW1zIHRvIHdvcmsuIFRoZW4gSSB0cmllZCB0byBhcHBs
-eSB0aGUgcGF0Y2ggIltQQVRDSCA2LzZdIA0KU01ESzY0MTAgU1BJOiBBZGRlZCBzcGlkZXYgc3Vw
-cG9ydCBhcyBhbiBleGFtcGxlIiB0byBnZXQgdGhlIFNQSQ0KZHJpdmVyIGluaXRpYWxpemVkIG9u
-IHRoZSBTTURLNjQxMCBib2FyZC4gQnV0IHRoaXMgbGVhZHMgdG8gb3RoZXINCmNvbXBpbGUgZXJy
-b3JzOg0KDQpsaW51eC0yLjYtc2Ftc3VuZy9hcmNoL2FybS9tYWNoLXMzYzY0MTAvbWFjaC1zbWRr
-NjQxMC5jOjQ4NDogdW5kZWZpbmVkIHJlZmVyZW5jZSB0byBgczNjNjR4eF9zcGlfc2V0X2luZm8n
-DQphcmNoL2FybS9tYWNoLXMzYzY0MTAvYnVpbHQtaW4ubzooLmluaXQuZGF0YSsweDkwKTogdW5k
-ZWZpbmVkIHJlZmVyZW5jZSB0byBgczNjNjR4eF9kZXZpY2Vfc3BpMCcNCm1ha2U6ICoqKiBbLnRt
-cF92bWxpbnV4MV0gRXJyb3IgMQ0KDQpBbmQgb25jZSBkZXYtc3BpLmMgaXMgY29tcGlsZWQgaW50
-byB0aGUga2VybmVsIC0gdG8gcmVzb2x2ZSB0aGUgDQp1bmRlZmluZWQgcmVmZXJlbmNlIGVycm9y
-IC0gdGhlIGtlcm5lbCBjcmFzaGVzIGR1cmluZyBib290dXAgDQooPDQ+U0xVQjogVW5hYmxlIHRv
-IGFsbG9jYXRlIG1lbW9yeSBvbiBub2RlIC0xIC4uLikuIEFmdGVyIHRoaXMgDQpJIGdhdmUgdXAu
-DQoNCj4gVGhlcmUgaGFzIHJlY2VudGx5IGJlZW4gYSBtYWpvciBzaHVmZmxlIG9mIGhlYWRlcnMg
-aW4gcGxhdCBhbmQgbWFjaCwNCj4gcGxlYXNlIHRlc3QgYWdhaW5zdCBzb21lIHVubW9kaWZpZWQg
-a2VybmVsIGFuZCBsZXQgbWUga25vdyB3aGljaCBvbmUNCj4gaWYgdGhlIGVycm9yIHN0aWxsIG9j
-Y3Vycy4gTWF5YmUgeW91KG9yIEkpIGNhbiBzdWJtaXQgYSBmaXggdXBzdHJlYW0uDQoNCldoYXQg
-ZG8geW91IG1lYW4gd2l0aCAndW5tb2RpZmllZCBrZXJuZWwnPyBXaGVyZSBjYW4gSSBmaW5kIHRo
-ZQ0KbGF0ZXN0IEtlcm5lbCB3aXRoIFMzQzY0MTAgc3VwcG9ydD8NCg0KUmVnYXJkcywNCk1hcnRp
-bg0K
+On Wednesday 10 March 2010, jassi brar wrote:
+> On Wed, Mar 10, 2010 at 5:11 PM, Frans Pop <elendil@planet.nl> wrote:
+> > When building with an SMDK6410 config with CONFIG_SPI_S3C64XX=3Dm I=
+ get
+> > the following compilation error:
+> >
+> > CC [M] =C2=A0drivers/spi/spi_s3c64xx.o
+> > drivers/spi/spi_s3c64xx.c:31:22: error: plat/spi.h: No such file or
+> > directory
+> >
+> > This is with Ben Dooks' next-samsung branch merged into 2.6.33.
+>
+> There has recently been a major shuffle of headers in plat and mach,
+> please test against some unmodified kernel and let me know which one
+> if the error still occurs. Maybe you(or I) can submit a fix upstream.
+
+The same error occurs with vanilla 2.6.33.
+
+Cheers,
+=46JP
