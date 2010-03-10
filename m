@@ -1,29 +1,54 @@
-From: Frans Pop <elendil@planet.nl>
-Subject: spi_s3c64xx.c - plat/spi.h: No such file or directory
-Date: Wed, 10 Mar 2010 09:11:04 +0100
-Message-ID: <201003100911.06148.elendil@planet.nl>
+From: "Martin Krause" <Martin.Krause@tqs.de>
+Subject: RE: spi_s3c64xx.c - plat/spi.h: No such file or directory
+Date: Wed, 10 Mar 2010 15:04:23 +0100
+Message-ID: <47F3F98010FF784EBEE6526EAAB078D10635E688@tq-mailsrv.tq-net.de>
+References: <1b68c6791003100040m519ceb3bo8cd8cf987f043c68@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+	charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpm-eml104.kpnxchange.com ([195.121.3.8]:62334 "EHLO
-	CPSMTPM-EML104.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755248Ab0CJILK (ORCPT
+Received: from mail.tqs.de ([62.157.136.17]:23340 "EHLO mail.tqs.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753023Ab0CJOQQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Mar 2010 03:11:10 -0500
-Content-Disposition: inline
+	Wed, 10 Mar 2010 09:16:16 -0500
+Content-class: urn:content-classes:message
+In-Reply-To: <1b68c6791003100040m519ceb3bo8cd8cf987f043c68@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: jassi brar <jassisinghbrar@gmail.com>, Frans Pop <elendil@planet.nl>
+Cc: linux-samsung-soc@vger.kernel.org
 
-When building with an SMDK6410 config with CONFIG_SPI_S3C64XX=m I get the
-following compilation error:
-
-CC [M]  drivers/spi/spi_s3c64xx.o
-drivers/spi/spi_s3c64xx.c:31:22: error: plat/spi.h: No such file or directory
-
-This is with Ben Dooks' next-samsung branch merged into 2.6.33.
-
-Cheers,
-FJP
+SGkgRnJhbnMsDQpoaSBKYXNzaSwNCg0KbGludXgtc2Ftc3VuZy1zb2Mtb3duZXJAdmdlci5rZXJu
+ZWwub3JnIHdyb3RlIG9uIFdlZG5lc2RheSwgTWFyY2ggMTAsDQoyMDEwIDk6NDAgQU06IA0KPiBP
+biBXZWQsIE1hciAxMCwgMjAxMCBhdCA1OjExIFBNLCBGcmFucyBQb3AgPGVsZW5kaWxAcGxhbmV0
+Lm5sPiB3cm90ZToNCj4+IFdoZW4gYnVpbGRpbmcgd2l0aCBhbiBTTURLNjQxMCBjb25maWcgd2l0
+aCBDT05GSUdfU1BJX1MzQzY0WFg9bSBJDQo+PiBnZXQgdGhlIGZvbGxvd2luZyBjb21waWxhdGlv
+biBlcnJvcjogDQo+PiANCj4+IENDIFtNXSDCoGRyaXZlcnMvc3BpL3NwaV9zM2M2NHh4Lm8NCj4+
+IGRyaXZlcnMvc3BpL3NwaV9zM2M2NHh4LmM6MzE6MjI6IGVycm9yOiBwbGF0L3NwaS5oOiBObyBz
+dWNoIGZpbGUgb3INCj4+IGRpcmVjdG9yeSANCj4+IA0KPj4gVGhpcyBpcyB3aXRoIEJlbiBEb29r
+cycgbmV4dC1zYW1zdW5nIGJyYW5jaCBtZXJnZWQgaW50byAyLjYuMzMuDQoNCkl0J3MgZnVubnks
+IEkgdHJpZWQgdGhlIHNhbWUgeWVzdGVyZGF5LCB3aXRoIHRoZSBuZXh0LXNhbXN1bmctNjQxMA0K
+a2VybmVsIGFuZCBydW4gaW50byB0aGUgc2FtZSBlcnJvciBtZXNzYWdlLg0KDQpPbiB0aGUgbWFp
+bGluZyBsaXN0IEkgZm91bmQgdGhlIHBhdGNoICJbUEFUQ0ggMy82XSBTM0M2NFhYIFNQSTogSGVh
+ZGVyIA0KZm9yIHBhc3NpbmcgcGxhdGZvcm0gZGF0YSIgZnJvbSAyMXRoIE5vdmVtYmVyIDIwMDks
+IHdoaWNoIEkgdHJpZWQuDQpUaGlzIHNlZW1zIHRvIHdvcmsuIFRoZW4gSSB0cmllZCB0byBhcHBs
+eSB0aGUgcGF0Y2ggIltQQVRDSCA2LzZdIA0KU01ESzY0MTAgU1BJOiBBZGRlZCBzcGlkZXYgc3Vw
+cG9ydCBhcyBhbiBleGFtcGxlIiB0byBnZXQgdGhlIFNQSQ0KZHJpdmVyIGluaXRpYWxpemVkIG9u
+IHRoZSBTTURLNjQxMCBib2FyZC4gQnV0IHRoaXMgbGVhZHMgdG8gb3RoZXINCmNvbXBpbGUgZXJy
+b3JzOg0KDQpsaW51eC0yLjYtc2Ftc3VuZy9hcmNoL2FybS9tYWNoLXMzYzY0MTAvbWFjaC1zbWRr
+NjQxMC5jOjQ4NDogdW5kZWZpbmVkIHJlZmVyZW5jZSB0byBgczNjNjR4eF9zcGlfc2V0X2luZm8n
+DQphcmNoL2FybS9tYWNoLXMzYzY0MTAvYnVpbHQtaW4ubzooLmluaXQuZGF0YSsweDkwKTogdW5k
+ZWZpbmVkIHJlZmVyZW5jZSB0byBgczNjNjR4eF9kZXZpY2Vfc3BpMCcNCm1ha2U6ICoqKiBbLnRt
+cF92bWxpbnV4MV0gRXJyb3IgMQ0KDQpBbmQgb25jZSBkZXYtc3BpLmMgaXMgY29tcGlsZWQgaW50
+byB0aGUga2VybmVsIC0gdG8gcmVzb2x2ZSB0aGUgDQp1bmRlZmluZWQgcmVmZXJlbmNlIGVycm9y
+IC0gdGhlIGtlcm5lbCBjcmFzaGVzIGR1cmluZyBib290dXAgDQooPDQ+U0xVQjogVW5hYmxlIHRv
+IGFsbG9jYXRlIG1lbW9yeSBvbiBub2RlIC0xIC4uLikuIEFmdGVyIHRoaXMgDQpJIGdhdmUgdXAu
+DQoNCj4gVGhlcmUgaGFzIHJlY2VudGx5IGJlZW4gYSBtYWpvciBzaHVmZmxlIG9mIGhlYWRlcnMg
+aW4gcGxhdCBhbmQgbWFjaCwNCj4gcGxlYXNlIHRlc3QgYWdhaW5zdCBzb21lIHVubW9kaWZpZWQg
+a2VybmVsIGFuZCBsZXQgbWUga25vdyB3aGljaCBvbmUNCj4gaWYgdGhlIGVycm9yIHN0aWxsIG9j
+Y3Vycy4gTWF5YmUgeW91KG9yIEkpIGNhbiBzdWJtaXQgYSBmaXggdXBzdHJlYW0uDQoNCldoYXQg
+ZG8geW91IG1lYW4gd2l0aCAndW5tb2RpZmllZCBrZXJuZWwnPyBXaGVyZSBjYW4gSSBmaW5kIHRo
+ZQ0KbGF0ZXN0IEtlcm5lbCB3aXRoIFMzQzY0MTAgc3VwcG9ydD8NCg0KUmVnYXJkcywNCk1hcnRp
+bg0K
