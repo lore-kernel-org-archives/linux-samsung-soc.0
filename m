@@ -1,33 +1,41 @@
-From: Frans Pop <elendil@planet.nl>
-Subject: Re: spi_s3c64xx.c - plat/spi.h: No such file or directory
-Date: Thu, 11 Mar 2010 05:57:31 +0100
-Message-ID: <201003110557.32936.elendil@planet.nl>
-References: <201003100911.06148.elendil@planet.nl> <201003110442.24196.elendil@planet.nl> <1b68c6791003102002l43de16ccq949b28a9fb856253@mail.gmail.com>
+From: christian pellegrin <chripell@fsfe.org>
+Subject: Re: [PATCH v2] Fix GPIOs bank H and J not being preserved during
+	suspend
+Date: Fri, 12 Mar 2010 08:25:08 +0100
+Message-ID: <cabda6421003112325w23628518tf12f2a7dae7b69ef@mail.gmail.com>
+References: <cabda6421003080317t37124990v72ac56906719c091@mail.gmail.com>
+	 <1268047288-11166-1-git-send-email-chripell@fsfe.org>
+	 <20100308155522.GE24864@trinity.fluff.org>
+	 <cabda6421003080814j2e17b664x1806a418928e09d4@mail.gmail.com>
+	 <20100308161604.GF24864@trinity.fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from Cpsmtpm-eml107.kpnxchange.com ([195.121.3.11]:54006 "EHLO
-	CPSMTPM-EML107.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756495Ab0CKE5f (ORCPT
+Received: from mail-fx0-f227.google.com ([209.85.220.227]:46797 "EHLO
+	mail-fx0-f227.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755228Ab0CLHZL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Mar 2010 23:57:35 -0500
-In-Reply-To: <1b68c6791003102002l43de16ccq949b28a9fb856253@mail.gmail.com>
-Content-Disposition: inline
+	Fri, 12 Mar 2010 02:25:11 -0500
+Received: by fxm27 with SMTP id 27so1093114fxm.28
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Mar 2010 23:25:09 -0800 (PST)
+In-Reply-To: <20100308161604.GF24864@trinity.fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jassi brar <jassisinghbrar@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Thursday 11 March 2010, jassi brar wrote:
-> Then you need patches from Grant Likely's tree.
-> The driver now includes a new header plat/s3c64xxx-spi.h instead
+On Mon, Mar 8, 2010 at 5:16 PM, Ben Dooks <ben-linux@fluff.org> wrote:
 
-> Check http://git.secretlab.ca/?p=linux-2.6.git;a=summary
-> branch 'next' or 'next-spi'
+> Can we have that as a seperate patch with that information in it, to show
+> what is being changed. Thanks.
+>
 
-Yep, that does work! Thanks a lot for your patience.
+ack, the patches in-reply-to to this email. Thanks.
 
-Cheers,
-FJP
+
+-- 
+Christian Pellegrin, see http://www.evolware.org/chri/
+"Real Programmers don't play tennis, or any other sport which requires
+you to change clothes. Mountain climbing is OK, and Real Programmers
+wear their climbing boots to work in case a mountain should suddenly
+spring up in the middle of the computer room."
