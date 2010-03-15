@@ -1,51 +1,49 @@
-From: Christian Pellegrin <chripell@fsfe.org>
-Subject: [PATCH v2] Fix one-too-much bug when building list of regs to be preserved on PM
-Date: Fri, 12 Mar 2010 08:29:03 +0100
-Message-ID: <1268378943-7924-1-git-send-email-chripell@fsfe.org>
-References: <cabda6421003112325w23628518tf12f2a7dae7b69ef@mail.gmail.com>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: [PULL] Please pull bjdooks' for-linus/samsung-fixes
+Date: Mon, 15 Mar 2010 23:20:27 +0000
+Message-ID: <20100315232027.GA11570@fluff.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qy0-f172.google.com ([209.85.221.172]:61859 "EHLO
-	mail-qy0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750766Ab0CLHbO (ORCPT
+Received: from aeryn.fluff.org.uk ([87.194.8.8]:15026 "EHLO
+	kira.home.fluff.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S937130Ab0COXUb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Mar 2010 02:31:14 -0500
-Received: by qyk2 with SMTP id 2so1016378qyk.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Mar 2010 23:31:13 -0800 (PST)
-In-Reply-To: <cabda6421003112325w23628518tf12f2a7dae7b69ef@mail.gmail.com>
+	Mon, 15 Mar 2010 19:20:31 -0400
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Christian Pellegrin <chripell@fsfe.org>
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, Vasily Khoruzhick <anarsoul@gmail.com>, Ben Dooks <ben-linux@fluff.org>
 
-gpio_nr is already incremented in the for loop, so if we will have 32
-banks of GPIOs someday the 33rd won't be saved/restored during PM
+Please pull the following ARM/Samsung fixes:
 
-Signed-off-by: Christian Pellegrin <chripell@fsfe.org>
----
- arch/arm/plat-s3c/pm-gpio.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+The following changes since commit a3d3203e4bb40f253b1541e310dc0f9305be7c84:
+  Linus Torvalds (1):
+        Merge branch 'release' of git://git.kernel.org/.../lenb/linux-acpi-2.6
 
-diff --git a/arch/arm/plat-s3c/pm-gpio.c b/arch/arm/plat-s3c/pm-gpio.c
-index cfd326a..b3cc8db 100644
---- a/arch/arm/plat-s3c/pm-gpio.c
-+++ b/arch/arm/plat-s3c/pm-gpio.c
-@@ -343,7 +343,7 @@ void s3c_pm_save_gpios(void)
- 			  ourchip->pm_save[2],
- 			  ourchip->pm_save[3]);
- 
--		gpio_nr += ourchip->chip.ngpio;
-+		gpio_nr += ourchip->chip.ngpio - 1;
- 		gpio_nr += CONFIG_S3C_GPIO_SPACE;
- 	}
- }
-@@ -374,7 +374,7 @@ void s3c_pm_restore_gpios(void)
- 
- 		s3c_pm_resume_gpio(ourchip);
- 
--		gpio_nr += ourchip->chip.ngpio;
-+		gpio_nr += ourchip->chip.ngpio - 1;
- 		gpio_nr += CONFIG_S3C_GPIO_SPACE;
- 	}
- }
+are available in the git repository at:
+
+  git://git.fluff.org/bjdooks/linux.git for-linus/samsung-fixes
+
+Ben Dooks (2):
+      ARM: SAMSUNG: Fix build error from stale define in <plat/uncompress.h>
+      ARM: SAMSUNG: Fixup commit 4e6d488af37980d224cbf298224db6173673f362
+
+Vasily Khoruzhick (2):
+      ARM: S3C2440: Fix s3c2440 cpufreq compilation post move.
+      ARM: SAMSUNG: Add suspend/resume support for S3C PWM driver
+
+ .../s3c2440-cpufreq.c                              |    0
+ arch/arm/mach-s3c64xx/include/mach/debug-macro.S   |    2 +-
+ arch/arm/mach-s5p6440/include/mach/debug-macro.S   |    2 +-
+ arch/arm/mach-s5p6442/include/mach/debug-macro.S   |    2 +-
+ arch/arm/plat-samsung/include/plat/uncompress.h    |    2 -
+ arch/arm/plat-samsung/pwm.c                        |   35 ++++++++++++++++++++
+ 6 files changed, 38 insertions(+), 5 deletions(-)
+ rename arch/arm/{plat-s3c24xx => mach-s3c2440}/s3c2440-cpufreq.c (100%)
+
 -- 
-1.5.6.5
+Ben (ben@fluff.org, http://www.fluff.org/)
+
+  'a smiley only costs 4 bytes'
