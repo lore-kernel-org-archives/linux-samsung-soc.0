@@ -1,27 +1,79 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PULL] Please pull bjdooks' for-linus/samsung-fixes
-Date: Tue, 16 Mar 2010 10:40:44 +0000
-Message-ID: <20100316104044.GA21604@sirena.org.uk>
-References: <20100315232027.GA11570@fluff.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH 2/3] ARM: S5P6442: Bug fix on PWM Timer
+Date: Fri, 19 Mar 2010 14:48:06 +0900
+Message-ID: <1268977686-26254-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:44214 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932139Ab0CPKkq (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:54133 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751110Ab0CSGAr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Mar 2010 06:40:46 -0400
-Content-Disposition: inline
-In-Reply-To: <20100315232027.GA11570@fluff.org.uk>
+	Fri, 19 Mar 2010 02:00:47 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, Vasily Khoruzhick <anarsoul@gmail.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Mon, Mar 15, 2010 at 11:20:27PM +0000, Ben Dooks wrote:
+From: Jongpill Lee <boyko.lee@samsung.com>
 
-> Ben Dooks (2):
->       ARM: SAMSUNG: Fix build error from stale define in <plat/uncompress.h>
+This patch fixes below bugs:
+- Return value in the pwm_cfg_src_is_tclk
+- Return value in the tcfg_to_divisor
+- Return value in the pwm_tdiv_has_div1
+- Return value in the pwm_tdiv_div_bits
 
-This should already be in Russell's tree as part of patch 5985/2 (not
-that this duplication should do any harm, git should just cope).
+Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s5p6442/include/mach/pwm-clock.h |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/mach-s5p6442/include/mach/pwm-clock.h b/arch/arm/mach-s5p6442/include/mach/pwm-clock.h
+index 15e8525..6e90fce 100644
+--- a/arch/arm/mach-s5p6442/include/mach/pwm-clock.h
++++ b/arch/arm/mach-s5p6442/include/mach/pwm-clock.h
+@@ -21,14 +21,14 @@
+ 
+ /**
+  * pwm_cfg_src_is_tclk() - return whether the given mux config is a tclk
+- * @cfg: The timer TCFG1 register bits shifted down to 0.
++ * @tcfg: The timer TCFG1 register bits shifted down to 0.
+  *
+  * Return true if the given configuration from TCFG1 is a TCLK instead
+  * any of the TDIV clocks.
+  */
+ static inline int pwm_cfg_src_is_tclk(unsigned long tcfg)
+ {
+-	return tcfg == S3C2410_TCFG1_MUX_TCLK;
++	return tcfg == S3C64XX_TCFG1_MUX_TCLK;
+ }
+ 
+ /**
+@@ -40,7 +40,7 @@ static inline int pwm_cfg_src_is_tclk(unsigned long tcfg)
+  */
+ static inline unsigned long tcfg_to_divisor(unsigned long tcfg1)
+ {
+-	return 1 << (1 + tcfg1);
++	return 1 << tcfg1;
+ }
+ 
+ /**
+@@ -50,7 +50,7 @@ static inline unsigned long tcfg_to_divisor(unsigned long tcfg1)
+  */
+ static inline unsigned int pwm_tdiv_has_div1(void)
+ {
+-	return 0;
++	return 1;
+ }
+ 
+ /**
+@@ -61,7 +61,7 @@ static inline unsigned int pwm_tdiv_has_div1(void)
+  */
+ static inline unsigned long pwm_tdiv_div_bits(unsigned int div)
+ {
+-	return ilog2(div) - 1;
++	return ilog2(div);
+ }
+ 
+ #define S3C_TCFG1_MUX_TCLK S3C2410_TCFG1_MUX_TCLK
+-- 
+1.6.2.5
