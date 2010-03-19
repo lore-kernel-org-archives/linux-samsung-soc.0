@@ -1,11 +1,11 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v2 3/3] ARM: S5PV210: Bug fix on PWM Timer
-Date: Fri, 19 Mar 2010 15:33:31 +0900
-Message-ID: <1268980411-2578-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH v2 1/3] ARM: S5P6440: Bug fix on PWM Timer
+Date: Fri, 19 Mar 2010 15:33:12 +0900
+Message-ID: <1268980392-2497-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:35460 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:35453 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750798Ab0CSGpp (ORCPT
+	with ESMTP id S1750986Ab0CSGpp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 19 Mar 2010 02:45:45 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -21,20 +21,20 @@ This patch fixes return value in below functions
 - pwm_tdiv_has_div1
 - pwm_tdiv_div_bits
 
-And this patch changes Copyright ordering.
+And this patch changes Copyright ordering, and addes 'based on' information.
 
 Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv210/include/mach/pwm-clock.h |   21 +++++++++++----------
- 1 files changed, 11 insertions(+), 10 deletions(-)
+ arch/arm/mach-s5p6440/include/mach/pwm-clock.h |   24 ++++++++++++++++--------
+ 1 files changed, 16 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv210/include/mach/pwm-clock.h b/arch/arm/mach-s5pv210/include/mach/pwm-clock.h
-index 69027fe..f8a9f1b 100644
---- a/arch/arm/mach-s5pv210/include/mach/pwm-clock.h
-+++ b/arch/arm/mach-s5pv210/include/mach/pwm-clock.h
-@@ -1,13 +1,14 @@
- /* linux/arch/arm/mach-s5pv210/include/mach/pwm-clock.h
+diff --git a/arch/arm/mach-s5p6440/include/mach/pwm-clock.h b/arch/arm/mach-s5p6440/include/mach/pwm-clock.h
+index c4bb7c5..6a2a02f 100644
+--- a/arch/arm/mach-s5p6440/include/mach/pwm-clock.h
++++ b/arch/arm/mach-s5p6440/include/mach/pwm-clock.h
+@@ -1,11 +1,14 @@
+ /* linux/arch/arm/mach-s5p6440/include/mach/pwm-clock.h
   *
 + * Copyright (c) 2009 Samsung Electronics Co., Ltd.
 + *		http://www.samsung.com/
@@ -44,16 +44,19 @@ index 69027fe..f8a9f1b 100644
   *      Ben Dooks <ben@simtec.co.uk>
   *      http://armlinux.simtec.co.uk/
   *
-- * Copyright (c) 2009 Samsung Electronics Co., Ltd.
+- * Copyright 2009 Samsung Electronics Co., Ltd.
 - *		http://www.samsung.com/
-- *
-- * Based on arch/arm/plat-s3c24xx/include/mach/pwm-clock.h
 + * Based on arch/arm/mach-s3c64xx/include/mach/pwm-clock.h
   *
-  * S5PV210 - pwm clock and timer support
+  * S5P6440 - pwm clock and timer support
   *
-@@ -21,14 +22,14 @@
+@@ -14,16 +17,19 @@
+  * published by the Free Software Foundation.
+ */
  
++#ifndef __ASM_ARCH_PWMCLK_H
++#define __ASM_ARCH_PWMCLK_H __FILE__
++
  /**
   * pwm_cfg_src_is_tclk() - return whether the given mux config is a tclk
 - * @cfg: The timer TCFG1 register bits shifted down to 0.
@@ -65,11 +68,11 @@ index 69027fe..f8a9f1b 100644
  static inline int pwm_cfg_src_is_tclk(unsigned long tcfg)
  {
 -	return tcfg == S3C2410_TCFG1_MUX_TCLK;
-+	return tcfg == S3C64XX_TCFG1_MUX_TCLK;
++	return 0;
  }
  
  /**
-@@ -40,7 +41,7 @@ static inline int pwm_cfg_src_is_tclk(unsigned long tcfg)
+@@ -35,7 +41,7 @@ static inline int pwm_cfg_src_is_tclk(unsigned long tcfg)
   */
  static inline unsigned long tcfg_to_divisor(unsigned long tcfg1)
  {
@@ -78,7 +81,7 @@ index 69027fe..f8a9f1b 100644
  }
  
  /**
-@@ -50,7 +51,7 @@ static inline unsigned long tcfg_to_divisor(unsigned long tcfg1)
+@@ -45,7 +51,7 @@ static inline unsigned long tcfg_to_divisor(unsigned long tcfg1)
   */
  static inline unsigned int pwm_tdiv_has_div1(void)
  {
@@ -87,7 +90,7 @@ index 69027fe..f8a9f1b 100644
  }
  
  /**
-@@ -61,9 +62,9 @@ static inline unsigned int pwm_tdiv_has_div1(void)
+@@ -56,7 +62,9 @@ static inline unsigned int pwm_tdiv_has_div1(void)
   */
  static inline unsigned long pwm_tdiv_div_bits(unsigned int div)
  {
@@ -96,8 +99,8 @@ index 69027fe..f8a9f1b 100644
  }
  
 -#define S3C_TCFG1_MUX_TCLK S3C2410_TCFG1_MUX_TCLK
-+#define S3C_TCFG1_MUX_TCLK S3C64XX_TCFG1_MUX_TCLK
- 
- #endif /* __ASM_ARCH_PWMCLK_H */
++#define S3C_TCFG1_MUX_TCLK 0
++
++#endif /* __ASM_ARCH_PWMCLK_H */
 -- 
 1.6.2.5
