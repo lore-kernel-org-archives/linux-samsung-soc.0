@@ -1,58 +1,36 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/3] ARM: S5P6440: Added PL330 support in plat-samsung for
-	samsung S5P6440 soc.
-Date: Fri, 19 Mar 2010 21:09:24 +0900
-Message-ID: <00b201cac75d$06d308a0$147919e0$%kim@samsung.com>
-References: <1268996540-15473-1-git-send-email-atul.dahiya@samsung.com>
- <1b68c6791003190410i77989864p7187957bfefbb94c@mail.gmail.com>
+From: "Martin Krause" <Martin.Krause@tqs.de>
+Subject: RE: spi_s3c64xx.c - plat/spi.h: No such file or directory
+Date: Tue, 23 Mar 2010 16:07:00 +0100
+Message-ID: <47F3F98010FF784EBEE6526EAAB078D10635E6A1@tq-mailsrv.tq-net.de>
+References: <201003110557.32936.elendil@planet.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:35257 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751700Ab0CSMJe (ORCPT
+Received: from mail.tqs.de ([62.157.136.17]:52029 "EHLO mail.tqs.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754524Ab0CWPIx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Mar 2010 08:09:34 -0400
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0KZJ00JJW33V2Q@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 19 Mar 2010 21:09:32 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0KZJ0054P33VXC@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 19 Mar 2010 21:09:31 +0900 (KST)
-In-reply-to: <1b68c6791003190410i77989864p7187957bfefbb94c@mail.gmail.com>
-Content-language: ko
+	Tue, 23 Mar 2010 11:08:53 -0400
+Content-class: urn:content-classes:message
+In-Reply-To: <201003110557.32936.elendil@planet.nl>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'jassi brar' <jassisinghbrar@gmail.com>, 'Atul Dahiya' <atul.dahiya@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: Frans Pop <elendil@planet.nl>, jassi brar <jassisinghbrar@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org
 
-jassi brar wrote:
-> On Fri, Mar 19, 2010 at 8:02 PM, Atul Dahiya <atul.dahiya@samsung.com> wrote:
-> > This patch adds DMA pl330 mico code for S5P series in plat-samsung.This patch
-> also
-> > moves some common code from s3c2410 to plat-samsung which can also be
-> used by pl330.
-> Not sure if it's a correct approach when the mainline discussions have
-> already made it clear that PL-330
-> code shouldn't be Samsung specific.
-> Also, the samsung internal DMA driver style is needlessly borrowed
-> from s3c24xx dma. We don't
-> need that unnecessarily complicated state machine, though the API
-> should be kept.
-Hi jassi,
-
-I also agree your opinion.
-DMA PL330 can be used by other SoCs.
-So it has to be in the arch/arm/common/ or drivers/dma/.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+SGksDQoNCmxpbnV4LXNhbXN1bmctc29jLW93bmVyQHZnZXIua2VybmVsLm9yZyB3cm90ZSBvbiBU
+aHVyc2RheSwgTWFyY2ggMTEsDQoyMDEwIDU6NTggQU06IA0KPiBPbiBUaHVyc2RheSAxMSBNYXJj
+aCAyMDEwLCBqYXNzaSBicmFyIHdyb3RlOg0KPj4gVGhlbiB5b3UgbmVlZCBwYXRjaGVzIGZyb20g
+R3JhbnQgTGlrZWx5J3MgdHJlZS4NCj4+IFRoZSBkcml2ZXIgbm93IGluY2x1ZGVzIGEgbmV3IGhl
+YWRlciBwbGF0L3MzYzY0eHh4LXNwaS5oIGluc3RlYWQNCj4gDQo+PiBDaGVjayBodHRwOi8vZ2l0
+LnNlY3JldGxhYi5jYS8/cD1saW51eC0yLjYuZ2l0O2E9c3VtbWFyeQ0KPj4gYnJhbmNoICduZXh0
+JyBvciAnbmV4dC1zcGknDQo+IA0KPiBZZXAsIHRoYXQgZG9lcyB3b3JrISBUaGFua3MgYSBsb3Qg
+Zm9yIHlvdXIgcGF0aWVuY2UuDQoNCkkgdHJpZWQgaXQgYm90aCwgd2l0aCB0aGUgY3VycmVudCAn
+bmV4dCcgYW5kICduZXh0LXNwaScgYnJhbmNoDQphbmQgZ2V0IHRoZSBmb2xsb3dpbmcgZXJyb3I6
+DQoNCiAgQ0MgICAgICBkcml2ZXJzL3NwaS9zcGkubw0KICBDQyAgICAgIGRyaXZlcnMvc3BpL3Nw
+aV9zM2M2NHh4Lm8NCmRyaXZlcnMvc3BpL3NwaV9zM2M2NHh4LmM6MzE6MzA6IGVycm9yOiBwbGF0
+L3MzYzY0eHgtc3BpLmg6IE5vIHN1Y2ggZmlsZSBvciBkaXJlY3RvcnkNCg0KVGhlIGZpbGUgJ3Mz
+YzY0eHgtc3BpLmgnIHNlZW1zIG5vdCB0byBleGlzdCBpbiBteSByZXBvLiBXaGF0IGFtIEkNCmRv
+aW5nIHdyb25nPw0KDQpSZWdhcmRzLA0KTWFydGluDQo=
