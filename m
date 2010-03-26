@@ -1,46 +1,33 @@
-From: "Martin Krause" <Martin.Krause@tqs.de>
-Subject: RE: spi_s3c64xx.c - plat/spi.h: No such file or directory
-Date: Fri, 26 Mar 2010 07:27:07 +0100
-Message-ID: <47F3F98010FF784EBEE6526EAAB078D10635E6A4@tq-mailsrv.tq-net.de>
-References: <201003250026.15514.elendil@planet.nl>
+From: christian pellegrin <chripell@gmail.com>
+Subject: misc brokenness in v2.6.34-rc2 s3c24xx
+Date: Fri, 26 Mar 2010 09:54:36 +0100
+Message-ID: <cabda6421003260154u6a1ef6e5ia5f04f5e9cce77db@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.tqs.de ([62.157.136.17]:37634 "EHLO mail.tqs.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753068Ab0CZG3E (ORCPT
+Received: from mail-fx0-f223.google.com ([209.85.220.223]:44913 "EHLO
+	mail-fx0-f223.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751059Ab0CZIyh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Mar 2010 02:29:04 -0400
-Content-class: urn:content-classes:message
-In-Reply-To: <201003250026.15514.elendil@planet.nl>
+	Fri, 26 Mar 2010 04:54:37 -0400
+Received: by fxm23 with SMTP id 23so1914793fxm.21
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Mar 2010 01:54:36 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Frans Pop <elendil@planet.nl>
-Cc: jassi brar <jassisinghbrar@gmail.com>, linux-samsung-soc@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-SGkgRnJhbnMsDQoNCkZyYW5zIFBvcCB3cm90ZSBvbiBUaHVyc2RheSwgTWFyY2ggMjUsIDIwMTAg
-MTI6MjYgQU06DQo+IE9uIFR1ZXNkYXkgMjMgTWFyY2ggMjAxMCwgTWFydGluIEtyYXVzZSB3cm90
-ZToNCj4+ICAgQ0MgICAgICBkcml2ZXJzL3NwaS9zcGkubw0KPj4gICBDQyAgICAgIGRyaXZlcnMv
-c3BpL3NwaV9zM2M2NHh4Lm8NCj4+IGRyaXZlcnMvc3BpL3NwaV9zM2M2NHh4LmM6MzE6MzA6IGVy
-cm9yOiBwbGF0L3MzYzY0eHgtc3BpLmg6IE5vIHN1Y2gNCj4+IGZpbGUgb3IgZGlyZWN0b3J5IA0K
-Pj4gDQo+PiBUaGUgZmlsZSAnczNjNjR4eC1zcGkuaCcgc2VlbXMgbm90IHRvIGV4aXN0IGluIG15
-IHJlcG8uIFdoYXQgYW0gSQ0KPj4gZG9pbmcgd3Jvbmc/DQo+IA0KPiBJIGhhdmUgaXQ6DQo+IGFy
-Y2gvYXJtL3BsYXQtc2Ftc3VuZy9pbmNsdWRlL3BsYXQvczNjNjR4eC1zcGkuaA0KPiANCj4gTG9v
-a3MgbGlrZSB5b3UncmUgbWlzc2luZyB0aGlzIGNvbW1pdDoNCj4gY29tbWl0IDM5OGNjY2NiNzcw
-ZTZlZDNlMTM4OTI1NDA0ZjA3NDZjYmU1N2M1YTENCj4gQXV0aG9yOiBKYXNzaSBCcmFyIDxAQEA+
-DQo+IERhdGU6ICAgTW9uIEphbiAxOCAxNzo0NTo1MiAyMDEwICswOTAwDQo+IA0KPiAgICAgQVJN
-OiBTM0M2NFhYOiBTUEk6IEhlYWRlciBmb3IgcGFzc2luZyBwbGF0Zm9ybSBkYXRhDQo+IA0KPiAg
-ICAgV2UgbmVlZCBhIHdheSB0byBwYXNzIGNvbnRyb2xsZXIgc3BlY2lmaWMgaW5mb3JtYXRpb24g
-dG8gdGhlIFNQSQ0KPiAgICAgZHJpdmVyLiBGb3IgdGhhdCBwdXJwb3NlIG5ldyBoZWFkZXJzIGFy
-ZSBtYWRlLg0KPiANCj4gICAgIFNQSSBDb250cm9sbGVyIGlzIGFzc3VtZWQgJ3R5cGUtczNjNjR4
-eCcgYW5kIGNhbiBiZSBkZWZpbmVkIGZvcg0KPiAgICAgIG5ld2VyIFNvQ3MuIEhlbmNlLCB0aGF0
-IHBhcnQgaXMgcGxhY2VkIHVuZGVyIHBsYXQtc2Ftc3VuZyB0byBiZQ0KPiBzaGFyZWQgYWNyb3Nz
-IG5ld2VyIFNvQ3MuIA0KPiANCj4gICAgIFNvQyBzcGVjaWZpYyBwYXJ0IC0gc3BpIHNvdXJjZSBj
-bG9ja3MsIHdpbGwgYmUgcGxhY2VkDQo+ICAgICB1bmRlciBwbGF0LTxzb2M+L2luY2x1ZGUvcGxh
-dC8NCj4gDQo+IE5vdGUgdGhhdCBib3RoIHNhbXN1bmcgdGhlIGFuZCBzcGkgYnJhbmNoZXMgaGF2
-ZSBiZWVuIGluY2x1ZGVkIGluDQo+IG1haW5saW5lIGdpdCBpbiB0aGUgbWVhbiB0aW1lIChmb3Ig
-Mi42LjM0KS4NCg0KVGFua3MhIFdlIHRlc3RlZCB0aGUgZm9yLWxpbnV4L3NhbXN1bmctZml4ZXMg
-QnJhbmNoIGZyb20gZ2l0LmZsdWZmLm9yZw0KYW5kIHRoYXQgc2VlbXMgdG8gd29yay4NCg0KUmVn
-YXJkcywNCk1hcnRpbg0K
+Hi,
+
+some time ago I sent a couple of patches that fix some bugs in s3c24xx
+code (nand clock stop, suspend/resume gpio state preservation). I
+started to work on 2.6.34-rcX and noticed they didn't make it to the
+repository. Was there something wrong with the patches or with the
+procedure for submitting them? Where can I monitor if the patches are
+waiting in someone queue? Thanks.
+
+-- 
+Christian Pellegrin, see http://www.evolware.org/chri/
+"Real Programmers don't play tennis, or any other sport which requires
+you to change clothes. Mountain climbing is OK, and Real Programmers
+wear their climbing boots to work in case a mountain should suddenly
+spring up in the middle of the computer room."
