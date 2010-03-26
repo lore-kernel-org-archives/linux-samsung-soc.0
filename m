@@ -1,55 +1,46 @@
-From: Frans Pop <elendil@planet.nl>
-Subject: Re: spi_s3c64xx.c - plat/spi.h: No such file or directory
-Date: Thu, 25 Mar 2010 00:26:14 +0100
-Message-ID: <201003250026.15514.elendil@planet.nl>
-References: <47F3F98010FF784EBEE6526EAAB078D10635E6A1@tq-mailsrv.tq-net.de>
+From: "Martin Krause" <Martin.Krause@tqs.de>
+Subject: RE: spi_s3c64xx.c - plat/spi.h: No such file or directory
+Date: Fri, 26 Mar 2010 07:27:07 +0100
+Message-ID: <47F3F98010FF784EBEE6526EAAB078D10635E6A4@tq-mailsrv.tq-net.de>
+References: <201003250026.15514.elendil@planet.nl>
 Mime-Version: 1.0
 Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpm-eml101.kpnxchange.com ([195.121.3.5]:49210 "EHLO
-	CPSMTPM-EML101.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751119Ab0CXX0V (ORCPT
+Received: from mail.tqs.de ([62.157.136.17]:37634 "EHLO mail.tqs.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753068Ab0CZG3E (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Mar 2010 19:26:21 -0400
-In-Reply-To: <47F3F98010FF784EBEE6526EAAB078D10635E6A1@tq-mailsrv.tq-net.de>
-Content-Disposition: inline
+	Fri, 26 Mar 2010 02:29:04 -0400
+Content-class: urn:content-classes:message
+In-Reply-To: <201003250026.15514.elendil@planet.nl>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Martin Krause <Martin.Krause@tqs.de>
+To: Frans Pop <elendil@planet.nl>
 Cc: jassi brar <jassisinghbrar@gmail.com>, linux-samsung-soc@vger.kernel.org
 
-On Tuesday 23 March 2010, Martin Krause wrote:
->   CC      drivers/spi/spi.o
->   CC      drivers/spi/spi_s3c64xx.o
-> drivers/spi/spi_s3c64xx.c:31:30: error: plat/s3c64xx-spi.h: No such file
-> or directory
->
-> The file 's3c64xx-spi.h' seems not to exist in my repo. What am I
-> doing wrong?
-
-I have it:
-arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
-
-Looks like you're missing this commit:
-commit 398ccccb770e6ed3e138925404f0746cbe57c5a1
-Author: Jassi Brar <@@@>
-Date:   Mon Jan 18 17:45:52 2010 +0900
-
-    ARM: S3C64XX: SPI: Header for passing platform data
-
-    We need a way to pass controller specific information to the SPI driver.
-    For that purpose new headers are made.
-
-    SPI Controller is assumed 'type-s3c64xx' and can be defined for newer SoCs.
-     Hence, that part is placed under plat-samsung to be shared across newer SoCs.
-
-    SoC specific part - spi source clocks, will be placed
-    under plat-<soc>/include/plat/
-
-Note that both samsung the and spi branches have been included in
-mainline git in the mean time (for 2.6.34).
-
-Cheers,
-FJP
+SGkgRnJhbnMsDQoNCkZyYW5zIFBvcCB3cm90ZSBvbiBUaHVyc2RheSwgTWFyY2ggMjUsIDIwMTAg
+MTI6MjYgQU06DQo+IE9uIFR1ZXNkYXkgMjMgTWFyY2ggMjAxMCwgTWFydGluIEtyYXVzZSB3cm90
+ZToNCj4+ICAgQ0MgICAgICBkcml2ZXJzL3NwaS9zcGkubw0KPj4gICBDQyAgICAgIGRyaXZlcnMv
+c3BpL3NwaV9zM2M2NHh4Lm8NCj4+IGRyaXZlcnMvc3BpL3NwaV9zM2M2NHh4LmM6MzE6MzA6IGVy
+cm9yOiBwbGF0L3MzYzY0eHgtc3BpLmg6IE5vIHN1Y2gNCj4+IGZpbGUgb3IgZGlyZWN0b3J5IA0K
+Pj4gDQo+PiBUaGUgZmlsZSAnczNjNjR4eC1zcGkuaCcgc2VlbXMgbm90IHRvIGV4aXN0IGluIG15
+IHJlcG8uIFdoYXQgYW0gSQ0KPj4gZG9pbmcgd3Jvbmc/DQo+IA0KPiBJIGhhdmUgaXQ6DQo+IGFy
+Y2gvYXJtL3BsYXQtc2Ftc3VuZy9pbmNsdWRlL3BsYXQvczNjNjR4eC1zcGkuaA0KPiANCj4gTG9v
+a3MgbGlrZSB5b3UncmUgbWlzc2luZyB0aGlzIGNvbW1pdDoNCj4gY29tbWl0IDM5OGNjY2NiNzcw
+ZTZlZDNlMTM4OTI1NDA0ZjA3NDZjYmU1N2M1YTENCj4gQXV0aG9yOiBKYXNzaSBCcmFyIDxAQEA+
+DQo+IERhdGU6ICAgTW9uIEphbiAxOCAxNzo0NTo1MiAyMDEwICswOTAwDQo+IA0KPiAgICAgQVJN
+OiBTM0M2NFhYOiBTUEk6IEhlYWRlciBmb3IgcGFzc2luZyBwbGF0Zm9ybSBkYXRhDQo+IA0KPiAg
+ICAgV2UgbmVlZCBhIHdheSB0byBwYXNzIGNvbnRyb2xsZXIgc3BlY2lmaWMgaW5mb3JtYXRpb24g
+dG8gdGhlIFNQSQ0KPiAgICAgZHJpdmVyLiBGb3IgdGhhdCBwdXJwb3NlIG5ldyBoZWFkZXJzIGFy
+ZSBtYWRlLg0KPiANCj4gICAgIFNQSSBDb250cm9sbGVyIGlzIGFzc3VtZWQgJ3R5cGUtczNjNjR4
+eCcgYW5kIGNhbiBiZSBkZWZpbmVkIGZvcg0KPiAgICAgIG5ld2VyIFNvQ3MuIEhlbmNlLCB0aGF0
+IHBhcnQgaXMgcGxhY2VkIHVuZGVyIHBsYXQtc2Ftc3VuZyB0byBiZQ0KPiBzaGFyZWQgYWNyb3Nz
+IG5ld2VyIFNvQ3MuIA0KPiANCj4gICAgIFNvQyBzcGVjaWZpYyBwYXJ0IC0gc3BpIHNvdXJjZSBj
+bG9ja3MsIHdpbGwgYmUgcGxhY2VkDQo+ICAgICB1bmRlciBwbGF0LTxzb2M+L2luY2x1ZGUvcGxh
+dC8NCj4gDQo+IE5vdGUgdGhhdCBib3RoIHNhbXN1bmcgdGhlIGFuZCBzcGkgYnJhbmNoZXMgaGF2
+ZSBiZWVuIGluY2x1ZGVkIGluDQo+IG1haW5saW5lIGdpdCBpbiB0aGUgbWVhbiB0aW1lIChmb3Ig
+Mi42LjM0KS4NCg0KVGFua3MhIFdlIHRlc3RlZCB0aGUgZm9yLWxpbnV4L3NhbXN1bmctZml4ZXMg
+QnJhbmNoIGZyb20gZ2l0LmZsdWZmLm9yZw0KYW5kIHRoYXQgc2VlbXMgdG8gd29yay4NCg0KUmVn
+YXJkcywNCk1hcnRpbg0K
