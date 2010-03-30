@@ -1,39 +1,70 @@
-From: christian pellegrin <chripell@gmail.com>
-Subject: Re: misc brokenness in v2.6.34-rc2 s3c24xx
-Date: Tue, 30 Mar 2010 07:21:26 +0200
-Message-ID: <cabda6421003292221v47b3e1m39373f081d539cf7@mail.gmail.com>
-References: <cabda6421003260154u6a1ef6e5ia5f04f5e9cce77db@mail.gmail.com>
-	<20100329193921.GH31126@trinity.fluff.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20100329193921.GH31126@trinity.fluff.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Christian Pellegrin <chripell@fsfe.org>
+Subject: [PATCH v2.6.34-rc2] s3c: Fix CONFIG_MTD_NAND_S3C2410_CLKSTOP
+Date: Tue, 30 Mar 2010 10:22:03 +0200
+Message-ID: <1269937323-7541-1-git-send-email-chripell@fsfe.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:42437 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755955Ab0C3IYi (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 30 Mar 2010 04:24:38 -0400
+Received: by vws20 with SMTP id 20so509146vws.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Mar 2010 01:24:37 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Christian Pellegrin <chripell@fsfe.org>
 
-On Mon, Mar 29, 2010 at 9:39 PM, Ben Dooks <ben-linux@fluff.org> wrote:
->
-> I'll be looking at these again over the next few days.
->
+Option CONFIG_MTD_NAND_S3C2410_CLKSTOP was broken by higher MTD layers
+calling select_chip with -1 twice in a row. This patch fixes the problem
+by making sure that clk_disable is not called too many times.
 
-Thanks a lot, I rebased them to 2.6.34-rc2 and I'll send them to
-you/list in a couple of minutes.
+Signed-off-by: Christian Pellegrin <chripell@fsfe.org>
+---
+ drivers/mtd/nand/s3c2410.c |   10 ++++++++--
+ 1 files changed, 8 insertions(+), 2 deletions(-)
 
-
+diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
+index fa6e9c7..9adecc6 100644
+--- a/drivers/mtd/nand/s3c2410.c
++++ b/drivers/mtd/nand/s3c2410.c
+@@ -37,6 +37,7 @@
+ #include <linux/slab.h>
+ #include <linux/clk.h>
+ #include <linux/cpufreq.h>
++#include <linux/bitops.h>
+ 
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/nand.h>
+@@ -135,6 +136,9 @@ struct s3c2410_nand_info {
+ #ifdef CONFIG_CPU_FREQ
+ 	struct notifier_block	freq_transition;
+ #endif
++#ifdef CONFIG_MTD_NAND_S3C2410_CLKSTOP
++	unsigned long                   clk_running;
++#endif
+ };
+ 
+ /* conversion functions */
+@@ -333,7 +337,8 @@ static void s3c2410_nand_select_chip(struct mtd_info *mtd, int chip)
+ 	nmtd = this->priv;
+ 	info = nmtd->info;
+ 
+-	if (chip != -1 && allow_clk_stop(info))
++	if (chip != -1 && allow_clk_stop(info) &&
++	    !test_and_set_bit(0, &info->clk_running))
+ 		clk_enable(info->clk);
+ 
+ 	cur = readl(info->sel_reg);
+@@ -356,7 +361,8 @@ static void s3c2410_nand_select_chip(struct mtd_info *mtd, int chip)
+ 
+ 	writel(cur, info->sel_reg);
+ 
+-	if (chip == -1 && allow_clk_stop(info))
++	if (chip == -1 && allow_clk_stop(info) &&
++	    test_and_clear_bit(0, &info->clk_running))
+ 		clk_disable(info->clk);
+ }
+ 
 -- 
-Christian Pellegrin, see http://www.evolware.org/chri/
-"Real Programmers don't play tennis, or any other sport which requires
-you to change clothes. Mountain climbing is OK, and Real Programmers
-wear their climbing boots to work in case a mountain should suddenly
-spring up in the middle of the computer room."
+1.5.6.5
