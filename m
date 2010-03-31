@@ -1,57 +1,128 @@
-From: Christian Pellegrin <chripell@fsfe.org>
-Subject: [PATCH v2.6.34-rc2] s3c: Fix GPIOs bank H and J not being preserved during suspend on S3C24XX
-Date: Tue, 30 Mar 2010 10:23:06 +0200
-Message-ID: <1269937386-7597-1-git-send-email-chripell@fsfe.org>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: [PATCH v2 1/3] ARM: S5P6440: Bug fix on PWM Timer
+Date: Wed, 31 Mar 2010 02:16:54 +0100
+Message-ID: <20100331011654.GO31126@trinity.fluff.org>
+References: <1268980392-2497-1-git-send-email-kgene.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:45129 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755427Ab0C3IZ5 (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:48457 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755077Ab0CaBQ4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Mar 2010 04:25:57 -0400
-Received: by vws20 with SMTP id 20so509428vws.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Mar 2010 01:25:56 -0700 (PDT)
+	Tue, 30 Mar 2010 21:16:56 -0400
+Content-Disposition: inline
+In-Reply-To: <1268980392-2497-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Christian Pellegrin <chripell@fsfe.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Jongpill Lee <boyko.lee@samsung.com>, ben-linux@fluff.org
 
-With this patch the platform-specific define for the last defined GPIO
-on S3C machines is used instead of a hard-coded value (which is right
-only for the s3c2410). The gpio_nr being incremented by 1 too much (look
-for the gpio_nr++ in the for instruction) is fixed too although it
-doesn't make any trouble on current S3C implementations.
+On Fri, Mar 19, 2010 at 03:33:12PM +0900, Kukjin Kim wrote:
+> From: Jongpill Lee <boyko.lee@samsung.com>
+> 
+> This patch fixes return value in below functions
 
-Signed-off-by: Christian Pellegrin <chripell@fsfe.org>
----
- arch/arm/mach-s3c2410/include/mach/gpio-track.h |    2 +-
- arch/arm/plat-samsung/pm-gpio.c                 |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+I'll look at merging fixes in the next few days.
 
-diff --git a/arch/arm/mach-s3c2410/include/mach/gpio-track.h b/arch/arm/mach-s3c2410/include/mach/gpio-track.h
-index acb2591..6371eaa 100644
---- a/arch/arm/mach-s3c2410/include/mach/gpio-track.h
-+++ b/arch/arm/mach-s3c2410/include/mach/gpio-track.h
-@@ -23,7 +23,7 @@ static inline struct s3c_gpio_chip *s3c_gpiolib_getchip(unsigned int pin)
- {
- 	struct s3c_gpio_chip *chip;
- 
--	if (pin > S3C2410_GPG(10))
-+	if (pin > S3C_GPIO_END)
- 		return NULL;
- 
- 	chip = &s3c24xx_gpios[pin/32];
-diff --git a/arch/arm/plat-samsung/pm-gpio.c b/arch/arm/plat-samsung/pm-gpio.c
-index 69a4c7f..1aac746 100644
---- a/arch/arm/plat-samsung/pm-gpio.c
-+++ b/arch/arm/plat-samsung/pm-gpio.c
-@@ -343,7 +343,7 @@ void s3c_pm_save_gpios(void)
- 			  ourchip->pm_save[2],
- 			  ourchip->pm_save[3]);
- 
--		gpio_nr += ourchip->chip.ngpio;
-+		gpio_nr += ourchip->chip.ngpio - 1;
- 		gpio_nr += CONFIG_S3C_GPIO_SPACE;
- 	}
- }
+> - pwm_cfg_src_is_tclk
+> - tcfg_to_divisor
+> - pwm_tdiv_has_div1
+> - pwm_tdiv_div_bits
+> 
+> And this patch changes Copyright ordering, and addes 'based on' information.
+> 
+> Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+>  arch/arm/mach-s5p6440/include/mach/pwm-clock.h |   24 ++++++++++++++++--------
+>  1 files changed, 16 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/arm/mach-s5p6440/include/mach/pwm-clock.h b/arch/arm/mach-s5p6440/include/mach/pwm-clock.h
+> index c4bb7c5..6a2a02f 100644
+> --- a/arch/arm/mach-s5p6440/include/mach/pwm-clock.h
+> +++ b/arch/arm/mach-s5p6440/include/mach/pwm-clock.h
+> @@ -1,11 +1,14 @@
+>  /* linux/arch/arm/mach-s5p6440/include/mach/pwm-clock.h
+>   *
+> + * Copyright (c) 2009 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com/
+> + *
+> + * Copyright 2008 Openmoko, Inc.
+>   * Copyright 2008 Simtec Electronics
+>   *      Ben Dooks <ben@simtec.co.uk>
+>   *      http://armlinux.simtec.co.uk/
+>   *
+> - * Copyright 2009 Samsung Electronics Co., Ltd.
+> - *		http://www.samsung.com/
+> + * Based on arch/arm/mach-s3c64xx/include/mach/pwm-clock.h
+>   *
+>   * S5P6440 - pwm clock and timer support
+>   *
+> @@ -14,16 +17,19 @@
+>   * published by the Free Software Foundation.
+>  */
+>  
+> +#ifndef __ASM_ARCH_PWMCLK_H
+> +#define __ASM_ARCH_PWMCLK_H __FILE__
+> +
+>  /**
+>   * pwm_cfg_src_is_tclk() - return whether the given mux config is a tclk
+> - * @cfg: The timer TCFG1 register bits shifted down to 0.
+> + * @tcfg: The timer TCFG1 register bits shifted down to 0.
+>   *
+>   * Return true if the given configuration from TCFG1 is a TCLK instead
+>   * any of the TDIV clocks.
+>   */
+>  static inline int pwm_cfg_src_is_tclk(unsigned long tcfg)
+>  {
+> -	return tcfg == S3C2410_TCFG1_MUX_TCLK;
+> +	return 0;
+>  }
+>  
+>  /**
+> @@ -35,7 +41,7 @@ static inline int pwm_cfg_src_is_tclk(unsigned long tcfg)
+>   */
+>  static inline unsigned long tcfg_to_divisor(unsigned long tcfg1)
+>  {
+> -	return 1 << (1 + tcfg1);
+> +	return 1 << tcfg1;
+>  }
+>  
+>  /**
+> @@ -45,7 +51,7 @@ static inline unsigned long tcfg_to_divisor(unsigned long tcfg1)
+>   */
+>  static inline unsigned int pwm_tdiv_has_div1(void)
+>  {
+> -	return 0;
+> +	return 1;
+>  }
+>  
+>  /**
+> @@ -56,7 +62,9 @@ static inline unsigned int pwm_tdiv_has_div1(void)
+>   */
+>  static inline unsigned long pwm_tdiv_div_bits(unsigned int div)
+>  {
+> -	return ilog2(div) - 1;
+> +	return ilog2(div);
+>  }
+>  
+> -#define S3C_TCFG1_MUX_TCLK S3C2410_TCFG1_MUX_TCLK
+> +#define S3C_TCFG1_MUX_TCLK 0
+> +
+> +#endif /* __ASM_ARCH_PWMCLK_H */
+> -- 
+> 1.6.2.5
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
 -- 
-1.5.6.5
+-- 
+Ben
+
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
