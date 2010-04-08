@@ -1,64 +1,87 @@
-From: ch.naveen@samsung.com
-Subject: S3C64XX & S3C24XX TS/ADC support in mainline
-Date: Tue, 06 Apr 2010 10:35:10 +0530
-Message-ID: <1270530310-24119-1-git-send-email-ch.naveen@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH] ARM: S5P: Add System Timer
+Date: Thu, 08 Apr 2010 09:59:36 +0200
+Message-ID: <001b01cad6f1$71bdd890$553989b0$%szyprowski@samsung.com>
+References: <1269916185-30533-1-git-send-email-kgene.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:63602 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751181Ab0DFFFJ (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:52460 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751539Ab0DHIBq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Apr 2010 01:05:09 -0400
-Received: from epmmp2 (mailout4.samsung.com [203.254.224.34])
+	Thu, 8 Apr 2010 04:01:46 -0400
+Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L0F00HY6VGJPP@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 06 Apr 2010 14:05:08 +0900 (KST)
-Received: from localhost.localdomain ([107.108.83.161])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L0F007ZQVGGWJ@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 06 Apr 2010 14:05:07 +0900 (KST)
+ with ESMTP id <0L0J00AS0SYSYI@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 08 Apr 2010 17:01:41 +0900 (KST)
+Received: from AMDC159 ([106.116.37.153])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L0J00AD5SYOV9@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 08 Apr 2010 17:01:40 +0900 (KST)
+In-reply-to: <1269916185-30533-1-git-send-email-kgene.kim@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Naveen Krishna CH <ch.naveen@samsung.com>
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, 'Jongpill Lee' <boyko.lee@samsung.com>, kyungmin.park@samsung.com
 
-From: Naveen Krishna CH <ch.naveen@samsung.com>
+Hello,
 
-Hi Ben,
+On Tuesday, March 30, 2010 4:30 AM Kukjin Kim wrote:
 
-This is Naveen from Samsung, India. 
+> From: Jongpill Lee <boyko.lee@samsung.com>
+> 
+> This patch addes system timer for Samsung S5P series SoCs
+> 
+> Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 
-I'm working on adding support for TS/ADC for the following boards
-6410, 6440 and V210 on 2.6.34-rc2 kernel. 
+I've tested this patch on Samsung Aquila board and it works fine.
 
-1)
-I did some initial work and found that the current driver 
-(s3c24xx_ts.c) exists for ARCH_S3C24XX alone 
-and which requires ADC for S3C24XX.  
+> ...
 
-Though. there is no board under (mach-s3c24XX) implementing the 
-touchscreen driver.
+> diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
+> index a278832..22ed209 100644
+> --- a/arch/arm/mach-s5pv210/mach-smdkv210.c
+> +++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
+> @@ -94,5 +94,5 @@ MACHINE_START(SMDKV210, "SMDKV210")
+>  	.init_irq	= s5pv210_init_irq,
+>  	.map_io		= smdkv210_map_io,
+>  	.init_machine	= smdkv210_machine_init,
+> -	.timer		= &s3c24xx_timer,
+> +	.timer		= &s5p_systimer,
+>  MACHINE_END
 
-I would like to know, on what all boards is this driver tested  & 
-how much compatible it is with S3C64XX and S5P series SoCs.
+What about mach-smdkc110.c ?
 
-2)
-I also have a design issue with 
-a.  There are some GPIO config specific to 2410 in the current driver.
-b.  It uses only 1 IRQ (PenDown) and 
-c.  The ISR for this IRQ uses the ADC APIs.
+> diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
+> index d400a6a..a73fc56 100644
+> --- a/arch/arm/plat-s5p/Kconfig
+> +++ b/arch/arm/plat-s5p/Kconfig
+> @@ -23,3 +23,10 @@ config PLAT_S5P
+>  	select SAMSUNG_IRQ_UART
+>  	help
+>  	  Base platform code for Samsung's S5P series SoC.
+> +
+> +config SYSTIMER_S5P
+> +	bool
+> +	depends on (ARCH_S5P6442 || ARCH_S5PV210)
+> +	default y
+> +	help
+> +	  Support System Timer for S5P Series
 
-I have a reference driver, which uses 2 IRQs 
-One for PENDOWN and another Stylus Action.
-And this driver does not use the ADC driver.
+IMHO 'S5P_SYSTIMER' would be a better name, but it is only a matter
+of taste.
 
-TS on S3C64XX and S5P series does not seem to need
-ADC driver as such. 
+A new Kconfig option to conditionally disable plat-samsung/time.c timer
+build would be nice to disable unused code on S5PV210.
 
-I need your suggestions on this. 
+> ...
 
-
--- 
-Thank You,
-(: Naveen Krishna Ch :)
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
