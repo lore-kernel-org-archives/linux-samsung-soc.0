@@ -1,119 +1,117 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH] S3C: SDHCI: Add platform data parameters for GPIO
-	external interrupts.
-Date: Tue, 4 May 2010 08:15:57 +0100
-Message-ID: <20100504071557.GE26401@trinity.fluff.org>
-References: <1268141825-10828-1-git-send-email-thomas.ab@samsung.com>
+Subject: Re: [PATCH] S5P6440: Add support for SDHCI interface.
+Date: Tue, 4 May 2010 08:19:21 +0100
+Message-ID: <20100504071921.GF26401@trinity.fluff.org>
+References: <1268141986-10983-1-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:45188 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:33072 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751217Ab0EDHP6 (ORCPT
+	id S1753771Ab0EDHTV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 May 2010 03:15:58 -0400
+	Tue, 4 May 2010 03:19:21 -0400
 Content-Disposition: inline
-In-Reply-To: <1268141825-10828-1-git-send-email-thomas.ab@samsung.com>
+In-Reply-To: <1268141986-10983-1-git-send-email-thomas.ab@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.ab@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org
 
-On Tue, Mar 09, 2010 at 07:07:05PM +0530, Thomas Abraham wrote:
-> This patch adds platform parameters for external GPIO support for card
-> insertion/removal events. This is used for S3C SDHCI controllers that
-> does not use the SDCD pin for card detection.
+On Tue, Mar 09, 2010 at 07:09:46PM +0530, Thomas Abraham wrote:
+> This patch adds support for SDHCI interface for Samsung's S5P6440 SoC.
 > 
 > Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 > ---
->  arch/arm/plat-samsung/include/plat/sdhci.h |    7 ++++++
->  drivers/mmc/host/sdhci-s3c.c               |   30 ++++++++++++++++++++++++++++
->  2 files changed, 37 insertions(+), 0 deletions(-)
+>  arch/arm/mach-s5p6440/Kconfig            |    9 +++++++++
+>  arch/arm/mach-s5p6440/cpu.c              |    4 ++++
+>  arch/arm/mach-s5p6440/include/mach/map.h |    3 +++
+>  arch/arm/plat-s5p/include/plat/s5p6440.h |    1 +
+>  drivers/mmc/host/Kconfig                 |    2 +-
+>  5 files changed, 18 insertions(+), 1 deletions(-)
 > 
-> diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-samsung/include/plat/sdhci.h
-> index 7d07cd7..b0a0528 100644
-> --- a/arch/arm/plat-samsung/include/plat/sdhci.h
-> +++ b/arch/arm/plat-samsung/include/plat/sdhci.h
-> @@ -29,6 +29,9 @@ struct mmc_ios;
->   *            is necessary the controllers and/or GPIO blocks require the
->   *	      changing of driver-strength and other controls dependant on
->   *	      the card and speed of operation.
-> + * @cfg_ext_cd: Configure external interrupt line.
-> + * @is_card_present: Returns status of card availability.
-> + * @ext_cd: The external GPIO interrupt number to be used.
+> diff --git a/arch/arm/mach-s5p6440/Kconfig b/arch/arm/mach-s5p6440/Kconfig
+> index 4c29ff8..7a73ae2 100644
+> --- a/arch/arm/mach-s5p6440/Kconfig
+> +++ b/arch/arm/mach-s5p6440/Kconfig
+> @@ -12,9 +12,18 @@ config CPU_S5P6440
+>  	help
+>  	  Enable S5P6440 CPU support
+>  
+> +config S5P6440_SETUP_SDHCI
+> +	bool
+> +	help
+> +	  Internal configuration for default SDHCI setup for S5P6440 SoC.
+> +
+>  config MACH_SMDK6440
+>  	bool "SMDK6440"
+>  	select CPU_S5P6440
+> +	select S5P6440_SETUP_SDHCI
+> +	select S3C_DEV_HSMMC
+> +	select S3C_DEV_HSMMC1
+> +	select S3C_DEV_HSMMC2
+>  	help
+>  	  Machine support for the Samsung SMDK6440
+>  
+> diff --git a/arch/arm/mach-s5p6440/cpu.c b/arch/arm/mach-s5p6440/cpu.c
+> index 1794131..16f6f0d 100644
+> --- a/arch/arm/mach-s5p6440/cpu.c
+> +++ b/arch/arm/mach-s5p6440/cpu.c
+> @@ -107,6 +107,10 @@ int __init s5p6440_init(void)
+>  {
+>  	printk(KERN_INFO "S5P6440: Initializing architecture\n");
+>  
+> +#ifdef CONFIG_MMC_SDHCI_S3C
+> +	s5p6440_setup_sdhci();
+> +#endif
+> +
+>  	/* set idle function */
+>  	pm_idle = s5p6440_idle;
+>  
+> diff --git a/arch/arm/mach-s5p6440/include/mach/map.h b/arch/arm/mach-s5p6440/include/mach/map.h
+> index 8924e5a..abf462b 100644
+> --- a/arch/arm/mach-s5p6440/include/mach/map.h
+> +++ b/arch/arm/mach-s5p6440/include/mach/map.h
+> @@ -64,5 +64,8 @@
+>  /* compatibiltiy defines. */
+>  #define S3C_PA_UART		S5P6440_PA_UART
+>  #define S3C_PA_IIC		S5P6440_PA_IIC0
+> +#define S3C_PA_HSMMC0           S5P6440_PA_HSMMC0
+> +#define S3C_PA_HSMMC1           S5P6440_PA_HSMMC1
+> +#define S3C_PA_HSMMC2           S5P6440_PA_HSMMC2
+>  
+>  #endif /* __ASM_ARCH_MAP_H */
+> diff --git a/arch/arm/plat-s5p/include/plat/s5p6440.h b/arch/arm/plat-s5p/include/plat/s5p6440.h
+> index a4cd75a..0ca8daf 100644
+> --- a/arch/arm/plat-s5p/include/plat/s5p6440.h
+> +++ b/arch/arm/plat-s5p/include/plat/s5p6440.h
+> @@ -15,6 +15,7 @@
+>  extern void s5p6440_common_init_uarts(struct s3c2410_uartcfg *cfg, int no);
+>  extern void s5p6440_register_clocks(void);
+>  extern void s5p6440_setup_clocks(void);
+> +extern void s5p6440_setup_sdhci(void);
+>  
+>  #ifdef CONFIG_CPU_S5P6440
+>  
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index ce1d288..811d00b 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -127,7 +127,7 @@ config MMC_SDHCI_PLTFM
+>  
+>  config MMC_SDHCI_S3C
+>  	tristate "SDHCI support on Samsung S3C SoC"
+> -	depends on MMC_SDHCI && (PLAT_S3C24XX || PLAT_S3C64XX)
+> +	depends on MMC_SDHCI && (PLAT_S3C24XX || PLAT_S3C64XX || PLAT_S5P)
+>  	help
+>  	  This selects the Secure Digital Host Controller Interface (SDHCI)
+>  	  often referrered to as the HSMMC block in some of the Samsung S3C
 
-Do you really need cfg_ext_cd?
+Hmm, should we change to depending on PLAT_SAMSUNG instead, or have a
+HAVE_S3C_SDHCI which the relevant platforms/SoCs select? not all S3C24XX
+have this.
 
->   * Initialisation data specific to either the machine or the platform
->   * for the device driver to use or call-back when configuring gpio or
-> @@ -45,6 +48,10 @@ struct s3c_sdhci_platdata {
->  			    void __iomem *regbase,
->  			    struct mmc_ios *ios,
->  			    struct mmc_card *card);
-> +
-> +	void		(*cfg_ext_cd)(void);
-> +	unsigned int	(*is_card_present)(void);
-> +	unsigned int	ext_cd;
->  };
->  
->  /**
-> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-> index ebb17ac..073b56f 100644
-> --- a/drivers/mmc/host/sdhci-s3c.c
-> +++ b/drivers/mmc/host/sdhci-s3c.c
-> @@ -212,6 +212,20 @@ static void sdhci_s3c_set_clock(struct sdhci_host *host, unsigned int clock)
->  	}
->  }
->  
-> +static irqreturn_t s3c_sdhci_irq_extcd(int irq, void *dev_id)
-> +{
-> +	struct sdhci_s3c *sc = dev_id;
-> +	u32 present = sc->pdata->is_card_present();
-> +
-> +	if (present)
-> +		sc->host->flags &= ~SDHCI_DEVICE_DEAD;
-> +	else
-> +		sc->host->flags |= SDHCI_DEVICE_DEAD;
-> +
-> +	tasklet_schedule(&sc->host->card_tasklet);
-> +	return IRQ_HANDLED;
-> +}
-> +
->  static struct sdhci_ops sdhci_s3c_ops = {
->  	.get_max_clock		= sdhci_s3c_get_max_clk,
->  	.get_timeout_clock	= sdhci_s3c_get_timeout_clk,
-> @@ -346,14 +360,30 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
->  	host->quirks |= (SDHCI_QUIRK_32BIT_DMA_ADDR |
->  			 SDHCI_QUIRK_32BIT_DMA_SIZE);
->  
-> +	if (pdata->cfg_ext_cd) {
-> +		pdata->cfg_ext_cd();
-> +		if (!pdata->is_card_present())
-> +			host->flags |= SDHCI_DEVICE_DEAD;
-> +	}
-> +
->  	ret = sdhci_add_host(host);
->  	if (ret) {
->  		dev_err(dev, "sdhci_add_host() failed\n");
->  		goto err_add_host;
->  	}
->  
-> +	if (pdata->cfg_ext_cd) {
-> +		ret = request_irq(pdata->ext_cd, s3c_sdhci_irq_extcd,
-> +			IRQF_SHARED, mmc_hostname(host->mmc), sc);
-> +		if (ret)
-> +			goto err_req_cdirq;
-> +	}
-> +
->  	return 0;
->  
-> + err_req_cdirq:
-> +	sdhci_remove_host(host, 0);
-> +
->   err_add_host:
->  	release_resource(sc->ioarea);
->  	kfree(sc->ioarea);
-> -- 
+
 > 1.6.6.rc2
 > 
 > --
