@@ -1,42 +1,39 @@
-From: Tubbs Freudenberger <gelidly@urlaubsspot.de>
-Subject: Row escape." "Yes," said Tom, coming up, "I've been out to look,
-Date: Mon, 03 May 2010 02:24:50 +0200
-Message-ID: <4BDE16CD.5040107@farapi.com>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: S3C6410 power management support status
+Date: Tue, 4 May 2010 01:24:20 +0100
+Message-ID: <20100504002420.GQ6684@trinity.fluff.org>
+References: <20100429124509.GA11290@jeknote.loshitsa1.net>
 Mime-Version: 1.0
-Content-Type: application/octet-stream; name="containers.rtf"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from static.kpn.net ([188.207.99.158]:57573 "HELO static.kpn.net"
-	rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-	id S1754348Ab0ECAY6 (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:54973 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S932283Ab0EDAY0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 2 May 2010 20:24:58 -0400
+	Mon, 3 May 2010 20:24:26 -0400
+Content-Disposition: inline
+In-Reply-To: <20100429124509.GA11290@jeknote.loshitsa1.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shelby Gonzalaz <linux-samsung-soc@vger.kernel.org>
+To: Yauhen Kharuzhy <yauhen.kharuzhy@promwad.com>
+Cc: linux-arm-kernel@lists.infradead.org, Vladimir Semyonov <vladimir.semyonov@promwad.com>, linux-samsung-soc@vger.kernel.org, Vladimir Davydov <vladimir.davydov@promwad.com>, Ben Dooks <ben-linux@fluff.org>
 
-e1xydGYxXGFuc2lcYW5zaWNwZzEyNTJcZGVmZjBcZGVmbGFuZzEwMzN7XCpcZ2VuZXJhdG9y
-IE1zZnRlZGl0IDEuNDcuMzIuNjI3O317XGZvbnR0Ymx7XGYwXGZuaWxcZmNoYXJzZXQwIENh
-bGlicmk7fX0NCntcKlxnZW5lcmF0b3IgTXNmdGVkaXQgMS40Ny4zMi42Mjc7fXtcY29sb3J0
-YmwgO1xyZWQwXGdyZWVuMFxibHVlMjU1O1xyZWQxOTJcZ3JlZW44MFxibHVlNzc7XHJlZDBc
-Z3JlZW4xNzZcYmx1ZTgwO1xyZWQyMDRcZ3JlZW4xODBcYmx1ZTA7XHJlZDI1NVxncmVlbjBc
-Ymx1ZTA7XHJlZDIyM1xncmVlbjIwNlxibHVlNDtccmVkMTU1XGdyZWVuMFxibHVlMjExO1xy
-ZWQ3OVxncmVlbjEyOVxibHVlMTg5O1xyZWQxNjVcZ3JlZW4xNjVcYmx1ZTE2NTtccmVkMTI4
-XGdyZWVuMTU4XGJsdWUxOTQ7XHJlZDI0N1xncmVlbjE1MFxibHVlNzA7XHJlZDBcZ3JlZW43
-N1xibHVlMTg3O1xyZWQ3NVxncmVlbjE3MlxibHVlMTk4O1xyZWQyMjFcZ3JlZW4xMzJcYmx1
-ZTEzMjtccmVkNTFcZ3JlZW41MVxibHVlNTE7XHJlZDE1OFxncmVlbjEyNFxibHVlMTI0O1xy
-ZWQxNTVcZ3JlZW4xODdcYmx1ZTg5O30NCntcKlxnZW5lcmF0b3IgTXNmdGVkaXQgMS40Ny4z
-Mi42Mjc7fVx2aWV3a2luZDRcdWMxXHBhcmRcc2EyMDBcc2wyNzZcc2xtdWx0MVxsYW5nOVxm
-MFxmczMye1xmaWVsZHtcKlxmbGRpbnN0e0hZUEVSTElOSyAiaHtcKlxkZCAxLjQ3LjMyLjYy
-Nzt9dHRwOi8vd3d3LmRlOTMucnUifX17XGZsZHJzbHR7XHVsXGNmMSBodHRwOi8vd3d3LmRl
-OTMucnV9fX1cZjBcY2YxXGJcZnMzMiAgLSBPcmRlciB0aGUgY2hlYXBlc3QgbWVkaWNhdGlv
-bnMgbm93IVxwYXINClZpYWdyYSBcY2Y0IENpYWxpcyBcY2YzIFZpYWdyYSBQcm9mZXNzaW9u
-YWwgXGNmNSBDaWFsaXMgUHJvZmVzc2lvbmFsIFxjZjYgVmlhZ3JhIFN1cGVyIEFjdGl2ZSsg
-XGNmMyBDaWFsaXMgU3VwZXIgQWN0aXZlKyBcY2Y3IExldml0cmFcY2YwICBcY2Y4IFZpYWdy
-YSBTb2Z0IFRhYnMgXGNmOSBDaWFsaXMgU29mdCBUYWJzXGNmMTAgIFxjZjExIExldml0cmEg
-UHJvZmVzc2lvbmFsIFxjZjQgRmVtYWxlIFZpYWdyYSBcY2YxMiBQcm9wZWNpYSBcY2Y3IEFj
-b21wbGlhIFxjZjYgWGVuaWNhbFxjZjAgIFxjZjUgQnJhbmQgTGV2aXRyYSBcY2YxMyBGZW1h
-bGUgQ2lhbGlzIFxjZjE0IExldml0cmEgU3VwZXIgQWN0aXZlKyBcY2YxNSBUYW1pZmx1XGNm
-MCAgXGNmNyBWUFhMXGNmMCAgXGNmMTYgVmlhZ3JhIFNvZnQgRmxhdm91cmVkIFxjZjUgQnJh
-bmQgVmlhZ3JhIFxjZjE3IEJyYW5kIENpYWxpc1xjZjANCntcKlxnZW5lcmF0b3IgTXNmdGVk
-aXQgMS40Ny4zMi42Mjc7fX0=
+On Thu, Apr 29, 2010 at 03:45:09PM +0300, Yauhen Kharuzhy wrote:
+> Hi.
+> 
+> Can anybody explain current status of S3C6410 power management support
+> in mainline? Suspend-to-RAM looks completely broken in the current
+> Linus's git tree.
+
+I'd prefer if you didn't make sweeping accusations about the state of
+a given piece of the kernel without having a good look first. From reading
+your second post, it seems that what is actually the problem is that the
+64XX support only currently handles wakeup configurations from the EINT
+pins.
+
+
+-- 
+Ben
+
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
