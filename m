@@ -1,77 +1,87 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: S3C64XX & S3C24XX TS/ADC support in mainline
-Date: Tue, 4 May 2010 07:55:29 +0100
-Message-ID: <20100504065529.GA26401@trinity.fluff.org>
-References: <1270530310-24119-1-git-send-email-ch.naveen@samsung.com>
+Subject: Re: [PATCH v2.6.34-rc2] s3c: Fix CONFIG_MTD_NAND_S3C2410_CLKSTOP
+Date: Tue, 4 May 2010 07:57:01 +0100
+Message-ID: <20100504065701.GB26401@trinity.fluff.org>
+References: <1269937323-7541-1-git-send-email-chripell@fsfe.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:49508 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:49563 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751472Ab0EDGzb (ORCPT
+	id S1753175Ab0EDG5C (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 May 2010 02:55:31 -0400
+	Tue, 4 May 2010 02:57:02 -0400
 Content-Disposition: inline
-In-Reply-To: <1270530310-24119-1-git-send-email-ch.naveen@samsung.com>
+In-Reply-To: <1269937323-7541-1-git-send-email-chripell@fsfe.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ch.naveen@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org
+To: Christian Pellegrin <chripell@fsfe.org>
+Cc: ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Tue, Apr 06, 2010 at 10:35:10AM +0530, ch.naveen@samsung.com wrote:
-> From: Naveen Krishna CH <ch.naveen@samsung.com>
+On Tue, Mar 30, 2010 at 10:22:03AM +0200, Christian Pellegrin wrote:
+> Option CONFIG_MTD_NAND_S3C2410_CLKSTOP was broken by higher MTD layers
+> calling select_chip with -1 twice in a row. This patch fixes the problem
+> by making sure that clk_disable is not called too many times.
 > 
-> Hi Ben,
+> Signed-off-by: Christian Pellegrin <chripell@fsfe.org>
+> ---
+>  drivers/mtd/nand/s3c2410.c |   10 ++++++++--
+>  1 files changed, 8 insertions(+), 2 deletions(-)
 > 
-> This is Naveen from Samsung, India. 
+> diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
+> index fa6e9c7..9adecc6 100644
+> --- a/drivers/mtd/nand/s3c2410.c
+> +++ b/drivers/mtd/nand/s3c2410.c
+> @@ -37,6 +37,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/clk.h>
+>  #include <linux/cpufreq.h>
+> +#include <linux/bitops.h>
+>  
+>  #include <linux/mtd/mtd.h>
+>  #include <linux/mtd/nand.h>
+> @@ -135,6 +136,9 @@ struct s3c2410_nand_info {
+>  #ifdef CONFIG_CPU_FREQ
+>  	struct notifier_block	freq_transition;
+>  #endif
+> +#ifdef CONFIG_MTD_NAND_S3C2410_CLKSTOP
+> +	unsigned long                   clk_running;
+> +#endif
+>  };
+>  
+>  /* conversion functions */
+> @@ -333,7 +337,8 @@ static void s3c2410_nand_select_chip(struct mtd_info *mtd, int chip)
+>  	nmtd = this->priv;
+>  	info = nmtd->info;
+>  
+> -	if (chip != -1 && allow_clk_stop(info))
+> +	if (chip != -1 && allow_clk_stop(info) &&
+> +	    !test_and_set_bit(0, &info->clk_running))
+>  		clk_enable(info->clk);
+
+please let me know why you feel the need to use test_and_set_bit on
+a variable that is single use.
+  
+>  	cur = readl(info->sel_reg);
+> @@ -356,7 +361,8 @@ static void s3c2410_nand_select_chip(struct mtd_info *mtd, int chip)
+>  
+>  	writel(cur, info->sel_reg);
+>  
+> -	if (chip == -1 && allow_clk_stop(info))
+> +	if (chip == -1 && allow_clk_stop(info) &&
+> +	    test_and_clear_bit(0, &info->clk_running))
+>  		clk_disable(info->clk);
+>  }
+>  
+> -- 
+> 1.5.6.5
 > 
-> I'm working on adding support for TS/ADC for the following boards
-> 6410, 6440 and V210 on 2.6.34-rc2 kernel. 
-> 
-> 1)
-> I did some initial work and found that the current driver 
-> (s3c24xx_ts.c) exists for ARCH_S3C24XX alone 
-> and which requires ADC for S3C24XX.  
-> 
-> Though. there is no board under (mach-s3c24XX) implementing the 
-> touchscreen driver.
-> 
-> I would like to know, on what all boards is this driver tested  & 
-> how much compatible it is with S3C64XX and S5P series SoCs.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-The h1940 should be using the touchscreen, since this is what it was
-originally written for.
- 
-> 2)
-> I also have a design issue with 
-> a.  There are some GPIO config specific to 2410 in the current driver.
-
-yes, although this could be removed and given to the relevant machine.
-
-> b.  It uses only 1 IRQ (PenDown) and 
-
-yes.
-
-> c.  The ISR for this IRQ uses the ADC APIs.
-> 
-> I have a reference driver, which uses 2 IRQs 
-> One for PENDOWN and another Stylus Action.
-> And this driver does not use the ADC driver.
-
-either update the existing driver to use the StylusAction IRQ
-or do without it.
- 
-> TS on S3C64XX and S5P series does not seem to need
-> ADC driver as such. 
-
-please dont' assume you know bettert than any of your potentuial
-customers... the ADC API is there for a reason, there are more than
-just the TS ADC inputs and it is entirly possible something else
-will need acces to them.
-
-On some of our boards, they provide input voltage monitoring and
-feedback from sensors.
-
+-- 
 -- 
 Ben
 
