@@ -1,77 +1,46 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH v2.6.34-rc2] s3c: Fix GPIOs bank H and J not being
-	preserved during suspend on S3C24XX
-Date: Tue, 4 May 2010 08:01:11 +0100
-Message-ID: <20100504070111.GC26401@trinity.fluff.org>
-References: <1269937386-7597-1-git-send-email-chripell@fsfe.org>
+From: christian pellegrin <chripell@fsfe.org>
+Subject: Re: [PATCH v2.6.34-rc2] s3c: Fix CONFIG_MTD_NAND_S3C2410_CLKSTOP
+Date: Tue, 4 May 2010 09:13:41 +0200
+Message-ID: <o2wcabda6421005040013rc335f723qc0f2f6018f0ba578@mail.gmail.com>
+References: <1269937323-7541-1-git-send-email-chripell@fsfe.org>
+	 <20100504065701.GB26401@trinity.fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:33307 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753717Ab0EDHBP (ORCPT
+Received: from mail-bw0-f217.google.com ([209.85.218.217]:42313 "EHLO
+	mail-bw0-f217.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756381Ab0EDHNo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 May 2010 03:01:15 -0400
-Content-Disposition: inline
-In-Reply-To: <1269937386-7597-1-git-send-email-chripell@fsfe.org>
+	Tue, 4 May 2010 03:13:44 -0400
+Received: by bwz9 with SMTP id 9so1907779bwz.29
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 May 2010 00:13:42 -0700 (PDT)
+In-Reply-To: <20100504065701.GB26401@trinity.fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Christian Pellegrin <chripell@fsfe.org>
-Cc: ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Tue, Mar 30, 2010 at 10:23:06AM +0200, Christian Pellegrin wrote:
-> With this patch the platform-specific define for the last defined GPIO
-> on S3C machines is used instead of a hard-coded value (which is right
-> only for the s3c2410). The gpio_nr being incremented by 1 too much (look
-> for the gpio_nr++ in the for instruction) is fixed too although it
-> doesn't make any trouble on current S3C implementations.
-> 
-> Signed-off-by: Christian Pellegrin <chripell@fsfe.org>
-> ---
->  arch/arm/mach-s3c2410/include/mach/gpio-track.h |    2 +-
->  arch/arm/plat-samsung/pm-gpio.c                 |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s3c2410/include/mach/gpio-track.h b/arch/arm/mach-s3c2410/include/mach/gpio-track.h
-> index acb2591..6371eaa 100644
-> --- a/arch/arm/mach-s3c2410/include/mach/gpio-track.h
-> +++ b/arch/arm/mach-s3c2410/include/mach/gpio-track.h
-> @@ -23,7 +23,7 @@ static inline struct s3c_gpio_chip *s3c_gpiolib_getchip(unsigned int pin)
->  {
->  	struct s3c_gpio_chip *chip;
->  
-> -	if (pin > S3C2410_GPG(10))
-> +	if (pin > S3C_GPIO_END)
->  		return NULL;
->  
->  	chip = &s3c24xx_gpios[pin/32];
+On Tue, May 4, 2010 at 8:57 AM, Ben Dooks <ben-linux@fluff.org> wrote:
+>
+> please let me know why you feel the need to use test_and_set_bit on
+> a variable that is single use.
+>
 
-This may get removed in the up-comming s3c2410_gpio fallout, so I'll
-keep this in mind if it is needed. Series should be posted in the next
-few days.
+As I mentioned in the description the select function is not called in
+a balanced way by upper layers, so there is a need to count it in the
+driver (otherwise you end by calling clk_disable too many times if I
+remember well). Perhaps the atomic operations are not needed but I'm
+not sure about this so I preferred to take the cautionary approach (I
+haven't studied if calls to select are serialized in the upper MTD
+layer or even the block layer). Feel free to use a simple integer, but
+I confirm that something like this patch is needed in 2.6.33 and
+2.6.34 if you want clock stopping enabled.
 
-> diff --git a/arch/arm/plat-samsung/pm-gpio.c b/arch/arm/plat-samsung/pm-gpio.c
-> index 69a4c7f..1aac746 100644
-> --- a/arch/arm/plat-samsung/pm-gpio.c
-> +++ b/arch/arm/plat-samsung/pm-gpio.c
-> @@ -343,7 +343,7 @@ void s3c_pm_save_gpios(void)
->  			  ourchip->pm_save[2],
->  			  ourchip->pm_save[3]);
->  
-> -		gpio_nr += ourchip->chip.ngpio;
-> +		gpio_nr += ourchip->chip.ngpio - 1;
->  		gpio_nr += CONFIG_S3C_GPIO_SPACE;
->  	}
->  }
-
-Hmm, think a better fix for this would be to remove the gpio_nr++ in
-the for() loop.
-
-could you send the gpio fix with the above change as a seperate patch
-please?
+Thanks,
 
 -- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+Christian Pellegrin, see http://www.evolware.org/chri/
+"Real Programmers don't play tennis, or any other sport which requires
+you to change clothes. Mountain climbing is OK, and Real Programmers
+wear their climbing boots to work in case a mountain should suddenly
+spring up in the middle of the computer room."
