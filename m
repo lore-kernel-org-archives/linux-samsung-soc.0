@@ -1,375 +1,976 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 2/2] ARM: S5PV210: Add GPIO register definitions
-Date: Tue,  4 May 2010 11:37:32 +0900
-Message-ID: <1272940652-31254-1-git-send-email-kgene.kim@samsung.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH v2 1/2] ARM: S5PV210: Add S5PV210 GPIO support
+Date: Tue, 4 May 2010 12:18:32 +0900
+Message-ID: <t2n9c9fda241005032018odc1eb6beia07c6252f25ded2b@mail.gmail.com>
+References: <1272940641-31220-1-git-send-email-kgene.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:43585 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754917Ab0EDCmn (ORCPT
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:47319 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750958Ab0EDDSd convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 May 2010 22:42:43 -0400
+	Mon, 3 May 2010 23:18:33 -0400
+Received: by vws19 with SMTP id 19so2456952vws.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 May 2010 20:18:32 -0700 (PDT)
+In-Reply-To: <1272940641-31220-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-From: Jongpill Lee <boyko.lee@samsung.com>
+Hi,
 
-This patch adds GPIO register definitions for group interrupt.
+On Tue, May 4, 2010 at 11:37 AM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> This patch adds GPIOlib support for S5PV210.
+>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+> =A0arch/arm/mach-s5pv210/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0=
+ =A02 +-
+> =A0arch/arm/mach-s5pv210/gpio.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 |=
+ =A0495 ++++++++++++++++++++++++
+> =A0arch/arm/mach-s5pv210/include/mach/gpio.h =A0 =A0 =A0| =A0 97 ++++=
++-
+> =A0arch/arm/mach-s5pv210/include/mach/regs-gpio.h | =A0 77 ++++
+> =A04 files changed, 667 insertions(+), 4 deletions(-)
+> =A0create mode 100644 arch/arm/mach-s5pv210/gpio.c
+> =A0create mode 100644 arch/arm/mach-s5pv210/include/mach/regs-gpio.h
+>
+> diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/M=
+akefile
+> index 7469d10..cb959ea 100644
+> --- a/arch/arm/mach-s5pv210/Makefile
+> +++ b/arch/arm/mach-s5pv210/Makefile
+> @@ -12,7 +12,7 @@ obj- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0:=3D
+>
+> =A0# Core support for S5PV210 system
+>
+> -obj-$(CONFIG_CPU_S5PV210) =A0 =A0 =A0+=3D cpu.o init.o clock.o
+> +obj-$(CONFIG_CPU_S5PV210) =A0 =A0 =A0+=3D cpu.o init.o clock.o gpio.=
+o
+>
+> =A0# machine support
+>
+> diff --git a/arch/arm/mach-s5pv210/gpio.c b/arch/arm/mach-s5pv210/gpi=
+o.c
+> new file mode 100644
+> index 0000000..88f4802
+> --- /dev/null
+> +++ b/arch/arm/mach-s5pv210/gpio.c
+> @@ -0,0 +1,495 @@
+> +/* linux/arch/arm/mach-s5pv210/gpio.c
+> + *
+> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+> + * =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com/
+> + *
+> + * S5PV210 - GPIOlib support
+> + *
+> + * This program is free software; you can redistribute it and/or mod=
+ify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/irq.h>
+> +#include <linux/io.h>
+> +#include <mach/map.h>
+> +#include <mach/gpio.h>
+> +#include <mach/regs-gpio.h>
+> +#include <plat/gpio-core.h>
+> +#include <plat/gpio-cfg.h>
+> +#include <plat/gpio-cfg-helpers.h>
+> +
+> +static struct s3c_gpio_cfg gpio_cfg =3D {
+> + =A0 =A0 =A0 .cfg_eint =A0 =A0 =A0 =3D 0xf,
 
-Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s5pv210/include/mach/regs-gpio.h |  338 ++++++++++++++++++++----
- 1 files changed, 282 insertions(+), 56 deletions(-)
+What's the purpose of 'cfg_eint'? As I know no place to use it.
 
-diff --git a/arch/arm/mach-s5pv210/include/mach/regs-gpio.h b/arch/arm/mach-s5pv210/include/mach/regs-gpio.h
-index c78bbeb..4968b06 100644
---- a/arch/arm/mach-s5pv210/include/mach/regs-gpio.h
-+++ b/arch/arm/mach-s5pv210/include/mach/regs-gpio.h
-@@ -17,61 +17,287 @@
- 
- /* Base addresses for each of the banks */
- 
--#define S5PV210_GPA0_BASE	(S5P_VA_GPIO + 0x000)
--#define S5PV210_GPA1_BASE	(S5P_VA_GPIO + 0x020)
--#define S5PV210_GPB_BASE	(S5P_VA_GPIO + 0x040)
--#define S5PV210_GPC0_BASE	(S5P_VA_GPIO + 0x060)
--#define S5PV210_GPC1_BASE	(S5P_VA_GPIO + 0x080)
--#define S5PV210_GPD0_BASE	(S5P_VA_GPIO + 0x0A0)
--#define S5PV210_GPD1_BASE	(S5P_VA_GPIO + 0x0C0)
--#define S5PV210_GPE0_BASE	(S5P_VA_GPIO + 0x0E0)
--#define S5PV210_GPE1_BASE	(S5P_VA_GPIO + 0x100)
--#define S5PV210_GPF0_BASE	(S5P_VA_GPIO + 0x120)
--#define S5PV210_GPF1_BASE	(S5P_VA_GPIO + 0x140)
--#define S5PV210_GPF2_BASE	(S5P_VA_GPIO + 0x160)
--#define S5PV210_GPF3_BASE	(S5P_VA_GPIO + 0x180)
--#define S5PV210_GPG0_BASE	(S5P_VA_GPIO + 0x1A0)
--#define S5PV210_GPG1_BASE	(S5P_VA_GPIO + 0x1C0)
--#define S5PV210_GPG2_BASE	(S5P_VA_GPIO + 0x1E0)
--#define S5PV210_GPG3_BASE	(S5P_VA_GPIO + 0x200)
--#define S5PV210_GPH0_BASE	(S5P_VA_GPIO + 0xC00)
--#define S5PV210_GPH1_BASE	(S5P_VA_GPIO + 0xC20)
--#define S5PV210_GPH2_BASE	(S5P_VA_GPIO + 0xC40)
--#define S5PV210_GPH3_BASE	(S5P_VA_GPIO + 0xC60)
--#define S5PV210_GPI_BASE	(S5P_VA_GPIO + 0x220)
--#define S5PV210_GPJ0_BASE	(S5P_VA_GPIO + 0x240)
--#define S5PV210_GPJ1_BASE	(S5P_VA_GPIO + 0x260)
--#define S5PV210_GPJ2_BASE	(S5P_VA_GPIO + 0x280)
--#define S5PV210_GPJ3_BASE	(S5P_VA_GPIO + 0x2A0)
--#define S5PV210_GPJ4_BASE	(S5P_VA_GPIO + 0x2C0)
--#define S5PV210_MP01_BASE	(S5P_VA_GPIO + 0x2E0)
--#define S5PV210_MP02_BASE	(S5P_VA_GPIO + 0x300)
--#define S5PV210_MP03_BASE	(S5P_VA_GPIO + 0x320)
--#define S5PV210_MP04_BASE	(S5P_VA_GPIO + 0x340)
--#define S5PV210_MP05_BASE	(S5P_VA_GPIO + 0x360)
--#define S5PV210_MP06_BASE	(S5P_VA_GPIO + 0x380)
--#define S5PV210_MP07_BASE	(S5P_VA_GPIO + 0x3A0)
--#define S5PV210_MP10_BASE	(S5P_VA_GPIO + 0x3C0)
--#define S5PV210_MP11_BASE	(S5P_VA_GPIO + 0x3E0)
--#define S5PV210_MP12_BASE	(S5P_VA_GPIO + 0x400)
--#define S5PV210_MP13_BASE	(S5P_VA_GPIO + 0x420)
--#define S5PV210_MP14_BASE	(S5P_VA_GPIO + 0x440)
--#define S5PV210_MP15_BASE	(S5P_VA_GPIO + 0x460)
--#define S5PV210_MP16_BASE	(S5P_VA_GPIO + 0x480)
--#define S5PV210_MP17_BASE	(S5P_VA_GPIO + 0x4A0)
--#define S5PV210_MP18_BASE	(S5P_VA_GPIO + 0x4C0)
--#define S5PV210_MP20_BASE	(S5P_VA_GPIO + 0x4E0)
--#define S5PV210_MP21_BASE	(S5P_VA_GPIO + 0x500)
--#define S5PV210_MP22_BASE	(S5P_VA_GPIO + 0x520)
--#define S5PV210_MP23_BASE	(S5P_VA_GPIO + 0x540)
--#define S5PV210_MP24_BASE	(S5P_VA_GPIO + 0x560)
--#define S5PV210_MP25_BASE	(S5P_VA_GPIO + 0x580)
--#define S5PV210_MP26_BASE	(S5P_VA_GPIO + 0x5A0)
--#define S5PV210_MP27_BASE	(S5P_VA_GPIO + 0x5C0)
--#define S5PV210_MP28_BASE	(S5P_VA_GPIO + 0x5E0)
--#define S5PV210_ETC0_BASE	(S5P_VA_GPIO + 0x600)
--#define S5PV210_ETC1_BASE	(S5P_VA_GPIO + 0x620)
--#define S5PV210_ETC2_BASE	(S5P_VA_GPIO + 0x640)
--#define S5PV210_ETC4_BASE	(S5P_VA_GPIO + 0x660)
-+#define S5PV210_GPA0_BASE		(S5P_VA_GPIO + 0x000)
-+#define S5PV210_GPA1_BASE		(S5P_VA_GPIO + 0x020)
-+#define S5PV210_GPB_BASE 		(S5P_VA_GPIO + 0x040)
-+#define S5PV210_GPC0_BASE		(S5P_VA_GPIO + 0x060)
-+#define S5PV210_GPC1_BASE		(S5P_VA_GPIO + 0x080)
-+#define S5PV210_GPD0_BASE		(S5P_VA_GPIO + 0x0A0)
-+#define S5PV210_GPD1_BASE		(S5P_VA_GPIO + 0x0C0)
-+#define S5PV210_GPE0_BASE		(S5P_VA_GPIO + 0x0E0)
-+#define S5PV210_GPE1_BASE		(S5P_VA_GPIO + 0x100)
-+#define S5PV210_GPF0_BASE		(S5P_VA_GPIO + 0x120)
-+#define S5PV210_GPF1_BASE		(S5P_VA_GPIO + 0x140)
-+#define S5PV210_GPF2_BASE		(S5P_VA_GPIO + 0x160)
-+#define S5PV210_GPF3_BASE		(S5P_VA_GPIO + 0x180)
-+#define S5PV210_GPG0_BASE		(S5P_VA_GPIO + 0x1A0)
-+#define S5PV210_GPG1_BASE		(S5P_VA_GPIO + 0x1C0)
-+#define S5PV210_GPG2_BASE		(S5P_VA_GPIO + 0x1E0)
-+#define S5PV210_GPG3_BASE		(S5P_VA_GPIO + 0x200)
-+#define S5PV210_GPH0_BASE		(S5P_VA_GPIO + 0xC00)
-+#define S5PV210_GPH1_BASE		(S5P_VA_GPIO + 0xC20)
-+#define S5PV210_GPH2_BASE		(S5P_VA_GPIO + 0xC40)
-+#define S5PV210_GPH3_BASE		(S5P_VA_GPIO + 0xC60)
-+#define S5PV210_GPI_BASE 		(S5P_VA_GPIO + 0x220)
-+#define S5PV210_GPJ0_BASE		(S5P_VA_GPIO + 0x240)
-+#define S5PV210_GPJ1_BASE		(S5P_VA_GPIO + 0x260)
-+#define S5PV210_GPJ2_BASE		(S5P_VA_GPIO + 0x280)
-+#define S5PV210_GPJ3_BASE		(S5P_VA_GPIO + 0x2A0)
-+#define S5PV210_GPJ4_BASE		(S5P_VA_GPIO + 0x2C0)
-+#define S5PV210_MP01_BASE		(S5P_VA_GPIO + 0x2E0)
-+#define S5PV210_MP02_BASE		(S5P_VA_GPIO + 0x300)
-+#define S5PV210_MP03_BASE		(S5P_VA_GPIO + 0x320)
-+#define S5PV210_MP04_BASE		(S5P_VA_GPIO + 0x340)
-+#define S5PV210_MP05_BASE		(S5P_VA_GPIO + 0x360)
-+#define S5PV210_MP06_BASE		(S5P_VA_GPIO + 0x380)
-+#define S5PV210_MP07_BASE		(S5P_VA_GPIO + 0x3A0)
-+#define S5PV210_MP10_BASE		(S5P_VA_GPIO + 0x3C0)
-+#define S5PV210_MP11_BASE		(S5P_VA_GPIO + 0x3E0)
-+#define S5PV210_MP12_BASE		(S5P_VA_GPIO + 0x400)
-+#define S5PV210_MP13_BASE		(S5P_VA_GPIO + 0x420)
-+#define S5PV210_MP14_BASE		(S5P_VA_GPIO + 0x440)
-+#define S5PV210_MP15_BASE		(S5P_VA_GPIO + 0x460)
-+#define S5PV210_MP16_BASE		(S5P_VA_GPIO + 0x480)
-+#define S5PV210_MP17_BASE		(S5P_VA_GPIO + 0x4A0)
-+#define S5PV210_MP18_BASE		(S5P_VA_GPIO + 0x4C0)
-+#define S5PV210_MP20_BASE		(S5P_VA_GPIO + 0x4E0)
-+#define S5PV210_MP21_BASE		(S5P_VA_GPIO + 0x500)
-+#define S5PV210_MP22_BASE		(S5P_VA_GPIO + 0x520)
-+#define S5PV210_MP23_BASE		(S5P_VA_GPIO + 0x540)
-+#define S5PV210_MP24_BASE		(S5P_VA_GPIO + 0x560)
-+#define S5PV210_MP25_BASE		(S5P_VA_GPIO + 0x580)
-+#define S5PV210_MP26_BASE		(S5P_VA_GPIO + 0x5A0)
-+#define S5PV210_MP27_BASE		(S5P_VA_GPIO + 0x5C0)
-+#define S5PV210_MP28_BASE		(S5P_VA_GPIO + 0x5E0)
-+#define S5PV210_ETC0_BASE		(S5P_VA_GPIO + 0x600)
-+#define S5PV210_ETC1_BASE		(S5P_VA_GPIO + 0x620)
-+#define S5PV210_ETC2_BASE		(S5P_VA_GPIO + 0x640)
-+#define S5PV210_ETC4_BASE		(S5P_VA_GPIO + 0x660)
-+
-+#define S5PV210_GPA0_INT_CON		(S5P_VA_GPIO + 0x700)
-+#define S5PV210_GPA0_INTFLTCON0		(S5P_VA_GPIO + 0x800)
-+#define S5PV210_GPA0_INTFLTCON1		(S5P_VA_GPIO + 0x804)
-+#define S5PV210_GPA0_INT_MASK		(S5P_VA_GPIO + 0x900)
-+#define S5PV210_GPA0_INT_PEND		(S5P_VA_GPIO + 0xA00)
-+#define S5PV210_GPA0_INT_FIXPRI		(S5P_VA_GPIO + 0xB14)
-+
-+#define S5PV210_GPA1_INT_CON		(S5P_VA_GPIO + 0x704)
-+#define S5PV210_GPA1_INTFLTCON0		(S5P_VA_GPIO + 0x808)
-+#define S5PV210_GPA1_INTFLTCON1		(S5P_VA_GPIO + 0x80C)
-+#define S5PV210_GPA1_INT_MASK		(S5P_VA_GPIO + 0x904)
-+#define S5PV210_GPA1_INT_PEND		(S5P_VA_GPIO + 0xA04)
-+#define S5PV210_GPA1_INT_FIXPRI		(S5P_VA_GPIO + 0xB18)
-+
-+#define S5PV210_GPB_INT_CON		(S5P_VA_GPIO + 0x708)
-+#define S5PV210_GPB_INTFLTCON0		(S5P_VA_GPIO + 0x810)
-+#define S5PV210_GPB_INTFLTCON1		(S5P_VA_GPIO + 0x814)
-+#define S5PV210_GPB_INT_MASK		(S5P_VA_GPIO + 0x908)
-+#define S5PV210_GPB_INT_PEND		(S5P_VA_GPIO + 0xA08)
-+#define S5PV210_GPB_INT_FIXPRI		(S5P_VA_GPIO + 0xB1C)
-+
-+#define S5PV210_GPC0_INT_CON		(S5P_VA_GPIO + 0x70C)
-+#define S5PV210_GPC0_INTFLTCON0		(S5P_VA_GPIO + 0x818)
-+#define S5PV210_GPC0_INTFLTCON1		(S5P_VA_GPIO + 0x81C)
-+#define S5PV210_GPC0_INT_MASK		(S5P_VA_GPIO + 0x90C)
-+#define S5PV210_GPC0_INT_PEND		(S5P_VA_GPIO + 0xA0C)
-+#define S5PV210_GPC0_INT_FIXPRI		(S5P_VA_GPIO + 0xB20)
-+
-+#define S5PV210_GPC1_INT_CON		(S5P_VA_GPIO + 0x710)
-+#define S5PV210_GPC1_INTFLTCON0		(S5P_VA_GPIO + 0x820)
-+#define S5PV210_GPC1_INTFLTCON1		(S5P_VA_GPIO + 0x824)
-+#define S5PV210_GPC1_INT_MASK		(S5P_VA_GPIO + 0x910)
-+#define S5PV210_GPC1_INT_PEND		(S5P_VA_GPIO + 0xA10)
-+#define S5PV210_GPC1_INT_FIXPRI		(S5P_VA_GPIO + 0xB24)
-+
-+#define S5PV210_GPD0_INT_CON		(S5P_VA_GPIO + 0x714)
-+#define S5PV210_GPD0_INTFLTCON0		(S5P_VA_GPIO + 0x828)
-+#define S5PV210_GPD0_INTFLTCON1		(S5P_VA_GPIO + 0x82C)
-+#define S5PV210_GPD0_INT_MASK		(S5P_VA_GPIO + 0x914)
-+#define S5PV210_GPD0_INT_PEND		(S5P_VA_GPIO + 0xA14)
-+#define S5PV210_GPD0_INT_FIXPRI		(S5P_VA_GPIO + 0xB28)
-+
-+#define S5PV210_GPD1_INT_CON		(S5P_VA_GPIO + 0x718)
-+#define S5PV210_GPD1_INTFLTCON0		(S5P_VA_GPIO + 0x830)
-+#define S5PV210_GPD1_INTFLTCON1		(S5P_VA_GPIO + 0x834)
-+#define S5PV210_GPD1_INT_MASK		(S5P_VA_GPIO + 0x918)
-+#define S5PV210_GPD1_INT_PEND		(S5P_VA_GPIO + 0xA18)
-+#define S5PV210_GPD1_INT_FIXPRI		(S5P_VA_GPIO + 0xB2C)
-+
-+#define S5PV210_GPE0_INT_CON		(S5P_VA_GPIO + 0x71C)
-+#define S5PV210_GPE0_INTFLTCON0		(S5P_VA_GPIO + 0x838)
-+#define S5PV210_GPE0_INTFLTCON1		(S5P_VA_GPIO + 0x83C)
-+#define S5PV210_GPE0_INT_MASK		(S5P_VA_GPIO + 0x91C)
-+#define S5PV210_GPE0_INT_PEND		(S5P_VA_GPIO + 0xA1C)
-+#define S5PV210_GPE0_INT_FIXPRI		(S5P_VA_GPIO + 0xB30)
-+
-+#define S5PV210_GPE1_INT_CON		(S5P_VA_GPIO + 0x720)
-+#define S5PV210_GPE1_INTFLTCON0		(S5P_VA_GPIO + 0x840)
-+#define S5PV210_GPE1_INTFLTCON1		(S5P_VA_GPIO + 0x844)
-+#define S5PV210_GPE1_INT_MASK		(S5P_VA_GPIO + 0x920)
-+#define S5PV210_GPE1_INT_PEND		(S5P_VA_GPIO + 0xA20)
-+#define S5PV210_GPE1_INT_FIXPRI		(S5P_VA_GPIO + 0xB34)
-+
-+#define S5PV210_GPF0_INT_CON		(S5P_VA_GPIO + 0x724)
-+#define S5PV210_GPF0_INTFLTCON0		(S5P_VA_GPIO + 0x848)
-+#define S5PV210_GPF0_INTFLTCON1		(S5P_VA_GPIO + 0x84C)
-+#define S5PV210_GPF0_INT_MASK		(S5P_VA_GPIO + 0x924)
-+#define S5PV210_GPF0_INT_PEND		(S5P_VA_GPIO + 0xA24)
-+#define S5PV210_GPF0_INT_FIXPRI		(S5P_VA_GPIO + 0xB38)
-+
-+#define S5PV210_GPF1_INT_CON		(S5P_VA_GPIO + 0x728)
-+#define S5PV210_GPF1_INTFLTCON0		(S5P_VA_GPIO + 0x850)
-+#define S5PV210_GPF1_INTFLTCON1		(S5P_VA_GPIO + 0x854)
-+#define S5PV210_GPF1_INT_MASK		(S5P_VA_GPIO + 0x928)
-+#define S5PV210_GPF1_INT_PEND		(S5P_VA_GPIO + 0xA28)
-+#define S5PV210_GPF1_INT_FIXPRI		(S5P_VA_GPIO + 0xB3C)
-+
-+#define S5PV210_GPF2_INT_CON		(S5P_VA_GPIO + 0x72C)
-+#define S5PV210_GPF2_INTFLTCON0		(S5P_VA_GPIO + 0x858)
-+#define S5PV210_GPF2_INTFLTCON1		(S5P_VA_GPIO + 0x85C)
-+#define S5PV210_GPF2_INT_MASK		(S5P_VA_GPIO + 0x92C)
-+#define S5PV210_GPF2_INT_PEND		(S5P_VA_GPIO + 0xA2C)
-+#define S5PV210_GPF2_INT_FIXPRI		(S5P_VA_GPIO + 0xB40)
-+
-+#define S5PV210_GPF3_INT_CON		(S5P_VA_GPIO + 0x730)
-+#define S5PV210_GPF3_INTFLTCON0		(S5P_VA_GPIO + 0x860)
-+#define S5PV210_GPF3_INTFLTCON1		(S5P_VA_GPIO + 0x864)
-+#define S5PV210_GPF3_INT_MASK		(S5P_VA_GPIO + 0x930)
-+#define S5PV210_GPF3_INT_PEND		(S5P_VA_GPIO + 0xA30)
-+#define S5PV210_GPF3_INT_FIXPRI		(S5P_VA_GPIO + 0xB44)
-+
-+#define S5PV210_GPG0_INT_CON		(S5P_VA_GPIO + 0x734)
-+#define S5PV210_GPG0_INTFLTCON0		(S5P_VA_GPIO + 0x868)
-+#define S5PV210_GPG0_INTFLTCON1		(S5P_VA_GPIO + 0x86C)
-+#define S5PV210_GPG0_INT_MASK		(S5P_VA_GPIO + 0x934)
-+#define S5PV210_GPG0_INT_PEND		(S5P_VA_GPIO + 0xA34)
-+#define S5PV210_GPG0_INT_FIXPRI		(S5P_VA_GPIO + 0xB48)
-+
-+#define S5PV210_GPG1_INT_CON		(S5P_VA_GPIO + 0x738)
-+#define S5PV210_GPG1_INTFLTCON0		(S5P_VA_GPIO + 0x870)
-+#define S5PV210_GPG1_INTFLTCON1		(S5P_VA_GPIO + 0x874)
-+#define S5PV210_GPG1_INT_MASK		(S5P_VA_GPIO + 0x938)
-+#define S5PV210_GPG1_INT_PEND		(S5P_VA_GPIO + 0xA38)
-+#define S5PV210_GPG1_INT_FIXPRI		(S5P_VA_GPIO + 0xB4C)
-+
-+#define S5PV210_GPG2_INT_CON		(S5P_VA_GPIO + 0x73C)
-+#define S5PV210_GPG2_INTFLTCON0		(S5P_VA_GPIO + 0x878)
-+#define S5PV210_GPG2_INTFLTCON1		(S5P_VA_GPIO + 0x87C)
-+#define S5PV210_GPG2_INT_MASK		(S5P_VA_GPIO + 0x93C)
-+#define S5PV210_GPG2_INT_PEND		(S5P_VA_GPIO + 0xA3C)
-+#define S5PV210_GPG2_INT_FIXPRI		(S5P_VA_GPIO + 0xB50)
-+
-+#define S5PV210_GPG3_INT_CON		(S5P_VA_GPIO + 0x740)
-+#define S5PV210_GPG3_INTFLTCON0		(S5P_VA_GPIO + 0x880)
-+#define S5PV210_GPG3_INTFLTCON1		(S5P_VA_GPIO + 0x884)
-+#define S5PV210_GPG3_INT_MASK		(S5P_VA_GPIO + 0x940)
-+#define S5PV210_GPG3_INT_PEND		(S5P_VA_GPIO + 0xA40)
-+#define S5PV210_GPG3_INT_FIXPRI		(S5P_VA_GPIO + 0xB54)
-+
-+#define S5PV210_GPJ0_INT_CON		(S5P_VA_GPIO + 0x744)
-+#define S5PV210_GPJ0_INTFLTCON0		(S5P_VA_GPIO + 0x888)
-+#define S5PV210_GPJ0_INTFLTCON1		(S5P_VA_GPIO + 0x88C)
-+#define S5PV210_GPJ0_INT_MASK		(S5P_VA_GPIO + 0x944)
-+#define S5PV210_GPJ0_INT_PEND		(S5P_VA_GPIO + 0xA44)
-+#define S5PV210_GPJ0_INT_FIXPRI		(S5P_VA_GPIO + 0xB58)
-+
-+#define S5PV210_GPJ1_INT_CON		(S5P_VA_GPIO + 0x748)
-+#define S5PV210_GPJ1_INTFLTCON0		(S5P_VA_GPIO + 0x890)
-+#define S5PV210_GPJ1_INTFLTCON1		(S5P_VA_GPIO + 0x894)
-+#define S5PV210_GPJ1_INT_MASK		(S5P_VA_GPIO + 0x948)
-+#define S5PV210_GPJ1_INT_PEND		(S5P_VA_GPIO + 0xA48)
-+#define S5PV210_GPJ1_INT_FIXPRI		(S5P_VA_GPIO + 0xB5C)
-+
-+#define S5PV210_GPJ2_INT_CON		(S5P_VA_GPIO + 0x74C)
-+#define S5PV210_GPJ2_INTFLTCON0		(S5P_VA_GPIO + 0x898)
-+#define S5PV210_GPJ2_INTFLTCON1		(S5P_VA_GPIO + 0x89C)
-+#define S5PV210_GPJ2_INT_MASK		(S5P_VA_GPIO + 0x94C)
-+#define S5PV210_GPJ2_INT_PEND		(S5P_VA_GPIO + 0xA4C)
-+#define S5PV210_GPJ2_INT_FIXPRI		(S5P_VA_GPIO + 0xB60)
-+
-+#define S5PV210_GPJ3_INT_CON		(S5P_VA_GPIO + 0x750)
-+#define S5PV210_GPJ3_INTFLTCON0		(S5P_VA_GPIO + 0x8A0)
-+#define S5PV210_GPJ3_INTFLTCON1		(S5P_VA_GPIO + 0x8A4)
-+#define S5PV210_GPJ3_INT_MASK		(S5P_VA_GPIO + 0x950)
-+#define S5PV210_GPJ3_INT_PEND		(S5P_VA_GPIO + 0xA50)
-+#define S5PV210_GPJ3_INT_FIXPRI		(S5P_VA_GPIO + 0xB64)
-+
-+#define S5PV210_GPJ4_INT_CON		(S5P_VA_GPIO + 0x754)
-+#define S5PV210_GPJ4_INTFLTCON0		(S5P_VA_GPIO + 0x8A8)
-+#define S5PV210_GPJ4_INTFLTCON1		(S5P_VA_GPIO + 0x8AC)
-+#define S5PV210_GPJ4_INT_MASK		(S5P_VA_GPIO + 0x954)
-+#define S5PV210_GPJ4_INT_PEND		(S5P_VA_GPIO + 0xA54)
-+#define S5PV210_GPJ4_INT_FIXPRI		(S5P_VA_GPIO + 0xB68)
-+
-+#define S5PV210_EXT_INT_GRPPRI		(S5P_VA_GPIO + 0xB00)
-+#define S5PV210_EXT_INT_PRIO		(S5P_VA_GPIO + 0xB04)
-+#define S5PV210_EXT_INT_SVC		(S5P_VA_GPIO + 0xB08)
-+#define S5PV210_EXT_INT_SVC_PND		(S5P_VA_GPIO + 0xB0C)
-+#define S5PV210_EXT_INT_GRPFIXPRI	(S5P_VA_GPIO + 0xB10)
-+
-+#define S5PV210_EINT30CON		(S5P_VA_GPIO + 0xE00)
-+#define S5PV210_EINT31CON		(S5P_VA_GPIO + 0xE04)
-+#define S5PV210_EINT32CON		(S5P_VA_GPIO + 0xE08)
-+#define S5PV210_EINT33CON		(S5P_VA_GPIO + 0xE0C)
-+
-+#define S5P_EINT_CON(x)			(S5PV210_EINT30CON + ((x) * 0x4))
-+
-+#define S5PV210_EINT30FLTCON0		(S5P_VA_GPIO + 0xE80)
-+#define S5PV210_EINT30FLTCON1		(S5P_VA_GPIO + 0xE84)
-+#define S5PV210_EINT31FLTCON0		(S5P_VA_GPIO + 0xE88)
-+#define S5PV210_EINT31FLTCON1		(S5P_VA_GPIO + 0xE8C)
-+#define S5PV210_EINT32FLTCON0		(S5P_VA_GPIO + 0xE90)
-+#define S5PV210_EINT32FLTCON1		(S5P_VA_GPIO + 0xE94)
-+#define S5PV210_EINT33FLTCON0		(S5P_VA_GPIO + 0xE98)
-+#define S5PV210_EINT33FLTCON1		(S5P_VA_GPIO + 0xE9C)
-+
-+#define S5P_EINT_FLTCON(x)		(S5PV210_EINT30FLTCON0 + ((x) * 0x4))
-+
-+#define S5PV210_EINT30MASK		(S5P_VA_GPIO + 0xF00)
-+#define S5PV210_EINT31MASK		(S5P_VA_GPIO + 0xF04)
-+#define S5PV210_EINT32MASK		(S5P_VA_GPIO + 0xF08)
-+#define S5PV210_EINT33MASK		(S5P_VA_GPIO + 0xF0C)
-+
-+#define S5P_EINT_MASK(x)		(S5PV210_EINT30MASK + ((x) * 0x4))
-+
-+#define S5PV210_EINT30PEND		(S5P_VA_GPIO + 0xF40)
-+#define S5PV210_EINT31PEND		(S5P_VA_GPIO + 0xF44)
-+#define S5PV210_EINT32PEND		(S5P_VA_GPIO + 0xF48)
-+#define S5PV210_EINT33PEND		(S5P_VA_GPIO + 0xF4C)
-+
-+#define S5P_EINT_PEND(x)		(S5PV210_EINT30PEND + ((x) * 0x4))
-+
-+#define eint_offset(irq)		((irq) < IRQ_EINT16_31 ? ((irq)-IRQ_EINT0)	\
-+						: (irq-S5P_IRQ_EINT_BASE))
-+
-+#define eint_irq_to_bit(irq)		(1 << (eint_offset(irq) & 0x7))
-+
-+#define eint_conf_reg(irq)		((eint_offset(irq)) >> 3)
-+#define eint_filt_reg(irq)		((eint_offset(irq)) >> 2)
-+#define eint_mask_reg(irq)		((eint_offset(irq)) >> 3)
-+#define eint_pend_reg(irq)		((eint_offset(irq)) >> 3)
-+
-+#define S5P_EINT30CON			S5PV210_EINT30CON
-+#define S5P_EINT31CON			S5PV210_EINT31CON
-+#define S5P_EINT32CON			S5PV210_EINT32CON
-+#define S5P_EINT33CON			S5PV210_EINT33CON
-+#define S5P_EINT30FLTCON0		S5PV210_EINT30FLTCON0
-+#define S5P_EINT30FLTCON1		S5PV210_EINT30FLTCON1
-+#define S5P_EINT31FLTCON0		S5PV210_EINT31FLTCON0
-+#define S5P_EINT31FLTCON1		S5PV210_EINT31FLTCON1
-+#define S5P_EINT32FLTCON0		S5PV210_EINT32FLTCON0
-+#define S5P_EINT32FLTCON1		S5PV210_EINT32FLTCON1
-+#define S5P_EINT33FLTCON0		S5PV210_EINT33FLTCON0
-+#define S5P_EINT33FLTCON1		S5PV210_EINT33FLTCON1
-+#define S5P_EINT30MASK			S5PV210_EINT30MASK
-+#define S5P_EINT31MASK			S5PV210_EINT31MASK
-+#define S5P_EINT32MASK			S5PV210_EINT32MASK
-+#define S5P_EINT33MASK			S5PV210_EINT33MASK
-+
-+/* values for S5P_EXTINT0 */
-+#define S5P_EXTINT_LOWLEV		(0x00)
-+#define S5P_EXTINT_HILEV		(0x01)
-+#define S5P_EXTINT_FALLEDGE		(0x02)
-+#define S5P_EXTINT_RISEEDGE		(0x03)
-+#define S5P_EXTINT_BOTHEDGE		(0x04)
- 
- #endif /* __ASM_ARCH_REGS_GPIO_H */
--- 
-1.6.2.5
+> + =A0 =A0 =A0 .set_config =A0 =A0 =3D s3c_gpio_setcfg_s3c64xx_4bit,
+> + =A0 =A0 =A0 .set_pull =A0 =A0 =A0 =3D s3c_gpio_setpull_updown,
+> + =A0 =A0 =A0 .get_pull =A0 =A0 =A0 =3D s3c_gpio_getpull_updown,
+> +};
+> +
+> +static struct s3c_gpio_cfg gpio_cfg_noint =3D {
+> + =A0 =A0 =A0 .set_config =A0 =A0 =3D s3c_gpio_setcfg_s3c64xx_4bit,
+> + =A0 =A0 =A0 .set_pull =A0 =A0 =A0 =3D s3c_gpio_setpull_updown,
+> + =A0 =A0 =A0 .get_pull =A0 =A0 =A0 =3D s3c_gpio_getpull_updown,
+> +};
+> +
+> +static struct s3c_gpio_chip s5pv210_gpio_4bit[] =3D {
+> + =A0 =A0 =A0 {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPA0_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PA0(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_A0_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPA0",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPA1_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PA1(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_A1_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPA1",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPB_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PB(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_B_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPB",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPC0_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PC0(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_C0_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPC0",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPC1_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PC1(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_C1_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPC1",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPD0_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PD0(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_D0_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPD0",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPD1_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PD1(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_D1_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPD1",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPE0_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PE0(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_E0_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPE0",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPE1_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PE1(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_E1_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPE1",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPF0_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PF0(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_F0_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPF0",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPF1_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PF1(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_F1_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPF1",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPF2_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PF2(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_F2_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPF2",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPF3_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PF3(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_F3_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPF3",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPG0_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PG0(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_G0_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPG0",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPG1_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PG1(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_G1_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPG1",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPG2_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PG2(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_G2_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPG2",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPG3_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PG3(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_G3_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPG3",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPH0_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PH0(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_H0_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPH0",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPH1_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PH1(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_H1_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPH1",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPH2_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PH2(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_H2_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPH2",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPH3_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PH3(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_H3_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPH3",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPI_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PI(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_I_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPI",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPJ0_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PJ0(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_J0_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPJ0",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPJ1_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PJ1(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_J1_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPJ1",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPJ2_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PJ2(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_J2_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPJ2",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPJ3_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PJ3(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_J3_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPJ3",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_GPJ4_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_G=
+PJ4(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_J4_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "GPJ4",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP01_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P01(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP01_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP01",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP02_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P02(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP02_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP02",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP03_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P03(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP03_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP03",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP04_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P04(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP04_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP04",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP05_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P05(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP05_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP05",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP06_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P06(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP06_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP06",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+
+=46rom MP06 to end is there any possibility to use GPIO interrupt? If
+not, how about to remove it. It consumes the memory and increase code
+itself. It's only function pin instead of GPIOs.
+
+Thank you,
+Kyungmin Park
+
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP07_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P07(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP07_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP07",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP10_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P10(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP10_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP10",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP11_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P11(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP11_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP11",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP12_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P12(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP12_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP12",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP13_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P13(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP13_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP13",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP14_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P14(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP14_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP14",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP15_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P15(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP15_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP15",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP16_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P16(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP16_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP16",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP17_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P17(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP17_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP17",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP18_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P18(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP18_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP18",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP20_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P20(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP20_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP20",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP21_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P21(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP21_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP21",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP22_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P22(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP22_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP22",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP23_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P23(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP23_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP23",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP24_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P24(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP24_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP24",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP25_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P25(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP25_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP25",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP26_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P26(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP26_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP26",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP27_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P27(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP27_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP27",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_MP28_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_M=
+P28(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_MP28_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "MP28",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_ETC0_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_E=
+TC0(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_ETC0_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "ETC0",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_ETC1_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_E=
+TC1(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_ETC1_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "ETC1",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_ETC2_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_E=
+TC2(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_ETC2_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "ETC2",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_ETC4_BASE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .config =3D &gpio_cfg_noint,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .chip =A0 =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .base =A0 =3D S5PV210_E=
+TC4(0),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ngpio =A0=3D S5PV210_G=
+PIO_ETC4_NR,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .label =A0=3D "ETC4",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 },
+> +};
+> +
+> +static __init int s5pv210_gpiolib_init(void)
+> +{
+> + =A0 =A0 =A0 samsung_gpiolib_add_4bit_chips(s5pv210_gpio_4bit,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0ARRAY_SIZE(s5pv210_gpio_4bit));
+> +
+> + =A0 =A0 =A0 return 0;
+> +}
+> +core_initcall(s5pv210_gpiolib_init);
+> diff --git a/arch/arm/mach-s5pv210/include/mach/gpio.h b/arch/arm/mac=
+h-s5pv210/include/mach/gpio.h
+> index 533b020..ddbbfc3 100644
+> --- a/arch/arm/mach-s5pv210/include/mach/gpio.h
+> +++ b/arch/arm/mach-s5pv210/include/mach/gpio.h
+> @@ -47,6 +47,39 @@
+> =A0#define S5PV210_GPIO_J3_NR =A0 =A0 (8)
+> =A0#define S5PV210_GPIO_J4_NR =A0 =A0 (5)
+>
+> +#define S5PV210_GPIO_MP01_NR =A0 (8)
+> +#define S5PV210_GPIO_MP02_NR =A0 (4)
+> +#define S5PV210_GPIO_MP03_NR =A0 (8)
+> +#define S5PV210_GPIO_MP04_NR =A0 (8)
+> +#define S5PV210_GPIO_MP05_NR =A0 (8)
+> +#define S5PV210_GPIO_MP06_NR =A0 (8)
+> +#define S5PV210_GPIO_MP07_NR =A0 (8)
+> +
+> +#define S5PV210_GPIO_MP10_NR =A0 (8)
+> +#define S5PV210_GPIO_MP11_NR =A0 (8)
+> +#define S5PV210_GPIO_MP12_NR =A0 (8)
+> +#define S5PV210_GPIO_MP13_NR =A0 (8)
+> +#define S5PV210_GPIO_MP14_NR =A0 (8)
+> +#define S5PV210_GPIO_MP15_NR =A0 (8)
+> +#define S5PV210_GPIO_MP16_NR =A0 (8)
+> +#define S5PV210_GPIO_MP17_NR =A0 (8)
+> +#define S5PV210_GPIO_MP18_NR =A0 (7)
+> +
+> +#define S5PV210_GPIO_MP20_NR =A0 (8)
+> +#define S5PV210_GPIO_MP21_NR =A0 (8)
+> +#define S5PV210_GPIO_MP22_NR =A0 (8)
+> +#define S5PV210_GPIO_MP23_NR =A0 (8)
+> +#define S5PV210_GPIO_MP24_NR =A0 (8)
+> +#define S5PV210_GPIO_MP25_NR =A0 (8)
+> +#define S5PV210_GPIO_MP26_NR =A0 (8)
+> +#define S5PV210_GPIO_MP27_NR =A0 (8)
+> +#define S5PV210_GPIO_MP28_NR =A0 (7)
+> +
+> +#define S5PV210_GPIO_ETC0_NR =A0 (6)
+> +#define S5PV210_GPIO_ETC1_NR =A0 (8)
+> +#define S5PV210_GPIO_ETC2_NR =A0 (8)
+> +#define S5PV210_GPIO_ETC4_NR =A0 (6)
+> +
+> =A0/* GPIO bank numbers */
+>
+> =A0/* CONFIG_S3C_GPIO_SPACE allows the user to select extra
+> @@ -85,6 +118,35 @@ enum s5p_gpio_number {
+> =A0 =A0 =A0 =A0S5PV210_GPIO_J2_START =A0 =3D S5PV210_GPIO_NEXT(S5PV21=
+0_GPIO_J1),
+> =A0 =A0 =A0 =A0S5PV210_GPIO_J3_START =A0 =3D S5PV210_GPIO_NEXT(S5PV21=
+0_GPIO_J2),
+> =A0 =A0 =A0 =A0S5PV210_GPIO_J4_START =A0 =3D S5PV210_GPIO_NEXT(S5PV21=
+0_GPIO_J3),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP01_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_J4),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP02_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP01),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP03_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP02),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP04_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP03),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP05_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP04),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP06_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP05),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP07_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP06),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP10_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP07),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP11_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP10),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP12_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP11),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP13_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP12),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP14_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP13),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP15_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP14),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP16_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP15),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP17_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP16),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP18_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP17),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP20_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP18),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP21_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP20),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP22_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP21),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP23_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP22),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP24_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP23),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP25_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP24),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP26_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP25),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP27_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP26),
+> + =A0 =A0 =A0 S5PV210_GPIO_MP28_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP27),
+> + =A0 =A0 =A0 S5PV210_GPIO_ETC0_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_MP28),
+> + =A0 =A0 =A0 S5PV210_GPIO_ETC1_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_ETC0),
+> + =A0 =A0 =A0 S5PV210_GPIO_ETC2_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_ETC1),
+> + =A0 =A0 =A0 S5PV210_GPIO_ETC4_START =3D S5PV210_GPIO_NEXT(S5PV210_G=
+PIO_ETC2),
+> =A0};
+>
+> =A0/* S5PV210 GPIO number definitions */
+> @@ -115,13 +177,42 @@ enum s5p_gpio_number {
+> =A0#define S5PV210_GPJ2(_nr) =A0 =A0 =A0(S5PV210_GPIO_J2_START + (_nr=
+))
+> =A0#define S5PV210_GPJ3(_nr) =A0 =A0 =A0(S5PV210_GPIO_J3_START + (_nr=
+))
+> =A0#define S5PV210_GPJ4(_nr) =A0 =A0 =A0(S5PV210_GPIO_J4_START + (_nr=
+))
+> +#define S5PV210_MP01(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP01_START + (_nr=
+))
+> +#define S5PV210_MP02(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP02_START + (_nr=
+))
+> +#define S5PV210_MP03(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP03_START + (_nr=
+))
+> +#define S5PV210_MP04(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP04_START + (_nr=
+))
+> +#define S5PV210_MP05(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP05_START + (_nr=
+))
+> +#define S5PV210_MP06(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP06_START + (_nr=
+))
+> +#define S5PV210_MP07(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP07_START + (_nr=
+))
+> +#define S5PV210_MP10(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP10_START + (_nr=
+))
+> +#define S5PV210_MP11(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP11_START + (_nr=
+))
+> +#define S5PV210_MP12(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP12_START + (_nr=
+))
+> +#define S5PV210_MP13(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP13_START + (_nr=
+))
+> +#define S5PV210_MP14(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP14_START + (_nr=
+))
+> +#define S5PV210_MP15(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP15_START + (_nr=
+))
+> +#define S5PV210_MP16(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP16_START + (_nr=
+))
+> +#define S5PV210_MP17(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP17_START + (_nr=
+))
+> +#define S5PV210_MP18(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP18_START + (_nr=
+))
+> +#define S5PV210_MP20(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP20_START + (_nr=
+))
+> +#define S5PV210_MP21(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP21_START + (_nr=
+))
+> +#define S5PV210_MP22(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP22_START + (_nr=
+))
+> +#define S5PV210_MP23(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP23_START + (_nr=
+))
+> +#define S5PV210_MP24(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP24_START + (_nr=
+))
+> +#define S5PV210_MP25(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP25_START + (_nr=
+))
+> +#define S5PV210_MP26(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP26_START + (_nr=
+))
+> +#define S5PV210_MP27(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP27_START + (_nr=
+))
+> +#define S5PV210_MP28(_nr) =A0 =A0 =A0(S5PV210_GPIO_MP28_START + (_nr=
+))
+> +#define S5PV210_ETC0(_nr) =A0 =A0 =A0(S5PV210_GPIO_ETC0_START + (_nr=
+))
+> +#define S5PV210_ETC1(_nr) =A0 =A0 =A0(S5PV210_GPIO_ETC1_START + (_nr=
+))
+> +#define S5PV210_ETC2(_nr) =A0 =A0 =A0(S5PV210_GPIO_ETC2_START + (_nr=
+))
+> +#define S5PV210_ETC4(_nr) =A0 =A0 =A0(S5PV210_GPIO_ETC4_START + (_nr=
+))
+>
+> =A0/* the end of the S5PV210 specific gpios */
+> -#define S5PV210_GPIO_END =A0 =A0 =A0 (S5PV210_GPJ4(S5PV210_GPIO_J4_N=
+R) + 1)
+> +#define S5PV210_GPIO_END =A0 =A0 =A0 (S5PV210_ETC4(S5PV210_GPIO_ETC4=
+_NR) + 1)
+> =A0#define S3C_GPIO_END =A0 =A0 =A0 =A0 =A0 S5PV210_GPIO_END
+>
+> -/* define the number of gpios we need to the one after the GPJ4() ra=
+nge */
+> -#define ARCH_NR_GPIOS =A0 =A0 =A0 =A0 =A0(S5PV210_GPJ4(S5PV210_GPIO_=
+J4_NR) + =A0 =A0 \
+> +/* define the number of gpios we need to the one after the ETC4() ra=
+nge */
+> +#define ARCH_NR_GPIOS =A0 =A0 =A0 =A0 =A0(S5PV210_ETC4(S5PV210_GPIO_=
+ETC4_NR) + =A0 \
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 CONFI=
+G_SAMSUNG_GPIO_EXTRA + 1)
+>
+> =A0#include <asm-generic/gpio.h>
+> diff --git a/arch/arm/mach-s5pv210/include/mach/regs-gpio.h b/arch/ar=
+m/mach-s5pv210/include/mach/regs-gpio.h
+> new file mode 100644
+> index 0000000..c78bbeb
+> --- /dev/null
+> +++ b/arch/arm/mach-s5pv210/include/mach/regs-gpio.h
+> @@ -0,0 +1,77 @@
+> +/* linux/arch/arm/mach-s5pv210/include/mach/regs-gpio.h
+> + *
+> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+> + * =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com/
+> + *
+> + * S5PV210 - GPIO register definitions
+> + *
+> + * This program is free software; you can redistribute it and/or mod=
+ify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#ifndef __ASM_ARCH_REGS_GPIO_H
+> +#define __ASM_ARCH_REGS_GPIO_H __FILE__
+> +
+> +#include <mach/map.h>
+> +
+> +/* Base addresses for each of the banks */
+> +
+> +#define S5PV210_GPA0_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x000)
+> +#define S5PV210_GPA1_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x020)
+> +#define S5PV210_GPB_BASE =A0 =A0 =A0 (S5P_VA_GPIO + 0x040)
+> +#define S5PV210_GPC0_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x060)
+> +#define S5PV210_GPC1_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x080)
+> +#define S5PV210_GPD0_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x0A0)
+> +#define S5PV210_GPD1_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x0C0)
+> +#define S5PV210_GPE0_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x0E0)
+> +#define S5PV210_GPE1_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x100)
+> +#define S5PV210_GPF0_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x120)
+> +#define S5PV210_GPF1_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x140)
+> +#define S5PV210_GPF2_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x160)
+> +#define S5PV210_GPF3_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x180)
+> +#define S5PV210_GPG0_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x1A0)
+> +#define S5PV210_GPG1_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x1C0)
+> +#define S5PV210_GPG2_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x1E0)
+> +#define S5PV210_GPG3_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x200)
+> +#define S5PV210_GPH0_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0xC00)
+> +#define S5PV210_GPH1_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0xC20)
+> +#define S5PV210_GPH2_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0xC40)
+> +#define S5PV210_GPH3_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0xC60)
+> +#define S5PV210_GPI_BASE =A0 =A0 =A0 (S5P_VA_GPIO + 0x220)
+> +#define S5PV210_GPJ0_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x240)
+> +#define S5PV210_GPJ1_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x260)
+> +#define S5PV210_GPJ2_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x280)
+> +#define S5PV210_GPJ3_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x2A0)
+> +#define S5PV210_GPJ4_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x2C0)
+> +#define S5PV210_MP01_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x2E0)
+> +#define S5PV210_MP02_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x300)
+> +#define S5PV210_MP03_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x320)
+> +#define S5PV210_MP04_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x340)
+> +#define S5PV210_MP05_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x360)
+> +#define S5PV210_MP06_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x380)
+> +#define S5PV210_MP07_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x3A0)
+> +#define S5PV210_MP10_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x3C0)
+> +#define S5PV210_MP11_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x3E0)
+> +#define S5PV210_MP12_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x400)
+> +#define S5PV210_MP13_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x420)
+> +#define S5PV210_MP14_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x440)
+> +#define S5PV210_MP15_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x460)
+> +#define S5PV210_MP16_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x480)
+> +#define S5PV210_MP17_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x4A0)
+> +#define S5PV210_MP18_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x4C0)
+> +#define S5PV210_MP20_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x4E0)
+> +#define S5PV210_MP21_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x500)
+> +#define S5PV210_MP22_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x520)
+> +#define S5PV210_MP23_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x540)
+> +#define S5PV210_MP24_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x560)
+> +#define S5PV210_MP25_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x580)
+> +#define S5PV210_MP26_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x5A0)
+> +#define S5PV210_MP27_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x5C0)
+> +#define S5PV210_MP28_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x5E0)
+> +#define S5PV210_ETC0_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x600)
+> +#define S5PV210_ETC1_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x620)
+> +#define S5PV210_ETC2_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x640)
+> +#define S5PV210_ETC4_BASE =A0 =A0 =A0(S5P_VA_GPIO + 0x660)
+> +
+> +#endif /* __ASM_ARCH_REGS_GPIO_H */
+> --
+> 1.6.2.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
