@@ -1,47 +1,178 @@
 From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: [PATCH 3/3] SDHCI: Enable multiblock transfers in sdhci-s3c
-Date: Tue, 04 May 2010 11:43:30 +0200
-Message-ID: <4BDFEC42.5020900@gmail.com>
-References: <cover.1272966142.git.mcuelenaere@gmail.com>
+Subject: [PATCH] ARM: SAMSUNG: Move HWMON from plat-s3c24xx to plat-samsung
+Date: Tue, 04 May 2010 13:12:32 +0200
+Message-ID: <4BE00120.3040703@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f222.google.com ([209.85.219.222]:38373 "EHLO
+Received: from mail-ew0-f222.google.com ([209.85.219.222]:64326 "EHLO
 	mail-ew0-f222.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755156Ab0EDJnd (ORCPT
+	with ESMTP id S1751432Ab0EDLMh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 May 2010 05:43:33 -0400
-In-Reply-To: <cover.1272966142.git.mcuelenaere@gmail.com>
+	Tue, 4 May 2010 07:12:37 -0400
+Received: by ewy22 with SMTP id 22so1064380ewy.37
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 May 2010 04:12:34 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, pierre@ossman.eu, linux-mmc@vger.kernel.org, akpm@linux-foundation.org, sdhci-devel@lists.ossman.eu
-Cc: ben-linux@fluff.org, thomas.ab@samsung.com
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: ben-linux@fluff.org
 
-Wifi over SDIO doesn't work correctly without multiblock, so enable
-this. This patch depends on the following patches:
-
-[PATCH] s3c6410: Enable ADMA feature in 6410 sdhci controller.
-[PATCH] s3c6410: Add new quirk in sdhci driver and update ADMA descriptor build.
+Move HWMON platform definition from plat-s3c24xx to plat-samsung
+and adjust mach-bast to use the new s3c_hwmon_set_platdata().
+This allows usage of dev-hwmon by other Samsung SoCs.
 
 Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
 ---
- drivers/mmc/host/sdhci-s3c.c |    3 ---
- 1 files changed, 0 insertions(+), 3 deletions(-)
+ arch/arm/mach-s3c2410/Kconfig              |    1 +
+ arch/arm/mach-s3c2410/mach-bast.c          |    2 +-
+ arch/arm/plat-s3c24xx/devs.c               |    8 -----
+ arch/arm/plat-samsung/Kconfig              |    5 +++
+ arch/arm/plat-samsung/Makefile             |    1 +
+ arch/arm/plat-samsung/dev-hwmon.c          |   42 ++++++++++++++++++++++++++++
+ arch/arm/plat-samsung/include/plat/hwmon.h |   10 ++++++
+ 7 files changed, 60 insertions(+), 9 deletions(-)
+ create mode 100644 arch/arm/plat-samsung/dev-hwmon.c
 
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index 2136794..2c1a618 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -330,9 +330,6 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 	 * support as well. */
- 	host->quirks |= SDHCI_QUIRK_BROKEN_DMA;
+diff --git a/arch/arm/mach-s3c2410/Kconfig b/arch/arm/mach-s3c2410/Kconfig
+index 5547318..ca5c3c6 100644
+--- a/arch/arm/mach-s3c2410/Kconfig
++++ b/arch/arm/mach-s3c2410/Kconfig
+@@ -110,6 +110,7 @@ config ARCH_BAST
+ 	select MACH_BAST_IDE
+ 	select S3C24XX_DCLK
+ 	select ISA
++	select S3C_DEV_HWMON
+ 	select S3C_DEV_USB_HOST
+ 	select S3C_DEV_NAND
+ 	help
+diff --git a/arch/arm/mach-s3c2410/mach-bast.c b/arch/arm/mach-s3c2410/mach-bast.c
+index 02b1b62..c8786df 100644
+--- a/arch/arm/mach-s3c2410/mach-bast.c
++++ b/arch/arm/mach-s3c2410/mach-bast.c
+@@ -634,7 +634,7 @@ static void __init bast_map_io(void)
  
--	/* PIO currently has problems with multi-block IO */
--	host->quirks |= SDHCI_QUIRK_NO_MULTIBLOCK;
+ 	s3c24xx_register_clocks(bast_clocks, ARRAY_SIZE(bast_clocks));
+ 
+-	s3c_device_hwmon.dev.platform_data = &bast_hwmon_info;
++	s3c_hwmon_set_platdata(&bast_hwmon_info);
+ 
+ 	s3c24xx_init_io(bast_iodesc, ARRAY_SIZE(bast_iodesc));
+ 	s3c24xx_init_clocks(0);
+diff --git a/arch/arm/plat-s3c24xx/devs.c b/arch/arm/plat-s3c24xx/devs.c
+index 9265f09..3166f32 100644
+--- a/arch/arm/plat-s3c24xx/devs.c
++++ b/arch/arm/plat-s3c24xx/devs.c
+@@ -338,14 +338,6 @@ struct platform_device s3c_device_adc = {
+ 	.resource	  = s3c_adc_resource,
+ };
+ 
+-/* HWMON */
 -
- #endif /* CONFIG_MMC_SDHCI_S3C_DMA */
+-struct platform_device s3c_device_hwmon = {
+-	.name		= "s3c-hwmon",
+-	.id		= -1,
+-	.dev.parent	= &s3c_device_adc.dev,
+-};
+-
+ /* SDI */
  
- 	/* It seems we do not get an DATA transfer complete on non-busy
+ static struct resource s3c_sdi_resource[] = {
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index d552c65..7a36cf8 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -160,6 +160,11 @@ config S3C_DEV_HSMMC2
+ 	help
+ 	  Compile in platform device definitions for HSMMC channel 2
+ 
++config S3C_DEV_HWMON
++	bool
++	help
++	    Compile in platform device definitions for HWMON
++
+ config S3C_DEV_I2C1
+ 	bool
+ 	help
+diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+index 22c89d0..0ad820a 100644
+--- a/arch/arm/plat-samsung/Makefile
++++ b/arch/arm/plat-samsung/Makefile
+@@ -33,6 +33,7 @@ obj-$(CONFIG_S3C_ADC)	+= adc.o
+ obj-$(CONFIG_S3C_DEV_HSMMC)	+= dev-hsmmc.o
+ obj-$(CONFIG_S3C_DEV_HSMMC1)	+= dev-hsmmc1.o
+ obj-$(CONFIG_S3C_DEV_HSMMC2)	+= dev-hsmmc2.o
++obj-$(CONFIG_S3C_DEV_HWMON)	+= dev-hwmon.o
+ obj-y				+= dev-i2c0.o
+ obj-$(CONFIG_S3C_DEV_I2C1)	+= dev-i2c1.o
+ obj-$(CONFIG_S3C_DEV_FB)	+= dev-fb.o
+diff --git a/arch/arm/plat-samsung/dev-hwmon.c b/arch/arm/plat-samsung/dev-hwmon.c
+new file mode 100644
+index 0000000..b3ffb95
+--- /dev/null
++++ b/arch/arm/plat-samsung/dev-hwmon.c
+@@ -0,0 +1,42 @@
++/* linux/arch/arm/plat-samsung/dev-hwmon.c
++ *
++ * Copyright 2008 Simtec Electronics
++ *	Ben Dooks <ben@simtec.co.uk>
++ *	http://armlinux.simtec.co.uk/
++ *
++ * Adapted for HWMON by Maurus Cuelenaere
++ *
++ * Samsung series device definition for HWMON
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/kernel.h>
++#include <linux/platform_device.h>
++
++#include <plat/devs.h>
++#include <plat/hwmon.h>
++
++struct platform_device s3c_device_hwmon = {
++	.name		= "s3c-hwmon",
++	.id		= -1,
++	.dev.parent	= &s3c_device_adc.dev,
++};
++
++void __init s3c_hwmon_set_platdata(struct s3c_hwmon_pdata *pd)
++{
++	struct s3c_hwmon_pdata *npd;
++
++	if (!pd) {
++		printk(KERN_ERR "%s: no platform data\n", __func__);
++		return;
++	}
++
++	npd = kmemdup(pd, sizeof(struct s3c_hwmon_pdata), GFP_KERNEL);
++	if (!npd)
++		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
++
++	s3c_device_hwmon.dev.platform_data = npd;
++}
+diff --git a/arch/arm/plat-samsung/include/plat/hwmon.h b/arch/arm/plat-samsung/include/plat/hwmon.h
+index 1ba88ea..c167e44 100644
+--- a/arch/arm/plat-samsung/include/plat/hwmon.h
++++ b/arch/arm/plat-samsung/include/plat/hwmon.h
+@@ -37,5 +37,15 @@ struct s3c_hwmon_pdata {
+ 	struct s3c_hwmon_chcfg	*in[8];
+ };
+ 
++/**
++ * s3c_hwmon_set_platdata - Set platform data for S3C HWMON device
++ * @pd: Platform data to register to device.
++ *
++ * Register the given platform data for use with the S3C HWMON device.
++ * The call will copy the platform data, so the board definitions can
++ * make the structure itself __initdata.
++ */
++extern void __init s3c_hwmon_set_platdata(struct s3c_hwmon_pdata *pd);
++
+ #endif /* __ASM_ARCH_ADC_HWMON_H */
+ 
 -- 
 1.7.1
