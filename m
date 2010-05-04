@@ -1,87 +1,75 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH v2.6.34-rc2] s3c: Fix CONFIG_MTD_NAND_S3C2410_CLKSTOP
-Date: Tue, 4 May 2010 07:57:01 +0100
-Message-ID: <20100504065701.GB26401@trinity.fluff.org>
-References: <1269937323-7541-1-git-send-email-chripell@fsfe.org>
+Subject: Re: [PATCH v2.6.34-rc2] s3c: Fix GPIOs bank H and J not being
+	preserved during suspend on S3C24XX
+Date: Tue, 4 May 2010 08:01:11 +0100
+Message-ID: <20100504070111.GC26401@trinity.fluff.org>
+References: <1269937386-7597-1-git-send-email-chripell@fsfe.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:49563 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:33307 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753175Ab0EDG5C (ORCPT
+	id S1753717Ab0EDHBP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 May 2010 02:57:02 -0400
+	Tue, 4 May 2010 03:01:15 -0400
 Content-Disposition: inline
-In-Reply-To: <1269937323-7541-1-git-send-email-chripell@fsfe.org>
+In-Reply-To: <1269937386-7597-1-git-send-email-chripell@fsfe.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Christian Pellegrin <chripell@fsfe.org>
 Cc: ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Tue, Mar 30, 2010 at 10:22:03AM +0200, Christian Pellegrin wrote:
-> Option CONFIG_MTD_NAND_S3C2410_CLKSTOP was broken by higher MTD layers
-> calling select_chip with -1 twice in a row. This patch fixes the problem
-> by making sure that clk_disable is not called too many times.
+On Tue, Mar 30, 2010 at 10:23:06AM +0200, Christian Pellegrin wrote:
+> With this patch the platform-specific define for the last defined GPIO
+> on S3C machines is used instead of a hard-coded value (which is right
+> only for the s3c2410). The gpio_nr being incremented by 1 too much (look
+> for the gpio_nr++ in the for instruction) is fixed too although it
+> doesn't make any trouble on current S3C implementations.
 > 
 > Signed-off-by: Christian Pellegrin <chripell@fsfe.org>
 > ---
->  drivers/mtd/nand/s3c2410.c |   10 ++++++++--
->  1 files changed, 8 insertions(+), 2 deletions(-)
+>  arch/arm/mach-s3c2410/include/mach/gpio-track.h |    2 +-
+>  arch/arm/plat-samsung/pm-gpio.c                 |    2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
-> index fa6e9c7..9adecc6 100644
-> --- a/drivers/mtd/nand/s3c2410.c
-> +++ b/drivers/mtd/nand/s3c2410.c
-> @@ -37,6 +37,7 @@
->  #include <linux/slab.h>
->  #include <linux/clk.h>
->  #include <linux/cpufreq.h>
-> +#include <linux/bitops.h>
+> diff --git a/arch/arm/mach-s3c2410/include/mach/gpio-track.h b/arch/arm/mach-s3c2410/include/mach/gpio-track.h
+> index acb2591..6371eaa 100644
+> --- a/arch/arm/mach-s3c2410/include/mach/gpio-track.h
+> +++ b/arch/arm/mach-s3c2410/include/mach/gpio-track.h
+> @@ -23,7 +23,7 @@ static inline struct s3c_gpio_chip *s3c_gpiolib_getchip(unsigned int pin)
+>  {
+>  	struct s3c_gpio_chip *chip;
 >  
->  #include <linux/mtd/mtd.h>
->  #include <linux/mtd/nand.h>
-> @@ -135,6 +136,9 @@ struct s3c2410_nand_info {
->  #ifdef CONFIG_CPU_FREQ
->  	struct notifier_block	freq_transition;
->  #endif
-> +#ifdef CONFIG_MTD_NAND_S3C2410_CLKSTOP
-> +	unsigned long                   clk_running;
-> +#endif
->  };
+> -	if (pin > S3C2410_GPG(10))
+> +	if (pin > S3C_GPIO_END)
+>  		return NULL;
 >  
->  /* conversion functions */
-> @@ -333,7 +337,8 @@ static void s3c2410_nand_select_chip(struct mtd_info *mtd, int chip)
->  	nmtd = this->priv;
->  	info = nmtd->info;
->  
-> -	if (chip != -1 && allow_clk_stop(info))
-> +	if (chip != -1 && allow_clk_stop(info) &&
-> +	    !test_and_set_bit(0, &info->clk_running))
->  		clk_enable(info->clk);
+>  	chip = &s3c24xx_gpios[pin/32];
 
-please let me know why you feel the need to use test_and_set_bit on
-a variable that is single use.
-  
->  	cur = readl(info->sel_reg);
-> @@ -356,7 +361,8 @@ static void s3c2410_nand_select_chip(struct mtd_info *mtd, int chip)
+This may get removed in the up-comming s3c2410_gpio fallout, so I'll
+keep this in mind if it is needed. Series should be posted in the next
+few days.
+
+> diff --git a/arch/arm/plat-samsung/pm-gpio.c b/arch/arm/plat-samsung/pm-gpio.c
+> index 69a4c7f..1aac746 100644
+> --- a/arch/arm/plat-samsung/pm-gpio.c
+> +++ b/arch/arm/plat-samsung/pm-gpio.c
+> @@ -343,7 +343,7 @@ void s3c_pm_save_gpios(void)
+>  			  ourchip->pm_save[2],
+>  			  ourchip->pm_save[3]);
 >  
->  	writel(cur, info->sel_reg);
->  
-> -	if (chip == -1 && allow_clk_stop(info))
-> +	if (chip == -1 && allow_clk_stop(info) &&
-> +	    test_and_clear_bit(0, &info->clk_running))
->  		clk_disable(info->clk);
+> -		gpio_nr += ourchip->chip.ngpio;
+> +		gpio_nr += ourchip->chip.ngpio - 1;
+>  		gpio_nr += CONFIG_S3C_GPIO_SPACE;
+>  	}
 >  }
->  
-> -- 
-> 1.5.6.5
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
--- 
+Hmm, think a better fix for this would be to remove the gpio_nr++ in
+the for() loop.
+
+could you send the gpio fix with the above change as a seperate patch
+please?
+
 -- 
 Ben
 
