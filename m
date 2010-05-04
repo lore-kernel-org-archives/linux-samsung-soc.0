@@ -1,153 +1,76 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH] S5P6440: Add support for SDHCI on SMDK6440 board.
-Date: Tue, 4 May 2010 08:20:57 +0100
-Message-ID: <20100504072057.GG26401@trinity.fluff.org>
-References: <1268141997-11015-1-git-send-email-thomas.ab@samsung.com>
+From: christian pellegrin <chripell@fsfe.org>
+Subject: Re: [PATCH v2.6.34-rc2] s3c: Fix GPIOs bank H and J not being
+	preserved during suspend on S3C24XX
+Date: Tue, 4 May 2010 09:34:01 +0200
+Message-ID: <i2lcabda6421005040034hf27d04f7m95ff2cda9333ff93@mail.gmail.com>
+References: <1269937386-7597-1-git-send-email-chripell@fsfe.org>
+	 <20100504070111.GC26401@trinity.fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:33169 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751472Ab0EDHU6 (ORCPT
+Received: from mail-bw0-f217.google.com ([209.85.218.217]:39942 "EHLO
+	mail-bw0-f217.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751217Ab0EDHeG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 May 2010 03:20:58 -0400
-Content-Disposition: inline
-In-Reply-To: <1268141997-11015-1-git-send-email-thomas.ab@samsung.com>
+	Tue, 4 May 2010 03:34:06 -0400
+Received: by bwz9 with SMTP id 9so1917428bwz.29
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 May 2010 00:34:04 -0700 (PDT)
+In-Reply-To: <20100504070111.GC26401@trinity.fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, anarsoul@gmail.com
 
-On Tue, Mar 09, 2010 at 07:09:57PM +0530, Thomas Abraham wrote:
-> This patch adds support for SDHCI interface on SMDK6440 board.
-> 
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> ---
->  arch/arm/mach-s5p6440/mach-smdk6440.c |   69 +++++++++++++++++++++++++++++++++
->  1 files changed, 69 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s5p6440/mach-smdk6440.c b/arch/arm/mach-s5p6440/mach-smdk6440.c
-> index 3ae88f2..e039128 100644
-> --- a/arch/arm/mach-s5p6440/mach-smdk6440.c
-> +++ b/arch/arm/mach-s5p6440/mach-smdk6440.c
-> @@ -20,6 +20,7 @@
->  #include <linux/io.h>
->  #include <linux/module.h>
->  #include <linux/clk.h>
-> +#include <linux/irq.h>
->  
->  #include <asm/mach/arch.h>
->  #include <asm/mach/map.h>
-> @@ -38,6 +39,12 @@
->  #include <plat/devs.h>
->  #include <plat/cpu.h>
->  #include <plat/pll.h>
-> +#include <plat/sdhci.h>
-> +#include <plat/s5p-clock.h>
-> +
-> +#include <mach/gpio.h>
-> +#include <plat/gpio-core.h>
-> +#include <plat/gpio-cfg.h>
->  
->  #define S5P6440_UCON_DEFAULT    (S3C2410_UCON_TXILEVEL |	\
->  				S3C2410_UCON_RXILEVEL |		\
-> @@ -84,6 +91,10 @@ static struct s3c2410_uartcfg smdk6440_uartcfgs[] __initdata = {
->  };
->  
->  static struct platform_device *smdk6440_devices[] __initdata = {
-> +#ifdef CONFIG_MMC_SDHCI_S3C
-> +	&s3c_device_hsmmc0,
-> +	&s3c_device_hsmmc1,
-> +#endif
->  };
->  
->  static void __init smdk6440_map_io(void)
-> @@ -93,9 +104,67 @@ static void __init smdk6440_map_io(void)
->  	s3c24xx_init_uarts(smdk6440_uartcfgs, ARRAY_SIZE(smdk6440_uartcfgs));
->  }
->  
-> +#ifdef CONFIG_MMC_SDHCI_S3C
-> +static void smdk6440_sdhci0_cfg_ext_cd(void)
-> +{
-> +	s3c_gpio_cfgpin(S5P6440_GPN(8), S3C_GPIO_SFN(2));
-> +	s3c_gpio_setpull(S5P6440_GPN(8), S3C_GPIO_PULL_NONE);
-> +	set_irq_type(IRQ_EINT(8), IRQ_TYPE_EDGE_BOTH);
-> +}
+On Tue, May 4, 2010 at 9:01 AM, Ben Dooks <ben-linux@fluff.org> wrote:
 
-set_irq_type() is not recommended, please use the relevant flags
-to request_irq().
+>
+> could you send the gpio fix with the above change as a seperate patch
+> please?
+>
 
-> +static u32 smdk6440_sdhci0_card_detect(void)
-> +{
-> +	struct s3c_gpio_chip *chip = s3c_gpiolib_getchip(S5P6440_GPN(8));
-> +	struct gpio_chip *gc = &chip->chip;
-> +	u32 present;
-> +	int offset;
-> +
-> +	offset = S5P6440_GPN(8) - chip->chip.base;
-> +	present = gc->get(gc, offset);
-> +	return !present;
-> +}
+Yes, no problem, I'll just wait for the "up-comming s3c2410_gpio
+fallout" patches so I can test everything with the new functions.
 
-argh, much abuse of the gpio layer here.
+BTW there is a nastiness in mixing old-style s3c24xx gpios and gpiolib
+ones for the J port found in the s3c2440. For the former you have to
+use S3C241?_GPJ* macros in regs-gpioj.h, for the later S3C2410_GPJ().
+The reason of this is the "hole" in GPIO registers address which
+breaks S3C2410_GPIO_BASE. So I'm looking forward for your
+reorganization of s3c24xx gpio to see if a patch is needed for this.
+Right now I'm using:
 
-gpio_get_value() is what you want here.
+diff --git a/arch/arm/mach-s3c2410/include/mach/regs-gpio.h
+b/arch/arm/mach-s3c2410/include/mach/regs-gpio.h
+index ebc85c6..a2eab90 100644
+--- a/arch/arm/mach-s3c2410/include/mach/regs-gpio.h
++++ b/arch/arm/mach-s3c2410/include/mach/regs-gpio.h
+@@ -37,7 +37,16 @@
+                                  S3C2400_BASEC2H(pin)+S3C24XX_VA_GPIO)
 
 
-> +static void smdk6440_sdhci_setup_clocks(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct clk *parent;
-> +
-> +	parent = clk_get(NULL, "dout_mpll");
-> +	if (IS_ERR(parent)) {
-> +		dev_err(dev, "failed to get parent clock of mmc_bus clock\n");
-> +		return;
-> +	}
-> +
-> +	if (!s5p_setup_sdhci_sclk(pdev, parent))
-> +		clk_put(parent);
-> +}
-> +
-> +static void __init smdk6440_sdhci_setup_platdata(void)
-> +{
-> +	struct s3c_sdhci_platdata *pdata;
-> +
-> +	/* SDHCI Slot 0 platform data */
-> +	/* SMDK6440 uses EINT(8) for SD/MMC card detection for slot 0 */
-> +	pdata = &s3c_hsmmc0_def_platdata;
-> +	pdata->cfg_ext_cd = smdk6440_sdhci0_cfg_ext_cd;
-> +	pdata->is_card_present = smdk6440_sdhci0_card_detect;
-> +	pdata->ext_cd = S5P_EINT(8);
-> +	pdata->cfg_clocks = smdk6440_sdhci_setup_clocks;
-> +	pdata->sclk_mmc_freq = 50 * MHZ;
-> +
-> +	/* SDHCI Slot 1 platform data */
-> +	pdata = &s3c_hsmmc1_def_platdata;
-> +	s3c_hsmmc1_def_platdata.cfg_clocks = smdk6440_sdhci_setup_clocks;
-> +	s3c_hsmmc1_def_platdata.sclk_mmc_freq = 50 * MHZ;
-> +}
-> +#endif /* CONFIG_MMC_SDHCI_S3C */
-> +
->  static void __init smdk6440_machine_init(void)
->  {
->  	platform_add_devices(smdk6440_devices, ARRAY_SIZE(smdk6440_devices));
-> +#ifdef CONFIG_MMC_SDHCI_S3C
-> +	smdk6440_sdhci_setup_platdata();
-> +#endif
->  }
->  
->  MACHINE_START(SMDK6440, "SMDK6440")
-> -- 
-> 1.6.6.rc2
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-#define S3C2410_GPIO_BASE(pin)   ((((pin) & ~31) >> 1) + S3C24XX_VA_GPIO)
++#if !defined(__ASSEMBLER__) && defined(S3C24XX_VA_GPIO)
++static inline void *S3C2410_GPIO_BASE(unsigned int pin)
++{
++	unsigned int off = (pin & ~31) >> 1;
++
++	if ((pin & ~31) == S3C2410_GPIO_J_START)
++		off += 0x50;
++	return S3C24XX_VA_GPIO + off;
++}
++#endif
+ #define S3C2410_GPIO_OFFSET(pin) ((pin) & 31)
+
+so if I use, by mistake, S3C2410_GPJ() in s3c2410_gpio_cfgpin I don't
+shoot myself in the foot. If I understand you intentions S3C241?_GPJ*
+will go away after the mentioned patch series. Anyway I wait for your
+reorganization of s3c gpios to resubmit these patches if needed.
+
+Thanks,
 
 -- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+Christian Pellegrin, see http://www.evolware.org/chri/
+"Real Programmers don't play tennis, or any other sport which requires
+you to change clothes. Mountain climbing is OK, and Real Programmers
+wear their climbing boots to work in case a mountain should suddenly
+spring up in the middle of the computer room."
