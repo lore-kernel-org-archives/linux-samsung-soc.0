@@ -1,127 +1,96 @@
-From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: [PATCH 2/2] ARM: S3C64XX: Add touchscreen platform device definition
-Date: Tue, 04 May 2010 13:12:44 +0200
-Message-ID: <4BE0012C.6040000@gmail.com>
-References: <2856f2f38f35862f102351991b3fdccf8f01adba.1272971522.git.mcuelenaere@gmail.com>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: [PATCH 1/3] s3c6410: Add new quirk in sdhci driver and update
+	ADMA descriptor build.
+Date: Wed, 5 May 2010 15:59:13 +0100
+Message-ID: <20100505145913.GI26401@trinity.fluff.org>
+References: <cover.1272966142.git.mcuelenaere@gmail.com> <4BDFEC3A.9060501@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ey-out-2122.google.com ([74.125.78.27]:23073 "EHLO
-	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751732Ab0EDLMr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 May 2010 07:12:47 -0400
-Received: by ey-out-2122.google.com with SMTP id d26so205185eyd.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 May 2010 04:12:46 -0700 (PDT)
-In-Reply-To: <2856f2f38f35862f102351991b3fdccf8f01adba.1272971522.git.mcuelenaere@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4BDFEC3A.9060501@gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, pierre@ossman.eu, linux-mmc@vger.kernel.org, akpm@linux-foundation.org, sdhci-devel@lists.ossman.eu, ben-linux@fluff.org, thomas.ab@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: ben-linux@fluff.org
 
-This patch adds the touchscreen platform device definition for S3C64XX boards.
+On Tue, May 04, 2010 at 11:43:22AM +0200, Maurus Cuelenaere wrote:
 
-Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
----
- arch/arm/mach-s3c64xx/Makefile |    1 +
- arch/arm/mach-s3c64xx/dev-ts.c |   61 ++++++++++++++++++++++++++++++++++++++++
- arch/arm/plat-samsung/Kconfig  |    6 ++++
- 3 files changed, 68 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s3c64xx/dev-ts.c
+The 'From:' line seems to have been lost?
 
-diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
-index 3758e15..a690a9d 100644
---- a/arch/arm/mach-s3c64xx/Makefile
-+++ b/arch/arm/mach-s3c64xx/Makefile
-@@ -60,3 +60,4 @@ obj-y				+= dev-rtc.o
- obj-y				+= dev-audio.o
- obj-$(CONFIG_S3C_ADC)		+= dev-adc.o
- obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
-+obj-$(CONFIG_S3C64XX_DEV_TS)	+= dev-ts.o
-diff --git a/arch/arm/mach-s3c64xx/dev-ts.c b/arch/arm/mach-s3c64xx/dev-ts.c
-new file mode 100644
-index 0000000..17cc793
---- /dev/null
-+++ b/arch/arm/mach-s3c64xx/dev-ts.c
-@@ -0,0 +1,61 @@
-+/* linux/arch/arm/mach-s3c64xx/dev-ts.c
-+ *
-+ * Copyright (c) 2008 Simtec Electronics
-+ *	http://armlinux.simtec.co.uk/
-+ *	Ben Dooks <ben@simtec.co.uk>, <ben-linux@fluff.org>
-+ *
-+ * Adapted by Maurus Cuelenaere for s3c64xx
-+ *
-+ * S3C64XX series device definition for touchscreen device
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/string.h>
-+#include <linux/platform_device.h>
-+
-+#include <mach/irqs.h>
-+#include <mach/map.h>
-+
-+#include <plat/devs.h>
-+#include <plat/ts.h>
-+
-+static struct resource s3c_ts_resource[] = {
-+	[0] = {
-+		.start = S3C64XX_PA_ADC,
-+		.end   = S3C64XX_PA_ADC + SZ_256 - 1,
-+		.flags = IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start = IRQ_TC,
-+		.end   = IRQ_TC,
-+		.flags = IORESOURCE_IRQ,
-+	},
-+};
-+
-+struct platform_device s3c_device_ts = {
-+	.name		= "s3c64xx-ts",
-+	.id		= -1,
-+	.num_resources	= ARRAY_SIZE(s3c_ts_resource),
-+	.resource	= s3c_ts_resource,
-+};
-+
-+void __init s3c24xx_ts_set_platdata(struct s3c2410_ts_mach_info *pd)
-+{
-+	struct s3c2410_ts_mach_info *npd;
-+
-+	if (!pd) {
-+		printk(KERN_ERR "%s: no platform data\n", __func__);
-+		return;
-+	}
-+
-+	npd = kmemdup(pd, sizeof(struct s3c2410_ts_mach_info), GFP_KERNEL);
-+	if (!npd)
-+		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
-+
-+	s3c_device_ts.dev.platform_data = npd;
-+}
-+EXPORT_SYMBOL(s3c24xx_ts_set_platdata);
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index d552c65..5d3ef35 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -191,6 +191,12 @@ config S3C64XX_DEV_SPI
- 	  Compile in platform device definitions for S3C64XX's type
- 	  SPI controllers.
- 
-+config S3C64XX_DEV_TS
-+	bool
-+	help
-+	    Common in platform device definitions for S3C64XX touchscreen
-+	    device
-+
- # DMA
- 
- config S3C_DMA
+> The s3c6410 sdhci controller does not support the 'End' attribute and
+> NOP attribute in the same 8-Byte ADMA descriptor. This patch adds a
+> new quirk to identify sdhci host contollers with such behaviour.
+> In addition to this, for controllers using the new quirk, the last
+> entry in the ADMA descritor table is marked with the 'End' attribute
+> (instead of using a NOP descriptor with 'End' attribute).
+> 
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Acked-by: Ben Dooks <ben-linux@fluff.org>
+> Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
+> ---
+>  drivers/mmc/host/sdhci.c |   20 +++++++++++++++-----
+>  drivers/mmc/host/sdhci.h |    2 ++
+>  2 files changed, 17 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 9d4fdfa..db5d566 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -496,12 +496,22 @@ static int sdhci_adma_table_pre(struct sdhci_host *host,
+>  		WARN_ON((desc - host->adma_desc) > (128 * 2 + 1) * 4);
+>  	}
+>  
+> -	/*
+> -	 * Add a terminating entry.
+> -	 */
+> +	if (host->quirks & SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC) {
+> +		/*
+> +		* Mark the last descriptor as the terminating descriptor
+> +		*/
+> +		if (desc != host->adma_desc) {
+> +			desc -= 8;
+> +			desc[0] |= 0x2; /* end */
+> +		}
+> +	} else {
+> +		/*
+> +		* Add a terminating entry.
+> +		*/
+>  
+> -	/* nop, end, valid */
+> -	sdhci_set_adma_desc(desc, 0, 0, 0x3);
+> +		/* nop, end, valid */
+> +		sdhci_set_adma_desc(desc, 0, 0, 0x3);
+> +	}
+>  
+>  	/*
+>  	 * Resync align buffer as we might have changed it.
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index 842f46f..7ba0006 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -236,6 +236,8 @@ struct sdhci_host {
+>  #define SDHCI_QUIRK_DELAY_AFTER_POWER			(1<<23)
+>  /* Controller uses SDCLK instead of TMCLK for data timeouts */
+>  #define SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK		(1<<24)
+> +/* Controller cannot support End Attribute in NOP ADMA descriptor */
+> +#define SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC		(1<<25)
+>  
+>  	int			irq;		/* Device IRQ */
+>  	void __iomem *		ioaddr;		/* Mapped address */
+> -- 
+> 1.7.1
+> 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
 -- 
-1.7.1
+-- 
+Ben
+
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
+
