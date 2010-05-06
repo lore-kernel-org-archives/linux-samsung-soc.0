@@ -1,103 +1,124 @@
-From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: Re: SAMSUNG How to handle changes in TSADC IP register bits
-Date: Thu, 06 May 2010 12:47:35 +0200
-Message-ID: <4BE29E47.10704@gmail.com>
-References: <20385116.536981273142442574.JavaMail.weblogic@epml02>
+From: Yauhen Kharuzhy <yauhen.kharuzhy@promwad.com>
+Subject: Re: S3C6410 power management support status
+Date: Thu, 6 May 2010 17:49:55 +0300
+Message-ID: <20100506144955.GA24641@jeknote.loshitsa1.net>
+References: <20100429124509.GA11290@jeknote.loshitsa1.net>
+ <20100504002420.GQ6684@trinity.fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ey-out-2122.google.com ([74.125.78.24]:50821 "EHLO
-	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754636Ab0EFKri (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:47930 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752876Ab0EFOuD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 May 2010 06:47:38 -0400
-Received: by ey-out-2122.google.com with SMTP id d26so50843eyd.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 May 2010 03:47:37 -0700 (PDT)
-In-Reply-To: <20385116.536981273142442574.JavaMail.weblogic@epml02>
+	Thu, 6 May 2010 10:50:03 -0400
+Received: by fxm10 with SMTP id 10so32926fxm.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 May 2010 07:50:00 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20100504002420.GQ6684@trinity.fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ch.naveen@samsung.com
-Cc: Ben Dooks <ben-linux@fluff.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-arm-kernel@lists.infradead.org, Viktar Palstsiuk <viktar.palstsiuk@promwad.com>, linux-samsung-soc@vger.kernel.org, Vladimir Davydov <vladimir.davydov@promwad.com>
 
-Op 06-05-10 12:40, NAVEEN KRISHNA CHATRADHI schreef:
-> Hi Maurus, 
->
-> ------ Original Message -------
-> Sender : Maurus Cuelenaere<mcuelenaere@gmail.com> 
-> Date   : May 06, 2010 15:28 (GMT+05:00)
-> Title  : Re: SAMSUNG How to handle changes in TSADC IP register bits
->
-> Hi Naveen,
->
-> Op 06-05-10 12:15, NAVEEN KRISHNA CHATRADHI schreef:
->   
->> Hi Ben, Maurus,
->>
->> ------- Original Message -------
->> Sender : Maurus Cuelenaere<mcuelenaere@gmail.com> 
->> Date   : May 06, 2010 14:52 (GMT+05:00)
->> Title  : Re: SAMSUNG How to handle changes in TSADC IP register bits
->>
->> Op 06-05-10 07:41, Ben Dooks schreef:
->>   
->>     
->>> On Thu, May 06, 2010 at 06:38:22AM +0100, Ben Dooks wrote:
->>>   
->>>     
->>>       
->>>> On Thu, May 06, 2010 at 04:08:20AM +0000, NAVEEN KRISHNA CHATRADHI wrote:
->>>>     
->>>>       
->>>>         
->>>>> Hi Ben, 
->>>>>  
->>>>> I'm working on Touchscreen driver support for S5PC100, S5PV210, S3C6410 & S5P6440.
->>>>> The TSADC registers bit fields are keep on varying between the different 
->>>>> SoCs, though the IP as a whole remains same.
->>>>>
->>>>> For example: 
->>>>> Some of the ADC CONTROL REGISTER bit fields in S3C6410 are made as seperate register 
->>>>> ADC CHANNEL MUX REGISTER
->>>>> How do we handle this in the driver which should be generic to all the SoCs.
->>>>>       
->>>>>         
->>>>>           
->>>> I've already merged the first changes for the s3c6410 (see Maurus' previous
->>>> patches) ready for the next mainline merge.
->>>>     
->>>>       
->>>>         
->>> Maurus, can you send the change to the core driver to support the extended
->>> range please.
->>>   
->>>     
->>>       
->> I've seen this patch from Maurus a long ago.
->> Maurus, Do you have any other patches other than, Cause i have already made patches for 
->> touchscreen support for S3C6410/6440 S5Pv210/C110/C100 these boards.
->>
->> I'ill post it in a day or 2. 
->>   
->>     
-> No, I only added support for the S3C6410 (as that's the only board I have).
-> I've seen your patch earlier and i made a patch set for TSADC on other boards too.
->
-> This patch set would take care of the moving of ts.h from plat to mach,
-> moving the GPIOs specific for S3C24XX to seperate file, 
-> Adding generic GPIO configuration functions (based on I2C)
-> and Also adds TSADC support for S3c6410, S5PV210,C110 and S5P6440.
->
-> but, It might take a day or 2 to get them reviewed internally and post it on mainline.
->   
+On Tue, May 04, 2010 at 01:24:20AM +0100, Ben Dooks wrote:
+> On Thu, Apr 29, 2010 at 03:45:09PM +0300, Yauhen Kharuzhy wrote:
+> > Hi.
+> > 
+> > Can anybody explain current status of S3C6410 power management support
+> > in mainline? Suspend-to-RAM looks completely broken in the current
+> > Linus's git tree.
+> 
+> I'd prefer if you didn't make sweeping accusations about the state of
+> a given piece of the kernel without having a good look first. From reading
+> your second post, it seems that what is actually the problem is that the
+> 64XX support only currently handles wakeup configurations from the EINT
+> pins.
 
-You probably want to state that too on the patch I sent to linux-input (
-ARM: S3C64XX: Add s3c64xx support to touchscreen driver), as your
-patches seem to supersede mine.
+I am sorry for my hasty opinion about StR.
 
-Keep in mind that "ARM: SAMSUNG: Move mach/ts.h to plat/ts.h" and "ARM:
-S3C64XX: Add touchscreen platform device definition" have already been
-merged though.
+But we have checked Suspend-to-RAM at our (custom, not SMDK) board just now
+and it is not works with EINT too. Kernel goes to sleep and never
+return. We found that XPWRRGTON pin isn't
+changed at sleep instruction execution so CPU don't go to sleep state. If anybody
+can say something about reasons of this, please say.
+
+Can anybody check suspend mode with SMDK6410 and confirm that StR works
+on it? If it works, we will stop to ask stupid questions and will find
+our hardware bugs :)
+
+Below is log of sleeping procedure:
+-----------------------------------------------------------------------
+/sys/power # echo mem > state
+s3c64xx_irq_pm_suspend: suspending IRQs
+saved f4500280 value 000003ff
+saved f4500900 value 00400000
+saved f4500904 value 00000000
+saved f4500910 value 00000000
+saved f4500914 value 00000000
+saved f4500918 value 00000000
+saved f450091c value 00000000
+saved f4500920 value 0ffff7ff
+saved f4300044 value 00000210
+s3c_pm_enter(3)
+s3c_sleep_save_phys=0x503cac18
+GPA: save 00000000,22222222,0000007a,00002955
+GPB: save 00000000,02212222,0000007b,00002955
+GPC: save 00000000,11331000,00000010,00005055
+GPD: save 00000000,00000000,00000000,00000155
+GPE: save 00000000,00000000,00000000,00000155
+GPF: save 50000000,00008000,55555555,00000000
+GPG: save 00000000,03222222,0000003e,00002000
+GPH: save 33222222,00000033,000003fe,00000000
+GPI: save aaaaaaaa,00000000,00000000,00000000
+GPJ: save 00aaaaaa,00000f00,00000000,00000000
+GPK: save 22222222,22222222,00000000,55555555
+GPL: save 12121122,02222211,0000038c,15555555
+GPM: save 00000000,00222222,0000001f,000002aa
+GPN: save 55940454,0000f81a,55955555,00000000
+GPO: save aaaaaaaa,0000003f,00000000,00000000
+GPP: save 2aaaaaaa,000038e7,1011aaa0,00000000
+GPQ: save 0002aaaa,00000018,00000000,00000000
+UART[0]: ULCON=0007, UCON=0785, UFCON=0011, UBRDIV=0000
+UART[1]: ULCON=002b, UCON=0385, UFCON=0011, UBRDIV=0003
+UART[2]: ULCON=0003, UCON=0385, UFCON=0011, UBRDIV=001f
+UART[3]: ULCON=0007, UCON=0785, UFCON=0011, UBRDIV=0000
+saved f4100100 value 04000000
+saved f4100104 value 00000000
+saved f4100108 value 00000000
+saved f45001a0 value ffcd1501
+saved f45001b0 value 00000000
+saved f45001b4 value 00000000
+saved f45001c0 value 00000000
+saved f45001c4 value 00000000
+saved f45001c8 value 00000000
+saved f4100000 value 0000ffff
+saved f4100004 value 0000ffff
+saved f4100008 value 0000ffff
+saved f410001c value 00000007
+saved f4100020 value 01043310
+saved f4100024 value 00000000
+saved f4100028 value 00000000
+saved f410002c value 00000000
+saved f4100030 value fffffff7
+saved f4100034 value fb9e6fff
+saved f4100038 value c73fffff
+saved f410003c value ffffffff
+saved f4100018 value 00000000
+saved f4100014 value 00200203
+saved f45001d0 value 10555551
+saved f45001d4 value 00555555
+sleep: irq wakeup masks: ffffffff,fffff7ff
+------------------------------------------------------------------------------
 
 -- 
-Maurus Cuelenaere
+Yauhen Kharuzhy
+-----------------------------------------------------------
+Promwad Innovation Company
+22, Olshevskogo St.
+Office 809
+220073, Minsk, Belarus
+Phone/Fax: +375 (17) 312-1246
+E-mail: yauhen.kharuzhy@promwad.com
+Skype: jekhor
+Web: www.promwad.com
