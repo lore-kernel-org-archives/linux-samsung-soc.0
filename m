@@ -1,184 +1,174 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH 02/23] ARM: S3C24XX: Add the gpio pull configuration for pull-up
-Date: Fri,  7 May 2010 08:15:24 +0900
-Message-ID: <1273187745-6566-3-git-send-email-ben-linux@fluff.org>
+Subject: [PATCH 03/23] ARM: S3C24XX: Add extended GPIO used on S3C2443 and beyond
+Date: Fri,  7 May 2010 08:15:25 +0900
+Message-ID: <1273187745-6566-4-git-send-email-ben-linux@fluff.org>
 References: <1273187745-6566-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from [121.136.51.148] ([121.136.51.148]:60606 "EHLO ben-laptop"
+Received: from [121.136.51.148] ([121.136.51.148]:60608 "EHLO ben-laptop"
 	rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1752746Ab0EFXQA (ORCPT
+	id S1751363Ab0EFXQD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 May 2010 19:16:00 -0400
+	Thu, 6 May 2010 19:16:03 -0400
 In-Reply-To: <1273187745-6566-1-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Ben Dooks <ben-linux@fluff.org>
 
-Add the necessary gpio configuration helper for the devices which
-have a single-bit pull-up resistor disabled.
+Add the GPIO banks that are used on the S3C2443 and above to the
+list of available GPIOS.
+
+Currently we do not have any limit on the SoC GPIO, so these are
+being registered whether the SoC has them or not. It is currently
+up to the user not to try and use them.
 
 Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/mach-s3c2410/Kconfig                      |    1 +
- arch/arm/mach-s3c2410/s3c2410.c                    |    8 +++++
- arch/arm/mach-s3c2440/Kconfig                      |    1 +
- arch/arm/mach-s3c2440/s3c2440.c                    |    8 +++++
- arch/arm/plat-samsung/gpio-config.c                |   32 ++++++++++++++++++++
- .../plat-samsung/include/plat/gpio-cfg-helpers.h   |   11 +++++++
- 6 files changed, 61 insertions(+), 0 deletions(-)
+ arch/arm/mach-s3c2410/include/mach/gpio-nrs.h   |   12 +++++++
+ arch/arm/mach-s3c2410/include/mach/regs-gpio.h  |   17 +++++++++
+ arch/arm/mach-s3c2410/include/mach/regs-gpioj.h |    4 --
+ arch/arm/plat-s3c24xx/gpiolib.c                 |   41 ++++++++++++++++++++++-
+ 4 files changed, 69 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/mach-s3c2410/Kconfig b/arch/arm/mach-s3c2410/Kconfig
-index 5547318..9e5e96f 100644
---- a/arch/arm/mach-s3c2410/Kconfig
-+++ b/arch/arm/mach-s3c2410/Kconfig
-@@ -6,6 +6,7 @@ config CPU_S3C2410
- 	bool
- 	depends on ARCH_S3C2410
- 	select CPU_ARM920T
-+	select S3C_GPIO_PULL_UP
- 	select S3C2410_CLOCK
- 	select S3C2410_GPIO
- 	select CPU_LLSERIAL_S3C2410
-diff --git a/arch/arm/mach-s3c2410/s3c2410.c b/arch/arm/mach-s3c2410/s3c2410.c
-index 91ba42f..adc90a3 100644
---- a/arch/arm/mach-s3c2410/s3c2410.c
-+++ b/arch/arm/mach-s3c2410/s3c2410.c
-@@ -16,6 +16,7 @@
- #include <linux/list.h>
- #include <linux/timer.h>
- #include <linux/init.h>
-+#include <linux/gpio.h>
- #include <linux/clk.h>
- #include <linux/sysdev.h>
- #include <linux/serial_core.h>
-@@ -40,6 +41,10 @@
- #include <plat/clock.h>
- #include <plat/pll.h>
+diff --git a/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h b/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h
+index 2edbb9c..f3182ff 100644
+--- a/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h
++++ b/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h
+@@ -34,6 +34,10 @@
+ #define S3C2410_GPIO_F_NR	(32)
+ #define S3C2410_GPIO_G_NR	(32)
+ #define S3C2410_GPIO_H_NR	(32)
++#define S3C2410_GPIO_J_NR	(32)	/* technically 16. */
++#define S3C2410_GPIO_K_NR	(32)	/* technically 16. */
++#define S3C2410_GPIO_L_NR	(32)	/* technically 15. */
++#define S3C2410_GPIO_M_NR	(32)	/* technically 2. */
  
-+#include <plat/gpio-core.h>
-+#include <plat/gpio-cfg.h>
-+#include <plat/gpio-cfg-helpers.h>
-+
- /* Initial IO mappings */
- 
- static struct map_desc s3c2410_iodesc[] __initdata = {
-@@ -65,6 +70,9 @@ void __init s3c2410_init_uarts(struct s3c2410_uartcfg *cfg, int no)
- 
- void __init s3c2410_map_io(void)
- {
-+	s3c24xx_gpiocfg_default.set_pull = s3c_gpio_setpull_1up;
-+	s3c24xx_gpiocfg_default.get_pull = s3c_gpio_getpull_1up;
-+
- 	iotable_init(s3c2410_iodesc, ARRAY_SIZE(s3c2410_iodesc));
- }
- 
-diff --git a/arch/arm/mach-s3c2440/Kconfig b/arch/arm/mach-s3c2440/Kconfig
-index 7f46526..9d102b9 100644
---- a/arch/arm/mach-s3c2440/Kconfig
-+++ b/arch/arm/mach-s3c2440/Kconfig
-@@ -6,6 +6,7 @@ config CPU_S3C2440
- 	bool
- 	depends on ARCH_S3C2410
- 	select CPU_ARM920T
-+	select S3C_GPIO_PULL_UP
- 	select S3C2410_CLOCK
- 	select S3C2410_PM if PM
- 	select S3C2410_GPIO
-diff --git a/arch/arm/mach-s3c2440/s3c2440.c b/arch/arm/mach-s3c2440/s3c2440.c
-index 2b68f7e..d50f3ae 100644
---- a/arch/arm/mach-s3c2440/s3c2440.c
-+++ b/arch/arm/mach-s3c2440/s3c2440.c
-@@ -19,6 +19,7 @@
- #include <linux/platform_device.h>
- #include <linux/serial_core.h>
- #include <linux/sysdev.h>
-+#include <linux/gpio.h>
- #include <linux/clk.h>
- #include <linux/io.h>
- 
-@@ -33,6 +34,10 @@
- #include <plat/cpu.h>
- #include <plat/s3c244x.h>
- 
-+#include <plat/gpio-core.h>
-+#include <plat/gpio-cfg.h>
-+#include <plat/gpio-cfg-helpers.h>
-+
- static struct sys_device s3c2440_sysdev = {
- 	.cls		= &s3c2440_sysclass,
+ #if CONFIG_S3C_GPIO_SPACE != 0
+ #error CONFIG_S3C_GPIO_SPACE cannot be zero at the moment
+@@ -53,6 +57,10 @@ enum s3c_gpio_number {
+ 	S3C2410_GPIO_F_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_E),
+ 	S3C2410_GPIO_G_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_F),
+ 	S3C2410_GPIO_H_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_G),
++	S3C2410_GPIO_J_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_H),
++	S3C2410_GPIO_K_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_J),
++	S3C2410_GPIO_L_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_K),
++	S3C2410_GPIO_M_START = S3C2410_GPIO_NEXT(S3C2410_GPIO_L),
  };
-@@ -41,6 +46,9 @@ int __init s3c2440_init(void)
+ 
+ #endif /* __ASSEMBLY__ */
+@@ -67,6 +75,10 @@ enum s3c_gpio_number {
+ #define S3C2410_GPF(_nr)	(S3C2410_GPIO_F_START + (_nr))
+ #define S3C2410_GPG(_nr)	(S3C2410_GPIO_G_START + (_nr))
+ #define S3C2410_GPH(_nr)	(S3C2410_GPIO_H_START + (_nr))
++#define S3C2410_GPJ(_nr)	(S3C2410_GPIO_J_START + (_nr))
++#define S3C2410_GPK(_nr)	(S3C2410_GPIO_K_START + (_nr))
++#define S3C2410_GPL(_nr)	(S3C2410_GPIO_L_START + (_nr))
++#define S3C2410_GPM(_nr)	(S3C2410_GPIO_M_START + (_nr))
+ 
+ /* compatibility until drivers can be modified */
+ 
+diff --git a/arch/arm/mach-s3c2410/include/mach/regs-gpio.h b/arch/arm/mach-s3c2410/include/mach/regs-gpio.h
+index fd672f3..821b966 100644
+--- a/arch/arm/mach-s3c2410/include/mach/regs-gpio.h
++++ b/arch/arm/mach-s3c2410/include/mach/regs-gpio.h
+@@ -639,6 +639,23 @@
+  * for the 2412/2413 from the 2410/2440/2442
+ */
+ 
++/* S3C2443 and above */
++#define S3C2440_GPJCON	   S3C2410_GPIOREG(0xD0)
++#define S3C2440_GPJDAT	   S3C2410_GPIOREG(0xD4)
++#define S3C2440_GPJUP	   S3C2410_GPIOREG(0xD8)
++
++#define S3C2443_GPKCON	   S3C2410_GPIOREG(0xE0)
++#define S3C2443_GPKDAT	   S3C2410_GPIOREG(0xE4)
++#define S3C2443_GPKUP	   S3C2410_GPIOREG(0xE8)
++
++#define S3C2443_GPLCON	   S3C2410_GPIOREG(0xF0)
++#define S3C2443_GPLDAT	   S3C2410_GPIOREG(0xF4)
++#define S3C2443_GPLUP	   S3C2410_GPIOREG(0xF8)
++
++#define S3C2443_GPMCON	   S3C2410_GPIOREG(0x100)
++#define S3C2443_GPMDAT	   S3C2410_GPIOREG(0x104)
++#define S3C2443_GPMUP	   S3C2410_GPIOREG(0x108)
++
+ /* miscellaneous control */
+ #define S3C2400_MISCCR	   S3C2410_GPIOREG(0x54)
+ #define S3C2410_MISCCR	   S3C2410_GPIOREG(0x80)
+diff --git a/arch/arm/mach-s3c2410/include/mach/regs-gpioj.h b/arch/arm/mach-s3c2410/include/mach/regs-gpioj.h
+index 1202ca5..de463bc 100644
+--- a/arch/arm/mach-s3c2410/include/mach/regs-gpioj.h
++++ b/arch/arm/mach-s3c2410/include/mach/regs-gpioj.h
+@@ -24,10 +24,6 @@
+ 
+ #define S3C2440_GPIO_BANKJ  (416)
+ 
+-#define S3C2440_GPJCON	    S3C2410_GPIOREG(0xd0)
+-#define S3C2440_GPJDAT	    S3C2410_GPIOREG(0xd4)
+-#define S3C2440_GPJUP	    S3C2410_GPIOREG(0xd8)
+-
+ #define S3C2413_GPJCON		S3C2410_GPIOREG(0x80)
+ #define S3C2413_GPJDAT		S3C2410_GPIOREG(0x84)
+ #define S3C2413_GPJUP		S3C2410_GPIOREG(0x88)
+diff --git a/arch/arm/plat-s3c24xx/gpiolib.c b/arch/arm/plat-s3c24xx/gpiolib.c
+index 376b061..e8c0e8a 100644
+--- a/arch/arm/plat-s3c24xx/gpiolib.c
++++ b/arch/arm/plat-s3c24xx/gpiolib.c
+@@ -1,6 +1,6 @@
+ /* linux/arch/arm/plat-s3c24xx/gpiolib.c
+  *
+- * Copyright (c) 2008 Simtec Electronics
++ * Copyright (c) 2008-2010 Simtec Electronics
+  *	http://armlinux.simtec.co.uk/
+  *	Ben Dooks <ben@simtec.co.uk>
+  *
+@@ -172,8 +172,47 @@ struct s3c_gpio_chip s3c24xx_gpios[] = {
+ 			.ngpio			= 11,
+ 		},
+ 	},
++		/* GPIOS for the S3C2443 and later devices. */
++	{
++		.base	= S3C2440_GPJCON,
++		.pm	= __gpio_pm(&s3c_gpio_pm_2bit),
++		.chip	= {
++			.base			= S3C2410_GPJ(0),
++			.owner			= THIS_MODULE,
++			.label			= "GPIOJ",
++			.ngpio			= 16,
++		},
++	}, {
++		.base	= S3C2443_GPKCON,
++		.pm	= __gpio_pm(&s3c_gpio_pm_2bit),
++		.chip	= {
++			.base			= S3C2410_GPK(0),
++			.owner			= THIS_MODULE,
++			.label			= "GPIOK",
++			.ngpio			= 16,
++		},
++	}, {
++		.base	= S3C2443_GPLCON,
++		.pm	= __gpio_pm(&s3c_gpio_pm_2bit),
++		.chip	= {
++			.base			= S3C2410_GPL(0),
++			.owner			= THIS_MODULE,
++			.label			= "GPIOL",
++			.ngpio			= 15,
++		},
++	}, {
++		.base	= S3C2443_GPMCON,
++		.pm	= __gpio_pm(&s3c_gpio_pm_2bit),
++		.chip	= {
++			.base			= S3C2410_GPM(0),
++			.owner			= THIS_MODULE,
++			.label			= "GPIOM",
++			.ngpio			= 2,
++		},
++	},
+ };
+ 
++
+ static __init int s3c24xx_gpiolib_init(void)
  {
- 	printk("S3C2440: Initialising architecture\n");
- 
-+	s3c24xx_gpiocfg_default.set_pull = s3c_gpio_setpull_1up;
-+	s3c24xx_gpiocfg_default.get_pull = s3c_gpio_getpull_1up;
-+
- 	/* change irq for watchdog */
- 
- 	s3c_device_wdt.resource[1].start = IRQ_S3C2440_WDT;
-diff --git a/arch/arm/plat-samsung/gpio-config.c b/arch/arm/plat-samsung/gpio-config.c
-index c583282..8aca88d 100644
---- a/arch/arm/plat-samsung/gpio-config.c
-+++ b/arch/arm/plat-samsung/gpio-config.c
-@@ -164,3 +164,35 @@ s3c_gpio_pull_t s3c_gpio_getpull_updown(struct s3c_gpio_chip *chip,
- 	return (__force s3c_gpio_pull_t)pup;
- }
- #endif
-+
-+#ifdef CONFIG_S3C_GPIO_PULL_UP
-+int s3c_gpio_setpull_1up(struct s3c_gpio_chip *chip,
-+			 unsigned int off, s3c_gpio_pull_t pull)
-+{
-+	void __iomem *reg = chip->base + 0x08;
-+	u32 pup = __raw_readl(reg);
-+
-+	pup = __raw_readl(reg);
-+
-+	if (pup == S3C_GPIO_PULL_UP)
-+		pup &= ~(1 << off);
-+	else if (pup == S3C_GPIO_PULL_NONE)
-+		pup |= (1 << off);
-+	else
-+		return -EINVAL;
-+
-+	__raw_writel(pup, reg);
-+	return 0;
-+}
-+
-+s3c_gpio_pull_t s3c_gpio_getpull_1up(struct s3c_gpio_chip *chip,
-+				     unsigned int off)
-+{
-+	void __iomem *reg = chip->base + 0x08;
-+	u32 pup = __raw_readl(reg);
-+
-+	pup &= (1 << off);
-+	return pup ? S3C_GPIO_PULL_NONE : S3C_GPIO_PULL_UP;
-+}
-+#endif /* CONFIG_S3C_GPIO_PULL_UP */
-+
-diff --git a/arch/arm/plat-samsung/include/plat/gpio-cfg-helpers.h b/arch/arm/plat-samsung/include/plat/gpio-cfg-helpers.h
-index dda19da..885e9ac 100644
---- a/arch/arm/plat-samsung/include/plat/gpio-cfg-helpers.h
-+++ b/arch/arm/plat-samsung/include/plat/gpio-cfg-helpers.h
-@@ -146,6 +146,17 @@ extern s3c_gpio_pull_t s3c_gpio_getpull_updown(struct s3c_gpio_chip *chip,
- 					       unsigned int off);
- 
- /**
-+ * s3c_gpio_getpull_1up() - Get configuration for choice of up or none
-+ * @chip: The gpio chip that the GPIO pin belongs to
-+ * @off: The offset to the pin to get the configuration of.
-+ *
-+ * This helper function reads the state of the pull-up resistor for the
-+ * given GPIO in the same case as s3c_gpio_setpull_1up.
-+*/
-+extern s3c_gpio_pull_t s3c_gpio_getpull_1up(struct s3c_gpio_chip *chip,
-+					    unsigned int off);
-+
-+/**
-  * s3c_gpio_setpull_s3c2443() - Pull configuration for s3c2443.
-  * @chip: The gpio chip that is being configured.
-  * @off: The offset for the GPIO being configured.
+ 	struct s3c_gpio_chip *chip = s3c24xx_gpios;
 -- 
 1.7.0.4
