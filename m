@@ -1,72 +1,103 @@
-From: NAVEEN KRISHNA CHATRADHI <ch.naveen@samsung.com>
-Subject: Re: Re: SAMSUNG How to handle changes in TSADC IP register bits
-Date: Thu, 06 May 2010 10:40:42 +0000 (GMT)
-Message-ID: <20385116.536981273142442574.JavaMail.weblogic@epml02>
-Reply-To: ch.naveen@samsung.com
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Subject: Re: SAMSUNG How to handle changes in TSADC IP register bits
+Date: Thu, 06 May 2010 12:47:35 +0200
+Message-ID: <4BE29E47.10704@gmail.com>
+References: <20385116.536981273142442574.JavaMail.weblogic@epml02>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:34000 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751965Ab0EFKko (ORCPT
+Received: from ey-out-2122.google.com ([74.125.78.24]:50821 "EHLO
+	ey-out-2122.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754636Ab0EFKri (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 May 2010 06:40:44 -0400
-Received: from ep_ms13_bk (mailout4.samsung.com [203.254.224.34])
- by mailout1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L1Z00AB9UZUH4@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 06 May 2010 19:40:42 +0900 (KST)
-Received: from ep_spt01 (ms13.samsung.com [203.254.225.109])
- by ms13.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L1Z000RIUZUM4@ms13.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 06 May 2010 19:40:42 +0900 (KST)
-Content-return: prohibited
-MIME-version: 1.0
+	Thu, 6 May 2010 06:47:38 -0400
+Received: by ey-out-2122.google.com with SMTP id d26so50843eyd.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 May 2010 03:47:37 -0700 (PDT)
+In-Reply-To: <20385116.536981273142442574.JavaMail.weblogic@epml02>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Maurus Cuelenaere <mcuelenaere@gmail.com>
+To: ch.naveen@samsung.com
 Cc: Ben Dooks <ben-linux@fluff.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-SGkgTWF1cnVzLCANCg0KLS0tLS0tIE9yaWdpbmFsIE1lc3NhZ2UgLS0tLS0tLQ0KU2VuZGVyIDog
-TWF1cnVzIEN1ZWxlbmFlcmU8bWN1ZWxlbmFlcmVAZ21haWwuY29tPiANCkRhdGUgICA6IE1heSAw
-NiwgMjAxMCAxNToyOCAoR01UKzA1OjAwKQ0KVGl0bGUgIDogUmU6IFNBTVNVTkcgSG93IHRvIGhh
-bmRsZSBjaGFuZ2VzIGluIFRTQURDIElQIHJlZ2lzdGVyIGJpdHMNCg0KSGkgTmF2ZWVuLA0KDQpP
-cCAwNi0wNS0xMCAxMjoxNSwgTkFWRUVOIEtSSVNITkEgQ0hBVFJBREhJIHNjaHJlZWY6DQo+IEhp
-IEJlbiwgTWF1cnVzLA0KPg0KPiAtLS0tLS0tIE9yaWdpbmFsIE1lc3NhZ2UgLS0tLS0tLQ0KPiBT
-ZW5kZXIgOiBNYXVydXMgQ3VlbGVuYWVyZTxtY3VlbGVuYWVyZUBnbWFpbC5jb20+IA0KPiBEYXRl
-ICAgOiBNYXkgMDYsIDIwMTAgMTQ6NTIgKEdNVCswNTowMCkNCj4gVGl0bGUgIDogUmU6IFNBTVNV
-TkcgSG93IHRvIGhhbmRsZSBjaGFuZ2VzIGluIFRTQURDIElQIHJlZ2lzdGVyIGJpdHMNCj4NCj4g
-T3AgMDYtMDUtMTAgMDc6NDEsIEJlbiBEb29rcyBzY2hyZWVmOg0KPiAgIA0KPj4gT24gVGh1LCBN
-YXkgMDYsIDIwMTAgYXQgMDY6Mzg6MjJBTSArMDEwMCwgQmVuIERvb2tzIHdyb3RlOg0KPj4gICAN
-Cj4+ICAgICANCj4+PiBPbiBUaHUsIE1heSAwNiwgMjAxMCBhdCAwNDowODoyMEFNICswMDAwLCBO
-QVZFRU4gS1JJU0hOQSBDSEFUUkFESEkgd3JvdGU6DQo+Pj4gICAgIA0KPj4+ICAgICAgIA0KPj4+
-PiBIaSBCZW4sIA0KPj4+PiAgDQo+Pj4+IEknbSB3b3JraW5nIG9uIFRvdWNoc2NyZWVuIGRyaXZl
-ciBzdXBwb3J0IGZvciBTNVBDMTAwLCBTNVBWMjEwLCBTM0M2NDEwICYgUzVQNjQ0MC4NCj4+Pj4g
-VGhlIFRTQURDIHJlZ2lzdGVycyBiaXQgZmllbGRzIGFyZSBrZWVwIG9uIHZhcnlpbmcgYmV0d2Vl
-biB0aGUgZGlmZmVyZW50IA0KPj4+PiBTb0NzLCB0aG91Z2ggdGhlIElQIGFzIGEgd2hvbGUgcmVt
-YWlucyBzYW1lLg0KPj4+Pg0KPj4+PiBGb3IgZXhhbXBsZTogDQo+Pj4+IFNvbWUgb2YgdGhlIEFE
-QyBDT05UUk9MIFJFR0lTVEVSIGJpdCBmaWVsZHMgaW4gUzNDNjQxMCBhcmUgbWFkZSBhcyBzZXBl
-cmF0ZSByZWdpc3RlciANCj4+Pj4gQURDIENIQU5ORUwgTVVYIFJFR0lTVEVSDQo+Pj4+IEhvdyBk
-byB3ZSBoYW5kbGUgdGhpcyBpbiB0aGUgZHJpdmVyIHdoaWNoIHNob3VsZCBiZSBnZW5lcmljIHRv
-IGFsbCB0aGUgU29Dcy4NCj4+Pj4gICAgICAgDQo+Pj4+ICAgICAgICAgDQo+Pj4gSSd2ZSBhbHJl
-YWR5IG1lcmdlZCB0aGUgZmlyc3QgY2hhbmdlcyBmb3IgdGhlIHMzYzY0MTAgKHNlZSBNYXVydXMn
-IHByZXZpb3VzDQo+Pj4gcGF0Y2hlcykgcmVhZHkgZm9yIHRoZSBuZXh0IG1haW5saW5lIG1lcmdl
-Lg0KPj4+ICAgICANCj4+PiAgICAgICANCj4+IE1hdXJ1cywgY2FuIHlvdSBzZW5kIHRoZSBjaGFu
-Z2UgdG8gdGhlIGNvcmUgZHJpdmVyIHRvIHN1cHBvcnQgdGhlIGV4dGVuZGVkDQo+PiByYW5nZSBw
-bGVhc2UuDQo+PiAgIA0KPj4gICAgIA0KPiBJJ3ZlIHNlZW4gdGhpcyBwYXRjaCBmcm9tIE1hdXJ1
-cyBhIGxvbmcgYWdvLg0KPiBNYXVydXMsIERvIHlvdSBoYXZlIGFueSBvdGhlciBwYXRjaGVzIG90
-aGVyIHRoYW4sIENhdXNlIGkgaGF2ZSBhbHJlYWR5IG1hZGUgcGF0Y2hlcyBmb3IgDQo+IHRvdWNo
-c2NyZWVuIHN1cHBvcnQgZm9yIFMzQzY0MTAvNjQ0MCBTNVB2MjEwL0MxMTAvQzEwMCB0aGVzZSBi
-b2FyZHMuDQo+DQo+IEknaWxsIHBvc3QgaXQgaW4gYSBkYXkgb3IgMi4gDQo+ICAgDQoNCk5vLCBJ
-IG9ubHkgYWRkZWQgc3VwcG9ydCBmb3IgdGhlIFMzQzY0MTAgKGFzIHRoYXQncyB0aGUgb25seSBi
-b2FyZCBJIGhhdmUpLg0KSSd2ZSBzZWVuIHlvdXIgcGF0Y2ggZWFybGllciBhbmQgaSBtYWRlIGEg
-cGF0Y2ggc2V0IGZvciBUU0FEQyBvbiBvdGhlciBib2FyZHMgdG9vLg0KDQpUaGlzIHBhdGNoIHNl
-dCB3b3VsZCB0YWtlIGNhcmUgb2YgdGhlIG1vdmluZyBvZiB0cy5oIGZyb20gcGxhdCB0byBtYWNo
-LA0KbW92aW5nIHRoZSBHUElPcyBzcGVjaWZpYyBmb3IgUzNDMjRYWCB0byBzZXBlcmF0ZSBmaWxl
-LCANCkFkZGluZyBnZW5lcmljIEdQSU8gY29uZmlndXJhdGlvbiBmdW5jdGlvbnMgKGJhc2VkIG9u
-IEkyQykNCmFuZCBBbHNvIGFkZHMgVFNBREMgc3VwcG9ydCBmb3IgUzNjNjQxMCwgUzVQVjIxMCxD
-MTEwIGFuZCBTNVA2NDQwLg0KDQpidXQsIEl0IG1pZ2h0IHRha2UgYSBkYXkgb3IgMiB0byBnZXQg
-dGhlbSByZXZpZXdlZCBpbnRlcm5hbGx5IGFuZCBwb3N0IGl0IG9uIG1haW5saW5lLg0KLS0gDQpN
-YXVydXMgQ3VlbGVuYWVyZQ0KDQpUaGFua3MgJiBCZXN0IFJlZ2FyZHMsDQpOYXZlZW4gS3Jpc2hu
-YSBDaA0KU0UgQCBTTEcgRGl2LCBEUyBMQUJzLCBTYW1zdW5nLCBJbmRpYS4NCg==
+Op 06-05-10 12:40, NAVEEN KRISHNA CHATRADHI schreef:
+> Hi Maurus, 
+>
+> ------ Original Message -------
+> Sender : Maurus Cuelenaere<mcuelenaere@gmail.com> 
+> Date   : May 06, 2010 15:28 (GMT+05:00)
+> Title  : Re: SAMSUNG How to handle changes in TSADC IP register bits
+>
+> Hi Naveen,
+>
+> Op 06-05-10 12:15, NAVEEN KRISHNA CHATRADHI schreef:
+>   
+>> Hi Ben, Maurus,
+>>
+>> ------- Original Message -------
+>> Sender : Maurus Cuelenaere<mcuelenaere@gmail.com> 
+>> Date   : May 06, 2010 14:52 (GMT+05:00)
+>> Title  : Re: SAMSUNG How to handle changes in TSADC IP register bits
+>>
+>> Op 06-05-10 07:41, Ben Dooks schreef:
+>>   
+>>     
+>>> On Thu, May 06, 2010 at 06:38:22AM +0100, Ben Dooks wrote:
+>>>   
+>>>     
+>>>       
+>>>> On Thu, May 06, 2010 at 04:08:20AM +0000, NAVEEN KRISHNA CHATRADHI wrote:
+>>>>     
+>>>>       
+>>>>         
+>>>>> Hi Ben, 
+>>>>>  
+>>>>> I'm working on Touchscreen driver support for S5PC100, S5PV210, S3C6410 & S5P6440.
+>>>>> The TSADC registers bit fields are keep on varying between the different 
+>>>>> SoCs, though the IP as a whole remains same.
+>>>>>
+>>>>> For example: 
+>>>>> Some of the ADC CONTROL REGISTER bit fields in S3C6410 are made as seperate register 
+>>>>> ADC CHANNEL MUX REGISTER
+>>>>> How do we handle this in the driver which should be generic to all the SoCs.
+>>>>>       
+>>>>>         
+>>>>>           
+>>>> I've already merged the first changes for the s3c6410 (see Maurus' previous
+>>>> patches) ready for the next mainline merge.
+>>>>     
+>>>>       
+>>>>         
+>>> Maurus, can you send the change to the core driver to support the extended
+>>> range please.
+>>>   
+>>>     
+>>>       
+>> I've seen this patch from Maurus a long ago.
+>> Maurus, Do you have any other patches other than, Cause i have already made patches for 
+>> touchscreen support for S3C6410/6440 S5Pv210/C110/C100 these boards.
+>>
+>> I'ill post it in a day or 2. 
+>>   
+>>     
+> No, I only added support for the S3C6410 (as that's the only board I have).
+> I've seen your patch earlier and i made a patch set for TSADC on other boards too.
+>
+> This patch set would take care of the moving of ts.h from plat to mach,
+> moving the GPIOs specific for S3C24XX to seperate file, 
+> Adding generic GPIO configuration functions (based on I2C)
+> and Also adds TSADC support for S3c6410, S5PV210,C110 and S5P6440.
+>
+> but, It might take a day or 2 to get them reviewed internally and post it on mainline.
+>   
+
+You probably want to state that too on the patch I sent to linux-input (
+ARM: S3C64XX: Add s3c64xx support to touchscreen driver), as your
+patches seem to supersede mine.
+
+Keep in mind that "ARM: SAMSUNG: Move mach/ts.h to plat/ts.h" and "ARM:
+S3C64XX: Add touchscreen platform device definition" have already been
+merged though.
+
+-- 
+Maurus Cuelenaere
