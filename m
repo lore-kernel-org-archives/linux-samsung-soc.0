@@ -1,57 +1,71 @@
-From: NAVEEN KRISHNA CHATRADHI <ch.naveen@samsung.com>
-Subject: Re: Re: SAMSUNG How to handle changes in TSADC IP register bits
-Date: Thu, 06 May 2010 10:15:16 +0000 (GMT)
-Message-ID: <29440984.535821273140916662.JavaMail.weblogic@epml02>
-Reply-To: ch.naveen@samsung.com
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Subject: Re: SAMSUNG How to handle changes in TSADC IP register bits
+Date: Thu, 06 May 2010 12:28:16 +0200
+Message-ID: <4BE299C0.6020600@gmail.com>
+References: <29440984.535821273140916662.JavaMail.weblogic@epml02>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:62709 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751418Ab0EFKPS (ORCPT
+Received: from mail-ew0-f220.google.com ([209.85.219.220]:63581 "EHLO
+	mail-ew0-f220.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751411Ab0EFK2T (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 May 2010 06:15:18 -0400
-Received: from ep_ms13_bk (mailout4.samsung.com [203.254.224.34])
- by mailout1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L1Z00DCZTTG1W@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 06 May 2010 19:15:17 +0900 (KST)
-Received: from ep_spt01 (ms13.samsung.com [203.254.225.109])
- by ms13.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L1Z00BUXTTGIB@ms13.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 06 May 2010 19:15:16 +0900 (KST)
-Content-return: prohibited
-MIME-version: 1.0
+	Thu, 6 May 2010 06:28:19 -0400
+Received: by ewy20 with SMTP id 20so1621335ewy.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 May 2010 03:28:17 -0700 (PDT)
+In-Reply-To: <29440984.535821273140916662.JavaMail.weblogic@epml02>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Maurus Cuelenaere <mcuelenaere@gmail.com>, Ben Dooks <ben-linux@fluff.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: ch.naveen@samsung.com
+Cc: Ben Dooks <ben-linux@fluff.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-SGkgQmVuLCBNYXVydXMsDQoNCi0tLS0tLS0gT3JpZ2luYWwgTWVzc2FnZSAtLS0tLS0tDQpTZW5k
-ZXIgOiBNYXVydXMgQ3VlbGVuYWVyZTxtY3VlbGVuYWVyZUBnbWFpbC5jb20+IA0KRGF0ZSAgIDog
-TWF5IDA2LCAyMDEwIDE0OjUyIChHTVQrMDU6MDApDQpUaXRsZSAgOiBSZTogU0FNU1VORyBIb3cg
-dG8gaGFuZGxlIGNoYW5nZXMgaW4gVFNBREMgSVAgcmVnaXN0ZXIgYml0cw0KDQpPcCAwNi0wNS0x
-MCAwNzo0MSwgQmVuIERvb2tzIHNjaHJlZWY6DQo+IE9uIFRodSwgTWF5IDA2LCAyMDEwIGF0IDA2
-OjM4OjIyQU0gKzAxMDAsIEJlbiBEb29rcyB3cm90ZToNCj4gICANCj4+IE9uIFRodSwgTWF5IDA2
-LCAyMDEwIGF0IDA0OjA4OjIwQU0gKzAwMDAsIE5BVkVFTiBLUklTSE5BIENIQVRSQURISSB3cm90
-ZToNCj4+ICAgICANCj4+PiBIaSBCZW4sIA0KPj4+ICANCj4+PiBJJ20gd29ya2luZyBvbiBUb3Vj
-aHNjcmVlbiBkcml2ZXIgc3VwcG9ydCBmb3IgUzVQQzEwMCwgUzVQVjIxMCwgUzNDNjQxMCAmIFM1
-UDY0NDAuDQo+Pj4gVGhlIFRTQURDIHJlZ2lzdGVycyBiaXQgZmllbGRzIGFyZSBrZWVwIG9uIHZh
-cnlpbmcgYmV0d2VlbiB0aGUgZGlmZmVyZW50IA0KPj4+IFNvQ3MsIHRob3VnaCB0aGUgSVAgYXMg
-YSB3aG9sZSByZW1haW5zIHNhbWUuDQo+Pj4NCj4+PiBGb3IgZXhhbXBsZTogDQo+Pj4gU29tZSBv
-ZiB0aGUgQURDIENPTlRST0wgUkVHSVNURVIgYml0IGZpZWxkcyBpbiBTM0M2NDEwIGFyZSBtYWRl
-IGFzIHNlcGVyYXRlIHJlZ2lzdGVyIA0KPj4+IEFEQyBDSEFOTkVMIE1VWCBSRUdJU1RFUg0KPj4+
-IEhvdyBkbyB3ZSBoYW5kbGUgdGhpcyBpbiB0aGUgZHJpdmVyIHdoaWNoIHNob3VsZCBiZSBnZW5l
-cmljIHRvIGFsbCB0aGUgU29Dcy4NCj4+PiAgICAgICANCj4+IEkndmUgYWxyZWFkeSBtZXJnZWQg
-dGhlIGZpcnN0IGNoYW5nZXMgZm9yIHRoZSBzM2M2NDEwIChzZWUgTWF1cnVzJyBwcmV2aW91cw0K
-Pj4gcGF0Y2hlcykgcmVhZHkgZm9yIHRoZSBuZXh0IG1haW5saW5lIG1lcmdlLg0KPj4gICAgIA0K
-PiBNYXVydXMsIGNhbiB5b3Ugc2VuZCB0aGUgY2hhbmdlIHRvIHRoZSBjb3JlIGRyaXZlciB0byBz
-dXBwb3J0IHRoZSBleHRlbmRlZA0KPiByYW5nZSBwbGVhc2UuDQo+ICAgDQoNCkRvbmUuDQpJJ3Zl
-IHNlZW4gdGhpcyBwYXRjaCBmcm9tIE1hdXJ1cyBhIGxvbmcgYWdvLg0KTWF1cnVzLCBEbyB5b3Ug
-aGF2ZSBhbnkgb3RoZXIgcGF0Y2hlcyBvdGhlciB0aGFuLCBDYXVzZSBpIGhhdmUgYWxyZWFkeSBt
-YWRlIHBhdGNoZXMgZm9yIA0KdG91Y2hzY3JlZW4gc3VwcG9ydCBmb3IgUzNDNjQxMC82NDQwIFM1
-UHYyMTAvQzExMC9DMTAwIHRoZXNlIGJvYXJkcy4NCg0KSSdpbGwgcG9zdCBpdCBpbiBhIGRheSBv
-ciAyLiANCg0KLS0gDQpNYXVydXMgQ3VlbGVuYWVyZQ0KDQoNCg0KVGhhbmtzICYgQmVzdCBSZWdh
-cmRzLA0KTmF2ZWVuIEtyaXNobmEgQ2gNClNFIEAgU0xHIERpdiwgRFMgTEFCcywgU2Ftc3VuZywg
-SW5kaWEuDQo=
+Hi Naveen,
+
+Op 06-05-10 12:15, NAVEEN KRISHNA CHATRADHI schreef:
+> Hi Ben, Maurus,
+>
+> ------- Original Message -------
+> Sender : Maurus Cuelenaere<mcuelenaere@gmail.com> 
+> Date   : May 06, 2010 14:52 (GMT+05:00)
+> Title  : Re: SAMSUNG How to handle changes in TSADC IP register bits
+>
+> Op 06-05-10 07:41, Ben Dooks schreef:
+>   
+>> On Thu, May 06, 2010 at 06:38:22AM +0100, Ben Dooks wrote:
+>>   
+>>     
+>>> On Thu, May 06, 2010 at 04:08:20AM +0000, NAVEEN KRISHNA CHATRADHI wrote:
+>>>     
+>>>       
+>>>> Hi Ben, 
+>>>>  
+>>>> I'm working on Touchscreen driver support for S5PC100, S5PV210, S3C6410 & S5P6440.
+>>>> The TSADC registers bit fields are keep on varying between the different 
+>>>> SoCs, though the IP as a whole remains same.
+>>>>
+>>>> For example: 
+>>>> Some of the ADC CONTROL REGISTER bit fields in S3C6410 are made as seperate register 
+>>>> ADC CHANNEL MUX REGISTER
+>>>> How do we handle this in the driver which should be generic to all the SoCs.
+>>>>       
+>>>>         
+>>> I've already merged the first changes for the s3c6410 (see Maurus' previous
+>>> patches) ready for the next mainline merge.
+>>>     
+>>>       
+>> Maurus, can you send the change to the core driver to support the extended
+>> range please.
+>>   
+>>     
+> I've seen this patch from Maurus a long ago.
+> Maurus, Do you have any other patches other than, Cause i have already made patches for 
+> touchscreen support for S3C6410/6440 S5Pv210/C110/C100 these boards.
+>
+> I'ill post it in a day or 2. 
+>   
+
+No, I only added support for the S3C6410 (as that's the only board I have).
+
+-- 
+Maurus Cuelenaere
