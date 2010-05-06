@@ -1,62 +1,71 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: SAMSUNG kernel tree merge plans
-Date: Thu, 06 May 2010 08:50:38 +0200
-Message-ID: <015f01caece8$723e1700$56ba4500$%szyprowski@samsung.com>
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: Re: SAMSUNG kernel tree merge plans
+Date: Thu, 6 May 2010 10:21:02 +0300
+Message-ID: <201005061021.06125.anarsoul@gmail.com>
 References: <20100506054651.GL26401@trinity.fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: multipart/signed;
+  boundary="nextPart2491553.6dJJ1r5MTA";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:53353 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751059Ab0EFGvG (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:56423 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753302Ab0EFHWf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 May 2010 02:51:06 -0400
-Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
- by mailout1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L1Z00859KD4WO@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 06 May 2010 15:51:05 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L1Z0019VKD0AR@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 06 May 2010 15:51:04 +0900 (KST)
-In-reply-to: <20100506054651.GL26401@trinity.fluff.org>
-Content-language: pl
+	Thu, 6 May 2010 03:22:35 -0400
+Received: by fxm10 with SMTP id 10so4859626fxm.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 May 2010 00:22:33 -0700 (PDT)
+In-Reply-To: <20100506054651.GL26401@trinity.fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Ben Dooks' <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org
 
-Hello,
+--nextPart2491553.6dJJ1r5MTA
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thursday, May 06, 2010 7:47 AM Ben Dooks wrote:
-
+=D0=92 =D1=81=D0=BE=D0=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D0=B8 =D0=BE=D1=82 =
+6 =D0=BC=D0=B0=D1=8F 2010 08:46:51 =D0=B0=D0=B2=D1=82=D0=BE=D1=80 Ben Dooks=
+ =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=B0=D0=BB:
 > I'm busy sorting out the trees for the next mege window, and should
 > have a new next-samsung out in the next two or three days.
-> 
+>=20
 > As such, if there is anything that needs to go via Russell's tree, then
 > it needs to be merged as soon as possible. I would like to send a pull
 > before Wednesday.
-> 
+>=20
 > Anything else, if it is not merged into one of my trees by the end of
 > next week (May 14th) then there is no guarantees that it will be merged.
-> 
+>=20
 > If everyone interested in this could check my trees after the weekend and
 > make any reminders of other stuff to fix at that point as there is still
 > items being processed.
-> 
-> http://git.fluff.org/gitweb?p=bjdooks/linux.git;a=summary
+>=20
+> http://git.fluff.org/gitweb?p=3Dbjdooks/linux.git;a=3Dsummary
 
-We would really like to merge as much as possible from our current
-development tree:
-http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/SPRC-2.6.34-rc5-opensource
+Is there any chance that my rx1950-support patch series will be merged? I'v=
+e=20
+almost finished moving to gpiolib and can send series after this weekend. W=
+hat=20
+branch of your tree should I use as base?
 
-Some of the patches that we depend on are still in the review phase (s5p timer), some should be replaced by the ones that were
-posted recently. Especially most of our patches depend on S5PV210 GPIO support, so without it we cannot go further. Is there any
-chance to get it merged quickly? I will rebase our tree asap the mentioned patches get merged.
+Regards
+Vasily
 
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+--nextPart2491553.6dJJ1r5MTA
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.15 (GNU/Linux)
+
+iEYEABECAAYFAkvibeIACgkQRM6pQpltKE4s3gCdE2gDkrQVQbzRGKc7PHb4ktvr
+a7cAn0ExWW3+GSGU99veHlMz1qSJf9Pq
+=3Bwg
+-----END PGP SIGNATURE-----
+
+--nextPart2491553.6dJJ1r5MTA--
