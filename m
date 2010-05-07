@@ -1,11 +1,11 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 1/6] ARM: SAMSUNG: Moving ADC device definition to plat-samsung
-Date: Fri,  7 May 2010 15:31:11 +0900
-Message-ID: <1273213871-6396-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 6/6] ARM: S5PV210: Adds touch screen Device support for S5PV210
+Date: Fri,  7 May 2010 15:31:35 +0900
+Message-ID: <1273213895-6564-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:38278 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:38274 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751484Ab0EGGir (ORCPT
+	with ESMTP id S1751400Ab0EGGir (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 7 May 2010 02:38:47 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -15,208 +15,140 @@ Cc: ben-linux@fluff.org, Naveen Krishna <ch.naveen@samsung.com>, Kukjin Kim <kge
 
 From: Naveen Krishna <ch.naveen@samsung.com>
 
-Since, the ADC device definition is generic to the S3C64XX, S5P Series SoCs
-from Samsung.
+Note: TSADC in S5PV210 support 2 touch screen interfaces,
+Only 1 is implemented as of now.
 
 Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s3c64xx/Kconfig            |    1 +
- arch/arm/mach-s3c64xx/Makefile           |    1 -
- arch/arm/mach-s3c64xx/dev-adc.c          |   46 ------------------------------
- arch/arm/mach-s3c64xx/include/mach/map.h |    1 +
- arch/arm/mach-s3c64xx/s3c6410.c          |    2 +
- arch/arm/plat-samsung/Kconfig            |    5 +++
- arch/arm/plat-samsung/Makefile           |    1 +
- arch/arm/plat-samsung/dev-adc.c          |   46 ++++++++++++++++++++++++++++++
- 8 files changed, 56 insertions(+), 47 deletions(-)
- delete mode 100644 arch/arm/mach-s3c64xx/dev-adc.c
- create mode 100644 arch/arm/plat-samsung/dev-adc.c
+ arch/arm/mach-s5pv210/Kconfig            |    2 ++
+ arch/arm/mach-s5pv210/cpu.c              |    3 +++
+ arch/arm/mach-s5pv210/include/mach/map.h |    3 +++
+ arch/arm/mach-s5pv210/mach-smdkv210.c    |   11 +++++++++++
+ drivers/input/touchscreen/Kconfig        |    2 +-
+ drivers/input/touchscreen/s3c2410_ts.c   |    4 +++-
+ 6 files changed, 23 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-index 959df38..69e9fbf 100644
---- a/arch/arm/mach-s3c64xx/Kconfig
-+++ b/arch/arm/mach-s3c64xx/Kconfig
-@@ -85,6 +85,7 @@ config MACH_ANW6410
- config MACH_SMDK6410
- 	bool "SMDK6410"
- 	select CPU_S3C6410
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index af33a1a..3870012 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -24,6 +24,8 @@ config MACH_SMDKV210
+ 	bool "SMDKV210"
+ 	select CPU_S5PV210
+ 	select ARCH_SPARSEMEM_ENABLE
 +	select SAMSUNG_DEV_ADC
- 	select S3C_DEV_HSMMC
- 	select S3C_DEV_HSMMC1
- 	select S3C_DEV_I2C1
-diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
-index 3758e15..da66278 100644
---- a/arch/arm/mach-s3c64xx/Makefile
-+++ b/arch/arm/mach-s3c64xx/Makefile
-@@ -58,5 +58,4 @@ obj-$(CONFIG_MACH_HMT)		+= mach-hmt.o
- obj-y				+= dev-uart.o
- obj-y				+= dev-rtc.o
- obj-y				+= dev-audio.o
--obj-$(CONFIG_S3C_ADC)		+= dev-adc.o
- obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
-diff --git a/arch/arm/mach-s3c64xx/dev-adc.c b/arch/arm/mach-s3c64xx/dev-adc.c
-deleted file mode 100644
-index fafef9b..0000000
---- a/arch/arm/mach-s3c64xx/dev-adc.c
-+++ /dev/null
-@@ -1,46 +0,0 @@
--/* linux/arch/arm/plat-s3c64xx/dev-adc.c
-- *
-- * Copyright 2010 Maurus Cuelenaere
-- *
-- * S3C64xx series device definition for ADC device
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#include <linux/kernel.h>
--#include <linux/string.h>
--#include <linux/platform_device.h>
--
--#include <mach/irqs.h>
--#include <mach/map.h>
--
--#include <plat/adc.h>
--#include <plat/devs.h>
--#include <plat/cpu.h>
--
--static struct resource s3c_adc_resource[] = {
--	[0] = {
--		.start = S3C64XX_PA_ADC,
--		.end   = S3C64XX_PA_ADC + SZ_256 - 1,
--		.flags = IORESOURCE_MEM,
--	},
--	[1] = {
--		.start = IRQ_TC,
--		.end   = IRQ_TC,
--		.flags = IORESOURCE_IRQ,
--	},
--	[2] = {
--		.start = IRQ_ADC,
--		.end   = IRQ_ADC,
--		.flags = IORESOURCE_IRQ,
--	},
--};
--
--struct platform_device s3c_device_adc = {
--	.name		= "s3c64xx-adc",
--	.id		= -1,
--	.num_resources	= ARRAY_SIZE(s3c_adc_resource),
--	.resource	= s3c_adc_resource,
--};
-diff --git a/arch/arm/mach-s3c64xx/include/mach/map.h b/arch/arm/mach-s3c64xx/include/mach/map.h
-index 801c1c0..869c8e0 100644
---- a/arch/arm/mach-s3c64xx/include/mach/map.h
-+++ b/arch/arm/mach-s3c64xx/include/mach/map.h
-@@ -103,5 +103,6 @@
- #define S3C_PA_USBHOST		S3C64XX_PA_USBHOST
- #define S3C_PA_USB_HSOTG	S3C64XX_PA_USB_HSOTG
- #define S3C_VA_USB_HSPHY	S3C64XX_VA_USB_HSPHY
-+#define SAMSUNG_PA_ADC		S3C64XX_PA_ADC
++	select SAMSUNG_DEV_TS
+ 	help
+ 	  Machine support for Samsung SMDKV210
  
- #endif /* __ASM_ARCH_6400_MAP_H */
-diff --git a/arch/arm/mach-s3c64xx/s3c6410.c b/arch/arm/mach-s3c64xx/s3c6410.c
-index 59635d1..31e53fa 100644
---- a/arch/arm/mach-s3c64xx/s3c6410.c
-+++ b/arch/arm/mach-s3c64xx/s3c6410.c
-@@ -38,6 +38,7 @@
- #include <plat/clock.h>
- #include <plat/sdhci.h>
- #include <plat/iic-core.h>
-+#include <plat/adc.h>
- #include <mach/s3c6400.h>
- #include <mach/s3c6410.h>
+diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
+index 0e0f8fd..5f0675d 100644
+--- a/arch/arm/mach-s5pv210/cpu.c
++++ b/arch/arm/mach-s5pv210/cpu.c
+@@ -74,6 +74,9 @@ static void s5pv210_idle(void)
  
-@@ -52,6 +53,7 @@ void __init s3c6410_map_io(void)
- 	s3c_i2c0_setname("s3c2440-i2c");
- 	s3c_i2c1_setname("s3c2440-i2c");
- 
-+	s3c_device_adc.name      = "s3c64xx-adc";
- 	s3c_device_nand.name = "s3c6400-nand";
+ void __init s5pv210_map_io(void)
+ {
++	s3c_device_ts.name	= "s5pv210-ts";
++	s3c_device_adc.name	= "s3c64xx-adc";
++
+ 	iotable_init(s5pv210_iodesc, ARRAY_SIZE(s5pv210_iodesc));
  }
  
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index d552c65..641649f 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -185,6 +185,11 @@ config S3C_DEV_NAND
- 	help
- 	  Compile in platform device definition for NAND controller
+diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
+index c22694c..29355ee 100644
+--- a/arch/arm/mach-s5pv210/include/mach/map.h
++++ b/arch/arm/mach-s5pv210/include/mach/map.h
+@@ -58,8 +58,11 @@
+ #define S5PV210_PA_SDRAM	(0x20000000)
+ #define S5P_PA_SDRAM		S5PV210_PA_SDRAM
  
-+config SAMSUNG_DEV_ADC
-+	bool
-+	help
-+	  Compile in platform device definition for ADC controller
++#define S5PV210_PA_ADC		(0xE1700000)
 +
- config S3C64XX_DEV_SPI
- 	bool
- 	help
-diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-index 22c89d0..3cf30a4 100644
---- a/arch/arm/plat-samsung/Makefile
-+++ b/arch/arm/plat-samsung/Makefile
-@@ -40,6 +40,7 @@ obj-y				+= dev-uart.o
- obj-$(CONFIG_S3C_DEV_USB_HOST)	+= dev-usb.o
- obj-$(CONFIG_S3C_DEV_USB_HSOTG)	+= dev-usb-hsotg.o
- obj-$(CONFIG_S3C_DEV_NAND)	+= dev-nand.o
-+obj-$(CONFIG_SAMSUNG_DEV_ADC)	+= dev-adc.o
+ /* compatibiltiy defines. */
+ #define S3C_PA_UART		S5PV210_PA_UART
+ #define S3C_PA_IIC		S5PV210_PA_IIC0
++#define SAMSUNG_PA_ADC		S5PV210_PA_ADC
  
- # DMA support
- 
-diff --git a/arch/arm/plat-samsung/dev-adc.c b/arch/arm/plat-samsung/dev-adc.c
-new file mode 100644
-index 0000000..d3ee59a
---- /dev/null
-+++ b/arch/arm/plat-samsung/dev-adc.c
-@@ -0,0 +1,46 @@
-+/* linux/arch/arm/plat-samsung/dev-adc.c
-+ *
-+ * Copyright 2010 Maurus Cuelenaere
-+ *
-+ * S3C64xx series device definition for ADC device
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/string.h>
-+#include <linux/platform_device.h>
-+
-+#include <mach/irqs.h>
-+#include <mach/map.h>
-+
+ #endif /* __ASM_ARCH_MAP_H */
+diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
+index a278832..1440cb2 100644
+--- a/arch/arm/mach-s5pv210/mach-smdkv210.c
++++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
+@@ -25,6 +25,8 @@
+ #include <plat/s5pv210.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
 +#include <plat/adc.h>
-+#include <plat/devs.h>
-+#include <plat/cpu.h>
-+
-+static struct resource s3c_adc_resource[] = {
-+	[0] = {
-+		.start	= SAMSUNG_PA_ADC,
-+		.end	= SAMSUNG_PA_ADC + SZ_256 - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start	= IRQ_TC,
-+		.end	= IRQ_TC,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	[2] = {
-+		.start	= IRQ_ADC,
-+		.end	= IRQ_ADC,
-+		.flags	= IORESOURCE_IRQ,
-+	},
++#include <plat/ts.h>
+ 
+ /* Following are default values for UCON, ULCON and UFCON UART registers */
+ #define S5PV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+@@ -72,6 +74,14 @@ static struct s3c2410_uartcfg smdkv210_uartcfgs[] __initdata = {
+ };
+ 
+ static struct platform_device *smdkv210_devices[] __initdata = {
++	&s3c_device_adc,
++	&s3c_device_ts,
 +};
 +
-+struct platform_device s3c_device_adc = {
-+	.name		= "samsung-adc",
-+	.id		= -1,
-+	.num_resources	= ARRAY_SIZE(s3c_adc_resource),
-+	.resource	= s3c_adc_resource,
-+};
++static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
++	.delay			= 10000,
++	.presc			= 49,
++	.oversampling_shift	= 2,
+ };
+ 
+ static void __init smdkv210_map_io(void)
+@@ -83,6 +93,7 @@ static void __init smdkv210_map_io(void)
+ 
+ static void __init smdkv210_machine_init(void)
+ {
++	s3c24xx_ts_set_platdata(&s3c_ts_platform);
+ 	platform_add_devices(smdkv210_devices, ARRAY_SIZE(smdkv210_devices));
+ }
+ 
+diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
+index c82c1e1..a90a5bb 100644
+--- a/drivers/input/touchscreen/Kconfig
++++ b/drivers/input/touchscreen/Kconfig
+@@ -159,7 +159,7 @@ config TOUCHSCREEN_FUJITSU
+ 
+ config TOUCHSCREEN_S3C2410
+ 	tristate "Samsung S3C2410 touchscreen input driver"
+-	depends on ARCH_S3C2410 || ARCH_S3C64XX || ARCH_S5P6440
++	depends on ARCH_S3C2410 || ARCH_S3C64XX || ARCH_S5P6440 || ARCH_S5PV210
+ 	select S3C_ADC
+ 	help
+ 	  Say Y here if you have the s3c2410 touchscreen.
+diff --git a/drivers/input/touchscreen/s3c2410_ts.c b/drivers/input/touchscreen/s3c2410_ts.c
+index 3964964..d9e597d 100644
+--- a/drivers/input/touchscreen/s3c2410_ts.c
++++ b/drivers/input/touchscreen/s3c2410_ts.c
+@@ -91,6 +91,7 @@ enum s3c_cpu_type {
+ 	TYPE_S3C2410,
+ 	TYPE_S3C2440,
+ 	TYPE_S3C64XX,	/* S3C64XX, S5P64XX Series */
++	TYPE_S5PV210,	/* S5PV210 */
+ };
+ 
+ /**
+@@ -180,7 +181,7 @@ static irqreturn_t stylus_irq(int irq, void *dev_id)
+ 	else
+ 		dev_info(ts.dev, "%s: count=%d\n", __func__, ts.count);
+ 
+-	if (platform_get_device_id(pdev)->driver_data == TYPE_S3C64XX) {
++	if (platform_get_device_id(pdev)->driver_data >= TYPE_S3C64XX) {
+ 		/* Clear pen down/up interrupt */
+ 		writel(0x0, ts.io + S3C64XX_ADCCLRINTPNDNUP);
+ 	}
+@@ -420,6 +421,7 @@ static struct platform_device_id s3cts_driver_ids[] = {
+ 	{ "s3c2410-ts", TYPE_S3C2410 },
+ 	{ "s3c2440-ts", TYPE_S3C2440 },
+ 	{ "s3c64xx-ts", TYPE_S3C64XX },
++	{ "s5pv210-ts", TYPE_S5PV210 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, s3cts_driver_ids);
 -- 
 1.6.6.1
