@@ -1,16 +1,16 @@
 From: Ben Dooks <ben-linux@fluff.org>
 Subject: Re: S3C6410 power management support status
-Date: Mon, 10 May 2010 01:58:09 +0100
-Message-ID: <20100510005809.GU26401@trinity.fluff.org>
+Date: Mon, 10 May 2010 03:35:37 +0100
+Message-ID: <20100510023537.GW26401@trinity.fluff.org>
 References: <20100429124509.GA11290@jeknote.loshitsa1.net> <20100504002420.GQ6684@trinity.fluff.org> <20100506144955.GA24641@jeknote.loshitsa1.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:38039 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:42923 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754768Ab0EJA6Q (ORCPT
+	id S1754963Ab0EJCfi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 May 2010 20:58:16 -0400
+	Sun, 9 May 2010 22:35:38 -0400
 Content-Disposition: inline
 In-Reply-To: <20100506144955.GA24641@jeknote.loshitsa1.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -41,18 +41,23 @@ On Thu, May 06, 2010 at 05:49:55PM +0300, Yauhen Kharuzhy wrote:
 > changed at sleep instruction execution so CPU don't go to sleep state. If anybody
 > can say something about reasons of this, please say.
 
-Hmm, this is interesting if as your log says it should have managed to
-get through to the point it wants to go to sleep.
+Just tested 2.6.34-rc6-git and it works on the SMDK6410 with the
+addition of the gpio buttons for EINT9..11, and it worked.
+
+Can post the patches or git tree if you like.
  
 > Can anybody check suspend mode with SMDK6410 and confirm that StR works
 > on it? If it works, we will stop to ask stupid questions and will find
 > our hardware bugs :)
 
-I'll run the latest -rc through a smdk6410 today and see what happens.
+It does seem to work on this SMDK, and the XPWRTGON line on TP7 definetly
+goes low during sleep.
 
-It worked last tiem it was tested, but that was a couple of kernel revisions
-ago and something may have gotten borked since then.
-
+Note, not sure if I will post the buttons patches as the SMDK's single
+buttons share interrupts with the LAN and other devices, making them
+rather useless (my SMDK6410 has EINT10 held permanently active by the
+unused network devices...)
+ 
 > Below is log of sleeping procedure:
 > -----------------------------------------------------------------------
 > /sys/power # echo mem > state
@@ -115,7 +120,25 @@ ago and something may have gotten borked since then.
 > saved f45001d0 value 10555551
 > saved f45001d4 value 00555555
 > sleep: irq wakeup masks: ffffffff,fffff7ff
+> ------------------------------------------------------------------------------
+> 
+> -- 
+> Yauhen Kharuzhy
+> -----------------------------------------------------------
+> Promwad Innovation Company
+> 22, Olshevskogo St.
+> Office 809
+> 220073, Minsk, Belarus
+> Phone/Fax: +375 (17) 312-1246
+> E-mail: yauhen.kharuzhy@promwad.com
+> Skype: jekhor
+> Web: www.promwad.com
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
+-- 
 -- 
 Ben
 
