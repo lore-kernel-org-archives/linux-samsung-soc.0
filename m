@@ -1,93 +1,121 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: Re: [PATCH 4/6] ARM: S3C64XX: Adds Touch Screen Driver Support
-	for S3C6410
-Date: Mon, 10 May 2010 01:28:02 +0100
-Message-ID: <20100510002802.GT26401@trinity.fluff.org>
-References: <1054428.61651273231771063.JavaMail.weblogic@epml16>
+Subject: Re: S3C6410 power management support status
+Date: Mon, 10 May 2010 01:58:09 +0100
+Message-ID: <20100510005809.GU26401@trinity.fluff.org>
+References: <20100429124509.GA11290@jeknote.loshitsa1.net> <20100504002420.GQ6684@trinity.fluff.org> <20100506144955.GA24641@jeknote.loshitsa1.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:52971 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:38039 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753411Ab0EJA2I convert rfc822-to-8bit (ORCPT
+	id S1754768Ab0EJA6Q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 May 2010 20:28:08 -0400
+	Sun, 9 May 2010 20:58:16 -0400
 Content-Disposition: inline
-In-Reply-To: <1054428.61651273231771063.JavaMail.weblogic@epml16>
+In-Reply-To: <20100506144955.GA24641@jeknote.loshitsa1.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: NAVEEN KRISHNA CHATRADHI <ch.naveen@samsung.com>
-Cc: Maurus Cuelenaere <mcuelenaere@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "ben-linux@fluff.org" <ben-linux@fluff.org>
+To: Yauhen Kharuzhy <yauhen.kharuzhy@promwad.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, Viktar Palstsiuk <viktar.palstsiuk@promwad.com>, linux-samsung-soc@vger.kernel.org, Vladimir Davydov <vladimir.davydov@promwad.com>
 
-On Fri, May 07, 2010 at 11:29:31AM +0000, NAVEEN KRISHNA CHATRADHI wrote:
-> Hi, Maurus
+On Thu, May 06, 2010 at 05:49:55PM +0300, Yauhen Kharuzhy wrote:
+> On Tue, May 04, 2010 at 01:24:20AM +0100, Ben Dooks wrote:
+> > On Thu, Apr 29, 2010 at 03:45:09PM +0300, Yauhen Kharuzhy wrote:
+> > > Hi.
+> > > 
+> > > Can anybody explain current status of S3C6410 power management support
+> > > in mainline? Suspend-to-RAM looks completely broken in the current
+> > > Linus's git tree.
+> > 
+> > I'd prefer if you didn't make sweeping accusations about the state of
+> > a given piece of the kernel without having a good look first. From reading
+> > your second post, it seems that what is actually the problem is that the
+> > 64XX support only currently handles wakeup configurations from the EINT
+> > pins.
 > 
-> ------- Original Message -------
-> Sender : Maurus Cuelenaere<mcuelenaere@gmail.com> 
-> Date   : May 07, 2010 14:55 (GMT+05:00)
-> Title  : Re: [PATCH 4/6] ARM: S3C64XX: Adds Touch Screen Driver Support for
->  S3C6410
+> I am sorry for my hasty opinion about StR.
 > 
-> Hi Naveen,
-> 
-> "Kukjin Kim" <kgene.kim@samsung.com> wrote:
-> 
-> >From: Naveen Krishna <ch.naveen@samsung.com>
-> >
-> >Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
-> >Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> >---
-> > arch/arm/mach-s3c64xx/Kconfig          |    1 +
-> > arch/arm/mach-s3c64xx/mach-smdk6410.c  |   12 +++++++
-> > arch/arm/mach-s3c64xx/s3c6410.c        |    1 +
-> > arch/arm/plat-samsung/Kconfig          |    5 +++
-> > arch/arm/plat-samsung/Makefile         |    1 +
-> > arch/arm/plat-samsung/dev-ts.c         |   54 ++++++++++++++++++++++++++++++++
-> > drivers/input/touchscreen/Kconfig      |    3 +-
-> > drivers/input/touchscreen/s3c2410_ts.c |   19 +++++++++--
-> > 8 files changed, 92 insertions(+), 4 deletions(-)
-> > create mode 100644 arch/arm/plat-samsung/dev-ts.c
-> >
-> 
-> I'm sure you've seen my patch which does pretty much the same wrt adjusting s3c2410_ts.c.
-> Though that one has already been acked by Ben so I'm unsure what should happen: you adjusting your patchset or me dropping mine (obviously I prefer the former :) ).
-> My patch was under review for over a week, its a coincidence that i saw your patch and my patch was posted on mainline. 
-> I'ill rework my patches anyway, I'ill wait for a day on Ben Dook's Comments on my patch set.
+> But we have checked Suspend-to-RAM at our (custom, not SMDK) board just now
+> and it is not works with EINT too. Kernel goes to sleep and never
+> return. We found that XPWRRGTON pin isn't
+> changed at sleep instruction execution so CPU don't go to sleep state. If anybody
+> can say something about reasons of this, please say.
 
-Naveen's patches do have two advantages, firstly that they add a gpio
-callback to the platform data so that if it is needed in the future it
-can be used again. The second is that it covers more than just the 24xx
-and 64xx series.
-
-I tried applying this with Maurus' updates but they don't apply well together
-and I'm not going to spend a lot of time trying to get the two sets applied.
-
-Maurus, hope you're not too offended if we go for Naveen's series, unless
-you have any technical commenbts that need to be sorted.
+Hmm, this is interesting if as your log says it should have managed to
+get through to the point it wants to go to sleep.
  
-> P.S.: I'd recommend splitting this patch and sending the drivers/input part to the linux-input mailing list.
-> I'ill take this option.
+> Can anybody check suspend mode with SMDK6410 and confirm that StR works
+> on it? If it works, we will stop to ask stupid questions and will find
+> our hardware bugs :)
 
-This is going to be a bit of an interesting merge as we will temporarily
-end up either breaking the s3c2410 users, or waiting for the input system
-updates before applying the arch specific updayes (otherwise we'll not be
-able to compile).
+I'll run the latest -rc through a smdk6410 today and see what happens.
 
-Whichever waym, the input part needs to go the linux-input list to get
-reviewed before it gets applied. With a note that there is some arch
-dependency that may require a cross tree merge (preferable to go with
-arch merging and the input maintainers blessing).
- 
-> --
-> Maurus Cuelenaere
-> 
-> 
-> Thanks & Best Regards,
-> Naveen Krishna Ch
-> SE @ SLG Div, DS LABs, Samsung, India.
-> N?????r??y????b?X????v?^?)??{.n?+????{?????x,????????}?????z?&j:+v???????zZ+??+zf???h???~????i???z??w?????????&?)??f
--- 
+It worked last tiem it was tested, but that was a couple of kernel revisions
+ago and something may have gotten borked since then.
+
+> Below is log of sleeping procedure:
+> -----------------------------------------------------------------------
+> /sys/power # echo mem > state
+> s3c64xx_irq_pm_suspend: suspending IRQs
+> saved f4500280 value 000003ff
+> saved f4500900 value 00400000
+> saved f4500904 value 00000000
+> saved f4500910 value 00000000
+> saved f4500914 value 00000000
+> saved f4500918 value 00000000
+> saved f450091c value 00000000
+> saved f4500920 value 0ffff7ff
+> saved f4300044 value 00000210
+> s3c_pm_enter(3)
+> s3c_sleep_save_phys=0x503cac18
+> GPA: save 00000000,22222222,0000007a,00002955
+> GPB: save 00000000,02212222,0000007b,00002955
+> GPC: save 00000000,11331000,00000010,00005055
+> GPD: save 00000000,00000000,00000000,00000155
+> GPE: save 00000000,00000000,00000000,00000155
+> GPF: save 50000000,00008000,55555555,00000000
+> GPG: save 00000000,03222222,0000003e,00002000
+> GPH: save 33222222,00000033,000003fe,00000000
+> GPI: save aaaaaaaa,00000000,00000000,00000000
+> GPJ: save 00aaaaaa,00000f00,00000000,00000000
+> GPK: save 22222222,22222222,00000000,55555555
+> GPL: save 12121122,02222211,0000038c,15555555
+> GPM: save 00000000,00222222,0000001f,000002aa
+> GPN: save 55940454,0000f81a,55955555,00000000
+> GPO: save aaaaaaaa,0000003f,00000000,00000000
+> GPP: save 2aaaaaaa,000038e7,1011aaa0,00000000
+> GPQ: save 0002aaaa,00000018,00000000,00000000
+> UART[0]: ULCON=0007, UCON=0785, UFCON=0011, UBRDIV=0000
+> UART[1]: ULCON=002b, UCON=0385, UFCON=0011, UBRDIV=0003
+> UART[2]: ULCON=0003, UCON=0385, UFCON=0011, UBRDIV=001f
+> UART[3]: ULCON=0007, UCON=0785, UFCON=0011, UBRDIV=0000
+> saved f4100100 value 04000000
+> saved f4100104 value 00000000
+> saved f4100108 value 00000000
+> saved f45001a0 value ffcd1501
+> saved f45001b0 value 00000000
+> saved f45001b4 value 00000000
+> saved f45001c0 value 00000000
+> saved f45001c4 value 00000000
+> saved f45001c8 value 00000000
+> saved f4100000 value 0000ffff
+> saved f4100004 value 0000ffff
+> saved f4100008 value 0000ffff
+> saved f410001c value 00000007
+> saved f4100020 value 01043310
+> saved f4100024 value 00000000
+> saved f4100028 value 00000000
+> saved f410002c value 00000000
+> saved f4100030 value fffffff7
+> saved f4100034 value fb9e6fff
+> saved f4100038 value c73fffff
+> saved f410003c value ffffffff
+> saved f4100018 value 00000000
+> saved f4100014 value 00200203
+> saved f45001d0 value 10555551
+> saved f45001d4 value 00555555
+> sleep: irq wakeup masks: ffffffff,fffff7ff
+
 -- 
 Ben
 
