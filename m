@@ -1,59 +1,95 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: SAMSUNG kernel tree merge plans
-Date: Mon, 10 May 2010 04:49:37 +0100
-Message-ID: <20100510034937.GX26401@trinity.fluff.org>
-References: <20100506054651.GL26401@trinity.fluff.org> <015f01caece8$723e1700$56ba4500$%szyprowski@samsung.com>
+From: NAVEEN KRISHNA CHATRADHI <ch.naveen@samsung.com>
+Subject: Re: Re: Re: [PATCH 4/6] ARM: S3C64XX: Adds Touch Screen Driver Support
+	for S3C6410
+Date: Mon, 10 May 2010 06:27:23 +0000 (GMT)
+Message-ID: <14961.38041273472843571.JavaMail.weblogic@epml20>
+Reply-To: ch.naveen@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:48331 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751937Ab0EJDtj (ORCPT
+Received: from mailout5.samsung.com ([203.254.224.35]:56468 "EHLO
+	mailout5.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752515Ab0EJG11 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 May 2010 23:49:39 -0400
-Content-Disposition: inline
-In-Reply-To: <015f01caece8$723e1700$56ba4500$%szyprowski@samsung.com>
+	Mon, 10 May 2010 02:27:27 -0400
+Received: from ep_ms13_bk (mailout5.samsung.com [203.254.224.35])
+ by mailout1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L2600K0JXXNZB@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 10 May 2010 15:27:23 +0900 (KST)
+Received: from ep_spt04 (ms13.samsung.com [203.254.225.109])
+ by ms13.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L26008UTXXNI4@ms13.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 10 May 2010 15:27:23 +0900 (KST)
+Content-return: prohibited
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: Maurus Cuelenaere <mcuelenaere@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Thu, May 06, 2010 at 08:50:38AM +0200, Marek Szyprowski wrote:
-> Hello,
-> 
-> On Thursday, May 06, 2010 7:47 AM Ben Dooks wrote:
-> 
-> > I'm busy sorting out the trees for the next mege window, and should
-> > have a new next-samsung out in the next two or three days.
-> > 
-> > As such, if there is anything that needs to go via Russell's tree, then
-> > it needs to be merged as soon as possible. I would like to send a pull
-> > before Wednesday.
-> > 
-> > Anything else, if it is not merged into one of my trees by the end of
-> > next week (May 14th) then there is no guarantees that it will be merged.
-> > 
-> > If everyone interested in this could check my trees after the weekend and
-> > make any reminders of other stuff to fix at that point as there is still
-> > items being processed.
-> > 
-> > http://git.fluff.org/gitweb?p=bjdooks/linux.git;a=summary
-> 
-> We would really like to merge as much as possible from our current
-> development tree:
-> http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/SPRC-2.6.34-rc5-opensource
-> 
-> Some of the patches that we depend on are still in the review phase (s5p timer), some should be replaced by the ones that were
-> posted recently. Especially most of our patches depend on S5PV210 GPIO support, so without it we cannot go further. Is there any
-> chance to get it merged quickly? I will rebase our tree asap the mentioned patches get merged.
-
-I'll sort out what can be merged from the items on the list, but I'm
-not going git-tree diving just at the moment. The firstset will be
-stuff for Russell's tree, for linus' tree there is a ltitle more time
-to get prepared.
-
--- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+SGkgQmVuLA0KDQotLS0tLS0tIE9yaWdpbmFsIE1lc3NhZ2UgLS0tLS0tLQ0KU2VuZGVyIDogQmVu
+IERvb2tzPGJlbi1saW51eEBmbHVmZi5vcmc+IA0KRGF0ZSAgIDogTWF5IDEwLCAyMDEwIDA1OjI4
+IChHTVQrMDU6MDApDQpUaXRsZSAgOiBSZTogUmU6IFtQQVRDSCA0LzZdIEFSTTogUzNDNjRYWDog
+QWRkcyBUb3VjaCBTY3JlZW4gRHJpdmVyIFN1cHBvcnQJZm9yDQogUzNDNjQxMA0KDQpPbiBGcmks
+IE1heSAwNywgMjAxMCBhdCAxMToyOTozMUFNICswMDAwLCBOQVZFRU4gS1JJU0hOQSBDSEFUUkFE
+SEkgd3JvdGU6DQo+IEhpLCBNYXVydXMNCj4gDQo+IC0tLS0tLS0gT3JpZ2luYWwgTWVzc2FnZSAt
+LS0tLS0tDQo+IFNlbmRlciA6IE1hdXJ1cyBDdWVsZW5hZXJlPG1jdWVsZW5hZXJlQGdtYWlsLmNv
+bT4gDQo+IERhdGUgICA6IE1heSAwNywgMjAxMCAxNDo1NSAoR01UKzA1OjAwKQ0KPiBUaXRsZSAg
+OiBSZTogW1BBVENIIDQvNl0gQVJNOiBTM0M2NFhYOiBBZGRzIFRvdWNoIFNjcmVlbiBEcml2ZXIg
+U3VwcG9ydCBmb3INCj4gIFMzQzY0MTANCj4gDQo+IEhpIE5hdmVlbiwNCj4gDQo+ICJLdWtqaW4g
+S2ltIiA8a2dlbmUua2ltQHNhbXN1bmcuY29tPiB3cm90ZToNCj4gDQo+ID5Gcm9tOiBOYXZlZW4g
+S3Jpc2huYSA8Y2gubmF2ZWVuQHNhbXN1bmcuY29tPg0KPiA+DQo+ID5TaWduZWQtb2ZmLWJ5OiBO
+YXZlZW4gS3Jpc2huYSBDaCA8Y2gubmF2ZWVuQHNhbXN1bmcuY29tPg0KPiA+U2lnbmVkLW9mZi1i
+eTogS3VramluIEtpbSA8a2dlbmUua2ltQHNhbXN1bmcuY29tPg0KPiA+LS0tDQo+ID4gYXJjaC9h
+cm0vbWFjaC1zM2M2NHh4L0tjb25maWcgICAgICAgICAgfCAgICAxICsNCj4gPiBhcmNoL2FybS9t
+YWNoLXMzYzY0eHgvbWFjaC1zbWRrNjQxMC5jICB8ICAgMTIgKysrKysrKw0KPiA+IGFyY2gvYXJt
+L21hY2gtczNjNjR4eC9zM2M2NDEwLmMgICAgICAgIHwgICAgMSArDQo+ID4gYXJjaC9hcm0vcGxh
+dC1zYW1zdW5nL0tjb25maWcgICAgICAgICAgfCAgICA1ICsrKw0KPiA+IGFyY2gvYXJtL3BsYXQt
+c2Ftc3VuZy9NYWtlZmlsZSAgICAgICAgIHwgICAgMSArDQo+ID4gYXJjaC9hcm0vcGxhdC1zYW1z
+dW5nL2Rldi10cy5jICAgICAgICAgfCAgIDU0ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrDQo+ID4gZHJpdmVycy9pbnB1dC90b3VjaHNjcmVlbi9LY29uZmlnICAgICAgfCAgICAzICst
+DQo+ID4gZHJpdmVycy9pbnB1dC90b3VjaHNjcmVlbi9zM2MyNDEwX3RzLmMgfCAgIDE5ICsrKysr
+KysrKy0tDQo+ID4gOCBmaWxlcyBjaGFuZ2VkLCA5MiBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9u
+cygtKQ0KPiA+IGNyZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL2FybS9wbGF0LXNhbXN1bmcvZGV2LXRz
+LmMNCj4gPg0KPiANCj4gSSdtIHN1cmUgeW91J3ZlIHNlZW4gbXkgcGF0Y2ggd2hpY2ggZG9lcyBw
+cmV0dHkgbXVjaCB0aGUgc2FtZSB3cnQgYWRqdXN0aW5nIHMzYzI0MTBfdHMuYy4NCj4gVGhvdWdo
+IHRoYXQgb25lIGhhcyBhbHJlYWR5IGJlZW4gYWNrZWQgYnkgQmVuIHNvIEknbSB1bnN1cmUgd2hh
+dCBzaG91bGQgaGFwcGVuOiB5b3UgYWRqdXN0aW5nIHlvdXIgcGF0Y2hzZXQgb3IgbWUgZHJvcHBp
+bmcgbWluZSAob2J2aW91c2x5IEkgcHJlZmVyIHRoZSBmb3JtZXIgOikgKS4NCj4gTXkgcGF0Y2gg
+d2FzIHVuZGVyIHJldmlldyBmb3Igb3ZlciBhIHdlZWssIGl0cyBhIGNvaW5jaWRlbmNlIHRoYXQg
+aSBzYXcgeW91ciBwYXRjaCBhbmQgbXkgcGF0Y2ggd2FzIHBvc3RlZCBvbiBtYWlubGluZS4gDQo+
+IEknaWxsIHJld29yayBteSBwYXRjaGVzIGFueXdheSwgSSdpbGwgd2FpdCBmb3IgYSBkYXkgb24g
+QmVuIERvb2sncyBDb21tZW50cyBvbiBteSBwYXRjaCBzZXQuDQoNCk5hdmVlbidzIHBhdGNoZXMg
+ZG8gaGF2ZSB0d28gYWR2YW50YWdlcywgZmlyc3RseSB0aGF0IHRoZXkgYWRkIGEgZ3Bpbw0KY2Fs
+bGJhY2sgdG8gdGhlIHBsYXRmb3JtIGRhdGEgc28gdGhhdCBpZiBpdCBpcyBuZWVkZWQgaW4gdGhl
+IGZ1dHVyZSBpdA0KY2FuIGJlIHVzZWQgYWdhaW4uIFRoZSBzZWNvbmQgaXMgdGhhdCBpdCBjb3Zl
+cnMgbW9yZSB0aGFuIGp1c3QgdGhlIDI0eHgNCmFuZCA2NHh4IHNlcmllcy4NCg0KSSB0cmllZCBh
+cHBseWluZyB0aGlzIHdpdGggTWF1cnVzJyB1cGRhdGVzIGJ1dCB0aGV5IGRvbid0IGFwcGx5IHdl
+bGwgdG9nZXRoZXINCmFuZCBJJ20gbm90IGdvaW5nIHRvIHNwZW5kIGEgbG90IG9mIHRpbWUgdHJ5
+aW5nIHRvIGdldCB0aGUgdHdvIHNldHMgYXBwbGllZC4NCg0KTWF1cnVzLCBob3BlIHlvdSdyZSBu
+b3QgdG9vIG9mZmVuZGVkIGlmIHdlIGdvIGZvciBOYXZlZW4ncyBzZXJpZXMsIHVubGVzcw0KeW91
+IGhhdmUgYW55IHRlY2huaWNhbCBjb21tZW5idHMgdGhhdCBuZWVkIHRvIGJlIHNvcnRlZC4NCkJl
+biwgU2hvdWxkIGkgcmV3b3JrIHRoZSBwYXRjaGVzIHRvIHdvcmsgb24gdG9wIG9mIE1hdXJ1cyBj
+aGFuZ2VzIE9SDQpTaGFsbCB3ZSB3YWl0IGZvciBoaXMgcmVwbHkuDQogDQo+IFAuUy46IEknZCBy
+ZWNvbW1lbmQgc3BsaXR0aW5nIHRoaXMgcGF0Y2ggYW5kIHNlbmRpbmcgdGhlIGRyaXZlcnMvaW5w
+dXQgcGFydCB0byB0aGUgbGludXgtaW5wdXQgbWFpbGluZyBsaXN0Lg0KPiBJJ2lsbCB0YWtlIHRo
+aXMgb3B0aW9uLg0KDQpUaGlzIGlzIGdvaW5nIHRvIGJlIGEgYml0IG9mIGFuIGludGVyZXN0aW5n
+IG1lcmdlIGFzIHdlIHdpbGwgdGVtcG9yYXJpbHkNCmVuZCB1cCBlaXRoZXIgYnJlYWtpbmcgdGhl
+IHMzYzI0MTAgdXNlcnMsIG9yIHdhaXRpbmcgZm9yIHRoZSBpbnB1dCBzeXN0ZW0NCnVwZGF0ZXMg
+YmVmb3JlIGFwcGx5aW5nIHRoZSBhcmNoIHNwZWNpZmljIHVwZGF5ZXMgKG90aGVyd2lzZSB3ZSds
+bCBub3QgYmUNCmFibGUgdG8gY29tcGlsZSkuDQoNCldoaWNoZXZlciB3YXltLCB0aGUgaW5wdXQg
+cGFydCBuZWVkcyB0byBnbyB0aGUgbGludXgtaW5wdXQgbGlzdCB0byBnZXQNCnJldmlld2VkIGJl
+Zm9yZSBpdCBnZXRzIGFwcGxpZWQuIFdpdGggYSBub3RlIHRoYXQgdGhlcmUgaXMgc29tZSBhcmNo
+DQpkZXBlbmRlbmN5IHRoYXQgbWF5IHJlcXVpcmUgYSBjcm9zcyB0cmVlIG1lcmdlIChwcmVmZXJh
+YmxlIHRvIGdvIHdpdGgNCmFyY2ggbWVyZ2luZyBhbmQgdGhlIGlucHV0IG1haW50YWluZXJzIGJs
+ZXNzaW5nKS4NCkkgd2lsbCBzcGxpdCB0aGUgcGF0Y2hlcyBmb3IgbGludXgtaW5wdXQgc3VibWlz
+c2lvbi4gDQogDQo+IC0tDQo+IE1hdXJ1cyBDdWVsZW5hZXJlDQo+IA0KPiANCj4gVGhhbmtzICYg
+QmVzdCBSZWdhcmRzLA0KPiBOYXZlZW4gS3Jpc2huYSBDaA0KPiBTRSBAIFNMRyBEaXYsIERTIExB
+QnMsIFNhbXN1bmcsIEluZGlhLg0KPiBOPz8/Pz9yPz95Pz8/P2I/WD8/Pz92P14/KT8/ey5uPys/
+Pz8/ez8/Pz8/eCw/Pz8/Fz8/Pz99Pz8/Pz96PyZqOit2Pz8/Bz8/Pz96Wis/Pyt6Zj8/P2g/Pz9+
+Pz8/P2k/Pz96Px4/dz8/Pz8/Pz8/PyY/KT8/G2YNCi0tIA0KLS0gDQpCZW4NCg0KUTogICAgICBX
+aGF0J3MgYSBsaWdodC15ZWFyPw0KQTogICAgICBPbmUtdGhpcmQgbGVzcyBjYWxvcmllcyB0aGFu
+IGEgcmVndWxhciB5ZWFyLg0KDQoNCg0KVGhhbmtzICYgQmVzdCBSZWdhcmRzLA0KTmF2ZWVuIEty
+aXNobmEgQ2gNClNFIEAgU0xHIERpdiwgRFMgTEFCcywgU2Ftc3VuZywgSW5kaWEuDQo=
