@@ -1,144 +1,57 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: S3C6410 power management support status
-Date: Mon, 10 May 2010 03:35:37 +0100
-Message-ID: <20100510023537.GW26401@trinity.fluff.org>
-References: <20100429124509.GA11290@jeknote.loshitsa1.net> <20100504002420.GQ6684@trinity.fluff.org> <20100506144955.GA24641@jeknote.loshitsa1.net>
+Subject: Re: SAMSUNG kernel tree merge plans
+Date: Mon, 10 May 2010 04:49:37 +0100
+Message-ID: <20100510034937.GX26401@trinity.fluff.org>
+References: <20100506054651.GL26401@trinity.fluff.org> <015f01caece8$723e1700$56ba4500$%szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:42923 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:48331 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754963Ab0EJCfi (ORCPT
+	id S1751937Ab0EJDtj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 May 2010 22:35:38 -0400
+	Sun, 9 May 2010 23:49:39 -0400
 Content-Disposition: inline
-In-Reply-To: <20100506144955.GA24641@jeknote.loshitsa1.net>
+In-Reply-To: <015f01caece8$723e1700$56ba4500$%szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yauhen Kharuzhy <yauhen.kharuzhy@promwad.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, Viktar Palstsiuk <viktar.palstsiuk@promwad.com>, linux-samsung-soc@vger.kernel.org, Vladimir Davydov <vladimir.davydov@promwad.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: 'Ben Dooks' <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com
 
-On Thu, May 06, 2010 at 05:49:55PM +0300, Yauhen Kharuzhy wrote:
-> On Tue, May 04, 2010 at 01:24:20AM +0100, Ben Dooks wrote:
-> > On Thu, Apr 29, 2010 at 03:45:09PM +0300, Yauhen Kharuzhy wrote:
-> > > Hi.
-> > > 
-> > > Can anybody explain current status of S3C6410 power management support
-> > > in mainline? Suspend-to-RAM looks completely broken in the current
-> > > Linus's git tree.
+On Thu, May 06, 2010 at 08:50:38AM +0200, Marek Szyprowski wrote:
+> Hello,
+> 
+> On Thursday, May 06, 2010 7:47 AM Ben Dooks wrote:
+> 
+> > I'm busy sorting out the trees for the next mege window, and should
+> > have a new next-samsung out in the next two or three days.
 > > 
-> > I'd prefer if you didn't make sweeping accusations about the state of
-> > a given piece of the kernel without having a good look first. From reading
-> > your second post, it seems that what is actually the problem is that the
-> > 64XX support only currently handles wakeup configurations from the EINT
-> > pins.
+> > As such, if there is anything that needs to go via Russell's tree, then
+> > it needs to be merged as soon as possible. I would like to send a pull
+> > before Wednesday.
+> > 
+> > Anything else, if it is not merged into one of my trees by the end of
+> > next week (May 14th) then there is no guarantees that it will be merged.
+> > 
+> > If everyone interested in this could check my trees after the weekend and
+> > make any reminders of other stuff to fix at that point as there is still
+> > items being processed.
+> > 
+> > http://git.fluff.org/gitweb?p=bjdooks/linux.git;a=summary
 > 
-> I am sorry for my hasty opinion about StR.
+> We would really like to merge as much as possible from our current
+> development tree:
+> http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/SPRC-2.6.34-rc5-opensource
 > 
-> But we have checked Suspend-to-RAM at our (custom, not SMDK) board just now
-> and it is not works with EINT too. Kernel goes to sleep and never
-> return. We found that XPWRRGTON pin isn't
-> changed at sleep instruction execution so CPU don't go to sleep state. If anybody
-> can say something about reasons of this, please say.
+> Some of the patches that we depend on are still in the review phase (s5p timer), some should be replaced by the ones that were
+> posted recently. Especially most of our patches depend on S5PV210 GPIO support, so without it we cannot go further. Is there any
+> chance to get it merged quickly? I will rebase our tree asap the mentioned patches get merged.
 
-Just tested 2.6.34-rc6-git and it works on the SMDK6410 with the
-addition of the gpio buttons for EINT9..11, and it worked.
+I'll sort out what can be merged from the items on the list, but I'm
+not going git-tree diving just at the moment. The firstset will be
+stuff for Russell's tree, for linus' tree there is a ltitle more time
+to get prepared.
 
-Can post the patches or git tree if you like.
- 
-> Can anybody check suspend mode with SMDK6410 and confirm that StR works
-> on it? If it works, we will stop to ask stupid questions and will find
-> our hardware bugs :)
-
-It does seem to work on this SMDK, and the XPWRTGON line on TP7 definetly
-goes low during sleep.
-
-Note, not sure if I will post the buttons patches as the SMDK's single
-buttons share interrupts with the LAN and other devices, making them
-rather useless (my SMDK6410 has EINT10 held permanently active by the
-unused network devices...)
- 
-> Below is log of sleeping procedure:
-> -----------------------------------------------------------------------
-> /sys/power # echo mem > state
-> s3c64xx_irq_pm_suspend: suspending IRQs
-> saved f4500280 value 000003ff
-> saved f4500900 value 00400000
-> saved f4500904 value 00000000
-> saved f4500910 value 00000000
-> saved f4500914 value 00000000
-> saved f4500918 value 00000000
-> saved f450091c value 00000000
-> saved f4500920 value 0ffff7ff
-> saved f4300044 value 00000210
-> s3c_pm_enter(3)
-> s3c_sleep_save_phys=0x503cac18
-> GPA: save 00000000,22222222,0000007a,00002955
-> GPB: save 00000000,02212222,0000007b,00002955
-> GPC: save 00000000,11331000,00000010,00005055
-> GPD: save 00000000,00000000,00000000,00000155
-> GPE: save 00000000,00000000,00000000,00000155
-> GPF: save 50000000,00008000,55555555,00000000
-> GPG: save 00000000,03222222,0000003e,00002000
-> GPH: save 33222222,00000033,000003fe,00000000
-> GPI: save aaaaaaaa,00000000,00000000,00000000
-> GPJ: save 00aaaaaa,00000f00,00000000,00000000
-> GPK: save 22222222,22222222,00000000,55555555
-> GPL: save 12121122,02222211,0000038c,15555555
-> GPM: save 00000000,00222222,0000001f,000002aa
-> GPN: save 55940454,0000f81a,55955555,00000000
-> GPO: save aaaaaaaa,0000003f,00000000,00000000
-> GPP: save 2aaaaaaa,000038e7,1011aaa0,00000000
-> GPQ: save 0002aaaa,00000018,00000000,00000000
-> UART[0]: ULCON=0007, UCON=0785, UFCON=0011, UBRDIV=0000
-> UART[1]: ULCON=002b, UCON=0385, UFCON=0011, UBRDIV=0003
-> UART[2]: ULCON=0003, UCON=0385, UFCON=0011, UBRDIV=001f
-> UART[3]: ULCON=0007, UCON=0785, UFCON=0011, UBRDIV=0000
-> saved f4100100 value 04000000
-> saved f4100104 value 00000000
-> saved f4100108 value 00000000
-> saved f45001a0 value ffcd1501
-> saved f45001b0 value 00000000
-> saved f45001b4 value 00000000
-> saved f45001c0 value 00000000
-> saved f45001c4 value 00000000
-> saved f45001c8 value 00000000
-> saved f4100000 value 0000ffff
-> saved f4100004 value 0000ffff
-> saved f4100008 value 0000ffff
-> saved f410001c value 00000007
-> saved f4100020 value 01043310
-> saved f4100024 value 00000000
-> saved f4100028 value 00000000
-> saved f410002c value 00000000
-> saved f4100030 value fffffff7
-> saved f4100034 value fb9e6fff
-> saved f4100038 value c73fffff
-> saved f410003c value ffffffff
-> saved f4100018 value 00000000
-> saved f4100014 value 00200203
-> saved f45001d0 value 10555551
-> saved f45001d4 value 00555555
-> sleep: irq wakeup masks: ffffffff,fffff7ff
-> ------------------------------------------------------------------------------
-> 
-> -- 
-> Yauhen Kharuzhy
-> -----------------------------------------------------------
-> Promwad Innovation Company
-> 22, Olshevskogo St.
-> Office 809
-> 220073, Minsk, Belarus
-> Phone/Fax: +375 (17) 312-1246
-> E-mail: yauhen.kharuzhy@promwad.com
-> Skype: jekhor
-> Web: www.promwad.com
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
--- 
 -- 
 Ben
 
