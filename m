@@ -1,71 +1,72 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: next-samsung: acer n30/n35 updates
-Date: Tue, 11 May 2010 02:03:26 +0100
-Message-ID: <20100511010326.GC26401@trinity.fluff.org>
-References: <20100507005050.GY2589@trinity.fluff.org> <4BE37CCA.30406@vscht.cz>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: SAMSUNG kernel tree merge plans
+Date: Tue, 11 May 2010 09:57:49 +0200
+Message-ID: <001001caf0df$a920c1f0$fb6245d0$%szyprowski@samsung.com>
+References: <20100506054651.GL26401@trinity.fluff.org>
+ <015f01caece8$723e1700$56ba4500$%szyprowski@samsung.com>
+ <20100510034937.GX26401@trinity.fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:37594 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758036Ab0EKBDc (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:63733 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755143Ab0EKH63 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 May 2010 21:03:32 -0400
-Content-Disposition: inline
-In-Reply-To: <4BE37CCA.30406@vscht.cz>
+	Tue, 11 May 2010 03:58:29 -0400
+Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
+ by mailout1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L2800ENIWTESW@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 11 May 2010 16:58:27 +0900 (KST)
+Received: from AMDC159 ([106.116.37.153])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L2800FG9WT4O7@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 11 May 2010 16:58:26 +0900 (KST)
+In-reply-to: <20100510034937.GX26401@trinity.fluff.org>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Pinkava J." <Jiri.Pinkava@vscht.cz>
-Cc: Ben Dooks <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, christer@weinigel.se
+To: 'Ben Dooks' <ben-linux@fluff.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Fri, May 07, 2010 at 04:36:58AM +0200, Pinkava J. wrote:
-> Dne 7.5.2010 02:50, Ben Dooks napsal(a):
-> > Acer n35 support has been provisonally merged into the following branch:
-> > 
-> >   git://git.fluff.org/bjdooks/linux.git for-2635/acer-n35
-> > 
-> > If there are any objections, then let me know, otherwise this will be
-> > merged into next-samsug this weekend ready to go in the next merge window.
-> > 
-> > Jiri, please confirm that you've read Section 12 'Sign your work' of
-> > Documentation/SubmittingPatches and that you agree to the part on
-> > "Developer's Certificate of Origin 1.1"
-> I comfirming that I've read above mentioned.
+Hello,
+
+On Monday, May 10, 2010 5:50 AM Ben Dooks wrote:
+
+> > We would really like to merge as much as possible from our current
+> > development tree:
+> > http://git.infradead.org/users/kmpark/linux-2.6-
+> samsung/shortlog/refs/heads/SPRC-2.6.34-rc5-opensource
+> >
+> > Some of the patches that we depend on are still in the review phase (s5p
+> timer), some should be replaced by the ones that were
+> > posted recently. Especially most of our patches depend on S5PV210 GPIO
+> support, so without it we cannot go further. Is there any
+> > chance to get it merged quickly? I will rebase our tree asap the
+> mentioned patches get merged.
 > 
-> In order to be absolutely clear I must mention that patches 4-7 are based on old
-> patches from Christer Weinigel (author of current implementation of Samsung n30
-> code in kernel). Is this OK?
+> I'll sort out what can be merged from the items on the list, but I'm
+> not going git-tree diving just at the moment. The firstset will be
+> stuff for Russell's tree, for linus' tree there is a ltitle more time
+> to get prepared.
 
-I'd run this past Christer if he wasn't already copied in on them.
- 
-> >From may point of view I can agree with the part "Developer's Certificate of
-> Origin 1.1"
-> > 
-> > The following commits are in:
-> > 
-> > Pinkava J (7):
-> >       ARM: n30: Enable Acer n35 if Acer n30 is selected
-> >       ARM: n30: fix: suspended wrong USB port on Acer n35
-> >       ARM: n30: Add RTC platform device for Acer n30 / Acer n35
-> >       ARM: n35: Add support for LEDs on Acer n35
-> >       ARM: n35: Enable wake-up by Power button on Acer n35
-> >       ARM: n30: Add support for MMC card reader on Acer n30 / Acer n35
-> >       ARM: n30: Add support for power on/off on Acer n30 / Acer n35 MMC card reader
-> > 
-> >  arch/arm/mach-s3c2410/Kconfig    |    7 ++++
-> >  arch/arm/mach-s3c2410/mach-n30.c |   65 +++++++++++++++++++++++++++++++++++++-
-> >  2 files changed, 71 insertions(+), 1 deletions(-)
-> > 
-> > 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Ok, I understand. I've separated the patches into different categories and
+rebased onto your next-samsung. I hope this will help sorting out these
+things.
 
--- 
--- 
-Ben
+Patches are available at:
 
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+http://git.infradead.org/users/kmpark/linux-2.6-samsung
+
+branches:
+next-samsung-s5p-fixes - various fixes for s5p SoCs
+next-samsung-s5pv210 - new features for s5pv210 SoCs
+next-samsung-s5pc1xx - s5pc1xx cleanup (to be discussed)
+next-samsung-onenand - platform patch for onenand driver (requires all
+above patches)
+
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
