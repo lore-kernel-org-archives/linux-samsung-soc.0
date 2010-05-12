@@ -1,244 +1,92 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH 10/15] ARM: S3C2416: Add basic clock support
-Date: Wed, 12 May 2010 03:36:01 +0100
-Message-ID: <1273631766-15693-10-git-send-email-ben-linux@fluff.org>
+Subject: [PATCH 11/15] ARM: S3C2416: Add support for second HSMMC channel
+Date: Wed, 12 May 2010 03:36:02 +0100
+Message-ID: <1273631766-15693-11-git-send-email-ben-linux@fluff.org>
 References: <1273631766-15693-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:60975 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:60951 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752563Ab0ELCgQ (ORCPT
+	id S1752022Ab0ELCgI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 May 2010 22:36:16 -0400
+	Tue, 11 May 2010 22:36:08 -0400
 In-Reply-To: <1273631766-15693-1-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Ben Dooks <ben-linux@fluff.org>
 
-Add basic clock support for the PLLs, HSMMC channels and
-PWM clocks. This is enough to get a basic system up and
-running.
+Add support for the second HSMMC channel on the S3C2416.
 
 Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/mach-s3c2410/include/mach/regs-clock.h |    2 +
- arch/arm/mach-s3c2416/Kconfig                   |    2 +
- arch/arm/mach-s3c2416/Makefile                  |    2 +-
- arch/arm/mach-s3c2416/clock.c                   |  135 +++++++++++++++++++++++
- arch/arm/plat-s3c24xx/include/plat/pll.h        |   25 ++++
- 5 files changed, 165 insertions(+), 1 deletions(-)
- create mode 100644 arch/arm/mach-s3c2416/clock.c
+ arch/arm/mach-s3c2410/include/mach/irqs.h |    3 +++
+ arch/arm/mach-s3c2410/include/mach/map.h  |    5 +++--
+ arch/arm/mach-s3c2416/Kconfig             |    1 +
+ arch/arm/mach-s3c2416/mach-smdk2416.c     |    1 +
+ 4 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-s3c2410/include/mach/regs-clock.h b/arch/arm/mach-s3c2410/include/mach/regs-clock.h
-index 9a0d169..3415b60 100644
---- a/arch/arm/mach-s3c2410/include/mach/regs-clock.h
-+++ b/arch/arm/mach-s3c2410/include/mach/regs-clock.h
-@@ -161,4 +161,6 @@
+diff --git a/arch/arm/mach-s3c2410/include/mach/irqs.h b/arch/arm/mach-s3c2410/include/mach/irqs.h
+index c1b8ec0..877c15e 100644
+--- a/arch/arm/mach-s3c2410/include/mach/irqs.h
++++ b/arch/arm/mach-s3c2410/include/mach/irqs.h
+@@ -150,7 +150,10 @@
+ #define IRQ_S3C2443_HSMMC	S3C2410_IRQ(20)		/* IRQ_SDI */
+ #define IRQ_S3C2443_NAND	S3C2410_IRQ(24)		/* reserved */
  
- #endif /* CONFIG_CPU_S3C2412 | CONFIG_CPU_S3C2413 */
- 
-+#define S3C2416_CLKDIV2		S3C2410_CLKREG(0x28)
++#define IRQ_S3C2416_HSMMC0	S3C2410_IRQ(21)		/* S3C2416/S3C2450 */
 +
- #endif /* __ASM_ARM_REGS_CLOCK */
+ #define IRQ_HSMMC0		IRQ_S3C2443_HSMMC
++#define IRQ_HSMMC1		IRQ_S3C2416_HSMMC0
+ 
+ #define IRQ_S3C2443_LCD1	S3C2410_IRQSUB(14)
+ #define IRQ_S3C2443_LCD2	S3C2410_IRQSUB(15)
+diff --git a/arch/arm/mach-s3c2410/include/mach/map.h b/arch/arm/mach-s3c2410/include/mach/map.h
+index b049e61..f07d680 100644
+--- a/arch/arm/mach-s3c2410/include/mach/map.h
++++ b/arch/arm/mach-s3c2410/include/mach/map.h
+@@ -63,9 +63,9 @@
+ #define S3C2440_PA_AC97	   (0x5B000000)
+ #define S3C2440_SZ_AC97	   SZ_1M
+ 
+-/* S3C2443 High-speed SD/MMC */
++/* S3C2443/S3C2416 High-speed SD/MMC */
+ #define S3C2443_PA_HSMMC   (0x4A800000)
+-#define S3C2443_SZ_HSMMC   (256)
++#define S3C2416_PA_HSMMC0  (0x4AC00000)
+ 
+ /* S3C2412 memory and IO controls */
+ #define S3C2412_PA_SSMC	(0x4F000000)
+@@ -110,6 +110,7 @@
+ #define S3C_PA_UART	    S3C24XX_PA_UART
+ #define S3C_PA_USBHOST	S3C2410_PA_USBHOST
+ #define S3C_PA_HSMMC0	    S3C2443_PA_HSMMC
++#define S3C_PA_HSMMC1	    S3C2416_PA_HSMMC0
+ #define S3C_PA_NAND	    S3C24XX_PA_NAND
+ 
+ #endif /* __ASM_ARCH_MAP_H */
 diff --git a/arch/arm/mach-s3c2416/Kconfig b/arch/arm/mach-s3c2416/Kconfig
-index 528f273..677f963 100644
+index 677f963..a1308d4 100644
 --- a/arch/arm/mach-s3c2416/Kconfig
 +++ b/arch/arm/mach-s3c2416/Kconfig
-@@ -10,6 +10,8 @@ config CPU_S3C2416
- 	select CPU_ARM926T
- 	select S3C2416_DMA if S3C2410_DMA
- 	select CPU_LLSERIAL_S3C2440
-+	select SAMSUNG_CLKSRC
-+	select S3C2443_CLOCK
+@@ -27,6 +27,7 @@ config MACH_SMDK2416
+ 	bool "SMDK2416"
+ 	select CPU_S3C2416
+ 	select S3C_DEV_HSMMC
++	select S3C_DEV_HSMMC1
  	help
- 	  Support for the S3C2416 SoC from the S3C24XX line
+ 	  Say Y here if you are using an SMDK2416
  
-diff --git a/arch/arm/mach-s3c2416/Makefile b/arch/arm/mach-s3c2416/Makefile
-index 9183e81..6c12c7b 100644
---- a/arch/arm/mach-s3c2416/Makefile
-+++ b/arch/arm/mach-s3c2416/Makefile
-@@ -9,7 +9,7 @@ obj-m				:=
- obj-n				:=
- obj-				:=
+diff --git a/arch/arm/mach-s3c2416/mach-smdk2416.c b/arch/arm/mach-s3c2416/mach-smdk2416.c
+index 8c9aed6..a51973c 100644
+--- a/arch/arm/mach-s3c2416/mach-smdk2416.c
++++ b/arch/arm/mach-s3c2416/mach-smdk2416.c
+@@ -112,6 +112,7 @@ static struct platform_device *smdk2416_devices[] __initdata = {
+ 	&s3c_device_wdt,
+ 	&s3c_device_i2c0,
+ 	&s3c_device_hsmmc0,
++	&s3c_device_hsmmc1,
+ };
  
--obj-$(CONFIG_CPU_S3C2416)	+= s3c2416.o
-+obj-$(CONFIG_CPU_S3C2416)	+= s3c2416.o clock.o
- obj-$(CONFIG_CPU_S3C2416)	+= irq.o
- 
- #obj-$(CONFIG_S3C2416_DMA)	+= dma.o
-diff --git a/arch/arm/mach-s3c2416/clock.c b/arch/arm/mach-s3c2416/clock.c
-new file mode 100644
-index 0000000..7ccf5a2
---- /dev/null
-+++ b/arch/arm/mach-s3c2416/clock.c
-@@ -0,0 +1,135 @@
-+/* linux/arch/arm/mach-s3c2416/clock.c
-+ *
-+ * Copyright (c) 2010 Simtec Electronics
-+ * Copyright (c) 2010 Ben Dooks <ben-linux@fluff.org>
-+ *
-+ * S3C2416 Clock control support
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#include <linux/init.h>
-+#include <linux/clk.h>
-+
-+#include <plat/s3c2416.h>
-+#include <plat/s3c2443.h>
-+#include <plat/clock.h>
-+#include <plat/clock-clksrc.h>
-+#include <plat/cpu.h>
-+
-+#include <plat/cpu-freq.h>
-+#include <plat/pll6553x.h>
-+#include <plat/pll.h>
-+
-+#include <asm/mach/map.h>
-+
-+#include <mach/regs-clock.h>
-+#include <mach/regs-s3c2443-clock.h>
-+
-+static unsigned int armdiv[8] = {
-+	[0] = 1,
-+	[1] = 2,
-+	[2] = 3,
-+	[3] = 4,
-+	[5] = 6,
-+	[7] = 8,
-+};
-+
-+/* ID to hardware numbering, 0 is HSMMC1, 1 is HSMMC0 */
-+static struct clksrc_clk hsmmc_div[] = {
-+	[0] = {
-+		.clk = {
-+			.name	= "hsmmc-div",
-+			.id	= 1,
-+			.parent	= &clk_esysclk.clk,
-+		},
-+		.reg_div = { .reg = S3C2416_CLKDIV2, .size = 2, .shift = 6 },
-+	},
-+	[1] = {
-+		.clk = {
-+			.name	= "hsmmc-div",
-+			.id	= 0,
-+			.parent	= &clk_esysclk.clk,
-+		},
-+		.reg_div = { .reg = S3C2443_CLKDIV1, .size = 2, .shift = 6 },
-+	},
-+};
-+
-+static struct clksrc_clk hsmmc_mux[] = {
-+	[0] = {
-+		.clk	= {
-+			.id	= 1,
-+			.name	= "hsmmc-if",
-+			.ctrlbit = (1 << 6),
-+			.enable = s3c2443_clkcon_enable_s,
-+		},
-+		.sources = &(struct clksrc_sources) {
-+			.nr_sources = 2,
-+			.sources = (struct clk *[]) {
-+				[0] = &hsmmc_div[0].clk,
-+				[1] = NULL, /* to fix */
-+			},
-+		},
-+		.reg_src = { .reg = S3C2443_CLKSRC, .size = 1, .shift = 16 },
-+	},
-+	[1] = {
-+		.clk	= {
-+			.id	= 0,
-+			.name	= "hsmmc-if",
-+			.ctrlbit = (1 << 12),
-+			.enable = s3c2443_clkcon_enable_s,
-+		},
-+		.sources = &(struct clksrc_sources) {
-+			.nr_sources = 2,
-+			.sources = (struct clk *[]) {
-+				[0] = &hsmmc_div[1].clk,
-+				[1] = NULL, /* to fix */
-+			},
-+		},
-+		.reg_src = { .reg = S3C2443_CLKSRC, .size = 1, .shift = 17 },
-+	},
-+};
-+
-+
-+static inline unsigned int s3c2416_fclk_div(unsigned long clkcon0)
-+{
-+	clkcon0 &= 7 << S3C2443_CLKDIV0_ARMDIV_SHIFT;
-+
-+	return armdiv[clkcon0 >> S3C2443_CLKDIV0_ARMDIV_SHIFT];
-+}
-+
-+void __init_or_cpufreq s3c2416_setup_clocks(void)
-+{
-+	s3c2443_common_setup_clocks(s3c2416_get_pll, s3c2416_fclk_div);
-+}
-+
-+
-+static struct clksrc_clk *clksrcs[] __initdata = {
-+	&hsmmc_div[0],
-+	&hsmmc_div[1],
-+	&hsmmc_mux[0],
-+	&hsmmc_mux[1],
-+};
-+
-+void __init s3c2416_init_clocks(int xtal)
-+{
-+	u32 epllcon = __raw_readl(S3C2443_EPLLCON);
-+	u32 epllcon1 = __raw_readl(S3C2443_EPLLCON+4);
-+	int ptr;
-+
-+	/* s3c2416 EPLL compatible with s3c64xx */
-+	clk_epll.rate = s3c_get_pll6553x(xtal, epllcon, epllcon1);
-+
-+	clk_epll.parent = &clk_epllref.clk;
-+
-+	s3c2443_common_init_clocks(xtal, s3c2416_get_pll, s3c2416_fclk_div);
-+
-+	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
-+		s3c_register_clksrc(clksrcs[ptr], 1);
-+
-+	s3c_pwmclk_init();
-+
-+}
-diff --git a/arch/arm/plat-s3c24xx/include/plat/pll.h b/arch/arm/plat-s3c24xx/include/plat/pll.h
-index 7ea8bff..005729a 100644
---- a/arch/arm/plat-s3c24xx/include/plat/pll.h
-+++ b/arch/arm/plat-s3c24xx/include/plat/pll.h
-@@ -35,3 +35,28 @@ s3c24xx_get_pll(unsigned int pllval, unsigned int baseclk)
- 
- 	return (unsigned int)fvco;
- }
-+
-+#define S3C2416_PLL_M_SHIFT	(14)
-+#define S3C2416_PLL_P_SHIFT	(5)
-+#define S3C2416_PLL_S_MASK	(7)
-+#define S3C2416_PLL_M_MASK	((1 << 10) - 1)
-+#define S3C2416_PLL_P_MASK	(63)
-+
-+static inline unsigned int
-+s3c2416_get_pll(unsigned int pllval, unsigned int baseclk)
-+{
-+	unsigned int m, p, s;
-+	uint64_t fvco;
-+
-+	m = pllval >> S3C2416_PLL_M_SHIFT;
-+	p = pllval >> S3C2416_PLL_P_SHIFT;
-+
-+	s = pllval & S3C2416_PLL_S_MASK;
-+	m &= S3C2416_PLL_M_MASK;
-+	p &= S3C2416_PLL_P_MASK;
-+
-+	fvco = (uint64_t)baseclk * m;
-+	do_div(fvco, (p << s));
-+
-+	return (unsigned int)fvco;
-+}
+ static void __init smdk2416_map_io(void)
 -- 
 1.6.3.3
