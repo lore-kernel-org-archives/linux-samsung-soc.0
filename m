@@ -1,38 +1,43 @@
-From: Jonathan Miles <jm@reciva.com>
-Subject: S3C2412 SPI controller in DMA/FIFO mode
-Date: Wed, 12 May 2010 10:45:14 +0100
-Message-ID: <4BEA78AA.1090409@reciva.com>
+From: Mike Solovyev <ms@sk.2-ch.org>
+Subject: [PATCH] h1940: framebuffer configuration fix
+Date: Wed, 12 May 2010 15:38:00 +0400
+Message-ID: <20100512153800.cdffab04.ms@sk.2-ch.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.reciva.com ([109.169.29.93]:53425 "EHLO crown.reciva.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751685Ab0ELKIE (ORCPT
+Received: from mail-ew0-f216.google.com ([209.85.219.216]:44097 "EHLO
+	mail-ew0-f216.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754650Ab0ELL1M (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 May 2010 06:08:04 -0400
-Received: from host86-156-69-106.range86-156.btcentralplus.com ([86.156.69.106] helo=[192.168.106.23])
-	by crown.reciva.com with esmtpa (Exim 4.69)
-	(envelope-from <jm@reciva.com>)
-	id 1OC8V9-0007oZ-FX
-	for linux-samsung-soc@vger.kernel.org; Wed, 12 May 2010 10:45:15 +0100
+	Wed, 12 May 2010 07:27:12 -0400
+Received: by ewy8 with SMTP id 8so1757579ewy.28
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 May 2010 04:27:10 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
+Cc: Ben Dooks <ben-linux@fluff.org>, Arnaud Patard <arnaud.patard@rtp-net.org>
 
-Hi!
+Seems like a typo, wrong setup leads to broken image on ipaq screen.
 
-Has anyone had any success in getting the S3C2412 SPI controller to work 
-in FIFO or DMA mode? I've been trying for a while now but not managed to 
-create anything stable.
+Signed-off-by: Mike Solovyev <ms@sk.2-ch.org>
+Signed-off-by: Arnaud Patard <arnaud.patard@rtp-net.org>
+---
+ arch/arm/mach-s3c2410/mach-h1940.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I note that the current kernels have s3c24xx_fiq - is this because no 
-one else has managed to get FIFO/DMA to work either?
-
-Thanks in advance,
-
-Jonathan
-
--- 
-Reciva Ltd, Unit 1, The Old Granary, Westwick, CAMBRIDGE CB24 3AR
-Registered in England & Wales No. 04719949
+Index: linux-2.6/arch/arm/mach-s3c2410/mach-h1940.c
+===================================================================
+--- linux-2.6.orig/arch/arm/mach-s3c2410/mach-h1940.c
++++ linux-2.6/arch/arm/mach-s3c2410/mach-h1940.c
+@@ -162,8 +162,8 @@ static struct s3c2410fb_display h1940_lc
+ 	.xres =		240,
+ 	.yres =		320,
+ 	.bpp =		16,
+-	.left_margin =	20,
+-	.right_margin =	8,
++	.left_margin =	8,
++	.right_margin =	20,
+ 	.hsync_len =	4,
+ 	.upper_margin =	8,
+ 	.lower_margin = 7,
