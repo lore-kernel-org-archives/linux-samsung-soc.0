@@ -1,208 +1,155 @@
-From: NAVEEN KRISHNA CHATRADHI <ch.naveen@samsung.com>
-Subject: Re: Re: [PATCH 4/6] ARM: S3C64XX: Adds Touch Screen Driver Support for
-	S3C6410
-Date: Tue, 11 May 2010 11:31:08 +0000 (GMT)
-Message-ID: <4272885.112601273577468333.JavaMail.weblogic@epml14>
-Reply-To: ch.naveen@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: base64
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: [PATCH] ARM: SAMSUNG: Remove old email address for ben-linux@fluff.org
+Date: Wed, 12 May 2010 02:14:16 +0100
+Message-ID: <1273626856-9775-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:56328 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751754Ab0EKLlM (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:44600 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753308Ab0ELBOZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 May 2010 07:41:12 -0400
-Received: from ep_ms13_bk (mailout2.samsung.com [203.254.224.25])
- by mailout1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L29003876NWAS@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 11 May 2010 20:31:08 +0900 (KST)
-Received: from ep_spt02 (ms13.samsung.com [203.254.225.109])
- by ms13.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L290059N6NWEG@ms13.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 11 May 2010 20:31:08 +0900 (KST)
-Content-return: prohibited
-MIME-version: 1.0
+	Tue, 11 May 2010 21:14:25 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Ben Dooks <ben-linux@fluff.org>
 
-SGkgQmVuLA0KDQotLS0tLS0tIE9yaWdpbmFsIE1lc3NhZ2UgLS0tLS0tLQ0KU2VuZGVyIDogQmVu
-IERvb2tzPGJlbi1saW51eEBmbHVmZi5vcmc+IA0KRGF0ZSAgIDogTWF5IDExLCAyMDEwIDEzOjI2
-IChHTVQrMDU6MDApDQpUaXRsZSAgOiBSZTogW1BBVENIIDQvNl0gQVJNOiBTM0M2NFhYOiBBZGRz
-IFRvdWNoIFNjcmVlbiBEcml2ZXIgU3VwcG9ydCBmb3INCglTM0M2NDEwDQoNCk9uIEZyaSwgTWF5
-IDA3LCAyMDEwIGF0IDAzOjMxOjI1UE0gKzA5MDAsIEt1a2ppbiBLaW0gd3JvdGU6DQo+IEZyb206
-IE5hdmVlbiBLcmlzaG5hIDxjaC5uYXZlZW5Ac2Ftc3VuZy5jb20+DQo+IA0KPiBTaWduZWQtb2Zm
-LWJ5OiBOYXZlZW4gS3Jpc2huYSBDaCA8Y2gubmF2ZWVuQHNhbXN1bmcuY29tPg0KPiBTaWduZWQt
-b2ZmLWJ5OiBLdWtqaW4gS2ltIDxrZ2VuZS5raW1Ac2Ftc3VuZy5jb20+DQo+IC0tLQ0KPiAgYXJj
-aC9hcm0vbWFjaC1zM2M2NHh4L0tjb25maWcgICAgICAgICAgfCAgICAxICsNCj4gIGFyY2gvYXJt
-L21hY2gtczNjNjR4eC9tYWNoLXNtZGs2NDEwLmMgIHwgICAxMiArKysrKysrDQo+ICBhcmNoL2Fy
-bS9tYWNoLXMzYzY0eHgvczNjNjQxMC5jICAgICAgICB8ICAgIDEgKw0KPiAgYXJjaC9hcm0vcGxh
-dC1zYW1zdW5nL0tjb25maWcgICAgICAgICAgfCAgICA1ICsrKw0KPiAgYXJjaC9hcm0vcGxhdC1z
-YW1zdW5nL01ha2VmaWxlICAgICAgICAgfCAgICAxICsNCj4gIGFyY2gvYXJtL3BsYXQtc2Ftc3Vu
-Zy9kZXYtdHMuYyAgICAgICAgIHwgICA1NCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-Kw0KPiAgZHJpdmVycy9pbnB1dC90b3VjaHNjcmVlbi9LY29uZmlnICAgICAgfCAgICAzICstDQo+
-ICBkcml2ZXJzL2lucHV0L3RvdWNoc2NyZWVuL3MzYzI0MTBfdHMuYyB8ICAgMTkgKysrKysrKysr
-LS0NCj4gIDggZmlsZXMgY2hhbmdlZCwgOTIgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkN
-Cj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL2FybS9wbGF0LXNhbXN1bmcvZGV2LXRzLmMNCj4g
-DQo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9tYWNoLXMzYzY0eHgvS2NvbmZpZyBiL2FyY2gvYXJt
-L21hY2gtczNjNjR4eC9LY29uZmlnDQo+IGluZGV4IDY5ZTlmYmYuLjFmMmY0MTIgMTAwNjQ0DQo+
-IC0tLSBhL2FyY2gvYXJtL21hY2gtczNjNjR4eC9LY29uZmlnDQo+ICsrKyBiL2FyY2gvYXJtL21h
-Y2gtczNjNjR4eC9LY29uZmlnDQo+IEBAIC05MCw2ICs5MCw3IEBAIGNvbmZpZyBNQUNIX1NNREs2
-NDEwDQo+ICAJc2VsZWN0IFMzQ19ERVZfSFNNTUMxDQo+ICAJc2VsZWN0IFMzQ19ERVZfSTJDMQ0K
-PiAgCXNlbGVjdCBTM0NfREVWX0ZCDQo+ICsJc2VsZWN0IFNBTVNVTkdfREVWX1RTDQo+ICAJc2Vs
-ZWN0IFMzQ19ERVZfVVNCX0hPU1QNCj4gIAlzZWxlY3QgUzNDX0RFVl9VU0JfSFNPVEcNCj4gIAlz
-ZWxlY3QgUzNDNjRYWF9TRVRVUF9TREhDSQ0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1z
-M2M2NHh4L21hY2gtc21kazY0MTAuYyBiL2FyY2gvYXJtL21hY2gtczNjNjR4eC9tYWNoLXNtZGs2
-NDEwLmMNCj4gaW5kZXggMmQ1YWZkMi4uZmIxODZjOSAxMDA2NDQNCj4gLS0tIGEvYXJjaC9hcm0v
-bWFjaC1zM2M2NHh4L21hY2gtc21kazY0MTAuYw0KPiArKysgYi9hcmNoL2FybS9tYWNoLXMzYzY0
-eHgvbWFjaC1zbWRrNjQxMC5jDQo+IEBAIC02NCw2ICs2NCw4IEBADQo+ICAjaW5jbHVkZSA8cGxh
-dC9jbG9jay5oPg0KPiAgI2luY2x1ZGUgPHBsYXQvZGV2cy5oPg0KPiAgI2luY2x1ZGUgPHBsYXQv
-Y3B1Lmg+DQo+ICsjaW5jbHVkZSA8cGxhdC9hZGMuaD4NCj4gKyNpbmNsdWRlIDxwbGF0L3RzLmg+
-DQo+ICANCj4gICNkZWZpbmUgVUNPTiBTM0MyNDEwX1VDT05fREVGQVVMVCB8IFMzQzI0MTBfVUNP
-Tl9VQ0xLDQo+ICAjZGVmaW5lIFVMQ09OIFMzQzI0MTBfTENPTl9DUzggfCBTM0MyNDEwX0xDT05f
-UE5PTkUgfCBTM0MyNDEwX0xDT05fU1RPUEINCj4gQEAgLTI2Miw2ICsyNjQsOCBAQCBzdGF0aWMg
-c3RydWN0IHBsYXRmb3JtX2RldmljZSAqc21kazY0MTBfZGV2aWNlc1tdIF9faW5pdGRhdGEgPSB7
-DQo+ICAJJnNtZGs2NDEwX2xjZF9wb3dlcmRldiwNCj4gIA0KPiAgCSZzbWRrNjQxMF9zbXNjOTEx
-eCwNCj4gKwkmczNjX2RldmljZV9hZGMsDQo+ICsJJnMzY19kZXZpY2VfdHMsDQo+ICB9Ow0KPiAg
-DQo+ICAjaWZkZWYgQ09ORklHX1JFR1VMQVRPUg0KPiBAQCAtNTk2LDYgKzYwMCwxMiBAQCBzdGF0
-aWMgc3RydWN0IGkyY19ib2FyZF9pbmZvIGkyY19kZXZzMVtdIF9faW5pdGRhdGEgPSB7DQo+ICAJ
-eyBJMkNfQk9BUkRfSU5GTygiMjRjMTI4IiwgMHg1NyksIH0sCS8qIFNhbXN1bmcgUzUyNEFEMFhE
-MSAqLw0KPiAgfTsNCj4gIA0KPiArc3RhdGljIHN0cnVjdCBzM2MyNDEwX3RzX21hY2hfaW5mbyBz
-M2NfdHNfcGxhdGZvcm0gX19pbml0ZGF0YSA9IHsNCj4gKwkuZGVsYXkJCQk9IDEwMDAwLA0KPiAr
-CS5wcmVzYwkJCT0gNDksDQo+ICsJLm92ZXJzYW1wbGluZ19zaGlmdAk9IDIsDQo+ICt9Ow0KPiAr
-DQo+ICBzdGF0aWMgdm9pZCBfX2luaXQgc21kazY0MTBfbWFwX2lvKHZvaWQpDQo+ICB7DQo+ICAJ
-dTMyIHRtcDsNCj4gQEAgLTYyNSw2ICs2MzUsOCBAQCBzdGF0aWMgdm9pZCBfX2luaXQgc21kazY0
-MTBfbWFjaGluZV9pbml0KHZvaWQpDQo+ICAJczNjX2kyYzFfc2V0X3BsYXRkYXRhKE5VTEwpOw0K
-PiAgCXMzY19mYl9zZXRfcGxhdGRhdGEoJnNtZGs2NDEwX2xjZF9wZGF0YSk7DQo+ICANCj4gKwlz
-M2MyNHh4X3RzX3NldF9wbGF0ZGF0YSgmczNjX3RzX3BsYXRmb3JtKTsNCj4gKw0KPiAgCS8qIGNv
-bmZpZ3VyZSBuQ1MxIHdpZHRoIHRvIDE2IGJpdHMgKi8NCj4gIA0KPiAgCWNzMSA9IF9fcmF3X3Jl
-YWRsKFMzQzY0WFhfU1JPTV9CVykgJg0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1zM2M2
-NHh4L3MzYzY0MTAuYyBiL2FyY2gvYXJtL21hY2gtczNjNjR4eC9zM2M2NDEwLmMNCj4gaW5kZXgg
-MzFlNTNmYS4uNDM5MGVjYiAxMDA2NDQNCj4gLS0tIGEvYXJjaC9hcm0vbWFjaC1zM2M2NHh4L3Mz
-YzY0MTAuYw0KPiArKysgYi9hcmNoL2FybS9tYWNoLXMzYzY0eHgvczNjNjQxMC5jDQo+IEBAIC01
-NSw2ICs1NSw3IEBAIHZvaWQgX19pbml0IHMzYzY0MTBfbWFwX2lvKHZvaWQpDQo+ICANCj4gIAlz
-M2NfZGV2aWNlX2FkYy5uYW1lICAgICAgPSAiczNjNjR4eC1hZGMiOw0KPiAgCXMzY19kZXZpY2Vf
-bmFuZC5uYW1lID0gInMzYzY0MDAtbmFuZCI7DQo+ICsJczNjX2RldmljZV90cy5uYW1lCT0gInMz
-YzY0eHgtdHMiOw0KPiAgfQ0KPiAgDQo+ICB2b2lkIF9faW5pdCBzM2M2NDEwX2luaXRfY2xvY2tz
-KGludCB4dGFsKQ0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vcGxhdC1zYW1zdW5nL0tjb25maWcg
-Yi9hcmNoL2FybS9wbGF0LXNhbXN1bmcvS2NvbmZpZw0KPiBpbmRleCA2NDE2NDlmLi5iNDY2ZGE4
-IDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FybS9wbGF0LXNhbXN1bmcvS2NvbmZpZw0KPiArKysgYi9h
-cmNoL2FybS9wbGF0LXNhbXN1bmcvS2NvbmZpZw0KPiBAQCAtMTk2LDYgKzE5NiwxMSBAQCBjb25m
-aWcgUzNDNjRYWF9ERVZfU1BJDQo+ICAJICBDb21waWxlIGluIHBsYXRmb3JtIGRldmljZSBkZWZp
-bml0aW9ucyBmb3IgUzNDNjRYWCdzIHR5cGUNCj4gIAkgIFNQSSBjb250cm9sbGVycy4NCj4gIA0K
-PiArY29uZmlnIFNBTVNVTkdfREVWX1RTDQo+ICsJYm9vbA0KPiArCWhlbHANCj4gKwkgIENvbXBp
-bGUgaW4gcGxhdGZvcm0gZGV2aWNlIGRlZmluaXRpb24gZm9yIFNhbXN1bmcgVG91Y2ggU2NyZWVu
-Lg0KPiArDQo+ICAjIERNQQ0KPiAgDQo+ICBjb25maWcgUzNDX0RNQQ0KPiBkaWZmIC0tZ2l0IGEv
-YXJjaC9hcm0vcGxhdC1zYW1zdW5nL01ha2VmaWxlIGIvYXJjaC9hcm0vcGxhdC1zYW1zdW5nL01h
-a2VmaWxlDQo+IGluZGV4IDNjZjMwYTQuLjY5NWVkOTkgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJt
-L3BsYXQtc2Ftc3VuZy9NYWtlZmlsZQ0KPiArKysgYi9hcmNoL2FybS9wbGF0LXNhbXN1bmcvTWFr
-ZWZpbGUNCj4gQEAgLTQxLDYgKzQxLDcgQEAgb2JqLSQoQ09ORklHX1MzQ19ERVZfVVNCX0hPU1Qp
-CSs9IGRldi11c2Iubw0KPiAgb2JqLSQoQ09ORklHX1MzQ19ERVZfVVNCX0hTT1RHKQkrPSBkZXYt
-dXNiLWhzb3RnLm8NCj4gIG9iai0kKENPTkZJR19TM0NfREVWX05BTkQpCSs9IGRldi1uYW5kLm8N
-Cj4gIG9iai0kKENPTkZJR19TQU1TVU5HX0RFVl9BREMpCSs9IGRldi1hZGMubw0KPiArb2JqLSQo
-Q09ORklHX1NBTVNVTkdfREVWX1RTKQkrPSBkZXYtdHMubw0KPiAgDQo+ICAjIERNQSBzdXBwb3J0
-DQo+ICANCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL3BsYXQtc2Ftc3VuZy9kZXYtdHMuYyBiL2Fy
-Y2gvYXJtL3BsYXQtc2Ftc3VuZy9kZXYtdHMuYw0KPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiBp
-bmRleCAwMDAwMDAwLi5mNGEyYmJkDQo+IC0tLSAvZGV2L251bGwNCj4gKysrIGIvYXJjaC9hcm0v
-cGxhdC1zYW1zdW5nL2Rldi10cy5jDQo+IEBAIC0wLDAgKzEsNTQgQEANCj4gKy8qIGxpbnV4L2Fy
-Y2gvYXJtL3BsYXQtc2Ftc3VuZy9kZXYtdHMuYw0KPiArICoNCj4gKyAqIENvcHlyaWdodCAoYykg
-MjAxMCBTYW1zdW5nIEVsZWN0cm9uaWNzIENvLiwgTHRkLg0KPiArICoJCWh0dHA6Ly93d3cuc2Ft
-c3VuZy5jb20vDQo+ICsgKg0KPiArICogVG91Y2hTY3JlZW4gRGV2aWNlIGRlZmluaXRpb24gZm9y
-IFNhbXN1bmcgUzNDLCBTNVAgc2VyaWUgU29Dcy4NCj4gKyAqDQo+ICsgKiBUaGlzIHByb2dyYW0g
-aXMgZnJlZSBzb2Z0d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUgaXQgYW5kL29yIG1vZGlmeQ0K
-PiArICogaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5z
-ZSB2ZXJzaW9uIDIgYXMNCj4gKyAqIHB1Ymxpc2hlZCBieSB0aGUgRnJlZSBTb2Z0d2FyZSBGb3Vu
-ZGF0aW9uLg0KPiArICovDQo+ICsNCj4gKyNpbmNsdWRlIDxsaW51eC9rZXJuZWwuaD4NCj4gKyNp
-bmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4NCj4gKw0KPiArI2luY2x1ZGUgPG1hY2gv
-bWFwLmg+DQo+ICsjaW5jbHVkZSA8bWFjaC9pcnFzLmg+DQo+ICsjaW5jbHVkZSA8cGxhdC9kZXZz
-Lmg+DQo+ICsjaW5jbHVkZSA8cGxhdC9jcHUuaD4NCj4gKyNpbmNsdWRlIDxwbGF0L3RzLmg+DQo+
-ICsNCj4gK3N0YXRpYyBzdHJ1Y3QgcmVzb3VyY2UgczNjX3RzX3Jlc291cmNlW10gPSB7DQo+ICtb
-MF0gPSB7DQo+ICsJCS5zdGFydAk9IFNBTVNVTkdfUEFfQURDLA0KPiArCQkuZW5kCT0gU0FNU1VO
-R19QQV9BREMgKyBTWl80SyAtIDEsDQo+ICsJCS5mbGFncwk9IElPUkVTT1VSQ0VfTUVNLA0KPiAr
-CX0sDQo+ICsJWzFdID0gew0KPiArCQkuc3RhcnQJPSBJUlFfUEVORE4sDQo+ICsJCS5lbmQJPSBJ
-UlFfUEVORE4sDQo+ICsJCS5mbGFncwk9IElPUkVTT1VSQ0VfSVJRLA0KPiArCX0sDQo+ICt9Ow0K
-PiArDQo+ICtzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlIHMzY19kZXZpY2VfdHMgPSB7DQo+ICsJLm5h
-bWUJCT0gInNhbXN1bmctdHMiLA0KPiArCS5pZAkJPSAtMSwNCj4gKwkubnVtX3Jlc291cmNlcwk9
-IEFSUkFZX1NJWkUoczNjX3RzX3Jlc291cmNlKSwNCj4gKwkucmVzb3VyY2UJPSBzM2NfdHNfcmVz
-b3VyY2UsDQo+ICt9Ow0KPiArRVhQT1JUX1NZTUJPTChzM2NfZGV2aWNlX3RzKTsNCj4gKw0KPiAr
-dm9pZCBfX2luaXQgczNjMjR4eF90c19zZXRfcGxhdGRhdGEoc3RydWN0IHMzYzI0MTBfdHNfbWFj
-aF9pbmZvICpwZCkNCj4gK3sNCj4gKwlzdHJ1Y3QgczNjMjQxMF90c19tYWNoX2luZm8gKm5wZDsN
-Cj4gKw0KPiArCW5wZCA9IGttYWxsb2Moc2l6ZW9mKCpucGQpLCBHRlBfS0VSTkVMKTsNCj4gKwlp
-ZiAobnBkKSB7DQo+ICsJCW1lbWNweShucGQsIHBkLCBzaXplb2YoKm5wZCkpOw0KPiArCQlzM2Nf
-ZGV2aWNlX3RzLmRldi5wbGF0Zm9ybV9kYXRhID0gbnBkOw0KPiArCX0gZWxzZSB7DQo+ICsJCXBy
-aW50ayhLRVJOX0VSUiAibm8gbWVtb3J5IGZvciBUb3VjaHNjcmVlbiBwbGF0Zm9ybSBkYXRhXG4i
-KTsNCj4gKwl9DQo+ICt9DQoNCmNvdWxkIHlvdSBzcGxpdCB0aGUgZHJpdmVyIGNoYW5nZXMgZnJv
-bSB0aGUgY29yZSBjaGFuZ2VzIHBsZWFzZS4NCkkgd2lsbCBzcGxpdCB0aGUgcGF0Y2hlcyBmb3Ig
-TGludXgtaW5wdXQgc3VtaXNzaW9uLg0KDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lucHV0L3Rv
-dWNoc2NyZWVuL0tjb25maWcgYi9kcml2ZXJzL2lucHV0L3RvdWNoc2NyZWVuL0tjb25maWcNCj4g
-aW5kZXggYTVkY2RhYy4uZGMyMDI3OSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9pbnB1dC90b3Vj
-aHNjcmVlbi9LY29uZmlnDQo+ICsrKyBiL2RyaXZlcnMvaW5wdXQvdG91Y2hzY3JlZW4vS2NvbmZp
-Zw0KPiBAQCAtMTU5LDcgKzE1OSw4IEBAIGNvbmZpZyBUT1VDSFNDUkVFTl9GVUpJVFNVDQo+ICAN
-Cj4gIGNvbmZpZyBUT1VDSFNDUkVFTl9TM0MyNDEwDQo+ICAJdHJpc3RhdGUgIlNhbXN1bmcgUzND
-MjQxMCB0b3VjaHNjcmVlbiBpbnB1dCBkcml2ZXIiDQo+IC0JZGVwZW5kcyBvbiBBUkNIX1MzQzI0
-MTANCj4gKwlkZXBlbmRzIG9uIEFSQ0hfUzNDMjQxMCB8fCBBUkNIX1MzQzY0WFgNCj4gKwlzZWxl
-Y3QgUzNDX0FEQw0KPiAgCWhlbHANCj4gIAkgIFNheSBZIGhlcmUgaWYgeW91IGhhdmUgdGhlIHMz
-YzI0MTAgdG91Y2hzY3JlZW4uDQo+ICANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaW5wdXQvdG91
-Y2hzY3JlZW4vczNjMjQxMF90cy5jIGIvZHJpdmVycy9pbnB1dC90b3VjaHNjcmVlbi9zM2MyNDEw
-X3RzLmMNCj4gaW5kZXggMWE3MGY5Yy4uMzk2NDk2NCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9p
-bnB1dC90b3VjaHNjcmVlbi9zM2MyNDEwX3RzLmMNCj4gKysrIGIvZHJpdmVycy9pbnB1dC90b3Vj
-aHNjcmVlbi9zM2MyNDEwX3RzLmMNCj4gQEAgLTg3LDYgKzg3LDEyIEBAIHN0cnVjdCBzM2MyNDEw
-dHMgew0KPiAgDQo+ICBzdGF0aWMgc3RydWN0IHMzYzI0MTB0cyB0czsNCj4gIA0KPiArZW51bSBz
-M2NfY3B1X3R5cGUgew0KPiArCVRZUEVfUzNDMjQxMCwNCj4gKwlUWVBFX1MzQzI0NDAsDQo+ICsJ
-VFlQRV9TM0M2NFhYLAkvKiBTM0M2NFhYLCBTNVA2NFhYIFNlcmllcyAqLw0KPiArfTsNCg0KYWN0
-dWFsbHksIGhhdmluZyBsb29rZWQgYXQgdGhpcywgd2UgZG9uJ3QgcmVhbGx5IDI0MTAgYW5kIDI0
-NDAgYXMNCmEgc2VwZXJhdGUgdHlwZSBpZiB3ZSd2ZSBnb3R0ZW4gcmlkIG9mIHRoZSBncGlvIGNv
-bmZpZ3VyYXRpb24gYXMNCnRoaXMgd2FzIHRoZSBvbmx5IGNoYW5nZSB0aGF0IGl0IHdhcyBiZWlu
-ZyB1c2VkIGZvci4NCg0KSSBhbHNvIHRoaW5rIHdlIGNvdWxkIGFkZCBhIHNldCBvZiBmbGFncyB3
-aXRoIHRoZSBmZWF0dXJlcyBvZiB0aGUNClNvQyBpbnN0ZWFkIG9mIHVzaW5nIHRoZSB0eXBlIG5h
-bWUsIHNvIHdlIGNvdWxkIGRvOg0KDQojZGVmaW5lIEZFQVRfUEVOX0lSUQkoMSA8PCAwKQkvKiBI
-QVMgQURDQ0xSSU5UUE5ETlVQICovDQoNCg0KVGhpcyBzZWVtcyBhIGJldHRlciB3YXksIFM1UFYy
-MTAgaGFzIHN1cHBvcnQgZm9yIDIgdG91Y2ggc2NyZWVuIGludGVyZmFjZXMgdGhlcmUgaSBjYW4g
-dXNlIGFub3RoZXIgbWFjcm8uIA0KQXBhcnQgZnJvbSB0aGlzIHRoZSBUU0FEQyBtb2R1bGUgcmVt
-YWlucyBzYW1lIGluIGFsbCBTM0M2NDEwLCBTNVBjMTAwL0MxMTAvVjIxMCBib2FyZHMuDQo+ICAv
-KioNCj4gICAqIGdldF9kb3duIC0gcmV0dXJuIHRoZSBkb3duIHN0YXRlIG9mIHRoZSBwZW4NCj4g
-ICAqIEBkYXRhMDogVGhlIGRhdGEgcmVhZCBmcm9tIEFEQ0RBVDAgcmVnaXN0ZXIuDQo+IEBAIC0x
-NTUsNiArMTYxLDcgQEAgc3RhdGljIERFRklORV9USU1FUih0b3VjaF90aW1lciwgdG91Y2hfdGlt
-ZXJfZmlyZSwgMCwgMCk7DQo+ICAgKi8NCj4gIHN0YXRpYyBpcnFyZXR1cm5fdCBzdHlsdXNfaXJx
-KGludCBpcnEsIHZvaWQgKmRldl9pZCkNCj4gIHsNCj4gKwlzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
-ICpwZGV2ID0gdG9fcGxhdGZvcm1fZGV2aWNlKHRzLmRldik7DQo+ICAJdW5zaWduZWQgbG9uZyBk
-YXRhMDsNCj4gIAl1bnNpZ25lZCBsb25nIGRhdGExOw0KPiAgCWJvb2wgZG93bjsNCj4gQEAgLTE3
-Myw2ICsxODAsMTEgQEAgc3RhdGljIGlycXJldHVybl90IHN0eWx1c19pcnEoaW50IGlycSwgdm9p
-ZCAqZGV2X2lkKQ0KPiAgCWVsc2UNCj4gIAkJZGV2X2luZm8odHMuZGV2LCAiJXM6IGNvdW50PSVk
-XG4iLCBfX2Z1bmNfXywgdHMuY291bnQpOw0KPiAgDQo+ICsJaWYgKHBsYXRmb3JtX2dldF9kZXZp
-Y2VfaWQocGRldiktPmRyaXZlcl9kYXRhID09IFRZUEVfUzNDNjRYWCkgew0KPiArCQkvKiBDbGVh
-ciBwZW4gZG93bi91cCBpbnRlcnJ1cHQgKi8NCj4gKwkJd3JpdGVsKDB4MCwgdHMuaW8gKyBTM0M2
-NFhYX0FEQ0NMUklOVFBORE5VUCk7DQo+ICsJfQ0KDQoJaWYgKHRzLmZlYXQgJiBGRUFUX1BFTl9J
-UlEpIHsNCgkJLyogQ2xlYXIgcGVuIGRvd24vdXAgaW50ZXJydXB0ICovDQouLi4uDQoNCnlvdSds
-bCBhbHNvIG5lZWQgdG8gY29weSB0cy5mZWF0IGZyb20gcGxhdGZvcm1fZ2V0X2RldmljZV9pZChw
-ZGV2KS0+ZHJpdmVyX2RhdGENCmF0IHN0YXJ0dXAuDQoNCnRzLmZlYXQgaXMgb3B0aW9uYWwsIGhv
-d2V2ZXIgaWYgeW91IGRvbid0IHdhbnQgdG8gdXNlIGl0IGknZA0Kc3VnZ2VzdCBhIHdyYXBwZXIg
-Y2FsbCB0byB0YWtlIHRzIGFuZCByZXR1cm4gdGhlIGZlYXR1cmVzIGFzDQp0aHVzOg0KDQp0c19n
-ZXRfZmVhdHVyZXModHMpDQp7DQoJc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiA9IHRvX3Bs
-YXRmb3JtX2RldmljZSh0cy5kZXYpOw0KCXJldHVybiBwbGF0Zm9ybV9nZXRfZGV2aWNlX2lkKHBk
-ZXYpLT5kcml2ZXJfZGF0YTsNCn0NCkkgZGluJ3QgdW5kZXJzdGFuZCB0aGlzIG1ldGhvZCwgV2hp
-Y2ggb25lIHRoZXNlIDIgbWV0aG9kcyBhcmUgbW9yZSBvcHRpbWlzZWQuIA0KQ2FuIHlvdSBwbGVh
-c2UgZWxvYm9yYXRlLg0KPiArDQo+ICAJcmV0dXJuIElSUV9IQU5ETEVEOw0KPiAgfQ0KPiAgDQo+
-IEBAIC00MDUsMTUgKzQxNywxNiBAQCBzdGF0aWMgc3RydWN0IGRldl9wbV9vcHMgczNjX3RzX3Bt
-b3BzID0gew0KPiAgI2VuZGlmDQo+ICANCj4gIHN0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
-X2lkIHMzY3RzX2RyaXZlcl9pZHNbXSA9IHsNCj4gLQl7ICJzM2MyNDEwLXRzIiwgMCB9LA0KPiAt
-CXsgInMzYzI0NDAtdHMiLCAxIH0sDQo+ICsJeyAiczNjMjQxMC10cyIsIFRZUEVfUzNDMjQxMCB9
-LA0KPiArCXsgInMzYzI0NDAtdHMiLCBUWVBFX1MzQzI0NDAgfSwNCj4gKwl7ICJzM2M2NHh4LXRz
-IiwgVFlQRV9TM0M2NFhYIH0sDQoNCgl7ICJzM2MyNDEwLXRzIiwgMCB9LA0KCXsgInMzYzI0NDAt
-dHMiLCAwIH0NCgl7ICJzM2M2NHh4LXRzIiwgRkVBVF9QRU5fSVJRIH0sIA0KDQo+ICAJeyB9DQo+
-ICB9Ow0KPiAgTU9EVUxFX0RFVklDRV9UQUJMRShwbGF0Zm9ybSwgczNjdHNfZHJpdmVyX2lkcyk7
-DQo+ICANCj4gIHN0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIHMzY190c19kcml2ZXIgPSB7
-DQo+ICAJLmRyaXZlciAgICAgICAgID0gew0KPiAtCQkubmFtZSAgID0gInMzYzI0eHgtdHMiLA0K
-PiArCQkubmFtZSAgID0gInNhbXN1bmctdHMiLA0KPiAgCQkub3duZXIgID0gVEhJU19NT0RVTEUs
-DQo+ICAjaWZkZWYgQ09ORklHX1BNDQo+ICAJCS5wbQk9ICZzM2NfdHNfcG1vcHMsDQo+IC0tIA0K
-PiAxLjYuNi4xDQo+IA0KPiAtLQ0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2Vu
-ZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluDQo+IHRoZSBib2R5
-IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnDQo+IE1vcmUgbWFqb3Jk
-b21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbA0K
-DQotLSANCi0tIA0KQmVuDQoNClE6ICAgICAgV2hhdCdzIGEgbGlnaHQteWVhcj8NCkE6ICAgICAg
-T25lLXRoaXJkIGxlc3MgY2Fsb3JpZXMgdGhhbiBhIHJlZ3VsYXIgeWVhci4NCg0KDQoNClRoYW5r
-cyAmIEJlc3QgUmVnYXJkcywNCk5hdmVlbiBLcmlzaG5hIENoDQpTRSBAIFNMRyBEaXYsIERTIExB
-QnMsIFNhbXN1bmcsIEluZGlhLg0K
+The address ben@fluff.org is old, ben-linux@fluff.org has been in use
+for a long time, and we should fixup all the occasions of the older
+address to avoid confusion.
+
+Signed-off-by: Ben Dooks <ben-linux@fluff.org>
+---
+ arch/arm/mach-s3c2410/mach-h1940.c    |    2 +-
+ arch/arm/mach-s3c2412/mach-jive.c     |    2 +-
+ arch/arm/mach-s3c2412/mach-smdk2413.c |    6 +++---
+ arch/arm/mach-s3c2440/mach-rx3715.c   |    2 +-
+ arch/arm/mach-s3c2440/mach-smdk2440.c |    2 +-
+ arch/arm/mach-s3c2443/mach-smdk2443.c |    2 +-
+ arch/arm/mach-s3c64xx/mach-smdk6400.c |    2 +-
+ arch/arm/mach-s3c64xx/mach-smdk6410.c |    2 +-
+ 8 files changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/arch/arm/mach-s3c2410/mach-h1940.c b/arch/arm/mach-s3c2410/mach-h1940.c
+index 9531b4c..8a26fe1 100644
+--- a/arch/arm/mach-s3c2410/mach-h1940.c
++++ b/arch/arm/mach-s3c2410/mach-h1940.c
+@@ -339,7 +339,7 @@ static void __init h1940_init(void)
+ }
+ 
+ MACHINE_START(H1940, "IPAQ-H1940")
+-	/* Maintainer: Ben Dooks <ben@fluff.org> */
++	/* Maintainer: Ben Dooks <ben-linux@fluff.org> */
+ 	.phys_io	= S3C2410_PA_UART,
+ 	.io_pg_offst	= (((u32)S3C24XX_VA_UART) >> 18) & 0xfffc,
+ 	.boot_params	= S3C2410_SDRAM_PA + 0x100,
+diff --git a/arch/arm/mach-s3c2412/mach-jive.c b/arch/arm/mach-s3c2412/mach-jive.c
+index 4316018..478f4b4 100644
+--- a/arch/arm/mach-s3c2412/mach-jive.c
++++ b/arch/arm/mach-s3c2412/mach-jive.c
+@@ -674,7 +674,7 @@ static void __init jive_machine_init(void)
+ }
+ 
+ MACHINE_START(JIVE, "JIVE")
+-	/* Maintainer: Ben Dooks <ben@fluff.org> */
++	/* Maintainer: Ben Dooks <ben-linux@fluff.org> */
+ 	.phys_io	= S3C2410_PA_UART,
+ 	.io_pg_offst	= (((u32)S3C24XX_VA_UART) >> 18) & 0xfffc,
+ 	.boot_params	= S3C2410_SDRAM_PA + 0x100,
+diff --git a/arch/arm/mach-s3c2412/mach-smdk2413.c b/arch/arm/mach-s3c2412/mach-smdk2413.c
+index faddb36..ba93a35 100644
+--- a/arch/arm/mach-s3c2412/mach-smdk2413.c
++++ b/arch/arm/mach-s3c2412/mach-smdk2413.c
+@@ -150,7 +150,7 @@ static void __init smdk2413_machine_init(void)
+ }
+ 
+ MACHINE_START(S3C2413, "S3C2413")
+-	/* Maintainer: Ben Dooks <ben@fluff.org> */
++	/* Maintainer: Ben Dooks <ben-linux@fluff.org> */
+ 	.phys_io	= S3C2410_PA_UART,
+ 	.io_pg_offst	= (((u32)S3C24XX_VA_UART) >> 18) & 0xfffc,
+ 	.boot_params	= S3C2410_SDRAM_PA + 0x100,
+@@ -163,7 +163,7 @@ MACHINE_START(S3C2413, "S3C2413")
+ MACHINE_END
+ 
+ MACHINE_START(SMDK2412, "SMDK2412")
+-	/* Maintainer: Ben Dooks <ben@fluff.org> */
++	/* Maintainer: Ben Dooks <ben-linux@fluff.org> */
+ 	.phys_io	= S3C2410_PA_UART,
+ 	.io_pg_offst	= (((u32)S3C24XX_VA_UART) >> 18) & 0xfffc,
+ 	.boot_params	= S3C2410_SDRAM_PA + 0x100,
+@@ -176,7 +176,7 @@ MACHINE_START(SMDK2412, "SMDK2412")
+ MACHINE_END
+ 
+ MACHINE_START(SMDK2413, "SMDK2413")
+-	/* Maintainer: Ben Dooks <ben@fluff.org> */
++	/* Maintainer: Ben Dooks <ben-linux@fluff.org> */
+ 	.phys_io	= S3C2410_PA_UART,
+ 	.io_pg_offst	= (((u32)S3C24XX_VA_UART) >> 18) & 0xfffc,
+ 	.boot_params	= S3C2410_SDRAM_PA + 0x100,
+diff --git a/arch/arm/mach-s3c2440/mach-rx3715.c b/arch/arm/mach-s3c2440/mach-rx3715.c
+index 1e836e5..d2946de 100644
+--- a/arch/arm/mach-s3c2440/mach-rx3715.c
++++ b/arch/arm/mach-s3c2440/mach-rx3715.c
+@@ -209,7 +209,7 @@ static void __init rx3715_init_machine(void)
+ }
+ 
+ MACHINE_START(RX3715, "IPAQ-RX3715")
+-	/* Maintainer: Ben Dooks <ben@fluff.org> */
++	/* Maintainer: Ben Dooks <ben-linux@fluff.org> */
+ 	.phys_io	= S3C2410_PA_UART,
+ 	.io_pg_offst	= (((u32)S3C24XX_VA_UART) >> 18) & 0xfffc,
+ 	.boot_params	= S3C2410_SDRAM_PA + 0x100,
+diff --git a/arch/arm/mach-s3c2440/mach-smdk2440.c b/arch/arm/mach-s3c2440/mach-smdk2440.c
+index 3ac3d63..df83276 100644
+--- a/arch/arm/mach-s3c2440/mach-smdk2440.c
++++ b/arch/arm/mach-s3c2440/mach-smdk2440.c
+@@ -174,7 +174,7 @@ static void __init smdk2440_machine_init(void)
+ }
+ 
+ MACHINE_START(S3C2440, "SMDK2440")
+-	/* Maintainer: Ben Dooks <ben@fluff.org> */
++	/* Maintainer: Ben Dooks <ben-linux@fluff.org> */
+ 	.phys_io	= S3C2410_PA_UART,
+ 	.io_pg_offst	= (((u32)S3C24XX_VA_UART) >> 18) & 0xfffc,
+ 	.boot_params	= S3C2410_SDRAM_PA + 0x100,
+diff --git a/arch/arm/mach-s3c2443/mach-smdk2443.c b/arch/arm/mach-s3c2443/mach-smdk2443.c
+index e2e362b..4c863d3 100644
+--- a/arch/arm/mach-s3c2443/mach-smdk2443.c
++++ b/arch/arm/mach-s3c2443/mach-smdk2443.c
+@@ -131,7 +131,7 @@ static void __init smdk2443_machine_init(void)
+ }
+ 
+ MACHINE_START(SMDK2443, "SMDK2443")
+-	/* Maintainer: Ben Dooks <ben@fluff.org> */
++	/* Maintainer: Ben Dooks <ben-linux@fluff.org> */
+ 	.phys_io	= S3C2410_PA_UART,
+ 	.io_pg_offst	= (((u32)S3C24XX_VA_UART) >> 18) & 0xfffc,
+ 	.boot_params	= S3C2410_SDRAM_PA + 0x100,
+diff --git a/arch/arm/mach-s3c64xx/mach-smdk6400.c b/arch/arm/mach-s3c64xx/mach-smdk6400.c
+index f7b1898..5991667 100644
+--- a/arch/arm/mach-s3c64xx/mach-smdk6400.c
++++ b/arch/arm/mach-s3c64xx/mach-smdk6400.c
+@@ -84,7 +84,7 @@ static void __init smdk6400_machine_init(void)
+ }
+ 
+ MACHINE_START(SMDK6400, "SMDK6400")
+-	/* Maintainer: Ben Dooks <ben@fluff.org> */
++	/* Maintainer: Ben Dooks <ben-linux@fluff.org> */
+ 	.phys_io	= S3C_PA_UART & 0xfff00000,
+ 	.io_pg_offst	= (((u32)S3C_VA_UART) >> 18) & 0xfffc,
+ 	.boot_params	= S3C64XX_PA_SDRAM + 0x100,
+diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+index 2d5afd2..9d51455 100644
+--- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
++++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+@@ -656,7 +656,7 @@ static void __init smdk6410_machine_init(void)
+ }
+ 
+ MACHINE_START(SMDK6410, "SMDK6410")
+-	/* Maintainer: Ben Dooks <ben@fluff.org> */
++	/* Maintainer: Ben Dooks <ben-linux@fluff.org> */
+ 	.phys_io	= S3C_PA_UART & 0xfff00000,
+ 	.io_pg_offst	= (((u32)S3C_VA_UART) >> 18) & 0xfffc,
+ 	.boot_params	= S3C64XX_PA_SDRAM + 0x100,
+-- 
+1.6.3.3
