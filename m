@@ -1,12 +1,12 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH 08/15] ARM: S3C24XX: Identify S3C2416 if S3C2412/S3C2413 built in
-Date: Wed, 12 May 2010 03:35:59 +0100
-Message-ID: <1273631766-15693-8-git-send-email-ben-linux@fluff.org>
+Subject: [PATCH 04/15] ARM: SAMSUNG: Move S3C6400 PLL code to <plat/pll.h> for re-use
+Date: Wed, 12 May 2010 03:35:55 +0100
+Message-ID: <1273631766-15693-4-git-send-email-ben-linux@fluff.org>
 References: <1273631766-15693-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:60948 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:60939 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751791Ab0ELCgI (ORCPT
+	id S1751581Ab0ELCgI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Tue, 11 May 2010 22:36:08 -0400
 In-Reply-To: <1273631766-15693-1-git-send-email-ben-linux@fluff.org>
@@ -15,39 +15,125 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Ben Dooks <ben-linux@fluff.org>
 
-Extend the ARMv5 ID code to deal with S3C2416 being built with
-S3C2412/S3C2413 enabled, as these have their ID registers in a
-different place.
+The S3C6400 EPLL code matches the S3C2416 and compatible SoCs, so move
+it from mach-s3c64xx into <plat/pll.h> for easy reuse.
 
 Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/plat-s3c24xx/cpu.c |   12 ++++++++++--
- 1 files changed, 10 insertions(+), 2 deletions(-)
+ arch/arm/mach-s3c64xx/include/mach/pll.h      |   35 +---------------
+ arch/arm/plat-samsung/include/plat/pll6553x.h |   51 +++++++++++++++++++++++++
+ 2 files changed, 54 insertions(+), 32 deletions(-)
+ create mode 100644 arch/arm/plat-samsung/include/plat/pll6553x.h
 
-diff --git a/arch/arm/plat-s3c24xx/cpu.c b/arch/arm/plat-s3c24xx/cpu.c
-index 494f4f3..32db856 100644
---- a/arch/arm/plat-s3c24xx/cpu.c
-+++ b/arch/arm/plat-s3c24xx/cpu.c
-@@ -181,10 +181,18 @@ static struct map_desc s3c_iodesc[] __initdata = {
+diff --git a/arch/arm/mach-s3c64xx/include/mach/pll.h b/arch/arm/mach-s3c64xx/include/mach/pll.h
+index 90bbd72..5ef0bb6 100644
+--- a/arch/arm/mach-s3c64xx/include/mach/pll.h
++++ b/arch/arm/mach-s3c64xx/include/mach/pll.h
+@@ -20,6 +20,7 @@
+ #define S3C6400_PLL_SDIV_SHIFT	(0)
  
- static unsigned long s3c24xx_read_idcode_v5(void)
+ #include <asm/div64.h>
++#include <plat/pll6553x.h>
+ 
+ static inline unsigned long s3c6400_get_pll(unsigned long baseclk,
+ 					    u32 pllcon)
+@@ -37,38 +38,8 @@ static inline unsigned long s3c6400_get_pll(unsigned long baseclk,
+ 	return (unsigned long)fvco;
+ }
+ 
+-#define S3C6400_EPLL_MDIV_MASK	((1 << (23-16)) - 1)
+-#define S3C6400_EPLL_PDIV_MASK	((1 << (13-8)) - 1)
+-#define S3C6400_EPLL_SDIV_MASK	((1 << (2-0)) - 1)
+-#define S3C6400_EPLL_MDIV_SHIFT	(16)
+-#define S3C6400_EPLL_PDIV_SHIFT	(8)
+-#define S3C6400_EPLL_SDIV_SHIFT	(0)
+-#define S3C6400_EPLL_KDIV_MASK  (0xffff)
+-
+ static inline unsigned long s3c6400_get_epll(unsigned long baseclk)
  {
-+#if defined(CONFIG_CPU_S3C2416)
-+	/* s3c2416 is v5, with S3C24XX_GSTATUS1 instead of S3C2412_GSTATUS1 */
+-	unsigned long result;
+-	u32 epll0 = __raw_readl(S3C_EPLL_CON0);
+-	u32 epll1 = __raw_readl(S3C_EPLL_CON1);
+-	u32 mdiv, pdiv, sdiv, kdiv;
+-	u64 tmp;
+-
+-	mdiv = (epll0 >> S3C6400_EPLL_MDIV_SHIFT) & S3C6400_EPLL_MDIV_MASK;
+-	pdiv = (epll0 >> S3C6400_EPLL_PDIV_SHIFT) & S3C6400_EPLL_PDIV_MASK;
+-	sdiv = (epll0 >> S3C6400_EPLL_SDIV_SHIFT) & S3C6400_EPLL_SDIV_MASK;
+-	kdiv = epll1 & S3C6400_EPLL_KDIV_MASK;
+-
+-	/* We need to multiple baseclk by mdiv (the integer part) and kdiv
+-	 * which is in 2^16ths, so shift mdiv up (does not overflow) and
+-	 * add kdiv before multiplying. The use of tmp is to avoid any
+-	 * overflows before shifting bac down into result when multipling
+-	 * by the mdiv and kdiv pair.
+-	 */
+-
+-	tmp = baseclk;
+-	tmp *= (mdiv << 16) + kdiv;
+-	do_div(tmp, (pdiv << sdiv));
+-	result = tmp >> 16;
+-
+-	return result;
++	return s3c_get_pll6553x(baseclk, __raw_readl(S3C_EPLL_CON0),
++				__raw_readl(S3C_EPLL_CON1));
+ }
+diff --git a/arch/arm/plat-samsung/include/plat/pll6553x.h b/arch/arm/plat-samsung/include/plat/pll6553x.h
+new file mode 100644
+index 0000000..b8b7e1d
+--- /dev/null
++++ b/arch/arm/plat-samsung/include/plat/pll6553x.h
+@@ -0,0 +1,51 @@
++/* arch/arm/plat-samsung/include/plat/pll6553x.h
++ *	partially from arch/arm/mach-s3c64xx/include/mach/pll.h
++ *
++ * Copyright 2008 Openmoko, Inc.
++ * Copyright 2008 Simtec Electronics
++ *	Ben Dooks <ben@simtec.co.uk>
++ *	http://armlinux.simtec.co.uk/
++ *
++ * Samsung PLL6553x PLL code
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
-+	u32 gs = __raw_readl(S3C24XX_GSTATUS1);
++/* S3C6400 and compatible (S3C2416, etc.) EPLL code */
 +
-+	/* test for s3c2416 or similar device */
-+	if ((gs >> 16) == 0x3245)
-+		return gs;
-+#endif
++#define PLL6553X_MDIV_MASK	((1 << (23-16)) - 1)
++#define PLL6553X_PDIV_MASK	((1 << (13-8)) - 1)
++#define PLL6553X_SDIV_MASK	((1 << (2-0)) - 1)
++#define PLL6553X_MDIV_SHIFT	(16)
++#define PLL6553X_PDIV_SHIFT	(8)
++#define PLL6553X_SDIV_SHIFT	(0)
++#define PLL6553X_KDIV_MASK	(0xffff)
 +
- #if defined(CONFIG_CPU_S3C2412) || defined(CONFIG_CPU_S3C2413)
- 	return __raw_readl(S3C2412_GSTATUS1);
--#elif defined(CONFIG_CPU_S3C2416)
--	return __raw_readl(S3C24XX_GSTATUS1);
- #else
- 	return 1UL;	/* don't look like an 2400 */
- #endif
++static inline unsigned long s3c_get_pll6553x(unsigned long baseclk,
++					     u32 pll0, u32 pll1)
++{
++	unsigned long result;
++	u32 mdiv, pdiv, sdiv, kdiv;
++	u64 tmp;
++
++	mdiv = (pll0 >> PLL6553X_MDIV_SHIFT) & PLL6553X_MDIV_MASK;
++	pdiv = (pll0 >> PLL6553X_PDIV_SHIFT) & PLL6553X_PDIV_MASK;
++	sdiv = (pll0 >> PLL6553X_SDIV_SHIFT) & PLL6553X_SDIV_MASK;
++	kdiv = pll1 & PLL6553X_KDIV_MASK;
++
++	/* We need to multiple baseclk by mdiv (the integer part) and kdiv
++	 * which is in 2^16ths, so shift mdiv up (does not overflow) and
++	 * add kdiv before multiplying. The use of tmp is to avoid any
++	 * overflows before shifting bac down into result when multipling
++	 * by the mdiv and kdiv pair.
++	 */
++
++	tmp = baseclk;
++	tmp *= (mdiv << 16) + kdiv;
++	do_div(tmp, (pdiv << sdiv));
++	result = tmp >> 16;
++
++	return result;
++}
 -- 
 1.6.3.3
