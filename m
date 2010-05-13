@@ -1,11 +1,11 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 03/11] ARM: S5P6440: Remove usage of clk_arm and add clk_armclk clock
-Date: Thu, 13 May 2010 09:27:04 +0900
-Message-ID: <1273710424-14591-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 01/11] ARM: S5P6440: Register apll/mpll/epll mout clocks.
+Date: Thu, 13 May 2010 09:26:49 +0900
+Message-ID: <1273710409-14525-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:33969 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:33973 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755251Ab0EMAam (ORCPT
+	with ESMTP id S1755589Ab0EMAam (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 12 May 2010 20:30:42 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -15,94 +15,67 @@ Cc: ben-linux@fluff.org, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kge
 
 From: Thomas Abraham <thomas.ab@samsung.com>
 
-The clk_arm clock is of type 'struct clk' whereas on S5P6440,
-the arm clock is more suitable to be of type 'struct clksrc_clk'
-(since arm clock is divided version of apll clock).
-
 This patch modifies the following.
 
-1. Removes the usage of clk_arm clock (defined in plat-s5p) and
-   defines the new clock 'clk_armclk' of type 'struct clksrc_clk'.
+1. Registers the mout_apll clksrc_clk clock.
 
-2. Rearranges the assignment of clock rate for the fout_a/m/epll
-   clocks. This will help in calculating the clock rate of fclk
-   from clk_armclk clock and setup the clock rate for fout_m/epll
-   for subsequent patches which depend on it.
+2. The mout_mpll and mout_epll were registered as 'struct clk'
+   types and then their parents were setup using the s3c_set_clksrc
+   function. This patch reduces the two steps into one by registering
+   the mout_mpll and mout_epll clocks using the s3c_register_clksrc
+   function.
 
-3. Modifies the clock rate calculation of fclk to be based on
-   the newly added clk_armclk clock.
+3. As per point 2 above, the init_parents array is no longer required.
+   So the mout clocks are now put together in a new array named 'sysclks'.
+   The sysclks array will list the system level clocks and more
+   clocks will be added to it in the subsequent patches.
 
 Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5p6440/clock.c |   23 ++++++++++++++++-------
- 1 files changed, 16 insertions(+), 7 deletions(-)
+ arch/arm/mach-s5p6440/clock.c |   10 ++++------
+ 1 files changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/arch/arm/mach-s5p6440/clock.c b/arch/arm/mach-s5p6440/clock.c
-index 8bd6f15..2c6dd54 100644
+index b2672e1..3ad63f4 100644
 --- a/arch/arm/mach-s5p6440/clock.c
 +++ b/arch/arm/mach-s5p6440/clock.c
-@@ -247,6 +247,16 @@ static struct clk_ops s5p6440_clkarm_ops = {
- 	.round_rate	= s5p6440_armclk_round_rate,
+@@ -574,7 +574,7 @@ static struct clksrc_clk clksrcs[] = {
  };
  
-+static struct clksrc_clk clk_armclk = {
-+	.clk	= {
-+		.name	= "armclk",
-+		.id	= 1,
-+		.parent	= &clk_mout_apll.clk,
-+		.ops	= &s5p6440_clkarm_ops,
-+	},
-+	.reg_div	= { .reg = S5P_CLK_DIV0, .shift = 0, .size = 4 },
-+};
-+
- static struct clksrc_clk clk_dout_mpll = {
- 	.clk	= {
- 		.name	= "dout_mpll",
-@@ -569,6 +579,7 @@ static struct clksrc_clk *sysclks[] = {
+ /* Clock initialisation code */
+-static struct clksrc_clk *init_parents[] = {
++static struct clksrc_clk *sysclks[] = {
+ 	&clk_mout_apll,
  	&clk_mout_epll,
  	&clk_mout_mpll,
- 	&clk_dout_mpll,
-+	&clk_armclk,
- };
+@@ -652,17 +652,12 @@ void __init_or_cpufreq s5p6440_setup_clocks(void)
+ 	clk_h_low.rate = hclk_low;
+ 	clk_p_low.rate = pclk_low;
  
- void __init_or_cpufreq s5p6440_setup_clocks(void)
-@@ -592,8 +603,6 @@ void __init_or_cpufreq s5p6440_setup_clocks(void)
- 	clk_fout_epll.ops = &s5p6440_epll_ops;
- 
- 	/* Set S5P6440 functions for arm clock */
--	clk_arm.parent = &clk_mout_apll.clk;
--	clk_arm.ops = &s5p6440_clkarm_ops;
- 	clk_48m.enable = s5p6440_clk48m_ctrl;
- 
- 	clkdiv0 = __raw_readl(S5P_CLK_DIV0);
-@@ -610,11 +619,15 @@ void __init_or_cpufreq s5p6440_setup_clocks(void)
- 	mpll = s5p_get_pll45xx(xtal, __raw_readl(S5P_MPLL_CON), pll_4502);
- 	apll = s5p_get_pll45xx(xtal, __raw_readl(S5P_APLL_CON), pll_4502);
- 
-+	clk_fout_mpll.rate = mpll;
-+	clk_fout_epll.rate = epll;
-+	clk_fout_apll.rate = apll;
-+
- 	printk(KERN_INFO "S5P6440: PLL settings, A=%ld.%ldMHz, M=%ld.%ldMHz," \
- 			" E=%ld.%ldMHz\n",
- 			print_mhz(apll), print_mhz(mpll), print_mhz(epll));
- 
--	fclk = apll / GET_DIV(clkdiv0, S5P_CLKDIV0_ARM);
-+	fclk = clk_get_rate(&clk_armclk.clk);
- 	hclk = fclk / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK);
- 	pclk = hclk / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK);
- 
-@@ -633,10 +646,6 @@ void __init_or_cpufreq s5p6440_setup_clocks(void)
- 			print_mhz(hclk), print_mhz(hclk_low),
- 			print_mhz(pclk), print_mhz(pclk_low));
- 
--	clk_fout_mpll.rate = mpll;
--	clk_fout_epll.rate = epll;
--	clk_fout_apll.rate = apll;
+-	for (ptr = 0; ptr < ARRAY_SIZE(init_parents); ptr++)
+-		s3c_set_clksrc(init_parents[ptr], true);
 -
- 	clk_f.rate = fclk;
- 	clk_h.rate = hclk;
- 	clk_p.rate = pclk;
+ 	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
+ 		s3c_set_clksrc(&clksrcs[ptr], true);
+ }
+ 
+ static struct clk *clks[] __initdata = {
+ 	&clk_ext,
+-	&clk_mout_epll.clk,
+-	&clk_mout_mpll.clk,
+ 	&clk_dout_mpll,
+ 	&clk_iis_cd_v40,
+ 	&clk_pcm_cd,
+@@ -680,6 +675,9 @@ void __init s5p6440_register_clocks(void)
+ 	if (ret > 0)
+ 		printk(KERN_ERR "Failed to register %u clocks\n", ret);
+ 
++	for (ptr = 0; ptr < ARRAY_SIZE(sysclks); ptr++)
++		s3c_register_clksrc(sysclks[ptr], 1);
++
+ 	s3c_register_clksrc(clksrcs, ARRAY_SIZE(clksrcs));
+ 	s3c_register_clocks(init_clocks, ARRAY_SIZE(init_clocks));
+ 
 -- 
 1.6.2.5
