@@ -1,51 +1,64 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: Re: approaching last call for updatyes
-Date: Thu, 13 May 2010 13:44:02 +0300
-Message-ID: <201005131344.13949.anarsoul@gmail.com>
-References: <20100513091540.GK26401@trinity.fluff.org> <AANLkTimHifdCStUZJ_Xgyf2n5mA47Jdj2zscWNB13LDq@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: S5PC100 planning
+Date: Thu, 13 May 2010 13:11:43 +0200
+Message-ID: <006a01caf28d$13e86bb0$3bb94310$%szyprowski@samsung.com>
+References: <20100513042545.GT6684@trinity.fluff.org>
+ <006901caf283$60709930$2151cb90$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart22347960.6V0Qrmq31x";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:49272 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758539Ab0EMKpz (ORCPT
+Received: from mailout5.samsung.com ([203.254.224.35]:51001 "EHLO
+	mailout5.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758547Ab0EMLMY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 May 2010 06:45:55 -0400
-Received: by fxm6 with SMTP id 6so171385fxm.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 May 2010 03:45:53 -0700 (PDT)
-In-Reply-To: <AANLkTimHifdCStUZJ_Xgyf2n5mA47Jdj2zscWNB13LDq@mail.gmail.com>
+	Thu, 13 May 2010 07:12:24 -0400
+Received: from epmmp1 (mailout5.samsung.com [203.254.224.35])
+ by mailout1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L2C007EIV4LRD@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 13 May 2010 20:12:22 +0900 (KST)
+Received: from AMDC159 ([106.116.37.153])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L2C00CFKV4BXU@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 13 May 2010 20:12:21 +0900 (KST)
+In-reply-to: <006901caf283$60709930$2151cb90$%kim@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: christian pellegrin <chripell@gmail.com>, Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kyungmin.park@samsung.com
 
---nextPart22347960.6V0Qrmq31x
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: base64
+Hello,
 
-0JIg0YHQvtC+0LHRidC10L3QuNC4INC+0YIgMTMg0LzQsNGPIDIwMTAgMTI6Mzc6MzAg0LDQstGC
-0L7RgCBjaHJpc3RpYW4gcGVsbGVncmluINC90LDQv9C40YHQsNC7Ogo+IFRoZSBmaXggZm9yIE5B
-TkQgY2xvY2sgc3RvcCBvbiBpZGxlIGlzIG1pc3NpbmcuIFdpdGhvdXQgaXQgSSBzdWdnZXN0Cj4g
-dG8gbWFyayB0aGUgb3B0aW9uIENPTkZJR19NVERfTkFORF9TM0MyNDEwX0NMS1NUT1AgYnJva2Vu
-LgoKQ29uZmlybWVkLCBDTEtTVE9QIG9wdGlvbiBpcyBub3Qgd29ya2luZyBvbiBteSByeDE5NTAs
-IEknbSBub3QgYWJsZSB0bwpyZWFkIE5BTkQgYWZ0ZXIgcmVzdW1lIGZyb20gc3VzcGVuZCB3aXRo
-IENMS1NUT1AgZW5hYmxlZC4KClJlZ2FyZHMKVmFzaWx5Cg==
+On Thursday, May 13, 2010 12:02 PM Kukjin Kim wrote:
 
---nextPart22347960.6V0Qrmq31x
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
+> Ben Dooks wrote:
+> >
+> > I would like to get an idea of what each group involvedi n the
+> > current S5PC100 changes is planning to allow the organisation of
+> > what is going on.
+> >
+> > Firstly, I think Kukjin's clock changes are the first to be
+> > applied, followed by looking at what support exists (or is being
+> > submitted) in plat-s5p which could be used for s5pc100.
+> >
+> > Then, let's move out what is left of plat-s5pc1xx into mach-s5pc100
+> > and get rid of it (although the final removal may have to be left
+> > until the next merge window, due to time constraints).
+> >
+> > I would like to see whatever changes done grouped into sections,
+> > such as clock, machine, core, gpio.
+> 
+> I will re-submit S5PC100 clock patch which can be merged to Ben's latest
+> tree
+> without any compile error.
+> 
+> Marek, can you re-make your patches based on it?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.15 (GNU/Linux)
+Yes, I will do this soon.
 
-iEYEABECAAYFAkvr1/0ACgkQRM6pQpltKE7MbACcD9i34ikJzG6R1jYS77eJk+Fz
-vxAAoNxnx3AFR5Dp1JKd6X63j6s08yN2
-=JqZU
------END PGP SIGNATURE-----
-
---nextPart22347960.6V0Qrmq31x--
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
