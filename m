@@ -1,80 +1,40 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH] ARM: S5PC100: Modified the clock code to conform to
-	Samsung clock API.
-Date: Thu, 13 May 2010 08:28:29 +0100
-Message-ID: <20100513072829.GA27571@trinity.fluff.org>
-References: <1273713001-15028-1-git-send-email-kgene.kim@samsung.com> <005101caf268$1f852320$5e8f6960$%szyprowski@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 11/11] ARM: S5P6440: Remove redundant defines
+Date: Thu, 13 May 2010 10:06:08 +0100
+Message-ID: <20100513090608.GA5382@n2100.arm.linux.org.uk>
+References: <1273710481-14856-1-git-send-email-kgene.kim@samsung.com> <AANLkTimTm_Vxvb2xvJnVxTxUaYguFgGeaWGypzA1yjwM@mail.gmail.com> <20100513020236.GS6684@trinity.fluff.org> <AANLkTilIvm2AlZeh_1cdcgZFFL5YuJUnYiytXA2tZktB@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:44043 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755157Ab0EMH2b (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:47582 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755909Ab0EMJGn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 May 2010 03:28:31 -0400
+	Thu, 13 May 2010 05:06:43 -0400
 Content-Disposition: inline
-In-Reply-To: <005101caf268$1f852320$5e8f6960$%szyprowski@samsung.com>
+In-Reply-To: <AANLkTilIvm2AlZeh_1cdcgZFFL5YuJUnYiytXA2tZktB@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Abhilash Kesavan' <a.kesavan@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, ben-linux@fluff.org
+To: Kyungmin Park <kmpark@infradead.org>
+Cc: Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Jassi Brar <jassisinghbrar@gmail.com>, Thomas Abraham <thomas.ab@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On Thu, May 13, 2010 at 08:47:10AM +0200, Marek Szyprowski wrote:
-> Hello,
-> 
-> On Thursday, May 13, 2010 3:10 AM Kukjin Kim wrote:
-> 
-> > From: Thomas Abraham <thomas.ab@samsung.com>
-> > 
-> > Re-worked the existing clock code for Samsung's S5PC100 SoC to be in
-> > sync with new clock API.
-> > 
-> > Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> > ---
-> >  arch/arm/mach-s5pc100/Makefile                  |    2 +-
-> >  arch/arm/mach-s5pc100/clock.c                   | 1368
-> > +++++++++++++++++++++++
-> >  arch/arm/mach-s5pc100/include/mach/regs-clock.h |   71 ++
-> >  arch/arm/plat-s5p/clock.c                       |    2 +-
-> >  arch/arm/plat-s5p/include/plat/pll.h            |   22 +
-> >  arch/arm/plat-s5p/include/plat/s5p-clock.h      |    2 +
-> >  6 files changed, 1465 insertions(+), 2 deletions(-)
-> >  create mode 100755 arch/arm/mach-s5pc100/clock.c
-> >  create mode 100644 arch/arm/mach-s5pc100/include/mach/regs-clock.h
-> > 
-> > diff --git a/arch/arm/mach-s5pc100/Makefile b/arch/arm/mach-
-> > s5pc100/Makefile
-> > index 809ff10..8540509 100644
-> > --- a/arch/arm/mach-s5pc100/Makefile
-> > +++ b/arch/arm/mach-s5pc100/Makefile
-> > @@ -11,7 +11,7 @@ obj-				:=
-> > 
-> >  # Core support for S5PC100 system
-> > 
-> > -obj-$(CONFIG_CPU_S5PC100)	+= cpu.o
-> > +obj-$(CONFIG_CPU_S5PC100)	+= cpu.o clock.o
-> 
-> This currently causes a build break. 
+On Thu, May 13, 2010 at 01:54:12PM +0900, Kyungmin Park wrote:
+> On Thu, May 13, 2010 at 11:02 AM, Ben Dooks <ben-linux@fluff.org> wro=
+te:
+> > 1) It takes two lines of code, where one is sufficient.
+> >
+> > 2) You only have to look in the relevant .c file to find out the
+> > =A0 value instead of tracking down a header. This makes it easier
+> > =A0 to verify the value against the manual and easier to compare
+> > =A0 against simialr code.
+>=20
+> Then define it at c code and use the macro. I also don't like the
+> hard-coded values.
 
-would be nice to show what the build break is...
- 
-> Anyway, I will try to use this patch as a base for my s5pc100 patch
-> series.
-> 
-> > ...
-> 
-> Best regards
-> --
-> Marek Szyprowski
-> Samsung Poland R&D Center
-> 
-> 
+I'm almost with Ben on this; but we can do better to satisfy both camps=
+=2E
 
--- 
--- 
-Ben
+	.ctrlbit	=3D 1 << 2, /* CLKCON_MEM0_HCLK_NFCON */
 
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+It's now documented what the magic constant is.
