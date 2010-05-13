@@ -1,84 +1,35 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: next-samsung: acer n30/n35 updates
-Date: Thu, 13 May 2010 03:08:59 +0100
-Message-ID: <20100513020859.GJ26401@trinity.fluff.org>
-References: <20100507005050.GY2589@trinity.fluff.org> <4BE37CCA.30406@vscht.cz> <20100511010326.GC26401@trinity.fluff.org> <4BEAAB90.1000407@vscht.cz>
+Subject: S5PC100 planning
+Date: Thu, 13 May 2010 05:25:45 +0100
+Message-ID: <20100513042545.GT6684@trinity.fluff.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:53546 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:35301 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752065Ab0EMCJB (ORCPT
+	id S1750794Ab0EMEZq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 May 2010 22:09:01 -0400
+	Thu, 13 May 2010 00:25:46 -0400
 Content-Disposition: inline
-In-Reply-To: <4BEAAB90.1000407@vscht.cz>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Pinkava J." <Jiri.Pinkava@vscht.cz>
-Cc: Ben Dooks <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "christer@weinigel.se" <christer@weinigel.se>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Wed, May 12, 2010 at 03:22:24PM +0200, Pinkava J. wrote:
-> Dne 11.5.2010 03:03, Ben Dooks napsal(a):
-> > On Fri, May 07, 2010 at 04:36:58AM +0200, Pinkava J. wrote:
-> >> Dne 7.5.2010 02:50, Ben Dooks napsal(a):
-> >>> Acer n35 support has been provisonally merged into the following branch:
-> >>>
-> >>>   git://git.fluff.org/bjdooks/linux.git for-2635/acer-n35
-> >>>
-> >>> If there are any objections, then let me know, otherwise this will be
-> >>> merged into next-samsug this weekend ready to go in the next merge window.
-> >>>
-> >>> Jiri, please confirm that you've read Section 12 'Sign your work' of
-> >>> Documentation/SubmittingPatches and that you agree to the part on
-> >>> "Developer's Certificate of Origin 1.1"
-> >> I comfirming that I've read above mentioned.
-> >>
-> >> In order to be absolutely clear I must mention that patches 4-7 are based on old
-> >> patches from Christer Weinigel (author of current implementation of Samsung n30
-> >> code in kernel). Is this OK?
-> > 
-> > I'd run this past Christer if he wasn't already copied in on them.
-> 
-> I wos trying contact them before fewtimes but withought response.
+I would like to get an idea of what each group involvedi n the
+current S5PC100 changes is planning to allow the organisation of
+what is going on.
 
-So long as either direct patches are attributed to their original
-authour, or any modified patches keep some form of note about where
-they came from, it should be possible to get them merged.
- 
-> >  
-> >> >From may point of view I can agree with the part "Developer's Certificate of
-> >> Origin 1.1"
-> >>>
-> >>> The following commits are in:
-> >>>
-> >>> Pinkava J (7):
-> >>>       ARM: n30: Enable Acer n35 if Acer n30 is selected
-> >>>       ARM: n30: fix: suspended wrong USB port on Acer n35
-> >>>       ARM: n30: Add RTC platform device for Acer n30 / Acer n35
-> >>>       ARM: n35: Add support for LEDs on Acer n35
-> >>>       ARM: n35: Enable wake-up by Power button on Acer n35
-> >>>       ARM: n30: Add support for MMC card reader on Acer n30 / Acer n35
-> >>>       ARM: n30: Add support for power on/off on Acer n30 / Acer n35 MMC card reader
-> >>>
-> >>>  arch/arm/mach-s3c2410/Kconfig    |    7 ++++
-> >>>  arch/arm/mach-s3c2410/mach-n30.c |   65 +++++++++++++++++++++++++++++++++++++-
-> >>>  2 files changed, 71 insertions(+), 1 deletions(-)
-> >>>
-> >>>
-> >>
-> >> --
-> >> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> >> the body of a message to majordomo@vger.kernel.org
-> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Firstly, I think Kukjin's clock changes are the first to be
+applied, followed by looking at what support exists (or is being
+submitted) in plat-s5p which could be used for s5pc100.
 
--- 
+Then, let's move out what is left of plat-s5pc1xx into mach-s5pc100
+and get rid of it (although the final removal may have to be left
+until the next merge window, due to time constraints).
+
+I would like to see whatever changes done grouped into sections,
+such as clock, machine, core, gpio.
+
 -- 
 Ben
 
