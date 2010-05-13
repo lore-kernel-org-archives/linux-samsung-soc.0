@@ -1,11 +1,11 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v2 7/9] ARM: S5P6440: Adds Touchscreen support for S5P6440
-Date: Thu, 13 May 2010 22:07:24 +0900
-Message-ID: <1273756044-3230-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH v2 4/9] Input: s3c24xx_ts - Implements generic GPIO configuration function
+Date: Thu, 13 May 2010 22:07:14 +0900
+Message-ID: <1273756034-3131-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:52312 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:52311 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752966Ab0EMNKw (ORCPT
+	with ESMTP id S1752594Ab0EMNKw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Thu, 13 May 2010 09:10:52 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -15,95 +15,76 @@ Cc: ben-linux@fluff.org, Naveen Krishna <ch.naveen@samsung.com>, Kukjin Kim <kge
 
 From: Naveen Krishna <ch.naveen@samsung.com>
 
-This patch adds touchscreen support for S5P6440.
+This patch implements generic GPIO configuration function in Samsung
+touchscreen driver. And makes the touchscreen driver s3c24xx-ts.c
+generic to all the Samsung SoCs.
 
-Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com
+Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5p6440/Kconfig            |    2 ++
- arch/arm/mach-s5p6440/cpu.c              |    2 ++
- arch/arm/mach-s5p6440/include/mach/map.h |    3 +++
- arch/arm/mach-s5p6440/mach-smdk6440.c    |   12 ++++++++++++
- 4 files changed, 19 insertions(+), 0 deletions(-)
+ drivers/input/touchscreen/Kconfig      |    1 -
+ drivers/input/touchscreen/s3c2410_ts.c |   23 +++--------------------
+ 2 files changed, 3 insertions(+), 21 deletions(-)
 
-diff --git a/arch/arm/mach-s5p6440/Kconfig b/arch/arm/mach-s5p6440/Kconfig
-index 4c29ff8..597e1a9 100644
---- a/arch/arm/mach-s5p6440/Kconfig
-+++ b/arch/arm/mach-s5p6440/Kconfig
-@@ -15,6 +15,8 @@ config CPU_S5P6440
- config MACH_SMDK6440
- 	bool "SMDK6440"
- 	select CPU_S5P6440
-+	select SAMSUNG_DEV_TS
-+	select SAMSUNG_DEV_ADC
+diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
+index 8a8fa4d..a5dcdac 100644
+--- a/drivers/input/touchscreen/Kconfig
++++ b/drivers/input/touchscreen/Kconfig
+@@ -160,7 +160,6 @@ config TOUCHSCREEN_FUJITSU
+ config TOUCHSCREEN_S3C2410
+ 	tristate "Samsung S3C2410 touchscreen input driver"
+ 	depends on ARCH_S3C2410
+-	select S3C24XX_ADC
  	help
- 	  Machine support for the Samsung SMDK6440
+ 	  Say Y here if you have the s3c2410 touchscreen.
  
-diff --git a/arch/arm/mach-s5p6440/cpu.c b/arch/arm/mach-s5p6440/cpu.c
-index 1794131..e461955 100644
---- a/arch/arm/mach-s5p6440/cpu.c
-+++ b/arch/arm/mach-s5p6440/cpu.c
-@@ -61,6 +61,8 @@ static void s5p6440_idle(void)
- void __init s5p6440_map_io(void)
- {
- 	/* initialize any device information early */
-+	s3c_device_ts.name      = "s3c64xx-ts";
-+	s3c_device_adc.name	= "s3c64xx-adc";
- }
+diff --git a/drivers/input/touchscreen/s3c2410_ts.c b/drivers/input/touchscreen/s3c2410_ts.c
+index a2e1228..86086a4 100644
+--- a/drivers/input/touchscreen/s3c2410_ts.c
++++ b/drivers/input/touchscreen/s3c2410_ts.c
+@@ -39,8 +39,6 @@
+ #include <plat/regs-adc.h>
+ #include <plat/ts.h>
  
- void __init s5p6440_init_clocks(int xtal)
-diff --git a/arch/arm/mach-s5p6440/include/mach/map.h b/arch/arm/mach-s5p6440/include/mach/map.h
-index 8924e5a..52e7930 100644
---- a/arch/arm/mach-s5p6440/include/mach/map.h
-+++ b/arch/arm/mach-s5p6440/include/mach/map.h
-@@ -61,8 +61,11 @@
- #define S5P6440_PA_SDRAM	(0x20000000)
- #define S5P_PA_SDRAM		S5P6440_PA_SDRAM
+-#include <mach/regs-gpio.h>
+-
+ #define TSC_SLEEP  (S3C2410_ADCTSC_PULL_UP_DISABLE | S3C2410_ADCTSC_XY_PST(0))
  
-+#define S5P6440_PA_ADC		(0xF3000000)
-+
- /* compatibiltiy defines. */
- #define S3C_PA_UART		S5P6440_PA_UART
- #define S3C_PA_IIC		S5P6440_PA_IIC0
-+#define SAMSUNG_PA_ADC		S5P6440_PA_ADC
+ #define INT_DOWN	(0)
+@@ -88,21 +86,6 @@ struct s3c2410ts {
+ static struct s3c2410ts ts;
  
- #endif /* __ASM_ARCH_MAP_H */
-diff --git a/arch/arm/mach-s5p6440/mach-smdk6440.c b/arch/arm/mach-s5p6440/mach-smdk6440.c
-index 3ae88f2..177701b 100644
---- a/arch/arm/mach-s5p6440/mach-smdk6440.c
-+++ b/arch/arm/mach-s5p6440/mach-smdk6440.c
-@@ -38,6 +38,8 @@
- #include <plat/devs.h>
- #include <plat/cpu.h>
- #include <plat/pll.h>
-+#include <plat/adc.h>
-+#include <plat/ts.h>
+ /**
+- * s3c2410_ts_connect - configure gpio for s3c2410 systems
+- *
+- * Configure the GPIO for the S3C2410 system, where we have external FETs
+- * connected to the device (later systems such as the S3C2440 integrate
+- * these into the device).
+-*/
+-static inline void s3c2410_ts_connect(void)
+-{
+-	s3c2410_gpio_cfgpin(S3C2410_GPG(12), S3C2410_GPG12_XMON);
+-	s3c2410_gpio_cfgpin(S3C2410_GPG(13), S3C2410_GPG13_nXPON);
+-	s3c2410_gpio_cfgpin(S3C2410_GPG(14), S3C2410_GPG14_YMON);
+-	s3c2410_gpio_cfgpin(S3C2410_GPG(15), S3C2410_GPG15_nYPON);
+-}
+-
+-/**
+  * get_down - return the down state of the pen
+  * @data0: The data read from ADCDAT0 register.
+  * @data1: The data read from ADCDAT1 register.
+@@ -296,9 +279,9 @@ static int __devinit s3c2410ts_probe(struct platform_device *pdev)
+ 		goto err_clk;
+ 	}
  
- #define S5P6440_UCON_DEFAULT    (S3C2410_UCON_TXILEVEL |	\
- 				S3C2410_UCON_RXILEVEL |		\
-@@ -84,6 +86,14 @@ static struct s3c2410_uartcfg smdk6440_uartcfgs[] __initdata = {
- };
+-	/* Configure the touchscreen external FETs on the S3C2410 */
+-	if (!platform_get_device_id(pdev)->driver_data)
+-		s3c2410_ts_connect();
++	/* inititalise the gpio */
++	if (info->cfg_gpio)
++		info->cfg_gpio(to_platform_device(ts.dev));
  
- static struct platform_device *smdk6440_devices[] __initdata = {
-+	&s3c_device_adc,
-+	&s3c_device_ts,
-+};
-+
-+static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
-+	.delay			= 10000,
-+	.presc			= 49,
-+	.oversampling_shift	= 2,
- };
- 
- static void __init smdk6440_map_io(void)
-@@ -95,6 +105,8 @@ static void __init smdk6440_map_io(void)
- 
- static void __init smdk6440_machine_init(void)
- {
-+	s3c24xx_ts_set_platdata(&s3c_ts_platform);
-+
- 	platform_add_devices(smdk6440_devices, ARRAY_SIZE(smdk6440_devices));
- }
- 
+ 	ts.client = s3c_adc_register(pdev, s3c24xx_ts_select,
+ 				     s3c24xx_ts_conversion, 1);
 -- 
 1.6.2.5
