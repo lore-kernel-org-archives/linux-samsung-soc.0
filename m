@@ -1,65 +1,78 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH 11/11] ARM: S5P6440: Remove redundant defines
-Date: Thu, 13 May 2010 13:54:12 +0900
-Message-ID: <AANLkTilIvm2AlZeh_1cdcgZFFL5YuJUnYiytXA2tZktB@mail.gmail.com>
-References: <1273710481-14856-1-git-send-email-kgene.kim@samsung.com>
-	 <AANLkTimTm_Vxvb2xvJnVxTxUaYguFgGeaWGypzA1yjwM@mail.gmail.com>
-	 <20100513020236.GS6684@trinity.fluff.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH] ARM: S5PC100: Modified the clock code to conform to
+ Samsung clock API.
+Date: Thu, 13 May 2010 08:47:10 +0200
+Message-ID: <005101caf268$1f852320$5e8f6960$%szyprowski@samsung.com>
+References: <1273713001-15028-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:65174 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750763Ab0EMEyN convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:49463 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751570Ab0EMGry (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 May 2010 00:54:13 -0400
-Received: by vws17 with SMTP id 17so230230vws.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 May 2010 21:54:12 -0700 (PDT)
-In-Reply-To: <20100513020236.GS6684@trinity.fluff.org>
+	Thu, 13 May 2010 02:47:54 -0400
+Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L2C00FHGIVSSF@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 13 May 2010 15:47:52 +0900 (KST)
+Received: from AMDC159 ([106.116.37.153])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L2C004HSIVEE4@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 13 May 2010 15:47:52 +0900 (KST)
+In-reply-to: <1273713001-15028-1-git-send-email-kgene.kim@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Abhilash Kesavan' <a.kesavan@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, ben-linux@fluff.org
 
-On Thu, May 13, 2010 at 11:02 AM, Ben Dooks <ben-linux@fluff.org> wrote=
-:
-> On Thu, May 13, 2010 at 10:49:29AM +0900, Jassi Brar wrote:
->> On Thu, May 13, 2010 at 9:28 AM, Kukjin Kim <kgene.kim@samsung.com> =
-wrote:
->> > From: Thomas Abraham <thomas.ab@samsung.com>
->> > --- a/arch/arm/mach-s5p6440/clock.c
->> > +++ b/arch/arm/mach-s5p6440/clock.c
->> > @@ -357,121 +357,121 @@ static struct clk init_clocks_disable[] =3D=
- {
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.parent =A0 =A0 =A0 =A0 =3D &clk_hc=
-lk.clk,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.enable =A0 =A0 =A0 =A0 =3D s5p6440=
-_mem_ctrl,
->> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D S5P_CLKC=
-ON_MEM0_HCLK_NFCON,
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 2)=
-,
->> Peculiar. I have never seen defines dropped in favor of magic number=
-s.
->
-> I know it seems a little odd at first, but people seem to be clinging
-> on to writing it down in a header file and then using it once as some
-> form of high law of programming. Whilst talking with Kukjin and other=
-s
-> last year and looking at this, we came to the following conclusions
-> about single-use defines:
->
-> 1) It takes two lines of code, where one is sufficient.
->
-> 2) You only have to look in the relevant .c file to find out the
-> =A0 value instead of tracking down a header. This makes it easier
-> =A0 to verify the value against the manual and easier to compare
-> =A0 against simialr code.
+Hello,
 
-Then define it at c code and use the macro. I also don't like the
-hard-coded values.
+On Thursday, May 13, 2010 3:10 AM Kukjin Kim wrote:
 
-Thank you,
-Kyungmin Park
+> From: Thomas Abraham <thomas.ab@samsung.com>
+> 
+> Re-worked the existing clock code for Samsung's S5PC100 SoC to be in
+> sync with new clock API.
+> 
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+>  arch/arm/mach-s5pc100/Makefile                  |    2 +-
+>  arch/arm/mach-s5pc100/clock.c                   | 1368
+> +++++++++++++++++++++++
+>  arch/arm/mach-s5pc100/include/mach/regs-clock.h |   71 ++
+>  arch/arm/plat-s5p/clock.c                       |    2 +-
+>  arch/arm/plat-s5p/include/plat/pll.h            |   22 +
+>  arch/arm/plat-s5p/include/plat/s5p-clock.h      |    2 +
+>  6 files changed, 1465 insertions(+), 2 deletions(-)
+>  create mode 100755 arch/arm/mach-s5pc100/clock.c
+>  create mode 100644 arch/arm/mach-s5pc100/include/mach/regs-clock.h
+> 
+> diff --git a/arch/arm/mach-s5pc100/Makefile b/arch/arm/mach-
+> s5pc100/Makefile
+> index 809ff10..8540509 100644
+> --- a/arch/arm/mach-s5pc100/Makefile
+> +++ b/arch/arm/mach-s5pc100/Makefile
+> @@ -11,7 +11,7 @@ obj-				:=
+> 
+>  # Core support for S5PC100 system
+> 
+> -obj-$(CONFIG_CPU_S5PC100)	+= cpu.o
+> +obj-$(CONFIG_CPU_S5PC100)	+= cpu.o clock.o
+
+This currently causes a build break. 
+
+Anyway, I will try to use this patch as a base for my s5pc100 patch
+series.
+
+> ...
+
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
