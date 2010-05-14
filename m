@@ -1,181 +1,225 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v4] ARM: S5PV210: Add Ext interrupt support.
-Date: Fri, 14 May 2010 17:36:00 +0900
-Message-ID: <1273826160-17999-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH v2] ARM: S5P: Add System Timer
+Date: Fri, 14 May 2010 17:51:30 +0900
+Message-ID: <1273827090-26635-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:40794 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:44229 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758235Ab0ENIlG (ORCPT
+	with ESMTP id S1752261Ab0ENI4G (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 May 2010 04:41:06 -0400
+	Fri, 14 May 2010 04:56:06 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Pannaga Bhushan <p.bhushan@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, Jongpill Lee <boyko@samsung.com>, Jongpill Lee <boyko.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Jongpill Lee <boyko.lee@samsung.com>
+From: Jongpill Lee <boyko@samsung.com>
 
-Add support for external interrupts on v210.
+This patch addes system timer for Samsung S5P series SoCs
 
 Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
-Signed-off-by: Pannaga Bhushan <p.bhushan@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv210/Kconfig                  |    1 +
- arch/arm/mach-s5pv210/include/mach/irqs.h      |   26 +--
- arch/arm/mach-s5pv210/include/mach/regs-gpio.h |   46 +++++
- arch/arm/plat-s5p/Kconfig                      |    5 +
+ arch/arm/mach-s5p6442/include/mach/tick.h      |    6 +
+ arch/arm/mach-s5p6442/mach-smdk6442.c          |    2 +-
+ arch/arm/mach-s5pv210/include/mach/tick.h      |    6 +
+ arch/arm/mach-s5pv210/mach-smdkc110.c          |    2 +-
+ arch/arm/mach-s5pv210/mach-smdkv210.c          |    2 +-
+ arch/arm/plat-s5p/Kconfig                      |    7 +
  arch/arm/plat-s5p/Makefile                     |    1 +
- arch/arm/plat-s5p/irq-eint.c                   |  216 ++++++++++++++++++++++++
- 6 files changed, 277 insertions(+), 18 deletions(-)
- create mode 100644 arch/arm/mach-s5pv210/include/mach/regs-gpio.h
- create mode 100644 arch/arm/plat-s5p/irq-eint.c
+ arch/arm/plat-s5p/include/plat/regs-systimer.h |   75 ++++++
+ arch/arm/plat-s5p/s5p-systimer.c               |  287 ++++++++++++++++++++++++
+ arch/arm/plat-samsung/include/plat/cpu.h       |    3 +
+ 10 files changed, 388 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm/plat-s5p/include/plat/regs-systimer.h
+ create mode 100644 arch/arm/plat-s5p/s5p-systimer.c
 
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index af33a1a..c4c2a7f 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -12,6 +12,7 @@ if ARCH_S5PV210
- config CPU_S5PV210
- 	bool
- 	select PLAT_S5P
-+	select S5P_EXT_INT
+diff --git a/arch/arm/mach-s5p6442/include/mach/tick.h b/arch/arm/mach-s5p6442/include/mach/tick.h
+index e1d4cab..1795b43 100644
+--- a/arch/arm/mach-s5p6442/include/mach/tick.h
++++ b/arch/arm/mach-s5p6442/include/mach/tick.h
+@@ -21,6 +21,12 @@ static inline u32 s3c24xx_ostimer_pending(void)
+ 	return pend & (1 << (IRQ_TIMER4_VIC - S5P_IRQ_VIC0(0)));
+ }
+ 
++static inline u32 s5p_ostimer_pending(void)
++{
++	u32 pend = __raw_readl(VA_VIC0 + VIC_RAW_STATUS);
++	return pend & (1 << (IRQ_SYSTIMER - S5P_IRQ_VIC0(0)));
++}
++
+ #define TICK_MAX	(0xffffffff)
+ 
+ #endif /* __ASM_ARCH_TICK_H */
+diff --git a/arch/arm/mach-s5p6442/mach-smdk6442.c b/arch/arm/mach-s5p6442/mach-smdk6442.c
+index 0d63371..6c8728b 100644
+--- a/arch/arm/mach-s5p6442/mach-smdk6442.c
++++ b/arch/arm/mach-s5p6442/mach-smdk6442.c
+@@ -87,5 +87,5 @@ MACHINE_START(SMDK6442, "SMDK6442")
+ 	.init_irq	= s5p6442_init_irq,
+ 	.map_io		= smdk6442_map_io,
+ 	.init_machine	= smdk6442_machine_init,
+-	.timer		= &s3c24xx_timer,
++	.timer		= &s5p_systimer,
+ MACHINE_END
+diff --git a/arch/arm/mach-s5pv210/include/mach/tick.h b/arch/arm/mach-s5pv210/include/mach/tick.h
+index 7993b36..9fc5a8d 100644
+--- a/arch/arm/mach-s5pv210/include/mach/tick.h
++++ b/arch/arm/mach-s5pv210/include/mach/tick.h
+@@ -21,6 +21,12 @@ static inline u32 s3c24xx_ostimer_pending(void)
+ 	return pend & (1 << (IRQ_TIMER4_VIC - S5P_IRQ_VIC0(0)));
+ }
+ 
++static inline u32 s5p_ostimer_pending(void)
++{
++	u32 pend = __raw_readl(VA_VIC0 + VIC_RAW_STATUS);
++	return pend & (1 << (IRQ_SYSTIMER - S5P_IRQ_VIC0(0)));
++}
++
+ #define TICK_MAX	(0xffffffff)
+ 
+ #endif /* __ASM_ARCH_TICK_H */
+diff --git a/arch/arm/mach-s5pv210/mach-smdkc110.c b/arch/arm/mach-s5pv210/mach-smdkc110.c
+index ab4869d..b520817 100644
+--- a/arch/arm/mach-s5pv210/mach-smdkc110.c
++++ b/arch/arm/mach-s5pv210/mach-smdkc110.c
+@@ -94,5 +94,5 @@ MACHINE_START(SMDKC110, "SMDKC110")
+ 	.init_irq	= s5pv210_init_irq,
+ 	.map_io		= smdkc110_map_io,
+ 	.init_machine	= smdkc110_machine_init,
+-	.timer		= &s3c24xx_timer,
++	.timer		= &s5p_systimer,
+ MACHINE_END
+diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
+index a278832..2a29d47 100644
+--- a/arch/arm/mach-s5pv210/mach-smdkv210.c
++++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
+@@ -94,5 +94,5 @@ MACHINE_START(SMDKV210, "SMDKV210")
+ 	.init_irq	= s5pv210_init_irq,
+ 	.map_io		= smdkv210_map_io,
+ 	.init_machine	= smdkv210_machine_init,
+-	.timer		= &s3c24xx_timer,
++	.timer		= &s5p_systimer,
+ MACHINE_END
+diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
+index d400a6a..e152bbc 100644
+--- a/arch/arm/plat-s5p/Kconfig
++++ b/arch/arm/plat-s5p/Kconfig
+@@ -23,3 +23,10 @@ config PLAT_S5P
+ 	select SAMSUNG_IRQ_UART
  	help
- 	  Enable S5PV210 CPU support
- 
-diff --git a/arch/arm/mach-s5pv210/include/mach/irqs.h b/arch/arm/mach-s5pv210/include/mach/irqs.h
-index 62c5175..823789c 100644
---- a/arch/arm/mach-s5pv210/include/mach/irqs.h
-+++ b/arch/arm/mach-s5pv210/include/mach/irqs.h
-@@ -17,22 +17,9 @@
- 
- /* VIC0: System, DMA, Timer */
- 
--#define IRQ_EINT0		S5P_IRQ_VIC0(0)
--#define IRQ_EINT1		S5P_IRQ_VIC0(1)
--#define IRQ_EINT2		S5P_IRQ_VIC0(2)
--#define IRQ_EINT3		S5P_IRQ_VIC0(3)
--#define IRQ_EINT4		S5P_IRQ_VIC0(4)
--#define IRQ_EINT5		S5P_IRQ_VIC0(5)
--#define IRQ_EINT6		S5P_IRQ_VIC0(6)
--#define IRQ_EINT7		S5P_IRQ_VIC0(7)
--#define IRQ_EINT8		S5P_IRQ_VIC0(8)
--#define IRQ_EINT9		S5P_IRQ_VIC0(9)
--#define IRQ_EINT10		S5P_IRQ_VIC0(10)
--#define IRQ_EINT11		S5P_IRQ_VIC0(11)
--#define IRQ_EINT12		S5P_IRQ_VIC0(12)
--#define IRQ_EINT13		S5P_IRQ_VIC0(13)
--#define IRQ_EINT14		S5P_IRQ_VIC0(14)
--#define IRQ_EINT15		S5P_IRQ_VIC0(15)
-+/* Can be used for EINTs 0 to 15 */
-+#define IRQ_EINT(x)		((x) + S5P_IRQ_VIC0(0))
+ 	  Base platform code for Samsung's S5P series SoC.
 +
- #define IRQ_EINT16_31		S5P_IRQ_VIC0(16)
- #define IRQ_BATF		S5P_IRQ_VIC0(17)
- #define IRQ_MDMA		S5P_IRQ_VIC0(18)
-@@ -137,10 +124,13 @@
- #define S5P_IRQ_EINT_BASE	(IRQ_VIC_END + 1)
- 
- #define S5P_EINT(x)		((x) + S5P_IRQ_EINT_BASE)
--#define IRQ_EINT(x)		S5P_EINT(x)
-+/* Can be used for EINTs 16 to 31 */
-+#define IRQ_EINT_GRP(x)		S5P_EINT(x)
-+
-+#define EINT_MODE		S3C_GPIO_SFN(0xf)
- 
- /* Set the default NR_IRQS */
- 
--#define NR_IRQS 		(IRQ_EINT(31) + 1)
-+#define NR_IRQS			(IRQ_EINT_GRP(31) + 1)
- 
- #endif /* ASM_ARCH_IRQS_H */
-diff --git a/arch/arm/mach-s5pv210/include/mach/regs-gpio.h b/arch/arm/mach-s5pv210/include/mach/regs-gpio.h
++config S5P_SYSTIMER
++	bool
++	depends on (ARCH_S5P6442 || ARCH_S5PV210)
++	default y
++	help
++	  Support System Timer for S5P Series
+diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
+index 7f44678..dbc6595 100644
+--- a/arch/arm/plat-s5p/Makefile
++++ b/arch/arm/plat-s5p/Makefile
+@@ -17,3 +17,4 @@ obj-y				+= cpu.o
+ obj-y				+= clock.o
+ obj-y				+= irq.o
+ obj-y				+= setup-i2c0.o
++obj-$(CONFIG_S5P_SYSTIMER)	+= s5p-systimer.o
+diff --git a/arch/arm/plat-s5p/include/plat/regs-systimer.h b/arch/arm/plat-s5p/include/plat/regs-systimer.h
 new file mode 100644
-index 0000000..fe16292
+index 0000000..61f1282
 --- /dev/null
-+++ b/arch/arm/mach-s5pv210/include/mach/regs-gpio.h
-@@ -0,0 +1,46 @@
-+/* linux/arch/arm/mach-s5pv210/include/mach/regs-gpio.h
++++ b/arch/arm/plat-s5p/include/plat/regs-systimer.h
+@@ -0,0 +1,75 @@
++/* linux/arch/arm/plat-s5p/include/plat/regs-systimer.h
 + *
 + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
++ *		http://www.samsung.com/
 + *
-+ * S5PV210 - GPIO (including EINT) register definitions
++ * S5P System Timer Driver Header information
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 +*/
 +
-+#ifndef __ASM_ARCH_REGS_GPIO_H
-+#define __ASM_ARCH_REGS_GPIO_H __FILE__
++#ifndef __ASM_PLAT_REGS_SYSTIMER_H
++#define __ASM_PLAT_REGS_SYSTIMER_H __FILE__
 +
-+#include <mach/map.h>
++#define S5P_SYSTIMERREG(x)		(S5P_VA_SYSTIMER + (x))
 +
-+#define S5PV210_EINT30CON		(S5P_VA_GPIO + 0xE00)
-+#define S5P_EINT_CON(x)			(S5PV210_EINT30CON + ((x) * 0x4))
++#define S5P_SYSTIMER_TCFG		S5P_SYSTIMERREG(0x00)
++#define S5P_SYSTIMER_TCON		S5P_SYSTIMERREG(0x04)
++#define S5P_SYSTIMER_TICNTB		S5P_SYSTIMERREG(0x08)
++#define S5P_SYSTIMER_TICNTO		S5P_SYSTIMERREG(0x0c)
++#define S5P_SYSTIMER_TFCNTB		S5P_SYSTIMERREG(0x10)
++#define S5P_SYSTIMER_ICNTB		S5P_SYSTIMERREG(0x18)
++#define S5P_SYSTIMER_ICNTO		S5P_SYSTIMERREG(0x1c)
++#define S5P_SYSTIMER_INT_CSTAT		S5P_SYSTIMERREG(0x20)
 +
-+#define S5PV210_EINT30FLTCON0		(S5P_VA_GPIO + 0xE80)
-+#define S5P_EINT_FLTCON(x)		(S5PV210_EINT30FLTCON0 + ((x) * 0x4))
++/* Value for TCFG */
 +
-+#define S5PV210_EINT30MASK		(S5P_VA_GPIO + 0xF00)
-+#define S5P_EINT_MASK(x)		(S5PV210_EINT30MASK + ((x) * 0x4))
++#define S5P_SYSTIMER_SWRST		(1 << 16)
 +
-+#define S5PV210_EINT30PEND		(S5P_VA_GPIO + 0xF40)
-+#define S5P_EINT_PEND(x)		(S5PV210_EINT30PEND + ((x) * 0x4))
++#define S5P_SYSTIMER_DIV_GEN		(0 << 15)
++#define S5P_SYSTIMER_DIV_RTC		(1 << 15)
 +
-+#define eint_offset(irq)	((irq) < IRQ_EINT16_31 ? ((irq) - IRQ_EINT(0)) \
-+						: ((irq) - S5P_IRQ_EINT_BASE))
++#define S5P_SYSTIMER_TICK_INT		(0 << 14)
++#define S5P_SYSTIMER_TICK_FRA		(1 << 14)
 +
-+#define eint_irq_to_bit(irq)		(1 << (eint_offset(irq) & 0x7))
++#define S5P_SYSTIMER_TCLK_MASK		(3 << 12)
++#define S5P_SYSTIMER_TCLK_XXTI		(0 << 12)
++#define S5P_SYSTIMER_TCLK_RTC		(1 << 12)
++#define S5P_SYSTIMER_TCLK_USB		(2 << 12)
++#define S5P_SYSTIMER_TCLK_PCLK		(3 << 12)
 +
-+#define eint_conf_reg(irq)		((eint_offset(irq)) >> 3)
-+#define eint_mask_reg(irq)		((eint_offset(irq)) >> 3)
-+#define eint_pend_reg(irq)		((eint_offset(irq)) >> 3)
++#define S5P_SYSTIMER_DIV_MASK		(7 << 8)
++#define S5P_SYSTIMER_DIV_1		(0 << 8)
++#define S5P_SYSTIMER_DIV_2		(1 << 8)
++#define S5P_SYSTIMER_DIV_4		(2 << 8)
++#define S5P_SYSTIMER_DIV_8		(3 << 8)
++#define S5P_SYSTIMER_DIV_16		(4 << 8)
 +
-+/* values for S5P_EXTINT0 */
-+#define S5P_EXTINT_LOWLEV		(0x00)
-+#define S5P_EXTINT_HILEV		(0x01)
-+#define S5P_EXTINT_FALLEDGE		(0x02)
-+#define S5P_EXTINT_RISEEDGE		(0x03)
-+#define S5P_EXTINT_BOTHEDGE		(0x04)
++#define S5P_SYSTIMER_TARGET_HZ		1000
++#define S5P_SYSTIMER_PRESCALER		5
++#define S5P_SYSTIMER_PRESCALER_MASK	(0x3f << 0)
 +
-+#endif /* __ASM_ARCH_REGS_GPIO_H */
-diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-index d400a6a..7d1fc40 100644
---- a/arch/arm/plat-s5p/Kconfig
-+++ b/arch/arm/plat-s5p/Kconfig
-@@ -23,3 +23,8 @@ config PLAT_S5P
- 	select SAMSUNG_IRQ_UART
- 	help
- 	  Base platform code for Samsung's S5P series SoC.
++/* value for TCON */
 +
-+config S5P_EXT_INT
-+	bool
-+	help
-+	  Use the external interrupts (other than GPIO interrupts.)
-diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-index a7c54b3..25941a5 100644
---- a/arch/arm/plat-s5p/Makefile
-+++ b/arch/arm/plat-s5p/Makefile
-@@ -16,4 +16,5 @@ obj-y				+= dev-uart.o
- obj-y				+= cpu.o
- obj-y				+= clock.o
- obj-y				+= irq.o
-+obj-$(CONFIG_S5P_EXT_INT)	+= irq-eint.o
- obj-y				+= setup-i2c0.o
-diff --git a/arch/arm/plat-s5p/irq-eint.c b/arch/arm/plat-s5p/irq-eint.c
++#define S5P_SYSTIMER_INT_AUTO		(1 << 5)
++#define S5P_SYSTIMER_INT_IMM		(1 << 4)
++#define S5P_SYSTIMER_INT_START		(1 << 3)
++#define S5P_SYSTIMER_START		(1 << 0)
++
++/* Value for INT_CSTAT */
++
++#define S5P_SYSTIMER_INT_TWIE		(1 << 10)
++#define S5P_SYSTIMER_INT_IWIE		(1 << 9)
++#define S5P_SYSTIMER_INT_TFWIE		(1 << 8)
++#define S5P_SYSTIMER_INT_TIWIE		(1 << 7)
++#define S5P_SYSTIMER_INT_ICNTEIE	(1 << 6)
++#define S5P_SYSTIMER_INT_TCON		(1 << 5)
++#define S5P_SYSTIMER_INT_ICNTB		(1 << 4)
++#define S5P_SYSTIMER_INT_TFCNTB		(1 << 3)
++#define S5P_SYSTIMER_INT_TICNTB		(1 << 2)
++#define S5P_SYSTIMER_INT_INTCNT		(1 << 1)
++#define S5P_SYSTIMER_INT_INTENABLE	(1 << 0)
++
++#endif /* __ASM_PLAT_REGS_SYSTIMER_H */
+diff --git a/arch/arm/plat-s5p/s5p-systimer.c b/arch/arm/plat-s5p/s5p-systimer.c
 new file mode 100644
-index 0000000..040e271
+index 0000000..f0e4ec8
 --- /dev/null
-+++ b/arch/arm/plat-s5p/irq-eint.c
-@@ -0,0 +1,216 @@
-+/* linux/arch/arm/plat-s5p/irq-eint.c
++++ b/arch/arm/plat-s5p/s5p-systimer.c
+@@ -0,0 +1,287 @@
++/* linux/arch/arm/plat-s5p/s5p-systimer.c
 + *
 + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
++ *		http://www.samsung.com/
 + *
-+ * S5P - IRQ EINT support
++ * S5P System Timer
++ *
++ * Based on linux/arch/arm/plat-samsung/time.c
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
@@ -183,208 +227,291 @@ index 0000000..040e271
 +*/
 +
 +#include <linux/kernel.h>
++#include <linux/sched.h>
++#include <linux/init.h>
++#include <linux/errno.h>
 +#include <linux/interrupt.h>
 +#include <linux/irq.h>
++#include <linux/err.h>
++#include <linux/clk.h>
 +#include <linux/io.h>
-+#include <linux/sysdev.h>
-+#include <linux/gpio.h>
 +
-+#include <asm/bitops.h>
-+#include <asm/hardware/vic.h>
++#include <asm/system.h>
++#include <asm/mach-types.h>
 +
-+#include <plat/regs-irqtype.h>
++#include <asm/irq.h>
++#include <asm/mach/time.h>
 +
 +#include <mach/map.h>
++#include <mach/regs-irq.h>
++#include <mach/tick.h>
++
++#include <plat/regs-systimer.h>
++#include <plat/clock.h>
 +#include <plat/cpu.h>
-+#include <plat/pm.h>
 +
-+#include <plat/gpio-cfg.h>
-+#include <mach/regs-gpio.h>
++#include <mach/regs-clock.h>
 +
-+static inline void s5p_irq_eint_mask(unsigned int irq)
++static unsigned long timer_startval;
++static unsigned long timer_usec_ticks;
++static unsigned long timer_icnt;
++
++#define TICK_MAX		(0xffffffff)
++#define TIMER_USEC_SHIFT	16
++
++static unsigned int systimer_write_done(unsigned int value)
 +{
-+	u32 mask;
++	unsigned int cnt;
++	unsigned int tmp_reg;
 +
-+	mask = __raw_readl(S5P_EINT_MASK(eint_mask_reg(irq)));
-+	mask |= eint_irq_to_bit(irq);
-+	__raw_writel(mask, S5P_EINT_MASK(eint_mask_reg(irq)));
++	cnt = 1000;
++
++	do {
++		if (__raw_readl(S5P_SYSTIMER_INT_CSTAT) & value) {
++			tmp_reg = __raw_readl(S5P_SYSTIMER_INT_CSTAT);
++			tmp_reg |= value;
++			__raw_writel(tmp_reg , S5P_SYSTIMER_INT_CSTAT);
++
++			return 0;
++		}
++	} while (--cnt > 0);
++
++	printk(KERN_ERR "%s : %d : Timer Expired\n", __func__, value);
++
++	return -ETIME;
 +}
 +
-+static void s5p_irq_eint_unmask(unsigned int irq)
++static unsigned int s5p_systimer_write(void __iomem *reg,
++				       unsigned int value)
 +{
-+	u32 mask;
++	unsigned int int_cstat;
++	unsigned int ret = 0;
 +
-+	mask = __raw_readl(S5P_EINT_MASK(eint_mask_reg(irq)));
-+	mask &= ~(eint_irq_to_bit(irq));
-+	__raw_writel(mask, S5P_EINT_MASK(eint_mask_reg(irq)));
-+}
++	__raw_writel(value, reg);
 +
-+static inline void s5p_irq_eint_ack(unsigned int irq)
-+{
-+	__raw_writel(eint_irq_to_bit(irq), S5P_EINT_PEND(eint_pend_reg(irq)));
-+}
++	int_cstat = __raw_readl(S5P_SYSTIMER_INT_CSTAT);
 +
-+static void s5p_irq_eint_maskack(unsigned int irq)
-+{
-+	/* compiler should in-line these */
-+	s5p_irq_eint_mask(irq);
-+	s5p_irq_eint_ack(irq);
-+}
++	if (reg == S5P_SYSTIMER_TCON) {
++		if (int_cstat & S5P_SYSTIMER_INT_TWIE)
++			ret = systimer_write_done(S5P_SYSTIMER_INT_TCON);
 +
-+static int s5p_irq_eint_set_type(unsigned int irq, unsigned int type)
-+{
-+	int offs = eint_offset(irq);
-+	int shift;
-+	u32 ctrl, mask;
-+	u32 newvalue = 0;
++	} else if (reg == S5P_SYSTIMER_ICNTB) {
++		if (int_cstat & S5P_SYSTIMER_INT_IWIE)
++			ret = systimer_write_done(S5P_SYSTIMER_INT_ICNTB);
 +
-+	switch (type) {
-+	case IRQ_TYPE_NONE:
-+		printk(KERN_WARNING "No edge setting!\n");
-+		break;
++	} else if (reg == S5P_SYSTIMER_TFCNTB) {
++		if (int_cstat & S5P_SYSTIMER_INT_TFWIE)
++			ret = systimer_write_done(S5P_SYSTIMER_INT_TFCNTB);
 +
-+	case IRQ_TYPE_EDGE_RISING:
-+		newvalue = S5P_EXTINT_RISEEDGE;
-+		break;
-+
-+	case IRQ_TYPE_EDGE_FALLING:
-+		newvalue = S5P_EXTINT_RISEEDGE;
-+		break;
-+
-+	case IRQ_TYPE_EDGE_BOTH:
-+		newvalue = S5P_EXTINT_BOTHEDGE;
-+		break;
-+
-+	case IRQ_TYPE_LEVEL_LOW:
-+		newvalue = S5P_EXTINT_LOWLEV;
-+		break;
-+
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		newvalue = S5P_EXTINT_HILEV;
-+		break;
-+
-+	default:
-+		printk(KERN_ERR "No such irq type %d", type);
-+		return -EINVAL;
++	} else if (reg == S5P_SYSTIMER_TICNTB) {
++		if (int_cstat & S5P_SYSTIMER_INT_TIWIE)
++			ret = systimer_write_done(S5P_SYSTIMER_INT_TICNTB);
 +	}
 +
-+	shift = (offs & 0x7) * 4;
-+	mask = 0x7 << shift;
-+
-+	ctrl = __raw_readl(S5P_EINT_CON(eint_conf_reg(irq)));
-+	ctrl &= ~mask;
-+	ctrl |= newvalue << shift;
-+	__raw_writel(ctrl, S5P_EINT_CON(eint_conf_reg(irq)));
-+
-+	if ((0 <= offs) && (offs < 8))
-+		s3c_gpio_cfgpin(S5PV210_GPH0(offs & 0x7), EINT_MODE);
-+
-+	else if ((8 <= offs) && (offs < 16))
-+		s3c_gpio_cfgpin(S5PV210_GPH1(offs & 0x7), EINT_MODE);
-+
-+	else if ((16 <= offs) && (offs < 24))
-+		s3c_gpio_cfgpin(S5PV210_GPH2(offs & 0x7), EINT_MODE);
-+
-+	else if ((24 <= offs) && (offs < 32))
-+		s3c_gpio_cfgpin(S5PV210_GPH3(offs & 0x7), EINT_MODE);
-+
-+	else
-+		printk(KERN_ERR "No such irq number %d", offs);
-+
-+	return 0;
++	return ret;
 +}
 +
-+static struct irq_chip s5p_irq_eint = {
-+	.name		= "s5p-eint",
-+	.mask		= s5p_irq_eint_mask,
-+	.unmask		= s5p_irq_eint_unmask,
-+	.mask_ack	= s5p_irq_eint_maskack,
-+	.ack		= s5p_irq_eint_ack,
-+	.set_type	= s5p_irq_eint_set_type,
-+#ifdef CONFIG_PM
-+	.set_wake	= s3c_irqext_wake,
-+#endif
-+};
-+
-+/* s5p_irq_demux_eint
-+ *
-+ * This function demuxes the IRQ from the group0 external interrupts,
-+ * from IRQ_EINT(16) to IRQ_EINT(31). It is designed to be inlined into
-+ * the specific handlers s5p_irq_demux_eintX_Y.
++/*
++ * S5P has system timer to use as OS tick Timer.
++ * System Timer provides two distincive feature. Accurate timer which provides
++ * exact 1ms time tick at any power mode except sleep mode.
++ * interrupt interval without stopping reference tick timer.
 + */
-+static inline void s5p_irq_demux_eint(unsigned int start, unsigned int end)
++
++/*
++ * timer_mask_usec_ticks
++ *
++ * given a clock and divisor, make the value to pass into timer_ticks_to_usec
++ * to scale the ticks into usecs
++ */
++static inline unsigned long timer_mask_usec_ticks(unsigned long scaler,
++						  unsigned long pclk)
 +{
-+	u32 status;
-+	u32 mask = __raw_readl(S5P_EINT_MASK((start >> 3)));
-+	unsigned int irq;
++	unsigned long den = pclk / 1000;
 +
-+	status = __raw_readl(S5P_EINT_PEND((start >> 3)));
-+	status &= ~mask;
-+	status &= (1 << (end - start + 1)) - 1;
++	return ((1000 << TIMER_USEC_SHIFT) * scaler + (den >> 1)) / den;
++}
 +
-+	while (status) {
-+		irq = fls(status);
-+		generic_handle_irq(irq - 1 + IRQ_EINT(start));
-+		status &= ~(1 << irq);
++/*
++ * timer_ticks_to_usec
++ *
++ * convert timer ticks to usec.
++ */
++static inline unsigned long timer_ticks_to_usec(unsigned long ticks)
++{
++	unsigned long res;
++
++	res = ticks * timer_usec_ticks;
++	res += 1 << (TIMER_USEC_SHIFT - 4);	/* round up slightly */
++
++	return res >> TIMER_USEC_SHIFT;
++}
++
++/*
++ * Returns microsecond  since last clock interrupt.  Note that interrupts
++ * will have been disabled by do_gettimeoffset()
++ * IRQs are disabled before entering here from do_gettimeofday()
++ */
++static unsigned long s5p_gettimeoffset(void)
++{
++	unsigned long tdone;
++	unsigned long tval;
++	unsigned long clk_tick_totcnt;
++
++	clk_tick_totcnt = (timer_icnt + 1) * timer_startval;
++
++	/* work out how many ticks have gone since last timer interrupt */
++	tval = __raw_readl(S5P_SYSTIMER_ICNTO) * timer_startval;
++	tval += __raw_readl(S5P_SYSTIMER_TICNTO);
++
++	tdone = clk_tick_totcnt - tval;
++
++	/* check to see if there is an interrupt pending */
++	if (s5p_ostimer_pending()) {
++		/* re-read the timer, and try and fix up for the missed
++		 * interrupt. Note, the interrupt may go off before the
++		 * timer has re-loaded from wrapping.
++		 */
++
++		tval = __raw_readl(S5P_SYSTIMER_ICNTO) * timer_startval;
++		tval += __raw_readl(S5P_SYSTIMER_TICNTO);
++
++		tdone = clk_tick_totcnt - tval;
++
++		if (tval != 0)
++			tdone += clk_tick_totcnt;
 +	}
++
++	return timer_ticks_to_usec(tdone);
 +}
 +
-+static void s5p_irq_demux_eint16_31(unsigned int irq, struct irq_desc *desc)
++/*
++ * IRQ handler for the timer
++ */
++static irqreturn_t s5p_systimer_interrupt(int irq, void *dev_id)
 +{
-+	s5p_irq_demux_eint(16, 23);
-+	s5p_irq_demux_eint(24, 31);
++	unsigned int temp_cstat;
++
++	temp_cstat = __raw_readl(S5P_SYSTIMER_INT_CSTAT);
++	temp_cstat |= S5P_SYSTIMER_INT_INTCNT;
++	s5p_systimer_write(S5P_SYSTIMER_INT_CSTAT, temp_cstat);
++
++	timer_tick();
++
++	return IRQ_HANDLED;
 +}
 +
-+static inline void s5p_irq_vic_eint_mask(unsigned int irq)
-+{
-+	s5p_irq_eint_mask(irq);
-+}
-+
-+static void s5p_irq_vic_eint_unmask(unsigned int irq)
-+{
-+	s5p_irq_eint_unmask(irq);
-+}
-+
-+static inline void s5p_irq_vic_eint_ack(unsigned int irq)
-+{
-+	__raw_writel(eint_irq_to_bit(irq), S5P_EINT_PEND(eint_pend_reg(irq)));
-+}
-+
-+static void s5p_irq_vic_eint_maskack(unsigned int irq)
-+{
-+	s5p_irq_vic_eint_mask(irq);
-+	s5p_irq_vic_eint_ack(irq);
-+}
-+
-+static struct irq_chip s5p_irq_vic_eint = {
-+	.name		= "s5p_vic_eint",
-+	.mask		= s5p_irq_vic_eint_mask,
-+	.unmask		= s5p_irq_vic_eint_unmask,
-+	.mask_ack	= s5p_irq_vic_eint_maskack,
-+	.ack		= s5p_irq_vic_eint_ack,
-+	.set_type	= s5p_irq_eint_set_type,
-+#ifdef CONFIG_PM
-+	.set_wake	= s3c_irqext_wake,
-+#endif
++static struct irqaction s5p_systimer_irq = {
++	.name		= "S5P System Timer",
++	.flags		= IRQF_DISABLED | IRQF_TIMER | IRQF_IRQPOLL,
++	.handler	= s5p_systimer_interrupt,
 +};
 +
-+int __init s5p_init_irq_eint(void)
++/*
++ * Set up timer interrupt, and return the current time in seconds.
++ */
++static void s5p_systimer_setup(void)
 +{
-+	int irq;
++	unsigned long tcon;
++	unsigned long tcnt;
++	unsigned long tcfg;
++	unsigned long int_csata;
 +
-+	for (irq = IRQ_EINT(0); irq <= IRQ_EINT(15); irq++)
-+		set_irq_chip(irq, &s5p_irq_vic_eint);
++	/* clock configuration setting and enable */
++	unsigned long pclk;
++	struct clk *clk;
 +
-+	for (irq = IRQ_EINT_GRP(16); irq <= IRQ_EINT_GRP(31); irq++) {
-+		set_irq_chip(irq, &s5p_irq_eint);
-+		set_irq_handler(irq, handle_level_irq);
-+		set_irq_flags(irq, IRQF_VALID);
++	clk = clk_get(NULL, "systimer");
++	if (IS_ERR(clk))
++		panic("failed to get clock for system timer");
++
++	clk_enable(clk);
++
++	pclk = clk_get_rate(clk);
++
++	tcfg = __raw_readl(S5P_SYSTIMER_TCFG);
++	tcfg |= S5P_SYSTIMER_SWRST;
++	s5p_systimer_write(S5P_SYSTIMER_TCFG, tcfg);
++
++	tcnt = TICK_MAX;  /* default value for tcnt */
++
++	/* initialize system timer clock */
++	tcfg = __raw_readl(S5P_SYSTIMER_TCFG);
++
++	tcfg &= ~S5P_SYSTIMER_TCLK_MASK;
++	tcfg |= S5P_SYSTIMER_TCLK_PCLK;
++
++	s5p_systimer_write(S5P_SYSTIMER_TCFG, tcfg);
++
++	/* TCFG must not be changed at run-time.
++	 * If you want to change TCFG, stop timer(TCON[0] = 0)
++	 */
++
++	s5p_systimer_write(S5P_SYSTIMER_TCON, 0);
++
++	/* read the current timer configuration bits */
++	tcon = __raw_readl(S5P_SYSTIMER_TCON);
++	tcfg = __raw_readl(S5P_SYSTIMER_TCFG);
++
++	/* configure clock tick */
++	timer_usec_ticks = timer_mask_usec_ticks(S5P_SYSTIMER_PRESCALER, pclk);
++
++	tcfg &= ~S5P_SYSTIMER_TCLK_MASK;
++	tcfg |= S5P_SYSTIMER_TCLK_PCLK;
++	tcfg &= ~S5P_SYSTIMER_PRESCALER_MASK;
++	tcfg |= S5P_SYSTIMER_PRESCALER - 1;
++
++	tcnt = ((pclk / S5P_SYSTIMER_PRESCALER) / S5P_SYSTIMER_TARGET_HZ) - 1;
++
++	/* check to see if timer is within 16bit range... */
++	if (tcnt > TICK_MAX) {
++		panic("setup_timer: HZ is too small, cannot configure timer!");
++		return;
 +	}
 +
-+	set_irq_chained_handler(IRQ_EINT16_31, s5p_irq_demux_eint16_31);
-+	return 0;
++	s5p_systimer_write(S5P_SYSTIMER_TCFG, tcfg);
++
++	timer_startval = tcnt;
++	s5p_systimer_write(S5P_SYSTIMER_TICNTB, tcnt);
++
++	/* set Interrupt tick value */
++	timer_icnt = (S5P_SYSTIMER_TARGET_HZ / HZ) - 1;
++	s5p_systimer_write(S5P_SYSTIMER_ICNTB, timer_icnt);
++
++	tcon = (S5P_SYSTIMER_INT_AUTO | S5P_SYSTIMER_START
++		| S5P_SYSTIMER_INT_START);
++	s5p_systimer_write(S5P_SYSTIMER_TCON, tcon);
++
++	/* Interrupt Start and Enable */
++	int_csata = __raw_readl(S5P_SYSTIMER_INT_CSTAT);
++	int_csata |= (S5P_SYSTIMER_INT_ICNTEIE | S5P_SYSTIMER_INT_INTENABLE);
++	s5p_systimer_write(S5P_SYSTIMER_INT_CSTAT, int_csata);
 +}
 +
-+arch_initcall(s5p_init_irq_eint);
++static void __init s5p_systimer_init(void)
++{
++	s5p_systimer_setup();
++	setup_irq(IRQ_SYSTIMER, &s5p_systimer_irq);
++}
++
++struct sys_timer s5p_systimer = {
++	.init		= s5p_systimer_init,
++	.offset		= s5p_gettimeoffset,
++	.resume		= s5p_systimer_setup
++};
+diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
+index c54f318..d1ec201 100644
+--- a/arch/arm/plat-samsung/include/plat/cpu.h
++++ b/arch/arm/plat-samsung/include/plat/cpu.h
+@@ -68,6 +68,9 @@ extern void s3c24xx_init_uartdevs(char *name,
+ struct sys_timer;
+ extern struct sys_timer s3c24xx_timer;
+ 
++/* timer for s5p */
++extern struct sys_timer s5p_systimer;
++
+ /* system device classes */
+ 
+ extern struct sysdev_class s3c2410_sysclass;
 -- 
 1.6.2.5
