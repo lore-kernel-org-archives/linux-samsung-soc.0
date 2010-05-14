@@ -1,104 +1,137 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 8/9] Input: s3c24xx_ts - Adds TYPE_S5PV210 into	Samsung
- touchscreen driver
-Date: Fri, 14 May 2010 16:09:15 +0900
-Message-ID: <00a801caf334$60bae330$2230a990$%kim@samsung.com>
-References: <1273756048-3263-1-git-send-email-kgene.kim@samsung.com>
- <20100514005518.GL26401@trinity.fluff.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Subject: [PATCH v2 10/11] ARM: SAMSUNG: Remove the TYPE and replace it with a Feature
+Date: Fri, 14 May 2010 16:25:23 +0900
+Message-ID: <1273821923-17552-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:57952 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754988Ab0ENHJW (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:41618 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757230Ab0ENHbM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 May 2010 03:09:22 -0400
-Received: from epmmp2 (mailout2.samsung.com [203.254.224.25])
- by mailout1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L2E00E9MEJKQN@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 May 2010 16:09:20 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L2E00GZGEJJLP@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 May 2010 16:09:20 +0900 (KST)
-In-reply-to: <20100514005518.GL26401@trinity.fluff.org>
-Content-language: ko
+	Fri, 14 May 2010 03:31:12 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Ben Dooks' <ben-linux@fluff.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Naveen Krishna' <ch.naveen@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Naveen Krishna <ch.naveen@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Ben Dooks wrote:
-> 
-> On Thu, May 13, 2010 at 10:07:28PM +0900, Kukjin Kim wrote:
-> > From: Naveen Krishna <ch.naveen@samsung.com>
-> >
-> > This patch adds TYPE_S5PV210 to the ID table in Samsung touchscreen
-driver.
-> > So, we can configure the driver based on the IP level changes.
-> 
-> Hmm, what changes are those? Would much prefer to see the changes
-> with these additions.
-> 
-> Also, how about the 'FEAT' flags idea that was floated, it may help
-> with adding future SoCs.
+From: Naveen Krishna <ch.naveen@samsung.com>
 
-The coming 2 patches would fix these changes.
+This patch makes changes in the core files to remove the TYPE
+and replace it with a Feature bit field instead.
 
-> 
-> > Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
-> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> > ---
-> >  drivers/input/touchscreen/Kconfig      |    2 +-
-> >  drivers/input/touchscreen/s3c2410_ts.c |    2 ++
-> >  2 files changed, 3 insertions(+), 1 deletions(-)
-> >
-> > diff --git a/drivers/input/touchscreen/Kconfig
-b/drivers/input/touchscreen/Kconfig
-> > index c82c1e1..a90a5bb 100644
-> > --- a/drivers/input/touchscreen/Kconfig
-> > +++ b/drivers/input/touchscreen/Kconfig
-> > @@ -159,7 +159,7 @@ config TOUCHSCREEN_FUJITSU
-> >
-> >  config TOUCHSCREEN_S3C2410
-> >  	tristate "Samsung S3C2410 touchscreen input driver"
-> > -	depends on ARCH_S3C2410 || ARCH_S3C64XX || ARCH_S5P6440
-> > +	depends on ARCH_S3C2410 || ARCH_S3C64XX || ARCH_S5P6440 ||
-> ARCH_S5PV210
-> >  	select S3C_ADC
-> >  	help
-> >  	  Say Y here if you have the s3c2410 touchscreen.
-> > diff --git a/drivers/input/touchscreen/s3c2410_ts.c
-> b/drivers/input/touchscreen/s3c2410_ts.c
-> > index 7e7d368..8a970ea 100644
-> > --- a/drivers/input/touchscreen/s3c2410_ts.c
-> > +++ b/drivers/input/touchscreen/s3c2410_ts.c
-> > @@ -89,6 +89,7 @@ enum s3c_cpu_type {
-> >  	TYPE_S3C2410,
-> >  	TYPE_S3C2440,
-> >  	TYPE_S3C64XX,	/* S3C64XX, S5P64XX Series */
-> > +	TYPE_S5PV210,	/* S5PV210 */
-> >  };
-> >
-> >  /**
-> > @@ -418,6 +419,7 @@ static struct platform_device_id s3cts_driver_ids[] =
-{
-> >  	{ "s3c2410-ts", TYPE_S3C2410 },
-> >  	{ "s3c2440-ts", TYPE_S3C2440 },
-> >  	{ "s3c64xx-ts", TYPE_S3C64XX },
-> > +	{ "s5pv210-ts", TYPE_S5PV210 },
-> >  	{ }
-> >  };
-> >  MODULE_DEVICE_TABLE(platform, s3cts_driver_ids);
-> > --
+Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
 
+This 2 new patches which require the previous 9 patches to be applied. (0010 & 0011)
+This patch set of 9 patches contains core changes & driver changes into seperate patches.
+The 2 new patches would remove the TYPE from the core and driver file and replace it with 
+Feature field as suggested by Ben Dooks.
 
-Thanks.
+ arch/arm/mach-s3c64xx/mach-smdk6410.c   |    1 +
+ arch/arm/mach-s3c64xx/s3c6410.c         |    1 -
+ arch/arm/mach-s5p6440/cpu.c             |    1 -
+ arch/arm/mach-s5p6440/mach-smdk6440.c   |    1 +
+ arch/arm/mach-s5pv210/cpu.c             |    1 -
+ arch/arm/mach-s5pv210/mach-smdkv210.c   |    1 +
+ arch/arm/plat-samsung/dev-ts.c          |    1 +
+ arch/arm/plat-samsung/include/plat/ts.h |    1 +
+ 8 files changed, 5 insertions(+), 3 deletions(-)
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+index fb186c9..a8ead39 100644
+--- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
++++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+@@ -604,6 +604,7 @@ static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
+ 	.delay			= 10000,
+ 	.presc			= 49,
+ 	.oversampling_shift	= 2,
++	.feature		= 1 << 0,	/* HAS ADCCLRINTPNDNUP */
+ };
+ 
+ static void __init smdk6410_map_io(void)
+diff --git a/arch/arm/mach-s3c64xx/s3c6410.c b/arch/arm/mach-s3c64xx/s3c6410.c
+index 4390ecb..31e53fa 100644
+--- a/arch/arm/mach-s3c64xx/s3c6410.c
++++ b/arch/arm/mach-s3c64xx/s3c6410.c
+@@ -55,7 +55,6 @@ void __init s3c6410_map_io(void)
+ 
+ 	s3c_device_adc.name      = "s3c64xx-adc";
+ 	s3c_device_nand.name = "s3c6400-nand";
+-	s3c_device_ts.name	= "s3c64xx-ts";
+ }
+ 
+ void __init s3c6410_init_clocks(int xtal)
+diff --git a/arch/arm/mach-s5p6440/cpu.c b/arch/arm/mach-s5p6440/cpu.c
+index e461955..78c0e47 100644
+--- a/arch/arm/mach-s5p6440/cpu.c
++++ b/arch/arm/mach-s5p6440/cpu.c
+@@ -61,7 +61,6 @@ static void s5p6440_idle(void)
+ void __init s5p6440_map_io(void)
+ {
+ 	/* initialize any device information early */
+-	s3c_device_ts.name      = "s3c64xx-ts";
+ 	s3c_device_adc.name	= "s3c64xx-adc";
+ }
+ 
+diff --git a/arch/arm/mach-s5p6440/mach-smdk6440.c b/arch/arm/mach-s5p6440/mach-smdk6440.c
+index 177701b..afb53b1 100644
+--- a/arch/arm/mach-s5p6440/mach-smdk6440.c
++++ b/arch/arm/mach-s5p6440/mach-smdk6440.c
+@@ -94,6 +94,7 @@ static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
+ 	.delay			= 10000,
+ 	.presc			= 49,
+ 	.oversampling_shift	= 2,
++	.feature		= 1 << 0,	/* HAS ADCCLRINTPNDNUP */
+ };
+ 
+ static void __init smdk6440_map_io(void)
+diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
+index dd3dcca..8391342 100644
+--- a/arch/arm/mach-s5pv210/cpu.c
++++ b/arch/arm/mach-s5pv210/cpu.c
+@@ -74,7 +74,6 @@ static void s5pv210_idle(void)
+ 
+ void __init s5pv210_map_io(void)
+ {
+-	s3c_device_ts.name      = "s5pv210-ts";
+ 	s3c_device_adc.name	= "s3c64xx-adc";
+ 
+ 	iotable_init(s5pv210_iodesc, ARRAY_SIZE(s5pv210_iodesc));
+diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
+index 1440cb2..a0b0a67 100644
+--- a/arch/arm/mach-s5pv210/mach-smdkv210.c
++++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
+@@ -82,6 +82,7 @@ static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
+ 	.delay			= 10000,
+ 	.presc			= 49,
+ 	.oversampling_shift	= 2,
++	.feature		= 1 << 0,	/* HAS ADCCLRINTPNDNUP */
+ };
+ 
+ static void __init smdkv210_map_io(void)
+diff --git a/arch/arm/plat-samsung/dev-ts.c b/arch/arm/plat-samsung/dev-ts.c
+index 8d7cefb..7571691 100644
+--- a/arch/arm/plat-samsung/dev-ts.c
++++ b/arch/arm/plat-samsung/dev-ts.c
+@@ -13,6 +13,7 @@
+ 
+ #include <linux/kernel.h>
+ #include <linux/platform_device.h>
++#include <linux/slab.h>
+ 
+ #include <mach/map.h>
+ #include <mach/irqs.h>
+diff --git a/arch/arm/plat-samsung/include/plat/ts.h b/arch/arm/plat-samsung/include/plat/ts.h
+index 26fdb22..82c0eaf 100644
+--- a/arch/arm/plat-samsung/include/plat/ts.h
++++ b/arch/arm/plat-samsung/include/plat/ts.h
+@@ -14,6 +14,7 @@ struct s3c2410_ts_mach_info {
+        int             delay;
+        int             presc;
+        int             oversampling_shift;
++	int	feature;
+ 	void    (*cfg_gpio)(struct platform_device *dev);
+ };
+ 
+-- 
+1.6.2.5
