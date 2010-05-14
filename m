@@ -1,8 +1,8 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 03/15] ARM: Samsung: move driver strength gpio configuration
- helper to common dir
-Date: Fri, 14 May 2010 08:18:54 +0200
-Message-ID: <1273817946-29404-4-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 06/15] ARM: S5PC100: Move gpio support from plat-s5pc1xx to
+ mach-s5pc100
+Date: Fri, 14 May 2010 08:18:57 +0200
+Message-ID: <1273817946-29404-7-git-send-email-m.szyprowski@samsung.com>
 References: <1273817946-29404-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -10,16 +10,16 @@ Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout4.w1.samsung.com ([210.118.77.14]:56106 "EHLO
 	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754964Ab0ENGTR (ORCPT
+	with ESMTP id S1754832Ab0ENGTS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 May 2010 02:19:17 -0400
+	Fri, 14 May 2010 02:19:18 -0400
 Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
  (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
  with ESMTP id <0L2E00HXOC80TQ80@mailout4.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Fri, 14 May 2010 07:19:13 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
  by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L2E0025VC7ZLU@spt1.w1.samsung.com> for
+ 2004)) with ESMTPA id <0L2E00IK3C80TN@spt1.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Fri, 14 May 2010 07:19:12 +0100 (BST)
 In-reply-to: <1273817946-29404-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -27,314 +27,131 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
 
-Driver strength parameter can be changed not only on S5PC100 but also
-on S5PV210/S5PC110 platforms, so move the helper functions to the common
-plat-samsung directory.
+Move gpio-lib support from plat-s5pc1xx to mach-s5pc100. Only basic gpio
+functionality is now supported. Gpio interrupts are disabled temporarly
+and will be added later.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/plat-s5p/Kconfig                          |    1 +
- arch/arm/plat-s5pc1xx/Kconfig                      |    2 +-
- arch/arm/plat-s5pc1xx/Makefile                     |    1 -
- arch/arm/plat-s5pc1xx/gpio-config.c                |   62 --------------------
- .../plat-s5pc1xx/include/plat/gpio-cfg-s5pc1xx.h   |   32 ----------
- arch/arm/plat-s5pc1xx/setup-fb-24bpp.c             |    1 -
- arch/arm/plat-samsung/Kconfig                      |   12 ++--
- arch/arm/plat-samsung/gpio-config.c                |   48 +++++++++++++++
- arch/arm/plat-samsung/include/plat/gpio-cfg.h      |   30 ++++++++++
- 9 files changed, 86 insertions(+), 103 deletions(-)
- delete mode 100644 arch/arm/plat-s5pc1xx/gpio-config.c
- delete mode 100644 arch/arm/plat-s5pc1xx/include/plat/gpio-cfg-s5pc1xx.h
+ arch/arm/mach-s5pc100/Makefile                     |    2 +-
+ .../gpiolib.c => mach-s5pc100/gpio.c}              |   11 +++++++----
+ .../plat => mach-s5pc100/include/mach}/regs-gpio.h |    0
+ arch/arm/mach-s5pc100/mach-smdkc100.c              |    1 -
+ arch/arm/plat-s5pc1xx/Makefile                     |    3 +--
+ 5 files changed, 9 insertions(+), 8 deletions(-)
+ rename arch/arm/{plat-s5pc1xx/gpiolib.c => mach-s5pc100/gpio.c} (99%)
+ rename arch/arm/{plat-s5pc1xx/include/plat => mach-s5pc100/include/mach}/regs-gpio.h (100%)
 
-diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-index d400a6a..92bd756 100644
---- a/arch/arm/plat-s5p/Kconfig
-+++ b/arch/arm/plat-s5p/Kconfig
-@@ -13,6 +13,7 @@ config PLAT_S5P
- 	select NO_IOPORT
- 	select ARCH_REQUIRE_GPIOLIB
- 	select S3C_GPIO_TRACK
-+	select S5P_GPIO_DRVSTR
- 	select SAMSUNG_GPIOLIB_4BIT
- 	select S3C_GPIO_CFG_S3C64XX
- 	select S3C_GPIO_PULL_UPDOWN
-diff --git a/arch/arm/plat-s5pc1xx/Kconfig b/arch/arm/plat-s5pc1xx/Kconfig
-index c7ccdf2..79d3be7 100644
---- a/arch/arm/plat-s5pc1xx/Kconfig
-+++ b/arch/arm/plat-s5pc1xx/Kconfig
-@@ -16,9 +16,9 @@ config PLAT_S5PC1XX
- 	select SAMSUNG_IRQ_VIC_TIMER
- 	select S3C_GPIO_TRACK
- 	select S3C_GPIO_PULL_UPDOWN
-+	select S5P_GPIO_DRVSTR
- 	select S3C_GPIO_CFG_S3C24XX
- 	select S3C_GPIO_CFG_S3C64XX
--	select S5P_GPIO_CFG_S5PC1XX
- 	help
- 	  Base platform code for any Samsung S5PC1XX device
+diff --git a/arch/arm/mach-s5pc100/Makefile b/arch/arm/mach-s5pc100/Makefile
+index 809ff10..e1afdbf 100644
+--- a/arch/arm/mach-s5pc100/Makefile
++++ b/arch/arm/mach-s5pc100/Makefile
+@@ -11,7 +11,7 @@ obj-				:=
  
+ # Core support for S5PC100 system
+ 
+-obj-$(CONFIG_CPU_S5PC100)	+= cpu.o
++obj-$(CONFIG_CPU_S5PC100)	+= cpu.o gpio.o
+ 
+ # Helper and device support
+ 
+diff --git a/arch/arm/plat-s5pc1xx/gpiolib.c b/arch/arm/mach-s5pc100/gpio.c
+similarity index 99%
+rename from arch/arm/plat-s5pc1xx/gpiolib.c
+rename to arch/arm/mach-s5pc100/gpio.c
+index 5a97a8f..c8e8336 100644
+--- a/arch/arm/plat-s5pc1xx/gpiolib.c
++++ b/arch/arm/mach-s5pc100/gpio.c
+@@ -17,11 +17,11 @@
+ #include <linux/gpio.h>
+ 
+ #include <mach/map.h>
++#include <mach/regs-gpio.h>
+ 
+ #include <plat/gpio-core.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/gpio-cfg-helpers.h>
+-#include <plat/regs-gpio.h>
+ 
+ /* S5PC100 GPIO bank summary:
+  *
+@@ -61,6 +61,7 @@
+  * L3	8	4Bit	None
+  */
+ 
++#if 0
+ static int s5pc1xx_gpiolib_to_irq(struct gpio_chip *chip, unsigned int offset)
+ {
+ 	return S3C_IRQ_GPIO(chip->base + offset);
+@@ -84,7 +85,7 @@ static int s5pc1xx_gpiolib_to_eint(struct gpio_chip *chip, unsigned int offset)
+ 		return IRQ_EINT(24 + offset);
+ 	return -EINVAL;
+ }
+-
++#endif
+ static struct s3c_gpio_cfg gpio_cfg = {
+ 	.set_config	= s3c_gpio_setcfg_s3c64xx_4bit,
+ 	.set_pull	= s3c_gpio_setpull_updown,
+@@ -386,7 +387,7 @@ extern void s5pc1xx_irq_gpioint_handler(unsigned int irq, struct irq_desc *desc)
+ 
+ static __init void s5pc100_gpiolib_link(struct s3c_gpio_chip *chip)
+ {
+-
++#if 0
+ 	/* Interrupt */
+ 	if (chip->config == &gpio_cfg) {
+ 		int i, irq;
+@@ -402,6 +403,7 @@ static __init void s5pc100_gpiolib_link(struct s3c_gpio_chip *chip)
+ 		}
+ 	} else if (chip->config == &gpio_cfg_eint)
+ 		chip->chip.to_irq = s5pc1xx_gpiolib_to_eint;
++#endif
+ }
+ 
+ static __init int s5pc1xx_gpiolib_init(void)
+@@ -417,9 +419,10 @@ static __init int s5pc1xx_gpiolib_init(void)
+ 
+ 	samsung_gpiolib_add_4bit_chips(s5pc100_gpio_chips,
+ 				       ARRAY_SIZE(s5pc100_gpio_chips));
++#if 0
+ 	/* Interrupt */
+ 	set_irq_chained_handler(IRQ_GPIOINT, s5pc1xx_irq_gpioint_handler);
+-
++#endif
+ 	return 0;
+ }
+ core_initcall(s5pc1xx_gpiolib_init);
+diff --git a/arch/arm/plat-s5pc1xx/include/plat/regs-gpio.h b/arch/arm/mach-s5pc100/include/mach/regs-gpio.h
+similarity index 100%
+rename from arch/arm/plat-s5pc1xx/include/plat/regs-gpio.h
+rename to arch/arm/mach-s5pc100/include/mach/regs-gpio.h
+diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-s5pc100/mach-smdkc100.c
+index ae3c52c..bfe67db 100644
+--- a/arch/arm/mach-s5pc100/mach-smdkc100.c
++++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
+@@ -35,7 +35,6 @@
+ 
+ #include <plat/regs-serial.h>
+ #include <plat/gpio-cfg.h>
+-#include <plat/regs-gpio.h>
+ 
+ #include <plat/clock.h>
+ #include <plat/devs.h>
 diff --git a/arch/arm/plat-s5pc1xx/Makefile b/arch/arm/plat-s5pc1xx/Makefile
-index 278f268..66a8f3e 100644
+index 66a8f3e..540fca5 100644
 --- a/arch/arm/plat-s5pc1xx/Makefile
 +++ b/arch/arm/plat-s5pc1xx/Makefile
-@@ -24,7 +24,6 @@ obj-$(CONFIG_CPU_S5PC100_CLOCK)	+= s5pc100-clock.o
+@@ -13,9 +13,8 @@ obj-				:=
  
- # Device setup
+ obj-y				+= dev-uart.o
+ obj-y				+= cpu.o
+-obj-y				+= irq.o irq-gpio.o irq-eint.o
++obj-y				+= irq.o
+ obj-y				+= clock.o
+-obj-y				+= gpiolib.o
  
--obj-$(CONFIG_S5P_GPIO_CFG_S5PC1XX) += gpio-config.o
- obj-$(CONFIG_S5PC1XX_SETUP_FB_24BPP) += setup-fb-24bpp.o
- obj-$(CONFIG_S5PC1XX_SETUP_I2C0) += setup-i2c0.o
- obj-$(CONFIG_S5PC1XX_SETUP_I2C1) += setup-i2c1.o
-diff --git a/arch/arm/plat-s5pc1xx/gpio-config.c b/arch/arm/plat-s5pc1xx/gpio-config.c
-deleted file mode 100644
-index a4f67e8..0000000
---- a/arch/arm/plat-s5pc1xx/gpio-config.c
-+++ /dev/null
-@@ -1,62 +0,0 @@
--/* linux/arch/arm/plat-s5pc1xx/gpio-config.c
-- *
-- * Copyright 2009 Samsung Electronics
-- *
-- * S5PC1XX GPIO Configuration.
-- *
-- * Based on plat-s3c64xx/gpio-config.c
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#include <linux/kernel.h>
--#include <linux/module.h>
--#include <linux/gpio.h>
--#include <linux/io.h>
--
--#include <plat/gpio-core.h>
--#include <plat/gpio-cfg-s5pc1xx.h>
--
--s5p_gpio_drvstr_t s5p_gpio_get_drvstr(unsigned int pin, unsigned int off)
--{
--	struct s3c_gpio_chip *chip = s3c_gpiolib_getchip(pin);
--	void __iomem *reg;
--	int shift = off * 2;
--	u32 drvstr;
--
--	if (!chip)
--		return -EINVAL;
--
--	reg = chip->base + 0x0C;
--
--	drvstr = __raw_readl(reg);
--	drvstr = 0xffff & (0x3 << shift);
--	drvstr = drvstr >> shift;
--
--	return (__force s5p_gpio_drvstr_t)drvstr;
--}
--EXPORT_SYMBOL(s5p_gpio_get_drvstr);
--
--int s5p_gpio_set_drvstr(unsigned int pin, unsigned int off,
--			s5p_gpio_drvstr_t drvstr)
--{
--	struct s3c_gpio_chip *chip = s3c_gpiolib_getchip(pin);
--	void __iomem *reg;
--	int shift = off * 2;
--	u32 tmp;
--
--	if (!chip)
--		return -EINVAL;
--
--	reg = chip->base + 0x0C;
--
--	tmp = __raw_readl(reg);
--	tmp |= drvstr << shift;
--
--	__raw_writel(tmp, reg);
--
--	return 0;
--}
--EXPORT_SYMBOL(s5p_gpio_set_drvstr);
-diff --git a/arch/arm/plat-s5pc1xx/include/plat/gpio-cfg-s5pc1xx.h b/arch/arm/plat-s5pc1xx/include/plat/gpio-cfg-s5pc1xx.h
-deleted file mode 100644
-index 72ad59f..0000000
---- a/arch/arm/plat-s5pc1xx/include/plat/gpio-cfg-s5pc1xx.h
-+++ /dev/null
-@@ -1,32 +0,0 @@
--/* linux/arch/arm/plat-s5pc1xx/include/plat/gpio-cfg.h
-- *
-- * Copyright 2009 Samsung Electronic
-- *
-- * S5PC1XX Platform - GPIO pin configuration
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--/* This file contains the necessary definitions to get the basic gpio
-- * pin configuration done such as setting a pin to input or output or
-- * changing the pull-{up,down} configurations.
-- */
--
--#ifndef __GPIO_CFG_S5PC1XX_H
--#define __GPIO_CFG_S5PC1XX_H __FILE__
--
--typedef unsigned int __bitwise__ s5p_gpio_drvstr_t;
--
--#define S5P_GPIO_DRVSTR_LV1	0x00
--#define S5P_GPIO_DRVSTR_LV2	0x01
--#define S5P_GPIO_DRVSTR_LV3	0x10
--#define S5P_GPIO_DRVSTR_LV4	0x11
--
--extern s5p_gpio_drvstr_t s5p_gpio_get_drvstr(unsigned int pin, unsigned int off);
--
--extern int s5p_gpio_set_drvstr(unsigned int pin, unsigned int off,
--			s5p_gpio_drvstr_t drvstr);
--
--#endif /* __GPIO_CFG_S5PC1XX_H */
-diff --git a/arch/arm/plat-s5pc1xx/setup-fb-24bpp.c b/arch/arm/plat-s5pc1xx/setup-fb-24bpp.c
-index 1a63768..b02c36f 100644
---- a/arch/arm/plat-s5pc1xx/setup-fb-24bpp.c
-+++ b/arch/arm/plat-s5pc1xx/setup-fb-24bpp.c
-@@ -19,7 +19,6 @@
- #include <mach/map.h>
- #include <plat/fb.h>
- #include <plat/gpio-cfg.h>
--#include <plat/gpio-cfg-s5pc1xx.h>
+ # CPU support
  
- #define DISR_OFFSET	0x7008
- 
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 287e6f7..6ccfd60 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -90,12 +90,6 @@ config S3C_GPIO_CFG_S3C64XX
- 	  Internal configuration to enable S3C64XX style GPIO configuration
- 	  functions.
- 
--config S5P_GPIO_CFG_S5PC1XX
--	bool
--	help
--	  Internal configuration to enable S5PC1XX style GPIO configuration
--	  functions.
--
- config S3C_GPIO_PULL_UPDOWN
- 	bool
- 	help
-@@ -111,6 +105,12 @@ config S3C_GPIO_PULL_UP
- 	help
- 	  Internal configuration to enable the correct GPIO pull helper
- 
-+config S5P_GPIO_DRVSTR
-+	bool
-+	help
-+	  Internal configuration to get and set correct GPIO driver strength
-+	  helper
-+
- config SAMSUNG_GPIO_EXTRA
- 	int "Number of additional GPIO pins"
- 	default 0
-diff --git a/arch/arm/plat-samsung/gpio-config.c b/arch/arm/plat-samsung/gpio-config.c
-index 3282db3..d0e67a2 100644
---- a/arch/arm/plat-samsung/gpio-config.c
-+++ b/arch/arm/plat-samsung/gpio-config.c
-@@ -261,3 +261,51 @@ s3c_gpio_pull_t s3c_gpio_getpull_1up(struct s3c_gpio_chip *chip,
- }
- #endif /* CONFIG_S3C_GPIO_PULL_UP */
- 
-+#ifdef CONFIG_S5P_GPIO_DRVSTR
-+s5p_gpio_drvstr_t s5p_gpio_get_drvstr(unsigned int pin)
-+{
-+	struct s3c_gpio_chip *chip = s3c_gpiolib_getchip(pin);
-+	unsigned int off;
-+	void __iomem *reg;
-+	int shift;
-+	u32 drvstr;
-+
-+	if (!chip)
-+		return -EINVAL;
-+
-+	off = chip->chip.base - pin;
-+	shift = off * 2;
-+	reg = chip->base + 0x0C;
-+
-+	drvstr = __raw_readl(reg);
-+	drvstr = 0xffff & (0x3 << shift);
-+	drvstr = drvstr >> shift;
-+
-+	return (__force s5p_gpio_drvstr_t)drvstr;
-+}
-+EXPORT_SYMBOL(s5p_gpio_get_drvstr);
-+
-+int s5p_gpio_set_drvstr(unsigned int pin, s5p_gpio_drvstr_t drvstr)
-+{
-+	struct s3c_gpio_chip *chip = s3c_gpiolib_getchip(pin);
-+	unsigned int off;
-+	void __iomem *reg;
-+	int shift;
-+	u32 tmp;
-+
-+	if (!chip)
-+		return -EINVAL;
-+
-+	off = chip->chip.base - pin;
-+	shift = off * 2;
-+	reg = chip->base + 0x0C;
-+
-+	tmp = __raw_readl(reg);
-+	tmp |= drvstr << shift;
-+
-+	__raw_writel(tmp, reg);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(s5p_gpio_set_drvstr);
-+#endif	/* CONFIG_S5P_GPIO_DRVSTR */
-diff --git a/arch/arm/plat-samsung/include/plat/gpio-cfg.h b/arch/arm/plat-samsung/include/plat/gpio-cfg.h
-index 8d01e85..34efdd2 100644
---- a/arch/arm/plat-samsung/include/plat/gpio-cfg.h
-+++ b/arch/arm/plat-samsung/include/plat/gpio-cfg.h
-@@ -25,6 +25,7 @@
- #define __PLAT_GPIO_CFG_H __FILE__
- 
- typedef unsigned int __bitwise__ s3c_gpio_pull_t;
-+typedef unsigned int __bitwise__ s5p_gpio_drvstr_t;
- 
- /* forward declaration if gpio-core.h hasn't been included */
- struct s3c_gpio_chip;
-@@ -118,4 +119,33 @@ extern int s3c_gpio_setpull(unsigned int pin, s3c_gpio_pull_t pull);
- */
- extern s3c_gpio_pull_t s3c_gpio_getpull(unsigned int pin);
- 
-+/* Define values for the drvstr available for each gpio pin.
-+ *
-+ * These values control the value of the output signal driver strength,
-+ * configurable on most pins on the S5C series.
-+ */
-+#define S5P_GPIO_DRVSTR_LV1	((__force s5p_gpio_drvstr_t)0x00)
-+#define S5P_GPIO_DRVSTR_LV2	((__force s5p_gpio_drvstr_t)0x01)
-+#define S5P_GPIO_DRVSTR_LV3	((__force s5p_gpio_drvstr_t)0x10)
-+#define S5P_GPIO_DRVSTR_LV4	((__force s5p_gpio_drvstr_t)0x11)
-+
-+/**
-+ * s5c_gpio_get_drvstr() - get the driver streght value of a gpio pin
-+ * @pin: The pin number to get the settings for
-+ *
-+ * Read the driver streght value for the specified pin.
-+*/
-+extern s5p_gpio_drvstr_t s5p_gpio_get_drvstr(unsigned int pin);
-+
-+/**
-+ * s3c_gpio_set_drvstr() - set the driver streght value of a gpio pin
-+ * @pin: The pin number to configure the driver streght value
-+ * @drvstr: The new value of the driver strength
-+ *
-+ * This function sets the driver strength value for the specified pin.
-+ * It will return 0 if successfull, or a negative error code if the pin
-+ * cannot support the requested setting.
-+*/
-+extern int s5p_gpio_set_drvstr(unsigned int pin, s5p_gpio_drvstr_t drvstr);
-+
- #endif /* __PLAT_GPIO_CFG_H */
 -- 
 1.6.4
