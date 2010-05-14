@@ -1,169 +1,108 @@
-From: NAVEEN KRISHNA CHATRADHI <ch.naveen@samsung.com>
-Subject: Re: Re: Re: [PATCH v2 10/11] ARM: SAMSUNG: Remove the TYPE and replace
-	it with a Feature
-Date: Fri, 14 May 2010 09:12:32 +0000 (GMT)
-Message-ID: <18447744.46081273828351740.JavaMail.weblogic@epml22>
-Reply-To: ch.naveen@samsung.com
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH] ARM: S5P: Dynamicly numbered GPIO interrupt support
+Date: Fri, 14 May 2010 18:16:06 +0900
+Message-ID: <AANLkTineeTkf3HXjo2f0Xxn7_v7S11G5HWAGDBagspt2@mail.gmail.com>
+References: <1273826403-28976-1-git-send-email-ben-linux@fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:58994 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752317Ab0ENJMj (ORCPT
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:55409 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758684Ab0ENJQI convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 May 2010 05:12:39 -0400
-Received: from ep_ms13_bk (mailout3.samsung.com [203.254.224.33])
- by mailout1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L2E00J9WK8WTM@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 May 2010 18:12:32 +0900 (KST)
-Received: from ep_spt01 (ms13.samsung.com [203.254.225.109])
- by ms13.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L2E00MI4K8W6G@ms13.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 May 2010 18:12:32 +0900 (KST)
-Content-return: prohibited
-MIME-version: 1.0
+	Fri, 14 May 2010 05:16:08 -0400
+Received: by vws16 with SMTP id 16so716607vws.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 May 2010 02:16:06 -0700 (PDT)
+In-Reply-To: <1273826403-28976-1-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben@trinity.fluff.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "ben-linux@fluff.org" <ben-linux@fluff.org>
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-SGkgQmVuLA0KDQotLS0tLS0tIE9yaWdpbmFsIE1lc3NhZ2UgLS0tLS0tLQ0KU2VuZGVyIDogQmVu
-IERvb2tzPGJlbkB0cmluaXR5LmZsdWZmLm9yZz4gDQpEYXRlICAgOiBNYXkgMTQsIDIwMTAgMTQ6
-MDAgKEdNVCswNTowMCkNClRpdGxlICA6IFJlOiBSZTogW1BBVENIIHYyIDEwLzExXSBBUk06IFNB
-TVNVTkc6IFJlbW92ZSB0aGUgVFlQRSBhbmQgcmVwbGFjZQlpdA0KIHdpdGggYSBGZWF0dXJlDQoN
-Ck9uIEZyaSwgTWF5IDE0LCAyMDEwIGF0IDA4OjE3OjQxQU0gKzAwMDAsIE5BVkVFTiBLUklTSE5B
-IENIQVRSQURISSB3cm90ZToNCj4gSGkgQmVuLCANCj4gLS0tLS0tLSBPcmlnaW5hbCBNZXNzYWdl
-IC0tLS0tLS0NCj4gU2VuZGVyIDogQmVuIERvb2tzPGJlbkB0cmluaXR5LmZsdWZmLm9yZz4gDQo+
-IERhdGUgICA6IE1heSAxNCwgMjAxMCAxMjozOCAoR01UKzA1OjAwKQ0KPiBUaXRsZSAgOiBSZTog
-W1BBVENIIHYyIDEwLzExXSBBUk06IFNBTVNVTkc6IFJlbW92ZSB0aGUgVFlQRSBhbmQgcmVwbGFj
-ZSBpdAl3aXRoDQo+ICBhIEZlYXR1cmUNCj4gDQo+IE9uIEZyaSwgTWF5IDE0LCAyMDEwIGF0IDA0
-OjI1OjIzUE0gKzA5MDAsIEt1a2ppbiBLaW0gd3JvdGU6DQo+ID4gRnJvbTogTmF2ZWVuIEtyaXNo
-bmEgPGNoLm5hdmVlbkBzYW1zdW5nLmNvbT4NCj4gPiANCj4gPiBUaGlzIHBhdGNoIG1ha2VzIGNo
-YW5nZXMgaW4gdGhlIGNvcmUgZmlsZXMgdG8gcmVtb3ZlIHRoZSBUWVBFDQo+ID4gYW5kIHJlcGxh
-Y2UgaXQgd2l0aCBhIEZlYXR1cmUgYml0IGZpZWxkIGluc3RlYWQuDQo+IA0KPiBub3QgcXVpdGUg
-d2hhdCBJIGhhZCBpbiBtaW5kLCBJIHdhcyBqdXN0IGNvbnNpZGVyaW5nIHJlcGxhY2luZyB0aGUN
-Cj4gVFlQRV9TM0MgaW4gdGhlIGRldmljZV9pZF90YWJsZSB3aXRoIGEgZmVhdHVyZXMgZmxhZyBp
-biB0aGUgZHJpdmVyDQo+IGl0c2VsZiwgYW5kIG5vdCBhbHRlcmluZyBhbnkgb2YgdGhlIHBsYXRm
-b3JtIGRhdGEuDQo+IEFjY29yZGluZyB0byB5b3VyIGNvbW1lbnQgb24gdGhlIHByZXZpb3VzIHBh
-dGNoc2V0LCB0aGlzIHdhcyBteSANCj4gdW5kZXJzdGFuZGluZy4gIE5vdywgaWYgbXkgdW5kZXJz
-dGFuZGluZyBpcyByaWdodC4gDQo+IFlvdSBtZWFuIHRvIHNheSwga2VlcCB0aGUgdHNfZGV2aWNl
-Lm5hbWUgaW4gcGxhdCAmIFRZUEVzIGluIGRyaXZlcg0KPiBzYW1lICYgYmFzZWQgb24gdGhlIGRl
-dmljZS5uYW1lIGdpdmVuIGJ5IG1hY2hpbmUgc2V0IHRoZSBGRUFUVVJFIGJpdA0KPiBhbmQgdXNl
-IGl0LiANCj4gDQo+IEJ1dCwgV2hhdCB3b3VsZCBoYXBwZW4gaWYgdGhlIFNvQyBzdXBwb3J0cyAy
-IG9yIG1vcmUgZmVhdHVyZXMuDQo+IGxpa2Ugb25lIElSUSwgMiBUUyBJL0YsIEV0YyB0aGVuIHdl
-IG5lZWQgdG8gYWRkIG1vcmUgRmVhdHVyZSBiaXQgaXNpdC4gDQo+IGFuZCBtYWtpbmcgdGhlc2Ug
-Y2hhbmdlcyBpbiBEcml2ZXIgd291bGQgbWFrZSB0aGUgZHJpdmVyIGNvbXBsZXguDQoNCm5vdCBy
-ZWFsbHksIHRoZSBmZWF0dXJlcyBhcmVhIGEgYml0ZmllbGQgZWVhY2ggcGFydCBvZiB0aGUgZHJp
-dmVyIGNhbg0KY2hlY2sgd2hlbiBkb2luZyBhIGZ1bmN0aW9uIHRoYXQgbWF5IGJlIGNoYW5nZWQu
-DQoNCkJ5IHRoZSB3YXksIEkgZG9uJ3QgdGhpbmsgdGhlIFRTIGRyaXZlciBhY3R1YWxseSBuZWVk
-cyB0byB3b3JyeSBhIGxvdA0KYWJvdXQgd2hldGhlciBpdCBoYXMgMiBUUyBpbnRlcmZhY2VzLCBz
-aW5jZSBtb3N0IG9mIHRoYXQgd2lsbCBuZWVkIHRvDQpiZSBoYW5kbGVkIGJ5IHRoZSBBREMgbGF5
-ZXIuDQoNCkkgZ290IGV4YWN0bHkgd2hhdCB5b3UgbWVhbiAmIGkgZmVlbCB0aGUgbWFpbiBwcm9i
-bGVtIGFyYWlzZWQgDQpieSBrZWVwaW5nIHRoZSB0c19pbmZvIHN0cnVjdHVyZSBpbiBoZWFkZXIg
-ZmlsZSBpbiBwbGF0LXNhbXN1bmcuIA0KDQpJbiBteSBhcHByb2FjaCwgVGhvdWdoIGkgYWRkZWQg
-YW4gaW5lZ2VyIGZpZWxkIGluIHRoYXQgc29jIHNwZWNpZmljIA0Kc3RydWN0IHdlIHIgcG9wdWxh
-dGluZyBiYXNlZCBvbiB0aGUgbWFjaGluZSwgdGhpcyB3YXkgaXQgYmVjb21lcyBhIA0KbWFjaGlu
-ZSBzcGVjaWZpYy4gV2Ugc2hvdWxkIGhhdmUgdGhhdCBoZWFkZXIgZmlsZSBpbiByZXNwZWN0aXZl
-IG1hY2hpbmVzLg0KDQpTbywgSG93IGRvIHdlIHByb2NlZWQgQmVuLg0KIA0KPiBJbnN0ZWFkIGkg
-YWRkZWQgYSBmZWF0dXJlIGZpZWxkIGluIHRoZSBJUF9JbmZvIHN0cnVjdHVyZSBhbmQgZW5hYmxp
-bmcgaXQgDQo+IGJhc2VkIG9uIE1hY2hpbmUuDQo+DQo+IFNvbWUgbWlzdW5kZXJzdGFuZGluZywg
-Q291bGQgeW91IHBsZWFzZSBlbGxvYm9yYXRlLiANCj4gDQo+IE5vdGUsIHBsYXRmb3JtIGRhdGEg
-cmVhbGx5IHNob3VsZCBiZSBmb3IgdGhlIHBlci1ib2FyZCBpbmZvcm1hdGlvbg0KPiBub3QgZm9y
-IHNvYyBpbmZvLi4uIEknbSBzb3J0IG9mIHNvcnJ5IG5vdyB0aGF0IHdlIGVuZGVkIHVwIHBhc3Np
-bmcNCj4gYSBwaWxlIG9mIHdoYXQgSSBub3cgYmVsaXZlIHRvIGJlIFNvQyBzcGVjaWZpYyBkYXRh
-IGZvciB0aGUgU0RIQ0kNCj4gYmxvY2sgdmlhIHRoZSBwbGF0Zm9ybS1kYXRhLCBpdCBvbmx5IG1h
-a2VzIGxpZmUgZGlmZmljdWx0IGZvciBldmVyeW9uZQ0KPiBlbHNlLg0KPiAgDQo+ID4gU2lnbmVk
-LW9mZi1ieTogTmF2ZWVuIEtyaXNobmEgQ2ggPGNoLm5hdmVlbkBzYW1zdW5nLmNvbT4NCj4gPiBT
-aWduZWQtb2ZmLWJ5OiBLdWtqaW4gS2ltIDxrZ2VuZS5raW1Ac2Ftc3VuZy5jb20+DQo+ID4gLS0t
-DQo+ID4gDQo+ID4gVGhpcyAyIG5ldyBwYXRjaGVzIHdoaWNoIHJlcXVpcmUgdGhlIHByZXZpb3Vz
-IDkgcGF0Y2hlcyB0byBiZSBhcHBsaWVkLiAoMDAxMCAmIDAwMTEpDQo+ID4gVGhpcyBwYXRjaCBz
-ZXQgb2YgOSBwYXRjaGVzIGNvbnRhaW5zIGNvcmUgY2hhbmdlcyAmIGRyaXZlciBjaGFuZ2VzIGlu
-dG8gc2VwZXJhdGUgcGF0Y2hlcy4NCj4gPiBUaGUgMiBuZXcgcGF0Y2hlcyB3b3VsZCByZW1vdmUg
-dGhlIFRZUEUgZnJvbSB0aGUgY29yZSBhbmQgZHJpdmVyIGZpbGUgYW5kIHJlcGxhY2UgaXQgd2l0
-aCANCj4gPiBGZWF0dXJlIGZpZWxkIGFzIHN1Z2dlc3RlZCBieSBCZW4gRG9va3MuDQo+ID4gDQo+
-ID4gIGFyY2gvYXJtL21hY2gtczNjNjR4eC9tYWNoLXNtZGs2NDEwLmMgICB8ICAgIDEgKw0KPiA+
-ICBhcmNoL2FybS9tYWNoLXMzYzY0eHgvczNjNjQxMC5jICAgICAgICAgfCAgICAxIC0NCj4gPiAg
-YXJjaC9hcm0vbWFjaC1zNXA2NDQwL2NwdS5jICAgICAgICAgICAgIHwgICAgMSAtDQo+ID4gIGFy
-Y2gvYXJtL21hY2gtczVwNjQ0MC9tYWNoLXNtZGs2NDQwLmMgICB8ICAgIDEgKw0KPiA+ICBhcmNo
-L2FybS9tYWNoLXM1cHYyMTAvY3B1LmMgICAgICAgICAgICAgfCAgICAxIC0NCj4gPiAgYXJjaC9h
-cm0vbWFjaC1zNXB2MjEwL21hY2gtc21ka3YyMTAuYyAgIHwgICAgMSArDQo+ID4gIGFyY2gvYXJt
-L3BsYXQtc2Ftc3VuZy9kZXYtdHMuYyAgICAgICAgICB8ICAgIDEgKw0KPiA+ICBhcmNoL2FybS9w
-bGF0LXNhbXN1bmcvaW5jbHVkZS9wbGF0L3RzLmggfCAgICAxICsNCj4gPiAgOCBmaWxlcyBjaGFu
-Z2VkLCA1IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+ID4gDQo+ID4gZGlmZiAtLWdp
-dCBhL2FyY2gvYXJtL21hY2gtczNjNjR4eC9tYWNoLXNtZGs2NDEwLmMgYi9hcmNoL2FybS9tYWNo
-LXMzYzY0eHgvbWFjaC1zbWRrNjQxMC5jDQo+ID4gaW5kZXggZmIxODZjOS4uYThlYWQzOSAxMDA2
-NDQNCj4gPiAtLS0gYS9hcmNoL2FybS9tYWNoLXMzYzY0eHgvbWFjaC1zbWRrNjQxMC5jDQo+ID4g
-KysrIGIvYXJjaC9hcm0vbWFjaC1zM2M2NHh4L21hY2gtc21kazY0MTAuYw0KPiA+IEBAIC02MDQs
-NiArNjA0LDcgQEAgc3RhdGljIHN0cnVjdCBzM2MyNDEwX3RzX21hY2hfaW5mbyBzM2NfdHNfcGxh
-dGZvcm0gX19pbml0ZGF0YSA9IHsNCj4gPiAgCS5kZWxheQkJCT0gMTAwMDAsDQo+ID4gIAkucHJl
-c2MJCQk9IDQ5LA0KPiA+ICAJLm92ZXJzYW1wbGluZ19zaGlmdAk9IDIsDQo+ID4gKwkuZmVhdHVy
-ZQkJPSAxIDw8IDAsCS8qIEhBUyBBRENDTFJJTlRQTkROVVAgKi8NCj4gPiAgfTsNCj4gPiAgDQo+
-ID4gIHN0YXRpYyB2b2lkIF9faW5pdCBzbWRrNjQxMF9tYXBfaW8odm9pZCkNCj4gPiBkaWZmIC0t
-Z2l0IGEvYXJjaC9hcm0vbWFjaC1zM2M2NHh4L3MzYzY0MTAuYyBiL2FyY2gvYXJtL21hY2gtczNj
-NjR4eC9zM2M2NDEwLmMNCj4gPiBpbmRleCA0MzkwZWNiLi4zMWU1M2ZhIDEwMDY0NA0KPiA+IC0t
-LSBhL2FyY2gvYXJtL21hY2gtczNjNjR4eC9zM2M2NDEwLmMNCj4gPiArKysgYi9hcmNoL2FybS9t
-YWNoLXMzYzY0eHgvczNjNjQxMC5jDQo+ID4gQEAgLTU1LDcgKzU1LDYgQEAgdm9pZCBfX2luaXQg
-czNjNjQxMF9tYXBfaW8odm9pZCkNCj4gPiAgDQo+ID4gIAlzM2NfZGV2aWNlX2FkYy5uYW1lICAg
-ICAgPSAiczNjNjR4eC1hZGMiOw0KPiA+ICAJczNjX2RldmljZV9uYW5kLm5hbWUgPSAiczNjNjQw
-MC1uYW5kIjsNCj4gPiAtCXMzY19kZXZpY2VfdHMubmFtZQk9ICJzM2M2NHh4LXRzIjsNCj4gPiAg
-fQ0KPiA+ICANCj4gPiAgdm9pZCBfX2luaXQgczNjNjQxMF9pbml0X2Nsb2NrcyhpbnQgeHRhbCkN
-Cj4gPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1zNXA2NDQwL2NwdS5jIGIvYXJjaC9hcm0v
-bWFjaC1zNXA2NDQwL2NwdS5jDQo+ID4gaW5kZXggZTQ2MTk1NS4uNzhjMGU0NyAxMDA2NDQNCj4g
-PiAtLS0gYS9hcmNoL2FybS9tYWNoLXM1cDY0NDAvY3B1LmMNCj4gPiArKysgYi9hcmNoL2FybS9t
-YWNoLXM1cDY0NDAvY3B1LmMNCj4gPiBAQCAtNjEsNyArNjEsNiBAQCBzdGF0aWMgdm9pZCBzNXA2
-NDQwX2lkbGUodm9pZCkNCj4gPiAgdm9pZCBfX2luaXQgczVwNjQ0MF9tYXBfaW8odm9pZCkNCj4g
-PiAgew0KPiA+ICAJLyogaW5pdGlhbGl6ZSBhbnkgZGV2aWNlIGluZm9ybWF0aW9uIGVhcmx5ICov
-DQo+ID4gLQlzM2NfZGV2aWNlX3RzLm5hbWUgICAgICA9ICJzM2M2NHh4LXRzIjsNCj4gPiAgCXMz
-Y19kZXZpY2VfYWRjLm5hbWUJPSAiczNjNjR4eC1hZGMiOw0KPiA+ICB9DQo+ID4gIA0KPiA+IGRp
-ZmYgLS1naXQgYS9hcmNoL2FybS9tYWNoLXM1cDY0NDAvbWFjaC1zbWRrNjQ0MC5jIGIvYXJjaC9h
-cm0vbWFjaC1zNXA2NDQwL21hY2gtc21kazY0NDAuYw0KPiA+IGluZGV4IDE3NzcwMWIuLmFmYjUz
-YjEgMTAwNjQ0DQo+ID4gLS0tIGEvYXJjaC9hcm0vbWFjaC1zNXA2NDQwL21hY2gtc21kazY0NDAu
-Yw0KPiA+ICsrKyBiL2FyY2gvYXJtL21hY2gtczVwNjQ0MC9tYWNoLXNtZGs2NDQwLmMNCj4gPiBA
-QCAtOTQsNiArOTQsNyBAQCBzdGF0aWMgc3RydWN0IHMzYzI0MTBfdHNfbWFjaF9pbmZvIHMzY190
-c19wbGF0Zm9ybSBfX2luaXRkYXRhID0gew0KPiA+ICAJLmRlbGF5CQkJPSAxMDAwMCwNCj4gPiAg
-CS5wcmVzYwkJCT0gNDksDQo+ID4gIAkub3ZlcnNhbXBsaW5nX3NoaWZ0CT0gMiwNCj4gPiArCS5m
-ZWF0dXJlCQk9IDEgPDwgMCwJLyogSEFTIEFEQ0NMUklOVFBORE5VUCAqLw0KPiA+ICB9Ow0KPiA+
-ICANCj4gPiAgc3RhdGljIHZvaWQgX19pbml0IHNtZGs2NDQwX21hcF9pbyh2b2lkKQ0KPiA+IGRp
-ZmYgLS1naXQgYS9hcmNoL2FybS9tYWNoLXM1cHYyMTAvY3B1LmMgYi9hcmNoL2FybS9tYWNoLXM1
-cHYyMTAvY3B1LmMNCj4gPiBpbmRleCBkZDNkY2NhLi44MzkxMzQyIDEwMDY0NA0KPiA+IC0tLSBh
-L2FyY2gvYXJtL21hY2gtczVwdjIxMC9jcHUuYw0KPiA+ICsrKyBiL2FyY2gvYXJtL21hY2gtczVw
-djIxMC9jcHUuYw0KPiA+IEBAIC03NCw3ICs3NCw2IEBAIHN0YXRpYyB2b2lkIHM1cHYyMTBfaWRs
-ZSh2b2lkKQ0KPiA+ICANCj4gPiAgdm9pZCBfX2luaXQgczVwdjIxMF9tYXBfaW8odm9pZCkNCj4g
-PiAgew0KPiA+IC0JczNjX2RldmljZV90cy5uYW1lICAgICAgPSAiczVwdjIxMC10cyI7DQo+ID4g
-IAlzM2NfZGV2aWNlX2FkYy5uYW1lCT0gInMzYzY0eHgtYWRjIjsNCj4gPiAgDQo+ID4gIAlpb3Rh
-YmxlX2luaXQoczVwdjIxMF9pb2Rlc2MsIEFSUkFZX1NJWkUoczVwdjIxMF9pb2Rlc2MpKTsNCj4g
-PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1zNXB2MjEwL21hY2gtc21ka3YyMTAuYyBiL2Fy
-Y2gvYXJtL21hY2gtczVwdjIxMC9tYWNoLXNtZGt2MjEwLmMNCj4gPiBpbmRleCAxNDQwY2IyLi5h
-MGIwYTY3IDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gvYXJtL21hY2gtczVwdjIxMC9tYWNoLXNtZGt2
-MjEwLmMNCj4gPiArKysgYi9hcmNoL2FybS9tYWNoLXM1cHYyMTAvbWFjaC1zbWRrdjIxMC5jDQo+
-ID4gQEAgLTgyLDYgKzgyLDcgQEAgc3RhdGljIHN0cnVjdCBzM2MyNDEwX3RzX21hY2hfaW5mbyBz
-M2NfdHNfcGxhdGZvcm0gX19pbml0ZGF0YSA9IHsNCj4gPiAgCS5kZWxheQkJCT0gMTAwMDAsDQo+
-ID4gIAkucHJlc2MJCQk9IDQ5LA0KPiA+ICAJLm92ZXJzYW1wbGluZ19zaGlmdAk9IDIsDQo+ID4g
-KwkuZmVhdHVyZQkJPSAxIDw8IDAsCS8qIEhBUyBBRENDTFJJTlRQTkROVVAgKi8NCj4gPiAgfTsN
-Cj4gPiAgDQo+ID4gIHN0YXRpYyB2b2lkIF9faW5pdCBzbWRrdjIxMF9tYXBfaW8odm9pZCkNCj4g
-PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vcGxhdC1zYW1zdW5nL2Rldi10cy5jIGIvYXJjaC9hcm0v
-cGxhdC1zYW1zdW5nL2Rldi10cy5jDQo+ID4gaW5kZXggOGQ3Y2VmYi4uNzU3MTY5MSAxMDA2NDQN
-Cj4gPiAtLS0gYS9hcmNoL2FybS9wbGF0LXNhbXN1bmcvZGV2LXRzLmMNCj4gPiArKysgYi9hcmNo
-L2FybS9wbGF0LXNhbXN1bmcvZGV2LXRzLmMNCj4gPiBAQCAtMTMsNiArMTMsNyBAQA0KPiA+ICAN
-Cj4gPiAgI2luY2x1ZGUgPGxpbnV4L2tlcm5lbC5oPg0KPiA+ICAjaW5jbHVkZSA8bGludXgvcGxh
-dGZvcm1fZGV2aWNlLmg+DQo+ID4gKyNpbmNsdWRlIDxsaW51eC9zbGFiLmg+DQo+ID4gIA0KPiA+
-ICAjaW5jbHVkZSA8bWFjaC9tYXAuaD4NCj4gPiAgI2luY2x1ZGUgPG1hY2gvaXJxcy5oPg0KPiA+
-IGRpZmYgLS1naXQgYS9hcmNoL2FybS9wbGF0LXNhbXN1bmcvaW5jbHVkZS9wbGF0L3RzLmggYi9h
-cmNoL2FybS9wbGF0LXNhbXN1bmcvaW5jbHVkZS9wbGF0L3RzLmgNCj4gPiBpbmRleCAyNmZkYjIy
-Li44MmMwZWFmIDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gvYXJtL3BsYXQtc2Ftc3VuZy9pbmNsdWRl
-L3BsYXQvdHMuaA0KPiA+ICsrKyBiL2FyY2gvYXJtL3BsYXQtc2Ftc3VuZy9pbmNsdWRlL3BsYXQv
-dHMuaA0KPiA+IEBAIC0xNCw2ICsxNCw3IEBAIHN0cnVjdCBzM2MyNDEwX3RzX21hY2hfaW5mbyB7
-DQo+ID4gICAgICAgICBpbnQgICAgICAgICAgICAgZGVsYXk7DQo+ID4gICAgICAgICBpbnQgICAg
-ICAgICAgICAgcHJlc2M7DQo+ID4gICAgICAgICBpbnQgICAgICAgICAgICAgb3ZlcnNhbXBsaW5n
-X3NoaWZ0Ow0KPiA+ICsJaW50CWZlYXR1cmU7DQo+ID4gIAl2b2lkICAgICgqY2ZnX2dwaW8pKHN0
-cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKmRldik7DQo+ID4gIH07DQo+ID4gIA0KPiA+IC0tIA0KPiA+
-IDEuNi4yLjUNCj4gPiANCj4gDQo+IC0tIA0KPiAtLSANCj4gQmVuDQo+IA0KPiBROiAgICAgIFdo
-YXQncyBhIGxpZ2h0LXllYXI/DQo+IEE6ICAgICAgT25lLXRoaXJkIGxlc3MgY2Fsb3JpZXMgdGhh
-biBhIHJlZ3VsYXIgeWVhci4NCj4gDQo+IA0KPiANCj4gVGhhbmtzICYgQmVzdCBSZWdhcmRzLA0K
-PiBOYXZlZW4gS3Jpc2huYSBDaA0KPiBTRSBAIFNMRyBEaXYsIERTIExBQnMsIFNhbXN1bmcsIElu
-ZGlhLg0KDQotLSANCi0tIA0KQmVuDQoNClE6ICAgICAgV2hhdCdzIGEgbGlnaHQteWVhcj8NCkE6
-ICAgICAgT25lLXRoaXJkIGxlc3MgY2Fsb3JpZXMgdGhhbiBhIHJlZ3VsYXIgeWVhci4NCg0KDQoN
-ClRoYW5rcyAmIEJlc3QgUmVnYXJkcywNCk5hdmVlbiBLcmlzaG5hIENoDQpTRSBAIFNMRyBEaXYs
-IERTIExBQnMsIFNhbXN1bmcsIEluZGlhLg0K
+On Fri, May 14, 2010 at 5:40 PM, Ben Dooks <ben-linux@fluff.org> wrote:
+> Add support for GPIO interrupts where the interrupt number
+> is dynamically allocated at first request from gpiolib.
+>
+> This method is employed as the newer SoCs have a large number
+> of possible interrupt numbers which are very rarely heavily
+> used. However, the classic code has always registered all
+> possible interrupts, using a large amount of memory for the
+> irq_desc[] table.
+>
+> For example, S5PV210 has 178 possible GPIO interrupt sources
+> of which few boards actually use any of these. The current
+> size of a single irq_desc entry is 80 bytes, meaing to fully
+> support GPIO interrupts on the V210 we use 14240 bytes when
+> a board may only need a few of these.
+>
+> NOTE: This code is not tested, and not even booted. it is
+> offered here as an example and if people think it is a good
+> idea, I will do the necessary run testing and checking.
+>
+> not-quite-signed-off-by: Ben Dooks <ben-linux@fluff.org>
+> ---
+> =C2=A0arch/arm/mach-s5pv210/gpiolib.c =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0| =C2=A0 10 +++++++++-
+> =C2=A0arch/arm/mach-s5pv210/include/mach/irqs.h =C2=A0 =C2=A0 =C2=A0|=
+ =C2=A0 =C2=A05 ++++-
+> =C2=A0arch/arm/plat-s5p/Kconfig =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0| =C2=A0 =C2=A05 +++++
+> =C2=A0arch/arm/plat-s5p/Makefile =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 | =C2=A0 =C2=A01 +
+> =C2=A0arch/arm/plat-samsung/include/plat/gpio-core.h | =C2=A0 =C2=A05=
+ +++++
+> =C2=A05 files changed, 24 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/mach-s5pv210/gpiolib.c b/arch/arm/mach-s5pv210/=
+gpiolib.c
+> index 99dad92..68972ea 100644
+> --- a/arch/arm/mach-s5pv210/gpiolib.c
+> +++ b/arch/arm/mach-s5pv210/gpiolib.c
+> @@ -237,6 +237,12 @@ static struct s3c_gpio_chip s5pv210_gpio_4bit[] =
+=3D {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0},
+> =C2=A0};
+>
+> +static int to_gpio_irq_bank(int nr)
+> +{
+> + =C2=A0 =C2=A0 =C2=A0 if (nr >=3D 17)
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return nr - 4;
+> +}
+> +
+> =C2=A0static __init int s5pv210_gpiolib_init(void)
+> =C2=A0{
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0struct s3c_gpio_chip *chip =3D s5pv210_gpi=
+o_4bit;
+> @@ -244,8 +250,10 @@ static __init int s5pv210_gpiolib_init(void)
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0int i =3D 0;
+>
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0for (i =3D 0; i < nr_chips; i++, chip++) {
+> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (chip->config =3D=
+=3D NULL)
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (chip->config =3D=
+=3D NULL) {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0chip->config =3D &gpio_cfg;
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 s5p_gpio_irq_register(chip, to_gpio_irq_bank(i));
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0if (chip->base=
+ =3D=3D NULL)
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0chip->base =3D S5PV210_BANK_BASE(i);
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0}
+> diff --git a/arch/arm/mach-s5pv210/include/mach/irqs.h b/arch/arm/mac=
+h-s5pv210/include/mach/irqs.h
+> index 1714be2..dca0067 100644
+> --- a/arch/arm/mach-s5pv210/include/mach/irqs.h
+> +++ b/arch/arm/mach-s5pv210/include/mach/irqs.h
+> @@ -144,8 +144,11 @@
+> =C2=A0#define S5P_EINT_SET2(x) =C2=A0 =C2=A0 =C2=A0 S5PV210_GPH2(x)
+> =C2=A0#define S5P_EINT_SET3(x) =C2=A0 =C2=A0 =C2=A0 S5PV210_GPH3(x)
+>
+> +#define IRQ_GPIO_BASE =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0IRQ_EINT(31)=
+ + 1
+> +#define NR_GPIO_IRQS =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 (24)
+Don't we want to give option to configure this value during build?
+Rest sounds good.
