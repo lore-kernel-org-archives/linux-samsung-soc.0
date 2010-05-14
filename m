@@ -1,171 +1,129 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 07/15] ARM: S5PC100: rename gpio registers from s5pc1xx to
- s5pc100
-Date: Fri, 14 May 2010 08:18:58 +0200
-Message-ID: <1273817946-29404-8-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 08/15] ARM: S5PC100: Move frame buffer helpers from
+ plat-s5pc1xx to mach-s5pc100
+Date: Fri, 14 May 2010 08:18:59 +0200
+Message-ID: <1273817946-29404-9-git-send-email-m.szyprowski@samsung.com>
 References: <1273817946-29404-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:56106 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755192Ab0ENGTU (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:24732 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754964Ab0ENGTU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 14 May 2010 02:19:20 -0400
-Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0L2E00HXOC80TQ80@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 May 2010 07:19:13 +0100 (BST)
+Received: from eu_spt2 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L2E000GGC82PL@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 May 2010 07:19:14 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L2E00GEIC80WE@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 May 2010 07:19:12 +0100 (BST)
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0L2E005ZKC80HT@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 May 2010 07:19:13 +0100 (BST)
 In-reply-to: <1273817946-29404-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
 
-This patch renames gpio related registers from s5pc1xx to s5pc100 to
-better match the plat-s5p framework style.
+Move frame buffer helpers from plat-s5pc1xx to mach-s5pc100.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-s5pc100/include/mach/gpio.h      |   82 ++++++++++++------------
- arch/arm/mach-s5pc100/include/mach/regs-gpio.h |    8 +-
- 2 files changed, 45 insertions(+), 45 deletions(-)
+ arch/arm/mach-s5pc100/Kconfig                      |    7 ++++++-
+ arch/arm/mach-s5pc100/Makefile                     |    1 +
+ .../setup-fb-24bpp.c                               |    4 ++--
+ arch/arm/plat-s5pc1xx/Kconfig                      |    5 -----
+ arch/arm/plat-s5pc1xx/Makefile                     |    1 -
+ 5 files changed, 9 insertions(+), 9 deletions(-)
+ rename arch/arm/{plat-s5pc1xx => mach-s5pc100}/setup-fb-24bpp.c (91%)
 
-diff --git a/arch/arm/mach-s5pc100/include/mach/gpio.h b/arch/arm/mach-s5pc100/include/mach/gpio.h
-index 2c4cbe8..fb2f40a 100644
---- a/arch/arm/mach-s5pc100/include/mach/gpio.h
-+++ b/arch/arm/mach-s5pc100/include/mach/gpio.h
-@@ -65,50 +65,50 @@
-  * change from one gpio bank to another can be caught.
- */
+diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
+index 27ec167..b24c66d 100644
+--- a/arch/arm/mach-s5pc100/Kconfig
++++ b/arch/arm/mach-s5pc100/Kconfig
+@@ -12,6 +12,11 @@ config CPU_S5PC100
+ 	help
+ 	  Enable S5PC100 CPU support
  
--#define S5PC1XX_GPIO_NEXT(__gpio) \
-+#define S5PC100_GPIO_NEXT(__gpio) \
- 	((__gpio##_START) + (__gpio##_NR) + CONFIG_S3C_GPIO_SPACE + 1)
++config S5PC100_SETUP_FB_24BPP
++	bool
++	help
++          Common setup code for S5PC1XX with an 24bpp RGB display helper.
++
+ config S5PC100_SETUP_SDHCI
+         bool
+         select S5PC1XX_SETUP_SDHCI_GPIO
+@@ -28,7 +33,7 @@ config MACH_SMDKC100
+ 	select S3C_DEV_HSMMC2
+ 	select S5PC1XX_SETUP_I2C0
+ 	select S5PC1XX_SETUP_I2C1
+-	select S5PC1XX_SETUP_FB_24BPP
++	select S5PC100_SETUP_FB_24BPP
+ 	select S5PC100_SETUP_SDHCI
+ 	help
+ 	  Machine support for the Samsung SMDKC100
+diff --git a/arch/arm/mach-s5pc100/Makefile b/arch/arm/mach-s5pc100/Makefile
+index e1afdbf..ccf0dca 100644
+--- a/arch/arm/mach-s5pc100/Makefile
++++ b/arch/arm/mach-s5pc100/Makefile
+@@ -15,6 +15,7 @@ obj-$(CONFIG_CPU_S5PC100)	+= cpu.o gpio.o
  
- enum s3c_gpio_number {
- 	S5PC100_GPIO_A0_START	= 0,
--	S5PC100_GPIO_A1_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_A0),
--	S5PC100_GPIO_B_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_A1),
--	S5PC100_GPIO_C_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_B),
--	S5PC100_GPIO_D_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_C),
--	S5PC100_GPIO_E0_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_D),
--	S5PC100_GPIO_E1_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_E0),
--	S5PC100_GPIO_F0_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_E1),
--	S5PC100_GPIO_F1_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_F0),
--	S5PC100_GPIO_F2_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_F1),
--	S5PC100_GPIO_F3_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_F2),
--	S5PC100_GPIO_G0_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_F3),
--	S5PC100_GPIO_G1_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_G0),
--	S5PC100_GPIO_G2_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_G1),
--	S5PC100_GPIO_G3_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_G2),
--	S5PC100_GPIO_H0_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_G3),
--	S5PC100_GPIO_H1_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_H0),
--	S5PC100_GPIO_H2_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_H1),
--	S5PC100_GPIO_H3_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_H2),
--	S5PC100_GPIO_I_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_H3),
--	S5PC100_GPIO_J0_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_I),
--	S5PC100_GPIO_J1_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_J0),
--	S5PC100_GPIO_J2_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_J1),
--	S5PC100_GPIO_J3_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_J2),
--	S5PC100_GPIO_J4_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_J3),
--	S5PC100_GPIO_K0_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_J4),
--	S5PC100_GPIO_K1_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_K0),
--	S5PC100_GPIO_K2_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_K1),
--	S5PC100_GPIO_K3_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_K2),
--	S5PC100_GPIO_L0_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_K3),
--	S5PC100_GPIO_L1_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_L0),
--	S5PC100_GPIO_L2_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_L1),
--	S5PC100_GPIO_L3_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_L2),
--	S5PC100_GPIO_L4_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_L3),
--	S5PC100_GPIO_MP00_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_L4),
--	S5PC100_GPIO_MP01_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_MP00),
--	S5PC100_GPIO_MP02_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_MP01),
--	S5PC100_GPIO_MP03_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_MP02),
--	S5PC100_GPIO_MP04_START	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_MP03),
--	S5PC100_GPIO_END	= S5PC1XX_GPIO_NEXT(S5PC100_GPIO_MP04),
-+	S5PC100_GPIO_A1_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_A0),
-+	S5PC100_GPIO_B_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_A1),
-+	S5PC100_GPIO_C_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_B),
-+	S5PC100_GPIO_D_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_C),
-+	S5PC100_GPIO_E0_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_D),
-+	S5PC100_GPIO_E1_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_E0),
-+	S5PC100_GPIO_F0_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_E1),
-+	S5PC100_GPIO_F1_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_F0),
-+	S5PC100_GPIO_F2_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_F1),
-+	S5PC100_GPIO_F3_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_F2),
-+	S5PC100_GPIO_G0_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_F3),
-+	S5PC100_GPIO_G1_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_G0),
-+	S5PC100_GPIO_G2_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_G1),
-+	S5PC100_GPIO_G3_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_G2),
-+	S5PC100_GPIO_H0_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_G3),
-+	S5PC100_GPIO_H1_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_H0),
-+	S5PC100_GPIO_H2_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_H1),
-+	S5PC100_GPIO_H3_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_H2),
-+	S5PC100_GPIO_I_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_H3),
-+	S5PC100_GPIO_J0_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_I),
-+	S5PC100_GPIO_J1_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_J0),
-+	S5PC100_GPIO_J2_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_J1),
-+	S5PC100_GPIO_J3_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_J2),
-+	S5PC100_GPIO_J4_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_J3),
-+	S5PC100_GPIO_K0_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_J4),
-+	S5PC100_GPIO_K1_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_K0),
-+	S5PC100_GPIO_K2_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_K1),
-+	S5PC100_GPIO_K3_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_K2),
-+	S5PC100_GPIO_L0_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_K3),
-+	S5PC100_GPIO_L1_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_L0),
-+	S5PC100_GPIO_L2_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_L1),
-+	S5PC100_GPIO_L3_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_L2),
-+	S5PC100_GPIO_L4_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_L3),
-+	S5PC100_GPIO_MP00_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_L4),
-+	S5PC100_GPIO_MP01_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_MP00),
-+	S5PC100_GPIO_MP02_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_MP01),
-+	S5PC100_GPIO_MP03_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_MP02),
-+	S5PC100_GPIO_MP04_START	= S5PC100_GPIO_NEXT(S5PC100_GPIO_MP03),
-+	S5PC100_GPIO_END	= S5PC100_GPIO_NEXT(S5PC100_GPIO_MP04),
- };
+ # Helper and device support
  
- /* S5PC100 GPIO number definitions. */
-@@ -153,7 +153,7 @@ enum s3c_gpio_number {
- #define S5PC100_MP04(_nr)	(S5PC100_GPIO_MP04_START + (_nr))
- #define S5PC100_MP05(_nr)	(S5PC100_GPIO_MP05_START + (_nr))
++obj-$(CONFIG_S5PC100_SETUP_FB_24BPP)	+= setup-fb-24bpp.o
+ obj-$(CONFIG_S5PC100_SETUP_SDHCI)       += setup-sdhci.o
  
--/* It used the end of the S5PC1XX gpios */
-+/* It used the end of the S5PC100 gpios */
- #define S3C_GPIO_END		S5PC100_GPIO_END
- 
- /* define the number of gpios we need to the one after the MP04() range */
-diff --git a/arch/arm/mach-s5pc100/include/mach/regs-gpio.h b/arch/arm/mach-s5pc100/include/mach/regs-gpio.h
-index 43c7bc8..6866691 100644
---- a/arch/arm/mach-s5pc100/include/mach/regs-gpio.h
-+++ b/arch/arm/mach-s5pc100/include/mach/regs-gpio.h
-@@ -3,11 +3,11 @@
-  * Copyright 2009 Samsung Electronics Co.
-  *      Byungho Min <bhmin@samsung.com>
+ # machine support
+diff --git a/arch/arm/plat-s5pc1xx/setup-fb-24bpp.c b/arch/arm/mach-s5pc100/setup-fb-24bpp.c
+similarity index 91%
+rename from arch/arm/plat-s5pc1xx/setup-fb-24bpp.c
+rename to arch/arm/mach-s5pc100/setup-fb-24bpp.c
+index b02c36f..6eba6cb 100644
+--- a/arch/arm/plat-s5pc1xx/setup-fb-24bpp.c
++++ b/arch/arm/mach-s5pc100/setup-fb-24bpp.c
+@@ -1,9 +1,9 @@
+ /*
+- * linux/arch/arm/plat-s5pc100/setup-fb-24bpp.c
++ * linux/arch/arm/mach-s5pc100/setup-fb-24bpp.c
   *
-- * S5PC1XX - GPIO register definitions
-+ * S5PC100 - GPIO register definitions
-  */
+  * Copyright 2009 Samsung Electronics
+  *
+- * Base S5PC1XX setup information for 24bpp LCD framebuffer
++ * Base S5PC100 setup information for 24bpp LCD framebuffer
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+diff --git a/arch/arm/plat-s5pc1xx/Kconfig b/arch/arm/plat-s5pc1xx/Kconfig
+index 98bbaf9..708f7a0 100644
+--- a/arch/arm/plat-s5pc1xx/Kconfig
++++ b/arch/arm/plat-s5pc1xx/Kconfig
+@@ -39,11 +39,6 @@ config CPU_S5PC100_CLOCK
  
--#ifndef __ASM_PLAT_S5PC1XX_REGS_GPIO_H
--#define __ASM_PLAT_S5PC1XX_REGS_GPIO_H __FILE__
-+#ifndef __ASM_MACH_S5PC100_REGS_GPIO_H
-+#define __ASM_MACH_S5PC100_REGS_GPIO_H __FILE__
+ # platform specific device setup
  
- #include <mach/map.h>
+-config S5PC1XX_SETUP_FB_24BPP
+-	bool
+-	help
+-          Common setup code for S5PC1XX with an 24bpp RGB display helper.
+-
+ config S5PC1XX_SETUP_I2C0
+ 	bool
+ 	default y
+diff --git a/arch/arm/plat-s5pc1xx/Makefile b/arch/arm/plat-s5pc1xx/Makefile
+index 540fca5..a5b90c0 100644
+--- a/arch/arm/plat-s5pc1xx/Makefile
++++ b/arch/arm/plat-s5pc1xx/Makefile
+@@ -23,7 +23,6 @@ obj-$(CONFIG_CPU_S5PC100_CLOCK)	+= s5pc100-clock.o
  
-@@ -66,5 +66,5 @@
- #define S5PC100_GPx_OUTPUT(__gpio)	(0x1 << ((__gpio) * 4))
- #define S5PC100_GPx_CONMASK(__gpio)	(0xf << ((__gpio) * 4))
+ # Device setup
  
--#endif /* __ASM_PLAT_S5PC1XX_REGS_GPIO_H */
-+#endif /* __ASM_MACH_S5PC100_REGS_GPIO_H */
- 
+-obj-$(CONFIG_S5PC1XX_SETUP_FB_24BPP) += setup-fb-24bpp.o
+ obj-$(CONFIG_S5PC1XX_SETUP_I2C0) += setup-i2c0.o
+ obj-$(CONFIG_S5PC1XX_SETUP_I2C1) += setup-i2c1.o
+ obj-$(CONFIG_S5PC1XX_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
 -- 
 1.6.4
