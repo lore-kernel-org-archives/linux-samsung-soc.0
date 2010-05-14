@@ -1,65 +1,75 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH 11/11] ARM: S5P6440: Remove redundant defines
-Date: Fri, 14 May 2010 03:12:42 +0100
-Message-ID: <20100514021242.GO26401@trinity.fluff.org>
-References: <1273710481-14856-1-git-send-email-kgene.kim@samsung.com>
-	<AANLkTimTm_Vxvb2xvJnVxTxUaYguFgGeaWGypzA1yjwM@mail.gmail.com>
-	<20100513020236.GS6684@trinity.fluff.org>
-	<AANLkTilIvm2AlZeh_1cdcgZFFL5YuJUnYiytXA2tZktB@mail.gmail.com>
-	<20100513090608.GA5382@n2100.arm.linux.org.uk>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH v3] ARM: S5PC100: Pre-requisite clock patch for
+ plat-s5pc1xx to plat-s5p move.
+Date: Fri, 14 May 2010 07:22:03 +0200
+Message-ID: <008501caf325$65716430$30542c90$%szyprowski@samsung.com>
+References: <1273797327-5342-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20100513090608.GA5382@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Jassi Brar <jassisinghbrar@gmail.com>, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout5.samsung.com ([203.254.224.35]:62719 "EHLO
+	mailout5.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750731Ab0ENFWq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 14 May 2010 01:22:46 -0400
+Received: from epmmp2 (mailout5.samsung.com [203.254.224.35])
+ by mailout1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L2E005ZZ9LVV3@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 May 2010 14:22:44 +0900 (KST)
+Received: from AMDC159 ([106.116.37.153])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L2E00CLT9LKWK@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 May 2010 14:22:43 +0900 (KST)
+In-reply-to: <1273797327-5342-1-git-send-email-kgene.kim@samsung.com>
+Content-language: pl
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Thomas Abraham' <thomas.ab@samsung.com>, ben-linux@fluff.org, kyungmin.park@samsung.com
 
-On Thu, May 13, 2010 at 10:06:08AM +0100, Russell King - ARM Linux wrote:
-> On Thu, May 13, 2010 at 01:54:12PM +0900, Kyungmin Park wrote:
-> > On Thu, May 13, 2010 at 11:02 AM, Ben Dooks <ben-linux@fluff.org> wrote:
-> > > 1) It takes two lines of code, where one is sufficient.
-> > >
-> > > 2) You only have to look in the relevant .c file to find out the
-> > > =A0 value instead of tracking down a header. This makes it easier
-> > > =A0 to verify the value against the manual and easier to compare
-> > > =A0 against simialr code.
-> > =
+Hello,
 
-> > Then define it at c code and use the macro. I also don't like the
-> > hard-coded values.
-> =
+On Friday, May 14, 2010 2:35 AM Kukjin Kim wrote:
 
-> I'm almost with Ben on this; but we can do better to satisfy both camps.
-> =
+> From: Thomas Abraham <thomas.ab@samsung.com>
+> 
+> This is a pre-requisite clock patch for the plat-s5pc1xx to plat-s5p
+> movement. The patches that perform the movement of the code from
+> plat-s5pc1xx to plat-s5p (and mach-s5pc100) should also enable the
+> build for the mach-s5pc100/clock.c code.
+> 
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+>  arch/arm/mach-s5pc100/clock.c                   | 1362
+> +++++++++++++++++++++++
+>  arch/arm/mach-s5pc100/include/mach/regs-clock.h |   71 ++
+>  arch/arm/plat-s5p/clock.c                       |    2 +-
+>  arch/arm/plat-s5p/include/plat/pll.h            |   22 +
+>  arch/arm/plat-s5p/include/plat/s5p-clock.h      |    2 +
+>  5 files changed, 1459 insertions(+), 1 deletions(-)
+>  create mode 100755 arch/arm/mach-s5pc100/clock.c
+>  create mode 100644 arch/arm/mach-s5pc100/include/mach/regs-clock.h
+> 
+> diff --git a/arch/arm/mach-s5pc100/clock.c b/arch/arm/mach-s5pc100/clock.c
+> new file mode 100755
 
-> 	.ctrlbit	=3D 1 << 2, /* CLKCON_MEM0_HCLK_NFCON */
-> =
+Please use 0644 mode for new files, no need to set the 'execute' bit.
 
-> It's now documented what the magic constant is.
+> ...
 
-Gah, my braincell!
+I also got the following compilation warnings:
 
-I should also point out that we are also trying to cut down on the large
-headerfiles that are being poured into the kernel without things using
-them and the likelyhood of not being used. It seems that people think
-that the more output the more work has been done, which makes life harder
-for anyone else looking at the code to review.
+arch/arm/mach-s5pc100/clock.c:47: warning: 'clk_mout_href' defined but not used
+arch/arm/mach-s5pc100/clock.c:400: warning: 's5pc100_d2_0_ctrl' defined but not
+used
 
--- =
+Besides the above this patch works fine. I will post my redesigned s5pc100 patch
+series in a few minutes.
 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
