@@ -1,140 +1,590 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH v2 11/11] Input: s3c24xx_ts - Uses Feature field instead
-	TYPE for Samsung SoCs
-Date: Fri, 14 May 2010 21:30:24 +0900
-Message-ID: <AANLkTikoeAccwaRclasmr9Ez8yzEeJoB71dCpHeOB5on@mail.gmail.com>
-References: <1273821927-17585-1-git-send-email-kgene.kim@samsung.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: RE: [PATCH v2] ARM: S5P: Add System Timer
+Date: Fri, 14 May 2010 18:08:40 +0200
+Message-ID: <00c501caf37f$bb0b3330$31219990$%majewski@samsung.com>
+References: <1273827090-26635-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:35841 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751695Ab0ENMa1 convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:47655 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750958Ab0ENQJY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 May 2010 08:30:27 -0400
-Received: by vws16 with SMTP id 16so790170vws.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 May 2010 05:30:26 -0700 (PDT)
-In-Reply-To: <1273821927-17585-1-git-send-email-kgene.kim@samsung.com>
+	Fri, 14 May 2010 12:09:24 -0400
+Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
+ by mailout1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L2F0001O3JLND@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 15 May 2010 01:09:21 +0900 (KST)
+Received: from AMDN142 ([106.116.44.225])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L2F00D1I3J95P@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 15 May 2010 01:09:21 +0900 (KST)
+In-reply-to: <1273827090-26635-1-git-send-email-kgene.kim@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Naveen Krishna <ch.naveen@samsung.com>
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, 'Jongpill Lee' <boyko@samsung.com>, 'Jongpill Lee' <boyko.lee@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Tomasz Fujak' <t.fujak@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Fri, May 14, 2010 at 4:25 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> From: Naveen Krishna <ch.naveen@samsung.com>
->
-> This patch removes teh TYPE from touchscreen driver for Samsung SoCs
-> and uses a Feature bit field instead.
->
-> Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
+Hello,
+
+I've following comments:
+
+> -----Original Message-----
+> From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-
+> soc-owner@vger.kernel.org] On Behalf Of Kukjin Kim
+> Sent: Friday, May 14, 2010 10:52 AM
+> To: linux-arm-kernel@lists.infradead.org; linux-samsung-
+> soc@vger.kernel.org
+> Cc: ben-linux@fluff.org; Jongpill Lee; Jongpill Lee; Kukjin Kim
+> Subject: [PATCH v2] ARM: S5P: Add System Timer
+> 
+> From: Jongpill Lee <boyko@samsung.com>
+> 
+> This patch addes system timer for Samsung S5P series SoCs
+> 
+> Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
 > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > ---
-> =A0drivers/input/touchscreen/s3c2410_ts.c | =A0 23 +++++-------------=
------
-> =A01 files changed, 5 insertions(+), 18 deletions(-)
->
-> diff --git a/drivers/input/touchscreen/s3c2410_ts.c b/drivers/input/t=
-ouchscreen/s3c2410_ts.c
-> index 8a970ea..aa43f93 100644
-> --- a/drivers/input/touchscreen/s3c2410_ts.c
-> +++ b/drivers/input/touchscreen/s3c2410_ts.c
-> @@ -55,6 +55,8 @@
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S3C2410_ADCTSC_AUTO_P=
-ST | \
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S3C2410_ADCTSC_XY_PST=
-(0))
->
-> +#define FEAT_PEN_IRQ =A0 (1 << 0) =A0 =A0 =A0 =A0/* HAS ADCCLRINTPND=
-NUP */
-
-It should be go header file for board files to use?
-
+>  arch/arm/mach-s5p6442/include/mach/tick.h      |    6 +
+>  arch/arm/mach-s5p6442/mach-smdk6442.c          |    2 +-
+>  arch/arm/mach-s5pv210/include/mach/tick.h      |    6 +
+>  arch/arm/mach-s5pv210/mach-smdkc110.c          |    2 +-
+>  arch/arm/mach-s5pv210/mach-smdkv210.c          |    2 +-
+>  arch/arm/plat-s5p/Kconfig                      |    7 +
+>  arch/arm/plat-s5p/Makefile                     |    1 +
+>  arch/arm/plat-s5p/include/plat/regs-systimer.h |   75 ++++++
+>  arch/arm/plat-s5p/s5p-systimer.c               |  287
+> ++++++++++++++++++++++++
+>  arch/arm/plat-samsung/include/plat/cpu.h       |    3 +
+>  10 files changed, 388 insertions(+), 3 deletions(-)
+>  create mode 100644 arch/arm/plat-s5p/include/plat/regs-systimer.h
+>  create mode 100644 arch/arm/plat-s5p/s5p-systimer.c
+> 
+> diff --git a/arch/arm/mach-s5p6442/include/mach/tick.h b/arch/arm/mach-
+> s5p6442/include/mach/tick.h
+> index e1d4cab..1795b43 100644
+> --- a/arch/arm/mach-s5p6442/include/mach/tick.h
+> +++ b/arch/arm/mach-s5p6442/include/mach/tick.h
+> @@ -21,6 +21,12 @@ static inline u32 s3c24xx_ostimer_pending(void)
+>  	return pend & (1 << (IRQ_TIMER4_VIC - S5P_IRQ_VIC0(0)));
+>  }
+> 
+> +static inline u32 s5p_ostimer_pending(void)
+> +{
+> +	u32 pend = __raw_readl(VA_VIC0 + VIC_RAW_STATUS);
+> +	return pend & (1 << (IRQ_SYSTIMER - S5P_IRQ_VIC0(0)));
+> +}
 > +
-> =A0/* Per-touchscreen data. */
->
-> =A0/**
-> @@ -81,17 +83,11 @@ struct s3c2410ts {
-> =A0 =A0 =A0 =A0int irq_tc;
-> =A0 =A0 =A0 =A0int count;
-> =A0 =A0 =A0 =A0int shift;
-> + =A0 =A0 =A0 int feat;
-> =A0};
+>  #define TICK_MAX	(0xffffffff)
+> 
+>  #endif /* __ASM_ARCH_TICK_H */
+> diff --git a/arch/arm/mach-s5p6442/mach-smdk6442.c b/arch/arm/mach-
+> s5p6442/mach-smdk6442.c
+> index 0d63371..6c8728b 100644
+> --- a/arch/arm/mach-s5p6442/mach-smdk6442.c
+> +++ b/arch/arm/mach-s5p6442/mach-smdk6442.c
+> @@ -87,5 +87,5 @@ MACHINE_START(SMDK6442, "SMDK6442")
+>  	.init_irq	= s5p6442_init_irq,
+>  	.map_io		= smdk6442_map_io,
+>  	.init_machine	= smdk6442_machine_init,
+> -	.timer		= &s3c24xx_timer,
+> +	.timer		= &s5p_systimer,
+>  MACHINE_END
+> diff --git a/arch/arm/mach-s5pv210/include/mach/tick.h b/arch/arm/mach-
+> s5pv210/include/mach/tick.h
+> index 7993b36..9fc5a8d 100644
+> --- a/arch/arm/mach-s5pv210/include/mach/tick.h
+> +++ b/arch/arm/mach-s5pv210/include/mach/tick.h
+> @@ -21,6 +21,12 @@ static inline u32 s3c24xx_ostimer_pending(void)
+>  	return pend & (1 << (IRQ_TIMER4_VIC - S5P_IRQ_VIC0(0)));
+>  }
+> 
+> +static inline u32 s5p_ostimer_pending(void)
+> +{
+> +	u32 pend = __raw_readl(VA_VIC0 + VIC_RAW_STATUS);
+> +	return pend & (1 << (IRQ_SYSTIMER - S5P_IRQ_VIC0(0)));
+> +}
+> +
+>  #define TICK_MAX	(0xffffffff)
+> 
+>  #endif /* __ASM_ARCH_TICK_H */
+> diff --git a/arch/arm/mach-s5pv210/mach-smdkc110.c b/arch/arm/mach-
+> s5pv210/mach-smdkc110.c
+> index ab4869d..b520817 100644
+> --- a/arch/arm/mach-s5pv210/mach-smdkc110.c
+> +++ b/arch/arm/mach-s5pv210/mach-smdkc110.c
+> @@ -94,5 +94,5 @@ MACHINE_START(SMDKC110, "SMDKC110")
+>  	.init_irq	= s5pv210_init_irq,
+>  	.map_io		= smdkc110_map_io,
+>  	.init_machine	= smdkc110_machine_init,
+> -	.timer		= &s3c24xx_timer,
+> +	.timer		= &s5p_systimer,
+>  MACHINE_END
+> diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-
+> s5pv210/mach-smdkv210.c
+> index a278832..2a29d47 100644
+> --- a/arch/arm/mach-s5pv210/mach-smdkv210.c
+> +++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
+> @@ -94,5 +94,5 @@ MACHINE_START(SMDKV210, "SMDKV210")
+>  	.init_irq	= s5pv210_init_irq,
+>  	.map_io		= smdkv210_map_io,
+>  	.init_machine	= smdkv210_machine_init,
+> -	.timer		= &s3c24xx_timer,
+> +	.timer		= &s5p_systimer,
+>  MACHINE_END
+> diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
+> index d400a6a..e152bbc 100644
+> --- a/arch/arm/plat-s5p/Kconfig
+> +++ b/arch/arm/plat-s5p/Kconfig
+> @@ -23,3 +23,10 @@ config PLAT_S5P
+>  	select SAMSUNG_IRQ_UART
+>  	help
+>  	  Base platform code for Samsung's S5P series SoC.
+> +
+> +config S5P_SYSTIMER
+> +	bool
+> +	depends on (ARCH_S5P6442 || ARCH_S5PV210)
+> +	default y
+> +	help
+> +	  Support System Timer for S5P Series
+> diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
+> index 7f44678..dbc6595 100644
+> --- a/arch/arm/plat-s5p/Makefile
+> +++ b/arch/arm/plat-s5p/Makefile
+> @@ -17,3 +17,4 @@ obj-y				+= cpu.o
+>  obj-y				+= clock.o
+>  obj-y				+= irq.o
+>  obj-y				+= setup-i2c0.o
+> +obj-$(CONFIG_S5P_SYSTIMER)	+= s5p-systimer.o
+> diff --git a/arch/arm/plat-s5p/include/plat/regs-systimer.h
+> b/arch/arm/plat-s5p/include/plat/regs-systimer.h
+> new file mode 100644
+> index 0000000..61f1282
+> --- /dev/null
+> +++ b/arch/arm/plat-s5p/include/plat/regs-systimer.h
+> @@ -0,0 +1,75 @@
+> +/* linux/arch/arm/plat-s5p/include/plat/regs-systimer.h
+> + *
+> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com/
+> + *
+> + * S5P System Timer Driver Header information
+> + *
+> + * This program is free software; you can redistribute it and/or
+> modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#ifndef __ASM_PLAT_REGS_SYSTIMER_H
+> +#define __ASM_PLAT_REGS_SYSTIMER_H __FILE__
+> +
+> +#define S5P_SYSTIMERREG(x)		(S5P_VA_SYSTIMER + (x))
+> +
+> +#define S5P_SYSTIMER_TCFG		S5P_SYSTIMERREG(0x00)
+> +#define S5P_SYSTIMER_TCON		S5P_SYSTIMERREG(0x04)
+> +#define S5P_SYSTIMER_TICNTB		S5P_SYSTIMERREG(0x08)
+> +#define S5P_SYSTIMER_TICNTO		S5P_SYSTIMERREG(0x0c)
+> +#define S5P_SYSTIMER_TFCNTB		S5P_SYSTIMERREG(0x10)
+> +#define S5P_SYSTIMER_ICNTB		S5P_SYSTIMERREG(0x18)
+> +#define S5P_SYSTIMER_ICNTO		S5P_SYSTIMERREG(0x1c)
+> +#define S5P_SYSTIMER_INT_CSTAT		S5P_SYSTIMERREG(0x20)
+> +
+> +/* Value for TCFG */
+> +
+> +#define S5P_SYSTIMER_SWRST		(1 << 16)
+> +
+> +#define S5P_SYSTIMER_DIV_GEN		(0 << 15)
+> +#define S5P_SYSTIMER_DIV_RTC		(1 << 15)
+> +
+> +#define S5P_SYSTIMER_TICK_INT		(0 << 14)
+> +#define S5P_SYSTIMER_TICK_FRA		(1 << 14)
+> +
+> +#define S5P_SYSTIMER_TCLK_MASK		(3 << 12)
+> +#define S5P_SYSTIMER_TCLK_XXTI		(0 << 12)
+> +#define S5P_SYSTIMER_TCLK_RTC		(1 << 12)
+> +#define S5P_SYSTIMER_TCLK_USB		(2 << 12)
+> +#define S5P_SYSTIMER_TCLK_PCLK		(3 << 12)
+> +
+> +#define S5P_SYSTIMER_DIV_MASK		(7 << 8)
+> +#define S5P_SYSTIMER_DIV_1		(0 << 8)
+> +#define S5P_SYSTIMER_DIV_2		(1 << 8)
+> +#define S5P_SYSTIMER_DIV_4		(2 << 8)
+> +#define S5P_SYSTIMER_DIV_8		(3 << 8)
+> +#define S5P_SYSTIMER_DIV_16		(4 << 8)
+> +
+> +#define S5P_SYSTIMER_TARGET_HZ		1000
+> +#define S5P_SYSTIMER_PRESCALER		5
+> +#define S5P_SYSTIMER_PRESCALER_MASK	(0x3f << 0)
+> +
+> +/* value for TCON */
+> +
+> +#define S5P_SYSTIMER_INT_AUTO		(1 << 5)
+> +#define S5P_SYSTIMER_INT_IMM		(1 << 4)
+> +#define S5P_SYSTIMER_INT_START		(1 << 3)
+> +#define S5P_SYSTIMER_START		(1 << 0)
+> +
+> +/* Value for INT_CSTAT */
+> +
+> +#define S5P_SYSTIMER_INT_TWIE		(1 << 10)
+> +#define S5P_SYSTIMER_INT_IWIE		(1 << 9)
+> +#define S5P_SYSTIMER_INT_TFWIE		(1 << 8)
+> +#define S5P_SYSTIMER_INT_TIWIE		(1 << 7)
+> +#define S5P_SYSTIMER_INT_ICNTEIE	(1 << 6)
+> +#define S5P_SYSTIMER_INT_TCON		(1 << 5)
+> +#define S5P_SYSTIMER_INT_ICNTB		(1 << 4)
+> +#define S5P_SYSTIMER_INT_TFCNTB		(1 << 3)
+> +#define S5P_SYSTIMER_INT_TICNTB		(1 << 2)
+> +#define S5P_SYSTIMER_INT_INTCNT		(1 << 1)
+> +#define S5P_SYSTIMER_INT_INTENABLE	(1 << 0)
+> +
+> +#endif /* __ASM_PLAT_REGS_SYSTIMER_H */
+> diff --git a/arch/arm/plat-s5p/s5p-systimer.c b/arch/arm/plat-s5p/s5p-
+> systimer.c
+> new file mode 100644
+> index 0000000..f0e4ec8
+> --- /dev/null
+> +++ b/arch/arm/plat-s5p/s5p-systimer.c
+> @@ -0,0 +1,287 @@
+> +/* linux/arch/arm/plat-s5p/s5p-systimer.c
+> + *
+> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com/
+> + *
+> + * S5P System Timer
+> + *
+> + * Based on linux/arch/arm/plat-samsung/time.c
+> + *
+> + * This program is free software; you can redistribute it and/or
+> modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/sched.h>
+> +#include <linux/init.h>
+> +#include <linux/errno.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irq.h>
+> +#include <linux/err.h>
+> +#include <linux/clk.h>
+> +#include <linux/io.h>
+> +
+> +#include <asm/system.h>
+> +#include <asm/mach-types.h>
+> +
+> +#include <asm/irq.h>
+> +#include <asm/mach/time.h>
+> +
+> +#include <mach/map.h>
+> +#include <mach/regs-irq.h>
+> +#include <mach/tick.h>
+> +
+> +#include <plat/regs-systimer.h>
+> +#include <plat/clock.h>
+> +#include <plat/cpu.h>
+> +
+> +#include <mach/regs-clock.h>
+> +
+> +static unsigned long timer_startval;
+> +static unsigned long timer_usec_ticks;
+> +static unsigned long timer_icnt;
+> +
+> +#define TICK_MAX		(0xffffffff)
+> +#define TIMER_USEC_SHIFT	16
+> +
+> +static unsigned int systimer_write_done(unsigned int value)
+> +{
+> +	unsigned int cnt;
+> +	unsigned int tmp_reg;
+> +
+> +	cnt = 1000;
+> +
+> +	do {
+> +		if (__raw_readl(S5P_SYSTIMER_INT_CSTAT) & value) {
+> +			tmp_reg = __raw_readl(S5P_SYSTIMER_INT_CSTAT);
+> +			tmp_reg |= value;
+> +			__raw_writel(tmp_reg , S5P_SYSTIMER_INT_CSTAT);
+> +
+> +			return 0;
+> +		}
+> +	} while (--cnt > 0);
+> +
+> +	printk(KERN_ERR "%s : %d : Timer Expired\n", __func__, value);
+> +
+> +	return -ETIME;
+> +}
+> +
+> +static unsigned int s5p_systimer_write(void __iomem *reg,
+> +				       unsigned int value)
+> +{
+> +	unsigned int int_cstat;
+> +	unsigned int ret = 0;
+> +
+> +	__raw_writel(value, reg);
+> +
+> +	int_cstat = __raw_readl(S5P_SYSTIMER_INT_CSTAT);
+> +
+> +	if (reg == S5P_SYSTIMER_TCON) {
+> +		if (int_cstat & S5P_SYSTIMER_INT_TWIE)
+> +			ret = systimer_write_done(S5P_SYSTIMER_INT_TCON);
+> +
+> +	} else if (reg == S5P_SYSTIMER_ICNTB) {
+> +		if (int_cstat & S5P_SYSTIMER_INT_IWIE)
+> +			ret = systimer_write_done(S5P_SYSTIMER_INT_ICNTB);
+> +
+> +	} else if (reg == S5P_SYSTIMER_TFCNTB) {
+> +		if (int_cstat & S5P_SYSTIMER_INT_TFWIE)
+> +			ret = systimer_write_done(S5P_SYSTIMER_INT_TFCNTB);
+> +
+> +	} else if (reg == S5P_SYSTIMER_TICNTB) {
+> +		if (int_cstat & S5P_SYSTIMER_INT_TIWIE)
+> +			ret = systimer_write_done(S5P_SYSTIMER_INT_TICNTB);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +/*
+> + * S5P has system timer to use as OS tick Timer.
+> + * System Timer provides two distincive feature. Accurate timer which
+> provides
+> + * exact 1ms time tick at any power mode except sleep mode.
+> + * interrupt interval without stopping reference tick timer.
+> + */
+> +
+> +/*
+> + * timer_mask_usec_ticks
+> + *
+> + * given a clock and divisor, make the value to pass into
+> timer_ticks_to_usec
+> + * to scale the ticks into usecs
+> + */
+> +static inline unsigned long timer_mask_usec_ticks(unsigned long
+> scaler,
+> +						  unsigned long pclk)
+> +{
+> +	unsigned long den = pclk / 1000;
+> +
+> +	return ((1000 << TIMER_USEC_SHIFT) * scaler + (den >> 1)) / den;
+> +}
+> +
+> +/*
+> + * timer_ticks_to_usec
+> + *
+> + * convert timer ticks to usec.
+> + */
+> +static inline unsigned long timer_ticks_to_usec(unsigned long ticks)
+> +{
+> +	unsigned long res;
+> +
+> +	res = ticks * timer_usec_ticks;
+> +	res += 1 << (TIMER_USEC_SHIFT - 4);	/* round up slightly */
+> +
+> +	return res >> TIMER_USEC_SHIFT;
+> +}
+> +
+> +/*
+> + * Returns microsecond  since last clock interrupt.  Note that
+> interrupts
+> + * will have been disabled by do_gettimeoffset()
+> + * IRQs are disabled before entering here from do_gettimeofday()
+> + */
+> +static unsigned long s5p_gettimeoffset(void)
+> +{
+> +	unsigned long tdone;
+> +	unsigned long tval;
+> +	unsigned long clk_tick_totcnt;
+> +
+> +	clk_tick_totcnt = (timer_icnt + 1) * timer_startval;
+> +
+> +	/* work out how many ticks have gone since last timer interrupt
+> */
+> +	tval = __raw_readl(S5P_SYSTIMER_ICNTO) * timer_startval;
+> +	tval += __raw_readl(S5P_SYSTIMER_TICNTO);
+> +
+> +	tdone = clk_tick_totcnt - tval;
+> +
+> +	/* check to see if there is an interrupt pending */
+> +	if (s5p_ostimer_pending()) {
+> +		/* re-read the timer, and try and fix up for the missed
+> +		 * interrupt. Note, the interrupt may go off before the
+> +		 * timer has re-loaded from wrapping.
+> +		 */
+> +
+> +		tval = __raw_readl(S5P_SYSTIMER_ICNTO) * timer_startval;
+> +		tval += __raw_readl(S5P_SYSTIMER_TICNTO);
+> +
+> +		tdone = clk_tick_totcnt - tval;
+> +
+> +		if (tval != 0)
+> +			tdone += clk_tick_totcnt;
+> +	}
+> +
+> +	return timer_ticks_to_usec(tdone);
+> +}
+> +
+> +/*
+> + * IRQ handler for the timer
+> + */
+> +static irqreturn_t s5p_systimer_interrupt(int irq, void *dev_id)
+> +{
+> +	unsigned int temp_cstat;
+> +
+> +	temp_cstat = __raw_readl(S5P_SYSTIMER_INT_CSTAT);
+> +	temp_cstat |= S5P_SYSTIMER_INT_INTCNT;
+> +	s5p_systimer_write(S5P_SYSTIMER_INT_CSTAT, temp_cstat);
+> +
+> +	timer_tick();
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static struct irqaction s5p_systimer_irq = {
+> +	.name		= "S5P System Timer",
+> +	.flags		= IRQF_DISABLED | IRQF_TIMER | IRQF_IRQPOLL,
+> +	.handler	= s5p_systimer_interrupt,
+> +};
+> +
+> +/*
+> + * Set up timer interrupt, and return the current time in seconds.
+> + */
+> +static void s5p_systimer_setup(void)
+> +{
+> +	unsigned long tcon;
+> +	unsigned long tcnt;
+> +	unsigned long tcfg;
+> +	unsigned long int_csata;
+> +
+> +	/* clock configuration setting and enable */
+> +	unsigned long pclk;
+> +	struct clk *clk;
+> +
+> +	clk = clk_get(NULL, "systimer");
+> +	if (IS_ERR(clk))
+> +		panic("failed to get clock for system timer");
+> +
+> +	clk_enable(clk);
+> +
+> +	pclk = clk_get_rate(clk);
+> +
+> +	tcfg = __raw_readl(S5P_SYSTIMER_TCFG);
+> +	tcfg |= S5P_SYSTIMER_SWRST;
+> +	s5p_systimer_write(S5P_SYSTIMER_TCFG, tcfg);
+> +
+> +	tcnt = TICK_MAX;  /* default value for tcnt */
+> +
+> +	/* initialize system timer clock */
+> +	tcfg = __raw_readl(S5P_SYSTIMER_TCFG);
+> +
+> +	tcfg &= ~S5P_SYSTIMER_TCLK_MASK;
+> +	tcfg |= S5P_SYSTIMER_TCLK_PCLK;
+> +
+> +	s5p_systimer_write(S5P_SYSTIMER_TCFG, tcfg);
+> +
+> +	/* TCFG must not be changed at run-time.
+> +	 * If you want to change TCFG, stop timer(TCON[0] = 0)
+> +	 */
+> +
+> +	s5p_systimer_write(S5P_SYSTIMER_TCON, 0);
+> +
+> +	/* read the current timer configuration bits */
+> +	tcon = __raw_readl(S5P_SYSTIMER_TCON);
+> +	tcfg = __raw_readl(S5P_SYSTIMER_TCFG);
+> +
+> +	/* configure clock tick */
+> +	timer_usec_ticks = timer_mask_usec_ticks(S5P_SYSTIMER_PRESCALER,
+> pclk);
+> +
+> +	tcfg &= ~S5P_SYSTIMER_TCLK_MASK;
+> +	tcfg |= S5P_SYSTIMER_TCLK_PCLK;
 
-What's the 'feat'? How about to write 'features' exactly.
-It's for plurals for future.
+Here the PCLK clock is used to feed the SYSTEM TIMER.
+Maybe it would be worth to use other (not system dependent and always
+available) 
+clock source - for instance the main processor clock?
 
-Thank you,
-Kyungmin Park
->
-> =A0static struct s3c2410ts ts;
->
-> -enum s3c_cpu_type {
-> - =A0 =A0 =A0 TYPE_S3C2410,
-> - =A0 =A0 =A0 TYPE_S3C2440,
-> - =A0 =A0 =A0 TYPE_S3C64XX, =A0 /* S3C64XX, S5P64XX Series */
-> - =A0 =A0 =A0 TYPE_S5PV210, =A0 /* S5PV210 */
-> -};
-> -
-> =A0/**
-> =A0* get_down - return the down state of the pen
-> =A0* @data0: The data read from ADCDAT0 register.
-> @@ -179,7 +175,7 @@ static irqreturn_t stylus_irq(int irq, void *dev_=
-id)
-> =A0 =A0 =A0 =A0else
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0dev_info(ts.dev, "%s: count=3D%d\n", _=
-_func__, ts.count);
->
-> - =A0 =A0 =A0 if (platform_get_device_id(pdev)->driver_data >=3D TYPE=
-_S3C64XX) {
-> + =A0 =A0 =A0 if (ts.feat & FEAT_PEN_IRQ) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0/* Clear pen down/up interrupt */
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0writel(0x0, ts.io + S3C64XX_ADCCLRINTP=
-NDNUP);
-> =A0 =A0 =A0 =A0}
-> @@ -330,6 +326,7 @@ static int __devinit s3c2410ts_probe(struct platf=
-orm_device *pdev)
-> =A0 =A0 =A0 =A0ts.input->id.version =3D 0x0102;
->
-> =A0 =A0 =A0 =A0ts.shift =3D info->oversampling_shift;
-> + =A0 =A0 =A0 ts.feat =3D info->feature;
->
-> =A0 =A0 =A0 =A0ret =3D request_irq(ts.irq_tc, stylus_irq, IRQF_DISABL=
-ED,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0"s3c2410_ts_pen", =
-ts.input);
-> @@ -415,15 +412,6 @@ static struct dev_pm_ops s3c_ts_pmops =3D {
-> =A0};
-> =A0#endif
->
-> -static struct platform_device_id s3cts_driver_ids[] =3D {
-> - =A0 =A0 =A0 { "s3c2410-ts", TYPE_S3C2410 },
-> - =A0 =A0 =A0 { "s3c2440-ts", TYPE_S3C2440 },
-> - =A0 =A0 =A0 { "s3c64xx-ts", TYPE_S3C64XX },
-> - =A0 =A0 =A0 { "s5pv210-ts", TYPE_S5PV210 },
-> - =A0 =A0 =A0 { }
-> -};
-> -MODULE_DEVICE_TABLE(platform, s3cts_driver_ids);
-> -
-> =A0static struct platform_driver s3c_ts_driver =3D {
-> =A0 =A0 =A0 =A0.driver =A0 =A0 =A0 =A0 =3D {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "samsung-ts",
-> @@ -432,7 +420,6 @@ static struct platform_driver s3c_ts_driver =3D {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.pm =A0 =A0 =3D &s3c_ts_pmops,
-> =A0#endif
-> =A0 =A0 =A0 =A0},
-> - =A0 =A0 =A0 .id_table =A0 =A0 =A0 =3D s3cts_driver_ids,
-> =A0 =A0 =A0 =A0.probe =A0 =A0 =A0 =A0 =A0=3D s3c2410ts_probe,
-> =A0 =A0 =A0 =A0.remove =A0 =A0 =A0 =A0 =3D __devexit_p(s3c2410ts_remo=
-ve),
-> =A0};
+And additionally it would be welcome to add this clock selection to the
+overall clock API? (with use of e.g. clock_set/get_parent)
+
+Is there any plan to do that?
+
+
+> +	tcfg &= ~S5P_SYSTIMER_PRESCALER_MASK;
+> +	tcfg |= S5P_SYSTIMER_PRESCALER - 1;
+> +
+> +	tcnt = ((pclk / S5P_SYSTIMER_PRESCALER) / S5P_SYSTIMER_TARGET_HZ)
+> - 1;
+> +
+> +	/* check to see if timer is within 16bit range... */
+> +	if (tcnt > TICK_MAX) {
+> +		panic("setup_timer: HZ is too small, cannot configure
+> timer!");
+> +		return;
+> +	}
+> +
+> +	s5p_systimer_write(S5P_SYSTIMER_TCFG, tcfg);
+> +
+> +	timer_startval = tcnt;
+> +	s5p_systimer_write(S5P_SYSTIMER_TICNTB, tcnt);
+> +
+> +	/* set Interrupt tick value */
+> +	timer_icnt = (S5P_SYSTIMER_TARGET_HZ / HZ) - 1;
+> +	s5p_systimer_write(S5P_SYSTIMER_ICNTB, timer_icnt);
+> +
+> +	tcon = (S5P_SYSTIMER_INT_AUTO | S5P_SYSTIMER_START
+> +		| S5P_SYSTIMER_INT_START);
+> +	s5p_systimer_write(S5P_SYSTIMER_TCON, tcon);
+> +
+> +	/* Interrupt Start and Enable */
+> +	int_csata = __raw_readl(S5P_SYSTIMER_INT_CSTAT);
+> +	int_csata |= (S5P_SYSTIMER_INT_ICNTEIE |
+> S5P_SYSTIMER_INT_INTENABLE);
+> +	s5p_systimer_write(S5P_SYSTIMER_INT_CSTAT, int_csata);
+> +}
+> +
+> +static void __init s5p_systimer_init(void)
+> +{
+> +	s5p_systimer_setup();
+> +	setup_irq(IRQ_SYSTIMER, &s5p_systimer_irq);
+> +}
+> +
+> +struct sys_timer s5p_systimer = {
+> +	.init		= s5p_systimer_init,
+> +	.offset		= s5p_gettimeoffset,
+> +	.resume		= s5p_systimer_setup
+> +};
+> diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-
+> samsung/include/plat/cpu.h
+> index c54f318..d1ec201 100644
+> --- a/arch/arm/plat-samsung/include/plat/cpu.h
+> +++ b/arch/arm/plat-samsung/include/plat/cpu.h
+> @@ -68,6 +68,9 @@ extern void s3c24xx_init_uartdevs(char *name,
+>  struct sys_timer;
+>  extern struct sys_timer s3c24xx_timer;
+> 
+> +/* timer for s5p */
+> +extern struct sys_timer s5p_systimer;
+> +
+>  /* system device classes */
+> 
+>  extern struct sysdev_class s3c2410_sysclass;
 > --
 > 1.6.2.5
->
+> 
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
+> To unsubscribe from this list: send the line "unsubscribe linux-
+> samsung-soc" in
 > the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+Best regards,
+
+Lukasz Majewski
+Samsung Poland R&D Center
+Platform Group
