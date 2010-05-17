@@ -1,29 +1,29 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 05/15] ARM: S5PC100: Use common functions for gpiolib
-	implementation
-Date: Mon, 17 May 2010 20:14:49 +0900
-Message-ID: <003201caf5b2$2d641d00$882c5700$%kim@samsung.com>
+Subject: RE: [PATCH 06/15] ARM: S5PC100: Move gpio support from plat-s5pc1xx to
+	mach-s5pc100
+Date: Mon, 17 May 2010 20:24:51 +0900
+Message-ID: <003501caf5b3$94807c80$bd817580$%kim@samsung.com>
 References: <1273817946-29404-1-git-send-email-m.szyprowski@samsung.com>
- <1273817946-29404-6-git-send-email-m.szyprowski@samsung.com>
+ <1273817946-29404-7-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:35065 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752554Ab0EQLOy (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:36585 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752730Ab0EQLY5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 May 2010 07:14:54 -0400
-Received: from epmmp2 (mailout1.samsung.com [203.254.224.24])
+	Mon, 17 May 2010 07:24:57 -0400
+Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
  by mailout1.samsung.com
  (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L2K0033F9WSXI@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 20:14:52 +0900 (KST)
+ with ESMTP id <0L2K00FCBADJIW@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 20:24:55 +0900 (KST)
 Received: from kgenekim ([12.23.103.96])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L2K00AML9WS07@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 20:14:52 +0900 (KST)
-In-reply-to: <1273817946-29404-6-git-send-email-m.szyprowski@samsung.com>
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L2K00LU3ADJ9A@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 20:24:55 +0900 (KST)
+In-reply-to: <1273817946-29404-7-git-send-email-m.szyprowski@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -32,191 +32,152 @@ Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
 
 Marek Szyprowski wrote:
 > 
-> GPIOlib helpers from plat-samsung already have functions for accessing
-> 4bit gpio banks. This patch removes the duplicated functions from
-> plat-s5pc1xx/gpiolib.c.
+> Move gpio-lib support from plat-s5pc1xx to mach-s5pc100. Only basic gpio
+> functionality is now supported. Gpio interrupts are disabled temporarly
+> and will be added later.
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  arch/arm/plat-s5pc1xx/Kconfig   |    1 +
->  arch/arm/plat-s5pc1xx/gpiolib.c |   96
-++++-----------------------------------
->  2 files changed, 10 insertions(+), 87 deletions(-)
+>  arch/arm/mach-s5pc100/Makefile                     |    2 +-
+>  .../gpiolib.c => mach-s5pc100/gpio.c}              |   11 +++++++----
+>  .../plat => mach-s5pc100/include/mach}/regs-gpio.h |    0
+>  arch/arm/mach-s5pc100/mach-smdkc100.c              |    1 -
+>  arch/arm/plat-s5pc1xx/Makefile                     |    3 +--
+>  5 files changed, 9 insertions(+), 8 deletions(-)
+>  rename arch/arm/{plat-s5pc1xx/gpiolib.c => mach-s5pc100/gpio.c} (99%)
+>  rename arch/arm/{plat-s5pc1xx/include/plat =>
+mach-s5pc100/include/mach}/regs-
+> gpio.h (100%)
 > 
-> diff --git a/arch/arm/plat-s5pc1xx/Kconfig b/arch/arm/plat-s5pc1xx/Kconfig
-> index 79d3be7..98bbaf9 100644
-> --- a/arch/arm/plat-s5pc1xx/Kconfig
-> +++ b/arch/arm/plat-s5pc1xx/Kconfig
-> @@ -19,6 +19,7 @@ config PLAT_S5PC1XX
->  	select S5P_GPIO_DRVSTR
->  	select S3C_GPIO_CFG_S3C24XX
->  	select S3C_GPIO_CFG_S3C64XX
-> +	select SAMSUNG_GPIOLIB_4BIT
->  	help
->  	  Base platform code for any Samsung S5PC1XX device
+> diff --git a/arch/arm/mach-s5pc100/Makefile
+b/arch/arm/mach-s5pc100/Makefile
+> index 809ff10..e1afdbf 100644
+> --- a/arch/arm/mach-s5pc100/Makefile
+> +++ b/arch/arm/mach-s5pc100/Makefile
+> @@ -11,7 +11,7 @@ obj-				:=
 > 
-> diff --git a/arch/arm/plat-s5pc1xx/gpiolib.c
-b/arch/arm/plat-s5pc1xx/gpiolib.c
-> index 1ffc57a..5a97a8f 100644
+>  # Core support for S5PC100 system
+> 
+> -obj-$(CONFIG_CPU_S5PC100)	+= cpu.o
+> +obj-$(CONFIG_CPU_S5PC100)	+= cpu.o gpio.o
+
+How about changing gpiolib like gpiolib.c of mach-s3c64xx/ and mach-s5pv210/.
+I will change the file name of mach-s5p6440/ also.
+
+> 
+>  # Helper and device support
+> 
+> diff --git a/arch/arm/plat-s5pc1xx/gpiolib.c b/arch/arm/mach-s5pc100/gpio.c
+> similarity index 99%
+> rename from arch/arm/plat-s5pc1xx/gpiolib.c
+> rename to arch/arm/mach-s5pc100/gpio.c
+> index 5a97a8f..c8e8336 100644
 > --- a/arch/arm/plat-s5pc1xx/gpiolib.c
-> +++ b/arch/arm/plat-s5pc1xx/gpiolib.c
-> @@ -61,74 +61,6 @@
+> +++ b/arch/arm/mach-s5pc100/gpio.c
+> @@ -17,11 +17,11 @@
+>  #include <linux/gpio.h>
+> 
+>  #include <mach/map.h>
+> +#include <mach/regs-gpio.h>
+> 
+>  #include <plat/gpio-core.h>
+>  #include <plat/gpio-cfg.h>
+>  #include <plat/gpio-cfg-helpers.h>
+> -#include <plat/regs-gpio.h>
+> 
+>  /* S5PC100 GPIO bank summary:
+>   *
+> @@ -61,6 +61,7 @@
 >   * L3	8	4Bit	None
 >   */
 > 
-> -#define OFF_GPCON	(0x00)
-> -#define OFF_GPDAT	(0x04)
-> -
-> -#define con_4bit_shift(__off) ((__off) * 4)
-> -
-> -#if 1
-> -#define gpio_dbg(x...) do { } while (0)
-> -#else
-> -#define gpio_dbg(x...) printk(KERN_DEBUG x)
-> -#endif
-> -
-> -/* The s5pc1xx_gpiolib routines are to control the gpio banks where
-> - * the gpio configuration register (GPxCON) has 4 bits per GPIO, as the
-> - * following example:
-> - *
-> - * base + 0x00: Control register, 4 bits per gpio
-> - *	        gpio n: 4 bits starting at (4*n)
-> - *		0000 = input, 0001 = output, others mean special-function
-> - * base + 0x04: Data register, 1 bit per gpio
-> - *		bit n: data bit n
-> - *
-> - * Note, since the data register is one bit per gpio and is at base + 0x4
-> - * we can use s3c_gpiolib_get and s3c_gpiolib_set to change the state of
-> - * the output.
-> - */
-> -
-> -static int s5pc1xx_gpiolib_input(struct gpio_chip *chip, unsigned offset)
-> -{
-> -	struct s3c_gpio_chip *ourchip = to_s3c_gpio(chip);
-> -	void __iomem *base = ourchip->base;
-> -	unsigned long con;
-> -
-> -	con = __raw_readl(base + OFF_GPCON);
-> -	con &= ~(0xf << con_4bit_shift(offset));
-> -	__raw_writel(con, base + OFF_GPCON);
-> -
-> -	gpio_dbg("%s: %p: CON now %08lx\n", __func__, base, con);
-> -
-> -	return 0;
-> -}
-> -
-> -static int s5pc1xx_gpiolib_output(struct gpio_chip *chip,
-> -				       unsigned offset, int value)
-> -{
-> -	struct s3c_gpio_chip *ourchip = to_s3c_gpio(chip);
-> -	void __iomem *base = ourchip->base;
-> -	unsigned long con;
-> -	unsigned long dat;
-> -
-> -	con = __raw_readl(base + OFF_GPCON);
-> -	con &= ~(0xf << con_4bit_shift(offset));
-> -	con |= 0x1 << con_4bit_shift(offset);
-> -
-> -	dat = __raw_readl(base + OFF_GPDAT);
-> -	if (value)
-> -		dat |= 1 << offset;
-> -	else
-> -		dat &= ~(1 << offset);
-> -
-> -	__raw_writel(dat, base + OFF_GPDAT);
-> -	__raw_writel(con, base + OFF_GPCON);
-> -	__raw_writel(dat, base + OFF_GPDAT);
-> -
-> -	gpio_dbg("%s: %p: CON %08lx, DAT %08lx\n", __func__, base, con, dat);
-> -
-> -	return 0;
-> -}
-> -
+> +#if 0
 >  static int s5pc1xx_gpiolib_to_irq(struct gpio_chip *chip, unsigned int
 offset)
 >  {
 >  	return S3C_IRQ_GPIO(chip->base + offset);
-
-The following is from 137th line in the same file.
-static int s5pc1xx_gpiolib_to_eint(struct gpio_chip *chip, unsigned int
-offset)
-{
-...
-
-Really need above function in this file?
-How about handling gpio external interrupt to other file?
-
-And the following is from 175th line in the same file.
-static struct s3c_gpio_chip s5pc100_gpio_chips[] = {
-	{
-		.base	= S5PC100_GPA0_BASE,
-		.config	= &gpio_cfg,
-		.chip	= {
-			.base	= S5PC100_GPA0(0),
-			.ngpio	= S5PC100_GPIO_A0_NR,
-			.label	= "GPA0",
-		},
-...
-
-1. the &gpio_cfg is default, it means any null config setting to gpio_cfg.
-
-2. avoid a whole pile of defines in the plat-s5pc1xx/include/plat/regs-gpio.h
-The S5PC100_GPxx_BASE defines look like they could be defined as offset from
-a base and each bank given its own index. 
-
-> @@ -452,11 +384,8 @@ static struct s3c_gpio_chip s5pc100_gpio_chips[] = {
->  extern struct irq_chip s5pc1xx_gpioint;
->  extern void s5pc1xx_irq_gpioint_handler(unsigned int irq, struct irq_desc
-*desc);
+> @@ -84,7 +85,7 @@ static int s5pc1xx_gpiolib_to_eint(struct gpio_chip
+*chip,
+> unsigned int offset)
+>  		return IRQ_EINT(24 + offset);
+>  	return -EINVAL;
+>  }
+> -
+> +#endif
+>  static struct s3c_gpio_cfg gpio_cfg = {
+>  	.set_config	= s3c_gpio_setcfg_s3c64xx_4bit,
+>  	.set_pull	= s3c_gpio_setpull_updown,
+> @@ -386,7 +387,7 @@ extern void s5pc1xx_irq_gpioint_handler(unsigned int
+irq,
+> struct irq_desc *desc)
 > 
-> -static __init void s5pc1xx_gpiolib_link(struct s3c_gpio_chip *chip)
-> +static __init void s5pc100_gpiolib_link(struct s3c_gpio_chip *chip)
+>  static __init void s5pc100_gpiolib_link(struct s3c_gpio_chip *chip)
 >  {
-> -	chip->chip.direction_input = s5pc1xx_gpiolib_input;
-> -	chip->chip.direction_output = s5pc1xx_gpiolib_output;
-> -	chip->pm = __gpio_pm(&s3c_gpio_pm_4bit);
-> 
+> -
+> +#if 0
 >  	/* Interrupt */
 >  	if (chip->config == &gpio_cfg) {
-> @@ -475,26 +404,19 @@ static __init void s5pc1xx_gpiolib_link(struct
-> s3c_gpio_chip *chip)
+>  		int i, irq;
+> @@ -402,6 +403,7 @@ static __init void s5pc100_gpiolib_link(struct
+s3c_gpio_chip
+> *chip)
+>  		}
+>  	} else if (chip->config == &gpio_cfg_eint)
 >  		chip->chip.to_irq = s5pc1xx_gpiolib_to_eint;
+> +#endif
 >  }
 > 
-> -static __init void s5pc1xx_gpiolib_add(struct s3c_gpio_chip *chips,
-> -				       int nr_chips,
-> -				       void (*fn)(struct s3c_gpio_chip *))
-> -{
-> -	for (; nr_chips > 0; nr_chips--, chips++) {
-> -		if (fn)
-> -			(fn)(chips);
-> -		s3c_gpiolib_add(chips);
-> -	}
-> -}
-> -
 >  static __init int s5pc1xx_gpiolib_init(void)
->  {
-> -	struct s3c_gpio_chip *chips;
-> +	struct s3c_gpio_chip *chip;
->  	int nr_chips;
+> @@ -417,9 +419,10 @@ static __init int s5pc1xx_gpiolib_init(void)
 > 
-> -		chips = s5pc100_gpio_chips;
-> -		nr_chips = ARRAY_SIZE(s5pc100_gpio_chips);
-> +	chip = s5pc100_gpio_chips;
-> +	nr_chips = ARRAY_SIZE(s5pc100_gpio_chips);
-> +
-> +	for (; nr_chips > 0; nr_chips--, chip++)
-> +		s5pc100_gpiolib_link(chip);
-> 
-> -	s5pc1xx_gpiolib_add(chips, nr_chips, s5pc1xx_gpiolib_link);
-> +	samsung_gpiolib_add_4bit_chips(s5pc100_gpio_chips,
-> +				       ARRAY_SIZE(s5pc100_gpio_chips));
-
-nr_chips?
-
+>  	samsung_gpiolib_add_4bit_chips(s5pc100_gpio_chips,
+>  				       ARRAY_SIZE(s5pc100_gpio_chips));
+> +#if 0
 >  	/* Interrupt */
 >  	set_irq_chained_handler(IRQ_GPIOINT, s5pc1xx_irq_gpioint_handler);
+> -
+> +#endif
+>  	return 0;
+>  }
+>  core_initcall(s5pc1xx_gpiolib_init);
+
+Is there any way to avoid compile compatibility without #if 0?
+
+> diff --git a/arch/arm/plat-s5pc1xx/include/plat/regs-gpio.h
+b/arch/arm/mach-
+> s5pc100/include/mach/regs-gpio.h
+> similarity index 100%
+> rename from arch/arm/plat-s5pc1xx/include/plat/regs-gpio.h
+> rename to arch/arm/mach-s5pc100/include/mach/regs-gpio.h
+> diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-
+> s5pc100/mach-smdkc100.c
+> index ae3c52c..bfe67db 100644
+> --- a/arch/arm/mach-s5pc100/mach-smdkc100.cgg
+> +++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
+> @@ -35,7 +35,6 @@
+> 
+>  #include <plat/regs-serial.h>
+>  #include <plat/gpio-cfg.h>
+> -#include <plat/regs-gpio.h>
+> 
+>  #include <plat/clock.h>
+>  #include <plat/devs.h>
+> diff --git a/arch/arm/plat-s5pc1xx/Makefile
+b/arch/arm/plat-s5pc1xx/Makefile
+> index 66a8f3e..540fca5 100644
+> --- a/arch/arm/plat-s5pc1xx/Makefile
+> +++ b/arch/arm/plat-s5pc1xx/Makefile
+> @@ -13,9 +13,8 @@ obj-				:=
+> 
+>  obj-y				+= dev-uart.o
+>  obj-y				+= cpu.o
+> -obj-y				+= irq.o irq-gpio.o irq-eint.o
+> +obj-y				+= irq.o
+>  obj-y				+= clock.o
+> -obj-y				+= gpiolib.o
+> 
+>  # CPU support
 > 
 > --
 
