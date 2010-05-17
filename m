@@ -1,209 +1,69 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 4/7] ARM: S5PV210: add framebuffer platform helpers for s5pv210
- based machines
-Date: Mon, 17 May 2010 08:53:12 +0200
-Message-ID: <1274079195-18105-5-git-send-email-m.szyprowski@samsung.com>
-References: <1274079195-18105-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: [PATCH 3/6] ARM: S3C24XX: Start cleanup of GPIO numbering
+Date: Mon, 17 May 2010 08:22:35 +0100
+Message-ID: <1274080958-369-3-git-send-email-ben-linux@fluff.org>
+References: <1274080958-369-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58573 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753526Ab0EQGxZ (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:48507 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752159Ab0EQHWp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 May 2010 02:53:25 -0400
-Received: from eu_spt2 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L2J00B4GXSUVW@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 07:53:18 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L2J00KD1XST6R@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 07:53:18 +0100 (BST)
-In-reply-to: <1274079195-18105-1-git-send-email-m.szyprowski@samsung.com>
+	Mon, 17 May 2010 03:22:45 -0400
+In-Reply-To: <1274080958-369-1-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
+Cc: Ben Dooks <ben-linux@fluff.org>
 
-This patch adds common framebuffer device helpers and register defines
-for S5PV210 based machines.
+Start cleaning up the numbering of GPIO banks by removing the old
+bank start definitions currently being used by some of the header
+files.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/mach-s5pv210/Kconfig                   |    5 ++
- arch/arm/mach-s5pv210/Makefile                  |    4 ++
- arch/arm/mach-s5pv210/include/mach/irqs.h       |    5 ++
- arch/arm/mach-s5pv210/include/mach/map.h        |    3 +
- arch/arm/mach-s5pv210/include/mach/regs-clock.h |    1 +
- arch/arm/mach-s5pv210/setup-fb-24bpp.c          |   62 +++++++++++++++++++++++
- arch/arm/plat-samsung/include/plat/fb.h         |    7 +++
- 7 files changed, 87 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s5pv210/setup-fb-24bpp.c
+ arch/arm/mach-s3c2410/include/mach/gpio-nrs.h |    5 -----
+ arch/arm/mach-s3c2412/gpio.c                  |    8 ++++----
+ 2 files changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index c42bcba..3717b52 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -15,6 +15,11 @@ config CPU_S5PV210
- 	help
- 	  Enable S5PV210 CPU support
+diff --git a/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h b/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h
+index f3182ff..ad94e1a 100644
+--- a/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h
++++ b/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h
+@@ -16,12 +16,7 @@
  
-+config S5PV210_SETUP_FB_24BPP
-+	bool
-+	help
-+          Common setup code for S5PV210 with an 24bpp RGB display helper.
-+
- config MACH_SMDKV210
- 	bool "SMDKV210"
- 	select CPU_S5PV210
-diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
-index 0bb1680..a2707a8 100644
---- a/arch/arm/mach-s5pv210/Makefile
-+++ b/arch/arm/mach-s5pv210/Makefile
-@@ -15,6 +15,10 @@ obj-				:=
- obj-$(CONFIG_CPU_S5PV210)	+= cpu.o init.o clock.o gpiolib.o
- obj-$(CONFIG_CPU_S5PV210)	+= setup-i2c0.o
+ #define S3C2410_GPIONO(bank,offset) ((bank) + (offset))
  
-+# Helper and device support
-+
-+obj-$(CONFIG_S5PV210_SETUP_FB_24BPP)	+= setup-fb-24bpp.o
-+
- # machine support
+-#define S3C2410_GPIO_BANKA   (32*0)
+-#define S3C2410_GPIO_BANKB   (32*1)
+ #define S3C2410_GPIO_BANKC   (32*2)
+-#define S3C2410_GPIO_BANKD   (32*3)
+-#define S3C2410_GPIO_BANKE   (32*4)
+-#define S3C2410_GPIO_BANKF   (32*5)
+ #define S3C2410_GPIO_BANKG   (32*6)
+ #define S3C2410_GPIO_BANKH   (32*7)
  
- obj-$(CONFIG_MACH_SMDKV210)	+= mach-smdkv210.o
-diff --git a/arch/arm/mach-s5pv210/include/mach/irqs.h b/arch/arm/mach-s5pv210/include/mach/irqs.h
-index 62c5175..ee6e07b 100644
---- a/arch/arm/mach-s5pv210/include/mach/irqs.h
-+++ b/arch/arm/mach-s5pv210/include/mach/irqs.h
-@@ -143,4 +143,9 @@
+diff --git a/arch/arm/mach-s3c2412/gpio.c b/arch/arm/mach-s3c2412/gpio.c
+index f7afece..71c5793 100644
+--- a/arch/arm/mach-s3c2412/gpio.c
++++ b/arch/arm/mach-s3c2412/gpio.c
+@@ -33,14 +33,14 @@ int s3c2412_gpio_set_sleepcfg(unsigned int pin, unsigned int state)
  
- #define NR_IRQS 		(IRQ_EINT(31) + 1)
+ 	offs *= 2;
  
-+/* Compatibility */
-+#define IRQ_LCD_FIFO		IRQ_LCD0
-+#define IRQ_LCD_VSYNC		IRQ_LCD1
-+#define IRQ_LCD_SYSTEM		IRQ_LCD2
-+
- #endif /* ASM_ARCH_IRQS_H */
-diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
-index c22694c..5903056 100644
---- a/arch/arm/mach-s5pv210/include/mach/map.h
-+++ b/arch/arm/mach-s5pv210/include/mach/map.h
-@@ -43,6 +43,8 @@
+-	if (pin < S3C2410_GPIO_BANKB)
++	if (pin < S3C2410_GPB(0))
+ 		return -EINVAL;
  
- #define S5PV210_PA_SROMC	(0xE8000000)
+-	if (pin >= S3C2410_GPIO_BANKF &&
+-	    pin <= S3C2410_GPIO_BANKG)
++	if (pin >= S3C2410_GPF(0) &&
++	    pin <= S3C2410_GPG(16))
+ 		return -EINVAL;
  
-+#define S5PV210_PA_FB		(0xF8000000)
-+
- #define S5PV210_PA_VIC0		(0xF2000000)
- #define S5P_PA_VIC0		S5PV210_PA_VIC0
+-	if (pin > (S3C2410_GPIO_BANKH + 32))
++	if (pin > S3C2410_GPH(16))
+ 		return -EINVAL;
  
-@@ -61,5 +63,6 @@
- /* compatibiltiy defines. */
- #define S3C_PA_UART		S5PV210_PA_UART
- #define S3C_PA_IIC		S5PV210_PA_IIC0
-+#define S3C_PA_FB		S5PV210_PA_FB
- 
- #endif /* __ASM_ARCH_MAP_H */
-diff --git a/arch/arm/mach-s5pv210/include/mach/regs-clock.h b/arch/arm/mach-s5pv210/include/mach/regs-clock.h
-index 40dd24f..0a3d7ad 100644
---- a/arch/arm/mach-s5pv210/include/mach/regs-clock.h
-+++ b/arch/arm/mach-s5pv210/include/mach/regs-clock.h
-@@ -128,6 +128,7 @@
- 
- #define S5P_RST_STAT		S5P_CLKREG(0xA000)
- #define S5P_OSC_CON		S5P_CLKREG(0x8000)
-+#define S5P_MDNIE_SEL		S5P_CLKREG(0x7008)
- #define S5P_MIPI_PHY_CON0	S5P_CLKREG(0x7200)
- #define S5P_MIPI_PHY_CON1	S5P_CLKREG(0x7204)
- #define S5P_MIPI_CONTROL	S5P_CLKREG(0xE814)
-diff --git a/arch/arm/mach-s5pv210/setup-fb-24bpp.c b/arch/arm/mach-s5pv210/setup-fb-24bpp.c
-new file mode 100644
-index 0000000..b039a55
---- /dev/null
-+++ b/arch/arm/mach-s5pv210/setup-fb-24bpp.c
-@@ -0,0 +1,62 @@
-+/*
-+ * linux/arch/arm/plat-s5pv210/setup-fb-24bpp.c
-+ *
-+ * Copyright 2009 Samsung Electronics
-+ *
-+ * Base s5pv210 setup information for 24bpp LCD framebuffer
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/types.h>
-+#include <linux/fb.h>
-+
-+#include <mach/regs-fb.h>
-+#include <mach/gpio.h>
-+#include <mach/map.h>
-+#include <plat/fb.h>
-+#include <mach/regs-clock.h>
-+#include <plat/gpio-cfg.h>
-+
-+void s5pv210_fb_gpio_setup_24bpp(void)
-+{
-+	unsigned int gpio = 0;
-+
-+	for (gpio = S5PV210_GPF0(0); gpio <= S5PV210_GPF0(7); gpio++) {
-+		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
-+		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
-+		s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV4);
-+	}
-+
-+	for (gpio = S5PV210_GPF1(0); gpio <= S5PV210_GPF1(7); gpio++) {
-+		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
-+		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
-+		s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV4);
-+	}
-+
-+	for (gpio = S5PV210_GPF2(0); gpio <= S5PV210_GPF2(7); gpio++) {
-+		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
-+		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
-+		s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV4);
-+	}
-+
-+	for (gpio = S5PV210_GPF3(0); gpio <= S5PV210_GPF3(3); gpio++) {
-+		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
-+		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
-+		s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV4);
-+	}
-+
-+	/* Set DISPLAY_CONTROL register for Display path selection.
-+	 *
-+	 * ouput   |   RGB   |   I80   |   ITU
-+	 * -----------------------------------
-+	 *  00     |   MIE   |  FIMD   |  FIMD
-+	 *  01     | MDNIE   | MDNIE   |  FIMD
-+	 *  10     |  FIMD   |  FIMD   |  FIMD
-+	 *  11     |  FIMD   |  FIMD   |  FIMD
-+	 */
-+	writel(0x2, S5P_MDNIE_SEL);
-+}
-diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/plat-samsung/include/plat/fb.h
-index ffc01a7..3b30d7b 100644
---- a/arch/arm/plat-samsung/include/plat/fb.h
-+++ b/arch/arm/plat-samsung/include/plat/fb.h
-@@ -77,4 +77,11 @@ extern void s3c64xx_fb_gpio_setup_24bpp(void);
-  */
- extern void s5pc100_fb_gpio_setup_24bpp(void);
- 
-+/**
-+ * s5pv210_fb_gpio_setup_24bpp() - S5PV210/S5PC110 setup function for 24bpp LCD
-+ *
-+ * Initialise the GPIO for an 24bpp LCD display on the RGB interface.
-+ */
-+extern void s5pv210_fb_gpio_setup_24bpp(void);
-+
- #endif /* __PLAT_S3C_FB_H */
+ 	local_irq_save(flags);
 -- 
-1.6.4
+1.6.3.3
