@@ -1,11 +1,11 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 01/18] ARM: S5PV210: Rearrange the system clock definitions
-Date: Mon, 17 May 2010 09:38:01 +0900
-Message-ID: <1274056681-14217-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 14/18] ARM: S5PV210: Add sclk_dac, sclk_mixer and sclk_hdmi clocks
+Date: Mon, 17 May 2010 09:38:57 +0900
+Message-ID: <1274056737-14647-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:33032 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:33024 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751962Ab0EQAmI (ORCPT
+	with ESMTP id S1751941Ab0EQAmI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Sun, 16 May 2010 20:42:08 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -15,91 +15,116 @@ Cc: ben-linux@fluff.org, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kge
 
 From: Thomas Abraham <thomas.ab@samsung.com>
 
-The system clock definitions are currently defined below the
-peripheral clock definitions in the V210 clock code. For the V210
-clock updates that follow this patch, it is required that the
-system clock definitions such as the mout_apll and mout_mpll be
-defined prior to the device clock definitions. This patch
-re-arranges the system clock defintions for the clock updates that
-follow this patch.
+Add sclk_dac, sclk_mixer and sclk_hdmi clocks. These clocks
+are of type 'struct clksrc_clk' and so have a corresponding
+clock list. These clocks are also added to the list of
+clocks to be registered at boot time.
 
 Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv210/clock.c |   54 ++++++++++++++++++++--------------------
- 1 files changed, 27 insertions(+), 27 deletions(-)
+ arch/arm/mach-s5pv210/clock.c |   75 ++++++++++++++++++++++++++++++++++++++++-
+ 1 files changed, 74 insertions(+), 1 deletions(-)
 
 diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-index ccccae2..a620cd8 100644
+index 2c7be15..c03e288 100644
 --- a/arch/arm/mach-s5pv210/clock.c
 +++ b/arch/arm/mach-s5pv210/clock.c
-@@ -31,6 +31,33 @@
- #include <plat/clock-clksrc.h>
- #include <plat/s5pv210.h>
- 
-+static struct clksrc_clk clk_mout_apll = {
-+	.clk	= {
-+		.name		= "mout_apll",
-+		.id		= -1,
-+	},
-+	.sources	= &clk_src_apll,
-+	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 0, .size = 1 },
-+};
-+
-+static struct clksrc_clk clk_mout_epll = {
-+	.clk	= {
-+		.name		= "mout_epll",
-+		.id		= -1,
-+	},
-+	.sources	= &clk_src_epll,
-+	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 8, .size = 1 },
-+};
-+
-+static struct clksrc_clk clk_mout_mpll = {
-+	.clk = {
-+		.name		= "mout_mpll",
-+		.id		= -1,
-+	},
-+	.sources	= &clk_src_mpll,
-+	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 4, .size = 1 },
-+};
-+
- static int s5pv210_clk_ip0_ctrl(struct clk *clk, int enable)
- {
- 	return s5p_gatectrl(S5P_CLKGATE_IP0, clk, enable);
-@@ -272,33 +299,6 @@ static struct clk init_clocks[] = {
- 	},
+@@ -463,6 +463,67 @@ static struct clksrc_sources clkset_sclk_onenand = {
+ 	.nr_sources	= ARRAY_SIZE(clkset_sclk_onenand_list),
  };
  
--static struct clksrc_clk clk_mout_apll = {
--	.clk	= {
--		.name		= "mout_apll",
--		.id		= -1,
--	},
--	.sources	= &clk_src_apll,
--	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 0, .size = 1 },
--};
--
--static struct clksrc_clk clk_mout_epll = {
--	.clk	= {
--		.name		= "mout_epll",
--		.id		= -1,
--	},
--	.sources	= &clk_src_epll,
--	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 8, .size = 1 },
--};
--
--static struct clksrc_clk clk_mout_mpll = {
--	.clk = {
--		.name		= "mout_mpll",
--		.id		= -1,
--	},
--	.sources	= &clk_src_mpll,
--	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 4, .size = 1 },
--};
--
- static struct clk *clkset_uart_list[] = {
- 	[6] = &clk_mout_mpll.clk,
- 	[7] = &clk_mout_epll.clk,
++static struct clk *clkset_sclk_dac_list[] = {
++	[0] = &clk_sclk_vpll.clk,
++	[1] = &clk_sclk_hdmiphy,
++};
++
++static struct clksrc_sources clkset_sclk_dac = {
++	.sources	= clkset_sclk_dac_list,
++	.nr_sources	= ARRAY_SIZE(clkset_sclk_dac_list),
++};
++
++static struct clksrc_clk clk_sclk_dac = {
++	.clk		= {
++		.name		= "sclk_dac",
++		.id		= -1,
++		.ctrlbit	= (1 << 10),
++		.enable		= s5pv210_clk_ip1_ctrl,
++	},
++	.sources	= &clkset_sclk_dac,
++	.reg_src	= { .reg = S5P_CLK_SRC1, .shift = 8, .size = 1 },
++};
++
++static struct clksrc_clk clk_sclk_pixel = {
++	.clk		= {
++		.name		= "sclk_pixel",
++		.id		= -1,
++		.parent		= &clk_sclk_vpll.clk,
++	},
++	.reg_div	= { .reg = S5P_CLK_DIV1, .shift = 0, .size = 4},
++};
++
++static struct clk *clkset_sclk_hdmi_list[] = {
++	[0] = &clk_sclk_pixel.clk,
++	[1] = &clk_sclk_hdmiphy,
++};
++
++static struct clksrc_sources clkset_sclk_hdmi = {
++	.sources	= clkset_sclk_hdmi_list,
++	.nr_sources	= ARRAY_SIZE(clkset_sclk_hdmi_list),
++};
++
++static struct clksrc_clk clk_sclk_hdmi = {
++	.clk		= {
++		.name		= "sclk_hdmi",
++		.id		= -1,
++		.enable		= s5pv210_clk_ip1_ctrl,
++		.ctrlbit	= (1 << 11),
++	},
++	.sources	= &clkset_sclk_hdmi,
++	.reg_src	= { .reg = S5P_CLK_SRC1, .shift = 0, .size = 1 },
++};
++
++static struct clk *clkset_sclk_mixer_list[] = {
++	[0] = &clk_sclk_dac.clk,
++	[1] = &clk_sclk_hdmi.clk,
++};
++
++static struct clksrc_sources clkset_sclk_mixer = {
++	.sources	= clkset_sclk_mixer_list,
++	.nr_sources	= ARRAY_SIZE(clkset_sclk_mixer_list),
++};
++
+ static struct clksrc_clk clksrcs[] = {
+ 	{
+ 		.clk	= {
+@@ -490,7 +551,16 @@ static struct clksrc_clk clksrcs[] = {
+ 		.sources = &clkset_uart,
+ 		.reg_src = { .reg = S5P_CLK_SRC4, .shift = 16, .size = 4 },
+ 		.reg_div = { .reg = S5P_CLK_DIV4, .shift = 16, .size = 4 },
+-	}
++	}, {
++		.clk	= {
++			.name		= "sclk_mixer",
++			.id		= -1,
++			.enable		= s5pv210_clk_ip1_ctrl,
++			.ctrlbit	= (1 << 9),
++		},
++		.sources = &clkset_sclk_mixer,
++		.reg_src = { .reg = S5P_CLK_SRC1, .shift = 4, .size = 1 },
++	},
+ };
+ 
+ /* Clock initialisation code */
+@@ -508,6 +578,9 @@ static struct clksrc_clk *sysclks[] = {
+ 	&clk_pclk_psys,
+ 	&clk_vpllsrc,
+ 	&clk_sclk_vpll,
++	&clk_sclk_dac,
++	&clk_sclk_pixel,
++	&clk_sclk_hdmi,
+ };
+ 
+ void __init_or_cpufreq s5pv210_setup_clocks(void)
 -- 
 1.6.2.5
