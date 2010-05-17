@@ -1,75 +1,186 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH] ARM: S5P: Dynamicly numbered GPIO interrupt support
-Date: Sat, 15 May 2010 01:11:03 +0100
-Message-ID: <20100515001103.GQ26401@trinity.fluff.org>
-References: <1273826403-28976-1-git-send-email-ben-linux@fluff.org> <008e01caf345$50ad0610$f2071230$%szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH 15/18] ARM: S5PV210: Add sclk_audio and sclk_spdif clocks.
+Date: Mon, 17 May 2010 09:39:00 +0900
+Message-ID: <1274056740-14680-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:49175 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751365Ab0EOALH (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:33028 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751925Ab0EQAmI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 May 2010 20:11:07 -0400
-Content-Disposition: inline
-In-Reply-To: <008e01caf345$50ad0610$f2071230$%szyprowski@samsung.com>
+	Sun, 16 May 2010 20:42:08 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Fri, May 14, 2010 at 11:10:19AM +0200, Marek Szyprowski wrote:
-> Hello,
-> 
-> On Friday, May 14, 2010 10:40 AM Ben Dooks wrote:
-> 
-> > Add support for GPIO interrupts where the interrupt number
-> > is dynamically allocated at first request from gpiolib.
-> > 
-> > This method is employed as the newer SoCs have a large number
-> > of possible interrupt numbers which are very rarely heavily
-> > used. However, the classic code has always registered all
-> > possible interrupts, using a large amount of memory for the
-> > irq_desc[] table.
-> 
-> I like this idea, however I already see some problems. This solves
-> only gpio to irq mappings, but what about reverse mappings? There
-> are many i2c/spi/whatever drivers that requires a irq number to be
-> passed with platform data. With static gpio-irq mappings this is
-> trivial. However with dynamic gpio2irq mappings this becomes more
-> complicated. 
-> 
-> Machine startup code would need to:
-> 1. request the gpio pin used for interrupt (ok)
-> 2. convert it to irq number (ok)
-> 3. put it in driver specific platform data (ok)
-> 4. release the gpio pin (?)
-> 
-> Would request_irq() work after release of that gpio pin?
+From: Thomas Abraham <thomas.ab@samsung.com>
 
-I was actually considering exporting it as both a gpiolib call
-and a call which is s5p specific, say s5p_map_gpio_irq() which
-odes the neessary chip mampping.
+Add the sclk_audio(0/1/2) clocks and sclk_spdif clock of type
+'struct clksrc_clk' clock. Also, add clk_pcmcdclk(0/1/2) clocks
+of type 'struct clk' clock.
 
-At the moment, we don't release the interrupt range once we get
-it as there's no call in gpiolib to reverse to_irq() and even
-if you release the irq, it is still possible the driver will
-have noted the irq number and then re-request it.
-  
-> Best regards
-> --
-> Marek Szyprowski
-> Samsung Poland R&D Center
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s5pv210/clock.c |  125 +++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 125 insertions(+), 0 deletions(-)
 
+diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
+index c03e288..0154710 100644
+--- a/arch/arm/mach-s5pv210/clock.c
++++ b/arch/arm/mach-s5pv210/clock.c
+@@ -199,6 +199,21 @@ static struct clk clk_sclk_usbphy1 = {
+ 	.id		= -1,
+ };
+ 
++static struct clk clk_pcmcdclk0 = {
++	.name		= "pcmcdclk",
++	.id		= -1,
++};
++
++static struct clk clk_pcmcdclk1 = {
++	.name		= "pcmcdclk",
++	.id		= -1,
++};
++
++static struct clk clk_pcmcdclk2 = {
++	.name		= "pcmcdclk",
++	.id		= -1,
++};
++
+ static struct clk *clkset_vpllsrc_list[] = {
+ 	[0] = &clk_fin_vpll,
+ 	[1] = &clk_sclk_hdmi27m,
+@@ -524,6 +539,104 @@ static struct clksrc_sources clkset_sclk_mixer = {
+ 	.nr_sources	= ARRAY_SIZE(clkset_sclk_mixer_list),
+ };
+ 
++static struct clk *clkset_sclk_audio0_list[] = {
++	[0] = &clk_ext_xtal_mux,
++	[1] = &clk_pcmcdclk0,
++	[2] = &clk_sclk_hdmi27m,
++	[3] = &clk_sclk_usbphy0,
++	[4] = &clk_sclk_usbphy1,
++	[5] = &clk_sclk_hdmiphy,
++	[6] = &clk_mout_mpll.clk,
++	[7] = &clk_mout_epll.clk,
++	[8] = &clk_sclk_vpll.clk,
++};
++
++static struct clksrc_sources clkset_sclk_audio0 = {
++	.sources	= clkset_sclk_audio0_list,
++	.nr_sources	= ARRAY_SIZE(clkset_sclk_audio0_list),
++};
++
++static struct clksrc_clk clk_sclk_audio0 = {
++	.clk		= {
++		.name		= "sclk_audio",
++		.id		= 0,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= (1 << 4),
++	},
++	.sources = &clkset_sclk_audio0,
++	.reg_src = { .reg = S5P_CLK_SRC6, .shift = 0, .size = 4 },
++	.reg_div = { .reg = S5P_CLK_DIV6, .shift = 0, .size = 4 },
++};
++
++static struct clk *clkset_sclk_audio1_list[] = {
++	[0] = &clk_ext_xtal_mux,
++	[1] = &clk_pcmcdclk1,
++	[2] = &clk_sclk_hdmi27m,
++	[3] = &clk_sclk_usbphy0,
++	[4] = &clk_sclk_usbphy1,
++	[5] = &clk_sclk_hdmiphy,
++	[6] = &clk_mout_mpll.clk,
++	[7] = &clk_mout_epll.clk,
++	[8] = &clk_sclk_vpll.clk,
++};
++
++static struct clksrc_sources clkset_sclk_audio1 = {
++	.sources	= clkset_sclk_audio1_list,
++	.nr_sources	= ARRAY_SIZE(clkset_sclk_audio1_list),
++};
++
++static struct clksrc_clk clk_sclk_audio1 = {
++	.clk		= {
++		.name		= "sclk_audio",
++		.id		= 1,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= (1 << 5),
++	},
++	.sources = &clkset_sclk_audio1,
++	.reg_src = { .reg = S5P_CLK_SRC6, .shift = 4, .size = 4 },
++	.reg_div = { .reg = S5P_CLK_DIV6, .shift = 4, .size = 4 },
++};
++
++static struct clk *clkset_sclk_audio2_list[] = {
++	[0] = &clk_ext_xtal_mux,
++	[1] = &clk_pcmcdclk0,
++	[2] = &clk_sclk_hdmi27m,
++	[3] = &clk_sclk_usbphy0,
++	[4] = &clk_sclk_usbphy1,
++	[5] = &clk_sclk_hdmiphy,
++	[6] = &clk_mout_mpll.clk,
++	[7] = &clk_mout_epll.clk,
++	[8] = &clk_sclk_vpll.clk,
++};
++
++static struct clksrc_sources clkset_sclk_audio2 = {
++	.sources	= clkset_sclk_audio2_list,
++	.nr_sources	= ARRAY_SIZE(clkset_sclk_audio2_list),
++};
++
++static struct clksrc_clk clk_sclk_audio2 = {
++	.clk		= {
++		.name		= "sclk_audio",
++		.id		= 2,
++		.enable		= s5pv210_clk_ip3_ctrl,
++		.ctrlbit	= (1 << 6),
++	},
++	.sources = &clkset_sclk_audio2,
++	.reg_src = { .reg = S5P_CLK_SRC6, .shift = 8, .size = 4 },
++	.reg_div = { .reg = S5P_CLK_DIV6, .shift = 8, .size = 4 },
++};
++
++static struct clk *clkset_sclk_spdif_list[] = {
++	[0] = &clk_sclk_audio0.clk,
++	[1] = &clk_sclk_audio1.clk,
++	[2] = &clk_sclk_audio2.clk,
++};
++
++static struct clksrc_sources clkset_sclk_spdif = {
++	.sources	= clkset_sclk_spdif_list,
++	.nr_sources	= ARRAY_SIZE(clkset_sclk_spdif_list),
++};
++
+ static struct clksrc_clk clksrcs[] = {
+ 	{
+ 		.clk	= {
+@@ -560,6 +673,15 @@ static struct clksrc_clk clksrcs[] = {
+ 		},
+ 		.sources = &clkset_sclk_mixer,
+ 		.reg_src = { .reg = S5P_CLK_SRC1, .shift = 4, .size = 1 },
++	}, {
++		.clk		= {
++			.name		= "sclk_spdif",
++			.id		= -1,
++			.enable		= s5pv210_clk_mask0_ctrl,
++			.ctrlbit	= (1 << 27),
++		},
++		.sources = &clkset_sclk_spdif,
++		.reg_src = { .reg = S5P_CLK_SRC6, .shift = 12, .size = 2 },
+ 	},
+ };
+ 
+@@ -658,6 +780,9 @@ static struct clk *clks[] __initdata = {
+ 	&clk_sclk_hdmiphy,
+ 	&clk_sclk_usbphy0,
+ 	&clk_sclk_usbphy1,
++	&clk_pcmcdclk0,
++	&clk_pcmcdclk1,
++	&clk_pcmcdclk2,
+ };
+ 
+ void __init s5pv210_register_clocks(void)
 -- 
--- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+1.6.2.5
