@@ -1,166 +1,92 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 2/3] ARM: Samsung: move common I2C0 device helpers to machine
- directories
-Date: Mon, 17 May 2010 08:29:54 +0200
-Message-ID: <1274077795-30873-3-git-send-email-m.szyprowski@samsung.com>
-References: <1274077795-30873-1-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 2/7] ARM: S5PV210: add Aquila board
+Date: Mon, 17 May 2010 08:53:10 +0200
+Message-ID: <1274079195-18105-3-git-send-email-m.szyprowski@samsung.com>
+References: <1274079195-18105-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:31501 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753612Ab0EQGaB (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:33246 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753358Ab0EQGxU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 May 2010 02:30:01 -0400
-Received: from eu_spt2 ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0L2J00DN6WPY3B10@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 07:29:58 +0100 (BST)
+	Mon, 17 May 2010 02:53:20 -0400
+Received: from eu_spt2 (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L2J00E79XSU2Y@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 07:53:18 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
  by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L2J00BGMWPX2X@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 07:29:58 +0100 (BST)
-In-reply-to: <1274077795-30873-1-git-send-email-m.szyprowski@samsung.com>
+ 2004)) with ESMTPA id <0L2J00BUDXST2X@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 07:53:18 +0100 (BST)
+In-reply-to: <1274079195-18105-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
 
-I2C0 device helper depend on GPIO pin defines that are SoC specific.
-This patch copies the dummy i2c0 setup code to the respective mach-s5p*
-directories, so each SoC will be able to implement using its own
-defines.
+Add basic support for Samsung Aquila board. This board is based
+on S5PC110 SoC.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-s5p6440/Makefile     |    1 +
- arch/arm/mach-s5p6440/setup-i2c0.c |   25 +++++++++++++++++++++++++
- arch/arm/mach-s5p6442/Makefile     |    1 +
- arch/arm/mach-s5p6442/setup-i2c0.c |   25 +++++++++++++++++++++++++
- arch/arm/mach-s5pv210/Makefile     |    1 +
- arch/arm/mach-s5pv210/setup-i2c0.c |   25 +++++++++++++++++++++++++
- arch/arm/plat-s5p/Makefile         |    1 -
- arch/arm/plat-s5p/setup-i2c0.c     |   25 -------------------------
- 8 files changed, 78 insertions(+), 26 deletions(-)
- create mode 100644 arch/arm/mach-s5p6440/setup-i2c0.c
- create mode 100644 arch/arm/mach-s5p6442/setup-i2c0.c
- create mode 100644 arch/arm/mach-s5pv210/setup-i2c0.c
- delete mode 100644 arch/arm/plat-s5p/setup-i2c0.c
+ arch/arm/mach-s5pv210/Kconfig       |   12 ++--
+ arch/arm/mach-s5pv210/Makefile      |    1 +
+ arch/arm/mach-s5pv210/mach-aquila.c |  100 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 107 insertions(+), 6 deletions(-)
+ create mode 100644 arch/arm/mach-s5pv210/mach-aquila.c
 
-diff --git a/arch/arm/mach-s5p6440/Makefile b/arch/arm/mach-s5p6440/Makefile
-index 1ad894b..9646cdf 100644
---- a/arch/arm/mach-s5p6440/Makefile
-+++ b/arch/arm/mach-s5p6440/Makefile
-@@ -13,6 +13,7 @@ obj-				:=
- # Core support for S5P6440 system
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index af33a1a..c42bcba 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -15,11 +15,6 @@ config CPU_S5PV210
+ 	help
+ 	  Enable S5PV210 CPU support
  
- obj-$(CONFIG_CPU_S5P6440)	+= cpu.o init.o clock.o gpio.o
-+obj-$(CONFIG_CPU_S5P6440)	+= setup-i2c0.o
+-choice
+-	prompt "Select machine type"
+-	depends on ARCH_S5PV210
+-	default MACH_SMDKV210
+-
+ config MACH_SMDKV210
+ 	bool "SMDKV210"
+ 	select CPU_S5PV210
+@@ -35,6 +30,11 @@ config MACH_SMDKC110
+ 	  Machine support for Samsung SMDKC110
+ 	  S5PC110(MCP) is one of package option of S5PV210
  
- # machine support
+-endchoice
++config MACH_AQUILA
++	bool "Samsung Aquila"
++	select CPU_S5PV210
++	select ARCH_SPARSEMEM_ENABLE
++	help
++	  Machine support for the Samsung Aquila target based on S5PC110 SoC
  
-diff --git a/arch/arm/mach-s5p6440/setup-i2c0.c b/arch/arm/mach-s5p6440/setup-i2c0.c
-new file mode 100644
-index 0000000..69e8a66
---- /dev/null
-+++ b/arch/arm/mach-s5p6440/setup-i2c0.c
-@@ -0,0 +1,25 @@
-+/* linux/arch/arm/mach-s5p6440/setup-i2c0.c
-+ *
-+ * Copyright (c) 2009 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * I2C0 GPIO configuration.
-+ *
-+ * Based on plat-s3c64xx/setup-i2c0.c
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/types.h>
-+
-+struct platform_device; /* don't need the contents */
-+
-+#include <plat/iic.h>
-+
-+void s3c_i2c0_cfg_gpio(struct platform_device *dev)
-+{
-+	/* Will be populated later */
-+}
-diff --git a/arch/arm/mach-s5p6442/Makefile b/arch/arm/mach-s5p6442/Makefile
-index dde39a6..4942c14 100644
---- a/arch/arm/mach-s5p6442/Makefile
-+++ b/arch/arm/mach-s5p6442/Makefile
-@@ -13,6 +13,7 @@ obj-				:=
- # Core support for S5P6442 system
- 
- obj-$(CONFIG_CPU_S5P6442)	+= cpu.o init.o clock.o
-+obj-$(CONFIG_CPU_S5P6442)	+= setup-i2c0.o
- 
- # machine support
- 
-diff --git a/arch/arm/mach-s5p6442/setup-i2c0.c b/arch/arm/mach-s5p6442/setup-i2c0.c
-new file mode 100644
-index 0000000..662695d
---- /dev/null
-+++ b/arch/arm/mach-s5p6442/setup-i2c0.c
-@@ -0,0 +1,25 @@
-+/* linux/arch/arm/mach-s5p6442/setup-i2c0.c
-+ *
-+ * Copyright (c) 2009 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * I2C0 GPIO configuration.
-+ *
-+ * Based on plat-s3c64xx/setup-i2c0.c
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/types.h>
-+
-+struct platform_device; /* don't need the contents */
-+
-+#include <plat/iic.h>
-+
-+void s3c_i2c0_cfg_gpio(struct platform_device *dev)
-+{
-+	/* Will be populated later */
-+}
+ endif
 diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
-index 8ebf51c..1a972a5 100644
+index 370aac6..0bb1680 100644
 --- a/arch/arm/mach-s5pv210/Makefile
 +++ b/arch/arm/mach-s5pv210/Makefile
-@@ -13,6 +13,7 @@ obj-				:=
- # Core support for S5PV210 system
+@@ -19,3 +19,4 @@ obj-$(CONFIG_CPU_S5PV210)	+= setup-i2c0.o
  
- obj-$(CONFIG_CPU_S5PV210)	+= cpu.o init.o clock.o
-+obj-$(CONFIG_CPU_S5PV210)	+= setup-i2c0.o
- 
- # machine support
- 
-diff --git a/arch/arm/mach-s5pv210/setup-i2c0.c b/arch/arm/mach-s5pv210/setup-i2c0.c
+ obj-$(CONFIG_MACH_SMDKV210)	+= mach-smdkv210.o
+ obj-$(CONFIG_MACH_SMDKC110)	+= mach-smdkc110.o
++obj-$(CONFIG_MACH_AQUILA)	+= mach-aquila.o
+diff --git a/arch/arm/mach-s5pv210/mach-aquila.c b/arch/arm/mach-s5pv210/mach-aquila.c
 new file mode 100644
-index 0000000..27de0c1
+index 0000000..6a1db39
 --- /dev/null
-+++ b/arch/arm/mach-s5pv210/setup-i2c0.c
-@@ -0,0 +1,25 @@
-+/*
-+ * linux/arch/arm/mach-s5pv210/setup-i2c2.c
++++ b/arch/arm/mach-s5pv210/mach-aquila.c
+@@ -0,0 +1,100 @@
++/* linux/arch/arm/mach-s5pv210/mach-aquila.c
 + *
-+ * Copyright 2009 Samsung Electronics Co.
-+ *
-+ * Base S5PV210 I2C bus 0 gpio configuration
-+ *
-+ * Based on mach-s3c64xx/setup-i2c0.c
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
@@ -169,54 +95,93 @@ index 0000000..27de0c1
 +
 +#include <linux/kernel.h>
 +#include <linux/types.h>
++#include <linux/init.h>
++#include <linux/serial_core.h>
 +
-+struct platform_device; /* don't need the contents */
++#include <asm/mach/arch.h>
++#include <asm/mach/map.h>
++#include <asm/setup.h>
++#include <asm/mach-types.h>
 +
-+#include <plat/iic.h>
++#include <mach/map.h>
++#include <mach/regs-clock.h>
 +
-+void s3c_i2c0_cfg_gpio(struct platform_device *dev)
++#include <plat/regs-serial.h>
++#include <plat/s5pv210.h>
++#include <plat/devs.h>
++#include <plat/cpu.h>
++
++/* Following are default values for UCON, ULCON and UFCON UART registers */
++#define S5PV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
++				 S3C2410_UCON_RXILEVEL |	\
++				 S3C2410_UCON_TXIRQMODE |	\
++				 S3C2410_UCON_RXIRQMODE |	\
++				 S3C2410_UCON_RXFIFO_TOI |	\
++				 S3C2443_UCON_RXERR_IRQEN)
++
++#define S5PV210_ULCON_DEFAULT	S3C2410_LCON_CS8
++
++#define S5PV210_UFCON_DEFAULT	(S3C2410_UFCON_FIFOMODE |	\
++				 S5PV210_UFCON_TXTRIG4 |	\
++				 S5PV210_UFCON_RXTRIG4)
++
++static struct s3c2410_uartcfg smdkv210_uartcfgs[] __initdata = {
++	[0] = {
++		.hwport		= 0,
++		.flags		= 0,
++		.ucon		= S5PV210_UCON_DEFAULT,
++		.ulcon		= S5PV210_ULCON_DEFAULT,
++		.ufcon		= S5PV210_UFCON_DEFAULT,
++	},
++	[1] = {
++		.hwport		= 1,
++		.flags		= 0,
++		.ucon		= S5PV210_UCON_DEFAULT,
++		.ulcon		= S5PV210_ULCON_DEFAULT,
++		.ufcon		= S5PV210_UFCON_DEFAULT,
++	},
++	[2] = {
++		.hwport		= 2,
++		.flags		= 0,
++		.ucon		= S5PV210_UCON_DEFAULT,
++		.ulcon		= S5PV210_ULCON_DEFAULT,
++		.ufcon		= S5PV210_UFCON_DEFAULT,
++	},
++	[3] = {
++		.hwport		= 3,
++		.flags		= 0,
++		.ucon		= S5PV210_UCON_DEFAULT,
++		.ulcon		= S5PV210_ULCON_DEFAULT,
++		.ufcon		= S5PV210_UFCON_DEFAULT,
++	},
++};
++
++static struct platform_device *aquila_devices[] __initdata = {
++};
++
++static void __init aquila_map_io(void)
 +{
-+	/* Will be populated later */
++	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
++	s3c24xx_init_clocks(24000000);
++	s3c24xx_init_uarts(smdkv210_uartcfgs, ARRAY_SIZE(smdkv210_uartcfgs));
 +}
-diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-index a7c54b3..0ec09a9 100644
---- a/arch/arm/plat-s5p/Makefile
-+++ b/arch/arm/plat-s5p/Makefile
-@@ -16,4 +16,3 @@ obj-y				+= dev-uart.o
- obj-y				+= cpu.o
- obj-y				+= clock.o
- obj-y				+= irq.o
--obj-y				+= setup-i2c0.o
-diff --git a/arch/arm/plat-s5p/setup-i2c0.c b/arch/arm/plat-s5p/setup-i2c0.c
-deleted file mode 100644
-index 67a66e0..0000000
---- a/arch/arm/plat-s5p/setup-i2c0.c
-+++ /dev/null
-@@ -1,25 +0,0 @@
--/* linux/arch/arm/plat-s5p/setup-i2c0.c
-- *
-- * Copyright (c) 2009 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com/
-- *
-- * I2C0 GPIO configuration.
-- *
-- * Based on plat-s3c64xx/setup-i2c0.c
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#include <linux/kernel.h>
--#include <linux/types.h>
--
--struct platform_device; /* don't need the contents */
--
--#include <plat/iic.h>
--
--void s3c_i2c0_cfg_gpio(struct platform_device *dev)
--{
--	/* Will be populated later */
--}
++
++static void __init aquila_machine_init(void)
++{
++	platform_add_devices(aquila_devices, ARRAY_SIZE(aquila_devices));
++}
++
++MACHINE_START(AQUILA, "Aquila")
++	/* Maintainers:
++	   Marek Szyprowski <m.szyprowski@samsung.com>
++	   Kyungmin Park <kyungmin.park@samsung.com> */
++	.phys_io	= S3C_PA_UART & 0xfff00000,
++	.io_pg_offst	= (((u32)S3C_VA_UART) >> 18) & 0xfffc,
++	.boot_params	= S5P_PA_SDRAM + 0x100,
++	.init_irq	= s5pv210_init_irq,
++	.map_io		= aquila_map_io,
++	.init_machine	= aquila_machine_init,
++	.timer		= &s3c24xx_timer,
++MACHINE_END
 -- 
 1.6.4
