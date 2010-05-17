@@ -1,441 +1,377 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 3/7] ARM: Samsung: move common framebuffer regs to common
- platform directory
-Date: Mon, 17 May 2010 08:53:11 +0200
-Message-ID: <1274079195-18105-4-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 7/7] ARM: S5PV210: add common HSMMC device helpers
+Date: Mon, 17 May 2010 08:53:15 +0200
+Message-ID: <1274079195-18105-8-git-send-email-m.szyprowski@samsung.com>
 References: <1274079195-18105-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58573 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753330Ab0EQGxV (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:33246 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753612Ab0EQGxW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 May 2010 02:53:21 -0400
-Received: from eu_spt1 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
+	Mon, 17 May 2010 02:53:22 -0400
+Received: from eu_spt1 (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
  (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L2J00LXTXSUPJ@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 07:53:18 +0100 (BST)
+ with ESMTP id <0L2J00MYPXSVK8@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 07:53:19 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
  by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L2J00J2DXSTZM@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 07:53:18 +0100 (BST)
+ 2004)) with ESMTPA id <0L2J00LI8XSUEQ@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 07:53:19 +0100 (BST)
 In-reply-to: <1274079195-18105-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com, Pawel Osciak <p.osciak@samsung.com>
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
 
-From: Pawel Osciak <p.osciak@samsung.com>
+This patch adds sdhci platform helpers required by sdhci-s3c driver.
 
-The framebuffer register blocks on S5PC100 and S5PV210/S5PC110 differ
-only slightly. This patch extracts all register definitions that are
-common to S5PC100 and S5PC110 into plat-samsung/plat/regs-fb-v5.h and
-adds a new file with C110-specific register definitions to the
-mach-s5pv210/include/mach directory.
-
-Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-s5pc100/include/mach/regs-fb.h    |  130 +--------------------
- arch/arm/mach-s5pv210/include/mach/regs-fb.h    |   91 +++++++++++++++
- arch/arm/plat-samsung/include/plat/regs-fb-v5.h |  138 +++++++++++++++++++++++
- 3 files changed, 236 insertions(+), 123 deletions(-)
- create mode 100644 arch/arm/mach-s5pv210/include/mach/regs-fb.h
- create mode 100644 arch/arm/plat-samsung/include/plat/regs-fb-v5.h
+ arch/arm/mach-s5pv210/Kconfig              |   11 +++
+ arch/arm/mach-s5pv210/Makefile             |    2 +
+ arch/arm/mach-s5pv210/cpu.c                |    6 ++
+ arch/arm/mach-s5pv210/include/mach/map.h   |    5 ++
+ arch/arm/mach-s5pv210/setup-sdhci-gpio.c   |  103 ++++++++++++++++++++++++++++
+ arch/arm/mach-s5pv210/setup-sdhci.c        |   62 +++++++++++++++++
+ arch/arm/plat-samsung/include/plat/sdhci.h |   55 +++++++++++++++
+ 7 files changed, 244 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5pv210/setup-sdhci-gpio.c
+ create mode 100644 arch/arm/mach-s5pv210/setup-sdhci.c
 
-diff --git a/arch/arm/mach-s5pc100/include/mach/regs-fb.h b/arch/arm/mach-s5pc100/include/mach/regs-fb.h
-index 1732cd2..c5d75c5 100644
---- a/arch/arm/mach-s5pc100/include/mach/regs-fb.h
-+++ b/arch/arm/mach-s5pc100/include/mach/regs-fb.h
-@@ -3,137 +3,21 @@
-  * Copyright 2009 Samsung Electronics Co.
-  *   Pawel Osciak <p.osciak@samsung.com>
-  *
-- * Framebuffer register definitions for Samsung S5PC100.
-+ * Machine-specific framebuffer definitions for Samsung S5PC100.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_REGS_FB_H
--#define __ASM_ARCH_REGS_FB_H __FILE__
--
--#include <plat/regs-fb-v4.h>
--
--/* VP1 interface timing control */
--#define VP1CON0						(0x118)
--#define VP1_RATECON_EN					(1 << 31)
--#define VP1_CLKRATE_MASK				(0xff)
--
--#define VP1CON1						(0x11c)
--#define VP1_VTREGCON_EN					(1 << 31)
--#define VP1_VBPD_MASK					(0xfff)
--#define VP1_VBPD_SHIFT					(16)
--
--
--#define WPALCON_H					(0x19c)
--#define WPALCON_L					(0x1a0)
--
--/* Pallete contro for WPAL0 and WPAL1 is the same as in S3C64xx, but
-- * different for WPAL2-4
-- */
--/* In WPALCON_L (aka WPALCON) */
--#define WPALCON_W1PAL_32BPP_A888			(0x7 << 3)
--#define WPALCON_W0PAL_32BPP_A888			(0x7 << 0)
--
--/* To set W2PAL-W4PAL consist of one bit from WPALCON_L and two from WPALCON_H,
-- * e.g. W2PAL[2..0] is made of (WPALCON_H[10..9], WPALCON_L[6]).
-- */
--#define WPALCON_L_WxPAL_L_MASK				(0x1)
--#define WPALCON_L_W2PAL_L_SHIFT				(6)
--#define WPALCON_L_W3PAL_L_SHIFT				(7)
--#define WPALCON_L_W4PAL_L_SHIFT				(8)
--
--#define WPALCON_L_WxPAL_H_MASK				(0x3)
--#define WPALCON_H_W2PAL_H_SHIFT				(9)
--#define WPALCON_H_W3PAL_H_SHIFT				(13)
--#define WPALCON_H_W4PAL_H_SHIFT				(17)
--
--/* Per-window alpha value registers */
--/* For window 0 8-bit alpha values are in VIDW0ALPHAx,
-- * for windows 1-4 alpha values consist of two parts, the 4 low bits are
-- * taken from VIDWxALPHAx and 4 high bits are from VIDOSDxC,
-- * e.g. WIN1_ALPHA0_B[7..0] = (VIDOSD1C[3..0], VIDW1ALPHA0[3..0])
-- */
--#define VIDWxALPHA0(_win)				(0x200 + (_win * 8))
--#define VIDWxALPHA1(_win)				(0x204 + (_win * 8))
--
--/* Only for window 0 in VIDW0ALPHAx. */
--#define VIDW0ALPHAx_R(_x)				((_x) << 16)
--#define VIDW0ALPHAx_R_MASK				(0xff << 16)
--#define VIDW0ALPHAx_R_SHIFT				(16)
--#define VIDW0ALPHAx_G(_x)				((_x) << 8)
--#define VIDW0ALPHAx_G_MASK				(0xff << 8)
--#define VIDW0ALPHAx_G_SHIFT				(8)
--#define VIDW0ALPHAx_B(_x)				((_x) << 0)
--#define VIDW0ALPHAx_B_MASK				(0xff << 0)
--#define VIDW0ALPHAx_B_SHIFT				(0)
--
--/* Low 4 bits of alpha0-1 for windows 1-4 */
--#define VIDW14ALPHAx_R_L(_x)				((_x) << 16)
--#define VIDW14ALPHAx_R_L_MASK				(0xf << 16)
--#define VIDW14ALPHAx_R_L_SHIFT				(16)
--#define VIDW14ALPHAx_G_L(_x)				((_x) << 8)
--#define VIDW14ALPHAx_G_L_MASK				(0xf << 8)
--#define VIDW14ALPHAx_G_L_SHIFT				(8)
--#define VIDW14ALPHAx_B_L(_x)				((_x) << 0)
--#define VIDW14ALPHAx_B_L_MASK				(0xf << 0)
--#define VIDW14ALPHAx_B_L_SHIFT				(0)
--
--
--/* Per-window blending equation control registers */
--#define BLENDEQx(_win)					(0x244 + ((_win) * 4))
--#define BLENDEQ1					(0x244)
--#define BLENDEQ2					(0x248)
--#define BLENDEQ3					(0x24c)
--#define BLENDEQ4					(0x250)
--
--#define BLENDEQx_Q_FUNC(_x)				((_x) << 18)
--#define BLENDEQx_Q_FUNC_MASK				(0xf << 18)
--#define BLENDEQx_P_FUNC(_x)				((_x) << 12)
--#define BLENDEQx_P_FUNC_MASK				(0xf << 12)
--#define BLENDEQx_B_FUNC(_x)				((_x) << 6)
--#define BLENDEQx_B_FUNC_MASK				(0xf << 6)
--#define BLENDEQx_A_FUNC(_x)				((_x) << 0)
--#define BLENDEQx_A_FUNC_MASK				(0xf << 0)
--
--#define BLENDCON					(0x260)
--#define BLENDCON_8BIT_ALPHA				(1 << 0)
--
--/* Per-window palette base addresses (start of palette memory).
-- * Each window palette area consists of 256 32-bit entries.
-- * START is the first address (entry 0th), END is the address of 255th entry.
-  */
--#define WIN0_PAL_BASE					(0x2400)
--#define WIN0_PAL_END					(0x27fc)
--#define WIN1_PAL_BASE					(0x2800)
--#define WIN1_PAL_END					(0x2bfc)
--#define WIN2_PAL_BASE					(0x2c00)
--#define WIN2_PAL_END					(0x2ffc)
--#define WIN3_PAL_BASE					(0x3000)
--#define WIN3_PAL_END					(0x33fc)
--#define WIN4_PAL_BASE					(0x3400)
--#define WIN4_PAL_END					(0x37fc)
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index 8b5975a..16fbc06 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -30,6 +30,17 @@ config S5PV210_SETUP_FB_24BPP
+ 	help
+           Common setup code for S5PV210 with an 24bpp RGB display helper.
  
--#define WIN0_PAL(_entry)			(WIN0_PAL_BASE + ((_entry) * 4))
--#define WIN1_PAL(_entry)			(WIN1_PAL_BASE + ((_entry) * 4))
--#define WIN2_PAL(_entry)			(WIN2_PAL_BASE + ((_entry) * 4))
--#define WIN3_PAL(_entry)			(WIN3_PAL_BASE + ((_entry) * 4))
--#define WIN4_PAL(_entry)			(WIN4_PAL_BASE + ((_entry) * 4))
-+#ifndef __ASM_ARCH_MACH_REGS_FB_H
-+#define __ASM_ARCH_MACH_REGS_FB_H __FILE__
++config S5PV210_SETUP_SDHCI
++        bool
++        select S5PV210_SETUP_SDHCI_GPIO
++        help
++          Internal helper functions for S5PV210 based SDHCI systems
++
++config S5PV210_SETUP_SDHCI_GPIO
++	bool
++	help
++	  Common setup code for SDHCI gpio.
++
+ config MACH_SMDKV210
+ 	bool "SMDKV210"
+ 	select CPU_S5PV210
+diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
+index ea7119a..0579d36 100644
+--- a/arch/arm/mach-s5pv210/Makefile
++++ b/arch/arm/mach-s5pv210/Makefile
+@@ -20,6 +20,8 @@ obj-$(CONFIG_CPU_S5PV210)	+= setup-i2c0.o
+ obj-$(CONFIG_S5PV210_SETUP_FB_24BPP)	+= setup-fb-24bpp.o
+ obj-$(CONFIG_S5PV210_SETUP_I2C1) 	+= setup-i2c1.o
+ obj-$(CONFIG_S5PV210_SETUP_I2C2) 	+= setup-i2c2.o
++obj-$(CONFIG_S5PV210_SETUP_SDHCI)       += setup-sdhci.o
++obj-$(CONFIG_S5PV210_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
  
--static inline unsigned int s3c_fb_pal_reg(unsigned int window, int reg)
--{
--	switch (window) {
--	case 0: return WIN0_PAL(reg);
--	case 1: return WIN1_PAL(reg);
--	case 2: return WIN2_PAL(reg);
--	case 3: return WIN3_PAL(reg);
--	case 4: return WIN4_PAL(reg);
--	}
-+#include <plat/regs-fb-v5.h>
+ # machine support
  
--	BUG();
--}
-+#define PRTCON						(0xc)
-+#define PRTCON_PROTECT					(1 << 11)
+diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
+index 2d4a3d2..c5d53ab 100644
+--- a/arch/arm/mach-s5pv210/cpu.c
++++ b/arch/arm/mach-s5pv210/cpu.c
+@@ -33,6 +33,7 @@
+ #include <plat/clock.h>
+ #include <plat/s5pv210.h>
+ #include <plat/iic-core.h>
++#include <plat/sdhci.h>
  
+ /* Initial IO mappings */
  
--#endif /* __ASM_ARCH_REGS_FB_H */
-+#endif /* __ASM_ARCH_MACH_REGS_FB_H */
+@@ -77,6 +78,11 @@ void __init s5pv210_map_io(void)
+ {
+ 	iotable_init(s5pv210_iodesc, ARRAY_SIZE(s5pv210_iodesc));
  
-diff --git a/arch/arm/mach-s5pv210/include/mach/regs-fb.h b/arch/arm/mach-s5pv210/include/mach/regs-fb.h
++	/* initialise device information early */
++	s5pv210_default_sdhci0();
++	s5pv210_default_sdhci1();
++	s5pv210_default_sdhci2();
++
+ 	/* the i2c devices are directly compatible with s3c2440 */
+ 	s3c_i2c0_setname("s3c2440-i2c");
+ 	s3c_i2c1_setname("s3c2440-i2c");
+diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
+index 36bc608..def7762 100644
+--- a/arch/arm/mach-s5pv210/include/mach/map.h
++++ b/arch/arm/mach-s5pv210/include/mach/map.h
+@@ -47,6 +47,8 @@
+ 
+ #define S5PV210_PA_FB		(0xF8000000)
+ 
++#define S5PV210_PA_HSMMC(x)	(0xEB000000 + ((x) * 0x100000))
++
+ #define S5PV210_PA_VIC0		(0xF2000000)
+ #define S5P_PA_VIC0		S5PV210_PA_VIC0
+ 
+@@ -64,6 +66,9 @@
+ 
+ /* compatibiltiy defines. */
+ #define S3C_PA_UART		S5PV210_PA_UART
++#define S3C_PA_HSMMC0		S5PV210_PA_HSMMC(0)
++#define S3C_PA_HSMMC1		S5PV210_PA_HSMMC(1)
++#define S3C_PA_HSMMC2		S5PV210_PA_HSMMC(2)
+ #define S3C_PA_IIC		S5PV210_PA_IIC0
+ #define S3C_PA_IIC1		S5PV210_PA_IIC1
+ #define S3C_PA_IIC2		S5PV210_PA_IIC2
+diff --git a/arch/arm/mach-s5pv210/setup-sdhci-gpio.c b/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
 new file mode 100644
-index 0000000..27fa497
+index 0000000..140c42e
 --- /dev/null
-+++ b/arch/arm/mach-s5pv210/include/mach/regs-fb.h
-@@ -0,0 +1,91 @@
-+/*
-+ * Copyright 2009 Samsung Electronics Co.
-+ *   Pawel Osciak <p.osciak@samsung.com>
++++ b/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
+@@ -0,0 +1,103 @@
++/* linux/arch/arm/plat-s5pc1xx/setup-sdhci-gpio.c
 + *
-+ * Machine-specific framebuffer definitions for Samsung S5PC110.
++ * Copyright 2009 Samsung Eletronics
++ *
++ * S5PV210 - Helper functions for setting up SDHCI device(s) GPIO (HSMMC)
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
-+ */
++*/
 +
-+#ifndef __ASM_ARCH_MACH_REGS_FB_H
-+#define __ASM_ARCH_MACH_REGS_FB_H __FILE__
++#include <linux/kernel.h>
++#include <linux/types.h>
++#include <linux/interrupt.h>
++#include <linux/platform_device.h>
++#include <linux/io.h>
++#include <linux/mmc/host.h>
++#include <linux/mmc/card.h>
 +
-+#include <plat/regs-fb-v5.h>
++#include <mach/gpio.h>
++#include <plat/gpio-cfg.h>
++#include <plat/regs-sdhci.h>
 +
-+/* WINCONx */
-+#define WINCONx_BUFSTATUS_H				(1 << 31)
-+#define WINCONx_BUFSEL_H				(1 << 30)
-+#define WINCONx_LIMIT_ON				(1 << 29)
-+#define WINCONx_EQ709					(1 << 28)
-+
-+
-+/* VIDCON3 */
-+#define VIDCON3						(0x0c)
-+#define VIDCON3_VE_ON					(1 << 20)
-+#define VIDCON3_CG_ON					(1 << 18)
-+#define VIDCON3_GM_ON					(1 << 16)
-+#define VIDCON3_HU_CSC_F_NARROW				(1 << 14)
-+#define VIDCON3_HU_CSC_F_EQ709				(1 << 13)
-+#define VIDCON3_HU_CSC_F_EN				(1 << 12)
-+#define VIDCON3_HU_CSC_B_NARROW				(1 << 10)
-+#define VIDCON3_HU_CSC_B_EQ709				(1 << 9)
-+#define VIDCON3_HU_CSC_B_EN				(1 << 8)
-+#define VIDCON3_HUE_EN					(1 << 7)
-+#define VIDCON3_PC_DIR_NEG				(1 << 1)
-+#define VIDCON3_PC_EN					(1 << 0)
-+
-+
-+/* VIDTCON3 */
-+#define VIDTCON3					(0x1c)
-+#define VIDTCON3_VSYNC_EN				(1 << 31)
-+#define VIDTCON3_FRM_EN					(1 << 29)
-+#define VIDTCON3_INVFRM_LOW				(1 << 28)
-+#define VIDTCON3_FRMVRATE_MASK				0xf
-+#define VIDTCON3_FRMVRATE_SHIFT				(24)
-+#define VIDTCON3_FRMVFPD_MASK				0xff
-+#define VIDTCON3_FRMVFPD_SHIFT				(8)
-+#define VIDTCON3_FRMVSPW_MASK				0xff
-+#define VIDTCON3_FRMVSPW_SHIFT				(0)
-+
-+
-+#define SHADOWCON					(0x34)
-+/* Set to disable window 4-0 shadow registers' update */
-+#define SHADOWCON_W4_PROTECT				(1 << 14)
-+#define SHADOWCON_W3_PROTECT				(1 << 13)
-+#define SHADOWCON_W2_PROTECT				(1 << 12)
-+#define SHADOWCON_W1_PROTECT				(1 << 11)
-+#define SHADOWCON_W0_PROTECT				(1 << 10)
-+
-+
-+/* Video buffer address shadow registers (read-only) */
-+#define VIDW_BUF_START_SHADOW(_buf)			(0x20a0 + ((_buf) * 8))
-+#define VIDW_BUF_END_SHADOW(_buf)			(0x20d0 + ((_buf) * 8))
-+
-+/* For windows 1-4 */
-+#define WxKEY_ALPHA(_win)				(0x160 + ((_win) * 4))
-+
-+#define COLORGAINCON					(0x1c0)
-+#define VESFRCON0					(0x1c4)
-+#define VESFRCON1					(0x1c8)
-+#define VESFRCON2					(0x1cc)
-+
-+/* Hue matrix coefficients */
-+#define HUECOEF00					(0x1ec)
-+#define HUECOEF01					(0x1f0)
-+#define HUECOEF10					(0x1f4)
-+#define HUECOEF11					(0x1f8)
-+#define HUEOFFSET					(0x1fc)
-+
-+/* RTQOS control for windows 0-4*/
-+#define WxRTQOSCON(_win)				(0x264 + ((_win) * 4))
-+
-+/* Gamma LUT data for index I1 and I0, where
-+ * I0 = _index, I1 = _index + 1.
-+ */
-+#define GAMMALUT_BASE					(0x37c)
-+#define GAMMALUT_I1I0(_index)			(GAMMALUT_BASE + ((_index) * 4))
-+
-+#endif /* __ASM_ARCH_MACH_REGS_FB_H */
-+
-diff --git a/arch/arm/plat-samsung/include/plat/regs-fb-v5.h b/arch/arm/plat-samsung/include/plat/regs-fb-v5.h
-new file mode 100644
-index 0000000..0e0686d
---- /dev/null
-+++ b/arch/arm/plat-samsung/include/plat/regs-fb-v5.h
-@@ -0,0 +1,138 @@
-+/*
-+ * Copyright 2009 Samsung Electronics Co.
-+ *   Pawel Osciak <p.osciak@samsung.com>
-+ *
-+ * Common framebuffer register definitions for Samsung S5PC1xx family.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef __ASM_ARCH_REGS_FB_V5_H
-+#define __ASM_ARCH_REGS_FB_V5_H __FILE__
-+
-+#include <plat/regs-fb-v4.h>
-+
-+/* VP1 interface timing control */
-+#define VP1CON0						(0x118)
-+#define VP1_RATECON_EN					(1 << 31)
-+#define VP1_CLKRATE_MASK				(0xff)
-+
-+#define VP1CON1						(0x11c)
-+#define VP1_VTREGCON_EN					(1 << 31)
-+#define VP1_VBPD_MASK					(0xfff)
-+#define VP1_VBPD_SHIFT					(16)
-+
-+
-+#define WPALCON_H					(0x19c)
-+#define WPALCON_L					(0x1a0)
-+
-+/* Pallete contro for WPAL0 and WPAL1 is the same as in S3C64xx, but
-+ * different for WPAL2-4
-+ */
-+/* In WPALCON_L (aka WPALCON) */
-+#define WPALCON_W1PAL_32BPP_A888			(0x7 << 3)
-+#define WPALCON_W0PAL_32BPP_A888			(0x7 << 0)
-+
-+/* W2PAL-W4PAL consist of one bit from WPALCON_L and two from WPALCON_H,
-+ * e.g. W2PAL[2..0] is made of (WPALCON_H[10..9], WPALCON_L[6]).
-+ */
-+#define WPALCON_L_WxPAL_L_MASK				(0x1)
-+#define WPALCON_L_W2PAL_L_SHIFT				(6)
-+#define WPALCON_L_W3PAL_L_SHIFT				(7)
-+#define WPALCON_L_W4PAL_L_SHIFT				(8)
-+
-+#define WPALCON_L_WxPAL_H_MASK				(0x3)
-+#define WPALCON_H_W2PAL_H_SHIFT				(9)
-+#define WPALCON_H_W3PAL_H_SHIFT				(13)
-+#define WPALCON_H_W4PAL_H_SHIFT				(17)
-+
-+/* Per-window alpha value registers */
-+/* For window 0 8-bit alpha values are in VIDW0ALPHAx,
-+ * for windows 1-4 alpha values consist of two parts, the 4 low bits are
-+ * taken from VIDWxALPHAx and 4 high bits are from VIDOSDxC,
-+ * e.g. WIN1_ALPHA0_B[7..0] = (VIDOSD1C[3..0], VIDW1ALPHA0[3..0])
-+ */
-+#define VIDWxALPHA0(_win)				(0x200 + (_win * 8))
-+#define VIDWxALPHA1(_win)				(0x204 + (_win * 8))
-+
-+/* Only for window 0 in VIDW0ALPHAx. */
-+#define VIDW0ALPHAx_R(_x)				((_x) << 16)
-+#define VIDW0ALPHAx_R_MASK				(0xff << 16)
-+#define VIDW0ALPHAx_R_SHIFT				(16)
-+#define VIDW0ALPHAx_G(_x)				((_x) << 8)
-+#define VIDW0ALPHAx_G_MASK				(0xff << 8)
-+#define VIDW0ALPHAx_G_SHIFT				(8)
-+#define VIDW0ALPHAx_B(_x)				((_x) << 0)
-+#define VIDW0ALPHAx_B_MASK				(0xff << 0)
-+#define VIDW0ALPHAx_B_SHIFT				(0)
-+
-+/* Low 4 bits of alpha0-1 for windows 1-4 */
-+#define VIDW14ALPHAx_R_L(_x)				((_x) << 16)
-+#define VIDW14ALPHAx_R_L_MASK				(0xf << 16)
-+#define VIDW14ALPHAx_R_L_SHIFT				(16)
-+#define VIDW14ALPHAx_G_L(_x)				((_x) << 8)
-+#define VIDW14ALPHAx_G_L_MASK				(0xf << 8)
-+#define VIDW14ALPHAx_G_L_SHIFT				(8)
-+#define VIDW14ALPHAx_B_L(_x)				((_x) << 0)
-+#define VIDW14ALPHAx_B_L_MASK				(0xf << 0)
-+#define VIDW14ALPHAx_B_L_SHIFT				(0)
-+
-+
-+/* Per-window blending equation control registers */
-+#define BLENDEQx(_win)					(0x244 + ((_win) * 4))
-+#define BLENDEQ1					(0x244)
-+#define BLENDEQ2					(0x248)
-+#define BLENDEQ3					(0x24c)
-+#define BLENDEQ4					(0x250)
-+
-+#define BLENDEQx_Q_FUNC(_x)				((_x) << 18)
-+#define BLENDEQx_Q_FUNC_MASK				(0xf << 18)
-+#define BLENDEQx_P_FUNC(_x)				((_x) << 12)
-+#define BLENDEQx_P_FUNC_MASK				(0xf << 12)
-+#define BLENDEQx_B_FUNC(_x)				((_x) << 6)
-+#define BLENDEQx_B_FUNC_MASK				(0xf << 6)
-+#define BLENDEQx_A_FUNC(_x)				((_x) << 0)
-+#define BLENDEQx_A_FUNC_MASK				(0xf << 0)
-+
-+#define BLENDCON					(0x260)
-+#define BLENDCON_8BIT_ALPHA				(1 << 0)
-+
-+/* Per-window palette base addresses (start of palette memory).
-+ * Each window palette area consists of 256 32-bit entries.
-+ * START is the first address (entry 0th), END is the address of 255th entry.
-+ */
-+#define WIN0_PAL_BASE					(0x2400)
-+#define WIN0_PAL_END					(0x27fc)
-+#define WIN1_PAL_BASE					(0x2800)
-+#define WIN1_PAL_END					(0x2bfc)
-+#define WIN2_PAL_BASE					(0x2c00)
-+#define WIN2_PAL_END					(0x2ffc)
-+#define WIN3_PAL_BASE					(0x3000)
-+#define WIN3_PAL_END					(0x33fc)
-+#define WIN4_PAL_BASE					(0x3400)
-+#define WIN4_PAL_END					(0x37fc)
-+
-+#define WIN0_PAL(_entry)			(WIN0_PAL_BASE + ((_entry) * 4))
-+#define WIN1_PAL(_entry)			(WIN1_PAL_BASE + ((_entry) * 4))
-+#define WIN2_PAL(_entry)			(WIN2_PAL_BASE + ((_entry) * 4))
-+#define WIN3_PAL(_entry)			(WIN3_PAL_BASE + ((_entry) * 4))
-+#define WIN4_PAL(_entry)			(WIN4_PAL_BASE + ((_entry) * 4))
-+
-+static inline unsigned int s3c_fb_pal_reg(unsigned int window, int reg)
++void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
 +{
-+	switch (window) {
-+	case 0: return WIN0_PAL(reg);
-+	case 1: return WIN1_PAL(reg);
-+	case 2: return WIN2_PAL(reg);
-+	case 3: return WIN3_PAL(reg);
-+	case 4: return WIN4_PAL(reg);
++	unsigned int gpio;
++
++	/* Set all the necessary GPG0/GPG1 pins to special-function 2 */
++	for (gpio = S5PV210_GPG0(0); gpio < S5PV210_GPG0(2); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++	}
++	switch (width) {
++	case 8:
++		/* GPG1[3:6] special-funtion 3 */
++		for (gpio = S5PV210_GPG1(3); gpio <= S5PV210_GPG1(6); gpio++) {
++			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(3));
++			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++		}
++	case 4:
++		/* GPG0[3:6] special-funtion 2 */
++		for (gpio = S5PV210_GPG0(3); gpio <= S5PV210_GPG0(6); gpio++) {
++			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++		}
++	default:
++		break;
 +	}
 +
-+	BUG();
++	s3c_gpio_setpull(S5PV210_GPG0(2), S3C_GPIO_PULL_UP);
++	s3c_gpio_cfgpin(S5PV210_GPG0(2), S3C_GPIO_SFN(2));
 +}
 +
++void s5pv210_setup_sdhci1_cfg_gpio(struct platform_device *dev, int width)
++{
++	unsigned int gpio;
 +
-+#endif /* __ASM_ARCH_REGS_FB_V5_H */
++	/* Set all the necessary GPG1[0:1] pins to special-function 2 */
++	for (gpio = S5PV210_GPG1(0); gpio < S5PV210_GPG1(2); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++	}
 +
++	/* Data pin GPG1[3:6] to special-function 2 */
++	for (gpio = S5PV210_GPG1(3); gpio <= S5PV210_GPG1(6); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++	}
++
++	s3c_gpio_setpull(S5PV210_GPG1(2), S3C_GPIO_PULL_UP);
++	s3c_gpio_cfgpin(S5PV210_GPG1(2), S3C_GPIO_SFN(2));
++}
++
++void s5pv210_setup_sdhci2_cfg_gpio(struct platform_device *dev, int width)
++{
++	unsigned int gpio;
++
++	/* Set all the necessary GPG2[0:1] pins to special-function 2 */
++	for (gpio = S5PV210_GPG2(0); gpio < S5PV210_GPG2(2); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++	}
++
++	switch (width) {
++	case 8:
++		/* Data pin GPG3[3:6] to special-function 3 */
++		for (gpio = S5PV210_GPG3(3); gpio <= S5PV210_GPG3(6); gpio++) {
++			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(3));
++			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++		}
++	case 4:
++		/* Data pin GPG2[3:6] to special-function 2 */
++		for (gpio = S5PV210_GPG2(3); gpio <= S5PV210_GPG2(6); gpio++) {
++			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++		}
++	default:
++		break;
++	}
++
++	s3c_gpio_setpull(S5PV210_GPG2(2), S3C_GPIO_PULL_UP);
++	s3c_gpio_cfgpin(S5PV210_GPG2(2), S3C_GPIO_SFN(2));
++}
+diff --git a/arch/arm/mach-s5pv210/setup-sdhci.c b/arch/arm/mach-s5pv210/setup-sdhci.c
+new file mode 100644
+index 0000000..e70472b
+--- /dev/null
++++ b/arch/arm/mach-s5pv210/setup-sdhci.c
+@@ -0,0 +1,62 @@
++/* linux/arch/arm/mach-s5pv200/setup-sdhci.c
++ *
++ * Copyright 2008 Samsung Electronics
++ *
++ * S5PV210 - Helper functions for settign up SDHCI device(s) (HSMMC)
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/kernel.h>
++#include <linux/types.h>
++#include <linux/interrupt.h>
++#include <linux/platform_device.h>
++#include <linux/io.h>
++
++#include <linux/mmc/card.h>
++#include <linux/mmc/host.h>
++
++#include <plat/regs-sdhci.h>
++#include <plat/sdhci.h>
++
++/* clock sources for the mmc bus clock, order as for the ctrl2[5..4] */
++
++char *s5pv210_hsmmc_clksrcs[4] = {
++	[0] = "hsmmc",		/* HCLK */
++	[1] = "hsmmc",		/* HCLK */
++	[2] = "sclk_mmc",	/* mmc_bus */
++	/*[4] = reserved */
++};
++
++void s5pv210_setup_sdhci_cfg_card(struct platform_device *dev,
++				    void __iomem *r,
++				    struct mmc_ios *ios,
++				    struct mmc_card *card)
++{
++	u32 ctrl2, ctrl3;
++
++	/* don't need to alter anything acording to card-type */
++
++	writel(S3C64XX_SDHCI_CONTROL4_DRIVE_9mA, r + S3C64XX_SDHCI_CONTROL4);
++
++	ctrl2 = readl(r + S3C_SDHCI_CONTROL2);
++	ctrl2 &= S3C_SDHCI_CTRL2_SELBASECLK_MASK;
++	ctrl2 |= (S3C64XX_SDHCI_CTRL2_ENSTAASYNCCLR |
++		  S3C64XX_SDHCI_CTRL2_ENCMDCNFMSK |
++		  S3C_SDHCI_CTRL2_ENFBCLKRX |
++		  S3C_SDHCI_CTRL2_DFCNT_NONE |
++		  S3C_SDHCI_CTRL2_ENCLKOUTHOLD);
++
++	if (ios->clock < 25 * 1000000)
++		ctrl3 = (S3C_SDHCI_CTRL3_FCSEL3 |
++			 S3C_SDHCI_CTRL3_FCSEL2 |
++			 S3C_SDHCI_CTRL3_FCSEL1 |
++			 S3C_SDHCI_CTRL3_FCSEL0);
++	else
++		ctrl3 = (S3C_SDHCI_CTRL3_FCSEL1 | S3C_SDHCI_CTRL3_FCSEL0);
++
++	writel(ctrl2, r + S3C_SDHCI_CONTROL2);
++	writel(ctrl3, r + S3C_SDHCI_CONTROL3);
++}
+diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-samsung/include/plat/sdhci.h
+index 7d07cd7..13f9fb2 100644
+--- a/arch/arm/plat-samsung/include/plat/sdhci.h
++++ b/arch/arm/plat-samsung/include/plat/sdhci.h
+@@ -75,6 +75,9 @@ extern void s5pc100_setup_sdhci0_cfg_gpio(struct platform_device *, int w);
+ extern void s5pc100_setup_sdhci1_cfg_gpio(struct platform_device *, int w);
+ extern void s5pc100_setup_sdhci2_cfg_gpio(struct platform_device *, int w);
+ extern void s3c64xx_setup_sdhci2_cfg_gpio(struct platform_device *, int w);
++extern void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *, int w);
++extern void s5pv210_setup_sdhci1_cfg_gpio(struct platform_device *, int w);
++extern void s5pv210_setup_sdhci2_cfg_gpio(struct platform_device *, int w);
+ 
+ /* S3C6400 SDHCI setup */
+ 
+@@ -218,4 +221,56 @@ static inline void s5pc100_default_sdhci1(void) { }
+ static inline void s5pc100_default_sdhci2(void) { }
+ #endif /* CONFIG_S5PC100_SETUP_SDHCI */
+ 
++
++/* S5PC110 SDHCI setup */
++#ifdef CONFIG_S5PV210_SETUP_SDHCI
++extern char *s5pv210_hsmmc_clksrcs[4];
++
++extern void s5pv210_setup_sdhci_cfg_card(struct platform_device *dev,
++					   void __iomem *r,
++					   struct mmc_ios *ios,
++					   struct mmc_card *card);
++
++#ifdef CONFIG_S3C_DEV_HSMMC
++static inline void s5pv210_default_sdhci0(void)
++{
++	s3c_hsmmc0_def_platdata.clocks = s5pv210_hsmmc_clksrcs;
++	s3c_hsmmc0_def_platdata.cfg_gpio = s5pv210_setup_sdhci0_cfg_gpio;
++	s3c_hsmmc0_def_platdata.cfg_card = s5pv210_setup_sdhci_cfg_card;
++}
++#else
++static inline void s5pc100_default_sdhci0(void) { }
++#endif /* CONFIG_S3C_DEV_HSMMC */
++
++#ifdef CONFIG_S3C_DEV_HSMMC1
++static inline void s5pv210_default_sdhci1(void)
++{
++	s3c_hsmmc1_def_platdata.clocks = s5pv210_hsmmc_clksrcs;
++	s3c_hsmmc1_def_platdata.cfg_gpio = s5pv210_setup_sdhci1_cfg_gpio;
++	s3c_hsmmc1_def_platdata.cfg_card = s5pv210_setup_sdhci_cfg_card;
++}
++#else
++static inline void s5pv210_default_sdhci1(void) { }
++#endif /* CONFIG_S3C_DEV_HSMMC1 */
++
++#ifdef CONFIG_S3C_DEV_HSMMC2
++static inline void s5pv210_default_sdhci2(void)
++{
++	s3c_hsmmc2_def_platdata.clocks = s5pv210_hsmmc_clksrcs;
++	s3c_hsmmc2_def_platdata.cfg_gpio = s5pv210_setup_sdhci2_cfg_gpio;
++	s3c_hsmmc2_def_platdata.cfg_card = s5pv210_setup_sdhci_cfg_card;
++}
++#else
++static inline void s5pv210_default_sdhci2(void) { }
++#endif /* CONFIG_S3C_DEV_HSMMC2 */
++
++#else
++static inline void s5pv210_default_sdhci0(void) { }
++static inline void s5pv210_default_sdhci1(void) { }
++static inline void s5pv210_default_sdhci2(void) { }
++#endif /* CONFIG_S5PC100_SETUP_SDHCI */
++
++
++
++
+ #endif /* __PLAT_S3C_SDHCI_H */
 -- 
 1.6.4
