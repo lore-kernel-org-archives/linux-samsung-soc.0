@@ -1,134 +1,101 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH v6] ARM: S5PV210: Add Ext interrupt support.
-Date: Mon, 17 May 2010 12:19:46 +0200
-Message-ID: <00c601caf5aa$7c5aeea0$7510cbe0$%szyprowski@samsung.com>
-References: <1274082986-24250-1-git-send-email-kgene.kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 04/15] drivers: serial: S5PC100 serial driver cleanup
+Date: Mon, 17 May 2010 20:14:25 +0900
+Message-ID: <003101caf5b2$200df590$6029e0b0$%kim@samsung.com>
+References: <1273817946-29404-1-git-send-email-m.szyprowski@samsung.com>
+ <1273817946-29404-5-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout5.samsung.com ([203.254.224.35]:40056 "EHLO
-	mailout5.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752892Ab0EQKUi (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:35030 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752554Ab0EQLOc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 May 2010 06:20:38 -0400
-Received: from epmmp2 (mailout5.samsung.com [203.254.224.35])
+	Mon, 17 May 2010 07:14:32 -0400
+Received: from epmmp2 (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L2K00AC87E5XN@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 19:20:29 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
+ with ESMTP id <0L2K00K8T9W686@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 20:14:30 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L2K008IN7DT70@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 19:20:29 +0900 (KST)
-In-reply-to: <1274082986-24250-1-git-send-email-kgene.kim@samsung.com>
-Content-language: pl
+ with ESMTPA id <0L2K008GU9W670@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 20:14:30 +0900 (KST)
+In-reply-to: <1273817946-29404-5-git-send-email-m.szyprowski@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, 'Jongpill Lee' <boyko.lee@samsung.com>, 'Pannaga Bhushan' <p.bhushan@samsung.com>, kyungmin.park@samsung.com
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
 
-Hello,
-
-On Monday, May 17, 2010 9:56 AM Kukjin Kim wrote:
-
-> From: Jongpill Lee <boyko.lee@samsung.com>
+Marek Szyprowski wrote:
 > 
-> Add support for external interrupts on S5PV210.
+> Remove unnecessary Kconfig entry. S5PC100 has exactly the same driver as
+> S3C6400/S3C6410/S5P6440.
 > 
-> Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
-> Signed-off-by: Pannaga Bhushan <p.bhushan@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  arch/arm/mach-s5pv210/Kconfig                  |    1 +
->  arch/arm/mach-s5pv210/include/mach/irqs.h      |   31 ++---
->  arch/arm/mach-s5pv210/include/mach/regs-gpio.h |   44 +++++
->  arch/arm/plat-s5p/Kconfig                      |    5 +
->  arch/arm/plat-s5p/Makefile                     |    1 +
->  arch/arm/plat-s5p/irq-eint.c                   |  213
-> ++++++++++++++++++++++++
->  6 files changed, 275 insertions(+), 20 deletions(-)
->  create mode 100644 arch/arm/mach-s5pv210/include/mach/regs-gpio.h
->  create mode 100644 arch/arm/plat-s5p/irq-eint.c
+>  drivers/serial/Kconfig  |   16 ++++------------
+>  drivers/serial/Makefile |    1 -
+>  2 files changed, 4 insertions(+), 13 deletions(-)
 > 
-> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-> index af33a1a..c4c2a7f 100644
-> --- a/arch/arm/mach-s5pv210/Kconfig
-> +++ b/arch/arm/mach-s5pv210/Kconfig
-> @@ -12,6 +12,7 @@ if ARCH_S5PV210
->  config CPU_S5PV210
->  	bool
->  	select PLAT_S5P
-> +	select S5P_EXT_INT
+> diff --git a/drivers/serial/Kconfig b/drivers/serial/Kconfig
+> index 5f3f03d..302836a 100644
+> --- a/drivers/serial/Kconfig
+> +++ b/drivers/serial/Kconfig
+> @@ -534,21 +534,13 @@ config SERIAL_S3C24A0
+>  	  Serial port support for the Samsung S3C24A0 SoC
+> 
+>  config SERIAL_S3C6400
+> -	tristate "Samsung S3C6400/S3C6410/S5P6440 Seria port support"
+> -	depends on SERIAL_SAMSUNG && (CPU_S3C6400 || CPU_S3C6410 ||
+> CPU_S5P6440)
+> +	tristate "Samsung S3C6400/S3C6410/S5P6440/S5PC100 Serial port
+> support"
+> +	depends on SERIAL_SAMSUNG && (CPU_S3C6400 || CPU_S3C6410 ||
+> CPU_S5P6440 || CPU_S5PC100)
+>  	select SERIAL_SAMSUNG_UARTS_4
+>  	default y
 >  	help
->  	  Enable S5PV210 CPU support
+> -	  Serial port support for the Samsung S3C6400, S3C6410 and S5P6440
+> -	  SoCs
+> -
+> -config SERIAL_S5PC100
+> -	tristate "Samsung S5PC100 Serial port support"
+> -	depends on SERIAL_SAMSUNG && CPU_S5PC100
+> -	select SERIAL_SAMSUNG_UARTS_4
+> -	default y
+> -	help
+> -	  Serial port support for the Samsung S5PC100 SoCs
+> +	  Serial port support for the Samsung S3C6400, S3C6410, S5P6440
+> +	  and S5PC100 SoCs
 > 
-> diff --git a/arch/arm/mach-s5pv210/include/mach/irqs.h b/arch/arm/mach-
-> s5pv210/include/mach/irqs.h
-> index 62c5175..3a9e42e 100644
-> --- a/arch/arm/mach-s5pv210/include/mach/irqs.h
-> +++ b/arch/arm/mach-s5pv210/include/mach/irqs.h
-> @@ -17,22 +17,6 @@
-> 
->  /* VIC0: System, DMA, Timer */
-> 
-> -#define IRQ_EINT0		S5P_IRQ_VIC0(0)
-> -#define IRQ_EINT1		S5P_IRQ_VIC0(1)
-> -#define IRQ_EINT2		S5P_IRQ_VIC0(2)
-> -#define IRQ_EINT3		S5P_IRQ_VIC0(3)
-> -#define IRQ_EINT4		S5P_IRQ_VIC0(4)
-> -#define IRQ_EINT5		S5P_IRQ_VIC0(5)
-> -#define IRQ_EINT6		S5P_IRQ_VIC0(6)
-> -#define IRQ_EINT7		S5P_IRQ_VIC0(7)
-> -#define IRQ_EINT8		S5P_IRQ_VIC0(8)
-> -#define IRQ_EINT9		S5P_IRQ_VIC0(9)
-> -#define IRQ_EINT10		S5P_IRQ_VIC0(10)
-> -#define IRQ_EINT11		S5P_IRQ_VIC0(11)
-> -#define IRQ_EINT12		S5P_IRQ_VIC0(12)
-> -#define IRQ_EINT13		S5P_IRQ_VIC0(13)
-> -#define IRQ_EINT14		S5P_IRQ_VIC0(14)
-> -#define IRQ_EINT15		S5P_IRQ_VIC0(15)
->  #define IRQ_EINT16_31		S5P_IRQ_VIC0(16)
->  #define IRQ_BATF		S5P_IRQ_VIC0(17)
->  #define IRQ_MDMA		S5P_IRQ_VIC0(18)
-> @@ -134,13 +118,20 @@
->  #define IRQ_MDNIE3		S5P_IRQ_VIC3(8)
->  #define IRQ_VIC_END		S5P_IRQ_VIC3(31)
-> 
-> -#define S5P_IRQ_EINT_BASE	(IRQ_VIC_END + 1)
-> +#define S5P_EINT_16_31_BASE	(IRQ_VIC_END + 1)
-> 
-> -#define S5P_EINT(x)		((x) + S5P_IRQ_EINT_BASE)
-> -#define IRQ_EINT(x)		S5P_EINT(x)
+>  config SERIAL_S5PV210
+>  	tristate "Samsung S5PV210 Serial port support"
+> diff --git a/drivers/serial/Makefile b/drivers/serial/Makefile
+> index 6aa4723..328f107 100644
+> --- a/drivers/serial/Makefile
+> +++ b/drivers/serial/Makefile
+> @@ -44,7 +44,6 @@ obj-$(CONFIG_SERIAL_S3C2412) += s3c2412.o
+>  obj-$(CONFIG_SERIAL_S3C2440) += s3c2440.o
+>  obj-$(CONFIG_SERIAL_S3C24A0) += s3c24a0.o
+>  obj-$(CONFIG_SERIAL_S3C6400) += s3c6400.o
+> -obj-$(CONFIG_SERIAL_S5PC100) += s3c6400.o
+>  obj-$(CONFIG_SERIAL_S5PV210) += s5pv210.o
+>  obj-$(CONFIG_SERIAL_MAX3100) += max3100.o
+>  obj-$(CONFIG_SERIAL_IP22_ZILOG) += ip22zilog.o
+> --
 
-ok
+Ok, updated the list of supported devices.
 
-> +#define EINT_MODE		S3C_GPIO_SFN(0xf)
+Looks good.
 
-IMHO the irq.h is not the right place for this define
+Thanks.
 
-> +
-> +#define IRQ_EINT(x)		((x) < 16 ? ((x) + S5P_IRQ_VIC0(0)) \
-> +					: ((x) + S5P_EINT_16_31_BASE))
-> 
->  /* Set the default NR_IRQS */
-> 
-> -#define NR_IRQS 		(IRQ_EINT(31) + 1)
-> +#define NR_IRQS			(IRQ_EINT(31) + 1)
-> +
-
-ok
-
-> +#define EINT_GPIO_0(x)		S5PV210_GPH0(x)
-> +#define EINT_GPIO_1(x)		S5PV210_GPH1(x)
-> +#define EINT_GPIO_2(x)		S5PV210_GPH2(x)
-> +#define EINT_GPIO_3(x)		S5PV210_GPH3(x)
-
-Again, gpio.h would be much better for these.
-
-> ...
-
-Best regards
+Best regards,
+Kgene.
 --
-Marek Szyprowski
-Samsung Poland R&D Center
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
