@@ -1,29 +1,62 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH v6] ARM: S5PV210: Add Ext interrupt support.
-Date: Mon, 17 May 2010 09:08:29 +0100
-Message-ID: <20100517080829.GH27571@trinity.fluff.org>
-References: <1274082986-24250-1-git-send-email-kgene.kim@samsung.com>
+Subject: Re: [PATCH 1/3] ARM: Samsung: fix broken timer irq base
+Date: Mon, 17 May 2010 09:12:38 +0100
+Message-ID: <20100517081238.GZ6684@trinity.fluff.org>
+References: <1274077795-30873-1-git-send-email-m.szyprowski@samsung.com> <1274077795-30873-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:56387 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:41782 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752466Ab0EQIIb (ORCPT
+	id S1751446Ab0EQIMs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 May 2010 04:08:31 -0400
+	Mon, 17 May 2010 04:12:48 -0400
 Content-Disposition: inline
-In-Reply-To: <1274082986-24250-1-git-send-email-kgene.kim@samsung.com>
+In-Reply-To: <1274077795-30873-2-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Pannaga Bhushan <p.bhushan@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
 
-On Mon, May 17, 2010 at 04:56:26PM +0900, Kukjin Kim wrote:
-> From: Jongpill Lee <boyko.lee@samsung.com>
+On Mon, May 17, 2010 at 08:29:53AM +0200, Marek Szyprowski wrote:
+> Timer interrupts range was defined as 43-47, what overlaps with VIC0 range
+> (32-64). This was caused probably by a typo while the common interrupts
+> definition was refactored. This patch moves timer interrupt range to safe
+> area of 11-15 (just before uart range).
 > 
-> Add support for external interrupts on S5PV210.
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/plat-s5p/include/plat/irqs.h |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/arch/arm/plat-s5p/include/plat/irqs.h b/arch/arm/plat-s5p/include/plat/irqs.h
+> index 42e757f..9ff3d71 100644
+> --- a/arch/arm/plat-s5p/include/plat/irqs.h
+> +++ b/arch/arm/plat-s5p/include/plat/irqs.h
+> @@ -79,7 +79,7 @@
+>  #define S5P_IRQ_VIC2(x)		(S5P_VIC2_BASE + (x))
+>  #define S5P_IRQ_VIC3(x)		(S5P_VIC3_BASE + (x))
+>  
+> -#define S5P_TIMER_IRQ(x)	S5P_IRQ(11 + (x))
+> +#define S5P_TIMER_IRQ(x)	(11 + (x))
 
-ok, merged onto for-2635/s5p-general.
+87aef30e (Atul Dahiya 2010-01-29 09:08:28 +0900 82) #define S5P_TIMER_IRQ(x)    S5P_IRQ(11 + (x))
+
+is the one to blame here.
+
+    ARM: S5P: Change S5P_TIMER_IRQ based to 11 for SAMSUNG S5P series.
+    
+    Currently, S5P_TIMER_IRQ is based at the end of VICs. This patch changes
+    the S5P_TIMER_IRQ base from end of VICs to 11 in ISA IRQ space.
+    No of VICs varies between SOCs. This causes an exception on S5P6442.
+    
+    Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
+    Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+    Signed-off-by: Ben Dooks <ben-linux@fluff.org>
+
+So it looks like this was intended to re-use the ISA interrupt range
+but didn't get it quite right.
 
 -- 
 Ben
