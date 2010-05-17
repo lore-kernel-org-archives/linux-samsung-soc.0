@@ -1,67 +1,76 @@
 From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: [PATCH 1/2] ARM: S3C64XX: Add USB external clock definition
-Date: Mon, 17 May 2010 20:17:42 +0200
-Message-ID: <4BF18846.9030809@gmail.com>
+Subject: [PATCH 2/2] USB: s3c_hsotg: Add support for external USB clock
+Date: Mon, 17 May 2010 20:17:48 +0200
+Message-ID: <4BF1884C.2050901@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mail-ew0-f216.google.com ([209.85.219.216]:43850 "EHLO
 	mail-ew0-f216.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752565Ab0EQSRq (ORCPT
+	with ESMTP id S1752565Ab0EQSRv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 May 2010 14:17:46 -0400
-Received: by ewy8 with SMTP id 8so2036368ewy.28
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 May 2010 11:17:44 -0700 (PDT)
+	Mon, 17 May 2010 14:17:51 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
 Cc: Ben Dooks <ben-linux@fluff.org>
 
-This adds the xusbxti clock to S3C64XX platform.
+The PLL that drives the USB clock supports 3 input clocks: 12, 24 and 48Mhz.
+This patch adds support to the USB driver for setting the correct register bit
+according to the given clock.
+
+This depends on the following patch:
+[PATCH] ARM: S3C64XX: Add USB external clock definition
 
 Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
 ---
- arch/arm/mach-s3c64xx/clock.c              |    7 +++++++
- arch/arm/plat-samsung/include/plat/clock.h |    1 +
- 2 files changed, 8 insertions(+), 0 deletions(-)
+ drivers/usb/gadget/s3c-hsotg.c |   19 +++++++++++++++++++
+ 1 files changed, 19 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/clock.c b/arch/arm/mach-s3c64xx/clock.c
-index 2ac2e7d..6830bb7 100644
---- a/arch/arm/mach-s3c64xx/clock.c
-+++ b/arch/arm/mach-s3c64xx/clock.c
-@@ -88,6 +88,12 @@ struct clk clk_48m = {
- 	.enable		= clk_48m_ctrl,
- };
+diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
+index 1f73b48..dce9366 100644
+--- a/drivers/usb/gadget/s3c-hsotg.c
++++ b/drivers/usb/gadget/s3c-hsotg.c
+@@ -23,6 +23,7 @@
+ #include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/slab.h>
++#include <linux/clk.h>
  
-+struct clk clk_xusbxti = {
-+	.name		= "xusbxti",
-+	.id		= -1,
-+	.rate		= 48000000,
-+};
+ #include <linux/usb/ch9.h>
+ #include <linux/usb/gadget.h>
+@@ -2699,6 +2700,7 @@ static void __devinit s3c_hsotg_initep(struct s3c_hsotg *hsotg,
+  */
+ static void s3c_hsotg_otgreset(struct s3c_hsotg *hsotg)
+ {
++	struct clk *xusbxti;
+ 	u32 osc;
+ 
+ 	writel(0, S3C_PHYPWR);
+@@ -2706,6 +2708,23 @@ static void s3c_hsotg_otgreset(struct s3c_hsotg *hsotg)
+ 
+ 	osc = hsotg->plat->is_osc ? S3C_PHYCLK_EXT_OSC : 0;
+ 
++	xusbxti = clk_get(hsotg->dev, "xusbxti");
++	if (xusbxti && !IS_ERR(xusbxti)) {
++		switch (clk_get_rate(xusbxti)) {
++		case 12000000:
++		    osc |= S3C_PHYCLK_CLKSEL_12M;
++		    break;
++		case 24000000:
++		    osc |= S3C_PHYCLK_CLKSEL_24M;
++		    break;
++		default:
++		case 48000000:
++		    /* default reference clock */
++		    break;
++		}
++		clk_put(xusbxti);
++	}
 +
- static int inline s3c64xx_gate(void __iomem *reg,
- 				struct clk *clk,
- 				int enable)
-@@ -762,6 +768,7 @@ static struct clk *clks[] __initdata = {
- 	&clk_27m,
- 	&clk_48m,
- 	&clk_h2,
-+	&clk_xusbxti,
- };
+ 	writel(osc | 0x10, S3C_PHYCLK);
  
- /**
-diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-samsung/include/plat/clock.h
-index 60b6269..efbc984 100644
---- a/arch/arm/plat-samsung/include/plat/clock.h
-+++ b/arch/arm/plat-samsung/include/plat/clock.h
-@@ -74,6 +74,7 @@ extern struct clk clk_ext;
- extern struct clk clk_h2;
- extern struct clk clk_27m;
- extern struct clk clk_48m;
-+extern struct clk clk_xusbxti;
- 
- extern int clk_default_setrate(struct clk *clk, unsigned long rate);
- extern struct clk_ops clk_ops_def_setrate;
+ 	/* issue a full set of resets to the otg and core */
 -- 
 1.7.1
