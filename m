@@ -1,31 +1,77 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: approaching last call for updatyes
-Date: Mon, 17 May 2010 06:00:38 +0100
-Message-ID: <20100517050038.GU26401@trinity.fluff.org>
-References: <20100513091540.GK26401@trinity.fluff.org> <AANLkTimHifdCStUZJ_Xgyf2n5mA47Jdj2zscWNB13LDq@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH v3 10/10] Input: s3c24xx_ts - Changes TYPEs for Samsung touchscreen driver
+Date: Mon, 17 May 2010 15:12:37 +0900
+Message-ID: <1274076757-26550-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:34215 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752067Ab0EQFAk (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:56032 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753276Ab0EQGRJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 May 2010 01:00:40 -0400
-Content-Disposition: inline
-In-Reply-To: <AANLkTimHifdCStUZJ_Xgyf2n5mA47Jdj2zscWNB13LDq@mail.gmail.com>
+	Mon, 17 May 2010 02:17:09 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: christian pellegrin <chripell@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Naveen Krishna <ch.naveen@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Thu, May 13, 2010 at 11:37:30AM +0200, christian pellegrin wrote:
-> The fix for NAND clock stop on idle is missing. Without it I suggest
-> to mark the option CONFIG_MTD_NAND_S3C2410_CLKSTOP broken.
+From: Naveen Krishna <ch.naveen@samsung.com>
 
-this is something for the relevant mtd maintainer to merge.
+The Touchscreen driver now uses only 2 TYPEs based on the variations
+of TSADC module in the respective SoCs.
 
+TYPE_S3C24XX supports for S3C2410, S3C2440
+TYPE_S3C64XX supports for S3C6410, S5P6440, S5PVV210/S5PC110
+
+Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+This patch is as per comments from Ben Dooks about following.
+
+[PATCH v2 10/11] ARM: SAMSUNG: Remove the TYPE and replace it with a Feature
+[PATCH v2 11/11] Input: s3c24xx_ts - Uses Feature field instead TYPE for Samsung SoCs
+
+
+ drivers/input/touchscreen/s3c2410_ts.c |   14 ++++++--------
+ 1 files changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/input/touchscreen/s3c2410_ts.c b/drivers/input/touchscreen/s3c2410_ts.c
+index 8a970ea..f2c8328 100644
+--- a/drivers/input/touchscreen/s3c2410_ts.c
++++ b/drivers/input/touchscreen/s3c2410_ts.c
+@@ -86,10 +86,8 @@ struct s3c2410ts {
+ static struct s3c2410ts ts;
+ 
+ enum s3c_cpu_type {
+-	TYPE_S3C2410,
+-	TYPE_S3C2440,
+-	TYPE_S3C64XX,	/* S3C64XX, S5P64XX Series */
+-	TYPE_S5PV210,	/* S5PV210 */
++	TYPE_S3C24XX,	/* S3C2410, S3C2440 Series */
++	TYPE_S3C64XX,	/* S3C64XX, S5P64XX, S5PV210 Series */
+ };
+ 
+ /**
+@@ -179,7 +177,7 @@ static irqreturn_t stylus_irq(int irq, void *dev_id)
+ 	else
+ 		dev_info(ts.dev, "%s: count=%d\n", __func__, ts.count);
+ 
+-	if (platform_get_device_id(pdev)->driver_data >= TYPE_S3C64XX) {
++	if (platform_get_device_id(pdev)->driver_data != TYPE_S3C24XX) {
+ 		/* Clear pen down/up interrupt */
+ 		writel(0x0, ts.io + S3C64XX_ADCCLRINTPNDNUP);
+ 	}
+@@ -416,10 +414,10 @@ static struct dev_pm_ops s3c_ts_pmops = {
+ #endif
+ 
+ static struct platform_device_id s3cts_driver_ids[] = {
+-	{ "s3c2410-ts", TYPE_S3C2410 },
+-	{ "s3c2440-ts", TYPE_S3C2440 },
++	{ "s3c2410-ts", TYPE_S3C24XX },
++	{ "s3c2440-ts", TYPE_S3C24XX },
+ 	{ "s3c64xx-ts", TYPE_S3C64XX },
+-	{ "s5pv210-ts", TYPE_S5PV210 },
++	{ "s5pv210-ts", TYPE_S3C64XX },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, s3cts_driver_ids);
 -- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+1.6.2.5
