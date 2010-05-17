@@ -1,11 +1,11 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 07/18] ARM: S5PV210: Remove usage of clk_h133 and add clk_hclk_psys clock
-Date: Mon, 17 May 2010 09:38:40 +0900
-Message-ID: <1274056720-14416-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 11/18] ARM: S5PV210: Remove usage of clk_p66 and add clk_pclk_psys clock
+Date: Mon, 17 May 2010 09:38:50 +0900
+Message-ID: <1274056730-14548-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:33031 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:33030 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751306Ab0EQAmI (ORCPT
+	with ESMTP id S1751986Ab0EQAmI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Sun, 16 May 2010 20:42:08 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -15,174 +15,232 @@ Cc: ben-linux@fluff.org, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kge
 
 From: Thomas Abraham <thomas.ab@samsung.com>
 
-The clk_h133 clock, which is the HCLK clock for PSYS domain, is of
+The clk_p83 clock, which is the PCLK clock for PSYS domain, is of
 type 'struct clk' whereas on S5PV210, this clock is suitable to be
-of type clksrc_clk clock (since it has a choice of clock source
-and a pre-divider). So this patch replaces the 'struct clk' type
-clock to 'struct clksrc_clk' type clock for the HCLK PSYS clock.
+of type clksrc_clk clock (since it has a clock divider). So this
+patch replaces the 'struct clk' type clock to 'struct clksrc_clk'
+type clock for the PCLK PSYS clock.
 
 This patch modifies the following.
 
-1. Remove definitions and usage of 'clk_h133' clock.
-2. Adds 'clk_hclk_psys' clock which is of type 'struct clksrc_clk'.
-3. Replace all usage of clk_h133 with clk_hclk_psys clock.
-4. Adds clk_hclk_psys into list of clocks to be registered.
-5. Removes the clock rate calculation of hclk133 and replaces
-   it with code that derives the HCLK PSYS clock rate from
-   the clk_hclk_psys clock.
-6. Modify printing of the system clock rates.
+1. Removes definitions and usage of 'clk_p66' clock.
+2. Adds 'clk_pclk_psys' clock which is of type 'struct clksrc_clk'.
+3. Replaces all usage of clk_p66 with clk_pclk_psys clock.
+4. Adds clk_pclk_psys into list of clocks to be registered.
+5. Removes the sys_clks array since it is no longer required.
+   Also the registration of clocks in sys_clks is also removed.
+6. Remove the 'GET_DIV' as it is no longer required.
 
 Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv210/clock.c |   52 ++++++++++++++++++++--------------------
- 1 files changed, 26 insertions(+), 26 deletions(-)
+ arch/arm/mach-s5pv210/clock.c |   66 ++++++++++++++++++----------------------
+ 1 files changed, 30 insertions(+), 36 deletions(-)
 
 diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-index ecffafe..7ed1d4e 100644
+index b46d9ec..315955d 100644
 --- a/arch/arm/mach-s5pv210/clock.c
 +++ b/arch/arm/mach-s5pv210/clock.c
-@@ -116,6 +116,16 @@ static struct clksrc_clk clk_hclk_dsys = {
- 	.reg_div        = { .reg = S5P_CLK_DIV0, .shift = 16, .size = 4 },
+@@ -144,6 +144,15 @@ static struct clksrc_clk clk_hclk_psys = {
+ 	.reg_div        = { .reg = S5P_CLK_DIV0, .shift = 24, .size = 4 },
  };
  
-+static struct clksrc_clk clk_hclk_psys = {
++static struct clksrc_clk clk_pclk_psys = {
 +	.clk	= {
-+		.name	= "hclk_psys",
++		.name	= "pclk_psys",
 +		.id	= -1,
++		.parent	= &clk_hclk_psys.clk,
 +	},
-+	.sources	= &clkset_hclk_sys,
-+	.reg_src        = { .reg = S5P_CLK_SRC0, .shift = 24, .size = 1 },
-+	.reg_div        = { .reg = S5P_CLK_DIV0, .shift = 24, .size = 4 },
++	.reg_div        = { .reg = S5P_CLK_DIV0, .shift = 28, .size = 3 },
 +};
 +
  static int s5pv210_clk_ip0_ctrl(struct clk *clk, int enable)
  {
  	return s5p_gatectrl(S5P_CLKGATE_IP0, clk, enable);
-@@ -141,11 +151,6 @@ static struct clk clk_h100 = {
- 	.id		= -1,
- };
+@@ -164,15 +173,6 @@ static int s5pv210_clk_ip3_ctrl(struct clk *clk, int enable)
+ 	return s5p_gatectrl(S5P_CLKGATE_IP3, clk, enable);
+ }
  
--static struct clk clk_h133 = {
--	.name		= "hclk133",
+-static struct clk clk_p66 = {
+-	.name		= "pclk66",
 -	.id		= -1,
 -};
 -
- static struct clk clk_p100 = {
- 	.name		= "pclk100",
- 	.id		= -1,
-@@ -163,7 +168,6 @@ static struct clk clk_p66 = {
- 
- static struct clk *sys_clks[] = {
- 	&clk_h100,
--	&clk_h133,
- 	&clk_p100,
- 	&clk_p83,
- 	&clk_p66
-@@ -179,13 +183,13 @@ static struct clk init_clocks_disable[] = {
+-static struct clk *sys_clks[] = {
+-	&clk_p66
+-};
+-
+ static unsigned long s5pv210_clk_imem_get_rate(struct clk *clk)
+ {
+ 	return clk_get_rate(clk->parent) / 2;
+@@ -240,73 +240,73 @@ static struct clk init_clocks_disable[] = {
  	}, {
- 		.name		= "otg",
+ 		.name		= "systimer",
  		.id		= -1,
--		.parent		= &clk_h133,
-+		.parent		= &clk_hclk_psys.clk,
- 		.enable		= s5pv210_clk_ip1_ctrl,
+-		.parent		= &clk_p66,
++		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
  		.ctrlbit	= (1<<16),
  	}, {
- 		.name		= "usb-host",
+ 		.name		= "watchdog",
  		.id		= -1,
--		.parent		= &clk_h133,
-+		.parent		= &clk_hclk_psys.clk,
- 		.enable		= s5pv210_clk_ip1_ctrl,
- 		.ctrlbit	= (1<<17),
+-		.parent		= &clk_p66,
++		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<22),
  	}, {
-@@ -197,31 +201,31 @@ static struct clk init_clocks_disable[] = {
+ 		.name		= "rtc",
+ 		.id		= -1,
+-		.parent		= &clk_p66,
++		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<15),
  	}, {
- 		.name		= "cfcon",
+ 		.name		= "i2c",
  		.id		= 0,
--		.parent		= &clk_h133,
-+		.parent		= &clk_hclk_psys.clk,
- 		.enable		= s5pv210_clk_ip1_ctrl,
- 		.ctrlbit	= (1<<25),
+-		.parent		= &clk_p66,
++		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<7),
  	}, {
- 		.name		= "hsmmc",
- 		.id		= 0,
--		.parent		= &clk_h133,
-+		.parent		= &clk_hclk_psys.clk,
- 		.enable		= s5pv210_clk_ip2_ctrl,
- 		.ctrlbit	= (1<<16),
- 	}, {
- 		.name		= "hsmmc",
+ 		.name		= "i2c",
  		.id		= 1,
--		.parent		= &clk_h133,
-+		.parent		= &clk_hclk_psys.clk,
- 		.enable		= s5pv210_clk_ip2_ctrl,
- 		.ctrlbit	= (1<<17),
+-		.parent		= &clk_p66,
++		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<8),
  	}, {
- 		.name		= "hsmmc",
+ 		.name		= "i2c",
  		.id		= 2,
--		.parent		= &clk_h133,
-+		.parent		= &clk_hclk_psys.clk,
- 		.enable		= s5pv210_clk_ip2_ctrl,
- 		.ctrlbit	= (1<<18),
+-		.parent		= &clk_p66,
++		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<9),
  	}, {
- 		.name		= "hsmmc",
+ 		.name		= "spi",
+ 		.id		= 0,
+-		.parent		= &clk_p66,
++		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<12),
+ 	}, {
+ 		.name		= "spi",
+ 		.id		= 1,
+-		.parent		= &clk_p66,
++		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<13),
+ 	}, {
+ 		.name		= "spi",
+ 		.id		= 2,
+-		.parent		= &clk_p66,
++		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<14),
+ 	}, {
+ 		.name		= "timers",
+ 		.id		= -1,
+-		.parent		= &clk_p66,
++		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<23),
+ 	}, {
+ 		.name		= "adc",
+ 		.id		= -1,
+-		.parent		= &clk_p66,
++		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<24),
+ 	}, {
+ 		.name		= "keypad",
+ 		.id		= -1,
+-		.parent		= &clk_p66,
++		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<21),
+ 	}, {
+@@ -341,25 +341,25 @@ static struct clk init_clocks[] = {
+ 	}, {
+ 		.name		= "uart",
+ 		.id		= 0,
+-		.parent		= &clk_p66,
++		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<7),
+ 	}, {
+ 		.name		= "uart",
+ 		.id		= 1,
+-		.parent		= &clk_p66,
++		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<8),
+ 	}, {
+ 		.name		= "uart",
+ 		.id		= 2,
+-		.parent		= &clk_p66,
++		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<9),
+ 	}, {
+ 		.name		= "uart",
  		.id		= 3,
--		.parent		= &clk_h133,
-+		.parent		= &clk_hclk_psys.clk,
- 		.enable		= s5pv210_clk_ip2_ctrl,
- 		.ctrlbit	= (1<<19),
- 	}, {
-@@ -378,6 +382,7 @@ static struct clksrc_clk *sysclks[] = {
- 	&clk_hclk_msys,
- 	&clk_sclk_a2m,
- 	&clk_hclk_dsys,
-+	&clk_hclk_psys,
+-		.parent		= &clk_p66,
++		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<10),
+ 	},
+@@ -401,10 +401,9 @@ static struct clksrc_clk *sysclks[] = {
+ 	&clk_hclk_psys,
+ 	&clk_pclk_msys,
+ 	&clk_pclk_dsys,
++	&clk_pclk_psys,
  };
  
- #define GET_DIV(clk, field) ((((clk) & field##_MASK) >> field##_SHIFT) + 1)
-@@ -389,7 +394,7 @@ void __init_or_cpufreq s5pv210_setup_clocks(void)
- 	unsigned long armclk;
- 	unsigned long hclk_msys;
- 	unsigned long hclk_dsys;
--	unsigned long hclk133;
-+	unsigned long hclk_psys;
- 	unsigned long pclk100;
- 	unsigned long pclk83;
- 	unsigned long pclk66;
-@@ -429,27 +434,22 @@ void __init_or_cpufreq s5pv210_setup_clocks(void)
- 	armclk = clk_get_rate(&clk_armclk.clk);
- 	hclk_msys = clk_get_rate(&clk_hclk_msys.clk);
- 	hclk_dsys = clk_get_rate(&clk_hclk_dsys.clk);
+-#define GET_DIV(clk, field) ((((clk) & field##_MASK) >> field##_SHIFT) + 1)
 -
--	if (__raw_readl(S5P_CLK_SRC0) & S5P_CLKSRC0_MUX133_MASK) {
--		hclk133 = apll / GET_DIV(clkdiv0, S5P_CLKDIV0_A2M);
--		hclk133 = hclk133 / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK133);
--	} else
--		hclk133 = mpll / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK133);
-+	hclk_psys = clk_get_rate(&clk_hclk_psys.clk);
+ void __init_or_cpufreq s5pv210_setup_clocks(void)
+ {
+ 	struct clk *xtal_clk;
+@@ -415,7 +414,7 @@ void __init_or_cpufreq s5pv210_setup_clocks(void)
+ 	unsigned long hclk_psys;
+ 	unsigned long pclk_msys;
+ 	unsigned long pclk_dsys;
+-	unsigned long pclk66;
++	unsigned long pclk_psys;
+ 	unsigned long apll;
+ 	unsigned long mpll;
+ 	unsigned long epll;
+@@ -455,17 +454,16 @@ void __init_or_cpufreq s5pv210_setup_clocks(void)
+ 	hclk_psys = clk_get_rate(&clk_hclk_psys.clk);
+ 	pclk_msys = clk_get_rate(&clk_pclk_msys.clk);
+ 	pclk_dsys = clk_get_rate(&clk_pclk_dsys.clk);
+-	pclk66 = hclk_psys / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK66);
++	pclk_psys = clk_get_rate(&clk_pclk_psys.clk);
  
- 	pclk100 = hclk_msys / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK100);
- 	pclk83 = hclk_dsys / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK83);
--	pclk66 = hclk133 / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK66);
-+	pclk66 = hclk_psys / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK66);
- 
--	printk(KERN_INFO "S5PV210: ARMCLK=%ld, HCLKM=%ld, HCLKD=%ld, \
--			HCLKP=%ld, PCLKM=%ld, PCLKD=%ld, PCLKP=%ld\n",
--	       armclk, hclk_msys, hclk_dsys, hclk133, pclk100, pclk83, pclk66);
-+	printk(KERN_INFO "S5PV210: ARMCLK=%ld, HCLKM=%ld, HCLKD=%ld\n"
-+			 "HCLKP=%ld, PCLKM=%ld, PCLKD=%ld, PCLKP=%ld\n",
-+			armclk, hclk_msys, hclk_dsys, hclk_psys,
-+			pclk100, pclk83, pclk66);
+ 	printk(KERN_INFO "S5PV210: ARMCLK=%ld, HCLKM=%ld, HCLKD=%ld\n"
+ 			 "HCLKP=%ld, PCLKM=%ld, PCLKD=%ld, PCLKP=%ld\n",
+ 			armclk, hclk_msys, hclk_dsys, hclk_psys,
+-			pclk_msys, pclk_dsys, pclk66);
++			pclk_msys, pclk_dsys, pclk_psys);
  
  	clk_f.rate = armclk;
--	clk_h.rate = hclk133;
-+	clk_h.rate = hclk_psys;
- 	clk_p.rate = pclk66;
- 	clk_p66.rate = pclk66;
- 	clk_p83.rate = pclk83;
--	clk_h133.rate = hclk133;
+ 	clk_h.rate = hclk_psys;
+-	clk_p.rate = pclk66;
+-	clk_p66.rate = pclk66;
++	clk_p.rate = pclk_psys;
  
  	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
  		s3c_set_clksrc(&clksrcs[ptr], true);
+@@ -490,10 +488,6 @@ void __init s5pv210_register_clocks(void)
+ 	s3c_register_clksrc(clksrcs, ARRAY_SIZE(clksrcs));
+ 	s3c_register_clocks(init_clocks, ARRAY_SIZE(init_clocks));
+ 
+-	ret = s3c24xx_register_clocks(sys_clks, ARRAY_SIZE(sys_clks));
+-	if (ret > 0)
+-		printk(KERN_ERR "Failed to register system clocks\n");
+-
+ 	clkp = init_clocks_disable;
+ 	for (ptr = 0; ptr < ARRAY_SIZE(init_clocks_disable); ptr++, clkp++) {
+ 		ret = s3c24xx_register_clock(clkp);
 -- 
 1.6.2.5
