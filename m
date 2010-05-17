@@ -1,56 +1,107 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH 6/6] ARM: S3C24XX: Add note on GPIO bank sizes
-Date: Mon, 17 May 2010 08:22:38 +0100
-Message-ID: <1274080958-369-6-git-send-email-ben-linux@fluff.org>
-References: <1274080958-369-1-git-send-email-ben-linux@fluff.org>
+Subject: Re: [PATCH v3 10/10] Input: s3c24xx_ts - Changes TYPEs for Samsung
+	touchscreen driver
+Date: Mon, 17 May 2010 08:41:31 +0100
+Message-ID: <20100517074131.GV26401@trinity.fluff.org>
+References: <1274076757-26550-1-git-send-email-kgene.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:48551 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:52798 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753867Ab0EQHW7 (ORCPT
+	id S1753773Ab0EQHlf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 May 2010 03:22:59 -0400
-In-Reply-To: <1274080958-369-1-git-send-email-ben-linux@fluff.org>
+	Mon, 17 May 2010 03:41:35 -0400
+Content-Disposition: inline
+In-Reply-To: <1274076757-26550-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Ben Dooks <ben-linux@fluff.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Naveen Krishna <ch.naveen@samsung.com>
 
-Add a table for the GPIO bank sizes for each SoC
+On Mon, May 17, 2010 at 03:12:37PM +0900, Kukjin Kim wrote:
+> From: Naveen Krishna <ch.naveen@samsung.com>
+> 
+> The Touchscreen driver now uses only 2 TYPEs based on the variations
+> of TSADC module in the respective SoCs.
+> 
+> TYPE_S3C24XX supports for S3C2410, S3C2440
+> TYPE_S3C64XX supports for S3C6410, S5P6440, S5PVV210/S5PC110
 
-Signed-off-by: Ben Dooks <ben-linux@fluff.org>
----
- arch/arm/mach-s3c2410/include/mach/gpio-nrs.h |   19 +++++++++++++++++++
- 1 files changed, 19 insertions(+), 0 deletions(-)
+I'd much rather we change from having the TYPE_ ebnum and move th
+a bitfield specificying the capabilities of the hardware, so that if
+in the future we don't have an S3C64XX_ADCCLRINTPNDNUP we don't need to
+go and change the if () around it for the new driver.
 
-diff --git a/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h b/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h
-index ad4a04a..4f7bf32 100644
---- a/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h
-+++ b/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h
-@@ -19,6 +19,25 @@
- #define S3C2410_GPIO_BANKG   (32*6)
- #define S3C2410_GPIO_BANKH   (32*7)
+I used feat and FEAT_ as a reasonable contraction for feature and features
+to avoid typing whilst still conveying the meaning of the flags.
  
-+/* GPIO sizes for various SoCs:
-+ *
-+ *             2442
-+ *   2410 2412 2440 2443 2416
-+ *   ---- ---- ---- ---- ----
-+ * A 23   22   25   16   25
-+ * B 11   11   11   11   9
-+ * C 16   15   16   16   16
-+ * D 16   16   16   16   16
-+ * E 16   16   16   16   16
-+ * F 8    8    8    8    8
-+ * G 16   16   16   16   8
-+ * H 11   11   9    15   15
-+ * J --   --   13   16   --
-+ * K --   --   --   --   16
-+ * L --   --   --   15   7
-+ * M --   --   --   2    2
-+ */
-+
- /* GPIO bank sizes */
- #define S3C2410_GPIO_A_NR	(32)
- #define S3C2410_GPIO_B_NR	(32)
+> Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+> This patch is as per comments from Ben Dooks about following.
+> 
+> [PATCH v2 10/11] ARM: SAMSUNG: Remove the TYPE and replace it with a Feature
+> [PATCH v2 11/11] Input: s3c24xx_ts - Uses Feature field instead TYPE for Samsung SoCs
+> 
+> 
+>  drivers/input/touchscreen/s3c2410_ts.c |   14 ++++++--------
+>  1 files changed, 6 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/input/touchscreen/s3c2410_ts.c b/drivers/input/touchscreen/s3c2410_ts.c
+> index 8a970ea..f2c8328 100644
+> --- a/drivers/input/touchscreen/s3c2410_ts.c
+> +++ b/drivers/input/touchscreen/s3c2410_ts.c
+> @@ -86,10 +86,8 @@ struct s3c2410ts {
+>  static struct s3c2410ts ts;
+>  
+>  enum s3c_cpu_type {
+> -	TYPE_S3C2410,
+> -	TYPE_S3C2440,
+> -	TYPE_S3C64XX,	/* S3C64XX, S5P64XX Series */
+> -	TYPE_S5PV210,	/* S5PV210 */
+> +	TYPE_S3C24XX,	/* S3C2410, S3C2440 Series */
+> +	TYPE_S3C64XX,	/* S3C64XX, S5P64XX, S5PV210 Series */
+>  };
+>  
+>  /**
+> @@ -179,7 +177,7 @@ static irqreturn_t stylus_irq(int irq, void *dev_id)
+>  	else
+>  		dev_info(ts.dev, "%s: count=%d\n", __func__, ts.count);
+>  
+> -	if (platform_get_device_id(pdev)->driver_data >= TYPE_S3C64XX) {
+> +	if (platform_get_device_id(pdev)->driver_data != TYPE_S3C24XX) {
+>  		/* Clear pen down/up interrupt */
+>  		writel(0x0, ts.io + S3C64XX_ADCCLRINTPNDNUP);
+>  	}
+> @@ -416,10 +414,10 @@ static struct dev_pm_ops s3c_ts_pmops = {
+>  #endif
+>  
+>  static struct platform_device_id s3cts_driver_ids[] = {
+> -	{ "s3c2410-ts", TYPE_S3C2410 },
+> -	{ "s3c2440-ts", TYPE_S3C2440 },
+> +	{ "s3c2410-ts", TYPE_S3C24XX },
+> +	{ "s3c2440-ts", TYPE_S3C24XX },
+>  	{ "s3c64xx-ts", TYPE_S3C64XX },
+> -	{ "s5pv210-ts", TYPE_S5PV210 },
+> +	{ "s5pv210-ts", TYPE_S3C64XX },
+
+Do we really need this?
+
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(platform, s3cts_driver_ids);
+> -- 
+> 1.6.2.5
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
 -- 
-1.6.3.3
+-- 
+Ben
+
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
