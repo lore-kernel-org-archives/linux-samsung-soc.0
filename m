@@ -1,29 +1,29 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 09/15] ARM: S5PC100: Move i2c helpers from plat-s5pc1xx to
-	mach-s5pc100
-Date: Mon, 17 May 2010 22:00:24 +0900
-Message-ID: <004601caf5c0$ed5f4450$c81dccf0$%kim@samsung.com>
-References: <1273817946-29404-1-git-send-email-m.szyprowski@samsung.com>
- <1273817946-29404-10-git-send-email-m.szyprowski@samsung.com>
+Subject: RE: [PATCH 2/3] ARM: Samsung: move common I2C0 device helpers to
+ machine	directories
+Date: Mon, 17 May 2010 22:14:19 +0900
+Message-ID: <004701caf5c2$ddfdf8b0$99f9ea10$%kim@samsung.com>
+References: <1274077795-30873-1-git-send-email-m.szyprowski@samsung.com>
+ <1274077795-30873-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:46835 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755147Ab0EQNAa (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:51856 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755147Ab0EQNOX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 May 2010 09:00:30 -0400
-Received: from epmmp2 (mailout3.samsung.com [203.254.224.33])
+	Mon, 17 May 2010 09:14:23 -0400
+Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
  by mailout1.samsung.com
  (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L2K009ABESRSD@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 22:00:28 +0900 (KST)
+ with ESMTP id <0L2K00J2RFFWW4@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 22:14:21 +0900 (KST)
 Received: from kgenekim ([12.23.103.96])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L2K00ENHESRPY@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 22:00:27 +0900 (KST)
-In-reply-to: <1273817946-29404-10-git-send-email-m.szyprowski@samsung.com>
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L2K001Z4FFWKK@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 22:14:21 +0900 (KST)
+In-reply-to: <1274077795-30873-3-git-send-email-m.szyprowski@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -32,154 +32,220 @@ Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
 
 Marek Szyprowski wrote:
 > 
-> Move i2c helpers from plat-s5pc1xx to mach-s5pc100.
+> I2C0 device helper depend on GPIO pin defines that are SoC specific.
+> This patch copies the dummy i2c0 setup code to the respective mach-s5p*
+> directories, so each SoC will be able to implement using its own
+> defines.
 
-It would be nice that separate submitting this patch from c100 clean up
-with your [PATCH 2/3] ARM: Samsung: move common I2C0 device helpers to
-machine directories.
+Yes, right.
 
-1. Moving common I2C0 device helpers to each mach directory
-2. And then C100's I2Cx moving.
+Looks good except header of mach-s5pv210/setup-i2c0.c
+
+And as I reviewed, how about re-submitting this patch with c100 i2c moving?
 
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  arch/arm/mach-s5pc100/Kconfig                      |    8 ++++++--
->  arch/arm/mach-s5pc100/Makefile                     |    2 ++
->  .../{plat-s5pc1xx => mach-s5pc100}/setup-i2c0.c    |    4 ++--
->  .../{plat-s5pc1xx => mach-s5pc100}/setup-i2c1.c    |    4 ++--
->  arch/arm/plat-s5pc1xx/Kconfig                      |   14 --------------
->  arch/arm/plat-s5pc1xx/Makefile                     |    2 --
->  6 files changed, 12 insertions(+), 22 deletions(-)
->  rename arch/arm/{plat-s5pc1xx => mach-s5pc100}/setup-i2c0.c (89%)
->  rename arch/arm/{plat-s5pc1xx => mach-s5pc100}/setup-i2c1.c (89%)
+>  arch/arm/mach-s5p6440/Makefile     |    1 +
+>  arch/arm/mach-s5p6440/setup-i2c0.c |   25 +++++++++++++++++++++++++
+>  arch/arm/mach-s5p6442/Makefile     |    1 +
+>  arch/arm/mach-s5p6442/setup-i2c0.c |   25 +++++++++++++++++++++++++
+>  arch/arm/mach-s5pv210/Makefile     |    1 +
+>  arch/arm/mach-s5pv210/setup-i2c0.c |   25 +++++++++++++++++++++++++
+>  arch/arm/plat-s5p/Makefile         |    1 -
+>  arch/arm/plat-s5p/setup-i2c0.c     |   25 -------------------------
+>  8 files changed, 78 insertions(+), 26 deletions(-)
+>  create mode 100644 arch/arm/mach-s5p6440/setup-i2c0.c
+>  create mode 100644 arch/arm/mach-s5p6442/setup-i2c0.c
+>  create mode 100644 arch/arm/mach-s5pv210/setup-i2c0.c
+>  delete mode 100644 arch/arm/plat-s5p/setup-i2c0.c
 > 
-> diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
-> index b24c66d..9b10541 100644
-> --- a/arch/arm/mach-s5pc100/Kconfig
-> +++ b/arch/arm/mach-s5pc100/Kconfig
-> @@ -23,6 +23,11 @@ config S5PC100_SETUP_SDHCI
->          help
->            Internal helper functions for S5PC100 based SDHCI systems
+> diff --git a/arch/arm/mach-s5p6440/Makefile
+b/arch/arm/mach-s5p6440/Makefile
+> index 1ad894b..9646cdf 100644
+> --- a/arch/arm/mach-s5p6440/Makefile
+> +++ b/arch/arm/mach-s5p6440/Makefile
+> @@ -13,6 +13,7 @@ obj-				:=
+>  # Core support for S5P6440 system
 > 
-> +config S5PC100_SETUP_I2C1
-> +	bool
-> +	help
-> +	  Common setup code for i2c bus 1.
-> +
->  config MACH_SMDKC100
->  	bool "SMDKC100"
->  	select CPU_S5PC100
-> @@ -31,9 +36,8 @@ config MACH_SMDKC100
->  	select S3C_DEV_HSMMC
->  	select S3C_DEV_HSMMC1
->  	select S3C_DEV_HSMMC2
-> -	select S5PC1XX_SETUP_I2C0
-> -	select S5PC1XX_SETUP_I2C1
->  	select S5PC100_SETUP_FB_24BPP
-> +	select S5PC100_SETUP_I2C1
->  	select S5PC100_SETUP_SDHCI
->  	help
->  	  Machine support for the Samsung SMDKC100
-> diff --git a/arch/arm/mach-s5pc100/Makefile
-b/arch/arm/mach-s5pc100/Makefile
-> index ccf0dca..741fba0 100644
-> --- a/arch/arm/mach-s5pc100/Makefile
-> +++ b/arch/arm/mach-s5pc100/Makefile
-> @@ -12,10 +12,12 @@ obj-				:=
->  # Core support for S5PC100 system
-> 
->  obj-$(CONFIG_CPU_S5PC100)	+= cpu.o gpio.o
-> +obj-$(CONFIG_CPU_S5PC100)	+= setup-i2c0.o
-> 
->  # Helper and device support
-> 
->  obj-$(CONFIG_S5PC100_SETUP_FB_24BPP)	+= setup-fb-24bpp.o
-> +obj-$(CONFIG_S5PC100_SETUP_I2C1)	+= setup-i2c1.o
->  obj-$(CONFIG_S5PC100_SETUP_SDHCI)       += setup-sdhci.o
+>  obj-$(CONFIG_CPU_S5P6440)	+= cpu.o init.o clock.o gpio.o
+> +obj-$(CONFIG_CPU_S5P6440)	+= setup-i2c0.o
 > 
 >  # machine support
-> diff --git a/arch/arm/plat-s5pc1xx/setup-i2c0.c
-b/arch/arm/mach-s5pc100/setup-
+> 
+> diff --git a/arch/arm/mach-s5p6440/setup-i2c0.c
+b/arch/arm/mach-s5p6440/setup-
 > i2c0.c
-> similarity index 89%
-> rename from arch/arm/plat-s5pc1xx/setup-i2c0.c
-> rename to arch/arm/mach-s5pc100/setup-i2c0.c
-> index 5e4a7c3..dd3174e 100644
-> --- a/arch/arm/plat-s5pc1xx/setup-i2c0.c
-> +++ b/arch/arm/mach-s5pc100/setup-i2c0.c
-> @@ -1,9 +1,9 @@
-> -/* linux/arch/arm/plat-s5pc1xx/setup-i2c0.c
-> +/* linux/arch/arm/mach-s5pc100/setup-i2c0.c
->   *
->   * Copyright 2009 Samsung Electronics Co.
->   *	Byungho Min <bhmin@samsung.com>
->   *
-> - * Base S5PC1XX I2C bus 0 gpio configuration
-> + * Base S5PC100 I2C bus 0 gpio configuration
->   *
->   * Based on plat-s3c64xx/setup-i2c0.c
->   *
-> diff --git a/arch/arm/plat-s5pc1xx/setup-i2c1.c
-b/arch/arm/mach-s5pc100/setup-
-> i2c1.c
-> similarity index 89%
-> rename from arch/arm/plat-s5pc1xx/setup-i2c1.c
-> rename to arch/arm/mach-s5pc100/setup-i2c1.c
-> index a0a8b4a..d1fec26 100644
-> --- a/arch/arm/plat-s5pc1xx/setup-i2c1.c
-> +++ b/arch/arm/mach-s5pc100/setup-i2c1.c
-> @@ -1,9 +1,9 @@
-> -/* linux/arch/arm/plat-s3c64xx/setup-i2c1.c
-> +/* linux/arch/arm/mach-s5pc100/setup-i2c1.c
->   *
->   * Copyright 2009 Samsung Electronics Co.
->   *	Byungho Min <bhmin@samsung.com>
->   *
-> - * Base S5PC1XX I2C bus 1 gpio configuration
-> + * Base S5PC100 I2C bus 1 gpio configuration
->   *
->   * Based on plat-s3c64xx/setup-i2c1.c
->   *
-> diff --git a/arch/arm/plat-s5pc1xx/Kconfig b/arch/arm/plat-s5pc1xx/Kconfig
-> index 708f7a0..c7bd2bb 100644
-> --- a/arch/arm/plat-s5pc1xx/Kconfig
-> +++ b/arch/arm/plat-s5pc1xx/Kconfig
-> @@ -39,20 +39,6 @@ config CPU_S5PC100_CLOCK
+> new file mode 100644
+> index 0000000..69e8a66
+> --- /dev/null
+> +++ b/arch/arm/mach-s5p6440/setup-i2c0.c
+> @@ -0,0 +1,25 @@
+> +/* linux/arch/arm/mach-s5p6440/setup-i2c0.c
+> + *
+> + * Copyright (c) 2009 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com/
+> + *
+> + * I2C0 GPIO configuration.
+> + *
+> + * Based on plat-s3c64xx/setup-i2c0.c
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/types.h>
+> +
+> +struct platform_device; /* don't need the contents */
+> +
+> +#include <plat/iic.h>
+> +
+> +void s3c_i2c0_cfg_gpio(struct platform_device *dev)
+> +{
+> +	/* Will be populated later */
+> +}
+> diff --git a/arch/arm/mach-s5p6442/Makefile
+b/arch/arm/mach-s5p6442/Makefile
+> index dde39a6..4942c14 100644
+> --- a/arch/arm/mach-s5p6442/Makefile
+> +++ b/arch/arm/mach-s5p6442/Makefile
+> @@ -13,6 +13,7 @@ obj-				:=
+>  # Core support for S5P6442 system
 > 
->  # platform specific device setup
+>  obj-$(CONFIG_CPU_S5P6442)	+= cpu.o init.o clock.o
+> +obj-$(CONFIG_CPU_S5P6442)	+= setup-i2c0.o
 > 
-> -config S5PC1XX_SETUP_I2C0
-> -	bool
-> -	default y
-> -	help
-> -	  Common setup code for i2c bus 0.
+>  # machine support
+> 
+> diff --git a/arch/arm/mach-s5p6442/setup-i2c0.c
+b/arch/arm/mach-s5p6442/setup-
+> i2c0.c
+> new file mode 100644
+> index 0000000..662695d
+> --- /dev/null
+> +++ b/arch/arm/mach-s5p6442/setup-i2c0.c
+> @@ -0,0 +1,25 @@
+> +/* linux/arch/arm/mach-s5p6442/setup-i2c0.c
+> + *
+> + * Copyright (c) 2009 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com/
+> + *
+> + * I2C0 GPIO configuration.
+> + *
+> + * Based on plat-s3c64xx/setup-i2c0.c
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/types.h>
+> +
+> +struct platform_device; /* don't need the contents */
+> +
+> +#include <plat/iic.h>
+> +
+> +void s3c_i2c0_cfg_gpio(struct platform_device *dev)
+> +{
+> +	/* Will be populated later */
+> +}
+> diff --git a/arch/arm/mach-s5pv210/Makefile
+b/arch/arm/mach-s5pv210/Makefile
+> index 8ebf51c..1a972a5 100644
+> --- a/arch/arm/mach-s5pv210/Makefile
+> +++ b/arch/arm/mach-s5pv210/Makefile
+> @@ -13,6 +13,7 @@ obj-				:=
+>  # Core support for S5PV210 system
+> 
+>  obj-$(CONFIG_CPU_S5PV210)	+= cpu.o init.o clock.o
+> +obj-$(CONFIG_CPU_S5PV210)	+= setup-i2c0.o
+> 
+>  # machine support
+> 
+> diff --git a/arch/arm/mach-s5pv210/setup-i2c0.c
+b/arch/arm/mach-s5pv210/setup-
+> i2c0.c
+> new file mode 100644
+> index 0000000..27de0c1
+> --- /dev/null
+> +++ b/arch/arm/mach-s5pv210/setup-i2c0.c
+> @@ -0,0 +1,25 @@
+> +/*
+> + * linux/arch/arm/mach-s5pv210/setup-i2c2.c
+> + *
+> + * Copyright 2009 Samsung Electronics Co.
+> + *
+> + * Base S5PV210 I2C bus 0 gpio configuration
+> + *
+> + * Based on mach-s3c64xx/setup-i2c0.c
+
+Pleae keep the original header from plat-s5p/setup-i2c
+
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/types.h>
+> +
+> +struct platform_device; /* don't need the contents */
+> +
+> +#include <plat/iic.h>
+> +
+> +void s3c_i2c0_cfg_gpio(struct platform_device *dev)
+> +{
+> +	/* Will be populated later */
+> +}
+> diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
+> index a7c54b3..0ec09a9 100644
+> --- a/arch/arm/plat-s5p/Makefile
+> +++ b/arch/arm/plat-s5p/Makefile
+> @@ -16,4 +16,3 @@ obj-y				+= dev-uart.o
+>  obj-y				+= cpu.o
+>  obj-y				+= clock.o
+>  obj-y				+= irq.o
+> -obj-y				+= setup-i2c0.o
+> diff --git a/arch/arm/plat-s5p/setup-i2c0.c
+b/arch/arm/plat-s5p/setup-i2c0.c
+> deleted file mode 100644
+> index 67a66e0..0000000
+> --- a/arch/arm/plat-s5p/setup-i2c0.c
+> +++ /dev/null
+> @@ -1,25 +0,0 @@
+> -/* linux/arch/arm/plat-s5p/setup-i2c0.c
+> - *
+> - * Copyright (c) 2009 Samsung Electronics Co., Ltd.
+> - *		http://www.samsung.com/
+> - *
+> - * I2C0 GPIO configuration.
+> - *
+> - * Based on plat-s3c64xx/setup-i2c0.c
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> -*/
 > -
-> -	  Note, currently since i2c0 is always compiled, this setup helper
-> -	  is always compiled with it.
+> -#include <linux/kernel.h>
+> -#include <linux/types.h>
 > -
-> -config S5PC1XX_SETUP_I2C1
-> -	bool
-> -	help
-> -	  Common setup code for i2c bus 1.
+> -struct platform_device; /* don't need the contents */
 > -
->  config S5PC1XX_SETUP_SDHCI_GPIO
->  	bool
->  	help
-> diff --git a/arch/arm/plat-s5pc1xx/Makefile
-b/arch/arm/plat-s5pc1xx/Makefile
-> index a5b90c0..9ce6409 100644
-> --- a/arch/arm/plat-s5pc1xx/Makefile
-> +++ b/arch/arm/plat-s5pc1xx/Makefile
-> @@ -23,6 +23,4 @@ obj-$(CONFIG_CPU_S5PC100_CLOCK)	+= s5pc100-clock.o
-> 
->  # Device setup
-> 
-> -obj-$(CONFIG_S5PC1XX_SETUP_I2C0) += setup-i2c0.o
-> -obj-$(CONFIG_S5PC1XX_SETUP_I2C1) += setup-i2c1.o
->  obj-$(CONFIG_S5PC1XX_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
+> -#include <plat/iic.h>
+> -
+> -void s3c_i2c0_cfg_gpio(struct platform_device *dev)
+> -{
+> -	/* Will be populated later */
+> -}
 > --
+
+
 Thanks.
 
 Best regards,
