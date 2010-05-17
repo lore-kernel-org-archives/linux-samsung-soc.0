@@ -1,11 +1,11 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 15/18] ARM: S5PV210: Add sclk_audio and sclk_spdif clocks.
-Date: Mon, 17 May 2010 09:39:00 +0900
-Message-ID: <1274056740-14680-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 10/18] ARM: S5PV210: Remove usage of clk_p83 and add clk_pclk_dsys clock\
+Date: Mon, 17 May 2010 09:38:48 +0900
+Message-ID: <1274056728-14515-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:33028 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:33026 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751925Ab0EQAmI (ORCPT
+	with ESMTP id S1751318Ab0EQAmI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Sun, 16 May 2010 20:42:08 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -15,172 +15,102 @@ Cc: ben-linux@fluff.org, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kge
 
 From: Thomas Abraham <thomas.ab@samsung.com>
 
-Add the sclk_audio(0/1/2) clocks and sclk_spdif clock of type
-'struct clksrc_clk' clock. Also, add clk_pcmcdclk(0/1/2) clocks
-of type 'struct clk' clock.
+The clk_p83 clock, which is the PCLK clock for DSYS domain, is of
+type 'struct clk' whereas on S5PV210, this clock is suitable to be
+of type clksrc_clk clock (since it has a clock divider). So this
+patch replaces the 'struct clk' type clock to 'struct clksrc_clk'
+type clock for the PCLK DSYS clock.
+
+This patch modifies the following.
+
+1. Remove definitions and usage of 'clk_p83' clock.
+2. Adds 'clk_pclk_dsys' clock which is of type 'struct clksrc_clk'.
+3. Replace all usage of clk_p83 with clk_pclk_dsys clock.
+4. Adds clk_pclk_dsys into list of clocks to be registered.
 
 Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv210/clock.c |  125 +++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 125 insertions(+), 0 deletions(-)
+ arch/arm/mach-s5pv210/clock.c |   23 +++++++++++++----------
+ 1 files changed, 13 insertions(+), 10 deletions(-)
 
 diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-index c03e288..0154710 100644
+index 527c9c4..b46d9ec 100644
 --- a/arch/arm/mach-s5pv210/clock.c
 +++ b/arch/arm/mach-s5pv210/clock.c
-@@ -199,6 +199,21 @@ static struct clk clk_sclk_usbphy1 = {
+@@ -125,6 +125,15 @@ static struct clksrc_clk clk_hclk_dsys = {
+ 	.reg_div        = { .reg = S5P_CLK_DIV0, .shift = 16, .size = 4 },
+ };
+ 
++static struct clksrc_clk clk_pclk_dsys = {
++	.clk	= {
++		.name	= "pclk_dsys",
++		.id	= -1,
++		.parent	= &clk_hclk_dsys.clk,
++	},
++	.reg_div = { .reg = S5P_CLK_DIV0, .shift = 20, .size = 3 },
++};
++
+ static struct clksrc_clk clk_hclk_psys = {
+ 	.clk	= {
+ 		.name	= "hclk_psys",
+@@ -155,18 +164,12 @@ static int s5pv210_clk_ip3_ctrl(struct clk *clk, int enable)
+ 	return s5p_gatectrl(S5P_CLKGATE_IP3, clk, enable);
+ }
+ 
+-static struct clk clk_p83 = {
+-	.name		= "pclk83",
+-	.id		= -1,
+-};
+-
+ static struct clk clk_p66 = {
+ 	.name		= "pclk66",
  	.id		= -1,
  };
  
-+static struct clk clk_pcmcdclk0 = {
-+	.name		= "pcmcdclk",
-+	.id		= -1,
-+};
-+
-+static struct clk clk_pcmcdclk1 = {
-+	.name		= "pcmcdclk",
-+	.id		= -1,
-+};
-+
-+static struct clk clk_pcmcdclk2 = {
-+	.name		= "pcmcdclk",
-+	.id		= -1,
-+};
-+
- static struct clk *clkset_vpllsrc_list[] = {
- 	[0] = &clk_fin_vpll,
- 	[1] = &clk_sclk_hdmi27m,
-@@ -524,6 +539,104 @@ static struct clksrc_sources clkset_sclk_mixer = {
- 	.nr_sources	= ARRAY_SIZE(clkset_sclk_mixer_list),
+ static struct clk *sys_clks[] = {
+-	&clk_p83,
+ 	&clk_p66
  };
  
-+static struct clk *clkset_sclk_audio0_list[] = {
-+	[0] = &clk_ext_xtal_mux,
-+	[1] = &clk_pcmcdclk0,
-+	[2] = &clk_sclk_hdmi27m,
-+	[3] = &clk_sclk_usbphy0,
-+	[4] = &clk_sclk_usbphy1,
-+	[5] = &clk_sclk_hdmiphy,
-+	[6] = &clk_mout_mpll.clk,
-+	[7] = &clk_mout_epll.clk,
-+	[8] = &clk_sclk_vpll.clk,
-+};
-+
-+static struct clksrc_sources clkset_sclk_audio0 = {
-+	.sources	= clkset_sclk_audio0_list,
-+	.nr_sources	= ARRAY_SIZE(clkset_sclk_audio0_list),
-+};
-+
-+static struct clksrc_clk clk_sclk_audio0 = {
-+	.clk		= {
-+		.name		= "sclk_audio",
-+		.id		= 0,
-+		.enable		= s5pv210_clk_ip3_ctrl,
-+		.ctrlbit	= (1 << 4),
-+	},
-+	.sources = &clkset_sclk_audio0,
-+	.reg_src = { .reg = S5P_CLK_SRC6, .shift = 0, .size = 4 },
-+	.reg_div = { .reg = S5P_CLK_DIV6, .shift = 0, .size = 4 },
-+};
-+
-+static struct clk *clkset_sclk_audio1_list[] = {
-+	[0] = &clk_ext_xtal_mux,
-+	[1] = &clk_pcmcdclk1,
-+	[2] = &clk_sclk_hdmi27m,
-+	[3] = &clk_sclk_usbphy0,
-+	[4] = &clk_sclk_usbphy1,
-+	[5] = &clk_sclk_hdmiphy,
-+	[6] = &clk_mout_mpll.clk,
-+	[7] = &clk_mout_epll.clk,
-+	[8] = &clk_sclk_vpll.clk,
-+};
-+
-+static struct clksrc_sources clkset_sclk_audio1 = {
-+	.sources	= clkset_sclk_audio1_list,
-+	.nr_sources	= ARRAY_SIZE(clkset_sclk_audio1_list),
-+};
-+
-+static struct clksrc_clk clk_sclk_audio1 = {
-+	.clk		= {
-+		.name		= "sclk_audio",
-+		.id		= 1,
-+		.enable		= s5pv210_clk_ip3_ctrl,
-+		.ctrlbit	= (1 << 5),
-+	},
-+	.sources = &clkset_sclk_audio1,
-+	.reg_src = { .reg = S5P_CLK_SRC6, .shift = 4, .size = 4 },
-+	.reg_div = { .reg = S5P_CLK_DIV6, .shift = 4, .size = 4 },
-+};
-+
-+static struct clk *clkset_sclk_audio2_list[] = {
-+	[0] = &clk_ext_xtal_mux,
-+	[1] = &clk_pcmcdclk0,
-+	[2] = &clk_sclk_hdmi27m,
-+	[3] = &clk_sclk_usbphy0,
-+	[4] = &clk_sclk_usbphy1,
-+	[5] = &clk_sclk_hdmiphy,
-+	[6] = &clk_mout_mpll.clk,
-+	[7] = &clk_mout_epll.clk,
-+	[8] = &clk_sclk_vpll.clk,
-+};
-+
-+static struct clksrc_sources clkset_sclk_audio2 = {
-+	.sources	= clkset_sclk_audio2_list,
-+	.nr_sources	= ARRAY_SIZE(clkset_sclk_audio2_list),
-+};
-+
-+static struct clksrc_clk clk_sclk_audio2 = {
-+	.clk		= {
-+		.name		= "sclk_audio",
-+		.id		= 2,
-+		.enable		= s5pv210_clk_ip3_ctrl,
-+		.ctrlbit	= (1 << 6),
-+	},
-+	.sources = &clkset_sclk_audio2,
-+	.reg_src = { .reg = S5P_CLK_SRC6, .shift = 8, .size = 4 },
-+	.reg_div = { .reg = S5P_CLK_DIV6, .shift = 8, .size = 4 },
-+};
-+
-+static struct clk *clkset_sclk_spdif_list[] = {
-+	[0] = &clk_sclk_audio0.clk,
-+	[1] = &clk_sclk_audio1.clk,
-+	[2] = &clk_sclk_audio2.clk,
-+};
-+
-+static struct clksrc_sources clkset_sclk_spdif = {
-+	.sources	= clkset_sclk_spdif_list,
-+	.nr_sources	= ARRAY_SIZE(clkset_sclk_spdif_list),
-+};
-+
- static struct clksrc_clk clksrcs[] = {
- 	{
- 		.clk	= {
-@@ -560,6 +673,15 @@ static struct clksrc_clk clksrcs[] = {
- 		},
- 		.sources = &clkset_sclk_mixer,
- 		.reg_src = { .reg = S5P_CLK_SRC1, .shift = 4, .size = 1 },
-+	}, {
-+		.clk		= {
-+			.name		= "sclk_spdif",
-+			.id		= -1,
-+			.enable		= s5pv210_clk_mask0_ctrl,
-+			.ctrlbit	= (1 << 27),
-+		},
-+		.sources = &clkset_sclk_spdif,
-+		.reg_src = { .reg = S5P_CLK_SRC6, .shift = 12, .size = 2 },
- 	},
+@@ -397,6 +400,7 @@ static struct clksrc_clk *sysclks[] = {
+ 	&clk_hclk_dsys,
+ 	&clk_hclk_psys,
+ 	&clk_pclk_msys,
++	&clk_pclk_dsys,
  };
  
-@@ -658,6 +780,9 @@ static struct clk *clks[] __initdata = {
- 	&clk_sclk_hdmiphy,
- 	&clk_sclk_usbphy0,
- 	&clk_sclk_usbphy1,
-+	&clk_pcmcdclk0,
-+	&clk_pcmcdclk1,
-+	&clk_pcmcdclk2,
- };
+ #define GET_DIV(clk, field) ((((clk) & field##_MASK) >> field##_SHIFT) + 1)
+@@ -410,7 +414,7 @@ void __init_or_cpufreq s5pv210_setup_clocks(void)
+ 	unsigned long hclk_dsys;
+ 	unsigned long hclk_psys;
+ 	unsigned long pclk_msys;
+-	unsigned long pclk83;
++	unsigned long pclk_dsys;
+ 	unsigned long pclk66;
+ 	unsigned long apll;
+ 	unsigned long mpll;
+@@ -450,19 +454,18 @@ void __init_or_cpufreq s5pv210_setup_clocks(void)
+ 	hclk_dsys = clk_get_rate(&clk_hclk_dsys.clk);
+ 	hclk_psys = clk_get_rate(&clk_hclk_psys.clk);
+ 	pclk_msys = clk_get_rate(&clk_pclk_msys.clk);
+-	pclk83 = hclk_dsys / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK83);
++	pclk_dsys = clk_get_rate(&clk_pclk_dsys.clk);
+ 	pclk66 = hclk_psys / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK66);
  
- void __init s5pv210_register_clocks(void)
+ 	printk(KERN_INFO "S5PV210: ARMCLK=%ld, HCLKM=%ld, HCLKD=%ld\n"
+ 			 "HCLKP=%ld, PCLKM=%ld, PCLKD=%ld, PCLKP=%ld\n",
+ 			armclk, hclk_msys, hclk_dsys, hclk_psys,
+-			pclk_msys, pclk83, pclk66);
++			pclk_msys, pclk_dsys, pclk66);
+ 
+ 	clk_f.rate = armclk;
+ 	clk_h.rate = hclk_psys;
+ 	clk_p.rate = pclk66;
+ 	clk_p66.rate = pclk66;
+-	clk_p83.rate = pclk83;
+ 
+ 	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
+ 		s3c_set_clksrc(&clksrcs[ptr], true);
 -- 
 1.6.2.5
