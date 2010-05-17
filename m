@@ -1,65 +1,134 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH 1/3] ARM: Samsung: fix broken timer irq base
-Date: Mon, 17 May 2010 09:12:38 +0100
-Message-ID: <20100517081238.GZ6684@trinity.fluff.org>
-References: <1274077795-30873-1-git-send-email-m.szyprowski@samsung.com> <1274077795-30873-2-git-send-email-m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH v6] ARM: S5PV210: Add Ext interrupt support.
+Date: Mon, 17 May 2010 12:19:46 +0200
+Message-ID: <00c601caf5aa$7c5aeea0$7510cbe0$%szyprowski@samsung.com>
+References: <1274082986-24250-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:41782 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751446Ab0EQIMs (ORCPT
+Received: from mailout5.samsung.com ([203.254.224.35]:40056 "EHLO
+	mailout5.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752892Ab0EQKUi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 May 2010 04:12:48 -0400
-Content-Disposition: inline
-In-Reply-To: <1274077795-30873-2-git-send-email-m.szyprowski@samsung.com>
+	Mon, 17 May 2010 06:20:38 -0400
+Received: from epmmp2 (mailout5.samsung.com [203.254.224.35])
+ by mailout1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L2K00AC87E5XN@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 19:20:29 +0900 (KST)
+Received: from AMDC159 ([106.116.37.153])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L2K008IN7DT70@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 19:20:29 +0900 (KST)
+In-reply-to: <1274082986-24250-1-git-send-email-kgene.kim@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, 'Jongpill Lee' <boyko.lee@samsung.com>, 'Pannaga Bhushan' <p.bhushan@samsung.com>, kyungmin.park@samsung.com
 
-On Mon, May 17, 2010 at 08:29:53AM +0200, Marek Szyprowski wrote:
-> Timer interrupts range was defined as 43-47, what overlaps with VIC0 range
-> (32-64). This was caused probably by a typo while the common interrupts
-> definition was refactored. This patch moves timer interrupt range to safe
-> area of 11-15 (just before uart range).
+Hello,
+
+On Monday, May 17, 2010 9:56 AM Kukjin Kim wrote:
+
+> From: Jongpill Lee <boyko.lee@samsung.com>
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Add support for external interrupts on S5PV210.
+> 
+> Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
+> Signed-off-by: Pannaga Bhushan <p.bhushan@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > ---
->  arch/arm/plat-s5p/include/plat/irqs.h |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
+>  arch/arm/mach-s5pv210/Kconfig                  |    1 +
+>  arch/arm/mach-s5pv210/include/mach/irqs.h      |   31 ++---
+>  arch/arm/mach-s5pv210/include/mach/regs-gpio.h |   44 +++++
+>  arch/arm/plat-s5p/Kconfig                      |    5 +
+>  arch/arm/plat-s5p/Makefile                     |    1 +
+>  arch/arm/plat-s5p/irq-eint.c                   |  213
+> ++++++++++++++++++++++++
+>  6 files changed, 275 insertions(+), 20 deletions(-)
+>  create mode 100644 arch/arm/mach-s5pv210/include/mach/regs-gpio.h
+>  create mode 100644 arch/arm/plat-s5p/irq-eint.c
 > 
-> diff --git a/arch/arm/plat-s5p/include/plat/irqs.h b/arch/arm/plat-s5p/include/plat/irqs.h
-> index 42e757f..9ff3d71 100644
-> --- a/arch/arm/plat-s5p/include/plat/irqs.h
-> +++ b/arch/arm/plat-s5p/include/plat/irqs.h
-> @@ -79,7 +79,7 @@
->  #define S5P_IRQ_VIC2(x)		(S5P_VIC2_BASE + (x))
->  #define S5P_IRQ_VIC3(x)		(S5P_VIC3_BASE + (x))
->  
-> -#define S5P_TIMER_IRQ(x)	S5P_IRQ(11 + (x))
-> +#define S5P_TIMER_IRQ(x)	(11 + (x))
+> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+> index af33a1a..c4c2a7f 100644
+> --- a/arch/arm/mach-s5pv210/Kconfig
+> +++ b/arch/arm/mach-s5pv210/Kconfig
+> @@ -12,6 +12,7 @@ if ARCH_S5PV210
+>  config CPU_S5PV210
+>  	bool
+>  	select PLAT_S5P
+> +	select S5P_EXT_INT
+>  	help
+>  	  Enable S5PV210 CPU support
+> 
+> diff --git a/arch/arm/mach-s5pv210/include/mach/irqs.h b/arch/arm/mach-
+> s5pv210/include/mach/irqs.h
+> index 62c5175..3a9e42e 100644
+> --- a/arch/arm/mach-s5pv210/include/mach/irqs.h
+> +++ b/arch/arm/mach-s5pv210/include/mach/irqs.h
+> @@ -17,22 +17,6 @@
+> 
+>  /* VIC0: System, DMA, Timer */
+> 
+> -#define IRQ_EINT0		S5P_IRQ_VIC0(0)
+> -#define IRQ_EINT1		S5P_IRQ_VIC0(1)
+> -#define IRQ_EINT2		S5P_IRQ_VIC0(2)
+> -#define IRQ_EINT3		S5P_IRQ_VIC0(3)
+> -#define IRQ_EINT4		S5P_IRQ_VIC0(4)
+> -#define IRQ_EINT5		S5P_IRQ_VIC0(5)
+> -#define IRQ_EINT6		S5P_IRQ_VIC0(6)
+> -#define IRQ_EINT7		S5P_IRQ_VIC0(7)
+> -#define IRQ_EINT8		S5P_IRQ_VIC0(8)
+> -#define IRQ_EINT9		S5P_IRQ_VIC0(9)
+> -#define IRQ_EINT10		S5P_IRQ_VIC0(10)
+> -#define IRQ_EINT11		S5P_IRQ_VIC0(11)
+> -#define IRQ_EINT12		S5P_IRQ_VIC0(12)
+> -#define IRQ_EINT13		S5P_IRQ_VIC0(13)
+> -#define IRQ_EINT14		S5P_IRQ_VIC0(14)
+> -#define IRQ_EINT15		S5P_IRQ_VIC0(15)
+>  #define IRQ_EINT16_31		S5P_IRQ_VIC0(16)
+>  #define IRQ_BATF		S5P_IRQ_VIC0(17)
+>  #define IRQ_MDMA		S5P_IRQ_VIC0(18)
+> @@ -134,13 +118,20 @@
+>  #define IRQ_MDNIE3		S5P_IRQ_VIC3(8)
+>  #define IRQ_VIC_END		S5P_IRQ_VIC3(31)
+> 
+> -#define S5P_IRQ_EINT_BASE	(IRQ_VIC_END + 1)
+> +#define S5P_EINT_16_31_BASE	(IRQ_VIC_END + 1)
+> 
+> -#define S5P_EINT(x)		((x) + S5P_IRQ_EINT_BASE)
+> -#define IRQ_EINT(x)		S5P_EINT(x)
 
-87aef30e (Atul Dahiya 2010-01-29 09:08:28 +0900 82) #define S5P_TIMER_IRQ(x)    S5P_IRQ(11 + (x))
+ok
 
-is the one to blame here.
+> +#define EINT_MODE		S3C_GPIO_SFN(0xf)
 
-    ARM: S5P: Change S5P_TIMER_IRQ based to 11 for SAMSUNG S5P series.
-    
-    Currently, S5P_TIMER_IRQ is based at the end of VICs. This patch changes
-    the S5P_TIMER_IRQ base from end of VICs to 11 in ISA IRQ space.
-    No of VICs varies between SOCs. This causes an exception on S5P6442.
-    
-    Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
-    Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-    Signed-off-by: Ben Dooks <ben-linux@fluff.org>
+IMHO the irq.h is not the right place for this define
 
-So it looks like this was intended to re-use the ISA interrupt range
-but didn't get it quite right.
+> +
+> +#define IRQ_EINT(x)		((x) < 16 ? ((x) + S5P_IRQ_VIC0(0)) \
+> +					: ((x) + S5P_EINT_16_31_BASE))
+> 
+>  /* Set the default NR_IRQS */
+> 
+> -#define NR_IRQS 		(IRQ_EINT(31) + 1)
+> +#define NR_IRQS			(IRQ_EINT(31) + 1)
+> +
 
--- 
-Ben
+ok
 
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+> +#define EINT_GPIO_0(x)		S5PV210_GPH0(x)
+> +#define EINT_GPIO_1(x)		S5PV210_GPH1(x)
+> +#define EINT_GPIO_2(x)		S5PV210_GPH2(x)
+> +#define EINT_GPIO_3(x)		S5PV210_GPH3(x)
+
+Again, gpio.h would be much better for these.
+
+> ...
+
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
