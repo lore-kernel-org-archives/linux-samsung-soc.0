@@ -1,77 +1,54 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v3 10/10] Input: s3c24xx_ts - Changes TYPEs for Samsung touchscreen driver
-Date: Mon, 17 May 2010 15:12:37 +0900
-Message-ID: <1274076757-26550-1-git-send-email-kgene.kim@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 1/3] ARM: Samsung: fix broken timer irq base
+Date: Mon, 17 May 2010 08:29:53 +0200
+Message-ID: <1274077795-30873-2-git-send-email-m.szyprowski@samsung.com>
+References: <1274077795-30873-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:56032 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753276Ab0EQGRJ (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:15576 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753479Ab0EQGaA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 May 2010 02:17:09 -0400
+	Mon, 17 May 2010 02:30:00 -0400
+Received: from eu_spt1 ([210.118.77.13]) by mailout3.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0L2J00KVYWPXEJ40@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 07:29:57 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0L2J00JM8WPXZM@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 May 2010 07:29:57 +0100 (BST)
+In-reply-to: <1274077795-30873-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Naveen Krishna <ch.naveen@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
 
-From: Naveen Krishna <ch.naveen@samsung.com>
+Timer interrupts range was defined as 43-47, what overlaps with VIC0 range
+(32-64). This was caused probably by a typo while the common interrupts
+definition was refactored. This patch moves timer interrupt range to safe
+area of 11-15 (just before uart range).
 
-The Touchscreen driver now uses only 2 TYPEs based on the variations
-of TSADC module in the respective SoCs.
-
-TYPE_S3C24XX supports for S3C2410, S3C2440
-TYPE_S3C64XX supports for S3C6410, S5P6440, S5PVV210/S5PC110
-
-Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
-This patch is as per comments from Ben Dooks about following.
+ arch/arm/plat-s5p/include/plat/irqs.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-[PATCH v2 10/11] ARM: SAMSUNG: Remove the TYPE and replace it with a Feature
-[PATCH v2 11/11] Input: s3c24xx_ts - Uses Feature field instead TYPE for Samsung SoCs
-
-
- drivers/input/touchscreen/s3c2410_ts.c |   14 ++++++--------
- 1 files changed, 6 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/input/touchscreen/s3c2410_ts.c b/drivers/input/touchscreen/s3c2410_ts.c
-index 8a970ea..f2c8328 100644
---- a/drivers/input/touchscreen/s3c2410_ts.c
-+++ b/drivers/input/touchscreen/s3c2410_ts.c
-@@ -86,10 +86,8 @@ struct s3c2410ts {
- static struct s3c2410ts ts;
+diff --git a/arch/arm/plat-s5p/include/plat/irqs.h b/arch/arm/plat-s5p/include/plat/irqs.h
+index 42e757f..9ff3d71 100644
+--- a/arch/arm/plat-s5p/include/plat/irqs.h
++++ b/arch/arm/plat-s5p/include/plat/irqs.h
+@@ -79,7 +79,7 @@
+ #define S5P_IRQ_VIC2(x)		(S5P_VIC2_BASE + (x))
+ #define S5P_IRQ_VIC3(x)		(S5P_VIC3_BASE + (x))
  
- enum s3c_cpu_type {
--	TYPE_S3C2410,
--	TYPE_S3C2440,
--	TYPE_S3C64XX,	/* S3C64XX, S5P64XX Series */
--	TYPE_S5PV210,	/* S5PV210 */
-+	TYPE_S3C24XX,	/* S3C2410, S3C2440 Series */
-+	TYPE_S3C64XX,	/* S3C64XX, S5P64XX, S5PV210 Series */
- };
+-#define S5P_TIMER_IRQ(x)	S5P_IRQ(11 + (x))
++#define S5P_TIMER_IRQ(x)	(11 + (x))
  
- /**
-@@ -179,7 +177,7 @@ static irqreturn_t stylus_irq(int irq, void *dev_id)
- 	else
- 		dev_info(ts.dev, "%s: count=%d\n", __func__, ts.count);
- 
--	if (platform_get_device_id(pdev)->driver_data >= TYPE_S3C64XX) {
-+	if (platform_get_device_id(pdev)->driver_data != TYPE_S3C24XX) {
- 		/* Clear pen down/up interrupt */
- 		writel(0x0, ts.io + S3C64XX_ADCCLRINTPNDNUP);
- 	}
-@@ -416,10 +414,10 @@ static struct dev_pm_ops s3c_ts_pmops = {
- #endif
- 
- static struct platform_device_id s3cts_driver_ids[] = {
--	{ "s3c2410-ts", TYPE_S3C2410 },
--	{ "s3c2440-ts", TYPE_S3C2440 },
-+	{ "s3c2410-ts", TYPE_S3C24XX },
-+	{ "s3c2440-ts", TYPE_S3C24XX },
- 	{ "s3c64xx-ts", TYPE_S3C64XX },
--	{ "s5pv210-ts", TYPE_S5PV210 },
-+	{ "s5pv210-ts", TYPE_S3C64XX },
- 	{ }
- };
- MODULE_DEVICE_TABLE(platform, s3cts_driver_ids);
+ #define IRQ_TIMER0		S5P_TIMER_IRQ(0)
+ #define IRQ_TIMER1		S5P_TIMER_IRQ(1)
 -- 
-1.6.2.5
+1.6.4
