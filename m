@@ -1,11 +1,11 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 13/18] ARM: S5PV210: Add new system clocks
-Date: Mon, 17 May 2010 09:38:55 +0900
-Message-ID: <1274056735-14614-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 04/18] ARM: S5PV210: Add armclk of clksrc_clk clock type
+Date: Mon, 17 May 2010 09:38:31 +0900
+Message-ID: <1274056711-14317-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:33006 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:33029 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751139Ab0EQAmI (ORCPT
+	with ESMTP id S1751501Ab0EQAmI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Sun, 16 May 2010 20:42:08 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -15,103 +15,67 @@ Cc: ben-linux@fluff.org, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kge
 
 From: Thomas Abraham <thomas.ab@samsung.com>
 
-This patch adds the following system clocks.
+This patch modifies the following.
 
-1. clk_sclk_hdmiphy
-2. clk_sclk_usbphy0
-3. clk_sclk_usbphy1
-4. sclk_dmc (dram memory controller clock)
-5. sclk_onenand
+1. Adds arm clock 'clk_armclk' of type clksrc_clk clock type.
+2. Adds arm clock to the list of system clocks 'sysclks' for
+   registering it along with other system clocks.
+3. Modifies the armclk clock rate calculation procedure to be
+   based on the new clk_armclk clock.
 
 Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv210/clock.c |   56 +++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 56 insertions(+), 0 deletions(-)
+ arch/arm/mach-s5pv210/clock.c |   23 ++++++++++++++++++++++-
+ 1 files changed, 22 insertions(+), 1 deletions(-)
 
 diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-index c86bff5..2c7be15 100644
+index d782fed..f57fa1e 100644
 --- a/arch/arm/mach-s5pv210/clock.c
 +++ b/arch/arm/mach-s5pv210/clock.c
-@@ -184,6 +184,21 @@ static struct clk clk_sclk_hdmi27m = {
- 	.rate		= 27000000,
+@@ -58,6 +58,26 @@ static struct clksrc_clk clk_mout_mpll = {
+ 	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 4, .size = 1 },
  };
  
-+static struct clk clk_sclk_hdmiphy = {
-+	.name		= "sclk_hdmiphy",
-+	.id		= -1,
-+};
-+
-+static struct clk clk_sclk_usbphy0 = {
-+	.name		= "sclk_usbphy0",
-+	.id		= -1,
-+};
-+
-+static struct clk clk_sclk_usbphy1 = {
-+	.name		= "sclk_usbphy1",
-+	.id		= -1,
-+};
-+
- static struct clk *clkset_vpllsrc_list[] = {
- 	[0] = &clk_fin_vpll,
- 	[1] = &clk_sclk_hdmi27m,
-@@ -426,9 +441,47 @@ static struct clksrc_sources clkset_uart = {
- 	.nr_sources	= ARRAY_SIZE(clkset_uart_list),
- };
- 
-+static struct clk *clkset_group1_list[] = {
-+	[0] = &clk_sclk_a2m.clk,
++static struct clk *clkset_armclk_list[] = {
++	[0] = &clk_mout_apll.clk,
 +	[1] = &clk_mout_mpll.clk,
-+	[2] = &clk_mout_epll.clk,
-+	[3] = &clk_sclk_vpll.clk,
 +};
 +
-+static struct clksrc_sources clkset_group1 = {
-+	.sources	= clkset_group1_list,
-+	.nr_sources	= ARRAY_SIZE(clkset_group1_list),
++static struct clksrc_sources clkset_armclk = {
++	.sources	= clkset_armclk_list,
++	.nr_sources	= ARRAY_SIZE(clkset_armclk_list),
 +};
 +
-+static struct clk *clkset_sclk_onenand_list[] = {
-+	[0] = &clk_hclk_psys.clk,
-+	[1] = &clk_hclk_dsys.clk,
++static struct clksrc_clk clk_armclk = {
++	.clk	= {
++		.name		= "armclk",
++		.id		= -1,
++	},
++	.sources	= &clkset_armclk,
++	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 16, .size = 1 },
++	.reg_div	= { .reg = S5P_CLK_DIV0, .shift = 0, .size = 3 },
 +};
 +
-+static struct clksrc_sources clkset_sclk_onenand = {
-+	.sources	= clkset_sclk_onenand_list,
-+	.nr_sources	= ARRAY_SIZE(clkset_sclk_onenand_list),
-+};
-+
- static struct clksrc_clk clksrcs[] = {
- 	{
- 		.clk	= {
-+			.name		= "sclk_dmc",
-+			.id		= -1,
-+		},
-+		.sources = &clkset_group1,
-+		.reg_src = { .reg = S5P_CLK_SRC6, .shift = 24, .size = 2 },
-+		.reg_div = { .reg = S5P_CLK_DIV6, .shift = 28, .size = 4 },
-+	}, {
-+		.clk	= {
-+			.name		= "sclk_onenand",
-+			.id		= -1,
-+		},
-+		.sources = &clkset_sclk_onenand,
-+		.reg_src = { .reg = S5P_CLK_SRC0, .shift = 28, .size = 1 },
-+		.reg_div = { .reg = S5P_CLK_DIV6, .shift = 12, .size = 3 },
-+	}, {
-+		.clk	= {
- 			.name		= "uclk1",
- 			.id		= -1,
- 			.ctrlbit	= (1<<17),
-@@ -529,6 +582,9 @@ void __init_or_cpufreq s5pv210_setup_clocks(void)
- 
- static struct clk *clks[] __initdata = {
- 	&clk_sclk_hdmi27m,
-+	&clk_sclk_hdmiphy,
-+	&clk_sclk_usbphy0,
-+	&clk_sclk_usbphy1,
+ static int s5pv210_clk_ip0_ctrl(struct clk *clk, int enable)
+ {
+ 	return s5p_gatectrl(S5P_CLKGATE_IP0, clk, enable);
+@@ -328,6 +348,7 @@ static struct clksrc_clk *sysclks[] = {
+ 	&clk_mout_apll,
+ 	&clk_mout_epll,
+ 	&clk_mout_mpll,
++	&clk_armclk,
  };
  
- void __init s5pv210_register_clocks(void)
+ #define GET_DIV(clk, field) ((((clk) & field##_MASK) >> field##_SHIFT) + 1)
+@@ -376,7 +397,7 @@ void __init_or_cpufreq s5pv210_setup_clocks(void)
+ 	printk(KERN_INFO "S5PV210: PLL settings, A=%ld, M=%ld, E=%ld",
+ 			apll, mpll, epll);
+ 
+-	armclk = apll / GET_DIV(clkdiv0, S5P_CLKDIV0_APLL);
++	armclk = clk_get_rate(&clk_armclk.clk);
+ 	if (__raw_readl(S5P_CLK_SRC0) & S5P_CLKSRC0_MUX200_MASK)
+ 		hclk200 = mpll / GET_DIV(clkdiv0, S5P_CLKDIV0_HCLK200);
+ 	else
 -- 
 1.6.2.5
