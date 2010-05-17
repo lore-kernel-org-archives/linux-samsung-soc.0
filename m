@@ -1,11 +1,11 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 17/18] ARM: S5PV210: Add 'clock source gate' clock definitions
-Date: Mon, 17 May 2010 09:39:05 +0900
-Message-ID: <1274056745-14746-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 08/18] ARM: S5PV210: Remove usage of clk_p100 and add clk_pclk_msys clock
+Date: Mon, 17 May 2010 09:38:42 +0900
+Message-ID: <1274056722-14449-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:33022 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:33019 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751426Ab0EQAmI (ORCPT
+	with ESMTP id S1751959Ab0EQAmI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Sun, 16 May 2010 20:42:08 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -15,179 +15,99 @@ Cc: ben-linux@fluff.org, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kge
 
 From: Thomas Abraham <thomas.ab@samsung.com>
 
-The non-glitch-free clock muxes can suffer from glitches when changing
-clock sources. It is recommended to disable the output of non-glitch-
-free muxes before trying to change the clock source. After clock change
-is complete, the non-glitch-free clock can be re-enabled.
+The clk_p100 clock, which is the PCLK clock for MSYS domain, is of
+type 'struct clk' whereas on S5PV210, this clock is suitable to be
+of type clksrc_clk clock (since it has a choice of clock source
+and a pre-divider). So this patch replaces the 'struct clk' type
+clock to 'struct clksrc_clk' type clock for the PCLK MSYS clock.
 
-These clocks are added to the list of clocks to be enabled at boot time.
-Device drivers that need to disable the non-glitch-free mux output clock
-can 'clk_get' these clocks, disable them, change the clock selection
-of the mux and then re-enable the non-glitch-free mux output.
+This patch modifies the following.
+
+1. Remove definitions and usage of 'clk_p100' clock.
+2. Adds 'clk_pclk_msys' clock which is of type 'struct clksrc_clk'.
+3. Replace all usage of clk_p100 with clk_pclk_msys clock.
+4. Adds clk_pclk_msys into list of clocks to be registered.
 
 Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv210/clock.c |  140 +++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 140 insertions(+), 0 deletions(-)
+ arch/arm/mach-s5pv210/clock.c |   23 +++++++++++++----------
+ 1 files changed, 13 insertions(+), 10 deletions(-)
 
 diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-index 154bca4..a2c3ab5 100644
+index 7ed1d4e..4791642 100644
 --- a/arch/arm/mach-s5pv210/clock.c
 +++ b/arch/arm/mach-s5pv210/clock.c
-@@ -183,6 +183,11 @@ static int s5pv210_clk_mask0_ctrl(struct clk *clk, int enable)
- 	return s5p_gatectrl(S5P_CLK_SRC_MASK0, clk, enable);
- }
- 
-+static int s5pv210_clk_mask1_ctrl(struct clk *clk, int enable)
-+{
-+	return s5p_gatectrl(S5P_CLK_SRC_MASK1, clk, enable);
-+}
-+
- static struct clk clk_sclk_hdmi27m = {
- 	.name		= "sclk_hdmi27m",
- 	.id		= -1,
-@@ -448,6 +453,141 @@ static struct clk init_clocks[] = {
- 		.parent		= &clk_pclk_psys.clk,
- 		.enable		= s5pv210_clk_ip3_ctrl,
- 		.ctrlbit	= (1<<10),
-+	}, {
-+		.name		= "mout_hdmi",
-+		.id		= -1,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 0),
-+	}, {
-+		.name		= "mout_mixer",
-+		.id		= -1,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 1),
-+	}, {
-+		.name		= "mout_dac",
-+		.id		= -1,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 2),
-+	}, {
-+		.name		= "mout_cam",
-+		.id		= 0,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 3),
-+	}, {
-+		.name		= "mout_cam",
-+		.id		= 1,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 4),
-+	}, {
-+		.name		= "mout_fimd",
-+		.id		= -1,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 5),
-+	}, {
-+		.name		= "mout_csis",
-+		.id		= -1,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 6),
-+	}, {
-+		.name		= "mout_finvpll",
-+		.id		= -1,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 7),
-+	}, {
-+		.name		= "mout_mmc",
-+		.id		= 0,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 8),
-+	}, {
-+		.name		= "mout_mmc",
-+		.id		= 1,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 9),
-+	}, {
-+		.name		= "mout_mmc",
-+		.id		= 2,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 10),
-+	}, {
-+		.name		= "mout_mmc",
-+		.id		= 3,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 11),
-+	}, {
-+		.name		= "mout_uart",
-+		.id		= 0,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 12),
-+	}, {
-+		.name		= "mout_uart",
-+		.id		= 1,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 13),
-+	}, {
-+		.name		= "mout_uart",
-+		.id		= 2,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 14),
-+	}, {
-+		.name		= "mout_uart",
-+		.id		= 3,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 15),
-+	}, {
-+		.name		= "mout_spi",
-+		.id		= 0,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 16),
-+	}, {
-+		.name		= "mout_spi",
-+		.id		= 1,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 17),
-+	}, {
-+		.name		= "mout_pwm",
-+		.id		= -1,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 19),
-+	}, {
-+		.name		= "mout_audio",
-+		.id		= 0,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 24),
-+	}, {
-+		.name		= "mout_audio",
-+		.id		= 1,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 25),
-+	}, {
-+		.name		= "mout_audio",
-+		.id		= 2,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 26),
-+	}, {
-+		.name		= "mout_spdif",
-+		.id		= -1,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 27),
-+	}, {
-+		.name		= "mout_pwi",
-+		.id		= -1,
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 29),
-+	}, {
-+		.name		= "mout_fimc",
-+		.id		= 0,
-+		.enable		= s5pv210_clk_mask1_ctrl,
-+		.ctrlbit	= (1 << 2),
-+	}, {
-+		.name		= "mout_fimc",
-+		.id		= 1,
-+		.enable		= s5pv210_clk_mask1_ctrl,
-+		.ctrlbit	= (1 << 3),
-+	}, {
-+		.name		= "mout_fimc",
-+		.id		= 2,
-+		.enable		= s5pv210_clk_mask1_ctrl,
-+		.ctrlbit	= (1 << 4),
- 	},
+@@ -87,6 +87,15 @@ static struct clksrc_clk clk_hclk_msys = {
+ 	.reg_div	= { .reg = S5P_CLK_DIV0, .shift = 8, .size = 3 },
  };
  
++static struct clksrc_clk clk_pclk_msys = {
++	.clk	= {
++		.name		= "pclk_msys",
++		.id		= -1,
++		.parent		= &clk_hclk_msys.clk,
++	},
++	.reg_div        = { .reg = S5P_CLK_DIV0, .shift = 12, .size = 3 },
++};
++
+ static struct clksrc_clk clk_sclk_a2m = {
+ 	.clk	= {
+ 		.name		= "sclk_a2m",
+@@ -151,11 +160,6 @@ static struct clk clk_h100 = {
+ 	.id		= -1,
+ };
+ 
+-static struct clk clk_p100 = {
+-	.name		= "pclk100",
+-	.id		= -1,
+-};
+-
+ static struct clk clk_p83 = {
+ 	.name		= "pclk83",
+ 	.id		= -1,
+@@ -168,7 +172,6 @@ static struct clk clk_p66 = {
+ 
+ static struct clk *sys_clks[] = {
+ 	&clk_h100,
+-	&clk_p100,
+ 	&clk_p83,
+ 	&clk_p66
+ };
+@@ -383,6 +386,7 @@ static struct clksrc_clk *sysclks[] = {
+ 	&clk_sclk_a2m,
+ 	&clk_hclk_dsys,
+ 	&clk_hclk_psys,
++	&clk_pclk_msys,
+ };
+ 
+ #define GET_DIV(clk, field) ((((clk) & field##_MASK) >> field##_SHIFT) + 1)
+@@ -395,7 +399,7 @@ void __init_or_cpufreq s5pv210_setup_clocks(void)
+ 	unsigned long hclk_msys;
+ 	unsigned long hclk_dsys;
+ 	unsigned long hclk_psys;
+-	unsigned long pclk100;
++	unsigned long pclk_msys;
+ 	unsigned long pclk83;
+ 	unsigned long pclk66;
+ 	unsigned long apll;
+@@ -435,15 +439,14 @@ void __init_or_cpufreq s5pv210_setup_clocks(void)
+ 	hclk_msys = clk_get_rate(&clk_hclk_msys.clk);
+ 	hclk_dsys = clk_get_rate(&clk_hclk_dsys.clk);
+ 	hclk_psys = clk_get_rate(&clk_hclk_psys.clk);
+-
+-	pclk100 = hclk_msys / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK100);
++	pclk_msys = clk_get_rate(&clk_pclk_msys.clk);
+ 	pclk83 = hclk_dsys / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK83);
+ 	pclk66 = hclk_psys / GET_DIV(clkdiv0, S5P_CLKDIV0_PCLK66);
+ 
+ 	printk(KERN_INFO "S5PV210: ARMCLK=%ld, HCLKM=%ld, HCLKD=%ld\n"
+ 			 "HCLKP=%ld, PCLKM=%ld, PCLKD=%ld, PCLKP=%ld\n",
+ 			armclk, hclk_msys, hclk_dsys, hclk_psys,
+-			pclk100, pclk83, pclk66);
++			pclk_msys, pclk83, pclk66);
+ 
+ 	clk_f.rate = armclk;
+ 	clk_h.rate = hclk_psys;
 -- 
 1.6.2.5
