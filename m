@@ -1,78 +1,325 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 6/8] ARM: S3C64XX: Add RTC Driver support
-Date: Tue, 18 May 2010 14:59:38 +0900
-Message-ID: <1274162378-1981-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 5/8] rtc: rtc-s3c: Add RTC support for Samsung S3C64XX
+Date: Tue, 18 May 2010 14:59:29 +0900
+Message-ID: <1274162369-1946-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:51150 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:51141 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756395Ab0ERGHY (ORCPT
+	with ESMTP id S1755309Ab0ERGHY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Tue, 18 May 2010 02:07:24 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Atul Dahiya <atul.dahiya@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, Taekgyun Ko <taeggyun.ko@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Atul Dahiya <atul.dahiya@samsung.com>
+From: Taekgyun Ko <taeggyun.ko@samsung.com>
 
-This patch adds RTC driver support for S3C64XX.
+This patch adds support for Samsung S3C64XX.
 
-Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
+Signed-off-by: Taekgyun Ko <taeggyun.ko@samsung.com>
+Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s3c64xx/Kconfig         |    1 +
- arch/arm/mach-s3c64xx/mach-smdk6410.c |    1 +
- drivers/rtc/Kconfig                   |    8 ++++----
- 3 files changed, 6 insertions(+), 4 deletions(-)
+ drivers/rtc/rtc-s3c.c |  153 +++++++++++++++++++++++++++++++++++++++++-------
+ 1 files changed, 130 insertions(+), 23 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-index 959df38..1207c8b 100644
---- a/arch/arm/mach-s3c64xx/Kconfig
-+++ b/arch/arm/mach-s3c64xx/Kconfig
-@@ -91,6 +91,7 @@ config MACH_SMDK6410
- 	select S3C_DEV_FB
- 	select S3C_DEV_USB_HOST
- 	select S3C_DEV_USB_HSOTG
-+	select S3C_DEV_RTC
- 	select S3C64XX_SETUP_SDHCI
- 	select S3C64XX_SETUP_I2C1
- 	select S3C64XX_SETUP_FB_24BPP
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-index 10cf64a..866026a 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-@@ -255,6 +255,7 @@ static struct platform_device *smdk6410_devices[] __initdata = {
- 	&s3c_device_fb,
- 	&s3c_device_ohci,
- 	&s3c_device_usb_hsotg,
-+	&s3c_device_rtc,
- 	&s3c64xx_device_ac97,
- 	&s3c64xx_device_iisv4,
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index 9364dc2..77f33df 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -1,5 +1,8 @@
+ /* drivers/rtc/rtc-s3c.c
+  *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
+  * Copyright (c) 2004,2006 Simtec Electronics
+  *	Ben Dooks, <ben@simtec.co.uk>
+  *	http://armlinux.simtec.co.uk/
+@@ -8,7 +11,7 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  *
+- * S3C2410/S3C2440/S3C24XX Internal RTC Driver
++ * S3C2410/S3C2440/S3C24XX/S3C64XX Internal RTC Driver
+ */
  
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 6a13037..8cabeeb 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -630,16 +630,16 @@ config RTC_DRV_OMAP
+ #include <linux/module.h>
+@@ -28,16 +31,24 @@
+ #include <asm/io.h>
+ #include <asm/irq.h>
+ #include <plat/regs-rtc.h>
++#include <plat/clock.h>
  
- config RTC_DRV_S3C
- 	tristate "Samsung S3C series SoC RTC"
--	depends on ARCH_S3C2410
-+	depends on ARCH_S3C2410 || ARCH_S3C64XX
- 	help
- 	  RTC (Realtime Clock) driver for the clock inbuilt into the
--	  Samsung S3C24XX series of SoCs. This can provide periodic
-+	  Samsung S3C series of SoCs. This can provide periodic
- 	  interrupt rates from 1Hz to 64Hz for user programs, and
- 	  wakeup from Alarm.
+ /* I have yet to find an S3C implementation with more than one
+  * of these rtc blocks in */
  
- 	  The driver currently supports the common features on all the
--	  S3C24XX range, such as the S3C2410, S3C2412, S3C2413, S3C2440
--	  and S3C2442.
-+	  S3C range, such as the S3C2410, S3C2412, S3C2413, S3C2440,
-+	  S3C2442 and S3C64XX.
++enum s3c_cpu_type {
++	TYPE_S3C2410,
++	TYPE_S3C64XX,
++};
++
+ static struct resource *s3c_rtc_mem;
  
- 	  This driver can also be build as a module. If so, the module
- 	  will be called rtc-s3c.
+ static void __iomem *s3c_rtc_base;
+ static int s3c_rtc_alarmno = NO_IRQ;
+ static int s3c_rtc_tickno  = NO_IRQ;
+ 
++static enum s3c_cpu_type s3c_rtc_cpu_type;
++
+ static DEFINE_SPINLOCK(s3c_rtc_pie_lock);
+ 
+ /* IRQ Handlers */
+@@ -47,6 +58,10 @@ static irqreturn_t s3c_rtc_alarmirq(int irq, void *id)
+ 	struct rtc_device *rdev = id;
+ 
+ 	rtc_update_irq(rdev, 1, RTC_AF | RTC_IRQF);
++
++	if (s3c_rtc_cpu_type == TYPE_S3C64XX)
++		writeb(S3C64XX_INTP_ALM, s3c_rtc_base + S3C64XX_INTP);
++
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -55,6 +70,10 @@ static irqreturn_t s3c_rtc_tickirq(int irq, void *id)
+ 	struct rtc_device *rdev = id;
+ 
+ 	rtc_update_irq(rdev, 1, RTC_PF | RTC_IRQF);
++
++	if (s3c_rtc_cpu_type == TYPE_S3C64XX)
++		writeb(S3C64XX_INTP_TIC, s3c_rtc_base + S3C64XX_INTP);
++
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -82,12 +101,25 @@ static int s3c_rtc_setpie(struct device *dev, int enabled)
+ 	pr_debug("%s: pie=%d\n", __func__, enabled);
+ 
+ 	spin_lock_irq(&s3c_rtc_pie_lock);
+-	tmp = readb(s3c_rtc_base + S3C2410_TICNT) & ~S3C2410_TICNT_ENABLE;
+ 
+-	if (enabled)
+-		tmp |= S3C2410_TICNT_ENABLE;
++	if (s3c_rtc_cpu_type == TYPE_S3C64XX) {
++		tmp = readw(s3c_rtc_base + S3C2410_RTCCON);
++		tmp &= ~S3C64XX_RTCCON_TICEN;
++
++		if (enabled)
++			tmp |= S3C64XX_RTCCON_TICEN;
++
++		writew(tmp, s3c_rtc_base + S3C2410_RTCCON);
++	} else {
++		tmp = readb(s3c_rtc_base + S3C2410_TICNT);
++		tmp &= ~S3C2410_TICNT_ENABLE;
++
++		if (enabled)
++			tmp |= S3C2410_TICNT_ENABLE;
++
++		writeb(tmp, s3c_rtc_base + S3C2410_TICNT);
++	}
+ 
+-	writeb(tmp, s3c_rtc_base + S3C2410_TICNT);
+ 	spin_unlock_irq(&s3c_rtc_pie_lock);
+ 
+ 	return 0;
+@@ -102,10 +134,16 @@ static int s3c_rtc_setfreq(struct device *dev, int freq)
+ 
+ 	spin_lock_irq(&s3c_rtc_pie_lock);
+ 
+-	tmp = readb(s3c_rtc_base + S3C2410_TICNT) & S3C2410_TICNT_ENABLE;
+-	tmp |= (128 / freq)-1;
++	if (s3c_rtc_cpu_type == TYPE_S3C64XX) {
++		tmp = (32768 / freq) - 1;
++		writel(tmp, s3c_rtc_base + S3C2410_TICNT);
++	} else {
++		tmp = readb(s3c_rtc_base + S3C2410_TICNT);
++		tmp &= S3C2410_TICNT_ENABLE;
++		tmp |= (128 / freq) - 1;
++		writeb(tmp, s3c_rtc_base + S3C2410_TICNT);
++	}
+ 
+-	writeb(tmp, s3c_rtc_base + S3C2410_TICNT);
+ 	spin_unlock_irq(&s3c_rtc_pie_lock);
+ 
+ 	return 0;
+@@ -275,20 +313,29 @@ static int s3c_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 
+ 	s3c_rtc_setaie(0, alrm->enabled);
+ 
+-	if (alrm->enabled)
+-		enable_irq_wake(s3c_rtc_alarmno);
+-	else
+-		disable_irq_wake(s3c_rtc_alarmno);
++	if (s3c_rtc_cpu_type == TYPE_S3C2410) {
++		if (alrm->enabled)
++			enable_irq_wake(s3c_rtc_alarmno);
++		else
++			disable_irq_wake(s3c_rtc_alarmno);
++	}
+ 
+ 	return 0;
+ }
+ 
+ static int s3c_rtc_proc(struct device *dev, struct seq_file *seq)
+ {
+-	unsigned int ticnt = readb(s3c_rtc_base + S3C2410_TICNT);
++	unsigned int ticnt;
+ 
+-	seq_printf(seq, "periodic_IRQ\t: %s\n",
+-		     (ticnt & S3C2410_TICNT_ENABLE) ? "yes" : "no" );
++	if (s3c_rtc_cpu_type == TYPE_S3C64XX) {
++		ticnt = readw(s3c_rtc_base + S3C2410_RTCCON);
++		ticnt &= S3C64XX_RTCCON_TICEN;
++	} else {
++		ticnt = readb(s3c_rtc_base + S3C2410_TICNT);
++		ticnt &= S3C2410_TICNT_ENABLE;
++	}
++
++	seq_printf(seq, "periodic_IRQ\t: %s\n", ticnt ? "yes" : "no");
+ 	return 0;
+ }
+ 
+@@ -355,11 +402,20 @@ static void s3c_rtc_enable(struct platform_device *pdev, int en)
+ 		return;
+ 
+ 	if (!en) {
+-		tmp = readb(base + S3C2410_RTCCON);
+-		writeb(tmp & ~S3C2410_RTCCON_RTCEN, base + S3C2410_RTCCON);
++		if (s3c_rtc_cpu_type == TYPE_S3C64XX) {
++			tmp = readw(base + S3C2410_RTCCON);
++			tmp &= ~S3C64XX_RTCCON_TICEN;
++			tmp &= ~S3C2410_RTCCON_RTCEN;
++			writew(tmp, base + S3C2410_RTCCON);
++		} else {
++			tmp = readb(base + S3C2410_RTCCON);
++			writeb(tmp & ~S3C2410_RTCCON_RTCEN,
++				base + S3C2410_RTCCON);
+ 
+-		tmp = readb(base + S3C2410_TICNT);
+-		writeb(tmp & ~S3C2410_TICNT_ENABLE, base + S3C2410_TICNT);
++			tmp = readb(base + S3C2410_TICNT);
++			writeb(tmp & ~S3C2410_TICNT_ENABLE,
++				base + S3C2410_TICNT);
++		}
+ 	} else {
+ 		/* re-enable the device, and check it is ok */
+ 
+@@ -407,12 +463,16 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
+ {
+ 	struct rtc_device *rtc;
+ 	struct resource *res;
++	struct clk *clk_rtc;
++	unsigned char tmp, i;
+ 	int ret;
+ 
+ 	pr_debug("%s: probe=%p\n", __func__, pdev);
+ 
+ 	/* find the IRQs */
+ 
++	s3c_rtc_cpu_type = platform_get_device_id(pdev)->driver_data;
++
+ 	s3c_rtc_tickno = platform_get_irq(pdev, 1);
+ 	if (s3c_rtc_tickno < 0) {
+ 		dev_err(&pdev->dev, "no irq for rtc tick\n");
+@@ -453,6 +513,11 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
+ 		goto err_nomap;
+ 	}
+ 
++	clk_rtc = clk_get(NULL, "rtc");
++	if (IS_ERR(clk_rtc))
++		dev_err(&pdev->dev, "failed to get clock for RTC\n");
++	clk_enable(clk_rtc);
++
+ 	/* check to see if everything is setup correctly */
+ 
+ 	s3c_rtc_enable(pdev, 1);
+@@ -475,7 +540,18 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
+ 		goto err_nortc;
+ 	}
+ 
+-	rtc->max_user_freq = 128;
++	if (s3c_rtc_cpu_type == TYPE_S3C64XX) {
++		rtc->max_user_freq = 32768;
++
++		/* check rtc time */
++		for (i = S3C2410_RTCSEC; i <= S3C2410_RTCYEAR; i += 0x4) {
++			tmp = readb(s3c_rtc_base + i);
++			if (((tmp & 0xf) > 0x9) || (((tmp >> 4) & 0xf) > 0x9))
++				writeb(0, s3c_rtc_base + i);
++		}
++	} else {
++		rtc->max_user_freq = 128;
++	}
+ 
+ 	platform_set_drvdata(pdev, rtc);
+ 	return 0;
+@@ -495,20 +571,37 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
+ 
+ /* RTC Power management control */
+ 
+-static int ticnt_save;
++static unsigned int ticnt_save;
++static int ticnt_en_save;
+ 
+ static int s3c_rtc_suspend(struct platform_device *pdev, pm_message_t state)
+ {
+ 	/* save TICNT for anyone using periodic interrupts */
+-	ticnt_save = readb(s3c_rtc_base + S3C2410_TICNT);
++	if (s3c_rtc_cpu_type == TYPE_S3C64XX) {
++		ticnt_save = readl(s3c_rtc_base + S3C2410_TICNT);
++		ticnt_en_save = readw(s3c_rtc_base + S3C2410_RTCCON) &
++			S3C64XX_RTCCON_TICEN;
++	} else {
++		ticnt_save = readb(s3c_rtc_base + S3C2410_TICNT);
++	}
+ 	s3c_rtc_enable(pdev, 0);
+ 	return 0;
+ }
+ 
+ static int s3c_rtc_resume(struct platform_device *pdev)
+ {
++	unsigned int tmp;
++
+ 	s3c_rtc_enable(pdev, 1);
+-	writeb(ticnt_save, s3c_rtc_base + S3C2410_TICNT);
++	if (s3c_rtc_cpu_type == TYPE_S3C64XX) {
++		writel(ticnt_save, s3c_rtc_base + S3C2410_TICNT);
++		if (ticnt_en_save) {
++			tmp = readw(s3c_rtc_base + S3C2410_RTCCON);
++			writew(tmp | ticnt_en_save, s3c_rtc_base + S3C2410_RTCCON);
++		}
++	} else {
++		writeb(ticnt_save, s3c_rtc_base + S3C2410_TICNT);
++	}
+ 	return 0;
+ }
+ #else
+@@ -516,11 +609,25 @@ static int s3c_rtc_resume(struct platform_device *pdev)
+ #define s3c_rtc_resume  NULL
+ #endif
+ 
++static struct platform_device_id s3c_rtc_driver_ids[] = {
++	{
++		.name		= "s3c2410-rtc",
++		.driver_data	= TYPE_S3C2410,
++	}, {
++		.name		= "s3c64xx-rtc",
++		.driver_data	= TYPE_S3C64XX,
++	},
++	{}
++}
++
++MODULE_DEVICE_TABLE(platform, s3c_rtc_driver_ids);
++
+ static struct platform_driver s3c2410_rtc_driver = {
+ 	.probe		= s3c_rtc_probe,
+ 	.remove		= __devexit_p(s3c_rtc_remove),
+ 	.suspend	= s3c_rtc_suspend,
+ 	.resume		= s3c_rtc_resume,
++	.id_table	= s3c_rtc_driver_ids,
+ 	.driver		= {
+ 		.name	= "s3c2410-rtc",
+ 		.owner	= THIS_MODULE,
 -- 
 1.6.2.5
