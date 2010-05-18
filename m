@@ -1,75 +1,129 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: (unknown)
-Date: Tue, 18 May 2010 12:38:38 +0200
-Message-ID: <1274179129-14659-1-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 05/11] ARM: S5PC100: Move frame buffer helpers from
+ plat-s5pc1xx to mach-s5pc100
+Date: Tue, 18 May 2010 12:38:43 +0200
+Message-ID: <1274179129-14659-6-git-send-email-m.szyprowski@samsung.com>
+References: <1274179129-14659-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:12693 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752059Ab0ERKiz (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:36279 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752133Ab0ERKiz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Tue, 18 May 2010 06:38:55 -0400
-Received: from eu_spt2 (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
+Received: from eu_spt2 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
  (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L2M003X42WSMB@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 May 2010 11:38:52 +0100 (BST)
+ with ESMTP id <0L2M00JV42WT6H@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 May 2010 11:38:53 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
  by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L2M00F0D2WRKI@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 May 2010 11:38:52 +0100 (BST)
-Subject: 
+ 2004)) with ESMTPA id <0L2M00K0J2WR2W@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 May 2010 11:38:53 +0100 (BST)
+In-reply-to: <1274179129-14659-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
 
-Hello,
+Move frame buffer helpers from plat-s5pc1xx to mach-s5pc100.
 
-This patch series perform a general cleanup in Samsung S5PC100 SoC support.
-This chip is moved from custom s5pc1xx platform framework to new plat-s5p
-framework, so more common code can be easily reused in upcomming extensions
-for S5PV210/S5PC110 SoCs.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-s5pc100/Kconfig                      |    7 ++++++-
+ arch/arm/mach-s5pc100/Makefile                     |    1 +
+ .../setup-fb-24bpp.c                               |    4 ++--
+ arch/arm/plat-s5pc1xx/Kconfig                      |    5 -----
+ arch/arm/plat-s5pc1xx/Makefile                     |    1 -
+ 5 files changed, 9 insertions(+), 9 deletions(-)
+ rename arch/arm/{plat-s5pc1xx => mach-s5pc100}/setup-fb-24bpp.c (91%)
 
-This patch series is prepared against next-samsung tree, with assumption
-that the "[PATCH v3] ARM: S5PC100: Pre-requisite clock patch for
-plat-s5pc1xx to plat-s5p" has been applied as well as the '[PATCH v6]
-ARM: S5PV210: Add Ext interrupt support' (with additional bug fixes).
-
-I've tried to split my changes as much as possible to clearly show how the
-transition from plat-s5pc1xx to plat-s5p is being done.
-
-Changes since v2:
-- fixed some whitespace/tabs errors
-- removed external interrupt code, a common code from plat-s5p will be used
-- moved SMDKC100 fixes to separate patch series
-
-Changes since v1:
-- bases on completely new clock code provided by Kukjin Kim
-- added some plat-s5p fixes required for transition
-- removed custom functions from gpiolib implementation (now uses common
-  code from plat-samsung)
-- restructured the changes to avoid breaking the functionality beteen the
-  patches
-- some other minor cleanups (mainly c1xx to c100 renames)
-
-This patch series includes:
-
-[PATCH 01/11] drivers: serial: S5PC100 serial driver cleanup
-[PATCH 02/11] ARM: S5PC100: Use common functions for gpiolib implementation
-[PATCH 03/11] ARM: S5PC100: Move gpio support from plat-s5pc1xx to mach-s5pc100
-[PATCH 04/11] ARM: S5PC100: gpio.h cleanup
-[PATCH 05/11] ARM: S5PC100: Move frame buffer helpers from plat-s5pc1xx to mach-s5pc100
-[PATCH 06/11] ARM: S5PC100: Move i2c helpers from plat-s5pc1xx to mach-s5pc100
-[PATCH 07/11] ARM: S5PC100: Move sdhci helpers from plat-s5pc1xx to mach-s5pc100
-[PATCH 08/11] ARM: Samsung: move S5PC100 support from plat-s5pc1xx to plat-s5p framework
-[PATCH 09/11] ARM: S5PC100: Add support for gpio interrupt
-[PATCH 10/11] ARM: S5PC100: use common plat-s5p external interrupt code
-[PATCH 11/11] ARM: remove obsolete plat-s5pc1xx directory
-
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
+index 27ec167..7d9b68c 100644
+--- a/arch/arm/mach-s5pc100/Kconfig
++++ b/arch/arm/mach-s5pc100/Kconfig
+@@ -12,6 +12,11 @@ config CPU_S5PC100
+ 	help
+ 	  Enable S5PC100 CPU support
+ 
++config S5PC100_SETUP_FB_24BPP
++	bool
++	help
++	  Common setup code for S5PC1XX with an 24bpp RGB display helper.
++
+ config S5PC100_SETUP_SDHCI
+         bool
+         select S5PC1XX_SETUP_SDHCI_GPIO
+@@ -28,7 +33,7 @@ config MACH_SMDKC100
+ 	select S3C_DEV_HSMMC2
+ 	select S5PC1XX_SETUP_I2C0
+ 	select S5PC1XX_SETUP_I2C1
+-	select S5PC1XX_SETUP_FB_24BPP
++	select S5PC100_SETUP_FB_24BPP
+ 	select S5PC100_SETUP_SDHCI
+ 	help
+ 	  Machine support for the Samsung SMDKC100
+diff --git a/arch/arm/mach-s5pc100/Makefile b/arch/arm/mach-s5pc100/Makefile
+index 4199ce2..1d1276c 100644
+--- a/arch/arm/mach-s5pc100/Makefile
++++ b/arch/arm/mach-s5pc100/Makefile
+@@ -15,6 +15,7 @@ obj-$(CONFIG_CPU_S5PC100)	+= cpu.o gpiolib.o
+ 
+ # Helper and device support
+ 
++obj-$(CONFIG_S5PC100_SETUP_FB_24BPP)	+= setup-fb-24bpp.o
+ obj-$(CONFIG_S5PC100_SETUP_SDHCI)       += setup-sdhci.o
+ 
+ # machine support
+diff --git a/arch/arm/plat-s5pc1xx/setup-fb-24bpp.c b/arch/arm/mach-s5pc100/setup-fb-24bpp.c
+similarity index 91%
+rename from arch/arm/plat-s5pc1xx/setup-fb-24bpp.c
+rename to arch/arm/mach-s5pc100/setup-fb-24bpp.c
+index b02c36f..6eba6cb 100644
+--- a/arch/arm/plat-s5pc1xx/setup-fb-24bpp.c
++++ b/arch/arm/mach-s5pc100/setup-fb-24bpp.c
+@@ -1,9 +1,9 @@
+ /*
+- * linux/arch/arm/plat-s5pc100/setup-fb-24bpp.c
++ * linux/arch/arm/mach-s5pc100/setup-fb-24bpp.c
+  *
+  * Copyright 2009 Samsung Electronics
+  *
+- * Base S5PC1XX setup information for 24bpp LCD framebuffer
++ * Base S5PC100 setup information for 24bpp LCD framebuffer
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+diff --git a/arch/arm/plat-s5pc1xx/Kconfig b/arch/arm/plat-s5pc1xx/Kconfig
+index 98bbaf9..708f7a0 100644
+--- a/arch/arm/plat-s5pc1xx/Kconfig
++++ b/arch/arm/plat-s5pc1xx/Kconfig
+@@ -39,11 +39,6 @@ config CPU_S5PC100_CLOCK
+ 
+ # platform specific device setup
+ 
+-config S5PC1XX_SETUP_FB_24BPP
+-	bool
+-	help
+-          Common setup code for S5PC1XX with an 24bpp RGB display helper.
+-
+ config S5PC1XX_SETUP_I2C0
+ 	bool
+ 	default y
+diff --git a/arch/arm/plat-s5pc1xx/Makefile b/arch/arm/plat-s5pc1xx/Makefile
+index 540fca5..a5b90c0 100644
+--- a/arch/arm/plat-s5pc1xx/Makefile
++++ b/arch/arm/plat-s5pc1xx/Makefile
+@@ -23,7 +23,6 @@ obj-$(CONFIG_CPU_S5PC100_CLOCK)	+= s5pc100-clock.o
+ 
+ # Device setup
+ 
+-obj-$(CONFIG_S5PC1XX_SETUP_FB_24BPP) += setup-fb-24bpp.o
+ obj-$(CONFIG_S5PC1XX_SETUP_I2C0) += setup-i2c0.o
+ obj-$(CONFIG_S5PC1XX_SETUP_I2C1) += setup-i2c1.o
+ obj-$(CONFIG_S5PC1XX_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
+-- 
+1.6.4
