@@ -1,11 +1,11 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v2 5/9] Input: s3c24xx_ts - Adds FEAT for Samsung touchscreen support
-Date: Tue, 18 May 2010 20:44:45 +0900
-Message-ID: <1274183085-16063-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH v2 7/9] ARM: S5P6440: Adds Touchscreen support for S5P6440
+Date: Tue, 18 May 2010 20:44:56 +0900
+Message-ID: <1274183096-16133-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:52995 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:53011 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755250Ab0ERLw3 (ORCPT
+	with ESMTP id S1756380Ab0ERLw3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Tue, 18 May 2010 07:52:29 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -15,81 +15,95 @@ Cc: ben-linux@fluff.org, Naveen Krishna <ch.naveen@samsung.com>, Kukjin Kim <kge
 
 From: Naveen Krishna <ch.naveen@samsung.com>
 
-This patch adds a feature bit field in the touchscreen driver for Samsung SoCs.
-Which can be used to distinguish the TSADC module features.
+This patch adds touchscreen support for S5P6440.
 
-Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
+Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- drivers/input/touchscreen/s3c2410_ts.c |   15 ++++++++++++---
- 1 files changed, 12 insertions(+), 3 deletions(-)
+ arch/arm/mach-s5p6440/Kconfig            |    2 ++
+ arch/arm/mach-s5p6440/cpu.c              |    2 ++
+ arch/arm/mach-s5p6440/include/mach/map.h |    3 +++
+ arch/arm/mach-s5p6440/mach-smdk6440.c    |   12 ++++++++++++
+ 4 files changed, 19 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/input/touchscreen/s3c2410_ts.c b/drivers/input/touchscreen/s3c2410_ts.c
-index 86086a4..e0b7c83 100644
---- a/drivers/input/touchscreen/s3c2410_ts.c
-+++ b/drivers/input/touchscreen/s3c2410_ts.c
-@@ -55,6 +55,8 @@
- 			 S3C2410_ADCTSC_AUTO_PST | \
- 			 S3C2410_ADCTSC_XY_PST(0))
+diff --git a/arch/arm/mach-s5p6440/Kconfig b/arch/arm/mach-s5p6440/Kconfig
+index 4c29ff8..597e1a9 100644
+--- a/arch/arm/mach-s5p6440/Kconfig
++++ b/arch/arm/mach-s5p6440/Kconfig
+@@ -15,6 +15,8 @@ config CPU_S5P6440
+ config MACH_SMDK6440
+ 	bool "SMDK6440"
+ 	select CPU_S5P6440
++	select SAMSUNG_DEV_TS
++	select SAMSUNG_DEV_ADC
+ 	help
+ 	  Machine support for the Samsung SMDK6440
  
-+#define FEAT_PEN_IRQ	(1 << 0)	/* HAS ADCCLRINTPNDNUP */
-+
- /* Per-touchscreen data. */
- 
- /**
-@@ -69,6 +71,7 @@
-  * @irq_tc: The interrupt number for pen up/down interrupt
-  * @count: The number of samples collected.
-  * @shift: The log2 of the maximum count to read in one go.
-+ * @features: The features supported by the TSADC MOdule.
-  */
- struct s3c2410ts {
- 	struct s3c_adc_client *client;
-@@ -81,6 +84,7 @@ struct s3c2410ts {
- 	int irq_tc;
- 	int count;
- 	int shift;
-+	int features;
- };
- 
- static struct s3c2410ts ts;
-@@ -171,6 +175,11 @@ static irqreturn_t stylus_irq(int irq, void *dev_id)
- 	else
- 		dev_info(ts.dev, "%s: count=%d\n", __func__, ts.count);
- 
-+	if (ts.features & FEAT_PEN_IRQ) {
-+		/* Clear pen down/up interrupt */
-+		writel(0x0, ts.io + S3C64XX_ADCCLRINTPNDNUP);
-+	}
-+
- 	return IRQ_HANDLED;
+diff --git a/arch/arm/mach-s5p6440/cpu.c b/arch/arm/mach-s5p6440/cpu.c
+index 1794131..e461955 100644
+--- a/arch/arm/mach-s5p6440/cpu.c
++++ b/arch/arm/mach-s5p6440/cpu.c
+@@ -61,6 +61,8 @@ static void s5p6440_idle(void)
+ void __init s5p6440_map_io(void)
+ {
+ 	/* initialize any device information early */
++	s3c_device_ts.name      = "s3c64xx-ts";
++	s3c_device_adc.name	= "s3c64xx-adc";
  }
  
-@@ -317,6 +326,7 @@ static int __devinit s3c2410ts_probe(struct platform_device *pdev)
- 	ts.input->id.version = 0x0102;
+ void __init s5p6440_init_clocks(int xtal)
+diff --git a/arch/arm/mach-s5p6440/include/mach/map.h b/arch/arm/mach-s5p6440/include/mach/map.h
+index 8924e5a..52e7930 100644
+--- a/arch/arm/mach-s5p6440/include/mach/map.h
++++ b/arch/arm/mach-s5p6440/include/mach/map.h
+@@ -61,8 +61,11 @@
+ #define S5P6440_PA_SDRAM	(0x20000000)
+ #define S5P_PA_SDRAM		S5P6440_PA_SDRAM
  
- 	ts.shift = info->oversampling_shift;
-+	ts.features = platform_get_device_id(pdev)->driver_data;
++#define S5P6440_PA_ADC		(0xF3000000)
++
+ /* compatibiltiy defines. */
+ #define S3C_PA_UART		S5P6440_PA_UART
+ #define S3C_PA_IIC		S5P6440_PA_IIC0
++#define SAMSUNG_PA_ADC		S5P6440_PA_ADC
  
- 	ret = request_irq(ts.irq_tc, stylus_irq, IRQF_DISABLED,
- 			  "s3c2410_ts_pen", ts.input);
-@@ -403,15 +413,14 @@ static struct dev_pm_ops s3c_ts_pmops = {
- #endif
+ #endif /* __ASM_ARCH_MAP_H */
+diff --git a/arch/arm/mach-s5p6440/mach-smdk6440.c b/arch/arm/mach-s5p6440/mach-smdk6440.c
+index 3ae88f2..177701b 100644
+--- a/arch/arm/mach-s5p6440/mach-smdk6440.c
++++ b/arch/arm/mach-s5p6440/mach-smdk6440.c
+@@ -38,6 +38,8 @@
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+ #include <plat/pll.h>
++#include <plat/adc.h>
++#include <plat/ts.h>
  
- static struct platform_device_id s3cts_driver_ids[] = {
--	{ "s3c2410-ts", 0 },
--	{ "s3c2440-ts", 1 },
-+	{ "s3c64xx-ts", FEAT_PEN_IRQ },
- 	{ }
+ #define S5P6440_UCON_DEFAULT    (S3C2410_UCON_TXILEVEL |	\
+ 				S3C2410_UCON_RXILEVEL |		\
+@@ -84,6 +86,14 @@ static struct s3c2410_uartcfg smdk6440_uartcfgs[] __initdata = {
  };
- MODULE_DEVICE_TABLE(platform, s3cts_driver_ids);
  
- static struct platform_driver s3c_ts_driver = {
- 	.driver         = {
--		.name   = "s3c24xx-ts",
-+		.name   = "samsung-ts",
- 		.owner  = THIS_MODULE,
- #ifdef CONFIG_PM
- 		.pm	= &s3c_ts_pmops,
+ static struct platform_device *smdk6440_devices[] __initdata = {
++	&s3c_device_adc,
++	&s3c_device_ts,
++};
++
++static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
++	.delay			= 10000,
++	.presc			= 49,
++	.oversampling_shift	= 2,
+ };
+ 
+ static void __init smdk6440_map_io(void)
+@@ -95,6 +105,8 @@ static void __init smdk6440_map_io(void)
+ 
+ static void __init smdk6440_machine_init(void)
+ {
++	s3c24xx_ts_set_platdata(&s3c_ts_platform);
++
+ 	platform_add_devices(smdk6440_devices, ARRAY_SIZE(smdk6440_devices));
+ }
+ 
 -- 
 1.6.2.5
