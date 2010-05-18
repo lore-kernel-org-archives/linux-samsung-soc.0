@@ -1,13 +1,13 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v3 3/9] ARM: SAMSUNG: Implements cfg_gpio function for Samsung touchscreen
-Date: Tue, 18 May 2010 20:44:27 +0900
-Message-ID: <1274183067-15993-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH v2 5/9] Input: s3c24xx_ts - Adds FEAT for Samsung touchscreen support
+Date: Tue, 18 May 2010 20:44:45 +0900
+Message-ID: <1274183085-16063-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:56791 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:52995 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755250Ab0ERLrb (ORCPT
+	with ESMTP id S1755250Ab0ERLw3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 May 2010 07:47:31 -0400
+	Tue, 18 May 2010 07:52:29 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
@@ -15,135 +15,81 @@ Cc: ben-linux@fluff.org, Naveen Krishna <ch.naveen@samsung.com>, Kukjin Kim <kge
 
 From: Naveen Krishna <ch.naveen@samsung.com>
 
-This patch implements cfg_gpio function for Samsung touchscreen.
-And also modifies the H1940 machine respectively.
+This patch adds a feature bit field in the touchscreen driver for Samsung SoCs.
+Which can be used to distinguish the TSADC module features.
 
 Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s3c2410/Kconfig           |    1 +
- arch/arm/mach-s3c2410/mach-h1940.c      |    1 +
- arch/arm/plat-s3c24xx/Kconfig           |    6 +++++
- arch/arm/plat-s3c24xx/Makefile          |    1 +
- arch/arm/plat-s3c24xx/setup-ts.c        |   34 +++++++++++++++++++++++++++++++
- arch/arm/plat-samsung/include/plat/ts.h |    4 +++
- 6 files changed, 47 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/plat-s3c24xx/setup-ts.c
+ drivers/input/touchscreen/s3c2410_ts.c |   15 ++++++++++++---
+ 1 files changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-s3c2410/Kconfig b/arch/arm/mach-s3c2410/Kconfig
-index 5547318..6b9665c 100644
---- a/arch/arm/mach-s3c2410/Kconfig
-+++ b/arch/arm/mach-s3c2410/Kconfig
-@@ -76,6 +76,7 @@ config ARCH_H1940
- 	select PM_H1940 if PM
- 	select S3C_DEV_USB_HOST
- 	select S3C_DEV_NAND
-+	select S3C2410_SETUP_TS
- 	help
- 	  Say Y here if you are using the HP IPAQ H1940
+diff --git a/drivers/input/touchscreen/s3c2410_ts.c b/drivers/input/touchscreen/s3c2410_ts.c
+index 86086a4..e0b7c83 100644
+--- a/drivers/input/touchscreen/s3c2410_ts.c
++++ b/drivers/input/touchscreen/s3c2410_ts.c
+@@ -55,6 +55,8 @@
+ 			 S3C2410_ADCTSC_AUTO_PST | \
+ 			 S3C2410_ADCTSC_XY_PST(0))
  
-diff --git a/arch/arm/mach-s3c2410/mach-h1940.c b/arch/arm/mach-s3c2410/mach-h1940.c
-index 75e3ffb..e8583ec 100644
---- a/arch/arm/mach-s3c2410/mach-h1940.c
-+++ b/arch/arm/mach-s3c2410/mach-h1940.c
-@@ -145,6 +145,7 @@ static struct s3c2410_ts_mach_info h1940_ts_cfg __initdata = {
- 		.delay = 10000,
- 		.presc = 49,
- 		.oversampling_shift = 2,
-+		.cfg_gpio = s3c24xx_ts_cfg_gpio,
- };
++#define FEAT_PEN_IRQ	(1 << 0)	/* HAS ADCCLRINTPNDNUP */
++
+ /* Per-touchscreen data. */
  
  /**
-diff --git a/arch/arm/plat-s3c24xx/Kconfig b/arch/arm/plat-s3c24xx/Kconfig
-index 6e93ef8..d29c08c 100644
---- a/arch/arm/plat-s3c24xx/Kconfig
-+++ b/arch/arm/plat-s3c24xx/Kconfig
-@@ -9,6 +9,7 @@ config PLAT_S3C24XX
- 	select NO_IOPORT
- 	select ARCH_REQUIRE_GPIOLIB
- 	select S3C_DEVICE_NAND
-+	select S3C2410_SETUP_TS if TOUCHSCREEN_S3C2410
- 	help
- 	  Base platform code for any Samsung S3C24XX device
- 
-@@ -157,4 +158,9 @@ config S3C24XX_SIMTEC_AUDIO
- 	help
- 	  Add audio devices for common Simtec S3C24XX boards
- 
-+config S3C2410_SETUP_TS
-+	bool
-+	help
-+	  Compile in platform device definition for Samsung TouchScreen.
-+
- endif
-diff --git a/arch/arm/plat-s3c24xx/Makefile b/arch/arm/plat-s3c24xx/Makefile
-index c2237c4..6dd4e0a 100644
---- a/arch/arm/plat-s3c24xx/Makefile
-+++ b/arch/arm/plat-s3c24xx/Makefile
-@@ -37,6 +37,7 @@ obj-$(CONFIG_S3C2410_CPUFREQ_UTILS) += s3c2410-cpufreq-utils.o
- 
- # device specific setup and/or initialisation
- obj-$(CONFIG_ARCH_S3C2410)	+= setup-i2c.o
-+obj-$(CONFIG_S3C2410_SETUP_TS)	+= setup-ts.o
- 
- # SPI gpio central GPIO functions
- 
-diff --git a/arch/arm/plat-s3c24xx/setup-ts.c b/arch/arm/plat-s3c24xx/setup-ts.c
-new file mode 100644
-index 0000000..ed26386
---- /dev/null
-+++ b/arch/arm/plat-s3c24xx/setup-ts.c
-@@ -0,0 +1,34 @@
-+/* linux/arch/arm/plat-s3c24xx/setup-ts.c
-+ *
-+ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-+ *                     http://www.samsung.com/
-+ *
-+ * Based on S3C24XX setup for i2c device
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/gpio.h>
-+
-+struct platform_device; /* don't need the contents */
-+
-+#include <mach/hardware.h>
-+#include <mach/regs-gpio.h>
-+
-+/**
-+ * s3c24xx_ts_cfg_gpio - configure gpio for s3c2410 systems
-+ *
-+ * Configure the GPIO for the S3C2410 system, where we have external FETs
-+ * connected to the device (later systems such as the S3C2440 integrate
-+ * these into the device).
-+ */
-+void s3c24xx_ts_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c2410_gpio_cfgpin(S3C2410_GPG(12), S3C2410_GPG12_XMON);
-+	s3c2410_gpio_cfgpin(S3C2410_GPG(13), S3C2410_GPG13_nXPON);
-+	s3c2410_gpio_cfgpin(S3C2410_GPG(14), S3C2410_GPG14_YMON);
-+	s3c2410_gpio_cfgpin(S3C2410_GPG(15), S3C2410_GPG15_nYPON);
-+}
-diff --git a/arch/arm/plat-samsung/include/plat/ts.h b/arch/arm/plat-samsung/include/plat/ts.h
-index 28a80ad..f53cbc7 100644
---- a/arch/arm/plat-samsung/include/plat/ts.h
-+++ b/arch/arm/plat-samsung/include/plat/ts.h
-@@ -14,8 +14,12 @@ struct s3c2410_ts_mach_info {
-        int             delay;
-        int             presc;
-        int             oversampling_shift;
-+	void    (*cfg_gpio)(struct platform_device *dev);
+@@ -69,6 +71,7 @@
+  * @irq_tc: The interrupt number for pen up/down interrupt
+  * @count: The number of samples collected.
+  * @shift: The log2 of the maximum count to read in one go.
++ * @features: The features supported by the TSADC MOdule.
+  */
+ struct s3c2410ts {
+ 	struct s3c_adc_client *client;
+@@ -81,6 +84,7 @@ struct s3c2410ts {
+ 	int irq_tc;
+ 	int count;
+ 	int shift;
++	int features;
  };
  
- extern void s3c24xx_ts_set_platdata(struct s3c2410_ts_mach_info *);
+ static struct s3c2410ts ts;
+@@ -171,6 +175,11 @@ static irqreturn_t stylus_irq(int irq, void *dev_id)
+ 	else
+ 		dev_info(ts.dev, "%s: count=%d\n", __func__, ts.count);
  
-+/* defined by architecture to configure gpio */
-+extern void s3c24xx_ts_cfg_gpio(struct platform_device *dev);
++	if (ts.features & FEAT_PEN_IRQ) {
++		/* Clear pen down/up interrupt */
++		writel(0x0, ts.io + S3C64XX_ADCCLRINTPNDNUP);
++	}
 +
- #endif /* __ASM_ARM_TS_H */
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -317,6 +326,7 @@ static int __devinit s3c2410ts_probe(struct platform_device *pdev)
+ 	ts.input->id.version = 0x0102;
+ 
+ 	ts.shift = info->oversampling_shift;
++	ts.features = platform_get_device_id(pdev)->driver_data;
+ 
+ 	ret = request_irq(ts.irq_tc, stylus_irq, IRQF_DISABLED,
+ 			  "s3c2410_ts_pen", ts.input);
+@@ -403,15 +413,14 @@ static struct dev_pm_ops s3c_ts_pmops = {
+ #endif
+ 
+ static struct platform_device_id s3cts_driver_ids[] = {
+-	{ "s3c2410-ts", 0 },
+-	{ "s3c2440-ts", 1 },
++	{ "s3c64xx-ts", FEAT_PEN_IRQ },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(platform, s3cts_driver_ids);
+ 
+ static struct platform_driver s3c_ts_driver = {
+ 	.driver         = {
+-		.name   = "s3c24xx-ts",
++		.name   = "samsung-ts",
+ 		.owner  = THIS_MODULE,
+ #ifdef CONFIG_PM
+ 		.pm	= &s3c_ts_pmops,
 -- 
 1.6.2.5
