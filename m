@@ -1,150 +1,106 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH 1/8] ARM: SAMSUNG: Move RTC device definitions in
-	plat-samsung
-Date: Tue, 18 May 2010 08:12:57 +0100
-Message-ID: <20100518071257.GD26401@trinity.fluff.org>
-References: <1274162336-32667-1-git-send-email-kgene.kim@samsung.com>
+Subject: Re: [PATCH 6/8] ARM: S3C64XX: Add RTC Driver support
+Date: Tue, 18 May 2010 08:25:19 +0100
+Message-ID: <20100518072519.GE26401@trinity.fluff.org>
+References: <1274162378-1981-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:34621 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:33962 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752927Ab0ERHM7 (ORCPT
+	id S1753296Ab0ERHZV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 May 2010 03:12:59 -0400
+	Tue, 18 May 2010 03:25:21 -0400
 Content-Disposition: inline
-In-Reply-To: <1274162336-32667-1-git-send-email-kgene.kim@samsung.com>
+In-Reply-To: <1274162378-1981-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Atul Dahiya <atul.dahiya@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Atul Dahiya <atul.dahiya@samsung.com>
 
-On Tue, May 18, 2010 at 02:58:56PM +0900, Kukjin Kim wrote:
+
+On Tue, May 18, 2010 at 02:59:38PM +0900, Kukjin Kim wrote:
 > From: Atul Dahiya <atul.dahiya@samsung.com>
 > 
-> This patch moves RTC device definitions from mach-s3c64xx
-> to plat-samsung, to enable the other SoCs to use same device
-> definition.
+> This patch adds RTC driver support for S3C64XX.
 > 
 > Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
-> Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
 > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-
-ok, will apply to a branch.
-
 > ---
->  arch/arm/mach-s3c64xx/Makefile                    |    1 -
->  arch/arm/mach-s3c64xx/include/mach/map.h          |    1 +
->  arch/arm/plat-samsung/Kconfig                     |    5 +++
->  arch/arm/plat-samsung/Makefile                    |    1 +
->  arch/arm/{mach-s3c64xx => plat-samsung}/dev-rtc.c |   28 ++++++++++----------
->  5 files changed, 21 insertions(+), 15 deletions(-)
->  rename arch/arm/{mach-s3c64xx => plat-samsung}/dev-rtc.c (58%)
+>  arch/arm/mach-s3c64xx/Kconfig         |    1 +
+>  arch/arm/mach-s3c64xx/mach-smdk6410.c |    1 +
+>  drivers/rtc/Kconfig                   |    8 ++++----
+>  3 files changed, 6 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
-> index a690a9d..e7ac812 100644
-> --- a/arch/arm/mach-s3c64xx/Makefile
-> +++ b/arch/arm/mach-s3c64xx/Makefile
-> @@ -56,7 +56,6 @@ obj-$(CONFIG_MACH_HMT)		+= mach-hmt.o
->  # device support
+> diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
+> index 959df38..1207c8b 100644
+> --- a/arch/arm/mach-s3c64xx/Kconfig
+> +++ b/arch/arm/mach-s3c64xx/Kconfig
+> @@ -91,6 +91,7 @@ config MACH_SMDK6410
+>  	select S3C_DEV_FB
+>  	select S3C_DEV_USB_HOST
+>  	select S3C_DEV_USB_HSOTG
+> +	select S3C_DEV_RTC
+>  	select S3C64XX_SETUP_SDHCI
+>  	select S3C64XX_SETUP_I2C1
+>  	select S3C64XX_SETUP_FB_24BPP
+> diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+> index 10cf64a..866026a 100644
+> --- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
+> +++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+> @@ -255,6 +255,7 @@ static struct platform_device *smdk6410_devices[] __initdata = {
+>  	&s3c_device_fb,
+>  	&s3c_device_ohci,
+>  	&s3c_device_usb_hsotg,
+> +	&s3c_device_rtc,
+>  	&s3c64xx_device_ac97,
+>  	&s3c64xx_device_iisv4,
 >  
->  obj-y				+= dev-uart.o
-> -obj-y				+= dev-rtc.o
->  obj-y				+= dev-audio.o
->  obj-$(CONFIG_S3C_ADC)		+= dev-adc.o
->  obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
-> diff --git a/arch/arm/mach-s3c64xx/include/mach/map.h b/arch/arm/mach-s3c64xx/include/mach/map.h
-> index 801c1c0..cce28a9 100644
-> --- a/arch/arm/mach-s3c64xx/include/mach/map.h
-> +++ b/arch/arm/mach-s3c64xx/include/mach/map.h
-> @@ -103,5 +103,6 @@
->  #define S3C_PA_USBHOST		S3C64XX_PA_USBHOST
->  #define S3C_PA_USB_HSOTG	S3C64XX_PA_USB_HSOTG
->  #define S3C_VA_USB_HSPHY	S3C64XX_VA_USB_HSPHY
-> +#define S3C_PA_RTC		S3C64XX_PA_RTC
+> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+> index 6a13037..8cabeeb 100644
+> --- a/drivers/rtc/Kconfig
+> +++ b/drivers/rtc/Kconfig
+> @@ -630,16 +630,16 @@ config RTC_DRV_OMAP
 >  
->  #endif /* __ASM_ARCH_6400_MAP_H */
-> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-> index 287e6f7..29e2800 100644
-> --- a/arch/arm/plat-samsung/Kconfig
-> +++ b/arch/arm/plat-samsung/Kconfig
-> @@ -190,6 +190,11 @@ config S3C_DEV_NAND
+>  config RTC_DRV_S3C
+>  	tristate "Samsung S3C series SoC RTC"
+> -	depends on ARCH_S3C2410
+> +	depends on ARCH_S3C2410 || ARCH_S3C64XX
+
+I wonder whether just making this depend on either S3C_DEV_RTC, or simply
+PLAT_SAMSUNG would just be a better choice.
+
+The S3C_DEV_RTC would mean that the drivers the core of the kernel
+would be built, but means that we can't speculatively build drivers
+if the kernel hasn't any machines using them.
+
+Making it depend on PLAT_SAMSUNG would mean it is available to all,
+but would be selectable even if there isn't a machine supporting it
+being built.
+
+The current situation would mean that we have to update driver Kconfig
+entries each time a new SoC turns up...
+
+We could also have a HAVE_RTC_DRV_S3C so that all SoCs supporting this
+coudl select it independant of whether there is machine support.
+
+Anyone else got any comments?
+
 >  	help
->  	  Compile in platform device definition for NAND controller
+>  	  RTC (Realtime Clock) driver for the clock inbuilt into the
+> -	  Samsung S3C24XX series of SoCs. This can provide periodic
+> +	  Samsung S3C series of SoCs. This can provide periodic
+>  	  interrupt rates from 1Hz to 64Hz for user programs, and
+>  	  wakeup from Alarm.
 >  
-> +config S3C_DEV_RTC
-> +	bool
-> +	help
-> +	  Complie in platform device definition for RTC
-> +
->  config S3C64XX_DEV_SPI
->  	bool
->  	help
-> diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-> index 0ad820a..af17434 100644
-> --- a/arch/arm/plat-samsung/Makefile
-> +++ b/arch/arm/plat-samsung/Makefile
-> @@ -41,6 +41,7 @@ obj-y				+= dev-uart.o
->  obj-$(CONFIG_S3C_DEV_USB_HOST)	+= dev-usb.o
->  obj-$(CONFIG_S3C_DEV_USB_HSOTG)	+= dev-usb-hsotg.o
->  obj-$(CONFIG_S3C_DEV_NAND)	+= dev-nand.o
-> +obj-$(CONFIG_S3C_DEV_RTC)	+= dev-rtc.o
+>  	  The driver currently supports the common features on all the
+> -	  S3C24XX range, such as the S3C2410, S3C2412, S3C2413, S3C2440
+> -	  and S3C2442.
+> +	  S3C range, such as the S3C2410, S3C2412, S3C2413, S3C2440,
+> +	  S3C2442 and S3C64XX.
 >  
->  # DMA support
->  
-> diff --git a/arch/arm/mach-s3c64xx/dev-rtc.c b/arch/arm/plat-samsung/dev-rtc.c
-> similarity index 58%
-> rename from arch/arm/mach-s3c64xx/dev-rtc.c
-> rename to arch/arm/plat-samsung/dev-rtc.c
-> index b9e7a05..bf4e226 100644
-> --- a/arch/arm/mach-s3c64xx/dev-rtc.c
-> +++ b/arch/arm/plat-samsung/dev-rtc.c
-> @@ -1,4 +1,4 @@
-> -/* linux/arch/arm/plat-s3c64xx/dev-rtc.c
-> +/* linux/arch/arm/plat-samsung/dev-rtc.c
->   *
->   * Copyright 2009 by Maurus Cuelenaere <mcuelenaere@gmail.com>
->   *
-> @@ -18,26 +18,26 @@
->  
->  static struct resource s3c_rtc_resource[] = {
->  	[0] = {
-> -		.start = S3C64XX_PA_RTC,
-> -		.end   = S3C64XX_PA_RTC + 0xff,
-> -		.flags = IORESOURCE_MEM,
-> +		.start	= S3C_PA_RTC,
-> +		.end	= S3C_PA_RTC + 0xff,
-> +		.flags	= IORESOURCE_MEM,
->  	},
->  	[1] = {
-> -		.start = IRQ_RTC_ALARM,
-> -		.end   = IRQ_RTC_ALARM,
-> -		.flags = IORESOURCE_IRQ,
-> +		.start	= IRQ_RTC_ALARM,
-> +		.end	= IRQ_RTC_ALARM,
-> +		.flags	= IORESOURCE_IRQ,
->  	},
->  	[2] = {
-> -		.start = IRQ_RTC_TIC,
-> -		.end   = IRQ_RTC_TIC,
-> -		.flags = IORESOURCE_IRQ
-> +		.start	= IRQ_RTC_TIC,
-> +		.end	= IRQ_RTC_TIC,
-> +		.flags	= IORESOURCE_IRQ
->  	}
->  };
->  
->  struct platform_device s3c_device_rtc = {
-> -	.name		  = "s3c64xx-rtc",
-> -	.id		  = -1,
-> -	.num_resources	  = ARRAY_SIZE(s3c_rtc_resource),
-> -	.resource	  = s3c_rtc_resource,
-> +	.name		= "s3c64xx-rtc",
-> +	.id		= -1,
-> +	.num_resources	= ARRAY_SIZE(s3c_rtc_resource),
-> +	.resource	= s3c_rtc_resource,
->  };
->  EXPORT_SYMBOL(s3c_device_rtc);
+>  	  This driver can also be build as a module. If so, the module
+>  	  will be called rtc-s3c.
 > -- 
 > 1.6.2.5
 > 
