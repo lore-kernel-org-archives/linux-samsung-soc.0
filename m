@@ -1,63 +1,114 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH 01/15] ARM: Samsung: fix broken timer irq base
-Date: Tue, 18 May 2010 05:57:03 +0100
-Message-ID: <20100518045703.GA26401@trinity.fluff.org>
-References: <1273817946-29404-1-git-send-email-m.szyprowski@samsung.com> <1273817946-29404-2-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH 2/8] ARM: SAMSUNG: Fixed coding style issue
+Date: Tue, 18 May 2010 14:59:07 +0900
+Message-ID: <1274162347-557-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:55966 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753667Ab0ERE5F (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:51602 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754699Ab0ERGCY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 May 2010 00:57:05 -0400
-Content-Disposition: inline
-In-Reply-To: <1273817946-29404-2-git-send-email-m.szyprowski@samsung.com>
+	Tue, 18 May 2010 02:02:24 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Taekgyun Ko <taeggyun.ko@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Fri, May 14, 2010 at 08:18:52AM +0200, Marek Szyprowski wrote:
-> Timer interrupts range was defined as 43-47, what overlaps with VIC0 range
-> (32-64). This was caused probably by a typo while the common interrupts
-> definition was refactored. This patch moves timer interrupt range to safe
-> area of 11-15 (just before uart range).
+From: Taekgyun Ko <taeggyun.ko@samsung.com>
 
-I've put this on for-2635/s5p-general as it is a reasonably important
-bugfix for s5p. Have updated the comment to reference the commit that
-caused the problem in the first place.
+Fixed a coding style issue.
+
+Signed-off-by: Taekgyun Ko <taeggyun.ko@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/plat-samsung/include/plat/regs-rtc.h |   68 ++++++++++++-------------
+ 1 files changed, 33 insertions(+), 35 deletions(-)
+
+diff --git a/arch/arm/plat-samsung/include/plat/regs-rtc.h b/arch/arm/plat-samsung/include/plat/regs-rtc.h
+index d5837cf..5b547ce 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-rtc.h
++++ b/arch/arm/plat-samsung/include/plat/regs-rtc.h
+@@ -13,49 +13,47 @@
+ #ifndef __ASM_ARCH_REGS_RTC_H
+ #define __ASM_ARCH_REGS_RTC_H __FILE__
  
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/plat-s5p/include/plat/irqs.h |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/arm/plat-s5p/include/plat/irqs.h b/arch/arm/plat-s5p/include/plat/irqs.h
-> index 42e757f..9ff3d71 100644
-> --- a/arch/arm/plat-s5p/include/plat/irqs.h
-> +++ b/arch/arm/plat-s5p/include/plat/irqs.h
-> @@ -79,7 +79,7 @@
->  #define S5P_IRQ_VIC2(x)		(S5P_VIC2_BASE + (x))
->  #define S5P_IRQ_VIC3(x)		(S5P_VIC3_BASE + (x))
->  
-> -#define S5P_TIMER_IRQ(x)	S5P_IRQ(11 + (x))
-> +#define S5P_TIMER_IRQ(x)	(11 + (x))
->  
->  #define IRQ_TIMER0		S5P_TIMER_IRQ(0)
->  #define IRQ_TIMER1		S5P_TIMER_IRQ(1)
-> -- 
-> 1.6.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+-#define S3C2410_RTCREG(x) (x)
+-
+-#define S3C2410_RTCCON	      S3C2410_RTCREG(0x40)
+-#define S3C2410_RTCCON_RTCEN  (1<<0)
+-#define S3C2410_RTCCON_CLKSEL (1<<1)
+-#define S3C2410_RTCCON_CNTSEL (1<<2)
+-#define S3C2410_RTCCON_CLKRST (1<<3)
+-
+-#define S3C2410_TICNT	      S3C2410_RTCREG(0x44)
+-#define S3C2410_TICNT_ENABLE  (1<<7)
+-
+-#define S3C2410_RTCALM	      S3C2410_RTCREG(0x50)
+-#define S3C2410_RTCALM_ALMEN  (1<<6)
+-#define S3C2410_RTCALM_YEAREN (1<<5)
+-#define S3C2410_RTCALM_MONEN  (1<<4)
+-#define S3C2410_RTCALM_DAYEN  (1<<3)
+-#define S3C2410_RTCALM_HOUREN (1<<2)
+-#define S3C2410_RTCALM_MINEN  (1<<1)
+-#define S3C2410_RTCALM_SECEN  (1<<0)
++#define S3C2410_RTCREG(x)	(x)
++
++#define S3C2410_RTCCON		S3C2410_RTCREG(0x40)
++#define S3C2410_RTCCON_RTCEN	(1 << 0)
++#define S3C2410_RTCCON_CLKSEL	(1 << 1)
++#define S3C2410_RTCCON_CNTSEL	(1 << 2)
++#define S3C2410_RTCCON_CLKRST	(1 << 3)
++
++#define S3C2410_TICNT		S3C2410_RTCREG(0x44)
++#define S3C2410_TICNT_ENABLE	(1 << 7)
++
++#define S3C2410_RTCALM		S3C2410_RTCREG(0x50)
++#define S3C2410_RTCALM_ALMEN	(1 << 6)
++#define S3C2410_RTCALM_YEAREN	(1 << 5)
++#define S3C2410_RTCALM_MONEN	(1 << 4)
++#define S3C2410_RTCALM_DAYEN	(1 << 3)
++#define S3C2410_RTCALM_HOUREN	(1 << 2)
++#define S3C2410_RTCALM_MINEN	(1 << 1)
++#define S3C2410_RTCALM_SECEN	(1 << 0)
+ 
+ #define S3C2410_RTCALM_ALL \
+   S3C2410_RTCALM_ALMEN | S3C2410_RTCALM_YEAREN | S3C2410_RTCALM_MONEN |\
+   S3C2410_RTCALM_DAYEN | S3C2410_RTCALM_HOUREN | S3C2410_RTCALM_MINEN |\
+   S3C2410_RTCALM_SECEN
+ 
++#define S3C2410_ALMSEC		S3C2410_RTCREG(0x54)
++#define S3C2410_ALMMIN		S3C2410_RTCREG(0x58)
++#define S3C2410_ALMHOUR		S3C2410_RTCREG(0x5c)
+ 
+-#define S3C2410_ALMSEC	      S3C2410_RTCREG(0x54)
+-#define S3C2410_ALMMIN	      S3C2410_RTCREG(0x58)
+-#define S3C2410_ALMHOUR	      S3C2410_RTCREG(0x5c)
++#define S3C2410_ALMDATE		S3C2410_RTCREG(0x60)
++#define S3C2410_ALMMON		S3C2410_RTCREG(0x64)
++#define S3C2410_ALMYEAR		S3C2410_RTCREG(0x68)
+ 
+-#define S3C2410_ALMDATE	      S3C2410_RTCREG(0x60)
+-#define S3C2410_ALMMON	      S3C2410_RTCREG(0x64)
+-#define S3C2410_ALMYEAR	      S3C2410_RTCREG(0x68)
+-
+-#define S3C2410_RTCRST	      S3C2410_RTCREG(0x6c)
+-
+-#define S3C2410_RTCSEC	      S3C2410_RTCREG(0x70)
+-#define S3C2410_RTCMIN	      S3C2410_RTCREG(0x74)
+-#define S3C2410_RTCHOUR	      S3C2410_RTCREG(0x78)
+-#define S3C2410_RTCDATE	      S3C2410_RTCREG(0x7c)
+-#define S3C2410_RTCDAY	      S3C2410_RTCREG(0x80)
+-#define S3C2410_RTCMON	      S3C2410_RTCREG(0x84)
+-#define S3C2410_RTCYEAR	      S3C2410_RTCREG(0x88)
++#define S3C2410_RTCRST		S3C2410_RTCREG(0x6c)
+ 
++#define S3C2410_RTCSEC		S3C2410_RTCREG(0x70)
++#define S3C2410_RTCMIN		S3C2410_RTCREG(0x74)
++#define S3C2410_RTCHOUR		S3C2410_RTCREG(0x78)
++#define S3C2410_RTCDATE		S3C2410_RTCREG(0x7c)
++#define S3C2410_RTCDAY		S3C2410_RTCREG(0x80)
++#define S3C2410_RTCMON		S3C2410_RTCREG(0x84)
++#define S3C2410_RTCYEAR		S3C2410_RTCREG(0x88)
+ 
+ #endif /* __ASM_ARCH_REGS_RTC_H */
 -- 
--- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+1.6.2.5
