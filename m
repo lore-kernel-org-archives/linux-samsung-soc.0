@@ -1,17 +1,17 @@
 From: Ben Dooks <ben-linux@fluff.org>
 Subject: Re: [PATCH 10/11] ARM: S5PC100: use common plat-s5p external
 	interrupt code
-Date: Wed, 19 May 2010 06:58:44 +0100
-Message-ID: <20100519055844.GT26401@trinity.fluff.org>
+Date: Wed, 19 May 2010 07:46:36 +0100
+Message-ID: <20100519064636.GU26401@trinity.fluff.org>
 References: <1274179129-14659-1-git-send-email-m.szyprowski@samsung.com> <1274179129-14659-11-git-send-email-m.szyprowski@samsung.com> <20100519040212.GP26401@trinity.fluff.org> <011d01caf714$40ceed30$c26cc790$%szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:53282 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:34925 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751831Ab0ESF6q (ORCPT
+	id S1752980Ab0ESGqh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 May 2010 01:58:46 -0400
+	Wed, 19 May 2010 02:46:37 -0400
 Content-Disposition: inline
 In-Reply-To: <011d01caf714$40ceed30$c26cc790$%szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -103,10 +103,12 @@ On Wed, May 19, 2010 at 07:29:24AM +0200, Marek Szyprowski wrote:
 > the problems. If so then we can always just move it from plat/irqs.h to
 > mach/irqs.h again.
 
-Hmm, you're right that the s5p6440 is a bit of a problem here... Maybe
-we should have a common file for these elsewhere.
+I've just had a look, and whilst the S5P6440 is similar to the 64XX
+case, it only has 16 EINTs and the rest are gpio-style ones.
+
+So, we could define S5P_IRQ_EINT_LOW_BASE for all cases and use the
+S5P_EINT_16_31_BASE for the higher ones and have it all in plat/irqs.h
  
-> > 
 > > > +#define EINT_GPIO_0(x)		S5PC100_GPH0(x)
 > > > +#define EINT_GPIO_1(x)		S5PC100_GPH1(x)
 > > > +#define EINT_GPIO_2(x)		S5PC100_GPH2(x)
@@ -117,10 +119,7 @@ we should have a common file for these elsewhere.
 > 
 > What about moving these to mach/gpio.h? IMHO mach/irqs.h is not the
 > best place for them.
-
-Hmm, maybe they could go there, since we have to include the gpio
-numbering to get the S5PC100_GPH3() definitions.
- 
+> 
 > > ...
 > 
 > Best regards
