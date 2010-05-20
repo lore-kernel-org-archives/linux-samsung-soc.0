@@ -1,12 +1,12 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 4/5] ARM: S5P6440: Add Watchdog support for S5P6440
-Date: Thu, 20 May 2010 16:21:31 +0900
-Message-ID: <1274340092-10706-5-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 1/5] ARM: SAMSUNG: Move WDT device definitions in plat-samsung
+Date: Thu, 20 May 2010 16:21:28 +0900
+Message-ID: <1274340092-10706-2-git-send-email-kgene.kim@samsung.com>
 References: <1274340092-10706-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:52653 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:52655 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754254Ab0ETH2G (ORCPT
+	with ESMTP id S1754270Ab0ETH2G (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Thu, 20 May 2010 03:28:06 -0400
 In-Reply-To: <1274340092-10706-1-git-send-email-kgene.kim@samsung.com>
@@ -17,51 +17,185 @@ Cc: ben-linux@fluff.org, Banajit Goswami <banajit.g@samsung.com>, Kukjin Kim <kg
 
 From: Banajit Goswami <banajit.g@samsung.com>
 
-This patch adds support for Watchdog timer for Samsung S5P6440.
+This patch moves the definitions of watchdog timer device from
+plat-s3c24xx to plat-samsung. This will enable all Samsung S3C
+and S5P series SoC's to use common WDT device definition.
+
+And adds HAVE_S3C2410_WATCHDOG for selecting in each machine
+without modifying Kconfig in drivers directory.
 
 Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5p6440/Kconfig            |    2 ++
- arch/arm/mach-s5p6440/include/mach/map.h |    1 +
- arch/arm/mach-s5p6440/mach-smdk6440.c    |    1 +
- 3 files changed, 4 insertions(+), 0 deletions(-)
+ arch/arm/Kconfig                         |    1 +
+ arch/arm/mach-s3c2410/include/mach/map.h |    1 +
+ arch/arm/plat-s3c24xx/devs.c             |   26 -------------------
+ arch/arm/plat-samsung/Kconfig            |    6 ++++
+ arch/arm/plat-samsung/Makefile           |    1 +
+ arch/arm/plat-samsung/dev-wdt.c          |   40 ++++++++++++++++++++++++++++++
+ drivers/watchdog/Kconfig                 |   10 ++++---
+ 7 files changed, 55 insertions(+), 30 deletions(-)
+ create mode 100644 arch/arm/plat-samsung/dev-wdt.c
 
-diff --git a/arch/arm/mach-s5p6440/Kconfig b/arch/arm/mach-s5p6440/Kconfig
-index 4c29ff8..0a0eb5b 100644
---- a/arch/arm/mach-s5p6440/Kconfig
-+++ b/arch/arm/mach-s5p6440/Kconfig
-@@ -15,6 +15,8 @@ config CPU_S5P6440
- config MACH_SMDK6440
- 	bool "SMDK6440"
- 	select CPU_S5P6440
-+	select S3C_DEV_WDT
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 3f8718f..8e2bb6b 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -651,6 +651,7 @@ config ARCH_S3C2410
+ 	select GENERIC_GPIO
+ 	select ARCH_HAS_CPUFREQ
+ 	select HAVE_CLK
 +	select HAVE_S3C2410_WATCHDOG
  	help
- 	  Machine support for the Samsung SMDK6440
- 
-diff --git a/arch/arm/mach-s5p6440/include/mach/map.h b/arch/arm/mach-s5p6440/include/mach/map.h
-index 8924e5a..c015de6 100644
---- a/arch/arm/mach-s5p6440/include/mach/map.h
-+++ b/arch/arm/mach-s5p6440/include/mach/map.h
-@@ -64,5 +64,6 @@
- /* compatibiltiy defines. */
- #define S3C_PA_UART		S5P6440_PA_UART
- #define S3C_PA_IIC		S5P6440_PA_IIC0
-+#define S3C_PA_WDT		S5P6440_PA_WDT
+ 	  Samsung S3C2410X CPU based systems, such as the Simtec Electronics
+ 	  BAST (<http://www.simtec.co.uk/products/EB110ITX/>), the IPAQ 1940 or
+diff --git a/arch/arm/mach-s3c2410/include/mach/map.h b/arch/arm/mach-s3c2410/include/mach/map.h
+index f07d680..16fbc3c 100644
+--- a/arch/arm/mach-s3c2410/include/mach/map.h
++++ b/arch/arm/mach-s3c2410/include/mach/map.h
+@@ -111,6 +111,7 @@
+ #define S3C_PA_USBHOST	S3C2410_PA_USBHOST
+ #define S3C_PA_HSMMC0	    S3C2443_PA_HSMMC
+ #define S3C_PA_HSMMC1	    S3C2416_PA_HSMMC0
++#define S3C_PA_WDT	    S3C2410_PA_WATCHDOG
+ #define S3C_PA_NAND	    S3C24XX_PA_NAND
  
  #endif /* __ASM_ARCH_MAP_H */
-diff --git a/arch/arm/mach-s5p6440/mach-smdk6440.c b/arch/arm/mach-s5p6440/mach-smdk6440.c
-index 3ae88f2..ae50345 100644
---- a/arch/arm/mach-s5p6440/mach-smdk6440.c
-+++ b/arch/arm/mach-s5p6440/mach-smdk6440.c
-@@ -84,6 +84,7 @@ static struct s3c2410_uartcfg smdk6440_uartcfgs[] __initdata = {
- };
+diff --git a/arch/arm/plat-s3c24xx/devs.c b/arch/arm/plat-s3c24xx/devs.c
+index 5858373..452e184 100644
+--- a/arch/arm/plat-s3c24xx/devs.c
++++ b/arch/arm/plat-s3c24xx/devs.c
+@@ -234,32 +234,6 @@ void __init s3c24xx_udc_set_platdata(struct s3c2410_udc_mach_info *pd)
+ 	}
+ }
  
- static struct platform_device *smdk6440_devices[] __initdata = {
-+	&s3c_device_wdt,
- };
+-
+-/* Watchdog */
+-
+-static struct resource s3c_wdt_resource[] = {
+-	[0] = {
+-		.start = S3C24XX_PA_WATCHDOG,
+-		.end   = S3C24XX_PA_WATCHDOG + S3C24XX_SZ_WATCHDOG - 1,
+-		.flags = IORESOURCE_MEM,
+-	},
+-	[1] = {
+-		.start = IRQ_WDT,
+-		.end   = IRQ_WDT,
+-		.flags = IORESOURCE_IRQ,
+-	}
+-
+-};
+-
+-struct platform_device s3c_device_wdt = {
+-	.name		  = "s3c2410-wdt",
+-	.id		  = -1,
+-	.num_resources	  = ARRAY_SIZE(s3c_wdt_resource),
+-	.resource	  = s3c_wdt_resource,
+-};
+-
+-EXPORT_SYMBOL(s3c_device_wdt);
+-
+ /* IIS */
  
- static void __init smdk6440_map_io(void)
+ static struct resource s3c_iis_resource[] = {
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index 287e6f7..72dae49 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -185,6 +185,12 @@ config S3C_DEV_USB_HSOTG
+ 	help
+ 	  Compile in platform device definition for USB high-speed OtG
+ 
++config S3C_DEV_WDT
++	bool
++	default y if ARCH_S3C2410
++	help
++	  Complie in platform device definition for Watchdog Timer
++
+ config S3C_DEV_NAND
+ 	bool
+ 	help
+diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+index 0ad820a..0a92369 100644
+--- a/arch/arm/plat-samsung/Makefile
++++ b/arch/arm/plat-samsung/Makefile
+@@ -40,6 +40,7 @@ obj-$(CONFIG_S3C_DEV_FB)	+= dev-fb.o
+ obj-y				+= dev-uart.o
+ obj-$(CONFIG_S3C_DEV_USB_HOST)	+= dev-usb.o
+ obj-$(CONFIG_S3C_DEV_USB_HSOTG)	+= dev-usb-hsotg.o
++obj-$(CONFIG_S3C_DEV_WDT)	+= dev-wdt.o
+ obj-$(CONFIG_S3C_DEV_NAND)	+= dev-nand.o
+ 
+ # DMA support
+diff --git a/arch/arm/plat-samsung/dev-wdt.c b/arch/arm/plat-samsung/dev-wdt.c
+new file mode 100644
+index 0000000..5efca87
+--- /dev/null
++++ b/arch/arm/plat-samsung/dev-wdt.c
+@@ -0,0 +1,40 @@
++/* linux/arch/arm/plat-samsung/dev-wdt.c
++ *
++ * Copyright (c) 2004 Simtec Electronics
++ *	Ben Dooks <ben@simtec.co.uk>
++ *
++ * S3C series device definition for the watchdog timer
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/kernel.h>
++#include <linux/platform_device.h>
++
++#include <mach/irqs.h>
++#include <mach/map.h>
++
++#include <plat/devs.h>
++
++static struct resource s3c_wdt_resource[] = {
++	[0] = {
++		.start	= S3C_PA_WDT,
++		.end	= S3C_PA_WDT + SZ_1M - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++	[1] = {
++		.start	= IRQ_WDT,
++		.end	= IRQ_WDT,
++		.flags	= IORESOURCE_IRQ,
++	}
++};
++
++struct platform_device s3c_device_wdt = {
++	.name		= "s3c2410-wdt",
++	.id		= -1,
++	.num_resources	= ARRAY_SIZE(s3c_wdt_resource),
++	.resource	= s3c_wdt_resource,
++};
++EXPORT_SYMBOL(s3c_device_wdt);
+diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+index 0bf5020..d52118f 100644
+--- a/drivers/watchdog/Kconfig
++++ b/drivers/watchdog/Kconfig
+@@ -145,13 +145,15 @@ config KS8695_WATCHDOG
+ 	  Watchdog timer embedded into KS8695 processor. This will reboot your
+ 	  system when the timeout is reached.
+ 
++config HAVE_S3C2410_WATCHDOG
++	bool
++
+ config S3C2410_WATCHDOG
+ 	tristate "S3C2410 Watchdog"
+-	depends on ARCH_S3C2410
++	depends on HAVE_S3C2410_WATCHDOG
+ 	help
+-	  Watchdog timer block in the Samsung S3C2410 chips. This will
+-	  reboot the system when the timer expires with the watchdog
+-	  enabled.
++	  Watchdog timer block in the Samsung SoCs. This will reboot
++	  the system when the timer expires with the watchdog enabled.
+ 
+ 	  The driver is limited by the speed of the system's PCLK
+ 	  signal, so with reasonably fast systems (PCLK around 50-66MHz)
 -- 
 1.6.2.5
