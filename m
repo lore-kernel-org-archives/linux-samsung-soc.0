@@ -1,40 +1,23 @@
-From: Maurus Cuelenaere <mcuelenaere-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/2] USB: s3c_hsotg: Add support for external USB clock
-Date: Wed, 19 May 2010 18:51:29 +0200
-Message-ID: <4BF41711.1030409@gmail.com>
-References: <4BF1884C.2050901@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4BF1884C.2050901-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH v4 0/0] Adds TSADC support for S3C64XX, S5P6440, and S5PV210
+Date: Thu, 20 May 2010 11:39:51 +0900
+Message-ID: <1274323194-16059-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:56856 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751390Ab0ETCnE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 May 2010 22:43:04 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org
 
-Op 17-05-10 20:17, Maurus Cuelenaere schreef:
-> The PLL that drives the USB clock supports 3 input clocks: 12, 24 and 48Mhz.
-> This patch adds support to the USB driver for setting the correct register bit
-> according to the given clock.
->
-> This depends on the following patch:
-> [PATCH] ARM: S3C64XX: Add USB external clock definition
->
-> Signed-off-by: Maurus Cuelenaere <mcuelenaere-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  drivers/usb/gadget/s3c-hsotg.c |   19 +++++++++++++++++++
->  1 files changed, 19 insertions(+), 0 deletions(-)
->   
+This patches add TSADC support for S3C64XX, S5P6440 and S5PV210 which were
+made against Ben Dooks' tree on for-2635-2/samsung-ts branch.
 
-Same for this one:
+Now SMDK6410, SMDK6440 and SMDKV210 are availabe and will add SMDKC110.
 
-Acked-by: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-
--- 
-Maurus Cuelenaere
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+[PATCH v4 1/3] ARM: S3C64XX: Adds Touchscreen support for S3C64XX
+[PATCH v4 2/3] ARM: S5P6440: Adds Touchscreen support for S5P6440
+[PATCH v4 3/3] ARM: S5PV210: Adds Touchscreen support for S5PV210
