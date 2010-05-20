@@ -1,12 +1,12 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH 2/4] ARM: SAMSUNG: Make ADC client SMP safe
-Date: Thu, 20 May 2010 10:34:53 +0100
-Message-ID: <1274348095-9390-2-git-send-email-ben-linux@fluff.org>
+Subject: [PATCH 4/4] ARM: S3C64XX: PM: Synchronise wakeup mask on suspend
+Date: Thu, 20 May 2010 10:34:55 +0100
+Message-ID: <1274348095-9390-4-git-send-email-ben-linux@fluff.org>
 References: <1274348095-9390-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:53041 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:53042 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754921Ab0ETJe4 (ORCPT
+	id S1754922Ab0ETJe4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Thu, 20 May 2010 05:34:56 -0400
 In-Reply-To: <1274348095-9390-1-git-send-email-ben-linux@fluff.org>
@@ -15,134 +15,68 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Ben Dooks <ben-linux@fluff.org>
 
-Change local_irq disable calls to use spinlocks to ensure that the
-ADC driver data is protected against multiple access..
-
-Note, this does not protect the client's data, and the client should
-ensure it does not make multiple calls to the ADC driver.
+Use the new wakeup mask synchronisation code to set the
+relevant wakeup mask bits.
 
 Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/plat-samsung/adc.c |   26 ++++++++++++++++++++------
- 1 files changed, 20 insertions(+), 6 deletions(-)
+ arch/arm/mach-s3c64xx/Kconfig |    1 +
+ arch/arm/mach-s3c64xx/pm.c    |   20 ++++++++++++++++++++
+ 2 files changed, 21 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
-index 210030d..04d9521 100644
---- a/arch/arm/plat-samsung/adc.c
-+++ b/arch/arm/plat-samsung/adc.c
-@@ -66,6 +66,7 @@ struct adc_device {
- 	struct s3c_adc_client	*cur;
- 	struct s3c_adc_client	*ts_pend;
- 	void __iomem		*regs;
-+	spinlock_t		 lock;
+diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
+index 69e9fbf..d026bf4 100644
+--- a/arch/arm/mach-s3c64xx/Kconfig
++++ b/arch/arm/mach-s3c64xx/Kconfig
+@@ -7,6 +7,7 @@
+ config PLAT_S3C64XX
+ 	bool
+ 	depends on ARCH_S3C64XX
++	select SAMSUNG_WAKEMASK
+ 	default y
+ 	help
+ 	  Base platform code for any Samsung S3C64XX device
+diff --git a/arch/arm/mach-s3c64xx/pm.c b/arch/arm/mach-s3c64xx/pm.c
+index b8ac459..79412f7 100644
+--- a/arch/arm/mach-s3c64xx/pm.c
++++ b/arch/arm/mach-s3c64xx/pm.c
+@@ -18,8 +18,11 @@
+ #include <linux/io.h>
  
- 	unsigned int		 prescale;
+ #include <mach/map.h>
++#include <mach/irqs.h>
  
-@@ -74,7 +75,7 @@ struct adc_device {
- 
- static struct adc_device *adc_dev;
- 
--static LIST_HEAD(adc_pending);
-+static LIST_HEAD(adc_pending);	/* protected by adc_device.lock */
- 
- #define adc_dbg(_adc, msg...) dev_dbg(&(_adc)->pdev->dev, msg)
- 
-@@ -145,7 +146,7 @@ int s3c_adc_start(struct s3c_adc_client *client,
- 	if (client->is_ts && adc->ts_pend)
- 		return -EAGAIN;
- 
--	local_irq_save(flags);
-+	spin_lock_irqsave(&adc->lock, flags);
- 
- 	client->channel = channel;
- 	client->nr_samples = nr_samples;
-@@ -157,7 +158,8 @@ int s3c_adc_start(struct s3c_adc_client *client,
- 
- 	if (!adc->cur)
- 		s3c_adc_try(adc);
--	local_irq_restore(flags);
+ #include <plat/pm.h>
++#include <plat/wakeup-mask.h>
 +
-+	spin_unlock_irqrestore(&adc->lock, flags);
- 
- 	return 0;
+ #include <mach/regs-sys.h>
+ #include <mach/regs-gpio.h>
+ #include <mach/regs-clock.h>
+@@ -153,8 +156,25 @@ static void s3c64xx_cpu_suspend(void)
+ 	panic("sleep resumed to originator?");
  }
-@@ -237,6 +239,10 @@ EXPORT_SYMBOL_GPL(s3c_adc_register);
  
- void s3c_adc_release(struct s3c_adc_client *client)
++/* mapping of interrupts to parts of the wakeup mask */
++static struct samsung_wakeup_mask wake_irqs[] = {
++	{ .irq = IRQ_RTC_ALARM,	.bit = S3C64XX_PWRCFG_RTC_ALARM_DISABLE, },
++	{ .irq = IRQ_RTC_TIC,	.bit = S3C64XX_PWRCFG_RTC_TICK_DISABLE, },
++	{ .irq = IRQ_PENDN,	.bit = S3C64XX_PWRCFG_TS_DISABLE, },
++	{ .irq = IRQ_HSMMC0,	.bit = S3C64XX_PWRCFG_MMC0_DISABLE, },
++	{ .irq = IRQ_HSMMC1,	.bit = S3C64XX_PWRCFG_MMC1_DISABLE, },
++	{ .irq = IRQ_HSMMC2,	.bit = S3C64XX_PWRCFG_MMC2_DISABLE, },
++	{ .irq = NO_WAKEUP_IRQ,	.bit = S3C64XX_PWRCFG_BATF_DISABLE},
++	{ .irq = NO_WAKEUP_IRQ,	.bit = S3C64XX_PWRCFG_MSM_DISABLE },
++	{ .irq = NO_WAKEUP_IRQ,	.bit = S3C64XX_PWRCFG_HSI_DISABLE },
++	{ .irq = NO_WAKEUP_IRQ,	.bit = S3C64XX_PWRCFG_MSM_DISABLE },
++};
++
+ static void s3c64xx_pm_prepare(void)
  {
-+	unsigned long flags;
++	samsung_sync_wakemask(S3C64XX_PWR_CFG,
++			      wake_irqs, ARRAY_SIZE(wake_irqs));
 +
-+	spin_lock_irqsave(&adc_dev->lock, flags);
-+
- 	/* We should really check that nothing is in progress. */
- 	if (adc_dev->cur == client)
- 		adc_dev->cur = NULL;
-@@ -255,6 +261,8 @@ void s3c_adc_release(struct s3c_adc_client *client)
+ 	/* store address of resume. */
+ 	__raw_writel(virt_to_phys(s3c_cpu_resume), S3C64XX_INFORM0);
  
- 	if (adc_dev->cur == NULL)
- 		s3c_adc_try(adc_dev);
-+
-+	spin_unlock_irqrestore(&adc_dev->lock, flags);
- 	kfree(client);
- }
- EXPORT_SYMBOL_GPL(s3c_adc_release);
-@@ -264,7 +272,6 @@ static irqreturn_t s3c_adc_irq(int irq, void *pw)
- 	struct adc_device *adc = pw;
- 	struct s3c_adc_client *client = adc->cur;
- 	enum s3c_cpu_type cpu = platform_get_device_id(adc->pdev)->driver_data;
--	unsigned long flags;
- 	unsigned data0, data1;
- 
- 	if (!client) {
-@@ -296,12 +303,12 @@ static irqreturn_t s3c_adc_irq(int irq, void *pw)
- 		client->select_cb(client, 1);
- 		s3c_adc_convert(adc);
- 	} else {
--		local_irq_save(flags);
-+		spin_lock(&adc->lock);
- 		(client->select_cb)(client, 0);
- 		adc->cur = NULL;
- 
- 		s3c_adc_try(adc);
--		local_irq_restore(flags);
-+		spin_unlock(&adc->lock);
- 	}
- 
- exit:
-@@ -326,6 +333,8 @@ static int s3c_adc_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
-+	spin_lock_init(&adc->lock);
-+
- 	adc->pdev = pdev;
- 	adc->prescale = S3C2410_ADCCON_PRSCVL(49);
- 
-@@ -407,13 +416,17 @@ static int __devexit s3c_adc_remove(struct platform_device *pdev)
- static int s3c_adc_suspend(struct platform_device *pdev, pm_message_t state)
- {
- 	struct adc_device *adc = platform_get_drvdata(pdev);
-+	unsigned long flags;
- 	u32 con;
- 
-+	spin_lock_irqsave(&adc->lock, flags);
-+
- 	con = readl(adc->regs + S3C2410_ADCCON);
- 	con |= S3C2410_ADCCON_STDBM;
- 	writel(con, adc->regs + S3C2410_ADCCON);
- 
- 	disable_irq(adc->irq);
-+	spin_unlock_irqrestore(&adc->lock, flags);
- 	clk_disable(adc->clk);
- 
- 	return 0;
-@@ -422,6 +435,7 @@ static int s3c_adc_suspend(struct platform_device *pdev, pm_message_t state)
- static int s3c_adc_resume(struct platform_device *pdev)
- {
- 	struct adc_device *adc = platform_get_drvdata(pdev);
-+	unsigned long flags;
- 
- 	clk_enable(adc->clk);
- 	enable_irq(adc->irq);
 -- 
 1.6.3.3
