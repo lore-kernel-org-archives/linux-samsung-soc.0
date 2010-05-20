@@ -1,98 +1,50 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 5/5] ARM: S5PV210: Add Watchdog support for S5PV210
-Date: Thu, 20 May 2010 16:21:32 +0900
-Message-ID: <1274340092-10706-6-git-send-email-kgene.kim@samsung.com>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: [PATCH 0/0] Add Watchdog support for Samsung SMDK6410, S5P6440
+	and S5Pv210
+Date: Thu, 20 May 2010 08:35:26 +0100
+Message-ID: <20100520073526.GA26401@trinity.fluff.org>
 References: <1274340092-10706-1-git-send-email-kgene.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:52644 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754260Ab0ETH2G (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:47550 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750877Ab0ETHfd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 May 2010 03:28:06 -0400
+	Thu, 20 May 2010 03:35:33 -0400
+Content-Disposition: inline
 In-Reply-To: <1274340092-10706-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Banajit Goswami <banajit.g@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-From: Banajit Goswami <banajit.g@samsung.com>
+On Thu, May 20, 2010 at 04:21:27PM +0900, Kukjin Kim wrote:
+> This patches add Watchdog support for SMDK6410, S5P6440 and S5PV210.
+> 
+> - Add HAVE_S3C2410_WATCHDOG for selecting watchgog driver compile in each machine
+> - Add S3C_DEV_WDT for watchdog device definitions
+> - Fix freeing memory part when memory region could not be allocated s3c2410_wdt
+> - Add machine dependent part for watchdog support
 
-This patch adds support for Watchdog timer for Samsung S5PV210.
+ok, the will look at merging the device side of this. Please orward
+the drivers/watchdog patches to the relevant maintainer with
 
-Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s5pv210/Kconfig            |    4 ++++
- arch/arm/mach-s5pv210/include/mach/map.h |    3 +++
- arch/arm/mach-s5pv210/mach-smdkc110.c    |    1 +
- arch/arm/mach-s5pv210/mach-smdkv210.c    |    1 +
- 4 files changed, 9 insertions(+), 0 deletions(-)
+Acked-by: Ben Dooks <ben-linux@fluff.org>
+ 
+> [PATCH 1/5] ARM: SAMSUNG: Move WDT device definitions in plat-samsung
+> [PATCH 2/5] [WATCHDOG] s3c2410_wdt - Avoid freeing memory, if memory region could not be allocated
+> [PATCH 3/5] ARM: SMDK6410: Add Watchdog support for SMDK6410
+> [PATCH 4/5] ARM: S5P6440: Add Watchdog support for S5P6440
+> [PATCH 5/5] ARM: S5PV210: Add Watchdog support for S5PV210
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index af33a1a..8931d8a 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -24,6 +24,8 @@ config MACH_SMDKV210
- 	bool "SMDKV210"
- 	select CPU_S5PV210
- 	select ARCH_SPARSEMEM_ENABLE
-+	select S3C_DEV_WDT
-+	select HAVE_S3C2410_WATCHDOG
- 	help
- 	  Machine support for Samsung SMDKV210
- 
-@@ -31,6 +33,8 @@ config MACH_SMDKC110
- 	bool "SMDKC110"
- 	select CPU_S5PV210
- 	select ARCH_SPARSEMEM_ENABLE
-+	select S3C_DEV_WDT
-+	select HAVE_S3C2410_WATCHDOG
- 	help
- 	  Machine support for Samsung SMDKC110
- 	  S5PC110(MCP) is one of package option of S5PV210
-diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
-index c22694c..c37f2c5 100644
---- a/arch/arm/mach-s5pv210/include/mach/map.h
-+++ b/arch/arm/mach-s5pv210/include/mach/map.h
-@@ -32,6 +32,8 @@
- 
- #define S5PV210_PA_SYSTIMER	(0xE2600000)
- 
-+#define S5PV210_PA_WATCHDOG	(0xE2700000)
-+
- #define S5PV210_PA_UART		(0xE2900000)
- 
- #define S5P_PA_UART0		(S5PV210_PA_UART + 0x0)
-@@ -61,5 +63,6 @@
- /* compatibiltiy defines. */
- #define S3C_PA_UART		S5PV210_PA_UART
- #define S3C_PA_IIC		S5PV210_PA_IIC0
-+#define S3C_PA_WDT		S5PV210_PA_WATCHDOG
- 
- #endif /* __ASM_ARCH_MAP_H */
-diff --git a/arch/arm/mach-s5pv210/mach-smdkc110.c b/arch/arm/mach-s5pv210/mach-smdkc110.c
-index ab4869d..6af4ccf 100644
---- a/arch/arm/mach-s5pv210/mach-smdkc110.c
-+++ b/arch/arm/mach-s5pv210/mach-smdkc110.c
-@@ -72,6 +72,7 @@ static struct s3c2410_uartcfg smdkv210_uartcfgs[] __initdata = {
- };
- 
- static struct platform_device *smdkc110_devices[] __initdata = {
-+	&s3c_device_wdt,
- };
- 
- static void __init smdkc110_map_io(void)
-diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
-index a278832..8ea203d 100644
---- a/arch/arm/mach-s5pv210/mach-smdkv210.c
-+++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
-@@ -72,6 +72,7 @@ static struct s3c2410_uartcfg smdkv210_uartcfgs[] __initdata = {
- };
- 
- static struct platform_device *smdkv210_devices[] __initdata = {
-+	&s3c_device_wdt,
- };
- 
- static void __init smdkv210_map_io(void)
 -- 
-1.6.2.5
+-- 
+Ben
+
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
