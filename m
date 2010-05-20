@@ -1,195 +1,284 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH 2/7] ARM: S5PV210: add Aquila board
-Date: Thu, 20 May 2010 06:50:55 +0100
-Message-ID: <20100520055055.GZ26401@trinity.fluff.org>
-References: <1274079195-18105-1-git-send-email-m.szyprowski@samsung.com> <1274079195-18105-3-git-send-email-m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 2/4] ARM: S5PC100: Add support for gpio interrupt
+Date: Thu, 20 May 2010 07:51:09 +0200
+Message-ID: <1274334671-21838-3-git-send-email-m.szyprowski@samsung.com>
+References: <1274334671-21838-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:45674 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751498Ab0ETFu5 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:45649 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752304Ab0ETFvU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 May 2010 01:50:57 -0400
-Content-Disposition: inline
-In-Reply-To: <1274079195-18105-3-git-send-email-m.szyprowski@samsung.com>
+	Thu, 20 May 2010 01:51:20 -0400
+Received: from eu_spt1 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L2P00F6REXHG8@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 May 2010 06:51:17 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0L2P00CYLEXG9I@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 May 2010 06:51:17 +0100 (BST)
+In-reply-to: <1274334671-21838-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
 
-On Mon, May 17, 2010 at 08:53:10AM +0200, Marek Szyprowski wrote:
-> Add basic support for Samsung Aquila board. This board is based
-> on S5PC110 SoC.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/mach-s5pv210/Kconfig       |   12 ++--
->  arch/arm/mach-s5pv210/Makefile      |    1 +
->  arch/arm/mach-s5pv210/mach-aquila.c |  100 +++++++++++++++++++++++++++++++++++
->  3 files changed, 107 insertions(+), 6 deletions(-)
->  create mode 100644 arch/arm/mach-s5pv210/mach-aquila.c
-> 
-> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-> index af33a1a..c42bcba 100644
-> --- a/arch/arm/mach-s5pv210/Kconfig
-> +++ b/arch/arm/mach-s5pv210/Kconfig
-> @@ -15,11 +15,6 @@ config CPU_S5PV210
->  	help
->  	  Enable S5PV210 CPU support
->  
-> -choice
-> -	prompt "Select machine type"
-> -	depends on ARCH_S5PV210
-> -	default MACH_SMDKV210
-> -
+This patch moves support for gpio interrupts from plat-s5pc1xx to
+mach-s5pc100 directory.
 
-hmm, didn't notice that little gem in there. will build seperate patch
-and then apply this one.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-s5pc100/Makefile                     |    2 +-
+ arch/arm/mach-s5pc100/gpiolib.c                    |    9 +-
+ arch/arm/{plat-s5pc1xx => mach-s5pc100}/irq-gpio.c |   78 ++++++++++----------
+ 3 files changed, 44 insertions(+), 45 deletions(-)
+ rename arch/arm/{plat-s5pc1xx => mach-s5pc100}/irq-gpio.c (72%)
 
->  config MACH_SMDKV210
->  	bool "SMDKV210"
->  	select CPU_S5PV210
-> @@ -35,6 +30,11 @@ config MACH_SMDKC110
->  	  Machine support for Samsung SMDKC110
->  	  S5PC110(MCP) is one of package option of S5PV210
->  
-> -endchoice
-> +config MACH_AQUILA
-> +	bool "Samsung Aquila"
-> +	select CPU_S5PV210
-> +	select ARCH_SPARSEMEM_ENABLE
-> +	help
-> +	  Machine support for the Samsung Aquila target based on S5PC110 SoC
->  
->  endif
-> diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
-> index 370aac6..0bb1680 100644
-> --- a/arch/arm/mach-s5pv210/Makefile
-> +++ b/arch/arm/mach-s5pv210/Makefile
-> @@ -19,3 +19,4 @@ obj-$(CONFIG_CPU_S5PV210)	+= setup-i2c0.o
->  
->  obj-$(CONFIG_MACH_SMDKV210)	+= mach-smdkv210.o
->  obj-$(CONFIG_MACH_SMDKC110)	+= mach-smdkc110.o
-> +obj-$(CONFIG_MACH_AQUILA)	+= mach-aquila.o
-> diff --git a/arch/arm/mach-s5pv210/mach-aquila.c b/arch/arm/mach-s5pv210/mach-aquila.c
-> new file mode 100644
-> index 0000000..6a1db39
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/mach-aquila.c
-> @@ -0,0 +1,100 @@
-> +/* linux/arch/arm/mach-s5pv210/mach-aquila.c
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/types.h>
-> +#include <linux/init.h>
-> +#include <linux/serial_core.h>
-> +
-> +#include <asm/mach/arch.h>
-> +#include <asm/mach/map.h>
-> +#include <asm/setup.h>
-> +#include <asm/mach-types.h>
-> +
-> +#include <mach/map.h>
-> +#include <mach/regs-clock.h>
-> +
-> +#include <plat/regs-serial.h>
-> +#include <plat/s5pv210.h>
-> +#include <plat/devs.h>
-> +#include <plat/cpu.h>
-> +
-> +/* Following are default values for UCON, ULCON and UFCON UART registers */
-> +#define S5PV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-> +				 S3C2410_UCON_RXILEVEL |	\
-> +				 S3C2410_UCON_TXIRQMODE |	\
-> +				 S3C2410_UCON_RXIRQMODE |	\
-> +				 S3C2410_UCON_RXFIFO_TOI |	\
-> +				 S3C2443_UCON_RXERR_IRQEN)
-> +
-> +#define S5PV210_ULCON_DEFAULT	S3C2410_LCON_CS8
-> +
-> +#define S5PV210_UFCON_DEFAULT	(S3C2410_UFCON_FIFOMODE |	\
-> +				 S5PV210_UFCON_TXTRIG4 |	\
-> +				 S5PV210_UFCON_RXTRIG4)
-> +
-> +static struct s3c2410_uartcfg smdkv210_uartcfgs[] __initdata = {
-> +	[0] = {
-> +		.hwport		= 0,
-> +		.flags		= 0,
-> +		.ucon		= S5PV210_UCON_DEFAULT,
-> +		.ulcon		= S5PV210_ULCON_DEFAULT,
-> +		.ufcon		= S5PV210_UFCON_DEFAULT,
-> +	},
-> +	[1] = {
-> +		.hwport		= 1,
-> +		.flags		= 0,
-> +		.ucon		= S5PV210_UCON_DEFAULT,
-> +		.ulcon		= S5PV210_ULCON_DEFAULT,
-> +		.ufcon		= S5PV210_UFCON_DEFAULT,
-> +	},
-> +	[2] = {
-> +		.hwport		= 2,
-> +		.flags		= 0,
-> +		.ucon		= S5PV210_UCON_DEFAULT,
-> +		.ulcon		= S5PV210_ULCON_DEFAULT,
-> +		.ufcon		= S5PV210_UFCON_DEFAULT,
-> +	},
-> +	[3] = {
-> +		.hwport		= 3,
-> +		.flags		= 0,
-> +		.ucon		= S5PV210_UCON_DEFAULT,
-> +		.ulcon		= S5PV210_ULCON_DEFAULT,
-> +		.ufcon		= S5PV210_UFCON_DEFAULT,
-> +	},
-> +};
-> +
-> +static struct platform_device *aquila_devices[] __initdata = {
-> +};
-> +
-> +static void __init aquila_map_io(void)
-> +{
-> +	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
-> +	s3c24xx_init_clocks(24000000);
-> +	s3c24xx_init_uarts(smdkv210_uartcfgs, ARRAY_SIZE(smdkv210_uartcfgs));
-> +}
-> +
-> +static void __init aquila_machine_init(void)
-> +{
-> +	platform_add_devices(aquila_devices, ARRAY_SIZE(aquila_devices));
-> +}
-> +
-> +MACHINE_START(AQUILA, "Aquila")
-> +	/* Maintainers:
-> +	   Marek Szyprowski <m.szyprowski@samsung.com>
-> +	   Kyungmin Park <kyungmin.park@samsung.com> */
-> +	.phys_io	= S3C_PA_UART & 0xfff00000,
-> +	.io_pg_offst	= (((u32)S3C_VA_UART) >> 18) & 0xfffc,
-> +	.boot_params	= S5P_PA_SDRAM + 0x100,
-> +	.init_irq	= s5pv210_init_irq,
-> +	.map_io		= aquila_map_io,
-> +	.init_machine	= aquila_machine_init,
-> +	.timer		= &s3c24xx_timer,
-> +MACHINE_END
-> -- 
-> 1.6.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+diff --git a/arch/arm/mach-s5pc100/Makefile b/arch/arm/mach-s5pc100/Makefile
+index 9b52d2a..6e3f57c 100644
+--- a/arch/arm/mach-s5pc100/Makefile
++++ b/arch/arm/mach-s5pc100/Makefile
+@@ -11,7 +11,7 @@ obj-				:=
+ 
+ # Core support for S5PC100 system
+ 
+-obj-$(CONFIG_CPU_S5PC100)	+= cpu.o init.o clock.o gpiolib.o
++obj-$(CONFIG_CPU_S5PC100)	+= cpu.o init.o clock.o gpiolib.o irq-gpio.o
+ obj-$(CONFIG_CPU_S5PC100)	+= setup-i2c0.o
+ 
+ # Helper and device support
+diff --git a/arch/arm/mach-s5pc100/gpiolib.c b/arch/arm/mach-s5pc100/gpiolib.c
+index 494a53b..88dd913 100644
+--- a/arch/arm/mach-s5pc100/gpiolib.c
++++ b/arch/arm/mach-s5pc100/gpiolib.c
+@@ -387,7 +387,6 @@ extern void s5pc100_irq_gpioint_handler(unsigned int irq, struct irq_desc *desc)
+ 
+ static __init void s5pc100_gpiolib_link(struct s3c_gpio_chip *chip)
+ {
+-#if 0
+ 	/* Interrupt */
+ 	if (chip->config == &gpio_cfg) {
+ 		int i, irq;
+@@ -401,9 +400,9 @@ static __init void s5pc100_gpiolib_link(struct s3c_gpio_chip *chip)
+ 			set_irq_handler(irq, handle_level_irq);
+ 			set_irq_flags(irq, IRQF_VALID);
+ 		}
+-	} else if (chip->config == &gpio_cfg_eint)
++	} else if (chip->config == &gpio_cfg_eint) {
+ 		chip->chip.to_irq = s5pc100_gpiolib_to_eint;
+-#endif
++	}
+ }
+ 
+ static __init int s5pc100_gpiolib_init(void)
+@@ -419,10 +418,10 @@ static __init int s5pc100_gpiolib_init(void)
+ 
+ 	samsung_gpiolib_add_4bit_chips(s5pc100_gpio_chips,
+ 				       ARRAY_SIZE(s5pc100_gpio_chips));
+-#if 0
++
+ 	/* Interrupt */
+ 	set_irq_chained_handler(IRQ_GPIOINT, s5pc100_irq_gpioint_handler);
+-#endif
++
+ 	return 0;
+ }
+ core_initcall(s5pc100_gpiolib_init);
+diff --git a/arch/arm/plat-s5pc1xx/irq-gpio.c b/arch/arm/mach-s5pc100/irq-gpio.c
+similarity index 72%
+rename from arch/arm/plat-s5pc1xx/irq-gpio.c
+rename to arch/arm/mach-s5pc100/irq-gpio.c
+index fecca7a..2bf86c1 100644
+--- a/arch/arm/plat-s5pc1xx/irq-gpio.c
++++ b/arch/arm/mach-s5pc100/irq-gpio.c
+@@ -1,9 +1,9 @@
+ /*
+- * arch/arm/plat-s5pc1xx/irq-gpio.c
++ * arch/arm/mach-s5pc100/irq-gpio.c
+  *
+  * Copyright (C) 2009 Samsung Electronics
+  *
+- * S5PC1XX - Interrupt handling for IRQ_GPIO${group}(x)
++ * S5PC100 - Interrupt handling for IRQ_GPIO${group}(x)
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+@@ -19,7 +19,7 @@
+ #include <mach/map.h>
+ #include <plat/gpio-cfg.h>
+ 
+-#define S5PC1XX_GPIOREG(x)		(S5PC1XX_VA_GPIO + (x))
++#define S5P_GPIOREG(x)		(S5P_VA_GPIO + (x))
+ 
+ #define CON_OFFSET			0x700
+ #define MASK_OFFSET			0x900
+@@ -49,7 +49,7 @@ static int group_to_pend_offset(int group)
+ 	return group << 2;
+ }
+ 
+-static int s5pc1xx_get_start(unsigned int group)
++static int s5pc100_get_start(unsigned int group)
+ {
+ 	switch (group) {
+ 	case 0: return S5PC100_GPIO_A0_START;
+@@ -80,7 +80,7 @@ static int s5pc1xx_get_start(unsigned int group)
+ 	return -EINVAL;
+ }
+ 
+-static int s5pc1xx_get_group(unsigned int irq)
++static int s5pc100_get_group(unsigned int irq)
+ {
+ 	irq -= S3C_IRQ_GPIO(0);
+ 
+@@ -134,67 +134,67 @@ static int s5pc1xx_get_group(unsigned int irq)
+ 	return -EINVAL;
+ }
+ 
+-static int s5pc1xx_get_offset(unsigned int irq)
++static int s5pc100_get_offset(unsigned int irq)
+ {
+ 	struct gpio_chip *chip = get_irq_data(irq);
+ 	return irq - S3C_IRQ_GPIO(chip->base);
+ }
+ 
+-static void s5pc1xx_gpioint_ack(unsigned int irq)
++static void s5pc100_gpioint_ack(unsigned int irq)
+ {
+ 	int group, offset, pend_offset;
+ 	unsigned int value;
+ 
+-	group = s5pc1xx_get_group(irq);
+-	offset = s5pc1xx_get_offset(irq);
++	group = s5pc100_get_group(irq);
++	offset = s5pc100_get_offset(irq);
+ 	pend_offset = group_to_pend_offset(group);
+ 
+-	value = __raw_readl(S5PC1XX_GPIOREG(PEND_OFFSET) + pend_offset);
++	value = __raw_readl(S5P_GPIOREG(PEND_OFFSET) + pend_offset);
+ 	value |= 1 << offset;
+-	__raw_writel(value, S5PC1XX_GPIOREG(PEND_OFFSET) + pend_offset);
++	__raw_writel(value, S5P_GPIOREG(PEND_OFFSET) + pend_offset);
+ }
+ 
+-static void s5pc1xx_gpioint_mask(unsigned int irq)
++static void s5pc100_gpioint_mask(unsigned int irq)
+ {
+ 	int group, offset, mask_offset;
+ 	unsigned int value;
+ 
+-	group = s5pc1xx_get_group(irq);
+-	offset = s5pc1xx_get_offset(irq);
++	group = s5pc100_get_group(irq);
++	offset = s5pc100_get_offset(irq);
+ 	mask_offset = group_to_mask_offset(group);
+ 
+-	value = __raw_readl(S5PC1XX_GPIOREG(MASK_OFFSET) + mask_offset);
++	value = __raw_readl(S5P_GPIOREG(MASK_OFFSET) + mask_offset);
+ 	value |= 1 << offset;
+-	__raw_writel(value, S5PC1XX_GPIOREG(MASK_OFFSET) + mask_offset);
++	__raw_writel(value, S5P_GPIOREG(MASK_OFFSET) + mask_offset);
+ }
+ 
+-static void s5pc1xx_gpioint_unmask(unsigned int irq)
++static void s5pc100_gpioint_unmask(unsigned int irq)
+ {
+ 	int group, offset, mask_offset;
+ 	unsigned int value;
+ 
+-	group = s5pc1xx_get_group(irq);
+-	offset = s5pc1xx_get_offset(irq);
++	group = s5pc100_get_group(irq);
++	offset = s5pc100_get_offset(irq);
+ 	mask_offset = group_to_mask_offset(group);
+ 
+-	value = __raw_readl(S5PC1XX_GPIOREG(MASK_OFFSET) + mask_offset);
++	value = __raw_readl(S5P_GPIOREG(MASK_OFFSET) + mask_offset);
+ 	value &= ~(1 << offset);
+-	__raw_writel(value, S5PC1XX_GPIOREG(MASK_OFFSET) + mask_offset);
++	__raw_writel(value, S5P_GPIOREG(MASK_OFFSET) + mask_offset);
+ }
+ 
+-static void s5pc1xx_gpioint_mask_ack(unsigned int irq)
++static void s5pc100_gpioint_mask_ack(unsigned int irq)
+ {
+-	s5pc1xx_gpioint_mask(irq);
+-	s5pc1xx_gpioint_ack(irq);
++	s5pc100_gpioint_mask(irq);
++	s5pc100_gpioint_ack(irq);
+ }
+ 
+-static int s5pc1xx_gpioint_set_type(unsigned int irq, unsigned int type)
++static int s5pc100_gpioint_set_type(unsigned int irq, unsigned int type)
+ {
+ 	int group, offset, con_offset;
+ 	unsigned int value;
+ 
+-	group = s5pc1xx_get_group(irq);
+-	offset = s5pc1xx_get_offset(irq);
++	group = s5pc100_get_group(irq);
++	offset = s5pc100_get_offset(irq);
+ 	con_offset = group_to_con_offset(group);
+ 
+ 	switch (type) {
+@@ -221,24 +221,24 @@ static int s5pc1xx_gpioint_set_type(unsigned int irq, unsigned int type)
+ 	}
+ 
+ 
+-	value = __raw_readl(S5PC1XX_GPIOREG(CON_OFFSET) + con_offset);
++	value = __raw_readl(S5P_GPIOREG(CON_OFFSET) + con_offset);
+ 	value &= ~(0xf << (offset * 0x4));
+ 	value |= (type << (offset * 0x4));
+-	__raw_writel(value, S5PC1XX_GPIOREG(CON_OFFSET) + con_offset);
++	__raw_writel(value, S5P_GPIOREG(CON_OFFSET) + con_offset);
+ 
+ 	return 0;
+ }
+ 
+-struct irq_chip s5pc1xx_gpioint = {
++struct irq_chip s5pc100_gpioint = {
+ 	.name		= "GPIO",
+-	.ack		= s5pc1xx_gpioint_ack,
+-	.mask		= s5pc1xx_gpioint_mask,
+-	.mask_ack	= s5pc1xx_gpioint_mask_ack,
+-	.unmask		= s5pc1xx_gpioint_unmask,
+-	.set_type	= s5pc1xx_gpioint_set_type,
++	.ack		= s5pc100_gpioint_ack,
++	.mask		= s5pc100_gpioint_mask,
++	.mask_ack	= s5pc100_gpioint_mask_ack,
++	.unmask		= s5pc100_gpioint_unmask,
++	.set_type	= s5pc100_gpioint_set_type,
+ };
+ 
+-void s5pc1xx_irq_gpioint_handler(unsigned int irq, struct irq_desc *desc)
++void s5pc100_irq_gpioint_handler(unsigned int irq, struct irq_desc *desc)
+ {
+ 	int group, offset, pend_offset, mask_offset;
+ 	int real_irq, group_end;
+@@ -248,17 +248,17 @@ void s5pc1xx_irq_gpioint_handler(unsigned int irq, struct irq_desc *desc)
+ 
+ 	for (group = 0; group < group_end; group++) {
+ 		pend_offset = group_to_pend_offset(group);
+-		pend = __raw_readl(S5PC1XX_GPIOREG(PEND_OFFSET) + pend_offset);
++		pend = __raw_readl(S5P_GPIOREG(PEND_OFFSET) + pend_offset);
+ 		if (!pend)
+ 			continue;
+ 
+ 		mask_offset = group_to_mask_offset(group);
+-		mask = __raw_readl(S5PC1XX_GPIOREG(MASK_OFFSET) + mask_offset);
++		mask = __raw_readl(S5P_GPIOREG(MASK_OFFSET) + mask_offset);
+ 		pend &= ~mask;
+ 
+ 		for (offset = 0; offset < 8; offset++) {
+ 			if (pend & (1 << offset)) {
+-				real_irq = s5pc1xx_get_start(group) + offset;
++				real_irq = s5pc100_get_start(group) + offset;
+ 				generic_handle_irq(S3C_IRQ_GPIO(real_irq));
+ 			}
+ 		}
 -- 
--- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+1.6.4
