@@ -1,25 +1,24 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 2/4] ARM: S5PC100: Add support for gpio interrupt
-Date: Thu, 20 May 2010 07:51:09 +0200
-Message-ID: <1274334671-21838-3-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 3/4] ARM: S5PC100: use common plat-s5p external interrupt code
+Date: Thu, 20 May 2010 07:51:10 +0200
+Message-ID: <1274334671-21838-4-git-send-email-m.szyprowski@samsung.com>
 References: <1274334671-21838-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:45649 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752304Ab0ETFvU (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:19952 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751756Ab0ETFvT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 May 2010 01:51:20 -0400
-Received: from eu_spt1 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L2P00F6REXHG8@mailout1.w1.samsung.com> for
+	Thu, 20 May 2010 01:51:19 -0400
+Received: from eu_spt2 ([210.118.77.14]) by mailout4.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0L2P009Q3EXH3Y10@mailout4.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Thu, 20 May 2010 06:51:17 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L2P00CYLEXG9I@spt1.w1.samsung.com> for
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0L2P00DY0EXGFU@spt2.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Thu, 20 May 2010 06:51:17 +0100 (BST)
 In-reply-to: <1274334671-21838-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -27,258 +26,130 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
 
-This patch moves support for gpio interrupts from plat-s5pc1xx to
-mach-s5pc100 directory.
-
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-s5pc100/Makefile                     |    2 +-
- arch/arm/mach-s5pc100/gpiolib.c                    |    9 +-
- arch/arm/{plat-s5pc1xx => mach-s5pc100}/irq-gpio.c |   78 ++++++++++----------
- 3 files changed, 44 insertions(+), 45 deletions(-)
- rename arch/arm/{plat-s5pc1xx => mach-s5pc100}/irq-gpio.c (72%)
+ arch/arm/mach-s5pc100/Kconfig                  |    1 +
+ arch/arm/mach-s5pc100/gpiolib.c                |    3 +-
+ arch/arm/mach-s5pc100/include/mach/gpio.h      |    7 +++++
+ arch/arm/mach-s5pc100/include/mach/irqs.h      |    6 +---
+ arch/arm/mach-s5pc100/include/mach/regs-gpio.h |   33 +++++++++++++----------
+ 5 files changed, 30 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm/mach-s5pc100/Makefile b/arch/arm/mach-s5pc100/Makefile
-index 9b52d2a..6e3f57c 100644
---- a/arch/arm/mach-s5pc100/Makefile
-+++ b/arch/arm/mach-s5pc100/Makefile
-@@ -11,7 +11,7 @@ obj-				:=
+diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
+index fe1216b..2eb9497 100644
+--- a/arch/arm/mach-s5pc100/Kconfig
++++ b/arch/arm/mach-s5pc100/Kconfig
+@@ -10,6 +10,7 @@ if ARCH_S5PC100
+ config CPU_S5PC100
+ 	bool
+ 	select PLAT_S5P
++	select S5P_EXT_INT
+ 	help
+ 	  Enable S5PC100 CPU support
  
- # Core support for S5PC100 system
- 
--obj-$(CONFIG_CPU_S5PC100)	+= cpu.o init.o clock.o gpiolib.o
-+obj-$(CONFIG_CPU_S5PC100)	+= cpu.o init.o clock.o gpiolib.o irq-gpio.o
- obj-$(CONFIG_CPU_S5PC100)	+= setup-i2c0.o
- 
- # Helper and device support
 diff --git a/arch/arm/mach-s5pc100/gpiolib.c b/arch/arm/mach-s5pc100/gpiolib.c
-index 494a53b..88dd913 100644
+index 88dd913..0fab7f2 100644
 --- a/arch/arm/mach-s5pc100/gpiolib.c
 +++ b/arch/arm/mach-s5pc100/gpiolib.c
-@@ -387,7 +387,6 @@ extern void s5pc100_irq_gpioint_handler(unsigned int irq, struct irq_desc *desc)
+@@ -61,7 +61,6 @@
+  * L3	8	4Bit	None
+  */
  
- static __init void s5pc100_gpiolib_link(struct s3c_gpio_chip *chip)
- {
 -#if 0
- 	/* Interrupt */
- 	if (chip->config == &gpio_cfg) {
- 		int i, irq;
-@@ -401,9 +400,9 @@ static __init void s5pc100_gpiolib_link(struct s3c_gpio_chip *chip)
- 			set_irq_handler(irq, handle_level_irq);
- 			set_irq_flags(irq, IRQF_VALID);
- 		}
--	} else if (chip->config == &gpio_cfg_eint)
-+	} else if (chip->config == &gpio_cfg_eint) {
- 		chip->chip.to_irq = s5pc100_gpiolib_to_eint;
--#endif
-+	}
- }
- 
- static __init int s5pc100_gpiolib_init(void)
-@@ -419,10 +418,10 @@ static __init int s5pc100_gpiolib_init(void)
- 
- 	samsung_gpiolib_add_4bit_chips(s5pc100_gpio_chips,
- 				       ARRAY_SIZE(s5pc100_gpio_chips));
--#if 0
-+
- 	/* Interrupt */
- 	set_irq_chained_handler(IRQ_GPIOINT, s5pc100_irq_gpioint_handler);
--#endif
-+
- 	return 0;
- }
- core_initcall(s5pc100_gpiolib_init);
-diff --git a/arch/arm/plat-s5pc1xx/irq-gpio.c b/arch/arm/mach-s5pc100/irq-gpio.c
-similarity index 72%
-rename from arch/arm/plat-s5pc1xx/irq-gpio.c
-rename to arch/arm/mach-s5pc100/irq-gpio.c
-index fecca7a..2bf86c1 100644
---- a/arch/arm/plat-s5pc1xx/irq-gpio.c
-+++ b/arch/arm/mach-s5pc100/irq-gpio.c
-@@ -1,9 +1,9 @@
- /*
-- * arch/arm/plat-s5pc1xx/irq-gpio.c
-+ * arch/arm/mach-s5pc100/irq-gpio.c
-  *
-  * Copyright (C) 2009 Samsung Electronics
-  *
-- * S5PC1XX - Interrupt handling for IRQ_GPIO${group}(x)
-+ * S5PC100 - Interrupt handling for IRQ_GPIO${group}(x)
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -19,7 +19,7 @@
- #include <mach/map.h>
- #include <plat/gpio-cfg.h>
- 
--#define S5PC1XX_GPIOREG(x)		(S5PC1XX_VA_GPIO + (x))
-+#define S5P_GPIOREG(x)		(S5P_VA_GPIO + (x))
- 
- #define CON_OFFSET			0x700
- #define MASK_OFFSET			0x900
-@@ -49,7 +49,7 @@ static int group_to_pend_offset(int group)
- 	return group << 2;
- }
- 
--static int s5pc1xx_get_start(unsigned int group)
-+static int s5pc100_get_start(unsigned int group)
+ static int s5pc100_gpiolib_to_irq(struct gpio_chip *chip, unsigned int offset)
  {
- 	switch (group) {
- 	case 0: return S5PC100_GPIO_A0_START;
-@@ -80,7 +80,7 @@ static int s5pc1xx_get_start(unsigned int group)
+ 	return S3C_IRQ_GPIO(chip->base + offset);
+@@ -85,7 +84,7 @@ static int s5pc100_gpiolib_to_eint(struct gpio_chip *chip, unsigned int offset)
+ 		return IRQ_EINT(24 + offset);
  	return -EINVAL;
  }
+-#endif
++
+ static struct s3c_gpio_cfg gpio_cfg = {
+ 	.set_config	= s3c_gpio_setcfg_s3c64xx_4bit,
+ 	.set_pull	= s3c_gpio_setpull_updown,
+diff --git a/arch/arm/mach-s5pc100/include/mach/gpio.h b/arch/arm/mach-s5pc100/include/mach/gpio.h
+index 29a8a12..71ae1f5 100644
+--- a/arch/arm/mach-s5pc100/include/mach/gpio.h
++++ b/arch/arm/mach-s5pc100/include/mach/gpio.h
+@@ -146,6 +146,13 @@ enum s5p_gpio_number {
+ /* define the number of gpios we need to the one after the MP04() range */
+ #define ARCH_NR_GPIOS		(S5PC100_GPIO_END + 1)
  
--static int s5pc1xx_get_group(unsigned int irq)
-+static int s5pc100_get_group(unsigned int irq)
- {
- 	irq -= S3C_IRQ_GPIO(0);
++#define EINT_MODE		S3C_GPIO_SFN(0x2)
++
++#define EINT_GPIO_0(x)		S5PC100_GPH0(x)
++#define EINT_GPIO_1(x)		S5PC100_GPH1(x)
++#define EINT_GPIO_2(x)		S5PC100_GPH2(x)
++#define EINT_GPIO_3(x)		S5PC100_GPH3(x)
++
+ #include <asm-generic/gpio.h>
  
-@@ -134,67 +134,67 @@ static int s5pc1xx_get_group(unsigned int irq)
- 	return -EINVAL;
- }
+ #endif /* __ASM_ARCH_GPIO_H */
+diff --git a/arch/arm/mach-s5pc100/include/mach/irqs.h b/arch/arm/mach-s5pc100/include/mach/irqs.h
+index 84c74ac..28aa551 100644
+--- a/arch/arm/mach-s5pc100/include/mach/irqs.h
++++ b/arch/arm/mach-s5pc100/include/mach/irqs.h
+@@ -97,10 +97,8 @@
+ #define IRQ_SDMFIQ		S5P_IRQ_VIC2(31)
+ #define IRQ_VIC_END		S5P_IRQ_VIC2(31)
  
--static int s5pc1xx_get_offset(unsigned int irq)
-+static int s5pc100_get_offset(unsigned int irq)
- {
- 	struct gpio_chip *chip = get_irq_data(irq);
- 	return irq - S3C_IRQ_GPIO(chip->base);
- }
+-#define S5P_IRQ_EINT_BASE	(IRQ_VIC_END + 1)
+-
+-#define IRQ_EINT(x)             ((x) < 16 ? S5P_IRQ_VIC0(x) : \
+-					(S5P_IRQ_EINT_BASE + (x)-16))
++#define S5P_EINT_BASE1		(S5P_IRQ_VIC0(0))
++#define S5P_EINT_BASE2		(IRQ_VIC_END + 1)
  
--static void s5pc1xx_gpioint_ack(unsigned int irq)
-+static void s5pc100_gpioint_ack(unsigned int irq)
- {
- 	int group, offset, pend_offset;
- 	unsigned int value;
+ #define S3C_IRQ_GPIO_BASE	(IRQ_EINT(31) + 1)
+ #define S3C_IRQ_GPIO(x)		(S3C_IRQ_GPIO_BASE + (x))
+diff --git a/arch/arm/mach-s5pc100/include/mach/regs-gpio.h b/arch/arm/mach-s5pc100/include/mach/regs-gpio.h
+index cd6200a..dd6295e 100644
+--- a/arch/arm/mach-s5pc100/include/mach/regs-gpio.h
++++ b/arch/arm/mach-s5pc100/include/mach/regs-gpio.h
+@@ -47,24 +47,29 @@
+ #define S5PC100_GPL2_BASE	(S5PC100_GPIO_BASE + 0x0360)
+ #define S5PC100_GPL3_BASE	(S5PC100_GPIO_BASE + 0x0380)
+ #define S5PC100_GPL4_BASE	(S5PC100_GPIO_BASE + 0x03A0)
+-#define S5PC100_EINT_BASE	(S5PC100_GPIO_BASE + 0x0E00)
  
--	group = s5pc1xx_get_group(irq);
--	offset = s5pc1xx_get_offset(irq);
-+	group = s5pc100_get_group(irq);
-+	offset = s5pc100_get_offset(irq);
- 	pend_offset = group_to_pend_offset(group);
+-#define S5PC100_UHOST		(S5PC100_GPIO_BASE + 0x0B68)
+-#define S5PC100_PDNEN		(S5PC100_GPIO_BASE + 0x0F80)
++#define S5PC100EINT30CON		(S5P_VA_GPIO + 0xE00)
++#define S5P_EINT_CON(x)			(S5PC100EINT30CON + ((x) * 0x4))
  
--	value = __raw_readl(S5PC1XX_GPIOREG(PEND_OFFSET) + pend_offset);
-+	value = __raw_readl(S5P_GPIOREG(PEND_OFFSET) + pend_offset);
- 	value |= 1 << offset;
--	__raw_writel(value, S5PC1XX_GPIOREG(PEND_OFFSET) + pend_offset);
-+	__raw_writel(value, S5P_GPIOREG(PEND_OFFSET) + pend_offset);
- }
+-/* PDNEN */
+-#define S5PC100_PDNEN_CFG_PDNEN	(1 << 1)
+-#define S5PC100_PDNEN_CFG_AUTO	(0 << 1)
+-#define S5PC100_PDNEN_POWERDOWN	(1 << 0)
+-#define S5PC100_PDNEN_NORMAL	(0 << 0)
++#define S5PC100EINT30FLTCON0		(S5P_VA_GPIO + 0xE80)
++#define S5P_EINT_FLTCON(x)		(S5PC100EINT30FLTCON0 + ((x) * 0x4))
  
--static void s5pc1xx_gpioint_mask(unsigned int irq)
-+static void s5pc100_gpioint_mask(unsigned int irq)
- {
- 	int group, offset, mask_offset;
- 	unsigned int value;
+-/* Common part */
+-/* External interrupt base is same at both s5pc100 and s5pc110 */
+-#define S5P_EINT_BASE			(S5PC100_EINT_BASE)
++#define S5PC100EINT30MASK		(S5P_VA_GPIO + 0xF00)
++#define S5P_EINT_MASK(x)		(S5PC100EINT30MASK + ((x) * 0x4))
  
--	group = s5pc1xx_get_group(irq);
--	offset = s5pc1xx_get_offset(irq);
-+	group = s5pc100_get_group(irq);
-+	offset = s5pc100_get_offset(irq);
- 	mask_offset = group_to_mask_offset(group);
+-#define S5PC100_GPx_INPUT(__gpio)	(0x0 << ((__gpio) * 4))
+-#define S5PC100_GPx_OUTPUT(__gpio)	(0x1 << ((__gpio) * 4))
+-#define S5PC100_GPx_CONMASK(__gpio)	(0xf << ((__gpio) * 4))
++#define S5PC100EINT30PEND		(S5P_VA_GPIO + 0xF40)
++#define S5P_EINT_PEND(x)		(S5PC100EINT30PEND + ((x) * 0x4))
++
++#define EINT_REG_NR(x)			(EINT_OFFSET(x) >> 3)
++
++#define eint_irq_to_bit(irq)		(1 << (EINT_OFFSET(irq) & 0x7))
++
++/* values for S5P_EXTINT0 */
++#define S5P_EXTINT_LOWLEV		(0x00)
++#define S5P_EXTINT_HILEV		(0x01)
++#define S5P_EXTINT_FALLEDGE		(0x02)
++#define S5P_EXTINT_RISEEDGE		(0x03)
++#define S5P_EXTINT_BOTHEDGE		(0x04)
  
--	value = __raw_readl(S5PC1XX_GPIOREG(MASK_OFFSET) + mask_offset);
-+	value = __raw_readl(S5P_GPIOREG(MASK_OFFSET) + mask_offset);
- 	value |= 1 << offset;
--	__raw_writel(value, S5PC1XX_GPIOREG(MASK_OFFSET) + mask_offset);
-+	__raw_writel(value, S5P_GPIOREG(MASK_OFFSET) + mask_offset);
- }
+ #endif /* __ASM_MACH_S5PC100_REGS_GPIO_H */
  
--static void s5pc1xx_gpioint_unmask(unsigned int irq)
-+static void s5pc100_gpioint_unmask(unsigned int irq)
- {
- 	int group, offset, mask_offset;
- 	unsigned int value;
- 
--	group = s5pc1xx_get_group(irq);
--	offset = s5pc1xx_get_offset(irq);
-+	group = s5pc100_get_group(irq);
-+	offset = s5pc100_get_offset(irq);
- 	mask_offset = group_to_mask_offset(group);
- 
--	value = __raw_readl(S5PC1XX_GPIOREG(MASK_OFFSET) + mask_offset);
-+	value = __raw_readl(S5P_GPIOREG(MASK_OFFSET) + mask_offset);
- 	value &= ~(1 << offset);
--	__raw_writel(value, S5PC1XX_GPIOREG(MASK_OFFSET) + mask_offset);
-+	__raw_writel(value, S5P_GPIOREG(MASK_OFFSET) + mask_offset);
- }
- 
--static void s5pc1xx_gpioint_mask_ack(unsigned int irq)
-+static void s5pc100_gpioint_mask_ack(unsigned int irq)
- {
--	s5pc1xx_gpioint_mask(irq);
--	s5pc1xx_gpioint_ack(irq);
-+	s5pc100_gpioint_mask(irq);
-+	s5pc100_gpioint_ack(irq);
- }
- 
--static int s5pc1xx_gpioint_set_type(unsigned int irq, unsigned int type)
-+static int s5pc100_gpioint_set_type(unsigned int irq, unsigned int type)
- {
- 	int group, offset, con_offset;
- 	unsigned int value;
- 
--	group = s5pc1xx_get_group(irq);
--	offset = s5pc1xx_get_offset(irq);
-+	group = s5pc100_get_group(irq);
-+	offset = s5pc100_get_offset(irq);
- 	con_offset = group_to_con_offset(group);
- 
- 	switch (type) {
-@@ -221,24 +221,24 @@ static int s5pc1xx_gpioint_set_type(unsigned int irq, unsigned int type)
- 	}
- 
- 
--	value = __raw_readl(S5PC1XX_GPIOREG(CON_OFFSET) + con_offset);
-+	value = __raw_readl(S5P_GPIOREG(CON_OFFSET) + con_offset);
- 	value &= ~(0xf << (offset * 0x4));
- 	value |= (type << (offset * 0x4));
--	__raw_writel(value, S5PC1XX_GPIOREG(CON_OFFSET) + con_offset);
-+	__raw_writel(value, S5P_GPIOREG(CON_OFFSET) + con_offset);
- 
- 	return 0;
- }
- 
--struct irq_chip s5pc1xx_gpioint = {
-+struct irq_chip s5pc100_gpioint = {
- 	.name		= "GPIO",
--	.ack		= s5pc1xx_gpioint_ack,
--	.mask		= s5pc1xx_gpioint_mask,
--	.mask_ack	= s5pc1xx_gpioint_mask_ack,
--	.unmask		= s5pc1xx_gpioint_unmask,
--	.set_type	= s5pc1xx_gpioint_set_type,
-+	.ack		= s5pc100_gpioint_ack,
-+	.mask		= s5pc100_gpioint_mask,
-+	.mask_ack	= s5pc100_gpioint_mask_ack,
-+	.unmask		= s5pc100_gpioint_unmask,
-+	.set_type	= s5pc100_gpioint_set_type,
- };
- 
--void s5pc1xx_irq_gpioint_handler(unsigned int irq, struct irq_desc *desc)
-+void s5pc100_irq_gpioint_handler(unsigned int irq, struct irq_desc *desc)
- {
- 	int group, offset, pend_offset, mask_offset;
- 	int real_irq, group_end;
-@@ -248,17 +248,17 @@ void s5pc1xx_irq_gpioint_handler(unsigned int irq, struct irq_desc *desc)
- 
- 	for (group = 0; group < group_end; group++) {
- 		pend_offset = group_to_pend_offset(group);
--		pend = __raw_readl(S5PC1XX_GPIOREG(PEND_OFFSET) + pend_offset);
-+		pend = __raw_readl(S5P_GPIOREG(PEND_OFFSET) + pend_offset);
- 		if (!pend)
- 			continue;
- 
- 		mask_offset = group_to_mask_offset(group);
--		mask = __raw_readl(S5PC1XX_GPIOREG(MASK_OFFSET) + mask_offset);
-+		mask = __raw_readl(S5P_GPIOREG(MASK_OFFSET) + mask_offset);
- 		pend &= ~mask;
- 
- 		for (offset = 0; offset < 8; offset++) {
- 			if (pend & (1 << offset)) {
--				real_irq = s5pc1xx_get_start(group) + offset;
-+				real_irq = s5pc100_get_start(group) + offset;
- 				generic_handle_irq(S3C_IRQ_GPIO(real_irq));
- 			}
- 		}
 -- 
 1.6.4
