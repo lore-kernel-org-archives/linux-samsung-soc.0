@@ -1,161 +1,42 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v2 2/3] ARM: SAMSUNG: Move WDT device definitions in plat-samsung
-Date: Thu, 20 May 2010 19:28:30 +0900
-Message-ID: <1274351311-6879-3-git-send-email-kgene.kim@samsung.com>
-References: <1274351311-6879-1-git-send-email-kgene.kim@samsung.com>
+From: Brotherton Guardino <congruency@franscoop.com>
+Subject: could think of but one w
+Date: Mon, 24 May 2010 02:51:20 +0200
+Message-ID: <4BF9CC94.8050909@raft.hr>
+Mime-Version: 1.0
+Content-Type: application/octet-stream; name="leadwork.rtf"
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:36988 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755486Ab0EWWtV (ORCPT
+Received: from 93-46-204-50.ip109.fastwebnet.it ([93.46.204.50]:4883 "HELO
+	liwrkvo.fastwebnet.it" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with SMTP id S1753180Ab0EXAvT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 23 May 2010 18:49:21 -0400
-In-Reply-To: <1274351311-6879-1-git-send-email-kgene.kim@samsung.com>
+	Sun, 23 May 2010 20:51:19 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Wim Van Sebroeck <wim@iguana.be>, Banajit Goswami <banajit.g@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Olivera Jolivette <linux-samsung-soc@vger.kernel.org>
 
-From: Banajit Goswami <banajit.g@samsung.com>
-
-This patch moves the definitions of watchdog timer device from
-plat-s3c24xx to plat-samsung. This will enable all Samsung S3C
-and S5P series SoC's to use common WDT device definition.
-
-Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-Acked-by: Ben Dooks <ben-linux@fluff.org>
----
- arch/arm/mach-s3c2410/include/mach/map.h |    1 +
- arch/arm/plat-s3c24xx/devs.c             |   26 -------------------
- arch/arm/plat-samsung/Kconfig            |    6 ++++
- arch/arm/plat-samsung/Makefile           |    1 +
- arch/arm/plat-samsung/dev-wdt.c          |   40 ++++++++++++++++++++++++++++++
- 5 files changed, 48 insertions(+), 26 deletions(-)
- create mode 100644 arch/arm/plat-samsung/dev-wdt.c
-
-diff --git a/arch/arm/mach-s3c2410/include/mach/map.h b/arch/arm/mach-s3c2410/include/mach/map.h
-index f07d680..16fbc3c 100644
---- a/arch/arm/mach-s3c2410/include/mach/map.h
-+++ b/arch/arm/mach-s3c2410/include/mach/map.h
-@@ -111,6 +111,7 @@
- #define S3C_PA_USBHOST	S3C2410_PA_USBHOST
- #define S3C_PA_HSMMC0	    S3C2443_PA_HSMMC
- #define S3C_PA_HSMMC1	    S3C2416_PA_HSMMC0
-+#define S3C_PA_WDT	    S3C2410_PA_WATCHDOG
- #define S3C_PA_NAND	    S3C24XX_PA_NAND
- 
- #endif /* __ASM_ARCH_MAP_H */
-diff --git a/arch/arm/plat-s3c24xx/devs.c b/arch/arm/plat-s3c24xx/devs.c
-index 5858373..452e184 100644
---- a/arch/arm/plat-s3c24xx/devs.c
-+++ b/arch/arm/plat-s3c24xx/devs.c
-@@ -234,32 +234,6 @@ void __init s3c24xx_udc_set_platdata(struct s3c2410_udc_mach_info *pd)
- 	}
- }
- 
--
--/* Watchdog */
--
--static struct resource s3c_wdt_resource[] = {
--	[0] = {
--		.start = S3C24XX_PA_WATCHDOG,
--		.end   = S3C24XX_PA_WATCHDOG + S3C24XX_SZ_WATCHDOG - 1,
--		.flags = IORESOURCE_MEM,
--	},
--	[1] = {
--		.start = IRQ_WDT,
--		.end   = IRQ_WDT,
--		.flags = IORESOURCE_IRQ,
--	}
--
--};
--
--struct platform_device s3c_device_wdt = {
--	.name		  = "s3c2410-wdt",
--	.id		  = -1,
--	.num_resources	  = ARRAY_SIZE(s3c_wdt_resource),
--	.resource	  = s3c_wdt_resource,
--};
--
--EXPORT_SYMBOL(s3c_device_wdt);
--
- /* IIS */
- 
- static struct resource s3c_iis_resource[] = {
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 287e6f7..72dae49 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -185,6 +185,12 @@ config S3C_DEV_USB_HSOTG
- 	help
- 	  Compile in platform device definition for USB high-speed OtG
- 
-+config S3C_DEV_WDT
-+	bool
-+	default y if ARCH_S3C2410
-+	help
-+	  Complie in platform device definition for Watchdog Timer
-+
- config S3C_DEV_NAND
- 	bool
- 	help
-diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-index 0ad820a..0a92369 100644
---- a/arch/arm/plat-samsung/Makefile
-+++ b/arch/arm/plat-samsung/Makefile
-@@ -40,6 +40,7 @@ obj-$(CONFIG_S3C_DEV_FB)	+= dev-fb.o
- obj-y				+= dev-uart.o
- obj-$(CONFIG_S3C_DEV_USB_HOST)	+= dev-usb.o
- obj-$(CONFIG_S3C_DEV_USB_HSOTG)	+= dev-usb-hsotg.o
-+obj-$(CONFIG_S3C_DEV_WDT)	+= dev-wdt.o
- obj-$(CONFIG_S3C_DEV_NAND)	+= dev-nand.o
- 
- # DMA support
-diff --git a/arch/arm/plat-samsung/dev-wdt.c b/arch/arm/plat-samsung/dev-wdt.c
-new file mode 100644
-index 0000000..5efca87
---- /dev/null
-+++ b/arch/arm/plat-samsung/dev-wdt.c
-@@ -0,0 +1,40 @@
-+/* linux/arch/arm/plat-samsung/dev-wdt.c
-+ *
-+ * Copyright (c) 2004 Simtec Electronics
-+ *	Ben Dooks <ben@simtec.co.uk>
-+ *
-+ * S3C series device definition for the watchdog timer
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+
-+#include <mach/irqs.h>
-+#include <mach/map.h>
-+
-+#include <plat/devs.h>
-+
-+static struct resource s3c_wdt_resource[] = {
-+	[0] = {
-+		.start	= S3C_PA_WDT,
-+		.end	= S3C_PA_WDT + SZ_1M - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start	= IRQ_WDT,
-+		.end	= IRQ_WDT,
-+		.flags	= IORESOURCE_IRQ,
-+	}
-+};
-+
-+struct platform_device s3c_device_wdt = {
-+	.name		= "s3c2410-wdt",
-+	.id		= -1,
-+	.num_resources	= ARRAY_SIZE(s3c_wdt_resource),
-+	.resource	= s3c_wdt_resource,
-+};
-+EXPORT_SYMBOL(s3c_device_wdt);
--- 
-1.6.5.2
+e1xydGYxXGFuc2lcYW5zaWNwZzEyNTJcZGVmZjBcZGVmbGFuZzEwMzN7XCpcZ2VuZXJhdG9y
+IE1zZnRlZGl0IDMuMC4zMS43ODU0O317XGZvbnR0Ymx7XGYwXGZuaWxcZmNoYXJzZXQwIENh
+bGlicmk7fX0NCntcKlxnZW5lcmF0b3IgTXNmdGVkaXQgMy4wLjMxLjc4NTQ7fXtcY29sb3J0
+YmwgO1xyZWQwXGdyZWVuMFxibHVlMjU1O1xyZWQxOTJcZ3JlZW44MFxibHVlNzc7XHJlZDBc
+Z3JlZW4xNzZcYmx1ZTgwO1xyZWQyMDRcZ3JlZW4xODBcYmx1ZTA7XHJlZDI1NVxncmVlbjBc
+Ymx1ZTA7XHJlZDIyM1xncmVlbjIwNlxibHVlNDtccmVkMTU1XGdyZWVuMFxibHVlMjExO1xy
+ZWQ3OVxncmVlbjEyOVxibHVlMTg5O1xyZWQxNjVcZ3JlZW4xNjVcYmx1ZTE2NTtccmVkMTI4
+XGdyZWVuMTU4XGJsdWUxOTQ7XHJlZDI0N1xncmVlbjE1MFxibHVlNzA7XHJlZDBcZ3JlZW43
+N1xibHVlMTg3O1xyZWQ3NVxncmVlbjE3MlxibHVlMTk4O1xyZWQyMjFcZ3JlZW4xMzJcYmx1
+ZTEzMjtccmVkNTFcZ3JlZW41MVxibHVlNTE7XHJlZDE1OFxncmVlbjEyNFxibHVlMTI0O1xy
+ZWQxNTVcZ3JlZW4xODdcYmx1ZTg5O30NCntcKlxnZW5lcmF0b3IgTXNmdGVkaXQgMy4wLjMx
+Ljc4NTQ7fVx2aWV3a2luZDRcdWMxXHBhcmRcc2EyMDBcc2wyNzZcc2xtdWx0MVxsYW5nOVxm
+MFxmczMye1xmaWVsZHtcKlxmbGRpbnN0e0hZUEVSTElOSyAiaHtcKlxkZCAzLjAuMzEuNzg1
+NDt9dHRwOi8vd3d3LmthNzcucnUifX17XGZsZHJzbHR7XHVsXGNmMSBodHRwOi8vd3d3Lmth
+NzcucnV9fX1cZjBcY2YxXGJcZnMzMiAgLSBPcmRlciB0aGUgY2hlYXBlc3QgbWVkaWNhdGlv
+bnMgbm93IVxwYXINClZpYWdyYSBcY2Y0IENpYWxpcyBcY2YzIFZpYWdyYSBQcm9mZXNzaW9u
+YWwgXGNmNSBDaWFsaXMgUHJvZmVzc2lvbmFsIFxjZjYgVmlhZ3JhIFN1cGVyIEFjdGl2ZSsg
+XGNmMyBDaWFsaXMgU3VwZXIgQWN0aXZlKyBcY2Y3IExldml0cmFcY2YwICBcY2Y4IFZpYWdy
+YSBTb2Z0IFRhYnMgXGNmOSBDaWFsaXMgU29mdCBUYWJzXGNmMTAgIFxjZjExIExldml0cmEg
+UHJvZmVzc2lvbmFsIFxjZjQgRmVtYWxlIFZpYWdyYSBcY2YxMiBQcm9wZWNpYSBcY2Y3IEFj
+b21wbGlhIFxjZjYgWGVuaWNhbFxjZjAgIFxjZjUgQnJhbmQgTGV2aXRyYSBcY2YxMyBGZW1h
+bGUgQ2lhbGlzIFxjZjE0IExldml0cmEgU3VwZXIgQWN0aXZlKyBcY2YxNSBUYW1pZmx1XGNm
+MCAgXGNmNyBWUFhMXGNmMCAgXGNmMTYgVmlhZ3JhIFNvZnQgRmxhdm91cmVkIFxjZjUgQnJh
+bmQgVmlhZ3JhIFxjZjE3IEJyYW5kIENpYWxpc1xjZjANCntcKlxnZW5lcmF0b3IgTXNmdGVk
+aXQgMy4wLjMxLjc4NTQ7fX0=
