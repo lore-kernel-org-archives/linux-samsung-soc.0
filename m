@@ -1,74 +1,107 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH 8/8] ARM: SAMSUNG: gpio-cfg.h: update documentation
-Date: Mon, 24 May 2010 04:30:09 +0100
-Message-ID: <1274671809-9821-9-git-send-email-ben-linux@fluff.org>
+Subject: [PATCH 7/8] ARM: SAMSUNG: Documentation: add documentation on GPIO code
+Date: Mon, 24 May 2010 04:30:08 +0100
+Message-ID: <1274671809-9821-8-git-send-email-ben-linux@fluff.org>
 References: <1274671809-9821-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:54809 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:54819 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756047Ab0EXDaN (ORCPT
+	id S1756047Ab0EXDaS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 23 May 2010 23:30:13 -0400
+	Sun, 23 May 2010 23:30:18 -0400
 In-Reply-To: <1274671809-9821-1-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Ben Dooks <ben-linux@fluff.org>
 
-Update the documentation on the gpio configuration calls to add more
-references to useful information and also to document the values that
-are passed.
+Add some documentation in Documentation/arm/Samsung for the GPIO code
+and where to look for the necessary functions. Update the S3C24XX case
+as well.
 
 Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/plat-samsung/include/plat/gpio-cfg.h |   21 +++++++++++++++++++++
- 1 files changed, 21 insertions(+), 0 deletions(-)
+ Documentation/arm/Samsung-S3C24XX/GPIO.txt     |    2 +
+ Documentation/arm/Samsung-S3C24XX/Overview.txt |    4 ++
+ Documentation/arm/Samsung/GPIO.txt             |   42 ++++++++++++++++++++++++
+ 3 files changed, 48 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/arm/Samsung/GPIO.txt
 
-diff --git a/arch/arm/plat-samsung/include/plat/gpio-cfg.h b/arch/arm/plat-samsung/include/plat/gpio-cfg.h
-index 4683823..db4112c 100644
---- a/arch/arm/plat-samsung/include/plat/gpio-cfg.h
-+++ b/arch/arm/plat-samsung/include/plat/gpio-cfg.h
-@@ -43,6 +43,11 @@ struct s3c_gpio_chip;
-  * layouts. Provide an point to vector control routine and provide any
-  * per-bank configuration information that other systems such as the
-  * external interrupt code will need.
-+ *
-+ * @sa s3c_gpio_cfgpin
-+ * @sa s3c_gpio_getcfg
-+ * @sa s3c_gpio_setpull
-+ * @sa s3c_gpio_getpull
-  */
- struct s3c_gpio_cfg {
- 	unsigned int	cfg_eint;
-@@ -75,6 +80,20 @@ struct s3c_gpio_cfg {
-  * Configure which function is actually connected to the external
-  * pin, such as an gpio input, output or some form of special function
-  * connected to an internal peripheral block.
-+ *
-+ * The @to parameter can be one of the generic S3C_GPIO_INPUT, S3C_GPIO_OUTPUT
-+ * or S3C_GPIO_SFN() to indicate one of the possible values that the helper
-+ * will then generate the correct bit mask and shift for the configuration.
-+ *
-+ * If a bank of GPIOs all needs to be set to special-function 2, then
-+ * the following code will work:
-+ *
-+ *	for (gpio = start; gpio < end; gpio++)
-+ *		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
-+ *
-+ * The @to parameter can also be a specific value already shifted to the
-+ * correct position in the control register, although these are discouraged
-+ * in newer kernels and are only being kept for compatibility.
-  */
- extern int s3c_gpio_cfgpin(unsigned int pin, unsigned int to);
+diff --git a/Documentation/arm/Samsung-S3C24XX/GPIO.txt b/Documentation/arm/Samsung-S3C24XX/GPIO.txt
+index 228ecb6..816d607 100644
+--- a/Documentation/arm/Samsung-S3C24XX/GPIO.txt
++++ b/Documentation/arm/Samsung-S3C24XX/GPIO.txt
+@@ -12,6 +12,8 @@ Introduction
+   of the s3c2410 GPIO system, please read the Samsung provided
+   data-sheet/users manual to find out the complete list.
  
-@@ -108,6 +127,8 @@ extern unsigned s3c_gpio_getcfg(unsigned int pin);
-  * This function sets the state of the pull-{up,down} resistor for the
-  * specified pin. It will return 0 if successfull, or a negative error
-  * code if the pin cannot support the requested pull setting.
-+ *
-+ * @pull is one of S3C_GPIO_PULL_NONE, S3C_GPIO_PULL_DOWN or S3C_GPIO_PULL_UP.
- */
- extern int s3c_gpio_setpull(unsigned int pin, s3c_gpio_pull_t pull);
++  See Documentation/arm/Samsung/GPIO.txt for the core implemetation.
++
  
+ GPIOLIB
+ -------
+diff --git a/Documentation/arm/Samsung-S3C24XX/Overview.txt b/Documentation/arm/Samsung-S3C24XX/Overview.txt
+index 0f11fcc..c12bfc1 100644
+--- a/Documentation/arm/Samsung-S3C24XX/Overview.txt
++++ b/Documentation/arm/Samsung-S3C24XX/Overview.txt
+@@ -218,6 +218,10 @@ GPIO
+   As of v2.6.34, the move towards using gpiolib support is almost
+   complete, and very little of the old calls are left.
+ 
++  See Documentation/arm/Samsung-S3C24XX/GPIO.txt for the S3C24XX specific
++  support and Documentation/arm/Samsung/GPIO.txt for the core Samsung
++  implementation.
++
+ 
+ Clock Management
+ ----------------
+diff --git a/Documentation/arm/Samsung/GPIO.txt b/Documentation/arm/Samsung/GPIO.txt
+new file mode 100644
+index 0000000..05850c6
+--- /dev/null
++++ b/Documentation/arm/Samsung/GPIO.txt
+@@ -0,0 +1,42 @@
++		Samsung GPIO implementation
++		===========================
++
++Introduction
++------------
++
++This outlines the Samsung GPIO implementation and the architecture
++specfic calls provided alongisde the drivers/gpio core.
++
++
++S3C24XX (Legacy)
++----------------
++
++See Documentation/arm/Samsung-S3C24XX/GPIO.txt for more information
++about these devices. Their implementation is being brought into line
++with the core samsung implementation described in this document.
++
++
++GPIOLIB integration
++-------------------
++
++The gpio implementation uses gpiolib as much as possible, only providing
++specific calls for the items that require Samsung specific handling, such
++as pin special-function or pull resistor control.
++
++GPIO numbering is synchronised between the Samsung and gpiolib system.
++
++
++PIN configuration
++-----------------
++
++Pin configuration is specific to the Samsung architecutre, with each SoC
++registering the necessary information for the core gpio configuration
++implementation to configure pins as necessary.
++
++The s3c_gpio_cfgpin() and s3c_gpio_setpull() provide the means for a
++driver or machine to change gpio configuration.
++
++See arch/arm/plat-samsung/include/plat/gpio-cfg.h for more information
++on these functions.
++
++
 -- 
 1.6.3.3
