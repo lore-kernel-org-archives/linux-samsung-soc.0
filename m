@@ -1,81 +1,107 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: WARNING about next merge window (Re: samsung merge window over)
-Date: Tue, 25 May 2010 09:00:31 +0100
-Message-ID: <20100525080031.GA11543@n2100.arm.linux.org.uk>
-References: <20100525044214.GE7248@trinity.fluff.org> <004b01cafbce$7b249430$716dbc90$%kim@samsung.com> <20100525073124.GA11051@n2100.arm.linux.org.uk> <20100525073454.GF7248@trinity.fluff.org>
+From: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Subject: Re: [PATCH 3/6] USB: s3c-hsotg: Ensure TX FIFO addresses setup
+	when initialising FIFOs
+Date: Tue, 25 May 2010 09:20:06 +0100
+Message-ID: <20100525082006.GA4720@trinity.fluff.org>
+References: <1274762213-3404-1-git-send-email-ben-linux@fluff.org> <1274762213-3404-2-git-send-email-ben-linux@fluff.org> <1274762213-3404-3-git-send-email-ben-linux@fluff.org> <1274762213-3404-4-git-send-email-ben-linux@fluff.org> <AANLkTin6EEiXOGyZjmOEd39g_eUxGBJEV2yMdnwtAQbh@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:52126 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751015Ab0EYIA4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 May 2010 04:00:56 -0400
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20100525073454.GF7248@trinity.fluff.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <AANLkTin6EEiXOGyZjmOEd39g_eUxGBJEV2yMdnwtAQbh-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Maulik Mankad <mankad.maulik-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Linux Samsung SoC' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
 
-On Tue, May 25, 2010 at 08:34:54AM +0100, Ben Dooks wrote:
-> On Tue, May 25, 2010 at 08:31:24AM +0100, Russell King - ARM Linux wrote:
-> > On Tue, May 25, 2010 at 02:52:29PM +0900, Kukjin Kim wrote:
-> > > Ben Dooks wrote:
-> > > > 
-> > > > Thankyou to all who contributed to this round of updates, I am officially
-> > > > calling the end of any new development work for this merge window.
-> > > > 
-> > > > Special thanks to all at Samsung for their help.
-> > > > 
-> > > > I will now be preparing a defconfig, documentation and any other bugfixes
-> > > > tree to send to Linus as soon as possible.
-> > > > 
-> > > > As a note, this is the shortlog of the patches merged via my tree:
-> > > 
-> > > Thanks for your review and merging.
-> > > 
-> > > And ok, we will continue our development and submit patches for the next
-> > > merge window. Also, if we find any issues, we will submit patches for those
-> > > also.
-> > 
-> > The impression I have is that Samsung folk waited for the merge window
-> > before sending their patches to the mailing list - there have been
-> > about 320 messages attributable to 'samsung' or 's3' subjects since the
-> > merge window opened.
-> > 
-> > This is excessive, and isn't really practical - it swamps the mailing
-> > list and makes it very easy to miss more relevant stuff during the
-> > merge window.
-> 
-> Yes, agreed. I have made the point to them again that this is too late
-> in the development cycle. Unforunately due to the 'fun' with uk airspace
-> my visit here was dealyed by nearly three weeks, which has left us with
-> too little time.
+On Tue, May 25, 2010 at 11:00:39AM +0530, Maulik Mankad wrote:
+> On Tue, May 25, 2010 at 10:06 AM, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org> wro=
+te:
+> > Some versions of the S3C HS OtG block startup with overlapping TX F=
+IFO
+> > information, so change the fifo_init code to ensure that known valu=
+es
+> > are set into the FIFO registers at initialisation/reset time.
+> >
+> > This also ensures that the FIFO RAM pointers are in a known state
+> > before use.
+> >
+> > Signed-off-by: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+> > ---
+> > =A0drivers/usb/gadget/s3c-hsotg.c | =A0 25 ++++++++++++++++++++++++=
++
+> > =A01 files changed, 25 insertions(+), 0 deletions(-)
+> >
+> > diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3=
+c-hsotg.c
+> > index dce9366..2ee75a7 100644
+> > --- a/drivers/usb/gadget/s3c-hsotg.c
+> > +++ b/drivers/usb/gadget/s3c-hsotg.c
+> > @@ -298,6 +298,11 @@ static void s3c_hsotg_ctrl_epint(struct s3c_hs=
+otg *hsotg,
+> > =A0*/
+> > =A0static void s3c_hsotg_init_fifo(struct s3c_hsotg *hsotg)
+> > =A0{
+> > + =A0 =A0 =A0 unsigned int ep;
+> > + =A0 =A0 =A0 unsigned int addr;
+> > + =A0 =A0 =A0 unsigned int size;
+> > + =A0 =A0 =A0 u32 val;
+> > +
+> > =A0 =A0 =A0 =A0/* the ryu 2.6.24 release ahs
+> > =A0 =A0 =A0 =A0 =A0 writel(0x1C0, hsotg->regs + S3C_GRXFSIZ);
+> > =A0 =A0 =A0 =A0 =A0 writel(S3C_GNPTXFSIZ_NPTxFStAddr(0x200) |
+> > @@ -311,6 +316,26 @@ static void s3c_hsotg_init_fifo(struct s3c_hso=
+tg *hsotg)
+> > =A0 =A0 =A0 =A0writel(S3C_GNPTXFSIZ_NPTxFStAddr(2048) |
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 S3C_GNPTXFSIZ_NPTxFDep(0x1C0),
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 hsotg->regs + S3C_GNPTXFSIZ);
+> > +
+> > + =A0 =A0 =A0 /* arange all the rest of the TX FIFOs, as some versi=
+ons of this
+> > + =A0 =A0 =A0 =A0* block have overlapping default addresses. This a=
+lso ensures
+> > + =A0 =A0 =A0 =A0* that if the settings have been changed, then the=
+y are set to
+> > + =A0 =A0 =A0 =A0* known values. */
+>=20
+> Please see Documentation/CodingStyle for multi-line comments.
+>=20
+> > +
+> > + =A0 =A0 =A0 /* start at the end of the GNPTXFSIZ, rounded up */
+> > + =A0 =A0 =A0 addr =3D 2048 + 1024;
+> > + =A0 =A0 =A0 size =3D 768;
+> > +
+> > + =A0 =A0 =A0 /* currently we allocate TX FIFOs for all possible en=
+dpoints,
+> > + =A0 =A0 =A0 =A0* and assume that they are all the same size. */
+>=20
+> Same here.
+>=20
+> > +
+> > + =A0 =A0 =A0 for (ep =3D 0; ep <=3D 15; ep++) {
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D addr;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val |=3D size << S3C_DPTXFSIZn_DPTxFS=
+ize_SHIFT;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 addr +=3D size;
+> > +
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val, hsotg->regs + S3C_DPTXFSI=
+Zn(ep));
+> > + =A0 =A0 =A0 }
+> > =A0}
+>=20
+> Regards,
+> Maulik
 
-Volcanic ash doesn't stop email working - or patches being reviewed.
+ok, fixed both,
 
-> > So, please send the majority of patches *before* the merge window and
-> > try to avoid sending anything but fixes during the merge window itself.
-> > The merge window is for code which has _already_ been merged and has
-> > been in linux-next to be merged into Linus' tree.  It's not for new
-> > code to be reviewed.
-> 
-> Next merge window, which will probably be the last I will handle for the
-> S5P range, will have an earlier cut-off point. It was a big rush to get
-> this lot reviewed and merged.
+--=20
+Ben
 
-It also means that *NONE* of the stuff in your second pull request was
-in linux-next for *any* time.  It also conflicted with my tree.  The
-result of that is I'm expecting mainline to be dead for all ARM with:
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
 
-arch/arm/Kconfig:883: can't open file "arch/arm/plat-s5pc1xx/Kconfig"
-
-because of a mis-merge - and since that conflict was not picked up by
-linux-next, it could not have been previously published.
-
-For the next merge window, I will avoid reading email for the duration
-of the window - which means those who are late for the merge window will
-simply not have their patches and trees pulled.  This means we _will_
-have time to resolve conflicts and find problems _before_ the merge
-window.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
