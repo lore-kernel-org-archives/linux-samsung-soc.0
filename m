@@ -1,98 +1,95 @@
-From: Maulik Mankad <mankad.maulik@gmail.com>
-Subject: Re: [PATCH 3/6] USB: s3c-hsotg: Ensure TX FIFO addresses setup when
-	initialising FIFOs
-Date: Tue, 25 May 2010 11:00:39 +0530
-Message-ID: <AANLkTin6EEiXOGyZjmOEd39g_eUxGBJEV2yMdnwtAQbh@mail.gmail.com>
+From: Maulik Mankad <mankad.maulik-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 5/6] USB: s3c-hsotg: Ensure FIFOs are fully flushed after
+	layout
+Date: Tue, 25 May 2010 11:02:31 +0530
+Message-ID: <AANLkTilUDC37-PJOL5vuM-sd6QTOQNyBFIkkrAUp0RtX@mail.gmail.com>
 References: <1274762213-3404-1-git-send-email-ben-linux@fluff.org>
 	 <1274762213-3404-2-git-send-email-ben-linux@fluff.org>
 	 <1274762213-3404-3-git-send-email-ben-linux@fluff.org>
 	 <1274762213-3404-4-git-send-email-ben-linux@fluff.org>
+	 <1274762213-3404-5-git-send-email-ben-linux@fluff.org>
+	 <1274762213-3404-6-git-send-email-ben-linux@fluff.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gw0-f46.google.com ([74.125.83.46]:62757 "EHLO
-	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754745Ab0EYFak convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 May 2010 01:30:40 -0400
-In-Reply-To: <1274762213-3404-4-git-send-email-ben-linux@fluff.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1274762213-3404-6-git-send-email-ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
 
-On Tue, May 25, 2010 at 10:06 AM, Ben Dooks <ben-linux@fluff.org> wrote=
+On Tue, May 25, 2010 at 10:06 AM, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org> wrote=
 :
-> Some versions of the S3C HS OtG block startup with overlapping TX FIF=
-O
-> information, so change the fifo_init code to ensure that known values
-> are set into the FIFO registers at initialisation/reset time.
+> According to the design guide, if the FIFO layout is changed, then th=
+e
+> FIFOs must be flushed to ensure all FIFO pointers are correct.
 >
-> This also ensures that the FIFO RAM pointers are in a known state
-> before use.
->
-> Signed-off-by: Ben Dooks <ben-linux@fluff.org>
+> Signed-off-by: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
 > ---
-> =A0drivers/usb/gadget/s3c-hsotg.c | =A0 25 +++++++++++++++++++++++++
-> =A01 files changed, 25 insertions(+), 0 deletions(-)
+> =A0drivers/usb/gadget/s3c-hsotg.c | =A0 26 ++++++++++++++++++++++++++
+> =A01 files changed, 26 insertions(+), 0 deletions(-)
 >
 > diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-=
 hsotg.c
-> index dce9366..2ee75a7 100644
+> index 8ed4f8a..0cb0462 100644
 > --- a/drivers/usb/gadget/s3c-hsotg.c
 > +++ b/drivers/usb/gadget/s3c-hsotg.c
-> @@ -298,6 +298,11 @@ static void s3c_hsotg_ctrl_epint(struct s3c_hsot=
-g *hsotg,
-> =A0*/
-> =A0static void s3c_hsotg_init_fifo(struct s3c_hsotg *hsotg)
-> =A0{
-> + =A0 =A0 =A0 unsigned int ep;
-> + =A0 =A0 =A0 unsigned int addr;
-> + =A0 =A0 =A0 unsigned int size;
-> + =A0 =A0 =A0 u32 val;
-> +
+> @@ -301,6 +301,7 @@ static void s3c_hsotg_init_fifo(struct s3c_hsotg =
+*hsotg)
+> =A0 =A0 =A0 =A0unsigned int ep;
+> =A0 =A0 =A0 =A0unsigned int addr;
+> =A0 =A0 =A0 =A0unsigned int size;
+> + =A0 =A0 =A0 int timeout;
+> =A0 =A0 =A0 =A0u32 val;
+>
 > =A0 =A0 =A0 =A0/* the ryu 2.6.24 release ahs
-> =A0 =A0 =A0 =A0 =A0 writel(0x1C0, hsotg->regs + S3C_GRXFSIZ);
-> =A0 =A0 =A0 =A0 =A0 writel(S3C_GNPTXFSIZ_NPTxFStAddr(0x200) |
-> @@ -311,6 +316,26 @@ static void s3c_hsotg_init_fifo(struct s3c_hsotg=
+> @@ -336,6 +337,31 @@ static void s3c_hsotg_init_fifo(struct s3c_hsotg=
  *hsotg)
-> =A0 =A0 =A0 =A0writel(S3C_GNPTXFSIZ_NPTxFStAddr(2048) |
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 S3C_GNPTXFSIZ_NPTxFDep(0x1C0),
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 hsotg->regs + S3C_GNPTXFSIZ);
+>
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0writel(val, hsotg->regs + S3C_DPTXFSIZ=
+n(ep));
+> =A0 =A0 =A0 =A0}
 > +
-> + =A0 =A0 =A0 /* arange all the rest of the TX FIFOs, as some version=
-s of this
-> + =A0 =A0 =A0 =A0* block have overlapping default addresses. This als=
-o ensures
-> + =A0 =A0 =A0 =A0* that if the settings have been changed, then they =
-are set to
-> + =A0 =A0 =A0 =A0* known values. */
+> + =A0 =A0 =A0 /* according to p428 of the design guide, we need to en=
+sure that
+> + =A0 =A0 =A0 =A0* all fifos are flushed before continuing */
 
 Please see Documentation/CodingStyle for multi-line comments.
 
 > +
-> + =A0 =A0 =A0 /* start at the end of the GNPTXFSIZ, rounded up */
-> + =A0 =A0 =A0 addr =3D 2048 + 1024;
-> + =A0 =A0 =A0 size =3D 768;
+> + =A0 =A0 =A0 writel(S3C_GRSTCTL_TxFNum(0x10) | S3C_GRSTCTL_TxFFlsh |
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0S3C_GRSTCTL_RxFFlsh, hsotg->regs + S3C_G=
+RSTCTL);
 > +
-> + =A0 =A0 =A0 /* currently we allocate TX FIFOs for all possible endp=
-oints,
-> + =A0 =A0 =A0 =A0* and assume that they are all the same size. */
-
-Same here.
-
+> + =A0 =A0 =A0 /* wait until the fifos are both flushed */
+> + =A0 =A0 =A0 timeout =3D 100;
+> + =A0 =A0 =A0 while (1) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D readl(hsotg->regs + S3C_GRSTCTL=
+);
 > +
-> + =A0 =A0 =A0 for (ep =3D 0; ep <=3D 15; ep++) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D addr;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val |=3D size << S3C_DPTXFSIZn_DPTxFSiz=
-e_SHIFT;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 addr +=3D size;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if ((val & (S3C_GRSTCTL_TxFFlsh | S3C_G=
+RSTCTL_RxFFlsh)) =3D=3D 0)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
 > +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val, hsotg->regs + S3C_DPTXFSIZn=
-(ep));
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (--timeout =3D=3D 0) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(hsotg->dev,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "%s: ti=
+meout flushing fifos (GRSTCTL=3D%08x)\n",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 __func_=
+_, val);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 udelay(1);
 > + =A0 =A0 =A0 }
+> +
+> + =A0 =A0 =A0 dev_dbg(hsotg->dev, "FIFOs reset, timeout at %d\n", tim=
+eout);
 > =A0}
 
 Regards,
 Maulik
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
