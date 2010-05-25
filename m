@@ -1,95 +1,67 @@
-From: Maulik Mankad <mankad.maulik-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 5/6] USB: s3c-hsotg: Ensure FIFOs are fully flushed after
-	layout
-Date: Tue, 25 May 2010 11:02:31 +0530
-Message-ID: <AANLkTilUDC37-PJOL5vuM-sd6QTOQNyBFIkkrAUp0RtX@mail.gmail.com>
-References: <1274762213-3404-1-git-send-email-ben-linux@fluff.org>
-	 <1274762213-3404-2-git-send-email-ben-linux@fluff.org>
-	 <1274762213-3404-3-git-send-email-ben-linux@fluff.org>
-	 <1274762213-3404-4-git-send-email-ben-linux@fluff.org>
-	 <1274762213-3404-5-git-send-email-ben-linux@fluff.org>
-	 <1274762213-3404-6-git-send-email-ben-linux@fluff.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH] ARM: S5P: Fix the platform external interrupt issues.
+Date: Tue, 25 May 2010 07:45:43 +0200
+Message-ID: <019e01cafbcd$8640c6a0$92c253e0$%szyprowski@samsung.com>
+References: <1274687063-748-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1274762213-3404-6-git-send-email-ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:37228 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752835Ab0EYFqZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 25 May 2010 01:46:25 -0400
+Received: from epmmp2 (mailout4.samsung.com [203.254.224.34])
+ by mailout1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L2Y00AZ9O1BY6@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 25 May 2010 14:46:23 +0900 (KST)
+Received: from AMDC159 ([106.116.37.153])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L2Y00M9VO170D@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 25 May 2010 14:46:23 +0900 (KST)
+In-reply-to: <1274687063-748-1-git-send-email-kgene.kim@samsung.com>
+Content-language: pl
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, 'Pannaga Bhushan' <p.bhushan@samsung.com>
 
-On Tue, May 25, 2010 at 10:06 AM, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org> wrote=
-:
-> According to the design guide, if the FIFO layout is changed, then th=
-e
-> FIFOs must be flushed to ensure all FIFO pointers are correct.
->
-> Signed-off-by: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Hello,
+
+On Monday, May 24, 2010 9:44 AM Kukjin Kim wrote:
+
+> From: Pannaga Bhushan <p.bhushan@samsung.com>
+> 
+> This patch does the following:
+> 
+> 1. Corrects the common platform code for external interrupts for using the
+>    VIC mask/unmask bits also.
+> 2. Moves the common defines related to external interrupt for plat-s5p
+>    to common files.
+> 3. Based on the new common defines, corresponding changes are made in the
+>    affected platforms (S5P6440, S5P6442 and S5PC100).
+> 
+> Signed-off-by: Pannaga Bhushan <p.bhushan@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > ---
-> =A0drivers/usb/gadget/s3c-hsotg.c | =A0 26 ++++++++++++++++++++++++++
-> =A01 files changed, 26 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-=
-hsotg.c
-> index 8ed4f8a..0cb0462 100644
-> --- a/drivers/usb/gadget/s3c-hsotg.c
-> +++ b/drivers/usb/gadget/s3c-hsotg.c
-> @@ -301,6 +301,7 @@ static void s3c_hsotg_init_fifo(struct s3c_hsotg =
-*hsotg)
-> =A0 =A0 =A0 =A0unsigned int ep;
-> =A0 =A0 =A0 =A0unsigned int addr;
-> =A0 =A0 =A0 =A0unsigned int size;
-> + =A0 =A0 =A0 int timeout;
-> =A0 =A0 =A0 =A0u32 val;
->
-> =A0 =A0 =A0 =A0/* the ryu 2.6.24 release ahs
-> @@ -336,6 +337,31 @@ static void s3c_hsotg_init_fifo(struct s3c_hsotg=
- *hsotg)
->
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0writel(val, hsotg->regs + S3C_DPTXFSIZ=
-n(ep));
-> =A0 =A0 =A0 =A0}
-> +
-> + =A0 =A0 =A0 /* according to p428 of the design guide, we need to en=
-sure that
-> + =A0 =A0 =A0 =A0* all fifos are flushed before continuing */
+>  arch/arm/mach-s5p6440/include/mach/irqs.h      |    9 ++++++++-
+>  arch/arm/mach-s5p6442/include/mach/irqs.h      |    5 +++--
+>  arch/arm/mach-s5pc100/include/mach/irqs.h      |    3 ---
+>  arch/arm/mach-s5pv210/include/mach/irqs.h      |   14 ++------------
+>  arch/arm/mach-s5pv210/include/mach/regs-gpio.h |   14 +++++++++-----
+>  arch/arm/plat-s5p/Kconfig                      |    1 +
+>  arch/arm/plat-s5p/include/plat/irqs.h          |    7 +++++++
+>  arch/arm/plat-s5p/irq-eint.c                   |   15 ++++++++++-----
+>  8 files changed, 40 insertions(+), 28 deletions(-)
 
-Please see Documentation/CodingStyle for multi-line comments.
+This patch lacks a fix for arch/arm/mach-s5pc100/include/mach/regs-gpio.h
+file. It should revert the changes from commit 45c79433c02b8fe7b8a1cbf6054
+to that file. Without it the external interrupt 16..31 does not work on
+S5PC100.
 
-> +
-> + =A0 =A0 =A0 writel(S3C_GRSTCTL_TxFNum(0x10) | S3C_GRSTCTL_TxFFlsh |
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0S3C_GRSTCTL_RxFFlsh, hsotg->regs + S3C_G=
-RSTCTL);
-> +
-> + =A0 =A0 =A0 /* wait until the fifos are both flushed */
-> + =A0 =A0 =A0 timeout =3D 100;
-> + =A0 =A0 =A0 while (1) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D readl(hsotg->regs + S3C_GRSTCTL=
-);
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if ((val & (S3C_GRSTCTL_TxFFlsh | S3C_G=
-RSTCTL_RxFFlsh)) =3D=3D 0)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (--timeout =3D=3D 0) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(hsotg->dev,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "%s: ti=
-meout flushing fifos (GRSTCTL=3D%08x)\n",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 __func_=
-_, val);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 udelay(1);
-> + =A0 =A0 =A0 }
-> +
-> + =A0 =A0 =A0 dev_dbg(hsotg->dev, "FIFOs reset, timeout at %d\n", tim=
-eout);
-> =A0}
-
-Regards,
-Maulik
+Best regards
 --
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Marek Szyprowski
+Samsung Poland R&D Center
