@@ -1,39 +1,38 @@
 From: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Subject: [PATCH 02/11] USB: s3c_hsotg: define USB_GADGET_DUALSPEED in Kconfig
-Date: Wed, 26 May 2010 05:09:20 +0100
-Message-ID: <1274846966-23247-3-git-send-email-ben-linux@fluff.org>
+Subject: [PATCH 04/11] USB: s3c-hsotg: SoftDisconnect minimum 3ms
+Date: Wed, 26 May 2010 05:09:22 +0100
+Message-ID: <1274846966-23247-5-git-send-email-ben-linux@fluff.org>
 References: <1274846966-23247-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1274846966-23247-1-git-send-email-ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
 Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Maurus Cuelenaere <mcuelenaere-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Maurus Cuelenaere <mcuelenaere-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+The shortest period SoftDisconnect can be asserted for is 3 milliseconds
+according to the V210 datasheet, so ensure that we add an msleep() to
+the registration code to enforce this.
 
-The s3c_hsotg driver sets usb_gadget->is_dualspeed to 1, yet it doesn't define
-USB_GADGET_DUALSPEED in Kconfig. This triggers a NULL pointer dereference in
-the composite driver (which is fixed in another patch).
-
-Signed-off-by: Maurus Cuelenaere <mcuelenaere-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Signed-off-by: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
 ---
- drivers/usb/gadget/Kconfig |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+ drivers/usb/gadget/s3c-hsotg.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/usb/gadget/Kconfig b/drivers/usb/gadget/Kconfig
-index 649c0c5..591ae9f 100644
---- a/drivers/usb/gadget/Kconfig
-+++ b/drivers/usb/gadget/Kconfig
-@@ -295,6 +295,7 @@ config USB_GADGET_S3C_HSOTG
- 	boolean "S3C HS/OtG USB Device controller"
- 	depends on S3C_DEV_USB_HSOTG
- 	select USB_GADGET_S3C_HSOTG_PIO
-+	select USB_GADGET_DUALSPEED
- 	help
- 	  The Samsung S3C64XX USB2.0 high-speed gadget controller
- 	  integrated into the S3C64XX series SoC.
+diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
+index ed306ec..215beae 100644
+--- a/drivers/usb/gadget/s3c-hsotg.c
++++ b/drivers/usb/gadget/s3c-hsotg.c
+@@ -2602,6 +2602,9 @@ int usb_gadget_register_driver(struct usb_gadget_driver *driver)
+ 	writel(S3C_DCTL_CGOUTNak | S3C_DCTL_CGNPInNAK,
+ 	       hsotg->regs + S3C_DCTL);
+ 
++	/* must be at-least 3ms to allow bus to see disconnect */
++	msleep(3);
++
+ 	/* remove the soft-disconnect and let's go */
+ 	__bic32(hsotg->regs + S3C_DCTL, S3C_DCTL_SftDiscon);
+ 
 -- 
 1.6.3.3
 
