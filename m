@@ -1,72 +1,66 @@
-From: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Subject: [PATCH 05/11] USB: s3c-hsotg: Ensure FIFOs are fully flushed after layout
-Date: Wed, 26 May 2010 05:09:23 +0100
-Message-ID: <1274846966-23247-6-git-send-email-ben-linux@fluff.org>
-References: <1274846966-23247-1-git-send-email-ben-linux@fluff.org>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1274846966-23247-1-git-send-email-ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: request pull of bjdooks' for-linus/2634-git-updates
+Date: Wed, 26 May 2010 11:16:59 +0100
+Message-ID: <20100526101659.GH4720@trinity.fluff.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from trinity.fluff.org ([89.16.178.74]:49012 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757160Ab0EZKRQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 26 May 2010 06:17:16 -0400
+Content-Disposition: inline
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: torvalds@linux-foundation.org
+Cc: linux-arm-kernel@lists.infradead.org, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
 
-According to the design guide, if the FIFO layout is changed, then the
-FIFOs must be flushed to ensure all FIFO pointers are correct.
+Two cleanups for post merging to mainline and a defconfig update
+for all the defconfigs to bring them up to latest kernel.
 
-Signed-off-by: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
----
- drivers/usb/gadget/s3c-hsotg.c |   27 +++++++++++++++++++++++++++
- 1 files changed, 27 insertions(+), 0 deletions(-)
+The following changes since commit b1cdc4670b9508fcd47a15fbd12f70d269880b37:
+  Linus Torvalds (1):
+        Merge git://git.kernel.org/.../davem/net-2.6
 
-diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
-index 215beae..bce510c 100644
---- a/drivers/usb/gadget/s3c-hsotg.c
-+++ b/drivers/usb/gadget/s3c-hsotg.c
-@@ -301,6 +301,7 @@ static void s3c_hsotg_init_fifo(struct s3c_hsotg *hsotg)
- 	unsigned int ep;
- 	unsigned int addr;
- 	unsigned int size;
-+	int timeout;
- 	u32 val;
- 
- 	/* the ryu 2.6.24 release ahs
-@@ -338,6 +339,32 @@ static void s3c_hsotg_init_fifo(struct s3c_hsotg *hsotg)
- 
- 		writel(val, hsotg->regs + S3C_DPTXFSIZn(ep));
- 	}
-+
-+	/* according to p428 of the design guide, we need to ensure that
-+	 * all fifos are flushed before continuing.
-+	 */
-+
-+	writel(S3C_GRSTCTL_TxFNum(0x10) | S3C_GRSTCTL_TxFFlsh |
-+	       S3C_GRSTCTL_RxFFlsh, hsotg->regs + S3C_GRSTCTL);
-+
-+	/* wait until the fifos are both flushed */
-+	timeout = 100;
-+	while (1) {
-+		val = readl(hsotg->regs + S3C_GRSTCTL);
-+
-+		if ((val & (S3C_GRSTCTL_TxFFlsh | S3C_GRSTCTL_RxFFlsh)) == 0)
-+			break;
-+
-+		if (--timeout == 0) {
-+			dev_err(hsotg->dev,
-+				"%s: timeout flushing fifos (GRSTCTL=%08x)\n",
-+				__func__, val);
-+		}
-+
-+		udelay(1);
-+	}
-+
-+	dev_dbg(hsotg->dev, "FIFOs reset, timeout at %d\n", timeout);
- }
- 
- /**
+are available in the git repository at:
+
+  git://git.fluff.org/bjdooks/linux.git for-linus/2634-git-updates
+
+Ben Dooks (9):
+      ARM: s3c2410_defconfig: Update s3c2410_defconfig to v2.6.34-git
+      ARM: s3c6400_defconfig: Update s3c6400_defconfig to v2.6.34-git
+      ARM: s5p6440_defconfig: Update s5p6440_defconfig to v2.6.34-git
+      ARM: s5p6442_defconfig: Update s5p6442_defconfig to v2.6.34-git
+      ARM: s5pc100_defconfig: Update s5pc100_defconfig to v2.6.34-git
+      ARM: s5pc110_defconfig: Update s5pc110_defconfig to v2.6.34-git
+      ARM: s5pv210_defconfig: Update s5pv210_defconfig to v2.6.34-git
+      ARM: S5PC100: Fixup cross tree merge problems
+      ARM: Merge next-samsung
+
+Pannaga Bhushan (1):
+      ARM: S5P: Fix the platform external interrupt issues.
+
+ arch/arm/configs/s3c2410_defconfig             |   70 ++++++-
+ arch/arm/configs/s3c6400_defconfig             |   35 +++-
+ arch/arm/configs/s5p6440_defconfig             |   29 +++-
+ arch/arm/configs/s5p6442_defconfig             |   24 ++-
+ arch/arm/configs/s5pc100_defconfig             |  233 +++++++++++++++++++-----
+ arch/arm/configs/s5pc110_defconfig             |   30 +++-
+ arch/arm/configs/s5pv210_defconfig             |   33 +++-
+ arch/arm/mach-s5p6440/include/mach/irqs.h      |    9 +-
+ arch/arm/mach-s5p6442/include/mach/irqs.h      |    5 +-
+ arch/arm/mach-s5pc100/include/mach/irqs.h      |    3 -
+ arch/arm/mach-s5pc100/include/mach/regs-gpio.h |    7 +-
+ arch/arm/mach-s5pv210/include/mach/irqs.h      |   14 +--
+ arch/arm/mach-s5pv210/include/mach/regs-gpio.h |   14 +-
+ arch/arm/plat-s5p/Kconfig                      |    1 +
+ arch/arm/plat-s5p/include/plat/irqs.h          |    7 +
+ arch/arm/plat-s5p/irq-eint.c                   |   15 +-
+ 16 files changed, 407 insertions(+), 122 deletions(-)
+
 -- 
-1.6.3.3
+Ben
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
