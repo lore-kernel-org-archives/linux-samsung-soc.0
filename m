@@ -1,42 +1,47 @@
-From: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Subject: [PATCH 04/11] USB: s3c-hsotg: SoftDisconnect minimum 3ms
-Date: Wed, 26 May 2010 05:09:22 +0100
-Message-ID: <1274846966-23247-5-git-send-email-ben-linux@fluff.org>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: [PATCH 06/11] USB: s3c-hsotg: Enable soft disconnect during initialization
+Date: Wed, 26 May 2010 05:09:24 +0100
+Message-ID: <1274846966-23247-7-git-send-email-ben-linux@fluff.org>
 References: <1274846966-23247-1-git-send-email-ben-linux@fluff.org>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1274846966-23247-1-git-send-email-ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from trinity.fluff.org ([89.16.178.74]:41764 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750917Ab0EZEJb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 26 May 2010 00:09:31 -0400
+In-Reply-To: <1274846966-23247-1-git-send-email-ben-linux@fluff.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org
+Cc: Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
 
-The shortest period SoftDisconnect can be asserted for is 3 milliseconds
-according to the V210 datasheet, so ensure that we add an msleep() to
-the registration code to enforce this.
+From: Thomas Abraham <thomas.ab@samsung.com>
 
-Signed-off-by: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Enable soft disconnect bit the OTG core during initialization. Without this,
+the host sees that a gadget is connected and tries to enumerate. The
+soft disconnect should be enabled until the USB gadget driver is
+registered with this otg driver.
+
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
  drivers/usb/gadget/s3c-hsotg.c |    3 +++
  1 files changed, 3 insertions(+), 0 deletions(-)
 
 diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
-index ed306ec..215beae 100644
+index bce510c..7e595a4 100644
 --- a/drivers/usb/gadget/s3c-hsotg.c
 +++ b/drivers/usb/gadget/s3c-hsotg.c
-@@ -2602,6 +2602,9 @@ int usb_gadget_register_driver(struct usb_gadget_driver *driver)
- 	writel(S3C_DCTL_CGOUTNak | S3C_DCTL_CGNPInNAK,
- 	       hsotg->regs + S3C_DCTL);
+@@ -2806,6 +2806,9 @@ static void s3c_hsotg_init(struct s3c_hsotg *hsotg)
  
-+	/* must be at-least 3ms to allow bus to see disconnect */
-+	msleep(3);
+ 	writel(0, hsotg->regs + S3C_DAINTMSK);
+ 
++	/* Be in disconnected state until gadget is registered */
++	__orr32(hsotg->regs + S3C_DCTL, S3C_DCTL_SftDiscon);
 +
- 	/* remove the soft-disconnect and let's go */
- 	__bic32(hsotg->regs + S3C_DCTL, S3C_DCTL_SftDiscon);
- 
+ 	if (0) {
+ 		/* post global nak until we're ready */
+ 		writel(S3C_DCTL_SGNPInNAK | S3C_DCTL_SGOUTNak,
 -- 
 1.6.3.3
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
