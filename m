@@ -1,54 +1,57 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH 4/4] pata_samsung: Add Samsung PATA controller driver
-Date: Thu, 27 May 2010 23:52:11 +0200
-Message-ID: <4BFEE98B.3090303@kernel.org>
-References: <1274948524-2970-1-git-send-email-kgene.kim@samsung.com> <1274948524-2970-5-git-send-email-kgene.kim@samsung.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 1/2] RTC: s3c: Initialize driver data before using it
+Date: Thu, 27 May 2010 14:51:56 -0700
+Message-ID: <20100527145156.f6270ae7.akpm@linux-foundation.org>
+References: <cover.1274994983.git.mcuelenaere@gmail.com>
+	<4BFEE40D.4030807@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from hera.kernel.org ([140.211.167.34]:39661 "EHLO hera.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932535Ab0E0Vwd (ORCPT
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:56007 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932535Ab0E0Vwh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 May 2010 17:52:33 -0400
-In-Reply-To: <1274948524-2970-5-git-send-email-kgene.kim@samsung.com>
+	Thu, 27 May 2010 17:52:37 -0400
+In-Reply-To: <4BFEE40D.4030807@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Abhilash Kesavan <a.kesavan@samsung.com>
+To: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Cc: rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, a.zummo@towertech.it, p_gortmaker@yahoo.com, Jiri.Pinkava@vscht.cz
 
-Hello,
+On Thu, 27 May 2010 23:28:45 +0200
+Maurus Cuelenaere <mcuelenaere@gmail.com> wrote:
 
-On 05/27/2010 10:22 AM, Kukjin Kim wrote:
-> From: Abhilash Kesavan <a.kesavan@samsung.com>
+> s3c_rtc_setfreq() uses the platform driver data to derive struct rtc_device,
+> so make sure drvdata is set _before_ s3c_rtc_setfreq() is called.
 > 
-> Adds support for the Samsung PATA controller. This driver is based on the
-> Libata subsystem and references the earlier patches sent for IDE subsystem.
-
-Just one small thing.
-
-> +static struct ata_port_operations pata_s3c_port_ops = {
-> +	.inherits		= &ata_sff_port_ops,
-> +	.sff_check_status	= pata_s3c_check_status,
-> +	.sff_tf_load		= pata_s3c_tf_load,
-> +	.sff_tf_read		= pata_s3c_tf_read,
-> +	.sff_data_xfer		= pata_s3c_data_xfer,
-> +	.sff_exec_command	= pata_s3c_exec_command,
-> +	.qc_prep		= ata_noop_qc_prep,
-> +	.set_piomode		= pata_s3c_set_piomode,
-> +};
+> Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
+> ---
+>  drivers/rtc/rtc-s3c.c |    5 +++--
+>  1 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+> index e5972b2..6adebf3 100644
+> --- a/drivers/rtc/rtc-s3c.c
+> +++ b/drivers/rtc/rtc-s3c.c
+> @@ -495,8 +495,6 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
+>   	pr_debug("s3c2410_rtc: RTCCON=%02x\n",
+>  		 readb(s3c_rtc_base + S3C2410_RTCCON));
+>  
+> -	s3c_rtc_setfreq(&pdev->dev, 1);
+> -
+>  	device_init_wakeup(&pdev->dev, 1);
+>  
+>  	/* register RTC and exit */
+> @@ -518,6 +516,9 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
+>  	s3c_rtc_cpu_type = platform_get_device_id(pdev)->driver_data;
+>  
+>  	platform_set_drvdata(pdev, rtc);
 > +
-> +static struct ata_port_operations pata_s5p_port_ops = {
-> +	.inherits		= &ata_sff_port_ops,
-> +	.qc_prep		= ata_noop_qc_prep,
-> +	.set_piomode		= pata_s3c_set_piomode,
-> +};
+> +	s3c_rtc_setfreq(&pdev->dev, 1);
+> +
+>  	return 0;
+>  
+>   err_nortc:
 
-You don't need to override .qc_prep to ata_noop_qc_prep() and can you
-please base the patch against the current libata-dev#upstream?
-
-Thanks.
-
--- 
-tejun
+This one I tagged for a -stable backport.
