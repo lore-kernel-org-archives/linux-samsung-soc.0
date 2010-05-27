@@ -1,66 +1,22 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: request pull of bjdooks' for-linus/2634-git-updates
-Date: Wed, 26 May 2010 11:16:59 +0100
-Message-ID: <20100526101659.GH4720@trinity.fluff.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] Add Compact Flash driver for Samsung SoCs
+Date: Thu, 27 May 2010 17:22:00 +0900
+Message-ID: <1274948524-2970-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:49012 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757160Ab0EZKRQ (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:48710 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755428Ab0E0IZO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 May 2010 06:17:16 -0400
-Content-Disposition: inline
+	Thu, 27 May 2010 04:25:14 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: torvalds@linux-foundation.org
-Cc: linux-arm-kernel@lists.infradead.org, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
+To: linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org
 
-Two cleanups for post merging to mainline and a defconfig update
-for all the defconfigs to bring them up to latest kernel.
+This patches add PATA driver for Samsung SoCs. And this enables
+support for Compact Flash interfacing with Samsung SoCs.
 
-The following changes since commit b1cdc4670b9508fcd47a15fbd12f70d269880b37:
-  Linus Torvalds (1):
-        Merge git://git.kernel.org/.../davem/net-2.6
-
-are available in the git repository at:
-
-  git://git.fluff.org/bjdooks/linux.git for-linus/2634-git-updates
-
-Ben Dooks (9):
-      ARM: s3c2410_defconfig: Update s3c2410_defconfig to v2.6.34-git
-      ARM: s3c6400_defconfig: Update s3c6400_defconfig to v2.6.34-git
-      ARM: s5p6440_defconfig: Update s5p6440_defconfig to v2.6.34-git
-      ARM: s5p6442_defconfig: Update s5p6442_defconfig to v2.6.34-git
-      ARM: s5pc100_defconfig: Update s5pc100_defconfig to v2.6.34-git
-      ARM: s5pc110_defconfig: Update s5pc110_defconfig to v2.6.34-git
-      ARM: s5pv210_defconfig: Update s5pv210_defconfig to v2.6.34-git
-      ARM: S5PC100: Fixup cross tree merge problems
-      ARM: Merge next-samsung
-
-Pannaga Bhushan (1):
-      ARM: S5P: Fix the platform external interrupt issues.
-
- arch/arm/configs/s3c2410_defconfig             |   70 ++++++-
- arch/arm/configs/s3c6400_defconfig             |   35 +++-
- arch/arm/configs/s5p6440_defconfig             |   29 +++-
- arch/arm/configs/s5p6442_defconfig             |   24 ++-
- arch/arm/configs/s5pc100_defconfig             |  233 +++++++++++++++++++-----
- arch/arm/configs/s5pc110_defconfig             |   30 +++-
- arch/arm/configs/s5pv210_defconfig             |   33 +++-
- arch/arm/mach-s5p6440/include/mach/irqs.h      |    9 +-
- arch/arm/mach-s5p6442/include/mach/irqs.h      |    5 +-
- arch/arm/mach-s5pc100/include/mach/irqs.h      |    3 -
- arch/arm/mach-s5pc100/include/mach/regs-gpio.h |    7 +-
- arch/arm/mach-s5pv210/include/mach/irqs.h      |   14 +--
- arch/arm/mach-s5pv210/include/mach/regs-gpio.h |   14 +-
- arch/arm/plat-s5p/Kconfig                      |    1 +
- arch/arm/plat-s5p/include/plat/irqs.h          |    7 +
- arch/arm/plat-s5p/irq-eint.c                   |   15 +-
- 16 files changed, 407 insertions(+), 122 deletions(-)
-
--- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+[PATCH 1/4] ARM: S3C64XX: Add support for Compact Flash driver on SMDK6410
+[PATCH 2/4] ARM: S5PV210: Add support for Compact Flash driver on SMDKV210/SMDKC110
+[PATCH 3/4] ARM: S5PC100: Add support for Compact Flash driver on SMDKC100
+[PATCH 4/4] pata_samsung: Add Samsung PATA controller driver
