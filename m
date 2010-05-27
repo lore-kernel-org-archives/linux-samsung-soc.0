@@ -1,42 +1,31 @@
-From: Zide Neighbor <reuses@carkoo.com>
-Subject: Nth x x x x x x Figures 13 and 14, similarl
-Date: Thu, 27 May 2010 20:50:32 +0100
-Message-ID: <4BFECB12.3030209@n-g-c.com>
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Subject: [PATCH 0/2] Fixes for s3c RTC driver
+Date: Thu, 27 May 2010 23:28:42 +0200
+Message-ID: <4BFEE40A.6000403@gmail.com>
 Mime-Version: 1.0
-Content-Type: application/octet-stream; name="unhurt.rtf"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from a83-132-252-140.cpe.netcabo.pt ([83.132.252.140]:50658 "HELO
-	fhogy.netcabo.pt" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with SMTP id S1759330Ab0E0Tuc (ORCPT
+Received: from mail-ew0-f216.google.com ([209.85.219.216]:37266 "EHLO
+	mail-ew0-f216.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755439Ab0E0V2q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 May 2010 15:50:32 -0400
+	Thu, 27 May 2010 17:28:46 -0400
+Received: by ewy8 with SMTP id 8so137814ewy.28
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 27 May 2010 14:28:43 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Valin Llerena <linux-samsung-soc@vger.kernel.org>
+To: rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, a.zummo@towertech.it, p_gortmaker@yahoo.com, Jiri.Pinkava@vscht.cz, akpm@linux-foundation.org
 
-e1xydGYxXGFuc2lcYW5zaWNwZzEyNTJcZGVmZjBcZGVmbGFuZzEwMzN7XCpcZ2VuZXJhdG9y
-IE1zZnRlZGl0IDMuMjcuMzEuMTYzO317XGZvbnR0Ymx7XGYwXGZuaWxcZmNoYXJzZXQwIENh
-bGlicmk7fX0NCntcKlxnZW5lcmF0b3IgTXNmdGVkaXQgMy4yNy4zMS4xNjM7fXtcY29sb3J0
-YmwgO1xyZWQwXGdyZWVuMFxibHVlMjU1O1xyZWQxOTJcZ3JlZW44MFxibHVlNzc7XHJlZDBc
-Z3JlZW4xNzZcYmx1ZTgwO1xyZWQyMDRcZ3JlZW4xODBcYmx1ZTA7XHJlZDI1NVxncmVlbjBc
-Ymx1ZTA7XHJlZDIyM1xncmVlbjIwNlxibHVlNDtccmVkMTU1XGdyZWVuMFxibHVlMjExO1xy
-ZWQ3OVxncmVlbjEyOVxibHVlMTg5O1xyZWQxNjVcZ3JlZW4xNjVcYmx1ZTE2NTtccmVkMTI4
-XGdyZWVuMTU4XGJsdWUxOTQ7XHJlZDI0N1xncmVlbjE1MFxibHVlNzA7XHJlZDBcZ3JlZW43
-N1xibHVlMTg3O1xyZWQ3NVxncmVlbjE3MlxibHVlMTk4O1xyZWQyMjFcZ3JlZW4xMzJcYmx1
-ZTEzMjtccmVkNTFcZ3JlZW41MVxibHVlNTE7XHJlZDE1OFxncmVlbjEyNFxibHVlMTI0O1xy
-ZWQxNTVcZ3JlZW4xODdcYmx1ZTg5O30NCntcKlxnZW5lcmF0b3IgTXNmdGVkaXQgMy4yNy4z
-MS4xNjM7fVx2aWV3a2luZDRcdWMxXHBhcmRcc2EyMDBcc2wyNzZcc2xtdWx0MVxsYW5nOVxm
-MFxmczMye1xmaWVsZHtcKlxmbGRpbnN0e0hZUEVSTElOSyAiaHtcKlxkZCAzLjI3LjMxLjE2
-Mzt9dHRwOi8vd3d3Lm51ODgucnUifX17XGZsZHJzbHR7XHVsXGNmMSBodHRwOi8vd3d3Lm51
-ODgucnV9fX1cZjBcY2YxXGJcZnMzMiAgLSBPcmRlciB0aGUgY2hlYXBlc3QgbWVkaWNhdGlv
-bnMgbm93IVxwYXINClZpYWdyYSBcY2Y0IENpYWxpcyBcY2YzIFZpYWdyYSBQcm9mZXNzaW9u
-YWwgXGNmNSBDaWFsaXMgUHJvZmVzc2lvbmFsIFxjZjYgVmlhZ3JhIFN1cGVyIEFjdGl2ZSsg
-XGNmMyBDaWFsaXMgU3VwZXIgQWN0aXZlKyBcY2Y3IExldml0cmFcY2YwICBcY2Y4IFZpYWdy
-YSBTb2Z0IFRhYnMgXGNmOSBDaWFsaXMgU29mdCBUYWJzXGNmMTAgIFxjZjExIExldml0cmEg
-UHJvZmVzc2lvbmFsIFxjZjQgRmVtYWxlIFZpYWdyYSBcY2YxMiBQcm9wZWNpYSBcY2Y3IEFj
-b21wbGlhIFxjZjYgWGVuaWNhbFxjZjAgIFxjZjUgQnJhbmQgTGV2aXRyYSBcY2YxMyBGZW1h
-bGUgQ2lhbGlzIFxjZjE0IExldml0cmEgU3VwZXIgQWN0aXZlKyBcY2YxNSBUYW1pZmx1XGNm
-MCAgXGNmNyBWUFhMXGNmMCAgXGNmMTYgVmlhZ3JhIFNvZnQgRmxhdm91cmVkIFxjZjUgQnJh
-bmQgVmlhZ3JhIFxjZjE3IEJyYW5kIENpYWxpc1xjZjANCntcKlxnZW5lcmF0b3IgTXNmdGVk
-aXQgMy4yNy4zMS4xNjM7fX0=
+The first patch fixes a segfault when dereferencing a garbage pointer while
+the second one ensures that the correct max_user_freq gets set.
+
+These should probably go in mainline as soon as possible.
+
+Maurus Cuelenaere (2):
+  RTC: s3c: Initialize driver data before using it
+  RTC: s3c: Initialize s3c_rtc_cpu_type before using it
+
+ drivers/rtc/rtc-s3c.c |    9 +++++----
+ 1 files changed, 5 insertions(+), 4 deletions(-)
