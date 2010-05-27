@@ -1,24 +1,42 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 3/4] ARM: S5PC100: Add support for Compact Flash driver
-	on SMDKC100
-Date: Thu, 27 May 2010 20:47:14 +0100
-Message-ID: <20100527194714.GE25921@n2100.arm.linux.org.uk>
-References: <1274948524-2970-1-git-send-email-kgene.kim@samsung.com> <1274948524-2970-4-git-send-email-kgene.kim@samsung.com>
+From: Zide Neighbor <reuses@carkoo.com>
+Subject: Nth x x x x x x Figures 13 and 14, similarl
+Date: Thu, 27 May 2010 20:50:32 +0100
+Message-ID: <4BFECB12.3030209@n-g-c.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-ide-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1274948524-2970-4-git-send-email-kgene.kim@samsung.com>
-Sender: linux-ide-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Abhilash Kesavan <a.kesavan@samsung.com>, ben-linux@fluff.org
+Content-Type: application/octet-stream; name="unhurt.rtf"
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from a83-132-252-140.cpe.netcabo.pt ([83.132.252.140]:50658 "HELO
+	fhogy.netcabo.pt" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with SMTP id S1759330Ab0E0Tuc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 27 May 2010 15:50:32 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Valin Llerena <linux-samsung-soc@vger.kernel.org>
 
-On Thu, May 27, 2010 at 05:22:03PM +0900, Kukjin Kim wrote:
-> +#include <linux/kernel.h>
-> +#include <linux/types.h>
-> +#include <linux/io.h>
-> +
-> +#include <mach/gpio.h>
-
-linux/gpio.h ?
+e1xydGYxXGFuc2lcYW5zaWNwZzEyNTJcZGVmZjBcZGVmbGFuZzEwMzN7XCpcZ2VuZXJhdG9y
+IE1zZnRlZGl0IDMuMjcuMzEuMTYzO317XGZvbnR0Ymx7XGYwXGZuaWxcZmNoYXJzZXQwIENh
+bGlicmk7fX0NCntcKlxnZW5lcmF0b3IgTXNmdGVkaXQgMy4yNy4zMS4xNjM7fXtcY29sb3J0
+YmwgO1xyZWQwXGdyZWVuMFxibHVlMjU1O1xyZWQxOTJcZ3JlZW44MFxibHVlNzc7XHJlZDBc
+Z3JlZW4xNzZcYmx1ZTgwO1xyZWQyMDRcZ3JlZW4xODBcYmx1ZTA7XHJlZDI1NVxncmVlbjBc
+Ymx1ZTA7XHJlZDIyM1xncmVlbjIwNlxibHVlNDtccmVkMTU1XGdyZWVuMFxibHVlMjExO1xy
+ZWQ3OVxncmVlbjEyOVxibHVlMTg5O1xyZWQxNjVcZ3JlZW4xNjVcYmx1ZTE2NTtccmVkMTI4
+XGdyZWVuMTU4XGJsdWUxOTQ7XHJlZDI0N1xncmVlbjE1MFxibHVlNzA7XHJlZDBcZ3JlZW43
+N1xibHVlMTg3O1xyZWQ3NVxncmVlbjE3MlxibHVlMTk4O1xyZWQyMjFcZ3JlZW4xMzJcYmx1
+ZTEzMjtccmVkNTFcZ3JlZW41MVxibHVlNTE7XHJlZDE1OFxncmVlbjEyNFxibHVlMTI0O1xy
+ZWQxNTVcZ3JlZW4xODdcYmx1ZTg5O30NCntcKlxnZW5lcmF0b3IgTXNmdGVkaXQgMy4yNy4z
+MS4xNjM7fVx2aWV3a2luZDRcdWMxXHBhcmRcc2EyMDBcc2wyNzZcc2xtdWx0MVxsYW5nOVxm
+MFxmczMye1xmaWVsZHtcKlxmbGRpbnN0e0hZUEVSTElOSyAiaHtcKlxkZCAzLjI3LjMxLjE2
+Mzt9dHRwOi8vd3d3Lm51ODgucnUifX17XGZsZHJzbHR7XHVsXGNmMSBodHRwOi8vd3d3Lm51
+ODgucnV9fX1cZjBcY2YxXGJcZnMzMiAgLSBPcmRlciB0aGUgY2hlYXBlc3QgbWVkaWNhdGlv
+bnMgbm93IVxwYXINClZpYWdyYSBcY2Y0IENpYWxpcyBcY2YzIFZpYWdyYSBQcm9mZXNzaW9u
+YWwgXGNmNSBDaWFsaXMgUHJvZmVzc2lvbmFsIFxjZjYgVmlhZ3JhIFN1cGVyIEFjdGl2ZSsg
+XGNmMyBDaWFsaXMgU3VwZXIgQWN0aXZlKyBcY2Y3IExldml0cmFcY2YwICBcY2Y4IFZpYWdy
+YSBTb2Z0IFRhYnMgXGNmOSBDaWFsaXMgU29mdCBUYWJzXGNmMTAgIFxjZjExIExldml0cmEg
+UHJvZmVzc2lvbmFsIFxjZjQgRmVtYWxlIFZpYWdyYSBcY2YxMiBQcm9wZWNpYSBcY2Y3IEFj
+b21wbGlhIFxjZjYgWGVuaWNhbFxjZjAgIFxjZjUgQnJhbmQgTGV2aXRyYSBcY2YxMyBGZW1h
+bGUgQ2lhbGlzIFxjZjE0IExldml0cmEgU3VwZXIgQWN0aXZlKyBcY2YxNSBUYW1pZmx1XGNm
+MCAgXGNmNyBWUFhMXGNmMCAgXGNmMTYgVmlhZ3JhIFNvZnQgRmxhdm91cmVkIFxjZjUgQnJh
+bmQgVmlhZ3JhIFxjZjE3IEJyYW5kIENpYWxpc1xjZjANCntcKlxnZW5lcmF0b3IgTXNmdGVk
+aXQgMy4yNy4zMS4xNjM7fX0=
