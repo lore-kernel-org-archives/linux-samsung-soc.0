@@ -1,24 +1,47 @@
-From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] Updates for S3C HSOTG driver
-Date: Fri, 28 May 2010 11:41:13 +0900
-Message-ID: <1275014477-23133-1-git-send-email-kgene.kim@samsung.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH 1/4] ARM: S3C64XX: Add USB OTG HCLK to the list of clocks
+Date: Fri, 28 May 2010 11:41:14 +0900
+Message-ID: <1275014477-23133-2-git-send-email-kgene.kim@samsung.com>
+References: <1275014477-23133-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:35341 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756719Ab0E1CpZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 27 May 2010 22:45:25 -0400
+In-Reply-To: <1275014477-23133-1-git-send-email-kgene.kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch series adds the following updates for S3C HSTOG driver.
-1. Adds HCLK clock for S3C HSOTG module.
-2. Adds clk_xusbxti clock to the list of clocks to be registred in S5P.
-3. Sets the clk_xusbsti clock rate on S5PV210 to 24Mhz.
-4. Updates the s3c hsotg driver to use the HCLK OTG clock.
+From: Thomas Abraham <thomas.ab@samsung.com>
 
-[PATCH 1/4] ARM: S3C64XX: Add USB OTG HCLK to the list of clocks
-[PATCH 2/4] ARM: S5PV210: Assign clock rate for clk_xusbxti clock.
-[PATCH 3/4] ARM: S5P: Add clk_xusbxti clock to the list of clocks to be registered.
-[PATCH 4/4] usb: s3c-hsotg: Enable HCLK for the OTG module.
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Add the USB OTG HCLK clock to the list of clocks to be registered
+during initialization.
+
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s3c64xx/clock.c |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-s3c64xx/clock.c b/arch/arm/mach-s3c64xx/clock.c
+index 7a4138b..fbd85a9 100644
+--- a/arch/arm/mach-s3c64xx/clock.c
++++ b/arch/arm/mach-s3c64xx/clock.c
+@@ -259,6 +259,12 @@ static struct clk init_clocks[] = {
+ 		.enable		= s3c64xx_hclk_ctrl,
+ 		.ctrlbit	= S3C_CLKCON_HCLK_HSMMC2,
+ 	}, {
++		.name		= "otg",
++		.id		= -1,
++		.parent		= &clk_h,
++		.enable		= s3c64xx_hclk_ctrl,
++		.ctrlbit	= S3C_CLKCON_HCLK_USB,
++	}, {
+ 		.name		= "timers",
+ 		.id		= -1,
+ 		.parent		= &clk_p,
+-- 
+1.6.3.3
