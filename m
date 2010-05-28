@@ -1,146 +1,196 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH 10/15] ARM: S5PC100: Change to using s3c_gpio_cfgall_range()
-Date: Fri, 28 May 2010 06:56:47 +0100
-Message-ID: <1275026212-27510-11-git-send-email-ben-linux@fluff.org>
-References: <1275026212-27510-1-git-send-email-ben-linux@fluff.org>
+Subject: [PATCH 7/9] ARM: SAMSUNG: Use s3c_set_platdata() helper
+Date: Fri, 28 May 2010 07:19:17 +0100
+Message-ID: <1275027559-29278-8-git-send-email-ben-linux@fluff.org>
+References: <1275027559-29278-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:34045 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:42362 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751313Ab0E1F5a (ORCPT
+	id S1751245Ab0E1GTW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 May 2010 01:57:30 -0400
-In-Reply-To: <1275026212-27510-1-git-send-email-ben-linux@fluff.org>
+	Fri, 28 May 2010 02:19:22 -0400
+In-Reply-To: <1275027559-29278-1-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Ben Dooks <ben-linux@fluff.org>
 
-Change the code setting a range of GPIO pins' configuration and
-pull state to use the recently introduced s3c_gpio_cfgall_range().
-
-Mop up a few missed s3c_gpio_cfgpin_range() changes.
+Commit f8b5ea089d5a447a8933a6540ceeccbcb78f9e53 added a helper
+to copy and set platform data, so let's replace the various sites
+in the Samsung support where this is happening.
 
 Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/mach-s5pc100/setup-fb-24bpp.c   |   30 +++++++----------------
- arch/arm/mach-s5pc100/setup-sdhci-gpio.c |   38 ++++++-----------------------
- 2 files changed, 17 insertions(+), 51 deletions(-)
+ arch/arm/plat-samsung/dev-fb.c      |   13 +------------
+ arch/arm/plat-samsung/dev-hwmon.c   |   13 +------------
+ arch/arm/plat-samsung/dev-i2c0.c    |   12 ++++--------
+ arch/arm/plat-samsung/dev-i2c1.c    |   12 ++++--------
+ arch/arm/plat-samsung/dev-onenand.c |    8 ++------
+ arch/arm/plat-samsung/dev-ts.c      |   14 ++------------
+ arch/arm/plat-samsung/dev-usb.c     |   12 +++---------
+ 7 files changed, 17 insertions(+), 67 deletions(-)
 
-diff --git a/arch/arm/mach-s5pc100/setup-fb-24bpp.c b/arch/arm/mach-s5pc100/setup-fb-24bpp.c
-index 6eba6cb..5a882d4 100644
---- a/arch/arm/mach-s5pc100/setup-fb-24bpp.c
-+++ b/arch/arm/mach-s5pc100/setup-fb-24bpp.c
-@@ -22,27 +22,15 @@
+diff --git a/arch/arm/plat-samsung/dev-fb.c b/arch/arm/plat-samsung/dev-fb.c
+index bf60204..f63190c 100644
+--- a/arch/arm/plat-samsung/dev-fb.c
++++ b/arch/arm/plat-samsung/dev-fb.c
+@@ -58,16 +58,5 @@ struct platform_device s3c_device_fb = {
  
- #define DISR_OFFSET	0x7008
- 
--void s5pc100_fb_gpio_setup_24bpp(void)
-+static void s5pc100_fb_setgpios(unsigned int base, unsigned int nr)
+ void __init s3c_fb_set_platdata(struct s3c_fb_platdata *pd)
  {
--	unsigned int gpio = 0;
+-	struct s3c_fb_platdata *npd;
 -
--	for (gpio = S5PC100_GPF0(0); gpio <= S5PC100_GPF0(7); gpio++) {
--		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
--		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
--	}
--
--	for (gpio = S5PC100_GPF1(0); gpio <= S5PC100_GPF1(7); gpio++) {
--		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
--		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+-	if (!pd) {
+-		printk(KERN_ERR "%s: no platform data\n", __func__);
+-		return;
 -	}
 -
--	for (gpio = S5PC100_GPF2(0); gpio <= S5PC100_GPF2(7); gpio++) {
--		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
--		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
--	}
-+	s3c_gpio_cfgall_range(base, nr, S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
-+}
- 
--	for (gpio = S5PC100_GPF3(0); gpio <= S5PC100_GPF3(3); gpio++) {
--		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
--		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
--	}
-+void s5pc100_fb_gpio_setup_24bpp(void)
-+{
-+	s5pc100_fb_setgpios(S5PC100_GPF0(0), 8);
-+	s5pc100_fb_setgpios(S5PC100_GPF1(0), 8);
-+	s5pc100_fb_setgpios(S5PC100_GPF2(0), 8);
-+	s5pc100_fb_setgpios(S5PC100_GPF3(0), 4);
+-	npd = kmemdup(pd, sizeof(struct s3c_fb_platdata), GFP_KERNEL);
+-	if (!npd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-
+-	s3c_device_fb.dev.platform_data = npd;
++	s3c_set_platdata(pd, sizeof(struct s3c_fb_platdata), &s3c_device_fb);
  }
-diff --git a/arch/arm/mach-s5pc100/setup-sdhci-gpio.c b/arch/arm/mach-s5pc100/setup-sdhci-gpio.c
-index 320dc64..15cf1ac 100644
---- a/arch/arm/mach-s5pc100/setup-sdhci-gpio.c
-+++ b/arch/arm/mach-s5pc100/setup-sdhci-gpio.c
-@@ -23,8 +23,6 @@
+diff --git a/arch/arm/plat-samsung/dev-hwmon.c b/arch/arm/plat-samsung/dev-hwmon.c
+index b3ffb95..580f580 100644
+--- a/arch/arm/plat-samsung/dev-hwmon.c
++++ b/arch/arm/plat-samsung/dev-hwmon.c
+@@ -27,16 +27,5 @@ struct platform_device s3c_device_hwmon = {
  
- void s5pc100_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
+ void __init s3c_hwmon_set_platdata(struct s3c_hwmon_pdata *pd)
  {
--	unsigned int gpio;
--	unsigned int end;
- 	unsigned int num;
- 
- 	num = width;
-@@ -32,19 +30,13 @@ void s5pc100_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
- 	if (width == 8)
- 		num = width - 2;
- 
--	end = S5PC100_GPG0(2 + num);
+-	struct s3c_hwmon_pdata *npd;
 -
- 	/* Set all the necessary GPG0/GPG1 pins to special-function 0 */
--	s3c_gpio_cfgpin_range(S5PC100_GPG0(0), 2 + num, S3C_GPIO_SFN(2));
--	for (gpio = S5PC100_GPG0(0); gpio < end; gpio++) {
--		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+-	if (!pd) {
+-		printk(KERN_ERR "%s: no platform data\n", __func__);
+-		return;
 -	}
-+	s3c_gpio_cfgall_range(S5PC100_GPG0(0), 2 + num,
-+			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
+-
+-	npd = kmemdup(pd, sizeof(struct s3c_hwmon_pdata), GFP_KERNEL);
+-	if (!npd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-
+-	s3c_device_hwmon.dev.platform_data = npd;
++	s3c_set_platdata(pd, sizeof(struct s3c_hwmon_pdata), &s3c_device_hwmon);
+ }
+diff --git a/arch/arm/plat-samsung/dev-i2c0.c b/arch/arm/plat-samsung/dev-i2c0.c
+index 1ec1ef9..6256c0d 100644
+--- a/arch/arm/plat-samsung/dev-i2c0.c
++++ b/arch/arm/plat-samsung/dev-i2c0.c
+@@ -58,16 +58,12 @@ static struct s3c2410_platform_i2c default_i2c_data0 __initdata = {
  
- 	if (width == 8) {
--		for (gpio = S5PC100_GPG1(0); gpio <= S5PC100_GPG1(1); gpio++) {
--			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
--			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
--		}
-+		s3c_gpio_cfgall_range(S5PC100_GPG1(0), 2,
-+				      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
- 	}
- 
- 	s3c_gpio_setpull(S5PC100_GPG1(2), S3C_GPIO_PULL_UP);
-@@ -53,16 +45,9 @@ void s5pc100_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
- 
- void s5pc100_setup_sdhci1_cfg_gpio(struct platform_device *dev, int width)
+ void __init s3c_i2c0_set_platdata(struct s3c2410_platform_i2c *pd)
  {
--	unsigned int gpio;
--	unsigned int end;
+-	struct s3c2410_platform_i2c *npd;
 -
--	end = S5PC100_GPG2(2 + width);
--	s3c_gpio_cfgpin_range(S5PC100_GPG2(0), 2 + width, S3C_GPIO_SFN(2));
--
- 	/* Set all the necessary GPG2 pins to special-function 2 */
--	for (gpio = S5PC100_GPG2(0); gpio < end; gpio++) {
--		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
--	}
-+	s3c_gpio_cfgall_range(S5PC100_GPG2(0), 2 + width,
-+			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
+ 	if (!pd)
+ 		pd = &default_i2c_data0;
  
- 	s3c_gpio_setpull(S5PC100_GPG2(6), S3C_GPIO_PULL_UP);
- 	s3c_gpio_cfgpin(S5PC100_GPG2(6), S3C_GPIO_SFN(2));
-@@ -70,16 +55,9 @@ void s5pc100_setup_sdhci1_cfg_gpio(struct platform_device *dev, int width)
+-	npd = kmemdup(pd, sizeof(struct s3c2410_platform_i2c), GFP_KERNEL);
+-	if (!npd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-	else if (!npd->cfg_gpio)
+-		npd->cfg_gpio = s3c_i2c0_cfg_gpio;
++	if (!pd->cfg_gpio)
++		pd->cfg_gpio = s3c_i2c0_cfg_gpio;
  
- void s5pc100_setup_sdhci2_cfg_gpio(struct platform_device *dev, int width)
+-	s3c_device_i2c0.dev.platform_data = npd;
++	s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
++			 &s3c_device_i2c0);
+ }
+diff --git a/arch/arm/plat-samsung/dev-i2c1.c b/arch/arm/plat-samsung/dev-i2c1.c
+index f97905f..cb63223 100644
+--- a/arch/arm/plat-samsung/dev-i2c1.c
++++ b/arch/arm/plat-samsung/dev-i2c1.c
+@@ -55,16 +55,12 @@ static struct s3c2410_platform_i2c default_i2c_data1 __initdata = {
+ 
+ void __init s3c_i2c1_set_platdata(struct s3c2410_platform_i2c *pd)
  {
--	unsigned int gpio;
--	unsigned int end;
+-	struct s3c2410_platform_i2c *npd;
 -
--	end = S5PC100_GPG3(2 + width);
--	s3c_gpio_cfgpin_range(S5PC100_GPG3(0), 2 + width, S3C_GPIO_SFN(2));
--
- 	/* Set all the necessary GPG3 pins to special-function 2 */
--	for (gpio = S5PC100_GPG3(0); gpio < end; gpio++) {
--		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
--	}
-+	s3c_gpio_cfgall_range(S5PC100_GPG3(0), 2 + width,
-+			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
+ 	if (!pd)
+ 		pd = &default_i2c_data1;
  
- 	s3c_gpio_setpull(S5PC100_GPG3(6), S3C_GPIO_PULL_UP);
- 	s3c_gpio_cfgpin(S5PC100_GPG3(6), S3C_GPIO_SFN(2));
+-	npd = kmemdup(pd, sizeof(struct s3c2410_platform_i2c), GFP_KERNEL);
+-	if (!npd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-	else if (!npd->cfg_gpio)
+-		npd->cfg_gpio = s3c_i2c1_cfg_gpio;
++	if (!pd->cfg_gpio)
++		pd->cfg_gpio = s3c_i2c1_cfg_gpio;
+ 
+-	s3c_device_i2c1.dev.platform_data = npd;
++	s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
++			 &s3c_device_i2c1);
+ }
+diff --git a/arch/arm/plat-samsung/dev-onenand.c b/arch/arm/plat-samsung/dev-onenand.c
+index 45ec732..a16e878 100644
+--- a/arch/arm/plat-samsung/dev-onenand.c
++++ b/arch/arm/plat-samsung/dev-onenand.c
+@@ -46,10 +46,6 @@ struct platform_device s3c_device_onenand = {
+ 
+ void s3c_onenand_set_platdata(struct onenand_platform_data *pdata)
+ {
+-	struct onenand_platform_data *pd;
+-
+-	pd = kmemdup(pdata, sizeof(struct onenand_platform_data), GFP_KERNEL);
+-	if (!pd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-	s3c_device_onenand.dev.platform_data = pd;
++	s3c_set_platdata(pdata, sizeof(struct onenand_platform_data),
++			 &s3c_device_onenand);
+ }
+diff --git a/arch/arm/plat-samsung/dev-ts.c b/arch/arm/plat-samsung/dev-ts.c
+index 236ef84..db0432d 100644
+--- a/arch/arm/plat-samsung/dev-ts.c
++++ b/arch/arm/plat-samsung/dev-ts.c
+@@ -45,17 +45,7 @@ struct platform_device s3c_device_ts = {
+ 
+ void __init s3c24xx_ts_set_platdata(struct s3c2410_ts_mach_info *pd)
+ {
+-	struct s3c2410_ts_mach_info *npd;
+-
+-	if (!pd) {
+-		printk(KERN_ERR "%s: no platform data\n", __func__);
+-		return;
+-	}
+-
+-	npd = kmemdup(pd, sizeof(struct s3c2410_ts_mach_info), GFP_KERNEL);
+-	if (!npd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-
+-	s3c_device_ts.dev.platform_data = npd;
++	s3c_set_platdata(pd, sizeof(struct s3c2410_ts_mach_info),
++			 &s3c_device_ts);
+ }
+ EXPORT_SYMBOL(s3c24xx_ts_set_platdata);
+diff --git a/arch/arm/plat-samsung/dev-usb.c b/arch/arm/plat-samsung/dev-usb.c
+index 0e0a3bf..591c53c 100644
+--- a/arch/arm/plat-samsung/dev-usb.c
++++ b/arch/arm/plat-samsung/dev-usb.c
+@@ -52,19 +52,13 @@ EXPORT_SYMBOL(s3c_device_ohci);
+ 
+ /**
+  * s3c_ohci_set_platdata - initialise OHCI device platform data
+- * @info: The platform data.
++ * @pd: The platform data.
+  *
+  * This call copies the @info passed in and sets the device .platform_data
+  * field to that copy. The @info is copied so that the original can be marked
+  * __initdata.
+  */
+-void __init s3c_ohci_set_platdata(struct s3c2410_hcd_info *info)
++void __init s3c_ohci_set_platdata(struct s3c2410_hcd_info *pd)
+ {
+-	struct s3c2410_hcd_info *npd;
+-
+-	npd = kmemdup(info, sizeof(struct s3c2410_hcd_info), GFP_KERNEL);
+-	if (!npd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-
+-	s3c_device_ohci.dev.platform_data = npd;
++	s3c_set_platdata(pd, sizeof(struct s3c2410_hcd_info), &s3c_device_ohci);
+ }
 -- 
 1.6.3.3
