@@ -1,66 +1,74 @@
-From: Sergei Shtylyov <sshtylyov@mvista.com>
-Subject: Re: [PATCH 4/4] usb: s3c-hsotg: Enable HCLK for the OTG module.
-Date: Fri, 28 May 2010 14:48:25 +0400
-Message-ID: <4BFF9F79.106@ru.mvista.com>
-References: <1275014477-23133-1-git-send-email-kgene.kim@samsung.com> <1275014477-23133-5-git-send-email-kgene.kim@samsung.com> <20100528102232.GZ4720@trinity.fluff.org>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: please pull bjdooks' for-linus/2635-updates
+Date: Fri, 28 May 2010 12:12:21 +0100
+Message-ID: <20100528111221.GD4720@trinity.fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:56499 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751303Ab0E1KtQ (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:45532 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755991Ab0E1LM3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 May 2010 06:49:16 -0400
-In-Reply-To: <20100528102232.GZ4720@trinity.fluff.org>
+	Fri, 28 May 2010 07:12:29 -0400
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>
+To: torvalds@linux-foundation.org
+Cc: linux-arm-kernel@lists.infradead.org, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
 
-Hello.
+Please pull the following, which updates the documentation to follow
+the current Samsung areas of the kernel, fixes a pair of missing clocks
+and updates the defconfigs i'm directly responsible for up to the latest
+kernel. Also fix a serial sparse warning.
 
-Ben Dooks wrote:
+The following changes since commit 9dda696f0de87a2e5cfabb147e28c76b7d3c6846:
+  Linus Torvalds (1):
+        Merge branch 'release' of git://git.kernel.org/.../aegl/linux-2.6
 
->> From: Thomas Abraham <thomas.ab@samsung.com>
+are available in the git repository at:
 
->> This patch modifies the following in S3C hsotg driver.
+  git://git.fluff.org/bjdooks/linux.git for-linus/2635-updates
 
->> 1. Gets a reference to the USB OTG hclk clock and enables it. This is
->>    required for plaforms on which the USB OTG hclk is disabled during
->>    the boot time clock intialization.
+Ben Dooks (15):
+      ARM: SAMSUNG: Documentation: update the list of SoCs supported
+      ARM: SAMSUNG: Documentation: update directory layout
+      ARM: S3C24XX: Documentation: update documentation overview
+      ARM: S3C24XX: Documentation: update GPIO documentation
+      ARM: S3C24XX: Documentation: add section on gpiolib changes
+      ARM: SAMSUNG: Fix documentation for s3c_gpio_cfgpin()
+      ARM: SAMSUNG: Documentation: add documentation on GPIO code
+      ARM: SAMSUNG: gpio-cfg.h: update documentation
+      ARM: s3c6400_defconfig: Update compiled machines
+      ARM: s3c6400_defconfig: Add SPI driver
+      ARM: s3c6400_defconfig: Enable USB host side
+      ARM: s3c6400_defconfig: Add RTC driver support
+      ARM: s3c6400_defconfig: Add framebuffer and basic LCD
+      ARM: s3c2410_defconfig: Add new machines
+      ARM: Merge for-2635/defconfig3
 
->> 2. Add necessary clock clean up in case of error during initialization
->>    failure or during module unload.
+Marek Szyprowski (1):
+      ARM: S5PV210: serial: Fix section mismatch warning
 
->> 3. Add a new field 'clk_otg' in 'struct s3c_hsotg' to maintain a
->>    reference to the USB OTG hclk clock.
+Thomas Abraham (2):
+      ARM: S3C64XX: Add USB OTG HCLK to the list of clocks
+      ARM: S5P: Regoster clk_xusbxti clock for hsotg driver
 
->> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
->> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
->> ---
->>  drivers/usb/gadget/s3c-hsotg.c |   17 +++++++++++++++++
->>  1 files changed, 17 insertions(+), 0 deletions(-)
->>
->> diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
->> index 81c47d2..526d081 100644
->> --- a/drivers/usb/gadget/s3c-hsotg.c
->> +++ b/drivers/usb/gadget/s3c-hsotg.c
+ Documentation/arm/Samsung-S3C24XX/GPIO.txt     |   81 +++++-
+ Documentation/arm/Samsung-S3C24XX/Overview.txt |   15 +-
+ Documentation/arm/Samsung/GPIO.txt             |   42 +++
+ Documentation/arm/Samsung/Overview.txt         |   33 ++-
+ arch/arm/configs/s3c2410_defconfig             |   35 ++-
+ arch/arm/configs/s3c6400_defconfig             |  390 +++++++++++++++++++++++-
+ arch/arm/mach-s3c64xx/clock.c                  |    6 +
+ arch/arm/plat-s5p/clock.c                      |    1 +
+ arch/arm/plat-samsung/include/plat/gpio-cfg.h  |   23 ++-
+ drivers/serial/s5pv210.c                       |    8 +-
+ 10 files changed, 594 insertions(+), 40 deletions(-)
+ create mode 100644 Documentation/arm/Samsung/GPIO.txt
 
-[...]
 
->> @@ -3269,6 +3271,14 @@ static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
->>  		goto err_regs_res;
->>  	}
->>  
->> +	hsotg->clk_otg = clk_get(&pdev->dev, "otg");
->> +	if (IS_ERR(hsotg->clk_otg)) {
->> +		dev_err(dev, "failed to find usb otg clock source\n");
->> +		ret = -ENODEV;
+-- 
+Ben
 
-> hmm, -ENODEV isn't really the right error to return here, it'll
-> get silently ignored by the device core.
-
-    Right, PTR_ERR(hsotg->clk_otg) should be returned in this case.
-
-WBR, Sergei
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
