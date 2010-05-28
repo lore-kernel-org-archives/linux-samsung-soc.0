@@ -1,152 +1,79 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH 02/15] ARM: S3C64XX: Change dev-audio.c to use S3C_GPIO_SFN() for special functions
-Date: Fri, 28 May 2010 06:56:39 +0100
-Message-ID: <1275026212-27510-3-git-send-email-ben-linux@fluff.org>
+Subject: [PATCH 01/15] ARM: SAMSUNG: Add GPIO configuration for a range of pins
+Date: Fri, 28 May 2010 06:56:38 +0100
+Message-ID: <1275026212-27510-2-git-send-email-ben-linux@fluff.org>
 References: <1275026212-27510-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:33956 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:33979 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755720Ab0E1F5F (ORCPT
+	id S1755270Ab0E1F5N (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 May 2010 01:57:05 -0400
+	Fri, 28 May 2010 01:57:13 -0400
 In-Reply-To: <1275026212-27510-1-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Ben Dooks <ben-linux@fluff.org>
 
-To aide in changing the gpio code, remove the use of pin-specific configs
-and move to using the S3C_GPIO_SFN() versions.
+Add s3c_gpio_cfgpin_range() to configure a range of pins to the given
+value. This is useful for a number of blocks where the pins are in order
+and saves multiple calls to s3c_gpio_cfgpin().
 
 Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/mach-s3c64xx/dev-audio.c |   79 +++++++++++++++++-------------------
- 1 files changed, 37 insertions(+), 42 deletions(-)
+ arch/arm/plat-samsung/gpio-config.c           |   15 +++++++++++++++
+ arch/arm/plat-samsung/include/plat/gpio-cfg.h |   13 +++++++++++++
+ 2 files changed, 28 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
-index c3e9e73..6699cdc 100644
---- a/arch/arm/mach-s3c64xx/dev-audio.c
-+++ b/arch/arm/mach-s3c64xx/dev-audio.c
-@@ -22,27 +22,22 @@
- #include <plat/audio.h>
- #include <plat/gpio-cfg.h>
- 
--#include <mach/gpio-bank-c.h>
--#include <mach/gpio-bank-d.h>
--#include <mach/gpio-bank-e.h>
--#include <mach/gpio-bank-h.h>
--
- static int s3c64xx_i2sv3_cfg_gpio(struct platform_device *pdev)
- {
- 	switch (pdev->id) {
- 	case 0:
--		s3c_gpio_cfgpin(S3C64XX_GPD(0), S3C64XX_GPD0_I2S0_CLK);
--		s3c_gpio_cfgpin(S3C64XX_GPD(1), S3C64XX_GPD1_I2S0_CDCLK);
--		s3c_gpio_cfgpin(S3C64XX_GPD(2), S3C64XX_GPD2_I2S0_LRCLK);
--		s3c_gpio_cfgpin(S3C64XX_GPD(3), S3C64XX_GPD3_I2S0_DI);
--		s3c_gpio_cfgpin(S3C64XX_GPD(4), S3C64XX_GPD4_I2S0_D0);
-+		s3c_gpio_cfgpin(S3C64XX_GPD(0), S3C_GPIO_SFN(3));
-+		s3c_gpio_cfgpin(S3C64XX_GPD(1), S3C_GPIO_SFN(3));
-+		s3c_gpio_cfgpin(S3C64XX_GPD(2), S3C_GPIO_SFN(3));
-+		s3c_gpio_cfgpin(S3C64XX_GPD(3), S3C_GPIO_SFN(3));
-+		s3c_gpio_cfgpin(S3C64XX_GPD(4), S3C_GPIO_SFN(3));
- 		break;
- 	case 1:
--		s3c_gpio_cfgpin(S3C64XX_GPE(0), S3C64XX_GPE0_I2S1_CLK);
--		s3c_gpio_cfgpin(S3C64XX_GPE(1), S3C64XX_GPE1_I2S1_CDCLK);
--		s3c_gpio_cfgpin(S3C64XX_GPE(2), S3C64XX_GPE2_I2S1_LRCLK);
--		s3c_gpio_cfgpin(S3C64XX_GPE(3), S3C64XX_GPE3_I2S1_DI);
--		s3c_gpio_cfgpin(S3C64XX_GPE(4), S3C64XX_GPE4_I2S1_D0);
-+		s3c_gpio_cfgpin(S3C64XX_GPE(0), S3C_GPIO_SFN(3));
-+		s3c_gpio_cfgpin(S3C64XX_GPE(1), S3C_GPIO_SFN(3));
-+		s3c_gpio_cfgpin(S3C64XX_GPE(2), S3C_GPIO_SFN(3));
-+		s3c_gpio_cfgpin(S3C64XX_GPE(3), S3C_GPIO_SFN(3));
-+		s3c_gpio_cfgpin(S3C64XX_GPE(4), S3C_GPIO_SFN(3));
- 	default:
- 		printk(KERN_DEBUG "Invalid I2S Controller number!");
- 		return -EINVAL;
-@@ -53,13 +48,13 @@ static int s3c64xx_i2sv3_cfg_gpio(struct platform_device *pdev)
- 
- static int s3c64xx_i2sv4_cfg_gpio(struct platform_device *pdev)
- {
--	s3c_gpio_cfgpin(S3C64XX_GPC(4), S3C64XX_GPC4_I2S_V40_DO0);
--	s3c_gpio_cfgpin(S3C64XX_GPC(5), S3C64XX_GPC5_I2S_V40_DO1);
--	s3c_gpio_cfgpin(S3C64XX_GPC(7), S3C64XX_GPC7_I2S_V40_DO2);
--	s3c_gpio_cfgpin(S3C64XX_GPH(6), S3C64XX_GPH6_I2S_V40_BCLK);
--	s3c_gpio_cfgpin(S3C64XX_GPH(7), S3C64XX_GPH7_I2S_V40_CDCLK);
--	s3c_gpio_cfgpin(S3C64XX_GPH(8), S3C64XX_GPH8_I2S_V40_LRCLK);
--	s3c_gpio_cfgpin(S3C64XX_GPH(9), S3C64XX_GPH9_I2S_V40_DI);
-+	s3c_gpio_cfgpin(S3C64XX_GPC(4), S3C_GPIO_SFN(5));
-+	s3c_gpio_cfgpin(S3C64XX_GPC(5), S3C_GPIO_SFN(5));
-+	s3c_gpio_cfgpin(S3C64XX_GPC(7), S3C_GPIO_SFN(5));
-+	s3c_gpio_cfgpin(S3C64XX_GPH(6), S3C_GPIO_SFN(4));
-+	s3c_gpio_cfgpin(S3C64XX_GPH(7), S3C_GPIO_SFN(4));
-+	s3c_gpio_cfgpin(S3C64XX_GPH(8), S3C_GPIO_SFN(4));
-+	s3c_gpio_cfgpin(S3C64XX_GPH(9), S3C_GPIO_SFN(4)); 
- 
- 	return 0;
+diff --git a/arch/arm/plat-samsung/gpio-config.c b/arch/arm/plat-samsung/gpio-config.c
+index 57b68a5..a927dd2 100644
+--- a/arch/arm/plat-samsung/gpio-config.c
++++ b/arch/arm/plat-samsung/gpio-config.c
+@@ -41,6 +41,21 @@ int s3c_gpio_cfgpin(unsigned int pin, unsigned int config)
  }
-@@ -170,18 +165,18 @@ static int s3c64xx_pcm_cfg_gpio(struct platform_device *pdev)
+ EXPORT_SYMBOL(s3c_gpio_cfgpin);
+ 
++int s3c_gpio_cfgpin_range(unsigned int start, unsigned int nr,
++			  unsigned int cfg)
++{
++	int ret;
++
++	for (; nr > 0; nr--, start++) {
++		ret = s3c_gpio_cfgpin(start, cfg);
++		if (ret != 0)
++			return ret;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(s3c_gpio_cfgpin_range);
++
+ unsigned s3c_gpio_getcfg(unsigned int pin)
  {
- 	switch (pdev->id) {
- 	case 0:
--		s3c_gpio_cfgpin(S3C64XX_GPD(0), S3C64XX_GPD0_PCM0_SCLK);
--		s3c_gpio_cfgpin(S3C64XX_GPD(1), S3C64XX_GPD1_PCM0_EXTCLK);
--		s3c_gpio_cfgpin(S3C64XX_GPD(2), S3C64XX_GPD2_PCM0_FSYNC);
--		s3c_gpio_cfgpin(S3C64XX_GPD(3), S3C64XX_GPD3_PCM0_SIN);
--		s3c_gpio_cfgpin(S3C64XX_GPD(4), S3C64XX_GPD4_PCM0_SOUT);
-+		s3c_gpio_cfgpin(S3C64XX_GPD(0), S3C_GPIO_SFN(2));
-+		s3c_gpio_cfgpin(S3C64XX_GPD(1), S3C_GPIO_SFN(2));
-+		s3c_gpio_cfgpin(S3C64XX_GPD(2), S3C_GPIO_SFN(2));
-+		s3c_gpio_cfgpin(S3C64XX_GPD(3), S3C_GPIO_SFN(2));
-+		s3c_gpio_cfgpin(S3C64XX_GPD(4), S3C_GPIO_SFN(2));
- 		break;
- 	case 1:
--		s3c_gpio_cfgpin(S3C64XX_GPE(0), S3C64XX_GPE0_PCM1_SCLK);
--		s3c_gpio_cfgpin(S3C64XX_GPE(1), S3C64XX_GPE1_PCM1_EXTCLK);
--		s3c_gpio_cfgpin(S3C64XX_GPE(2), S3C64XX_GPE2_PCM1_FSYNC);
--		s3c_gpio_cfgpin(S3C64XX_GPE(3), S3C64XX_GPE3_PCM1_SIN);
--		s3c_gpio_cfgpin(S3C64XX_GPE(4), S3C64XX_GPE4_PCM1_SOUT);
-+		s3c_gpio_cfgpin(S3C64XX_GPE(0), S3C_GPIO_SFN(2));
-+		s3c_gpio_cfgpin(S3C64XX_GPE(1), S3C_GPIO_SFN(2));
-+		s3c_gpio_cfgpin(S3C64XX_GPE(2), S3C_GPIO_SFN(2));
-+		s3c_gpio_cfgpin(S3C64XX_GPE(3), S3C_GPIO_SFN(2));
-+		s3c_gpio_cfgpin(S3C64XX_GPE(4), S3C_GPIO_SFN(2));
- 		break;
- 	default:
- 		printk(KERN_DEBUG "Invalid PCM Controller number!");
-@@ -261,22 +256,22 @@ EXPORT_SYMBOL(s3c64xx_device_pcm1);
+ 	struct s3c_gpio_chip *chip = s3c_gpiolib_getchip(pin);
+diff --git a/arch/arm/plat-samsung/include/plat/gpio-cfg.h b/arch/arm/plat-samsung/include/plat/gpio-cfg.h
+index 34efdd2..8ec9936 100644
+--- a/arch/arm/plat-samsung/include/plat/gpio-cfg.h
++++ b/arch/arm/plat-samsung/include/plat/gpio-cfg.h
+@@ -89,6 +89,19 @@ extern int s3c_gpio_cfgpin(unsigned int pin, unsigned int to);
+  */
+ extern unsigned s3c_gpio_getcfg(unsigned int pin);
  
- static int s3c64xx_ac97_cfg_gpd(struct platform_device *pdev)
- {
--	s3c_gpio_cfgpin(S3C64XX_GPD(0), S3C64XX_GPD0_AC97_BITCLK);
--	s3c_gpio_cfgpin(S3C64XX_GPD(1), S3C64XX_GPD1_AC97_nRESET);
--	s3c_gpio_cfgpin(S3C64XX_GPD(2), S3C64XX_GPD2_AC97_SYNC);
--	s3c_gpio_cfgpin(S3C64XX_GPD(3), S3C64XX_GPD3_AC97_SDI);
--	s3c_gpio_cfgpin(S3C64XX_GPD(4), S3C64XX_GPD4_AC97_SDO);
-+	s3c_gpio_cfgpin(S3C64XX_GPD(0), S3C_GPIO_SFN(4));
-+	s3c_gpio_cfgpin(S3C64XX_GPD(1), S3C_GPIO_SFN(4));
-+	s3c_gpio_cfgpin(S3C64XX_GPD(2), S3C_GPIO_SFN(4));
-+	s3c_gpio_cfgpin(S3C64XX_GPD(3), S3C_GPIO_SFN(4));
-+	s3c_gpio_cfgpin(S3C64XX_GPD(4), S3C_GPIO_SFN(4));
- 
- 	return 0;
- }
- 
- static int s3c64xx_ac97_cfg_gpe(struct platform_device *pdev)
- {
--	s3c_gpio_cfgpin(S3C64XX_GPE(0), S3C64XX_GPE0_AC97_BITCLK);
--	s3c_gpio_cfgpin(S3C64XX_GPE(1), S3C64XX_GPE1_AC97_nRESET);
--	s3c_gpio_cfgpin(S3C64XX_GPE(2), S3C64XX_GPE2_AC97_SYNC);
--	s3c_gpio_cfgpin(S3C64XX_GPE(3), S3C64XX_GPE3_AC97_SDI);
--	s3c_gpio_cfgpin(S3C64XX_GPE(4), S3C64XX_GPE4_AC97_SDO);
-+	s3c_gpio_cfgpin(S3C64XX_GPE(0), S3C_GPIO_SFN(4));
-+	s3c_gpio_cfgpin(S3C64XX_GPE(1), S3C_GPIO_SFN(4));
-+	s3c_gpio_cfgpin(S3C64XX_GPE(2), S3C_GPIO_SFN(4));
-+	s3c_gpio_cfgpin(S3C64XX_GPE(3), S3C_GPIO_SFN(4));
-+	s3c_gpio_cfgpin(S3C64XX_GPE(4), S3C_GPIO_SFN(4));
- 
- 	return 0;
- }
++/**
++ * s3c_gpio_cfgpin_range() - Change the GPIO function for configuring pin range
++ * @start: The pin number to start at
++ * @number: The number of pins to configure from @start.
++ * @cfg: The configuration for the pin's function
++ *
++ * Call s3c_gpio_cfgpin() for the @number pins starting at @start.
++ *
++ * @sa s3c_gpio_cfgpin.
++ */
++extern int s3c_gpio_cfgpin_range(unsigned int start, unsigned int nr,
++				 unsigned int cfg);
++
+ /* Define values for the pull-{up,down} available for each gpio pin.
+  *
+  * These values control the state of the weak pull-{up,down} resistors
 -- 
 1.6.3.3
