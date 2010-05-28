@@ -1,188 +1,58 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH 05/15] ARM: S5P6442: Change to using
-	s3c_gpio_cfgpin_range()
-Date: Fri, 28 May 2010 07:35:46 +0100
-Message-ID: <20100528063546.GV4720@trinity.fluff.org>
-References: <1275026212-27510-1-git-send-email-ben-linux@fluff.org> <1275026212-27510-6-git-send-email-ben-linux@fluff.org> <AANLkTilPCk0NqJ7od6ZBorqPrlG0xCjdPaim1Q3WwZMH@mail.gmail.com>
+Subject: Re: [PATCH 2/4] ARM: S5PV210: Assign clock rate for clk_xusbxti
+	clock.
+Date: Fri, 28 May 2010 08:10:57 +0100
+Message-ID: <20100528071057.GX4720@trinity.fluff.org>
+References: <1275014477-23133-1-git-send-email-kgene.kim@samsung.com> <1275014477-23133-3-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:59890 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:53376 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751313Ab0E1Gfv (ORCPT
+	id S1754369Ab0E1HLH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 May 2010 02:35:51 -0400
+	Fri, 28 May 2010 03:11:07 -0400
 Content-Disposition: inline
-In-Reply-To: <AANLkTilPCk0NqJ7od6ZBorqPrlG0xCjdPaim1Q3WwZMH@mail.gmail.com>
+In-Reply-To: <1275014477-23133-3-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>
-Cc: Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Thomas Abraham <thomas.ab@samsung.com>
 
-On Fri, May 28, 2010 at 03:24:02PM +0900, Kyungmin Park wrote:
-> Hi,
->=20
-> Looks good but I'm afraid it's more difficult to find pin
-> configuration from typo.
+On Fri, May 28, 2010 at 11:41:15AM +0900, Kukjin Kim wrote:
+> From: Thomas Abraham <thomas.ab@samsung.com>
+> 
+> The input clock frequency for USB Phy is 24 Mhz on the S5PV210
+> platform. This patch initializes the clk_xusbxti clock rate to 24Mhz.
 
-I'm not sure if that's really so much of a problem.
-=20
-> On Fri, May 28, 2010 at 2:56 PM, Ben Dooks <ben-linux@fluff.org> wrot=
-e:
-> > Change the code setting ranges of GPIO pins using s3c_gpio_cfgpin()=
- to
-> > use the recently introduced s3c_gpio_cfgpin_range().
-> >
-> > Signed-off-by: Ben Dooks <ben-linux@fluff.org>
-> > ---
-> > =A0arch/arm/mach-s5p6442/dev-audio.c | =A0 30 ++++++++++-----------=
----------
-> > =A0arch/arm/mach-s5p6442/dev-spi.c =A0 | =A0 =A04 +---
-> > =A02 files changed, 11 insertions(+), 23 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-s5p6442/dev-audio.c b/arch/arm/mach-s5p6=
-442/dev-audio.c
-> > index cb801e1..0e57caf 100644
-> > --- a/arch/arm/mach-s5p6442/dev-audio.c
-> > +++ b/arch/arm/mach-s5p6442/dev-audio.c
-> > @@ -21,22 +21,16 @@
-> >
-> > =A0static int s5p6442_cfg_i2s(struct platform_device *pdev)
-> > =A0{
-> > + =A0 =A0 =A0 unsigned int base;
-> > +
-> > =A0 =A0 =A0 =A0/* configure GPIO for i2s port */
-> > =A0 =A0 =A0 =A0switch (pdev->id) {
-> > =A0 =A0 =A0 =A0case 1:
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC1(0), S3C_=
-GPIO_SFN(2));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC1(1), S3C_=
-GPIO_SFN(2));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC1(2), S3C_=
-GPIO_SFN(2));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC1(3), S3C_=
-GPIO_SFN(2));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC1(4), S3C_=
-GPIO_SFN(2));
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 base =3D S5P6442_GPC1(0);
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0break;
-> >
-> > =A0 =A0 =A0 =A0case -1:
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC0(0), S3C_=
-GPIO_SFN(2));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC0(1), S3C_=
-GPIO_SFN(2));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC0(2), S3C_=
-GPIO_SFN(2));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC0(3), S3C_=
-GPIO_SFN(2));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC0(4), S3C_=
-GPIO_SFN(2));
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 base =3D S5P6442_GPC0(0);
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0break;
-> >
-> > =A0 =A0 =A0 =A0default:
-> > @@ -44,6 +38,7 @@ static int s5p6442_cfg_i2s(struct platform_device=
- *pdev)
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return -EINVAL;
-> > =A0 =A0 =A0 =A0}
-> >
-> > + =A0 =A0 =A0 s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(2));
-> > =A0 =A0 =A0 =A0return 0;
-> > =A0}
-> >
-> > @@ -111,21 +106,15 @@ struct platform_device s5p6442_device_iis1 =3D=
- {
-> >
-> > =A0static int s5p6442_pcm_cfg_gpio(struct platform_device *pdev)
-> > =A0{
-> > + =A0 =A0 =A0 unsigned int base;
-> > +
-> > =A0 =A0 =A0 =A0switch (pdev->id) {
-> > =A0 =A0 =A0 =A0case 0:
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC0(0), S3C_=
-GPIO_SFN(3));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC0(1), S3C_=
-GPIO_SFN(3));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC0(2), S3C_=
-GPIO_SFN(3));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC0(3), S3C_=
-GPIO_SFN(3));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC0(4), S3C_=
-GPIO_SFN(3));
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 base =3D S5P6442_GPC0(0);
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0break;
-> >
-> > =A0 =A0 =A0 =A0case 1:
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC1(0), S3C_=
-GPIO_SFN(3));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC1(1), S3C_=
-GPIO_SFN(3));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC1(2), S3C_=
-GPIO_SFN(3));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC1(3), S3C_=
-GPIO_SFN(3));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPC1(4), S3C_=
-GPIO_SFN(3));
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 base =3D S5P6442_GPC1(0);
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0break;
-> >
-> > =A0 =A0 =A0 =A0default:
-> > @@ -133,6 +122,7 @@ static int s5p6442_pcm_cfg_gpio(struct platform=
-_device *pdev)
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return -EINVAL;
-> > =A0 =A0 =A0 =A0}
-> >
-> > + =A0 =A0 =A0 s3c_gpio_cfgpin_range(base, 5, S3C_GPIO_SFN(3));
-> > =A0 =A0 =A0 =A0return 0;
-> > =A0}
-> >
-> > diff --git a/arch/arm/mach-s5p6442/dev-spi.c b/arch/arm/mach-s5p644=
-2/dev-spi.c
-> > index 3019952..1c5c170 100644
-> > --- a/arch/arm/mach-s5p6442/dev-spi.c
-> > +++ b/arch/arm/mach-s5p6442/dev-spi.c
-> > @@ -37,9 +37,7 @@ static int s5p6442_spi_cfg_gpio(struct platform_d=
-evice *pdev)
-> > =A0{
-> > =A0 =A0 =A0 =A0switch (pdev->id) {
-> > =A0 =A0 =A0 =A0case 0:
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPB(0), S3C_G=
-PIO_SFN(2));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPB(2), S3C_G=
-PIO_SFN(2));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6442_GPB(3), S3C_G=
-PIO_SFN(2));
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin_range(S5P6442_GPB(0),=
- 4, S3C_GPIO_SFN(2));
->=20
-> Where's the GPB(1)???
+is this all s5pv210/s5pc110 machines, or are there any current/likely
+machines with non 24M clocks?
+ 
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+>  arch/arm/mach-s5pv210/clock.c |    2 ++
+>  1 files changed, 2 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
+> index 154bca4..4ef09d4 100644
+> --- a/arch/arm/mach-s5pv210/clock.c
+> +++ b/arch/arm/mach-s5pv210/clock.c
+> @@ -954,6 +954,8 @@ void __init_or_cpufreq s5pv210_setup_clocks(void)
+>  
+>  	printk(KERN_DEBUG "%s: registering clocks\n", __func__);
+>  
+> +	clk_xusbxti.rate = 24 * MHZ;
+> +
+>  	clkdiv0 = __raw_readl(S5P_CLK_DIV0);
+>  	clkdiv1 = __raw_readl(S5P_CLK_DIV1);
+>  
+> -- 
+> 1.6.3.3
+> 
 
-you're right, this is an invalid change. will back it out.
-=20
-> Thank you,
-> Kyungmin Park
->=20
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0s3c_gpio_setpull(S5P6442_GPB(0), S3C=
-_GPIO_PULL_UP);
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0s3c_gpio_setpull(S5P6442_GPB(2), S3C=
-_GPIO_PULL_UP);
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0s3c_gpio_setpull(S5P6442_GPB(3), S3C=
-_GPIO_PULL_UP);
-> > --
-> > 1.6.3.3
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-sam=
-sung-soc" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at =A0http://vger.kernel.org/majordomo-info.htm=
-l
-> >
-
---=20
---=20
+-- 
+-- 
 Ben
 
 Q:      What's a light-year?
