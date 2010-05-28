@@ -1,100 +1,83 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: [PATCH 04/15] ARM: S5P6440: Change to using s3c_gpio_cfgpin_range()
-Date: Fri, 28 May 2010 06:56:41 +0100
-Message-ID: <1275026212-27510-5-git-send-email-ben-linux@fluff.org>
+Subject: [PATCH 15/15] ARM: S5PV210: Change to using s3c_gpio_cfgrange_nopull()
+Date: Fri, 28 May 2010 06:56:52 +0100
+Message-ID: <1275026212-27510-16-git-send-email-ben-linux@fluff.org>
 References: <1275026212-27510-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:33957 "EHLO trinity.fluff.org"
+Received: from trinity.fluff.org ([89.16.178.74]:33962 "EHLO trinity.fluff.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755751Ab0E1F5F (ORCPT
+	id S1755867Ab0E1F5G (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 May 2010 01:57:05 -0400
+	Fri, 28 May 2010 01:57:06 -0400
 In-Reply-To: <1275026212-27510-1-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Ben Dooks <ben-linux@fluff.org>
 
-Change the code setting ranges of GPIO pins using s3c_gpio_cfgpin() to
-use the recently introduced s3c_gpio_cfgpin_range().
+Chane code setting special-function and no pull-up to use
+the s3c_gpio_cfgrange_nopull() wrapper.
 
 Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 ---
- arch/arm/mach-s5p6440/dev-audio.c |   16 ++++------------
- arch/arm/mach-s5p6440/dev-spi.c   |   12 ++++++------
- 2 files changed, 10 insertions(+), 18 deletions(-)
+ arch/arm/mach-s5pv210/setup-sdhci-gpio.c |   21 +++++++--------------
+ 1 files changed, 7 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/mach-s5p6440/dev-audio.c b/arch/arm/mach-s5p6440/dev-audio.c
-index 0c53679..f929290 100644
---- a/arch/arm/mach-s5p6440/dev-audio.c
-+++ b/arch/arm/mach-s5p6440/dev-audio.c
-@@ -24,13 +24,8 @@ static int s5p6440_cfg_i2s(struct platform_device *pdev)
- 	/* configure GPIO for i2s port */
- 	switch (pdev->id) {
- 	case -1:
--		s3c_gpio_cfgpin(S5P6440_GPR(4), S3C_GPIO_SFN(5));
--		s3c_gpio_cfgpin(S5P6440_GPR(5), S3C_GPIO_SFN(5));
--		s3c_gpio_cfgpin(S5P6440_GPR(6), S3C_GPIO_SFN(5));
--		s3c_gpio_cfgpin(S5P6440_GPR(7), S3C_GPIO_SFN(5));
--		s3c_gpio_cfgpin(S5P6440_GPR(8), S3C_GPIO_SFN(5));
--		s3c_gpio_cfgpin(S5P6440_GPR(13), S3C_GPIO_SFN(5));
--		s3c_gpio_cfgpin(S5P6440_GPR(14), S3C_GPIO_SFN(5));
-+		s3c_gpio_cfgpin_range(S5P6440_GPR(4), 5, S3C_GPIO_SFN(5));
-+		s3c_gpio_cfgpin_range(S5P6440_GPR(13), 2, S3C_GPIO_SFN(5));
- 		break;
- 
+diff --git a/arch/arm/mach-s5pv210/setup-sdhci-gpio.c b/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
+index 38189d1..2307d52 100644
+--- a/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
++++ b/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
+@@ -31,12 +31,10 @@ void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
+ 	switch (width) {
+ 	case 8:
+ 		/* GPG1[3:6] special-funtion 3 */
+-		s3c_gpio_cfgall_range(S5PV210_GPG1(3), 4,
+-				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_NONE);
++		s3c_gpio_cfgrange_nopull(S5PV210_GPG1(3), 4, S3C_GPIO_SFN(3));
+ 	case 4:
+ 		/* GPG0[3:6] special-funtion 2 */
+-		s3c_gpio_cfgall_range(S5PV210_GPG0(3), 4,
+-				      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
++		s3c_gpio_cfgrange_nopull(S5PV210_GPG0(3), 4, S3C_GPIO_SFN(2));
  	default:
-@@ -79,11 +74,8 @@ static int s5p6440_pcm_cfg_gpio(struct platform_device *pdev)
- {
- 	switch (pdev->id) {
- 	case 0:
--		s3c_gpio_cfgpin(S5P6440_GPR(7), S3C_GPIO_SFN(2));
--		s3c_gpio_cfgpin(S5P6440_GPR(13), S3C_GPIO_SFN(2));
--		s3c_gpio_cfgpin(S5P6440_GPR(14), S3C_GPIO_SFN(2));
--		s3c_gpio_cfgpin(S5P6440_GPR(8), S3C_GPIO_SFN(2));
--		s3c_gpio_cfgpin(S5P6440_GPR(6), S3C_GPIO_SFN(2));
-+		s3c_gpio_cfgpin_range(S5P6440_GPR(13), 2, S3C_GPIO_SFN(2));
-+		s3c_gpio_cfgpin_range(S5P6440_GPR(6), 3, S3C_GPIO_SFN(2));
  		break;
- 
- 	default:
-diff --git a/arch/arm/mach-s5p6440/dev-spi.c b/arch/arm/mach-s5p6440/dev-spi.c
-index 0a30280..473eae4 100644
---- a/arch/arm/mach-s5p6440/dev-spi.c
-+++ b/arch/arm/mach-s5p6440/dev-spi.c
-@@ -35,20 +35,18 @@ static char *spi_src_clks[] = {
-  */
- static int s5p6440_spi_cfg_gpio(struct platform_device *pdev)
- {
-+	unsigned int base;
-+
- 	switch (pdev->id) {
- 	case 0:
--		s3c_gpio_cfgpin(S5P6440_GPC(0), S3C_GPIO_SFN(2));
--		s3c_gpio_cfgpin(S5P6440_GPC(1), S3C_GPIO_SFN(2));
--		s3c_gpio_cfgpin(S5P6440_GPC(2), S3C_GPIO_SFN(2));
-+		base = S5P6440_GPC(0);
- 		s3c_gpio_setpull(S5P6440_GPC(0), S3C_GPIO_PULL_UP);
- 		s3c_gpio_setpull(S5P6440_GPC(1), S3C_GPIO_PULL_UP);
- 		s3c_gpio_setpull(S5P6440_GPC(2), S3C_GPIO_PULL_UP);
- 		break;
- 
- 	case 1:
--		s3c_gpio_cfgpin(S5P6440_GPC(4), S3C_GPIO_SFN(2));
--		s3c_gpio_cfgpin(S5P6440_GPC(5), S3C_GPIO_SFN(2));
--		s3c_gpio_cfgpin(S5P6440_GPC(6), S3C_GPIO_SFN(2));
-+		base = S5P6440_GPC(4);
- 		s3c_gpio_setpull(S5P6440_GPC(4), S3C_GPIO_PULL_UP);
- 		s3c_gpio_setpull(S5P6440_GPC(5), S3C_GPIO_PULL_UP);
- 		s3c_gpio_setpull(S5P6440_GPC(6), S3C_GPIO_PULL_UP);
-@@ -59,6 +57,8 @@ static int s5p6440_spi_cfg_gpio(struct platform_device *pdev)
- 		return -EINVAL;
  	}
+@@ -48,12 +46,10 @@ void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
+ void s5pv210_setup_sdhci1_cfg_gpio(struct platform_device *dev, int width)
+ {
+ 	/* Set all the necessary GPG1[0:1] pins to special-function 2 */
+-	s3c_gpio_cfgall_range(S5PV210_GPG1(0), 2,
+-			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
++	s3c_gpio_cfgrange_nopull(S5PV210_GPG1(0), 2, S3C_GPIO_SFN(2));
  
-+	s3c_gpio_cfgpin_range(base, 3, S3C_GPIO_SFN(2));
-+
- 	return 0;
- }
+ 	/* Data pin GPG1[3:6] to special-function 2 */
+-	s3c_gpio_cfgall_range(S5PV210_GPG1(3), 4,
+-			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
++	s3c_gpio_cfgrange_nopull(S5PV210_GPG1(3), 4, S3C_GPIO_SFN(2));
  
+ 	s3c_gpio_setpull(S5PV210_GPG1(2), S3C_GPIO_PULL_UP);
+ 	s3c_gpio_cfgpin(S5PV210_GPG1(2), S3C_GPIO_SFN(2));
+@@ -62,18 +58,15 @@ void s5pv210_setup_sdhci1_cfg_gpio(struct platform_device *dev, int width)
+ void s5pv210_setup_sdhci2_cfg_gpio(struct platform_device *dev, int width)
+ {
+ 	/* Set all the necessary GPG2[0:1] pins to special-function 2 */
+-	s3c_gpio_cfgall_range(S5PV210_GPG2(0), 2,
+-			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
++	s3c_gpio_cfgrange_nopull(S5PV210_GPG2(0), 2, S3C_GPIO_SFN(2));
+ 
+ 	switch (width) {
+ 	case 8:
+ 		/* Data pin GPG3[3:6] to special-function 3 */
+-		s3c_gpio_cfgall_range(S5PV210_GPG3(3), 4,
+-				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_NONE);
++		s3c_gpio_cfgrange_nopull(S5PV210_GPG3(3), 4, S3C_GPIO_SFN(3));
+ 	case 4:
+ 		/* Data pin GPG2[3:6] to special-function 2 */
+-		s3c_gpio_cfgall_range(S5PV210_GPG2(3), 4,
+-				      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
++		s3c_gpio_cfgrange_nopull(S5PV210_GPG2(3), 4, S3C_GPIO_SFN(2));
+ 	default:
+ 		break;
+ 	}
 -- 
 1.6.3.3
