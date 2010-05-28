@@ -1,59 +1,66 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH 2/4] ARM: S5PV210: Assign clock rate for clk_xusbxti
-	clock.
-Date: Fri, 28 May 2010 08:10:57 +0100
-Message-ID: <20100528071057.GX4720@trinity.fluff.org>
-References: <1275014477-23133-1-git-send-email-kgene.kim@samsung.com> <1275014477-23133-3-git-send-email-kgene.kim@samsung.com>
+From: Sergei Shtylyov <sshtylyov@mvista.com>
+Subject: Re: [PATCH 01/15] ARM: SAMSUNG: Add GPIO configuration for a range
+ of pins
+Date: Fri, 28 May 2010 13:53:24 +0400
+Message-ID: <4BFF9294.60305@ru.mvista.com>
+References: <1275026212-27510-1-git-send-email-ben-linux@fluff.org> <1275026212-27510-2-git-send-email-ben-linux@fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:53376 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754369Ab0E1HLH (ORCPT
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:63372 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754655Ab0E1JyP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 May 2010 03:11:07 -0400
-Content-Disposition: inline
-In-Reply-To: <1275014477-23133-3-git-send-email-kgene.kim@samsung.com>
+	Fri, 28 May 2010 05:54:15 -0400
+Received: by wya21 with SMTP id 21so9800wya.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 May 2010 02:54:14 -0700 (PDT)
+In-Reply-To: <1275026212-27510-2-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Thomas Abraham <thomas.ab@samsung.com>
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Fri, May 28, 2010 at 11:41:15AM +0900, Kukjin Kim wrote:
-> From: Thomas Abraham <thomas.ab@samsung.com>
-> 
-> The input clock frequency for USB Phy is 24 Mhz on the S5PV210
-> platform. This patch initializes the clk_xusbxti clock rate to 24Mhz.
+Hello.
 
-is this all s5pv210/s5pc110 machines, or are there any current/likely
-machines with non 24M clocks?
- 
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
->  arch/arm/mach-s5pv210/clock.c |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-> index 154bca4..4ef09d4 100644
-> --- a/arch/arm/mach-s5pv210/clock.c
-> +++ b/arch/arm/mach-s5pv210/clock.c
-> @@ -954,6 +954,8 @@ void __init_or_cpufreq s5pv210_setup_clocks(void)
+Ben Dooks wrote:
+
+> Add s3c_gpio_cfgpin_range() to configure a range of pins to the given
+> value. This is useful for a number of blocks where the pins are in order
+> and saves multiple calls to s3c_gpio_cfgpin().
+
+> Signed-off-by: Ben Dooks <ben-linux@fluff.org>
+
+    A little kerneldoc correction:
+
+[...]
+
+> diff --git a/arch/arm/plat-samsung/include/plat/gpio-cfg.h b/arch/arm/plat-samsung/include/plat/gpio-cfg.h
+> index 34efdd2..8ec9936 100644
+> --- a/arch/arm/plat-samsung/include/plat/gpio-cfg.h
+> +++ b/arch/arm/plat-samsung/include/plat/gpio-cfg.h
+> @@ -89,6 +89,19 @@ extern int s3c_gpio_cfgpin(unsigned int pin, unsigned int to);
+>   */
+>  extern unsigned s3c_gpio_getcfg(unsigned int pin);
 >  
->  	printk(KERN_DEBUG "%s: registering clocks\n", __func__);
->  
-> +	clk_xusbxti.rate = 24 * MHZ;
+> +/**
+> + * s3c_gpio_cfgpin_range() - Change the GPIO function for configuring pin range
+> + * @start: The pin number to start at
+> + * @number: The number of pins to configure from @start.
+
+    You call the parameter 'nr'.
+
+> + * @cfg: The configuration for the pin's function
+> + *
+> + * Call s3c_gpio_cfgpin() for the @number pins starting at @start.
+> + *
+> + * @sa s3c_gpio_cfgpin.
+> + */
+> +extern int s3c_gpio_cfgpin_range(unsigned int start, unsigned int nr,
+> +				 unsigned int cfg);
 > +
->  	clkdiv0 = __raw_readl(S5P_CLK_DIV0);
->  	clkdiv1 = __raw_readl(S5P_CLK_DIV1);
->  
-> -- 
-> 1.6.3.3
-> 
+>  /* Define values for the pull-{up,down} available for each gpio pin.
+>   *
+>   * These values control the state of the weak pull-{up,down} resistors
 
--- 
--- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+WBR, Sergei
