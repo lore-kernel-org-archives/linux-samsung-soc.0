@@ -1,42 +1,52 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: S5P: Bug fix on external interrupt for S5P series
-Date: Mon, 31 May 2010 16:18:29 +0900
-Message-ID: <1275290309-5124-1-git-send-email-kgene.kim@samsung.com>
+From: Pawel Osciak <p.osciak@samsung.com>
+Subject: [PATCH 2/6] s3c-fb: Correct FRAMESEL1 bitfield defines for VIDINTCON0
+ register
+Date: Mon, 31 May 2010 11:08:51 +0200
+Message-ID: <1275296935-2693-3-git-send-email-p.osciak@samsung.com>
+References: <1275296935-2693-1-git-send-email-p.osciak@samsung.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:42608 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756395Ab0EaH0J (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:42719 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756071Ab0EaJJG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 31 May 2010 03:26:09 -0400
+	Mon, 31 May 2010 05:09:06 -0400
+In-reply-to: <1275296935-2693-1-git-send-email-p.osciak@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Boojin Kim <boojin.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: p.osciak@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org
 
-From: Boojin Kim <boojin.kim@samsung.com>
+FRAMESEL1 bitfield starts on 13th bit, not on 14th.
 
-This patch fixes bug on eint type set function, s5p_irq_eint_set_type().
-In the IRQ_TYPE_EDGE_FALLING case, S5P_EXTINT_FALLEDGE is right
-instead of S5P_EXTINT_RISEEDGE
-
-Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/plat-s5p/irq-eint.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ arch/arm/plat-samsung/include/plat/regs-fb.h |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/plat-s5p/irq-eint.c b/arch/arm/plat-s5p/irq-eint.c
-index e56c807..f36cd33 100644
---- a/arch/arm/plat-s5p/irq-eint.c
-+++ b/arch/arm/plat-s5p/irq-eint.c
-@@ -71,7 +71,7 @@ static int s5p_irq_eint_set_type(unsigned int irq, unsigned int type)
- 		break;
+diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-samsung/include/plat/regs-fb.h
+index f4259e5..ac10013 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-fb.h
++++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
+@@ -292,11 +292,11 @@
+ #define VIDINTCON0_FRAMESEL0_ACTIVE		(0x2 << 15)
+ #define VIDINTCON0_FRAMESEL0_FRONTPORCH		(0x3 << 15)
  
- 	case IRQ_TYPE_EDGE_FALLING:
--		newvalue = S5P_EXTINT_RISEEDGE;
-+		newvalue = S5P_EXTINT_FALLEDGE;
- 		break;
+-#define VIDINTCON0_FRAMESEL1			(1 << 14)
+-#define VIDINTCON0_FRAMESEL1_NONE		(0x0 << 14)
+-#define VIDINTCON0_FRAMESEL1_BACKPORCH		(0x1 << 14)
+-#define VIDINTCON0_FRAMESEL1_VSYNC		(0x2 << 14)
+-#define VIDINTCON0_FRAMESEL1_FRONTPORCH		(0x3 << 14)
++#define VIDINTCON0_FRAMESEL1			(1 << 13)
++#define VIDINTCON0_FRAMESEL1_NONE		(0x0 << 13)
++#define VIDINTCON0_FRAMESEL1_BACKPORCH		(0x1 << 13)
++#define VIDINTCON0_FRAMESEL1_VSYNC		(0x2 << 13)
++#define VIDINTCON0_FRAMESEL1_FRONTPORCH		(0x3 << 13)
  
- 	case IRQ_TYPE_EDGE_BOTH:
+ #define VIDINTCON0_INT_FRAME			(1 << 12)
+ #define VIDINTCON0_FIFIOSEL_MASK		(0x7f << 5)
 -- 
-1.6.2.5
+1.7.0.4
