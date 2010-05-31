@@ -1,31 +1,44 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2 1/5] ARM: SAMSUNG: Add keypad device support
-Date: Mon, 31 May 2010 10:44:09 +0100
-Message-ID: <20100531094408.GB7799@sirena.org.uk>
-References: <1275188784-23395-1-git-send-email-jy0922.shim@samsung.com> <201005300542.37715.marek.vasut@gmail.com> <AANLkTilt_-UAZGZepwtIYM7HRuPsX7gsW_ppLZD1_bZq@mail.gmail.com> <20100530045151.GE4720@trinity.fluff.org> <AANLkTimJyc8E_D_-95eeVFwOVXwJKM5xKCCW-7gkNWrU@mail.gmail.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: ARM: SAMSUNG: question about cfg_eint field of struct s3c_gpio_cfg
+Date: Mon, 31 May 2010 20:22:12 +0900
+Message-ID: <4C039BE4.3040904@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:49063 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756281Ab0EaJoO (ORCPT
+Received: from mailout5.samsung.com ([203.254.224.35]:58221 "EHLO
+	mailout5.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751632Ab0EaLWZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 31 May 2010 05:44:14 -0400
-Content-Disposition: inline
-In-Reply-To: <AANLkTimJyc8E_D_-95eeVFwOVXwJKM5xKCCW-7gkNWrU@mail.gmail.com>
+	Mon, 31 May 2010 07:22:25 -0400
+Received: from epmmp2 (mailout5.samsung.com [203.254.224.35])
+ by mailout1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L3A006O97L0TP@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 31 May 2010 20:22:12 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L3A00B8C7L03I@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 31 May 2010 20:22:12 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, dmitry.torokhov@gmail.com, Marek Vasut <marek.vasut@gmail.com>, kyungmin.park@samsung.com, linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: ben-linux@fluff.org
+Cc: linux-samsung-soc@vger.kernel.org
 
-On Sun, May 30, 2010 at 02:04:39PM +0900, Jassi Brar wrote:
+Hi,
 
-> I believe on most implementations, if not all, sizeof char, short and
-> int are resp
-> 1, 2 and 4 bytes. whereas long denotes the native capacity of the arch.
+There is cfg_eint field in struct s3c_gpio_cfg at 
+arch/arm/plat-samsung/include/plat/gpio-cfg.h. I don't know the usage of 
+cfg_eint. It isn't used anywhere or just assigned. Does it need really?
 
-This is very common for interoperability with code making the assumption
-that you just made but you shouldn't rely on it, the C standard just
-specifies minimum sizes and requires that char <= short <= int <= long.
-The common issues to run into are int being made the native word size
-and not having any sub word types at all.
+struct s3c_gpio_cfg {
+	unsigned int	cfg_eint;
+
+	s3c_gpio_pull_t	(*get_pull)(struct s3c_gpio_chip *chip, unsigned offs);
+	int		(*set_pull)(struct s3c_gpio_chip *chip, unsigned offs,
+				    s3c_gpio_pull_t pull);
+
+	unsigned (*get_config)(struct s3c_gpio_chip *chip, unsigned offs);
+	int	 (*set_config)(struct s3c_gpio_chip *chip, unsigned offs,
+			       unsigned config);
+};
