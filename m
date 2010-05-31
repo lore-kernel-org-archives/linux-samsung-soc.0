@@ -1,65 +1,61 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: S5P6442: Support arch_reset() in S5P6442
-Date: Mon, 31 May 2010 11:23:15 +0900
-Message-ID: <1275272595-25251-1-git-send-email-kgene.kim@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: [PATCH v3 0/5] Add samsung keypad
+Date: Mon, 31 May 2010 13:40:59 +0900
+Message-ID: <4C033DDB.1030906@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:45471 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755314Ab0EaCbG (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:63563 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750933Ab0EaElO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 30 May 2010 22:31:06 -0400
+	Mon, 31 May 2010 00:41:14 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: ben-linux@fluff.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, kyungmin.park@samsung.com, dmitry.torokhov@gmail.com
 
-From: Jongpill Lee <boyko.lee@samsung.com>
+This is patch v3 series to add Samsung keypad.
 
-This patch is for support system reboot on S5P6442.
+Changes since v1:
+- Include linux/gpio.h instead of mach/gpio.h
+- Switch to dev_pm_ops in the samsung keypad driver
 
-Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Changes since v2:
+- Add keypad device types to remove platform specific #ifdef
+- Remove unnecessary include and checking codes.
+- Rename from 'kp' to 'keypad'
+- Rename keypad registers definition
+- Modify 'rep' variable declaration
+
 ---
- arch/arm/mach-s5p6442/include/mach/regs-clock.h |    2 ++
- arch/arm/mach-s5p6442/include/mach/system.h     |    6 +++++-
- 2 files changed, 7 insertions(+), 1 deletions(-)
+Joonyoung Shim (5):
+      ARM: SAMSUNG: Add keypad device support
+      ARM: S5PV210: Add keypad device helpers
+      ARM: S5PV210: Add keypad device to the GONI board
+      ARM: S5PV210: Add keypad device to the Aquila board
+      input: samsung-keypad - Add samsung keypad driver
 
-diff --git a/arch/arm/mach-s5p6442/include/mach/regs-clock.h b/arch/arm/mach-s5p6442/include/mach/regs-clock.h
-index d8360b5..61c694d 100644
---- a/arch/arm/mach-s5p6442/include/mach/regs-clock.h
-+++ b/arch/arm/mach-s5p6442/include/mach/regs-clock.h
-@@ -59,6 +59,8 @@
- #define S5P_CLK_MUX_STAT0	S5P_CLKREG(0x1100)
- #define S5P_CLK_MUX_STAT1	S5P_CLKREG(0x1104)
- 
-+#define S5P_SWRESET		S5P_CLKREG(0x2000)
-+
- #define S5P_MDNIE_SEL		S5P_CLKREG(0x7008)
- 
- /* Register Bit definition */
-diff --git a/arch/arm/mach-s5p6442/include/mach/system.h b/arch/arm/mach-s5p6442/include/mach/system.h
-index 8bcd8ed..974a8e9 100644
---- a/arch/arm/mach-s5p6442/include/mach/system.h
-+++ b/arch/arm/mach-s5p6442/include/mach/system.h
-@@ -13,6 +13,10 @@
- #ifndef __ASM_ARCH_SYSTEM_H
- #define __ASM_ARCH_SYSTEM_H __FILE__
- 
-+#include <linux/io.h>
-+#include <mach/map.h>
-+#include <mach/regs-clock.h>
-+
- static void arch_idle(void)
- {
- 	/* nothing here yet */
-@@ -20,7 +24,7 @@ static void arch_idle(void)
- 
- static void arch_reset(char mode, const char *cmd)
- {
--	/* nothing here yet */
-+	__raw_writel(0x1, S5P_SWRESET);
- }
- 
- #endif /* __ASM_ARCH_SYSTEM_H */
--- 
-1.6.2.5
+ arch/arm/mach-s5pv210/Kconfig                    |    9 +
+ arch/arm/mach-s5pv210/Makefile                   |    1 +
+ arch/arm/mach-s5pv210/cpu.c                      |    4 +
+ arch/arm/mach-s5pv210/include/mach/map.h         |    3 +
+ arch/arm/mach-s5pv210/mach-aquila.c              |   25 ++
+ arch/arm/mach-s5pv210/mach-goni.c                |   26 ++
+ arch/arm/mach-s5pv210/setup-keypad.c             |   34 ++
+ arch/arm/plat-samsung/Kconfig                    |    5 +
+ arch/arm/plat-samsung/Makefile                   |    1 +
+ arch/arm/plat-samsung/dev-keypad.c               |   50 +++
+ arch/arm/plat-samsung/include/plat/devs.h        |    2 +
+ arch/arm/plat-samsung/include/plat/keypad.h      |   57 +++
+ arch/arm/plat-samsung/include/plat/regs-keypad.h |   49 +++
+ drivers/input/keyboard/Kconfig                   |    9 +
+ drivers/input/keyboard/Makefile                  |    1 +
+ drivers/input/keyboard/samsung-keypad.c          |  397 ++++++++++++++++++++++
+ 16 files changed, 673 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5pv210/setup-keypad.c
+ create mode 100644 arch/arm/plat-samsung/dev-keypad.c
+ create mode 100644 arch/arm/plat-samsung/include/plat/keypad.h
+ create mode 100644 arch/arm/plat-samsung/include/plat/regs-keypad.h
+ create mode 100644 drivers/input/keyboard/samsung-keypad.c
