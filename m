@@ -1,34 +1,160 @@
 From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: [PATCH 0/3] ARM: S3C64XX: DMA core patches
-Date: Mon, 31 May 2010 13:58:21 +0200
-Message-ID: <4C03A45D.1050802@gmail.com>
+Subject: [PATCH 2/3] ARM: S3C64XX: Add SDMA support to DMA core
+Date: Mon, 31 May 2010 13:58:30 +0200
+Message-ID: <4C03A466.2010304@gmail.com>
+References: <cover.1275306279.git.mcuelenaere@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mail-ew0-f216.google.com ([209.85.219.216]:49241 "EHLO
 	mail-ew0-f216.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753691Ab0EaL60 (ORCPT
+	with ESMTP id S1753691Ab0EaL6d (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 31 May 2010 07:58:26 -0400
-Received: by ewy8 with SMTP id 8so940968ewy.28
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 May 2010 04:58:23 -0700 (PDT)
+	Mon, 31 May 2010 07:58:33 -0400
+Received: by mail-ew0-f216.google.com with SMTP id 8so940968ewy.28
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 31 May 2010 04:58:32 -0700 (PDT)
+In-Reply-To: <cover.1275306279.git.mcuelenaere@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-The first two patches add support for SDMA to the DMA core, which the crypto
-engine needs to support DMA.
+The crypto engine uses the DMACH_SECURITY_[RT]X channels, who seem to be
+hardcoded to SDMA-only in hardware, so add support for SDMA to the S3C64XX
+DMA core.
 
-The third one implements behaviour that seems to be forgotten, namely stopping
-and flushing pending requests on freeing a DMA channel.
+Only DMACH_SECURITY_[RT]X are using SDMA, other channels are unaffected and
+will continue to use standard DMA.
 
-Maurus Cuelenaere (3):
-  ARM: S3C64XX: Add SDMA clocks
-  ARM: S3C64XX: Add SDMA support to DMA core
-  ARM: S3C64XX: Stop and flush requests on freeing
+Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
+---
+ arch/arm/mach-s3c64xx/dma.c |   52 +++++++++++++++++++++++++++++++++---------
+ 1 files changed, 41 insertions(+), 11 deletions(-)
 
- arch/arm/mach-s3c64xx/clock.c |   12 +++++++++
- arch/arm/mach-s3c64xx/dma.c   |   55 ++++++++++++++++++++++++++++++++---------
- 2 files changed, 55 insertions(+), 12 deletions(-)
+diff --git a/arch/arm/mach-s3c64xx/dma.c b/arch/arm/mach-s3c64xx/dma.c
+index 5567e03..8c9946f 100644
+--- a/arch/arm/mach-s3c64xx/dma.c
++++ b/arch/arm/mach-s3c64xx/dma.c
+@@ -45,6 +45,15 @@ struct s3c64xx_dmac {
+ /* pool to provide LLI buffers */
+ static struct dma_pool *dma_pool;
+ 
++/* SDMA channel state information */
++struct s3c2410_dma_chan sdma_chans[S3C_DMA_CHANNELS];
++
++/* Currently hardcodes SECURITY_[RT]X SDMA-only as dictated by HW */
++static inline bool channel_needs_sdma(unsigned int chan)
++{
++	return chan == DMACH_SECURITY_RX || chan == DMACH_SECURITY_TX;
++}
++
+ /* Debug configuration and code */
+ 
+ static unsigned char debug_show_buffs = 0;
+@@ -92,16 +101,20 @@ static void dbg_showbuffs(struct s3c2410_dma_chan *chan)
+ 
+ static struct s3c2410_dma_chan *s3c64xx_dma_map_channel(unsigned int channel)
+ {
++	struct s3c2410_dma_chan *chans = s3c2410_chans;
+ 	struct s3c2410_dma_chan *chan;
+ 	unsigned int start, offs;
+ 
++	if (channel_needs_sdma(channel))
++		chans = sdma_chans;
++
+ 	start = 0;
+ 
+ 	if (channel >= DMACH_PCM1_TX)
+ 		start = 8;
+ 
+ 	for (offs = 0; offs < 8; offs++) {
+-		chan = &s3c2410_chans[start + offs];
++		chan = &chans[start + offs];
+ 		if (!chan->in_use)
+ 			goto found;
+ 	}
+@@ -549,7 +562,6 @@ int s3c2410_dma_free(unsigned int channel, struct s3c2410_dma_client *client)
+ 
+ 	/* sort out stopping and freeing the channel */
+ 
+-
+ 	chan->client = NULL;
+ 	chan->in_use = 0;
+ 
+@@ -634,8 +646,12 @@ static struct sysdev_class dma_sysclass = {
+ 	.name		= "s3c64xx-dma",
+ };
+ 
++static struct sysdev_class sdma_sysclass = {
++	.name		= "s3c64xx-sdma",
++};
++
+ static int s3c64xx_dma_init1(int chno, enum dma_ch chbase,
+-			     int irq, unsigned int base)
++			     int irq, unsigned int base, bool sdma)
+ {
+ 	struct s3c2410_dma_chan *chptr = &s3c2410_chans[chno];
+ 	struct s3c64xx_dmac *dmac;
+@@ -651,7 +667,7 @@ static int s3c64xx_dma_init1(int chno, enum dma_ch chbase,
+ 	}
+ 
+ 	dmac->sysdev.id = chno / 8;
+-	dmac->sysdev.cls = &dma_sysclass;
++	dmac->sysdev.cls = sdma ? &sdma_sysclass : &dma_sysclass;
+ 
+ 	err = sysdev_register(&dmac->sysdev);
+ 	if (err) {
+@@ -666,7 +682,11 @@ static int s3c64xx_dma_init1(int chno, enum dma_ch chbase,
+ 		goto err_dev;
+ 	}
+ 
+-	snprintf(clkname, sizeof(clkname), "dma%d", dmac->sysdev.id);
++	if (sdma) {
++		snprintf(clkname, sizeof(clkname), "sdma%d", dmac->sysdev.id);
++		chptr = &sdma_chans[chno];
++	} else
++		snprintf(clkname, sizeof(clkname), "dma%d", dmac->sysdev.id);
+ 
+ 	dmac->clk = clk_get(NULL, clkname);
+ 	if (IS_ERR(dmac->clk)) {
+@@ -690,8 +710,8 @@ static int s3c64xx_dma_init1(int chno, enum dma_ch chbase,
+ 	regptr = regs + PL080_Cx_BASE(0);
+ 
+ 	for (ch = 0; ch < 8; ch++, chno++, chptr++) {
+-		printk(KERN_INFO "%s: registering DMA %d (%p)\n",
+-		       __func__, chno, regptr);
++		printk(KERN_INFO "%s: registering %sDMA %d (%p)\n",
++		    __func__, sdma ? "S" : "", chno, regptr);
+ 
+ 		chptr->bit = 1 << ch;
+ 		chptr->number = chno;
+@@ -737,12 +757,22 @@ static int __init s3c64xx_dma_init(void)
+ 		return -ENOMEM;
+ 	}
+ 
+-	/* Set all DMA configuration to be DMA, not SDMA */
+-	writel(0xffffff, S3C_SYSREG(0x110));
++	ret = sysdev_class_register(&sdma_sysclass);
++	if (ret) {
++		printk(KERN_ERR "%s: failed to create sysclass\n", __func__);
++		return -ENOMEM;
++	}
++
++	/* Set all DMA configuration to be DMA, except SECURITY_[RT]X */
++	writel(0x3fffffff, S3C_SYSREG(0x110));
+ 
+ 	/* Register standard DMA controlers */
+-	s3c64xx_dma_init1(0, DMACH_UART0, IRQ_DMA0, 0x75000000);
+-	s3c64xx_dma_init1(8, DMACH_PCM1_TX, IRQ_DMA1, 0x75100000);
++	s3c64xx_dma_init1(0, DMACH_UART0, IRQ_DMA0, 0x75000000, false);
++	s3c64xx_dma_init1(8, DMACH_PCM1_TX, IRQ_DMA1, 0x75100000, false);
++
++	/* Register SDMA controllers */
++	s3c64xx_dma_init1(0, DMACH_UART0, IRQ_SDMA0, 0x7DB00000, true);
++	s3c64xx_dma_init1(8, DMACH_PCM1_TX, IRQ_SDMA1, 0x7DC00000, true);
+ 
+ 	return 0;
+ }
+-- 
+1.7.1
