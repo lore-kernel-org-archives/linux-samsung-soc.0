@@ -1,73 +1,36 @@
-From: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Subject: Re: [PATCH 4/4] usb: s3c-hsotg: Enable HCLK for the OTG module.
-Date: Mon, 31 May 2010 01:39:54 +0100
-Message-ID: <20100531003954.GN7248@trinity.fluff.org>
-References: <1275014477-23133-1-git-send-email-kgene.kim@samsung.com> <1275014477-23133-5-git-send-email-kgene.kim@samsung.com> <20100528102232.GZ4720@trinity.fluff.org> <4BFF9F79.106@ru.mvista.com>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: [PATCH 05/15] ARM: S5P6442: Change to using
+	s3c_gpio_cfgpin_range()
+Date: Mon, 31 May 2010 02:09:07 +0100
+Message-ID: <20100531010907.GO7248@trinity.fluff.org>
+References: <1275026212-27510-1-git-send-email-ben-linux@fluff.org> <1275026212-27510-6-git-send-email-ben-linux@fluff.org> <AANLkTilPCk0NqJ7od6ZBorqPrlG0xCjdPaim1Q3WwZMH@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from trinity.fluff.org ([89.16.178.74]:48325 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754171Ab0EaBJI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 30 May 2010 21:09:08 -0400
 Content-Disposition: inline
-In-Reply-To: <4BFF9F79.106-hkdhdckH98+B+jHODAdFcQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sergei Shtylyov <sshtylyov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>
-Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Thomas Abraham <thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+In-Reply-To: <AANLkTilPCk0NqJ7od6ZBorqPrlG0xCjdPaim1Q3WwZMH@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kyungmin Park <kmpark@infradead.org>
+Cc: Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Fri, May 28, 2010 at 02:48:25PM +0400, Sergei Shtylyov wrote:
-> Hello.
->
-> Ben Dooks wrote:
->
->>> From: Thomas Abraham <thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->
->>> This patch modifies the following in S3C hsotg driver.
->
->>> 1. Gets a reference to the USB OTG hclk clock and enables it. This is
->>>    required for plaforms on which the USB OTG hclk is disabled during
->>>    the boot time clock intialization.
->
->>> 2. Add necessary clock clean up in case of error during initialization
->>>    failure or during module unload.
->
->>> 3. Add a new field 'clk_otg' in 'struct s3c_hsotg' to maintain a
->>>    reference to the USB OTG hclk clock.
->
->>> Signed-off-by: Thomas Abraham <thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>> Signed-off-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>> ---
->>>  drivers/usb/gadget/s3c-hsotg.c |   17 +++++++++++++++++
->>>  1 files changed, 17 insertions(+), 0 deletions(-)
->>>
->>> diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
->>> index 81c47d2..526d081 100644
->>> --- a/drivers/usb/gadget/s3c-hsotg.c
->>> +++ b/drivers/usb/gadget/s3c-hsotg.c
->
-> [...]
->
->>> @@ -3269,6 +3271,14 @@ static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
->>>  		goto err_regs_res;
->>>  	}
->>>  +	hsotg->clk_otg = clk_get(&pdev->dev, "otg");
->>> +	if (IS_ERR(hsotg->clk_otg)) {
->>> +		dev_err(dev, "failed to find usb otg clock source\n");
->>> +		ret = -ENODEV;
->
->> hmm, -ENODEV isn't really the right error to return here, it'll
->> get silently ignored by the device core.
->
->    Right, PTR_ERR(hsotg->clk_otg) should be returned in this case.
->
-> WBR, Sergei
+On Fri, May 28, 2010 at 03:24:02PM +0900, Kyungmin Park wrote:
+> Hi,
+> 
+> Looks good but I'm afraid it's more difficult to find pin
+> configuration from typo.
 
-yes, missed that thanks.
+Do you meant that there's now no explicit mention of all pins invovled?
+
+Note, may decided to drop or re-do this series.
+
 -- 
 Ben
 
 Q:      What's a light-year?
 A:      One-third less calories than a regular year.
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
