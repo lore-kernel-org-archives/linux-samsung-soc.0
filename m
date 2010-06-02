@@ -1,60 +1,91 @@
-From: Ben Dooks <ben@trinity.fluff.org>
-Subject: Re: [PATCH] ARM: SAMSUNG: Reduce virtual memory size for WDT device
-Date: Wed, 2 Jun 2010 08:27:20 +0100
-Message-ID: <20100602072720.GD30276@trinity.fluff.org>
-References: <1275462337-21587-1-git-send-email-kgene.kim@samsung.com>
+From: Sergei Shtylyov <sshtylyov@mvista.com>
+Subject: Re: [PATCH 4/4] pata_samsung: Add Samsung PATA controller driver
+Date: Wed, 02 Jun 2010 13:51:51 +0400
+Message-ID: <4C0629B7.4060300@ru.mvista.com>
+References: <1274948524-2970-1-git-send-email-kgene.kim@samsung.com> <1274948524-2970-5-git-send-email-kgene.kim@samsung.com> <4BFE46C4.5030007@mvista.com> <002a01cb01fd$4cf10a50$e6d31ef0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:53266 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757538Ab0FBH1Z (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jun 2010 03:27:25 -0400
-Content-Disposition: inline
-In-Reply-To: <1275462337-21587-1-git-send-email-kgene.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <002a01cb01fd$4cf10a50$e6d31ef0$%kim@samsung.com>
+Sender: linux-ide-owner@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Banajit Goswami <banajit.g@samsung.com>
+Cc: 'Sergei Shtylyov' <sshtylyov@mvista.com>, linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Abhilash Kesavan' <a.kesavan@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 02, 2010 at 04:05:37PM +0900, Kukjin Kim wrote:
-> From: Banajit Goswami <banajit.g@samsung.com>
-> 
-> This patch reduces the virtual memory allocated for WDT device from 1M
-> to 1K.
->
-> Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-Acked-by: Ben Dooks <ben-linux@fluff.org>
-> ---
->  arch/arm/plat-samsung/dev-wdt.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/dev-wdt.c b/arch/arm/plat-samsung/dev-wdt.c
-> index 5efca87..019b5b8 100644
-> --- a/arch/arm/plat-samsung/dev-wdt.c
-> +++ b/arch/arm/plat-samsung/dev-wdt.c
-> @@ -21,7 +21,7 @@
->  static struct resource s3c_wdt_resource[] = {
->  	[0] = {
->  		.start	= S3C_PA_WDT,
-> -		.end	= S3C_PA_WDT + SZ_1M - 1,
-> +		.end	= S3C_PA_WDT + SZ_1K,
->  		.flags	= IORESOURCE_MEM,
->  	},
->  	[1] = {
-> -- 
-> 1.6.2.5
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Hello.
 
--- 
--- 
-Ben
+Kukjin Kim wrote:
 
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+>>> From: Abhilash Kesavan <a.kesavan@samsung.com>
+>>> Adds support for the Samsung PATA controller. This driver is based on the
+>>> Libata subsystem and references the earlier patches sent for IDE subsystem.
+
+    Where I those I wonder? :-)
+    It's a pity they didn't get accepted.
+
+>>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+>>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+
+[...]
+
+>>> +		for (i = 0; i < words; i++, temp_addr++) {
+>>> +			wait_for_host_ready(info);
+>>> +			writel(*temp_addr, data_addr);
+>>> +		}
+>>> +	}
+
+>>     Well, if this is pere CF case, 'buflen' can't be odd, but otherwise
+
+    I meant to type "pure". :-)
+
+>> you should handle that case...
+
+>>> +	uint pio_teoc[5] = { 240, 43, 10, 70, 25 };
+
+>>     What timing is this? :-O
+
+> Should have been t2i rec.
+
+    If it's t2i timing, it is incorrect for the first 3 PIO modes.
+
+>>> +	if (cpu_type == TYPE_S3C6400) {
+>>> +		ap->ops = &pata_s3c_port_ops;
+>>> +		info->sfr_addr = info->ide_addr + 0x1800;
+>>> +		info->ide_addr = info->ide_addr + 0x1900;
+>>> +		info->fifo_status_reg = 0x94;
+>>> +	} else if (cpu_type == TYPE_S5PC100) {
+>>> +		ap->ops = &pata_s5p_port_ops;
+>>> +		info->sfr_addr = info->ide_addr + 0x1800;
+>>> +		info->ide_addr = info->ide_addr + 0x1900;
+
+>>     Does make sense to assign those before *if*.
+
+> Offsets not required for S5PV210/S5PC110.
+
+    pata_s3c_tune_chipset() certainly requires them.
+
+>>> +		info->fifo_status_reg = 0x84;
+>>> +	} else {
+>>> +		ap->ops = &pata_s5p_port_ops;
+
+>>     You don't assign 'info->ide_addr' here but you'll need it in
+>> pata_s3c_tune_chipset() which will be called thru pata_s5p_port_ops!
+
+> The address received at ioremap() is enough for S5PV210/S5PC110..no offset
+> needed.
+
+    I only have to restate that pata_s3c_tune_chipset() does use 
+'info->ide_addr'. Maybe you shouldn't install this method for S5PV210/S5PC110? 
+Or do you mean thgat offset of 0 will work?
+
+>>> +release_mem:
+>>> +	release_mem_region(res->start, res->end - res->start + 1);
+
+>>     But you didn't call request_mem_region()!
+
+> I didn't..will remove.
+
+    But you should call request_mem_region() in one or another form...
+
+MBR, Sergei
