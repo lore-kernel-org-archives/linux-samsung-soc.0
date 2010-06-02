@@ -1,105 +1,60 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: SAMSUNG: Make WDT driver dependency SoC specific instead of machine specific
-Date: Wed,  2 Jun 2010 16:10:11 +0900
-Message-ID: <1275462611-21657-1-git-send-email-kgene.kim@samsung.com>
+From: Ben Dooks <ben@trinity.fluff.org>
+Subject: Re: [PATCH] ARM: SAMSUNG: Reduce virtual memory size for WDT device
+Date: Wed, 2 Jun 2010 08:27:20 +0100
+Message-ID: <20100602072720.GD30276@trinity.fluff.org>
+References: <1275462337-21587-1-git-send-email-kgene.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:42532 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752459Ab0FBHQ3 (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:53266 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757538Ab0FBH1Z (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Jun 2010 03:16:29 -0400
+	Wed, 2 Jun 2010 03:27:25 -0400
+Content-Disposition: inline
+In-Reply-To: <1275462337-21587-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Banajit Goswami <banajit.g@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Banajit Goswami <banajit.g@samsung.com>
 
-From: Banajit Goswami <banajit.g@samsung.com>
+On Wed, Jun 02, 2010 at 04:05:37PM +0900, Kukjin Kim wrote:
+> From: Banajit Goswami <banajit.g@samsung.com>
+> 
+> This patch reduces the virtual memory allocated for WDT device from 1M
+> to 1K.
+>
+> Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Acked-by: Ben Dooks <ben-linux@fluff.org>
+> ---
+>  arch/arm/plat-samsung/dev-wdt.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/arch/arm/plat-samsung/dev-wdt.c b/arch/arm/plat-samsung/dev-wdt.c
+> index 5efca87..019b5b8 100644
+> --- a/arch/arm/plat-samsung/dev-wdt.c
+> +++ b/arch/arm/plat-samsung/dev-wdt.c
+> @@ -21,7 +21,7 @@
+>  static struct resource s3c_wdt_resource[] = {
+>  	[0] = {
+>  		.start	= S3C_PA_WDT,
+> -		.end	= S3C_PA_WDT + SZ_1M - 1,
+> +		.end	= S3C_PA_WDT + SZ_1K,
+>  		.flags	= IORESOURCE_MEM,
+>  	},
+>  	[1] = {
+> -- 
+> 1.6.2.5
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-This patch moves the dependency of watchdog timer driver from
-MACH_XXX(board) to ARCH_XXX(SoC). This will enable all machines
-using Samsung S3C64XX, S5P6440 and S5PV210/S5PC110 SoCs to use
-the WDT driver by default.
-
-Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/Kconfig              |    3 +++
- arch/arm/mach-s3c64xx/Kconfig |    1 -
- arch/arm/mach-s5p6440/Kconfig |    1 -
- arch/arm/mach-s5pv210/Kconfig |    2 --
- 4 files changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 1f254bd..40c90bd 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -663,6 +663,7 @@ config ARCH_S3C64XX
- 	select S3C_DEV_NAND
- 	select USB_ARCH_HAS_OHCI
- 	select SAMSUNG_GPIOLIB_4BIT
-+	select HAVE_S3C2410_WATCHDOG
- 	help
- 	  Samsung S3C64XX series based systems
- 
-@@ -672,6 +673,7 @@ config ARCH_S5P6440
- 	select GENERIC_GPIO
- 	select HAVE_CLK
- 	select ARCH_USES_GETTIMEOFFSET
-+	select HAVE_S3C2410_WATCHDOG
- 	help
- 	  Samsung S5P6440 CPU based systems
- 
-@@ -701,6 +703,7 @@ config ARCH_S5PV210
- 	select HAVE_CLK
- 	select ARM_L1_CACHE_SHIFT_6
- 	select ARCH_USES_GETTIMEOFFSET
-+	select HAVE_S3C2410_WATCHDOG
- 	help
- 	  Samsung S5PV210/S5PC110 series based systems
- 
-diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-index f5a5972..915cb47 100644
---- a/arch/arm/mach-s3c64xx/Kconfig
-+++ b/arch/arm/mach-s3c64xx/Kconfig
-@@ -100,7 +100,6 @@ config MACH_SMDK6410
- 	select S3C_DEV_USB_HOST
- 	select S3C_DEV_USB_HSOTG
- 	select S3C_DEV_WDT
--	select HAVE_S3C2410_WATCHDOG
- 	select S3C64XX_SETUP_SDHCI
- 	select S3C64XX_SETUP_I2C1
- 	select S3C64XX_SETUP_FB_24BPP
-diff --git a/arch/arm/mach-s5p6440/Kconfig b/arch/arm/mach-s5p6440/Kconfig
-index f066fae..084c0bc 100644
---- a/arch/arm/mach-s5p6440/Kconfig
-+++ b/arch/arm/mach-s5p6440/Kconfig
-@@ -19,7 +19,6 @@ config MACH_SMDK6440
- 	select SAMSUNG_DEV_TS
- 	select SAMSUNG_DEV_ADC
- 	select S3C_DEV_WDT
--	select HAVE_S3C2410_WATCHDOG
- 	help
- 	  Machine support for the Samsung SMDK6440
- 
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index 0761eac..2e3ed18 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -74,7 +74,6 @@ config MACH_SMDKV210
- 	select SAMSUNG_DEV_ADC
- 	select SAMSUNG_DEV_TS
- 	select S3C_DEV_WDT
--	select HAVE_S3C2410_WATCHDOG
- 	help
- 	  Machine support for Samsung SMDKV210
- 
-@@ -83,7 +82,6 @@ config MACH_SMDKC110
- 	select CPU_S5PV210
- 	select ARCH_SPARSEMEM_ENABLE
- 	select S3C_DEV_WDT
--	select HAVE_S3C2410_WATCHDOG
- 	help
- 	  Machine support for Samsung SMDKC110
- 	  S5PC110(MCP) is one of package option of S5PV210
 -- 
-1.6.2.5
+-- 
+Ben
+
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
