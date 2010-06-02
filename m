@@ -1,65 +1,41 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 4/4] pata_samsung: Add Samsung PATA controller driver
-Date: Wed, 02 Jun 2010 11:46:27 +0900
-Message-ID: <002b01cb01fd$cf1589c0$6d409d40$%kim@samsung.com>
-References: <1274948524-2970-1-git-send-email-kgene.kim@samsung.com>
- <1274948524-2970-5-git-send-email-kgene.kim@samsung.com>
- <4BFEE98B.3090303@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Subject: [PATCH] ARM: SAMSUNG: Reduce virtual memory size for WDT device
+Date: Wed,  2 Jun 2010 16:05:37 +0900
+Message-ID: <1275462337-21587-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:50475 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755537Ab0FBCqa (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:56957 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752421Ab0FBHLd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Jun 2010 22:46:30 -0400
-In-reply-to: <4BFEE98B.3090303@kernel.org>
-Content-language: ko
+	Wed, 2 Jun 2010 03:11:33 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tejun Heo' <tj@kernel.org>
-Cc: linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Abhilash Kesavan' <a.kesavan@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Banajit Goswami <banajit.g@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Tejun Heo wrote:
-> 
-> Hello,
-> 
-> On 05/27/2010 10:22 AM, Kukjin Kim wrote:
-> > From: Abhilash Kesavan <a.kesavan@samsung.com>
-> >
-> > Adds support for the Samsung PATA controller. This driver is based on the
-> > Libata subsystem and references the earlier patches sent for IDE
-subsystem.
-> 
-> Just one small thing.
-> 
-> > +static struct ata_port_operations pata_s3c_port_ops = {
-> > +	.inherits		= &ata_sff_port_ops,
-> > +	.sff_check_status	= pata_s3c_check_status,
-> > +	.sff_tf_load		= pata_s3c_tf_load,
-> > +	.sff_tf_read		= pata_s3c_tf_read,
-> > +	.sff_data_xfer		= pata_s3c_data_xfer,
-> > +	.sff_exec_command	= pata_s3c_exec_command,
-> > +	.qc_prep		= ata_noop_qc_prep,
-> > +	.set_piomode		= pata_s3c_set_piomode,
-> > +};
-> > +
-> > +static struct ata_port_operations pata_s5p_port_ops = {
-> > +	.inherits		= &ata_sff_port_ops,
-> > +	.qc_prep		= ata_noop_qc_prep,
-> > +	.set_piomode		= pata_s3c_set_piomode,
-> > +};
-> 
-> You don't need to override .qc_prep to ata_noop_qc_prep() and can you
-> please base the patch against the current libata-dev#upstream?
-> 
-Will remove the override and rebase the new patches against upstream branch.
+From: Banajit Goswami <banajit.g@samsung.com>
 
-Thanks.
+This patch reduces the virtual memory allocated for WDT device from 1M
+to 1K.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/plat-samsung/dev-wdt.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/plat-samsung/dev-wdt.c b/arch/arm/plat-samsung/dev-wdt.c
+index 5efca87..019b5b8 100644
+--- a/arch/arm/plat-samsung/dev-wdt.c
++++ b/arch/arm/plat-samsung/dev-wdt.c
+@@ -21,7 +21,7 @@
+ static struct resource s3c_wdt_resource[] = {
+ 	[0] = {
+ 		.start	= S3C_PA_WDT,
+-		.end	= S3C_PA_WDT + SZ_1M - 1,
++		.end	= S3C_PA_WDT + SZ_1K,
+ 		.flags	= IORESOURCE_MEM,
+ 	},
+ 	[1] = {
+-- 
+1.6.2.5
