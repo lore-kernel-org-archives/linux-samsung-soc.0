@@ -1,109 +1,79 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] arm: s5pv210: add more banks to gpiolib
-Date: Wed, 09 Jun 2010 15:08:39 +0200
-Message-ID: <1276088919-20730-1-git-send-email-m.szyprowski@samsung.com>
+From: Jeff Garzik <jgarzik@pobox.com>
+Subject: Re: [PATCH v2 1/5] libata: pata_samsung: Add Samsung PATA controller
+ driver
+Date: Wed, 09 Jun 2010 13:31:23 -0400
+Message-ID: <4C0FCFEB.6030603@pobox.com>
+References: <1275988020-29000-1-git-send-email-kgene.kim@samsung.com> <1275988020-29000-2-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:13478 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756781Ab0FINIy (ORCPT
+Received: from mail-gw0-f46.google.com ([74.125.83.46]:62845 "EHLO
+	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756217Ab0FIRba (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Jun 2010 09:08:54 -0400
-Received: from eu_spt2 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L3R008QJ0IMWD@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 09 Jun 2010 14:08:46 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L3R00L060ILKN@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 09 Jun 2010 14:08:46 +0100 (BST)
+	Wed, 9 Jun 2010 13:31:30 -0400
+In-Reply-To: <1275988020-29000-2-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Abhilash Kesavan <a.kesavan@samsung.com>
 
-This patch adds support for MP04 and MP05 gpio banks.
+On 06/08/2010 05:06 AM, Kukjin Kim wrote:
+> From: Abhilash Kesavan<a.kesavan@samsung.com>
+>
+> Adds support for the Samsung PATA controller. This driver is based on the
+> Libata subsystem and references the earlier patches sent for IDE subsystem.
+>
+> Signed-off-by: Abhilash Kesavan<a.kesavan@samsung.com>
+> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
+> ---
+>   drivers/ata/Kconfig           |    9 +
+>   drivers/ata/Makefile          |    1 +
+>   drivers/ata/pata_samsung_cf.c |  608 +++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 618 insertions(+), 0 deletions(-)
+>   create mode 100644 drivers/ata/pata_samsung_cf.c
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Looks OK to me, minor nits only...
 
----
 
-Changes since v1:
-- fixed style issues reported by Kukjin Kim
 
- arch/arm/mach-s5pv210/gpiolib.c           |   14 ++++++++++++++
- arch/arm/mach-s5pv210/include/mach/gpio.h |   12 +++++++++---
- 2 files changed, 23 insertions(+), 3 deletions(-)
+> +#define DRV_NAME "pata_samsung"
 
-diff --git a/arch/arm/mach-s5pv210/gpiolib.c b/arch/arm/mach-s5pv210/gpiolib.c
-index f4ac81f..0261908 100644
---- a/arch/arm/mach-s5pv210/gpiolib.c
-+++ b/arch/arm/mach-s5pv210/gpiolib.c
-@@ -208,6 +208,20 @@ static struct s3c_gpio_chip s5pv210_gpio_4bit[] = {
- 			.label	= "MP03",
- 		},
- 	}, {
-+		.config	= &gpio_cfg_noint,
-+		.chip	= {
-+			.base	= S5PV210_MP04(0),
-+			.ngpio	= S5PV210_GPIO_MP04_NR,
-+			.label	= "MP04",
-+		},
-+	}, {
-+		.config	= &gpio_cfg_noint,
-+		.chip	= {
-+			.base	= S5PV210_MP05(0),
-+			.ngpio	= S5PV210_GPIO_MP05_NR,
-+			.label	= "MP05",
-+		},
-+	}, {
- 		.base	= (S5P_VA_GPIO + 0xC00),
- 		.config	= &gpio_cfg_noint,
- 		.chip	= {
-diff --git a/arch/arm/mach-s5pv210/include/mach/gpio.h b/arch/arm/mach-s5pv210/include/mach/gpio.h
-index d6461ba..1f4b595 100644
---- a/arch/arm/mach-s5pv210/include/mach/gpio.h
-+++ b/arch/arm/mach-s5pv210/include/mach/gpio.h
-@@ -52,6 +52,8 @@
- #define S5PV210_GPIO_MP01_NR	(8)
- #define S5PV210_GPIO_MP02_NR	(4)
- #define S5PV210_GPIO_MP03_NR	(8)
-+#define S5PV210_GPIO_MP04_NR	(8)
-+#define S5PV210_GPIO_MP05_NR	(8)
- 
- /* GPIO bank numbers */
- 
-@@ -94,6 +96,8 @@ enum s5p_gpio_number {
- 	S5PV210_GPIO_MP01_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_J4),
- 	S5PV210_GPIO_MP02_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_MP01),
- 	S5PV210_GPIO_MP03_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_MP02),
-+	S5PV210_GPIO_MP04_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_MP03),
-+	S5PV210_GPIO_MP05_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_MP04),
- };
- 
- /* S5PV210 GPIO number definitions */
-@@ -127,13 +131,15 @@ enum s5p_gpio_number {
- #define S5PV210_MP01(_nr)	(S5PV210_GPIO_MP01_START + (_nr))
- #define S5PV210_MP02(_nr)	(S5PV210_GPIO_MP02_START + (_nr))
- #define S5PV210_MP03(_nr)	(S5PV210_GPIO_MP03_START + (_nr))
-+#define S5PV210_MP04(_nr)	(S5PV210_GPIO_MP04_START + (_nr))
-+#define S5PV210_MP05(_nr)	(S5PV210_GPIO_MP05_START + (_nr))
- 
- /* the end of the S5PV210 specific gpios */
--#define S5PV210_GPIO_END	(S5PV210_MP03(S5PV210_GPIO_MP03_NR) + 1)
-+#define S5PV210_GPIO_END	(S5PV210_MP05(S5PV210_GPIO_MP05_NR) + 1)
- #define S3C_GPIO_END		S5PV210_GPIO_END
- 
--/* define the number of gpios we need to the one after the MP03() range */
--#define ARCH_NR_GPIOS		(S5PV210_MP03(S5PV210_GPIO_MP03_NR) +	\
-+/* define the number of gpios we need to the one after the MP05() range */
-+#define ARCH_NR_GPIOS		(S5PV210_MP05(S5PV210_GPIO_MP05_NR) +	\
- 				 CONFIG_SAMSUNG_GPIO_EXTRA + 1)
- 
- #include <asm-generic/gpio.h>
--- 
-1.7.1.240.g225c
+this should be "pata_samsung_cf"
+
+
+> +static void pata_s3c_hwinit(struct s3c_ide_info *info,
+> +				struct s3c_ide_platdata *pdata)
+> +{
+> +	switch (info->cpu_type) {
+> +	case TYPE_S3C64XX:
+> +		/* Configure as big endian */
+> +		pata_s3c_cfg_mode(info->sfr_addr);
+> +		pata_s3c_set_endian(info->ide_addr, 1);
+> +		pata_s3c_enable(info->ide_addr, 1);
+> +		mdelay(100);
+> +
+> +		/* Remove IRQ Status */
+> +		writel(0x1f, info->ide_addr + S3C_ATA_IRQ);
+> +		writel(0x1b, info->ide_addr + S3C_ATA_IRQ_MSK);
+> +	break;
+> +
+> +	case TYPE_S5PC100:
+> +		pata_s3c_cfg_mode(info->sfr_addr);
+> +
+> +	case TYPE_S5PV210:
+> +		/* Configure as little endian */
+> +		pata_s3c_set_endian(info->ide_addr, 0);
+> +		pata_s3c_enable(info->ide_addr, 1);
+> +		mdelay(100);
+> +
+> +		/* Remove IRQ Status */
+> +		writel(0x3f, info->ide_addr + S3C_ATA_IRQ);
+> +		writel(0x3f, info->ide_addr + S3C_ATA_IRQ_MSK);
+> +	break;
+> +
+> +	default:
+> +		BUG();
+
+Use of msleep() is preferred, in cases where you can sleep (such as this)
