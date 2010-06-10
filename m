@@ -1,133 +1,252 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2] arm: s5pv210: add more banks to gpiolib
-Date: Thu, 10 Jun 2010 19:01:25 +0900
-Message-ID: <019101cb0883$e5a07fb0$b0e17f10$%kim@samsung.com>
-References: <1276088919-20730-1-git-send-email-m.szyprowski@samsung.com>
+From: Sergei Shtylyov <sshtylyov@mvista.com>
+Subject: Re: [PATCH v3] libata: pata_samsung_cf: Add Samsung PATA controller
+ driver
+Date: Thu, 10 Jun 2010 14:43:34 +0400
+Message-ID: <4C10C1D6.8080708@ru.mvista.com>
+References: <1276156241-28804-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:52958 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753607Ab0FJKBb (ORCPT
+Received: from mail-ww0-f46.google.com ([74.125.82.46]:39379 "EHLO
+	mail-ww0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753392Ab0FJKob (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jun 2010 06:01:31 -0400
-Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L3S00MGRMID2L00@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 10 Jun 2010 19:01:25 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L3S000LTMIBHL@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 10 Jun 2010 19:01:24 +0900 (KST)
-In-reply-to: <1276088919-20730-1-git-send-email-m.szyprowski@samsung.com>
-Content-language: ko
+	Thu, 10 Jun 2010 06:44:31 -0400
+In-Reply-To: <1276156241-28804-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, jgarzik@pobox.com, Abhilash Kesavan <a.kesavan@samsung.com>
 
-Marek Szyprowski wrote:
-> 
-> This patch adds support for MP04 and MP05 gpio banks.
-> 
-LGTM. Will apply.
+Kukjin Kim wrote:
 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> 
-> ---
-> 
-> Changes since v1:
-> - fixed style issues reported by Kukjin Kim
-> 
->  arch/arm/mach-s5pv210/gpiolib.c           |   14 ++++++++++++++
->  arch/arm/mach-s5pv210/include/mach/gpio.h |   12 +++++++++---
->  2 files changed, 23 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s5pv210/gpiolib.c b/arch/arm/mach-s5pv210/gpiolib.c
-> index f4ac81f..0261908 100644
-> --- a/arch/arm/mach-s5pv210/gpiolib.c
-> +++ b/arch/arm/mach-s5pv210/gpiolib.c
-> @@ -208,6 +208,20 @@ static struct s3c_gpio_chip s5pv210_gpio_4bit[] = {
->  			.label	= "MP03",
->  		},
->  	}, {
-> +		.config	= &gpio_cfg_noint,
-> +		.chip	= {
-> +			.base	= S5PV210_MP04(0),
-> +			.ngpio	= S5PV210_GPIO_MP04_NR,
-> +			.label	= "MP04",
-> +		},
-> +	}, {
-> +		.config	= &gpio_cfg_noint,
-> +		.chip	= {
-> +			.base	= S5PV210_MP05(0),
-> +			.ngpio	= S5PV210_GPIO_MP05_NR,
-> +			.label	= "MP05",
-> +		},
-> +	}, {
->  		.base	= (S5P_VA_GPIO + 0xC00),
->  		.config	= &gpio_cfg_noint,
->  		.chip	= {
-> diff --git a/arch/arm/mach-s5pv210/include/mach/gpio.h b/arch/arm/mach-
-> s5pv210/include/mach/gpio.h
-> index d6461ba..1f4b595 100644
-> --- a/arch/arm/mach-s5pv210/include/mach/gpio.h
-> +++ b/arch/arm/mach-s5pv210/include/mach/gpio.h
-> @@ -52,6 +52,8 @@
->  #define S5PV210_GPIO_MP01_NR	(8)
->  #define S5PV210_GPIO_MP02_NR	(4)
->  #define S5PV210_GPIO_MP03_NR	(8)
-> +#define S5PV210_GPIO_MP04_NR	(8)
-> +#define S5PV210_GPIO_MP05_NR	(8)
-> 
->  /* GPIO bank numbers */
-> 
-> @@ -94,6 +96,8 @@ enum s5p_gpio_number {
->  	S5PV210_GPIO_MP01_START	=
-> S5PV210_GPIO_NEXT(S5PV210_GPIO_J4),
->  	S5PV210_GPIO_MP02_START	=
-> S5PV210_GPIO_NEXT(S5PV210_GPIO_MP01),
->  	S5PV210_GPIO_MP03_START	=
-> S5PV210_GPIO_NEXT(S5PV210_GPIO_MP02),
-> +	S5PV210_GPIO_MP04_START	=
-> S5PV210_GPIO_NEXT(S5PV210_GPIO_MP03),
-> +	S5PV210_GPIO_MP05_START	=
-> S5PV210_GPIO_NEXT(S5PV210_GPIO_MP04),
->  };
-> 
->  /* S5PV210 GPIO number definitions */
-> @@ -127,13 +131,15 @@ enum s5p_gpio_number {
->  #define S5PV210_MP01(_nr)	(S5PV210_GPIO_MP01_START + (_nr))
->  #define S5PV210_MP02(_nr)	(S5PV210_GPIO_MP02_START + (_nr))
->  #define S5PV210_MP03(_nr)	(S5PV210_GPIO_MP03_START + (_nr))
-> +#define S5PV210_MP04(_nr)	(S5PV210_GPIO_MP04_START + (_nr))
-> +#define S5PV210_MP05(_nr)	(S5PV210_GPIO_MP05_START + (_nr))
-> 
->  /* the end of the S5PV210 specific gpios */
-> -#define S5PV210_GPIO_END	(S5PV210_MP03(S5PV210_GPIO_MP03_NR) +
-> 1)
-> +#define S5PV210_GPIO_END	(S5PV210_MP05(S5PV210_GPIO_MP05_NR) +
-> 1)
->  #define S3C_GPIO_END		S5PV210_GPIO_END
-> 
-> -/* define the number of gpios we need to the one after the MP03() range */
-> -#define ARCH_NR_GPIOS
-> 	(S5PV210_MP03(S5PV210_GPIO_MP03_NR) +	\
-> +/* define the number of gpios we need to the one after the MP05() range */
-> +#define ARCH_NR_GPIOS
-> 	(S5PV210_MP05(S5PV210_GPIO_MP05_NR) +	\
->  				 CONFIG_SAMSUNG_GPIO_EXTRA + 1)
-> 
->  #include <asm-generic/gpio.h>
-> --
+> From: Abhilash Kesavan <a.kesavan@samsung.com>
 
-Thanks.
+> Adds support for the Samsung PATA controller. This driver is based on the
+> Libata subsystem and references the earlier patches sent for IDE subsystem.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+
+[...]
+
+> diff --git a/drivers/ata/pata_samsung_cf.c b/drivers/ata/pata_samsung_cf.c
+> new file mode 100644
+> index 0000000..fef5515
+> --- /dev/null
+> +++ b/drivers/ata/pata_samsung_cf.c
+> @@ -0,0 +1,608 @@
+> +/* linux/drivers/ata/pata_samsung_cf.c
+
+    File names in the heading comment are discouraged.
+
+[...]
+
+> +static unsigned long
+> +pata_s3c_setup_timing(struct s3c_ide_info *info, struct ata_device *adev)
+> +{
+> +	const struct ata_timing *timing;
+> +	int cycle_time;
+> +	int t1;
+> +	int t2;
+> +	int t2i;
+> +	ulong piotime;
+> +
+> +	cycle_time = (int)(1000000000UL / clk_get_rate(info->clk));
+> +
+> +	timing = ata_timing_find_mode(adev->pio_mode);
+> +	t1	= (timing->setup / cycle_time) & 0xf;
+> +	t2	= (timing->act8b / cycle_time) & 0xff;
+> +	t2i	= (timing->rec8b / cycle_time) & 0xff;
+
+    Why are you still not using ata_timing_compute()?
+
+> +
+> +	piotime = (t2i << 12) | (t2 << 4) | t1;
+> +
+> +	return piotime;
+> +}
+> +
+> +static void pata_s3c_set_piomode(struct ata_port *ap, struct ata_device *adev)
+> +{
+> +	int mode = adev->pio_mode - XFER_PIO_0;
+> +	struct s3c_ide_info *info = ap->host->private_data;
+> +	ulong ata_cfg = readl(info->ide_addr + S3C_ATA_CFG);
+> +	ulong piotime;
+> +
+> +	/* Calculates timing parameters for PIO mode */
+> +	piotime = pata_s3c_setup_timing(info, adev);
+
+    In fact, for 8-bit (command) timing you should program the slowest mode of 
+the two drives. However, with CF, you probably only have only one drive per 
+channel...
+
+> +
+> +	/* Enables IORDY if mode requires it */
+> +	if (ata_pio_need_iordy(adev))
+> +		ata_cfg |= S3C_ATA_CFG_IORDYEN;
+> +	else
+> +		ata_cfg &= ~S3C_ATA_CFG_IORDYEN;
+> +
+> +	/* Host controller supports upto PIO4 only */
+> +	if (mode >= 0 && mode <= 4) {
+
+    No need to check -- you won't be passed a mode not specified by your pio_mask.
+
+> +		writel(ata_cfg, info->ide_addr + S3C_ATA_CFG);
+> +		writel(piotime, info->ide_addr + S3C_ATA_PIO_TIME);
+> +	}
+> +}
+
+[...]
+
+> +/*
+> + * pata_s3c_data_xfer - Transfer data by PIO
+> + */
+> +unsigned int pata_s3c_data_xfer(struct ata_device *dev, unsigned char *buf,
+> +				unsigned int buflen, int rw)
+> +{
+> +	struct ata_port *ap = dev->link->ap;
+> +	struct s3c_ide_info *info = ap->host->private_data;
+> +	void __iomem *data_addr = ap->ioaddr.data_addr;
+> +	unsigned int words = buflen >> 1, i;
+> +	u16 *data_ptr = (u16 *)buf;
+> +
+> +	if (rw == READ)
+> +		for (i = 0; i < words; i++, data_ptr++) {
+> +			wait_for_host_ready(info);
+> +			*data_ptr = readw(data_addr);
+
+    Why not just ignore the result?
+
+> +			wait_for_host_ready(info);
+> +			*data_ptr = readw(info->ide_addr
+> +					+ S3C_ATA_PIO_RDATA);
+> +		}
+> +	else
+> +		for (i = 0; i < words; i++, data_ptr++) {
+> +			wait_for_host_ready(info);
+> +			writel(*data_ptr, data_addr);
+> +		}
+> +
+> +	return words << 1;
+> +}
+
+[...]
+
+> +static struct ata_port_operations pata_s3c_port_ops = {
+> +	.inherits		= &ata_sff_port_ops,
+> +	.sff_check_status	= pata_s3c_check_status,
+> +	.sff_check_altstatus    = pata_s3c_check_altstatus,
+> +	.sff_tf_load		= pata_s3c_tf_load,
+> +	.sff_tf_read		= pata_s3c_tf_read,
+> +	.sff_data_xfer		= pata_s3c_data_xfer,
+> +	.sff_exec_command	= pata_s3c_exec_command,
+> +	.sff_dev_select         = pata_s3c_dev_select,
+> +	.sff_set_devctl         = pata_s3c_set_devctl,
+
+    I forgot: you also need to override the softreset() method as it accesses 
+several taskfile registers and ioread8()/iowrite8() won't suffice -- Jeff was 
+too quick to ack the patch. See ata_bus_softreset(), ata_devchk(), and 
+ata_sff_wait_after_reset() for the accesses I'm talking about...
+
+[...]
+
+> +static int __devinit pata_s3c_probe(struct platform_device *pdev)
+> +{
+> +	struct s3c_ide_platdata *pdata = pdev->dev.platform_data;
+> +	struct device *dev = &pdev->dev;
+> +	struct s3c_ide_info *info;
+> +	struct resource *res;
+> +	struct ata_port *ap;
+> +	struct ata_host *host;
+> +	enum s3c_cpu_type cpu_type;
+> +	int ret;
+> +
+> +	cpu_type = platform_get_device_id(pdev)->driver_data;
+> +
+> +	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
+> +	if (!info) {
+> +		dev_err(dev, "failed to allocate memory for device data\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	info->irq = platform_get_irq(pdev, 0);
+> +	if (info->irq < 0) {
+> +		dev_err(dev, "could not obtain irq number\n");
+> +		ret = -EINVAL;
+> +		goto release_device_mem;
+> +	}
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (res == NULL) {
+> +		dev_err(dev, "failed to get mem resource\n");
+> +		ret = -EINVAL;
+> +		goto release_device_mem;
+> +	}
+> +
+> +	if (!request_mem_region(res->start, resource_size(res), DRV_NAME)) {
+
+    Probably should call devm_request_mem_region() if you're using 
+devm_ioremap()...
+
+> +		dev_err(dev, "error requesting register region\n");
+> +		return -EBUSY;
+> +	}
+> +
+> +	info->ide_addr = devm_ioremap(dev, res->start, resource_size(res));
+> +	if (!info->ide_addr) {
+> +		dev_err(dev, "failed to map IO base address\n");
+> +		ret = -ENOMEM;
+> +		goto release_mem;
+> +	}
+> +
+> +	info->clk = clk_get(&pdev->dev, "cfcon");
+> +	if (IS_ERR(info->clk)) {
+> +		dev_err(dev, "failed to get access to cf controller clock\n");
+> +		ret = PTR_ERR(info->clk);
+> +		info->clk = NULL;
+
+    No 'goto' here?
+
+[...]
+
+> +stop_clk:
+> +	clk_disable(info->clk);
+
+    Where is clk_put() call?
+
+> +release_mem:
+> +	release_mem_region(res->start, resource_size(res));
+> +release_device_mem:
+> +	kfree(info);
+
+    Doesn't using devm_kzalloc() guarantee that the memory will be freed up 
+automatically?
+
+> +return ret;
+
+    Wrong indentation.
+
+> +static struct platform_driver pata_s3c_driver = {
+> +	.probe		= pata_s3c_probe,
+> 
+> 
+
+    2 empty lines -- broken patch?
+
+> +	.remove		= __devexit_p(pata_s3c_remove),
+> +	.id_table	= pata_s3c_driver_ids,
+> +	.driver		= {
+> +		.name	= DRV_NAME,
+> +		.owner	= THIS_MODULE,
+> +#ifdef CONFIG_PM
+> +		.pm	= &pata_s3c_pm_ops,
+> +#endif
+> +	},
+> +};
+
+[...]
+
+MBR, Sergei
