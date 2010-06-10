@@ -1,60 +1,42 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH v3] libata: pata_samsung_cf: Add Samsung PATA
-	controller driver
-Date: Thu, 10 Jun 2010 09:56:39 +0100
-Message-ID: <20100610085639.GU7248@trinity.fluff.org>
-References: <1276156241-28804-1-git-send-email-kgene.kim@samsung.com> <4C10A7B7.4090601@pobox.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: SAMSUNG: Fix on wrong function name for S5PV210 sdhci0
+Date: Thu, 10 Jun 2010 18:18:36 +0900
+Message-ID: <1276161516-17480-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:53377 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752931Ab0FJI4r (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:55045 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753139Ab0FJJXU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jun 2010 04:56:47 -0400
-Content-Disposition: inline
-In-Reply-To: <4C10A7B7.4090601@pobox.com>
+	Thu, 10 Jun 2010 05:23:20 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jeff Garzik <jgarzik@pobox.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-ide@vger.kernel.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Lee Hyuk <hyuk1.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Thu, Jun 10, 2010 at 04:52:07AM -0400, Jeff Garzik wrote:
-> On 06/10/2010 03:50 AM, Kukjin Kim wrote:
->> From: Abhilash Kesavan<a.kesavan@samsung.com>
->>
->> Adds support for the Samsung PATA controller. This driver is based on the
->> Libata subsystem and references the earlier patches sent for IDE subsystem.
->>
->> Signed-off-by: Abhilash Kesavan<a.kesavan@samsung.com>
->> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
->> ---
->>
->> Changes since v2:
->> - Changed the DRV_NAME to pata_samsung_cf
->> - Used msleep instead of mdelay
->>
->>   drivers/ata/Makefile          |    1 +
->>   drivers/ata/pata_samsung_cf.c |  608 +++++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 618 insertions(+), 0 deletions(-)
->>   create mode 100644 drivers/ata/pata_samsung_cf.c
->
-> Acked-by: Jeff Garzik <jgarzik@redhat.com>
->
->
-> I presume you'll send this upstream via the appropriate ARM tree.
+From: Lee Hyuk <hyuk1.lee@samsung.com>
 
-It depends on whether Linus un-declares his current suspensio nof
-ARM based work. The machine updtaes should go via the samsung tree
-but whether to send the driver that was is another matter (I prefer
-to have drivers go via the driver's tree to avoid clashes in
-Makefile and Kconfig).
+This patch fixes on wrong function name in include/plat/sdhci.h for Samsung.
+The 's5pc100_default_sdhci0()' function should be chnaged to
+'s5pv210_default_sdhci0()'. Because 's5pv210_default_sdhci0()' must be pair.
 
-PS, what's your policy on -rc inclusion of completely new code
-such as this?
+Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/plat-samsung/include/plat/sdhci.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
+diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-samsung/include/plat/sdhci.h
+index 13f9fb2..98ebd50 100644
+--- a/arch/arm/plat-samsung/include/plat/sdhci.h
++++ b/arch/arm/plat-samsung/include/plat/sdhci.h
+@@ -239,7 +239,7 @@ static inline void s5pv210_default_sdhci0(void)
+ 	s3c_hsmmc0_def_platdata.cfg_card = s5pv210_setup_sdhci_cfg_card;
+ }
+ #else
+-static inline void s5pc100_default_sdhci0(void) { }
++static inline void s5pv210_default_sdhci0(void) { }
+ #endif /* CONFIG_S3C_DEV_HSMMC */
+ 
+ #ifdef CONFIG_S3C_DEV_HSMMC1
 -- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+1.6.2.5
