@@ -1,25 +1,75 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 1/5] sdhci-s3c: depend on plat-samsung
-Date: Fri, 11 Jun 2010 11:30:48 +0100
-Message-ID: <20100611103047.GC12436@sirena.org.uk>
-References: <1276076383-24825-1-git-send-email-m.szyprowski@samsung.com> <1276076383-24825-2-git-send-email-m.szyprowski@samsung.com> <000701cb08fd$2f8e15a0$8eaa40e0$%kim@samsung.com> <20100611052407.GX7248@trinity.fluff.org>
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Subject: [RFC/PATCH 0/9] Samsung crypto engine
+Date: Fri, 11 Jun 2010 21:48:37 +0200
+Message-ID: <4C129315.4030404@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20100611052407.GX7248@trinity.fluff.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ww0-f46.google.com ([74.125.82.46]:46761 "EHLO
+	mail-ww0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756856Ab0FKTsk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 11 Jun 2010 15:48:40 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org
+Cc: ben-linux@fluff.org, herbert@gondor.apana.org.au, davem@davemloft.net
 
-On Fri, Jun 11, 2010 at 06:24:07AM +0100, Ben Dooks wrote:
+Hi all,
 
-> Hmm, Mr Park and Co really need to learn how to handle the treatment of
-> patches. I'm really disapointed that these patches get submitted without
-> the proper authour accreditation. If this isn't sorted out then I for
-> one will start thinking about giving this stuff an automatic reject.
+this patchset introduces crypto acceleration support for the crypto engine
+available in S3C64XX and S5PC100 SoC's. I only have access to a S3C6410 board so
+it would be nice if people could test these patches on S5PC100.
 
-For this specific patch it looks more like the patch was sufficiently
-straightforward that two different people ended up coming up with
-identical implementations rather than anything else?
+The driver currently only supports AES and (T)DES in PIO mode, but even then it
+doesn't always succeed the DES self-tests so the driver part of this patch is
+more an RFC than an actual patch.
+
+AES seems to work better than (T)DES, but it hangs on 64-bytes transfers (DES
+hangs on a 24-byte transfer).
+
+There is support for DMA in the driver, but that has its own set of problems (it
+can't even finish a single transfer).
+
+I've tagged the patches I think are worthy for upstreaming with [PATCH], the
+others are tagged with [RFC] (reviews are welcome!).
+
+I'm not completely sure about my approach of handling the subsystems' register
+offsets currently as this limits the driver to S3C64XX- or S5PC100-only.
+
+Mapping these to virtual space could solve this and would have the benefit of
+reducing the ~11MB IO space on S3C64XX SoC's.
+
+Maurus Cuelenaere (9):
+  ARM: S3C64XX: Add SDMA clocks
+  ARM: S3C64XX: Add SDMA support to DMA core
+  ARM: S3C64XX: Stop and flush requests on freeing
+  ARM: S3C64XX: Add support for secur clock
+  ARM: S3C64XX: Add crypto engine register definitions
+  ARM: S5PC100: Add crypto engine register definitions
+  ARM: SAMSUNG: Add crypto engine platform definition
+  ARM: SAMSUNG: Add crypto engine register definitions
+  crypto: Add Samsung crypto engine driver
+
+ arch/arm/Kconfig                              |    2 +
+ arch/arm/mach-s3c64xx/clock.c                 |   21 +
+ arch/arm/mach-s3c64xx/dma.c                   |   54 +-
+ arch/arm/mach-s3c64xx/include/mach/map.h      |    3 +
+ arch/arm/mach-s3c64xx/include/mach/regs-sss.h |   27 +
+ arch/arm/mach-s5pc100/include/mach/map.h      |    4 +
+ arch/arm/mach-s5pc100/include/mach/regs-sss.h |   29 +
+ arch/arm/plat-samsung/Kconfig                 |    5 +
+ arch/arm/plat-samsung/Makefile                |    1 +
+ arch/arm/plat-samsung/dev-sss.c               |   46 +
+ arch/arm/plat-samsung/include/plat/devs.h     |    2 +
+ arch/arm/plat-samsung/include/plat/regs-sss.h |  153 +++
+ drivers/crypto/Kconfig                        |   11 +
+ drivers/crypto/Makefile                       |    1 +
+ drivers/crypto/s3c-sss.c                      | 1320 +++++++++++++++++++++++++
+ 15 files changed, 1668 insertions(+), 11 deletions(-)
+ create mode 100644 arch/arm/mach-s3c64xx/include/mach/regs-sss.h
+ create mode 100644 arch/arm/mach-s5pc100/include/mach/regs-sss.h
+ create mode 100644 arch/arm/plat-samsung/dev-sss.c
+ create mode 100644 arch/arm/plat-samsung/include/plat/regs-sss.h
+ create mode 100644 drivers/crypto/s3c-sss.c
