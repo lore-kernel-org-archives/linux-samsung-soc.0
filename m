@@ -1,19 +1,19 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/5] sdhci-s3c: depend on plat-samsung
-Date: Fri, 11 Jun 2010 09:29:38 +0900
-Message-ID: <000701cb08fd$2f8e15a0$8eaa40e0$%kim@samsung.com>
-References: <1276076383-24825-1-git-send-email-m.szyprowski@samsung.com>
- <1276076383-24825-2-git-send-email-m.szyprowski@samsung.com>
+Subject: RE: [PATCH 1/3] s3c64xx: Fix build without SDHCI controllers
+Date: Fri, 11 Jun 2010 09:56:38 +0900
+Message-ID: <000801cb0900$f64bbdc0$e2e33940$%kim@samsung.com>
+References: <1276076345-24370-1-git-send-email-m.szyprowski@samsung.com>
+ <1276076345-24370-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:32068 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754000Ab0FKA3j (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:34945 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754423Ab0FKA4l convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Jun 2010 20:29:39 -0400
-In-reply-to: <1276076383-24825-2-git-send-email-m.szyprowski@samsung.com>
+	Thu, 10 Jun 2010 20:56:41 -0400
+In-reply-to: <1276076345-24370-2-git-send-email-m.szyprowski@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -21,42 +21,45 @@ To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infrad
 Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
 
 Marek Szyprowski wrote:
-> 
-> Most Samsung SoC have support for SDHCI block, so make the driver
-> dependent on the Samsung platform instead on listing all SoCs in the
-> Kconfig (and updating it again when support for the new SoC variant is
-> added).
-> 
-Hi, Marek
-
-Kyungmin Park already submitted same patch.
-
-And Andrew Morton added to the -mm tree.
-http://www.spinics.net/lists/mm-commits/msg79159.html
-
-But, I think your comment is better...
-
+>=20
+> This patch fixes the following compilation problem if only NCP machin=
+e
+> is selected:
+>=20
+> arch/arm/mach-s3c64xx/s3c6410.c: In function =E2=80=98s3c6410_map_io=E2=
+=80=99:
+> arch/arm/mach-s3c64xx/s3c6410.c:51: error: implicit declaration of fu=
+nction
+> =E2=80=98s3c6410_default_sdhci2=E2=80=99
+>=20
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  drivers/mmc/host/Kconfig |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index e171e77..acf5bf6 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -123,7 +123,7 @@ config MMC_SDHCI_PLTFM
-> 
->  config MMC_SDHCI_S3C
->  	tristate "SDHCI support on Samsung S3C SoC"
-> -	depends on MMC_SDHCI && (PLAT_S3C24XX || PLAT_S3C64XX)
-> +	depends on MMC_SDHCI && PLAT_SAMSUNG
->  	help
->  	  This selects the Secure Digital Host Controller Interface (SDHCI)
->  	  often referrered to as the HSMMC block in some of the Samsung S3C
+>  arch/arm/plat-samsung/include/plat/sdhci.h |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+>=20
+> diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/pl=
+at-
+> samsung/include/plat/sdhci.h
+> index 13f9fb2..c2044e5 100644
+> --- a/arch/arm/plat-samsung/include/plat/sdhci.h
+> +++ b/arch/arm/plat-samsung/include/plat/sdhci.h
+> @@ -166,6 +166,7 @@ static inline void s3c6410_default_sdhci2(void) {=
+ }
+>  #else
+>  static inline void s3c6410_default_sdhci0(void) { }
+>  static inline void s3c6410_default_sdhci1(void) { }
+> +static inline void s3c6410_default_sdhci2(void) { }
+>  static inline void s3c6400_default_sdhci0(void) { }
+>  static inline void s3c6400_default_sdhci1(void) { }
+>=20
 > --
 
+Maybe missed in Maurus' patch 'S3C64XX: add HSMMC2 support'
+commit 92b118f6968ae0788ac659af47b464acd9a754a1
+
+Also need 'static inline s3c6400_default_sdhci2(void) { }'
+Could you re-submit updated patch including s3c6400_default_sdhci2()?
 
 Thanks.
 
