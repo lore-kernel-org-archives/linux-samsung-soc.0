@@ -1,66 +1,131 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: [PATCH v4 0/3] Add samsung keypad
-Date: Fri, 11 Jun 2010 17:08:44 +0900
-Message-ID: <4C11EF0C.8060109@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] sdhci-s3c: Add SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK quirk
+	for Samsung SoC
+Date: Fri, 11 Jun 2010 17:08:09 +0900
+Message-ID: <003901cb093d$3dd14110$b973c330$%kim@samsung.com>
+References: <1276169991-16396-1-git-send-email-kgene.kim@samsung.com>
+ <AANLkTim2LzIh7dadCAWCo6jltS4CYA8gLKaiQne_VzqK@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:30241 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755523Ab0FKIIq (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:12531 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756266Ab0FKIIy convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Jun 2010 04:08:46 -0400
+	Fri, 11 Jun 2010 04:08:54 -0400
+In-reply-to: <AANLkTim2LzIh7dadCAWCo6jltS4CYA8gLKaiQne_VzqK@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, kyungmin.park@samsung.com, dmitry.torokhov@gmail.com, kgene.kim@samsung.com
+To: 'Kyungmin Park' <kmpark@infradead.org>
+Cc: linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Lee Hyuk' <hyuk1.lee@samsung.com>
 
-This is patch v4 series to add Samsung keypad. I've removed board file
-patchs for samsung-keypad support in the v4, They don't have any change
-but i will post later because of dependence problem with other patches.
+Kyungmin Park wrote:
+>=20
+> Hi,
+>=20
+> On Thu, Jun 10, 2010 at 8:39 PM, Kukjin Kim <kgene.kim@samsung.com> w=
+rote:
+> > From: Lee Hyuk <hyuk1.lee@samsung.com>
+> >
+> > On Samsung's SDMMC hosts the timeout clock is derivied from the SD
+> > Clock, which is set dynamically.
+> > So, checked 'SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK' quirk and removed
+> > 'sdhci_s3c_get_timeout_clk' callback which doesn't need any more.
+> >
+> > Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > ---
+> > =A0drivers/mmc/host/sdhci-s3c.c | =A0 10 +++-------
+> > =A01 files changed, 3 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-=
+s3c.c
+> > index af21792..ca09382 100644
+> > --- a/drivers/mmc/host/sdhci-s3c.c
+> > +++ b/drivers/mmc/host/sdhci-s3c.c
+> > @@ -110,11 +110,6 @@ static unsigned int sdhci_s3c_get_max_clk(stru=
+ct
+> sdhci_host *host)
+> > =A0 =A0 =A0 =A0return max;
+> > =A0}
+> >
+> > -static unsigned int sdhci_s3c_get_timeout_clk(struct sdhci_host *h=
+ost)
+> > -{
+> > - =A0 =A0 =A0 return sdhci_s3c_get_max_clk(host) / 1000000;
+> > -}
+> > -
+> > =A0/**
+> > =A0* sdhci_s3c_consider_clock - consider one the bus clocks for cur=
+rent
+setting
+> > =A0* @ourhost: Our SDHCI instance.
+> > @@ -188,7 +183,6 @@ static void sdhci_s3c_set_clock(struct sdhci_ho=
+st
+*host,
+> unsigned int clock)
+> >
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0ourhost->cur_clk =3D best_src;
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0host->max_clk =3D clk_get_rate(clk);
+> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 host->timeout_clk =3D sdhci_s3c_get_t=
+imeout_clk(host);
+> >
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0ctrl =3D readl(host->ioaddr + S3C_SD=
+HCI_CONTROL2);
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0ctrl &=3D ~S3C_SDHCI_CTRL2_SELBASECL=
+K_MASK;
+> > @@ -211,7 +205,6 @@ static void sdhci_s3c_set_clock(struct sdhci_ho=
+st
+*host,
+> unsigned int clock)
+> >
+> > =A0static struct sdhci_ops sdhci_s3c_ops =3D {
+> > =A0 =A0 =A0 =A0.get_max_clock =A0 =A0 =A0 =A0 =A0=3D sdhci_s3c_get_=
+max_clk,
+> > - =A0 =A0 =A0 .get_timeout_clock =A0 =A0 =A0=3D sdhci_s3c_get_timeo=
+ut_clk,
+> > =A0 =A0 =A0 =A0.set_clock =A0 =A0 =A0 =A0 =A0 =A0 =A0=3D sdhci_s3c_=
+set_clock,
+> > =A0};
+> >
+> > @@ -335,6 +328,9 @@ static int __devinit sdhci_s3c_probe(struct
+> platform_device *pdev)
+> > =A0 =A0 =A0 =A0host->quirks |=3D (SDHCI_QUIRK_32BIT_DMA_ADDR |
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 SDHCI_QUIRK_32BIT_D=
+MA_SIZE);
+> >
+> > + =A0 =A0 =A0 /* HSMMC on Samsung SoCs uses SDCLK as timeout clock.=
+ */
+> > + =A0 =A0 =A0 host->quirks |=3D SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK=
+;
+>=20
+> How do you know Samsung SoCs use SDCLK in the spec?
+>
+Samsung SoC hardware engineer guided about that.
 
-Changes since v1:
-- Include linux/gpio.h instead of mach/gpio.h
-- Switch to dev_pm_ops in the samsung keypad driver
+> Is it also true at s3c64xx series?
+>=20
+Yes, of course.
 
-Changes since v2:
-- Add keypad device types to remove platform specific #ifdef
-- Remove unnecessary include and checking codes.
-- Rename from 'kp' to 'keypad'
-- Rename keypad registers definition
-- Modify 'rep' variable declaration
 
-Changes since v3:
-- Use schedule_delayed_work and remove timer
-- Modify memory alloc codes
-- Add MODULE_ALIAS() and missing error printk
-- Change from rep to no_autorepeat and it's type to bool
-- Add report EV_MSC/MSC_SCAN and wakeup control
-- Remove s3c_set_platdata() call because there is not yet
 
-Joonyoung Shim (3):
-      ARM: SAMSUNG: Add keypad device support
-      ARM: S5PV210: Add keypad device helpers
-      input: samsung-keypad - Add samsung keypad driver
+>=20
+> > +
+> > =A0 =A0 =A0 =A0ret =3D sdhci_add_host(host);
+> > =A0 =A0 =A0 =A0if (ret) {
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0dev_err(dev, "sdhci_add_host() faile=
+d\n");
+> > --
+> > 1.6.2.5
+> >
+> > --
 
- arch/arm/mach-s5pv210/Kconfig                    |    5 +
- arch/arm/mach-s5pv210/Makefile                   |    1 +
- arch/arm/mach-s5pv210/cpu.c                      |    4 +
- arch/arm/mach-s5pv210/include/mach/map.h         |    3 +
- arch/arm/mach-s5pv210/setup-keypad.c             |   34 ++
- arch/arm/plat-samsung/Kconfig                    |    5 +
- arch/arm/plat-samsung/Makefile                   |    1 +
- arch/arm/plat-samsung/dev-keypad.c               |   58 ++++
- arch/arm/plat-samsung/include/plat/devs.h        |    2 +
- arch/arm/plat-samsung/include/plat/keypad.h      |   59 ++++
- arch/arm/plat-samsung/include/plat/regs-keypad.h |   49 +++
- drivers/input/keyboard/Kconfig                   |    9 +
- drivers/input/keyboard/Makefile                  |    1 +
- drivers/input/keyboard/samsung-keypad.c          |  400 ++++++++++++++++++++++
- 14 files changed, 631 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s5pv210/setup-keypad.c
- create mode 100644 arch/arm/plat-samsung/dev-keypad.c
- create mode 100644 arch/arm/plat-samsung/include/plat/keypad.h
- create mode 100644 arch/arm/plat-samsung/include/plat/regs-keypad.h
- create mode 100644 drivers/input/keyboard/samsung-keypad.c
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
