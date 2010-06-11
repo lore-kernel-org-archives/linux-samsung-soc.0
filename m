@@ -1,337 +1,190 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: [PATCH v2 1/4] ARM: S5PV210: Add gpio interrupt support
-Date: Fri, 11 Jun 2010 17:33:17 +0900
-Message-ID: <1276245200-18052-1-git-send-email-jy0922.shim@samsung.com>
-Content-Transfer-Encoding: 7BIT
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Subject: Re: [PATCH 06/11] USB: s3c-hsotg: Add initial detection and setup
+ for dedicated FIFO mode
+Date: Fri, 11 Jun 2010 10:54:27 +0200
+Message-ID: <4C11F9C3.20802@gmail.com>
+References: <1276244457-4072-1-git-send-email-ben-linux@fluff.org> <1276244457-4072-7-git-send-email-ben-linux@fluff.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:40247 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759152Ab0FKIdX (ORCPT
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:61571 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759752Ab0FKIyc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Jun 2010 04:33:23 -0400
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L3U00586D3MNU40@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 11 Jun 2010 17:33:22 +0900 (KST)
-Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L3U00GE5D3MIA@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 11 Jun 2010 17:33:22 +0900 (KST)
+	Fri, 11 Jun 2010 04:54:32 -0400
+Received: by wyb40 with SMTP id 40so566627wyb.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jun 2010 01:54:30 -0700 (PDT)
+In-Reply-To: <1276244457-4072-7-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: Ben Dooks <ben-linux@fluff.org>
 
-This patch is to support gpio interrupts on s5pv210.
+Op 11-06-10 10:20, Ben Dooks schreef:
+> Add support for the dedicated FIFO mode on newer SoCs such as the S5PV210
+> partly to improve support and to fix the bug where any non-EP0 IN endpoint
+> requires its own FIFO allocation.
+> 
+> To fix this, we ensure that any non-zero IN endpoint is given a TXFIFO
+> using the same allocation method as the periodic case (all our current
+> hardware has enough FIFOs and FIFO memory for a 1:1 mapping) and ensure
+> that the necessary transmission done interrupt is enabled.
+> 
+> The default settings from reset for the core point all EPs at FIFO0,
+> used for the control endpoint. However, the controller documentation
+> states that all IN endpoints _must_ have a unique FIFO to avoid any
+> contention during transmission.
+> 
+> Note, this leaves us with a large IN FIFO for EP0 (which re-uses the
+> old NPTXFIFO) for an endpoint which cannot shift more than a pair of
+> packets at a time... this is a waste, but it looks like we cannot
+> re-allocate space to the individual IN FIFOs as they are already
+> maxed out (to be confirmed).
+> 
+> Signed-off-by: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org?
 
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-s5pv210/gpiolib.c                |    8 +-
- arch/arm/mach-s5pv210/include/mach/irqs.h      |   16 ++-
- arch/arm/plat-s5p/Makefile                     |    2 +-
- arch/arm/plat-s5p/irq-gpioint.c                |  208 ++++++++++++++++++++++++
- arch/arm/plat-samsung/include/plat/gpio-core.h |    2 +
- 5 files changed, 233 insertions(+), 3 deletions(-)
- create mode 100644 arch/arm/plat-s5p/irq-gpioint.c
+Shouldn't this be s/\?/>/ ?
 
-diff --git a/arch/arm/mach-s5pv210/gpiolib.c b/arch/arm/mach-s5pv210/gpiolib.c
-index 9ea8972..16d6747 100644
---- a/arch/arm/mach-s5pv210/gpiolib.c
-+++ b/arch/arm/mach-s5pv210/gpiolib.c
-@@ -150,6 +150,7 @@ static struct s3c_gpio_chip s5pv210_gpio_4bit[] = {
- 			.label	= "GPG3",
- 		},
- 	}, {
-+		.config	= &gpio_cfg_noint,
- 		.chip	= {
- 			.base	= S5PV210_GPI(0),
- 			.ngpio	= S5PV210_GPIO_I_NR,
-@@ -245,11 +246,16 @@ static __init int s5pv210_gpiolib_init(void)
- {
- 	struct s3c_gpio_chip *chip = s5pv210_gpio_4bit;
- 	int nr_chips = ARRAY_SIZE(s5pv210_gpio_4bit);
-+	int gpioint_group = 0;
- 	int i = 0;
- 
- 	for (i = 0; i < nr_chips; i++, chip++) {
--		if (chip->config == NULL)
-+		if (chip->config == NULL) {
- 			chip->config = &gpio_cfg;
-+
-+			/* gpio interrupts */
-+			s5p_gpioint_add(chip, gpioint_group++);
-+		}
- 		if (chip->base == NULL)
- 			chip->base = S5PV210_BANK_BASE(i);
- 	}
-diff --git a/arch/arm/mach-s5pv210/include/mach/irqs.h b/arch/arm/mach-s5pv210/include/mach/irqs.h
-index 9689537..43baacc 100644
---- a/arch/arm/mach-s5pv210/include/mach/irqs.h
-+++ b/arch/arm/mach-s5pv210/include/mach/irqs.h
-@@ -121,8 +121,22 @@
- #define S5P_EINT_BASE1		(S5P_IRQ_VIC0(0))
- #define S5P_EINT_BASE2		(IRQ_VIC_END + 1)
- 
-+/* GPIO interrupt */
-+#define S5P_GPIOINT_GROUP_NR	22
-+#define S5P_GPIOINT_BASE	(IRQ_EINT(31) + 1)
-+#define S5P_IRQ_GPIOINT(x)	(S5P_GPIOINT_BASE + (x))
-+
- /* Set the default NR_IRQS */
--#define NR_IRQS			(IRQ_EINT(31) + 1)
-+
-+/*
-+ * GPIO groups is 27. Each GPIO group can have max 8 GPIO interrupts.
-+ *
-+ * We should include gpios of all gpio groups from GPIO_A0 until GPIO_J4 to
-+ * NR_IRQS because 22 gpio groups having gpio interrupts aren't in order and
-+ * are mixed with no interrupt gpio groups, then it can give simple irq
-+ * computation of gpio interrupts.
-+ */
-+#define NR_IRQS			(S5P_IRQ_GPIOINT(27 * 8) + 1)
- 
- /* Compatibility */
- #define IRQ_LCD_FIFO		IRQ_LCD0
-diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-index 39c242b..b56b4d3 100644
---- a/arch/arm/plat-s5p/Makefile
-+++ b/arch/arm/plat-s5p/Makefile
-@@ -15,6 +15,6 @@ obj-				:=
- obj-y				+= dev-uart.o
- obj-y				+= cpu.o
- obj-y				+= clock.o
--obj-y				+= irq.o
-+obj-y				+= irq.o irq-gpioint.o
- obj-$(CONFIG_S5P_EXT_INT)	+= irq-eint.o
- 
-diff --git a/arch/arm/plat-s5p/irq-gpioint.c b/arch/arm/plat-s5p/irq-gpioint.c
-new file mode 100644
-index 0000000..c172e37
---- /dev/null
-+++ b/arch/arm/plat-s5p/irq-gpioint.c
-@@ -0,0 +1,208 @@
-+/*
-+ * linux/arch/arm/plat-s5p/irq-gpioint.c
-+ *
-+ * Copyright (C) 2010 Samsung Electronics Co.Ltd
-+ * Author: Kyungmin Park <kyungmin.park@samsung.com>
-+ * Author: Joonyoung Shim <jy0922.shim@samsung.com>
-+ *
-+ *  This program is free software; you can redistribute  it and/or modify it
-+ *  under  the terms of  the GNU General  Public License as published by the
-+ *  Free Software Foundation;  either version 2 of the  License, or (at your
-+ *  option) any later version.
-+ *
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/io.h>
-+#include <linux/gpio.h>
-+
-+#include <mach/map.h>
-+#include <plat/gpio-core.h>
-+#include <plat/gpio-cfg.h>
-+
-+#define S5P_GPIOREG(x)			(S5P_VA_GPIO + (x))
-+
-+#define GPIOINT_CON_OFFSET		0x700
-+#define GPIOINT_MASK_OFFSET		0x900
-+#define GPIOINT_PEND_OFFSET		0xA00
-+
-+#define GPIOINT_LEVEL_LOW		0x0
-+#define GPIOINT_LEVEL_HIGH		0x1
-+#define GPIOINT_EDGE_FALLING		0x2
-+#define GPIOINT_EDGE_RISING		0x3
-+#define GPIOINT_EDGE_BOTH		0x4
-+
-+static struct s3c_gpio_chip *s3c_chips[S5P_GPIOINT_GROUP_NR];
-+
-+static int s5p_gpioint_get_group(unsigned int irq)
-+{
-+	struct gpio_chip *chip = get_irq_data(irq);
-+	struct s3c_gpio_chip *s3c_chip = container_of(chip,
-+			struct s3c_gpio_chip, chip);
-+	int group;
-+
-+	for (group = 0; group < S5P_GPIOINT_GROUP_NR; group++)
-+		if (s3c_chip == s3c_chips[group])
-+			break;
-+
-+	return group;
-+}
-+
-+static int s5p_gpioint_get_offset(unsigned int irq)
-+{
-+	struct gpio_chip *chip = get_irq_data(irq);
-+	return irq - S5P_IRQ_GPIOINT(chip->base);
-+}
-+
-+static void s5p_gpioint_ack(unsigned int irq)
-+{
-+	int group, offset, pend_offset;
-+	unsigned int value;
-+
-+	group = s5p_gpioint_get_group(irq);
-+	offset = s5p_gpioint_get_offset(irq);
-+	pend_offset = group << 2;
-+
-+	value = __raw_readl(S5P_GPIOREG(GPIOINT_PEND_OFFSET) + pend_offset);
-+	value |= 1 << offset;
-+	__raw_writel(value, S5P_GPIOREG(GPIOINT_PEND_OFFSET) + pend_offset);
-+}
-+
-+static void s5p_gpioint_mask(unsigned int irq)
-+{
-+	int group, offset, mask_offset;
-+	unsigned int value;
-+
-+	group = s5p_gpioint_get_group(irq);
-+	offset = s5p_gpioint_get_offset(irq);
-+	mask_offset = group << 2;
-+
-+	value = __raw_readl(S5P_GPIOREG(GPIOINT_MASK_OFFSET) + mask_offset);
-+	value |= 1 << offset;
-+	__raw_writel(value, S5P_GPIOREG(GPIOINT_MASK_OFFSET) + mask_offset);
-+}
-+
-+static void s5p_gpioint_unmask(unsigned int irq)
-+{
-+	int group, offset, mask_offset;
-+	unsigned int value;
-+
-+	group = s5p_gpioint_get_group(irq);
-+	offset = s5p_gpioint_get_offset(irq);
-+	mask_offset = group << 2;
-+
-+	value = __raw_readl(S5P_GPIOREG(GPIOINT_MASK_OFFSET) + mask_offset);
-+	value &= ~(1 << offset);
-+	__raw_writel(value, S5P_GPIOREG(GPIOINT_MASK_OFFSET) + mask_offset);
-+}
-+
-+static void s5p_gpioint_mask_ack(unsigned int irq)
-+{
-+	s5p_gpioint_mask(irq);
-+	s5p_gpioint_ack(irq);
-+}
-+
-+static int s5p_gpioint_set_type(unsigned int irq, unsigned int type)
-+{
-+	int group, offset, con_offset;
-+	unsigned int value;
-+
-+	group = s5p_gpioint_get_group(irq);
-+	offset = s5p_gpioint_get_offset(irq);
-+	con_offset = group << 2;
-+
-+	switch (type) {
-+	case IRQ_TYPE_NONE:
-+		printk(KERN_WARNING "No irq type\n");
-+		return -EINVAL;
-+	case IRQ_TYPE_EDGE_RISING:
-+		type = GPIOINT_EDGE_RISING;
-+		break;
-+	case IRQ_TYPE_EDGE_FALLING:
-+		type = GPIOINT_EDGE_FALLING;
-+		break;
-+	case IRQ_TYPE_EDGE_BOTH:
-+		type = GPIOINT_EDGE_BOTH;
-+		break;
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		type = GPIOINT_LEVEL_HIGH;
-+		break;
-+	case IRQ_TYPE_LEVEL_LOW:
-+		type = GPIOINT_LEVEL_LOW;
-+		break;
-+	default:
-+		BUG();
-+	}
-+
-+	value = __raw_readl(S5P_GPIOREG(GPIOINT_CON_OFFSET) + con_offset);
-+	value &= ~(0xf << (offset * 0x4));
-+	value |= (type << (offset * 0x4));
-+	__raw_writel(value, S5P_GPIOREG(GPIOINT_CON_OFFSET) + con_offset);
-+
-+	return 0;
-+}
-+
-+struct irq_chip s5p_gpioint = {
-+	.name		= "GPIO",
-+	.ack		= s5p_gpioint_ack,
-+	.mask		= s5p_gpioint_mask,
-+	.mask_ack	= s5p_gpioint_mask_ack,
-+	.unmask		= s5p_gpioint_unmask,
-+	.set_type	= s5p_gpioint_set_type,
-+};
-+
-+static void s5p_gpioint_handler(unsigned int irq, struct irq_desc *desc)
-+{
-+	int group, offset, pend_offset, mask_offset;
-+	int real_irq;
-+	unsigned int pend, mask;
-+
-+	for (group = 0; group < S5P_GPIOINT_GROUP_NR; group++) {
-+		pend_offset = group << 2;
-+		pend = __raw_readl(S5P_GPIOREG(GPIOINT_PEND_OFFSET) +
-+				pend_offset);
-+		if (!pend)
-+			continue;
-+
-+		mask_offset = group << 2;
-+		mask = __raw_readl(S5P_GPIOREG(GPIOINT_MASK_OFFSET) +
-+				mask_offset);
-+		pend &= ~mask;
-+
-+		for (offset = 0; offset < 8; offset++) {
-+			if (pend & (1 << offset)) {
-+				real_irq = s3c_chips[group]->chip.base +
-+					   offset;
-+				generic_handle_irq(S5P_IRQ_GPIOINT(real_irq));
-+			}
-+		}
-+	}
-+}
-+
-+void s5p_gpioint_add(struct s3c_gpio_chip *chip, int group)
-+{
-+	int irq;
-+	int i;
-+
-+	s3c_chips[group] = chip;
-+
-+	for (i = 0; i < chip->chip.ngpio; i++) {
-+		irq = S5P_GPIOINT_BASE + chip->chip.base + i;
-+		set_irq_chip(irq, &s5p_gpioint);
-+		set_irq_data(irq, &chip->chip);
-+		set_irq_handler(irq, handle_level_irq);
-+		set_irq_flags(irq, IRQF_VALID);
-+	}
-+}
-+
-+int __init s5p_gpioint_init(void)
-+{
-+	/* register gpio interrupt handler */
-+	set_irq_chained_handler(IRQ_GPIOINT, s5p_gpioint_handler);
-+
-+	return 0;
-+}
-+
-+arch_initcall(s5p_gpioint_init);
-diff --git a/arch/arm/plat-samsung/include/plat/gpio-core.h b/arch/arm/plat-samsung/include/plat/gpio-core.h
-index e358c7d..12ec82c 100644
---- a/arch/arm/plat-samsung/include/plat/gpio-core.h
-+++ b/arch/arm/plat-samsung/include/plat/gpio-core.h
-@@ -121,6 +121,8 @@ extern void samsung_gpiolib_add_4bit2(struct s3c_gpio_chip *chip);
- /* exported for core SoC support to change */
- extern struct s3c_gpio_cfg s3c24xx_gpiocfg_default;
- 
-+extern void s5p_gpioint_add(struct s3c_gpio_chip *chip, int group);
-+
- #ifdef CONFIG_S3C_GPIO_TRACK
- extern struct s3c_gpio_chip *s3c_gpios[S3C_GPIO_END];
- 
--- 
-1.7.0.4
+> ---
+>  .../arm/plat-samsung/include/plat/regs-usb-hsotg.h |    2 +
+>  drivers/usb/gadget/s3c-hsotg.c                     |   40 +++++++++++++++++++-
+>  2 files changed, 40 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/plat-samsung/include/plat/regs-usb-hsotg.h b/arch/arm/plat-samsung/include/plat/regs-usb-hsotg.h
+> index 8d18d9d..dc90f5e 100644
+> --- a/arch/arm/plat-samsung/include/plat/regs-usb-hsotg.h
+> +++ b/arch/arm/plat-samsung/include/plat/regs-usb-hsotg.h
+> @@ -226,6 +226,7 @@
+>  
+>  #define S3C_DIEPMSK				S3C_HSOTG_REG(0x810)
+>  
+> +#define S3C_DIEPMSK_TxFIFOEmpty			(1 << 7)
+>  #define S3C_DIEPMSK_INEPNakEffMsk		(1 << 6)
+>  #define S3C_DIEPMSK_INTknEPMisMsk		(1 << 5)
+>  #define S3C_DIEPMSK_INTknTXFEmpMsk		(1 << 4)
+> @@ -371,6 +372,7 @@
+>  
+>  #define S3C_DIEPDMA(_a)				S3C_HSOTG_REG(0x914 + ((_a) * 0x20))
+>  #define S3C_DOEPDMA(_a)				S3C_HSOTG_REG(0xB14 + ((_a) * 0x20))
+> +#define S3C_DTXFSTS(_a)				S3C_HSOTG_REG(0x918 + ((_a) * 0x20))
+>  
+>  #define S3C_EPFIFO(_a)				S3C_HSOTG_REG(0x1000 + ((_a) * 0x1000))
+>  
+> diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
+> index 5b61bcf..819e75a 100644
+> --- a/drivers/usb/gadget/s3c-hsotg.c
+> +++ b/drivers/usb/gadget/s3c-hsotg.c
+> @@ -12,6 +12,8 @@
+>   * published by the Free Software Foundation.
+>  */
+>  
+> +#define DEBUG
+
+I don't think this is an intended change?
+
+> +
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/spinlock.h>
+> @@ -131,6 +133,7 @@ struct s3c_hsotg_ep {
+>   * @regs: The memory area mapped for accessing registers.
+>   * @regs_res: The resource that was allocated when claiming register space.
+>   * @irq: The IRQ number we are using
+> + * @dedicated_fifos: Set if the hardware has dedicated IN-EP fifos.
+>   * @debug_root: root directrory for debugfs.
+>   * @debug_file: main status file for debugfs.
+>   * @debug_fifo: FIFO status file for debugfs.
+> @@ -149,6 +152,8 @@ struct s3c_hsotg {
+>  	struct resource		*regs_res;
+>  	int			irq;
+>  
+> +	unsigned int		dedicated_fifos:1;
+> +
+>  	struct dentry		*debug_root;
+>  	struct dentry		*debug_file;
+>  	struct dentry		*debug_fifo;
+> @@ -467,7 +472,7 @@ static int s3c_hsotg_write_fifo(struct s3c_hsotg *hsotg,
+>  	if (to_write == 0)
+>  		return 0;
+>  
+> -	if (periodic) {
+> +	if (periodic && !hsotg->dedicated_fifos) {
+>  		u32 epsize = readl(hsotg->regs + S3C_DIEPTSIZ(hs_ep->index));
+>  		int size_left;
+>  		int size_done;
+> @@ -505,6 +510,11 @@ static int s3c_hsotg_write_fifo(struct s3c_hsotg *hsotg,
+>  			s3c_hsotg_en_gsint(hsotg, S3C_GINTSTS_PTxFEmp);
+>  			return -ENOSPC;
+>  		}
+> +	} else if (hsotg->dedicated_fifos && hs_ep->index != 0) {
+> +		can_write = readl(hsotg->regs + S3C_DTXFSTS(hs_ep->index));
+> +
+> +		can_write &= 0xffff;
+> +		can_write *= 4;
+>  	} else {
+>  		if (S3C_GNPTXSTS_NPTxQSpcAvail_GET(gnptxsts) == 0) {
+>  			dev_dbg(hsotg->dev,
+> @@ -1830,6 +1840,15 @@ static void s3c_hsotg_epint(struct s3c_hsotg *hsotg, unsigned int idx,
+>  				 __func__, idx);
+>  			clear |= S3C_DIEPMSK_INTknEPMisMsk;
+>  		}
+> +
+> +		/* FIFO has space or is empty (see GAHBCFG) */
+> +		if (hsotg->dedicated_fifos &&
+> +		    ints & S3C_DIEPMSK_TxFIFOEmpty) {
+> +			dev_dbg(hsotg->dev, "%s: ep%d: TxFIFOEmpty\n",
+> +				__func__, idx);
+> +			s3c_hsotg_trytx(hsotg, hs_ep);
+> +			clear |= S3C_DIEPMSK_TxFIFOEmpty;
+> +		}
+>  	}
+>  
+>  	writel(clear, hsotg->regs + epint_reg);
+> @@ -2281,6 +2300,12 @@ static int s3c_hsotg_ep_enable(struct usb_ep *ep,
+>  		break;
+>  	}
+>  
+> +	/* if the hardware has dedicated fifos, we must give each IN EP
+> +	 * a unique tx-fifo even if it is non-periodic.
+> +	 */
+> +	if (dir_in && hsotg->dedicated_fifos)
+> +		epctrl |= S3C_DxEPCTL_TxFNum(index);
+> +
+>  	/* for non control endpoints, set PID to D0 */
+>  	if (index)
+>  		epctrl |= S3C_DxEPCTL_SetD0PID;
+> @@ -2570,7 +2595,8 @@ int usb_gadget_register_driver(struct usb_gadget_driver *driver)
+>  
+>  	writel(S3C_DIEPMSK_TimeOUTMsk | S3C_DIEPMSK_AHBErrMsk |
+>  	       S3C_DIEPMSK_INTknEPMisMsk |
+> -	       S3C_DIEPMSK_EPDisbldMsk | S3C_DIEPMSK_XferComplMsk,
+> +	       S3C_DIEPMSK_EPDisbldMsk | S3C_DIEPMSK_XferComplMsk |
+> +	       ((hsotg->dedicated_fifos) ? S3C_DIEPMSK_TxFIFOEmpty : 0),
+>  	       hsotg->regs + S3C_DIEPMSK);
+>  
+>  	/* don't need XferCompl, we get that from RXFIFO in slave mode. In
+> @@ -2797,6 +2823,8 @@ static void s3c_hsotg_otgreset(struct s3c_hsotg *hsotg)
+>  
+>  static void s3c_hsotg_init(struct s3c_hsotg *hsotg)
+>  {
+> +	u32 cfg4;
+> +
+>  	/* unmask subset of endpoint interrupts */
+>  
+>  	writel(S3C_DIEPMSK_TimeOUTMsk | S3C_DIEPMSK_AHBErrMsk |
+> @@ -2832,6 +2860,14 @@ static void s3c_hsotg_init(struct s3c_hsotg *hsotg)
+>  
+>  	writel(using_dma(hsotg) ? S3C_GAHBCFG_DMAEn : 0x0,
+>  	       hsotg->regs + S3C_GAHBCFG);
+> +
+> +	/* check hardware configuration */
+> +
+> +	cfg4 = readl(hsotg->regs + 0x50);
+> +	hsotg->dedicated_fifos = (cfg4 >> 25) & 1;
+> +
+> +	dev_info(hsotg->dev, "%s fifos\n",
+> +		 hsotg->dedicated_fifos ? "dedicated" : "shared");
+>  }
+>  
+>  static void s3c_hsotg_dump(struct s3c_hsotg *hsotg)
