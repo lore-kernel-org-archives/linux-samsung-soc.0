@@ -1,82 +1,104 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
+From: Kyungmin Park <kyungmin.park@samsung.com>
 Subject: RE: [PATCH 1/3] s3c64xx: Fix build without SDHCI controllers
-Date: Fri, 11 Jun 2010 12:58:46 +0900
-Message-ID: <000c01cb091a$675b2fa0$36118ee0$%kim@samsung.com>
+Date: Fri, 11 Jun 2010 13:34:52 +0900
+Message-ID: <00a401cb091f$6f212370$4d636a50$%park@samsung.com>
 References: <1276076345-24370-1-git-send-email-m.szyprowski@samsung.com>
  <1276076345-24370-2-git-send-email-m.szyprowski@samsung.com>
  <000801cb0900$f64bbdc0$e2e33940$%kim@samsung.com>
  <AANLkTimPp36K_SmFm053cu9f9Znb8SFHVcKAn8bjD1PI@mail.gmail.com>
+ <000c01cb091a$675b2fa0$36118ee0$%kim@samsung.com>
+Reply-To: kyungmin.park@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <AANLkTimPp36K_SmFm053cu9f9Znb8SFHVcKAn8bjD1PI@mail.gmail.com>
+In-reply-to: <000c01cb091a$675b2fa0$36118ee0$%kim@samsung.com>
 Content-language: ko
 Sender: linux-mmc-owner@vger.kernel.org
-To: 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: 'Kukjin Kim' <kgene.kim@samsung.com>
 Cc: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, ben-linux@fluff.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Kyungmin Park wrote:
+
+
+> -----Original Message-----
+> From: Kukjin Kim [mailto:kgene.kim@samsung.com]
+> Sent: Friday, June 11, 2010 12:59 PM
+> To: 'Kyungmin Park'
+> Cc: 'Marek Szyprowski'; linux-arm-kernel@lists.infradead.org; linux-
+> samsung-soc@vger.kernel.org; linux-mmc@vger.kernel.org; ben-
+> linux@fluff.org
+> Subject: RE: [PATCH 1/3] s3c64xx: Fix build without SDHCI controllers
 >=20
-> On Fri, Jun 11, 2010 at 9:56 AM, Kukjin Kim <kgene.kim@samsung.com> w=
-rote:
-> > Marek Szyprowski wrote:
-> >>
-> >> This patch fixes the following compilation problem if only NCP mac=
-hine
-> >> is selected:
-> >>
-> >> arch/arm/mach-s3c64xx/s3c6410.c: In function =E2=80=98s3c6410_map_=
-io=E2=80=99:
-> >> arch/arm/mach-s3c64xx/s3c6410.c:51: error: implicit declaration of=
- function
-> >> =E2=80=98s3c6410_default_sdhci2=E2=80=99
-> >>
-> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> >> ---
-> >>  arch/arm/plat-samsung/include/plat/sdhci.h |    1 +
-> >>  1 files changed, 1 insertions(+), 0 deletions(-)
-> >>
-> >> diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm=
-/plat-
-> >> samsung/include/plat/sdhci.h
-> >> index 13f9fb2..c2044e5 100644
-> >> --- a/arch/arm/plat-samsung/include/plat/sdhci.h
-> >> +++ b/arch/arm/plat-samsung/include/plat/sdhci.h
-> >> @@ -166,6 +166,7 @@ static inline void s3c6410_default_sdhci2(void=
-) { }
-> >>  #else
-> >>  static inline void s3c6410_default_sdhci0(void) { }
-> >>  static inline void s3c6410_default_sdhci1(void) { }
-> >> +static inline void s3c6410_default_sdhci2(void) { }
-> >>  static inline void s3c6400_default_sdhci0(void) { }
-> >>  static inline void s3c6400_default_sdhci1(void) { }
-> >>
-> >> --
+> Kyungmin Park wrote:
 > >
-> > Maybe missed in Maurus' patch 'S3C64XX: add HSMMC2 support'
-> > commit 92b118f6968ae0788ac659af47b464acd9a754a1
+> > On Fri, Jun 11, 2010 at 9:56 AM, Kukjin Kim <kgene.kim@samsung.com>
+> wrote:
+> > > Marek Szyprowski wrote:
+> > >>
+> > >> This patch fixes the following compilation problem if only NCP
+> machine
+> > >> is selected:
+> > >>
+> > >> arch/arm/mach-s3c64xx/s3c6410.c: In function =E2=80=98s3c6410_ma=
+p_io=E2=80=99:
+> > >> arch/arm/mach-s3c64xx/s3c6410.c:51: error: implicit declaration =
+of
+> function
+> > >> =E2=80=98s3c6410_default_sdhci2=E2=80=99
+> > >>
+> > >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > >> ---
+> > >>  arch/arm/plat-samsung/include/plat/sdhci.h |    1 +
+> > >>  1 files changed, 1 insertions(+), 0 deletions(-)
+> > >>
+> > >> diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h
+> b/arch/arm/plat-
+> > >> samsung/include/plat/sdhci.h
+> > >> index 13f9fb2..c2044e5 100644
+> > >> --- a/arch/arm/plat-samsung/include/plat/sdhci.h
+> > >> +++ b/arch/arm/plat-samsung/include/plat/sdhci.h
+> > >> @@ -166,6 +166,7 @@ static inline void s3c6410_default_sdhci2(vo=
+id)
+> { }
+> > >>  #else
+> > >>  static inline void s3c6410_default_sdhci0(void) { }
+> > >>  static inline void s3c6410_default_sdhci1(void) { }
+> > >> +static inline void s3c6410_default_sdhci2(void) { }
+> > >>  static inline void s3c6400_default_sdhci0(void) { }
+> > >>  static inline void s3c6400_default_sdhci1(void) { }
+> > >>
+> > >> --
+> > >
+> > > Maybe missed in Maurus' patch 'S3C64XX: add HSMMC2 support'
+> > > commit 92b118f6968ae0788ac659af47b464acd9a754a1
+> >
+> > Which kernel tree do you use?
+> > it's against the latest kernel.
+> >
+> Of course, Linus' 35-rc2.
+
+We used 63a07cb64ccc3ceae619d3298545d602ab5ecd38
+And there's no s3c6410_default_sdhci2(void) .
+
+Thank you,
+Kyungmin Park
+
+> Any problem?
 >=20
-> Which kernel tree do you use?
-> it's against the latest kernel.
->
-Of course, Linus' 35-rc2.
-Any problem?
-
-> >
-> > Also need 'static inline s3c6400_default_sdhci2(void) { }'
-> > Could you re-submit updated patch including s3c6400_default_sdhci2(=
-)?
-> >
-
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> > >
+> > > Also need 'static inline s3c6400_default_sdhci2(void) { }'
+> > > Could you re-submit updated patch including s3c6400_default_sdhci=
+2()?
+> > >
+>=20
+>=20
+> Thanks.
+>=20
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
 
