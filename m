@@ -1,190 +1,150 @@
-From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: Re: [PATCH 06/11] USB: s3c-hsotg: Add initial detection and setup
- for dedicated FIFO mode
-Date: Fri, 11 Jun 2010 10:54:27 +0200
-Message-ID: <4C11F9C3.20802@gmail.com>
-References: <1276244457-4072-1-git-send-email-ben-linux@fluff.org> <1276244457-4072-7-git-send-email-ben-linux@fluff.org>
+From: Sergei Shtylyov <sshtylyov@mvista.com>
+Subject: Re: [PATCH v3] libata: pata_samsung_cf: Add Samsung PATA controller
+ driver
+Date: Fri, 11 Jun 2010 13:48:53 +0400
+Message-ID: <4C120685.8030306@mvista.com>
+References: <1276156241-28804-1-git-send-email-kgene.kim@samsung.com> <4C10C1D6.8080708@ru.mvista.com> <003301cb0937$e04412c0$a0cc3840$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:61571 "EHLO
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:38369 "EHLO
 	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759752Ab0FKIyc (ORCPT
+	with ESMTP id S1755121Ab0FKJtt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Jun 2010 04:54:32 -0400
-Received: by wyb40 with SMTP id 40so566627wyb.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Jun 2010 01:54:30 -0700 (PDT)
-In-Reply-To: <1276244457-4072-7-git-send-email-ben-linux@fluff.org>
+	Fri, 11 Jun 2010 05:49:49 -0400
+In-Reply-To: <003301cb0937$e04412c0$a0cc3840$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Ben Dooks <ben-linux@fluff.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, jgarzik@pobox.com, 'Abhilash Kesavan' <a.kesavan@samsung.com>, tj@kernel.org
 
-Op 11-06-10 10:20, Ben Dooks schreef:
-> Add support for the dedicated FIFO mode on newer SoCs such as the S5PV210
-> partly to improve support and to fix the bug where any non-EP0 IN endpoint
-> requires its own FIFO allocation.
-> 
-> To fix this, we ensure that any non-zero IN endpoint is given a TXFIFO
-> using the same allocation method as the periodic case (all our current
-> hardware has enough FIFOs and FIFO memory for a 1:1 mapping) and ensure
-> that the necessary transmission done interrupt is enabled.
-> 
-> The default settings from reset for the core point all EPs at FIFO0,
-> used for the control endpoint. However, the controller documentation
-> states that all IN endpoints _must_ have a unique FIFO to avoid any
-> contention during transmission.
-> 
-> Note, this leaves us with a large IN FIFO for EP0 (which re-uses the
-> old NPTXFIFO) for an endpoint which cannot shift more than a pair of
-> packets at a time... this is a waste, but it looks like we cannot
-> re-allocate space to the individual IN FIFOs as they are already
-> maxed out (to be confirmed).
-> 
-> Signed-off-by: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org?
+Hello.
 
-Shouldn't this be s/\?/>/ ?
+Kukjin Kim wrote:
 
-> ---
->  .../arm/plat-samsung/include/plat/regs-usb-hsotg.h |    2 +
->  drivers/usb/gadget/s3c-hsotg.c                     |   40 +++++++++++++++++++-
->  2 files changed, 40 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/include/plat/regs-usb-hsotg.h b/arch/arm/plat-samsung/include/plat/regs-usb-hsotg.h
-> index 8d18d9d..dc90f5e 100644
-> --- a/arch/arm/plat-samsung/include/plat/regs-usb-hsotg.h
-> +++ b/arch/arm/plat-samsung/include/plat/regs-usb-hsotg.h
-> @@ -226,6 +226,7 @@
->  
->  #define S3C_DIEPMSK				S3C_HSOTG_REG(0x810)
->  
-> +#define S3C_DIEPMSK_TxFIFOEmpty			(1 << 7)
->  #define S3C_DIEPMSK_INEPNakEffMsk		(1 << 6)
->  #define S3C_DIEPMSK_INTknEPMisMsk		(1 << 5)
->  #define S3C_DIEPMSK_INTknTXFEmpMsk		(1 << 4)
-> @@ -371,6 +372,7 @@
->  
->  #define S3C_DIEPDMA(_a)				S3C_HSOTG_REG(0x914 + ((_a) * 0x20))
->  #define S3C_DOEPDMA(_a)				S3C_HSOTG_REG(0xB14 + ((_a) * 0x20))
-> +#define S3C_DTXFSTS(_a)				S3C_HSOTG_REG(0x918 + ((_a) * 0x20))
->  
->  #define S3C_EPFIFO(_a)				S3C_HSOTG_REG(0x1000 + ((_a) * 0x1000))
->  
-> diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
-> index 5b61bcf..819e75a 100644
-> --- a/drivers/usb/gadget/s3c-hsotg.c
-> +++ b/drivers/usb/gadget/s3c-hsotg.c
-> @@ -12,6 +12,8 @@
->   * published by the Free Software Foundation.
->  */
->  
-> +#define DEBUG
+>>> From: Abhilash Kesavan <a.kesavan@samsung.com>
+>>> Adds support for the Samsung PATA controller. This driver is based on the
+>>> Libata subsystem and references the earlier patches sent for IDE subsystem.
 
-I don't think this is an intended change?
+> Hi,
 
-> +
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/spinlock.h>
-> @@ -131,6 +133,7 @@ struct s3c_hsotg_ep {
->   * @regs: The memory area mapped for accessing registers.
->   * @regs_res: The resource that was allocated when claiming register space.
->   * @irq: The IRQ number we are using
-> + * @dedicated_fifos: Set if the hardware has dedicated IN-EP fifos.
->   * @debug_root: root directrory for debugfs.
->   * @debug_file: main status file for debugfs.
->   * @debug_fifo: FIFO status file for debugfs.
-> @@ -149,6 +152,8 @@ struct s3c_hsotg {
->  	struct resource		*regs_res;
->  	int			irq;
->  
-> +	unsigned int		dedicated_fifos:1;
-> +
->  	struct dentry		*debug_root;
->  	struct dentry		*debug_file;
->  	struct dentry		*debug_fifo;
-> @@ -467,7 +472,7 @@ static int s3c_hsotg_write_fifo(struct s3c_hsotg *hsotg,
->  	if (to_write == 0)
->  		return 0;
->  
-> -	if (periodic) {
-> +	if (periodic && !hsotg->dedicated_fifos) {
->  		u32 epsize = readl(hsotg->regs + S3C_DIEPTSIZ(hs_ep->index));
->  		int size_left;
->  		int size_done;
-> @@ -505,6 +510,11 @@ static int s3c_hsotg_write_fifo(struct s3c_hsotg *hsotg,
->  			s3c_hsotg_en_gsint(hsotg, S3C_GINTSTS_PTxFEmp);
->  			return -ENOSPC;
->  		}
-> +	} else if (hsotg->dedicated_fifos && hs_ep->index != 0) {
-> +		can_write = readl(hsotg->regs + S3C_DTXFSTS(hs_ep->index));
-> +
-> +		can_write &= 0xffff;
-> +		can_write *= 4;
->  	} else {
->  		if (S3C_GNPTXSTS_NPTxQSpcAvail_GET(gnptxsts) == 0) {
->  			dev_dbg(hsotg->dev,
-> @@ -1830,6 +1840,15 @@ static void s3c_hsotg_epint(struct s3c_hsotg *hsotg, unsigned int idx,
->  				 __func__, idx);
->  			clear |= S3C_DIEPMSK_INTknEPMisMsk;
->  		}
-> +
-> +		/* FIFO has space or is empty (see GAHBCFG) */
-> +		if (hsotg->dedicated_fifos &&
-> +		    ints & S3C_DIEPMSK_TxFIFOEmpty) {
-> +			dev_dbg(hsotg->dev, "%s: ep%d: TxFIFOEmpty\n",
-> +				__func__, idx);
-> +			s3c_hsotg_trytx(hsotg, hs_ep);
-> +			clear |= S3C_DIEPMSK_TxFIFOEmpty;
-> +		}
->  	}
->  
->  	writel(clear, hsotg->regs + epint_reg);
-> @@ -2281,6 +2300,12 @@ static int s3c_hsotg_ep_enable(struct usb_ep *ep,
->  		break;
->  	}
->  
-> +	/* if the hardware has dedicated fifos, we must give each IN EP
-> +	 * a unique tx-fifo even if it is non-periodic.
-> +	 */
-> +	if (dir_in && hsotg->dedicated_fifos)
-> +		epctrl |= S3C_DxEPCTL_TxFNum(index);
-> +
->  	/* for non control endpoints, set PID to D0 */
->  	if (index)
->  		epctrl |= S3C_DxEPCTL_SetD0PID;
-> @@ -2570,7 +2595,8 @@ int usb_gadget_register_driver(struct usb_gadget_driver *driver)
->  
->  	writel(S3C_DIEPMSK_TimeOUTMsk | S3C_DIEPMSK_AHBErrMsk |
->  	       S3C_DIEPMSK_INTknEPMisMsk |
-> -	       S3C_DIEPMSK_EPDisbldMsk | S3C_DIEPMSK_XferComplMsk,
-> +	       S3C_DIEPMSK_EPDisbldMsk | S3C_DIEPMSK_XferComplMsk |
-> +	       ((hsotg->dedicated_fifos) ? S3C_DIEPMSK_TxFIFOEmpty : 0),
->  	       hsotg->regs + S3C_DIEPMSK);
->  
->  	/* don't need XferCompl, we get that from RXFIFO in slave mode. In
-> @@ -2797,6 +2823,8 @@ static void s3c_hsotg_otgreset(struct s3c_hsotg *hsotg)
->  
->  static void s3c_hsotg_init(struct s3c_hsotg *hsotg)
->  {
-> +	u32 cfg4;
-> +
->  	/* unmask subset of endpoint interrupts */
->  
->  	writel(S3C_DIEPMSK_TimeOUTMsk | S3C_DIEPMSK_AHBErrMsk |
-> @@ -2832,6 +2860,14 @@ static void s3c_hsotg_init(struct s3c_hsotg *hsotg)
->  
->  	writel(using_dma(hsotg) ? S3C_GAHBCFG_DMAEn : 0x0,
->  	       hsotg->regs + S3C_GAHBCFG);
-> +
-> +	/* check hardware configuration */
-> +
-> +	cfg4 = readl(hsotg->regs + 0x50);
-> +	hsotg->dedicated_fifos = (cfg4 >> 25) & 1;
-> +
-> +	dev_info(hsotg->dev, "%s fifos\n",
-> +		 hsotg->dedicated_fifos ? "dedicated" : "shared");
->  }
->  
->  static void s3c_hsotg_dump(struct s3c_hsotg *hsotg)
+> Thanks for your comments.
+
+>>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+>>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+>> [...]
+
+>>> diff --git a/drivers/ata/pata_samsung_cf.c b/drivers/ata/pata_samsung_cf.c
+>>> new file mode 100644
+>>> index 0000000..fef5515
+>>> --- /dev/null
+>>> +++ b/drivers/ata/pata_samsung_cf.c
+>>> @@ -0,0 +1,608 @@
+>>> +/* linux/drivers/ata/pata_samsung_cf.c
+
+>>     File names in the heading comment are discouraged.
+
+> Hmm. I used like that in other device drivers.
+
+    Nevertheless, it's quite an old rule already.
+
+> Ok..will remove the file name in the heading comment.
+
+>> [...]
+
+>>> +
+>>> +	piotime = (t2i << 12) | (t2 << 4) | t1;
+>>> +
+>>> +	return piotime;
+>>> +}
+>>> +
+>>> +static void pata_s3c_set_piomode(struct ata_port *ap, struct ata_device *adev)
+>>> +{
+>>> +	int mode = adev->pio_mode - XFER_PIO_0;
+>>> +	struct s3c_ide_info *info = ap->host->private_data;
+>>> +	ulong ata_cfg = readl(info->ide_addr + S3C_ATA_CFG);
+>>> +	ulong piotime;
+>>> +
+>>> +	/* Calculates timing parameters for PIO mode */
+>>> +	piotime = pata_s3c_setup_timing(info, adev);
+
+>>     In fact, for 8-bit (command) timing you should program the slowest mode  of
+>> the two drives. However, with CF, you probably only have only one drive per
+>> channel...
+
+> Below code looks OK ?
+
+    No, it doesn't.
+
+> 	if (ata_timing_compute(adev, adev->pio_mode, &timing, cycle_time, 0))
+> {
+> 		dev_err(ap->dev, "Failed to compute ATA timing\n");
+> 		piotime = pata_s3c_setup_timing(info, &initial_timing);
+> 	} else {
+> 		piotime = pata_s3c_setup_timing(info, &timing);
+> 	}
+> where initial_timing is for PIO0. I have added the below struct
+
+> static const struct ata_timing initial_timing =
+> 	{XFER_PIO_0, 70, 290, 240, 600, 165, 150, 0, 600, 0};
+
+    I'd call ata_timing_find_mode(XFER_PIO_0) rather than duplicating the 
+ata_timing entry. But really, you shouldn't set any timing for an invalid mode 
+and, as I said, you won't be passed one, so there's nor much sense in calling 
+ata_timing_compute() and checking its result; anyway, you'd want to call 
+ata_timing_find_mode() here instead of ata_timing_compute() because the latter 
+returns already quantized timings, but initial_timing is not quantized, you'll 
+have to call ata_timing_compute() in pata_s3c_setup_timing() anyway.
+
+>>> +
+>>> +	/* Enables IORDY if mode requires it */
+>>> +	if (ata_pio_need_iordy(adev))
+>>> +		ata_cfg |= S3C_ATA_CFG_IORDYEN;
+>>> +	else
+>>> +		ata_cfg &= ~S3C_ATA_CFG_IORDYEN;
+>>> +
+>>> +	/* Host controller supports upto PIO4 only */
+>>> +	if (mode >= 0 && mode <= 4) {
+
+>>     No need to check -- you won't be passed a mode not specified by your
+>> pio_mask.
+
+> Will remove the check.
+
+>>> +static int __devinit pata_s3c_probe(struct platform_device *pdev)
+[...]
+>>> +	if (!request_mem_region(res->start, resource_size(res), DRV_NAME)) {
+
+>>     Probably should call devm_request_mem_region() if you're using
+>> devm_ioremap()...
+
+> Will change to devm_request_mem_region.
+
+    This function does exist, if I don't mistake...
+
+>>> +release_mem:
+>>> +	release_mem_region(res->start, resource_size(res));
+>>> +release_device_mem:
+>>> +	kfree(info);
+
+>>     Doesn't using devm_kzalloc() guarantee that the memory will be freed up
+>> automatically?
+
+> Will remove kfree and release_mem_region because of devm_kzalloc and
+> devm_request_mem_region usage
+
+    I don't know devres librarry capabilities well. Tejun, am I right?
+
+>>> +static struct platform_driver pata_s3c_driver = {
+>>> +	.probe		= pata_s3c_probe,
+>>>
+>>>
+
+>>     2 empty lines -- broken patch?
+
+> Seems OK at my end.
+
+    The sent patch had them, nevertheless.
+
+MBR, Sergei
