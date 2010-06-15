@@ -1,80 +1,27 @@
-From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: S3C FB pixclock calculation
-Date: Mon, 14 Jun 2010 13:31:16 +0200
-Message-ID: <4C161304.70903@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-fbdev@vger.kernel.org
-Cc: Ben Dooks <ben-linux@fluff.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: ARM: S5PV210: Add support SDMMC Write Protection on SMDKV210
+Date: Tue, 15 Jun 2010 20:27:45 +0900
+Message-ID: <1276601268-7226-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:36919 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752802Ab0FOLe1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Jun 2010 07:34:27 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org
 
-Hi,
+This patch adds support SDMMC write protection pin on SMDKV210.
 
-one thing that has bothered me for some time is the fb pixclock value: this
-seems rather arbitrary and undocumented (couldn't find it in the datasheets).
+Note: Depends on following patch set
 
-Though I did find an "algorithm", which I've used in the SmartQ machs for the
-calculation of this value (I can't remember where I found it, I think it was in
-the original SmartQ kernels).
+[PATCH 1/2] ARM: SAMSUNG: Add device definition for HSMMC3
+[PATCH 2/2 RE-SEND] ARM: S5PV210: Add support HSMMC on Samsung SMDKV210
 
-So I made this small patch which does the calculation in the s3c fb driver
-itself when the pixclock pdata hasn't been set (see below).
+And this patch set includes the following patches:
 
-I've checked this against the SMDK6410 value (and ANW6410 and HMT, which are
-identical) and it seems to match so I *think* this is correct, but as it's
-undocumented I'm not sure.
-
-Is anyone able to tell me whether I'm correct? (if so, I'll clean up this patch
-and send it for inclusion)
-
---
-Maurus Cuelenaere
-
-diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index 9682ecc..17d882f 100644
---- a/drivers/video/s3c-fb.c
-+++ b/drivers/video/s3c-fb.c
-@@ -235,6 +235,22 @@ static int s3c_fb_calc_pixclk(struct s3c_fb *sfb, unsigned int pixclk)
- 	return result;
- }
-
-+static void s3c_fb_missing_pixclock(struct fb_videomode *mode)
-+{
-+	u64 pixclk = 1000000000000ULL;
-+	u32 div;
-+
-+	div  = mode->left_margin + mode->hsync_len + mode->right_margin +
-+	       mode->xres;
-+	div *= mode->upper_margin + mode->vsync_len + mode->lower_margin +
-+	       mode->yres;
-+	div *= mode->refresh ? : 80;
-+
-+	do_div(pixclk, div);
-+
-+	mode->pixclock = pixclk;
-+}
-+
- /**
-  * s3c_fb_align_word() - align pixel count to word boundary
-  * @bpp: The number of bits per pixel
-@@ -925,6 +941,9 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
- 		if (!pd->win[win])
- 			continue;
-
-+		if (!pd->win[win]->win_mode.pixclock)
-+			s3c_fb_missing_pixclock(&pd->win[win]->win_mode);
-+
- 		ret = s3c_fb_probe_win(sfb, win, &sfb->windows[win]);
- 		if (ret < 0) {
- 			dev_err(dev, "failed to create window %d\n", win);
+[PATCH 1/3] ARM: SAMSUNG: Add the member of platdata to implement SDMMC Write Protection
+[PATCH 2/3] ARM: S5PV210: Add support SDMMC WP through EXT_INT on SMDKV210
+[PATCH 3/3] sdhci-s3c: Add SDHCI_QUIRK_NO_WP_BIT for Samsung SoC
