@@ -1,121 +1,54 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH 3/3] sdhci-s3c: Add SDHCI_QUIRK_NO_WP_BIT for Samsung
-	SoC
-Date: Tue, 15 Jun 2010 13:04:06 +0100
-Message-ID: <20100615120406.GE7248@trinity.fluff.org>
-References: <1276601268-7226-1-git-send-email-kgene.kim@samsung.com> <1276601268-7226-4-git-send-email-kgene.kim@samsung.com>
+From: Vladimir Davydov <vladimir.davydov@promwad.com>
+Subject: s3c-otg host driver status
+Date: Tue, 15 Jun 2010 16:23:01 +0300
+Message-ID: <201006151623.01687.vladimir.davydov@promwad.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:53712 "EHLO trinity.fluff.org"
+Received: from promwad.com ([83.149.69.23]:49445 "EHLO promwad.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751780Ab0FOMEH (ORCPT
+	id S1753108Ab0FON5V convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Jun 2010 08:04:07 -0400
-Content-Disposition: inline
-In-Reply-To: <1276601268-7226-4-git-send-email-kgene.kim@samsung.com>
+	Tue, 15 Jun 2010 09:57:21 -0400
+Received: from [195.222.85.229] (helo=intranet.promwad.com)
+	by promwad.com with esmtps (TLSv1:AES256-SHA:256)
+	(Exim 4.63)
+	(envelope-from <vladimir.davydov@promwad.com>)
+	id 1OOW6K-0005eU-EN
+	for linux-samsung-soc@vger.kernel.org; Tue, 15 Jun 2010 16:22:48 +0300
+Received: from [178.124.78.112] (helo=linux-x8hi.localnet)
+	by intranet.promwad.com with esmtpsa (TLS1.0:DHE_RSA_AES_256_CBC_SHA1:32)
+	(Exim 4.69)
+	(envelope-from <vladimir.davydov@promwad.com>)
+	id 1OOW5j-0008Bo-Vr
+	for linux-samsung-soc@vger.kernel.org; Tue, 15 Jun 2010 16:22:12 +0300
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Lee Hyuk <hyuk1.lee@samsung.com>, ben-linux@fluff.org
+To: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jun 15, 2010 at 08:27:48PM +0900, Kukjin Kim wrote:
-> From: Lee Hyuk <hyuk1.lee@samsung.com>
-> 
-> S5PV210 HSMMC host controller doesn't have the WP pin which should be
-> connnected with SDMMC card WP pin. So if there are the cfg_wp and get_ro
-> in pdata, configure the WP pin and replace get_ro function in sdhci with
-> get_ro function in pdata.
-> 
-> Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
->  drivers/mmc/host/sdhci-s3c.c |   12 ++++++++++++
->  drivers/mmc/host/sdhci.c     |    3 +++
->  drivers/mmc/host/sdhci.h     |    3 +++
->  3 files changed, 18 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-> index af21792..857cbed 100644
-> --- a/drivers/mmc/host/sdhci-s3c.c
-> +++ b/drivers/mmc/host/sdhci-s3c.c
-> @@ -311,6 +311,9 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
->  	if (pdata->cfg_gpio)
->  		pdata->cfg_gpio(pdev, pdata->max_width);
->  
-> +	if (pdata->get_ro)
-> +		sdhci_s3c_ops.get_ro = pdata->get_ro;
-> +
->  	host->hw_name = "samsung-hsmmc";
->  	host->ops = &sdhci_s3c_ops;
->  	host->quirks = 0;
-> @@ -335,6 +338,15 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
->  	host->quirks |= (SDHCI_QUIRK_32BIT_DMA_ADDR |
->  			 SDHCI_QUIRK_32BIT_DMA_SIZE);
->  
-> +	/* Controller's WP pin donsn't connected with SD card. So we allocate
-> +	 * a GPIO for getting WP data form SD card  and use that data as
-> +	 * the return value of the get_ro function */
-> +	host->quirks |= SDHCI_QUIRK_NO_WP_BIT;
+Hi All,
 
-I really think this should be a custom-wp quirk, not a we-don-have-wp
-quirk.
+Can anybody explain current status of the S3C OTGHCD driver? Does it ha=
+ve any=20
+progress? I have found that the current version of the driver doesn't w=
+ork=20
+correctly with USB mice and keyboards (deadlocks). Also, external USB h=
+ub=20
+doesn't work.
+I have tested on the S3C6410.
 
-> +
-> +	/* to configure gpio pin as a card write protection signal */
-> +	if (pdata->cfg_wp)
-> +		pdata->cfg_wp(pdev->id);
-> +
->  	ret = sdhci_add_host(host);
->  	if (ret) {
->  		dev_err(dev, "sdhci_add_host() failed\n");
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index c6d1bd8..2f8dfbc 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -1192,6 +1192,9 @@ static int sdhci_get_ro(struct mmc_host *mmc)
->  
->  	host = mmc_priv(mmc);
->  
-> +	if ((host->quirks & SDHCI_QUIRK_NO_WP_BIT) && host->ops->get_ro)
-> +		return host->ops->get_ro(mmc);
-> +
->  	spin_lock_irqsave(&host->lock, flags);
->  
->  	if (host->flags & SDHCI_DEVICE_DEAD)
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index c846813..f479e22 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -240,6 +240,8 @@ struct sdhci_host {
->  #define SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN		(1<<25)
->  /* Controller cannot support End Attribute in NOP ADMA descriptor */
->  #define SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC		(1<<26)
-> +/* Controller has no write-protect pin connected with SD card */
-> +#define SDHCI_QUIRK_NO_WP_BIT                          (1<<27)
->  
->  	int			irq;		/* Device IRQ */
->  	void __iomem *		ioaddr;		/* Mapped address */
-> @@ -312,6 +314,7 @@ struct sdhci_ops {
->  	unsigned int	(*get_max_clock)(struct sdhci_host *host);
->  	unsigned int	(*get_min_clock)(struct sdhci_host *host);
->  	unsigned int	(*get_timeout_clock)(struct sdhci_host *host);
-> +	int		(*get_ro)(struct mmc_host *mmc);
->  };
->  
->  #ifdef CONFIG_MMC_SDHCI_IO_ACCESSORS
-> -- 
-> 1.6.2.5
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Best regards,
+Vladimir
 
--- 
--- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+--=20
+Vladimir Davydov
+Senior Developer
+Promwad Innovation Company
+Web: www.promwad.com
+22, Olshevskogo St.,
+220073, Minsk,
+BELARUS
+Phone/Fax: +375 (17) 312=E2=80=931246
+E-mail: vladimir.davydov@promwad.com
+Skype: v_davydov
