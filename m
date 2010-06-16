@@ -1,141 +1,165 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 8/9] s3c-fb: Add SHADOWCON shadow register locking support for
- S5PV210
-Date: Wed, 16 Jun 2010 11:34:51 +0200
-Message-ID: <1276680892-14760-9-git-send-email-m.szyprowski@samsung.com>
-References: <1275296935-2693-1-git-send-email-p.osciak@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH/RFC] Samsung multimedia (FIMC and FB) drivers proposal
+Date: Wed, 16 Jun 2010 12:11:56 +0200
+Message-ID: <1276683123-30224-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:13518 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756811Ab0FPJfV (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:57423 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758369Ab0FPKML (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Jun 2010 05:35:21 -0400
-In-reply-to: <1275296935-2693-1-git-send-email-p.osciak@samsung.com>
+	Wed, 16 Jun 2010 06:12:11 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: m.szyprowski@samsung.com, p.osciak@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-fbdev@vger.kernel.org
+Cc: p.osciak@samsung.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
 
-From: Pawel Osciak <p.osciak@samsung.com>
 
-S5PV210 allows per-window locking of register value updates from shadow
-registers.
+Hello, 
 
-Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/plat-samsung/include/plat/regs-fb.h |    3 ++
- drivers/video/s3c-fb.c                       |   46 +++++++++++++++++++++++--
- 2 files changed, 45 insertions(+), 4 deletions(-)
+This RFC concerns Samsung's S3C/S5P SoC series and the proposal 
+of a general solution for managing direct data pipelines between 
+numerous graphics IPs present in these chips.
 
-diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-samsung/include/plat/regs-fb.h
-index 5bcdd09..da54b64 100644
---- a/arch/arm/plat-samsung/include/plat/regs-fb.h
-+++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
-@@ -218,6 +218,9 @@
- #define WINCON1_BPPMODE_25BPP_A1888		(0xd << 2)
- #define WINCON1_BPPMODE_28BPP_A4888		(0xd << 2)
- 
-+/* S5PV210 */
-+#define SHADOWCON				(0x34)
-+#define SHADOWCON_WINx_PROTECT(_win)		(1 << (10 + _win))
- 
- #define VIDOSDxA_TOPLEFT_X_MASK			(0x7ff << 11)
- #define VIDOSDxA_TOPLEFT_X_SHIFT		(11)
-diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index 0a93fca..5e14f0a 100644
---- a/drivers/video/s3c-fb.c
-+++ b/drivers/video/s3c-fb.c
-@@ -79,6 +79,7 @@ struct s3c_fb;
-  * @osd: The base for the OSD registers.
-  * @palette: Address of palette memory, or 0 if none.
-  * @has_prtcon: Set if has PRTCON register.
-+ * @has_shadowcon: Set if has SHADOWCON register.
-  */
- struct s3c_fb_variant {
- 	unsigned int	is_2443:1;
-@@ -95,6 +96,7 @@ struct s3c_fb_variant {
- 	unsigned short	palette[S3C_FB_MAX_WIN];
- 
- 	unsigned int	has_prtcon:1;
-+	unsigned int	has_shadowcon:1;
- };
- 
- /**
-@@ -620,6 +622,43 @@ static inline unsigned int chan_to_field(unsigned int chan,
- }
- 
- /**
-+ * shadow_protect() - disable updating values from shadow registers at vsync
-+ *
-+ * @sfb: The hardware information
-+ * @win_no: Window number to protect registers for
-+ */
-+static void shadow_protect(struct s3c_fb_win *win)
-+{
-+	struct s3c_fb *sfb = win->parent;
-+
-+	if (sfb->variant.has_prtcon)
-+		writel(PRTCON_PROTECT, sfb->regs + PRTCON);
-+	else if (sfb->variant.has_shadowcon)
-+		writel(SHADOWCON_WINx_PROTECT(win->index),
-+			sfb->regs + SHADOWCON);
-+}
-+
-+/**
-+ * shadow_noprotect() - re-enable updating values from shadow registers at vsync
-+ *
-+ * @sfb: The hardware information
-+ * @win_no: Window number to re-enable updates from shadow registers
-+ */
-+static void shadow_noprotect(struct s3c_fb_win *win)
-+{
-+	struct s3c_fb *sfb = win->parent;
-+	u32 reg;
-+
-+	if (sfb->variant.has_prtcon) {
-+		writel(0, sfb->regs + PRTCON);
-+	} else if (sfb->variant.has_shadowcon) {
-+		reg = readl(sfb->regs + SHADOWCON);
-+		writel(reg & ~SHADOWCON_WINx_PROTECT(win->index),
-+			sfb->regs + SHADOWCON);
-+	}
-+}
-+
-+/**
-  * s3c_fb_setcolreg() - framebuffer layer request to change palette.
-  * @regno: The palette index to change.
-  * @red: The red field for the palette data.
-@@ -811,16 +850,14 @@ static int s3c_fb_pan_display(struct fb_var_screeninfo *var,
- 
- 	/* Temporarily turn off per-vsync update from shadow registers until
- 	 * both start and end addresses are updated to prevent corruption */
--	if (sfb->variant.has_prtcon)
--		writel(PRTCON_PROTECT, sfb->regs + PRTCON);
-+	shadow_protect(win);
- 
- 	writel(info->fix.smem_start + start_byte_offset,
- 		buf + sfb->variant.buf_start);
- 	writel(info->fix.smem_start + end_byte_offset,
- 		buf + sfb->variant.buf_end);
- 
--	if (sfb->variant.has_prtcon)
--		writel(0, sfb->regs + PRTCON);
-+	shadow_noprotect(win);
- 
- 	return 0;
- }
-@@ -1534,6 +1571,7 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pv210 __devinitdata = {
- 			[4] = 0x3400,
- 		},
- 
-+		.has_shadowcon	= 1,
- 	},
- 	.win[0]	= &s3c_fb_data_64xx_wins[0],
- 	.win[1]	= &s3c_fb_data_64xx_wins[1],
--- 
-1.7.1.240.g225c
+Background
+-----------------
+
+Selected multimedia devices in Samsung S3C/S5P SoCs are capable of 
+transferring data directly between each other over so called fifo 
+channels, bypassing the main memory system bus. The fifo links, for 
+instance exist between tv scaler and framebuffer (S3C64xx), camera 
+interface and framebuffer (S3C64xx, S5PC1xx and others) or framebuffer 
+and video postprocessor (S3C64xx). Usually a framebuffer (display 
+controller) is the data receiver in a different configurations. 
+The framebuffer is divided into logic windows which represent 
+data transfer destination objects in each fifo configurations. 
+
+Implementation
+-----------------
+
+To enable the fifo link both ends need to be switched in a synchronized 
+way to so called "local fifo mode". Depending on the SoC it mostly needs 
+to be done shortly after an interrupt invocation and excess latencies 
+are not acceptable. 
+
+The proposed solution supports the following kinds of fifo links between
+source and target devices:
+ - "one to one", e.g. fimc-0 -> framebuffer window-0 (s5pv210 like)
+ - "one to many" e.g. fimc-1 or TV scaler -> framebufer window-1
+   (s3c64xx like)
+ - "many to one", e.g. camera interface -> framebuffer window-0 or
+   window-1 (s3c64xx like)
+
+Implementing support for the local fifo mode requires partial control of 
+one (slave) device from within other (master) device. The v4l2_subdev 
+API seem to seem to be a concise solution for this problem. 
+
+The following patches are a preliminary implementation of the V4L2 
+driver of the camera interface/video postprocessor, which is found in 
+S3C/S5P SoCs and required logic in s3c-fb driver. 
+
+We decided to create a v4l2 subdevice instance at framebuffer per its each 
+possible data source, depending on SoC architecture, as shown below:
+
+                  -------------------          ---------------
+                 |                   |        |               |
+                 |   fb window-0     |  ....  |  fb window-N  |<---
+                  -------------------         |               |    |
+       ----------|  v4l2_subdev-0.1  |        |               |    |
+      |           -------------------          ---------------     |
+      |          |  v4l2_subdev-0.2  |        | v4l2_subdev-N |    |
+      |           -------------------          ---------------     |
+      |                 |                        |   ^             |
+      |                 |    -------------------     |          slave_dev
+      |                 |   |                     sub_dev          |
+ --------------     ----------------                 |             |
+|  v4l2_device |   |  v4l2_device   |       [ s3c_fifo_link ]------
+ --------------     ----------------           | 
+|              |   |                |      master_dev
+|  tv scaler   |   | video postproc.|          |
+|              |   |   (fimc-0)     |<---------
+ --------------     ---------------- 
+
+
+The s3c_fifo_link data structure allows to define possible device driver's 
+connections, depending on the physical hardware architecture.
+
+struct s3c_fifo_link {
+	struct device	*master_dev;
+	struct device	*slave_dev;
+	struct v4l2_subdev *sub_dev;
+};
+
+
+Driver initialization sequence
+-------------------------------
+
+At slave (fb window) side:
+
+- during probe() call fb driver initializes each window's subdevice 
+  and s3c_fifo_link data structure 
+  
+
+At master (fimc-X) side:
+
+- in video device open() fimc iterates through its list of pointers 
+  to target subdevices earlier setup by the platform code 
+  and initialized by fb probe() and calls v4l2_device_register_subdev() 
+
+
+Driver module release sequence
+-------------------------------
+
+When the video postprocessor acquires one of the framebuffer subdevices 
+the framebuffer module is marked as "in use" so it cannot be removed 
+until the postprocessor has completed its perations on fb v4l2-subdev.
+
+On slave module removal (unless any subdevice is in use):
+
+- slave device driver deletes its all subdevices and sets to null
+  corresponding sub_dev field in s3c_fifo_link instance
+
+On master removal/close:
+
+-  master device driver calls v4l2_device_register_subdev() on sub_dev; 
+   after that subdevice/fifo interface may be used by any 
+   other master device
+
+
+I would like to ask for any comments on such a v4l2-subdev API usage
+and on any possible drawbacks it might have.
+
+Kernel tree
+-----------------
+
+This patch series has been prepared in assumption that the following
+patches for s3c-fb driver has been applied:
+1. S3C Frame Buffer patches prepared by Ben Dooks:
+   git://git.fluff.org/bjdooks/linux for-2635/s3c-fb
+2. S3C Frame Buffer patches prepared by Pawel Osciak:
+   http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg01527.html
+   
+For easier code review all the patches will be also available in
+few hours on:
+http://git.infradead.org/users/kmpark/linux-2.6-samsung/ 
+branch s5pv210-fimc-fb
+
+Patches
+-----------------
+
+The following patch series contains:
+
+[PATCH 1/7] ARM: Samsung: Add FIMC driver register definition and platform helpers
+[PATCH 2/7] ARM: Samsung: Add platform definitions for local FIMC/FIMD fifo path
+[PATCH 3/7] s3c-fb: Add v4l2 subdevice to support framebuffer local fifo input path
+[PATCH 4/7] v4l: Add Samsung FIMC (video postprocessor) driver
+[PATCH 5/7] ARM: S5PV210: Add fifo link definitions for fimc and framebuffer
+[PATCH 6/7] ARM: S5PV210: enable FIMC on Aquila
+[PATCH 7/7] ARM: S5PC100: enable FIMC on SMDKC100
+
+Best regards,
+--
+Sylwester Nawrocki
+Samsung Poland R&D Center
