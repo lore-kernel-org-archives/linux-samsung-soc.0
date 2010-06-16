@@ -1,8 +1,7 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/9] s3c-fb: Fix various null references on framebuffer memory
- alloc failure
-Date: Wed, 16 Jun 2010 11:34:44 +0200
-Message-ID: <1276680892-14760-2-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v2] Various s3c-fb updates
+Date: Wed, 16 Jun 2010 11:34:43 +0200
+Message-ID: <1276680892-14760-1-git-send-email-m.szyprowski@samsung.com>
 References: <1275296935-2693-1-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -10,73 +9,52 @@ Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout4.w1.samsung.com ([210.118.77.14]:13518 "EHLO
 	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755031Ab0FPJfO (ORCPT
+	with ESMTP id S1755997Ab0FPJfM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Jun 2010 05:35:14 -0400
+	Wed, 16 Jun 2010 05:35:12 -0400
 In-reply-to: <1275296935-2693-1-git-send-email-p.osciak@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: m.szyprowski@samsung.com, p.osciak@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
 
-From: Pawel Osciak <p.osciak@samsung.com>
+Hello,
 
-The following problems were found in the above situation:
+Im sending a new version of the s3c-fb patch series on behalf of Pawel
+Osciak.
 
-sfb->windows[win] was being assigned at the end of s3c_fb_probe_win only.
-This resulted in passing a NULL to s3c_fb_release_win if probe_win returned
-early and a memory leak.
+This series is rebased onto Ben Dook's framebuffer branch available at:
+git://git.fluff.org/bjdooks/linux.git dev/s3c-fb
 
-dma_free_writecombine does not allow its third argument to be NULL.
+The main changes are the addition of an ability to wait for VSYNC and
+display panning and better support for S5PV210 SoCs. A lot of various
+bugs has been also fixed.
 
-fb_dealloc_cmap does not verify whether its argument is not NULL.
+The first patch attempts to fix some NULL pointer dereferences in case
+of a failed framebuffer memory allocation attempt. This is a quick fix,
+so please treat it more as an indication of what may be wrong with the
+code in the probe function and not as something to merge.
 
-Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/video/s3c-fb.c |    8 +++++---
- 1 files changed, 5 insertions(+), 3 deletions(-)
+Patches 3-4 add "new style" device name initialization for various
+S3C/S5P devices. The 4th patch also separates S5PC100 and S5PV210 as
+their framebuffer registers sets differ.
 
-diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index b00c064..d998324 100644
---- a/drivers/video/s3c-fb.c
-+++ b/drivers/video/s3c-fb.c
-@@ -804,7 +804,8 @@ static void s3c_fb_free_memory(struct s3c_fb *sfb, struct s3c_fb_win *win)
- {
- 	struct fb_info *fbi = win->fbinfo;
- 
--	dma_free_writecombine(sfb->dev, PAGE_ALIGN(fbi->fix.smem_len),
-+	if (fbi->screen_base)
-+		dma_free_writecombine(sfb->dev, PAGE_ALIGN(fbi->fix.smem_len),
- 			      fbi->screen_base, fbi->fix.smem_start);
- }
- 
-@@ -819,7 +820,8 @@ static void s3c_fb_release_win(struct s3c_fb *sfb, struct s3c_fb_win *win)
- {
- 	if (win->fbinfo) {
- 		unregister_framebuffer(win->fbinfo);
--		fb_dealloc_cmap(&win->fbinfo->cmap);
-+		if (&win->fbinfo->cmap)
-+			fb_dealloc_cmap(&win->fbinfo->cmap);
- 		s3c_fb_free_memory(sfb, win);
- 		framebuffer_release(win->fbinfo);
- 	}
-@@ -865,6 +867,7 @@ static int __devinit s3c_fb_probe_win(struct s3c_fb *sfb, unsigned int win_no,
- 	WARN_ON(windata->win_mode.yres == 0);
- 
- 	win = fbinfo->par;
-+	*res = win;
- 	var = &fbinfo->var;
- 	win->variant = *variant;
- 	win->fbinfo = fbinfo;
-@@ -939,7 +942,6 @@ static int __devinit s3c_fb_probe_win(struct s3c_fb *sfb, unsigned int win_no,
- 		return ret;
- 	}
- 
--	*res = win;
- 	dev_info(sfb->dev, "window %d: fb %s\n", win_no, fbinfo->fix.id);
- 
- 	return 0;
+Patch 7 nd 9 are pure bugfixes.
+
+Patch 8 adds support for the new feature available on S5PV210.
+
+The complete list of patches:
+[PATCH 1/9] s3c-fb: Fix various null references on framebuffer memory alloc failure
+[PATCH 2/9] s3c-fb: Correct FRAMESEL1 bitfield defines for VIDINTCON0 register
+[PATCH 3/9] s3c-fb: Add device name initialization.
+[PATCH 4/9] s3c-fb: Separate S5PC100 and S5PV210 framebuffer driver data structures
+[PATCH 5/9] s3c-fb: Add support for display panning
+[PATCH 6/9] s3c-fb: Add wait for VSYNC ioctl
+[PATCH 7/9] s3c-fb: window 3 of 64xx+ does not have an osd_d register
+[PATCH 8/9] s3c-fb: Add SHADOWCON shadow register locking support for S5PV210
+[PATCH 9/9] s3c-fb: Correct window osd size and alpha register handling
+
+Best regards
 -- 
-1.7.1.240.g225c
+Marek Szyprowski
+Samsung Poland R&D Center
