@@ -1,70 +1,75 @@
-From: Darius Augulis <augulis.darius@gmail.com>
-Subject: Re: [PATCH 11/15] ARM: S3C2416: Add support for second HSMMC channel
-Date: Fri, 18 Jun 2010 21:30:46 +0300
-Message-ID: <4C1BBB56.4090205@gmail.com>
-References: <1273631766-15693-1-git-send-email-ben-linux@fluff.org> <1273631766-15693-11-git-send-email-ben-linux@fluff.org> <4C1A71F6.5030203@gmail.com> <20100617191901.GA5864@jeknote.loshitsa1.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH 1/2] ARM: S5PC100: Add Watchdog support for S5PC100
+Date: Sat, 19 Jun 2010 11:28:30 +0900
+Message-ID: <1276914511-7677-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f46.google.com ([74.125.82.46]:35881 "EHLO
-	mail-ww0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750741Ab0FRSaw (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:46503 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751165Ab0FSCfR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Jun 2010 14:30:52 -0400
-Received: by wwb22 with SMTP id 22so392653wwb.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 18 Jun 2010 11:30:49 -0700 (PDT)
-In-Reply-To: <20100617191901.GA5864@jeknote.loshitsa1.net>
+	Fri, 18 Jun 2010 22:35:17 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yauhen Kharuzhy <jekhor@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Banajit Goswami <banajit.g@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On 06/17/2010 10:19 PM, Yauhen Kharuzhy wrote:
-> On Thu, Jun 17, 2010 at 10:05:26PM +0300, Darius Augulis wrote:
->> On 05/12/2010 05:36 AM, Ben Dooks wrote:
->>> Add support for the second HSMMC channel on the S3C2416.
->>
->> There is issue with mach-s3c2416 and sdhci-s3c driver.
->> Driver probe crashes with following backtrace:
->>
->> sdhci: Secure Digital Host Controller Interface driver
->> sdhci: Copyright(c) Pierre Ossman
->> Unable to handle kernel NULL pointer dereference at virtual address 00000000
->> pgd = c0004000
->> [00000000] *pgd=00000000
->> Internal error: Oops: 5 [#1]
->> last sysfs file:
->> CPU: 0    Not tainted  (2.6.35-rc3-00001-g7dfb002 #31)
->> PC is at sdhci_s3c_probe+0x188/0x42c
->> LR is at clk_enable+0x50/0x60
->>
->> The reason is not completely initialised s3c_sdhci_platdata
->> structure. When getting clocks in sdhci_s3c_probe():
->>
->> for (clks = 0, ptr = 0; ptr<  MAX_BUS_CLK; ptr++) {
->>                  struct clk *clk;
->>                  char *name = pdata->clocks[ptr];
->>
->> Pointer clocks is not initialised at all, because mach-s3c2416
->> doesn't have such helpers like mach-s3c64xx does:
->>
->> s3c6400_default_sdhci0()
->> s3c6400_default_sdhci1()
->> s3c6400_default_sdhci2()
->>
->> Also other necessary s3c_sdhci_platdata members cfg_gpio and
->> cfg_card are missing on s3c2416.
->>
->> Is there any patch adding this missing info to mach-s3c2416?
->
-> I am already wrote such patch today and will post it after testing
-> tomorrow, I hope.
+From: Banajit Goswami <banajit.g@samsung.com>
 
-Hi Yauhen,
+This patch adds support for Watchdog timer for Samsung S5PC100.
 
-could you please send me this patch? I will test it too by my side.
-thanks.
+Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s5pc100/Kconfig            |    2 ++
+ arch/arm/mach-s5pc100/include/mach/map.h |    3 +++
+ arch/arm/mach-s5pc100/mach-smdkc100.c    |    1 +
+ 3 files changed, 6 insertions(+), 0 deletions(-)
 
-
->
+diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
+index b2a11df..b63b440 100644
+--- a/arch/arm/mach-s5pc100/Kconfig
++++ b/arch/arm/mach-s5pc100/Kconfig
+@@ -44,6 +44,8 @@ config MACH_SMDKC100
+ 	select S3C_DEV_HSMMC
+ 	select S3C_DEV_HSMMC1
+ 	select S3C_DEV_HSMMC2
++	select S3C_DEV_WDT
++	select HAVE_S3C2410_WATCHDOG
+ 	select S5PC100_SETUP_FB_24BPP
+ 	select S5PC100_SETUP_I2C1
+ 	select S5PC100_SETUP_SDHCI
+diff --git a/arch/arm/mach-s5pc100/include/mach/map.h b/arch/arm/mach-s5pc100/include/mach/map.h
+index cadae43..4b3a7b7 100644
+--- a/arch/arm/mach-s5pc100/include/mach/map.h
++++ b/arch/arm/mach-s5pc100/include/mach/map.h
+@@ -72,6 +72,8 @@
+ 
+ #define S5PC100_PA_SYSTIMER	(0xEA100000)
+ 
++#define S5PC100_PA_WATCHDOG	(0xEA200000)
++
+ #define S5PC100_PA_UART		(0xEC000000)
+ 
+ #define S5P_PA_UART0		(S5PC100_PA_UART + 0x0)
+@@ -131,6 +133,7 @@
+ #define S3C_PA_HSMMC2		S5PC100_PA_HSMMC(2)
+ #define S3C_PA_KEYPAD		S5PC100_PA_KEYPAD
+ #define S3C_PA_TSADC		S5PC100_PA_TSADC
++#define S3C_PA_WDT		S5PC100_PA_WATCHDOG
+ #define S3C_PA_ONENAND		S5PC100_PA_ONENAND
+ #define S3C_PA_ONENAND_BUF	S5PC100_PA_ONENAND_BUF
+ #define S3C_SZ_ONENAND_BUF	S5PC100_SZ_ONENAND_BUF
+diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-s5pc100/mach-smdkc100.c
+index af22f82..6fc0bff 100644
+--- a/arch/arm/mach-s5pc100/mach-smdkc100.c
++++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
+@@ -156,6 +156,7 @@ static struct platform_device *smdkc100_devices[] __initdata = {
+ 	&s3c_device_hsmmc0,
+ 	&s3c_device_hsmmc1,
+ 	&s3c_device_hsmmc2,
++	&s3c_device_wdt,
+ 	&smdkc100_lcd_powerdev,
+ 	&s5pc100_device_iis0,
+ 	&s5pc100_device_ac97,
+-- 
+1.6.2.5
