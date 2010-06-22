@@ -1,41 +1,84 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: S5P6442: Fix PLL setting announce message.
-Date: Tue, 22 Jun 2010 10:05:59 +0900
-Message-ID: <1277168759-4599-1-git-send-email-kgene.kim@samsung.com>
+Subject: RE: [PATCH v4] libata: pata_samsung_cf: Add Samsung PATA controller
+ driver
+Date: Tue, 22 Jun 2010 10:45:23 +0900
+Message-ID: <010c01cb11ac$9844e490$c8ceadb0$%kim@samsung.com>
+References: <1276499263-12217-1-git-send-email-kgene.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:47291 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752095Ab0FVBKy (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:16668 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752568Ab0FVBpY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Jun 2010 21:10:54 -0400
+	Mon, 21 Jun 2010 21:45:24 -0400
+In-reply-to: <1276499263-12217-1-git-send-email-kgene.kim@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Thomas Abraham <thomas@localhost.localdomain>, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, jgarzik@pobox.com, 'Abhilash Kesavan' <a.kesavan@samsung.com>
 
-From: Thomas Abraham <thomas@localhost.localdomain>
+Kukjin Kim wrote:
+> 
+> From: Abhilash Kesavan <a.kesavan@samsung.com>
+> 
+> Adds support for the Samsung PATA controller. This driver is based on the
+> Libata subsystem and references the earlier patches sent for IDE
+subsystem.
+> 
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
 
-The S5P6442 PLL setting announce message incorrectly displays S5P6440
-as the SoC. Change it to S5P6442.
+Hi,
 
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s5p6442/clock.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Maybe missed? :-(
 
-diff --git a/arch/arm/mach-s5p6442/clock.c b/arch/arm/mach-s5p6442/clock.c
-index 3aadbf4..087e57f 100644
---- a/arch/arm/mach-s5p6442/clock.c
-+++ b/arch/arm/mach-s5p6442/clock.c
-@@ -294,7 +294,7 @@ void __init_or_cpufreq s5p6442_setup_clocks(void)
- 	mpll = s5p_get_pll45xx(xtal, __raw_readl(S5P_MPLL_CON), pll_4502);
- 	epll = s5p_get_pll45xx(xtal, __raw_readl(S5P_EPLL_CON), pll_4500);
- 
--	printk(KERN_INFO "S5P6440: PLL settings, A=%ld, M=%ld, E=%ld",
-+	printk(KERN_INFO "S5P6442: PLL settings, A=%ld, M=%ld, E=%ld",
- 			apll, mpll, epll);
- 
- 	clk_fout_apll.rate = apll;
--- 
-1.6.6.rc2
+If no problems, please apply or kindly let me know how this should be
+handled.
+
+> 
+> Changes since v3:
+> 
+> Addressed comments from
+> 
+> Sergei Shtylyov:
+> 	- Removed filename in header
+> 	- Used ata_timing_compute for obtaining timing parameters
+> 	- Removed valid PIO mode check
+> 	- Added softreset method and associated functions
+> 	- Used devm_request_mem_region function as had used devm_ioremap
+> 	  earlier
+> 	- Removed kree and release_mem_region calls because of managed
+> 	  kzalloc and request_mem_region fns being used
+> 	- Added return in clk_get function
+> 	- Added missing clk_put
+> 	- Corrected indentation issue
+> 
+> Ben Dooks:
+> 	- Added missing 'void __iomem' parameters
+> 	- Added check for trailing bytes in data_xfer function
+> 	- Removed assignment in data_xfer function
+> 	- Coding changes - e.g. in pata_s3c_enable, pata_s3c_dev_select,
+> 	  wait_for_host_ready
+> 	- Removed host checks in suspend/resume functions
+> 
+>  drivers/ata/Kconfig           |    9 +
+>  drivers/ata/Makefile          |    1 +
+>  drivers/ata/pata_samsung_cf.c |  735
+> +++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 745 insertions(+), 0 deletions(-)
+>  create mode 100644 drivers/ata/pata_samsung_cf.c
+> 
+(snip)
+
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
