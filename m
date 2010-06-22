@@ -1,48 +1,66 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] input: samsung-keypad - Add samsung keypad driver
-Date: Tue, 22 Jun 2010 16:45:11 +0900
-Message-ID: <013301cb11de$dac50cf0$904f26d0$%kim@samsung.com>
-References: <1277163098-10263-1-git-send-email-kgene.kim@samsung.com>
- <4C2019D4.1040105@samsung.com>
+Subject: RE: [PATCH v2] s3c64xx: Fix build without SDHCI controllers
+Date: Tue, 22 Jun 2010 21:29:09 +0900
+Message-ID: <015c01cb1206$86bfeda0$943fc8e0$%kim@samsung.com>
+References: <000801cb0900$f64bbdc0$e2e33940$%kim@samsung.com>
+ <1276235941-12114-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7BIT
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:14682 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:49593 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752807Ab0FVHpL (ORCPT
+	with ESMTP id S1751158Ab0FVM3K convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Jun 2010 03:45:11 -0400
-In-reply-to: <4C2019D4.1040105@samsung.com>
+	Tue, 22 Jun 2010 08:29:10 -0400
+In-reply-to: <1276235941-12114-1-git-send-email-m.szyprowski@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Joonyoung Shim' <jy0922.shim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, ben-linux@fluff.org, dmitry.torokhov@gmail.com, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
+Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
 
-Joonyoung Shim wrote:
-> 
-> On 6/22/2010 8:31 AM, Kukjin Kim wrote:
-> > From: Joonyoung Shim <jy0922.shim@samsung.com>
-> >
-> > This patch adds support for keypad driver running on Samsung SoCs. This
-> > driver is tested on SMDK6410(S3C6410), SMDKC100(S5PC100),
-> Aquila(S5PC110),
-> > GONI(S5PC110) and SMDKV210(S5PV210) boards.
-> >
-> > Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > Tested-by: Naveen Krishna Ch <ch.naveen@samsung.com>
-> > [kgene.kim@samsung.com: added comments]
-> > Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> 
-> I think this is duplicated posting. Why don't you just reply the
-> tested-by or acked-by at previous my mail?
+Marek Szyprowski wrote:
+>=20
+> This patch fixes the following compilation problem if only NCP machin=
+e
+> is selected:
+>=20
+> arch/arm/mach-s3c64xx/s3c6410.c: In function =E2=80=98s3c6410_map_io=E2=
+=80=99:
+> arch/arm/mach-s3c64xx/s3c6410.c:51: error: implicit declaration of fu=
+nction
+> =E2=80=98s3c6410_default_sdhci2=E2=80=99
+>=20
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-I was just thinking, need to modify comments when added 'Tested-by'.
+Applied :-)
 
-Anyway, if any problems in here, please kindly ignore.
+> ---
+>  arch/arm/plat-samsung/include/plat/sdhci.h |    2 ++
+>  1 files changed, 2 insertions(+), 0 deletions(-)
+>=20
+> diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/pl=
+at-
+> samsung/include/plat/sdhci.h
+> index 13f9fb2..2e263a8 100644
+> --- a/arch/arm/plat-samsung/include/plat/sdhci.h
+> +++ b/arch/arm/plat-samsung/include/plat/sdhci.h
+> @@ -166,8 +166,10 @@ static inline void s3c6410_default_sdhci2(void) =
+{ }
+>  #else
+>  static inline void s3c6410_default_sdhci0(void) { }
+>  static inline void s3c6410_default_sdhci1(void) { }
+> +static inline void s3c6410_default_sdhci2(void) { }
+>  static inline void s3c6400_default_sdhci0(void) { }
+>  static inline void s3c6400_default_sdhci1(void) { }
+> +static inline void s3c6400_default_sdhci2(void) { }
+>=20
+>  #endif /* CONFIG_S3C64XX_SETUP_SDHCI */
+>=20
+> --
+
 
 Thanks.
 
