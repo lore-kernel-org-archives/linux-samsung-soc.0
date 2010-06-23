@@ -1,191 +1,106 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: Samsung SoCs: preparation for single kernel
-Date: Wed, 23 Jun 2010 11:01:03 +0900
-Message-ID: <AANLkTinKsmc1IZDFqZIUutvxFQzYeAWwiR9TOEHBsbOe@mail.gmail.com>
-References: <AANLkTinGwWzIAOe2tj6V2kCrMiPT7PHlYs1kFS-IsiN4@mail.gmail.com>
-	<AANLkTil-AOEqhMOXydaiA1X_v0rjoNQxALrO0UY638AS@mail.gmail.com>
-	<AANLkTil1i_ZGI8bY14HhjrAk9RooVreAJsTteqqrMgqJ@mail.gmail.com>
-	<AANLkTikDml6gQAsiRrCjIt4bUD3hnpAATr1erqCGOJMd@mail.gmail.com>
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: SMDK6440: Crash during boot up while configuring GPIO bank R
+Date: Wed, 23 Jun 2010 11:07:53 +0530
+Message-ID: <AANLkTingC66StF3iVZqwleenthLZ8mQpdaV0XMRHWI0v@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:35413 "EHLO
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:50953 "EHLO
 	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750945Ab0FWCBE convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1751066Ab0FWFiO convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Jun 2010 22:01:04 -0400
-Received: by vws9 with SMTP id 9so214738vws.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Jun 2010 19:01:04 -0700 (PDT)
-In-Reply-To: <AANLkTikDml6gQAsiRrCjIt4bUD3hnpAATr1erqCGOJMd@mail.gmail.com>
+	Wed, 23 Jun 2010 01:38:14 -0400
+Received: by vws9 with SMTP id 9so447395vws.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Jun 2010 22:38:13 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eric Miao <eric.y.miao@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, arm-linux <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Ben Dooks <ben-linux@fluff.org>
 
-On Wed, Jun 23, 2010 at 10:54 AM, Eric Miao <eric.y.miao@gmail.com> wro=
-te:
-> On Wed, Jun 23, 2010 at 9:47 AM, Kyungmin Park <kmpark@infradead.org>=
- wrote:
->> On Wed, Jun 23, 2010 at 9:50 AM, Eric Miao <eric.y.miao@gmail.com> w=
-rote:
->>> On Wed, Jun 23, 2010 at 7:27 AM, Kyungmin Park <kmpark@infradead.or=
-g> wrote:
->>>> To Ben,
->>>>
->>>> I really need single kernel for s5pc110 (cortex A8) and s5pc210
->>>> (cortex A9) at least.
->>>> Fortunately arm move to these approaches recently. but current Sam=
-sung
->>>> SoCs not prepare these one.
->>>>
->>>> So I wonder do you have a plan or how to address these issues?
->>>> How to assign the address at resources and use it at runtime?
->>>>
->>>> Personally I want to use cpu_is_*. but you reject it to use.
->>>> Other way is that we can create the base address variables and ass=
-ign
->>>> it at init time.
->>>>
->>>> Please give your opinions.
->>>>
->>>> Thank you,
->>>> Kyungmin Park
->>>>
->>>> e.g., cpu_is_* usage at OMAP tree
->>>>
->>>> static void omap_init_mcspi(void)
->>>> {
->>>> =A0 =A0 =A0 =A0if (cpu_is_omap44xx())
->>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0omap4_mcspi_fixup();
->>>>
->>>> =A0 =A0 =A0 =A0platform_device_register(&omap2_mcspi1);
->>>> =A0 =A0 =A0 =A0platform_device_register(&omap2_mcspi2);
->>>>
->>>> =A0 =A0 =A0 =A0if (cpu_is_omap2430() || cpu_is_omap343x() || cpu_i=
-s_omap44xx())
->>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0omap2_mcspi3_init();
->>>>
->>>> =A0 =A0 =A0 =A0if (cpu_is_omap343x() || cpu_is_omap44xx())
->>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0omap2_mcspi4_init();
->>>> }
->>>
->>> Just my two cents: cpu_is_*() can be used, but only when absolutely=
- necessary.
->>> The s3c does a CPU detection at startup, so I guess the usage of cp=
-u_is_*()
->>> can be even reduced.
->>
->> My concern is that most device resources use the S3C_* or S5P_* pref=
-ix
->> and defined at each arch differently.
->>
->> E.G., mmc resource drivers use the S3C_PA_HSMMC0. but each mach has
->> different base address.
->> then how to handle this or make it possible?
->>
->
-> Now you have
->
-> s5pv210_device_hsmmc0
-> s5pc100_device_hsmmc0
-> s3c64xx_device_hsmmc0
-> ....
->
-> each with a different base.
+Hi Ben,
 
-Good, then wait Ben's opinions.
+I'm adding I2C support for SMDK6440 board.
 
->
->> #define S5PV210_PA_HSMMC(x) =A0 =A0 (0xEB000000 + ((x) * 0x100000))
->> #define S3C_PA_HSMMC0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_HSMMC(0)
->> #define S3C_PA_HSMMC1 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_HSMMC(1)
->> #define S3C_PA_HSMMC2 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_HSMMC(2)
->>
->> #define S5PC100_PA_HSMMC(x) =A0 =A0 (0xED800000 + ((x) * 0x100000))
->> #define S3C_PA_HSMMC0 =A0 =A0 =A0 =A0 =A0 S5PC100_PA_HSMMC(0)
->> #define S3C_PA_HSMMC1 =A0 =A0 =A0 =A0 =A0 S5PC100_PA_HSMMC(1)
->> #define S3C_PA_HSMMC2 =A0 =A0 =A0 =A0 =A0 S5PC100_PA_HSMMC(2)
->>
->> #define S3C64XX_PA_HSMMC(x) =A0 =A0 (0x7C200000 + ((x) * 0x100000))
->> #define S3C64XX_PA_HSMMC0 =A0 =A0 =A0 S3C64XX_PA_HSMMC(0)
->> #define S3C64XX_PA_HSMMC1 =A0 =A0 =A0 S3C64XX_PA_HSMMC(1)
->> #define S3C64XX_PA_HSMMC2 =A0 =A0 =A0 S3C64XX_PA_HSMMC(2)
->> #define S3C_PA_HSMMC0 =A0 =A0 =A0 =A0 =A0 S3C64XX_PA_HSMMC0
->> #define S3C_PA_HSMMC1 =A0 =A0 =A0 =A0 =A0 S3C64XX_PA_HSMMC1
->> #define S3C_PA_HSMMC2 =A0 =A0 =A0 =A0 =A0 S3C64XX_PA_HSMMC2
->>
->>>
->>> I'm not sure if the above case is a good reference or not. The omap=
-_init_mcspi
->>> is called from omap2_init_devices(), while the registration can act=
-ually be
->>> made into the board init code when that device is used (some of the=
- McSPIs are
->>> not used, and it's not necessary to register them), and the differe=
-nces be
->>> handled in the driver.
->>
->> that's just example how to use cpu_is_* in others. the current schme
->> in samsung SoCs. we passed the different platform name for each arch=
-=2E
->> e.g., s3c2410_i2c or s3c2440_i2c then i2c driver detect it and handl=
-e
->> properly. of course it assume base address is set correctly as above=
-=2E
->
-> For the device driver, when you register two different i2c devices:
->
-> struct platform_device s3c2410_device_i2c {
-> =A0 =A0 =A0 =A0.name =A0 =3D "s3c2410-i2c",
-> =A0 =A0 =A0 =A0...
-> };
->
-> struct platform_device s3c2440_device_i2c {
-> =A0 =A0 =A0 =A0.name =A0 =3D "s3c2440-i2c",
-> =A0 =A0 =A0 =A0...
-> };
->
-> And register the corresponding one in your board code (your board cod=
-e
-> knows exactly which one to register, no? )
->
-> And then in your i2c driver, you declare:
->
-> const static struct platform_device_id s3c_i2c_ids[] =3D {
-> =A0 =A0 =A0 =A0{ "s3c2410-i2c", S3C2410_SPECIFIC_FLAGS },
-> =A0 =A0 =A0 =A0{ "s3c2440-i2c", S3C2440_SPECIFIC_FLAGS },
-> =A0 =A0 =A0 =A0.....
-> };
->
-> Now you have S3C2410_SPECIFIC_FLAGS and S3C2440_SPECIFIC_FLAGS for yo=
-ur
-> device driver to distinguish between the differences. Normally, the
-> differences won't be much, and make sure you have good abstraction of
-> those _SPECIFIC_FLAGS.
+And observed a bootup crash while configuring GPIO GPR();
 
-It's already done.
->>
->> Thank you,
->> Kyungmin Park
->>>
->>>>
->>>> _______________________________________________
->>>> linux-arm-kernel mailing list
->>>> linux-arm-kernel@lists.infradead.org
->>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-sam=
-sung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at =A0http://vger.kernel.org/majordomo-info.htm=
-l
->>>
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+The following are the boot logs
+
+BUG: spinlock recursion on CPU#0, swapper/1
+=A0lock: c01fbd64, .magic: dead4ead, .owner: swapper/1, .owner_cpu: 0
+[<c0023260>] (unwind_backtrace+0x0/0xec) from [<c011e764>]
+(do_raw_spin_lock+0x48/0x14c)
+[<c011e764>] (do_raw_spin_lock+0x48/0x14c) from [<c016e6e8>]
+(_raw_spin_lock_irqsave+0x10/0x18)
+[<c016e6e8>] (_raw_spin_lock_irqsave+0x10/0x18) from [<c00292e8>]
+(s5p6440_gpio_setcfg_4bit_rbank+0x54/0xb4)
+[<c00292e8>] (s5p6440_gpio_setcfg_4bit_rbank+0x54/0xb4) from
+[<c002a1bc>] (s3c_gpio_cfgpin+0x50/0x74)
+[<c002a1bc>] (s3c_gpio_cfgpin+0x50/0x74) from [<c0029478>]
+(s3c_i2c1_cfg_gpio+0x10/0x20)
+[<c0029478>] (s3c_i2c1_cfg_gpio+0x10/0x20) from [<c016af24>]
+(s3c24xx_i2c_probe+0x21c/0x5c8)
+[<c016af24>] (s3c24xx_i2c_probe+0x21c/0x5c8) from [<c01445ac>]
+(platform_drv_probe+0x18/0x1c)
+[<c01445ac>] (platform_drv_probe+0x18/0x1c) from [<c0143700>]
+(driver_probe_device+0xa8/0x158)
+[<c0143700>] (driver_probe_device+0xa8/0x158) from [<c0143810>]
+(__driver_attach+0x60/0x84)
+[<c0143810>] (__driver_attach+0x60/0x84) from [<c0142fa0>]
+(bus_for_each_dev+0x44/0x74)
+[<c0142fa0>] (bus_for_each_dev+0x44/0x74) from [<c01428a8>]
+(bus_add_driver+0x98/0x218)
+[<c01428a8>] (bus_add_driver+0x98/0x218) from [<c0143ae0>]
+(driver_register+0xa8/0x138)
+[<c0143ae0>] (driver_register+0xa8/0x138) from [<c001d388>]
+(do_one_initcall+0x58/0x1a8)
+[<c001d388>] (do_one_initcall+0x58/0x1a8) from [<c0008570>]
+(kernel_init+0x90/0x144)
+[<c0008570>] (kernel_init+0x90/0x144) from [<c001edf4>]
+(kernel_thread_exit+0x0/0x8)
+BUG: spinlock lockup on CPU#0, swapper/1, c01fbd64
+[<c0023260>] (unwind_backtrace+0x0/0xec) from [<c011e82c>]
+(do_raw_spin_lock+0x110/0x14c)
+[<c011e82c>] (do_raw_spin_lock+0x110/0x14c) from [<c016e6e8>]
+(_raw_spin_lock_irqsave+0x10/0x18)
+[<c016e6e8>] (_raw_spin_lock_irqsave+0x10/0x18) from [<c00292e8>]
+(s5p6440_gpio_setcfg_4bit_rbank+0x54/0xb4)
+[<c00292e8>] (s5p6440_gpio_setcfg_4bit_rbank+0x54/0xb4) from
+[<c002a1bc>] (s3c_gpio_cfgpin+0x50/0x74)
+[<c002a1bc>] (s3c_gpio_cfgpin+0x50/0x74) from [<c0029478>]
+(s3c_i2c1_cfg_gpio+0x10/0x20)
+[<c0029478>] (s3c_i2c1_cfg_gpio+0x10/0x20) from [<c016af24>]
+(s3c24xx_i2c_probe+0x21c/0x5c8)
+[<c016af24>] (s3c24xx_i2c_probe+0x21c/0x5c8) from [<c01445ac>]
+(platform_drv_probe+0x18/0x1c)
+[<c01445ac>] (platform_drv_probe+0x18/0x1c) from [<c0143700>]
+(driver_probe_device+0xa8/0x158)
+[<c0143700>] (driver_probe_device+0xa8/0x158) from [<c0143810>]
+(__driver_attach+0x60/0x84)
+[<c0143810>] (__driver_attach+0x60/0x84) from [<c0142fa0>]
+(bus_for_each_dev+0x44/0x74)
+[<c0142fa0>] (bus_for_each_dev+0x44/0x74) from [<c01428a8>]
+(bus_add_driver+0x98/0x218)
+[<c01428a8>] (bus_add_driver+0x98/0x218) from [<c0143ae0>]
+(driver_register+0xa8/0x138)
+[<c0143ae0>] (driver_register+0xa8/0x138) from [<c001d388>]
+(do_one_initcall+0x58/0x1a8)
+[<c001d388>] (do_one_initcall+0x58/0x1a8) from [<c0008570>]
+(kernel_init+0x90/0x144)
+[<c0008570>] (kernel_init+0x90/0x144) from [<c001edf4>]
+(kernel_thread_exit+0x0/0x8)
+
+I found in the code that s3c_gpio_cfgpin() has a spinlock and it in
+turn calls=A0s5p6440_gpio_setcfg_4bit_rbank() which has another spinloc=
+k
+with in.
+
+Should i be calling=A0s5p6440_gpio_setcfg_4bit_rbank() directly when
+required to configure GPIO Bank R.
+
+Why there are special functions defined for GPIO Bank R only in
+S5P6440 and not in any other CPU.
+
+--
+Shine bright,
+(: Naveen Krishna Ch :)
