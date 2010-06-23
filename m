@@ -1,181 +1,137 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: Samsung SoCs: preparation for single kernel
-Date: Wed, 23 Jun 2010 11:20:55 +0200
-Message-ID: <003e01cb12b5$656c0670$30441350$%szyprowski@samsung.com>
+From: Eric Miao <eric.y.miao@gmail.com>
+Subject: Re: Samsung SoCs: preparation for single kernel
+Date: Wed, 23 Jun 2010 18:24:18 +0800
+Message-ID: <AANLkTilt7uncmA1Zfo77h4bGbRIlvmp6zOCbdDK3QMez@mail.gmail.com>
 References: <AANLkTinGwWzIAOe2tj6V2kCrMiPT7PHlYs1kFS-IsiN4@mail.gmail.com>
- <AANLkTil-AOEqhMOXydaiA1X_v0rjoNQxALrO0UY638AS@mail.gmail.com>
- <AANLkTil1i_ZGI8bY14HhjrAk9RooVreAJsTteqqrMgqJ@mail.gmail.com>
- <AANLkTikDml6gQAsiRrCjIt4bUD3hnpAATr1erqCGOJMd@mail.gmail.com>
- <002301cb129c$ec59fe30$c50dfa90$%szyprowski@samsung.com>
- <AANLkTikspf9zHuSKe86wDQxI12HpJo_occBlLUXBkjef@mail.gmail.com>
+	<AANLkTil-AOEqhMOXydaiA1X_v0rjoNQxALrO0UY638AS@mail.gmail.com>
+	<AANLkTil1i_ZGI8bY14HhjrAk9RooVreAJsTteqqrMgqJ@mail.gmail.com>
+	<AANLkTikDml6gQAsiRrCjIt4bUD3hnpAATr1erqCGOJMd@mail.gmail.com>
+	<002301cb129c$ec59fe30$c50dfa90$%szyprowski@samsung.com>
+	<AANLkTikspf9zHuSKe86wDQxI12HpJo_occBlLUXBkjef@mail.gmail.com>
+	<003e01cb12b5$656c0670$30441350$%szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7BIT
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:39139 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751059Ab0FWJWI (ORCPT
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:36331 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750954Ab0FWKYT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Jun 2010 05:22:08 -0400
-Received: from epmmp2 (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L4G006PTNCTYPC0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 23 Jun 2010 18:22:05 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L4G009WONCII9@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 23 Jun 2010 18:22:05 +0900 (KST)
-In-reply-to: <AANLkTikspf9zHuSKe86wDQxI12HpJo_occBlLUXBkjef@mail.gmail.com>
-Content-language: pl
+	Wed, 23 Jun 2010 06:24:19 -0400
+Received: by vws9 with SMTP id 9so762760vws.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jun 2010 03:24:18 -0700 (PDT)
+In-Reply-To: <003e01cb12b5$656c0670$30441350$%szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Eric Miao' <eric.y.miao@gmail.com>
-Cc: 'Kyungmin Park' <kmpark@infradead.org>, linux-samsung-soc@vger.kernel.org, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'arm-linux' <linux-arm-kernel@lists.infradead.org>, 'Ben Dooks' <ben-linux@fluff.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Kyungmin Park <kmpark@infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, arm-linux <linux-arm-kernel@lists.infradead.org>, Ben Dooks <ben-linux@fluff.org>
 
-Hello,
-
-On Wednesday, June 23, 2010 10:02 AM Eric Miao wrote:
-
-> >> Now you have
-> >>
-> >> s5pv210_device_hsmmc0
-> >> s5pc100_device_hsmmc0
-> >> s3c64xx_device_hsmmc0
-> >> ....
-> >>
-> >> each with a different base.
-> >
-> > There is no need for such code duplication.
-> 
-> However, I believe this is the right way to go. A certain level of
-> duplication is the price to pay for a generic and clean solution.
-> 
-> When a peripheral controller or IP is moved from one SoC to the
-> next generation, there are several things could have been changed:
-> 
-> 1. new base address and IRQ number
-> 2. fixes and enhancements to the original IP
-> 
-> 1. will result in a different 'struct resource', and 2. will result in a
-> different 'struct platform_device' with a different name, so the driver
-> can match the platform_device_id table as you agreed I'm right on
-> that recommendation.
-> 
-> They are actually _two_ different devices.
-
-Right, they are separate entities, but would be really good if a similar
-git brcode could be merged together.
-
-> > Ben is working on a solution for
-> > a single kernel which supports multiple SoCs. Some of his work in
-> progress can
-> > be found here: git://git.fluff.org/bjdooks/linux branch wip-samsung-dev
-> and
-> > wip-samsung-dev2.
-> 
-> Could you describe it a bit here and bring it on table for discussion?
-
-The idea behind his patches is to provide a table for each SoC with short
-description of all available devices and generate platform_device entries
-dynamically from that table.
-
-Here is a short code example:
-
-struct s3c_pdev_table s3c6xxx_dev_table[] __initdata = {
-	{
-		.type	= SAMSUNG_DEVICE_UART,
-		.name	= "s3c6400-uart",
-		.index	= 0,
-		.base	= S3C_PA_UART0,
-		.irq	= IRQ_S3CUART_RX0,
-		.template = &template_uart_s3c64xx,
-	}, {
-		.type	= SAMSUNG_DEVICE_UART,
-		.name	= "s3c6400-uart",
-		.index	= 1,
-		.base	= S3C_PA_UART1,
-		.irq	= IRQ_S3CUART_RX1,
-		.template = &template_uart_s3c64xx,
-	}, {
-		.type	= SAMSUNG_DEVICE_UART,
-		.name	= "s3c6400-uart",
-		.index	= 2,
-		.base	= S3C_PA_UART2,
-		.irq	= IRQ_S3CUART_RX2,
-		.template = &template_uart_s3c64xx,
-	}, {
-		.type	= SAMSUNG_DEVICE_UART,
-		.name	= "s3c6400-uart",
-		.index	= 3,
-		.base	= S3C_PA_UART3,
-		.irq	= IRQ_S3CUART_RX3,
-		.template = &template_uart_s3c64xx,
-	}, {
-		.type	= SAMSUNG_DEVICE_WATCHDOG,
-		.name	= "s3c2410-wdt",
-		.index	= -1,
-		.base	= S3C64XX_PA_WATCHDOG,
-		.irq	= IRQ_WDT,
-	}, {
-		.type	= SAMSUNG_DEVICE_SDHCI,
-		.name	= "s3c-sdhci",
-		.index	= 0,
-		.base	= S3C64XX_PA_HSMMC0 ,
-		.irq	= IRQ_HSMMC0,
-		.dma	= &samsung_std_dma_mask,
-	}, {
-		.type	= SAMSUNG_DEVICE_SDHCI,
-		.name	= "s3c-sdhci",
-		.index	= 1,
-		.base	= S3C64XX_PA_HSMMC1,
-		.irq	= IRQ_HSMMC1,
-		.dma	= &samsung_std_dma_mask,
-	}, {
-		.type	= SAMSUNG_DEVICE_SDHCI,
-		.name	= "s3c-sdhci",
-		.index	= 2,
-		.base	= S3C64XX_PA_HSMMC2,
-		.irq	= IRQ_HSMMC1,
-		.dma	= &samsung_std_dma_mask,
-	}, {
-		.type	= SAMSUNG_DEVICE_OHCI,
-		.name	= "s3c2410-ohci",
-		.index	= -1,
-		.base	= S3C64XX_PA_USBHOST,
-		.irq	= IRQ_USBH,
-		.dma	= &samsung_std_dma_mask,
-	}, {
-		.type	= SAMSUNG_DEVICE_NAND,
-		.name	= "s3c6400-nand",
-		.index	= -1,
-		.base	= 0x4E000000,
-		.irq	= IRQ_NFC,
-	}, {
-		.type	= SAMSUNG_DEVICE_I2C,
-		.name	= "s3c2440-i2c",
-		.index	= 0,
-		.base	= S3C64XX_PA_IIC0,
-		.irq	= IRQ_IIC,
-	}, {
-...
-
-This solution is imho really clean an easy to understand. It is also
-easy to check which SoC has which peripherals defined and how.
-
-I hope Ben will be able to finish it soon and all Samsung platforms can
-be converted for it. Then creating a single kernel for more than one SoC
-should be possible with only a few additional changes.
-
-> PS: My feeling of commenting several of the samsung patches so far turns
-> out to be quite frustrated, or I'm just too sensitive. NOTE neither am I
-> NAKing Samsung patches, nor am I interested to be involved, I'm just givin
-> my suggestions.
-
-I'm sorry if I offended You. I just wanted to show that the solution has
-been already found.
-
-Best regards
---	
-Marek Szyprowski
-Samsung Poland R&D Center
+T24gV2VkbmVzZGF5LCBKdW5lIDIzLCAyMDEwLCBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dz
+a2lAc2Ftc3VuZy5jb20+IHdyb3RlOgo+IEhlbGxvLAo+Cj4gT24gV2VkbmVzZGF5LCBKdW5lIDIz
+LCAyMDEwIDEwOjAyIEFNIEVyaWMgTWlhbyB3cm90ZToKPgo+PiA+PiBOb3cgeW91IGhhdmUKPj4g
+Pj4KPj4gPj4gczVwdjIxMF9kZXZpY2VfaHNtbWMwCj4+ID4+IHM1cGMxMDBfZGV2aWNlX2hzbW1j
+MAo+PiA+PiBzM2M2NHh4X2RldmljZV9oc21tYzAKPj4gPj4gLi4uLgo+PiA+Pgo+PiA+PiBlYWNo
+IHdpdGggYSBkaWZmZXJlbnQgYmFzZS4KPj4gPgo+PiA+IFRoZXJlIGlzIG5vIG5lZWQgZm9yIHN1
+Y2ggY29kZSBkdXBsaWNhdGlvbi4KPj4KPj4gSG93ZXZlciwgSSBiZWxpZXZlIHRoaXMgaXMgdGhl
+IHJpZ2h0IHdheSB0byBnby4gQSBjZXJ0YWluIGxldmVsIG9mCj4+IGR1cGxpY2F0aW9uIGlzIHRo
+ZSBwcmljZSB0byBwYXkgZm9yIGEgZ2VuZXJpYyBhbmQgY2xlYW4gc29sdXRpb24uCj4+Cj4+IFdo
+ZW4gYSBwZXJpcGhlcmFsIGNvbnRyb2xsZXIgb3IgSVAgaXMgbW92ZWQgZnJvbSBvbmUgU29DIHRv
+IHRoZQo+PiBuZXh0IGdlbmVyYXRpb24sIHRoZXJlIGFyZSBzZXZlcmFsIHRoaW5ncyBjb3VsZCBo
+YXZlIGJlZW4gY2hhbmdlZDoKPj4KPj4gMS4gbmV3IGJhc2UgYWRkcmVzcyBhbmQgSVJRIG51bWJl
+cgo+PiAyLiBmaXhlcyBhbmQgZW5oYW5jZW1lbnRzIHRvIHRoZSBvcmlnaW5hbCBJUAo+Pgo+PiAx
+LiB3aWxsIHJlc3VsdCBpbiBhIGRpZmZlcmVudCAnc3RydWN0IHJlc291cmNlJywgYW5kIDIuIHdp
+bGwgcmVzdWx0IGluIGEKPj4gZGlmZmVyZW50ICdzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlJyB3aXRo
+IGEgZGlmZmVyZW50IG5hbWUsIHNvIHRoZSBkcml2ZXIKPj4gY2FuIG1hdGNoIHRoZSBwbGF0Zm9y
+bV9kZXZpY2VfaWQgdGFibGUgYXMgeW91IGFncmVlZCBJJ20gcmlnaHQgb24KPj4gdGhhdCByZWNv
+bW1lbmRhdGlvbi4KPj4KPj4gVGhleSBhcmUgYWN0dWFsbHkgX3R3b18gZGlmZmVyZW50IGRldmlj
+ZXMuCj4KPiBSaWdodCwgdGhleSBhcmUgc2VwYXJhdGUgZW50aXRpZXMsIGJ1dCB3b3VsZCBiZSBy
+ZWFsbHkgZ29vZCBpZiBhIHNpbWlsYXIKPiBnaXQgYnJjb2RlIGNvdWxkIGJlIG1lcmdlZCB0b2dl
+dGhlci4KPgo+PiA+IEJlbiBpcyB3b3JraW5nIG9uIGEgc29sdXRpb24gZm9yCj4+ID4gYSBzaW5n
+bGUga2VybmVsIHdoaWNoIHN1cHBvcnRzIG11bHRpcGxlIFNvQ3MuIFNvbWUgb2YgaGlzIHdvcmsg
+aW4KPj4gcHJvZ3Jlc3MgY2FuCj4+ID4gYmUgZm91bmQgaGVyZTogZ2l0Oi8vZ2l0LmZsdWZmLm9y
+Zy9iamRvb2tzL2xpbnV4IGJyYW5jaCB3aXAtc2Ftc3VuZy1kZXYKPj4gYW5kCj4+ID4gd2lwLXNh
+bXN1bmctZGV2Mi4KPj4KPj4gQ291bGQgeW91IGRlc2NyaWJlIGl0IGEgYml0IGhlcmUgYW5kIGJy
+aW5nIGl0IG9uIHRhYmxlIGZvciBkaXNjdXNzaW9uPwo+Cj4gVGhlIGlkZWEgYmVoaW5kIGhpcyBw
+YXRjaGVzIGlzIHRvIHByb3ZpZGUgYSB0YWJsZSBmb3IgZWFjaCBTb0Mgd2l0aCBzaG9ydAo+IGRl
+c2NyaXB0aW9uIG9mIGFsbCBhdmFpbGFibGUgZGV2aWNlcyBhbmQgZ2VuZXJhdGUgcGxhdGZvcm1f
+ZGV2aWNlIGVudHJpZXMKPiBkeW5hbWljYWxseSBmcm9tIHRoYXQgdGFibGUuCj4KPiBIZXJlIGlz
+IGEgc2hvcnQgY29kZSBleGFtcGxlOgo+Cj4gc3RydWN0IHMzY19wZGV2X3RhYmxlIHMzYzZ4eHhf
+ZGV2X3RhYmxlW10gX19pbml0ZGF0YSA9IHsKPiAgwqAgwqAgwqAgwqB7Cj4gIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgLnR5cGUgwqAgPSBTQU1TVU5HX0RFVklDRV9VQVJULAo+ICDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoC5uYW1lIMKgID0gInMzYzY0MDAtdWFydCIsCj4gIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgLmluZGV4IMKgPSAwLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5iYXNlIMKg
+ID0gUzNDX1BBX1VBUlQwLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5pcnEgwqAgwqA9IElS
+UV9TM0NVQVJUX1JYMCwKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAudGVtcGxhdGUgPSAmdGVt
+cGxhdGVfdWFydF9zM2M2NHh4LAo+ICDCoCDCoCDCoCDCoH0sIHsKPiAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAudHlwZSDCoCA9IFNBTVNVTkdfREVWSUNFX1VBUlQsCj4gIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgLm5hbWUgwqAgPSAiczNjNjQwMC11YXJ0IiwKPiAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAuaW5kZXggwqA9IDEsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLmJhc2UgwqAgPSBT
+M0NfUEFfVUFSVDEsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLmlycSDCoCDCoD0gSVJRX1Mz
+Q1VBUlRfUlgxLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC50ZW1wbGF0ZSA9ICZ0ZW1wbGF0
+ZV91YXJ0X3MzYzY0eHgsCj4gIMKgIMKgIMKgIMKgfSwgewo+ICDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoC50eXBlIMKgID0gU0FNU1VOR19ERVZJQ0VfVUFSVCwKPiAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAubmFtZSDCoCA9ICJzM2M2NDAwLXVhcnQiLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oC5pbmRleCDCoD0gMiwKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAuYmFzZSDCoCA9IFMzQ19Q
+QV9VQVJUMiwKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAuaXJxIMKgIMKgPSBJUlFfUzNDVUFS
+VF9SWDIsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLnRlbXBsYXRlID0gJnRlbXBsYXRlX3Vh
+cnRfczNjNjR4eCwKPiAgwqAgwqAgwqAgwqB9LCB7Cj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+LnR5cGUgwqAgPSBTQU1TVU5HX0RFVklDRV9VQVJULAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oC5uYW1lIMKgID0gInMzYzY0MDAtdWFydCIsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLmlu
+ZGV4IMKgPSAzLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5iYXNlIMKgID0gUzNDX1BBX1VB
+UlQzLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5pcnEgwqAgwqA9IElSUV9TM0NVQVJUX1JY
+MywKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAudGVtcGxhdGUgPSAmdGVtcGxhdGVfdWFydF9z
+M2M2NHh4LAo+ICDCoCDCoCDCoCDCoH0sIHsKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAudHlw
+ZSDCoCA9IFNBTVNVTkdfREVWSUNFX1dBVENIRE9HLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oC5uYW1lIMKgID0gInMzYzI0MTAtd2R0IiwKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAuaW5k
+ZXggwqA9IC0xLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5iYXNlIMKgID0gUzNDNjRYWF9Q
+QV9XQVRDSERPRywKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAuaXJxIMKgIMKgPSBJUlFfV0RU
+LAo+ICDCoCDCoCDCoCDCoH0sIHsKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAudHlwZSDCoCA9
+IFNBTVNVTkdfREVWSUNFX1NESENJLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5uYW1lIMKg
+ID0gInMzYy1zZGhjaSIsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLmluZGV4IMKgPSAwLAo+
+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5iYXNlIMKgID0gUzNDNjRYWF9QQV9IU01NQzAgLAo+
+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5pcnEgwqAgwqA9IElSUV9IU01NQzAsCj4gIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgLmRtYSDCoCDCoD0gJnNhbXN1bmdfc3RkX2RtYV9tYXNrLAo+ICDC
+oCDCoCDCoCDCoH0sIHsKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAudHlwZSDCoCA9IFNBTVNV
+TkdfREVWSUNFX1NESENJLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5uYW1lIMKgID0gInMz
+Yy1zZGhjaSIsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLmluZGV4IMKgPSAxLAo+ICDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoC5iYXNlIMKgID0gUzNDNjRYWF9QQV9IU01NQzEsCj4gIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgLmlycSDCoCDCoD0gSVJRX0hTTU1DMSwKPiAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAuZG1hIMKgIMKgPSAmc2Ftc3VuZ19zdGRfZG1hX21hc2ssCj4gIMKgIMKgIMKg
+IMKgfSwgewo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC50eXBlIMKgID0gU0FNU1VOR19ERVZJ
+Q0VfU0RIQ0ksCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLm5hbWUgwqAgPSAiczNjLXNkaGNp
+IiwKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAuaW5kZXggwqA9IDIsCj4gIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgLmJhc2UgwqAgPSBTM0M2NFhYX1BBX0hTTU1DMiwKPiAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAuaXJxIMKgIMKgPSBJUlFfSFNNTUMxLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoC5kbWEgwqAgwqA9ICZzYW1zdW5nX3N0ZF9kbWFfbWFzaywKPiAgwqAgwqAgwqAgwqB9LCB7
+Cj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLnR5cGUgwqAgPSBTQU1TVU5HX0RFVklDRV9PSENJ
+LAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5uYW1lIMKgID0gInMzYzI0MTAtb2hjaSIsCj4g
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLmluZGV4IMKgPSAtMSwKPiAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAuYmFzZSDCoCA9IFMzQzY0WFhfUEFfVVNCSE9TVCwKPiAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAuaXJxIMKgIMKgPSBJUlFfVVNCSCwKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAu
+ZG1hIMKgIMKgPSAmc2Ftc3VuZ19zdGRfZG1hX21hc2ssCj4gIMKgIMKgIMKgIMKgfSwgewo+ICDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoC50eXBlIMKgID0gU0FNU1VOR19ERVZJQ0VfTkFORCwKPiAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAubmFtZSDCoCA9ICJzM2M2NDAwLW5hbmQiLAo+ICDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoC5pbmRleCDCoD0gLTEsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgLmJhc2UgwqAgPSAweDRFMDAwMDAwLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5pcnEg
+wqAgwqA9IElSUV9ORkMsCj4gIMKgIMKgIMKgIMKgfSwgewo+ICDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoC50eXBlIMKgID0gU0FNU1VOR19ERVZJQ0VfSTJDLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoC5uYW1lIMKgID0gInMzYzI0NDAtaTJjIiwKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAu
+aW5kZXggwqA9IDAsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLmJhc2UgwqAgPSBTM0M2NFhY
+X1BBX0lJQzAsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLmlycSDCoCDCoD0gSVJRX0lJQywK
+PiAgwqAgwqAgwqAgwqB9LCB7Cj4gLi4uCj4KPiBUaGlzIHNvbHV0aW9uIGlzIGltaG8gcmVhbGx5
+IGNsZWFuIGFuIGVhc3kgdG8gdW5kZXJzdGFuZC4gSXQgaXMgYWxzbwo+IGVhc3kgdG8gY2hlY2sg
+d2hpY2ggU29DIGhhcyB3aGljaCBwZXJpcGhlcmFscyBkZWZpbmVkIGFuZCBob3cuCj4KClllcCwg
+dGhpcyB3YXMgYWxyZWFkeSB1c2VkIGluIGFyY2gvYXJtL21hY2gtbW1wLCBhbmQgSSB3cm90ZSB0
+aGF0LgoKSXQncyBhY3R1YWxseSBhbiBpbXByb3ZlZCB2ZXJzaW9uIG9mIG11bHRpcGxlIHBsYXRm
+b3JtX2RldmljZS4KCj4gSSBob3BlIEJlbiB3aWxsIGJlIGFibGUgdG8gZmluaXNoIGl0IHNvb24g
+YW5kIGFsbCBTYW1zdW5nIHBsYXRmb3JtcyBjYW4KPiBiZSBjb252ZXJ0ZWQgZm9yIGl0LiBUaGVu
+IGNyZWF0aW5nIGEgc2luZ2xlIGtlcm5lbCBmb3IgbW9yZSB0aGFuIG9uZSBTb0MKPiBzaG91bGQg
+YmUgcG9zc2libGUgd2l0aCBvbmx5IGEgZmV3IGFkZGl0aW9uYWwgY2hhbmdlcy4KPgo+PiBQUzog
+TXkgZmVlbGluZyBvZiBjb21tZW50aW5nIHNldmVyYWwgb2YgdGhlIHNhbXN1bmcgcGF0Y2hlcyBz
+byBmYXIgdHVybnMKPj4gb3V0IHRvIGJlIHF1aXRlIGZydXN0cmF0ZWQsIG9yIEknbSBqdXN0IHRv
+byBzZW5zaXRpdmUuIE5PVEUgbmVpdGhlciBhbSBJCj4+IE5BS2luZyBTYW1zdW5nIHBhdGNoZXMs
+IG5vciBhbSBJIGludGVyZXN0ZWQgdG8gYmUgaW52b2x2ZWQsIEknbSBqdXN0IGdpdmluCj4+IG15
+IHN1Z2dlc3Rpb25zLgo+Cj4gSSdtIHNvcnJ5IGlmIEkgb2ZmZW5kZWQgWW91LiBJIGp1c3Qgd2Fu
+dGVkIHRvIHNob3cgdGhhdCB0aGUgc29sdXRpb24gaGFzCj4gYmVlbiBhbHJlYWR5IGZvdW5kLgo+
+Cj4gQmVzdCByZWdhcmRzCj4gLS0KPiBNYXJlayBTenlwcm93c2tpCj4gU2Ftc3VuZyBQb2xhbmQg
+UiZEIENlbnRlcgo+Cj4KPgo+Cg==
