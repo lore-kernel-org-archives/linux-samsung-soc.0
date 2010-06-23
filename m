@@ -1,65 +1,99 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH v2 2/4] ARM: S3C2416: Set name of the framebuffer device
- only if it present
-Date: Wed, 23 Jun 2010 08:38:39 +0200
-Message-ID: <002401cb129e$b93a75a0$2baf60e0$%szyprowski@samsung.com>
-References: <1277220124-16225-1-git-send-email-jekhor@gmail.com>
- <1277220124-16225-3-git-send-email-jekhor@gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: Samsung SoCs: preparation for single kernel
+Date: Wed, 23 Jun 2010 10:28:55 +0300
+Message-ID: <20100623072855.GZ12255@atomide.com>
+References: <AANLkTinGwWzIAOe2tj6V2kCrMiPT7PHlYs1kFS-IsiN4@mail.gmail.com>
+ <AANLkTil-AOEqhMOXydaiA1X_v0rjoNQxALrO0UY638AS@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:41584 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751184Ab0FWGju (ORCPT
+Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:51468 "EHLO
+	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751417Ab0FWH2y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Jun 2010 02:39:50 -0400
-Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L4G007ZVFUBEF10@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 23 Jun 2010 15:39:47 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L4G0027MFU1KN@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 23 Jun 2010 15:39:47 +0900 (KST)
-In-reply-to: <1277220124-16225-3-git-send-email-jekhor@gmail.com>
-Content-language: pl
+	Wed, 23 Jun 2010 03:28:54 -0400
+Content-Disposition: inline
+In-Reply-To: <AANLkTil-AOEqhMOXydaiA1X_v0rjoNQxALrO0UY638AS@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Yauhen Kharuzhy' <jekhor@gmail.com>, 'Ben Dooks' <ben-linux@fluff.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Eric Miao <eric.y.miao@gmail.com>
+Cc: Kyungmin Park <kmpark@infradead.org>, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, arm-linux <linux-arm-kernel@lists.infradead.org>, Ben Dooks <ben-linux@fluff.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hello,
+* Eric Miao <eric.y.miao@gmail.com> [100623 03:48]:
+> On Wed, Jun 23, 2010 at 7:27 AM, Kyungmin Park <kmpark@infradead.org>=
+ wrote:
+> > To Ben,
+> >
+> > I really need single kernel for s5pc110 (cortex A8) and s5pc210
+> > (cortex A9) at least.
+> > Fortunately arm move to these approaches recently. but current Sams=
+ung
+> > SoCs not prepare these one.
+> >
+> > So I wonder do you have a plan or how to address these issues?
+> > How to assign the address at resources and use it at runtime?
+> >
+> > Personally I want to use cpu_is_*. but you reject it to use.
+> > Other way is that we can create the base address variables and assi=
+gn
+> > it at init time.
+> >
+> > Please give your opinions.
+> >
+> > Thank you,
+> > Kyungmin Park
+> >
+> > e.g., cpu_is_* usage at OMAP tree
+> >
+> > static void omap_init_mcspi(void)
+> > {
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0if (cpu_is_omap44xx())
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0omap4_mcspi_=
+fixup();
+> >
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0platform_device_register(&omap2_mcspi1);
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0platform_device_register(&omap2_mcspi2);
+> >
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0if (cpu_is_omap2430() || cpu_is_omap343x=
+() || cpu_is_omap44xx())
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0omap2_mcspi3=
+_init();
+> >
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0if (cpu_is_omap343x() || cpu_is_omap44xx=
+())
+> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0omap2_mcspi4=
+_init();
+> > }
+>=20
+> Just my two cents: cpu_is_*() can be used, but only when absolutely n=
+ecessary.
+> The s3c does a CPU detection at startup, so I guess the usage of cpu_=
+is_*()
+> can be even reduced.
+>=20
+> I'm not sure if the above case is a good reference or not. The omap_i=
+nit_mcspi
+> is called from omap2_init_devices(), while the registration can actua=
+lly be
+> made into the board init code when that device is used (some of the M=
+cSPIs are
+> not used, and it's not necessary to register them), and the differenc=
+es be
+> handled in the driver.
 
-On Tuesday, June 22, 2010 5:22 PM Yauhen Kharuzhy wrote:
+=46ew comments regarding the cpu_is_omap macros: The macros should real=
+ly be
+soc_is_omapxxxx() instead cpu_is_omapxxxx().
 
-> Fix case when board doesn't have LCD connected and doesn't have
-> corresponding platform device compiled.
-> 
-> Signed-off-by: Yauhen Kharuzhy <jekhor@gmail.com>
-> ---
->  arch/arm/mach-s3c2416/s3c2416.c |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s3c2416/s3c2416.c b/arch/arm/mach-
-> s3c2416/s3c2416.c
-> index 35dabcc..355ab62 100644
-> --- a/arch/arm/mach-s3c2416/s3c2416.c
-> +++ b/arch/arm/mach-s3c2416/s3c2416.c
-> @@ -90,7 +90,9 @@ int __init s3c2416_init(void)
->  	s3c_i2c0_setname("s3c2440-i2c");
->  	s3c_i2c1_setname("s3c2440-i2c");
-> 
-> +#ifdef CONFIG_S3C_DEV_FB
->  	s3c_device_fb.name = "s3c2443-fb";
-> +#endif
+Also, sprinkling these too much makes the code messy and hard to patch =
+for
+new processors. So you should limit the use to very selected places dur=
+ing
+init, then set some flag like OMAP_HAS_MCSPI2 | OMAP_HAS_MCSPI3 or some=
+thing
+similar.
 
-The above line should be rather removed completely in favor of a
-solution proposed by Pawel Osciak in his s3c-fb patches:
-http://www.spinics.net/lists/arm-kernel/msg90906.html
+Regards,
 
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+Tony
