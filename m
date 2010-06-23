@@ -1,88 +1,39 @@
-From: Eric Miao <eric.y.miao@gmail.com>
-Subject: Re: Samsung SoCs: preparation for single kernel
-Date: Wed, 23 Jun 2010 08:50:34 +0800
-Message-ID: <AANLkTil-AOEqhMOXydaiA1X_v0rjoNQxALrO0UY638AS@mail.gmail.com>
-References: <AANLkTinGwWzIAOe2tj6V2kCrMiPT7PHlYs1kFS-IsiN4@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL linux-next] Samsung S5P SoCs
+Date: Wed, 23 Jun 2010 09:56:52 +0900
+Message-ID: <000d01cb126e$fa193690$ee4ba3b0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:52188 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750777Ab0FWAuz convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:18784 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750777Ab0FWA4v (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Jun 2010 20:50:55 -0400
-Received: by gye5 with SMTP id 5so3344808gye.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Jun 2010 17:50:54 -0700 (PDT)
-In-Reply-To: <AANLkTinGwWzIAOe2tj6V2kCrMiPT7PHlYs1kFS-IsiN4@mail.gmail.com>
+	Tue, 22 Jun 2010 20:56:51 -0400
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>
-Cc: Ben Dooks <ben-linux@fluff.org>, arm-linux <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, sfr@canb.auug.org.au
+Cc: ben-linux@fluff.org
 
-On Wed, Jun 23, 2010 at 7:27 AM, Kyungmin Park <kmpark@infradead.org> w=
-rote:
-> To Ben,
->
-> I really need single kernel for s5pc110 (cortex A8) and s5pc210
-> (cortex A9) at least.
-> Fortunately arm move to these approaches recently. but current Samsun=
-g
-> SoCs not prepare these one.
->
-> So I wonder do you have a plan or how to address these issues?
-> How to assign the address at resources and use it at runtime?
->
-> Personally I want to use cpu_is_*. but you reject it to use.
-> Other way is that we can create the base address variables and assign
-> it at init time.
->
-> Please give your opinions.
->
-> Thank you,
-> Kyungmin Park
->
-> e.g., cpu_is_* usage at OMAP tree
->
-> static void omap_init_mcspi(void)
-> {
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0if (cpu_is_omap44xx())
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0omap4_mcspi_fi=
-xup();
->
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0platform_device_register(&omap2_mcspi1);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0platform_device_register(&omap2_mcspi2);
->
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0if (cpu_is_omap2430() || cpu_is_omap343x()=
- || cpu_is_omap44xx())
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0omap2_mcspi3_i=
-nit();
->
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0if (cpu_is_omap343x() || cpu_is_omap44xx()=
-)
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0omap2_mcspi4_i=
-nit();
-> }
+Dear Stephen Rothwell,
 
-Just my two cents: cpu_is_*() can be used, but only when absolutely nec=
-essary.
-The s3c does a CPU detection at startup, so I guess the usage of cpu_is=
-_*()
-can be even reduced.
+Could you please pull the following into linux-next?
 
-I'm not sure if the above case is a good reference or not. The omap_ini=
-t_mcspi
-is called from omap2_init_devices(), while the registration can actuall=
-y be
-made into the board init code when that device is used (some of the McS=
-PIs are
-not used, and it's not necessary to register them), and the differences=
- be
-handled in the driver.
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git#for-ne
+xt
 
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
+This tree is for next- Samsung S5P SoCs such as S5P6440, S5P6442, S5PC100,
+and S5PV210/S5PC110.
+
+Of course, Ben Dooks' 'next-samsung' is appropriate for next- Samsung common
+and S3C SoCs.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
