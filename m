@@ -1,25 +1,50 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: S5P: Add Support common arch_reset() for S5P SoCs
-Date: Thu, 24 Jun 2010 07:31:54 +0900
-Message-ID: <1277332317-30192-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 1/3] ARM: S5P6442: Add Watchdog Timer map for S5P6442
+Date: Thu, 24 Jun 2010 07:31:55 +0900
+Message-ID: <1277332317-30192-2-git-send-email-kgene.kim@samsung.com>
+References: <1277332317-30192-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:60065 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:60074 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753893Ab0FWWgT (ORCPT
+	with ESMTP id S1753930Ab0FWWgV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Jun 2010 18:36:19 -0400
+	Wed, 23 Jun 2010 18:36:21 -0400
+In-Reply-To: <1277332317-30192-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org
+Cc: ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch adds system define for arch_reset() for S5P SoCs
-such as S5P6440, S5P6442, S5PC100 and S5PV210/S5PC110.
-Now perform reset using Watchdog reset, SWRESET support with
-s5p_reset_hook() will be added later.
+From: Jongpill Lee <boyko.lee@samsung.com>
 
-NOTE: depends on 'Add Watchdog support for S5PC100'
+This patch adds definition of Watchdog Timer map.
 
-ARM: S5P6442: Add Watchdog Timer map for S5P6442
-ARM: S5P: Add System define for arch_reset()
-ARM: S5P: Add Support common arch_reset() for S5P SoCs
+Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s5p6442/include/mach/map.h |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-s5p6442/include/mach/map.h b/arch/arm/mach-s5p6442/include/mach/map.h
+index 32ca424..281d256 100644
+--- a/arch/arm/mach-s5p6442/include/mach/map.h
++++ b/arch/arm/mach-s5p6442/include/mach/map.h
+@@ -42,6 +42,8 @@
+ 
+ #define S5P6442_PA_SYSTIMER   	(0xEA100000)
+ 
++#define S5P6442_PA_WATCHDOG	(0xEA200000)
++
+ #define S5P6442_PA_UART		(0xEC000000)
+ 
+ #define S5P_PA_UART0		(S5P6442_PA_UART + 0x0)
+@@ -65,6 +67,7 @@
+ #define S5P6442_PA_PCM1		0xF2500000
+ 
+ /* compatibiltiy defines. */
++#define S3C_PA_WDT		S5P6442_PA_WATCHDOG
+ #define S3C_PA_UART		S5P6442_PA_UART
+ #define S3C_PA_IIC		S5P6442_PA_IIC0
+ 
+-- 
+1.6.2.5
