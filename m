@@ -1,137 +1,98 @@
-From: Eric Miao <eric.y.miao@gmail.com>
-Subject: Re: Samsung SoCs: preparation for single kernel
-Date: Wed, 23 Jun 2010 18:24:18 +0800
-Message-ID: <AANLkTilt7uncmA1Zfo77h4bGbRIlvmp6zOCbdDK3QMez@mail.gmail.com>
-References: <AANLkTinGwWzIAOe2tj6V2kCrMiPT7PHlYs1kFS-IsiN4@mail.gmail.com>
-	<AANLkTil-AOEqhMOXydaiA1X_v0rjoNQxALrO0UY638AS@mail.gmail.com>
-	<AANLkTil1i_ZGI8bY14HhjrAk9RooVreAJsTteqqrMgqJ@mail.gmail.com>
-	<AANLkTikDml6gQAsiRrCjIt4bUD3hnpAATr1erqCGOJMd@mail.gmail.com>
-	<002301cb129c$ec59fe30$c50dfa90$%szyprowski@samsung.com>
-	<AANLkTikspf9zHuSKe86wDQxI12HpJo_occBlLUXBkjef@mail.gmail.com>
-	<003e01cb12b5$656c0670$30441350$%szyprowski@samsung.com>
+From: Kyungmin Park <kyungmin.park@samsung.com>
+Subject: Re: [PATCH v2 0/4] ARM: S5P: Support gpio interrupts
+Date: Wed, 23 Jun 2010 22:36:54 +0900
+Message-ID: <AANLkTilGbh8F-LzBhbB-q8h6bcrFPHlFSriuDo_WXKMB@mail.gmail.com>
+References: <4C11F4CA.10802@samsung.com>
+	<004601cb12a8$c869e560$593db020$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:36331 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750954Ab0FWKYT (ORCPT
+Received: from mail-pv0-f174.google.com ([74.125.83.174]:61214 "EHLO
+	mail-pv0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751932Ab0FWNgz convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Jun 2010 06:24:19 -0400
-Received: by vws9 with SMTP id 9so762760vws.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jun 2010 03:24:18 -0700 (PDT)
-In-Reply-To: <003e01cb12b5$656c0670$30441350$%szyprowski@samsung.com>
+	Wed, 23 Jun 2010 09:36:55 -0400
+Received: by pvh11 with SMTP id 11so879982pvh.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jun 2010 06:36:54 -0700 (PDT)
+In-Reply-To: <004601cb12a8$c869e560$593db020$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Kyungmin Park <kmpark@infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, arm-linux <linux-arm-kernel@lists.infradead.org>, Ben Dooks <ben-linux@fluff.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Eric Miao <eric.y.miao@gmail.com>
 
-T24gV2VkbmVzZGF5LCBKdW5lIDIzLCAyMDEwLCBNYXJlayBTenlwcm93c2tpIDxtLnN6eXByb3dz
-a2lAc2Ftc3VuZy5jb20+IHdyb3RlOgo+IEhlbGxvLAo+Cj4gT24gV2VkbmVzZGF5LCBKdW5lIDIz
-LCAyMDEwIDEwOjAyIEFNIEVyaWMgTWlhbyB3cm90ZToKPgo+PiA+PiBOb3cgeW91IGhhdmUKPj4g
-Pj4KPj4gPj4gczVwdjIxMF9kZXZpY2VfaHNtbWMwCj4+ID4+IHM1cGMxMDBfZGV2aWNlX2hzbW1j
-MAo+PiA+PiBzM2M2NHh4X2RldmljZV9oc21tYzAKPj4gPj4gLi4uLgo+PiA+Pgo+PiA+PiBlYWNo
-IHdpdGggYSBkaWZmZXJlbnQgYmFzZS4KPj4gPgo+PiA+IFRoZXJlIGlzIG5vIG5lZWQgZm9yIHN1
-Y2ggY29kZSBkdXBsaWNhdGlvbi4KPj4KPj4gSG93ZXZlciwgSSBiZWxpZXZlIHRoaXMgaXMgdGhl
-IHJpZ2h0IHdheSB0byBnby4gQSBjZXJ0YWluIGxldmVsIG9mCj4+IGR1cGxpY2F0aW9uIGlzIHRo
-ZSBwcmljZSB0byBwYXkgZm9yIGEgZ2VuZXJpYyBhbmQgY2xlYW4gc29sdXRpb24uCj4+Cj4+IFdo
-ZW4gYSBwZXJpcGhlcmFsIGNvbnRyb2xsZXIgb3IgSVAgaXMgbW92ZWQgZnJvbSBvbmUgU29DIHRv
-IHRoZQo+PiBuZXh0IGdlbmVyYXRpb24sIHRoZXJlIGFyZSBzZXZlcmFsIHRoaW5ncyBjb3VsZCBo
-YXZlIGJlZW4gY2hhbmdlZDoKPj4KPj4gMS4gbmV3IGJhc2UgYWRkcmVzcyBhbmQgSVJRIG51bWJl
-cgo+PiAyLiBmaXhlcyBhbmQgZW5oYW5jZW1lbnRzIHRvIHRoZSBvcmlnaW5hbCBJUAo+Pgo+PiAx
-LiB3aWxsIHJlc3VsdCBpbiBhIGRpZmZlcmVudCAnc3RydWN0IHJlc291cmNlJywgYW5kIDIuIHdp
-bGwgcmVzdWx0IGluIGEKPj4gZGlmZmVyZW50ICdzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlJyB3aXRo
-IGEgZGlmZmVyZW50IG5hbWUsIHNvIHRoZSBkcml2ZXIKPj4gY2FuIG1hdGNoIHRoZSBwbGF0Zm9y
-bV9kZXZpY2VfaWQgdGFibGUgYXMgeW91IGFncmVlZCBJJ20gcmlnaHQgb24KPj4gdGhhdCByZWNv
-bW1lbmRhdGlvbi4KPj4KPj4gVGhleSBhcmUgYWN0dWFsbHkgX3R3b18gZGlmZmVyZW50IGRldmlj
-ZXMuCj4KPiBSaWdodCwgdGhleSBhcmUgc2VwYXJhdGUgZW50aXRpZXMsIGJ1dCB3b3VsZCBiZSBy
-ZWFsbHkgZ29vZCBpZiBhIHNpbWlsYXIKPiBnaXQgYnJjb2RlIGNvdWxkIGJlIG1lcmdlZCB0b2dl
-dGhlci4KPgo+PiA+IEJlbiBpcyB3b3JraW5nIG9uIGEgc29sdXRpb24gZm9yCj4+ID4gYSBzaW5n
-bGUga2VybmVsIHdoaWNoIHN1cHBvcnRzIG11bHRpcGxlIFNvQ3MuIFNvbWUgb2YgaGlzIHdvcmsg
-aW4KPj4gcHJvZ3Jlc3MgY2FuCj4+ID4gYmUgZm91bmQgaGVyZTogZ2l0Oi8vZ2l0LmZsdWZmLm9y
-Zy9iamRvb2tzL2xpbnV4IGJyYW5jaCB3aXAtc2Ftc3VuZy1kZXYKPj4gYW5kCj4+ID4gd2lwLXNh
-bXN1bmctZGV2Mi4KPj4KPj4gQ291bGQgeW91IGRlc2NyaWJlIGl0IGEgYml0IGhlcmUgYW5kIGJy
-aW5nIGl0IG9uIHRhYmxlIGZvciBkaXNjdXNzaW9uPwo+Cj4gVGhlIGlkZWEgYmVoaW5kIGhpcyBw
-YXRjaGVzIGlzIHRvIHByb3ZpZGUgYSB0YWJsZSBmb3IgZWFjaCBTb0Mgd2l0aCBzaG9ydAo+IGRl
-c2NyaXB0aW9uIG9mIGFsbCBhdmFpbGFibGUgZGV2aWNlcyBhbmQgZ2VuZXJhdGUgcGxhdGZvcm1f
-ZGV2aWNlIGVudHJpZXMKPiBkeW5hbWljYWxseSBmcm9tIHRoYXQgdGFibGUuCj4KPiBIZXJlIGlz
-IGEgc2hvcnQgY29kZSBleGFtcGxlOgo+Cj4gc3RydWN0IHMzY19wZGV2X3RhYmxlIHMzYzZ4eHhf
-ZGV2X3RhYmxlW10gX19pbml0ZGF0YSA9IHsKPiAgwqAgwqAgwqAgwqB7Cj4gIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgLnR5cGUgwqAgPSBTQU1TVU5HX0RFVklDRV9VQVJULAo+ICDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoC5uYW1lIMKgID0gInMzYzY0MDAtdWFydCIsCj4gIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgLmluZGV4IMKgPSAwLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5iYXNlIMKg
-ID0gUzNDX1BBX1VBUlQwLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5pcnEgwqAgwqA9IElS
-UV9TM0NVQVJUX1JYMCwKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAudGVtcGxhdGUgPSAmdGVt
-cGxhdGVfdWFydF9zM2M2NHh4LAo+ICDCoCDCoCDCoCDCoH0sIHsKPiAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAudHlwZSDCoCA9IFNBTVNVTkdfREVWSUNFX1VBUlQsCj4gIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgLm5hbWUgwqAgPSAiczNjNjQwMC11YXJ0IiwKPiAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAuaW5kZXggwqA9IDEsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLmJhc2UgwqAgPSBT
-M0NfUEFfVUFSVDEsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLmlycSDCoCDCoD0gSVJRX1Mz
-Q1VBUlRfUlgxLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC50ZW1wbGF0ZSA9ICZ0ZW1wbGF0
-ZV91YXJ0X3MzYzY0eHgsCj4gIMKgIMKgIMKgIMKgfSwgewo+ICDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoC50eXBlIMKgID0gU0FNU1VOR19ERVZJQ0VfVUFSVCwKPiAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAubmFtZSDCoCA9ICJzM2M2NDAwLXVhcnQiLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oC5pbmRleCDCoD0gMiwKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAuYmFzZSDCoCA9IFMzQ19Q
-QV9VQVJUMiwKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAuaXJxIMKgIMKgPSBJUlFfUzNDVUFS
-VF9SWDIsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLnRlbXBsYXRlID0gJnRlbXBsYXRlX3Vh
-cnRfczNjNjR4eCwKPiAgwqAgwqAgwqAgwqB9LCB7Cj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-LnR5cGUgwqAgPSBTQU1TVU5HX0RFVklDRV9VQVJULAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oC5uYW1lIMKgID0gInMzYzY0MDAtdWFydCIsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLmlu
-ZGV4IMKgPSAzLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5iYXNlIMKgID0gUzNDX1BBX1VB
-UlQzLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5pcnEgwqAgwqA9IElSUV9TM0NVQVJUX1JY
-MywKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAudGVtcGxhdGUgPSAmdGVtcGxhdGVfdWFydF9z
-M2M2NHh4LAo+ICDCoCDCoCDCoCDCoH0sIHsKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAudHlw
-ZSDCoCA9IFNBTVNVTkdfREVWSUNFX1dBVENIRE9HLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oC5uYW1lIMKgID0gInMzYzI0MTAtd2R0IiwKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAuaW5k
-ZXggwqA9IC0xLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5iYXNlIMKgID0gUzNDNjRYWF9Q
-QV9XQVRDSERPRywKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAuaXJxIMKgIMKgPSBJUlFfV0RU
-LAo+ICDCoCDCoCDCoCDCoH0sIHsKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAudHlwZSDCoCA9
-IFNBTVNVTkdfREVWSUNFX1NESENJLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5uYW1lIMKg
-ID0gInMzYy1zZGhjaSIsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLmluZGV4IMKgPSAwLAo+
-ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5iYXNlIMKgID0gUzNDNjRYWF9QQV9IU01NQzAgLAo+
-ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5pcnEgwqAgwqA9IElSUV9IU01NQzAsCj4gIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgLmRtYSDCoCDCoD0gJnNhbXN1bmdfc3RkX2RtYV9tYXNrLAo+ICDC
-oCDCoCDCoCDCoH0sIHsKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAudHlwZSDCoCA9IFNBTVNV
-TkdfREVWSUNFX1NESENJLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5uYW1lIMKgID0gInMz
-Yy1zZGhjaSIsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLmluZGV4IMKgPSAxLAo+ICDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoC5iYXNlIMKgID0gUzNDNjRYWF9QQV9IU01NQzEsCj4gIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgLmlycSDCoCDCoD0gSVJRX0hTTU1DMSwKPiAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAuZG1hIMKgIMKgPSAmc2Ftc3VuZ19zdGRfZG1hX21hc2ssCj4gIMKgIMKgIMKg
-IMKgfSwgewo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC50eXBlIMKgID0gU0FNU1VOR19ERVZJ
-Q0VfU0RIQ0ksCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLm5hbWUgwqAgPSAiczNjLXNkaGNp
-IiwKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAuaW5kZXggwqA9IDIsCj4gIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgLmJhc2UgwqAgPSBTM0M2NFhYX1BBX0hTTU1DMiwKPiAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAuaXJxIMKgIMKgPSBJUlFfSFNNTUMxLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoC5kbWEgwqAgwqA9ICZzYW1zdW5nX3N0ZF9kbWFfbWFzaywKPiAgwqAgwqAgwqAgwqB9LCB7
-Cj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLnR5cGUgwqAgPSBTQU1TVU5HX0RFVklDRV9PSENJ
-LAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5uYW1lIMKgID0gInMzYzI0MTAtb2hjaSIsCj4g
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLmluZGV4IMKgPSAtMSwKPiAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAuYmFzZSDCoCA9IFMzQzY0WFhfUEFfVVNCSE9TVCwKPiAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAuaXJxIMKgIMKgPSBJUlFfVVNCSCwKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAu
-ZG1hIMKgIMKgPSAmc2Ftc3VuZ19zdGRfZG1hX21hc2ssCj4gIMKgIMKgIMKgIMKgfSwgewo+ICDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoC50eXBlIMKgID0gU0FNU1VOR19ERVZJQ0VfTkFORCwKPiAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAubmFtZSDCoCA9ICJzM2M2NDAwLW5hbmQiLAo+ICDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoC5pbmRleCDCoD0gLTEsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgLmJhc2UgwqAgPSAweDRFMDAwMDAwLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5pcnEg
-wqAgwqA9IElSUV9ORkMsCj4gIMKgIMKgIMKgIMKgfSwgewo+ICDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoC50eXBlIMKgID0gU0FNU1VOR19ERVZJQ0VfSTJDLAo+ICDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoC5uYW1lIMKgID0gInMzYzI0NDAtaTJjIiwKPiAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAu
-aW5kZXggwqA9IDAsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLmJhc2UgwqAgPSBTM0M2NFhY
-X1BBX0lJQzAsCj4gIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLmlycSDCoCDCoD0gSVJRX0lJQywK
-PiAgwqAgwqAgwqAgwqB9LCB7Cj4gLi4uCj4KPiBUaGlzIHNvbHV0aW9uIGlzIGltaG8gcmVhbGx5
-IGNsZWFuIGFuIGVhc3kgdG8gdW5kZXJzdGFuZC4gSXQgaXMgYWxzbwo+IGVhc3kgdG8gY2hlY2sg
-d2hpY2ggU29DIGhhcyB3aGljaCBwZXJpcGhlcmFscyBkZWZpbmVkIGFuZCBob3cuCj4KClllcCwg
-dGhpcyB3YXMgYWxyZWFkeSB1c2VkIGluIGFyY2gvYXJtL21hY2gtbW1wLCBhbmQgSSB3cm90ZSB0
-aGF0LgoKSXQncyBhY3R1YWxseSBhbiBpbXByb3ZlZCB2ZXJzaW9uIG9mIG11bHRpcGxlIHBsYXRm
-b3JtX2RldmljZS4KCj4gSSBob3BlIEJlbiB3aWxsIGJlIGFibGUgdG8gZmluaXNoIGl0IHNvb24g
-YW5kIGFsbCBTYW1zdW5nIHBsYXRmb3JtcyBjYW4KPiBiZSBjb252ZXJ0ZWQgZm9yIGl0LiBUaGVu
-IGNyZWF0aW5nIGEgc2luZ2xlIGtlcm5lbCBmb3IgbW9yZSB0aGFuIG9uZSBTb0MKPiBzaG91bGQg
-YmUgcG9zc2libGUgd2l0aCBvbmx5IGEgZmV3IGFkZGl0aW9uYWwgY2hhbmdlcy4KPgo+PiBQUzog
-TXkgZmVlbGluZyBvZiBjb21tZW50aW5nIHNldmVyYWwgb2YgdGhlIHNhbXN1bmcgcGF0Y2hlcyBz
-byBmYXIgdHVybnMKPj4gb3V0IHRvIGJlIHF1aXRlIGZydXN0cmF0ZWQsIG9yIEknbSBqdXN0IHRv
-byBzZW5zaXRpdmUuIE5PVEUgbmVpdGhlciBhbSBJCj4+IE5BS2luZyBTYW1zdW5nIHBhdGNoZXMs
-IG5vciBhbSBJIGludGVyZXN0ZWQgdG8gYmUgaW52b2x2ZWQsIEknbSBqdXN0IGdpdmluCj4+IG15
-IHN1Z2dlc3Rpb25zLgo+Cj4gSSdtIHNvcnJ5IGlmIEkgb2ZmZW5kZWQgWW91LiBJIGp1c3Qgd2Fu
-dGVkIHRvIHNob3cgdGhhdCB0aGUgc29sdXRpb24gaGFzCj4gYmVlbiBhbHJlYWR5IGZvdW5kLgo+
-Cj4gQmVzdCByZWdhcmRzCj4gLS0KPiBNYXJlayBTenlwcm93c2tpCj4gU2Ftc3VuZyBQb2xhbmQg
-UiZEIENlbnRlcgo+Cj4KPgo+Cg==
+On Wed, Jun 23, 2010 at 4:50 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> Joonyoung Shim wrote:
+>>
+>> This patch v2 set is to support gpio interrupts of samsung s5p cpus,=
+ and
+>> the GPIOlib gpio_to_irq goes to plat-samsung gpiolib, so patch v2 se=
+t
+>> has four commit smaller than v1.
+>>
+>> Changes since v1:
+>> - Add irq_base to s3c_gpio_chip struct
+>> - GPIOlib gpio_to_irq() is implemented to samsung_gpiolib_to_irq() o=
+f
+>> =A0 plat-samsung gpiolib
+>>
+>> Joonyoung Shim (4):
+>> =A0 =A0 =A0 ARM: S5PV210: Add gpio interrupt support
+>> =A0 =A0 =A0 ARM: S5PC100: Use S5P gpio interrupts interface
+>> =A0 =A0 =A0 ARM: S5PC100: Move external interrupt defines
+>> =A0 =A0 =A0 ARM: SAMSUNG: Add GPIOlib gpio_to_irq
+>>
+>> =A0arch/arm/mach-s5pc100/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =
+=A0 =A02 +-
+>> =A0arch/arm/mach-s5pc100/gpiolib.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =
+=A0 70 ++-----
+>> =A0arch/arm/mach-s5pc100/include/mach/gpio.h =A0 =A0 =A0| =A0 =A07 -
+>> =A0arch/arm/mach-s5pc100/include/mach/irqs.h =A0 =A0 =A0| =A0 18 ++-
+>> =A0arch/arm/mach-s5pc100/include/mach/regs-gpio.h | =A0 =A07 +
+>> =A0arch/arm/mach-s5pc100/irq-gpio.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0=
+266
+> ------------------------
+>> =A0arch/arm/mach-s5pv210/gpiolib.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =
+=A0 18 ++-
+>> =A0arch/arm/mach-s5pv210/include/mach/irqs.h =A0 =A0 =A0| =A0 16 ++-
+>> =A0arch/arm/plat-s5p/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ | =A0 =A02 +-
+>> =A0arch/arm/plat-s5p/irq-gpioint.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =
+=A0208 ++++++++++++++++++
+>> =A0arch/arm/plat-samsung/gpiolib.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =
+=A0 =A09 +
+>> =A0arch/arm/plat-samsung/include/plat/gpio-core.h | =A0 =A06 +
+>> =A012 files changed, 295 insertions(+), 334 deletions(-)
+>> =A0delete mode 100644 arch/arm/mach-s5pc100/irq-gpio.c
+>> =A0create mode 100644 arch/arm/plat-s5p/irq-gpioint.c
+>>
+>
+> I am sure this patchset is working code, but Ben had made suggestion =
+about
+> 'sparse irq'...
+> It is because there are too many gpio interrupts and having support o=
+f all
+> of them is unnecessary as realistically only few of them maybe used.
+> In fact in SMDK board there is no use of gpio in interrupt mode.
+>
+> Ben, I remember your suggestion for using 'sparse irq' for handling g=
+pio
+> interrupts.
+> And in fact, sparse irq implementation can be beneficial to many othe=
+r
+> boards...
+> Could you please explain about that?
+Interesting.
+you can find it by "[ARM] Preliminary support for dynamic IRQ" written =
+by Eric.
+Instead define the 'NR_IRQS' of chip, board can define each 'nr_irqs'
+at init time.
+
+Maybe smdk don't use the GPIOs. but mobile phones at samsung use the un=
+til MP0x.
+Sometime H/W team connect it at MP04 or MP05 which doesn't support
+GPIO interrupt.
+
+Thank you,
+Kyungmin Park
