@@ -1,108 +1,85 @@
-From: Eric Miao <eric.y.miao@gmail.com>
-Subject: Re: Samsung SoCs: preparation for single kernel
-Date: Wed, 23 Jun 2010 15:36:46 +0800
-Message-ID: <AANLkTinYTm-AZDXOSvtTptGg1HYhKfItYYW8tBuF4SPV@mail.gmail.com>
-References: <AANLkTinGwWzIAOe2tj6V2kCrMiPT7PHlYs1kFS-IsiN4@mail.gmail.com>
-	<AANLkTil-AOEqhMOXydaiA1X_v0rjoNQxALrO0UY638AS@mail.gmail.com>
-	<20100623072855.GZ12255@atomide.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 0/4] ARM: S5P: Support gpio interrupts
+Date: Wed, 23 Jun 2010 16:50:32 +0900
+Message-ID: <004601cb12a8$c869e560$593db020$%kim@samsung.com>
+References: <4C11F4CA.10802@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:61066 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751638Ab0FWHhI convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:60998 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751141Ab0FWHui (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Jun 2010 03:37:08 -0400
-Received: by vws9 with SMTP id 9so578566vws.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jun 2010 00:37:06 -0700 (PDT)
-In-Reply-To: <20100623072855.GZ12255@atomide.com>
+	Wed, 23 Jun 2010 03:50:38 -0400
+Received: from epmmp2 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L4G00F50J4CAJ70@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 23 Jun 2010 16:50:36 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L4G003H9J4CSC@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 23 Jun 2010 16:50:36 +0900 (KST)
+In-reply-to: <4C11F4CA.10802@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>
-Cc: Kyungmin Park <kmpark@infradead.org>, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, arm-linux <linux-arm-kernel@lists.infradead.org>, Ben Dooks <ben-linux@fluff.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: 'Joonyoung Shim' <jy0922.shim@samsung.com>, ben-linux@fluff.org
+Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Wed, Jun 23, 2010 at 3:28 PM, Tony Lindgren <tony@atomide.com> wrote=
-:
-> * Eric Miao <eric.y.miao@gmail.com> [100623 03:48]:
->> On Wed, Jun 23, 2010 at 7:27 AM, Kyungmin Park <kmpark@infradead.org=
-> wrote:
->> > To Ben,
->> >
->> > I really need single kernel for s5pc110 (cortex A8) and s5pc210
->> > (cortex A9) at least.
->> > Fortunately arm move to these approaches recently. but current Sam=
-sung
->> > SoCs not prepare these one.
->> >
->> > So I wonder do you have a plan or how to address these issues?
->> > How to assign the address at resources and use it at runtime?
->> >
->> > Personally I want to use cpu_is_*. but you reject it to use.
->> > Other way is that we can create the base address variables and ass=
-ign
->> > it at init time.
->> >
->> > Please give your opinions.
->> >
->> > Thank you,
->> > Kyungmin Park
->> >
->> > e.g., cpu_is_* usage at OMAP tree
->> >
->> > static void omap_init_mcspi(void)
->> > {
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0if (cpu_is_omap44xx())
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0omap4_mcspi=
-_fixup();
->> >
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0platform_device_register(&omap2_mcspi1)=
-;
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0platform_device_register(&omap2_mcspi2)=
-;
->> >
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0if (cpu_is_omap2430() || cpu_is_omap343=
-x() || cpu_is_omap44xx())
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0omap2_mcspi=
-3_init();
->> >
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0if (cpu_is_omap343x() || cpu_is_omap44x=
-x())
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0omap2_mcspi=
-4_init();
->> > }
->>
->> Just my two cents: cpu_is_*() can be used, but only when absolutely =
-necessary.
->> The s3c does a CPU detection at startup, so I guess the usage of cpu=
-_is_*()
->> can be even reduced.
->>
->> I'm not sure if the above case is a good reference or not. The omap_=
-init_mcspi
->> is called from omap2_init_devices(), while the registration can actu=
-ally be
->> made into the board init code when that device is used (some of the =
-McSPIs are
->> not used, and it's not necessary to register them), and the differen=
-ces be
->> handled in the driver.
->
-> Few comments regarding the cpu_is_omap macros: The macros should real=
-ly be
-> soc_is_omapxxxx() instead cpu_is_omapxxxx().
+Joonyoung Shim wrote:
+> 
+> This patch v2 set is to support gpio interrupts of samsung s5p cpus, and
+> the GPIOlib gpio_to_irq goes to plat-samsung gpiolib, so patch v2 set
+> has four commit smaller than v1.
+> 
+> Changes since v1:
+> - Add irq_base to s3c_gpio_chip struct
+> - GPIOlib gpio_to_irq() is implemented to samsung_gpiolib_to_irq() of
+>   plat-samsung gpiolib
+> 
+> Joonyoung Shim (4):
+>       ARM: S5PV210: Add gpio interrupt support
+>       ARM: S5PC100: Use S5P gpio interrupts interface
+>       ARM: S5PC100: Move external interrupt defines
+>       ARM: SAMSUNG: Add GPIOlib gpio_to_irq
+> 
+>  arch/arm/mach-s5pc100/Makefile                 |    2 +-
+>  arch/arm/mach-s5pc100/gpiolib.c                |   70 ++-----
+>  arch/arm/mach-s5pc100/include/mach/gpio.h      |    7 -
+>  arch/arm/mach-s5pc100/include/mach/irqs.h      |   18 ++-
+>  arch/arm/mach-s5pc100/include/mach/regs-gpio.h |    7 +
+>  arch/arm/mach-s5pc100/irq-gpio.c               |  266
+------------------------
+>  arch/arm/mach-s5pv210/gpiolib.c                |   18 ++-
+>  arch/arm/mach-s5pv210/include/mach/irqs.h      |   16 ++-
+>  arch/arm/plat-s5p/Makefile                     |    2 +-
+>  arch/arm/plat-s5p/irq-gpioint.c                |  208 ++++++++++++++++++
+>  arch/arm/plat-samsung/gpiolib.c                |    9 +
+>  arch/arm/plat-samsung/include/plat/gpio-core.h |    6 +
+>  12 files changed, 295 insertions(+), 334 deletions(-)
+>  delete mode 100644 arch/arm/mach-s5pc100/irq-gpio.c
+>  create mode 100644 arch/arm/plat-s5p/irq-gpioint.c
+> 
 
-Right, that will be more specific. cpu_is_* could be used only
-with the ARM core, like cpu_is_arm946ejs(), ... And apparently
-we all have abusively used it :-)
+I am sure this patchset is working code, but Ben had made suggestion about
+'sparse irq'...
+It is because there are too many gpio interrupts and having support of all
+of them is unnecessary as realistically only few of them maybe used.
+In fact in SMDK board there is no use of gpio in interrupt mode.
 
->
-> Also, sprinkling these too much makes the code messy and hard to patc=
-h for
-> new processors. So you should limit the use to very selected places d=
-uring
-> init, then set some flag like OMAP_HAS_MCSPI2 | OMAP_HAS_MCSPI3 or so=
-mething
-> similar.
+Ben, I remember your suggestion for using 'sparse irq' for handling gpio
+interrupts.
+And in fact, sparse irq implementation can be beneficial to many other
+boards...
+Could you please explain about that?
 
-Exactly.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
