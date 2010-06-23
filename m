@@ -1,93 +1,89 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: clock updates
-Date: Thu, 24 Jun 2010 00:24:22 +0100
-Message-ID: <20100623232422.GB16584@trinity.fluff.org>
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [GIT PULL linux-next] Samsung S5P SoCs
+Date: Thu, 24 Jun 2010 09:52:33 +1000
+Message-ID: <20100624095233.d2daaa4f.sfr@canb.auug.org.au>
+References: <000d01cb126e$fa193690$ee4ba3b0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="PGP-SHA1";
+ boundary="Signature=_Thu__24_Jun_2010_09_52_33_+1000_xsbR0yD7eceO01Mc"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:60141 "EHLO trinity.fluff.org"
+Received: from chilli.pcug.org.au ([203.10.76.44]:41920 "EHLO smtps.tip.net.au"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753855Ab0FWXYX (ORCPT
+	id S1752399Ab0FWXwl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Jun 2010 19:24:23 -0400
-Content-Disposition: inline
+	Wed, 23 Jun 2010 19:52:41 -0400
+In-Reply-To: <000d01cb126e$fa193690$ee4ba3b0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, ben-linux@fluff.org
 
-I've been looking into updating the current samsung socs to use
-clkdev to lookup clocks. Currently we have a few issues that we
-could do with sorting before running the conversion to clkdev.
+--Signature=_Thu__24_Jun_2010_09_52_33_+1000_xsbR0yD7eceO01Mc
+Content-Type: text/plain; charset=US-ASCII
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Firstly, the s5pc100 has some clocks that could be merged into
-common s5p, and a few which don't seem to match the others in
-the s5p series.
+Hi,
 
-The i2s clocks which we should look at mergining are:
+On Wed, 23 Jun 2010 09:56:52 +0900 Kukjin Kim <kgene.kim@samsung.com> wrote:
+>
+> Could you please pull the following into linux-next?
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git#for=
+-ne
+> xt
+>=20
+> This tree is for next- Samsung S5P SoCs such as S5P6440, S5P6442, S5PC100,
+> and S5PV210/S5PC110.
 
-i2s_cdclk<0..2>
-pcm_cdclk<0..l>
+I have added this from today.  I have called the tree s5p.  Currently you
+alone are the contact for problems to do with this tree - should I add
+anyone else (or a mailing list)?
 
-also, clocks that have may need changing:
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgment of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
 
-rotator	     => rot
-keyif	     => keypad
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+	Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
 
-this isn't an complete list, still working on the changes.
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
 
-The big changes with respect to drivers is that we will now be using
-clk_get(dev, NULL) to get the clock names, and any bus clocks such
-as the sdhci bus clock will be updated.
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
 
-The intention with both the SDHCI and the SPI is to change the clock
-lookups to reflect the mux positions, so the sdhci clocks on the
-s3c64xx would be changed to use the following lookups:
+Legal Stuff:
+By participating in linux-next, your subsystem tree contributions are
+public and will be included in the linux-next trees.  You may be sent
+e-mail messages indicating errors or other issues when the
+patches/commits from your subsystem tree are merged and tested in
+linux-next.  These messages may also be cross-posted to the linux-next
+mailing list, the linux-kernel mailing list, etc.  The linux-next tree
+project and IBM (my employer) make no warranties regarding the linux-next
+project, the testing procedures, the results, the e-mails, etc.  If you
+don't agree to these ground rules, let me know and I'll remove your tree
+from participation in linux-next.
 
-hsmmc	=> mux0
-mmc_bus	=> mux2
-48m	=> mux3
+--Signature=_Thu__24_Jun_2010_09_52_33_+1000_xsbR0yD7eceO01Mc
+Content-Type: application/pgp-signature
 
-This would avoid passing the clock names through the platform data, if
-the boards or the arch needs to avoid a clock, an array of clock enable
-or disable bits. Any unimplemented clocks will return NULL to ensure
-that they can be distinguished from a clock that isn't available.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
 
-The changes would be to remove the .name field from all the s3c struct clk,
-and replace it with a pointer to a lookup (so that if the clock does not
-need a name then it doesn't need a lookup).
+iEYEARECAAYFAkwinkEACgkQjjKRsyhoI8zjzwCfWAbQvAWYLYUSfNB6YKyfFRtp
+qvgAoKSBFie65bCbdU8N1SfJu1lBXjs+
+=Naif
+-----END PGP SIGNATURE-----
 
-There are also a number of clocks that probably don't need a name as they
-are part of the clock heirarchy, it would be useful to have a call that
-returns all possible parents of a given clock.
-
-I'll post the script whcih runs the changes once i've finished the last
-few details to show what happens.
-
-With resepect to the clkdev clk_get() function, we may need to do a couple of
-updates (ie, override it for ourselves) due to the following two problems:
-
-1) The s3c/s5p devices change name depending on the soc they are attached
-   to, which means we may need to cut the s3cxxxx- part of the device name
-   off before running the lookup
-
-2) Some of the lookups are done early for the serial driver, which means
-   that the platform devices's name has not been setup, so something needs
-   to be done about this.
-
--- 
-Ben
-
-
-
-
-
-
-
-
-
-
--- 
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+--Signature=_Thu__24_Jun_2010_09_52_33_+1000_xsbR0yD7eceO01Mc--
