@@ -1,66 +1,135 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: SMDK6440: I2C writes fails
-Date: Thu, 24 Jun 2010 18:05:12 +0530
-Message-ID: <AANLkTikxaMB4eqnNuC8lneEt333gRWzKfLHy2-ChQeB5@mail.gmail.com>
-References: <AANLkTim5qV8N_0iZ9DViJG1-IqYHhO-DKJZrd7RHpWbB@mail.gmail.com>
-	<20100624113236.GA3958@opensource.wolfsonmicro.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 1/2] ARM: S5PV210: Fix Aquila board UART FIFO mode
+ configration
+Date: Thu, 24 Jun 2010 21:56:45 +0900
+Message-ID: <012c01cb139c$b6967250$23c356f0$%kim@samsung.com>
+References: <1277354105-13097-1-git-send-email-jy0922.shim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:41148 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754456Ab0FXMfd convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:55800 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752381Ab0FXM4p (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Jun 2010 08:35:33 -0400
-Received: by gxk28 with SMTP id 28so708644gxk.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Jun 2010 05:35:32 -0700 (PDT)
-In-Reply-To: <20100624113236.GA3958@opensource.wolfsonmicro.com>
+	Thu, 24 Jun 2010 08:56:45 -0400
+Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L4I00HE1RYK66A0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 24 Jun 2010 21:56:44 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L4I008HZRYJGO@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 24 Jun 2010 21:56:43 +0900 (KST)
+In-reply-to: <1277354105-13097-1-git-send-email-jy0922.shim@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
+To: 'Joonyoung Shim' <jy0922.shim@samsung.com>, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, ben-linux@fluff.org
 
-Hi Mark,
+Joonyoung Shim wrote:
+> 
+> The Aquila board uses max UART FIFO size to each UART channels. UART0
+> supports 256 bytes FIFO, but Aquila board supports 128 bytes FIFO
+> because of initial chip bug.
+> 
+> Also, this patch fixes to "s/smdkv210/aquila".
+> 
+> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-s5pv210/mach-aquila.c |   24 +++++++++++++++---------
+>  1 files changed, 15 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/arm/mach-s5pv210/mach-aquila.c
+b/arch/arm/mach-s5pv210/mach-
+> aquila.c
+> index 10bc76e..5795a7c 100644
+> --- a/arch/arm/mach-s5pv210/mach-aquila.c
+> +++ b/arch/arm/mach-s5pv210/mach-aquila.c
+> @@ -39,38 +39,44 @@
+> 
+>  #define S5PV210_ULCON_DEFAULT	S3C2410_LCON_CS8
+> 
+> -#define S5PV210_UFCON_DEFAULT	(S3C2410_UFCON_FIFOMODE |	\
+> -				 S5PV210_UFCON_TXTRIG4 |	\
+> -				 S5PV210_UFCON_RXTRIG4)
+> +#define S5PV210_UFCON_DEFAULT	S3C2410_UFCON_FIFOMODE
+> 
+I think it is better to change 'S5PV210_xxx_DEFAULT' to board specific name
+later.
 
-On 24 June 2010 17:02, Mark Brown <broonie@opensource.wolfsonmicro.com>=
- wrote:
->
-> On Wed, Jun 23, 2010 at 11:15:55AM +0530, Naveen Krishna Ch wrote:
->
-> > Where should i be looking,
->
-> I would suggest looking at the driver and comparing it with the
-> datasheet.
->
-> > Will changing the spin counts work?
->
-> I'd expect this to be unlikely. =A0Note that if we run out of spins w=
-e
-> still go for the 1ms sleep that was being used originally so it's mor=
-e
-> likely that there's a bug in the chip when that register is being rea=
-d
-> (though this would be surprising) or some other change in your kernel=
- is
-> causing problems.
+But right now, it's ok.
 
-=A0--- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -527,7 +527,7 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i=
-2c,
-=A0=A0 =A0 =A0 =A0/* first, try busy waiting briefly */
-=A0=A0 =A0 =A0 =A0do {
-=A0=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0iicstat =3D readl(i2c->regs + S3C2410=
-_IICSTAT);
-- =A0 =A0 =A0 } while ((iicstat & S3C2410_IICSTAT_START) && --spins);
-+ =A0 =A0 =A0 } while (--spins && (iicstat & S3C2410_IICSTAT_START));
+> -static struct s3c2410_uartcfg smdkv210_uartcfgs[] __initdata = {
+> +static struct s3c2410_uartcfg aquila_uartcfgs[] __initdata = {
+>  	[0] = {
+>  		.hwport		= 0,
+>  		.flags		= 0,
+>  		.ucon		= S5PV210_UCON_DEFAULT,
+>  		.ulcon		= S5PV210_ULCON_DEFAULT,
+> -		.ufcon		= S5PV210_UFCON_DEFAULT,
+> +		/*
+> +		 * Actually UART0 can support 256 bytes fifo, but aquila
+board
+> +		 * supports 128 bytes fifo because of initial chip bug
+> +		 */
+> +		.ufcon		= S5PV210_UFCON_DEFAULT |
+> +			S5PV210_UFCON_TXTRIG128 |
+> S5PV210_UFCON_RXTRIG128,
+>  	},
+>  	[1] = {
+>  		.hwport		= 1,
+>  		.flags		= 0,
+>  		.ucon		= S5PV210_UCON_DEFAULT,
+>  		.ulcon		= S5PV210_ULCON_DEFAULT,
+> -		.ufcon		= S5PV210_UFCON_DEFAULT,
+> +		.ufcon		= S5PV210_UFCON_DEFAULT |
+> +			S5PV210_UFCON_TXTRIG64 |
+> S5PV210_UFCON_RXTRIG64,
+>  	},
+>  	[2] = {
+>  		.hwport		= 2,
+>  		.flags		= 0,
+>  		.ucon		= S5PV210_UCON_DEFAULT,
+>  		.ulcon		= S5PV210_ULCON_DEFAULT,
+> -		.ufcon		= S5PV210_UFCON_DEFAULT,
+> +		.ufcon		= S5PV210_UFCON_DEFAULT |
+> +			S5PV210_UFCON_TXTRIG16 |
+> S5PV210_UFCON_RXTRIG16,
+>  	},
+>  	[3] = {
+>  		.hwport		= 3,
+>  		.flags		= 0,
+>  		.ucon		= S5PV210_UCON_DEFAULT,
+>  		.ulcon		= S5PV210_ULCON_DEFAULT,
+> -		.ufcon		= S5PV210_UFCON_DEFAULT,
+> +		.ufcon		= S5PV210_UFCON_DEFAULT |
+> +			S5PV210_UFCON_TXTRIG16 |
+> S5PV210_UFCON_RXTRIG16,
+>  	},
+>  };
+> 
+> @@ -124,7 +130,7 @@ static void __init aquila_map_io(void)
+>  {
+>  	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
+>  	s3c24xx_init_clocks(24000000);
+> -	s3c24xx_init_uarts(smdkv210_uartcfgs,
+> ARRAY_SIZE(smdkv210_uartcfgs));
+> +	s3c24xx_init_uarts(aquila_uartcfgs, ARRAY_SIZE(aquila_uartcfgs));
+>  }
+> 
+>  static void __init aquila_machine_init(void)
+> --
 
-=A0=A0 =A0 =A0 =A0/* if that timed out sleep */
-=A0=A0 =A0 =A0 =A0if (!spins) {
+Will apply.
 
-Does the trick..
+Thanks.
 
+Best regards,
+Kgene.
 --
-Shine bright,
-(: Naveen Krishna Ch :)
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
