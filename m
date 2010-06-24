@@ -1,207 +1,105 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: Samsung SoCs: preparation for single kernel
-Date: Thu, 24 Jun 2010 11:08:09 +0900
-Message-ID: <AANLkTimqQyHLm4KcxYwYC8slSoy9udi2gganKdsD_8Nw@mail.gmail.com>
-References: <AANLkTinGwWzIAOe2tj6V2kCrMiPT7PHlYs1kFS-IsiN4@mail.gmail.com>
-	<AANLkTil-AOEqhMOXydaiA1X_v0rjoNQxALrO0UY638AS@mail.gmail.com>
-	<AANLkTil1i_ZGI8bY14HhjrAk9RooVreAJsTteqqrMgqJ@mail.gmail.com>
-	<AANLkTikDml6gQAsiRrCjIt4bUD3hnpAATr1erqCGOJMd@mail.gmail.com>
-	<002301cb129c$ec59fe30$c50dfa90$%szyprowski@samsung.com>
-	<AANLkTikspf9zHuSKe86wDQxI12HpJo_occBlLUXBkjef@mail.gmail.com>
-	<003e01cb12b5$656c0670$30441350$%szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: [PATCH 1/2] ARM: S5PV210: Fix Aquila board UART FIFO mode configration
+Date: Thu, 24 Jun 2010 13:35:04 +0900
+Message-ID: <1277354105-13097-1-git-send-email-jy0922.shim@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-px0-f174.google.com ([209.85.212.174]:44145 "EHLO
-	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752927Ab0FXCIx convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:59162 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751172Ab0FXEf2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Jun 2010 22:08:53 -0400
-Received: by pxi7 with SMTP id 7so505299pxi.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 Jun 2010 19:08:18 -0700 (PDT)
-In-Reply-To: <003e01cb12b5$656c0670$30441350$%szyprowski@samsung.com>
+	Thu, 24 Jun 2010 00:35:28 -0400
+Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L4I00EL94R2K520@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 24 Jun 2010 13:35:26 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L4I00G8T4R2D1@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 24 Jun 2010 13:35:26 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Eric Miao <eric.y.miao@gmail.com>, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, arm-linux <linux-arm-kernel@lists.infradead.org>, Ben Dooks <ben-linux@fluff.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
 
-On Wed, Jun 23, 2010 at 6:20 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Hello,
->
-> On Wednesday, June 23, 2010 10:02 AM Eric Miao wrote:
->
->> >> Now you have
->> >>
->> >> s5pv210_device_hsmmc0
->> >> s5pc100_device_hsmmc0
->> >> s3c64xx_device_hsmmc0
->> >> ....
->> >>
->> >> each with a different base.
->> >
->> > There is no need for such code duplication.
->>
->> However, I believe this is the right way to go. A certain level of
->> duplication is the price to pay for a generic and clean solution.
->>
->> When a peripheral controller or IP is moved from one SoC to the
->> next generation, there are several things could have been changed:
->>
->> 1. new base address and IRQ number
->> 2. fixes and enhancements to the original IP
->>
->> 1. will result in a different 'struct resource', and 2. will result =
-in a
->> different 'struct platform_device' with a different name, so the dri=
-ver
->> can match the platform_device_id table as you agreed I'm right on
->> that recommendation.
->>
->> They are actually _two_ different devices.
->
-> Right, they are separate entities, but would be really good if a simi=
-lar
-> git brcode could be merged together.
->
->> > Ben is working on a solution for
->> > a single kernel which supports multiple SoCs. Some of his work in
->> progress can
->> > be found here: git://git.fluff.org/bjdooks/linux branch wip-samsun=
-g-dev
->> and
->> > wip-samsung-dev2.
->>
->> Could you describe it a bit here and bring it on table for discussio=
-n?
->
-> The idea behind his patches is to provide a table for each SoC with s=
-hort
-> description of all available devices and generate platform_device ent=
-ries
-> dynamically from that table.
->
-> Here is a short code example:
->
-> struct s3c_pdev_table s3c6xxx_dev_table[] __initdata =3D {
-> =A0 =A0 =A0 =A0{
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.type =A0 =3D SAMSUNG_DEVICE_UART,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "s3c6400-uart",
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.index =A0=3D 0,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.base =A0 =3D S3C_PA_UART0,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.irq =A0 =A0=3D IRQ_S3CUART_RX0,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.template =3D &template_uart_s3c64xx,
-> =A0 =A0 =A0 =A0}, {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.type =A0 =3D SAMSUNG_DEVICE_UART,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "s3c6400-uart",
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.index =A0=3D 1,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.base =A0 =3D S3C_PA_UART1,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.irq =A0 =A0=3D IRQ_S3CUART_RX1,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.template =3D &template_uart_s3c64xx,
-> =A0 =A0 =A0 =A0}, {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.type =A0 =3D SAMSUNG_DEVICE_UART,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "s3c6400-uart",
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.index =A0=3D 2,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.base =A0 =3D S3C_PA_UART2,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.irq =A0 =A0=3D IRQ_S3CUART_RX2,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.template =3D &template_uart_s3c64xx,
-> =A0 =A0 =A0 =A0}, {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.type =A0 =3D SAMSUNG_DEVICE_UART,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "s3c6400-uart",
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.index =A0=3D 3,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.base =A0 =3D S3C_PA_UART3,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.irq =A0 =A0=3D IRQ_S3CUART_RX3,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.template =3D &template_uart_s3c64xx,
-> =A0 =A0 =A0 =A0}, {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.type =A0 =3D SAMSUNG_DEVICE_WATCHDOG,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "s3c2410-wdt",
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.index =A0=3D -1,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.base =A0 =3D S3C64XX_PA_WATCHDOG,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.irq =A0 =A0=3D IRQ_WDT,
-> =A0 =A0 =A0 =A0}, {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.type =A0 =3D SAMSUNG_DEVICE_SDHCI,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "s3c-sdhci",
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.index =A0=3D 0,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.base =A0 =3D S3C64XX_PA_HSMMC0 ,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.irq =A0 =A0=3D IRQ_HSMMC0,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.dma =A0 =A0=3D &samsung_std_dma_mask,
-> =A0 =A0 =A0 =A0}, {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.type =A0 =3D SAMSUNG_DEVICE_SDHCI,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "s3c-sdhci",
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.index =A0=3D 1,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.base =A0 =3D S3C64XX_PA_HSMMC1,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.irq =A0 =A0=3D IRQ_HSMMC1,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.dma =A0 =A0=3D &samsung_std_dma_mask,
-> =A0 =A0 =A0 =A0}, {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.type =A0 =3D SAMSUNG_DEVICE_SDHCI,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "s3c-sdhci",
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.index =A0=3D 2,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.base =A0 =3D S3C64XX_PA_HSMMC2,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.irq =A0 =A0=3D IRQ_HSMMC1,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.dma =A0 =A0=3D &samsung_std_dma_mask,
-> =A0 =A0 =A0 =A0}, {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.type =A0 =3D SAMSUNG_DEVICE_OHCI,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "s3c2410-ohci",
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.index =A0=3D -1,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.base =A0 =3D S3C64XX_PA_USBHOST,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.irq =A0 =A0=3D IRQ_USBH,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.dma =A0 =A0=3D &samsung_std_dma_mask,
-> =A0 =A0 =A0 =A0}, {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.type =A0 =3D SAMSUNG_DEVICE_NAND,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "s3c6400-nand",
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.index =A0=3D -1,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.base =A0 =3D 0x4E000000,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.irq =A0 =A0=3D IRQ_NFC,
-> =A0 =A0 =A0 =A0}, {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.type =A0 =3D SAMSUNG_DEVICE_I2C,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "s3c2440-i2c",
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.index =A0=3D 0,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.base =A0 =3D S3C64XX_PA_IIC0,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.irq =A0 =A0=3D IRQ_IIC,
-> =A0 =A0 =A0 =A0}, {
-> ...
->
-> This solution is imho really clean an easy to understand. It is also
-> easy to check which SoC has which peripherals defined and how.
+The Aquila board uses max UART FIFO size to each UART channels. UART0
+supports 256 bytes FIFO, but Aquila board supports 128 bytes FIFO
+because of initial chip bug.
 
-Question. recently it's changed to use MMC0, MMC2, MMC3, then how to de=
-fine it?
-More basically, where these info are defined for chip or board?
-If chip, the how to handle several variants?
+Also, this patch fixes to "s/smdkv210/aquila".
 
-Thank you,
-Kyungmin Park
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-s5pv210/mach-aquila.c |   24 +++++++++++++++---------
+ 1 files changed, 15 insertions(+), 9 deletions(-)
 
->
-> I hope Ben will be able to finish it soon and all Samsung platforms c=
-an
-> be converted for it. Then creating a single kernel for more than one =
-SoC
-> should be possible with only a few additional changes.
->
->> PS: My feeling of commenting several of the samsung patches so far t=
-urns
->> out to be quite frustrated, or I'm just too sensitive. NOTE neither =
-am I
->> NAKing Samsung patches, nor am I interested to be involved, I'm just=
- givin
->> my suggestions.
->
-> I'm sorry if I offended You. I just wanted to show that the solution =
-has
-> been already found.
->
-> Best regards
-> --
-> Marek Szyprowski
-> Samsung Poland R&D Center
->
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+diff --git a/arch/arm/mach-s5pv210/mach-aquila.c b/arch/arm/mach-s5pv210/mach-aquila.c
+index 10bc76e..5795a7c 100644
+--- a/arch/arm/mach-s5pv210/mach-aquila.c
++++ b/arch/arm/mach-s5pv210/mach-aquila.c
+@@ -39,38 +39,44 @@
+ 
+ #define S5PV210_ULCON_DEFAULT	S3C2410_LCON_CS8
+ 
+-#define S5PV210_UFCON_DEFAULT	(S3C2410_UFCON_FIFOMODE |	\
+-				 S5PV210_UFCON_TXTRIG4 |	\
+-				 S5PV210_UFCON_RXTRIG4)
++#define S5PV210_UFCON_DEFAULT	S3C2410_UFCON_FIFOMODE
+ 
+-static struct s3c2410_uartcfg smdkv210_uartcfgs[] __initdata = {
++static struct s3c2410_uartcfg aquila_uartcfgs[] __initdata = {
+ 	[0] = {
+ 		.hwport		= 0,
+ 		.flags		= 0,
+ 		.ucon		= S5PV210_UCON_DEFAULT,
+ 		.ulcon		= S5PV210_ULCON_DEFAULT,
+-		.ufcon		= S5PV210_UFCON_DEFAULT,
++		/*
++		 * Actually UART0 can support 256 bytes fifo, but aquila board
++		 * supports 128 bytes fifo because of initial chip bug
++		 */
++		.ufcon		= S5PV210_UFCON_DEFAULT |
++			S5PV210_UFCON_TXTRIG128 | S5PV210_UFCON_RXTRIG128,
+ 	},
+ 	[1] = {
+ 		.hwport		= 1,
+ 		.flags		= 0,
+ 		.ucon		= S5PV210_UCON_DEFAULT,
+ 		.ulcon		= S5PV210_ULCON_DEFAULT,
+-		.ufcon		= S5PV210_UFCON_DEFAULT,
++		.ufcon		= S5PV210_UFCON_DEFAULT |
++			S5PV210_UFCON_TXTRIG64 | S5PV210_UFCON_RXTRIG64,
+ 	},
+ 	[2] = {
+ 		.hwport		= 2,
+ 		.flags		= 0,
+ 		.ucon		= S5PV210_UCON_DEFAULT,
+ 		.ulcon		= S5PV210_ULCON_DEFAULT,
+-		.ufcon		= S5PV210_UFCON_DEFAULT,
++		.ufcon		= S5PV210_UFCON_DEFAULT |
++			S5PV210_UFCON_TXTRIG16 | S5PV210_UFCON_RXTRIG16,
+ 	},
+ 	[3] = {
+ 		.hwport		= 3,
+ 		.flags		= 0,
+ 		.ucon		= S5PV210_UCON_DEFAULT,
+ 		.ulcon		= S5PV210_ULCON_DEFAULT,
+-		.ufcon		= S5PV210_UFCON_DEFAULT,
++		.ufcon		= S5PV210_UFCON_DEFAULT |
++			S5PV210_UFCON_TXTRIG16 | S5PV210_UFCON_RXTRIG16,
+ 	},
+ };
+ 
+@@ -124,7 +130,7 @@ static void __init aquila_map_io(void)
+ {
+ 	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
+ 	s3c24xx_init_clocks(24000000);
+-	s3c24xx_init_uarts(smdkv210_uartcfgs, ARRAY_SIZE(smdkv210_uartcfgs));
++	s3c24xx_init_uarts(aquila_uartcfgs, ARRAY_SIZE(aquila_uartcfgs));
+ }
+ 
+ static void __init aquila_machine_init(void)
+-- 
+1.7.0.4
