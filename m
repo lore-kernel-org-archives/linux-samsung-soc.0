@@ -1,58 +1,77 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: SMDK6440: I2C writes fails
-Date: Thu, 24 Jun 2010 17:35:18 +0100
-Message-ID: <34703F8C-7A9C-43FE-A748-9F6E90F3D425@opensource.wolfsonmicro.com>
-References: <AANLkTim5qV8N_0iZ9DViJG1-IqYHhO-DKJZrd7RHpWbB@mail.gmail.com>  <20100624113236.GA3958@opensource.wolfsonmicro.com> <AANLkTikxaMB4eqnNuC8lneEt333gRWzKfLHy2-ChQeB5@mail.gmail.com> (sfid-20100624_133539_674220_8A82C8AB)
-Mime-Version: 1.0 (iPad Mail 7B367)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] serial: samsung.c: Add FRACVAL support for newer UART
+Date: Fri, 25 Jun 2010 22:55:19 +0900
+Message-ID: <1277474119-6897-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:55983 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1755184Ab0FYMPz convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Jun 2010 08:15:55 -0400
-In-Reply-To: <AANLkTikxaMB4eqnNuC8lneEt333gRWzKfLHy2-ChQeB5@mail.gmail.com> (sfid-20100624_133539_674220_8A82C8AB)
+Received: from ganesha.gnumonks.org ([213.95.27.120]:51245 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755776Ab0FYOBm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 25 Jun 2010 10:01:42 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
+From: Changhwan Youn <chaos.youn@samsung.com>
 
-On 24 Jun 2010, at 13:35, Naveen Krishna Ch <naveenkrishna.ch@gmail.com> wrote:
+FRACVAL register provides the same function as UDIVSLOT register which is
+the 1/16ths adjustment to the baud rate but the implementaiton is easier.
+To support UDIVSLOT register, UDIVSLOT table search is necessary though
+supporting FRACVAL only needs the index value of UDIVSLOT table.
 
-> Hi Mark,
-> 
-> On 24 June 2010 17:02, Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
->> 
->> On Wed, Jun 23, 2010 at 11:15:55AM +0530, Naveen Krishna Ch wrote:
->> 
->>> Where should i be looking,
->> 
->> I would suggest looking at the driver and comparing it with the
->> datasheet.
->> 
->>> Will changing the spin counts work?
->> 
->> I'd expect this to be unlikely.  Note that if we run out of spins we
->> still go for the 1ms sleep that was being used originally so it's more
->> likely that there's a bug in the chip when that register is being read
->> (though this would be surprising) or some other change in your kernel is
->> causing problems.
-> 
->  --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -527,7 +527,7 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
->         /* first, try busy waiting briefly */
->         do {
->                 iicstat = readl(i2c->regs + S3C2410_IICSTAT);
-> -       } while ((iicstat & S3C2410_IICSTAT_START) && --spins);
-> +       } while (--spins && (iicstat & S3C2410_IICSTAT_START));
-> 
->         /* if that timed out sleep */
->         if (!spins) {
-> 
-> Does the trick..
+This patch implements the FRACVAL supports for the newer Samsung SoC UARTs.
 
-That smells rather like a compiler bug to me - the two versions
-ought to be equivalent apart from the ordering of the comparisons.
+Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ drivers/serial/samsung.c |    7 +++++--
+ drivers/serial/samsung.h |    1 +
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/serial/samsung.c b/drivers/serial/samsung.c
+index a9d6c56..09805c7 100644
+--- a/drivers/serial/samsung.c
++++ b/drivers/serial/samsung.c
+@@ -530,7 +530,7 @@ static int s3c24xx_serial_calcbaud(struct baud_calc *calc,
+ 
+ 	calc->clksrc = clksrc;
+ 
+-	if (ourport->info->has_divslot) {
++	if ((ourport->info->has_divslot) || (ourport->info->has_fracval)) {
+ 		unsigned long div = rate / baud;
+ 
+ 		/* The UDIVSLOT register on the newer UARTs allows us to
+@@ -707,6 +707,9 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
+ 
+ 		udivslot = udivslot_table[div & 15];
+ 		dbg("udivslot = %04x (div %d)\n", udivslot, div & 15);
++	} else if (ourport->info->has_fracval) {
++		udivslot = (ourport->baudclk_rate / baud) & 15;
++		dbg("fracval = %04x\n", udivslot);
+ 	}
+ 
+ 	switch (termios->c_cflag & CSIZE) {
+@@ -755,7 +758,7 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
+ 	wr_regl(port, S3C2410_UBRDIV, quot);
+ 	wr_regl(port, S3C2410_UMCON, umcon);
+ 
+-	if (ourport->info->has_divslot)
++	if ((ourport->info->has_divslot) || (ourport->info->has_fracval))
+ 		wr_regl(port, S3C2443_DIVSLOT, udivslot);
+ 
+ 	dbg("uart: ulcon = 0x%08x, ucon = 0x%08x, ufcon = 0x%08x\n",
+diff --git a/drivers/serial/samsung.h b/drivers/serial/samsung.h
+index 0ac06a0..124f476 100644
+--- a/drivers/serial/samsung.h
++++ b/drivers/serial/samsung.h
+@@ -24,6 +24,7 @@ struct s3c24xx_uart_info {
+ 	/* uart port features */
+ 
+ 	unsigned int		has_divslot:1;
++	unsigned int		has_fracval:1;
+ 
+ 	/* clock source control */
+ 
+-- 
+1.6.2.5
