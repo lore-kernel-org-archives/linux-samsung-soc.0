@@ -1,72 +1,98 @@
-From: Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [PATCH v4] libata: pata_samsung_cf: Add Samsung PATA controller driver
-Date: Fri, 25 Jun 2010 06:18:36 +0200
-Message-ID: <201006250618.37076.marek.vasut@gmail.com>
-References: <1276499263-12217-1-git-send-email-kgene.kim@samsung.com> <4C22704B.50103@pobox.com> <001f01cb1417$dce8f8d0$96baea70$%kim@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH v2 0/4] ARM: S5P: Support gpio interrupts
+Date: Fri, 25 Jun 2010 07:33:10 +0200
+Message-ID: <000101cb1427$e88bfec0$b9a3fc40$%szyprowski@samsung.com>
+References: <4C11F4CA.10802@samsung.com>
+ <004601cb12a8$c869e560$593db020$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <001f01cb1417$dce8f8d0$96baea70$%kim@samsung.com>
-Sender: linux-ide-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Jeff Garzik' <jgarzik@pobox.com>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Abhilash Kesavan' <a.kesavan@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:62297 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750807Ab0FYFeP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 25 Jun 2010 01:34:15 -0400
+Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L4K0000S252PJ60@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 25 Jun 2010 14:34:14 +0900 (KST)
+Received: from AMDC159 ([106.116.37.153])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L4K00FMI24XKR@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 25 Jun 2010 14:34:13 +0900 (KST)
+In-reply-to: <004601cb12a8$c869e560$593db020$%kim@samsung.com>
+Content-language: pl
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, ben-linux@fluff.org
+Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Dne P=C3=A1 25. =C4=8Dervna 2010 05:38:19 Kukjin Kim napsal(a):
-> Jeff Garzik wrote:
-> > On 06/14/2010 03:07 AM, Kukjin Kim wrote:
-> > > From: Abhilash Kesavan<a.kesavan@samsung.com>
-> > >=20
-> > > Adds support for the Samsung PATA controller. This driver is base=
-d on
->=20
-> the
->=20
-> > > Libata subsystem and references the earlier patches sent for IDE
->=20
-> subsystem.
->=20
-> > > Signed-off-by: Abhilash Kesavan<a.kesavan@samsung.com>
-> > > Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
-> >=20
-> > Acked-by: Jeff Garzik <jgarzik@redhat.com>
-> >=20
-> > Send it through the appropriate subsystem tree for this platform...
->=20
-> Hi,
->=20
-> You mean in my case, appropriate subsystem tree is ARM tree.
-> But I think, as Ben commented, it's better drivers go to upstream via=
- the
-> driver's tree.
-> And of course, I read your comments about this like below...
-> 'platform drivers do not build and/or work without additional platfor=
-m
-> glue...'
->=20
-> Hmm.
-> I'm not sure which way is better...
+Hello,
 
-I pushed pata_pxa through Eric as well ... go for the linux-arm tree.
-Cheers
->=20
-> Russell,
->=20
-> How do you think?
-> May I send this to your patch tracking system?
-> Or...how should I handle this?
->=20
-> Thanks.
->=20
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-ide" =
-in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Wednesday, June 23, 2010 9:51 AM Kukjin Kim wrote:
+
+> Joonyoung Shim wrote:
+> >
+> > This patch v2 set is to support gpio interrupts of samsung s5p cpus, and
+> > the GPIOlib gpio_to_irq goes to plat-samsung gpiolib, so patch v2 set
+> > has four commit smaller than v1.
+> >
+> > Changes since v1:
+> > - Add irq_base to s3c_gpio_chip struct
+> > - GPIOlib gpio_to_irq() is implemented to samsung_gpiolib_to_irq() of
+> >   plat-samsung gpiolib
+> >
+> > Joonyoung Shim (4):
+> >       ARM: S5PV210: Add gpio interrupt support
+> >       ARM: S5PC100: Use S5P gpio interrupts interface
+> >       ARM: S5PC100: Move external interrupt defines
+> >       ARM: SAMSUNG: Add GPIOlib gpio_to_irq
+> >
+> >  arch/arm/mach-s5pc100/Makefile                 |    2 +-
+> >  arch/arm/mach-s5pc100/gpiolib.c                |   70 ++-----
+> >  arch/arm/mach-s5pc100/include/mach/gpio.h      |    7 -
+> >  arch/arm/mach-s5pc100/include/mach/irqs.h      |   18 ++-
+> >  arch/arm/mach-s5pc100/include/mach/regs-gpio.h |    7 +
+> >  arch/arm/mach-s5pc100/irq-gpio.c               |  266
+> ------------------------
+> >  arch/arm/mach-s5pv210/gpiolib.c                |   18 ++-
+> >  arch/arm/mach-s5pv210/include/mach/irqs.h      |   16 ++-
+> >  arch/arm/plat-s5p/Makefile                     |    2 +-
+> >  arch/arm/plat-s5p/irq-gpioint.c                |  208 ++++++++++++++++++
+> >  arch/arm/plat-samsung/gpiolib.c                |    9 +
+> >  arch/arm/plat-samsung/include/plat/gpio-core.h |    6 +
+> >  12 files changed, 295 insertions(+), 334 deletions(-)
+> >  delete mode 100644 arch/arm/mach-s5pc100/irq-gpio.c
+> >  create mode 100644 arch/arm/plat-s5p/irq-gpioint.c
+> >
+> 
+> I am sure this patchset is working code, but Ben had made suggestion about
+> 'sparse irq'...
+> It is because there are too many gpio interrupts and having support of all
+> of them is unnecessary as realistically only few of them maybe used.
+
+Right. Ben suggested to create a pool for gpio interrupts (for example 16
+interrupts) and selectively assign them in machine startup code to those
+gpio pins that really need it.
+
+The problem is that such solution is not yet ready and we really need the
+gpio interrupt functionality for our boards (Aquila and GONI). 
+
+Maybe these current patches could be merged now, and then, once the new
+solution is prepared, the gpio interrupt support get converted to selective
+registering?
+
+S5PC100 already has gpio interrupt support.
+ 
+> In fact in SMDK board there is no use of gpio in interrupt mode.
+
+We are talking about support for Samsung S5PV210/S5PC110 SoCs in the Linux
+mainline kernel, not the support for only SMDK boards. GPIO interrupts is
+a feature of the SoC not a particular board.
+
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
