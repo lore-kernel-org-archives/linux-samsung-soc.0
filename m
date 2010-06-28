@@ -1,302 +1,183 @@
-From: Sergei Shtylyov <sshtylyov@mvista.com>
-Subject: Re: [PATCH v4] libata: pata_samsung_cf: Add Samsung PATA controller
-	driver
-Date: Mon, 28 Jun 2010 14:12:06 +0400
-Message-ID: <4C287576.6050506@ru.mvista.com>
-References: <1276499263-12217-1-git-send-email-kgene.kim@samsung.com>
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Subject: Re: [PATCH v3 05/12] s3c-fb: Add support for display panning
+Date: Mon, 28 Jun 2010 13:28:57 +0200
+Message-ID: <4C288779.8040702@gmail.com>
+References: <1277712538-23188-1-git-send-email-p.osciak@samsung.com> <1277712538-23188-6-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1276499263-12217-1-git-send-email-kgene.kim@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-ide@vger.kernel.org, ben-linux@fluff.org, Abhilash Kesavan <a.kesavan@samsung.com>, jgarzik@pobox.com, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ww0-f46.google.com ([74.125.82.46]:44510 "EHLO
+	mail-ww0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751031Ab0F1L3B (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 28 Jun 2010 07:29:01 -0400
+In-Reply-To: <1277712538-23188-6-git-send-email-p.osciak@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pawel Osciak <p.osciak@samsung.com>
+Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com
 
-Hello.
-
-Kukjin Kim wrote:
-
-> From: Abhilash Kesavan <a.kesavan@samsung.com>
-
-> Adds support for the Samsung PATA controller. This driver is based on the
-> Libata subsystem and references the earlier patches sent for IDE subsystem.
-
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-
-[...]
-
-> diff --git a/drivers/ata/pata_samsung_cf.c b/drivers/ata/pata_samsung_cf.c
-> new file mode 100644
-> index 0000000..aeb2825
-> --- /dev/null
-> +++ b/drivers/ata/pata_samsung_cf.c
-> @@ -0,0 +1,735 @@
-[...]
-> +static unsigned long
-> +pata_s3c_setup_timing(struct s3c_ide_info *info, const struct ata_timing *ata)
-> +{
-> +	int t1;
-> +	int t2;
-> +	int t2i;
-> +	ulong piotime;
+ Op 28-06-10 10:08, Pawel Osciak schreef:
+> Supports all bpp modes.
+>
+> The PRTCON register is used to disable in-hardware updates of registers
+> that store start and end addresses of framebuffer memory. This prevents
+> display corruption in case we do not make it before VSYNC with updating
+> them atomically. With this feature there is no need to wait for a VSYNC
+> interrupt before each such update.
+>
+> Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/plat-samsung/include/plat/regs-fb.h |    5 ++
+>  drivers/video/s3c-fb.c                       |   71 ++++++++++++++++++++++++++
+>  2 files changed, 76 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-samsung/include/plat/regs-fb.h
+> index ac10013..f454e32 100644
+> --- a/arch/arm/plat-samsung/include/plat/regs-fb.h
+> +++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
+> @@ -112,6 +112,11 @@
+>  #define VIDCON2_ORGYCbCr			(1 << 8)
+>  #define VIDCON2_YUVORDCrCb			(1 << 7)
+>  
+> +/* PRTCON (S3C6410, S5PC100) */
 > +
-> +	t1 = ata->setup;
-> +	t2 = ata->act8b;
-> +	t2i = ata->rec8b;
+> +#define PRTCON					(0x0c)
+> +#define PRTCON_PROTECT				(1 << 11)
+> +
+>  /* VIDTCON0 */
+>  
+>  #define VIDTCON0_VBPDE_MASK			(0xff << 24)
+> diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+> index 59ac76a..4f3680d 100644
+> --- a/drivers/video/s3c-fb.c
+> +++ b/drivers/video/s3c-fb.c
+> @@ -71,6 +71,7 @@ struct s3c_fb;
+>   * @buf_end: Offset of buffer end registers.
+>   * @osd: The base for the OSD registers.
+>   * @palette: Address of palette memory, or 0 if none.
+> + * @has_prtcon: Set if has PRTCON register.
+>   */
+>  struct s3c_fb_variant {
+>  	unsigned int	is_2443:1;
+> @@ -85,6 +86,8 @@ struct s3c_fb_variant {
+>  	unsigned short	osd;
+>  	unsigned short	osd_stride;
+>  	unsigned short	palette[S3C_FB_MAX_WIN];
+> +
+> +	unsigned int	has_prtcon:1;
+>  };
+>  
+>  /**
+> @@ -379,6 +382,9 @@ static int s3c_fb_set_par(struct fb_info *info)
+>  
+>  	info->fix.line_length = (var->xres_virtual * var->bits_per_pixel) / 8;
+>  
+> +	info->fix.xpanstep = info->var.xres_virtual > info->var.xres ? 1 : 0;
+> +	info->fix.ypanstep = info->var.yres_virtual > info->var.yres ? 1 : 0;
 
-    Could be initializers...
+No need for the '? 1 : 0'
 
-[...]
-
-> +/*
-> + * pata_s3c_data_xfer - Transfer data by PIO
+> +
+>  	/* disable the window whilst we update it */
+>  	writel(0, regs + WINCON(win_no));
+>  
+> @@ -735,6 +741,66 @@ static int s3c_fb_blank(int blank_mode, struct fb_info *info)
+>  	return 0;
+>  }
+>  
+> +/**
+> + * s3c_fb_pan_display() - Pan the display.
+> + *
+> + * Note that the offsets can be written to the device at any time, as their
+> + * values are latched at each vsync automatically. This also means that only
+> + * the last call to this function will have any effect on next vsync, but
+> + * there is no need to sleep waiting for it to prevent tearing.
+> + *
+> + * @var: The screen information to verify.
+> + * @info: The framebuffer device.
 > + */
-> +unsigned int pata_s3c_data_xfer(struct ata_device *dev, unsigned char *buf,
-> +				unsigned int buflen, int rw)
+> +static int s3c_fb_pan_display(struct fb_var_screeninfo *var,
+> +			      struct fb_info *info)
 > +{
-> +	struct ata_port *ap = dev->link->ap;
-> +	struct s3c_ide_info *info = ap->host->private_data;
-> +	void __iomem *data_addr = ap->ioaddr.data_addr;
-> +	unsigned int words = buflen >> 1, i;
-> +	u16 *data_ptr = (u16 *)buf;
+> +	struct s3c_fb_win *win	= info->par;
+> +	struct s3c_fb *sfb	= win->parent;
+> +	void __iomem *buf	= sfb->regs + win->index * 8;
+> +	unsigned int start_byte_offset, end_byte_offset;
 > +
-> +	/* Requires wait same as in ata_inb/ata_outb */
-> +	if (rw == READ)
-> +		for (i = 0; i < words; i++, data_ptr++) {
-> +			wait_for_host_ready(info);
-> +			(void) readw(data_addr);
-> +			wait_for_host_ready(info);
-> +			*data_ptr = readw(info->ide_addr
-> +					+ S3C_ATA_PIO_RDATA);
+> +	/* Offset in bytes to the start of the displayed area */
+> +	start_byte_offset = var->yoffset * info->fix.line_length;
+> +	/* X offset depends on the current bpp */
+> +	if (info->var.bits_per_pixel >= 8) {
+> +		start_byte_offset +=
+> +			var->xoffset * (info->var.bits_per_pixel >> 3);
+> +	} else {
+> +		switch (info->var.bits_per_pixel) {
+> +		case 4:
+> +			start_byte_offset += var->xoffset >> 1;
+> +			break;
+> +		case 2:
+> +			start_byte_offset += var->xoffset >> 2;
+> +			break;
+> +		case 1:
+> +			start_byte_offset += var->xoffset >> 3;
+> +			break;
+> +		default:
+> +			dev_err(sfb->dev, "invalid bpp\n");
+> +			return -EINVAL;
 > +		}
-> +	else
-> +		for (i = 0; i < words; i++, data_ptr++) {
-> +			wait_for_host_ready(info);
-> +			writew(*data_ptr, data_addr);
-> +		}
-> +
-> +	if (buflen & 0x01) {
-> +		dev_err(ap->dev, "unexpected trailing data\n");
-> +		return -EINVAL;
-
-    This method should return number of bytes consumed, never error...
-
 > +	}
+> +	/* Offset in bytes to the end of the displayed area */
+> +	end_byte_offset = start_byte_offset + var->yres * info->fix.line_length;
 > +
-> +	return words << 1;
+> +	/* Temporarily turn off per-vsync update from shadow registers until
+> +	 * both start and end addresses are updated to prevent corruption */
+> +	if (sfb->variant.has_prtcon)
+> +		writel(PRTCON_PROTECT, sfb->regs + PRTCON);
+> +
+> +	writel(info->fix.smem_start + start_byte_offset,
+> +		buf + sfb->variant.buf_start);
+> +	writel(info->fix.smem_start + end_byte_offset,
+> +		buf + sfb->variant.buf_end);
+> +
+> +	if (sfb->variant.has_prtcon)
+> +		writel(0, sfb->regs + PRTCON);
+> +
+> +	return 0;
 > +}
-
-[...]
-
-> +/*
-> + * pata_s3c_devchk - PATA device presence detection
-> + */
-> +static unsigned int pata_s3c_devchk(struct ata_port *ap,
-> +				unsigned int device)
-> +{
-> +	struct ata_ioports *ioaddr = &ap->ioaddr;
-> +	u8 nsect, lbal;
 > +
-> +	ap->ops->sff_dev_select(ap, device);
-
-    Can call pata_s3c_dev_select() directly...
-
-> +/*
-> + * pata_s3c_wait_after_reset - wait for devices to become ready after reset
-> + */
-> +static int pata_s3c_wait_after_reset(struct ata_link *link,
-> +		unsigned int devmask, unsigned long deadline)
-> +{
-> +	struct ata_port *ap = link->ap;
-> +	struct ata_ioports *ioaddr = &ap->ioaddr;
-> +	unsigned int dev0 = devmask & (1 << 0);
-> +	unsigned int dev1 = devmask & (1 << 1);
-> +	int rc, ret = 0;
+>  static struct fb_ops s3c_fb_ops = {
+>  	.owner		= THIS_MODULE,
+>  	.fb_check_var	= s3c_fb_check_var,
+> @@ -744,6 +810,7 @@ static struct fb_ops s3c_fb_ops = {
+>  	.fb_fillrect	= cfb_fillrect,
+>  	.fb_copyarea	= cfb_copyarea,
+>  	.fb_imageblit	= cfb_imageblit,
+> +	.fb_pan_display	= s3c_fb_pan_display,
+>  };
+>  
+>  /**
+> @@ -1243,6 +1310,8 @@ static struct s3c_fb_driverdata s3c_fb_data_64xx __devinitdata = {
+>  			[3] = 0x320,
+>  			[4] = 0x340,
+>  		},
 > +
-> +	msleep(ATA_WAIT_AFTER_RESET);
+> +		.has_prtcon	= 1,
+>  	},
+>  	.win[0]	= &s3c_fb_data_64xx_wins[0],
+>  	.win[1]	= &s3c_fb_data_64xx_wins[1],
+> @@ -1271,6 +1340,8 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pc100 __devinitdata = {
+>  			[3] = 0x3000,
+>  			[4] = 0x3400,
+>  		},
 > +
-> +	/* always check readiness of the master device */
-> +	rc = ata_sff_wait_ready(link, deadline);
-> +	if (rc)
-> +		return rc;
-> +
-> +	/* if device 1 was found in ata_devchk, wait for register
-> +	 * access briefly, then wait for BSY to clear.
-> +	 */
-> +	if (dev1) {
-> +		int i;
-> +
-> +		ap->ops->sff_dev_select(ap, 1);
+> +		.has_prtcon	= 1,
+>  	},
+>  	.win[0]	= &s3c_fb_data_64xx_wins[0],
+>  	.win[1]	= &s3c_fb_data_64xx_wins[1],
 
-    Ditto.
 
-> +
-> +		for (i = 0; i < 2; i++) {
-> +			u8 nsect, lbal;
-> +
-> +			nsect = ata_inb(ap->host, ioaddr->nsect_addr);
-> +			lbal = ata_inb(ap->host, ioaddr->lbal_addr);
-> +			if ((nsect == 1) && (lbal == 1))
-> +				break;
-> +			msleep(50);	/* give drive a breather */
-> +		}
-> +
-> +		rc = ata_sff_wait_ready(link, deadline);
-> +		if (rc) {
-> +			if (rc != -ENODEV)
-> +				return rc;
-> +			ret = rc;
-> +		}
-> +	}
-> +
-
-    Should have copied the original commant here, cause I dount that this 
-drive selection trickery is indeed necessary...
-
-> +	ap->ops->sff_dev_select(ap, 0);
-> +	if (dev1)
-> +		ap->ops->sff_dev_select(ap, 1);
-> +	if (dev0)
-> +		ap->ops->sff_dev_select(ap, 0);
-
-    Ditto.
-
-> +/*
-> + * pata_s3c_softreset - reset host port via ATA SRST
-> + */
-> +static int pata_s3c_softreset(struct ata_link *link, unsigned int *classes,
-> +			 unsigned long deadline)
-> +{
-> +	struct ata_port *ap = link->ap;
-> +	unsigned int slave_possible = ap->flags & ATA_FLAG_SLAVE_POSS;
-
-    I don't see where you set this flag, hence the check seems useless.
-
-> +	unsigned int devmask = 0;
-> +	int rc;
-> +	u8 err;
-> +
-> +	/* determine if device 0/1 are present */
-> +	if (pata_s3c_devchk(ap, 0))
-> +		devmask |= (1 << 0);
-> +	if (slave_possible && pata_s3c_devchk(ap, 1))
-> +		devmask |= (1 << 1);
-> +
-> +	/* select device 0 again */
-> +	ap->ops->sff_dev_select(ap, 0);
-
-    Can call pata_s3c_dev_select() directly...
-
-> +
-> +	/* issue bus reset */
-> +	rc = pata_s3c_bus_softreset(ap, devmask, deadline);
-> +	/* if link is occupied, -ENODEV too is an error */
-> +	if (rc && (rc != -ENODEV || sata_scr_valid(link))) {
-
-    sata_scr_valid() doesn't apply to your PATA driver, no need to call it.
-
-> +static void pata_s3c_hwinit(struct s3c_ide_info *info,
-> +				struct s3c_ide_platdata *pdata)
-> +{
-> +	switch (info->cpu_type) {
-> +	case TYPE_S3C64XX:
-> +		/* Configure as big endian */
-> +		pata_s3c_cfg_mode(info->sfr_addr);
-> +		pata_s3c_set_endian(info->ide_addr, 1);
-> +		pata_s3c_enable(info->ide_addr, true);
-> +		msleep(100);
-> +
-> +		/* Remove IRQ Status */
-> +		writel(0x1f, info->ide_addr + S3C_ATA_IRQ);
-> +		writel(0x1b, info->ide_addr + S3C_ATA_IRQ_MSK);
-> +	break;
-
-    Mis-indented: one more tab needed.
-
-> +
-> +	case TYPE_S5PC100:
-> +		pata_s3c_cfg_mode(info->sfr_addr);
-
-    There should be a comment like /* FALLTHRU */ if *break* is omitted.
-
-> +	case TYPE_S5PV210:
-> +		/* Configure as little endian */
-> +		pata_s3c_set_endian(info->ide_addr, 0);
-> +		pata_s3c_enable(info->ide_addr, true);
-> +		msleep(100);
-> +
-> +		/* Remove IRQ Status */
-> +		writel(0x3f, info->ide_addr + S3C_ATA_IRQ);
-> +		writel(0x3f, info->ide_addr + S3C_ATA_IRQ_MSK);
-> +	break;
-
-    Mis-indented.
-
-> +static int __devinit pata_s3c_probe(struct platform_device *pdev)
-
-    Is this device really hot-pluggable? Shouldn't this be '__init' instead?
-
-> +{
-> +	struct s3c_ide_platdata *pdata = pdev->dev.platform_data;
-> +	struct device *dev = &pdev->dev;
-> +	struct s3c_ide_info *info;
-> +	struct resource *res;
-> +	struct ata_port *ap;
-> +	struct ata_host *host;
-> +	enum s3c_cpu_type cpu_type;
-> +	int ret;
-> +
-> +	cpu_type = platform_get_device_id(pdev)->driver_data;
-> +
-> +	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
-> +	if (!info) {
-> +		dev_err(dev, "failed to allocate memory for device data\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	info->irq = platform_get_irq(pdev, 0);
-> +	if (info->irq < 0) {
-> +		dev_err(dev, "could not obtain irq number\n");
-
-    You driver permits working without IRQ -- why require an IRQ resource even 
-if there's no IRQ?
-
-[...]
-
-> +	if (!info->irq) {
-
-    Should be (info->irq <= 0) instead, I think, with the above check removed.
-
-> +		ap->flags |= ATA_FLAG_PIO_POLLING;
-> +		ata_port_desc(ap, "no IRQ, using PIO polling\n");
-> +	}
-> +
-
-[...]
-
-> +static struct platform_driver pata_s3c_driver = {
-> +	.probe		= pata_s3c_probe,
-
-    If this function will be '__init', this needs to be removed.
-
-[...]
-
-> +static int __init pata_s3c_init(void)
-> +{
-> +	return platform_driver_register(&pata_s3c_driver);
-
-    I'd coinsider platform_driver_probe() -- this device doesn't seem to be 
-hot-pluggable...
-
-MBR, Sergei
+-- 
+Maurus Cuelenaere
