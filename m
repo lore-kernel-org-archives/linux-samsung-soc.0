@@ -1,69 +1,177 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: S3C2416 fixes (gpiolib, SDHCI, compilation without FB device)
-Date: Mon, 28 Jun 2010 08:01:40 +0200
-Message-ID: <000001cb1687$638b2310$2aa16930$%szyprowski@samsung.com>
-References: <1277212585-25605-1-git-send-email-jekhor@gmail.com>
- <4C248B23.7060905@gmail.com>
+From: Pawel Osciak <p.osciak@samsung.com>
+Subject: [PATCH v3 05/12] s3c-fb: Add support for display panning
+Date: Mon, 28 Jun 2010 10:08:51 +0200
+Message-ID: <1277712538-23188-6-git-send-email-p.osciak@samsung.com>
+References: <1277712538-23188-1-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:54967 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753548Ab0F1GDF (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:55858 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754849Ab0F1IJF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jun 2010 02:03:05 -0400
-Received: from epmmp2 (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L4P00KXXNGMXGD0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 28 Jun 2010 15:02:46 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L4P00CTUNGIZ8@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 28 Jun 2010 15:02:46 +0900 (KST)
-In-reply-to: <4C248B23.7060905@gmail.com>
-Content-language: pl
+	Mon, 28 Jun 2010 04:09:05 -0400
+In-reply-to: <1277712538-23188-1-git-send-email-p.osciak@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Darius Augulis' <augulis.darius@gmail.com>, 'Yauhen Kharuzhy' <jekhor@gmail.com>
-Cc: 'Vasily Khoruzhick' <anarsoul@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Ben Dooks' <ben-linux@fluff.org>
+To: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: p.osciak@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com
 
-Hello,
+Supports all bpp modes.
 
-On Friday, June 25, 2010 12:56 PM Darius Augulis wrote:
+The PRTCON register is used to disable in-hardware updates of registers
+that store start and end addresses of framebuffer memory. This prevents
+display corruption in case we do not make it before VSYNC with updating
+them atomically. With this feature there is no need to wait for a VSYNC
+interrupt before each such update.
 
-> On 06/22/2010 04:16 PM, Yauhen Kharuzhy wrote:
-> > This patch series fixes SDHCI on S3C2416. I got SD card working with this
-> patches
-> > and with patches for GPIO card detection support by Marek Szyprowski.
-> >
-> 
-> Unfortunately I did not get SD card working with these patches. I'm
-> using custom board, not SMDK2416, but SD slot connection and schematics
-> are the same like in SMDK2416. I've tried to debug a bit this problem
-> and this is what I got: kernel do detection of card insert/remove,
-> driver prints messages:
-> 
-> s3c-sdhci s3c-sdhci.1: card inserted.
-> s3c-sdhci s3c-sdhci.1: card removed.
-> 
-> Then I put some printk in s3c-sdhci driver and MMC core and found that
-> mmc_rescan() is called only once at startup and no more when
-> inserting/removing SD card. Also mmc_rescan() stops at that point where
-> mmc_power_up() is called and does not return. And mmc_power_up() stops
-> where mmc_delay(10) is called and does not return too.
-> Every time when inserting/removing SD card only functions
-> sdhci_tasklet_card() and mmc_detect_change() are called, and nothing
-> happens. Kernel doesn't detect the card inserted.
-> Maybe this info could help to debug where the problem is - in my custom
-> board or in your patches?
+Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/plat-samsung/include/plat/regs-fb.h |    5 ++
+ drivers/video/s3c-fb.c                       |   71 ++++++++++++++++++++++++++
+ 2 files changed, 76 insertions(+), 0 deletions(-)
 
-Have you tried with polled card detection method (SDHCI_CD_NONE)? If it
-doesn't work I suspect something with the hardware. Checking with mmc debug
-enabled might also help figuring this issue out.
-
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-samsung/include/plat/regs-fb.h
+index ac10013..f454e32 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-fb.h
++++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
+@@ -112,6 +112,11 @@
+ #define VIDCON2_ORGYCbCr			(1 << 8)
+ #define VIDCON2_YUVORDCrCb			(1 << 7)
+ 
++/* PRTCON (S3C6410, S5PC100) */
++
++#define PRTCON					(0x0c)
++#define PRTCON_PROTECT				(1 << 11)
++
+ /* VIDTCON0 */
+ 
+ #define VIDTCON0_VBPDE_MASK			(0xff << 24)
+diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+index 59ac76a..4f3680d 100644
+--- a/drivers/video/s3c-fb.c
++++ b/drivers/video/s3c-fb.c
+@@ -71,6 +71,7 @@ struct s3c_fb;
+  * @buf_end: Offset of buffer end registers.
+  * @osd: The base for the OSD registers.
+  * @palette: Address of palette memory, or 0 if none.
++ * @has_prtcon: Set if has PRTCON register.
+  */
+ struct s3c_fb_variant {
+ 	unsigned int	is_2443:1;
+@@ -85,6 +86,8 @@ struct s3c_fb_variant {
+ 	unsigned short	osd;
+ 	unsigned short	osd_stride;
+ 	unsigned short	palette[S3C_FB_MAX_WIN];
++
++	unsigned int	has_prtcon:1;
+ };
+ 
+ /**
+@@ -379,6 +382,9 @@ static int s3c_fb_set_par(struct fb_info *info)
+ 
+ 	info->fix.line_length = (var->xres_virtual * var->bits_per_pixel) / 8;
+ 
++	info->fix.xpanstep = info->var.xres_virtual > info->var.xres ? 1 : 0;
++	info->fix.ypanstep = info->var.yres_virtual > info->var.yres ? 1 : 0;
++
+ 	/* disable the window whilst we update it */
+ 	writel(0, regs + WINCON(win_no));
+ 
+@@ -735,6 +741,66 @@ static int s3c_fb_blank(int blank_mode, struct fb_info *info)
+ 	return 0;
+ }
+ 
++/**
++ * s3c_fb_pan_display() - Pan the display.
++ *
++ * Note that the offsets can be written to the device at any time, as their
++ * values are latched at each vsync automatically. This also means that only
++ * the last call to this function will have any effect on next vsync, but
++ * there is no need to sleep waiting for it to prevent tearing.
++ *
++ * @var: The screen information to verify.
++ * @info: The framebuffer device.
++ */
++static int s3c_fb_pan_display(struct fb_var_screeninfo *var,
++			      struct fb_info *info)
++{
++	struct s3c_fb_win *win	= info->par;
++	struct s3c_fb *sfb	= win->parent;
++	void __iomem *buf	= sfb->regs + win->index * 8;
++	unsigned int start_byte_offset, end_byte_offset;
++
++	/* Offset in bytes to the start of the displayed area */
++	start_byte_offset = var->yoffset * info->fix.line_length;
++	/* X offset depends on the current bpp */
++	if (info->var.bits_per_pixel >= 8) {
++		start_byte_offset +=
++			var->xoffset * (info->var.bits_per_pixel >> 3);
++	} else {
++		switch (info->var.bits_per_pixel) {
++		case 4:
++			start_byte_offset += var->xoffset >> 1;
++			break;
++		case 2:
++			start_byte_offset += var->xoffset >> 2;
++			break;
++		case 1:
++			start_byte_offset += var->xoffset >> 3;
++			break;
++		default:
++			dev_err(sfb->dev, "invalid bpp\n");
++			return -EINVAL;
++		}
++	}
++	/* Offset in bytes to the end of the displayed area */
++	end_byte_offset = start_byte_offset + var->yres * info->fix.line_length;
++
++	/* Temporarily turn off per-vsync update from shadow registers until
++	 * both start and end addresses are updated to prevent corruption */
++	if (sfb->variant.has_prtcon)
++		writel(PRTCON_PROTECT, sfb->regs + PRTCON);
++
++	writel(info->fix.smem_start + start_byte_offset,
++		buf + sfb->variant.buf_start);
++	writel(info->fix.smem_start + end_byte_offset,
++		buf + sfb->variant.buf_end);
++
++	if (sfb->variant.has_prtcon)
++		writel(0, sfb->regs + PRTCON);
++
++	return 0;
++}
++
+ static struct fb_ops s3c_fb_ops = {
+ 	.owner		= THIS_MODULE,
+ 	.fb_check_var	= s3c_fb_check_var,
+@@ -744,6 +810,7 @@ static struct fb_ops s3c_fb_ops = {
+ 	.fb_fillrect	= cfb_fillrect,
+ 	.fb_copyarea	= cfb_copyarea,
+ 	.fb_imageblit	= cfb_imageblit,
++	.fb_pan_display	= s3c_fb_pan_display,
+ };
+ 
+ /**
+@@ -1243,6 +1310,8 @@ static struct s3c_fb_driverdata s3c_fb_data_64xx __devinitdata = {
+ 			[3] = 0x320,
+ 			[4] = 0x340,
+ 		},
++
++		.has_prtcon	= 1,
+ 	},
+ 	.win[0]	= &s3c_fb_data_64xx_wins[0],
+ 	.win[1]	= &s3c_fb_data_64xx_wins[1],
+@@ -1271,6 +1340,8 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pc100 __devinitdata = {
+ 			[3] = 0x3000,
+ 			[4] = 0x3400,
+ 		},
++
++		.has_prtcon	= 1,
+ 	},
+ 	.win[0]	= &s3c_fb_data_64xx_wins[0],
+ 	.win[1]	= &s3c_fb_data_64xx_wins[1],
+-- 
+1.7.1.569.g6f426
