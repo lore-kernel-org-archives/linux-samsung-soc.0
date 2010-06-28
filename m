@@ -1,81 +1,69 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: SMDK6440: I2C writes fails
-Date: Mon, 28 Jun 2010 11:24:39 +0530
-Message-ID: <AANLkTinobDuo9ffJ3O6iNlYG8yPOnSA-WCeO_y9eXOg2@mail.gmail.com>
-References: <AANLkTim5qV8N_0iZ9DViJG1-IqYHhO-DKJZrd7RHpWbB@mail.gmail.com>
-	<20100624113236.GA3958@opensource.wolfsonmicro.com> <AANLkTikxaMB4eqnNuC8lneEt333gRWzKfLHy2-ChQeB5@mail.gmail.com>
-	<34703F8C-7A9C-43FE-A748-9F6E90F3D425@opensource.wolfsonmicro.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: S3C2416 fixes (gpiolib, SDHCI, compilation without FB device)
+Date: Mon, 28 Jun 2010 08:01:40 +0200
+Message-ID: <000001cb1687$638b2310$2aa16930$%szyprowski@samsung.com>
+References: <1277212585-25605-1-git-send-email-jekhor@gmail.com>
+ <4C248B23.7060905@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:44692 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752556Ab0F1FzB convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:54967 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753548Ab0F1GDF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jun 2010 01:55:01 -0400
-Received: by qwi4 with SMTP id 4so1598986qwi.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Jun 2010 22:54:59 -0700 (PDT)
-In-Reply-To: <34703F8C-7A9C-43FE-A748-9F6E90F3D425@opensource.wolfsonmicro.com>
+	Mon, 28 Jun 2010 02:03:05 -0400
+Received: from epmmp2 (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L4P00KXXNGMXGD0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 28 Jun 2010 15:02:46 +0900 (KST)
+Received: from AMDC159 ([106.116.37.153])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L4P00CTUNGIZ8@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 28 Jun 2010 15:02:46 +0900 (KST)
+In-reply-to: <4C248B23.7060905@gmail.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>
+To: 'Darius Augulis' <augulis.darius@gmail.com>, 'Yauhen Kharuzhy' <jekhor@gmail.com>
+Cc: 'Vasily Khoruzhick' <anarsoul@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Ben Dooks' <ben-linux@fluff.org>
 
-Hi Mark,
+Hello,
 
-On 24 June 2010 22:05, Mark Brown <broonie@opensource.wolfsonmicro.com>=
- wrote:
->
-> On 24 Jun 2010, at 13:35, Naveen Krishna Ch <naveenkrishna.ch@gmail.c=
-om> wrote:
->
-> > Hi Mark,
-> >
-> > On 24 June 2010 17:02, Mark Brown <broonie@opensource.wolfsonmicro.=
-com> wrote:
-> >>
-> >> On Wed, Jun 23, 2010 at 11:15:55AM +0530, Naveen Krishna Ch wrote:
-> >>
-> >>> Where should i be looking,
-> >>
-> >> I would suggest looking at the driver and comparing it with the
-> >> datasheet.
-> >>
-> >>> Will changing the spin counts work?
-> >>
-> >> I'd expect this to be unlikely. =A0Note that if we run out of spin=
-s we
-> >> still go for the 1ms sleep that was being used originally so it's =
-more
-> >> likely that there's a bug in the chip when that register is being =
-read
-> >> (though this would be surprising) or some other change in your ker=
-nel is
-> >> causing problems.
-> >
-> > =A0--- a/drivers/i2c/busses/i2c-s3c2410.c
-> > +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> > @@ -527,7 +527,7 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2=
-c *i2c,
-> > =A0 =A0 =A0 =A0 /* first, try busy waiting briefly */
-> > =A0 =A0 =A0 =A0 do {
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 iicstat =3D readl(i2c->regs + S3C24=
-10_IICSTAT);
-> > - =A0 =A0 =A0 } while ((iicstat & S3C2410_IICSTAT_START) && --spins=
-);
-> > + =A0 =A0 =A0 } while (--spins && (iicstat & S3C2410_IICSTAT_START)=
-);
-> >
-> > =A0 =A0 =A0 =A0 /* if that timed out sleep */
-> > =A0 =A0 =A0 =A0 if (!spins) {
-> >
-> > Does the trick..
->
-> That smells rather like a compiler bug to me - the two versions
-> ought to be equivalent apart from the ordering of the comparisons.
-I'm not sure, I'm using arm-2009q3 toolchain.
+On Friday, June 25, 2010 12:56 PM Darius Augulis wrote:
 
+> On 06/22/2010 04:16 PM, Yauhen Kharuzhy wrote:
+> > This patch series fixes SDHCI on S3C2416. I got SD card working with this
+> patches
+> > and with patches for GPIO card detection support by Marek Szyprowski.
+> >
+> 
+> Unfortunately I did not get SD card working with these patches. I'm
+> using custom board, not SMDK2416, but SD slot connection and schematics
+> are the same like in SMDK2416. I've tried to debug a bit this problem
+> and this is what I got: kernel do detection of card insert/remove,
+> driver prints messages:
+> 
+> s3c-sdhci s3c-sdhci.1: card inserted.
+> s3c-sdhci s3c-sdhci.1: card removed.
+> 
+> Then I put some printk in s3c-sdhci driver and MMC core and found that
+> mmc_rescan() is called only once at startup and no more when
+> inserting/removing SD card. Also mmc_rescan() stops at that point where
+> mmc_power_up() is called and does not return. And mmc_power_up() stops
+> where mmc_delay(10) is called and does not return too.
+> Every time when inserting/removing SD card only functions
+> sdhci_tasklet_card() and mmc_detect_change() are called, and nothing
+> happens. Kernel doesn't detect the card inserted.
+> Maybe this info could help to debug where the problem is - in my custom
+> board or in your patches?
+
+Have you tried with polled card detection method (SDHCI_CD_NONE)? If it
+doesn't work I suspect something with the hardware. Checking with mmc debug
+enabled might also help figuring this issue out.
+
+Best regards
 --
-Shine bright,
-(: Naveen Krishna Ch :)
+Marek Szyprowski
+Samsung Poland R&D Center
