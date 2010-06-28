@@ -1,82 +1,53 @@
-From: Pawel Osciak <p.osciak@samsung.com>
-Subject: [PATCH v3 12/12] s3c-fb: Add support for DMA channel control on S5PV210
-Date: Mon, 28 Jun 2010 10:08:58 +0200
-Message-ID: <1277712538-23188-13-git-send-email-p.osciak@samsung.com>
-References: <1277712538-23188-1-git-send-email-p.osciak@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH v5 3/3] input: samsung-keypad - Add samsung keypad driver
+Date: Mon, 28 Jun 2010 17:39:39 +0900
+Message-ID: <4C285FCB.3070100@samsung.com>
+References: <1277101605-2435-1-git-send-email-jy0922.shim@samsung.com>
+	<1277101605-2435-3-git-send-email-jy0922.shim@samsung.com>
+	<20100625083019.GD8546@core.coreip.homeip.net>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:55858 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755432Ab0F1IJK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jun 2010 04:09:10 -0400
-In-reply-to: <1277712538-23188-1-git-send-email-p.osciak@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <20100625083019.GD8546@core.coreip.homeip.net>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: kgene.kim@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: p.osciak@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com
 
-S5PV210 SoCs allow enabling/disabling DMA channels per window. For a window
-to display data from framebuffer memory, its channel has to be enabled.
+Hi, Dmitry.
 
-Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/plat-samsung/include/plat/regs-fb.h |    4 ++++
- drivers/video/s3c-fb.c                       |   15 +++++++++++++++
- 2 files changed, 19 insertions(+), 0 deletions(-)
+On 6/25/2010 5:30 PM, Dmitry Torokhov wrote:
+> Hi Joonyoung,
+> 
+> On Mon, Jun 21, 2010 at 03:26:45PM +0900, Joonyoung Shim wrote:
+>> This patch adds support for keypad driver running on Samsung cpus. This
+>> driver is tested on GONI and Aquila board using S5PC110 cpu.
+>>
+>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> 
+> Following my conversation with Thomas Gleixner reagrding "long playing"
+> threaded interrupt handlers I tried to convert your driver to use this
+> concept. The idea is to keep polling within IRQ thread context instead
+> of using additional work/timer structures to simplify code and ensure
+> race-free shutdown/unbind.
+> 
+> I think it was based on v4 of your driver and I'd appreciate if you could
+> give it a try.
+> 
+> Thank you.
+> 
 
-diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-samsung/include/plat/regs-fb.h
-index da54b64..f801a37 100644
---- a/arch/arm/plat-samsung/include/plat/regs-fb.h
-+++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
-@@ -221,6 +221,10 @@
- /* S5PV210 */
- #define SHADOWCON				(0x34)
- #define SHADOWCON_WINx_PROTECT(_win)		(1 << (10 + _win))
-+/* DMA channels (all windows) */
-+#define SHADOWCON_CHx_ENABLE(_win)		(1 << (_win))
-+/* Local input channels (windows 0-2) */
-+#define SHADOWCON_CHx_LOCAL_ENABLE(_win)	(1 << (5 + (_win)))
- 
- #define VIDOSDxA_TOPLEFT_X_MASK			(0x7ff << 11)
- #define VIDOSDxA_TOPLEFT_X_SHIFT		(11)
-diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index de7334c..4b3617c 100644
---- a/drivers/video/s3c-fb.c
-+++ b/drivers/video/s3c-fb.c
-@@ -635,6 +635,13 @@ static int s3c_fb_set_par(struct fb_info *info)
- 	writel(data, regs + sfb->variant.wincon + (win_no * 4));
- 	writel(0x0, regs + sfb->variant.winmap + (win_no * 4));
- 
-+	/* Enable DMA channel for this window */
-+	if (sfb->variant.has_shadowcon) {
-+		data = readl(sfb->regs + SHADOWCON);
-+		data |= SHADOWCON_CHx_ENABLE(win_no);
-+		writel(data, sfb->regs + SHADOWCON);
-+	}
-+
- 	shadow_protect_win(win, 0);
- 
- 	return 0;
-@@ -1095,7 +1102,15 @@ static void s3c_fb_free_memory(struct s3c_fb *sfb, struct s3c_fb_win *win)
-  */
- static void s3c_fb_release_win(struct s3c_fb *sfb, struct s3c_fb_win *win)
- {
-+	u32 data;
-+
- 	if (win->fbinfo) {
-+		if (sfb->variant.has_shadowcon) {
-+			data = readl(sfb->regs + SHADOWCON);
-+			data &= ~SHADOWCON_CHx_ENABLE(win->index);
-+			data &= ~SHADOWCON_CHx_LOCAL_ENABLE(win->index);
-+			writel(data, sfb->regs + SHADOWCON);
-+		}
- 		unregister_framebuffer(win->fbinfo);
- 		if (&win->fbinfo->cmap)
- 			fb_dealloc_cmap(&win->fbinfo->cmap);
--- 
-1.7.1.569.g6f426
+I have tested your patch on my v5 patchset and it is working after some
+fixing. I will post v6 patchset appling your patch.
+
+Thanks.
