@@ -1,7 +1,8 @@
 From: Pawel Osciak <p.osciak@samsung.com>
-Subject: [PATCH v3 06/12] s3c-fb: Add wait for VSYNC ioctl
-Date: Mon, 28 Jun 2010 10:08:52 +0200
-Message-ID: <1277712538-23188-7-git-send-email-p.osciak@samsung.com>
+Subject: [PATCH v3 08/12] s3c-fb: Add SHADOWCON shadow register locking support
+ for S5PV210
+Date: Mon, 28 Jun 2010 10:08:54 +0200
+Message-ID: <1277712538-23188-9-git-send-email-p.osciak@samsung.com>
 References: <1277712538-23188-1-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -9,296 +10,120 @@ Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout4.w1.samsung.com ([210.118.77.14]:55858 "EHLO
 	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754947Ab0F1IJL (ORCPT
+	with ESMTP id S1755348Ab0F1IJJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jun 2010 04:09:11 -0400
+	Mon, 28 Jun 2010 04:09:09 -0400
 In-reply-to: <1277712538-23188-1-git-send-email-p.osciak@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: p.osciak@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com
 
-Add VSYNC interrupt support and an ioctl that allows waiting for it.
-Interrupts are turned on only when needed.
+S5PV210 allows per-window locking of register value updates from shadow
+registers.
 
 Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/plat-samsung/include/plat/regs-fb.h |    1 +
- drivers/video/s3c-fb.c                       |  167 +++++++++++++++++++++++++-
- 2 files changed, 167 insertions(+), 1 deletions(-)
+ arch/arm/plat-samsung/include/plat/regs-fb.h |    3 ++
+ drivers/video/s3c-fb.c                       |   39 +++++++++++++++++++++++--
+ 2 files changed, 38 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-samsung/include/plat/regs-fb.h
-index f454e32..5bcdd09 100644
+index 5bcdd09..da54b64 100644
 --- a/arch/arm/plat-samsung/include/plat/regs-fb.h
 +++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
-@@ -298,6 +298,7 @@
- #define VIDINTCON0_FRAMESEL0_FRONTPORCH		(0x3 << 15)
+@@ -218,6 +218,9 @@
+ #define WINCON1_BPPMODE_25BPP_A1888		(0xd << 2)
+ #define WINCON1_BPPMODE_28BPP_A4888		(0xd << 2)
  
- #define VIDINTCON0_FRAMESEL1			(1 << 13)
-+#define VIDINTCON0_FRAMESEL1_MASK		(0x3 << 13)
- #define VIDINTCON0_FRAMESEL1_NONE		(0x0 << 13)
- #define VIDINTCON0_FRAMESEL1_BACKPORCH		(0x1 << 13)
- #define VIDINTCON0_FRAMESEL1_VSYNC		(0x2 << 13)
++/* S5PV210 */
++#define SHADOWCON				(0x34)
++#define SHADOWCON_WINx_PROTECT(_win)		(1 << (10 + _win))
+ 
+ #define VIDOSDxA_TOPLEFT_X_MASK			(0x7ff << 11)
+ #define VIDOSDxA_TOPLEFT_X_SHIFT		(11)
 diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index 4f3680d..6131ebb 100644
+index 0a93fca..94423c5 100644
 --- a/drivers/video/s3c-fb.c
 +++ b/drivers/video/s3c-fb.c
-@@ -21,6 +21,8 @@
- #include <linux/clk.h>
- #include <linux/fb.h>
- #include <linux/io.h>
-+#include <linux/uaccess.h>
-+#include <linux/interrupt.h>
- 
- #include <mach/map.h>
- #include <plat/regs-fb-v4.h>
-@@ -48,6 +50,11 @@
- 	__raw_writel(v, r); } while(0)
- #endif /* FB_S3C_DEBUG_REGWRITE */
- 
-+/* irq_flags bits */
-+#define S3C_FB_VSYNC_IRQ_EN	0
-+
-+#define VSYNC_TIMEOUT_MSEC 50
-+
- struct s3c_fb;
- 
- #define VALID_BPP(x) (1 << ((x) - 1))
-@@ -156,6 +163,16 @@ struct s3c_fb_win {
- };
- 
- /**
-+ * struct s3c_fb_vsync - vsync information
-+ * @wait:	a queue for processes waiting for vsync
-+ * @count:	vsync interrupt count
-+ */
-+struct s3c_fb_vsync {
-+	wait_queue_head_t	wait;
-+	unsigned int		count;
-+};
-+
-+/**
-  * struct s3c_fb - overall hardware state of the hardware
-  * @dev: The device that we bound to, for printing, etc.
-  * @regs_res: The resource we claimed for the IO registers.
-@@ -165,6 +182,9 @@ struct s3c_fb_win {
-  * @enabled: A bitmask of enabled hardware windows.
-  * @pdata: The platform configuration data passed with the device.
-  * @windows: The hardware windows that have been claimed.
-+ * @irq_no: IRQ line number
-+ * @irq_flags: irq flags
-+ * @vsync_info: VSYNC-related information (count, queues...)
+@@ -79,6 +79,7 @@ struct s3c_fb;
+  * @osd: The base for the OSD registers.
+  * @palette: Address of palette memory, or 0 if none.
+  * @has_prtcon: Set if has PRTCON register.
++ * @has_shadowcon: Set if has SHADOWCON register.
   */
- struct s3c_fb {
- 	struct device		*dev;
-@@ -177,6 +197,10 @@ struct s3c_fb {
+ struct s3c_fb_variant {
+ 	unsigned int	is_2443:1;
+@@ -95,6 +96,7 @@ struct s3c_fb_variant {
+ 	unsigned short	palette[S3C_FB_MAX_WIN];
  
- 	struct s3c_fb_platdata	*pdata;
- 	struct s3c_fb_win	*windows[S3C_FB_MAX_WIN];
-+
-+	int			 irq_no;
-+	unsigned long		 irq_flags;
-+	struct s3c_fb_vsync	 vsync_info;
+ 	unsigned int	has_prtcon:1;
++	unsigned int	has_shadowcon:1;
  };
  
  /**
-@@ -801,6 +825,124 @@ static int s3c_fb_pan_display(struct fb_var_screeninfo *var,
- 	return 0;
+@@ -363,6 +365,36 @@ static int s3c_fb_align_word(unsigned int bpp, unsigned int pix)
  }
  
-+/**
-+ * s3c_fb_enable_irq() - enable framebuffer interrupts
-+ * @sfb: main hardware state
-+ */
-+static void s3c_fb_enable_irq(struct s3c_fb *sfb)
-+{
-+	void __iomem *regs = sfb->regs;
-+	u32 irq_ctrl_reg;
-+
-+	if (!test_and_set_bit(S3C_FB_VSYNC_IRQ_EN, &sfb->irq_flags)) {
-+		/* IRQ disabled, enable it */
-+		irq_ctrl_reg = readl(regs + VIDINTCON0);
-+
-+		irq_ctrl_reg |= VIDINTCON0_INT_ENABLE;
-+		irq_ctrl_reg |= VIDINTCON0_INT_FRAME;
-+
-+		irq_ctrl_reg &= ~VIDINTCON0_FRAMESEL0_MASK;
-+		irq_ctrl_reg |= VIDINTCON0_FRAMESEL0_VSYNC;
-+		irq_ctrl_reg &= ~VIDINTCON0_FRAMESEL1_MASK;
-+		irq_ctrl_reg |= VIDINTCON0_FRAMESEL1_NONE;
-+
-+		writel(irq_ctrl_reg, regs + VIDINTCON0);
-+	}
-+}
-+
-+/**
-+ * s3c_fb_disable_irq() - disable framebuffer interrupts
-+ * @sfb: main hardware state
-+ */
-+static void s3c_fb_disable_irq(struct s3c_fb *sfb)
-+{
-+	void __iomem *regs = sfb->regs;
-+	u32 irq_ctrl_reg;
-+
-+	if (test_and_clear_bit(S3C_FB_VSYNC_IRQ_EN, &sfb->irq_flags)) {
-+		/* IRQ enabled, disable it */
-+		irq_ctrl_reg = readl(regs + VIDINTCON0);
-+
-+		irq_ctrl_reg &= ~VIDINTCON0_INT_FRAME;
-+		irq_ctrl_reg &= ~VIDINTCON0_INT_ENABLE;
-+
-+		writel(irq_ctrl_reg, regs + VIDINTCON0);
-+	}
-+}
-+
-+static irqreturn_t s3c_fb_irq(int irq, void *dev_id)
-+{
-+	struct s3c_fb *sfb = dev_id;
-+	void __iomem  *regs = sfb->regs;
-+	u32 irq_sts_reg;
-+
-+	irq_sts_reg = readl(regs + VIDINTCON1);
-+
-+	if (irq_sts_reg & VIDINTCON1_INT_FRAME) {
-+
-+		/* VSYNC interrupt, accept it */
-+		writel(VIDINTCON1_INT_FRAME, regs + VIDINTCON1);
-+
-+		sfb->vsync_info.count++;
-+		wake_up_interruptible(&sfb->vsync_info.wait);
-+	}
-+
-+	/* We only support waiting for VSYNC for now, so it's safe
-+	 * to always disable irqs here.
-+	 */
-+	s3c_fb_disable_irq(sfb);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/**
-+ * s3c_fb_wait_for_vsync() - sleep until next VSYNC interrupt or timeout
-+ * @sfb: main hardware state
-+ * @crtc: head index.
-+ */
-+static int s3c_fb_wait_for_vsync(struct s3c_fb *sfb, u32 crtc)
-+{
-+	unsigned long count;
-+	int ret;
-+
-+	if (crtc != 0)
-+		return -ENODEV;
-+
-+	s3c_fb_enable_irq(sfb);
-+	count = sfb->vsync_info.count;
-+	ret = wait_event_interruptible_timeout(sfb->vsync_info.wait,
-+				       count != sfb->vsync_info.count,
-+				       msecs_to_jiffies(VSYNC_TIMEOUT_MSEC));
-+	if (ret == 0)
-+		return -ETIMEDOUT;
-+
-+	return 0;
-+}
-+
-+static int s3c_fb_ioctl(struct fb_info *info, unsigned int cmd,
-+			unsigned long arg)
-+{
-+	struct s3c_fb_win *win = info->par;
-+	struct s3c_fb *sfb = win->parent;
-+	int ret;
-+	u32 crtc;
-+
-+	switch (cmd) {
-+	case FBIO_WAITFORVSYNC:
-+		if (get_user(crtc, (u32 __user *)arg)) {
-+			ret = -EFAULT;
-+			break;
-+		}
-+
-+		ret = s3c_fb_wait_for_vsync(sfb, crtc);
-+		break;
-+	default:
-+		ret = -ENOTTY;
-+	}
-+
-+	return ret;
-+}
-+
- static struct fb_ops s3c_fb_ops = {
- 	.owner		= THIS_MODULE,
- 	.fb_check_var	= s3c_fb_check_var,
-@@ -811,6 +953,7 @@ static struct fb_ops s3c_fb_ops = {
- 	.fb_copyarea	= cfb_copyarea,
- 	.fb_imageblit	= cfb_imageblit,
- 	.fb_pan_display	= s3c_fb_pan_display,
-+	.fb_ioctl	= s3c_fb_ioctl,
- };
- 
  /**
-@@ -917,6 +1060,8 @@ static int __devinit s3c_fb_probe_win(struct s3c_fb *sfb, unsigned int win_no,
- 
- 	dev_dbg(sfb->dev, "probing window %d, variant %p\n", win_no, variant);
- 
-+	init_waitqueue_head(&sfb->vsync_info.wait);
++ * shadow_protect_win() - disable updating values from shadow registers at vsync
++ *
++ * @win: window to protect registers for
++ * @protect: 1 to protect (disable updates)
++ */
++static void shadow_protect_win(struct s3c_fb_win *win, int protect)
++{
++	struct s3c_fb *sfb = win->parent;
++	u32 reg;
 +
- 	palette_size = variant->palette_sz * 4;
- 
- 	fbinfo = framebuffer_alloc(sizeof(struct s3c_fb_win) +
-@@ -1096,6 +1241,20 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
- 		goto err_req_region;
- 	}
- 
-+	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-+	if (!res) {
-+		dev_err(dev, "failed to acquire irq resource\n");
-+		ret = -ENOENT;
-+		goto err_ioremap;
++	if (protect) {
++		if (sfb->variant.has_prtcon) {
++			writel(PRTCON_PROTECT, sfb->regs + PRTCON);
++		} else if (sfb->variant.has_shadowcon) {
++			reg = readl(sfb->regs + SHADOWCON);
++			writel(reg | SHADOWCON_WINx_PROTECT(win->index),
++				sfb->regs + SHADOWCON);
++		}
++	} else {
++		if (sfb->variant.has_prtcon) {
++			writel(0, sfb->regs + PRTCON);
++		} else if (sfb->variant.has_shadowcon) {
++			reg = readl(sfb->regs + SHADOWCON);
++			writel(reg & ~SHADOWCON_WINx_PROTECT(win->index),
++				sfb->regs + SHADOWCON);
++		}
 +	}
-+	sfb->irq_no = res->start;
-+	ret = request_irq(sfb->irq_no, s3c_fb_irq,
-+			  0, "s3c_fb", sfb);
-+	if (ret) {
-+		dev_err(dev, "irq request failed\n");
-+		goto err_ioremap;
-+	}
++}
 +
- 	dev_dbg(dev, "got resources (regs %p), probing windows\n", sfb->regs);
++/**
+  * s3c_fb_set_par() - framebuffer request to set new framebuffer state.
+  * @info: The framebuffer to change.
+  *
+@@ -811,16 +843,14 @@ static int s3c_fb_pan_display(struct fb_var_screeninfo *var,
  
- 	/* setup gpio and output polarity controls */
-@@ -1130,7 +1289,7 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
- 			dev_err(dev, "failed to create window %d\n", win);
- 			for (; win >= 0; win--)
- 				s3c_fb_release_win(sfb, sfb->windows[win]);
--			goto err_ioremap;
-+			goto err_irq;
- 		}
- 	}
+ 	/* Temporarily turn off per-vsync update from shadow registers until
+ 	 * both start and end addresses are updated to prevent corruption */
+-	if (sfb->variant.has_prtcon)
+-		writel(PRTCON_PROTECT, sfb->regs + PRTCON);
++	shadow_protect_win(win, 1);
  
-@@ -1138,6 +1297,9 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
+ 	writel(info->fix.smem_start + start_byte_offset,
+ 		buf + sfb->variant.buf_start);
+ 	writel(info->fix.smem_start + end_byte_offset,
+ 		buf + sfb->variant.buf_end);
+ 
+-	if (sfb->variant.has_prtcon)
+-		writel(0, sfb->regs + PRTCON);
++	shadow_protect_win(win, 0);
  
  	return 0;
- 
-+err_irq:
-+	free_irq(sfb->irq_no, sfb);
-+
- err_ioremap:
- 	iounmap(sfb->regs);
- 
-@@ -1170,6 +1332,8 @@ static int __devexit s3c_fb_remove(struct platform_device *pdev)
- 		if (sfb->windows[win])
- 			s3c_fb_release_win(sfb, sfb->windows[win]);
- 
-+	free_irq(sfb->irq_no, sfb);
-+
- 	iounmap(sfb->regs);
- 
- 	clk_disable(sfb->bus_clk);
-@@ -1370,6 +1534,7 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pv210 __devinitdata = {
- 			[3] = 0x3000,
+ }
+@@ -1534,6 +1564,7 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pv210 __devinitdata = {
  			[4] = 0x3400,
  		},
-+
+ 
++		.has_shadowcon	= 1,
  	},
  	.win[0]	= &s3c_fb_data_64xx_wins[0],
  	.win[1]	= &s3c_fb_data_64xx_wins[1],
