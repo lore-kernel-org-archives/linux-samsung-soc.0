@@ -1,34 +1,55 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: SMDK6440: I2C writes fails
-Date: Mon, 28 Jun 2010 15:17:06 +0100
-Message-ID: <20100628141706.GD7403@rakim.wolfsonmicro.main>
-References: <AANLkTim5qV8N_0iZ9DViJG1-IqYHhO-DKJZrd7RHpWbB@mail.gmail.com>
- <20100624113236.GA3958@opensource.wolfsonmicro.com>
- <AANLkTikxaMB4eqnNuC8lneEt333gRWzKfLHy2-ChQeB5@mail.gmail.com>
- <34703F8C-7A9C-43FE-A748-9F6E90F3D425@opensource.wolfsonmicro.com>
- <AANLkTikPNJXmcdGxAutoScAnrgvowKE9ChsOaOGQM9sC@mail.gmail.com>
+From: Rabin Vincent <rabin@rab.in>
+Subject: Re: [PATCH 4/8] ARM: S5PV310: Add IRQ support
+Date: Mon, 28 Jun 2010 20:17:43 +0530
+Message-ID: <20100628144743.GB3287@debian>
+References: <1277476037-8806-1-git-send-email-kgene.kim@samsung.com>
+	<1277476037-8806-5-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:59899 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754390Ab0F1ORI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jun 2010 10:17:08 -0400
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <AANLkTikPNJXmcdGxAutoScAnrgvowKE9ChsOaOGQM9sC@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1277476037-8806-5-git-send-email-kgene.kim@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Changhwan Youn <chaos.youn@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>
 
-On Mon, Jun 28, 2010 at 10:53:18AM +0530, Naveen Krishna Ch wrote:
-> On 24 June 2010 22:05, Mark Brown <broonie@opensource.wolfsonmicro.com>wrote:
+On Fri, Jun 25, 2010 at 11:27:13PM +0900, Kukjin Kim wrote:
+> +static DEFINE_SPINLOCK(irq_controller_lock);
 
-> > That smells rather like a compiler bug to me - the two versions
-> > ought to be equivalent apart from the ordering of the comparisons.
+Hmm, why is this lock needed?  The uses below don't seem like they need
+locking:
 
-> I'm not sure, I'm using arm-2009q3 toolchain.
-
-I don't see any reason to suspect that a particular codesourcery code
-drop from last year would be compltely bug free?
+> +static void combiner_mask_irq(unsigned int irq)
+> +{
+> +	u32 mask = 1 << (irq % 32);
+> +
+> +	spin_lock(&irq_controller_lock);
+> +	__raw_writel(mask, combiner_base(irq) + COMBINER_ENABLE_CLEAR);
+> +	spin_unlock(&irq_controller_lock);
+> +}
+> +
+> +static void combiner_unmask_irq(unsigned int irq)
+> +{
+> +	u32 mask = 1 << (irq % 32);
+> +
+> +	spin_lock(&irq_controller_lock);
+> +	__raw_writel(mask, combiner_base(irq) + COMBINER_ENABLE_SET);
+> +	spin_unlock(&irq_controller_lock);
+> +}
+> +
+> +static void combiner_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
+> +{
+...
+> +	spin_lock(&irq_controller_lock);
+> +	status = __raw_readl(chip_data->base + COMBINER_INT_STATUS);
+> +	spin_unlock(&irq_controller_lock);
