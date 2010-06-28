@@ -1,78 +1,165 @@
 From: Pawel Osciak <p.osciak@samsung.com>
-Subject: [PATCH v3 0/12] Various s3c-fb updates
-Date: Mon, 28 Jun 2010 10:08:46 +0200
-Message-ID: <1277712538-23188-1-git-send-email-p.osciak@samsung.com>
+Subject: [PATCH v3 04/12] s3c-fb: Add device name initialization
+Date: Mon, 28 Jun 2010 10:08:50 +0200
+Message-ID: <1277712538-23188-5-git-send-email-p.osciak@samsung.com>
+References: <1277712538-23188-1-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout1.w1.samsung.com ([210.118.77.11]:15756 "EHLO
 	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755000Ab0F1IJJ (ORCPT
+	with ESMTP id S1755377Ab0F1IJK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jun 2010 04:09:09 -0400
+	Mon, 28 Jun 2010 04:09:10 -0400
+In-reply-to: <1277712538-23188-1-git-send-email-p.osciak@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: p.osciak@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com
 
-Hello,
+Add framebuffer device name initialization calls for S3C2443, S3C64xx
+and S5P machines.
 
-this series is rebased onto Ben Dook's framebuffer branch available at:
-git://git.fluff.org/bjdooks/linux.git dev/s3c-fb
+Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-s3c2416/s3c2416.c              |    3 +-
+ arch/arm/mach-s3c2443/s3c2443.c              |    2 +
+ arch/arm/mach-s5pc100/cpu.c                  |    3 ++
+ arch/arm/mach-s5pv210/cpu.c                  |    7 ++---
+ arch/arm/plat-samsung/include/plat/fb-core.h |   29 ++++++++++++++++++++++++++
+ 5 files changed, 39 insertions(+), 5 deletions(-)
+ create mode 100644 arch/arm/plat-samsung/include/plat/fb-core.h
 
-The main changes are the addition of an ability to wait for VSYNC and
-display panning and a better support for S5PV210 SoCs. A number of bugs
-has also been fixed.
-
-The first patch attempts to fix some NULL pointer dereferences in case
-of a failed framebuffer memory allocation attempt. This is a quick fix,
-so please treat it more as an indication of what may be wrong with the
-code in the probe function and not as something to merge.
-
-Patches 3-4 add "new style" device name initialization for various
-S3C/S5P devices. The 4th patch also separates S5PC100 and S5PV210 as
-their framebuffer registers sets differ.
-
-Patches 8, 10 add shadow register update locking (S3C6410+)
-Patch 12 Adds support for DMA channel control found on S5PV210+
-
-Patches 7, 9 and 11 are pure bugfixes.
-
-Changes in v3:
-- new patches:
-  * fixing a section mismatch error
-  * adding support for DMA channel control (enable/disable) found on S5PV210
-  * disabling shadow register updates during set_par
-
-- unified function for disabling register updates
-- no need to initialize names for 64xx-type framebuffers (is being set as
-  default anyway)
-- updated to the new version of Ben's branch
-- minor fixes
-
-Changes in v2:
-- added SHADOWCON register support found on S3C6410 and S5PC100 for disabling
-  shadow register updates
-- fixed osd and alpha register handling (different configurations for different
-  machines)
-
-The series includes:
-[PATCH v3 01/12] s3c-fb: Fix various null references on framebuffer memory alloc failure
-[PATCH v3 02/12] s3c-fb: Correct FRAMESEL1 bitfield defines for VIDINTCON0 register
-[PATCH v3 03/12] s3c-fb: Separate S5PC100 and S5PV210 framebuffer driver data structures
-[PATCH v3 04/12] s3c-fb: Add device name initialization
-[PATCH v3 05/12] s3c-fb: Add support for display panning
-[PATCH v3 06/12] s3c-fb: Add wait for VSYNC ioctl
-[PATCH v3 07/12] s3c-fb: window 3 of 64xx+ does not have an osd_d register
-[PATCH v3 08/12] s3c-fb: Add SHADOWCON shadow register locking support for S5PV210
-[PATCH v3 09/12] s3c-fb: Correct window osd size and alpha register handling
-[PATCH v3 10/12] s3c-fb: Protect window-specific registers during updates
-[PATCH v3 11/12] s3c-fb: fix section mismatch
-[PATCH v3 12/12] s3c-fb: Add support for DMA channel control on S5PV210
-
-Best regards
---
-Pawel Osciak
-Linux Platform Group
-Samsung Poland R&D Center
+diff --git a/arch/arm/mach-s3c2416/s3c2416.c b/arch/arm/mach-s3c2416/s3c2416.c
+index 35dabcc..bc30245 100644
+--- a/arch/arm/mach-s3c2416/s3c2416.c
++++ b/arch/arm/mach-s3c2416/s3c2416.c
+@@ -55,6 +55,7 @@
+ #include <plat/cpu.h>
+ 
+ #include <plat/iic-core.h>
++#include <plat/fb-core.h>
+ 
+ static struct map_desc s3c2416_iodesc[] __initdata = {
+ 	IODESC_ENT(WATCHDOG),
+@@ -90,7 +91,7 @@ int __init s3c2416_init(void)
+ 	s3c_i2c0_setname("s3c2440-i2c");
+ 	s3c_i2c1_setname("s3c2440-i2c");
+ 
+-	s3c_device_fb.name = "s3c2443-fb";
++	s3c_fb_setname("s3c2443-fb");
+ 
+ 	return sysdev_register(&s3c2416_sysdev);
+ }
+diff --git a/arch/arm/mach-s3c2443/s3c2443.c b/arch/arm/mach-s3c2443/s3c2443.c
+index ce2ec32..839b6b2 100644
+--- a/arch/arm/mach-s3c2443/s3c2443.c
++++ b/arch/arm/mach-s3c2443/s3c2443.c
+@@ -35,6 +35,7 @@
+ #include <plat/s3c2443.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
++#include <plat/fb-core.h>
+ 
+ static struct map_desc s3c2443_iodesc[] __initdata = {
+ 	IODESC_ENT(WATCHDOG),
+@@ -62,6 +63,7 @@ int __init s3c2443_init(void)
+ 	s3c24xx_reset_hook = s3c2443_hard_reset;
+ 
+ 	s3c_device_nand.name = "s3c2412-nand";
++	s3c_fb_setname("s3c2443-fb");
+ 
+ 	/* change WDT IRQ number */
+ 	s3c_device_wdt.resource[1].start = IRQ_S3C2443_WDT;
+diff --git a/arch/arm/mach-s5pc100/cpu.c b/arch/arm/mach-s5pc100/cpu.c
+index 7b5bdbc..d10276a 100644
+--- a/arch/arm/mach-s5pc100/cpu.c
++++ b/arch/arm/mach-s5pc100/cpu.c
+@@ -41,6 +41,7 @@
+ #include <plat/iic-core.h>
+ #include <plat/sdhci.h>
+ #include <plat/onenand-core.h>
++#include <plat/fb-core.h>
+ 
+ #include <plat/s5pc100.h>
+ 
+@@ -92,6 +93,8 @@ void __init s5pc100_map_io(void)
+ 	s3c_i2c1_setname("s3c2440-i2c");
+ 
+ 	s3c_onenand_setname("s5pc100-onenand");
++
++	s3c_fb_setname("s5pc100-fb");
+ }
+ 
+ void __init s5pc100_init_clocks(int xtal)
+diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
+index f42c507..4d3580a 100644
+--- a/arch/arm/mach-s5pv210/cpu.c
++++ b/arch/arm/mach-s5pv210/cpu.c
+@@ -34,6 +34,7 @@
+ #include <plat/s5pv210.h>
+ #include <plat/iic-core.h>
+ #include <plat/sdhci.h>
++#include <plat/fb-core.h>
+ 
+ /* Initial IO mappings */
+ 
+@@ -80,10 +81,6 @@ void __init s5pv210_map_io(void)
+ 	s3c_device_adc.name	= "s3c64xx-adc";
+ #endif
+ 
+-#ifdef CONFIG_S3C_DEV_FB
+-	s3c_device_fb.name	= "s5p-fb";
+-#endif
+-
+ 	iotable_init(s5pv210_iodesc, ARRAY_SIZE(s5pv210_iodesc));
+ 
+ 	/* initialise device information early */
+@@ -95,6 +92,8 @@ void __init s5pv210_map_io(void)
+ 	s3c_i2c0_setname("s3c2440-i2c");
+ 	s3c_i2c1_setname("s3c2440-i2c");
+ 	s3c_i2c2_setname("s3c2440-i2c");
++
++	s3c_fb_setname("s5pv210-fb");
+ }
+ 
+ void __init s5pv210_init_clocks(int xtal)
+diff --git a/arch/arm/plat-samsung/include/plat/fb-core.h b/arch/arm/plat-samsung/include/plat/fb-core.h
+new file mode 100644
+index 0000000..bca383e
+--- /dev/null
++++ b/arch/arm/plat-samsung/include/plat/fb-core.h
+@@ -0,0 +1,29 @@
++/*
++ * arch/arm/plat-samsung/include/plat/fb-core.h
++ *
++ * Copyright 2010 Samsung Electronics Co., Ltd.
++ *	Pawel Osciak <p.osciak@samsung.com>
++ *
++ * Samsung framebuffer driver core functions
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#ifndef __ASM_PLAT_FB_CORE_H
++#define __ASM_PLAT_FB_CORE_H __FILE__
++
++/*
++ * These functions are only for use with the core support code, such as
++ * the CPU-specific initialization code.
++ */
++
++/* Re-define device name depending on support. */
++static inline void s3c_fb_setname(char *name)
++{
++#ifdef CONFIG_S3C_DEV_FB
++	s3c_device_fb.name = name;
++#endif
++}
++
++#endif /* __ASM_PLAT_FB_CORE_H */
+-- 
+1.7.1.569.g6f426
