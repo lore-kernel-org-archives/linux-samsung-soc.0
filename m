@@ -1,8 +1,7 @@
 From: Pawel Osciak <p.osciak@samsung.com>
-Subject: [PATCH v3 08/12] s3c-fb: Add SHADOWCON shadow register locking support
- for S5PV210
-Date: Mon, 28 Jun 2010 10:08:54 +0200
-Message-ID: <1277712538-23188-9-git-send-email-p.osciak@samsung.com>
+Subject: [PATCH v3 11/12] s3c-fb: fix section mismatch
+Date: Mon, 28 Jun 2010 10:08:57 +0200
+Message-ID: <1277712538-23188-12-git-send-email-p.osciak@samsung.com>
 References: <1277712538-23188-1-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -10,122 +9,94 @@ Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout4.w1.samsung.com ([210.118.77.14]:55858 "EHLO
 	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755348Ab0F1IJJ (ORCPT
+	with ESMTP id S1755348Ab0F1IJM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Jun 2010 04:09:09 -0400
+	Mon, 28 Jun 2010 04:09:12 -0400
 In-reply-to: <1277712538-23188-1-git-send-email-p.osciak@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: p.osciak@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com
 
-S5PV210 allows per-window locking of register value updates from shadow
-registers.
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
+This patch fixes the following section mismatch errors:
+
+WARNING: vmlinux.o(.data+0x20b40): Section mismatch in reference from the variable s3c_fb_driver_ids to the (unknown reference) .devinit.data:(unknown)
+The variable s3c_fb_driver_ids references
+the (unknown reference) __devinitdata (unknown)
+If the reference is valid then annotate the
+variable with __init* or __refdata (see linux/init.h) or name the variable:
+*driver, *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console,
+
+WARNING: vmlinux.o(.data+0x20b58): Section mismatch in reference from the variable s3c_fb_driver_ids to the (unknown reference) .devinit.data:(unknown)
+The variable s3c_fb_driver_ids references
+the (unknown reference) __devinitdata (unknown)
+If the reference is valid then annotate the
+variable with __init* or __refdata (see linux/init.h) or name the variable:
+*driver, *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console,
+
+WARNING: vmlinux.o(.data+0x20b70): Section mismatch in reference from the variable s3c_fb_driver_ids to the (unknown reference) .devinit.data:(unknown)
+The variable s3c_fb_driver_ids references
+the (unknown reference) __devinitdata (unknown)
+If the reference is valid then annotate the
+variable with __init* or __refdata (see linux/init.h) or name the variable:
+*driver, *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console,
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/plat-samsung/include/plat/regs-fb.h |    3 ++
- drivers/video/s3c-fb.c                       |   39 +++++++++++++++++++++++--
- 2 files changed, 38 insertions(+), 4 deletions(-)
+ drivers/video/s3c-fb.c |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-samsung/include/plat/regs-fb.h
-index 5bcdd09..da54b64 100644
---- a/arch/arm/plat-samsung/include/plat/regs-fb.h
-+++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
-@@ -218,6 +218,9 @@
- #define WINCON1_BPPMODE_25BPP_A1888		(0xd << 2)
- #define WINCON1_BPPMODE_28BPP_A4888		(0xd << 2)
- 
-+/* S5PV210 */
-+#define SHADOWCON				(0x34)
-+#define SHADOWCON_WINx_PROTECT(_win)		(1 << (10 + _win))
- 
- #define VIDOSDxA_TOPLEFT_X_MASK			(0x7ff << 11)
- #define VIDOSDxA_TOPLEFT_X_SHIFT		(11)
 diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index 0a93fca..94423c5 100644
+index d461f1d..de7334c 100644
 --- a/drivers/video/s3c-fb.c
 +++ b/drivers/video/s3c-fb.c
-@@ -79,6 +79,7 @@ struct s3c_fb;
-  * @osd: The base for the OSD registers.
-  * @palette: Address of palette memory, or 0 if none.
-  * @has_prtcon: Set if has PRTCON register.
-+ * @has_shadowcon: Set if has SHADOWCON register.
-  */
- struct s3c_fb_variant {
- 	unsigned int	is_2443:1;
-@@ -95,6 +96,7 @@ struct s3c_fb_variant {
- 	unsigned short	palette[S3C_FB_MAX_WIN];
+@@ -1482,7 +1482,7 @@ static int s3c_fb_resume(struct platform_device *pdev)
+ #define VALID_BPP124 (VALID_BPP(1) | VALID_BPP(2) | VALID_BPP(4))
+ #define VALID_BPP1248 (VALID_BPP124 | VALID_BPP(8))
  
- 	unsigned int	has_prtcon:1;
-+	unsigned int	has_shadowcon:1;
+-static struct s3c_fb_win_variant s3c_fb_data_64xx_wins[] __devinitdata = {
++static struct s3c_fb_win_variant s3c_fb_data_64xx_wins[] = {
+ 	[0] = {
+ 		.has_osd_c	= 1,
+ 		.has_osd_size	= 1,
+@@ -1533,7 +1533,7 @@ static struct s3c_fb_win_variant s3c_fb_data_64xx_wins[] __devinitdata = {
+ 	},
  };
  
- /**
-@@ -363,6 +365,36 @@ static int s3c_fb_align_word(unsigned int bpp, unsigned int pix)
- }
+-static struct s3c_fb_driverdata s3c_fb_data_64xx __devinitdata = {
++static struct s3c_fb_driverdata s3c_fb_data_64xx = {
+ 	.variant = {
+ 		.nr_windows	= 5,
+ 		.vidtcon	= VIDTCON0,
+@@ -1563,7 +1563,7 @@ static struct s3c_fb_driverdata s3c_fb_data_64xx __devinitdata = {
+ 	.win[4]	= &s3c_fb_data_64xx_wins[4],
+ };
  
- /**
-+ * shadow_protect_win() - disable updating values from shadow registers at vsync
-+ *
-+ * @win: window to protect registers for
-+ * @protect: 1 to protect (disable updates)
-+ */
-+static void shadow_protect_win(struct s3c_fb_win *win, int protect)
-+{
-+	struct s3c_fb *sfb = win->parent;
-+	u32 reg;
-+
-+	if (protect) {
-+		if (sfb->variant.has_prtcon) {
-+			writel(PRTCON_PROTECT, sfb->regs + PRTCON);
-+		} else if (sfb->variant.has_shadowcon) {
-+			reg = readl(sfb->regs + SHADOWCON);
-+			writel(reg | SHADOWCON_WINx_PROTECT(win->index),
-+				sfb->regs + SHADOWCON);
-+		}
-+	} else {
-+		if (sfb->variant.has_prtcon) {
-+			writel(0, sfb->regs + PRTCON);
-+		} else if (sfb->variant.has_shadowcon) {
-+			reg = readl(sfb->regs + SHADOWCON);
-+			writel(reg & ~SHADOWCON_WINx_PROTECT(win->index),
-+				sfb->regs + SHADOWCON);
-+		}
-+	}
-+}
-+
-+/**
-  * s3c_fb_set_par() - framebuffer request to set new framebuffer state.
-  * @info: The framebuffer to change.
-  *
-@@ -811,16 +843,14 @@ static int s3c_fb_pan_display(struct fb_var_screeninfo *var,
+-static struct s3c_fb_driverdata s3c_fb_data_s5pc100 __devinitdata = {
++static struct s3c_fb_driverdata s3c_fb_data_s5pc100 = {
+ 	.variant = {
+ 		.nr_windows	= 5,
+ 		.vidtcon	= VIDTCON0,
+@@ -1593,7 +1593,7 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pc100 __devinitdata = {
+ 	.win[4]	= &s3c_fb_data_64xx_wins[4],
+ };
  
- 	/* Temporarily turn off per-vsync update from shadow registers until
- 	 * both start and end addresses are updated to prevent corruption */
--	if (sfb->variant.has_prtcon)
--		writel(PRTCON_PROTECT, sfb->regs + PRTCON);
-+	shadow_protect_win(win, 1);
+-static struct s3c_fb_driverdata s3c_fb_data_s5pv210 __devinitdata = {
++static struct s3c_fb_driverdata s3c_fb_data_s5pv210 = {
+ 	.variant = {
+ 		.nr_windows	= 5,
+ 		.vidtcon	= VIDTCON0,
+@@ -1624,7 +1624,7 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pv210 __devinitdata = {
+ };
  
- 	writel(info->fix.smem_start + start_byte_offset,
- 		buf + sfb->variant.buf_start);
- 	writel(info->fix.smem_start + end_byte_offset,
- 		buf + sfb->variant.buf_end);
- 
--	if (sfb->variant.has_prtcon)
--		writel(0, sfb->regs + PRTCON);
-+	shadow_protect_win(win, 0);
- 
- 	return 0;
- }
-@@ -1534,6 +1564,7 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pv210 __devinitdata = {
- 			[4] = 0x3400,
- 		},
- 
-+		.has_shadowcon	= 1,
- 	},
- 	.win[0]	= &s3c_fb_data_64xx_wins[0],
- 	.win[1]	= &s3c_fb_data_64xx_wins[1],
+ /* S3C2443/S3C2416 style hardware */
+-static struct s3c_fb_driverdata s3c_fb_data_s3c2443 __devinitdata = {
++static struct s3c_fb_driverdata s3c_fb_data_s3c2443 = {
+ 	.variant = {
+ 		.nr_windows	= 2,
+ 		.is_2443	= 1,
 -- 
 1.7.1.569.g6f426
