@@ -1,118 +1,45 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: SMDK6440: Crash during boot up while configuring GPIO bank R
-Date: Thu, 1 Jul 2010 08:32:27 +0530
-Message-ID: <AANLkTimQVcdjqnP1nV49hQXKjcbdEAIdiPMygOvI_Kh_@mail.gmail.com>
-References: <AANLkTinz-ia2PaoLmjlFa6aTS70O1l7kys-9aSZq2O99@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] Samsung Aquila & GONI update
+Date: Thu, 01 Jul 2010 08:07:43 +0200
+Message-ID: <1277964466-23891-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gw0-f46.google.com ([74.125.83.46]:56212 "EHLO
-	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751634Ab0GADCs convert rfc822-to-8bit (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:54058 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751808Ab0GAGIA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jun 2010 23:02:48 -0400
-Received: by gwb15 with SMTP id 15so823917gwb.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jun 2010 20:02:47 -0700 (PDT)
-In-Reply-To: <AANLkTinz-ia2PaoLmjlFa6aTS70O1l7kys-9aSZq2O99@mail.gmail.com>
+	Thu, 1 Jul 2010 02:08:00 -0400
+Received: from eu_spt1 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L4V0083L7P9YD@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 01 Jul 2010 07:07:57 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0L4V00JF47P935@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 01 Jul 2010 07:07:57 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
 
-Ben, Can you show some light here.
+Hello,
 
----------- Forwarded message ----------
-=46rom: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Date: 22 June 2010 16:01
-Subject: SMDK6440: Crash during boot up while configuring GPIO bank R
-To: Ben Dooks <ben-linux@fluff.org>
+This short patch series adds basic framebuffer defintion to Samsung GONI
+board as well as PMIC8998 support for both Samsung Aquila and GONI
+boards. MAX8998 PMIC driver has been accepted by regulator subsystem
+maintainers and is already available in the 'next' kernel tree (see
+commit 8d017ab9f81089cb5ffde0e354d13130c1c19999). 
 
+The series contains the following patches:
 
-Hi Ben,
+[PATCH 1/3] arm: s5pv210: GONI: add support for framebuffer
+[PATCH 2/3] arm: s5pv210: Aquila: add support for MAX8998 PMIC
+[PATCH 3/3] arm: s5pv210: GONI: add support for MAX8998 PMIC
 
-I was adding I2C support for SMDK6440 board.
-
-And observed a bootup crash while configuring GPIO GPR();
-The following are the boot logs
-
-BUG: spinlock recursion on CPU#0, swapper/1
-=A0lock: c01fbd64, .magic: dead4ead, .owner: swapper/1, .owner_cpu: 0
-[<c0023260>] (unwind_backtrace+0x0/0xec) from [<c011e764>]
-(do_raw_spin_lock+0x48/0x14c)
-[<c011e764>] (do_raw_spin_lock+0x48/0x14c) from [<c016e6e8>]
-(_raw_spin_lock_irqsave+0x10/0x18)
-[<c016e6e8>] (_raw_spin_lock_irqsave+0x10/0x18) from [<c00292e8>]
-(s5p6440_gpio_setcfg_4bit_rbank+0x54/0xb4)
-[<c00292e8>] (s5p6440_gpio_setcfg_4bit_rbank+0x54/0xb4) from
-[<c002a1bc>] (s3c_gpio_cfgpin+0x50/0x74)
-[<c002a1bc>] (s3c_gpio_cfgpin+0x50/0x74) from [<c0029478>]
-(s3c_i2c1_cfg_gpio+0x10/0x20)
-[<c0029478>] (s3c_i2c1_cfg_gpio+0x10/0x20) from [<c016af24>]
-(s3c24xx_i2c_probe+0x21c/0x5c8)
-[<c016af24>] (s3c24xx_i2c_probe+0x21c/0x5c8) from [<c01445ac>]
-(platform_drv_probe+0x18/0x1c)
-[<c01445ac>] (platform_drv_probe+0x18/0x1c) from [<c0143700>]
-(driver_probe_device+0xa8/0x158)
-[<c0143700>] (driver_probe_device+0xa8/0x158) from [<c0143810>]
-(__driver_attach+0x60/0x84)
-[<c0143810>] (__driver_attach+0x60/0x84) from [<c0142fa0>]
-(bus_for_each_dev+0x44/0x74)
-[<c0142fa0>] (bus_for_each_dev+0x44/0x74) from [<c01428a8>]
-(bus_add_driver+0x98/0x218)
-[<c01428a8>] (bus_add_driver+0x98/0x218) from [<c0143ae0>]
-(driver_register+0xa8/0x138)
-[<c0143ae0>] (driver_register+0xa8/0x138) from [<c001d388>]
-(do_one_initcall+0x58/0x1a8)
-[<c001d388>] (do_one_initcall+0x58/0x1a8) from [<c0008570>]
-(kernel_init+0x90/0x144)
-[<c0008570>] (kernel_init+0x90/0x144) from [<c001edf4>]
-(kernel_thread_exit+0x0/0x8)
-BUG: spinlock lockup on CPU#0, swapper/1, c01fbd64
-[<c0023260>] (unwind_backtrace+0x0/0xec) from [<c011e82c>]
-(do_raw_spin_lock+0x110/0x14c)
-[<c011e82c>] (do_raw_spin_lock+0x110/0x14c) from [<c016e6e8>]
-(_raw_spin_lock_irqsave+0x10/0x18)
-[<c016e6e8>] (_raw_spin_lock_irqsave+0x10/0x18) from [<c00292e8>]
-(s5p6440_gpio_setcfg_4bit_rbank+0x54/0xb4)
-[<c00292e8>] (s5p6440_gpio_setcfg_4bit_rbank+0x54/0xb4) from
-[<c002a1bc>] (s3c_gpio_cfgpin+0x50/0x74)
-[<c002a1bc>] (s3c_gpio_cfgpin+0x50/0x74) from [<c0029478>]
-(s3c_i2c1_cfg_gpio+0x10/0x20)
-[<c0029478>] (s3c_i2c1_cfg_gpio+0x10/0x20) from [<c016af24>]
-(s3c24xx_i2c_probe+0x21c/0x5c8)
-[<c016af24>] (s3c24xx_i2c_probe+0x21c/0x5c8) from [<c01445ac>]
-(platform_drv_probe+0x18/0x1c)
-[<c01445ac>] (platform_drv_probe+0x18/0x1c) from [<c0143700>]
-(driver_probe_device+0xa8/0x158)
-[<c0143700>] (driver_probe_device+0xa8/0x158) from [<c0143810>]
-(__driver_attach+0x60/0x84)
-[<c0143810>] (__driver_attach+0x60/0x84) from [<c0142fa0>]
-(bus_for_each_dev+0x44/0x74)
-[<c0142fa0>] (bus_for_each_dev+0x44/0x74) from [<c01428a8>]
-(bus_add_driver+0x98/0x218)
-[<c01428a8>] (bus_add_driver+0x98/0x218) from [<c0143ae0>]
-(driver_register+0xa8/0x138)
-[<c0143ae0>] (driver_register+0xa8/0x138) from [<c001d388>]
-(do_one_initcall+0x58/0x1a8)
-[<c001d388>] (do_one_initcall+0x58/0x1a8) from [<c0008570>]
-(kernel_init+0x90/0x144)
-[<c0008570>] (kernel_init+0x90/0x144) from [<c001edf4>]
-(kernel_thread_exit+0x0/0x8)
-
-I found in the code that
-
-s3c_gpio_cfgpin() has a spinlock and it in turn calls
-s5p6440_gpio_setcfg_4bit_rbank() which has another spinlock with in.
-
-Should i be calling=A0s5p6440_gpio_setcfg_4bit_rbank() directly when
-required to configure GPIO Bank R.
-
-Why there are special functions defined for GPIO Bank R only in
-S5P6440 and not in any other CPU.
-
-Am i missing anything..
-
---
-Shine bright,
-(: Naveen Krishna Ch :)
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
