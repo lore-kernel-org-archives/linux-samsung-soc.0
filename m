@@ -1,141 +1,118 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: S5PC100: Add Touchscreen support.
-Date: Wed, 30 Jun 2010 21:59:22 +0900
-Message-ID: <1277902762-12916-1-git-send-email-kgene.kim@samsung.com>
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: SMDK6440: Crash during boot up while configuring GPIO bank R
+Date: Thu, 1 Jul 2010 08:32:27 +0530
+Message-ID: <AANLkTimQVcdjqnP1nV49hQXKjcbdEAIdiPMygOvI_Kh_@mail.gmail.com>
+References: <AANLkTinz-ia2PaoLmjlFa6aTS70O1l7kys-9aSZq2O99@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:43939 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754743Ab0F3NHs (ORCPT
+Received: from mail-gw0-f46.google.com ([74.125.83.46]:56212 "EHLO
+	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751634Ab0GADCs convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Jun 2010 09:07:48 -0400
+	Wed, 30 Jun 2010 23:02:48 -0400
+Received: by gwb15 with SMTP id 15so823917gwb.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Jun 2010 20:02:47 -0700 (PDT)
+In-Reply-To: <AANLkTinz-ia2PaoLmjlFa6aTS70O1l7kys-9aSZq2O99@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Naveen Krishna Ch <ch.naveen@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-samsung-soc@vger.kernel.org
 
-From: Naveen Krishna Ch <ch.naveen@samsung.com>
+Ben, Can you show some light here.
 
-This patch adds touchscreen support for S5PC100.
+---------- Forwarded message ----------
+=46rom: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Date: 22 June 2010 16:01
+Subject: SMDK6440: Crash during boot up while configuring GPIO bank R
+To: Ben Dooks <ben-linux@fluff.org>
 
-Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s5pc100/Kconfig            |    2 ++
- arch/arm/mach-s5pc100/cpu.c              |    3 +++
- arch/arm/mach-s5pc100/include/mach/map.h |    5 ++++-
- arch/arm/mach-s5pc100/mach-smdkc100.c    |   12 ++++++++++++
- 4 files changed, 21 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
-index b2a11df..4cc740e 100644
---- a/arch/arm/mach-s5pc100/Kconfig
-+++ b/arch/arm/mach-s5pc100/Kconfig
-@@ -39,11 +39,13 @@ config S5PC100_SETUP_SDHCI_GPIO
- config MACH_SMDKC100
- 	bool "SMDKC100"
- 	select CPU_S5PC100
-+	select SAMSUNG_DEV_ADC
- 	select S3C_DEV_FB
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_HSMMC
- 	select S3C_DEV_HSMMC1
- 	select S3C_DEV_HSMMC2
-+	select SAMSUNG_DEV_TS
- 	select S5PC100_SETUP_FB_24BPP
- 	select S5PC100_SETUP_I2C1
- 	select S5PC100_SETUP_SDHCI
-diff --git a/arch/arm/mach-s5pc100/cpu.c b/arch/arm/mach-s5pc100/cpu.c
-index 7b5bdbc..5edd8e9 100644
---- a/arch/arm/mach-s5pc100/cpu.c
-+++ b/arch/arm/mach-s5pc100/cpu.c
-@@ -40,6 +40,7 @@
- #include <plat/clock.h>
- #include <plat/iic-core.h>
- #include <plat/sdhci.h>
-+#include <plat/adc-core.h>
- #include <plat/onenand-core.h>
- 
- #include <plat/s5pc100.h>
-@@ -87,6 +88,8 @@ void __init s5pc100_map_io(void)
- 	s5pc100_default_sdhci1();
- 	s5pc100_default_sdhci2();
- 
-+	s3c_adc_setname("s3c64xx-adc");
-+
- 	/* the i2c devices are directly compatible with s3c2440 */
- 	s3c_i2c0_setname("s3c2440-i2c");
- 	s3c_i2c1_setname("s3c2440-i2c");
-diff --git a/arch/arm/mach-s5pc100/include/mach/map.h b/arch/arm/mach-s5pc100/include/mach/map.h
-index cadae43..56d02c0 100644
---- a/arch/arm/mach-s5pc100/include/mach/map.h
-+++ b/arch/arm/mach-s5pc100/include/mach/map.h
-@@ -104,6 +104,8 @@
- #define S5PC100_PA_PCM0		0xF2400000
- #define S5PC100_PA_PCM1		0xF2500000
- 
-+#define S5PC100_PA_TSADC	(0xF3000000)
-+
- /* KEYPAD */
- #define S5PC100_PA_KEYPAD	(0xF3100000)
- 
-@@ -130,9 +132,10 @@
- #define S3C_PA_HSMMC1		S5PC100_PA_HSMMC(1)
- #define S3C_PA_HSMMC2		S5PC100_PA_HSMMC(2)
- #define S3C_PA_KEYPAD		S5PC100_PA_KEYPAD
--#define S3C_PA_TSADC		S5PC100_PA_TSADC
- #define S3C_PA_ONENAND		S5PC100_PA_ONENAND
- #define S3C_PA_ONENAND_BUF	S5PC100_PA_ONENAND_BUF
- #define S3C_SZ_ONENAND_BUF	S5PC100_SZ_ONENAND_BUF
- 
-+#define SAMSUNG_PA_ADC		S5PC100_PA_TSADC
-+
- #endif /* __ASM_ARCH_C100_MAP_H */
-diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-s5pc100/mach-smdkc100.c
-index af22f82..ebb682b 100644
---- a/arch/arm/mach-s5pc100/mach-smdkc100.c
-+++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
-@@ -42,6 +42,8 @@
- #include <plat/s5pc100.h>
- #include <plat/fb.h>
- #include <plat/iic.h>
-+#include <plat/adc.h>
-+#include <plat/ts.h>
- 
- /* Following are default values for UCON, ULCON and UFCON UART registers */
- #define S5PC100_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-@@ -150,16 +152,24 @@ static struct s3c_fb_platdata smdkc100_lcd_pdata __initdata = {
- };
- 
- static struct platform_device *smdkc100_devices[] __initdata = {
-+	&s3c_device_adc,
- 	&s3c_device_i2c0,
- 	&s3c_device_i2c1,
- 	&s3c_device_fb,
- 	&s3c_device_hsmmc0,
- 	&s3c_device_hsmmc1,
- 	&s3c_device_hsmmc2,
-+	&s3c_device_ts,
- 	&smdkc100_lcd_powerdev,
- 	&s5pc100_device_iis0,
- 	&s5pc100_device_ac97,
- };
-+
-+static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
-+	.delay			= 10000,
-+	.presc			= 49,
-+	.oversampling_shift	= 2,
-+};
- 
- static void __init smdkc100_map_io(void)
- {
-@@ -170,6 +180,8 @@ static void __init smdkc100_map_io(void)
- 
- static void __init smdkc100_machine_init(void)
- {
-+	s3c24xx_ts_set_platdata(&s3c_ts_platform);
-+
- 	/* I2C */
- 	s3c_i2c0_set_platdata(NULL);
- 	s3c_i2c1_set_platdata(NULL);
--- 
-1.6.2.5
+Hi Ben,
+
+I was adding I2C support for SMDK6440 board.
+
+And observed a bootup crash while configuring GPIO GPR();
+The following are the boot logs
+
+BUG: spinlock recursion on CPU#0, swapper/1
+=A0lock: c01fbd64, .magic: dead4ead, .owner: swapper/1, .owner_cpu: 0
+[<c0023260>] (unwind_backtrace+0x0/0xec) from [<c011e764>]
+(do_raw_spin_lock+0x48/0x14c)
+[<c011e764>] (do_raw_spin_lock+0x48/0x14c) from [<c016e6e8>]
+(_raw_spin_lock_irqsave+0x10/0x18)
+[<c016e6e8>] (_raw_spin_lock_irqsave+0x10/0x18) from [<c00292e8>]
+(s5p6440_gpio_setcfg_4bit_rbank+0x54/0xb4)
+[<c00292e8>] (s5p6440_gpio_setcfg_4bit_rbank+0x54/0xb4) from
+[<c002a1bc>] (s3c_gpio_cfgpin+0x50/0x74)
+[<c002a1bc>] (s3c_gpio_cfgpin+0x50/0x74) from [<c0029478>]
+(s3c_i2c1_cfg_gpio+0x10/0x20)
+[<c0029478>] (s3c_i2c1_cfg_gpio+0x10/0x20) from [<c016af24>]
+(s3c24xx_i2c_probe+0x21c/0x5c8)
+[<c016af24>] (s3c24xx_i2c_probe+0x21c/0x5c8) from [<c01445ac>]
+(platform_drv_probe+0x18/0x1c)
+[<c01445ac>] (platform_drv_probe+0x18/0x1c) from [<c0143700>]
+(driver_probe_device+0xa8/0x158)
+[<c0143700>] (driver_probe_device+0xa8/0x158) from [<c0143810>]
+(__driver_attach+0x60/0x84)
+[<c0143810>] (__driver_attach+0x60/0x84) from [<c0142fa0>]
+(bus_for_each_dev+0x44/0x74)
+[<c0142fa0>] (bus_for_each_dev+0x44/0x74) from [<c01428a8>]
+(bus_add_driver+0x98/0x218)
+[<c01428a8>] (bus_add_driver+0x98/0x218) from [<c0143ae0>]
+(driver_register+0xa8/0x138)
+[<c0143ae0>] (driver_register+0xa8/0x138) from [<c001d388>]
+(do_one_initcall+0x58/0x1a8)
+[<c001d388>] (do_one_initcall+0x58/0x1a8) from [<c0008570>]
+(kernel_init+0x90/0x144)
+[<c0008570>] (kernel_init+0x90/0x144) from [<c001edf4>]
+(kernel_thread_exit+0x0/0x8)
+BUG: spinlock lockup on CPU#0, swapper/1, c01fbd64
+[<c0023260>] (unwind_backtrace+0x0/0xec) from [<c011e82c>]
+(do_raw_spin_lock+0x110/0x14c)
+[<c011e82c>] (do_raw_spin_lock+0x110/0x14c) from [<c016e6e8>]
+(_raw_spin_lock_irqsave+0x10/0x18)
+[<c016e6e8>] (_raw_spin_lock_irqsave+0x10/0x18) from [<c00292e8>]
+(s5p6440_gpio_setcfg_4bit_rbank+0x54/0xb4)
+[<c00292e8>] (s5p6440_gpio_setcfg_4bit_rbank+0x54/0xb4) from
+[<c002a1bc>] (s3c_gpio_cfgpin+0x50/0x74)
+[<c002a1bc>] (s3c_gpio_cfgpin+0x50/0x74) from [<c0029478>]
+(s3c_i2c1_cfg_gpio+0x10/0x20)
+[<c0029478>] (s3c_i2c1_cfg_gpio+0x10/0x20) from [<c016af24>]
+(s3c24xx_i2c_probe+0x21c/0x5c8)
+[<c016af24>] (s3c24xx_i2c_probe+0x21c/0x5c8) from [<c01445ac>]
+(platform_drv_probe+0x18/0x1c)
+[<c01445ac>] (platform_drv_probe+0x18/0x1c) from [<c0143700>]
+(driver_probe_device+0xa8/0x158)
+[<c0143700>] (driver_probe_device+0xa8/0x158) from [<c0143810>]
+(__driver_attach+0x60/0x84)
+[<c0143810>] (__driver_attach+0x60/0x84) from [<c0142fa0>]
+(bus_for_each_dev+0x44/0x74)
+[<c0142fa0>] (bus_for_each_dev+0x44/0x74) from [<c01428a8>]
+(bus_add_driver+0x98/0x218)
+[<c01428a8>] (bus_add_driver+0x98/0x218) from [<c0143ae0>]
+(driver_register+0xa8/0x138)
+[<c0143ae0>] (driver_register+0xa8/0x138) from [<c001d388>]
+(do_one_initcall+0x58/0x1a8)
+[<c001d388>] (do_one_initcall+0x58/0x1a8) from [<c0008570>]
+(kernel_init+0x90/0x144)
+[<c0008570>] (kernel_init+0x90/0x144) from [<c001edf4>]
+(kernel_thread_exit+0x0/0x8)
+
+I found in the code that
+
+s3c_gpio_cfgpin() has a spinlock and it in turn calls
+s5p6440_gpio_setcfg_4bit_rbank() which has another spinlock with in.
+
+Should i be calling=A0s5p6440_gpio_setcfg_4bit_rbank() directly when
+required to configure GPIO Bank R.
+
+Why there are special functions defined for GPIO Bank R only in
+S5P6440 and not in any other CPU.
+
+Am i missing anything..
+
+--
+Shine bright,
+(: Naveen Krishna Ch :)
