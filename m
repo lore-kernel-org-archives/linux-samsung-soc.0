@@ -1,51 +1,48 @@
-From: Patrick Georgi <patrick@georgi-clan.de>
-Subject: [PATCH]Framebuffer fix for SmartQ5
-Date: Thu, 01 Jul 2010 13:25:51 +0200
-Message-ID: <4C2C7B3F.8030609@georgi-clan.de>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 2/3] arm: s5pv210: Aquila: add support for MAX8998 PMIC
+Date: Thu, 1 Jul 2010 13:24:51 +0100
+Message-ID: <20100701122451.GA17698@sirena.org.uk>
+References: <1277964466-23891-1-git-send-email-m.szyprowski@samsung.com> <1277964466-23891-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from georgi-clan.de ([87.118.84.233]:44729 "EHLO georgi-clan.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752569Ab0GALeG (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:34767 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753739Ab0GAMYy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Jul 2010 07:34:06 -0400
-Received: from [192.168.10.98] (p4FEC9ED4.dip.t-dialin.net [79.236.158.212])
-	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: patrick)
-	by georgi-clan.de (Postfix) with ESMTPSA id 35859778930
-	for <linux-samsung-soc@vger.kernel.org>; Thu,  1 Jul 2010 13:25:47 +0200 (CEST)
+	Thu, 1 Jul 2010 08:24:54 -0400
+Content-Disposition: inline
+In-Reply-To: <1277964466-23891-3-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
 
-Hi,
+On Thu, Jul 01, 2010 at 08:07:45AM +0200, Marek Szyprowski wrote:
 
-the following change makes the framebuffer work on SmartQ5. There are
-still some problems with ADC, so this patch alone won't make the device
-run (or even give a working fb), but it's one issue less to think about.
+> +static struct regulator_consumer_supply aquila_ldo3_consumers[] = {
+> +	{	.supply	= "VMIPI_1.1V",	},
+> +};
 
-Signed-off-by: Patrick Georgi <patrick@georgi-clan.de>
+> +static struct regulator_consumer_supply aquila_ldo8_consumers[] = {
+> +	{	.supply	= "VADC_3.3V", },
+> +};
 
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq5.c
-b/arch/arm/mach-s3c64xx/mach-smartq5.c
-index 1d0326e..27c2901 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq5.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq5.c
-@@ -136,10 +136,10 @@ static struct s3c_fb_pd_win smartq5_fb_win0 = {
-        .win_mode       = {
-                .pixclock       = 1000000000000ULL /
-                                ((40+1+216+800)*(10+1+35+480)*80),
--               .left_margin    = 40,
--               .right_margin   = 216,
--               .upper_margin   = 10,
--               .lower_margin   = 35,
-+               .left_margin    = 216,
-+               .right_margin   = 40,
-+               .upper_margin   = 35,
-+               .lower_margin   = 10,
-                .hsync_len      = 1,
-                .vsync_len      = 1,
-                .xres           = 800,
+Almost all of these regulator supplies should be removed.  Except in
+some exceptional cases all supplies should specify a struct device (the
+only one that really exists at the minute is CPU core due to lack of
+devices for CPUfreq).  In general if you're defining a supply name that
+is the same as the rail on the board rather than a pin on a chip you're
+not using the API correctly.
+
+If you want to label the supply for userspace do so in the constraints.
+
+> +	.constraints	= {
+> +		.name		= "VALIVE_1.1V",
+> +		.min_uV		= 1100000,
+> +		.max_uV		= 1100000,
+> +		.apply_uV	= 1,
+> +		.always_on	= 1,
+> +		.boot_on	= 0,
+
+No need to explicitly set stuff to zero.
