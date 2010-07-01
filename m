@@ -1,462 +1,60 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 3/3] arm: s5pv210: GONI: add support for MAX8998 PMIC
-Date: Thu, 01 Jul 2010 08:07:46 +0200
-Message-ID: <1277964466-23891-4-git-send-email-m.szyprowski@samsung.com>
-References: <1277964466-23891-1-git-send-email-m.szyprowski@samsung.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH 0/8] ARM: S5PV310: Add support for Samsung S5PV310 SoC
+Date: Thu, 1 Jul 2010 18:49:24 +0900
+Message-ID: <AANLkTilZ0ZnFp6grlwHe9r8mWZ0G6bMkV8LJasVd0yjy@mail.gmail.com>
+References: <1277476037-8806-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:37123 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753745Ab0GAGIA (ORCPT
+Received: from mail-px0-f174.google.com ([209.85.212.174]:48245 "EHLO
+	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751927Ab0GAJtZ convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Jul 2010 02:08:00 -0400
-Received: from eu_spt2 ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0L4V0070I7PAG030@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 01 Jul 2010 07:07:58 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L4V00H9E7P9CZ@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 01 Jul 2010 07:07:58 +0100 (BST)
-In-reply-to: <1277964466-23891-1-git-send-email-m.szyprowski@samsung.com>
+	Thu, 1 Jul 2010 05:49:25 -0400
+Received: by pxi14 with SMTP id 14so276042pxi.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Jul 2010 02:49:25 -0700 (PDT)
+In-Reply-To: <1277476037-8806-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-This patch adds required platform definitions for MAX8998 PMIC driver. Power
-regulators for LDO and BUCK outputs has been defined as well as a simple
-gpio-keys button for power key (to enable wakeup functionality with
-external interrupt).
+Hi,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-s5pv210/mach-goni.c |  391 +++++++++++++++++++++++++++++++++++++
- 1 files changed, 391 insertions(+), 0 deletions(-)
+How about to start the single kernel preparation from this patch?
+Instead of create the new machine directory, we just put the
+mach-s5pv210 or create the new one.
 
-diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
-index 05b4a1a..683d2b9 100644
---- a/arch/arm/mach-s5pv210/mach-goni.c
-+++ b/arch/arm/mach-s5pv210/mach-goni.c
-@@ -13,8 +13,13 @@
- #include <linux/init.h>
- #include <linux/serial_core.h>
- #include <linux/fb.h>
-+#include <linux/i2c.h>
-+#include <linux/i2c-gpio.h>
-+#include <linux/mfd/max8998.h>
- #include <linux/delay.h>
- #include <linux/clk.h>
-+#include <linux/gpio_keys.h>
-+#include <linux/input.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
-@@ -107,9 +112,391 @@ static struct s3c_fb_platdata goni_lcd_pdata __initdata = {
- 	.setup_gpio		= s5pv210_fb_gpio_setup_24bpp,
- };
- 
-+/* MAX8998 regulators */
-+#if defined(CONFIG_REGULATOR_MAX8998) || \
-+				defined(CONFIG_REGULATOR_MAX8998_MODULE)
-+
-+static struct regulator_consumer_supply goni_ldo3_consumers[] = {
-+	{	.supply	= "VMIPI_1.1V",	},
-+};
-+
-+static struct regulator_consumer_supply sdk_ldo7_consumers[] = {
-+	{	.supply	= "VLCD_1.8V", },
-+};
-+
-+static struct regulator_consumer_supply goni_ldo8_consumers[] = {
-+	{	.supply	= "VADC_3.3V", },
-+};
-+
-+static struct regulator_consumer_supply goni_ldo11_consumers[] = {
-+	{	.supply	= "CAM_IO_2.8V", },
-+};
-+
-+static struct regulator_consumer_supply goni_ldo12_consumers[] = {
-+	{	.supply	= "CAM_ISP_1.2V", },
-+};
-+
-+static struct regulator_consumer_supply goni_ldo13_consumers[] = {
-+	{	.supply	= "CAM_A_2.8V", },
-+};
-+
-+static struct regulator_consumer_supply goni_ldo14_consumers[] = {
-+	{	.supply	= "CAM_CIF_1.8V", },
-+};
-+
-+static struct regulator_consumer_supply goni_ldo15_consumers[] = {
-+	{	.supply	= "CAM_AF_3.3V", },
-+};
-+
-+static struct regulator_consumer_supply goni_ldo16_consumers[] = {
-+	{	.supply	= "VMIPI_1.8V", },
-+};
-+
-+static struct regulator_consumer_supply goni_ldo17_consumers[] = {
-+	{	.supply	= "VCC_3.0V_LCD", },
-+};
-+
-+static struct regulator_init_data goni_ldo2_data = {
-+	.constraints	= {
-+		.name		= "VALIVE_1.1V",
-+		.min_uV		= 1100000,
-+		.max_uV		= 1100000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+		.boot_on	= 0,
-+		.state_mem	= {
-+			.enabled = 1,
-+		},
-+	},
-+};
-+
-+static struct regulator_init_data goni_ldo3_data = {
-+	.constraints	= {
-+		.name		= "VUSB/MIPI_1.1V",
-+		.min_uV		= 1100000,
-+		.max_uV		= 1100000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(goni_ldo3_consumers),
-+	.consumer_supplies	= goni_ldo3_consumers,
-+};
-+
-+static struct regulator_init_data goni_ldo4_data = {
-+	.constraints	= {
-+		.name		= "VDAC_3.3V",
-+		.min_uV		= 3300000,
-+		.max_uV		= 3300000,
-+		.apply_uV	= 1,
-+	},
-+};
-+
-+static struct regulator_init_data goni_ldo5_data = {
-+	.constraints	= {
-+		.name		= "VTF_2.8V",
-+		.min_uV		= 2800000,
-+		.max_uV		= 2800000,
-+		.apply_uV	= 1,
-+	},
-+};
-+
-+static struct regulator_init_data goni_ldo6_data = {
-+	.constraints	= {
-+		.name		= "VCC_3.3V",
-+		.min_uV		= 3300000,
-+		.max_uV		= 3300000,
-+		.apply_uV	= 1,
-+	},
-+};
-+
-+static struct regulator_init_data goni_ldo7_data = {
-+	.constraints	= {
-+		.name		= "VLCD_1.8V",
-+		.min_uV		= 1800000,
-+		.max_uV		= 1800000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(sdk_ldo7_consumers),
-+	.consumer_supplies	= sdk_ldo7_consumers,
-+};
-+
-+static struct regulator_init_data goni_ldo8_data = {
-+	.constraints	= {
-+		.name		= "VUSB/VADC_3.3V",
-+		.min_uV		= 3300000,
-+		.max_uV		= 3300000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(goni_ldo8_consumers),
-+	.consumer_supplies	= goni_ldo8_consumers,
-+};
-+
-+static struct regulator_init_data goni_ldo9_data = {
-+	.constraints	= {
-+		.name		= "VCC/VCAM_2.8V",
-+		.min_uV		= 2800000,
-+		.max_uV		= 2800000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+	},
-+};
-+
-+static struct regulator_init_data goni_ldo10_data = {
-+	.constraints	= {
-+		.name		= "VPLL_1.1V",
-+		.min_uV		= 1100000,
-+		.max_uV		= 1100000,
-+		.apply_uV	= 1,
-+		.boot_on	= 1,
-+	},
-+};
-+
-+static struct regulator_init_data goni_ldo11_data = {
-+	.constraints	= {
-+		.name		= "CAM_IO_2.8V",
-+		.min_uV		= 2800000,
-+		.max_uV		= 2800000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(goni_ldo11_consumers),
-+	.consumer_supplies	= goni_ldo11_consumers,
-+};
-+
-+static struct regulator_init_data goni_ldo12_data = {
-+	.constraints	= {
-+		.name		= "CAM_ISP_1.2V",
-+		.min_uV		= 1200000,
-+		.max_uV		= 1200000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(goni_ldo12_consumers),
-+	.consumer_supplies	= goni_ldo12_consumers,
-+};
-+
-+static struct regulator_init_data goni_ldo13_data = {
-+	.constraints	= {
-+		.name		= "CAM_A_2.8V",
-+		.min_uV		= 2800000,
-+		.max_uV		= 2800000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(goni_ldo13_consumers),
-+	.consumer_supplies	= goni_ldo13_consumers,
-+};
-+
-+static struct regulator_init_data goni_ldo14_data = {
-+	.constraints	= {
-+		.name		= "CAM_CIF_1.8V",
-+		.min_uV		= 1800000,
-+		.max_uV		= 1800000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(goni_ldo14_consumers),
-+	.consumer_supplies	= goni_ldo14_consumers,
-+};
-+
-+static struct regulator_init_data goni_ldo15_data = {
-+	.constraints	= {
-+		.name		= "CAM_AF_3.3V",
-+		.min_uV		= 3300000,
-+		.max_uV		= 3300000,
-+		.apply_uV	= 1,
-+		.boot_on	= 0,
-+		.always_on	= 1,
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(goni_ldo15_consumers),
-+	.consumer_supplies	= goni_ldo15_consumers,
-+};
-+
-+static struct regulator_init_data goni_ldo16_data = {
-+	.constraints	= {
-+		.name		= "VMIPI_1.8V",
-+		.min_uV		= 1800000,
-+		.max_uV		= 1800000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(goni_ldo16_consumers),
-+	.consumer_supplies	= goni_ldo16_consumers,
-+};
-+
-+static struct regulator_init_data goni_ldo17_data = {
-+	.constraints	= {
-+		.name		= "VCC_3.0V_LCD",
-+		.min_uV		= 3000000,
-+		.max_uV		= 3000000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(goni_ldo17_consumers),
-+	.consumer_supplies	= goni_ldo17_consumers,
-+};
-+
-+/* BUCK */
-+static struct regulator_consumer_supply buck1_consumer[] = {
-+	{	.supply	= "vddarm", },
-+};
-+
-+static struct regulator_consumer_supply goni_buck4_consumers[] = {
-+	{	.supply	= "CAM_CORE_1.2V", },
-+};
-+
-+static struct regulator_init_data goni_buck1_data = {
-+	.constraints	= {
-+		.name		= "VARM_1.2V",
-+		.min_uV		= 1200000,
-+		.max_uV		= 1200000,
-+		.apply_uV	= 1,
-+		.valid_ops_mask	= REGULATOR_CHANGE_VOLTAGE |
-+				  REGULATOR_CHANGE_STATUS,
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(buck1_consumer),
-+	.consumer_supplies	= buck1_consumer,
-+};
-+
-+static struct regulator_consumer_supply buck2_consumer[] = {
-+	{	.supply	= "vddint", },
-+};
-+
-+static struct regulator_init_data goni_buck2_data = {
-+	.constraints	= {
-+		.name		= "VINT_1.2V",
-+		.min_uV		= 1200000,
-+		.max_uV		= 1200000,
-+		.apply_uV	= 1,
-+		.valid_ops_mask	= REGULATOR_CHANGE_VOLTAGE |
-+				  REGULATOR_CHANGE_STATUS,
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(buck2_consumer),
-+	.consumer_supplies	= buck2_consumer,
-+};
-+
-+static struct regulator_init_data goni_buck3_data = {
-+	.constraints	= {
-+		.name		= "VCC_1.8V",
-+		.min_uV		= 1800000,
-+		.max_uV		= 1800000,
-+		.apply_uV	= 1,
-+		.state_mem	= {
-+			.enabled = 1,
-+		},
-+	},
-+};
-+
-+static struct regulator_init_data goni_buck4_data = {
-+	.constraints	= {
-+		.name		= "CAM_CORE_1.2V",
-+		.min_uV		= 1200000,
-+		.max_uV		= 1200000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(goni_buck4_consumers),
-+	.consumer_supplies	= goni_buck4_consumers,
-+};
-+
-+static struct max8998_regulator_data goni_regulators[] = {
-+	{ MAX8998_LDO2,  &goni_ldo2_data },
-+	{ MAX8998_LDO3,  &goni_ldo3_data },
-+	{ MAX8998_LDO4,  &goni_ldo4_data },
-+	{ MAX8998_LDO5,  &goni_ldo5_data },
-+	{ MAX8998_LDO6,  &goni_ldo6_data },
-+	{ MAX8998_LDO7,  &goni_ldo7_data },
-+	{ MAX8998_LDO8,  &goni_ldo8_data },
-+	{ MAX8998_LDO9,  &goni_ldo9_data },
-+	{ MAX8998_LDO10, &goni_ldo10_data },
-+	{ MAX8998_LDO11, &goni_ldo11_data },
-+	{ MAX8998_LDO12, &goni_ldo12_data },
-+	{ MAX8998_LDO13, &goni_ldo13_data },
-+	{ MAX8998_LDO14, &goni_ldo14_data },
-+	{ MAX8998_LDO15, &goni_ldo15_data },
-+	{ MAX8998_LDO16, &goni_ldo16_data },
-+	{ MAX8998_LDO17, &goni_ldo17_data },
-+	{ MAX8998_BUCK1, &goni_buck1_data },
-+	{ MAX8998_BUCK2, &goni_buck2_data },
-+	{ MAX8998_BUCK3, &goni_buck3_data },
-+	{ MAX8998_BUCK4, &goni_buck4_data },
-+};
-+
-+static struct max8998_platform_data max8998_platform_data = {
-+	.num_regulators		= ARRAY_SIZE(goni_regulators),
-+	.regulators		= goni_regulators,
-+};
-+#endif
-+
-+/* GPIO I2C PMIC */
-+#define AP_I2C_GPIO_PMIC_BUS_4	4
-+static struct i2c_gpio_platform_data goni_i2c_gpio_pmic_data = {
-+	.sda_pin	= S5PV210_GPJ4(0),	/* XMSMCSN */
-+	.scl_pin	= S5PV210_GPJ4(3),	/* XMSMIRQN */
-+};
-+
-+static struct platform_device goni_i2c_gpio_pmic = {
-+	.name		= "i2c-gpio",
-+	.id		= AP_I2C_GPIO_PMIC_BUS_4,
-+	.dev		= {
-+		.platform_data	= &goni_i2c_gpio_pmic_data,
-+	},
-+};
-+
-+static struct i2c_board_info i2c_gpio_pmic_devs[] __initdata = {
-+#if defined(CONFIG_REGULATOR_MAX8998) || defined(CONFIG_REGULATOR_MAX8998_MODULE)
-+	{
-+		/* 0xCC when SRAD = 0 */
-+		I2C_BOARD_INFO("max8998", 0xCC >> 1),
-+		.platform_data		= &max8998_platform_data,
-+	},
-+#endif
-+};
-+
-+/* PMIC Power button */
-+static struct gpio_keys_button goni_gpio_keys_table[] = {
-+	{
-+		.code 		= KEY_POWER,
-+		.gpio		= S5PV210_GPH2(6),
-+		.desc		= "gpio-keys: KEY_POWER",
-+		.type		= EV_KEY,
-+		.active_low	= 1,
-+		.wakeup		= 1,
-+		.debounce_interval = 1,
-+	},
-+};
-+
-+static struct gpio_keys_platform_data goni_gpio_keys_data = {
-+	.buttons        = goni_gpio_keys_table,
-+	.nbuttons       = ARRAY_SIZE(goni_gpio_keys_table),
-+};
-+
-+static struct platform_device goni_device_gpiokeys = {
-+	.name      = "gpio-keys",
-+	.dev = {
-+		.platform_data = &goni_gpio_keys_data,
-+	},
-+};
-+
-+static void __init goni_pmic_init(void)
-+{
-+	/* AP_PMIC_IRQ: EINT7 */
-+	s3c_gpio_cfgpin(S5PV210_GPH0(7), S3C_GPIO_SFN(0xf));
-+	s3c_gpio_setpull(S5PV210_GPH0(7), S3C_GPIO_PULL_UP);
-+
-+	/* nPower: EINT22 */
-+	s3c_gpio_cfgpin(S5PV210_GPH2(6), S3C_GPIO_SFN(0xf));
-+	s3c_gpio_setpull(S5PV210_GPH2(6), S3C_GPIO_PULL_UP);
-+}
-+
-+
- static struct platform_device *goni_devices[] __initdata = {
- 	&s3c_device_fb,
- 	&s5pc110_device_onenand,
-+	&goni_i2c_gpio_pmic,
-+	&goni_device_gpiokeys,
- };
- 
- static void __init goni_map_io(void)
-@@ -121,6 +508,10 @@ static void __init goni_map_io(void)
- 
- static void __init goni_machine_init(void)
- {
-+	/* PMIC */
-+	goni_pmic_init();
-+	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4, i2c_gpio_pmic_devs,
-+			ARRAY_SIZE(i2c_gpio_pmic_devs));
- 
- 	/* FB */
- 	s3c_fb_set_platdata(&goni_lcd_pdata);
--- 
-1.7.1.569.g6f426
+and don't you think it's confusing of names.
+s5pc110 (same as s5pv210), vs. s5pc210 (same as s5pv310).
+maybe someone don't read the chip carefully. it's misleading the chips.
+
+Thank you,
+Kyungmin Park
+
+On Fri, Jun 25, 2010 at 11:27 PM, Kukjin Kim <kgene.kim@samsung.com> wr=
+ote:
+> This patch set adds support for Samsung S5PV310/S5PC210. The S5PV310
+> integrates a ARM Cortex A9 microprocessor with several other peripher=
+als
+> to support features such as multimedia, storage, graphics and gaming.
+> The S5PV310 can be used in products such as Netbooks and Mobile devic=
+es.
+>
+> This patch set consists of the following patches.
+>
+> [PATCH 1/8] ARM: S5P: Remove fixed uart offset dependent code
+> [PATCH 2/8] ARM: S5PV310: Add new CPU initialization support
+> [PATCH 3/8] ARM: S5PV310: Add Clock and PLL support
+> [PATCH 4/8] ARM: S5PV310: Add IRQ support
+> [PATCH 5/8] ARM: S5PV310: Add Timer support
+> [PATCH 6/8] ARM: S5PV310: Add new Kconfig and Makefiles
+> [PATCH 7/8] ARM: S5PV310: Add Board support file
+> [PATCH 8/8] ARM: S5PV310: Add serial port support
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
