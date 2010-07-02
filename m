@@ -1,40 +1,81 @@
-From: Pawel Osciak <p.osciak@samsung.com>
-Subject: RE: [PATCH v3 03/12] s3c-fb: Separate S5PC100 and S5PV210 framebuffer
- driver data structures
-Date: Fri, 02 Jul 2010 15:05:20 +0200
-Message-ID: <003d01cb19e7$39c7db50$ad5791f0$%osciak@samsung.com>
-References: <1277712538-23188-1-git-send-email-p.osciak@samsung.com>
- <1277712538-23188-4-git-send-email-p.osciak@samsung.com>
- <4C2DC986.7040705@simtec.co.uk>
+From: Ben Dooks <ben@simtec.co.uk>
+Subject: Re: [PATCH v3 08/12] s3c-fb: Add SHADOWCON shadow register locking
+ support	for S5PV210
+Date: Fri, 02 Jul 2010 14:11:35 +0100
+Message-ID: <4C2DE587.6000306@simtec.co.uk>
+References: <1277712538-23188-1-git-send-email-p.osciak@samsung.com> <1277712538-23188-9-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:42370 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758566Ab0GBNGb (ORCPT
+Received: from hull.simtec.co.uk ([78.105.113.97]:43114 "EHLO
+	preston.local.simtec.co.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1756314Ab0GBNLm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Jul 2010 09:06:31 -0400
-In-reply-to: <4C2DC986.7040705@simtec.co.uk>
-Content-language: pl
+	Fri, 2 Jul 2010 09:11:42 -0400
+In-Reply-To: <1277712538-23188-9-git-send-email-p.osciak@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Ben Dooks' <ben@simtec.co.uk>
-Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, ben-linux@fluff.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Pawel Osciak <p.osciak@samsung.com>
+Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com
 
-> Ben Dooks <ben@simtec.co.uk> wrote:
->On 28/06/10 09:08, Pawel Osciak wrote:
->> S5PC100 and S5PV210 framebuffer devices differ slightly in terms of
->> available registers and their driver data structures have to be separate.
->
->Would have been nice to note which ones changes, otherwise ok.
+On 28/06/10 09:08, Pawel Osciak wrote:
+> S5PV210 allows per-window locking of register value updates from shadow
+> registers.
+> 
+> Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/plat-samsung/include/plat/regs-fb.h |    3 ++
+>  drivers/video/s3c-fb.c                       |   39 +++++++++++++++++++++++--
+>  2 files changed, 38 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-samsung/include/plat/regs-fb.h
+> index 5bcdd09..da54b64 100644
+> --- a/arch/arm/plat-samsung/include/plat/regs-fb.h
+> +++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
+> @@ -218,6 +218,9 @@
+>  #define WINCON1_BPPMODE_25BPP_A1888		(0xd << 2)
+>  #define WINCON1_BPPMODE_28BPP_A4888		(0xd << 2)
+>  
+> +/* S5PV210 */
+> +#define SHADOWCON				(0x34)
+> +#define SHADOWCON_WINx_PROTECT(_win)		(1 << (10 + _win))
 
-For this series, the difference is the existence of PRTCON and SHADOWCON
-registers. There are more AFAIR. I am not sure if it'd be a good place
-to list all of them though...
+you should have () around the _win arg.
 
-Best regards
---
-Pawel Osciak
-Linux Platform Group
-Samsung Poland R&D Center
+>  
+>  #define VIDOSDxA_TOPLEFT_X_MASK			(0x7ff << 11)
+>  #define VIDOSDxA_TOPLEFT_X_SHIFT		(11)
+> diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+> index 0a93fca..94423c5 100644
+> --- a/drivers/video/s3c-fb.c
+> +++ b/drivers/video/s3c-fb.c
+> @@ -79,6 +79,7 @@ struct s3c_fb;
+>   * @osd: The base for the OSD registers.
+>   * @palette: Address of palette memory, or 0 if none.
+>   * @has_prtcon: Set if has PRTCON register.
+> + * @has_shadowcon: Set if has SHADOWCON register.
+>   */
+>  struct s3c_fb_variant {
+>  	unsigned int	is_2443:1;
+> @@ -95,6 +96,7 @@ struct s3c_fb_variant {
+>  	unsigned short	palette[S3C_FB_MAX_WIN];
+>  
+>  	unsigned int	has_prtcon:1;
+> +	unsigned int	has_shadowcon:1;
+>  };
+>  
+>  /**
+> @@ -363,6 +365,36 @@ static int s3c_fb_align_word(unsigned int bpp, unsigned int pix)
+>  }
+>  
+>  /**
+> + * shadow_protect_win() - disable updating values from shadow registers at vsync
+> + *
+> + * @win: window to protect registers for
+> + * @protect: 1 to protect (disable updates)
+> + */
+> +static void shadow_protect_win(struct s3c_fb_win *win, int protect)
+
+technically, protect should be of type 'bool'/
