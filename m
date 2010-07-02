@@ -1,30 +1,52 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v3 05/12] s3c-fb: Add support for display panning
-Date: Fri, 2 Jul 2010 12:52:05 +0100
-Message-ID: <20100702115205.GB30655@sirena.org.uk>
-References: <1277712538-23188-1-git-send-email-p.osciak@samsung.com> <1277712538-23188-6-git-send-email-p.osciak@samsung.com> <4C288779.8040702@gmail.com> <4C2DCCAD.9080306@simtec.co.uk>
+From: Pawel Osciak <p.osciak@samsung.com>
+Subject: RE: [PATCH v3 01/12] s3c-fb: Fix various null references on
+ framebuffer memory alloc failure
+Date: Fri, 02 Jul 2010 14:56:06 +0200
+Message-ID: <003c01cb19e5$ef8c5df0$cea519d0$%osciak@samsung.com>
+References: <1277712538-23188-1-git-send-email-p.osciak@samsung.com>
+ <1277712538-23188-2-git-send-email-p.osciak@samsung.com>
+ <4C2DB6A2.2040005@simtec.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:40501 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752659Ab0GBLwI (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:41676 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758368Ab0GBM5R (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Jul 2010 07:52:08 -0400
-Content-Disposition: inline
-In-Reply-To: <4C2DCCAD.9080306@simtec.co.uk>
+	Fri, 2 Jul 2010 08:57:17 -0400
+In-reply-to: <4C2DB6A2.2040005@simtec.co.uk>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben@simtec.co.uk>
-Cc: Maurus Cuelenaere <mcuelenaere@gmail.com>, Pawel Osciak <p.osciak@samsung.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+To: 'Ben Dooks' <ben@simtec.co.uk>
+Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, ben-linux@fluff.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Fri, Jul 02, 2010 at 12:25:33PM +0100, Ben Dooks wrote:
-> On 28/06/10 12:28, Maurus Cuelenaere wrote:
+>Ben Dooks <ben@simtec.co.uk> wrote:
+>On 28/06/10 09:08, Pawel Osciak wrote:
+>> @@ -819,7 +820,8 @@ static void s3c_fb_release_win(struct s3c_fb *sfb,
+>struct s3c_fb_win *win)
+>>  {
+>>  	if (win->fbinfo) {
+>>  		unregister_framebuffer(win->fbinfo);
+>> -		fb_dealloc_cmap(&win->fbinfo->cmap);
+>> +		if (&win->fbinfo->cmap)
+>> +			fb_dealloc_cmap(&win->fbinfo->cmap);
+>
+>did you really mean &win->fbinfo->cmap? surely that will end up
+>always evaluating to true?
+>
 
-> > No need for the '? 1 : 0'
+It should have actually been:
 
-> I tihnk there is, IIRC there is no neccessity for a compiler to produce
-> one for true, just that the result be !0
++		if (win->fbinfo->cmap.len)
++			fb_dealloc_cmap(&win->fbinfo->cmap);
 
-The compiler will *produce* 1 for true, but it will accept any non-zero
-value as true.
+Thanks, will post a fix for this patch.
+
+
+Best regards
+--
+Pawel Osciak
+Linux Platform Group
+Samsung Poland R&D Center
