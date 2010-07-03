@@ -1,196 +1,213 @@
-From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: [PATCH 2/3] ASoC: Add SmartQ sound driver
-Date: Sat, 03 Jul 2010 02:46:12 +0200
-Message-ID: <4c2e8856.487e0e0a.3bb5.3ec0@mx.google.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 2/3] ARM: S5PV210: Add support SDMMC WP through EXT_INT on
+	SMDKV210
+Date: Sat, 03 Jul 2010 10:08:01 +0900
+Message-ID: <009101cb1a4c$3105a000$9310e000$%kim@samsung.com>
+References: <1276601268-7226-1-git-send-email-kgene.kim@samsung.com>
+ <1276601268-7226-3-git-send-email-kgene.kim@samsung.com>
+ <AANLkTimQwmFGwRgXASba1ECwYDJaay_D1q4_L6tvIo9y@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: alsa-devel@alsa-project.org
-Cc: linux-samsung-soc@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-arm-kernel@lists.infradead.org, Liam Girdwood <lrg@slimlogic.co.uk>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:35792 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751620Ab0GCBH7 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 2 Jul 2010 21:07:59 -0400
+In-reply-to: <AANLkTimQwmFGwRgXASba1ECwYDJaay_D1q4_L6tvIo9y@mail.gmail.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kyungmin Park' <kmpark@infradead.org>
+Cc: linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Lee Hyuk' <hyuk1.lee@samsung.com>
 
-VGhpcyBhZGRzIHNvdW5kIHN1cHBvcnQgZm9yIHRoZSBTbWFydFEgYm9hcmQuCgpUaGUgaGFyZHdh
-cmUgY29uc2lzdHMgb2YgYSBTM0M2NDEwIGNvdXBsZWQgd2l0aCBhIFdNODk4NyBvdmVyIEnCslMu
-IFRoZSBXTTg3NTAKZHJpdmVyIGlzIHVzZWQgZm9yIGRyaXZpbmcgdGhlIFdNODk4NywgYXMgdGhl
-eSBhcmUgcmVnaXN0ZXIgY29tcGF0aWJsZS4KClNpZ25lZC1vZmYtYnk6IE1hdXJ1cyBDdWVsZW5h
-ZXJlIDxtY3VlbGVuYWVyZUBnbWFpbC5jb20+Ci0tLQogc291bmQvc29jL3MzYzI0eHgvS2NvbmZp
-ZyAgICAgICAgIHwgICAgNiArCiBzb3VuZC9zb2MvczNjMjR4eC9NYWtlZmlsZSAgICAgICAgfCAg
-ICAyICsKIHNvdW5kL3NvYy9zM2MyNHh4L3NtYXJ0cV93bTg5ODcuYyB8ICAyOTYgKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKwogMyBmaWxlcyBjaGFuZ2VkLCAzMDQgaW5zZXJ0
-aW9ucygrKSwgMCBkZWxldGlvbnMoLSkKIGNyZWF0ZSBtb2RlIDEwMDY0NCBzb3VuZC9zb2MvczNj
-MjR4eC9zbWFydHFfd204OTg3LmMKCmRpZmYgLS1naXQgYS9zb3VuZC9zb2MvczNjMjR4eC9LY29u
-ZmlnIGIvc291bmQvc29jL3MzYzI0eHgvS2NvbmZpZwppbmRleCAyYTdjYzIyLi40ZjQ2YmEwIDEw
-MDY0NAotLS0gYS9zb3VuZC9zb2MvczNjMjR4eC9LY29uZmlnCisrKyBiL3NvdW5kL3NvYy9zM2My
-NHh4L0tjb25maWcKQEAgLTEyNSwzICsxMjUsOSBAQCBjb25maWcgU05EX1NPQ19TTURLX1dNOTcx
-MwogCXNlbGVjdCBTTkRfUzNDX1NPQ19BQzk3CiAJaGVscAogCSAgU2F0IFkgaWYgeW91IHdhbnQg
-dG8gYWRkIHN1cHBvcnQgZm9yIFNvQyBhdWRpbyBvbiB0aGUgU01ESy4KKworY29uZmlnIFNORF9T
-M0M2NFhYX1NPQ19TTUFSVFEKKwl0cmlzdGF0ZSAiU29DIEkyUyBBdWRpbyBzdXBwb3J0IGZvciBT
-bWFydFEgYm9hcmQiCisJZGVwZW5kcyBvbiBTTkRfUzNDMjRYWF9TT0MgJiYgTUFDSF9TTUFSVFEK
-KwlzZWxlY3QgU05EX1MzQzY0WFhfU09DX0kyUworCXNlbGVjdCBTTkRfU09DX1dNODc1MApkaWZm
-IC0tZ2l0IGEvc291bmQvc29jL3MzYzI0eHgvTWFrZWZpbGUgYi9zb3VuZC9zb2MvczNjMjR4eC9N
-YWtlZmlsZQppbmRleCA4MWQ4ZGM1Li41MDE3MmMzIDEwMDY0NAotLS0gYS9zb3VuZC9zb2MvczNj
-MjR4eC9NYWtlZmlsZQorKysgYi9zb3VuZC9zb2MvczNjMjR4eC9NYWtlZmlsZQpAQCAtMjksNiAr
-MjksNyBAQCBzbmQtc29jLXMzYzI0eHgtc2ltdGVjLWhlcm1lcy1vYmpzIDo9IHMzYzI0eHhfc2lt
-dGVjX2hlcm1lcy5vCiBzbmQtc29jLXMzYzI0eHgtc2ltdGVjLXRsdjMyMGFpYzIzLW9ianMgOj0g
-czNjMjR4eF9zaW10ZWNfdGx2MzIwYWljMjMubwogc25kLXNvYy1zbWRrNjR4eC13bTg1ODAtb2Jq
-cyA6PSBzbWRrNjR4eF93bTg1ODAubwogc25kLXNvYy1zbWRrLXdtOTcxMy1vYmpzIDo9IHNtZGtf
-d205NzEzLm8KK3NuZC1zb2MtczNjNjR4eC1zbWFydHEtd204OTg3LW9ianMgOj0gc21hcnRxX3dt
-ODk4Ny5vCiAKIG9iai0kKENPTkZJR19TTkRfUzNDMjRYWF9TT0NfSklWRV9XTTg3NTApICs9IHNu
-ZC1zb2Mtaml2ZS13bTg3NTAubwogb2JqLSQoQ09ORklHX1NORF9TM0MyNFhYX1NPQ19ORU8xOTcz
-X1dNODc1MykgKz0gc25kLXNvYy1uZW8xOTczLXdtODc1My5vCkBAIC00MSwzICs0Miw0IEBAIG9i
-ai0kKENPTkZJR19TTkRfUzNDMjRYWF9TT0NfU0lNVEVDX0hFUk1FUykgKz0gc25kLXNvYy1zM2My
-NHh4LXNpbXRlYy1oZXJtZXMubwogb2JqLSQoQ09ORklHX1NORF9TM0MyNFhYX1NPQ19TSU1URUNf
-VExWMzIwQUlDMjMpICs9IHNuZC1zb2MtczNjMjR4eC1zaW10ZWMtdGx2MzIwYWljMjMubwogb2Jq
-LSQoQ09ORklHX1NORF9TM0M2NFhYX1NPQ19XTTg1ODApICs9IHNuZC1zb2Mtc21kazY0eHgtd204
-NTgwLm8KIG9iai0kKENPTkZJR19TTkRfU09DX1NNREtfV005NzEzKSArPSBzbmQtc29jLXNtZGst
-d205NzEzLm8KK29iai0kKENPTkZJR19TTkRfUzNDNjRYWF9TT0NfU01BUlRRKSArPSBzbmQtc29j
-LXMzYzY0eHgtc21hcnRxLXdtODk4Ny5vCmRpZmYgLS1naXQgYS9zb3VuZC9zb2MvczNjMjR4eC9z
-bWFydHFfd204OTg3LmMgYi9zb3VuZC9zb2MvczNjMjR4eC9zbWFydHFfd204OTg3LmMKbmV3IGZp
-bGUgbW9kZSAxMDA2NDQKaW5kZXggMDAwMDAwMC4uYzkwZWY5NgotLS0gL2Rldi9udWxsCisrKyBi
-L3NvdW5kL3NvYy9zM2MyNHh4L3NtYXJ0cV93bTg5ODcuYwpAQCAtMCwwICsxLDI5NiBAQAorLyog
-c291bmQvc29jL3MzYzI0eHgvc21hcnRxX3dtODk4Ny5jCisgKgorICogQ29weXJpZ2h0IDIwMTAg
-TWF1cnVzIEN1ZWxlbmFlcmUgPG1jdWVsZW5hZXJlQGdtYWlsLmNvbT4KKyAqCisgKiBCYXNlZCBv
-biBzbWRrNjQxMF93bTg5ODcuYworICogICAgIENvcHlyaWdodCAyMDA3IFdvbGZzb24gTWljcm9l
-bGVjdHJvbmljcyBQTEMuIC0gbGludXhAd29sZnNvbm1pY3JvLmNvbQorICogICAgIEdyYWVtZSBH
-cmVnb3J5IC0gZ3JhZW1lLmdyZWdvcnlAd29sZnNvbm1pY3JvLmNvbQorICoKKyAqICBUaGlzIHBy
-b2dyYW0gaXMgZnJlZSBzb2Z0d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUgIGl0IGFuZC9vciBt
-b2RpZnkgaXQKKyAqICB1bmRlciAgdGhlIHRlcm1zIG9mICB0aGUgR05VIEdlbmVyYWwgIFB1Ymxp
-YyBMaWNlbnNlIGFzIHB1Ymxpc2hlZCBieSB0aGUKKyAqICBGcmVlIFNvZnR3YXJlIEZvdW5kYXRp
-b247ICBlaXRoZXIgdmVyc2lvbiAyIG9mIHRoZSAgTGljZW5zZSwgb3IgKGF0IHlvdXIKKyAqICBv
-cHRpb24pIGFueSBsYXRlciB2ZXJzaW9uLgorICoKKyAqLworCisjaW5jbHVkZSA8bGludXgvbW9k
-dWxlLmg+CisjaW5jbHVkZSA8bGludXgvcGxhdGZvcm1fZGV2aWNlLmg+CisjaW5jbHVkZSA8bGlu
-dXgvZ3Bpby5oPgorCisjaW5jbHVkZSA8c291bmQvcGNtLmg+CisjaW5jbHVkZSA8c291bmQvcGNt
-X3BhcmFtcy5oPgorI2luY2x1ZGUgPHNvdW5kL3NvYy1kYXBtLmg+CisjaW5jbHVkZSA8c291bmQv
-amFjay5oPgorCisjaW5jbHVkZSA8YXNtL21hY2gtdHlwZXMuaD4KKworI2luY2x1ZGUgInMzYy1k
-bWEuaCIKKyNpbmNsdWRlICJzM2M2NHh4LWkycy5oIgorCisjaW5jbHVkZSAiLi4vY29kZWNzL3dt
-ODc1MC5oIgorCisvKgorICogV004OTg3IGlzIHJlZ2lzdGVyIGNvbXBhdGlibGUgd2l0aCBXTTg3
-NTAsIHNvIHVzaW5nIHRoYXQgYXMgYmFzZSBkcml2ZXIuCisgKi8KKworc3RhdGljIHN0cnVjdCBz
-bmRfc29jX2NhcmQgc25kX3NvY19zbWFydHE7CisKK3N0YXRpYyBpbnQgc21hcnRxX2hpZmlfaHdf
-cGFyYW1zKHN0cnVjdCBzbmRfcGNtX3N1YnN0cmVhbSAqc3Vic3RyZWFtLAorCXN0cnVjdCBzbmRf
-cGNtX2h3X3BhcmFtcyAqcGFyYW1zKQoreworCXN0cnVjdCBzbmRfc29jX3BjbV9ydW50aW1lICpy
-dGQgPSBzdWJzdHJlYW0tPnByaXZhdGVfZGF0YTsKKwlzdHJ1Y3Qgc25kX3NvY19kYWkgKmNvZGVj
-X2RhaSA9IHJ0ZC0+ZGFpLT5jb2RlY19kYWk7CisJc3RydWN0IHNuZF9zb2NfZGFpICpjcHVfZGFp
-ID0gcnRkLT5kYWktPmNwdV9kYWk7CisJc3RydWN0IHMzY19pMnN2Ml9yYXRlX2NhbGMgZGl2Owor
-CXVuc2lnbmVkIGludCBjbGsgPSAwOworCWludCByZXQ7CisKKwlzM2NfaTJzdjJfaWlzX2NhbGNf
-cmF0ZSgmZGl2LCBOVUxMLCBwYXJhbXNfcmF0ZShwYXJhbXMpLAorCQkJCXMzY19pMnN2Ml9nZXRf
-Y2xvY2soY3B1X2RhaSkpOworCisJc3dpdGNoIChwYXJhbXNfcmF0ZShwYXJhbXMpKSB7CisJY2Fz
-ZSA4MDAwOgorCWNhc2UgMTYwMDA6CisJY2FzZSAzMjAwMDoKKwljYXNlIDQ4MDAwOgorCWNhc2Ug
-OTYwMDA6CisJCWNsayA9IDEyMjg4MDAwOworCQlicmVhazsKKwljYXNlIDExMDI1OgorCWNhc2Ug
-MjIwNTA6CisJY2FzZSA0NDEwMDoKKwljYXNlIDg4MjAwOgorCQljbGsgPSAxMTI4OTYwMDsKKwkJ
-YnJlYWs7CisJfQorCisJLyogc2V0IGNvZGVjIERBSSBjb25maWd1cmF0aW9uICovCisJcmV0ID0g
-c25kX3NvY19kYWlfc2V0X2ZtdChjb2RlY19kYWksIFNORF9TT0NfREFJRk1UX0kyUyB8CisJCQkJ
-CSAgICAgU05EX1NPQ19EQUlGTVRfTkJfTkYgfAorCQkJCQkgICAgIFNORF9TT0NfREFJRk1UX0NC
-U19DRlMpOworCWlmIChyZXQgPCAwKQorCQlyZXR1cm4gcmV0OworCisJLyogc2V0IGNwdSBEQUkg
-Y29uZmlndXJhdGlvbiAqLworCXJldCA9IHNuZF9zb2NfZGFpX3NldF9mbXQoY3B1X2RhaSwgU05E
-X1NPQ19EQUlGTVRfSTJTIHwKKwkJCQkJICAgU05EX1NPQ19EQUlGTVRfTkJfTkYgfAorCQkJCQkg
-ICBTTkRfU09DX0RBSUZNVF9DQlNfQ0ZTKTsKKwlpZiAocmV0IDwgMCkKKwkJcmV0dXJuIHJldDsK
-KworCS8qIHNldCB0aGUgY29kZWMgc3lzdGVtIGNsb2NrIGZvciBEQUMgYW5kIEFEQyAqLworCXJl
-dCA9IHNuZF9zb2NfZGFpX3NldF9zeXNjbGsoY29kZWNfZGFpLCBXTTg3NTBfU1lTQ0xLLCBjbGss
-CisJCQkJICAgICBTTkRfU09DX0NMT0NLX0lOKTsKKwlpZiAocmV0IDwgMCkKKwkJcmV0dXJuIHJl
-dDsKKworCS8qIHNldCBNQ0xLIGRpdmlzaW9uIGZvciBzYW1wbGUgcmF0ZSAqLworCXJldCA9IHNu
-ZF9zb2NfZGFpX3NldF9jbGtkaXYoY3B1X2RhaSwgUzNDX0kyU1YyX0RJVl9SQ0xLLCBkaXYuZnNf
-ZGl2KTsKKwlpZiAocmV0IDwgMCkKKwkJcmV0dXJuIHJldDsKKworCS8qIHNldCBwcmVzY2FsZXIg
-ZGl2aXNpb24gZm9yIHNhbXBsZSByYXRlICovCisJcmV0ID0gc25kX3NvY19kYWlfc2V0X2Nsa2Rp
-dihjcHVfZGFpLCBTM0NfSTJTVjJfRElWX1BSRVNDQUxFUiwKKwkJCQkgICAgIGRpdi5jbGtfZGl2
-IC0gMSk7CisJaWYgKHJldCA8IDApCisJCXJldHVybiByZXQ7CisKKwlyZXR1cm4gMDsKK30KKwor
-LyoKKyAqIFNtYXJ0USBXTTg5ODcgSGlGaSBEQUkgb3BlcmF0aW9ucy4KKyAqLworc3RhdGljIHN0
-cnVjdCBzbmRfc29jX29wcyBzbWFydHFfaGlmaV9vcHMgPSB7CisJLmh3X3BhcmFtcyA9IHNtYXJ0
-cV9oaWZpX2h3X3BhcmFtcywKK307CisKK3N0YXRpYyBzdHJ1Y3Qgc25kX3NvY19qYWNrIHNtYXJ0
-cV9qYWNrOworCitzdGF0aWMgc3RydWN0IHNuZF9zb2NfamFja19waW4gc21hcnRxX2phY2tfcGlu
-c1tdID0geworCS8qIERpc2FibGUgc3BlYWtlciB3aGVuIGhlYWRwaG9uZSBpcyBwbHVnZ2VkIGlu
-ICovCisJeworCQkucGluCT0gIkludGVybmFsIFNwZWFrZXIiLAorCQkubWFzawk9IFNORF9KQUNL
-X0hFQURQSE9ORSwKKwkJLmludmVydAk9IHRydWUsCisJfSwKK307CisKK3N0YXRpYyBzdHJ1Y3Qg
-c25kX3NvY19qYWNrX2dwaW8gc21hcnRxX2phY2tfZ3Bpb3NbXSA9IHsKKwl7CisJCS5ncGlvCQk9
-IFMzQzY0WFhfR1BMKDEyKSwKKwkJLm5hbWUJCT0gImhlYWRwaG9uZSBkZXRlY3QiLAorCQkucmVw
-b3J0CQk9IFNORF9KQUNLX0hFQURQSE9ORSwKKwkJLmRlYm91bmNlX3RpbWUJPSAyMDAsCisJfSwK
-K307CisKK3N0YXRpYyBjb25zdCBzdHJ1Y3Qgc25kX2tjb250cm9sX25ldyB3bTg5ODdfc21hcnRx
-X2NvbnRyb2xzW10gPSB7CisJU09DX0RBUE1fUElOX1NXSVRDSCgiSW50ZXJuYWwgU3BlYWtlciIp
-LAorCVNPQ19EQVBNX1BJTl9TV0lUQ0goIkhlYWRwaG9uZSBKYWNrIiksCisJU09DX0RBUE1fUElO
-X1NXSVRDSCgiSW50ZXJuYWwgTWljIiksCit9OworCitzdGF0aWMgaW50IHNtYXJ0cV9zcGVha2Vy
-X2V2ZW50KHN0cnVjdCBzbmRfc29jX2RhcG1fd2lkZ2V0ICp3LAorCQkJCXN0cnVjdCBzbmRfa2Nv
-bnRyb2wgKmssCisJCQkJaW50IGV2ZW50KQoreworCWdwaW9fc2V0X3ZhbHVlKFMzQzY0WFhfR1BL
-KDEyKSwgU05EX1NPQ19EQVBNX0VWRU5UX09GRihldmVudCkpOworCisJcmV0dXJuIDA7Cit9CisK
-K3N0YXRpYyBjb25zdCBzdHJ1Y3Qgc25kX3NvY19kYXBtX3dpZGdldCB3bTg5ODdfZGFwbV93aWRn
-ZXRzW10gPSB7CisJU05EX1NPQ19EQVBNX1NQSygiSW50ZXJuYWwgU3BlYWtlciIsIHNtYXJ0cV9z
-cGVha2VyX2V2ZW50KSwKKwlTTkRfU09DX0RBUE1fSFAoIkhlYWRwaG9uZSBKYWNrIiwgTlVMTCks
-CisJU05EX1NPQ19EQVBNX01JQygiSW50ZXJuYWwgTWljIiwgTlVMTCksCit9OworCitzdGF0aWMg
-Y29uc3Qgc3RydWN0IHNuZF9zb2NfZGFwbV9yb3V0ZSBhdWRpb19tYXBbXSA9IHsKKwl7IkhlYWRw
-aG9uZSBKYWNrIiwgTlVMTCwgIkxPVVQyIn0sCisJeyJIZWFkcGhvbmUgSmFjayIsIE5VTEwsICJS
-T1VUMiJ9LAorCisJeyJJbnRlcm5hbCBTcGVha2VyIiwgTlVMTCwgIkxPVVQyIn0sCisJeyJJbnRl
-cm5hbCBTcGVha2VyIiwgTlVMTCwgIlJPVVQyIn0sCisKKwl7Ik1pYyBCaWFzIiwgTlVMTCwgIklu
-dGVybmFsIE1pYyJ9LAorCXsiTElOUFVUMiIsIE5VTEwsICJNaWMgQmlhcyJ9LAorfTsKKworc3Rh
-dGljIGludCBzbWFydHFfd204OTg3X2luaXQoc3RydWN0IHNuZF9zb2NfY29kZWMgKmNvZGVjKQor
-eworCWludCBlcnIgPSAwOworCisJLyogQWRkIFNtYXJ0USBzcGVjaWZpYyB3aWRnZXRzICovCisJ
-c25kX3NvY19kYXBtX25ld19jb250cm9scyhjb2RlYywgd204OTg3X2RhcG1fd2lkZ2V0cywKKwkJ
-CQkgIEFSUkFZX1NJWkUod204OTg3X2RhcG1fd2lkZ2V0cykpOworCisJLyogYWRkIFNtYXJ0USBz
-cGVjaWZpYyBjb250cm9scyAqLworCWVyciA9IHNuZF9zb2NfYWRkX2NvbnRyb2xzKGNvZGVjLCB3
-bTg5ODdfc21hcnRxX2NvbnRyb2xzLAorCQkJCSAgIEFSUkFZX1NJWkUod204OTg3X3NtYXJ0cV9j
-b250cm9scykpOworCisJaWYgKGVyciA8IDApCisJCXJldHVybiBlcnI7CisKKwkvKiBzZXR1cCBT
-bWFydFEgc3BlY2lmaWMgYXVkaW8gcGF0aCAqLworCXNuZF9zb2NfZGFwbV9hZGRfcm91dGVzKGNv
-ZGVjLCBhdWRpb19tYXAsIEFSUkFZX1NJWkUoYXVkaW9fbWFwKSk7CisKKwkvKiBzZXQgZW5kcG9p
-bnRzIHRvIG5vdCBjb25uZWN0ZWQgKi8KKwlzbmRfc29jX2RhcG1fbmNfcGluKGNvZGVjLCAiTElO
-UFVUMSIpOworCXNuZF9zb2NfZGFwbV9uY19waW4oY29kZWMsICJSSU5QVVQxIik7CisJc25kX3Nv
-Y19kYXBtX25jX3Bpbihjb2RlYywgIk9VVDMiKTsKKwlzbmRfc29jX2RhcG1fbmNfcGluKGNvZGVj
-LCAiUk9VVDEiKTsKKworCS8qIHNldCBlbmRwb2ludHMgdG8gZGVmYXVsdCBvZmYgbW9kZSAqLwor
-CXNuZF9zb2NfZGFwbV9lbmFibGVfcGluKGNvZGVjLCAiSW50ZXJuYWwgU3BlYWtlciIpOworCXNu
-ZF9zb2NfZGFwbV9lbmFibGVfcGluKGNvZGVjLCAiSW50ZXJuYWwgTWljIik7CisJc25kX3NvY19k
-YXBtX2Rpc2FibGVfcGluKGNvZGVjLCAiSGVhZHBob25lIEphY2siKTsKKworCWVyciA9IHNuZF9z
-b2NfZGFwbV9zeW5jKGNvZGVjKTsKKwlpZiAoZXJyKQorCQlyZXR1cm4gZXJyOworCisJLyogSGVh
-ZHBob25lIGphY2sgZGV0ZWN0aW9uICovCisJZXJyID0gc25kX3NvY19qYWNrX25ldygmc25kX3Nv
-Y19zbWFydHEsICJIZWFkcGhvbmUgSmFjayIsCisJCQkgICAgICAgU05EX0pBQ0tfSEVBRFBIT05F
-LCAmc21hcnRxX2phY2spOworCWlmIChlcnIpCisJCXJldHVybiBlcnI7CisKKwllcnIgPSBzbmRf
-c29jX2phY2tfYWRkX3BpbnMoJnNtYXJ0cV9qYWNrLCBBUlJBWV9TSVpFKHNtYXJ0cV9qYWNrX3Bp
-bnMpLAorCQkJCSAgICBzbWFydHFfamFja19waW5zKTsKKwlpZiAoZXJyKQorCQlyZXR1cm4gZXJy
-OworCisJZXJyID0gc25kX3NvY19qYWNrX2FkZF9ncGlvcygmc21hcnRxX2phY2ssCisJCQkJICAg
-ICBBUlJBWV9TSVpFKHNtYXJ0cV9qYWNrX2dwaW9zKSwKKwkJCQkgICAgIHNtYXJ0cV9qYWNrX2dw
-aW9zKTsKKworCXJldHVybiBlcnI7Cit9CisKK3N0YXRpYyBzdHJ1Y3Qgc25kX3NvY19kYWlfbGlu
-ayBzbWFydHFfZGFpW10gPSB7CisJeworCQkubmFtZQkJPSAid204OTg3IiwKKwkJLnN0cmVhbV9u
-YW1lCT0gIlNtYXJ0USBIaS1GaSIsCisJCS5jcHVfZGFpCT0gJnMzYzY0eHhfaTJzX2RhaVswXSwK
-KwkJLmNvZGVjX2RhaQk9ICZ3bTg3NTBfZGFpLAorCQkuaW5pdAkJPSBzbWFydHFfd204OTg3X2lu
-aXQsCisJCS5vcHMJCT0gJnNtYXJ0cV9oaWZpX29wcywKKwl9LAorfTsKKworc3RhdGljIHN0cnVj
-dCBzbmRfc29jX2NhcmQgc25kX3NvY19zbWFydHEgPSB7CisJLm5hbWUgPSAiU21hcnRRIiwKKwku
-cGxhdGZvcm0gPSAmczNjMjR4eF9zb2NfcGxhdGZvcm0sCisJLmRhaV9saW5rID0gc21hcnRxX2Rh
-aSwKKwkubnVtX2xpbmtzID0gQVJSQVlfU0laRShzbWFydHFfZGFpKSwKK307CisKK3N0YXRpYyBz
-dHJ1Y3Qgc25kX3NvY19kZXZpY2Ugc21hcnRxX3NuZF9kZXZkYXRhID0geworCS5jYXJkID0gJnNu
-ZF9zb2Nfc21hcnRxLAorCS5jb2RlY19kZXYgPSAmc29jX2NvZGVjX2Rldl93bTg3NTAsCit9Owor
-CitzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RldmljZSAqc21hcnRxX3NuZF9kZXZpY2U7CisKK3N0
-YXRpYyBpbnQgX19pbml0IHNtYXJ0cV9pbml0KHZvaWQpCit7CisJaW50IHJldDsKKworCWlmICgh
-bWFjaGluZV9pc19zbWFydHE3KCkgJiYgIW1hY2hpbmVfaXNfc21hcnRxNSgpKSB7CisJCXByX2lu
-Zm8oIk9ubHkgU21hcnRRIGlzIHN1cHBvcnRlZCBieSB0aGlzIEFTb0MgZHJpdmVyXG4iKTsKKwkJ
-cmV0dXJuIC1FTk9ERVY7CisJfQorCisJc21hcnRxX3NuZF9kZXZpY2UgPSBwbGF0Zm9ybV9kZXZp
-Y2VfYWxsb2MoInNvYy1hdWRpbyIsIC0xKTsKKwlpZiAoIXNtYXJ0cV9zbmRfZGV2aWNlKQorCQly
-ZXR1cm4gLUVOT01FTTsKKworCXBsYXRmb3JtX3NldF9kcnZkYXRhKHNtYXJ0cV9zbmRfZGV2aWNl
-LCAmc21hcnRxX3NuZF9kZXZkYXRhKTsKKwlzbWFydHFfc25kX2RldmRhdGEuZGV2ID0gJnNtYXJ0
-cV9zbmRfZGV2aWNlLT5kZXY7CisKKwlyZXQgPSBwbGF0Zm9ybV9kZXZpY2VfYWRkKHNtYXJ0cV9z
-bmRfZGV2aWNlKTsKKwlpZiAocmV0KSB7CisJCXBsYXRmb3JtX2RldmljZV9wdXQoc21hcnRxX3Nu
-ZF9kZXZpY2UpOworCQlyZXR1cm4gcmV0OworCX0KKworCS8qIEluaXRpYWxpc2UgR1BJT3MgdXNl
-ZCBieSBhbXBsaWZpZXJzICovCisJcmV0ID0gZ3Bpb19yZXF1ZXN0KFMzQzY0WFhfR1BLKDEyKSwg
-ImFtcGxpZmllcnMgc2h1dGRvd24iKTsKKwlpZiAocmV0KSB7CisJCWRldl9lcnIoJnNtYXJ0cV9z
-bmRfZGV2aWNlLT5kZXYsICJGYWlsZWQgdG8gcmVnaXN0ZXIgR1BLMTJcbiIpOworCQlnb3RvIGVy
-cl91bnJlZ2lzdGVyX2RldmljZTsKKwl9CisKKwkvKiBEaXNhYmxlIGFtcGxpZmllcnMgKi8KKwly
-ZXQgPSBncGlvX2RpcmVjdGlvbl9vdXRwdXQoUzNDNjRYWF9HUEsoMTIpLCAxKTsKKwlpZiAocmV0
-KSB7CisJCWRldl9lcnIoJnNtYXJ0cV9zbmRfZGV2aWNlLT5kZXYsICJGYWlsZWQgdG8gY29uZmln
-dXJlIEdQSzEyXG4iKTsKKwkJZ290byBlcnJfZnJlZV9ncGlvX2FtcF9zaHV0OworCX0KKworCXJl
-dHVybiAwOworCitlcnJfZnJlZV9ncGlvX2FtcF9zaHV0OgorCWdwaW9fZnJlZShTM0M2NFhYX0dQ
-SygxMikpOworZXJyX3VucmVnaXN0ZXJfZGV2aWNlOgorCXBsYXRmb3JtX2RldmljZV91bnJlZ2lz
-dGVyKHNtYXJ0cV9zbmRfZGV2aWNlKTsKKworCXJldHVybiByZXQ7Cit9CisKK3N0YXRpYyB2b2lk
-IF9fZXhpdCBzbWFydHFfZXhpdCh2b2lkKQoreworCXNuZF9zb2NfamFja19mcmVlX2dwaW9zKCZz
-bWFydHFfamFjaywgQVJSQVlfU0laRShzbWFydHFfamFja19ncGlvcyksCisJCQkJc21hcnRxX2ph
-Y2tfZ3Bpb3MpOworCisJcGxhdGZvcm1fZGV2aWNlX3VucmVnaXN0ZXIoc21hcnRxX3NuZF9kZXZp
-Y2UpOworfQorCittb2R1bGVfaW5pdChzbWFydHFfaW5pdCk7Cittb2R1bGVfZXhpdChzbWFydHFf
-ZXhpdCk7CisKKy8qIE1vZHVsZSBpbmZvcm1hdGlvbiAqLworTU9EVUxFX0FVVEhPUigiTWF1cnVz
-IEN1ZWxlbmFlcmUgPG1jdWVsZW5hZXJlQGdtYWlsLmNvbT4iKTsKK01PRFVMRV9ERVNDUklQVElP
-TigiQUxTQSBTb0MgU21hcnRRIFdNODk4NyIpOworTU9EVUxFX0xJQ0VOU0UoIkdQTCIpOwotLSAK
-MS43LjAuNAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-QWxzYS1kZXZlbCBtYWlsaW5nIGxpc3QKQWxzYS1kZXZlbEBhbHNhLXByb2plY3Qub3JnCmh0dHA6
-Ly9tYWlsbWFuLmFsc2EtcHJvamVjdC5vcmcvbWFpbG1hbi9saXN0aW5mby9hbHNhLWRldmVsCg==
+Kyungmin Park wrote:
+>=20
+> On Tue, Jun 15, 2010 at 8:27 PM, Kukjin Kim <kgene.kim@samsung.com> w=
+rote:
+> > From: Lee Hyuk <hyuk1.lee@samsung.com>
+> >
+> > S5PV210 HSMMC host controller doesn't have the Write Protection pin
+which
+> > should be connnected with SDMMC card WP pin. So allocated a GPIO in
+order
+> to
+> > get the data from SDMMC card WP pin with EXT_INT and implement get_=
+ro
+and
+> > cfg_wp function.
+> >
+> > Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > ---
+> > =A0arch/arm/mach-s5pv210/mach-smdkv210.c | =A0 =A02 +
+> > =A0arch/arm/mach-s5pv210/setup-sdhci.c =A0 | =A0 72
+> +++++++++++++++++++++++++++++++++
+> > =A02 files changed, 74 insertions(+), 0 deletions(-)
+> >
+> > diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-
+> s5pv210/mach-smdkv210.c
+> > index b08f376..18cdb8c 100644
+> > --- a/arch/arm/mach-s5pv210/mach-smdkv210.c
+> > +++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
+> > @@ -27,6 +27,7 @@
+> > =A0#include <plat/cpu.h>
+> > =A0#include <plat/adc.h>
+> > =A0#include <plat/ts.h>
+> > +#include <plat/sdhci.h>
+> >
+> > =A0/* Following are default values for UCON, ULCON and UFCON UART
+registers */
+> > =A0#define S5PV210_UCON_DEFAULT =A0 (S3C2410_UCON_TXILEVEL | =A0 =A0=
+ =A0 =A0\
+> > @@ -101,6 +102,7 @@ static void __init smdkv210_map_io(void)
+> > =A0static void __init smdkv210_machine_init(void)
+> > =A0{
+> > =A0 =A0 =A0 =A0s3c24xx_ts_set_platdata(&s3c_ts_platform);
+> > + =A0 =A0 =A0 s3c_sdhci_set_platdata();
+> > =A0 =A0 =A0 =A0platform_add_devices(smdkv210_devices,
+> ARRAY_SIZE(smdkv210_devices));
+> > =A0}
+> >
+> > diff --git a/arch/arm/mach-s5pv210/setup-sdhci.c b/arch/arm/mach-
+> s5pv210/setup-sdhci.c
+> > index 51815ec..b553b36 100644
+> > --- a/arch/arm/mach-s5pv210/setup-sdhci.c
+> > +++ b/arch/arm/mach-s5pv210/setup-sdhci.c
+> > @@ -15,13 +15,17 @@
+> > =A0#include <linux/interrupt.h>
+> > =A0#include <linux/platform_device.h>
+> > =A0#include <linux/io.h>
+> > +#include <linux/gpio.h>
+> >
+> > =A0#include <linux/mmc/card.h>
+> > =A0#include <linux/mmc/host.h>
+> >
+> > +#include <plat/gpio-cfg.h>
+> > =A0#include <plat/regs-sdhci.h>
+> > =A0#include <plat/sdhci.h>
+> >
+> > +#include <mach/map.h>
+> > +
+> > =A0/* clock sources for the mmc bus clock, order as for the ctrl2[5=
+=2E.4] */
+> >
+> > =A0char *s5pv210_hsmmc_clksrcs[4] =3D {
+> > @@ -61,3 +65,71 @@ void s5pv210_setup_sdhci_cfg_card(struct
+> platform_device *dev,
+> > =A0 =A0 =A0 =A0writel(ctrl2, r + S3C_SDHCI_CONTROL2);
+> > =A0 =A0 =A0 =A0writel(ctrl3, r + S3C_SDHCI_CONTROL3);
+> > =A0}
+> > +
+> > +static int s5pv210_sdhci_get_ro(struct mmc_host *mmc)
+> > +{
+> > + =A0 =A0 =A0 int gpio_dat;
+> > +
+> > + =A0 =A0 =A0 if ((mmc->index =3D=3D 0 && s3c_hsmmc0_def_platdata.c=
+fg_wp !=3D NULL)
+||
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 (mmc->index =3D=3D 1 && s3c_hsmmc1_de=
+f_platdata.cfg_wp !=3D
+> NULL)) {
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_dat =3D __raw_readl((S5P_VA_GPIO=
+ + 0xC00) + 0x04);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return !!(gpio_dat & 0x80);
+>=20
+> It's GPIO values, and it's smdk specific values. So it should go smdk
+> board files instead of platform common one.
+>=20
+Yes, you're right..moved.
+
+> > + =A0 =A0 =A0 } else if (mmc->index =3D=3D 2 && s3c_hsmmc2_def_plat=
+data.cfg_wp !=3D
+> NULL) {
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_dat =3D __raw_readl((S5P_VA_GPIO=
+ + 0xC00) + 0x64);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return !!(gpio_dat & 0x2);
+> > + =A0 =A0 =A0 } else if (mmc->index =3D=3D 3 && s3c_hsmmc3_def_plat=
+data.cfg_wp !=3D
+> NULL) {
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_dat =3D __raw_readl((S5P_VA_GPIO=
+ + 0xC00) + 0x24);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return !!(gpio_dat & 0x1);
+> > + =A0 =A0 =A0 } else
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return 0;
+> > +}
+> > +
+> > +static void s5pv210_setup_sdhci_gpio_wp(int dev_id)
+> > +{
+> > + =A0 =A0 =A0 switch (dev_id) {
+> > + =A0 =A0 =A0 case 0:
+> > + =A0 =A0 =A0 case 1:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5PV210_GPH0(7), S3C_=
+GPIO_INPUT);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_setpull(S5PV210_GPH0(7), S3C=
+_GPIO_PULL_UP);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > + =A0 =A0 =A0 case 2:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5PV210_GPH3(1), S3C_=
+GPIO_INPUT);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_setpull(S5PV210_GPH3(1), S3C=
+_GPIO_PULL_UP);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > + =A0 =A0 =A0 case 3:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5PV210_GPH1(0), S3C_=
+GPIO_INPUT);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_setpull(S5PV210_GPH1(0), S3C=
+_GPIO_PULL_UP);
+>=20
+> Ditto. board specific configurations. should go smdk board file.
+>=20
+Moved.
+
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > + =A0 =A0 =A0 default:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > + =A0 =A0 =A0 }
+> > +}
+> > +
+> > +static struct s3c_sdhci_platdata hsmmc0_platdata =3D {
+> > + =A0 =A0 =A0 .cfg_wp =A0 =A0 =A0 =A0 =3D s5pv210_setup_sdhci_gpio_=
+wp,
+> > + =A0 =A0 =A0 .get_ro =A0 =A0 =A0 =A0 =3D s5pv210_sdhci_get_ro,
+> > +};
+> > +
+> > +static struct s3c_sdhci_platdata hsmmc1_platdata =3D {
+> > + =A0 =A0 =A0 .cfg_wp =A0 =A0 =A0 =A0 =3D s5pv210_setup_sdhci_gpio_=
+wp,
+> > + =A0 =A0 =A0 .get_ro =A0 =A0 =A0 =A0 =3D s5pv210_sdhci_get_ro,
+> > +};
+> > +
+> > +static struct s3c_sdhci_platdata hsmmc2_platdata =3D {
+> > + =A0 =A0 =A0 .cfg_wp =A0 =A0 =A0 =A0 =3D s5pv210_setup_sdhci_gpio_=
+wp,
+> > + =A0 =A0 =A0 .get_ro =A0 =A0 =A0 =A0 =3D s5pv210_sdhci_get_ro,
+> > +};
+> > +
+> > +static struct s3c_sdhci_platdata hsmmc3_platdata =3D {
+> > + =A0 =A0 =A0 .cfg_wp =A0 =A0 =A0 =A0 =3D s5pv210_setup_sdhci_gpio_=
+wp,
+> > + =A0 =A0 =A0 .get_ro =A0 =A0 =A0 =A0 =3D s5pv210_sdhci_get_ro,
+> > +};
+> > +
+> > +void s3c_sdhci_set_platdata(void)
+> > +{
+> > + =A0 =A0 =A0 s3c_sdhci0_set_platdata(&hsmmc0_platdata);
+> > + =A0 =A0 =A0 s3c_sdhci1_set_platdata(&hsmmc1_platdata);
+> > + =A0 =A0 =A0 s3c_sdhci2_set_platdata(&hsmmc2_platdata);
+> > + =A0 =A0 =A0 s3c_sdhci3_set_platdata(&hsmmc3_platdata);
+> > +}
+> > +EXPORT_SYMBOL(s3c_sdhci_set_platdata);
+>=20
+> I think all added lines should go smdk totally.
+>=20
+=46ixed in v2 patches as your comments.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
