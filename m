@@ -1,66 +1,25 @@
-From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: [PATCH 2/2] ARM: S3C64XX: Add audio support to SmartQ
-Date: Sat, 3 Jul 2010 01:40:24 +0200
-Message-ID: <4c2e7f40.d37b0e0a.2178.3d69@mx.google.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH v2] Add support HSMMC on Samsung SMDKV210
+Date: Sat,  3 Jul 2010 09:07:38 +0900
+Message-ID: <1278115660-20969-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f46.google.com ([209.85.215.46]:53932 "EHLO
-	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753644Ab0GCAHa (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:37822 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755017Ab0GCANj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Jul 2010 20:07:30 -0400
-Received: by ewy23 with SMTP id 23so1171606ewy.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 02 Jul 2010 17:07:28 -0700 (PDT)
+	Fri, 2 Jul 2010 20:13:39 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben@simtec.co.uk>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org
 
-This adds the I=C2=B2C board information for the WM8987 used in the Sma=
-rtQ as audio
-codec and adds the I=C2=B2C/I=C2=B2S platform drivers.
+This patch adds support hsmmc on SMDKV210.
 
-Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
----
- arch/arm/mach-s3c64xx/mach-smartq.c |    7 +++++++
- 1 files changed, 7 insertions(+), 0 deletions(-)
+Changes since v1:
 
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq.c b/arch/arm/mach-s3c64x=
-x/mach-smartq.c
-index 028d080..ee77255 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq.c
-@@ -199,6 +199,9 @@ static struct platform_device smartq_lcd_power_devi=
-ce =3D {
- 	.dev.platform_data	=3D &smartq_lcd_power_data,
- };
-=20
-+static struct i2c_board_info smartq_i2c_devs[] __initdata =3D {
-+	{ I2C_BOARD_INFO("wm8750", 0x1a), },
-+};
-=20
- static struct platform_device *smartq_devices[] __initdata =3D {
- 	&s3c_device_hsmmc1,	/* Init iNAND first, ... */
-@@ -213,6 +216,7 @@ static struct platform_device *smartq_devices[] __i=
-nitdata =3D {
- 	&s3c_device_timer[1],
- 	&s3c_device_ts,
- 	&s3c_device_usb_hsotg,
-+	&s3c64xx_device_iis0,
- 	&smartq_backlight_device,
- 	&smartq_lcd_power_device,
- 	&smartq_usb_otg_vbus_dev,
-@@ -354,6 +358,9 @@ void __init smartq_machine_init(void)
- 	s3c_sdhci2_set_platdata(&smartq_internal_hsmmc_pdata);
- 	s3c24xx_ts_set_platdata(&smartq_touchscreen_pdata);
-=20
-+	i2c_register_board_info(0, smartq_i2c_devs,
-+				ARRAY_SIZE(smartq_i2c_devs));
-+
- 	WARN_ON(smartq_power_off_init());
- 	WARN_ON(smartq_usb_host_init());
- 	WARN_ON(smartq_usb_otg_init());
---=20
-1.7.0.4
+- Fixed wrong pin name in comments
+- Adding missed call s5pv210_default_sdhci3() in s5pv210_map_io()
+- Minor coding style fixes
+
+[PATCH v2 1/2] ARM: SAMSUNG: Add device definition for HSMMC3
+[PATCH v2 2/2] ARM: S5PV210: Add support HSMMC on SMDKV210
