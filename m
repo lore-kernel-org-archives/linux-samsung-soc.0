@@ -1,48 +1,43 @@
-From: Patrick Georgi <patrick@georgi-clan.de>
-Subject: [PATCH] ARM: S3C64XX: Framebuffer fix for SmartQ5
-Date: Sat, 03 Jul 2010 11:58:48 +0200
-Message-ID: <4C2F09D8.1000007@georgi-clan.de>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 2/3] ASoC: Add SmartQ sound driver
+Date: Sun, 4 Jul 2010 18:05:50 +0900
+Message-ID: <20100704090549.GD16825@opensource.wolfsonmicro.com>
+References: <4c2e8856.487e0e0a.3bb5.3ec0@mx.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from georgi-clan.de ([87.118.84.233]:57666 "EHLO georgi-clan.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754497Ab0GCJ6l (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:40514 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1756915Ab0GDJGq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 3 Jul 2010 05:58:41 -0400
+	Sun, 4 Jul 2010 05:06:46 -0400
+Content-Disposition: inline
+In-Reply-To: <4c2e8856.487e0e0a.3bb5.3ec0@mx.google.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Ben Dooks <ben@simtec.co.uk>
+To: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Liam Girdwood <lrg@slimlogic.co.uk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>
 
-Hi,
+On Sat, Jul 03, 2010 at 02:46:12AM +0200, Maurus Cuelenaere wrote:
+> This adds sound support for the SmartQ board.
+>=20
+> The hardware consists of a S3C6410 coupled with a WM8987 over I=B2S. =
+The WM8750
+> driver is used for driving the WM8987, as they are register compatibl=
+e.
 
-[resend, due to a hint where to Cc: it]
+I've applied this, but...
 
-the following change makes the framebuffer work on SmartQ5. There are
-still some problems with ADC, so this patch alone won't make the device
-run (or even give a working fb), but it's one issue less to think about.
+> +static struct snd_soc_jack_pin smartq_jack_pins[] =3D {
+> +	/* Disable speaker when headphone is plugged in */
+> +	{
+> +		.pin	=3D "Internal Speaker",
+> +		.mask	=3D SND_JACK_HEADPHONE,
+> +		.invert	=3D true,
+> +	},
+> +};
 
-Signed-off-by: Patrick Georgi <patrick@georgi-clan.de>
-
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq5.c
-b/arch/arm/mach-s3c64xx/mach-smartq5.c
-index 1d0326e..27c2901 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq5.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq5.c
-@@ -136,10 +136,10 @@ static struct s3c_fb_pd_win smartq5_fb_win0 = {
-        .win_mode       = {
-                .pixclock       = 1000000000000ULL /
-                                ((40+1+216+800)*(10+1+35+480)*80),
--               .left_margin    = 40,
--               .right_margin   = 216,
--               .upper_margin   = 10,
--               .lower_margin   = 35,
-+               .left_margin    = 216,
-+               .right_margin   = 40,
-+               .upper_margin   = 35,
-+               .lower_margin   = 10,
-                .hsync_len      = 1,
-                .vsync_len      = 1,
-                .xres           = 800,
+=2E..it probably also make sense to disable the headphone output when t=
+he
+headphone is not plugged in to save power?
