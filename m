@@ -1,41 +1,49 @@
-From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: [PATCH] ASoC: Invert speaker enabling behaviour in SmartQ sound driver
-Date: Sun, 04 Jul 2010 15:12:11 +0200
-Message-ID: <4c3088ad.487e0e0a.3402.6e62@mx.google.com>
-References: <F182A883-DE14-4BE4-8430-9C925E59893B@opensource.wolfsonmicro.com>
+From: Jamie Lokier <jamie@shareable.org>
+Subject: Re: [PATCH v3 05/12] s3c-fb: Add support for display panning
+Date: Sun, 4 Jul 2010 14:50:10 +0100
+Message-ID: <20100704135010.GA1201@shareable.org>
+References: <1277712538-23188-1-git-send-email-p.osciak@samsung.com> <1277712538-23188-6-git-send-email-p.osciak@samsung.com> <4C2DCC5B.2000100@simtec.co.uk> <003e01cb19ea$969e0090$c3da01b0$%osciak@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f46.google.com ([209.85.215.46]:51088 "EHLO
-	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757451Ab0GDNMP (ORCPT
+Received: from mail2.shareable.org ([80.68.89.115]:56811 "EHLO
+	mail2.shareable.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757602Ab0GDNuO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 4 Jul 2010 09:12:15 -0400
-Received: by ewy23 with SMTP id 23so1424435ewy.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 04 Jul 2010 06:12:13 -0700 (PDT)
-In-Reply-To: <F182A883-DE14-4BE4-8430-9C925E59893B@opensource.wolfsonmicro.com>
+	Sun, 4 Jul 2010 09:50:14 -0400
+Content-Disposition: inline
+In-Reply-To: <003e01cb19ea$969e0090$c3da01b0$%osciak@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: alsa-devel@alsa-project.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Liam Girdwood <lrg@slimlogic.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>
+To: Pawel Osciak <p.osciak@samsung.com>
+Cc: 'Ben Dooks' <ben@simtec.co.uk>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-The speaker was enabled when the headphone was plugged in, which isn't the
-wanted behaviour so correct this.
+Pawel Osciak wrote:
+> >Ben Dooks <ben@simtec.co.uk> wrote:
+> >On 28/06/10 09:08, Pawel Osciak wrote:
+> 
+> >> diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-
+> >samsung/include/plat/regs-fb.h
+> >> index ac10013..f454e32 100644
+> >> --- a/arch/arm/plat-samsung/include/plat/regs-fb.h
+> >> +++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
+> >> @@ -112,6 +112,11 @@
+> >>  #define VIDCON2_ORGYCbCr			(1 << 8)
+> >>  #define VIDCON2_YUVORDCrCb			(1 << 7)
+> >>
+> >> +/* PRTCON (S3C6410, S5PC100) */
+> >
+> >Not listed in my S3C6410 manual?
+> >
+> 
+> Not in my either. It is there in the S5PC100 docs though. This is not an
+> "official statement", but I've been testing panning on my 6410 *very*
+> intensively and experienced a lot of crashes without it. Not a single one
+> with it though. So it's either almost impossible luck or it is there,
+> undocumented. There is a hole at this address anyway, so this shouldn't
+> hurt anything.
 
-Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
----
- sound/soc/s3c24xx/smartq_wm8987.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
+Probably a good idea to put that in a comment, for the person who
+looks at it in 5 years time and wonders if the code is mistaken.
 
-diff --git a/sound/soc/s3c24xx/smartq_wm8987.c b/sound/soc/s3c24xx/smartq_wm8987.c
-index c90ef96..b480348 100644
---- a/sound/soc/s3c24xx/smartq_wm8987.c
-+++ b/sound/soc/s3c24xx/smartq_wm8987.c
-@@ -112,7 +112,6 @@ static struct snd_soc_jack_pin smartq_jack_pins[] = {
- 	{
- 		.pin	= "Internal Speaker",
- 		.mask	= SND_JACK_HEADPHONE,
--		.invert	= true,
- 	},
- };
- 
--- 
-1.7.0.4
+-- Jamie
