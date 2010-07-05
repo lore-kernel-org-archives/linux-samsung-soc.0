@@ -1,130 +1,134 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: [PATCH] ARM: S5P: Add PMU device
-Date: Mon, 05 Jul 2010 10:46:51 +0900
-Message-ID: <1278294411-5104-1-git-send-email-jy0922.shim@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH v2 3/3] sdhci-s3c: Add SDHCI_QUIRK_NO_WP_BIT quirk
+Date: Mon, 05 Jul 2010 09:14:06 +0200
+Message-ID: <006301cb1c11$aa7d47f0$ff77d7d0$%szyprowski@samsung.com>
+References: <1278118844-21770-1-git-send-email-kgene.kim@samsung.com>
+ <1278118844-21770-4-git-send-email-kgene.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:8510 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756080Ab0GEBqx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 4 Jul 2010 21:46:53 -0400
-Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L5200BAQAA37O00@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 05 Jul 2010 10:46:51 +0900 (KST)
-Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L5200C4CAA3ON@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 05 Jul 2010 10:46:51 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <1278118844-21770-4-git-send-email-kgene.kim@samsung.com>
+Content-language: pl
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
+Cc: 'Hyuk Lee' <hyuk1.lee@samsung.com>, ben-linux@fluff.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com
 
-This patch adds an initcall for the s5p platforms so that they register
-their PMU IRQs with the PMU framework in the Kernel.
+Hello,
 
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
----
- arch/arm/mach-s5p6442/include/mach/irqs.h |    2 +-
- arch/arm/mach-s5pc100/include/mach/irqs.h |    1 +
- arch/arm/mach-s5pv210/include/mach/irqs.h |    1 +
- arch/arm/plat-s5p/Makefile                |    1 +
- arch/arm/plat-s5p/dev-pmu.c               |   37 +++++++++++++++++++++++++++++
- 5 files changed, 41 insertions(+), 1 deletions(-)
- create mode 100644 arch/arm/plat-s5p/dev-pmu.c
+On Saturday, July 03, 2010 3:01 AM Kukjin Kim wrote:
 
-diff --git a/arch/arm/mach-s5p6442/include/mach/irqs.h b/arch/arm/mach-s5p6442/include/mach/irqs.h
-index 02c2374..22173cc 100644
---- a/arch/arm/mach-s5p6442/include/mach/irqs.h
-+++ b/arch/arm/mach-s5p6442/include/mach/irqs.h
-@@ -32,7 +32,7 @@
- #define IRQ_GPIOINT		S5P_IRQ_VIC0(30)
- 
- /* VIC1 */
--#define IRQ_nPMUIRQ 		S5P_IRQ_VIC1(0)
-+#define IRQ_PMUIRQ		S5P_IRQ_VIC1(0)
- #define IRQ_ONENAND 		S5P_IRQ_VIC1(7)
- #define IRQ_UART0 		S5P_IRQ_VIC1(10)
- #define IRQ_UART1 		S5P_IRQ_VIC1(11)
-diff --git a/arch/arm/mach-s5pc100/include/mach/irqs.h b/arch/arm/mach-s5pc100/include/mach/irqs.h
-index 28aa551..9cc1b0d 100644
---- a/arch/arm/mach-s5pc100/include/mach/irqs.h
-+++ b/arch/arm/mach-s5pc100/include/mach/irqs.h
-@@ -110,5 +110,6 @@
- #define IRQ_LCD_FIFO		IRQ_LCD0
- #define IRQ_LCD_VSYNC		IRQ_LCD1
- #define IRQ_LCD_SYSTEM		IRQ_LCD2
-+#define IRQ_PMUIRQ		IRQ_CORTEX0
- 
- #endif /* __ASM_ARCH_IRQS_H */
-diff --git a/arch/arm/mach-s5pv210/include/mach/irqs.h b/arch/arm/mach-s5pv210/include/mach/irqs.h
-index 9689537..3972f8d 100644
---- a/arch/arm/mach-s5pv210/include/mach/irqs.h
-+++ b/arch/arm/mach-s5pv210/include/mach/irqs.h
-@@ -128,5 +128,6 @@
- #define IRQ_LCD_FIFO		IRQ_LCD0
- #define IRQ_LCD_VSYNC		IRQ_LCD1
- #define IRQ_LCD_SYSTEM		IRQ_LCD2
-+#define IRQ_PMUIRQ		IRQ_CORTEX0
- 
- #endif /* ASM_ARCH_IRQS_H */
-diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-index 39c242b..7e34194 100644
---- a/arch/arm/plat-s5p/Makefile
-+++ b/arch/arm/plat-s5p/Makefile
-@@ -12,6 +12,7 @@ obj-				:=
- 
- # Core files
- 
-+obj-y				+= dev-pmu.o
- obj-y				+= dev-uart.o
- obj-y				+= cpu.o
- obj-y				+= clock.o
-diff --git a/arch/arm/plat-s5p/dev-pmu.c b/arch/arm/plat-s5p/dev-pmu.c
-new file mode 100644
-index 0000000..de3b118
---- /dev/null
-+++ b/arch/arm/plat-s5p/dev-pmu.c
-@@ -0,0 +1,37 @@
-+/*
-+ * linux/arch/arm/plat-s5p/dev-pmu.c
-+ *
-+ * Copyright (C) 2010 Samsung Electronics Co.Ltd
-+ * Author: Joonyoung Shim <jy0922.shim@samsung.com>
-+ *
-+ *  This program is free software; you can redistribute  it and/or modify it
-+ *  under  the terms of  the GNU General  Public License as published by the
-+ *  Free Software Foundation;  either version 2 of the  License, or (at your
-+ *  option) any later version.
-+ *
-+ */
-+
-+#include <linux/platform_device.h>
-+#include <asm/pmu.h>
-+#include <mach/irqs.h>
-+#include <mach/map.h>
-+
-+static struct resource s5p_pmu_resource = {
-+	.start	= IRQ_PMUIRQ,
-+	.end	= IRQ_PMUIRQ,
-+	.flags	= IORESOURCE_IRQ,
-+};
-+
-+struct platform_device s5p_device_pmu = {
-+	.name		= "arm-pmu",
-+	.id		= ARM_PMU_DEVICE_CPU,
-+	.num_resources	= 1,
-+	.resource	= &s5p_pmu_resource,
-+};
-+
-+static int __init s5p_pmu_init(void)
-+{
-+	platform_device_register(&s5p_device_pmu);
-+	return 0;
-+}
-+arch_initcall(s5p_pmu_init);
--- 
-1.7.0.4
+> From: Hyuk Lee <hyuk1.lee@samsung.com>
+> 
+> If host controller doesn't have WP pin which should be connnected with
+> SDMMC
+> card WP pin, can implement get_ro function with using the allocated gpio.
+> In order to use this quirk wp_gpio in the platform data must be set.
+> 
+> Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+>  drivers/mmc/host/sdhci-s3c.c |   44
+> ++++++++++++++++++++++++++++++++++++++++++
+>  drivers/mmc/host/sdhci.c     |    3 ++
+>  drivers/mmc/host/sdhci.h     |    3 ++
+>  3 files changed, 50 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> index af21792..ed9376d 100644
+> --- a/drivers/mmc/host/sdhci-s3c.c
+> +++ b/drivers/mmc/host/sdhci-s3c.c
+> @@ -18,11 +18,13 @@
+>  #include <linux/slab.h>
+>  #include <linux/clk.h>
+>  #include <linux/io.h>
+> +#include <linux/gpio.h>
+> 
+>  #include <linux/mmc/host.h>
+> 
+>  #include <plat/sdhci.h>
+>  #include <plat/regs-sdhci.h>
+> +#include <plat/gpio-cfg.h>
+> 
+>  #include "sdhci.h"
+> 
+> @@ -209,6 +211,36 @@ static void sdhci_s3c_set_clock(struct sdhci_host
+> *host, unsigned int clock)
+>  	}
+>  }
+> 
+> +/**
+> + * sdhci_s3c_get_ro - callback for get_ro
+> + * @host: The SDHCI host being changed
+> + *
+> + * If the WP pin is connected with GPIO, can get the value which indicates
+> + * the card is locked or not.
+> +*/
+> +static int sdhci_s3c_get_ro(struct mmc_host *mmc)
+> +{
+> +	struct sdhci_s3c *sc;
+> +	struct sdhci_host *host;
+> +
+> +	host = mmc_priv(mmc);
+> +	sc = sdhci_priv(host);
+> +
+> +	return gpio_get_value(sc->pdata->wp_gpio);
+> +}
+> +
+> +/**
+> + * sdhci_s3c_cfg_wp - configure GPIO for WP pin
+> + * @gpio_num: GPIO number which connected with WP line from SD/MMC slot
+> + *
+> + * Configure GPIO for using WP line
+> +*/
+> +static void sdhci_s3c_cfg_wp(unsigned int gpio_num)
+> +{
+> +	s3c_gpio_cfgpin(gpio_num, S3C_GPIO_INPUT);
+> +	s3c_gpio_setpull(gpio_num, S3C_GPIO_PULL_UP);
+> +}
+> +
+>  static struct sdhci_ops sdhci_s3c_ops = {
+>  	.get_max_clock		= sdhci_s3c_get_max_clk,
+>  	.get_timeout_clock	= sdhci_s3c_get_timeout_clk,
+> @@ -311,6 +343,9 @@ static int __devinit sdhci_s3c_probe(struct
+> platform_device *pdev)
+>  	if (pdata->cfg_gpio)
+>  		pdata->cfg_gpio(pdev, pdata->max_width);
+> 
+> +	if (pdata->wp_gpio)
+> +		sdhci_s3c_ops.get_ro = sdhci_s3c_get_ro;
+> +
+>  	host->hw_name = "samsung-hsmmc";
+>  	host->ops = &sdhci_s3c_ops;
+>  	host->quirks = 0;
+> @@ -335,6 +370,15 @@ static int __devinit sdhci_s3c_probe(struct
+> platform_device *pdev)
+>  	host->quirks |= (SDHCI_QUIRK_32BIT_DMA_ADDR |
+>  			 SDHCI_QUIRK_32BIT_DMA_SIZE);
+> 
+> +	/* Controller's WP pin donsn't connected with SD card. So we allocate
+> +	 * a GPIO for getting WP data from SD card and use that data as
+> +	 * the return value of the get_ro function */
+> +	host->quirks |= SDHCI_QUIRK_NO_WP_BIT;
+> +
+> +	/* to configure gpio pin as a card write protection signal */
+> +	if (pdata->wp_gpio)
+> +		sdhci_s3c_cfg_wp(pdata->wp_gpio);
+> +
+
+Assuming that pdata->wp_gpio == 0 means that the board has no additional wp
+feature is wrong from the 'good and clean' API point of view. For example
+GPIO_A0(0) pin for S5PV210 is gpio number 0. This would mean that it cannot
+be used for this feature at all. 
+
+I was told to use gpio_is_valid() macro and use -1 as 'invalid gpio' pin
+number for implementing similar checks.
+
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
+
+
+
