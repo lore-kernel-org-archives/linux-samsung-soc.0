@@ -1,156 +1,161 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v3 2/2] ARM: S5PV210: Add support HSMMC on SMDKV210
-Date: Mon,  5 Jul 2010 21:17:50 +0900
-Message-ID: <1278332270-25178-3-git-send-email-kgene.kim@samsung.com>
-References: <1278332270-25178-1-git-send-email-kgene.kim@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:59113 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752924Ab0GEMYB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Jul 2010 08:24:01 -0400
-In-Reply-To: <1278332270-25178-1-git-send-email-kgene.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: RE: [PATCH] ARM: S5P: Add PMU device
+Date: Mon, 05 Jul 2010 21:44:06 +0900
+Message-ID: <005f01cb1c3f$c464d150$4d2e73f0$%kim@samsung.com>
+References: <1278294411-5104-1-git-send-email-jy0922.shim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1278294411-5104-1-git-send-email-jy0922.shim@samsung.com>
+Content-language: ko
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Joonyoung Shim' <jy0922.shim@samsung.com>, linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Hyuk Lee <hyuk1.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Hyuk Lee <hyuk1.lee@samsung.com>
+Joonyoung Shim wrote:
+> 
+> This patch adds an initcall for the s5p platforms so that they register
+> their PMU IRQs with the PMU framework in the Kernel.
+> 
+Please include Ben Dooks email address in the CC.
 
-This patch adds support HSMMC on SMDKV210, and gpio configuration for
-S5PV210 hsmmc3.
+> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> ---
+>  arch/arm/mach-s5p6442/include/mach/irqs.h |    2 +-
+>  arch/arm/mach-s5pc100/include/mach/irqs.h |    1 +
+>  arch/arm/mach-s5pv210/include/mach/irqs.h |    1 +
+>  arch/arm/plat-s5p/Makefile                |    1 +
+>  arch/arm/plat-s5p/dev-pmu.c               |   37
+> +++++++++++++++++++++++++++++
+>  5 files changed, 41 insertions(+), 1 deletions(-)
+>  create mode 100644 arch/arm/plat-s5p/dev-pmu.c
+> 
+> diff --git a/arch/arm/mach-s5p6442/include/mach/irqs.h b/arch/arm/mach-
+> s5p6442/include/mach/irqs.h
+> index 02c2374..22173cc 100644
+> --- a/arch/arm/mach-s5p6442/include/mach/irqs.h
+> +++ b/arch/arm/mach-s5p6442/include/mach/irqs.h
+> @@ -32,7 +32,7 @@
+>  #define IRQ_GPIOINT		S5P_IRQ_VIC0(30)
+> 
+>  /* VIC1 */
+> -#define IRQ_nPMUIRQ 		S5P_IRQ_VIC1(0)
+> +#define IRQ_PMUIRQ		S5P_IRQ_VIC1(0)
 
-Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s5pv210/Kconfig              |    5 +++++
- arch/arm/mach-s5pv210/cpu.c                |    1 +
- arch/arm/mach-s5pv210/include/mach/map.h   |    1 +
- arch/arm/mach-s5pv210/mach-smdkv210.c      |    4 ++++
- arch/arm/mach-s5pv210/setup-sdhci-gpio.c   |   20 ++++++++++++++++++++
- arch/arm/plat-samsung/include/plat/sdhci.h |   13 +++++++++++++
- 6 files changed, 44 insertions(+), 0 deletions(-)
+I'm not sure this changing is better..as you know, nXXX has some meaning.
 
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index 0761eac..6aee967 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -72,9 +72,14 @@ config MACH_SMDKV210
- 	select CPU_S5PV210
- 	select ARCH_SPARSEMEM_ENABLE
- 	select SAMSUNG_DEV_ADC
-+	select S3C_DEV_HSMMC
-+	select S3C_DEV_HSMMC1
-+	select S3C_DEV_HSMMC2
-+	select S3C_DEV_HSMMC3
- 	select SAMSUNG_DEV_TS
- 	select S3C_DEV_WDT
- 	select HAVE_S3C2410_WATCHDOG
-+	select S5PV210_SETUP_SDHCI
- 	help
- 	  Machine support for Samsung SMDKV210
- 
-diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
-index 411a4a9..765034e 100644
---- a/arch/arm/mach-s5pv210/cpu.c
-+++ b/arch/arm/mach-s5pv210/cpu.c
-@@ -86,6 +86,7 @@ void __init s5pv210_map_io(void)
- 	s5pv210_default_sdhci0();
- 	s5pv210_default_sdhci1();
- 	s5pv210_default_sdhci2();
-+	s5pv210_default_sdhci3();
- 
- 	/* the i2c devices are directly compatible with s3c2440 */
- 	s3c_i2c0_setname("s3c2440-i2c");
-diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
-index 34eb168..fa9d7c2 100644
---- a/arch/arm/mach-s5pv210/include/mach/map.h
-+++ b/arch/arm/mach-s5pv210/include/mach/map.h
-@@ -97,6 +97,7 @@
- #define S3C_PA_HSMMC0		S5PV210_PA_HSMMC(0)
- #define S3C_PA_HSMMC1		S5PV210_PA_HSMMC(1)
- #define S3C_PA_HSMMC2		S5PV210_PA_HSMMC(2)
-+#define S3C_PA_HSMMC3		S5PV210_PA_HSMMC(3)
- #define S3C_PA_IIC		S5PV210_PA_IIC0
- #define S3C_PA_IIC1		S5PV210_PA_IIC1
- #define S3C_PA_IIC2		S5PV210_PA_IIC2
-diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
-index 0d46279..b08f376 100644
---- a/arch/arm/mach-s5pv210/mach-smdkv210.c
-+++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
-@@ -77,6 +77,10 @@ static struct platform_device *smdkv210_devices[] __initdata = {
- 	&s5pv210_device_iis0,
- 	&s5pv210_device_ac97,
- 	&s3c_device_adc,
-+	&s3c_device_hsmmc0,
-+	&s3c_device_hsmmc1,
-+	&s3c_device_hsmmc2,
-+	&s3c_device_hsmmc3,
- 	&s3c_device_ts,
- 	&s3c_device_wdt,
- };
-diff --git a/arch/arm/mach-s5pv210/setup-sdhci-gpio.c b/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
-index fe7d86d..143bfec 100644
---- a/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
-+++ b/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
-@@ -102,3 +102,23 @@ void s5pv210_setup_sdhci2_cfg_gpio(struct platform_device *dev, int width)
- 	s3c_gpio_setpull(S5PV210_GPG2(2), S3C_GPIO_PULL_UP);
- 	s3c_gpio_cfgpin(S5PV210_GPG2(2), S3C_GPIO_SFN(2));
- }
-+
-+void s5pv210_setup_sdhci3_cfg_gpio(struct platform_device *dev, int width)
-+{
-+	unsigned int gpio;
-+
-+	/* Set all the necessary GPG3[0:2] pins to special-function 2 */
-+	for (gpio = S5PV210_GPG3(0); gpio < S5PV210_GPG3(2); gpio++) {
-+		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
-+		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
-+	}
-+
-+	/* Data pin GPG3[3:6] to special-function 2 */
-+	for (gpio = S5PV210_GPG3(3); gpio <= S5PV210_GPG3(6); gpio++) {
-+		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
-+		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
-+	}
-+
-+	s3c_gpio_setpull(S5PV210_GPG3(2), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgpin(S5PV210_GPG3(2), S3C_GPIO_SFN(2));
-+}
-diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-samsung/include/plat/sdhci.h
-index 72224db..1314ffa 100644
---- a/arch/arm/plat-samsung/include/plat/sdhci.h
-+++ b/arch/arm/plat-samsung/include/plat/sdhci.h
-@@ -80,6 +80,7 @@ extern void s3c64xx_setup_sdhci2_cfg_gpio(struct platform_device *, int w);
- extern void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *, int w);
- extern void s5pv210_setup_sdhci1_cfg_gpio(struct platform_device *, int w);
- extern void s5pv210_setup_sdhci2_cfg_gpio(struct platform_device *, int w);
-+extern void s5pv210_setup_sdhci3_cfg_gpio(struct platform_device *, int w);
- 
- /* S3C6400 SDHCI setup */
- 
-@@ -266,10 +267,22 @@ static inline void s5pv210_default_sdhci2(void)
- static inline void s5pv210_default_sdhci2(void) { }
- #endif /* CONFIG_S3C_DEV_HSMMC2 */
- 
-+#ifdef CONFIG_S3C_DEV_HSMMC3
-+static inline void s5pv210_default_sdhci3(void)
-+{
-+	s3c_hsmmc3_def_platdata.clocks = s5pv210_hsmmc_clksrcs;
-+	s3c_hsmmc3_def_platdata.cfg_gpio = s5pv210_setup_sdhci3_cfg_gpio;
-+	s3c_hsmmc3_def_platdata.cfg_card = s5pv210_setup_sdhci_cfg_card;
-+}
-+#else
-+static inline void s5pv210_default_sdhci3(void) { }
-+#endif /* CONFIG_S3C_DEV_HSMMC3 */
-+
- #else
- static inline void s5pv210_default_sdhci0(void) { }
- static inline void s5pv210_default_sdhci1(void) { }
- static inline void s5pv210_default_sdhci2(void) { }
-+static inline void s5pv210_default_sdhci3(void) { }
- #endif /* CONFIG_S5PC100_SETUP_SDHCI */
- 
- 
--- 
-1.6.2.5
+>  #define IRQ_ONENAND 		S5P_IRQ_VIC1(7)
+>  #define IRQ_UART0 		S5P_IRQ_VIC1(10)
+>  #define IRQ_UART1 		S5P_IRQ_VIC1(11)
+> diff --git a/arch/arm/mach-s5pc100/include/mach/irqs.h b/arch/arm/mach-
+> s5pc100/include/mach/irqs.h
+> index 28aa551..9cc1b0d 100644
+> --- a/arch/arm/mach-s5pc100/include/mach/irqs.h
+> +++ b/arch/arm/mach-s5pc100/include/mach/irqs.h
+> @@ -110,5 +110,6 @@
+>  #define IRQ_LCD_FIFO		IRQ_LCD0
+>  #define IRQ_LCD_VSYNC		IRQ_LCD1
+>  #define IRQ_LCD_SYSTEM		IRQ_LCD2
+> +#define IRQ_PMUIRQ		IRQ_CORTEX0
+> 
+I think, we don't need remapping in here.
+How about use direct mapping like following:
+#define IRQ_PMUIRQ	S5P_IRQ_VIC1(0)
+
+>  #endif /* __ASM_ARCH_IRQS_H */
+> diff --git a/arch/arm/mach-s5pv210/include/mach/irqs.h b/arch/arm/mach-
+> s5pv210/include/mach/irqs.h
+> index 9689537..3972f8d 100644
+> --- a/arch/arm/mach-s5pv210/include/mach/irqs.h
+> +++ b/arch/arm/mach-s5pv210/include/mach/irqs.h
+> @@ -128,5 +128,6 @@
+>  #define IRQ_LCD_FIFO		IRQ_LCD0
+>  #define IRQ_LCD_VSYNC		IRQ_LCD1
+>  #define IRQ_LCD_SYSTEM		IRQ_LCD2
+> +#define IRQ_PMUIRQ		IRQ_CORTEX0
+> 
+same.
+
+>  #endif /* ASM_ARCH_IRQS_H */
+> diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
+> index 39c242b..7e34194 100644
+> --- a/arch/arm/plat-s5p/Makefile
+> +++ b/arch/arm/plat-s5p/Makefile
+> @@ -12,6 +12,7 @@ obj-				:=
+> 
+>  # Core files
+> 
+> +obj-y				+= dev-pmu.o
+>  obj-y				+= dev-uart.o
+>  obj-y				+= cpu.o
+>  obj-y				+= clock.o
+> diff --git a/arch/arm/plat-s5p/dev-pmu.c b/arch/arm/plat-s5p/dev-pmu.c
+> new file mode 100644
+> index 0000000..de3b118
+> --- /dev/null
+> +++ b/arch/arm/plat-s5p/dev-pmu.c
+> @@ -0,0 +1,37 @@
+> +/*
+> + * linux/arch/arm/plat-s5p/dev-pmu.c
+> + *
+> + * Copyright (C) 2010 Samsung Electronics Co.Ltd
+> + * Author: Joonyoung Shim <jy0922.shim@samsung.com>
+> + *
+> + *  This program is free software; you can redistribute  it and/or modify
+it
+> + *  under  the terms of  the GNU General  Public License as published by
+the
+> + *  Free Software Foundation;  either version 2 of the  License, or (at
+your
+> + *  option) any later version.
+> + *
+> + */
+> +
+> +#include <linux/platform_device.h>
+> +#include <asm/pmu.h>
+> +#include <mach/irqs.h>
+> +#include <mach/map.h>
+
+really need mach/map.h?
+
+> +
+> +static struct resource s5p_pmu_resource = {
+> +	.start	= IRQ_PMUIRQ,
+> +	.end	= IRQ_PMUIRQ,
+> +	.flags	= IORESOURCE_IRQ,
+> +};
+> +
+> +struct platform_device s5p_device_pmu = {
+> +	.name		= "arm-pmu",
+> +	.id		= ARM_PMU_DEVICE_CPU,
+> +	.num_resources	= 1,
+> +	.resource	= &s5p_pmu_resource,
+> +};
+> +
+> +static int __init s5p_pmu_init(void)
+> +{
+> +	platform_device_register(&s5p_device_pmu);
+> +	return 0;
+> +}
+> +arch_initcall(s5p_pmu_init);
+> --
+
+
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
