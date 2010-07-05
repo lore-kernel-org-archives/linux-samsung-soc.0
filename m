@@ -1,25 +1,24 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 2/3] arm: s5pv210: Aquila: add support for MAX8998 PMIC
-Date: Mon, 05 Jul 2010 11:16:55 +0200
-Message-ID: <1278321416-32524-3-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 3/3] arm: s5pv210: GONI: add support for MAX8998 PMIC
+Date: Mon, 05 Jul 2010 11:16:56 +0200
+Message-ID: <1278321416-32524-4-git-send-email-m.szyprowski@samsung.com>
 References: <1278321416-32524-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:58532 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758113Ab0GEJRC (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:53027 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758149Ab0GEJRI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Jul 2010 05:17:02 -0400
-Received: from eu_spt1 (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L52002YBV4AA1@mailout2.w1.samsung.com> for
+	Mon, 5 Jul 2010 05:17:08 -0400
+Received: from eu_spt2 ([210.118.77.14]) by mailout4.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0L52004TBV4ATV30@mailout4.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Mon, 05 Jul 2010 10:16:59 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L52000VAV4ANZ@spt1.w1.samsung.com> for
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0L52009W7V4A4Q@spt2.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Mon, 05 Jul 2010 10:16:58 +0100 (BST)
 In-reply-to: <1278321416-32524-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -35,44 +34,36 @@ external interrupt).
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-s5pv210/mach-aquila.c |  326 +++++++++++++++++++++++++++++++++++
- 1 files changed, 326 insertions(+), 0 deletions(-)
+ arch/arm/mach-s5pv210/mach-goni.c |  323 +++++++++++++++++++++++++++++++++++++
+ 1 files changed, 323 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv210/mach-aquila.c b/arch/arm/mach-s5pv210/mach-aquila.c
-index 44db0fc..ad0ee96 100644
---- a/arch/arm/mach-s5pv210/mach-aquila.c
-+++ b/arch/arm/mach-s5pv210/mach-aquila.c
-@@ -13,6 +13,11 @@
+diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
+index 05b4a1a..f0eaf86 100644
+--- a/arch/arm/mach-s5pv210/mach-goni.c
++++ b/arch/arm/mach-s5pv210/mach-goni.c
+@@ -13,8 +13,13 @@
  #include <linux/init.h>
  #include <linux/serial_core.h>
  #include <linux/fb.h>
 +#include <linux/i2c.h>
 +#include <linux/i2c-gpio.h>
 +#include <linux/mfd/max8998.h>
+ #include <linux/delay.h>
+ #include <linux/clk.h>
 +#include <linux/gpio_keys.h>
 +#include <linux/input.h>
  
  #include <asm/mach/arch.h>
  #include <asm/mach/map.h>
-@@ -22,7 +27,9 @@
- #include <mach/map.h>
- #include <mach/regs-clock.h>
- #include <mach/regs-fb.h>
-+#include <mach/gpio.h>
- 
-+#include <plat/gpio-cfg.h>
- #include <plat/regs-serial.h>
- #include <plat/s5pv210.h>
- #include <plat/devs.h>
-@@ -122,7 +129,321 @@ static struct s3c_fb_platdata aquila_lcd_pdata __initdata = {
- 	.setup_gpio	= s5pv210_fb_gpio_setup_24bpp,
+@@ -107,9 +112,323 @@ static struct s3c_fb_platdata goni_lcd_pdata __initdata = {
+ 	.setup_gpio		= s5pv210_fb_gpio_setup_24bpp,
  };
  
 +/* MAX8998 regulators */
 +#if defined(CONFIG_REGULATOR_MAX8998) || \
 +				defined(CONFIG_REGULATOR_MAX8998_MODULE)
 +
-+static struct regulator_init_data aquila_ldo2_data = {
++static struct regulator_init_data goni_ldo2_data = {
 +	.constraints	= {
 +		.name		= "VALIVE_1.1V",
 +		.min_uV		= 1100000,
@@ -85,7 +76,7 @@ index 44db0fc..ad0ee96 100644
 +	},
 +};
 +
-+static struct regulator_init_data aquila_ldo3_data = {
++static struct regulator_init_data goni_ldo3_data = {
 +	.constraints	= {
 +		.name		= "VUSB/MIPI_1.1V",
 +		.min_uV		= 1100000,
@@ -95,7 +86,7 @@ index 44db0fc..ad0ee96 100644
 +	},
 +};
 +
-+static struct regulator_init_data aquila_ldo4_data = {
++static struct regulator_init_data goni_ldo4_data = {
 +	.constraints	= {
 +		.name		= "VDAC_3.3V",
 +		.min_uV		= 3300000,
@@ -104,7 +95,7 @@ index 44db0fc..ad0ee96 100644
 +	},
 +};
 +
-+static struct regulator_init_data aquila_ldo5_data = {
++static struct regulator_init_data goni_ldo5_data = {
 +	.constraints	= {
 +		.name		= "VTF_2.8V",
 +		.min_uV		= 2800000,
@@ -113,7 +104,7 @@ index 44db0fc..ad0ee96 100644
 +	},
 +};
 +
-+static struct regulator_init_data aquila_ldo6_data = {
++static struct regulator_init_data goni_ldo6_data = {
 +	.constraints	= {
 +		.name		= "VCC_3.3V",
 +		.min_uV		= 3300000,
@@ -122,18 +113,17 @@ index 44db0fc..ad0ee96 100644
 +	},
 +};
 +
-+static struct regulator_init_data aquila_ldo7_data = {
++static struct regulator_init_data goni_ldo7_data = {
 +	.constraints	= {
-+		.name		= "VCC_3.0V",
-+		.min_uV		= 3000000,
-+		.max_uV		= 3000000,
++		.name		= "VLCD_1.8V",
++		.min_uV		= 1800000,
++		.max_uV		= 1800000,
 +		.apply_uV	= 1,
-+		.boot_on	= 1,
 +		.always_on	= 1,
 +	},
 +};
 +
-+static struct regulator_init_data aquila_ldo8_data = {
++static struct regulator_init_data goni_ldo8_data = {
 +	.constraints	= {
 +		.name		= "VUSB/VADC_3.3V",
 +		.min_uV		= 3300000,
@@ -143,7 +133,7 @@ index 44db0fc..ad0ee96 100644
 +	},
 +};
 +
-+static struct regulator_init_data aquila_ldo9_data = {
++static struct regulator_init_data goni_ldo9_data = {
 +	.constraints	= {
 +		.name		= "VCC/VCAM_2.8V",
 +		.min_uV		= 2800000,
@@ -153,7 +143,7 @@ index 44db0fc..ad0ee96 100644
 +	},
 +};
 +
-+static struct regulator_init_data aquila_ldo10_data = {
++static struct regulator_init_data goni_ldo10_data = {
 +	.constraints	= {
 +		.name		= "VPLL_1.1V",
 +		.min_uV		= 1100000,
@@ -163,7 +153,7 @@ index 44db0fc..ad0ee96 100644
 +	},
 +};
 +
-+static struct regulator_init_data aquila_ldo11_data = {
++static struct regulator_init_data goni_ldo11_data = {
 +	.constraints	= {
 +		.name		= "CAM_IO_2.8V",
 +		.min_uV		= 2800000,
@@ -173,7 +163,7 @@ index 44db0fc..ad0ee96 100644
 +	},
 +};
 +
-+static struct regulator_init_data aquila_ldo12_data = {
++static struct regulator_init_data goni_ldo12_data = {
 +	.constraints	= {
 +		.name		= "CAM_ISP_1.2V",
 +		.min_uV		= 1200000,
@@ -183,7 +173,7 @@ index 44db0fc..ad0ee96 100644
 +	},
 +};
 +
-+static struct regulator_init_data aquila_ldo13_data = {
++static struct regulator_init_data goni_ldo13_data = {
 +	.constraints	= {
 +		.name		= "CAM_A_2.8V",
 +		.min_uV		= 2800000,
@@ -193,7 +183,7 @@ index 44db0fc..ad0ee96 100644
 +	},
 +};
 +
-+static struct regulator_init_data aquila_ldo14_data = {
++static struct regulator_init_data goni_ldo14_data = {
 +	.constraints	= {
 +		.name		= "CAM_CIF_1.8V",
 +		.min_uV		= 1800000,
@@ -203,7 +193,7 @@ index 44db0fc..ad0ee96 100644
 +	},
 +};
 +
-+static struct regulator_init_data aquila_ldo15_data = {
++static struct regulator_init_data goni_ldo15_data = {
 +	.constraints	= {
 +		.name		= "CAM_AF_3.3V",
 +		.min_uV		= 3300000,
@@ -213,7 +203,7 @@ index 44db0fc..ad0ee96 100644
 +	},
 +};
 +
-+static struct regulator_init_data aquila_ldo16_data = {
++static struct regulator_init_data goni_ldo16_data = {
 +	.constraints	= {
 +		.name		= "VMIPI_1.8V",
 +		.min_uV		= 1800000,
@@ -223,11 +213,11 @@ index 44db0fc..ad0ee96 100644
 +	},
 +};
 +
-+static struct regulator_init_data aquila_ldo17_data = {
++static struct regulator_init_data goni_ldo17_data = {
 +	.constraints	= {
-+		.name		= "CAM_8M_1.8V",
-+		.min_uV		= 1800000,
-+		.max_uV		= 1800000,
++		.name		= "VCC_3.0V_LCD",
++		.min_uV		= 3000000,
++		.max_uV		= 3000000,
 +		.apply_uV	= 1,
 +		.always_on	= 1,
 +	},
@@ -242,7 +232,7 @@ index 44db0fc..ad0ee96 100644
 +	{	.supply	= "vddint", },
 +};
 +
-+static struct regulator_init_data aquila_buck1_data = {
++static struct regulator_init_data goni_buck1_data = {
 +	.constraints	= {
 +		.name		= "VARM_1.2V",
 +		.min_uV		= 1200000,
@@ -255,7 +245,7 @@ index 44db0fc..ad0ee96 100644
 +	.consumer_supplies	= buck1_consumer,
 +};
 +
-+static struct regulator_init_data aquila_buck2_data = {
++static struct regulator_init_data goni_buck2_data = {
 +	.constraints	= {
 +		.name		= "VINT_1.2V",
 +		.min_uV		= 1200000,
@@ -268,7 +258,7 @@ index 44db0fc..ad0ee96 100644
 +	.consumer_supplies	= buck2_consumer,
 +};
 +
-+static struct regulator_init_data aquila_buck3_data = {
++static struct regulator_init_data goni_buck3_data = {
 +	.constraints	= {
 +		.name		= "VCC_1.8V",
 +		.min_uV		= 1800000,
@@ -280,7 +270,7 @@ index 44db0fc..ad0ee96 100644
 +	},
 +};
 +
-+static struct regulator_init_data aquila_buck4_data = {
++static struct regulator_init_data goni_buck4_data = {
 +	.constraints	= {
 +		.name		= "CAM_CORE_1.2V",
 +		.min_uV		= 1200000,
@@ -290,47 +280,47 @@ index 44db0fc..ad0ee96 100644
 +	},
 +};
 +
-+static struct max8998_regulator_data aquila_regulators[] = {
-+	{ MAX8998_LDO2,  &aquila_ldo2_data },
-+	{ MAX8998_LDO3,  &aquila_ldo3_data },
-+	{ MAX8998_LDO4,  &aquila_ldo4_data },
-+	{ MAX8998_LDO5,  &aquila_ldo5_data },
-+	{ MAX8998_LDO6,  &aquila_ldo6_data },
-+	{ MAX8998_LDO7,  &aquila_ldo7_data },
-+	{ MAX8998_LDO8,  &aquila_ldo8_data },
-+	{ MAX8998_LDO9,  &aquila_ldo9_data },
-+	{ MAX8998_LDO10, &aquila_ldo10_data },
-+	{ MAX8998_LDO11, &aquila_ldo11_data },
-+	{ MAX8998_LDO12, &aquila_ldo12_data },
-+	{ MAX8998_LDO13, &aquila_ldo13_data },
-+	{ MAX8998_LDO14, &aquila_ldo14_data },
-+	{ MAX8998_LDO15, &aquila_ldo15_data },
-+	{ MAX8998_LDO16, &aquila_ldo16_data },
-+	{ MAX8998_LDO17, &aquila_ldo17_data },
-+	{ MAX8998_BUCK1, &aquila_buck1_data },
-+	{ MAX8998_BUCK2, &aquila_buck2_data },
-+	{ MAX8998_BUCK3, &aquila_buck3_data },
-+	{ MAX8998_BUCK4, &aquila_buck4_data },
++static struct max8998_regulator_data goni_regulators[] = {
++	{ MAX8998_LDO2,  &goni_ldo2_data },
++	{ MAX8998_LDO3,  &goni_ldo3_data },
++	{ MAX8998_LDO4,  &goni_ldo4_data },
++	{ MAX8998_LDO5,  &goni_ldo5_data },
++	{ MAX8998_LDO6,  &goni_ldo6_data },
++	{ MAX8998_LDO7,  &goni_ldo7_data },
++	{ MAX8998_LDO8,  &goni_ldo8_data },
++	{ MAX8998_LDO9,  &goni_ldo9_data },
++	{ MAX8998_LDO10, &goni_ldo10_data },
++	{ MAX8998_LDO11, &goni_ldo11_data },
++	{ MAX8998_LDO12, &goni_ldo12_data },
++	{ MAX8998_LDO13, &goni_ldo13_data },
++	{ MAX8998_LDO14, &goni_ldo14_data },
++	{ MAX8998_LDO15, &goni_ldo15_data },
++	{ MAX8998_LDO16, &goni_ldo16_data },
++	{ MAX8998_LDO17, &goni_ldo17_data },
++	{ MAX8998_BUCK1, &goni_buck1_data },
++	{ MAX8998_BUCK2, &goni_buck2_data },
++	{ MAX8998_BUCK3, &goni_buck3_data },
++	{ MAX8998_BUCK4, &goni_buck4_data },
 +};
 +
 +static struct max8998_platform_data max8998_platform_data = {
-+	.num_regulators		= ARRAY_SIZE(aquila_regulators),
-+	.regulators		= aquila_regulators,
++	.num_regulators		= ARRAY_SIZE(goni_regulators),
++	.regulators		= goni_regulators,
 +};
 +#endif
 +
 +/* GPIO I2C PMIC */
 +#define AP_I2C_GPIO_PMIC_BUS_4	4
-+static struct i2c_gpio_platform_data aquila_i2c_gpio_pmic_data = {
++static struct i2c_gpio_platform_data goni_i2c_gpio_pmic_data = {
 +	.sda_pin	= S5PV210_GPJ4(0),	/* XMSMCSN */
 +	.scl_pin	= S5PV210_GPJ4(3),	/* XMSMIRQN */
 +};
 +
-+static struct platform_device aquila_i2c_gpio_pmic = {
++static struct platform_device goni_i2c_gpio_pmic = {
 +	.name		= "i2c-gpio",
 +	.id		= AP_I2C_GPIO_PMIC_BUS_4,
 +	.dev		= {
-+		.platform_data	= &aquila_i2c_gpio_pmic_data,
++		.platform_data	= &goni_i2c_gpio_pmic_data,
 +	},
 +};
 +
@@ -345,7 +335,7 @@ index 44db0fc..ad0ee96 100644
 +};
 +
 +/* PMIC Power button */
-+static struct gpio_keys_button aquila_gpio_keys_table[] = {
++static struct gpio_keys_button goni_gpio_keys_table[] = {
 +	{
 +		.code 		= KEY_POWER,
 +		.gpio		= S5PV210_GPH2(6),
@@ -357,19 +347,19 @@ index 44db0fc..ad0ee96 100644
 +	},
 +};
 +
-+static struct gpio_keys_platform_data aquila_gpio_keys_data = {
-+	.buttons        = aquila_gpio_keys_table,
-+	.nbuttons       = ARRAY_SIZE(aquila_gpio_keys_table),
++static struct gpio_keys_platform_data goni_gpio_keys_data = {
++	.buttons        = goni_gpio_keys_table,
++	.nbuttons       = ARRAY_SIZE(goni_gpio_keys_table),
 +};
 +
-+static struct platform_device aquila_device_gpiokeys = {
++static struct platform_device goni_device_gpiokeys = {
 +	.name      = "gpio-keys",
 +	.dev = {
-+		.platform_data = &aquila_gpio_keys_data,
++		.platform_data = &goni_gpio_keys_data,
 +	},
 +};
 +
-+static void __init aquila_pmic_init(void)
++static void __init goni_pmic_init(void)
 +{
 +	/* AP_PMIC_IRQ: EINT7 */
 +	s3c_gpio_cfgpin(S5PV210_GPH0(7), S3C_GPIO_SFN(0xf));
@@ -380,23 +370,25 @@ index 44db0fc..ad0ee96 100644
 +	s3c_gpio_setpull(S5PV210_GPH2(6), S3C_GPIO_PULL_UP);
 +}
 +
- static struct platform_device *aquila_devices[] __initdata = {
-+	&aquila_i2c_gpio_pmic,
-+	&aquila_device_gpiokeys,
++
+ static struct platform_device *goni_devices[] __initdata = {
  	&s3c_device_fb,
  	&s5pc110_device_onenand,
++	&goni_i2c_gpio_pmic,
++	&goni_device_gpiokeys,
  };
-@@ -136,6 +457,11 @@ static void __init aquila_map_io(void)
  
- static void __init aquila_machine_init(void)
+ static void __init goni_map_io(void)
+@@ -121,6 +440,10 @@ static void __init goni_map_io(void)
+ 
+ static void __init goni_machine_init(void)
  {
 +	/* PMIC */
-+	aquila_pmic_init();
++	goni_pmic_init();
 +	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4, i2c_gpio_pmic_devs,
 +			ARRAY_SIZE(i2c_gpio_pmic_devs));
-+
- 	/* FB */
- 	s3c_fb_set_platdata(&aquila_lcd_pdata);
  
+ 	/* FB */
+ 	s3c_fb_set_platdata(&goni_lcd_pdata);
 -- 
 1.7.1.569.g6f426
