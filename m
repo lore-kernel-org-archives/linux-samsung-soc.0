@@ -1,368 +1,89 @@
 From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH] ARM: SAMSUNG: updates sdhci.h for Samsung SoCs
-Date: Mon, 5 Jul 2010 22:02:03 +0900
-Message-ID: <AANLkTilEZV1-xiP5mmfy1NFI9f9hSNP5qBE2JFk4pRkN@mail.gmail.com>
-References: <1278332288-28021-1-git-send-email-kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: S5P: Add PMU device
+Date: Tue, 6 Jul 2010 09:50:52 +0900
+Message-ID: <AANLkTik3WGvkUsvKHllgSlj9fJJy90y7L4me4tywCoE0@mail.gmail.com>
+References: <1278294411-5104-1-git-send-email-jy0922.shim@samsung.com>
+	<4C31C47C.1050905@gmail.com>
+	<006c01cb1c41$a0af5c10$e20e1430$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:57715 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753091Ab0GENCG convert rfc822-to-8bit (ORCPT
+Received: from mail-px0-f174.google.com ([209.85.212.174]:33174 "EHLO
+	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756752Ab0GFAux convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Jul 2010 09:02:06 -0400
-Received: by pzk26 with SMTP id 26so673120pzk.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Jul 2010 06:02:05 -0700 (PDT)
-In-Reply-To: <1278332288-28021-1-git-send-email-kgene.kim@samsung.com>
+	Mon, 5 Jul 2010 20:50:53 -0400
+Received: by pxi14 with SMTP id 14so1863492pxi.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Jul 2010 17:50:52 -0700 (PDT)
+In-Reply-To: <006c01cb1c41$a0af5c10$e20e1430$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+Cc: Maurus Cuelenaere <mcuelenaere@gmail.com>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-Hi,
+On Mon, Jul 5, 2010 at 9:57 PM, Kukjin Kim <kgene.kim@samsung.com> wrot=
+e:
+> Maurus Cuelenaere wrote:
+>>
+>> =A0Op 05-07-10 03:46, Joonyoung Shim schreef:
+>> > This patch adds an initcall for the s5p platforms so that they reg=
+ister
+>> > their PMU IRQs with the PMU framework in the Kernel.
+>> >
+>> > Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+>> > ---
+>> > =A0arch/arm/mach-s5p6442/include/mach/irqs.h | =A0 =A02 +-
+>> > =A0arch/arm/mach-s5pc100/include/mach/irqs.h | =A0 =A01 +
+>> > =A0arch/arm/mach-s5pv210/include/mach/irqs.h | =A0 =A01 +
+>> > =A0arch/arm/plat-s5p/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0=
+ =A01 +
+>> > =A0arch/arm/plat-s5p/dev-pmu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 3=
+7
+>> +++++++++++++++++++++++++++++
+>> > =A05 files changed, 41 insertions(+), 1 deletions(-)
+>> > =A0create mode 100644 arch/arm/plat-s5p/dev-pmu.c
+>>
+>> Wouldn't it be better if this was in plat-samsung? I can see that th=
+e S3C6410
+>> datasheet mentions a PMU_IRQ_ENABLE bit in SYS_OTHERS so I suspect t=
+hat it
+>> has
+>> the same functionality (even though there's no mention of which inte=
+rrupt this
+>> is).
+>>
+> Yes, I also found PMU_IRQ_ENABLE bit in System Others register of S3C=
+6410 datasheet. But as your comments, could not found the interrupt num=
+ber and any description...Actually, need to check whether it's availabl=
+e or not.
+>
+> And S5P6440 has it.
+> So Joonyoung, it would be helpful if you could add 6440 PMUIRQ (VIC1[=
+23]) in this patch.
 
-Instead of refactoring, how about to delete it and move to dev-hsmmc fi=
-le.
-We don't need to call each sdhci_setup at each cpu files. just set
-platform data and register platform data.
-
-Just focus the each dev-hsmmc file and no need to change header file an=
-ymore.
-
-How do you think?
+It's another story. Can you explain the difference between 6440 and 644=
+2?
+As I heard it's same chip and type is difference. If true, how about
+to delete the 6442 directory?
+It makes a single kernel simple.
 
 Thank you,
 Kyungmin Park
 
-On Mon, Jul 5, 2010 at 9:18 PM, Kukjin Kim <kgene.kim@samsung.com> wrot=
-e:
-> This patch updates sdhci.h as Maurus suggestion like following:
+
 >
-> From:
-> =A0 =A0 =A0 =A0#ifdef ...
-> =A0 =A0 =A0 =A0function()
-> =A0 =A0 =A0 =A0{
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0blahblah;
-> =A0 =A0 =A0 =A0}
-> =A0 =A0 =A0 =A0#else
-> =A0 =A0 =A0 =A0function() { }
-> =A0 =A0 =A0 =A0#endif
+> Thanks.
 >
-> To:
-> =A0 =A0 =A0 =A0function()
-> =A0 =A0 =A0 =A0{
-> =A0 =A0 =A0 =A0#ifdef ...
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0blahblah;
-> =A0 =A0 =A0 =A0#endif
-> =A0 =A0 =A0 =A0}
->
-> And fixes a couple of typos.
->
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
-> Note: depends on previous v3 patch set, Add support HSMMC on Samsung =
-SMDKV210
->
-> =A0arch/arm/plat-samsung/include/plat/sdhci.h | =A0 91 +++++++++-----=
---------------
-> =A01 files changed, 30 insertions(+), 61 deletions(-)
->
-> diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/pl=
-at-samsung/include/plat/sdhci.h
-> index 1314ffa..5ad1e94 100644
-> --- a/arch/arm/plat-samsung/include/plat/sdhci.h
-> +++ b/arch/arm/plat-samsung/include/plat/sdhci.h
-> @@ -82,12 +82,11 @@ extern void s5pv210_setup_sdhci1_cfg_gpio(struct =
-platform_device *, int w);
-> =A0extern void s5pv210_setup_sdhci2_cfg_gpio(struct platform_device *=
-, int w);
-> =A0extern void s5pv210_setup_sdhci3_cfg_gpio(struct platform_device *=
-, int w);
->
-> -/* S3C6400 SDHCI setup */
-> +/* S3C64XX SDHCI setup */
->
-> =A0#ifdef CONFIG_S3C64XX_SETUP_SDHCI
-> =A0extern char *s3c64xx_hsmmc_clksrcs[4];
->
-> -#ifdef CONFIG_S3C_DEV_HSMMC
-> =A0extern void s3c6400_setup_sdhci_cfg_card(struct platform_device *d=
-ev,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 void __iomem *r,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 struct mmc_ios *ios,
-> @@ -95,76 +94,62 @@ extern void s3c6400_setup_sdhci_cfg_card(struct p=
-latform_device *dev,
->
-> =A0static inline void s3c6400_default_sdhci0(void)
-> =A0{
-> +#ifdef CONFIG_S3C_DEV_HSMMC
-> =A0 =A0 =A0 =A0s3c_hsmmc0_def_platdata.clocks =3D s3c64xx_hsmmc_clksr=
-cs;
-> =A0 =A0 =A0 =A0s3c_hsmmc0_def_platdata.cfg_gpio =3D s3c64xx_setup_sdh=
-ci0_cfg_gpio;
-> =A0 =A0 =A0 =A0s3c_hsmmc0_def_platdata.cfg_card =3D s3c6400_setup_sdh=
-ci_cfg_card;
-> +#endif
-> =A0}
->
-> -#else
-> -static inline void s3c6400_default_sdhci0(void) { }
-> -#endif =A0/* CONFIG_S3C_DEV_HSMMC */
-> -
-> -#ifdef CONFIG_S3C_DEV_HSMMC1
-> =A0static inline void s3c6400_default_sdhci1(void)
-> =A0{
-> +#ifdef CONFIG_S3C_DEV_HSMMC1
-> =A0 =A0 =A0 =A0s3c_hsmmc1_def_platdata.clocks =3D s3c64xx_hsmmc_clksr=
-cs;
-> =A0 =A0 =A0 =A0s3c_hsmmc1_def_platdata.cfg_gpio =3D s3c64xx_setup_sdh=
-ci1_cfg_gpio;
-> =A0 =A0 =A0 =A0s3c_hsmmc1_def_platdata.cfg_card =3D s3c6400_setup_sdh=
-ci_cfg_card;
-> +#endif
-> =A0}
-> -#else
-> -static inline void s3c6400_default_sdhci1(void) { }
-> -#endif /* CONFIG_S3C_DEV_HSMMC1 */
->
-> -#ifdef CONFIG_S3C_DEV_HSMMC2
-> =A0static inline void s3c6400_default_sdhci2(void)
-> =A0{
-> +#ifdef CONFIG_S3C_DEV_HSMMC2
-> =A0 =A0 =A0 =A0s3c_hsmmc2_def_platdata.clocks =3D s3c64xx_hsmmc_clksr=
-cs;
-> =A0 =A0 =A0 =A0s3c_hsmmc2_def_platdata.cfg_gpio =3D s3c64xx_setup_sdh=
-ci2_cfg_gpio;
-> =A0 =A0 =A0 =A0s3c_hsmmc2_def_platdata.cfg_card =3D s3c6400_setup_sdh=
-ci_cfg_card;
-> +#endif
-> =A0}
-> -#else
-> -static inline void s3c6400_default_sdhci2(void) { }
-> -#endif /* CONFIG_S3C_DEV_HSMMC2 */
-> -
-> -/* S3C6410 SDHCI setup */
->
-> =A0extern void s3c6410_setup_sdhci_cfg_card(struct platform_device *d=
-ev,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 void __iomem *r,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 struct mmc_ios *ios,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 struct mmc_card *card);
->
-> -#ifdef CONFIG_S3C_DEV_HSMMC
-> =A0static inline void s3c6410_default_sdhci0(void)
-> =A0{
-> +#ifdef CONFIG_S3C_DEV_HSMMC
-> =A0 =A0 =A0 =A0s3c_hsmmc0_def_platdata.clocks =3D s3c64xx_hsmmc_clksr=
-cs;
-> =A0 =A0 =A0 =A0s3c_hsmmc0_def_platdata.cfg_gpio =3D s3c64xx_setup_sdh=
-ci0_cfg_gpio;
-> =A0 =A0 =A0 =A0s3c_hsmmc0_def_platdata.cfg_card =3D s3c6410_setup_sdh=
-ci_cfg_card;
-> +#endif
-> =A0}
-> -#else
-> -static inline void s3c6410_default_sdhci0(void) { }
-> -#endif /* CONFIG_S3C_DEV_HSMMC */
->
-> -#ifdef CONFIG_S3C_DEV_HSMMC1
-> =A0static inline void s3c6410_default_sdhci1(void)
-> =A0{
-> +#ifdef CONFIG_S3C_DEV_HSMMC1
-> =A0 =A0 =A0 =A0s3c_hsmmc1_def_platdata.clocks =3D s3c64xx_hsmmc_clksr=
-cs;
-> =A0 =A0 =A0 =A0s3c_hsmmc1_def_platdata.cfg_gpio =3D s3c64xx_setup_sdh=
-ci1_cfg_gpio;
-> =A0 =A0 =A0 =A0s3c_hsmmc1_def_platdata.cfg_card =3D s3c6410_setup_sdh=
-ci_cfg_card;
-> +#endif
-> =A0}
-> -#else
-> -static inline void s3c6410_default_sdhci1(void) { }
-> -#endif /* CONFIG_S3C_DEV_HSMMC1 */
->
-> -#ifdef CONFIG_S3C_DEV_HSMMC2
-> =A0static inline void s3c6410_default_sdhci2(void)
-> =A0{
-> +#ifdef CONFIG_S3C_DEV_HSMMC2
-> =A0 =A0 =A0 =A0s3c_hsmmc2_def_platdata.clocks =3D s3c64xx_hsmmc_clksr=
-cs;
-> =A0 =A0 =A0 =A0s3c_hsmmc2_def_platdata.cfg_gpio =3D s3c64xx_setup_sdh=
-ci2_cfg_gpio;
-> =A0 =A0 =A0 =A0s3c_hsmmc2_def_platdata.cfg_card =3D s3c6410_setup_sdh=
-ci_cfg_card;
-> +#endif
-> =A0}
-> -#else
-> -static inline void s3c6410_default_sdhci2(void) { }
-> -#endif /* CONFIG_S3C_DEV_HSMMC2 */
->
-> =A0#else
-> =A0static inline void s3c6410_default_sdhci0(void) { }
-> @@ -184,48 +169,42 @@ extern void s5pc100_setup_sdhci0_cfg_card(struc=
-t platform_device *dev,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 struct mmc_ios *ios,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 struct mmc_card *card);
->
-> -#ifdef CONFIG_S3C_DEV_HSMMC
-> =A0static inline void s5pc100_default_sdhci0(void)
-> =A0{
-> +#ifdef CONFIG_S3C_DEV_HSMMC
-> =A0 =A0 =A0 =A0s3c_hsmmc0_def_platdata.clocks =3D s5pc100_hsmmc_clksr=
-cs;
-> =A0 =A0 =A0 =A0s3c_hsmmc0_def_platdata.cfg_gpio =3D s5pc100_setup_sdh=
-ci0_cfg_gpio;
-> =A0 =A0 =A0 =A0s3c_hsmmc0_def_platdata.cfg_card =3D s5pc100_setup_sdh=
-ci0_cfg_card;
-> +#endif
-> =A0}
-> -#else
-> -static inline void s5pc100_default_sdhci0(void) { }
-> -#endif /* CONFIG_S3C_DEV_HSMMC */
->
-> -#ifdef CONFIG_S3C_DEV_HSMMC1
-> =A0static inline void s5pc100_default_sdhci1(void)
-> =A0{
-> +#ifdef CONFIG_S3C_DEV_HSMMC1
-> =A0 =A0 =A0 =A0s3c_hsmmc1_def_platdata.clocks =3D s5pc100_hsmmc_clksr=
-cs;
-> =A0 =A0 =A0 =A0s3c_hsmmc1_def_platdata.cfg_gpio =3D s5pc100_setup_sdh=
-ci1_cfg_gpio;
-> =A0 =A0 =A0 =A0s3c_hsmmc1_def_platdata.cfg_card =3D s5pc100_setup_sdh=
-ci0_cfg_card;
-> +#endif
-> =A0}
-> -#else
-> -static inline void s5pc100_default_sdhci1(void) { }
-> -#endif /* CONFIG_S3C_DEV_HSMMC1 */
->
-> -#ifdef CONFIG_S3C_DEV_HSMMC2
-> =A0static inline void s5pc100_default_sdhci2(void)
-> =A0{
-> +#ifdef CONFIG_S3C_DEV_HSMMC2
-> =A0 =A0 =A0 =A0s3c_hsmmc2_def_platdata.clocks =3D s5pc100_hsmmc_clksr=
-cs;
-> =A0 =A0 =A0 =A0s3c_hsmmc2_def_platdata.cfg_gpio =3D s5pc100_setup_sdh=
-ci2_cfg_gpio;
-> =A0 =A0 =A0 =A0s3c_hsmmc2_def_platdata.cfg_card =3D s5pc100_setup_sdh=
-ci0_cfg_card;
-> +#endif
-> =A0}
-> -#else
-> -static inline void s5pc100_default_sdhci2(void) { }
-> -#endif /* CONFIG_S3C_DEV_HSMMC1 */
-> -
->
-> =A0#else
-> =A0static inline void s5pc100_default_sdhci0(void) { }
-> =A0static inline void s5pc100_default_sdhci1(void) { }
-> =A0static inline void s5pc100_default_sdhci2(void) { }
-> +
-> =A0#endif /* CONFIG_S5PC100_SETUP_SDHCI */
->
-> +/* S5PV210 SDHCI setup */
->
-> -/* S5PC110 SDHCI setup */
-> =A0#ifdef CONFIG_S5PV210_SETUP_SDHCI
-> =A0extern char *s5pv210_hsmmc_clksrcs[4];
->
-> @@ -234,58 +213,48 @@ extern void s5pv210_setup_sdhci_cfg_card(struct=
- platform_device *dev,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 struct mmc_ios *ios,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 struct mmc_card *card);
->
-> -#ifdef CONFIG_S3C_DEV_HSMMC
-> =A0static inline void s5pv210_default_sdhci0(void)
-> =A0{
-> +#ifdef CONFIG_S3C_DEV_HSMMC
-> =A0 =A0 =A0 =A0s3c_hsmmc0_def_platdata.clocks =3D s5pv210_hsmmc_clksr=
-cs;
-> =A0 =A0 =A0 =A0s3c_hsmmc0_def_platdata.cfg_gpio =3D s5pv210_setup_sdh=
-ci0_cfg_gpio;
-> =A0 =A0 =A0 =A0s3c_hsmmc0_def_platdata.cfg_card =3D s5pv210_setup_sdh=
-ci_cfg_card;
-> +#endif
-> =A0}
-> -#else
-> -static inline void s5pv210_default_sdhci0(void) { }
-> -#endif /* CONFIG_S3C_DEV_HSMMC */
->
-> -#ifdef CONFIG_S3C_DEV_HSMMC1
-> =A0static inline void s5pv210_default_sdhci1(void)
-> =A0{
-> +#ifdef CONFIG_S3C_DEV_HSMMC1
-> =A0 =A0 =A0 =A0s3c_hsmmc1_def_platdata.clocks =3D s5pv210_hsmmc_clksr=
-cs;
-> =A0 =A0 =A0 =A0s3c_hsmmc1_def_platdata.cfg_gpio =3D s5pv210_setup_sdh=
-ci1_cfg_gpio;
-> =A0 =A0 =A0 =A0s3c_hsmmc1_def_platdata.cfg_card =3D s5pv210_setup_sdh=
-ci_cfg_card;
-> +#endif
-> =A0}
-> -#else
-> -static inline void s5pv210_default_sdhci1(void) { }
-> -#endif /* CONFIG_S3C_DEV_HSMMC1 */
->
-> -#ifdef CONFIG_S3C_DEV_HSMMC2
-> =A0static inline void s5pv210_default_sdhci2(void)
-> =A0{
-> +#ifdef CONFIG_S3C_DEV_HSMMC2
-> =A0 =A0 =A0 =A0s3c_hsmmc2_def_platdata.clocks =3D s5pv210_hsmmc_clksr=
-cs;
-> =A0 =A0 =A0 =A0s3c_hsmmc2_def_platdata.cfg_gpio =3D s5pv210_setup_sdh=
-ci2_cfg_gpio;
-> =A0 =A0 =A0 =A0s3c_hsmmc2_def_platdata.cfg_card =3D s5pv210_setup_sdh=
-ci_cfg_card;
-> +#endif
-> =A0}
-> -#else
-> -static inline void s5pv210_default_sdhci2(void) { }
-> -#endif /* CONFIG_S3C_DEV_HSMMC2 */
->
-> -#ifdef CONFIG_S3C_DEV_HSMMC3
-> =A0static inline void s5pv210_default_sdhci3(void)
-> =A0{
-> +#ifdef CONFIG_S3C_DEV_HSMMC3
-> =A0 =A0 =A0 =A0s3c_hsmmc3_def_platdata.clocks =3D s5pv210_hsmmc_clksr=
-cs;
-> =A0 =A0 =A0 =A0s3c_hsmmc3_def_platdata.cfg_gpio =3D s5pv210_setup_sdh=
-ci3_cfg_gpio;
-> =A0 =A0 =A0 =A0s3c_hsmmc3_def_platdata.cfg_card =3D s5pv210_setup_sdh=
-ci_cfg_card;
-> +#endif
-> =A0}
-> -#else
-> -static inline void s5pv210_default_sdhci3(void) { }
-> -#endif /* CONFIG_S3C_DEV_HSMMC3 */
->
-> =A0#else
-> =A0static inline void s5pv210_default_sdhci0(void) { }
-> =A0static inline void s5pv210_default_sdhci1(void) { }
-> =A0static inline void s5pv210_default_sdhci2(void) { }
-> =A0static inline void s5pv210_default_sdhci3(void) { }
-> -#endif /* CONFIG_S5PC100_SETUP_SDHCI */
-> -
-> -
->
-> +#endif /* CONFIG_S5PV210_SETUP_SDHCI */
->
-> =A0#endif /* __PLAT_S3C_SDHCI_H */
+> Best regards,
+> Kgene.
 > --
-> 1.6.2.5
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
 >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 >
