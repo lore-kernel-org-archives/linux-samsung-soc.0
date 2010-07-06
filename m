@@ -1,33 +1,49 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v6 3/3] input: samsung-keypad - Add samsung keypad driver
-Date: Tue, 06 Jul 2010 16:58:18 +0900
-Message-ID: <4C32E21A.8080100@samsung.com>
-References: <1277724824-13308-1-git-send-email-jy0922.shim@samsung.com>
- <1277724824-13308-3-git-send-email-jy0922.shim@samsung.com>
+From: Liam Girdwood <lrg@slimlogic.co.uk>
+Subject: Re: [alsa-devel] [PATCH] ASoC: Invert speaker enabling behaviour
+ in SmartQ sound driver
+Date: Tue, 06 Jul 2010 09:07:36 +0100
+Message-ID: <1278403656.3103.10.camel@odin>
+References: <4c3088ad.487e0e0a.3402.6e62@mx.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-input-owner@vger.kernel.org>
-In-reply-to: <1277724824-13308-3-git-send-email-jy0922.shim@samsung.com>
-Sender: linux-input-owner@vger.kernel.org
-To: ch.naveen@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, dmitry.torokhov@gmail.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-input@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:37935 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751134Ab0GFIHn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 6 Jul 2010 04:07:43 -0400
+Received: by fxm14 with SMTP id 14so4442392fxm.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Jul 2010 01:07:39 -0700 (PDT)
+In-Reply-To: <4c3088ad.487e0e0a.3402.6e62@mx.google.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-arm-kernel@lists.infradead.org
 
-Hi, Naveen.
-
-On 6/28/2010 8:33 PM, Joonyoung Shim wrote:
-> This patch adds support for keypad driver running on Samsung cpus. This
-> driver is tested on GONI and Aquila board using S5PC110 cpu.
+On Sun, 2010-07-04 at 15:12 +0200, Maurus Cuelenaere wrote:
+> The speaker was enabled when the headphone was plugged in, which isn't the
+> wanted behaviour so correct this.
 > 
-> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
 > ---
->  drivers/input/keyboard/Kconfig          |    9 +
->  drivers/input/keyboard/Makefile         |    1 +
->  drivers/input/keyboard/samsung-keypad.c |  491 +++++++++++++++++++++++++++++++
->  3 files changed, 501 insertions(+), 0 deletions(-)
->  create mode 100644 drivers/input/keyboard/samsung-keypad.c
+>  sound/soc/s3c24xx/smartq_wm8987.c |    1 -
+>  1 files changed, 0 insertions(+), 1 deletions(-)
 > 
-
-Could you please test this v6 keypad driver on your various targets?
+> diff --git a/sound/soc/s3c24xx/smartq_wm8987.c b/sound/soc/s3c24xx/smartq_wm8987.c
+> index c90ef96..b480348 100644
+> --- a/sound/soc/s3c24xx/smartq_wm8987.c
+> +++ b/sound/soc/s3c24xx/smartq_wm8987.c
+> @@ -112,7 +112,6 @@ static struct snd_soc_jack_pin smartq_jack_pins[] = {
+>  	{
+>  		.pin	= "Internal Speaker",
+>  		.mask	= SND_JACK_HEADPHONE,
+> -		.invert	= true,
+>  	},
+>  };
+>  
+Acked-by: Liam Girdwood <lrg@slimlogic.co.uk>
+-- 
+Freelance Developer, SlimLogic Ltd
+ASoC and Voltage Regulator Maintainer.
+http://www.slimlogic.co.uk
