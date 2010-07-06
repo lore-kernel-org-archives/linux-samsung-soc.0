@@ -1,186 +1,99 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH] ARM: S5P: Add PMU device
-Date: Tue, 06 Jul 2010 10:56:10 +0900
-Message-ID: <4C328D3A.7060701@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: S5P: Add PMU device
+Date: Tue, 06 Jul 2010 12:12:37 +0900
+Message-ID: <009f01cb1cb9$188332d0$49899870$%kim@samsung.com>
 References: <1278294411-5104-1-git-send-email-jy0922.shim@samsung.com>
- <005f01cb1c3f$c464d150$4d2e73f0$%kim@samsung.com>
+ <4C31C47C.1050905@gmail.com> <006c01cb1c41$a0af5c10$e20e1430$%kim@samsung.com>
+ <AANLkTik3WGvkUsvKHllgSlj9fJJy90y7L4me4tywCoE0@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:29424 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:61399 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753699Ab0GFB4Q (ORCPT
+	with ESMTP id S1754834Ab0GFDMe convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Jul 2010 21:56:16 -0400
+	Mon, 5 Jul 2010 23:12:34 -0400
 Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
  by mailout2.samsung.com
  (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L54000JF5DM2MB0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 06 Jul 2010 10:56:10 +0900 (KST)
-Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ with ESMTP id <0L54008X18WXM710@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 06 Jul 2010 12:12:33 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L54007M85DMWY@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 06 Jul 2010 10:56:10 +0900 (KST)
-In-reply-to: <005f01cb1c3f$c464d150$4d2e73f0$%kim@samsung.com>
+ with ESMTPA id <0L540091A8WW7T@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 06 Jul 2010 12:12:33 +0900 (KST)
+In-reply-to: <AANLkTik3WGvkUsvKHllgSlj9fJJy90y7L4me4tywCoE0@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: 'Kyungmin Park' <kmpark@infradead.org>
+Cc: 'Maurus Cuelenaere' <mcuelenaere@gmail.com>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-On 7/5/2010 9:44 PM, Kukjin Kim wrote:
-> Joonyoung Shim wrote:
->> This patch adds an initcall for the s5p platforms so that they register
->> their PMU IRQs with the PMU framework in the Kernel.
->>
-> Please include Ben Dooks email address in the CC.
+Kyungmin Park wrote:
+>=20
+> On Mon, Jul 5, 2010 at 9:57 PM, Kukjin Kim <kgene.kim@samsung.com> wr=
+ote:
+> > Maurus Cuelenaere wrote:
+> >>
+> >> =A0Op 05-07-10 03:46, Joonyoung Shim schreef:
+> >> > This patch adds an initcall for the s5p platforms so that they
+register
+> >> > their PMU IRQs with the PMU framework in the Kernel.
+> >> >
+> >> > Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> >> > ---
+> >> > =A0arch/arm/mach-s5p6442/include/mach/irqs.h | =A0 =A02 +-
+> >> > =A0arch/arm/mach-s5pc100/include/mach/irqs.h | =A0 =A01 +
+> >> > =A0arch/arm/mach-s5pv210/include/mach/irqs.h | =A0 =A01 +
+> >> > =A0arch/arm/plat-s5p/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0=
+ =A01 +
+> >> > =A0arch/arm/plat-s5p/dev-pmu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0=
+ 37
+> >> +++++++++++++++++++++++++++++
+> >> > =A05 files changed, 41 insertions(+), 1 deletions(-)
+> >> > =A0create mode 100644 arch/arm/plat-s5p/dev-pmu.c
+> >>
+> >> Wouldn't it be better if this was in plat-samsung? I can see that =
+the
+S3C6410
+> >> datasheet mentions a PMU_IRQ_ENABLE bit in SYS_OTHERS so I suspect
+> that it
+> >> has
+> >> the same functionality (even though there's no mention of which
+interrupt this
+> >> is).
+> >>
+> > Yes, I also found PMU_IRQ_ENABLE bit in System Others register of
+S3C6410
+> datasheet. But as your comments, could not found the interrupt number=
+ and
+any
+> description...Actually, need to check whether it's available or not.
+> >
+> > And S5P6440 has it.
+> > So Joonyoung, it would be helpful if you could add 6440 PMUIRQ
+(VIC1[23]) in
+> this patch.
+>=20
+> It's another story. Can you explain the difference between 6440 and 6=
+442?
+> As I heard it's same chip and type is difference. If true, how about
+> to delete the 6442 directory?
+> It makes a single kernel simple.
+>=20
 
-OK.
+I remember, already explained about that.
+Hmm..Where did you hear wrong information that they are same? :-(
+Absolutely, they are different !! not same chip.
+=2E..
 
-> 
->> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
->> ---
->>  arch/arm/mach-s5p6442/include/mach/irqs.h |    2 +-
->>  arch/arm/mach-s5pc100/include/mach/irqs.h |    1 +
->>  arch/arm/mach-s5pv210/include/mach/irqs.h |    1 +
->>  arch/arm/plat-s5p/Makefile                |    1 +
->>  arch/arm/plat-s5p/dev-pmu.c               |   37
->> +++++++++++++++++++++++++++++
->>  5 files changed, 41 insertions(+), 1 deletions(-)
->>  create mode 100644 arch/arm/plat-s5p/dev-pmu.c
->>
->> diff --git a/arch/arm/mach-s5p6442/include/mach/irqs.h b/arch/arm/mach-
->> s5p6442/include/mach/irqs.h
->> index 02c2374..22173cc 100644
->> --- a/arch/arm/mach-s5p6442/include/mach/irqs.h
->> +++ b/arch/arm/mach-s5p6442/include/mach/irqs.h
->> @@ -32,7 +32,7 @@
->>  #define IRQ_GPIOINT		S5P_IRQ_VIC0(30)
->>
->>  /* VIC1 */
->> -#define IRQ_nPMUIRQ 		S5P_IRQ_VIC1(0)
->> +#define IRQ_PMUIRQ		S5P_IRQ_VIC1(0)
-> 
-> I'm not sure this changing is better..as you know, nXXX has some meaning.
-> 
+But actually, I'm working on merge some S5P SoCs...
 
-Otherwise, we should redefine it and s5p6440 was defined to IRQ_PMUIRQ.
+Thanks.
 
->>  #define IRQ_ONENAND 		S5P_IRQ_VIC1(7)
->>  #define IRQ_UART0 		S5P_IRQ_VIC1(10)
->>  #define IRQ_UART1 		S5P_IRQ_VIC1(11)
->> diff --git a/arch/arm/mach-s5pc100/include/mach/irqs.h b/arch/arm/mach-
->> s5pc100/include/mach/irqs.h
->> index 28aa551..9cc1b0d 100644
->> --- a/arch/arm/mach-s5pc100/include/mach/irqs.h
->> +++ b/arch/arm/mach-s5pc100/include/mach/irqs.h
->> @@ -110,5 +110,6 @@
->>  #define IRQ_LCD_FIFO		IRQ_LCD0
->>  #define IRQ_LCD_VSYNC		IRQ_LCD1
->>  #define IRQ_LCD_SYSTEM		IRQ_LCD2
->> +#define IRQ_PMUIRQ		IRQ_CORTEX0
->>
-> I think, we don't need remapping in here.
-> How about use direct mapping like following:
-> #define IRQ_PMUIRQ	S5P_IRQ_VIC1(0)
-> 
-
-I don't care, but above codes uses already remapping.
-
->>  #endif /* __ASM_ARCH_IRQS_H */
->> diff --git a/arch/arm/mach-s5pv210/include/mach/irqs.h b/arch/arm/mach-
->> s5pv210/include/mach/irqs.h
->> index 9689537..3972f8d 100644
->> --- a/arch/arm/mach-s5pv210/include/mach/irqs.h
->> +++ b/arch/arm/mach-s5pv210/include/mach/irqs.h
->> @@ -128,5 +128,6 @@
->>  #define IRQ_LCD_FIFO		IRQ_LCD0
->>  #define IRQ_LCD_VSYNC		IRQ_LCD1
->>  #define IRQ_LCD_SYSTEM		IRQ_LCD2
->> +#define IRQ_PMUIRQ		IRQ_CORTEX0
->>
-> same.
-> 
->>  #endif /* ASM_ARCH_IRQS_H */
->> diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
->> index 39c242b..7e34194 100644
->> --- a/arch/arm/plat-s5p/Makefile
->> +++ b/arch/arm/plat-s5p/Makefile
->> @@ -12,6 +12,7 @@ obj-				:=
->>
->>  # Core files
->>
->> +obj-y				+= dev-pmu.o
->>  obj-y				+= dev-uart.o
->>  obj-y				+= cpu.o
->>  obj-y				+= clock.o
->> diff --git a/arch/arm/plat-s5p/dev-pmu.c b/arch/arm/plat-s5p/dev-pmu.c
->> new file mode 100644
->> index 0000000..de3b118
->> --- /dev/null
->> +++ b/arch/arm/plat-s5p/dev-pmu.c
->> @@ -0,0 +1,37 @@
->> +/*
->> + * linux/arch/arm/plat-s5p/dev-pmu.c
->> + *
->> + * Copyright (C) 2010 Samsung Electronics Co.Ltd
->> + * Author: Joonyoung Shim <jy0922.shim@samsung.com>
->> + *
->> + *  This program is free software; you can redistribute  it and/or modify
-> it
->> + *  under  the terms of  the GNU General  Public License as published by
-> the
->> + *  Free Software Foundation;  either version 2 of the  License, or (at
-> your
->> + *  option) any later version.
->> + *
->> + */
->> +
->> +#include <linux/platform_device.h>
->> +#include <asm/pmu.h>
->> +#include <mach/irqs.h>
->> +#include <mach/map.h>
-> 
-> really need mach/map.h?
-> 
-
-Ah, it is unnecessary. i will remove it.
-
->> +
->> +static struct resource s5p_pmu_resource = {
->> +	.start	= IRQ_PMUIRQ,
->> +	.end	= IRQ_PMUIRQ,
->> +	.flags	= IORESOURCE_IRQ,
->> +};
->> +
->> +struct platform_device s5p_device_pmu = {
->> +	.name		= "arm-pmu",
->> +	.id		= ARM_PMU_DEVICE_CPU,
->> +	.num_resources	= 1,
->> +	.resource	= &s5p_pmu_resource,
->> +};
->> +
->> +static int __init s5p_pmu_init(void)
->> +{
->> +	platform_device_register(&s5p_device_pmu);
->> +	return 0;
->> +}
->> +arch_initcall(s5p_pmu_init);
->> --
-> 
-> 
-> 
-> Thanks.
-> 
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
