@@ -1,49 +1,60 @@
-From: Liam Girdwood <lrg@slimlogic.co.uk>
-Subject: Re: [alsa-devel] [PATCH] ASoC: Invert speaker enabling behaviour
- in SmartQ sound driver
-Date: Tue, 06 Jul 2010 09:07:36 +0100
-Message-ID: <1278403656.3103.10.camel@odin>
-References: <4c3088ad.487e0e0a.3402.6e62@mx.google.com>
+From: Sergei Shtylyov <sshtylyov@mvista.com>
+Subject: Re: [PATCH] ARM: S5PV210: Fix on SECTION_SIZE_BITS on S5PV210/S5PC110.
+Date: Tue, 06 Jul 2010 14:44:38 +0400
+Message-ID: <4C330916.1070201@ru.mvista.com>
+References: <1278391007-11144-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:37935 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751134Ab0GFIHn (ORCPT
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:54098 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751590Ab0GFKpo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Jul 2010 04:07:43 -0400
-Received: by fxm14 with SMTP id 14so4442392fxm.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Jul 2010 01:07:39 -0700 (PDT)
-In-Reply-To: <4c3088ad.487e0e0a.3402.6e62@mx.google.com>
+	Tue, 6 Jul 2010 06:45:44 -0400
+Received: by ewy23 with SMTP id 23so1814328ewy.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Jul 2010 03:45:43 -0700 (PDT)
+In-Reply-To: <1278391007-11144-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On Sun, 2010-07-04 at 15:12 +0200, Maurus Cuelenaere wrote:
-> The speaker was enabled when the headphone was plugged in, which isn't the
-> wanted behaviour so correct this.
-> 
-> Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Hello.
+
+Kukjin Kim wrote:
+
+> This patch fixes on SECTION_SIZE_BITS for Sparsemem on S5PV210/S5PC110.
+> Because smallest size of a bank on S5PV210/S5PC110 is aligned by 16MB.
+> So each section's maximum size should be 16MB.
+
+> Reported-by: Kyongho Cho <pullip.cho@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > ---
->  sound/soc/s3c24xx/smartq_wm8987.c |    1 -
->  1 files changed, 0 insertions(+), 1 deletions(-)
-> 
-> diff --git a/sound/soc/s3c24xx/smartq_wm8987.c b/sound/soc/s3c24xx/smartq_wm8987.c
-> index c90ef96..b480348 100644
-> --- a/sound/soc/s3c24xx/smartq_wm8987.c
-> +++ b/sound/soc/s3c24xx/smartq_wm8987.c
-> @@ -112,7 +112,6 @@ static struct snd_soc_jack_pin smartq_jack_pins[] = {
->  	{
->  		.pin	= "Internal Speaker",
->  		.mask	= SND_JACK_HEADPHONE,
-> -		.invert	= true,
->  	},
->  };
+>  arch/arm/mach-s5pv210/include/mach/memory.h |    8 ++++++--
+>  1 files changed, 6 insertions(+), 2 deletions(-)
+
+> diff --git a/arch/arm/mach-s5pv210/include/mach/memory.h b/arch/arm/mach-s5pv210/include/mach/memory.h
+> index 379117e..4a372d8 100644
+> --- a/arch/arm/mach-s5pv210/include/mach/memory.h
+> +++ b/arch/arm/mach-s5pv210/include/mach/memory.h
+> @@ -16,8 +16,12 @@
+>  #define PHYS_OFFSET		UL(0x20000000)
+>  #define CONSISTENT_DMA_SIZE	(SZ_8M + SZ_4M + SZ_2M)
 >  
-Acked-by: Liam Girdwood <lrg@slimlogic.co.uk>
--- 
-Freelance Developer, SlimLogic Ltd
-ASoC and Voltage Regulator Maintainer.
-http://www.slimlogic.co.uk
+> -/* Maximum of 256MiB in one bank */
+> +/* Sparsemem support. Each section is a maximum of 16MB.
+> + * Because there are many different memory type on S5PC110(MCP),
+> + * and there is a case that having 80MB, 128MB or 256MB in one
+> + * bank.
+> +*/
+
+    According to CodingStyle, the prefrerrable format for multi-line comments 
+is this:
+
+/*
+  * bla
+  * bla
+  */
+
+WBR, Sergei
