@@ -1,78 +1,103 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH] ARM: S5PV210: Fix on SECTION_SIZE_BITS on
-	S5PV210/S5PC110.
-Date: Tue, 6 Jul 2010 14:33:43 +0900
-Message-ID: <AANLkTimqquLc7lW7TdMD2q84d4uATvHKppt5gVfKcMFT@mail.gmail.com>
-References: <1278391007-11144-1-git-send-email-kgene.kim@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH] ARM: S5P: Add PMU device
+Date: Tue, 06 Jul 2010 16:09:22 +0900
+Message-ID: <4C32D6A2.306@samsung.com>
+References: <1278294411-5104-1-git-send-email-jy0922.shim@samsung.com>
+ <005f01cb1c3f$c464d150$4d2e73f0$%kim@samsung.com>
+ <4C328D3A.7060701@samsung.com>
+ <00a201cb1cbd$594371a0$0bca54e0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-px0-f174.google.com ([209.85.212.174]:59221 "EHLO
-	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751684Ab0GFFdo convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:14415 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753568Ab0GFHJ2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Jul 2010 01:33:44 -0400
-Received: by pxi14 with SMTP id 14so1941658pxi.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Jul 2010 22:33:44 -0700 (PDT)
-In-Reply-To: <1278391007-11144-1-git-send-email-kgene.kim@samsung.com>
+	Tue, 6 Jul 2010 03:09:28 -0400
+Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L54002GDJVMHAA0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 06 Jul 2010 16:09:22 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L5400GC1JVMH9@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 06 Jul 2010 16:09:22 +0900 (KST)
+In-reply-to: <00a201cb1cbd$594371a0$0bca54e0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On Tue, Jul 6, 2010 at 1:36 PM, Kukjin Kim <kgene.kim@samsung.com> wrot=
-e:
-> This patch fixes on SECTION_SIZE_BITS for Sparsemem on S5PV210/S5PC11=
-0.
-> Because smallest size of a bank on S5PV210/S5PC110 is aligned by 16MB=
-=2E
-> So each section's maximum size should be 16MB.
+On 7/6/2010 12:43 PM, Kukjin Kim wrote:
+> Joonyoung Shim wrote:
+>> On 7/5/2010 9:44 PM, Kukjin Kim wrote:
+>>> Joonyoung Shim wrote:
+>>>> This patch adds an initcall for the s5p platforms so that they register
+>>>> their PMU IRQs with the PMU framework in the Kernel.
+>>>>
+>>> Please include Ben Dooks email address in the CC.
+>> OK.
+>>
+>>>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+>>>> ---
+>>>>  arch/arm/mach-s5p6442/include/mach/irqs.h |    2 +-
+>>>>  arch/arm/mach-s5pc100/include/mach/irqs.h |    1 +
+>>>>  arch/arm/mach-s5pv210/include/mach/irqs.h |    1 +
+>>>>  arch/arm/plat-s5p/Makefile                |    1 +
+>>>>  arch/arm/plat-s5p/dev-pmu.c               |   37
+>>>> +++++++++++++++++++++++++++++
+>>>>  5 files changed, 41 insertions(+), 1 deletions(-)
+>>>>  create mode 100644 arch/arm/plat-s5p/dev-pmu.c
+>>>>
+>>>> diff --git a/arch/arm/mach-s5p6442/include/mach/irqs.h b/arch/arm/mach-
+>>>> s5p6442/include/mach/irqs.h
+>>>> index 02c2374..22173cc 100644
+>>>> --- a/arch/arm/mach-s5p6442/include/mach/irqs.h
+>>>> +++ b/arch/arm/mach-s5p6442/include/mach/irqs.h
+>>>> @@ -32,7 +32,7 @@
+>>>>  #define IRQ_GPIOINT		S5P_IRQ_VIC0(30)
+>>>>
+>>>>  /* VIC1 */
+>>>> -#define IRQ_nPMUIRQ 		S5P_IRQ_VIC1(0)
+>>>> +#define IRQ_PMUIRQ		S5P_IRQ_VIC1(0)
+>>> I'm not sure this changing is better..as you know, nXXX has some meaning.
+>>>
+>> Otherwise, we should redefine it and s5p6440 was defined to IRQ_PMUIRQ.
+>>
+> Hmm..so I said...I'm not sure... :-)
+> OK...just IRQ_PMUIRQ looks good.
+> 
+>>>>  #define IRQ_ONENAND 		S5P_IRQ_VIC1(7)
+>>>>  #define IRQ_UART0 		S5P_IRQ_VIC1(10)
+>>>>  #define IRQ_UART1 		S5P_IRQ_VIC1(11)
+>>>> diff --git a/arch/arm/mach-s5pc100/include/mach/irqs.h b/arch/arm/mach-
+>>>> s5pc100/include/mach/irqs.h
+>>>> index 28aa551..9cc1b0d 100644
+>>>> --- a/arch/arm/mach-s5pc100/include/mach/irqs.h
+>>>> +++ b/arch/arm/mach-s5pc100/include/mach/irqs.h
+>>>> @@ -110,5 +110,6 @@
+>>>>  #define IRQ_LCD_FIFO		IRQ_LCD0
+>>>>  #define IRQ_LCD_VSYNC		IRQ_LCD1
+>>>>  #define IRQ_LCD_SYSTEM		IRQ_LCD2
+>>>> +#define IRQ_PMUIRQ		IRQ_CORTEX0
+>>>>
+>>> I think, we don't need remapping in here.
+>>> How about use direct mapping like following:
+>>> #define IRQ_PMUIRQ	S5P_IRQ_VIC1(0)
+>>>
+>> I don't care, but above codes uses already remapping.
+>>
+> Yeah, used remapping..but written by IRQ_LCD[0-2] in datasheet.
+> In the PMUIRQ case, written by CORTEX0(nPMUIRQ).
+> ...
+> Anyway, I mean just no need IRQ_CORTEX0.
+> 
+> So suggested direct mapping like above.
+> I think, we don't need to add an unused code.
+> 
 
-Could you explain what's the problem?
-
-Even though 80MiB is used at logical size. it used the physical 128MiB
-so. it's reasonable to use 128MiB align instead of 16MiB. Are there
-boards use 64MiB or less?
-
-I think if decrease the SECTIONS_SIZE_BITS, it wastes the memory.
-
-Thank you,
-Kyungmin Park
-
->
-> Reported-by: Kyongho Cho <pullip.cho@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
-> =A0arch/arm/mach-s5pv210/include/mach/memory.h | =A0 =A08 ++++++--
-> =A01 files changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/mach-s5pv210/include/mach/memory.h b/arch/arm/m=
-ach-s5pv210/include/mach/memory.h
-> index 379117e..4a372d8 100644
-> --- a/arch/arm/mach-s5pv210/include/mach/memory.h
-> +++ b/arch/arm/mach-s5pv210/include/mach/memory.h
-> @@ -16,8 +16,12 @@
-> =A0#define PHYS_OFFSET =A0 =A0 =A0 =A0 =A0 =A0UL(0x20000000)
-> =A0#define CONSISTENT_DMA_SIZE =A0 =A0(SZ_8M + SZ_4M + SZ_2M)
->
-> -/* Maximum of 256MiB in one bank */
-> +/* Sparsemem support. Each section is a maximum of 16MB.
-> + * Because there are many different memory type on S5PC110(MCP),
-> + * and there is a case that having 80MB, 128MB or 256MB in one
-> + * bank.
-> +*/
-> =A0#define MAX_PHYSMEM_BITS =A0 =A0 =A0 32
-> -#define SECTION_SIZE_BITS =A0 =A0 =A028
-> +#define SECTION_SIZE_BITS =A0 =A0 =A024
->
-> =A0#endif /* __ASM_ARCH_MEMORY_H */
-> --
-> 1.6.2.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+I don't know what means 'n' character of nPMUIRQ. If you are fine, let 
+decide to use IRQ_PMUIRQ instead of IRQ_nPMUIRQ and IRQ_CORTEX0.
+How about this?
