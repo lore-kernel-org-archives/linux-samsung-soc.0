@@ -1,91 +1,78 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: S3C2416 fixes (gpiolib, SDHCI, compilation without FB device)
-Date: Thu, 08 Jul 2010 09:23:59 +0200
-Message-ID: <000201cb1e6e$8b3f7a20$a1be6e60$%szyprowski@samsung.com>
-References: <1277212585-25605-1-git-send-email-jekhor@gmail.com>
- <4C248B23.7060905@gmail.com>
- <000001cb1687$638b2310$2aa16930$%szyprowski@samsung.com>
- <4C3361BC.2040204@gmail.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] ARM: S5PV210: Fix on SECTION_SIZE_BITS on
+	S5PV210/S5PC110.
+Date: Thu, 8 Jul 2010 09:02:32 +0100
+Message-ID: <20100708080232.GA5297@n2100.arm.linux.org.uk>
+References: <1278391007-11144-1-git-send-email-kgene.kim@samsung.com> <20100706071245.GA5058@n2100.arm.linux.org.uk> <013001cb1d62$de72ff30$9b58fd90$%kim@samsung.com> <20100707075622.GA21830@n2100.arm.linux.org.uk> <01be01cb1e30$b2d52e10$187f8a30$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:48059 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754179Ab0GHHZO (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:46538 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753252Ab0GHICw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Jul 2010 03:25:14 -0400
-Received: from epmmp2 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L5800FCM9Y0BP90@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 08 Jul 2010 16:25:13 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L580054L9XWPR@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 08 Jul 2010 16:25:12 +0900 (KST)
-In-reply-to: <4C3361BC.2040204@gmail.com>
-Content-language: pl
+	Thu, 8 Jul 2010 04:02:52 -0400
+Content-Disposition: inline
+In-Reply-To: <01be01cb1e30$b2d52e10$187f8a30$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Darius Augulis' <augulis.darius@gmail.com>
-Cc: 'Yauhen Kharuzhy' <jekhor@gmail.com>, 'Vasily Khoruzhick' <anarsoul@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Ben Dooks' <ben-linux@fluff.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-Hello,
-
-On Tuesday, July 06, 2010 7:03 PM Darius Augulis wrote:
-
-> On 06/28/2010 09:01 AM, Marek Szyprowski wrote:
-> > Hello,
-> >
-> > On Friday, June 25, 2010 12:56 PM Darius Augulis wrote:
-> >
-> >> On 06/22/2010 04:16 PM, Yauhen Kharuzhy wrote:
-> >>> This patch series fixes SDHCI on S3C2416. I got SD card working with
-> this
-> >> patches
-> >>> and with patches for GPIO card detection support by Marek Szyprowski.
-> >>>
-> >>
-> >> Unfortunately I did not get SD card working with these patches. I'm
-> >> using custom board, not SMDK2416, but SD slot connection and schematics
-> >> are the same like in SMDK2416. I've tried to debug a bit this problem
-> >> and this is what I got: kernel do detection of card insert/remove,
-> >> driver prints messages:
-> >>
-> >> s3c-sdhci s3c-sdhci.1: card inserted.
-> >> s3c-sdhci s3c-sdhci.1: card removed.
-> >>
-> >> Then I put some printk in s3c-sdhci driver and MMC core and found that
-> >> mmc_rescan() is called only once at startup and no more when
-> >> inserting/removing SD card. Also mmc_rescan() stops at that point where
-> >> mmc_power_up() is called and does not return. And mmc_power_up() stops
-> >> where mmc_delay(10) is called and does not return too.
-> >> Every time when inserting/removing SD card only functions
-> >> sdhci_tasklet_card() and mmc_detect_change() are called, and nothing
-> >> happens. Kernel doesn't detect the card inserted.
-> >> Maybe this info could help to debug where the problem is - in my custom
-> >> board or in your patches?
-> >
-> > Have you tried with polled card detection method (SDHCI_CD_NONE)? If it
-> > doesn't work I suspect something with the hardware. Checking with mmc
-> debug
-> > enabled might also help figuring this issue out.
+On Thu, Jul 08, 2010 at 09:01:16AM +0900, Kukjin Kim wrote:
+> Ok...let's suppose the size of section is 32MiB.
 > 
-> yes, I've tried that, but didn't get sd card working. I got schematics
-> from China manufacturer, SD card connection is the same like in
-> smdk2416. with mmc debug enabled I found that SD card is detected when
-> inserted or removed, but after detection card initialisation is not
-> performed.
+>             Physical Mem.    Sections
+>                   .              .
+>                   .              .
+>                   .              .
+>             |          |    |          | 
+> 0x30000000  ------------    ------------  0x30000000
+>             |          |    |  offline |
+>             |          |    ------------  0x2C000000
+>             |          |    |  offline |
+>             |          |    ------------  0x2A000000
+>             |   none   |    |  offline |
+>             |          |    ------------  0x28000000
+>             |          |    |  offline |
+>             |          |    ------------  0x26000000
+> 0x25000000  ------------    |  *online |
+>             |          |    ------------  0x24000000
+>             |          |    |  online  |
+>             |  80 MiB  |    ------------  0x22000000
+>             |          |    |  online  |
+> 0x20000000  ------------    ------------  0x20000000
+> 
+> In the above diagram, *section includes a 'hole' that is invalid online area
+> between 0x25000000 and 0x26000000.
 
-Does it work without my patches or with other Linux kernel? You can try to 
-check the custom Linux 2.6.29 from 
-git://git.kernel.org/pub/scm/linux/kernel/git/kki_ap/linux-2.6-samsung.git
+So, memory starts at 0x20000000 and finishes at 0x25000000.  That's fine.
+That doesn't mean the section size is 16MB.
 
-I would like to know whether my patches cause the problem or there is some
-kind of hardware issue with your board.
+As I've already said, the section size has _nothing_ what so ever to do
+with the size of memory, or the granularity of the size of memory.  By
+way of illustration, it is perfectly legal to have a section size of
+256MB but only have 1MB in a section and this is perfectly legal.  So
+sections do not have to be completely filled.
 
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+> > > > Also, what is the maximum physical address which memory can be
+> located?
+> > >
+> > > Following is memory map of S5PV210/S5PC110.
+> > >
+> > > 0x80000000  -------------------
+> > >             |          |
+> > > 0x70000000  |          |
+> > >             |          |
+> > > 0x60000000  |  DMC 1  |  up to 1GiB
+> > >             |          |
+> > > 0x50000000  |          |
+> > >             |          |
+> > > 0x40000000  -----------------
+> > >             |          |
+> > > 0x30000000  |  DMC 0  |  up to 512MiB
+> > >             |          |
+> > > 0x20000000  -------------------
+
+So from this diagram, the sections should be 512MB - SECTION_SIZE_BITS
+should be 28.
