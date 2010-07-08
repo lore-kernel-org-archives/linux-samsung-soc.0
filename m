@@ -1,67 +1,87 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung fixes for 2.6.35-rc5
-Date: Thu, 08 Jul 2010 20:19:36 +0900
-Message-ID: <020501cb1e8f$756067c0$60213740$%kim@samsung.com>
+From: Darius Augulis <augulis.darius@gmail.com>
+Subject: Re: S3C2416 fixes (gpiolib, SDHCI, compilation without FB device)
+Date: Thu, 08 Jul 2010 20:08:35 +0300
+Message-ID: <4C360613.1000506@gmail.com>
+References: <1277212585-25605-1-git-send-email-jekhor@gmail.com> <4C248B23.7060905@gmail.com> <000001cb1687$638b2310$2aa16930$%szyprowski@samsung.com> <4C3361BC.2040204@gmail.com> <000201cb1e6e$8b3f7a20$a1be6e60$%szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:21757 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753513Ab0GHLTd (ORCPT
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:52579 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753792Ab0GHRIj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Jul 2010 07:19:33 -0400
-Content-language: ko
+	Thu, 8 Jul 2010 13:08:39 -0400
+Received: by ewy23 with SMTP id 23so244842ewy.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Jul 2010 10:08:37 -0700 (PDT)
+In-Reply-To: <000201cb1e6e$8b3f7a20$a1be6e60$%szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Linus Torvalds' <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: 'Yauhen Kharuzhy' <jekhor@gmail.com>, 'Vasily Khoruzhick' <anarsoul@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Ben Dooks' <ben-linux@fluff.org>
 
-Hello Linus,
+On 07/08/2010 10:23 AM, Marek Szyprowski wrote:
+> Hello,
+>
+> On Tuesday, July 06, 2010 7:03 PM Darius Augulis wrote:
+>
+>> On 06/28/2010 09:01 AM, Marek Szyprowski wrote:
+>>> Hello,
+>>>
+>>> On Friday, June 25, 2010 12:56 PM Darius Augulis wrote:
+>>>
+>>>> On 06/22/2010 04:16 PM, Yauhen Kharuzhy wrote:
+>>>>> This patch series fixes SDHCI on S3C2416. I got SD card working with
+>> this
+>>>> patches
+>>>>> and with patches for GPIO card detection support by Marek Szyprowski.
+>>>>>
+>>>>
+>>>> Unfortunately I did not get SD card working with these patches. I'm
+>>>> using custom board, not SMDK2416, but SD slot connection and schematics
+>>>> are the same like in SMDK2416. I've tried to debug a bit this problem
+>>>> and this is what I got: kernel do detection of card insert/remove,
+>>>> driver prints messages:
+>>>>
+>>>> s3c-sdhci s3c-sdhci.1: card inserted.
+>>>> s3c-sdhci s3c-sdhci.1: card removed.
+>>>>
+>>>> Then I put some printk in s3c-sdhci driver and MMC core and found that
+>>>> mmc_rescan() is called only once at startup and no more when
+>>>> inserting/removing SD card. Also mmc_rescan() stops at that point where
+>>>> mmc_power_up() is called and does not return. And mmc_power_up() stops
+>>>> where mmc_delay(10) is called and does not return too.
+>>>> Every time when inserting/removing SD card only functions
+>>>> sdhci_tasklet_card() and mmc_detect_change() are called, and nothing
+>>>> happens. Kernel doesn't detect the card inserted.
+>>>> Maybe this info could help to debug where the problem is - in my custom
+>>>> board or in your patches?
+>>>
+>>> Have you tried with polled card detection method (SDHCI_CD_NONE)? If it
+>>> doesn't work I suspect something with the hardware. Checking with mmc
+>> debug
+>>> enabled might also help figuring this issue out.
+>>
+>> yes, I've tried that, but didn't get sd card working. I got schematics
+>> from China manufacturer, SD card connection is the same like in
+>> smdk2416. with mmc debug enabled I found that SD card is detected when
+>> inserted or removed, but after detection card initialisation is not
+>> performed.
+>
+> Does it work without my patches or with other Linux kernel? You can try to
+> check the custom Linux 2.6.29 from
+> git://git.kernel.org/pub/scm/linux/kernel/git/kki_ap/linux-2.6-samsung.git
 
-Please pull Samsung fixes from:
+I did try with and without your patches. First, I applied only s3c2416 
+realated patches from Yauhen, then I've added your patches, but nothing 
+changed.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-s5p-fixes-for-linus
-
-These things are for bug fix on 2.6.35-rc.
-If any problems, please let me know.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-
-The following changes since commit 815c4163b6c8ebf8152f42b0a5fd015cfdcedc78
-
-  Linux 2.6.35-rc4
-
-are available in the git repository at:
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-s5p-fixes-for-linus
-
-Boojin Kim (1):
-      ARM: S5P: Bug fix on external interrupt for S5P SoCs
-
-Hyuk Lee (1):
-      ARM: SAMSUNG: Fix on wrong function name for S5PV210 sdhci0
-
-Marek Szyprowski (1):
-      ARM: SAMSUNG: Fix build without SDHCI controllers for S3C64XX
-
-MyungJoo Ham (1):
-      ARM: S5PV210: Correct clock register properties
-
-Thomas Abraham (1):
-      ARM: S5P6442: Fix PLL setting announce message.
-
- arch/arm/mach-s5p6442/clock.c              |    2 +-
- arch/arm/mach-s5pv210/clock.c              |  115
-+++++++++++++++-------------
- arch/arm/plat-s5p/irq-eint.c               |    2 +-
- arch/arm/plat-samsung/include/plat/sdhci.h |    4 +-
- 4 files changed, 67 insertions(+), 56 deletions(-)
+>
+> I would like to know whether my patches cause the problem or there is some
+> kind of hardware issue with your board.
+>
+> Best regards
+> --
+> Marek Szyprowski
+> Samsung Poland R&D Center
+>
