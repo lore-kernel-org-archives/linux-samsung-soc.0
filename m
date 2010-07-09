@@ -1,7 +1,8 @@
 From: Pawel Osciak <p.osciak@samsung.com>
-Subject: [PATCH 12/19] s3c-fb: Add support for display panning
-Date: Fri, 09 Jul 2010 10:50:00 +0200
-Message-ID: <1278665407-18002-13-git-send-email-p.osciak@samsung.com>
+Subject: [PATCH 15/19] s3c-fb: Add SHADOWCON shadow register locking support
+ for S5PV210
+Date: Fri, 09 Jul 2010 10:50:03 +0200
+Message-ID: <1278665407-18002-16-git-send-email-p.osciak@samsung.com>
 References: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -9,166 +10,119 @@ Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.w1.samsung.com ([210.118.77.13]:39640 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754538Ab0GIIvx (ORCPT
+	with ESMTP id S1754538Ab0GIIvz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Jul 2010 04:51:53 -0400
+	Fri, 9 Jul 2010 04:51:55 -0400
 In-reply-to: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: p.osciak@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, akpm@linux-foundation.org
 
-Supports all bpp modes.
-
-The PRTCON register is used to disable in-hardware updates of registers
-that store start and end addresses of framebuffer memory. This prevents
-display corruption in case we do not make it before VSYNC with updating
-them atomically. With this feature there is no need to wait for a VSYNC
-interrupt before each such update.
+S5PV210 allows per-window locking of register value updates from shadow
+registers.
 
 Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/plat-samsung/include/plat/regs-fb.h |    7 +++
- drivers/video/s3c-fb.c                       |   68 ++++++++++++++++++++++++++
- 2 files changed, 75 insertions(+), 0 deletions(-)
+ arch/arm/plat-samsung/include/plat/regs-fb.h |    3 ++
+ drivers/video/s3c-fb.c                       |   40 +++++++++++++++++++++++--
+ 2 files changed, 39 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-samsung/include/plat/regs-fb.h
-index ac10013..dbb6c0a 100644
+index 564594e..4359918 100644
 --- a/arch/arm/plat-samsung/include/plat/regs-fb.h
 +++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
-@@ -112,6 +112,13 @@
- #define VIDCON2_ORGYCbCr			(1 << 8)
- #define VIDCON2_YUVORDCrCb			(1 << 7)
+@@ -220,6 +220,9 @@
+ #define WINCON1_BPPMODE_25BPP_A1888		(0xd << 2)
+ #define WINCON1_BPPMODE_28BPP_A4888		(0xd << 2)
  
-+/* PRTCON (S3C6410, S5PC100)
-+ * Might not be present in the S3C6410 documentation,
-+ * but tests prove it's there almost for sure; shouldn't hurt in any case.
-+ */
-+#define PRTCON					(0x0c)
-+#define PRTCON_PROTECT				(1 << 11)
-+
- /* VIDTCON0 */
++/* S5PV210 */
++#define SHADOWCON				(0x34)
++#define SHADOWCON_WINx_PROTECT(_win)		(1 << (10 + (_win)))
  
- #define VIDTCON0_VBPDE_MASK			(0xff << 24)
+ #define VIDOSDxA_TOPLEFT_X_MASK			(0x7ff << 11)
+ #define VIDOSDxA_TOPLEFT_X_SHIFT		(11)
 diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index 5f931b4..de427d9 100644
+index 6cbddc4..f767911 100644
 --- a/drivers/video/s3c-fb.c
 +++ b/drivers/video/s3c-fb.c
-@@ -71,6 +71,7 @@ struct s3c_fb;
-  * @buf_end: Offset of buffer end registers.
+@@ -79,6 +79,7 @@ struct s3c_fb;
   * @osd: The base for the OSD registers.
   * @palette: Address of palette memory, or 0 if none.
-+ * @has_prtcon: Set if has PRTCON register.
+  * @has_prtcon: Set if has PRTCON register.
++ * @has_shadowcon: Set if has SHADOWCON register.
   */
  struct s3c_fb_variant {
  	unsigned int	is_2443:1;
-@@ -85,6 +86,8 @@ struct s3c_fb_variant {
- 	unsigned short	osd;
- 	unsigned short	osd_stride;
+@@ -95,6 +96,7 @@ struct s3c_fb_variant {
  	unsigned short	palette[S3C_FB_MAX_WIN];
-+
-+	unsigned int	has_prtcon:1;
+ 
+ 	unsigned int	has_prtcon:1;
++	unsigned int	has_shadowcon:1;
  };
  
  /**
-@@ -379,6 +382,9 @@ static int s3c_fb_set_par(struct fb_info *info)
- 
- 	info->fix.line_length = (var->xres_virtual * var->bits_per_pixel) / 8;
- 
-+	info->fix.xpanstep = info->var.xres_virtual > info->var.xres ? 1 : 0;
-+	info->fix.ypanstep = info->var.yres_virtual > info->var.yres ? 1 : 0;
-+
- 	/* disable the window whilst we update it */
- 	writel(0, regs + WINCON(win_no));
- 
-@@ -735,6 +741,63 @@ static int s3c_fb_blank(int blank_mode, struct fb_info *info)
- 	return 0;
+@@ -363,6 +365,36 @@ static int s3c_fb_align_word(unsigned int bpp, unsigned int pix)
  }
  
-+/**
-+ * s3c_fb_pan_display() - Pan the display.
+ /**
++ * shadow_protect_win() - disable updating values from shadow registers at vsync
 + *
-+ * Note that the offsets can be written to the device at any time, as their
-+ * values are latched at each vsync automatically. This also means that only
-+ * the last call to this function will have any effect on next vsync, but
-+ * there is no need to sleep waiting for it to prevent tearing.
-+ *
-+ * @var: The screen information to verify.
-+ * @info: The framebuffer device.
++ * @win: window to protect registers for
++ * @protect: 1 to protect (disable updates)
 + */
-+static int s3c_fb_pan_display(struct fb_var_screeninfo *var,
-+			      struct fb_info *info)
++static void shadow_protect_win(struct s3c_fb_win *win, bool protect)
 +{
-+	struct s3c_fb_win *win	= info->par;
-+	struct s3c_fb *sfb	= win->parent;
-+	void __iomem *buf	= sfb->regs + win->index * 8;
-+	unsigned int start_boff, end_boff;
++	struct s3c_fb *sfb = win->parent;
++	u32 reg;
 +
-+	/* Offset in bytes to the start of the displayed area */
-+	start_boff = var->yoffset * info->fix.line_length;
-+	/* X offset depends on the current bpp */
-+	if (info->var.bits_per_pixel >= 8) {
-+		start_boff += var->xoffset * (info->var.bits_per_pixel >> 3);
++	if (protect) {
++		if (sfb->variant.has_prtcon) {
++			writel(PRTCON_PROTECT, sfb->regs + PRTCON);
++		} else if (sfb->variant.has_shadowcon) {
++			reg = readl(sfb->regs + SHADOWCON);
++			writel(reg | SHADOWCON_WINx_PROTECT(win->index),
++				sfb->regs + SHADOWCON);
++		}
 +	} else {
-+		switch (info->var.bits_per_pixel) {
-+		case 4:
-+			start_boff += var->xoffset >> 1;
-+			break;
-+		case 2:
-+			start_boff += var->xoffset >> 2;
-+			break;
-+		case 1:
-+			start_boff += var->xoffset >> 3;
-+			break;
-+		default:
-+			dev_err(sfb->dev, "invalid bpp\n");
-+			return -EINVAL;
++		if (sfb->variant.has_prtcon) {
++			writel(0, sfb->regs + PRTCON);
++		} else if (sfb->variant.has_shadowcon) {
++			reg = readl(sfb->regs + SHADOWCON);
++			writel(reg & ~SHADOWCON_WINx_PROTECT(win->index),
++				sfb->regs + SHADOWCON);
 +		}
 +	}
-+	/* Offset in bytes to the end of the displayed area */
-+	end_boff = start_boff + var->yres * info->fix.line_length;
-+
-+	/* Temporarily turn off per-vsync update from shadow registers until
-+	 * both start and end addresses are updated to prevent corruption */
-+	if (sfb->variant.has_prtcon)
-+		writel(PRTCON_PROTECT, sfb->regs + PRTCON);
-+
-+	writel(info->fix.smem_start + start_boff, buf + sfb->variant.buf_start);
-+	writel(info->fix.smem_start + end_boff, buf + sfb->variant.buf_end);
-+
-+	if (sfb->variant.has_prtcon)
-+		writel(0, sfb->regs + PRTCON);
-+
-+	return 0;
 +}
 +
- static struct fb_ops s3c_fb_ops = {
- 	.owner		= THIS_MODULE,
- 	.fb_check_var	= s3c_fb_check_var,
-@@ -744,6 +807,7 @@ static struct fb_ops s3c_fb_ops = {
- 	.fb_fillrect	= cfb_fillrect,
- 	.fb_copyarea	= cfb_copyarea,
- 	.fb_imageblit	= cfb_imageblit,
-+	.fb_pan_display	= s3c_fb_pan_display,
- };
++/**
+  * s3c_fb_set_par() - framebuffer request to set new framebuffer state.
+  * @info: The framebuffer to change.
+  *
+@@ -810,14 +842,12 @@ static int s3c_fb_pan_display(struct fb_var_screeninfo *var,
  
- /**
-@@ -1243,6 +1307,8 @@ static struct s3c_fb_driverdata s3c_fb_data_64xx __devinitdata = {
- 			[3] = 0x320,
- 			[4] = 0x340,
- 		},
-+
-+		.has_prtcon	= 1,
- 	},
- 	.win[0]	= &s3c_fb_data_64xx_wins[0],
- 	.win[1]	= &s3c_fb_data_64xx_wins[1],
-@@ -1271,6 +1337,8 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pc100 __devinitdata = {
+ 	/* Temporarily turn off per-vsync update from shadow registers until
+ 	 * both start and end addresses are updated to prevent corruption */
+-	if (sfb->variant.has_prtcon)
+-		writel(PRTCON_PROTECT, sfb->regs + PRTCON);
++	shadow_protect_win(win, 1);
+ 
+ 	writel(info->fix.smem_start + start_boff, buf + sfb->variant.buf_start);
+ 	writel(info->fix.smem_start + end_boff, buf + sfb->variant.buf_end);
+ 
+-	if (sfb->variant.has_prtcon)
+-		writel(0, sfb->regs + PRTCON);
++	shadow_protect_win(win, 0);
+ 
+ 	return 0;
+ }
+@@ -1530,6 +1560,8 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pv210 __devinitdata = {
  			[3] = 0x3000,
  			[4] = 0x3400,
  		},
 +
-+		.has_prtcon	= 1,
++		.has_shadowcon	= 1,
  	},
  	.win[0]	= &s3c_fb_data_64xx_wins[0],
  	.win[1]	= &s3c_fb_data_64xx_wins[1],
