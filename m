@@ -1,51 +1,67 @@
-From: Sergei Shtylyov <sshtylyov@mvista.com>
-Subject: Re: [PATCH 06/11] USB: s3c-hsotg: Only load packet per fifo write
-Date: Fri, 09 Jul 2010 14:48:15 +0400
-Message-ID: <4C36FE6F.6050606@ru.mvista.com>
-References: <1278460943-16224-1-git-send-email-ben-linux@fluff.org> <1278460943-16224-7-git-send-email-ben-linux@fluff.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 01/19] s3c-fb: Change to depending on CONFIG_S3C_FB_DEV
+Date: Fri, 09 Jul 2010 20:33:28 +0900
+Message-ID: <028801cb1f5a$8fe5c970$afb15c50$%kim@samsung.com>
+References: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
+ <1278665407-18002-2-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f46.google.com ([209.85.215.46]:39870 "EHLO
-	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754912Ab0GIKt0 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:61074 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755721Ab0GILd0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Jul 2010 06:49:26 -0400
-In-Reply-To: <1278460943-16224-7-git-send-email-ben-linux@fluff.org>
+	Fri, 9 Jul 2010 07:33:26 -0400
+In-reply-to: <1278665407-18002-2-git-send-email-p.osciak@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: 'Pawel Osciak' <p.osciak@samsung.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, akpm@linux-foundation.org, ben-linux@fluff.org, m.szyprowski@samsung.com
 
-Hello.
-
-Ben Dooks wrote:
-
-> Limit the IN FIFO write to a single packet per attempt at writing,
-> as per the specifications and ensure that we don't return fifo-full
-> so that we can continue writing packets if we have the space.
-
+Pawel Osciak wrote:
+> 
+> From: Ben Dooks <ben-linux@fluff.org>
+> 
+> As suggested by Marek Szyprowski, we should make the driver depend on
+> the configuration currently being used to build the platform device
+> into the kernel.
+> 
 > Signed-off-by: Ben Dooks <ben-linux@fluff.org>
-[...]
-> diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
-> index 4196e37..df6a39d 100644
-> --- a/drivers/usb/gadget/s3c-hsotg.c
-> +++ b/drivers/usb/gadget/s3c-hsotg.c
-> @@ -538,6 +538,17 @@ static int s3c_hsotg_write_fifo(struct s3c_hsotg *hsotg,
->  	if (can_write > 512)
->  		can_write = 512;
->  
-> +	/* limit the write to one max-packet size worth of data, but allow
-> +	 * the transfer to return that it did not run out of fifo space
-> +	 * doing it. */
+> Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
 
-   According to CodingStyle, the preferred style for the multi-line commnets 
-is this:
+Actually, already submitted by Ben Dooks.
+http://lists.infradead.org/pipermail/linux-arm-kernel/2010-May/015616.html
 
-/*
-  * bla
-  * bla
-  */
+So...I'm not sure adding your signedoff and re-submitting are right.
 
-WBR, Sergei
+In my opinion, it's enough to add comments which includes information about
+that without re-submitting.
+
+> ---
+>  drivers/video/Kconfig |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
+> index 3d94a14..858f1ca 100644
+> --- a/drivers/video/Kconfig
+> +++ b/drivers/video/Kconfig
+> @@ -1930,7 +1930,7 @@ config FB_TMIO_ACCELL
+> 
+>  config FB_S3C
+>  	tristate "Samsung S3C framebuffer support"
+> -	depends on FB && ARCH_S3C64XX
+> +	depends on FB && S3C_DEV_FB
+>  	select FB_CFB_FILLRECT
+>  	select FB_CFB_COPYAREA
+>  	select FB_CFB_IMAGEBLIT
+> --
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
