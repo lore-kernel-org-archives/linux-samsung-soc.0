@@ -1,53 +1,51 @@
-From: Pawel Osciak <p.osciak@samsung.com>
-Subject: [PATCH 09/19] s3c-fb: Correct FRAMESEL1 bitfield defines for
- VIDINTCON0 register
-Date: Fri, 09 Jul 2010 10:49:57 +0200
-Message-ID: <1278665407-18002-10-git-send-email-p.osciak@samsung.com>
-References: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
+From: Sergei Shtylyov <sshtylyov@mvista.com>
+Subject: Re: [PATCH 06/11] USB: s3c-hsotg: Only load packet per fifo write
+Date: Fri, 09 Jul 2010 14:48:15 +0400
+Message-ID: <4C36FE6F.6050606@ru.mvista.com>
+References: <1278460943-16224-1-git-send-email-ben-linux@fluff.org> <1278460943-16224-7-git-send-email-ben-linux@fluff.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:39640 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755229Ab0GIIvt (ORCPT
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:39870 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754912Ab0GIKt0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Jul 2010 04:51:49 -0400
-In-reply-to: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
+	Fri, 9 Jul 2010 06:49:26 -0400
+In-Reply-To: <1278460943-16224-7-git-send-email-ben-linux@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: p.osciak@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, akpm@linux-foundation.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-FRAMESEL1 bitfield starts on 13th bit, not on 14th.
+Hello.
 
-Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Acked-by: Ben Dooks <ben-linux@fluff.org>
----
- arch/arm/plat-samsung/include/plat/regs-fb.h |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
+Ben Dooks wrote:
 
-diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-samsung/include/plat/regs-fb.h
-index f4259e5..ac10013 100644
---- a/arch/arm/plat-samsung/include/plat/regs-fb.h
-+++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
-@@ -292,11 +292,11 @@
- #define VIDINTCON0_FRAMESEL0_ACTIVE		(0x2 << 15)
- #define VIDINTCON0_FRAMESEL0_FRONTPORCH		(0x3 << 15)
- 
--#define VIDINTCON0_FRAMESEL1			(1 << 14)
--#define VIDINTCON0_FRAMESEL1_NONE		(0x0 << 14)
--#define VIDINTCON0_FRAMESEL1_BACKPORCH		(0x1 << 14)
--#define VIDINTCON0_FRAMESEL1_VSYNC		(0x2 << 14)
--#define VIDINTCON0_FRAMESEL1_FRONTPORCH		(0x3 << 14)
-+#define VIDINTCON0_FRAMESEL1			(1 << 13)
-+#define VIDINTCON0_FRAMESEL1_NONE		(0x0 << 13)
-+#define VIDINTCON0_FRAMESEL1_BACKPORCH		(0x1 << 13)
-+#define VIDINTCON0_FRAMESEL1_VSYNC		(0x2 << 13)
-+#define VIDINTCON0_FRAMESEL1_FRONTPORCH		(0x3 << 13)
- 
- #define VIDINTCON0_INT_FRAME			(1 << 12)
- #define VIDINTCON0_FIFIOSEL_MASK		(0x7f << 5)
--- 
-1.7.1.569.g6f426
+> Limit the IN FIFO write to a single packet per attempt at writing,
+> as per the specifications and ensure that we don't return fifo-full
+> so that we can continue writing packets if we have the space.
+
+> Signed-off-by: Ben Dooks <ben-linux@fluff.org>
+[...]
+> diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
+> index 4196e37..df6a39d 100644
+> --- a/drivers/usb/gadget/s3c-hsotg.c
+> +++ b/drivers/usb/gadget/s3c-hsotg.c
+> @@ -538,6 +538,17 @@ static int s3c_hsotg_write_fifo(struct s3c_hsotg *hsotg,
+>  	if (can_write > 512)
+>  		can_write = 512;
+>  
+> +	/* limit the write to one max-packet size worth of data, but allow
+> +	 * the transfer to return that it did not run out of fifo space
+> +	 * doing it. */
+
+   According to CodingStyle, the preferred style for the multi-line commnets 
+is this:
+
+/*
+  * bla
+  * bla
+  */
+
+WBR, Sergei
