@@ -1,87 +1,71 @@
-From: Darius Augulis <augulis.darius@gmail.com>
-Subject: Re: S3C2416 fixes (gpiolib, SDHCI, compilation without FB device)
-Date: Thu, 08 Jul 2010 20:08:35 +0300
-Message-ID: <4C360613.1000506@gmail.com>
-References: <1277212585-25605-1-git-send-email-jekhor@gmail.com> <4C248B23.7060905@gmail.com> <000001cb1687$638b2310$2aa16930$%szyprowski@samsung.com> <4C3361BC.2040204@gmail.com> <000201cb1e6e$8b3f7a20$a1be6e60$%szyprowski@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: Requested features for next merge on s5pc110
+Date: Fri, 09 Jul 2010 10:43:50 +0900
+Message-ID: <022e01cb1f08$319726e0$94c574a0$%kim@samsung.com>
+References: <AANLkTim58_kJFO0vjTXufYc0DkLhT-nVv25trxgjmsFk@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f46.google.com ([209.85.215.46]:52579 "EHLO
-	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753792Ab0GHRIj (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:56056 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751281Ab0GIBnt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Jul 2010 13:08:39 -0400
-Received: by ewy23 with SMTP id 23so244842ewy.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Jul 2010 10:08:37 -0700 (PDT)
-In-Reply-To: <000201cb1e6e$8b3f7a20$a1be6e60$%szyprowski@samsung.com>
+	Thu, 8 Jul 2010 21:43:49 -0400
+Received: from epmmp2 (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L59008BEOSZEBC0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 09 Jul 2010 10:43:47 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L590059BOSYZ3@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 09 Jul 2010 10:43:47 +0900 (KST)
+In-reply-to: <AANLkTim58_kJFO0vjTXufYc0DkLhT-nVv25trxgjmsFk@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: 'Yauhen Kharuzhy' <jekhor@gmail.com>, 'Vasily Khoruzhick' <anarsoul@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Ben Dooks' <ben-linux@fluff.org>
+To: 'Kyungmin Park' <kmpark@infradead.org>, linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, =?ks_c_5601-1987?B?J8fUuO
 
-On 07/08/2010 10:23 AM, Marek Szyprowski wrote:
-> Hello,
->
-> On Tuesday, July 06, 2010 7:03 PM Darius Augulis wrote:
->
->> On 06/28/2010 09:01 AM, Marek Szyprowski wrote:
->>> Hello,
->>>
->>> On Friday, June 25, 2010 12:56 PM Darius Augulis wrote:
->>>
->>>> On 06/22/2010 04:16 PM, Yauhen Kharuzhy wrote:
->>>>> This patch series fixes SDHCI on S3C2416. I got SD card working with
->> this
->>>> patches
->>>>> and with patches for GPIO card detection support by Marek Szyprowski.
->>>>>
->>>>
->>>> Unfortunately I did not get SD card working with these patches. I'm
->>>> using custom board, not SMDK2416, but SD slot connection and schematics
->>>> are the same like in SMDK2416. I've tried to debug a bit this problem
->>>> and this is what I got: kernel do detection of card insert/remove,
->>>> driver prints messages:
->>>>
->>>> s3c-sdhci s3c-sdhci.1: card inserted.
->>>> s3c-sdhci s3c-sdhci.1: card removed.
->>>>
->>>> Then I put some printk in s3c-sdhci driver and MMC core and found that
->>>> mmc_rescan() is called only once at startup and no more when
->>>> inserting/removing SD card. Also mmc_rescan() stops at that point where
->>>> mmc_power_up() is called and does not return. And mmc_power_up() stops
->>>> where mmc_delay(10) is called and does not return too.
->>>> Every time when inserting/removing SD card only functions
->>>> sdhci_tasklet_card() and mmc_detect_change() are called, and nothing
->>>> happens. Kernel doesn't detect the card inserted.
->>>> Maybe this info could help to debug where the problem is - in my custom
->>>> board or in your patches?
->>>
->>> Have you tried with polled card detection method (SDHCI_CD_NONE)? If it
->>> doesn't work I suspect something with the hardware. Checking with mmc
->> debug
->>> enabled might also help figuring this issue out.
->>
->> yes, I've tried that, but didn't get sd card working. I got schematics
->> from China manufacturer, SD card connection is the same like in
->> smdk2416. with mmc debug enabled I found that SD card is detected when
->> inserted or removed, but after detection card initialisation is not
->> performed.
->
-> Does it work without my patches or with other Linux kernel? You can try to
-> check the custom Linux 2.6.29 from
-> git://git.kernel.org/pub/scm/linux/kernel/git/kki_ap/linux-2.6-samsung.git
+Kyungmin Park wrote:
+> 
+> Hi Kukjin,
+> 
+Hi,
 
-I did try with and without your patches. First, I applied only s3c2416 
-realated patches from Yauhen, then I've added your patches, but nothing 
-changed.
+> Before next merge window, I hope these features will be included.
+> If your team is done already, please reply it. If not, our team will do
+it.
+> 
+> 1. High-resolution timer using timer 4 and systimer.
+>     other timer 1, 2, 3, is used
 
->
-> I would like to know whether my patches cause the problem or there is some
-> kind of hardware issue with your board.
->
-> Best regards
-> --
-> Marek Szyprowski
-> Samsung Poland R&D Center
->
+HR-Timer patch for S5P SoCs will be submitted in a few days. And maybe used
+2 PWM Timers because S5P6440 does not have System Timer.
+
+Also, will be submitted specific SoC support HR-Timer together..but I'm not
+sure whether used timer4 and systimer.
+
+> 
+> 2. Basic suspend & resume feature.
+>     No clock gating, and cpufreq. Of course I hope it's included.
+> 
+Now preparing re-submit..so maybe can be submitted soon.
+
+> 3. Aquila & goni board support.
+>     If possible all feature are included at current maineline kernel
+> implemented.
+> 
+> If I'm missing one features, please let me know,
+> 
+> Give your opinions.
+> 
+Need to sort out items for merge window..and will inform soon.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
