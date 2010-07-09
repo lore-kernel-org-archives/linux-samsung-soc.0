@@ -1,97 +1,66 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v6 3/3] input: samsung-keypad - Add samsung keypad driver
-Date: Fri, 09 Jul 2010 16:39:33 +0900
-Message-ID: <4C36D235.3040702@samsung.com>
-References: <1277724824-13308-1-git-send-email-jy0922.shim@samsung.com>
- <1277724824-13308-3-git-send-email-jy0922.shim@samsung.com>
- <4C32E21A.8080100@samsung.com>
- <013401cb1d66$5fbf3fb0$1f3dbf10$%kim@samsung.com>
- <4C33D859.9050708@samsung.com>
- <026901cb1f35$64c63470$2e529d50$%kim@samsung.com>
+From: Pawel Osciak <p.osciak@samsung.com>
+Subject: [PATCH 03/19] s3c-fb: fixed distortedness situation for the mode more
+ then 24bpp.
+Date: Fri, 09 Jul 2010 10:49:51 +0200
+Message-ID: <1278665407-18002-4-git-send-email-p.osciak@samsung.com>
+References: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:40245 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751544Ab0GIHjf (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:64783 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752690Ab0GIIvM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Jul 2010 03:39:35 -0400
-In-reply-to: <026901cb1f35$64c63470$2e529d50$%kim@samsung.com>
+	Fri, 9 Jul 2010 04:51:12 -0400
+In-reply-to: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: ch.naveen@samsung.com, linux-arm-kernel@lists.infradead.org, dmitry.torokhov@gmail.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-input@vger.kernel.org
+To: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: p.osciak@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, akpm@linux-foundation.org, InKi Dae <inki.dae@samsung.com>
 
-On 7/9/2010 4:07 PM, Kukjin Kim wrote:
-> Joonyoung Shim wrote:
->> On 7/7/2010 8:52 AM, Kukjin Kim wrote:
->>> Joonyoung Shim wrote:
->>>> Hi, Naveen.
->>>>
->>>> On 6/28/2010 8:33 PM, Joonyoung Shim wrote:
->>>>> This patch adds support for keypad driver running on Samsung cpus. This
->>>>> driver is tested on GONI and Aquila board using S5PC110 cpu.
->>>>>
->>>>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
->>>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->>>>> ---
->>>>>  drivers/input/keyboard/Kconfig          |    9 +
->>>>>  drivers/input/keyboard/Makefile         |    1 +
->>>>>  drivers/input/keyboard/samsung-keypad.c |  491
->>>> +++++++++++++++++++++++++++++++
->>>>>  3 files changed, 501 insertions(+), 0 deletions(-)
->>>>>  create mode 100644 drivers/input/keyboard/samsung-keypad.c
->>>>>
->>>> Could you please test this v6 keypad driver on your various targets?
->>> Hi,
->>>
->>> I received the test result from Naveen.
->>> And now he is debugging about that.
->>>
->>> ..his e-mail client has some problem..so I replied...
->>>
->>> ---
->>> From: Naveen Ch
->>>
->>> I've tested with v6 patches and they are working fine on SMDK6410, SMDKC100
->> and SMDKV210, except for some header inclusion (linux/sched.h) in samsung-
->> keypad.c.
->>> The build breaking error is like following:
->>> (make s5pc100_defconfig and select input->keypad->samsung keypad)
->>>
->>> drivers/input/keyboard/samsung-keypad.c: In function 'samsung_keypad_irq':
->>> drivers/input/keyboard/samsung-keypad.c:170: error: 'TASK_UNINTERRUPTIBLE'
->> undeclared (first use in this function)
->>> drivers/input/keyboard/samsung-keypad.c:170: error: (Each undeclared identifier
->> is reported only once
->>> drivers/input/keyboard/samsung-keypad.c:170: error: for each function it appears
->> in.)
->>> drivers/input/keyboard/samsung-keypad.c:170: error: implicit declaration of
->> function 'schedule_timeout'
->>> drivers/input/keyboard/samsung-keypad.c: In function 'samsung_keypad_stop':
->>> drivers/input/keyboard/samsung-keypad.c:202: error: 'TASK_NORMAL'
->> undeclared (first use in this function)
->>> make[3]: *** [drivers/input/keyboard/samsung-keypad.o] Error 1
->>>
->> This error occurs on s5pc100_defconfig having disabled CONFIG_PREEMPT
->> option. I think sched.h should be included to remove like this
->> dependency in driver, are there other ways?
-> 
-> I'm not sure root cause is that. But as you said, I think need inclusion it for prevent the problem.
-> Actually didn't happen it before..so maybe the some core functions have moved between rc-3 and earlier versions...
+From: InKi Dae <inki.dae@samsung.com>
 
-The sched.h is included by below path.
+it has been working fine at 16bpp but in case of pixel format more then
+24bpp
+it would occur distortedness situation on that mode. so this patch set
+the word swap control bit of WINCONx to 1 as default value. but it
+should be set to 0
+in case that each ENLOCAL bit of WINCON0 ~ 2 registers is enabled.
+this issue would be solved with local path feature soon.
 
-interrupt.h -> hardirq.h -> smp_lock.h -> sched.h
+Signed-off-by: InKi Dae <inki.dae@samsung.com>
+Reviewed-by: KyungMin Park <kyungmin.park.samsung.com>
+Signed-off-by: Ben Dooks <ben-linux@fluff.org>
+Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
+---
+ arch/arm/plat-samsung/include/plat/regs-fb.h |    1 +
+ drivers/video/s3c-fb.c                       |    1 +
+ 2 files changed, 2 insertions(+), 0 deletions(-)
 
-The smp_lock.h in hardirq.h is included if CONFIG_PREEMPT is defined. 
-The samsung keypad driver haven't needed including sched.h before
-Dmitry's patch is applied..
-
-> 
-> Anyway, if no any issues, could you please re-submit updated it soon?
-
-I haven't get yet Dmitry's review of v6 patch set, so i am waiting it.
-
-Thanks.
+diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-samsung/include/plat/regs-fb.h
+index 0ef806e..41c68ac 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-fb.h
++++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
+@@ -173,6 +173,7 @@
+ #define WINCONx_BITSWP				(1 << 18)
+ #define WINCONx_BYTSWP				(1 << 17)
+ #define WINCONx_HAWSWP				(1 << 16)
++#define WINCONx_WSWP				(1 << 15)
+ #define WINCONx_BURSTLEN_MASK			(0x3 << 9)
+ #define WINCONx_BURSTLEN_SHIFT			(9)
+ #define WINCONx_BURSTLEN_16WORD			(0x0 << 9)
+diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+index c4639c4..9c46f95 100644
+--- a/drivers/video/s3c-fb.c
++++ b/drivers/video/s3c-fb.c
+@@ -424,6 +424,7 @@ static int s3c_fb_set_par(struct fb_info *info)
+ 		else
+ 			data |= WINCON0_BPPMODE_24BPP_888;
+ 
++		data |= WINCONx_WSWP;
+ 		data |= WINCONx_BURSTLEN_16WORD;
+ 		break;
+ 	}
+-- 
+1.7.1.569.g6f426
