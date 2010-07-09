@@ -1,86 +1,69 @@
 From: Pawel Osciak <p.osciak@samsung.com>
-Subject: [PATCH v4 0/19] Various s3c-fb updates
-Date: Fri, 09 Jul 2010 10:49:48 +0200
-Message-ID: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
+Subject: [PATCH 17/19] s3c-fb: Protect window-specific registers during updates
+Date: Fri, 09 Jul 2010 10:50:05 +0200
+Message-ID: <1278665407-18002-18-git-send-email-p.osciak@samsung.com>
+References: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout2.w1.samsung.com ([210.118.77.12]:64783 "EHLO
 	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752792Ab0GIIvO (ORCPT
+	with ESMTP id S1754119Ab0GIIvP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Jul 2010 04:51:14 -0400
+	Fri, 9 Jul 2010 04:51:15 -0400
+In-reply-to: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: p.osciak@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, akpm@linux-foundation.org
 
-Hello,
+Newer hardware (S3C6410, S5P) have the ability to block updates from shadow
+registers during reconfiguration. Add protect calls for set_par and clear
+protection when resetting.
 
-This series contains various Samsung framebuffer driver updates.
-I believe that it has reached the stage of being ready for merging.
+Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/video/s3c-fb.c |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
 
-The main highlights of this series are:
-- Ben Dook's unification of the plethora of Samsung framebuffer header
-files with configuration selection at probe time, machine naming;
-- palette setup code moved to the main driver;
-- added ability to wait for VSYNC and to pan the display;
-- better support for new features found in S5PV210 SoCs, including
-  shadow register handling and DMA channel control,
-- various small changes,
-- a number of bugs has also been fixed.
-
-
-Changes in v4:
-- corrected fb_dealloc_cmap condition on window probe failure
-- fixed a race condition in wait for VSYNC ioctl
-- removed has_osd_size flag from window variant; osd_size_off != 0
-  now implies has_osd_size = 1
-- cosmetic changes, as suggested by Ben Dooks, and more comments
-
-Changes in v3:
-- new patches:
-  * fixing a section mismatch error
-  * adding support for DMA channel control (enable/disable) found on S5PV210
-  * disabling shadow register updates during set_par
-
-- unified function for disabling register updates
-- no need to initialize names for 64xx-type framebuffers (is being set as
-  default anyway)
-- updated to the new version of Ben's branch
-- minor fixes
-
-Changes in v2:
-- added SHADOWCON register support found on S3C6410 and S5PC100 for disabling
-  shadow register updates
-- fixed osd and alpha register handling (different configurations for different
-  machines)
-
-The series includes:
-
-[PATCH 01/19] s3c-fb: Change to depending on CONFIG_S3C_FB_DEV
-[PATCH 02/19] s3c-fb: add default window feature.
-[PATCH 03/19] s3c-fb: fixed distortedness situation for the mode more then 24bpp.
-[PATCH 04/19] s3c-fb: only init window colour key controls for windows with blending
-[PATCH 05/19] s3c-fb: Initial move to unifying the header files
-[PATCH 06/19] s3c-fb: udpate to support s3c2416/s3c2443 style hardware
-[PATCH 07/19] s3c-fb: Integrate palette setup code into main driver
-[PATCH 08/19] s3c-fb: Fix various null references on framebuffer memory alloc failure
-[PATCH 09/19] s3c-fb: Correct FRAMESEL1 bitfield defines for VIDINTCON0 register
-[PATCH 10/19] s3c-fb: Separate S5PC100 and S5PV210 framebuffer driver data structures
-[PATCH 11/19] s3c-fb: Add device name initialization
-[PATCH 12/19] s3c-fb: Add support for display panning
-[PATCH 13/19] s3c-fb: Add wait for VSYNC ioctl
-[PATCH 14/19] s3c-fb: window 3 of 64xx+ does not have an osd_d register
-[PATCH 15/19] s3c-fb: Add SHADOWCON shadow register locking support for S5PV210
-[PATCH 16/19] s3c-fb: Correct window osd size and alpha register handling
-[PATCH 17/19] s3c-fb: Protect window-specific registers during updates
-[PATCH 18/19] s3c-fb: fix section mismatch
-[PATCH 19/19] s3c-fb: Add support for DMA channel control on S5PV210
-
-Best regards
---
-Pawel Osciak
-Linux Platform Group
-Samsung Poland R&D Center
+diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+index 2173869..b10d16d 100644
+--- a/drivers/video/s3c-fb.c
++++ b/drivers/video/s3c-fb.c
+@@ -450,6 +450,8 @@ static int s3c_fb_set_par(struct fb_info *info)
+ 
+ 	dev_dbg(sfb->dev, "setting framebuffer parameters\n");
+ 
++	shadow_protect_win(win, 1);
++
+ 	switch (var->bits_per_pixel) {
+ 	case 32:
+ 	case 24:
+@@ -632,6 +634,8 @@ static int s3c_fb_set_par(struct fb_info *info)
+ 	writel(data, regs + sfb->variant.wincon + (win_no * 4));
+ 	writel(0x0, regs + sfb->variant.winmap + (win_no * 4));
+ 
++	shadow_protect_win(win, 0);
++
+ 	return 0;
+ }
+ 
+@@ -1228,11 +1232,14 @@ static int __devinit s3c_fb_probe_win(struct s3c_fb *sfb, unsigned int win_no,
+ static void s3c_fb_clear_win(struct s3c_fb *sfb, int win)
+ {
+ 	void __iomem *regs = sfb->regs;
++	u32 reg;
+ 
+ 	writel(0, regs + sfb->variant.wincon + (win * 4));
+ 	writel(0, regs + VIDOSD_A(win, sfb->variant));
+ 	writel(0, regs + VIDOSD_B(win, sfb->variant));
+ 	writel(0, regs + VIDOSD_C(win, sfb->variant));
++	reg = readl(regs + SHADOWCON);
++	writel(reg & ~SHADOWCON_WINx_PROTECT(win), regs + SHADOWCON);
+ }
+ 
+ static int __devinit s3c_fb_probe(struct platform_device *pdev)
+-- 
+1.7.1.569.g6f426
