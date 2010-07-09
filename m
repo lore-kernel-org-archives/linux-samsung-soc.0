@@ -1,84 +1,89 @@
 From: Pawel Osciak <p.osciak@samsung.com>
-Subject: [PATCH 02/19] s3c-fb: add default window feature.
-Date: Fri, 09 Jul 2010 10:49:50 +0200
-Message-ID: <1278665407-18002-3-git-send-email-p.osciak@samsung.com>
+Subject: [PATCH 10/19] s3c-fb: Separate S5PC100 and S5PV210 framebuffer driver
+ data structures
+Date: Fri, 09 Jul 2010 10:49:58 +0200
+Message-ID: <1278665407-18002-11-git-send-email-p.osciak@samsung.com>
 References: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:39640 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754940Ab0GIIv3 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:12747 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754918Ab0GIIv1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Jul 2010 04:51:29 -0400
+	Fri, 9 Jul 2010 04:51:27 -0400
 In-reply-to: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: p.osciak@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, akpm@linux-foundation.org, InKi Dae <inki.dae@samsung.com>
+Cc: p.osciak@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, akpm@linux-foundation.org
 
-From: InKi Dae <inki.dae@samsung.com>
+S5PC100 and S5PV210 framebuffer devices differ slightly in terms of
+available registers and their driver data structures have to be separate.
+Those differences include dissimilar ways to control shadow register
+updates.
 
-s5pv210 has five window layers (window0 ~ 4), among them,
-window0 ~ 2 could be used for local path with fimc(capture device)
-and fimd writeback feature so this patch makes default window layer
-for UI to be set at machine code.
-
-Signed-off-by: InKi Dae <inki.dae@samsung.com>
-Reviewed-by: KyungMin Park <kyungmin.park.samsung.com>
-Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/plat-samsung/include/plat/fb.h |    3 +++
- drivers/video/s3c-fb.c                  |    6 +++---
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ drivers/video/s3c-fb.c |   37 ++++++++++++++++++++++++++++++++++---
+ 1 files changed, 34 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/plat-samsung/include/plat/fb.h
-index 27d3b49..cb3ca3a 100644
---- a/arch/arm/plat-samsung/include/plat/fb.h
-+++ b/arch/arm/plat-samsung/include/plat/fb.h
-@@ -42,6 +42,7 @@ struct s3c_fb_pd_win {
-  * @setup_gpio: Setup the external GPIO pins to the right state to transfer
-  *		the data from the display system to the connected display
-  *		device.
-+ * @default_win: default window layer number to be used for UI layer.
-  * @vidcon0: The base vidcon0 values to control the panel data format.
-  * @vidcon1: The base vidcon1 values to control the panel data output.
-  * @win: The setup data for each hardware window, or NULL for unused.
-@@ -58,6 +59,8 @@ struct s3c_fb_platdata {
- 
- 	struct s3c_fb_pd_win	*win[S3C_FB_MAX_WIN];
- 
-+	u32			 default_win;
-+
- 	u32			 vidcon0;
- 	u32			 vidcon1;
- };
 diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index 9682ecc..c4639c4 100644
+index 77f5765..5f931b4 100644
 --- a/drivers/video/s3c-fb.c
 +++ b/drivers/video/s3c-fb.c
-@@ -300,9 +300,9 @@ static int s3c_fb_set_par(struct fb_info *info)
- 	/* disable the window whilst we update it */
- 	writel(0, regs + WINCON(win_no));
+@@ -1251,7 +1251,35 @@ static struct s3c_fb_driverdata s3c_fb_data_64xx __devinitdata = {
+ 	.win[4]	= &s3c_fb_data_64xx_wins[4],
+ };
  
--	/* use window 0 as the basis for the lcd output timings */
-+	/* use platform specified window as the basis for the lcd timings */
- 
--	if (win_no == 0) {
-+	if (win_no == sfb->pdata->default_win) {
- 		clkdiv = s3c_fb_calc_pixclk(sfb, var->pixclock);
- 
- 		data = sfb->pdata->vidcon0;
-@@ -636,7 +636,7 @@ static int s3c_fb_blank(int blank_mode, struct fb_info *info)
- 	/* we're stuck with this until we can do something about overriding
- 	 * the power control using the blanking event for a single fb.
- 	 */
--	if (index == 0)
-+	if (index == sfb->pdata->default_win)
- 		s3c_fb_enable(sfb, blank_mode != FB_BLANK_POWERDOWN ? 1 : 0);
- 
- 	return 0;
+-static struct s3c_fb_driverdata s3c_fb_data_s5p __devinitdata = {
++static struct s3c_fb_driverdata s3c_fb_data_s5pc100 __devinitdata = {
++	.variant = {
++		.nr_windows	= 5,
++		.vidtcon	= VIDTCON0,
++		.wincon		= WINCON(0),
++		.winmap		= WINxMAP(0),
++		.keycon		= WKEYCON,
++		.osd		= VIDOSD_BASE,
++		.osd_stride	= 16,
++		.buf_start	= VIDW_BUF_START(0),
++		.buf_size	= VIDW_BUF_SIZE(0),
++		.buf_end	= VIDW_BUF_END(0),
++
++		.palette = {
++			[0] = 0x2400,
++			[1] = 0x2800,
++			[2] = 0x2c00,
++			[3] = 0x3000,
++			[4] = 0x3400,
++		},
++	},
++	.win[0]	= &s3c_fb_data_64xx_wins[0],
++	.win[1]	= &s3c_fb_data_64xx_wins[1],
++	.win[2]	= &s3c_fb_data_64xx_wins[2],
++	.win[3]	= &s3c_fb_data_64xx_wins[3],
++	.win[4]	= &s3c_fb_data_64xx_wins[4],
++};
++
++static struct s3c_fb_driverdata s3c_fb_data_s5pv210 __devinitdata = {
+ 	.variant = {
+ 		.nr_windows	= 5,
+ 		.vidtcon	= VIDTCON0,
+@@ -1319,8 +1347,11 @@ static struct platform_device_id s3c_fb_driver_ids[] = {
+ 		.name		= "s3c-fb",
+ 		.driver_data	= (unsigned long)&s3c_fb_data_64xx,
+ 	}, {
+-		.name		= "s5p-fb",
+-		.driver_data	= (unsigned long)&s3c_fb_data_s5p,
++		.name		= "s5pc100-fb",
++		.driver_data	= (unsigned long)&s3c_fb_data_s5pc100,
++	}, {
++		.name		= "s5pv210-fb",
++		.driver_data	= (unsigned long)&s3c_fb_data_s5pv210,
+ 	}, {
+ 		.name		= "s3c2443-fb",
+ 		.driver_data	= (unsigned long)&s3c_fb_data_s3c2443,
 -- 
 1.7.1.569.g6f426
