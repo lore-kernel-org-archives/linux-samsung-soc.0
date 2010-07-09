@@ -1,154 +1,47 @@
 From: Pawel Osciak <p.osciak@samsung.com>
-Subject: [PATCH 11/19] s3c-fb: Add device name initialization
-Date: Fri, 09 Jul 2010 10:49:59 +0200
-Message-ID: <1278665407-18002-12-git-send-email-p.osciak@samsung.com>
+Subject: [PATCH 01/19] s3c-fb: Change to depending on CONFIG_S3C_FB_DEV
+Date: Fri, 09 Jul 2010 10:49:49 +0200
+Message-ID: <1278665407-18002-2-git-send-email-p.osciak@samsung.com>
 References: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:54743 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754872Ab0GIIv1 (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:39640 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754119Ab0GIIv0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Jul 2010 04:51:27 -0400
+	Fri, 9 Jul 2010 04:51:26 -0400
 In-reply-to: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: p.osciak@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, akpm@linux-foundation.org
 
-Add framebuffer device name initialization calls for S3C2443, S3C64xx
-and S5P machines.
+From: Ben Dooks <ben-linux@fluff.org>
 
+As suggested by Marek Szyprowski, we should make the driver depend on
+the configuration currently being used to build the platform device
+into the kernel.
+
+Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-s3c2416/s3c2416.c              |    3 +-
- arch/arm/mach-s3c2443/s3c2443.c              |    2 +
- arch/arm/mach-s5pc100/cpu.c                  |    3 ++
- arch/arm/mach-s5pv210/cpu.c                  |    3 ++
- arch/arm/plat-samsung/include/plat/fb-core.h |   29 ++++++++++++++++++++++++++
- 5 files changed, 39 insertions(+), 1 deletions(-)
- create mode 100644 arch/arm/plat-samsung/include/plat/fb-core.h
+ drivers/video/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-s3c2416/s3c2416.c b/arch/arm/mach-s3c2416/s3c2416.c
-index 35dabcc..bc30245 100644
---- a/arch/arm/mach-s3c2416/s3c2416.c
-+++ b/arch/arm/mach-s3c2416/s3c2416.c
-@@ -55,6 +55,7 @@
- #include <plat/cpu.h>
+diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
+index 3d94a14..858f1ca 100644
+--- a/drivers/video/Kconfig
++++ b/drivers/video/Kconfig
+@@ -1930,7 +1930,7 @@ config FB_TMIO_ACCELL
  
- #include <plat/iic-core.h>
-+#include <plat/fb-core.h>
- 
- static struct map_desc s3c2416_iodesc[] __initdata = {
- 	IODESC_ENT(WATCHDOG),
-@@ -90,7 +91,7 @@ int __init s3c2416_init(void)
- 	s3c_i2c0_setname("s3c2440-i2c");
- 	s3c_i2c1_setname("s3c2440-i2c");
- 
--	s3c_device_fb.name = "s3c2443-fb";
-+	s3c_fb_setname("s3c2443-fb");
- 
- 	return sysdev_register(&s3c2416_sysdev);
- }
-diff --git a/arch/arm/mach-s3c2443/s3c2443.c b/arch/arm/mach-s3c2443/s3c2443.c
-index ce2ec32..839b6b2 100644
---- a/arch/arm/mach-s3c2443/s3c2443.c
-+++ b/arch/arm/mach-s3c2443/s3c2443.c
-@@ -35,6 +35,7 @@
- #include <plat/s3c2443.h>
- #include <plat/devs.h>
- #include <plat/cpu.h>
-+#include <plat/fb-core.h>
- 
- static struct map_desc s3c2443_iodesc[] __initdata = {
- 	IODESC_ENT(WATCHDOG),
-@@ -62,6 +63,7 @@ int __init s3c2443_init(void)
- 	s3c24xx_reset_hook = s3c2443_hard_reset;
- 
- 	s3c_device_nand.name = "s3c2412-nand";
-+	s3c_fb_setname("s3c2443-fb");
- 
- 	/* change WDT IRQ number */
- 	s3c_device_wdt.resource[1].start = IRQ_S3C2443_WDT;
-diff --git a/arch/arm/mach-s5pc100/cpu.c b/arch/arm/mach-s5pc100/cpu.c
-index 7b5bdbc..d10276a 100644
---- a/arch/arm/mach-s5pc100/cpu.c
-+++ b/arch/arm/mach-s5pc100/cpu.c
-@@ -41,6 +41,7 @@
- #include <plat/iic-core.h>
- #include <plat/sdhci.h>
- #include <plat/onenand-core.h>
-+#include <plat/fb-core.h>
- 
- #include <plat/s5pc100.h>
- 
-@@ -92,6 +93,8 @@ void __init s5pc100_map_io(void)
- 	s3c_i2c1_setname("s3c2440-i2c");
- 
- 	s3c_onenand_setname("s5pc100-onenand");
-+
-+	s3c_fb_setname("s5pc100-fb");
- }
- 
- void __init s5pc100_init_clocks(int xtal)
-diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
-index 411a4a9..4d3580a 100644
---- a/arch/arm/mach-s5pv210/cpu.c
-+++ b/arch/arm/mach-s5pv210/cpu.c
-@@ -34,6 +34,7 @@
- #include <plat/s5pv210.h>
- #include <plat/iic-core.h>
- #include <plat/sdhci.h>
-+#include <plat/fb-core.h>
- 
- /* Initial IO mappings */
- 
-@@ -91,6 +92,8 @@ void __init s5pv210_map_io(void)
- 	s3c_i2c0_setname("s3c2440-i2c");
- 	s3c_i2c1_setname("s3c2440-i2c");
- 	s3c_i2c2_setname("s3c2440-i2c");
-+
-+	s3c_fb_setname("s5pv210-fb");
- }
- 
- void __init s5pv210_init_clocks(int xtal)
-diff --git a/arch/arm/plat-samsung/include/plat/fb-core.h b/arch/arm/plat-samsung/include/plat/fb-core.h
-new file mode 100644
-index 0000000..bca383e
---- /dev/null
-+++ b/arch/arm/plat-samsung/include/plat/fb-core.h
-@@ -0,0 +1,29 @@
-+/*
-+ * arch/arm/plat-samsung/include/plat/fb-core.h
-+ *
-+ * Copyright 2010 Samsung Electronics Co., Ltd.
-+ *	Pawel Osciak <p.osciak@samsung.com>
-+ *
-+ * Samsung framebuffer driver core functions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#ifndef __ASM_PLAT_FB_CORE_H
-+#define __ASM_PLAT_FB_CORE_H __FILE__
-+
-+/*
-+ * These functions are only for use with the core support code, such as
-+ * the CPU-specific initialization code.
-+ */
-+
-+/* Re-define device name depending on support. */
-+static inline void s3c_fb_setname(char *name)
-+{
-+#ifdef CONFIG_S3C_DEV_FB
-+	s3c_device_fb.name = name;
-+#endif
-+}
-+
-+#endif /* __ASM_PLAT_FB_CORE_H */
+ config FB_S3C
+ 	tristate "Samsung S3C framebuffer support"
+-	depends on FB && ARCH_S3C64XX
++	depends on FB && S3C_DEV_FB
+ 	select FB_CFB_FILLRECT
+ 	select FB_CFB_COPYAREA
+ 	select FB_CFB_IMAGEBLIT
 -- 
 1.7.1.569.g6f426
