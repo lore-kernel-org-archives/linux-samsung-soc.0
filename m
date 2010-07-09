@@ -1,7 +1,7 @@
 From: Pawel Osciak <p.osciak@samsung.com>
-Subject: [PATCH 13/19] s3c-fb: Add wait for VSYNC ioctl
-Date: Fri, 09 Jul 2010 10:50:01 +0200
-Message-ID: <1278665407-18002-14-git-send-email-p.osciak@samsung.com>
+Subject: [PATCH 06/19] s3c-fb: udpate to support s3c2416/s3c2443 style hardware
+Date: Fri, 09 Jul 2010 10:49:54 +0200
+Message-ID: <1278665407-18002-7-git-send-email-p.osciak@samsung.com>
 References: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -9,290 +9,427 @@ Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.w1.samsung.com ([210.118.77.13]:39640 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755229Ab0GIIvv (ORCPT
+	with ESMTP id S1755130Ab0GIIvq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Jul 2010 04:51:51 -0400
+	Fri, 9 Jul 2010 04:51:46 -0400
 In-reply-to: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: p.osciak@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, akpm@linux-foundation.org
 
-Add VSYNC interrupt support and an ioctl that allows waiting for it.
-Interrupts are turned on only when needed.
+From: Ben Dooks <ben-linux@fluff.org>
 
+Update the variant and window variant structures with the necessary
+changes to support the older style of hardware where these are not
+in the same place.
+
+Add the support for the s3c2443/s3c2416 hardware by using the
+platform-device s3c2443 to cover both, and add the initialisation
+data for these.
+
+Also change to including just the v4 header files for the moment
+until the last of the merging of these is sorted out.
+
+Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/plat-samsung/include/plat/regs-fb.h |    1 +
- drivers/video/s3c-fb.c                       |  166 +++++++++++++++++++++++++-
- 2 files changed, 166 insertions(+), 1 deletions(-)
+ arch/arm/plat-samsung/include/plat/regs-fb-v4.h |    8 +-
+ arch/arm/plat-samsung/include/plat/regs-fb.h    |    4 +
+ drivers/video/s3c-fb.c                          |  162 ++++++++++++++++++-----
+ 3 files changed, 136 insertions(+), 38 deletions(-)
 
+diff --git a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h b/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+index 0477e8a..8352f5dc 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
++++ b/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+@@ -40,16 +40,10 @@
+ 
+ /* OSD1 and OSD4 do not have register D */
+ 
+-#define VIDOSD_A(_win)				(0x40 + ((_win) * 16))
+-#define VIDOSD_B(_win)				(0x44 + ((_win) * 16))
+-#define VIDOSD_C(_win)				(0x48 + ((_win) * 16))
+-#define VIDOSD_D(_win)				(0x4C + ((_win) * 16))
+-
++#define VIDOSD_BASE				(0x40)
+ 
+ #define VIDINTCON0				(0x130)
+ 
+-#define WxKEYCONy(_win, _con)			((0x140 + ((_win) * 8)) + ((_con) * 4))
+-
+ /* WINCONx */
+ 
+ #define WINCONx_CSCWIDTH_MASK			(0x3 << 26)
 diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-samsung/include/plat/regs-fb.h
-index dbb6c0a..564594e 100644
+index 41c68ac..f4259e5 100644
 --- a/arch/arm/plat-samsung/include/plat/regs-fb.h
 +++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
-@@ -300,6 +300,7 @@
- #define VIDINTCON0_FRAMESEL0_FRONTPORCH		(0x3 << 15)
+@@ -322,6 +322,10 @@
+ #define VIDINTCON1_INT_FIFO			(1 << 0)
  
- #define VIDINTCON0_FRAMESEL1			(1 << 13)
-+#define VIDINTCON0_FRAMESEL1_MASK		(0x3 << 13)
- #define VIDINTCON0_FRAMESEL1_NONE		(0x0 << 13)
- #define VIDINTCON0_FRAMESEL1_BACKPORCH		(0x1 << 13)
- #define VIDINTCON0_FRAMESEL1_VSYNC		(0x2 << 13)
+ /* Window colour-key control registers */
++#define WKEYCON					(0x140)	/* 6410,V210 */
++
++#define WKEYCON0				(0x00)
++#define WKEYCON1				(0x04)
+ 
+ #define WxKEYCON0_KEYBL_EN			(1 << 26)
+ #define WxKEYCON0_KEYEN_F			(1 << 25)
 diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index de427d9..2e82adf 100644
+index e700cfd..5c7ac01 100644
 --- a/drivers/video/s3c-fb.c
 +++ b/drivers/video/s3c-fb.c
-@@ -21,6 +21,8 @@
- #include <linux/clk.h>
- #include <linux/fb.h>
+@@ -9,7 +9,7 @@
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
++ * published by the Free Software FoundatIon.
+ */
+ 
+ #include <linux/kernel.h>
+@@ -23,7 +23,7 @@
  #include <linux/io.h>
-+#include <linux/uaccess.h>
-+#include <linux/interrupt.h>
  
  #include <mach/map.h>
- #include <plat/regs-fb-v4.h>
-@@ -48,6 +50,11 @@
- 	__raw_writel(v, r); } while(0)
- #endif /* FB_S3C_DEBUG_REGWRITE */
+-#include <mach/regs-fb.h>
++#include <plat/regs-fb-v4.h>
+ #include <plat/fb.h>
  
-+/* irq_flags bits */
-+#define S3C_FB_VSYNC_IRQ_EN	0
-+
-+#define VSYNC_TIMEOUT_MSEC 50
-+
- struct s3c_fb;
+ /* This driver will export a number of framebuffer interfaces depending
+@@ -52,13 +52,38 @@ struct s3c_fb;
  
  #define VALID_BPP(x) (1 << ((x) - 1))
-@@ -156,6 +163,16 @@ struct s3c_fb_win {
- };
  
- /**
-+ * struct s3c_fb_vsync - vsync information
-+ * @wait:	a queue for processes waiting for vsync
-+ * @count:	vsync interrupt count
-+ */
-+struct s3c_fb_vsync {
-+	wait_queue_head_t	wait;
-+	unsigned int		count;
-+};
++#define OSD_BASE(win, variant) ((variant).osd + ((win) * (variant).osd_stride))
++#define VIDOSD_A(win, variant) (OSD_BASE(win, variant) + 0x00)
++#define VIDOSD_B(win, variant) (OSD_BASE(win, variant) + 0x04)
++#define VIDOSD_C(win, variant) (OSD_BASE(win, variant) + 0x08)
++#define VIDOSD_D(win, variant) (OSD_BASE(win, variant) + 0x0C)
 +
-+/**
-  * struct s3c_fb - overall hardware state of the hardware
-  * @dev: The device that we bound to, for printing, etc.
-  * @regs_res: The resource we claimed for the IO registers.
-@@ -165,6 +182,9 @@ struct s3c_fb_win {
-  * @enabled: A bitmask of enabled hardware windows.
-  * @pdata: The platform configuration data passed with the device.
-  * @windows: The hardware windows that have been claimed.
-+ * @irq_no: IRQ line number
-+ * @irq_flags: irq flags
-+ * @vsync_info: VSYNC-related information (count, queues...)
+ /**
+  * struct s3c_fb_variant - fb variant information
++ * @is_2443: Set if S3C2443/S3C2416 style hardware.
+  * @nr_windows: The number of windows.
++ * @vidtcon: The base for the VIDTCONx registers
++ * @wincon: The base for the WINxCON registers.
++ * @winmap: The base for the WINxMAP registers.
++ * @keycon: The abse for the WxKEYCON registers.
++ * @buf_start: Offset of buffer start registers.
++ * @buf_size: Offset of buffer size registers.
++ * @buf_end: Offset of buffer end registers.
++ * @osd: The base for the OSD registers.
+  * @palette: Address of palette memory, or 0 if none.
   */
- struct s3c_fb {
- 	struct device		*dev;
-@@ -177,6 +197,10 @@ struct s3c_fb {
- 
- 	struct s3c_fb_platdata	*pdata;
- 	struct s3c_fb_win	*windows[S3C_FB_MAX_WIN];
-+
-+	int			 irq_no;
-+	unsigned long		 irq_flags;
-+	struct s3c_fb_vsync	 vsync_info;
+ struct s3c_fb_variant {
++	unsigned int	is_2443:1;
+ 	unsigned short	nr_windows;
++	unsigned short	vidtcon;
++	unsigned short	wincon;
++	unsigned short	winmap;
++	unsigned short	keycon;
++	unsigned short	buf_start;
++	unsigned short	buf_end;
++	unsigned short	buf_size;
++	unsigned short	osd;
++	unsigned short	osd_stride;
+ 	unsigned short	palette[S3C_FB_MAX_WIN];
  };
  
- /**
-@@ -798,6 +822,124 @@ static int s3c_fb_pan_display(struct fb_var_screeninfo *var,
+@@ -308,6 +333,7 @@ static int s3c_fb_set_par(struct fb_info *info)
+ 	struct s3c_fb_win *win = info->par;
+ 	struct s3c_fb *sfb = win->parent;
+ 	void __iomem *regs = sfb->regs;
++	void __iomem *buf = regs;
+ 	int win_no = win->index;
+ 	u32 osdc_data = 0;
+ 	u32 data;
+@@ -357,6 +383,9 @@ static int s3c_fb_set_par(struct fb_info *info)
+ 
+ 		/* write the timing data to the panel */
+ 
++		if (sfb->variant.is_2443)
++			data |= (1 << 5);
++
+ 		data |= VIDCON0_ENVID | VIDCON0_ENVID_F;
+ 		writel(data, regs + VIDCON0);
+ 
+@@ -364,41 +393,45 @@ static int s3c_fb_set_par(struct fb_info *info)
+ 		       VIDTCON0_VFPD(var->lower_margin - 1) |
+ 		       VIDTCON0_VSPW(var->vsync_len - 1);
+ 
+-		writel(data, regs + VIDTCON0);
++		writel(data, regs + sfb->variant.vidtcon);
+ 
+ 		data = VIDTCON1_HBPD(var->left_margin - 1) |
+ 		       VIDTCON1_HFPD(var->right_margin - 1) |
+ 		       VIDTCON1_HSPW(var->hsync_len - 1);
+ 
+-		writel(data, regs + VIDTCON1);
++		/* VIDTCON1 */
++		writel(data, regs + sfb->variant.vidtcon + 4);
+ 
+ 		data = VIDTCON2_LINEVAL(var->yres - 1) |
+ 		       VIDTCON2_HOZVAL(var->xres - 1);
+-		writel(data, regs + VIDTCON2);
++		writel(data, regs +sfb->variant.vidtcon + 8 );
+ 	}
+ 
+ 	/* write the buffer address */
+ 
+-	writel(info->fix.smem_start, regs + VIDW_BUF_START(win_no));
++	/* start and end registers stride is 8 */
++	buf = regs + win_no * 8;
++
++	writel(info->fix.smem_start, buf + sfb->variant.buf_start);
+ 
+ 	data = info->fix.smem_start + info->fix.line_length * var->yres;
+-	writel(data, regs + VIDW_BUF_END(win_no));
++	writel(data, buf + sfb->variant.buf_end);
+ 
+ 	pagewidth = (var->xres * var->bits_per_pixel) >> 3;
+ 	data = VIDW_BUF_SIZE_OFFSET(info->fix.line_length - pagewidth) |
+ 	       VIDW_BUF_SIZE_PAGEWIDTH(pagewidth);
+-	writel(data, regs + VIDW_BUF_SIZE(win_no));
++	writel(data, regs + sfb->variant.buf_size + (win_no * 4));
+ 
+ 	/* write 'OSD' registers to control position of framebuffer */
+ 
+ 	data = VIDOSDxA_TOPLEFT_X(0) | VIDOSDxA_TOPLEFT_Y(0);
+-	writel(data, regs + VIDOSD_A(win_no));
++	writel(data, regs + VIDOSD_A(win_no, sfb->variant));
+ 
+ 	data = VIDOSDxB_BOTRIGHT_X(s3c_fb_align_word(var->bits_per_pixel,
+ 						     var->xres - 1)) |
+ 	       VIDOSDxB_BOTRIGHT_Y(var->yres - 1);
+ 
+-	writel(data, regs + VIDOSD_B(win_no));
++	writel(data, regs + VIDOSD_B(win_no, sfb->variant));
+ 
+ 	data = var->xres * var->yres;
+ 
+@@ -407,10 +440,10 @@ static int s3c_fb_set_par(struct fb_info *info)
+ 		VIDISD14C_ALPHA1_B(0xf);
+ 
+ 	if (win->variant.has_osd_d) {
+-		writel(data, regs + VIDOSD_D(win_no));
+-		writel(osdc_data, regs + VIDOSD_C(win_no));
++		writel(data, regs + VIDOSD_D(win_no, sfb->variant));
++		writel(osdc_data, regs + VIDOSD_C(win_no, sfb->variant));
+ 	} else
+-		writel(data, regs + VIDOSD_C(win_no));
++		writel(data, regs + VIDOSD_C(win_no, sfb->variant));
+ 
+ 	data = WINCONx_ENWIN;
+ 
+@@ -471,9 +504,10 @@ static int s3c_fb_set_par(struct fb_info *info)
+ 		break;
+ 	}
+ 
+-	/* It has no color key control register for window0 */
++	/* Enable the colour keying for the window below this one */
+ 	if (win_no > 0) {
+ 		u32 keycon0_data = 0, keycon1_data = 0;
++		void __iomem *keycon = regs + sfb->variant.keycon;
+ 
+ 		keycon0_data = ~(WxKEYCON0_KEYBL_EN |
+ 				WxKEYCON0_KEYEN_F |
+@@ -481,12 +515,14 @@ static int s3c_fb_set_par(struct fb_info *info)
+ 
+ 		keycon1_data = WxKEYCON1_COLVAL(0xffffff);
+ 
+-		writel(keycon0_data, regs + WxKEYCONy(win_no-1, 0));
+-		writel(keycon1_data, regs + WxKEYCONy(win_no-1, 1));
++		keycon += (win_no - 1) * 8;
++
++		writel(keycon0_data, keycon + WKEYCON0);
++		writel(keycon1_data, keycon + WKEYCON1);
+ 	}
+ 
+-	writel(data, regs + WINCON(win_no));
+-	writel(0x0, regs + WINxMAP(win_no));
++	writel(data, regs + sfb->variant.wincon + (win_no * 4));
++	writel(0x0, regs + sfb->variant.winmap + (win_no * 4));
+ 
  	return 0;
  }
+@@ -634,7 +670,7 @@ static int s3c_fb_blank(int blank_mode, struct fb_info *info)
  
-+/**
-+ * s3c_fb_enable_irq() - enable framebuffer interrupts
-+ * @sfb: main hardware state
-+ */
-+static void s3c_fb_enable_irq(struct s3c_fb *sfb)
-+{
-+	void __iomem *regs = sfb->regs;
-+	u32 irq_ctrl_reg;
-+
-+	if (!test_and_set_bit(S3C_FB_VSYNC_IRQ_EN, &sfb->irq_flags)) {
-+		/* IRQ disabled, enable it */
-+		irq_ctrl_reg = readl(regs + VIDINTCON0);
-+
-+		irq_ctrl_reg |= VIDINTCON0_INT_ENABLE;
-+		irq_ctrl_reg |= VIDINTCON0_INT_FRAME;
-+
-+		irq_ctrl_reg &= ~VIDINTCON0_FRAMESEL0_MASK;
-+		irq_ctrl_reg |= VIDINTCON0_FRAMESEL0_VSYNC;
-+		irq_ctrl_reg &= ~VIDINTCON0_FRAMESEL1_MASK;
-+		irq_ctrl_reg |= VIDINTCON0_FRAMESEL1_NONE;
-+
-+		writel(irq_ctrl_reg, regs + VIDINTCON0);
-+	}
-+}
-+
-+/**
-+ * s3c_fb_disable_irq() - disable framebuffer interrupts
-+ * @sfb: main hardware state
-+ */
-+static void s3c_fb_disable_irq(struct s3c_fb *sfb)
-+{
-+	void __iomem *regs = sfb->regs;
-+	u32 irq_ctrl_reg;
-+
-+	if (test_and_clear_bit(S3C_FB_VSYNC_IRQ_EN, &sfb->irq_flags)) {
-+		/* IRQ enabled, disable it */
-+		irq_ctrl_reg = readl(regs + VIDINTCON0);
-+
-+		irq_ctrl_reg &= ~VIDINTCON0_INT_FRAME;
-+		irq_ctrl_reg &= ~VIDINTCON0_INT_ENABLE;
-+
-+		writel(irq_ctrl_reg, regs + VIDINTCON0);
-+	}
-+}
-+
-+static irqreturn_t s3c_fb_irq(int irq, void *dev_id)
-+{
-+	struct s3c_fb *sfb = dev_id;
-+	void __iomem  *regs = sfb->regs;
-+	u32 irq_sts_reg;
-+
-+	irq_sts_reg = readl(regs + VIDINTCON1);
-+
-+	if (irq_sts_reg & VIDINTCON1_INT_FRAME) {
-+
-+		/* VSYNC interrupt, accept it */
-+		writel(VIDINTCON1_INT_FRAME, regs + VIDINTCON1);
-+
-+		sfb->vsync_info.count++;
-+		wake_up_interruptible(&sfb->vsync_info.wait);
-+	}
-+
-+	/* We only support waiting for VSYNC for now, so it's safe
-+	 * to always disable irqs here.
-+	 */
-+	s3c_fb_disable_irq(sfb);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+/**
-+ * s3c_fb_wait_for_vsync() - sleep until next VSYNC interrupt or timeout
-+ * @sfb: main hardware state
-+ * @crtc: head index.
-+ */
-+static int s3c_fb_wait_for_vsync(struct s3c_fb *sfb, u32 crtc)
-+{
-+	unsigned long count;
-+	int ret;
-+
-+	if (crtc != 0)
-+		return -ENODEV;
-+
-+	count = sfb->vsync_info.count;
-+	s3c_fb_enable_irq(sfb);
-+	ret = wait_event_interruptible_timeout(sfb->vsync_info.wait,
-+				       count != sfb->vsync_info.count,
-+				       msecs_to_jiffies(VSYNC_TIMEOUT_MSEC));
-+	if (ret == 0)
-+		return -ETIMEDOUT;
-+
-+	return 0;
-+}
-+
-+static int s3c_fb_ioctl(struct fb_info *info, unsigned int cmd,
-+			unsigned long arg)
-+{
-+	struct s3c_fb_win *win = info->par;
-+	struct s3c_fb *sfb = win->parent;
-+	int ret;
-+	u32 crtc;
-+
-+	switch (cmd) {
-+	case FBIO_WAITFORVSYNC:
-+		if (get_user(crtc, (u32 __user *)arg)) {
-+			ret = -EFAULT;
-+			break;
-+		}
-+
-+		ret = s3c_fb_wait_for_vsync(sfb, crtc);
-+		break;
-+	default:
-+		ret = -ENOTTY;
-+	}
-+
-+	return ret;
-+}
-+
- static struct fb_ops s3c_fb_ops = {
- 	.owner		= THIS_MODULE,
- 	.fb_check_var	= s3c_fb_check_var,
-@@ -808,6 +950,7 @@ static struct fb_ops s3c_fb_ops = {
- 	.fb_copyarea	= cfb_copyarea,
- 	.fb_imageblit	= cfb_imageblit,
- 	.fb_pan_display	= s3c_fb_pan_display,
-+	.fb_ioctl	= s3c_fb_ioctl,
- };
+ 	dev_dbg(sfb->dev, "blank mode %d\n", blank_mode);
  
- /**
-@@ -914,6 +1057,8 @@ static int __devinit s3c_fb_probe_win(struct s3c_fb *sfb, unsigned int win_no,
+-	wincon = readl(sfb->regs + WINCON(index));
++	wincon = readl(sfb->regs + sfb->variant.wincon + (index * 4));
  
- 	dev_dbg(sfb->dev, "probing window %d, variant %p\n", win_no, variant);
+ 	switch (blank_mode) {
+ 	case FB_BLANK_POWERDOWN:
+@@ -645,11 +681,11 @@ static int s3c_fb_blank(int blank_mode, struct fb_info *info)
+ 	case FB_BLANK_NORMAL:
+ 		/* disable the DMA and display 0x0 (black) */
+ 		writel(WINxMAP_MAP | WINxMAP_MAP_COLOUR(0x0),
+-		       sfb->regs + WINxMAP(index));
++		       sfb->regs + sfb->variant.winmap + (index * 4));
+ 		break;
  
-+	init_waitqueue_head(&sfb->vsync_info.wait);
-+
+ 	case FB_BLANK_UNBLANK:
+-		writel(0x0, sfb->regs + WINxMAP(index));
++		writel(0x0, sfb->regs + sfb->variant.winmap + (index * 4));
+ 		wincon |= WINCONx_ENWIN;
+ 		sfb->enabled |= (1 << index);
+ 		break;
+@@ -660,7 +696,7 @@ static int s3c_fb_blank(int blank_mode, struct fb_info *info)
+ 		return 1;
+ 	}
+ 
+-	writel(wincon, sfb->regs + WINCON(index));
++	writel(wincon, sfb->regs + sfb->variant.wincon + (index * 4));
+ 
+ 	/* Check the enabled state to see if we need to be running the
+ 	 * main LCD interface, as if there are no active windows then
+@@ -796,7 +832,7 @@ static int __devinit s3c_fb_probe_win(struct s3c_fb *sfb, unsigned int win_no,
+ 	int palette_size;
+ 	int ret;
+ 
+-	dev_dbg(sfb->dev, "probing window %d\n", win_no);
++	dev_dbg(sfb->dev, "probing window %d, variant %p\n", win_no, variant);
+ 
  	palette_size = variant->palette_sz * 4;
  
- 	fbinfo = framebuffer_alloc(sizeof(struct s3c_fb_win) +
-@@ -1093,6 +1238,20 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
- 		goto err_req_region;
+@@ -889,10 +925,10 @@ static void s3c_fb_clear_win(struct s3c_fb *sfb, int win)
+ {
+ 	void __iomem *regs = sfb->regs;
+ 
+-	writel(0, regs + WINCON(win));
+-	writel(0, regs + VIDOSD_A(win));
+-	writel(0, regs + VIDOSD_B(win));
+-	writel(0, regs + VIDOSD_C(win));
++	writel(0, regs + sfb->variant.wincon + (win * 4));
++	writel(0, regs + VIDOSD_A(win, sfb->variant));
++	writel(0, regs + VIDOSD_B(win, sfb->variant));
++	writel(0, regs + VIDOSD_C(win, sfb->variant));
+ }
+ 
+ static int __devinit s3c_fb_probe(struct platform_device *pdev)
+@@ -924,6 +960,8 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  	}
  
-+	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-+	if (!res) {
-+		dev_err(dev, "failed to acquire irq resource\n");
-+		ret = -ENOENT;
-+		goto err_ioremap;
-+	}
-+	sfb->irq_no = res->start;
-+	ret = request_irq(sfb->irq_no, s3c_fb_irq,
-+			  0, "s3c_fb", sfb);
-+	if (ret) {
-+		dev_err(dev, "irq request failed\n");
-+		goto err_ioremap;
-+	}
++	dev_dbg(dev, "allocate new framebuffer %p\n", sfb);
 +
- 	dev_dbg(dev, "got resources (regs %p), probing windows\n", sfb->regs);
+ 	sfb->dev = dev;
+ 	sfb->pdata = pd;
+ 	sfb->variant = fbdrv->variant;
+@@ -973,8 +1011,11 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
  
- 	/* setup gpio and output polarity controls */
-@@ -1127,7 +1286,7 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
- 			dev_err(dev, "failed to create window %d\n", win);
- 			for (; win >= 0; win--)
- 				s3c_fb_release_win(sfb, sfb->windows[win]);
--			goto err_ioremap;
-+			goto err_irq;
- 		}
+ 	/* initialise colour key controls */
+ 	for (win = 0; win < (fbdrv->variant.nr_windows - 1); win++) {
+-		writel(0xffffff, sfb->regs + WxKEYCONy(win, 0));
+-		writel(0xffffff, sfb->regs + WxKEYCONy(win, 1));
++		void __iomem *regs = sfb->regs + sfb->variant.keycon;
++
++		regs += (win * 8);
++		writel(0xffffff, regs + WKEYCON0);
++		writel(0xffffff, regs + WKEYCON1);
  	}
  
-@@ -1135,6 +1294,9 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
+ 	/* we have the register setup, start allocating framebuffers */
+@@ -1079,8 +1120,11 @@ static int s3c_fb_resume(struct platform_device *pdev)
+ 		s3c_fb_clear_win(sfb, win_no);
  
- 	return 0;
- 
-+err_irq:
-+	free_irq(sfb->irq_no, sfb);
+ 	for (win_no = 0; win_no < sfb->variant.nr_windows - 1; win_no++) {
+-		writel(0xffffff, sfb->regs + WxKEYCONy(win_no, 1));
+-		writel(0xffffff, sfb->regs + WxKEYCONy(win_no, 1));
++		void __iomem *regs = sfb->regs + sfb->variant.keycon;
 +
- err_ioremap:
- 	iounmap(sfb->regs);
++		regs += (win_no * 8);
++		writel(0xffffff, regs + WKEYCON0);
++		writel(0xffffff, regs + WKEYCON1);
+ 	}
  
-@@ -1167,6 +1329,8 @@ static int __devexit s3c_fb_remove(struct platform_device *pdev)
- 		if (sfb->windows[win])
- 			s3c_fb_release_win(sfb, sfb->windows[win]);
+ 	/* restore framebuffers */
+@@ -1149,6 +1193,15 @@ static struct s3c_fb_win_variant s3c_fb_data_64xx_wins[] __devinitdata = {
+ static struct s3c_fb_driverdata s3c_fb_data_64xx __devinitdata = {
+ 	.variant = {
+ 		.nr_windows	= 5,
++		.vidtcon	= VIDTCON0,
++		.wincon		= WINCON(0),
++		.winmap		= WINxMAP(0),
++		.keycon		= WKEYCON,
++		.osd		= VIDOSD_BASE,
++		.osd_stride	= 16,
++		.buf_start	= VIDW_BUF_START(0),
++		.buf_size	= VIDW_BUF_SIZE(0),
++		.buf_end	= VIDW_BUF_END(0),
  
-+	free_irq(sfb->irq_no, sfb);
+ 		.palette = {
+ 			[0] = 0x400,
+@@ -1168,6 +1221,15 @@ static struct s3c_fb_driverdata s3c_fb_data_64xx __devinitdata = {
+ static struct s3c_fb_driverdata s3c_fb_data_s5p __devinitdata = {
+ 	.variant = {
+ 		.nr_windows	= 5,
++		.vidtcon	= VIDTCON0,
++		.wincon		= WINCON(0),
++		.winmap		= WINxMAP(0),
++		.keycon		= WKEYCON,
++		.osd		= VIDOSD_BASE,
++		.osd_stride	= 16,
++		.buf_start	= VIDW_BUF_START(0),
++		.buf_size	= VIDW_BUF_SIZE(0),
++		.buf_end	= VIDW_BUF_END(0),
+ 
+ 		.palette = {
+ 			[0] = 0x2400,
+@@ -1184,6 +1246,41 @@ static struct s3c_fb_driverdata s3c_fb_data_s5p __devinitdata = {
+ 	.win[4]	= &s3c_fb_data_64xx_wins[4],
+ };
+ 
++/* S3C2443/S3C2416 style hardware */
++static struct s3c_fb_driverdata s3c_fb_data_s3c2443 __devinitdata = {
++	.variant = {
++		.nr_windows	= 2,
++		.is_2443	= 1,
 +
- 	iounmap(sfb->regs);
- 
- 	clk_disable(sfb->bus_clk);
++		.vidtcon	= 0x08,
++		.wincon		= 0x14,
++		.winmap		= 0xd0,
++		.keycon		= 0xb0,
++		.osd		= 0x28,
++		.osd_stride	= 12,
++		.buf_start	= 0x64,
++		.buf_size	= 0x94,
++		.buf_end	= 0x7c,
++
++		.palette = {
++			[0] = 0x400,
++			[1] = 0x800,
++		},
++	},
++	.win[0] = &(struct s3c_fb_win_variant) {
++		.palette_sz	= 256,
++		.valid_bpp	= VALID_BPP1248 | VALID_BPP(16) | VALID_BPP(24),
++	},
++	.win[1] = &(struct s3c_fb_win_variant) {
++		.has_osd_c	= 1,
++		.palette_sz	= 256,
++		.valid_bpp	= (VALID_BPP1248 | VALID_BPP(16) |
++				   VALID_BPP(18) | VALID_BPP(19) |
++				   VALID_BPP(24) | VALID_BPP(25) |
++				   VALID_BPP(28)),
++	},
++};
++
+ static struct platform_device_id s3c_fb_driver_ids[] = {
+ 	{
+ 		.name		= "s3c-fb",
+@@ -1191,6 +1288,9 @@ static struct platform_device_id s3c_fb_driver_ids[] = {
+ 	}, {
+ 		.name		= "s5p-fb",
+ 		.driver_data	= (unsigned long)&s3c_fb_data_s5p,
++	}, {
++		.name		= "s3c2443-fb",
++		.driver_data	= (unsigned long)&s3c_fb_data_s3c2443,
+ 	},
+ 	{},
+ };
 -- 
 1.7.1.569.g6f426
