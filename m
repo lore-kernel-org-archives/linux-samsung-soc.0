@@ -1,130 +1,79 @@
 From: Pawel Osciak <p.osciak@samsung.com>
-Subject: [PATCH 07/19] s3c-fb: Integrate palette setup code into main driver
-Date: Fri, 09 Jul 2010 10:49:55 +0200
-Message-ID: <1278665407-18002-8-git-send-email-p.osciak@samsung.com>
+Subject: [PATCH 08/19] s3c-fb: Fix various null references on framebuffer
+ memory alloc failure
+Date: Fri, 09 Jul 2010 10:49:56 +0200
+Message-ID: <1278665407-18002-9-git-send-email-p.osciak@samsung.com>
 References: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:12747 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754791Ab0GIIv0 (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:39640 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754918Ab0GIIvb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Jul 2010 04:51:26 -0400
+	Fri, 9 Jul 2010 04:51:31 -0400
 In-reply-to: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: p.osciak@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, akpm@linux-foundation.org
 
-From: Ben Dooks <ben-linux@fluff.org>
+The following problems were found in the above situation:
 
-Remove the palette setup code from the header files and
-put it into the main driver.
+sfb->windows[win] was being assigned at the end of s3c_fb_probe_win only.
+This resulted in passing a NULL to s3c_fb_release_win if probe_win returned
+early and a memory leak.
 
-Signed-off-by: Ben Dooks <ben-linux@fluff.org>
+dma_free_writecombine does not allow its third argument to be NULL.
+
+fb_dealloc_cmap does not verify whether its argument is not NULL.
+
 Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/plat-samsung/include/plat/regs-fb-v4.h |   34 -----------------------
- drivers/video/s3c-fb.c                          |   33 +++++++++++++++++++++-
- 2 files changed, 32 insertions(+), 35 deletions(-)
+ drivers/video/s3c-fb.c |    8 +++++---
+ 1 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h b/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
-index 8352f5dc..4c3647f 100644
---- a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
-+++ b/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
-@@ -137,40 +137,6 @@
- #define WPALCON_W2PAL_16BPP_A555		(1 << 6)
- 
- 
--/* system specific implementation code for palette sizes, and other
-- * information that changes depending on which architecture is being
-- * compiled.
--*/
--
--struct s3c_fb_palette {
--	struct fb_bitfield	r;
--	struct fb_bitfield	g;
--	struct fb_bitfield	b;
--	struct fb_bitfield	a;
--};
--
--static inline void s3c_fb_init_palette(unsigned int window,
--				       struct s3c_fb_palette *palette)
--{
--	if (window < 2) {
--		/* Windows 0/1 are 8/8/8 or A/8/8/8 */
--		palette->r.offset = 16;
--		palette->r.length = 8;
--		palette->g.offset = 8;
--		palette->g.length = 8;
--		palette->b.offset = 0;
--		palette->b.length = 8;
--	} else {
--		/* currently we assume RGB 5/6/5 */
--		palette->r.offset = 11;
--		palette->r.length = 5;
--		palette->g.offset = 5;
--		palette->g.length = 6;
--		palette->b.offset = 0;
--		palette->b.length = 5;
--	}
--}
--
- /* Notes on per-window bpp settings
-  *
-  * Value	Win0	 Win1	  Win2	   Win3	    Win 4
 diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index 5c7ac01..b00c064 100644
+index b00c064..77f5765 100644
 --- a/drivers/video/s3c-fb.c
 +++ b/drivers/video/s3c-fb.c
-@@ -116,6 +116,20 @@ struct s3c_fb_driverdata {
- };
+@@ -804,7 +804,8 @@ static void s3c_fb_free_memory(struct s3c_fb *sfb, struct s3c_fb_win *win)
+ {
+ 	struct fb_info *fbi = win->fbinfo;
  
- /**
-+ * struct s3c_fb_palette - palette information
-+ * @r: Red bitfield.
-+ * @g: Green bitfield.
-+ * @b: Blue bitfield.
-+ * @a: Alpha bitfield.
-+ */
-+struct s3c_fb_palette {
-+	struct fb_bitfield	r;
-+	struct fb_bitfield	g;
-+	struct fb_bitfield	b;
-+	struct fb_bitfield	a;
-+};
-+
-+/**
-  * struct s3c_fb_win - per window private data for each framebuffer.
-  * @windata: The platform data supplied for the window configuration.
-  * @parent: The hardware that this window is part of.
-@@ -866,7 +880,24 @@ static int __devinit s3c_fb_probe_win(struct s3c_fb *sfb, unsigned int win_no,
+-	dma_free_writecombine(sfb->dev, PAGE_ALIGN(fbi->fix.smem_len),
++	if (fbi->screen_base)
++		dma_free_writecombine(sfb->dev, PAGE_ALIGN(fbi->fix.smem_len),
+ 			      fbi->screen_base, fbi->fix.smem_start);
+ }
+ 
+@@ -819,7 +820,8 @@ static void s3c_fb_release_win(struct s3c_fb *sfb, struct s3c_fb_win *win)
+ {
+ 	if (win->fbinfo) {
+ 		unregister_framebuffer(win->fbinfo);
+-		fb_dealloc_cmap(&win->fbinfo->cmap);
++		if (win->fbinfo->cmap.len)
++			fb_dealloc_cmap(&win->fbinfo->cmap);
+ 		s3c_fb_free_memory(sfb, win);
+ 		framebuffer_release(win->fbinfo);
+ 	}
+@@ -865,6 +867,7 @@ static int __devinit s3c_fb_probe_win(struct s3c_fb *sfb, unsigned int win_no,
+ 	WARN_ON(windata->win_mode.yres == 0);
+ 
+ 	win = fbinfo->par;
++	*res = win;
+ 	var = &fbinfo->var;
+ 	win->variant = *variant;
+ 	win->fbinfo = fbinfo;
+@@ -939,7 +942,6 @@ static int __devinit s3c_fb_probe_win(struct s3c_fb *sfb, unsigned int win_no,
+ 		return ret;
  	}
  
- 	/* setup the r/b/g positions for the window's palette */
--	s3c_fb_init_palette(win_no, &win->palette);
-+	if (win->variant.palette_16bpp) {
-+		/* Set RGB 5:6:5 as default */
-+		win->palette.r.offset = 11;
-+		win->palette.r.length = 5;
-+		win->palette.g.offset = 5;
-+		win->palette.g.length = 6;
-+		win->palette.b.offset = 0;
-+		win->palette.b.length = 5;
-+
-+	} else {
-+		/* Set 8bpp or 8bpp and 1bit alpha */
-+		win->palette.r.offset = 16;
-+		win->palette.r.length = 8;
-+		win->palette.g.offset = 8;
-+		win->palette.g.length = 8;
-+		win->palette.b.offset = 0;
-+		win->palette.b.length = 8;
-+	}
+-	*res = win;
+ 	dev_info(sfb->dev, "window %d: fb %s\n", win_no, fbinfo->fix.id);
  
- 	/* setup the initial video mode from the window */
- 	fb_videomode_to_var(&fbinfo->var, initmode);
+ 	return 0;
 -- 
 1.7.1.569.g6f426
