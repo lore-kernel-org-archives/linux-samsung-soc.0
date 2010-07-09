@@ -1,116 +1,57 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v4 0/19] Various s3c-fb updates
-Date: Fri, 09 Jul 2010 20:58:53 +0900
-Message-ID: <028901cb1f5e$1d869fe0$5893dfa0$%kim@samsung.com>
-References: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH 2/3] sdhci-s3c: add support for the non standard minimal
+ clock value
+Date: Fri, 9 Jul 2010 14:19:03 -0700
+Message-ID: <20100709141903.d883ad05.akpm@linux-foundation.org>
+References: <1276670996-17729-1-git-send-email-m.szyprowski@samsung.com>
+	<1276670996-17729-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:50653 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754063Ab0GIL6v (ORCPT
+Received: from smtp1.linux-foundation.org ([140.211.169.13]:42078 "EHLO
+	smtp1.linux-foundation.org" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751241Ab0GIVTe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Jul 2010 07:58:51 -0400
-In-reply-to: <1278665407-18002-1-git-send-email-p.osciak@samsung.com>
-Content-language: ko
+	Fri, 9 Jul 2010 17:19:34 -0400
+In-Reply-To: <1276670996-17729-3-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Pawel Osciak' <p.osciak@samsung.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, akpm@linux-foundation.org, ben-linux@fluff.org, m.szyprowski@samsung.com
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com, Anton Vorontsov <avorontsov@mvista.com>
 
-Pawel Osciak wrote:
-> 
-> Hello,
-> 
-Hi,
+On Wed, 16 Jun 2010 08:49:55 +0200
+Marek Szyprowski <m.szyprowski@samsung.com> wrote:
 
-> This series contains various Samsung framebuffer driver updates.
-> I believe that it has reached the stage of being ready for merging.
+> S3C SDHCI host controller can change the source for generating mmc clock.
+> By default host bus clock is used, what causes some problems on machines
+> with 133MHz bus, because the SDHCI divider cannot be as high get proper
+> clock value for identification mode. This is not a problem for the
+> controller, because it can generate lower frequencies from other clock
+> sources. This patch adds a new quirk to SDHCI driver to calculate the
+> minimal supported clock frequency.
 > 
-> The main highlights of this series are:
-> - Ben Dook's unification of the plethora of Samsung framebuffer header
-> files with configuration selection at probe time, machine naming;
-> - palette setup code moved to the main driver;
-> - added ability to wait for VSYNC and to pan the display;
-> - better support for new features found in S5PV210 SoCs, including
->   shadow register handling and DMA channel control,
-> - various small changes,
-> - a number of bugs has also been fixed.
+> This fixes the flood of the following warnings on Samsung S5PV210 SoCs:
+> mmc0: Minimum clock frequency too high for identification mode
 > 
-> 
-> Changes in v4:
-> - corrected fb_dealloc_cmap condition on window probe failure
-> - fixed a race condition in wait for VSYNC ioctl
-> - removed has_osd_size flag from window variant; osd_size_off != 0
->   now implies has_osd_size = 1
-> - cosmetic changes, as suggested by Ben Dooks, and more comments
-> 
-> Changes in v3:
-> - new patches:
->   * fixing a section mismatch error
->   * adding support for DMA channel control (enable/disable) found on
-S5PV210
->   * disabling shadow register updates during set_par
-> 
-> - unified function for disabling register updates
-> - no need to initialize names for 64xx-type framebuffers (is being set as
->   default anyway)
-> - updated to the new version of Ben's branch
-> - minor fixes
-> 
-> Changes in v2:
-> - added SHADOWCON register support found on S3C6410 and S5PC100 for
-> disabling
->   shadow register updates
-> - fixed osd and alpha register handling (different configurations for
-different
->   machines)
-> 
-> The series includes:
-> 
-> [PATCH 01/19] s3c-fb: Change to depending on CONFIG_S3C_FB_DEV
-> [PATCH 02/19] s3c-fb: add default window feature.
-> [PATCH 03/19] s3c-fb: fixed distortedness situation for the mode more then
-24bpp.
-> [PATCH 04/19] s3c-fb: only init window colour key controls for windows
-with
-> blending
-> [PATCH 05/19] s3c-fb: Initial move to unifying the header files
-> [PATCH 06/19] s3c-fb: udpate to support s3c2416/s3c2443 style hardware
-> [PATCH 07/19] s3c-fb: Integrate palette setup code into main driver
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  drivers/mmc/host/sdhci-of-esdhc.c |    1 +
+>  drivers/mmc/host/sdhci-s3c.c      |   29 +++++++++++++++++++++++++++++
+>  drivers/mmc/host/sdhci.c          |    2 +-
+>  drivers/mmc/host/sdhci.h          |    2 ++
+>  4 files changed, 33 insertions(+), 1 deletions(-)
 
-Actually, already submitted 1st and 4th to 7th patches in here by Ben Dooks.
-http://lists.infradead.org/pipermail/linux-arm-kernel/2010-May/015614.html
-threads
+This patch doesn't know about Anton's
+sdhci-pltfm-add-support-for-cns3xxx-soc-devices.patch.  Please check my fixup:
 
-So I think no need to re-submit them..and just need to add comments about
-that.
-
-> [PATCH 08/19] s3c-fb: Fix various null references on framebuffer memory
-alloc
-> failure
-> [PATCH 09/19] s3c-fb: Correct FRAMESEL1 bitfield defines for VIDINTCON0
-> register
-> [PATCH 10/19] s3c-fb: Separate S5PC100 and S5PV210 framebuffer driver data
-> structures
-> [PATCH 11/19] s3c-fb: Add device name initialization
-> [PATCH 12/19] s3c-fb: Add support for display panning
-> [PATCH 13/19] s3c-fb: Add wait for VSYNC ioctl
-> [PATCH 14/19] s3c-fb: window 3 of 64xx+ does not have an osd_d register
-> [PATCH 15/19] s3c-fb: Add SHADOWCON shadow register locking support for
-> S5PV210
-> [PATCH 16/19] s3c-fb: Correct window osd size and alpha register handling
-> [PATCH 17/19] s3c-fb: Protect window-specific registers during updates
-> [PATCH 18/19] s3c-fb: fix section mismatch
-> [PATCH 19/19] s3c-fb: Add support for DMA channel control on S5PV210
-> 
-
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+--- a/drivers/mmc/host/sdhci-cns3xxx.c~sdhci-s3c-add-support-for-the-non-standard-minimal-clock-value-fix
++++ a/drivers/mmc/host/sdhci-cns3xxx.c
+@@ -93,5 +93,6 @@ struct sdhci_pltfm_data sdhci_cns3xxx_pd
+ 		  SDHCI_QUIRK_INVERTED_WRITE_PROTECT |
+ 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN |
+ 		  SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
++		  SDHCI_QUIRK_NONSTANDARD_MINCLOCK |
+ 		  SDHCI_QUIRK_NONSTANDARD_CLOCK,
+ };
