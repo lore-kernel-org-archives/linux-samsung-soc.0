@@ -1,86 +1,91 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: Requested features for next merge on s5pc110
-Date: Fri, 9 Jul 2010 10:57:50 +0900
-Message-ID: <AANLkTin7FWTf7SMGkyCxcTmfEmo21OrovYj7hz3QAeSJ@mail.gmail.com>
-References: <AANLkTim58_kJFO0vjTXufYc0DkLhT-nVv25trxgjmsFk@mail.gmail.com>
-	<022e01cb1f08$319726e0$94c574a0$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v6 3/3] input: samsung-keypad - Add samsung keypad driver
+Date: Fri, 09 Jul 2010 16:07:24 +0900
+Message-ID: <026901cb1f35$64c63470$2e529d50$%kim@samsung.com>
+References: <1277724824-13308-1-git-send-email-jy0922.shim@samsung.com>
+ <1277724824-13308-3-git-send-email-jy0922.shim@samsung.com>
+ <4C32E21A.8080100@samsung.com>
+ <013401cb1d66$5fbf3fb0$1f3dbf10$%kim@samsung.com>
+ <4C33D859.9050708@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-px0-f174.google.com ([209.85.212.174]:49372 "EHLO
-	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751281Ab0GIB5v convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Jul 2010 21:57:51 -0400
-Received: by pxi14 with SMTP id 14so563460pxi.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Jul 2010 18:57:50 -0700 (PDT)
-In-Reply-To: <022e01cb1f08$319726e0$94c574a0$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-input-owner@vger.kernel.org>
+In-reply-to: <4C33D859.9050708@samsung.com>
+Content-language: ko
+Sender: linux-input-owner@vger.kernel.org
+To: 'Joonyoung Shim' <jy0922.shim@samsung.com>
+Cc: ch.naveen@samsung.com, linux-arm-kernel@lists.infradead.org, dmitry.torokhov@gmail.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-input@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Marek Szyprowski <m.szyprowski@samsung.com>, =?EUC-KR?B?x9S47cHW?= <myungjoo.ham@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Iqbal <iqbal.ams@samsung.com>, Singh Madhav <singh.madhav@samsung.com>
 
-2010/7/9 Kukjin Kim <kgene.kim@samsung.com>:
-> Kyungmin Park wrote:
->>
->> Hi Kukjin,
->>
-> Hi,
->
->> Before next merge window, I hope these features will be included.
->> If your team is done already, please reply it. If not, our team will=
- do
-> it.
->>
->> 1. High-resolution timer using timer 4 and systimer.
->> =A0 =A0 other timer 1, 2, 3, is used
->
-> HR-Timer patch for S5P SoCs will be submitted in a few days. And mayb=
-e used
-> 2 PWM Timers because S5P6440 does not have System Timer.
->
-> Also, will be submitted specific SoC support HR-Timer together..but I=
-'m not
-> sure whether used timer4 and systimer.
+Joonyoung Shim wrote:
+> 
+> On 7/7/2010 8:52 AM, Kukjin Kim wrote:
+> > Joonyoung Shim wrote:
+> >> Hi, Naveen.
+> >>
+> >> On 6/28/2010 8:33 PM, Joonyoung Shim wrote:
+> >>> This patch adds support for keypad driver running on Samsung cpus. This
+> >>> driver is tested on GONI and Aquila board using S5PC110 cpu.
+> >>>
+> >>> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> >>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> >>> ---
+> >>>  drivers/input/keyboard/Kconfig          |    9 +
+> >>>  drivers/input/keyboard/Makefile         |    1 +
+> >>>  drivers/input/keyboard/samsung-keypad.c |  491
+> >> +++++++++++++++++++++++++++++++
+> >>>  3 files changed, 501 insertions(+), 0 deletions(-)
+> >>>  create mode 100644 drivers/input/keyboard/samsung-keypad.c
+> >>>
+> >> Could you please test this v6 keypad driver on your various targets?
+> >
+> > Hi,
+> >
+> > I received the test result from Naveen.
+> > And now he is debugging about that.
+> >
+> > ..his e-mail client has some problem..so I replied...
+> >
+> > ---
+> > From: Naveen Ch
+> >
+> > I've tested with v6 patches and they are working fine on SMDK6410, SMDKC100
+> and SMDKV210, except for some header inclusion (linux/sched.h) in samsung-
+> keypad.c.
+> >
+> > The build breaking error is like following:
+> > (make s5pc100_defconfig and select input->keypad->samsung keypad)
+> >
+> > drivers/input/keyboard/samsung-keypad.c: In function 'samsung_keypad_irq':
+> > drivers/input/keyboard/samsung-keypad.c:170: error: 'TASK_UNINTERRUPTIBLE'
+> undeclared (first use in this function)
+> > drivers/input/keyboard/samsung-keypad.c:170: error: (Each undeclared identifier
+> is reported only once
+> > drivers/input/keyboard/samsung-keypad.c:170: error: for each function it appears
+> in.)
+> > drivers/input/keyboard/samsung-keypad.c:170: error: implicit declaration of
+> function 'schedule_timeout'
+> > drivers/input/keyboard/samsung-keypad.c: In function 'samsung_keypad_stop':
+> > drivers/input/keyboard/samsung-keypad.c:202: error: 'TASK_NORMAL'
+> undeclared (first use in this function)
+> > make[3]: *** [drivers/input/keyboard/samsung-keypad.o] Error 1
+> >
+> 
+> This error occurs on s5pc100_defconfig having disabled CONFIG_PREEMPT
+> option. I think sched.h should be included to remove like this
+> dependency in driver, are there other ways?
 
-Then make it configurable, In case of s5pc110, LSI guided to use the
-RTC and systimer for deep sleep.
-We will prepare it.
+I'm not sure root cause is that. But as you said, I think need inclusion it for prevent the problem.
+Actually didn't happen it before..so maybe the some core functions have moved between rc-3 and earlier versions...
 
->
->>
->> 2. Basic suspend & resume feature.
->> =A0 =A0 No clock gating, and cpufreq. Of course I hope it's included=
-=2E
->>
-> Now preparing re-submit..so maybe can be submitted soon.
+Anyway, if no any issues, could you please re-submit updated it soon?
 
-Please see the Mr. Ham patch also.
+Thanks.
 
->
->> 3. Aquila & goni board support.
->> =A0 =A0 If possible all feature are included at current maineline ke=
-rnel
->> implemented.
->>
->> If I'm missing one features, please let me know,
->>
->> Give your opinions.
->>
-> Need to sort out items for merge window..and will inform soon.
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
