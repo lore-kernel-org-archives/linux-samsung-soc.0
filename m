@@ -1,62 +1,98 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 1/3] sdhci-s3c: add missing remove function
-Date: Fri, 9 Jul 2010 14:26:17 -0700
-Message-ID: <20100709142617.50892f8b.akpm@linux-foundation.org>
-References: <1276670996-17729-1-git-send-email-m.szyprowski@samsung.com>
-	<1276670996-17729-2-git-send-email-m.szyprowski@samsung.com>
+From: Sergei Shtylyov <sshtylyov@mvista.com>
+Subject: Re: [PATCH v5] libata: pata_samsung: Add Samsung PATA controller
+ driver
+Date: Sun, 11 Jul 2010 14:31:39 +0400
+Message-ID: <4C399D8B.2050700@ru.mvista.com>
+References: <1277809518-1122-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1276670996-17729-2-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:34184 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753875Ab0GKKcv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 11 Jul 2010 06:32:51 -0400
+In-Reply-To: <1277809518-1122-1-git-send-email-kgene.kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, jgarzik@redhat.com, sshtylyov@mvista.com, Abhilash Kesavan <a.kesavan@samsung.com>
 
-On Wed, 16 Jun 2010 08:49:54 +0200
-Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+Hello.
 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/mmc/host/sdhci-s3c.c |   20 ++++++++++++++++++++
->  1 files changed, 20 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-> index af21792..ad30f07 100644
-> --- a/drivers/mmc/host/sdhci-s3c.c
-> +++ b/drivers/mmc/host/sdhci-s3c.c
-> @@ -365,6 +365,26 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
->  
->  static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
->  {
-> +	struct sdhci_host *host =  platform_get_drvdata(pdev);
-> +	struct sdhci_s3c *sc = sdhci_priv(host);
-> +	int ptr;
+Kukjin Kim wrote:
+
+> From: Abhilash Kesavan <a.kesavan@samsung.com>
+
+> Adds support for the Samsung PATA controller. This driver is based on the
+> Libata subsystem and references the earlier patches sent for IDE subsystem.
+
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+
+    Looks like there's issues still...
+
+[...]
+
+> diff --git a/drivers/ata/pata_samsung_cf.c b/drivers/ata/pata_samsung_cf.c
+> new file mode 100644
+> index 0000000..26b96c3
+> --- /dev/null
+> +++ b/drivers/ata/pata_samsung_cf.c
+> @@ -0,0 +1,728 @@
+> +/*
+> + * pata_s3c_tf_load - send taskfile registers to host controller
+> + */
+> +static void pata_s3c_tf_load(struct ata_port *ap,
+> +				const struct ata_taskfile *tf)
+> +{
+> +	struct ata_ioports *ioaddr = &ap->ioaddr;
+> +	unsigned int is_addr = tf->flags & ATA_TFLAG_ISADDR;
 > +
-> +	sdhci_remove_host(host, 1);
-> +
-> +	for (ptr = 0; ptr < 3; ptr++) {
-> +		clk_disable(sc->clk_bus[ptr]);
-> +		clk_put(sc->clk_bus[ptr]);
+> +	if (tf->ctl != ap->last_ctl) {
+> +		ata_outb(ap->host, tf->ctl, ioaddr->ctl_addr);
+> +		ap->last_ctl = tf->ctl;
+> +		ata_wait_idle(ap);
 > +	}
-> +	clk_disable(sc->clk_io);
-> +	clk_put(sc->clk_io);
 > +
-> +	iounmap(host->ioaddr);
-> +	release_resource(sc->ioarea);
-> +	kfree(sc->ioarea);
+
+[...]
+
+> +/*
+> + * pata_s3c_tf_read - input device's ATA taskfile shadow registers
+> + */
+> +static void pata_s3c_tf_read(struct ata_port *ap, struct ata_taskfile *tf)
+> +{
+> +	struct ata_ioports *ioaddr = &ap->ioaddr;
 > +
-> +	sdhci_free_host(host);
-> +	platform_set_drvdata(pdev, NULL);
+> +	tf->feature = ata_inb(ap->host, ioaddr->error_addr);
+> +	tf->nsect = ata_inb(ap->host, ioaddr->nsect_addr);
+> +	tf->lbal = ata_inb(ap->host, ioaddr->lbal_addr);
+> +	tf->lbam = ata_inb(ap->host, ioaddr->lbam_addr);
+> +	tf->lbah = ata_inb(ap->host, ioaddr->lbah_addr);
+> +	tf->device = ata_inb(ap->host, ioaddr->device_addr);
 > +
->  	return 0;
->  }
+> +	if (tf->flags & ATA_TFLAG_LBA48) {
+> +		iowrite8(tf->ctl | ATA_HOB, ioaddr->ctl_addr);
+> +		tf->hob_feature = ata_inb(ap->host, ioaddr->error_addr);
+> +		tf->hob_nsect = ata_inb(ap->host, ioaddr->nsect_addr);
+> +		tf->hob_lbal = ata_inb(ap->host, ioaddr->lbal_addr);
+> +		tf->hob_lbam = ata_inb(ap->host, ioaddr->lbam_addr);
+> +		tf->hob_lbah = ata_inb(ap->host, ioaddr->lbah_addr);
+> +		iowrite8(tf->ctl, ioaddr->ctl_addr);
 
-This looks like it fixes a pretty serious omission.  What happens if
-the user rmmods this driver on a 2.6.34 kernel?
+    I don't understand why you're using ata_outb() to awrite to the device 
+control register in tf_load() method but use iowrite8() here...
 
-Because I have a suspicion that this fix should be backported into
-2.6.34.x?
+> +#ifdef CONFIG_PM
+> +static int pata_s3c_suspend(struct device *dev)
+> +{
+> +	struct platform_device *pdev = to_platform_device(dev);
+> +	struct ata_host *host = platform_get_drvdata(pdev);
+> +	pm_message_t state = PMSG_SUSPEND;
 
+    Don't see why this variable is needed...
+
+MBR, Sergei
