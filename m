@@ -1,133 +1,50 @@
-From: Minchan Kim <minchan.kim@gmail.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
 Subject: Re: About SECTION_SIZE_BITS for Sparsemem
-Date: Mon, 12 Jul 2010 21:28:16 +0900
-Message-ID: <20100712122816.GA1889@barrios-desktop>
-References: <000601cb219c$c7830b60$56892220$%kim@samsung.com>
-	<AANLkTinTrt7VKuKvleiJj4lv2tWqCcDYHVXAQIHLA7bh@mail.gmail.com>
-	<20100712104541.GA6577@n2100.arm.linux.org.uk>
+Date: Mon, 12 Jul 2010 13:42:25 +0100
+Message-ID: <20100712124225.GB6577@n2100.arm.linux.org.uk>
+References: <000601cb219c$c7830b60$56892220$%kim@samsung.com> <AANLkTinTrt7VKuKvleiJj4lv2tWqCcDYHVXAQIHLA7bh@mail.gmail.com> <20100712104541.GA6577@n2100.arm.linux.org.uk> <20100712122816.GA1889@barrios-desktop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:36366 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754634Ab0GLMmq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 12 Jul 2010 08:42:46 -0400
 Content-Disposition: inline
-In-Reply-To: <20100712104541.GA6577@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20100712122816.GA1889@barrios-desktop>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Minchan Kim <minchan.kim@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On Mon, Jul 12, 2010 at 11:45:41AM +0100, Russell King - ARM Linux wrote:
-> On Mon, Jul 12, 2010 at 06:52:28PM +0900, Minchan Kim wrote:
-> > Hello.
-> > =
+On Mon, Jul 12, 2010 at 09:28:16PM +0900, Minchan Kim wrote:
+> It just checks that there is a section and section_mem_map has SECTION_HAS_MEM_MAP.
+> The first section in above case has just 80M memory but section has 256M. 
+> So, 0x25000000 - 28000000 is the hole. If you pass pfn whihc is 0x2500000,
+> let's see pfn_valid.
 
-> > On Mon, Jul 12, 2010 at 5:32 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> > > Russell,
-> > >
-> > > Hi,
-> > >
-> > > Kukjin Kim wrote:
-> > >> Russell wrote:
-> > >> > So, memory starts at 0x20000000 and finishes at 0x25000000. =A0Tha=
-t's
-> > > fine.
-> > >> > That doesn't mean the section size is 16MB.
-> > >> >
-> > >> > As I've already said, the section size has _nothing_ what so ever =
-to do
-> > >> > with the size of memory, or the granularity of the size of memory.=
- =A0By
-> > >> > way of illustration, it is perfectly legal to have a section size =
-of
-> > >> > 256MB but only have 1MB in a section and this is perfectly legal. =
-=A0So
-> > >> > sections do not have to be completely filled.
-> > >> >
-> > >> Actually, as you know, the hole's area of mem_map is freed from boot=
-mem if
-> > > a
-> > >> section has a hole when initializing sparse memory.
-> > >>
-> > >> I identified that a section doesn't need to be a contiguous area of
-> > > physical
-> > >> memory when reading your comment with the fact that the mem_map of a
-> > > section
-> > >> can be smaller than the size of a section.
-> > >>
-> > >> I found, however, the kernel panics when modifying min_free_kbytes f=
-ile in
-> > >> the proc filesystem if a section has a hole.
-> > >>
-> > >> While processing the change of min_free_kbytes in the kernel, page
-> > >> descriptors in a hole of an online section is accessed.
-> > >
-> > > As I said, following error happens.
-> > > It would be helpful to me if any opinions or comments.
-> > >
-> > =
+That's not a hole as such.  It's an incompletely filled section, which is
+precisely what sparsemem is all about.
 
-> > Could you test below patch?
-> > Also, you should select ARCH_HAS_HOLES_MEMORYMODEL in your config.
-> =
+> 1. We pass pfn_to_section_nr check 
+> 2. Both __nr_to_section and valid_section is vaild.
+> 
+> static inline int pfn_valid(unsigned long pfn) 
+> {
+>         if (pfn_to_section_nr(pfn) >= NR_MEM_SECTIONS)
+>                 return 0;
+>         return valid_section(__nr_to_section(pfn_to_section_nr(pfn)));
+> }
+> 
+> 
+> What prevent above hole's case?
 
-> But hang on.  Where are the hole(s)?
-> =
+That looks too loose to be useful - that means invalid page table entries
+can pass the pfn_valid() test when they should actually fail, and I'd
+imagine there will be many more such problems like that.
 
-> The DRAM setup is:
-> 0x20000000-0x25000000, 0x40000000-0x50000000, 0x50000000-0x58000000
-> =
+> I think at least pfn_valid in sparsemem need bank range check like pfn_valid of ARM 
+> in FLATMEM.
 
-> which with SECTION_SIZE_BITS set to 28 gives three sections of memory,
-> and each sparsemem section does not have a hole.
-> =
-
-> No zone should cross a sparsemem section boundary.
-> =
-
-> Moreover, our pfn_valid() now returns false for any and all invalid PFNs.
-
-True if it isn't sparsemem. =
-
-But look at pfn_valid in sparsemem. =
-
-
-It just checks that there is a section and section_mem_map has SECTION_HAS_=
-MEM_MAP.
-The first section in above case has just 80M memory but section has 256M. =
-
-So, 0x25000000 - 28000000 is the hole. If you pass pfn whihc is 0x2500000,
-let's see pfn_valid. =
-
-
-1. We pass pfn_to_section_nr check =
-
-2. Both __nr_to_section and valid_section is vaild.
-
-static inline int pfn_valid(unsigned long pfn) =
-
-{
-        if (pfn_to_section_nr(pfn) >=3D NR_MEM_SECTIONS)
-                return 0;
-        return valid_section(__nr_to_section(pfn_to_section_nr(pfn)));
-}
-
-
-What prevent above hole's case?
-I think at least pfn_valid in sparsemem need bank range check like pfn_vali=
-d of ARM =
-
-in FLATMEM.
-
--- =
-
-Kind regards,
-Minchan Kim
+I agree - pfn_valid() on sparsemem needs to be tightened.
