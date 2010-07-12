@@ -1,86 +1,110 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: About SECTION_SIZE_BITS for Sparsemem
-Date: Mon, 12 Jul 2010 11:45:41 +0100
-Message-ID: <20100712104541.GA6577@n2100.arm.linux.org.uk>
-References: <000601cb219c$c7830b60$56892220$%kim@samsung.com> <AANLkTinTrt7VKuKvleiJj4lv2tWqCcDYHVXAQIHLA7bh@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH 3/3] sdhci-s3c: add support for new card detection methods
+Date: Mon, 12 Jul 2010 13:04:09 +0200
+Message-ID: <000101cb21b1$f9accad0$ed066070$%szyprowski@samsung.com>
+References: <1276670996-17729-1-git-send-email-m.szyprowski@samsung.com>
+ <1276670996-17729-4-git-send-email-m.szyprowski@samsung.com>
+ <20100709142440.3ce31714.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:45676 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751889Ab0GLKqB (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:23823 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751568Ab0GLLFc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Jul 2010 06:46:01 -0400
-Content-Disposition: inline
-In-Reply-To: <AANLkTinTrt7VKuKvleiJj4lv2tWqCcDYHVXAQIHLA7bh@mail.gmail.com>
+	Mon, 12 Jul 2010 07:05:32 -0400
+In-reply-to: <20100709142440.3ce31714.akpm@linux-foundation.org>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Minchan Kim <minchan.kim@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: 'Andrew Morton' <akpm@linux-foundation.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com
 
-On Mon, Jul 12, 2010 at 06:52:28PM +0900, Minchan Kim wrote:
-> Hello.
->=20
-> On Mon, Jul 12, 2010 at 5:32 PM, Kukjin Kim <kgene.kim@samsung.com> w=
-rote:
-> > Russell,
+Hello,
+
+On Friday, July 09, 2010 11:25 PM Andrew Morton wrote:
+
+On Wed, 16 Jun 2010 08:49:56 +0200
+> Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> 
+> > On some Samsung SoCs not all SDHCI controllers have card detect (CD)
+> > line. For some embedded designs it is not even needed, because ususally
+> > the device (like SDIO flash memory or wifi controller) is permanently
+> > wired to the controller. There are also systems which have a card detect
+> > line connected to some of the external interrupt lines or the presence
+> > of the card depends on some other actions (like enabling a power
+> > regulator).
 > >
-> > Hi,
+> > This patch adds support for all these cases. The following card
+> > detection methods are possible:
 > >
-> > Kukjin Kim wrote:
-> >> Russell wrote:
-> >> > So, memory starts at 0x20000000 and finishes at 0x25000000. =A0T=
-hat's
-> > fine.
-> >> > That doesn't mean the section size is 16MB.
-> >> >
-> >> > As I've already said, the section size has _nothing_ what so eve=
-r to do
-> >> > with the size of memory, or the granularity of the size of memor=
-y. =A0By
-> >> > way of illustration, it is perfectly legal to have a section siz=
-e of
-> >> > 256MB but only have 1MB in a section and this is perfectly legal=
-=2E =A0So
-> >> > sections do not have to be completely filled.
-> >> >
-> >> Actually, as you know, the hole's area of mem_map is freed from bo=
-otmem if
-> > a
-> >> section has a hole when initializing sparse memory.
-> >>
-> >> I identified that a section doesn't need to be a contiguous area o=
-f
-> > physical
-> >> memory when reading your comment with the fact that the mem_map of=
- a
-> > section
-> >> can be smaller than the size of a section.
-> >>
-> >> I found, however, the kernel panics when modifying min_free_kbytes=
- file in
-> >> the proc filesystem if a section has a hole.
-> >>
-> >> While processing the change of min_free_kbytes in the kernel, page
-> >> descriptors in a hole of an online section is accessed.
+> > 1. internal sdhci host card detect line
+> > 2. external event
+> > 3. external gpio interrupt
+> > 4. no card detect line, controller will poll for the card
+> > 5. no card detect line, card is permanently wired to the controller
+> > (once detected host won't poll it any more)
 > >
-> > As I said, following error happens.
-> > It would be helpful to me if any opinions or comments.
+> > By default, all existing code would use method #1, what is compatible
+> > with the previous version of the driver.
 > >
->=20
-> Could you test below patch?
-> Also, you should select ARCH_HAS_HOLES_MEMORYMODEL in your config.
+> > In case of external event, two callbacks must be provided in platdata:
+> > ext_cd_init and ext_cd_cleanup. Both of them get a callback to a
+> > function that notifies the s3c-sdhci host contoller as their argument.
+> > That callback function should be called from the even dispatcher to let
+> > host notice the card insertion/removal.
+> >
+> > In case of external gpio interrupt, a gpio pin number must be provided
+> > in platdata (ext_cd_gpio parameter), as well as the information about
+> > the polarity of that gpio pin (ext_cd_gpio_invert). By default
+> > (ext_cd_gpio_invert == 0) gpio value 0 means 'card has been removed',
+> > but this can be changed to 'card has been removed' when
+> > ext_cd_gpio_invert == 1.
+> >
+> > This patch adds changes to sdhci-s3c driver.
+> >
+> > ...
+> >
+> > +static void sdhci_s3c_notify_change(struct platform_device *dev, int
+> state)
+> > +{
+> > +	struct sdhci_host *host;
+> > +	unsigned long flags;
+> > +
+> > +	local_irq_save(flags);
+> > +	host = platform_get_drvdata(dev);
+> > +	if (host) {
+> > +		if (state) {
+> > +			dev_dbg(&dev->dev, "card inserted.\n");
+> > +			host->flags &= ~SDHCI_DEVICE_DEAD;
+> > +			host->quirks |= SDHCI_QUIRK_BROKEN_CARD_DETECTION;
+> > +			tasklet_schedule(&host->card_tasklet);
+> > +		} else {
+> > +			dev_dbg(&dev->dev, "card removed.\n");
+> > +			host->flags |= SDHCI_DEVICE_DEAD;
+> > +			host->quirks &= ~SDHCI_QUIRK_BROKEN_CARD_DETECTION;
+> > +			tasklet_schedule(&host->card_tasklet);
+> > +		}
+> > +	}
+> > +	local_irq_restore(flags);
+> > +}
+> 
+> What's the local_irq_save() there for?
+> 
+> Presumably it is for local-cpu-only protection of some data.  But which
+> data is it there to protect?
+> 
+> It doesn't provide protection on SMP systems and if I'm guessing
+> correctly about why it was added, it would be much better to use
+> spin_lock_irq[save]() here.  That sets a better example, it means the
+> code has a hope of working correctly on SMP systems and will devolve to
+> local_irq_save() on UP kernels anyway.
 
-But hang on.  Where are the hole(s)?
+Ok. I will change local_irq_save to spin_lock_irqsave. Thanks for spotting
+this!
 
-The DRAM setup is:
-0x20000000-0x25000000, 0x40000000-0x50000000, 0x50000000-0x58000000
-
-which with SECTION_SIZE_BITS set to 28 gives three sections of memory,
-and each sparsemem section does not have a hole.
-
-No zone should cross a sparsemem section boundary.
-
-Moreover, our pfn_valid() now returns false for any and all invalid PFN=
-s.
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
