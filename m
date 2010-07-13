@@ -1,62 +1,71 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 1/3] sdhci-s3c: add missing remove function
-Date: Mon, 12 Jul 2010 16:52:28 -0700
-Message-ID: <20100712165228.ea719738.akpm@linux-foundation.org>
-References: <1276670996-17729-1-git-send-email-m.szyprowski@samsung.com>
-	<1276670996-17729-2-git-send-email-m.szyprowski@samsung.com>
-	<20100709142617.50892f8b.akpm@linux-foundation.org>
-	<000201cb21b1$fc69c7f0$f53d57d0$%szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <000201cb21b1$fc69c7f0$f53d57d0$%szyprowski@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: kgene.kim@samsung.com, linux-mmc@vger.kernel.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Subject: [PATCH] s3c-fb: Automatically calculate pixel clock when none is given
+Date: Tue, 13 Jul 2010 02:03:54 +0200
+Message-ID: <4c3bad6b.487e0e0a.688b.ffffd045@mx.google.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:45117 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751622Ab0GMAD6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 12 Jul 2010 20:03:58 -0400
+Received: by ewy23 with SMTP id 23so970241ewy.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jul 2010 17:03:56 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-fbdev-devel@lists.sourceforge.net
+Cc: linux-samsung-soc@vger.kernel.org, akpm@linux-foundation.org, ben-linux@fluff.org
 
-On Mon, 12 Jul 2010 13:04:09 +0200
-Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+This patch adds a simple algorithm which calculates the pixel clock based on the
+video mode parameters. This is only done when no pixel clock is supplied through
+the platform data.
 
-> > >  static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
-> > >  {
-> > > +	struct sdhci_host *host =  platform_get_drvdata(pdev);
-> > > +	struct sdhci_s3c *sc = sdhci_priv(host);
-> > > +	int ptr;
-> > > +
-> > > +	sdhci_remove_host(host, 1);
-> > > +
-> > > +	for (ptr = 0; ptr < 3; ptr++) {
-> > > +		clk_disable(sc->clk_bus[ptr]);
-> > > +		clk_put(sc->clk_bus[ptr]);
-> > > +	}
-> > > +	clk_disable(sc->clk_io);
-> > > +	clk_put(sc->clk_io);
-> > > +
-> > > +	iounmap(host->ioaddr);
-> > > +	release_resource(sc->ioarea);
-> > > +	kfree(sc->ioarea);
-> > > +
-> > > +	sdhci_free_host(host);
-> > > +	platform_set_drvdata(pdev, NULL);
-> > > +
-> > >  	return 0;
-> > >  }
-> > 
-> > This looks like it fixes a pretty serious omission.  What happens if
-> > the user rmmods this driver on a 2.6.34 kernel?
-> 
-> System will crash sooner or later once the memory with the code of the
-> s3c-sdhci.ko module is reused for something else. I really have no idea
-> how the lack of remove function went unnoticed into the mainline code.
->  
-> > Because I have a suspicion that this fix should be backported into
-> > 2.6.34.x?
-> 
-> Right, this is really a good idea. This patch applies cleanly onto
-> v2.6.34 too.
+Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
+---
+ drivers/video/s3c-fb.c |   25 +++++++++++++++++++++++++
+ 1 files changed, 25 insertions(+), 0 deletions(-)
 
-OK, thanks, I added the Cc: <stable@kernel.org> to the changelog and
-moved the patch into my for-2.6.35 queue.
-
+diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+index 9682ecc..e4715eb 100644
+--- a/drivers/video/s3c-fb.c
++++ b/drivers/video/s3c-fb.c
+@@ -654,6 +654,28 @@ static struct fb_ops s3c_fb_ops = {
+ };
+ 
+ /**
++ * s3c_fb_missing_pixclock() - calculates pixel clock
++ * @mode: The video mode to change.
++ *
++ * Calculate the pixel clock when none has been given through platform data.
++ */
++static void __devinit s3c_fb_missing_pixclock(struct fb_videomode *mode)
++{
++	u64 pixclk = 1000000000000ULL;
++	u32 div;
++
++	div  = mode->left_margin + mode->hsync_len + mode->right_margin +
++	       mode->xres;
++	div *= mode->upper_margin + mode->vsync_len + mode->lower_margin +
++	       mode->yres;
++	div *= mode->refresh ? : 60;
++
++	do_div(pixclk, div);
++
++	mode->pixclock = pixclk;
++}
++
++/**
+  * s3c_fb_alloc_memory() - allocate display memory for framebuffer window
+  * @sfb: The base resources for the hardware.
+  * @win: The window to initialise memory for.
+@@ -925,6 +947,9 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
+ 		if (!pd->win[win])
+ 			continue;
+ 
++		if (!pd->win[win]->win_mode.pixclock)
++			s3c_fb_missing_pixclock(&pd->win[win]->win_mode);
++
+ 		ret = s3c_fb_probe_win(sfb, win, &sfb->windows[win]);
+ 		if (ret < 0) {
+ 			dev_err(dev, "failed to create window %d\n", win);
+-- 
+1.7.0.4
