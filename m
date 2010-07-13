@@ -1,198 +1,183 @@
-From: Minchan Kim <minchan.kim@gmail.com>
-Subject: Re: About SECTION_SIZE_BITS for Sparsemem
-Date: Tue, 13 Jul 2010 11:05:26 +0900
-Message-ID: <AANLkTimHNBUo30sp1azUcWQiDpADGyEW_N-dwU0nJy9u@mail.gmail.com>
-References: <000601cb219c$c7830b60$56892220$%kim@samsung.com>
-	<AANLkTinTrt7VKuKvleiJj4lv2tWqCcDYHVXAQIHLA7bh@mail.gmail.com>
-	<001b01cb21aa$ef0e4d80$cd2ae880$%kim@samsung.com>
-	<AANLkTinkujX3VbL0sXjjghovr8eX9Os0huw3OTBut2UP@mail.gmail.com>
-	<20100713092522.6d9939ac.kamezawa.hiroyu@jp.fujitsu.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH v2] ARM: s5pv210_defconfig: Update for removing s5pc110_defconfig
+Date: Tue, 13 Jul 2010 11:22:06 +0900
+Message-ID: <1278987726-10803-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:63514 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753301Ab0GMCF2 convert rfc822-to-8bit (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:41860 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756204Ab0GMC3T (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Jul 2010 22:05:28 -0400
-Received: by iwn7 with SMTP id 7so5303734iwn.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jul 2010 19:05:26 -0700 (PDT)
-In-Reply-To: <20100713092522.6d9939ac.kamezawa.hiroyu@jp.fujitsu.com>
+	Mon, 12 Jul 2010 22:29:19 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Mel Gorman <mel@csn.ul.ie>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, ben-linux@fluff.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-On Tue, Jul 13, 2010 at 9:25 AM, KAMEZAWA Hiroyuki
-<kamezawa.hiroyu@jp.fujitsu.com> wrote:
-> On Mon, 12 Jul 2010 19:35:17 +0900
-> Minchan Kim <minchan.kim@gmail.com> wrote:
->
->> Hi, Mel and Kame.
->>
->> On Mon, Jul 12, 2010 at 7:13 PM, Kukjin Kim <kgene.kim@samsung.com> =
-wrote:
->> > Minchan Kim wrote:
->> >>
->> >> Hello.
->> >>
->> > Hello :-)
->> >
->> >> On Mon, Jul 12, 2010 at 5:32 PM, Kukjin Kim <kgene.kim@samsung.co=
-m> wrote:
->> >> > Russell,
->> >> >
->> >> > Hi,
->> >> >
->> >> > Kukjin Kim wrote:
->> >> >> Russell wrote:
->> >> >> > So, memory starts at 0x20000000 and finishes at 0x25000000. =
-=A0That's
->> >> > fine.
->> >> >> > That doesn't mean the section size is 16MB.
->> >> >> >
->> >> >> > As I've already said, the section size has _nothing_ what so=
- ever to
->> > do
->> >> >> > with the size of memory, or the granularity of the size of m=
-emory.
->> > =A0By
->> >> >> > way of illustration, it is perfectly legal to have a section=
- size of
->> >> >> > 256MB but only have 1MB in a section and this is perfectly l=
-egal. =A0So
->> >> >> > sections do not have to be completely filled.
->> >> >> >
->> >> >> Actually, as you know, the hole's area of mem_map is freed fro=
-m bootmem
->> > if
->> >> > a
->> >> >> section has a hole when initializing sparse memory.
->> >> >>
->> >> >> I identified that a section doesn't need to be a contiguous ar=
-ea of
->> >> > physical
->> >> >> memory when reading your comment with the fact that the mem_ma=
-p of a
->> >> > section
->> >> >> can be smaller than the size of a section.
->> >> >>
->> >> >> I found, however, the kernel panics when modifying min_free_kb=
-ytes file
->> > in
->> >> >> the proc filesystem if a section has a hole.
->> >> >>
->> >> >> While processing the change of min_free_kbytes in the kernel, =
-page
->> >> >> descriptors in a hole of an online section is accessed.
->> >> >
->> >> > As I said, following error happens.
->> >> > It would be helpful to me if any opinions or comments.
->> >> >
->> >>
->> >> Could you test below patch?
->> >> Also, you should select ARCH_HAS_HOLES_MEMORYMODEL in your config=
-=2E
->> >>
->> > Yes, I did it, and no kernel panic happens :-)
->> >
->> > Same test...
->> > [root@Samsung ~]# cat /proc/sys/vm/min_free_kbytes
->> > 2736
->> > [root@Samsung ~]# echo "2730" > /proc/sys/vm/min_free_kbytes
->> > [root@Samsung ~]#
->> > [root@Samsung ~]# cat /proc/sys/vm/min_free_kbytes
->> > 2730
->> >
->> >
->> >> @@ -2824,8 +2825,13 @@ static void setup_zone_migrate_reserve(str=
-uct zone
->> >> *zone)
->> >> =A0 =A0 =A0 =A0 for (pfn =3D start_pfn; pfn < end_pfn; pfn +=3D p=
-ageblock_nr_pages) {
->> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (!pfn_valid(pfn))
->> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 continue;
->> >> +
->> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 page =3D pfn_to_page(pfn);
->> >>
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0/* Watch for unexpected holes pu=
-nched in the memmap */
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (!memmap_valid_within(pfn, pa=
-ge, zone))
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0continue;
->> >> +
->> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* Watch out for overlapping node=
-s */
->> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (page_to_nid(page) !=3D zone_t=
-o_nid(zone))
->> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 continue;
->> >>
->> >>
->> >>
->> >
->> > ...Could you please explain about this issue?
->>
->> The setup_zone_migrate_reserve doesn't check memmap hole. I think
->> compaction would have the =A0same problem, too. I don't know there i=
-s a
->> problem in elsewhere.
->> Anyway, I think memmap_valid_within calling whenever walking whole p=
-fn
->> range isn't a good solution. We already have pfn_valid. Could we che=
-ck
->> this in there?
->> For example, mem_section have a valid pfn range and then valid secti=
-on
->> can test it in pfn_valid.
->>
->> What do you think about it?
->>
->
-> please map another "fake" page when you free memmap.
->
-> For example, prepare a page filled with (1 << PG_reserved).
-> and replace it with unnecessary memmap rather than freeing a page for=
- memmap.
+Now that S5PC110 machines and S5PV210 machines can be built into
+one kernel, update mach-s5pv210/Kconfig and s5pv210_defconfig.
 
-Hmm. I don't got your point.
-The problem is that we access struct page by pfn number not address.
+Tested on SMDKC110(S5PC110) and SMDKV210(S5PV210).
+Note that GONI machine ID is not included in the kernel.
 
-You mean let's remain memmap on hole with changing PageReseved instead =
-of free?
+Created and tested against linux-2.6.35-rc5.
 
->
-> Then, you can find a PageReserved() page there. However it doesn't ha=
-ve valid
-> nid,zid,secitonID, I don't think it can cause trouble.
-> But you may see some BUG_ON() hit. If so, I think ARM guys can add
->
-> #define PageHole(page) (PageReserved(page) && PageXXXXX(page))
-> for avoiding BUG_ON() hit. (and this will help to skip unnecessary
-> memmap_init_zone())
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+Changes since v1:
+- This patch re-based against linux-2.6.35-rc5 which includes
+  'ARM: reduce defconfigs' from Uwe Kleine-Konig.
 
-I think it's not a good idea to add new flag. If
-Kame. Could you review my RFC patch which makes pfn_valid check more
-tightly on sparsemem?
+ arch/arm/configs/s5pc110_defconfig |   66 ------------------------------------
+ arch/arm/configs/s5pv210_defconfig |    4 ++
+ arch/arm/mach-s5pv210/Kconfig      |   28 +++++++++------
+ 3 files changed, 21 insertions(+), 77 deletions(-)
+ delete mode 100644 arch/arm/configs/s5pc110_defconfig
 
->
-> By this, you can finaly remove CONFIG_MEMMAP_HOLES_IN_ZONE, and makes=
- ARM's
-> sparsemem much easier for maintainance.
-
-I think above problem isn't only ARM one. It can happen on any
-sparsemem which do loose pfn_valid check.
-
->
-> section ID is not important as far as you call page_to_pfn().
-> You may able to add WARNING when page_to_pfn() is called against a HO=
-LE page.
-
-Yes. It's a good idea. We can add it optionally. But for it, we need
-PageHole or mem_section bank range check. I like second like my
-previous posting.
-
-
---=20
-Kind regards,
-Minchan Kim
+diff --git a/arch/arm/configs/s5pc110_defconfig b/arch/arm/configs/s5pc110_defconfig
+deleted file mode 100644
+index 22c2d14..0000000
+--- a/arch/arm/configs/s5pc110_defconfig
++++ /dev/null
+@@ -1,66 +0,0 @@
+-CONFIG_EXPERIMENTAL=y
+-CONFIG_SYSFS_DEPRECATED_V2=y
+-CONFIG_BLK_DEV_INITRD=y
+-CONFIG_KALLSYMS_ALL=y
+-CONFIG_MODULES=y
+-CONFIG_MODULE_UNLOAD=y
+-# CONFIG_BLK_DEV_BSG is not set
+-CONFIG_ARCH_S5PV210=y
+-CONFIG_S3C_LOWLEVEL_UART_PORT=1
+-CONFIG_MACH_SMDKC110=y
+-CONFIG_VMSPLIT_2G=y
+-CONFIG_PREEMPT=y
+-CONFIG_AEABI=y
+-CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x20800000,8M console=ttySAC1,115200 init=/linuxrc"
+-CONFIG_VFP=y
+-CONFIG_NEON=y
+-CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+-CONFIG_BLK_DEV_LOOP=y
+-CONFIG_BLK_DEV_RAM=y
+-CONFIG_BLK_DEV_RAM_SIZE=8192
+-# CONFIG_MISC_DEVICES is not set
+-CONFIG_SCSI=y
+-CONFIG_BLK_DEV_SD=y
+-CONFIG_CHR_DEV_SG=y
+-CONFIG_INPUT_EVDEV=y
+-# CONFIG_INPUT_KEYBOARD is not set
+-# CONFIG_INPUT_MOUSE is not set
+-CONFIG_INPUT_TOUCHSCREEN=y
+-CONFIG_SERIAL_8250=y
+-CONFIG_SERIAL_SAMSUNG=y
+-CONFIG_SERIAL_SAMSUNG_CONSOLE=y
+-CONFIG_HW_RANDOM=y
+-# CONFIG_HWMON is not set
+-# CONFIG_VGA_CONSOLE is not set
+-# CONFIG_HID_SUPPORT is not set
+-# CONFIG_USB_SUPPORT is not set
+-CONFIG_EXT2_FS=y
+-CONFIG_INOTIFY=y
+-CONFIG_MSDOS_FS=y
+-CONFIG_VFAT_FS=y
+-CONFIG_TMPFS=y
+-CONFIG_TMPFS_POSIX_ACL=y
+-CONFIG_CRAMFS=y
+-CONFIG_ROMFS_FS=y
+-CONFIG_PARTITION_ADVANCED=y
+-CONFIG_BSD_DISKLABEL=y
+-CONFIG_SOLARIS_X86_PARTITION=y
+-CONFIG_NLS_CODEPAGE_437=y
+-CONFIG_NLS_ASCII=y
+-CONFIG_NLS_ISO8859_1=y
+-CONFIG_MAGIC_SYSRQ=y
+-CONFIG_DEBUG_KERNEL=y
+-# CONFIG_DEBUG_PREEMPT is not set
+-CONFIG_DEBUG_RT_MUTEXES=y
+-CONFIG_DEBUG_SPINLOCK=y
+-CONFIG_DEBUG_MUTEXES=y
+-CONFIG_DEBUG_SPINLOCK_SLEEP=y
+-CONFIG_DEBUG_INFO=y
+-# CONFIG_RCU_CPU_STALL_DETECTOR is not set
+-CONFIG_SYSCTL_SYSCALL_CHECK=y
+-CONFIG_DEBUG_USER=y
+-CONFIG_DEBUG_ERRORS=y
+-CONFIG_DEBUG_LL=y
+-CONFIG_EARLY_PRINTK=y
+-CONFIG_DEBUG_S3C_UART=1
+-CONFIG_CRC_CCITT=y
+diff --git a/arch/arm/configs/s5pv210_defconfig b/arch/arm/configs/s5pv210_defconfig
+index 1753836..b2fbbff 100644
+--- a/arch/arm/configs/s5pv210_defconfig
++++ b/arch/arm/configs/s5pv210_defconfig
+@@ -7,6 +7,10 @@ CONFIG_MODULE_UNLOAD=y
+ # CONFIG_BLK_DEV_BSG is not set
+ CONFIG_ARCH_S5PV210=y
+ CONFIG_S3C_LOWLEVEL_UART_PORT=1
++CONFIG_S3C_DEV_FB=y
++CONFIG_S5PV210_SETUP_FB_24BPP=y
++CONFIG_MACH_AQUILA=y
++CONFIG_MACH_SMDKC110=y
+ CONFIG_MACH_SMDKV210=y
+ CONFIG_VMSPLIT_2G=y
+ CONFIG_PREEMPT=y
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index 7e2e1eb..e7b98bf 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -43,10 +43,10 @@ config S5PV210_SETUP_SDHCI_GPIO
+ 	help
+ 	  Common setup code for SDHCI gpio.
+ 
+-# machine support
++menu "S5PC110 Machines"
+ 
+ config MACH_AQUILA
+-	bool "Samsung Aquila"
++	bool "Aquila"
+ 	select CPU_S5PV210
+ 	select ARCH_SPARSEMEM_ENABLE
+ 	select S5PV210_SETUP_FB_24BPP
+@@ -64,11 +64,25 @@ config MACH_GONI
+ 	  Machine support for Samsung GONI board
+ 	  S5PC110(MCP) is one of package option of S5PV210
+ 
++config MACH_SMDKC110
++	bool "SMDKC110"
++	select CPU_S5PV210
++	select ARCH_SPARSEMEM_ENABLE
++	select S3C_DEV_WDT
++	select HAVE_S3C2410_WATCHDOG
++	help
++	  Machine support for Samsung SMDKC110
++	  S5PC110(MCP) is one of package option of S5PV210
++
++endmenu
++
+ config S5PC110_DEV_ONENAND
+ 	bool
+ 	help
+ 	  Compile in platform device definition for OneNAND1 controller
+ 
++menu "S5PV210 Machines"
++
+ config MACH_SMDKV210
+ 	bool "SMDKV210"
+ 	select CPU_S5PV210
+@@ -80,14 +94,6 @@ config MACH_SMDKV210
+ 	help
+ 	  Machine support for Samsung SMDKV210
+ 
+-config MACH_SMDKC110
+-	bool "SMDKC110"
+-	select CPU_S5PV210
+-	select ARCH_SPARSEMEM_ENABLE
+-	select S3C_DEV_WDT
+-	select HAVE_S3C2410_WATCHDOG
+-	help
+-	  Machine support for Samsung SMDKC110
+-	  S5PC110(MCP) is one of package option of S5PV210
++endmenu
+ 
+ endif
+-- 
+1.6.2.5
