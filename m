@@ -1,91 +1,189 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH v2] ARM: s5pv210_defconfig: Update for removing
-	s5pc110_defconfig
-Date: Tue, 13 Jul 2010 15:23:48 +0900
-Message-ID: <AANLkTikZZjqTrGtv7ts4_a_dxMZ1ZyMCugoltIwH8sTy@mail.gmail.com>
-References: <1278987726-10803-1-git-send-email-kgene.kim@samsung.com>
-	<AANLkTilAKmCrHm5pZU5s6oJkSGGZyYihsnPsG4Z1uKFw@mail.gmail.com>
-	<00fc01cb2253$27307c30$75917490$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Sangbeom Kim <sbkim73@samsung.com>
+Subject: [PATCH] ARM: S3C2416: Add Power Management support for SMDK2416
+Date: Tue, 13 Jul 2010 15:50:00 +0900
+Message-ID: <1279003800-16899-1-git-send-email-sbkim73@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-px0-f174.google.com ([209.85.212.174]:33764 "EHLO
-	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751288Ab0GMGXu convert rfc822-to-8bit (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:42817 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751404Ab0GMG7U (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Jul 2010 02:23:50 -0400
-Received: by pxi14 with SMTP id 14so2149894pxi.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jul 2010 23:23:48 -0700 (PDT)
-In-Reply-To: <00fc01cb2253$27307c30$75917490$%kim@samsung.com>
+	Tue, 13 Jul 2010 02:59:20 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, Abhilash Kesavan <a.kesavan@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>
 
-On Tue, Jul 13, 2010 at 3:17 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> Kyungmin Park wrote:
->>
->> Question?
->>
->> Are there difference between smdkc110 and smdkv210?
->
-> Yes.
->
-> The components on the board are different such as default LCD module,
-> external memory, connector, and so on.
+From: Abhilash Kesavan <a.kesavan@samsung.com>
 
-It seems to be handle at one board file. Maybe you register it as
-different machine ID so you can handle it.
-Look at current board files.
+Adds suspend-to-ram support for SMDK2416 based on existing 2412 PM code
 
-Thank you,
-Kyungmin Park
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+---
+Note: it depends on patches:
 
->
->>
->> Thank you,
->> Kyungmin Park
->>
->> On Tue, Jul 13, 2010 at 11:22 AM, Kukjin Kim <kgene.kim@samsung.com>
-> wrote:
->> > Now that S5PC110 machines and S5PV210 machines can be built into
->> > one kernel, update mach-s5pv210/Kconfig and s5pv210_defconfig.
->> >
->> > Tested on SMDKC110(S5PC110) and SMDKV210(S5PV210).
->> > Note that GONI machine ID is not included in the kernel.
->> >
->> > Created and tested against linux-2.6.35-rc5.
->> >
->> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
->> > ---
->> > Changes since v1:
->> > - This patch re-based against linux-2.6.35-rc5 which includes
->> > =A0'ARM: reduce defconfigs' from Uwe Kleine-Konig.
->> >
->> > =A0arch/arm/configs/s5pc110_defconfig | =A0 66
-> ------------------------------------
->> > =A0arch/arm/configs/s5pv210_defconfig | =A0 =A04 ++
->> > =A0arch/arm/mach-s5pv210/Kconfig =A0 =A0 =A0| =A0 28 +++++++++----=
---
->> > =A03 files changed, 21 insertions(+), 77 deletions(-)
->> > =A0delete mode 100644 arch/arm/configs/s5pc110_defconfig
->
-> (snip)
->
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+ARM: S3C24XX: Fix gpiolib support for ports K..M
+
+ .../mach-s3c2410/include/mach/regs-s3c2443-clock.h |    2 +
+ arch/arm/mach-s3c2416/Kconfig                      |    6 ++
+ arch/arm/mach-s3c2416/Makefile                     |    2 +-
+ arch/arm/mach-s3c2416/irq.c                        |    2 +
+ arch/arm/mach-s3c2416/pm.c                         |   84 ++++++++++++++++++++
+ 5 files changed, 95 insertions(+), 1 deletions(-)
+ create mode 100644 arch/arm/mach-s3c2416/pm.c
+
+diff --git a/arch/arm/mach-s3c2410/include/mach/regs-s3c2443-clock.h b/arch/arm/mach-s3c2410/include/mach/regs-s3c2443-clock.h
+index 08ab9df..101aeea 100644
+--- a/arch/arm/mach-s3c2410/include/mach/regs-s3c2443-clock.h
++++ b/arch/arm/mach-s3c2410/include/mach/regs-s3c2443-clock.h
+@@ -118,6 +118,8 @@
+ #define S3C2443_SCLKCON_UARTCLK		(1<<8)
+ #define S3C2443_SCLKCON_USBHOST		(1<<1)
+ 
++#define S3C2443_PWRCFG_SLEEP		(1<<15)
++
+ #include <asm/div64.h>
+ 
+ static inline unsigned int
+diff --git a/arch/arm/mach-s3c2416/Kconfig b/arch/arm/mach-s3c2416/Kconfig
+index 657e4fe..87b9c9f 100644
+--- a/arch/arm/mach-s3c2416/Kconfig
++++ b/arch/arm/mach-s3c2416/Kconfig
+@@ -25,6 +25,11 @@ config S3C2416_DMA
+ 	help
+ 	  Internal config node for S3C2416 DMA support
+ 
++config S3C2416_PM
++	bool
++	help
++	  Internal config node to apply S3C2416 power management
++
+ menu "S3C2416 Machines"
+ 
+ config MACH_SMDK2416
+@@ -33,6 +38,7 @@ config MACH_SMDK2416
+ 	select S3C_DEV_FB
+ 	select S3C_DEV_HSMMC
+ 	select S3C_DEV_HSMMC1
++	select S3C2416_PM if PM
+ 	help
+ 	  Say Y here if you are using an SMDK2416
+ 
+diff --git a/arch/arm/mach-s3c2416/Makefile b/arch/arm/mach-s3c2416/Makefile
+index 6c12c7b..ef038d6 100644
+--- a/arch/arm/mach-s3c2416/Makefile
++++ b/arch/arm/mach-s3c2416/Makefile
+@@ -11,7 +11,7 @@ obj-				:=
+ 
+ obj-$(CONFIG_CPU_S3C2416)	+= s3c2416.o clock.o
+ obj-$(CONFIG_CPU_S3C2416)	+= irq.o
+-
++obj-$(CONFIG_S3C2416_PM)	+= pm.o
+ #obj-$(CONFIG_S3C2416_DMA)	+= dma.o
+ 
+ # Machine support
+diff --git a/arch/arm/mach-s3c2416/irq.c b/arch/arm/mach-s3c2416/irq.c
+index 89f521d..084d121 100644
+--- a/arch/arm/mach-s3c2416/irq.c
++++ b/arch/arm/mach-s3c2416/irq.c
+@@ -243,6 +243,8 @@ static int __init s3c2416_irq_add(struct sys_device *sysdev)
+ 
+ static struct sysdev_driver s3c2416_irq_driver = {
+ 	.add		= s3c2416_irq_add,
++	.suspend	= s3c24xx_irq_suspend,
++	.resume		= s3c24xx_irq_resume,
+ };
+ 
+ static int __init s3c2416_irq_init(void)
+diff --git a/arch/arm/mach-s3c2416/pm.c b/arch/arm/mach-s3c2416/pm.c
+new file mode 100644
+index 0000000..4d41f28
+--- /dev/null
++++ b/arch/arm/mach-s3c2416/pm.c
+@@ -0,0 +1,84 @@
++/* linux/arch/arm/mach-s3c2416/pm.c
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * S3C2416 - PM support (Based on Ben Dooks' S3C2412 PM support)
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/sysdev.h>
++#include <linux/io.h>
++
++#include <asm/cacheflush.h>
++
++#include <mach/regs-power.h>
++#include <mach/regs-s3c2443-clock.h>
++
++#include <plat/cpu.h>
++#include <plat/pm.h>
++
++extern void s3c2412_sleep_enter(void);
++
++static void s3c2416_cpu_suspend(void)
++{
++	flush_cache_all();
++
++	/* enable wakeup sources regardless of battery state */
++	__raw_writel(S3C2443_PWRCFG_SLEEP, S3C2443_PWRCFG);
++
++	/* set the mode as sleep, 2BED represents "Go to BED" */
++	__raw_writel(0x2BED, S3C2443_PWRMODE);
++
++	s3c2412_sleep_enter();
++}
++
++static void s3c2416_pm_prepare(void)
++{
++	/*
++	 * write the magic value u-boot uses to check for resume into
++	 * the INFORM0 register, and ensure INFORM1 is set to the
++	 * correct address to resume from.
++	 */
++	__raw_writel(0x2BED, S3C2412_INFORM0);
++	__raw_writel(virt_to_phys(s3c_cpu_resume), S3C2412_INFORM1);
++}
++
++static int s3c2416_pm_add(struct sys_device *sysdev)
++{
++	pm_cpu_prep = s3c2416_pm_prepare;
++	pm_cpu_sleep = s3c2416_cpu_suspend;
++
++	return 0;
++}
++
++static int s3c2416_pm_suspend(struct sys_device *dev, pm_message_t state)
++{
++	return 0;
++}
++
++static int s3c2416_pm_resume(struct sys_device *dev)
++{
++	/* unset the return-from-sleep amd inform flags */
++	__raw_writel(0x0, S3C2443_PWRMODE);
++	__raw_writel(0x0, S3C2412_INFORM0);
++	__raw_writel(0x0, S3C2412_INFORM1);
++
++	return 0;
++}
++
++static struct sysdev_driver s3c2416_pm_driver = {
++	.add		= s3c2416_pm_add,
++	.suspend	= s3c2416_pm_suspend,
++	.resume		= s3c2416_pm_resume,
++};
++
++static __init int s3c2416_pm_init(void)
++{
++	return sysdev_driver_register(&s3c2416_sysclass, &s3c2416_pm_driver);
++}
++
++arch_initcall(s3c2416_pm_init);
+-- 
+1.6.3.3
