@@ -1,213 +1,72 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH v2] ARM: s5pv210_defconfig: Update for removing
-	s5pc110_defconfig
-Date: Tue, 13 Jul 2010 11:41:13 +0900
-Message-ID: <AANLkTilAKmCrHm5pZU5s6oJkSGGZyYihsnPsG4Z1uKFw@mail.gmail.com>
-References: <1278987726-10803-1-git-send-email-kgene.kim@samsung.com>
+From: KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>
+Subject: Re: About SECTION_SIZE_BITS for Sparsemem
+Date: Tue, 13 Jul 2010 12:03:15 +0900
+Message-ID: <20100713120315.c6c418f4.kamezawa.hiroyu@jp.fujitsu.com>
+References: <000601cb219c$c7830b60$56892220$%kim@samsung.com>
+	<AANLkTinTrt7VKuKvleiJj4lv2tWqCcDYHVXAQIHLA7bh@mail.gmail.com>
+	<001b01cb21aa$ef0e4d80$cd2ae880$%kim@samsung.com>
+	<AANLkTinkujX3VbL0sXjjghovr8eX9Os0huw3OTBut2UP@mail.gmail.com>
+	<20100713092522.6d9939ac.kamezawa.hiroyu@jp.fujitsu.com>
+	<AANLkTimHNBUo30sp1azUcWQiDpADGyEW_N-dwU0nJy9u@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:60671 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752199Ab0GMClO convert rfc822-to-8bit (ORCPT
+Received: from fgwmail7.fujitsu.co.jp ([192.51.44.37]:47642 "EHLO
+	fgwmail7.fujitsu.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752126Ab0GMDH5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Jul 2010 22:41:14 -0400
-Received: by pwi5 with SMTP id 5so2085318pwi.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jul 2010 19:41:13 -0700 (PDT)
-In-Reply-To: <1278987726-10803-1-git-send-email-kgene.kim@samsung.com>
+	Mon, 12 Jul 2010 23:07:57 -0400
+Received: from m5.gw.fujitsu.co.jp ([10.0.50.75])
+	by fgwmail7.fujitsu.co.jp (Fujitsu Gateway) with ESMTP id o6D37tqN016284
+	for <linux-samsung-soc@vger.kernel.org> (envelope-from kamezawa.hiroyu@jp.fujitsu.com);
+	Tue, 13 Jul 2010 12:07:55 +0900
+Received: from smail (m5 [127.0.0.1])
+	by outgoing.m5.gw.fujitsu.co.jp (Postfix) with ESMTP id 19A5B45DE5A
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jul 2010 12:07:55 +0900 (JST)
+Received: from s5.gw.fujitsu.co.jp (s5.gw.fujitsu.co.jp [10.0.50.95])
+	by m5.gw.fujitsu.co.jp (Postfix) with ESMTP id EA55F45DE53
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jul 2010 12:07:54 +0900 (JST)
+Received: from s5.gw.fujitsu.co.jp (localhost.localdomain [127.0.0.1])
+	by s5.gw.fujitsu.co.jp (Postfix) with ESMTP id C86361DB805D
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jul 2010 12:07:54 +0900 (JST)
+Received: from m106.s.css.fujitsu.com (m106.s.css.fujitsu.com [10.249.87.106])
+	by s5.gw.fujitsu.co.jp (Postfix) with ESMTP id 80BA31DB8040
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jul 2010 12:07:54 +0900 (JST)
+In-Reply-To: <AANLkTimHNBUo30sp1azUcWQiDpADGyEW_N-dwU0nJy9u@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: Minchan Kim <minchan.kim@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Mel Gorman <mel@csn.ul.ie>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, ben-linux@fluff.org
 
-Question?
+On Tue, 13 Jul 2010 11:05:26 +0900
+Minchan Kim <minchan.kim@gmail.com> wrote:
 
-Are there difference between smdkc110 and smdkv210?
+> On Tue, Jul 13, 2010 at 9:25 AM, KAMEZAWA Hiroyuki
+> <kamezawa.hiroyu@jp.fujitsu.com> wrote:
 
-Thank you,
-Kyungmin Park
+> > For example, prepare a page filled with (1 << PG_reserved).
+> > and replace it with unnecessary memmap rather than freeing a page for memmap.
+> 
+> Hmm. I don't got your point.
+> The problem is that we access struct page by pfn number not address.
+> 
+> You mean let's remain memmap on hole with changing PageReseved instead of free?
+> 
+Like a ZERO_PAGE, preparing RESERVED_PAGE, 
+which is filled with (1 << PG_reserved) as
 
-On Tue, Jul 13, 2010 at 11:22 AM, Kukjin Kim <kgene.kim@samsung.com> wr=
-ote:
-> Now that S5PC110 machines and S5PV210 machines can be built into
-> one kernel, update mach-s5pv210/Kconfig and s5pv210_defconfig.
->
-> Tested on SMDKC110(S5PC110) and SMDKV210(S5PV210).
-> Note that GONI machine ID is not included in the kernel.
->
-> Created and tested against linux-2.6.35-rc5.
->
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
-> Changes since v1:
-> - This patch re-based against linux-2.6.35-rc5 which includes
-> =A0'ARM: reduce defconfigs' from Uwe Kleine-Konig.
->
-> =A0arch/arm/configs/s5pc110_defconfig | =A0 66 ----------------------=
---------------
-> =A0arch/arm/configs/s5pv210_defconfig | =A0 =A04 ++
-> =A0arch/arm/mach-s5pv210/Kconfig =A0 =A0 =A0| =A0 28 +++++++++------
-> =A03 files changed, 21 insertions(+), 77 deletions(-)
-> =A0delete mode 100644 arch/arm/configs/s5pc110_defconfig
->
-> diff --git a/arch/arm/configs/s5pc110_defconfig b/arch/arm/configs/s5=
-pc110_defconfig
-> deleted file mode 100644
-> index 22c2d14..0000000
-> --- a/arch/arm/configs/s5pc110_defconfig
-> +++ /dev/null
-> @@ -1,66 +0,0 @@
-> -CONFIG_EXPERIMENTAL=3Dy
-> -CONFIG_SYSFS_DEPRECATED_V2=3Dy
-> -CONFIG_BLK_DEV_INITRD=3Dy
-> -CONFIG_KALLSYMS_ALL=3Dy
-> -CONFIG_MODULES=3Dy
-> -CONFIG_MODULE_UNLOAD=3Dy
-> -# CONFIG_BLK_DEV_BSG is not set
-> -CONFIG_ARCH_S5PV210=3Dy
-> -CONFIG_S3C_LOWLEVEL_UART_PORT=3D1
-> -CONFIG_MACH_SMDKC110=3Dy
-> -CONFIG_VMSPLIT_2G=3Dy
-> -CONFIG_PREEMPT=3Dy
-> -CONFIG_AEABI=3Dy
-> -CONFIG_CMDLINE=3D"root=3D/dev/ram0 rw ramdisk=3D8192 initrd=3D0x2080=
-0000,8M console=3DttySAC1,115200 init=3D/linuxrc"
-> -CONFIG_VFP=3Dy
-> -CONFIG_NEON=3Dy
-> -CONFIG_UEVENT_HELPER_PATH=3D"/sbin/hotplug"
-> -CONFIG_BLK_DEV_LOOP=3Dy
-> -CONFIG_BLK_DEV_RAM=3Dy
-> -CONFIG_BLK_DEV_RAM_SIZE=3D8192
-> -# CONFIG_MISC_DEVICES is not set
-> -CONFIG_SCSI=3Dy
-> -CONFIG_BLK_DEV_SD=3Dy
-> -CONFIG_CHR_DEV_SG=3Dy
-> -CONFIG_INPUT_EVDEV=3Dy
-> -# CONFIG_INPUT_KEYBOARD is not set
-> -# CONFIG_INPUT_MOUSE is not set
-> -CONFIG_INPUT_TOUCHSCREEN=3Dy
-> -CONFIG_SERIAL_8250=3Dy
-> -CONFIG_SERIAL_SAMSUNG=3Dy
-> -CONFIG_SERIAL_SAMSUNG_CONSOLE=3Dy
-> -CONFIG_HW_RANDOM=3Dy
-> -# CONFIG_HWMON is not set
-> -# CONFIG_VGA_CONSOLE is not set
-> -# CONFIG_HID_SUPPORT is not set
-> -# CONFIG_USB_SUPPORT is not set
-> -CONFIG_EXT2_FS=3Dy
-> -CONFIG_INOTIFY=3Dy
-> -CONFIG_MSDOS_FS=3Dy
-> -CONFIG_VFAT_FS=3Dy
-> -CONFIG_TMPFS=3Dy
-> -CONFIG_TMPFS_POSIX_ACL=3Dy
-> -CONFIG_CRAMFS=3Dy
-> -CONFIG_ROMFS_FS=3Dy
-> -CONFIG_PARTITION_ADVANCED=3Dy
-> -CONFIG_BSD_DISKLABEL=3Dy
-> -CONFIG_SOLARIS_X86_PARTITION=3Dy
-> -CONFIG_NLS_CODEPAGE_437=3Dy
-> -CONFIG_NLS_ASCII=3Dy
-> -CONFIG_NLS_ISO8859_1=3Dy
-> -CONFIG_MAGIC_SYSRQ=3Dy
-> -CONFIG_DEBUG_KERNEL=3Dy
-> -# CONFIG_DEBUG_PREEMPT is not set
-> -CONFIG_DEBUG_RT_MUTEXES=3Dy
-> -CONFIG_DEBUG_SPINLOCK=3Dy
-> -CONFIG_DEBUG_MUTEXES=3Dy
-> -CONFIG_DEBUG_SPINLOCK_SLEEP=3Dy
-> -CONFIG_DEBUG_INFO=3Dy
-> -# CONFIG_RCU_CPU_STALL_DETECTOR is not set
-> -CONFIG_SYSCTL_SYSCALL_CHECK=3Dy
-> -CONFIG_DEBUG_USER=3Dy
-> -CONFIG_DEBUG_ERRORS=3Dy
-> -CONFIG_DEBUG_LL=3Dy
-> -CONFIG_EARLY_PRINTK=3Dy
-> -CONFIG_DEBUG_S3C_UART=3D1
-> -CONFIG_CRC_CCITT=3Dy
-> diff --git a/arch/arm/configs/s5pv210_defconfig b/arch/arm/configs/s5=
-pv210_defconfig
-> index 1753836..b2fbbff 100644
-> --- a/arch/arm/configs/s5pv210_defconfig
-> +++ b/arch/arm/configs/s5pv210_defconfig
-> @@ -7,6 +7,10 @@ CONFIG_MODULE_UNLOAD=3Dy
-> =A0# CONFIG_BLK_DEV_BSG is not set
-> =A0CONFIG_ARCH_S5PV210=3Dy
-> =A0CONFIG_S3C_LOWLEVEL_UART_PORT=3D1
-> +CONFIG_S3C_DEV_FB=3Dy
-> +CONFIG_S5PV210_SETUP_FB_24BPP=3Dy
-> +CONFIG_MACH_AQUILA=3Dy
-> +CONFIG_MACH_SMDKC110=3Dy
-> =A0CONFIG_MACH_SMDKV210=3Dy
-> =A0CONFIG_VMSPLIT_2G=3Dy
-> =A0CONFIG_PREEMPT=3Dy
-> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kc=
-onfig
-> index 7e2e1eb..e7b98bf 100644
-> --- a/arch/arm/mach-s5pv210/Kconfig
-> +++ b/arch/arm/mach-s5pv210/Kconfig
-> @@ -43,10 +43,10 @@ config S5PV210_SETUP_SDHCI_GPIO
-> =A0 =A0 =A0 =A0help
-> =A0 =A0 =A0 =A0 =A0Common setup code for SDHCI gpio.
->
-> -# machine support
-> +menu "S5PC110 Machines"
->
-> =A0config MACH_AQUILA
-> - =A0 =A0 =A0 bool "Samsung Aquila"
-> + =A0 =A0 =A0 bool "Aquila"
-> =A0 =A0 =A0 =A0select CPU_S5PV210
-> =A0 =A0 =A0 =A0select ARCH_SPARSEMEM_ENABLE
-> =A0 =A0 =A0 =A0select S5PV210_SETUP_FB_24BPP
-> @@ -64,11 +64,25 @@ config MACH_GONI
-> =A0 =A0 =A0 =A0 =A0Machine support for Samsung GONI board
-> =A0 =A0 =A0 =A0 =A0S5PC110(MCP) is one of package option of S5PV210
->
-> +config MACH_SMDKC110
-> + =A0 =A0 =A0 bool "SMDKC110"
-> + =A0 =A0 =A0 select CPU_S5PV210
-> + =A0 =A0 =A0 select ARCH_SPARSEMEM_ENABLE
-> + =A0 =A0 =A0 select S3C_DEV_WDT
-> + =A0 =A0 =A0 select HAVE_S3C2410_WATCHDOG
-> + =A0 =A0 =A0 help
-> + =A0 =A0 =A0 =A0 Machine support for Samsung SMDKC110
-> + =A0 =A0 =A0 =A0 S5PC110(MCP) is one of package option of S5PV210
-> +
-> +endmenu
-> +
-> =A0config S5PC110_DEV_ONENAND
-> =A0 =A0 =A0 =A0bool
-> =A0 =A0 =A0 =A0help
-> =A0 =A0 =A0 =A0 =A0Compile in platform device definition for OneNAND1=
- controller
->
-> +menu "S5PV210 Machines"
-> +
-> =A0config MACH_SMDKV210
-> =A0 =A0 =A0 =A0bool "SMDKV210"
-> =A0 =A0 =A0 =A0select CPU_S5PV210
-> @@ -80,14 +94,6 @@ config MACH_SMDKV210
-> =A0 =A0 =A0 =A0help
-> =A0 =A0 =A0 =A0 =A0Machine support for Samsung SMDKV210
->
-> -config MACH_SMDKC110
-> - =A0 =A0 =A0 bool "SMDKC110"
-> - =A0 =A0 =A0 select CPU_S5PV210
-> - =A0 =A0 =A0 select ARCH_SPARSEMEM_ENABLE
-> - =A0 =A0 =A0 select S3C_DEV_WDT
-> - =A0 =A0 =A0 select HAVE_S3C2410_WATCHDOG
-> - =A0 =A0 =A0 help
-> - =A0 =A0 =A0 =A0 Machine support for Samsung SMDKC110
-> - =A0 =A0 =A0 =A0 S5PC110(MCP) is one of package option of S5PV210
-> +endmenu
->
-> =A0endif
-> --
-> 1.6.2.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+  0x00000400,0x00000400,0x00000400,0x00000400
+  .....
+
+And map this pages to every hole. Then, you only waste a page to fill all holes
+because "struct page" is aligned to 4bytes.
+
+
+> I think it's not a good idea to add new flag. If
+> Kame. Could you review my RFC patch which makes pfn_valid check more
+> tightly on sparsemem?
+Sure.
+
+Thanks,
+-Kame
