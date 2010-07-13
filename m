@@ -1,86 +1,153 @@
-From: yiffie9819 <yiffie9819@gmail.com>
-Subject: Re: [PATCH v2] s3c-fb: Automatically calculate pixel clock when none
- is given
-Date: Tue, 13 Jul 2010 12:14:49 +0900
-Message-ID: <4C3BDA29.1030205@gmail.com>
-References: <4c3baddb.d37b0e0a.67e4.ffffcb55@mx.google.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v6] libata: pata_samsung: Add Samsung PATA controller driver
+Date: Tue, 13 Jul 2010 13:28:58 +0900
+Message-ID: <00e601cb2243$eca12c90$c5e385b0$%kim@samsung.com>
+References: <1278904780-20592-1-git-send-email-kgene.kim@samsung.com>
+ <4C3AE174.7090509@mvista.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=EUC-KR
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:15030 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752681Ab0GMDOv (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:10296 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750747Ab0GME24 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Jul 2010 23:14:51 -0400
-In-reply-to: <4c3baddb.d37b0e0a.67e4.ffffcb55@mx.google.com>
+	Tue, 13 Jul 2010 00:28:56 -0400
+In-reply-to: <4C3AE174.7090509@mvista.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, akpm@linux-foundation.org, ben-linux@fluff.org
+To: 'Sergei Shtylyov' <sshtylyov@mvista.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-ide@vger.kernel.org, ben-linux@fluff.org, jgarzik@redhat.com, 'Abhilash Kesavan' <a.kesavan@samsung.com>
 
- I tested this patch by using s5pv210.
-It is verified by linux-2.6.32.
-The result of test is the same pixel clock as before applying patch.
+Sergei Shtylyov wrote:
+> 
+> Hello.
 
-Tested-by: Donghwa Lee <yiffie9819@gmail.com>
+Hi ;-)
+> 
+> Kukjin Kim wrote:
+> 
+> > From: Abhilash Kesavan <a.kesavan@samsung.com>
+> 
+> > Adds support for the Samsung PATA controller. This driver is based on
+the
+> > Libata subsystem and references the earlier patches sent for IDE
+subsystem.
+> 
+> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > Cc: Ben Dooks <ben-linux@fluff.org>
+> 
+>     There's probably still a place for improvement... sorry that I dind't
+> notice before. Other than that:
+> 
+Ok..will address comments from you and re-submit.
+
+> Acked-by: Sergei Shtylyov <sshtylyov@mvista.com>
+> 
+Will be added above your ack in updated patch.
+If any problem, please let me know.
+
+> [...]
+> 
+> > diff --git a/drivers/ata/pata_samsung_cf.c
+b/drivers/ata/pata_samsung_cf.c
+> > new file mode 100644
+> > index 0000000..5718220
+> > --- /dev/null
+> > +++ b/drivers/ata/pata_samsung_cf.c
+> > @@ -0,0 +1,727 @@
+> [...]
+> > +/*
+> > + * pata_s3c_wait_after_reset - wait for devices to become ready after
+reset
+> > + */
+> > +static int pata_s3c_wait_after_reset(struct ata_link *link,
+> > +		unsigned int devmask, unsigned long deadline)
+> > +{
+> > +	struct ata_port *ap = link->ap;
+> > +	struct ata_ioports *ioaddr = &ap->ioaddr;
+> > +	unsigned int dev0 = devmask & (1 << 0);
+> > +	unsigned int dev1 = devmask & (1 << 1);
+> > +	int rc, ret = 0;
+> > +
+> > +	msleep(ATA_WAIT_AFTER_RESET);
+> > +
+> > +	/* always check readiness of the master device */
+> > +	rc = ata_sff_wait_ready(link, deadline);
+> > +	/* -ENODEV means the odd clown forgot the D7 pulldown resistor
+> > +	 * and TF status is 0xff, bail out on it too.
+> > +	 */
+> > +	if (rc)
+> > +		return rc;
+> > +
+> > +	/* if device 1 was found in ata_devchk, wait for register
+> > +	 * access briefly, then wait for BSY to clear.
+> > +	 */
+> 
+>     You don't call pata_s3c_devchk() for device 1, so in principle you can
+> drop the following block:
+> 
+> > +	if (dev1) {
+> > +		int i;
+> > +
+> > +		pata_s3c_dev_select(ap, 1);
+> > +
+> > +		/* Wait for register access.  Some ATAPI devices fail
+> > +		 * to set nsect/lbal after reset, so don't waste too
+> > +		 * much time on it.  We're gonna wait for !BSY anyway.
+> > +		 */
+> > +		for (i = 0; i < 2; i++) {
+> > +			u8 nsect, lbal;
+> > +
+> > +			nsect = ata_inb(ap->host, ioaddr->nsect_addr);
+> > +			lbal = ata_inb(ap->host, ioaddr->lbal_addr);
+> > +			if ((nsect == 1) && (lbal == 1))
+> > +				break;
+> > +			msleep(50);	/* give drive a breather */
+> > +		}
+> > +
+> > +		rc = ata_sff_wait_ready(link, deadline);
+> > +		if (rc) {
+> > +			if (rc != -ENODEV)
+> > +				return rc;
+> > +			ret = rc;
+> > +		}
+> > +	}
+> > +
+> > +	/* is all this really necessary? */
+> > +	pata_s3c_dev_select(ap, 0);
+> > +	if (dev1)
+> > +		pata_s3c_dev_select(ap, 1);
+> 
+>     This too...
+> 
+> > +	if (dev0)
+> > +		pata_s3c_dev_select(ap, 0);
+> > +
+> > +	return ret;
+> > +}
+> > +
+> [...]
+> > +static int pata_s3c_resume(struct device *dev)
+> > +{
+> > +	struct platform_device *pdev = to_platform_device(dev);
+> > +	struct ata_host *host = platform_get_drvdata(pdev);
+> > +	struct s3c_ide_platdata *pdata = pdev->dev.platform_data;
+> > +	struct s3c_ide_info *info;
+> > +
+> > +	info = host->private_data;
+> 
+>     Could be initializer...
+> 
+> MBR, Sergei
 
 
-2010/7/13 Maurus Cuelenaere <mcuelenaere@gmail.com>
-> This patch adds a simple algorithm which calculates the pixel clock based on the
-> video mode parameters. This is only done when no pixel clock is supplied through
-> the platform data.
->
-> Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
-> ---
->
-> Changes since v1:
-> Re-posted this to the correct fbdev mailing list.
->
-> ---
->  drivers/video/s3c-fb.c |   25 +++++++++++++++++++++++++
->  1 files changed, 25 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-> index 9682ecc..e4715eb 100644
-> --- a/drivers/video/s3c-fb.c
-> +++ b/drivers/video/s3c-fb.c
-> @@ -654,6 +654,28 @@ static struct fb_ops s3c_fb_ops = {
->  };
->  
->  /**
-> + * s3c_fb_missing_pixclock() - calculates pixel clock
-> + * @mode: The video mode to change.
-> + *
-> + * Calculate the pixel clock when none has been given through platform data.
-> + */
-> +static void __devinit s3c_fb_missing_pixclock(struct fb_videomode *mode)
-> +{
-> +	u64 pixclk = 1000000000000ULL;
-> +	u32 div;
-> +
-> +	div  = mode->left_margin + mode->hsync_len + mode->right_margin +
-> +	       mode->xres;
-> +	div *= mode->upper_margin + mode->vsync_len + mode->lower_margin +
-> +	       mode->yres;
-> +	div *= mode->refresh ? : 60;
-> +
-> +	do_div(pixclk, div);
-> +
-> +	mode->pixclock = pixclk;
-> +}
-> +
-> +/**
->   * s3c_fb_alloc_memory() - allocate display memory for framebuffer window
->   * @sfb: The base resources for the hardware.
->   * @win: The window to initialise memory for.
-> @@ -925,6 +947,9 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
->  		if (!pd->win[win])
->  			continue;
->  
-> +		if (!pd->win[win]->win_mode.pixclock)
-> +			s3c_fb_missing_pixclock(&pd->win[win]->win_mode);
-> +
->  		ret = s3c_fb_probe_win(sfb, win, &sfb->windows[win]);
->  		if (ret < 0) {
->  			dev_err(dev, "failed to create window %d\n", win);
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
