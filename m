@@ -1,478 +1,247 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 2/3] arm: s5pv210: Aquila: add support for MAX8998 PMIC
-Date: Wed, 14 Jul 2010 09:30:22 +0200
-Message-ID: <00be01cb2326$6e3a3930$4aaeab90$%szyprowski@samsung.com>
+From: Kyungmin Park <kyungmin.park@samsung.com>
+Subject: Re: [PATCH 1/3] arm: s5pv210: GONI: add support for framebuffer
+Date: Wed, 14 Jul 2010 16:39:19 +0900
+Message-ID: <AANLkTinFFwWBQ3ZgjBBDVHrfVUCg3kjVjkHYURn3Jr4m@mail.gmail.com>
 References: <1278321416-32524-1-git-send-email-m.szyprowski@samsung.com>
- <1278321416-32524-3-git-send-email-m.szyprowski@samsung.com>
- <006101cb2310$f9738ee0$ec5aaca0$%kim@samsung.com>
+	<1278321416-32524-2-git-send-email-m.szyprowski@samsung.com>
+	<006301cb2320$822639e0$8672ada0$%kim@samsung.com>
+	<00bf01cb2326$705e9fd0$511bdf70$%szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:11505 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750959Ab0GNHbn (ORCPT
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:34852 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751275Ab0GNHjU convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Jul 2010 03:31:43 -0400
-Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L5J00A1DE8S68B0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 Jul 2010 16:31:40 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L5J002DAE8OBS@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 Jul 2010 16:31:40 +0900 (KST)
-In-reply-to: <006101cb2310$f9738ee0$ec5aaca0$%kim@samsung.com>
-Content-language: pl
+	Wed, 14 Jul 2010 03:39:20 -0400
+Received: by pwi5 with SMTP id 5so2630590pwi.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Jul 2010 00:39:19 -0700 (PDT)
+In-Reply-To: <00bf01cb2326$705e9fd0$511bdf70$%szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Andrew Morton <akpm@linux-foundation.org>, Maurus Cuelenaere <mcuelenaere@gmail.com>
 
-Hello,
+On Wed, Jul 14, 2010 at 4:30 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Hello,
+>
+> On Wednesday, July 14, 2010 8:48 AM Kukjin Kim wrote:
+>
+>> Marek Szyprowski wrote:
+>> >
+>> > This patch adds required platform definitions to enable s3c-fb
+>> > driver on GONI board. One framebuffer window in 480x800x16bpp mode=
+ is
+>> > defined.
+>> >
+>> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> > ---
+>> > =A0arch/arm/mach-s5pv210/Kconfig =A0 =A0 | =A0 =A02 +
+>> > =A0arch/arm/mach-s5pv210/mach-goni.c | =A0 39
+>> > +++++++++++++++++++++++++++++++++++++
+>> > =A02 files changed, 41 insertions(+), 0 deletions(-)
+>> >
+>> > diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-
+>> s5pv210/Kconfig
+>> > index 5e88941..8ab4bb0 100644
+>> > --- a/arch/arm/mach-s5pv210/Kconfig
+>> > +++ b/arch/arm/mach-s5pv210/Kconfig
+>> > @@ -59,6 +59,8 @@ config MACH_GONI
+>> > =A0 =A0 bool "GONI"
+>> > =A0 =A0 select CPU_S5PV210
+>> > =A0 =A0 select ARCH_SPARSEMEM_ENABLE
+>> > + =A0 select S5PV210_SETUP_FB_24BPP
+>> > + =A0 select S3C_DEV_FB
+>> > =A0 =A0 select S5PC110_DEV_ONENAND
+>> > =A0 =A0 help
+>> > =A0 =A0 =A0 Machine support for Samsung GONI board
+>> > diff --git a/arch/arm/mach-s5pv210/mach-goni.c
+>> b/arch/arm/mach-s5pv210/mach-
+>> > goni.c
+>> > index 88c38e3..05b4a1a 100644
+>> > --- a/arch/arm/mach-s5pv210/mach-goni.c
+>> > +++ b/arch/arm/mach-s5pv210/mach-goni.c
+>> > @@ -12,6 +12,9 @@
+>> > =A0#include <linux/types.h>
+>> > =A0#include <linux/init.h>
+>> > =A0#include <linux/serial_core.h>
+>> > +#include <linux/fb.h>
+>> > +#include <linux/delay.h>
+>>
+>> need linux/delay.h in here?
+>>
+>> > +#include <linux/clk.h>
+>>
+>> same...need linux/clk.h?
+>>
+>> >
+>> > =A0#include <asm/mach/arch.h>
+>> > =A0#include <asm/mach/map.h>
+>> > @@ -20,11 +23,15 @@
+>> >
+>> > =A0#include <mach/map.h>
+>> > =A0#include <mach/regs-clock.h>
+>> > +#include <mach/regs-fb.h>
+>> > +#include <mach/gpio.h>
+>>
+>> linux/gpio.h
+>
+> Ok.
+>
+>> >
+>> > +#include <plat/gpio-cfg.h>
+>> > =A0#include <plat/regs-serial.h>
+>> > =A0#include <plat/s5pv210.h>
+>> > =A0#include <plat/devs.h>
+>> > =A0#include <plat/cpu.h>
+>> > +#include <plat/fb.h>
+>> >
+>> > =A0/* Following are default values for UCON, ULCON and UFCON UART =
+registers
+>> */
+>> > =A0#define S5PV210_UCON_DEFAULT =A0 =A0 =A0 (S3C2410_UCON_TXILEVEL=
+ | =A0 =A0 =A0 =A0\
+>> > @@ -73,7 +80,35 @@ static struct s3c2410_uartcfg goni_uartcfgs[]
+>> __initdata =3D {
+>> > =A0 =A0 },
+>> > =A0};
+>> >
+>> > +/* Frame Buffer */
+>>
+>> No need this comment because we know _fb_ means frame buffer...
+>
+> Comments in the source code are imho always welcome. As you know mach=
+-*.c files
+> grows to very large sizes and it is much easier to read them if all d=
+efinitions
+> and items are grouped and commented with a header on top of them (wit=
+h such
+> comments you easily can notice where one group starts and ends withou=
+t reading
+> the code).
+>
+>> > +static struct s3c_fb_pd_win goni_fb_win0 =3D {
+>>
+>> How about to use goni_fb_win[] array so that can be extended easily.=
+=2E.
+>
+> I've just followed the style used in the other mach-*.c files. No pro=
+blem to
+> change it.
+>
+>>
+>> > + =A0 .win_mode =3D {
+>> > + =A0 =A0 =A0 =A0 =A0 .pixclock =3D 1000000000000ULL /
+>> > ((16+16+2+480)*(28+3+2+800)*55),
 
-On Wednesday, July 14, 2010 6:57 AM Kukjin Kim wrote:
+Marugu(?) send the patch remove pixclock at fb mailing list. So If
+>> > + =A0 =A0 =A0 =A0 =A0 .left_margin =3D 16,
+>> > + =A0 =A0 =A0 =A0 =A0 .right_margin =3D 16,
+>> > + =A0 =A0 =A0 =A0 =A0 .upper_margin =3D 3,
+>> > + =A0 =A0 =A0 =A0 =A0 .lower_margin =3D 28,
+>> > + =A0 =A0 =A0 =A0 =A0 .hsync_len =3D 2,
+>> > + =A0 =A0 =A0 =A0 =A0 .vsync_len =3D 2,
+>> > + =A0 =A0 =A0 =A0 =A0 .xres =3D 480,
+>> > + =A0 =A0 =A0 =A0 =A0 .yres =3D 800,
+>> > + =A0 =A0 =A0 =A0 =A0 .refresh =3D 55,
+>> > + =A0 },
+>> > + =A0 .max_bpp =3D 32,
+>> > + =A0 .default_bpp =3D 16,
+>>
+>> If possible, please keep the align like below...for easily reading..=
+=2E
+>> But...it depends on your taste...:-)
+>
+> Ok, no problem with this.
+>
+>>
+>> + =A0 =A0 .win_mode =3D {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .pixclock =A0 =A0 =A0 =3D 1000000000000ULL=
+ /
+>> ((16+16+2+480)*(28+3+2+800)*55),
 
-> Marek Szyprowski wrote:
-> >
-> > This patch adds required platform definitions for MAX8998 PMIC driver.
-> Power
-> > regulators for LDO and BUCK outputs has been defined as well as a simple
-> > gpio-keys button for power key (to enable wakeup functionality with
-> > external interrupt).
-> >
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> >  arch/arm/mach-s5pv210/mach-aquila.c |  326
-> > +++++++++++++++++++++++++++++++++++
-> >  1 files changed, 326 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-s5pv210/mach-aquila.c
-> b/arch/arm/mach-s5pv210/mach-
-> > aquila.c
-> > index 44db0fc..ad0ee96 100644
-> > --- a/arch/arm/mach-s5pv210/mach-aquila.c
-> > +++ b/arch/arm/mach-s5pv210/mach-aquila.c
-> > @@ -13,6 +13,11 @@
-> >  #include <linux/init.h>
-> >  #include <linux/serial_core.h>
-> >  #include <linux/fb.h>
-> > +#include <linux/i2c.h>
-> > +#include <linux/i2c-gpio.h>
-> > +#include <linux/mfd/max8998.h>
-> > +#include <linux/gpio_keys.h>
-> > +#include <linux/input.h>
-> >
-> >  #include <asm/mach/arch.h>
-> >  #include <asm/mach/map.h>
-> > @@ -22,7 +27,9 @@
-> >  #include <mach/map.h>
-> >  #include <mach/regs-clock.h>
-> >  #include <mach/regs-fb.h>
-> > +#include <mach/gpio.h>
-> 
-> It's <linux/gpio.h>
+Maurus send the patch remove pixclock calculation so I hope his patch
+merge and we just remove it at here.
 
-Ok.
-
-> 
-> >
-> > +#include <plat/gpio-cfg.h>
-> >  #include <plat/regs-serial.h>
-> >  #include <plat/s5pv210.h>
-> >  #include <plat/devs.h>
-> > @@ -122,7 +129,321 @@ static struct s3c_fb_platdata aquila_lcd_pdata
-> __initdata
-> > = {
-> >  	.setup_gpio	= s5pv210_fb_gpio_setup_24bpp,
-> >  };
-> >
-> > +/* MAX8998 regulators */
-> > +#if defined(CONFIG_REGULATOR_MAX8998) || \
-> > +
-> > 	defined(CONFIG_REGULATOR_MAX8998_MODULE)
-> > +
-> > +static struct regulator_init_data aquila_ldo2_data = {
-> > +	.constraints	= {
-> > +		.name		= "VALIVE_1.1V",
-> > +		.min_uV		= 1100000,
-> > +		.max_uV		= 1100000,
-> > +		.apply_uV	= 1,
-> > +		.always_on	= 1,
-> > +		.state_mem	= {
-> > +			.enabled = 1,
-> > +		},
-> > +	},
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_ldo3_data = {
-> > +	.constraints	= {
-> > +		.name		= "VUSB/MIPI_1.1V",
-> > +		.min_uV		= 1100000,
-> > +		.max_uV		= 1100000,
-> > +		.apply_uV	= 1,
-> > +		.always_on	= 1,
-> > +	},
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_ldo4_data = {
-> > +	.constraints	= {
-> > +		.name		= "VDAC_3.3V",
-> > +		.min_uV		= 3300000,
-> > +		.max_uV		= 3300000,
-> > +		.apply_uV	= 1,
-> > +	},
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_ldo5_data = {
-> > +	.constraints	= {
-> > +		.name		= "VTF_2.8V",
-> > +		.min_uV		= 2800000,
-> > +		.max_uV		= 2800000,
-> > +		.apply_uV	= 1,
-> > +	},
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_ldo6_data = {
-> > +	.constraints	= {
-> > +		.name		= "VCC_3.3V",
-> > +		.min_uV		= 3300000,
-> > +		.max_uV		= 3300000,
-> > +		.apply_uV	= 1,
-> > +	},
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_ldo7_data = {
-> > +	.constraints	= {
-> > +		.name		= "VCC_3.0V",
-> > +		.min_uV		= 3000000,
-> > +		.max_uV		= 3000000,
-> > +		.apply_uV	= 1,
-> > +		.boot_on	= 1,
-> > +		.always_on	= 1,
-> > +	},
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_ldo8_data = {
-> > +	.constraints	= {
-> > +		.name		= "VUSB/VADC_3.3V",
-> > +		.min_uV		= 3300000,
-> > +		.max_uV		= 3300000,
-> > +		.apply_uV	= 1,
-> > +		.always_on	= 1,
-> > +	},
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_ldo9_data = {
-> > +	.constraints	= {
-> > +		.name		= "VCC/VCAM_2.8V",
-> > +		.min_uV		= 2800000,
-> > +		.max_uV		= 2800000,
-> > +		.apply_uV	= 1,
-> > +		.always_on	= 1,
-> > +	},
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_ldo10_data = {
-> > +	.constraints	= {
-> > +		.name		= "VPLL_1.1V",
-> > +		.min_uV		= 1100000,
-> > +		.max_uV		= 1100000,
-> > +		.apply_uV	= 1,
-> > +		.boot_on	= 1,
-> > +	},
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_ldo11_data = {
-> > +	.constraints	= {
-> > +		.name		= "CAM_IO_2.8V",
-> > +		.min_uV		= 2800000,
-> > +		.max_uV		= 2800000,
-> > +		.apply_uV	= 1,
-> > +		.always_on	= 1,
-> > +	},
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_ldo12_data = {
-> > +	.constraints	= {
-> > +		.name		= "CAM_ISP_1.2V",
-> > +		.min_uV		= 1200000,
-> > +		.max_uV		= 1200000,
-> > +		.apply_uV	= 1,
-> > +		.always_on	= 1,
-> > +	},
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_ldo13_data = {
-> > +	.constraints	= {
-> > +		.name		= "CAM_A_2.8V",
-> > +		.min_uV		= 2800000,
-> > +		.max_uV		= 2800000,
-> > +		.apply_uV	= 1,
-> > +		.always_on	= 1,
-> > +	},
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_ldo14_data = {
-> > +	.constraints	= {
-> > +		.name		= "CAM_CIF_1.8V",
-> > +		.min_uV		= 1800000,
-> > +		.max_uV		= 1800000,
-> > +		.apply_uV	= 1,
-> > +		.always_on	= 1,
-> > +	},
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_ldo15_data = {
-> > +	.constraints	= {
-> > +		.name		= "CAM_AF_3.3V",
-> > +		.min_uV		= 3300000,
-> > +		.max_uV		= 3300000,
-> > +		.apply_uV	= 1,
-> > +		.always_on	= 1,
-> > +	},
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_ldo16_data = {
-> > +	.constraints	= {
-> > +		.name		= "VMIPI_1.8V",
-> > +		.min_uV		= 1800000,
-> > +		.max_uV		= 1800000,
-> > +		.apply_uV	= 1,
-> > +		.always_on	= 1,
-> > +	},
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_ldo17_data = {
-> > +	.constraints	= {
-> > +		.name		= "CAM_8M_1.8V",
-> > +		.min_uV		= 1800000,
-> > +		.max_uV		= 1800000,
-> > +		.apply_uV	= 1,
-> > +		.always_on	= 1,
-> > +	},
-> > +};
-> > +
-> > +/* BUCK */
-> > +static struct regulator_consumer_supply buck1_consumer[] = {
-> > +	{	.supply	= "vddarm", },
-> > +};
-> > +
-> > +static struct regulator_consumer_supply buck2_consumer[] = {
-> > +	{	.supply	= "vddint", },
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_buck1_data = {
-> > +	.constraints	= {
-> > +		.name		= "VARM_1.2V",
-> > +		.min_uV		= 1200000,
-> > +		.max_uV		= 1200000,
-> > +		.apply_uV	= 1,
-> > +		.valid_ops_mask	= REGULATOR_CHANGE_VOLTAGE |
-> > +				  REGULATOR_CHANGE_STATUS,
-> > +	},
-> > +	.num_consumer_supplies	= ARRAY_SIZE(buck1_consumer),
-> > +	.consumer_supplies	= buck1_consumer,
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_buck2_data = {
-> > +	.constraints	= {
-> > +		.name		= "VINT_1.2V",
-> > +		.min_uV		= 1200000,
-> > +		.max_uV		= 1200000,
-> > +		.apply_uV	= 1,
-> > +		.valid_ops_mask	= REGULATOR_CHANGE_VOLTAGE |
-> > +				  REGULATOR_CHANGE_STATUS,
-> > +	},
-> > +	.num_consumer_supplies	= ARRAY_SIZE(buck2_consumer),
-> > +	.consumer_supplies	= buck2_consumer,
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_buck3_data = {
-> > +	.constraints	= {
-> > +		.name		= "VCC_1.8V",
-> > +		.min_uV		= 1800000,
-> > +		.max_uV		= 1800000,
-> > +		.apply_uV	= 1,
-> > +		.state_mem	= {
-> > +			.enabled = 1,
-> > +		},
-> > +	},
-> > +};
-> > +
-> > +static struct regulator_init_data aquila_buck4_data = {
-> > +	.constraints	= {
-> > +		.name		= "CAM_CORE_1.2V",
-> > +		.min_uV		= 1200000,
-> > +		.max_uV		= 1200000,
-> > +		.apply_uV	= 1,
-> > +		.always_on	= 1,
-> > +	},
-> > +};
-> > +
-> > +static struct max8998_regulator_data aquila_regulators[] = {
-> > +	{ MAX8998_LDO2,  &aquila_ldo2_data },
-> > +	{ MAX8998_LDO3,  &aquila_ldo3_data },
-> > +	{ MAX8998_LDO4,  &aquila_ldo4_data },
-> > +	{ MAX8998_LDO5,  &aquila_ldo5_data },
-> > +	{ MAX8998_LDO6,  &aquila_ldo6_data },
-> > +	{ MAX8998_LDO7,  &aquila_ldo7_data },
-> > +	{ MAX8998_LDO8,  &aquila_ldo8_data },
-> > +	{ MAX8998_LDO9,  &aquila_ldo9_data },
-> > +	{ MAX8998_LDO10, &aquila_ldo10_data },
-> > +	{ MAX8998_LDO11, &aquila_ldo11_data },
-> > +	{ MAX8998_LDO12, &aquila_ldo12_data },
-> > +	{ MAX8998_LDO13, &aquila_ldo13_data },
-> > +	{ MAX8998_LDO14, &aquila_ldo14_data },
-> > +	{ MAX8998_LDO15, &aquila_ldo15_data },
-> > +	{ MAX8998_LDO16, &aquila_ldo16_data },
-> > +	{ MAX8998_LDO17, &aquila_ldo17_data },
-> > +	{ MAX8998_BUCK1, &aquila_buck1_data },
-> > +	{ MAX8998_BUCK2, &aquila_buck2_data },
-> > +	{ MAX8998_BUCK3, &aquila_buck3_data },
-> > +	{ MAX8998_BUCK4, &aquila_buck4_data },
-> > +};
-> > +
-> > +static struct max8998_platform_data max8998_platform_data = {
-> 
-> How about 'static struct max8998_platform_data aquila_max8998_info' instead
-> of same max8998_platform_data?
-
-ok.
-
-> 
-> > +	.num_regulators		= ARRAY_SIZE(aquila_regulators),
-> > +	.regulators		= aquila_regulators,
-> > +};
-> > +#endif
-> > +
-> > +/* GPIO I2C PMIC */
-> > +#define AP_I2C_GPIO_PMIC_BUS_4	4
-> 
-> How about moving to head?...or...directly to use hard-coding with comment?
-
-I actually like the idea of grouping all items related to particular
-device/bus together. mach-*.c file usually grows to very large sizes.
-It is much easier to read them when items are grouped and commented as
-much as possible.
-
-> > +static struct i2c_gpio_platform_data aquila_i2c_gpio_pmic_data = {
-> > +	.sda_pin	= S5PV210_GPJ4(0),	/* XMSMCSN */
-> > +	.scl_pin	= S5PV210_GPJ4(3),	/* XMSMIRQN */
-> > +};
-> > +
-> > +static struct platform_device aquila_i2c_gpio_pmic = {
-> > +	.name		= "i2c-gpio",
-> > +	.id		= AP_I2C_GPIO_PMIC_BUS_4,
-> > +	.dev		= {
-> > +		.platform_data	= &aquila_i2c_gpio_pmic_data,
-> > +	},
-> > +};
-> > +
-> > +static struct i2c_board_info i2c_gpio_pmic_devs[] __initdata = {
-> > +#if defined(CONFIG_REGULATOR_MAX8998) ||
-> > defined(CONFIG_REGULATOR_MAX8998_MODULE)
-> 
-> How about to use same form(?)...like above..
-> In my opinion, this form is better even though exceed 80 chars...
-> But depends on private taste :-)
-
-I see no problem merging it to a single line if it better fits your taste.
-
-> > +	{
-> > +		/* 0xCC when SRAD = 0 */
-> > +		I2C_BOARD_INFO("max8998", 0xCC >> 1),
-> > +		.platform_data		= &max8998_platform_data,
-> > +	},
-> > +#endif
-> > +};
-> > +
-> > +/* PMIC Power button */
-> > +static struct gpio_keys_button aquila_gpio_keys_table[] = {
-> > +	{
-> > +		.code 		= KEY_POWER,
-> > +		.gpio		= S5PV210_GPH2(6),
-> > +		.desc		= "gpio-keys: KEY_POWER",
-> > +		.type		= EV_KEY,
-> > +		.active_low	= 1,
-> > +		.wakeup		= 1,
-> > +		.debounce_interval = 1,
-> > +	},
-> > +};
-> > +
-> > +static struct gpio_keys_platform_data aquila_gpio_keys_data = {
-> > +	.buttons        = aquila_gpio_keys_table,
->                ^^^^^^^^^
-> > +	.nbuttons       = ARRAY_SIZE(aquila_gpio_keys_table),
->                 ^^^^^^^^
-> 
-> To use tab is better at marking place.
-
-Ok.
-
-> 
-> > +};
-> > +
-> > +static struct platform_device aquila_device_gpiokeys = {
-> > +	.name      = "gpio-keys",
-> > +	.dev = {
-> > +		.platform_data = &aquila_gpio_keys_data,
-> > +	},
-> > +};
-> > +
-> > +static void __init aquila_pmic_init(void)
-> > +{
-> > +	/* AP_PMIC_IRQ: EINT7 */
-> > +	s3c_gpio_cfgpin(S5PV210_GPH0(7), S3C_GPIO_SFN(0xf));
-> 
-> Maybe need 'ARM: S5P: Support gpio interrupts' to this gpio external
-> interrupt...or...
-> Hmm...
-
-This patch is not required for PMIC.
-
-> > +	s3c_gpio_setpull(S5PV210_GPH0(7), S3C_GPIO_PULL_UP);
-> > +
-> > +	/* nPower: EINT22 */
-> > +	s3c_gpio_cfgpin(S5PV210_GPH2(6), S3C_GPIO_SFN(0xf));
-> > +	s3c_gpio_setpull(S5PV210_GPH2(6), S3C_GPIO_PULL_UP);
-> > +}
-> > +
-> >  static struct platform_device *aquila_devices[] __initdata = {
-> > +	&aquila_i2c_gpio_pmic,
-> > +	&aquila_device_gpiokeys,
-> >  	&s3c_device_fb,
-> >  	&s5pc110_device_onenand,
-> >  };
-> > @@ -136,6 +457,11 @@ static void __init aquila_map_io(void)
-> >
-> >  static void __init aquila_machine_init(void)
-> >  {
-> > +	/* PMIC */
-> > +	aquila_pmic_init();
-> > +	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4,
-> > i2c_gpio_pmic_devs,
-> > +			ARRAY_SIZE(i2c_gpio_pmic_devs));
-> > +
-> >  	/* FB */
-> >  	s3c_fb_set_platdata(&aquila_lcd_pdata);
-> >
-> > --
-> 
-> 
-> Thanks.
-> 
-> Best regards,
-> Kgene.
+Thank you,
+Kyungmin Park
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .left_margin =A0 =A0=3D 16,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .right_margin =A0 =3D 16,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .upper_margin =A0 =3D 3,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .lower_margin =A0 =3D 28,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .hsync_len =A0 =A0 =A0=3D 2,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .vsync_len =A0 =A0 =A0=3D 2,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .xres =A0 =A0 =A0 =A0 =A0 =3D 480,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .yres =A0 =A0 =A0 =A0 =A0 =3D 800,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .refresh =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=3D=
+ 55,
+>> + =A0 =A0 },
+>> + =A0 =A0 .max_bpp =A0 =A0 =A0 =A0=3D 32,
+>> + =A0 =A0 .default_bpp =A0 =A0=3D 16,
+>>
+>>
+>> > +};
+>> > +
+>> > +static struct s3c_fb_platdata goni_lcd_pdata __initdata =3D {
+>> > + =A0 .win[0] =3D &goni_fb_win0,
+>> > + =A0 .vidcon0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=3D VIDCON0_VIDOUT_R=
+GB |
+>> > VIDCON0_PNRMODE_RGB |
+>> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 VIDCON0_CLKSEL_LCD,
+>> > + =A0 .vidcon1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=3D VIDCON1_INV_VCLK=
+ | VIDCON1_INV_VDEN
+>> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | VIDCON1_IN=
+V_HSYNC |
+>> > VIDCON1_INV_VSYNC,
+>> > + =A0 .setup_gpio =A0 =A0 =A0 =A0 =A0 =A0 =3D s5pv210_fb_gpio_setu=
+p_24bpp,
+>> > +};
+>>
+>> Same...as previous comment.
+>>
+>> > +
+>> > =A0static struct platform_device *goni_devices[] __initdata =3D {
+>> > + =A0 &s3c_device_fb,
+>> > =A0 =A0 &s5pc110_device_onenand,
+>> > =A0};
+>> >
+>> > @@ -86,6 +121,10 @@ static void __init goni_map_io(void)
+>> >
+>> > =A0static void __init goni_machine_init(void)
+>> > =A0{
+>> > +
+>>
+>> no need above empty line.
+>>
+>> > + =A0 /* FB */
+>> > + =A0 s3c_fb_set_platdata(&goni_lcd_pdata);
+>> > +
+>> > =A0 =A0 platform_add_devices(goni_devices, ARRAY_SIZE(goni_devices=
+));
+>> > =A0}
+>> >
+>> > --
+>>
+>> Thanks.
+>>
+>> Best regards,
+>> Kgene.
+>> --
+>> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+>> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+> Best regards
 > --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-
-
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+> Marek Szyprowski
+> Samsung Poland R&D Center
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
