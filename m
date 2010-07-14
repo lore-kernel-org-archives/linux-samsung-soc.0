@@ -1,193 +1,219 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 Subject: RE: [PATCH 1/3] arm: s5pv210: GONI: add support for framebuffer
-Date: Wed, 14 Jul 2010 15:47:58 +0900
-Message-ID: <006301cb2320$822639e0$8672ada0$%kim@samsung.com>
+Date: Wed, 14 Jul 2010 09:30:29 +0200
+Message-ID: <00bf01cb2326$705e9fd0$511bdf70$%szyprowski@samsung.com>
 References: <1278321416-32524-1-git-send-email-m.szyprowski@samsung.com>
  <1278321416-32524-2-git-send-email-m.szyprowski@samsung.com>
+ <006301cb2320$822639e0$8672ada0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:10591 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751272Ab0GNGr4 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:11527 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751427Ab0GNHbp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Jul 2010 02:47:56 -0400
-Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Wed, 14 Jul 2010 03:31:45 -0400
+Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L5J00M6OC7U3AA0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 Jul 2010 15:47:54 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
+ with ESMTP id <0L5J008X9E8W2MB0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 Jul 2010 16:31:44 +0900 (KST)
+Received: from AMDC159 ([106.116.37.153])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L5J001Y5C7THR@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 Jul 2010 15:47:54 +0900 (KST)
-In-reply-to: <1278321416-32524-2-git-send-email-m.szyprowski@samsung.com>
-Content-language: ko
+ with ESMTPA id <0L5J002DAE8OBS@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 Jul 2010 16:31:44 +0900 (KST)
+In-reply-to: <006301cb2320$822639e0$8672ada0$%kim@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
 
-Marek Szyprowski wrote:
+Hello,
+
+On Wednesday, July 14, 2010 8:48 AM Kukjin Kim wrote:
+
+> Marek Szyprowski wrote:
+> >
+> > This patch adds required platform definitions to enable s3c-fb
+> > driver on GONI board. One framebuffer window in 480x800x16bpp mode is
+> > defined.
+> >
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
+> >  arch/arm/mach-s5pv210/Kconfig     |    2 +
+> >  arch/arm/mach-s5pv210/mach-goni.c |   39
+> > +++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 41 insertions(+), 0 deletions(-)
+> >
+> > diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-
+> s5pv210/Kconfig
+> > index 5e88941..8ab4bb0 100644
+> > --- a/arch/arm/mach-s5pv210/Kconfig
+> > +++ b/arch/arm/mach-s5pv210/Kconfig
+> > @@ -59,6 +59,8 @@ config MACH_GONI
+> >  	bool "GONI"
+> >  	select CPU_S5PV210
+> >  	select ARCH_SPARSEMEM_ENABLE
+> > +	select S5PV210_SETUP_FB_24BPP
+> > +	select S3C_DEV_FB
+> >  	select S5PC110_DEV_ONENAND
+> >  	help
+> >  	  Machine support for Samsung GONI board
+> > diff --git a/arch/arm/mach-s5pv210/mach-goni.c
+> b/arch/arm/mach-s5pv210/mach-
+> > goni.c
+> > index 88c38e3..05b4a1a 100644
+> > --- a/arch/arm/mach-s5pv210/mach-goni.c
+> > +++ b/arch/arm/mach-s5pv210/mach-goni.c
+> > @@ -12,6 +12,9 @@
+> >  #include <linux/types.h>
+> >  #include <linux/init.h>
+> >  #include <linux/serial_core.h>
+> > +#include <linux/fb.h>
+> > +#include <linux/delay.h>
 > 
-> This patch adds required platform definitions to enable s3c-fb
-> driver on GONI board. One framebuffer window in 480x800x16bpp mode is
-> defined.
+> need linux/delay.h in here?
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/mach-s5pv210/Kconfig     |    2 +
->  arch/arm/mach-s5pv210/mach-goni.c |   39
-> +++++++++++++++++++++++++++++++++++++
->  2 files changed, 41 insertions(+), 0 deletions(-)
+> > +#include <linux/clk.h>
 > 
-> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-> index 5e88941..8ab4bb0 100644
-> --- a/arch/arm/mach-s5pv210/Kconfig
-> +++ b/arch/arm/mach-s5pv210/Kconfig
-> @@ -59,6 +59,8 @@ config MACH_GONI
->  	bool "GONI"
->  	select CPU_S5PV210
->  	select ARCH_SPARSEMEM_ENABLE
-> +	select S5PV210_SETUP_FB_24BPP
-> +	select S3C_DEV_FB
->  	select S5PC110_DEV_ONENAND
->  	help
->  	  Machine support for Samsung GONI board
-> diff --git a/arch/arm/mach-s5pv210/mach-goni.c
-b/arch/arm/mach-s5pv210/mach-
-> goni.c
-> index 88c38e3..05b4a1a 100644
-> --- a/arch/arm/mach-s5pv210/mach-goni.c
-> +++ b/arch/arm/mach-s5pv210/mach-goni.c
-> @@ -12,6 +12,9 @@
->  #include <linux/types.h>
->  #include <linux/init.h>
->  #include <linux/serial_core.h>
-> +#include <linux/fb.h>
-> +#include <linux/delay.h>
-
-need linux/delay.h in here?
-
-> +#include <linux/clk.h>
-
-same...need linux/clk.h?
-
+> same...need linux/clk.h?
 > 
->  #include <asm/mach/arch.h>
->  #include <asm/mach/map.h>
-> @@ -20,11 +23,15 @@
+> >
+> >  #include <asm/mach/arch.h>
+> >  #include <asm/mach/map.h>
+> > @@ -20,11 +23,15 @@
+> >
+> >  #include <mach/map.h>
+> >  #include <mach/regs-clock.h>
+> > +#include <mach/regs-fb.h>
+> > +#include <mach/gpio.h>
 > 
->  #include <mach/map.h>
->  #include <mach/regs-clock.h>
-> +#include <mach/regs-fb.h>
-> +#include <mach/gpio.h>
+> linux/gpio.h
 
-linux/gpio.h
+Ok.
+
+> >
+> > +#include <plat/gpio-cfg.h>
+> >  #include <plat/regs-serial.h>
+> >  #include <plat/s5pv210.h>
+> >  #include <plat/devs.h>
+> >  #include <plat/cpu.h>
+> > +#include <plat/fb.h>
+> >
+> >  /* Following are default values for UCON, ULCON and UFCON UART registers
+> */
+> >  #define S5PV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+> > @@ -73,7 +80,35 @@ static struct s3c2410_uartcfg goni_uartcfgs[]
+> __initdata = {
+> >  	},
+> >  };
+> >
+> > +/* Frame Buffer */
+> 
+> No need this comment because we know _fb_ means frame buffer...
+
+Comments in the source code are imho always welcome. As you know mach-*.c files
+grows to very large sizes and it is much easier to read them if all definitions
+and items are grouped and commented with a header on top of them (with such
+comments you easily can notice where one group starts and ends without reading
+the code).
+
+> > +static struct s3c_fb_pd_win goni_fb_win0 = {
+> 
+> How about to use goni_fb_win[] array so that can be extended easily...
+
+I've just followed the style used in the other mach-*.c files. No problem to
+change it.
 
 > 
-> +#include <plat/gpio-cfg.h>
->  #include <plat/regs-serial.h>
->  #include <plat/s5pv210.h>
->  #include <plat/devs.h>
->  #include <plat/cpu.h>
-> +#include <plat/fb.h>
+> > +	.win_mode = {
+> > +		.pixclock = 1000000000000ULL /
+> > ((16+16+2+480)*(28+3+2+800)*55),
+> > +		.left_margin = 16,
+> > +		.right_margin = 16,
+> > +		.upper_margin = 3,
+> > +		.lower_margin = 28,
+> > +		.hsync_len = 2,
+> > +		.vsync_len = 2,
+> > +		.xres = 480,
+> > +		.yres = 800,
+> > +		.refresh = 55,
+> > +	},
+> > +	.max_bpp = 32,
+> > +	.default_bpp = 16,
 > 
->  /* Following are default values for UCON, ULCON and UFCON UART registers
-*/
->  #define S5PV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-> @@ -73,7 +80,35 @@ static struct s3c2410_uartcfg goni_uartcfgs[]
-__initdata = {
->  	},
->  };
+> If possible, please keep the align like below...for easily reading...
+> But...it depends on your taste...:-)
+
+Ok, no problem with this.
+
 > 
-> +/* Frame Buffer */
-
-No need this comment because we know _fb_ means frame buffer...
-
-> +static struct s3c_fb_pd_win goni_fb_win0 = {
-
-How about to use goni_fb_win[] array so that can be extended easily...
-
 > +	.win_mode = {
-> +		.pixclock = 1000000000000ULL /
+> +		.pixclock	= 1000000000000ULL /
 > ((16+16+2+480)*(28+3+2+800)*55),
-> +		.left_margin = 16,
-> +		.right_margin = 16,
-> +		.upper_margin = 3,
-> +		.lower_margin = 28,
-> +		.hsync_len = 2,
-> +		.vsync_len = 2,
-> +		.xres = 480,
-> +		.yres = 800,
-> +		.refresh = 55,
+> +		.left_margin	= 16,
+> +		.right_margin	= 16,
+> +		.upper_margin	= 3,
+> +		.lower_margin	= 28,
+> +		.hsync_len	= 2,
+> +		.vsync_len	= 2,
+> +		.xres		= 480,
+> +		.yres		= 800,
+> +		.refresh		= 55,
 > +	},
-> +	.max_bpp = 32,
-> +	.default_bpp = 16,
-
-If possible, please keep the align like below...for easily reading...
-But...it depends on your taste...:-)
-
-+	.win_mode = {
-+		.pixclock	= 1000000000000ULL /
-((16+16+2+480)*(28+3+2+800)*55),
-+		.left_margin	= 16,
-+		.right_margin	= 16,
-+		.upper_margin	= 3,
-+		.lower_margin	= 28,
-+		.hsync_len	= 2,
-+		.vsync_len	= 2,
-+		.xres		= 480,
-+		.yres		= 800,
-+		.refresh		= 55,
-+	},
-+	.max_bpp	= 32,
-+	.default_bpp	= 16,
-
-
-> +};
-> +
-> +static struct s3c_fb_platdata goni_lcd_pdata __initdata = {
-> +	.win[0]	= &goni_fb_win0,
-> +	.vidcon0		= VIDCON0_VIDOUT_RGB |
-> VIDCON0_PNRMODE_RGB |
-> +					VIDCON0_CLKSEL_LCD,
-> +	.vidcon1		= VIDCON1_INV_VCLK | VIDCON1_INV_VDEN
-> +				| VIDCON1_INV_HSYNC |
-> VIDCON1_INV_VSYNC,
-> +	.setup_gpio		= s5pv210_fb_gpio_setup_24bpp,
-> +};
-
-Same...as previous comment.
-
-> +
->  static struct platform_device *goni_devices[] __initdata = {
-> +	&s3c_device_fb,
->  	&s5pc110_device_onenand,
->  };
+> +	.max_bpp	= 32,
+> +	.default_bpp	= 16,
 > 
-> @@ -86,6 +121,10 @@ static void __init goni_map_io(void)
 > 
->  static void __init goni_machine_init(void)
->  {
-> +
-
-no need above empty line.
-
-> +	/* FB */
-> +	s3c_fb_set_platdata(&goni_lcd_pdata);
-> +
->  	platform_add_devices(goni_devices, ARRAY_SIZE(goni_devices));
->  }
+> > +};
+> > +
+> > +static struct s3c_fb_platdata goni_lcd_pdata __initdata = {
+> > +	.win[0]	= &goni_fb_win0,
+> > +	.vidcon0		= VIDCON0_VIDOUT_RGB |
+> > VIDCON0_PNRMODE_RGB |
+> > +					VIDCON0_CLKSEL_LCD,
+> > +	.vidcon1		= VIDCON1_INV_VCLK | VIDCON1_INV_VDEN
+> > +				| VIDCON1_INV_HSYNC |
+> > VIDCON1_INV_VSYNC,
+> > +	.setup_gpio		= s5pv210_fb_gpio_setup_24bpp,
+> > +};
 > 
+> Same...as previous comment.
+> 
+> > +
+> >  static struct platform_device *goni_devices[] __initdata = {
+> > +	&s3c_device_fb,
+> >  	&s5pc110_device_onenand,
+> >  };
+> >
+> > @@ -86,6 +121,10 @@ static void __init goni_map_io(void)
+> >
+> >  static void __init goni_machine_init(void)
+> >  {
+> > +
+> 
+> no need above empty line.
+> 
+> > +	/* FB */
+> > +	s3c_fb_set_platdata(&goni_lcd_pdata);
+> > +
+> >  	platform_add_devices(goni_devices, ARRAY_SIZE(goni_devices));
+> >  }
+> >
+> > --
+> 
+> Thanks.
+> 
+> Best regards,
+> Kgene.
 > --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-Thanks.
-
-Best regards,
-Kgene.
+Best regards
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Marek Szyprowski
+Samsung Poland R&D Center
