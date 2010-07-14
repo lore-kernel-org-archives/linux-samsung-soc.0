@@ -1,73 +1,51 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: s3c-hsotg patches
-Date: Wed, 14 Jul 2010 11:39:50 +0200
-Message-ID: <00c401cb2338$84a3f730$8debe590$%szyprowski@samsung.com>
-References: <1278460943-16224-1-git-send-email-ben-linux@fluff.org>
- <20100707151246.GA2121@kroah.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 2/3] ARM: S5PV210: Aquila: add support for MAX8998 PMIC
+Date: Wed, 14 Jul 2010 18:42:26 +0900
+Message-ID: <001001cb2338$de209890$9a61c9b0$%kim@samsung.com>
+References: <1279095416-24871-1-git-send-email-m.szyprowski@samsung.com>
+ <1279095416-24871-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:63285 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:63723 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752895Ab0GNJlL (ORCPT
+	with ESMTP id S1753512Ab0GNJmR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Jul 2010 05:41:11 -0400
-In-reply-to: <20100707151246.GA2121@kroah.com>
-Content-language: pl
+	Wed, 14 Jul 2010 05:42:17 -0400
+Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L5J00JNMKAGB800@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 Jul 2010 18:42:16 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L5J00792KAG9L@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 Jul 2010 18:42:16 +0900 (KST)
+In-reply-to: <1279095416-24871-3-git-send-email-m.szyprowski@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Greg KH' <greg@kroah.com>, 'Ben Dooks' <ben-linux@fluff.org>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
 
-Hello,
-
-On Wednesday, July 07, 2010 5:13 PM Greg KH wrote:
-
-> On Wed, Jul 07, 2010 at 01:02:12AM +0100, Ben Dooks wrote:
-> > Re-send of previous set, with corrected patches.
+Marek Szyprowski wrote:
 > 
-> Hm, what tree are these going through?  Do you need me to take them
-> through the linux-usb tree?  Or are they going through a
-> platform-specific one somewhere?
+> This patch adds required platform definitions for MAX8998 PMIC driver.
+Power
+> regulators for LDO and BUCK outputs has been defined as well as a simple
+> gpio-keys button for power key (to enable wakeup functionality with
+> external interrupt).
 > 
-> confused,
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+Ok..will apply :-)
 
-Looks that Ben is busy and has no time to answer...
+Thanks.
 
-I'm interested in merging these patches too. These patches were
-intended to be merged to 2.6.35-rc5. They are available on 
-git://git.fluff.org/bjdooks/linux for-2635-rc5/hsotg branch.
-
-IMHO these patches should go though the linux-usb tree - they
-don't touch any platform specific code, and register definitions 
-(arch/arm/plat-samsung/include/plat/regs-usb-hsotg.h) in fact belongs
-to the driver rather than the platform. s3c-hsotg driver belongs to
-the linux-usb tree.
-
-Here is original message for that patch series - see
-http://kerneltrap.org/mailarchive/linux-usb/2010/6/11/6261985
-
--->8---
-Some further fixes for the s3c-hsotg block, as well as a repost of
-the missed USB phy clock setting patch which either got missed or
-passed over from last time.
-
-As a note, this series has a patch adding support for dedicated FIFO
-mode, this is in my view a fix, as when the hsotg block is compiled
-with dedicated fifos then each USB IN non-periodic pipe needs to be
-alloacted a unique TX FIFO. We have no actual data on how well the
-block performs when all IN TX NP FIFOs are all set to the same one,
-but it really should be fixed.
-
-I am not sure if I have been subscribed to linux-usb, please CC: me
-just in case.
-
+Best regards,
+Kgene.
 --
-Ben
---->8---
-
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
