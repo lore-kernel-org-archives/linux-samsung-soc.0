@@ -1,55 +1,70 @@
-From: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-Subject: Re: s3c-hsotg patches
-Date: Wed, 14 Jul 2010 08:10:26 -0700
-Message-ID: <20100714151026.GD24104@kroah.com>
-References: <1278460943-16224-1-git-send-email-ben-linux@fluff.org> <20100707151246.GA2121@kroah.com> <00c401cb2338$84a3f730$8debe590$%szyprowski@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: About SECTION_SIZE_BITS for Sparsemem
+Date: Wed, 14 Jul 2010 21:49:52 +0100
+Message-ID: <20100714204952.GD18138@n2100.arm.linux.org.uk>
+References: <001b01cb21aa$ef0e4d80$cd2ae880$%kim@samsung.com> <AANLkTinkujX3VbL0sXjjghovr8eX9Os0huw3OTBut2UP@mail.gmail.com> <20100713092658.GB29885@csn.ul.ie> <20100713093815.GD20590@n2100.arm.linux.org.uk> <20100713095035.GE29885@csn.ul.ie> <20100713173744.GB30142@n2100.arm.linux.org.uk> <20100713203250.GA21600@csn.ul.ie> <AANLkTim55BDz4_vWhTnDVj1EP42MxAMZzP2PR80j5fLN@mail.gmail.com> <20100714084943.GA9115@n2100.arm.linux.org.uk> <AANLkTilrLJb97NkK4Q-Oan_ufXRdafIw7n6060mItaXj@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:40206 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757473Ab0GNUuo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 Jul 2010 16:50:44 -0400
 Content-Disposition: inline
-In-Reply-To: <00c401cb2338$84a3f730$8debe590$%szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: 'Ben Dooks' <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+In-Reply-To: <AANLkTilrLJb97NkK4Q-Oan_ufXRdafIw7n6060mItaXj@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Minchan Kim <minchan.kim@gmail.com>
+Cc: Mel Gorman <mel@csn.ul.ie>, Kukjin Kim <kgene.kim@samsung.com>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On Wed, Jul 14, 2010 at 11:39:50AM +0200, Marek Szyprowski wrote:
-> Hello,
+On Wed, Jul 14, 2010 at 08:04:07PM +0900, Minchan Kim wrote:
+> On Wed, Jul 14, 2010 at 5:49 PM, Russell King - ARM Linux
+> <linux@arm.linux.org.uk> wrote:
+> > On Wed, Jul 14, 2010 at 08:59:06AM +0900, Minchan Kim wrote:
+> >> But I think Kukjin case's best solution is to make section size 16M, not 256M.
+> >> Regardless of this, Your idea is the direction we should proceed, I think.
+> >
+> > So what if someone decides to fit 8MB DRAMs to the board?
+> >
 > 
-> On Wednesday, July 07, 2010 5:13 PM Greg KH wrote:
+> Hmm. It might be a problem.
+> Should we consider all configuration?
 > 
-> > On Wed, Jul 07, 2010 at 01:02:12AM +0100, Ben Dooks wrote:
-> > > Re-send of previous set, with corrected patches.
-> > 
-> > Hm, what tree are these going through?  Do you need me to take them
-> > through the linux-usb tree?  Or are they going through a
-> > platform-specific one somewhere?
-> > 
-> > confused,
-> 
-> Looks that Ben is busy and has no time to answer...
+> Then, in below cases ram size never can change?
+> How does it acked and merged?
+> I don't know below board can't configurable ram size. Just out of curiosity.
 
-Then we all should be too busy to apply them :)
+All of these, SECTION_SIZE_BITS refers to the _spacing_ of memory, not
+the minimum size of DRAM which can ever be fitted.
 
-Seriously, if a simple question like this is ignored, what happens if a
-real problem is reported?
+Reducing SECTION_SIZE_BITS is really not an option for some of these
+platforms - just look at where memory starts in physical space:
 
-> I'm interested in merging these patches too. These patches were
-> intended to be merged to 2.6.35-rc5. They are available on 
-> git://git.fluff.org/bjdooks/linux for-2635-rc5/hsotg branch.
-> 
-> IMHO these patches should go though the linux-usb tree - they
-> don't touch any platform specific code, and register definitions 
-> (arch/arm/plat-samsung/include/plat/regs-usb-hsotg.h) in fact belongs
-> to the driver rather than the platform. s3c-hsotg driver belongs to
-> the linux-usb tree.
+arch/arm/mach-clps711x/include/mach/memory.h:#define PHYS_OFFSET UL(0xc0000000)
+arch/arm/mach-clps711x/include/mach/memory.h:#define SECTION_SIZE_BITS  24
+arch/arm/mach-lh7a40x/include/mach/memory.h:#define PHYS_OFFSET UL(0xc0000000)
+arch/arm/mach-lh7a40x/include/mach/memory.h:#define SECTION_SIZE_BITS   24
+arch/arm/mach-realview/include/mach/memory.h:#define PHYS_OFFSET UL(0x70000000)
+arch/arm/mach-realview/include/mach/memory.h:#define SECTION_SIZE_BITS  28
+arch/arm/mach-realview/include/mach/memory.h:#define PHYS_OFFSET UL(0x00000000)
+arch/arm/mach-rpc/include/mach/memory.h:#define PHYS_OFFSET UL(0x10000000)
+arch/arm/mach-rpc/include/mach/memory.h:#define SECTION_SIZE_BITS       26
+arch/arm/mach-s5pv210/include/mach/memory.h:#define PHYS_OFFSET UL(0x20000000)
+arch/arm/mach-s5pv210/include/mach/memory.h:#define SECTION_SIZE_BITS   28
+arch/arm/mach-sa1100/include/mach/memory.h:#define PHYS_OFFSET UL(0xc0000000)
+arch/arm/mach-sa1100/include/mach/memory.h:#define SECTION_SIZE_BITS    27
 
-Ok, I can take them all, care to resend them through email?
+If physical memory starts at 3GB, with SECTION_SIZE_BITS set at 24,
+there's 256 sections already.  Reducing SECTION_SIZE_BITS to the multiple
+of RAM size will increase the number of sections to many thousands.
+Clearly, sparsemem doesn't handle sparse memory very well, and is
+defficient.
 
-thanks,
+I don't know what the answer is to this; I'm totally fed up with being
+pushed into using things, and then later down the line being told that
+its all wrong and shouldn't be used like we are.  Maybe we should just
+delete these sub-architectures which use sparsemem and say to people
+that the kernel just doesn't support their memory layouts.
 
-greg k-h
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+<depressed>.
