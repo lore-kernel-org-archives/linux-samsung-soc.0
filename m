@@ -1,70 +1,148 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: About SECTION_SIZE_BITS for Sparsemem
-Date: Wed, 14 Jul 2010 21:49:52 +0100
-Message-ID: <20100714204952.GD18138@n2100.arm.linux.org.uk>
-References: <001b01cb21aa$ef0e4d80$cd2ae880$%kim@samsung.com> <AANLkTinkujX3VbL0sXjjghovr8eX9Os0huw3OTBut2UP@mail.gmail.com> <20100713092658.GB29885@csn.ul.ie> <20100713093815.GD20590@n2100.arm.linux.org.uk> <20100713095035.GE29885@csn.ul.ie> <20100713173744.GB30142@n2100.arm.linux.org.uk> <20100713203250.GA21600@csn.ul.ie> <AANLkTim55BDz4_vWhTnDVj1EP42MxAMZzP2PR80j5fLN@mail.gmail.com> <20100714084943.GA9115@n2100.arm.linux.org.uk> <AANLkTilrLJb97NkK4Q-Oan_ufXRdafIw7n6060mItaXj@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: [PATCH v2] ARM: S5P: Add PMU device
+Date: Thu, 15 Jul 2010 10:31:34 +0900
+Message-ID: <1279157494-22329-1-git-send-email-jy0922.shim@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:40206 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757473Ab0GNUuo (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:14800 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758067Ab0GOBcJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Jul 2010 16:50:44 -0400
-Content-Disposition: inline
-In-Reply-To: <AANLkTilrLJb97NkK4Q-Oan_ufXRdafIw7n6060mItaXj@mail.gmail.com>
+	Wed, 14 Jul 2010 21:32:09 -0400
+Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L5K00AKAS894A90@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 15 Jul 2010 10:31:21 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L5K00BWXS88RN@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 15 Jul 2010 10:31:20 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Minchan Kim <minchan.kim@gmail.com>
-Cc: Mel Gorman <mel@csn.ul.ie>, Kukjin Kim <kgene.kim@samsung.com>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org
 
-On Wed, Jul 14, 2010 at 08:04:07PM +0900, Minchan Kim wrote:
-> On Wed, Jul 14, 2010 at 5:49 PM, Russell King - ARM Linux
-> <linux@arm.linux.org.uk> wrote:
-> > On Wed, Jul 14, 2010 at 08:59:06AM +0900, Minchan Kim wrote:
-> >> But I think Kukjin case's best solution is to make section size 16M, not 256M.
-> >> Regardless of this, Your idea is the direction we should proceed, I think.
-> >
-> > So what if someone decides to fit 8MB DRAMs to the board?
-> >
-> 
-> Hmm. It might be a problem.
-> Should we consider all configuration?
-> 
-> Then, in below cases ram size never can change?
-> How does it acked and merged?
-> I don't know below board can't configurable ram size. Just out of curiosity.
+This patch adds an initcall for the s5p platforms so that they register
+their PMU IRQs with the PMU framework in the Kernel.
 
-All of these, SECTION_SIZE_BITS refers to the _spacing_ of memory, not
-the minimum size of DRAM which can ever be fitted.
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-s5p6440/include/mach/irqs.h |    2 +-
+ arch/arm/mach-s5p6442/include/mach/irqs.h |    2 +-
+ arch/arm/mach-s5pc100/include/mach/irqs.h |    2 +-
+ arch/arm/mach-s5pv210/include/mach/irqs.h |    2 +-
+ arch/arm/plat-s5p/Makefile                |    1 +
+ arch/arm/plat-s5p/dev-pmu.c               |   36 +++++++++++++++++++++++++++++
+ 6 files changed, 41 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm/plat-s5p/dev-pmu.c
 
-Reducing SECTION_SIZE_BITS is really not an option for some of these
-platforms - just look at where memory starts in physical space:
-
-arch/arm/mach-clps711x/include/mach/memory.h:#define PHYS_OFFSET UL(0xc0000000)
-arch/arm/mach-clps711x/include/mach/memory.h:#define SECTION_SIZE_BITS  24
-arch/arm/mach-lh7a40x/include/mach/memory.h:#define PHYS_OFFSET UL(0xc0000000)
-arch/arm/mach-lh7a40x/include/mach/memory.h:#define SECTION_SIZE_BITS   24
-arch/arm/mach-realview/include/mach/memory.h:#define PHYS_OFFSET UL(0x70000000)
-arch/arm/mach-realview/include/mach/memory.h:#define SECTION_SIZE_BITS  28
-arch/arm/mach-realview/include/mach/memory.h:#define PHYS_OFFSET UL(0x00000000)
-arch/arm/mach-rpc/include/mach/memory.h:#define PHYS_OFFSET UL(0x10000000)
-arch/arm/mach-rpc/include/mach/memory.h:#define SECTION_SIZE_BITS       26
-arch/arm/mach-s5pv210/include/mach/memory.h:#define PHYS_OFFSET UL(0x20000000)
-arch/arm/mach-s5pv210/include/mach/memory.h:#define SECTION_SIZE_BITS   28
-arch/arm/mach-sa1100/include/mach/memory.h:#define PHYS_OFFSET UL(0xc0000000)
-arch/arm/mach-sa1100/include/mach/memory.h:#define SECTION_SIZE_BITS    27
-
-If physical memory starts at 3GB, with SECTION_SIZE_BITS set at 24,
-there's 256 sections already.  Reducing SECTION_SIZE_BITS to the multiple
-of RAM size will increase the number of sections to many thousands.
-Clearly, sparsemem doesn't handle sparse memory very well, and is
-defficient.
-
-I don't know what the answer is to this; I'm totally fed up with being
-pushed into using things, and then later down the line being told that
-its all wrong and shouldn't be used like we are.  Maybe we should just
-delete these sub-architectures which use sparsemem and say to people
-that the kernel just doesn't support their memory layouts.
-
-<depressed>.
+diff --git a/arch/arm/mach-s5p6440/include/mach/irqs.h b/arch/arm/mach-s5p6440/include/mach/irqs.h
+index 911854d..16a7612 100644
+--- a/arch/arm/mach-s5p6440/include/mach/irqs.h
++++ b/arch/arm/mach-s5p6440/include/mach/irqs.h
+@@ -51,7 +51,7 @@
+ #define IRQ_DISPCON3		S5P_IRQ_VIC1(19)
+ #define IRQ_FIMGVG		S5P_IRQ_VIC1(20)
+ #define IRQ_EINT_GROUPS		S5P_IRQ_VIC1(21)
+-#define IRQ_PMUIRQ		S5P_IRQ_VIC1(23)
++#define IRQ_PMU			S5P_IRQ_VIC1(23)
+ #define IRQ_HSMMC0		S5P_IRQ_VIC1(24)
+ #define IRQ_HSMMC1		S5P_IRQ_VIC1(25)
+ #define IRQ_HSMMC2		IRQ_SPI1	/* shared with SPI1 */
+diff --git a/arch/arm/mach-s5p6442/include/mach/irqs.h b/arch/arm/mach-s5p6442/include/mach/irqs.h
+index 02c2374..3fbc6c3 100644
+--- a/arch/arm/mach-s5p6442/include/mach/irqs.h
++++ b/arch/arm/mach-s5p6442/include/mach/irqs.h
+@@ -32,7 +32,7 @@
+ #define IRQ_GPIOINT		S5P_IRQ_VIC0(30)
+ 
+ /* VIC1 */
+-#define IRQ_nPMUIRQ 		S5P_IRQ_VIC1(0)
++#define IRQ_PMU			S5P_IRQ_VIC1(0)
+ #define IRQ_ONENAND 		S5P_IRQ_VIC1(7)
+ #define IRQ_UART0 		S5P_IRQ_VIC1(10)
+ #define IRQ_UART1 		S5P_IRQ_VIC1(11)
+diff --git a/arch/arm/mach-s5pc100/include/mach/irqs.h b/arch/arm/mach-s5pc100/include/mach/irqs.h
+index 28aa551..59e90bf 100644
+--- a/arch/arm/mach-s5pc100/include/mach/irqs.h
++++ b/arch/arm/mach-s5pc100/include/mach/irqs.h
+@@ -29,7 +29,7 @@
+ #define IRQ_GPIOINT		S5P_IRQ_VIC0(30)
+ 
+ /* VIC1: ARM, power, memory, connectivity */
+-#define IRQ_CORTEX0		S5P_IRQ_VIC1(0)
++#define IRQ_PMU			S5P_IRQ_VIC1(0)
+ #define IRQ_CORTEX1		S5P_IRQ_VIC1(1)
+ #define IRQ_CORTEX2		S5P_IRQ_VIC1(2)
+ #define IRQ_CORTEX3		S5P_IRQ_VIC1(3)
+diff --git a/arch/arm/mach-s5pv210/include/mach/irqs.h b/arch/arm/mach-s5pv210/include/mach/irqs.h
+index 9689537..b55f9e0 100644
+--- a/arch/arm/mach-s5pv210/include/mach/irqs.h
++++ b/arch/arm/mach-s5pv210/include/mach/irqs.h
+@@ -36,7 +36,7 @@
+ 
+ /* VIC1: ARM, Power, Memory, Connectivity, Storage */
+ 
+-#define IRQ_CORTEX0		S5P_IRQ_VIC1(0)
++#define IRQ_PMU			S5P_IRQ_VIC1(0)
+ #define IRQ_CORTEX1		S5P_IRQ_VIC1(1)
+ #define IRQ_CORTEX2		S5P_IRQ_VIC1(2)
+ #define IRQ_CORTEX3		S5P_IRQ_VIC1(3)
+diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
+index 39c242b..7e34194 100644
+--- a/arch/arm/plat-s5p/Makefile
++++ b/arch/arm/plat-s5p/Makefile
+@@ -12,6 +12,7 @@ obj-				:=
+ 
+ # Core files
+ 
++obj-y				+= dev-pmu.o
+ obj-y				+= dev-uart.o
+ obj-y				+= cpu.o
+ obj-y				+= clock.o
+diff --git a/arch/arm/plat-s5p/dev-pmu.c b/arch/arm/plat-s5p/dev-pmu.c
+new file mode 100644
+index 0000000..a08576d
+--- /dev/null
++++ b/arch/arm/plat-s5p/dev-pmu.c
+@@ -0,0 +1,36 @@
++/*
++ * linux/arch/arm/plat-s5p/dev-pmu.c
++ *
++ * Copyright (C) 2010 Samsung Electronics Co.Ltd
++ * Author: Joonyoung Shim <jy0922.shim@samsung.com>
++ *
++ *  This program is free software; you can redistribute  it and/or modify it
++ *  under  the terms of  the GNU General  Public License as published by the
++ *  Free Software Foundation;  either version 2 of the  License, or (at your
++ *  option) any later version.
++ *
++ */
++
++#include <linux/platform_device.h>
++#include <asm/pmu.h>
++#include <mach/irqs.h>
++
++static struct resource s5p_pmu_resource = {
++	.start	= IRQ_PMU,
++	.end	= IRQ_PMU,
++	.flags	= IORESOURCE_IRQ,
++};
++
++struct platform_device s5p_device_pmu = {
++	.name		= "arm-pmu",
++	.id		= ARM_PMU_DEVICE_CPU,
++	.num_resources	= 1,
++	.resource	= &s5p_pmu_resource,
++};
++
++static int __init s5p_pmu_init(void)
++{
++	platform_device_register(&s5p_device_pmu);
++	return 0;
++}
++arch_initcall(s5p_pmu_init);
+-- 
+1.7.0.4
