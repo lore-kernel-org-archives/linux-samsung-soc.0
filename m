@@ -1,76 +1,143 @@
-From: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-Subject: Re: s3c-hsotg patches
-Date: Thu, 15 Jul 2010 03:05:54 -0700
-Message-ID: <20100715100554.GA12786@kroah.com>
-References: <1278460943-16224-1-git-send-email-ben-linux@fluff.org> <20100707151246.GA2121@kroah.com> <00c401cb2338$84a3f730$8debe590$%szyprowski@samsung.com> <20100714151026.GD24104@kroah.com> <20100715090222.GD16584@trinity.fluff.org>
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Subject: Re: [PATCH 05/10 v2] s3c-fb: Add v4l2 subdevice to support framebuffer
+ local fifo input path
+Date: Thu, 15 Jul 2010 12:32:26 +0200
+Message-ID: <4C3EE3BA.9020307@gmail.com>
+References: <1279185041-6004-1-git-send-email-s.nawrocki@samsung.com> <1279185041-6004-6-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20100715090222.GD16584-SMNkleLxa3Z6Wcw2j4pizdi2O/JbrIOy@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:33417 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933012Ab0GOKca (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 15 Jul 2010 06:32:30 -0400
+In-Reply-To: <1279185041-6004-6-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, p.osciak@samsung.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, linux-fbdev@vger.kernel.org
 
-On Thu, Jul 15, 2010 at 10:02:22AM +0100, Ben Dooks wrote:
-> On Wed, Jul 14, 2010 at 08:10:26AM -0700, Greg KH wrote:
-> > On Wed, Jul 14, 2010 at 11:39:50AM +0200, Marek Szyprowski wrote:
-> > > Hello,
-> > > 
-> > > On Wednesday, July 07, 2010 5:13 PM Greg KH wrote:
-> > > 
-> > > > On Wed, Jul 07, 2010 at 01:02:12AM +0100, Ben Dooks wrote:
-> > > > > Re-send of previous set, with corrected patches.
-> > > > 
-> > > > Hm, what tree are these going through?  Do you need me to take them
-> > > > through the linux-usb tree?  Or are they going through a
-> > > > platform-specific one somewhere?
-> > > > 
-> > > > confused,
-> > > 
-> > > Looks that Ben is busy and has no time to answer...
-> > 
-> > Then we all should be too busy to apply them :)
-> 
-> I've been really ill for the last couple of weeks, so still sifting
-> through a pile of stuff that needs to be sorted.
+ Op 15-07-10 11:10, Sylwester Nawrocki schreef:
+> Selected multimedia devices in Samsung S3C/S5P SoC series are capable of
+> transferring data directly between each other, bypassing the main system
+> bus. Such a datapath exists between the camera interface/video
+> postprocessor and the lcd controller. To control the data flow from the
+> fimc driver level v4l2-subdevice driver is added to the framebuffer.
+> It enables to configure the lcd controller into FIFO or DMA input mode.
+>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  arch/arm/plat-samsung/include/plat/fb.h |    6 +
+>  drivers/video/s3c-fb.c                  |  487 +++++++++++++++++++++++++++++--
+>  2 files changed, 472 insertions(+), 21 deletions(-)
 
-Completly understandable, the comment "no time to answer" I took to be a
-choice on your part, not external circumstances, my appologies.  Hope
-you are better now.
+<snip>
 
-> They where sent to you as I much prefer the driver specific stuff to go
-> to the relevant maintainer and if possible have them merged via the
-> maintainer tree.
+>  /**
+> + * s3c_fb_enable_local() - switch window between input DMA and fifo modes
+> + *
+> + * @fb_sd: window subdevice for fifo input
+> + * @en:    1 - switch from input DMA to fifo mode and apply
+> + *	       window size and position set by the window's subdevice
+> + *         0 - restore from fifo to DMA mode
+> + */
+> +static int s3c_fb_enable_local_in(struct s3c_fb_win_sd *fb_sd, int en)
+> +{
+> +	struct s3c_fb_win *win = fb_sd->win;
+> +	struct s3c_fb *sfb = win->parent;
+> +	static u32 wincon;
+> +	u32 reg, data;
+> +	int ret = 0, bpp = 32;
+> +
+> +	/* disable video output and the window logic */
+> +	reg = readl(sfb->regs + WINCON(win->index));
+> +	writel(reg & ~WINCONx_ENWIN, sfb->regs + WINCON(win->index));
+> +
+> +	shadow_protect_win(win, 1);
+> +
+> +	if (en == 1) {
+> +		if (fb_sd->streaming)
+> +			return 0;
 
-Great.
+Shouldn't you do shadow_protect_win(win, 0) before returning here?
 
-> > Seriously, if a simple question like this is ignored, what happens if a
-> > real problem is reported?
-> > 
-> > > I'm interested in merging these patches too. These patches were
-> > > intended to be merged to 2.6.35-rc5. They are available on 
-> > > git://git.fluff.org/bjdooks/linux for-2635-rc5/hsotg branch.
-> > > 
-> > > IMHO these patches should go though the linux-usb tree - they
-> > > don't touch any platform specific code, and register definitions 
-> > > (arch/arm/plat-samsung/include/plat/regs-usb-hsotg.h) in fact belongs
-> > > to the driver rather than the platform. s3c-hsotg driver belongs to
-> > > the linux-usb tree.
-> > 
-> > Ok, I can take them all, care to resend them through email?
-> 
-> Do you still want them re-sending. I'd have to check that the branch
-> on git://git.fluff.org/bjdooks/linux for-2635-rc5/hsotg is up to date
-> before having it pulled.
+> +
+> +		wincon = reg;
+> +
+> +		switch (fb_sd->fmt.fmt.pix.pixelformat) {
+> +		case V4L2_PIX_FMT_YUYV: /* YCbCr 4:4:4 */
+> +			reg |= WINCONx_YCbCr | WINCONx_ENLOCAL;
+> +			bpp = 16;
+> +			break;
+> +
+> +		case V4L2_PIX_FMT_RGB24:
+> +		default:
+> +			reg &= ~(WINCONx_YCbCr | WINCONx_WSWP | WINCONx_HAWSWP |
+> +				 WINCONx_BYTSWP | WINCONx_BITSWP |
+> +				 WINCON0_BPPMODE_MASK | WINCONx_BURSTLEN_MASK);
+> +
+> +			reg |=	WINCON0_BPPMODE_24BPP_888 |
+> +				WINCONx_BURSTLEN_4WORD;
+> +			bpp = 24;
+> +			break;
+> +		}
+> +
+> +		fb_sd->streaming = 1;
+> +		writel(reg, sfb->regs + WINCON(win->index));
+> +
+> +		s3c_fb_set_osd(fb_sd->win, &fb_sd->curr_osd_win, bpp);
+> +
+> +		writel(reg | WINCONx_ENLOCAL, sfb->regs + WINCON(win->index));
+> +
+> +		shadow_protect_win(win, 0);
+> +
+> +		reg = readl(sfb->regs + WINCON(win->index));
+> +		writel(reg | WINCONx_ENWIN, sfb->regs + WINCON(win->index));
+> +
+> +		if (sfb->variant.has_shadowcon)	{
+> +			data = readl(sfb->regs + SHADOWCON);
+> +			data |=	SHADOWCON_CHx_LOCAL_ENABLE(win->index);
+> +			writel(data, sfb->regs + SHADOWCON);
+> +		}
+> +
+> +	} else if (en == 0) {
+> +		if (!fb_sd->streaming)
+> +			return 0;
 
-I can't "pull" trees, sorry, I need email patches.
+Same comment
 
-thanks,
+> +
+> +		fb_sd->streaming = 0;
+> +
+> +		/* need to be aligned with VSYNC interrupt */
+> +		writel(wincon & ~WINCONx_ENLOCAL,
+> +		       sfb->regs + WINCON(win->index));
+> +
+> +		/* restore OSD values from before we enabled local mode */
+> +		bpp = win->fbinfo->var.bits_per_pixel;
+> +		s3c_fb_set_osd(fb_sd->win, &fb_sd->default_osd_win, bpp);
+> +
+> +		shadow_protect_win(win, 0);
+> +
+> +		if (sfb->variant.has_shadowcon)	{
+> +			data = readl(sfb->regs + SHADOWCON);
+> +			data &=	~SHADOWCON_CHx_LOCAL_ENABLE(win->index);
+> +			writel(data, sfb->regs + SHADOWCON);
+> +		}
+> +
+> +		reg = readl(sfb->regs + WINCON(win->index));
+> +		writel(reg | WINCONx_ENWIN, sfb->regs + WINCON(win->index));
+> +	} else {
+> +		return -EINVAL;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
 
-greg k-h
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Maurus Cuelenaere
