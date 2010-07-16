@@ -1,705 +1,533 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 02/10 v2] ARM: Samsung: Add FIMC resource definition and
- FIMC driver platform helpers
-Date: Fri, 16 Jul 2010 19:07:32 +0900
-Message-ID: <012301cb24ce$cc67aac0$65370040$%kim@samsung.com>
-References: <1279185041-6004-1-git-send-email-s.nawrocki@samsung.com>
- <1279185041-6004-3-git-send-email-s.nawrocki@samsung.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH v2 5/8] ARM: S5PV310: Add Timer support
+Date: Fri, 16 Jul 2010 19:30:45 +0900
+Message-ID: <AANLkTimirpioNZmzLoWeAD9hN0gAmWodddeMyxsdY7A6@mail.gmail.com>
+References: <1279270714-15146-1-git-send-email-kgene.kim@samsung.com>
+	<1279270714-15146-6-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:65057 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964898Ab0GPKIG (ORCPT
+Received: from mail-px0-f174.google.com ([209.85.212.174]:63931 "EHLO
+	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964951Ab0GPKaq convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Jul 2010 06:08:06 -0400
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L5N00ISKATEWXA0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 Jul 2010 19:08:02 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L5N000MQATD4G@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 Jul 2010 19:08:02 +0900 (KST)
-In-reply-to: <1279185041-6004-3-git-send-email-s.nawrocki@samsung.com>
-Content-language: ko
+	Fri, 16 Jul 2010 06:30:46 -0400
+Received: by pxi14 with SMTP id 14so853100pxi.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Jul 2010 03:30:46 -0700 (PDT)
+In-Reply-To: <1279270714-15146-6-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: p.osciak@samsung.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>, Hyuk Lee <hyuk1.lee@samsung.com>
 
-Sylwester Nawrocki wrote:
-> 
-> Add camera interface SoC resource definitions and setup code
-> for FIMC/FB fifo links.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+On Fri, Jul 16, 2010 at 5:58 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> From: Changhwan Youn <chaos.youn@samsung.com>
+>
+> This patch adds timer support for S5PV310.
+> Until now, all S5P SoCs use CONFIG_ARCH_USES_GETTIMEOFFSET macro as a=
+ default
+> configuration. Instead, S5PV310 implements clocksource and clock_even=
+t_device
+> to support the high resolution timer and tickless system.
+>
+> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+> Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > ---
->  arch/arm/mach-s5pc100/Kconfig                  |   15 ++++++
->  arch/arm/mach-s5pc100/Makefile                 |    3 +
->  arch/arm/mach-s5pc100/include/mach/map.h       |    8 +++
->  arch/arm/mach-s5pc100/setup-fimc0.c            |   14 ++++++
->  arch/arm/mach-s5pc100/setup-fimc1.c            |   14 ++++++
->  arch/arm/mach-s5pc100/setup-fimc2.c            |   14 ++++++
->  arch/arm/mach-s5pv210/Kconfig                  |   15 ++++++
->  arch/arm/mach-s5pv210/Makefile                 |    3 +
->  arch/arm/mach-s5pv210/cpu.c                    |    5 ++
->  arch/arm/mach-s5pv210/include/mach/map.h       |    8 +++
->  arch/arm/mach-s5pv210/setup-fimc0.c            |   14 ++++++
->  arch/arm/mach-s5pv210/setup-fimc1.c            |   14 ++++++
->  arch/arm/mach-s5pv210/setup-fimc2.c            |   14 ++++++
->  arch/arm/plat-s5p/Kconfig                      |   16 +++++++
->  arch/arm/plat-s5p/Makefile                     |    3 +
->  arch/arm/plat-s5p/dev-fimc0.c                  |   56
-> ++++++++++++++++++++++++
->  arch/arm/plat-s5p/dev-fimc1.c                  |   55
-> +++++++++++++++++++++++
->  arch/arm/plat-s5p/dev-fimc2.c                  |   55
-> +++++++++++++++++++++++
->  arch/arm/plat-samsung/include/plat/fimc-core.h |   45 +++++++++++++++++++
->  arch/arm/plat-samsung/include/plat/fimc.h      |   12 +++++
->  20 files changed, 383 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-s5pc100/setup-fimc0.c
->  create mode 100644 arch/arm/mach-s5pc100/setup-fimc1.c
->  create mode 100644 arch/arm/mach-s5pc100/setup-fimc2.c
->  create mode 100644 arch/arm/mach-s5pv210/setup-fimc0.c
->  create mode 100644 arch/arm/mach-s5pv210/setup-fimc1.c
->  create mode 100644 arch/arm/mach-s5pv210/setup-fimc2.c
->  create mode 100644 arch/arm/plat-s5p/dev-fimc0.c
->  create mode 100644 arch/arm/plat-s5p/dev-fimc1.c
->  create mode 100644 arch/arm/plat-s5p/dev-fimc2.c
->  create mode 100644 arch/arm/plat-samsung/include/plat/fimc-core.h
-> 
-> diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
-> index d421f80..791270d 100644
-> --- a/arch/arm/mach-s5pc100/Kconfig
-> +++ b/arch/arm/mach-s5pc100/Kconfig
-> @@ -36,6 +36,21 @@ config S5PC100_SETUP_SDHCI_GPIO
->  	help
->  	  Common setup code for SDHCI gpio.
-> 
-> +config S5PC100_SETUP_FIMC0
-> +	bool
-> +	help
-> +	  Setup code for FIMC controller 0
-> +
-> +config S5PC100_SETUP_FIMC1
-> +	bool
-> +	help
-> +	  Setup code for FIMC controller 1
-> +
-> +config S5PC100_SETUP_FIMC2
-> +	bool
-> +	help
-> +	  Setup code for FIMC controller 2
-> +
->  config MACH_SMDKC100
->  	bool "SMDKC100"
->  	select CPU_S5PC100
-> diff --git a/arch/arm/mach-s5pc100/Makefile
-b/arch/arm/mach-s5pc100/Makefile
-> index f2073bc..7b43337 100644
-> --- a/arch/arm/mach-s5pc100/Makefile
-> +++ b/arch/arm/mach-s5pc100/Makefile
-> @@ -25,6 +25,9 @@ obj-$(CONFIG_S5PC100_SETUP_SDHCI_GPIO)	+= setup-
-> sdhci-gpio.o
->  # device support
->  obj-y				+= dev-audio.o
->  obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
-> +obj-$(CONFIG_S5PC100_SETUP_FIMC0)	+= setup-fimc0.o
-> +obj-$(CONFIG_S5PC100_SETUP_FIMC1)	+= setup-fimc1.o
-> +obj-$(CONFIG_S5PC100_SETUP_FIMC2)	+= setup-fimc2.o
-> 
->  # machine support
-> 
-> diff --git a/arch/arm/mach-s5pc100/include/mach/map.h b/arch/arm/mach-
-> s5pc100/include/mach/map.h
-> index c025064..a1c6f22 100644
-> --- a/arch/arm/mach-s5pc100/include/mach/map.h
-> +++ b/arch/arm/mach-s5pc100/include/mach/map.h
-> @@ -112,6 +112,11 @@
->  #define S5PC100_PA_SDRAM	(0x30000000)
->  #define S5P_PA_SDRAM		S5PC100_PA_SDRAM
-> 
-> +/* FIMC */
-> +#define S5PC100_PA_FIMC0	(0xEE200000)
-> +#define S5PC100_PA_FIMC1	(0xEE300000)
-> +#define S5PC100_PA_FIMC2	(0xEE400000)
-> +
->  /* compatibiltiy defines. */
->  #define S3C_PA_UART		S5PC100_PA_UART
->  #define S3C_PA_IIC		S5PC100_PA_IIC0
-> @@ -134,5 +139,8 @@
->  #define S3C_PA_ONENAND		S5PC100_PA_ONENAND
->  #define S3C_PA_ONENAND_BUF	S5PC100_PA_ONENAND_BUF
->  #define S3C_SZ_ONENAND_BUF	S5PC100_SZ_ONENAND_BUF
-> +#define S5P_PA_FIMC0		S5PC100_PA_FIMC0
-> +#define S5P_PA_FIMC1		S5PC100_PA_FIMC1
-> +#define S5P_PA_FIMC2		S5PC100_PA_FIMC2
-> 
->  #endif /* __ASM_ARCH_C100_MAP_H */
-> diff --git a/arch/arm/mach-s5pc100/setup-fimc0.c
-b/arch/arm/mach-s5pc100/setup-
-> fimc0.c
+> =A0arch/arm/mach-s5pv310/include/mach/pwm-clock.h | =A0 70 ++++++
+> =A0arch/arm/mach-s5pv310/localtimer.c =A0 =A0 =A0 =A0 =A0 =A0 | =A0 2=
+5 ++
+> =A0arch/arm/mach-s5pv310/time.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 |=
+ =A0287 ++++++++++++++++++++++++
+> =A0arch/arm/plat-s5p/include/plat/s5pv310.h =A0 =A0 =A0 | =A0 =A01 +
+> =A0arch/arm/plat-samsung/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0=
+ =A02 +-
+> =A05 files changed, 384 insertions(+), 1 deletions(-)
+> =A0create mode 100644 arch/arm/mach-s5pv310/include/mach/pwm-clock.h
+> =A0create mode 100644 arch/arm/mach-s5pv310/localtimer.c
+> =A0create mode 100644 arch/arm/mach-s5pv310/time.c
+>
+> diff --git a/arch/arm/mach-s5pv310/include/mach/pwm-clock.h b/arch/ar=
+m/mach-s5pv310/include/mach/pwm-clock.h
 > new file mode 100644
-> index 0000000..dea33c2
+> index 0000000..7e6da27
 > --- /dev/null
-> +++ b/arch/arm/mach-s5pc100/setup-fimc0.c
-> @@ -0,0 +1,14 @@
-> +/* linux/arch/arm/mach-s5pc100/setup-fimc0.c
+> +++ b/arch/arm/mach-s5pv310/include/mach/pwm-clock.h
+> @@ -0,0 +1,70 @@
+> +/* linux/arch/arm/mach-s5pv310/include/mach/pwm-clock.h
 > + *
-> + * Copyright (c) 2010 Samsung Electronics
+> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+> + * =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com/
 > + *
-> + * S5PC100 - setup for S5P FIMC device 0
+> + * Copyright 2008 Openmoko, Inc.
+> + * Copyright 2008 Simtec Electronics
+> + * =A0 =A0 =A0Ben Dooks <ben@simtec.co.uk>
+> + * =A0 =A0 =A0http://armlinux.simtec.co.uk/
 > + *
-> + * This program is free software; you can redistribute it and/or modify
+> + * Based on arch/arm/mach-s3c64xx/include/mach/pwm-clock.h
+> + *
+> + * S5PV310 - pwm clock and timer support
+> + *
+> + * This program is free software; you can redistribute it and/or mod=
+ify
 > + * it under the terms of the GNU General Public License version 2 as
 > + * published by the Free Software Foundation.
+> +*/
+> +
+> +#ifndef __ASM_ARCH_PWMCLK_H
+> +#define __ASM_ARCH_PWMCLK_H __FILE__
+> +
+> +/**
+> + * pwm_cfg_src_is_tclk() - return whether the given mux config is a =
+tclk
+> + * @tcfg: The timer TCFG1 register bits shifted down to 0.
+> + *
+> + * Return true if the given configuration from TCFG1 is a TCLK inste=
+ad
+> + * any of the TDIV clocks.
 > + */
-> +
-> +#include <plat/fimc.h>
-> +
-> +struct samsung_plat_fimc s5p_fimc0_default_data __initdata = {};
-> diff --git a/arch/arm/mach-s5pc100/setup-fimc1.c
-b/arch/arm/mach-s5pc100/setup-
-> fimc1.c
-> new file mode 100644
-> index 0000000..1833377
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pc100/setup-fimc1.c
-> @@ -0,0 +1,14 @@
-> +/* linux/arch/arm/mach-s5pc100/setup-fimc1.c
-> + *
-> + * Copyright (c) 2010 Samsung Electronics
-> + *
-> + * S5PC100 - setup for S5P FIMC device 1
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <plat/fimc.h>
-> +
-> +struct samsung_plat_fimc s5p_fimc1_default_data __initdata = {};
-> diff --git a/arch/arm/mach-s5pc100/setup-fimc2.c
-b/arch/arm/mach-s5pc100/setup-
-> fimc2.c
-> new file mode 100644
-> index 0000000..746e0f0
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pc100/setup-fimc2.c
-> @@ -0,0 +1,14 @@
-> +/* linux/arch/arm/mach-s5pc100/setup-fimc2.c
-> + *
-> + * Copyright (c) 2010 Samsung Electronics
-> + *
-> + * S5PC100 - setup for S5P FIMC device 2
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <plat/fimc.h>
-> +
-> +struct samsung_plat_fimc s5p_fimc2_default_data __initdata = {};
-> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-> index d876ff0..4bb5a85 100644
-> --- a/arch/arm/mach-s5pv210/Kconfig
-> +++ b/arch/arm/mach-s5pv210/Kconfig
-> @@ -32,6 +32,21 @@ config S5PV210_SETUP_FB_24BPP
->  	help
->            Common setup code for S5PV210 with an 24bpp RGB display helper.
-> 
-> +config S5PV210_SETUP_FIMC0
-> +	bool
-> +	help
-> +	  Setup code for FIMC controller 0
-> +
-> +config S5PV210_SETUP_FIMC1
-> +	bool
-> +	help
-> +	  Setup code for FIMC controller 1
-> +
-> +config S5PV210_SETUP_FIMC2
-> +	bool
-> +	help
-> +	  Setup code for FIMC controller 2
-> +
->  config S5PV210_SETUP_SDHCI
->          bool
->          select S5PV210_SETUP_SDHCI_GPIO
-> diff --git a/arch/arm/mach-s5pv210/Makefile
-b/arch/arm/mach-s5pv210/Makefile
-> index 7b3a984..6eceeb8 100644
-> --- a/arch/arm/mach-s5pv210/Makefile
-> +++ b/arch/arm/mach-s5pv210/Makefile
-> @@ -35,3 +35,6 @@ obj-$(CONFIG_S5PV210_SETUP_I2C1) 	+= setup-i2c1.o
->  obj-$(CONFIG_S5PV210_SETUP_I2C2) 	+= setup-i2c2.o
->  obj-$(CONFIG_S5PV210_SETUP_SDHCI)       += setup-sdhci.o
->  obj-$(CONFIG_S5PV210_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
-> +obj-$(CONFIG_S5PV210_SETUP_FIMC0)	+= setup-fimc0.o
-> +obj-$(CONFIG_S5PV210_SETUP_FIMC1)	+= setup-fimc1.o
-> +obj-$(CONFIG_S5PV210_SETUP_FIMC2)	+= setup-fimc2.o
-> diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
-> index fc3801b..4133cae 100644
-> --- a/arch/arm/mach-s5pv210/cpu.c
-> +++ b/arch/arm/mach-s5pv210/cpu.c
-> @@ -35,6 +35,7 @@
->  #include <plat/iic-core.h>
->  #include <plat/sdhci.h>
->  #include <plat/fb-core.h>
-> +#include <plat/fimc-core.h>
-> 
->  /* Initial IO mappings */
-> 
-> @@ -95,6 +96,10 @@ void __init s5pv210_map_io(void)
->  	s3c_i2c2_setname("s3c2440-i2c");
-> 
->  	s3c_fb_setname("s5pv210-fb");
-> +
-> +	s3c_fimc_setname(0, "s5pv210-fimc");
-> +	s3c_fimc_setname(1, "s5pv210-fimc");
-> +	s3c_fimc_setname(2, "s5pv210-fimc");
->  }
-> 
->  void __init s5pv210_init_clocks(int xtal)
-> diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-
-> s5pv210/include/mach/map.h
-> index e78bd47..9b8cf69 100644
-> --- a/arch/arm/mach-s5pv210/include/mach/map.h
-> +++ b/arch/arm/mach-s5pv210/include/mach/map.h
-> @@ -96,6 +96,11 @@
-> 
->  #define S5PV210_PA_ADC		(0xE1700000)
-> 
-> +/* FIMC */
-> +#define S5PV210_PA_FIMC0	(0xFB200000)
-> +#define S5PV210_PA_FIMC1	(0xFB300000)
-> +#define S5PV210_PA_FIMC2	(0xFB400000)
-> +
->  /* compatibiltiy defines. */
->  #define S3C_PA_UART		S5PV210_PA_UART
->  #define S3C_PA_HSMMC0		S5PV210_PA_HSMMC(0)
-> @@ -111,5 +116,8 @@
->  #define SAMSUNG_PA_ADC		S5PV210_PA_ADC
->  #define S3C_PA_USB_HSOTG	S5PV210_PA_USB_HSOTG
->  #define S3C_PA_USB_HSPHY	S5PV210_PA_USB_HSPHY
-> +#define S5P_PA_FIMC0		S5PV210_PA_FIMC0
-> +#define S5P_PA_FIMC1		S5PV210_PA_FIMC1
-> +#define S5P_PA_FIMC2		S5PV210_PA_FIMC2
-> 
->  #endif /* __ASM_ARCH_MAP_H */
-> diff --git a/arch/arm/mach-s5pv210/setup-fimc0.c
-b/arch/arm/mach-s5pv210/setup-
-> fimc0.c
-> new file mode 100644
-> index 0000000..0e5ef0a
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/setup-fimc0.c
-> @@ -0,0 +1,14 @@
-> +/* linux/arch/arm/mach-s5pv210/setup-fimc0.c
-> + *
-> + * Copyright (c) 2010 Samsung Electronics
-> + *
-> + * S5PV210 - setup for S5P FIMC device 0
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <plat/fimc.h>
-> +
-> +struct samsung_plat_fimc s5p_fimc0_default_data __initdata = {};
-> diff --git a/arch/arm/mach-s5pv210/setup-fimc1.c
-b/arch/arm/mach-s5pv210/setup-
-> fimc1.c
-> new file mode 100644
-> index 0000000..80da0e7
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/setup-fimc1.c
-> @@ -0,0 +1,14 @@
-> +/* linux/arch/arm/mach-s5pv210/setup-fimc1.c
-> + *
-> + * Copyright (c) 2010 Samsung Electronics
-> + *
-> + * S5PV210 - setup for S5P FIMC device 1
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <plat/fimc.h>
-> +
-> +struct samsung_plat_fimc s5p_fimc1_default_data __initdata = {};
-> diff --git a/arch/arm/mach-s5pv210/setup-fimc2.c
-b/arch/arm/mach-s5pv210/setup-
-> fimc2.c
-> new file mode 100644
-> index 0000000..bc6a27b
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/setup-fimc2.c
-> @@ -0,0 +1,14 @@
-> +/* linux/arch/arm/mach-s5pv210/setup-fimc2.c
-> + *
-> + * Copyright (c) 2010 Samsung Electronics
-> + *
-> + * S5PV210 - setup for S5P FIMC device 2
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <plat/fimc.h>
-> +
-> +struct samsung_plat_fimc s5p_fimc2_default_data __initdata = {};
-> diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-> index 11d6a1b..38b60c7 100644
-> --- a/arch/arm/plat-s5p/Kconfig
-> +++ b/arch/arm/plat-s5p/Kconfig
-> @@ -5,6 +5,22 @@
->  #
->  # Licensed under GPLv2
-> 
-> +config S5P_DEV_FIMC0
-> +	bool
-> +	help
-> +	  Compile in platform device definitions for FIMC controller 0
-> +
-> +config S5P_DEV_FIMC1
-> +	bool
-> +	help
-> +	  Compile in platform device definitions for FIMC controller 1
-> +
-> +config S5P_DEV_FIMC2
-> +	bool
-> +	help
-> +	  Compile in platform device definitions for FIMC controller 2
-> +
-> +
-
-2 empty lines...
-
->  config PLAT_S5P
->  	bool
->  	depends on (ARCH_S5P6440 || ARCH_S5P6442 || ARCH_S5PC100 ||
-> ARCH_S5PV210)
-> diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-> index b56b4d3..a7d3c35 100644
-> --- a/arch/arm/plat-s5p/Makefile
-> +++ b/arch/arm/plat-s5p/Makefile
-> @@ -18,3 +18,6 @@ obj-y				+= clock.o
->  obj-y				+= irq.o irq-gpioint.o
->  obj-$(CONFIG_S5P_EXT_INT)	+= irq-eint.o
-> 
-> +obj-$(CONFIG_S5P_DEV_FIMC0)	+= dev-fimc0.o
-> +obj-$(CONFIG_S5P_DEV_FIMC1)	+= dev-fimc1.o
-> +obj-$(CONFIG_S5P_DEV_FIMC2)	+= dev-fimc2.o
-> diff --git a/arch/arm/plat-s5p/dev-fimc0.c b/arch/arm/plat-s5p/dev-fimc0.c
-> new file mode 100644
-> index 0000000..cfa10f0
-> --- /dev/null
-> +++ b/arch/arm/plat-s5p/dev-fimc0.c
-> @@ -0,0 +1,56 @@
-> +/* linux/arch/arm/plat-s5p/dev-fimc0.c
-> + *
-> + * Copyright (c) 2010 Samsung Electronics
-> + *
-> + * Base S5P FIMC0 resource and device definitions
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/string.h>
-> +#include <linux/platform_device.h>
-> +#include <mach/map.h>
-> +#include <mach/irqs.h>
-> +#include <plat/fimc.h>
-> +#include <plat/devs.h>
-> +#include <plat/cpu.h>
-> +
-> +
-
-Same...2 empty lines...
-
-> +static struct resource s5p_fimc_resource[] = {
-> +	[0] = {
-> +		.start	= S5P_PA_FIMC0,
-> +		.end	= S5P_PA_FIMC0 + SZ_1M - 1,
-> +		.flags	= IORESOURCE_MEM,
-> +	},
-> +	[1] = {
-> +		.start	= IRQ_FIMC0,
-> +		.end	= IRQ_FIMC0,
-> +		.flags	= IORESOURCE_IRQ,
-> +	},
-> +};
-> +
-> +struct platform_device s5p_device_fimc0 = {
-> +	.name		= "s5p-fimc",
-> +	.id		= 0,
-> +	.num_resources	= ARRAY_SIZE(s5p_fimc_resource),
-> +	.resource	= s5p_fimc_resource,
-> +};
-> +
-> +
-
-2 empty lines...
-
-> +void __init s5p_fimc0_set_platdata(struct samsung_plat_fimc *pd)
-
-Actually, we can use Ben's 's3c_set_platdata' which can replace a number of
-sites...
-
-Please refer to below URL.
-http://lists.infradead.org/pipermail/linux-arm-kernel/2010-May/016650.html
-
-I think this method is better to us.
-
+> +static inline int pwm_cfg_src_is_tclk(unsigned long tcfg)
 > +{
-> +	struct samsung_plat_fimc *npd;
-> +
-> +	if (!pd)
-> +		pd = &s5p_fimc0_default_data;
-> +
-> +	npd = kmemdup(pd, sizeof(*npd), GFP_KERNEL);
-> +	if (!npd)
-> +		printk(KERN_ERR "%s: out of memory\n", __func__);
-> +
-> +	s5p_device_fimc0.dev.platform_data = npd;
+> + =A0 =A0 =A0 return tcfg =3D=3D S3C64XX_TCFG1_MUX_TCLK;
 > +}
 > +
-
-No need last empty line
-
-> diff --git a/arch/arm/plat-s5p/dev-fimc1.c b/arch/arm/plat-s5p/dev-fimc1.c
-> new file mode 100644
-> index 0000000..7178477
-> --- /dev/null
-> +++ b/arch/arm/plat-s5p/dev-fimc1.c
-> @@ -0,0 +1,55 @@
-> +/* linux/arch/arm/plat-s5p/dev-fimc1.c
+> +/**
+> + * tcfg_to_divisor() - convert tcfg1 setting to a divisor
+> + * @tcfg1: The tcfg1 setting, shifted down.
 > + *
-> + * Copyright (c) 2010 Samsung Electronics
-> + *
-> + * Base S5P FIMC1 resource and device definitions
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
+> + * Get the divisor value for the given tcfg1 setting. We assume the
+> + * caller has already checked to see if this is not a TCLK source.
 > + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/string.h>
-> +#include <linux/platform_device.h>
-> +#include <mach/map.h>
-> +#include <mach/irqs.h>
-> +#include <plat/fimc.h>
-> +#include <plat/devs.h>
-> +#include <plat/cpu.h>
-> +
-> +
-2 empty lines..
-
-> +static struct resource s5p_fimc_resource[] = {
-> +	[0] = {
-> +		.start	= S5P_PA_FIMC1,
-> +		.end	= S5P_PA_FIMC1 + SZ_1M - 1,
-> +		.flags	= IORESOURCE_MEM,
-> +	},
-> +	[1] = {
-> +		.start	= IRQ_FIMC1,
-> +		.end	= IRQ_FIMC1,
-> +		.flags	= IORESOURCE_IRQ,
-> +	},
-> +};
-> +
-> +struct platform_device s5p_device_fimc1 = {
-> +	.name		= "s5p-fimc",
-> +	.id		= 1,
-> +	.num_resources	= ARRAY_SIZE(s5p_fimc_resource),
-> +	.resource	= s5p_fimc_resource,
-> +};
-> +
-> +void __init s5p_fimc1_set_platdata(struct samsung_plat_fimc *pd)
+> +static inline unsigned long tcfg_to_divisor(unsigned long tcfg1)
 > +{
-> +	struct samsung_plat_fimc *npd;
-> +
-> +	if (!pd)
-> +		pd = &s5p_fimc1_default_data;
-> +
-> +	npd = kmemdup(pd, sizeof(*npd), GFP_KERNEL);
-> +	if (!npd)
-> +		printk(KERN_ERR "%s: out of memory\n", __func__);
-> +
-> +	s5p_device_fimc1.dev.platform_data = npd;
+> + =A0 =A0 =A0 return 1 << tcfg1;
 > +}
 > +
-
-No need last empty line...
-
-> diff --git a/arch/arm/plat-s5p/dev-fimc2.c b/arch/arm/plat-s5p/dev-fimc2.c
-> new file mode 100644
-> index 0000000..fe1a6c0
-> --- /dev/null
-> +++ b/arch/arm/plat-s5p/dev-fimc2.c
-> @@ -0,0 +1,55 @@
-> +/* linux/arch/arm/plat-s5p/dev-fimc2.c
+> +/**
+> + * pwm_tdiv_has_div1() - does the tdiv setting have a /1
 > + *
-> + * Copyright (c) 2010 Samsung Electronics
-> + *
-> + * Base S5P FIMC2 resource and device definitions
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
+> + * Return true if we have a /1 in the tdiv setting.
 > + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/string.h>
-> +#include <linux/platform_device.h>
-> +#include <mach/map.h>
-> +#include <mach/irqs.h>
-> +#include <plat/fimc.h>
-> +#include <plat/devs.h>
-> +#include <plat/cpu.h>
-> +
-> +
-
-Same...
-
-> +static struct resource s5p_fimc_resource[] = {
-> +	[0] = {
-> +		.start	= S5P_PA_FIMC2,
-> +		.end	= S5P_PA_FIMC2 + SZ_1M - 1,
-> +		.flags	= IORESOURCE_MEM,
-> +	},
-> +	[1] = {
-> +		.start	= IRQ_FIMC2,
-> +		.end	= IRQ_FIMC2,
-> +		.flags	= IORESOURCE_IRQ,
-> +	},
-> +};
-> +
-> +struct platform_device s5p_device_fimc2 = {
-> +	.name		= "s5p-fimc",
-> +	.id		= 2,
-> +	.num_resources	= ARRAY_SIZE(s5p_fimc_resource),
-> +	.resource	= s5p_fimc_resource,
-> +};
-> +
-> +void __init s5p_fimc2_set_platdata(struct samsung_plat_fimc *pd)
+> +static inline unsigned int pwm_tdiv_has_div1(void)
 > +{
-> +	struct samsung_plat_fimc *npd;
-> +
-> +	if (!pd)
-> +		pd = &s5p_fimc2_default_data;
-> +
-> +	npd = kmemdup(pd, sizeof(*npd), GFP_KERNEL);
-> +	if (!npd)
-> +		printk(KERN_ERR "%s: out of memory\n", __func__);
-> +
-> +	s5p_device_fimc2.dev.platform_data = npd;
+> + =A0 =A0 =A0 return 1;
 > +}
 > +
-
-Same..
-
-> diff --git a/arch/arm/plat-samsung/include/plat/fimc-core.h
-b/arch/arm/plat-
-> samsung/include/plat/fimc-core.h
+> +/**
+> + * pwm_tdiv_div_bits() - calculate TCFG1 divisor value.
+> + * @div: The divisor to calculate the bit information for.
+> + *
+> + * Turn a divisor into the necessary bit field for TCFG1.
+> + */
+> +static inline unsigned long pwm_tdiv_div_bits(unsigned int div)
+> +{
+> + =A0 =A0 =A0 return ilog2(div);
+> +}
+> +
+> +#define S3C_TCFG1_MUX_TCLK S3C64XX_TCFG1_MUX_TCLK
+> +
+> +#endif /* __ASM_ARCH_PWMCLK_H */
+> diff --git a/arch/arm/mach-s5pv310/localtimer.c b/arch/arm/mach-s5pv3=
+10/localtimer.c
 > new file mode 100644
-> index 0000000..a126bbd
+> index 0000000..2784036
 > --- /dev/null
-> +++ b/arch/arm/plat-samsung/include/plat/fimc-core.h
-> @@ -0,0 +1,45 @@
-> +/*
-> + * arch/arm/plat-samsung/include/plat/fimc-core.h
+> +++ b/arch/arm/mach-s5pv310/localtimer.c
+> @@ -0,0 +1,25 @@
+> +/* linux/arch/arm/mach-s5pv310/localtimer.c
 > + *
-> + * Copyright 2010 Samsung Electronics Co., Ltd.
-> + *	Sylwester Nawrocki <s.nawrocki@samsung.com>
+> + * Cloned from linux/arch/arm/mach-realview/localtimer.c
 > + *
-> + * Samsung camera interface driver core functions
+> + * =A0Copyright (C) 2002 ARM Ltd.
+> + * =A0All Rights Reserved
 > + *
-> + * This program is free software; you can redistribute it and/or modify
+> + * This program is free software; you can redistribute it and/or mod=
+ify
 > + * it under the terms of the GNU General Public License version 2 as
 > + * published by the Free Software Foundation.
-> + */
-> +#ifndef __ASM_PLAT_FIMC_CORE_H
-> +#define __ASM_PLAT_FIMC_CORE_H __FILE__
+> +*/
+> +
+> +#include <linux/clockchips.h>
+> +
+> +#include <asm/irq.h>
+> +#include <asm/localtimer.h>
 > +
 > +/*
-> + * These functions are only for use with the core support code, such as
-> + * the CPU-specific initialization code.
+> + * Setup the local clock events for a CPU.
 > + */
-> +
-> +#include <plat/fimc.h>
-> +
-> +/* Re-define device name to differentiate the subsystem in various SoCs.
-*/
-> +static inline void s3c_fimc_setname(int id, char *name)
+> +void __cpuinit local_timer_setup(struct clock_event_device *evt)
 > +{
-> +	switch(id) {
-> +#ifdef CONFIG_S5P_DEV_FIMC0
-> +	case 0:
-> +		s5p_device_fimc0.name = name;
-> +		break;
-> +#endif
-> +#ifdef CONFIG_S5P_DEV_FIMC1
-> +	case 1:
-> +		s5p_device_fimc1.name = name;
-> +		break;
-> +#endif
-> +#ifdef CONFIG_S5P_DEV_FIMC2
-> +	case 2:
-> +		s5p_device_fimc2.name = name;
-> +		break;
-> +#endif
-> +	}
+> + =A0 =A0 =A0 evt->irq =3D IRQ_LOCALTIMER;
+> + =A0 =A0 =A0 twd_timer_setup(evt);
+> +}
+> diff --git a/arch/arm/mach-s5pv310/time.c b/arch/arm/mach-s5pv310/tim=
+e.c
+> new file mode 100644
+> index 0000000..64accf8
+> --- /dev/null
+> +++ b/arch/arm/mach-s5pv310/time.c
+> @@ -0,0 +1,287 @@
+> +/* linux/arch/arm/mach-s5pv310/time.c
+> + *
+> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+> + * =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com
+> + *
+> + * S5PV310 (and compatible) HRT support
+> + * PWM 2/4 is used for this feature
+
+Please make it configurable, now PWM 2 is used for I2C pin in mobile ha=
+rdware.
+It seems to smdk specific file.
+
+Why don't use the systimer?
+
+Thank you,
+Kyungmin Park
+
+> + *
+> + * This program is free software; you can redistribute it and/or mod=
+ify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#include <linux/sched.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irq.h>
+> +#include <linux/err.h>
+> +#include <linux/clk.h>
+> +#include <linux/clockchips.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include <asm/smp_twd.h>
+> +
+> +#include <mach/map.h>
+> +#include <plat/regs-timer.h>
+> +#include <asm/mach/time.h>
+> +
+> +static unsigned long clock_count_per_tick;
+> +
+> +static struct clk *tin2;
+> +static struct clk *tin4;
+> +static struct clk *tdiv2;
+> +static struct clk *tdiv4;
+> +static struct clk *timerclk;
+> +
+> +static void s5pv310_pwm_stop(unsigned int pwm_id)
+> +{
+> + =A0 =A0 =A0 unsigned long tcon;
+> +
+> + =A0 =A0 =A0 tcon =3D __raw_readl(S3C2410_TCON);
+> +
+> + =A0 =A0 =A0 switch (pwm_id) {
+> + =A0 =A0 =A0 case 2:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T2START;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 case 4:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T4START;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 default:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 }
+> + =A0 =A0 =A0 __raw_writel(tcon, S3C2410_TCON);
 > +}
 > +
-> +#endif /* __ASM_PLAT_FIMC_CORE_H */
-> diff --git a/arch/arm/plat-samsung/include/plat/fimc.h b/arch/arm/plat-
-> samsung/include/plat/fimc.h
-> index be1e853..cf7d2fb 100644
-> --- a/arch/arm/plat-samsung/include/plat/fimc.h
-> +++ b/arch/arm/plat-samsung/include/plat/fimc.h
-> @@ -27,5 +27,17 @@ struct samsung_plat_fimc {
->  	struct s3c_fifo_link	*fifo_targets[FIMC_MAX_FIFO_TARGETS];
->  };
-> 
-> +extern struct platform_device s5p_device_fimc0;
-> +extern struct platform_device s5p_device_fimc1;
-> +extern struct platform_device s5p_device_fimc2;
+> +static void s5pv310_pwm_init(unsigned int pwm_id, unsigned long tcnt=
+)
+> +{
+> + =A0 =A0 =A0 unsigned long tcon;
 > +
-> +extern struct samsung_plat_fimc s5p_fimc0_default_data;
-> +extern struct samsung_plat_fimc s5p_fimc1_default_data;
-> +extern struct samsung_plat_fimc s5p_fimc2_default_data;
+> + =A0 =A0 =A0 tcon =3D __raw_readl(S3C2410_TCON);
 > +
-> +extern void s5p_fimc0_set_platdata(struct samsung_plat_fimc *fimc);
-> +extern void s5p_fimc1_set_platdata(struct samsung_plat_fimc *fimc);
-> +extern void s5p_fimc2_set_platdata(struct samsung_plat_fimc *fimc);
+> + =A0 =A0 =A0 /* timers reload after counting zero, so reduce the cou=
+nt by 1 */
+> + =A0 =A0 =A0 tcnt--;
 > +
->  #endif /* FIMC_H_ */
-> 
+> + =A0 =A0 =A0 /* ensure timer is stopped... */
+> + =A0 =A0 =A0 switch (pwm_id) {
+> + =A0 =A0 =A0 case 2:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~(0xf<<12);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T2MANUALUPD;
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 __raw_writel(tcnt, S3C2410_TCNTB(2));
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 __raw_writel(tcnt, S3C2410_TCMPB(2));
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 __raw_writel(tcon, S3C2410_TCON);
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 case 4:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~(7<<20);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T4MANUALUPD;
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 __raw_writel(tcnt, S3C2410_TCNTB(4));
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 __raw_writel(tcnt, S3C2410_TCMPB(4));
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 __raw_writel(tcon, S3C2410_TCON);
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 default:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 }
+> +}
+> +
+> +static inline void s5pv310_pwm_start(unsigned int pwm_id, bool perio=
+dic)
+> +{
+> + =A0 =A0 =A0 unsigned long tcon;
+> +
+> + =A0 =A0 =A0 tcon =A0=3D __raw_readl(S3C2410_TCON);
+> +
+> + =A0 =A0 =A0 switch (pwm_id) {
+> + =A0 =A0 =A0 case 2:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T2START;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T2MANUALUPD;
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (periodic)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_=
+T2RELOAD;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON=
+_T2RELOAD;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 case 4:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T4START;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T4MANUALUPD;
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (periodic)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_=
+T4RELOAD;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON=
+_T4RELOAD;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 default:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 }
+> + =A0 =A0 =A0 __raw_writel(tcon, S3C2410_TCON);
+> +}
+> +
+> +static int s5pv310_pwm_set_next_event(unsigned long cycles,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 struct clock_event_device *evt)
+> +{
+> + =A0 =A0 =A0 s5pv310_pwm_init(4, cycles);
+> + =A0 =A0 =A0 s5pv310_pwm_start(4, 0);
+> + =A0 =A0 =A0 return 0;
+> +}
+> +
+> +static void s5pv310_pwm_set_mode(enum clock_event_mode mode,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 struct =
+clock_event_device *evt)
+> +{
+> + =A0 =A0 =A0 s5pv310_pwm_stop(4);
+> +
+> + =A0 =A0 =A0 switch (mode) {
+> + =A0 =A0 =A0 case CLOCK_EVT_MODE_PERIODIC:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s5pv310_pwm_init(4, clock_count_per_tic=
+k);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s5pv310_pwm_start(4, 1);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 case CLOCK_EVT_MODE_ONESHOT:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 case CLOCK_EVT_MODE_UNUSED:
+> + =A0 =A0 =A0 case CLOCK_EVT_MODE_SHUTDOWN:
+> + =A0 =A0 =A0 case CLOCK_EVT_MODE_RESUME:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 }
+> +}
+> +
+> +static struct clock_event_device pwm_event_device =3D {
+> + =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "pwm_timer4",
+> + =A0 =A0 =A0 .features =A0 =A0 =A0 =3D CLOCK_EVT_FEAT_PERIODIC | CLO=
+CK_EVT_FEAT_ONESHOT,
+> + =A0 =A0 =A0 .rating =A0 =A0 =A0 =A0 =3D 200,
+> + =A0 =A0 =A0 .shift =A0 =A0 =A0 =A0 =A0=3D 32,
+> + =A0 =A0 =A0 .set_next_event =3D s5pv310_pwm_set_next_event,
+> + =A0 =A0 =A0 .set_mode =A0 =A0 =A0 =3D s5pv310_pwm_set_mode,
+> +};
+> +
+> +irqreturn_t s5pv310_clock_event_isr(int irq, void *dev_id)
+> +{
+> + =A0 =A0 =A0 struct clock_event_device *evt =3D &pwm_event_device;
+> +
+> + =A0 =A0 =A0 evt->event_handler(evt);
+> +
+> + =A0 =A0 =A0 return IRQ_HANDLED;
+> +}
+> +
+> +static struct irqaction s5pv310_clock_event_irq =3D {
+> + =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "pwm_timer4_irq",
+> + =A0 =A0 =A0 .flags =A0 =A0 =A0 =A0 =A0=3D IRQF_DISABLED | IRQF_TIME=
+R | IRQF_IRQPOLL,
+> + =A0 =A0 =A0 .handler =A0 =A0 =A0 =A0=3D s5pv310_clock_event_isr,
+> +};
+> +
+> +static void __init s5pv310_clockevent_init(void)
+> +{
+> + =A0 =A0 =A0 unsigned long pclk;
+> + =A0 =A0 =A0 unsigned long clock_rate;
+> + =A0 =A0 =A0 struct clk *tscaler;
+> +
+> + =A0 =A0 =A0 pclk =3D clk_get_rate(timerclk);
+> +
+> + =A0 =A0 =A0 /* configure clock tick */
+> +
+> + =A0 =A0 =A0 tscaler =3D clk_get_parent(tdiv4);
+> +
+> + =A0 =A0 =A0 clk_set_rate(tscaler, pclk / 2);
+> + =A0 =A0 =A0 clk_set_rate(tdiv4, pclk / 2);
+> + =A0 =A0 =A0 clk_set_parent(tin4, tdiv4);
+> +
+> + =A0 =A0 =A0 clock_rate =3D clk_get_rate(tin4);
+> +
+> + =A0 =A0 =A0 clock_count_per_tick =3D clock_rate / HZ;
+> +
+> + =A0 =A0 =A0 pwm_event_device.mult =3D
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 div_sc(clock_rate, NSEC_PER_SEC, pwm_ev=
+ent_device.shift);
+> + =A0 =A0 =A0 pwm_event_device.max_delta_ns =3D
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clockevent_delta2ns(-1, &pwm_event_devi=
+ce);
+> + =A0 =A0 =A0 pwm_event_device.min_delta_ns =3D
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clockevent_delta2ns(1, &pwm_event_devic=
+e);
+> +
+> + =A0 =A0 =A0 pwm_event_device.cpumask =3D cpumask_of(0);
+> + =A0 =A0 =A0 clockevents_register_device(&pwm_event_device);
+> +
+> + =A0 =A0 =A0 setup_irq(IRQ_TIMER4, &s5pv310_clock_event_irq);
+> +}
+> +
+> +static cycle_t s5pv310_pwm2_read(struct clocksource *cs)
+> +{
+> + =A0 =A0 =A0 return (cycle_t) ~__raw_readl(S3C_TIMERREG(0x2c));
+> +}
+> +
+> +struct clocksource pwm_clocksource =3D {
+> + =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "pwm_timer2",
+> + =A0 =A0 =A0 .rating =A0 =A0 =A0 =A0 =3D 250,
+> + =A0 =A0 =A0 .read =A0 =A0 =A0 =A0 =A0 =3D s5pv310_pwm2_read,
+> + =A0 =A0 =A0 .mask =A0 =A0 =A0 =A0 =A0 =3D CLOCKSOURCE_MASK(32),
+> + =A0 =A0 =A0 .shift =A0 =A0 =A0 =A0 =A0=3D 20,
+> + =A0 =A0 =A0 .flags =A0 =A0 =A0 =A0 =A0=3D CLOCK_SOURCE_IS_CONTINUOU=
+S ,
+> +};
+> +
+> +static void __init s5pv310_clocksource_init(void)
+> +{
+> + =A0 =A0 =A0 unsigned long pclk;
+> + =A0 =A0 =A0 unsigned long clock_rate;
+> +
+> + =A0 =A0 =A0 pclk =3D clk_get_rate(timerclk);
+> +
+> + =A0 =A0 =A0 clk_set_rate(tdiv2, pclk / 2);
+> + =A0 =A0 =A0 clk_set_parent(tin2, tdiv2);
+> +
+> + =A0 =A0 =A0 clock_rate =3D clk_get_rate(tin2);
+> +
+> + =A0 =A0 =A0 s5pv310_pwm_init(2, ~0);
+> + =A0 =A0 =A0 s5pv310_pwm_start(2, 1);
+> +
+> + =A0 =A0 =A0 pwm_clocksource.mult =3D
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clocksource_khz2mult(clock_rate/1000, p=
+wm_clocksource.shift);
+> +
+> + =A0 =A0 =A0 if (clocksource_register(&pwm_clocksource))
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("%s: can't register clocksource\n=
+", pwm_clocksource.name);
+> +}
+> +
+> +static void __init s5pv310_timer_resources(void)
+> +{
+> + =A0 =A0 =A0 struct platform_device tmpdev;
+> +
+> + =A0 =A0 =A0 tmpdev.dev.bus =3D &platform_bus_type;
+> +
+> + =A0 =A0 =A0 timerclk =3D clk_get(NULL, "timers");
+> + =A0 =A0 =A0 if (IS_ERR(timerclk))
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("failed to get timers clock for s=
+ystem timer");
+> +
+> + =A0 =A0 =A0 clk_enable(timerclk);
+> +
+> + =A0 =A0 =A0 tmpdev.id =3D 2;
+> + =A0 =A0 =A0 tin2 =3D clk_get(&tmpdev.dev, "pwm-tin");
+> + =A0 =A0 =A0 if (IS_ERR(tin2))
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("failed to get pwm-tin2 clock for=
+ system timer");
+> +
+> + =A0 =A0 =A0 tdiv2 =3D clk_get(&tmpdev.dev, "pwm-tdiv");
+> + =A0 =A0 =A0 if (IS_ERR(tdiv2))
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("failed to get pwm-tdiv2 clock fo=
+r system timer");
+> + =A0 =A0 =A0 clk_enable(tin2);
+> +
+> + =A0 =A0 =A0 tmpdev.id =3D 4;
+> + =A0 =A0 =A0 tin4 =3D clk_get(&tmpdev.dev, "pwm-tin");
+> + =A0 =A0 =A0 if (IS_ERR(tin4))
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("failed to get pwm-tin4 clock for=
+ system timer");
+> +
+> + =A0 =A0 =A0 tdiv4 =3D clk_get(&tmpdev.dev, "pwm-tdiv");
+> + =A0 =A0 =A0 if (IS_ERR(tdiv4))
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("failed to get pwm-tdiv4 clock fo=
+r system timer");
+> +
+> + =A0 =A0 =A0 clk_enable(tin4);
+> +}
+> +
+> +static void __init s5pv310_timer_init(void)
+> +{
+> +#ifdef CONFIG_LOCAL_TIMERS
+> + =A0 =A0 =A0 twd_base =3D S5P_VA_TWD;
+> +#endif
+> +
+> + =A0 =A0 =A0 s5pv310_timer_resources();
+> + =A0 =A0 =A0 s5pv310_clockevent_init();
+> + =A0 =A0 =A0 s5pv310_clocksource_init();
+> +}
+> +
+> +struct sys_timer s5pv310_timer =3D {
+> + =A0 =A0 =A0 .init =A0 =A0 =A0 =A0 =A0 =3D s5pv310_timer_init,
+> +};
+> diff --git a/arch/arm/plat-s5p/include/plat/s5pv310.h b/arch/arm/plat=
+-s5p/include/plat/s5pv310.h
+> index d2f05e1..769c991 100644
+> --- a/arch/arm/plat-s5p/include/plat/s5pv310.h
+> +++ b/arch/arm/plat-s5p/include/plat/s5pv310.h
+> @@ -22,6 +22,7 @@ extern =A0int s5pv310_init(void);
+> =A0extern void s5pv310_init_irq(void);
+> =A0extern void s5pv310_map_io(void);
+> =A0extern void s5pv310_init_clocks(int xtal);
+> +extern struct sys_timer s5pv310_timer;
+>
+> =A0#define s5pv310_init_uarts s5pv310_common_init_uarts
+>
+> diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/M=
+akefile
+> index b1d82cc..0d5bf8a 100644
+> --- a/arch/arm/plat-samsung/Makefile
+> +++ b/arch/arm/plat-samsung/Makefile
+> @@ -12,7 +12,7 @@ obj- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0:=3D
+> =A0# Objects we always build independent of SoC choice
+>
+> =A0obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0+=3D init=
+=2Eo
+> -obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0+=3D time.o
+> +obj-$(CONFIG_ARCH_USES_GETTIMEOFFSET) =A0 +=3D time.o
+> =A0obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0+=3D cloc=
+k.o
+> =A0obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0+=3D pwm-=
+clock.o
+> =A0obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0+=3D gpio=
+=2Eo
 > --
-
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> 1.6.2.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
