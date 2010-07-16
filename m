@@ -1,137 +1,70 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH] regulator: MAX8998: set_voltage bugfix. ramp_up delay and
-	min/max voltage
-Date: Fri, 16 Jul 2010 10:50:53 +0200
-Message-ID: <011801cb24c4$02ef53a0$08cdfae0$%szyprowski@samsung.com>
-References: <1279267760-6971-1-git-send-email-myungjoo.ham@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1279267760-6971-1-git-send-email-myungjoo.ham@samsung.com>
-Content-language: pl
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, sameo@linux.intel.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, myungjoo.ham@gmail.com, lrg@slimlogic.co.uk
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH v2] ARM: SAMSUNG: serial: Add FRACVAL support for newer UART
+Date: Fri, 16 Jul 2010 17:46:02 +0900
+Message-ID: <1279269962-15109-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:47189 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S936040Ab0GPIzC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 Jul 2010 04:55:02 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hello,
+From: Jongpill Lee <boyko.lee@samsung.com>
 
-On Friday, July 16, 2010 10:09 AM MyungJoo Ham wrote:
+Add support for the FRACVAL register on the newer UART blocks which provides
+the same function as UDIVSLOT register but the FRACVAL is easier to implement.
+To support UDIVSLOT register, UDIVSLOT table search is necessary though
+supporting FRACVAL only needs the index value of UDIVSLOT table.
 
-> Two issues are addressed for max8998_set_voltage function.
-> 
-> 1. Min/Max Voltage.
-> 
-> 	max8998_set_voltage had been using the voltage value of
-> 
-> 	min ( voltage[i] >= max_vol , i )
-> 
-> 	This is corrected to use:
-> 
-> 	min ( voltage[i] >= min_vol , i )
-> 
-> 2. Ramp Up Delay.
-> 
-> 	max8998_set_voltage should provide delay for BUCK1/2
-> if ENRAMP is on. It reads RAMP value from ONOFF4 register to determine
-> RAMP delay length. However, when max8998_set_voltage's new voltage is
-> lower than the previous, we don't care because it does not deteriorate
-> the stability.
-> 
-> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
+Acked-by: Changhwan Youn <chaos.youn@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+Changes since v1:
+- Movded 'has_fracval' from s3c24xx_uart_info to s3c2410_uartcfg to support
+  FRACVAL through platform_data. This can help to reduce register duplicated
+  similar serial driver.
 
-Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+ arch/arm/plat-samsung/include/plat/regs-serial.h |    2 ++
+ drivers/serial/samsung.c                         |    9 +++++++--
+ 2 files changed, 9 insertions(+), 2 deletions(-)
 
-> --
-> I've omitted some CC in the previous email, adding them here. Sorry for the
-> duplicated submission.
-> ---
->  drivers/regulator/max8998.c |   30 ++++++++++++++++++++++++++++--
->  1 files changed, 28 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/regulator/max8998.c b/drivers/regulator/max8998.c
-> index 1cca8b5..99c5279 100644
-> --- a/drivers/regulator/max8998.c
-> +++ b/drivers/regulator/max8998.c
-> @@ -28,6 +28,7 @@
->  #include <linux/slab.h>
->  #include <linux/interrupt.h>
->  #include <linux/mutex.h>
-> +#include <linux/delay.h>
->  #include <linux/platform_device.h>
->  #include <linux/regulator/driver.h>
->  #include <linux/mfd/max8998.h>
-> @@ -302,10 +303,13 @@ static int max8998_set_voltage(struct regulator_dev
-> *rdev,
->  	struct max8998_data *max8998 = rdev_get_drvdata(rdev);
->  	struct i2c_client *i2c = max8998->iodev->i2c;
->  	int min_vol = min_uV / 1000, max_vol = max_uV / 1000;
-> +	int previous_vol = 0;
->  	const struct voltage_map_desc *desc;
->  	int ldo = max8998_get_ldo(rdev);
->  	int reg, shift = 0, mask, ret;
->  	int i = 0;
-> +	u8 val;
-> +	bool en_ramp = false;
-> 
->  	if (ldo > ARRAY_SIZE(ldo_voltage_map))
->  		return -EINVAL;
-> @@ -317,15 +321,37 @@ static int max8998_set_voltage(struct regulator_dev
-> *rdev,
->  	if (max_vol < desc->min || min_vol > desc->max)
->  		return -EINVAL;
-> 
-> -	while (desc->min + desc->step*i < max_vol &&
-> +	while (desc->min + desc->step*i < min_vol &&
->  	       desc->min + desc->step*i < desc->max)
->  		i++;
-> 
-> +	if (desc->min + desc->step*i > max_vol)
-> +		return -EINVAL;
-> +
->  	ret = max8998_get_voltage_register(rdev, &reg, &shift, &mask);
->  	if (ret)
->  		return ret;
-> 
-> -	return max8998_update_reg(i2c, reg, i<<shift, mask<<shift);
-> +	/* wait for RAMP_UP_DELAY if rdev is BUCK1/2 and
-> +	 * ENRAMP is ON */
-> +	if (ldo == MAX8998_BUCK1 || ldo == MAX8998_BUCK2) {
-> +		max8998_read_reg(i2c, MAX8998_REG_ONOFF4, &val);
-> +		if (val & (1 << 4)) {
-> +			en_ramp = true;
-> +			previous_vol = max8998_get_voltage(rdev);
-> +		}
-> +	}
-> +
-> +	ret = max8998_update_reg(i2c, reg, i<<shift, mask<<shift);
-> +
-> +	if (en_ramp == true) {
-> +		int difference = desc->min + desc->step * i
-> +			- previous_vol / 1000;
-> +		if (difference > 0)
-> +			udelay(difference / ((val & 0x0f) + 1));
-> +	}
-> +
-> +	return ret;
->  }
-> 
->  static struct regulator_ops max8998_ldo_ops = {
-> --
-> 1.6.3.3
-
-
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+diff --git a/arch/arm/plat-samsung/include/plat/regs-serial.h b/arch/arm/plat-samsung/include/plat/regs-serial.h
+index a6eba84..788837e 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-serial.h
++++ b/arch/arm/plat-samsung/include/plat/regs-serial.h
+@@ -259,6 +259,8 @@ struct s3c2410_uartcfg {
+ 	unsigned short	   flags;
+ 	upf_t		   uart_flags;	 /* default uart flags */
+ 
++	unsigned int	   has_fracval;
++
+ 	unsigned long	   ucon;	 /* value of ucon for port */
+ 	unsigned long	   ulcon;	 /* value of ulcon for port */
+ 	unsigned long	   ufcon;	 /* value of ufcon for port */
+diff --git a/drivers/serial/samsung.c b/drivers/serial/samsung.c
+index a9d6c56..b1156ba 100644
+--- a/drivers/serial/samsung.c
++++ b/drivers/serial/samsung.c
+@@ -705,8 +705,13 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
+ 	if (ourport->info->has_divslot) {
+ 		unsigned int div = ourport->baudclk_rate / baud;
+ 
+-		udivslot = udivslot_table[div & 15];
+-		dbg("udivslot = %04x (div %d)\n", udivslot, div & 15);
++		if (cfg->has_fracval) {
++			udivslot = (div & 15);
++			dbg("fracval = %04x\n", udivslot);
++		} else {
++			udivslot = udivslot_table[div & 15];
++			dbg("udivslot = %04x (div %d)\n", udivslot, div & 15);
++		}
+ 	}
+ 
+ 	switch (termios->c_cflag & CSIZE) {
+-- 
+1.6.2.5
