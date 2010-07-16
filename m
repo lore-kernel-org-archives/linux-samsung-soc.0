@@ -1,190 +1,534 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 2/3] ARM: S5PV210: Add support for I2C devices on SMDKV210 and SMDKC110
-Date: Fri, 16 Jul 2010 22:13:18 +0900
-Message-ID: <1279285999-27555-3-git-send-email-kgene.kim@samsung.com>
-References: <1279285999-27555-1-git-send-email-kgene.kim@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: RE: [PATCH 01/10 v2] ARM: Samsung: Add FIMC register and platform
+ definitions
+Date: Fri, 16 Jul 2010 15:30:36 +0200
+Message-ID: <000301cb24eb$13434000$39c9c000$%nawrocki@samsung.com>
+References: <1279185041-6004-1-git-send-email-s.nawrocki@samsung.com>
+ <1279185041-6004-2-git-send-email-s.nawrocki@samsung.com>
+ <012101cb24cb$83187410$89495c30$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:43563 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965564Ab0GPNZG (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:48440 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965352Ab0GPNcB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Jul 2010 09:25:06 -0400
-In-Reply-To: <1279285999-27555-1-git-send-email-kgene.kim@samsung.com>
+	Fri, 16 Jul 2010 09:32:01 -0400
+In-reply-to: <012101cb24cb$83187410$89495c30$%kim@samsung.com>
+Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
-Cc: ben-linux@fluff.org, Naveen Krishna Ch <ch.naveen@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: 'Kukjin Kim' <kgene.kim@samsung.com>
+Cc: Pawel Osciak <p.osciak@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, kyungmin.park@samsung.com, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-From: Naveen Krishna Ch <ch.naveen@samsung.com>
+Hi,
 
-This patch adds support I2C-0/1/2 devices to the SMDKV210/SMDKC110.
+thank you for the review. Please se my comments below.
 
-Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s5pv210/Kconfig         |    8 ++++++++
- arch/arm/mach-s5pv210/mach-smdkc110.c |   28 ++++++++++++++++++++++++++++
- arch/arm/mach-s5pv210/mach-smdkv210.c |   29 +++++++++++++++++++++++++++++
- 3 files changed, 65 insertions(+), 0 deletions(-)
+> -----Original Message-----
+> From: Kukjin Kim [mailto:kgene.kim@samsung.com]
+> Sent: Friday, July 16, 2010 11:45 AM
+> To: 'Sylwester Nawrocki'; linux-samsung-soc@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org
+> Cc: p.osciak@samsung.com; m.szyprowski@samsung.com;
+> kyungmin.park@samsung.com; linux-media@vger.kernel.org
+> Subject: RE: [PATCH 01/10 v2] ARM: Samsung: Add FIMC register and
+> platform definitions
+> 
+> Sylwester Nawrocki wrote:
+> >
+> > FIMC device is a camera interface embedded in S3C/S5P Samsung SOC
+> series.
+> > It supports ITU-R BT.601/656 and MIPI-CSI2 standards, memory to
+> memory
+> > operations, color conversion, resizing and rotation.
+> >
+> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
+> >  arch/arm/plat-samsung/include/plat/fimc.h      |   31 ++
+> >  arch/arm/plat-samsung/include/plat/regs-fimc.h |  361
+> > ++++++++++++++++++++++++
+> >  2 files changed, 392 insertions(+), 0 deletions(-)
+> >  create mode 100644 arch/arm/plat-samsung/include/plat/fimc.h
+> >  create mode 100644 arch/arm/plat-samsung/include/plat/regs-fimc.h
+> >
+> > diff --git a/arch/arm/plat-samsung/include/plat/fimc.h
+> b/arch/arm/plat-
+> > samsung/include/plat/fimc.h
+> > new file mode 100644
+> > index 0000000..be1e853
+> > --- /dev/null
+> > +++ b/arch/arm/plat-samsung/include/plat/fimc.h
+> > @@ -0,0 +1,31 @@
+> > +/* linux/arch/arm/plat-samsung/include/plat/fimc.h
+> > + *
+> > + * Platform header file for FIMC driver
+> > + *
+> > + * Copyright (c) 2010 Samsung Electronics
+> > + *
+> > + * Sylwester Nawrocki, <s.nawrocki@samsung.com>
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > + */
+> > +
+> > +#ifndef FIMC_H_
+> > +#define FIMC_H_
+> > +
+> > +#include <linux/device.h>
+> > +#include <linux/platform_device.h>
+> > +
+> > +
+> 
+> 2 empty lines...
 
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index 0761eac..2a996d9 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -72,9 +72,13 @@ config MACH_SMDKV210
- 	select CPU_S5PV210
- 	select ARCH_SPARSEMEM_ENABLE
- 	select SAMSUNG_DEV_ADC
-+	select S3C_DEV_I2C1
-+	select S3C_DEV_I2C2
- 	select SAMSUNG_DEV_TS
- 	select S3C_DEV_WDT
- 	select HAVE_S3C2410_WATCHDOG
-+	select S5PV210_SETUP_I2C1
-+	select S5PV210_SETUP_I2C2
- 	help
- 	  Machine support for Samsung SMDKV210
+I don't mind at all changing these to single line if it is 
+the adopted style, however I didn't file like so when looking
+through the existing headers.
+
+> 
+> > +#define FIMC_MAX_FIFO_TARGETS	1
+> > +#define FIMC_LCD_FIFO_TARGET	0
+> > +
+> > +struct s3c_fifo_link;
+> > +
+> > +struct samsung_plat_fimc {
+> > +	struct s3c_fifo_link	*fifo_targets[FIMC_MAX_FIFO_TARGETS];
+> > +};
+> > +
+> > +#endif /* FIMC_H_ */
+> > +
+> 
+> No need last empty line...
+
+C89 and C99 standard requires a new line character at the end of file.
+The compiler should issue a warning when the new line character 
+at the end of file is missing, otherwise it is not compliant with 
+the above C standards.
+So I would rather add a new line where it is missing rather than 
+removing it.
+There is lots of header files already in arch/arm/plat-samsung where 
+there is even more than one empty line at the end of file. 
+
+> 
+> > diff --git a/arch/arm/plat-samsung/include/plat/regs-fimc.h
+> b/arch/arm/plat-
+> > samsung/include/plat/regs-fimc.h
+> > new file mode 100644
+> > index 0000000..6946a93
+> > --- /dev/null
+> > +++ b/arch/arm/plat-samsung/include/plat/regs-fimc.h
+> > @@ -0,0 +1,361 @@
+> > +/* arch/arm/plat-s5p/include/plat/regs-fimc.h
+> > + *
+> > + * Register definition file for Samsung Camera Interface (FIMC)
+> driver
+> > + *
+> > + * Copyright (c) 2010 Samsung Electronics
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > + */
+> > +
+> > +#ifndef REGS_FIMC_H_
+> > +#define REGS_FIMC_H_
+> > +
+> > +#define S5P_CIOYSA(__x)				(0x18 + (__x) * 4)
+> > +#define S5P_CIOCBSA(__x)			(0x28 + (__x) * 4)
+> > +#define S5P_CIOCRSA(__x)			(0x38 + (__x) * 4)
+> > +
+> > +/* Input source format */
+> > +#define S5P_CISRCFMT				0x00
+> > +/* Window offset */
+> > +#define S5P_CIWDOFST				0x04
+> > +/* Global control */
+> > +#define S5P_CIGCTRL				0x08
+> > +/* Window offset 2 */
+> > +#define S5P_CIWDOFST2				0x14
+> > +/* Output DMA Y 1st frame start address */
+> > +#define S5P_CIOYSA1				0x18
+> > +/* Output DMA Y 2nd frame start address */
+> > +#define S5P_CIOYSA2				0x1c
+> > +/* Output DMA Y 3rd frame start address */
+> > +#define S5P_CIOYSA3				0x20
+> > +/* Output DMA Y 4th frame start address */
+> > +#define S5P_CIOYSA4				0x24
+> > +/* Output DMA Cb 1st frame start address */
+> > +#define S5P_CIOCBSA1				0x28
+> > +/* Output DMA Cb 2nd frame start address */
+> > +#define S5P_CIOCBSA2				0x2c
+> > +/* Output DMA Cb 3rd frame start address */
+> > +#define S5P_CIOCBSA3				0x30
+> > +/* Output DMA Cb 4th frame start address */
+> > +#define S5P_CIOCBSA4				0x34
+> > +/* Output DMA Cr 1st frame start address */
+> > +#define S5P_CIOCRSA1				0x38
+> > +/* Output DMA Cr 2nd frame start address */
+> > +#define S5P_CIOCRSA2				0x3c
+> > +/* Output DMA Cr 3rd frame start address */
+> > +#define S5P_CIOCRSA3				0x40
+> > +/* Output DMA Cr 4th frame start address */
+> > +#define S5P_CIOCRSA4				0x44
+> > +/* Target image format */
+> > +#define S5P_CITRGFMT				0x48
+> > +/* Output DMA control */
+> > +#define S5P_CIOCTRL				0x4c
+> > +/* Pre-scaler control 1 */
+> > +#define S5P_CISCPRERATIO			0x50
+> > +/* Pre-scaler control 2 */
+> > +#define S5P_CISCPREDST				0x54
+> > +/* Main scaler control */
+> > +#define S5P_CISCCTRL				0x58
+> > +/* Target area */
+> > +#define S5P_CITAREA				0x5c
+> > +/* Status */
+> > +#define S5P_CISTATUS				0x64
+> > +/* Image capture enable command */
+> > +#define S5P_CIIMGCPT				0xc0
+> > +/* Capture sequence */
+> > +#define S5P_CICPTSEQ				0xc4
+> > +/* Image effects */
+> > +#define S5P_CIIMGEFF				0xd0
+> > +/* Y frame start address for input DMA */
+> > +#define S5P_CIIYSA0				0xd4
+> > +/* Cb frame start address for input DMA */
+> > +#define S5P_CIICBSA0				0xd8
+> > +/* Cr frame start address for input DMA */
+> > +#define S5P_CIICRSA0				0xdc
+> > +/* Real input DMA image size */
+> > +#define S5P_CIREAL_ISIZE			0xf8
+> > +/* Input DMA control */
+> > +#define S5P_MSCTRL				0xfc
+> > +/* Y frame start address for input DMA */
+> > +#define S5P_CIIYSA1				0x144
+> > +/* Cb frame start address for input DMA */
+> > +#define S5P_CIICBSA1				0x148
+> > +/* Cr frame start address for input DMA */
+> > +#define S5P_CIICRSA1				0x14c
+> > +/* Output DMA Y offset */
+> > +#define S5P_CIOYOFF				0x168
+> > +/* Output DMA CB offset */
+> > +#define S5P_CIOCBOFF				0x16c
+> > +/* Output DMA CR offset */
+> > +#define S5P_CIOCROFF				0x170
+> > +/* Input DMA Y offset */
+> > +#define S5P_CIIYOFF				0x174
+> > +/* Input DMA CB offset */
+> > +#define S5P_CIICBOFF				0x178
+> > +/* Input DMA CR offset */
+> > +#define S5P_CIICROFF				0x17c
+> > +/* Input DMA original image size */
+> > +#define S5P_ORGISIZE				0x180
+> > +/* Output DMA original image size */
+> > +#define S5P_ORGOSIZE				0x184
+> > +/* Real output DMA image size */
+> > +#define S5P_CIEXTEN				0x188
+> > +/* DMA parameter */
+> > +#define S5P_CIDMAPARAM				0x18c
+> > +/* MIPI CSI image format */
+> > +#define S5P_CSIIMGFMT				0x194
+> > +
+> > +
+> 
+> 2 empty lines?
+> 
+> > +#define S5P_CISRCFMT_SOURCEHSIZE(x)		((x) << 16)
+> > +#define S5P_CISRCFMT_SOURCEVSIZE(x)		((x) << 0)
+> > +
+> > +#define S5P_CIWDOFST_WINHOROFST(x)		((x) << 16)
+> > +#define S5P_CIWDOFST_WINVEROFST(x)		((x) << 0)
+> > +
+> > +#define S5P_CIWDOFST2_WINHOROFST2(x)		((x) << 16)
+> > +#define S5P_CIWDOFST2_WINVEROFST2(x)		((x) << 0)
+> > +
+> > +#define S5P_CITRGFMT_TARGETHSIZE(x)		((x) << 16)
+> > +#define S5P_CITRGFMT_TARGETVSIZE(x)		((x) << 0)
+> > +
+> > +#define S5P_CISCPRERATIO_SHFACTOR(x)		((x) << 28)
+> > +#define S5P_CISCPRERATIO_PREHORRATIO(x)		((x) << 16)
+> > +#define S5P_CISCPRERATIO_PREVERRATIO(x)		((x) << 0)
+> > +
+> > +#define S5P_CISCPREDST_PREDSTWIDTH(x)		((x) << 16)
+> > +#define S5P_CISCPREDST_PREDSTHEIGHT(x)		((x) << 0)
+> > +
+> > +#define S5P_CISCCTRL_MAINHORRATIO(x)		((x) << 16)
+> > +#define S5P_CISCCTRL_MAINVERRATIO(x)		((x) << 0)
+> > +
+> > +#define S5P_CITAREA_TARGET_AREA(x)		((x) << 0)
+> > +
+> > +#define S5P_CIIMGEFF_PAT_CB(x)			((x) << 13)
+> > +#define S5P_CIIMGEFF_PAT_CR(x)			((x) << 0)
+> > +
+> > +#define S5P_CIREAL_ISIZE_HEIGHT(x)		((x) << 16)
+> > +#define S5P_CIREAL_ISIZE_WIDTH(x)		((x) << 0)
+> > +
+> > +#define S5P_MSCTRL_SUCCESSIVE_COUNT(x)		((x) << 24)
+> > +
+> > +#define S5P_CIOYOFF_VERTICAL(x)			((x) << 16)
+> > +#define S5P_CIOYOFF_HORIZONTAL(x)		((x) << 0)
+> > +
+> > +#define S5P_CIOCBOFF_VERTICAL(x)		((x) << 16)
+> > +#define S5P_CIOCBOFF_HORIZONTAL(x)		((x) << 0)
+> > +
+> > +#define S5P_CIOCROFF_VERTICAL(x)		((x) << 16)
+> > +#define S5P_CIOCROFF_HORIZONTAL(x)		((x) << 0)
+> > +
+> > +#define S5P_CIIYOFF_VERTICAL(x)			((x) << 16)
+> > +#define S5P_CIIYOFF_HORIZONTAL(x)		((x) << 0)
+> > +
+> > +#define S5P_CIICBOFF_VERTICAL(x)		((x) << 16)
+> > +#define S5P_CIICBOFF_HORIZONTAL(x)		((x) << 0)
+> > +
+> > +#define S5P_CIICROFF_VERTICAL(x)		((x) << 16)
+> > +#define S5P_CIICROFF_HORIZONTAL(x)		((x) << 0)
+> > +
+> > +#define S5P_ORGISIZE_VERTICAL(x)		((x) << 16)
+> > +#define S5P_ORGISIZE_HORIZONTAL(x)		((x) << 0)
+> > +
+> > +#define S5P_ORGOSIZE_VERTICAL(x)		((x) << 16)
+> > +#define S5P_ORGOSIZE_HORIZONTAL(x)		((x) << 0)
+> > +
+> > +
+> 
+> Same...2 empty lines...
+> 
+> And above definitions used same bit shift...((x) << 16) or ((x) <<
+> 0)...
+> Hmm...I'm thinking...whether there is any method to reduce similar
+> codes...
+
+OK, I will just define 2 generic macros for these DMA offsets
+and possibly other two for the sizes. However when the shifts are
+changed in the future SoC versions we will have to go back to
+separate definitions per each register and modify the driver again.
+
+> 
+> > +/* Register's bit definitions */
+> > +
+> > +/* Source format register */
+> > +#define S5P_CISRCFMT_ITU601_8BIT		(1 << 31)
+> > +#define S5P_CISRCFMT_ITU656_8BIT		(0 << 31)
+> > +#define S5P_CISRCFMT_ITU601_16BIT		(1 << 29)
+> > +#define S5P_CISRCFMT_ORDER422_YCBYCR		(0 << 14)
+> > +#define S5P_CISRCFMT_ORDER422_YCRYCB		(1 << 14)
+> > +#define S5P_CISRCFMT_ORDER422_CBYCRY		(2 << 14)
+> > +#define S5P_CISRCFMT_ORDER422_CRYCBY		(3 << 14)
+> > +/* ITU601 16bit only */
+> > +#define S5P_CISRCFMT_ORDER422_Y4CBCRCBCR	(0 << 14)
+> > +/* ITU601 16bit only */
+> 
+> Same comments... ITU601 16bit only...
+> 
+> > +#define S5P_CISRCFMT_ORDER422_Y4CRCBCRCB	(1 << 14)
+> > +
+> > +/* Window offset register */
+> > +#define S5P_CIWDOFST_WINOFSEN			(1 << 31)
+> > +#define S5P_CIWDOFST_CLROVFIY			(1 << 30)
+> > +#define S5P_CIWDOFST_CLROVRLB			(1 << 29)
+> > +#define S5P_CIWDOFST_WINHOROFST_MASK		(0x7ff << 16)
+> > +#define S5P_CIWDOFST_CLROVFICB			(1 << 15)
+> > +#define S5P_CIWDOFST_CLROVFICR			(1 << 14)
+> > +#define S5P_CIWDOFST_WINVEROFST_MASK		(0xfff << 0)
+> > +
+> > +/* Global control register */
+> > +#define S5P_CIGCTRL_SWRST			(1 << 31)
+> > +#define S5P_CIGCTRL_CAMRST_A			(1 << 30)
+> > +#define S5P_CIGCTRL_SELCAM_ITU_B		(0 << 29)
+> > +#define S5P_CIGCTRL_SELCAM_ITU_A		(1 << 29)
+> > +#define S5P_CIGCTRL_SELCAM_ITU_MASK		(1 << 29)
+> > +#define S5P_CIGCTRL_TESTPAT_NORMAL		(0 << 27)
+> > +#define S5P_CIGCTRL_TESTPAT_COLOR_BAR		(1 << 27)
+> > +#define S5P_CIGCTRL_TESTPAT_HOR_INC		(2 << 27)
+> > +#define S5P_CIGCTRL_TESTPAT_VER_INC		(3 << 27)
+> > +#define S5P_CIGCTRL_TESTPAT_MASK		(3 << 27)
+> > +#define S5P_CIGCTRL_TESTPAT_SHIFT		(27)
+> > +#define S5P_CIGCTRL_INVPOLPCLK			(1 << 26)
+> > +#define S5P_CIGCTRL_INVPOLVSYNC			(1 << 25)
+> > +#define S5P_CIGCTRL_INVPOLHREF			(1 << 24)
+> > +#define S5P_CIGCTRL_IRQ_OVFEN			(1 << 22)
+> > +#define S5P_CIGCTRL_HREF_MASK			(1 << 21)
+> > +#define S5P_CIGCTRL_IRQ_EDGE			(0 << 20)
+> > +#define S5P_CIGCTRL_IRQ_LEVEL			(1 << 20)
+> > +#define S5P_CIGCTRL_IRQ_CLR			(1 << 19)
+> > +#define S5P_CIGCTRL_IRQ_DISABLE			(0 << 16)
+> > +#define S5P_CIGCTRL_IRQ_ENABLE			(1 << 16)
+> > +#define S5P_CIGCTRL_SHDW_DISABLE		(1 << 12)
+> > +#define S5P_CIGCTRL_SELCAM_MIPI_B		(0 << 7)
+> > +#define S5P_CIGCTRL_SELCAM_MIPI_A		(1 << 7)
+> > +#define S5P_CIGCTRL_SELCAM_MIPI_MASK		(1 << 7)
+> > +#define S5P_CIGCTRL_CAMIF_SELWB			(1 << 6)
+> > +#define S5P_CIGCTRL_INVPOLHSYNC			(1 << 4)
+> > +#define S5P_CIGCTRL_SELCAM_ITU			(0 << 3)
+> > +#define S5P_CIGCTRL_SELCAM_MIPI			(1 << 3)
+> > +#define S5P_CIGCTRL_PROGRESSIVE			(0 << 0)
+> > +#define S5P_CIGCTRL_INTERLACE			(1 << 0)
+> > +
+> > +/* Window offset2 register */
+> > +#define S5P_CIWDOFST_WINHOROFST2_MASK		(0xfff << 16)
+> > +#define S5P_CIWDOFST_WINVEROFST2_MASK		(0xfff << 16)
+> > +
+> > +/* Target format register */
+> > +#define S5P_CITRGFMT_INROT90			(1 << 31)
+> > +#define S5P_CITRGFMT_OUTFORMAT_YCBCR420		(0 << 29)
+> > +#define S5P_CITRGFMT_OUTFORMAT_YCBCR422		(1 << 29)
+> > +#define S5P_CITRGFMT_OUTFORMAT_YCBCR422_1PLANE	(2 << 29)
+> > +#define S5P_CITRGFMT_OUTFORMAT_RGB		(3 << 29)
+> > +#define S5P_CITRGFMT_OUT_FMT_MASK		(3 << 29)
+> > +#define S5P_CITRGFMT_HSIZE_MASK			(0xfff << 16)
+> > +#define S5P_CITRGFMT_FLIP_SHIFT			(14)
+> > +#define S5P_CITRGFMT_FLIP_NORMAL		(0 << 14)
+> > +#define S5P_CITRGFMT_FLIP_X_MIRROR		(1 << 14)
+> > +#define S5P_CITRGFMT_FLIP_Y_MIRROR		(2 << 14)
+> > +#define S5P_CITRGFMT_FLIP_180			(3 << 14)
+> > +#define S5P_CITRGFMT_FLIP_MASK			(3 << 14)
+> > +#define S5P_CITRGFMT_OUTROT90			(1 << 13)
+> > +#define S5P_CITRGFMT_VSIZE_MASK			(0xfff << 0)
+> > +
+> > +/* Output DMA control register */
+> > +#define S5P_CIOCTRL_ORDER422_MASK		(3 << 0)
+> > +#define S5P_CIOCTRL_ORDER422_CRYCBY		(0 << 0)
+> > +#define S5P_CIOCTRL_ORDER422_YCRYCB		(1 << 0)
+> > +#define S5P_CIOCTRL_ORDER422_CBYCRY		(2 << 0)
+> > +#define S5P_CIOCTRL_ORDER422_YCBYCR		(3 << 0)
+> > +#define S5P_CIOCTRL_LASTIRQ_ENABLE		(1 << 2)
+> > +#define S5P_CIOCTRL_YCBCR_3PLANE		(0 << 3)
+> > +#define S5P_CIOCTRL_YCBCR_2PLANE		(1 << 3)
+> > +#define S5P_CIOCTRL_YCBCR_PLANE_MASK		(1 << 3)
+> > +#define S5P_CIOCTRL_ORDER2P_SHIFT		(24)
+> > +#define S5P_CIOCTRL_ORDER2P_MASK		(3 << 24)
+> > +#define S5P_CIOCTRL_ORDER422_2P_LSB_CRCB	(0 << 24)
+> > +
+> > +
+> 
+> 2 empty lines...
+> 
+> > +/* Main scaler control register */
+> > +#define S5P_CISCCTRL_SCALERBYPASS		(1 << 31)
+> > +#define S5P_CISCCTRL_SCALEUP_H			(1 << 30)
+> > +#define S5P_CISCCTRL_SCALEUP_V			(1 << 29)
+> > +#define S5P_CISCCTRL_CSCR2Y_NARROW		(0 << 28)
+> > +#define S5P_CISCCTRL_CSCR2Y_WIDE		(1 << 28)
+> > +#define S5P_CISCCTRL_CSCY2R_NARROW		(0 << 27)
+> > +#define S5P_CISCCTRL_CSCY2R_WIDE		(1 << 27)
+> > +#define S5P_CISCCTRL_LCDPATHEN_FIFO		(1 << 26)
+> > +#define S5P_CISCCTRL_PROGRESSIVE		(0 << 25)
+> > +#define S5P_CISCCTRL_INTERLACE			(1 << 25)
+> > +#define S5P_CISCCTRL_SCALERSTART		(1 << 15)
+> > +#define S5P_CISCCTRL_INRGB_FMT_RGB565		(0 << 13)
+> > +#define S5P_CISCCTRL_INRGB_FMT_RGB666		(1 << 13)
+> > +#define S5P_CISCCTRL_INRGB_FMT_RGB888		(2 << 13)
+> > +#define S5P_CISCCTRL_INRGB_FMT_MASK		(3 << 13)
+> > +#define S5P_CISCCTRL_OUTRGB_FMT_RGB565		(0 << 11)
+> > +#define S5P_CISCCTRL_OUTRGB_FMT_RGB666		(1 << 11)
+> > +#define S5P_CISCCTRL_OUTRGB_FMT_RGB888		(2 << 11)
+> > +#define S5P_CISCCTRL_OUTRGB_FMT_MASK		(3 << 11)
+> > +#define S5P_CISCCTRL_EXTRGB_NORMAL		(0 << 10)
+> > +#define S5P_CISCCTRL_EXTRGB_EXTENSION		(1 << 10)
+> > +#define S5P_CISCCTRL_ONE2ONE			(1 << 9)
+> > +
+> > +/* Status register */
+> > +#define S5P_CISTATUS_OVFIY			(1 << 31)
+> > +#define S5P_CISTATUS_OVFICB			(1 << 30)
+> > +#define S5P_CISTATUS_OVFICR			(1 << 29)
+> > +#define S5P_CISTATUS_VSYNC			(1 << 28)
+> > +#define S5P_CISTATUS_WINOFSTEN			(1 << 25)
+> > +#define S5P_CISTATUS_IMGCPTEN			(1 << 22)
+> > +#define S5P_CISTATUS_IMGCPTENSC			(1 << 21)
+> > +#define S5P_CISTATUS_VSYNC_A			(1 << 20)
+> > +#define S5P_CISTATUS_VSYNC_B			(1 << 19)
+> > +#define S5P_CISTATUS_OVRLB			(1 << 18)
+> > +#define S5P_CISTATUS_FRAMEEND			(1 << 17)
+> > +#define S5P_CISTATUS_LASTCAPTUREEND		(1 << 16)
+> > +#define S5P_CISTATUS_VVALID_A			(1 << 15)
+> > +#define S5P_CISTATUS_VVALID_B			(1 << 14)
+> > +
+> > +/* Image capture enable register */
+> > +#define S5P_CIIMGCPT_IMGCPTEN			(1 << 31)
+> > +#define S5P_CIIMGCPT_IMGCPTEN_SC		(1 << 30)
+> > +#define S5P_CIIMGCPT_CPT_FREN_ENABLE		(1 << 25)
+> > +#define S5P_CIIMGCPT_CPT_FRMOD_EN		(0 << 18)
+> > +#define S5P_CIIMGCPT_CPT_FRMOD_CNT		(1 << 18)
+> > +
+> > +/* Image effects register */
+> > +#define S5P_CIIMGEFF_IE_DISABLE			(0 << 30)
+> > +#define S5P_CIIMGEFF_IE_ENABLE			(1 << 30)
+> > +#define S5P_CIIMGEFF_IE_SC_BEFORE		(0 << 29)
+> > +#define S5P_CIIMGEFF_IE_SC_AFTER		(1 << 29)
+> > +#define S5P_CIIMGEFF_FIN_BYPASS			(0 << 26)
+> > +#define S5P_CIIMGEFF_FIN_ARBITRARY		(1 << 26)
+> > +#define S5P_CIIMGEFF_FIN_NEGATIVE		(2 << 26)
+> > +#define S5P_CIIMGEFF_FIN_ARTFREEZE		(3 << 26)
+> > +#define S5P_CIIMGEFF_FIN_EMBOSSING		(4 << 26)
+> > +#define S5P_CIIMGEFF_FIN_SILHOUETTE		(5 << 26)
+> > +#define S5P_CIIMGEFF_FIN_MASK			(7 << 26)
+> > +#define S5P_CIIMGEFF_PAT_CBCR_MASK		((0xff < 13) | (0xff <
+> > 0))
+> > +
+> > +/* Real input DMA size register */
+> > +#define S5P_CIREAL_ISIZE_AUTOLOAD_ENABLE	(1 << 31)
+> > +#define S5P_CIREAL_ISIZE_ADDR_CH_DISABLE	(1 << 30)
+> > +
+> > +/* Input DMA control register */
+> > +#define S5P_MSCTRL_IN_BURST_COUNT_MASK		(3 << 24)
+> > +#define S5P_MSCTRL_2P_IN_ORDER_MASK		(3 << 16)
+> > +#define S5P_MSCTRL_2P_IN_ORDER_SHIFT		(16)
+> > +#define S5P_MSCTRL_C_INT_IN_3PLANE		(0 << 15)
+> > +#define S5P_MSCTRL_C_INT_IN_2PLANE		(1 << 15)
+> > +#define S5P_MSCTRL_C_INT_IN_MASK		(1 << 15)
+> > +#define S5P_MSCTRL_FLIP_SHIFT			(13)
+> > +#define S5P_MSCTRL_FLIP_MASK			(3 << 13)
+> > +#define S5P_MSCTRL_FLIP_NORMAL			(0 << 13)
+> > +#define S5P_MSCTRL_FLIP_X_MIRROR		(1 << 13)
+> > +#define S5P_MSCTRL_FLIP_Y_MIRROR		(2 << 13)
+> > +#define S5P_MSCTRL_FLIP_180			(3 << 13)
+> > +#define S5P_MSCTRL_ORDER422_SHIFT		(4)
+> > +#define S5P_MSCTRL_ORDER422_CRYCBY		(0 << 4)
+> > +#define S5P_MSCTRL_ORDER422_YCRYCB		(1 << 4)
+> > +#define S5P_MSCTRL_ORDER422_CBYCRY		(2 << 4)
+> > +#define S5P_MSCTRL_ORDER422_YCBYCR		(3 << 4)
+> > +#define S5P_MSCTRL_ORDER422_MASK		(3 << 4)
+> > +#define S5P_MSCTRL_INPUT_EXTCAM			(0 << 3)
+> > +#define S5P_MSCTRL_INPUT_MEMORY			(1 << 3)
+> > +#define S5P_MSCTRL_INPUT_MASK			(1 << 3)
+> > +#define S5P_MSCTRL_INFORMAT_YCBCR420		(0 << 1)
+> > +#define S5P_MSCTRL_INFORMAT_YCBCR422		(1 << 1)
+> > +#define S5P_MSCTRL_INFORMAT_YCBCR422_1PLANE	(2 << 1)
+> > +#define S5P_MSCTRL_INFORMAT_RGB			(3 << 1)
+> > +#define S5P_MSCTRL_INFORMAT_MASK		(3 << 1)
+> > +#define S5P_MSCTRL_ENVID			(1 << 0)
+> > +
+> > +/* DMA parameter register */
+> > +#define S5P_CIDMAPARAM_R_MODE_64X32		(3 << 29)
+> > +#define S5P_CIDMAPARAM_W_MODE_LINEAR		(0 << 13)
+> > +#define S5P_CIDMAPARAM_W_MODE_CONFTILE		(1 << 13)
+> > +#define S5P_CIDMAPARAM_W_MODE_64X32		(3 << 13)
+> > +
+> > +#endif /* REGS_FIMC_H_ */
+> > --
+> I wonder...we really need above every definitions?
+
+I think I could get rid of some of them. But I was not sure
+whether it is better to define all available bit fields at once
+or rather only those used by the current driver, and then 
+re-submit what is missing.
+Anyway I will try to remove as many as possible statements that 
+define a single bit position with 1 and 0.
  
-@@ -82,8 +86,12 @@ config MACH_SMDKC110
- 	bool "SMDKC110"
- 	select CPU_S5PV210
- 	select ARCH_SPARSEMEM_ENABLE
-+	select S3C_DEV_I2C1
-+	select S3C_DEV_I2C2
- 	select S3C_DEV_WDT
- 	select HAVE_S3C2410_WATCHDOG
-+	select S5PV210_SETUP_I2C1
-+	select S5PV210_SETUP_I2C2
- 	help
- 	  Machine support for Samsung SMDKC110
- 	  S5PC110(MCP) is one of package option of S5PV210
-diff --git a/arch/arm/mach-s5pv210/mach-smdkc110.c b/arch/arm/mach-s5pv210/mach-smdkc110.c
-index 4c8903c..420f9a0 100644
---- a/arch/arm/mach-s5pv210/mach-smdkc110.c
-+++ b/arch/arm/mach-s5pv210/mach-smdkc110.c
-@@ -12,6 +12,7 @@
- #include <linux/types.h>
- #include <linux/init.h>
- #include <linux/serial_core.h>
-+#include <linux/i2c.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
-@@ -25,6 +26,7 @@
- #include <plat/s5pv210.h>
- #include <plat/devs.h>
- #include <plat/cpu.h>
-+#include <plat/iic.h>
- 
- /* Following are default values for UCON, ULCON and UFCON UART registers */
- #define S5PV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-@@ -74,9 +76,24 @@ static struct s3c2410_uartcfg smdkv210_uartcfgs[] __initdata = {
- static struct platform_device *smdkc110_devices[] __initdata = {
- 	&s5pv210_device_iis0,
- 	&s5pv210_device_ac97,
-+	&s3c_device_i2c0,
-+	&s3c_device_i2c1,
-+	&s3c_device_i2c2,
- 	&s3c_device_wdt,
- };
- 
-+static struct i2c_board_info smdkc100_i2c_devs0[] __initdata = {
-+	{ I2C_BOARD_INFO("24c08", 0x50), },     /* Samsung S524AD0XD1 */
-+};
-+
-+static struct i2c_board_info smdkc100_i2c_devs1[] __initdata = {
-+	/* To Be Updated */
-+};
-+
-+static struct i2c_board_info smdkc100_i2c_devs2[] __initdata = {
-+	/* To Be Updated */
-+};
-+
- static void __init smdkc110_map_io(void)
- {
- 	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
-@@ -86,6 +103,17 @@ static void __init smdkc110_map_io(void)
- 
- static void __init smdkc110_machine_init(void)
- {
-+	/* I2C */
-+	s3c_i2c0_set_platdata(NULL);
-+	s3c_i2c1_set_platdata(NULL);
-+	s3c_i2c2_set_platdata(NULL);
-+	i2c_register_board_info(0, smdkc100_i2c_devs0,
-+			ARRAY_SIZE(smdkc100_i2c_devs0));
-+	i2c_register_board_info(1, smdkc100_i2c_devs1,
-+			ARRAY_SIZE(smdkc100_i2c_devs1));
-+	i2c_register_board_info(2, smdkc100_i2c_devs2,
-+			ARRAY_SIZE(smdkc100_i2c_devs2));
-+
- 	platform_add_devices(smdkc110_devices, ARRAY_SIZE(smdkc110_devices));
- }
- 
-diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
-index 0d46279..765f47e 100644
---- a/arch/arm/mach-s5pv210/mach-smdkv210.c
-+++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
-@@ -10,6 +10,7 @@
- 
- #include <linux/kernel.h>
- #include <linux/types.h>
-+#include <linux/i2c.h>
- #include <linux/init.h>
- #include <linux/serial_core.h>
- 
-@@ -27,6 +28,7 @@
- #include <plat/cpu.h>
- #include <plat/adc.h>
- #include <plat/ts.h>
-+#include <plat/iic.h>
- 
- /* Following are default values for UCON, ULCON and UFCON UART registers */
- #define S5PV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-@@ -77,10 +79,25 @@ static struct platform_device *smdkv210_devices[] __initdata = {
- 	&s5pv210_device_iis0,
- 	&s5pv210_device_ac97,
- 	&s3c_device_adc,
-+	&s3c_device_i2c0,
-+	&s3c_device_i2c1,
-+	&s3c_device_i2c2,
- 	&s3c_device_ts,
- 	&s3c_device_wdt,
- };
- 
-+static struct i2c_board_info smdkv210_i2c_devs0[] __initdata = {
-+	{ I2C_BOARD_INFO("24c08", 0x50), },     /* Samsung S524AD0XD1 */
-+};
-+
-+static struct i2c_board_info smdkv210_i2c_devs1[] __initdata = {
-+	/* To Be Updated */
-+};
-+
-+static struct i2c_board_info smdkv210_i2c_devs2[] __initdata = {
-+	/* To Be Updated */
-+};
-+
- static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
- 	.delay			= 10000,
- 	.presc			= 49,
-@@ -97,6 +114,18 @@ static void __init smdkv210_map_io(void)
- static void __init smdkv210_machine_init(void)
- {
- 	s3c24xx_ts_set_platdata(&s3c_ts_platform);
-+
-+	/* I2C */
-+	s3c_i2c0_set_platdata(NULL);
-+	s3c_i2c1_set_platdata(NULL);
-+	s3c_i2c2_set_platdata(NULL);
-+	i2c_register_board_info(0, smdkv210_i2c_devs0,
-+			ARRAY_SIZE(smdkv210_i2c_devs0));
-+	i2c_register_board_info(1, smdkv210_i2c_devs1,
-+			ARRAY_SIZE(smdkv210_i2c_devs1));
-+	i2c_register_board_info(2, smdkv210_i2c_devs2,
-+			ARRAY_SIZE(smdkv210_i2c_devs2));
-+
- 	platform_add_devices(smdkv210_devices, ARRAY_SIZE(smdkv210_devices));
- }
- 
--- 
-1.6.2.5
+> 
+> Thanks.
+> 
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+Kind regards,
+Sylwester
