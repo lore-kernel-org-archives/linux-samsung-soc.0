@@ -1,112 +1,82 @@
 From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH v2 3/5] ARM: S5PV210: macros for clock registers at regs-clock.h
-Date: Fri, 16 Jul 2010 17:01:15 +0900
-Message-ID: <1279267277-6804-4-git-send-email-myungjoo.ham@samsung.com>
+Subject: [PATCH v2 4/5] ARM: S5PV210: add DMCx access virtual address
+Date: Fri, 16 Jul 2010 17:01:16 +0900
+Message-ID: <1279267277-6804-5-git-send-email-myungjoo.ham@samsung.com>
 References: <1279267277-6804-1-git-send-email-myungjoo.ham@samsung.com>
  <1279267277-6804-2-git-send-email-myungjoo.ham@samsung.com>
  <1279267277-6804-3-git-send-email-myungjoo.ham@samsung.com>
+ <1279267277-6804-4-git-send-email-myungjoo.ham@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.samsung.com ([203.254.224.33]:18235 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935756Ab0GPIBi (ORCPT
+	with ESMTP id S935756Ab0GPIBj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Jul 2010 04:01:38 -0400
+	Fri, 16 Jul 2010 04:01:39 -0400
 Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
  by mailout3.samsung.com
  (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
  with ESMTP id <0L5N00KQR4Y5FA80@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 Jul 2010 17:01:17 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Fri, 16 Jul 2010 17:01:18 +0900 (KST)
 Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0L5N00KOI4Y5MN@mmp1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Fri, 16 Jul 2010 17:01:17 +0900 (KST)
-In-reply-to: <1279267277-6804-3-git-send-email-myungjoo.ham@samsung.com>
+In-reply-to: <1279267277-6804-4-git-send-email-myungjoo.ham@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: kyungmin.park@samsung.com, kgene.kim@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
 
-Previously, most of CLK_DIV/SRC register accessing mask and shift
-values were used at arch/arm/mach-s5pv210/clock.c only; thus we
-had not been using macros for these. However, as CPUFREQ uses
-those shift and mask values as well, we'd better define them at a single
-location, whose proper location would be regs-clock.h.
-
-Note that only the information about registers used by CPUFREQ are
-defined. However, we may need to define other registers later if we add
-other parts.
+This patch prepares CPUFREQ support for S5PV210 by adding definitions
+for S5P_VA_DMCx accessed by CPUFREQ, which were not defined previously.
 
 Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-s5pv210/include/mach/regs-clock.h |   45 +++++++++++++++++++++--
- 1 files changed, 42 insertions(+), 3 deletions(-)
+ arch/arm/mach-s5pv210/cpu.c              |   12 +++++++++++-
+ arch/arm/mach-s5pv210/include/mach/map.h |    8 ++++++++
+ 2 files changed, 19 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv210/include/mach/regs-clock.h b/arch/arm/mach-s5pv210/include/mach/regs-clock.h
-index 2a25ab4..a117ecc 100644
---- a/arch/arm/mach-s5pv210/include/mach/regs-clock.h
-+++ b/arch/arm/mach-s5pv210/include/mach/regs-clock.h
-@@ -66,11 +66,30 @@
- #define S5P_CLKGATE_BUS0	S5P_CLKREG(0x484)
- #define S5P_CLKGATE_BUS1	S5P_CLKREG(0x488)
- #define S5P_CLK_OUT		S5P_CLKREG(0x500)
-+#define S5P_CLK_DIV_STAT0   S5P_CLKREG(0x1000)
-+#define S5P_CLK_DIV_STAT1   S5P_CLKREG(0x1004)
-+#define S5P_CLK_MUX_STAT0   S5P_CLKREG(0x1100)
-+#define S5P_CLK_MUX_STAT1   S5P_CLKREG(0x1104)
-+
-+#define S5P_ARM_MCS_CON		S5P_CLKREG(0x6100)
+diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
+index 94c632b..84a6708 100644
+--- a/arch/arm/mach-s5pv210/cpu.c
++++ b/arch/arm/mach-s5pv210/cpu.c
+@@ -59,7 +59,17 @@ static struct map_desc s5pv210_iodesc[] __initdata = {
+ 		.pfn		= __phys_to_pfn(S5PV210_PA_SROMC),
+ 		.length		= SZ_4K,
+ 		.type		= MT_DEVICE,
+-	}
++	}, {
++		.virtual    = (unsigned long)S5P_VA_DMC0,
++		.pfn        = __phys_to_pfn(S5P_PA_DMC0),
++		.length     = SZ_4K,
++		.type       = MT_DEVICE,
++	}, {
++		.virtual    = (unsigned long)S5P_VA_DMC1,
++		.pfn        = __phys_to_pfn(S5P_PA_DMC1),
++		.length     = SZ_4K,
++		.type       = MT_DEVICE,
++	},
+ };
  
- /* CLKSRC0 */
--#define S5P_CLKSRC0_MUX200_MASK		(0x1<<16)
--#define S5P_CLKSRC0_MUX166_MASK		(0x1<<20)
--#define S5P_CLKSRC0_MUX133_MASK		(0x1<<24)
-+#define S5P_CLKSRC0_APLL_MASK		(0x1 << 0)
-+#define S5P_CLKSRC0_APLL_SHIFT		(0)
-+#define S5P_CLKSRC0_MPLL_MASK		(0x1 << 4)
-+#define S5P_CLKSRC0_MPLL_SHIFT		(4)
-+#define S5P_CLKSRC0_EPLL_MASK		(0x1 << 8)
-+#define S5P_CLKSRC0_EPLL_SHIFT		(8)
-+#define S5P_CLKSRC0_VPLL_MASK		(0x1 << 12)
-+#define S5P_CLKSRC0_VPLL_SHIFT		(12)
-+#define S5P_CLKSRC0_MUX200_MASK		(0x1 << 16)
-+#define S5P_CLKSRC0_MUX200_SHIFT	(16)
-+#define S5P_CLKSRC0_MUX166_MASK		(0x1 << 20)
-+#define S5P_CLKSRC0_MUX166_SHIFT	(20)
-+#define S5P_CLKSRC0_MUX133_MASK		(0x1 << 24)
-+#define S5P_CLKSRC0_MUX133_SHIFT	(24)
-+#define S5P_CLKSRC0_ONENAND_MASK	(0x1 << 28)
-+#define S5P_CLKSRC0_ONENAND_SHIFT	(28)
+ static void s5pv210_idle(void)
+diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
+index 17687f0..4945674 100644
+--- a/arch/arm/mach-s5pv210/include/mach/map.h
++++ b/arch/arm/mach-s5pv210/include/mach/map.h
+@@ -108,4 +108,12 @@
+ #define SAMSUNG_PA_ADC		S5PV210_PA_ADC
+ #define SAMSUNG_PA_KEYPAD	S5PV210_PA_KEYPAD
  
- /* CLKDIV0 */
- #define S5P_CLKDIV0_APLL_SHIFT		(0)
-@@ -90,6 +109,26 @@
- #define S5P_CLKDIV0_PCLK66_SHIFT	(28)
- #define S5P_CLKDIV0_PCLK66_MASK		(0x7 << S5P_CLKDIV0_PCLK66_SHIFT)
- 
-+/* CLKSRC2 */
-+#define S5P_CLKSRC2_G3D_MASK		(0x3 << 0)
-+#define S5P_CLKSRC2_G3D_SHIFT		(0)
-+#define S5P_CLKSRC2_MFC_MASK		(0x3 << 4)
-+#define S5P_CLKSRC2_MFC_SHIFT		(4)
-+#define S5P_CLKSRC2_G2D_MASK		(0x3 << 8)
-+#define S5P_CLKSRC2_G2D_SHIFT		(8)
++/* DMC */
++#define S5P_PA_DMC0     (0xF0000000)
++#define S5P_VA_DMC0     S3C_ADDR(0x00a00000)
 +
-+/* CLKDIV2 */
-+#define S5P_CLKDIV2_G3D_MASK		(0xF << 0)
-+#define S5P_CLKDIV2_G3D_SHIFT		(0)
-+#define S5P_CLKDIV2_MFC_MASK		(0xF << 4)
-+#define S5P_CLKDIV2_MFC_SHIFT		(4)
-+#define S5P_CLKDIV2_G2D_MASK		(0xF << 8)
-+#define S5P_CLKDIV2_G2D_SHIFT		(8)
++#define S5P_PA_DMC1     (0xF1400000)
++#define S5P_VA_DMC1     S3C_ADDR(0x00b00000)
 +
-+/* CLKDIV6 */
-+#define S5P_CLKDIV6_ONEDRAM_MASK	(0xf<<28)
-+#define S5P_CLKDIV6_ONEDRAM_SHIFT	(28)
 +
- /* Registers related to power management */
- #define S5P_PWR_CFG		S5P_CLKREG(0xC000)
- #define S5P_EINT_WAKEUP_MASK	S5P_CLKREG(0xC004)
+ #endif /* __ASM_ARCH_MAP_H */
 -- 
 1.6.3.3
