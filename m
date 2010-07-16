@@ -1,121 +1,135 @@
-From: Minchan Kim <minchan.kim@gmail.com>
-Subject: Re: About SECTION_SIZE_BITS for Sparsemem
-Date: Fri, 16 Jul 2010 09:07:59 +0900
-Message-ID: <AANLkTilpGchoSYd6h_fnACkQCX_c5I3AH679fHbL5_im@mail.gmail.com>
-References: <001b01cb21aa$ef0e4d80$cd2ae880$%kim@samsung.com>
-	<AANLkTinkujX3VbL0sXjjghovr8eX9Os0huw3OTBut2UP@mail.gmail.com>
-	<20100713092658.GB29885@csn.ul.ie>
-	<20100713093815.GD20590@n2100.arm.linux.org.uk>
-	<20100713095035.GE29885@csn.ul.ie>
-	<20100713173744.GB30142@n2100.arm.linux.org.uk>
-	<20100713203250.GA21600@csn.ul.ie>
-	<AANLkTim55BDz4_vWhTnDVj1EP42MxAMZzP2PR80j5fLN@mail.gmail.com>
-	<20100714084943.GA9115@n2100.arm.linux.org.uk>
-	<AANLkTilrLJb97NkK4Q-Oan_ufXRdafIw7n6060mItaXj@mail.gmail.com>
-	<20100714204952.GD18138@n2100.arm.linux.org.uk>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH v3] Samsung: sdhci-s3c: add support for new card detection
+	methods
+Date: Fri, 16 Jul 2010 08:24:26 +0200
+Message-ID: <011401cb24af$8eb2cb70$ac186250$%szyprowski@samsung.com>
+References: <1279181721-23333-1-git-send-email-m.szyprowski@samsung.com>
+	<20100715133954.7fcb797a.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:65374 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934037Ab0GPAIA convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Jul 2010 20:08:00 -0400
-Received: by iwn7 with SMTP id 7so1514879iwn.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Jul 2010 17:07:59 -0700 (PDT)
-In-Reply-To: <20100714204952.GD18138@n2100.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <20100715133954.7fcb797a.akpm@linux-foundation.org>
+Content-language: pl
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Andrew Morton' <akpm@linux-foundation.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Mel Gorman <mel@csn.ul.ie>, Kukjin Kim <kgene.kim@samsung.com>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On Thu, Jul 15, 2010 at 5:49 AM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Wed, Jul 14, 2010 at 08:04:07PM +0900, Minchan Kim wrote:
->> On Wed, Jul 14, 2010 at 5:49 PM, Russell King - ARM Linux
->> <linux@arm.linux.org.uk> wrote:
->> > On Wed, Jul 14, 2010 at 08:59:06AM +0900, Minchan Kim wrote:
->> >> But I think Kukjin case's best solution is to make section size 1=
-6M, not 256M.
->> >> Regardless of this, Your idea is the direction we should proceed,=
- I think.
->> >
->> > So what if someone decides to fit 8MB DRAMs to the board?
->> >
->>
->> Hmm. It might be a problem.
->> Should we consider all configuration?
->>
->> Then, in below cases ram size never can change?
->> How does it acked and merged?
->> I don't know below board can't configurable ram size. Just out of cu=
-riosity.
->
-> All of these, SECTION_SIZE_BITS refers to the _spacing_ of memory, no=
-t
-> the minimum size of DRAM which can ever be fitted.
->
-> Reducing SECTION_SIZE_BITS is really not an option for some of these
-> platforms - just look at where memory starts in physical space:
->
-> arch/arm/mach-clps711x/include/mach/memory.h:#define PHYS_OFFSET UL(0=
-xc0000000)
-> arch/arm/mach-clps711x/include/mach/memory.h:#define SECTION_SIZE_BIT=
-S =A024
-> arch/arm/mach-lh7a40x/include/mach/memory.h:#define PHYS_OFFSET UL(0x=
-c0000000)
-> arch/arm/mach-lh7a40x/include/mach/memory.h:#define SECTION_SIZE_BITS=
- =A0 24
-> arch/arm/mach-realview/include/mach/memory.h:#define PHYS_OFFSET UL(0=
-x70000000)
-> arch/arm/mach-realview/include/mach/memory.h:#define SECTION_SIZE_BIT=
-S =A028
-> arch/arm/mach-realview/include/mach/memory.h:#define PHYS_OFFSET UL(0=
-x00000000)
-> arch/arm/mach-rpc/include/mach/memory.h:#define PHYS_OFFSET UL(0x1000=
-0000)
-> arch/arm/mach-rpc/include/mach/memory.h:#define SECTION_SIZE_BITS =A0=
- =A0 =A0 26
-> arch/arm/mach-s5pv210/include/mach/memory.h:#define PHYS_OFFSET UL(0x=
-20000000)
-> arch/arm/mach-s5pv210/include/mach/memory.h:#define SECTION_SIZE_BITS=
- =A0 28
-> arch/arm/mach-sa1100/include/mach/memory.h:#define PHYS_OFFSET UL(0xc=
-0000000)
-> arch/arm/mach-sa1100/include/mach/memory.h:#define SECTION_SIZE_BITS =
-=A0 =A027
->
-> If physical memory starts at 3GB, with SECTION_SIZE_BITS set at 24,
-> there's 256 sections already. =A0Reducing SECTION_SIZE_BITS to the mu=
-ltiple
-> of RAM size will increase the number of sections to many thousands.
-> Clearly, sparsemem doesn't handle sparse memory very well, and is
-> defficient.
->
-> I don't know what the answer is to this; I'm totally fed up with bein=
-g
-> pushed into using things, and then later down the line being told tha=
-t
-> its all wrong and shouldn't be used like we are. =A0Maybe we should j=
-ust
-> delete these sub-architectures which use sparsemem and say to people
-> that the kernel just doesn't support their memory layouts.
->
-> <depressed>.
->
+Hello,
 
-Sorry for late response.
+On Thursday, July 15, 2010 10:40 PM Andrew Morton wrote:
 
-Okay. I think Kame's recent solution is a good.
-http://www.spinics.net/lists/linux-mm/msg06594.html
-It doesn't need overriding pfn_valid, doesn't need more space.
-And we can optimize it with overriding SECTION_MAP_LAST_BIT with
-SECTION_MAP_HAS_HOLE  to avoid non-hole section overhead.
-If we all agree, I will make the patch.
+> On Thu, 15 Jul 2010 10:15:21 +0200
+> Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> 
+> > On some Samsung SoCs not all SDHCI controllers have card detect (CD)
+> > line. For some embedded designs it is not even needed, because ususally
+> > the device (like SDIO flash memory or wifi controller) is permanently
+> > wired to the controller. There are also systems which have a card detect
+> > line connected to some of the external interrupt lines or the presence
+> > of the card depends on some other actions (like enabling a power
+> > regulator).
+> >
+> > This patch adds support for all these cases. The following card
+> > detection methods are possible:
+> >
+> > 1. internal sdhci host card detect line
+> > 2. external event
+> > 3. external gpio interrupt
+> > 4. no card detect line, controller will poll for the card
+> > 5. no card detect line, card is permanently wired to the controller
+> > (once detected host won't poll it any more)
+> >
+> > By default, all existing code would use method #1, what is compatible
+> > with the previous version of the driver.
+> >
+> > In case of external event, two callbacks must be provided in platdata:
+> > ext_cd_init and ext_cd_cleanup. Both of them get a callback to a
+> > function that notifies the s3c-sdhci host contoller as their argument.
+> > That callback function should be called from the even dispatcher to let
+> > host notice the card insertion/removal.
+> >
+> > In case of external gpio interrupt, a gpio pin number must be provided
+> > in platdata (ext_cd_gpio parameter), as well as the information about
+> > the polarity of that gpio pin (ext_cd_gpio_invert). By default
+> > (ext_cd_gpio_invert == 0) gpio value 0 means 'card has been removed',
+> > but this can be changed to 'card has been removed' when
+> > ext_cd_gpio_invert == 1.
+> >
+> > This patch adds all required changes to platform support code.
+> >
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
+> >
+> > This a resend of the previous patch. Relevant patches for sdhci-s3c
+> > driver has been posted in a separate patch series for easier merging,
+> > please refer to the "[PATCH] SDHCI-S3C fixes and enhancements (driver
+> > specific code)" thread. They have been already taken by Andrew Morton
+> > into his patch tracking tree.
+> >
+> > I hope these changes to platform specific code gets merged soon, so the
+> > changes to the driver can be merged as well.
+> >
+> > The patch has been prepared for the following git tree:
+> > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> for-next
+> >
+> > Changes since V2:
+> > - added support for HSMMC3 device
+> >
+> > Changes since V1:
+> > - added support for gpio external interrupt card based detect method
+> >   directly to sdhci-s3c driver
+> > - removed s3c64xx compilation fix patch from the series
+> >
+> > Best regards
+> > --
+> > Marek Szyprowski
+> > Samsung Poland R&D Center
+> >
+> > ---
+> >
+> >  arch/arm/mach-s3c64xx/setup-sdhci-gpio.c   |   14 +++++++++---
+> >  arch/arm/mach-s5pc100/setup-sdhci-gpio.c   |   21 ++++++++++++++-----
+> >  arch/arm/mach-s5pv210/setup-sdhci-gpio.c   |   22 +++++++++++++++-----
+> >  arch/arm/plat-samsung/dev-hsmmc.c          |    5 ++++
+> >  arch/arm/plat-samsung/dev-hsmmc1.c         |    5 ++++
+> >  arch/arm/plat-samsung/dev-hsmmc2.c         |    5 ++++
+> >  arch/arm/plat-samsung/dev-hsmmc3.c         |    5 ++++
+> >  arch/arm/plat-samsung/include/plat/sdhci.h |   29
+> ++++++++++++++++++++++++++++
+> >  8 files changed, 90 insertions(+), 16 deletions(-)
+> 
+> This is quite confusing.  You've already sent a patch called
+> "sdhci-s3c: add support for new card detection methods".  It had the
+> same changelog as this patch and the same title, but the two patches
+> are utterly different!
 
-All agree?
+The real patch has been split into two for easier merging: 1. the driver
+part and 2. samsung platform related part. The part which patch belongs
+to is indicated in the last line of the change log.
 
---=20
-Kind regards,
-Minchan Kim
+I'm really confused how to submit properly a patch that requires changes
+to both the driver (which is merged by the proper driver maintainer's
+sub-tree) and the platform (which should go through platform maintainer's
+tree).
+
+> I suggest that you resend this patch under an appropriate title and
+> with a more specific changelog, please.
+
+Ok, I will add something like "(platform changes)" to the patch title next time.
+
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
