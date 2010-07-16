@@ -1,474 +1,700 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 01/10 v2] ARM: Samsung: Add FIMC register and platform
- definitions
-Date: Fri, 16 Jul 2010 18:44:34 +0900
-Message-ID: <012101cb24cb$83187410$89495c30$%kim@samsung.com>
+Subject: RE: [PATCH 02/10 v2] ARM: Samsung: Add FIMC resource definition and
+ FIMC driver platform helpers
+Date: Fri, 16 Jul 2010 19:07:32 +0900
+Message-ID: <012301cb24ce$cc67aac0$65370040$%kim@samsung.com>
 References: <1279185041-6004-1-git-send-email-s.nawrocki@samsung.com>
- <1279185041-6004-2-git-send-email-s.nawrocki@samsung.com>
+ <1279185041-6004-3-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:57144 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:65057 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964795Ab0GPJox (ORCPT
+	with ESMTP id S964898Ab0GPKIG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Jul 2010 05:44:53 -0400
-In-reply-to: <1279185041-6004-2-git-send-email-s.nawrocki@samsung.com>
+	Fri, 16 Jul 2010 06:08:06 -0400
+Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L5N00ISKATEWXA0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 16 Jul 2010 19:08:02 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L5N000MQATD4G@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 16 Jul 2010 19:08:02 +0900 (KST)
+In-reply-to: <1279185041-6004-3-git-send-email-s.nawrocki@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: p.osciak@samsung.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, linux-media@vger.kernel.org
+Cc: p.osciak@samsung.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com
 
 Sylwester Nawrocki wrote:
 > 
-> FIMC device is a camera interface embedded in S3C/S5P Samsung SOC series.
-> It supports ITU-R BT.601/656 and MIPI-CSI2 standards, memory to memory
-> operations, color conversion, resizing and rotation.
+> Add camera interface SoC resource definitions and setup code
+> for FIMC/FB fifo links.
 > 
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  arch/arm/plat-samsung/include/plat/fimc.h      |   31 ++
->  arch/arm/plat-samsung/include/plat/regs-fimc.h |  361
+>  arch/arm/mach-s5pc100/Kconfig                  |   15 ++++++
+>  arch/arm/mach-s5pc100/Makefile                 |    3 +
+>  arch/arm/mach-s5pc100/include/mach/map.h       |    8 +++
+>  arch/arm/mach-s5pc100/setup-fimc0.c            |   14 ++++++
+>  arch/arm/mach-s5pc100/setup-fimc1.c            |   14 ++++++
+>  arch/arm/mach-s5pc100/setup-fimc2.c            |   14 ++++++
+>  arch/arm/mach-s5pv210/Kconfig                  |   15 ++++++
+>  arch/arm/mach-s5pv210/Makefile                 |    3 +
+>  arch/arm/mach-s5pv210/cpu.c                    |    5 ++
+>  arch/arm/mach-s5pv210/include/mach/map.h       |    8 +++
+>  arch/arm/mach-s5pv210/setup-fimc0.c            |   14 ++++++
+>  arch/arm/mach-s5pv210/setup-fimc1.c            |   14 ++++++
+>  arch/arm/mach-s5pv210/setup-fimc2.c            |   14 ++++++
+>  arch/arm/plat-s5p/Kconfig                      |   16 +++++++
+>  arch/arm/plat-s5p/Makefile                     |    3 +
+>  arch/arm/plat-s5p/dev-fimc0.c                  |   56
 > ++++++++++++++++++++++++
->  2 files changed, 392 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/plat-samsung/include/plat/fimc.h
->  create mode 100644 arch/arm/plat-samsung/include/plat/regs-fimc.h
+>  arch/arm/plat-s5p/dev-fimc1.c                  |   55
+> +++++++++++++++++++++++
+>  arch/arm/plat-s5p/dev-fimc2.c                  |   55
+> +++++++++++++++++++++++
+>  arch/arm/plat-samsung/include/plat/fimc-core.h |   45 +++++++++++++++++++
+>  arch/arm/plat-samsung/include/plat/fimc.h      |   12 +++++
+>  20 files changed, 383 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm/mach-s5pc100/setup-fimc0.c
+>  create mode 100644 arch/arm/mach-s5pc100/setup-fimc1.c
+>  create mode 100644 arch/arm/mach-s5pc100/setup-fimc2.c
+>  create mode 100644 arch/arm/mach-s5pv210/setup-fimc0.c
+>  create mode 100644 arch/arm/mach-s5pv210/setup-fimc1.c
+>  create mode 100644 arch/arm/mach-s5pv210/setup-fimc2.c
+>  create mode 100644 arch/arm/plat-s5p/dev-fimc0.c
+>  create mode 100644 arch/arm/plat-s5p/dev-fimc1.c
+>  create mode 100644 arch/arm/plat-s5p/dev-fimc2.c
+>  create mode 100644 arch/arm/plat-samsung/include/plat/fimc-core.h
 > 
-> diff --git a/arch/arm/plat-samsung/include/plat/fimc.h b/arch/arm/plat-
-> samsung/include/plat/fimc.h
+> diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
+> index d421f80..791270d 100644
+> --- a/arch/arm/mach-s5pc100/Kconfig
+> +++ b/arch/arm/mach-s5pc100/Kconfig
+> @@ -36,6 +36,21 @@ config S5PC100_SETUP_SDHCI_GPIO
+>  	help
+>  	  Common setup code for SDHCI gpio.
+> 
+> +config S5PC100_SETUP_FIMC0
+> +	bool
+> +	help
+> +	  Setup code for FIMC controller 0
+> +
+> +config S5PC100_SETUP_FIMC1
+> +	bool
+> +	help
+> +	  Setup code for FIMC controller 1
+> +
+> +config S5PC100_SETUP_FIMC2
+> +	bool
+> +	help
+> +	  Setup code for FIMC controller 2
+> +
+>  config MACH_SMDKC100
+>  	bool "SMDKC100"
+>  	select CPU_S5PC100
+> diff --git a/arch/arm/mach-s5pc100/Makefile
+b/arch/arm/mach-s5pc100/Makefile
+> index f2073bc..7b43337 100644
+> --- a/arch/arm/mach-s5pc100/Makefile
+> +++ b/arch/arm/mach-s5pc100/Makefile
+> @@ -25,6 +25,9 @@ obj-$(CONFIG_S5PC100_SETUP_SDHCI_GPIO)	+= setup-
+> sdhci-gpio.o
+>  # device support
+>  obj-y				+= dev-audio.o
+>  obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
+> +obj-$(CONFIG_S5PC100_SETUP_FIMC0)	+= setup-fimc0.o
+> +obj-$(CONFIG_S5PC100_SETUP_FIMC1)	+= setup-fimc1.o
+> +obj-$(CONFIG_S5PC100_SETUP_FIMC2)	+= setup-fimc2.o
+> 
+>  # machine support
+> 
+> diff --git a/arch/arm/mach-s5pc100/include/mach/map.h b/arch/arm/mach-
+> s5pc100/include/mach/map.h
+> index c025064..a1c6f22 100644
+> --- a/arch/arm/mach-s5pc100/include/mach/map.h
+> +++ b/arch/arm/mach-s5pc100/include/mach/map.h
+> @@ -112,6 +112,11 @@
+>  #define S5PC100_PA_SDRAM	(0x30000000)
+>  #define S5P_PA_SDRAM		S5PC100_PA_SDRAM
+> 
+> +/* FIMC */
+> +#define S5PC100_PA_FIMC0	(0xEE200000)
+> +#define S5PC100_PA_FIMC1	(0xEE300000)
+> +#define S5PC100_PA_FIMC2	(0xEE400000)
+> +
+>  /* compatibiltiy defines. */
+>  #define S3C_PA_UART		S5PC100_PA_UART
+>  #define S3C_PA_IIC		S5PC100_PA_IIC0
+> @@ -134,5 +139,8 @@
+>  #define S3C_PA_ONENAND		S5PC100_PA_ONENAND
+>  #define S3C_PA_ONENAND_BUF	S5PC100_PA_ONENAND_BUF
+>  #define S3C_SZ_ONENAND_BUF	S5PC100_SZ_ONENAND_BUF
+> +#define S5P_PA_FIMC0		S5PC100_PA_FIMC0
+> +#define S5P_PA_FIMC1		S5PC100_PA_FIMC1
+> +#define S5P_PA_FIMC2		S5PC100_PA_FIMC2
+> 
+>  #endif /* __ASM_ARCH_C100_MAP_H */
+> diff --git a/arch/arm/mach-s5pc100/setup-fimc0.c
+b/arch/arm/mach-s5pc100/setup-
+> fimc0.c
 > new file mode 100644
-> index 0000000..be1e853
+> index 0000000..dea33c2
 > --- /dev/null
-> +++ b/arch/arm/plat-samsung/include/plat/fimc.h
-> @@ -0,0 +1,31 @@
-> +/* linux/arch/arm/plat-samsung/include/plat/fimc.h
-> + *
-> + * Platform header file for FIMC driver
+> +++ b/arch/arm/mach-s5pc100/setup-fimc0.c
+> @@ -0,0 +1,14 @@
+> +/* linux/arch/arm/mach-s5pc100/setup-fimc0.c
 > + *
 > + * Copyright (c) 2010 Samsung Electronics
 > + *
-> + * Sylwester Nawrocki, <s.nawrocki@samsung.com>
+> + * S5PC100 - setup for S5P FIMC device 0
 > + *
 > + * This program is free software; you can redistribute it and/or modify
 > + * it under the terms of the GNU General Public License version 2 as
 > + * published by the Free Software Foundation.
 > + */
 > +
-> +#ifndef FIMC_H_
-> +#define FIMC_H_
+> +#include <plat/fimc.h>
 > +
-> +#include <linux/device.h>
-> +#include <linux/platform_device.h>
+> +struct samsung_plat_fimc s5p_fimc0_default_data __initdata = {};
+> diff --git a/arch/arm/mach-s5pc100/setup-fimc1.c
+b/arch/arm/mach-s5pc100/setup-
+> fimc1.c
+> new file mode 100644
+> index 0000000..1833377
+> --- /dev/null
+> +++ b/arch/arm/mach-s5pc100/setup-fimc1.c
+> @@ -0,0 +1,14 @@
+> +/* linux/arch/arm/mach-s5pc100/setup-fimc1.c
+> + *
+> + * Copyright (c) 2010 Samsung Electronics
+> + *
+> + * S5PC100 - setup for S5P FIMC device 1
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <plat/fimc.h>
+> +
+> +struct samsung_plat_fimc s5p_fimc1_default_data __initdata = {};
+> diff --git a/arch/arm/mach-s5pc100/setup-fimc2.c
+b/arch/arm/mach-s5pc100/setup-
+> fimc2.c
+> new file mode 100644
+> index 0000000..746e0f0
+> --- /dev/null
+> +++ b/arch/arm/mach-s5pc100/setup-fimc2.c
+> @@ -0,0 +1,14 @@
+> +/* linux/arch/arm/mach-s5pc100/setup-fimc2.c
+> + *
+> + * Copyright (c) 2010 Samsung Electronics
+> + *
+> + * S5PC100 - setup for S5P FIMC device 2
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <plat/fimc.h>
+> +
+> +struct samsung_plat_fimc s5p_fimc2_default_data __initdata = {};
+> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+> index d876ff0..4bb5a85 100644
+> --- a/arch/arm/mach-s5pv210/Kconfig
+> +++ b/arch/arm/mach-s5pv210/Kconfig
+> @@ -32,6 +32,21 @@ config S5PV210_SETUP_FB_24BPP
+>  	help
+>            Common setup code for S5PV210 with an 24bpp RGB display helper.
+> 
+> +config S5PV210_SETUP_FIMC0
+> +	bool
+> +	help
+> +	  Setup code for FIMC controller 0
+> +
+> +config S5PV210_SETUP_FIMC1
+> +	bool
+> +	help
+> +	  Setup code for FIMC controller 1
+> +
+> +config S5PV210_SETUP_FIMC2
+> +	bool
+> +	help
+> +	  Setup code for FIMC controller 2
+> +
+>  config S5PV210_SETUP_SDHCI
+>          bool
+>          select S5PV210_SETUP_SDHCI_GPIO
+> diff --git a/arch/arm/mach-s5pv210/Makefile
+b/arch/arm/mach-s5pv210/Makefile
+> index 7b3a984..6eceeb8 100644
+> --- a/arch/arm/mach-s5pv210/Makefile
+> +++ b/arch/arm/mach-s5pv210/Makefile
+> @@ -35,3 +35,6 @@ obj-$(CONFIG_S5PV210_SETUP_I2C1) 	+= setup-i2c1.o
+>  obj-$(CONFIG_S5PV210_SETUP_I2C2) 	+= setup-i2c2.o
+>  obj-$(CONFIG_S5PV210_SETUP_SDHCI)       += setup-sdhci.o
+>  obj-$(CONFIG_S5PV210_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
+> +obj-$(CONFIG_S5PV210_SETUP_FIMC0)	+= setup-fimc0.o
+> +obj-$(CONFIG_S5PV210_SETUP_FIMC1)	+= setup-fimc1.o
+> +obj-$(CONFIG_S5PV210_SETUP_FIMC2)	+= setup-fimc2.o
+> diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
+> index fc3801b..4133cae 100644
+> --- a/arch/arm/mach-s5pv210/cpu.c
+> +++ b/arch/arm/mach-s5pv210/cpu.c
+> @@ -35,6 +35,7 @@
+>  #include <plat/iic-core.h>
+>  #include <plat/sdhci.h>
+>  #include <plat/fb-core.h>
+> +#include <plat/fimc-core.h>
+> 
+>  /* Initial IO mappings */
+> 
+> @@ -95,6 +96,10 @@ void __init s5pv210_map_io(void)
+>  	s3c_i2c2_setname("s3c2440-i2c");
+> 
+>  	s3c_fb_setname("s5pv210-fb");
+> +
+> +	s3c_fimc_setname(0, "s5pv210-fimc");
+> +	s3c_fimc_setname(1, "s5pv210-fimc");
+> +	s3c_fimc_setname(2, "s5pv210-fimc");
+>  }
+> 
+>  void __init s5pv210_init_clocks(int xtal)
+> diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-
+> s5pv210/include/mach/map.h
+> index e78bd47..9b8cf69 100644
+> --- a/arch/arm/mach-s5pv210/include/mach/map.h
+> +++ b/arch/arm/mach-s5pv210/include/mach/map.h
+> @@ -96,6 +96,11 @@
+> 
+>  #define S5PV210_PA_ADC		(0xE1700000)
+> 
+> +/* FIMC */
+> +#define S5PV210_PA_FIMC0	(0xFB200000)
+> +#define S5PV210_PA_FIMC1	(0xFB300000)
+> +#define S5PV210_PA_FIMC2	(0xFB400000)
+> +
+>  /* compatibiltiy defines. */
+>  #define S3C_PA_UART		S5PV210_PA_UART
+>  #define S3C_PA_HSMMC0		S5PV210_PA_HSMMC(0)
+> @@ -111,5 +116,8 @@
+>  #define SAMSUNG_PA_ADC		S5PV210_PA_ADC
+>  #define S3C_PA_USB_HSOTG	S5PV210_PA_USB_HSOTG
+>  #define S3C_PA_USB_HSPHY	S5PV210_PA_USB_HSPHY
+> +#define S5P_PA_FIMC0		S5PV210_PA_FIMC0
+> +#define S5P_PA_FIMC1		S5PV210_PA_FIMC1
+> +#define S5P_PA_FIMC2		S5PV210_PA_FIMC2
+> 
+>  #endif /* __ASM_ARCH_MAP_H */
+> diff --git a/arch/arm/mach-s5pv210/setup-fimc0.c
+b/arch/arm/mach-s5pv210/setup-
+> fimc0.c
+> new file mode 100644
+> index 0000000..0e5ef0a
+> --- /dev/null
+> +++ b/arch/arm/mach-s5pv210/setup-fimc0.c
+> @@ -0,0 +1,14 @@
+> +/* linux/arch/arm/mach-s5pv210/setup-fimc0.c
+> + *
+> + * Copyright (c) 2010 Samsung Electronics
+> + *
+> + * S5PV210 - setup for S5P FIMC device 0
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <plat/fimc.h>
+> +
+> +struct samsung_plat_fimc s5p_fimc0_default_data __initdata = {};
+> diff --git a/arch/arm/mach-s5pv210/setup-fimc1.c
+b/arch/arm/mach-s5pv210/setup-
+> fimc1.c
+> new file mode 100644
+> index 0000000..80da0e7
+> --- /dev/null
+> +++ b/arch/arm/mach-s5pv210/setup-fimc1.c
+> @@ -0,0 +1,14 @@
+> +/* linux/arch/arm/mach-s5pv210/setup-fimc1.c
+> + *
+> + * Copyright (c) 2010 Samsung Electronics
+> + *
+> + * S5PV210 - setup for S5P FIMC device 1
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <plat/fimc.h>
+> +
+> +struct samsung_plat_fimc s5p_fimc1_default_data __initdata = {};
+> diff --git a/arch/arm/mach-s5pv210/setup-fimc2.c
+b/arch/arm/mach-s5pv210/setup-
+> fimc2.c
+> new file mode 100644
+> index 0000000..bc6a27b
+> --- /dev/null
+> +++ b/arch/arm/mach-s5pv210/setup-fimc2.c
+> @@ -0,0 +1,14 @@
+> +/* linux/arch/arm/mach-s5pv210/setup-fimc2.c
+> + *
+> + * Copyright (c) 2010 Samsung Electronics
+> + *
+> + * S5PV210 - setup for S5P FIMC device 2
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <plat/fimc.h>
+> +
+> +struct samsung_plat_fimc s5p_fimc2_default_data __initdata = {};
+> diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
+> index 11d6a1b..38b60c7 100644
+> --- a/arch/arm/plat-s5p/Kconfig
+> +++ b/arch/arm/plat-s5p/Kconfig
+> @@ -5,6 +5,22 @@
+>  #
+>  # Licensed under GPLv2
+> 
+> +config S5P_DEV_FIMC0
+> +	bool
+> +	help
+> +	  Compile in platform device definitions for FIMC controller 0
+> +
+> +config S5P_DEV_FIMC1
+> +	bool
+> +	help
+> +	  Compile in platform device definitions for FIMC controller 1
+> +
+> +config S5P_DEV_FIMC2
+> +	bool
+> +	help
+> +	  Compile in platform device definitions for FIMC controller 2
 > +
 > +
 
 2 empty lines...
 
-> +#define FIMC_MAX_FIFO_TARGETS	1
-> +#define FIMC_LCD_FIFO_TARGET	0
-> +
-> +struct s3c_fifo_link;
-> +
-> +struct samsung_plat_fimc {
-> +	struct s3c_fifo_link	*fifo_targets[FIMC_MAX_FIFO_TARGETS];
-> +};
-> +
-> +#endif /* FIMC_H_ */
-> +
-
-No need last empty line...
-
-> diff --git a/arch/arm/plat-samsung/include/plat/regs-fimc.h
-b/arch/arm/plat-
-> samsung/include/plat/regs-fimc.h
+>  config PLAT_S5P
+>  	bool
+>  	depends on (ARCH_S5P6440 || ARCH_S5P6442 || ARCH_S5PC100 ||
+> ARCH_S5PV210)
+> diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
+> index b56b4d3..a7d3c35 100644
+> --- a/arch/arm/plat-s5p/Makefile
+> +++ b/arch/arm/plat-s5p/Makefile
+> @@ -18,3 +18,6 @@ obj-y				+= clock.o
+>  obj-y				+= irq.o irq-gpioint.o
+>  obj-$(CONFIG_S5P_EXT_INT)	+= irq-eint.o
+> 
+> +obj-$(CONFIG_S5P_DEV_FIMC0)	+= dev-fimc0.o
+> +obj-$(CONFIG_S5P_DEV_FIMC1)	+= dev-fimc1.o
+> +obj-$(CONFIG_S5P_DEV_FIMC2)	+= dev-fimc2.o
+> diff --git a/arch/arm/plat-s5p/dev-fimc0.c b/arch/arm/plat-s5p/dev-fimc0.c
 > new file mode 100644
-> index 0000000..6946a93
+> index 0000000..cfa10f0
 > --- /dev/null
-> +++ b/arch/arm/plat-samsung/include/plat/regs-fimc.h
-> @@ -0,0 +1,361 @@
-> +/* arch/arm/plat-s5p/include/plat/regs-fimc.h
-> + *
-> + * Register definition file for Samsung Camera Interface (FIMC) driver
+> +++ b/arch/arm/plat-s5p/dev-fimc0.c
+> @@ -0,0 +1,56 @@
+> +/* linux/arch/arm/plat-s5p/dev-fimc0.c
 > + *
 > + * Copyright (c) 2010 Samsung Electronics
+> + *
+> + * Base S5P FIMC0 resource and device definitions
 > + *
 > + * This program is free software; you can redistribute it and/or modify
 > + * it under the terms of the GNU General Public License version 2 as
 > + * published by the Free Software Foundation.
 > + */
 > +
-> +#ifndef REGS_FIMC_H_
-> +#define REGS_FIMC_H_
-> +
-> +#define S5P_CIOYSA(__x)				(0x18 + (__x) * 4)
-> +#define S5P_CIOCBSA(__x)			(0x28 + (__x) * 4)
-> +#define S5P_CIOCRSA(__x)			(0x38 + (__x) * 4)
-> +
-> +/* Input source format */
-> +#define S5P_CISRCFMT				0x00
-> +/* Window offset */
-> +#define S5P_CIWDOFST				0x04
-> +/* Global control */
-> +#define S5P_CIGCTRL				0x08
-> +/* Window offset 2 */
-> +#define S5P_CIWDOFST2				0x14
-> +/* Output DMA Y 1st frame start address */
-> +#define S5P_CIOYSA1				0x18
-> +/* Output DMA Y 2nd frame start address */
-> +#define S5P_CIOYSA2				0x1c
-> +/* Output DMA Y 3rd frame start address */
-> +#define S5P_CIOYSA3				0x20
-> +/* Output DMA Y 4th frame start address */
-> +#define S5P_CIOYSA4				0x24
-> +/* Output DMA Cb 1st frame start address */
-> +#define S5P_CIOCBSA1				0x28
-> +/* Output DMA Cb 2nd frame start address */
-> +#define S5P_CIOCBSA2				0x2c
-> +/* Output DMA Cb 3rd frame start address */
-> +#define S5P_CIOCBSA3				0x30
-> +/* Output DMA Cb 4th frame start address */
-> +#define S5P_CIOCBSA4				0x34
-> +/* Output DMA Cr 1st frame start address */
-> +#define S5P_CIOCRSA1				0x38
-> +/* Output DMA Cr 2nd frame start address */
-> +#define S5P_CIOCRSA2				0x3c
-> +/* Output DMA Cr 3rd frame start address */
-> +#define S5P_CIOCRSA3				0x40
-> +/* Output DMA Cr 4th frame start address */
-> +#define S5P_CIOCRSA4				0x44
-> +/* Target image format */
-> +#define S5P_CITRGFMT				0x48
-> +/* Output DMA control */
-> +#define S5P_CIOCTRL				0x4c
-> +/* Pre-scaler control 1 */
-> +#define S5P_CISCPRERATIO			0x50
-> +/* Pre-scaler control 2 */
-> +#define S5P_CISCPREDST				0x54
-> +/* Main scaler control */
-> +#define S5P_CISCCTRL				0x58
-> +/* Target area */
-> +#define S5P_CITAREA				0x5c
-> +/* Status */
-> +#define S5P_CISTATUS				0x64
-> +/* Image capture enable command */
-> +#define S5P_CIIMGCPT				0xc0
-> +/* Capture sequence */
-> +#define S5P_CICPTSEQ				0xc4
-> +/* Image effects */
-> +#define S5P_CIIMGEFF				0xd0
-> +/* Y frame start address for input DMA */
-> +#define S5P_CIIYSA0				0xd4
-> +/* Cb frame start address for input DMA */
-> +#define S5P_CIICBSA0				0xd8
-> +/* Cr frame start address for input DMA */
-> +#define S5P_CIICRSA0				0xdc
-> +/* Real input DMA image size */
-> +#define S5P_CIREAL_ISIZE			0xf8
-> +/* Input DMA control */
-> +#define S5P_MSCTRL				0xfc
-> +/* Y frame start address for input DMA */
-> +#define S5P_CIIYSA1				0x144
-> +/* Cb frame start address for input DMA */
-> +#define S5P_CIICBSA1				0x148
-> +/* Cr frame start address for input DMA */
-> +#define S5P_CIICRSA1				0x14c
-> +/* Output DMA Y offset */
-> +#define S5P_CIOYOFF				0x168
-> +/* Output DMA CB offset */
-> +#define S5P_CIOCBOFF				0x16c
-> +/* Output DMA CR offset */
-> +#define S5P_CIOCROFF				0x170
-> +/* Input DMA Y offset */
-> +#define S5P_CIIYOFF				0x174
-> +/* Input DMA CB offset */
-> +#define S5P_CIICBOFF				0x178
-> +/* Input DMA CR offset */
-> +#define S5P_CIICROFF				0x17c
-> +/* Input DMA original image size */
-> +#define S5P_ORGISIZE				0x180
-> +/* Output DMA original image size */
-> +#define S5P_ORGOSIZE				0x184
-> +/* Real output DMA image size */
-> +#define S5P_CIEXTEN				0x188
-> +/* DMA parameter */
-> +#define S5P_CIDMAPARAM				0x18c
-> +/* MIPI CSI image format */
-> +#define S5P_CSIIMGFMT				0x194
-> +
-> +
-
-2 empty lines?
-
-> +#define S5P_CISRCFMT_SOURCEHSIZE(x)		((x) << 16)
-> +#define S5P_CISRCFMT_SOURCEVSIZE(x)		((x) << 0)
-> +
-> +#define S5P_CIWDOFST_WINHOROFST(x)		((x) << 16)
-> +#define S5P_CIWDOFST_WINVEROFST(x)		((x) << 0)
-> +
-> +#define S5P_CIWDOFST2_WINHOROFST2(x)		((x) << 16)
-> +#define S5P_CIWDOFST2_WINVEROFST2(x)		((x) << 0)
-> +
-> +#define S5P_CITRGFMT_TARGETHSIZE(x)		((x) << 16)
-> +#define S5P_CITRGFMT_TARGETVSIZE(x)		((x) << 0)
-> +
-> +#define S5P_CISCPRERATIO_SHFACTOR(x)		((x) << 28)
-> +#define S5P_CISCPRERATIO_PREHORRATIO(x)		((x) << 16)
-> +#define S5P_CISCPRERATIO_PREVERRATIO(x)		((x) << 0)
-> +
-> +#define S5P_CISCPREDST_PREDSTWIDTH(x)		((x) << 16)
-> +#define S5P_CISCPREDST_PREDSTHEIGHT(x)		((x) << 0)
-> +
-> +#define S5P_CISCCTRL_MAINHORRATIO(x)		((x) << 16)
-> +#define S5P_CISCCTRL_MAINVERRATIO(x)		((x) << 0)
-> +
-> +#define S5P_CITAREA_TARGET_AREA(x)		((x) << 0)
-> +
-> +#define S5P_CIIMGEFF_PAT_CB(x)			((x) << 13)
-> +#define S5P_CIIMGEFF_PAT_CR(x)			((x) << 0)
-> +
-> +#define S5P_CIREAL_ISIZE_HEIGHT(x)		((x) << 16)
-> +#define S5P_CIREAL_ISIZE_WIDTH(x)		((x) << 0)
-> +
-> +#define S5P_MSCTRL_SUCCESSIVE_COUNT(x)		((x) << 24)
-> +
-> +#define S5P_CIOYOFF_VERTICAL(x)			((x) << 16)
-> +#define S5P_CIOYOFF_HORIZONTAL(x)		((x) << 0)
-> +
-> +#define S5P_CIOCBOFF_VERTICAL(x)		((x) << 16)
-> +#define S5P_CIOCBOFF_HORIZONTAL(x)		((x) << 0)
-> +
-> +#define S5P_CIOCROFF_VERTICAL(x)		((x) << 16)
-> +#define S5P_CIOCROFF_HORIZONTAL(x)		((x) << 0)
-> +
-> +#define S5P_CIIYOFF_VERTICAL(x)			((x) << 16)
-> +#define S5P_CIIYOFF_HORIZONTAL(x)		((x) << 0)
-> +
-> +#define S5P_CIICBOFF_VERTICAL(x)		((x) << 16)
-> +#define S5P_CIICBOFF_HORIZONTAL(x)		((x) << 0)
-> +
-> +#define S5P_CIICROFF_VERTICAL(x)		((x) << 16)
-> +#define S5P_CIICROFF_HORIZONTAL(x)		((x) << 0)
-> +
-> +#define S5P_ORGISIZE_VERTICAL(x)		((x) << 16)
-> +#define S5P_ORGISIZE_HORIZONTAL(x)		((x) << 0)
-> +
-> +#define S5P_ORGOSIZE_VERTICAL(x)		((x) << 16)
-> +#define S5P_ORGOSIZE_HORIZONTAL(x)		((x) << 0)
+> +#include <linux/kernel.h>
+> +#include <linux/string.h>
+> +#include <linux/platform_device.h>
+> +#include <mach/map.h>
+> +#include <mach/irqs.h>
+> +#include <plat/fimc.h>
+> +#include <plat/devs.h>
+> +#include <plat/cpu.h>
 > +
 > +
 
 Same...2 empty lines...
 
-And above definitions used same bit shift...((x) << 16) or ((x) << 0)...
-Hmm...I'm thinking...whether there is any method to reduce similar codes...
-
-> +/* Register's bit definitions */
+> +static struct resource s5p_fimc_resource[] = {
+> +	[0] = {
+> +		.start	= S5P_PA_FIMC0,
+> +		.end	= S5P_PA_FIMC0 + SZ_1M - 1,
+> +		.flags	= IORESOURCE_MEM,
+> +	},
+> +	[1] = {
+> +		.start	= IRQ_FIMC0,
+> +		.end	= IRQ_FIMC0,
+> +		.flags	= IORESOURCE_IRQ,
+> +	},
+> +};
 > +
-> +/* Source format register */
-> +#define S5P_CISRCFMT_ITU601_8BIT		(1 << 31)
-> +#define S5P_CISRCFMT_ITU656_8BIT		(0 << 31)
-> +#define S5P_CISRCFMT_ITU601_16BIT		(1 << 29)
-> +#define S5P_CISRCFMT_ORDER422_YCBYCR		(0 << 14)
-> +#define S5P_CISRCFMT_ORDER422_YCRYCB		(1 << 14)
-> +#define S5P_CISRCFMT_ORDER422_CBYCRY		(2 << 14)
-> +#define S5P_CISRCFMT_ORDER422_CRYCBY		(3 << 14)
-> +/* ITU601 16bit only */
-> +#define S5P_CISRCFMT_ORDER422_Y4CBCRCBCR	(0 << 14)
-> +/* ITU601 16bit only */
-
-Same comments... ITU601 16bit only...
-
-> +#define S5P_CISRCFMT_ORDER422_Y4CRCBCRCB	(1 << 14)
-> +
-> +/* Window offset register */
-> +#define S5P_CIWDOFST_WINOFSEN			(1 << 31)
-> +#define S5P_CIWDOFST_CLROVFIY			(1 << 30)
-> +#define S5P_CIWDOFST_CLROVRLB			(1 << 29)
-> +#define S5P_CIWDOFST_WINHOROFST_MASK		(0x7ff << 16)
-> +#define S5P_CIWDOFST_CLROVFICB			(1 << 15)
-> +#define S5P_CIWDOFST_CLROVFICR			(1 << 14)
-> +#define S5P_CIWDOFST_WINVEROFST_MASK		(0xfff << 0)
-> +
-> +/* Global control register */
-> +#define S5P_CIGCTRL_SWRST			(1 << 31)
-> +#define S5P_CIGCTRL_CAMRST_A			(1 << 30)
-> +#define S5P_CIGCTRL_SELCAM_ITU_B		(0 << 29)
-> +#define S5P_CIGCTRL_SELCAM_ITU_A		(1 << 29)
-> +#define S5P_CIGCTRL_SELCAM_ITU_MASK		(1 << 29)
-> +#define S5P_CIGCTRL_TESTPAT_NORMAL		(0 << 27)
-> +#define S5P_CIGCTRL_TESTPAT_COLOR_BAR		(1 << 27)
-> +#define S5P_CIGCTRL_TESTPAT_HOR_INC		(2 << 27)
-> +#define S5P_CIGCTRL_TESTPAT_VER_INC		(3 << 27)
-> +#define S5P_CIGCTRL_TESTPAT_MASK		(3 << 27)
-> +#define S5P_CIGCTRL_TESTPAT_SHIFT		(27)
-> +#define S5P_CIGCTRL_INVPOLPCLK			(1 << 26)
-> +#define S5P_CIGCTRL_INVPOLVSYNC			(1 << 25)
-> +#define S5P_CIGCTRL_INVPOLHREF			(1 << 24)
-> +#define S5P_CIGCTRL_IRQ_OVFEN			(1 << 22)
-> +#define S5P_CIGCTRL_HREF_MASK			(1 << 21)
-> +#define S5P_CIGCTRL_IRQ_EDGE			(0 << 20)
-> +#define S5P_CIGCTRL_IRQ_LEVEL			(1 << 20)
-> +#define S5P_CIGCTRL_IRQ_CLR			(1 << 19)
-> +#define S5P_CIGCTRL_IRQ_DISABLE			(0 << 16)
-> +#define S5P_CIGCTRL_IRQ_ENABLE			(1 << 16)
-> +#define S5P_CIGCTRL_SHDW_DISABLE		(1 << 12)
-> +#define S5P_CIGCTRL_SELCAM_MIPI_B		(0 << 7)
-> +#define S5P_CIGCTRL_SELCAM_MIPI_A		(1 << 7)
-> +#define S5P_CIGCTRL_SELCAM_MIPI_MASK		(1 << 7)
-> +#define S5P_CIGCTRL_CAMIF_SELWB			(1 << 6)
-> +#define S5P_CIGCTRL_INVPOLHSYNC			(1 << 4)
-> +#define S5P_CIGCTRL_SELCAM_ITU			(0 << 3)
-> +#define S5P_CIGCTRL_SELCAM_MIPI			(1 << 3)
-> +#define S5P_CIGCTRL_PROGRESSIVE			(0 << 0)
-> +#define S5P_CIGCTRL_INTERLACE			(1 << 0)
-> +
-> +/* Window offset2 register */
-> +#define S5P_CIWDOFST_WINHOROFST2_MASK		(0xfff << 16)
-> +#define S5P_CIWDOFST_WINVEROFST2_MASK		(0xfff << 16)
-> +
-> +/* Target format register */
-> +#define S5P_CITRGFMT_INROT90			(1 << 31)
-> +#define S5P_CITRGFMT_OUTFORMAT_YCBCR420		(0 << 29)
-> +#define S5P_CITRGFMT_OUTFORMAT_YCBCR422		(1 << 29)
-> +#define S5P_CITRGFMT_OUTFORMAT_YCBCR422_1PLANE	(2 << 29)
-> +#define S5P_CITRGFMT_OUTFORMAT_RGB		(3 << 29)
-> +#define S5P_CITRGFMT_OUT_FMT_MASK		(3 << 29)
-> +#define S5P_CITRGFMT_HSIZE_MASK			(0xfff << 16)
-> +#define S5P_CITRGFMT_FLIP_SHIFT			(14)
-> +#define S5P_CITRGFMT_FLIP_NORMAL		(0 << 14)
-> +#define S5P_CITRGFMT_FLIP_X_MIRROR		(1 << 14)
-> +#define S5P_CITRGFMT_FLIP_Y_MIRROR		(2 << 14)
-> +#define S5P_CITRGFMT_FLIP_180			(3 << 14)
-> +#define S5P_CITRGFMT_FLIP_MASK			(3 << 14)
-> +#define S5P_CITRGFMT_OUTROT90			(1 << 13)
-> +#define S5P_CITRGFMT_VSIZE_MASK			(0xfff << 0)
-> +
-> +/* Output DMA control register */
-> +#define S5P_CIOCTRL_ORDER422_MASK		(3 << 0)
-> +#define S5P_CIOCTRL_ORDER422_CRYCBY		(0 << 0)
-> +#define S5P_CIOCTRL_ORDER422_YCRYCB		(1 << 0)
-> +#define S5P_CIOCTRL_ORDER422_CBYCRY		(2 << 0)
-> +#define S5P_CIOCTRL_ORDER422_YCBYCR		(3 << 0)
-> +#define S5P_CIOCTRL_LASTIRQ_ENABLE		(1 << 2)
-> +#define S5P_CIOCTRL_YCBCR_3PLANE		(0 << 3)
-> +#define S5P_CIOCTRL_YCBCR_2PLANE		(1 << 3)
-> +#define S5P_CIOCTRL_YCBCR_PLANE_MASK		(1 << 3)
-> +#define S5P_CIOCTRL_ORDER2P_SHIFT		(24)
-> +#define S5P_CIOCTRL_ORDER2P_MASK		(3 << 24)
-> +#define S5P_CIOCTRL_ORDER422_2P_LSB_CRCB	(0 << 24)
+> +struct platform_device s5p_device_fimc0 = {
+> +	.name		= "s5p-fimc",
+> +	.id		= 0,
+> +	.num_resources	= ARRAY_SIZE(s5p_fimc_resource),
+> +	.resource	= s5p_fimc_resource,
+> +};
 > +
 > +
 
 2 empty lines...
 
-> +/* Main scaler control register */
-> +#define S5P_CISCCTRL_SCALERBYPASS		(1 << 31)
-> +#define S5P_CISCCTRL_SCALEUP_H			(1 << 30)
-> +#define S5P_CISCCTRL_SCALEUP_V			(1 << 29)
-> +#define S5P_CISCCTRL_CSCR2Y_NARROW		(0 << 28)
-> +#define S5P_CISCCTRL_CSCR2Y_WIDE		(1 << 28)
-> +#define S5P_CISCCTRL_CSCY2R_NARROW		(0 << 27)
-> +#define S5P_CISCCTRL_CSCY2R_WIDE		(1 << 27)
-> +#define S5P_CISCCTRL_LCDPATHEN_FIFO		(1 << 26)
-> +#define S5P_CISCCTRL_PROGRESSIVE		(0 << 25)
-> +#define S5P_CISCCTRL_INTERLACE			(1 << 25)
-> +#define S5P_CISCCTRL_SCALERSTART		(1 << 15)
-> +#define S5P_CISCCTRL_INRGB_FMT_RGB565		(0 << 13)
-> +#define S5P_CISCCTRL_INRGB_FMT_RGB666		(1 << 13)
-> +#define S5P_CISCCTRL_INRGB_FMT_RGB888		(2 << 13)
-> +#define S5P_CISCCTRL_INRGB_FMT_MASK		(3 << 13)
-> +#define S5P_CISCCTRL_OUTRGB_FMT_RGB565		(0 << 11)
-> +#define S5P_CISCCTRL_OUTRGB_FMT_RGB666		(1 << 11)
-> +#define S5P_CISCCTRL_OUTRGB_FMT_RGB888		(2 << 11)
-> +#define S5P_CISCCTRL_OUTRGB_FMT_MASK		(3 << 11)
-> +#define S5P_CISCCTRL_EXTRGB_NORMAL		(0 << 10)
-> +#define S5P_CISCCTRL_EXTRGB_EXTENSION		(1 << 10)
-> +#define S5P_CISCCTRL_ONE2ONE			(1 << 9)
+> +void __init s5p_fimc0_set_platdata(struct samsung_plat_fimc *pd)
+
+Actually, we can use Ben's 's3c_set_platdata' which can replace a number of
+sites...
+
+Please refer to below URL.
+http://lists.infradead.org/pipermail/linux-arm-kernel/2010-May/016650.html
+
+I think this method is better to us.
+
+> +{
+> +	struct samsung_plat_fimc *npd;
 > +
-> +/* Status register */
-> +#define S5P_CISTATUS_OVFIY			(1 << 31)
-> +#define S5P_CISTATUS_OVFICB			(1 << 30)
-> +#define S5P_CISTATUS_OVFICR			(1 << 29)
-> +#define S5P_CISTATUS_VSYNC			(1 << 28)
-> +#define S5P_CISTATUS_WINOFSTEN			(1 << 25)
-> +#define S5P_CISTATUS_IMGCPTEN			(1 << 22)
-> +#define S5P_CISTATUS_IMGCPTENSC			(1 << 21)
-> +#define S5P_CISTATUS_VSYNC_A			(1 << 20)
-> +#define S5P_CISTATUS_VSYNC_B			(1 << 19)
-> +#define S5P_CISTATUS_OVRLB			(1 << 18)
-> +#define S5P_CISTATUS_FRAMEEND			(1 << 17)
-> +#define S5P_CISTATUS_LASTCAPTUREEND		(1 << 16)
-> +#define S5P_CISTATUS_VVALID_A			(1 << 15)
-> +#define S5P_CISTATUS_VVALID_B			(1 << 14)
+> +	if (!pd)
+> +		pd = &s5p_fimc0_default_data;
 > +
-> +/* Image capture enable register */
-> +#define S5P_CIIMGCPT_IMGCPTEN			(1 << 31)
-> +#define S5P_CIIMGCPT_IMGCPTEN_SC		(1 << 30)
-> +#define S5P_CIIMGCPT_CPT_FREN_ENABLE		(1 << 25)
-> +#define S5P_CIIMGCPT_CPT_FRMOD_EN		(0 << 18)
-> +#define S5P_CIIMGCPT_CPT_FRMOD_CNT		(1 << 18)
+> +	npd = kmemdup(pd, sizeof(*npd), GFP_KERNEL);
+> +	if (!npd)
+> +		printk(KERN_ERR "%s: out of memory\n", __func__);
 > +
-> +/* Image effects register */
-> +#define S5P_CIIMGEFF_IE_DISABLE			(0 << 30)
-> +#define S5P_CIIMGEFF_IE_ENABLE			(1 << 30)
-> +#define S5P_CIIMGEFF_IE_SC_BEFORE		(0 << 29)
-> +#define S5P_CIIMGEFF_IE_SC_AFTER		(1 << 29)
-> +#define S5P_CIIMGEFF_FIN_BYPASS			(0 << 26)
-> +#define S5P_CIIMGEFF_FIN_ARBITRARY		(1 << 26)
-> +#define S5P_CIIMGEFF_FIN_NEGATIVE		(2 << 26)
-> +#define S5P_CIIMGEFF_FIN_ARTFREEZE		(3 << 26)
-> +#define S5P_CIIMGEFF_FIN_EMBOSSING		(4 << 26)
-> +#define S5P_CIIMGEFF_FIN_SILHOUETTE		(5 << 26)
-> +#define S5P_CIIMGEFF_FIN_MASK			(7 << 26)
-> +#define S5P_CIIMGEFF_PAT_CBCR_MASK		((0xff < 13) | (0xff <
-> 0))
+> +	s5p_device_fimc0.dev.platform_data = npd;
+> +}
 > +
-> +/* Real input DMA size register */
-> +#define S5P_CIREAL_ISIZE_AUTOLOAD_ENABLE	(1 << 31)
-> +#define S5P_CIREAL_ISIZE_ADDR_CH_DISABLE	(1 << 30)
+
+No need last empty line
+
+> diff --git a/arch/arm/plat-s5p/dev-fimc1.c b/arch/arm/plat-s5p/dev-fimc1.c
+> new file mode 100644
+> index 0000000..7178477
+> --- /dev/null
+> +++ b/arch/arm/plat-s5p/dev-fimc1.c
+> @@ -0,0 +1,55 @@
+> +/* linux/arch/arm/plat-s5p/dev-fimc1.c
+> + *
+> + * Copyright (c) 2010 Samsung Electronics
+> + *
+> + * Base S5P FIMC1 resource and device definitions
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
 > +
-> +/* Input DMA control register */
-> +#define S5P_MSCTRL_IN_BURST_COUNT_MASK		(3 << 24)
-> +#define S5P_MSCTRL_2P_IN_ORDER_MASK		(3 << 16)
-> +#define S5P_MSCTRL_2P_IN_ORDER_SHIFT		(16)
-> +#define S5P_MSCTRL_C_INT_IN_3PLANE		(0 << 15)
-> +#define S5P_MSCTRL_C_INT_IN_2PLANE		(1 << 15)
-> +#define S5P_MSCTRL_C_INT_IN_MASK		(1 << 15)
-> +#define S5P_MSCTRL_FLIP_SHIFT			(13)
-> +#define S5P_MSCTRL_FLIP_MASK			(3 << 13)
-> +#define S5P_MSCTRL_FLIP_NORMAL			(0 << 13)
-> +#define S5P_MSCTRL_FLIP_X_MIRROR		(1 << 13)
-> +#define S5P_MSCTRL_FLIP_Y_MIRROR		(2 << 13)
-> +#define S5P_MSCTRL_FLIP_180			(3 << 13)
-> +#define S5P_MSCTRL_ORDER422_SHIFT		(4)
-> +#define S5P_MSCTRL_ORDER422_CRYCBY		(0 << 4)
-> +#define S5P_MSCTRL_ORDER422_YCRYCB		(1 << 4)
-> +#define S5P_MSCTRL_ORDER422_CBYCRY		(2 << 4)
-> +#define S5P_MSCTRL_ORDER422_YCBYCR		(3 << 4)
-> +#define S5P_MSCTRL_ORDER422_MASK		(3 << 4)
-> +#define S5P_MSCTRL_INPUT_EXTCAM			(0 << 3)
-> +#define S5P_MSCTRL_INPUT_MEMORY			(1 << 3)
-> +#define S5P_MSCTRL_INPUT_MASK			(1 << 3)
-> +#define S5P_MSCTRL_INFORMAT_YCBCR420		(0 << 1)
-> +#define S5P_MSCTRL_INFORMAT_YCBCR422		(1 << 1)
-> +#define S5P_MSCTRL_INFORMAT_YCBCR422_1PLANE	(2 << 1)
-> +#define S5P_MSCTRL_INFORMAT_RGB			(3 << 1)
-> +#define S5P_MSCTRL_INFORMAT_MASK		(3 << 1)
-> +#define S5P_MSCTRL_ENVID			(1 << 0)
+> +#include <linux/kernel.h>
+> +#include <linux/string.h>
+> +#include <linux/platform_device.h>
+> +#include <mach/map.h>
+> +#include <mach/irqs.h>
+> +#include <plat/fimc.h>
+> +#include <plat/devs.h>
+> +#include <plat/cpu.h>
 > +
-> +/* DMA parameter register */
-> +#define S5P_CIDMAPARAM_R_MODE_64X32		(3 << 29)
-> +#define S5P_CIDMAPARAM_W_MODE_LINEAR		(0 << 13)
-> +#define S5P_CIDMAPARAM_W_MODE_CONFTILE		(1 << 13)
-> +#define S5P_CIDMAPARAM_W_MODE_64X32		(3 << 13)
 > +
-> +#endif /* REGS_FIMC_H_ */
+2 empty lines..
+
+> +static struct resource s5p_fimc_resource[] = {
+> +	[0] = {
+> +		.start	= S5P_PA_FIMC1,
+> +		.end	= S5P_PA_FIMC1 + SZ_1M - 1,
+> +		.flags	= IORESOURCE_MEM,
+> +	},
+> +	[1] = {
+> +		.start	= IRQ_FIMC1,
+> +		.end	= IRQ_FIMC1,
+> +		.flags	= IORESOURCE_IRQ,
+> +	},
+> +};
+> +
+> +struct platform_device s5p_device_fimc1 = {
+> +	.name		= "s5p-fimc",
+> +	.id		= 1,
+> +	.num_resources	= ARRAY_SIZE(s5p_fimc_resource),
+> +	.resource	= s5p_fimc_resource,
+> +};
+> +
+> +void __init s5p_fimc1_set_platdata(struct samsung_plat_fimc *pd)
+> +{
+> +	struct samsung_plat_fimc *npd;
+> +
+> +	if (!pd)
+> +		pd = &s5p_fimc1_default_data;
+> +
+> +	npd = kmemdup(pd, sizeof(*npd), GFP_KERNEL);
+> +	if (!npd)
+> +		printk(KERN_ERR "%s: out of memory\n", __func__);
+> +
+> +	s5p_device_fimc1.dev.platform_data = npd;
+> +}
+> +
+
+No need last empty line...
+
+> diff --git a/arch/arm/plat-s5p/dev-fimc2.c b/arch/arm/plat-s5p/dev-fimc2.c
+> new file mode 100644
+> index 0000000..fe1a6c0
+> --- /dev/null
+> +++ b/arch/arm/plat-s5p/dev-fimc2.c
+> @@ -0,0 +1,55 @@
+> +/* linux/arch/arm/plat-s5p/dev-fimc2.c
+> + *
+> + * Copyright (c) 2010 Samsung Electronics
+> + *
+> + * Base S5P FIMC2 resource and device definitions
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/string.h>
+> +#include <linux/platform_device.h>
+> +#include <mach/map.h>
+> +#include <mach/irqs.h>
+> +#include <plat/fimc.h>
+> +#include <plat/devs.h>
+> +#include <plat/cpu.h>
+> +
+> +
+
+Same...
+
+> +static struct resource s5p_fimc_resource[] = {
+> +	[0] = {
+> +		.start	= S5P_PA_FIMC2,
+> +		.end	= S5P_PA_FIMC2 + SZ_1M - 1,
+> +		.flags	= IORESOURCE_MEM,
+> +	},
+> +	[1] = {
+> +		.start	= IRQ_FIMC2,
+> +		.end	= IRQ_FIMC2,
+> +		.flags	= IORESOURCE_IRQ,
+> +	},
+> +};
+> +
+> +struct platform_device s5p_device_fimc2 = {
+> +	.name		= "s5p-fimc",
+> +	.id		= 2,
+> +	.num_resources	= ARRAY_SIZE(s5p_fimc_resource),
+> +	.resource	= s5p_fimc_resource,
+> +};
+> +
+> +void __init s5p_fimc2_set_platdata(struct samsung_plat_fimc *pd)
+> +{
+> +	struct samsung_plat_fimc *npd;
+> +
+> +	if (!pd)
+> +		pd = &s5p_fimc2_default_data;
+> +
+> +	npd = kmemdup(pd, sizeof(*npd), GFP_KERNEL);
+> +	if (!npd)
+> +		printk(KERN_ERR "%s: out of memory\n", __func__);
+> +
+> +	s5p_device_fimc2.dev.platform_data = npd;
+> +}
+> +
+
+Same..
+
+> diff --git a/arch/arm/plat-samsung/include/plat/fimc-core.h
+b/arch/arm/plat-
+> samsung/include/plat/fimc-core.h
+> new file mode 100644
+> index 0000000..a126bbd
+> --- /dev/null
+> +++ b/arch/arm/plat-samsung/include/plat/fimc-core.h
+> @@ -0,0 +1,45 @@
+> +/*
+> + * arch/arm/plat-samsung/include/plat/fimc-core.h
+> + *
+> + * Copyright 2010 Samsung Electronics Co., Ltd.
+> + *	Sylwester Nawrocki <s.nawrocki@samsung.com>
+> + *
+> + * Samsung camera interface driver core functions
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +#ifndef __ASM_PLAT_FIMC_CORE_H
+> +#define __ASM_PLAT_FIMC_CORE_H __FILE__
+> +
+> +/*
+> + * These functions are only for use with the core support code, such as
+> + * the CPU-specific initialization code.
+> + */
+> +
+> +#include <plat/fimc.h>
+> +
+> +/* Re-define device name to differentiate the subsystem in various SoCs.
+*/
+> +static inline void s3c_fimc_setname(int id, char *name)
+> +{
+> +	switch(id) {
+> +#ifdef CONFIG_S5P_DEV_FIMC0
+> +	case 0:
+> +		s5p_device_fimc0.name = name;
+> +		break;
+> +#endif
+> +#ifdef CONFIG_S5P_DEV_FIMC1
+> +	case 1:
+> +		s5p_device_fimc1.name = name;
+> +		break;
+> +#endif
+> +#ifdef CONFIG_S5P_DEV_FIMC2
+> +	case 2:
+> +		s5p_device_fimc2.name = name;
+> +		break;
+> +#endif
+> +	}
+> +}
+> +
+> +#endif /* __ASM_PLAT_FIMC_CORE_H */
+> diff --git a/arch/arm/plat-samsung/include/plat/fimc.h b/arch/arm/plat-
+> samsung/include/plat/fimc.h
+> index be1e853..cf7d2fb 100644
+> --- a/arch/arm/plat-samsung/include/plat/fimc.h
+> +++ b/arch/arm/plat-samsung/include/plat/fimc.h
+> @@ -27,5 +27,17 @@ struct samsung_plat_fimc {
+>  	struct s3c_fifo_link	*fifo_targets[FIMC_MAX_FIFO_TARGETS];
+>  };
+> 
+> +extern struct platform_device s5p_device_fimc0;
+> +extern struct platform_device s5p_device_fimc1;
+> +extern struct platform_device s5p_device_fimc2;
+> +
+> +extern struct samsung_plat_fimc s5p_fimc0_default_data;
+> +extern struct samsung_plat_fimc s5p_fimc1_default_data;
+> +extern struct samsung_plat_fimc s5p_fimc2_default_data;
+> +
+> +extern void s5p_fimc0_set_platdata(struct samsung_plat_fimc *fimc);
+> +extern void s5p_fimc1_set_platdata(struct samsung_plat_fimc *fimc);
+> +extern void s5p_fimc2_set_platdata(struct samsung_plat_fimc *fimc);
+> +
+>  #endif /* FIMC_H_ */
+> 
 > --
-I wonder...we really need above every definitions?
+
 
 Thanks.
 
