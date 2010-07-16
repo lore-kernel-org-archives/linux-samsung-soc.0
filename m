@@ -1,81 +1,91 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: RE: [PATCH 01/10 v2] ARM: Samsung: Add FIMC register and platform
- definitions
-Date: Fri, 16 Jul 2010 16:47:07 +0200
-Message-ID: <000801cb24f5$c3377490$49a65db0$%nawrocki@samsung.com>
+Subject: RE: [PATCH 04/10 v2] v4l: Add Samsung FIMC (video postprocessor) driver
+Date: Fri, 16 Jul 2010 18:33:43 +0200
+Message-ID: <000a01cb2504$a8007410$f8015c30$%nawrocki@samsung.com>
 References: <1279185041-6004-1-git-send-email-s.nawrocki@samsung.com>
- <1279185041-6004-2-git-send-email-s.nawrocki@samsung.com>
- <012101cb24cb$83187410$89495c30$%kim@samsung.com>
- <000301cb24eb$13434000$39c9c000$%nawrocki@samsung.com>
- <4C40603B.8000208@gmail.com>
+ <1279185041-6004-5-git-send-email-s.nawrocki@samsung.com>
+ <012601cb24db$84fb2380$8ef16a80$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <4C40603B.8000208@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:59562 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751113Ab0GPQfE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 Jul 2010 12:35:04 -0400
+In-reply-to: <012601cb24db$84fb2380$8ef16a80$%kim@samsung.com>
 Content-language: en-us
-Sender: linux-media-owner@vger.kernel.org
-To: 'Maurus Cuelenaere' <mcuelenaere@gmail.com>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, Pawel Osciak <p.osciak@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, kyungmin.park@samsung.com, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>
+Cc: Pawel Osciak <p.osciak@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, kyungmin.park@samsung.com, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
 > -----Original Message-----
-> From: Maurus Cuelenaere [mailto:mcuelenaere@gmail.com]
-> Sent: Friday, July 16, 2010 3:36 PM
-> To: Sylwester Nawrocki
-> Cc: 'Kukjin Kim'; Pawel Osciak; Marek Szyprowski;
-> kyungmin.park@samsung.com; linux-media@vger.kernel.org; linux-samsung-
-> soc@vger.kernel.org; linux-arm-kernel@lists.infradead.org
-> Subject: Re: [PATCH 01/10 v2] ARM: Samsung: Add FIMC register and
-> platform definitions
+> From: Kukjin Kim [mailto:kgene.kim@samsung.com]
+> Sent: Friday, July 16, 2010 1:39 PM
+> To: 'Sylwester Nawrocki'; linux-samsung-soc@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org
+> Cc: p.osciak@samsung.com; m.szyprowski@samsung.com;
+> kyungmin.park@samsung.com; linux-media@vger.kernel.org
+> Subject: RE: [PATCH 04/10 v2] v4l: Add Samsung FIMC (video
+> postprocessor) driver
 > 
->  Op 16-07-10 15:30, Sylwester Nawrocki schreef:
-> > Hi,
+> Sylwester Nawrocki wrote:
 > >
-> > thank you for the review. Please se my comments below.
+> Hi,
+> 
+> Samsung S.LSI hardly recommends DMA mode to implement the feature not
+> FIFO
+> mode because of H/W limitation.
+
+Does the hardware issue occur in all SoCs or only some specific versions 
+are affected?
+So far we were successful with S5PC110 EVT0, however we could not make 
+it work on S5PV210 (EVT1). That said I have created an option in the FIMC
+variant definition (samsung_fimc_variant::fifo_capable) so that 
+the V4L2 video node for FIMC FIFO operation mode is registered only 
+for selected SoC variants.
+
+> 
+> > This driver exports two video device nodes per each FIMC device,
+> > one for for memory to memory (color conversion, image resizing,
+> > flipping and rotation) operations and one for direct
+> > V4L2 output interface to framebuffer.
 > >
-> >> -----Original Message-----
-> >> From: Kukjin Kim [mailto:kgene.kim@samsung.com]
-> >> Sent: Friday, July 16, 2010 11:45 AM
-> >> To: 'Sylwester Nawrocki'; linux-samsung-soc@vger.kernel.org; linux-
-> arm-
-> >> kernel@lists.infradead.org
-> >> Cc: p.osciak@samsung.com; m.szyprowski@samsung.com;
-> >> kyungmin.park@samsung.com; linux-media@vger.kernel.org
-> >> Subject: RE: [PATCH 01/10 v2] ARM: Samsung: Add FIMC register and
-> >> platform definitions
-> >>
-
-<snip>
-
-> >>> +
-> >>> +struct samsung_plat_fimc {
-> >>> +	struct s3c_fifo_link	*fifo_targets[FIMC_MAX_FIFO_TARGETS];
-> >>> +};
-> >>> +
-> >>> +#endif /* FIMC_H_ */
-> >>> +
-> >> No need last empty line...
-> > C89 and C99 standard requires a new line character at the end of
-> file.
-> > The compiler should issue a warning when the new line character
-> > at the end of file is missing, otherwise it is not compliant with
-> > the above C standards.
-> > So I would rather add a new line where it is missing rather than
-> > removing it.
-> > There is lots of header files already in arch/arm/plat-samsung where
-> > there is even more than one empty line at the end of file.
+> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > Reviewed-by: Pawel Osciak <p.osciak@samsung.com>
+> > Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > ---
+> >  drivers/media/video/Kconfig                  |   20 +
+> >  drivers/media/video/Makefile                 |    1 +
+> >  drivers/media/video/samsung/fimc/Makefile    |    3 +
+> >  drivers/media/video/samsung/fimc/fimc-core.c | 1664
+> > ++++++++++++++++++++++++++
+> >  drivers/media/video/samsung/fimc/fimc-core.h |  541 +++++++++
+> >  drivers/media/video/samsung/fimc/fimc-fifo.c |  814 +++++++++++++
+> >  drivers/media/video/samsung/fimc/fimc-reg.c  |  585 +++++++++
+> >  include/linux/videodev2.h                    |    1 +
+> >  8 files changed, 3629 insertions(+), 0 deletions(-)
+> >  create mode 100644 drivers/media/video/samsung/fimc/Makefile
+> >  create mode 100644 drivers/media/video/samsung/fimc/fimc-core.c
+> >  create mode 100644 drivers/media/video/samsung/fimc/fimc-core.h
+> >  create mode 100644 drivers/media/video/samsung/fimc/fimc-fifo.c
+> >  create mode 100644 drivers/media/video/samsung/fimc/fimc-reg.c
+> >
 > 
-> AFAIK there *already is* an empty line, git just omits it in diffs.
-> Try removing the last line with your editor and see what git diff
-> gives, it'll
-> show "\ No newline at end of file".
-
-Indeed, I just had two new-line characters with single empty line..
-
+> (snip)
 > 
+> Thanks.
+> 
+> Best regards,
+> Kgene.
 > --
-> Maurus Cuelenaere
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-Thanks,
-Sylwester
+Best regards,
+--
+Sylwester Nawrocki
+Samsung Poland R&D Center
