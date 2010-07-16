@@ -1,135 +1,120 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH v3] Samsung: sdhci-s3c: add support for new card detection
-	methods
-Date: Fri, 16 Jul 2010 08:24:26 +0200
-Message-ID: <011401cb24af$8eb2cb70$ac186250$%szyprowski@samsung.com>
-References: <1279181721-23333-1-git-send-email-m.szyprowski@samsung.com>
-	<20100715133954.7fcb797a.akpm@linux-foundation.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <20100715133954.7fcb797a.akpm@linux-foundation.org>
-Content-language: pl
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Andrew Morton' <akpm@linux-foundation.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH] regulator: MAX8998: set_voltage bugfix. ramp_up delay and
+ min/max voltage
+Date: Fri, 16 Jul 2010 16:46:28 +0900
+Message-ID: <1279266388-6013-1-git-send-email-myungjoo.ham@samsung.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:55434 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935713Ab0GPHqc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 Jul 2010 03:46:32 -0400
+Received: from epmmp2 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L5N00K1Q49H6280@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 16 Jul 2010 16:46:29 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L5N00EMS49HUX@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 16 Jul 2010 16:46:29 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, kgene.kim@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
 
-Hello,
+Two issues are addressed for max8998_set_voltage function.
 
-On Thursday, July 15, 2010 10:40 PM Andrew Morton wrote:
+1. Min/Max Voltage.
 
-> On Thu, 15 Jul 2010 10:15:21 +0200
-> Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> 
-> > On some Samsung SoCs not all SDHCI controllers have card detect (CD)
-> > line. For some embedded designs it is not even needed, because ususally
-> > the device (like SDIO flash memory or wifi controller) is permanently
-> > wired to the controller. There are also systems which have a card detect
-> > line connected to some of the external interrupt lines or the presence
-> > of the card depends on some other actions (like enabling a power
-> > regulator).
-> >
-> > This patch adds support for all these cases. The following card
-> > detection methods are possible:
-> >
-> > 1. internal sdhci host card detect line
-> > 2. external event
-> > 3. external gpio interrupt
-> > 4. no card detect line, controller will poll for the card
-> > 5. no card detect line, card is permanently wired to the controller
-> > (once detected host won't poll it any more)
-> >
-> > By default, all existing code would use method #1, what is compatible
-> > with the previous version of the driver.
-> >
-> > In case of external event, two callbacks must be provided in platdata:
-> > ext_cd_init and ext_cd_cleanup. Both of them get a callback to a
-> > function that notifies the s3c-sdhci host contoller as their argument.
-> > That callback function should be called from the even dispatcher to let
-> > host notice the card insertion/removal.
-> >
-> > In case of external gpio interrupt, a gpio pin number must be provided
-> > in platdata (ext_cd_gpio parameter), as well as the information about
-> > the polarity of that gpio pin (ext_cd_gpio_invert). By default
-> > (ext_cd_gpio_invert == 0) gpio value 0 means 'card has been removed',
-> > but this can be changed to 'card has been removed' when
-> > ext_cd_gpio_invert == 1.
-> >
-> > This patch adds all required changes to platform support code.
-> >
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> >
-> > This a resend of the previous patch. Relevant patches for sdhci-s3c
-> > driver has been posted in a separate patch series for easier merging,
-> > please refer to the "[PATCH] SDHCI-S3C fixes and enhancements (driver
-> > specific code)" thread. They have been already taken by Andrew Morton
-> > into his patch tracking tree.
-> >
-> > I hope these changes to platform specific code gets merged soon, so the
-> > changes to the driver can be merged as well.
-> >
-> > The patch has been prepared for the following git tree:
-> > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> for-next
-> >
-> > Changes since V2:
-> > - added support for HSMMC3 device
-> >
-> > Changes since V1:
-> > - added support for gpio external interrupt card based detect method
-> >   directly to sdhci-s3c driver
-> > - removed s3c64xx compilation fix patch from the series
-> >
-> > Best regards
-> > --
-> > Marek Szyprowski
-> > Samsung Poland R&D Center
-> >
-> > ---
-> >
-> >  arch/arm/mach-s3c64xx/setup-sdhci-gpio.c   |   14 +++++++++---
-> >  arch/arm/mach-s5pc100/setup-sdhci-gpio.c   |   21 ++++++++++++++-----
-> >  arch/arm/mach-s5pv210/setup-sdhci-gpio.c   |   22 +++++++++++++++-----
-> >  arch/arm/plat-samsung/dev-hsmmc.c          |    5 ++++
-> >  arch/arm/plat-samsung/dev-hsmmc1.c         |    5 ++++
-> >  arch/arm/plat-samsung/dev-hsmmc2.c         |    5 ++++
-> >  arch/arm/plat-samsung/dev-hsmmc3.c         |    5 ++++
-> >  arch/arm/plat-samsung/include/plat/sdhci.h |   29
-> ++++++++++++++++++++++++++++
-> >  8 files changed, 90 insertions(+), 16 deletions(-)
-> 
-> This is quite confusing.  You've already sent a patch called
-> "sdhci-s3c: add support for new card detection methods".  It had the
-> same changelog as this patch and the same title, but the two patches
-> are utterly different!
+	max8998_set_voltage had been using the voltage value of
 
-The real patch has been split into two for easier merging: 1. the driver
-part and 2. samsung platform related part. The part which patch belongs
-to is indicated in the last line of the change log.
+	min ( voltage[i] >= max_vol , i )
 
-I'm really confused how to submit properly a patch that requires changes
-to both the driver (which is merged by the proper driver maintainer's
-sub-tree) and the platform (which should go through platform maintainer's
-tree).
+	This is corrected to use:
 
-> I suggest that you resend this patch under an appropriate title and
-> with a more specific changelog, please.
+	min ( voltage[i] >= min_vol , i )
 
-Ok, I will add something like "(platform changes)" to the patch title next time.
+2. Ramp Up Delay.
 
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+	max8998_set_voltage should provide delay for BUCK1/2
+if ENRAMP is on. It reads RAMP value from ONOFF4 register to determine
+RAMP delay length. However, when max8998_set_voltage's new voltage is
+lower than the previous, we don't care because it does not deteriorate
+the stability.
+
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/regulator/max8998.c |   30 ++++++++++++++++++++++++++++--
+ 1 files changed, 28 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/regulator/max8998.c b/drivers/regulator/max8998.c
+index 1cca8b5..99c5279 100644
+--- a/drivers/regulator/max8998.c
++++ b/drivers/regulator/max8998.c
+@@ -28,6 +28,7 @@
+ #include <linux/slab.h>
+ #include <linux/interrupt.h>
+ #include <linux/mutex.h>
++#include <linux/delay.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+ #include <linux/mfd/max8998.h>
+@@ -302,10 +303,13 @@ static int max8998_set_voltage(struct regulator_dev *rdev,
+ 	struct max8998_data *max8998 = rdev_get_drvdata(rdev);
+ 	struct i2c_client *i2c = max8998->iodev->i2c;
+ 	int min_vol = min_uV / 1000, max_vol = max_uV / 1000;
++	int previous_vol = 0;
+ 	const struct voltage_map_desc *desc;
+ 	int ldo = max8998_get_ldo(rdev);
+ 	int reg, shift = 0, mask, ret;
+ 	int i = 0;
++	u8 val;
++	bool en_ramp = false;
+ 
+ 	if (ldo > ARRAY_SIZE(ldo_voltage_map))
+ 		return -EINVAL;
+@@ -317,15 +321,37 @@ static int max8998_set_voltage(struct regulator_dev *rdev,
+ 	if (max_vol < desc->min || min_vol > desc->max)
+ 		return -EINVAL;
+ 
+-	while (desc->min + desc->step*i < max_vol &&
++	while (desc->min + desc->step*i < min_vol &&
+ 	       desc->min + desc->step*i < desc->max)
+ 		i++;
+ 
++	if (desc->min + desc->step*i > max_vol)
++		return -EINVAL;
++
+ 	ret = max8998_get_voltage_register(rdev, &reg, &shift, &mask);
+ 	if (ret)
+ 		return ret;
+ 
+-	return max8998_update_reg(i2c, reg, i<<shift, mask<<shift);
++	/* wait for RAMP_UP_DELAY if rdev is BUCK1/2 and
++	 * ENRAMP is ON */
++	if (ldo == MAX8998_BUCK1 || ldo == MAX8998_BUCK2) {
++		max8998_read_reg(i2c, MAX8998_REG_ONOFF4, &val);
++		if (val & (1 << 4)) {
++			en_ramp = true;
++			previous_vol = max8998_get_voltage(rdev);
++		}
++	}
++
++	ret = max8998_update_reg(i2c, reg, i<<shift, mask<<shift);
++
++	if (en_ramp == true) {
++		int difference = desc->min + desc->step * i
++			- previous_vol / 1000;
++		if (difference > 0)
++			udelay(difference / ((val & 0x0f) + 1));
++	}
++
++	return ret;
+ }
+ 
+ static struct regulator_ops max8998_ldo_ops = {
+-- 
+1.6.3.3
