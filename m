@@ -1,12 +1,12 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v2 7/8] ARM: S5PV310: Add Board support file
-Date: Fri, 16 Jul 2010 17:58:33 +0900
-Message-ID: <1279270714-15146-8-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH v2 1/8] ARM: S5P: Remove fixed uart offset dependent code
+Date: Fri, 16 Jul 2010 17:58:27 +0900
+Message-ID: <1279270714-15146-2-git-send-email-kgene.kim@samsung.com>
 References: <1279270714-15146-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:35575 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:35560 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S936138Ab0GPJKH (ORCPT
+	with ESMTP id S936135Ab0GPJKH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 16 Jul 2010 05:10:07 -0400
 In-Reply-To: <1279270714-15146-1-git-send-email-kgene.kim@samsung.com>
@@ -17,125 +17,56 @@ Cc: ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>, Kukjin Kim <kg
 
 From: Changhwan Youn <chaos.youn@samsung.com>
 
-This patch adds Samsung SMDKV310 board support file.
+The uart offset between channels has been 0x400 for all S5P series
+and to present virtual and physical offsets, both number 0x400 and
+S3C_UART_OFFSET have been used together.
+This patch removes the use of the number 0x400 and expands the virtual
+mapping size of S3C_VA_UART from 4KB to 512KB to support the CPU with
+S3C_UART_OFFSET being 0x10000.
 
 Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv310/Makefile        |    4 ++
- arch/arm/mach-s5pv310/mach-smdkv310.c |   92 +++++++++++++++++++++++++++++++++
- 2 files changed, 96 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s5pv310/mach-smdkv310.c
+ arch/arm/plat-s5p/cpu.c                  |    2 +-
+ arch/arm/plat-s5p/include/plat/map-s5p.h |   11 +++++++----
+ 2 files changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv310/Makefile b/arch/arm/mach-s5pv310/Makefile
-index 1b263a5..56e7693 100644
---- a/arch/arm/mach-s5pv310/Makefile
-+++ b/arch/arm/mach-s5pv310/Makefile
-@@ -18,3 +18,7 @@ obj-$(CONFIG_CPU_S5PV310)	+= setup-i2c0.o time.o
- obj-$(CONFIG_SMP)		+= platsmp.o headsmp.o
- obj-$(CONFIG_LOCAL_TIMERS)	+= localtimer.o
- obj-$(CONFIG_HOTPLUG_CPU)	+= hotplug.o
-+
-+# machine support
-+
-+obj-$(CONFIG_MACH_SMDKV310)	+= mach-smdkv310.o
-diff --git a/arch/arm/mach-s5pv310/mach-smdkv310.c b/arch/arm/mach-s5pv310/mach-smdkv310.c
-new file mode 100644
-index 0000000..0d6ab77
---- /dev/null
-+++ b/arch/arm/mach-s5pv310/mach-smdkv310.c
-@@ -0,0 +1,92 @@
-+/* linux/arch/arm/mach-s5pv310/mach-smdkv310.c
-+ *
-+ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/serial_core.h>
-+
-+#include <asm/mach/arch.h>
-+#include <asm/mach-types.h>
-+#include <asm/hardware/cache-l2x0.h>
-+
-+#include <plat/regs-serial.h>
-+#include <plat/s5pv310.h>
-+#include <plat/cpu.h>
-+
-+#include <mach/map.h>
-+
-+/* Following are default values for UCON, ULCON and UFCON UART registers */
-+#define SMDKV310_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-+				 S3C2410_UCON_RXILEVEL |	\
-+				 S3C2410_UCON_TXIRQMODE |	\
-+				 S3C2410_UCON_RXIRQMODE |	\
-+				 S3C2410_UCON_RXFIFO_TOI |	\
-+				 S3C2443_UCON_RXERR_IRQEN)
-+
-+#define SMDKV310_ULCON_DEFAULT	S3C2410_LCON_CS8
-+
-+#define SMDKV310_UFCON_DEFAULT	(S3C2410_UFCON_FIFOMODE |	\
-+				 S5PV210_UFCON_TXTRIG4 |	\
-+				 S5PV210_UFCON_RXTRIG4)
-+
-+static struct s3c2410_uartcfg smdkv310_uartcfgs[] __initdata = {
-+	[0] = {
-+		.hwport		= 0,
-+		.flags		= 0,
-+		.ucon		= SMDKV310_UCON_DEFAULT,
-+		.ulcon		= SMDKV310_ULCON_DEFAULT,
-+		.ufcon		= SMDKV310_UFCON_DEFAULT,
-+	},
-+	[1] = {
-+		.hwport		= 1,
-+		.flags		= 0,
-+		.ucon		= SMDKV310_UCON_DEFAULT,
-+		.ulcon		= SMDKV310_ULCON_DEFAULT,
-+		.ufcon		= SMDKV310_UFCON_DEFAULT,
-+	},
-+	[2] = {
-+		.hwport		= 2,
-+		.flags		= 0,
-+		.ucon		= SMDKV310_UCON_DEFAULT,
-+		.ulcon		= SMDKV310_ULCON_DEFAULT,
-+		.ufcon		= SMDKV310_UFCON_DEFAULT,
-+	},
-+	[3] = {
-+		.hwport		= 3,
-+		.flags		= 0,
-+		.ucon		= SMDKV310_UCON_DEFAULT,
-+		.ulcon		= SMDKV310_ULCON_DEFAULT,
-+		.ufcon		= SMDKV310_UFCON_DEFAULT,
-+	},
-+};
-+
-+static void __init smdkv310_map_io(void)
-+{
-+	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
-+	s3c24xx_init_clocks(24000000);
-+	s3c24xx_init_uarts(smdkv310_uartcfgs, ARRAY_SIZE(smdkv310_uartcfgs));
-+}
-+
-+static void __init smdkv310_machine_init(void)
-+{
-+#ifdef CONFIG_CACHE_L2X0
-+	l2x0_init(S5P_VA_L2CC, 1 << 28, 0xffffffff);
+diff --git a/arch/arm/plat-s5p/cpu.c b/arch/arm/plat-s5p/cpu.c
+index 75cb8c3..c478441 100644
+--- a/arch/arm/plat-s5p/cpu.c
++++ b/arch/arm/plat-s5p/cpu.c
+@@ -81,7 +81,7 @@ static struct map_desc s5p_iodesc[] __initdata = {
+ 	}, {
+ 		.virtual	= (unsigned long)S3C_VA_UART,
+ 		.pfn		= __phys_to_pfn(S3C_PA_UART),
+-		.length		= SZ_4K,
++		.length		= SZ_512K,
+ 		.type		= MT_DEVICE,
+ 	}, {
+ 		.virtual	= (unsigned long)VA_VIC0,
+diff --git a/arch/arm/plat-s5p/include/plat/map-s5p.h b/arch/arm/plat-s5p/include/plat/map-s5p.h
+index 1482852..3d815f4 100644
+--- a/arch/arm/plat-s5p/include/plat/map-s5p.h
++++ b/arch/arm/plat-s5p/include/plat/map-s5p.h
+@@ -18,12 +18,15 @@
+ #define S5P_VA_SYSTIMER		S3C_ADDR(0x01200000)
+ #define S5P_VA_SROMC		S3C_ADDR(0x01100000)
+ 
+-#define S5P_VA_UART0		(S3C_VA_UART + 0x0)
+-#define S5P_VA_UART1		(S3C_VA_UART + 0x400)
+-#define S5P_VA_UART2		(S3C_VA_UART + 0x800)
+-#define S5P_VA_UART3		(S3C_VA_UART + 0xC00)
++#define S5P_VA_UART(x)		(S3C_VA_UART + ((x) * S3C_UART_OFFSET))
++#define S5P_VA_UART0		S5P_VA_UART(0)
++#define S5P_VA_UART1		S5P_VA_UART(1)
++#define S5P_VA_UART2		S5P_VA_UART(2)
++#define S5P_VA_UART3		S5P_VA_UART(3)
+ 
++#ifndef S3C_UART_OFFSET
+ #define S3C_UART_OFFSET		(0x400)
 +#endif
-+}
-+
-+MACHINE_START(SMDKV310, "SMDKV310")
-+	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
-+	/* Maintainer: Changhwan Youn <chaos.youn@samsung.com> */
-+	.phys_io	= S3C_PA_UART & 0xfff00000,
-+	.io_pg_offst	= (((u32)S3C_VA_UART) >> 18) & 0xfffc,
-+	.boot_params	= S5P_PA_SDRAM + 0x100,
-+	.init_irq	= s5pv310_init_irq,
-+	.map_io		= smdkv310_map_io,
-+	.init_machine	= smdkv310_machine_init,
-+	.timer		= &s5pv310_timer,
-+MACHINE_END
+ 
+ #define VA_VIC(x)		(S3C_VA_IRQ + ((x) * 0x10000))
+ #define VA_VIC0			VA_VIC(0)
 -- 
 1.6.2.5
