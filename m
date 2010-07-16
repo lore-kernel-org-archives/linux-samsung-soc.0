@@ -1,235 +1,368 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH 2/3] ARM: S5PV210: Add support for I2C devices on SMDKV210
-	and SMDKC110
-Date: Fri, 16 Jul 2010 22:43:15 +0900
-Message-ID: <AANLkTikK6qjh4yG5OX8g8Ih22SCg-2m3nUIfMDABHChf@mail.gmail.com>
-References: <1279285999-27555-1-git-send-email-kgene.kim@samsung.com>
-	<1279285999-27555-3-git-send-email-kgene.kim@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: RE: [PATCH 02/10 v2] ARM: Samsung: Add FIMC resource definition and
+ FIMC driver platform helpers
+Date: Fri, 16 Jul 2010 16:27:11 +0200
+Message-ID: <000701cb24f2$fa81fea0$ef85fbe0$%nawrocki@samsung.com>
+References: <1279185041-6004-1-git-send-email-s.nawrocki@samsung.com>
+ <1279185041-6004-3-git-send-email-s.nawrocki@samsung.com>
+ <012301cb24ce$cc67aac0$65370040$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pv0-f174.google.com ([74.125.83.174]:54562 "EHLO
-	mail-pv0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965397Ab0GPNnR convert rfc822-to-8bit (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:20883 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965664Ab0GPO2k (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Jul 2010 09:43:17 -0400
-In-Reply-To: <1279285999-27555-3-git-send-email-kgene.kim@samsung.com>
+	Fri, 16 Jul 2010 10:28:40 -0400
+Received: from eu_spt1 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L5N00A29MVH5W@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 16 Jul 2010 15:28:29 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0L5N00FDOMVHJ2@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 16 Jul 2010 15:28:29 +0100 (BST)
+In-reply-to: <012301cb24ce$cc67aac0$65370040$%kim@samsung.com>
+Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, ben-linux@fluff.org, Naveen Krishna Ch <ch.naveen@samsung.com>
+To: 'Kukjin Kim' <kgene.kim@samsung.com>
+Cc: Pawel Osciak <p.osciak@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Fri, Jul 16, 2010 at 10:13 PM, Kukjin Kim <kgene.kim@samsung.com> wr=
-ote:
-> From: Naveen Krishna Ch <ch.naveen@samsung.com>
->
-> This patch adds support I2C-0/1/2 devices to the SMDKV210/SMDKC110.
->
-> Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
-> =A0arch/arm/mach-s5pv210/Kconfig =A0 =A0 =A0 =A0 | =A0 =A08 ++++++++
-> =A0arch/arm/mach-s5pv210/mach-smdkc110.c | =A0 28 +++++++++++++++++++=
-+++++++++
-> =A0arch/arm/mach-s5pv210/mach-smdkv210.c | =A0 29 +++++++++++++++++++=
-++++++++++
-> =A03 files changed, 65 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kc=
-onfig
-> index 0761eac..2a996d9 100644
-> --- a/arch/arm/mach-s5pv210/Kconfig
-> +++ b/arch/arm/mach-s5pv210/Kconfig
-> @@ -72,9 +72,13 @@ config MACH_SMDKV210
-> =A0 =A0 =A0 =A0select CPU_S5PV210
-> =A0 =A0 =A0 =A0select ARCH_SPARSEMEM_ENABLE
-> =A0 =A0 =A0 =A0select SAMSUNG_DEV_ADC
-> + =A0 =A0 =A0 select S3C_DEV_I2C1
-> + =A0 =A0 =A0 select S3C_DEV_I2C2
-> =A0 =A0 =A0 =A0select SAMSUNG_DEV_TS
-> =A0 =A0 =A0 =A0select S3C_DEV_WDT
-> =A0 =A0 =A0 =A0select HAVE_S3C2410_WATCHDOG
-> + =A0 =A0 =A0 select S5PV210_SETUP_I2C1
-> + =A0 =A0 =A0 select S5PV210_SETUP_I2C2
-> =A0 =A0 =A0 =A0help
-> =A0 =A0 =A0 =A0 =A0Machine support for Samsung SMDKV210
->
-> @@ -82,8 +86,12 @@ config MACH_SMDKC110
-> =A0 =A0 =A0 =A0bool "SMDKC110"
-> =A0 =A0 =A0 =A0select CPU_S5PV210
-> =A0 =A0 =A0 =A0select ARCH_SPARSEMEM_ENABLE
-> + =A0 =A0 =A0 select S3C_DEV_I2C1
-> + =A0 =A0 =A0 select S3C_DEV_I2C2
-> =A0 =A0 =A0 =A0select S3C_DEV_WDT
-> =A0 =A0 =A0 =A0select HAVE_S3C2410_WATCHDOG
-> + =A0 =A0 =A0 select S5PV210_SETUP_I2C1
-> + =A0 =A0 =A0 select S5PV210_SETUP_I2C2
-> =A0 =A0 =A0 =A0help
-> =A0 =A0 =A0 =A0 =A0Machine support for Samsung SMDKC110
-> =A0 =A0 =A0 =A0 =A0S5PC110(MCP) is one of package option of S5PV210
-> diff --git a/arch/arm/mach-s5pv210/mach-smdkc110.c b/arch/arm/mach-s5=
-pv210/mach-smdkc110.c
-> index 4c8903c..420f9a0 100644
-> --- a/arch/arm/mach-s5pv210/mach-smdkc110.c
-> +++ b/arch/arm/mach-s5pv210/mach-smdkc110.c
-> @@ -12,6 +12,7 @@
-> =A0#include <linux/types.h>
-> =A0#include <linux/init.h>
-> =A0#include <linux/serial_core.h>
-> +#include <linux/i2c.h>
->
-> =A0#include <asm/mach/arch.h>
-> =A0#include <asm/mach/map.h>
-> @@ -25,6 +26,7 @@
-> =A0#include <plat/s5pv210.h>
-> =A0#include <plat/devs.h>
-> =A0#include <plat/cpu.h>
-> +#include <plat/iic.h>
->
-> =A0/* Following are default values for UCON, ULCON and UFCON UART reg=
-isters */
-> =A0#define S5PV210_UCON_DEFAULT =A0 (S3C2410_UCON_TXILEVEL | =A0 =A0 =
-=A0 =A0\
-> @@ -74,9 +76,24 @@ static struct s3c2410_uartcfg smdkv210_uartcfgs[] =
-__initdata =3D {
-> =A0static struct platform_device *smdkc110_devices[] __initdata =3D {
-> =A0 =A0 =A0 =A0&s5pv210_device_iis0,
-> =A0 =A0 =A0 =A0&s5pv210_device_ac97,
-> + =A0 =A0 =A0 &s3c_device_i2c0,
-> + =A0 =A0 =A0 &s3c_device_i2c1,
-> + =A0 =A0 =A0 &s3c_device_i2c2,
-> =A0 =A0 =A0 =A0&s3c_device_wdt,
-> =A0};
->
-> +static struct i2c_board_info smdkc100_i2c_devs0[] __initdata =3D {
-> + =A0 =A0 =A0 { I2C_BOARD_INFO("24c08", 0x50), }, =A0 =A0 /* Samsung =
-S524AD0XD1 */
-> +};
-> +
+Hello,
 
-why smdkc100?
+> -----Original Message-----
+> From: Kukjin Kim [mailto:kgene.kim@samsung.com]
+> Sent: Friday, July 16, 2010 12:08 PM
+> To: 'Sylwester Nawrocki'; linux-samsung-soc@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org
+> Cc: p.osciak@samsung.com; m.szyprowski@samsung.com;
+> kyungmin.park@samsung.com
+> Subject: RE: [PATCH 02/10 v2] ARM: Samsung: Add FIMC resource
+> definition and FIMC driver platform helpers
+> 
+> Sylwester Nawrocki wrote:
+> >
+> > Add camera interface SoC resource definitions and setup code
+> > for FIMC/FB fifo links.
+> >
+> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
+> >  arch/arm/mach-s5pc100/Kconfig                  |   15 ++++++
+> >  arch/arm/mach-s5pc100/Makefile                 |    3 +
+> >  arch/arm/mach-s5pc100/include/mach/map.h       |    8 +++
+> >  arch/arm/mach-s5pc100/setup-fimc0.c            |   14 ++++++
+> >  arch/arm/mach-s5pc100/setup-fimc1.c            |   14 ++++++
+> >  arch/arm/mach-s5pc100/setup-fimc2.c            |   14 ++++++
+> >  arch/arm/mach-s5pv210/Kconfig                  |   15 ++++++
+> >  arch/arm/mach-s5pv210/Makefile                 |    3 +
+> >  arch/arm/mach-s5pv210/cpu.c                    |    5 ++
+> >  arch/arm/mach-s5pv210/include/mach/map.h       |    8 +++
+> >  arch/arm/mach-s5pv210/setup-fimc0.c            |   14 ++++++
+> >  arch/arm/mach-s5pv210/setup-fimc1.c            |   14 ++++++
+> >  arch/arm/mach-s5pv210/setup-fimc2.c            |   14 ++++++
+> >  arch/arm/plat-s5p/Kconfig                      |   16 +++++++
+> >  arch/arm/plat-s5p/Makefile                     |    3 +
+> >  arch/arm/plat-s5p/dev-fimc0.c                  |   56
+> > ++++++++++++++++++++++++
+> >  arch/arm/plat-s5p/dev-fimc1.c                  |   55
+> > +++++++++++++++++++++++
+> >  arch/arm/plat-s5p/dev-fimc2.c                  |   55
+> > +++++++++++++++++++++++
+> >  arch/arm/plat-samsung/include/plat/fimc-core.h |   45
+> +++++++++++++++++++
+> >  arch/arm/plat-samsung/include/plat/fimc.h      |   12 +++++
+> >  20 files changed, 383 insertions(+), 0 deletions(-)
+> >  create mode 100644 arch/arm/mach-s5pc100/setup-fimc0.c
+> >  create mode 100644 arch/arm/mach-s5pc100/setup-fimc1.c
+> >  create mode 100644 arch/arm/mach-s5pc100/setup-fimc2.c
+> >  create mode 100644 arch/arm/mach-s5pv210/setup-fimc0.c
+> >  create mode 100644 arch/arm/mach-s5pv210/setup-fimc1.c
+> >  create mode 100644 arch/arm/mach-s5pv210/setup-fimc2.c
+> >  create mode 100644 arch/arm/plat-s5p/dev-fimc0.c
+> >  create mode 100644 arch/arm/plat-s5p/dev-fimc1.c
+> >  create mode 100644 arch/arm/plat-s5p/dev-fimc2.c
+> >  create mode 100644 arch/arm/plat-samsung/include/plat/fimc-core.h
+> >
 
-> +static struct i2c_board_info smdkc100_i2c_devs1[] __initdata =3D {
-> + =A0 =A0 =A0 /* To Be Updated */
-> +};
-> +
-Ditto
+<snip>
 
-> +static struct i2c_board_info smdkc100_i2c_devs2[] __initdata =3D {
-> + =A0 =A0 =A0 /* To Be Updated */
-> +};
-Ditto
+> > +config S5P_DEV_FIMC2
+> > +	bool
+> > +	help
+> > +	  Compile in platform device definitions for FIMC controller 2
+> > +
+> > +
+> 
+> 2 empty lines...
 
-Thank you,
-Kyungmin Park
-> +
-> =A0static void __init smdkc110_map_io(void)
-> =A0{
-> =A0 =A0 =A0 =A0s5p_init_io(NULL, 0, S5P_VA_CHIPID);
-> @@ -86,6 +103,17 @@ static void __init smdkc110_map_io(void)
->
-> =A0static void __init smdkc110_machine_init(void)
-> =A0{
-> + =A0 =A0 =A0 /* I2C */
-> + =A0 =A0 =A0 s3c_i2c0_set_platdata(NULL);
-> + =A0 =A0 =A0 s3c_i2c1_set_platdata(NULL);
-> + =A0 =A0 =A0 s3c_i2c2_set_platdata(NULL);
-> + =A0 =A0 =A0 i2c_register_board_info(0, smdkc100_i2c_devs0,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ARRAY_SIZE(smdkc100_i2c=
-_devs0));
-> + =A0 =A0 =A0 i2c_register_board_info(1, smdkc100_i2c_devs1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ARRAY_SIZE(smdkc100_i2c=
-_devs1));
-> + =A0 =A0 =A0 i2c_register_board_info(2, smdkc100_i2c_devs2,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ARRAY_SIZE(smdkc100_i2c=
-_devs2));
-> +
-> =A0 =A0 =A0 =A0platform_add_devices(smdkc110_devices, ARRAY_SIZE(smdk=
-c110_devices));
-> =A0}
->
-> diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5=
-pv210/mach-smdkv210.c
-> index 0d46279..765f47e 100644
-> --- a/arch/arm/mach-s5pv210/mach-smdkv210.c
-> +++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
-> @@ -10,6 +10,7 @@
->
-> =A0#include <linux/kernel.h>
-> =A0#include <linux/types.h>
-> +#include <linux/i2c.h>
-> =A0#include <linux/init.h>
-> =A0#include <linux/serial_core.h>
->
-> @@ -27,6 +28,7 @@
-> =A0#include <plat/cpu.h>
-> =A0#include <plat/adc.h>
-> =A0#include <plat/ts.h>
-> +#include <plat/iic.h>
->
-> =A0/* Following are default values for UCON, ULCON and UFCON UART reg=
-isters */
-> =A0#define S5PV210_UCON_DEFAULT =A0 (S3C2410_UCON_TXILEVEL | =A0 =A0 =
-=A0 =A0\
-> @@ -77,10 +79,25 @@ static struct platform_device *smdkv210_devices[]=
- __initdata =3D {
-> =A0 =A0 =A0 =A0&s5pv210_device_iis0,
-> =A0 =A0 =A0 =A0&s5pv210_device_ac97,
-> =A0 =A0 =A0 =A0&s3c_device_adc,
-> + =A0 =A0 =A0 &s3c_device_i2c0,
-> + =A0 =A0 =A0 &s3c_device_i2c1,
-> + =A0 =A0 =A0 &s3c_device_i2c2,
-> =A0 =A0 =A0 =A0&s3c_device_ts,
-> =A0 =A0 =A0 =A0&s3c_device_wdt,
-> =A0};
->
-> +static struct i2c_board_info smdkv210_i2c_devs0[] __initdata =3D {
-> + =A0 =A0 =A0 { I2C_BOARD_INFO("24c08", 0x50), }, =A0 =A0 /* Samsung =
-S524AD0XD1 */
-> +};
-> +
-> +static struct i2c_board_info smdkv210_i2c_devs1[] __initdata =3D {
-> + =A0 =A0 =A0 /* To Be Updated */
-> +};
-> +
-> +static struct i2c_board_info smdkv210_i2c_devs2[] __initdata =3D {
-> + =A0 =A0 =A0 /* To Be Updated */
-> +};
-> +
-> =A0static struct s3c2410_ts_mach_info s3c_ts_platform __initdata =3D =
-{
-> =A0 =A0 =A0 =A0.delay =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=3D 10000,
-> =A0 =A0 =A0 =A0.presc =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=3D 49,
-> @@ -97,6 +114,18 @@ static void __init smdkv210_map_io(void)
-> =A0static void __init smdkv210_machine_init(void)
-> =A0{
-> =A0 =A0 =A0 =A0s3c24xx_ts_set_platdata(&s3c_ts_platform);
-> +
-> + =A0 =A0 =A0 /* I2C */
-> + =A0 =A0 =A0 s3c_i2c0_set_platdata(NULL);
-> + =A0 =A0 =A0 s3c_i2c1_set_platdata(NULL);
-> + =A0 =A0 =A0 s3c_i2c2_set_platdata(NULL);
-> + =A0 =A0 =A0 i2c_register_board_info(0, smdkv210_i2c_devs0,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ARRAY_SIZE(smdkv210_i2c=
-_devs0));
-> + =A0 =A0 =A0 i2c_register_board_info(1, smdkv210_i2c_devs1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ARRAY_SIZE(smdkv210_i2c=
-_devs1));
-> + =A0 =A0 =A0 i2c_register_board_info(2, smdkv210_i2c_devs2,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ARRAY_SIZE(smdkv210_i2c=
-_devs2));
-> +
-> =A0 =A0 =A0 =A0platform_add_devices(smdkv210_devices, ARRAY_SIZE(smdk=
-v210_devices));
-> =A0}
->
+OK, will try to pay more attention to these.
+ 
+> 
+> >  config PLAT_S5P
+> >  	bool
+> >  	depends on (ARCH_S5P6440 || ARCH_S5P6442 || ARCH_S5PC100 ||
+> > ARCH_S5PV210)
+> > diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
+> > index b56b4d3..a7d3c35 100644
+> > --- a/arch/arm/plat-s5p/Makefile
+> > +++ b/arch/arm/plat-s5p/Makefile
+> > @@ -18,3 +18,6 @@ obj-y				+= clock.o
+> >  obj-y				+= irq.o irq-gpioint.o
+> >  obj-$(CONFIG_S5P_EXT_INT)	+= irq-eint.o
+> >
+> > +obj-$(CONFIG_S5P_DEV_FIMC0)	+= dev-fimc0.o
+> > +obj-$(CONFIG_S5P_DEV_FIMC1)	+= dev-fimc1.o
+> > +obj-$(CONFIG_S5P_DEV_FIMC2)	+= dev-fimc2.o
+> > diff --git a/arch/arm/plat-s5p/dev-fimc0.c b/arch/arm/plat-s5p/dev-
+> fimc0.c
+> > new file mode 100644
+> > index 0000000..cfa10f0
+> > --- /dev/null
+> > +++ b/arch/arm/plat-s5p/dev-fimc0.c
+> > @@ -0,0 +1,56 @@
+> > +/* linux/arch/arm/plat-s5p/dev-fimc0.c
+> > + *
+> > + * Copyright (c) 2010 Samsung Electronics
+> > + *
+> > + * Base S5P FIMC0 resource and device definitions
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > + */
+> > +
+> > +#include <linux/kernel.h>
+> > +#include <linux/string.h>
+> > +#include <linux/platform_device.h>
+> > +#include <mach/map.h>
+> > +#include <mach/irqs.h>
+> > +#include <plat/fimc.h>
+> > +#include <plat/devs.h>
+> > +#include <plat/cpu.h>
+> > +
+> > +
+> 
+> Same...2 empty lines...
+
+Please see my comment to previous patch.
+
+> 
+> > +static struct resource s5p_fimc_resource[] = {
+> > +	[0] = {
+> > +		.start	= S5P_PA_FIMC0,
+> > +		.end	= S5P_PA_FIMC0 + SZ_1M - 1,
+> > +		.flags	= IORESOURCE_MEM,
+> > +	},
+> > +	[1] = {
+> > +		.start	= IRQ_FIMC0,
+> > +		.end	= IRQ_FIMC0,
+> > +		.flags	= IORESOURCE_IRQ,
+> > +	},
+> > +};
+> > +
+> > +struct platform_device s5p_device_fimc0 = {
+> > +	.name		= "s5p-fimc",
+> > +	.id		= 0,
+> > +	.num_resources	= ARRAY_SIZE(s5p_fimc_resource),
+> > +	.resource	= s5p_fimc_resource,
+> > +};
+> > +
+> > +
+> 
+> 2 empty lines...
+> 
+> > +void __init s5p_fimc0_set_platdata(struct samsung_plat_fimc *pd)
+> 
+> Actually, we can use Ben's 's3c_set_platdata' which can replace a
+> number of
+> sites...
+> 
+> Please refer to below URL.
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2010-
+> May/016650.html
+> 
+> I think this method is better to us.
+
+Thank you for pointing this out. I expected such changes, but I wanted
+to move on with the development so I have done that similar to the other
+devices. 
+I will rework this part too.
+
+> 
+> > +{
+> > +	struct samsung_plat_fimc *npd;
+> > +
+> > +	if (!pd)
+> > +		pd = &s5p_fimc0_default_data;
+> > +
+> > +	npd = kmemdup(pd, sizeof(*npd), GFP_KERNEL);
+> > +	if (!npd)
+> > +		printk(KERN_ERR "%s: out of memory\n", __func__);
+> > +
+> > +	s5p_device_fimc0.dev.platform_data = npd;
+> > +}
+> > +
+> 
+> No need last empty line
+
+Right, I will clean this up in the next patch version.
+
+> 
+> > diff --git a/arch/arm/plat-s5p/dev-fimc1.c b/arch/arm/plat-s5p/dev-
+> fimc1.c
+> > new file mode 100644
+> > index 0000000..7178477
+> > --- /dev/null
+> > +++ b/arch/arm/plat-s5p/dev-fimc1.c
+> > @@ -0,0 +1,55 @@
+> > +/* linux/arch/arm/plat-s5p/dev-fimc1.c
+> > + *
+> > + * Copyright (c) 2010 Samsung Electronics
+> > + *
+> > + * Base S5P FIMC1 resource and device definitions
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > + */
+> > +
+> > +#include <linux/kernel.h>
+> > +#include <linux/string.h>
+> > +#include <linux/platform_device.h>
+> > +#include <mach/map.h>
+> > +#include <mach/irqs.h>
+> > +#include <plat/fimc.h>
+> > +#include <plat/devs.h>
+> > +#include <plat/cpu.h>
+> > +
+> > +
+> 2 empty lines..
+> 
+> > +static struct resource s5p_fimc_resource[] = {
+> > +	[0] = {
+> > +		.start	= S5P_PA_FIMC1,
+> > +		.end	= S5P_PA_FIMC1 + SZ_1M - 1,
+> > +		.flags	= IORESOURCE_MEM,
+> > +	},
+> > +	[1] = {
+> > +		.start	= IRQ_FIMC1,
+> > +		.end	= IRQ_FIMC1,
+> > +		.flags	= IORESOURCE_IRQ,
+> > +	},
+> > +};
+> > +
+> > +struct platform_device s5p_device_fimc1 = {
+> > +	.name		= "s5p-fimc",
+> > +	.id		= 1,
+> > +	.num_resources	= ARRAY_SIZE(s5p_fimc_resource),
+> > +	.resource	= s5p_fimc_resource,
+> > +};
+> > +
+> > +void __init s5p_fimc1_set_platdata(struct samsung_plat_fimc *pd)
+> > +{
+> > +	struct samsung_plat_fimc *npd;
+> > +
+> > +	if (!pd)
+> > +		pd = &s5p_fimc1_default_data;
+> > +
+> > +	npd = kmemdup(pd, sizeof(*npd), GFP_KERNEL);
+> > +	if (!npd)
+> > +		printk(KERN_ERR "%s: out of memory\n", __func__);
+> > +
+> > +	s5p_device_fimc1.dev.platform_data = npd;
+> > +}
+> > +
+> 
+> No need last empty line...
+> 
+> > diff --git a/arch/arm/plat-s5p/dev-fimc2.c b/arch/arm/plat-s5p/dev-
+> fimc2.c
+> > new file mode 100644
+> > index 0000000..fe1a6c0
+> > --- /dev/null
+> > +++ b/arch/arm/plat-s5p/dev-fimc2.c
+> > @@ -0,0 +1,55 @@
+> > +/* linux/arch/arm/plat-s5p/dev-fimc2.c
+> > + *
+> > + * Copyright (c) 2010 Samsung Electronics
+> > + *
+> > + * Base S5P FIMC2 resource and device definitions
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > + */
+> > +
+> > +#include <linux/kernel.h>
+> > +#include <linux/string.h>
+> > +#include <linux/platform_device.h>
+> > +#include <mach/map.h>
+> > +#include <mach/irqs.h>
+> > +#include <plat/fimc.h>
+> > +#include <plat/devs.h>
+> > +#include <plat/cpu.h>
+> > +
+> > +
+> 
+> Same...
+> 
+> > +static struct resource s5p_fimc_resource[] = {
+> > +	[0] = {
+> > +		.start	= S5P_PA_FIMC2,
+> > +		.end	= S5P_PA_FIMC2 + SZ_1M - 1,
+> > +		.flags	= IORESOURCE_MEM,
+> > +	},
+> > +	[1] = {
+> > +		.start	= IRQ_FIMC2,
+> > +		.end	= IRQ_FIMC2,
+> > +		.flags	= IORESOURCE_IRQ,
+> > +	},
+> > +};
+> > +
+> > +struct platform_device s5p_device_fimc2 = {
+> > +	.name		= "s5p-fimc",
+> > +	.id		= 2,
+> > +	.num_resources	= ARRAY_SIZE(s5p_fimc_resource),
+> > +	.resource	= s5p_fimc_resource,
+> > +};
+> > +
+> > +void __init s5p_fimc2_set_platdata(struct samsung_plat_fimc *pd)
+> > +{
+> > +	struct samsung_plat_fimc *npd;
+> > +
+> > +	if (!pd)
+> > +		pd = &s5p_fimc2_default_data;
+> > +
+> > +	npd = kmemdup(pd, sizeof(*npd), GFP_KERNEL);
+> > +	if (!npd)
+> > +		printk(KERN_ERR "%s: out of memory\n", __func__);
+> > +
+> > +	s5p_device_fimc2.dev.platform_data = npd;
+> > +}
+> > +
+> 
+> Same..
+> 
+
+<snip>
+
+> 
+> 
+> Thanks.
+> 
+> Best regards,
+> Kgene.
 > --
-> 1.6.2.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+Regards,
+Sylwester
