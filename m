@@ -1,110 +1,52 @@
-From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: Re: [PATCH 01/10 v2] ARM: Samsung: Add FIMC register and platform
- definitions
-Date: Fri, 16 Jul 2010 15:35:55 +0200
-Message-ID: <4C40603B.8000208@gmail.com>
-References: <1279185041-6004-1-git-send-email-s.nawrocki@samsung.com> <1279185041-6004-2-git-send-email-s.nawrocki@samsung.com> <012101cb24cb$83187410$89495c30$%kim@samsung.com> <000301cb24eb$13434000$39c9c000$%nawrocki@samsung.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH 0/3] Add support I2C devices on SMDK6440, SMDKC110 and
+	SMDKV210
+Date: Fri, 16 Jul 2010 22:39:32 +0900
+Message-ID: <AANLkTinRtiRcfTteZR-OkmLpL1oSpEmsKf0MWDj89AUH@mail.gmail.com>
+References: <1279285999-27555-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <000301cb24eb$13434000$39c9c000$%nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, Pawel Osciak <p.osciak@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, kyungmin.park@samsung.com, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:59597 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965295Ab0GPNjd convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 Jul 2010 09:39:33 -0400
+In-Reply-To: <1279285999-27555-1-git-send-email-kgene.kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, ben-linux@fluff.org
 
- Op 16-07-10 15:30, Sylwester Nawrocki schreef:
-> Hi,
->
-> thank you for the review. Please se my comments below.
->
->> -----Original Message-----
->> From: Kukjin Kim [mailto:kgene.kim@samsung.com]
->> Sent: Friday, July 16, 2010 11:45 AM
->> To: 'Sylwester Nawrocki'; linux-samsung-soc@vger.kernel.org; linux-arm-
->> kernel@lists.infradead.org
->> Cc: p.osciak@samsung.com; m.szyprowski@samsung.com;
->> kyungmin.park@samsung.com; linux-media@vger.kernel.org
->> Subject: RE: [PATCH 01/10 v2] ARM: Samsung: Add FIMC register and
->> platform definitions
->>
->> Sylwester Nawrocki wrote:
->>> FIMC device is a camera interface embedded in S3C/S5P Samsung SOC
->> series.
->>> It supports ITU-R BT.601/656 and MIPI-CSI2 standards, memory to
->> memory
->>> operations, color conversion, resizing and rotation.
->>>
->>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->>> ---
->>>  arch/arm/plat-samsung/include/plat/fimc.h      |   31 ++
->>>  arch/arm/plat-samsung/include/plat/regs-fimc.h |  361
->>> ++++++++++++++++++++++++
->>>  2 files changed, 392 insertions(+), 0 deletions(-)
->>>  create mode 100644 arch/arm/plat-samsung/include/plat/fimc.h
->>>  create mode 100644 arch/arm/plat-samsung/include/plat/regs-fimc.h
->>>
->>> diff --git a/arch/arm/plat-samsung/include/plat/fimc.h
->> b/arch/arm/plat-
->>> samsung/include/plat/fimc.h
->>> new file mode 100644
->>> index 0000000..be1e853
->>> --- /dev/null
->>> +++ b/arch/arm/plat-samsung/include/plat/fimc.h
->>> @@ -0,0 +1,31 @@
->>> +/* linux/arch/arm/plat-samsung/include/plat/fimc.h
->>> + *
->>> + * Platform header file for FIMC driver
->>> + *
->>> + * Copyright (c) 2010 Samsung Electronics
->>> + *
->>> + * Sylwester Nawrocki, <s.nawrocki@samsung.com>
->>> + *
->>> + * This program is free software; you can redistribute it and/or
->> modify
->>> + * it under the terms of the GNU General Public License version 2 as
->>> + * published by the Free Software Foundation.
->>> + */
->>> +
->>> +#ifndef FIMC_H_
->>> +#define FIMC_H_
->>> +
->>> +#include <linux/device.h>
->>> +#include <linux/platform_device.h>
->>> +
->>> +
->> 2 empty lines...
-> I don't mind at all changing these to single line if it is 
-> the adopted style, however I didn't file like so when looking
-> through the existing headers.
->
->>> +#define FIMC_MAX_FIFO_TARGETS	1
->>> +#define FIMC_LCD_FIFO_TARGET	0
->>> +
->>> +struct s3c_fifo_link;
->>> +
->>> +struct samsung_plat_fimc {
->>> +	struct s3c_fifo_link	*fifo_targets[FIMC_MAX_FIFO_TARGETS];
->>> +};
->>> +
->>> +#endif /* FIMC_H_ */
->>> +
->> No need last empty line...
-> C89 and C99 standard requires a new line character at the end of file.
-> The compiler should issue a warning when the new line character 
-> at the end of file is missing, otherwise it is not compliant with 
-> the above C standards.
-> So I would rather add a new line where it is missing rather than 
-> removing it.
-> There is lots of header files already in arch/arm/plat-samsung where 
-> there is even more than one empty line at the end of file. 
+Maybe it requires the s5pc210(s5pv310) support also.
+As you know s5pc210 has 8 I2Cs. the problem is that current
+implementation need each i2c device gpio setup and Kconfig
+Do you think it's reasonable?
 
-AFAIK there *already is* an empty line, git just omits it in diffs.
-Try removing the last line with your editor and see what git diff gives, it'll
-show "\ No newline at end of file".
+I think we need to find a good way to solve this issue. do you have any=
+ idea?
 
--- 
-Maurus Cuelenaere
+Thank you,
+Kyungmin Park
+
+On Fri, Jul 16, 2010 at 10:13 PM, Kukjin Kim <kgene.kim@samsung.com> wr=
+ote:
+> This patches is to support I2C devices on SMDK6440, SMDKC110 and SMDK=
+V210.
+> S5P6440 can support I2C channel 0 and 1, and S5PV210/S5PC110 can supp=
+ort
+> I2C channel 0, 1 and 2.
+>
+> [PATCH 1/3] ARM: S5P6440: Add support for I2C channel 0 and 1 on SMDK=
+6440
+> [PATCH 2/3] ARM: S5PV210: Add support for I2C devices on SMDKV210 and=
+ SMDKC110
+> [PATCH 3/3] i2c/busses: Select I2C bus support for S5PV210 and S5P644=
+0.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
