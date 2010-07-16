@@ -1,120 +1,63 @@
 From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH] regulator: MAX8998: set_voltage bugfix. ramp_up delay and
- min/max voltage
-Date: Fri, 16 Jul 2010 16:46:28 +0900
-Message-ID: <1279266388-6013-1-git-send-email-myungjoo.ham@samsung.com>
+Subject: [PATCH v2 2/5] ARM: S5P: Added default pll values for APLL 800/1000MHz
+Date: Fri, 16 Jul 2010 17:01:14 +0900
+Message-ID: <1279267277-6804-3-git-send-email-myungjoo.ham@samsung.com>
+References: <1279267277-6804-1-git-send-email-myungjoo.ham@samsung.com>
+ <1279267277-6804-2-git-send-email-myungjoo.ham@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:55434 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935713Ab0GPHqc (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:18235 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935877Ab0GPIBj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Jul 2010 03:46:32 -0400
-Received: from epmmp2 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Fri, 16 Jul 2010 04:01:39 -0400
+Received: from epmmp2 (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L5N00K1Q49H6280@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 Jul 2010 16:46:29 +0900 (KST)
+ with ESMTP id <0L5N00MTV4Y5R670@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 16 Jul 2010 17:01:18 +0900 (KST)
 Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L5N00EMS49HUX@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 Jul 2010 16:46:29 +0900 (KST)
+ with ESMTPA id <0L5N00EHU4Y5Z5@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 16 Jul 2010 17:01:17 +0900 (KST)
+In-reply-to: <1279267277-6804-2-git-send-email-myungjoo.ham@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: kyungmin.park@samsung.com, kgene.kim@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
 
-Two issues are addressed for max8998_set_voltage function.
+CPUFREQ of S5PV210 uses different APLL settings and we provide
+such values for CPUFREQ at pll.h. We have been using differently
+between EVT0 and EVT1 machines. Although this version of kernel
+assumes that the CPU is EVT1, users may use code for EVT0 later.
 
-1. Min/Max Voltage.
-
-	max8998_set_voltage had been using the voltage value of
-
-	min ( voltage[i] >= max_vol , i )
-
-	This is corrected to use:
-
-	min ( voltage[i] >= min_vol , i )
-
-2. Ramp Up Delay.
-
-	max8998_set_voltage should provide delay for BUCK1/2
-if ENRAMP is on. It reads RAMP value from ONOFF4 register to determine
-RAMP delay length. However, when max8998_set_voltage's new voltage is
-lower than the previous, we don't care because it does not deteriorate
-the stability.
+Note that at 1GHz of ARMCLK, APLL should be 1GHz and for other lower
+ARMCLK, APLL should be 800MHz.
 
 Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/regulator/max8998.c |   30 ++++++++++++++++++++++++++++--
- 1 files changed, 28 insertions(+), 2 deletions(-)
+ arch/arm/plat-s5p/include/plat/pll.h |    8 ++++++++
+ 1 files changed, 8 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/regulator/max8998.c b/drivers/regulator/max8998.c
-index 1cca8b5..99c5279 100644
---- a/drivers/regulator/max8998.c
-+++ b/drivers/regulator/max8998.c
-@@ -28,6 +28,7 @@
- #include <linux/slab.h>
- #include <linux/interrupt.h>
- #include <linux/mutex.h>
-+#include <linux/delay.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/driver.h>
- #include <linux/mfd/max8998.h>
-@@ -302,10 +303,13 @@ static int max8998_set_voltage(struct regulator_dev *rdev,
- 	struct max8998_data *max8998 = rdev_get_drvdata(rdev);
- 	struct i2c_client *i2c = max8998->iodev->i2c;
- 	int min_vol = min_uV / 1000, max_vol = max_uV / 1000;
-+	int previous_vol = 0;
- 	const struct voltage_map_desc *desc;
- 	int ldo = max8998_get_ldo(rdev);
- 	int reg, shift = 0, mask, ret;
- 	int i = 0;
-+	u8 val;
-+	bool en_ramp = false;
+diff --git a/arch/arm/plat-s5p/include/plat/pll.h b/arch/arm/plat-s5p/include/plat/pll.h
+index 7db3227..3112aba 100644
+--- a/arch/arm/plat-s5p/include/plat/pll.h
++++ b/arch/arm/plat-s5p/include/plat/pll.h
+@@ -21,6 +21,14 @@
  
- 	if (ldo > ARRAY_SIZE(ldo_voltage_map))
- 		return -EINVAL;
-@@ -317,15 +321,37 @@ static int max8998_set_voltage(struct regulator_dev *rdev,
- 	if (max_vol < desc->min || min_vol > desc->max)
- 		return -EINVAL;
+ #include <asm/div64.h>
  
--	while (desc->min + desc->step*i < max_vol &&
-+	while (desc->min + desc->step*i < min_vol &&
- 	       desc->min + desc->step*i < desc->max)
- 		i++;
- 
-+	if (desc->min + desc->step*i > max_vol)
-+		return -EINVAL;
++#ifdef CONFIG_CPU_S5PC110_EVT0_ERRATA
++#define PLL45XX_APLL_VAL_1000	(1 << 31) | (0xfa<<16) | (0x6<<8) | (0x1)
++#define PLL45XX_APLL_VAL_800	(1 << 31) | (0xc8<<16) | (0x6<<8) | (0x1)
++#else
++#define PLL45XX_APLL_VAL_1000	(1 << 31) | (125<<16) | (3<<8) | (1)
++#define PLL45XX_APLL_VAL_800	(1 << 31) | (100<<16) | (3<<8) | (1)
++#endif
 +
- 	ret = max8998_get_voltage_register(rdev, &reg, &shift, &mask);
- 	if (ret)
- 		return ret;
- 
--	return max8998_update_reg(i2c, reg, i<<shift, mask<<shift);
-+	/* wait for RAMP_UP_DELAY if rdev is BUCK1/2 and
-+	 * ENRAMP is ON */
-+	if (ldo == MAX8998_BUCK1 || ldo == MAX8998_BUCK2) {
-+		max8998_read_reg(i2c, MAX8998_REG_ONOFF4, &val);
-+		if (val & (1 << 4)) {
-+			en_ramp = true;
-+			previous_vol = max8998_get_voltage(rdev);
-+		}
-+	}
-+
-+	ret = max8998_update_reg(i2c, reg, i<<shift, mask<<shift);
-+
-+	if (en_ramp == true) {
-+		int difference = desc->min + desc->step * i
-+			- previous_vol / 1000;
-+		if (difference > 0)
-+			udelay(difference / ((val & 0x0f) + 1));
-+	}
-+
-+	return ret;
- }
- 
- static struct regulator_ops max8998_ldo_ops = {
+ enum pll45xx_type_t {
+ 	pll_4500,
+ 	pll_4502,
 -- 
 1.6.3.3
