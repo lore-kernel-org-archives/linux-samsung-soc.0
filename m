@@ -1,91 +1,131 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: RE: [PATCH 04/10 v2] v4l: Add Samsung FIMC (video postprocessor) driver
-Date: Fri, 16 Jul 2010 18:33:43 +0200
-Message-ID: <000a01cb2504$a8007410$f8015c30$%nawrocki@samsung.com>
-References: <1279185041-6004-1-git-send-email-s.nawrocki@samsung.com>
- <1279185041-6004-5-git-send-email-s.nawrocki@samsung.com>
- <012601cb24db$84fb2380$8ef16a80$%kim@samsung.com>
+From: Kyungmin Park <kyungmin.park@samsung.com>
+Subject: Re: [PATCH v2 2/5] ARM: S5P: Added default pll values for APLL
+	800/1000MHz
+Date: Sat, 17 Jul 2010 12:10:42 +0900
+Message-ID: <AANLkTiliHDKDO_QIAW9xKGVaDtrzotYFH1lxAICnIXbo@mail.gmail.com>
+References: <1279267277-6804-1-git-send-email-myungjoo.ham@samsung.com>
+	<1279267277-6804-2-git-send-email-myungjoo.ham@samsung.com>
+	<1279267277-6804-3-git-send-email-myungjoo.ham@samsung.com>
+	<012f01cb24e1$85628920$90279b60$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:59562 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751113Ab0GPQfE (ORCPT
+Received: from mail-pv0-f174.google.com ([74.125.83.174]:59356 "EHLO
+	mail-pv0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755590Ab0GQDKn convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Jul 2010 12:35:04 -0400
-In-reply-to: <012601cb24db$84fb2380$8ef16a80$%kim@samsung.com>
-Content-language: en-us
+	Fri, 16 Jul 2010 23:10:43 -0400
+Received: by pvc7 with SMTP id 7so1052164pvc.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Jul 2010 20:10:42 -0700 (PDT)
+In-Reply-To: <012f01cb24e1$85628920$90279b60$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: Pawel Osciak <p.osciak@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, kyungmin.park@samsung.com, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, linux-arm-kernel@lists.infradead.org, myungjoo.ham@gmail.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
 
-> -----Original Message-----
-> From: Kukjin Kim [mailto:kgene.kim@samsung.com]
-> Sent: Friday, July 16, 2010 1:39 PM
-> To: 'Sylwester Nawrocki'; linux-samsung-soc@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org
-> Cc: p.osciak@samsung.com; m.szyprowski@samsung.com;
-> kyungmin.park@samsung.com; linux-media@vger.kernel.org
-> Subject: RE: [PATCH 04/10 v2] v4l: Add Samsung FIMC (video
-> postprocessor) driver
-> 
-> Sylwester Nawrocki wrote:
-> >
-> Hi,
-> 
-> Samsung S.LSI hardly recommends DMA mode to implement the feature not
-> FIFO
-> mode because of H/W limitation.
+On Fri, Jul 16, 2010 at 9:22 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> MyungJoo Ham wrote:
+>>
+>> CPUFREQ of S5PV210 uses different APLL settings and we provide
+>> such values for CPUFREQ at pll.h. We have been using differently
+>> between EVT0 and EVT1 machines. Although this version of kernel
+>> assumes that the CPU is EVT1, users may use code for EVT0 later.
+>>
+>> Note that at 1GHz of ARMCLK, APLL should be 1GHz and for other lower
+>> ARMCLK, APLL should be 800MHz.
+>>
+>> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>> =A0arch/arm/plat-s5p/include/plat/pll.h | =A0 =A08 ++++++++
+>> =A01 files changed, 8 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/arm/plat-s5p/include/plat/pll.h
+> b/arch/arm/plat-s5p/include/plat/pll.h
+>> index 7db3227..3112aba 100644
+>> --- a/arch/arm/plat-s5p/include/plat/pll.h
+>> +++ b/arch/arm/plat-s5p/include/plat/pll.h
+>> @@ -21,6 +21,14 @@
+>>
+>> =A0#include <asm/div64.h>
+>>
+>> +#ifdef CONFIG_CPU_S5PC110_EVT0_ERRATA
+>
+> Actually, EVT0 is not real chip and not for mass production.
+> So don't use in here.
 
-Does the hardware issue occur in all SoCs or only some specific versions 
-are affected?
-So far we were successful with S5PC110 EVT0, however we could not make 
-it work on S5PV210 (EVT1). That said I have created an option in the FIMC
-variant definition (samsung_fimc_variant::fifo_capable) so that 
-the V4L2 video node for FIMC FIFO operation mode is registered only 
-for selected SoC variants.
+But we got too many board and want to use it. ARM core is also has
+some workaround to fix internal bug. so you can regard it.
 
-> 
-> > This driver exports two video device nodes per each FIMC device,
-> > one for for memory to memory (color conversion, image resizing,
-> > flipping and rotation) operations and one for direct
-> > V4L2 output interface to framebuffer.
-> >
-> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > Reviewed-by: Pawel Osciak <p.osciak@samsung.com>
-> > Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > ---
-> >  drivers/media/video/Kconfig                  |   20 +
-> >  drivers/media/video/Makefile                 |    1 +
-> >  drivers/media/video/samsung/fimc/Makefile    |    3 +
-> >  drivers/media/video/samsung/fimc/fimc-core.c | 1664
-> > ++++++++++++++++++++++++++
-> >  drivers/media/video/samsung/fimc/fimc-core.h |  541 +++++++++
-> >  drivers/media/video/samsung/fimc/fimc-fifo.c |  814 +++++++++++++
-> >  drivers/media/video/samsung/fimc/fimc-reg.c  |  585 +++++++++
-> >  include/linux/videodev2.h                    |    1 +
-> >  8 files changed, 3629 insertions(+), 0 deletions(-)
-> >  create mode 100644 drivers/media/video/samsung/fimc/Makefile
-> >  create mode 100644 drivers/media/video/samsung/fimc/fimc-core.c
-> >  create mode 100644 drivers/media/video/samsung/fimc/fimc-core.h
-> >  create mode 100644 drivers/media/video/samsung/fimc/fimc-fifo.c
-> >  create mode 100644 drivers/media/video/samsung/fimc/fimc-reg.c
-> >
-> 
-> (snip)
-> 
+config S5PC110_WORKAROUND
+    help
+        Early s5pc110 has some errata blah blah ... To fix it you can e=
+nable it.
+
+Thank you,
+Kyungmin Park
+
+>
+>> +#define PLL45XX_APLL_VAL_1000 =A0 =A0 =A0 =A0(1 << 31) | (0xfa<<16)=
+ | (0x6<<8) |
+> (0x1)
+>> +#define PLL45XX_APLL_VAL_800 (1 << 31) | (0xc8<<16) | (0x6<<8) | (0=
+x1)
+>> +#else
+>> +#define PLL45XX_APLL_VAL_1000 =A0 =A0 =A0 =A0(1 << 31) | (125<<16) =
+| (3<<8) | (1)
+>> +#define PLL45XX_APLL_VAL_800 (1 << 31) | (100<<16) | (3<<8) | (1)
+>> +#endif
+>> +
+>> =A0enum pll45xx_type_t {
+>> =A0 =A0 =A0 pll_4500,
+>> =A0 =A0 =A0 pll_4502,
+>> --
+>
+> And...I got the below result from scripts/checkpatch.pl.
+>
+> --
+>
+> ERROR: Macros with complex values should be enclosed in parenthesis
+> #27: FILE: arch/arm/plat-s5p/include/plat/pll.h:25:
+> +#define PLL45XX_APLL_VAL_1000 =A0(1 << 31) | (0xfa<<16) | (0x6<<8) |=
+ (0x1)
+>
+> ERROR: Macros with complex values should be enclosed in parenthesis
+> #28: FILE: arch/arm/plat-s5p/include/plat/pll.h:26:
+> +#define PLL45XX_APLL_VAL_800 =A0 (1 << 31) | (0xc8<<16) | (0x6<<8) |=
+ (0x1)
+>
+> ERROR: Macros with complex values should be enclosed in parenthesis
+> #30: FILE: arch/arm/plat-s5p/include/plat/pll.h:28:
+> +#define PLL45XX_APLL_VAL_1000 =A0(1 << 31) | (125<<16) | (3<<8) | (1=
+)
+>
+> ERROR: Macros with complex values should be enclosed in parenthesis
+> #31: FILE: arch/arm/plat-s5p/include/plat/pll.h:29:
+> +#define PLL45XX_APLL_VAL_800 =A0 (1 << 31) | (100<<16) | (3<<8) | (1=
+)
+>
+> total: 4 errors, 0 warnings, 14 lines checked
+>
+> --
+>
+> I already said to you about that :-(
+> See the Documentation/SubmittingPatches...
+>
 > Thanks.
-> 
+>
 > Best regards,
 > Kgene.
 > --
 > Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 > SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-Best regards,
---
-Sylwester Nawrocki
-Samsung Poland R&D Center
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
