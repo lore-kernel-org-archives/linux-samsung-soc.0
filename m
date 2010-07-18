@@ -1,61 +1,42 @@
-From: Liam Girdwood <lrg@slimlogic.co.uk>
-Subject: Re: [PATCH] regulator: MAX8998: set_voltage bugfix. ramp_up delay
- and min/max voltage
-Date: Sat, 17 Jul 2010 19:24:08 +0100
-Message-ID: <1279391048.3070.11.camel@odin>
-References: <1279267760-6971-1-git-send-email-myungjoo.ham@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Sangbeom Kim <sbkim73@samsung.com>
+Subject: [PATCH] ARM: S3C24XX: Fix nand partition table for s3c24XX
+Date: Mon, 19 Jul 2010 08:25:15 +0900
+Message-ID: <1279495515-17265-1-git-send-email-sbkim73@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:39397 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756437Ab0GQSYM (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:43249 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757592Ab0GRXfi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 17 Jul 2010 14:24:12 -0400
-Received: by wyb42 with SMTP id 42so3004353wyb.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 17 Jul 2010 11:24:11 -0700 (PDT)
-In-Reply-To: <1279267760-6971-1-git-send-email-myungjoo.ham@samsung.com>
+	Sun, 18 Jul 2010 19:35:38 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sameo@linux.intel.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, myungjoo.ham@gmail.com, m.szyprowski@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, Atul Dahiya <atul.dahiya@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>
 
-On Fri, 2010-07-16 at 17:09 +0900, MyungJoo Ham wrote:
-> Two issues are addressed for max8998_set_voltage function.
-> 
-> 1. Min/Max Voltage.
-> 
-> 	max8998_set_voltage had been using the voltage value of
-> 
-> 	min ( voltage[i] >= max_vol , i )
-> 
-> 	This is corrected to use:
-> 
-> 	min ( voltage[i] >= min_vol , i )
-> 
-> 2. Ramp Up Delay.
-> 
-> 	max8998_set_voltage should provide delay for BUCK1/2
-> if ENRAMP is on. It reads RAMP value from ONOFF4 register to determine
-> RAMP delay length. However, when max8998_set_voltage's new voltage is
-> lower than the previous, we don't care because it does not deteriorate
-> the stability.
-> 
-> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> --
-> I've omitted some CC in the previous email, adding them here. Sorry for the duplicated submission.
+From: Atul Dahiya <atul.dahiya@samsung.com>
 
-This doesn't apply. Can you re-create against my regulator for-next
-branch.
+This patch fixes the partition table as existing partition table have last
+partition size fixed and can't utilize available memory proprly if size is
+more than 64M.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/lrg/voltage-2.6.git for-next
+Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
+Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+---
+ arch/arm/plat-s3c24xx/common-smdk.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Thanks
-
-Liam
+diff --git a/arch/arm/plat-s3c24xx/common-smdk.c b/arch/arm/plat-s3c24xx/common-smdk.c
+index 7b44d0c..bcc43f3 100644
+--- a/arch/arm/plat-s3c24xx/common-smdk.c
++++ b/arch/arm/plat-s3c24xx/common-smdk.c
+@@ -147,7 +147,7 @@ static struct mtd_partition smdk_default_nand_part[] = {
+ 	[7] = {
+ 		.name	= "S3C2410 flash partition 7",
+ 		.offset = SZ_1M * 48,
+-		.size	= SZ_16M,
++		.size	= MTDPART_SIZ_FULL,
+ 	}
+ };
+ 
 -- 
-Freelance Developer, SlimLogic Ltd
-ASoC and Voltage Regulator Maintainer.
-http://www.slimlogic.co.uk
+1.6.2.5
