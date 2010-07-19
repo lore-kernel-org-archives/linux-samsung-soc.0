@@ -1,7 +1,7 @@
 From: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Subject: [PATCH 08/11] USB: s3c-hsotg: Fix max EP0 IN request length
-Date: Mon, 19 Jul 2010 09:40:47 +0100
-Message-ID: <1279528850-28245-9-git-send-email-ben-linux@fluff.org>
+Subject: [PATCH 01/11] USB: s3c-hsotg: Increase TX fifo limit
+Date: Mon, 19 Jul 2010 09:40:40 +0100
+Message-ID: <1279528850-28245-2-git-send-email-ben-linux@fluff.org>
 References: <1279528850-28245-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1279528850-28245-1-git-send-email-ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
@@ -10,28 +10,44 @@ To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL
 Cc: gregkh-l3A5Bk7waGM@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The maximum length for any EP0 IN request on EP0 is 127 bytes, not 128
-as the driver currently has it.
+Up the FIFO size for the TX to 1024 entries, as this now seems to work
+with all the cores. This fixes a problem when using large packets on
+a core with MPS set to 512 can hang due to insufficient space for the
+writes.
+
+The hang arises due to getting the non-periodic FIFO empty IRQ but
+not being able to satisfy any requests since there is never enough
+space to write 512 bytes into the buffer. This means we end up with
+a stream of interrupt requests.
+
+It is easier to up the TX FIFO to fill the space we left for it
+than to try and fix the positions in the code where we should have
+limited the max-packet size to < TXFIFOSIZE, since the TXFIFOSIZE
+depends on how the TX FIFOs have been setup.
 
 Signed-off-by: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
 ---
- drivers/usb/gadget/s3c-hsotg.c |    3 +--
- 1 files changed, 1 insertions(+), 2 deletions(-)
+ drivers/usb/gadget/s3c-hsotg.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
-index 10aeee1..1020006 100644
+index 26193ec..81f62da 100644
 --- a/drivers/usb/gadget/s3c-hsotg.c
 +++ b/drivers/usb/gadget/s3c-hsotg.c
-@@ -612,8 +612,7 @@ static unsigned get_ep_limit(struct s3c_hsotg_ep *hs_ep)
- 		maxpkt = S3C_DxEPTSIZ_PktCnt_LIMIT + 1;
- 	} else {
- 		if (hs_ep->dir_in) {
--			/* maxsize = S3C_DIEPTSIZ0_XferSize_LIMIT + 1; */
--			maxsize = 64+64+1;
-+			maxsize = 64+64;
- 			maxpkt = S3C_DIEPTSIZ0_PktCnt_LIMIT + 1;
- 		} else {
- 			maxsize = 0x3f;
+@@ -310,11 +310,11 @@ static void s3c_hsotg_init_fifo(struct s3c_hsotg *hsotg)
+ 		hsotg->regs + S3C_GNPTXFSIZ);
+ 	*/
+ 
+-	/* set FIFO sizes to 2048/0x1C0 */
++	/* set FIFO sizes to 2048/1024 */
+ 
+ 	writel(2048, hsotg->regs + S3C_GRXFSIZ);
+ 	writel(S3C_GNPTXFSIZ_NPTxFStAddr(2048) |
+-	       S3C_GNPTXFSIZ_NPTxFDep(0x1C0),
++	       S3C_GNPTXFSIZ_NPTxFDep(1024),
+ 	       hsotg->regs + S3C_GNPTXFSIZ);
+ 
+ 	/* arange all the rest of the TX FIFOs, as some versions of this
 -- 
 1.7.0.4
 
