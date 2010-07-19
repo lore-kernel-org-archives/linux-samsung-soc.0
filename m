@@ -1,51 +1,36 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 2/3] USB: s3c-hsotg: modify only selected bits in S3C_PHYPWR
- register
-Date: Mon, 19 Jul 2010 16:01:41 +0200
-Message-ID: <1279548102-32390-3-git-send-email-m.szyprowski@samsung.com>
-References: <1279548102-32390-1-git-send-email-m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] more S3C HSOTG fixes
+Date: Mon, 19 Jul 2010 16:01:39 +0200
+Message-ID: <1279548102-32390-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1279548102-32390-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:17396 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933554Ab0GSOCC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 Jul 2010 10:02:02 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, greg@kroah.com
 
-S5PV210 SoCs has 2 USB PHY interfaces, both enabled by writing zero to
-S3C_PHYPWR register. HS/OTG driver uses only PHY0, so do not touch bits
-related to PHY1.
+Hello,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/usb/gadget/s3c-hsotg.c |    6 ++++--
- 1 files changed, 4 insertions(+), 2 deletions(-)
+This patch series adds 2 simple changes to enable the driver on S5PV210
+SoCs and a simple compile error fix. This is a continuation of 'S3C
+HSOTG fixes' series posted by Ben Dooks. The first one should be applied
+to 2.6.35. The latter can be also considered as a bug fixes because it
+is not possible to use the driver on Samsung Aquila and Goni boards
+without them.
 
-diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
-index ce272b4..258ca01 100644
---- a/drivers/usb/gadget/s3c-hsotg.c
-+++ b/drivers/usb/gadget/s3c-hsotg.c
-@@ -2801,9 +2801,11 @@ static void __devinit s3c_hsotg_initep(struct s3c_hsotg *hsotg,
- static void s3c_hsotg_otgreset(struct s3c_hsotg *hsotg)
- {
- 	struct clk *xusbxti;
--	u32 osc;
-+	u32 pwr, osc;
- 
--	writel(0, S3C_PHYPWR);
-+	pwr = readl(S3C_PHYPWR);
-+	pwr &= ~0x19;
-+	writel(pwr, S3C_PHYPWR);
- 	mdelay(1);
- 
- 	osc = hsotg->plat->is_osc ? S3C_PHYCLK_EXT_OSC : 0;
+List of patches:
+[PATCH 1/3] USB: s3c-hsotg: fix compilation problem
+[PATCH 2/3] USB: s3c-hsotg: modify only selected bits in S3C_PHYPWR register
+[PATCH 3/3] USB: s3c-hsotg: add support for clock gating
+
+Best regards
 -- 
-1.7.1.569.g6f426
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Marek Szyprowski
+Samsung Poland R&D Center
