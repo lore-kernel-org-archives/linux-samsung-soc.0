@@ -1,7 +1,8 @@
 From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 3/3] USB: s3c-hsotg: add support for clock gating
-Date: Mon, 19 Jul 2010 16:01:42 +0200
-Message-ID: <1279548102-32390-4-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 2/3] USB: s3c-hsotg: modify only selected bits in S3C_PHYPWR
+ register
+Date: Mon, 19 Jul 2010 16:01:41 +0200
+Message-ID: <1279548102-32390-3-git-send-email-m.szyprowski@samsung.com>
 References: <1279548102-32390-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -13,69 +14,38 @@ To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL
 Cc: m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds support for clock gating of the HS/OTG block. On S5PV210
-otg gating clock is initally disabled so the driver needs to get and
-enable it before it can access its registers.
+S5PV210 SoCs has 2 USB PHY interfaces, both enabled by writing zero to
+S3C_PHYPWR register. HS/OTG driver uses only PHY0, so do not touch bits
+related to PHY1.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/usb/gadget/s3c-hsotg.c |   20 +++++++++++++++++---
- 1 files changed, 17 insertions(+), 3 deletions(-)
+ drivers/usb/gadget/s3c-hsotg.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
-index 258ca01..521ebed 100644
+index ce272b4..258ca01 100644
 --- a/drivers/usb/gadget/s3c-hsotg.c
 +++ b/drivers/usb/gadget/s3c-hsotg.c
-@@ -152,6 +152,7 @@ struct s3c_hsotg {
- 	void __iomem		*regs;
- 	struct resource		*regs_res;
- 	int			irq;
-+	struct clk		*clk;
+@@ -2801,9 +2801,11 @@ static void __devinit s3c_hsotg_initep(struct s3c_hsotg *hsotg,
+ static void s3c_hsotg_otgreset(struct s3c_hsotg *hsotg)
+ {
+ 	struct clk *xusbxti;
+-	u32 osc;
++	u32 pwr, osc;
  
- 	unsigned int		dedicated_fifos:1;
+-	writel(0, S3C_PHYPWR);
++	pwr = readl(S3C_PHYPWR);
++	pwr &= ~0x19;
++	writel(pwr, S3C_PHYPWR);
+ 	mdelay(1);
  
-@@ -3258,13 +3259,20 @@ static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
- 	hsotg->dev = dev;
- 	hsotg->plat = plat;
- 
-+	hsotg->clk = clk_get(&pdev->dev, "otg");
-+	if (IS_ERR(hsotg->clk)) {
-+		dev_err(dev, "cannot get otg clock\n");
-+		ret = -EINVAL;
-+		goto err_mem;
-+	}
-+
- 	platform_set_drvdata(pdev, hsotg);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res) {
- 		dev_err(dev, "cannot find register resource 0\n");
- 		ret = -EINVAL;
--		goto err_mem;
-+		goto err_clk;
- 	}
- 
- 	hsotg->regs_res = request_mem_region(res->start, resource_size(res),
-@@ -3272,7 +3280,7 @@ static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
- 	if (!hsotg->regs_res) {
- 		dev_err(dev, "cannot reserve registers\n");
- 		ret = -ENOENT;
--		goto err_mem;
-+		goto err_clk;
- 	}
- 
- 	hsotg->regs = ioremap(res->start, resource_size(res));
-@@ -3325,6 +3333,8 @@ static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
- 
- 	/* reset the system */
- 
-+	clk_enable(hsotg->clk);
-+
- 	s3c_hsotg_gate(pdev, true);
- 
- 	s3c_hsotg_otgreset(hsotg);
-@@ -3348,7 +3358,8 @@ err_regs:
- err_regs_res:
- 	release_resource(hsotg->regs_res);
- 	kfree(hsotg->regs_res);
+ 	osc = hsotg->plat->is_osc ? S3C_PHYCLK_EXT_OSC : 0;
+-- 
+1.7.1.569.g6f426
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
