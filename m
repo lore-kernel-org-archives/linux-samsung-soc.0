@@ -1,75 +1,79 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: S5P6442: Add Watchdog support for S5P6442
-Date: Mon, 19 Jul 2010 14:18:47 +0900
-Message-ID: <1279516727-7609-1-git-send-email-kgene.kim@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH v3 6/7] ARM: S5PV210: Access for DMCx registers
+Date: Mon, 19 Jul 2010 14:31:22 +0900
+Message-ID: <1279517483-22751-7-git-send-email-myungjoo.ham@samsung.com>
+References: <1279517483-22751-1-git-send-email-myungjoo.ham@samsung.com>
+ <1279517483-22751-2-git-send-email-myungjoo.ham@samsung.com>
+ <1279517483-22751-3-git-send-email-myungjoo.ham@samsung.com>
+ <1279517483-22751-4-git-send-email-myungjoo.ham@samsung.com>
+ <1279517483-22751-5-git-send-email-myungjoo.ham@samsung.com>
+ <1279517483-22751-6-git-send-email-myungjoo.ham@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:40046 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752367Ab0GSFak (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:46676 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752534Ab0GSFb0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Jul 2010 01:30:40 -0400
+	Mon, 19 Jul 2010 01:31:26 -0400
+Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L5S00AXSI0B7D50@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Jul 2010 14:31:24 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L5S002XBI0BE1@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Jul 2010 14:31:23 +0900 (KST)
+In-reply-to: <1279517483-22751-6-git-send-email-myungjoo.ham@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Banajit Goswami <banajit.g@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, kgene.kim@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
 
-From: Banajit Goswami <banajit.g@samsung.com>
+	The CPUFREQ driver requires an access to DMCx registers.
 
-This patch adds support for Watchdog timer for Samsung S5P6442.
-
-Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
-NOTE:
-Depends on 'ARM: S5P6442: Add Watchdog Timer map for S5P6442' which
-has submitted for other part.
+ arch/arm/mach-s5pv210/cpu.c              |   12 +++++++++++-
+ arch/arm/mach-s5pv210/include/mach/map.h |    4 ++++
+ 2 files changed, 15 insertions(+), 1 deletions(-)
 
- arch/arm/mach-s5p6442/Kconfig         |    2 ++
- arch/arm/mach-s5p6442/clock.c         |    6 ++++++
- arch/arm/mach-s5p6442/mach-smdk6442.c |    1 +
- 3 files changed, 9 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-s5p6442/Kconfig b/arch/arm/mach-s5p6442/Kconfig
-index 0fd41b4..7cd2843 100644
---- a/arch/arm/mach-s5p6442/Kconfig
-+++ b/arch/arm/mach-s5p6442/Kconfig
-@@ -19,6 +19,8 @@ config CPU_S5P6442
- config MACH_SMDK6442
- 	bool "SMDK6442"
- 	select CPU_S5P6442
-+	select S3C_DEV_WDT
-+	select HAVE_S3C2410_WATCHDOG
- 	help
- 	  Machine support for Samsung SMDK6442
- 
-diff --git a/arch/arm/mach-s5p6442/clock.c b/arch/arm/mach-s5p6442/clock.c
-index 087e57f..dcd20f1 100644
---- a/arch/arm/mach-s5p6442/clock.c
-+++ b/arch/arm/mach-s5p6442/clock.c
-@@ -361,6 +361,12 @@ static struct clk init_clocks[] = {
- 		.enable		= s5p6442_clk_ip3_ctrl,
- 		.ctrlbit	= (1<<19),
- 	}, {
-+		.name		= "watchdog",
-+		.id		= -1,
-+		.parent		= &clk_pclkd1,
-+		.enable		= s5p6442_clk_ip3_ctrl,
-+		.ctrlbit	= (1 << 22),
+diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
+index 94c632b..28c101d 100644
+--- a/arch/arm/mach-s5pv210/cpu.c
++++ b/arch/arm/mach-s5pv210/cpu.c
+@@ -59,7 +59,17 @@ static struct map_desc s5pv210_iodesc[] __initdata = {
+ 		.pfn		= __phys_to_pfn(S5PV210_PA_SROMC),
+ 		.length		= SZ_4K,
+ 		.type		= MT_DEVICE,
+-	}
 +	}, {
- 		.name		= "timers",
- 		.id		= -1,
- 		.parent		= &clk_pclkd1,
-diff --git a/arch/arm/mach-s5p6442/mach-smdk6442.c b/arch/arm/mach-s5p6442/mach-smdk6442.c
-index ebcf997..6e061be 100644
---- a/arch/arm/mach-s5p6442/mach-smdk6442.c
-+++ b/arch/arm/mach-s5p6442/mach-smdk6442.c
-@@ -66,6 +66,7 @@ static struct s3c2410_uartcfg smdk6442_uartcfgs[] __initdata = {
- 
- static struct platform_device *smdk6442_devices[] __initdata = {
- 	&s5p6442_device_iis0,
-+	&s3c_device_wdt,
++		.virtual	= (unsigned long)S5P_VA_DMC0,
++		.pfn		= __phys_to_pfn(S5PV210_PA_DMC0),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S5P_VA_DMC1,
++		.pfn		= __phys_to_pfn(S5PV210_PA_DMC1),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	},
  };
  
- static void __init smdk6442_map_io(void)
+ static void s5pv210_idle(void)
+diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
+index 17687f0..daf6456 100644
+--- a/arch/arm/mach-s5pv210/include/mach/map.h
++++ b/arch/arm/mach-s5pv210/include/mach/map.h
+@@ -108,4 +108,8 @@
+ #define SAMSUNG_PA_ADC		S5PV210_PA_ADC
+ #define SAMSUNG_PA_KEYPAD	S5PV210_PA_KEYPAD
+ 
++/* DMC */
++#define S5PV210_PA_DMC0		(0xF0000000)
++#define S5PV210_PA_DMC1		(0xF1400000)
++
+ #endif /* __ASM_ARCH_MAP_H */
 -- 
-1.6.2.5
+1.6.3.3
