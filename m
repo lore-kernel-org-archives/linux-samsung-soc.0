@@ -1,58 +1,74 @@
 From: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Subject: [PATCH 03/11] USB: s3c-hsotg: Avoid overwriting contents of perodic in 'fifo'
-Date: Mon, 19 Jul 2010 09:40:42 +0100
-Message-ID: <1279528850-28245-4-git-send-email-ben-linux@fluff.org>
+Subject: [PATCH 11/11] USB: s3c-hsotg: Add support for external USB clock
+Date: Mon, 19 Jul 2010 09:40:50 +0100
+Message-ID: <1279528850-28245-12-git-send-email-ben-linux@fluff.org>
 References: <1279528850-28245-1-git-send-email-ben-linux@fluff.org>
 Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1279528850-28245-1-git-send-email-ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
 Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: gregkh-l3A5Bk7waGM@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Cc: gregkh-l3A5Bk7waGM@public.gmane.org, Maurus Cuelenaere <mcuelenaere-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-In shared fifo mode (used on older SoCs) the periodic in fifo beahves
-much more like a packet buffer, discarding old data when writing new
-data. Avoid this by ensuring that we do not load new transactions in
-when there is data sitting already in the FIFO.
+From: Maurus Cuelenaere <mcuelenaere-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-Note, this may not be an observed bug, we are fixing the case that this
-may happen.
+The PLL that drives the USB clock supports 3 input clocks: 12, 24 and 48Mhz.
+This patch adds support to the USB driver for setting the correct register bit
+according to the given clock.
 
+This depends on the following patch:
+[PATCH] ARM: S3C64XX: Add USB external clock definition
+
+Signed-off-by: Maurus Cuelenaere <mcuelenaere-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Signed-off-by: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
 ---
- drivers/usb/gadget/s3c-hsotg.c |   12 +++++++++++-
- 1 files changed, 11 insertions(+), 1 deletions(-)
+ drivers/usb/gadget/s3c-hsotg.c |   19 +++++++++++++++++++
+ 1 files changed, 19 insertions(+), 0 deletions(-)
 
 diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
-index 4a25145..354fd45 100644
+index 825b6ca..a4e0b0f 100644
 --- a/drivers/usb/gadget/s3c-hsotg.c
 +++ b/drivers/usb/gadget/s3c-hsotg.c
-@@ -91,7 +91,9 @@ struct s3c_hsotg_req;
-  * For periodic IN endpoints, we have fifo_size and fifo_load to try
-  * and keep track of the amount of data in the periodic FIFO for each
-  * of these as we don't have a status register that tells us how much
-- * is in each of them.
-+ * is in each of them. (note, this may actually be useless information
-+ * as in shared-fifo mode periodic in acts like a single-frame packet
-+ * buffer than a fifo)
+@@ -25,6 +25,7 @@
+ #include <linux/delay.h>
+ #include <linux/io.h>
+ #include <linux/slab.h>
++#include <linux/clk.h>
+ 
+ #include <linux/usb/ch9.h>
+ #include <linux/usb/gadget.h>
+@@ -2798,6 +2799,7 @@ static void __devinit s3c_hsotg_initep(struct s3c_hsotg *hsotg,
   */
- struct s3c_hsotg_ep {
- 	struct usb_ep		ep;
-@@ -474,6 +476,14 @@ static int s3c_hsotg_write_fifo(struct s3c_hsotg *hsotg,
+ static void s3c_hsotg_otgreset(struct s3c_hsotg *hsotg)
+ {
++	struct clk *xusbxti;
+ 	u32 osc;
  
- 		size_left = S3C_DxEPTSIZ_XferSize_GET(epsize);
+ 	writel(0, S3C_PHYPWR);
+@@ -2805,6 +2807,23 @@ static void s3c_hsotg_otgreset(struct s3c_hsotg *hsotg)
  
-+		/* if shared fifo, we cannot write anything until the
-+		 * previous data has been completely sent.
-+		 */
-+		if (hs_ep->fifo_load != 0) {
-+			s3c_hsotg_en_gsint(hsotg, S3C_GINTSTS_PTxFEmp);
-+			return -ENOSPC;
+ 	osc = hsotg->plat->is_osc ? S3C_PHYCLK_EXT_OSC : 0;
+ 
++	xusbxti = clk_get(hsotg->dev, "xusbxti");
++	if (xusbxti && !IS_ERR(xusbxti)) {
++		switch (clk_get_rate(xusbxti)) {
++		case 12*MHZ:
++			osc |= S3C_PHYCLK_CLKSEL_12M;
++			break;
++		case 24*MHZ:
++			osc |= S3C_PHYCLK_CLKSEL_24M;
++			break;
++		default:
++		case 48*MHZ:
++			/* default reference clock */
++			break;
 +		}
++		clk_put(xusbxti);
++	}
 +
- 		dev_dbg(hsotg->dev, "%s: left=%d, load=%d, fifo=%d, size %d\n",
- 			__func__, size_left,
- 			hs_ep->size_loaded, hs_ep->fifo_load, hs_ep->fifo_size);
+ 	writel(osc | 0x10, S3C_PHYCLK);
+ 
+ 	/* issue a full set of resets to the otg and core */
 -- 
 1.7.0.4
 
