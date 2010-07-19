@@ -1,277 +1,62 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 2/8] ARM: S5PV310: Add new CPU initialization support
-Date: Mon, 19 Jul 2010 09:09:42 +0900
-Message-ID: <000001cb26d6$b2a3fee0$17ebfca0$%kim@samsung.com>
-References: <1279270714-15146-1-git-send-email-kgene.kim@samsung.com>
- <1279270714-15146-3-git-send-email-kgene.kim@samsung.com>
- <20100716115219.GD17952@n2100.arm.linux.org.uk>
+From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH 3/3] i2c/busses: Select I2C bus support for S5PV210 and
+	S5P6440.
+Date: Mon, 19 Jul 2010 09:24:54 +0900
+Message-ID: <000101cb26d8$d2c74fe0$7855efa0$%kim@samsung.com>
+References: <1279285999-27555-1-git-send-email-kgene.kim@samsung.com>
+ <1279285999-27555-4-git-send-email-kgene.kim@samsung.com>
+ <AANLkTikqjZVKDgCIuZ0QCvzrzdrNmGUOq2YZyqb0TKZn@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:53381 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757699Ab0GSAKE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 18 Jul 2010 20:10:04 -0400
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L5S003GQ34032A0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 Jul 2010 09:09:36 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L5S00DDX340FW@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 Jul 2010 09:09:36 +0900 (KST)
-In-reply-to: <20100716115219.GD17952@n2100.arm.linux.org.uk>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <AANLkTikqjZVKDgCIuZ0QCvzrzdrNmGUOq2YZyqb0TKZn-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: 'Kyungmin Park' <kmpark-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, 'Naveen Krishna Ch' <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Jongpill Lee' <boyko.lee@samsung.com>, 'Changhwan Youn' <chaos.youn@samsung.com>, ben-linux@fluff.org
 
-Russell King wrote:
-> 
-> On Fri, Jul 16, 2010 at 05:58:28PM +0900, Kukjin Kim wrote:
-> > diff --git a/arch/arm/mach-s5pv310/platsmp.c b/arch/arm/mach-
-> s5pv310/platsmp.c
-> > new file mode 100644
-> > index 0000000..9325ac2
-> > --- /dev/null
-> > +++ b/arch/arm/mach-s5pv310/platsmp.c
-> > @@ -0,0 +1,212 @@
-> > +/* linux/arch/arm/mach-s5pv310/platsmp.c
-> > + *
-> > + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> > + *		http://www.samsung.com/
-> > + *
-> > + * Cloned from linux/arch/arm/mach-realview/platsmp.c
-> > + *
-> > + *  Copyright (C) 2002 ARM Ltd.
-> > + *  All Rights Reserved
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License version 2 as
-> > + * published by the Free Software Foundation.
-> > + */
-> > +#include <linux/init.h>
-> > +#include <linux/errno.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/device.h>
-> > +#include <linux/jiffies.h>
-> > +#include <linux/smp.h>
-> > +#include <linux/io.h>
-> > +
-> > +#include <asm/cacheflush.h>
-> > +#include <mach/hardware.h>
-> > +#include <asm/mach-types.h>
-> > +#include <asm/localtimer.h>
-> > +#include <asm/unified.h>
-> > +
-> > +#include <asm/smp_scu.h>
-> > +#include <mach/regs-clock.h>
-> > +
-> > +extern void s5pv310_secondary_startup(void);
-> > +
-> > +/*
-> > + * control for which core is the next to come out of the secondary
-> > + * boot "holding pen"
-> > + */
-> > +volatile int __cpuinitdata pen_release = -1;
-> > +
-> > +static void __iomem *scu_base_addr(void)
-> > +{
-> > +	return (void __iomem *)(S5P_VA_SCU);
-> > +}
-> > +
-> > +static inline unsigned int get_core_count(void)
-> > +{
-> > +	void __iomem *scu_base = scu_base_addr();
-> > +	if (scu_base)
-> > +		return scu_get_core_count(scu_base);
-> > +	return 1;
-> > +}
-> > +
-> > +static DEFINE_SPINLOCK(boot_lock);
-> > +
-> > +void __cpuinit platform_secondary_init(unsigned int cpu)
-> > +{
-> > +	trace_hardirqs_off();
-> > +
-> > +	/*
-> > +	 * if any interrupts are already enabled for the primary
-> > +	 * core (e.g. timer irq), then they will not have been enabled
-> > +	 * for us: do so
-> > +	 */
-> > +	gic_cpu_init(0, gic_cpu_base_addr);
-> > +
-> > +	/*
-> > +	 * let the primary processor know we're out of the
-> > +	 * pen, then head off into the C entry point
-> > +	 */
-> > +	pen_release = -1;
-> > +	smp_wmb();
-> > +
-> > +	/*
-> > +	 * Synchronise with the boot thread.
-> > +	 */
-> > +	spin_lock(&boot_lock);
-> > +	spin_unlock(&boot_lock);
-> > +}
-> > +
-> > +int __cpuinit boot_secondary(unsigned int cpu, struct task_struct
-*idle)
-> > +{
-> > +	unsigned long timeout;
-> > +
-> > +	/*
-> > +	 * set synchronisation state between this boot processor
-> > +	 * and the secondary one
-> > +	 */
-> > +	spin_lock(&boot_lock);
-> > +
-> > +	/*
-> > +	 * The secondary processor is waiting to be released from
-> > +	 * the holding pen - release it, then wait for it to flag
-> > +	 * that it has been released by resetting pen_release.
-> > +	 *
-> > +	 * Note that "pen_release" is the hardware CPU ID, whereas
-> > +	 * "cpu" is Linux's internal ID.
-> > +	 */
-> > +	pen_release = cpu;
-> > +	flush_cache_all();
-> > +
-> > +	/*
-> > +	 * XXX
-> > +	 *
-> > +	 * This is a later addition to the booting protocol: the
-> > +	 * bootMonitor now puts secondary cores into WFI, so
-> > +	 * poke_milo() no longer gets the cores moving; we need
-> > +	 * to send a soft interrupt to wake the secondary core.
-> > +	 * Use smp_cross_call() for this, since there's little
-> > +	 * point duplicating the code here
-> > +	 */
-> > +	smp_cross_call(cpumask_of(cpu));
-> > +
-> > +	timeout = jiffies + (1 * HZ);
-> > +	while (time_before(jiffies, timeout)) {
-> > +		smp_rmb();
-> > +		if (pen_release == -1)
-> > +			break;
-> > +
-> > +		udelay(10);
-> > +	}
-> > +
-> > +	/*
-> > +	 * now the secondary core is starting up let it run its
-> > +	 * calibrations, then wait for it to finish
-> > +	 */
-> > +	spin_unlock(&boot_lock);
-> > +
-> > +	return pen_release != -1 ? -ENOSYS : 0;
-> > +}
-> > +
-> > +static void __init poke_milo(void)
-> > +{
-> > +	/* nobody is to be released from the pen yet */
-> > +	pen_release = -1;
-> > +
-> > +	/*
-> > +	 * Write the address of secondary startup into the system-wide flags
-> > +	 * register. The BootMonitor waits for this register to become
-> > +	 * non-zero.
-> > +	 */
-> > +	__raw_writel(BSYM(virt_to_phys(s5pv310_secondary_startup)),
-> S5P_INFORM0);
-> > +
-> > +	mb();
-> > +}
-> > +
-> > +/*
-> > + * Initialise the CPU possible map early - this describes the CPUs
-> > + * which may be present or become present in the system.
-> > + */
-> > +void __init smp_init_cpus(void)
-> > +{
-> > +	unsigned int i, ncores = get_core_count();
-> > +
-> > +	for (i = 0; i < ncores; i++)
-> > +		set_cpu_possible(i, true);
-> > +}
-> > +
-> > +void __init smp_prepare_cpus(unsigned int max_cpus)
-> > +{
-> > +	unsigned int ncores = get_core_count();
-> > +	unsigned int cpu = smp_processor_id();
-> > +	int i;
-> > +
-> > +	/* sanity check */
-> > +	if (ncores == 0) {
-> > +		printk(KERN_ERR
-> > +		       "Realview: strange CM count of 0? Default to 1\n");
-> > +
-> > +		ncores = 1;
-> > +	}
-> > +
-> > +	if (ncores > NR_CPUS) {
-> > +		printk(KERN_WARNING
-> > +		       "Realview: no. of cores (%d) greater than configured
-"
-> > +		       "maximum of %d - clipping\n",
-> > +		       ncores, NR_CPUS);
-> > +		ncores = NR_CPUS;
-> > +	}
-> > +
-> > +	smp_store_cpu_info(cpu);
-> > +
-> > +	/*
-> > +	 * are we trying to boot more cores than exist?
-> > +	 */
-> > +	if (max_cpus > ncores)
-> > +		max_cpus = ncores;
-> > +
-> > +	/*
-> > +	 * Initialise the present map, which describes the set of CPUs
-> > +	 * actually populated at the present time.
-> > +	 */
-> > +	for (i = 0; i < max_cpus; i++)
-> > +		set_cpu_present(i, true);
-> > +
-> > +	/*
-> > +	 * Initialise the SCU if there are more than one CPU and let
-> > +	 * them know where to start. Note that, on modern versions of
-> > +	 * MILO, the "poke" doesn't actually do anything until each
-> > +	 * individual core is sent a soft interrupt to get it out of
-> > +	 * WFI
-> > +	 */
-> > +	if (max_cpus > 1) {
-> > +		/*
-> > +		 * Enable the local timer or broadcast device for the
-> > +		 * boot CPU, but only if we have more than one CPU.
-> > +		 */
-> > +		percpu_timer_setup();
-> > +
-> > +		scu_enable(scu_base_addr());
-> > +		poke_milo();
-> > +	}
-> > +}
-> 
-> Please can you model this on the Versatile Express platsmp.c rather than
-> the Realview platsmp.c ?
-> 
-Sure, will do it.
+Kyungmin Park wrote:
+>=20
+> On Fri, Jul 16, 2010 at 10:13 PM, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+wrote:
+> > From: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >
+> > This patch is to select support I2C channels 0, 1 and 2 for S5PV210=
+ and
+> S5P6440.
+> >
+> > Signed-off-by: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > Signed-off-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > ---
+> > =A0drivers/i2c/busses/Kconfig | =A0 =A02 +-
+> > =A01 files changed, 1 insertions(+), 1 deletions(-)
+> >
+> > diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfi=
+g
+> > index bceafbf..e553fe8 100644
+> > --- a/drivers/i2c/busses/Kconfig
+> > +++ b/drivers/i2c/busses/Kconfig
+> > @@ -523,7 +523,7 @@ config I2C_PXA_SLAVE
+> >
+> > =A0config I2C_S3C2410
+> > =A0 =A0 =A0 =A0tristate "S3C2410 I2C Driver"
+> > - =A0 =A0 =A0 depends on ARCH_S3C2410 || ARCH_S3C64XX
+> > + =A0 =A0 =A0 depends on ARCH_S3C2410 || ARCH_S3C64XX || ARCH_S5PV2=
+10 ||
+> ARCH_S5P6440
+>=20
+> Are there any SoCs don't have i2c? If no, how about to just depends o=
+n
+> PLAT_SAMSUNG.
+>=20
+Looks good..will change it.
 
-> The Realview platsmp.c implementation contains a lot of left-overs from
-> the initial Integrator-based SMP implementation which we really shouldn't
-> be carrying endlessly forward.
-
-Oh, I didn't know/check about that.
-Thanks for your information and inputs.
-
-Thanks.
+Thanks for your suggestion.
 
 Best regards,
 Kgene.
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
