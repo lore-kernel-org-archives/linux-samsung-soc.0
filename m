@@ -1,128 +1,240 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] regulator: MAX8998: set_voltage bugfix. ramp_up delay and
- min/max voltage
-Date: Tue, 20 Jul 2010 08:07:07 +0200
-Message-ID: <1279606027-18345-1-git-send-email-m.szyprowski@samsung.com>
-References: <1279391048.3070.11.camel@odin>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCH v3 7/7] ARM: S5PV210: Initial CPUFREQ Support
+Date: Tue, 20 Jul 2010 16:00:10 +0900
+Message-ID: <AANLkTincP954dBuRIN8KwiQPo1CDkykRKv1vIMFYcnyo@mail.gmail.com>
+References: <1279517483-22751-1-git-send-email-myungjoo.ham@samsung.com>
+	<1279517483-22751-2-git-send-email-myungjoo.ham@samsung.com>
+	<1279517483-22751-3-git-send-email-myungjoo.ham@samsung.com>
+	<1279517483-22751-4-git-send-email-myungjoo.ham@samsung.com>
+	<1279517483-22751-5-git-send-email-myungjoo.ham@samsung.com>
+	<1279517483-22751-6-git-send-email-myungjoo.ham@samsung.com>
+	<1279517483-22751-7-git-send-email-myungjoo.ham@samsung.com>
+	<1279517483-22751-8-git-send-email-myungjoo.ham@samsung.com>
+	<006301cb27a3$bd8d55e0$38a801a0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:53991 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752122Ab0GTGHP (ORCPT
+Received: from mail-iw0-f174.google.com ([209.85.214.174]:40295 "EHLO
+	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753248Ab0GTHAR convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Jul 2010 02:07:15 -0400
-Received: from eu_spt2 ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0L5U00MELEBZH250@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 20 Jul 2010 07:07:11 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L5U00H4SEBY55@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 20 Jul 2010 07:07:11 +0100 (BST)
-In-reply-to: <1279391048.3070.11.camel@odin>
+	Tue, 20 Jul 2010 03:00:17 -0400
+Received: by iwn7 with SMTP id 7so5481648iwn.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Jul 2010 00:00:16 -0700 (PDT)
+In-Reply-To: <006301cb27a3$bd8d55e0$38a801a0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, lrg@slimlogic.co.uk
-Cc: sameo@linux.intel.com, broonie@opensource.wolfsonmicro.com, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
 
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
+On Tue, Jul 20, 2010 at 9:37 AM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> MyungJoo Ham wrote:
+>>
+>> S5PV210 CPUFREQ Support.
+>>
+>> This CPUFREQ may work without PMIC's DVS support. However, it is not
+>> as effective without DVS support as supposed. AVS is not supported i=
+n
+>> this version.
+>>
+>> Note that CLK_SRC of some clocks including ARMCLK, G3D, G2D, MFC,
+>> and ONEDRAM are modified directly without updating clksrc_src
+>> representations of the clocks. =C2=A0Because CPUFREQ reverts the CLK=
+_SRC
+>> to the supposed values, this does not affect the consistency as long=
+ as
+>> there are no other modules that modifies clock sources of ARMCLK, G3=
+D,
+>> G2D, MFC, and ONEDRAM (and only CPUFREQ should have the control). As
+>> soon as clock framework is settled, we may update source clocks
+>> (.parent field) of those clocks accordingly later.
+>>
+> As you know memory composition such as mDDR, (mDDR, OneDRAM), DDR2 an=
+d so on
+> differs in MCP type of each S5PC110, and single type of S5PV210.
+> So basically, this code can available only for some S5PC110 MCP types=
+=2E..only
+> some machines.
+> It means can occur problem on some boards...if you use ARCH dependenc=
+y
+> configuration...
+> And need to add comment about tested boards.
 
-Two issues are addressed for max8998_set_voltage function.
+Although selecting "ARCH_HAS_CPUFREQ" does not make choosing
+ARCH_S5PV210 depend on CPUFREQ as it does NOT turn on CPUFREQ
+automatically or forcibly, do you think we need to block being able to
+turn on CPUFREQ if it is not one of the test boards?
 
-1. Min/Max Voltage.
+However, in the next patch version, I'm going to use the memory clock
+setting values set before initializing cpufreq so that we have no
+compatibility issues on memory configurations.
 
-	max8998_set_voltage had been using the voltage value of
+>
+>>
 
-	min ( voltage[i] >= max_vol , i )
+(snip)
 
-	This is corrected to use:
+>> +
+>> +# CPUFREQ (DVFS)
+>
+> No need above comment.
 
-	min ( voltage[i] >= min_vol , i )
+should be fixed.
 
-2. Ramp Up Delay.
+>
+>> +obj-$(CONFIG_CPU_FREQ) =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 +=3D cpufreq-s5pv210.o
+>
+> As I said, should be having machine dependency configuration...
 
-	max8998_set_voltage should provide delay for BUCK1/2
-if ENRAMP is on. It reads RAMP value from ONOFF4 register to determine
-RAMP delay length. However, when max8998_set_voltage's new voltage is
-lower than the previous, we don't care because it does not deteriorate
-the stability.
+going to remove memory-configuration dependency...
 
-Changes since v1:
-- rebased onto latest regulator-for-next tree
+>
+>> diff --git a/arch/arm/mach-s5pv210/cpufreq-s5pv210.c b/arch/arm/mach=
+-
+>> s5pv210/cpufreq-s5pv210.c
+>> new file mode 100644
+>> index 0000000..38de3ac
+>> --- /dev/null
+>> +++ b/arch/arm/mach-s5pv210/cpufreq-s5pv210.c
+>
+> 'cpufreq.c' is enough.
 
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/regulator/max8998.c |   29 +++++++++++++++++++++++++++--
- 1 files changed, 27 insertions(+), 2 deletions(-)
+fine.
 
-diff --git a/drivers/regulator/max8998.c b/drivers/regulator/max8998.c
-index 174fd19..78aea26 100644
---- a/drivers/regulator/max8998.c
-+++ b/drivers/regulator/max8998.c
-@@ -28,6 +28,7 @@
- #include <linux/slab.h>
- #include <linux/interrupt.h>
- #include <linux/mutex.h>
-+#include <linux/delay.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/driver.h>
- #include <linux/mfd/max8998.h>
-@@ -297,10 +298,13 @@ static int max8998_set_voltage(struct regulator_dev *rdev,
- {
- 	struct max8998_data *max8998 = rdev_get_drvdata(rdev);
- 	int min_vol = min_uV / 1000, max_vol = max_uV / 1000;
-+	int previous_vol = 0;
- 	const struct voltage_map_desc *desc;
- 	int ldo = max8998_get_ldo(rdev);
- 	int reg, shift = 0, mask, ret;
- 	int i = 0;
-+	u8 val;
-+	bool en_ramp = false;
- 
- 	if (ldo > ARRAY_SIZE(ldo_voltage_map))
- 		return -EINVAL;
-@@ -312,15 +316,36 @@ static int max8998_set_voltage(struct regulator_dev *rdev,
- 	if (max_vol < desc->min || min_vol > desc->max)
- 		return -EINVAL;
- 
--	while (desc->min + desc->step*i < max_vol &&
-+	while (desc->min + desc->step*i < min_vol &&
- 	       desc->min + desc->step*i < desc->max)
- 		i++;
- 
-+	if (desc->min + desc->step*i > max_vol)
-+		return -EINVAL;
-+
- 	ret = max8998_get_voltage_register(rdev, &reg, &shift, &mask);
- 	if (ret)
- 		return ret;
- 
--	return max8998_update_reg(max8998->iodev, reg, i<<shift, mask<<shift);
-+	/* wait for RAMP_UP_DELAY if rdev is BUCK1/2 and
-+	 * ENRAMP is ON */
-+	if (ldo == MAX8998_BUCK1 || ldo == MAX8998_BUCK2) {
-+		max8998_read_reg(max8998->iodev, MAX8998_REG_ONOFF4, &val);
-+		if (val & (1 << 4)) {
-+			en_ramp = true;
-+			previous_vol = max8998_get_voltage(rdev);
-+		}
-+	}
-+ 
-+	ret = max8998_update_reg(max8998->iodev, reg, i<<shift, mask<<shift);
-+ 
-+	if (en_ramp == true) {
-+		int difference = desc->min + desc->step*i - previous_vol/1000;
-+		if (difference > 0)
-+			udelay(difference / ((val & 0x0f) + 1));
-+	}
-+
-+	return ret;
- }
- 
- static struct regulator_ops max8998_ldo_ops = {
--- 
-1.7.1.569.g6f426
+>
+>> @@ -0,0 +1,766 @@
+>> +/* =C2=A0linux/arch/arm/plat-s5pc11x/s5pc11x-cpufreq.c
+>
+> Please correct above comment.
+
+sure.
+
+>
+>> + *
+
+(snip)
+
+>> +#ifdef CONFIG_S5PC110_EVT0_WORKAROUND
+>
+> As I said, please don't add EVT0 code in here.
+>
+
+Um.. then, what you want to do is to branch to the WORKAROUND codes in
+run-time (based on the board-specific setting), not in compile-time?
+
+(snip)
+
+>> +#if defined(CONFIG_S5PC110_H_TYPE)
+>
+> Where is S5PC110_H_TYPE?
+> Please don't add not available code in here.
+
+will remove every H_TYPE.
+
+>
+
+(snip)
+
+>> + =C2=A0 =C2=A0 mpu_clk =3D clk_get(NULL, MPU_CLK);
+>
+> Just use 'armclk' instead of MPU_CLK definition...
+>
+
+Yes.
+
+(snip)
+
+>> +
+>> +#ifndef _ARCH_ARM_MACH_S5PV210_INCLUDE_MACH_CPU_FREQ_H_
+>> +#define _ARCH_ARM_MACH_S5PV210_INCLUDE_MACH_CPU_FREQ_H_
+>
+> How about __ASM_ARCH_CPU_FREQ_H ?
+
+=46ine.
+
+>
+>> +
+>> +#include <linux/cpufreq.h>
+>> +
+>> +#ifdef CONFIG_CPU_S5PV210
+>
+> Do we really need above #ifdef?
+
+Not really. I'll remove it.
+
+>
+>> +
+>> +#define USE_FREQ_TABLE
+>> +
+>> +#define KHZ_T =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 1000
+>
+> Already said about that.
+>
+>> +
+>> +#define MPU_CLK =C2=A0 =C2=A0 =C2=A0 =C2=A0 "armclk"
+>
+> Already said about that...
+>
+>> +
+>> +enum perf_level {
+>> + =C2=A0 =C2=A0 L0 =3D 0,
+>> + =C2=A0 =C2=A0 L1,
+>> + =C2=A0 =C2=A0 L2,
+>> + =C2=A0 =C2=A0 L3,
+>> + =C2=A0 =C2=A0 L4,
+>> +};
+>> +
+>> +/* APLL,HCLK_MSYS,PCLK_MSYS mask value */
+>> +#define CLK_DIV0_MASK =C2=A0 ((0x7<<0)|(0x7<<8)|(0x7<<12))
+>
+> Here is right?
+
+=46ound that it's no more needed. I'll get rid of it.
+
+>
+>> +
+>> +#ifdef CONFIG_PM
+>> +#define SLEEP_FREQ =C2=A0 =C2=A0 =C2=A0(800 * 1000) /* Use 800MHz w=
+hen entering sleep */
+>> +
+>> +/* additional symantics for "relation" in cpufreq with pm */
+>> +#define DISABLE_FURTHER_CPUFREQ =C2=A0 =C2=A0 =C2=A0 =C2=A0 0x10
+>> +#define ENABLE_FURTHER_CPUFREQ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A00x=
+20
+>> +#define MASK_FURTHER_CPUFREQ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A00x30
+>> +/* With 0x00(NOCHANGE), it depends on the previous "further" status=
+ */
+>> +
+>> +#endif
+>> +
+>> +
+>
+> 1 empty line is enough...
+>
+>> +#endif /* CONFIG_CPU_S5PV210 */
+>> +#endif /* _ARCH_ARM_MACH_S5PV210_INCLUDE_MACH_CPU_FREQ_H_ */
+>> --
+>
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+>
+
+
+
+--=20
+MyungJoo Ham (=ED=95=A8=EB=AA=85=EC=A3=BC), Ph.D.
+Mobile Software Platform Lab,
+Digital Media and Communications (DMC) Business
+Samsung Electronics
+cell: 82-10-6714-2858
