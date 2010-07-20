@@ -1,202 +1,128 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH 0/4] ARM: S5PV210: Clock Framework: powerdomain,
-	block-gating, flags
-Date: Tue, 20 Jul 2010 12:05:12 +0900
-Message-ID: <AANLkTinUO548kSoDSII3ry8KZQFpUtXvgTooz40d6o7D@mail.gmail.com>
-References: <1279528236-6076-1-git-send-email-myungjoo.ham@samsung.com>
-	<006401cb27a7$90122100$b0366300$%kim@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2] regulator: MAX8998: set_voltage bugfix. ramp_up delay and
+ min/max voltage
+Date: Tue, 20 Jul 2010 08:07:07 +0200
+Message-ID: <1279606027-18345-1-git-send-email-m.szyprowski@samsung.com>
+References: <1279391048.3070.11.camel@odin>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:51104 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757941Ab0GTDFO convert rfc822-to-8bit (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:53991 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752122Ab0GTGHP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Jul 2010 23:05:14 -0400
-Received: by iwn7 with SMTP id 7so5300627iwn.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Jul 2010 20:05:12 -0700 (PDT)
-In-Reply-To: <006401cb27a7$90122100$b0366300$%kim@samsung.com>
+	Tue, 20 Jul 2010 02:07:15 -0400
+Received: from eu_spt2 ([210.118.77.13]) by mailout3.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0L5U00MELEBZH250@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 20 Jul 2010 07:07:11 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0L5U00H4SEBY55@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 20 Jul 2010 07:07:11 +0100 (BST)
+In-reply-to: <1279391048.3070.11.camel@odin>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, lrg@slimlogic.co.uk
+Cc: sameo@linux.intel.com, broonie@opensource.wolfsonmicro.com, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Tue, Jul 20, 2010 at 10:04 AM, Kukjin Kim <kgene.kim@samsung.com> wr=
-ote:
-> MyungJoo Ham wrote:
->>
->> This patches add support for powerdomain, block-gating, and flags in
-> struct clk.
->>
->> Blockgating re-uses powerdomain support scheme and depends on powerd=
-omain
->> support.
->>
->> Flags support is independent from powerdomain; however, powerdomain
-> support
->> is NOT stable without flags support. Without flags support, powerdom=
-ain
-> may lock
->> up the system with some conditions although they are rare. Thus, whe=
-n
->> powerdomain or block-gating is used, flags support should be turned =
-on for
-> the
->> system stability. (and that's why I'm sending flags support with
->> powerdomain/block-gating support).
->>
->> Although powerdomain support is requred for blockgating, blockgating=
- is
-> NOT
->> required for powerdomain. Besides, powerdomain support is observed t=
-o
-> reduce
->> power consumption significantly (with 2.6.29 kernel); however, block=
-gating
-> support
->> didn't show any significant improvement.
->>
->>
->> MyungJoo Ham (4):
->> =C2=A0 ARM: SAMSUNG SoC: Powerdomain/Block-gating Support
->> =C2=A0 ARM: S5PV210: Powerdomain/Clock-gating Support
->> =C2=A0 ARM: SAMSUNG SoC: Clock Framework: Flag Support for struct cl=
-k.
->> =C2=A0 ARM: S5PV210: Clock Framework: Flag Support for struct clk.
->>
->> =C2=A0arch/arm/mach-s5pv210/Kconfig =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0| =C2=A0 17 +
->> =C2=A0arch/arm/mach-s5pv210/clock.c =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0| =C2=A0906
->> ++++++++++++++++++++++------
->> =C2=A0arch/arm/plat-samsung/Kconfig =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0| =C2=A0 19 +
->> =C2=A0arch/arm/plat-samsung/clock.c =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0| =C2=A0146 +++++-
->> =C2=A0arch/arm/plat-samsung/include/plat/clock.h | =C2=A0 44 ++
->> =C2=A05 files changed, 935 insertions(+), 197 deletions(-)
->
-> Already we discussed about power domain...
-> And actually your code is similar with my member's 2.6.29 powerdomain
-> scheme.
-> So Ben's code review about that is available to your this patch.
->
-> Following is from Ben Dooks note.
->
-> =3D=3D=3D
->
-> Powerdomain control notes
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
->
-> Copyright 2010 Simtec Electronics
-> Ben Dooks <ben@simtec.co.uk>
->
-> Code Review
-> -----------
->
-> The current implementation makes a number of #ifdef based additions t=
-o
-> the clock.c which currently lies in plat-s3c/clock.c (but to be moved
-> to plat-samsung/clock.c). The following are the observations from rev=
-iewing
-> the code as presented:
->
-> 1) The use of #ifdef is not recommended, as noted before in reviews i=
-t
-> =C2=A0 makes the code hard to read, allows bugs to creep in due to co=
-de
-> =C2=A0 either being skipped, and problems when we get to the stage se=
-veral
-> =C2=A0 conflicting configurations could live in the kernel.
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
 
-I've been using #ifdef's for enabling/disabling powerdomain and
-blockgating control (especially for machines that do not have support
-for powerdomain/blockgating). However, it seems to be reasonable that
-the #ifdef's are not needed and to be removed.
+Two issues are addressed for max8998_set_voltage function.
 
->
-> 2) The code is changing the functionality of the clk_enable() and the
-> =C2=A0 clk_disable() calls, which is bad for the following reasons:
->
-> =C2=A0 A) Anyone reading or modifying a driver using this API may not=
- see
-> =C2=A0 =C2=A0 =C2=A0what is going on underneath.
->
-> =C2=A0 B) It ties the clock to the powerdomain, if any of the current=
- drivers
-> =C2=A0 =C2=A0 =C2=A0wish to temporarily stop the clock to reduce the =
-dynamic power
-> =C2=A0 =C2=A0 =C2=A0consumption they cannot (see part A, if all drive=
-rs are resting
-> =C2=A0 =C2=A0 =C2=A0in the power domain the whole domain may shutdown=
- with a resulting
-> =C2=A0 =C2=A0 =C2=A0cost to the work resumption).
->
-> =C2=A0 C) It ties the drivers to the specific clock implementation an=
-d thus
-> =C2=A0 =C2=A0 =C2=A0restricts future use of standard drivers on futur=
-e devices.
->
-> =C2=A0 D) It ties policy into the kernel, as it forces the power doma=
-ins to
-> =C2=A0 =C2=A0 =C2=A0shut down if the driver is not in use. The develo=
-per or end user
-> =C2=A0 =C2=A0 =C2=A0may want to change this depending on either a dev=
-ice wide or usage
-> =C2=A0 =C2=A0 =C2=A0case. Policy decisions are best left out of the k=
-ernel.
->
+1. Min/Max Voltage.
 
-Um... yes, putting powerdomain/blockgating code at clk_* code is too
-invasive to the clk_* code. And it'd be more problematic if we move on
-to the common struct clk.
+	max8998_set_voltage had been using the voltage value of
 
-I'll implement powerdomain/blockgating control code
- at arch/arm/mach-s5pv210/clock.c:s5pv210_clk_*_ctrl.
+	min ( voltage[i] >= max_vol , i )
 
-=46or B) and D), we may need to leave an option not to control
-powerdomain. How about leaving an option at sysfs if not using
-#ifdef's?
+	This is corrected to use:
 
+	min ( voltage[i] >= min_vol , i )
 
->
-> Part (1) is a definite barrier to merging, the code whilst functional=
- is
-> both ugly and the use of #ifdefs like that are contrary to a number o=
-f
-> developers beliefs.
->
-> The second part is also a stumbling block, as it is likely to be comm=
-ented
-> upon by a number of interested parties if it did come up for review. =
-I am
-> certainly not happy to see this sort of invasive change to the clock =
-system
-> merged. I expect others would also raise objections.
->
-> ...
->
-> =3D=3D=3D
->
-> So need to another approach for it.
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
->
+2. Ramp Up Delay.
 
+	max8998_set_voltage should provide delay for BUCK1/2
+if ENRAMP is on. It reads RAMP value from ONOFF4 register to determine
+RAMP delay length. However, when max8998_set_voltage's new voltage is
+lower than the previous, we don't care because it does not deteriorate
+the stability.
 
+Changes since v1:
+- rebased onto latest regulator-for-next tree
 
---=20
-MyungJoo Ham (=ED=95=A8=EB=AA=85=EC=A3=BC), Ph.D.
-Mobile Software Platform Lab,
-Digital Media and Communications (DMC) Business
-Samsung Electronics
-cell: 82-10-6714-2858
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/regulator/max8998.c |   29 +++++++++++++++++++++++++++--
+ 1 files changed, 27 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/regulator/max8998.c b/drivers/regulator/max8998.c
+index 174fd19..78aea26 100644
+--- a/drivers/regulator/max8998.c
++++ b/drivers/regulator/max8998.c
+@@ -28,6 +28,7 @@
+ #include <linux/slab.h>
+ #include <linux/interrupt.h>
+ #include <linux/mutex.h>
++#include <linux/delay.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+ #include <linux/mfd/max8998.h>
+@@ -297,10 +298,13 @@ static int max8998_set_voltage(struct regulator_dev *rdev,
+ {
+ 	struct max8998_data *max8998 = rdev_get_drvdata(rdev);
+ 	int min_vol = min_uV / 1000, max_vol = max_uV / 1000;
++	int previous_vol = 0;
+ 	const struct voltage_map_desc *desc;
+ 	int ldo = max8998_get_ldo(rdev);
+ 	int reg, shift = 0, mask, ret;
+ 	int i = 0;
++	u8 val;
++	bool en_ramp = false;
+ 
+ 	if (ldo > ARRAY_SIZE(ldo_voltage_map))
+ 		return -EINVAL;
+@@ -312,15 +316,36 @@ static int max8998_set_voltage(struct regulator_dev *rdev,
+ 	if (max_vol < desc->min || min_vol > desc->max)
+ 		return -EINVAL;
+ 
+-	while (desc->min + desc->step*i < max_vol &&
++	while (desc->min + desc->step*i < min_vol &&
+ 	       desc->min + desc->step*i < desc->max)
+ 		i++;
+ 
++	if (desc->min + desc->step*i > max_vol)
++		return -EINVAL;
++
+ 	ret = max8998_get_voltage_register(rdev, &reg, &shift, &mask);
+ 	if (ret)
+ 		return ret;
+ 
+-	return max8998_update_reg(max8998->iodev, reg, i<<shift, mask<<shift);
++	/* wait for RAMP_UP_DELAY if rdev is BUCK1/2 and
++	 * ENRAMP is ON */
++	if (ldo == MAX8998_BUCK1 || ldo == MAX8998_BUCK2) {
++		max8998_read_reg(max8998->iodev, MAX8998_REG_ONOFF4, &val);
++		if (val & (1 << 4)) {
++			en_ramp = true;
++			previous_vol = max8998_get_voltage(rdev);
++		}
++	}
++ 
++	ret = max8998_update_reg(max8998->iodev, reg, i<<shift, mask<<shift);
++ 
++	if (en_ramp == true) {
++		int difference = desc->min + desc->step*i - previous_vol/1000;
++		if (difference > 0)
++			udelay(difference / ((val & 0x0f) + 1));
++	}
++
++	return ret;
+ }
+ 
+ static struct regulator_ops max8998_ldo_ops = {
+-- 
+1.7.1.569.g6f426
