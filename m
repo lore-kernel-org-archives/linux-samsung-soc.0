@@ -1,230 +1,176 @@
-From: Kyungmin Park <kmpark-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH v2 2/3] ARM: S5PV210: Add support for I2C devices on
-	SMDKV210 and SMDKC110
-Date: Wed, 21 Jul 2010 22:23:38 +0900
-Message-ID: <AANLkTilTcum2H5zj2B21Ha8Ov0lfwJ29WavT89AoGQVL@mail.gmail.com>
-References: <1279717139-24422-1-git-send-email-kgene.kim@samsung.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH v3 2/8] ARM: S5PV310: Add new CPU initialization support
+Date: Wed, 21 Jul 2010 22:29:37 +0900
+Message-ID: <AANLkTimQqAKUlCXgRFMWMvI_zVXlHJOFCx3c3lrU5kpP@mail.gmail.com>
+References: <1279627861-23047-1-git-send-email-kgene.kim@samsung.com>
+	<AANLkTikYjSIZzT-WHpAYbaHC1R9DU2T89qUVoAYASEZv@mail.gmail.com>
+	<009701cb28d4$0ead3040$2c0790c0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1279717139-24422-1-git-send-email-kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:55965 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756110Ab0GUN3n convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Jul 2010 09:29:43 -0400
+Received: by fxm14 with SMTP id 14so3504588fxm.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Jul 2010 06:29:41 -0700 (PDT)
+In-Reply-To: <009701cb28d4$0ead3040$2c0790c0$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>, Jongpill Lee <boyko.lee@samsung.com>, Jiseong Oh <jiseong.oh@samsung.com>
 
-which tree do you use? If not fix the s5pv210_IIC2_IRQ correcly, it
-can't compile it.
-but I'm not see related patch at mailing list.
-
-Thank you,
-Kyungmin Park
-
-On Wed, Jul 21, 2010 at 9:58 PM, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wro=
+On Wed, Jul 21, 2010 at 9:55 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
 te:
-> From: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Kyungmin Park wrote:
+>>
+>> On Tue, Jul 20, 2010 at 9:11 PM, Kukjin Kim <kgene.kim@samsung.com> =
+wrote:
+>> > From: Changhwan Youn <chaos.youn@samsung.com>
+>> >
+>> > This patch adds Samsung S5PV310/S5PC210 CPU support.
+>> > The S5PV310/S5PC210 integrates a ARM Cortex A9 multi-core.
+>> >
+>> > Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+>> > Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
+>> > Signed-off-by: Jiseong Oh <jiseong.oh@samsung.com>
+>> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+>> > ---
+>> > Changes since v2:
+>> > - Re-model platsmp.c on the Versatile Express as per Russell King'=
+s
+> suggestion.
+>> > =A0And tested on the board.
+>> >
+>> > - Compared Versatile Express SMP code with Realview SMP code and
+> modified
+>> as needed.
+>> >
 >
-> This patch adds support I2C-0/1/2 devices to the SMDKV210/SMDKC110.
+> Hi,
 >
-> Signed-off-by: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
-> Changes since v1:
-> - Fixed the wrong name as per Kyungmin Park's comments
+> (snip)
 >
-> =A0arch/arm/mach-s5pv210/Kconfig =A0 =A0 =A0 =A0 | =A0 =A08 ++++++++
-> =A0arch/arm/mach-s5pv210/mach-smdkc110.c | =A0 28 +++++++++++++++++++=
-+++++++++
-> =A0arch/arm/mach-s5pv210/mach-smdkv210.c | =A0 29 +++++++++++++++++++=
-++++++++++
-> =A03 files changed, 65 insertions(+), 0 deletions(-)
+>> > +static void arch_detect_cpu(void)
+>> > +{
+>> > + =A0 =A0 =A0 /* we do not need to do any cpu detection here at th=
+e moment. */
+>> > +
+>> > + =A0 =A0 =A0 fifo_mask =3D S5PV210_UFSTAT_TXMASK;
+>> > + =A0 =A0 =A0 fifo_max =3D 63 << S5PV210_UFSTAT_TXSHIFT;
+>>
+>> It's only valid when use the UART1. others 255 for UART0, 15 for oth=
+ers.
 >
-> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kc=
-onfig
-> index 0761eac..2a996d9 100644
-> --- a/arch/arm/mach-s5pv210/Kconfig
-> +++ b/arch/arm/mach-s5pv210/Kconfig
-> @@ -72,9 +72,13 @@ config MACH_SMDKV210
-> =A0 =A0 =A0 =A0select CPU_S5PV210
-> =A0 =A0 =A0 =A0select ARCH_SPARSEMEM_ENABLE
-> =A0 =A0 =A0 =A0select SAMSUNG_DEV_ADC
-> + =A0 =A0 =A0 select S3C_DEV_I2C1
-> + =A0 =A0 =A0 select S3C_DEV_I2C2
-> =A0 =A0 =A0 =A0select SAMSUNG_DEV_TS
-> =A0 =A0 =A0 =A0select S3C_DEV_WDT
-> =A0 =A0 =A0 =A0select HAVE_S3C2410_WATCHDOG
-> + =A0 =A0 =A0 select S5PV210_SETUP_I2C1
-> + =A0 =A0 =A0 select S5PV210_SETUP_I2C2
-> =A0 =A0 =A0 =A0help
-> =A0 =A0 =A0 =A0 =A0Machine support for Samsung SMDKV210
+> Ok..will fix it.
 >
-> @@ -82,8 +86,12 @@ config MACH_SMDKC110
-> =A0 =A0 =A0 =A0bool "SMDKC110"
-> =A0 =A0 =A0 =A0select CPU_S5PV210
-> =A0 =A0 =A0 =A0select ARCH_SPARSEMEM_ENABLE
-> + =A0 =A0 =A0 select S3C_DEV_I2C1
-> + =A0 =A0 =A0 select S3C_DEV_I2C2
-> =A0 =A0 =A0 =A0select S3C_DEV_WDT
-> =A0 =A0 =A0 =A0select HAVE_S3C2410_WATCHDOG
-> + =A0 =A0 =A0 select S5PV210_SETUP_I2C1
-> + =A0 =A0 =A0 select S5PV210_SETUP_I2C2
-> =A0 =A0 =A0 =A0help
-> =A0 =A0 =A0 =A0 =A0Machine support for Samsung SMDKC110
-> =A0 =A0 =A0 =A0 =A0S5PC110(MCP) is one of package option of S5PV210
-> diff --git a/arch/arm/mach-s5pv210/mach-smdkc110.c b/arch/arm/mach-s5=
-pv210/mach-smdkc110.c
-> index 4c8903c..fcd475f 100644
-> --- a/arch/arm/mach-s5pv210/mach-smdkc110.c
-> +++ b/arch/arm/mach-s5pv210/mach-smdkc110.c
-> @@ -12,6 +12,7 @@
-> =A0#include <linux/types.h>
-> =A0#include <linux/init.h>
-> =A0#include <linux/serial_core.h>
-> +#include <linux/i2c.h>
+> (snip)
 >
-> =A0#include <asm/mach/arch.h>
-> =A0#include <asm/mach/map.h>
-> @@ -25,6 +26,7 @@
-> =A0#include <plat/s5pv210.h>
-> =A0#include <plat/devs.h>
-> =A0#include <plat/cpu.h>
-> +#include <plat/iic.h>
+>> > +#define VMALLOC_END =A0 =A0 =A0(0xE0000000)
+>>
+>> Increase to 0xF000'0000. but it will be removed from Eric's patch.
+>>
+> Right now, the 0xE0000000 is no problem as default.
+> But I will check this is appropriate again.
+Since maybe you use the 2g/2g configuration. try to use the 3g/1g
+configuration with more the 512MiB.
+
 >
-> =A0/* Following are default values for UCON, ULCON and UFCON UART reg=
-isters */
-> =A0#define S5PV210_UCON_DEFAULT =A0 (S3C2410_UCON_TXILEVEL | =A0 =A0 =
-=A0 =A0\
-> @@ -74,9 +76,24 @@ static struct s3c2410_uartcfg smdkv210_uartcfgs[] =
-__initdata =3D {
-> =A0static struct platform_device *smdkc110_devices[] __initdata =3D {
-> =A0 =A0 =A0 =A0&s5pv210_device_iis0,
-> =A0 =A0 =A0 =A0&s5pv210_device_ac97,
-> + =A0 =A0 =A0 &s3c_device_i2c0,
-> + =A0 =A0 =A0 &s3c_device_i2c1,
-> + =A0 =A0 =A0 &s3c_device_i2c2,
-> =A0 =A0 =A0 =A0&s3c_device_wdt,
-> =A0};
+> And according to his '[PATCH 08/13] [ARM] Make VMALLOC_END into a glo=
+bal
+> variable if not defined',
+> it doesn't mean absolutely remove it. why did you say like that.
 >
-> +static struct i2c_board_info smdkc110_i2c_devs0[] __initdata =3D {
-> + =A0 =A0 =A0 { I2C_BOARD_INFO("24c08", 0x50), }, =A0 =A0 /* Samsung =
-S524AD0XD1 */
-> +};
+> +#ifndef VMALLOC_END
+> +extern unsigned long vmalloc_end;
+> +#define VMALLOC_END (vmalloc_end)
+> +#endif
 > +
-> +static struct i2c_board_info smdkc110_i2c_devs1[] __initdata =3D {
-> + =A0 =A0 =A0 /* To Be Updated */
-> +};
-> +
-> +static struct i2c_board_info smdkc110_i2c_devs2[] __initdata =3D {
-> + =A0 =A0 =A0 /* To Be Updated */
-> +};
-> +
-> =A0static void __init smdkc110_map_io(void)
-> =A0{
-> =A0 =A0 =A0 =A0s5p_init_io(NULL, 0, S5P_VA_CHIPID);
-> @@ -86,6 +103,17 @@ static void __init smdkc110_map_io(void)
 >
-> =A0static void __init smdkc110_machine_init(void)
-> =A0{
-> + =A0 =A0 =A0 /* I2C */
-> + =A0 =A0 =A0 s3c_i2c0_set_platdata(NULL);
-> + =A0 =A0 =A0 s3c_i2c1_set_platdata(NULL);
-> + =A0 =A0 =A0 s3c_i2c2_set_platdata(NULL);
-> + =A0 =A0 =A0 i2c_register_board_info(0, smdkc110_i2c_devs0,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ARRAY_SIZE(smdkc110_i2c=
-_devs0));
-> + =A0 =A0 =A0 i2c_register_board_info(1, smdkc110_i2c_devs1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ARRAY_SIZE(smdkc110_i2c=
-_devs1));
-> + =A0 =A0 =A0 i2c_register_board_info(2, smdkc110_i2c_devs2,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ARRAY_SIZE(smdkc110_i2c=
-_devs2));
-> +
-> =A0 =A0 =A0 =A0platform_add_devices(smdkc110_devices, ARRAY_SIZE(smdk=
-c110_devices));
-> =A0}
+> And if required modify it for some machine, you can do it later with
+> mach_desc after applying Eric's patch.
+> Or as Russell said, there is the way to do it is to specify a vmalloc=
+=3D
+> parameter to the kernel.
+
+I don't have confidence with HIGHMEM with VIPT (it's same as PIPT).
+So I want to use lowmem if possible,
+
 >
-> diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5=
-pv210/mach-smdkv210.c
-> index 0d46279..765f47e 100644
-> --- a/arch/arm/mach-s5pv210/mach-smdkv210.c
-> +++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
-> @@ -10,6 +10,7 @@
+> (snip)
 >
-> =A0#include <linux/kernel.h>
-> =A0#include <linux/types.h>
-> +#include <linux/i2c.h>
-> =A0#include <linux/init.h>
-> =A0#include <linux/serial_core.h>
+>> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 /*
+>> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* Write the address of secondary =
+startup into the
+>> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* system-wide flags register. The=
+ boot monitor waits
+>> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* until it receives a soft interr=
+upt, and then the
+>> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* secondary CPU branches to this =
+address.
+>> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0*/
+>> > + =A0 =A0 =A0 __raw_writel(BSYM(virt_to_phys(s5pv310_secondary_sta=
+rtup)),
+>> S5P_INFORM0);
+>>
+>> Do you really use the INFORM0? historically it's used for sleep &
+>> wakeup. new SoC has several INFORM register. So I recommend to use
+>> others.
+>>
 >
-> @@ -27,6 +28,7 @@
-> =A0#include <plat/cpu.h>
-> =A0#include <plat/adc.h>
-> =A0#include <plat/ts.h>
-> +#include <plat/iic.h>
+> It doesn't mean we should use INFORM0 for sleep & wakeup even though
+> historically used.
+> ...I mean it doesn't matter and as you know, just need to sync with
+> boot-loader for it.
+that's reason I said, we got unused INFORM{3,4,5,...} so if we use it,
+no problem.
 >
-> =A0/* Following are default values for UCON, ULCON and UFCON UART reg=
-isters */
-> =A0#define S5PV210_UCON_DEFAULT =A0 (S3C2410_UCON_TXILEVEL | =A0 =A0 =
-=A0 =A0\
-> @@ -77,10 +79,25 @@ static struct platform_device *smdkv210_devices[]=
- __initdata =3D {
-> =A0 =A0 =A0 =A0&s5pv210_device_iis0,
-> =A0 =A0 =A0 =A0&s5pv210_device_ac97,
-> =A0 =A0 =A0 =A0&s3c_device_adc,
-> + =A0 =A0 =A0 &s3c_device_i2c0,
-> + =A0 =A0 =A0 &s3c_device_i2c1,
-> + =A0 =A0 =A0 &s3c_device_i2c2,
-> =A0 =A0 =A0 =A0&s3c_device_ts,
-> =A0 =A0 =A0 =A0&s3c_device_wdt,
-> =A0};
+> (snip)
 >
-> +static struct i2c_board_info smdkv210_i2c_devs0[] __initdata =3D {
-> + =A0 =A0 =A0 { I2C_BOARD_INFO("24c08", 0x50), }, =A0 =A0 /* Samsung =
-S524AD0XD1 */
-> +};
-> +
-> +static struct i2c_board_info smdkv210_i2c_devs1[] __initdata =3D {
-> + =A0 =A0 =A0 /* To Be Updated */
-> +};
-> +
-> +static struct i2c_board_info smdkv210_i2c_devs2[] __initdata =3D {
-> + =A0 =A0 =A0 /* To Be Updated */
-> +};
-> +
-> =A0static struct s3c2410_ts_mach_info s3c_ts_platform __initdata =3D =
-{
-> =A0 =A0 =A0 =A0.delay =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=3D 10000,
-> =A0 =A0 =A0 =A0.presc =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=3D 49,
-> @@ -97,6 +114,18 @@ static void __init smdkv210_map_io(void)
-> =A0static void __init smdkv210_machine_init(void)
-> =A0{
-> =A0 =A0 =A0 =A0s3c24xx_ts_set_platdata(&s3c_ts_platform);
-> +
-> + =A0 =A0 =A0 /* I2C */
-> + =A0 =A0 =A0 s3c_i2c0_set_platdata(NULL);
-> + =A0 =A0 =A0 s3c_i2c1_set_platdata(NULL);
-> + =A0 =A0 =A0 s3c_i2c2_set_platdata(NULL);
-> + =A0 =A0 =A0 i2c_register_board_info(0, smdkv210_i2c_devs0,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ARRAY_SIZE(smdkv210_i2c=
-_devs0));
-> + =A0 =A0 =A0 i2c_register_board_info(1, smdkv210_i2c_devs1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ARRAY_SIZE(smdkv210_i2c=
-_devs1));
-> + =A0 =A0 =A0 i2c_register_board_info(2, smdkv210_i2c_devs2,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ARRAY_SIZE(smdkv210_i2c=
-_devs2));
-> +
-> =A0 =A0 =A0 =A0platform_add_devices(smdkv210_devices, ARRAY_SIZE(smdk=
-v210_devices));
-> =A0}
+>> > +void s3c_i2c0_cfg_gpio(struct platform_device *dev)
+>> > +{
+>> > +/* will be implemented later */
+>> > +}
+>>
+>> Remove it and send separate patch. e.g.,I2C support on s5pc210.
+>>
+> I think i2c0 is un-conditionally compiled. So need to add i2c0 suppor=
+t in
+> here.
+It mean all samsung SoC have i2c0. okay if you want it.
 >
+> (snip)
+>
+>> > +#define S5P_VA_COREPERI_BASE =A0 S3C_ADDR(0x00800000)
+>> > +#define S5P_VA_COREPERI(x) =A0 =A0 (S5P_VA_COREPERI_BASE + (x))
+>> > +#define S5P_VA_SCU =A0 =A0 =A0 =A0 =A0 =A0 S5P_VA_COREPERI(0x0)
+>> > +#define S5P_VA_GIC_CPU =A0 =A0 =A0 =A0 S5P_VA_COREPERI(0x100)
+>> > +#define S5P_VA_TWD =A0 =A0 =A0 =A0 =A0 =A0 S5P_VA_COREPERI(0x600)
+>> > +#define S5P_VA_GIC_DIST =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0S5P_VA_COR=
+EPERI(0x1000)
+>> > +
+>> > +#define S5P_VA_L2CC =A0 =A0 =A0 =A0 =A0 =A0S3C_ADDR(0x00900000)
+>>
+>> I'm not sure it's proper prefix.
+>>
+> It's no problem.
+>
+> (snip)
+>
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
 > --
-> 1.6.2.5
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
 >
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-samsu=
 ng-soc" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> the body of a message to majordomo@vger.kernel.org
 > More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
 >
