@@ -1,97 +1,133 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] serial: samsung.c: Add FRACVAL support for newer UART
-Date: Wed, 21 Jul 2010 18:20:47 +0900
-Message-ID: <008b01cb28b6$049fc6d0$0ddf5470$%kim@samsung.com>
-References: <1277474119-6897-1-git-send-email-kgene.kim@samsung.com>
- <4C46B9D8.7020504@ru.mvista.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH] ARM: SAMSUNG: Make RTC driver dependency SoC specific
+	instead of machine specific
+Date: Wed, 21 Jul 2010 19:07:33 +0900
+Message-ID: <AANLkTikIAuRD1mRpPpeHd-WqvHSG9S_nPYyE279J76zb@mail.gmail.com>
+References: <1279702831-14968-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:40090 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751755Ab0GUJUt (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:54605 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750727Ab0GUKHd convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Jul 2010 05:20:49 -0400
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L5W00DQGHYIMYD0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Jul 2010 18:20:42 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L5W000Z2HYIW2@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Jul 2010 18:20:42 +0900 (KST)
-In-reply-to: <4C46B9D8.7020504@ru.mvista.com>
-Content-language: ko
+	Wed, 21 Jul 2010 06:07:33 -0400
+Received: by pzk26 with SMTP id 26so2021010pzk.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Jul 2010 03:07:33 -0700 (PDT)
+In-Reply-To: <1279702831-14968-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sergei Shtylyov' <sshtylyov@mvista.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Changhwan Youn' <chaos.youn@samsung.com>, ben-linux@fluff.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Atul Dahiya <atul.dahiya@samsung.com>
 
-Sergei Shtylyov wrote:
-> 
-> Hello.
-> 
-Hi ;-)
+I don't see the Samsung SoCs don't have RTC feature.
 
-> Kukjin Kim wrote:
-> 
-> > From: Changhwan Youn <chaos.youn@samsung.com>
-> 
-> > FRACVAL register provides the same function as UDIVSLOT register which
-is
-> > the 1/16ths adjustment to the baud rate but the implementaiton is
-easier.
-> > To support UDIVSLOT register, UDIVSLOT table search is necessary though
-> > supporting FRACVAL only needs the index value of UDIVSLOT table.
-> 
-> > This patch implements the FRACVAL supports for the newer Samsung SoC
-> UARTs.
-> 
-> > Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
-> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> [...]
-> > diff --git a/drivers/serial/samsung.c b/drivers/serial/samsung.c
-> > index a9d6c56..09805c7 100644
-> > --- a/drivers/serial/samsung.c
-> > +++ b/drivers/serial/samsung.c
-> > @@ -530,7 +530,7 @@ static int s3c24xx_serial_calcbaud(struct baud_calc
-*calc,
-> >
-> >  	calc->clksrc = clksrc;
-> >
-> > -	if (ourport->info->has_divslot) {
-> > +	if ((ourport->info->has_divslot) || (ourport->info->has_fracval)) {
-> 
->     Parens around variables are not needed.
-> 
-Yeah.
+I think S3C_RTC only depends on PLAT_SAMSUNG so PLAT_SAMSUNG select
+HAVE_S3C_RTC is enough.
 
-> 
-> > @@ -755,7 +758,7 @@ static void s3c24xx_serial_set_termios(struct
-uart_port
-> *port,
-> >  	wr_regl(port, S3C2410_UBRDIV, quot);
-> >  	wr_regl(port, S3C2410_UMCON, umcon);
-> >
-> > -	if (ourport->info->has_divslot)
-> > +	if ((ourport->info->has_divslot) || (ourport->info->has_fracval))
-> 
->     Here as well...
-> 
-Yeah.
+Thank you,
+Kyungmin Park
 
-You're right.
-But already re-submitted updated.
-
-Please kindly find following URL.
-http://lists.infradead.org/pipermail/linux-arm-kernel/2010-July/020713.html
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+On Wed, Jul 21, 2010 at 6:00 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> From: Atul Dahiya <atul.dahiya@samsung.com>
+>
+> This patch moves the dependency of RTC driver from MACH_XXX(board) to
+> ARCH_XXX(SoC). This will enable all machines using Samsung S5P6440, S=
+5PC100
+> and S5PV210 SoCs to use RTC driver by default.
+>
+> Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+> =A0arch/arm/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A03 +++
+> =A0arch/arm/mach-s5p6440/Kconfig | =A0 =A01 -
+> =A0arch/arm/mach-s5pc100/Kconfig | =A0 =A01 -
+> =A0arch/arm/mach-s5pv210/Kconfig | =A0 =A02 --
+> =A04 files changed, 3 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 98922f7..ea668a4 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -672,6 +672,7 @@ config ARCH_S5P6440
+> =A0 =A0 =A0 =A0select GENERIC_GPIO
+> =A0 =A0 =A0 =A0select HAVE_CLK
+> =A0 =A0 =A0 =A0select ARCH_USES_GETTIMEOFFSET
+> + =A0 =A0 =A0 select HAVE_S3C_RTC
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Samsung S5P6440 CPU based systems
+>
+> @@ -691,6 +692,7 @@ config ARCH_S5PC100
+> =A0 =A0 =A0 =A0select CPU_V7
+> =A0 =A0 =A0 =A0select ARM_L1_CACHE_SHIFT_6
+> =A0 =A0 =A0 =A0select ARCH_USES_GETTIMEOFFSET
+> + =A0 =A0 =A0 select HAVE_S3C_RTC
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Samsung S5PC100 series based systems
+>
+> @@ -701,6 +703,7 @@ config ARCH_S5PV210
+> =A0 =A0 =A0 =A0select HAVE_CLK
+> =A0 =A0 =A0 =A0select ARM_L1_CACHE_SHIFT_6
+> =A0 =A0 =A0 =A0select ARCH_USES_GETTIMEOFFSET
+> + =A0 =A0 =A0 select HAVE_S3C_RTC
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Samsung S5PV210/S5PC110 series based systems
+>
+> diff --git a/arch/arm/mach-s5p6440/Kconfig b/arch/arm/mach-s5p6440/Kc=
+onfig
+> index b2d4716..de8f08d 100644
+> --- a/arch/arm/mach-s5p6440/Kconfig
+> +++ b/arch/arm/mach-s5p6440/Kconfig
+> @@ -20,7 +20,6 @@ config MACH_SMDK6440
+> =A0 =A0 =A0 =A0select SAMSUNG_DEV_ADC
+> =A0 =A0 =A0 =A0select S3C_DEV_RTC
+> =A0 =A0 =A0 =A0select S3C_DEV_WDT
+> - =A0 =A0 =A0 select HAVE_S3C_RTC
+> =A0 =A0 =A0 =A0select HAVE_S3C2410_WATCHDOG
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Machine support for the Samsung SMDK6440
+> diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kc=
+onfig
+> index 2602895..e9c3d98 100644
+> --- a/arch/arm/mach-s5pc100/Kconfig
+> +++ b/arch/arm/mach-s5pc100/Kconfig
+> @@ -48,7 +48,6 @@ config MACH_SMDKC100
+> =A0 =A0 =A0 =A0select S5PC100_SETUP_FB_24BPP
+> =A0 =A0 =A0 =A0select S5PC100_SETUP_I2C1
+> =A0 =A0 =A0 =A0select S5PC100_SETUP_SDHCI
+> - =A0 =A0 =A0 select HAVE_S3C_RTC
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Machine support for the Samsung SMDKC100
+>
+> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kc=
+onfig
+> index 04597cc..7f029d1 100644
+> --- a/arch/arm/mach-s5pv210/Kconfig
+> +++ b/arch/arm/mach-s5pv210/Kconfig
+> @@ -75,7 +75,6 @@ config MACH_SMDKV210
+> =A0 =A0 =A0 =A0select SAMSUNG_DEV_TS
+> =A0 =A0 =A0 =A0select S3C_DEV_RTC
+> =A0 =A0 =A0 =A0select S3C_DEV_WDT
+> - =A0 =A0 =A0 select HAVE_S3C_RTC
+> =A0 =A0 =A0 =A0select HAVE_S3C2410_WATCHDOG
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Machine support for Samsung SMDKV210
+> @@ -86,7 +85,6 @@ config MACH_SMDKC110
+> =A0 =A0 =A0 =A0select ARCH_SPARSEMEM_ENABLE
+> =A0 =A0 =A0 =A0select S3C_DEV_RTC
+> =A0 =A0 =A0 =A0select S3C_DEV_WDT
+> - =A0 =A0 =A0 select HAVE_S3C_RTC
+> =A0 =A0 =A0 =A0select HAVE_S3C2410_WATCHDOG
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Machine support for Samsung SMDKC110
+> --
+> 1.6.2.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
