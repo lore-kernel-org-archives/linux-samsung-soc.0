@@ -1,115 +1,56 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH v2 3/3] i2c/busses: Select I2C bus support for S5PV210 and
-	S5P6440.
-Date: Wed, 21 Jul 2010 23:02:22 +0900
-Message-ID: <AANLkTikV2oR5t9-xUxuJ_CHfMyJUWjdt-6AsoAUm5YqL@mail.gmail.com>
-References: <1279717167-24456-1-git-send-email-kgene.kim@samsung.com>
-	<AANLkTilygLmO9n0oconz73C6Bjtsgbh0cbfnJ1zU9YMb@mail.gmail.com>
-	<00a901cb28dc$75b5dc80$61219580$%kim@samsung.com>
+From: Sergei Shtylyov <sshtylyov@mvista.com>
+Subject: Re: [PATCH 3/3] rtc: rtc-s3c: Add BCD register initialization codes
+Date: Wed, 21 Jul 2010 18:42:20 +0400
+Message-ID: <4C47074C.703@ru.mvista.com>
+References: <1279702666-13021-1-git-send-email-kgene.kim@samsung.com> <1279702666-13021-4-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:34968 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758570Ab0GUOCX convert rfc822-to-8bit (ORCPT
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:49667 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758659Ab0GUOnT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Jul 2010 10:02:23 -0400
-In-Reply-To: <00a901cb28dc$75b5dc80$61219580$%kim@samsung.com>
+	Wed, 21 Jul 2010 10:43:19 -0400
+Received: by ewy23 with SMTP id 23so2292496ewy.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Jul 2010 07:43:17 -0700 (PDT)
+In-Reply-To: <1279702666-13021-4-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, ben-linux@fluff.org, Naveen Krishna Ch <ch.naveen@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, p_gortmaker@yahoo.com, Taekgyun Ko <taeggyun.ko@samsung.com>, ben-linux@fluff.org, a.zummo@towertech.it
 
-On Wed, Jul 21, 2010 at 10:55 PM, Kukjin Kim <kgene.kim@samsung.com> wr=
-ote:
-> Kyungmin Park wrote:
->>
->> I don't want to modify Kconfig anymore. it's simple to modify driver
-> itself.
->>
-> Yeah, I think so.
->
->> Think the usage of I2c. I think there's no case don't use it.
->>
->> At this time modify Kconfig once, and just fix the driver if new SoC=
-s
->> are arrives.
->> Of course we can modify Kconfig one more, If there's really new IPs =
-of
->> I2C are created. but I expect we also need to define new PLAT_SAMSUN=
-G2
->>
-> Maybe you did see the Watchdog driver...I think, in this case, the de=
-pending
-> on 'HAVE_xxx_I2C' is better than 'PLAT_xxx'.
->
-> If there is newer I2C, the 'HAVE_xxx_I2Cv2' is enough.
+Hello.
 
-yes it's personal taste. I just don't want to modify each Kconfig for
-every samsung ARCH.
-Now your team enables Samsung SoCs peripherals and if you like this
-way, you should define all SoCs peripherals like this.
+Kukjin Kim wrote:
 
->
->> Thank you,
->> Kyungmin Park
->>
->> On Wed, Jul 21, 2010 at 9:59 PM, Kukjin Kim <kgene.kim@samsung.com> =
-wrote:
->> > From: Naveen Krishna Ch <ch.naveen@samsung.com>
->> >
->> > This patch is to select support I2C channels 0, 1 and 2 for S5PV21=
-0 and
->> S5P6440.
->> >
->> > Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
->> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
->> > ---
->> > Changes since v1:
->> > - Modifed the Kconfig help comments.
->> >
->> > =A0drivers/i2c/busses/Kconfig | =A0 =A06 +++---
->> > =A01 files changed, 3 insertions(+), 3 deletions(-)
->> >
->> > diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconf=
-ig
->> > index bceafbf..27c96ec 100644
->> > --- a/drivers/i2c/busses/Kconfig
->> > +++ b/drivers/i2c/busses/Kconfig
->> > @@ -523,10 +523,10 @@ config I2C_PXA_SLAVE
->> >
->> > =A0config I2C_S3C2410
->> > =A0 =A0 =A0 =A0tristate "S3C2410 I2C Driver"
->> > - =A0 =A0 =A0 depends on ARCH_S3C2410 || ARCH_S3C64XX
->> > + =A0 =A0 =A0 depends on ARCH_S3C2410 || ARCH_S3C64XX || ARCH_S5P6=
-440 ||
->> ARCH_S5PV210
->> > =A0 =A0 =A0 =A0help
->> > - =A0 =A0 =A0 =A0 Say Y here to include support for I2C controller=
- in the
->> > - =A0 =A0 =A0 =A0 Samsung S3C2410 based System-on-Chip devices.
->> > + =A0 =A0 =A0 =A0 Say Y here to include support for I2C controller=
- in the
-> Samsung
->> > + =A0 =A0 =A0 =A0 S3C2410, S3C64XX, S5P6440 and S5PV210 based Syst=
-em-on-Chip
->> devices.
->> >
->> > =A0config I2C_S6000
->> > =A0 =A0 =A0 =A0tristate "S6000 I2C support"
->> > --
->> > 1.6.2.5
->> >
->> > --
->
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
->
+> From: Taekgyun Ko <taeggyun.ko@samsung.com>
+
+> RTC needs to be initialized when BCD registers have invalid value.
+
+> Signed-off-by: Taekgyun Ko <taeggyun.ko@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+[...]
+> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+> index 2040017..e96e109 100644
+> --- a/drivers/rtc/rtc-s3c.c
+> +++ b/drivers/rtc/rtc-s3c.c
+> @@ -536,10 +536,20 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
+>  
+>  	s3c_rtc_cpu_type = platform_get_device_id(pdev)->driver_data;
+>  
+> -	if (s3c_rtc_cpu_type == TYPE_S3C64XX)
+> +	if (s3c_rtc_cpu_type == TYPE_S3C64XX) {
+>  		rtc->max_user_freq = 32768;
+> -	else
+> +
+> +		/* Check RTC Time */
+> +
+> +		for (i = S3C2410_RTCSEC; i <= S3C2410_RTCYEAR; i += 0x4) {
+> +			tmp = readb(s3c_rtc_base + i);
+> +
+> +			if (((tmp & 0xf) > 0x9) || (((tmp >> 4) & 0xf) > 0x9))
+
+   There is no need to have parens around > operations.
+
+WBR, Sergei
