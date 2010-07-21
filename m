@@ -1,145 +1,210 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: SAMSUNG: Make RTC driver dependency SoC specific
-	instead of machine specific
-Date: Wed, 21 Jul 2010 21:29:51 +0900
-Message-ID: <009301cb28d0$6db6b470$49241d50$%kim@samsung.com>
-References: <1279702831-14968-1-git-send-email-kgene.kim@samsung.com>
- <AANLkTikIAuRD1mRpPpeHd-WqvHSG9S_nPYyE279J76zb@mail.gmail.com>
+Subject: RE: [PATCH v2 7/8] ARM: S5PV310: Add Board support file
+Date: Wed, 21 Jul 2010 21:33:55 +0900
+Message-ID: <009401cb28d0$fe7d1530$fb773f90$%kim@samsung.com>
+References: <1279270714-15146-1-git-send-email-kgene.kim@samsung.com>
+ <1279270714-15146-8-git-send-email-kgene.kim@samsung.com>
+ <AANLkTin9JjK3VEn1klnrB6_6CI2g6G6GA2dD8BGxTiTQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:54630 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752469Ab0GUM3z convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:63744 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752476Ab0GUMdv convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Jul 2010 08:29:55 -0400
-Received: from epmmp2 (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Wed, 21 Jul 2010 08:33:51 -0400
+Received: from epmmp2 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L5W00BQWQPM3640@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Jul 2010 21:29:46 +0900 (KST)
+ with ESMTP id <0L5W00BTFQWD5S80@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Jul 2010 21:33:49 +0900 (KST)
 Received: from kgenekim ([12.23.103.96])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L5W00D94QPLH9@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Jul 2010 21:29:46 +0900 (KST)
-In-reply-to: <AANLkTikIAuRD1mRpPpeHd-WqvHSG9S_nPYyE279J76zb@mail.gmail.com>
+ with ESMTPA id <0L5W00C8OQWCXI@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Jul 2010 21:33:48 +0900 (KST)
+In-reply-to: <AANLkTin9JjK3VEn1klnrB6_6CI2g6G6GA2dD8BGxTiTQ@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Kyungmin Park' <kmpark@infradead.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Atul Dahiya' <atul.dahiya@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Changhwan Youn' <chaos.youn@samsung.com>, ben-linux@fluff.org
 
 Kyungmin Park wrote:
 >=20
-> I don't see the Samsung SoCs don't have RTC feature.
->=20
-Yes, you're right...
-But it doesn't mean the RTC driver can support every Samsung SoCs now.
-
-> I think S3C_RTC only depends on PLAT_SAMSUNG so PLAT_SAMSUNG select
-> HAVE_S3C_RTC is enough.
-
-So I think, this is not bad.
-
->=20
-> Thank you,
-> Kyungmin Park
->=20
-> On Wed, Jul 21, 2010 at 6:00 PM, Kukjin Kim <kgene.kim@samsung.com> w=
+> On Fri, Jul 16, 2010 at 5:58 PM, Kukjin Kim <kgene.kim@samsung.com> w=
 rote:
-> > From: Atul Dahiya <atul.dahiya@samsung.com>
+> > From: Changhwan Youn <chaos.youn@samsung.com>
 > >
-> > This patch moves the dependency of RTC driver from MACH_XXX(board) =
-to
-> > ARCH_XXX(SoC). This will enable all machines using Samsung S5P6440,
-> S5PC100
-> > and S5PV210 SoCs to use RTC driver by default.
+> > This patch adds Samsung SMDKV310 board support file.
 > >
-> > Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
+> > Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
 > > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > > ---
-> > =A0arch/arm/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A03 +++
-> > =A0arch/arm/mach-s5p6440/Kconfig | =A0 =A01 -
-> > =A0arch/arm/mach-s5pc100/Kconfig | =A0 =A01 -
-> > =A0arch/arm/mach-s5pv210/Kconfig | =A0 =A02 --
-> > =A04 files changed, 3 insertions(+), 4 deletions(-)
+> > =A0arch/arm/mach-s5pv310/Makefile =A0 =A0 =A0 =A0| =A0 =A04 ++
+> > =A0arch/arm/mach-s5pv310/mach-smdkv310.c | =A0 92
+> +++++++++++++++++++++++++++++++++
+> > =A02 files changed, 96 insertions(+), 0 deletions(-)
+> > =A0create mode 100644 arch/arm/mach-s5pv310/mach-smdkv310.c
 > >
-> > diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> > index 98922f7..ea668a4 100644
-> > --- a/arch/arm/Kconfig
-> > +++ b/arch/arm/Kconfig
-> > @@ -672,6 +672,7 @@ config ARCH_S5P6440
-> > =A0 =A0 =A0 =A0select GENERIC_GPIO
-> > =A0 =A0 =A0 =A0select HAVE_CLK
-> > =A0 =A0 =A0 =A0select ARCH_USES_GETTIMEOFFSET
-> > + =A0 =A0 =A0 select HAVE_S3C_RTC
-> > =A0 =A0 =A0 =A0help
-> > =A0 =A0 =A0 =A0 =A0Samsung S5P6440 CPU based systems
-> >
-> > @@ -691,6 +692,7 @@ config ARCH_S5PC100
-> > =A0 =A0 =A0 =A0select CPU_V7
-> > =A0 =A0 =A0 =A0select ARM_L1_CACHE_SHIFT_6
-> > =A0 =A0 =A0 =A0select ARCH_USES_GETTIMEOFFSET
-> > + =A0 =A0 =A0 select HAVE_S3C_RTC
-> > =A0 =A0 =A0 =A0help
-> > =A0 =A0 =A0 =A0 =A0Samsung S5PC100 series based systems
-> >
-> > @@ -701,6 +703,7 @@ config ARCH_S5PV210
-> > =A0 =A0 =A0 =A0select HAVE_CLK
-> > =A0 =A0 =A0 =A0select ARM_L1_CACHE_SHIFT_6
-> > =A0 =A0 =A0 =A0select ARCH_USES_GETTIMEOFFSET
-> > + =A0 =A0 =A0 select HAVE_S3C_RTC
-> > =A0 =A0 =A0 =A0help
-> > =A0 =A0 =A0 =A0 =A0Samsung S5PV210/S5PC110 series based systems
-> >
-> > diff --git a/arch/arm/mach-s5p6440/Kconfig
-b/arch/arm/mach-s5p6440/Kconfig
-> > index b2d4716..de8f08d 100644
-> > --- a/arch/arm/mach-s5p6440/Kconfig
-> > +++ b/arch/arm/mach-s5p6440/Kconfig
-> > @@ -20,7 +20,6 @@ config MACH_SMDK6440
-> > =A0 =A0 =A0 =A0select SAMSUNG_DEV_ADC
-> > =A0 =A0 =A0 =A0select S3C_DEV_RTC
-> > =A0 =A0 =A0 =A0select S3C_DEV_WDT
-> > - =A0 =A0 =A0 select HAVE_S3C_RTC
-> > =A0 =A0 =A0 =A0select HAVE_S3C2410_WATCHDOG
-> > =A0 =A0 =A0 =A0help
-> > =A0 =A0 =A0 =A0 =A0Machine support for the Samsung SMDK6440
-> > diff --git a/arch/arm/mach-s5pc100/Kconfig
-b/arch/arm/mach-s5pc100/Kconfig
-> > index 2602895..e9c3d98 100644
-> > --- a/arch/arm/mach-s5pc100/Kconfig
-> > +++ b/arch/arm/mach-s5pc100/Kconfig
-> > @@ -48,7 +48,6 @@ config MACH_SMDKC100
-> > =A0 =A0 =A0 =A0select S5PC100_SETUP_FB_24BPP
-> > =A0 =A0 =A0 =A0select S5PC100_SETUP_I2C1
-> > =A0 =A0 =A0 =A0select S5PC100_SETUP_SDHCI
-> > - =A0 =A0 =A0 select HAVE_S3C_RTC
-> > =A0 =A0 =A0 =A0help
-> > =A0 =A0 =A0 =A0 =A0Machine support for the Samsung SMDKC100
-> >
-> > diff --git a/arch/arm/mach-s5pv210/Kconfig
-b/arch/arm/mach-s5pv210/Kconfig
-> > index 04597cc..7f029d1 100644
-> > --- a/arch/arm/mach-s5pv210/Kconfig
-> > +++ b/arch/arm/mach-s5pv210/Kconfig
-> > @@ -75,7 +75,6 @@ config MACH_SMDKV210
-> > =A0 =A0 =A0 =A0select SAMSUNG_DEV_TS
-> > =A0 =A0 =A0 =A0select S3C_DEV_RTC
-> > =A0 =A0 =A0 =A0select S3C_DEV_WDT
-> > - =A0 =A0 =A0 select HAVE_S3C_RTC
-> > =A0 =A0 =A0 =A0select HAVE_S3C2410_WATCHDOG
-> > =A0 =A0 =A0 =A0help
-> > =A0 =A0 =A0 =A0 =A0Machine support for Samsung SMDKV210
-> > @@ -86,7 +85,6 @@ config MACH_SMDKC110
-> > =A0 =A0 =A0 =A0select ARCH_SPARSEMEM_ENABLE
-> > =A0 =A0 =A0 =A0select S3C_DEV_RTC
-> > =A0 =A0 =A0 =A0select S3C_DEV_WDT
-> > - =A0 =A0 =A0 select HAVE_S3C_RTC
-> > =A0 =A0 =A0 =A0select HAVE_S3C2410_WATCHDOG
-> > =A0 =A0 =A0 =A0help
-> > =A0 =A0 =A0 =A0 =A0Machine support for Samsung SMDKC110
+> > diff --git a/arch/arm/mach-s5pv310/Makefile
+b/arch/arm/mach-s5pv310/Makefile
+> > index 1b263a5..56e7693 100644
+> > --- a/arch/arm/mach-s5pv310/Makefile
+> > +++ b/arch/arm/mach-s5pv310/Makefile
+> > @@ -18,3 +18,7 @@ obj-$(CONFIG_CPU_S5PV310) =A0 =A0 +=3D setup-i2c0=
+=2Eo time.o
+> > =A0obj-$(CONFIG_SMP) =A0 =A0 =A0 =A0 =A0 =A0 =A0+=3D platsmp.o head=
+smp.o
+> > =A0obj-$(CONFIG_LOCAL_TIMERS) =A0 =A0 +=3D localtimer.o
+> > =A0obj-$(CONFIG_HOTPLUG_CPU) =A0 =A0 =A0+=3D hotplug.o
+> > +
+> > +# machine support
+> > +
+> > +obj-$(CONFIG_MACH_SMDKV310) =A0 =A0+=3D mach-smdkv310.o
+> > diff --git a/arch/arm/mach-s5pv310/mach-smdkv310.c b/arch/arm/mach-
+> s5pv310/mach-smdkv310.c
+> > new file mode 100644
+> > index 0000000..0d6ab77
+> > --- /dev/null
+> > +++ b/arch/arm/mach-s5pv310/mach-smdkv310.c
+> > @@ -0,0 +1,92 @@
+> > +/* linux/arch/arm/mach-s5pv310/mach-smdkv310.c
+> > + *
+> > + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+> > + * =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com/
+> > + *
+> > + * This program is free software; you can redistribute it and/or m=
+odify
+> > + * it under the terms of the GNU General Public License version 2 =
+as
+> > + * published by the Free Software Foundation.
+> > +*/
+> > +
+> > +#include <linux/serial_core.h>
+> > +
+> > +#include <asm/mach/arch.h>
+> > +#include <asm/mach-types.h>
+> > +#include <asm/hardware/cache-l2x0.h>
+> > +
+> > +#include <plat/regs-serial.h>
+> > +#include <plat/s5pv310.h>
+> > +#include <plat/cpu.h>
+> > +
+> > +#include <mach/map.h>
+> > +
+> > +/* Following are default values for UCON, ULCON and UFCON UART
+registers
+> */
+> > +#define SMDKV310_UCON_DEFAULT =A0(S3C2410_UCON_TXILEVEL | =A0 =A0 =
+=A0 =A0\
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0S3=
+C2410_UCON_RXILEVEL | =A0 =A0 =A0 =A0\
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0S3=
+C2410_UCON_TXIRQMODE | =A0 =A0 =A0 \
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0S3=
+C2410_UCON_RXIRQMODE | =A0 =A0 =A0 \
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0S3=
+C2410_UCON_RXFIFO_TOI | =A0 =A0 =A0\
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0S3=
+C2443_UCON_RXERR_IRQEN)
+> > +
+> > +#define SMDKV310_ULCON_DEFAULT S3C2410_LCON_CS8
+> > +
+> > +#define SMDKV310_UFCON_DEFAULT (S3C2410_UFCON_FIFOMODE | =A0 =A0 =A0=
+ \
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0S5=
+PV210_UFCON_TXTRIG4 | =A0 =A0 =A0 =A0\
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0S5=
+PV210_UFCON_RXTRIG4)
+>=20
+> UART supports the 16 triggers at 2/3. No need to setup the lower valu=
+e.
+>=20
+UFCON_DEFAULT is board specific UART configuration. Usually, we set the=
+ Tx
+and Rx FIFO trigger level at 4. It does not matter. It mainly depends o=
+n the
+final use of UART. If required, it can be changed later.
+
+> > +
+> > +static struct s3c2410_uartcfg smdkv310_uartcfgs[] __initdata =3D {
+> > + =A0 =A0 =A0 [0] =3D {
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .hwport =A0 =A0 =A0 =A0 =3D 0,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0 =A0 =A0 =A0 =A0=3D 0,
+>=20
+> Please remove unused flags filed.
+> Previous time Mr. Shim sent the related patch.
+>=20
+As far as I know, not applied yet.
+
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ucon =A0 =A0 =A0 =A0 =A0 =3D SMDKV31=
+0_UCON_DEFAULT,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ulcon =A0 =A0 =A0 =A0 =A0=3D SMDKV31=
+0_ULCON_DEFAULT,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ufcon =A0 =A0 =A0 =A0 =A0=3D SMDKV31=
+0_UFCON_DEFAULT,
+> > + =A0 =A0 =A0 },
+> > + =A0 =A0 =A0 [1] =3D {
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .hwport =A0 =A0 =A0 =A0 =3D 1,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0 =A0 =A0 =A0 =A0=3D 0,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ucon =A0 =A0 =A0 =A0 =A0 =3D SMDKV31=
+0_UCON_DEFAULT,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ulcon =A0 =A0 =A0 =A0 =A0=3D SMDKV31=
+0_ULCON_DEFAULT,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ufcon =A0 =A0 =A0 =A0 =A0=3D SMDKV31=
+0_UFCON_DEFAULT,
+> > + =A0 =A0 =A0 },
+> > + =A0 =A0 =A0 [2] =3D {
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .hwport =A0 =A0 =A0 =A0 =3D 2,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0 =A0 =A0 =A0 =A0=3D 0,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ucon =A0 =A0 =A0 =A0 =A0 =3D SMDKV31=
+0_UCON_DEFAULT,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ulcon =A0 =A0 =A0 =A0 =A0=3D SMDKV31=
+0_ULCON_DEFAULT,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ufcon =A0 =A0 =A0 =A0 =A0=3D SMDKV31=
+0_UFCON_DEFAULT,
+> > + =A0 =A0 =A0 },
+> > + =A0 =A0 =A0 [3] =3D {
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .hwport =A0 =A0 =A0 =A0 =3D 3,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0 =A0 =A0 =A0 =A0=3D 0,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ucon =A0 =A0 =A0 =A0 =A0 =3D SMDKV31=
+0_UCON_DEFAULT,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ulcon =A0 =A0 =A0 =A0 =A0=3D SMDKV31=
+0_ULCON_DEFAULT,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ufcon =A0 =A0 =A0 =A0 =A0=3D SMDKV31=
+0_UFCON_DEFAULT,
+> > + =A0 =A0 =A0 },
+> > +};
+> > +
+> > +static void __init smdkv310_map_io(void)
+> > +{
+> > + =A0 =A0 =A0 s5p_init_io(NULL, 0, S5P_VA_CHIPID);
+> > + =A0 =A0 =A0 s3c24xx_init_clocks(24000000);
+> > + =A0 =A0 =A0 s3c24xx_init_uarts(smdkv310_uartcfgs,
+> ARRAY_SIZE(smdkv310_uartcfgs));
+> > +}
+> > +
+> > +static void __init smdkv310_machine_init(void)
+> > +{
+> > +#ifdef CONFIG_CACHE_L2X0
+> > + =A0 =A0 =A0 l2x0_init(S5P_VA_L2CC, 1 << 28, 0xffffffff);
+> > +#endif
+> > +}
+> > +
+> > +MACHINE_START(SMDKV310, "SMDKV310")
+> > + =A0 =A0 =A0 /* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+> > + =A0 =A0 =A0 /* Maintainer: Changhwan Youn <chaos.youn@samsung.com=
+> */
+> > + =A0 =A0 =A0 .phys_io =A0 =A0 =A0 =A0=3D S3C_PA_UART & 0xfff00000,
+> > + =A0 =A0 =A0 .io_pg_offst =A0 =A0=3D (((u32)S3C_VA_UART) >> 18) & =
+0xfffc,
+> > + =A0 =A0 =A0 .boot_params =A0 =A0=3D S5P_PA_SDRAM + 0x100,
+> > + =A0 =A0 =A0 .init_irq =A0 =A0 =A0 =3D s5pv310_init_irq,
+> > + =A0 =A0 =A0 .map_io =A0 =A0 =A0 =A0 =3D smdkv310_map_io,
+> > + =A0 =A0 =A0 .init_machine =A0 =3D smdkv310_machine_init,
+> > + =A0 =A0 =A0 .timer =A0 =A0 =A0 =A0 =A0=3D &s5pv310_timer,
+> > +MACHINE_END
 > > --
 
 Thanks.
