@@ -1,42 +1,60 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v4 7/7] ARM: S5PV210: Initial CPUFREQ Support
-Date: Thu, 22 Jul 2010 11:21:09 +0100
-Message-ID: <20100722102109.GI10930@sirena.org.uk>
-References: <1279790573-24179-1-git-send-email-myungjoo.ham@samsung.com> <1279790573-24179-2-git-send-email-myungjoo.ham@samsung.com> <1279790573-24179-3-git-send-email-myungjoo.ham@samsung.com> <1279790573-24179-4-git-send-email-myungjoo.ham@samsung.com> <1279790573-24179-5-git-send-email-myungjoo.ham@samsung.com> <1279790573-24179-6-git-send-email-myungjoo.ham@samsung.com> <1279790573-24179-7-git-send-email-myungjoo.ham@samsung.com> <1279790573-24179-8-git-send-email-myungjoo.ham@samsung.com>
+From: Liam Girdwood <lrg@slimlogic.co.uk>
+Subject: Re: [PATCH v2] regulator: MAX8998: set_voltage bugfix. ramp_up
+ delay and min/max voltage
+Date: Thu, 22 Jul 2010 13:02:10 +0100
+Message-ID: <1279800130.3083.44.camel@odin>
+References: <1279391048.3070.11.camel@odin>
+	 <1279606027-18345-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:34849 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753190Ab0GVKVM (ORCPT
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:37152 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751260Ab0GVMCO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Jul 2010 06:21:12 -0400
-Content-Disposition: inline
-In-Reply-To: <1279790573-24179-8-git-send-email-myungjoo.ham@samsung.com>
+	Thu, 22 Jul 2010 08:02:14 -0400
+Received: by wyf19 with SMTP id 19so498665wyf.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Jul 2010 05:02:13 -0700 (PDT)
+In-Reply-To: <1279606027-18345-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, broonie@opensource.wolfsonmicro.com, sameo@linux.intel.com
 
-On Thu, Jul 22, 2010 at 06:22:53PM +0900, MyungJoo Ham wrote:
-> S5PV210 CPUFREQ Support.
+On Tue, 2010-07-20 at 08:07 +0200, Marek Szyprowski wrote:
+> From: MyungJoo Ham <myungjoo.ham@samsung.com>
 > 
-> This CPUFREQ may work without PMIC's DVS support. However, it is not
-> as effective without DVS support as supposed. AVS is not supported in
-> this version.
+> Two issues are addressed for max8998_set_voltage function.
 > 
-> Note that CLK_SRC of some clocks including ARMCLK, G3D, G2D, MFC,
-> and ONEDRAM are modified directly without updating clksrc_src
-> representations of the clocks.  Because CPUFREQ reverts the CLK_SRC
-> to the supposed values, this does not affect the consistency as long as
-> there are no other modules that modifies clock sources of ARMCLK, G3D,
-> G2D, MFC, and ONEDRAM (and only CPUFREQ should have the control). As
-> soon as clock framework is settled, we may update source clocks
-> (.parent field) of those clocks accordingly later.
+> 1. Min/Max Voltage.
 > 
-> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> 	max8998_set_voltage had been using the voltage value of
+> 
+> 	min ( voltage[i] >= max_vol , i )
+> 
+> 	This is corrected to use:
+> 
+> 	min ( voltage[i] >= min_vol , i )
+> 
+> 2. Ramp Up Delay.
+> 
+> 	max8998_set_voltage should provide delay for BUCK1/2
+> if ENRAMP is on. It reads RAMP value from ONOFF4 register to determine
+> RAMP delay length. However, when max8998_set_voltage's new voltage is
+> lower than the previous, we don't care because it does not deteriorate
+> the stability.
+> 
+> Changes since v1:
+> - rebased onto latest regulator-for-next tree
 
-Still
+Applied. Btw, please run checkpatch and/or cleanpatch before submitting
+next time as this patch contained some trailing white space.
 
-Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Thanks
+
+Liam
+-- 
+Freelance Developer, SlimLogic Ltd
+ASoC and Voltage Regulator Maintainer.
+http://www.slimlogic.co.uk
