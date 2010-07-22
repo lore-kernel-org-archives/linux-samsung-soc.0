@@ -1,129 +1,93 @@
-From: Wan ZongShun <mcuos.com@gmail.com>
-Subject: Re: [rtc-linux] [PATCH 2/2] rtc: rtc-s3c: Updates RTC driver for
-	clock enabling support
-Date: Thu, 22 Jul 2010 14:09:00 +0800
-Message-ID: <AANLkTikGjzmHxCX6_s5Z-ZXkoyPbtF28uCyE1VqdGPvb@mail.gmail.com>
-References: <1279702501-6803-1-git-send-email-kgene.kim@samsung.com>
-	<1279702501-6803-3-git-send-email-kgene.kim@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH v3] Samsung: sdhci-s3c: add support for new card detection
+	methods
+Date: Thu, 22 Jul 2010 10:25:44 +0200
+Message-ID: <000501cb2977$7d6cf210$7846d630$%szyprowski@samsung.com>
+References: <1279181721-23333-1-git-send-email-m.szyprowski@samsung.com>
+	<20100715133954.7fcb797a.akpm@linux-foundation.org>
+	<011401cb24af$8eb2cb70$ac186250$%szyprowski@samsung.com>
+	<20100721161133.5c3285d3.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:55976 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751096Ab0GVGJC convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Jul 2010 02:09:02 -0400
-Received: by gxk23 with SMTP id 23so4311086gxk.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Jul 2010 23:09:01 -0700 (PDT)
-In-Reply-To: <1279702501-6803-3-git-send-email-kgene.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <20100721161133.5c3285d3.akpm@linux-foundation.org>
+Content-language: pl
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Andrew Morton' <akpm@linux-foundation.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: rtc-linux@googlegroups.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, p_gortmaker@yahoo.com, a.zummo@towertech.it, Atul Dahiya <atul.dahiya@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Andrew Morton <akpm@linux-foundation.org>
 
-2010/7/21 Kukjin Kim <kgene.kim@samsung.com>:
-> From: Atul Dahiya <atul.dahiya@samsung.com>
->
-> This Patch updates existing Samsung RTC driver for clock enabling sup=
-port.
->
-> Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
-> =C2=A0drivers/rtc/rtc-s3c.c | =C2=A0 22 ++++++++++++++++++++++
-> =C2=A01 files changed, 22 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-> index 70b68d3..c032a15 100644
-> --- a/drivers/rtc/rtc-s3c.c
-> +++ b/drivers/rtc/rtc-s3c.c
-> @@ -1,5 +1,8 @@
-> =C2=A0/* drivers/rtc/rtc-s3c.c
-> =C2=A0*
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + * =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 http://www.samsung.com/
-> + *
-> =C2=A0* Copyright (c) 2004,2006 Simtec Electronics
-> =C2=A0* =C2=A0 =C2=A0 Ben Dooks, <ben@simtec.co.uk>
-> =C2=A0* =C2=A0 =C2=A0 http://armlinux.simtec.co.uk/
-> @@ -39,6 +42,7 @@ enum s3c_cpu_type {
->
-> =C2=A0static struct resource *s3c_rtc_mem;
->
-> +static struct clk *rtc_clk;
-> =C2=A0static void __iomem *s3c_rtc_base;
-> =C2=A0static int s3c_rtc_alarmno =3D NO_IRQ;
-> =C2=A0static int s3c_rtc_tickno =C2=A0=3D NO_IRQ;
-> @@ -431,6 +435,10 @@ static int __devexit s3c_rtc_remove(struct platf=
-orm_device *dev)
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0s3c_rtc_setpie(&dev->dev, 0);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0s3c_rtc_setaie(0);
->
-> + =C2=A0 =C2=A0 =C2=A0 clk_disable(rtc_clk);
-> + =C2=A0 =C2=A0 =C2=A0 clk_put(rtc_clk);
-> + =C2=A0 =C2=A0 =C2=A0 rtc_clk =3D NULL;
-> +
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0iounmap(s3c_rtc_base);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0release_resource(s3c_rtc_mem);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0kfree(s3c_rtc_mem);
-> @@ -488,6 +496,16 @@ static int __devinit s3c_rtc_probe(struct platfo=
-rm_device *pdev)
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto err_nomap=
-;
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0}
->
-> + =C2=A0 =C2=A0 =C2=A0 rtc_clk =3D clk_get(&pdev->dev, "rtc");
+Hello,
 
-Do you really need the second argument? I think the bus clock for
-a device should be findable with NULL for s3c platform..
+On Thursday, July 22, 2010 1:12 AM 
 
-> + =C2=A0 =C2=A0 =C2=A0 if (IS_ERR(rtc_clk)) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dev_err(&pdev->dev=
-, "failed to find rtc clock source\n");
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ret =3D PTR_ERR(rt=
-c_clk);
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rtc_clk =3D NULL;
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 goto err_clk;
-> + =C2=A0 =C2=A0 =C2=A0 }
-> +
-> + =C2=A0 =C2=A0 =C2=A0 clk_enable(rtc_clk);
-> +
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0/* check to see if everything is setup cor=
-rectly */
->
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0s3c_rtc_enable(pdev, 1);
-> @@ -523,6 +541,10 @@ static int __devinit s3c_rtc_probe(struct platfo=
-rm_device *pdev)
->
-> =C2=A0err_nortc:
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0s3c_rtc_enable(pdev, 0);
-> + =C2=A0 =C2=A0 =C2=A0 clk_disable(rtc_clk);
-> + =C2=A0 =C2=A0 =C2=A0 clk_put(rtc_clk);
-> +
-> + err_clk:
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0iounmap(s3c_rtc_base);
->
-> =C2=A0err_nomap:
+> On Fri, 16 Jul 2010 08:24:26 +0200
+> Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> 
+> > > >  arch/arm/mach-s3c64xx/setup-sdhci-gpio.c   |   14 +++++++++---
+> > > >  arch/arm/mach-s5pc100/setup-sdhci-gpio.c   |   21 ++++++++++++++----
+> -
+> > > >  arch/arm/mach-s5pv210/setup-sdhci-gpio.c   |   22 +++++++++++++++---
 > --
-> 1.6.2.5
->
-> --
-> You received this message because you are subscribed to "rtc-linux".
-> Membership options at http://groups.google.com/group/rtc-linux .
-> Please read http://groups.google.com/group/rtc-linux/web/checklist
-> before submitting a driver.
+> > > >  arch/arm/plat-samsung/dev-hsmmc.c          |    5 ++++
+> > > >  arch/arm/plat-samsung/dev-hsmmc1.c         |    5 ++++
+> > > >  arch/arm/plat-samsung/dev-hsmmc2.c         |    5 ++++
+> > > >  arch/arm/plat-samsung/dev-hsmmc3.c         |    5 ++++
+> > > >  arch/arm/plat-samsung/include/plat/sdhci.h |   29
+> > > ++++++++++++++++++++++++++++
+> > > >  8 files changed, 90 insertions(+), 16 deletions(-)
+> > >
+> > > This is quite confusing.  You've already sent a patch called
+> > > "sdhci-s3c: add support for new card detection methods".  It had the
+> > > same changelog as this patch and the same title, but the two patches
+> > > are utterly different!
+> >
+> > The real patch has been split into two for easier merging: 1. the driver
+> > part and 2. samsung platform related part. The part which patch belongs
+> > to is indicated in the last line of the change log.
+> >
+> > I'm really confused how to submit properly a patch that requires changes
+> > to both the driver (which is merged by the proper driver maintainer's
+> > sub-tree) and the platform (which should go through platform maintainer's
+> > tree).
+> 
+> Make the relationship very very clear in the changelog.  Send both
+> patches to both maintainers.  Ask that one of them merge both patches
+> and that the other ack both patches.
 
+Ok. Thanks for the hint.
 
+> Anyway, I've forgotten what's happening here.  I appear to be sitting on
+> 
+> sdhci-s3c-add-support-for-the-non-standard-minimal-clock-value.patch
 
---=20
-*linux-arm-kernel mailing list
-mail addr:linux-arm-kernel@lists.infradead.org
-you can subscribe by:
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+This one is independent from the card-detection patches and can be applied
+directly onto linux-next kernel tree.
 
-* linux-arm-NUC900 mailing list
-mail addr:NUC900@googlegroups.com
-main web: https://groups.google.com/group/NUC900
-you can subscribe it by sending me mail:
-mcuos.com@gmail.com
+> and
+> sdhci-s3c-add-support-for-new-card-detection-methods.patch
+> 
+> the latter of which is below.
+> 
+> Am I missing something?  Is
+> sdhci-s3c-add-support-for-new-card-detection-methods.patch up to date?
+> 
+
+Ok, I will repost these 2 patches under new names to avoid further
+confusion. Currently there exists two 
+"sdhci-s3c-add-support-for-new-card-detection-methods.patch", both of them 
+are required.
+
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
