@@ -1,76 +1,122 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 2/2] ARM: S5PV210: Add s5pv210_sw_reset for SWRESET
-Date: Fri, 23 Jul 2010 21:43:59 +0900
-Message-ID: <1279889039-9718-3-git-send-email-kgene.kim@samsung.com>
-References: <1279889039-9718-1-git-send-email-kgene.kim@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:44045 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758207Ab0GWM4o (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Jul 2010 08:56:44 -0400
-In-Reply-To: <1279889039-9718-1-git-send-email-kgene.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH v3 3/3] sdhci-s3c: Add SDHCI_QUIRK_NO_WP_BIT quirk for
+	Samsung SoC
+Date: Fri, 23 Jul 2010 15:17:09 +0200
+Message-ID: <005d01cb2a69$5eeceff0$1cc6cfd0$%szyprowski@samsung.com>
+References: <1279886191-9197-1-git-send-email-kgene.kim@samsung.com>
+	<1279886191-9197-4-git-send-email-kgene.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1279886191-9197-4-git-send-email-kgene.kim@samsung.com>
+Content-language: pl
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
+Cc: akpm@linux-foundation.org, ben-linux@fluff.org, 'Hyuk Lee' <hyuk1.lee@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Jongpill Lee <boyko.lee@samsung.com>
+Hello,
 
-This patch adds s5pv210_sw_reset() which includes SWRESET for S5PV210/S5PC110.
+On Friday, July 23, 2010 1:57 PM Kukjin Kim wrote:
 
-Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s5pv210/cpu.c                     |    9 +++++++++
- arch/arm/mach-s5pv210/include/mach/regs-clock.h |    2 ++
- 2 files changed, 11 insertions(+), 0 deletions(-)
+> From: Hyuk Lee <hyuk1.lee@samsung.com>
+> 
+> If host controller doesn't have WP pin which should be connnected with
+> SDMMC
+> card WP pin, can implement get_ro function with using the allocated gpio.
+> In order to use this quirk wp_gpio in the platform data must be set.
+> 
+> Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+>  drivers/mmc/host/sdhci-s3c.c |   43
+> ++++++++++++++++++++++++++++++++++++++++++
+>  drivers/mmc/host/sdhci.c     |    3 ++
+>  drivers/mmc/host/sdhci.h     |    3 ++
+>  3 files changed, 49 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> index 0d25285..0b75e57 100644
+> --- a/drivers/mmc/host/sdhci-s3c.c
+> +++ b/drivers/mmc/host/sdhci-s3c.c
+> @@ -22,6 +22,7 @@
+> 
+>  #include <linux/mmc/host.h>
+> 
+> +#include <plat/gpio-cfg.h>
+>  #include <plat/sdhci.h>
+>  #include <plat/regs-sdhci.h>
+> 
+> @@ -213,6 +214,36 @@ static void sdhci_s3c_set_clock(struct sdhci_host
+> *host, unsigned int clock)
+>  }
+> 
+>  /**
+> + * sdhci_s3c_get_ro - callback for get_ro
+> + * @host: The SDHCI host being changed
+> + *
+> + * If the WP pin is connected with GPIO, can get the value which indicates
+> + * the card is locked or not.
+> +*/
+> +static int sdhci_s3c_get_ro(struct mmc_host *mmc)
+> +{
+> +	struct sdhci_s3c *sc;
+> +	struct sdhci_host *host;
+> +
+> +	host = mmc_priv(mmc);
+> +	sc = sdhci_priv(host);
+> +
+> +	return gpio_get_value(sc->pdata->wp_gpio);
+> +}
+> +
+> +/**
+> + * sdhci_s3c_cfg_wp - configure GPIO for WP pin
+> + * @gpio_num: GPIO number which connected with WP line from SD/MMC slot
+> + *
+> + * Configure GPIO for using WP line
+> +*/
+> +static void sdhci_s3c_cfg_wp(unsigned int gpio_num)
+> +{
+> +	s3c_gpio_cfgpin(gpio_num, S3C_GPIO_INPUT);
+> +	s3c_gpio_setpull(gpio_num, S3C_GPIO_PULL_UP);
+> +}
+> +
+> +/**
+>   * sdhci_s3c_get_min_clock - callback to get minimal supported clock value
+>   * @host: The SDHCI host being queried
+>   *
+> @@ -375,6 +406,9 @@ static int __devinit sdhci_s3c_probe(struct
+> platform_device *pdev)
+>  	if (pdata->cfg_gpio)
+>  		pdata->cfg_gpio(pdev, pdata->max_width);
+> 
+> +	if (gpio_is_valid(pdata->wp_gpio))
+> +		sdhci_s3c_ops.get_ro = sdhci_s3c_get_ro;
+> +
 
-diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
-index 411a4a9..2a61d81 100644
---- a/arch/arm/mach-s5pv210/cpu.c
-+++ b/arch/arm/mach-s5pv210/cpu.c
-@@ -34,6 +34,7 @@
- #include <plat/s5pv210.h>
- #include <plat/iic-core.h>
- #include <plat/sdhci.h>
-+#include <plat/reset.h>
- 
- /* Initial IO mappings */
- 
-@@ -69,6 +70,11 @@ static void s5pv210_idle(void)
- 	local_irq_enable();
- }
- 
-+static void s5pv210_sw_reset(void)
-+{
-+	__raw_writel(0x1, S5P_SWRESET);
-+}
-+
- /* s5pv210_map_io
-  *
-  * register the standard cpu IO areas
-@@ -138,5 +144,8 @@ int __init s5pv210_init(void)
- 	/* set idle function */
- 	pm_idle = s5pv210_idle;
- 
-+	/* set sw_reset function */
-+	s5p_reset_hook = s5pv210_sw_reset;
-+
- 	return sysdev_register(&s5pv210_sysdev);
- }
-diff --git a/arch/arm/mach-s5pv210/include/mach/regs-clock.h b/arch/arm/mach-s5pv210/include/mach/regs-clock.h
-index 2a25ab4..499aef7 100644
---- a/arch/arm/mach-s5pv210/include/mach/regs-clock.h
-+++ b/arch/arm/mach-s5pv210/include/mach/regs-clock.h
-@@ -90,6 +90,8 @@
- #define S5P_CLKDIV0_PCLK66_SHIFT	(28)
- #define S5P_CLKDIV0_PCLK66_MASK		(0x7 << S5P_CLKDIV0_PCLK66_SHIFT)
- 
-+#define S5P_SWRESET		S5P_CLKREG(0x2000)
-+
- /* Registers related to power management */
- #define S5P_PWR_CFG		S5P_CLKREG(0xC000)
- #define S5P_EINT_WAKEUP_MASK	S5P_CLKREG(0xC004)
--- 
-1.6.2.5
+There is still a problem here, but the opposite to the issue from V1 of this
+patch.
+If one apply the current version, he would need to set pdata->wp_gpio to -1 on
+all
+existing platforms to get old behavior of the driver. Leaving it as zero means
+that
+the driver will try to use GPA(0) for write protection.
+
+Adding one more field to pdata (like "bool has_gpio_wp") seems to be unavoidable
+in this case imho.
+
+> (snip)
+
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
