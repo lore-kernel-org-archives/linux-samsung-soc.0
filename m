@@ -1,129 +1,59 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] ARM: S5PV210: Add SDHCI devices for GONI board
-Date: Fri, 23 Jul 2010 16:47:00 +0200
-Message-ID: <1279896420-29642-1-git-send-email-m.szyprowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v3 0/8] Samsung S5P SoC camera interface driver
+Date: Fri, 23 Jul 2010 18:21:15 +0200
+Message-ID: <1279902083-21250-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:27423 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754650Ab0GWOrG (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:32690 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752727Ab0GWQVh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Jul 2010 10:47:06 -0400
-Received: from eu_spt2 ([210.118.77.14]) by mailout4.w1.samsung.com
+	Fri, 23 Jul 2010 12:21:37 -0400
+Received: from eu_spt1 ([210.118.77.13]) by mailout3.w1.samsung.com
  (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0L6000KAPMEFOY10@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 23 Jul 2010 15:47:03 +0100 (BST)
+ with ESMTP id <0L6000A8LQRZKM20@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 Jul 2010 17:21:35 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L6000BB6MEE13@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 23 Jul 2010 15:47:03 +0100 (BST)
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0L60002K6QRYKK@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 Jul 2010 17:21:35 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
+Cc: p.osciak@samsung.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com
 
-This patch add support for SDHCI blocks on Samsung Goni board. The
-following host controllers are defined:
-1. Internal MoviNAND device (permanently wired to the controller)
-2. Internal WiFI SDIO device (card is activated by power regualor)
-3. External MMC/SD socket (card detection is provided by external
-gpio interrupt)
+Hello,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-s5pv210/Kconfig     |    4 +++
- arch/arm/mach-s5pv210/mach-goni.c |   39 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 43 insertions(+), 0 deletions(-)
+This is a third version of my patch series adding support for camera interface,
+video output and video processing IP contained in Samsung's S3C/S5P SoCs.
 
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index c64dff1..13e0690 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -74,8 +74,12 @@ config MACH_GONI
- 	select CPU_S5PV210
- 	select ARCH_SPARSEMEM_ENABLE
- 	select S5PV210_SETUP_FB_24BPP
-+	select S5PV210_SETUP_SDHCI
- 	select S3C_DEV_FB
- 	select S5PC110_DEV_ONENAND
-+	select S3C_DEV_HSMMC
-+	select S3C_DEV_HSMMC1
-+	select S3C_DEV_HSMMC2
- 	help
- 	  Machine support for Samsung GONI board
- 	  S5PC110(MCP) is one of package option of S5PV210
-diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
-index 7b18505..e374b34 100644
---- a/arch/arm/mach-s5pv210/mach-goni.c
-+++ b/arch/arm/mach-s5pv210/mach-goni.c
-@@ -35,6 +35,7 @@
- #include <plat/devs.h>
- #include <plat/cpu.h>
- #include <plat/fb.h>
-+#include <plat/sdhci.h>
- 
- /* Following are default values for UCON, ULCON and UFCON UART registers */
- #define S5PV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-@@ -420,12 +421,47 @@ static void __init goni_pmic_init(void)
- 	s3c_gpio_setpull(S5PV210_GPH2(6), S3C_GPIO_PULL_UP);
- }
- 
-+/* MoviNAND */
-+static struct s3c_sdhci_platdata goni_hsmmc0_data __initdata = {
-+	.max_width		= 4,
-+	.cd_type		= S3C_SDHCI_CD_PERMANENT,
-+};
-+
-+/* Wireless LAN */
-+static struct s3c_sdhci_platdata goni_hsmmc1_data __initdata = {
-+	.max_width		= 4,
-+	.cd_type		= S3C_SDHCI_CD_EXTERNAL,
-+	/* ext_cd_{init,cleanup} callbacks will be added later */
-+};
-+
-+/* External Flash */
-+#define GONI_EXT_FLASH_EN	S5PV210_MP05(4)
-+#define GONI_EXT_FLASH_CD	S5PV210_GPH3(4)
-+static struct s3c_sdhci_platdata goni_hsmmc2_data __initdata = {
-+	.max_width		= 4,
-+	.cd_type		= S3C_SDHCI_CD_GPIO,
-+	.ext_cd_gpio		= GONI_EXT_FLASH_CD,
-+	.ext_cd_gpio_invert	= 1,
-+};
-+
-+static void goni_setup_sdhci(void)
-+{
-+	gpio_request(GONI_EXT_FLASH_EN, "FLASH_EN");
-+	gpio_direction_output(GONI_EXT_FLASH_EN, 1);
-+
-+	s3c_sdhci0_set_platdata(&goni_hsmmc0_data);
-+	s3c_sdhci1_set_platdata(&goni_hsmmc1_data);
-+	s3c_sdhci2_set_platdata(&goni_hsmmc2_data);
-+};
- 
- static struct platform_device *goni_devices[] __initdata = {
- 	&s3c_device_fb,
- 	&s5pc110_device_onenand,
- 	&goni_i2c_gpio_pmic,
- 	&goni_device_gpiokeys,
-+	&s3c_device_hsmmc0,
-+	&s3c_device_hsmmc1,
-+	&s3c_device_hsmmc2,
- };
- 
- static void __init goni_map_io(void)
-@@ -441,6 +477,9 @@ static void __init goni_machine_init(void)
- 	goni_pmic_init();
- 	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4, i2c_gpio_pmic_devs,
- 			ARRAY_SIZE(i2c_gpio_pmic_devs));
-+	/* SDHCI */
-+	goni_setup_sdhci();
-+
- 	/* FB */
- 	s3c_fb_set_platdata(&goni_lcd_pdata);
- 
--- 
-1.7.1.569.g6f426
+Changes since v1:
+- support for multiple SoC variants through the platform device name overriding
+  (S5PC100 and SPV210 version definitions included)
+
+Changes since v2:
+- reworked register definition, minor synchronization fixes, whitespace cleanup
+- removed support for FIFO mode output to the lcd controller due to
+  hardware limitations (removed fifo link and platform data setup code
+  and v4l2_subdevice in s3c-fb driver)
+
+
+The following patch series contains:
+
+[PATCH v3 1/8] ARM: Samsung: Add register definitions for Samsung S5P SoC camera interface
+[PATCH v3 2/8] v4l: Add driver for Samsung S3C/S5P SoC video postprocessor
+[PATCH v3 3/8] ARM: Samsung: Add platform definitions and helpers for FIMC driver
+[PATCH v3 4/8] ARM: Samsung: Add common Aquila and GONI code
+[PATCH v3 5/8] ARM: s5pv210: enable FIMC on Aquila
+[PATCH v3 6/8] ARM: s5pv210: enable FIMC on Goni
+[PATCH v3 7/8] ARM: S5PC100: enable FIMC on SMDKC100
+[PATCH v3 8/8] ARM: s5pv210: Override FIMC driver name on Aquila board
+
+
+Best regards,
+--
+Sylwester Nawrocki
+Linux Platform Group
+Samsung Poland R&D Center
