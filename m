@@ -1,12 +1,12 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 1/2] ARM: S5P: Add s5p_reset_hook() for perform reset using SWRESET on S5P SoCs
-Date: Fri, 23 Jul 2010 21:43:58 +0900
-Message-ID: <1279889039-9718-2-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 2/2] ARM: S5PV210: Add s5pv210_sw_reset for SWRESET
+Date: Fri, 23 Jul 2010 21:43:59 +0900
+Message-ID: <1279889039-9718-3-git-send-email-kgene.kim@samsung.com>
 References: <1279889039-9718-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:44046 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:44045 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758277Ab0GWM4o (ORCPT
+	with ESMTP id S1758207Ab0GWM4o (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 23 Jul 2010 08:56:44 -0400
 In-Reply-To: <1279889039-9718-1-git-send-email-kgene.kim@samsung.com>
@@ -17,62 +17,60 @@ Cc: ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Kukjin Kim <kgene
 
 From: Jongpill Lee <boyko.lee@samsung.com>
 
-This patch adds s5p_reset_hook() which includes software reset
-by using SWRESET.
+This patch adds s5pv210_sw_reset() which includes SWRESET for S5PV210/S5PC110.
 
 Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/plat-s5p/include/plat/reset.h        |   16 ++++++++++++++++
- arch/arm/plat-s5p/include/plat/system-reset.h |   11 +++++++++--
- 2 files changed, 25 insertions(+), 2 deletions(-)
- create mode 100644 arch/arm/plat-s5p/include/plat/reset.h
+ arch/arm/mach-s5pv210/cpu.c                     |    9 +++++++++
+ arch/arm/mach-s5pv210/include/mach/regs-clock.h |    2 ++
+ 2 files changed, 11 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/plat-s5p/include/plat/reset.h b/arch/arm/plat-s5p/include/plat/reset.h
-new file mode 100644
-index 0000000..335e978
---- /dev/null
-+++ b/arch/arm/plat-s5p/include/plat/reset.h
-@@ -0,0 +1,16 @@
-+/* linux/arch/arm/plat-s5p/include/plat/reset.h
-+ *
-+ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __ASM_PLAT_S5P_RESET_H
-+#define __ASM_PLAT_S5P_RESET_H __FILE__
-+
-+extern void (*s5p_reset_hook)(void);
-+
-+#endif /* __ASM_PLAT_S5P_RESET_H */
-diff --git a/arch/arm/plat-s5p/include/plat/system-reset.h b/arch/arm/plat-s5p/include/plat/system-reset.h
-index 7f76a16..f307f34 100644
---- a/arch/arm/plat-s5p/include/plat/system-reset.h
-+++ b/arch/arm/plat-s5p/include/plat/system-reset.h
-@@ -14,10 +14,17 @@
+diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
+index 411a4a9..2a61d81 100644
+--- a/arch/arm/mach-s5pv210/cpu.c
++++ b/arch/arm/mach-s5pv210/cpu.c
+@@ -34,6 +34,7 @@
+ #include <plat/s5pv210.h>
+ #include <plat/iic-core.h>
+ #include <plat/sdhci.h>
++#include <plat/reset.h>
  
- #include <plat/watchdog-reset.h>
+ /* Initial IO mappings */
  
-+void (*s5p_reset_hook)(void);
-+
- static void arch_reset(char mode, const char *cmd)
- {
--	/* Perform reset using Watchdog reset.
--	 * SWRESET support will be added later.
-+	/* SWRESET support in s5p_reset_hook() */
-+
-+	if (s5p_reset_hook)
-+		s5p_reset_hook();
-+
-+	/* Perform reset using Watchdog reset
-+	 * if there is no s5p_reset_hook()
- 	 */
+@@ -69,6 +70,11 @@ static void s5pv210_idle(void)
+ 	local_irq_enable();
+ }
  
- 	arch_wdt_reset();
++static void s5pv210_sw_reset(void)
++{
++	__raw_writel(0x1, S5P_SWRESET);
++}
++
+ /* s5pv210_map_io
+  *
+  * register the standard cpu IO areas
+@@ -138,5 +144,8 @@ int __init s5pv210_init(void)
+ 	/* set idle function */
+ 	pm_idle = s5pv210_idle;
+ 
++	/* set sw_reset function */
++	s5p_reset_hook = s5pv210_sw_reset;
++
+ 	return sysdev_register(&s5pv210_sysdev);
+ }
+diff --git a/arch/arm/mach-s5pv210/include/mach/regs-clock.h b/arch/arm/mach-s5pv210/include/mach/regs-clock.h
+index 2a25ab4..499aef7 100644
+--- a/arch/arm/mach-s5pv210/include/mach/regs-clock.h
++++ b/arch/arm/mach-s5pv210/include/mach/regs-clock.h
+@@ -90,6 +90,8 @@
+ #define S5P_CLKDIV0_PCLK66_SHIFT	(28)
+ #define S5P_CLKDIV0_PCLK66_MASK		(0x7 << S5P_CLKDIV0_PCLK66_SHIFT)
+ 
++#define S5P_SWRESET		S5P_CLKREG(0x2000)
++
+ /* Registers related to power management */
+ #define S5P_PWR_CFG		S5P_CLKREG(0xC000)
+ #define S5P_EINT_WAKEUP_MASK	S5P_CLKREG(0xC004)
 -- 
 1.6.2.5
