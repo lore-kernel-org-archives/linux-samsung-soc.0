@@ -1,122 +1,129 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH v3 3/3] sdhci-s3c: Add SDHCI_QUIRK_NO_WP_BIT quirk for
-	Samsung SoC
-Date: Fri, 23 Jul 2010 15:17:09 +0200
-Message-ID: <005d01cb2a69$5eeceff0$1cc6cfd0$%szyprowski@samsung.com>
-References: <1279886191-9197-1-git-send-email-kgene.kim@samsung.com>
-	<1279886191-9197-4-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH] ARM: S5PV210: Add SDHCI devices for Aquila board
+Date: Fri, 23 Jul 2010 16:46:47 +0200
+Message-ID: <1279896407-29571-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1279886191-9197-4-git-send-email-kgene.kim@samsung.com>
-Content-language: pl
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
-Cc: akpm@linux-foundation.org, ben-linux@fluff.org, 'Hyuk Lee' <hyuk1.lee@samsung.com>
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:26040 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754407Ab0GWOqy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 23 Jul 2010 10:46:54 -0400
+Received: from eu_spt2 (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L600010AME40H@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 Jul 2010 15:46:52 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0L6000KYUME383@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 Jul 2010 15:46:52 +0100 (BST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
 
-Hello,
+This patch add support for SDHCI blocks on Samsung Aquila board. The
+following host controllers are defined:
+1. Internal MoviNAND device (permanently wired to the controller)
+2. Internal WiFI SDIO device (card is activated by power regualor)
+3. External MMC/SD socket (card detection is provided by external
+gpio interrupt)
 
-On Friday, July 23, 2010 1:57 PM Kukjin Kim wrote:
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-s5pv210/Kconfig       |    4 +++
+ arch/arm/mach-s5pv210/mach-aquila.c |   39 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 43 insertions(+), 0 deletions(-)
 
-> From: Hyuk Lee <hyuk1.lee@samsung.com>
-> 
-> If host controller doesn't have WP pin which should be connnected with
-> SDMMC
-> card WP pin, can implement get_ro function with using the allocated gpio.
-> In order to use this quirk wp_gpio in the platform data must be set.
-> 
-> Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
->  drivers/mmc/host/sdhci-s3c.c |   43
-> ++++++++++++++++++++++++++++++++++++++++++
->  drivers/mmc/host/sdhci.c     |    3 ++
->  drivers/mmc/host/sdhci.h     |    3 ++
->  3 files changed, 49 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-> index 0d25285..0b75e57 100644
-> --- a/drivers/mmc/host/sdhci-s3c.c
-> +++ b/drivers/mmc/host/sdhci-s3c.c
-> @@ -22,6 +22,7 @@
-> 
->  #include <linux/mmc/host.h>
-> 
-> +#include <plat/gpio-cfg.h>
->  #include <plat/sdhci.h>
->  #include <plat/regs-sdhci.h>
-> 
-> @@ -213,6 +214,36 @@ static void sdhci_s3c_set_clock(struct sdhci_host
-> *host, unsigned int clock)
->  }
-> 
->  /**
-> + * sdhci_s3c_get_ro - callback for get_ro
-> + * @host: The SDHCI host being changed
-> + *
-> + * If the WP pin is connected with GPIO, can get the value which indicates
-> + * the card is locked or not.
-> +*/
-> +static int sdhci_s3c_get_ro(struct mmc_host *mmc)
-> +{
-> +	struct sdhci_s3c *sc;
-> +	struct sdhci_host *host;
-> +
-> +	host = mmc_priv(mmc);
-> +	sc = sdhci_priv(host);
-> +
-> +	return gpio_get_value(sc->pdata->wp_gpio);
-> +}
-> +
-> +/**
-> + * sdhci_s3c_cfg_wp - configure GPIO for WP pin
-> + * @gpio_num: GPIO number which connected with WP line from SD/MMC slot
-> + *
-> + * Configure GPIO for using WP line
-> +*/
-> +static void sdhci_s3c_cfg_wp(unsigned int gpio_num)
-> +{
-> +	s3c_gpio_cfgpin(gpio_num, S3C_GPIO_INPUT);
-> +	s3c_gpio_setpull(gpio_num, S3C_GPIO_PULL_UP);
-> +}
-> +
-> +/**
->   * sdhci_s3c_get_min_clock - callback to get minimal supported clock value
->   * @host: The SDHCI host being queried
->   *
-> @@ -375,6 +406,9 @@ static int __devinit sdhci_s3c_probe(struct
-> platform_device *pdev)
->  	if (pdata->cfg_gpio)
->  		pdata->cfg_gpio(pdev, pdata->max_width);
-> 
-> +	if (gpio_is_valid(pdata->wp_gpio))
-> +		sdhci_s3c_ops.get_ro = sdhci_s3c_get_ro;
-> +
-
-There is still a problem here, but the opposite to the issue from V1 of this
-patch.
-If one apply the current version, he would need to set pdata->wp_gpio to -1 on
-all
-existing platforms to get old behavior of the driver. Leaving it as zero means
-that
-the driver will try to use GPA(0) for write protection.
-
-Adding one more field to pdata (like "bool has_gpio_wp") seems to be unavoidable
-in this case imho.
-
-> (snip)
-
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index 12a2c6b..c64dff1 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -60,8 +60,12 @@ config MACH_AQUILA
+ 	select CPU_S5PV210
+ 	select ARCH_SPARSEMEM_ENABLE
+ 	select S5PV210_SETUP_FB_24BPP
++	select S5PV210_SETUP_SDHCI
+ 	select S3C_DEV_FB
+ 	select S5PC110_DEV_ONENAND
++	select S3C_DEV_HSMMC
++	select S3C_DEV_HSMMC1
++	select S3C_DEV_HSMMC2
+ 	help
+ 	  Machine support for the Samsung Aquila target based on S5PC110 SoC
+ 
+diff --git a/arch/arm/mach-s5pv210/mach-aquila.c b/arch/arm/mach-s5pv210/mach-aquila.c
+index 0992618..a1f8d07 100644
+--- a/arch/arm/mach-s5pv210/mach-aquila.c
++++ b/arch/arm/mach-s5pv210/mach-aquila.c
+@@ -35,6 +35,7 @@
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+ #include <plat/fb.h>
++#include <plat/sdhci.h>
+ 
+ /* Following are default values for UCON, ULCON and UFCON UART registers */
+ #define S5PV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+@@ -440,11 +441,47 @@ static void __init aquila_pmic_init(void)
+ 	s3c_gpio_setpull(S5PV210_GPH2(6), S3C_GPIO_PULL_UP);
+ }
+ 
++/* MoviNAND */
++static struct s3c_sdhci_platdata aquila_hsmmc0_data __initdata = {
++	.max_width		= 4,
++	.cd_type		= S3C_SDHCI_CD_PERMANENT,
++};
++
++/* Wireless LAN */
++static struct s3c_sdhci_platdata aquila_hsmmc1_data __initdata = {
++	.max_width		= 4,
++	.cd_type		= S3C_SDHCI_CD_EXTERNAL,
++	/* ext_cd_{init,cleanup} callbacks will be added later */
++};
++
++/* External Flash */
++#define AQUILA_EXT_FLASH_EN	S5PV210_MP05(4)
++#define AQUILA_EXT_FLASH_CD	S5PV210_GPH3(4)
++static struct s3c_sdhci_platdata aquila_hsmmc2_data __initdata = {
++	.max_width		= 4,
++	.cd_type		= S3C_SDHCI_CD_GPIO,
++	.ext_cd_gpio		= AQUILA_EXT_FLASH_CD,
++	.ext_cd_gpio_invert	= 1,
++};
++
++static void aquila_setup_sdhci(void)
++{
++	gpio_request(AQUILA_EXT_FLASH_EN, "FLASH_EN");
++	gpio_direction_output(AQUILA_EXT_FLASH_EN, 1);
++
++	s3c_sdhci0_set_platdata(&aquila_hsmmc0_data);
++	s3c_sdhci1_set_platdata(&aquila_hsmmc1_data);
++	s3c_sdhci2_set_platdata(&aquila_hsmmc2_data);
++};
++
+ static struct platform_device *aquila_devices[] __initdata = {
+ 	&aquila_i2c_gpio_pmic,
+ 	&aquila_device_gpiokeys,
+ 	&s3c_device_fb,
+ 	&s5pc110_device_onenand,
++	&s3c_device_hsmmc0,
++	&s3c_device_hsmmc1,
++	&s3c_device_hsmmc2,
+ };
+ 
+ static void __init aquila_map_io(void)
+@@ -460,6 +497,8 @@ static void __init aquila_machine_init(void)
+ 	aquila_pmic_init();
+ 	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4, i2c_gpio_pmic_devs,
+ 			ARRAY_SIZE(i2c_gpio_pmic_devs));
++	/* SDHCI */
++	aquila_setup_sdhci();
+ 
+ 	/* FB */
+ 	s3c_fb_set_platdata(&aquila_lcd_pdata);
+-- 
+1.7.1.569.g6f426
