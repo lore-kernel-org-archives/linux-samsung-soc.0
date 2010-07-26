@@ -1,186 +1,66 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v4 1/7] ARM: S5PV210: Allow to probe whether workaround
- codes are required.
-Date: Mon, 26 Jul 2010 13:58:26 +0900
-Message-ID: <008401cb2c7f$3d7e30a0$b87a91e0$%kim@samsung.com>
-References: <1279790573-24179-1-git-send-email-myungjoo.ham@samsung.com>
- <1279790573-24179-2-git-send-email-myungjoo.ham@samsung.com>
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: Re: [PATCH RFC] h1940: use gpiolib for latch access
+Date: Mon, 26 Jul 2010 08:40:35 +0300
+Message-ID: <201007260841.25560.anarsoul@gmail.com>
+References: <1280076072-1049-1-git-send-email-anarsoul@gmail.com> <20100725223521.GA14747@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed;
+  boundary="nextPart1850512.7WOld7qRzS";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:40871 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752111Ab0GZE6l (ORCPT
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:52256 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750805Ab0GZFmb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Jul 2010 00:58:41 -0400
-Received: from epmmp1. (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L650054CF5RM8D0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 26 Jul 2010 13:58:39 +0900 (KST)
-Received: from kgenekim (unknown [12.23.103.96])
- by mmp1.samsung.com (Sun Java(tm) System Messaging Server 7u3-15.01 64bit
- (built Feb 12 2010)) with ESMTPA id <0L65006KAF5RLH30@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 26 Jul 2010 13:58:39 +0900 (KST)
-In-reply-to: <1279790573-24179-2-git-send-email-myungjoo.ham@samsung.com>
-Content-language: ko
+	Mon, 26 Jul 2010 01:42:31 -0400
+Received: by ewy23 with SMTP id 23so708711ewy.19
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 Jul 2010 22:42:29 -0700 (PDT)
+In-Reply-To: <20100725223521.GA14747@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Ben Dooks <ben-linux@fluff.org>, "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-MyungJoo Ham wrote:
-> 
-> Early products of S5PV210 had several errata that require kernel to
-> avoid using some parts/instructions of the CPU or to add protection
-> instructions. There are products with such early production CPUs;
-> thus, we want to distinguish them in kernel. This patch is to
-> distinguish such products.
-> 
-> Include <mach/hardware.h> and call s5pv210_workaround()
-> 
-> For example,
-> 
-> 	if (s5pv210_workaround()) {
-> 		... execute workaround code ...
-> 	} else {
-> 		... execute normal code ...
-> 	}
-> 
-> Where we can identify whether such workaround codes are required or not,
-> call set_s5pv210_workaround_required() is it's needed. Note that in this
-> system, it can be identified at board support file
-> (arch/arm/mach-s5pv210/mach-*.c), not at the cpe file
-> (arch/arm/mach-s5pv210/cpu.c). It is because we cannot determine based
-> on the CPU_ID or PRODUCT_ID only; board revision number is required to
-> determine.
-> 
-> For Aquila machine. (mach-aquila.c)
-> 
-> Part of Aquila machines have the early production CPUs that require
-> to address errata issues. Note that we don't do this for GONI machines
-> because they have never used early production CPUs with errata. Besides,
-> please note that there are other boards that use such early produces
-> other than Aquila. However, those boards/machines are not registered at
-> the /linux/arch/arm/tools/mach-types, yet; thus, we have omitted them
-> in this patch.
+--nextPart1850512.7WOld7qRzS
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+=D0=92 =D1=81=D0=BE=D0=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D0=B8 =D0=BE=D1=82 =
+26 =D0=B8=D1=8E=D0=BB=D1=8F 2010 01:35:21 =D0=B0=D0=B2=D1=82=D0=BE=D1=80 Ru=
+ssell King - ARM Linux =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=B0=D0=BB:
+> On Sun, Jul 25, 2010 at 07:41:12PM +0300, Vasily Khoruzhick wrote:
+> > diff --git a/arch/arm/mach-s3c2410/include/mach/h1940-latch.h
+> > b/arch/arm/mach-s3c2410/include/mach/h1940-latch.h index
+> > d8a8327..4607d5c 100644
+> > --- a/arch/arm/mach-s3c2410/include/mach/h1940-latch.h
+> > +++ b/arch/arm/mach-s3c2410/include/mach/h1940-latch.h
+> > @@ -14,51 +14,30 @@
+> >=20
+> >  #ifndef __ASM_ARCH_H1940_LATCH_H
+> >  #define __ASM_ARCH_H1940_LATCH_H
+> >=20
+> > +#include <mach/gpio.h>
+>=20
+> Would linux/gpio.h make more sense here?
 
-Actually, I can't find any reason to need this 'workaround' function.
-I think...this is for just EVT0, not workaround.
+Nope, mach/gpio.h is for S3C_GPIO_END
 
-Please check my comments about your 7/7 patch.
+Regards
+Vasily
 
-> 
-> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/mach-s5pv210/cpu.c                   |   33
-> +++++++++++++++++++++++++
->  arch/arm/mach-s5pv210/include/mach/hardware.h |    3 +-
->  arch/arm/mach-s5pv210/mach-aquila.c           |    4 +++
->  3 files changed, 39 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
-> index 94c632b..b9fe38e 100644
-> --- a/arch/arm/mach-s5pv210/cpu.c
-> +++ b/arch/arm/mach-s5pv210/cpu.c
-> @@ -24,6 +24,7 @@
->  #include <asm/mach/map.h>
->  #include <asm/mach/irq.h>
-> 
-> +#include <asm/mach-types.h>
->  #include <asm/proc-fns.h>
->  #include <mach/map.h>
->  #include <mach/regs-clock.h>
-> @@ -128,6 +129,38 @@ static struct sys_device s5pv210_sysdev = {
->  	.cls	= &s5pv210_sysclass,
->  };
-> 
-> +/* See if workaround to avoid errata of earlier revisions */
-> +static bool s5pv210_workaround_required;
-> +
-> +bool s5pv210_workaround(void)
-> +{
-> +	return s5pv210_workaround_required;
-> +}
-> +
-> +void set_s5pv210_workaround(unsigned int board_rev)
-> +{
-> +	s5pv210_workaround_required = false;
-> +
-> +	if (machine_is_aquila()) {
-> +		if (board_rev & 0x0800) {
-> +			if ((board_rev & 0xF) < 8)
-> +				s5pv210_workaround_required = true;
-> +		} else if (board_rev & 0x2000) {
-> +			s5pv210_workaround_required = true;
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * When machine_is_goni(), always false
-> +	 *
-> +	 * When machine_arch_number is 3260 and board_rev&0xF is 5,
-> +	 *      always true. But, omitted as it's not registered at
-> +	 *      mach_types, yet.
-> +	 * When machine_arch_number is 3104 and board_rev&0xF is 0,
-> +	 *      always true, as well. Omitted by the same reason.
-> +	 */
-> +}
-> +
->  static int __init s5pv210_core_init(void)
->  {
->  	return sysdev_class_register(&s5pv210_sysclass);
-> diff --git a/arch/arm/mach-s5pv210/include/mach/hardware.h
-b/arch/arm/mach-
-> s5pv210/include/mach/hardware.h
-> index fada7a3..0c41852 100644
-> --- a/arch/arm/mach-s5pv210/include/mach/hardware.h
-> +++ b/arch/arm/mach-s5pv210/include/mach/hardware.h
-> @@ -13,6 +13,7 @@
->  #ifndef __ASM_ARCH_HARDWARE_H
->  #define __ASM_ARCH_HARDWARE_H __FILE__
-> 
-> -/* currently nothing here, placeholder */
-> +extern bool s5pv210_workaround(void);
-> +extern void set_s5pv210_workaround(unsigned int);
-> 
->  #endif /* __ASM_ARCH_HARDWARE_H */
-> diff --git a/arch/arm/mach-s5pv210/mach-aquila.c
-b/arch/arm/mach-s5pv210/mach-
-> aquila.c
-> index 46d5c7e..85024af 100644
-> --- a/arch/arm/mach-s5pv210/mach-aquila.c
-> +++ b/arch/arm/mach-s5pv210/mach-aquila.c
-> @@ -30,6 +30,7 @@
->  #include <mach/regs-clock.h>
->  #include <mach/regs-fb.h>
->  #include <mach/gpio.h>
-> +#include <mach/hardware.h>
-> 
->  #include <plat/gpio-cfg.h>
->  #include <plat/regs-serial.h>
-> @@ -536,6 +537,9 @@ static void __init aquila_map_io(void)
-> 
->  static void __init aquila_machine_init(void)
->  {
-> +	/* Determine whether we need workaround codes */
-> +	set_s5pv210_workaround(system_rev);
-> +
->  	/* PMIC */
->  	aquila_pmic_init();
->  	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4,
-> i2c_gpio_pmic_devs,
-> --
+--nextPart1850512.7WOld7qRzS
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.15 (GNU/Linux)
 
-Thanks.
+iEUEABECAAYFAkxNIAUACgkQRM6pQpltKE551wCdEleFWC29DQUUlUbSmPsgQrWY
+HfsAl3dsakAHNNrhcl5pCeSn8TsWjPo=
+=zjTQ
+-----END PGP SIGNATURE-----
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+--nextPart1850512.7WOld7qRzS--
