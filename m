@@ -1,125 +1,468 @@
-From: Pawel Osciak <p.osciak@samsung.com>
-Subject: RE: [PATCH v3 5/8] ARM: s5pv210: enable FIMC on Aquila
-Date: Mon, 26 Jul 2010 08:51:36 +0200
-Message-ID: <003201cb2c8e$fdf0dc70$f9d29550$%osciak@samsung.com>
-References: <1279902083-21250-1-git-send-email-s.nawrocki@samsung.com>
- <1279902083-21250-6-git-send-email-s.nawrocki@samsung.com>
- <00b801cb2c8d$98282610$c8787230$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7BIT
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH v4 5/8] ARM: S5PV310: Add Timer support
+Date: Mon, 26 Jul 2010 21:42:56 +0900
+Message-ID: <1280148176-8985-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:36379 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752832Ab0GZGxI (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:49383 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751438Ab0GZMwU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Jul 2010 02:53:08 -0400
-Received: from eu_spt1 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L6500EQ5KGHGZ@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 26 Jul 2010 07:53:05 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L6500MUCKGHXD@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 26 Jul 2010 07:53:05 +0100 (BST)
-In-reply-to: <00b801cb2c8d$98282610$c8787230$%kim@samsung.com>
-Content-language: pl
+	Mon, 26 Jul 2010 08:52:20 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, kyungmin.park@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>, Hyuk Lee <hyuk1.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hello,
+From: Changhwan Youn <chaos.youn@samsung.com>
 
->Kukjin Kim <kgene.kim@samsung.com> wrote:
->Sylwester Nawrocki wrote:
->>
->> Add support for FIMC on Samsung Aquila board.
->>
->> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>  arch/arm/mach-s5pv210/Kconfig       |    4 ++++
->>  arch/arm/mach-s5pv210/mach-aquila.c |    7 +++++++
->>  2 files changed, 11 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
->> index 039ba8c..b81b91b 100644
->> --- a/arch/arm/mach-s5pv210/Kconfig
->> +++ b/arch/arm/mach-s5pv210/Kconfig
->> @@ -58,9 +58,13 @@ menu "S5PC110 Machines"
->>  config MACH_AQUILA
->>  	bool "Aquila"
->>  	select CPU_S5PV210
->> +	select COMMON_AQUILA_GONI
->
->...
->
+This patch adds timer support for S5PV310.  Until now, all S5P SoCs
+use CONFIG_ARCH_USES_GETTIMEOFFSET macro as a default configuration.
+Instead,S5PV310 implements clocksource and clock_event_device to
+support the high resolution timer and tickless system.
 
-Please see my previous comments.
+Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+Changes since v3:
 
->>  	select ARCH_SPARSEMEM_ENABLE
->>  	select S5PV210_SETUP_FB_24BPP
->>  	select S3C_DEV_FB
->> +	select S5P_DEV_FIMC0
->> +	select S5P_DEV_FIMC1
->> +	select S5P_DEV_FIMC2
->>  	select S5PC110_DEV_ONENAND
->>  	help
->>  	  Machine support for the Samsung Aquila target based on S5PC110
->> SoC
->> diff --git a/arch/arm/mach-s5pv210/mach-aquila.c
->b/arch/arm/mach-s5pv210/mach-
->> aquila.c
->> index 0992618..7528514 100644
->> --- a/arch/arm/mach-s5pv210/mach-aquila.c
->> +++ b/arch/arm/mach-s5pv210/mach-aquila.c
->> @@ -35,6 +35,9 @@
->>  #include <plat/devs.h>
->>  #include <plat/cpu.h>
->>  #include <plat/fb.h>
->> +#include <plat/fimc.h>
->> +
->> +#include "common-aquila-goni.h"
->
->Hmm...please refer to my another comment.
->
+- Changes clock source from PWM2 to PWM4 because PWM4 cannot be used for
+  other purpose such as external output function through GPIO.
 
-Ditto.
+ arch/arm/mach-s5pv310/include/mach/pwm-clock.h |   70 ++++++
+ arch/arm/mach-s5pv310/localtimer.c             |   25 ++
+ arch/arm/mach-s5pv310/time.c                   |  287 ++++++++++++++++++++++++
+ arch/arm/plat-s5p/include/plat/s5pv310.h       |    1 +
+ arch/arm/plat-samsung/Makefile                 |    2 +-
+ 5 files changed, 384 insertions(+), 1 deletions(-)
+ create mode 100644 arch/arm/mach-s5pv310/include/mach/pwm-clock.h
+ create mode 100644 arch/arm/mach-s5pv310/localtimer.c
+ create mode 100644 arch/arm/mach-s5pv310/time.c
 
->>
->>  /* Following are default values for UCON, ULCON and UFCON UART registers
->*/
->>  #define S5PV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
->> @@ -445,6 +448,9 @@ static struct platform_device *aquila_devices[]
->__initdata =
->> {
->>  	&aquila_device_gpiokeys,
->>  	&s3c_device_fb,
->>  	&s5pc110_device_onenand,
->> +	&s5p_device_fimc0,
->> +	&s5p_device_fimc1,
->> +	&s5p_device_fimc2,
->>  };
->>
->>  static void __init aquila_map_io(void)
->> @@ -465,6 +471,7 @@ static void __init aquila_machine_init(void)
->>  	s3c_fb_set_platdata(&aquila_lcd_pdata);
->>
->>  	platform_add_devices(aquila_devices, ARRAY_SIZE(aquila_devices));
->> +	s5pv210_common_fimc_clk_init();
->
->Hmm...really need this fimc_clk_init here not driver?
->
-
-I believe that the whole idea is that drivers should not be involved in
-clocks setup, especially in setting up source parameters...
-
-
-Best regards
---
-Pawel Osciak
-Linux Platform Group
-Samsung Poland R&D Center
+diff --git a/arch/arm/mach-s5pv310/include/mach/pwm-clock.h b/arch/arm/mach-s5pv310/include/mach/pwm-clock.h
+new file mode 100644
+index 0000000..7e6da27
+--- /dev/null
++++ b/arch/arm/mach-s5pv310/include/mach/pwm-clock.h
+@@ -0,0 +1,70 @@
++/* linux/arch/arm/mach-s5pv310/include/mach/pwm-clock.h
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * Copyright 2008 Openmoko, Inc.
++ * Copyright 2008 Simtec Electronics
++ *      Ben Dooks <ben@simtec.co.uk>
++ *      http://armlinux.simtec.co.uk/
++ *
++ * Based on arch/arm/mach-s3c64xx/include/mach/pwm-clock.h
++ *
++ * S5PV310 - pwm clock and timer support
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __ASM_ARCH_PWMCLK_H
++#define __ASM_ARCH_PWMCLK_H __FILE__
++
++/**
++ * pwm_cfg_src_is_tclk() - return whether the given mux config is a tclk
++ * @tcfg: The timer TCFG1 register bits shifted down to 0.
++ *
++ * Return true if the given configuration from TCFG1 is a TCLK instead
++ * any of the TDIV clocks.
++ */
++static inline int pwm_cfg_src_is_tclk(unsigned long tcfg)
++{
++	return tcfg == S3C64XX_TCFG1_MUX_TCLK;
++}
++
++/**
++ * tcfg_to_divisor() - convert tcfg1 setting to a divisor
++ * @tcfg1: The tcfg1 setting, shifted down.
++ *
++ * Get the divisor value for the given tcfg1 setting. We assume the
++ * caller has already checked to see if this is not a TCLK source.
++ */
++static inline unsigned long tcfg_to_divisor(unsigned long tcfg1)
++{
++	return 1 << tcfg1;
++}
++
++/**
++ * pwm_tdiv_has_div1() - does the tdiv setting have a /1
++ *
++ * Return true if we have a /1 in the tdiv setting.
++ */
++static inline unsigned int pwm_tdiv_has_div1(void)
++{
++	return 1;
++}
++
++/**
++ * pwm_tdiv_div_bits() - calculate TCFG1 divisor value.
++ * @div: The divisor to calculate the bit information for.
++ *
++ * Turn a divisor into the necessary bit field for TCFG1.
++ */
++static inline unsigned long pwm_tdiv_div_bits(unsigned int div)
++{
++	return ilog2(div);
++}
++
++#define S3C_TCFG1_MUX_TCLK S3C64XX_TCFG1_MUX_TCLK
++
++#endif /* __ASM_ARCH_PWMCLK_H */
+diff --git a/arch/arm/mach-s5pv310/localtimer.c b/arch/arm/mach-s5pv310/localtimer.c
+new file mode 100644
+index 0000000..2784036
+--- /dev/null
++++ b/arch/arm/mach-s5pv310/localtimer.c
+@@ -0,0 +1,25 @@
++/* linux/arch/arm/mach-s5pv310/localtimer.c
++ *
++ * Cloned from linux/arch/arm/mach-realview/localtimer.c
++ *
++ *  Copyright (C) 2002 ARM Ltd.
++ *  All Rights Reserved
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/clockchips.h>
++
++#include <asm/irq.h>
++#include <asm/localtimer.h>
++
++/*
++ * Setup the local clock events for a CPU.
++ */
++void __cpuinit local_timer_setup(struct clock_event_device *evt)
++{
++	evt->irq = IRQ_LOCALTIMER;
++	twd_timer_setup(evt);
++}
+diff --git a/arch/arm/mach-s5pv310/time.c b/arch/arm/mach-s5pv310/time.c
+new file mode 100644
+index 0000000..01b012a
+--- /dev/null
++++ b/arch/arm/mach-s5pv310/time.c
+@@ -0,0 +1,287 @@
++/* linux/arch/arm/mach-s5pv310/time.c
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * S5PV310 (and compatible) HRT support
++ * PWM 2/4 is used for this feature
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/sched.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/err.h>
++#include <linux/clk.h>
++#include <linux/clockchips.h>
++#include <linux/platform_device.h>
++
++#include <asm/smp_twd.h>
++
++#include <mach/map.h>
++#include <plat/regs-timer.h>
++#include <asm/mach/time.h>
++
++static unsigned long clock_count_per_tick;
++
++static struct clk *tin2;
++static struct clk *tin4;
++static struct clk *tdiv2;
++static struct clk *tdiv4;
++static struct clk *timerclk;
++
++static void s5pv310_pwm_stop(unsigned int pwm_id)
++{
++	unsigned long tcon;
++
++	tcon = __raw_readl(S3C2410_TCON);
++
++	switch (pwm_id) {
++	case 2:
++		tcon &= ~S3C2410_TCON_T2START;
++		break;
++	case 4:
++		tcon &= ~S3C2410_TCON_T4START;
++		break;
++	default:
++		break;
++	}
++	__raw_writel(tcon, S3C2410_TCON);
++}
++
++static void s5pv310_pwm_init(unsigned int pwm_id, unsigned long tcnt)
++{
++	unsigned long tcon;
++
++	tcon = __raw_readl(S3C2410_TCON);
++
++	/* timers reload after counting zero, so reduce the count by 1 */
++	tcnt--;
++
++	/* ensure timer is stopped... */
++	switch (pwm_id) {
++	case 2:
++		tcon &= ~(0xf<<12);
++		tcon |= S3C2410_TCON_T2MANUALUPD;
++
++		__raw_writel(tcnt, S3C2410_TCNTB(2));
++		__raw_writel(tcnt, S3C2410_TCMPB(2));
++		__raw_writel(tcon, S3C2410_TCON);
++
++		break;
++	case 4:
++		tcon &= ~(7<<20);
++		tcon |= S3C2410_TCON_T4MANUALUPD;
++
++		__raw_writel(tcnt, S3C2410_TCNTB(4));
++		__raw_writel(tcnt, S3C2410_TCMPB(4));
++		__raw_writel(tcon, S3C2410_TCON);
++
++		break;
++	default:
++		break;
++	}
++}
++
++static inline void s5pv310_pwm_start(unsigned int pwm_id, bool periodic)
++{
++	unsigned long tcon;
++
++	tcon  = __raw_readl(S3C2410_TCON);
++
++	switch (pwm_id) {
++	case 2:
++		tcon |= S3C2410_TCON_T2START;
++		tcon &= ~S3C2410_TCON_T2MANUALUPD;
++
++		if (periodic)
++			tcon |= S3C2410_TCON_T2RELOAD;
++		else
++			tcon &= ~S3C2410_TCON_T2RELOAD;
++		break;
++	case 4:
++		tcon |= S3C2410_TCON_T4START;
++		tcon &= ~S3C2410_TCON_T4MANUALUPD;
++
++		if (periodic)
++			tcon |= S3C2410_TCON_T4RELOAD;
++		else
++			tcon &= ~S3C2410_TCON_T4RELOAD;
++		break;
++	default:
++		break;
++	}
++	__raw_writel(tcon, S3C2410_TCON);
++}
++
++static int s5pv310_pwm_set_next_event(unsigned long cycles,
++					struct clock_event_device *evt)
++{
++	s5pv310_pwm_init(2, cycles);
++	s5pv310_pwm_start(2, 0);
++	return 0;
++}
++
++static void s5pv310_pwm_set_mode(enum clock_event_mode mode,
++				struct clock_event_device *evt)
++{
++	s5pv310_pwm_stop(2);
++
++	switch (mode) {
++	case CLOCK_EVT_MODE_PERIODIC:
++		s5pv310_pwm_init(2, clock_count_per_tick);
++		s5pv310_pwm_start(2, 1);
++		break;
++	case CLOCK_EVT_MODE_ONESHOT:
++		break;
++	case CLOCK_EVT_MODE_UNUSED:
++	case CLOCK_EVT_MODE_SHUTDOWN:
++	case CLOCK_EVT_MODE_RESUME:
++		break;
++	}
++}
++
++static struct clock_event_device pwm_event_device = {
++	.name		= "pwm_timer2",
++	.features       = CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
++	.rating		= 200,
++	.shift		= 32,
++	.set_next_event	= s5pv310_pwm_set_next_event,
++	.set_mode	= s5pv310_pwm_set_mode,
++};
++
++irqreturn_t s5pv310_clock_event_isr(int irq, void *dev_id)
++{
++	struct clock_event_device *evt = &pwm_event_device;
++
++	evt->event_handler(evt);
++
++	return IRQ_HANDLED;
++}
++
++static struct irqaction s5pv310_clock_event_irq = {
++	.name		= "pwm_timer2_irq",
++	.flags		= IRQF_DISABLED | IRQF_TIMER | IRQF_IRQPOLL,
++	.handler	= s5pv310_clock_event_isr,
++};
++
++static void __init s5pv310_clockevent_init(void)
++{
++	unsigned long pclk;
++	unsigned long clock_rate;
++	struct clk *tscaler;
++
++	pclk = clk_get_rate(timerclk);
++
++	/* configure clock tick */
++
++	tscaler = clk_get_parent(tdiv2);
++
++	clk_set_rate(tscaler, pclk / 2);
++	clk_set_rate(tdiv2, pclk / 2);
++	clk_set_parent(tin2, tdiv2);
++
++	clock_rate = clk_get_rate(tin2);
++
++	clock_count_per_tick = clock_rate / HZ;
++
++	pwm_event_device.mult =
++		div_sc(clock_rate, NSEC_PER_SEC, pwm_event_device.shift);
++	pwm_event_device.max_delta_ns =
++		clockevent_delta2ns(-1, &pwm_event_device);
++	pwm_event_device.min_delta_ns =
++		clockevent_delta2ns(1, &pwm_event_device);
++
++	pwm_event_device.cpumask = cpumask_of(0);
++	clockevents_register_device(&pwm_event_device);
++
++	setup_irq(IRQ_TIMER2, &s5pv310_clock_event_irq);
++}
++
++static cycle_t s5pv310_pwm4_read(struct clocksource *cs)
++{
++	return (cycle_t) ~__raw_readl(S3C_TIMERREG(0x40));
++}
++
++struct clocksource pwm_clocksource = {
++	.name		= "pwm_timer4",
++	.rating		= 250,
++	.read		= s5pv310_pwm4_read,
++	.mask		= CLOCKSOURCE_MASK(32),
++	.shift		= 20,
++	.flags		= CLOCK_SOURCE_IS_CONTINUOUS ,
++};
++
++static void __init s5pv310_clocksource_init(void)
++{
++	unsigned long pclk;
++	unsigned long clock_rate;
++
++	pclk = clk_get_rate(timerclk);
++
++	clk_set_rate(tdiv4, pclk / 2);
++	clk_set_parent(tin4, tdiv4);
++
++	clock_rate = clk_get_rate(tin4);
++
++	s5pv310_pwm_init(4, ~0);
++	s5pv310_pwm_start(4, 1);
++
++	pwm_clocksource.mult =
++		clocksource_khz2mult(clock_rate/1000, pwm_clocksource.shift);
++
++	if (clocksource_register(&pwm_clocksource))
++		panic("%s: can't register clocksource\n", pwm_clocksource.name);
++}
++
++static void __init s5pv310_timer_resources(void)
++{
++	struct platform_device tmpdev;
++
++	tmpdev.dev.bus = &platform_bus_type;
++
++	timerclk = clk_get(NULL, "timers");
++	if (IS_ERR(timerclk))
++		panic("failed to get timers clock for system timer");
++
++	clk_enable(timerclk);
++
++	tmpdev.id = 2;
++	tin2 = clk_get(&tmpdev.dev, "pwm-tin");
++	if (IS_ERR(tin2))
++		panic("failed to get pwm-tin2 clock for system timer");
++
++	tdiv2 = clk_get(&tmpdev.dev, "pwm-tdiv");
++	if (IS_ERR(tdiv2))
++		panic("failed to get pwm-tdiv2 clock for system timer");
++	clk_enable(tin2);
++
++	tmpdev.id = 4;
++	tin4 = clk_get(&tmpdev.dev, "pwm-tin");
++	if (IS_ERR(tin4))
++		panic("failed to get pwm-tin4 clock for system timer");
++
++	tdiv4 = clk_get(&tmpdev.dev, "pwm-tdiv");
++	if (IS_ERR(tdiv4))
++		panic("failed to get pwm-tdiv4 clock for system timer");
++
++	clk_enable(tin4);
++}
++
++static void __init s5pv310_timer_init(void)
++{
++#ifdef CONFIG_LOCAL_TIMERS
++	twd_base = S5P_VA_TWD;
++#endif
++
++	s5pv310_timer_resources();
++	s5pv310_clockevent_init();
++	s5pv310_clocksource_init();
++}
++
++struct sys_timer s5pv310_timer = {
++	.init		= s5pv310_timer_init,
++};
+diff --git a/arch/arm/plat-s5p/include/plat/s5pv310.h b/arch/arm/plat-s5p/include/plat/s5pv310.h
+index d2f05e1..769c991 100644
+--- a/arch/arm/plat-s5p/include/plat/s5pv310.h
++++ b/arch/arm/plat-s5p/include/plat/s5pv310.h
+@@ -22,6 +22,7 @@ extern  int s5pv310_init(void);
+ extern void s5pv310_init_irq(void);
+ extern void s5pv310_map_io(void);
+ extern void s5pv310_init_clocks(int xtal);
++extern struct sys_timer s5pv310_timer;
+ 
+ #define s5pv310_init_uarts s5pv310_common_init_uarts
+ 
+diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+index b1d82cc..0d5bf8a 100644
+--- a/arch/arm/plat-samsung/Makefile
++++ b/arch/arm/plat-samsung/Makefile
+@@ -12,7 +12,7 @@ obj-				:=
+ # Objects we always build independent of SoC choice
+ 
+ obj-y				+= init.o
+-obj-y				+= time.o
++obj-$(CONFIG_ARCH_USES_GETTIMEOFFSET)   += time.o
+ obj-y				+= clock.o
+ obj-y				+= pwm-clock.o
+ obj-y				+= gpio.o
+-- 
+1.6.2.5
