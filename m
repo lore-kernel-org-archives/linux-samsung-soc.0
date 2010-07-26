@@ -1,118 +1,191 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3 5/8] ARM: s5pv210: enable FIMC on Aquila
-Date: Mon, 26 Jul 2010 15:41:23 +0900
-Message-ID: <00b801cb2c8d$98282610$c8787230$%kim@samsung.com>
+From: Pawel Osciak <p.osciak@samsung.com>
+Subject: RE: [PATCH v3 4/8] ARM: Samsung: Add common Aquila and GONI code
+Date: Mon, 26 Jul 2010 08:48:47 +0200
+Message-ID: <003101cb2c8e$991576d0$cb406470$%osciak@samsung.com>
 References: <1279902083-21250-1-git-send-email-s.nawrocki@samsung.com>
- <1279902083-21250-6-git-send-email-s.nawrocki@samsung.com>
+ <1279902083-21250-5-git-send-email-s.nawrocki@samsung.com>
+ <00b701cb2c8c$6c932fa0$45b98ee0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:30650 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752677Ab0GZGl0 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:33000 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753084Ab0GZGuW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Jul 2010 02:41:26 -0400
-Received: from epmmp2 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L6500DYGJX0EPC0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 26 Jul 2010 15:41:24 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L6500EVJJX0ZM@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 26 Jul 2010 15:41:25 +0900 (KST)
-In-reply-to: <1279902083-21250-6-git-send-email-s.nawrocki@samsung.com>
-Content-language: ko
+	Mon, 26 Jul 2010 02:50:22 -0400
+Received: from eu_spt2 (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L6500GLJKBU47@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 26 Jul 2010 07:50:18 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0L6500G1IKBTCS@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 26 Jul 2010 07:50:18 +0100 (BST)
+In-reply-to: <00b701cb2c8c$6c932fa0$45b98ee0$%kim@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: p.osciak@samsung.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, kyungmin.park@samsung.com
 
-Sylwester Nawrocki wrote:
-> 
-> Add support for FIMC on Samsung Aquila board.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/mach-s5pv210/Kconfig       |    4 ++++
->  arch/arm/mach-s5pv210/mach-aquila.c |    7 +++++++
->  2 files changed, 11 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-> index 039ba8c..b81b91b 100644
-> --- a/arch/arm/mach-s5pv210/Kconfig
-> +++ b/arch/arm/mach-s5pv210/Kconfig
-> @@ -58,9 +58,13 @@ menu "S5PC110 Machines"
->  config MACH_AQUILA
->  	bool "Aquila"
->  	select CPU_S5PV210
-> +	select COMMON_AQUILA_GONI
+Hello,
 
-...
+>Kukjin Kim <kgene.kim@samsung.com> wrote:
+>Sylwester Nawrocki wrote:
+>>
+>Hi Sylwester,
+>
+>Hmm...no comments here?
+>
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Signed-off-by: Pawel Osciak <p.osciak@samsung.com>
+>
+>I wonder we need really above multiple sign for this, just only one c file?
+>
 
->  	select ARCH_SPARSEMEM_ENABLE
->  	select S5PV210_SETUP_FB_24BPP
->  	select S3C_DEV_FB
-> +	select S5P_DEV_FIMC0
-> +	select S5P_DEV_FIMC1
-> +	select S5P_DEV_FIMC2
->  	select S5PC110_DEV_ONENAND
->  	help
->  	  Machine support for the Samsung Aquila target based on S5PC110
-> SoC
-> diff --git a/arch/arm/mach-s5pv210/mach-aquila.c
-b/arch/arm/mach-s5pv210/mach-
-> aquila.c
-> index 0992618..7528514 100644
-> --- a/arch/arm/mach-s5pv210/mach-aquila.c
-> +++ b/arch/arm/mach-s5pv210/mach-aquila.c
-> @@ -35,6 +35,9 @@
->  #include <plat/devs.h>
->  #include <plat/cpu.h>
->  #include <plat/fb.h>
-> +#include <plat/fimc.h>
-> +
-> +#include "common-aquila-goni.h"
+Sylwester is the main author, I am also the author of this, although I agree
+it is a small patch. Mr. Park is here as the person that gives the permission
+for the patches to be published under GPL.
 
-Hmm...please refer to my another comment.
+>> ---
+>>  arch/arm/mach-s5pv210/Kconfig              |    5 ++++
+>>  arch/arm/mach-s5pv210/Makefile             |    2 +
+>>  arch/arm/mach-s5pv210/common-aquila-goni.c |   35
+>> ++++++++++++++++++++++++++++
+>>  arch/arm/mach-s5pv210/common-aquila-goni.h |    2 +
+>>  4 files changed, 44 insertions(+), 0 deletions(-)
+>>  create mode 100644 arch/arm/mach-s5pv210/common-aquila-goni.c
+>>  create mode 100644 arch/arm/mach-s5pv210/common-aquila-goni.h
+>>
+>> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+>> index 12a2c6b..039ba8c 100644
+>> --- a/arch/arm/mach-s5pv210/Kconfig
+>> +++ b/arch/arm/mach-s5pv210/Kconfig
+>> @@ -90,6 +90,11 @@ config MACH_SMDKC110
+>>
+>>  endmenu
+>>
+>> +config COMMON_AQUILA_GONI
+>
+>do we _really_ need this?
+>
 
-> 
->  /* Following are default values for UCON, ULCON and UFCON UART registers
-*/
->  #define S5PV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-> @@ -445,6 +448,9 @@ static struct platform_device *aquila_devices[]
-__initdata =
-> {
->  	&aquila_device_gpiokeys,
->  	&s3c_device_fb,
->  	&s5pc110_device_onenand,
-> +	&s5p_device_fimc0,
-> +	&s5p_device_fimc1,
-> +	&s5p_device_fimc2,
->  };
-> 
->  static void __init aquila_map_io(void)
-> @@ -465,6 +471,7 @@ static void __init aquila_machine_init(void)
->  	s3c_fb_set_platdata(&aquila_lcd_pdata);
-> 
->  	platform_add_devices(aquila_devices, ARRAY_SIZE(aquila_devices));
-> +	s5pv210_common_fimc_clk_init();
+The alternative is to have identical code in both Aquila and Goni files.
 
-Hmm...really need this fimc_clk_init here not driver?
+>> +	bool
+>> +	help
+>> +	  Compile common code for Samsung Aquila and Samsung GONI
+>> machines
+>> +
+>>  config S5PC110_DEV_ONENAND
+>>  	bool
+>>  	help
+>> diff --git a/arch/arm/mach-s5pv210/Makefile
+>b/arch/arm/mach-s5pv210/Makefile
+>> index 05048c5..a4c0bc9 100644
+>> --- a/arch/arm/mach-s5pv210/Makefile
+>> +++ b/arch/arm/mach-s5pv210/Makefile
+>> @@ -22,6 +22,8 @@ obj-$(CONFIG_MACH_SMDKV210)	+= mach-
+>> smdkv210.o
+>>  obj-$(CONFIG_MACH_SMDKC110)	+= mach-smdkc110.o
+>>  obj-$(CONFIG_MACH_GONI)		+= mach-goni.o
+>>
+>> +obj-$(CONFIG_COMMON_AQUILA_GONI)	+= common-aquila-goni.o
+>> +
+>>  # device support
+>>
+>>  obj-y				+= dev-audio.o
+>> diff --git a/arch/arm/mach-s5pv210/common-aquila-goni.c b/arch/arm/mach-
+>> s5pv210/common-aquila-goni.c
+>> new file mode 100644
+>> index 0000000..4d72531
+>> --- /dev/null
+>> +++ b/arch/arm/mach-s5pv210/common-aquila-goni.c
+>
+>Just setup-fimc.c is enough...
+>I don't know why we need common-aquila-goni now.
+>
 
->  }
-> 
->  MACHINE_START(AQUILA, "Aquila")
-> --
+The alternative was to have identical clock setup code in both mach-aquila
+and mach-goni files.
+
+>And your following patches in this patch-set perfectly same except just
+>name.
+>[PATCH v3 5/8] ARM: s5pv210: enable FIMC on Aquila
+>[PATCH v3 6/8] ARM: s5pv210: enable FIMC on Goni
+>
+>Hmm...
+>
+
+One is for Aquila and one is for Goni, sorry, I don't understand what do
+you mean here... Would you prefer them to be combined into one patch?
+
+>> @@ -0,0 +1,35 @@
+>> +#include <linux/clk.h>
+>> +#include <linux/err.h>
+>> +#include <plat/fimc.h>
+>> +
+>> +#include "common-aquila-goni.h"
+>> +
+>> +void __init s5pv210_common_fimc_clk_init(void)
+>> +{
+>> +	int i;
+>> +	struct clk *clk_fimc, *parent;
+>> +
+>> +	struct device *fimc_devs[] = {
+>> +		&s5p_device_fimc0.dev,
+>> +		&s5p_device_fimc1.dev,
+>> +		&s5p_device_fimc2.dev
+>> +	};
+>> +
+>> +	parent = clk_get(NULL, "mout_epll");
+>> +	if (IS_ERR(parent))
+>> +		return;
+>> +
+>> +	for (i = 0; i < ARRAY_SIZE(fimc_devs); i++) {
+>> +		if (fimc_devs[i]) {
+>> +			clk_fimc = clk_get(fimc_devs[i], "sclk_fimc");
+>> +
+>> +			if (IS_ERR(clk_fimc))
+>> +				continue;
+>> +
+>> +			clk_set_parent(clk_fimc, parent);
+>> +			clk_set_rate(clk_fimc, 133000000);
+>
+>Is this for direct fifo mode?
+>
+
+Bootloader is not setting up clocks correctly and defaults do not work.
+It's not only for fifo, fimc doesn't work at all without this.
+
+>> +			clk_enable(clk_fimc);
+>> +		}
+>> +	}
+>> +	clk_put(parent);
+>> +}
+>> diff --git a/arch/arm/mach-s5pv210/common-aquila-goni.h b/arch/arm/mach-
+>> s5pv210/common-aquila-goni.h
+>> new file mode 100644
+>> index 0000000..f666462
+>> --- /dev/null
+>> +++ b/arch/arm/mach-s5pv210/common-aquila-goni.h
+>> @@ -0,0 +1,2 @@
+>> +
+>> +extern void s5pv210_common_fimc_clk_init(void);
+>> --
+>
+>I do not think that we need common-aquila-goni.[ch] now to us.
+>
+
+What would you propose as the alternative? Have duplicate code in both machine
+files?
 
 
-Thanks.
-
-Best regards,
-Kgene.
+Best regards
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Pawel Osciak
+Linux Platform Group
+Samsung Poland R&D Center
