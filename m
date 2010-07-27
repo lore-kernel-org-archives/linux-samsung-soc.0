@@ -1,129 +1,57 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v4 3/3] sdhci-s3c: Add SDHCI_QUIRK_NO_WP_BIT quirk for Samsung SoC
-Date: Tue, 27 Jul 2010 21:43:48 +0900
-Message-ID: <1280234628-27303-4-git-send-email-kgene.kim@samsung.com>
-References: <1280234628-27303-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH v2 3/3] rtc: rtc-s3c: Add BCD register initialization codes
+Date: Tue, 27 Jul 2010 21:59:13 +0900
+Message-ID: <1280235553-27369-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:60923 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:52088 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753417Ab0G0Mw3 (ORCPT
+	with ESMTP id S1751949Ab0G0NHg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Jul 2010 08:52:29 -0400
-In-Reply-To: <1280234628-27303-1-git-send-email-kgene.kim@samsung.com>
+	Tue, 27 Jul 2010 09:07:36 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
-Cc: ben-linux@fluff.org, akpm@linux-foundation.org, Hyuk Lee <hyuk1.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com
+Cc: ben-linux@fluff.org, p_gortmaker@yahoo.com, a.zummo@towertech.it, Taekgyun Ko <taeggyun.ko@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Hyuk Lee <hyuk1.lee@samsung.com>
+From: Taekgyun Ko <taeggyun.ko@samsung.com>
 
-If host controller doesn't have WP pin which should be connnected with SDMMC
-card WP pin, can implement get_ro function with using the allocated gpio.
-In order to use this quirk wp_gpio in the platform data must be set.
+RTC needs to be initialized when BCD registers have invalid value.
 
-Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
+Signed-off-by: Taekgyun Ko <taeggyun.ko@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- drivers/mmc/host/sdhci-s3c.c |   36 ++++++++++++++++++++++++++++++++++++
- drivers/mmc/host/sdhci.c     |    3 +++
- drivers/mmc/host/sdhci.h     |    3 +++
- 3 files changed, 42 insertions(+), 0 deletions(-)
+Changes since v1:
+- Removed unnecessary parens around > operations as per Sergei Shtylyov
 
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index 0d25285..98a8ec8 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -22,6 +22,7 @@
+ drivers/rtc/rtc-s3c.c |   14 ++++++++++++--
+ 1 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index 2040017..e96e109 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -536,10 +536,20 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
  
- #include <linux/mmc/host.h>
+ 	s3c_rtc_cpu_type = platform_get_device_id(pdev)->driver_data;
  
-+#include <plat/gpio-cfg.h>
- #include <plat/sdhci.h>
- #include <plat/regs-sdhci.h>
- 
-@@ -213,6 +214,32 @@ static void sdhci_s3c_set_clock(struct sdhci_host *host, unsigned int clock)
- }
- 
- /**
-+ * sdhci_s3c_get_ro - callback for get_ro
-+ * @host: The SDHCI host being changed
-+ *
-+ * If the WP pin is connected with GPIO, can get the value which indicates
-+ * the card is locked or not.
-+*/
-+static int sdhci_s3c_get_ro(struct mmc_host *mmc)
-+{
-+	struct sdhci_s3c *ourhost = to_s3c(mmc_priv(mmc));
+-	if (s3c_rtc_cpu_type == TYPE_S3C64XX)
++	if (s3c_rtc_cpu_type == TYPE_S3C64XX) {
+ 		rtc->max_user_freq = 32768;
+-	else
 +
-+	return gpio_get_value(ourhost->pdata->wp_gpio);
-+}
++		/* Check RTC Time */
 +
-+/**
-+ * sdhci_s3c_cfg_wp - configure GPIO for WP pin
-+ * @gpio_num: GPIO number which connected with WP line from SD/MMC slot
-+ *
-+ * Configure GPIO for using WP line
-+*/
-+static void sdhci_s3c_cfg_wp(unsigned int gpio_num)
-+{
-+	s3c_gpio_cfgpin(gpio_num, S3C_GPIO_INPUT);
-+	s3c_gpio_setpull(gpio_num, S3C_GPIO_PULL_UP);
-+}
++		for (i = S3C2410_RTCSEC; i <= S3C2410_RTCYEAR; i += 0x4) {
++			tmp = readb(s3c_rtc_base + i);
 +
-+/**
-  * sdhci_s3c_get_min_clock - callback to get minimal supported clock value
-  * @host: The SDHCI host being queried
-  *
-@@ -408,6 +435,15 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 	host->quirks |= (SDHCI_QUIRK_32BIT_DMA_ADDR |
- 			 SDHCI_QUIRK_32BIT_DMA_SIZE);
- 
-+	/* Controller's WP pin doesn't connected with SD card and there is an
-+	 * allocated GPIO for getting WP data form SD card, use this quirk and
-+	 * send the GPIO number in pdata->wp_gpio. */
-+	if (gpio_is_valid(pdata->wp_gpio) && pdata->has_wp_gpio) {
-+		sdhci_s3c_ops.get_ro = sdhci_s3c_get_ro;
-+		host->quirks |= SDHCI_QUIRK_NO_WP_BIT;
-+		sdhci_s3c_cfg_wp(pdata->wp_gpio);
++			if ((tmp & 0xf) > 0x9 || ((tmp >> 4) & 0xf) > 0x9)
++				writeb(0, s3c_rtc_base + i);
++		}
++	} else {
+ 		rtc->max_user_freq = 128;
 +	}
-+
- 	ret = sdhci_add_host(host);
- 	if (ret) {
- 		dev_err(dev, "sdhci_add_host() failed\n");
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index f9ca4c6..7fba401 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1198,6 +1198,9 @@ static int sdhci_get_ro(struct mmc_host *mmc)
  
- 	host = mmc_priv(mmc);
+ 	platform_set_drvdata(pdev, rtc);
  
-+	if ((host->quirks & SDHCI_QUIRK_NO_WP_BIT) && host->ops->get_ro)
-+		return host->ops->get_ro(mmc);
-+
- 	spin_lock_irqsave(&host->lock, flags);
- 
- 	if (host->flags & SDHCI_DEVICE_DEAD)
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index 0de8b38..dd9a233 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -247,6 +247,8 @@ struct sdhci_host {
- #define SDHCI_QUIRK_MISSING_CAPS			(1<<28)
- /* Controller has nonstandard clock management */
- #define SDHCI_QUIRK_NONSTANDARD_MINCLOCK		(1<<29)
-+/* Controller has no write-protect pin connected with SD card */
-+#define SDHCI_QUIRK_NO_WP_BIT				(1<<30)
- 
- 	int			irq;		/* Device IRQ */
- 	void __iomem *		ioaddr;		/* Mapped address */
-@@ -321,6 +323,7 @@ struct sdhci_ops {
- 	unsigned int	(*get_max_clock)(struct sdhci_host *host);
- 	unsigned int	(*get_min_clock)(struct sdhci_host *host);
- 	unsigned int	(*get_timeout_clock)(struct sdhci_host *host);
-+	int		(*get_ro)(struct mmc_host *mmc);
- };
- 
- #ifdef CONFIG_MMC_SDHCI_IO_ACCESSORS
 -- 
 1.6.2.5
