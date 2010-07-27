@@ -1,642 +1,143 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH v4 5/8] ARM: S5PV310: Add Timer support
-Date: Tue, 27 Jul 2010 14:06:13 +0900
-Message-ID: <AANLkTi=80VB4kbdjotLpZaiOsFKNUdOKAWOj5-OYxskc@mail.gmail.com>
-References: <1280148176-8985-1-git-send-email-kgene.kim@samsung.com>
-	<AANLkTimWqKc24fAE0G06rhupdGTyLJ5HY5rZRh8HOy6r@mail.gmail.com>
-	<00ce01cb2d41$e8a913b0$b9fb3b10$@com>
-	<AANLkTimcJUjwtgCmfqip2t-i_f=RMLQb6Q08kJaDyDnj@mail.gmail.com>
-	<00d101cb2d48$4e99ab20$ebcd0160$@com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH v3] Samsung: sdhci-s3c: add support for new card detection
+ methods
+Date: Tue, 27 Jul 2010 08:12:53 +0200
+Message-ID: <001b01cb2d52$c2a7b4d0$47f71e70$%szyprowski@samsung.com>
+References: <1279181721-23333-1-git-send-email-m.szyprowski@samsung.com>
+ <20100715133954.7fcb797a.akpm@linux-foundation.org>
+ <011401cb24af$8eb2cb70$ac186250$%szyprowski@samsung.com>
+ <20100721161133.5c3285d3.akpm@linux-foundation.org>
+ <000501cb2977$7d6cf210$7846d630$%szyprowski@samsung.com>
+ <20100726135708.57048800.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:38141 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751308Ab0G0FGO convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:41875 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750810Ab0G0GPZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Jul 2010 01:06:14 -0400
-Received: by vws3 with SMTP id 3so3180051vws.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Jul 2010 22:06:13 -0700 (PDT)
-In-Reply-To: <00d101cb2d48$4e99ab20$ebcd0160$@com>
+	Tue, 27 Jul 2010 02:15:25 -0400
+In-reply-to: <20100726135708.57048800.akpm@linux-foundation.org>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Hyuk Lee <hyuk1.lee@samsung.com>, linux-samsung-soc@vger.kernel.org, Changhwan Youn <chaos.youn@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+To: 'Andrew Morton' <akpm@linux-foundation.org>
+Cc: kgene.kim@samsung.com, linux-mmc@vger.kernel.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-You mean we can use pwm2 and I2c simultaneously since we don't use the =
-Tout.
+Hello,
 
-Do you also consider low power audio case? In the previous time to
-this reason, HRT uses the RTC and systimer.
+On Monday, July 26, 2010 10:57 PM Andrew Morton wrote:
 
-anyway thank you for clarification.
+> On Thu, 22 Jul 2010 10:25:44 +0200
+> Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> > On Thursday, July 22, 2010 1:12 AM
+> > > On Fri, 16 Jul 2010 08:24:26 +0200
+> > > Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> > >
+> > > > > >  arch/arm/mach-s3c64xx/setup-sdhci-gpio.c   |   14 +++++++++---
+> > > > > >  arch/arm/mach-s5pc100/setup-sdhci-gpio.c   |   21
+> ++++++++++++++----
+> > > -
+> > > > > >  arch/arm/mach-s5pv210/setup-sdhci-gpio.c   |   22
+> +++++++++++++++---
+> > > --
+> > > > > >  arch/arm/plat-samsung/dev-hsmmc.c          |    5 ++++
+> > > > > >  arch/arm/plat-samsung/dev-hsmmc1.c         |    5 ++++
+> > > > > >  arch/arm/plat-samsung/dev-hsmmc2.c         |    5 ++++
+> > > > > >  arch/arm/plat-samsung/dev-hsmmc3.c         |    5 ++++
+> > > > > >  arch/arm/plat-samsung/include/plat/sdhci.h |   29
+> > > > > ++++++++++++++++++++++++++++
+> > > > > >  8 files changed, 90 insertions(+), 16 deletions(-)
+> > > > >
+> > > > > This is quite confusing.  You've already sent a patch called
+> > > > > "sdhci-s3c: add support for new card detection methods".  It had
+> the
+> > > > > same changelog as this patch and the same title, but the two
+> patches
+> > > > > are utterly different!
+> > > >
+> > > > The real patch has been split into two for easier merging: 1. the
+> driver
+> > > > part and 2. samsung platform related part. The part which patch
+> belongs
+> > > > to is indicated in the last line of the change log.
+> > > >
+> > > > I'm really confused how to submit properly a patch that requires
+> changes
+> > > > to both the driver (which is merged by the proper driver maintainer's
+> > > > sub-tree) and the platform (which should go through platform
+> maintainer's
+> > > > tree).
+> > >
+> > > Make the relationship very very clear in the changelog.  Send both
+> > > patches to both maintainers.  Ask that one of them merge both patches
+> > > and that the other ack both patches.
+> >
+> > Ok. Thanks for the hint.
+> >
+> > > Anyway, I've forgotten what's happening here.  I appear to be sitting
+> on
+> > >
+> > > sdhci-s3c-add-support-for-the-non-standard-minimal-clock-value.patch
+> >
+> > This one is independent from the card-detection patches and can be
+> applied
+> > directly onto linux-next kernel tree.
+> >
+> > > and
+> > > sdhci-s3c-add-support-for-new-card-detection-methods.patch
+> > >
+> > > the latter of which is below.
+> > >
+> > > Am I missing something?  Is
+> > > sdhci-s3c-add-support-for-new-card-detection-methods.patch up to date?
+> > >
+> >
+> > Ok, I will repost these 2 patches under new names to avoid further
+> > confusion. Currently there exists two
+> > "sdhci-s3c-add-support-for-new-card-detection-methods.patch", both of
+> them
+> > are required.
+> 
+> So the second(?) patch "[PATCH v4] Samsung: add new card detection
+> methods in s3c-sdhci driver (platform part)" has already been applied
+> to linux-next by Kukjin Kim, along with modifications which we have not
+> been shown.
+> 
+> But the first patch
+> (sdhci-s3c-add-support-for-the-non-standard-minimal-clock-value.patch)
+> has not been applied to linux-next by anoyne and the third patch
+> "[PATCH v4] sdhci-s3c: add support for new card detection methods
+> (driver part)" has not been applied either.
+> 
+> This is a complete mess.  What happens if I apply and merge
+> sdhci-s3c-add-support-for-the-non-standard-minimal-clock-value.patch
+> and
+> sdhci-s3c-add-support-for-new-card-detection-methods-driver-part.patch?
+> I have no idea.
 
-Thank you,
-Kyungmin Park
+"[PATCH v4] Samsung: add new card detection methods in s3c-sdhci driver
+(platform part)" perform some important changes in platform setup code.
+It does not influence the driver itself (the driver can be still compiled
+as before and works without changes).
 
-On Tue, Jul 27, 2010 at 1:58 PM, Sangbeom Kim <sbkim73@samsung.com> wro=
-te:
-> Thanks for your answer,
-> If you want use to GPD0[2] as I2C_7, you can use it as I2C port.
-> Because We don't use PWM2 Tout.
-> We only use pwm timer2 for internal operation.
-> Thanks,
->
-> Kyungmin Park <kmpark@infradead.org> wrote:
->>On Tue, Jul 27, 2010 at 1:12 PM, Sangbeom Kim <sbkim73@samsung.com> w=
-rote:
->>> Hi! Kyungmin,
->>>
->>> After booting, clock event is generated by 2 arm private timers.
->>> What do you mean by 'change the pwm2 pin to i2c functions' ?
->>> What do you use for I2C emulation? (TOUT2 or gpio)
->>> Could you explain it in detail?
->>
->>In the spec, PWM2 is muxed with I2C_7. I muxed it I2C pin to use i2c =
-chip.
->>
->>Thank you,
->>Kyungmin Park
->>>
->>> Thanks and regards,
->>> Sangbeom Kim
->>>
->>> Kyungmin Park <kmpark@infradead.org> wrote:
->>>
->>>>Can you confirm that during boot time, change the pwm2 pin to i2c
->>>>functions and still it's working correctly?
->>>>
->>>>1. pwm2 is used for clock event at first boot.
->>>>2. during i2c init, pwm2 pin is changed to i2c functionality.
->>>>
->>>>then where can get the clockevent?
->>>>
->>>>Another possible scenarios is that.
->>>>pwm2 pin is changed to i2c function at bootloader to access the i2c
-> chips.
->>>>Then below code is working?
->>>>
->>>>Thank you,
->>>>Kyungmin Park
->>>>
->>>>On Mon, Jul 26, 2010 at 9:42 PM, Kukjin Kim <kgene.kim@samsung.com>
-> wrote:
->>>>> From: Changhwan Youn <chaos.youn@samsung.com>
->>>>>
->>>>> This patch adds timer support for S5PV310. =A0Until now, all S5P =
-SoCs
->>>>> use CONFIG_ARCH_USES_GETTIMEOFFSET macro as a default configurati=
-on.
->>>>> Instead,S5PV310 implements clocksource and clock_event_device to
->>>>> support the high resolution timer and tickless system.
->>>>>
->>>>> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
->>>>> Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
->>>>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
->>>>> ---
->>>>> Changes since v3:
->>>>>
->>>>> - Changes clock source from PWM2 to PWM4 because PWM4 cannot be u=
-sed
->>for
->>>>> =A0other purpose such as external output function through GPIO.
->>>>>
->>>>> =A0arch/arm/mach-s5pv310/include/mach/pwm-clock.h | =A0 70 ++++++
->>>>> =A0arch/arm/mach-s5pv310/localtimer.c =A0 =A0 =A0 =A0 =A0 =A0 | =A0=
- 25 ++
->>>>> =A0arch/arm/mach-s5pv310/time.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- | =A0287
->>>>++++++++++++++++++++++++
->>>>> =A0arch/arm/plat-s5p/include/plat/s5pv310.h =A0 =A0 =A0 | =A0 =A0=
-1 +
->>>>> =A0arch/arm/plat-samsung/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- | =A0 =A02 +-
->>>>> =A05 files changed, 384 insertions(+), 1 deletions(-)
->>>>> =A0create mode 100644 arch/arm/mach-s5pv310/include/mach/pwm-cloc=
-k.h
->>>>> =A0create mode 100644 arch/arm/mach-s5pv310/localtimer.c
->>>>> =A0create mode 100644 arch/arm/mach-s5pv310/time.c
->>>>>
->>>>> diff --git a/arch/arm/mach-s5pv310/include/mach/pwm-clock.h
->>>>b/arch/arm/mach-s5pv310/include/mach/pwm-clock.h
->>>>> new file mode 100644
->>>>> index 0000000..7e6da27
->>>>> --- /dev/null
->>>>> +++ b/arch/arm/mach-s5pv310/include/mach/pwm-clock.h
->>>>> @@ -0,0 +1,70 @@
->>>>> +/* linux/arch/arm/mach-s5pv310/include/mach/pwm-clock.h
->>>>> + *
->>>>> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
->>>>> + * =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com/
->>>>> + *
->>>>> + * Copyright 2008 Openmoko, Inc.
->>>>> + * Copyright 2008 Simtec Electronics
->>>>> + * =A0 =A0 =A0Ben Dooks <ben@simtec.co.uk>
->>>>> + * =A0 =A0 =A0http://armlinux.simtec.co.uk/
->>>>> + *
->>>>> + * Based on arch/arm/mach-s3c64xx/include/mach/pwm-clock.h
->>>>> + *
->>>>> + * S5PV310 - pwm clock and timer support
->>>>> + *
->>>>> + * This program is free software; you can redistribute it and/or
->>modify
->>>>> + * it under the terms of the GNU General Public License version =
-2 as
->>>>> + * published by the Free Software Foundation.
->>>>> +*/
->>>>> +
->>>>> +#ifndef __ASM_ARCH_PWMCLK_H
->>>>> +#define __ASM_ARCH_PWMCLK_H __FILE__
->>>>> +
->>>>> +/**
->>>>> + * pwm_cfg_src_is_tclk() - return whether the given mux config i=
-s a
->>tclk
->>>>> + * @tcfg: The timer TCFG1 register bits shifted down to 0.
->>>>> + *
->>>>> + * Return true if the given configuration from TCFG1 is a TCLK i=
-nstead
->>>>> + * any of the TDIV clocks.
->>>>> + */
->>>>> +static inline int pwm_cfg_src_is_tclk(unsigned long tcfg)
->>>>> +{
->>>>> + =A0 =A0 =A0 return tcfg =3D=3D S3C64XX_TCFG1_MUX_TCLK;
->>>>> +}
->>>>> +
->>>>> +/**
->>>>> + * tcfg_to_divisor() - convert tcfg1 setting to a divisor
->>>>> + * @tcfg1: The tcfg1 setting, shifted down.
->>>>> + *
->>>>> + * Get the divisor value for the given tcfg1 setting. We assume =
-the
->>>>> + * caller has already checked to see if this is not a TCLK sourc=
-e.
->>>>> + */
->>>>> +static inline unsigned long tcfg_to_divisor(unsigned long tcfg1)
->>>>> +{
->>>>> + =A0 =A0 =A0 return 1 << tcfg1;
->>>>> +}
->>>>> +
->>>>> +/**
->>>>> + * pwm_tdiv_has_div1() - does the tdiv setting have a /1
->>>>> + *
->>>>> + * Return true if we have a /1 in the tdiv setting.
->>>>> + */
->>>>> +static inline unsigned int pwm_tdiv_has_div1(void)
->>>>> +{
->>>>> + =A0 =A0 =A0 return 1;
->>>>> +}
->>>>> +
->>>>> +/**
->>>>> + * pwm_tdiv_div_bits() - calculate TCFG1 divisor value.
->>>>> + * @div: The divisor to calculate the bit information for.
->>>>> + *
->>>>> + * Turn a divisor into the necessary bit field for TCFG1.
->>>>> + */
->>>>> +static inline unsigned long pwm_tdiv_div_bits(unsigned int div)
->>>>> +{
->>>>> + =A0 =A0 =A0 return ilog2(div);
->>>>> +}
->>>>> +
->>>>> +#define S3C_TCFG1_MUX_TCLK S3C64XX_TCFG1_MUX_TCLK
->>>>> +
->>>>> +#endif /* __ASM_ARCH_PWMCLK_H */
->>>>> diff --git a/arch/arm/mach-s5pv310/localtimer.c b/arch/arm/mach-
->>>>s5pv310/localtimer.c
->>>>> new file mode 100644
->>>>> index 0000000..2784036
->>>>> --- /dev/null
->>>>> +++ b/arch/arm/mach-s5pv310/localtimer.c
->>>>> @@ -0,0 +1,25 @@
->>>>> +/* linux/arch/arm/mach-s5pv310/localtimer.c
->>>>> + *
->>>>> + * Cloned from linux/arch/arm/mach-realview/localtimer.c
->>>>> + *
->>>>> + * =A0Copyright (C) 2002 ARM Ltd.
->>>>> + * =A0All Rights Reserved
->>>>> + *
->>>>> + * This program is free software; you can redistribute it and/or
->>modify
->>>>> + * it under the terms of the GNU General Public License version =
-2 as
->>>>> + * published by the Free Software Foundation.
->>>>> +*/
->>>>> +
->>>>> +#include <linux/clockchips.h>
->>>>> +
->>>>> +#include <asm/irq.h>
->>>>> +#include <asm/localtimer.h>
->>>>> +
->>>>> +/*
->>>>> + * Setup the local clock events for a CPU.
->>>>> + */
->>>>> +void __cpuinit local_timer_setup(struct clock_event_device *evt)
->>>>> +{
->>>>> + =A0 =A0 =A0 evt->irq =3D IRQ_LOCALTIMER;
->>>>> + =A0 =A0 =A0 twd_timer_setup(evt);
->>>>> +}
->>>>> diff --git a/arch/arm/mach-s5pv310/time.c b/arch/arm/mach-
->>s5pv310/time.c
->>>>> new file mode 100644
->>>>> index 0000000..01b012a
->>>>> --- /dev/null
->>>>> +++ b/arch/arm/mach-s5pv310/time.c
->>>>> @@ -0,0 +1,287 @@
->>>>> +/* linux/arch/arm/mach-s5pv310/time.c
->>>>> + *
->>>>> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
->>>>> + * =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com
->>>>> + *
->>>>> + * S5PV310 (and compatible) HRT support
->>>>> + * PWM 2/4 is used for this feature
->>>>> + *
->>>>> + * This program is free software; you can redistribute it and/or
->>modify
->>>>> + * it under the terms of the GNU General Public License version =
-2 as
->>>>> + * published by the Free Software Foundation.
->>>>> +*/
->>>>> +
->>>>> +#include <linux/sched.h>
->>>>> +#include <linux/interrupt.h>
->>>>> +#include <linux/irq.h>
->>>>> +#include <linux/err.h>
->>>>> +#include <linux/clk.h>
->>>>> +#include <linux/clockchips.h>
->>>>> +#include <linux/platform_device.h>
->>>>> +
->>>>> +#include <asm/smp_twd.h>
->>>>> +
->>>>> +#include <mach/map.h>
->>>>> +#include <plat/regs-timer.h>
->>>>> +#include <asm/mach/time.h>
->>>>> +
->>>>> +static unsigned long clock_count_per_tick;
->>>>> +
->>>>> +static struct clk *tin2;
->>>>> +static struct clk *tin4;
->>>>> +static struct clk *tdiv2;
->>>>> +static struct clk *tdiv4;
->>>>> +static struct clk *timerclk;
->>>>> +
->>>>> +static void s5pv310_pwm_stop(unsigned int pwm_id)
->>>>> +{
->>>>> + =A0 =A0 =A0 unsigned long tcon;
->>>>> +
->>>>> + =A0 =A0 =A0 tcon =3D __raw_readl(S3C2410_TCON);
->>>>> +
->>>>> + =A0 =A0 =A0 switch (pwm_id) {
->>>>> + =A0 =A0 =A0 case 2:
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T2START;
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->>>>> + =A0 =A0 =A0 case 4:
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T4START;
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->>>>> + =A0 =A0 =A0 default:
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->>>>> + =A0 =A0 =A0 }
->>>>> + =A0 =A0 =A0 __raw_writel(tcon, S3C2410_TCON);
->>>>> +}
->>>>> +
->>>>> +static void s5pv310_pwm_init(unsigned int pwm_id, unsigned long =
-tcnt)
->>>>> +{
->>>>> + =A0 =A0 =A0 unsigned long tcon;
->>>>> +
->>>>> + =A0 =A0 =A0 tcon =3D __raw_readl(S3C2410_TCON);
->>>>> +
->>>>> + =A0 =A0 =A0 /* timers reload after counting zero, so reduce the=
- count by 1
->>*/
->>>>> + =A0 =A0 =A0 tcnt--;
->>>>> +
->>>>> + =A0 =A0 =A0 /* ensure timer is stopped... */
->>>>> + =A0 =A0 =A0 switch (pwm_id) {
->>>>> + =A0 =A0 =A0 case 2:
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~(0xf<<12);
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T2MANUALUPD;
->>>>> +
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 __raw_writel(tcnt, S3C2410_TCNTB(2)=
-);
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 __raw_writel(tcnt, S3C2410_TCMPB(2)=
-);
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 __raw_writel(tcon, S3C2410_TCON);
->>>>> +
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->>>>> + =A0 =A0 =A0 case 4:
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~(7<<20);
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T4MANUALUPD;
->>>>> +
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 __raw_writel(tcnt, S3C2410_TCNTB(4)=
-);
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 __raw_writel(tcnt, S3C2410_TCMPB(4)=
-);
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 __raw_writel(tcon, S3C2410_TCON);
->>>>> +
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->>>>> + =A0 =A0 =A0 default:
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->>>>> + =A0 =A0 =A0 }
->>>>> +}
->>>>> +
->>>>> +static inline void s5pv310_pwm_start(unsigned int pwm_id, bool
->>periodic)
->>>>> +{
->>>>> + =A0 =A0 =A0 unsigned long tcon;
->>>>> +
->>>>> + =A0 =A0 =A0 tcon =A0=3D __raw_readl(S3C2410_TCON);
->>>>> +
->>>>> + =A0 =A0 =A0 switch (pwm_id) {
->>>>> + =A0 =A0 =A0 case 2:
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T2START;
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T2MANUALUPD=
-;
->>>>> +
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (periodic)
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_T=
-CON_T2RELOAD;
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_=
-TCON_T2RELOAD;
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->>>>> + =A0 =A0 =A0 case 4:
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T4START;
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T4MANUALUPD=
-;
->>>>> +
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (periodic)
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_T=
-CON_T4RELOAD;
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_=
-TCON_T4RELOAD;
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->>>>> + =A0 =A0 =A0 default:
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->>>>> + =A0 =A0 =A0 }
->>>>> + =A0 =A0 =A0 __raw_writel(tcon, S3C2410_TCON);
->>>>> +}
->>>>> +
->>>>> +static int s5pv310_pwm_set_next_event(unsigned long cycles,
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 struct clock_event_device *evt)
->>>>> +{
->>>>> + =A0 =A0 =A0 s5pv310_pwm_init(2, cycles);
->>>>> + =A0 =A0 =A0 s5pv310_pwm_start(2, 0);
->>>>> + =A0 =A0 =A0 return 0;
->>>>> +}
->>>>> +
->>>>> +static void s5pv310_pwm_set_mode(enum clock_event_mode mode,
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 str=
-uct clock_event_device *evt)
->>>>> +{
->>>>> + =A0 =A0 =A0 s5pv310_pwm_stop(2);
->>>>> +
->>>>> + =A0 =A0 =A0 switch (mode) {
->>>>> + =A0 =A0 =A0 case CLOCK_EVT_MODE_PERIODIC:
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s5pv310_pwm_init(2, clock_count_per=
-_tick);
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s5pv310_pwm_start(2, 1);
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->>>>> + =A0 =A0 =A0 case CLOCK_EVT_MODE_ONESHOT:
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->>>>> + =A0 =A0 =A0 case CLOCK_EVT_MODE_UNUSED:
->>>>> + =A0 =A0 =A0 case CLOCK_EVT_MODE_SHUTDOWN:
->>>>> + =A0 =A0 =A0 case CLOCK_EVT_MODE_RESUME:
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->>>>> + =A0 =A0 =A0 }
->>>>> +}
->>>>> +
->>>>> +static struct clock_event_device pwm_event_device =3D {
->>>>> + =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "pwm_timer2",
->>>>> + =A0 =A0 =A0 .features =A0 =A0 =A0 =3D CLOCK_EVT_FEAT_PERIODIC |
->>> CLOCK_EVT_FEAT_ONESHOT,
->>>>> + =A0 =A0 =A0 .rating =A0 =A0 =A0 =A0 =3D 200,
->>>>> + =A0 =A0 =A0 .shift =A0 =A0 =A0 =A0 =A0=3D 32,
->>>>> + =A0 =A0 =A0 .set_next_event =3D s5pv310_pwm_set_next_event,
->>>>> + =A0 =A0 =A0 .set_mode =A0 =A0 =A0 =3D s5pv310_pwm_set_mode,
->>>>> +};
->>>>> +
->>>>> +irqreturn_t s5pv310_clock_event_isr(int irq, void *dev_id)
->>>>> +{
->>>>> + =A0 =A0 =A0 struct clock_event_device *evt =3D &pwm_event_devic=
-e;
->>>>> +
->>>>> + =A0 =A0 =A0 evt->event_handler(evt);
->>>>> +
->>>>> + =A0 =A0 =A0 return IRQ_HANDLED;
->>>>> +}
->>>>> +
->>>>> +static struct irqaction s5pv310_clock_event_irq =3D {
->>>>> + =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "pwm_timer2_irq",
->>>>> + =A0 =A0 =A0 .flags =A0 =A0 =A0 =A0 =A0=3D IRQF_DISABLED | IRQF_=
-TIMER | IRQF_IRQPOLL,
->>>>> + =A0 =A0 =A0 .handler =A0 =A0 =A0 =A0=3D s5pv310_clock_event_isr=
-,
->>>>> +};
->>>>> +
->>>>> +static void __init s5pv310_clockevent_init(void)
->>>>> +{
->>>>> + =A0 =A0 =A0 unsigned long pclk;
->>>>> + =A0 =A0 =A0 unsigned long clock_rate;
->>>>> + =A0 =A0 =A0 struct clk *tscaler;
->>>>> +
->>>>> + =A0 =A0 =A0 pclk =3D clk_get_rate(timerclk);
->>>>> +
->>>>> + =A0 =A0 =A0 /* configure clock tick */
->>>>> +
->>>>> + =A0 =A0 =A0 tscaler =3D clk_get_parent(tdiv2);
->>>>> +
->>>>> + =A0 =A0 =A0 clk_set_rate(tscaler, pclk / 2);
->>>>> + =A0 =A0 =A0 clk_set_rate(tdiv2, pclk / 2);
->>>>> + =A0 =A0 =A0 clk_set_parent(tin2, tdiv2);
->>>>> +
->>>>> + =A0 =A0 =A0 clock_rate =3D clk_get_rate(tin2);
->>>>> +
->>>>> + =A0 =A0 =A0 clock_count_per_tick =3D clock_rate / HZ;
->>>>> +
->>>>> + =A0 =A0 =A0 pwm_event_device.mult =3D
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 div_sc(clock_rate, NSEC_PER_SEC,
-> pwm_event_device.shift);
->>>>> + =A0 =A0 =A0 pwm_event_device.max_delta_ns =3D
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clockevent_delta2ns(-1, &pwm_event_=
-device);
->>>>> + =A0 =A0 =A0 pwm_event_device.min_delta_ns =3D
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clockevent_delta2ns(1, &pwm_event_d=
-evice);
->>>>> +
->>>>> + =A0 =A0 =A0 pwm_event_device.cpumask =3D cpumask_of(0);
->>>>> + =A0 =A0 =A0 clockevents_register_device(&pwm_event_device);
->>>>> +
->>>>> + =A0 =A0 =A0 setup_irq(IRQ_TIMER2, &s5pv310_clock_event_irq);
->>>>> +}
->>>>> +
->>>>> +static cycle_t s5pv310_pwm4_read(struct clocksource *cs)
->>>>> +{
->>>>> + =A0 =A0 =A0 return (cycle_t) ~__raw_readl(S3C_TIMERREG(0x40));
->>>>> +}
->>>>> +
->>>>> +struct clocksource pwm_clocksource =3D {
->>>>> + =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "pwm_timer4",
->>>>> + =A0 =A0 =A0 .rating =A0 =A0 =A0 =A0 =3D 250,
->>>>> + =A0 =A0 =A0 .read =A0 =A0 =A0 =A0 =A0 =3D s5pv310_pwm4_read,
->>>>> + =A0 =A0 =A0 .mask =A0 =A0 =A0 =A0 =A0 =3D CLOCKSOURCE_MASK(32),
->>>>> + =A0 =A0 =A0 .shift =A0 =A0 =A0 =A0 =A0=3D 20,
->>>>> + =A0 =A0 =A0 .flags =A0 =A0 =A0 =A0 =A0=3D CLOCK_SOURCE_IS_CONTI=
-NUOUS ,
->>>>> +};
->>>>> +
->>>>> +static void __init s5pv310_clocksource_init(void)
->>>>> +{
->>>>> + =A0 =A0 =A0 unsigned long pclk;
->>>>> + =A0 =A0 =A0 unsigned long clock_rate;
->>>>> +
->>>>> + =A0 =A0 =A0 pclk =3D clk_get_rate(timerclk);
->>>>> +
->>>>> + =A0 =A0 =A0 clk_set_rate(tdiv4, pclk / 2);
->>>>> + =A0 =A0 =A0 clk_set_parent(tin4, tdiv4);
->>>>> +
->>>>> + =A0 =A0 =A0 clock_rate =3D clk_get_rate(tin4);
->>>>> +
->>>>> + =A0 =A0 =A0 s5pv310_pwm_init(4, ~0);
->>>>> + =A0 =A0 =A0 s5pv310_pwm_start(4, 1);
->>>>> +
->>>>> + =A0 =A0 =A0 pwm_clocksource.mult =3D
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clocksource_khz2mult(clock_rate/100=
-0,
->>>>pwm_clocksource.shift);
->>>>> +
->>>>> + =A0 =A0 =A0 if (clocksource_register(&pwm_clocksource))
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("%s: can't register clocksour=
-ce\n",
->>>>pwm_clocksource.name);
->>>>> +}
->>>>> +
->>>>> +static void __init s5pv310_timer_resources(void)
->>>>> +{
->>>>> + =A0 =A0 =A0 struct platform_device tmpdev;
->>>>> +
->>>>> + =A0 =A0 =A0 tmpdev.dev.bus =3D &platform_bus_type;
->>>>> +
->>>>> + =A0 =A0 =A0 timerclk =3D clk_get(NULL, "timers");
->>>>> + =A0 =A0 =A0 if (IS_ERR(timerclk))
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("failed to get timers clock f=
-or system timer");
->>>>> +
->>>>> + =A0 =A0 =A0 clk_enable(timerclk);
->>>>> +
->>>>> + =A0 =A0 =A0 tmpdev.id =3D 2;
->>>>> + =A0 =A0 =A0 tin2 =3D clk_get(&tmpdev.dev, "pwm-tin");
->>>>> + =A0 =A0 =A0 if (IS_ERR(tin2))
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("failed to get pwm-tin2 clock=
- for system timer");
->>>>> +
->>>>> + =A0 =A0 =A0 tdiv2 =3D clk_get(&tmpdev.dev, "pwm-tdiv");
->>>>> + =A0 =A0 =A0 if (IS_ERR(tdiv2))
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("failed to get pwm-tdiv2 cloc=
-k for system
-> timer");
->>>>> + =A0 =A0 =A0 clk_enable(tin2);
->>>>> +
->>>>> + =A0 =A0 =A0 tmpdev.id =3D 4;
->>>>> + =A0 =A0 =A0 tin4 =3D clk_get(&tmpdev.dev, "pwm-tin");
->>>>> + =A0 =A0 =A0 if (IS_ERR(tin4))
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("failed to get pwm-tin4 clock=
- for system timer");
->>>>> +
->>>>> + =A0 =A0 =A0 tdiv4 =3D clk_get(&tmpdev.dev, "pwm-tdiv");
->>>>> + =A0 =A0 =A0 if (IS_ERR(tdiv4))
->>>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("failed to get pwm-tdiv4 cloc=
-k for system
-> timer");
->>>>> +
->>>>> + =A0 =A0 =A0 clk_enable(tin4);
->>>>> +}
->>>>> +
->>>>> +static void __init s5pv310_timer_init(void)
->>>>> +{
->>>>> +#ifdef CONFIG_LOCAL_TIMERS
->>>>> + =A0 =A0 =A0 twd_base =3D S5P_VA_TWD;
->>>>> +#endif
->>>>> +
->>>>> + =A0 =A0 =A0 s5pv310_timer_resources();
->>>>> + =A0 =A0 =A0 s5pv310_clockevent_init();
->>>>> + =A0 =A0 =A0 s5pv310_clocksource_init();
->>>>> +}
->>>>> +
->>>>> +struct sys_timer s5pv310_timer =3D {
->>>>> + =A0 =A0 =A0 .init =A0 =A0 =A0 =A0 =A0 =3D s5pv310_timer_init,
->>>>> +};
->>>>> diff --git a/arch/arm/plat-s5p/include/plat/s5pv310.h b/arch/arm/=
-plat-
->>>>s5p/include/plat/s5pv310.h
->>>>> index d2f05e1..769c991 100644
->>>>> --- a/arch/arm/plat-s5p/include/plat/s5pv310.h
->>>>> +++ b/arch/arm/plat-s5p/include/plat/s5pv310.h
->>>>> @@ -22,6 +22,7 @@ extern =A0int s5pv310_init(void);
->>>>> =A0extern void s5pv310_init_irq(void);
->>>>> =A0extern void s5pv310_map_io(void);
->>>>> =A0extern void s5pv310_init_clocks(int xtal);
->>>>> +extern struct sys_timer s5pv310_timer;
->>>>>
->>>>> =A0#define s5pv310_init_uarts s5pv310_common_init_uarts
->>>>>
->>>>> diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-
->>>>samsung/Makefile
->>>>> index b1d82cc..0d5bf8a 100644
->>>>> --- a/arch/arm/plat-samsung/Makefile
->>>>> +++ b/arch/arm/plat-samsung/Makefile
->>>>> @@ -12,7 +12,7 @@ obj- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0:=3D
->>>>> =A0# Objects we always build independent of SoC choice
->>>>>
->>>>> =A0obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0+=3D =
-init.o
->>>>> -obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0+=3D ti=
-me.o
->>>>> +obj-$(CONFIG_ARCH_USES_GETTIMEOFFSET) =A0 +=3D time.o
->>>>> =A0obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0+=3D =
-clock.o
->>>>> =A0obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0+=3D =
-pwm-clock.o
->>>>> =A0obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0+=3D =
-gpio.o
->>>>> --
->>>>> 1.6.2.5
->>>>>
->>>>> --
->>>>> To unsubscribe from this list: send the line "unsubscribe linux-
->>samsung-
->>>>soc" in
->>>>> the body of a message to majordomo@vger.kernel.org
->>>>> More majordomo info at =A0http://vger.kernel.org/majordomo-info.h=
-tml
->>>>>
->>>>
->>>>_______________________________________________
->>>>linux-arm-kernel mailing list
->>>>linux-arm-kernel@lists.infradead.org
->>>>http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-sam=
-sung-
->>soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at =A0http://vger.kernel.org/majordomo-info.htm=
-l
->>>
->>--
->>To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-
->>soc" in
->>the body of a message to majordomo@vger.kernel.org
->>More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+The only changes added by Kukjin Kim were compilation fixes (looks I've
+forgot one include on the platform that has not been tested). 
+
+This patch is also a prerequisite for "[PATCH v4] sdhci-s3c: add support
+for new card detection methods (driver part)".
+
+> I think I'll just drop all of it.  Please sort all of this out then let
+> me know what you want me to do.
+
+I would to ask not for dropping. As all required platform changes has been
+already merged by Kukjin, s
+dhci-s3c-add-support-for-the-non-standard-minimal-clock-value.patch and 
+sdhci-s3c-add-support-for-new-card-detection-methods-driver-part.patch can
+be merged without causing compilation break in the 'next' kernel tree.
+
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
