@@ -1,134 +1,82 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3] Samsung: sdhci-s3c: add support for new card detection
- methods
-Date: Tue, 27 Jul 2010 20:27:55 +0900
-Message-ID: <000801cb2d7e$c572b7b0$50582710$%kim@samsung.com>
-References: <1279181721-23333-1-git-send-email-m.szyprowski@samsung.com>
- <20100715133954.7fcb797a.akpm@linux-foundation.org>
- <011401cb24af$8eb2cb70$ac186250$%szyprowski@samsung.com>
- <20100721161133.5c3285d3.akpm@linux-foundation.org>
- <000501cb2977$7d6cf210$7846d630$%szyprowski@samsung.com>
- <20100726135708.57048800.akpm@linux-foundation.org>
+Subject: RE: [PATCH v3 3/3] sdhci-s3c: Add SDHCI_QUIRK_NO_WP_BIT quirk for
+ Samsung SoC
+Date: Tue, 27 Jul 2010 20:58:49 +0900
+Message-ID: <000d01cb2d83$16b7efb0$4427cf10$%kim@samsung.com>
+References: <1279886191-9197-1-git-send-email-kgene.kim@samsung.com>
+ <1279886191-9197-4-git-send-email-kgene.kim@samsung.com>
+ <4C49871D.8030702@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:26508 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756049Ab0G0L1u (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Jul 2010 07:27:50 -0400
-In-reply-to: <20100726135708.57048800.akpm@linux-foundation.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <4C49871D.8030702@gmail.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Maurus Cuelenaere' <mcuelenaere@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, ben-linux@fluff.org, akpm@linux-foundation.org, 'Hyuk Lee' <hyuk1.lee@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Andrew Morton' <akpm@linux-foundation.org>, 'Marek Szyprowski' <m.szyprowski@samsung.com>
-Cc: linux-mmc@vger.kernel.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-Andrew Morton wrote:
+Maurus Cuelenaere wrote:
 > 
-> On Thu, 22 Jul 2010 10:25:44 +0200
-> Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>  Op 23-07-10 13:56, Kukjin Kim schreef:
+> > From: Hyuk Lee <hyuk1.lee@samsung.com>
+> >
+> > If host controller doesn't have WP pin which should be connnected with SDMMC
+> > card WP pin, can implement get_ro function with using the allocated gpio.
+> > In order to use this quirk wp_gpio in the platform data must be set.
+> >
+> > Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > ---
+> >  drivers/mmc/host/sdhci-s3c.c |   43
+> ++++++++++++++++++++++++++++++++++++++++++
+> >  drivers/mmc/host/sdhci.c     |    3 ++
+> >  drivers/mmc/host/sdhci.h     |    3 ++
+> >  3 files changed, 49 insertions(+), 0 deletions(-)
+> >
+> > diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> > index 0d25285..0b75e57 100644
+> > --- a/drivers/mmc/host/sdhci-s3c.c
+> > +++ b/drivers/mmc/host/sdhci-s3c.c
+> > @@ -22,6 +22,7 @@
+> >
+> >  #include <linux/mmc/host.h>
+> >
+> > +#include <plat/gpio-cfg.h>
+> >  #include <plat/sdhci.h>
+> >  #include <plat/regs-sdhci.h>
+> >
+> > @@ -213,6 +214,36 @@ static void sdhci_s3c_set_clock(struct sdhci_host *host,
+> unsigned int clock)
+> >  }
+> >
+> >  /**
+> > + * sdhci_s3c_get_ro - callback for get_ro
+> > + * @host: The SDHCI host being changed
+> > + *
+> > + * If the WP pin is connected with GPIO, can get the value which indicates
+> > + * the card is locked or not.
+> > +*/
+> > +static int sdhci_s3c_get_ro(struct mmc_host *mmc)
+> > +{
+> > +	struct sdhci_s3c *sc;
+> > +	struct sdhci_host *host;
+> > +
+> > +	host = mmc_priv(mmc);
+> > +	sc = sdhci_priv(host);
 > 
-> > Hello,
-> >
-> > On Thursday, July 22, 2010 1:12 AM
-> >
-> > > On Fri, 16 Jul 2010 08:24:26 +0200
-> > > Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> > >
-> > > > > >  arch/arm/mach-s3c64xx/setup-sdhci-gpio.c   |   14 +++++++++---
-> > > > > >  arch/arm/mach-s5pc100/setup-sdhci-gpio.c   |   21
-> ++++++++++++++----
-> > > -
-> > > > > >  arch/arm/mach-s5pv210/setup-sdhci-gpio.c   |   22
-> +++++++++++++++---
-> > > --
-> > > > > >  arch/arm/plat-samsung/dev-hsmmc.c          |    5 ++++
-> > > > > >  arch/arm/plat-samsung/dev-hsmmc1.c         |    5 ++++
-> > > > > >  arch/arm/plat-samsung/dev-hsmmc2.c         |    5 ++++
-> > > > > >  arch/arm/plat-samsung/dev-hsmmc3.c         |    5 ++++
-> > > > > >  arch/arm/plat-samsung/include/plat/sdhci.h |   29
-> > > > > ++++++++++++++++++++++++++++
-> > > > > >  8 files changed, 90 insertions(+), 16 deletions(-)
-> > > > >
-> > > > > This is quite confusing.  You've already sent a patch called
-> > > > > "sdhci-s3c: add support for new card detection methods".  It had
-the
-> > > > > same changelog as this patch and the same title, but the two
-patches
-> > > > > are utterly different!
-> > > >
-> > > > The real patch has been split into two for easier merging: 1. the
-driver
-> > > > part and 2. samsung platform related part. The part which patch
-belongs
-> > > > to is indicated in the last line of the change log.
-> > > >
-> > > > I'm really confused how to submit properly a patch that requires
-changes
-> > > > to both the driver (which is merged by the proper driver
-maintainer's
-> > > > sub-tree) and the platform (which should go through platform
-maintainer's
-> > > > tree).
-> > >
-> > > Make the relationship very very clear in the changelog.  Send both
-> > > patches to both maintainers.  Ask that one of them merge both patches
-> > > and that the other ack both patches.
-> >
-> > Ok. Thanks for the hint.
-> >
-> > > Anyway, I've forgotten what's happening here.  I appear to be sitting
-on
-> > >
-> > > sdhci-s3c-add-support-for-the-non-standard-minimal-clock-value.patch
-> >
-> > This one is independent from the card-detection patches and can be
-applied
-> > directly onto linux-next kernel tree.
-> >
-> > > and
-> > > sdhci-s3c-add-support-for-new-card-detection-methods.patch
-> > >
-> > > the latter of which is below.
-> > >
-> > > Am I missing something?  Is
-> > > sdhci-s3c-add-support-for-new-card-detection-methods.patch up to date?
-> > >
-> >
-> > Ok, I will repost these 2 patches under new names to avoid further
-> > confusion. Currently there exists two
-> > "sdhci-s3c-add-support-for-new-card-detection-methods.patch", both of
-them
-> > are required.
+> This can be done as static initializer if you reverse the order above.
 > 
-> So the second(?) patch "[PATCH v4] Samsung: add new card detection
-> methods in s3c-sdhci driver (platform part)" has already been applied
-> to linux-next by Kukjin Kim, along with modifications which we have not
-> been shown.
+Could you please kindly explain about this?
+Sorry, I cannot get the exactly meaning...
 
-Yeah, I applied it in my tree which can be merged linux-next.
+> > +
+> > +	return gpio_get_value(sc->pdata->wp_gpio);
+> > +}
 > 
-> But the first patch
-> (sdhci-s3c-add-support-for-the-non-standard-minimal-clock-value.patch)
-> has not been applied to linux-next by anoyne and the third patch
-> "[PATCH v4] sdhci-s3c: add support for new card detection methods
-> (driver part)" has not been applied either.
-> 
-> This is a complete mess.  What happens if I apply and merge
-> sdhci-s3c-add-support-for-the-non-standard-minimal-clock-value.patch
-> and
-> sdhci-s3c-add-support-for-new-card-detection-methods-driver-part.patch?
-> I have no idea.
+> --
 
-Hmm...
-
-> 
-> I think I'll just drop all of it.  Please sort all of this out then let
-> me know what you want me to do.
-
-If any updates, please let me know.
 
 Thanks.
 
@@ -137,3 +85,4 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
