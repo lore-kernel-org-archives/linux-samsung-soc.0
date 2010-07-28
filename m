@@ -1,170 +1,268 @@
-From: Wan ZongShun <mcuos.com@gmail.com>
-Subject: Re: [rtc-linux] [PATCH 2/2] rtc: rtc-s3c: Updates RTC driver for
-	clock enabling support
-Date: Wed, 28 Jul 2010 09:45:31 +0800
-Message-ID: <AANLkTin=bqMRLYgAd4NvVnKZi1PWAGPqQSsZDPxvitfh@mail.gmail.com>
-References: <1279702501-6803-1-git-send-email-kgene.kim@samsung.com>
-	<1279702501-6803-3-git-send-email-kgene.kim@samsung.com>
-	<AANLkTikGjzmHxCX6_s5Z-ZXkoyPbtF28uCyE1VqdGPvb@mail.gmail.com>
-	<AANLkTikEanSQBeFoqpMxR3tWxWTci_ytNsEhe9VS9ygg@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 1/2] ARM: S5PV210: Add audio support to Aquila
+Date: Wed, 28 Jul 2010 12:04:44 +0900
+Message-ID: <4C4F9E4C.7000001@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qy0-f174.google.com ([209.85.216.174]:60451 "EHLO
-	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751383Ab0G1Bpc convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:36830 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751879Ab0G1DEr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Jul 2010 21:45:32 -0400
-Received: by qyk7 with SMTP id 7so3170975qyk.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Jul 2010 18:45:32 -0700 (PDT)
-In-Reply-To: <AANLkTikEanSQBeFoqpMxR3tWxWTci_ytNsEhe9VS9ygg@mail.gmail.com>
+	Tue, 27 Jul 2010 23:04:47 -0400
+Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L6800GDQZ7WCVG0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 28 Jul 2010 12:04:44 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L680096ZZ7WEO@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 28 Jul 2010 12:04:44 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Atul Dahiya <atuldahiya84@gmail.com>, linux-rtc <rtc-linux@googlegroups.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, p_gortmaker@yahoo.com, a.zummo@towertech.it, Atul Dahiya <atul.dahiya@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben@simtec.co.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-2010/7/22 Atul Dahiya <atuldahiya84@gmail.com>:
-> On Thu, Jul 22, 2010 at 11:39 AM, Wan ZongShun <mcuos.com@gmail.com> =
-wrote:
->>
->> 2010/7/21 Kukjin Kim <kgene.kim@samsung.com>:
->> > From: Atul Dahiya <atul.dahiya@samsung.com>
->> >
->> > This Patch updates existing Samsung RTC driver for clock enabling =
-support.
->> >
->> > Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
->> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
->> > ---
->> > =C2=A0drivers/rtc/rtc-s3c.c | =C2=A0 22 ++++++++++++++++++++++
->> > =C2=A01 files changed, 22 insertions(+), 0 deletions(-)
->> >
->> > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
->> > index 70b68d3..c032a15 100644
->> > --- a/drivers/rtc/rtc-s3c.c
->> > +++ b/drivers/rtc/rtc-s3c.c
->> > @@ -1,5 +1,8 @@
->> > =C2=A0/* drivers/rtc/rtc-s3c.c
->> > =C2=A0*
->> > + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
->> > + * =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 http://www.samsung.c=
-om/
->> > + *
->> > =C2=A0* Copyright (c) 2004,2006 Simtec Electronics
->> > =C2=A0* =C2=A0 =C2=A0 Ben Dooks, <ben@simtec.co.uk>
->> > =C2=A0* =C2=A0 =C2=A0 http://armlinux.simtec.co.uk/
->> > @@ -39,6 +42,7 @@ enum s3c_cpu_type {
->> >
->> > =C2=A0static struct resource *s3c_rtc_mem;
->> >
->> > +static struct clk *rtc_clk;
->> > =C2=A0static void __iomem *s3c_rtc_base;
->> > =C2=A0static int s3c_rtc_alarmno =3D NO_IRQ;
->> > =C2=A0static int s3c_rtc_tickno =C2=A0=3D NO_IRQ;
->> > @@ -431,6 +435,10 @@ static int __devexit s3c_rtc_remove(struct pl=
-atform_device *dev)
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0s3c_rtc_setpie(&dev->dev, 0);
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0s3c_rtc_setaie(0);
->> >
->> > + =C2=A0 =C2=A0 =C2=A0 clk_disable(rtc_clk);
->> > + =C2=A0 =C2=A0 =C2=A0 clk_put(rtc_clk);
->> > + =C2=A0 =C2=A0 =C2=A0 rtc_clk =3D NULL;
->> > +
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0iounmap(s3c_rtc_base);
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0release_resource(s3c_rtc_mem);
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0kfree(s3c_rtc_mem);
->> > @@ -488,6 +496,16 @@ static int __devinit s3c_rtc_probe(struct pla=
-tform_device *pdev)
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto err_no=
-map;
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0}
->> >
->> > + =C2=A0 =C2=A0 =C2=A0 rtc_clk =3D clk_get(&pdev->dev, "rtc");
->>
->> Do you really need the second argument? I think the bus clock for
->> a device should be findable with NULL for s3c platform..
->
-> No, actually =C2=A0clk_get() function for s3c platform searches on th=
-e
-> basis of second parameter passed
-> so need to pass the second argument here.
+This patch the I2C board information for the WM8994 used in the Aquila
+as audio codec and adds the I2C/I2S platform drivers. Additionlly, to
+control power consumption have registerd the voltage consumer of WM8994
+to the regulator framework. I initialize gpio settting relevant to
+operation of audio codec. I explain following comment concering gpio
+setting:
+- CODEC_XTAL_EN : This gpio enables that the main clock is provided
+  to operate audio codec.
+- MICBIAS_EN : This gpio enable the microphone to input analog
+- ADC_EN : This gpio enable the ADC device which is used to detect
+  the kind of jack. (SND_JACK_HEADPHONE/HEADSET/MECHANICAL/AVOUT)
+  According to the kind of jack, an electric current is changed.
 
-Okay, good patch!
+Signed-off-by : Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by : Joonyoung Shim <jy0922.shim@samsung.com>
+Signed-off-by : Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-s5pv210/mach-aquila.c |  177 +++++++++++++++++++++++++++++++++++
+ 1 files changed, 177 insertions(+), 0 deletions(-)
 
-Acked-by: Wan ZongShun <mcuos.com@gmail.com>
-
->
->>
->> > + =C2=A0 =C2=A0 =C2=A0 if (IS_ERR(rtc_clk)) {
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dev_err(&pdev->=
-dev, "failed to find rtc clock source\n");
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ret =3D PTR_ERR=
-(rtc_clk);
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rtc_clk =3D NUL=
-L;
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 goto err_clk;
->> > + =C2=A0 =C2=A0 =C2=A0 }
->> > +
->> > + =C2=A0 =C2=A0 =C2=A0 clk_enable(rtc_clk);
->> > +
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0/* check to see if everything is setup =
-correctly */
->> >
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0s3c_rtc_enable(pdev, 1);
->> > @@ -523,6 +541,10 @@ static int __devinit s3c_rtc_probe(struct pla=
-tform_device *pdev)
->> >
->> > =C2=A0err_nortc:
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0s3c_rtc_enable(pdev, 0);
->> > + =C2=A0 =C2=A0 =C2=A0 clk_disable(rtc_clk);
->> > + =C2=A0 =C2=A0 =C2=A0 clk_put(rtc_clk);
->> > +
->> > + err_clk:
->> > =C2=A0 =C2=A0 =C2=A0 =C2=A0iounmap(s3c_rtc_base);
->> >
->> > =C2=A0err_nomap:
->> > --
->> > 1.6.2.5
->> >
->> > --
->> > You received this message because you are subscribed to "rtc-linux=
-".
->> > Membership options at http://groups.google.com/group/rtc-linux .
->> > Please read http://groups.google.com/group/rtc-linux/web/checklist
->> > before submitting a driver.
->>
->>
->>
->> --
->> *linux-arm-kernel mailing list
->> mail addr:linux-arm-kernel@lists.infradead.org
->> you can subscribe by:
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>
->> * linux-arm-NUC900 mailing list
->> mail addr:NUC900@googlegroups.com
->> main web: https://groups.google.com/group/NUC900
->> you can subscribe it by sending me mail:
->> mcuos.com@gmail.com
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-sams=
-ung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.h=
-tml
->
-
-
-
---=20
-*linux-arm-kernel mailing list
-mail addr:linux-arm-kernel@lists.infradead.org
-you can subscribe by:
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
-* linux-arm-NUC900 mailing list
-mail addr:NUC900@googlegroups.com
-main web: https://groups.google.com/group/NUC900
-you can subscribe it by sending me mail:
-mcuos.com@gmail.com
+diff --git a/arch/arm/mach-s5pv210/mach-aquila.c b/arch/arm/mach-s5pv210/mach-aquila.c
+index f0f960f..d027f9d 100644
+--- a/arch/arm/mach-s5pv210/mach-aquila.c
++++ b/arch/arm/mach-s5pv210/mach-aquila.c
+@@ -17,9 +17,11 @@
+ #include <linux/i2c-gpio.h>
+ #include <linux/i2c/mcs.h>
+ #include <linux/mfd/max8998.h>
++#include <linux/mfd/wm8994/pdata.h>
+ #include <linux/gpio_keys.h>
+ #include <linux/input.h>
+ #include <linux/gpio.h>
++#include <linux/regulator/fixed.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+@@ -397,6 +399,120 @@ static struct max8998_platform_data aquila_max8998_pdata = {
+ };
+ #endif
+ 
++static struct regulator_consumer_supply wm8994_fixed_voltage0_supplies[] = {
++	{
++		.dev_name	= "5-001a",
++		.supply		= "DBVDD",
++	}, {
++		.dev_name	= "5-001a",
++		.supply		= "AVDD2",
++	}, {
++		.dev_name	= "5-001a",
++		.supply		= "CPVDD",
++	},
++
++};
++
++static struct regulator_consumer_supply wm8994_fixed_voltage1_supplies[] = {
++	{
++		.dev_name	= "5-001a",
++		.supply		= "SPKVDD1",
++	}, {
++		.dev_name	= "5-001a",
++		.supply		= "SPKVDD2",
++	},
++};
++
++static struct regulator_init_data wm8994_fixed_voltage0_init_data = {
++	.constraints = {
++		.always_on = 1,
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(wm8994_fixed_voltage0_supplies),
++	.consumer_supplies	= wm8994_fixed_voltage0_supplies,
++};
++
++static struct regulator_init_data wm8994_fixed_voltage1_init_data = {
++	.constraints = {
++		.always_on = 1,
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(wm8994_fixed_voltage1_supplies),
++	.consumer_supplies	= wm8994_fixed_voltage1_supplies,
++};
++
++static struct fixed_voltage_config wm8994_fixed_voltage0_config = {
++	.supply_name	= "VCC_1.8V_PDA",
++	.microvolts	= 1800000,
++	.gpio		= -EINVAL,
++	.init_data	= &wm8994_fixed_voltage0_init_data,
++};
++
++static struct fixed_voltage_config wm8994_fixed_voltage1_config = {
++	.supply_name	= "V_BAT",
++	.microvolts	= 3700000,
++	.gpio		= -EINVAL,
++	.init_data	= &wm8994_fixed_voltage1_init_data,
++};
++
++static struct platform_device wm8994_fixed_voltage0 = {
++	.name		= "reg-fixed-voltage",
++	.id		= 0,
++	.dev		= {
++		.platform_data	= &wm8994_fixed_voltage0_config,
++	},
++};
++
++static struct platform_device wm8994_fixed_voltage1 = {
++	.name		= "reg-fixed-voltage",
++	.id		= 1,
++	.dev		= {
++		.platform_data	= &wm8994_fixed_voltage1_config,
++	},
++};
++
++static struct regulator_consumer_supply wm8994_avdd1_supply = {
++	.dev_name	= "5-001a",
++	.supply		= "AVDD1",
++};
++
++static struct regulator_consumer_supply wm8994_dcvdd_supply = {
++	.dev_name	= "5-001a",
++	.supply		= "DCVDD",
++};
++
++static struct regulator_init_data wm8994_ldo1_data = {
++	.constraints	= {
++		.name		= "AVDD1_3.0V",
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++	},
++	.num_consumer_supplies	= 1,
++	.consumer_supplies	= &wm8994_avdd1_supply,
++};
++
++static struct regulator_init_data wm8994_ldo2_data = {
++	.constraints	= {
++		.name		= "DCVDD_1.0V",
++	},
++	.num_consumer_supplies	= 1,
++	.consumer_supplies	= &wm8994_dcvdd_supply,
++};
++
++static struct wm8994_pdata wm8994_platform_data = {
++	/* configure gpio1 function: 0x0001(Logic level input/output) */
++	.gpio_defaults[0] = 0x0001,
++	/* configure gpio3/4/5/7 function for AIF2 voice */
++	.gpio_defaults[2] = 0x8100,
++	.gpio_defaults[3] = 0x8100,
++	.gpio_defaults[4] = 0x8100,
++	.gpio_defaults[6] = 0x0100,
++	/* configure gpio8/9/10/11 function for AIF3 BT */
++	.gpio_defaults[7] = 0x8100,
++	.gpio_defaults[8] = 0x0100,
++	.gpio_defaults[9] = 0x0100,
++	.gpio_defaults[10] = 0x0100,
++	.ldo[0]	= { S5PV210_MP03(6), NULL, &wm8994_ldo1_data },	/* XM0FRNB_2 */
++	.ldo[1]	= { 0, NULL, &wm8994_ldo2_data },
++};
++
+ /* GPIO I2C PMIC */
+ #define AP_I2C_GPIO_PMIC_BUS_4	4
+ static struct i2c_gpio_platform_data aquila_i2c_gpio_pmic_data = {
+@@ -422,6 +538,58 @@ static struct i2c_board_info i2c_gpio_pmic_devs[] __initdata = {
+ #endif
+ };
+ 
++/* GPIO I2C AP 1.8V */
++#define AP_I2C_GPIO_BUS_5	5
++static struct i2c_gpio_platform_data i2c_gpio5_data = {
++	.sda_pin	= S5PV210_MP05(3),	/* XM0ADDR_11 */
++	.scl_pin	= S5PV210_MP05(2),	/* XM0ADDR_10 */
++};
++
++static struct platform_device i2c_gpio5 = {
++	.name		= "i2c-gpio",
++	.id		= AP_I2C_GPIO_BUS_5,
++	.dev		= {
++		.platform_data	= &i2c_gpio5_data,
++	},
++};
++
++static struct i2c_board_info i2c_gpio5_devs[] __initdata = {
++	{
++		/* CS/ADDR = low 0x34 (FYI: high = 0x36) */
++		I2C_BOARD_INFO("wm8994", 0x34 >> 1),
++		.platform_data	= &wm8994_platform_data,
++	},
++};
++
++static void __init aquila_sound_init(void)
++{
++	unsigned int gpio;
++
++	/* CODEC_XTAL_EN */
++	gpio = S5PV210_GPH3(2);		/* XEINT_26 */
++	gpio_request(gpio, "CODEC_XTAL_EN");
++	s3c_gpio_cfgpin(gpio, S3C_GPIO_OUTPUT);
++	s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++	gpio_direction_output(gpio, 1);
++
++	/* CLKOUT[9:8] set to 0x3(XUSBXTI) of 0xE010E000(OTHERS)
++	 * for 24MHZ
++	 */
++	writel(readl(S5P_OTHERS) | (0x3 << 8), S5P_OTHERS);
++
++	/* MICBIAS_EN */
++	gpio = S5PV210_GPJ4(2);			/* XMSMRN */
++	gpio_request(gpio, "MICBIAS_EN");
++	s3c_gpio_cfgpin(gpio, S3C_GPIO_OUTPUT);
++	gpio_direction_output(gpio, 1);
++
++	/* ADC_EN */
++	gpio = S5PV210_GPJ3(2);
++	gpio_request(gpio, "ADC_EN");
++	s3c_gpio_cfgpin(gpio, S3C_GPIO_OUTPUT);
++	gpio_direction_output(gpio, 1);
++}
++
+ /* PMIC Power button */
+ static struct gpio_keys_button aquila_gpio_keys_table[] = {
+ 	{
+@@ -523,6 +691,10 @@ static struct platform_device *aquila_devices[] __initdata = {
+ 	&s5pc110_device_onenand,
+ 	&samsung_device_keypad,
+ 	&i2c_gpio10,
++	&wm8994_fixed_voltage0,
++	&wm8994_fixed_voltage1,
++	&s5pv210_device_iis0,
++	&i2c_gpio5,
+ };
+ 
+ static void __init aquila_map_io(void)
+@@ -539,6 +711,11 @@ static void __init aquila_machine_init(void)
+ 	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4, i2c_gpio_pmic_devs,
+ 			ARRAY_SIZE(i2c_gpio_pmic_devs));
+ 
++	/* SOUND */
++	i2c_register_board_info(AP_I2C_GPIO_BUS_5, i2c_gpio5_devs,
++			ARRAY_SIZE(i2c_gpio5_devs));
++	aquila_sound_init();
++
+ 	/* FB */
+ 	s3c_fb_set_platdata(&aquila_lcd_pdata);
+ 
+-- 
+1.6.3.3
