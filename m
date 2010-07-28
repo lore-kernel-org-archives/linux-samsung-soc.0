@@ -1,98 +1,75 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3 3/3] sdhci-s3c: Add SDHCI_QUIRK_NO_WP_BIT quirk for
- Samsung SoC
-Date: Wed, 28 Jul 2010 13:42:56 +0900
-Message-ID: <008b01cb2e0f$5c2de590$1489b0b0$%kim@samsung.com>
-References: <1279886191-9197-1-git-send-email-kgene.kim@samsung.com>
- <1279886191-9197-4-git-send-email-kgene.kim@samsung.com>
- <4C49871D.8030702@gmail.com> <000d01cb2d83$16b7efb0$4427cf10$%kim@samsung.com>
- <4C4F06EC.2020902@gmail.com>
+From: Wan ZongShun <mcuos.com@gmail.com>
+Subject: Re: [rtc-linux] [PATCH v2 3/3] rtc: rtc-s3c: Add BCD register
+	initialization codes
+Date: Wed, 28 Jul 2010 12:48:00 +0800
+Message-ID: <AANLkTikE-2daOEX9G+t2E3ywiM=4E0L4TYBw=S2fftTY@mail.gmail.com>
+References: <1280235553-27369-1-git-send-email-kgene.kim@samsung.com>
+	<20100727194611.04486f92@linux.lan.towertech.it>
+	<007901cb2e0d$ac1faa40$045efec0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7BIT
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:41504 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751267Ab0G1Emv (ORCPT
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:44267 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751403Ab0G1EsB convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Jul 2010 00:42:51 -0400
-In-reply-to: <4C4F06EC.2020902@gmail.com>
-Content-language: ko
+	Wed, 28 Jul 2010 00:48:01 -0400
+Received: by vws3 with SMTP id 3so4065432vws.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Jul 2010 21:48:01 -0700 (PDT)
+In-Reply-To: <007901cb2e0d$ac1faa40$045efec0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Maurus Cuelenaere' <mcuelenaere@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, ben-linux@fluff.org, akpm@linux-foundation.org, 'Hyuk Lee' <hyuk1.lee@samsung.com>
+To: rtc-linux@googlegroups.com
+Cc: Alessandro Zummo <a.zummo@towertech.it>, p_gortmaker@yahoo.com, linux-samsung-soc@vger.kernel.org, Taekgyun Ko <taeggyun.ko@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-Maurus Cuelenaere wrote:
-> 
->  Op 27-07-10 13:58, Kukjin Kim schreef:
-> > Maurus Cuelenaere wrote:
-> >>  Op 23-07-10 13:56, Kukjin Kim schreef:
-> >>> From: Hyuk Lee <hyuk1.lee@samsung.com>
-> >>>
-> >>> If host controller doesn't have WP pin which should be connnected with
-> SDMMC
-> >>> card WP pin, can implement get_ro function with using the allocated gpio.
-> >>> In order to use this quirk wp_gpio in the platform data must be set.
-> >>>
-> >>> Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
-> >>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> >>> ---
-> >>>  drivers/mmc/host/sdhci-s3c.c |   43
-> >> ++++++++++++++++++++++++++++++++++++++++++
-> >>>  drivers/mmc/host/sdhci.c     |    3 ++
-> >>>  drivers/mmc/host/sdhci.h     |    3 ++
-> >>>  3 files changed, 49 insertions(+), 0 deletions(-)
-> >>>
-> >>> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-> >>> index 0d25285..0b75e57 100644
-> >>> --- a/drivers/mmc/host/sdhci-s3c.c
-> >>> +++ b/drivers/mmc/host/sdhci-s3c.c
-> >>> @@ -22,6 +22,7 @@
-> >>>
-> >>>  #include <linux/mmc/host.h>
-> >>>
-> >>> +#include <plat/gpio-cfg.h>
-> >>>  #include <plat/sdhci.h>
-> >>>  #include <plat/regs-sdhci.h>
-> >>>
-> >>> @@ -213,6 +214,36 @@ static void sdhci_s3c_set_clock(struct sdhci_host
-> *host,
-> >> unsigned int clock)
-> >>>  }
-> >>>
-> >>>  /**
-> >>> + * sdhci_s3c_get_ro - callback for get_ro
-> >>> + * @host: The SDHCI host being changed
-> >>> + *
-> >>> + * If the WP pin is connected with GPIO, can get the value which indicates
-> >>> + * the card is locked or not.
-> >>> +*/
-> >>> +static int sdhci_s3c_get_ro(struct mmc_host *mmc)
-> >>> +{
-> >>> +	struct sdhci_s3c *sc;
-> >>> +	struct sdhci_host *host;
-> >>> +
-> >>> +	host = mmc_priv(mmc);
-> >>> +	sc = sdhci_priv(host);
-> >> This can be done as static initializer if you reverse the order above.
-> > Could you please kindly explain about this?
-> > Sorry, I cannot get the exactly meaning...
-> 
-> +static int sdhci_s3c_get_ro(struct mmc_host *mmc)
-> +{
-> +	struct sdhci_host *host = mmc_priv(mmc);
-> +	struct sdhci_s3c *sc = sdhci_priv(host);
-> 
-Hahaha, no need more words ;-)
-Thanks for your kindly explanation.
+2010/7/28 Kukjin Kim <kgene.kim@samsung.com>:
+> Alessandro Zummo wrote:
+>>
+>> On Tue, 27 Jul 2010 21:59:13 +0900
+>> Kukjin Kim <kgene.kim@samsung.com> wrote:
+>>
+>> > From: Taekgyun Ko <taeggyun.ko@samsung.com>
+>> >
+>> > RTC needs to be initialized when BCD registers have invalid value.
+>> >
+>> > Signed-off-by: Taekgyun Ko <taeggyun.ko@samsung.com>
+>> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+>>
+>>
+>> =C2=A0Acked-by: Alessandro Zummo <a.zummo@towertech.it>
+>>
+> Thanks for your ack.
+>
+> So...which subsystem tree is appropriate for this?
 
-I think, v4 patch seems to satisfy your suggestion...even though need v5 patch right now.
+S3c git tree or Andrew's mm git tree.
 
-Thanks.
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+> --
+> You received this message because you are subscribed to "rtc-linux".
+> Membership options at http://groups.google.com/group/rtc-linux .
+> Please read http://groups.google.com/group/rtc-linux/web/checklist
+> before submitting a driver.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+
+--=20
+*linux-arm-kernel mailing list
+mail addr:linux-arm-kernel@lists.infradead.org
+you can subscribe by:
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+* linux-arm-NUC900 mailing list
+mail addr:NUC900@googlegroups.com
+main web: https://groups.google.com/group/NUC900
+you can subscribe it by sending me mail:
+mcuos.com@gmail.com
