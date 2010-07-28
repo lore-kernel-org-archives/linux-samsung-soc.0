@@ -1,146 +1,45 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: not coming prompt in 2.6.33.6 kernel
-Date: Wed, 28 Jul 2010 10:43:44 +0100
-Message-ID: <20100728094344.GA9142@trinity.fluff.org>
-References: <AANLkTikgB9OF6mRqZ2KgQYuCQ4JcF7N6oTJyUbrYq0t7@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 2/4] sdhci-s3c: enable SDHCI_QUIRK_NO_HISPD_BIT quirk
+Date: Wed, 28 Jul 2010 16:19:55 +0200
+Message-ID: <1280326797-15792-3-git-send-email-m.szyprowski@samsung.com>
+References: <1280326797-15792-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:37974 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754204Ab0G1Jnz (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:61739 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752309Ab0G1OUK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Jul 2010 05:43:55 -0400
-Content-Disposition: inline
-In-Reply-To: <AANLkTikgB9OF6mRqZ2KgQYuCQ4JcF7N6oTJyUbrYq0t7@mail.gmail.com>
+	Wed, 28 Jul 2010 10:20:10 -0400
+In-reply-to: <1280326797-15792-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: nitin vishnoi <nitvishnoi@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Wan ZongShun <mcuos.com@gmail.com>, rtc-linux@googlegroups.com, p_gortmaker@yahoo.com, linux-samsung-soc@vger.kernel.org, a.zummo@towertech.it, Taekgyun Ko <taeggyun.ko@samsung.com>, ben-linux@fluff.org, Andrew Morton <akpm@linux-foundation.org>, linux-arm-kernel@lists.infradead.org
+To: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, akpm@linux-foundation.org, broonie@opensource.wolfsonmicro.com
 
-On Wed, Jul 28, 2010 at 08:51:06AM +0530, nitin vishnoi wrote:
-> Hi
->=20
-> I am porting the 2.6.33.6 kernel,which i took from kernel.org.I am tr=
-ying to
-> port it on samsung-s3c2451 board.
-> But i am not getting the shell prompt,due to getting the following er=
-ror.Any
-> body can tell due to what this error i am getting?
->=20
-> Starting kernel ...
->=20
->=20
-> Uncompressing Linux... done, booting the kernel.
-> Linux version 2.6.33.6 (root@ubntu-desktop) (gcc version 4.2.2) #12 M=
-on Jul
-> 26 18:39:19 IST 2010
-> CPU: ARM926EJ-S [41069265] revision 5 (ARMv5TEJ), cr=3D00053177
-> CPU: VIVT data cache, VIVT instruction cache
-> Machine: SMDK2450
-> Ignoring unrecognised tag 0x00000000
-> Memory policy: ECC disabled, Data cache writeback
-> CPU S3C2450 EVT3 (id 0x32450003)
-> SPA   epll  80200102  Mpll  80640061   clkdiv0 557
-> S3C24XX Clocks, (c) 2004 Simtec Electronics
-> S3C2450: mpll on 800.000 MHz, cpu 400.000 MHz, mem 133.333 MHz, pclk =
-66.666
-> MHz
-> S3C2450: epll on 96.000 MHz, usb-bus 48.000 MHz
-> Built 1 zonelists in Zone order, mobility grouping on.  Total pages: =
-16256
-> Kernel command line: root=3D/dev/ram0 initrd=3D0x30800000,16M ramdisk=
-=3D32768
-> init=3D/bin/sh console=3DttySAC3,115200 mem=3D64M
-> PID hash table entries: 256 (order: -2, 1024 bytes)
-> Dentry cache hash table entries: 8192 (order: 3, 32768 bytes)
-> Inode-cache hash table entries: 4096 (order: 2, 16384 bytes)
-> Memory: 64MB =3D 64MB total
-> Memory: 45432KB available (2588K code, 271K data, 116K init, 0K highm=
-em)
-> Hierarchical RCU implementation.
-> NR_IRQS:109
-> irq: clearing subpending status 02000006
-> irq: clearing subpending status 02000002
-> timer tcon=3D00000000, tcnt 28af, tcfg 00000f00,00000000, usec 00007a=
-e2
-> Console: colour dummy device 80x30
-> console [ttySAC3] enabled
-> Calibrating delay loop... 398.95 BogoMIPS (lpj=3D997376)
-> Mount-cache hash table entries: 512
-> CPU: Testing write buffer coherency: ok
-> NET: Registered protocol family 16
-> whats up blady
-> hello
-> entered machine init
-> S3C Power Management, Copyright 2004 Simtec Electronics
-> S3C2450: Initialising architecture
-> SPA s3c2450_init
-> S3C2450: IRQ Support
-> bio: create slab <bio-0> at 0
-> SCSI subsystem initialized
-> NET: Registered protocol family 2
-> IP route cache hash table entries: 1024 (order: 0, 4096 bytes)
-> TCP established hash table entries: 2048 (order: 2, 16384 bytes)
-> TCP bind hash table entries: 2048 (order: 1, 8192 bytes)
-> TCP: Hash tables configured (established 2048 bind 2048)
-> TCP reno registered
-> UDP hash table entries: 256 (order: 0, 4096 bytes)
-> UDP-Lite hash table entries: 256 (order: 0, 4096 bytes)
-> NET: Registered protocol family 1
-> Trying to unpack rootfs image as initramfs...
-> rootfs image is not initramfs (no cpio magic); looks like an initrd
-> Freeing initrd memory: 16384K
-> NetWinder Floating Point Emulator V0.97 (double precision)
-> JFFS2 version 2.2. (NAND) =C2=A9 2001-2006 Red Hat, Inc.
-> ROMFS MTD (C) 2007 Red Hat, Inc.
-> msgmni has been set to 120
-> alg: No test for stdrng (krng)
-> Block layer SCSI generic (bsg) driver version 0.4 loaded (major 254)
-> io scheduler noop registered
-> io scheduler deadline registered
-> io scheduler cfq registered (default)
-> brd: module loaded
-> loop: module loaded
-> Uniform Multi-Platform E-IDE driver
-> ide-gd driver 1.18
-> ide-cd driver 5.00
-> PPP generic driver version 2.4.2
-> PPP Deflate Compression module registered
-> PPP BSD Compression module registered
-> PPP MPPE Compression module registered
-> NET: Registered protocol family 24
-> SLIP: version 0.8.4-NET3.019-NEWTTY (dynamic channels, max=3D256).
-> CSLIP: code copyright 1989 Regents of the University of California.
-> mice: PS/2 mouse device common for all mice
-> TCP cubic registered
-> RAMDISK: gzip image found at block 0
-> EXT2-fs (ram0): warning: maximal mount count reached, running e2fsck =
-is
-> recommended
-> VFS: Mounted root (ext2 filesystem) on device 1:0.
-> Freeing init memory: 116K
-> Warning: unable to open an initial console.
-> Kernel panic - not syncing: Attempted to kill init!
-> [<c002b900>] (unwind_backtrace+0x0/0xe0) from [<c003fe9c>]
-> (panic+0x40/0x12c)
-> [<c003fe9c>] (panic+0x40/0x12c) from [<c0042cac>] (do_exit+0x58/0x57c=
-)
-> [<c0042cac>] (do_exit+0x58/0x57c) from [<c0043254>]
-> (do_group_exit+0x84/0xb8)
-> [<c0043254>] (do_group_exit+0x84/0xb8) from [<c004329c>]
-> (sys_exit_group+0x14/0x20)
-> [<c004329c>] (sys_exit_group+0x14/0x20) from [<c0025e80>]
-> (ret_fast_syscall+0x0/0x28)
+This patch enables SDHCI_QUIRK_NO_HISPD_BIT on Samsung SDHCI driver.
+This solves detection problems with some external SD cards. This change
+has been tested on S5PC100 and S5PC110. It has no inpact on driver
+speed.
 
-looks like whatever you're trying to run as init doesn't have /dev/cons=
-ole
-available. there seems to be no evidence of UARTs being added in the
-setup, are they being registered with the serial driver properly?
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/mmc/host/sdhci-s3c.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
---=20
-Ben
-
-Q:      What's a light-year?
-A:      One-third less calories than a regular year.
+diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+index 5218f2b..9938ded 100644
+--- a/drivers/mmc/host/sdhci-s3c.c
++++ b/drivers/mmc/host/sdhci-s3c.c
+@@ -337,6 +337,7 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+ 	host->irq = irq;
+ 
+ 	host->quirks |= SDHCI_QUIRK_NONSTANDARD_MINCLOCK;
++	host->quirks |= SDHCI_QUIRK_NO_HISPD_BIT;
+ 
+ 	/* Setup quirks for the controller */
+ 	host->quirks |= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC;
+-- 
+1.7.1.569.g6f426
