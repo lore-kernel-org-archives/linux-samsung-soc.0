@@ -1,75 +1,137 @@
-From: Wan ZongShun <mcuos.com@gmail.com>
-Subject: Re: [rtc-linux] [PATCH v2 3/3] rtc: rtc-s3c: Add BCD register
-	initialization codes
-Date: Wed, 28 Jul 2010 12:48:00 +0800
-Message-ID: <AANLkTikE-2daOEX9G+t2E3ywiM=4E0L4TYBw=S2fftTY@mail.gmail.com>
-References: <1280235553-27369-1-git-send-email-kgene.kim@samsung.com>
-	<20100727194611.04486f92@linux.lan.towertech.it>
-	<007901cb2e0d$ac1faa40$045efec0$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [rtc-linux] [PATCH 2/2] rtc: rtc-s3c: Updates RTC driver for	clock
+ enabling support
+Date: Wed, 28 Jul 2010 13:49:53 +0900
+Message-ID: <009601cb2e10$5420c7e0$fc6257a0$%kim@samsung.com>
+References: <1279702501-6803-1-git-send-email-kgene.kim@samsung.com>
+ <1279702501-6803-3-git-send-email-kgene.kim@samsung.com>
+ <AANLkTikGjzmHxCX6_s5Z-ZXkoyPbtF28uCyE1VqdGPvb@mail.gmail.com>
+ <AANLkTikEanSQBeFoqpMxR3tWxWTci_ytNsEhe9VS9ygg@mail.gmail.com>
+ <AANLkTin=bqMRLYgAd4NvVnKZi1PWAGPqQSsZDPxvitfh@mail.gmail.com>
+ <007a01cb2e0e$6760ad40$362207c0$%kim@samsung.com>
+ <AANLkTimCd-4mqW6vt1f+xVVzMdzOqD0RwzLu3-Ue41gs@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:44267 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751403Ab0G1EsB convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:20429 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751186Ab0G1Etr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Jul 2010 00:48:01 -0400
-Received: by vws3 with SMTP id 3so4065432vws.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Jul 2010 21:48:01 -0700 (PDT)
-In-Reply-To: <007901cb2e0d$ac1faa40$045efec0$%kim@samsung.com>
+	Wed, 28 Jul 2010 00:49:47 -0400
+Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L6900FM742XO040@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 28 Jul 2010 13:49:45 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L6900AXP42XGA@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 28 Jul 2010 13:49:45 +0900 (KST)
+In-reply-to: <AANLkTimCd-4mqW6vt1f+xVVzMdzOqD0RwzLu3-Ue41gs@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: rtc-linux@googlegroups.com
-Cc: Alessandro Zummo <a.zummo@towertech.it>, p_gortmaker@yahoo.com, linux-samsung-soc@vger.kernel.org, Taekgyun Ko <taeggyun.ko@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
-
-2010/7/28 Kukjin Kim <kgene.kim@samsung.com>:
-> Alessandro Zummo wrote:
->>
->> On Tue, 27 Jul 2010 21:59:13 +0900
->> Kukjin Kim <kgene.kim@samsung.com> wrote:
->>
->> > From: Taekgyun Ko <taeggyun.ko@samsung.com>
->> >
->> > RTC needs to be initialized when BCD registers have invalid value.
->> >
->> > Signed-off-by: Taekgyun Ko <taeggyun.ko@samsung.com>
->> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
->>
->>
->> =C2=A0Acked-by: Alessandro Zummo <a.zummo@towertech.it>
->>
-> Thanks for your ack.
->
-> So...which subsystem tree is appropriate for this?
-
-S3c git tree or Andrew's mm git tree.
-
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> --
-> You received this message because you are subscribed to "rtc-linux".
-> Membership options at http://groups.google.com/group/rtc-linux .
-> Please read http://groups.google.com/group/rtc-linux/web/checklist
-> before submitting a driver.
+To: 'Wan ZongShun' <mcuos.com@gmail.com>, rtc-linux@googlegroups.com
+Cc: a.zummo@towertech.it, linux-samsung-soc@vger.kernel.org, 'Atul Dahiya' <atul.dahiya@samsung.com>, p_gortmaker@yahoo.com, 'Atul Dahiya' <atuldahiya84@gmail.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
 
 
---=20
-*linux-arm-kernel mailing list
-mail addr:linux-arm-kernel@lists.infradead.org
-you can subscribe by:
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> -----Original Message-----
+> From: linux-arm-kernel-bounces@lists.infradead.org [mailto:linux-arm-kernel-
+> bounces@lists.infradead.org] On Behalf Of Wan ZongShun
+> Sent: Wednesday, July 28, 2010 1:42 PM
+> To: rtc-linux@googlegroups.com
+> Cc: a.zummo@towertech.it; linux-samsung-soc@vger.kernel.org; Atul Dahiya;
+> p_gortmaker@yahoo.com; Atul Dahiya; ben-linux@fluff.org; linux-arm-
+> kernel@lists.infradead.org
+> Subject: Re: [rtc-linux] [PATCH 2/2] rtc: rtc-s3c: Updates RTC driver for clock
+> enabling support
+> 
+> 2010/7/28 Kukjin Kim <kgene.kim@samsung.com>:
+> > Wan ZongShun wrote:
+> >>
+> >> 2010/7/22 Atul Dahiya <atuldahiya84@gmail.com>:
+> >> > On Thu, Jul 22, 2010 at 11:39 AM, Wan ZongShun <mcuos.com@gmail.com>
+> >> wrote:
+> >> >>
+> >> >> 2010/7/21 Kukjin Kim <kgene.kim@samsung.com>:
+> >> >> > From: Atul Dahiya <atul.dahiya@samsung.com>
+> >> >> >
+> >> >> > This Patch updates existing Samsung RTC driver for clock enabling
+> support.
+> >> >> >
+> >> >> > Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
+> >> >> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> >> >> > ---
+> >> >> >  drivers/rtc/rtc-s3c.c |   22 ++++++++++++++++++++++
+> >> >> >  1 files changed, 22 insertions(+), 0 deletions(-)
+> >> >> >
+> >> >> > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+> >> >> > index 70b68d3..c032a15 100644
+> >> >> > --- a/drivers/rtc/rtc-s3c.c
+> >> >> > +++ b/drivers/rtc/rtc-s3c.c
+> >> >> > @@ -1,5 +1,8 @@
+> >> >> >  /* drivers/rtc/rtc-s3c.c
+> >> >> >  *
+> >> >> > + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+> >> >> > + *             http://www.samsung.com/
+> >> >> > + *
+> >> >> >  * Copyright (c) 2004,2006 Simtec Electronics
+> >> >> >  *     Ben Dooks, <ben@simtec.co.uk>
+> >> >> >  *     http://armlinux.simtec.co.uk/
+> >> >> > @@ -39,6 +42,7 @@ enum s3c_cpu_type {
+> >> >> >
+> >> >> >  static struct resource *s3c_rtc_mem;
+> >> >> >
+> >> >> > +static struct clk *rtc_clk;
+> >> >> >  static void __iomem *s3c_rtc_base;
+> >> >> >  static int s3c_rtc_alarmno = NO_IRQ;
+> >> >> >  static int s3c_rtc_tickno  = NO_IRQ;
+> >> >> > @@ -431,6 +435,10 @@ static int __devexit s3c_rtc_remove(struct
+> >> platform_device *dev)
+> >> >> >        s3c_rtc_setpie(&dev->dev, 0);
+> >> >> >        s3c_rtc_setaie(0);
+> >> >> >
+> >> >> > +       clk_disable(rtc_clk);
+> >> >> > +       clk_put(rtc_clk);
+> >> >> > +       rtc_clk = NULL;
+> >> >> > +
+> >> >> >        iounmap(s3c_rtc_base);
+> >> >> >        release_resource(s3c_rtc_mem);
+> >> >> >        kfree(s3c_rtc_mem);
+> >> >> > @@ -488,6 +496,16 @@ static int __devinit s3c_rtc_probe(struct
+> >> platform_device *pdev)
+> >> >> >                goto err_nomap;
+> >> >> >        }
+> >> >> >
+> >> >> > +       rtc_clk = clk_get(&pdev->dev, "rtc");
+> >> >>
+> >> >> Do you really need the second argument? I think the bus clock for
+> >> >> a device should be findable with NULL for s3c platform..
+> >> >
+> >> > No, actually  clk_get() function for s3c platform searches on the
+> >> > basis of second parameter passed
+> >> > so need to pass the second argument here.
+> >>
+> >> Okay, good patch!
+> >>
+> >> Acked-by: Wan ZongShun <mcuos.com@gmail.com>
+> >>
+> > Thanks for your review and ack.
+> >
+> > As I asked to Alessandro, does this goes through what subsystem go to
+> upstream?
+> >
+> After you get ack, Samsung git tree or Andrew's mm git tree can do it.
+> Thanks!
+> 
+Ok...will apply this for next merge window with your ack.
 
-* linux-arm-NUC900 mailing list
-mail addr:NUC900@googlegroups.com
-main web: https://groups.google.com/group/NUC900
-you can subscribe it by sending me mail:
-mcuos.com@gmail.com
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
