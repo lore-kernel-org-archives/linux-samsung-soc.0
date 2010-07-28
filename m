@@ -1,100 +1,478 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 2/2] ARM: S5PV210: Add the GPIO lib
-Date: Wed, 28 Jul 2010 10:09:16 +0200
-Message-ID: <005501cb2e2c$304d4480$90e7cd80$%szyprowski@samsung.com>
-References: <4C4F9E4D.4090608@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH] ARM: S5PV210: Add audio support to Goni and Aquila board
+Date: Wed, 28 Jul 2010 17:49:57 +0900
+Message-ID: <4C4FEF35.7020002@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:60878 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:22683 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751886Ab0G1IL0 (ORCPT
+	with ESMTP id S1750729Ab0G1It7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Jul 2010 04:11:26 -0400
+	Wed, 28 Jul 2010 04:49:59 -0400
 Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
  by mailout3.samsung.com
  (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L69004HTDECS490@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 28 Jul 2010 17:11:00 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
+ with ESMTP id <0L69004U3F79UQB0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 28 Jul 2010 17:49:57 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L6900DL7DDX85@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 28 Jul 2010 17:11:00 +0900 (KST)
-In-reply-to: <4C4F9E4D.4090608@samsung.com>
-Content-language: pl
+ with ESMTPA id <0L6900DJEF7985@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 28 Jul 2010 17:49:57 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Chanwoo Choi' <cw00.choi@samsung.com>, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>
-Cc: alsa-devel@alsa-project.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Ben Dooks' <ben@simtec.co.uk>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Liam Girdwood' <lrg@slimlogic.co.uk>
+To: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, alsa-devel@alsa-project.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-Hello,
+This patch the I2C board information for the WM8994 used in the Goni/Aquila
+as audio codec and adds the I2C/I2S platform drivers. Additionlly, to
+control power consumption have registerd the voltage consumer of WM8994
+to the regulator framework. I initialize gpio settting relevant to
+operation of audio codec. I explain following comment concering gpio
+setting:
+ - CODEC_XTAL_EN : This gpio enables that the main clock is provided
+   to operate audio codec. (Only used on Aquila board)
+ - ADC_EN : This gpio enable the ADC device which is used to detect
+   the kind of jack. (SND_JACK_HEADPHONE/HEADSET/MECHANICAL/AVOUT)
+   According to the kind of jack, an electric current is changed.
+   (Only used on Aquila board)
+ - MICBIAS_EN : This gpio enable the microphone to support capture.
 
-On Wednesday, July 28, 2010 5:05 AM Chanwoo Choi wrote:
+Signed-off-by : Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by : Joonyoung Shim <jy0922.shim@samsung.com>
+Signed-off-by : Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-s5pv210/mach-aquila.c |  177 +++++++++++++++++++++++++++++++++++
+ arch/arm/mach-s5pv210/mach-goni.c   |  165 ++++++++++++++++++++++++++++++++
+ 2 files changed, 342 insertions(+), 0 deletions(-)
 
-> This patch add the definition of GPIO to support WM8994 audio codec on
-> I2C bus.
-
-I've already submitted similar patch that does this job correctly. See:
-http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git;a=commit;h=d67
-d303c159aca6db11fb9a03068f52cbf7c145d
-
-
-
-
-> Signed-off-by : Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by : Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/mach-s5pv210/include/mach/gpio.h |   10 ++++++++--
->  1 files changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s5pv210/include/mach/gpio.h b/arch/arm/mach-
-> s5pv210/include/mach/gpio.h
-> index d6461ba..33a9867 100644
-> --- a/arch/arm/mach-s5pv210/include/mach/gpio.h
-> +++ b/arch/arm/mach-s5pv210/include/mach/gpio.h
-> @@ -52,6 +52,8 @@
->  #define S5PV210_GPIO_MP01_NR	(8)
->  #define S5PV210_GPIO_MP02_NR	(4)
->  #define S5PV210_GPIO_MP03_NR	(8)
-> +#define S5PV210_GPIO_MP04_NR	(8)
-> +#define S5PV210_GPIO_MP05_NR	(8)
-> 
->  /* GPIO bank numbers */
-> 
-> @@ -94,6 +96,8 @@ enum s5p_gpio_number {
->  	S5PV210_GPIO_MP01_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_J4),
->  	S5PV210_GPIO_MP02_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_MP01),
->  	S5PV210_GPIO_MP03_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_MP02),
-> +	S5PV210_GPIO_MP04_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_MP03),
-> +	S5PV210_GPIO_MP05_START	= S5PV210_GPIO_NEXT(S5PV210_GPIO_MP04),
->  };
-> 
->  /* S5PV210 GPIO number definitions */
-> @@ -127,13 +131,15 @@ enum s5p_gpio_number {
->  #define S5PV210_MP01(_nr)	(S5PV210_GPIO_MP01_START + (_nr))
->  #define S5PV210_MP02(_nr)	(S5PV210_GPIO_MP02_START + (_nr))
->  #define S5PV210_MP03(_nr)	(S5PV210_GPIO_MP03_START + (_nr))
-> +#define S5PV210_MP04(_nr)	(S5PV210_GPIO_MP04_START + (_nr))
-> +#define S5PV210_MP05(_nr)	(S5PV210_GPIO_MP05_START + (_nr))
-> 
->  /* the end of the S5PV210 specific gpios */
-> -#define S5PV210_GPIO_END	(S5PV210_MP03(S5PV210_GPIO_MP03_NR) + 1)
-> +#define S5PV210_GPIO_END	(S5PV210_MP05(S5PV210_GPIO_MP05_NR) + 1)
->  #define S3C_GPIO_END		S5PV210_GPIO_END
-> 
->  /* define the number of gpios we need to the one after the MP03() range */
-> -#define ARCH_NR_GPIOS		(S5PV210_MP03(S5PV210_GPIO_MP03_NR) +
-\
-> +#define ARCH_NR_GPIOS		(S5PV210_MP05(S5PV210_GPIO_MP05_NR) +
-\
->  				 CONFIG_SAMSUNG_GPIO_EXTRA + 1)
-> 
->  #include <asm-generic/gpio.h>
-> 
-
-
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+diff --git a/arch/arm/mach-s5pv210/mach-aquila.c b/arch/arm/mach-s5pv210/mach-aquila.c
+index f0f960f..312ff76 100644
+--- a/arch/arm/mach-s5pv210/mach-aquila.c
++++ b/arch/arm/mach-s5pv210/mach-aquila.c
+@@ -17,9 +17,11 @@
+ #include <linux/i2c-gpio.h>
+ #include <linux/i2c/mcs.h>
+ #include <linux/mfd/max8998.h>
++#include <linux/mfd/wm8994/pdata.h>
+ #include <linux/gpio_keys.h>
+ #include <linux/input.h>
+ #include <linux/gpio.h>
++#include <linux/regulator/fixed.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+@@ -397,6 +399,120 @@ static struct max8998_platform_data aquila_max8998_pdata = {
+ };
+ #endif
+ 
++static struct regulator_consumer_supply wm8994_fixed_voltage0_supplies[] = {
++	{
++		.dev_name	= "5-001a",
++		.supply		= "DBVDD",
++	}, {
++		.dev_name	= "5-001a",
++		.supply		= "AVDD2",
++	}, {
++		.dev_name	= "5-001a",
++		.supply		= "CPVDD",
++	},
++
++};
++
++static struct regulator_consumer_supply wm8994_fixed_voltage1_supplies[] = {
++	{
++		.dev_name	= "5-001a",
++		.supply		= "SPKVDD1",
++	}, {
++		.dev_name	= "5-001a",
++		.supply		= "SPKVDD2",
++	},
++};
++
++static struct regulator_init_data wm8994_fixed_voltage0_init_data = {
++	.constraints = {
++		.always_on = 1,
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(wm8994_fixed_voltage0_supplies),
++	.consumer_supplies	= wm8994_fixed_voltage0_supplies,
++};
++
++static struct regulator_init_data wm8994_fixed_voltage1_init_data = {
++	.constraints = {
++		.always_on = 1,
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(wm8994_fixed_voltage1_supplies),
++	.consumer_supplies	= wm8994_fixed_voltage1_supplies,
++};
++
++static struct fixed_voltage_config wm8994_fixed_voltage0_config = {
++	.supply_name	= "VCC_1.8V_PDA",
++	.microvolts	= 1800000,
++	.gpio		= -EINVAL,
++	.init_data	= &wm8994_fixed_voltage0_init_data,
++};
++
++static struct fixed_voltage_config wm8994_fixed_voltage1_config = {
++	.supply_name	= "V_BAT",
++	.microvolts	= 3700000,
++	.gpio		= -EINVAL,
++	.init_data	= &wm8994_fixed_voltage1_init_data,
++};
++
++static struct platform_device wm8994_fixed_voltage0 = {
++	.name		= "reg-fixed-voltage",
++	.id		= 0,
++	.dev		= {
++		.platform_data	= &wm8994_fixed_voltage0_config,
++	},
++};
++
++static struct platform_device wm8994_fixed_voltage1 = {
++	.name		= "reg-fixed-voltage",
++	.id		= 1,
++	.dev		= {
++		.platform_data	= &wm8994_fixed_voltage1_config,
++	},
++};
++
++static struct regulator_consumer_supply wm8994_avdd1_supply = {
++	.dev_name	= "5-001a",
++	.supply		= "AVDD1",
++};
++
++static struct regulator_consumer_supply wm8994_dcvdd_supply = {
++	.dev_name	= "5-001a",
++	.supply		= "DCVDD",
++};
++
++static struct regulator_init_data wm8994_ldo1_data = {
++	.constraints	= {
++		.name		= "AVDD1_3.0V",
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++	},
++	.num_consumer_supplies	= 1,
++	.consumer_supplies	= &wm8994_avdd1_supply,
++};
++
++static struct regulator_init_data wm8994_ldo2_data = {
++	.constraints	= {
++		.name		= "DCVDD_1.0V",
++	},
++	.num_consumer_supplies	= 1,
++	.consumer_supplies	= &wm8994_dcvdd_supply,
++};
++
++static struct wm8994_pdata wm8994_platform_data = {
++	/* configure gpio1 function: 0x0001(Logic level input/output) */
++	.gpio_defaults[0] = 0x0001,
++	/* configure gpio3/4/5/7 function for AIF2 voice */
++	.gpio_defaults[2] = 0x8100,
++	.gpio_defaults[3] = 0x8100,
++	.gpio_defaults[4] = 0x8100,
++	.gpio_defaults[6] = 0x0100,
++	/* configure gpio8/9/10/11 function for AIF3 BT */
++	.gpio_defaults[7] = 0x8100,
++	.gpio_defaults[8] = 0x0100,
++	.gpio_defaults[9] = 0x0100,
++	.gpio_defaults[10] = 0x0100,
++	.ldo[0]	= { S5PV210_MP03(6), NULL, &wm8994_ldo1_data },	/* XM0FRNB_2 */
++	.ldo[1]	= { 0, NULL, &wm8994_ldo2_data },
++};
++
+ /* GPIO I2C PMIC */
+ #define AP_I2C_GPIO_PMIC_BUS_4	4
+ static struct i2c_gpio_platform_data aquila_i2c_gpio_pmic_data = {
+@@ -422,6 +538,58 @@ static struct i2c_board_info i2c_gpio_pmic_devs[] __initdata = {
+ #endif
+ };
+ 
++/* GPIO I2C AP 1.8V */
++#define AP_I2C_GPIO_BUS_5	5
++static struct i2c_gpio_platform_data i2c_gpio5_data = {
++	.sda_pin	= S5PV210_MP05(3),	/* XM0ADDR_11 */
++	.scl_pin	= S5PV210_MP05(2),	/* XM0ADDR_10 */
++};
++
++static struct platform_device i2c_gpio5 = {
++	.name		= "i2c-gpio",
++	.id		= AP_I2C_GPIO_BUS_5,
++	.dev		= {
++		.platform_data	= &i2c_gpio5_data,
++	},
++};
++
++static struct i2c_board_info i2c_gpio5_devs[] __initdata = {
++	{
++		/* CS/ADDR = low 0x34 (FYI: high = 0x36) */
++		I2C_BOARD_INFO("wm8994", 0x34 >> 1),
++		.platform_data	= &wm8994_platform_data,
++	},
++};
++
++static void __init aquila_sound_init(void)
++{
++	unsigned int gpio;
++
++	/* CODEC_XTAL_EN */
++	gpio = S5PV210_GPH3(2);		/* XEINT_26 */
++	gpio_request(gpio, "CODEC_XTAL_EN");
++	s3c_gpio_cfgpin(gpio, S3C_GPIO_OUTPUT);
++	s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++	gpio_direction_output(gpio, 1);
++
++	/* CLKOUT[9:8] set to 0x3(XUSBXTI) of 0xE010E000(OTHERS)
++	 * for 24MHZ
++	 */
++	writel(readl(S5P_OTHERS) | (0x3 << 8), S5P_OTHERS);
++
++	/* MICBIAS_EN */
++	gpio = S5PV210_GPJ4(2);			/* XMSMRN */
++	gpio_request(gpio, "MICBIAS_EN");
++	s3c_gpio_cfgpin(gpio, S3C_GPIO_OUTPUT);
++	gpio_direction_output(gpio, 1);
++
++	/* ADC_EN */
++	gpio = S5PV210_GPJ3(2);
++	gpio_request(gpio, "ADC_EN");
++	s3c_gpio_cfgpin(gpio, S3C_GPIO_OUTPUT);
++	gpio_direction_output(gpio, 1);
++}
++
+ /* PMIC Power button */
+ static struct gpio_keys_button aquila_gpio_keys_table[] = {
+ 	{
+@@ -523,6 +691,10 @@ static struct platform_device *aquila_devices[] __initdata = {
+ 	&s5pc110_device_onenand,
+ 	&samsung_device_keypad,
+ 	&i2c_gpio10,
++	&i2c_gpio5,
++	&wm8994_fixed_voltage0,
++	&wm8994_fixed_voltage1,
++	&s5pv210_device_iis0,
+ };
+ 
+ static void __init aquila_map_io(void)
+@@ -539,6 +711,11 @@ static void __init aquila_machine_init(void)
+ 	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4, i2c_gpio_pmic_devs,
+ 			ARRAY_SIZE(i2c_gpio_pmic_devs));
+ 
++	/* SOUND */
++	aquila_sound_init();
++	i2c_register_board_info(AP_I2C_GPIO_BUS_5, i2c_gpio5_devs,
++			ARRAY_SIZE(i2c_gpio5_devs));
++
+ 	/* FB */
+ 	s3c_fb_set_platdata(&aquila_lcd_pdata);
+ 
+diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
+index 5fec4a0..944e600 100644
+--- a/arch/arm/mach-s5pv210/mach-goni.c
++++ b/arch/arm/mach-s5pv210/mach-goni.c
+@@ -17,9 +17,11 @@
+ #include <linux/i2c-gpio.h>
+ #include <linux/i2c/mcs.h>
+ #include <linux/mfd/max8998.h>
++#include <linux/mfd/wm8994/pdata.h>
+ #include <linux/gpio_keys.h>
+ #include <linux/input.h>
+ #include <linux/gpio.h>
++#include <linux/regulator/fixed.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+@@ -373,6 +375,120 @@ static struct max8998_regulator_data goni_regulators[] = {
+ 	{ MAX8998_BUCK4, &goni_buck4_data },
+ };
+ 
++static struct regulator_consumer_supply wm8994_fixed_voltage0_supplies[] = {
++	{
++		.dev_name	= "5-001a",
++		.supply		= "DBVDD",
++	}, {
++		.dev_name	= "5-001a",
++		.supply		= "AVDD2",
++	}, {
++		.dev_name	= "5-001a",
++		.supply		= "CPVDD",
++	},
++
++};
++
++static struct regulator_consumer_supply wm8994_fixed_voltage1_supplies[] = {
++	{
++		.dev_name	= "5-001a",
++		.supply		= "SPKVDD1",
++	}, {
++		.dev_name	= "5-001a",
++		.supply		= "SPKVDD2",
++	},
++};
++
++static struct regulator_init_data wm8994_fixed_voltage0_init_data = {
++	.constraints = {
++		.always_on = 1,
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(wm8994_fixed_voltage0_supplies),
++	.consumer_supplies	= wm8994_fixed_voltage0_supplies,
++};
++
++static struct regulator_init_data wm8994_fixed_voltage1_init_data = {
++	.constraints = {
++		.always_on = 1,
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(wm8994_fixed_voltage1_supplies),
++	.consumer_supplies	= wm8994_fixed_voltage1_supplies,
++};
++
++static struct fixed_voltage_config wm8994_fixed_voltage0_config = {
++	.supply_name	= "VCC_1.8V_PDA",
++	.microvolts	= 1800000,
++	.gpio		= -EINVAL,
++	.init_data	= &wm8994_fixed_voltage0_init_data,
++};
++
++static struct fixed_voltage_config wm8994_fixed_voltage1_config = {
++	.supply_name	= "V_BAT",
++	.microvolts	= 3700000,
++	.gpio		= -EINVAL,
++	.init_data	= &wm8994_fixed_voltage1_init_data,
++};
++
++static struct platform_device wm8994_fixed_voltage0 = {
++	.name		= "reg-fixed-voltage",
++	.id		= 0,
++	.dev		= {
++		.platform_data	= &wm8994_fixed_voltage0_config,
++	},
++};
++
++static struct platform_device wm8994_fixed_voltage1 = {
++	.name		= "reg-fixed-voltage",
++	.id		= 1,
++	.dev		= {
++		.platform_data	= &wm8994_fixed_voltage1_config,
++	},
++};
++
++static struct regulator_consumer_supply wm8994_avdd1_supply = {
++	.dev_name	= "5-001a",
++	.supply		= "AVDD1",
++};
++
++static struct regulator_consumer_supply wm8994_dcvdd_supply = {
++	.dev_name	= "5-001a",
++	.supply		= "DCVDD",
++};
++
++static struct regulator_init_data wm8994_ldo1_data = {
++	.constraints	= {
++		.name		= "AVDD1_3.0V",
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++	},
++	.num_consumer_supplies	= 1,
++	.consumer_supplies	= &wm8994_avdd1_supply,
++};
++
++static struct regulator_init_data wm8994_ldo2_data = {
++	.constraints	= {
++		.name		= "DCVDD_1.0V",
++	},
++	.num_consumer_supplies	= 1,
++	.consumer_supplies	= &wm8994_dcvdd_supply,
++};
++
++static struct wm8994_pdata wm8994_platform_data = {
++	/* configure gpio1 function: 0x0001(Logic level input/output) */
++	.gpio_defaults[0] = 0x0001,
++	/* configure gpio3/4/5/7 function for AIF2 voice */
++	.gpio_defaults[2] = 0x8100,
++	.gpio_defaults[3] = 0x8100,
++	.gpio_defaults[4] = 0x8100,
++	.gpio_defaults[6] = 0x0100,
++	/* configure gpio8/9/10/11 function for AIF3 BT */
++	.gpio_defaults[7] = 0x8100,
++	.gpio_defaults[8] = 0x0100,
++	.gpio_defaults[9] = 0x0100,
++	.gpio_defaults[10] = 0x0100,
++	.ldo[0]	= { S5PV210_GPF3(4), NULL, &wm8994_ldo1_data },	/* XVVSYNC_LDI */
++	.ldo[1]	= { 0, NULL, &wm8994_ldo2_data },
++};
++
+ static struct max8998_platform_data goni_max8998_pdata = {
+ 	.num_regulators	= ARRAY_SIZE(goni_regulators),
+ 	.regulators	= goni_regulators,
+@@ -404,6 +520,45 @@ static struct i2c_board_info i2c_gpio_pmic_devs[] __initdata = {
+ #endif
+ };
+ 
++/* GPIO I2C AP 1.8V */
++#define AP_I2C_GPIO_BUS_5	5
++static struct i2c_gpio_platform_data i2c_gpio5_data = {
++	.sda_pin	= S5PV210_MP05(3),	/* XM0ADDR_11 */
++	.scl_pin	= S5PV210_MP05(2),	/* XM0ADDR_10 */
++};
++
++static struct platform_device i2c_gpio5 = {
++	.name		= "i2c-gpio",
++	.id		= AP_I2C_GPIO_BUS_5,
++	.dev		= {
++		.platform_data	= &i2c_gpio5_data,
++	},
++};
++
++static struct i2c_board_info i2c_gpio5_devs[] __initdata = {
++	{
++		/* CS/ADDR = low 0x34 (FYI: high = 0x36) */
++		I2C_BOARD_INFO("wm8994", 0x34 >> 1),
++		.platform_data	= &wm8994_platform_data,
++	},
++};
++
++static void __init goni_sound_init(void)
++{
++	unsigned int gpio;
++
++	/* CLKOUT[9:8] set to 0x3(XUSBXTI) of 0xE010E000(OTHERS)
++	 * for 24MHZ
++	 */
++	writel(readl(S5P_OTHERS) | (0x3 << 8), S5P_OTHERS);
++
++	/* MICBIAS_EN */
++	gpio = S5PV210_GPJ4(2);			/* XMSMRN */
++	gpio_request(gpio, "MICBIAS_EN");
++	s3c_gpio_cfgpin(gpio, S3C_GPIO_OUTPUT);
++	gpio_direction_output(gpio, 1);
++}
++
+ /* PMIC Power button */
+ static struct gpio_keys_button goni_gpio_keys_table[] = {
+ 	{
+@@ -504,7 +659,11 @@ static struct platform_device *goni_devices[] __initdata = {
+ 	&samsung_device_keypad,
+ 	&goni_i2c_gpio_pmic,
+ 	&goni_device_gpiokeys,
++	&i2c_gpio5,
+ 	&i2c_gpio10,
++	&wm8994_fixed_voltage0,
++	&wm8994_fixed_voltage1,
++	&s5pv210_device_iis0,
+ };
+ 
+ static void __init goni_map_io(void)
+@@ -520,6 +679,12 @@ static void __init goni_machine_init(void)
+ 	goni_pmic_init();
+ 	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4, i2c_gpio_pmic_devs,
+ 			ARRAY_SIZE(i2c_gpio_pmic_devs));
++
++	/* SOUND */
++	goni_sound_init();
++	i2c_register_board_info(AP_I2C_GPIO_BUS_5, i2c_gpio5_devs,
++			ARRAY_SIZE(i2c_gpio5_devs));
++
+ 	/* FB */
+ 	s3c_fb_set_platdata(&goni_lcd_pdata);
+ 
+-- 
+1.6.3.3
