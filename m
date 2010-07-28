@@ -1,93 +1,111 @@
 From: Ben Dooks <ben@simtec.co.uk>
-Subject: Re: [PATCH v5 3/3] sdhci-s3c: Add SDHCI_QUIRK_NO_WP_BIT quirk for
- Samsung	SoC
-Date: Wed, 28 Jul 2010 18:20:37 +0100
-Message-ID: <4C5066E5.50505@simtec.co.uk>
-References: <1280294587-17961-1-git-send-email-kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: Samsung SoC: clksrc-clk: wait for the stable SRC/DIV
+ status.
+Date: Wed, 28 Jul 2010 18:25:47 +0100
+Message-ID: <4C50681B.8040306@simtec.co.uk>
+References: <1280287044-6645-1-git-send-email-myungjoo.ham@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from hull.simtec.co.uk ([78.105.113.97]:50842 "EHLO
+Received: from hull.simtec.co.uk ([78.105.113.97]:44051 "EHLO
 	preston.local.simtec.co.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753089Ab0G1RUn (ORCPT
+	by vger.kernel.org with ESMTP id S1754605Ab0G1RZx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Jul 2010 13:20:43 -0400
-In-Reply-To: <1280294587-17961-1-git-send-email-kgene.kim@samsung.com>
+	Wed, 28 Jul 2010 13:25:53 -0400
+In-Reply-To: <1280287044-6645-1-git-send-email-myungjoo.ham@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, akpm@linux-foundation.org, Hyuk Lee <hyuk1.lee@samsung.com>, ben-linux@fluff.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org
 
-On 28/07/10 06:23, Kukjin Kim wrote:
-> From: Hyuk Lee <hyuk1.lee@samsung.com>
+On 28/07/10 04:17, MyungJoo Ham wrote:
+> Many MUX and clock dividers have a status bit so that users can wait
+> until the status is stable. When corresponding registers are accessed
+> while a clock is not stable, we may suffer from unexpected errors.
 > 
-> If host controller doesn't have WP pin which should be connnected with SDMMC
-> card WP pin, can implement get_ro function with using the allocated gpio.
-> In order to use this quirk wp_gpio in the platform data must be set.
+> Therefore, we introduce a mechanism to let the operations related with
+> updating SRC/DIV registers of clksrc-clk wait for the stabilization:
+> clk_set_parent, clk_set_rate.
 > 
-> Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Ben Dooks <ben-linux@fluff.org>
+> In order to use this feature, the definition of clksrc_clk should
+> include reg_src_stable or reg_div_stable. With effective rec_src_stable
+> values, clk_set_parent returns with a stabilized SRC register and
+> with effective rec_div_stable values, clk_set_rate returns with a
+> stabilized DIV register. If .reg field is null, its (either SRC or DIV)
+> register's status is not checked and returned without waiting; i.e.,
+> some MUX/DIV may not need this feature.
+> 
+> When setting reg_*_stable, .size is used to tell the value of "stable".
+> If .size = 0, the stable status is 0 and if .size = 1, the stable status
+> is 1.
+> 
+> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
-> Changes since v4:
-> - Address comments from Marek.
+>  arch/arm/plat-samsung/clock-clksrc.c              |   13 +++++++++++++
+>  arch/arm/plat-samsung/include/plat/clock-clksrc.h |   10 ++++++++++
+>  2 files changed, 23 insertions(+), 0 deletions(-)
 > 
-> Hi Andrew,
-> If there are no problems, could you please apply this patch?
->rn gpio_get_value(ourhost->pdata->wp_gpio);
-> +}
-> +
-> +/**
-> + * sdhci_s3c_cfg_wp - configure GPIO for WP pin
-> + * @gpio_num: GPIO number which connected with WP line from SD/MMC slot
-> + *
-> + * Configure GPIO for using WP line
-> +*/
-> +static void sdhci_s3c_cfg_wp(unsigned int gpio_num)
-> +{
-> +	s3c_gpio_cfgpin(gpio_num, S3C_GPIO_INPUT);
-
-gpio_direction_input()
-
-> +	s3c_gpio_setpull(gpio_num, S3C_GPIO_PULL_UP);
-
-would prefer not to be using this here, should go into the
-board file, otherwise we can't pass non-soc gpios into this
-code.
-
-
-> +/**
->   * sdhci_s3c_get_min_clock - callback to get minimal supported clock value
->   * @host: The SDHCI host being queried
->   *
-> @@ -408,6 +435,15 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
->  	host->quirks |= (SDHCI_QUIRK_32BIT_DMA_ADDR |
->  			 SDHCI_QUIRK_32BIT_DMA_SIZE);
+> diff --git a/arch/arm/plat-samsung/clock-clksrc.c b/arch/arm/plat-samsung/clock-clksrc.c
+> index 46d204a..5ff17ad 100644
+> --- a/arch/arm/plat-samsung/clock-clksrc.c
+> +++ b/arch/arm/plat-samsung/clock-clksrc.c
+> @@ -68,6 +68,12 @@ static int s3c_setrate_clksrc(struct clk *clk, unsigned long rate)
+>  	val |= (div - 1) << sclk->reg_div.shift;
+>  	__raw_writel(val, reg);
 >  
-> +	/* Controller's WP pin doesn't connected with SD card and there is an
-> +	 * allocated GPIO for getting WP data form SD card, use this quirk and
-> +	 * send the GPIO number in pdata->wp_gpio. */
-> +	if (pdata->has_wp_gpio && gpio_is_valid(pdata->wp_gpio)) {
-> +		sdhci_s3c_ops.get_ro = sdhci_s3c_get_ro;
-> +		host->quirks |= SDHCI_QUIRK_NO_WP_BIT;
-> +		sdhci_s3c_cfg_wp(pdata->wp_gpio);
+> +	if (sclk->reg_div_stable.reg) {
+> +		do { } while (((__raw_readl(sclk->reg_div_stable.reg) >>
+> +						sclk->reg_div_stable.shift) & 1)
+> +				!= sclk->reg_div_stable.size);
 > +	}
 > +
->  	ret = sdhci_add_host(host);
->  	if (ret) {
->  		dev_err(dev, "sdhci_add_host() failed\n");
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index f9ca4c6..7fba401 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -1198,6 +1198,9 @@ static int sdhci_get_ro(struct mmc_host *mmc)
->  
->  	host = mmc_priv(mmc);
->  
-> +	if ((host->quirks & SDHCI_QUIRK_NO_WP_BIT) && host->ops->get_ro)
-> +		return host->ops->get_ro(mmc);
-> +
+>  	return 0;
+>  }
 
-I really think we shouldn't be using quirks here, just checking the
-existence of the host->ops->get_ro field.
+you could move the code for this out to a separate inlined function to
+avoid it being here twice, and possibly make it flow better.
+
+> @@ -93,6 +99,13 @@ static int s3c_setparent_clksrc(struct clk *clk, struct clk *parent)
+>  		clksrc |= src_nr << sclk->reg_src.shift;
+>  
+>  		__raw_writel(clksrc, sclk->reg_src.reg);
+> +
+> +		if (sclk->reg_src_stable.reg) {
+> +			do { } while (((__raw_readl(sclk->reg_src_stable.reg) >>
+> +						sclk->reg_src_stable.shift) & 1)
+> +					!= sclk->reg_src_stable.size);
+> +		}
+> +
+>  		return 0;
+>  	}
+>  
+> diff --git a/arch/arm/plat-samsung/include/plat/clock-clksrc.h b/arch/arm/plat-samsung/include/plat/clock-clksrc.h
+> index 50a8ca7..282821d 100644
+> --- a/arch/arm/plat-samsung/include/plat/clock-clksrc.h
+> +++ b/arch/arm/plat-samsung/include/plat/clock-clksrc.h
+> @@ -45,6 +45,13 @@ struct clksrc_reg {
+>   * @sources: the sources for this clock
+>   * @reg_src: the register definition for selecting the clock's source
+>   * @reg_div: the register definition for the clock's output divisor
+> + * @reg_src_stable: the register definition to probe if reg_src is
+> + *    stabilized after the update of reg_src. It is "stabilized" if
+> + *    reg[shift] == size. If reg == NULL, this stable reg is not looked
+> + *    up. Thus, in S5PV210, size is usually 0.
+> + * @reg_div_stable: the register definition to probe if reg_div is
+> + *    stabilized after the update of reg_div. Same mechanism with
+> + *    reg_src_stable.
+>   *
+>   * This clock implements the features required by the newer SoCs where
+>   * the standard clock block provides an input mux and a post-mux divisor
+> @@ -61,6 +68,9 @@ struct clksrc_clk {
+>  
+>  	struct clksrc_reg	reg_src;
+>  	struct clksrc_reg	reg_div;
+> +
+> +	struct clksrc_reg	reg_src_stable;
+> +	struct clksrc_reg	reg_div_stable;
+>  };
+>  
+>  /**
