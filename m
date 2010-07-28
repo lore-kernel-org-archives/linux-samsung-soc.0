@@ -1,53 +1,62 @@
-From: Ben Dooks <ben@simtec.co.uk>
-Subject: Re: [PATCH 3/3] rtc: rtc-s3c: Add BCD register initialization codes
-Date: Wed, 28 Jul 2010 19:17:48 +0100
-Message-ID: <4C50744C.6010501@simtec.co.uk>
-References: <1279702666-13021-1-git-send-email-kgene.kim@samsung.com> <1279702666-13021-4-git-send-email-kgene.kim@samsung.com>
+From: nitin vishnoi <nitvishnoi@gmail.com>
+Subject: Re: [PATCH] ARM: S5PV210: Add SDHCI devices for Aquila board
+Date: Wed, 28 Jul 2010 20:33:05 +0530
+Message-ID: <AANLkTikbsS22s=Ayw0g7q7Qms-Ju_nUnqC=udc46o-MK@mail.gmail.com>
+References: <1279896407-29571-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from hull.simtec.co.uk ([78.105.113.97]:59907 "EHLO
-	preston.local.simtec.co.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751821Ab0G1SSG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Jul 2010 14:18:06 -0400
-In-Reply-To: <1279702666-13021-4-git-send-email-kgene.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0984175850=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1279896407-29571-1-git-send-email-m.szyprowski@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: kgene.kim@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, p_gortmaker@yahoo.com, Taekgyun Ko <taeggyun.ko@samsung.com>, ben-linux@fluff.org, a.zummo@towertech.it
 
-On 21/07/10 09:57, Kukjin Kim wrote:
-> From: Taekgyun Ko <taeggyun.ko@samsung.com>
-> 
-> RTC needs to be initialized when BCD registers have invalid value.
-> 
-> Signed-off-by: Taekgyun Ko <taeggyun.ko@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
->  drivers/rtc/rtc-s3c.c |   14 ++++++++++++--
->  1 files changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-> index 2040017..e96e109 100644
-> --- a/drivers/rtc/rtc-s3c.c
-> +++ b/drivers/rtc/rtc-s3c.c
-> @@ -536,10 +536,20 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
->  
->  	s3c_rtc_cpu_type = platform_get_device_id(pdev)->driver_data;
->  
-> -	if (s3c_rtc_cpu_type == TYPE_S3C64XX)
-> +	if (s3c_rtc_cpu_type == TYPE_S3C64XX) {
->  		rtc->max_user_freq = 32768;
-> -	else
-> +
-> +		/* Check RTC Time */
-> +
-> +		for (i = S3C2410_RTCSEC; i <= S3C2410_RTCYEAR; i += 0x4) {
-> +			tmp = readb(s3c_rtc_base + i);
-> +
-> +			if (((tmp & 0xf) > 0x9) || (((tmp >> 4) & 0xf) > 0x9))
-> +				writeb(0, s3c_rtc_base + i);
+--===============0984175850==
+Content-Type: multipart/alternative; boundary=000e0cd18162479653048c73eadf
 
-This is something we should probably do for all SoCs.
+--000e0cd18162479653048c73eadf
+Content-Type: text/plain; charset=ISO-8859-1
+
+Hi
+
+I need the support for wifi driver(lpm series chip),it needs the sdio
+interface,but i m using the 2.6.21.7 kernel version.in which sdio driver is
+not supporting for the Wifi(unifi_sdio) driver.
+and in wifi driver installation guide also it is given wifi driver will
+support higher than 2.6.24 version and onwards.
+So can i get some patch for 2.6.21.7 version for sdio driver.
+
+Regards
+
+Nitin
+
+--000e0cd18162479653048c73eadf
+Content-Type: text/html; charset=ISO-8859-1
+
+<br>Hi <br><br>I need the support for wifi driver(lpm series chip),it needs the sdio interface,but i m using the 2.6.21.7 kernel <a href="http://version.in">version.in</a> which sdio driver is not supporting for the Wifi(unifi_sdio) driver.<br>
+and in wifi driver installation guide also it is given wifi driver will support higher than 2.6.24 version and onwards.<br>So can i get some patch for 2.6.21.7 version for sdio driver.<br><br>Regards<br><br>Nitin<br>
+
+--000e0cd18162479653048c73eadf--
+
+
+--===============0984175850==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============0984175850==--
