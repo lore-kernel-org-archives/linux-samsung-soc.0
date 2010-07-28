@@ -1,111 +1,52 @@
-From: Ben Dooks <ben@simtec.co.uk>
-Subject: Re: [PATCH] ARM: Samsung SoC: clksrc-clk: wait for the stable SRC/DIV
- status.
-Date: Wed, 28 Jul 2010 18:25:47 +0100
-Message-ID: <4C50681B.8040306@simtec.co.uk>
-References: <1280287044-6645-1-git-send-email-myungjoo.ham@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 4/4] sdhci-s3c: add regulator support
+Date: Wed, 28 Jul 2010 10:39:55 -0700
+Message-ID: <20100728173954.GD22544@opensource.wolfsonmicro.com>
+References: <1280326797-15792-1-git-send-email-m.szyprowski@samsung.com>
+ <1280326797-15792-5-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from hull.simtec.co.uk ([78.105.113.97]:44051 "EHLO
-	preston.local.simtec.co.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754605Ab0G1RZx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Jul 2010 13:25:53 -0400
-In-Reply-To: <1280287044-6645-1-git-send-email-myungjoo.ham@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1280326797-15792-5-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, akpm@linux-foundation.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org
 
-On 28/07/10 04:17, MyungJoo Ham wrote:
-> Many MUX and clock dividers have a status bit so that users can wait
-> until the status is stable. When corresponding registers are accessed
-> while a clock is not stable, we may suffer from unexpected errors.
-> 
-> Therefore, we introduce a mechanism to let the operations related with
-> updating SRC/DIV registers of clksrc-clk wait for the stabilization:
-> clk_set_parent, clk_set_rate.
-> 
-> In order to use this feature, the definition of clksrc_clk should
-> include reg_src_stable or reg_div_stable. With effective rec_src_stable
-> values, clk_set_parent returns with a stabilized SRC register and
-> with effective rec_div_stable values, clk_set_rate returns with a
-> stabilized DIV register. If .reg field is null, its (either SRC or DIV)
-> register's status is not checked and returned without waiting; i.e.,
-> some MUX/DIV may not need this feature.
-> 
-> When setting reg_*_stable, .size is used to tell the value of "stable".
-> If .size = 0, the stable status is 0 and if .size = 1, the stable status
-> is 1.
-> 
-> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/plat-samsung/clock-clksrc.c              |   13 +++++++++++++
->  arch/arm/plat-samsung/include/plat/clock-clksrc.h |   10 ++++++++++
->  2 files changed, 23 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/clock-clksrc.c b/arch/arm/plat-samsung/clock-clksrc.c
-> index 46d204a..5ff17ad 100644
-> --- a/arch/arm/plat-samsung/clock-clksrc.c
-> +++ b/arch/arm/plat-samsung/clock-clksrc.c
-> @@ -68,6 +68,12 @@ static int s3c_setrate_clksrc(struct clk *clk, unsigned long rate)
->  	val |= (div - 1) << sclk->reg_div.shift;
->  	__raw_writel(val, reg);
->  
-> +	if (sclk->reg_div_stable.reg) {
-> +		do { } while (((__raw_readl(sclk->reg_div_stable.reg) >>
-> +						sclk->reg_div_stable.shift) & 1)
-> +				!= sclk->reg_div_stable.size);
-> +	}
-> +
->  	return 0;
->  }
+On Wed, Jul 28, 2010 at 04:19:57PM +0200, Marek Szyprowski wrote:
 
-you could move the code for this out to a separate inlined function to
-avoid it being here twice, and possibly make it flow better.
+>  static int sdhci_s3c_suspend(struct platform_device *dev, pm_message_t pm)
+>  {
+> +	int ret = 0;
+>  	struct sdhci_host *host = platform_get_drvdata(dev);
+> +	struct sdhci_s3c *sc = sdhci_priv(host);
+>  
+>  	sdhci_suspend_host(host, pm);
+> -	return 0;
+> +
+> +	if (sc->vmmc)
+> +		ret = regulator_disable(sc->vmmc);
+> +
 
-> @@ -93,6 +99,13 @@ static int s3c_setparent_clksrc(struct clk *clk, struct clk *parent)
->  		clksrc |= src_nr << sclk->reg_src.shift;
->  
->  		__raw_writel(clksrc, sclk->reg_src.reg);
+So, on suspend you disable the regulator...
+
+> +	struct sdhci_s3c *sc = sdhci_priv(host);
 > +
-> +		if (sclk->reg_src_stable.reg) {
-> +			do { } while (((__raw_readl(sclk->reg_src_stable.reg) >>
-> +						sclk->reg_src_stable.shift) & 1)
-> +					!= sclk->reg_src_stable.size);
-> +		}
-> +
->  		return 0;
->  	}
->  
-> diff --git a/arch/arm/plat-samsung/include/plat/clock-clksrc.h b/arch/arm/plat-samsung/include/plat/clock-clksrc.h
-> index 50a8ca7..282821d 100644
-> --- a/arch/arm/plat-samsung/include/plat/clock-clksrc.h
-> +++ b/arch/arm/plat-samsung/include/plat/clock-clksrc.h
-> @@ -45,6 +45,13 @@ struct clksrc_reg {
->   * @sources: the sources for this clock
->   * @reg_src: the register definition for selecting the clock's source
->   * @reg_div: the register definition for the clock's output divisor
-> + * @reg_src_stable: the register definition to probe if reg_src is
-> + *    stabilized after the update of reg_src. It is "stabilized" if
-> + *    reg[shift] == size. If reg == NULL, this stable reg is not looked
-> + *    up. Thus, in S5PV210, size is usually 0.
-> + * @reg_div_stable: the register definition to probe if reg_div is
-> + *    stabilized after the update of reg_div. Same mechanism with
-> + *    reg_src_stable.
->   *
->   * This clock implements the features required by the newer SoCs where
->   * the standard clock block provides an input mux and a post-mux divisor
-> @@ -61,6 +68,9 @@ struct clksrc_clk {
->  
->  	struct clksrc_reg	reg_src;
->  	struct clksrc_reg	reg_div;
-> +
-> +	struct clksrc_reg	reg_src_stable;
-> +	struct clksrc_reg	reg_div_stable;
->  };
->  
->  /**
+> +	if (sc->vmmc) {
+> +		int ret = regulator_disable(sc->vmmc);
+> +		if (ret)
+> +			return ret;
+
+...and on resume you disable it again.  I'm surprised this works
+properly after resume, at the very least the core is going to get
+confused about the reference counts I'd expect.
+
+I suspect this is for something we need to do better in the regulator
+API - restoring the state of the regulators after a resume if the
+hardware changes them.  A lot of regulators just do this in hardware so
+we didn't need to worry about it previously.
+
+> +		mdelay(2);
+
+This could do with some sort of comment.
