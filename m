@@ -1,137 +1,163 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [rtc-linux] [PATCH 2/2] rtc: rtc-s3c: Updates RTC driver for	clock
- enabling support
-Date: Wed, 28 Jul 2010 13:49:53 +0900
-Message-ID: <009601cb2e10$5420c7e0$fc6257a0$%kim@samsung.com>
-References: <1279702501-6803-1-git-send-email-kgene.kim@samsung.com>
- <1279702501-6803-3-git-send-email-kgene.kim@samsung.com>
- <AANLkTikGjzmHxCX6_s5Z-ZXkoyPbtF28uCyE1VqdGPvb@mail.gmail.com>
- <AANLkTikEanSQBeFoqpMxR3tWxWTci_ytNsEhe9VS9ygg@mail.gmail.com>
- <AANLkTin=bqMRLYgAd4NvVnKZi1PWAGPqQSsZDPxvitfh@mail.gmail.com>
- <007a01cb2e0e$6760ad40$362207c0$%kim@samsung.com>
- <AANLkTimCd-4mqW6vt1f+xVVzMdzOqD0RwzLu3-Ue41gs@mail.gmail.com>
+Subject: RE: [PATCH v4 3/3] sdhci-s3c: Add SDHCI_QUIRK_NO_WP_BIT quirk for
+ Samsung	SoC
+Date: Wed, 28 Jul 2010 14:21:45 +0900
+Message-ID: <009701cb2e14$c8232080$58696180$%kim@samsung.com>
+References: <1280234628-27303-1-git-send-email-kgene.kim@samsung.com>
+ <1280234628-27303-4-git-send-email-kgene.kim@samsung.com>
+ <003e01cb2d92$054871a0$0fd954e0$%szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:20429 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751186Ab0G1Etr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Jul 2010 00:49:47 -0400
-Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L6900FM742XO040@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 28 Jul 2010 13:49:45 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L6900AXP42XGA@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 28 Jul 2010 13:49:45 +0900 (KST)
-In-reply-to: <AANLkTimCd-4mqW6vt1f+xVVzMdzOqD0RwzLu3-Ue41gs@mail.gmail.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <003e01cb2d92$054871a0$0fd954e0$%szyprowski@samsung.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
+Cc: akpm@linux-foundation.org, 'Hyuk Lee' <hyuk1.lee@samsung.com>, ben-linux@fluff.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Wan ZongShun' <mcuos.com@gmail.com>, rtc-linux@googlegroups.com
-Cc: a.zummo@towertech.it, linux-samsung-soc@vger.kernel.org, 'Atul Dahiya' <atul.dahiya@samsung.com>, p_gortmaker@yahoo.com, 'Atul Dahiya' <atuldahiya84@gmail.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-
-
-> -----Original Message-----
-> From: linux-arm-kernel-bounces@lists.infradead.org [mailto:linux-arm-kernel-
-> bounces@lists.infradead.org] On Behalf Of Wan ZongShun
-> Sent: Wednesday, July 28, 2010 1:42 PM
-> To: rtc-linux@googlegroups.com
-> Cc: a.zummo@towertech.it; linux-samsung-soc@vger.kernel.org; Atul Dahiya;
-> p_gortmaker@yahoo.com; Atul Dahiya; ben-linux@fluff.org; linux-arm-
-> kernel@lists.infradead.org
-> Subject: Re: [rtc-linux] [PATCH 2/2] rtc: rtc-s3c: Updates RTC driver for clock
-> enabling support
+Marek Szyprowski wrote:
 > 
-> 2010/7/28 Kukjin Kim <kgene.kim@samsung.com>:
-> > Wan ZongShun wrote:
-> >>
-> >> 2010/7/22 Atul Dahiya <atuldahiya84@gmail.com>:
-> >> > On Thu, Jul 22, 2010 at 11:39 AM, Wan ZongShun <mcuos.com@gmail.com>
-> >> wrote:
-> >> >>
-> >> >> 2010/7/21 Kukjin Kim <kgene.kim@samsung.com>:
-> >> >> > From: Atul Dahiya <atul.dahiya@samsung.com>
-> >> >> >
-> >> >> > This Patch updates existing Samsung RTC driver for clock enabling
-> support.
-> >> >> >
-> >> >> > Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
-> >> >> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> >> >> > ---
-> >> >> >  drivers/rtc/rtc-s3c.c |   22 ++++++++++++++++++++++
-> >> >> >  1 files changed, 22 insertions(+), 0 deletions(-)
-> >> >> >
-> >> >> > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-> >> >> > index 70b68d3..c032a15 100644
-> >> >> > --- a/drivers/rtc/rtc-s3c.c
-> >> >> > +++ b/drivers/rtc/rtc-s3c.c
-> >> >> > @@ -1,5 +1,8 @@
-> >> >> >  /* drivers/rtc/rtc-s3c.c
-> >> >> >  *
-> >> >> > + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> >> >> > + *             http://www.samsung.com/
-> >> >> > + *
-> >> >> >  * Copyright (c) 2004,2006 Simtec Electronics
-> >> >> >  *     Ben Dooks, <ben@simtec.co.uk>
-> >> >> >  *     http://armlinux.simtec.co.uk/
-> >> >> > @@ -39,6 +42,7 @@ enum s3c_cpu_type {
-> >> >> >
-> >> >> >  static struct resource *s3c_rtc_mem;
-> >> >> >
-> >> >> > +static struct clk *rtc_clk;
-> >> >> >  static void __iomem *s3c_rtc_base;
-> >> >> >  static int s3c_rtc_alarmno = NO_IRQ;
-> >> >> >  static int s3c_rtc_tickno  = NO_IRQ;
-> >> >> > @@ -431,6 +435,10 @@ static int __devexit s3c_rtc_remove(struct
-> >> platform_device *dev)
-> >> >> >        s3c_rtc_setpie(&dev->dev, 0);
-> >> >> >        s3c_rtc_setaie(0);
-> >> >> >
-> >> >> > +       clk_disable(rtc_clk);
-> >> >> > +       clk_put(rtc_clk);
-> >> >> > +       rtc_clk = NULL;
-> >> >> > +
-> >> >> >        iounmap(s3c_rtc_base);
-> >> >> >        release_resource(s3c_rtc_mem);
-> >> >> >        kfree(s3c_rtc_mem);
-> >> >> > @@ -488,6 +496,16 @@ static int __devinit s3c_rtc_probe(struct
-> >> platform_device *pdev)
-> >> >> >                goto err_nomap;
-> >> >> >        }
-> >> >> >
-> >> >> > +       rtc_clk = clk_get(&pdev->dev, "rtc");
-> >> >>
-> >> >> Do you really need the second argument? I think the bus clock for
-> >> >> a device should be findable with NULL for s3c platform..
-> >> >
-> >> > No, actually  clk_get() function for s3c platform searches on the
-> >> > basis of second parameter passed
-> >> > so need to pass the second argument here.
-> >>
-> >> Okay, good patch!
-> >>
-> >> Acked-by: Wan ZongShun <mcuos.com@gmail.com>
-> >>
-> > Thanks for your review and ack.
-> >
-> > As I asked to Alessandro, does this goes through what subsystem go to
-> upstream?
-> >
-> After you get ack, Samsung git tree or Andrew's mm git tree can do it.
-> Thanks!
-> 
-Ok...will apply this for next merge window with your ack.
+> Hello,
 
-Thanks.
+Hi :-)
+> 
+> On Tuesday, July 27, 2010 2:44 PM Kukjin Kim wrote:
+> 
+> > From: Hyuk Lee <hyuk1.lee@samsung.com>
+> >
+> > If host controller doesn't have WP pin which should be connnected with
+> > SDMMC
+> > card WP pin, can implement get_ro function with using the allocated
+gpio.
+> > In order to use this quirk wp_gpio in the platform data must be set.
+> >
+> > Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > ---
+> >  drivers/mmc/host/sdhci-s3c.c |   36
+> ++++++++++++++++++++++++++++++++++++
+> >  drivers/mmc/host/sdhci.c     |    3 +++
+> >  drivers/mmc/host/sdhci.h     |    3 +++
+> >  3 files changed, 42 insertions(+), 0 deletions(-)
+> >
+> > diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> > index 0d25285..98a8ec8 100644
+> > --- a/drivers/mmc/host/sdhci-s3c.c
+> > +++ b/drivers/mmc/host/sdhci-s3c.c
+> > @@ -22,6 +22,7 @@
+> >
+> >  #include <linux/mmc/host.h>
+> >
+> > +#include <plat/gpio-cfg.h>
+> >  #include <plat/sdhci.h>
+> >  #include <plat/regs-sdhci.h>
+> >
+> > @@ -213,6 +214,32 @@ static void sdhci_s3c_set_clock(struct sdhci_host
+> > *host, unsigned int clock)
+> >  }
+> >
+> >  /**
+> > + * sdhci_s3c_get_ro - callback for get_ro
+> > + * @host: The SDHCI host being changed
+> > + *
+> > + * If the WP pin is connected with GPIO, can get the value which
+indicates
+> > + * the card is locked or not.
+> > +*/
+> > +static int sdhci_s3c_get_ro(struct mmc_host *mmc)
+> > +{
+> > +	struct sdhci_s3c *ourhost = to_s3c(mmc_priv(mmc));
+> > +
+> > +	return gpio_get_value(ourhost->pdata->wp_gpio);
+> > +}
+> > +
+> > +/**
+> > + * sdhci_s3c_cfg_wp - configure GPIO for WP pin
+> > + * @gpio_num: GPIO number which connected with WP line from SD/MMC slot
+> > + *
+> > + * Configure GPIO for using WP line
+> > +*/
+> > +static void sdhci_s3c_cfg_wp(unsigned int gpio_num)
+> > +{
+> > +	s3c_gpio_cfgpin(gpio_num, S3C_GPIO_INPUT);
+> > +	s3c_gpio_setpull(gpio_num, S3C_GPIO_PULL_UP);
+> > +}
+> > +
+> > +/**
+> >   * sdhci_s3c_get_min_clock - callback to get minimal supported clock
+value
+> >   * @host: The SDHCI host being queried
+> >   *
+> > @@ -408,6 +435,15 @@ static int __devinit sdhci_s3c_probe(struct
+> > platform_device *pdev)
+> >  	host->quirks |= (SDHCI_QUIRK_32BIT_DMA_ADDR |
+> >  			 SDHCI_QUIRK_32BIT_DMA_SIZE);
+> >
+> > +	/* Controller's WP pin doesn't connected with SD card and there is
+an
+> > +	 * allocated GPIO for getting WP data form SD card, use this quirk
+> > and
+> > +	 * send the GPIO number in pdata->wp_gpio. */
+> > +	if (gpio_is_valid(pdata->wp_gpio) && pdata->has_wp_gpio) {
+> 
+> IMHO the opposite order would make much more sense:
+> if (pdata->has_wp_gpio && gpio_is_valid(pdata->wp_gpio))
+> 
+Ok..will modify.
+
+> > +		sdhci_s3c_ops.get_ro = sdhci_s3c_get_ro;
+> > +		host->quirks |= SDHCI_QUIRK_NO_WP_BIT;
+> > +		sdhci_s3c_cfg_wp(pdata->wp_gpio);
+> > +	}
+> > +
+> >  	ret = sdhci_add_host(host);
+> >  	if (ret) {
+> >  		dev_err(dev, "sdhci_add_host() failed\n");
+> > diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> > index f9ca4c6..7fba401 100644
+> > --- a/drivers/mmc/host/sdhci.c
+> > +++ b/drivers/mmc/host/sdhci.c
+> > @@ -1198,6 +1198,9 @@ static int sdhci_get_ro(struct mmc_host *mmc)
+> >
+> >  	host = mmc_priv(mmc);
+> >
+> > +	if ((host->quirks & SDHCI_QUIRK_NO_WP_BIT) && host->ops->get_ro)
+> > +		return host->ops->get_ro(mmc);
+> > +
+> >  	spin_lock_irqsave(&host->lock, flags);
+> >
+> >  	if (host->flags & SDHCI_DEVICE_DEAD)
+> > diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> > index 0de8b38..dd9a233 100644
+> > --- a/drivers/mmc/host/sdhci.h
+> > +++ b/drivers/mmc/host/sdhci.h
+> > @@ -247,6 +247,8 @@ struct sdhci_host {
+> >  #define SDHCI_QUIRK_MISSING_CAPS			(1<<28)
+> >  /* Controller has nonstandard clock management */
+> >  #define SDHCI_QUIRK_NONSTANDARD_MINCLOCK		(1<<29)
+> > +/* Controller has no write-protect pin connected with SD card */
+> > +#define SDHCI_QUIRK_NO_WP_BIT				(1<<30)
+> >
+> >  	int			irq;		/* Device IRQ */
+> >  	void __iomem *		ioaddr;		/* Mapped address */
+> > @@ -321,6 +323,7 @@ struct sdhci_ops {
+> >  	unsigned int	(*get_max_clock)(struct sdhci_host *host);
+> >  	unsigned int	(*get_min_clock)(struct sdhci_host *host);
+> >  	unsigned int	(*get_timeout_clock)(struct sdhci_host *host);
+> > +	int		(*get_ro)(struct mmc_host *mmc);
+> >  };
+> >
+> >  #ifdef CONFIG_MMC_SDHCI_IO_ACCESSORS
+> 
+> Otherwise looks fine.
+> 
+Thanks for your comment.
 
 Best regards,
 Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
