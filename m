@@ -1,139 +1,98 @@
-From: Wan ZongShun <mcuos.com@gmail.com>
-Subject: Re: [rtc-linux] [PATCH 2/2] rtc: rtc-s3c: Updates RTC driver for
-	clock enabling support
-Date: Wed, 28 Jul 2010 12:42:05 +0800
-Message-ID: <AANLkTimCd-4mqW6vt1f+xVVzMdzOqD0RwzLu3-Ue41gs@mail.gmail.com>
-References: <1279702501-6803-1-git-send-email-kgene.kim@samsung.com>
-	<1279702501-6803-3-git-send-email-kgene.kim@samsung.com>
-	<AANLkTikGjzmHxCX6_s5Z-ZXkoyPbtF28uCyE1VqdGPvb@mail.gmail.com>
-	<AANLkTikEanSQBeFoqpMxR3tWxWTci_ytNsEhe9VS9ygg@mail.gmail.com>
-	<AANLkTin=bqMRLYgAd4NvVnKZi1PWAGPqQSsZDPxvitfh@mail.gmail.com>
-	<007a01cb2e0e$6760ad40$362207c0$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v3 3/3] sdhci-s3c: Add SDHCI_QUIRK_NO_WP_BIT quirk for
+ Samsung SoC
+Date: Wed, 28 Jul 2010 13:42:56 +0900
+Message-ID: <008b01cb2e0f$5c2de590$1489b0b0$%kim@samsung.com>
+References: <1279886191-9197-1-git-send-email-kgene.kim@samsung.com>
+ <1279886191-9197-4-git-send-email-kgene.kim@samsung.com>
+ <4C49871D.8030702@gmail.com> <000d01cb2d83$16b7efb0$4427cf10$%kim@samsung.com>
+ <4C4F06EC.2020902@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:58969 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751233Ab0G1EmJ convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:41504 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751267Ab0G1Emv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Jul 2010 00:42:09 -0400
-Received: by vws3 with SMTP id 3so4061707vws.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Jul 2010 21:42:06 -0700 (PDT)
-In-Reply-To: <007a01cb2e0e$6760ad40$362207c0$%kim@samsung.com>
+	Wed, 28 Jul 2010 00:42:51 -0400
+In-reply-to: <4C4F06EC.2020902@gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: rtc-linux@googlegroups.com
-Cc: Atul Dahiya <atuldahiya84@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, p_gortmaker@yahoo.com, a.zummo@towertech.it, Atul Dahiya <atul.dahiya@samsung.com>
+To: 'Maurus Cuelenaere' <mcuelenaere@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, ben-linux@fluff.org, akpm@linux-foundation.org, 'Hyuk Lee' <hyuk1.lee@samsung.com>
 
-2010/7/28 Kukjin Kim <kgene.kim@samsung.com>:
-> Wan ZongShun wrote:
->>
->> 2010/7/22 Atul Dahiya <atuldahiya84@gmail.com>:
->> > On Thu, Jul 22, 2010 at 11:39 AM, Wan ZongShun <mcuos.com@gmail.co=
-m>
->> wrote:
->> >>
->> >> 2010/7/21 Kukjin Kim <kgene.kim@samsung.com>:
->> >> > From: Atul Dahiya <atul.dahiya@samsung.com>
->> >> >
->> >> > This Patch updates existing Samsung RTC driver for clock enabli=
-ng support.
->> >> >
->> >> > Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
->> >> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
->> >> > ---
->> >> > =C2=A0drivers/rtc/rtc-s3c.c | =C2=A0 22 ++++++++++++++++++++++
->> >> > =C2=A01 files changed, 22 insertions(+), 0 deletions(-)
->> >> >
->> >> > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
->> >> > index 70b68d3..c032a15 100644
->> >> > --- a/drivers/rtc/rtc-s3c.c
->> >> > +++ b/drivers/rtc/rtc-s3c.c
->> >> > @@ -1,5 +1,8 @@
->> >> > =C2=A0/* drivers/rtc/rtc-s3c.c
->> >> > =C2=A0*
->> >> > + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
->> >> > + * =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 http://www.samsun=
-g.com/
->> >> > + *
->> >> > =C2=A0* Copyright (c) 2004,2006 Simtec Electronics
->> >> > =C2=A0* =C2=A0 =C2=A0 Ben Dooks, <ben@simtec.co.uk>
->> >> > =C2=A0* =C2=A0 =C2=A0 http://armlinux.simtec.co.uk/
->> >> > @@ -39,6 +42,7 @@ enum s3c_cpu_type {
->> >> >
->> >> > =C2=A0static struct resource *s3c_rtc_mem;
->> >> >
->> >> > +static struct clk *rtc_clk;
->> >> > =C2=A0static void __iomem *s3c_rtc_base;
->> >> > =C2=A0static int s3c_rtc_alarmno =3D NO_IRQ;
->> >> > =C2=A0static int s3c_rtc_tickno =C2=A0=3D NO_IRQ;
->> >> > @@ -431,6 +435,10 @@ static int __devexit s3c_rtc_remove(struct
->> platform_device *dev)
->> >> > =C2=A0 =C2=A0 =C2=A0 =C2=A0s3c_rtc_setpie(&dev->dev, 0);
->> >> > =C2=A0 =C2=A0 =C2=A0 =C2=A0s3c_rtc_setaie(0);
->> >> >
->> >> > + =C2=A0 =C2=A0 =C2=A0 clk_disable(rtc_clk);
->> >> > + =C2=A0 =C2=A0 =C2=A0 clk_put(rtc_clk);
->> >> > + =C2=A0 =C2=A0 =C2=A0 rtc_clk =3D NULL;
->> >> > +
->> >> > =C2=A0 =C2=A0 =C2=A0 =C2=A0iounmap(s3c_rtc_base);
->> >> > =C2=A0 =C2=A0 =C2=A0 =C2=A0release_resource(s3c_rtc_mem);
->> >> > =C2=A0 =C2=A0 =C2=A0 =C2=A0kfree(s3c_rtc_mem);
->> >> > @@ -488,6 +496,16 @@ static int __devinit s3c_rtc_probe(struct
->> platform_device *pdev)
->> >> > =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0goto err=
-_nomap;
->> >> > =C2=A0 =C2=A0 =C2=A0 =C2=A0}
->> >> >
->> >> > + =C2=A0 =C2=A0 =C2=A0 rtc_clk =3D clk_get(&pdev->dev, "rtc");
->> >>
->> >> Do you really need the second argument? I think the bus clock for
->> >> a device should be findable with NULL for s3c platform..
->> >
->> > No, actually =C2=A0clk_get() function for s3c platform searches on=
- the
->> > basis of second parameter passed
->> > so need to pass the second argument here.
->>
->> Okay, good patch!
->>
->> Acked-by: Wan ZongShun <mcuos.com@gmail.com>
->>
-> Thanks for your review and ack.
->
-> As I asked to Alessandro, does this goes through what subsystem go to=
- upstream?
->
-After you get ack, Samsung git tree or Andrew's mm git tree can do it.
-Thanks!
+Maurus Cuelenaere wrote:
+> 
+>  Op 27-07-10 13:58, Kukjin Kim schreef:
+> > Maurus Cuelenaere wrote:
+> >>  Op 23-07-10 13:56, Kukjin Kim schreef:
+> >>> From: Hyuk Lee <hyuk1.lee@samsung.com>
+> >>>
+> >>> If host controller doesn't have WP pin which should be connnected with
+> SDMMC
+> >>> card WP pin, can implement get_ro function with using the allocated gpio.
+> >>> In order to use this quirk wp_gpio in the platform data must be set.
+> >>>
+> >>> Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
+> >>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> >>> ---
+> >>>  drivers/mmc/host/sdhci-s3c.c |   43
+> >> ++++++++++++++++++++++++++++++++++++++++++
+> >>>  drivers/mmc/host/sdhci.c     |    3 ++
+> >>>  drivers/mmc/host/sdhci.h     |    3 ++
+> >>>  3 files changed, 49 insertions(+), 0 deletions(-)
+> >>>
+> >>> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> >>> index 0d25285..0b75e57 100644
+> >>> --- a/drivers/mmc/host/sdhci-s3c.c
+> >>> +++ b/drivers/mmc/host/sdhci-s3c.c
+> >>> @@ -22,6 +22,7 @@
+> >>>
+> >>>  #include <linux/mmc/host.h>
+> >>>
+> >>> +#include <plat/gpio-cfg.h>
+> >>>  #include <plat/sdhci.h>
+> >>>  #include <plat/regs-sdhci.h>
+> >>>
+> >>> @@ -213,6 +214,36 @@ static void sdhci_s3c_set_clock(struct sdhci_host
+> *host,
+> >> unsigned int clock)
+> >>>  }
+> >>>
+> >>>  /**
+> >>> + * sdhci_s3c_get_ro - callback for get_ro
+> >>> + * @host: The SDHCI host being changed
+> >>> + *
+> >>> + * If the WP pin is connected with GPIO, can get the value which indicates
+> >>> + * the card is locked or not.
+> >>> +*/
+> >>> +static int sdhci_s3c_get_ro(struct mmc_host *mmc)
+> >>> +{
+> >>> +	struct sdhci_s3c *sc;
+> >>> +	struct sdhci_host *host;
+> >>> +
+> >>> +	host = mmc_priv(mmc);
+> >>> +	sc = sdhci_priv(host);
+> >> This can be done as static initializer if you reverse the order above.
+> > Could you please kindly explain about this?
+> > Sorry, I cannot get the exactly meaning...
+> 
+> +static int sdhci_s3c_get_ro(struct mmc_host *mmc)
+> +{
+> +	struct sdhci_host *host = mmc_priv(mmc);
+> +	struct sdhci_s3c *sc = sdhci_priv(host);
+> 
+Hahaha, no need more words ;-)
+Thanks for your kindly explanation.
 
-> (snip)
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> --
-> You received this message because you are subscribed to "rtc-linux".
-> Membership options at http://groups.google.com/group/rtc-linux .
-> Please read http://groups.google.com/group/rtc-linux/web/checklist
-> before submitting a driver.
+I think, v4 patch seems to satisfy your suggestion...even though need v5 patch right now.
 
+Thanks.
 
-
---=20
-*linux-arm-kernel mailing list
-mail addr:linux-arm-kernel@lists.infradead.org
-you can subscribe by:
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
-* linux-arm-NUC900 mailing list
-mail addr:NUC900@googlegroups.com
-main web: https://groups.google.com/group/NUC900
-you can subscribe it by sending me mail:
-mcuos.com@gmail.com
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
