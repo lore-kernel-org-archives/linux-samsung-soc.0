@@ -1,53 +1,104 @@
-From: Sergei Shtylyov <sshtylyov@mvista.com>
-Subject: Re: [PATCH v5 3/7] ARM: S5P: Added default pll values for APLL 800/1000MHz
-Date: Thu, 29 Jul 2010 15:11:20 +0400
-Message-ID: <4C5161D8.1010609@ru.mvista.com>
-References: <1280399145-22761-1-git-send-email-myungjoo.ham@samsung.com>	<1280399145-22761-2-git-send-email-myungjoo.ham@samsung.com>	<1280399145-22761-3-git-send-email-myungjoo.ham@samsung.com> <1280399145-22761-4-git-send-email-myungjoo.ham@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCHv3 1/4] sdhci-s3c: add support for the non standard minimal
+ clock value
+Date: Thu, 29 Jul 2010 14:34:32 +0200
+Message-ID: <1280406875-31830-2-git-send-email-m.szyprowski@samsung.com>
+References: <1280406875-31830-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:61494 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752731Ab0G2LMk (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:56830 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756996Ab0G2Men (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Jul 2010 07:12:40 -0400
-Received: by eya25 with SMTP id 25so56728eya.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Jul 2010 04:12:39 -0700 (PDT)
-In-Reply-To: <1280399145-22761-4-git-send-email-myungjoo.ham@samsung.com>
+	Thu, 29 Jul 2010 08:34:43 -0400
+In-reply-to: <1280406875-31830-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org
+To: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, akpm@linux-foundation.org, broonie@opensource.wolfsonmicro.com
 
-Hello.
+S3C SDHCI host controller can change the source for generating mmc
+clock. By default host bus clock is used, what causes some problems on
+machines with 133MHz bus, because the SDHCI divider cannot be as high
+get proper clock value for identification mode. This is not a problem
+for the controller, because it can generate lower frequencies from other
+clock sources. This patch changes sdhci driver to use get_min_clock()
+call if it has been provided.
 
-MyungJoo Ham wrote:
+This fixes the flood of the following warnings on Samsung S5PV210 SoCs:
+mmc0: Minimum clock frequency too high for identification mode
 
-> CPUFREQ of S5PV210 uses different APLL settings according to
-> different CPU frequencies. We provide such settings values for
-> CPUFREQ at pll.h.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
 
-> Note that at 1GHz of ARMCLK, APLL should be 1GHz and for other lower
-> ARMCLK, APLL should be 800MHz.
+Changes since V2: 
+- removed the need for additional quirk, just use get_min_clock() method
+if provided
 
-> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-[...]
-> diff --git a/arch/arm/plat-s5p/include/plat/pll.h b/arch/arm/plat-s5p/include/plat/pll.h
-> index 7db3227..d79042a 100644
-> --- a/arch/arm/plat-s5p/include/plat/pll.h
-> +++ b/arch/arm/plat-s5p/include/plat/pll.h
-> @@ -21,6 +21,9 @@
->  
->  #include <asm/div64.h>
->  
-> +#define PLL45XX_APLL_VAL_1000	((1 << 31) | (125<<16) | (3<<8) | (1))
-> +#define PLL45XX_APLL_VAL_800	((1 << 31) | (100<<16) | (3<<8) | (1))
-> +
+Changes since V1:
+- rebased onto latest -mm kernel tree
+---
+ drivers/mmc/host/sdhci-s3c.c |   27 +++++++++++++++++++++++++++
+ drivers/mmc/host/sdhci.c     |    3 +--
+ 2 files changed, 28 insertions(+), 2 deletions(-)
 
-   Incosistent spacing. Why there spaces around the first << but not around 
-the following? Should be spaces around every <<...
-
-
-WBR, Sergei
+diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+index d7058ee..47138af 100644
+--- a/drivers/mmc/host/sdhci-s3c.c
++++ b/drivers/mmc/host/sdhci-s3c.c
+@@ -203,9 +203,36 @@ static void sdhci_s3c_set_clock(struct sdhci_host *host, unsigned int clock)
+ 	}
+ }
+ 
++/**
++ * sdhci_s3c_get_min_clock - callback to get minimal supported clock value
++ * @host: The SDHCI host being queried
++ *
++ * To init mmc host properly a minimal clock value is needed. For high system
++ * bus clock's values the standard formula gives values out of allowed range.
++ * The clock still can be set to lower values, if clock source other then
++ * system bus is selected.
++*/
++static unsigned int sdhci_s3c_get_min_clock(struct sdhci_host *host)
++{
++	struct sdhci_s3c *ourhost = to_s3c(host);
++	unsigned int delta, min = UINT_MAX;
++	int src;
++
++	for (src = 0; src < MAX_BUS_CLK; src++) {
++		delta = sdhci_s3c_consider_clock(ourhost, src, 0);
++		if (delta == UINT_MAX)
++			continue;
++		/* delta is a negative value in this case */
++		if (-delta < min)
++			min = -delta;
++	}
++	return min;
++}
++
+ static struct sdhci_ops sdhci_s3c_ops = {
+ 	.get_max_clock		= sdhci_s3c_get_max_clk,
+ 	.set_clock		= sdhci_s3c_set_clock,
++	.get_min_clock		= sdhci_s3c_get_min_clock,
+ };
+ 
+ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 07b2695..1c67f91 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1776,8 +1776,7 @@ int sdhci_add_host(struct sdhci_host *host)
+ 	 * Set host parameters.
+ 	 */
+ 	mmc->ops = &sdhci_ops;
+-	if (host->quirks & SDHCI_QUIRK_NONSTANDARD_CLOCK &&
+-			host->ops->get_min_clock)
++	if (host->ops->get_min_clock)
+ 		mmc->f_min = host->ops->get_min_clock(host);
+ 	else
+ 		mmc->f_min = host->max_clk / 256;
+-- 
+1.7.1.569.g6f426
