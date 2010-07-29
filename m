@@ -1,53 +1,80 @@
 From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH v5 4/7] ARM: S5P: Virtual Addresses for DMCx registers.
-Date: Thu, 29 Jul 2010 19:25:42 +0900
-Message-ID: <1280399145-22761-5-git-send-email-myungjoo.ham@samsung.com>
-References: <1280399145-22761-1-git-send-email-myungjoo.ham@samsung.com>
- <1280399145-22761-2-git-send-email-myungjoo.ham@samsung.com>
- <1280399145-22761-3-git-send-email-myungjoo.ham@samsung.com>
- <1280399145-22761-4-git-send-email-myungjoo.ham@samsung.com>
+Subject: [PATCH v5 0/7] ARM: S5PV210: CPUFREQ Initial Support
+Date: Thu, 29 Jul 2010 19:25:38 +0900
+Message-ID: <1280399145-22761-1-git-send-email-myungjoo.ham@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:63027 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756378Ab0G2KZu (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:22738 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756418Ab0G2KZv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Jul 2010 06:25:50 -0400
-Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Thu, 29 Jul 2010 06:25:51 -0400
+Received: from epmmp2 (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L6B00179EAXVD20@mailout4.samsung.com> for
+ with ESMTP id <0L6B004X1EAXZTB0@mailout3.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Thu, 29 Jul 2010 19:25:45 +0900 (KST)
 Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L6B008T2EAXU5@mmp1.samsung.com> for
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L6B002JDEAXX9@mmp2.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Thu, 29 Jul 2010 19:25:45 +0900 (KST)
-In-reply-to: <1280399145-22761-4-git-send-email-myungjoo.ham@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: kyungmin.park@samsung.com, kgene.kim@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
 
-	The CPUFREQ driver requires an access to DMCx registers. We
-define virtual addresses of DMCx registers.
+S5PV210 CPUFREQ Initial Support.
 
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/plat-s5p/include/plat/map-s5p.h |    3 +++
- 1 files changed, 3 insertions(+), 0 deletions(-)
+This is a series of patches to enable CPUFREQ for S5PV210.
 
-diff --git a/arch/arm/plat-s5p/include/plat/map-s5p.h b/arch/arm/plat-s5p/include/plat/map-s5p.h
-index 1482852..bd803f1 100644
---- a/arch/arm/plat-s5p/include/plat/map-s5p.h
-+++ b/arch/arm/plat-s5p/include/plat/map-s5p.h
-@@ -31,4 +31,7 @@
- #define VA_VIC2			VA_VIC(2)
- #define VA_VIC3			VA_VIC(3)
- 
-+#define S5P_VA_DMC0		S3C_ADDR(0x00a00000)
-+#define S5P_VA_DMC1		S3C_ADDR(0x00b00000)
-+
- #endif /* __ASM_PLAT_MAP_S5P_H */
--- 
-1.6.3.3
+Although this works without PMIC's DVS support, it is not
+as effective without DVS support as supposed. AVS is not
+supported in this version.
+
+At the patch revision v5, the following patches are updated from v4.
+- 1/7: ARM: S5PV210: Allow to probe EVT revision number
+	* Renamed revision check function
+	* Revise revision check function so that it does not access
+	board-specific information
+	* Chip-ID is used to identify some of EVT revisions.
+	* Added "s5pv210_revision_or_later()" function
+- 6/7: ARM: S5PV210: clock registers (CLK_DIV/SRC/STAT)
+	* Added entry infromation for G3D/G2D/MFC of the register
+	S5P_CLK_[DIV|MUX]_STAT[0|1]. These entries are accessed
+	multiple times at /arch/arm/mach-s5pv210/cpufreq.c.
+- 7/7: ARM: S5PV210: Initial CPUFREQ Support
+	* Remove unnecessary USE_FREQ_TABLE
+	* Renamed functions in cpufreq.c
+	* Initialization of s5pv210_cpufreq_target (previously,
+	s5pv210_target) is revised (initilization --> first_run)
+	* "workaround" --> "revision"
+	* CLK_*_STATx register entries use macros: they are used
+	multiple times.
+
+MyungJoo Ham (7):
+  ARM: S5PV210: Allow to probe EVT revision number.
+  ARM: Samsung SoC: added hclk/pclk info to s3c_freq for s5pv210
+    cpu-freq
+  ARM: S5P: Added default pll values for APLL 800/1000MHz
+  ARM: S5P: Virtual Addresses for DMCx registers.
+  ARM: S5PV210: Access for DMCx registers
+  ARM: S5PV210: clock registers (CLK_DIV/SRC/STAT)
+  ARM: S5PV210: Initial CPUFREQ Support
+
+ arch/arm/Kconfig                                |    1 +
+ arch/arm/mach-s5pv210/Kconfig                   |    5 +
+ arch/arm/mach-s5pv210/Makefile                  |    2 +
+ arch/arm/mach-s5pv210/cpu.c                     |   41 ++-
+ arch/arm/mach-s5pv210/cpufreq.c                 |  790 +++++++++++++++++++++++
+ arch/arm/mach-s5pv210/include/mach/cpu-freq.h   |   38 ++
+ arch/arm/mach-s5pv210/include/mach/hardware.h   |   19 +-
+ arch/arm/mach-s5pv210/include/mach/map.h        |    4 +
+ arch/arm/mach-s5pv210/include/mach/regs-clock.h |   60 ++-
+ arch/arm/mach-s5pv210/mach-aquila.c             |   14 +
+ arch/arm/mach-s5pv210/mach-goni.c               |    8 +
+ arch/arm/plat-s5p/include/plat/map-s5p.h        |    3 +
+ arch/arm/plat-s5p/include/plat/pll.h            |    3 +
+ arch/arm/plat-samsung/include/plat/cpu-freq.h   |    6 +
+ 14 files changed, 989 insertions(+), 5 deletions(-)
+ create mode 100644 arch/arm/mach-s5pv210/cpufreq.c
+ create mode 100644 arch/arm/mach-s5pv210/include/mach/cpu-freq.h
