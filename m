@@ -1,41 +1,32 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 2/4] sdhci-s3c: enable SDHCI_QUIRK_NO_HISPD_BIT quirk
-Date: Thu, 29 Jul 2010 14:34:33 +0200
-Message-ID: <1280406875-31830-3-git-send-email-m.szyprowski@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCHv2 4/4] sdhci: add regulator support
+Date: Thu, 29 Jul 2010 10:21:29 -0700
+Message-ID: <20100729172128.GB24781@opensource.wolfsonmicro.com>
 References: <1280406875-31830-1-git-send-email-m.szyprowski@samsung.com>
+ <1280406875-31830-5-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <1280406875-31830-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, akpm@linux-foundation.org, broonie@opensource.wolfsonmicro.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:36860 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754898Ab0G2RVQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 29 Jul 2010 13:21:16 -0400
+Content-Disposition: inline
+In-Reply-To: <1280406875-31830-5-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, akpm@linux-foundation.org
 
-This patch enables SDHCI_QUIRK_NO_HISPD_BIT on Samsung SDHCI driver.
-This solves detection problems with some external SD cards. This change
-has been tested on S5PC100 and S5PC110. It has no inpact on driver
-speed.
+On Thu, Jul 29, 2010 at 02:34:35PM +0200, Marek Szyprowski wrote:
+> This patch adds support for regulator API to sdhci core driver. Regulators
+> can be used to disable power in suspended state to reduce dissipated
+> energy.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/mmc/host/sdhci-s3c.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+Looks good from a regulator point of view.
 
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index 47138af..f0b819d 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -338,6 +338,7 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 
- 	/* Setup quirks for the controller */
- 	host->quirks |= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC;
-+	host->quirks |= SDHCI_QUIRK_NO_HISPD_BIT;
- 
- #ifndef CONFIG_MMC_SDHCI_S3C_DMA
- 
--- 
-1.7.1.569.g6f426
-
+Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
