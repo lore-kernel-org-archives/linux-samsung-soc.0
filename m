@@ -1,106 +1,223 @@
-From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v3 3/3] ARM: SAMSUNG: i2c/busses: Add HAVE_S3C2410_I2C option to include I2C for Samsung SoCs
-Date: Thu, 29 Jul 2010 18:42:45 +0900
-Message-ID: <1280396565-21014-1-git-send-email-kgene.kim@samsung.com>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH v5 1/7] ARM: S5PV210: Allow to probe EVT revision number.
+Date: Thu, 29 Jul 2010 19:25:39 +0900
+Message-ID: <1280399145-22761-2-git-send-email-myungjoo.ham@samsung.com>
+References: <1280399145-22761-1-git-send-email-myungjoo.ham@samsung.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:63027 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753333Ab0G2KZr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 29 Jul 2010 06:25:47 -0400
+Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L6B00179EAXVD20@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 29 Jul 2010 19:25:45 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L6B008T2EAXU5@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 29 Jul 2010 19:25:45 +0900 (KST)
+In-reply-to: <1280399145-22761-1-git-send-email-myungjoo.ham@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, kgene.kim@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
 
-From: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Early products of S5PV210, EVT0, had several errata that require
+kernel to avoid using some parts/instructions of the CPU or to
+add protection instructions. There are products with such early
+production CPUs; thus, we want to distinguish them in kernel.
+This patch is to distinguish such products.
 
-This patch adds HAVE_S3C2410_I2C to control inclusion of I2C bus driver
-on Samsung SoCs and makes I2C bus driver dependency SoC specific instead
-of machine specific. This will enalbe all machines using Samsung ARCH_S3C2410,
-_S3C64XX, _S5P6440, _S5PC100, and _S5PV210 to select the I2C driver by default
+Include <mach/hardware.h> and call s5pv210_revision().
 
-Signed-off-by: Naveen Krishna Ch <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+For example,
+
+	if (s5pv210_revision(EVT0)) {
+		... execute code targeted only to EVT0 ...
+	} else {
+		... execute normal code ...
+	}
+
+Call set_s5pv210_revision(EVTx) when the EVT revision number can be
+identified. We have EVT0, EVT1, and EVT1-Fused avaialble right now and
+only EVT1-Fused has the unique revision number at chipid (PRO_ID
+register). A function, get_s5pv210_revision_chipid(), returns EVT
+revision number if the revision is identified by the chipid; otherwise,
+the function returns EVT_UNKNOWN. When EVT cannot be identified with
+chipid, it can be identified at board support file
+(arch/arm/mach-s5pv210/mach-*.c), not at the cpu file
+(arch/arm/mach-s5pv210/cpu.c).
+
+For Aquila machine. (mach-aquila.c)
+
+Part of Aquila machines have the early production CPUs that require
+to address errata issues. Note that we don't do this for GONI machines
+because they have never used early production CPUs with errata. Besides,
+please note that there are other boards that use such early produces
+other than Aquila. However, those boards/machines are not registered at
+the /linux/arch/arm/tools/mach-types, yet; thus, we have omitted them
+in this patch.
+
+For Goni machine. (mach-goni.c)
+
+It's either EVT1 or EVT1-Fused; thus, it can be identified by
+get_s5pv210_revision_chipid() function.
+
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+--
+v5:
+	- rename revision check function.
+	- revise revision check functions so that it does not access
+	  board-related information.
+	- chipid is used to identify EVT revision.
+	- added "s5pv210_revision_or_later()" function
 ---
-Changes since v2:
-- Added HAVE_S3C2410_I2C in drivers Kconfig
-- Made I2C bus driver dependency SoC specific
-- Selected additional support I2C bus driver for S5P6440, S5PC100,
-  and S5PV210
+ arch/arm/mach-s5pv210/cpu.c                   |   29 +++++++++++++++++++++++++
+ arch/arm/mach-s5pv210/include/mach/hardware.h |   19 +++++++++++++++-
+ arch/arm/mach-s5pv210/mach-aquila.c           |   14 ++++++++++++
+ arch/arm/mach-s5pv210/mach-goni.c             |    8 +++++++
+ 4 files changed, 69 insertions(+), 1 deletions(-)
 
-Changes since v1:
-- Modifed the Kconfig help comments.
-
- arch/arm/Kconfig           |    5 +++++
- drivers/i2c/busses/Kconfig |   11 +++++++++--
- 2 files changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 98922f7..e922994 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -634,6 +634,7 @@ config ARCH_S3C2410
- 	select ARCH_HAS_CPUFREQ
- 	select HAVE_CLK
- 	select ARCH_USES_GETTIMEOFFSET
-+	select HAVE_S3C2410_I2C
- 	help
- 	  Samsung S3C2410X CPU based systems, such as the Simtec Electronics
- 	  BAST (<http://www.simtec.co.uk/products/EB110ITX/>), the IPAQ 1940 or
-@@ -663,6 +664,7 @@ config ARCH_S3C64XX
- 	select S3C_DEV_NAND
- 	select USB_ARCH_HAS_OHCI
- 	select SAMSUNG_GPIOLIB_4BIT
-+	select HAVE_S3C2410_I2C
- 	help
- 	  Samsung S3C64XX series based systems
+diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
+index 94c632b..77bf37d 100644
+--- a/arch/arm/mach-s5pv210/cpu.c
++++ b/arch/arm/mach-s5pv210/cpu.c
+@@ -24,9 +24,11 @@
+ #include <asm/mach/map.h>
+ #include <asm/mach/irq.h>
  
-@@ -672,6 +674,7 @@ config ARCH_S5P6440
- 	select GENERIC_GPIO
- 	select HAVE_CLK
- 	select ARCH_USES_GETTIMEOFFSET
-+	select HAVE_S3C2410_I2C
- 	help
- 	  Samsung S5P6440 CPU based systems
++#include <asm/mach-types.h>
+ #include <asm/proc-fns.h>
+ #include <mach/map.h>
+ #include <mach/regs-clock.h>
++#include <mach/hardware.h>
  
-@@ -691,6 +694,7 @@ config ARCH_S5PC100
- 	select CPU_V7
- 	select ARM_L1_CACHE_SHIFT_6
- 	select ARCH_USES_GETTIMEOFFSET
-+	select HAVE_S3C2410_I2C
- 	help
- 	  Samsung S5PC100 series based systems
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+@@ -128,6 +130,33 @@ static struct sys_device s5pv210_sysdev = {
+ 	.cls	= &s5pv210_sysclass,
+ };
  
-@@ -701,6 +705,7 @@ config ARCH_S5PV210
- 	select HAVE_CLK
- 	select ARM_L1_CACHE_SHIFT_6
- 	select ARCH_USES_GETTIMEOFFSET
-+	select HAVE_S3C2410_I2C
- 	help
- 	  Samsung S5PV210/S5PC110 series based systems
- 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index bceafbf..f1751da 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -521,12 +521,19 @@ config I2C_PXA_SLAVE
- 	  is necessary for systems where the PXA may be a target on the
- 	  I2C bus.
- 
-+config HAVE_S3C2410_I2C
-+	bool
-+	help
-+	  This will include I2C support for Samsung SoCs. If you want to
-+	  include I2C support for any machine, kindly select this in the
-+	  respective Kconfig file.
++static enum s5pv210_revision s5pv210_evt_number = EVT_UNKNOWN;
 +
- config I2C_S3C2410
- 	tristate "S3C2410 I2C Driver"
--	depends on ARCH_S3C2410 || ARCH_S3C64XX
-+	depends on HAVE_S3C2410_I2C
- 	help
- 	  Say Y here to include support for I2C controller in the
--	  Samsung S3C2410 based System-on-Chip devices.
-+	  Samsung SoCs.
++bool s5pv210_revision(enum s5pv210_revision rev)
++{
++	return rev == s5pv210_evt_number;
++}
++
++bool s5pv210_revision_or_later(enum s5pv210_revision rev)
++{
++	return rev >= s5pv210_evt_number;
++}
++
++void set_s5pv210_revision(enum s5pv210_revision rev)
++{
++	s5pv210_evt_number = rev;
++}
++
++enum s5pv210_revision get_s5pv210_revision_chipid(void)
++{
++	unsigned int reg = __raw_readl(S5P_VA_CHIPID);
++
++	if ((reg & 0xf0) == 0x20)
++		return EVT1_FUSED;
++
++	return EVT_UNKNOWN;
++}
++
+ static int __init s5pv210_core_init(void)
+ {
+ 	return sysdev_class_register(&s5pv210_sysclass);
+diff --git a/arch/arm/mach-s5pv210/include/mach/hardware.h b/arch/arm/mach-s5pv210/include/mach/hardware.h
+index fada7a3..c1702d6 100644
+--- a/arch/arm/mach-s5pv210/include/mach/hardware.h
++++ b/arch/arm/mach-s5pv210/include/mach/hardware.h
+@@ -13,6 +13,23 @@
+ #ifndef __ASM_ARCH_HARDWARE_H
+ #define __ASM_ARCH_HARDWARE_H __FILE__
  
- config I2C_S6000
- 	tristate "S6000 I2C support"
+-/* currently nothing here, placeholder */
++enum s5pv210_revision { EVT_UNKNOWN = 0,
++	EVT0,
++	EVT1,
++	EVT1_FUSED };
++
++extern bool s5pv210_revision(enum s5pv210_revision);
++extern bool s5pv210_revision_or_later(enum s5pv210_revision);
++extern void set_s5pv210_revision(enum s5pv210_revision);
++
++/*
++ * get_s5pv210_revision_chipid returns s5pv210_revision if the
++ * EVT revision can be determined by the chipid(PRO_ID) register.
++ * However, note that only EVT1-FUSED can be identified from it and
++ * it cannot distinguish between EVT0 and EVT1. In such case, it
++ * returns EVT_UNKNOWN. In such case use set_s5pv210_revision() to
++ * set the revision number manually.
++ */
++extern enum s5pv210_revision get_s5pv210_revision_chipid(void);
+ 
+ #endif /* __ASM_ARCH_HARDWARE_H */
+diff --git a/arch/arm/mach-s5pv210/mach-aquila.c b/arch/arm/mach-s5pv210/mach-aquila.c
+index 46d5c7e..25f45d1 100644
+--- a/arch/arm/mach-s5pv210/mach-aquila.c
++++ b/arch/arm/mach-s5pv210/mach-aquila.c
+@@ -30,6 +30,7 @@
+ #include <mach/regs-clock.h>
+ #include <mach/regs-fb.h>
+ #include <mach/gpio.h>
++#include <mach/hardware.h>
+ 
+ #include <plat/gpio-cfg.h>
+ #include <plat/regs-serial.h>
+@@ -536,6 +537,19 @@ static void __init aquila_map_io(void)
+ 
+ static void __init aquila_machine_init(void)
+ {
++	enum s5pv210_revision cpurev = get_s5pv210_revision_chipid();
++
++	/* CPU Revision (EVTx) */
++	if (cpurev == EVT_UNKNOWN) {
++		cpurev = EVT1;
++		if (system_rev & 0x0800) {
++			if ((system_rev & 0xF) < 8)
++				cpurev = EVT0;
++		} else if (system_rev & 0x2000)
++			cpurev = EVT0;
++	}
++	set_s5pv210_revision(cpurev);
++
+ 	/* PMIC */
+ 	aquila_pmic_init();
+ 	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4, i2c_gpio_pmic_devs,
+diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
+index 380d2ae..25a26ed 100644
+--- a/arch/arm/mach-s5pv210/mach-goni.c
++++ b/arch/arm/mach-s5pv210/mach-goni.c
+@@ -32,6 +32,7 @@
+ #include <mach/regs-clock.h>
+ #include <mach/regs-fb.h>
+ #include <mach/gpio.h>
++#include <mach/hardware.h>
+ 
+ #include <plat/gpio-cfg.h>
+ #include <plat/regs-serial.h>
+@@ -520,6 +521,13 @@ static void __init goni_map_io(void)
+ 
+ static void __init goni_machine_init(void)
+ {
++	enum s5pv210_revision cpurev = get_s5pv210_revision_chipid();
++
++	/* CPU Revision (EVTx) */
++	if (cpurev == EVT_UNKNOWN)
++		cpurev = EVT1;
++	set_s5pv210_revision(cpurev);
++
+ 	/* PMIC */
+ 	goni_pmic_init();
+ 	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4, i2c_gpio_pmic_devs,
 -- 
-1.6.2.5
+1.6.3.3
