@@ -1,73 +1,125 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 3/3] rtc: rtc-s3c: Add BCD register initialization codes
-Date: Thu, 29 Jul 2010 10:55:25 +0900
-Message-ID: <007701cb2ec1$1fe5a2a0$5fb0e7e0$%kim@samsung.com>
-References: <1279702666-13021-1-git-send-email-kgene.kim@samsung.com>
-	<1279702666-13021-4-git-send-email-kgene.kim@samsung.com>
-	<4C50744C.6010501@simtec.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <4C50744C.6010501@simtec.co.uk>
-Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Ben Dooks' <ben@simtec.co.uk>
-Cc: p_gortmaker@yahoo.com, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, a.zummo@towertech.it, 'Taekgyun Ko' <taeggyun.ko@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH v2] ARM: Samsung SoC: clksrc-clk: wait for the stable SRC/DIV
+ status.
+Date: Thu, 29 Jul 2010 14:05:47 +0900
+Message-ID: <1280379947-7362-1-git-send-email-myungjoo.ham@samsung.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:13832 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750845Ab0G2FFt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 29 Jul 2010 01:05:49 -0400
+Received: from epmmp2 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L6A0035LZHNSO10@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 29 Jul 2010 14:05:47 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L6A00C04ZHO2M@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 29 Jul 2010 14:05:48 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, kgene.kim@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
 
-Ben Dooks wrote:
-> 
-> On 21/07/10 09:57, Kukjin Kim wrote:
-> > From: Taekgyun Ko <taeggyun.ko@samsung.com>
-> >
-> > RTC needs to be initialized when BCD registers have invalid value.
-> >
-> > Signed-off-by: Taekgyun Ko <taeggyun.ko@samsung.com>
-> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> > ---
-> >  drivers/rtc/rtc-s3c.c |   14 ++++++++++++--
-> >  1 files changed, 12 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-> > index 2040017..e96e109 100644
-> > --- a/drivers/rtc/rtc-s3c.c
-> > +++ b/drivers/rtc/rtc-s3c.c
-> > @@ -536,10 +536,20 @@ static int __devinit s3c_rtc_probe(struct
-> platform_device *pdev)
-> >
-> >  	s3c_rtc_cpu_type = platform_get_device_id(pdev)->driver_data;
-> >
-> > -	if (s3c_rtc_cpu_type == TYPE_S3C64XX)
-> > +	if (s3c_rtc_cpu_type == TYPE_S3C64XX) {
-> >  		rtc->max_user_freq = 32768;
-> > -	else
-> > +
-> > +		/* Check RTC Time */
-> > +
-> > +		for (i = S3C2410_RTCSEC; i <= S3C2410_RTCYEAR; i += 0x4) {
-> > +			tmp = readb(s3c_rtc_base + i);
-> > +
-> > +			if (((tmp & 0xf) > 0x9) || (((tmp >> 4) & 0xf) >
-0x9))
-> > +				writeb(0, s3c_rtc_base + i);
-> 
-> This is something we should probably do for all SoCs.
+Many MUX and clock dividers have a status bit so that users can wait
+until the status is stable. When corresponding registers are accessed
+while a clock is not stable, we may suffer from unexpected errors.
 
-Yeah...ok...will move it.
+Therefore, we introduce a mechanism to let the operations related with
+updating SRC/DIV registers of clksrc-clk wait for the stabilization:
+clk_set_parent, clk_set_rate.
 
-Thanks.
+In order to use this feature, the definition of clksrc_clk should
+include reg_src_stable or reg_div_stable. With effective rec_src_stable
+values, clk_set_parent returns with a stabilized SRC register and
+with effective rec_div_stable values, clk_set_rate returns with a
+stabilized DIV register. If .reg field is null, its (either SRC or DIV)
+register's status is not checked and returned without waiting; i.e.,
+some MUX/DIV may not need this feature.
 
-Best regards,
-Kgene.
+When setting reg_*_stable, .size is used to tell the value of "stable".
+If .size = 0, the stable status is 0 and if .size = 1, the stable status
+is 1.
+
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+v2 changes:
+	- Wait-for-stable loop is described at an inline function.
+
+---
+ arch/arm/plat-samsung/clock-clksrc.c              |   13 +++++++++++++
+ arch/arm/plat-samsung/include/plat/clock-clksrc.h |   10 ++++++++++
+ 2 files changed, 23 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/plat-samsung/clock-clksrc.c b/arch/arm/plat-samsung/clock-clksrc.c
+index 46d204a..eeaf8f4 100644
+--- a/arch/arm/plat-samsung/clock-clksrc.c
++++ b/arch/arm/plat-samsung/clock-clksrc.c
+@@ -50,6 +50,14 @@ static unsigned long s3c_getrate_clksrc(struct clk *clk)
+ 	return rate;
+ }
+ 
++static inline void s3c_wait_for_stable(struct clksrc_reg *stable)
++{
++	if (stable->reg) {
++		do { } while (((__raw_readl(stable->reg) >> stable->shift) & 1)
++				!= stable->size);
++	}
++}
++
+ static int s3c_setrate_clksrc(struct clk *clk, unsigned long rate)
+ {
+ 	struct clksrc_clk *sclk = to_clksrc(clk);
+@@ -68,6 +76,8 @@ static int s3c_setrate_clksrc(struct clk *clk, unsigned long rate)
+ 	val |= (div - 1) << sclk->reg_div.shift;
+ 	__raw_writel(val, reg);
+ 
++	s3c_wait_for_stable(&sclk->reg_div_stable);
++
+ 	return 0;
+ }
+ 
+@@ -93,6 +103,9 @@ static int s3c_setparent_clksrc(struct clk *clk, struct clk *parent)
+ 		clksrc |= src_nr << sclk->reg_src.shift;
+ 
+ 		__raw_writel(clksrc, sclk->reg_src.reg);
++
++		s3c_wait_for_stable(&sclk->reg_src_stable);
++
+ 		return 0;
+ 	}
+ 
+diff --git a/arch/arm/plat-samsung/include/plat/clock-clksrc.h b/arch/arm/plat-samsung/include/plat/clock-clksrc.h
+index 50a8ca7..282821d 100644
+--- a/arch/arm/plat-samsung/include/plat/clock-clksrc.h
++++ b/arch/arm/plat-samsung/include/plat/clock-clksrc.h
+@@ -45,6 +45,13 @@ struct clksrc_reg {
+  * @sources: the sources for this clock
+  * @reg_src: the register definition for selecting the clock's source
+  * @reg_div: the register definition for the clock's output divisor
++ * @reg_src_stable: the register definition to probe if reg_src is
++ *    stabilized after the update of reg_src. It is "stabilized" if
++ *    reg[shift] == size. If reg == NULL, this stable reg is not looked
++ *    up. Thus, in S5PV210, size is usually 0.
++ * @reg_div_stable: the register definition to probe if reg_div is
++ *    stabilized after the update of reg_div. Same mechanism with
++ *    reg_src_stable.
+  *
+  * This clock implements the features required by the newer SoCs where
+  * the standard clock block provides an input mux and a post-mux divisor
+@@ -61,6 +68,9 @@ struct clksrc_clk {
+ 
+ 	struct clksrc_reg	reg_src;
+ 	struct clksrc_reg	reg_div;
++
++	struct clksrc_reg	reg_src_stable;
++	struct clksrc_reg	reg_div_stable;
+ };
+ 
+ /**
+-- 
+1.6.3.3
