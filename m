@@ -1,147 +1,139 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3 3/3] ARM: SAMSUNG: i2c/busses: Add HAVE_S3C2410_I2C
-	option to include I2C for Samsung SoCs
-Date: Fri, 30 Jul 2010 13:25:37 +0900
-Message-ID: <018801cb2f9f$457badf0$d07309d0$%kim@samsung.com>
-References: <1280396565-21014-1-git-send-email-kgene.kim@samsung.com>
- <AANLkTikyOUyz+sNPgBvWU8FvYa8HvgRY4P2udhMY=eOw@mail.gmail.com>
- <015601cb2f83$0225bd00$06713700$%kim@samsung.com>
- <AANLkTimcZeZXoQ=i1rsbXiaU_FfSZSRi5NxMd7oYekj9@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 1/2] ARM: S5PV210: Add audio support to Aquila
+Date: Fri, 30 Jul 2010 16:15:29 +0900
+Message-ID: <4C527C11.5090409@samsung.com>
+References: <4C4F9E4C.7000001@samsung.com>
+ <20100729173825.GE24781@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:47450 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751164Ab0G3EZb convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:63615 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755205Ab0G3HPa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Jul 2010 00:25:31 -0400
-In-reply-to: <AANLkTimcZeZXoQ=i1rsbXiaU_FfSZSRi5NxMd7oYekj9@mail.gmail.com>
-Content-language: ko
+	Fri, 30 Jul 2010 03:15:30 -0400
+Received: from epmmp2 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L6D002XM05TRZ40@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 30 Jul 2010 16:15:29 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L6D00AD905T6N@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 30 Jul 2010 16:15:29 +0900 (KST)
+In-reply-to: <20100729173825.GE24781@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kyungmin Park' <kmpark@infradead.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, ben-linux@fluff.org, 'Naveen Krishna Ch' <ch.naveen@samsung.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben@simtec.co.uk>, Liam Girdwood <lrg@slimlogic.co.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>
 
+Mark Brown wrote:
+> On Wed, Jul 28, 2010 at 12:04:44PM +0900, Chanwoo Choi wrote:
+> 
+>> +static struct regulator_consumer_supply wm8994_fixed_voltage0_supplies[] = {
+>> +	{
+>> +		.dev_name	= "5-001a",
+>> +		.supply		= "DBVDD",
+>> +	}, {
+>> +		.dev_name	= "5-001a",
+>> +		.supply		= "AVDD2",
+>> +	}, {
+>> +		.dev_name	= "5-001a",
+>> +		.supply		= "CPVDD",
+>> +	},
+>> +
+>> +};
+>> +
+>> +static struct regulator_consumer_supply wm8994_fixed_voltage1_supplies[] = {
+> 
+> All these fixed voltage regulators seem a bit suspicous for a mobile
+> phone - I'd have expected that the supplies would all be being provided
+> by your PMIC except for things taken directly from the battery supply
+> (like the speakers tend to be, for example)?  There's no problem with
+> the code itself, it just looks a bit odd.
+> 
 
-> -----Original Message-----
-> From: kyungmin78@gmail.com [mailto:kyungmin78@gmail.com] On Behalf Of
-> Kyungmin Park
-> Sent: Friday, July 30, 2010 11:43 AM
-> To: Kukjin Kim
-> Cc: linux-arm-kernel@lists.infradead.org;
-linux-samsung-soc@vger.kernel.org;
-> linux-i2c@vger.kernel.org; ben-linux@fluff.org; Naveen Krishna Ch
-> Subject: Re: [PATCH v3 3/3] ARM: SAMSUNG: i2c/busses: Add
-> HAVE_S3C2410_I2C option to include I2C for Samsung SoCs
->=20
-> On Fri, Jul 30, 2010 at 10:03 AM, Kukjin Kim <kgene.kim@samsung.com>
-wrote:
-> > Kyungmin Park wrote:
-> >>
-> >> On Thu, Jul 29, 2010 at 6:42 PM, Kukjin Kim <kgene.kim@samsung.com=
->
-wrote:
-> >> > From: Naveen Krishna Ch <ch.naveen@samsung.com>
-> >> >
-> >> > This patch adds HAVE_S3C2410_I2C to control inclusion of I2C bus
-driver
-> >> > on Samsung SoCs and makes I2C bus driver dependency SoC specific
-> instead
-> >> > of machine specific. This will enalbe all machines using Samsung
-> >> ARCH_S3C2410,
-> >> > _S3C64XX, _S5P6440, _S5PC100, and _S5PV210 to select the I2C dri=
-ver
-by
-> >> default
-> >>
-> >> What's the different from use PLAT_SAMSUNG?
-> >>
-> > Hi,
-> >
-> > Hmm..the difference?
-> >
-> > I remember, already said to you...
-> > Anyway actually, there was a stuff in here about that.
-> > Please refer to following...it may answer on your question.
-> >
-> > --- From Ben Dooks
-> >
-> >> =A0config RTC_DRV_S3C
-> >> =A0 =A0 =A0 tristate "Samsung S3C series SoC RTC"
-> >> - =A0 =A0 depends on ARCH_S3C2410
-> >> + =A0 =A0 depends on ARCH_S3C2410 || ARCH_S3C64XX
-> >
-> > I wonder whether just making this depend on either S3C_DEV_RTC, or
-simply
-> > PLAT_SAMSUNG would just be a better choice.
-> >
-> > The S3C_DEV_RTC would mean that the drivers the core of the kernel
-> > would be built, but means that we can't speculatively build drivers
-> > if the kernel hasn't any machines using them.
-> >
-> > Making it depend on PLAT_SAMSUNG would mean it is available to all,
-> > but would be selectable even if there isn't a machine supporting it
-> > being built.
-> >
-> > The current situation would mean that we have to update driver Kcon=
-fig
-> > entries each time a new SoC turns up...
->=20
-> In other word, It can make it workable when new SoCs arrives, even
-> though depends on PLAT_SAMSUNG.
->=20
-> If new chip has improved i2C IP then define new I2C drivers and modif=
-y
-> it as 'depends on PLAT_SAMUSNG if !NEW_IP_I2C'
-> and use another i2c drivers. of course it's depends on PLAT_SAMSUNG o=
-r
-> PLAT_S5P if NEW_IP_I2C.
->=20
-Hmm...if there is new IP driver for Samsung SoCs, why should I add extr=
-a
-option for new one like your suggestion?
-As I said, just 'depends on HAVE_SAMSUNGNEWIPV2_I2C' is enough for it..=
-=2E
+All these consumer supply of WM8994 codec connected the below regulator(VCC_1.8V) on
+a circuit diagram. "VCC_1.8V" regualtor is always enabled, because it is used to many devices.
+Then I haven't connected all these consumer supply of WM8994 codec to "VCC_1.8V" regulator.
+I will modify that the consumer supply would be provided by PMIC.
 
-I'm still thinking, this way is better to me...anything else?
+static struct regulator_init_data aquila_buck3_data = {
+	.constraints	= {
+		.name		= "VCC_1.8V",
+		.min_uV		= 1800000,
+		.max_uV		= 1800000,
+		.apply_uV	= 1,
+		.state_mem	= {
+			.enabled = 1,
+		},
+	},
+};
 
-> >
-> > We could also have a HAVE_RTC_DRV_S3C so that all SoCs supporting t=
-his
-> > coudl select it independant of whether there is machine support.
-> >
-> > ---
-> >
-> > It doesn't mean that we should use HAVE_XXX in this case...
-> > But this way is better _now_ and they used same method in several
-drivers.
-> > And if driver IP changes, we can use with HAVE_XXXV2...
-> >
-> >> config I2C_S3C2410
-> >> =A0 =A0 =A0 =A0 tristate "S3C2410 I2C Driver"
-> >> =A0 =A0 =A0 =A0 depends on PLAT_SAMSUNG
-> >>
-> >> Please don't populate the Kconfigs.
-> >>
-> >
-> > I hope you stop talking same issue without alternative...
-> >
-> >> Thank you,
-> >> Kyungmin Park
-> >>
-> >> >
-> >> > Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
-> >> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> >> > Cc: Ben Dooks <ben-linux@fluff.org>
-> >> > ---
+>> +static struct i2c_board_info i2c_gpio5_devs[] __initdata = {
+>> +	{
+>> +		/* CS/ADDR = low 0x34 (FYI: high = 0x36) */
+>> +		I2C_BOARD_INFO("wm8994", 0x34 >> 1),
+>> +		.platform_data	= &wm8994_platform_data,
+>> +	},
+>> +};
+> 
+> Probably clearer for generic Linux use to specify the address as 0x1a
+> directly.
 
-(snip)
+Ok, I will do.
 
-Thanks.
+> 
+>> +static void __init aquila_sound_init(void)
+>> +{
+>> +	unsigned int gpio;
+>> +
+>> +	/* CODEC_XTAL_EN */
+>> +	gpio = S5PV210_GPH3(2);		/* XEINT_26 */
+>> +	gpio_request(gpio, "CODEC_XTAL_EN");
+>> +	s3c_gpio_cfgpin(gpio, S3C_GPIO_OUTPUT);
+>> +	s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+>> +	gpio_direction_output(gpio, 1);
+> 
+> Might be as well to provide some or all this stuff in your audio machine
+> driver?
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+The Aquila board have a oscillator which provide main clock to 
+WM8994 audio codec. The oscillator provide 24MHz clock to WM8994 audio codec
+(MCLK1 pin). I set gpio setting of "CODEC_XTAL_EN" to enable a oscillator.
+
+> 
+>> +	/* MICBIAS_EN */
+>> +	gpio = S5PV210_GPJ4(2);			/* XMSMRN */
+>> +	gpio_request(gpio, "MICBIAS_EN");
+>> +	s3c_gpio_cfgpin(gpio, S3C_GPIO_OUTPUT);
+>> +	gpio_direction_output(gpio, 1);
+> 
+> This in particular would benefit from keeping the request of the GPIO
+> joined up with the driver that uses it.
+
+Ok, I will move this code to machine driver(sound/soc/s3c24xxx/aquila_wm8994.c).
+
+>> +	/* ADC_EN */
+>> +	gpio = S5PV210_GPJ3(2);
+>> +	gpio_request(gpio, "ADC_EN");
+>> +	s3c_gpio_cfgpin(gpio, S3C_GPIO_OUTPUT);
+>> +	gpio_direction_output(gpio, 1);
+> 
+> I'm not sure what this does?
+> 
+
+I explained below description about "ADC_EN" :
+"ADC_EN : This gpio enable the ADC device which is used to detect
+ the kind of jack. (SND_JACK_HEADPHONE/HEADSET/MECHANICAL/AVOUT)
+ According to the kind of jack, an electric current is changed.
+ (Only used on Aquila board) "
+
+When inserting the jack to Aquila board, I used ADC driver so that, detecting
+the kind of jack(SND_JACK_HEADPHONE/HEADSET/MECHANICAL/AVOUT).
+
+I will separately make the another function to initialize ADC driver.
+
+Thank you for your comment.
+Chanwoo Choi
