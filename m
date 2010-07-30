@@ -1,98 +1,147 @@
-From: Kyungmin Park <kyungmin.park@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: S5PV210: Add audio support to Aquila
-Date: Fri, 30 Jul 2010 09:14:30 +0900
-Message-ID: <AANLkTimiLMqJ1qewOGr6jy=MhAgQpM0Z1yxYYz4xeraL@mail.gmail.com>
-References: <4C4F9E4C.7000001@samsung.com>
-	<4C52053A.8090400@simtec.co.uk>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH v3 3/3] ARM: SAMSUNG: i2c/busses: Add HAVE_S3C2410_I2C
+	option to include I2C for Samsung SoCs
+Date: Fri, 30 Jul 2010 09:22:51 +0900
+Message-ID: <AANLkTikyOUyz+sNPgBvWU8FvYa8HvgRY4P2udhMY=eOw@mail.gmail.com>
+References: <1280396565-21014-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:50338 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755912Ab0G3AOb convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Jul 2010 20:14:31 -0400
-Received: by vws3 with SMTP id 3so796401vws.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Jul 2010 17:14:31 -0700 (PDT)
-In-Reply-To: <4C52053A.8090400@simtec.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1280396565-21014-1-git-send-email-kgene.kim@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Naveen Krishna Ch <ch.naveen@samsung.com>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben@simtec.co.uk>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>, Joonyoung Shim <jy0922.shim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Fri, Jul 30, 2010 at 7:48 AM, Ben Dooks <ben@simtec.co.uk> wrote:
-> On 28/07/10 04:04, Chanwoo Choi wrote:
+On Thu, Jul 29, 2010 at 6:42 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> From: Naveen Krishna Ch <ch.naveen@samsung.com>
 >
-> [snip]
->
->
->> +/* GPIO I2C AP 1.8V */
->> +#define AP_I2C_GPIO_BUS_5 =A0 =A05
->> +static struct i2c_gpio_platform_data i2c_gpio5_data =3D {
->> + =A0 =A0 .sda_pin =A0 =A0 =A0 =A0=3D S5PV210_MP05(3), =A0 =A0 =A0/*=
- XM0ADDR_11 */
->> + =A0 =A0 .scl_pin =A0 =A0 =A0 =A0=3D S5PV210_MP05(2), =A0 =A0 =A0/*=
- XM0ADDR_10 */
->> +};
->> +
->> +static struct platform_device i2c_gpio5 =3D {
->> + =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "i2c-gpio",
->> + =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D AP_I2C_GPIO_BUS_5,
->> + =A0 =A0 .dev =A0 =A0 =A0 =A0 =A0 =A0=3D {
->> + =A0 =A0 =A0 =A0 =A0 =A0 .platform_data =A0=3D &i2c_gpio5_data,
->> + =A0 =A0 },
->> +};
->> +
->> +static struct i2c_board_info i2c_gpio5_devs[] __initdata =3D {
->> + =A0 =A0 {
->> + =A0 =A0 =A0 =A0 =A0 =A0 /* CS/ADDR =3D low 0x34 (FYI: high =3D 0x3=
-6) */
->> + =A0 =A0 =A0 =A0 =A0 =A0 I2C_BOARD_INFO("wm8994", 0x34 >> 1),
->> + =A0 =A0 =A0 =A0 =A0 =A0 .platform_data =A0=3D &wm8994_platform_dat=
-a,
->> + =A0 =A0 },
->> +};
->> +
->> +static void __init aquila_sound_init(void)
->> +{
->> + =A0 =A0 unsigned int gpio;
->> +
->> + =A0 =A0 /* CODEC_XTAL_EN */
->> + =A0 =A0 gpio =3D S5PV210_GPH3(2); =A0 =A0 =A0 =A0 /* XEINT_26 */
->> + =A0 =A0 gpio_request(gpio, "CODEC_XTAL_EN");
->> + =A0 =A0 s3c_gpio_cfgpin(gpio, S3C_GPIO_OUTPUT);
->> + =A0 =A0 s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
->> + =A0 =A0 gpio_direction_output(gpio, 1);
->
-> gpio_direction_output() should have done the cfgpin()
-> call.
+> This patch adds HAVE_S3C2410_I2C to control inclusion of I2C bus driver
+> on Samsung SoCs and makes I2C bus driver dependency SoC specific instead
+> of machine specific. This will enalbe all machines using Samsung ARCH_S3C=
+2410,
+> _S3C64XX, _S5P6440, _S5PC100, and _S5PV210 to select the I2C driver by de=
+fault
 
-Good catch. Thanks.
+What's the different from use PLAT_SAMSUNG?
 
-I think we required that extend the current gpiolib to support the
-setpull like functions. also sleep gpio pin configuration.
-Marek or shim? do you have any ideas?
+config I2C_S3C2410
+        tristate "S3C2410 I2C Driver"
+        depends on PLAT_SAMSUNG
 
->
->> + =A0 =A0 /* CLKOUT[9:8] set to 0x3(XUSBXTI) of 0xE010E000(OTHERS)
->> + =A0 =A0 =A0* for 24MHZ
->> + =A0 =A0 =A0*/
->> + =A0 =A0 writel(readl(S5P_OTHERS) | (0x3 << 8), S5P_OTHERS);
->
-> Not sure if this should be being done directly? will it affect
-> the current clock tree?
-
-It's almost done by bootloader. but we make sure it's really routed
-the CLKOUT to XUSBXTI.
+Please don't populate the Kconfigs.
 
 Thank you,
 Kyungmin Park
 
 >
+> Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> ---
+> Changes since v2:
+> - Added HAVE_S3C2410_I2C in drivers Kconfig
+> - Made I2C bus driver dependency SoC specific
+> - Selected additional support I2C bus driver for S5P6440, S5PC100,
+> =A0and S5PV210
+>
+> Changes since v1:
+> - Modifed the Kconfig help comments.
+>
+> =A0arch/arm/Kconfig =A0 =A0 =A0 =A0 =A0 | =A0 =A05 +++++
+> =A0drivers/i2c/busses/Kconfig | =A0 11 +++++++++--
+> =A02 files changed, 14 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 98922f7..e922994 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -634,6 +634,7 @@ config ARCH_S3C2410
+> =A0 =A0 =A0 =A0select ARCH_HAS_CPUFREQ
+> =A0 =A0 =A0 =A0select HAVE_CLK
+> =A0 =A0 =A0 =A0select ARCH_USES_GETTIMEOFFSET
+> + =A0 =A0 =A0 select HAVE_S3C2410_I2C
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Samsung S3C2410X CPU based systems, such as the Simtec=
+ Electronics
+> =A0 =A0 =A0 =A0 =A0BAST (<http://www.simtec.co.uk/products/EB110ITX/>), t=
+he IPAQ 1940 or
+> @@ -663,6 +664,7 @@ config ARCH_S3C64XX
+> =A0 =A0 =A0 =A0select S3C_DEV_NAND
+> =A0 =A0 =A0 =A0select USB_ARCH_HAS_OHCI
+> =A0 =A0 =A0 =A0select SAMSUNG_GPIOLIB_4BIT
+> + =A0 =A0 =A0 select HAVE_S3C2410_I2C
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Samsung S3C64XX series based systems
+>
+> @@ -672,6 +674,7 @@ config ARCH_S5P6440
+> =A0 =A0 =A0 =A0select GENERIC_GPIO
+> =A0 =A0 =A0 =A0select HAVE_CLK
+> =A0 =A0 =A0 =A0select ARCH_USES_GETTIMEOFFSET
+> + =A0 =A0 =A0 select HAVE_S3C2410_I2C
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Samsung S5P6440 CPU based systems
+>
+> @@ -691,6 +694,7 @@ config ARCH_S5PC100
+> =A0 =A0 =A0 =A0select CPU_V7
+> =A0 =A0 =A0 =A0select ARM_L1_CACHE_SHIFT_6
+> =A0 =A0 =A0 =A0select ARCH_USES_GETTIMEOFFSET
+> + =A0 =A0 =A0 select HAVE_S3C2410_I2C
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Samsung S5PC100 series based systems
+>
+> @@ -701,6 +705,7 @@ config ARCH_S5PV210
+> =A0 =A0 =A0 =A0select HAVE_CLK
+> =A0 =A0 =A0 =A0select ARM_L1_CACHE_SHIFT_6
+> =A0 =A0 =A0 =A0select ARCH_USES_GETTIMEOFFSET
+> + =A0 =A0 =A0 select HAVE_S3C2410_I2C
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Samsung S5PV210/S5PC110 series based systems
+>
+> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+> index bceafbf..f1751da 100644
+> --- a/drivers/i2c/busses/Kconfig
+> +++ b/drivers/i2c/busses/Kconfig
+> @@ -521,12 +521,19 @@ config I2C_PXA_SLAVE
+> =A0 =A0 =A0 =A0 =A0is necessary for systems where the PXA may be a target=
+ on the
+> =A0 =A0 =A0 =A0 =A0I2C bus.
+>
+> +config HAVE_S3C2410_I2C
+> + =A0 =A0 =A0 bool
+> + =A0 =A0 =A0 help
+> + =A0 =A0 =A0 =A0 This will include I2C support for Samsung SoCs. If you =
+want to
+> + =A0 =A0 =A0 =A0 include I2C support for any machine, kindly select this=
+ in the
+> + =A0 =A0 =A0 =A0 respective Kconfig file.
+> +
+> =A0config I2C_S3C2410
+> =A0 =A0 =A0 =A0tristate "S3C2410 I2C Driver"
+> - =A0 =A0 =A0 depends on ARCH_S3C2410 || ARCH_S3C64XX
+> + =A0 =A0 =A0 depends on HAVE_S3C2410_I2C
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Say Y here to include support for I2C controller in the
+> - =A0 =A0 =A0 =A0 Samsung S3C2410 based System-on-Chip devices.
+> + =A0 =A0 =A0 =A0 Samsung SoCs.
+>
+> =A0config I2C_S6000
+> =A0 =A0 =A0 =A0tristate "S6000 I2C support"
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
+> 1.6.2.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-s=
+oc" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
 >
