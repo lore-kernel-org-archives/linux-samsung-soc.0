@@ -1,37 +1,28 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH v3 1/8] ARM: Samsung: Add register definitions for Samsung
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: [PATCH v3 1/8] ARM: Samsung: Add register definitions for	Samsung
  S5P SoC camera interface
-Date: Mon, 02 Aug 2010 13:13:49 +0200
-Message-ID: <011701cb3233$cba1f1a0$62e5d4e0$%szyprowski@samsung.com>
-References: <1279902083-21250-1-git-send-email-s.nawrocki@samsung.com>
- <1279902083-21250-2-git-send-email-s.nawrocki@samsung.com>
- <00ba01cb2c8f$02fc8480$08f58d80$%kim@samsung.com>
- <003001cb322d$fc976b10$f5c64130$%osciak@samsung.com>
- <20100802105216.GD30670@n2100.arm.linux.org.uk>
+Date: Mon, 02 Aug 2010 08:51:06 -0300
+Message-ID: <4C56B12A.3080808@redhat.com>
+References: <1279902083-21250-1-git-send-email-s.nawrocki@samsung.com> <1279902083-21250-2-git-send-email-s.nawrocki@samsung.com> <00ba01cb2c8f$02fc8480$08f58d80$%kim@samsung.com> <003001cb322d$fc976b10$f5c64130$%osciak@samsung.com> <20100802105216.GD30670@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:18612 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752846Ab0HBLPm (ORCPT
+Received: from mx1.redhat.com ([209.132.183.28]:53231 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751310Ab0HBLuy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Aug 2010 07:15:42 -0400
-In-reply-to: <20100802105216.GD30670@n2100.arm.linux.org.uk>
-Content-language: pl
+	Mon, 2 Aug 2010 07:50:54 -0400
+In-Reply-To: <20100802105216.GD30670@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, Pawel Osciak <p.osciak@samsung.com>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, linux-media@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Pawel Osciak <p.osciak@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, linux-media@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hello,
-
-On Monday, August 02, 2010 12:52 PM Russell King wrote:
-
+Em 02-08-2010 07:52, Russell King - ARM Linux escreveu:
 > On Mon, Aug 02, 2010 at 12:32:20PM +0200, Pawel Osciak wrote:
-> > Well, some of them are indeed unused, but it's not an uncommon practice
-> in
-> > kernel and might help future developers.
+>> Well, some of them are indeed unused, but it's not an uncommon practice in
+>> kernel and might help future developers.
 > 
 > On the other hand, arch/arm is getting soo big that we need to do
 > something about this - and one solution is to avoid unnecessary
@@ -44,14 +35,28 @@ On Monday, August 02, 2010 12:52 PM Russell King wrote:
 > where its actually used, and means that the driver isn't dependent so
 > much on arch/arm or even the SoC itself.
 
-Well, with FIMC driver we just followed the style from other Samsung
-drivers. Just take a look at video/s3c-fb or usb/gadget/s3c-hsotg.c.
-I personally like to keep the same style for all drivers for Samsung
-IPs. Changing the style of all of them requires some amount of work,
-that would delay this particular driver even more so we will definitely
-miss the merge window.
+Very much appreciated from my side. It is very hard to sync changes that
+happen via arm trees when merging from my tree. There were several cases
+in the past were I needed to coordinate with an ARM maintainer about when
+he would merge from his tree, as the patches I had on media tree were
+highly dependent on the patches at arch.
 
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+On several cases, I suspect that we had git bisect breakages (compilation
+or driver miss-functioning) due to those sync issues between two trees.
+
+A per-driver *.h file makes things easier, as such header file can be
+merged/maintained together with the subsystem tree where the driver belongs.
+
+> Take a look at arch/arm/mach-vexpress/include/mach/ct-ca9x4.h and
+> arch/arm/mach-vexpress/include/mach/motherboard.h - these are the only
+> two files which contain platform definitions which are actually used
+> for Versatile Express.  Compare that with
+> arch/arm/mach-realview/include/mach/platform.h which contains lots
+> more...
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Cheers,
+Mauro
