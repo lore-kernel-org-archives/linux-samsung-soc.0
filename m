@@ -1,186 +1,59 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3] ARM: Samsung SoC: clksrc-clk: wait for the stable
- SRC/DIV status.
-Date: Mon, 02 Aug 2010 14:30:19 +0900
-Message-ID: <003001cb3203$ce869bd0$6b93d370$%kim@samsung.com>
-References: <1280717476-32327-1-git-send-email-myungjoo.ham@samsung.com>
+Subject: Please remind 'WARNING: about Samsung merge window over'
+Date: Mon, 02 Aug 2010 14:52:01 +0900
+Message-ID: <003401cb3206$d68a1fc0$839e5f40$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:56643 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752737Ab0HBFa6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Aug 2010 01:30:58 -0400
-Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L6I00B8CFAB4GA0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 02 Aug 2010 14:30:11 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L6I004QDFAB5W@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 02 Aug 2010 14:30:11 +0900 (KST)
-In-reply-to: <1280717476-32327-1-git-send-email-myungjoo.ham@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, ben-linux@fluff.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
 
-MyungJoo Ham wrote:
-> 
-> Many MUX and clock dividers have a status bit so that users can wait
-> until the status is stable. When corresponding registers are accessed
-> while a clock is not stable, we may suffer from unexpected errors.
-> 
-> Therefore, we introduce a mechanism to let the operations related with
-> updating SRC/DIV registers of clksrc-clk wait for the stabilization:
-> clk_set_parent, clk_set_rate.
-> 
-> In order to use this feature, the definition of clksrc_clk should
-> include reg_src_stable or reg_div_stable. With effective rec_src_stable
-> values, clk_set_parent returns with a stabilized SRC register and
-> with effective rec_div_stable values, clk_set_rate returns with a
-> stabilized DIV register. If .reg field is null, its (either SRC or DIV)
-> register's status is not checked and returned without waiting; i.e.,
-> some MUX/DIV may not need this feature.
-> 
-> When setting reg_*_stable, .size is used to tell the value of "stable".
-> If .size = 0, the stable status is 0 and if .size = 1, the stable status
-> is 1.
-> 
-> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> --
-> v2:
-> 	- Wait-for-stable loop is described at an inline function.
-> v3:
-> 	- Stop using clksrc_reg for stable bits. Use "clkstat_reg" for
-> 	  them.
-> 
-> ---
->  arch/arm/plat-samsung/clock-clksrc.c              |   14 +++++++++++++
->  arch/arm/plat-samsung/include/plat/clock-clksrc.h |   22
-> +++++++++++++++++++++
->  2 files changed, 36 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/clock-clksrc.c
-b/arch/arm/plat-samsung/clock-
-> clksrc.c
-> index 46d204a..79ae92e 100644
-> --- a/arch/arm/plat-samsung/clock-clksrc.c
-> +++ b/arch/arm/plat-samsung/clock-clksrc.c
-> @@ -50,6 +50,15 @@ static unsigned long s3c_getrate_clksrc(struct clk
-*clk)
->  	return rate;
->  }
-> 
-> +static inline void s3c_wait_for_stable(struct clkstat_reg *stat)
-> +{
-> +	WARN_ON(stat == NULL);
+Please remind following which is from discussion about Samsung merge stuff
+with Russell.
 
-if (stat == NULL)
-	return;
+---
 
-If don't need to check status, have not become define relevant status
-register.
-
-> +	if (stat->reg) {
-
-No need?...or need to check stat->reg and stat->shift?
-
-> +		do { } while (((__raw_readl(stat->reg) >> stat->shift) & 1)
-> +				!= stat->stable);
-
-I'm still wondering we _really_ need 'stable'...just comments is enough,
-right now.
-
-> +		do { } while (((__raw_readl(stat->reg) >> stat->shift) & 1)
-> +				!= stat->stable);
-
-> +	}
-> +}
-> +
->  static int s3c_setrate_clksrc(struct clk *clk, unsigned long rate)
->  {
->  	struct clksrc_clk *sclk = to_clksrc(clk);
-> @@ -68,6 +77,8 @@ static int s3c_setrate_clksrc(struct clk *clk, unsigned
-long rate)
->  	val |= (div - 1) << sclk->reg_div.shift;
->  	__raw_writel(val, reg);
+> > So, please send the majority of patches *before* the merge window and
+> > try to avoid sending anything but fixes during the merge window itself.
+> > The merge window is for code which has _already_ been merged and has
+> > been in linux-next to be merged into Linus' tree.  It's not for new
+> > code to be reviewed.
 > 
-> +	s3c_wait_for_stable(&sclk->reg_div_stable);
-> +
->  	return 0;
->  }
-> 
-> @@ -93,6 +104,9 @@ static int s3c_setparent_clksrc(struct clk *clk, struct
-clk
-> *parent)
->  		clksrc |= src_nr << sclk->reg_src.shift;
-> 
->  		__raw_writel(clksrc, sclk->reg_src.reg);
-> +
-> +		s3c_wait_for_stable(&sclk->reg_src_stable);
-> +
->  		return 0;
->  	}
-> 
-> diff --git a/arch/arm/plat-samsung/include/plat/clock-clksrc.h
-b/arch/arm/plat-
-> samsung/include/plat/clock-clksrc.h
-> index 50a8ca7..f1d54da 100644
-> --- a/arch/arm/plat-samsung/include/plat/clock-clksrc.h
-> +++ b/arch/arm/plat-samsung/include/plat/clock-clksrc.h
-> @@ -40,11 +40,30 @@ struct clksrc_reg {
->  };
-> 
->  /**
-> + * struct clkstat_reg - register definition for clock stat bits
-> + * @reg: pointer to the register in virtual memory.
-> + * @shift: the shift in bits to where the bitfield is.
-> + * @stable: the bit value of stable status.
-> + */
-> +struct clkstat_reg {
-> +	void __iomem		*reg;
-> +	unsigned short		shift;
-> +	unsigned short		stable;
+> Next merge window, which will probably be the last I will handle for the
+> S5P range, will have an earlier cut-off point. It was a big rush to get
+> this lot reviewed and merged.
 
-If you want to use this, just 'value' is better.
-But...I think...we don't need this field now.
+It also means that *NONE* of the stuff in your second pull request was
+in linux-next for *any* time.  It also conflicted with my tree.  The
+result of that is I'm expecting mainline to be dead for all ARM with:
 
-> +};
-> +
-> +/**
->   * struct clksrc_clk - class of clock for newer style samsung devices.
->   * @clk: the standard clock representation
->   * @sources: the sources for this clock
->   * @reg_src: the register definition for selecting the clock's source
->   * @reg_div: the register definition for the clock's output divisor
-> + * @reg_src_stable: the register definition to probe if reg_src is
-> + *    stabilized after the update of reg_src. It is "stabilized" if
-> + *    reg[shift] == size. If reg == NULL, this stable reg is not looked
-> + *    up. Thus, in S5PV210, size is usually 0.
-> + * @reg_div_stable: the register definition to probe if reg_div is
-> + *    stabilized after the update of reg_div. Same mechanism with
-> + *    reg_src_stable.
->   *
->   * This clock implements the features required by the newer SoCs where
->   * the standard clock block provides an input mux and a post-mux divisor
-> @@ -61,6 +80,9 @@ struct clksrc_clk {
-> 
->  	struct clksrc_reg	reg_src;
->  	struct clksrc_reg	reg_div;
-> +
-> +	struct clkstat_reg	reg_src_stable;
-> +	struct clkstat_reg	reg_div_stable;
->  };
-> 
->  /**
-> --
+arch/arm/Kconfig:883: can't open file "arch/arm/plat-s5pc1xx/Kconfig"
 
+because of a mis-merge - and since that conflict was not picked up by
+linux-next, it could not have been previously published.
+
+For the next merge window, I will avoid reading email for the duration
+of the window - which means those who are late for the merge window will
+simply not have their patches and trees pulled.  This means we _will_
+have time to resolve conflicts and find problems _before_ the merge
+window
+
+---
+
+I have no more plan to merge s5p stuff for this merge window, but reviewed
+here until now.
 
 Thanks.
 
