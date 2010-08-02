@@ -1,102 +1,186 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v6 3/3] input: samsung-keypad - Add samsung keypad driver
-Date: Mon, 02 Aug 2010 14:12:51 +0900
-Message-ID: <002f01cb3201$5da32480$18e96d80$%kim@samsung.com>
-References: <1277724824-13308-1-git-send-email-jy0922.shim@samsung.com>
- <1277724824-13308-3-git-send-email-jy0922.shim@samsung.com>
- <4C32E21A.8080100@samsung.com>
- <013401cb1d66$5fbf3fb0$1f3dbf10$%kim@samsung.com>
- <4C33D859.9050708@samsung.com>
- <026901cb1f35$64c63470$2e529d50$%kim@samsung.com>
- <4C36D235.3040702@samsung.com> <4C4688BE.1080409@samsung.com>
- <20100721080725.GA21373@core.coreip.homeip.net> <4C46B777.9010808@samsung.com>
- <009501cb28d1$c54c9f00$4fe5dd00$%kim@samsung.com>
- <4C5636DC.5070703@samsung.com>
- <019a01cb31f4$226a8aa0$673f9fe0$%kim@samsung.com>
- <4C564C6A.9040204@samsung.com>
+Subject: RE: [PATCH v3] ARM: Samsung SoC: clksrc-clk: wait for the stable
+ SRC/DIV status.
+Date: Mon, 02 Aug 2010 14:30:19 +0900
+Message-ID: <003001cb3203$ce869bd0$6b93d370$%kim@samsung.com>
+References: <1280717476-32327-1-git-send-email-myungjoo.ham@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:47785 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:56643 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752495Ab0HBFNR (ORCPT
+	with ESMTP id S1752737Ab0HBFa6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Aug 2010 01:13:17 -0400
-In-reply-to: <4C564C6A.9040204@samsung.com>
+	Mon, 2 Aug 2010 01:30:58 -0400
+Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L6I00B8CFAB4GA0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 02 Aug 2010 14:30:11 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L6I004QDFAB5W@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 02 Aug 2010 14:30:11 +0900 (KST)
+In-reply-to: <1280717476-32327-1-git-send-email-myungjoo.ham@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Joonyoung Shim' <jy0922.shim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Dmitry Torokhov' <dmitry.torokhov@gmail.com>, kyungmin.park@samsung.com, ben-linux@fluff.org, linux-input@vger.kernel.org, ch.naveen@samsung.com, linux-arm-kernel@lists.infradead.org
+To: 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
 
-Joonyoung Shim wrote:
+MyungJoo Ham wrote:
 > 
-> On 8/2/2010 12:38 PM, Kukjin Kim wrote:
-> > Joonyoung Shim wrote:
-> >> Hi, I came back from vacation.
-> >>
-> >>>>>> Do you have any feedback? If ok, i want to go to input tree or samsung
-> >>>>>> tree these added sched.h including.
-> >>>>> I applied the patch adding samsung-keypad.c and the platform data
-> >>>>> arch/arm/plat-samsung/include/plat/keypad.h and I expect that
-> >>>>> patches to actually enable keypad will go through appropriate
-> >>>>> platform tree(s).
-> >>>>>
-> >>>> OK, the rest will go through samsung platform tree
-> >>>>
-> >>> Ok..will apply.
-> >>>
-> >> Kukjin, could you remove keypad.h on the commit "ARM: SAMSUNG: Add
-> >> keypad device support" of the samsung platform tree. The keypad.h file
-> >> was included on input tree.
-> >>
-> (http://git.kernel.org/?p=linux/kernel/git/dtor/input.git;a=commit;h=0fffed27f92d9d7
-> >> a34de9fe017b7082b5958bb93)
-> >
-> > You mean in plat-samsung/dev-keypad.c?
-> > If remove inclusion plat/keypad.h in there, following build error happens.
-> >
+> Many MUX and clock dividers have a status bit so that users can wait
+> until the status is stable. When corresponding registers are accessed
+> while a clock is not stable, we may suffer from unexpected errors.
 > 
-> No. I mean to remove arch/arm/plat-samsung/include/plat/keypad.h file on
-> samsung platform tree, it was applied on input tree already. If needs, i
-> can repost.
+> Therefore, we introduce a mechanism to let the operations related with
+> updating SRC/DIV registers of clksrc-clk wait for the stabilization:
+> clk_set_parent, clk_set_rate.
 > 
-If it is not small change like to remove a file in a patch, I think should be re-submitted.
-Will drop your previous patch in my tree.
+> In order to use this feature, the definition of clksrc_clk should
+> include reg_src_stable or reg_div_stable. With effective rec_src_stable
+> values, clk_set_parent returns with a stabilized SRC register and
+> with effective rec_div_stable values, clk_set_rate returns with a
+> stabilized DIV register. If .reg field is null, its (either SRC or DIV)
+> register's status is not checked and returned without waiting; i.e.,
+> some MUX/DIV may not need this feature.
+> 
+> When setting reg_*_stable, .size is used to tell the value of "stable".
+> If .size = 0, the stable status is 0 and if .size = 1, the stable status
+> is 1.
+> 
+> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> --
+> v2:
+> 	- Wait-for-stable loop is described at an inline function.
+> v3:
+> 	- Stop using clksrc_reg for stable bits. Use "clkstat_reg" for
+> 	  them.
+> 
+> ---
+>  arch/arm/plat-samsung/clock-clksrc.c              |   14 +++++++++++++
+>  arch/arm/plat-samsung/include/plat/clock-clksrc.h |   22
+> +++++++++++++++++++++
+>  2 files changed, 36 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/plat-samsung/clock-clksrc.c
+b/arch/arm/plat-samsung/clock-
+> clksrc.c
+> index 46d204a..79ae92e 100644
+> --- a/arch/arm/plat-samsung/clock-clksrc.c
+> +++ b/arch/arm/plat-samsung/clock-clksrc.c
+> @@ -50,6 +50,15 @@ static unsigned long s3c_getrate_clksrc(struct clk
+*clk)
+>  	return rate;
+>  }
+> 
+> +static inline void s3c_wait_for_stable(struct clkstat_reg *stat)
+> +{
+> +	WARN_ON(stat == NULL);
 
-> > arch/arm/plat-samsung/dev-keypad.c:41: warning: 'struct
-> samsung_keypad_platdata' declared inside parameter list
-> > arch/arm/plat-samsung/dev-keypad.c:41: warning: its scope is only this definition
-> or declaration, which is probably not what you want
-> > arch/arm/plat-samsung/dev-keypad.c: In function
-> 'samsung_keypad_set_platdata':
-> > arch/arm/plat-samsung/dev-keypad.c:50: error: invalid application of 'sizeof' to
-> incomplete type 'struct samsung_keypad_platdata'
-> > arch/arm/plat-samsung/dev-keypad.c:54: error: dereferencing pointer to
-> incomplete type
-> > arch/arm/plat-samsung/dev-keypad.c:55: error: dereferencing pointer to
-> incomplete type
-> > arch/arm/plat-samsung/dev-keypad.c:55: error: 'samsung_keypad_cfg_gpio'
-> undeclared (first use in this function)
-> > arch/arm/plat-samsung/dev-keypad.c:55: error: (Each undeclared identifier is
-> reported only once
-> > arch/arm/plat-samsung/dev-keypad.c:55: error: for each function it appears in.)
-> > make[1]: *** [arch/arm/plat-samsung/dev-keypad.o] Error 1
-> >
-> > As you know, released 35 today. So we have no much time for this merge
-> window.
-> >
+if (stat == NULL)
+	return;
+
+If don't need to check status, have not become define relevant status
+register.
+
+> +	if (stat->reg) {
+
+No need?...or need to check stat->reg and stat->shift?
+
+> +		do { } while (((__raw_readl(stat->reg) >> stat->shift) & 1)
+> +				!= stat->stable);
+
+I'm still wondering we _really_ need 'stable'...just comments is enough,
+right now.
+
+> +		do { } while (((__raw_readl(stat->reg) >> stat->shift) & 1)
+> +				!= stat->stable);
+
+> +	}
+> +}
+> +
+>  static int s3c_setrate_clksrc(struct clk *clk, unsigned long rate)
+>  {
+>  	struct clksrc_clk *sclk = to_clksrc(clk);
+> @@ -68,6 +77,8 @@ static int s3c_setrate_clksrc(struct clk *clk, unsigned
+long rate)
+>  	val |= (div - 1) << sclk->reg_div.shift;
+>  	__raw_writel(val, reg);
 > 
-> I'm not sure about merge rule, but I think the compile problem can be
-> solved by merge to 36 of input tree and samsung platform tree.
+> +	s3c_wait_for_stable(&sclk->reg_div_stable);
+> +
+>  	return 0;
+>  }
+> 
+> @@ -93,6 +104,9 @@ static int s3c_setparent_clksrc(struct clk *clk, struct
+clk
+> *parent)
+>  		clksrc |= src_nr << sclk->reg_src.shift;
+> 
+>  		__raw_writel(clksrc, sclk->reg_src.reg);
+> +
+> +		s3c_wait_for_stable(&sclk->reg_src_stable);
+> +
+>  		return 0;
+>  	}
+> 
+> diff --git a/arch/arm/plat-samsung/include/plat/clock-clksrc.h
+b/arch/arm/plat-
+> samsung/include/plat/clock-clksrc.h
+> index 50a8ca7..f1d54da 100644
+> --- a/arch/arm/plat-samsung/include/plat/clock-clksrc.h
+> +++ b/arch/arm/plat-samsung/include/plat/clock-clksrc.h
+> @@ -40,11 +40,30 @@ struct clksrc_reg {
+>  };
+> 
+>  /**
+> + * struct clkstat_reg - register definition for clock stat bits
+> + * @reg: pointer to the register in virtual memory.
+> + * @shift: the shift in bits to where the bitfield is.
+> + * @stable: the bit value of stable status.
+> + */
+> +struct clkstat_reg {
+> +	void __iomem		*reg;
+> +	unsigned short		shift;
+> +	unsigned short		stable;
 
-Hmm...actually, already informed about that on linux-next.
-If it's just build problem, I or Dmitry can fix it. However, this is not just that.
-I cannot understand how your 'plat/keypad.h' was included to both of patch.
-And I'm not sure, should be 'plat/keypad.h' in which tree...
+If you want to use this, just 'value' is better.
+But...I think...we don't need this field now.
 
-Anyway, as I said, should be solved that as soon as possible....
+> +};
+> +
+> +/**
+>   * struct clksrc_clk - class of clock for newer style samsung devices.
+>   * @clk: the standard clock representation
+>   * @sources: the sources for this clock
+>   * @reg_src: the register definition for selecting the clock's source
+>   * @reg_div: the register definition for the clock's output divisor
+> + * @reg_src_stable: the register definition to probe if reg_src is
+> + *    stabilized after the update of reg_src. It is "stabilized" if
+> + *    reg[shift] == size. If reg == NULL, this stable reg is not looked
+> + *    up. Thus, in S5PV210, size is usually 0.
+> + * @reg_div_stable: the register definition to probe if reg_div is
+> + *    stabilized after the update of reg_div. Same mechanism with
+> + *    reg_src_stable.
+>   *
+>   * This clock implements the features required by the newer SoCs where
+>   * the standard clock block provides an input mux and a post-mux divisor
+> @@ -61,6 +80,9 @@ struct clksrc_clk {
+> 
+>  	struct clksrc_reg	reg_src;
+>  	struct clksrc_reg	reg_div;
+> +
+> +	struct clkstat_reg	reg_src_stable;
+> +	struct clkstat_reg	reg_div_stable;
+>  };
+> 
+>  /**
+> --
+
 
 Thanks.
 
