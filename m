@@ -1,88 +1,243 @@
-From: Kyungmin Park <kyungmin.park@samsung.com>
-Subject: Re: [PATCH v3 1/8] ARM: Samsung: Add register definitions for Samsung
-	S5P SoC camera interface
-Date: Tue, 3 Aug 2010 11:15:34 +0900
-Message-ID: <AANLkTi=cCPXP0nHskKKn-fJj_u2TYj26J=JWXrh3jYe_@mail.gmail.com>
-References: <1279902083-21250-1-git-send-email-s.nawrocki@samsung.com>
-	<1279902083-21250-2-git-send-email-s.nawrocki@samsung.com>
-	<00ba01cb2c8f$02fc8480$08f58d80$%kim@samsung.com>
-	<003001cb322d$fc976b10$f5c64130$%osciak@samsung.com>
-	<20100802105216.GD30670@n2100.arm.linux.org.uk>
-	<003201cb323b$72f32df0$58d989d0$%osciak@samsung.com>
-	<20100802165852.GA6671@n2100.arm.linux.org.uk>
-	<00e601cb32a5$61f4d8e0$25de8aa0$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v4 3/8] ARM: Samsung: Add platform definitions and helpers
+	for FIMC driver
+Date: Tue, 03 Aug 2010 11:33:14 +0900
+Message-ID: <00eb01cb32b4$3c1285a0$b43790e0$%kim@samsung.com>
+References: <1279902083-21250-4-git-send-email-s.nawrocki@samsung.com>
+	<1280750229-15732-1-git-send-email-m.szyprowski@samsung.com>
+	<00e101cb329e$a50ceb60$ef26c220$%kim@samsung.com>
+	<AANLkTimJcQccG-H_661bPSz-sQ+L=GYNLd2A3W02wUUP@mail.gmail.com>
+	<00e501cb32a5$5775ed50$0661c7f0$%kim@samsung.com>
+	<AANLkTinuDaOKe1cMTCC+kmZg0dg2y75szDPQaa93gWbn@mail.gmail.com>
+	<00e801cb32a7$fffae0f0$fff0a2d0$%kim@samsung.com>
+	<AANLkTimTVmrFTWrFH5gSnutSDhckU6akYtFwsARgJnK4@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:54556 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751452Ab0HCCPh convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Aug 2010 22:15:37 -0400
-In-Reply-To: <00e601cb32a5$61f4d8e0$25de8aa0$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <AANLkTimTVmrFTWrFH5gSnutSDhckU6akYtFwsARgJnK4@mail.gmail.com>
+Content-language: ko
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Kyungmin Park' <kyungmin.park@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com, p.osciak@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Pawel Osciak <p.osciak@samsung.com>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Tue, Aug 3, 2010 at 9:46 AM, Kukjin Kim <kgene.kim@samsung.com> wrot=
-e:
-> Russell King wrote:
->>
->> On Mon, Aug 02, 2010 at 02:08:42PM +0200, Pawel Osciak wrote:
->> > >Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
->> > >On Mon, Aug 02, 2010 at 12:32:20PM +0200, Pawel Osciak wrote:
->> > >> Well, some of them are indeed unused, but it's not an uncommon
-> practice in
->> > >> kernel and might help future developers.
->> > >
->> > >On the other hand, arch/arm is getting soo big that we need to do
->> > >something about this - and one solution is to avoid unnecessary
->> > >definitions that we're not using.
->> > >
->> > >Another good idea is to put definitions along side the drivers wh=
-ich
->> > >they're relevant to - maybe in a local driver-name.h file which
->> > >driver-name.c includes, or maybe even within driver-name.c if the=
-y're
->> > >not excessive. =A0This has the advantage of distributing the "blo=
-at" to
->> > >where its actually used, and means that the driver isn't dependen=
-t so
->> > >much on arch/arm or even the SoC itself.
->> > >
->> > >Take a look at arch/arm/mach-vexpress/include/mach/ct-ca9x4.h and
->> > >arch/arm/mach-vexpress/include/mach/motherboard.h - these are the=
- only
->> > >two files which contain platform definitions which are actually u=
-sed
->> > >for Versatile Express. =A0Compare that with
->> > >arch/arm/mach-realview/include/mach/platform.h which contains lot=
-s
->> > >more...
->> >
->> > So basically, what you and Mauro are recommending is that we move =
-the
-> *.h
->> > file with register definitions to drivers/media?
->>
->> What I'm suggesting is what's been pretty standard in Linux for a lo=
-ng
->> time. =A0Take a look at: drivers/net/3c503.[ch], or for a more recen=
-t
->> driver, drivers/net/e1000/*.[ch]. =A0Or drivers/mmc/host/mmci.[ch]
->>
-> I agree with Russell's opinion.
-> I don't want to add unnecessary(or unavailable in arch/arm) definitio=
-ns in
-> arch/arm/*/include
->
->> Putting definitions which are only used by one driver in
-> arch/arm/*/include
->> is silly.
+Kyungmin Park wrote:
+> =
 
-I also happy with this method.
+> On Tue, Aug 3, 2010 at 10:05 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > Kyungmin Park wrote:
+> >>
+> >> On Tue, Aug 3, 2010 at 9:46 AM, Kukjin Kim <kgene.kim@samsung.com>
+wrote:
+> >> > Kyungmin Park wrote:
+> >> >>
+> >> >> On Tue, Aug 3, 2010 at 8:58 AM, Kukjin Kim <kgene.kim@samsung.com>
+> > wrote:
+> >> >> > Marek Szyprowski wrote:
+> >> >> >>
+> >> >> >> From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> >> >> >>
+> >> >> >> FIMC (CAMIF) device is a camera interface embedded in S3C/S5P
+> > Samsung
+> >> >> >> SOC series. It supports ITU-R BT.601/656 and MIPI-CSI2 standards,
+> >> >> >> memory to memory operations, color conversion, resizing and
+> > rotation.
+> >> >> >>
+> >> >> >> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> >> >> >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> >> >> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> >> >> >> ---
+> >> >> >>
+> >> >> >> This is patch is a v3 version rebased onto latest kgene/for-next
+> > tree.
+> >> >> >> New entries in map.h files has been sorted by the physicall
+address.
+> >> >> >>
+> >> >> > Thanks for your addressing.
+> >> >> >
+> >> >> >> I'm resending this patch on behalf of Sylwester who is on
+holidays
+> > this
+> >> >> >> week.
+> >> >> >>
+> >> >> >> Best regards
+> >> >> >> --
+> >> >> >> Marek Szyprowski
+> >> >> >> Samsung Poland R&D Center
+> >> >> >> ---
+> >
+> > (snip)
+> >
+> >> >> >>
+> >> >> >> diff --git a/arch/arm/mach-s5pc100/include/mach/map.h
+> > b/arch/arm/mach-
+> >> >> >> s5pc100/include/mach/map.h
+> >> >> >> index c018697..3abe7f5 100644
+> >> >> >> --- a/arch/arm/mach-s5pc100/include/mach/map.h
+> >> >> >> +++ b/arch/arm/mach-s5pc100/include/mach/map.h
+> >> >> >> @@ -99,6 +99,10 @@
+> >> >> >>
+> >> >> >> =A0#define S5PC100_PA_FB =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(0xEE000=
+000)
+> >> >> >>
+> >> >> >> +#define S5PC100_PA_FIMC0 =A0 =A0 (0xEE200000)
+> >> >> >> +#define S5PC100_PA_FIMC1 =A0 =A0 (0xEE300000)
+> >> >> >> +#define S5PC100_PA_FIMC2 =A0 =A0 (0xEE400000)
+> >> >> >> +
+> >> >> >> =A0#define S5PC100_PA_I2S0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(0xF200000=
+0)
+> >> >> >> =A0#define S5PC100_PA_I2S1 =A0 =A0 =A0 =A0 =A0 =A0 =A0(0xF210000=
+0)
+> >> >> >> =A0#define S5PC100_PA_I2S2 =A0 =A0 =A0 =A0 =A0 =A0 =A0(0xF220000=
+0)
+> >> >> >> @@ -143,6 +147,9 @@
+> >> >> >> =A0#define S3C_PA_ONENAND_BUF =A0 S5PC100_PA_ONENAND_BUF
+> >> >> >> =A0#define S3C_SZ_ONENAND_BUF =A0 S5PC100_SZ_ONENAND_BUF
+> >> >> >> =A0#define S3C_PA_RTC =A0 =A0 =A0 =A0 =A0 S5PC100_PA_RTC
+> >> >> >> +#define S5P_PA_FIMC0 =A0 =A0 =A0 =A0 S5PC100_PA_FIMC0
+> >> >> >> +#define S5P_PA_FIMC1 =A0 =A0 =A0 =A0 S5PC100_PA_FIMC1
+> >> >> >> +#define S5P_PA_FIMC2 =A0 =A0 =A0 =A0 S5PC100_PA_FIMC2
+> >> >> >>
+> >> >> >> =A0#define SAMSUNG_PA_ADC =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5PC100_PA=
+_TSADC
+> >> >> >> =A0#define SAMSUNG_PA_CFCON =A0 =A0 S5PC100_PA_CFCON
+> >> >> >> diff --git a/arch/arm/mach-s5pv210/cpu.c
+> > b/arch/arm/mach-s5pv210/cpu.c
+> >
+> > (snip)
+> >
+> >> >> >> diff --git a/arch/arm/mach-s5pv210/include/mach/map.h
+> > b/arch/arm/mach-
+> >> >> >> s5pv210/include/mach/map.h
+> >> >> >> index 986b285..6a07e55 100644
+> >> >> >> --- a/arch/arm/mach-s5pv210/include/mach/map.h
+> >> >> >> +++ b/arch/arm/mach-s5pv210/include/mach/map.h
+> >> >> >> @@ -65,6 +65,10 @@
+> >> >> >>
+> >> >> >> =A0#define S5PV210_PA_FB =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(0xF8000=
+000)
+> >> >> >>
+> >> >> >> +#define S5PV210_PA_FIMC0 =A0 =A0 (0xFB200000)
+> >> >> >> +#define S5PV210_PA_FIMC1 =A0 =A0 (0xFB300000)
+> >> >> >> +#define S5PV210_PA_FIMC2 =A0 =A0 (0xFB400000)
+> >> >> >> +
+> >> >> >> =A0#define S5PV210_PA_HSMMC(x) =A0(0xEB000000 + ((x) * 0x100000))
+> >> >> >>
+> >> >> >> =A0#define S5PV210_PA_VIC0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(0xF200000=
+0)
+> >> >> >> @@ -114,4 +118,8 @@
+> >> >> >> =A0#define SAMSUNG_PA_CFCON =A0 =A0 S5PV210_PA_CFCON
+> >> >> >> =A0#define SAMSUNG_PA_KEYPAD =A0 =A0S5PV210_PA_KEYPAD
+> >> >> >>
+> >> >> >> +#define S5P_PA_FIMC0 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC0
+> >> >> >> +#define S5P_PA_FIMC1 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC1
+> >> >> >> +#define S5P_PA_FIMC2 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC2
+> >> >> >
+> >> >> > To use one style is better for reading, merge conflict handling
+and
+> > so
+> >> > on...
+> >> >> > The style means to add S5P_PA_XXX after S3C_PA_XXX with C100 case
+> or
+> >> to
+> >> >> > modify above C100 case like this.
+> >> >>
+> >> >> Use the same conversion as previous one. are you okay?
+> >> >>
+> >> >> #define S5PV210_PA_VIC0 =A0 =A0 =A0 =A0 (0xF2000000)
+> >> >> #define S5P_PA_VIC0 =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_VIC0
+> >> >>
+> >> >> #define S5PV210_PA_VIC1 =A0 =A0 =A0 =A0 (0xF2100000)
+> >> >> #define S5P_PA_VIC1 =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_VIC1
+> >> >>
+> >> >> #define S5PV210_PA_VIC2 =A0 =A0 =A0 =A0 (0xF2200000)
+> >> >> #define S5P_PA_VIC2 =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_VIC2
+> >> >>
+> >> >> #define S5PV210_PA_VIC3 =A0 =A0 =A0 =A0 (0xF2300000)
+> >> >> #define S5P_PA_VIC3 =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_VIC3
+> >> >>
+> >> >> #define S5PV210_PA_SDRAM =A0 =A0 =A0 =A0(0x30000000)
+> >> >> #define S5P_PA_SDRAM =A0 =A0 =A0 =A0 =A0 =A0S5PV210_PA_SDRAM
+> >> >>
+> >> > No.
+> >> >
+> >> > Did you see above C100?
+> >> >
+> >> > --- C100
+> >> >
+> >> > =A0#define
+> S3C_PA_ONENAND_BUF =A0 =A0 =A0 =A0 =A0 =A0 S5PC100_PA_ONENAND_BUF
+> >> > =A0#define
+> S3C_SZ_ONENAND_BUF =A0 =A0 =A0 =A0 =A0 =A0 S5PC100_SZ_ONENAND_BUF
+> >> > =A0#define S3C_PA_RTC =A0 =A0 =A0 =A0 =A0 =A0 S5PC100_PA_RTC
+> >> > +#define S5P_PA_FIMC0 =A0 =A0 =A0 =A0 =A0 S5PC100_PA_FIMC0
+> >> > +#define S5P_PA_FIMC1 =A0 =A0 =A0 =A0 =A0 S5PC100_PA_FIMC1
+> >> > +#define S5P_PA_FIMC2 =A0 =A0 =A0 =A0 =A0 S5PC100_PA_FIMC2
+> >> >
+> >> > =A0#define SAMSUNG_PA_ADC =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5PC100_PA_TSA=
+DC
+> >> > =A0#define SAMSUNG_PA_CFCON =A0 =A0 S5PC100_PA_CFCON
+> >> >
+> >> > --- V210
+> >> >
+> >> > =A0#define SAMSUNG_PA_CFCON =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_C=
+FCON
+> >> > =A0#define SAMSUNG_PA_KEYPAD =A0 =A0 =A0 =A0 =A0 =A0 =A0S5PV210_PA_K=
+EYPAD
+> >> >
+> >> > +#define S5P_PA_FIMC0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC0
+> >> > +#define S5P_PA_FIMC1 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC1
+> >> > +#define S5P_PA_FIMC2 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC2
+> >> >
+> >> > I mean it's just ordering.
+> >>
+> >> Yes I also mean it don't separate the related definitions. so place
+> >> adjacent as the the previous.
+> >>
+> > No...maybe you misunderstood...hmm :-(
+> > Please add in map.h of V210 like following.
+> =
 
-Thank you,
-Kyungmin Park
+> Then please also apply the same rules at existing definitions.
+> =
+
+I meant...there are other orderings in a patch file..so unify style...
+But..yeah, in this case the criteria about that seems not clear.
+If need, I will sort it out...firstly please address as I said.
+
+Marek, could you please re-submit for this...?
+
+> >
+> > @@ -110,6 +110,10 @@
+> > =A0#define S3C_PA_RTC =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_RTC
+> > =A0#define S3C_PA_WDT =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_WATCHDOG
+> >
+> > +#define S5P_PA_FIMC0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC0
+> > +#define S5P_PA_FIMC1 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC1
+> > +#define S5P_PA_FIMC2 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC2
+> > +
+> > =A0#define SAMSUNG_PA_ADC =A0 =A0 =A0 =A0 S5PV210_PA_ADC
+> > =A0#define SAMSUNG_PA_CFCON =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_CFCON
+> > =A0#define SAMSUNG_PA_KEYPAD =A0 =A0 =A0 =A0 =A0 =A0 =A0S5PV210_PA_KEYP=
+AD
+> >
+> > (snip)
+> >
+
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
