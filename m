@@ -1,375 +1,75 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v5 3/8] ARM: Samsung: Add platform definitions and helpers for
- FIMC driver
-Date: Tue, 03 Aug 2010 07:41:25 +0200
-Message-ID: <1280814085-25718-1-git-send-email-m.szyprowski@samsung.com>
-References: <00e101cb329e$a50ceb60$ef26c220$%kim@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 1/2] ARM: S5PV210: Add audio support to Aquila
+Date: Tue, 3 Aug 2010 09:59:29 +0100
+Message-ID: <20100803085929.GC25306@rakim.wolfsonmicro.main>
+References: <4C4F9E4C.7000001@samsung.com>
+ <20100729173825.GE24781@opensource.wolfsonmicro.com>
+ <4C527C11.5090409@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:51705 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755121Ab0HCFmm (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:54839 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752651Ab0HCI7c (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Aug 2010 01:42:42 -0400
-Received: from eu_spt1 ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0L6K00BRZAJ3YZ00@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 03 Aug 2010 06:42:39 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L6K00KQ8AJ2DG@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 03 Aug 2010 06:42:39 +0100 (BST)
-In-reply-to: <00e101cb329e$a50ceb60$ef26c220$%kim@samsung.com>
+	Tue, 3 Aug 2010 04:59:32 -0400
+Content-Disposition: inline
+In-Reply-To: <4C527C11.5090409@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: s.nawrocki@samsung.com, m.szyprowski@samsung.com, p.osciak@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben@simtec.co.uk>, Liam Girdwood <lrg@slimlogic.co.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>
 
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+On Fri, Jul 30, 2010 at 04:15:29PM +0900, Chanwoo Choi wrote:
 
-FIMC (CAMIF) device is a camera interface embedded in S3C/S5P Samsung
-SOC series. It supports ITU-R BT.601/656 and MIPI-CSI2 standards,
-memory to memory operations, color conversion, resizing and rotation.
+> > All these fixed voltage regulators seem a bit suspicous for a mobile
+> > phone - I'd have expected that the supplies would all be being provided
+> > by your PMIC except for things taken directly from the battery supply
+> > (like the speakers tend to be, for example)?  There's no problem with
+> > the code itself, it just looks a bit odd.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
+> All these consumer supply of WM8994 codec connected the below regulator(VCC_1.8V) on
+> a circuit diagram. "VCC_1.8V" regualtor is always enabled, because it is used to many devices.
+> Then I haven't connected all these consumer supply of WM8994 codec to "VCC_1.8V" regulator.
+> I will modify that the consumer supply would be provided by PMIC.
 
-Changes since v4:
-- addressed all minor style issues reported by Kukjin Kim
+OK, good - the fact that the connection wasn't being made with the PMIC
+was my main point here.
 
-Changes since v3:
-- rebased onto latest kgene/for-next tree
-- new entries in map.h files has been sorted by the physicall address
+> >> +	/* CODEC_XTAL_EN */
+> >> +	gpio = S5PV210_GPH3(2);		/* XEINT_26 */
+> >> +	gpio_request(gpio, "CODEC_XTAL_EN");
 
-I'm sending this patch on behalf of Sylwerster who is on holidays this
-week.
+> > Might be as well to provide some or all this stuff in your audio machine
+> > driver?
 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
----
- arch/arm/mach-s5pc100/include/mach/map.h       |    7 ++++
- arch/arm/mach-s5pv210/cpu.c                    |    5 +++
- arch/arm/mach-s5pv210/include/mach/map.h       |    7 ++++
- arch/arm/plat-s5p/Kconfig                      |   15 ++++++++
- arch/arm/plat-s5p/Makefile                     |    5 +++
- arch/arm/plat-s5p/dev-fimc0.c                  |   36 ++++++++++++++++++++
- arch/arm/plat-s5p/dev-fimc1.c                  |   36 ++++++++++++++++++++
- arch/arm/plat-s5p/dev-fimc2.c                  |   36 ++++++++++++++++++++
- arch/arm/plat-samsung/include/plat/devs.h      |    4 ++
- arch/arm/plat-samsung/include/plat/fimc-core.h |   43 ++++++++++++++++++++++++
- 10 files changed, 194 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/plat-s5p/dev-fimc0.c
- create mode 100644 arch/arm/plat-s5p/dev-fimc1.c
- create mode 100644 arch/arm/plat-s5p/dev-fimc2.c
- create mode 100644 arch/arm/plat-samsung/include/plat/fimc-core.h
+> The Aquila board have a oscillator which provide main clock to 
+> WM8994 audio codec. The oscillator provide 24MHz clock to WM8994 audio codec
+> (MCLK1 pin). I set gpio setting of "CODEC_XTAL_EN" to enable a oscillator.
 
-diff --git a/arch/arm/mach-s5pc100/include/mach/map.h b/arch/arm/mach-s5pc100/include/mach/map.h
-index c018697..3abe7f5 100644
---- a/arch/arm/mach-s5pc100/include/mach/map.h
-+++ b/arch/arm/mach-s5pc100/include/mach/map.h
-@@ -99,6 +99,10 @@
- 
- #define S5PC100_PA_FB		(0xEE000000)
- 
-+#define S5PC100_PA_FIMC0	(0xEE200000)
-+#define S5PC100_PA_FIMC1	(0xEE300000)
-+#define S5PC100_PA_FIMC2	(0xEE400000)
-+
- #define S5PC100_PA_I2S0		(0xF2000000)
- #define S5PC100_PA_I2S1		(0xF2100000)
- #define S5PC100_PA_I2S2		(0xF2200000)
-@@ -143,6 +147,9 @@
- #define S3C_PA_ONENAND_BUF	S5PC100_PA_ONENAND_BUF
- #define S3C_SZ_ONENAND_BUF	S5PC100_SZ_ONENAND_BUF
- #define S3C_PA_RTC		S5PC100_PA_RTC
-+#define S5P_PA_FIMC0		S5PC100_PA_FIMC0
-+#define S5P_PA_FIMC1		S5PC100_PA_FIMC1
-+#define S5P_PA_FIMC2		S5PC100_PA_FIMC2
- 
- #define SAMSUNG_PA_ADC		S5PC100_PA_TSADC
- #define SAMSUNG_PA_CFCON	S5PC100_PA_CFCON
-diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
-index ea09c32..a7446d4 100644
---- a/arch/arm/mach-s5pv210/cpu.c
-+++ b/arch/arm/mach-s5pv210/cpu.c
-@@ -37,6 +37,7 @@
- #include <plat/iic-core.h>
- #include <plat/keypad-core.h>
- #include <plat/sdhci.h>
-+#include <plat/fimc-core.h>
- #include <plat/reset.h>
- 
- /* Initial IO mappings */
-@@ -104,6 +105,10 @@ void __init s5pv210_map_io(void)
- 
- 	/* Use s5pv210-keypad instead of samsung-keypad */
- 	samsung_keypad_setname("s5pv210-keypad");
-+
-+	s3c_fimc_setname(0, "s5pv210-fimc");
-+	s3c_fimc_setname(1, "s5pv210-fimc");
-+	s3c_fimc_setname(2, "s5pv210-fimc");
- }
- 
- void __init s5pv210_init_clocks(int xtal)
-diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
-index 986b285..dd4fb6b 100644
---- a/arch/arm/mach-s5pv210/include/mach/map.h
-+++ b/arch/arm/mach-s5pv210/include/mach/map.h
-@@ -65,6 +65,10 @@
- 
- #define S5PV210_PA_FB		(0xF8000000)
- 
-+#define S5PV210_PA_FIMC0	(0xFB200000)
-+#define S5PV210_PA_FIMC1	(0xFB300000)
-+#define S5PV210_PA_FIMC2	(0xFB400000)
-+
- #define S5PV210_PA_HSMMC(x)	(0xEB000000 + ((x) * 0x100000))
- 
- #define S5PV210_PA_VIC0		(0xF2000000)
-@@ -109,6 +113,9 @@
- #define S3C_PA_FB		S5PV210_PA_FB
- #define S3C_PA_RTC		S5PV210_PA_RTC
- #define S3C_PA_WDT		S5PV210_PA_WATCHDOG
-+#define S5P_PA_FIMC0		S5PV210_PA_FIMC0
-+#define S5P_PA_FIMC1		S5PV210_PA_FIMC1
-+#define S5P_PA_FIMC2		S5PV210_PA_FIMC2
- 
- #define SAMSUNG_PA_ADC		S5PV210_PA_ADC
- #define SAMSUNG_PA_CFCON	S5PV210_PA_CFCON
-diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-index 907ac63..66e40c8 100644
---- a/arch/arm/plat-s5p/Kconfig
-+++ b/arch/arm/plat-s5p/Kconfig
-@@ -5,6 +5,21 @@
- #
- # Licensed under GPLv2
- 
-+config S5P_DEV_FIMC0
-+	bool
-+	help
-+	  Compile in platform device definitions for FIMC controller 0
-+
-+config S5P_DEV_FIMC1
-+	bool
-+	help
-+	  Compile in platform device definitions for FIMC controller 1
-+
-+config S5P_DEV_FIMC2
-+	bool
-+	help
-+	  Compile in platform device definitions for FIMC controller 2
-+
- config PLAT_S5P
- 	bool
- 	depends on (ARCH_S5P6440 || ARCH_S5P6442 || ARCH_S5PC100 || ARCH_S5PV210 || ARCH_S5PV310)
-diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-index 7e34194..b2e0296 100644
---- a/arch/arm/plat-s5p/Makefile
-+++ b/arch/arm/plat-s5p/Makefile
-@@ -19,3 +19,8 @@ obj-y				+= clock.o
- obj-y				+= irq.o
- obj-$(CONFIG_S5P_EXT_INT)	+= irq-eint.o
- 
-+# devices
-+
-+obj-$(CONFIG_S5P_DEV_FIMC0)	+= dev-fimc0.o
-+obj-$(CONFIG_S5P_DEV_FIMC1)	+= dev-fimc1.o
-+obj-$(CONFIG_S5P_DEV_FIMC2)	+= dev-fimc2.o
-diff --git a/arch/arm/plat-s5p/dev-fimc0.c b/arch/arm/plat-s5p/dev-fimc0.c
-new file mode 100644
-index 0000000..d3f1a9b
---- /dev/null
-+++ b/arch/arm/plat-s5p/dev-fimc0.c
-@@ -0,0 +1,36 @@
-+/* linux/arch/arm/plat-s5p/dev-fimc0.c
-+ *
-+ * Copyright (c) 2010 Samsung Electronics
-+ *
-+ * Base S5P FIMC0 resource and device definitions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/interrupt.h>
-+#include <linux/ioport.h>
-+#include <mach/map.h>
-+
-+static struct resource s5p_fimc0_resource[] = {
-+	[0] = {
-+		.start	= S5P_PA_FIMC0,
-+		.end	= S5P_PA_FIMC0 + SZ_1M - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start	= IRQ_FIMC0,
-+		.end	= IRQ_FIMC0,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+};
-+
-+struct platform_device s5p_device_fimc0 = {
-+	.name		= "s5p-fimc",
-+	.id		= 0,
-+	.num_resources	= ARRAY_SIZE(s5p_fimc0_resource),
-+	.resource	= s5p_fimc0_resource,
-+};
-diff --git a/arch/arm/plat-s5p/dev-fimc1.c b/arch/arm/plat-s5p/dev-fimc1.c
-new file mode 100644
-index 0000000..41bd698
---- /dev/null
-+++ b/arch/arm/plat-s5p/dev-fimc1.c
-@@ -0,0 +1,36 @@
-+/* linux/arch/arm/plat-s5p/dev-fimc1.c
-+ *
-+ * Copyright (c) 2010 Samsung Electronics
-+ *
-+ * Base S5P FIMC1 resource and device definitions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/interrupt.h>
-+#include <linux/ioport.h>
-+#include <mach/map.h>
-+
-+static struct resource s5p_fimc1_resource[] = {
-+	[0] = {
-+		.start	= S5P_PA_FIMC1,
-+		.end	= S5P_PA_FIMC1 + SZ_1M - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start	= IRQ_FIMC1,
-+		.end	= IRQ_FIMC1,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+};
-+
-+struct platform_device s5p_device_fimc1 = {
-+	.name		= "s5p-fimc",
-+	.id		= 1,
-+	.num_resources	= ARRAY_SIZE(s5p_fimc1_resource),
-+	.resource	= s5p_fimc1_resource,
-+};
-diff --git a/arch/arm/plat-s5p/dev-fimc2.c b/arch/arm/plat-s5p/dev-fimc2.c
-new file mode 100644
-index 0000000..dfddeda
---- /dev/null
-+++ b/arch/arm/plat-s5p/dev-fimc2.c
-@@ -0,0 +1,36 @@
-+/* linux/arch/arm/plat-s5p/dev-fimc2.c
-+ *
-+ * Copyright (c) 2010 Samsung Electronics
-+ *
-+ * Base S5P FIMC2 resource and device definitions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/interrupt.h>
-+#include <linux/ioport.h>
-+#include <mach/map.h>
-+
-+static struct resource s5p_fimc2_resource[] = {
-+	[0] = {
-+		.start	= S5P_PA_FIMC2,
-+		.end	= S5P_PA_FIMC2 + SZ_1M - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start	= IRQ_FIMC2,
-+		.end	= IRQ_FIMC2,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+};
-+
-+struct platform_device s5p_device_fimc2 = {
-+	.name		= "s5p-fimc",
-+	.id		= 2,
-+	.num_resources	= ARRAY_SIZE(s5p_fimc2_resource),
-+	.resource	= s5p_fimc2_resource,
-+};
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index 4c31d32..85f6f23 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -104,6 +104,10 @@ extern struct platform_device s5pc100_device_iis2;
- 
- extern struct platform_device samsung_device_keypad;
- 
-+extern struct platform_device s5p_device_fimc0;
-+extern struct platform_device s5p_device_fimc1;
-+extern struct platform_device s5p_device_fimc2;
-+
- /* s3c2440 specific devices */
- 
- #ifdef CONFIG_CPU_S3C2440
-diff --git a/arch/arm/plat-samsung/include/plat/fimc-core.h b/arch/arm/plat-samsung/include/plat/fimc-core.h
-new file mode 100644
-index 0000000..c2ddd83
---- /dev/null
-+++ b/arch/arm/plat-samsung/include/plat/fimc-core.h
-@@ -0,0 +1,43 @@
-+/*
-+ * arch/arm/plat-samsung/include/plat/fimc-core.h
-+ *
-+ * Copyright 2010 Samsung Electronics Co., Ltd.
-+ *	Sylwester Nawrocki <s.nawrocki@samsung.com>
-+ *
-+ * Samsung camera interface driver core functions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#ifndef __ASM_PLAT_FIMC_CORE_H
-+#define __ASM_PLAT_FIMC_CORE_H __FILE__
-+
-+/*
-+ * These functions are only for use with the core support code, such as
-+ * the CPU-specific initialization code.
-+ */
-+
-+/* Re-define device name to differentiate the subsystem in various SoCs. */
-+static inline void s3c_fimc_setname(int id, char *name)
-+{
-+	switch (id) {
-+#ifdef CONFIG_S5P_DEV_FIMC0
-+	case 0:
-+		s5p_device_fimc0.name = name;
-+		break;
-+#endif
-+#ifdef CONFIG_S5P_DEV_FIMC1
-+	case 1:
-+		s5p_device_fimc1.name = name;
-+		break;
-+#endif
-+#ifdef CONFIG_S5P_DEV_FIMC2
-+	case 2:
-+		s5p_device_fimc2.name = name;
-+		break;
-+#endif
-+	}
-+}
-+
-+#endif /* __ASM_PLAT_FIMC_CORE_H */
--- 
-1.7.1.569.g6f426
+I understand what the code does.  My point is that it looks like it's
+in the wrong place - it'd seem nicer (and to open up more optimisation
+opportunties to manage the clock in the audio driver).
+
+> >> +	/* ADC_EN */
+> >> +	gpio = S5PV210_GPJ3(2);
+> >> +	gpio_request(gpio, "ADC_EN");
+> >> +	s3c_gpio_cfgpin(gpio, S3C_GPIO_OUTPUT);
+> >> +	gpio_direction_output(gpio, 1);
+
+> > I'm not sure what this does?
+
+> I explained below description about "ADC_EN" :
+> "ADC_EN : This gpio enable the ADC device which is used to detect
+>  the kind of jack. (SND_JACK_HEADPHONE/HEADSET/MECHANICAL/AVOUT)
+>  According to the kind of jack, an electric current is changed.
+>  (Only used on Aquila board) "
+
+> When inserting the jack to Aquila board, I used ADC driver so that, detecting
+> the kind of jack(SND_JACK_HEADPHONE/HEADSET/MECHANICAL/AVOUT).
+
+> I will separately make the another function to initialize ADC driver.
+
+So you're using an external ADC to measure the current draw on micbias
+as part of your jack sense.  Again, this feels like something that ought
+to be managed along with the rest of the audio code.
