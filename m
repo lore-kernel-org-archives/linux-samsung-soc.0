@@ -1,68 +1,89 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3 1/8] ARM: Samsung: Add register definitions for	Samsung
- S5P SoC camera interface
-Date: Tue, 03 Aug 2010 09:46:53 +0900
-Message-ID: <00e601cb32a5$61f4d8e0$25de8aa0$%kim@samsung.com>
-References: <1279902083-21250-1-git-send-email-s.nawrocki@samsung.com>
- <1279902083-21250-2-git-send-email-s.nawrocki@samsung.com>
- <00ba01cb2c8f$02fc8480$08f58d80$%kim@samsung.com>
- <003001cb322d$fc976b10$f5c64130$%osciak@samsung.com>
- <20100802105216.GD30670@n2100.arm.linux.org.uk>
- <003201cb323b$72f32df0$58d989d0$%osciak@samsung.com>
- <20100802165852.GA6671@n2100.arm.linux.org.uk>
+Subject: RE: Please remind 'WARNING: about Samsung merge window over'
+Date: Tue, 03 Aug 2010 09:53:10 +0900
+Message-ID: <00e701cb32a6$4282cf20$c7886d60$%kim@samsung.com>
+References: <003401cb3206$d68a1fc0$839e5f40$%kim@samsung.com>
+ <AANLkTimJvS0djVprEgCJ8k3_SYeaKc72NMNZNrRpqXHi@mail.gmail.com>
+ <20100802073138.GB10608@n2100.arm.linux.org.uk>
+ <AANLkTim1qtiYzvGKKRDcgt-Wds30qVX27GDMcnquOvBP@mail.gmail.com>
+ <20100802092233.GB30670@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <20100802165852.GA6671@n2100.arm.linux.org.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:23055 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753787Ab0HCAxH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 Aug 2010 20:53:07 -0400
+Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L6J00A9OX4GMR50@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 03 Aug 2010 09:53:04 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L6J00CZ4X4GX0@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 03 Aug 2010 09:53:04 +0900 (KST)
+In-reply-to: <20100802092233.GB30670@n2100.arm.linux.org.uk>
 Content-language: ko
-Sender: linux-media-owner@vger.kernel.org
-To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Pawel Osciak' <p.osciak@samsung.com>
-Cc: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, linux-media@vger.kernel.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Kyungmin Park' <kmpark@infradead.org>
+Cc: linux-samsung-soc@vger.kernel.org, kimty@samsung.com, ben-linux@fluff.org, nala.la@samsung.com, linux-arm-kernel@lists.infradead.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>
 
 Russell King wrote:
 > 
-> On Mon, Aug 02, 2010 at 02:08:42PM +0200, Pawel Osciak wrote:
-> > >Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
-> > >On Mon, Aug 02, 2010 at 12:32:20PM +0200, Pawel Osciak wrote:
-> > >> Well, some of them are indeed unused, but it's not an uncommon
-practice in
-> > >> kernel and might help future developers.
-> > >
-> > >On the other hand, arch/arm is getting soo big that we need to do
-> > >something about this - and one solution is to avoid unnecessary
-> > >definitions that we're not using.
-> > >
-> > >Another good idea is to put definitions along side the drivers which
-> > >they're relevant to - maybe in a local driver-name.h file which
-> > >driver-name.c includes, or maybe even within driver-name.c if they're
-> > >not excessive.  This has the advantage of distributing the "bloat" to
-> > >where its actually used, and means that the driver isn't dependent so
-> > >much on arch/arm or even the SoC itself.
-> > >
-> > >Take a look at arch/arm/mach-vexpress/include/mach/ct-ca9x4.h and
-> > >arch/arm/mach-vexpress/include/mach/motherboard.h - these are the only
-> > >two files which contain platform definitions which are actually used
-> > >for Versatile Express.  Compare that with
-> > >arch/arm/mach-realview/include/mach/platform.h which contains lots
-> > >more...
+> On Mon, Aug 02, 2010 at 05:35:37PM +0900, Kyungmin Park wrote:
+> > As the maintainer, he merged his features freely but others can't get
+> > the chance if the implementation is not fit his taste or company
+> > policy.
 > >
-> > So basically, what you and Mauro are recommending is that we move the
-*.h
-> > file with register definitions to drivers/media?
+> > Look at the example.
+> > [PATCH v2 0/4] ARM: S5P: Support gpio interrupts
+> > http://marc.info/?l=linux-arm-kernel&m=127840208508625&w=2
+> >
+> > We need the gpio interrupt support but he refused it since it used too
+> > many irq. Actually his board don't use this features.
+> > "It is because there are too many gpio interrupts and having support
+> > of all of them is unnecessary as realistically only few of them maybe
+> > used."
 > 
-> What I'm suggesting is what's been pretty standard in Linux for a long
-> time.  Take a look at: drivers/net/3c503.[ch], or for a more recent
-> driver, drivers/net/e1000/*.[ch].  Or drivers/mmc/host/mmci.[ch]
+> From my count, there's already 144 IRQs, and you'll be adding 27*8 = 216
+> additional IRQs to that.  That's quite small compared to some platforms
+> which have in the order of 512 or even 1024 IRQs.
 > 
-I agree with Russell's opinion.
-I don't want to add unnecessary(or unavailable in arch/arm) definitions in
-arch/arm/*/include
+> > And current kernel don't support the sparse irq feature. then it's
+> > reasonable to merge it first and revise it later.
+> 
+> sparse irq support has been queued for almost a month for the merge
+> window which has just this morning opened.  This doesn't help you if
+> you instantiate all your 360 interrupts though - just because you
+> don't _use_ an interrupt which has been declared as existing doesn't
+> reduce the size of the arrays.
+> 
+> > Another why FIMC support is missing? we modified it as his requested
+> > and send it properly.
+> > [PATCH v3 3/8] ARM: Samsung: Add platform definitions and helpers for
+> > http://marc.info/?l=linux-arm-kernel&m=127990218813931&w=2
+> 
+> This looks like it's been missed.  People get busy and miss things on
+> the mailing list, there's nothing special about that.
+> 
+Yeah...actually I missed reply for it...so I requested re-submit v4 patch to
+Marek with some modifying and finished review it just now.
 
-> Putting definitions which are only used by one driver in
-arch/arm/*/include
-> is silly.
+> > [PATCH v3 1/8] ARM: Samsung: Add register definitions for Samsung S5P
+> > http://marc.info/?l=linux-arm-kernel&m=127990218613922&w=2
+> 
+> Kukjin Kim replied to this one with a point requiring an answer, but
+> nothing came back.
+> 
+>    "Looks ok...however, I'm still thinking whether really need all these
+>     definitions."
+> 
+> Seems to be a perfectly reasonable point to raise, and if there's no
+> reply to justify them...
 
 Thanks.
 
