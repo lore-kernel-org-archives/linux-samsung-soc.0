@@ -1,240 +1,177 @@
-From: Kyungmin Park <kyungmin.park@samsung.com>
-Subject: Re: [PATCH v4 3/8] ARM: Samsung: Add platform definitions and helpers
-	for FIMC driver
-Date: Tue, 3 Aug 2010 10:12:05 +0900
-Message-ID: <AANLkTimTVmrFTWrFH5gSnutSDhckU6akYtFwsARgJnK4@mail.gmail.com>
-References: <1279902083-21250-4-git-send-email-s.nawrocki@samsung.com>
-	<1280750229-15732-1-git-send-email-m.szyprowski@samsung.com>
-	<00e101cb329e$a50ceb60$ef26c220$%kim@samsung.com>
-	<AANLkTimJcQccG-H_661bPSz-sQ+L=GYNLd2A3W02wUUP@mail.gmail.com>
-	<00e501cb32a5$5775ed50$0661c7f0$%kim@samsung.com>
-	<AANLkTinuDaOKe1cMTCC+kmZg0dg2y75szDPQaa93gWbn@mail.gmail.com>
-	<00e801cb32a7$fffae0f0$fff0a2d0$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v6 3/3] input: samsung-keypad - Add samsung keypad driver
+Date: Tue, 03 Aug 2010 11:10:32 +0900
+Message-ID: <00ea01cb32b1$115ae1c0$3410a540$%kim@samsung.com>
+References: <4C4688BE.1080409@samsung.com>
+ <20100721080725.GA21373@core.coreip.homeip.net> <4C46B777.9010808@samsung.com>
+ <009501cb28d1$c54c9f00$4fe5dd00$%kim@samsung.com>
+ <4C5636DC.5070703@samsung.com>
+ <019a01cb31f4$226a8aa0$673f9fe0$%kim@samsung.com>
+ <4C564C6A.9040204@samsung.com>
+ <002f01cb3201$5da32480$18e96d80$%kim@samsung.com>
+ <4C565D21.8050506@samsung.com>
+ <003901cb320c$47daa960$d78ffc20$%kim@samsung.com>
+ <20100802075827.GA11903@core.coreip.homeip.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:33438 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752215Ab0HCBMI convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:45306 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751207Ab0HCCKe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Aug 2010 21:12:08 -0400
-Received: by wyb39 with SMTP id 39so3880166wyb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Aug 2010 18:12:06 -0700 (PDT)
-In-Reply-To: <00e801cb32a7$fffae0f0$fff0a2d0$%kim@samsung.com>
+	Mon, 2 Aug 2010 22:10:34 -0400
+In-reply-to: <20100802075827.GA11903@core.coreip.homeip.net>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com, p.osciak@samsung.com, ben-linux@fluff.org
+To: 'Dmitry Torokhov' <dmitry.torokhov@gmail.com>
+Cc: 'Joonyoung Shim' <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org, linux-input@vger.kernel.org, ch.naveen@samsung.com, linux-arm-kernel@lists.infradead.org
 
-On Tue, Aug 3, 2010 at 10:05 AM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> Kyungmin Park wrote:
->>
->> On Tue, Aug 3, 2010 at 9:46 AM, Kukjin Kim <kgene.kim@samsung.com> w=
-rote:
->> > Kyungmin Park wrote:
->> >>
->> >> On Tue, Aug 3, 2010 at 8:58 AM, Kukjin Kim <kgene.kim@samsung.com=
+Dmitry Torokhov wrote:
+> 
+> On Mon, Aug 02, 2010 at 03:30:57PM +0900, Kukjin Kim wrote:
+> > Joonyoung Shim wrote:
+> > >
+> > > On 8/2/2010 2:12 PM, Kukjin Kim wrote:
+> > > > Joonyoung Shim wrote:
+> > > >> On 8/2/2010 12:38 PM, Kukjin Kim wrote:
+> > > >>> Joonyoung Shim wrote:
+> > > >>>> Hi, I came back from vacation.
+> > > >>>>
+> > > >>>>>>>> Do you have any feedback? If ok, i want to go to input tree
+or
+> samsung
+> > > >>>>>>>> tree these added sched.h including.
+> > > >>>>>>> I applied the patch adding samsung-keypad.c and the platform
+data
+> > > >>>>>>> arch/arm/plat-samsung/include/plat/keypad.h and I expect that
+> > > >>>>>>> patches to actually enable keypad will go through appropriate
+> > > >>>>>>> platform tree(s).
+> > > >>>>>>>
+> > > >>>>>> OK, the rest will go through samsung platform tree
+> > > >>>>>>
+> > > >>>>> Ok..will apply.
+> > > >>>>>
+> > > >>>> Kukjin, could you remove keypad.h on the commit "ARM: SAMSUNG:
+> Add
+> > > >>>> keypad device support" of the samsung platform tree. The keypad.h
+file
+> > > >>>> was included on input tree.
+> > > >>>>
+> > > >>
+> > >
 >
-> wrote:
->> >> > Marek Szyprowski wrote:
->> >> >>
->> >> >> From: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> >> >>
->> >> >> FIMC (CAMIF) device is a camera interface embedded in S3C/S5P
-> Samsung
->> >> >> SOC series. It supports ITU-R BT.601/656 and MIPI-CSI2 standar=
-ds,
->> >> >> memory to memory operations, color conversion, resizing and
-> rotation.
->> >> >>
->> >> >> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> >> >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->> >> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> >> >> ---
->> >> >>
->> >> >> This is patch is a v3 version rebased onto latest kgene/for-ne=
-xt
-> tree.
->> >> >> New entries in map.h files has been sorted by the physicall ad=
-dress.
->> >> >>
->> >> > Thanks for your addressing.
->> >> >
->> >> >> I'm resending this patch on behalf of Sylwester who is on holi=
-days
-> this
->> >> >> week.
->> >> >>
->> >> >> Best regards
->> >> >> --
->> >> >> Marek Szyprowski
->> >> >> Samsung Poland R&D Center
->> >> >> ---
->
-> (snip)
->
->> >> >>
->> >> >> diff --git a/arch/arm/mach-s5pc100/include/mach/map.h
-> b/arch/arm/mach-
->> >> >> s5pc100/include/mach/map.h
->> >> >> index c018697..3abe7f5 100644
->> >> >> --- a/arch/arm/mach-s5pc100/include/mach/map.h
->> >> >> +++ b/arch/arm/mach-s5pc100/include/mach/map.h
->> >> >> @@ -99,6 +99,10 @@
->> >> >>
->> >> >> =A0#define S5PC100_PA_FB =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(0xEE0=
-00000)
->> >> >>
->> >> >> +#define S5PC100_PA_FIMC0 =A0 =A0 (0xEE200000)
->> >> >> +#define S5PC100_PA_FIMC1 =A0 =A0 (0xEE300000)
->> >> >> +#define S5PC100_PA_FIMC2 =A0 =A0 (0xEE400000)
->> >> >> +
->> >> >> =A0#define S5PC100_PA_I2S0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(0xF2000=
-000)
->> >> >> =A0#define S5PC100_PA_I2S1 =A0 =A0 =A0 =A0 =A0 =A0 =A0(0xF2100=
-000)
->> >> >> =A0#define S5PC100_PA_I2S2 =A0 =A0 =A0 =A0 =A0 =A0 =A0(0xF2200=
-000)
->> >> >> @@ -143,6 +147,9 @@
->> >> >> =A0#define S3C_PA_ONENAND_BUF =A0 S5PC100_PA_ONENAND_BUF
->> >> >> =A0#define S3C_SZ_ONENAND_BUF =A0 S5PC100_SZ_ONENAND_BUF
->> >> >> =A0#define S3C_PA_RTC =A0 =A0 =A0 =A0 =A0 S5PC100_PA_RTC
->> >> >> +#define S5P_PA_FIMC0 =A0 =A0 =A0 =A0 S5PC100_PA_FIMC0
->> >> >> +#define S5P_PA_FIMC1 =A0 =A0 =A0 =A0 S5PC100_PA_FIMC1
->> >> >> +#define S5P_PA_FIMC2 =A0 =A0 =A0 =A0 S5PC100_PA_FIMC2
->> >> >>
->> >> >> =A0#define SAMSUNG_PA_ADC =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5PC100_=
-PA_TSADC
->> >> >> =A0#define SAMSUNG_PA_CFCON =A0 =A0 S5PC100_PA_CFCON
->> >> >> diff --git a/arch/arm/mach-s5pv210/cpu.c
-> b/arch/arm/mach-s5pv210/cpu.c
->
-> (snip)
->
->> >> >> diff --git a/arch/arm/mach-s5pv210/include/mach/map.h
-> b/arch/arm/mach-
->> >> >> s5pv210/include/mach/map.h
->> >> >> index 986b285..6a07e55 100644
->> >> >> --- a/arch/arm/mach-s5pv210/include/mach/map.h
->> >> >> +++ b/arch/arm/mach-s5pv210/include/mach/map.h
->> >> >> @@ -65,6 +65,10 @@
->> >> >>
->> >> >> =A0#define S5PV210_PA_FB =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(0xF80=
-00000)
->> >> >>
->> >> >> +#define S5PV210_PA_FIMC0 =A0 =A0 (0xFB200000)
->> >> >> +#define S5PV210_PA_FIMC1 =A0 =A0 (0xFB300000)
->> >> >> +#define S5PV210_PA_FIMC2 =A0 =A0 (0xFB400000)
->> >> >> +
->> >> >> =A0#define S5PV210_PA_HSMMC(x) =A0(0xEB000000 + ((x) * 0x10000=
-0))
->> >> >>
->> >> >> =A0#define S5PV210_PA_VIC0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(0xF2000=
-000)
->> >> >> @@ -114,4 +118,8 @@
->> >> >> =A0#define SAMSUNG_PA_CFCON =A0 =A0 S5PV210_PA_CFCON
->> >> >> =A0#define SAMSUNG_PA_KEYPAD =A0 =A0S5PV210_PA_KEYPAD
->> >> >>
->> >> >> +#define S5P_PA_FIMC0 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC0
->> >> >> +#define S5P_PA_FIMC1 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC1
->> >> >> +#define S5P_PA_FIMC2 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC2
->> >> >
->> >> > To use one style is better for reading, merge conflict handling=
- and
-> so
->> > on...
->> >> > The style means to add S5P_PA_XXX after S3C_PA_XXX with C100 ca=
-se or
->> to
->> >> > modify above C100 case like this.
->> >>
->> >> Use the same conversion as previous one. are you okay?
->> >>
->> >> #define S5PV210_PA_VIC0 =A0 =A0 =A0 =A0 (0xF2000000)
->> >> #define S5P_PA_VIC0 =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_VIC0
->> >>
->> >> #define S5PV210_PA_VIC1 =A0 =A0 =A0 =A0 (0xF2100000)
->> >> #define S5P_PA_VIC1 =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_VIC1
->> >>
->> >> #define S5PV210_PA_VIC2 =A0 =A0 =A0 =A0 (0xF2200000)
->> >> #define S5P_PA_VIC2 =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_VIC2
->> >>
->> >> #define S5PV210_PA_VIC3 =A0 =A0 =A0 =A0 (0xF2300000)
->> >> #define S5P_PA_VIC3 =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_VIC3
->> >>
->> >> #define S5PV210_PA_SDRAM =A0 =A0 =A0 =A0(0x30000000)
->> >> #define S5P_PA_SDRAM =A0 =A0 =A0 =A0 =A0 =A0S5PV210_PA_SDRAM
->> >>
->> > No.
->> >
->> > Did you see above C100?
->> >
->> > --- C100
->> >
->> > =A0#define S3C_PA_ONENAND_BUF =A0 =A0 =A0 =A0 =A0 =A0 S5PC100_PA_O=
-NENAND_BUF
->> > =A0#define S3C_SZ_ONENAND_BUF =A0 =A0 =A0 =A0 =A0 =A0 S5PC100_SZ_O=
-NENAND_BUF
->> > =A0#define S3C_PA_RTC =A0 =A0 =A0 =A0 =A0 =A0 S5PC100_PA_RTC
->> > +#define S5P_PA_FIMC0 =A0 =A0 =A0 =A0 =A0 S5PC100_PA_FIMC0
->> > +#define S5P_PA_FIMC1 =A0 =A0 =A0 =A0 =A0 S5PC100_PA_FIMC1
->> > +#define S5P_PA_FIMC2 =A0 =A0 =A0 =A0 =A0 S5PC100_PA_FIMC2
->> >
->> > =A0#define SAMSUNG_PA_ADC =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5PC100_PA_T=
-SADC
->> > =A0#define SAMSUNG_PA_CFCON =A0 =A0 S5PC100_PA_CFCON
->> >
->> > --- V210
->> >
->> > =A0#define SAMSUNG_PA_CFCON =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA=
-_CFCON
->> > =A0#define SAMSUNG_PA_KEYPAD =A0 =A0 =A0 =A0 =A0 =A0 =A0S5PV210_PA=
-_KEYPAD
->> >
->> > +#define S5P_PA_FIMC0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC0
->> > +#define S5P_PA_FIMC1 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC1
->> > +#define S5P_PA_FIMC2 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC2
->> >
->> > I mean it's just ordering.
->>
->> Yes I also mean it don't separate the related definitions. so place
->> adjacent as the the previous.
->>
-> No...maybe you misunderstood...hmm :-(
-> Please add in map.h of V210 like following.
-
-Then please also apply the same rules at existing definitions.
-
->
-> @@ -110,6 +110,10 @@
-> =A0#define S3C_PA_RTC =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_RTC
-> =A0#define S3C_PA_WDT =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_WATCHDOG
->
-> +#define S5P_PA_FIMC0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC0
-> +#define S5P_PA_FIMC1 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC1
-> +#define S5P_PA_FIMC2 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_FIMC2
-> +
-> =A0#define SAMSUNG_PA_ADC =A0 =A0 =A0 =A0 S5PV210_PA_ADC
-> =A0#define SAMSUNG_PA_CFCON =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_CF=
-CON
-> =A0#define SAMSUNG_PA_KEYPAD =A0 =A0 =A0 =A0 =A0 =A0 =A0S5PV210_PA_KE=
-YPAD
->
-> (snip)
->
+(http://git.kernel.org/?p=linux/kernel/git/dtor/input.git;a=commit;h=0fffed2
+7f92d9d7
+> > > >>>> a34de9fe017b7082b5958bb93)
+> > > >>> You mean in plat-samsung/dev-keypad.c?
+> > > >>> If remove inclusion plat/keypad.h in there, following build error
+happens.
+> > > >>>
+> > > >> No. I mean to remove arch/arm/plat-samsung/include/plat/keypad.h
+file on
+> > > >> samsung platform tree, it was applied on input tree already. If
+needs, i
+> > > >> can repost.
+> > > >>
+> > > > If it is not small change like to remove a file in a patch, I think
+should be re-
+> > > submitted.
+> > > > Will drop your previous patch in my tree.
+> > > >
+> > > >>> arch/arm/plat-samsung/dev-keypad.c:41: warning: 'struct
+> > > >> samsung_keypad_platdata' declared inside parameter list
+> > > >>> arch/arm/plat-samsung/dev-keypad.c:41: warning: its scope is only
+this
+> > > definition
+> > > >> or declaration, which is probably not what you want
+> > > >>> arch/arm/plat-samsung/dev-keypad.c: In function
+> > > >> 'samsung_keypad_set_platdata':
+> > > >>> arch/arm/plat-samsung/dev-keypad.c:50: error: invalid application
+of
+> 'sizeof'
+> > > to
+> > > >> incomplete type 'struct samsung_keypad_platdata'
+> > > >>> arch/arm/plat-samsung/dev-keypad.c:54: error: dereferencing
+pointer to
+> > > >> incomplete type
+> > > >>> arch/arm/plat-samsung/dev-keypad.c:55: error: dereferencing
+pointer to
+> > > >> incomplete type
+> > > >>> arch/arm/plat-samsung/dev-keypad.c:55: error:
+> 'samsung_keypad_cfg_gpio'
+> > > >> undeclared (first use in this function)
+> > > >>> arch/arm/plat-samsung/dev-keypad.c:55: error: (Each undeclared
+identifier
+> is
+> > > >> reported only once
+> > > >>> arch/arm/plat-samsung/dev-keypad.c:55: error: for each function it
+> appears in.)
+> > > >>> make[1]: *** [arch/arm/plat-samsung/dev-keypad.o] Error 1
+> > > >>>
+> > > >>> As you know, released 35 today. So we have no much time for this
+merge
+> > > >> window.
+> > > >> I'm not sure about merge rule, but I think the compile problem can
+be
+> > > >> solved by merge to 36 of input tree and samsung platform tree.
+> > > >
+> > > > Hmm...actually, already informed about that on linux-next.
+> > > > If it's just build problem, I or Dmitry can fix it. However, this is
+not just that.
+> > > > I cannot understand how your 'plat/keypad.h' was included to both of
+patch.
+> > >
+> > > Please see the prior mail history. The keypad.h file is included only
+at
+> > > the 1/3 patch in the original patch set, but Dmitry applied the 3/3
+> > > patch modified with keypad.h.
+> > >
+> > > The basic problem is that each patches be applied on two tree. It
+makes
+> > > compile errors at the one tree lacking keypad.h file because both tree
+> > > share keypad.h file.
+> > >
+> > > There are two solutions, First, all patches go to one tree. Second, we
+> > > wait for merging to 36 of both tree then apply platform patches.
+> > >
+> > > > And I'm not sure, should be 'plat/keypad.h' in which tree...
+> > > >
+> >
+> > Hi Dmitry,
+> >
+> > How can/should I do for it?...Which way is better to us? :-)
+> >
+> >
+> > Joonyoung,
+> > Let's wait for Dmitry's reply.
+> > I will holding drop your previous patch in my tree till that time.
+> >
+> 
+> Kgene,
+> 
+> I will be sending pull request to Linus in the next day or so, so it
+> will have plat/keypad.h as it is in my tree. Once you merge (with his or
+> mine) you have an option to patching the plat/keypad.h with hooks that I
+> removed, although I would prefer if you changed the way you initialize
+> your devices since having the these hooks defeats the purpose of having
+> config pointer in platform data. Another option would be to have a
+> separate include file for the hooks, one that
+> drivers/input/keyboard/samsung-keypad.c does not use.
+> 
 > Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+> 
+Hi Dmitry,
+
+Hmm...I saw your pull request to Linus...ok...will replace new one which
+don't have duplicate 'plat/keypad.h' in my tree.
+But..in this case, I'm not sure which way is better to us...
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
