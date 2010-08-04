@@ -1,32 +1,28 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v6 5/7] ARM: S5PV210: Access for DMCx registers
-Date: Wed, 04 Aug 2010 20:17:50 +0900
-Message-ID: <001901cb33c6$b05542f0$10ffc8d0$%kim@samsung.com>
+Subject: RE: [PATCH v6 1/7] ARM: S5PV210: Allow to probe EVT revision number.
+Date: Wed, 04 Aug 2010 20:29:13 +0900
+Message-ID: <001a01cb33c8$46f44340$d4dcc9c0$%kim@samsung.com>
 References: <1280829866-26001-1-git-send-email-myungjoo.ham@samsung.com>
  <1280829866-26001-2-git-send-email-myungjoo.ham@samsung.com>
- <1280829866-26001-3-git-send-email-myungjoo.ham@samsung.com>
- <1280829866-26001-4-git-send-email-myungjoo.ham@samsung.com>
- <1280829866-26001-5-git-send-email-myungjoo.ham@samsung.com>
- <1280829866-26001-6-git-send-email-myungjoo.ham@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:62146 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757111Ab0HDLRq (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:10925 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755789Ab0HDL3H (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Aug 2010 07:17:46 -0400
-Received: from epmmp2 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Wed, 4 Aug 2010 07:29:07 -0400
+Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L6M004Q2KPJ9J00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 04 Aug 2010 20:17:43 +0900 (KST)
+ with ESMTP id <0L6M00MX6L8HBZ00@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 04 Aug 2010 20:29:05 +0900 (KST)
 Received: from kgenekim ([12.23.103.96])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L6M00AM4KPJS7@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 04 Aug 2010 20:17:44 +0900 (KST)
-In-reply-to: <1280829866-26001-6-git-send-email-myungjoo.ham@samsung.com>
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L6M0012JL8H5W@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 04 Aug 2010 20:29:05 +0900 (KST)
+In-reply-to: <1280829866-26001-2-git-send-email-myungjoo.ham@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -35,66 +31,185 @@ Cc: kyungmin.park@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org, linu
 
 MyungJoo Ham wrote:
 > 
-> 	The CPUFREQ driver requires an access to DMCx registers. We
-> define physical addresses and mapping between physical and virtual
-> addresses of DMCx registers.
+> Early products of S5PV210, EVT0, had several errata that require
+> kernel to avoid using some parts/instructions of the CPU or to
+> add protection instructions. There are products with such early
+> production CPUs; thus, we want to distinguish them in kernel.
+> This patch is to distinguish such products.
 > 
+> Include <mach/hardware.h> and call s5pv210_revision().
+> 
+> For example,
+> 
+> 	if (s5pv210_revision(EVT0)) {
+> 		... execute code targeted only to EVT0 ...
+> 	} else {
+> 		... execute normal code ...
+> 	}
+> 
+> Call set_s5pv210_revision(EVTx) when the EVT revision number can be
+> identified. We have EVT0, EVT1, and EVT1-Fused avaialble right now and
+> only EVT1-Fused has the unique revision number at chipid (PRO_ID
+> register). A function, get_s5pv210_revision_chipid(), returns EVT
+> revision number if the revision is identified by the chipid; otherwise,
+> the function returns EVT_UNKNOWN. When EVT cannot be identified with
+> chipid, it can be identified at board support file
+> (arch/arm/mach-s5pv210/mach-*.c), not at the cpu file
+> (arch/arm/mach-s5pv210/cpu.c).
+> 
+> For Aquila machine. (mach-aquila.c)
+> 
+> Part of Aquila machines have the early production CPUs that require
+> to address errata issues. Note that we don't do this for GONI machines
+> because they have never used early production CPUs with errata. Besides,
+> please note that there are other boards that use such early produces
+> other than Aquila. However, those boards/machines are not registered at
+> the /linux/arch/arm/tools/mach-types, yet; thus, we have omitted them
+> in this patch.
+> 
+> For Goni machine. (mach-goni.c)
+> 
+> It's either EVT1 or EVT1-Fused; thus, it can be identified by
+> get_s5pv210_revision_chipid() function.
+> 
+I think, your commit description(message) need to update with your changes.
+
 > Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> --
+> v5 updates:
+> 	- rename revision check function.
+> 	- revise revision check functions so that it does not access
+> 	  board-related information.
+> 	- chipid is used to identify EVT revision.
+> 	- added "s5pv210_revision_or_later()" function
+> v6 updates:
+> 	- removed consideration for EVT1-FUSED
+> 
 > ---
->  arch/arm/mach-s5pv210/cpu.c              |   12 +++++++++++-
->  arch/arm/mach-s5pv210/include/mach/map.h |    4 ++++
->  2 files changed, 15 insertions(+), 1 deletions(-)
+>  arch/arm/mach-s5pv210/cpu.c                   |   13 +++++++++++++
+>  arch/arm/mach-s5pv210/include/mach/hardware.h |   12 +++++++++++-
+>  arch/arm/mach-s5pv210/mach-aquila.c           |    9 +++++++++
+>  arch/arm/mach-s5pv210/mach-goni.c             |    3 +++
+>  4 files changed, 36 insertions(+), 1 deletions(-)
 > 
 > diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
-> index 74d4c08..2066695 100644
+> index 94c632b..74d4c08 100644
 > --- a/arch/arm/mach-s5pv210/cpu.c
 > +++ b/arch/arm/mach-s5pv210/cpu.c
-> @@ -60,7 +60,17 @@ static struct map_desc s5pv210_iodesc[] __initdata = {
->  		.pfn		= __phys_to_pfn(S5PV210_PA_SROMC),
->  		.length		= SZ_4K,
->  		.type		= MT_DEVICE,
-> -	}
-> +	}, {
-> +		.virtual	= (unsigned long)S5P_VA_DMC0,
-> +		.pfn		= __phys_to_pfn(S5PV210_PA_DMC0),
-> +		.length		= SZ_4K,
-> +		.type		= MT_DEVICE,
-> +	}, {
-> +		.virtual	= (unsigned long)S5P_VA_DMC1,
-> +		.pfn		= __phys_to_pfn(S5PV210_PA_DMC1),
-> +		.length		= SZ_4K,
-> +		.type		= MT_DEVICE,
-> +	},
+> @@ -27,6 +27,7 @@
+>  #include <asm/proc-fns.h>
+>  #include <mach/map.h>
+>  #include <mach/regs-clock.h>
+> +#include <mach/hardware.h>
+> 
+>  #include <plat/cpu.h>
+>  #include <plat/devs.h>
+> @@ -128,6 +129,18 @@ static struct sys_device s5pv210_sysdev = {
+>  	.cls	= &s5pv210_sysclass,
 >  };
 > 
->  static void s5pv210_idle(void)
-> diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-
-> s5pv210/include/mach/map.h
-> index 17687f0..daf6456 100644
-> --- a/arch/arm/mach-s5pv210/include/mach/map.h
-> +++ b/arch/arm/mach-s5pv210/include/mach/map.h
-> @@ -108,4 +108,8 @@
->  #define SAMSUNG_PA_ADC		S5PV210_PA_ADC
->  #define SAMSUNG_PA_KEYPAD	S5PV210_PA_KEYPAD
-> 
-> +/* DMC */
-
-No need an obvious comment like above...
-
-> +#define S5PV210_PA_DMC0		(0xF0000000)
-> +#define S5PV210_PA_DMC1		(0xF1400000)
-
-As I said, if you need adding new definition into the mach/map.h, please
-keep the address order like others.
-It can help to us for easily reading...
-
+> +static bool s5pv210_evt0;
 > +
->  #endif /* __ASM_ARCH_MAP_H */
-> --
+> +bool s5pv210_revision_evt0(void)
+> +{
+> +	return s5pv210_evt0 == true;
+> +}
+> +
+> +void set_s5pv210_revision_evt0(bool evt0)
+> +{
+> +	s5pv210_evt0 = evt0;
+> +}
+> +
 
-And as I commented, to merge your 4th(previous, just adding VA) and 5th
-patch to one is better...just for adding DMC map IO.
+I'm not sure we _really_ need above functions...just one of extern variable
+such as 's5pv210_evt_version' can handle this functionality...?
+
+>  static int __init s5pv210_core_init(void)
+>  {
+>  	return sysdev_class_register(&s5pv210_sysclass);
+> diff --git a/arch/arm/mach-s5pv210/include/mach/hardware.h
+b/arch/arm/mach-
+> s5pv210/include/mach/hardware.h
+> index fada7a3..fa50868 100644
+> --- a/arch/arm/mach-s5pv210/include/mach/hardware.h
+> +++ b/arch/arm/mach-s5pv210/include/mach/hardware.h
+> @@ -13,6 +13,16 @@
+>  #ifndef __ASM_ARCH_HARDWARE_H
+>  #define __ASM_ARCH_HARDWARE_H __FILE__
+> 
+> -/* currently nothing here, placeholder */
+> +extern bool s5pv210_revision_evt0(void);
+> +extern void set_s5pv210_revision_evt0(bool);
+> +
+> +/*
+> + * get_s5pv210_revision_chipid returns s5pv210_revision if the
+> + * EVT revision can be determined by the chipid(PRO_ID) register.
+> + * However, note that only EVT1-FUSED can be identified from it and
+> + * it cannot distinguish between EVT0 and EVT1. In such case, it
+> + * returns EVT_UNKNOWN. In such case use set_s5pv210_revision() to
+> + * set the revision number manually.
+> + */
+> 
+>  #endif /* __ASM_ARCH_HARDWARE_H */
+> diff --git a/arch/arm/mach-s5pv210/mach-aquila.c
+b/arch/arm/mach-s5pv210/mach-
+> aquila.c
+> index 46d5c7e..6a8deaa 100644
+> --- a/arch/arm/mach-s5pv210/mach-aquila.c
+> +++ b/arch/arm/mach-s5pv210/mach-aquila.c
+> @@ -30,6 +30,7 @@
+>  #include <mach/regs-clock.h>
+>  #include <mach/regs-fb.h>
+>  #include <mach/gpio.h>
+> +#include <mach/hardware.h>
+> 
+>  #include <plat/gpio-cfg.h>
+>  #include <plat/regs-serial.h>
+> @@ -536,6 +537,14 @@ static void __init aquila_map_io(void)
+> 
+>  static void __init aquila_machine_init(void)
+>  {
+> +	/* CPU Revision (EVTx) */
+> +	set_s5pv210_revision_evt0(false);
+> +	if (system_rev & 0x0800) {
+> +		if ((system_rev & 0xF) < 8)
+
+...
+
+> +			set_s5pv210_revision_evt0(true);
+> +	} else if (system_rev & 0x2000)
+> +		set_s5pv210_revision_evt0(true);
+> +
+>  	/* PMIC */
+>  	aquila_pmic_init();
+>  	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4,
+> i2c_gpio_pmic_devs,
+> diff --git a/arch/arm/mach-s5pv210/mach-goni.c
+b/arch/arm/mach-s5pv210/mach-
+> goni.c
+> index 380d2ae..08ee3f6 100644
+> --- a/arch/arm/mach-s5pv210/mach-goni.c
+> +++ b/arch/arm/mach-s5pv210/mach-goni.c
+> @@ -32,6 +32,7 @@
+>  #include <mach/regs-clock.h>
+>  #include <mach/regs-fb.h>
+>  #include <mach/gpio.h>
+> +#include <mach/hardware.h>
+> 
+>  #include <plat/gpio-cfg.h>
+>  #include <plat/regs-serial.h>
+> @@ -520,6 +521,8 @@ static void __init goni_map_io(void)
+> 
+>  static void __init goni_machine_init(void)
+>  {
+> +	set_s5pv210_revision_evt0(false);
+> +
+>  	/* PMIC */
+>  	goni_pmic_init();
+>  	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4,
+> i2c_gpio_pmic_devs,
+> --
 
 
 Thanks.
