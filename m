@@ -1,129 +1,50 @@
-From: Kyungmin Park <kyungmin.park@samsung.com>
-Subject: Re: [PATCH v6 5/7] ARM: S5PV210: Access for DMCx registers
-Date: Wed, 4 Aug 2010 22:36:21 +0900
-Message-ID: <AANLkTinrOPuQUn63gh1owfEgYBRZ8J=COVkPBp_VtBm4@mail.gmail.com>
-References: <1280829866-26001-1-git-send-email-myungjoo.ham@samsung.com>
-	<1280829866-26001-2-git-send-email-myungjoo.ham@samsung.com>
-	<1280829866-26001-3-git-send-email-myungjoo.ham@samsung.com>
-	<1280829866-26001-4-git-send-email-myungjoo.ham@samsung.com>
-	<1280829866-26001-5-git-send-email-myungjoo.ham@samsung.com>
-	<1280829866-26001-6-git-send-email-myungjoo.ham@samsung.com>
-	<001901cb33c6$b05542f0$10ffc8d0$%kim@samsung.com>
+From: Ben Dooks <ben@simtec.co.uk>
+Subject: Re: [PATCH v3 3/3] ARM: SAMSUNG: i2c/busses: Add HAVE_S3C2410_I2C
+ 	option to include I2C for Samsung SoCs
+Date: Wed, 04 Aug 2010 16:03:13 +0100
+Message-ID: <4C598131.3050705@simtec.co.uk>
+References: <1280396565-21014-1-git-send-email-kgene.kim@samsung.com> <AANLkTikyOUyz+sNPgBvWU8FvYa8HvgRY4P2udhMY=eOw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-px0-f174.google.com ([209.85.212.174]:51443 "EHLO
-	mail-px0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932656Ab0HDNgV convert rfc822-to-8bit (ORCPT
+Received: from hull.simtec.co.uk ([78.105.113.97]:41309 "EHLO
+	preston.local.simtec.co.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S932993Ab0HDPDx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Aug 2010 09:36:21 -0400
-Received: by pxi14 with SMTP id 14so1976049pxi.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Aug 2010 06:36:21 -0700 (PDT)
-In-Reply-To: <001901cb33c6$b05542f0$10ffc8d0$%kim@samsung.com>
+	Wed, 4 Aug 2010 11:03:53 -0400
+In-Reply-To: <AANLkTikyOUyz+sNPgBvWU8FvYa8HvgRY4P2udhMY=eOw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, linux-arm-kernel@lists.infradead.org, myungjoo.ham@gmail.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Kyungmin Park <kmpark@infradead.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Naveen Krishna Ch <ch.naveen@samsung.com>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Wed, Aug 4, 2010 at 8:17 PM, Kukjin Kim <kgene.kim@samsung.com> wrot=
-e:
-> MyungJoo Ham wrote:
+On 30/07/10 01:22, Kyungmin Park wrote:
+> On Thu, Jul 29, 2010 at 6:42 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>> From: Naveen Krishna Ch <ch.naveen@samsung.com>
 >>
->> =A0 =A0 =A0 The CPUFREQ driver requires an access to DMCx registers.=
- We
->> define physical addresses and mapping between physical and virtual
->> addresses of DMCx registers.
->>
->> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
->> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->> =A0arch/arm/mach-s5pv210/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 12 +=
-++++++++++-
->> =A0arch/arm/mach-s5pv210/include/mach/map.h | =A0 =A04 ++++
->> =A02 files changed, 15 insertions(+), 1 deletions(-)
->>
->> diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu=
-=2Ec
->> index 74d4c08..2066695 100644
->> --- a/arch/arm/mach-s5pv210/cpu.c
->> +++ b/arch/arm/mach-s5pv210/cpu.c
->> @@ -60,7 +60,17 @@ static struct map_desc s5pv210_iodesc[] __initdat=
-a =3D {
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_t=
-o_pfn(S5PV210_PA_SROMC),
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_4K,
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVICE,
->> - =A0 =A0 }
->> + =A0 =A0 }, {
->> + =A0 =A0 =A0 =A0 =A0 =A0 .virtual =A0 =A0 =A0 =A0=3D (unsigned long=
-)S5P_VA_DMC0,
->> + =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_to_=
-pfn(S5PV210_PA_DMC0),
->> + =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_4K,
->> + =A0 =A0 =A0 =A0 =A0 =A0 .type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVICE,
->> + =A0 =A0 }, {
->> + =A0 =A0 =A0 =A0 =A0 =A0 .virtual =A0 =A0 =A0 =A0=3D (unsigned long=
-)S5P_VA_DMC1,
->> + =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_to_=
-pfn(S5PV210_PA_DMC1),
->> + =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_4K,
->> + =A0 =A0 =A0 =A0 =A0 =A0 .type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVICE,
->> + =A0 =A0 },
->> =A0};
->>
->> =A0static void s5pv210_idle(void)
->> diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mac=
-h-
->> s5pv210/include/mach/map.h
->> index 17687f0..daf6456 100644
->> --- a/arch/arm/mach-s5pv210/include/mach/map.h
->> +++ b/arch/arm/mach-s5pv210/include/mach/map.h
->> @@ -108,4 +108,8 @@
->> =A0#define SAMSUNG_PA_ADC =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_ADC
->> =A0#define SAMSUNG_PA_KEYPAD =A0 =A0S5PV210_PA_KEYPAD
->>
->> +/* DMC */
->
-> No need an obvious comment like above...
->
->> +#define S5PV210_PA_DMC0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(0xF0000000)
->> +#define S5PV210_PA_DMC1 =A0 =A0 =A0 =A0 =A0 =A0 =A0(0xF1400000)
->
-> As I said, if you need adding new definition into the mach/map.h, ple=
-ase
-> keep the address order like others.
-> It can help to us for easily reading...
+>> This patch adds HAVE_S3C2410_I2C to control inclusion of I2C bus driver
+>> on Samsung SoCs and makes I2C bus driver dependency SoC specific instead
+>> of machine specific. This will enalbe all machines using Samsung ARCH_S3C2410,
+>> _S3C64XX, _S5P6440, _S5PC100, and _S5PV210 to select the I2C driver by default
+> 
+> What's the different from use PLAT_SAMSUNG?
+> 
+> config I2C_S3C2410
+>         tristate "S3C2410 I2C Driver"
+>         depends on PLAT_SAMSUNG
+> 
+> Please don't populate the Kconfigs.
 
-Good, good, good,
+For things that are pretty common among all the Samsung architectures
+such as the i2c, rtc and serial ports that we use PLAT_SAMSUNG, as these
+drivers tend to compile and do not go wrong when loaded onto newer
+systems (either the device name is changed, so if there is no support
+then the driver will not bind, or someone didn't change the name in the
+soc support and it should only be a transitory bug during development).
 
-I'm really appreciate it if the same rules apply to LSI internal trees.
-I hope you check it LSI codes also.
+I'm going to spend some time thinking about the current Kconfig setup
+to see if there is any improvements can be done.
 
-Thank you,
-Kyungmin Park
-
->
->> +
->> =A0#endif /* __ASM_ARCH_MAP_H */
->> --
->
-> And as I commented, to merge your 4th(previous, just adding VA) and 5=
-th
-> patch to one is better...just for adding DMC map IO.
->
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+-- 
+Ben
