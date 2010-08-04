@@ -1,27 +1,27 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S5PV210: Add SDHCI devices for Aquila board
-Date: Wed, 04 Aug 2010 19:56:48 +0900
-Message-ID: <001701cb33c3$c0a72590$41f570b0$%kim@samsung.com>
-References: <1279896407-29571-1-git-send-email-m.szyprowski@samsung.com>
+Subject: RE: [PATCH] ARM: S5PV210: Add SDHCI devices for GONI board
+Date: Wed, 04 Aug 2010 20:02:10 +0900
+Message-ID: <001801cb33c4$7febd680$7fc38380$%kim@samsung.com>
+References: <1279896420-29642-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:47161 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757406Ab0HDK4o (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:62351 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751351Ab0HDLCG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Aug 2010 06:56:44 -0400
-Received: from epmmp2 (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Wed, 4 Aug 2010 07:02:06 -0400
+Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L6M002OKJQIA430@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 04 Aug 2010 19:56:42 +0900 (KST)
+ with ESMTP id <0L6M00M5ZJZFC300@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 04 Aug 2010 20:02:03 +0900 (KST)
 Received: from kgenekim ([12.23.103.96])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L6M009Y3JQIS5@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 04 Aug 2010 19:56:42 +0900 (KST)
-In-reply-to: <1279896407-29571-1-git-send-email-m.szyprowski@samsung.com>
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L6M00MAVJZFZT@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 04 Aug 2010 20:02:03 +0900 (KST)
+In-reply-to: <1279896420-29642-1-git-send-email-m.szyprowski@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -30,7 +30,7 @@ Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
 
 Marek Szyprowski wrote:
 > 
-> This patch add support for SDHCI blocks on Samsung Aquila board. The
+> This patch add support for SDHCI blocks on Samsung Goni board. The
 > following host controllers are defined:
 > 1. Internal MoviNAND device (permanently wired to the controller)
 > 2. Internal WiFI SDIO device (card is activated by power regualor)
@@ -40,16 +40,16 @@ Marek Szyprowski wrote:
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  arch/arm/mach-s5pv210/Kconfig       |    4 +++
->  arch/arm/mach-s5pv210/mach-aquila.c |   39
-> +++++++++++++++++++++++++++++++++++
+>  arch/arm/mach-s5pv210/Kconfig     |    4 +++
+>  arch/arm/mach-s5pv210/mach-goni.c |   39
+> +++++++++++++++++++++++++++++++++++++
 >  2 files changed, 43 insertions(+), 0 deletions(-)
 > 
 > diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-> index 12a2c6b..c64dff1 100644
+> index c64dff1..13e0690 100644
 > --- a/arch/arm/mach-s5pv210/Kconfig
 > +++ b/arch/arm/mach-s5pv210/Kconfig
-> @@ -60,8 +60,12 @@ config MACH_AQUILA
+> @@ -74,8 +74,12 @@ config MACH_GONI
 >  	select CPU_S5PV210
 >  	select ARCH_SPARSEMEM_ENABLE
 >  	select S5PV210_SETUP_FB_24BPP
@@ -60,15 +60,14 @@ Marek Szyprowski wrote:
 > +	select S3C_DEV_HSMMC1
 > +	select S3C_DEV_HSMMC2
 >  	help
->  	  Machine support for the Samsung Aquila target based on S5PC110
-> SoC
-> 
-> diff --git a/arch/arm/mach-s5pv210/mach-aquila.c
+>  	  Machine support for Samsung GONI board
+>  	  S5PC110(MCP) is one of package option of S5PV210
+> diff --git a/arch/arm/mach-s5pv210/mach-goni.c
 b/arch/arm/mach-s5pv210/mach-
-> aquila.c
-> index 0992618..a1f8d07 100644
-> --- a/arch/arm/mach-s5pv210/mach-aquila.c
-> +++ b/arch/arm/mach-s5pv210/mach-aquila.c
+> goni.c
+> index 7b18505..e374b34 100644
+> --- a/arch/arm/mach-s5pv210/mach-goni.c
+> +++ b/arch/arm/mach-s5pv210/mach-goni.c
 > @@ -35,6 +35,7 @@
 >  #include <plat/devs.h>
 >  #include <plat/cpu.h>
@@ -78,66 +77,71 @@ b/arch/arm/mach-s5pv210/mach-
 >  /* Following are default values for UCON, ULCON and UFCON UART registers
 */
 >  #define S5PV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-> @@ -440,11 +441,47 @@ static void __init aquila_pmic_init(void)
+> @@ -420,12 +421,47 @@ static void __init goni_pmic_init(void)
 >  	s3c_gpio_setpull(S5PV210_GPH2(6), S3C_GPIO_PULL_UP);
 >  }
 > 
 > +/* MoviNAND */
-> +static struct s3c_sdhci_platdata aquila_hsmmc0_data __initdata = {
+> +static struct s3c_sdhci_platdata goni_hsmmc0_data __initdata = {
 > +	.max_width		= 4,
 > +	.cd_type		= S3C_SDHCI_CD_PERMANENT,
 > +};
 > +
 > +/* Wireless LAN */
-> +static struct s3c_sdhci_platdata aquila_hsmmc1_data __initdata = {
+> +static struct s3c_sdhci_platdata goni_hsmmc1_data __initdata = {
 > +	.max_width		= 4,
 > +	.cd_type		= S3C_SDHCI_CD_EXTERNAL,
 > +	/* ext_cd_{init,cleanup} callbacks will be added later */
 > +};
 > +
 > +/* External Flash */
-> +#define AQUILA_EXT_FLASH_EN	S5PV210_MP05(4)
-> +#define AQUILA_EXT_FLASH_CD	S5PV210_GPH3(4)
-> +static struct s3c_sdhci_platdata aquila_hsmmc2_data __initdata = {
+> +#define GONI_EXT_FLASH_EN	S5PV210_MP05(4)
+> +#define GONI_EXT_FLASH_CD	S5PV210_GPH3(4)
+> +static struct s3c_sdhci_platdata goni_hsmmc2_data __initdata = {
 > +	.max_width		= 4,
 > +	.cd_type		= S3C_SDHCI_CD_GPIO,
-> +	.ext_cd_gpio		= AQUILA_EXT_FLASH_CD,
+> +	.ext_cd_gpio		= GONI_EXT_FLASH_CD,
 > +	.ext_cd_gpio_invert	= 1,
 > +};
 > +
-> +static void aquila_setup_sdhci(void)
+> +static void goni_setup_sdhci(void)
 > +{
-> +	gpio_request(AQUILA_EXT_FLASH_EN, "FLASH_EN");
-> +	gpio_direction_output(AQUILA_EXT_FLASH_EN, 1);
+> +	gpio_request(GONI_EXT_FLASH_EN, "FLASH_EN");
+> +	gpio_direction_output(GONI_EXT_FLASH_EN, 1);
 > +
-> +	s3c_sdhci0_set_platdata(&aquila_hsmmc0_data);
-> +	s3c_sdhci1_set_platdata(&aquila_hsmmc1_data);
-> +	s3c_sdhci2_set_platdata(&aquila_hsmmc2_data);
+> +	s3c_sdhci0_set_platdata(&goni_hsmmc0_data);
+> +	s3c_sdhci1_set_platdata(&goni_hsmmc1_data);
+> +	s3c_sdhci2_set_platdata(&goni_hsmmc2_data);
 > +};
-> +
->  static struct platform_device *aquila_devices[] __initdata = {
->  	&aquila_i2c_gpio_pmic,
->  	&aquila_device_gpiokeys,
+> 
+>  static struct platform_device *goni_devices[] __initdata = {
 >  	&s3c_device_fb,
 >  	&s5pc110_device_onenand,
+>  	&goni_i2c_gpio_pmic,
+>  	&goni_device_gpiokeys,
 > +	&s3c_device_hsmmc0,
 > +	&s3c_device_hsmmc1,
 > +	&s3c_device_hsmmc2,
 >  };
 > 
->  static void __init aquila_map_io(void)
-> @@ -460,6 +497,8 @@ static void __init aquila_machine_init(void)
->  	aquila_pmic_init();
+>  static void __init goni_map_io(void)
+> @@ -441,6 +477,9 @@ static void __init goni_machine_init(void)
+>  	goni_pmic_init();
 >  	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4,
 > i2c_gpio_pmic_devs,
 >  			ARRAY_SIZE(i2c_gpio_pmic_devs));
 > +	/* SDHCI */
-> +	aquila_setup_sdhci();
-> 
+> +	goni_setup_sdhci();
+> +
 >  	/* FB */
->  	s3c_fb_set_platdata(&aquila_lcd_pdata);
+>  	s3c_fb_set_platdata(&goni_lcd_pdata);
+> 
 > --
-Looks ok..will apply.
+Hmm...as you know, this is same patch with previous Aquila SDHCI except only
+name.
+In future, we need to sort out about that.
+
+Anyway, will apply.
 
 Thanks.
 
