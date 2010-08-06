@@ -1,193 +1,161 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: SAMSUNG: Add keypad device support
-Date: Fri, 06 Aug 2010 17:21:33 +0900
-Message-ID: <008c01cb3540$645a7520$2d0f5f60$%kim@samsung.com>
-References: <1281072625-21079-1-git-send-email-jy0922.shim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Subject: [PATCH v3] ARM: S5PV310: Add Samsung UNIVERSAL_C210 support
+Date: Fri,  6 Aug 2010 20:41:13 +0900
+Message-ID: <1281094873-11679-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:34649 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932936Ab0HFIV2 (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:34185 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761278Ab0HFLyp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Aug 2010 04:21:28 -0400
-Received: from epmmp2 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L6Q00DUM1VPPE10@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 06 Aug 2010 17:21:25 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L6Q00D7D1VPDG@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 06 Aug 2010 17:21:26 +0900 (KST)
-In-reply-to: <1281072625-21079-1-git-send-email-jy0922.shim@samsung.com>
-Content-language: ko
+	Fri, 6 Aug 2010 07:54:45 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Joonyoung Shim' <jy0922.shim@samsung.com>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Joonyoung Shim wrote:
-> 
-> This patch adds samsung keypad device definition for samsung cpus.
-> 
-> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
-> This patch is to add samsung keypad device. It is updated single version
-> of previous patch "[PATCH v6 1/3] ARM: SAMSUNG: Add keypad device
-> support".
+From: Kyungmin Park <kyungmin.park@samsung.com>
 
-Ok, this is better...will replace an old one with this.
+This patch adds Samsung Mobile S5PC210 Reference Board, UNIVERSAL_C210 board
+support.
 
-Thanks.
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+[kgene.kim@samsung.com: changed machine name]
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+Changes since v2:
+- Changed machine name from 'UNIVERSAL' to 'UNIVERSAL_C210'
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Changes since v1:
+- Changed default UFCON tx/rx trigger level.
 
-> 
->  arch/arm/plat-samsung/Kconfig               |    5 +++
->  arch/arm/plat-samsung/Makefile              |    1 +
->  arch/arm/plat-samsung/dev-keypad.c          |   50
-> +++++++++++++++++++++++++++
->  arch/arm/plat-samsung/include/plat/devs.h   |    2 +
->  arch/arm/plat-samsung/include/plat/keypad.h |   13 +++++++
->  5 files changed, 71 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/plat-samsung/dev-keypad.c
-> 
-> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-> index 2753fb3..bd007e3 100644
-> --- a/arch/arm/plat-samsung/Kconfig
-> +++ b/arch/arm/plat-samsung/Kconfig
-> @@ -227,6 +227,11 @@ config SAMSUNG_DEV_TS
->  	help
->  	    Common in platform device definitions for touchscreen device
-> 
-> +config SAMSUNG_DEV_KEYPAD
-> +	bool
-> +	help
-> +	  Compile in platform device definitions for keypad
-> +
->  # DMA
-> 
->  config S3C_DMA
-> diff --git a/arch/arm/plat-samsung/Makefile
-b/arch/arm/plat-samsung/Makefile
-> index 228c2ad..ef00c47 100644
-> --- a/arch/arm/plat-samsung/Makefile
-> +++ b/arch/arm/plat-samsung/Makefile
-> @@ -50,6 +50,7 @@ obj-$(CONFIG_S3C_DEV_RTC)	+= dev-rtc.o
-> 
->  obj-$(CONFIG_SAMSUNG_DEV_ADC)	+= dev-adc.o
->  obj-$(CONFIG_SAMSUNG_DEV_TS)	+= dev-ts.o
-> +obj-$(CONFIG_SAMSUNG_DEV_KEYPAD)	+= dev-keypad.o
-> 
->  # DMA support
-> 
-> diff --git a/arch/arm/plat-samsung/dev-keypad.c
-b/arch/arm/plat-samsung/dev-
-> keypad.c
-> new file mode 100644
-> index 0000000..677c2d7
-> --- /dev/null
-> +++ b/arch/arm/plat-samsung/dev-keypad.c
-> @@ -0,0 +1,50 @@
-> +/*
-> + * linux/arch/arm/plat-samsung/dev-keypad.c
-> + *
-> + * Copyright (C) 2010 Samsung Electronics Co.Ltd
-> + * Author: Joonyoung Shim <jy0922.shim@samsung.com>
-> + *
-> + *  This program is free software; you can redistribute  it and/or modify
-it
-> + *  under  the terms of  the GNU General  Public License as published by
-the
-> + *  Free Software Foundation;  either version 2 of the  License, or (at
-your
-> + *  option) any later version.
-> + *
-> + */
-> +
-> +#include <linux/platform_device.h>
-> +#include <mach/irqs.h>
-> +#include <mach/map.h>
-> +#include <plat/cpu.h>
-> +#include <plat/devs.h>
-> +#include <plat/keypad.h>
-> +
-> +static struct resource samsung_keypad_resources[] = {
-> +	[0] = {
-> +		.start	= SAMSUNG_PA_KEYPAD,
-> +		.end	= SAMSUNG_PA_KEYPAD + 0x20 - 1,
-> +		.flags	= IORESOURCE_MEM,
-> +	},
-> +	[1] = {
-> +		.start	= IRQ_KEYPAD,
-> +		.end	= IRQ_KEYPAD,
-> +		.flags	= IORESOURCE_IRQ,
-> +	},
-> +};
-> +
-> +struct platform_device samsung_device_keypad = {
-> +	.name		= "samsung-keypad",
-> +	.id		= -1,
-> +	.num_resources	= ARRAY_SIZE(samsung_keypad_resources),
-> +	.resource	= samsung_keypad_resources,
-> +};
-> +
-> +void __init samsung_keypad_set_platdata(struct samsung_keypad_platdata
-*pd)
-> +{
-> +	struct samsung_keypad_platdata *npd;
-> +
-> +	npd = s3c_set_platdata(pd, sizeof(struct samsung_keypad_platdata),
-> +			&samsung_device_keypad);
-> +
-> +	if (!npd->cfg_gpio)
-> +		npd->cfg_gpio = samsung_keypad_cfg_gpio;
-> +}
-> diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-
-> samsung/include/plat/devs.h
-> index 6760999..c06386b 100644
-> --- a/arch/arm/plat-samsung/include/plat/devs.h
-> +++ b/arch/arm/plat-samsung/include/plat/devs.h
-> @@ -100,6 +100,8 @@ extern struct platform_device s5pc100_device_iis0;
->  extern struct platform_device s5pc100_device_iis1;
->  extern struct platform_device s5pc100_device_iis2;
-> 
-> +extern struct platform_device samsung_device_keypad;
-> +
->  /* s3c2440 specific devices */
-> 
->  #ifdef CONFIG_CPU_S3C2440
-> diff --git a/arch/arm/plat-samsung/include/plat/keypad.h b/arch/arm/plat-
-> samsung/include/plat/keypad.h
-> index 3a70c12..b59a648 100644
-> --- a/arch/arm/plat-samsung/include/plat/keypad.h
-> +++ b/arch/arm/plat-samsung/include/plat/keypad.h
-> @@ -40,4 +40,17 @@ struct samsung_keypad_platdata {
->  	void (*cfg_gpio)(unsigned int rows, unsigned int cols);
->  };
-> 
-> +/**
-> + * samsung_keypad_set_platdata - Set platform data for Samsung Keypad
-> device.
-> + * @pd: Platform data to register to device.
-> + *
-> + * Register the given platform data for use with Samsung Keypad device.
-> + * The call will copy the platform data, so the board definitions can
-> + * make the structure itself __initdata.
-> + */
-> +extern void samsung_keypad_set_platdata(struct samsung_keypad_platdata
-*pd);
-> +
-> +/* defined by architecture to configure gpio. */
-> +extern void samsung_keypad_cfg_gpio(unsigned int rows, unsigned int
-cols);
-> +
->  #endif /* __PLAT_SAMSUNG_KEYPAD_H */
-> --
+ arch/arm/mach-s5pv310/Kconfig               |    9 +++
+ arch/arm/mach-s5pv310/Makefile              |    1 +
+ arch/arm/mach-s5pv310/mach-universal_c210.c |   87 +++++++++++++++++++++++++++
+ 3 files changed, 97 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5pv310/mach-universal_c210.c
+
+diff --git a/arch/arm/mach-s5pv310/Kconfig b/arch/arm/mach-s5pv310/Kconfig
+index f9b1892..331b5bd 100644
+--- a/arch/arm/mach-s5pv310/Kconfig
++++ b/arch/arm/mach-s5pv310/Kconfig
+@@ -33,4 +33,13 @@ config MACH_SMDKV310
+ 	select ARCH_SPARSEMEM_ENABLE
+ 	help
+ 	  Machine support for Samsung SMDKV310
++
++config MACH_UNIVERSAL_C210
++	bool "Mobile UNIVERSAL_C210 Board"
++	select CPU_S5PV310
++	select ARCH_SPARSEMEM_ENABLE
++	help
++	  Machine support for Samsung Mobile Universal S5PC210 Reference
++	  Board. S5PC210(MCP) is one of package option of S5PV310
++
+ endif
+diff --git a/arch/arm/mach-s5pv310/Makefile b/arch/arm/mach-s5pv310/Makefile
+index 967e2c8..d5b51c7 100644
+--- a/arch/arm/mach-s5pv310/Makefile
++++ b/arch/arm/mach-s5pv310/Makefile
+@@ -22,6 +22,7 @@ obj-$(CONFIG_HOTPLUG_CPU)	+= hotplug.o
+ # machine support
+ 
+ obj-$(CONFIG_MACH_SMDKV310)	+= mach-smdkv310.o
++obj-$(CONFIG_MACH_UNIVERSAL_C210)	+= mach-universal_c210.o
+ 
+ # device support
+ 
+diff --git a/arch/arm/mach-s5pv310/mach-universal_c210.c b/arch/arm/mach-s5pv310/mach-universal_c210.c
+new file mode 100644
+index 0000000..bf8c77c
+--- /dev/null
++++ b/arch/arm/mach-s5pv310/mach-universal_c210.c
+@@ -0,0 +1,87 @@
++/* linux/arch/arm/mach-s5pv310/mach-universal_c210.c
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/serial_core.h>
++
++#include <asm/mach/arch.h>
++#include <asm/mach-types.h>
++#include <asm/hardware/cache-l2x0.h>
++
++#include <plat/regs-serial.h>
++#include <plat/s5pv310.h>
++#include <plat/cpu.h>
++
++#include <mach/map.h>
++
++/* Following are default values for UCON, ULCON and UFCON UART registers */
++#define UNIVERSAL_C210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
++					 S3C2410_UCON_RXILEVEL |	\
++					 S3C2410_UCON_TXIRQMODE |	\
++					 S3C2410_UCON_RXIRQMODE |	\
++					 S3C2410_UCON_RXFIFO_TOI |	\
++					 S3C2443_UCON_RXERR_IRQEN)
++
++#define UNIVERSAL_C210_ULCON_DEFAULT	S3C2410_LCON_CS8
++
++#define UNIVERSAL_C210_UFCON_DEFAULT	(S3C2410_UFCON_FIFOMODE |	\
++					 S5PV210_UFCON_TXTRIG256 |	\
++					 S5PV210_UFCON_RXTRIG256)
++
++static struct s3c2410_uartcfg universal_c210_uartcfgs[] __initdata = {
++	[0] = {
++		.hwport		= 0,
++		.ucon		= UNIVERSAL_C210_UCON_DEFAULT,
++		.ulcon		= UNIVERSAL_C210_ULCON_DEFAULT,
++		.ufcon		= UNIVERSAL_C210_UFCON_DEFAULT,
++	},
++	[1] = {
++		.hwport		= 1,
++		.ucon		= UNIVERSAL_C210_UCON_DEFAULT,
++		.ulcon		= UNIVERSAL_C210_ULCON_DEFAULT,
++		.ufcon		= UNIVERSAL_C210_UFCON_DEFAULT,
++	},
++	[2] = {
++		.hwport		= 2,
++		.ucon		= UNIVERSAL_C210_UCON_DEFAULT,
++		.ulcon		= UNIVERSAL_C210_ULCON_DEFAULT,
++		.ufcon		= UNIVERSAL_C210_UFCON_DEFAULT,
++	},
++	[3] = {
++		.hwport		= 3,
++		.ucon		= UNIVERSAL_C210_UCON_DEFAULT,
++		.ulcon		= UNIVERSAL_C210_ULCON_DEFAULT,
++		.ufcon		= UNIVERSAL_C210_UFCON_DEFAULT,
++	},
++};
++
++static void __init universal_c210_map_io(void)
++{
++	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
++	s3c24xx_init_clocks(24000000);
++	s3c24xx_init_uarts(universal_c210_uartcfgs,
++			   ARRAY_SIZE(universal_c210_uartcfgs));
++}
++
++static void __init universal_c210_machine_init(void)
++{
++#ifdef CONFIG_CACHE_L2X0
++	l2x0_init(S5P_VA_L2CC, 1 << 28, 0xffffffff);
++#endif
++}
++
++MACHINE_START(UNIVERSAL_C210, "UNIVERSAL_C210")
++	/* Maintainer: Kyungmin Park <kyungmin.park@samsung.com> */
++	.phys_io	= S3C_PA_UART & 0xfff00000,
++	.io_pg_offst	= (((u32)S3C_VA_UART) >> 18) & 0xfffc,
++	.boot_params	= S5P_PA_SDRAM + 0x100,
++	.init_irq	= s5pv310_init_irq,
++	.map_io		= universal_c210_map_io,
++	.init_machine	= universal_c210_machine_init,
++	.timer		= &s5pv310_timer,
++MACHINE_END
+-- 
+1.6.2.5
