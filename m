@@ -1,62 +1,47 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] Samsung: FIMC machine setup code
-Date: Mon, 09 Aug 2010 17:07:48 +0900
-Message-ID: <016b01cb3799$f74cf190$e5e6d4b0$%kim@samsung.com>
-References: <1281340315-26676-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Subject: [PATCH] ARM: S5PV210: Fix on missing s3c-sdhci card detection method for hsmmc3
+Date: Mon,  9 Aug 2010 19:00:55 +0900
+Message-ID: <1281348055-18357-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:37412 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755619Ab0HIIHk (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:46480 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755836Ab0HIKPV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Aug 2010 04:07:40 -0400
-Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L6V00KNUL8QEO20@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 09 Aug 2010 17:07:38 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L6V00H8ML8QPG@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 09 Aug 2010 17:07:38 +0900 (KST)
-In-reply-to: <1281340315-26676-1-git-send-email-m.szyprowski@samsung.com>
-Content-language: ko
+	Mon, 9 Aug 2010 06:15:21 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: kyungmin.park@samsung.com, s.nawrocki@samsung.com, p.osciak@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Marek Szyprowski wrote:
-> 
-> Hello,
-> 
-Hi :-)
+This patch fixes on missing s3c-sdhci card detection method for hsmmc3.
 
-> This is a quick resend of a FIMC patches that enable the driver on
-> Aquila, GONI and SMDKC100 machines. The code has been rebased onto
-> latest kgene/for-next kernel tree. common-aquila-and-goni code has been
-> disabled until a proper and cleaner solution will be provided.
-> 
-> List of patches:
-> 
-> [PATCH 1/4] ARM: S5PV210: enable FIMC on Aquila
-> [PATCH 2/4] ARM: S5PV210: enable FIMC on Goni
-> [PATCH 3/4] ARM: S5PC100: enable FIMC on SMDKC100
-> [PATCH 4/4] ARM: S5PV210: Override FIMC driver name on Aquila board
-> 
-> Best regards
-> --
-> Marek Szyprowski
-> Samsung Poland R&D Center
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s5pv210/setup-sdhci-gpio.c |    7 +++++--
+ 1 files changed, 5 insertions(+), 2 deletions(-)
 
-Looks ok...will apply.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/arch/arm/mach-s5pv210/setup-sdhci-gpio.c b/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
+index 9f0f63d..b18587b 100644
+--- a/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
++++ b/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
+@@ -115,6 +115,7 @@ void s5pv210_setup_sdhci2_cfg_gpio(struct platform_device *dev, int width)
+ 
+ void s5pv210_setup_sdhci3_cfg_gpio(struct platform_device *dev, int width)
+ {
++	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
+ 	unsigned int gpio;
+ 
+ 	/* Set all the necessary GPG3[0:2] pins to special-function 2 */
+@@ -129,6 +130,8 @@ void s5pv210_setup_sdhci3_cfg_gpio(struct platform_device *dev, int width)
+ 		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+ 	}
+ 
+-	s3c_gpio_setpull(S5PV210_GPG3(2), S3C_GPIO_PULL_UP);
+-	s3c_gpio_cfgpin(S5PV210_GPG3(2), S3C_GPIO_SFN(2));
++	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
++		s3c_gpio_setpull(S5PV210_GPG3(2), S3C_GPIO_PULL_UP);
++		s3c_gpio_cfgpin(S5PV210_GPG3(2), S3C_GPIO_SFN(2));
++	}
+ }
+-- 
+1.6.2.5
