@@ -1,70 +1,62 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 3/4] ARM: S5PC100: enable FIMC on SMDKC100
-Date: Mon, 09 Aug 2010 09:51:54 +0200
-Message-ID: <1281340315-26676-4-git-send-email-m.szyprowski@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] Samsung: FIMC machine setup code
+Date: Mon, 09 Aug 2010 17:07:48 +0900
+Message-ID: <016b01cb3799$f74cf190$e5e6d4b0$%kim@samsung.com>
 References: <1281340315-26676-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:29376 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755619Ab0HIHwB (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:37412 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755619Ab0HIIHk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Aug 2010 03:52:01 -0400
-Received: from eu_spt2 ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0L6V00MGPKIMSO60@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 09 Aug 2010 08:51:58 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L6V006X2KILN1@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 09 Aug 2010 08:51:58 +0100 (BST)
+	Mon, 9 Aug 2010 04:07:40 -0400
+Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L6V00KNUL8QEO20@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 09 Aug 2010 17:07:38 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L6V00H8ML8QPG@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 09 Aug 2010 17:07:38 +0900 (KST)
 In-reply-to: <1281340315-26676-1-git-send-email-m.szyprowski@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, p.osciak@samsung.com
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: kyungmin.park@samsung.com, s.nawrocki@samsung.com, p.osciak@samsung.com
 
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Marek Szyprowski wrote:
+> 
+> Hello,
+> 
+Hi :-)
 
-Add support for FIMC on Samsung SMDKC100 board.
+> This is a quick resend of a FIMC patches that enable the driver on
+> Aquila, GONI and SMDKC100 machines. The code has been rebased onto
+> latest kgene/for-next kernel tree. common-aquila-and-goni code has been
+> disabled until a proper and cleaner solution will be provided.
+> 
+> List of patches:
+> 
+> [PATCH 1/4] ARM: S5PV210: enable FIMC on Aquila
+> [PATCH 2/4] ARM: S5PV210: enable FIMC on Goni
+> [PATCH 3/4] ARM: S5PC100: enable FIMC on SMDKC100
+> [PATCH 4/4] ARM: S5PV210: Override FIMC driver name on Aquila board
+> 
+> Best regards
+> --
+> Marek Szyprowski
+> Samsung Poland R&D Center
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/mach-s5pc100/Kconfig         |    3 +++
- arch/arm/mach-s5pc100/mach-smdkc100.c |    3 +++
- 2 files changed, 6 insertions(+), 0 deletions(-)
+Looks ok...will apply.
 
-diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
-index ab038d0..77ae4bf 100644
---- a/arch/arm/mach-s5pc100/Kconfig
-+++ b/arch/arm/mach-s5pc100/Kconfig
-@@ -65,6 +65,9 @@ config MACH_SMDKC100
- 	select S5PC100_SETUP_IDE
- 	select S5PC100_SETUP_KEYPAD
- 	select S5PC100_SETUP_SDHCI
-+	select S5P_DEV_FIMC0
-+	select S5P_DEV_FIMC1
-+	select S5P_DEV_FIMC2
- 	help
- 	  Machine support for the Samsung SMDKC100
- 
-diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-s5pc100/mach-smdkc100.c
-index a63c8a4..2dc519c 100644
---- a/arch/arm/mach-s5pc100/mach-smdkc100.c
-+++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
-@@ -193,6 +193,9 @@ static struct platform_device *smdkc100_devices[] __initdata = {
- 	&samsung_device_keypad,
- 	&s5pc100_device_ac97,
- 	&s3c_device_rtc,
-+	&s5p_device_fimc0,
-+	&s5p_device_fimc1,
-+	&s5p_device_fimc2,
- };
- 
- static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
--- 
-1.7.1.569.g6f426
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
