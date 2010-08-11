@@ -1,7 +1,7 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/9] ARM: Samsung: add device-table core functions
-Date: Wed, 11 Aug 2010 14:03:50 +0200
-Message-ID: <1281528238-7298-2-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 6/9] ARM: S5PV210: convert sdhci to device-table
+Date: Wed, 11 Aug 2010 14:03:55 +0200
+Message-ID: <1281528238-7298-7-git-send-email-m.szyprowski@samsung.com>
 References: <1281528238-7298-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -9,683 +9,1080 @@ Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout1.w1.samsung.com ([210.118.77.11]:59754 "EHLO
 	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751668Ab0HKMEO (ORCPT
+	with ESMTP id S1751668Ab0HKMEP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Aug 2010 08:04:14 -0400
+	Wed, 11 Aug 2010 08:04:15 -0400
 Received: from eu_spt1 (mailout1.w1.samsung.com [210.118.77.11])
  by mailout1.w1.samsung.com
  (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTP id <0L6Z00IHULIVWP@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Aug 2010 13:04:08 +0100 (BST)
+ linux-samsung-soc@vger.kernel.org; Wed, 11 Aug 2010 13:04:09 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
  by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L6Z009NRLIU9N@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Aug 2010 13:04:07 +0100 (BST)
+ 2004)) with ESMTPA id <0L6Z00ETTLIVFR@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 11 Aug 2010 13:04:08 +0100 (BST)
 In-reply-to: <1281528238-7298-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
 
-Add device-table framework core functions. The device-table framework
-standarizes the way the Samsung platform devices are being defined and
-registered. It also a first step to redesign Samsung platform in a way
-that it would be possible to build a single kernel image for more than
-one SoC version. The device-table framework has been initially developed
-by Ben Dooks. This version has been redesigned and extended to support
-platform data handling and more flexible way of rewriting device
-resources (removed the limitation of only base address and irq pairs).
+Convert s3c-sdhci platform device initialization to device-table approach.
+The conversion is performed only for S5PV210 SoC.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/plat-samsung/Makefile                |    1 +
- arch/arm/plat-samsung/dev.c                   |  304 +++++++++++++++++++++++++
- arch/arm/plat-samsung/dev_templates.c         |   57 +++++
- arch/arm/plat-samsung/include/plat/dev-core.h |  116 ++++++++++
- arch/arm/plat-samsung/include/plat/devs.h     |  118 ++++++++++
- 5 files changed, 596 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/plat-samsung/dev.c
- create mode 100644 arch/arm/plat-samsung/dev_templates.c
- create mode 100644 arch/arm/plat-samsung/include/plat/dev-core.h
+ arch/arm/mach-s5pv210/Kconfig              |   39 ++++---
+ arch/arm/mach-s5pv210/Makefile             |    3 +-
+ arch/arm/mach-s5pv210/cpu.c                |    5 -
+ arch/arm/mach-s5pv210/dev-table.c          |   18 +++
+ arch/arm/mach-s5pv210/mach-aquila.c        |    9 +-
+ arch/arm/mach-s5pv210/mach-goni.c          |    9 +-
+ arch/arm/mach-s5pv210/setup-sdhci-gpio.c   |  137 ----------------------
+ arch/arm/mach-s5pv210/setup-sdhci.c        |  168 +++++++++++++++++++++++++++-
+ arch/arm/plat-samsung/Kconfig              |   15 ---
+ arch/arm/plat-samsung/Makefile             |    3 -
+ arch/arm/plat-samsung/dev-hsmmc.c          |   58 +++-------
+ arch/arm/plat-samsung/dev-hsmmc1.c         |   73 ------------
+ arch/arm/plat-samsung/dev-hsmmc2.c         |   74 ------------
+ arch/arm/plat-samsung/dev-hsmmc3.c         |   77 -------------
+ arch/arm/plat-samsung/dev_templates.c      |    2 +
+ arch/arm/plat-samsung/include/plat/sdhci.h |  106 ++++++++----------
+ 16 files changed, 285 insertions(+), 511 deletions(-)
+ delete mode 100644 arch/arm/mach-s5pv210/setup-sdhci-gpio.c
+ delete mode 100644 arch/arm/plat-samsung/dev-hsmmc1.c
+ delete mode 100644 arch/arm/plat-samsung/dev-hsmmc2.c
+ delete mode 100644 arch/arm/plat-samsung/dev-hsmmc3.c
 
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index 680b55b..7b59855 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -42,16 +42,29 @@ config S5PV210_SETUP_KEYPAD
+ 	help
+ 	  Common setup code for keypad.
+ 
+-config S5PV210_SETUP_SDHCI
++config S5PV210_SETUP_SDHCI0
++	select S3C_DEV_HSMMC
+         bool
+-        select S5PV210_SETUP_SDHCI_GPIO
+         help
+           Internal helper functions for S5PV210 based SDHCI systems
+ 
+-config S5PV210_SETUP_SDHCI_GPIO
+-	bool
+-	help
+-	  Common setup code for SDHCI gpio.
++config S5PV210_SETUP_SDHCI1
++	select S3C_DEV_HSMMC
++        bool
++        help
++          Internal helper functions for S5PV210 based SDHCI systems
++
++config S5PV210_SETUP_SDHCI2
++	select S3C_DEV_HSMMC
++        bool
++        help
++          Internal helper functions for S5PV210 based SDHCI systems
++
++config S5PV210_SETUP_SDHCI3
++	select S3C_DEV_HSMMC
++        bool
++        help
++          Internal helper functions for S5PV210 based SDHCI systems
+ 
+ config S5PC110_DEV_ONENAND
+ 	bool
+@@ -68,11 +81,10 @@ config MACH_AQUILA
+ 	select S5P_DEV_FIMC0
+ 	select S5P_DEV_FIMC1
+ 	select S5P_DEV_FIMC2
+-	select S3C_DEV_HSMMC
+-	select S3C_DEV_HSMMC1
+-	select S3C_DEV_HSMMC2
+ 	select S5PV210_SETUP_FB_24BPP
+-	select S5PV210_SETUP_SDHCI
++	select S5PV210_SETUP_SDHCI0
++	select S5PV210_SETUP_SDHCI1
++	select S5PV210_SETUP_SDHCI2
+ 	help
+ 	  Machine support for the Samsung Aquila target based on S5PC110 SoC
+ 
+@@ -84,11 +96,10 @@ config MACH_GONI
+ 	select S5P_DEV_FIMC0
+ 	select S5P_DEV_FIMC1
+ 	select S5P_DEV_FIMC2
+-	select S3C_DEV_HSMMC
+-	select S3C_DEV_HSMMC1
+-	select S3C_DEV_HSMMC2
+ 	select S5PV210_SETUP_FB_24BPP
+-	select S5PV210_SETUP_SDHCI
++	select S5PV210_SETUP_SDHCI0
++	select S5PV210_SETUP_SDHCI1
++	select S5PV210_SETUP_SDHCI2
+ 	help
+ 	  Machine support for Samsung GONI board
+ 	  S5PC110(MCP) is one of package option of S5PV210
+diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
+index 23bde19..a5fd9ae 100644
+--- a/arch/arm/mach-s5pv210/Makefile
++++ b/arch/arm/mach-s5pv210/Makefile
+@@ -33,5 +33,4 @@ obj-$(CONFIG_S5PV210_SETUP_I2C1) 	+= setup-i2c1.o
+ obj-$(CONFIG_S5PV210_SETUP_I2C2) 	+= setup-i2c2.o
+ obj-$(CONFIG_S5PV210_SETUP_IDE)		+= setup-ide.o
+ obj-$(CONFIG_S5PV210_SETUP_KEYPAD)	+= setup-keypad.o
+-obj-$(CONFIG_S5PV210_SETUP_SDHCI)       += setup-sdhci.o
+-obj-$(CONFIG_S5PV210_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
++obj-$(CONFIG_S3C_DEV_HSMMC)		+= setup-sdhci.o
+diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
+index 785f011..5f5ab1e 100644
+--- a/arch/arm/mach-s5pv210/cpu.c
++++ b/arch/arm/mach-s5pv210/cpu.c
+@@ -90,11 +90,6 @@ void __init s5pv210_map_io(void)
+ 	s5pv210_register_devtable();
+ 
+ 	/* initialise device information early */
+-	s5pv210_default_sdhci0();
+-	s5pv210_default_sdhci1();
+-	s5pv210_default_sdhci2();
+-	s5pv210_default_sdhci3();
+-
+ 	s3c_adc_setname("s3c64xx-adc");
+ 
+ 	s3c_cfcon_setname("s5pv210-pata");
+diff --git a/arch/arm/mach-s5pv210/dev-table.c b/arch/arm/mach-s5pv210/dev-table.c
+index 38e870a..86f3792 100644
+--- a/arch/arm/mach-s5pv210/dev-table.c
++++ b/arch/arm/mach-s5pv210/dev-table.c
+@@ -81,6 +81,24 @@ struct s3c_pdev_table s5pv210_dev_table[] __initdata = {
+ 			IRQ_S5P_UART_RX3, IRQ_S5P_UART_TX3, IRQ_S5P_UART_ERR3,
+ 		},
+ 	}, {
++		.type	= SAMSUNG_DEVICE_SDHCI,
++		.name	= "s3c-sdhci",
++		.index	= 0,
++		.res	= {S5PV210_PA_HSMMC(0), IRQ_HSMMC0},
++		.defpdata = s5pv210_hsmmc0_def_platdata_p,
++	}, {
++		.type	= SAMSUNG_DEVICE_SDHCI,
++		.name	= "s3c-sdhci",
++		.index	= 1,
++		.res	= {S5PV210_PA_HSMMC(1), IRQ_HSMMC1},
++		.defpdata = s5pv210_hsmmc1_def_platdata_p,
++	}, {
++		.type	= SAMSUNG_DEVICE_SDHCI,
++		.name	= "s3c-sdhci",
++		.index	= 2,
++		.res	= {S5PV210_PA_HSMMC(2), IRQ_HSMMC2},
++		.defpdata = s5pv210_hsmmc2_def_platdata_p,
++	}, {
+ 		.type	= SAMSUNG_DEVICE_ONENAND,
+ 		.name	= "s5pc110-onenand",
+ 		.index	= -1,
+diff --git a/arch/arm/mach-s5pv210/mach-aquila.c b/arch/arm/mach-s5pv210/mach-aquila.c
+index 5a502f3..c4f5261 100644
+--- a/arch/arm/mach-s5pv210/mach-aquila.c
++++ b/arch/arm/mach-s5pv210/mach-aquila.c
+@@ -470,18 +470,12 @@ static void aquila_setup_sdhci(void)
+ 	gpio_request(AQUILA_EXT_FLASH_EN, "FLASH_EN");
+ 	gpio_direction_output(AQUILA_EXT_FLASH_EN, 1);
+ 
+-	s3c_sdhci0_set_platdata(&aquila_hsmmc0_data);
+-	s3c_sdhci1_set_platdata(&aquila_hsmmc1_data);
+-	s3c_sdhci2_set_platdata(&aquila_hsmmc2_data);
+ };
+ 
+ static struct platform_device *aquila_devices[] __initdata = {
+ 	&aquila_i2c_gpio_pmic,
+ 	&aquila_device_gpiokeys,
+ 	&s3c_device_fb,
+-	&s3c_device_hsmmc0,
+-	&s3c_device_hsmmc1,
+-	&s3c_device_hsmmc2,
+ 	&s5p_device_fimc0,
+ 	&s5p_device_fimc1,
+ 	&s5p_device_fimc2,
+@@ -489,6 +483,9 @@ static struct platform_device *aquila_devices[] __initdata = {
+ 
+ static struct s3c_devtable aquila_devtable[] __initdata = {
+ 	{ .type = SAMSUNG_DEVICE_ONENAND,	.index = -1 },
++	{ .type = SAMSUNG_DEVICE_SDHCI,		.index = 0, .pdata = &aquila_hsmmc0_data},
++	{ .type = SAMSUNG_DEVICE_SDHCI,		.index = 1, .pdata = &aquila_hsmmc1_data},
++	{ .type = SAMSUNG_DEVICE_SDHCI,		.index = 2, .pdata = &aquila_hsmmc2_data},
+ };
+ 
+ static void __init aquila_map_io(void)
+diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
+index e24b815..9c9f6ca 100644
+--- a/arch/arm/mach-s5pv210/mach-goni.c
++++ b/arch/arm/mach-s5pv210/mach-goni.c
+@@ -449,9 +449,6 @@ static void goni_setup_sdhci(void)
+ 	gpio_request(GONI_EXT_FLASH_EN, "FLASH_EN");
+ 	gpio_direction_output(GONI_EXT_FLASH_EN, 1);
+ 
+-	s3c_sdhci0_set_platdata(&goni_hsmmc0_data);
+-	s3c_sdhci1_set_platdata(&goni_hsmmc1_data);
+-	s3c_sdhci2_set_platdata(&goni_hsmmc2_data);
+ };
+ 
+ static struct platform_device *goni_devices[] __initdata = {
+@@ -461,13 +458,13 @@ static struct platform_device *goni_devices[] __initdata = {
+ 	&s5p_device_fimc0,
+ 	&s5p_device_fimc1,
+ 	&s5p_device_fimc2,
+-	&s3c_device_hsmmc0,
+-	&s3c_device_hsmmc1,
+-	&s3c_device_hsmmc2,
+ };
+ 
+ static struct s3c_devtable goni_devtable[] __initdata = {
+ 	{ .type = SAMSUNG_DEVICE_ONENAND, .index = -1, },
++	{ .type = SAMSUNG_DEVICE_SDHCI, .index = 0, .pdata = &goni_hsmmc0_data},
++	{ .type = SAMSUNG_DEVICE_SDHCI,	.index = 1, .pdata = &goni_hsmmc1_data},
++	{ .type = SAMSUNG_DEVICE_SDHCI,	.index = 2, .pdata = &goni_hsmmc2_data},
+ };
+ 
+ static void __init goni_map_io(void)
+diff --git a/arch/arm/mach-s5pv210/setup-sdhci-gpio.c b/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
+deleted file mode 100644
+index b18587b..0000000
+--- a/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
++++ /dev/null
+@@ -1,137 +0,0 @@
+-/* linux/arch/arm/plat-s5pc1xx/setup-sdhci-gpio.c
+- *
+- * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com/
+- *
+- * S5PV210 - Helper functions for setting up SDHCI device(s) GPIO (HSMMC)
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#include <linux/kernel.h>
+-#include <linux/types.h>
+-#include <linux/interrupt.h>
+-#include <linux/platform_device.h>
+-#include <linux/io.h>
+-#include <linux/gpio.h>
+-#include <linux/mmc/host.h>
+-#include <linux/mmc/card.h>
+-
+-#include <plat/gpio-cfg.h>
+-#include <plat/regs-sdhci.h>
+-#include <plat/sdhci.h>
+-
+-void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
+-{
+-	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
+-	unsigned int gpio;
+-
+-	/* Set all the necessary GPG0/GPG1 pins to special-function 2 */
+-	for (gpio = S5PV210_GPG0(0); gpio < S5PV210_GPG0(2); gpio++) {
+-		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
+-		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+-	}
+-	switch (width) {
+-	case 8:
+-		/* GPG1[3:6] special-funtion 3 */
+-		for (gpio = S5PV210_GPG1(3); gpio <= S5PV210_GPG1(6); gpio++) {
+-			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(3));
+-			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+-		}
+-	case 4:
+-		/* GPG0[3:6] special-funtion 2 */
+-		for (gpio = S5PV210_GPG0(3); gpio <= S5PV210_GPG0(6); gpio++) {
+-			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
+-			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+-		}
+-	default:
+-		break;
+-	}
+-
+-	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
+-		s3c_gpio_setpull(S5PV210_GPG0(2), S3C_GPIO_PULL_UP);
+-		s3c_gpio_cfgpin(S5PV210_GPG0(2), S3C_GPIO_SFN(2));
+-	}
+-}
+-
+-void s5pv210_setup_sdhci1_cfg_gpio(struct platform_device *dev, int width)
+-{
+-	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
+-	unsigned int gpio;
+-
+-	/* Set all the necessary GPG1[0:1] pins to special-function 2 */
+-	for (gpio = S5PV210_GPG1(0); gpio < S5PV210_GPG1(2); gpio++) {
+-		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
+-		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+-	}
+-
+-	/* Data pin GPG1[3:6] to special-function 2 */
+-	for (gpio = S5PV210_GPG1(3); gpio <= S5PV210_GPG1(6); gpio++) {
+-		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
+-		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+-	}
+-
+-	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
+-		s3c_gpio_setpull(S5PV210_GPG1(2), S3C_GPIO_PULL_UP);
+-		s3c_gpio_cfgpin(S5PV210_GPG1(2), S3C_GPIO_SFN(2));
+-	}
+-}
+-
+-void s5pv210_setup_sdhci2_cfg_gpio(struct platform_device *dev, int width)
+-{
+-	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
+-	unsigned int gpio;
+-
+-	/* Set all the necessary GPG2[0:1] pins to special-function 2 */
+-	for (gpio = S5PV210_GPG2(0); gpio < S5PV210_GPG2(2); gpio++) {
+-		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
+-		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+-	}
+-
+-	switch (width) {
+-	case 8:
+-		/* Data pin GPG3[3:6] to special-function 3 */
+-		for (gpio = S5PV210_GPG3(3); gpio <= S5PV210_GPG3(6); gpio++) {
+-			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(3));
+-			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+-		}
+-	case 4:
+-		/* Data pin GPG2[3:6] to special-function 2 */
+-		for (gpio = S5PV210_GPG2(3); gpio <= S5PV210_GPG2(6); gpio++) {
+-			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
+-			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+-		}
+-	default:
+-		break;
+-	}
+-
+-	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
+-		s3c_gpio_setpull(S5PV210_GPG2(2), S3C_GPIO_PULL_UP);
+-		s3c_gpio_cfgpin(S5PV210_GPG2(2), S3C_GPIO_SFN(2));
+-	}
+-}
+-
+-void s5pv210_setup_sdhci3_cfg_gpio(struct platform_device *dev, int width)
+-{
+-	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
+-	unsigned int gpio;
+-
+-	/* Set all the necessary GPG3[0:2] pins to special-function 2 */
+-	for (gpio = S5PV210_GPG3(0); gpio < S5PV210_GPG3(2); gpio++) {
+-		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
+-		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+-	}
+-
+-	/* Data pin GPG3[3:6] to special-function 2 */
+-	for (gpio = S5PV210_GPG3(3); gpio <= S5PV210_GPG3(6); gpio++) {
+-		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
+-		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+-	}
+-
+-	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
+-		s3c_gpio_setpull(S5PV210_GPG3(2), S3C_GPIO_PULL_UP);
+-		s3c_gpio_cfgpin(S5PV210_GPG3(2), S3C_GPIO_SFN(2));
+-	}
+-}
+diff --git a/arch/arm/mach-s5pv210/setup-sdhci.c b/arch/arm/mach-s5pv210/setup-sdhci.c
+index c32e202..b946d10 100644
+--- a/arch/arm/mach-s5pv210/setup-sdhci.c
++++ b/arch/arm/mach-s5pv210/setup-sdhci.c
+@@ -19,19 +19,21 @@
+ #include <linux/mmc/card.h>
+ #include <linux/mmc/host.h>
+ 
++#include <mach/gpio.h>
++#include <plat/gpio-cfg.h>
+ #include <plat/regs-sdhci.h>
+ #include <plat/sdhci.h>
+ 
+ /* clock sources for the mmc bus clock, order as for the ctrl2[5..4] */
+ 
+-char *s5pv210_hsmmc_clksrcs[4] = {
++static char *s5pv210_hsmmc_clksrcs[4] = {
+ 	[0] = "hsmmc",		/* HCLK */
+ 	/* [1] = "hsmmc",	- duplicate HCLK entry */
+ 	[2] = "sclk_mmc",	/* mmc_bus */
+ 	/* [3] = NULL,		- reserved */
+ };
+ 
+-void s5pv210_setup_sdhci_cfg_card(struct platform_device *dev,
++static void s5pv210_setup_sdhci_cfg_card(struct platform_device *dev,
+ 				    void __iomem *r,
+ 				    struct mmc_ios *ios,
+ 				    struct mmc_card *card)
+@@ -61,3 +63,165 @@ void s5pv210_setup_sdhci_cfg_card(struct platform_device *dev,
+ 	writel(ctrl2, r + S3C_SDHCI_CONTROL2);
+ 	writel(ctrl3, r + S3C_SDHCI_CONTROL3);
+ }
++
++#ifdef CONFIG_S5PV210_SETUP_SDHCI0
++
++static void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
++{
++	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
++	unsigned int gpio;
++
++	/* Set all the necessary GPG0/GPG1 pins to special-function 2 */
++	for (gpio = S5PV210_GPG0(0); gpio < S5PV210_GPG0(2); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++	}
++	switch (width) {
++	case 8:
++		/* GPG1[3:6] special-funtion 3 */
++		for (gpio = S5PV210_GPG1(3); gpio <= S5PV210_GPG1(6); gpio++) {
++			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(3));
++			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++		}
++	case 4:
++		/* GPG0[3:6] special-funtion 2 */
++		for (gpio = S5PV210_GPG0(3); gpio <= S5PV210_GPG0(6); gpio++) {
++			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++		}
++	default:
++		break;
++	}
++
++	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
++		s3c_gpio_setpull(S5PV210_GPG0(2), S3C_GPIO_PULL_UP);
++		s3c_gpio_cfgpin(S5PV210_GPG0(2), S3C_GPIO_SFN(2));
++	}
++}
++
++struct s3c_sdhci_platdata s5pv210_hsmmc0_def_platdata __initdata = {
++	.max_width	= 4,
++	.host_caps	= (MMC_CAP_4_BIT_DATA |
++			   MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED),
++	.clocks		= s5pv210_hsmmc_clksrcs,
++	.cfg_gpio	= s5pv210_setup_sdhci0_cfg_gpio,
++	.cfg_card	= s5pv210_setup_sdhci_cfg_card,
++};
++
++#endif
++
++#ifdef CONFIG_S5PV210_SETUP_SDHCI1
++
++static void s5pv210_setup_sdhci1_cfg_gpio(struct platform_device *dev, int width)
++{
++	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
++	unsigned int gpio;
++
++	/* Set all the necessary GPG1[0:1] pins to special-function 2 */
++	for (gpio = S5PV210_GPG1(0); gpio < S5PV210_GPG1(2); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++	}
++
++	/* Data pin GPG1[3:6] to special-function 2 */
++	for (gpio = S5PV210_GPG1(3); gpio <= S5PV210_GPG1(6); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++	}
++
++	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
++		s3c_gpio_setpull(S5PV210_GPG1(2), S3C_GPIO_PULL_UP);
++		s3c_gpio_cfgpin(S5PV210_GPG1(2), S3C_GPIO_SFN(2));
++	}
++}
++
++struct s3c_sdhci_platdata s5pv210_hsmmc1_def_platdata __initdata = {
++	.max_width	= 4,
++	.host_caps	= (MMC_CAP_4_BIT_DATA |
++			   MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED),
++	.clocks		= s5pv210_hsmmc_clksrcs,
++	.cfg_gpio	= s5pv210_setup_sdhci1_cfg_gpio,
++	.cfg_card	= s5pv210_setup_sdhci_cfg_card,
++};
++
++#endif
++
++#ifdef CONFIG_S5PV210_SETUP_SDHCI2
++
++static void s5pv210_setup_sdhci2_cfg_gpio(struct platform_device *dev, int width)
++{
++	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
++	unsigned int gpio;
++
++	/* Set all the necessary GPG2[0:1] pins to special-function 2 */
++	for (gpio = S5PV210_GPG2(0); gpio < S5PV210_GPG2(2); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++	}
++
++	switch (width) {
++	case 8:
++		/* Data pin GPG3[3:6] to special-function 3 */
++		for (gpio = S5PV210_GPG3(3); gpio <= S5PV210_GPG3(6); gpio++) {
++			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(3));
++			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++		}
++	case 4:
++		/* Data pin GPG2[3:6] to special-function 2 */
++		for (gpio = S5PV210_GPG2(3); gpio <= S5PV210_GPG2(6); gpio++) {
++			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++		}
++	default:
++		break;
++	}
++
++	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
++		s3c_gpio_setpull(S5PV210_GPG2(2), S3C_GPIO_PULL_UP);
++		s3c_gpio_cfgpin(S5PV210_GPG2(2), S3C_GPIO_SFN(2));
++	}
++}
++
++struct s3c_sdhci_platdata s5pv210_hsmmc2_def_platdata __initdata = {
++	.max_width	= 4,
++	.host_caps	= (MMC_CAP_4_BIT_DATA |
++			   MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED),
++	.clocks		= s5pv210_hsmmc_clksrcs,
++	.cfg_gpio	= s5pv210_setup_sdhci2_cfg_gpio,
++	.cfg_card	= s5pv210_setup_sdhci_cfg_card,
++};
++
++#endif
++
++#ifdef CONFIG_S5PV210_SETUP_SDHCI3
++
++static void s5pv210_setup_sdhci3_cfg_gpio(struct platform_device *dev, int width)
++{
++	unsigned int gpio;
++
++	/* Set all the necessary GPG3[0:2] pins to special-function 2 */
++	for (gpio = S5PV210_GPG3(0); gpio < S5PV210_GPG3(2); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++	}
++
++	/* Data pin GPG3[3:6] to special-function 2 */
++	for (gpio = S5PV210_GPG3(3); gpio <= S5PV210_GPG3(6); gpio++) {
++		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
++		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++	}
++
++	s3c_gpio_setpull(S5PV210_GPG3(2), S3C_GPIO_PULL_UP);
++	s3c_gpio_cfgpin(S5PV210_GPG3(2), S3C_GPIO_SFN(2));
++}
++
++struct s3c_sdhci_platdata s5pv210_hsmmc3_def_platdata __initdata = {
++	.max_width	= 4,
++	.host_caps	= (MMC_CAP_4_BIT_DATA |
++			   MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED),
++	.clocks		= s5pv210_hsmmc_clksrcs,
++	.cfg_gpio	= s5pv210_setup_sdhci3_cfg_gpio,
++	.cfg_card	= s5pv210_setup_sdhci_cfg_card,
++};
++
++#endif
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index 8f3be02..57c791c 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -160,21 +160,6 @@ config S3C_DEV_HSMMC
+ 	help
+ 	  Compile in platform device definitions for HSMMC code
+ 
+-config S3C_DEV_HSMMC1
+-	bool
+-	help
+-	  Compile in platform device definitions for HSMMC channel 1
+-
+-config S3C_DEV_HSMMC2
+-	bool
+-	help
+-	  Compile in platform device definitions for HSMMC channel 2
+-
+-config S3C_DEV_HSMMC3
+-	bool
+-	help
+-	  Compile in platform device definitions for HSMMC channel 3
+-
+ config S3C_DEV_HWMON
+ 	bool
+ 	help
 diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-index 4d8ff92..a14f443 100644
+index edaa083..b59a6e4 100644
 --- a/arch/arm/plat-samsung/Makefile
 +++ b/arch/arm/plat-samsung/Makefile
-@@ -13,6 +13,7 @@ obj-				:=
- 
- obj-y				+= init.o
- obj-$(CONFIG_ARCH_USES_GETTIMEOFFSET)   += time.o
-+obj-y				+= dev.o dev_templates.o
- obj-y				+= clock.o
- obj-y				+= pwm-clock.o
- obj-y				+= gpio.o
-diff --git a/arch/arm/plat-samsung/dev.c b/arch/arm/plat-samsung/dev.c
-new file mode 100644
-index 0000000..4c32c82
---- /dev/null
-+++ b/arch/arm/plat-samsung/dev.c
-@@ -0,0 +1,304 @@
-+/* linux/arch/arm/plat-s3c/dev.c
-+ *
-+ * Copyright 2009 Ben Dooks <ben-linux@fluff.org>
-+ * Copyright 2010 Marek Szyprowski <m.szyprowski@samsung.com>
-+ *
-+ * S3C series device creation code
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/string.h>
-+#include <linux/slab.h>
-+#include <linux/bootmem.h>
-+#include <linux/platform_device.h>
-+
-+#include <plat/devs.h>
-+#include <plat/dev-core.h>
-+#include <plat/cpu.h>
-+
-+/* state data */
-+static struct s3c_pdev_table *pdev_table;
-+static unsigned int pdev_tsize;
-+
-+/**
-+ * s3c_device_lookup() - lookup a pdev table entry from name and index
-+ * @type: The device type to find.
-+ * @index: The index for the device.
-+ *
-+ * Find the relevant device table entry for the given @name and @index
-+ * value, or return NULL if the table does not contain such an entry.
-+ */
-+static struct s3c_pdev_table __init *s3c_device_lookup(enum s3c_dev_type type,
-+						       int index)
-+{
-+	struct s3c_pdev_table *table = pdev_table;
-+	int nr = pdev_tsize;
-+
-+	for (; nr > 0; nr--, table++) {
-+		if (table->type == type && table->index == index)
-+			return table;
-+	}
-+
-+	return NULL; /* not found */
-+}
-+
-+/**
-+ * s3c_device_rename - rename a device type in the device table
-+ * @type: The device type to rename
-+ * @name: The new name to give it
-+ */
-+void __init s3c_device_rename(enum s3c_dev_type type, char *name)
-+{
-+	struct s3c_pdev_table *ptr = pdev_table;
-+	int nr = pdev_tsize;
-+
-+	for (; nr > 0; nr--, ptr++) {
-+		if (ptr->type == type)
-+			ptr->name = name;
-+	}
-+}
-+
-+void s3c_device_set_platdata(enum s3c_dev_type type, unsigned int index,
-+			     void *pdata)
-+{
-+	struct s3c_pdev_table *pdev_tab;
-+
-+	pdev_tab = s3c_device_lookup(type, index);
-+	if (!pdev_tab) {
-+		printk(KERN_ERR "%s: no entry for type %d index %d\n",
-+		       __func__, type, index);
-+	} else
-+		pdev_tab->defpdata = pdata;
-+}
-+
-+void __init *s3c_device_get_defplatdata(enum s3c_dev_type type,
-+					unsigned int index)
-+{
-+	struct s3c_pdev_table *pdev_tab = s3c_device_lookup(type, index);
-+	if (!pdev_tab) {
-+		printk(KERN_ERR "%s: no entry for type %d index %d\n",
-+		       __func__, type, index);
-+		return NULL;
-+	}
-+	return pdev_tab->defpdata;
-+}
-+
-+/**
-+ * s3c_device_create() - create a new platform device
-+ * @type: The type of device to create.
-+ * @index: The index of the device being created.
-+ * @pdata: The platform data to add to the new device.
-+ *
-+ * Create and register a new platform device from the given template
-+ * and platform data. Calls platform_device_register().
-+ */
-+struct platform_device  __init *s3c_device_create(enum s3c_dev_type type,
-+						 unsigned int index,
-+						 void *pdata)
-+{
-+	struct s3c_pdev_template *template;
-+	struct s3c_pdev_table *pdev_tab;
-+	struct platform_device *pdev;
-+	struct resource *res_src, *res_dest;
-+	unsigned int *res_remap;
-+	const char *name;
-+	u64 *dma_mask;
-+	void *defpdata;
-+	int nr_res;
-+	int pdata_size;
-+	int size;
-+	int res;
-+
-+	pdev_tab = s3c_device_lookup(type, index);
-+	if (!pdev_tab) {
-+		printk(KERN_ERR "%s: no entry for type %d index %d\n",
-+		       __func__, type, index);
-+		return NULL;
-+	}
-+
-+	if (pdev_tab->dev)
-+		return pdev_tab->dev;
-+
-+	template = pdev_tab->template;
-+	if (!template)
-+		template = s3c_device_find_template(type);
-+	if (!template) {
-+		printk(KERN_ERR "%s: no template for device type %d\n",
-+		       __func__, type);
-+		return NULL;
-+	}
-+
-+	nr_res = template->nr_res;
-+	pdata_size = template->pdata_size;
-+	dma_mask = template->dma;
-+
-+	name = pdev_tab->name;
-+	res_remap = pdev_tab->res;
-+
-+	printk(KERN_INFO "%s: device %s.%d, template %p, #res %d\n",
-+	       __func__, name, index, template, nr_res);
-+
-+	/* allocate memory for the device */
-+
-+	size = sizeof(struct platform_device);
-+	size += nr_res * sizeof(struct resource);
-+
-+	if (type != SAMSUNG_DEVICE_UART) {
-+		pdev = kzalloc(size, GFP_KERNEL);
-+		if (!pdev) {
-+			printk(KERN_ERR "%s: no memory to create %s.%d\n",
-+			       __func__, name, index);
-+			return NULL;
-+		}
-+	} else {
-+		/* we cannot allocate memory for the UARTs in the part of
-+		 * the initialisation sequence we are in, so we use the
-+		 * alloc_bootmem call instead.
-+		 */
-+
-+		pdev = alloc_bootmem(size);
-+		if (!pdev)
-+			panic("failed to create uart device");
-+	}
-+
-+	/* setup the basic platform device */
-+
-+	pdev->name = name;
-+	pdev->id = index;
-+	pdev->num_resources = nr_res;
-+
-+	/* start modifying the resources we got */
-+
-+	res_src = template->resources;
-+	res_dest = (struct resource *)(pdev + 1);
-+	pdev->resource = res_dest;
-+
-+	/* copy everything by default before modifying as needed */
-+	memcpy(res_dest, res_src, nr_res * sizeof(struct resource));
-+
-+	for (res = 0; pdev_tab->res && res < nr_res; res++, res_dest++) {
-+		/* process any changes. */
-+		res_dest->start += res_remap[res];
-+		res_dest->end += res_remap[res];
-+
-+		printk(KERN_INFO "%s: %s res %d => ", __func__, name, res);
-+		printk("%p = %08lx %08lx..%08lx\n",
-+		       res_dest, res_dest->flags,
-+		       (unsigned long)res_dest->start,
-+		       (unsigned long)res_dest->end);
-+	}
-+
-+	/* check if we have any dma capability for this device and if so
-+	 * declare we have both types of dma memory for it. */
-+
-+	if (dma_mask) {
-+		printk(KERN_INFO "%s: %s dma mask => ", __func__, name);
-+		printk("%llx\n", *dma_mask);
-+
-+		pdev->dev.coherent_dma_mask = *dma_mask;
-+		pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
-+	}
-+
-+	/* set user pdata (will be duplicated in the next step) */
-+
-+	if (pdata) {
-+		if (template->pdata_set)
-+			template->pdata_set(pdata, index);
-+		else
-+			s3c_device_set_platdata(type, index, pdata);
-+	}
-+
-+	/* setup (default) platform data */
-+
-+	defpdata = pdev_tab->defpdata;
-+
-+	if (defpdata) {
-+		void *npd = kmemdup(defpdata, pdata_size, GFP_KERNEL);
-+		if (!npd)
-+			printk(KERN_ERR "%s: no memory for platform data\n",
-+			       __func__);
-+
-+		printk(KERN_INFO "%s: %s pdata => ", __func__, name);
-+		printk("%p (%d bytes)\n", npd, pdata_size);
-+
-+		pdev->dev.platform_data = npd;
-+	}
-+
-+	pdev_tab->dev = pdev;
-+	return pdev;
-+}
-+
-+void __init samsung_device_setparent(struct device *dev,
-+				     enum s3c_dev_type type, int index)
-+{
-+	struct s3c_pdev_table *pdev_tab;
-+
-+	pdev_tab = s3c_device_lookup(type, index);
-+	if (!pdev_tab) {
-+		printk(KERN_ERR "%s: device does not exist\n", __func__);
-+		return;
-+	}
-+
-+	if (pdev_tab->dev == NULL) {
-+		printk(KERN_ERR "%s: device not created yet\n", __func__);
-+		return;
-+	}
-+
-+	dev->parent = &pdev_tab->dev->dev;
-+}
-+
-+/**
-+ * s3c_device_register() - create a new platform device from the template.
-+ * @type: The type of device to create.
-+ * @index: The index of the device being created.
-+ *
-+ * Create and register a new platform device from the given template
-+ * and platform data. Calls platform_device_register().
-+ */
-+int __init s3c_device_register(enum s3c_dev_type type,
-+			       unsigned int index, void *pdata)
-+{
-+	struct platform_device *pdev = s3c_device_create(type, index, pdata);
-+	int res;
-+
-+	/* s3c_device_create() printed the relevant error messages */
-+	if (!pdev)
-+		return -EINVAL;
-+
-+	/* register the device now we've created it */
-+	res = platform_device_register(pdev);
-+	if (res) {
-+		printk(KERN_ERR "%s: failed to register device %s.%d: %d\n",
-+		       __func__, pdev->name, index, res);
-+	}
-+
-+	return res;
-+}
-+
-+int __init samsung_add_devices(struct s3c_devtable *table, int nr_entries)
-+{
-+	int count = 0;
-+
-+	printk(KERN_INFO "%s: table %p, %d\n", __func__, table, nr_entries);
-+
-+	for (; nr_entries > 0; nr_entries--, table++)
-+		s3c_device_register(table->type, table->index, table->pdata);
-+
-+	return count;
-+}
-+
-+void __init s3c_device_register_table(struct s3c_pdev_table *table,
-+				      unsigned int nr_ent)
-+{
-+	/* note, we do not copy this even though we expect that the table
-+	 * itself is marked __initdata as the device creation process should
-+	 * be over by the time the __initdata section is discarded.
-+	 */
-+
-+	pdev_table = table;
-+	pdev_tsize = nr_ent;
-+}
-diff --git a/arch/arm/plat-samsung/dev_templates.c b/arch/arm/plat-samsung/dev_templates.c
-new file mode 100644
-index 0000000..6783bec
---- /dev/null
-+++ b/arch/arm/plat-samsung/dev_templates.c
-@@ -0,0 +1,57 @@
-+
-+/* linux/arch/arm/plat-s3c/dev_templates.c
-+ *
-+ * Copyright 2009 Ben Dooks <ben-linux@fluff.org>
-+ * Copyright 2010 Marek Szyprowski <m.szyprowski@samsung.com>
-+ *
-+ * S3C series device creation code
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/string.h>
-+#include <linux/slab.h>
-+#include <linux/bootmem.h>
-+#include <linux/platform_device.h>
-+
-+#include <plat/devs.h>
-+#include <plat/dev-core.h>
-+#include <plat/cpu.h>
-+
-+#define TEMPLATE_ENTRY(_type, _res) \
-+{	.type = (_type), \
-+	.resources = (_res), \
-+	.nr_res = ARRAY_SIZE(_res), \
-+}
-+
-+/* most common template */
-+struct resource s3c_std_resources_4k[] __initdata = {
-+	[0] = {
-+		.end = SZ_4K - 1,
-+		.flags = IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.flags = IORESOURCE_IRQ,
-+	},
-+};
-+
-+static struct s3c_pdev_template *templates[] __initdata = {
-+};
-+
-+u64 samsung_std_dma_mask = 0xffffffffUL;
-+
-+struct s3c_pdev_template *s3c_device_find_template(enum s3c_dev_type type)
-+{
-+	int i, nr = ARRAY_SIZE(templates);
-+
-+	for (i = 0; i < nr; i++) {
-+		struct s3c_pdev_template *ptr = templates[i];
-+		if (ptr && ptr->type == type)
-+			return ptr;
-+	}
-+
-+	return NULL;
-+}
-diff --git a/arch/arm/plat-samsung/include/plat/dev-core.h b/arch/arm/plat-samsung/include/plat/dev-core.h
-new file mode 100644
-index 0000000..d3b5a88
---- /dev/null
-+++ b/arch/arm/plat-samsung/include/plat/dev-core.h
-@@ -0,0 +1,116 @@
-+/* linux/include/asm-arm/plat-s3c24xx/dev-core.h
-+ *
-+ * Copyright (c) 2009 Ben Dooks <ben-linux@fluff.org>
-+ * Copyright (c) 2010 Marek Szyprowski <m.szyprowski@samsung.com>
-+ *
-+ * Header file for core handling of (platform) devices.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/**
-+ * struct s3c_pdev_template - template for device creation
-+ * @type: The device type
-+ * @resources: The resources array to use as a template.
-+ * @nr_res: The size of the resources array pointed to by @resources.
-+ * @dma: The pointer to device dma mask (if required by device)
-+ * @pdata_size: The size of platform data structure used by the device.
-+ * @pdata_set: The function to set platform data from the user specified one.
-+ */
-+struct s3c_pdev_template {
-+	enum s3c_dev_type type;
-+	struct resource	*resources;
-+	unsigned int	 nr_res;
-+	u64		*dma;
-+	unsigned int	 pdata_size;
-+	void		(*pdata_set)(void *pdata, int id);
-+};
-+
-+/**
-+ * s3c_device_find_template - find the template for the gived device type
-+ * @type: The type value, from SAMSUNG_DEVICE_
-+ */
-+struct s3c_pdev_template *s3c_device_find_template(enum s3c_dev_type type);
-+
-+/* The most common resource definition */
-+extern struct resource s3c_std_resources_4k[];
-+
-+/* standard DMA mask for 32bit DMA capability. */
-+extern u64 samsung_std_dma_mask;
-+
-+
-+/**
-+ * S3C_MAX_RESOURCES - maximum nuimber of the resources used by devicec
-+ * created by device table method.
-+ */
-+#define S3C_MAX_RESOURCES (6)
-+
-+/**
-+ * struct s3c_pdev_table - per-core platform device definition table
-+ * @type: The type value, from SAMSUNG_DEVICE_
-+ * @name: The name of the device.
-+ * @index: The index of the device, as for platform.index.
-+ * @res: The resources used by the device.
-+ * @defpdata: The platform data associated with this device.
-+ * @template: A replacement template to use, for complicated devices.
-+ * @dev: The device we created, in case it is needed again.
-+ *
-+ * This table is registered by the core SoC code after the detection
-+ * process has been performed. It defines the various parameters that
-+ * may change between SoCs, such as the base address, the IRQ and DMA
-+ * channel numbers. Also SoC specific platform data can be provided
-+ * this way.
-+ *
-+ * The purpose of this is to allow the system to be built for many
-+ * different devices without the need to try and switch in different
-+ * headers depending on the build process and to allow the future
-+ * support of many different SoCs in the same kernel.
-+ *
-+ * The board code does not need to see most of this process as it
-+ * should be between the core SoC detection and the device creation
-+ * process.
-+ *
-+ * The values specific for each SoC in the resources are handled by
-+ * res array. The order is important and should be the same as the
-+ * order of resources entries in the pdev_template.
-+ *
-+ * The default platform data should be placed in __initdata to save
-+ * kernel memory. Machine setup code should modify the default platform
-+ * data 'in place'. The platform data is duplicated (kmemdup) once
-+ * device has been created.
-+ *
-+ * The @template field specifies an alternate template to use if the device
-+ * requires very specific resources or cannot use any of the standard
-+ * templates available. If this field is used, the same process as the
-+ * standard templates is used, so this field can point to __initdata.
-+ */
-+struct s3c_pdev_table {
-+	enum s3c_dev_type type;
-+	const char		*name;
-+	unsigned int		 index;
-+	unsigned int		 res[S3C_MAX_RESOURCES];
-+	void			*defpdata;
-+	struct s3c_pdev_template *template;
-+	struct platform_device	*dev;
-+};
-+
-+/**
-+ * s3c_device_register_table - registers a device table in the system
-+ * @table: an array of pdev_table entries with device definitions
-+ * @rn_ent: number of entries to register
-+ */
-+extern void s3c_device_register_table(struct s3c_pdev_table *table,
-+				      unsigned int nr_ent);
-+
-+/**
-+ * s3c_device_rename - rename specified device
-+ * @type: The type value, from SAMSUNG_DEVICE_
-+ * @name: The new name for the device
-+ *
-+ * This function is usefull for machines that need to set different
-+ * name for particular device, despite the default name provided
-+ * by SoC device table.
-+ */
-+extern void s3c_device_rename(enum s3c_dev_type type, char *name);
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index 85f6f23..79e7564 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -9,8 +9,126 @@
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
- */
-+
+@@ -36,9 +36,6 @@ obj-y				+= platformdata.o
+ obj-$(CONFIG_S3C24XX_DEV_UART)	+= dev-uart-s3c24xx.o
+ obj-$(CONFIG_S3C64XX_DEV_UART)	+= dev-uart-s3c64xx.o
+ obj-$(CONFIG_S3C_DEV_HSMMC)	+= dev-hsmmc.o
+-obj-$(CONFIG_S3C_DEV_HSMMC1)	+= dev-hsmmc1.o
+-obj-$(CONFIG_S3C_DEV_HSMMC2)	+= dev-hsmmc2.o
+-obj-$(CONFIG_S3C_DEV_HSMMC3)	+= dev-hsmmc3.o
+ obj-$(CONFIG_S3C_DEV_HWMON)	+= dev-hwmon.o
+ obj-y				+= dev-i2c0.o
+ obj-$(CONFIG_S3C_DEV_I2C1)	+= dev-i2c1.o
+diff --git a/arch/arm/plat-samsung/dev-hsmmc.c b/arch/arm/plat-samsung/dev-hsmmc.c
+index b0f93f1..ff7452e9 100644
+--- a/arch/arm/plat-samsung/dev-hsmmc.c
++++ b/arch/arm/plat-samsung/dev-hsmmc.c
+@@ -15,50 +15,19 @@
  #include <linux/platform_device.h>
+ #include <linux/mmc/host.h>
  
-+/**
-+ * enum s3c_dev_type - samsung platform device identifier.
-+ *
-+ * One define per type of device supported, to indicate the type when
-+ * looking through various tables. If there is the possibility of more
-+ * than one of each of these, then this is handled elsewhere.
-+ */
-+enum s3c_dev_type {
-+	SAMSUNG_DEVICE_FB,	/* newer style framebuffer S3C2443+ */
-+	SAMSUNG_DEVICE_TS,
-+	SAMSUNG_DEVICE_ADC,
-+	SAMSUNG_DEVICE_I2C,
-+	SAMSUNG_DEVICE_IIS,
-+	SAMSUNG_DEVICE_LCD,
-+	SAMSUNG_DEVICE_MCI,	/* s3c24xx style sd/mmc block */
-+	SAMSUNG_DEVICE_RTC,
-+	SAMSUNG_DEVICE_SPI,	/* s3c24xx style SPI block */
-+	SAMSUNG_DEVICE_AC97,
-+	SAMSUNG_DEVICE_HSPI,
-+	SAMSUNG_DEVICE_OHCI,
-+	SAMSUNG_DEVICE_NAND,
-+	SAMSUNG_DEVICE_UART,
-+	SAMSUNG_DEVICE_CAMIF,
-+	SAMSUNG_DEVICE_SDHCI,
-+	SAMSUNG_DEVICE_HWMON,
-+	SAMSUNG_DEVICE_TIMER,	/* pwm timer block */
-+	SAMSUNG_DEVICE_CAMERA,
-+	SAMSUNG_DEVICE_WATCHDOG,
-+	SAMSUNG_DEVICE_USBGADGET,
-+	SAMSUNG_DEVICE_USB_HSOTG,
-+	SAMSUNG_DEVICE_SPI_S3C64XX,
-+	SAMSUNG_DEVICE_ONENAND,
+-#include <mach/map.h>
+ #include <plat/sdhci.h>
+ #include <plat/devs.h>
+-#include <plat/cpu.h>
++#include <plat/dev-core.h>
+ 
+-#define S3C_SZ_HSMMC	(0x1000)
+-
+-static struct resource s3c_hsmmc_resource[] = {
+-	[0] = {
+-		.start = S3C_PA_HSMMC0,
+-		.end   = S3C_PA_HSMMC0 + S3C_SZ_HSMMC - 1,
+-		.flags = IORESOURCE_MEM,
+-	},
+-	[1] = {
+-		.start = IRQ_HSMMC0,
+-		.end   = IRQ_HSMMC0,
+-		.flags = IORESOURCE_IRQ,
+-	}
+-};
+-
+-static u64 s3c_device_hsmmc_dmamask = 0xffffffffUL;
+-
+-struct s3c_sdhci_platdata s3c_hsmmc0_def_platdata = {
+-	.max_width	= 4,
+-	.host_caps	= (MMC_CAP_4_BIT_DATA |
+-			   MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED),
+-};
+-
+-struct platform_device s3c_device_hsmmc0 = {
+-	.name		= "s3c-sdhci",
+-	.id		= 0,
+-	.num_resources	= ARRAY_SIZE(s3c_hsmmc_resource),
+-	.resource	= s3c_hsmmc_resource,
+-	.dev		= {
+-		.dma_mask		= &s3c_device_hsmmc_dmamask,
+-		.coherent_dma_mask	= 0xffffffffUL,
+-		.platform_data		= &s3c_hsmmc0_def_platdata,
+-	},
+-};
+-
+-void s3c_sdhci0_set_platdata(struct s3c_sdhci_platdata *pd)
++void __init s3c_sdhci_set_platdata(void *src, int id)
+ {
+-	struct s3c_sdhci_platdata *set = &s3c_hsmmc0_def_platdata;
+-
++	struct s3c_sdhci_platdata *pd = src;
++	struct s3c_sdhci_platdata *set;
++	set = s3c_device_get_defplatdata(SAMSUNG_DEVICE_SDHCI, id);
++	if (!set) {
++		printk(KERN_ERR "%s: no default platform data\n", __func__);
++		return;
++	}
+ 	set->max_width = pd->max_width;
+ 	set->cd_type = pd->cd_type;
+ 	set->ext_cd_init = pd->ext_cd_init;
+@@ -71,3 +40,12 @@ void s3c_sdhci0_set_platdata(struct s3c_sdhci_platdata *pd)
+ 	if (pd->cfg_card)
+ 		set->cfg_card = pd->cfg_card;
+ }
++
++struct s3c_pdev_template s3c_hsmmc_template __initdata = {
++	.type = SAMSUNG_DEVICE_SDHCI,
++	.resources = s3c_std_resources_4k,
++	.nr_res = 2,
++	.pdata_size = sizeof(struct s3c_sdhci_platdata),
++	.pdata_set = s3c_sdhci_set_platdata,
++	.dma = &samsung_std_dma_mask,
 +};
-+
-+#define SAMSUNG_DEVICE_WDT SAMSUNG_DEVICE_WATCHDOG
-+#define SAMSUNG_DEVICE_SDI SAMSUNG_DEVICE_MCI
-+
+diff --git a/arch/arm/plat-samsung/dev-hsmmc1.c b/arch/arm/plat-samsung/dev-hsmmc1.c
+deleted file mode 100644
+index 1504fd8..0000000
+--- a/arch/arm/plat-samsung/dev-hsmmc1.c
++++ /dev/null
+@@ -1,73 +0,0 @@
+-/* linux/arch/arm/plat-s3c/dev-hsmmc1.c
+- *
+- * Copyright (c) 2008 Simtec Electronics
+- *	Ben Dooks <ben@simtec.co.uk>
+- *	http://armlinux.simtec.co.uk/
+- *
+- * S3C series device definition for hsmmc device 1
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#include <linux/kernel.h>
+-#include <linux/platform_device.h>
+-#include <linux/mmc/host.h>
+-
+-#include <mach/map.h>
+-#include <plat/sdhci.h>
+-#include <plat/devs.h>
+-#include <plat/cpu.h>
+-
+-#define S3C_SZ_HSMMC	(0x1000)
+-
+-static struct resource s3c_hsmmc1_resource[] = {
+-	[0] = {
+-		.start = S3C_PA_HSMMC1,
+-		.end   = S3C_PA_HSMMC1 + S3C_SZ_HSMMC - 1,
+-		.flags = IORESOURCE_MEM,
+-	},
+-	[1] = {
+-		.start = IRQ_HSMMC1,
+-		.end   = IRQ_HSMMC1,
+-		.flags = IORESOURCE_IRQ,
+-	}
+-};
+-
+-static u64 s3c_device_hsmmc1_dmamask = 0xffffffffUL;
+-
+-struct s3c_sdhci_platdata s3c_hsmmc1_def_platdata = {
+-	.max_width	= 4,
+-	.host_caps	= (MMC_CAP_4_BIT_DATA |
+-			   MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED),
+-};
+-
+-struct platform_device s3c_device_hsmmc1 = {
+-	.name		= "s3c-sdhci",
+-	.id		= 1,
+-	.num_resources	= ARRAY_SIZE(s3c_hsmmc1_resource),
+-	.resource	= s3c_hsmmc1_resource,
+-	.dev		= {
+-		.dma_mask		= &s3c_device_hsmmc1_dmamask,
+-		.coherent_dma_mask	= 0xffffffffUL,
+-		.platform_data		= &s3c_hsmmc1_def_platdata,
+-	},
+-};
+-
+-void s3c_sdhci1_set_platdata(struct s3c_sdhci_platdata *pd)
+-{
+-	struct s3c_sdhci_platdata *set = &s3c_hsmmc1_def_platdata;
+-
+-	set->max_width = pd->max_width;
+-	set->cd_type = pd->cd_type;
+-	set->ext_cd_init = pd->ext_cd_init;
+-	set->ext_cd_cleanup = pd->ext_cd_cleanup;
+-	set->ext_cd_gpio = pd->ext_cd_gpio;
+-	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
+-
+-	if (pd->cfg_gpio)
+-		set->cfg_gpio = pd->cfg_gpio;
+-	if (pd->cfg_card)
+-		set->cfg_card = pd->cfg_card;
+-}
+diff --git a/arch/arm/plat-samsung/dev-hsmmc2.c b/arch/arm/plat-samsung/dev-hsmmc2.c
+deleted file mode 100644
+index b28ef17..0000000
+--- a/arch/arm/plat-samsung/dev-hsmmc2.c
++++ /dev/null
+@@ -1,74 +0,0 @@
+-/* linux/arch/arm/plat-s3c/dev-hsmmc2.c
+- *
+- * Copyright (c) 2009 Samsung Electronics
+- * Copyright (c) 2009 Maurus Cuelenaere
+- *
+- * Based on arch/arm/plat-s3c/dev-hsmmc1.c
+- * original file Copyright (c) 2008 Simtec Electronics
+- *
+- * S3C series device definition for hsmmc device 2
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#include <linux/kernel.h>
+-#include <linux/platform_device.h>
+-#include <linux/mmc/host.h>
+-
+-#include <mach/map.h>
+-#include <plat/sdhci.h>
+-#include <plat/devs.h>
+-
+-#define S3C_SZ_HSMMC	(0x1000)
+-
+-static struct resource s3c_hsmmc2_resource[] = {
+-	[0] = {
+-		.start = S3C_PA_HSMMC2,
+-		.end   = S3C_PA_HSMMC2 + S3C_SZ_HSMMC - 1,
+-		.flags = IORESOURCE_MEM,
+-	},
+-	[1] = {
+-		.start = IRQ_HSMMC2,
+-		.end   = IRQ_HSMMC2,
+-		.flags = IORESOURCE_IRQ,
+-	}
+-};
+-
+-static u64 s3c_device_hsmmc2_dmamask = 0xffffffffUL;
+-
+-struct s3c_sdhci_platdata s3c_hsmmc2_def_platdata = {
+-	.max_width	= 4,
+-	.host_caps	= (MMC_CAP_4_BIT_DATA |
+-			   MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED),
+-};
+-
+-struct platform_device s3c_device_hsmmc2 = {
+-	.name		= "s3c-sdhci",
+-	.id		= 2,
+-	.num_resources	= ARRAY_SIZE(s3c_hsmmc2_resource),
+-	.resource	= s3c_hsmmc2_resource,
+-	.dev		= {
+-		.dma_mask		= &s3c_device_hsmmc2_dmamask,
+-		.coherent_dma_mask	= 0xffffffffUL,
+-		.platform_data		= &s3c_hsmmc2_def_platdata,
+-	},
+-};
+-
+-void s3c_sdhci2_set_platdata(struct s3c_sdhci_platdata *pd)
+-{
+-	struct s3c_sdhci_platdata *set = &s3c_hsmmc2_def_platdata;
+-
+-	set->max_width = pd->max_width;
+-	set->cd_type = pd->cd_type;
+-	set->ext_cd_init = pd->ext_cd_init;
+-	set->ext_cd_cleanup = pd->ext_cd_cleanup;
+-	set->ext_cd_gpio = pd->ext_cd_gpio;
+-	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
+-
+-	if (pd->cfg_gpio)
+-		set->cfg_gpio = pd->cfg_gpio;
+-	if (pd->cfg_card)
+-		set->cfg_card = pd->cfg_card;
+-}
+diff --git a/arch/arm/plat-samsung/dev-hsmmc3.c b/arch/arm/plat-samsung/dev-hsmmc3.c
+deleted file mode 100644
+index 85aaf0f..0000000
+--- a/arch/arm/plat-samsung/dev-hsmmc3.c
++++ /dev/null
+@@ -1,77 +0,0 @@
+-/* linux/arch/arm/plat-samsung/dev-hsmmc3.c
+- *
+- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- *
+- * Copyright (c) 2008 Simtec Electronics
+- *	Ben Dooks <ben@simtec.co.uk>
+- *	http://armlinux.simtec.co.uk/
+- *
+- * Based on arch/arm/plat-samsung/dev-hsmmc1.c
+- *
+- * Samsung device definition for hsmmc device 3
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#include <linux/kernel.h>
+-#include <linux/platform_device.h>
+-#include <linux/mmc/host.h>
+-
+-#include <mach/map.h>
+-#include <plat/sdhci.h>
+-#include <plat/devs.h>
+-
+-#define S3C_SZ_HSMMC	(0x1000)
+-
+-static struct resource s3c_hsmmc3_resource[] = {
+-	[0] = {
+-		.start	= S3C_PA_HSMMC3,
+-		.end	= S3C_PA_HSMMC3 + S3C_SZ_HSMMC - 1,
+-		.flags	= IORESOURCE_MEM,
+-	},
+-	[1] = {
+-		.start	= IRQ_MMC3,
+-		.end	= IRQ_MMC3,
+-		.flags	= IORESOURCE_IRQ,
+-	}
+-};
+-
+-static u64 s3c_device_hsmmc3_dmamask = 0xffffffffUL;
+-
+-struct s3c_sdhci_platdata s3c_hsmmc3_def_platdata = {
+-	.max_width	= 4,
+-	.host_caps	= (MMC_CAP_4_BIT_DATA |
+-			   MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED),
+-};
+-
+-struct platform_device s3c_device_hsmmc3 = {
+-	.name		= "s3c-sdhci",
+-	.id		= 3,
+-	.num_resources	= ARRAY_SIZE(s3c_hsmmc3_resource),
+-	.resource	= s3c_hsmmc3_resource,
+-	.dev		= {
+-		.dma_mask		= &s3c_device_hsmmc3_dmamask,
+-		.coherent_dma_mask	= 0xffffffffUL,
+-		.platform_data		= &s3c_hsmmc3_def_platdata,
+-	},
+-};
+-
+-void s3c_sdhci3_set_platdata(struct s3c_sdhci_platdata *pd)
+-{
+-	struct s3c_sdhci_platdata *set = &s3c_hsmmc3_def_platdata;
+-
+-	set->max_width = pd->max_width;
+-	set->cd_type = pd->cd_type;
+-	set->ext_cd_init = pd->ext_cd_init;
+-	set->ext_cd_cleanup = pd->ext_cd_cleanup;
+-	set->ext_cd_gpio = pd->ext_cd_gpio;
+-	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
+-
+-	if (pd->cfg_gpio)
+-		set->cfg_gpio = pd->cfg_gpio;
+-	if (pd->cfg_card)
+-		set->cfg_card = pd->cfg_card;
+-}
+diff --git a/arch/arm/plat-samsung/dev_templates.c b/arch/arm/plat-samsung/dev_templates.c
+index dcf8c0e..922c6e9 100644
+--- a/arch/arm/plat-samsung/dev_templates.c
++++ b/arch/arm/plat-samsung/dev_templates.c
+@@ -22,6 +22,7 @@
+ #include <plat/cpu.h>
+ 
+ #include <plat/uart.h>
++#include <plat/sdhci.h>
+ 
+ #define TEMPLATE_ENTRY(_type, _res) \
+ {	.type = (_type), \
+@@ -43,6 +44,7 @@ struct resource s3c_std_resources_4k[] __initdata = {
+ static struct s3c_pdev_template *templates[] __initdata = {
+ 	s3c24xx_uart_template_p,
+ 	s3c64xx_uart_template_p,
++	s3c_hsmmc_template_p,
+ };
+ 
+ u64 samsung_std_dma_mask = 0xffffffffUL;
+diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-samsung/include/plat/sdhci.h
+index 30844c2..280f291 100644
+--- a/arch/arm/plat-samsung/include/plat/sdhci.h
++++ b/arch/arm/plat-samsung/include/plat/sdhci.h
+@@ -106,10 +106,6 @@ extern void s5pc100_setup_sdhci0_cfg_gpio(struct platform_device *, int w);
+ extern void s5pc100_setup_sdhci1_cfg_gpio(struct platform_device *, int w);
+ extern void s5pc100_setup_sdhci2_cfg_gpio(struct platform_device *, int w);
+ extern void s3c64xx_setup_sdhci2_cfg_gpio(struct platform_device *, int w);
+-extern void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *, int w);
+-extern void s5pv210_setup_sdhci1_cfg_gpio(struct platform_device *, int w);
+-extern void s5pv210_setup_sdhci2_cfg_gpio(struct platform_device *, int w);
+-extern void s5pv210_setup_sdhci3_cfg_gpio(struct platform_device *, int w);
+ 
+ /* S3C64XX SDHCI setup */
+ 
+@@ -234,58 +230,54 @@ static inline void s5pc100_default_sdhci2(void) { }
+ 
+ #endif /* CONFIG_S5PC100_SETUP_SDHCI */
+ 
+-/* S5PV210 SDHCI setup */
+-
+-#ifdef CONFIG_S5PV210_SETUP_SDHCI
+-extern char *s5pv210_hsmmc_clksrcs[4];
+-
+-extern void s5pv210_setup_sdhci_cfg_card(struct platform_device *dev,
+-					   void __iomem *r,
+-					   struct mmc_ios *ios,
+-					   struct mmc_card *card);
+-
+-static inline void s5pv210_default_sdhci0(void)
+-{
+-#ifdef CONFIG_S3C_DEV_HSMMC
+-	s3c_hsmmc0_def_platdata.clocks = s5pv210_hsmmc_clksrcs;
+-	s3c_hsmmc0_def_platdata.cfg_gpio = s5pv210_setup_sdhci0_cfg_gpio;
+-	s3c_hsmmc0_def_platdata.cfg_card = s5pv210_setup_sdhci_cfg_card;
+-#endif
+-}
+-
+-static inline void s5pv210_default_sdhci1(void)
+-{
+-#ifdef CONFIG_S3C_DEV_HSMMC1
+-	s3c_hsmmc1_def_platdata.clocks = s5pv210_hsmmc_clksrcs;
+-	s3c_hsmmc1_def_platdata.cfg_gpio = s5pv210_setup_sdhci1_cfg_gpio;
+-	s3c_hsmmc1_def_platdata.cfg_card = s5pv210_setup_sdhci_cfg_card;
+-#endif
+-}
+-
+-static inline void s5pv210_default_sdhci2(void)
+-{
+-#ifdef CONFIG_S3C_DEV_HSMMC2
+-	s3c_hsmmc2_def_platdata.clocks = s5pv210_hsmmc_clksrcs;
+-	s3c_hsmmc2_def_platdata.cfg_gpio = s5pv210_setup_sdhci2_cfg_gpio;
+-	s3c_hsmmc2_def_platdata.cfg_card = s5pv210_setup_sdhci_cfg_card;
+-#endif
+-}
+-
+-static inline void s5pv210_default_sdhci3(void)
+-{
+-#ifdef CONFIG_S3C_DEV_HSMMC3
+-	s3c_hsmmc3_def_platdata.clocks = s5pv210_hsmmc_clksrcs;
+-	s3c_hsmmc3_def_platdata.cfg_gpio = s5pv210_setup_sdhci3_cfg_gpio;
+-	s3c_hsmmc3_def_platdata.cfg_card = s5pv210_setup_sdhci_cfg_card;
+-#endif
+-}
+-
+-#else
+-static inline void s5pv210_default_sdhci0(void) { }
+-static inline void s5pv210_default_sdhci1(void) { }
+-static inline void s5pv210_default_sdhci2(void) { }
+-static inline void s5pv210_default_sdhci3(void) { }
+-
+-#endif /* CONFIG_S5PV210_SETUP_SDHCI */
 +/**
-+ * struct s3c_devtable - device table entry for Samsung platform device
-+ * @type: The type of device that is being added
-+ * @index: -1 if there is only one, otherwise the index of the block 0..n
-+ * @pdata: Default platform data for the new device
-+ */
-+struct s3c_devtable {
-+	enum s3c_dev_type	 type;
-+	int			 index;
-+	void			*pdata;
-+};
-+
-+/**
-+ * s3c_device_create - creates a new instance of the device.
-+ * @type: The type of device that is being changed
-+ * @index: -1 if there is only one, otherwise the index of the block 0..n
-+ * @pdata: New platform data for the device
++ * s3c_sdhci_set_platdata - Set platform data for S3C SDHCI device.
++ * @pd: Platform data to register to device.
 + *
-+ * This call returns the pointer to the newly created instance of the
-+ * device specified by the type and index pair.
++ * Register the given platform data for use withe S3C SDHCI device.
++ * The call will copy the platform data, so the board definitions can
++ * make the structure itself __initdata.
 + */
-+extern struct platform_device *s3c_device_create(enum s3c_dev_type type,
-+						 unsigned int index,
-+						 void *pdata);
++extern void s3c_sdhci_set_platdata(void *pd, int id);
 +
-+/**
-+ * s3c_device_register - creates a new instance of the device.
-+ * @type: The type of device that is being changed
-+ * @index: -1 if there is only one, otherwise the index of the block 0..n
-+ * @pdata: New platform data for the device
-+ *
-+ * This call creates a new instance of the device specified by the type
-+ * and index pair. Then it registers it to the platform bus.
-+ */
-+extern int s3c_device_register(enum s3c_dev_type type,
-+			       unsigned int index, void *pdata);
++#ifdef CONFIG_S3C_DEV_HSMMC
++extern struct s3c_pdev_template s3c_hsmmc_template;
++#define s3c_hsmmc_template_p (&s3c_hsmmc_template)
++#else
++#define s3c_hsmmc_template_p NULL
++#endif
 +
-+/**
-+ * s3c_device_set_platdata - set platform data for specified device.
-+ * @type: The type of device that is being changed
-+ * @index: -1 if there is only one, otherwise the index of the block 0..n
-+ * @pdata: New platform data for the device
-+ */
-+extern void s3c_device_set_platdata(enum s3c_dev_type type,
-+				    unsigned int index,
-+				    void *pdata);
++/* Default platform data, exported so that per-cpu initialisation can
++ * set the correct one when there are more than one cpu type selected.
++*/
 +
-+/**
-+ * s3c_device_get_defplatdata - get a pointer to the default platform data.
-+ * @type: The type of device that is being examined
-+ * @index: -1 if there is only one, otherwise the index of the block 0..n
-+ *
-+ * This call returns a pointer to the device's default platform data. All
-+ * required changes should be done 'in place', on the original platform
-+ * data. Each device instance has its own default platform data. The
-+ * platform data will be copied to memory on the device registration.
-+ */
-+extern void *s3c_device_get_defplatdata(enum s3c_dev_type type,
-+				    unsigned int index);
++extern struct s3c_sdhci_platdata s5pv210_hsmmc0_def_platdata;
++extern struct s3c_sdhci_platdata s5pv210_hsmmc1_def_platdata;
++extern struct s3c_sdhci_platdata s5pv210_hsmmc2_def_platdata;
++extern struct s3c_sdhci_platdata s5pv210_hsmmc3_def_platdata;
 +
-+/**
-+ * samsung_devices_add - add devices from the given device table.
-+ * @devs: The device table to add devices from.
-+ * @nr_devs: The number of table entries in @devs.
-+ */
-+extern int samsung_add_devices(struct s3c_devtable *devs, int nr_devs);
++#ifdef CONFIG_S5PV210_SETUP_SDHCI0
++#define s5pv210_hsmmc0_def_platdata_p (&s5pv210_hsmmc0_def_platdata)
++#else
++#define s5pv210_hsmmc0_def_platdata_p NULL
++#endif
 +
-+/**
-+ * samsung_device_setparent - set device's parent from given device
-+ * @dev: The device to set the parent of.
-+ * @type: The device type
-+ * @index: -1 if there is only one, otherwise the index of the block 0..n
-+ *
-+ * Set the given device's parent to the platform device that was created
-+ * during the initialisation process (since we do not have direct pointers
-+ * to the platform device structures anymore).
-+ */
-+extern void samsung_device_setparent(struct device *dev,
-+				     enum s3c_dev_type type, int index);
++#ifdef CONFIG_S5PV210_SETUP_SDHCI1
++#define s5pv210_hsmmc1_def_platdata_p (&s5pv210_hsmmc1_def_platdata)
++#else
++#define s5pv210_hsmmc1_def_platdata_p NULL
++#endif
 +
- struct s3c24xx_uart_resources {
- 	struct resource		*resources;
- 	unsigned long		 nr_resources;
++#ifdef CONFIG_S5PV210_SETUP_SDHCI2
++#define s5pv210_hsmmc2_def_platdata_p (&s5pv210_hsmmc2_def_platdata)
++#else
++#define s5pv210_hsmmc2_def_platdata_p NULL
++#endif
++
++#ifdef CONFIG_S5PV210_SETUP_SDHCI3
++#define s5pv210_hsmmc3_def_platdata_p (&s5pv210_hsmmc3_def_platdata)
++#else
++#define s5pv210_hsmmc3_def_platdata_p NULL
++#endif
+ 
+ #endif /* __PLAT_S3C_SDHCI_H */
 -- 
 1.7.1.569.g6f426
