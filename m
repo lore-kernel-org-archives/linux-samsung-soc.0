@@ -1,26 +1,37 @@
-From: Maurus Cuelenaere <mcuelenaere-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] USB: s3c-hsotg: Remove DEBUG define
-Date: Fri, 13 Aug 2010 21:29:30 +0200
-Message-ID: <4c659d1c.487e0e0a.037b.ffffcf6a@mx.google.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, dbrownell-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, gregkh-l3A5Bk7waGM@public.gmane.org
+From: David Miller <davem@davemloft.net>
+Subject: Re: [RFC 9/9] crypto: Add Samsung crypto engine driver
+Date: Fri, 13 Aug 2010 14:45:37 -0700 (PDT)
+Message-ID: <20100813.144537.102558594.davem@davemloft.net>
+References: <4C63DF4C.1020501@gmail.com>
+	<20100812.153208.48514514.davem@davemloft.net>
+	<4C6529E1.8020300@gmail.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:41310
+	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753343Ab0HMVpT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 13 Aug 2010 17:45:19 -0400
+In-Reply-To: <4C6529E1.8020300@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: mcuelenaere@gmail.com
+Cc: kmpark@infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au
 
-DEBUG is defined unconditionally, remove it as this clutters the message log.
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Date: Fri, 13 Aug 2010 13:17:53 +0200
 
-Signed-off-by: Maurus Cuelenaere <mcuelenaere-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/usb/gadget/s3c-hsotg.c |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
+>  Op 13-08-10 00:32, David Miller schreef:
+>> From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+>> Date: Thu, 12 Aug 2010 13:47:24 +0200
+>>
+>> tcrypt can validate async crypto algorithms, but cannot performance
+>> test them just yet.  I can performance test async hash algorithms,
+>> for which I added the code for a few months ago.
+> Hmm ok, I suppose implementing support for performance testing async crypto
+> algorithms isn't trivial?
 
-diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
-index 521ebed..a229744 100644
---- a/drivers/usb/gadget/s3c-hsotg.c
-+++ b/drivers/usb/gadget/s3c-hsotg.c
-@@ -12,8 +12,6 @@
-  * published by the Free Software Foundation.
- */
- 
--#define DEBUG
+It shouldn't be that hard, the issue is simply that nobody has put
+the time in to do the work yet.
