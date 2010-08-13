@@ -1,55 +1,78 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: SAMSUNG: Fix on build warning about dependency in Kconfig
-Date: Fri, 13 Aug 2010 14:38:52 +0900
-Message-ID: <1281677932-6148-1-git-send-email-kgene.kim@samsung.com>
+Subject: 'error: 'SDHCI_QUIRK_NO_HISPD_BIT' undeclared' and 'undefined
+ reference to `sdhci_card_detect''
+Date: Fri, 13 Aug 2010 16:32:07 +0900
+Message-ID: <008d01cb3ab9$ae73da60$0b5b8f20$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:35974 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751874Ab0HMFvL (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:23991 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755133Ab0HMHcQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Aug 2010 01:51:11 -0400
+	Fri, 13 Aug 2010 03:32:16 -0400
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
+Cc: ben-linux@fluff.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Andrew Morton' <akpm@linux-foundation.org>
 
-This patch fixes on following build warning.
+Hi, 
 
-warning: (PLAT_S5P && (ARCH_S5P6440 || ARCH_S5P6442 || ARCH_S5PC100 ||
-	     ARCH_S5PV210 || ARCH_S5PV310) || ARCH_S3C64XX && <choice>)
-	     selects PLAT_SAMSUNG which has unmet direct dependencies
-	     (ARCH_S3C2410 || ARCH_S3C24A0 || ARCH_S3C64XX)
+This is just information about Samsung sdmmc stuff building error now.
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Ben Dooks <ben-linux@fluff.org>
----
-Hi, Russell
+I found Marek's 'sdhci-s3c: enable SDHCI_QUIRK_NO_HISPD_BIT quirk' in the
+Linus' tree.
+(commit ID: a1d5646005af1247d6ae78434bb4db15b07a07b2)
 
-This is for 2.6.36-rc1.
-How can this go to Linus' tree?
+But not defined the quirk yet...so following build error happened with
+s3c6400_defconfig in Linus' latest.
 
-Or is it better after rc1?
+drivers/mmc/host/sdhci-s3c.c: In function 'sdhci_s3c_probe':
+drivers/mmc/host/sdhci-s3c.c:400: error: 'SDHCI_QUIRK_NO_HISPD_BIT'
+undeclared (first use in this function)
+drivers/mmc/host/sdhci-s3c.c:400: error: (Each undeclared identifier is
+reported only once
+drivers/mmc/host/sdhci-s3c.c:400: error: for each function it appears in.)
+make[4]: *** [drivers/mmc/host/sdhci-s3c.o] Error 1
+make[3]: *** [drivers/mmc/host] Error 2
+make[2]: *** [drivers/mmc] Error 2
+make[1]: *** [drivers] Error 2
+
+Kyungmin Park's below patch can solve this and it is in mmotm now.
+(commit ID: 2935b9e7fcc4bea3751b8d039b383b2036a7d36d)
+
+But I think, to update quirk definition should being in Marek's patch for
+avoiding build error.
+Of course, I'm not sure whether the commit order changed.
+Anyway, in this case, will be solved after merging mm tree.
+
+
+And second case is same.
+
+Marek's 'sdhci-s3c: add support for new card detection methods' cause
+following build error.
+(commit ID:17866e14f3a4f219e94f1374ece7226479418ff8)
+
+drivers/built-in.o: In function `sdhci_s3c_notify_change':
+/home/kgene/linux/linux-2.6-mainline-dev/drivers/mmc/host/sdhci-s3c.c:255:
+undefined reference to `sdhci_card_detect'
+make[1]: *** [.tmp_vmlinux1] Error 1
+make: *** [sub-make] Error 2
+
+And Andrew's patch(b567e5dd5a34c184e5642100e752cb87e064bb97) can solve this.
+(of course this needs another patches...)
+
+Anyway...
+Marek, in future please make sure your patch has no building problem before
+submitting.
+(or it can help to add some kind of dependency note in your patch)
 
 Thanks.
 
 Best regards,
 Kgene.
-
- arch/arm/plat-samsung/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 4529dd6..7c0bde7 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -6,7 +6,7 @@
- 
- config PLAT_SAMSUNG
- 	bool
--	depends on ARCH_S3C2410 || ARCH_S3C24A0 || ARCH_S3C64XX
-+	depends on PLAT_S3C24XX || ARCH_S3C64XX || PLAT_S5P
- 	select NO_IOPORT
- 	default y
- 	help
--- 
-1.6.2.5
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
