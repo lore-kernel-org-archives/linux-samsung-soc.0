@@ -1,37 +1,55 @@
-From: David Miller <davem@davemloft.net>
-Subject: Re: [RFC 9/9] crypto: Add Samsung crypto engine driver
-Date: Thu, 12 Aug 2010 15:32:08 -0700 (PDT)
-Message-ID: <20100812.153208.48514514.davem@davemloft.net>
-References: <4C129341.2060407@gmail.com>
-	<AANLkTi=FKAdC9AwPR41MUBUjBZ2Zf1qv1DSQ+EnMHu7d@mail.gmail.com>
-	<4C63DF4C.1020501@gmail.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: SAMSUNG: Fix on build warning about dependency in Kconfig
+Date: Fri, 13 Aug 2010 14:38:52 +0900
+Message-ID: <1281677932-6148-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 74-93-104-97-Washington.hfc.comcastbusiness.net ([74.93.104.97]:34005
-	"EHLO sunset.davemloft.net" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754518Ab0HLWbv (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:35974 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751874Ab0HMFvL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Aug 2010 18:31:51 -0400
-In-Reply-To: <4C63DF4C.1020501@gmail.com>
+	Fri, 13 Aug 2010 01:51:11 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: mcuelenaere@gmail.com
-Cc: kmpark@infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Date: Thu, 12 Aug 2010 13:47:24 +0200
+This patch fixes on following build warning.
 
-> The main issues still remain (DMA not working at all and FIFO not
-> working for some (T)DES transfers). Additionally, I couldn't get
-> tcrypt to test the s3c-sss driver for some reason, it always picked
-> the standard AES/TDES/DES driver (even though s3c-sss has a higher
-> priority and succeeded the self-test).
+warning: (PLAT_S5P && (ARCH_S5P6440 || ARCH_S5P6442 || ARCH_S5PC100 ||
+	     ARCH_S5PV210 || ARCH_S5PV310) || ARCH_S3C64XX && <choice>)
+	     selects PLAT_SAMSUNG which has unmet direct dependencies
+	     (ARCH_S3C2410 || ARCH_S3C24A0 || ARCH_S3C64XX)
 
-I forget the details of your driver, but were your encryption algorithms
-implemented async?
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Ben Dooks <ben-linux@fluff.org>
+---
+Hi, Russell
 
-tcrypt can validate async crypto algorithms, but cannot performance
-test them just yet.  I can performance test async hash algorithms,
-for which I added the code for a few months ago.
+This is for 2.6.36-rc1.
+How can this go to Linus' tree?
+
+Or is it better after rc1?
+
+Thanks.
+
+Best regards,
+Kgene.
+
+ arch/arm/plat-samsung/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index 4529dd6..7c0bde7 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -6,7 +6,7 @@
+ 
+ config PLAT_SAMSUNG
+ 	bool
+-	depends on ARCH_S3C2410 || ARCH_S3C24A0 || ARCH_S3C64XX
++	depends on PLAT_S3C24XX || ARCH_S3C64XX || PLAT_S5P
+ 	select NO_IOPORT
+ 	default y
+ 	help
+-- 
+1.6.2.5
