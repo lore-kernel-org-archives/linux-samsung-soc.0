@@ -1,14 +1,14 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
 Subject: Re: [PATCH 3/3] ARM: S3C64XX: Stop and flush requests on freeing
-Date: Sun, 15 Aug 2010 22:36:39 +0900
-Message-ID: <AANLkTinC-mmdrhbGRsuuWVHTeFGCf2E6PMEU3tFOv3Ts@mail.gmail.com>
-References: <4c67e6b3.487e0e0a.0a1b.22d7@mx.google.com>
-	<AANLkTimvW3KM6k5grpXXoZw1Z64J1OtZkqpCavPApbsn@mail.gmail.com>
+Date: Sun, 15 Aug 2010 15:42:28 +0200
+Message-ID: <4C67EEC4.3040001@gmail.com>
+References: <4c67e6b3.487e0e0a.0a1b.22d7@mx.google.com>	<AANLkTimvW3KM6k5grpXXoZw1Z64J1OtZkqpCavPApbsn@mail.gmail.com>
+	<AANLkTinC-mmdrhbGRsuuWVHTeFGCf2E6PMEU3tFOv3Ts@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <AANLkTimvW3KM6k5grpXXoZw1Z64J1OtZkqpCavPApbsn@mail.gmail.com>
+In-Reply-To: <AANLkTinC-mmdrhbGRsuuWVHTeFGCf2E6PMEU3tFOv3Ts@mail.gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
 	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,32 +18,48 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: linux-arm-kernel-bounces@lists.infradead.org
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Maurus Cuelenaere <mcuelenaere@gmail.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>
 Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gU3VuLCBBdWcgMTUsIDIwMTAgYXQgMTA6MjggUE0sIEphc3NpIEJyYXIgPGphc3Npc2luZ2hi
-cmFyQGdtYWlsLmNvbT4gd3JvdGU6Cj4gT24gTW9uLCBNYXkgMzEsIDIwMTAgYXQgODozNCBQTSwg
-TWF1cnVzIEN1ZWxlbmFlcmUKPiA8bWN1ZWxlbmFlcmVAZ21haWwuY29tPiB3cm90ZToKPj4gV2hl
-biBhIERNQSBjaGFubmVsIGlzIGZyZWVkLCBpdHMgcGVuZGluZyByZXF1ZXN0cyBzaG91bGQgYmUg
-Zmx1c2hlZCBhbmQgdGhlCj4+IGNoYW5uZWwgc2hvdWxkIGJlIGhhbHRlZC4gVGhpcyBwYXRjaCBl
-bnN1cmVzIHRoYXQgaGFwcGVucy4KPj4KPj4gU2lnbmVkLW9mZi1ieTogTWF1cnVzIEN1ZWxlbmFl
-cmUgPG1jdWVsZW5hZXJlQGdtYWlsLmNvbT4KPj4gLS0tCj4+IMKgYXJjaC9hcm0vbWFjaC1zM2M2
-NHh4L2RtYS5jIHwgwqAgwqAzICsrLQo+PiDCoDEgZmlsZXMgY2hhbmdlZCwgMiBpbnNlcnRpb25z
-KCspLCAxIGRlbGV0aW9ucygtKQo+Pgo+PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1zM2M2
-NHh4L2RtYS5jIGIvYXJjaC9hcm0vbWFjaC1zM2M2NHh4L2RtYS5jCj4+IGluZGV4IDFmZDlkMGMu
-LmUxZjIyYWYgMTAwNjQ0Cj4+IC0tLSBhL2FyY2gvYXJtL21hY2gtczNjNjR4eC9kbWEuYwo+PiAr
-KysgYi9hcmNoL2FybS9tYWNoLXMzYzY0eHgvZG1hLmMKPj4gQEAgLTU2MCw3ICs1NjAsOCBAQCBp
-bnQgczNjMjQxMF9kbWFfZnJlZSh1bnNpZ25lZCBpbnQgY2hhbm5lbCwgc3RydWN0IHMzYzI0MTBf
-ZG1hX2NsaWVudCAqY2xpZW50KQo+PiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBj
-aGFubmVsLCBjaGFuLT5jbGllbnQsIGNsaWVudCk7Cj4+IMKgIMKgIMKgIMKgfQo+Pgo+PiAtIMKg
-IMKgIMKgIC8qIHNvcnQgb3V0IHN0b3BwaW5nIGFuZCBmcmVlaW5nIHRoZSBjaGFubmVsICovCj4+
-ICsgwqAgwqAgwqAgczNjNjR4eF9kbWFfZmx1c2goY2hhbik7Cj4+ICsgwqAgwqAgwqAgczNjNjR4
-eF9kbWFfc3RvcChjaGFuKTsKPgo+IEkgdGhpbmssIHRoZSBvcmRlciBzaG91bGQgYmUgcmV2ZXJ0
-ZWQuCgpUaG91Z2ggaXQncyBhIG1hdHRlciBvZiBTM0MgRE1BIEFQSSBzcGVjLgpTaG91bGRuJ3Qg
-dGhlIGNsaWVudCBiZSBtYWRlIHRvIGV4cGxpY2l0bHkgZG8gUzNDMjQxMF9ETUFPUF9GTFVTSAph
-IHBlbmRpbmcgcmVxIGJlZm9yZSBmcmVlaW5nIHRoZSBjaGFubmVsPyBJZiBzbywgdGhlIHBhdGNo
-IG1heSBub3QgYmUgbmVlZGVkLgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5l
-bEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4v
-bGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+ Op 15-08-10 15:36, Jassi Brar schreef:
+> On Sun, Aug 15, 2010 at 10:28 PM, Jassi Brar <jassisinghbrar@gmail.com> wrote:
+>> On Mon, May 31, 2010 at 8:34 PM, Maurus Cuelenaere
+>> <mcuelenaere@gmail.com> wrote:
+>>> When a DMA channel is freed, its pending requests should be flushed and the
+>>> channel should be halted. This patch ensures that happens.
+>>>
+>>> Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
+>>> ---
+>>>  arch/arm/mach-s3c64xx/dma.c |    3 ++-
+>>>  1 files changed, 2 insertions(+), 1 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-s3c64xx/dma.c b/arch/arm/mach-s3c64xx/dma.c
+>>> index 1fd9d0c..e1f22af 100644
+>>> --- a/arch/arm/mach-s3c64xx/dma.c
+>>> +++ b/arch/arm/mach-s3c64xx/dma.c
+>>> @@ -560,7 +560,8 @@ int s3c2410_dma_free(unsigned int channel, struct s3c2410_dma_client *client)
+>>>                       channel, chan->client, client);
+>>>        }
+>>>
+>>> -       /* sort out stopping and freeing the channel */
+>>> +       s3c64xx_dma_flush(chan);
+>>> +       s3c64xx_dma_stop(chan);
+>> I think, the order should be reverted.
+
+You're probably right.
+
+> Though it's a matter of S3C DMA API spec.
+> Shouldn't the client be made to explicitly do S3C2410_DMAOP_FLUSH
+> a pending req before freeing the channel? If so, the patch may not be needed.
+
+I can't find anything about the client needing to flush the request itself.
+
+Documentation/arm/Samsung-S3C24XX/DMA.txt doesn't mention anything regarding it
+and the comment above s3c2410_dma_free() says "release the given channel back to
+the system, will stop and flush any outstanding transfers, and ensure the
+channel is ready for the next claimant."
+
+
+-- 
+Maurus Cuelenaere
