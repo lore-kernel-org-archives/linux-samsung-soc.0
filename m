@@ -1,65 +1,72 @@
-From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: Re: [PATCH 3/3] ARM: S3C64XX: Stop and flush requests on freeing
-Date: Sun, 15 Aug 2010 15:42:28 +0200
-Message-ID: <4C67EEC4.3040001@gmail.com>
-References: <4c67e6b3.487e0e0a.0a1b.22d7@mx.google.com>	<AANLkTimvW3KM6k5grpXXoZw1Z64J1OtZkqpCavPApbsn@mail.gmail.com>
-	<AANLkTinC-mmdrhbGRsuuWVHTeFGCf2E6PMEU3tFOv3Ts@mail.gmail.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH] ARM: Update number of VIC
+Date: Mon, 16 Aug 2010 10:01:09 +0900
+Message-ID: <AANLkTikyZHX-PmPx8DjyP6ar7wmyiP7Cf9-ttZQJXttZ@mail.gmail.com>
+References: <1281697788-18018-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <AANLkTinC-mmdrhbGRsuuWVHTeFGCf2E6PMEU3tFOv3Ts@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:64524 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751775Ab0HPBBK convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 15 Aug 2010 21:01:10 -0400
+Received: by wwj40 with SMTP id 40so5760630wwj.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 15 Aug 2010 18:01:09 -0700 (PDT)
+In-Reply-To: <1281697788-18018-1-git-send-email-kgene.kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Russell King <rmk@arm.linux.org.uk>
 
- Op 15-08-10 15:36, Jassi Brar schreef:
-> On Sun, Aug 15, 2010 at 10:28 PM, Jassi Brar <jassisinghbrar@gmail.com> wrote:
->> On Mon, May 31, 2010 at 8:34 PM, Maurus Cuelenaere
->> <mcuelenaere@gmail.com> wrote:
->>> When a DMA channel is freed, its pending requests should be flushed and the
->>> channel should be halted. This patch ensures that happens.
->>>
->>> Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
->>> ---
->>>  arch/arm/mach-s3c64xx/dma.c |    3 ++-
->>>  1 files changed, 2 insertions(+), 1 deletions(-)
->>>
->>> diff --git a/arch/arm/mach-s3c64xx/dma.c b/arch/arm/mach-s3c64xx/dma.c
->>> index 1fd9d0c..e1f22af 100644
->>> --- a/arch/arm/mach-s3c64xx/dma.c
->>> +++ b/arch/arm/mach-s3c64xx/dma.c
->>> @@ -560,7 +560,8 @@ int s3c2410_dma_free(unsigned int channel, struct s3c2410_dma_client *client)
->>>                       channel, chan->client, client);
->>>        }
->>>
->>> -       /* sort out stopping and freeing the channel */
->>> +       s3c64xx_dma_flush(chan);
->>> +       s3c64xx_dma_stop(chan);
->> I think, the order should be reverted.
+Even though it required. I still think ben's patch is better approaches=
+=2E
+Talk to Ben again.
+And there's no answer from Russell this approaches can be accepted.
 
-You're probably right.
+And if you want to apply this patch, please apply my previous patch
+and then add other SoCs.
+http://marc.info/?l=3Dlinux-arm-kernel&m=3D127555986709819&w=3D2
 
-> Though it's a matter of S3C DMA API spec.
-> Shouldn't the client be made to explicitly do S3C2410_DMAOP_FLUSH
-> a pending req before freeing the channel? If so, the patch may not be needed.
+Thank you,
+Kyungmin Park
 
-I can't find anything about the client needing to flush the request itself.
-
-Documentation/arm/Samsung-S3C24XX/DMA.txt doesn't mention anything regarding it
-and the comment above s3c2410_dma_free() says "release the given channel back to
-the system, will stop and flush any outstanding transfers, and ensure the
-channel is ready for the next claimant."
-
-
--- 
-Maurus Cuelenaere
+On Fri, Aug 13, 2010 at 8:09 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> Update the number of VIC to handle the 3 or 4 VICs of
+> the S5PV210, S5P6442 and S5PC100.
+>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Russell King <rmk@arm.linux.org.uk>
+> ---
+> =A0arch/arm/common/Kconfig | =A0 =A04 +++-
+> =A01 files changed, 3 insertions(+), 1 deletions(-)
+>
+> diff --git a/arch/arm/common/Kconfig b/arch/arm/common/Kconfig
+> index 0a34c81..b7c76a9 100644
+> --- a/arch/arm/common/Kconfig
+> +++ b/arch/arm/common/Kconfig
+> @@ -6,8 +6,10 @@ config ARM_VIC
+>
+> =A0config ARM_VIC_NR
+> =A0 =A0 =A0 =A0int
+> - =A0 =A0 =A0 default 2
+> =A0 =A0 =A0 =A0depends on ARM_VIC
+> + =A0 =A0 =A0 default 4 if ARCH_S5PV210
+> + =A0 =A0 =A0 default 3 if ARCH_S5P6442 || ARCH_S5PC100
+> + =A0 =A0 =A0 default 2
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0The maximum number of VICs available in the system=
+, for
+> =A0 =A0 =A0 =A0 =A0power management.
+> --
+> 1.6.2.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
