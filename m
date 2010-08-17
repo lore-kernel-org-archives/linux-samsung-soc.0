@@ -1,121 +1,42 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: 'error: 'SDHCI_QUIRK_NO_HISPD_BIT' undeclared' and 'undefined
- reference to `sdhci_card_detect''
-Date: Tue, 17 Aug 2010 13:26:41 +0900
-Message-ID: <00a101cb3dc4$675e51b0$361af510$%kim@samsung.com>
-References: <008d01cb3ab9$ae73da60$0b5b8f20$%kim@samsung.com>
- <000901cb3abf$5ef59b30$1ce0d190$%szyprowski@samsung.com>
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Subject: Re: [PATCH 5/5] ARM: S3C64XX: Add wifi RF kill support for SmartQ
+ boards
+Date: Tue, 17 Aug 2010 14:01:12 +0200
+Message-ID: <4C6A7A08.6060709@gmail.com>
+References: <4c659a71.d37b0e0a.4deb.ffffcd80@mx.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <000901cb3abf$5ef59b30$1ce0d190$%szyprowski@samsung.com>
-Content-language: ko
-Sender: linux-mmc-owner@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
-Cc: ben-linux@fluff.org, 'Andrew Morton' <akpm@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:47318 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751647Ab0HQMBQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 17 Aug 2010 08:01:16 -0400
+Received: by eyg5 with SMTP id 5so1843306eyg.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Aug 2010 05:01:15 -0700 (PDT)
+In-Reply-To: <4c659a71.d37b0e0a.4deb.ffffcd80@mx.google.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: ben-linux@fluff.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, akpm@linux-foundation.org
 
-Marek Szyprowski wrote:
-> 
-> Hello,
-> 
-Hi Marek :-)
+ Op 13-08-10 21:18, Maurus Cuelenaere schreef:
+> This patch create a new platform driver which adds support for RF kill to the
+> on-board WM-G-MR-09 wifi chip. It also adds the platform device glue to the
+> SmartQ board definitions.
+>
+> Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
+> ---
+>  arch/arm/mach-s3c64xx/Kconfig       |    7 ++
+>  arch/arm/mach-s3c64xx/Makefile      |    3 +
+>  arch/arm/mach-s3c64xx/mach-smartq.c |   38 ++--------
+>  arch/arm/mach-s3c64xx/smartq-wifi.c |  135 +++++++++++++++++++++++++++++++++++
+>  4 files changed, 152 insertions(+), 31 deletions(-)
+>  create mode 100644 arch/arm/mach-s3c64xx/smartq-wifi.c
 
-> On Friday, August 13, 2010 9:32 AM Kukjin Kim wrote:
-> 
-> > This is just information about Samsung sdmmc stuff building error now.
-> >
-> > I found Marek's 'sdhci-s3c: enable SDHCI_QUIRK_NO_HISPD_BIT quirk' in
-the
-> > Linus' tree.
-> > (commit ID: a1d5646005af1247d6ae78434bb4db15b07a07b2)
-> >
-> > But not defined the quirk yet...so following build error happened with
-> > s3c6400_defconfig in Linus' latest.
-> >
-> > drivers/mmc/host/sdhci-s3c.c: In function 'sdhci_s3c_probe':
-> > drivers/mmc/host/sdhci-s3c.c:400: error: 'SDHCI_QUIRK_NO_HISPD_BIT'
-> > undeclared (first use in this function)
-> > drivers/mmc/host/sdhci-s3c.c:400: error: (Each undeclared identifier is
-> > reported only once
-> > drivers/mmc/host/sdhci-s3c.c:400: error: for each function it appears
-in.)
-> > make[4]: *** [drivers/mmc/host/sdhci-s3c.o] Error 1
-> > make[3]: *** [drivers/mmc/host] Error 2
-> > make[2]: *** [drivers/mmc] Error 2
-> > make[1]: *** [drivers] Error 2
-> >
-> > Kyungmin Park's below patch can solve this and it is in mmotm now.
-> > (commit ID: 2935b9e7fcc4bea3751b8d039b383b2036a7d36d)
-> >
-> > But I think, to update quirk definition should being in Marek's patch
-for
-> > avoiding build error.
-> > Of course, I'm not sure whether the commit order changed.
-> > Anyway, in this case, will be solved after merging mm tree.
-> >
-Hmm...not merged yet :-( so happened build error at 36-rc1.
+@Ben:
+Any specific reason why you didn't pick this up?
 
-> >
-> > And second case is same.
-> >
-> > Marek's 'sdhci-s3c: add support for new card detection methods' cause
-> > following build error.
-> > (commit ID:17866e14f3a4f219e94f1374ece7226479418ff8)
-> >
-> > drivers/built-in.o: In function `sdhci_s3c_notify_change':
-> >
-/home/kgene/linux/linux-2.6-mainline-dev/drivers/mmc/host/sdhci-s3c.c:255:
-> > undefined reference to `sdhci_card_detect'
-> > make[1]: *** [.tmp_vmlinux1] Error 1
-> > make: *** [sub-make] Error 2
-> >
-> > And Andrew's patch(b567e5dd5a34c184e5642100e752cb87e064bb97) can solve
-> this.
-> > (of course this needs another patches...)
-> >
-Same...
-
-
-This is just information...
-
-The build error of drivers/mmc/host/sdhci-s3c.c can be disappeared with the
-Kyungmin's commit 2935b9e7fcc4bea3751b8d039b383b2036a7d36d and Andrew's
-commit b567e5dd5a34c184e5642100e752cb87e064bb97 which are in mm tree now.
-
-And will be merged soon...Andrew, right?
-
-> > Anyway...
-> > Marek, in future please make sure your patch has no building problem
-before
-> > submitting.
-> > (or it can help to add some kind of dependency note in your patch)
-> 
-> My patches submited to Andrew Morton had the description and a note that
-they
-> have been prepared especially for his tree, taking into account all
-patches
-> that are already there (mainly a tasklets to threaded irq conversion). For
-me
-> it was quite obvious that they will be merged after all other sdhci
-changes
-> from that tree. I have no idea why the order of the patches has been
-reversed
-> and my sdhci patches has been submitted to Linus before the other sdhci
-> changes.
-> 
-> Best regards
-> --
-> Marek Szyprowski
-> Samsung Poland R&D Center
-
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
+-- 
+Maurus Cuelenaere
