@@ -1,47 +1,198 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 04/14] ARM: S5PV310: Fix on PLL setting for S5PV310
-Date: Wed, 18 Aug 2010 23:01:14 +0900
-Message-ID: <1282140084-10265-5-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 02/14] ARM: S5PV310: Removed unused clock
+Date: Wed, 18 Aug 2010 23:01:12 +0900
+Message-ID: <1282140084-10265-3-git-send-email-kgene.kim@samsung.com>
 References: <1282140084-10265-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:43471 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:43455 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753234Ab0HROWZ (ORCPT
+	with ESMTP id S1753076Ab0HROWZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 18 Aug 2010 10:22:25 -0400
 In-Reply-To: <1282140084-10265-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Jongpill Lee <boyko.lee@samsung.com>
+This pach removed unused clock on S5PV310/S5PC210.
 
-This patch fixes on PLL setting for S5PV310/S5PC210.
-
-Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv310/clock.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/mach-s5pv310/clock.c |  126 +----------------------------------------
+ 1 files changed, 2 insertions(+), 124 deletions(-)
 
 diff --git a/arch/arm/mach-s5pv310/clock.c b/arch/arm/mach-s5pv310/clock.c
-index d909515..c60d3b0 100644
+index 77f2b4d..e3098d5 100644
 --- a/arch/arm/mach-s5pv310/clock.c
 +++ b/arch/arm/mach-s5pv310/clock.c
-@@ -347,11 +347,11 @@ void __init_or_cpufreq s5pv310_setup_clocks(void)
- 	apll = s5p_get_pll45xx(xtal, __raw_readl(S5P_APLL_CON0), pll_4508);
- 	mpll = s5p_get_pll45xx(xtal, __raw_readl(S5P_MPLL_CON0), pll_4508);
- 	epll = s5p_get_pll46xx(xtal, __raw_readl(S5P_EPLL_CON0),
--				__raw_readl(S5P_EPLL_CON1), pll_4500);
-+				__raw_readl(S5P_EPLL_CON1), pll_4600);
+@@ -96,60 +96,6 @@ static struct clksrc_clk clk_armclk = {
+ 	},
+ };
  
- 	vpllsrc = clk_get_rate(&clk_vpllsrc.clk);
- 	vpll = s5p_get_pll46xx(vpllsrc, __raw_readl(S5P_VPLL_CON0),
--				__raw_readl(S5P_VPLL_CON1), pll_4502);
-+				__raw_readl(S5P_VPLL_CON1), pll_4650);
+-static struct clksrc_clk clk_aclk_corem0 = {
+-	.clk	= {
+-		.name		= "aclk_corem0",
+-		.id		= -1,
+-		.parent		= &clk_coreclk.clk,
+-	},
+-	.reg_div	= { .reg = S5P_CLKDIV_CPU, .shift = 4, .size = 3 },
+-};
+-
+-static struct clksrc_clk clk_aclk_cores = {
+-	.clk	= {
+-		.name		= "aclk_cores",
+-		.id		= -1,
+-		.parent		= &clk_coreclk.clk,
+-	},
+-	.reg_div	= { .reg = S5P_CLKDIV_CPU, .shift = 4, .size = 3 },
+-};
+-
+-static struct clksrc_clk clk_aclk_corem1 = {
+-	.clk	= {
+-		.name		= "aclk_corem1",
+-		.id		= -1,
+-		.parent		= &clk_coreclk.clk,
+-	},
+-	.reg_div	= { .reg = S5P_CLKDIV_CPU, .shift = 8, .size = 3 },
+-};
+-
+-static struct clksrc_clk clk_periphclk = {
+-	.clk	= {
+-		.name		= "periphclk",
+-		.id		= -1,
+-		.parent		= &clk_coreclk.clk,
+-	},
+-	.reg_div	= { .reg = S5P_CLKDIV_CPU, .shift = 12, .size = 3 },
+-};
+-
+-static struct clksrc_clk clk_atclk = {
+-	.clk	= {
+-		.name		= "atclk",
+-		.id		= -1,
+-		.parent		= &clk_moutcore.clk,
+-	},
+-	.reg_div	= { .reg = S5P_CLKDIV_CPU, .shift = 16, .size = 3 },
+-};
+-
+-static struct clksrc_clk clk_pclk_dbg = {
+-	.clk	= {
+-		.name		= "pclk_dbg",
+-		.id		= -1,
+-		.parent		= &clk_atclk.clk,
+-	},
+-	.reg_div	= { .reg = S5P_CLKDIV_CPU, .shift = 20, .size = 3 },
+-};
+-
+ /* Core list of CMU_CORE side */
  
- 	clk_fout_apll.rate = apll;
- 	clk_fout_mpll.rate = mpll;
+ static struct clk *clkset_corebus_list[] = {
+@@ -180,42 +126,6 @@ static struct clksrc_clk clk_sclk_dmc = {
+ 	.reg_div	= { .reg = S5P_CLKDIV_CORE0, .shift = 12, .size = 3 },
+ };
+ 
+-static struct clksrc_clk clk_aclk_cored = {
+-	.clk	= {
+-		.name		= "aclk_cored",
+-		.id		= -1,
+-		.parent		= &clk_sclk_dmc.clk,
+-	},
+-	.reg_div	= { .reg = S5P_CLKDIV_CORE0, .shift = 16, .size = 3 },
+-};
+-
+-static struct clksrc_clk clk_aclk_corep = {
+-	.clk	= {
+-		.name		= "aclk_corep",
+-		.id		= -1,
+-		.parent		= &clk_aclk_cored.clk,
+-	},
+-	.reg_div	= { .reg = S5P_CLKDIV_CORE0, .shift = 20, .size = 3 },
+-};
+-
+-static struct clksrc_clk clk_aclk_acp = {
+-	.clk	= {
+-		.name		= "aclk_acp",
+-		.id		= -1,
+-		.parent		= &clk_mout_corebus.clk,
+-	},
+-	.reg_div	= { .reg = S5P_CLKDIV_CORE0, .shift = 0, .size = 3 },
+-};
+-
+-static struct clksrc_clk clk_pclk_acp = {
+-	.clk	= {
+-		.name		= "pclk_acp",
+-		.id		= -1,
+-		.parent		= &clk_aclk_acp.clk,
+-	},
+-	.reg_div	= { .reg = S5P_CLKDIV_CORE0, .shift = 4, .size = 3 },
+-};
+-
+ /* Core list of CMU_TOP side */
+ 
+ static struct clk *clkset_aclk_top_list[] = {
+@@ -416,18 +326,8 @@ static struct clksrc_clk *sysclks[] = {
+ 	&clk_moutcore,
+ 	&clk_coreclk,
+ 	&clk_armclk,
+-	&clk_aclk_corem0,
+-	&clk_aclk_cores,
+-	&clk_aclk_corem1,
+-	&clk_periphclk,
+-	&clk_atclk,
+-	&clk_pclk_dbg,
+ 	&clk_mout_corebus,
+ 	&clk_sclk_dmc,
+-	&clk_aclk_cored,
+-	&clk_aclk_corep,
+-	&clk_aclk_acp,
+-	&clk_pclk_acp,
+ 	&clk_vpllsrc,
+ 	&clk_sclk_vpll,
+ 	&clk_aclk_200,
+@@ -446,15 +346,7 @@ void __init_or_cpufreq s5pv310_setup_clocks(void)
+ 	unsigned long vpllsrc;
+ 	unsigned long xtal;
+ 	unsigned long armclk;
+-	unsigned long aclk_corem0;
+-	unsigned long aclk_cores;
+-	unsigned long aclk_corem1;
+-	unsigned long periphclk;
+ 	unsigned long sclk_dmc;
+-	unsigned long aclk_cored;
+-	unsigned long aclk_corep;
+-	unsigned long aclk_acp;
+-	unsigned long pclk_acp;
+ 	unsigned int ptr;
+ 
+ 	printk(KERN_DEBUG "%s: registering clocks\n", __func__);
+@@ -485,26 +377,12 @@ void __init_or_cpufreq s5pv310_setup_clocks(void)
+ 			apll, mpll, epll, vpll);
+ 
+ 	armclk = clk_get_rate(&clk_armclk.clk);
+-	aclk_corem0 = clk_get_rate(&clk_aclk_corem0.clk);
+-	aclk_cores = clk_get_rate(&clk_aclk_cores.clk);
+-	aclk_corem1 = clk_get_rate(&clk_aclk_corem1.clk);
+-	periphclk = clk_get_rate(&clk_periphclk.clk);
+ 	sclk_dmc = clk_get_rate(&clk_sclk_dmc.clk);
+-	aclk_cored = clk_get_rate(&clk_aclk_cored.clk);
+-	aclk_corep = clk_get_rate(&clk_aclk_corep.clk);
+-	aclk_acp = clk_get_rate(&clk_aclk_acp.clk);
+-	pclk_acp = clk_get_rate(&clk_pclk_acp.clk);
+-
+-	printk(KERN_INFO "S5PV310: ARMCLK=%ld, COREM0=%ld, CORES=%ld\n"
+-			 "COREM1=%ld, PERI=%ld, DMC=%ld, CORED=%ld\n"
+-			 "COREP=%ld, ACLK_ACP=%ld, PCLK_ACP=%ld",
+-			armclk, aclk_corem0, aclk_cores, aclk_corem1,
+-			periphclk, sclk_dmc, aclk_cored, aclk_corep,
+-			aclk_acp, pclk_acp);
++
++	printk(KERN_INFO "S5PV310: ARMCLK=%ld, DMC=%ld\n", armclk, sclk_dmc);
+ 
+ 	clk_f.rate = armclk;
+ 	clk_h.rate = sclk_dmc;
+-	clk_p.rate = periphclk;
+ 
+ 	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
+ 		s3c_set_clksrc(&clksrcs[ptr], true);
 -- 
 1.6.2.5
