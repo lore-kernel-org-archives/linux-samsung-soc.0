@@ -1,54 +1,76 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 08/14] ARM: S5PV310: Adds enable and ctrlbit for clk_vpllsrc
-Date: Wed, 18 Aug 2010 23:01:18 +0900
-Message-ID: <1282140084-10265-9-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 01/14] ARM: S5PV310: Adds clock addresses for S5PV310
+Date: Wed, 18 Aug 2010 23:01:11 +0900
+Message-ID: <1282140084-10265-2-git-send-email-kgene.kim@samsung.com>
 References: <1282140084-10265-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:43468 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:43465 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753243Ab0HROWZ (ORCPT
+	with ESMTP id S1753201Ab0HROWZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 18 Aug 2010 10:22:25 -0400
 In-Reply-To: <1282140084-10265-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Jongpill Lee <boyko.lee@samsung.com>
+This patch adds definition of clock address.
 
-This patch adds enable and ctrlbit for struct clksrc_clk clk_vpllsrc
-
-Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv310/clock.c |    7 +++++++
- 1 files changed, 7 insertions(+), 0 deletions(-)
+ arch/arm/mach-s5pv310/include/mach/regs-clock.h |   29 +++++++++++++++++++++-
+ 1 files changed, 27 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv310/clock.c b/arch/arm/mach-s5pv310/clock.c
-index cc583c1..c3ee742 100644
---- a/arch/arm/mach-s5pv310/clock.c
-+++ b/arch/arm/mach-s5pv310/clock.c
-@@ -46,6 +46,11 @@ static struct clk clk_sclk_usbphy1 = {
- 	.id		= -1,
- };
+diff --git a/arch/arm/mach-s5pv310/include/mach/regs-clock.h b/arch/arm/mach-s5pv310/include/mach/regs-clock.h
+index 7727b45..eda07fd 100644
+--- a/arch/arm/mach-s5pv310/include/mach/regs-clock.h
++++ b/arch/arm/mach-s5pv310/include/mach/regs-clock.h
+@@ -26,11 +26,23 @@
  
-+static int s5pv310_clksrc_mask_top_ctrl(struct clk *clk, int enable)
-+{
-+	return s5p_gatectrl(S5P_CLKSRC_MASK_TOP, clk, enable);
-+}
+ #define S5P_CLKSRC_TOP0			S5P_CLKREG(0x0C210)
+ #define S5P_CLKSRC_TOP1			S5P_CLKREG(0x0C214)
+-
++#define S5P_CLKSRC_CAM			S5P_CLKREG(0x0C220)
++#define S5P_CLKSRC_IMAGE		S5P_CLKREG(0x0C230)
++#define S5P_CLKSRC_LCD0			S5P_CLKREG(0x0C234)
++#define S5P_CLKSRC_LCD1			S5P_CLKREG(0x0C238)
++#define S5P_CLKSRC_FSYS			S5P_CLKREG(0x0C240)
+ #define S5P_CLKSRC_PERIL0		S5P_CLKREG(0x0C250)
++#define S5P_CLKSRC_PERIL1		S5P_CLKREG(0x0C254)
+ 
+ #define S5P_CLKDIV_TOP			S5P_CLKREG(0x0C510)
+-
++#define S5P_CLKDIV_CAM			S5P_CLKREG(0x0C520)
++#define S5P_CLKDIV_IMAGE		S5P_CLKREG(0x0C530)
++#define S5P_CLKDIV_LCD0			S5P_CLKREG(0x0C534)
++#define S5P_CLKDIV_LCD1			S5P_CLKREG(0x0C538)
++#define S5P_CLKDIV_FSYS0		S5P_CLKREG(0x0C540)
++#define S5P_CLKDIV_FSYS1		S5P_CLKREG(0x0C544)
++#define S5P_CLKDIV_FSYS2		S5P_CLKREG(0x0C548)
++#define S5P_CLKDIV_FSYS3		S5P_CLKREG(0x0C54C)
+ #define S5P_CLKDIV_PERIL0		S5P_CLKREG(0x0C550)
+ #define S5P_CLKDIV_PERIL1		S5P_CLKREG(0x0C554)
+ #define S5P_CLKDIV_PERIL2		S5P_CLKREG(0x0C558)
+@@ -38,6 +50,19 @@
+ #define S5P_CLKDIV_PERIL4		S5P_CLKREG(0x0C560)
+ #define S5P_CLKDIV_PERIL5		S5P_CLKREG(0x0C564)
+ 
++#define S5P_CLKSRC_MASK_TOP		S5P_CLKREG(0x0C310)
++#define S5P_CLKSRC_MASK_CAM		S5P_CLKREG(0x0C320)
++#define S5P_CLKSRC_MASK_LCD0		S5P_CLKREG(0x0C334)
++#define S5P_CLKSRC_MASK_LCD1		S5P_CLKREG(0x0C338)
++#define S5P_CLKSRC_MASK_FSYS		S5P_CLKREG(0x0C340)
++#define S5P_CLKSRC_MASK_PERIL0		S5P_CLKREG(0x0C350)
++#define S5P_CLKSRC_MASK_PERIL1		S5P_CLKREG(0x0C354)
 +
- /* Core list of CMU_CPU side */
++#define S5P_CLKGATE_IP_CAM		S5P_CLKREG(0x0C920)
++#define S5P_CLKGATE_IP_IMAGE		S5P_CLKREG(0x0C930)
++#define S5P_CLKGATE_IP_LCD0		S5P_CLKREG(0x0C934)
++#define S5P_CLKGATE_IP_LCD1		S5P_CLKREG(0x0C938)
++#define S5P_CLKGATE_IP_FSYS		S5P_CLKREG(0x0C940)
+ #define S5P_CLKGATE_IP_PERIL		S5P_CLKREG(0x0C950)
  
- static struct clksrc_clk clk_mout_apll = {
-@@ -216,6 +221,8 @@ static struct clksrc_clk clk_vpllsrc = {
- 	.clk	= {
- 		.name		= "vpll_src",
- 		.id		= -1,
-+		.enable		= s5pv310_clksrc_mask_top_ctrl,
-+		.ctrlbit	= (1 << 0),
- 	},
- 	.sources	= &clkset_vpllsrc,
- 	.reg_src	= { .reg = S5P_CLKSRC_TOP1, .shift = 0, .size = 1 },
+ #define S5P_CLKSRC_CORE			S5P_CLKREG(0x10200)
 -- 
 1.6.2.5
