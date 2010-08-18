@@ -1,12 +1,12 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 06/14] ARM: S5PV310: Should be clk_sclk_apll not clk_mout_apll
-Date: Wed, 18 Aug 2010 23:01:16 +0900
-Message-ID: <1282140084-10265-7-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 07/14] ARM: S5PV310: Adds printing ACLK200, ACLK100, ACLK160 and ACLK133
+Date: Wed, 18 Aug 2010 23:01:17 +0900
+Message-ID: <1282140084-10265-8-git-send-email-kgene.kim@samsung.com>
 References: <1282140084-10265-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:43456 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:43463 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753116Ab0HROWZ (ORCPT
+	with ESMTP id S1753191Ab0HROWZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 18 Aug 2010 10:22:25 -0400
 In-Reply-To: <1282140084-10265-1-git-send-email-kgene.kim@samsung.com>
@@ -17,67 +17,50 @@ Cc: ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Kukjin Kim <kgene
 
 From: Jongpill Lee <boyko.lee@samsung.com>
 
-This patch adds clk_sclk_apll so that fixes on clk_mout_apll.
+This patch adds log messages of aclk_200, aclk_100, aclk_160, and
+aclk_133. And adds clk_p.rate from calculated aclk_100.
 
 Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv310/clock.c |   15 ++++++++++++---
- 1 files changed, 12 insertions(+), 3 deletions(-)
+ arch/arm/mach-s5pv310/clock.c |   15 ++++++++++++++-
+ 1 files changed, 14 insertions(+), 1 deletions(-)
 
 diff --git a/arch/arm/mach-s5pv310/clock.c b/arch/arm/mach-s5pv310/clock.c
-index 892259b..8ffda6e 100644
+index 8ffda6e..cc583c1 100644
 --- a/arch/arm/mach-s5pv310/clock.c
 +++ b/arch/arm/mach-s5pv310/clock.c
-@@ -55,6 +55,14 @@ static struct clksrc_clk clk_mout_apll = {
- 	},
- 	.sources	= &clk_src_apll,
- 	.reg_src	= { .reg = S5P_CLKSRC_CPU, .shift = 0, .size = 1 },
-+};
+@@ -360,6 +360,10 @@ void __init_or_cpufreq s5pv310_setup_clocks(void)
+ 	unsigned long xtal;
+ 	unsigned long armclk;
+ 	unsigned long sclk_dmc;
++	unsigned long aclk_200;
++	unsigned long aclk_100;
++	unsigned long aclk_160;
++	unsigned long aclk_133;
+ 	unsigned int ptr;
+ 
+ 	printk(KERN_DEBUG "%s: registering clocks\n", __func__);
+@@ -392,10 +396,19 @@ void __init_or_cpufreq s5pv310_setup_clocks(void)
+ 	armclk = clk_get_rate(&clk_armclk.clk);
+ 	sclk_dmc = clk_get_rate(&clk_sclk_dmc.clk);
+ 
+-	printk(KERN_INFO "S5PV310: ARMCLK=%ld, DMC=%ld\n", armclk, sclk_dmc);
++	aclk_200 = clk_get_rate(&clk_aclk_200.clk);
++	aclk_100 = clk_get_rate(&clk_aclk_100.clk);
++	aclk_160 = clk_get_rate(&clk_aclk_160.clk);
++	aclk_133 = clk_get_rate(&clk_aclk_133.clk);
 +
-+static struct clksrc_clk clk_sclk_apll = {
-+	.clk	= {
-+		.name		= "sclk_apll",
-+		.id		= -1,
-+		.parent		= &clk_mout_apll.clk,
-+	},
- 	.reg_div	= { .reg = S5P_CLKDIV_CPU, .shift = 24, .size = 3 },
- };
++	printk(KERN_INFO "S5PV310: ARMCLK=%ld, DMC=%ld, ACLK200=%ld\n"
++			 "ACLK100=%ld, ACLK160=%ld, ACLK133=%ld\n",
++			armclk, sclk_dmc, aclk_200,
++			aclk_100, aclk_160, aclk_133);
  
-@@ -77,7 +85,7 @@ static struct clksrc_clk clk_mout_mpll = {
- };
+ 	clk_f.rate = armclk;
+ 	clk_h.rate = sclk_dmc;
++	clk_p.rate = aclk_100;
  
- static struct clk *clkset_moutcore_list[] = {
--	[0] = &clk_mout_apll.clk,
-+	[0] = &clk_sclk_apll.clk,
- 	[1] = &clk_mout_mpll.clk,
- };
- 
-@@ -116,7 +124,7 @@ static struct clksrc_clk clk_armclk = {
- 
- static struct clk *clkset_corebus_list[] = {
- 	[0] = &clk_mout_mpll.clk,
--	[1] = &clk_mout_apll.clk,
-+	[1] = &clk_sclk_apll.clk,
- };
- 
- static struct clksrc_sources clkset_mout_corebus = {
-@@ -146,7 +154,7 @@ static struct clksrc_clk clk_sclk_dmc = {
- 
- static struct clk *clkset_aclk_top_list[] = {
- 	[0] = &clk_mout_mpll.clk,
--	[1] = &clk_mout_apll.clk,
-+	[1] = &clk_sclk_apll.clk,
- };
- 
- static struct clksrc_sources clkset_aclk = {
-@@ -325,6 +333,7 @@ static struct clksrc_clk clksrcs[] = {
- /* Clock initialization code */
- static struct clksrc_clk *sysclks[] = {
- 	&clk_mout_apll,
-+	&clk_sclk_apll,
- 	&clk_mout_epll,
- 	&clk_mout_mpll,
- 	&clk_moutcore,
+ 	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
+ 		s3c_set_clksrc(&clksrcs[ptr], true);
 -- 
 1.6.2.5
