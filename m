@@ -1,98 +1,47 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 03/14] ARM: S5PV310: Adds clkset_aclk for removing clkset_aclk_xxx
-Date: Wed, 18 Aug 2010 23:01:13 +0900
-Message-ID: <1282140084-10265-4-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 04/14] ARM: S5PV310: Fix on PLL setting for S5PV310
+Date: Wed, 18 Aug 2010 23:01:14 +0900
+Message-ID: <1282140084-10265-5-git-send-email-kgene.kim@samsung.com>
 References: <1282140084-10265-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:43467 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:43471 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753237Ab0HROWZ (ORCPT
+	with ESMTP id S1753234Ab0HROWZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 18 Aug 2010 10:22:25 -0400
 In-Reply-To: <1282140084-10265-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch adds 'clkset_aclk' to use commonly. And removed struct
-clksrc_sources clkset_aclk_200, clkset_aclk_100, clkset_aclk_160,
-and clkset_aclk_133.
+From: Jongpill Lee <boyko.lee@samsung.com>
 
+This patch fixes on PLL setting for S5PV310/S5PC210.
+
+Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv310/clock.c |   25 +++++--------------------
- 1 files changed, 5 insertions(+), 20 deletions(-)
+ arch/arm/mach-s5pv310/clock.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/mach-s5pv310/clock.c b/arch/arm/mach-s5pv310/clock.c
-index e3098d5..d909515 100644
+index d909515..c60d3b0 100644
 --- a/arch/arm/mach-s5pv310/clock.c
 +++ b/arch/arm/mach-s5pv310/clock.c
-@@ -133,7 +133,7 @@ static struct clk *clkset_aclk_top_list[] = {
- 	[1] = &clk_mout_apll.clk,
- };
+@@ -347,11 +347,11 @@ void __init_or_cpufreq s5pv310_setup_clocks(void)
+ 	apll = s5p_get_pll45xx(xtal, __raw_readl(S5P_APLL_CON0), pll_4508);
+ 	mpll = s5p_get_pll45xx(xtal, __raw_readl(S5P_MPLL_CON0), pll_4508);
+ 	epll = s5p_get_pll46xx(xtal, __raw_readl(S5P_EPLL_CON0),
+-				__raw_readl(S5P_EPLL_CON1), pll_4500);
++				__raw_readl(S5P_EPLL_CON1), pll_4600);
  
--static struct clksrc_sources clkset_aclk_200 = {
-+static struct clksrc_sources clkset_aclk = {
- 	.sources	= clkset_aclk_top_list,
- 	.nr_sources	= ARRAY_SIZE(clkset_aclk_top_list),
- };
-@@ -143,52 +143,37 @@ static struct clksrc_clk clk_aclk_200 = {
- 		.name		= "aclk_200",
- 		.id		= -1,
- 	},
--	.sources	= &clkset_aclk_200,
-+	.sources	= &clkset_aclk,
- 	.reg_src	= { .reg = S5P_CLKSRC_TOP0, .shift = 12, .size = 1 },
- 	.reg_div	= { .reg = S5P_CLKDIV_TOP, .shift = 0, .size = 3 },
- };
+ 	vpllsrc = clk_get_rate(&clk_vpllsrc.clk);
+ 	vpll = s5p_get_pll46xx(vpllsrc, __raw_readl(S5P_VPLL_CON0),
+-				__raw_readl(S5P_VPLL_CON1), pll_4502);
++				__raw_readl(S5P_VPLL_CON1), pll_4650);
  
--static struct clksrc_sources clkset_aclk_100 = {
--	.sources	= clkset_aclk_top_list,
--	.nr_sources	= ARRAY_SIZE(clkset_aclk_top_list),
--};
--
- static struct clksrc_clk clk_aclk_100 = {
- 	.clk	= {
- 		.name		= "aclk_100",
- 		.id		= -1,
- 	},
--	.sources	= &clkset_aclk_100,
-+	.sources	= &clkset_aclk,
- 	.reg_src	= { .reg = S5P_CLKSRC_TOP0, .shift = 16, .size = 1 },
- 	.reg_div	= { .reg = S5P_CLKDIV_TOP, .shift = 4, .size = 4 },
- };
- 
--static struct clksrc_sources clkset_aclk_160 = {
--	.sources	= clkset_aclk_top_list,
--	.nr_sources	= ARRAY_SIZE(clkset_aclk_top_list),
--};
--
- static struct clksrc_clk clk_aclk_160 = {
- 	.clk	= {
- 		.name		= "aclk_160",
- 		.id		= -1,
- 	},
--	.sources	= &clkset_aclk_160,
-+	.sources	= &clkset_aclk,
- 	.reg_src	= { .reg = S5P_CLKSRC_TOP0, .shift = 20, .size = 1 },
- 	.reg_div	= { .reg = S5P_CLKDIV_TOP, .shift = 8, .size = 3 },
- };
- 
--static struct clksrc_sources clkset_aclk_133 = {
--	.sources	= clkset_aclk_top_list,
--	.nr_sources	= ARRAY_SIZE(clkset_aclk_top_list),
--};
--
- static struct clksrc_clk clk_aclk_133 = {
- 	.clk	= {
- 		.name		= "aclk_133",
- 		.id		= -1,
- 	},
--	.sources	= &clkset_aclk_133,
-+	.sources	= &clkset_aclk,
- 	.reg_src	= { .reg = S5P_CLKSRC_TOP0, .shift = 24, .size = 1 },
- 	.reg_div	= { .reg = S5P_CLKDIV_TOP, .shift = 12, .size = 3 },
- };
+ 	clk_fout_apll.rate = apll;
+ 	clk_fout_mpll.rate = mpll;
 -- 
 1.6.2.5
