@@ -1,14 +1,14 @@
 From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH 12/14] ARM: S5PV310: Add various clocks
-Date: Thu, 19 Aug 2010 17:52:55 +0900
-Message-ID: <AANLkTim_rJu0RicETYqsdKArSKtzSMdGBfm96dSFWauw@mail.gmail.com>
+Subject: Re: [PATCH 13/14] ARM: S5PV310: Add video clocks
+Date: Thu, 19 Aug 2010 19:04:43 +0900
+Message-ID: <AANLkTincrZWhrb8fcrdL2QNtZTbgBB-pAYzTf8cq6Zn7@mail.gmail.com>
 References: <1282140084-10265-1-git-send-email-kgene.kim@samsung.com>
-	<1282140084-10265-13-git-send-email-kgene.kim@samsung.com>
+	<1282140084-10265-14-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1282140084-10265-13-git-send-email-kgene.kim@samsung.com>
+In-Reply-To: <1282140084-10265-14-git-send-email-kgene.kim@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
 	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -25,239 +25,125 @@ List-Id: linux-samsung-soc@vger.kernel.org
 On Wed, Aug 18, 2010 at 11:01 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
 > From: Jongpill Lee <boyko.lee@samsung.com>
 >
-> This patch adds clocks for S5PV310/S5PC210.
+> This patch adds video clocks for S5PV310/S5PC210.
 >
 > Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
 > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > ---
-> =A0arch/arm/mach-s5pv310/clock.c | =A0155 +++++++++++++++++++++++++++++++=
-+++++++++-
-> =A01 files changed, 154 insertions(+), 1 deletions(-)
+> =A0arch/arm/mach-s5pv310/clock.c | =A0 74 +++++++++++++++++++++++++++++++=
+++++++++++
+> =A01 files changed, 74 insertions(+), 0 deletions(-)
 >
 > diff --git a/arch/arm/mach-s5pv310/clock.c b/arch/arm/mach-s5pv310/clock.c
-> index ec69edc..14c9707 100644
+> index 14c9707..04bde94 100644
 > --- a/arch/arm/mach-s5pv310/clock.c
 > +++ b/arch/arm/mach-s5pv310/clock.c
-> @@ -61,6 +61,26 @@ static int s5pv310_clksrc_mask_peril0_ctrl(struct clk =
-*clk, int enable)
-> =A0 =A0 =A0 =A0return s5p_gatectrl(S5P_CLKSRC_MASK_PERIL0, clk, enable);
-> =A0}
->
-> +static int s5pv310_clk_ip_cam_ctrl(struct clk *clk, int enable)
-> +{
-> + =A0 =A0 =A0 return s5p_gatectrl(S5P_CLKGATE_IP_CAM, clk, enable);
-> +}
-> +
-> +static int s5pv310_clk_ip_image_ctrl(struct clk *clk, int enable)
-> +{
-> + =A0 =A0 =A0 return s5p_gatectrl(S5P_CLKGATE_IP_IMAGE, clk, enable);
-> +}
-> +
-> +static int s5pv310_clk_ip_lcd0_ctrl(struct clk *clk, int enable)
-> +{
-> + =A0 =A0 =A0 return s5p_gatectrl(S5P_CLKGATE_IP_LCD0, clk, enable);
-> +}
-> +
-> +static int s5pv310_clk_ip_lcd1_ctrl(struct clk *clk, int enable)
-> +{
-> + =A0 =A0 =A0 return s5p_gatectrl(S5P_CLKGATE_IP_LCD1, clk, enable);
-> +}
-> +
-> =A0static int s5pv310_clk_ip_fsys_ctrl(struct clk *clk, int enable)
-> =A0{
-> =A0 =A0 =A0 =A0return s5p_gatectrl(S5P_CLKGATE_IP_FSYS, clk, enable);
-> @@ -275,6 +295,46 @@ static struct clk init_clocks_disable[] =3D {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip=
-_peril_ctrl,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.ctrlbit =A0 =A0 =A0 =A0=3D (1<<24),
-> =A0 =A0 =A0 =A0}, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "csis",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 0,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-cam_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 4),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "csis",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-cam_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 5),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "fimc",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 0,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-cam_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 0),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "fimc",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-cam_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 1),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "fimc",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 2,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-cam_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 2),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "fimc",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 3,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-cam_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 3),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "fimd",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 0,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-lcd0_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 0),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "fimd",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-lcd1_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 0),
-> + =A0 =A0 =A0 }, {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =A0 =A0 =A0 =A0 =3D "hsmmc",
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.id =A0 =A0 =A0 =A0 =A0 =A0 =3D 0,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.parent =A0 =A0 =A0 =A0 =3D &clk_aclk_133.=
-clk,
-> @@ -304,7 +364,100 @@ static struct clk init_clocks_disable[] =3D {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.parent =A0 =A0 =A0 =A0 =3D &clk_aclk_133.=
-clk,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip=
-_fsys_ctrl,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.ctrlbit =A0 =A0 =A0 =A0=3D (1 << 9),
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "sata",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-fsys_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 10),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "adc",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-peril_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 15),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "watchdog",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-peril_ctrl,
-
-s5pv310_clk_ip_perir_ctrl (R, not L) appears to be correct for this entry.
-
-Probably, we may need to sort these according to .enable entry (and
-then .ctrlbit entry) later.
-
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 14),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "usbhost",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-fsys_ctrl ,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 12),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "otg",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-fsys_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 13),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "spi",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 0,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-peril_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 16),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "spi",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-peril_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 17),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "spi",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 2,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-peril_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 18),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "fimg2d",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-image_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 0),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "i2c",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 0,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_aclk_100.c=
-lk,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-peril_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 6),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "i2c",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_aclk_100.c=
-lk,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-peril_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 7),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "i2c",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 2,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_aclk_100.c=
-lk,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-peril_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 8),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "i2c",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 3,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_aclk_100.c=
-lk,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-peril_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 9),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "i2c",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 4,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_aclk_100.c=
-lk,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-peril_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 10),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "i2c",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 5,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_aclk_100.c=
-lk,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-peril_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 11),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "i2c",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 6,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_aclk_100.c=
-lk,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-peril_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 12),
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "i2c",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 7,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_aclk_100.c=
-lk,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
-peril_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 13),
-> + =A0 =A0 =A0 },
+> @@ -506,6 +506,78 @@ static struct clksrc_sources clkset_group =3D {
+> =A0 =A0 =A0 =A0.nr_sources =A0 =A0 =3D ARRAY_SIZE(clkset_group_list),
 > =A0};
 >
-> =A0static struct clk init_clocks[] =3D {
+> +static struct clksrc_clk clk_sclk_mipidphy4l =3D {
+> + =A0 =A0 =A0 .clk =A0 =A0=3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "sclk_mipidph=
+y4l",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
+lcd0_ctrl,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 4),
+> + =A0 =A0 =A0 },
+> + =A0 =A0 =A0 .sources =A0 =A0 =A0 =A0=3D &clkset_group,
+> + =A0 =A0 =A0 .reg_src =A0 =A0 =A0 =A0=3D { .reg =3D S5P_CLKSRC_LCD0, .sh=
+ift =3D 12, .size =3D 4 },
+> + =A0 =A0 =A0 .reg_div =A0 =A0 =A0 =A0=3D { .reg =3D S5P_CLKDIV_LCD0, .sh=
+ift =3D 16, .size =3D 4 },
+> +};
+
+It appears that clk_ip_lcd0[4](CLK_SMMUFIMD0) is not for this clock
+source. This SCLK_MIPIDPHY4L seems to be masked by
+CLK_SRC_MASK_LCD0[12] (MIPI0_MASK)
+
+> +
+> +static struct clksrc_clk clk_sclk_mipidphy2l =3D {
+> + =A0 =A0 =A0 .clk =A0 =A0=3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "sclk_mipidph=
+y2l",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D s5pv310_clk_ip_=
+lcd1_ctrl,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 4),
+> + =A0 =A0 =A0 },
+> + =A0 =A0 =A0 .sources =A0 =A0 =A0 =A0=3D &clkset_group,
+> + =A0 =A0 =A0 .reg_src =A0 =A0 =A0 =A0=3D { .reg =3D S5P_CLKSRC_LCD1, .sh=
+ift =3D 12, .size =3D 4 },
+> + =A0 =A0 =A0 .reg_div =A0 =A0 =A0 =A0=3D { .reg =3D S5P_CLKDIV_LCD1, .sh=
+ift =3D 16, .size =3D 4 },
+> +};
+
+Appears to have the similar issue with the previous clock source
+
+> +
+> +static struct clk *clkset_mout_g2d0_list[] =3D {
+> + =A0 =A0 =A0 [0] =3D &clk_mout_mpll.clk,
+> + =A0 =A0 =A0 [1] =3D &clk_sclk_apll.clk,
+> +};
+> +
+> +static struct clksrc_sources clkset_mout_g2d0 =3D {
+> + =A0 =A0 =A0 .sources =A0 =A0 =A0 =A0=3D clkset_mout_g2d0_list,
+> + =A0 =A0 =A0 .nr_sources =A0 =A0 =3D ARRAY_SIZE(clkset_mout_g2d0_list),
+> +};
+> +
+> +static struct clksrc_clk clk_mout_g2d0 =3D {
+> + =A0 =A0 =A0 .clk =A0 =A0=3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "mout_g2d0",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+> + =A0 =A0 =A0 },
+> + =A0 =A0 =A0 .sources =A0 =A0 =A0 =A0=3D &clkset_mout_g2d0,
+> + =A0 =A0 =A0 .reg_src =A0 =A0 =A0 =A0=3D { .reg =3D S5P_CLKSRC_IMAGE, .s=
+hift =3D 0, .size =3D 1 },
+> +};
+> +
+> +static struct clk *clkset_mout_g2d1_list[] =3D {
+> + =A0 =A0 =A0 [0] =3D &clk_mout_epll.clk,
+> + =A0 =A0 =A0 [1] =3D &clk_sclk_vpll.clk,
+> +};
+> +
+> +static struct clksrc_sources clkset_mout_g2d1 =3D {
+> + =A0 =A0 =A0 .sources =A0 =A0 =A0 =A0=3D clkset_mout_g2d1_list,
+> + =A0 =A0 =A0 .nr_sources =A0 =A0 =3D ARRAY_SIZE(clkset_mout_g2d1_list),
+> +};
+> +
+> +static struct clksrc_clk clk_mout_g2d1 =3D {
+> + =A0 =A0 =A0 .clk =A0 =A0=3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "mout_g2d1",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+> + =A0 =A0 =A0 },
+> + =A0 =A0 =A0 .sources =A0 =A0 =A0 =A0=3D &clkset_mout_g2d1,
+> + =A0 =A0 =A0 .reg_src =A0 =A0 =A0 =A0=3D { .reg =3D S5P_CLKSRC_IMAGE, .s=
+hift =3D 4, .size =3D 1 },
+> +};
+> +
+> +static struct clk *clkset_mout_g2d_list[] =3D {
+> + =A0 =A0 =A0 [0] =3D &clk_mout_g2d0.clk,
+> + =A0 =A0 =A0 [1] =3D &clk_mout_g2d1.clk,
+> +};
+> +
+> +static struct clksrc_sources clkset_mout_g2d =3D {
+> + =A0 =A0 =A0 .sources =A0 =A0 =A0 =A0=3D clkset_mout_g2d_list,
+> + =A0 =A0 =A0 .nr_sources =A0 =A0 =3D ARRAY_SIZE(clkset_mout_g2d_list),
+> +};
+> +
+> =A0static struct clksrc_clk clk_dout_mmc0 =3D {
+> =A0 =A0 =A0 =A0.clk =A0 =A0 =A0 =A0 =A0 =A0=3D {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =A0 =A0 =A0 =A0 =3D "dout_mmc0",
+> @@ -672,6 +744,8 @@ static struct clksrc_clk *sysclks[] =3D {
+> =A0 =A0 =A0 =A0&clk_aclk_100,
+> =A0 =A0 =A0 =A0&clk_aclk_160,
+> =A0 =A0 =A0 =A0&clk_aclk_133,
+> + =A0 =A0 =A0 &clk_sclk_mipidphy4l,
+> + =A0 =A0 =A0 &clk_sclk_mipidphy2l,
+> =A0 =A0 =A0 =A0&clk_dout_mmc0,
+> =A0 =A0 =A0 =A0&clk_dout_mmc1,
+> =A0 =A0 =A0 =A0&clk_dout_mmc2,
 > --
 > 1.6.2.5
 >
