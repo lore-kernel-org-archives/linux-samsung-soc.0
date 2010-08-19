@@ -1,182 +1,93 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] MAX8952 PMIC Driver Initial Release
-Date: Thu, 19 Aug 2010 11:46:54 +0100
-Message-ID: <20100819104654.GA23404@rakim.wolfsonmicro.main>
-References: <1282201515-11385-1-git-send-email-myungjoo.ham@samsung.com>
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: Re: [PATCH RFC] h1940: use gpiolib for latch access
+Date: Thu, 19 Aug 2010 16:56:27 +0300
+Message-ID: <201008191656.36727.anarsoul@gmail.com>
+References: <1280076072-1049-1-git-send-email-anarsoul@gmail.com> <4C5986AB.40103@simtec.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed;
+  boundary="nextPart3301310.A0aSvxZybZ";
+  protocol="application/pgp-signature";
+  micalg=pgp-sha1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:59743 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752036Ab0HSKq4 (ORCPT
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:46682 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751542Ab0HSN6T (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Aug 2010 06:46:56 -0400
-Content-Disposition: inline
-In-Reply-To: <1282201515-11385-1-git-send-email-myungjoo.ham@samsung.com>
+	Thu, 19 Aug 2010 09:58:19 -0400
+Received: by eyg5 with SMTP id 5so1263986eyg.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Aug 2010 06:58:18 -0700 (PDT)
+In-Reply-To: <4C5986AB.40103@simtec.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, myungjoo.ham@gmail.com, linux-samsung-soc@vger.kernel.org, lrg@slimlogic.co.uk
+To: Ben Dooks <ben@simtec.co.uk>
+Cc: Ben Dooks <ben-linux@fluff.org>, "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 19, 2010 at 04:05:15PM +0900, MyungJoo Ham wrote:
+--nextPart3301310.A0aSvxZybZ
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-> If MAX8952's EN is not going to be changed by this driver, the user
-> should set gpio_en_writable as false. In S5PC210/UNIVERSL board,
-> controlling EN pin at MAX8952 driver can be dangerous because this gpio
-> pin is shared with another PMIC.
+=D0=92 =D1=81=D0=BE=D0=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D0=B8 =D0=BE=D1=82 =
+4 =D0=B0=D0=B2=D0=B3=D1=83=D1=81=D1=82=D0=B0 2010 18:26:35 =D0=B0=D0=B2=D1=
+=82=D0=BE=D1=80 Ben Dooks =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=B0=D0=BB:
+> >  	/* Configures BT serial port GPIOs */
+> >  	s3c_gpio_cfgpin(S3C2410_GPH(0), S3C2410_GPH0_nCTS0);
+> >=20
+> > -	s3c_gpio_cfgpull(S3C2410_GPH(0), S3C_GPIO_PULL_NONE);
+> > +	s3c_gpio_setpull(S3C2410_GPH(0), S3C_GPIO_PULL_NONE);
+> >=20
+> >  	s3c_gpio_cfgpin(S3C2410_GPH(1), S3C2410_GPIO_OUTPUT);
+> >=20
+> > -	s3c_gpio_cfgpull(S3C2410_GPH(1), S3C_GPIO_PULL_NONE);
+> > +	s3c_gpio_setpull(S3C2410_GPH(1), S3C_GPIO_PULL_NONE);
+> >=20
+> >  	s3c_gpio_cfgpin(S3C2410_GPH(2), S3C2410_GPH2_TXD0);
+> >=20
+> > -	s3c_gpio_cfgpull(S3C2410_GPH(2), S3C_GPIO_PULL_NONE);
+> > +	s3c_gpio_setpull(S3C2410_GPH(2), S3C_GPIO_PULL_NONE);
+> >=20
+> >  	s3c_gpio_cfgpin(S3C2410_GPH(3), S3C2410_GPH3_RXD0);
+> >=20
+> > -	s3c_gpio_cfgpull(S3C2410_GPH(3), S3C_GPIO_PULL_NONE);
+> > +	s3c_gpio_setpull(S3C2410_GPH(3), S3C_GPIO_PULL_NONE);
+>=20
+> Is this an error, or have you merged a part of a different patch
+> into this one?
 
-If you're including this sort of board specific comment in the driver
-for a generic chip like a regulator it should be a bit of a warning sign
-- 
+Will move into separate patch
+=20
+> > +#define H1940_PA_LATCH		(S3C2410_CS2)
+> > +
+> > +#define H1940_LATCH_GPIO(x)		(S3C_GPIO_END + x)
+> > +
+> > +#define H1940_LATCH_BIT(x)		(1 << (x + 16 - S3C_GPIO_END))
+>=20
+> you probably want an () around the 'x's in the above defines.
 
-> +static int max8952_i2c_read(struct i2c_client *client, u8 reg, u8 *dest)
-> +{
-> +	int ret;
-> +
-> +	ret = i2c_smbus_read_byte_data(client, reg);
-> +	if (ret < 0)
-> +		return -EIO;
+Yep
+=20
+> computing the bit seperately to the call to h1940_latch_control
+> would have made the code easier to read.
+>=20
+> > +	h1940_latch_control(value ? 0 : (1 << (offset + 16)),
+> > +		value ? (1 << (offset + 16)) : 0);
 
-If you've got an error code back you should return it directly rather
-than replacing it with -EIO.
+Ok
 
-> +static int max8952_read_reg(struct max8952_data *max8952, u8 reg)
-> +{
-> +	u8 value = 0;
-> +	int ret;
-> +
-> +	mutex_lock(&max8952->mutex);
-> +	ret = max8952_i2c_read(max8952->client, reg, &value);
-> +	mutex_unlock(&max8952->mutex);
-> +	if (!ret)
-> +		ret = value & 0xff;
+Regards
+Vasily
 
-I don't see any need for the lock here - you're doing simple SMBus
-transactions which should already be atomic.  Locks are needed when
-you're doing multiple transactions in your driver but that's not the
-case at this level.
+--nextPart3301310.A0aSvxZybZ
+Content-Type: application/pgp-signature; name=signature.asc 
+Content-Description: This is a digitally signed message part.
 
-> +static int max8952_is_enabled(struct regulator_dev *rdev)
-> +{
-> +	struct max8952_data *max8952 = rdev_get_drvdata(rdev);
-> +
-> +	if (gpio_is_valid(max8952->pdata->gpio_en))
-> +		return gpio_get_value(max8952->pdata->gpio_en);
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.16 (GNU/Linux)
 
-You're not allowed to read the status of output GPIOs by the gpiolib
-API, you need to remember what you set it to.
+iEUEABECAAYFAkxtOBQACgkQRM6pQpltKE47RACYsdd5T/WMVg3RN8oI6haOWrWQ
+oACdHMlrMdUYAD3kvdBWTHH1zMOy3yw=
+=i3jO
+-----END PGP SIGNATURE-----
 
-> +
-> +	return -ENXIO;
-> +}
-
-If there's no GPIO I'd expect the driver to report that the regulator is
-always enabled since the most likely configuration is that the enable is
-latched high.  Otherwise users will get confused.
-
-> +static int max8952_get_voltage(struct regulator_dev *rdev)
-> +{
-> +	struct max8952_data *max8952 = rdev_get_drvdata(rdev);
-> +	u8 vid = 0;
-> +
-> +	if (gpio_is_valid(max8952->pdata->gpio_vid0) &&
-> +			gpio_is_valid(max8952->pdata->gpio_vid1)) {
-> +		if (gpio_get_value(max8952->pdata->gpio_vid0))
-> +			vid += 1;
-> +		if (gpio_get_value(max8952->pdata->gpio_vid1))
-> +			vid += 2;
-
-Again, you can't read GPIOs that you're using for output.
-
-> +static int max8952_set_voltage(struct regulator_dev *rdev,
-> +				int min_uV, int max_uV)
-> +{
-> +	struct max8952_data *max8952 = rdev_get_drvdata(rdev);
-> +	u8 vid = -1, i;
-> +
-> +	for (i = 0; i < MAX8952_NUM_DVS_MODE; i++) {
-> +		int volt = max8952_voltage(max8952, i);
-> +
-> +		/* Set the voltage as low as possible within the range */
-> +		if ((volt <= max_uV) && (volt >= min_uV))
-> +			if ((vid == -1) ||
-> +					(max8952_voltage(max8952, vid) > volt))
-> +				vid = i;
-
-The indentation here is badly confused - the second branch of the or is
-massively indented.
-
-> +static int max8952_do_nothing(struct regulator_dev *rdev)
-> +{
-> +	return 0;
-> +}
-
-Why have you done this?
-
-> +	.set_suspend_enable	= max8952_do_nothing,
-> +	.set_suspend_disable	= max8952_disable,
-
-If the chip has no explicit suspend mode control then remove these.
-
-> +	pr_info("MAX8952 Probing...\n");
-
-Remove this.
-
-> +	if (pdata->gpio_en_writable == false) {
-> +		max8952_ops.enable = NULL;
-> +		max8952_ops.disable = NULL;
-> +		max8952_ops.set_suspend_disable = max8952_do_nothing;
-> +	}
-
-This is going to break if you have more than one of these regulators in
-the system.
-
-> +	ret = IS_ERR(max8952->rdev);
-> +	if (ret)
-> +		dev_err(max8952->dev, "regulator init failed\n");
-
-Print the error code too.
-
-> +	} else {
-> +		pr_err("MAX8952 Initilization Failed: Wrong GPIO setting.\n");
-> +		return -EINVAL;
-
-dev_err().
-
-> +	max8952_write_reg(max8952, MAX8952_REG_SYNC,
-> +			(max8952_read_reg(max8952, MAX8952_REG_SYNC) & 0x3F) |
-> +			((pdata->sync_freq & 0x3) << 6));
-> +	max8952_write_reg(max8952, MAX8952_REG_RAMP,
-> +			(max8952_read_reg(max8952, MAX8952_REG_RAMP) & 0x1F) |
-> +			((pdata->ramp_speed & 0x7) << 5));
-
-This looks like it should be platform data.
-
-> +	i2c_set_clientdata(client, NULL);
-
-Not needed.
-
-> +#ifdef CONFIG_REGULATOR_RESUME
-> +/* becasue alway_power_on, add this feature,
-> + * To do this at bootloader is better */
-> +beforeresume_initcall(max8952_pmic_init);
-> +#else
-> +subsys_initcall(max8952_pmic_init);
-> +#endif
-
-There's no CONFIG_REGULATOR_RESUME in mainline.
-
-> +struct max8952_platform_data {
-> +	int gpio_vid0;
-> +	int gpio_vid1;
-> +	int gpio_en;
-> +
-> +	/*
-> +	 * In C210 Universal Board, EN is connected to PWR_EN, which can also
-> +	 * turn off the whole system. In such a case, disable en_writable.
-> +	 */
-> +	bool gpio_en_writable;
-
-This should not be in the driver - any regulator could be used in a
-fashion that's critical to system operation and the regulator API
-always_on constraint will do this for you.
+--nextPart3301310.A0aSvxZybZ--
