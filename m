@@ -1,211 +1,182 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH 13/14] ARM: S5PV310: Add video clocks
-Date: Thu, 19 Aug 2010 19:28:42 +0900
-Message-ID: <AANLkTikreMifRgd8kkvcmjZoRZ0fEAcHqWExaOikzE6v@mail.gmail.com>
-References: <1282140084-10265-1-git-send-email-kgene.kim@samsung.com>
-	<1282140084-10265-14-git-send-email-kgene.kim@samsung.com>
-	<AANLkTincrZWhrb8fcrdL2QNtZTbgBB-pAYzTf8cq6Zn7@mail.gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] MAX8952 PMIC Driver Initial Release
+Date: Thu, 19 Aug 2010 11:46:54 +0100
+Message-ID: <20100819104654.GA23404@rakim.wolfsonmicro.main>
+References: <1282201515-11385-1-git-send-email-myungjoo.ham@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:33817 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752445Ab0HSK2n convert rfc822-to-8bit (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:59743 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752036Ab0HSKq4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Aug 2010 06:28:43 -0400
-Received: by yxg6 with SMTP id 6so613872yxg.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Aug 2010 03:28:43 -0700 (PDT)
-In-Reply-To: <AANLkTincrZWhrb8fcrdL2QNtZTbgBB-pAYzTf8cq6Zn7@mail.gmail.com>
+	Thu, 19 Aug 2010 06:46:56 -0400
+Content-Disposition: inline
+In-Reply-To: <1282201515-11385-1-git-send-email-myungjoo.ham@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Jongpill Lee <boyko.lee@samsung.com>, ben-linux@fluff.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, myungjoo.ham@gmail.com, linux-samsung-soc@vger.kernel.org, lrg@slimlogic.co.uk
 
-On Thu, Aug 19, 2010 at 7:04 PM, MyungJoo Ham <myungjoo.ham@samsung.com=
-> wrote:
-> On Wed, Aug 18, 2010 at 11:01 PM, Kukjin Kim <kgene.kim@samsung.com> =
-wrote:
->> From: Jongpill Lee <boyko.lee@samsung.com>
->>
->> This patch adds video clocks for S5PV310/S5PC210.
->>
->> Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
->> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
->> ---
->> =C2=A0arch/arm/mach-s5pv310/clock.c | =C2=A0 74 ++++++++++++++++++++=
-+++++++++++++++++++++
->> =C2=A01 files changed, 74 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/arm/mach-s5pv310/clock.c b/arch/arm/mach-s5pv310/c=
-lock.c
->> index 14c9707..04bde94 100644
->> --- a/arch/arm/mach-s5pv310/clock.c
->> +++ b/arch/arm/mach-s5pv310/clock.c
->> @@ -506,6 +506,78 @@ static struct clksrc_sources clkset_group =3D {
->> =C2=A0 =C2=A0 =C2=A0 =C2=A0.nr_sources =C2=A0 =C2=A0 =3D ARRAY_SIZE(=
-clkset_group_list),
->> =C2=A0};
->>
->> +static struct clksrc_clk clk_sclk_mipidphy4l =3D {
->> + =C2=A0 =C2=A0 =C2=A0 .clk =C2=A0 =C2=A0=3D {
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .name =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =3D "sclk_mipidphy4l",
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .id =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D -1,
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .enable =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =3D s5pv310_clk_ip_lcd0_ctrl,
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .ctrlbit =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0=3D (1 << 4),
->> + =C2=A0 =C2=A0 =C2=A0 },
->> + =C2=A0 =C2=A0 =C2=A0 .sources =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D &clks=
-et_group,
->> + =C2=A0 =C2=A0 =C2=A0 .reg_src =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D { .re=
-g =3D S5P_CLKSRC_LCD0, .shift =3D 12, .size =3D 4 },
->> + =C2=A0 =C2=A0 =C2=A0 .reg_div =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D { .re=
-g =3D S5P_CLKDIV_LCD0, .shift =3D 16, .size =3D 4 },
->> +};
->
-> It appears that clk_ip_lcd0[4](CLK_SMMUFIMD0) is not for this clock
-> source. This SCLK_MIPIDPHY4L seems to be masked by
-> CLK_SRC_MASK_LCD0[12] (MIPI0_MASK)
+On Thu, Aug 19, 2010 at 04:05:15PM +0900, MyungJoo Ham wrote:
 
-Um... As CLK_SRC_MASK_LCD0[12] (MIPI0_MASK) controls MUX_MIPI0, it
-masks both SCLK_MIPIDPHY4L and SCLK_MIPI0. Then, it seems that we
-cannot mask SCLK_MIPIDPHY4L and SCLK_MIPI0 independently.
+> If MAX8952's EN is not going to be changed by this driver, the user
+> should set gpio_en_writable as false. In S5PC210/UNIVERSL board,
+> controlling EN pin at MAX8952 driver can be dangerous because this gpio
+> pin is shared with another PMIC.
 
-Then, what about not adding .enable entry for both "sclk_mipidphy4l"
-and "sclk_mipi" (which is added in the PATCH 14/14)? Affecting another
-clock source with one does not look good.
+If you're including this sort of board specific comment in the driver
+for a generic chip like a regulator it should be a bit of a warning sign
+- 
 
->
->> +
->> +static struct clksrc_clk clk_sclk_mipidphy2l =3D {
->> + =C2=A0 =C2=A0 =C2=A0 .clk =C2=A0 =C2=A0=3D {
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .name =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =3D "sclk_mipidphy2l",
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .id =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D -1,
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .enable =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =3D s5pv310_clk_ip_lcd1_ctrl,
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .ctrlbit =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0=3D (1 << 4),
->> + =C2=A0 =C2=A0 =C2=A0 },
->> + =C2=A0 =C2=A0 =C2=A0 .sources =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D &clks=
-et_group,
->> + =C2=A0 =C2=A0 =C2=A0 .reg_src =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D { .re=
-g =3D S5P_CLKSRC_LCD1, .shift =3D 12, .size =3D 4 },
->> + =C2=A0 =C2=A0 =C2=A0 .reg_div =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D { .re=
-g =3D S5P_CLKDIV_LCD1, .shift =3D 16, .size =3D 4 },
->> +};
->
-> Appears to have the similar issue with the previous clock source
+> +static int max8952_i2c_read(struct i2c_client *client, u8 reg, u8 *dest)
+> +{
+> +	int ret;
+> +
+> +	ret = i2c_smbus_read_byte_data(client, reg);
+> +	if (ret < 0)
+> +		return -EIO;
 
-Same with above.
+If you've got an error code back you should return it directly rather
+than replacing it with -EIO.
 
->
->> +
->> +static struct clk *clkset_mout_g2d0_list[] =3D {
->> + =C2=A0 =C2=A0 =C2=A0 [0] =3D &clk_mout_mpll.clk,
->> + =C2=A0 =C2=A0 =C2=A0 [1] =3D &clk_sclk_apll.clk,
->> +};
->> +
->> +static struct clksrc_sources clkset_mout_g2d0 =3D {
->> + =C2=A0 =C2=A0 =C2=A0 .sources =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D clkse=
-t_mout_g2d0_list,
->> + =C2=A0 =C2=A0 =C2=A0 .nr_sources =C2=A0 =C2=A0 =3D ARRAY_SIZE(clks=
-et_mout_g2d0_list),
->> +};
->> +
->> +static struct clksrc_clk clk_mout_g2d0 =3D {
->> + =C2=A0 =C2=A0 =C2=A0 .clk =C2=A0 =C2=A0=3D {
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .name =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =3D "mout_g2d0",
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .id =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D -1,
->> + =C2=A0 =C2=A0 =C2=A0 },
->> + =C2=A0 =C2=A0 =C2=A0 .sources =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D &clks=
-et_mout_g2d0,
->> + =C2=A0 =C2=A0 =C2=A0 .reg_src =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D { .re=
-g =3D S5P_CLKSRC_IMAGE, .shift =3D 0, .size =3D 1 },
->> +};
->> +
->> +static struct clk *clkset_mout_g2d1_list[] =3D {
->> + =C2=A0 =C2=A0 =C2=A0 [0] =3D &clk_mout_epll.clk,
->> + =C2=A0 =C2=A0 =C2=A0 [1] =3D &clk_sclk_vpll.clk,
->> +};
->> +
->> +static struct clksrc_sources clkset_mout_g2d1 =3D {
->> + =C2=A0 =C2=A0 =C2=A0 .sources =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D clkse=
-t_mout_g2d1_list,
->> + =C2=A0 =C2=A0 =C2=A0 .nr_sources =C2=A0 =C2=A0 =3D ARRAY_SIZE(clks=
-et_mout_g2d1_list),
->> +};
->> +
->> +static struct clksrc_clk clk_mout_g2d1 =3D {
->> + =C2=A0 =C2=A0 =C2=A0 .clk =C2=A0 =C2=A0=3D {
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .name =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =3D "mout_g2d1",
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .id =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D -1,
->> + =C2=A0 =C2=A0 =C2=A0 },
->> + =C2=A0 =C2=A0 =C2=A0 .sources =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D &clks=
-et_mout_g2d1,
->> + =C2=A0 =C2=A0 =C2=A0 .reg_src =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D { .re=
-g =3D S5P_CLKSRC_IMAGE, .shift =3D 4, .size =3D 1 },
->> +};
->> +
->> +static struct clk *clkset_mout_g2d_list[] =3D {
->> + =C2=A0 =C2=A0 =C2=A0 [0] =3D &clk_mout_g2d0.clk,
->> + =C2=A0 =C2=A0 =C2=A0 [1] =3D &clk_mout_g2d1.clk,
->> +};
->> +
->> +static struct clksrc_sources clkset_mout_g2d =3D {
->> + =C2=A0 =C2=A0 =C2=A0 .sources =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D clkse=
-t_mout_g2d_list,
->> + =C2=A0 =C2=A0 =C2=A0 .nr_sources =C2=A0 =C2=A0 =3D ARRAY_SIZE(clks=
-et_mout_g2d_list),
->> +};
->> +
->> =C2=A0static struct clksrc_clk clk_dout_mmc0 =3D {
->> =C2=A0 =C2=A0 =C2=A0 =C2=A0.clk =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0=3D {
->> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.name =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D "dout_mmc0",
->> @@ -672,6 +744,8 @@ static struct clksrc_clk *sysclks[] =3D {
->> =C2=A0 =C2=A0 =C2=A0 =C2=A0&clk_aclk_100,
->> =C2=A0 =C2=A0 =C2=A0 =C2=A0&clk_aclk_160,
->> =C2=A0 =C2=A0 =C2=A0 =C2=A0&clk_aclk_133,
->> + =C2=A0 =C2=A0 =C2=A0 &clk_sclk_mipidphy4l,
->> + =C2=A0 =C2=A0 =C2=A0 &clk_sclk_mipidphy2l,
->> =C2=A0 =C2=A0 =C2=A0 =C2=A0&clk_dout_mmc0,
->> =C2=A0 =C2=A0 =C2=A0 =C2=A0&clk_dout_mmc1,
->> =C2=A0 =C2=A0 =C2=A0 =C2=A0&clk_dout_mmc2,
->> --
->> 1.6.2.5
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>
->
->
->
-> --
-> MyungJoo Ham, Ph.D.
-> Mobile Software Platform Lab,
-> Digital Media and Communications (DMC) Business
-> Samsung Electronics
-> cell: 82-10-6714-2858
->
+> +static int max8952_read_reg(struct max8952_data *max8952, u8 reg)
+> +{
+> +	u8 value = 0;
+> +	int ret;
+> +
+> +	mutex_lock(&max8952->mutex);
+> +	ret = max8952_i2c_read(max8952->client, reg, &value);
+> +	mutex_unlock(&max8952->mutex);
+> +	if (!ret)
+> +		ret = value & 0xff;
 
+I don't see any need for the lock here - you're doing simple SMBus
+transactions which should already be atomic.  Locks are needed when
+you're doing multiple transactions in your driver but that's not the
+case at this level.
 
+> +static int max8952_is_enabled(struct regulator_dev *rdev)
+> +{
+> +	struct max8952_data *max8952 = rdev_get_drvdata(rdev);
+> +
+> +	if (gpio_is_valid(max8952->pdata->gpio_en))
+> +		return gpio_get_value(max8952->pdata->gpio_en);
 
---=20
-MyungJoo Ham (=ED=95=A8=EB=AA=85=EC=A3=BC), Ph.D.
-Mobile Software Platform Lab,
-Digital Media and Communications (DMC) Business
-Samsung Electronics
-cell: 82-10-6714-2858
+You're not allowed to read the status of output GPIOs by the gpiolib
+API, you need to remember what you set it to.
+
+> +
+> +	return -ENXIO;
+> +}
+
+If there's no GPIO I'd expect the driver to report that the regulator is
+always enabled since the most likely configuration is that the enable is
+latched high.  Otherwise users will get confused.
+
+> +static int max8952_get_voltage(struct regulator_dev *rdev)
+> +{
+> +	struct max8952_data *max8952 = rdev_get_drvdata(rdev);
+> +	u8 vid = 0;
+> +
+> +	if (gpio_is_valid(max8952->pdata->gpio_vid0) &&
+> +			gpio_is_valid(max8952->pdata->gpio_vid1)) {
+> +		if (gpio_get_value(max8952->pdata->gpio_vid0))
+> +			vid += 1;
+> +		if (gpio_get_value(max8952->pdata->gpio_vid1))
+> +			vid += 2;
+
+Again, you can't read GPIOs that you're using for output.
+
+> +static int max8952_set_voltage(struct regulator_dev *rdev,
+> +				int min_uV, int max_uV)
+> +{
+> +	struct max8952_data *max8952 = rdev_get_drvdata(rdev);
+> +	u8 vid = -1, i;
+> +
+> +	for (i = 0; i < MAX8952_NUM_DVS_MODE; i++) {
+> +		int volt = max8952_voltage(max8952, i);
+> +
+> +		/* Set the voltage as low as possible within the range */
+> +		if ((volt <= max_uV) && (volt >= min_uV))
+> +			if ((vid == -1) ||
+> +					(max8952_voltage(max8952, vid) > volt))
+> +				vid = i;
+
+The indentation here is badly confused - the second branch of the or is
+massively indented.
+
+> +static int max8952_do_nothing(struct regulator_dev *rdev)
+> +{
+> +	return 0;
+> +}
+
+Why have you done this?
+
+> +	.set_suspend_enable	= max8952_do_nothing,
+> +	.set_suspend_disable	= max8952_disable,
+
+If the chip has no explicit suspend mode control then remove these.
+
+> +	pr_info("MAX8952 Probing...\n");
+
+Remove this.
+
+> +	if (pdata->gpio_en_writable == false) {
+> +		max8952_ops.enable = NULL;
+> +		max8952_ops.disable = NULL;
+> +		max8952_ops.set_suspend_disable = max8952_do_nothing;
+> +	}
+
+This is going to break if you have more than one of these regulators in
+the system.
+
+> +	ret = IS_ERR(max8952->rdev);
+> +	if (ret)
+> +		dev_err(max8952->dev, "regulator init failed\n");
+
+Print the error code too.
+
+> +	} else {
+> +		pr_err("MAX8952 Initilization Failed: Wrong GPIO setting.\n");
+> +		return -EINVAL;
+
+dev_err().
+
+> +	max8952_write_reg(max8952, MAX8952_REG_SYNC,
+> +			(max8952_read_reg(max8952, MAX8952_REG_SYNC) & 0x3F) |
+> +			((pdata->sync_freq & 0x3) << 6));
+> +	max8952_write_reg(max8952, MAX8952_REG_RAMP,
+> +			(max8952_read_reg(max8952, MAX8952_REG_RAMP) & 0x1F) |
+> +			((pdata->ramp_speed & 0x7) << 5));
+
+This looks like it should be platform data.
+
+> +	i2c_set_clientdata(client, NULL);
+
+Not needed.
+
+> +#ifdef CONFIG_REGULATOR_RESUME
+> +/* becasue alway_power_on, add this feature,
+> + * To do this at bootloader is better */
+> +beforeresume_initcall(max8952_pmic_init);
+> +#else
+> +subsys_initcall(max8952_pmic_init);
+> +#endif
+
+There's no CONFIG_REGULATOR_RESUME in mainline.
+
+> +struct max8952_platform_data {
+> +	int gpio_vid0;
+> +	int gpio_vid1;
+> +	int gpio_en;
+> +
+> +	/*
+> +	 * In C210 Universal Board, EN is connected to PWR_EN, which can also
+> +	 * turn off the whole system. In such a case, disable en_writable.
+> +	 */
+> +	bool gpio_en_writable;
+
+This should not be in the driver - any regulator could be used in a
+fashion that's critical to system operation and the regulator API
+always_on constraint will do this for you.
