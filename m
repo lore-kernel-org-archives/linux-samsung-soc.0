@@ -1,138 +1,107 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: 'error: 'SDHCI_QUIRK_NO_HISPD_BIT' undeclared' and 'undefined
- reference to `sdhci_card_detect''
-Date: Thu, 19 Aug 2010 10:10:40 +0900
-Message-ID: <AANLkTikkUcyGv25FM2Nns29VxikJXk3pLVsjM5xdNwZi@mail.gmail.com>
-References: <008d01cb3ab9$ae73da60$0b5b8f20$%kim@samsung.com>
-	<000901cb3abf$5ef59b30$1ce0d190$%szyprowski@samsung.com>
-	<20100818113314.20c174f1.akpm@linux-foundation.org>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCH v7 6/6] ARM: S5PV210: Initial CPUFREQ Support
+Date: Thu, 19 Aug 2010 10:53:06 +0900
+Message-ID: <AANLkTik7u49pn2_UatW+pxOf9Rq9biiMGeR1z5Jcvfqs@mail.gmail.com>
+References: <1281419049-11562-1-git-send-email-myungjoo.ham@samsung.com>
+	<1281419049-11562-2-git-send-email-myungjoo.ham@samsung.com>
+	<1281419049-11562-3-git-send-email-myungjoo.ham@samsung.com>
+	<1281419049-11562-4-git-send-email-myungjoo.ham@samsung.com>
+	<1281419049-11562-5-git-send-email-myungjoo.ham@samsung.com>
+	<1281419049-11562-6-git-send-email-myungjoo.ham@samsung.com>
+	<1281419049-11562-7-git-send-email-myungjoo.ham@samsung.com>
+	<000001cb3f2d$7a5acb80$6f106280$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <20100818113314.20c174f1.akpm@linux-foundation.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, ben-linux@fluff.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <000001cb3f2d$7a5acb80$6f106280$%kim@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: jc.lee@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 19, 2010 at 3:33 AM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Fri, 13 Aug 2010 10:13:04 +0200
-> Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->
->> Hello,
->>
->> On Friday, August 13, 2010 9:32 AM Kukjin Kim wrote:
->>
->> > This is just information about Samsung sdmmc stuff building error =
-now.
->> >
->> > I found Marek's 'sdhci-s3c: enable SDHCI_QUIRK_NO_HISPD_BIT quirk'=
- in the
->> > Linus' tree.
->> > (commit ID: a1d5646005af1247d6ae78434bb4db15b07a07b2)
->> >
->> > But not defined the quirk yet...so following build error happened =
-with
->> > s3c6400_defconfig in Linus' latest.
->> >
->> > drivers/mmc/host/sdhci-s3c.c: In function 'sdhci_s3c_probe':
->> > drivers/mmc/host/sdhci-s3c.c:400: error: 'SDHCI_QUIRK_NO_HISPD_BIT=
-'
->> > undeclared (first use in this function)
->> > drivers/mmc/host/sdhci-s3c.c:400: error: (Each undeclared identifi=
-er is
->> > reported only once
->> > drivers/mmc/host/sdhci-s3c.c:400: error: for each function it appe=
-ars in.)
->> > make[4]: *** [drivers/mmc/host/sdhci-s3c.o] Error 1
->> > make[3]: *** [drivers/mmc/host] Error 2
->> > make[2]: *** [drivers/mmc] Error 2
->> > make[1]: *** [drivers] Error 2
->> >
->> > Kyungmin Park's below patch can solve this and it is in mmotm now.
->> > (commit ID: 2935b9e7fcc4bea3751b8d039b383b2036a7d36d)
->> >
->> > But I think, to update quirk definition should being in Marek's pa=
-tch for
->> > avoiding build error.
->> > Of course, I'm not sure whether the commit order changed.
->> > Anyway, in this case, will be solved after merging mm tree.
->> >
->> >
->> > And second case is same.
->> >
->> > Marek's 'sdhci-s3c: add support for new card detection methods' ca=
-use
->> > following build error.
->> > (commit ID:17866e14f3a4f219e94f1374ece7226479418ff8)
->> >
->> > drivers/built-in.o: In function `sdhci_s3c_notify_change':
->> > /home/kgene/linux/linux-2.6-mainline-dev/drivers/mmc/host/sdhci-s3=
-c.c:255:
->> > undefined reference to `sdhci_card_detect'
->> > make[1]: *** [.tmp_vmlinux1] Error 1
->> > make: *** [sub-make] Error 2
->> >
->> > And Andrew's patch(b567e5dd5a34c184e5642100e752cb87e064bb97) can s=
-olve this.
->> > (of course this needs another patches...)
->> >
->> > Anyway...
->> > Marek, in future please make sure your patch has no building probl=
-em before
->> > submitting.
->> > (or it can help to add some kind of dependency note in your patch)
->>
->> My patches submited to Andrew Morton had the description and a note =
-that they
->> have been prepared especially for his tree, taking into account all =
-patches
->> that are already there (mainly a tasklets to threaded irq conversion=
-). For me
->> it was quite obvious that they will be merged after all other sdhci =
-changes
->> from that tree. I have no idea why the order of the patches has been=
- reversed
->> and my sdhci patches has been submitted to Linus before the other sd=
-hci
->> changes.
->
-> We're talking about these:
->
-> s5pc110-sdhci-s3c-can-override-host-capabilities.patch
-> s5pc110-sdhci-s3c-support-on-s5pc110.patch
-> sdhci-add-no-hi-speed-bit-quirk-support.patch
->
-> I have a note that these await an ack from Ben Dooks so I held them
-> back for a closer look after -rc1. =A0I was unaware of this dependenc=
-y.
->
-> Ben, are you OK with those patches?
-
-These are required for support s5pc110 & s5pc210.
-
-Current sdhci on s5p has some wrong assumption. only support 4-bit
-bandwidth. and don't consider the embedded mmc like eMMC.
-
->
-> http://userweb.kernel.org/~akpm/mmotm/broken-out/s5pc110-sdhci-s3c-ca=
-n-override-host-capabilities.patch
-It required for override the host caps and pass to the mmc with correct=
- caps
-> http://userweb.kernel.org/~akpm/mmotm/broken-out/s5pc110-sdhci-s3c-su=
-pport-on-s5pc110.patch
-required for support s5pc110 and also s5pc210
-> http://userweb.kernel.org/~akpm/mmotm/broken-out/sdhci-add-no-hi-spee=
-d-bit-quirk-support.patch
-As SDHCI on s5p don't has HISPD bit in controller register. need to qui=
-rks.
->
-> Thanks.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+T24gVGh1LCBBdWcgMTksIDIwMTAgYXQgODozMCBBTSwgS3VramluIEtpbSA8a2dlbmUua2ltQHNh
+bXN1bmcuY29tPiB3cm90ZToKPiBNeXVuZ0pvbyBIYW0gd3JvdGU6Cj4+Cj4+IFM1UFYyMTAgQ1BV
+RlJFUSBTdXBwb3J0Lgo+PgoKKHNuaXApCgo+IEhpLAo+Cj4gRGlkIHlvdSB0ZXN0IG9uIHRoZSBi
+b2FyZD8KPgo+IFRoZSBmb2xsb3dpbmcgZXJyb3Igb2NjdXJzLgo+CgpIZWxsbywKClRoZSBDUFVG
+UkVRIHBhdGNoIGlzIG5vdCB0ZXN0ZWQgaW4gY29uanVudGlvbiB3aXRoIFBNIHN1cHBvcnQgYXMg
+UE0gaXMKbm90IHlldCBpbmNsdWRlZCBpbiB0aGUgbWFpbmxpbmUgYWx0aG91Z2ggd2UndmUgdHJp
+ZWQgdG8gYmUgY29tcGF0aWJsZQp3aXRoIFBNIHN1cHBvcnQuCgpIb3dldmVyLCBhcyB3ZSd2ZSBm
+b3VuZCB0aGF0IHRoaXMgQ1BVRlJFUSBwYXRjaCBpcyBub3QgZnVsbHkKY29tcGF0aWJsZSB3aXRo
+IFBNLCBJJ2QgbGlrZSB0byBzdWdnZXN0IHRoZSBmb2xsb3dpbmcgcGF0Y2ggb3ZlciB0aGUKcGF0
+Y2ggdjcuIEl0IHJlbW92ZXMgdGhlICJTTEVFUF9GUkVRIiBmZWF0dXJlLCB3aGljaCBmaXhlcyB0
+aGUKZnJlcXVlbmN5IGluIHN1c3BlbmQgcHJvY2VkdXJlcy4gVGhpcyBmZWF0dXJlIHNob3VsZCBi
+ZSBsYXRlciBpbmNsdWRlZAppbiBQTSBzdXBwb3J0IGFuZCBleGVjdXRlZCBiZWZvcmUgY2FsbGlu
+ZyAic3VzcGVuZCIgb3BzIG9mIGRldmljZXMgYW5kCmFmdGVyIGNhbGxpbmcgInJlc3VtZSIgb3Bz
+IG9mIHRoZSBkZXZpY2VzLiBJbiBwcmV2aW91cyB2ZXJzaW9ucyBvZgprZXJuZWwsIHdlJ3ZlIGRv
+bmUgdGhpcyBhdCAiLmJlZ2luIiBhbmQgIi5lbmQiIG9mIHN0cnVjdApwbGF0Zm9ybV9zdXNwZW5k
+X29wcy4KCgogYXJjaC9hcm0vbWFjaC1zNXB2MjEwL2NwdWZyZXEuYyAgICAgICAgICAgICAgIHwg
+ICAxNSArLS0tLS0tLS0tLS0tLS0KIGFyY2gvYXJtL21hY2gtczVwdjIxMC9pbmNsdWRlL21hY2gv
+Y3B1LWZyZXEuaCB8ICAgIDIgLS0KIDIgZmlsZXMgY2hhbmdlZCwgMSBpbnNlcnRpb25zKCspLCAx
+NiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9hcmNoL2FybS9tYWNoLXM1cHYyMTAvY3B1ZnJl
+cS5jIGIvYXJjaC9hcm0vbWFjaC1zNXB2MjEwL2NwdWZyZXEuYwppbmRleCAyYWU4M2MzLi4yZWU2
+NTg1IDEwMDY0NAotLS0gYS9hcmNoL2FybS9tYWNoLXM1cHYyMTAvY3B1ZnJlcS5jCisrKyBiL2Fy
+Y2gvYXJtL21hY2gtczVwdjIxMC9jcHVmcmVxLmMKQEAgLTYzNSwxOCArNjM1LDEwIEBAIG91dDoK
+IH0KCiAjaWZkZWYgQ09ORklHX1BNCi1zdGF0aWMgaW50IHByZXZpb3VzX2ZyZXF1ZW5jeTsKLQog
+c3RhdGljIGludCBzNXB2MjEwX2NwdWZyZXFfc3VzcGVuZChzdHJ1Y3QgY3B1ZnJlcV9wb2xpY3kg
+KnBvbGljeSwKIAkJcG1fbWVzc2FnZV90IHBtc2cpCiB7Ci0JaW50IHJldCA9IDA7Ci0JcHJfaW5m
+bygiY3B1ZnJlcTogRW50ZXJpbmcgc3VzcGVuZC5cbiIpOwotCi0JcHJldmlvdXNfZnJlcXVlbmN5
+ID0gY3B1ZnJlcV9nZXQoMCk7Ci0JcmV0ID0gX19jcHVmcmVxX2RyaXZlcl90YXJnZXQoY3B1ZnJl
+cV9jcHVfZ2V0KDApLCBTTEVFUF9GUkVRLAotCQkJRElTQUJMRV9GVVJUSEVSX0NQVUZSRVEpOwot
+CXJldHVybiByZXQ7CisJcmV0dXJuIDA7CiB9Cgogc3RhdGljIGludCBzNXB2MjEwX2NwdWZyZXFf
+cmVzdW1lKHN0cnVjdCBjcHVmcmVxX3BvbGljeSAqcG9saWN5KQpAQCAtNjU2LDExICs2NDgsNiBA
+QCBzdGF0aWMgaW50IHM1cHYyMTBfY3B1ZnJlcV9yZXN1bWUoc3RydWN0CmNwdWZyZXFfcG9saWN5
+ICpwb2xpY3kpCiAJaW50IGxldmVsID0gQ1BVRlJFUV9UQUJMRV9FTkQ7CiAJaW50IGkgPSAwOwoK
+LQlwcl9pbmZvKCJjcHVmcmVxOiBXYWtpbmcgdXAgZnJvbSBhIHN1c3BlbmQuXG4iKTsKLQotCV9f
+Y3B1ZnJlcV9kcml2ZXJfdGFyZ2V0KGNwdWZyZXFfY3B1X2dldCgwKSwgcHJldmlvdXNfZnJlcXVl
+bmN5LAotCQkJRU5BQkxFX0ZVUlRIRVJfQ1BVRlJFUSk7Ci0KIAkvKiBDbG9jayBpbmZvcm1hdGlv
+biB1cGRhdGUgd2l0aCB3YWtldXAgdmFsdWUgKi8KIAlyYXRlID0gY2xrX2dldF9yYXRlKG1wdV9j
+bGspOwoKZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gtczVwdjIxMC9pbmNsdWRlL21hY2gvY3B1
+LWZyZXEuaApiL2FyY2gvYXJtL21hY2gtczVwdjIxMC9pbmNsdWRlL21hY2gvY3B1LWZyZXEuaApp
+bmRleCA3NjgwNmFiLi5hNGVhMzZlIDEwMDY0NAotLS0gYS9hcmNoL2FybS9tYWNoLXM1cHYyMTAv
+aW5jbHVkZS9tYWNoL2NwdS1mcmVxLmgKKysrIGIvYXJjaC9hcm0vbWFjaC1zNXB2MjEwL2luY2x1
+ZGUvbWFjaC9jcHUtZnJlcS5oCkBAIC0yNSw4ICsyNSw2IEBAIGVudW0gcGVyZl9sZXZlbCB7CiB9
+OwoKICNpZmRlZiBDT05GSUdfUE0KLSNkZWZpbmUgU0xFRVBfRlJFUSAgICAgICg4MDAgKiAxMDAw
+KSAvKiBVc2UgODAwTUh6IHdoZW4gZW50ZXJpbmcgc2xlZXAgKi8KLQogLyogYWRkaXRpb25hbCBz
+eW1hbnRpY3MgZm9yICJyZWxhdGlvbiIgaW4gY3B1ZnJlcSB3aXRoIHBtICovCiAjZGVmaW5lIERJ
+U0FCTEVfRlVSVEhFUl9DUFVGUkVRICAgICAgICAgMHgxMAogI2RlZmluZSBFTkFCTEVfRlVSVEhF
+Ul9DUFVGUkVRICAgICAgICAgIDB4MjAKCgotLS0KPiAtLQo+IC4uLgo+IGNwdWZyZXE6IEVudGVy
+aW5nIHN1c3BlbmQuCj4gQlVHOiBzbGVlcGluZyBmdW5jdGlvbiBjYWxsZWQgZnJvbSBpbnZhbGlk
+IGNvbnRleHQgYXQga2VybmVsL3J3c2VtLmM6MjEKPiBpbl9hdG9taWMoKTogMCwgaXJxc19kaXNh
+YmxlZCgpOiAxMjgsIHBpZDogMTMsIG5hbWU6IHN1c3BlbmQKPiBbPGMwMDJjOTFjPl0gKHVud2lu
+ZF9iYWNrdHJhY2UrMHgwLzB4ZWMpIGZyb20gWzxjMDI5NWRkMD5dCj4gKGRvd25fcmVhZCsweDE4
+LzB4MjgpCj4gWzxjMDI5NWRkMD5dIChkb3duX3JlYWQrMHgxOC8weDI4KSBmcm9tIFs8YzAxZTg1
+MjQ+XQo+IChsb2NrX3BvbGljeV9yd3NlbV9yZWFkKzB4MmMvMHg1MCkKPiBbPGMwMWU4NTI0Pl0g
+KGxvY2tfcG9saWN5X3J3c2VtX3JlYWQrMHgyYy8weDUwKSBmcm9tIFs8YzAxZTg1ZDQ+XQo+IChj
+cHVmcmVxX2dldCsweDIwLzB4NTApCj4gWzxjMDFlODVkND5dIChjcHVmcmVxX2dldCsweDIwLzB4
+NTApIGZyb20gWzxjMDAzMWU1Yz5dCj4gKHM1cHYyMTBfY3B1ZnJlcV9zdXNwZW5kKzB4MTQvMHg0
+MCkKPiBbPGMwMDMxZTVjPl0gKHM1cHYyMTBfY3B1ZnJlcV9zdXNwZW5kKzB4MTQvMHg0MCkgZnJv
+bSBbPGMwMWU3OGM4Pl0KPiAoY3B1ZnJlcV9zdXNwZW5kKzB4NTAvMHg4NCkKPiBbPGMwMWU3OGM4
+Pl0gKGNwdWZyZXFfc3VzcGVuZCsweDUwLzB4ODQpIGZyb20gWzxjMDE3NTQ2ND5dCj4gKHN5c2Rl
+dl9zdXNwZW5kKzB4ODQvMHgyOGMpCj4gWzxjMDE3NTQ2ND5dIChzeXNkZXZfc3VzcGVuZCsweDg0
+LzB4MjhjKSBmcm9tIFs8YzAwNzEzMjQ+XQo+IChzdXNwZW5kX2RldmljZXNfYW5kX2VudGVyKzB4
+ZTAvMHgxYTApCj4gWzxjMDA3MTMyND5dIChzdXNwZW5kX2RldmljZXNfYW5kX2VudGVyKzB4ZTAv
+MHgxYTApIGZyb20gWzxjMDA3MTQ4Yz5dCj4gKGVudGVyX3N0YXRlKzB4YTgvMHhkNCkKPiBbPGMw
+MDcxNDhjPl0gKGVudGVyX3N0YXRlKzB4YTgvMHhkNCkgZnJvbSBbPGMwMDcyOTE0Pl0gKHN1c3Bl
+bmQrMHg2MC8weDEyNCkKPiBbPGMwMDcyOTE0Pl0gKHN1c3BlbmQrMHg2MC8weDEyNCkgZnJvbSBb
+PGMwMDU4MjYwPl0KPiAod29ya2VyX3RocmVhZCsweDE1Yy8weDFlYykKPiBbPGMwMDU4MjYwPl0g
+KHdvcmtlcl90aHJlYWQrMHgxNWMvMHgxZWMpIGZyb20gWzxjMDA1YjU4Yz5dCj4gKGt0aHJlYWQr
+MHg3OC8weDgwKQo+IFs8YzAwNWI1OGM+XSAoa3RocmVhZCsweDc4LzB4ODApIGZyb20gWzxjMDAy
+N2Y2ND5dCj4gKGtlcm5lbF90aHJlYWRfZXhpdCsweDAvMHg4KQo+IC4uLgo+IC0tCj4KPiBUaGFu
+a3MuCj4KPiBCZXN0IHJlZ2FyZHMsCj4gS2dlbmUuCj4gLS0KPiBLdWtqaW4gS2ltIDxrZ2VuZS5r
+aW1Ac2Ftc3VuZy5jb20+LCBTZW5pb3IgRW5naW5lZXIsCj4gU1cgU29sdXRpb24gRGV2ZWxvcG1l
+bnQgVGVhbSwgU2Ftc3VuZyBFbGVjdHJvbmljcyBDby4sIEx0ZC4KPgo+CgoKCi0tIApNeXVuZ0pv
+byBIYW0gKO2VqOuqheyjvCksIFBoLkQuCk1vYmlsZSBTb2Z0d2FyZSBQbGF0Zm9ybSBMYWIsCkRp
+Z2l0YWwgTWVkaWEgYW5kIENvbW11bmljYXRpb25zIChETUMpIEJ1c2luZXNzClNhbXN1bmcgRWxl
+Y3Ryb25pY3MKY2VsbDogODItMTAtNjcxNC0yODU4CgpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51
+eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
