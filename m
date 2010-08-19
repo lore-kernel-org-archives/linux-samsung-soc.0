@@ -1,203 +1,138 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v7 6/6] ARM: S5PV210: Initial CPUFREQ Support
-Date: Thu, 19 Aug 2010 08:30:48 +0900
-Message-ID: <000001cb3f2d$7a5acb80$6f106280$%kim@samsung.com>
-References: <1281419049-11562-1-git-send-email-myungjoo.ham@samsung.com>
- <1281419049-11562-2-git-send-email-myungjoo.ham@samsung.com>
- <1281419049-11562-3-git-send-email-myungjoo.ham@samsung.com>
- <1281419049-11562-4-git-send-email-myungjoo.ham@samsung.com>
- <1281419049-11562-5-git-send-email-myungjoo.ham@samsung.com>
- <1281419049-11562-6-git-send-email-myungjoo.ham@samsung.com>
- <1281419049-11562-7-git-send-email-myungjoo.ham@samsung.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: 'error: 'SDHCI_QUIRK_NO_HISPD_BIT' undeclared' and 'undefined
+ reference to `sdhci_card_detect''
+Date: Thu, 19 Aug 2010 10:10:40 +0900
+Message-ID: <AANLkTikkUcyGv25FM2Nns29VxikJXk3pLVsjM5xdNwZi@mail.gmail.com>
+References: <008d01cb3ab9$ae73da60$0b5b8f20$%kim@samsung.com>
+	<000901cb3abf$5ef59b30$1ce0d190$%szyprowski@samsung.com>
+	<20100818113314.20c174f1.akpm@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:35215 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750859Ab0HRXbN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Aug 2010 19:31:13 -0400
-Received: from epmmp1. (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L7D004F6FZZFU00@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 19 Aug 2010 08:31:11 +0900 (KST)
-Received: from kgenekim (unknown [12.23.103.96])
- by mmp1.samsung.com (Sun Java(tm) System Messaging Server 7u3-15.01 64bit
- (built Feb 12 2010)) with ESMTPA id <0L7D008CYFZZ1D30@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 19 Aug 2010 08:31:11 +0900 (KST)
-In-reply-to: <1281419049-11562-7-git-send-email-myungjoo.ham@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <20100818113314.20c174f1.akpm@linux-foundation.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, ben-linux@fluff.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, jc.lee@samsung.com
 
-MyungJoo Ham wrote:
-> 
-> S5PV210 CPUFREQ Support.
-> 
-> This CPUFREQ may work without PMIC's DVS support. However, it is not
-> as effective without DVS support as supposed. AVS is not supported in
-> this version.
-> 
-> Note that CLK_SRC of some clocks including ARMCLK, G3D, G2D, MFC,
-> and ONEDRAM are modified directly without updating clksrc_src
-> representations of the clocks.  Because CPUFREQ reverts the CLK_SRC
-> to the supposed values, this does not affect the consistency as long as
-> there are no other modules that modifies clock sources of ARMCLK, G3D,
-> G2D, MFC, and ONEDRAM (and only CPUFREQ should have the control). As
-> soon as clock framework is settled, we may update source clocks
-> (.parent field) of those clocks accordingly later.
-> 
-> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+On Thu, Aug 19, 2010 at 3:33 AM, Andrew Morton
+<akpm@linux-foundation.org> wrote:
+> On Fri, 13 Aug 2010 10:13:04 +0200
+> Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+>
+>> Hello,
+>>
+>> On Friday, August 13, 2010 9:32 AM Kukjin Kim wrote:
+>>
+>> > This is just information about Samsung sdmmc stuff building error =
+now.
+>> >
+>> > I found Marek's 'sdhci-s3c: enable SDHCI_QUIRK_NO_HISPD_BIT quirk'=
+ in the
+>> > Linus' tree.
+>> > (commit ID: a1d5646005af1247d6ae78434bb4db15b07a07b2)
+>> >
+>> > But not defined the quirk yet...so following build error happened =
+with
+>> > s3c6400_defconfig in Linus' latest.
+>> >
+>> > drivers/mmc/host/sdhci-s3c.c: In function 'sdhci_s3c_probe':
+>> > drivers/mmc/host/sdhci-s3c.c:400: error: 'SDHCI_QUIRK_NO_HISPD_BIT=
+'
+>> > undeclared (first use in this function)
+>> > drivers/mmc/host/sdhci-s3c.c:400: error: (Each undeclared identifi=
+er is
+>> > reported only once
+>> > drivers/mmc/host/sdhci-s3c.c:400: error: for each function it appe=
+ars in.)
+>> > make[4]: *** [drivers/mmc/host/sdhci-s3c.o] Error 1
+>> > make[3]: *** [drivers/mmc/host] Error 2
+>> > make[2]: *** [drivers/mmc] Error 2
+>> > make[1]: *** [drivers] Error 2
+>> >
+>> > Kyungmin Park's below patch can solve this and it is in mmotm now.
+>> > (commit ID: 2935b9e7fcc4bea3751b8d039b383b2036a7d36d)
+>> >
+>> > But I think, to update quirk definition should being in Marek's pa=
+tch for
+>> > avoiding build error.
+>> > Of course, I'm not sure whether the commit order changed.
+>> > Anyway, in this case, will be solved after merging mm tree.
+>> >
+>> >
+>> > And second case is same.
+>> >
+>> > Marek's 'sdhci-s3c: add support for new card detection methods' ca=
+use
+>> > following build error.
+>> > (commit ID:17866e14f3a4f219e94f1374ece7226479418ff8)
+>> >
+>> > drivers/built-in.o: In function `sdhci_s3c_notify_change':
+>> > /home/kgene/linux/linux-2.6-mainline-dev/drivers/mmc/host/sdhci-s3=
+c.c:255:
+>> > undefined reference to `sdhci_card_detect'
+>> > make[1]: *** [.tmp_vmlinux1] Error 1
+>> > make: *** [sub-make] Error 2
+>> >
+>> > And Andrew's patch(b567e5dd5a34c184e5642100e752cb87e064bb97) can s=
+olve this.
+>> > (of course this needs another patches...)
+>> >
+>> > Anyway...
+>> > Marek, in future please make sure your patch has no building probl=
+em before
+>> > submitting.
+>> > (or it can help to add some kind of dependency note in your patch)
+>>
+>> My patches submited to Andrew Morton had the description and a note =
+that they
+>> have been prepared especially for his tree, taking into account all =
+patches
+>> that are already there (mainly a tasklets to threaded irq conversion=
+). For me
+>> it was quite obvious that they will be merged after all other sdhci =
+changes
+>> from that tree. I have no idea why the order of the patches has been=
+ reversed
+>> and my sdhci patches has been submitted to Linus before the other sd=
+hci
+>> changes.
+>
+> We're talking about these:
+>
+> s5pc110-sdhci-s3c-can-override-host-capabilities.patch
+> s5pc110-sdhci-s3c-support-on-s5pc110.patch
+> sdhci-add-no-hi-speed-bit-quirk-support.patch
+>
+> I have a note that these await an ack from Ben Dooks so I held them
+> back for a closer look after -rc1. =A0I was unaware of this dependenc=
+y.
+>
+> Ben, are you OK with those patches?
+
+These are required for support s5pc110 & s5pc210.
+
+Current sdhci on s5p has some wrong assumption. only support 4-bit
+bandwidth. and don't consider the embedded mmc like eMMC.
+
+>
+> http://userweb.kernel.org/~akpm/mmotm/broken-out/s5pc110-sdhci-s3c-ca=
+n-override-host-capabilities.patch
+It required for override the host caps and pass to the mmc with correct=
+ caps
+> http://userweb.kernel.org/~akpm/mmotm/broken-out/s5pc110-sdhci-s3c-su=
+pport-on-s5pc110.patch
+required for support s5pc110 and also s5pc210
+> http://userweb.kernel.org/~akpm/mmotm/broken-out/sdhci-add-no-hi-spee=
+d-bit-quirk-support.patch
+As SDHCI on s5p don't has HISPD bit in controller register. need to qui=
+rks.
+>
+> Thanks.
 > --
-> v2:
-> 	- Ramp-up delay is removed. (let regulator framework do the job)
-> 	- Provide proper max values for regulator_set_voltage
-> 	- Removed unneccesary #ifdef's.
-> 	- Removed unnecessary initialiser for CLK_OUT
-> v3:
-> 	- Style corrections (pr_info/pr_err, ...)
-> 	- Revised dvs_conf struct
-> v4:
-> 	- Renamed cpufreq-s5pv210.c -> cpufreq.c
-> 	- Style corrections (less #ifdef's, comments)
-> 	- Removed unncessary codes
-> 	- Remove #ifdef for WORKAROUND, use s5pv210_workaround()
-> 	- Renamed some static variables (get rid of s5pv210 prefix)
-> 	- Added machine dependency to Kconfig/Makefile
-> 	- DMC0, DMC1 refresh counter is not updated by a hardcoded value,
-but
-> 	with the value given as the default and relative clock speeds.
-Besides,
-> 	the algorithm to update DMC0/1 refresh counter is reformed.
-> v5:
-> 	- Remove unnecessary USE_FREQ_TABLE
-> 	- Renamed functions
-> 	- s5pv210_cpufreq_target's initialization revised. (first_run)
-> 	- "workaround" --> "revision"
-> 	- CLK_*_STAT register entries use macros: they are used mutiple
-> 	  times.
-> v6:
-> 	- Restyled evt0-related codes.
-> v7:
-> 	- Updated evt0-check method.
-> 	- Enable CPUFREQ Only for Aquila/Goni
-> 	- Style patch (inline functions)
-> 
-> ---
->  arch/arm/Kconfig                              |    1 +
->  arch/arm/mach-s5pv210/Kconfig                 |    6 +
->  arch/arm/mach-s5pv210/Makefile                |    2 +
->  arch/arm/mach-s5pv210/cpufreq.c               |  792
-> +++++++++++++++++++++++++
->  arch/arm/mach-s5pv210/include/mach/cpu-freq.h |   38 ++
->  5 files changed, 839 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-s5pv210/cpufreq.c
->  create mode 100644 arch/arm/mach-s5pv210/include/mach/cpu-freq.h
-> 
-
-(snip)
-
-> +#ifdef CONFIG_PM
-> +static int previous_frequency;
-> +
-> +static int s5pv210_cpufreq_suspend(struct cpufreq_policy *policy,
-> +		pm_message_t pmsg)
-> +{
-> +	int ret = 0;
-> +	pr_info("cpufreq: Entering suspend.\n");
-> +
-> +	previous_frequency = cpufreq_get(0);
-> +	ret = __cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ,
-> +			DISABLE_FURTHER_CPUFREQ);
-> +	return ret;
-> +}
-> +
-> +static int s5pv210_cpufreq_resume(struct cpufreq_policy *policy)
-> +{
-> +	int ret = 0;
-> +	u32 rate;
-> +	int level = CPUFREQ_TABLE_END;
-> +	int i = 0;
-> +
-> +	pr_info("cpufreq: Waking up from a suspend.\n");
-> +
-> +	__cpufreq_driver_target(cpufreq_cpu_get(0), previous_frequency,
-> +			ENABLE_FURTHER_CPUFREQ);
-> +
-> +	/* Clock information update with wakeup value */
-> +	rate = clk_get_rate(mpu_clk);
-> +
-> +	while (freq_table[i].frequency != CPUFREQ_TABLE_END) {
-> +		if (freq_table[i].frequency * 1000 == rate) {
-> +			level = freq_table[i].index;
-> +			break;
-> +		}
-> +		i++;
-> +	}
-> +
-> +	if (level == CPUFREQ_TABLE_END) { /* Not found */
-> +		pr_err("[%s:%d] clock speed does not match: "
-> +				"%d. Using L1 of 800MHz.\n",
-> +				__FILE__, __LINE__, rate);
-> +		level = L1;
-> +	}
-> +
-> +	memcpy(&s3c_freqs.old, &clk_info[level],
-> +			sizeof(struct s3c_freq));
-> +	previous_arm_volt = dvs_conf[level].arm_volt;
-> +	return ret;
-> +}
-> +#endif
-> +
-
-(snip)
-
-Hi,
-
-Did you test on the board?
-
-The following error occurs.
-
---
-...
-cpufreq: Entering suspend.
-BUG: sleeping function called from invalid context at kernel/rwsem.c:21
-in_atomic(): 0, irqs_disabled(): 128, pid: 13, name: suspend
-[<c002c91c>] (unwind_backtrace+0x0/0xec) from [<c0295dd0>]
-(down_read+0x18/0x28)
-[<c0295dd0>] (down_read+0x18/0x28) from [<c01e8524>]
-(lock_policy_rwsem_read+0x2c/0x50)
-[<c01e8524>] (lock_policy_rwsem_read+0x2c/0x50) from [<c01e85d4>]
-(cpufreq_get+0x20/0x50)
-[<c01e85d4>] (cpufreq_get+0x20/0x50) from [<c0031e5c>]
-(s5pv210_cpufreq_suspend+0x14/0x40)
-[<c0031e5c>] (s5pv210_cpufreq_suspend+0x14/0x40) from [<c01e78c8>]
-(cpufreq_suspend+0x50/0x84)
-[<c01e78c8>] (cpufreq_suspend+0x50/0x84) from [<c0175464>]
-(sysdev_suspend+0x84/0x28c)
-[<c0175464>] (sysdev_suspend+0x84/0x28c) from [<c0071324>]
-(suspend_devices_and_enter+0xe0/0x1a0)
-[<c0071324>] (suspend_devices_and_enter+0xe0/0x1a0) from [<c007148c>]
-(enter_state+0xa8/0xd4)
-[<c007148c>] (enter_state+0xa8/0xd4) from [<c0072914>] (suspend+0x60/0x124)
-[<c0072914>] (suspend+0x60/0x124) from [<c0058260>]
-(worker_thread+0x15c/0x1ec)
-[<c0058260>] (worker_thread+0x15c/0x1ec) from [<c005b58c>]
-(kthread+0x78/0x80)
-[<c005b58c>] (kthread+0x78/0x80) from [<c0027f64>]
-(kernel_thread_exit+0x0/0x8)
-...
---
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
