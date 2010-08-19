@@ -1,148 +1,272 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: 'error: 'SDHCI_QUIRK_NO_HISPD_BIT' undeclared' and 'undefined
- reference to `sdhci_card_detect''
-Date: Thu, 19 Aug 2010 10:59:49 +0900
-Message-ID: <AANLkTi=Ece8jFtHW3rtiQ6cenqxgtQfVOWA+9uFCYe6A@mail.gmail.com>
-References: <008d01cb3ab9$ae73da60$0b5b8f20$%kim@samsung.com>
-	<000901cb3abf$5ef59b30$1ce0d190$%szyprowski@samsung.com>
-	<20100818113314.20c174f1.akpm@linux-foundation.org>
-	<AANLkTikkUcyGv25FM2Nns29VxikJXk3pLVsjM5xdNwZi@mail.gmail.com>
+From: MyungJoo Ham <myungjoo.ham@gmail.com>
+Subject: Re: [PATCH 02/14] ARM: S5PV310: Removed unused clock
+Date: Thu, 19 Aug 2010 11:57:14 +0900
+Message-ID: <AANLkTinjDBxahumErXmXXDW2FLxFi6oXpu-jZa+xzYhF@mail.gmail.com>
+References: <1282140084-10265-1-git-send-email-kgene.kim@samsung.com>
+	<1282140084-10265-3-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <AANLkTikkUcyGv25FM2Nns29VxikJXk3pLVsjM5xdNwZi@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, ben-linux@fluff.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1282140084-10265-3-git-send-email-kgene.kim@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 19, 2010 at 10:10 AM, Kyungmin Park <kmpark@infradead.org> =
-wrote:
-> On Thu, Aug 19, 2010 at 3:33 AM, Andrew Morton
-> <akpm@linux-foundation.org> wrote:
->> On Fri, 13 Aug 2010 10:13:04 +0200
->> Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->>
->>> Hello,
->>>
->>> On Friday, August 13, 2010 9:32 AM Kukjin Kim wrote:
->>>
->>> > This is just information about Samsung sdmmc stuff building error=
- now.
->>> >
->>> > I found Marek's 'sdhci-s3c: enable SDHCI_QUIRK_NO_HISPD_BIT quirk=
-' in the
->>> > Linus' tree.
->>> > (commit ID: a1d5646005af1247d6ae78434bb4db15b07a07b2)
->>> >
->>> > But not defined the quirk yet...so following build error happened=
- with
->>> > s3c6400_defconfig in Linus' latest.
->>> >
->>> > drivers/mmc/host/sdhci-s3c.c: In function 'sdhci_s3c_probe':
->>> > drivers/mmc/host/sdhci-s3c.c:400: error: 'SDHCI_QUIRK_NO_HISPD_BI=
-T'
->>> > undeclared (first use in this function)
->>> > drivers/mmc/host/sdhci-s3c.c:400: error: (Each undeclared identif=
-ier is
->>> > reported only once
->>> > drivers/mmc/host/sdhci-s3c.c:400: error: for each function it app=
-ears in.)
->>> > make[4]: *** [drivers/mmc/host/sdhci-s3c.o] Error 1
->>> > make[3]: *** [drivers/mmc/host] Error 2
->>> > make[2]: *** [drivers/mmc] Error 2
->>> > make[1]: *** [drivers] Error 2
->>> >
->>> > Kyungmin Park's below patch can solve this and it is in mmotm now=
-=2E
->>> > (commit ID: 2935b9e7fcc4bea3751b8d039b383b2036a7d36d)
->>> >
->>> > But I think, to update quirk definition should being in Marek's p=
-atch for
->>> > avoiding build error.
->>> > Of course, I'm not sure whether the commit order changed.
->>> > Anyway, in this case, will be solved after merging mm tree.
->>> >
->>> >
->>> > And second case is same.
->>> >
->>> > Marek's 'sdhci-s3c: add support for new card detection methods' c=
-ause
->>> > following build error.
->>> > (commit ID:17866e14f3a4f219e94f1374ece7226479418ff8)
->>> >
->>> > drivers/built-in.o: In function `sdhci_s3c_notify_change':
->>> > /home/kgene/linux/linux-2.6-mainline-dev/drivers/mmc/host/sdhci-s=
-3c.c:255:
->>> > undefined reference to `sdhci_card_detect'
->>> > make[1]: *** [.tmp_vmlinux1] Error 1
->>> > make: *** [sub-make] Error 2
+Hello,
 
-and this issue is another. check the this.
-http://marc.info/?l=3Dlinux-mmc&m=3D128201811218629&w=3D3
+On Wed, Aug 18, 2010 at 11:01 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> This pach removed unused clock on S5PV310/S5PC210.
+>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 
->>> >
->>> > And Andrew's patch(b567e5dd5a34c184e5642100e752cb87e064bb97) can =
-solve this.
->>> > (of course this needs another patches...)
->>> >
->>> > Anyway...
->>> > Marek, in future please make sure your patch has no building prob=
-lem before
->>> > submitting.
->>> > (or it can help to add some kind of dependency note in your patch=
-)
->>>
->>> My patches submited to Andrew Morton had the description and a note=
- that they
->>> have been prepared especially for his tree, taking into account all=
- patches
->>> that are already there (mainly a tasklets to threaded irq conversio=
-n). For me
->>> it was quite obvious that they will be merged after all other sdhci=
- changes
->>> from that tree. I have no idea why the order of the patches has bee=
-n reversed
->>> and my sdhci patches has been submitted to Linus before the other s=
-dhci
->>> changes.
->>
->> We're talking about these:
->>
->> s5pc110-sdhci-s3c-can-override-host-capabilities.patch
->> s5pc110-sdhci-s3c-support-on-s5pc110.patch
->> sdhci-add-no-hi-speed-bit-quirk-support.patch
->>
->> I have a note that these await an ack from Ben Dooks so I held them
->> back for a closer look after -rc1. =A0I was unaware of this dependen=
-cy.
->>
->> Ben, are you OK with those patches?
+In this patch, you've removed corem0, corem1, cores, periph, atclk,
+and pclk_dbg, which are directly affected by cpu-freq drivers. As long
+as CPUFREQ uses clocks under 800MHz, corem0, corem1, cores, and
+periph's dividers should be updated and as long as CPUFREQ uses clocks
+over 800MHz, atclk and pclk_dbg's dividers should also be updated.
+Although in the cpu-freq patches of S5PV210, the cpu-freq driver did
+not use the clock framework and accessed clock registers directly, I
+thought cpu-freq should consider using the clock framework later as,
+sometimes, other drivers and modules are interested in the values
+related with this domain (e.g., for the stability issues,
+suspend-to-mem/disk may want to read and save the clock rates of CPU).
+
+Do you think CPUFREQ should keep accessing the clock registers
+directly? or should start using clock frameworks later?
+
+ps. If we are going to change the bus speed as well (as in S5PV210's
+100MHz mode), we may need to access aclk_cored, aclk_corep, and
+aclk_acp as well.
+
+> ---
+> =A0arch/arm/mach-s5pv310/clock.c | =A0126 +------------------------------=
+----------
+> =A01 files changed, 2 insertions(+), 124 deletions(-)
 >
-> These are required for support s5pc110 & s5pc210.
+> diff --git a/arch/arm/mach-s5pv310/clock.c b/arch/arm/mach-s5pv310/clock.c
+> index 77f2b4d..e3098d5 100644
+> --- a/arch/arm/mach-s5pv310/clock.c
+> +++ b/arch/arm/mach-s5pv310/clock.c
+> @@ -96,60 +96,6 @@ static struct clksrc_clk clk_armclk =3D {
+> =A0 =A0 =A0 =A0},
+> =A0};
 >
-> Current sdhci on s5p has some wrong assumption. only support 4-bit
-> bandwidth. and don't consider the embedded mmc like eMMC.
+> -static struct clksrc_clk clk_aclk_corem0 =3D {
+> - =A0 =A0 =A0 .clk =A0 =A0=3D {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "aclk_corem0",
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_coreclk.cl=
+k,
+> - =A0 =A0 =A0 },
+> - =A0 =A0 =A0 .reg_div =A0 =A0 =A0 =A0=3D { .reg =3D S5P_CLKDIV_CPU, .shi=
+ft =3D 4, .size =3D 3 },
+> -};
+> -
+> -static struct clksrc_clk clk_aclk_cores =3D {
+> - =A0 =A0 =A0 .clk =A0 =A0=3D {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "aclk_cores",
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_coreclk.cl=
+k,
+> - =A0 =A0 =A0 },
+> - =A0 =A0 =A0 .reg_div =A0 =A0 =A0 =A0=3D { .reg =3D S5P_CLKDIV_CPU, .shi=
+ft =3D 4, .size =3D 3 },
+> -};
+> -
+> -static struct clksrc_clk clk_aclk_corem1 =3D {
+> - =A0 =A0 =A0 .clk =A0 =A0=3D {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "aclk_corem1",
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_coreclk.cl=
+k,
+> - =A0 =A0 =A0 },
+> - =A0 =A0 =A0 .reg_div =A0 =A0 =A0 =A0=3D { .reg =3D S5P_CLKDIV_CPU, .shi=
+ft =3D 8, .size =3D 3 },
+> -};
+> -
+> -static struct clksrc_clk clk_periphclk =3D {
+> - =A0 =A0 =A0 .clk =A0 =A0=3D {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "periphclk",
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_coreclk.cl=
+k,
+> - =A0 =A0 =A0 },
+> - =A0 =A0 =A0 .reg_div =A0 =A0 =A0 =A0=3D { .reg =3D S5P_CLKDIV_CPU, .shi=
+ft =3D 12, .size =3D 3 },
+> -};
+> -
+> -static struct clksrc_clk clk_atclk =3D {
+> - =A0 =A0 =A0 .clk =A0 =A0=3D {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "atclk",
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_moutcore.c=
+lk,
+> - =A0 =A0 =A0 },
+> - =A0 =A0 =A0 .reg_div =A0 =A0 =A0 =A0=3D { .reg =3D S5P_CLKDIV_CPU, .shi=
+ft =3D 16, .size =3D 3 },
+> -};
+> -
+> -static struct clksrc_clk clk_pclk_dbg =3D {
+> - =A0 =A0 =A0 .clk =A0 =A0=3D {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "pclk_dbg",
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_atclk.clk,
+> - =A0 =A0 =A0 },
+> - =A0 =A0 =A0 .reg_div =A0 =A0 =A0 =A0=3D { .reg =3D S5P_CLKDIV_CPU, .shi=
+ft =3D 20, .size =3D 3 },
+> -};
+> -
+> =A0/* Core list of CMU_CORE side */
 >
->>
->> http://userweb.kernel.org/~akpm/mmotm/broken-out/s5pc110-sdhci-s3c-c=
-an-override-host-capabilities.patch
-> It required for override the host caps and pass to the mmc with corre=
-ct caps
->> http://userweb.kernel.org/~akpm/mmotm/broken-out/s5pc110-sdhci-s3c-s=
-upport-on-s5pc110.patch
-> required for support s5pc110 and also s5pc210
->> http://userweb.kernel.org/~akpm/mmotm/broken-out/sdhci-add-no-hi-spe=
-ed-bit-quirk-support.patch
-> As SDHCI on s5p don't has HISPD bit in controller register. need to q=
-uirks.
->>
->> Thanks.
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-sams=
-ung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->>
+> =A0static struct clk *clkset_corebus_list[] =3D {
+> @@ -180,42 +126,6 @@ static struct clksrc_clk clk_sclk_dmc =3D {
+> =A0 =A0 =A0 =A0.reg_div =A0 =A0 =A0 =A0=3D { .reg =3D S5P_CLKDIV_CORE0, .=
+shift =3D 12, .size =3D 3 },
+> =A0};
 >
+> -static struct clksrc_clk clk_aclk_cored =3D {
+> - =A0 =A0 =A0 .clk =A0 =A0=3D {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "aclk_cored",
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_sclk_dmc.c=
+lk,
+> - =A0 =A0 =A0 },
+> - =A0 =A0 =A0 .reg_div =A0 =A0 =A0 =A0=3D { .reg =3D S5P_CLKDIV_CORE0, .s=
+hift =3D 16, .size =3D 3 },
+> -};
+> -
+> -static struct clksrc_clk clk_aclk_corep =3D {
+> - =A0 =A0 =A0 .clk =A0 =A0=3D {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "aclk_corep",
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_aclk_cored=
+.clk,
+> - =A0 =A0 =A0 },
+> - =A0 =A0 =A0 .reg_div =A0 =A0 =A0 =A0=3D { .reg =3D S5P_CLKDIV_CORE0, .s=
+hift =3D 20, .size =3D 3 },
+> -};
+> -
+> -static struct clksrc_clk clk_aclk_acp =3D {
+> - =A0 =A0 =A0 .clk =A0 =A0=3D {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "aclk_acp",
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_mout_coreb=
+us.clk,
+> - =A0 =A0 =A0 },
+> - =A0 =A0 =A0 .reg_div =A0 =A0 =A0 =A0=3D { .reg =3D S5P_CLKDIV_CORE0, .s=
+hift =3D 0, .size =3D 3 },
+> -};
+> -
+> -static struct clksrc_clk clk_pclk_acp =3D {
+> - =A0 =A0 =A0 .clk =A0 =A0=3D {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "pclk_acp",
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_aclk_acp.c=
+lk,
+> - =A0 =A0 =A0 },
+> - =A0 =A0 =A0 .reg_div =A0 =A0 =A0 =A0=3D { .reg =3D S5P_CLKDIV_CORE0, .s=
+hift =3D 4, .size =3D 3 },
+> -};
+> -
+> =A0/* Core list of CMU_TOP side */
+>
+> =A0static struct clk *clkset_aclk_top_list[] =3D {
+> @@ -416,18 +326,8 @@ static struct clksrc_clk *sysclks[] =3D {
+> =A0 =A0 =A0 =A0&clk_moutcore,
+> =A0 =A0 =A0 =A0&clk_coreclk,
+> =A0 =A0 =A0 =A0&clk_armclk,
+> - =A0 =A0 =A0 &clk_aclk_corem0,
+> - =A0 =A0 =A0 &clk_aclk_cores,
+> - =A0 =A0 =A0 &clk_aclk_corem1,
+> - =A0 =A0 =A0 &clk_periphclk,
+> - =A0 =A0 =A0 &clk_atclk,
+> - =A0 =A0 =A0 &clk_pclk_dbg,
+> =A0 =A0 =A0 =A0&clk_mout_corebus,
+> =A0 =A0 =A0 =A0&clk_sclk_dmc,
+> - =A0 =A0 =A0 &clk_aclk_cored,
+> - =A0 =A0 =A0 &clk_aclk_corep,
+> - =A0 =A0 =A0 &clk_aclk_acp,
+> - =A0 =A0 =A0 &clk_pclk_acp,
+> =A0 =A0 =A0 =A0&clk_vpllsrc,
+> =A0 =A0 =A0 =A0&clk_sclk_vpll,
+> =A0 =A0 =A0 =A0&clk_aclk_200,
+> @@ -446,15 +346,7 @@ void __init_or_cpufreq s5pv310_setup_clocks(void)
+> =A0 =A0 =A0 =A0unsigned long vpllsrc;
+> =A0 =A0 =A0 =A0unsigned long xtal;
+> =A0 =A0 =A0 =A0unsigned long armclk;
+> - =A0 =A0 =A0 unsigned long aclk_corem0;
+> - =A0 =A0 =A0 unsigned long aclk_cores;
+> - =A0 =A0 =A0 unsigned long aclk_corem1;
+> - =A0 =A0 =A0 unsigned long periphclk;
+> =A0 =A0 =A0 =A0unsigned long sclk_dmc;
+> - =A0 =A0 =A0 unsigned long aclk_cored;
+> - =A0 =A0 =A0 unsigned long aclk_corep;
+> - =A0 =A0 =A0 unsigned long aclk_acp;
+> - =A0 =A0 =A0 unsigned long pclk_acp;
+> =A0 =A0 =A0 =A0unsigned int ptr;
+>
+> =A0 =A0 =A0 =A0printk(KERN_DEBUG "%s: registering clocks\n", __func__);
+> @@ -485,26 +377,12 @@ void __init_or_cpufreq s5pv310_setup_clocks(void)
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0apll, mpll, epll, vpll);
+>
+> =A0 =A0 =A0 =A0armclk =3D clk_get_rate(&clk_armclk.clk);
+> - =A0 =A0 =A0 aclk_corem0 =3D clk_get_rate(&clk_aclk_corem0.clk);
+> - =A0 =A0 =A0 aclk_cores =3D clk_get_rate(&clk_aclk_cores.clk);
+> - =A0 =A0 =A0 aclk_corem1 =3D clk_get_rate(&clk_aclk_corem1.clk);
+> - =A0 =A0 =A0 periphclk =3D clk_get_rate(&clk_periphclk.clk);
+> =A0 =A0 =A0 =A0sclk_dmc =3D clk_get_rate(&clk_sclk_dmc.clk);
+> - =A0 =A0 =A0 aclk_cored =3D clk_get_rate(&clk_aclk_cored.clk);
+> - =A0 =A0 =A0 aclk_corep =3D clk_get_rate(&clk_aclk_corep.clk);
+> - =A0 =A0 =A0 aclk_acp =3D clk_get_rate(&clk_aclk_acp.clk);
+> - =A0 =A0 =A0 pclk_acp =3D clk_get_rate(&clk_pclk_acp.clk);
+> -
+> - =A0 =A0 =A0 printk(KERN_INFO "S5PV310: ARMCLK=3D%ld, COREM0=3D%ld, CORE=
+S=3D%ld\n"
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0"COREM1=3D%ld, PERI=3D%l=
+d, DMC=3D%ld, CORED=3D%ld\n"
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0"COREP=3D%ld, ACLK_ACP=
+=3D%ld, PCLK_ACP=3D%ld",
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 armclk, aclk_corem0, aclk_c=
+ores, aclk_corem1,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 periphclk, sclk_dmc, aclk_c=
+ored, aclk_corep,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 aclk_acp, pclk_acp);
+> +
+> + =A0 =A0 =A0 printk(KERN_INFO "S5PV310: ARMCLK=3D%ld, DMC=3D%ld\n", armc=
+lk, sclk_dmc);
+>
+> =A0 =A0 =A0 =A0clk_f.rate =3D armclk;
+> =A0 =A0 =A0 =A0clk_h.rate =3D sclk_dmc;
+> - =A0 =A0 =A0 clk_p.rate =3D periphclk;
+>
+> =A0 =A0 =A0 =A0for (ptr =3D 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0s3c_set_clksrc(&clksrcs[ptr], true);
+> --
+> 1.6.2.5
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+
+
+
+-- =
+
+MyungJoo Ham, Ph.D.
+Mobile Software Platform Lab,
+Digital Media and Communications (DMC) Business
+Samsung Electronics
+cell: 82-10-6714-2858
