@@ -1,74 +1,178 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S5PV210: Update I2C-1 Clock Register Property.
-Date: Fri, 20 Aug 2010 19:31:29 +0900
-Message-ID: <00da01cb4052$dcb20020$96160060$%kim@samsung.com>
-References: <1282199919-32523-1-git-send-email-myungjoo.ham@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Subject: [PATCH] ARM: S5PV310: Add CPU hotplug support for S5PV310
+Date: Fri, 20 Aug 2010 19:21:18 +0900
+Message-ID: <1282299678-5107-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:14129 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752250Ab0HTKbV (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:35176 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752226Ab0HTKcr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Aug 2010 06:31:21 -0400
-Received: from epmmp2 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L7G002GJ587T850@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Aug 2010 19:31:19 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L7G005YZ587QI@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Aug 2010 19:31:19 +0900 (KST)
-In-reply-to: <1282199919-32523-1-git-send-email-myungjoo.ham@samsung.com>
-Content-language: ko
+	Fri, 20 Aug 2010 06:32:47 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-MyungJoo Ham wrote:
-> 
-> CLK_GATE_IP3[8] is RESERVED. The port "I2C_HDMI_DDY" of
-> CLK_GATE_IP3[10] is used as another I2C port (but not dedicated to HDMI
-> as if it is a general I2C port)
-> 
-> Therefore, we define the unused I2C-1 (IP3[8] is not used) as another
-> I2C there was left undefined but used.
-> 
+From: Changhwan Youn <chaos.youn@samsung.com>
 
-Your patch file is right, but your comment is not.
-Because actually, I2C1 is dedicated to I2C_HDMI_DDC...
+This patch adds CPU hotplug support for S5PV310/S5PC210.
 
-Anyway, will apply.
+Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s5pv310/hotplug.c |  144 +++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 144 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5pv310/hotplug.c
 
-> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/mach-s5pv210/clock.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-> index af91fef..825b868 100644
-> --- a/arch/arm/mach-s5pv210/clock.c
-> +++ b/arch/arm/mach-s5pv210/clock.c
-> @@ -357,7 +357,7 @@ static struct clk init_clocks_disable[] = {
->  		.id		= 1,
->  		.parent		= &clk_pclk_psys.clk,
->  		.enable		= s5pv210_clk_ip3_ctrl,
-> -		.ctrlbit	= (1<<8),
-> +		.ctrlbit	= (1 << 10),
->  	}, {
->  		.name		= "i2c",
->  		.id		= 2,
-> --
-
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/arch/arm/mach-s5pv310/hotplug.c b/arch/arm/mach-s5pv310/hotplug.c
+new file mode 100644
+index 0000000..03652c3
+--- /dev/null
++++ b/arch/arm/mach-s5pv310/hotplug.c
+@@ -0,0 +1,144 @@
++/* linux arch/arm/mach-s5pv310/hotplug.c
++ *
++ *  Cloned from linux/arch/arm/mach-realview/hotplug.c
++ *
++ *  Copyright (C) 2002 ARM Ltd.
++ *  All Rights Reserved
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/kernel.h>
++#include <linux/errno.h>
++#include <linux/smp.h>
++#include <linux/completion.h>
++
++#include <asm/cacheflush.h>
++
++extern volatile int pen_release;
++
++static DECLARE_COMPLETION(cpu_killed);
++
++static inline void cpu_enter_lowpower(void)
++{
++	unsigned int v;
++
++	flush_cache_all();
++	asm volatile(
++	"	mcr	p15, 0, %1, c7, c5, 0\n"
++	"	mcr	p15, 0, %1, c7, c10, 4\n"
++	/*
++	 * Turn off coherency
++	 */
++	"	mrc	p15, 0, %0, c1, c0, 1\n"
++	"	bic	%0, %0, #0x20\n"
++	"	mcr	p15, 0, %0, c1, c0, 1\n"
++	"	mrc	p15, 0, %0, c1, c0, 0\n"
++	"	bic	%0, %0, #0x04\n"
++	"	mcr	p15, 0, %0, c1, c0, 0\n"
++	  : "=&r" (v)
++	  : "r" (0)
++	  : "cc");
++}
++
++static inline void cpu_leave_lowpower(void)
++{
++	unsigned int v;
++
++	asm volatile(
++	"mrc	p15, 0, %0, c1, c0, 0\n"
++	"	orr	%0, %0, #0x04\n"
++	"	mcr	p15, 0, %0, c1, c0, 0\n"
++	"	mrc	p15, 0, %0, c1, c0, 1\n"
++	"	orr	%0, %0, #0x20\n"
++	"	mcr	p15, 0, %0, c1, c0, 1\n"
++	  : "=&r" (v)
++	  :
++	  : "cc");
++}
++
++static inline void platform_do_lowpower(unsigned int cpu)
++{
++	/*
++	 * there is no power-control hardware on this platform, so all
++	 * we can do is put the core into WFI; this is safe as the calling
++	 * code will have already disabled interrupts
++	 */
++	for (;;) {
++		/*
++		 * here's the WFI
++		 */
++		asm(".word	0xe320f003\n"
++		    :
++		    :
++		    : "memory", "cc");
++
++		if (pen_release == cpu) {
++			/*
++			 * OK, proper wakeup, we're done
++			 */
++			break;
++		}
++
++		/*
++		 * getting here, means that we have come out of WFI without
++		 * having been woken up - this shouldn't happen
++		 *
++		 * The trouble is, letting people know about this is not really
++		 * possible, since we are currently running incoherently, and
++		 * therefore cannot safely call printk() or anything else
++		 */
++#ifdef DEBUG
++		printk(KERN_WARN "CPU%u: spurious wakeup call\n", cpu);
++#endif
++	}
++}
++
++int platform_cpu_kill(unsigned int cpu)
++{
++	return wait_for_completion_timeout(&cpu_killed, 5000);
++}
++
++/*
++ * platform-specific code to shutdown a CPU
++ *
++ * Called with IRQs disabled
++ */
++void platform_cpu_die(unsigned int cpu)
++{
++#ifdef DEBUG
++	unsigned int this_cpu = hard_smp_processor_id();
++
++	if (cpu != this_cpu) {
++		printk(KERN_CRIT "Eek! platform_cpu_die running on %u, should be %u\n",
++			   this_cpu, cpu);
++		BUG();
++	}
++#endif
++
++	printk(KERN_NOTICE "CPU%u: shutdown\n", cpu);
++	complete(&cpu_killed);
++
++	/*
++	 * we're ready for shutdown now, so do it
++	 */
++	cpu_enter_lowpower();
++	platform_do_lowpower(cpu);
++
++	/*
++	 * bring this CPU back into the world of cache
++	 * coherency, and then restore interrupts
++	 */
++	cpu_leave_lowpower();
++}
++
++int platform_cpu_disable(unsigned int cpu)
++{
++	/*
++	 * we don't allow CPU 0 to be shutdown (it is still too special
++	 * e.g. clock tick interrupts)
++	 */
++	return cpu == 0 ? -EPERM : 0;
++}
+-- 
+1.6.2.5
