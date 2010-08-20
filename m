@@ -1,66 +1,52 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: S5PV310: Fix on typo irqs.h of S5PV310
-Date: Fri, 20 Aug 2010 19:21:26 +0900
-Message-ID: <1282299686-5143-1-git-send-email-kgene.kim@samsung.com>
+From: Liam Girdwood <lrg@slimlogic.co.uk>
+Subject: Re: [PATCH v2] MAX8952 PMIC Driver Initial Release
+Date: Fri, 20 Aug 2010 11:47:09 +0100
+Message-ID: <1282301229.3084.152.camel@odin>
+References: <1282283036-12641-1-git-send-email-myungjoo.ham@samsung.com>
+	 <20100820095351.GD13668@rakim.wolfsonmicro.main>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:35172 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752034Ab0HTKcr (ORCPT
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:42709 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751207Ab0HTKrO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Aug 2010 06:32:47 -0400
+	Fri, 20 Aug 2010 06:47:14 -0400
+Received: by wyb32 with SMTP id 32so3443481wyb.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Aug 2010 03:47:12 -0700 (PDT)
+In-Reply-To: <20100820095351.GD13668@rakim.wolfsonmicro.main>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, myungjoo.ham@gmail.com, linux-samsung-soc@vger.kernel.org
 
-This patch fixes typo 'IRQ_WTD'(?) in the irqs.h of S5PV310.
-And minor update comments.
+On Fri, 2010-08-20 at 10:53 +0100, Mark Brown wrote:
+> On Fri, Aug 20, 2010 at 02:43:56PM +0900, MyungJoo Ham wrote:
+> > MAX8952 PMIC is used to provide voltage output between 770mV - 1400mV
+> > with DVS support. In this initial release, users can set voltages for
+> > four DVS modes, RAMP delay values, and SYNC frequency.
+> > Controlling FPWM/SYNC_MODE/Pull-Down/Ramp Modes and reading CHIP_ID
+> > is not supported in this release.
+> > 
+> > If GPIO of EN is not valid in platform data, the driver assumes that it
+> > is always-on. If GPIO of VID0 or VID1 is invalid, the driver pulls down
+> > VID0 and VID1 to fix DVS mode as 0 and disables DVS support.
+> > 
+> > We assume that V_OUT is capable to provide every voltage from 770mV to
+> > 1.40V in 10mV steps although the data sheet has some ambiguity on it.
+> > 
+> > Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> 
+> Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s5pv310/include/mach/irqs.h |   11 +++++++----
- 1 files changed, 7 insertions(+), 4 deletions(-)
+Applied.
 
-diff --git a/arch/arm/mach-s5pv310/include/mach/irqs.h b/arch/arm/mach-s5pv310/include/mach/irqs.h
-index 56885ca..4cdedda 100644
---- a/arch/arm/mach-s5pv310/include/mach/irqs.h
-+++ b/arch/arm/mach-s5pv310/include/mach/irqs.h
-@@ -15,12 +15,14 @@
- 
- #include <plat/irqs.h>
- 
--/* Private Peripheral Interrupt */
-+/* PPI: Private Peripheral Interrupt */
-+
- #define IRQ_PPI(x)		S5P_IRQ(x+16)
- 
- #define IRQ_LOCALTIMER		IRQ_PPI(13)
- 
--/* Shared Peripheral Interrupt */
-+/* SPI: Shared Peripheral Interrupt */
-+
- #define IRQ_SPI(x)		S5P_IRQ(x+32)
- 
- #define IRQ_EINT0		IRQ_SPI(40)
-@@ -36,7 +38,7 @@
- #define IRQ_PCIE		IRQ_SPI(50)
- #define IRQ_SYSTEM_TIMER	IRQ_SPI(51)
- #define IRQ_MFC			IRQ_SPI(52)
--#define IRQ_WTD			IRQ_SPI(53)
-+#define IRQ_WDT			IRQ_SPI(53)
- #define IRQ_AUDIO_SS		IRQ_SPI(54)
- #define IRQ_AC97		IRQ_SPI(55)
- #define IRQ_SPDIF		IRQ_SPI(56)
-@@ -67,8 +69,9 @@
- #define IRQ_IIC			COMBINER_IRQ(27, 0)
- 
- /* Set the default NR_IRQS */
-+
- #define NR_IRQS			COMBINER_IRQ(MAX_COMBINER_NR, 0)
- 
- #define MAX_COMBINER_NR		39
- 
--#endif /* ASM_ARCH_IRQS_H */
-+#endif /* __ASM_ARCH_IRQS_H */
+Thanks
+
+Liam
 -- 
-1.6.2.5
+Freelance Developer, SlimLogic Ltd
+ASoC and Voltage Regulator Maintainer.
+http://www.slimlogic.co.uk
