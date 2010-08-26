@@ -1,237 +1,91 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V2 12/14] ARM: S5PV310: Add various clocks
-Date: Thu, 26 Aug 2010 15:28:38 +0900
-Message-ID: <1282804120-17241-4-git-send-email-kgene.kim@samsung.com>
-References: <1282804120-17241-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH] ARM: S5PV310: Fix on Secondary CPU startup
+Date: Thu, 26 Aug 2010 17:23:41 +0900
+Message-ID: <1282811021-21612-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:59090 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:59877 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752663Ab0HZGoQ (ORCPT
+	with ESMTP id S1753368Ab0HZIjE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Aug 2010 02:44:16 -0400
-In-Reply-To: <1282804120-17241-1-git-send-email-kgene.kim@samsung.com>
+	Thu, 26 Aug 2010 04:39:04 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Jongpill Lee <boyko.lee@samsung.com>
+From: Changhwan Youn <chaos.youn@samsung.com>
 
-This patch adds various clocks for S5PV310/S5PC210.
+Following occurs on boot message without this patch.
+    CPU1: processor failed to boot
+    Brought up 1 CPUs
+    SMP: Total of 1 processors activated
 
-Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
+This patch adds SYSRAM mapping for fixing Secondary CPU startup.
+    CPU1: Booted secondary processor
+    Brought up 2 CPUs
+    SMP: Total of 2 processors activated
+
+Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
-Changes since v1:
-- Fix on watchdog timer
+ arch/arm/mach-s5pv310/cpu.c              |    5 +++++
+ arch/arm/mach-s5pv310/include/mach/map.h |    2 ++
+ arch/arm/mach-s5pv310/platsmp.c          |    2 +-
+ arch/arm/plat-s5p/include/plat/map-s5p.h |    1 +
+ 4 files changed, 9 insertions(+), 1 deletions(-)
 
- arch/arm/mach-s5pv310/clock.c                   |  160 ++++++++++++++++++++++-
- arch/arm/mach-s5pv310/include/mach/regs-clock.h |    1 +
- 2 files changed, 160 insertions(+), 1 deletions(-)
-
-diff --git a/arch/arm/mach-s5pv310/clock.c b/arch/arm/mach-s5pv310/clock.c
-index eb087dd..1f9ed85 100644
---- a/arch/arm/mach-s5pv310/clock.c
-+++ b/arch/arm/mach-s5pv310/clock.c
-@@ -61,6 +61,26 @@ static int s5pv310_clksrc_mask_peril0_ctrl(struct clk *clk, int enable)
- 	return s5p_gatectrl(S5P_CLKSRC_MASK_PERIL0, clk, enable);
- }
- 
-+static int s5pv310_clk_ip_cam_ctrl(struct clk *clk, int enable)
-+{
-+	return s5p_gatectrl(S5P_CLKGATE_IP_CAM, clk, enable);
-+}
-+
-+static int s5pv310_clk_ip_image_ctrl(struct clk *clk, int enable)
-+{
-+	return s5p_gatectrl(S5P_CLKGATE_IP_IMAGE, clk, enable);
-+}
-+
-+static int s5pv310_clk_ip_lcd0_ctrl(struct clk *clk, int enable)
-+{
-+	return s5p_gatectrl(S5P_CLKGATE_IP_LCD0, clk, enable);
-+}
-+
-+static int s5pv310_clk_ip_lcd1_ctrl(struct clk *clk, int enable)
-+{
-+	return s5p_gatectrl(S5P_CLKGATE_IP_LCD1, clk, enable);
-+}
-+
- static int s5pv310_clk_ip_fsys_ctrl(struct clk *clk, int enable)
- {
- 	return s5p_gatectrl(S5P_CLKGATE_IP_FSYS, clk, enable);
-@@ -71,6 +91,11 @@ static int s5pv310_clk_ip_peril_ctrl(struct clk *clk, int enable)
- 	return s5p_gatectrl(S5P_CLKGATE_IP_PERIL, clk, enable);
- }
- 
-+static int s5pv310_clk_ip_perir_ctrl(struct clk *clk, int enable)
-+{
-+	return s5p_gatectrl(S5P_CLKGATE_IP_PERIR, clk, enable);
-+}
-+
- /* Core list of CMU_CPU side */
- 
- static struct clksrc_clk clk_mout_apll = {
-@@ -347,6 +372,46 @@ static struct clk init_clocks_disable[] = {
- 		.enable		= s5pv310_clk_ip_peril_ctrl,
- 		.ctrlbit	= (1<<24),
- 	}, {
-+		.name		= "csis",
-+		.id		= 0,
-+		.enable		= s5pv310_clk_ip_cam_ctrl,
-+		.ctrlbit	= (1 << 4),
+diff --git a/arch/arm/mach-s5pv310/cpu.c b/arch/arm/mach-s5pv310/cpu.c
+index 2b74295..32b6972 100644
+--- a/arch/arm/mach-s5pv310/cpu.c
++++ b/arch/arm/mach-s5pv310/cpu.c
+@@ -50,6 +50,11 @@ static struct map_desc s5pv310_iodesc[] __initdata = {
+ 		.pfn		= __phys_to_pfn(S5PV310_PA_CMU),
+ 		.length		= SZ_128K,
+ 		.type		= MT_DEVICE,
 +	}, {
-+		.name		= "csis",
-+		.id		= 1,
-+		.enable		= s5pv310_clk_ip_cam_ctrl,
-+		.ctrlbit	= (1 << 5),
-+	}, {
-+		.name		= "fimc",
-+		.id		= 0,
-+		.enable		= s5pv310_clk_ip_cam_ctrl,
-+		.ctrlbit	= (1 << 0),
-+	}, {
-+		.name		= "fimc",
-+		.id		= 1,
-+		.enable		= s5pv310_clk_ip_cam_ctrl,
-+		.ctrlbit	= (1 << 1),
-+	}, {
-+		.name		= "fimc",
-+		.id		= 2,
-+		.enable		= s5pv310_clk_ip_cam_ctrl,
-+		.ctrlbit	= (1 << 2),
-+	}, {
-+		.name		= "fimc",
-+		.id		= 3,
-+		.enable		= s5pv310_clk_ip_cam_ctrl,
-+		.ctrlbit	= (1 << 3),
-+	}, {
-+		.name		= "fimd",
-+		.id		= 0,
-+		.enable		= s5pv310_clk_ip_lcd0_ctrl,
-+		.ctrlbit	= (1 << 0),
-+	}, {
-+		.name		= "fimd",
-+		.id		= 1,
-+		.enable		= s5pv310_clk_ip_lcd1_ctrl,
-+		.ctrlbit	= (1 << 0),
-+	}, {
- 		.name		= "hsmmc",
- 		.id		= 0,
- 		.parent		= &clk_aclk_133.clk,
-@@ -376,7 +441,100 @@ static struct clk init_clocks_disable[] = {
- 		.parent		= &clk_aclk_133.clk,
- 		.enable		= s5pv310_clk_ip_fsys_ctrl,
- 		.ctrlbit	= (1 << 9),
--	}
-+	}, {
-+		.name		= "sata",
-+		.id		= -1,
-+		.enable		= s5pv310_clk_ip_fsys_ctrl,
-+		.ctrlbit	= (1 << 10),
-+	}, {
-+		.name		= "adc",
-+		.id		= -1,
-+		.enable		= s5pv310_clk_ip_peril_ctrl,
-+		.ctrlbit	= (1 << 15),
-+	}, {
-+		.name		= "watchdog",
-+		.id		= -1,
-+		.enable		= s5pv310_clk_ip_perir_ctrl,
-+		.ctrlbit	= (1 << 14),
-+	}, {
-+		.name		= "usbhost",
-+		.id		= -1,
-+		.enable		= s5pv310_clk_ip_fsys_ctrl ,
-+		.ctrlbit	= (1 << 12),
-+	}, {
-+		.name		= "otg",
-+		.id		= -1,
-+		.enable		= s5pv310_clk_ip_fsys_ctrl,
-+		.ctrlbit	= (1 << 13),
-+	}, {
-+		.name		= "spi",
-+		.id		= 0,
-+		.enable		= s5pv310_clk_ip_peril_ctrl,
-+		.ctrlbit	= (1 << 16),
-+	}, {
-+		.name		= "spi",
-+		.id		= 1,
-+		.enable		= s5pv310_clk_ip_peril_ctrl,
-+		.ctrlbit	= (1 << 17),
-+	}, {
-+		.name		= "spi",
-+		.id		= 2,
-+		.enable		= s5pv310_clk_ip_peril_ctrl,
-+		.ctrlbit	= (1 << 18),
-+	}, {
-+		.name		= "fimg2d",
-+		.id		= -1,
-+		.enable		= s5pv310_clk_ip_image_ctrl,
-+		.ctrlbit	= (1 << 0),
-+	}, {
-+		.name		= "i2c",
-+		.id		= 0,
-+		.parent		= &clk_aclk_100.clk,
-+		.enable		= s5pv310_clk_ip_peril_ctrl,
-+		.ctrlbit	= (1 << 6),
-+	}, {
-+		.name		= "i2c",
-+		.id		= 1,
-+		.parent		= &clk_aclk_100.clk,
-+		.enable		= s5pv310_clk_ip_peril_ctrl,
-+		.ctrlbit	= (1 << 7),
-+	}, {
-+		.name		= "i2c",
-+		.id		= 2,
-+		.parent		= &clk_aclk_100.clk,
-+		.enable		= s5pv310_clk_ip_peril_ctrl,
-+		.ctrlbit	= (1 << 8),
-+	}, {
-+		.name		= "i2c",
-+		.id		= 3,
-+		.parent		= &clk_aclk_100.clk,
-+		.enable		= s5pv310_clk_ip_peril_ctrl,
-+		.ctrlbit	= (1 << 9),
-+	}, {
-+		.name		= "i2c",
-+		.id		= 4,
-+		.parent		= &clk_aclk_100.clk,
-+		.enable		= s5pv310_clk_ip_peril_ctrl,
-+		.ctrlbit	= (1 << 10),
-+	}, {
-+		.name		= "i2c",
-+		.id		= 5,
-+		.parent		= &clk_aclk_100.clk,
-+		.enable		= s5pv310_clk_ip_peril_ctrl,
-+		.ctrlbit	= (1 << 11),
-+	}, {
-+		.name		= "i2c",
-+		.id		= 6,
-+		.parent		= &clk_aclk_100.clk,
-+		.enable		= s5pv310_clk_ip_peril_ctrl,
-+		.ctrlbit	= (1 << 12),
-+	}, {
-+		.name		= "i2c",
-+		.id		= 7,
-+		.parent		= &clk_aclk_100.clk,
-+		.enable		= s5pv310_clk_ip_peril_ctrl,
-+		.ctrlbit	= (1 << 13),
-+	},
++		.virtual	= (unsigned long)S5P_VA_SYSRAM,
++		.pfn		= __phys_to_pfn(S5PV310_PA_SYSRAM),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
+ 	}
  };
  
- static struct clk init_clocks[] = {
-diff --git a/arch/arm/mach-s5pv310/include/mach/regs-clock.h b/arch/arm/mach-s5pv310/include/mach/regs-clock.h
-index eda07fd..12e983c 100644
---- a/arch/arm/mach-s5pv310/include/mach/regs-clock.h
-+++ b/arch/arm/mach-s5pv310/include/mach/regs-clock.h
-@@ -64,6 +64,7 @@
- #define S5P_CLKGATE_IP_LCD1		S5P_CLKREG(0x0C938)
- #define S5P_CLKGATE_IP_FSYS		S5P_CLKREG(0x0C940)
- #define S5P_CLKGATE_IP_PERIL		S5P_CLKREG(0x0C950)
-+#define S5P_CLKGATE_IP_PERIR		S5P_CLKREG(0x0C960)
+diff --git a/arch/arm/mach-s5pv310/include/mach/map.h b/arch/arm/mach-s5pv310/include/mach/map.h
+index 3c00495..213e110 100644
+--- a/arch/arm/mach-s5pv310/include/mach/map.h
++++ b/arch/arm/mach-s5pv310/include/mach/map.h
+@@ -23,6 +23,8 @@
  
- #define S5P_CLKSRC_CORE			S5P_CLKREG(0x10200)
- #define S5P_CLKDIV_CORE0		S5P_CLKREG(0x10500)
+ #include <plat/map-s5p.h>
+ 
++#define S5PV310_PA_SYSRAM		(0x02025000)
++
+ #define S5PV310_PA_CHIPID		(0x10000000)
+ #define S5P_PA_CHIPID			S5PV310_PA_CHIPID
+ 
+diff --git a/arch/arm/mach-s5pv310/platsmp.c b/arch/arm/mach-s5pv310/platsmp.c
+index fe9469a..d357c19 100644
+--- a/arch/arm/mach-s5pv310/platsmp.c
++++ b/arch/arm/mach-s5pv310/platsmp.c
+@@ -187,6 +187,6 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
+ 		 * until it receives a soft interrupt, and then the
+ 		 * secondary CPU branches to this address.
+ 		 */
+-	__raw_writel(BSYM(virt_to_phys(s5pv310_secondary_startup)), S5P_INFORM0);
++	__raw_writel(BSYM(virt_to_phys(s5pv310_secondary_startup)), S5P_VA_SYSRAM);
+ 	}
+ }
+diff --git a/arch/arm/plat-s5p/include/plat/map-s5p.h b/arch/arm/plat-s5p/include/plat/map-s5p.h
+index 5897792..c4ff88b 100644
+--- a/arch/arm/plat-s5p/include/plat/map-s5p.h
++++ b/arch/arm/plat-s5p/include/plat/map-s5p.h
+@@ -17,6 +17,7 @@
+ #define S5P_VA_GPIO		S3C_ADDR(0x00500000)
+ #define S5P_VA_SYSTIMER		S3C_ADDR(0x01200000)
+ #define S5P_VA_SROMC		S3C_ADDR(0x01100000)
++#define S5P_VA_SYSRAM		S3C_ADDR(0x01180000)
+ 
+ #define S5P_VA_COMBINER_BASE	S3C_ADDR(0x00600000)
+ #define S5P_VA_COMBINER(x)	(S5P_VA_COMBINER_BASE + ((x) >> 2) * 0x10)
 -- 
 1.6.2.5
