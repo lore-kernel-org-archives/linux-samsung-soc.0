@@ -1,84 +1,56 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung fixes for 2.6.36-rc3
-Date: Fri, 27 Aug 2010 18:48:48 +0900
-Message-ID: <006d01cb45cd$0e4e3610$2aeaa230$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Linus Torvalds' <torvalds@linux-foundation.org>
-Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] ARM: SAMSUNG: Removing unused codes
+Date: Fri, 27 Aug 2010 20:22:40 +0900
+Message-ID: <1282908160-9631-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:58940 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750983Ab0H0LjT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 27 Aug 2010 07:39:19 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Linus,
+This patch removes following unused codes.
 
-Please pull Samsung fixes from:
+arch/arm/plat-samsung/adc.c:438: warning: unused variable 'flags'
+arch/arm/mach-s5pv210/clock.c:176: warning: 's5pv210_clk_ip4_ctrl' defined but not used
 
-git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-s5p-fixes-for-linus
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s5pv210/clock.c |    5 -----
+ arch/arm/plat-samsung/adc.c   |    1 -
+ 2 files changed, 0 insertions(+), 6 deletions(-)
 
-These things are for bug fix on 2.6.36-rc3.
-If any problems, please let me know.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-
-The following changes since commit 76be97c1fc945db08aae1f1b746012662d643e97:
-
-  Linux 2.6.36-rc2 (2010-08-22 17:43:29 -0700)
-
-are available in the git repository at:
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-s5p-fixes-for-linus
-
-Changhwan Youn (1):
-      ARM: S5PV310: Fix on Secondary CPU startup
-
-Jongpill Lee (4):
-      ARM: S5PV310: Fix on PLL setting for S5PV310
-      ARM: S5PV310: Should be clk_sclk_apll not clk_mout_apll
-      ARM: S5PV310: Fix missed uart clocks
-      ARM: S5PV310: Bug fix on uclk1 and sclk_pwm
-
-Kukjin Kim (4):
-      ARM: SAMSUNG: Fix on build warning regarding VMALLOC_END type
-      ARM: S5PV310: Fix on default ZRELADDR of ARCH_S5PV310
-      ARM: S5PV310: Fix on typo irqs.h of S5PV310
-      ARM: S5PV310: Add CMU block for S5PV310 Clock
-
-Kyungmin Park (2):
-      ARM: S5P: VMALLOC_END should be unsigned long
-      ARM: S5PV310: Fix on GPIO base addresses
-
- arch/arm/Kconfig                                |    3 +-
- arch/arm/mach-s3c2410/include/mach/vmalloc.h    |    2 +-
- arch/arm/mach-s3c64xx/include/mach/vmalloc.h    |    2 +-
- arch/arm/mach-s5p6440/include/mach/vmalloc.h    |    2 +-
- arch/arm/mach-s5p6442/include/mach/vmalloc.h    |    2 +-
- arch/arm/mach-s5pv210/include/mach/vmalloc.h    |    2 +-
- arch/arm/mach-s5pv310/clock.c                   |   82
-+++++++++++++++++-----
- arch/arm/mach-s5pv310/cpu.c                     |   10 +++
- arch/arm/mach-s5pv310/include/mach/irqs.h       |   11 ++-
- arch/arm/mach-s5pv310/include/mach/map.h        |   16 ++++-
- arch/arm/mach-s5pv310/include/mach/regs-clock.h |   59 ++++++++--------
- arch/arm/mach-s5pv310/include/mach/vmalloc.h    |    2 +-
- arch/arm/mach-s5pv310/platsmp.c                 |    2 +-
- arch/arm/plat-s5p/include/plat/map-s5p.h        |    2 +
- 14 files changed, 135 insertions(+), 62 deletions(-)
+diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
+index af91fef..10a3934 100644
+--- a/arch/arm/mach-s5pv210/clock.c
++++ b/arch/arm/mach-s5pv210/clock.c
+@@ -173,11 +173,6 @@ static int s5pv210_clk_ip3_ctrl(struct clk *clk, int enable)
+ 	return s5p_gatectrl(S5P_CLKGATE_IP3, clk, enable);
+ }
+ 
+-static int s5pv210_clk_ip4_ctrl(struct clk *clk, int enable)
+-{
+-	return s5p_gatectrl(S5P_CLKGATE_IP4, clk, enable);
+-}
+-
+ static int s5pv210_clk_mask0_ctrl(struct clk *clk, int enable)
+ {
+ 	return s5p_gatectrl(S5P_CLK_SRC_MASK0, clk, enable);
+diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
+index 04d9521..e8f2be2 100644
+--- a/arch/arm/plat-samsung/adc.c
++++ b/arch/arm/plat-samsung/adc.c
+@@ -435,7 +435,6 @@ static int s3c_adc_suspend(struct platform_device *pdev, pm_message_t state)
+ static int s3c_adc_resume(struct platform_device *pdev)
+ {
+ 	struct adc_device *adc = platform_get_drvdata(pdev);
+-	unsigned long flags;
+ 
+ 	clk_enable(adc->clk);
+ 	enable_irq(adc->irq);
+-- 
+1.6.2.5
