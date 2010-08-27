@@ -1,91 +1,84 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: S5PV310: Fix on Secondary CPU startup
-Date: Thu, 26 Aug 2010 17:23:41 +0900
-Message-ID: <1282811021-21612-1-git-send-email-kgene.kim@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:59877 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753368Ab0HZIjE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Aug 2010 04:39:04 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [GIT PULL] Samsung fixes for 2.6.36-rc3
+Date: Fri, 27 Aug 2010 18:48:48 +0900
+Message-ID: <006d01cb45cd$0e4e3610$2aeaa230$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-language: ko
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Linus Torvalds' <torvalds@linux-foundation.org>
+Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Changhwan Youn <chaos.youn@samsung.com>
+Hi Linus,
 
-Following occurs on boot message without this patch.
-    CPU1: processor failed to boot
-    Brought up 1 CPUs
-    SMP: Total of 1 processors activated
+Please pull Samsung fixes from:
 
-This patch adds SYSRAM mapping for fixing Secondary CPU startup.
-    CPU1: Booted secondary processor
-    Brought up 2 CPUs
-    SMP: Total of 2 processors activated
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+s5p-fixes-for-linus
 
-Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s5pv310/cpu.c              |    5 +++++
- arch/arm/mach-s5pv310/include/mach/map.h |    2 ++
- arch/arm/mach-s5pv310/platsmp.c          |    2 +-
- arch/arm/plat-s5p/include/plat/map-s5p.h |    1 +
- 4 files changed, 9 insertions(+), 1 deletions(-)
+These things are for bug fix on 2.6.36-rc3.
+If any problems, please let me know.
 
-diff --git a/arch/arm/mach-s5pv310/cpu.c b/arch/arm/mach-s5pv310/cpu.c
-index 2b74295..32b6972 100644
---- a/arch/arm/mach-s5pv310/cpu.c
-+++ b/arch/arm/mach-s5pv310/cpu.c
-@@ -50,6 +50,11 @@ static struct map_desc s5pv310_iodesc[] __initdata = {
- 		.pfn		= __phys_to_pfn(S5PV310_PA_CMU),
- 		.length		= SZ_128K,
- 		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S5P_VA_SYSRAM,
-+		.pfn		= __phys_to_pfn(S5PV310_PA_SYSRAM),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
- 	}
- };
- 
-diff --git a/arch/arm/mach-s5pv310/include/mach/map.h b/arch/arm/mach-s5pv310/include/mach/map.h
-index 3c00495..213e110 100644
---- a/arch/arm/mach-s5pv310/include/mach/map.h
-+++ b/arch/arm/mach-s5pv310/include/mach/map.h
-@@ -23,6 +23,8 @@
- 
- #include <plat/map-s5p.h>
- 
-+#define S5PV310_PA_SYSRAM		(0x02025000)
-+
- #define S5PV310_PA_CHIPID		(0x10000000)
- #define S5P_PA_CHIPID			S5PV310_PA_CHIPID
- 
-diff --git a/arch/arm/mach-s5pv310/platsmp.c b/arch/arm/mach-s5pv310/platsmp.c
-index fe9469a..d357c19 100644
---- a/arch/arm/mach-s5pv310/platsmp.c
-+++ b/arch/arm/mach-s5pv310/platsmp.c
-@@ -187,6 +187,6 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
- 		 * until it receives a soft interrupt, and then the
- 		 * secondary CPU branches to this address.
- 		 */
--	__raw_writel(BSYM(virt_to_phys(s5pv310_secondary_startup)), S5P_INFORM0);
-+	__raw_writel(BSYM(virt_to_phys(s5pv310_secondary_startup)), S5P_VA_SYSRAM);
- 	}
- }
-diff --git a/arch/arm/plat-s5p/include/plat/map-s5p.h b/arch/arm/plat-s5p/include/plat/map-s5p.h
-index 5897792..c4ff88b 100644
---- a/arch/arm/plat-s5p/include/plat/map-s5p.h
-+++ b/arch/arm/plat-s5p/include/plat/map-s5p.h
-@@ -17,6 +17,7 @@
- #define S5P_VA_GPIO		S3C_ADDR(0x00500000)
- #define S5P_VA_SYSTIMER		S3C_ADDR(0x01200000)
- #define S5P_VA_SROMC		S3C_ADDR(0x01100000)
-+#define S5P_VA_SYSRAM		S3C_ADDR(0x01180000)
- 
- #define S5P_VA_COMBINER_BASE	S3C_ADDR(0x00600000)
- #define S5P_VA_COMBINER(x)	(S5P_VA_COMBINER_BASE + ((x) >> 2) * 0x10)
--- 
-1.6.2.5
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+
+The following changes since commit 76be97c1fc945db08aae1f1b746012662d643e97:
+
+  Linux 2.6.36-rc2 (2010-08-22 17:43:29 -0700)
+
+are available in the git repository at:
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+s5p-fixes-for-linus
+
+Changhwan Youn (1):
+      ARM: S5PV310: Fix on Secondary CPU startup
+
+Jongpill Lee (4):
+      ARM: S5PV310: Fix on PLL setting for S5PV310
+      ARM: S5PV310: Should be clk_sclk_apll not clk_mout_apll
+      ARM: S5PV310: Fix missed uart clocks
+      ARM: S5PV310: Bug fix on uclk1 and sclk_pwm
+
+Kukjin Kim (4):
+      ARM: SAMSUNG: Fix on build warning regarding VMALLOC_END type
+      ARM: S5PV310: Fix on default ZRELADDR of ARCH_S5PV310
+      ARM: S5PV310: Fix on typo irqs.h of S5PV310
+      ARM: S5PV310: Add CMU block for S5PV310 Clock
+
+Kyungmin Park (2):
+      ARM: S5P: VMALLOC_END should be unsigned long
+      ARM: S5PV310: Fix on GPIO base addresses
+
+ arch/arm/Kconfig                                |    3 +-
+ arch/arm/mach-s3c2410/include/mach/vmalloc.h    |    2 +-
+ arch/arm/mach-s3c64xx/include/mach/vmalloc.h    |    2 +-
+ arch/arm/mach-s5p6440/include/mach/vmalloc.h    |    2 +-
+ arch/arm/mach-s5p6442/include/mach/vmalloc.h    |    2 +-
+ arch/arm/mach-s5pv210/include/mach/vmalloc.h    |    2 +-
+ arch/arm/mach-s5pv310/clock.c                   |   82
++++++++++++++++++-----
+ arch/arm/mach-s5pv310/cpu.c                     |   10 +++
+ arch/arm/mach-s5pv310/include/mach/irqs.h       |   11 ++-
+ arch/arm/mach-s5pv310/include/mach/map.h        |   16 ++++-
+ arch/arm/mach-s5pv310/include/mach/regs-clock.h |   59 ++++++++--------
+ arch/arm/mach-s5pv310/include/mach/vmalloc.h    |    2 +-
+ arch/arm/mach-s5pv310/platsmp.c                 |    2 +-
+ arch/arm/plat-s5p/include/plat/map-s5p.h        |    2 +
+ 14 files changed, 135 insertions(+), 62 deletions(-)
