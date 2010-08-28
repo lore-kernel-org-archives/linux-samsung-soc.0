@@ -1,168 +1,121 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 4/5] sdhci-s3c: add support for the non standard	minimal
- clock value
-Date: Sat, 28 Aug 2010 09:54:03 +0900
-Message-ID: <009d01cb464b$851ef080$8f5cd180$%kim@samsung.com>
-References: <1276076383-24825-1-git-send-email-m.szyprowski@samsung.com>
- <1276076383-24825-5-git-send-email-m.szyprowski@samsung.com>
- <20100827195452.GM23079@void.printf.net>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [GIT PULL] Samsung fixes for 2.6.36-rc3
+Date: Sat, 28 Aug 2010 14:55:27 +0900
+Message-ID: <AANLkTi=+XnCQu6Cz0P+A=qhaeN2HKJ9gYdTx2jWe7sfH@mail.gmail.com>
+References: <006d01cb45cd$0e4e3610$2aeaa230$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <20100827195452.GM23079@void.printf.net>
-Content-language: ko
-Sender: linux-mmc-owner@vger.kernel.org
-To: 'Chris Ball' <cjb@laptop.org>, 'Marek Szyprowski' <m.szyprowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:48450 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750774Ab0H1Fz2 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 28 Aug 2010 01:55:28 -0400
+In-Reply-To: <006d01cb45cd$0e4e3610$2aeaa230$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Chris Ball wrote:
-> 
-> Hi,
-> 
-Hi again ;-)
+On Fri, Aug 27, 2010 at 6:48 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> Hi Linus,
+>
+> Please pull Samsung fixes from:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> s5p-fixes-for-linus
+>
+> These things are for bug fix on 2.6.36-rc3.
+> If any problems, please let me know.
 
-> Looks like this wasn't merged.  Any thoughts on doing so?
-> 
-Updated patch(v3) of this was merged.
+Well nothing changed. only LSI codes and required things from LSI side
+are merged.
+And still need more patches for booting at s5pc210 (aka s5pv310).
 
-http://marc.info/?l=linux-arm-kernel&m=128040710023029&w=2
+Several thins are missed.
+1. gpio_to_irq patch not included. it's basic gpiolib feature. Without
+this patch, it can't use the generic gpiolib based drivers. e.g.,
+gpio-keys.
+http://marc.info/?l=3Dlinux-arm-kernel&m=3D128202435823832&w=3D2
 
-(commit ID: ce5f036bbbfc6c21d7b55b8fdaa2e2bd56392d94)
+2. Wrong UART level triggers.
+At least s5pc110/s5pc210 has wrong UART trigger values compare to macro=
+ name.
+http://marc.info/?l=3Dlinux-arm-kernel&m=3D128218476209330&w=3D2
 
-Thanks.
+3. set correct gpio config at GPIO I at s5pc110
+http://marc.info/?l=3Dlinux-arm-kernel&m=3D128202423923745&w=3D2
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-> On Wed, Jun 09, 2010 at 11:39:42AM +0200, Marek Szyprowski wrote:
-> > S3C SDHCI host controller can change the source for generating mmc
-clock.
-> > By default host bus clock is used, what causes some problems on machines
-> > with 133MHz bus, because the SDHCI divider cannot be as high get proper
-> > clock value for identification mode. This is not a problem for the
-> > controller, because it can generate lower frequencies from other clock
-> > sources. This patch adds a new quirk to SDHCI driver to calculate the
-> > minimal supported clock frequency.
-> >
-> > This fixes the flood of the following warnings on Samsung S5PV210 SoCs:
-> > mmc0: Minimum clock frequency too high for identification mode
-> >
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> >  drivers/mmc/host/sdhci-of-esdhc.c |    1 +
-> >  drivers/mmc/host/sdhci-s3c.c      |   29
-> +++++++++++++++++++++++++++++
-> >  drivers/mmc/host/sdhci.c          |    2 +-
-> >  drivers/mmc/host/sdhci.h          |    2 ++
-> >  4 files changed, 33 insertions(+), 1 deletions(-)
-> >
-> > diff --git a/drivers/mmc/host/sdhci-of-esdhc.c
-b/drivers/mmc/host/sdhci-of-
-> esdhc.c
-> > index c8623de..64b3f79 100644
-> > --- a/drivers/mmc/host/sdhci-of-esdhc.c
-> > +++ b/drivers/mmc/host/sdhci-of-esdhc.c
-> > @@ -124,6 +124,7 @@ struct sdhci_of_data sdhci_esdhc = {
-> >  		  SDHCI_QUIRK_BROKEN_CARD_DETECTION |
-> >  		  SDHCI_QUIRK_NO_BUSY_IRQ |
-> >  		  SDHCI_QUIRK_NONSTANDARD_CLOCK |
-> > +		  SDHCI_QUIRK_NONSTANDARD_MINCLOCK |
-> >  		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
-> >  		  SDHCI_QUIRK_PIO_NEEDS_DELAY |
-> >  		  SDHCI_QUIRK_RESTORE_IRQS_AFTER_RESET |
-> > diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-> > index 2b6cb44..615008d 100644
-> > --- a/drivers/mmc/host/sdhci-s3c.c
-> > +++ b/drivers/mmc/host/sdhci-s3c.c
-> > @@ -209,10 +209,37 @@ static void sdhci_s3c_set_clock(struct sdhci_host
-> *host, unsigned int clock)
-> >  	}
-> >  }
-> >
-> > +/**
-> > + * sdhci_s3c_get_min_clock - callback to get minimal supported clock
-value
-> > + * @host: The SDHCI host being queried
-> > + *
-> > + * To init mmc host properly a minimal clock value is needed. For high
-system
-> > + * bus clock's values the standard formula gives values out of allowed
-range.
-> > + * The clock still can be set to lower values, if clock source other
-then
-> > + * system bus is selected.
-> > +*/
-> > +static unsigned int sdhci_s3c_get_min_clock(struct sdhci_host *host)
-> > +{
-> > +	struct sdhci_s3c *ourhost = to_s3c(host);
-> > +	unsigned int delta, min = UINT_MAX;
-> > +	int src;
-> > +
-> > +	for (src = 0; src < MAX_BUS_CLK; src++) {
-> > +		delta = sdhci_s3c_consider_clock(ourhost, src, 0);
-> > +		if (delta == UINT_MAX)
-> > +			continue;
-> > +		/* delta is a negative value in this case */
-> > +		if (-delta < min)
-> > +			min = -delta;
-> > +	}
-> > +	return min;
-> > +}
-> > +
-> >  static struct sdhci_ops sdhci_s3c_ops = {
-> >  	.get_max_clock		= sdhci_s3c_get_max_clk,
-> >  	.get_timeout_clock	= sdhci_s3c_get_timeout_clk,
-> >  	.set_clock		= sdhci_s3c_set_clock,
-> > +	.get_min_clock		= sdhci_s3c_get_min_clock,
-> >  };
-> >
-> >  static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
-> > @@ -316,6 +343,8 @@ static int __devinit sdhci_s3c_probe(struct
-> platform_device *pdev)
-> >  	host->quirks = 0;
-> >  	host->irq = irq;
-> >
-> > +	host->quirks |= SDHCI_QUIRK_NONSTANDARD_MINCLOCK;
-> > +
-> >  	/* Setup quirks for the controller */
-> >  	host->quirks |= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC;
-> >
-> > diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> > index c6d1bd8..8b3ee53 100644
-> > --- a/drivers/mmc/host/sdhci.c
-> > +++ b/drivers/mmc/host/sdhci.c
-> > @@ -1785,7 +1785,7 @@ int sdhci_add_host(struct sdhci_host *host)
-> >  	 * Set host parameters.
-> >  	 */
-> >  	mmc->ops = &sdhci_ops;
-> > -	if (host->quirks & SDHCI_QUIRK_NONSTANDARD_CLOCK &&
-> > +	if (host->quirks & SDHCI_QUIRK_NONSTANDARD_MINCLOCK &&
-> >  			host->ops->set_clock && host->ops->get_min_clock)
-> >  		mmc->f_min = host->ops->get_min_clock(host);
-> >  	else
-> > diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> > index c846813..3fd87c2 100644
-> > --- a/drivers/mmc/host/sdhci.h
-> > +++ b/drivers/mmc/host/sdhci.h
-> > @@ -240,6 +240,8 @@ struct sdhci_host {
-> >  #define SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN		(1<<25)
-> >  /* Controller cannot support End Attribute in NOP ADMA descriptor */
-> >  #define SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC		(1<<26)
-> > +/* Controller has nonstandard clock management */
-> > +#define SDHCI_QUIRK_NONSTANDARD_MINCLOCK		(1<<27)
-> >
-> >  	int			irq;		/* Device IRQ */
-> >  	void __iomem *		ioaddr;		/* Mapped address */
-> > --
-> > 1.7.1.240.g225c
-> 
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
 > --
-> Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-> One Laptop Per Child
-
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+>
+> The following changes since commit 76be97c1fc945db08aae1f1b746012662d=
+643e97:
+>
+> =A0Linux 2.6.36-rc2 (2010-08-22 17:43:29 -0700)
+>
+> are available in the git repository at:
+> =A0 git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung=
+=2Egit
+> s5p-fixes-for-linus
+>
+> Changhwan Youn (1):
+> =A0 =A0 =A0ARM: S5PV310: Fix on Secondary CPU startup
+>
+> Jongpill Lee (4):
+> =A0 =A0 =A0ARM: S5PV310: Fix on PLL setting for S5PV310
+> =A0 =A0 =A0ARM: S5PV310: Should be clk_sclk_apll not clk_mout_apll
+> =A0 =A0 =A0ARM: S5PV310: Fix missed uart clocks
+> =A0 =A0 =A0ARM: S5PV310: Bug fix on uclk1 and sclk_pwm
+>
+> Kukjin Kim (4):
+> =A0 =A0 =A0ARM: SAMSUNG: Fix on build warning regarding VMALLOC_END t=
+ype
+> =A0 =A0 =A0ARM: S5PV310: Fix on default ZRELADDR of ARCH_S5PV310
+> =A0 =A0 =A0ARM: S5PV310: Fix on typo irqs.h of S5PV310
+> =A0 =A0 =A0ARM: S5PV310: Add CMU block for S5PV310 Clock
+>
+> Kyungmin Park (2):
+> =A0 =A0 =A0ARM: S5P: VMALLOC_END should be unsigned long
+> =A0 =A0 =A0ARM: S5PV310: Fix on GPIO base addresses
+>
+> =A0arch/arm/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0| =A0 =A03 +-
+> =A0arch/arm/mach-s3c2410/include/mach/vmalloc.h =A0 =A0| =A0 =A02 +-
+> =A0arch/arm/mach-s3c64xx/include/mach/vmalloc.h =A0 =A0| =A0 =A02 +-
+> =A0arch/arm/mach-s5p6440/include/mach/vmalloc.h =A0 =A0| =A0 =A02 +-
+> =A0arch/arm/mach-s5p6442/include/mach/vmalloc.h =A0 =A0| =A0 =A02 +-
+> =A0arch/arm/mach-s5pv210/include/mach/vmalloc.h =A0 =A0| =A0 =A02 +-
+> =A0arch/arm/mach-s5pv310/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+| =A0 82
+> +++++++++++++++++-----
+> =A0arch/arm/mach-s5pv310/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ | =A0 10 +++
+> =A0arch/arm/mach-s5pv310/include/mach/irqs.h =A0 =A0 =A0 | =A0 11 ++-
+> =A0arch/arm/mach-s5pv310/include/mach/map.h =A0 =A0 =A0 =A0| =A0 16 +=
++++-
+> =A0arch/arm/mach-s5pv310/include/mach/regs-clock.h | =A0 59 ++++++++-=
+-------
+> =A0arch/arm/mach-s5pv310/include/mach/vmalloc.h =A0 =A0| =A0 =A02 +-
+> =A0arch/arm/mach-s5pv310/platsmp.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =
+=A0 =A02 +-
+> =A0arch/arm/plat-s5p/include/plat/map-s5p.h =A0 =A0 =A0 =A0| =A0 =A02=
+ +
+> =A014 files changed, 135 insertions(+), 62 deletions(-)
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
