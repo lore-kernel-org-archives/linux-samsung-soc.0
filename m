@@ -1,121 +1,83 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [GIT PULL] Samsung fixes for 2.6.36-rc3
-Date: Sat, 28 Aug 2010 14:55:27 +0900
-Message-ID: <AANLkTi=+XnCQu6Cz0P+A=qhaeN2HKJ9gYdTx2jWe7sfH@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [GIT PULL] Samsung fixes for 2.6.36-rc3
+Date: Sun, 29 Aug 2010 18:43:25 +0900
+Message-ID: <000101cb475e$a364eef0$ea2eccd0$%kim@samsung.com>
 References: <006d01cb45cd$0e4e3610$2aeaa230$%kim@samsung.com>
+ <AANLkTi=+XnCQu6Cz0P+A=qhaeN2HKJ9gYdTx2jWe7sfH@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:48450 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750774Ab0H1Fz2 convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:22334 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752648Ab0H2JnP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 28 Aug 2010 01:55:28 -0400
-In-Reply-To: <006d01cb45cd$0e4e3610$2aeaa230$%kim@samsung.com>
+	Sun, 29 Aug 2010 05:43:15 -0400
+In-reply-to: <AANLkTi=+XnCQu6Cz0P+A=qhaeN2HKJ9gYdTx2jWe7sfH@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Kyungmin Park' <kmpark@infradead.org>
+Cc: 'Linus Torvalds' <torvalds@linux-foundation.org>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Fri, Aug 27, 2010 at 6:48 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> Hi Linus,
->
-> Please pull Samsung fixes from:
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> s5p-fixes-for-linus
->
-> These things are for bug fix on 2.6.36-rc3.
-> If any problems, please let me know.
+Kyungmin Park wrote:
+> 
+> On Fri, Aug 27, 2010 at 6:48 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > Hi Linus,
+> >
+> > Please pull Samsung fixes from:
+> >
+> > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> > s5p-fixes-for-linus
+> >
+> > These things are for bug fix on 2.6.36-rc3.
+> > If any problems, please let me know.
+> 
+> Well nothing changed. only LSI codes and required things from LSI side
+> are merged.
 
-Well nothing changed. only LSI codes and required things from LSI side
-are merged.
-And still need more patches for booting at s5pc210 (aka s5pv310).
+At this point, focus on getting the critical portions of S5PV310/S5PC210
+into
+the mainline. Once that is done, other features can be merged as required.
 
-Several thins are missed.
-1. gpio_to_irq patch not included. it's basic gpiolib feature. Without
-this patch, it can't use the generic gpiolib based drivers. e.g.,
-gpio-keys.
-http://marc.info/?l=3Dlinux-arm-kernel&m=3D128202435823832&w=3D2
+> And still need more patches for booting at s5pc210 (aka s5pv310).
+> 
+Thanks for your concern.
+But I think it's enough just only one patch about following...
+I know the problem that we cannot get the proper clock 'id' from clk_get()
+in
+the console_initcall(). This problem occurs when only defined 'uclk1' as
+uart
+clock. And to solve that will be submitted soon.
 
-2. Wrong UART level triggers.
-At least s5pc110/s5pc210 has wrong UART trigger values compare to macro=
- name.
-http://marc.info/?l=3Dlinux-arm-kernel&m=3D128218476209330&w=3D2
+> Several thins are missed.
+> 1. gpio_to_irq patch not included. it's basic gpiolib feature. Without
+> this patch, it can't use the generic gpiolib based drivers. e.g.,
+> gpio-keys.
+> http://marc.info/?l=linux-arm-kernel&m=128202435823832&w=2
+> 
+I don't think so, 'gpio_to_irq' is a new feature not a bug fix.
+So if required, will be merged at the merge window after review.
 
-3. set correct gpio config at GPIO I at s5pc110
-http://marc.info/?l=3Dlinux-arm-kernel&m=3D128202423923745&w=3D2
+> 2. Wrong UART level triggers.
+> At least s5pc110/s5pc210 has wrong UART trigger values compare to macro
+name.
+> http://marc.info/?l=linux-arm-kernel&m=128218476209330&w=2
+> 
+I couldn't find anywhere used it in the mainline. So I'm not sure we really
+need it.
 
+> 3. set correct gpio config at GPIO I at s5pc110
+> http://marc.info/?l=linux-arm-kernel&m=128202423923745&w=2
+> 
+mm...I will sort this out.
 
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
->
-> The following changes since commit 76be97c1fc945db08aae1f1b746012662d=
-643e97:
->
-> =A0Linux 2.6.36-rc2 (2010-08-22 17:43:29 -0700)
->
-> are available in the git repository at:
-> =A0 git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung=
-=2Egit
-> s5p-fixes-for-linus
->
-> Changhwan Youn (1):
-> =A0 =A0 =A0ARM: S5PV310: Fix on Secondary CPU startup
->
-> Jongpill Lee (4):
-> =A0 =A0 =A0ARM: S5PV310: Fix on PLL setting for S5PV310
-> =A0 =A0 =A0ARM: S5PV310: Should be clk_sclk_apll not clk_mout_apll
-> =A0 =A0 =A0ARM: S5PV310: Fix missed uart clocks
-> =A0 =A0 =A0ARM: S5PV310: Bug fix on uclk1 and sclk_pwm
->
-> Kukjin Kim (4):
-> =A0 =A0 =A0ARM: SAMSUNG: Fix on build warning regarding VMALLOC_END t=
-ype
-> =A0 =A0 =A0ARM: S5PV310: Fix on default ZRELADDR of ARCH_S5PV310
-> =A0 =A0 =A0ARM: S5PV310: Fix on typo irqs.h of S5PV310
-> =A0 =A0 =A0ARM: S5PV310: Add CMU block for S5PV310 Clock
->
-> Kyungmin Park (2):
-> =A0 =A0 =A0ARM: S5P: VMALLOC_END should be unsigned long
-> =A0 =A0 =A0ARM: S5PV310: Fix on GPIO base addresses
->
-> =A0arch/arm/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0| =A0 =A03 +-
-> =A0arch/arm/mach-s3c2410/include/mach/vmalloc.h =A0 =A0| =A0 =A02 +-
-> =A0arch/arm/mach-s3c64xx/include/mach/vmalloc.h =A0 =A0| =A0 =A02 +-
-> =A0arch/arm/mach-s5p6440/include/mach/vmalloc.h =A0 =A0| =A0 =A02 +-
-> =A0arch/arm/mach-s5p6442/include/mach/vmalloc.h =A0 =A0| =A0 =A02 +-
-> =A0arch/arm/mach-s5pv210/include/mach/vmalloc.h =A0 =A0| =A0 =A02 +-
-> =A0arch/arm/mach-s5pv310/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-| =A0 82
-> +++++++++++++++++-----
-> =A0arch/arm/mach-s5pv310/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- | =A0 10 +++
-> =A0arch/arm/mach-s5pv310/include/mach/irqs.h =A0 =A0 =A0 | =A0 11 ++-
-> =A0arch/arm/mach-s5pv310/include/mach/map.h =A0 =A0 =A0 =A0| =A0 16 +=
-+++-
-> =A0arch/arm/mach-s5pv310/include/mach/regs-clock.h | =A0 59 ++++++++-=
--------
-> =A0arch/arm/mach-s5pv310/include/mach/vmalloc.h =A0 =A0| =A0 =A02 +-
-> =A0arch/arm/mach-s5pv310/platsmp.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =
-=A0 =A02 +-
-> =A0arch/arm/plat-s5p/include/plat/map-s5p.h =A0 =A0 =A0 =A0| =A0 =A02=
- +
-> =A014 files changed, 135 insertions(+), 62 deletions(-)
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
+(snip)
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
