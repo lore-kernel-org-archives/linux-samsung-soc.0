@@ -1,36 +1,36 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2] MAX8952 PMIC Driver Initial Release
-Date: Wed, 1 Sep 2010 12:16:02 +0100
-Message-ID: <20100901111602.GF17548@opensource.wolfsonmicro.com>
-References: <1282283036-12641-1-git-send-email-myungjoo.ham@samsung.com>
- <20100820095351.GD13668@rakim.wolfsonmicro.main>
- <1282301229.3084.152.camel@odin>
- <011b01cb496a$cfa773d0$6ef65b70$%kim@samsung.com>
- <20100901091519.GA17032@opensource.wolfsonmicro.com>
- <000801cb49ba$3e1e50f0$ba5af2d0$%kim@samsung.com>
- <AANLkTinUNXmDc=H16gS5EXEAdrGAU=zK4cjsHSh7UQ8Q@mail.gmail.com>
- <001101cb49c0$3fd715c0$bf854140$%kim@samsung.com>
- <AANLkTi=akjQ2wUp7h4gJfsn52BozMprVn9oKygec-0DU@mail.gmail.com>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: [PATCH 00/13] ARM: S5P64X0: Add new S5P6450 Support
+Date: Wed, 1 Sep 2010 12:45:18 +0100
+Message-ID: <20100901114518.GA20737@trinity.fluff.org>
+References: <1283324960-21629-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:59037 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752379Ab0IALPp (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:44890 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751972Ab0IALpZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Sep 2010 07:15:45 -0400
+	Wed, 1 Sep 2010 07:45:25 -0400
 Content-Disposition: inline
-In-Reply-To: <AANLkTi=akjQ2wUp7h4gJfsn52BozMprVn9oKygec-0DU@mail.gmail.com>
+In-Reply-To: <1283324960-21629-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Liam Girdwood <lrg@slimlogic.co.uk>, linux-samsung-soc@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>, myungjoo.ham@gmail.com, linux-arm-kernel@lists.infradead.org, Changhwan Youn <chaos.youn@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On Wed, Sep 01, 2010 at 07:36:40PM +0900, Kyungmin Park wrote:
+On Wed, Sep 01, 2010 at 04:09:07PM +0900, Kukjin Kim wrote:
+> This patches add basic support for Samsung S5P6450 SoC.
+> 
+> Basically this patch moves mach-s5p6440 (ARCH_S5P6440) to mach-s5p64x0
+> (ARCH_S5P64X0) to support Samsung's new S5P6450 SoC. The ARCH_S5P64X0
+> can support S5P6440 and S5P6450 with one kernel image. It is tested on
+> SMDK6440(S5P6440) and SMDK6450(S5P6450) with s5p64x0_defconfig. And
+> this patch changes s5p6440_defconfig to s5p64x0_defconfig for S5P64X0.
 
-> As your word, first check the ID1 to detect the 8649 and 8952 and read
-> ID2 again to distinguish it. But actually we pass the max8952 as
-> platform device, so don't need to read ID2.
+What about the s5p6442?
 
-If you can read the ID from the chip it's always good to do so in order
-to verify that the user has supplied accurate information.
+-- 
+Ben
+
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
