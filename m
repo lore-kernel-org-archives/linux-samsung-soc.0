@@ -1,36 +1,157 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 00/13] ARM: S5P64X0: Add new S5P6450 Support
-Date: Wed,  1 Sep 2010 16:09:07 +0900
-Message-ID: <1283324960-21629-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 05/13] ARM: S5P64X0: Update IRQ support
+Date: Wed,  1 Sep 2010 16:09:12 +0900
+Message-ID: <1283324960-21629-6-git-send-email-kgene.kim@samsung.com>
+References: <1283324960-21629-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:42008 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:42021 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751199Ab0IAHZe (ORCPT
+	with ESMTP id S1751865Ab0IAHZf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Sep 2010 03:25:34 -0400
+	Wed, 1 Sep 2010 03:25:35 -0400
+In-Reply-To: <1283324960-21629-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-This patches add basic support for Samsung S5P6450 SoC.
+This patch updates IRQ support for S5P6440 and S5P6450 SoCs.
 
-Basically this patch moves mach-s5p6440 (ARCH_S5P6440) to mach-s5p64x0
-(ARCH_S5P64X0) to support Samsung's new S5P6450 SoC. The ARCH_S5P64X0
-can support S5P6440 and S5P6450 with one kernel image. It is tested on
-SMDK6440(S5P6440) and SMDK6450(S5P6450) with s5p64x0_defconfig. And
-this patch changes s5p6440_defconfig to s5p64x0_defconfig for S5P64X0.
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ .../include/mach/irqs.h                            |   48 +++++++++++++++-----
+ .../include/mach/regs-irq.h                        |    8 ++--
+ 2 files changed, 40 insertions(+), 16 deletions(-)
+ rename arch/arm/{mach-s5p6440 => mach-s5p64x0}/include/mach/irqs.h (71%)
+ rename arch/arm/{mach-s5p6440 => mach-s5p64x0}/include/mach/regs-irq.h (66%)
 
-[PATCH 01/13] ARM: S5P: Moves initial map for merging S5P64X0
-[PATCH 02/13] ARM: S5P64X0: Update Kconfig and Makefile
-[PATCH 03/13] ARM: S5P64X0: Add S5P64X0(S5P6440 and S5P6450) initialization support
-[PATCH 04/13] ARM: S5P64X0: Update Clock for S5P6440 and S5P6450
-[PATCH 05/13] ARM: S5P64X0: Update IRQ support
-[PATCH 06/13] ARM: S5P64X0: Update Timer support
-[PATCH 07/13] ARM: S5P64X0: Update Audio support
-[PATCH 08/13] ARM: S5P64X0: Move DMA support for S5P64X0
-[PATCH 09/13] ARM: S5P64X0: Add S5P6450 I2C support
-[PATCH 10/13] ARM: S5P64X0: Move GPIO support files for merge S5P64X0
-[PATCH 11/13] ARM: S5P64X0: Move SMDK6440 board file and Add SMDK6450 board file
-[PATCH 12/13] ARM: S5P64X0: Add UART serial support for S5P6450
-[PATCH 13/13] ARM: s5p64x0_defconfig: Update for support S5P6440 and S5P6450
+diff --git a/arch/arm/mach-s5p6440/include/mach/irqs.h b/arch/arm/mach-s5p64x0/include/mach/irqs.h
+similarity index 71%
+rename from arch/arm/mach-s5p6440/include/mach/irqs.h
+rename to arch/arm/mach-s5p64x0/include/mach/irqs.h
+index 16a7612..513abff 100644
+--- a/arch/arm/mach-s5p6440/include/mach/irqs.h
++++ b/arch/arm/mach-s5p64x0/include/mach/irqs.h
+@@ -1,17 +1,17 @@
+-/* linux/arch/arm/mach-s5p6440/include/mach/irqs.h
++/* linux/arch/arm/mach-s5p64x0/include/mach/irqs.h
+  *
+- * Copyright 2009 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com/
++ * Copyright 2009-2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
+  *
+- * S5P6440 - IRQ definitions
++ * S5P64X0 - IRQ definitions
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+ */
+ 
+-#ifndef __ASM_ARCH_S5P_IRQS_H
+-#define __ASM_ARCH_S5P_IRQS_H __FILE__
++#ifndef __ASM_ARCH_IRQS_H
++#define __ASM_ARCH_IRQS_H __FILE__
+ 
+ #include <plat/irqs.h>
+ 
+@@ -20,10 +20,12 @@
+ #define IRQ_EINT0_3		S5P_IRQ_VIC0(0)
+ #define IRQ_EINT4_11		S5P_IRQ_VIC0(1)
+ #define IRQ_RTC_TIC		S5P_IRQ_VIC0(2)
++#define IRQ_IIS1		S5P_IRQ_VIC0(3)	/* for only S5P6450 */
++#define IRQ_IIS2		S5P_IRQ_VIC0(4)	/* for only S5P6450 */
+ #define IRQ_IIC1		S5P_IRQ_VIC0(5)
+ #define IRQ_I2SV40		S5P_IRQ_VIC0(6)
+-#define IRQ_GPS			S5P_IRQ_VIC0(7)
+-#define IRQ_POST0		S5P_IRQ_VIC0(9)
++#define IRQ_GPS			S5P_IRQ_VIC0(7)	/* for only S5P6450 */
++
+ #define IRQ_2D			S5P_IRQ_VIC0(11)
+ #define IRQ_TIMER0_VIC		S5P_IRQ_VIC0(23)
+ #define IRQ_TIMER1_VIC		S5P_IRQ_VIC0(24)
+@@ -39,22 +41,26 @@
+ 
+ #define IRQ_EINT12_15		S5P_IRQ_VIC1(0)
+ #define IRQ_PCM0		S5P_IRQ_VIC1(2)
++#define IRQ_PCM1		S5P_IRQ_VIC1(3)	/* for only S5P6450 */
++#define IRQ_PCM2		S5P_IRQ_VIC1(4)	/* for only S5P6450 */
+ #define IRQ_UART0		S5P_IRQ_VIC1(5)
+ #define IRQ_UART1		S5P_IRQ_VIC1(6)
+ #define IRQ_UART2		S5P_IRQ_VIC1(7)
+ #define IRQ_UART3		S5P_IRQ_VIC1(8)
+ #define IRQ_DMA0		S5P_IRQ_VIC1(9)
++#define IRQ_UART4		S5P_IRQ_VIC1(10)	/* S5P6450 */
++#define IRQ_UART5		S5P_IRQ_VIC1(11)	/* S5P6450 */
+ #define IRQ_NFC			S5P_IRQ_VIC1(13)
++#define IRQ_USI			S5P_IRQ_VIC1(15)	/* S5P6450 */
+ #define IRQ_SPI0		S5P_IRQ_VIC1(16)
+ #define IRQ_SPI1		S5P_IRQ_VIC1(17)
++#define IRQ_HSMMC2		S5P_IRQ_VIC1(17)	/* Shared */
+ #define IRQ_IIC			S5P_IRQ_VIC1(18)
+ #define IRQ_DISPCON3		S5P_IRQ_VIC1(19)
+-#define IRQ_FIMGVG		S5P_IRQ_VIC1(20)
+ #define IRQ_EINT_GROUPS		S5P_IRQ_VIC1(21)
+-#define IRQ_PMU			S5P_IRQ_VIC1(23)
++#define IRQ_PMU			S5P_IRQ_VIC1(23)	/* S5P6440 */
+ #define IRQ_HSMMC0		S5P_IRQ_VIC1(24)
+ #define IRQ_HSMMC1		S5P_IRQ_VIC1(25)
+-#define IRQ_HSMMC2		IRQ_SPI1	/* shared with SPI1 */
+ #define IRQ_OTG			S5P_IRQ_VIC1(26)
+ #define IRQ_DSI			S5P_IRQ_VIC1(27)
+ #define IRQ_RTC_ALARM		S5P_IRQ_VIC1(28)
+@@ -63,6 +69,24 @@
+ #define IRQ_TC			IRQ_PENDN
+ #define IRQ_ADC			S5P_IRQ_VIC1(31)
+ 
++/* UART interrupts, S5P6450 has 5 UARTs */
++#define IRQ_S5P_UART_BASE4	(96)
++#define IRQ_S5P_UART_BASE5	(100)
++
++#define IRQ_S5P_UART_RX4	(IRQ_S5P_UART_BASE4 + UART_IRQ_RXD)
++#define IRQ_S5P_UART_TX4	(IRQ_S5P_UART_BASE4 + UART_IRQ_TXD)
++#define IRQ_S5P_UART_ERR4	(IRQ_S5P_UART_BASE4 + UART_IRQ_ERR)
++
++#define IRQ_S5P_UART_RX5	(IRQ_S5P_UART_BASE5 + UART_IRQ_RXD)
++#define IRQ_S5P_UART_TX5	(IRQ_S5P_UART_BASE5 + UART_IRQ_TXD)
++#define IRQ_S5P_UART_ERR5	(IRQ_S5P_UART_BASE5 + UART_IRQ_ERR)
++
++/* S3C compatibilty defines */
++#define IRQ_S3CUART_RX4		IRQ_S5P_UART_RX4
++#define IRQ_S3CUART_RX5		IRQ_S5P_UART_RX5
++
++/* S5P6450 EINT feature will be added */
++
+ /*
+  * Since the IRQ_EINT(x) are a linear mapping on s5p6440 we just defined
+  * them as an IRQ_EINT(x) macro from S5P_IRQ_EINT_BASE which we place
+@@ -115,4 +139,4 @@
+ 
+ #define NR_IRQS			(IRQ_EINT_GROUP8_BASE + IRQ_EINT_GROUP8_NR + 1)
+ 
+-#endif /* __ASM_ARCH_S5P_IRQS_H */
++#endif /* __ASM_ARCH_IRQS_H */
+diff --git a/arch/arm/mach-s5p6440/include/mach/regs-irq.h b/arch/arm/mach-s5p64x0/include/mach/regs-irq.h
+similarity index 66%
+rename from arch/arm/mach-s5p6440/include/mach/regs-irq.h
+rename to arch/arm/mach-s5p64x0/include/mach/regs-irq.h
+index a961f4b..4aaebda 100644
+--- a/arch/arm/mach-s5p6440/include/mach/regs-irq.h
++++ b/arch/arm/mach-s5p64x0/include/mach/regs-irq.h
+@@ -1,9 +1,9 @@
+-/* linux/arch/arm/mach-s5p6440/include/mach/regs-irq.h
++/* linux/arch/arm/mach-s5p64x0/include/mach/regs-irq.h
+  *
+- * Copyright (c) 2009 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com/
++ * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
+  *
+- * S5P6440 - IRQ register definitions
++ * S5P64X0 - IRQ register definitions
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+-- 
+1.6.2.5
