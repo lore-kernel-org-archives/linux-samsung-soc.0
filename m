@@ -1,452 +1,204 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 01/13] ARM: S5P: Moves initial map for merging S5P64X0
-Date: Wed,  1 Sep 2010 16:09:08 +0900
-Message-ID: <1283324960-21629-2-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 08/13] ARM: S5P64X0: Move DMA support for S5P64X0
+Date: Wed,  1 Sep 2010 16:09:15 +0900
+Message-ID: <1283324960-21629-9-git-send-email-kgene.kim@samsung.com>
 References: <1283324960-21629-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:42034 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:42022 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752517Ab0IAHZf (ORCPT
+	with ESMTP id S1751870Ab0IAHZf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 1 Sep 2010 03:25:35 -0400
 In-Reply-To: <1283324960-21629-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, Jassi Brar <jassi.brar@samsung.com>
 
-This patch moves some initial maps from plat-s5p to machine,
-so that can merge mach-s5p6440 and mach-s5p6450.
+This patch moves DMA support files in the mach-s5p64x0
+for S5P6440 and S5P6450 SoCs.
 
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Jassi Brar <jassi.brar@samsung.com>
 ---
- arch/arm/mach-s5p6440/cpu.c              |   37 ++++++++++++++++++++++++++---
- arch/arm/mach-s5p6440/include/mach/map.h |    7 +-----
- arch/arm/mach-s5p6442/cpu.c              |   27 +++++++++++++++++++--
- arch/arm/mach-s5p6442/include/mach/map.h |    6 -----
- arch/arm/mach-s5pc100/cpu.c              |   25 +++++++++++++++++++-
- arch/arm/mach-s5pc100/include/mach/map.h |   11 +++-----
- arch/arm/mach-s5pv210/cpu.c              |   22 +++++++++++++++++-
- arch/arm/mach-s5pv210/include/mach/map.h |    8 ------
- arch/arm/mach-s5pv310/cpu.c              |   26 ++++++++++++++------
- arch/arm/plat-s5p/cpu.c                  |   22 -----------------
- 10 files changed, 125 insertions(+), 66 deletions(-)
+ arch/arm/{mach-s5p6440 => mach-s5p64x0}/dma.c      |   75 ++++++++++++++++---
+ .../include/mach/dma.h                             |    0
+ arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h |   28 +++++++
+ 3 files changed, 91 insertions(+), 12 deletions(-)
+ rename arch/arm/{mach-s5p6440 => mach-s5p64x0}/dma.c (56%)
+ rename arch/arm/{mach-s5p6440 => mach-s5p64x0}/include/mach/dma.h (100%)
 
-diff --git a/arch/arm/mach-s5p6440/cpu.c b/arch/arm/mach-s5p6440/cpu.c
-index 526f33a..a3c33d9 100644
---- a/arch/arm/mach-s5p6440/cpu.c
-+++ b/arch/arm/mach-s5p6440/cpu.c
-@@ -1,7 +1,7 @@
- /* linux/arch/arm/mach-s5p6440/cpu.c
-  *
-- * Copyright (c) 2009 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com/
-+ * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -39,6 +39,32 @@
- #include <plat/s5p6440.h>
- #include <plat/adc-core.h>
- 
-+/* Initial IO mappings */
-+
-+static struct map_desc s5p6440_iodesc[] __initdata = {
-+	{
-+		.virtual	= (unsigned long)S5P_VA_GPIO,
-+		.pfn		= __phys_to_pfn(S5P6440_PA_GPIO),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)VA_VIC0,
-+		.pfn		= __phys_to_pfn(S5P6440_PA_VIC0),
-+		.length		= SZ_16K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)VA_VIC1,
-+		.pfn		= __phys_to_pfn(S5P6440_PA_VIC1),
-+		.length		= SZ_16K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S3C_VA_UART,
-+		.pfn		= __phys_to_pfn(S3C_PA_UART),
-+		.length		= SZ_512K,
-+		.type		= MT_DEVICE,
-+	}
-+};
-+
- static void s5p6440_idle(void)
- {
- 	unsigned long val;
-@@ -54,15 +80,18 @@ static void s5p6440_idle(void)
- 	local_irq_enable();
- }
- 
--/* s5p6440_map_io
-+/*
-+ * s5p6440_map_io
-  *
-  * register the standard cpu IO areas
--*/
-+ */
- 
- void __init s5p6440_map_io(void)
- {
- 	/* initialize any device information early */
- 	s3c_adc_setname("s3c64xx-adc");
-+
-+	iotable_init(s5p6440_iodesc, ARRAY_SIZE(s5p6440_iodesc));
- }
- 
- void __init s5p6440_init_clocks(int xtal)
-diff --git a/arch/arm/mach-s5p6440/include/mach/map.h b/arch/arm/mach-s5p6440/include/mach/map.h
-index 6cc5cbc..11d31fe 100644
---- a/arch/arm/mach-s5p6440/include/mach/map.h
-+++ b/arch/arm/mach-s5p6440/include/mach/map.h
-@@ -24,23 +24,18 @@
- #define S5P_PA_SYSCON		S5P6440_PA_SYSCON
- 
- #define S5P6440_PA_GPIO		(0xE0308000)
--#define S5P_PA_GPIO		S5P6440_PA_GPIO
- 
- #define S5P6440_PA_VIC0		(0xE4000000)
--#define S5P_PA_VIC0		S5P6440_PA_VIC0
-+#define S5P6440_PA_VIC1		(0xE4100000)
- 
- #define S5P6440_PA_PDMA		0xE9000000
- 
--#define S5P6440_PA_VIC1		(0xE4100000)
--#define S5P_PA_VIC1		S5P6440_PA_VIC1
--
- #define S5P6440_PA_TIMER	(0xEA000000)
- #define S5P_PA_TIMER		S5P6440_PA_TIMER
- 
- #define S5P6440_PA_RTC		(0xEA100000)
- 
- #define S5P6440_PA_WDT		(0xEA200000)
--#define S5P_PA_WDT		S5P6440_PA_WDT
- 
- #define S5P6440_PA_UART		(0xEC000000)
- 
-diff --git a/arch/arm/mach-s5p6442/cpu.c b/arch/arm/mach-s5p6442/cpu.c
-index a48fb55..d3ab268 100644
---- a/arch/arm/mach-s5p6442/cpu.c
-+++ b/arch/arm/mach-s5p6442/cpu.c
-@@ -1,7 +1,7 @@
- /* linux/arch/arm/mach-s5p6442/cpu.c
-  *
-  * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com/
-+ *		http://www.samsung.com
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -47,10 +47,30 @@ static struct map_desc s5p6442_iodesc[] __initdata = {
- 		.length		= SZ_16K,
- 		.type		= MT_DEVICE,
- 	}, {
-+		.virtual	= (unsigned long)S5P_VA_GPIO,
-+		.pfn		= __phys_to_pfn(S5P6442_PA_GPIO),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)VA_VIC0,
-+		.pfn		= __phys_to_pfn(S5P6442_PA_VIC0),
-+		.length		= SZ_16K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)VA_VIC1,
-+		.pfn		= __phys_to_pfn(S5P6442_PA_VIC1),
-+		.length		= SZ_16K,
-+		.type		= MT_DEVICE,
-+	}, {
- 		.virtual	= (unsigned long)VA_VIC2,
- 		.pfn		= __phys_to_pfn(S5P6442_PA_VIC2),
- 		.length		= SZ_16K,
- 		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S3C_VA_UART,
-+		.pfn		= __phys_to_pfn(S3C_PA_UART),
-+		.length		= SZ_512K,
-+		.type		= MT_DEVICE,
- 	}
- };
- 
-@@ -62,10 +82,11 @@ static void s5p6442_idle(void)
- 	local_irq_enable();
- }
- 
--/* s5p6442_map_io
-+/*
-+ * s5p6442_map_io
-  *
-  * register the standard cpu IO areas
--*/
-+ */
- 
- void __init s5p6442_map_io(void)
- {
-diff --git a/arch/arm/mach-s5p6442/include/mach/map.h b/arch/arm/mach-s5p6442/include/mach/map.h
-index 281d256..31fb2e6 100644
---- a/arch/arm/mach-s5p6442/include/mach/map.h
-+++ b/arch/arm/mach-s5p6442/include/mach/map.h
-@@ -23,16 +23,10 @@
- #define S5P_PA_SYSCON		S5P6442_PA_SYSCON
- 
- #define S5P6442_PA_GPIO		(0xE0200000)
--#define S5P_PA_GPIO		S5P6442_PA_GPIO
- 
- #define S5P6442_PA_VIC0		(0xE4000000)
--#define S5P_PA_VIC0		S5P6442_PA_VIC0
--
- #define S5P6442_PA_VIC1		(0xE4100000)
--#define S5P_PA_VIC1		S5P6442_PA_VIC1
--
- #define S5P6442_PA_VIC2		(0xE4200000)
--#define S5P_PA_VIC2		S5P6442_PA_VIC2
- 
- #define S5P6442_PA_MDMA		0xE8000000
- #define S5P6442_PA_PDMA		0xE9000000
-diff --git a/arch/arm/mach-s5pc100/cpu.c b/arch/arm/mach-s5pc100/cpu.c
-index 251c92a..d13552c 100644
---- a/arch/arm/mach-s5pc100/cpu.c
-+++ b/arch/arm/mach-s5pc100/cpu.c
-@@ -1,5 +1,8 @@
- /* linux/arch/arm/mach-s5pc100/cpu.c
-  *
-+ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
+diff --git a/arch/arm/mach-s5p6440/dma.c b/arch/arm/mach-s5p64x0/dma.c
+similarity index 56%
+rename from arch/arm/mach-s5p6440/dma.c
+rename to arch/arm/mach-s5p64x0/dma.c
+index 07606ad..bc84678 100644
+--- a/arch/arm/mach-s5p6440/dma.c
++++ b/arch/arm/mach-s5p64x0/dma.c
+@@ -1,4 +1,5 @@
+-/*
++/* linux/arch/arm/mach-s5p64x0/dma.c
 + *
-  * Copyright 2009 Samsung Electronics Co.
-  *	Byungho Min <bhmin@samsung.com>
+  * Copyright (C) 2010 Samsung Electronics Co. Ltd.
+  *	Jaswinder Singh <jassi.brar@samsung.com>
   *
-@@ -56,11 +59,31 @@ static struct map_desc s5pc100_iodesc[] __initdata = {
- 		.length		= SZ_16K,
- 		.type		= MT_DEVICE,
- 	}, {
-+		.virtual	= (unsigned long)S5P_VA_GPIO,
-+		.pfn		= __phys_to_pfn(S5PC100_PA_GPIO),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)VA_VIC0,
-+		.pfn		= __phys_to_pfn(S5PC100_PA_VIC0),
-+		.length		= SZ_16K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)VA_VIC1,
-+		.pfn		= __phys_to_pfn(S5PC100_PA_VIC1),
-+		.length		= SZ_16K,
-+		.type		= MT_DEVICE,
-+	}, {
- 		.virtual	= (unsigned long)VA_VIC2,
--		.pfn		= __phys_to_pfn(S5P_PA_VIC2),
-+		.pfn		= __phys_to_pfn(S5PC100_PA_VIC2),
- 		.length		= SZ_16K,
- 		.type		= MT_DEVICE,
- 	}, {
-+		.virtual	= (unsigned long)S3C_VA_UART,
-+		.pfn		= __phys_to_pfn(S3C_PA_UART),
-+		.length		= SZ_512K,
-+		.type		= MT_DEVICE,
-+	}, {
- 		.virtual	= (unsigned long)S5PC100_VA_OTHERS,
- 		.pfn		= __phys_to_pfn(S5PC100_PA_OTHERS),
- 		.length		= SZ_4K,
-diff --git a/arch/arm/mach-s5pc100/include/mach/map.h b/arch/arm/mach-s5pc100/include/mach/map.h
-index 01b9134..8751ef4 100644
---- a/arch/arm/mach-s5pc100/include/mach/map.h
-+++ b/arch/arm/mach-s5pc100/include/mach/map.h
-@@ -44,19 +44,16 @@
- #define S5PC100_PA_OTHERS	(0xE0200000)
- #define S5PC100_VA_OTHERS	(S3C_VA_SYS + 0x10000)
+@@ -15,7 +16,7 @@
+  * You should have received a copy of the GNU General Public License
+  * along with this program; if not, write to the Free Software
+  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+- */
++*/
  
--#define S5P_PA_GPIO		(0xE0300000)
-+#define S5PC100_PA_GPIO		(0xE0300000)
- #define S5PC1XX_VA_GPIO		S3C_ADDR(0x00500000)
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
+@@ -30,11 +31,11 @@
  
- /* Interrupt */
--#define S5PC100_PA_VIC		(0xE4000000)
-+#define S5PC100_PA_VIC0		(0xE4000000)
-+#define S5PC100_PA_VIC1		(0xE4100000)
-+#define S5PC100_PA_VIC2		(0xE4200000)
- #define S5PC100_VA_VIC		S3C_VA_IRQ
--#define S5PC100_PA_VIC_OFFSET	0x100000
- #define S5PC100_VA_VIC_OFFSET	0x10000
--#define S5PC1XX_PA_VIC(x)	(S5PC100_PA_VIC + ((x) * S5PC100_PA_VIC_OFFSET))
- #define S5PC1XX_VA_VIC(x)	(S5PC100_VA_VIC + ((x) * S5PC100_VA_VIC_OFFSET))
--#define S5P_PA_VIC0		S5PC1XX_PA_VIC(0)
--#define S5P_PA_VIC1		S5PC1XX_PA_VIC(1)
--#define S5P_PA_VIC2		S5PC1XX_PA_VIC(2)
+ static u64 dma_dmamask = DMA_BIT_MASK(32);
  
- 
- #define S5PC100_PA_ONENAND	(0xE7100000)
-diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
-index b9f4d67..00f9ca1 100644
---- a/arch/arm/mach-s5pv210/cpu.c
-+++ b/arch/arm/mach-s5pv210/cpu.c
-@@ -1,7 +1,7 @@
- /* linux/arch/arm/mach-s5pv210/cpu.c
-  *
-  * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com/
-+ *		http://www.samsung.com
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -50,6 +50,21 @@ static struct map_desc s5pv210_iodesc[] __initdata = {
- 		.length		= SZ_1M,
- 		.type		= MT_DEVICE,
- 	}, {
-+		.virtual	= (unsigned long)S5P_VA_GPIO,
-+		.pfn		= __phys_to_pfn(S5PV210_PA_GPIO),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)VA_VIC0,
-+		.pfn		= __phys_to_pfn(S5PV210_PA_VIC0),
-+		.length		= SZ_16K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)VA_VIC1,
-+		.pfn		= __phys_to_pfn(S5PV210_PA_VIC1),
-+		.length		= SZ_16K,
-+		.type		= MT_DEVICE,
-+	}, {
- 		.virtual	= (unsigned long)VA_VIC2,
- 		.pfn		= __phys_to_pfn(S5PV210_PA_VIC2),
- 		.length		= SZ_16K,
-@@ -60,6 +75,11 @@ static struct map_desc s5pv210_iodesc[] __initdata = {
- 		.length		= SZ_16K,
- 		.type		= MT_DEVICE,
- 	}, {
-+		.virtual	= (unsigned long)S3C_VA_UART,
-+		.pfn		= __phys_to_pfn(S3C_PA_UART),
-+		.length		= SZ_512K,
-+		.type		= MT_DEVICE,
-+	}, {
- 		.virtual	= (unsigned long)S5P_VA_SROMC,
- 		.pfn		= __phys_to_pfn(S5PV210_PA_SROMC),
- 		.length		= SZ_4K,
-diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
-index dd4fb6b..cc50541 100644
---- a/arch/arm/mach-s5pv210/include/mach/map.h
-+++ b/arch/arm/mach-s5pv210/include/mach/map.h
-@@ -26,7 +26,6 @@
- #define S5P_PA_SYSCON		S5PV210_PA_SYSCON
- 
- #define S5PV210_PA_GPIO		(0xE0200000)
--#define S5P_PA_GPIO		S5PV210_PA_GPIO
- 
- /* SPI */
- #define S5PV210_PA_SPI0		0xE1300000
-@@ -72,16 +71,9 @@
- #define S5PV210_PA_HSMMC(x)	(0xEB000000 + ((x) * 0x100000))
- 
- #define S5PV210_PA_VIC0		(0xF2000000)
--#define S5P_PA_VIC0		S5PV210_PA_VIC0
--
- #define S5PV210_PA_VIC1		(0xF2100000)
--#define S5P_PA_VIC1		S5PV210_PA_VIC1
--
- #define S5PV210_PA_VIC2		(0xF2200000)
--#define S5P_PA_VIC2		S5PV210_PA_VIC2
--
- #define S5PV210_PA_VIC3		(0xF2300000)
--#define S5P_PA_VIC3		S5PV210_PA_VIC3
- 
- #define S5PV210_PA_SDRAM	(0x20000000)
- #define S5P_PA_SDRAM		S5PV210_PA_SDRAM
-diff --git a/arch/arm/mach-s5pv310/cpu.c b/arch/arm/mach-s5pv310/cpu.c
-index e5b261a..3b9c872 100644
---- a/arch/arm/mach-s5pv310/cpu.c
-+++ b/arch/arm/mach-s5pv310/cpu.c
-@@ -31,9 +31,14 @@ extern void combiner_cascade_irq(unsigned int combiner_nr, unsigned int irq);
- /* Initial IO mappings */
- static struct map_desc s5pv310_iodesc[] __initdata = {
- 	{
--		.virtual	= (unsigned long)S5P_VA_COREPERI_BASE,
--		.pfn		= __phys_to_pfn(S5PV310_PA_COREPERI),
--		.length		= SZ_8K,
-+		.virtual	= (unsigned long)S5P_VA_SYSRAM,
-+		.pfn		= __phys_to_pfn(S5PV310_PA_SYSRAM),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S5P_VA_CMU,
-+		.pfn		= __phys_to_pfn(S5PV310_PA_CMU),
-+		.length		= SZ_128K,
- 		.type		= MT_DEVICE,
- 	}, {
- 		.virtual	= (unsigned long)S5P_VA_COMBINER_BASE,
-@@ -41,19 +46,24 @@ static struct map_desc s5pv310_iodesc[] __initdata = {
- 		.length		= SZ_4K,
- 		.type		= MT_DEVICE,
- 	}, {
-+		.virtual	= (unsigned long)S5P_VA_COREPERI_BASE,
-+		.pfn		= __phys_to_pfn(S5PV310_PA_COREPERI),
-+		.length		= SZ_8K,
-+		.type		= MT_DEVICE,
-+	}, {
- 		.virtual	= (unsigned long)S5P_VA_L2CC,
- 		.pfn		= __phys_to_pfn(S5PV310_PA_L2CC),
- 		.length		= SZ_4K,
- 		.type		= MT_DEVICE,
- 	}, {
--		.virtual	= (unsigned long)S5P_VA_SYSRAM,
--		.pfn		= __phys_to_pfn(S5PV310_PA_SYSRAM),
-+		.virtual	= (unsigned long)S5P_VA_GPIO,
-+		.pfn		= __phys_to_pfn(S5PV310_PA_GPIO),
- 		.length		= SZ_4K,
- 		.type		= MT_DEVICE,
- 	}, {
--		.virtual	= (unsigned long)S5P_VA_CMU,
--		.pfn		= __phys_to_pfn(S5PV310_PA_CMU),
--		.length		= SZ_128K,
-+		.virtual	= (unsigned long)S3C_VA_UART,
-+		.pfn		= __phys_to_pfn(S3C_PA_UART),
-+		.length		= SZ_512K,
- 		.type		= MT_DEVICE,
+-static struct resource s5p6440_pdma_resource[] = {
++static struct resource s5p64x0_pdma_resource[] = {
+ 	[0] = {
+-		.start  = S5P6440_PA_PDMA,
+-		.end    = S5P6440_PA_PDMA + SZ_4K,
+-		.flags = IORESOURCE_MEM,
++		.start	= S5P64X0_PA_PDMA,
++		.end	= S5P64X0_PA_PDMA + SZ_4K,
++		.flags	= IORESOURCE_MEM,
+ 	},
+ 	[1] = {
+ 		.start	= IRQ_DMA0,
+@@ -80,11 +81,48 @@ static struct s3c_pl330_platdata s5p6440_pdma_pdata = {
  	},
  };
-diff --git a/arch/arm/plat-s5p/cpu.c b/arch/arm/plat-s5p/cpu.c
-index b07a078..57f08ee 100644
---- a/arch/arm/plat-s5p/cpu.c
-+++ b/arch/arm/plat-s5p/cpu.c
-@@ -89,33 +89,11 @@ static struct map_desc s5p_iodesc[] __initdata = {
- 		.length		= SZ_64K,
- 		.type		= MT_DEVICE,
- 	}, {
--		.virtual	= (unsigned long)S3C_VA_UART,
--		.pfn		= __phys_to_pfn(S3C_PA_UART),
--		.length		= SZ_512K,
--		.type		= MT_DEVICE,
--#ifdef CONFIG_ARM_VIC
--	}, {
--		.virtual	= (unsigned long)VA_VIC0,
--		.pfn		= __phys_to_pfn(S5P_PA_VIC0),
--		.length		= SZ_16K,
--		.type		= MT_DEVICE,
--	}, {
--		.virtual	= (unsigned long)VA_VIC1,
--		.pfn		= __phys_to_pfn(S5P_PA_VIC1),
--		.length		= SZ_16K,
--		.type		= MT_DEVICE,
--#endif
--	}, {
- 		.virtual	= (unsigned long)S3C_VA_TIMER,
- 		.pfn		= __phys_to_pfn(S5P_PA_TIMER),
- 		.length		= SZ_16K,
- 		.type		= MT_DEVICE,
- 	}, {
--		.virtual	= (unsigned long)S5P_VA_GPIO,
--		.pfn		= __phys_to_pfn(S5P_PA_GPIO),
--		.length		= SZ_4K,
--		.type		= MT_DEVICE,
--	}, {
- 		.virtual	= (unsigned long)S3C_VA_WATCHDOG,
- 		.pfn		= __phys_to_pfn(S3C_PA_WDT),
- 		.length		= SZ_4K,
+ 
++static struct s3c_pl330_platdata s5p6450_pdma_pdata = {
++	.peri = {
++		[0] = DMACH_UART0_RX,
++		[1] = DMACH_UART0_TX,
++		[2] = DMACH_UART1_RX,
++		[3] = DMACH_UART1_TX,
++		[4] = DMACH_UART2_RX,
++		[5] = DMACH_UART2_TX,
++		[6] = DMACH_UART3_RX,
++		[7] = DMACH_UART3_TX,
++		[8] = DMACH_UART4_RX,
++		[9] = DMACH_UART4_TX,
++		[10] = DMACH_PCM0_TX,
++		[11] = DMACH_PCM0_RX,
++		[12] = DMACH_I2S0_TX,
++		[13] = DMACH_I2S0_RX,
++		[14] = DMACH_SPI0_TX,
++		[15] = DMACH_SPI0_RX,
++		[16] = DMACH_PCM1_TX,
++		[17] = DMACH_PCM1_RX,
++		[18] = DMACH_PCM2_TX,
++		[19] = DMACH_PCM2_RX,
++		[20] = DMACH_SPI1_TX,
++		[21] = DMACH_SPI1_RX,
++		[22] = DMACH_USI_TX,
++		[23] = DMACH_USI_RX,
++		[24] = DMACH_MAX,
++		[25] = DMACH_I2S1_TX,
++		[26] = DMACH_I2S1_RX,
++		[27] = DMACH_I2S2_TX,
++		[28] = DMACH_I2S2_RX,
++		[29] = DMACH_PWM,
++		[30] = DMACH_UART5_RX,
++		[31] = DMACH_UART5_TX,
++	},
++};
++
+ static struct platform_device s5p6440_device_pdma = {
+ 	.name		= "s3c-pl330",
+ 	.id		= 1,
+-	.num_resources	= ARRAY_SIZE(s5p6440_pdma_resource),
+-	.resource	= s5p6440_pdma_resource,
++	.num_resources	= ARRAY_SIZE(s5p64x0_pdma_resource),
++	.resource	= s5p64x0_pdma_resource,
+ 	.dev		= {
+ 		.dma_mask = &dma_dmamask,
+ 		.coherent_dma_mask = DMA_BIT_MASK(32),
+@@ -92,14 +130,27 @@ static struct platform_device s5p6440_device_pdma = {
+ 	},
+ };
+ 
+-static struct platform_device *s5p6440_dmacs[] __initdata = {
++static struct platform_device s5p6450_device_pdma = {
++	.name		= "s3c-pl330",
++	.id		= 0,
++	.num_resources	= ARRAY_SIZE(s5p64x0_pdma_resource),
++	.resource	= s5p64x0_pdma_resource,
++	.dev		= {
++		.dma_mask = &dma_dmamask,
++		.coherent_dma_mask = DMA_BIT_MASK(32),
++		.platform_data = &s5p6450_pdma_pdata,
++	},
++};
++
++static struct platform_device *s5p64x0_dmacs[] __initdata = {
+ 	&s5p6440_device_pdma,
++	/* &s5p6450_device_pdma will be added */
+ };
+ 
+-static int __init s5p6440_dma_init(void)
++static int __init s5p64x0_dma_init(void)
+ {
+-	platform_add_devices(s5p6440_dmacs, ARRAY_SIZE(s5p6440_dmacs));
++	platform_add_devices(s5p64x0_dmacs, ARRAY_SIZE(s5p64x0_dmacs));
+ 
+ 	return 0;
+ }
+-arch_initcall(s5p6440_dma_init);
++arch_initcall(s5p64x0_dma_init);
+diff --git a/arch/arm/mach-s5p6440/include/mach/dma.h b/arch/arm/mach-s5p64x0/include/mach/dma.h
+similarity index 100%
+rename from arch/arm/mach-s5p6440/include/mach/dma.h
+rename to arch/arm/mach-s5p64x0/include/mach/dma.h
+diff --git a/arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h b/arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h
+index 5fe6721..333e381 100644
+--- a/arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h
++++ b/arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h
+@@ -32,6 +32,12 @@ enum dma_ch {
+ 	DMACH_UART2_TX,
+ 	DMACH_UART3_RX,
+ 	DMACH_UART3_TX,
++	DMACH_UART4_RX,
++	DMACH_UART4_TX,
++	DMACH_UART5_RX,
++	DMACH_UART5_TX,
++	DMACH_USI_RX,
++	DMACH_USI_TX,
+ 	DMACH_IRDA,
+ 	DMACH_I2S0_RX,
+ 	DMACH_I2S0_TX,
+@@ -64,6 +70,28 @@ enum dma_ch {
+ 	DMACH_MSM_REQ2,
+ 	DMACH_MSM_REQ1,
+ 	DMACH_MSM_REQ0,
++	DMACH_SLIMBUS0_RX,
++	DMACH_SLIMBUS0_TX,
++	DMACH_SLIMBUS0AUX_RX,
++	DMACH_SLIMBUS0AUX_TX,
++	DMACH_SLIMBUS1_RX,
++	DMACH_SLIMBUS1_TX,
++	DMACH_SLIMBUS2_RX,
++	DMACH_SLIMBUS2_TX,
++	DMACH_SLIMBUS3_RX,
++	DMACH_SLIMBUS3_TX,
++	DMACH_SLIMBUS4_RX,
++	DMACH_SLIMBUS4_TX,
++	DMACH_SLIMBUS5_RX,
++	DMACH_SLIMBUS5_TX,
++	DMACH_MTOM_0,
++	DMACH_MTOM_1,
++	DMACH_MTOM_2,
++	DMACH_MTOM_3,
++	DMACH_MTOM_4,
++	DMACH_MTOM_5,
++	DMACH_MTOM_6,
++	DMACH_MTOM_7,
+ 	/* END Marker, also used to denote a reserved channel */
+ 	DMACH_MAX,
+ };
 -- 
 1.6.2.5
