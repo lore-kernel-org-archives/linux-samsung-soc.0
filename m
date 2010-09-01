@@ -1,12 +1,12 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 05/13] ARM: S5P64X0: Update IRQ support
-Date: Wed,  1 Sep 2010 16:09:12 +0900
-Message-ID: <1283324960-21629-6-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 02/13] ARM: S5P64X0: Update Kconfig and Makefile
+Date: Wed,  1 Sep 2010 16:09:09 +0900
+Message-ID: <1283324960-21629-3-git-send-email-kgene.kim@samsung.com>
 References: <1283324960-21629-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:42021 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:42013 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751865Ab0IAHZf (ORCPT
+	with ESMTP id S1751863Ab0IAHZf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 1 Sep 2010 03:25:35 -0400
 In-Reply-To: <1283324960-21629-1-git-send-email-kgene.kim@samsung.com>
@@ -15,143 +15,285 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch updates IRQ support for S5P6440 and S5P6450 SoCs.
+This patch updates the Kconfig and Makefile for the S5P6440 and S5P6450
+machines. It also updates arch/arm/ Kconfig and Makefile to include for
+support ARCH_S5P64X0 with one kernel image.
 
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- .../include/mach/irqs.h                            |   48 +++++++++++++++-----
- .../include/mach/regs-irq.h                        |    8 ++--
- 2 files changed, 40 insertions(+), 16 deletions(-)
- rename arch/arm/{mach-s5p6440 => mach-s5p64x0}/include/mach/irqs.h (71%)
- rename arch/arm/{mach-s5p6440 => mach-s5p64x0}/include/mach/regs-irq.h (66%)
+ arch/arm/Kconfig                                   |   16 +++---
+ arch/arm/Makefile                                  |    2 +-
+ arch/arm/mach-s5p6440/Kconfig                      |   33 ------------
+ arch/arm/mach-s5p6440/Makefile                     |   25 ---------
+ arch/arm/mach-s5p64x0/Kconfig                      |   55 ++++++++++++++++++++
+ arch/arm/mach-s5p64x0/Makefile                     |   30 +++++++++++
+ .../{mach-s5p6440 => mach-s5p64x0}/Makefile.boot   |    0
+ arch/arm/plat-s5p/Kconfig                          |    4 +-
+ 8 files changed, 95 insertions(+), 70 deletions(-)
+ delete mode 100644 arch/arm/mach-s5p6440/Kconfig
+ delete mode 100644 arch/arm/mach-s5p6440/Makefile
+ create mode 100644 arch/arm/mach-s5p64x0/Kconfig
+ create mode 100644 arch/arm/mach-s5p64x0/Makefile
+ rename arch/arm/{mach-s5p6440 => mach-s5p64x0}/Makefile.boot (100%)
 
-diff --git a/arch/arm/mach-s5p6440/include/mach/irqs.h b/arch/arm/mach-s5p64x0/include/mach/irqs.h
-similarity index 71%
-rename from arch/arm/mach-s5p6440/include/mach/irqs.h
-rename to arch/arm/mach-s5p64x0/include/mach/irqs.h
-index 16a7612..513abff 100644
---- a/arch/arm/mach-s5p6440/include/mach/irqs.h
-+++ b/arch/arm/mach-s5p64x0/include/mach/irqs.h
-@@ -1,17 +1,17 @@
--/* linux/arch/arm/mach-s5p6440/include/mach/irqs.h
-+/* linux/arch/arm/mach-s5p64x0/include/mach/irqs.h
-  *
-- * Copyright 2009 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com/
-+ * Copyright 2009-2010 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-  *
-- * S5P6440 - IRQ definitions
-+ * S5P64X0 - IRQ definitions
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
- */
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index a7ed21f..40e75b3 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -679,17 +679,15 @@ config ARCH_S3C64XX
+ 	help
+ 	  Samsung S3C64XX series based systems
  
--#ifndef __ASM_ARCH_S5P_IRQS_H
--#define __ASM_ARCH_S5P_IRQS_H __FILE__
-+#ifndef __ASM_ARCH_IRQS_H
-+#define __ASM_ARCH_IRQS_H __FILE__
+-config ARCH_S5P6440
+-	bool "Samsung S5P6440"
++config ARCH_S5P64X0
++	bool "Samsung S5P6440 S5P6450"
+ 	select CPU_V6
+ 	select GENERIC_GPIO
+ 	select HAVE_CLK
+-	select HAVE_S3C2410_WATCHDOG
+ 	select ARCH_USES_GETTIMEOFFSET
+-	select HAVE_S3C2410_I2C
+-	select HAVE_S3C_RTC
+ 	help
+-	  Samsung S5P6440 CPU based systems
++	  Samsung S5P64X0 CPU based systems, such as the Samsung SMDK6440,
++	  SMDK6450.
  
- #include <plat/irqs.h>
+ config ARCH_S5P6442
+ 	bool "Samsung S5P6442"
+@@ -929,7 +927,7 @@ if ARCH_S3C64XX
+ source "arch/arm/mach-s3c64xx/Kconfig"
+ endif
  
-@@ -20,10 +20,12 @@
- #define IRQ_EINT0_3		S5P_IRQ_VIC0(0)
- #define IRQ_EINT4_11		S5P_IRQ_VIC0(1)
- #define IRQ_RTC_TIC		S5P_IRQ_VIC0(2)
-+#define IRQ_IIS1		S5P_IRQ_VIC0(3)	/* for only S5P6450 */
-+#define IRQ_IIS2		S5P_IRQ_VIC0(4)	/* for only S5P6450 */
- #define IRQ_IIC1		S5P_IRQ_VIC0(5)
- #define IRQ_I2SV40		S5P_IRQ_VIC0(6)
--#define IRQ_GPS			S5P_IRQ_VIC0(7)
--#define IRQ_POST0		S5P_IRQ_VIC0(9)
-+#define IRQ_GPS			S5P_IRQ_VIC0(7)	/* for only S5P6450 */
+-source "arch/arm/mach-s5p6440/Kconfig"
++source "arch/arm/mach-s5p64x0/Kconfig"
+ 
+ source "arch/arm/mach-s5p6442/Kconfig"
+ 
+@@ -1232,7 +1230,7 @@ source kernel/Kconfig.preempt
+ 
+ config HZ
+ 	int
+-	default 200 if ARCH_EBSA110 || ARCH_S3C2410 || ARCH_S5P6440 || \
++	default 200 if ARCH_EBSA110 || ARCH_S3C2410 || ARCH_S5P64X0 || \
+ 		ARCH_S5P6442 || ARCH_S5PV210 || ARCH_S5PV310
+ 	default OMAP_32K_TIMER_HZ if ARCH_OMAP && OMAP_32K_TIMER
+ 	default AT91_TIMER_HZ if ARCH_AT91
+@@ -1609,7 +1607,7 @@ config ZRELADDR
+ 	default 0x10008000 if ARCH_MSM ||\
+ 		ARCH_OMAP1 ||\
+ 		ARCH_RPC
+-	default 0x20008000 if ARCH_S5P6440 ||\
++	default 0x20008000 if ARCH_S5P64X0 ||\
+ 		ARCH_S5P6442 ||\
+ 		ARCH_S5PC100 ||\
+ 		ARCH_S5PV210
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index 59c1ce8..8420f21 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -173,7 +173,7 @@ machine-$(CONFIG_ARCH_RPC)		:= rpc
+ machine-$(CONFIG_ARCH_S3C2410)		:= s3c2410 s3c2400 s3c2412 s3c2416 s3c2440 s3c2443
+ machine-$(CONFIG_ARCH_S3C24A0)		:= s3c24a0
+ machine-$(CONFIG_ARCH_S3C64XX)		:= s3c64xx
+-machine-$(CONFIG_ARCH_S5P6440)		:= s5p6440
++machine-$(CONFIG_ARCH_S5P64X0)		:= s5p64x0
+ machine-$(CONFIG_ARCH_S5P6442)		:= s5p6442
+ machine-$(CONFIG_ARCH_S5PC100)		:= s5pc100
+ machine-$(CONFIG_ARCH_S5PV210)		:= s5pv210
+diff --git a/arch/arm/mach-s5p6440/Kconfig b/arch/arm/mach-s5p6440/Kconfig
+deleted file mode 100644
+index 6a4af7f..0000000
+--- a/arch/arm/mach-s5p6440/Kconfig
++++ /dev/null
+@@ -1,33 +0,0 @@
+-# arch/arm/mach-s5p6440/Kconfig
+-#
+-# Copyright (c) 2009 Samsung Electronics Co., Ltd.
+-#		http://www.samsung.com/
+-#
+-# Licensed under GPLv2
+-
+-if ARCH_S5P6440
+-
+-config CPU_S5P6440
+-	bool
+-	select S3C_PL330_DMA
+-	help
+-	  Enable S5P6440 CPU support
+-
+-config S5P6440_SETUP_I2C1
+-	bool
+-	help
+-	  Common setup code for i2c bus 1.
+-
+-config MACH_SMDK6440
+-	bool "SMDK6440"
+-	select CPU_S5P6440
+-	select S3C_DEV_I2C1
+-	select S3C_DEV_RTC
+-	select S3C_DEV_WDT
+-	select SAMSUNG_DEV_ADC
+-	select SAMSUNG_DEV_TS
+-	select S5P6440_SETUP_I2C1
+-	help
+-	  Machine support for the Samsung SMDK6440
+-
+-endif
+diff --git a/arch/arm/mach-s5p6440/Makefile b/arch/arm/mach-s5p6440/Makefile
+deleted file mode 100644
+index c3fe4d3..0000000
+--- a/arch/arm/mach-s5p6440/Makefile
++++ /dev/null
+@@ -1,25 +0,0 @@
+-# arch/arm/mach-s5p6440/Makefile
+-#
+-# Copyright (c) 2009 Samsung Electronics Co., Ltd.
+-# 		http://www.samsung.com/
+-#
+-# Licensed under GPLv2
+-
+-obj-y				:=
+-obj-m				:=
+-obj-n				:=
+-obj-				:=
+-
+-# Core support for S5P6440 system
+-
+-obj-$(CONFIG_CPU_S5P6440)	+= cpu.o init.o clock.o gpio.o dma.o
+-obj-$(CONFIG_CPU_S5P6440)	+= setup-i2c0.o
+-
+-# machine support
+-
+-obj-$(CONFIG_MACH_SMDK6440)	+= mach-smdk6440.o
+-
+-# device support
+-obj-y				+= dev-audio.o
+-obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
+-obj-$(CONFIG_S5P6440_SETUP_I2C1)	+= setup-i2c1.o
+diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
+new file mode 100644
+index 0000000..488375c
+--- /dev/null
++++ b/arch/arm/mach-s5p64x0/Kconfig
+@@ -0,0 +1,55 @@
++# arch/arm/mach-s5p64x0/Kconfig
++#
++# Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
++#		http://www.samsung.com/
++#
++# Licensed under GPLv2
 +
- #define IRQ_2D			S5P_IRQ_VIC0(11)
- #define IRQ_TIMER0_VIC		S5P_IRQ_VIC0(23)
- #define IRQ_TIMER1_VIC		S5P_IRQ_VIC0(24)
-@@ -39,22 +41,26 @@
++if ARCH_S5P64X0
++
++config CPU_S5P6440
++	bool
++	select PLAT_S5P
++	select S3C_PL330_DMA
++	help
++	  Enable S5P6440 CPU support
++
++config CPU_S5P6450
++	bool
++	select PLAT_S5P
++	select S3C_PL330_DMA
++	help
++	  Enable S5P6450 CPU support
++
++config S5P64X0_SETUP_I2C1
++	bool
++	help
++	  Common setup code for i2c bus 1.
++
++# machine support
++
++config MACH_SMDK6440
++	bool "SMDK6440"
++	select CPU_S5P6440
++	select S3C_DEV_I2C1
++	select S3C_DEV_RTC
++	select S3C_DEV_WDT
++	select SAMSUNG_DEV_ADC
++	select SAMSUNG_DEV_TS
++	select S5P64X0_SETUP_I2C1
++	help
++	  Machine support for the Samsung SMDK6440
++
++config MACH_SMDK6450
++	bool "SMDK6450"
++	select CPU_S5P6450
++	select S3C_DEV_I2C1
++	select S3C_DEV_RTC
++	select S3C_DEV_WDT
++	select SAMSUNG_DEV_ADC
++	select SAMSUNG_DEV_TS
++	select S5P64X0_SETUP_I2C1
++	help
++	  Machine support for the Samsung SMDK6450
++
++endif
+diff --git a/arch/arm/mach-s5p64x0/Makefile b/arch/arm/mach-s5p64x0/Makefile
+new file mode 100644
+index 0000000..2655829
+--- /dev/null
++++ b/arch/arm/mach-s5p64x0/Makefile
+@@ -0,0 +1,30 @@
++# arch/arm/mach-s5p64x0/Makefile
++#
++# Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
++# 		http://www.samsung.com
++#
++# Licensed under GPLv2
++
++obj-y				:=
++obj-m				:=
++obj-n				:=
++obj-				:=
++
++# Core support for S5P64X0 system
++
++obj-$(CONFIG_ARCH_S5P64X0)	+= cpu.o init.o clock.o dma.o
++obj-$(CONFIG_ARCH_S5P64X0)	+= setup-i2c0.o
++obj-$(CONFIG_CPU_S5P6440)	+= clock-s5p6440.o gpio.o
++obj-$(CONFIG_CPU_S5P6450)	+= clock-s5p6450.o
++
++# machine support
++
++obj-$(CONFIG_MACH_SMDK6440)	+= mach-smdk6440.o
++obj-$(CONFIG_MACH_SMDK6450)	+= mach-smdk6450.o
++
++# device support
++
++obj-y				+= dev-audio.o
++obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
++
++obj-$(CONFIG_S5P64X0_SETUP_I2C1)	+= setup-i2c1.o
+diff --git a/arch/arm/mach-s5p6440/Makefile.boot b/arch/arm/mach-s5p64x0/Makefile.boot
+similarity index 100%
+rename from arch/arm/mach-s5p6440/Makefile.boot
+rename to arch/arm/mach-s5p64x0/Makefile.boot
+diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
+index c6a855d..90f97d6 100644
+--- a/arch/arm/plat-s5p/Kconfig
++++ b/arch/arm/plat-s5p/Kconfig
+@@ -7,7 +7,7 @@
  
- #define IRQ_EINT12_15		S5P_IRQ_VIC1(0)
- #define IRQ_PCM0		S5P_IRQ_VIC1(2)
-+#define IRQ_PCM1		S5P_IRQ_VIC1(3)	/* for only S5P6450 */
-+#define IRQ_PCM2		S5P_IRQ_VIC1(4)	/* for only S5P6450 */
- #define IRQ_UART0		S5P_IRQ_VIC1(5)
- #define IRQ_UART1		S5P_IRQ_VIC1(6)
- #define IRQ_UART2		S5P_IRQ_VIC1(7)
- #define IRQ_UART3		S5P_IRQ_VIC1(8)
- #define IRQ_DMA0		S5P_IRQ_VIC1(9)
-+#define IRQ_UART4		S5P_IRQ_VIC1(10)	/* S5P6450 */
-+#define IRQ_UART5		S5P_IRQ_VIC1(11)	/* S5P6450 */
- #define IRQ_NFC			S5P_IRQ_VIC1(13)
-+#define IRQ_USI			S5P_IRQ_VIC1(15)	/* S5P6450 */
- #define IRQ_SPI0		S5P_IRQ_VIC1(16)
- #define IRQ_SPI1		S5P_IRQ_VIC1(17)
-+#define IRQ_HSMMC2		S5P_IRQ_VIC1(17)	/* Shared */
- #define IRQ_IIC			S5P_IRQ_VIC1(18)
- #define IRQ_DISPCON3		S5P_IRQ_VIC1(19)
--#define IRQ_FIMGVG		S5P_IRQ_VIC1(20)
- #define IRQ_EINT_GROUPS		S5P_IRQ_VIC1(21)
--#define IRQ_PMU			S5P_IRQ_VIC1(23)
-+#define IRQ_PMU			S5P_IRQ_VIC1(23)	/* S5P6440 */
- #define IRQ_HSMMC0		S5P_IRQ_VIC1(24)
- #define IRQ_HSMMC1		S5P_IRQ_VIC1(25)
--#define IRQ_HSMMC2		IRQ_SPI1	/* shared with SPI1 */
- #define IRQ_OTG			S5P_IRQ_VIC1(26)
- #define IRQ_DSI			S5P_IRQ_VIC1(27)
- #define IRQ_RTC_ALARM		S5P_IRQ_VIC1(28)
-@@ -63,6 +69,24 @@
- #define IRQ_TC			IRQ_PENDN
- #define IRQ_ADC			S5P_IRQ_VIC1(31)
+ config PLAT_S5P
+ 	bool
+-	depends on (ARCH_S5P6440 || ARCH_S5P6442 || ARCH_S5PC100 || ARCH_S5PV210 || ARCH_S5PV310)
++	depends on (ARCH_S5P64X0 || ARCH_S5P6442 || ARCH_S5PC100 || ARCH_S5PV210 || ARCH_S5PV310)
+ 	default y
+ 	select ARM_VIC if !ARCH_S5PV310
+ 	select ARM_GIC if ARCH_S5PV310
+@@ -30,7 +30,7 @@ config S5P_EXT_INT
+ 	bool
+ 	help
+ 	  Use the external interrupts (other than GPIO interrupts.)
+-	  Note: Do not choose this for S5P6440.
++	  Note: Do not choose this for S5P6440 and S5P6450.
  
-+/* UART interrupts, S5P6450 has 5 UARTs */
-+#define IRQ_S5P_UART_BASE4	(96)
-+#define IRQ_S5P_UART_BASE5	(100)
-+
-+#define IRQ_S5P_UART_RX4	(IRQ_S5P_UART_BASE4 + UART_IRQ_RXD)
-+#define IRQ_S5P_UART_TX4	(IRQ_S5P_UART_BASE4 + UART_IRQ_TXD)
-+#define IRQ_S5P_UART_ERR4	(IRQ_S5P_UART_BASE4 + UART_IRQ_ERR)
-+
-+#define IRQ_S5P_UART_RX5	(IRQ_S5P_UART_BASE5 + UART_IRQ_RXD)
-+#define IRQ_S5P_UART_TX5	(IRQ_S5P_UART_BASE5 + UART_IRQ_TXD)
-+#define IRQ_S5P_UART_ERR5	(IRQ_S5P_UART_BASE5 + UART_IRQ_ERR)
-+
-+/* S3C compatibilty defines */
-+#define IRQ_S3CUART_RX4		IRQ_S5P_UART_RX4
-+#define IRQ_S3CUART_RX5		IRQ_S5P_UART_RX5
-+
-+/* S5P6450 EINT feature will be added */
-+
- /*
-  * Since the IRQ_EINT(x) are a linear mapping on s5p6440 we just defined
-  * them as an IRQ_EINT(x) macro from S5P_IRQ_EINT_BASE which we place
-@@ -115,4 +139,4 @@
- 
- #define NR_IRQS			(IRQ_EINT_GROUP8_BASE + IRQ_EINT_GROUP8_NR + 1)
- 
--#endif /* __ASM_ARCH_S5P_IRQS_H */
-+#endif /* __ASM_ARCH_IRQS_H */
-diff --git a/arch/arm/mach-s5p6440/include/mach/regs-irq.h b/arch/arm/mach-s5p64x0/include/mach/regs-irq.h
-similarity index 66%
-rename from arch/arm/mach-s5p6440/include/mach/regs-irq.h
-rename to arch/arm/mach-s5p64x0/include/mach/regs-irq.h
-index a961f4b..4aaebda 100644
---- a/arch/arm/mach-s5p6440/include/mach/regs-irq.h
-+++ b/arch/arm/mach-s5p64x0/include/mach/regs-irq.h
-@@ -1,9 +1,9 @@
--/* linux/arch/arm/mach-s5p6440/include/mach/regs-irq.h
-+/* linux/arch/arm/mach-s5p64x0/include/mach/regs-irq.h
-  *
-- * Copyright (c) 2009 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com/
-+ * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-  *
-- * S5P6440 - IRQ register definitions
-+ * S5P64X0 - IRQ register definitions
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
+ config S5P_DEV_FIMC0
+ 	bool
 -- 
 1.6.2.5
