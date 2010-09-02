@@ -1,58 +1,54 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 00/13] ARM: S5P64X0: Add new S5P6450 Support
-Date: Thu, 02 Sep 2010 19:21:10 +0900
-Message-ID: <005201cb4a88$93214570$b963d050$%kim@samsung.com>
-References: <1283324960-21629-1-git-send-email-kgene.kim@samsung.com>
- <20100901114518.GA20737@trinity.fluff.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 1/3] h1940: use gpiolib for latch access
+Date: Thu, 2 Sep 2010 11:53:49 +0100
+Message-ID: <20100902105349.GT26319@n2100.arm.linux.org.uk>
+References: <1282230003-2020-1-git-send-email-anarsoul@gmail.com> <1282230003-2020-2-git-send-email-anarsoul@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:17461 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752790Ab0IBKVA (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:45937 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751900Ab0IBKyQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Sep 2010 06:21:00 -0400
-Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L84000JX7EY8900@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 02 Sep 2010 19:20:58 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L84002QM7EYTS@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 02 Sep 2010 19:20:58 +0900 (KST)
-In-reply-to: <20100901114518.GA20737@trinity.fluff.org>
-Content-language: ko
+	Thu, 2 Sep 2010 06:54:16 -0400
+Content-Disposition: inline
+In-Reply-To: <1282230003-2020-2-git-send-email-anarsoul@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Ben Dooks' <ben-linux@fluff.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Ben Dooks wrote:
-> 
-Hi ;-)
+On Thu, Aug 19, 2010 at 06:00:01PM +0300, Vasily Khoruzhick wrote:
+> diff --git a/arch/arm/mach-s3c2410/mach-h1940.c b/arch/arm/mach-s3c2410/mach-h1940.c
+> index 779b45b..9717790 100644
+> --- a/arch/arm/mach-s3c2410/mach-h1940.c
+> +++ b/arch/arm/mach-s3c2410/mach-h1940.c
+> @@ -42,6 +42,7 @@
+>  #include <mach/regs-gpio.h>
+>  #include <mach/gpio-fns.h>
+>  #include <mach/gpio-nrs.h>
+> +#include <mach/gpio.h>
 
-> On Wed, Sep 01, 2010 at 04:09:07PM +0900, Kukjin Kim wrote:
-> > This patches add basic support for Samsung S5P6450 SoC.
-> >
-> > Basically this patch moves mach-s5p6440 (ARCH_S5P6440) to mach-s5p64x0
-> > (ARCH_S5P64X0) to support Samsung's new S5P6450 SoC. The
-> ARCH_S5P64X0
-> > can support S5P6440 and S5P6450 with one kernel image. It is tested on
-> > SMDK6440(S5P6440) and SMDK6450(S5P6450) with s5p64x0_defconfig. And
-> > this patch changes s5p6440_defconfig to s5p64x0_defconfig for S5P64X0.
-> 
-> What about the s5p6442?
-> 
-S5P6440 and S5P6450 are each other similar, but S5P6442 differs much with
-it.
-,,,so remains some issues for it now.
+linux/gpio.h ?
 
-Thanks.
+>  
+>  #include <mach/h1940.h>
+>  #include <mach/h1940-latch.h>
+> @@ -58,6 +59,16 @@
+>  #include <plat/mci.h>
+>  #include <plat/ts.h>
+>  
+> +#ifndef __ASSEMBLY__
+> +#define H1940_LATCH		((void __force __iomem *)0xF8000000)
+> +#else
+> +#define H1940_LATCH		0xF8000000
+> +#endif
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+This file can never be built by the assembler, so the above is pointless.
+
+> +
+> +#define H1940_PA_LATCH		(S3C2410_CS2)
+
+Parents not required.
+
+Rest looks fine to me.
