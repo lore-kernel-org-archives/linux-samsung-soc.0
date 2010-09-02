@@ -1,54 +1,86 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 1/3] h1940: use gpiolib for latch access
-Date: Thu, 2 Sep 2010 11:53:49 +0100
-Message-ID: <20100902105349.GT26319@n2100.arm.linux.org.uk>
-References: <1282230003-2020-1-git-send-email-anarsoul@gmail.com> <1282230003-2020-2-git-send-email-anarsoul@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: SAMSUNG: Removed redunt zreladdr in Makefile.boot
+Date: Fri,  3 Sep 2010 08:27:23 +0900
+Message-ID: <1283470043-16050-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:45937 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751900Ab0IBKyQ (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:51611 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755227Ab0IBXkq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Sep 2010 06:54:16 -0400
-Content-Disposition: inline
-In-Reply-To: <1282230003-2020-2-git-send-email-anarsoul@gmail.com>
+	Thu, 2 Sep 2010 19:40:46 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-On Thu, Aug 19, 2010 at 06:00:01PM +0300, Vasily Khoruzhick wrote:
-> diff --git a/arch/arm/mach-s3c2410/mach-h1940.c b/arch/arm/mach-s3c2410/mach-h1940.c
-> index 779b45b..9717790 100644
-> --- a/arch/arm/mach-s3c2410/mach-h1940.c
-> +++ b/arch/arm/mach-s3c2410/mach-h1940.c
-> @@ -42,6 +42,7 @@
->  #include <mach/regs-gpio.h>
->  #include <mach/gpio-fns.h>
->  #include <mach/gpio-nrs.h>
-> +#include <mach/gpio.h>
+Because can be calculated ZREADDR now, removed redunt zreladdr
+definitions in each Makefile.boot of Samsung architectures.
 
-linux/gpio.h ?
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Ben Dooks <ben-linux@fluff.org>
+---
+ arch/arm/mach-s3c2410/Makefile.boot |    2 --
+ arch/arm/mach-s3c64xx/Makefile.boot |    1 -
+ arch/arm/mach-s5p6440/Makefile.boot |    1 -
+ arch/arm/mach-s5p6442/Makefile.boot |    1 -
+ arch/arm/mach-s5pc100/Makefile.boot |    1 -
+ arch/arm/mach-s5pv210/Makefile.boot |    1 -
+ arch/arm/mach-s5pv310/Makefile.boot |    1 -
+ 7 files changed, 0 insertions(+), 8 deletions(-)
 
->  
->  #include <mach/h1940.h>
->  #include <mach/h1940-latch.h>
-> @@ -58,6 +59,16 @@
->  #include <plat/mci.h>
->  #include <plat/ts.h>
->  
-> +#ifndef __ASSEMBLY__
-> +#define H1940_LATCH		((void __force __iomem *)0xF8000000)
-> +#else
-> +#define H1940_LATCH		0xF8000000
-> +#endif
-
-This file can never be built by the assembler, so the above is pointless.
-
-> +
-> +#define H1940_PA_LATCH		(S3C2410_CS2)
-
-Parents not required.
-
-Rest looks fine to me.
+diff --git a/arch/arm/mach-s3c2410/Makefile.boot b/arch/arm/mach-s3c2410/Makefile.boot
+index 58c1dd7..69dbda1 100644
+--- a/arch/arm/mach-s3c2410/Makefile.boot
++++ b/arch/arm/mach-s3c2410/Makefile.boot
+@@ -1,7 +1,5 @@
+ ifeq ($(CONFIG_PM_H1940),y)
+-	zreladdr-y		:= 0x30108000
+ 	params_phys-y	:= 0x30100100
+ else
+-	zreladdr-y		:= 0x30008000
+ 	params_phys-y	:= 0x30000100
+ endif
+diff --git a/arch/arm/mach-s3c64xx/Makefile.boot b/arch/arm/mach-s3c64xx/Makefile.boot
+index ba41fdc..b6349bd 100644
+--- a/arch/arm/mach-s3c64xx/Makefile.boot
++++ b/arch/arm/mach-s3c64xx/Makefile.boot
+@@ -1,2 +1 @@
+-   zreladdr-y	:= 0x50008000
+ params_phys-y	:= 0x50000100
+diff --git a/arch/arm/mach-s5p6440/Makefile.boot b/arch/arm/mach-s5p6440/Makefile.boot
+index ff90aa1..9a79532 100644
+--- a/arch/arm/mach-s5p6440/Makefile.boot
++++ b/arch/arm/mach-s5p6440/Makefile.boot
+@@ -1,2 +1 @@
+-   zreladdr-y	:= 0x20008000
+ params_phys-y	:= 0x20000100
+diff --git a/arch/arm/mach-s5p6442/Makefile.boot b/arch/arm/mach-s5p6442/Makefile.boot
+index ff90aa1..9a79532 100644
+--- a/arch/arm/mach-s5p6442/Makefile.boot
++++ b/arch/arm/mach-s5p6442/Makefile.boot
+@@ -1,2 +1 @@
+-   zreladdr-y	:= 0x20008000
+ params_phys-y	:= 0x20000100
+diff --git a/arch/arm/mach-s5pc100/Makefile.boot b/arch/arm/mach-s5pc100/Makefile.boot
+index ff90aa1..9a79532 100644
+--- a/arch/arm/mach-s5pc100/Makefile.boot
++++ b/arch/arm/mach-s5pc100/Makefile.boot
+@@ -1,2 +1 @@
+-   zreladdr-y	:= 0x20008000
+ params_phys-y	:= 0x20000100
+diff --git a/arch/arm/mach-s5pv210/Makefile.boot b/arch/arm/mach-s5pv210/Makefile.boot
+index ff90aa1..9a79532 100644
+--- a/arch/arm/mach-s5pv210/Makefile.boot
++++ b/arch/arm/mach-s5pv210/Makefile.boot
+@@ -1,2 +1 @@
+-   zreladdr-y	:= 0x20008000
+ params_phys-y	:= 0x20000100
+diff --git a/arch/arm/mach-s5pv310/Makefile.boot b/arch/arm/mach-s5pv310/Makefile.boot
+index d65956f..85644bc 100644
+--- a/arch/arm/mach-s5pv310/Makefile.boot
++++ b/arch/arm/mach-s5pv310/Makefile.boot
+@@ -1,2 +1 @@
+-   zreladdr-y	:= 0x40008000
+ params_phys-y	:= 0x40000100
+-- 
+1.6.2.5
