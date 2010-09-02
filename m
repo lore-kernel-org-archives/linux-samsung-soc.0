@@ -1,124 +1,188 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 08/13] ARM: S5P64X0: Move DMA support for S5P64X0
-Date: Thu, 2 Sep 2010 10:08:00 +0900
-Message-ID: <AANLkTi=1tJ-EnDmiossRWVPkumubicqXzqvXSrWQMqQ=@mail.gmail.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH 12/13] ARM: S5P64X0: Add UART serial support for S5P6450
+Date: Thu, 2 Sep 2010 10:43:55 +0900
+Message-ID: <AANLkTimxmodJGBQbQONOx870runSEKn5S7Du8Jrsxe1n@mail.gmail.com>
 References: <1283324960-21629-1-git-send-email-kgene.kim@samsung.com>
-	<1283324960-21629-9-git-send-email-kgene.kim@samsung.com>
+	<1283324960-21629-13-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:42293 "EHLO
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:40216 "EHLO
 	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752182Ab0IBBIC (ORCPT
+	with ESMTP id S1752750Ab0IBBn4 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Sep 2010 21:08:02 -0400
-Received: by wyb35 with SMTP id 35so9936240wyb.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Sep 2010 18:08:00 -0700 (PDT)
-In-Reply-To: <1283324960-21629-9-git-send-email-kgene.kim@samsung.com>
+	Wed, 1 Sep 2010 21:43:56 -0400
+Received: by wyb35 with SMTP id 35so9972897wyb.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Sep 2010 18:43:55 -0700 (PDT)
+In-Reply-To: <1283324960-21629-13-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>, ben-linux@fluff.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-T24gV2VkLCBTZXAgMSwgMjAxMCBhdCA0OjA5IFBNLCBLdWtqaW4gS2ltIDxrZ2VuZS5raW1Ac2Ft
-c3VuZy5jb20+IHdyb3RlOgo+IFRoaXMgcGF0Y2ggbW92ZXMgRE1BIHN1cHBvcnQgZmlsZXMgaW4g
-dGhlIG1hY2gtczVwNjR4MAo+IGZvciBTNVA2NDQwIGFuZCBTNVA2NDUwIFNvQ3MuCj4KPiBTaWdu
-ZWQtb2ZmLWJ5OiBLdWtqaW4gS2ltIDxrZ2VuZS5raW1Ac2Ftc3VuZy5jb20+Cj4gQ2M6IEphc3Np
-IEJyYXIgPGphc3NpLmJyYXJAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gwqBhcmNoL2FybS97bWFjaC1z
-NXA2NDQwID0+IG1hY2gtczVwNjR4MH0vZG1hLmMgwqAgwqAgwqB8IMKgIDc1ICsrKysrKysrKysr
-KysrKystLS0KPiDCoC4uLi9pbmNsdWRlL21hY2gvZG1hLmggwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgfCDCoCDCoDAKPiDCoGFyY2gvYXJtL3BsYXQtc2Ftc3VuZy9p
-bmNsdWRlL3BsYXQvczNjLWRtYS1wbDMzMC5oIHwgwqAgMjggKysrKysrKwo+IMKgMyBmaWxlcyBj
-aGFuZ2VkLCA5MSBpbnNlcnRpb25zKCspLCAxMiBkZWxldGlvbnMoLSkKPiDCoHJlbmFtZSBhcmNo
-L2FybS97bWFjaC1zNXA2NDQwID0+IG1hY2gtczVwNjR4MH0vZG1hLmMgKDU2JSkKPiDCoHJlbmFt
-ZSBhcmNoL2FybS97bWFjaC1zNXA2NDQwID0+IG1hY2gtczVwNjR4MH0vaW5jbHVkZS9tYWNoL2Rt
-YS5oICgxMDAlKQo+Cj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gtczVwNjQ0MC9kbWEuYyBi
-L2FyY2gvYXJtL21hY2gtczVwNjR4MC9kbWEuYwo+IHNpbWlsYXJpdHkgaW5kZXggNTYlCj4gcmVu
-YW1lIGZyb20gYXJjaC9hcm0vbWFjaC1zNXA2NDQwL2RtYS5jCj4gcmVuYW1lIHRvIGFyY2gvYXJt
-L21hY2gtczVwNjR4MC9kbWEuYwo+IGluZGV4IDA3NjA2YWQuLmJjODQ2NzggMTAwNjQ0Cj4gLS0t
-IGEvYXJjaC9hcm0vbWFjaC1zNXA2NDQwL2RtYS5jCj4gKysrIGIvYXJjaC9hcm0vbWFjaC1zNXA2
-NHgwL2RtYS5jCj4gQEAgLTEsNCArMSw1IEBACj4gLS8qCj4gKy8qIGxpbnV4L2FyY2gvYXJtL21h
-Y2gtczVwNjR4MC9kbWEuYwo+ICsgKgo+IMKgKiBDb3B5cmlnaHQgKEMpIDIwMTAgU2Ftc3VuZyBF
-bGVjdHJvbmljcyBDby4gTHRkLgo+IMKgKiDCoCDCoCBKYXN3aW5kZXIgU2luZ2ggPGphc3NpLmJy
-YXJAc2Ftc3VuZy5jb20+Cj4gwqAqCj4gQEAgLTE1LDcgKzE2LDcgQEAKPiDCoCogWW91IHNob3Vs
-ZCBoYXZlIHJlY2VpdmVkIGEgY29weSBvZiB0aGUgR05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UK
-PiDCoCogYWxvbmcgd2l0aCB0aGlzIHByb2dyYW07IGlmIG5vdCwgd3JpdGUgdG8gdGhlIEZyZWUg
-U29mdHdhcmUKPiDCoCogRm91bmRhdGlvbiwgSW5jLiwgNjc1IE1hc3MgQXZlLCBDYW1icmlkZ2Us
-IE1BIDAyMTM5LCBVU0EuCj4gLSAqLwo+ICsqLwo+Cj4gwqAjaW5jbHVkZSA8bGludXgvcGxhdGZv
-cm1fZGV2aWNlLmg+Cj4gwqAjaW5jbHVkZSA8bGludXgvZG1hLW1hcHBpbmcuaD4KPiBAQCAtMzAs
-MTEgKzMxLDExIEBACj4KPiDCoHN0YXRpYyB1NjQgZG1hX2RtYW1hc2sgPSBETUFfQklUX01BU0so
-MzIpOwo+Cj4gLXN0YXRpYyBzdHJ1Y3QgcmVzb3VyY2UgczVwNjQ0MF9wZG1hX3Jlc291cmNlW10g
-PSB7Cj4gK3N0YXRpYyBzdHJ1Y3QgcmVzb3VyY2UgczVwNjR4MF9wZG1hX3Jlc291cmNlW10gPSB7
-Cj4gwqAgwqAgwqAgwqBbMF0gPSB7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCAuc3RhcnQgwqA9
-IFM1UDY0NDBfUEFfUERNQSwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5lbmQgwqAgwqA9IFM1
-UDY0NDBfUEFfUERNQSArIFNaXzRLLAo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgLmZsYWdzID0g
-SU9SRVNPVVJDRV9NRU0sCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAuc3RhcnQgwqA9IFM1UDY0
-WDBfUEFfUERNQSwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5lbmQgwqAgwqA9IFM1UDY0WDBf
-UEFfUERNQSArIFNaXzRLLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLmZsYWdzIMKgPSBJT1JF
-U09VUkNFX01FTSwKPiDCoCDCoCDCoCDCoH0sCj4gwqAgwqAgwqAgwqBbMV0gPSB7Cj4gwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAuc3RhcnQgwqA9IElSUV9ETUEwLAo+IEBAIC04MCwxMSArODEsNDgg
-QEAgc3RhdGljIHN0cnVjdCBzM2NfcGwzMzBfcGxhdGRhdGEgczVwNjQ0MF9wZG1hX3BkYXRhID0g
-ewo+IMKgIMKgIMKgIMKgfSwKPiDCoH07Cj4KPiArc3RhdGljIHN0cnVjdCBzM2NfcGwzMzBfcGxh
-dGRhdGEgczVwNjQ1MF9wZG1hX3BkYXRhID0gewo+ICsgwqAgwqAgwqAgLnBlcmkgPSB7Cj4gKyDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCBbMF0gPSBETUFDSF9VQVJUMF9SWCwKPiArIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIFsxXSA9IERNQUNIX1VBUlQwX1RYLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-WzJdID0gRE1BQ0hfVUFSVDFfUlgsCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBbM10gPSBETUFD
-SF9VQVJUMV9UWCwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFs0XSA9IERNQUNIX1VBUlQyX1JY
-LAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgWzVdID0gRE1BQ0hfVUFSVDJfVFgsCj4gKyDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCBbNl0gPSBETUFDSF9VQVJUM19SWCwKPiArIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIFs3XSA9IERNQUNIX1VBUlQzX1RYLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgWzhd
-ID0gRE1BQ0hfVUFSVDRfUlgsCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBbOV0gPSBETUFDSF9V
-QVJUNF9UWCwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFsxMF0gPSBETUFDSF9QQ00wX1RYLAo+
-ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgWzExXSA9IERNQUNIX1BDTTBfUlgsCj4gKyDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCBbMTJdID0gRE1BQ0hfSTJTMF9UWCwKPiArIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIFsxM10gPSBETUFDSF9JMlMwX1JYLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgWzE0XSA9
-IERNQUNIX1NQSTBfVFgsCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBbMTVdID0gRE1BQ0hfU1BJ
-MF9SWCwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFsxNl0gPSBETUFDSF9QQ00xX1RYLAo+ICsg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgWzE3XSA9IERNQUNIX1BDTTFfUlgsCj4gKyDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCBbMThdID0gRE1BQ0hfUENNMl9UWCwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IFsxOV0gPSBETUFDSF9QQ00yX1JYLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgWzIwXSA9IERN
-QUNIX1NQSTFfVFgsCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBbMjFdID0gRE1BQ0hfU1BJMV9S
-WCwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFsyMl0gPSBETUFDSF9VU0lfVFgsCj4gKyDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCBbMjNdID0gRE1BQ0hfVVNJX1JYLAo+ICsgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgWzI0XSA9IERNQUNIX01BWCwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFsyNV0gPSBE
-TUFDSF9JMlMxX1RYLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgWzI2XSA9IERNQUNIX0kyUzFf
-UlgsCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBbMjddID0gRE1BQ0hfSTJTMl9UWCwKPiArIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIFsyOF0gPSBETUFDSF9JMlMyX1JYLAo+ICsgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgWzI5XSA9IERNQUNIX1BXTSwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFszMF0g
-PSBETUFDSF9VQVJUNV9SWCwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFszMV0gPSBETUFDSF9V
-QVJUNV9UWCwKPiArIMKgIMKgIMKgIH0sCj4gK307Cj4gKwo+IMKgc3RhdGljIHN0cnVjdCBwbGF0
-Zm9ybV9kZXZpY2UgczVwNjQ0MF9kZXZpY2VfcGRtYSA9IHsKPiDCoCDCoCDCoCDCoC5uYW1lIMKg
-IMKgIMKgIMKgIMKgID0gInMzYy1wbDMzMCIsCj4gwqAgwqAgwqAgwqAuaWQgwqAgwqAgwqAgwqAg
-wqAgwqAgPSAxLAoKV2hpbGUgYXQgaXQsIHBsZWFzZSBtYWtlIGlkIDAgIGFzIHdlbGwuCgoKPiAt
-IMKgIMKgIMKgIC5udW1fcmVzb3VyY2VzIMKgPSBBUlJBWV9TSVpFKHM1cDY0NDBfcGRtYV9yZXNv
-dXJjZSksCj4gLSDCoCDCoCDCoCAucmVzb3VyY2UgwqAgwqAgwqAgPSBzNXA2NDQwX3BkbWFfcmVz
-b3VyY2UsCj4gKyDCoCDCoCDCoCAubnVtX3Jlc291cmNlcyDCoD0gQVJSQVlfU0laRShzNXA2NHgw
-X3BkbWFfcmVzb3VyY2UpLAo+ICsgwqAgwqAgwqAgLnJlc291cmNlIMKgIMKgIMKgID0gczVwNjR4
-MF9wZG1hX3Jlc291cmNlLAo+IMKgIMKgIMKgIMKgLmRldiDCoCDCoCDCoCDCoCDCoCDCoD0gewo+
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLmRtYV9tYXNrID0gJmRtYV9kbWFtYXNrLAo+IMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgLmNvaGVyZW50X2RtYV9tYXNrID0gRE1BX0JJVF9NQVNLKDMyKSwK
-PiBAQCAtOTIsMTQgKzEzMCwyNyBAQCBzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RldmljZSBzNXA2
-NDQwX2RldmljZV9wZG1hID0gewo+IMKgIMKgIMKgIMKgfSwKPiDCoH07Cj4KPiAtc3RhdGljIHN0
-cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnM1cDY0NDBfZG1hY3NbXSBfX2luaXRkYXRhID0gewo+ICtz
-dGF0aWMgc3RydWN0IHBsYXRmb3JtX2RldmljZSBzNXA2NDUwX2RldmljZV9wZG1hID0gewo+ICsg
-wqAgwqAgwqAgLm5hbWUgwqAgwqAgwqAgwqAgwqAgPSAiczNjLXBsMzMwIiwKPiArIMKgIMKgIMKg
-IC5pZCDCoCDCoCDCoCDCoCDCoCDCoCA9IDAsCj4gKyDCoCDCoCDCoCAubnVtX3Jlc291cmNlcyDC
-oD0gQVJSQVlfU0laRShzNXA2NHgwX3BkbWFfcmVzb3VyY2UpLAo+ICsgwqAgwqAgwqAgLnJlc291
-cmNlIMKgIMKgIMKgID0gczVwNjR4MF9wZG1hX3Jlc291cmNlLAo+ICsgwqAgwqAgwqAgLmRldiDC
-oCDCoCDCoCDCoCDCoCDCoD0gewo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLmRtYV9tYXNrID0g
-JmRtYV9kbWFtYXNrLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLmNvaGVyZW50X2RtYV9tYXNr
-ID0gRE1BX0JJVF9NQVNLKDMyKSwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5wbGF0Zm9ybV9k
-YXRhID0gJnM1cDY0NTBfcGRtYV9wZGF0YSwKPiArIMKgIMKgIMKgIH0sCj4gK307Cj4gKwo+ICtz
-dGF0aWMgc3RydWN0IHBsYXRmb3JtX2RldmljZSAqczVwNjR4MF9kbWFjc1tdIF9faW5pdGRhdGEg
-PSB7Cj4gwqAgwqAgwqAgwqAmczVwNjQ0MF9kZXZpY2VfcGRtYSwKPiArIMKgIMKgIMKgIC8qICZz
-NXA2NDUwX2RldmljZV9wZG1hIHdpbGwgYmUgYWRkZWQgKi8KPiDCoH07CkxldCB1cyBzaW1wbHkg
-Y2FsbCB0aGUgRE1BQyBhcyBzNXA2NHgwX2RldmljZV9wZG1hIGFuZCB1c2Ugc29tZQpDUFUgZGV0
-ZWN0aW9uIG1ldGhvZCBpbiBzNXA2NHgwX2RtYV9pbml0IHRvIGFzc2lnbiBlaXRoZXIgb2YKczVw
-NjQ0MF9wZG1hX3BkYXRhIGFuZCBzNXA2NDUwX3BkbWFfcGRhdGEgdG8gdGhlIHBsYXRmb3JtX2Rh
-dGEKCi4uLi4uLi4uCgo+ICsgwqAgwqAgwqAgRE1BQ0hfTVRPTV8wLAo+ICsgwqAgwqAgwqAgRE1B
-Q0hfTVRPTV8xLAo+ICsgwqAgwqAgwqAgRE1BQ0hfTVRPTV8yLAo+ICsgwqAgwqAgwqAgRE1BQ0hf
-TVRPTV8zLAo+ICsgwqAgwqAgwqAgRE1BQ0hfTVRPTV80LAo+ICsgwqAgwqAgwqAgRE1BQ0hfTVRP
-TV81LAo+ICsgwqAgwqAgwqAgRE1BQ0hfTVRPTV82LAo+ICsgwqAgwqAgwqAgRE1BQ0hfTVRPTV83
-LAoKb29wcyAuLi4gTWFpbmxpbmUgczNjIGRtYSBhcGkgZG9lc24ndCB5ZXQgc3VwcG9ydCBNZW0t
-Pk1lbSB0cmFuc2ZlcnMuCllvdSBuZWVkIHRvIGRyb3AgaXQuCg==
+On Wed, Sep 1, 2010 at 4:09 PM, Kukjin Kim <kgene.kim@samsung.com> wrot=
+e:
+> This patch adds UART serial port support for S5P6450 SoC.
+> The S5P6450 has 6 UARTs, so adds resource of UART4 and UART5.
+> And to fix membase which is in serial/samsung.c is from Ben Dooks.
+>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> ---
+> =A0arch/arm/plat-s5p/dev-uart.c | =A0 58 ++++++++++++++++++++++++++++=
+++++++++++++++
+> =A0drivers/serial/Kconfig =A0 =A0 =A0 | =A0 =A07 +++--
+> =A0drivers/serial/samsung.c =A0 =A0 | =A0 =A02 +-
+> =A03 files changed, 63 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/arm/plat-s5p/dev-uart.c b/arch/arm/plat-s5p/dev-uar=
+t.c
+> index a89331e..6a73428 100644
+> --- a/arch/arm/plat-s5p/dev-uart.c
+> +++ b/arch/arm/plat-s5p/dev-uart.c
+> @@ -119,6 +119,56 @@ static struct resource s5p_uart3_resource[] =3D =
+{
+> =A0#endif
+> =A0};
+>
+> +static struct resource s5p_uart4_resource[] =3D {
+> +#if CONFIG_SERIAL_SAMSUNG_UARTS > 4
+> + =A0 =A0 =A0 [0] =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_UART4,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_UART4 + S5P_SZ_U=
+ART,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
+> + =A0 =A0 =A0 },
+> + =A0 =A0 =A0 [1] =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_S5P_UART_RX4,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_S5P_UART_RX4,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
+> + =A0 =A0 =A0 },
+> + =A0 =A0 =A0 [2] =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_S5P_UART_TX4,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_S5P_UART_TX4,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
+> + =A0 =A0 =A0 },
+> + =A0 =A0 =A0 [3] =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_S5P_UART_ERR4,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_S5P_UART_ERR4,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
+> + =A0 =A0 =A0 },
+> +#endif
+> +};
+> +
+> +static struct resource s5p_uart5_resource[] =3D {
+> +#if CONFIG_SERIAL_SAMSUNG_UARTS > 5
+> + =A0 =A0 =A0 [0] =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_UART5,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_UART5 + S5P_SZ_U=
+ART,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
+> + =A0 =A0 =A0 },
+> + =A0 =A0 =A0 [1] =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_S5P_UART_RX5,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_S5P_UART_RX5,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
+> + =A0 =A0 =A0 },
+> + =A0 =A0 =A0 [2] =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_S5P_UART_TX5,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_S5P_UART_TX5,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
+> + =A0 =A0 =A0 },
+> + =A0 =A0 =A0 [3] =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_S5P_UART_ERR5,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_S5P_UART_ERR5,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
+> + =A0 =A0 =A0 },
+> +#endif
+> +};
+> +
+> =A0struct s3c24xx_uart_resources s5p_uart_resources[] __initdata =3D =
+{
+> =A0 =A0 =A0 =A0[0] =3D {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.resources =A0 =A0 =A0=3D s5p_uart0_re=
+source,
+> @@ -136,4 +186,12 @@ struct s3c24xx_uart_resources s5p_uart_resources=
+[] __initdata =3D {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.resources =A0 =A0 =A0=3D s5p_uart3_re=
+source,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.nr_resources =A0 =3D ARRAY_SIZE(s5p_u=
+art3_resource),
+> =A0 =A0 =A0 =A0},
+> + =A0 =A0 =A0 [4] =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .resources =A0 =A0 =A0=3D s5p_uart4_res=
+ource,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .nr_resources =A0 =3D ARRAY_SIZE(s5p_ua=
+rt4_resource),
+> + =A0 =A0 =A0 },
+> + =A0 =A0 =A0 [5] =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .resources =A0 =A0 =A0=3D s5p_uart5_res=
+ource,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .nr_resources =A0 =3D ARRAY_SIZE(s5p_ua=
+rt5_resource),
+> + =A0 =A0 =A0 },
+> =A0};
+> diff --git a/drivers/serial/Kconfig b/drivers/serial/Kconfig
+> index 12900f7..3198c53 100644
+> --- a/drivers/serial/Kconfig
+> +++ b/drivers/serial/Kconfig
+> @@ -458,6 +458,7 @@ config SERIAL_SAMSUNG_UARTS
+> =A0 =A0 =A0 =A0int
+> =A0 =A0 =A0 =A0depends on ARM && PLAT_SAMSUNG
+> =A0 =A0 =A0 =A0default 2 if ARCH_S3C2400
+> + =A0 =A0 =A0 default 6 if ARCH_S5P6450
+> =A0 =A0 =A0 =A0default 4 if SERIAL_SAMSUNG_UARTS_4
+> =A0 =A0 =A0 =A0default 3
+> =A0 =A0 =A0 =A0help
+
+How about to remove SERIAL_SAMSUNG_UARTS_4 and use the
+SERIAL_SAMSUNG_UARTS only?
+
+> @@ -526,12 +527,12 @@ config SERIAL_S3C24A0
+> =A0 =A0 =A0 =A0 =A0Serial port support for the Samsung S3C24A0 SoC
+>
+> =A0config SERIAL_S3C6400
+> - =A0 =A0 =A0 tristate "Samsung S3C6400/S3C6410/S5P6440/S5PC100 Seria=
+l port support"
+> - =A0 =A0 =A0 depends on SERIAL_SAMSUNG && (CPU_S3C6400 || CPU_S3C641=
+0 || CPU_S5P6440 || CPU_S5PC100)
+> + =A0 =A0 =A0 tristate "Samsung S3C6400/S3C6410/S5P6440/S5P6450/S5PC1=
+00 Serial port support"
+> + =A0 =A0 =A0 depends on SERIAL_SAMSUNG && (CPU_S3C6400 || CPU_S3C641=
+0 || CPU_S5P6440 || CPU_S5P6450 || CPU_S5PC100)
+> =A0 =A0 =A0 =A0select SERIAL_SAMSUNG_UARTS_4
+> =A0 =A0 =A0 =A0default y
+> =A0 =A0 =A0 =A0help
+> - =A0 =A0 =A0 =A0 Serial port support for the Samsung S3C6400, S3C641=
+0, S5P6440
+> + =A0 =A0 =A0 =A0 Serial port support for the Samsung S3C6400, S3C641=
+0, S5P6440, S5P6450
+> =A0 =A0 =A0 =A0 =A0and S5PC100 SoCs
+>
+> =A0config SERIAL_S5PV210
+> diff --git a/drivers/serial/samsung.c b/drivers/serial/samsung.c
+> index b1156ba..7ac2bf5 100644
+> --- a/drivers/serial/samsung.c
+> +++ b/drivers/serial/samsung.c
+> @@ -1101,7 +1101,7 @@ static int s3c24xx_serial_init_port(struct s3c2=
+4xx_uart_port *ourport,
+> =A0 =A0 =A0 =A0dbg("resource %p (%lx..%lx)\n", res, res->start, res->=
+end);
+>
+> =A0 =A0 =A0 =A0port->mapbase =3D res->start;
+> - =A0 =A0 =A0 port->membase =3D S3C_VA_UART + res->start - (S3C_PA_UA=
+RT & 0xfff00000);
+> + =A0 =A0 =A0 port->membase =3D S3C_VA_UART + (res->start & 0xfffff);
+> =A0 =A0 =A0 =A0ret =3D platform_get_irq(platdev, 0);
+> =A0 =A0 =A0 =A0if (ret < 0)
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0port->irq =3D 0;
+> --
+> 1.6.2.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
