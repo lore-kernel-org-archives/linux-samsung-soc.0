@@ -1,7 +1,7 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
 Subject: Re: [PATCH 3/4] ARM: S5PC110: add common FIMC setup code
-Date: Mon, 06 Sep 2010 17:46:37 +0900
-Message-ID: <4C84AA6D.10509@samsung.com>
+Date: Mon, 06 Sep 2010 18:10:00 +0900
+Message-ID: <4C84AFE8.2010402@samsung.com>
 References: <1283745044-15514-1-git-send-email-m.szyprowski@samsung.com>
  <1283745044-15514-4-git-send-email-m.szyprowski@samsung.com>
  <AANLkTinhbmKX5gs4TPZwVUX0WSEQ5RLN+_gHAqXsTj1b@mail.gmail.com>
@@ -9,19 +9,19 @@ Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:35391 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752114Ab0IFIqw (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:37341 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750829Ab0IFJKP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Sep 2010 04:46:52 -0400
-Received: from eu_spt2 ([210.118.77.13]) by mailout3.w1.samsung.com
+	Mon, 6 Sep 2010 05:10:15 -0400
+Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
  (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0L8B00GHOHQ28660@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 06 Sep 2010 09:46:50 +0100 (BST)
+ with ESMTP id <0L8B002P9IT18N60@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 06 Sep 2010 10:10:13 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L8B006KEHQ2MJ@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 06 Sep 2010 09:46:50 +0100 (BST)
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0L8B003X0IT0EP@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 06 Sep 2010 10:10:13 +0100 (BST)
 In-reply-to: <AANLkTinhbmKX5gs4TPZwVUX0WSEQ5RLN+_gHAqXsTj1b@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
