@@ -1,47 +1,154 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] Platform fixes for s5p-fimc
-Date: Mon, 06 Sep 2010 05:50:40 +0200
-Message-ID: <1283745044-15514-1-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 3/4] ARM: S5PC110: add common FIMC setup code
+Date: Mon, 06 Sep 2010 05:50:43 +0200
+Message-ID: <1283745044-15514-4-git-send-email-m.szyprowski@samsung.com>
+References: <1283745044-15514-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:18023 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755240Ab0IFDut (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:18042 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755244Ab0IFDuv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 5 Sep 2010 23:50:49 -0400
-Received: from eu_spt1 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L8B00AW440NID@mailout1.w1.samsung.com> for
+	Sun, 5 Sep 2010 23:50:51 -0400
+Received: from eu_spt2 ([210.118.77.14]) by mailout4.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0L8B005G340NJ130@mailout4.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Mon, 06 Sep 2010 04:50:47 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L8B001GQ40MA4@spt1.w1.samsung.com> for
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0L8B009HO40M9N@spt2.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Mon, 06 Sep 2010 04:50:47 +0100 (BST)
+In-reply-to: <1283745044-15514-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
 
-Hello,
+Add common clocks setup code for FIMC devices on S5PV210 SoCs.
 
-This patch series fixes a bunch of bugs in s5p-fimc platform support.
-Mainly it adds missing clocks, dma coherent masks and clock setup code
-required on Aquila and Goni targets.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-s5pv210/Kconfig             |    6 ++++
+ arch/arm/mach-s5pv210/Makefile            |    1 +
+ arch/arm/mach-s5pv210/setup-fimc.c        |   46 +++++++++++++++++++++++++++++
+ arch/arm/plat-samsung/include/plat/fimc.h |   24 +++++++++++++++
+ 4 files changed, 77 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5pv210/setup-fimc.c
+ create mode 100644 arch/arm/plat-samsung/include/plat/fimc.h
 
-This is a pure bugfix series to get fimc driver working. I hope to get
-it merged for 2.6.36-rc4.
-
-The complete list of patches:
-
-[PATCH 1/4] ARM: S5PC110: add fimc clocks.
-[PATCH 2/4] ARM: Samsung: s5p-fimc: fix dma coherent mask
-[PATCH 3/4] ARM: S5PC110: add common FIMC setup code
-[PATCH 4/4] ARM: S5PC110: use common FIMC clock setup code
-
-Best regards
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index d3a3895..48489bb 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -37,6 +37,12 @@ config S5PV210_SETUP_FB_24BPP
+ 	help
+           Common setup code for S5PV210 with an 24bpp RGB display helper.
+ 
++config S5PV210_SETUP_FIMC
++	bool
++	help
++	  Compile common code for S5PV210 based machines to setup correct
++	  FIMC clock parameters.
++
+ config S5PV210_SETUP_KEYPAD
+ 	bool
+ 	help
+diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
+index 05048c5..c13aef1 100644
+--- a/arch/arm/mach-s5pv210/Makefile
++++ b/arch/arm/mach-s5pv210/Makefile
+@@ -29,6 +29,7 @@ obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
+ obj-$(CONFIG_S5PC110_DEV_ONENAND) += dev-onenand.o
+ 
+ obj-$(CONFIG_S5PV210_SETUP_FB_24BPP)	+= setup-fb-24bpp.o
++obj-$(CONFIG_S5PV210_SETUP_FIMC)	+= setup-fimc.o
+ obj-$(CONFIG_S5PV210_SETUP_I2C1) 	+= setup-i2c1.o
+ obj-$(CONFIG_S5PV210_SETUP_I2C2) 	+= setup-i2c2.o
+ obj-$(CONFIG_S5PV210_SETUP_IDE)		+= setup-ide.o
+diff --git a/arch/arm/mach-s5pv210/setup-fimc.c b/arch/arm/mach-s5pv210/setup-fimc.c
+new file mode 100644
+index 0000000..80c1ffe
+--- /dev/null
++++ b/arch/arm/mach-s5pv210/setup-fimc.c
+@@ -0,0 +1,46 @@
++/*
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * S5PV210 clock setup code for FIMC devices
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++#include <linux/device.h>
++#include <linux/clk.h>
++#include <linux/err.h>
++#include <plat/devs.h>
++#include <plat/fimc.h>
++
++int __init s5pv210_fimc_setup_clks(void)
++{
++	int err = 0;
++	int i;
++	struct clk *clk_fimc, *parent;
++
++	struct device *fimc_devs[] = {
++		&s5p_device_fimc0.dev,
++		&s5p_device_fimc1.dev,
++		&s5p_device_fimc2.dev
++	};
++
++	parent = clk_get(NULL, "mout_epll");
++	if (IS_ERR(parent))
++		return PTR_ERR(parent);
++
++	for (i = 0; err == 0 && i < ARRAY_SIZE(fimc_devs); i++) {
++		if (fimc_devs[i]) {
++			clk_fimc = clk_get(fimc_devs[i], "sclk_fimc");
++			if (IS_ERR(clk_fimc)) {
++				err = PTR_ERR(clk_fimc);
++				break;
++			}
++			clk_set_parent(clk_fimc, parent);
++			clk_put(clk_fimc);
++		}
++	}
++	clk_put(parent);
++	return err;
++}
+diff --git a/arch/arm/plat-samsung/include/plat/fimc.h b/arch/arm/plat-samsung/include/plat/fimc.h
+new file mode 100644
+index 0000000..2c06f37
+--- /dev/null
++++ b/arch/arm/plat-samsung/include/plat/fimc.h
+@@ -0,0 +1,24 @@
++/*
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * Common FIMC devices definitions and helper functions
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __PLAT_SAMSUNG_FIMC_H
++#define __PLAT_SAMSUNG_FIMC_H __FILE__
++
++/**
++ * s5pv210_fimc_setup_clks() - S5PV210/S5PC110 fimc clocks setup function
++ *
++ * Set correct parent clocks on machines which bootloaded did not configured
++ * fimc clocks correctly. FIMC devices works properly only if sourced from
++ * certain clock sources. "mout_epll" clock is the recommended one.
++ */
++extern int s5pv210_fimc_setup_clks(void);
++
++#endif /* __PLAT_SAMSUNG_FIMC_H */
 -- 
-Marek Szyprowski
-Samsung Poland R&D Center
+1.7.2.2
