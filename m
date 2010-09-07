@@ -1,87 +1,148 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: Re: [PATCH 1/3] rx1950: add battery device
-Date: Wed, 8 Sep 2010 02:10:05 +0300
-Message-ID: <201009080210.12621.anarsoul@gmail.com>
-References: <1283869946-28296-1-git-send-email-anarsoul@gmail.com> <1283869946-28296-2-git-send-email-anarsoul@gmail.com> <4C86C56B.7090204@fluff.org>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: [PATCH 1/5] h1940: use gpiolib for latch access
+Date: Wed, 08 Sep 2010 00:13:18 +0100
+Message-ID: <4C86C70E.7030009@fluff.org>
+References: <1283871605-32068-1-git-send-email-anarsoul@gmail.com> <1283871605-32068-2-git-send-email-anarsoul@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart5788478.ceURuh9c9T";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f46.google.com ([209.85.215.46]:38711 "EHLO
-	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750871Ab0IGXLB (ORCPT
+Received: from dsl78-143-211-26.in-addr.fast.co.uk ([78.143.211.26]:60321 "EHLO
+	ben-laptop" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1751006Ab0IGXN1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Sep 2010 19:11:01 -0400
-Received: by ewy23 with SMTP id 23so2678075ewy.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Sep 2010 16:11:00 -0700 (PDT)
-In-Reply-To: <4C86C56B.7090204@fluff.org>
+	Tue, 7 Sep 2010 19:13:27 -0400
+In-Reply-To: <1283871605-32068-2-git-send-email-anarsoul@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
---nextPart5788478.ceURuh9c9T
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+On 07/09/10 16:00, Vasily Khoruzhick wrote:
+> This patch adds gpiolib support for h1940 latch.
+> With this patch it's possible to use leds-gpio and uda1380
+> drivers (they require gpiolib support for appropriate pins).
+> And now it's possible to drop leds-h1940 driver.
+> 
+> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> ---
+>  arch/arm/mach-s3c2410/h1940-bluetooth.c          |   13 +++-
+>  arch/arm/mach-s3c2410/include/mach/h1940-latch.h |   57 ++++++------------
+>  arch/arm/mach-s3c2410/mach-h1940.c               |   72 ++++++++++++++++++++--
+>  arch/arm/plat-s3c24xx/Kconfig                    |    1 +
+>  4 files changed, 95 insertions(+), 48 deletions(-)
+> 
 
-=D0=92 =D1=81=D0=BE=D0=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D0=B8 =D0=BE=D1=82 =
-8 =D1=81=D0=B5=D0=BD=D1=82=D1=8F=D0=B1=D1=80=D1=8F 2010 02:06:19 =D0=B0=D0=
-=B2=D1=82=D0=BE=D1=80 Ben Dooks =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=B0=D0=BB:
-> On 07/09/10 15:32, Vasily Khoruzhick wrote:
-> > Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
-> > ---
-> >=20
-> >  arch/arm/mach-s3c2440/Kconfig       |    3 +
-> >  arch/arm/mach-s3c2440/mach-rx1950.c |  160
-> >  +++++++++++++++++++++++++++++++++++ 2 files changed, 163 insertions(+),
-> >  0 deletions(-)
-> >=20
-> > diff --git a/arch/arm/mach-s3c2440/Kconfig
-> > b/arch/arm/mach-s3c2440/Kconfig index cd8e7de..9b6b026 100644
-> > --- a/arch/arm/mach-s3c2440/Kconfig
-> > +++ b/arch/arm/mach-s3c2440/Kconfig
-> > @@ -198,6 +198,9 @@ config MACH_RX1950
-> >=20
-> >  	select S3C_DEV_NAND
-> >  	select S3C2410_IOTIMING if S3C2440_CPUFREQ
-> >  	select S3C2440_XTAL_16934400
-> >=20
-> > +	select S3C_ADC
-> > +	select PDA_POWER
-> > +	select BATTERY_S3C_ADC
->=20
-> not keen on forcing these on unless they are required for the
-> system to work.
+snip
 
-Ok
+>  #endif /* __ASM_ARCH_H1940_LATCH_H */
+> diff --git a/arch/arm/mach-s3c2410/mach-h1940.c b/arch/arm/mach-s3c2410/mach-h1940.c
+> index 3ba3bab..2af4afd 100644
+> --- a/arch/arm/mach-s3c2410/mach-h1940.c
+> +++ b/arch/arm/mach-s3c2410/mach-h1940.c
 
-> > +	{3629, 178, 10},
-> > +	{3612, 162, 5},
-> > +	{3605, 162, 0},
-> > +
->=20
-> at least add a space after { and before }
-> it would be nice to have named initialisers.
+snip
 
-Ok, I'll add named initialisers
+> -EXPORT_SYMBOL_GPL(h1940_latch_control);
+> +static int h1940_gpiolib_latch_input(struct gpio_chip *chip, unsigned offset)
+> +{
+> +	return -EINVAL;
+> +}
 
-Regards
-Vasily
+does not setting the field have the same effect, if so, please remove.
 
---nextPart5788478.ceURuh9c9T
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
+> +
+> +static inline int h1940_gpiolib_to_latch(int offset)
+> +{
+> +	return 1 << (offset + 16);
+> +}
+> +
+> +static void h1940_gpiolib_latch_set(struct gpio_chip *chip,
+> +					unsigned offset, int value)
+> +{
+> +	int latch_bit = h1940_gpiolib_to_latch(offset);
+> +
+> +	h1940_latch_control(value ? 0 : latch_bit,
+> +		value ? latch_bit : 0);
+> +}
+> +
+> +static int h1940_gpiolib_latch_output(struct gpio_chip *chip,
+> +					unsigned offset, int value)
+> +{
+> +	h1940_gpiolib_latch_set(chip, offset, value);
+> +
+> +	return 0;
+> +}
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.16 (GNU/Linux)
+you could eliminate the blank line in the above.
 
-iEYEABECAAYFAkyGxlQACgkQRM6pQpltKE6txACdEgelserZ6c3wo8nZlPEFl/Ha
-DesAniKVI8BI/Qn3R4/rx7hYASxuYwaV
-=e4xv
------END PGP SIGNATURE-----
+> +
+> +static int h1940_gpiolib_latch_get(struct gpio_chip *chip,
+> +					unsigned offset)
+> +{
+> +	return (latch_state >> (offset + 16)) & 1;
+> +}
+> +
+> +struct gpio_chip h1940_latch_gpiochip = {
+> +	.base			= H1940_LATCH_GPIO(0),
+> +	.owner			= THIS_MODULE,
+> +	.label			= "H1940_LATCH",
+> +	.ngpio			= 16,
+> +	.direction_input	= h1940_gpiolib_latch_input,
+> +	.direction_output	= h1940_gpiolib_latch_output,
+> +	.set			= h1940_gpiolib_latch_set,
+> +	.get			= h1940_gpiolib_latch_get,
+> +};
+>  
+>  static void h1940_udc_pullup(enum s3c2410_udc_cmd_e cmd)
+>  {
+> @@ -125,10 +181,10 @@ static void h1940_udc_pullup(enum s3c2410_udc_cmd_e cmd)
+>  	switch (cmd)
+>  	{
+>  		case S3C2410_UDC_P_ENABLE :
+> -			h1940_latch_control(0, H1940_LATCH_USB_DP);
+> +			gpio_set_value(H1940_LATCH_USB_DP, 1);
+>  			break;
+>  		case S3C2410_UDC_P_DISABLE :
+> -			h1940_latch_control(H1940_LATCH_USB_DP, 0);
+> +			gpio_set_value(H1940_LATCH_USB_DP, 0);
+>  			break;
+>  		case S3C2410_UDC_P_RESET :
+>  			break;
+> @@ -303,6 +359,8 @@ static void __init h1940_map_io(void)
+>  	memcpy(phys_to_virt(H1940_SUSPEND_RESUMEAT), h1940_pm_return, 1024);
+>  #endif
+>  	s3c_pm_init();
+> +
+> +	WARN_ON(gpiochip_add(&h1940_latch_gpiochip));
+>  }
+>  
+>  /* H1940 and RX3715 need to reserve this for suspend */
+> @@ -342,9 +400,11 @@ static void __init h1940_init(void)
+>  	gpio_request(S3C2410_GPC(0), "LCD power");
+>  	gpio_request(S3C2410_GPC(5), "LCD power");
+>  	gpio_request(S3C2410_GPC(6), "LCD power");
+> -
+>  	gpio_direction_input(S3C2410_GPC(6));
+>  
+> +	gpio_request(H1940_LATCH_USB_DP, "USB pullup");
+> +	gpio_direction_output(H1940_LATCH_USB_DP, 0);
+> +
+>  	platform_add_devices(h1940_devices, ARRAY_SIZE(h1940_devices));
+>  }
+>  
+> diff --git a/arch/arm/plat-s3c24xx/Kconfig b/arch/arm/plat-s3c24xx/Kconfig
+> index 984bf66..5a27b1b 100644
+> --- a/arch/arm/plat-s3c24xx/Kconfig
+> +++ b/arch/arm/plat-s3c24xx/Kconfig
+> @@ -69,6 +69,7 @@ config S3C24XX_GPIO_EXTRA
+>  	int
+>  	default 128 if S3C24XX_GPIO_EXTRA128
+>  	default 64 if S3C24XX_GPIO_EXTRA64
+> +	default 16 if ARCH_H1940
+>  	default 0
+>  
+>  config S3C24XX_GPIO_EXTRA64
 
---nextPart5788478.ceURuh9c9T--
+hmm, ok, we really need something in Kconfig to set a variable to
+a min value.
