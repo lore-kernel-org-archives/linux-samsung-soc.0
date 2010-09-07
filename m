@@ -1,37 +1,50 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH 1/2] s3c24xx: DMA: don't use autoreload feature
-Date: Wed, 08 Sep 2010 00:37:00 +0100
-Message-ID: <4C86CC9C.9070506@fluff.org>
-References: <1283872143-32492-1-git-send-email-anarsoul@gmail.com> <1283901799-20461-1-git-send-email-anarsoul@gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2] regulators: add support max8952 regulator
+Date: Wed, 08 Sep 2010 08:41:20 +0900
+Message-ID: <003901cb4ee6$2f22de50$8d689af0$%kim@samsung.com>
+References: <1283844202-4158-1-git-send-email-kgene.kim@samsung.com>
+ <20100907100442.GD7886@rakim.wolfsonmicro.main>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from dsl78-143-211-26.in-addr.fast.co.uk ([78.143.211.26]:55994 "EHLO
-	ben-laptop" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1756557Ab0IGXir (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:16300 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755991Ab0IGXlJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Sep 2010 19:38:47 -0400
-In-Reply-To: <1283901799-20461-1-git-send-email-anarsoul@gmail.com>
+	Tue, 7 Sep 2010 19:41:09 -0400
+In-reply-to: <20100907100442.GD7886@rakim.wolfsonmicro.main>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Kleffel <tk@maintech.de>
+To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, lrg@slimlogic.co.uk, 'Changhwan Youn' <chaos.youn@samsung.com>
 
-On 08/09/10 00:23, Vasily Khoruzhick wrote:
-> Some integrated DMA-capable hardware doesn't like autoreload
-> feature of s3c24xx DMA-engine, that's why s3cmci driver
-> didn't work with DMA transfers enabled.
+Mark Brown wrote:
 > 
-> I rewrote DMA driver not to use autoreload feature and removed
-> all pre-loading features. Buffer re-load is fast enought to perform
-> it in IRQ handler, and anyway I don't see any reason to waste CPU
-> cycles on waiting for buffer load. Driver is much simplier now,
-> it was tested with s3cmci and s3c24xx-i2s drivers on s3c2442 and
-> s3c2410 SoCs and works just nice.
+> On Tue, Sep 07, 2010 at 04:23:22PM +0900, Kukjin Kim wrote:
+> > From: Changhwan Youn <chaos.youn@samsung.com>
+> >
+> > The operation of max8952 is almost similar to max8649 except
+> > the output voltage range. This patch adds support the max8952
+> > regulator using current max8649 implementation.
+> >
+> > Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> 
+> This is OK but it should also include removal of the separate max8952
+> driver since the functionality is now merged into this driver.  With
+> that
+> 
+Sure, just now submitted updated patch.
 
-I found this really necessary, especially on systems where some
-drivers can keep the cpu irq load high, such as pio hard-discs.
+> Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Can this be changed to a flag that is set to control the behaviour
-on a per driver basis?
+Thanks for your review and ack ;-)
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
