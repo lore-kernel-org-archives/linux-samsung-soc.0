@@ -1,84 +1,18 @@
 From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH 2/3] rx1950: add LEDs support
-Date: Tue,  7 Sep 2010 17:32:25 +0300
-Message-ID: <1283869946-28296-3-git-send-email-anarsoul@gmail.com>
-References: <1283869946-28296-1-git-send-email-anarsoul@gmail.com>
+Subject: [PATCH 0/3] rx1950: add rest of devices
+Date: Tue,  7 Sep 2010 17:32:23 +0300
+Message-ID: <1283869946-28296-1-git-send-email-anarsoul@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:55630 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751830Ab0IGOrm (ORCPT
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:48099 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757087Ab0IGOsO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Sep 2010 10:47:42 -0400
-Received: by eyb6 with SMTP id 6so2360734eyb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Sep 2010 07:47:41 -0700 (PDT)
-In-Reply-To: <1283869946-28296-1-git-send-email-anarsoul@gmail.com>
+	Tue, 7 Sep 2010 10:48:14 -0400
+Received: by ewy23 with SMTP id 23so2363391ewy.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Sep 2010 07:48:13 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Vasily Khoruzhick <anarsoul@gmail.com>
+To: Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, Vasily Khoruzhick <anarsoul@gmail.com>, linux-samsung-soc@vger.kernel.org
 
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
----
- arch/arm/mach-s3c2440/mach-rx1950.c |   33 +++++++++++++++++++++++++++++++++
- 1 files changed, 33 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-s3c2440/mach-rx1950.c b/arch/arm/mach-s3c2440/mach-rx1950.c
-index 1197ab4..3328c86 100644
---- a/arch/arm/mach-s3c2440/mach-rx1950.c
-+++ b/arch/arm/mach-s3c2440/mach-rx1950.c
-@@ -29,6 +29,7 @@
- #include <linux/pwm_backlight.h>
- #include <linux/pwm.h>
- #include <linux/s3c_adc_battery.h>
-+#include <linux/leds.h>
- 
- #include <linux/mtd/mtd.h>
- #include <linux/mtd/partitions.h>
-@@ -259,6 +260,37 @@ void rx1950_disable_charger(void)
- 	gpio_direction_output(S3C2410_GPJ(3), 0);
- }
- 
-+static struct gpio_led rx1950_leds_desc[] = {
-+	{
-+		.name				= "Green",
-+		.default_trigger	= "main-battery-charging-or-full",
-+		.gpio				= S3C2410_GPA(6),
-+	},
-+	{
-+		.name				= "Red",
-+		.default_trigger	= "main-battery-full",
-+		.gpio				= S3C2410_GPA(7),
-+	},
-+	{
-+		.name				= "Blue",
-+		.default_trigger	= "rx1950-acx-mem",
-+		.gpio				= S3C2410_GPA(11),
-+	},
-+};
-+
-+static struct gpio_led_platform_data rx1950_leds_pdata = {
-+	.num_leds	= ARRAY_SIZE(rx1950_leds_desc),
-+	.leds		= rx1950_leds_desc,
-+};
-+
-+static struct platform_device rx1950_leds = {
-+	.name	= "leds-gpio",
-+	.id		= -1,
-+	.dev	= {
-+				.platform_data = &rx1950_leds_pdata,
-+	},
-+};
-+
- static struct s3c_adc_bat_pdata rx1950_bat_cfg = {
- 	.init = rx1950_bat_init,
- 	.exit = rx1950_bat_exit,
-@@ -663,6 +695,7 @@ static struct platform_device *rx1950_devices[] __initdata = {
- 	&rx1950_device_gpiokeys,
- 	&power_supply,
- 	&rx1950_battery,
-+	&rx1950_leds,
- };
- 
- static struct clk *rx1950_clocks[] __initdata = {
--- 
-1.7.2.2
+This series adds battery device, LEDs device and sound codec
+device to mach-rx1950.c
