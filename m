@@ -1,77 +1,361 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: Re: [PATCH 1/2] s3c24xx: DMA: don't use autoreload feature
-Date: Wed, 8 Sep 2010 09:27:43 +0300
-Message-ID: <201009080927.49861.anarsoul@gmail.com>
-References: <1283872143-32492-1-git-send-email-anarsoul@gmail.com> <1283901799-20461-1-git-send-email-anarsoul@gmail.com> <4C86CC9C.9070506@fluff.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart1860527.UetX5r5Of4";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH v2 08/13] ARM: S5P64X0: Move DMA support for S5P64X0
+Date: Wed,  8 Sep 2010 17:12:05 +0900
+Message-ID: <1283933525-31598-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f46.google.com ([209.85.215.46]:35608 "EHLO
-	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757238Ab0IHG2d (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:54900 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756383Ab0IHI1B (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Sep 2010 02:28:33 -0400
-Received: by ewy23 with SMTP id 23so2825371ewy.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Sep 2010 23:28:31 -0700 (PDT)
-In-Reply-To: <4C86CC9C.9070506@fluff.org>
+	Wed, 8 Sep 2010 04:27:01 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Ben Dooks <ben-linux@fluff.org>, Thomas Kleffel <tk@maintech.de>, linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, Jassi Brar <jassi.brar@samsung.com>
 
---nextPart1860527.UetX5r5Of4
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+This patch moves DMA support files in the mach-s5p64x0
+for S5P6440 and S5P6450 SoCs.
 
-=D0=92 =D1=81=D0=BE=D0=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D0=B8 =D0=BE=D1=82 =
-8 =D1=81=D0=B5=D0=BD=D1=82=D1=8F=D0=B1=D1=80=D1=8F 2010 02:37:00 =D0=B0=D0=
-=B2=D1=82=D0=BE=D1=80 Ben Dooks =D0=BD=D0=B0=D0=BF=D0=B8=D1=81=D0=B0=D0=BB:
-> On 08/09/10 00:23, Vasily Khoruzhick wrote:
-> > Some integrated DMA-capable hardware doesn't like autoreload
-> > feature of s3c24xx DMA-engine, that's why s3cmci driver
-> > didn't work with DMA transfers enabled.
-> >=20
-> > I rewrote DMA driver not to use autoreload feature and removed
-> > all pre-loading features. Buffer re-load is fast enought to perform
-> > it in IRQ handler, and anyway I don't see any reason to waste CPU
-> > cycles on waiting for buffer load. Driver is much simplier now,
-> > it was tested with s3cmci and s3c24xx-i2s drivers on s3c2442 and
-> > s3c2410 SoCs and works just nice.
->=20
-> I found this really necessary, especially on systems where some
-> drivers can keep the cpu irq load high, such as pio hard-discs.
->=20
-> Can this be changed to a flag that is set to control the behaviour
-> on a per driver basis?
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Jassi Brar <jassi.brar@samsung.com>
+---
+Changes since v1:
+- Fixed id of s5p6440_device_pdma
+- Added SoC detection for assign each platform device
+- Removed unuseful dma_ch of m2m transfer
 
-Well, that's not easy and result will be a bit complicated :) Your=20
-implementation has 4 states and actively uses autoreload flag, but when=20
-there's no autoreload/pre-loading there's only 2 states. Btw, all DMA-capab=
-le=20
-HW on S3C24xx has FIFO, so missing pre-loading should not give big impact, =
-as=20
-HW can be fed from FIFO for some time. Can you test if this patch causes so=
-me=20
-problems on your HW with pio hard-discs?
+ arch/arm/mach-s5p6440/dma.c                        |  105 -------------
+ arch/arm/mach-s5p64x0/dma.c                        |  165 ++++++++++++++++++++
+ .../include/mach/dma.h                             |    0
+ arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h |   20 +++
+ 4 files changed, 185 insertions(+), 105 deletions(-)
+ delete mode 100644 arch/arm/mach-s5p6440/dma.c
+ create mode 100644 arch/arm/mach-s5p64x0/dma.c
+ rename arch/arm/{mach-s5p6440 => mach-s5p64x0}/include/mach/dma.h (100%)
 
-Regards
-Vasily
-
---nextPart1860527.UetX5r5Of4
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.16 (GNU/Linux)
-
-iEYEABECAAYFAkyHLOUACgkQRM6pQpltKE4aLACfRQxUVox9K0TjGN7H7BOXO1Qt
-rhAAn2qTazffANTQXgXYgWUzSb027zlU
-=SVgR
------END PGP SIGNATURE-----
-
---nextPart1860527.UetX5r5Of4--
+diff --git a/arch/arm/mach-s5p6440/dma.c b/arch/arm/mach-s5p6440/dma.c
+deleted file mode 100644
+index 07606ad..0000000
+--- a/arch/arm/mach-s5p6440/dma.c
++++ /dev/null
+@@ -1,105 +0,0 @@
+-/*
+- * Copyright (C) 2010 Samsung Electronics Co. Ltd.
+- *	Jaswinder Singh <jassi.brar@samsung.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program; if not, write to the Free Software
+- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+- */
+-
+-#include <linux/platform_device.h>
+-#include <linux/dma-mapping.h>
+-
+-#include <plat/devs.h>
+-#include <plat/irqs.h>
+-
+-#include <mach/map.h>
+-#include <mach/irqs.h>
+-
+-#include <plat/s3c-pl330-pdata.h>
+-
+-static u64 dma_dmamask = DMA_BIT_MASK(32);
+-
+-static struct resource s5p6440_pdma_resource[] = {
+-	[0] = {
+-		.start  = S5P6440_PA_PDMA,
+-		.end    = S5P6440_PA_PDMA + SZ_4K,
+-		.flags = IORESOURCE_MEM,
+-	},
+-	[1] = {
+-		.start	= IRQ_DMA0,
+-		.end	= IRQ_DMA0,
+-		.flags	= IORESOURCE_IRQ,
+-	},
+-};
+-
+-static struct s3c_pl330_platdata s5p6440_pdma_pdata = {
+-	.peri = {
+-		[0] = DMACH_UART0_RX,
+-		[1] = DMACH_UART0_TX,
+-		[2] = DMACH_UART1_RX,
+-		[3] = DMACH_UART1_TX,
+-		[4] = DMACH_UART2_RX,
+-		[5] = DMACH_UART2_TX,
+-		[6] = DMACH_UART3_RX,
+-		[7] = DMACH_UART3_TX,
+-		[8] = DMACH_MAX,
+-		[9] = DMACH_MAX,
+-		[10] = DMACH_PCM0_TX,
+-		[11] = DMACH_PCM0_RX,
+-		[12] = DMACH_I2S0_TX,
+-		[13] = DMACH_I2S0_RX,
+-		[14] = DMACH_SPI0_TX,
+-		[15] = DMACH_SPI0_RX,
+-		[16] = DMACH_MAX,
+-		[17] = DMACH_MAX,
+-		[18] = DMACH_MAX,
+-		[19] = DMACH_MAX,
+-		[20] = DMACH_SPI1_TX,
+-		[21] = DMACH_SPI1_RX,
+-		[22] = DMACH_MAX,
+-		[23] = DMACH_MAX,
+-		[24] = DMACH_MAX,
+-		[25] = DMACH_MAX,
+-		[26] = DMACH_MAX,
+-		[27] = DMACH_MAX,
+-		[28] = DMACH_MAX,
+-		[29] = DMACH_PWM,
+-		[30] = DMACH_MAX,
+-		[31] = DMACH_MAX,
+-	},
+-};
+-
+-static struct platform_device s5p6440_device_pdma = {
+-	.name		= "s3c-pl330",
+-	.id		= 1,
+-	.num_resources	= ARRAY_SIZE(s5p6440_pdma_resource),
+-	.resource	= s5p6440_pdma_resource,
+-	.dev		= {
+-		.dma_mask = &dma_dmamask,
+-		.coherent_dma_mask = DMA_BIT_MASK(32),
+-		.platform_data = &s5p6440_pdma_pdata,
+-	},
+-};
+-
+-static struct platform_device *s5p6440_dmacs[] __initdata = {
+-	&s5p6440_device_pdma,
+-};
+-
+-static int __init s5p6440_dma_init(void)
+-{
+-	platform_add_devices(s5p6440_dmacs, ARRAY_SIZE(s5p6440_dmacs));
+-
+-	return 0;
+-}
+-arch_initcall(s5p6440_dma_init);
+diff --git a/arch/arm/mach-s5p64x0/dma.c b/arch/arm/mach-s5p64x0/dma.c
+new file mode 100644
+index 0000000..62c44dd
+--- /dev/null
++++ b/arch/arm/mach-s5p64x0/dma.c
+@@ -0,0 +1,165 @@
++/* linux/arch/arm/mach-s5p64x0/dma.c
++ *
++ * Copyright (C) 2010 Samsung Electronics Co. Ltd.
++ *	Jaswinder Singh <jassi.brar@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
++*/
++
++#include <linux/platform_device.h>
++#include <linux/dma-mapping.h>
++
++#include <mach/map.h>
++#include <mach/irqs.h>
++#include <mach/regs-clock.h>
++
++#include <plat/devs.h>
++#include <plat/s3c-pl330-pdata.h>
++
++static u64 dma_dmamask = DMA_BIT_MASK(32);
++
++static struct resource s5p64x0_pdma_resource[] = {
++	[0] = {
++		.start	= S5P64X0_PA_PDMA,
++		.end	= S5P64X0_PA_PDMA + SZ_4K,
++		.flags	= IORESOURCE_MEM,
++	},
++	[1] = {
++		.start	= IRQ_DMA0,
++		.end	= IRQ_DMA0,
++		.flags	= IORESOURCE_IRQ,
++	},
++};
++
++static struct s3c_pl330_platdata s5p6440_pdma_pdata = {
++	.peri = {
++		[0] = DMACH_UART0_RX,
++		[1] = DMACH_UART0_TX,
++		[2] = DMACH_UART1_RX,
++		[3] = DMACH_UART1_TX,
++		[4] = DMACH_UART2_RX,
++		[5] = DMACH_UART2_TX,
++		[6] = DMACH_UART3_RX,
++		[7] = DMACH_UART3_TX,
++		[8] = DMACH_MAX,
++		[9] = DMACH_MAX,
++		[10] = DMACH_PCM0_TX,
++		[11] = DMACH_PCM0_RX,
++		[12] = DMACH_I2S0_TX,
++		[13] = DMACH_I2S0_RX,
++		[14] = DMACH_SPI0_TX,
++		[15] = DMACH_SPI0_RX,
++		[16] = DMACH_MAX,
++		[17] = DMACH_MAX,
++		[18] = DMACH_MAX,
++		[19] = DMACH_MAX,
++		[20] = DMACH_SPI1_TX,
++		[21] = DMACH_SPI1_RX,
++		[22] = DMACH_MAX,
++		[23] = DMACH_MAX,
++		[24] = DMACH_MAX,
++		[25] = DMACH_MAX,
++		[26] = DMACH_MAX,
++		[27] = DMACH_MAX,
++		[28] = DMACH_MAX,
++		[29] = DMACH_PWM,
++		[30] = DMACH_MAX,
++		[31] = DMACH_MAX,
++	},
++};
++
++static struct s3c_pl330_platdata s5p6450_pdma_pdata = {
++	.peri = {
++		[0] = DMACH_UART0_RX,
++		[1] = DMACH_UART0_TX,
++		[2] = DMACH_UART1_RX,
++		[3] = DMACH_UART1_TX,
++		[4] = DMACH_UART2_RX,
++		[5] = DMACH_UART2_TX,
++		[6] = DMACH_UART3_RX,
++		[7] = DMACH_UART3_TX,
++		[8] = DMACH_UART4_RX,
++		[9] = DMACH_UART4_TX,
++		[10] = DMACH_PCM0_TX,
++		[11] = DMACH_PCM0_RX,
++		[12] = DMACH_I2S0_TX,
++		[13] = DMACH_I2S0_RX,
++		[14] = DMACH_SPI0_TX,
++		[15] = DMACH_SPI0_RX,
++		[16] = DMACH_PCM1_TX,
++		[17] = DMACH_PCM1_RX,
++		[18] = DMACH_PCM2_TX,
++		[19] = DMACH_PCM2_RX,
++		[20] = DMACH_SPI1_TX,
++		[21] = DMACH_SPI1_RX,
++		[22] = DMACH_USI_TX,
++		[23] = DMACH_USI_RX,
++		[24] = DMACH_MAX,
++		[25] = DMACH_I2S1_TX,
++		[26] = DMACH_I2S1_RX,
++		[27] = DMACH_I2S2_TX,
++		[28] = DMACH_I2S2_RX,
++		[29] = DMACH_PWM,
++		[30] = DMACH_UART5_RX,
++		[31] = DMACH_UART5_TX,
++	},
++};
++
++static struct platform_device s5p6440_device_pdma = {
++	.name		= "s3c-pl330",
++	.id		= 0,
++	.num_resources	= ARRAY_SIZE(s5p64x0_pdma_resource),
++	.resource	= s5p64x0_pdma_resource,
++	.dev		= {
++		.dma_mask = &dma_dmamask,
++		.coherent_dma_mask = DMA_BIT_MASK(32),
++		.platform_data = &s5p6440_pdma_pdata,
++	},
++};
++
++static struct platform_device s5p6450_device_pdma = {
++	.name		= "s3c-pl330",
++	.id		= 0,
++	.num_resources	= ARRAY_SIZE(s5p64x0_pdma_resource),
++	.resource	= s5p64x0_pdma_resource,
++	.dev		= {
++		.dma_mask = &dma_dmamask,
++		.coherent_dma_mask = DMA_BIT_MASK(32),
++		.platform_data = &s5p6450_pdma_pdata,
++	},
++};
++
++static struct platform_device *s5p6440_dmacs[] __initdata = {
++	&s5p6440_device_pdma,
++};
++
++static struct platform_device *s5p6450_dmacs[] __initdata = {
++	&s5p6450_device_pdma,
++};
++
++static int __init s5p64x0_dma_init(void)
++{
++	unsigned int id;
++
++	id = __raw_readl(S5P64X0_SYS_ID) & 0xFF000;
++
++	if (id == 0x50000)
++		platform_add_devices(s5p6450_dmacs, ARRAY_SIZE(s5p6450_dmacs));
++	else
++		platform_add_devices(s5p6440_dmacs, ARRAY_SIZE(s5p6440_dmacs));
++
++	return 0;
++}
++arch_initcall(s5p64x0_dma_init);
+diff --git a/arch/arm/mach-s5p6440/include/mach/dma.h b/arch/arm/mach-s5p64x0/include/mach/dma.h
+similarity index 100%
+rename from arch/arm/mach-s5p6440/include/mach/dma.h
+rename to arch/arm/mach-s5p64x0/include/mach/dma.h
+diff --git a/arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h b/arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h
+index 5fe6721..8107442 100644
+--- a/arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h
++++ b/arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h
+@@ -32,6 +32,12 @@ enum dma_ch {
+ 	DMACH_UART2_TX,
+ 	DMACH_UART3_RX,
+ 	DMACH_UART3_TX,
++	DMACH_UART4_RX,
++	DMACH_UART4_TX,
++	DMACH_UART5_RX,
++	DMACH_UART5_TX,
++	DMACH_USI_RX,
++	DMACH_USI_TX,
+ 	DMACH_IRDA,
+ 	DMACH_I2S0_RX,
+ 	DMACH_I2S0_TX,
+@@ -64,6 +70,20 @@ enum dma_ch {
+ 	DMACH_MSM_REQ2,
+ 	DMACH_MSM_REQ1,
+ 	DMACH_MSM_REQ0,
++	DMACH_SLIMBUS0_RX,
++	DMACH_SLIMBUS0_TX,
++	DMACH_SLIMBUS0AUX_RX,
++	DMACH_SLIMBUS0AUX_TX,
++	DMACH_SLIMBUS1_RX,
++	DMACH_SLIMBUS1_TX,
++	DMACH_SLIMBUS2_RX,
++	DMACH_SLIMBUS2_TX,
++	DMACH_SLIMBUS3_RX,
++	DMACH_SLIMBUS3_TX,
++	DMACH_SLIMBUS4_RX,
++	DMACH_SLIMBUS4_TX,
++	DMACH_SLIMBUS5_RX,
++	DMACH_SLIMBUS5_TX,
+ 	/* END Marker, also used to denote a reserved channel */
+ 	DMACH_MAX,
+ };
+-- 
+1.6.2.5
