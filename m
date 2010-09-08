@@ -1,276 +1,304 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH v2 1/5] h1940: use gpiolib for latch access
-Date: Wed,  8 Sep 2010 12:39:46 +0300
-Message-ID: <1283938786-15214-1-git-send-email-anarsoul@gmail.com>
-References: <4C86C70E.7030009@fluff.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH v3 02/13] ARM: S5P64X0: Update Kconfig and Makefile
+Date: Wed,  8 Sep 2010 20:06:21 +0900
+Message-ID: <1283943981-6778-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:61869 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751089Ab0IHJko (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:40574 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752741Ab0IHLWF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Sep 2010 05:40:44 -0400
-Received: by eyb6 with SMTP id 6so2864136eyb.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Sep 2010 02:40:43 -0700 (PDT)
-In-Reply-To: <4C86C70E.7030009@fluff.org>
+	Wed, 8 Sep 2010 07:22:05 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Vasily Khoruzhick <anarsoul@gmail.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch adds gpiolib support for h1940 latch.
-With this patch it's possible to use leds-gpio and uda1380
-drivers (they require gpiolib support for appropriate pins).
-And now it's possible to drop leds-h1940 driver.
+This patch updates the Kconfig and Makefile for the S5P6440 and S5P6450
+machines. It also updates arch/arm/ Kconfig and Makefile to include for
+support ARCH_S5P64X0 with one kernel image.
 
-v2: removed unnecessary direction_input callback,
-minor formatting cleanup
-
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s3c2410/h1940-bluetooth.c          |   13 ++++-
- arch/arm/mach-s3c2410/include/mach/h1940-latch.h |   57 ++++++-------------
- arch/arm/mach-s3c2410/mach-h1940.c               |   64 ++++++++++++++++++++--
- arch/arm/plat-s3c24xx/Kconfig                    |    1 +
- 4 files changed, 87 insertions(+), 48 deletions(-)
+Changes since v2:
+- Added selection S3C64XX_DEV_SPI on SMDK6440 and SMDK6450
 
-diff --git a/arch/arm/mach-s3c2410/h1940-bluetooth.c b/arch/arm/mach-s3c2410/h1940-bluetooth.c
-index 8cdeb14..8aa2f19 100644
---- a/arch/arm/mach-s3c2410/h1940-bluetooth.c
-+++ b/arch/arm/mach-s3c2410/h1940-bluetooth.c
-@@ -30,7 +30,7 @@ static void h1940bt_enable(int on)
- {
- 	if (on) {
- 		/* Power on the chip */
--		h1940_latch_control(0, H1940_LATCH_BLUETOOTH_POWER);
-+		gpio_set_value(H1940_LATCH_BLUETOOTH_POWER, 1);
- 		/* Reset the chip */
- 		mdelay(10);
+Changes since v1:
+- Added missing selections HAVE_S3C2410_WATCHDOG, _I2C, and _RTC
+
+ arch/arm/Kconfig                                   |   13 +++--
+ arch/arm/Makefile                                  |    2 +-
+ arch/arm/mach-s5p6440/Kconfig                      |   33 -----------
+ arch/arm/mach-s5p6440/Makefile                     |   25 ---------
+ arch/arm/mach-s5p64x0/Kconfig                      |   57 ++++++++++++++++++++
+ arch/arm/mach-s5p64x0/Makefile                     |   30 ++++++++++
+ .../{mach-s5p6440 => mach-s5p64x0}/Makefile.boot   |    0
+ arch/arm/plat-s5p/Kconfig                          |    4 +-
+ 8 files changed, 97 insertions(+), 67 deletions(-)
+ delete mode 100644 arch/arm/mach-s5p6440/Kconfig
+ delete mode 100644 arch/arm/mach-s5p6440/Makefile
+ create mode 100644 arch/arm/mach-s5p64x0/Kconfig
+ create mode 100644 arch/arm/mach-s5p64x0/Makefile
+ rename arch/arm/{mach-s5p6440 => mach-s5p64x0}/Makefile.boot (100%)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index a7ed21f..626489b 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -679,8 +679,8 @@ config ARCH_S3C64XX
+ 	help
+ 	  Samsung S3C64XX series based systems
  
-@@ -43,7 +43,7 @@ static void h1940bt_enable(int on)
- 		mdelay(10);
- 		gpio_set_value(S3C2410_GPH(1), 0);
- 		mdelay(10);
--		h1940_latch_control(H1940_LATCH_BLUETOOTH_POWER, 0);
-+		gpio_set_value(H1940_LATCH_BLUETOOTH_POWER, 0);
- 	}
- }
+-config ARCH_S5P6440
+-	bool "Samsung S5P6440"
++config ARCH_S5P64X0
++	bool "Samsung S5P6440 S5P6450"
+ 	select CPU_V6
+ 	select GENERIC_GPIO
+ 	select HAVE_CLK
+@@ -689,7 +689,8 @@ config ARCH_S5P6440
+ 	select HAVE_S3C2410_I2C
+ 	select HAVE_S3C_RTC
+ 	help
+-	  Samsung S5P6440 CPU based systems
++	  Samsung S5P64X0 CPU based systems, such as the Samsung SMDK6440,
++	  SMDK6450.
  
-@@ -64,7 +64,14 @@ static int __devinit h1940bt_probe(struct platform_device *pdev)
+ config ARCH_S5P6442
+ 	bool "Samsung S5P6442"
+@@ -929,7 +930,7 @@ if ARCH_S3C64XX
+ source "arch/arm/mach-s3c64xx/Kconfig"
+ endif
  
- 	ret = gpio_request(S3C2410_GPH(1), dev_name(&pdev->dev));
- 	if (ret) {
--		dev_err(&pdev->dev, "could not get GPH1\n");\
-+		dev_err(&pdev->dev, "could not get GPH1\n");
-+		return ret;
-+	}
-+
-+	ret = gpio_request(H1940_LATCH_BLUETOOTH_POWER, dev_name(&pdev->dev));
-+	if (ret) {
-+		gpio_free(S3C2410_GPH(1));
-+		dev_err(&pdev->dev, "could not get BT_POWER\n");
- 		return ret;
- 	}
+-source "arch/arm/mach-s5p6440/Kconfig"
++source "arch/arm/mach-s5p64x0/Kconfig"
  
-diff --git a/arch/arm/mach-s3c2410/include/mach/h1940-latch.h b/arch/arm/mach-s3c2410/include/mach/h1940-latch.h
-index d8a8327..73586f2 100644
---- a/arch/arm/mach-s3c2410/include/mach/h1940-latch.h
-+++ b/arch/arm/mach-s3c2410/include/mach/h1940-latch.h
-@@ -14,51 +14,30 @@
- #ifndef __ASM_ARCH_H1940_LATCH_H
- #define __ASM_ARCH_H1940_LATCH_H
+ source "arch/arm/mach-s5p6442/Kconfig"
  
-+#include <mach/gpio.h>
+@@ -1232,7 +1233,7 @@ source kernel/Kconfig.preempt
  
--#ifndef __ASSEMBLY__
--#define H1940_LATCH		((void __force __iomem *)0xF8000000)
--#else
--#define H1940_LATCH		0xF8000000
--#endif
--
--#define H1940_PA_LATCH		(S3C2410_CS2)
-+#define H1940_LATCH_GPIO(x)		(S3C_GPIO_END + (x))
- 
- /* SD layer latch */
- 
--#define H1940_LATCH_SDQ1		(1<<16)
--#define H1940_LATCH_LCD_P1		(1<<17)
--#define H1940_LATCH_LCD_P2		(1<<18)
--#define H1940_LATCH_LCD_P3		(1<<19)
--#define H1940_LATCH_MAX1698_nSHUTDOWN	(1<<20)		/* LCD backlight */
--#define H1940_LATCH_LED_RED		(1<<21)
--#define H1940_LATCH_SDQ7		(1<<22)
--#define H1940_LATCH_USB_DP		(1<<23)
-+#define H1940_LATCH_SDQ1		H1940_LATCH_GPIO(0)
-+#define H1940_LATCH_LCD_P1		H1940_LATCH_GPIO(1)
-+#define H1940_LATCH_LCD_P2		H1940_LATCH_GPIO(2)
-+#define H1940_LATCH_LCD_P3		H1940_LATCH_GPIO(3)
-+#define H1940_LATCH_MAX1698_nSHUTDOWN	H1940_LATCH_GPIO(4)
-+#define H1940_LATCH_LED_RED		H1940_LATCH_GPIO(5)
-+#define H1940_LATCH_SDQ7		H1940_LATCH_GPIO(6)
-+#define H1940_LATCH_USB_DP		H1940_LATCH_GPIO(7)
- 
- /* CPU layer latch */
- 
--#define H1940_LATCH_UDA_POWER		(1<<24)
--#define H1940_LATCH_AUDIO_POWER		(1<<25)
--#define H1940_LATCH_SM803_ENABLE	(1<<26)
--#define H1940_LATCH_LCD_P4		(1<<27)
--#define H1940_LATCH_CPUQ5		(1<<28)		/* untraced */
--#define H1940_LATCH_BLUETOOTH_POWER	(1<<29)		/* active high */
--#define H1940_LATCH_LED_GREEN		(1<<30)
--#define H1940_LATCH_LED_FLASH		(1<<31)
--
--/* default settings */
--
--#define H1940_LATCH_DEFAULT		\
--	H1940_LATCH_LCD_P4		| \
--	H1940_LATCH_SM803_ENABLE	| \
--	H1940_LATCH_SDQ1		| \
--	H1940_LATCH_LCD_P1		| \
--	H1940_LATCH_LCD_P2		| \
--	H1940_LATCH_LCD_P3		| \
--	H1940_LATCH_MAX1698_nSHUTDOWN   | \
--	H1940_LATCH_CPUQ5
--
--/* control functions */
--
--extern void h1940_latch_control(unsigned int clear, unsigned int set);
-+#define H1940_LATCH_UDA_POWER		H1940_LATCH_GPIO(8)
-+#define H1940_LATCH_AUDIO_POWER		H1940_LATCH_GPIO(9)
-+#define H1940_LATCH_SM803_ENABLE	H1940_LATCH_GPIO(10)
-+#define H1940_LATCH_LCD_P4		H1940_LATCH_GPIO(11)
-+#define H1940_LATCH_CPUQ5		H1940_LATCH_GPIO(12)
-+#define H1940_LATCH_BLUETOOTH_POWER	H1940_LATCH_GPIO(13)
-+#define H1940_LATCH_LED_GREEN		H1940_LATCH_GPIO(14)
-+#define H1940_LATCH_LED_FLASH		H1940_LATCH_GPIO(15)
- 
- #endif /* __ASM_ARCH_H1940_LATCH_H */
-diff --git a/arch/arm/mach-s3c2410/mach-h1940.c b/arch/arm/mach-s3c2410/mach-h1940.c
-index 3ba3bab..f0493bd 100644
---- a/arch/arm/mach-s3c2410/mach-h1940.c
-+++ b/arch/arm/mach-s3c2410/mach-h1940.c
-@@ -59,6 +59,12 @@
- #include <plat/mci.h>
- #include <plat/ts.h>
- 
-+#define H1940_LATCH		((void __force __iomem *)0xF8000000)
-+
-+#define H1940_PA_LATCH		S3C2410_CS2
-+
-+#define H1940_LATCH_BIT(x)	(1 << ((x) + 16 - S3C_GPIO_END))
-+
- static struct map_desc h1940_iodesc[] __initdata = {
- 	[0] = {
- 		.virtual	= (unsigned long)H1940_LATCH,
-@@ -100,9 +106,16 @@ static struct s3c2410_uartcfg h1940_uartcfgs[] __initdata = {
- 
- /* Board control latch control */
- 
--static unsigned int latch_state = H1940_LATCH_DEFAULT;
-+static unsigned int latch_state = H1940_LATCH_BIT(H1940_LATCH_LCD_P4) |
-+	H1940_LATCH_BIT(H1940_LATCH_SM803_ENABLE)	|
-+	H1940_LATCH_BIT(H1940_LATCH_SDQ1)			|
-+	H1940_LATCH_BIT(H1940_LATCH_LCD_P1)			|
-+	H1940_LATCH_BIT(H1940_LATCH_LCD_P2)			|
-+	H1940_LATCH_BIT(H1940_LATCH_LCD_P3)			|
-+	H1940_LATCH_BIT(H1940_LATCH_MAX1698_nSHUTDOWN)   |
-+	H1940_LATCH_BIT(H1940_LATCH_CPUQ5);
- 
--void h1940_latch_control(unsigned int clear, unsigned int set)
-+static void h1940_latch_control(unsigned int clear, unsigned int set)
- {
- 	unsigned long flags;
- 
-@@ -116,7 +129,42 @@ void h1940_latch_control(unsigned int clear, unsigned int set)
- 	local_irq_restore(flags);
- }
- 
--EXPORT_SYMBOL_GPL(h1940_latch_control);
-+static inline int h1940_gpiolib_to_latch(int offset)
-+{
-+	return 1 << (offset + 16);
-+}
-+
-+static void h1940_gpiolib_latch_set(struct gpio_chip *chip,
-+					unsigned offset, int value)
-+{
-+	int latch_bit = h1940_gpiolib_to_latch(offset);
-+
-+	h1940_latch_control(value ? 0 : latch_bit,
-+		value ? latch_bit : 0);
-+}
-+
-+static int h1940_gpiolib_latch_output(struct gpio_chip *chip,
-+					unsigned offset, int value)
-+{
-+	h1940_gpiolib_latch_set(chip, offset, value);
-+	return 0;
-+}
-+
-+static int h1940_gpiolib_latch_get(struct gpio_chip *chip,
-+					unsigned offset)
-+{
-+	return (latch_state >> (offset + 16)) & 1;
-+}
-+
-+struct gpio_chip h1940_latch_gpiochip = {
-+	.base			= H1940_LATCH_GPIO(0),
-+	.owner			= THIS_MODULE,
-+	.label			= "H1940_LATCH",
-+	.ngpio			= 16,
-+	.direction_output	= h1940_gpiolib_latch_output,
-+	.set			= h1940_gpiolib_latch_set,
-+	.get			= h1940_gpiolib_latch_get,
-+};
- 
- static void h1940_udc_pullup(enum s3c2410_udc_cmd_e cmd)
- {
-@@ -125,10 +173,10 @@ static void h1940_udc_pullup(enum s3c2410_udc_cmd_e cmd)
- 	switch (cmd)
- 	{
- 		case S3C2410_UDC_P_ENABLE :
--			h1940_latch_control(0, H1940_LATCH_USB_DP);
-+			gpio_set_value(H1940_LATCH_USB_DP, 1);
- 			break;
- 		case S3C2410_UDC_P_DISABLE :
--			h1940_latch_control(H1940_LATCH_USB_DP, 0);
-+			gpio_set_value(H1940_LATCH_USB_DP, 0);
- 			break;
- 		case S3C2410_UDC_P_RESET :
- 			break;
-@@ -303,6 +351,8 @@ static void __init h1940_map_io(void)
- 	memcpy(phys_to_virt(H1940_SUSPEND_RESUMEAT), h1940_pm_return, 1024);
- #endif
- 	s3c_pm_init();
-+
-+	WARN_ON(gpiochip_add(&h1940_latch_gpiochip));
- }
- 
- /* H1940 and RX3715 need to reserve this for suspend */
-@@ -342,9 +392,11 @@ static void __init h1940_init(void)
- 	gpio_request(S3C2410_GPC(0), "LCD power");
- 	gpio_request(S3C2410_GPC(5), "LCD power");
- 	gpio_request(S3C2410_GPC(6), "LCD power");
--
- 	gpio_direction_input(S3C2410_GPC(6));
- 
-+	gpio_request(H1940_LATCH_USB_DP, "USB pullup");
-+	gpio_direction_output(H1940_LATCH_USB_DP, 0);
-+
- 	platform_add_devices(h1940_devices, ARRAY_SIZE(h1940_devices));
- }
- 
-diff --git a/arch/arm/plat-s3c24xx/Kconfig b/arch/arm/plat-s3c24xx/Kconfig
-index 984bf66..5a27b1b 100644
---- a/arch/arm/plat-s3c24xx/Kconfig
-+++ b/arch/arm/plat-s3c24xx/Kconfig
-@@ -69,6 +69,7 @@ config S3C24XX_GPIO_EXTRA
+ config HZ
  	int
- 	default 128 if S3C24XX_GPIO_EXTRA128
- 	default 64 if S3C24XX_GPIO_EXTRA64
-+	default 16 if ARCH_H1940
- 	default 0
+-	default 200 if ARCH_EBSA110 || ARCH_S3C2410 || ARCH_S5P6440 || \
++	default 200 if ARCH_EBSA110 || ARCH_S3C2410 || ARCH_S5P64X0 || \
+ 		ARCH_S5P6442 || ARCH_S5PV210 || ARCH_S5PV310
+ 	default OMAP_32K_TIMER_HZ if ARCH_OMAP && OMAP_32K_TIMER
+ 	default AT91_TIMER_HZ if ARCH_AT91
+@@ -1609,7 +1610,7 @@ config ZRELADDR
+ 	default 0x10008000 if ARCH_MSM ||\
+ 		ARCH_OMAP1 ||\
+ 		ARCH_RPC
+-	default 0x20008000 if ARCH_S5P6440 ||\
++	default 0x20008000 if ARCH_S5P64X0 ||\
+ 		ARCH_S5P6442 ||\
+ 		ARCH_S5PC100 ||\
+ 		ARCH_S5PV210
+diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+index 59c1ce8..8420f21 100644
+--- a/arch/arm/Makefile
++++ b/arch/arm/Makefile
+@@ -173,7 +173,7 @@ machine-$(CONFIG_ARCH_RPC)		:= rpc
+ machine-$(CONFIG_ARCH_S3C2410)		:= s3c2410 s3c2400 s3c2412 s3c2416 s3c2440 s3c2443
+ machine-$(CONFIG_ARCH_S3C24A0)		:= s3c24a0
+ machine-$(CONFIG_ARCH_S3C64XX)		:= s3c64xx
+-machine-$(CONFIG_ARCH_S5P6440)		:= s5p6440
++machine-$(CONFIG_ARCH_S5P64X0)		:= s5p64x0
+ machine-$(CONFIG_ARCH_S5P6442)		:= s5p6442
+ machine-$(CONFIG_ARCH_S5PC100)		:= s5pc100
+ machine-$(CONFIG_ARCH_S5PV210)		:= s5pv210
+diff --git a/arch/arm/mach-s5p6440/Kconfig b/arch/arm/mach-s5p6440/Kconfig
+deleted file mode 100644
+index 6a4af7f..0000000
+--- a/arch/arm/mach-s5p6440/Kconfig
++++ /dev/null
+@@ -1,33 +0,0 @@
+-# arch/arm/mach-s5p6440/Kconfig
+-#
+-# Copyright (c) 2009 Samsung Electronics Co., Ltd.
+-#		http://www.samsung.com/
+-#
+-# Licensed under GPLv2
+-
+-if ARCH_S5P6440
+-
+-config CPU_S5P6440
+-	bool
+-	select S3C_PL330_DMA
+-	help
+-	  Enable S5P6440 CPU support
+-
+-config S5P6440_SETUP_I2C1
+-	bool
+-	help
+-	  Common setup code for i2c bus 1.
+-
+-config MACH_SMDK6440
+-	bool "SMDK6440"
+-	select CPU_S5P6440
+-	select S3C_DEV_I2C1
+-	select S3C_DEV_RTC
+-	select S3C_DEV_WDT
+-	select SAMSUNG_DEV_ADC
+-	select SAMSUNG_DEV_TS
+-	select S5P6440_SETUP_I2C1
+-	help
+-	  Machine support for the Samsung SMDK6440
+-
+-endif
+diff --git a/arch/arm/mach-s5p6440/Makefile b/arch/arm/mach-s5p6440/Makefile
+deleted file mode 100644
+index c3fe4d3..0000000
+--- a/arch/arm/mach-s5p6440/Makefile
++++ /dev/null
+@@ -1,25 +0,0 @@
+-# arch/arm/mach-s5p6440/Makefile
+-#
+-# Copyright (c) 2009 Samsung Electronics Co., Ltd.
+-# 		http://www.samsung.com/
+-#
+-# Licensed under GPLv2
+-
+-obj-y				:=
+-obj-m				:=
+-obj-n				:=
+-obj-				:=
+-
+-# Core support for S5P6440 system
+-
+-obj-$(CONFIG_CPU_S5P6440)	+= cpu.o init.o clock.o gpio.o dma.o
+-obj-$(CONFIG_CPU_S5P6440)	+= setup-i2c0.o
+-
+-# machine support
+-
+-obj-$(CONFIG_MACH_SMDK6440)	+= mach-smdk6440.o
+-
+-# device support
+-obj-y				+= dev-audio.o
+-obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
+-obj-$(CONFIG_S5P6440_SETUP_I2C1)	+= setup-i2c1.o
+diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
+new file mode 100644
+index 0000000..fbcae93
+--- /dev/null
++++ b/arch/arm/mach-s5p64x0/Kconfig
+@@ -0,0 +1,57 @@
++# arch/arm/mach-s5p64x0/Kconfig
++#
++# Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
++#		http://www.samsung.com/
++#
++# Licensed under GPLv2
++
++if ARCH_S5P64X0
++
++config CPU_S5P6440
++	bool
++	select PLAT_S5P
++	select S3C_PL330_DMA
++	help
++	  Enable S5P6440 CPU support
++
++config CPU_S5P6450
++	bool
++	select PLAT_S5P
++	select S3C_PL330_DMA
++	help
++	  Enable S5P6450 CPU support
++
++config S5P64X0_SETUP_I2C1
++	bool
++	help
++	  Common setup code for i2c bus 1.
++
++# machine support
++
++config MACH_SMDK6440
++	bool "SMDK6440"
++	select CPU_S5P6440
++	select S3C_DEV_I2C1
++	select S3C_DEV_RTC
++	select S3C_DEV_WDT
++	select S3C64XX_DEV_SPI
++	select SAMSUNG_DEV_ADC
++	select SAMSUNG_DEV_TS
++	select S5P64X0_SETUP_I2C1
++	help
++	  Machine support for the Samsung SMDK6440
++
++config MACH_SMDK6450
++	bool "SMDK6450"
++	select CPU_S5P6450
++	select S3C_DEV_I2C1
++	select S3C_DEV_RTC
++	select S3C_DEV_WDT
++	select S3C64XX_DEV_SPI
++	select SAMSUNG_DEV_ADC
++	select SAMSUNG_DEV_TS
++	select S5P64X0_SETUP_I2C1
++	help
++	  Machine support for the Samsung SMDK6450
++
++endif
+diff --git a/arch/arm/mach-s5p64x0/Makefile b/arch/arm/mach-s5p64x0/Makefile
+new file mode 100644
+index 0000000..2655829
+--- /dev/null
++++ b/arch/arm/mach-s5p64x0/Makefile
+@@ -0,0 +1,30 @@
++# arch/arm/mach-s5p64x0/Makefile
++#
++# Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
++# 		http://www.samsung.com
++#
++# Licensed under GPLv2
++
++obj-y				:=
++obj-m				:=
++obj-n				:=
++obj-				:=
++
++# Core support for S5P64X0 system
++
++obj-$(CONFIG_ARCH_S5P64X0)	+= cpu.o init.o clock.o dma.o
++obj-$(CONFIG_ARCH_S5P64X0)	+= setup-i2c0.o
++obj-$(CONFIG_CPU_S5P6440)	+= clock-s5p6440.o gpio.o
++obj-$(CONFIG_CPU_S5P6450)	+= clock-s5p6450.o
++
++# machine support
++
++obj-$(CONFIG_MACH_SMDK6440)	+= mach-smdk6440.o
++obj-$(CONFIG_MACH_SMDK6450)	+= mach-smdk6450.o
++
++# device support
++
++obj-y				+= dev-audio.o
++obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
++
++obj-$(CONFIG_S5P64X0_SETUP_I2C1)	+= setup-i2c1.o
+diff --git a/arch/arm/mach-s5p6440/Makefile.boot b/arch/arm/mach-s5p64x0/Makefile.boot
+similarity index 100%
+rename from arch/arm/mach-s5p6440/Makefile.boot
+rename to arch/arm/mach-s5p64x0/Makefile.boot
+diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
+index c6a855d..90f97d6 100644
+--- a/arch/arm/plat-s5p/Kconfig
++++ b/arch/arm/plat-s5p/Kconfig
+@@ -7,7 +7,7 @@
  
- config S3C24XX_GPIO_EXTRA64
+ config PLAT_S5P
+ 	bool
+-	depends on (ARCH_S5P6440 || ARCH_S5P6442 || ARCH_S5PC100 || ARCH_S5PV210 || ARCH_S5PV310)
++	depends on (ARCH_S5P64X0 || ARCH_S5P6442 || ARCH_S5PC100 || ARCH_S5PV210 || ARCH_S5PV310)
+ 	default y
+ 	select ARM_VIC if !ARCH_S5PV310
+ 	select ARM_GIC if ARCH_S5PV310
+@@ -30,7 +30,7 @@ config S5P_EXT_INT
+ 	bool
+ 	help
+ 	  Use the external interrupts (other than GPIO interrupts.)
+-	  Note: Do not choose this for S5P6440.
++	  Note: Do not choose this for S5P6440 and S5P6450.
+ 
+ config S5P_DEV_FIMC0
+ 	bool
 -- 
-1.7.2.2
+1.6.2.5
