@@ -1,37 +1,78 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3] regulators: add support max8952 regulator
-Date: Wed, 08 Sep 2010 21:28:45 +0900
-Message-ID: <004001cb4f51$63ea5d00$2bbf1700$%kim@samsung.com>
-References: <1283901976-32588-1-git-send-email-kgene.kim@samsung.com>
- <01a401cb4f01$73d60ac0$5b822040$%park@samsung.com>
+Subject: RE: [PATCH 1/4] ARM: S5PC110: add fimc clocks.
+Date: Thu, 09 Sep 2010 09:23:02 +0900
+Message-ID: <000101cb4fb5$2cbbc850$863358f0$%kim@samsung.com>
+References: <1283745044-15514-1-git-send-email-m.szyprowski@samsung.com>
+ <1283745044-15514-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:33955 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751751Ab0IHM2e (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:60701 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753194Ab0IIAWu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Sep 2010 08:28:34 -0400
-In-reply-to: <01a401cb4f01$73d60ac0$5b822040$%park@samsung.com>
+	Wed, 8 Sep 2010 20:22:50 -0400
+Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L8G00J7VEE1KG40@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 09 Sep 2010 09:22:49 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L8G00AZQEE0AI@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 09 Sep 2010 09:22:49 +0900 (KST)
+In-reply-to: <1283745044-15514-2-git-send-email-m.szyprowski@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kyungmin.park@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: lrg@slimlogic.co.uk, 'Changhwan Youn' <chaos.youn@samsung.com>, 'MyungJoo Ham' <myungjoo.ham@samsung.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
 
-Kyungmin Park wrote:
+Marek Szyprowski wrote:
 > 
-> Do you check the DVS feature?
-> It can support the DVS by GPIOs and platform can set the each voltages at
-> each mode.
+> These clocks enables FIMC driver to operate on machines, which bootloader
+> power gated FIMC devices to save power on boot.
 > 
-Ok...I agree about the feature's necessity that you said.
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-s5pv210/clock.c |   18 ++++++++++++++++++
+>  1 files changed, 18 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
+> index af91fef..9c199ef 100644
+> --- a/arch/arm/mach-s5pv210/clock.c
+> +++ b/arch/arm/mach-s5pv210/clock.c
+> @@ -281,6 +281,24 @@ static struct clk init_clocks_disable[] = {
+>  		.enable		= s5pv210_clk_ip0_ctrl,
+>  		.ctrlbit	= (1<<29),
+>  	}, {
+> +		.name		= "fimc",
+> +		.id		= 0,
+> +		.parent		= &clk_hclk_dsys.clk,
+> +		.enable		= s5pv210_clk_ip0_ctrl,
+> +		.ctrlbit	= (1 << 24),
+> +	}, {
+> +		.name		= "fimc",
+> +		.id		= 1,
+> +		.parent		= &clk_hclk_dsys.clk,
+> +		.enable		= s5pv210_clk_ip0_ctrl,
+> +		.ctrlbit	= (1 << 25),
+> +	}, {
+> +		.name		= "fimc",
+> +		.id		= 2,
+> +		.parent		= &clk_hclk_dsys.clk,
+> +		.enable		= s5pv210_clk_ip0_ctrl,
+> +		.ctrlbit	= (1 << 26),
+> +	}, {
+>  		.name		= "otg",
+>  		.id		= -1,
+>  		.parent		= &clk_hclk_psys.clk,
+> --
+> 1.7.2.2
 
-However, we don't need separate driver which has same/similar functionality.
-So...would be better that could implement it in max8649...
-
-Could you please do it based on this?...in fact, can't test it on SMDK.
+Ok..will apply.
 
 Thanks.
 
@@ -40,42 +81,3 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-> As quick review of max8649. It can't support it.
-> 
-> Thank you,
-> Kyungmin Park
-> 
-> -----Original Message-----
-> From: Kukjin Kim [mailto:kgene.kim@samsung.com]
-> Sent: Wednesday, September 08, 2010 8:26 AM
-> To: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> linux-samsung-soc@vger.kernel.org
-> Cc: lrg@slimlogic.co.uk; Changhwan Youn; Kukjin Kim; MyungJoo Ham;
-Kyungmin
-> Park
-> Subject: [PATCH v3] regulators: add support max8952 regulator
-> 
-> From: Changhwan Youn <chaos.youn@samsung.com>
-> 
-> The operation of max8952 is almost similar to max8649 except the output
-> voltage range. This patch adds support the max8952 regulator using
-> current max8649 implementation. And removes separate max8952.[ch] files
-> since the functionality is now merged into this driver.
-> 
-> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> ---
-> Following is as per Mark Brown's suggestion.
-> Changes since v2:
-> - Removed separate max8952.[ch] files
-> 
-> Changes since v1:
-> - Added returning fail when detected wrong ID
-> - Added matching the ID from the chip in case the user got things wrong
-> - Added enum chip ID instead of 0, 1
-> 
-(snip)
