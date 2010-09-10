@@ -1,54 +1,45 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: S5PV310: Fix build error on GPIO map
-Date: Thu,  9 Sep 2010 22:03:26 +0900
-Message-ID: <1284037406-2219-1-git-send-email-kgene.kim@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] ARM: S5PC110: Samsung Goni board update
+Date: Fri, 10 Sep 2010 09:23:17 +0200
+Message-ID: <1284103403-10696-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:38595 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753945Ab0IINWO (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:34132 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751295Ab0IJHX3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Sep 2010 09:22:14 -0400
+	Fri, 10 Sep 2010 03:23:29 -0400
+Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0L8I00C4CSJ2MG70@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Sep 2010 08:23:27 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0L8I00E0OSJ2JN@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Sep 2010 08:23:26 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
 
-This patch fixes build error about GPIO address due to
-conflict of commit 4d914705 and 813067ce.
+Hello,
 
-- commit 4d914705: Fix on GPIO base addresses
-- commit 813067ce: Moves initial map for merging S5P64X0
+This patch series updates the devices supported by Samsung Goni board.
+The patch series has been prepared against latest kgene/for-next kernel
+tree.
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s5pv310/cpu.c              |    2 +-
- arch/arm/mach-s5pv310/include/mach/map.h |    1 -
- 2 files changed, 1 insertions(+), 2 deletions(-)
+The complete list of patches:
 
-diff --git a/arch/arm/mach-s5pv310/cpu.c b/arch/arm/mach-s5pv310/cpu.c
-index 3b9c872..4add398 100644
---- a/arch/arm/mach-s5pv310/cpu.c
-+++ b/arch/arm/mach-s5pv310/cpu.c
-@@ -57,7 +57,7 @@ static struct map_desc s5pv310_iodesc[] __initdata = {
- 		.type		= MT_DEVICE,
- 	}, {
- 		.virtual	= (unsigned long)S5P_VA_GPIO,
--		.pfn		= __phys_to_pfn(S5PV310_PA_GPIO),
-+		.pfn		= __phys_to_pfn(S5PV310_PA_GPIO1),
- 		.length		= SZ_4K,
- 		.type		= MT_DEVICE,
- 	}, {
-diff --git a/arch/arm/mach-s5pv310/include/mach/map.h b/arch/arm/mach-s5pv310/include/mach/map.h
-index 204f386..aff6d23 100644
---- a/arch/arm/mach-s5pv310/include/mach/map.h
-+++ b/arch/arm/mach-s5pv310/include/mach/map.h
-@@ -52,7 +52,6 @@
- #define S5PV310_PA_GPIO1		(0x11400000)
- #define S5PV310_PA_GPIO2		(0x11000000)
- #define S5PV310_PA_GPIO3		(0x03860000)
--#define S5P_PA_GPIO			S5PV310_PA_GPIO1
- 
- #define S5PV310_PA_HSMMC(x)		(0x12510000 + ((x) * 0x10000))
- 
+[PATCH 1/6] ARM: S5PC110: update framebuffer setup information for Goni
+[PATCH 2/6] ARM: S5PC110: add support for S6E63M0 LCD controller on Goni board
+[PATCH 3/6] ARM: S5PC110: Add si470x radio device to the GONI board
+[PATCH 4/6] ARM: S5PV210: Enable USB HSOTG gadget build
+[PATCH 5/6] ARM: S5PC110: add support for otg usb gadget on Goni board
+[PATCH 6/6] ARM: S5PC110: add support for MMC regulators on Goni board
+
+Best regards
 -- 
-1.6.2.5
+Marek Szyprowski
+Samsung Poland R&D Center
