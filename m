@@ -1,28 +1,43 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 0/2] ARM: Update number of VIC
-Date: Fri, 10 Sep 2010 21:03:11 +0900
-Message-ID: <1284120193-23291-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 1/2] ARM: Update number of VIC for S5PV210
+Date: Fri, 10 Sep 2010 21:03:12 +0900
+Message-ID: <1284120193-23291-2-git-send-email-kgene.kim@samsung.com>
+References: <1284120193-23291-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:33730 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:33733 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752243Ab0IJMR0 (ORCPT
+	with ESMTP id S1752243Ab0IJMR1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Sep 2010 08:17:26 -0400
+	Fri, 10 Sep 2010 08:17:27 -0400
+In-Reply-To: <1284120193-23291-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org
+Cc: ben-linux@fluff.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <rmk@arm.linux.org.uk>
 
-This patches update number of VIC.
-The S5PV210 has 4 VICs, and the S5P6442 and S5PC100 have 3 ViCs.
-So need to update ARM_VIC_NR for them.
+From: Kyungmin Park <kyungmin.park@samsung.com>
 
-Russell,
+S5PV210 SoC have 4 VICs. It requires for suspend and resume.
 
-How do you think this?
-If another better way, please let me know.
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Russell King <rmk@arm.linux.org.uk>
+---
+ arch/arm/common/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-Thanks.
-
-[PATCH 1/2] ARM: Update number of VIC for S5PV210
-[PATCH 2/2] ARM: Update number of VIC for S5P6442 and S5PC100
+diff --git a/arch/arm/common/Kconfig b/arch/arm/common/Kconfig
+index 0a34c81..0ac3d81 100644
+--- a/arch/arm/common/Kconfig
++++ b/arch/arm/common/Kconfig
+@@ -6,6 +6,7 @@ config ARM_VIC
+ 
+ config ARM_VIC_NR
+ 	int
++	default 4 if ARCH_S5PV210
+ 	default 2
+ 	depends on ARM_VIC
+ 	help
+-- 
+1.6.2.5
