@@ -1,28 +1,29 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 4/6] ARM: S5PV210: Enable USB HSOTG gadget build
-Date: Fri, 10 Sep 2010 19:33:05 +0900
-Message-ID: <000a01cb50d3$90004750$b000d5f0$%kim@samsung.com>
+Subject: RE: [PATCH 5/6] ARM: S5PC110: add support for otg usb gadget on Goni
+ board
+Date: Fri, 10 Sep 2010 19:44:55 +0900
+Message-ID: <000b01cb50d5$37981140$a6c833c0$%kim@samsung.com>
 References: <1284103403-10696-1-git-send-email-m.szyprowski@samsung.com>
- <1284103403-10696-5-git-send-email-m.szyprowski@samsung.com>
+ <1284103403-10696-6-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:50138 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751107Ab0IJKcx (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:60697 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751798Ab0IJKon (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Sep 2010 06:32:53 -0400
-Received: from epmmp2 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Fri, 10 Sep 2010 06:44:43 -0400
+Received: from epmmp2 (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L8J00FED1ARQF90@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Sep 2010 19:32:51 +0900 (KST)
+ with ESMTP id <0L8J00AMU1UIAK00@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Sep 2010 19:44:42 +0900 (KST)
 Received: from kgenekim ([12.23.103.96])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L8J00II71ARUS@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Sep 2010 19:32:51 +0900 (KST)
-In-reply-to: <1284103403-10696-5-git-send-email-m.szyprowski@samsung.com>
+ with ESMTPA id <0L8J00IP71UIUS@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Sep 2010 19:44:42 +0900 (KST)
+In-reply-to: <1284103403-10696-6-git-send-email-m.szyprowski@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -31,103 +32,71 @@ Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
 
 Marek Szyprowski wrote:
 > 
-> Add the necessary definitions and mapping information to enable the
-> s3c-hsotg gadget to build.
+> Add required platform definitions for s3c-hsotg driver to enable usb
+> gadget support on Samsung Goni board.
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  arch/arm/mach-s5pv210/cpu.c                   |    5 +++++
->  arch/arm/mach-s5pv210/include/mach/map.h      |    6 ++++++
->  arch/arm/mach-s5pv210/include/mach/regs-sys.h |   19
-> +++++++++++++++++++
->  3 files changed, 30 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-s5pv210/include/mach/regs-sys.h
+>  arch/arm/mach-s5pv210/Kconfig     |    1 +
+>  arch/arm/mach-s5pv210/mach-goni.c |    5 +++++
+>  2 files changed, 6 insertions(+), 0 deletions(-)
 > 
-> diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
-> index c551ab1..6183b55 100644
-> --- a/arch/arm/mach-s5pv210/cpu.c
-> +++ b/arch/arm/mach-s5pv210/cpu.c
-> @@ -84,6 +84,11 @@ static struct map_desc s5pv210_iodesc[] __initdata = {
->  		.pfn		= __phys_to_pfn(S5PV210_PA_SROMC),
->  		.length		= SZ_4K,
->  		.type		= MT_DEVICE,
-> +	}, {
-> +		.virtual	= (unsigned long)S3C_VA_USB_HSPHY,
-> +		.pfn		=__phys_to_pfn(S3C_PA_USB_HSPHY),
+> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+> index b1f671d..f8bac5a 100644
+> --- a/arch/arm/mach-s5pv210/Kconfig
+> +++ b/arch/arm/mach-s5pv210/Kconfig
+> @@ -85,6 +85,7 @@ config MACH_GONI
+>  	select S3C_DEV_HSMMC2
+>  	select S3C_DEV_I2C1
+>  	select S5P_DEV_ONENAND
+> +	select S3C_DEV_USB_HSOTG
+>  	select SAMSUNG_DEV_KEYPAD
+>  	select S5PV210_SETUP_FB_24BPP
+>  	select S5PV210_SETUP_I2C1
+> diff --git a/arch/arm/mach-s5pv210/mach-goni.c
+b/arch/arm/mach-s5pv210/mach-
+> goni.c
+> index 30da422..b28a42b 100644
+> --- a/arch/arm/mach-s5pv210/mach-goni.c
+> +++ b/arch/arm/mach-s5pv210/mach-goni.c
+> @@ -41,6 +41,8 @@
+>  #include <plat/iic.h>
+>  #include <plat/keypad.h>
+>  #include <plat/sdhci.h>
+> +#include <plat/clock.h>
+> +#include <plat/s5p-clock.h>
 
-It's better to use S5PV210_PA_HSPHY directly without re-mapping.
-Because don't need S3C_PA_USB_HSPHY except here.
+Hmm...same 'extern struct clk_xusbxti' defined both.
+I will sort out :-)
 
-> +		.length		= SZ_4K,
-> +		.type		= MT_DEVICE,
->  	}
->  };
+I think, just one inclusion is enough now.
+If any problems, please let me know.
+
 > 
-> diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-
-> s5pv210/include/mach/map.h
-> index bd9afd5..724a428 100644
-> --- a/arch/arm/mach-s5pv210/include/mach/map.h
-> +++ b/arch/arm/mach-s5pv210/include/mach/map.h
-> @@ -73,6 +73,9 @@
+>  /* Following are default values for UCON, ULCON and UFCON UART registers
+*/
+>  #define GONI_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+> @@ -569,6 +571,7 @@ static struct platform_device *goni_devices[]
+__initdata = {
+>  	&s3c_device_fb,
+>  	&s5p_device_onenand,
+>  	&goni_spi_gpio,
+> +	&s3c_device_usb_hsotg,
+>  	&goni_i2c_gpio_pmic,
+>  	&goni_device_gpiokeys,
+>  	&s5p_device_fimc0,
+> @@ -613,6 +616,8 @@ static void __init goni_machine_init(void)
+>  	samsung_keypad_set_platdata(&keypad_data);
 > 
->  #define S5PV210_PA_HSMMC(x)	(0xEB000000 + ((x) * 0x100000))
-> 
-> +#define S5PV210_PA_HSOTG	(0xEC000000)
-> +#define S5PV210_PA_HSPHY	(0xEC100000)
+>  	platform_add_devices(goni_devices, ARRAY_SIZE(goni_devices));
 > +
->  #define S5PV210_PA_VIC0		(0xF2000000)
->  #define S5PV210_PA_VIC1		(0xF2100000)
->  #define S5PV210_PA_VIC2		(0xF2200000)
-> @@ -111,6 +114,9 @@
->  #define S5P_PA_FIMC0		S5PV210_PA_FIMC0
->  #define S5P_PA_FIMC1		S5PV210_PA_FIMC1
->  #define S5P_PA_FIMC2		S5PV210_PA_FIMC2
-> +#define S3C_PA_USB_HSOTG	S5PV210_PA_HSOTG
-
-IMHO, would be better if we could define S3C_PA_XXX first than S5P_PA_XXX.
-
-> +#define S3C_PA_USB_HSPHY	S5PV210_PA_HSPHY
-
-As I said, no need re-mapping to S3C_PA_USB_HSPHY.
-
-> +#define S3C_VA_USB_HSPHY	S3C_ADDR(0x02000000)
+> +	clk_xusbxti.rate = 24000000;
+>  }
 > 
-How about moving definition of VA_ to plat/map-s5p.h or plat/map-base.h?
-Yeah, I know in the case of s3c64xx, same address mapping is in mach/map.h.
-
->  #define SAMSUNG_PA_ADC		S5PV210_PA_ADC
->  #define SAMSUNG_PA_CFCON	S5PV210_PA_CFCON
-> diff --git a/arch/arm/mach-s5pv210/include/mach/regs-sys.h
-b/arch/arm/mach-
-> s5pv210/include/mach/regs-sys.h
-> new file mode 100644
-> index 0000000..26691d3
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv210/include/mach/regs-sys.h
-> @@ -0,0 +1,19 @@
-> +/* arch/arm/mach-s5pv210/include/mach/regs-sys.h
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * S5PV210 - System registers definitions
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#define S5PV210_USB_PHY_CON	(S3C_VA_SYS + 0xE80C)
-> +#define S5PV210_USB_PHY0_EN	(1 << 0)
-> +#define S5PV210_USB_PHY1_EN	(1 << 1)
-> +
-> +/* compatibility defines for s3c-hsotg driver */
-> +#define S3C64XX_OTHERS		S5PV210_USB_PHY_CON
-> +#define S3C64XX_OTHERS_USBMASK	S5PV210_USB_PHY0_EN
+>  MACHINE_START(GONI, "GONI")
 > --
 
-Others, ok.
 
 Thanks.
 
