@@ -1,149 +1,121 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 6/6] ARM: S5PC110: add support for MMC regulators on Goni
- board
-Date: Fri, 10 Sep 2010 18:55:50 +0900
-Message-ID: <000501cb50ce$5c606f60$15214e20$%kim@samsung.com>
+Subject: RE: [PATCH 3/6] ARM: S5PC110: Add si470x radio device to the GONI
+	board
+Date: Fri, 10 Sep 2010 18:58:15 +0900
+Message-ID: <000601cb50ce$b24f5620$16ee0260$%kim@samsung.com>
 References: <1284103403-10696-1-git-send-email-m.szyprowski@samsung.com>
- <1284103403-10696-7-git-send-email-m.szyprowski@samsung.com>
+	<1284103403-10696-4-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:26547 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751583Ab0IJJzi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Sep 2010 05:55:38 -0400
-Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L8I0093SZKPPX00@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Sep 2010 18:55:37 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L8I00EO0ZKPH1@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Sep 2010 18:55:37 +0900 (KST)
-In-reply-to: <1284103403-10696-7-git-send-email-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1284103403-10696-4-git-send-email-m.szyprowski@samsung.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, ben-linux@fluff.org, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: kyungmin.park@samsung.com, 'Joonyoung Shim' <jy0922.shim@samsung.com>, ben-linux@fluff.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Marek Szyprowski wrote:
 > 
-> Add required platform definitions for MMC power regulators on Samsung
+> Add required platform definitions for si470x radio device on Samsung
 > Goni board.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Is this the same with following?
+http://marc.info/?l=linux-arm-kernel&m=128220793700997&w=2
+
+> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> CC: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  arch/arm/mach-s5pv210/mach-goni.c |   44
-> ++++++++++++++++++++++++++++++++++--
->  1 files changed, 41 insertions(+), 3 deletions(-)
+>  arch/arm/mach-s5pv210/Kconfig     |    2 ++
+>  arch/arm/mach-s5pv210/mach-goni.c |   29
+> +++++++++++++++++++++++++++++
+>  2 files changed, 31 insertions(+), 0 deletions(-)
 > 
+> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+> index b46925b..b1f671d 100644
+> --- a/arch/arm/mach-s5pv210/Kconfig
+> +++ b/arch/arm/mach-s5pv210/Kconfig
+> @@ -83,9 +83,11 @@ config MACH_GONI
+>  	select S3C_DEV_HSMMC
+>  	select S3C_DEV_HSMMC1
+>  	select S3C_DEV_HSMMC2
+> +	select S3C_DEV_I2C1
+>  	select S5P_DEV_ONENAND
+>  	select SAMSUNG_DEV_KEYPAD
+>  	select S5PV210_SETUP_FB_24BPP
+> +	select S5PV210_SETUP_I2C1
+>  	select S5PV210_SETUP_KEYPAD
+>  	select S5PV210_SETUP_SDHCI
+>  	help
 > diff --git a/arch/arm/mach-s5pv210/mach-goni.c
 b/arch/arm/mach-s5pv210/mach-
 > goni.c
-> index b28a42b..595afc37 100644
+> index b263f3a..30da422 100644
 > --- a/arch/arm/mach-s5pv210/mach-goni.c
 > +++ b/arch/arm/mach-s5pv210/mach-goni.c
-> @@ -16,6 +16,7 @@
->  #include <linux/i2c.h>
->  #include <linux/i2c-gpio.h>
->  #include <linux/mfd/max8998.h>
-> +#include <linux/regulator/fixed.h>
->  #include <linux/spi/spi.h>
->  #include <linux/spi/spi_gpio.h>
->  #include <linux/lcd.h>
-> @@ -227,6 +228,10 @@ static void __init goni_radio_init(void)
+> @@ -38,6 +38,7 @@
+>  #include <plat/devs.h>
+>  #include <plat/cpu.h>
+>  #include <plat/fb.h>
+> +#include <plat/iic.h>
+>  #include <plat/keypad.h>
+>  #include <plat/sdhci.h>
+> 
+> @@ -200,6 +201,27 @@ static struct samsung_keypad_platdata keypad_data
+> __initdata = {
+>  	.cols		= 3,
+>  };
+> 
+> +/* Radio */
+> +static struct i2c_board_info i2c1_devs[] __initdata = {
+> +	{
+> +		I2C_BOARD_INFO("si470x", 0x10),
+> +	},
+> +};
+> +
+> +static void __init goni_radio_init(void)
+> +{
+> +	int gpio;
+> +
+> +	gpio = S5PV210_GPJ2(4);			/* XMSMDATA_4 */
+> +	gpio_request(gpio, "FM_INT");
+> +	s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0xf));
+> +	i2c1_devs[0].irq = gpio_to_irq(gpio);
+> +
+> +	gpio = S5PV210_GPJ2(5);			/* XMSMDATA_5 */
+> +	gpio_request(gpio, "FM_RST");
+> +	gpio_direction_output(gpio, 1);
+> +}
+> +
 >  /* MAX8998 regulators */
 >  #if defined(CONFIG_REGULATOR_MAX8998) ||
 > defined(CONFIG_REGULATOR_MAX8998_MODULE)
 > 
-> +static struct regulator_consumer_supply goni_ldo5_consumers[] = {
-> +	{ .supply = "vmmc",	.dev = &s3c_device_hsmmc0.dev },
-> +};
-> +
->  static struct regulator_init_data goni_ldo2_data = {
->  	.constraints	= {
->  		.name		= "VALIVE_1.1V",
-> @@ -266,6 +271,8 @@ static struct regulator_init_data goni_ldo5_data = {
->  		.max_uV		= 2800000,
->  		.apply_uV	= 1,
->  	},
-> +	.num_consumer_supplies = ARRAY_SIZE(goni_ldo5_consumers),
-> +	.consumer_supplies = goni_ldo5_consumers,
->  };
+> @@ -567,6 +589,13 @@ static void __init goni_map_io(void)
 > 
->  static struct regulator_init_data goni_ldo6_data = {
-> @@ -471,6 +478,39 @@ static struct max8998_platform_data
-> goni_max8998_pdata = {
->  	.num_regulators	= ARRAY_SIZE(goni_regulators),
->  	.regulators	= goni_regulators,
->  };
-> +
-> +static struct regulator_consumer_supply mmc2_supplies[] = {
-> +	{
-> +		.dev		= &s3c_device_hsmmc2.dev,
-> +		.supply		= "vmmc",
-> +	},
-> +};
-> +
-> +static struct regulator_init_data mmc2_fixed_voltage_init_data = {
-> +	.constraints		= {
-> +		.name		= "V_TF_2.8V",
-> +		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
-> +	},
-> +	.num_consumer_supplies	= ARRAY_SIZE(mmc2_supplies),
-> +	.consumer_supplies	= mmc2_supplies,
-> +};
-> +
-> +static struct fixed_voltage_config mmc2_fixed_voltage_config = {
-> +	.supply_name		= "T_FLASH_EN",
-> +	.microvolts		= 2800000,
-> +	.gpio			= S5PV210_MP05(4),	/* XM0ADDR_12 */
-> +	.enable_high		= true,
-> +	.init_data		= &mmc2_fixed_voltage_init_data,
-> +};
-> +
-> +static struct platform_device mmc2_fixed_voltage = {
-> +	.name		= "reg-fixed-voltage",
-> +	.id		= 2,
-> +	.dev		= {
-> +		.platform_data	= &mmc2_fixed_voltage_config,
-> +	},
-> +};
-> +
->  #endif
-> 
->  /* GPIO I2C PMIC */
-> @@ -559,9 +599,6 @@ static struct s3c_sdhci_platdata goni_hsmmc2_data
-> __initdata = {
-> 
->  static void goni_setup_sdhci(void)
+>  static void __init goni_machine_init(void)
 >  {
-> -	gpio_request(GONI_EXT_FLASH_EN, "FLASH_EN");
-> -	gpio_direction_output(GONI_EXT_FLASH_EN, 1);
-> -
-
-Why need above changes in this patch?
-Others, looks ok.
-
-
->  	s3c_sdhci0_set_platdata(&goni_hsmmc0_data);
->  	s3c_sdhci1_set_platdata(&goni_hsmmc1_data);
->  	s3c_sdhci2_set_platdata(&goni_hsmmc2_data);
-> @@ -573,6 +610,7 @@ static struct platform_device *goni_devices[]
-__initdata = {
->  	&goni_spi_gpio,
->  	&s3c_device_usb_hsotg,
->  	&goni_i2c_gpio_pmic,
-> +	&mmc2_fixed_voltage,
->  	&goni_device_gpiokeys,
->  	&s5p_device_fimc0,
->  	&s5p_device_fimc1,
+> +	/* Radio: call before I2C 1 registeration */
+> +	goni_radio_init();
+> +
+> +	/* I2C1 */
+> +	s3c_i2c1_set_platdata(NULL);
+> +	i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
+> +
+>  	/* PMIC */
+>  	goni_pmic_init();
+>  	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4,
+> i2c_gpio_pmic_devs,
 > --
 
 
