@@ -1,111 +1,82 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 3/6] ARM: S5PC110: Add si470x radio device to the GONI board
-Date: Fri, 10 Sep 2010 09:23:20 +0200
-Message-ID: <1284103403-10696-4-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 5/6] ARM: S5PC110: add support for otg usb gadget on Goni board
+Date: Fri, 10 Sep 2010 09:23:22 +0200
+Message-ID: <1284103403-10696-6-git-send-email-m.szyprowski@samsung.com>
 References: <1284103403-10696-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:34132 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751486Ab0IJHXa (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:35026 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753530Ab0IJHXc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Sep 2010 03:23:30 -0400
-Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
+	Fri, 10 Sep 2010 03:23:32 -0400
+Received: from eu_spt2 ([210.118.77.13]) by mailout3.w1.samsung.com
  (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0L8I00C4CSJ2MG70@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Sep 2010 08:23:27 +0100 (BST)
+ with ESMTP id <0L8I00EZ7SJ3VY30@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Sep 2010 08:23:28 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L8I005MLSJ26E@spt1.w1.samsung.com> for
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0L8I007C9SJ3V3@spt2.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Fri, 10 Sep 2010 08:23:27 +0100 (BST)
 In-reply-to: <1284103403-10696-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
 
-Add required platform definitions for si470x radio device on Samsung
-Goni board.
+Add required platform definitions for s3c-hsotg driver to enable usb
+gadget support on Samsung Goni board.
 
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-s5pv210/Kconfig     |    2 ++
- arch/arm/mach-s5pv210/mach-goni.c |   29 +++++++++++++++++++++++++++++
- 2 files changed, 31 insertions(+), 0 deletions(-)
+ arch/arm/mach-s5pv210/Kconfig     |    1 +
+ arch/arm/mach-s5pv210/mach-goni.c |    5 +++++
+ 2 files changed, 6 insertions(+), 0 deletions(-)
 
 diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index b46925b..b1f671d 100644
+index b1f671d..f8bac5a 100644
 --- a/arch/arm/mach-s5pv210/Kconfig
 +++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -83,9 +83,11 @@ config MACH_GONI
- 	select S3C_DEV_HSMMC
- 	select S3C_DEV_HSMMC1
+@@ -85,6 +85,7 @@ config MACH_GONI
  	select S3C_DEV_HSMMC2
-+	select S3C_DEV_I2C1
+ 	select S3C_DEV_I2C1
  	select S5P_DEV_ONENAND
++	select S3C_DEV_USB_HSOTG
  	select SAMSUNG_DEV_KEYPAD
  	select S5PV210_SETUP_FB_24BPP
-+	select S5PV210_SETUP_I2C1
- 	select S5PV210_SETUP_KEYPAD
- 	select S5PV210_SETUP_SDHCI
- 	help
+ 	select S5PV210_SETUP_I2C1
 diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
-index b263f3a..30da422 100644
+index 30da422..b28a42b 100644
 --- a/arch/arm/mach-s5pv210/mach-goni.c
 +++ b/arch/arm/mach-s5pv210/mach-goni.c
-@@ -38,6 +38,7 @@
- #include <plat/devs.h>
- #include <plat/cpu.h>
- #include <plat/fb.h>
-+#include <plat/iic.h>
+@@ -41,6 +41,8 @@
+ #include <plat/iic.h>
  #include <plat/keypad.h>
  #include <plat/sdhci.h>
++#include <plat/clock.h>
++#include <plat/s5p-clock.h>
  
-@@ -200,6 +201,27 @@ static struct samsung_keypad_platdata keypad_data __initdata = {
- 	.cols		= 3,
- };
+ /* Following are default values for UCON, ULCON and UFCON UART registers */
+ #define GONI_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+@@ -569,6 +571,7 @@ static struct platform_device *goni_devices[] __initdata = {
+ 	&s3c_device_fb,
+ 	&s5p_device_onenand,
+ 	&goni_spi_gpio,
++	&s3c_device_usb_hsotg,
+ 	&goni_i2c_gpio_pmic,
+ 	&goni_device_gpiokeys,
+ 	&s5p_device_fimc0,
+@@ -613,6 +616,8 @@ static void __init goni_machine_init(void)
+ 	samsung_keypad_set_platdata(&keypad_data);
  
-+/* Radio */
-+static struct i2c_board_info i2c1_devs[] __initdata = {
-+	{
-+		I2C_BOARD_INFO("si470x", 0x10),
-+	},
-+};
+ 	platform_add_devices(goni_devices, ARRAY_SIZE(goni_devices));
 +
-+static void __init goni_radio_init(void)
-+{
-+	int gpio;
-+
-+	gpio = S5PV210_GPJ2(4);			/* XMSMDATA_4 */
-+	gpio_request(gpio, "FM_INT");
-+	s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0xf));
-+	i2c1_devs[0].irq = gpio_to_irq(gpio);
-+
-+	gpio = S5PV210_GPJ2(5);			/* XMSMDATA_5 */
-+	gpio_request(gpio, "FM_RST");
-+	gpio_direction_output(gpio, 1);
-+}
-+
- /* MAX8998 regulators */
- #if defined(CONFIG_REGULATOR_MAX8998) || defined(CONFIG_REGULATOR_MAX8998_MODULE)
++	clk_xusbxti.rate = 24000000;
+ }
  
-@@ -567,6 +589,13 @@ static void __init goni_map_io(void)
- 
- static void __init goni_machine_init(void)
- {
-+	/* Radio: call before I2C 1 registeration */
-+	goni_radio_init();
-+
-+	/* I2C1 */
-+	s3c_i2c1_set_platdata(NULL);
-+	i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
-+
- 	/* PMIC */
- 	goni_pmic_init();
- 	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4, i2c_gpio_pmic_devs,
+ MACHINE_START(GONI, "GONI")
 -- 
 1.7.2.2
