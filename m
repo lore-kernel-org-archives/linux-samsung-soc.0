@@ -1,85 +1,35 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH v2 5/5] h1940: add UDA1380 to i2c devices list
-Date: Sun, 12 Sep 2010 00:46:40 +0300
-Message-ID: <1284241600-32738-1-git-send-email-anarsoul@gmail.com>
-References: <1283871605-32068-6-git-send-email-anarsoul@gmail.com>
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Subject: Re: [PATCH] ARM: Update number of VIC
+Date: Sun, 12 Sep 2010 23:08:30 +0200
+Message-ID: <4C8D414E.1010501@gmail.com>
+References: <1281697788-18018-1-git-send-email-kgene.kim@samsung.com> <AANLkTikyZHX-PmPx8DjyP6ar7wmyiP7Cf9-ttZQJXttZ@mail.gmail.com> <000001cb50e2$50f11940$f2d34bc0$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f46.google.com ([209.85.215.46]:63754 "EHLO
-	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752511Ab0IKVrh (ORCPT
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:50067 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753492Ab0ILVIe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 11 Sep 2010 17:47:37 -0400
-Received: by ewy23 with SMTP id 23so2300171ewy.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Sep 2010 14:47:36 -0700 (PDT)
-In-Reply-To: <1283871605-32068-6-git-send-email-anarsoul@gmail.com>
+	Sun, 12 Sep 2010 17:08:34 -0400
+Received: by eyb6 with SMTP id 6so2470567eyb.19
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Sep 2010 14:08:33 -0700 (PDT)
+In-Reply-To: <000001cb50e2$50f11940$f2d34bc0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, anarsoul@gmail.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Kyungmin Park' <kmpark@infradead.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Russell King' <rmk@arm.linux.org.uk>
 
-v2: add uda1380 reset pin
+Op 10-09-10 14:18, Kukjin Kim schreef:
+> Kyungmin Park wrote:
+>>
+>> Even though it required. I still think ben's patch is better approaches.
+> 
+> Please let me know where it is...I couldn't find it.
 
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
----
- arch/arm/mach-s3c2410/mach-h1940.c |   20 ++++++++++++++++++++
- 1 files changed, 20 insertions(+), 0 deletions(-)
+I think he means this:
 
-diff --git a/arch/arm/mach-s3c2410/mach-h1940.c b/arch/arm/mach-s3c2410/mach-h1940.c
-index e60177b..723f314 100644
---- a/arch/arm/mach-s3c2410/mach-h1940.c
-+++ b/arch/arm/mach-s3c2410/mach-h1940.c
-@@ -24,6 +24,7 @@
- #include <linux/io.h>
- #include <linux/gpio.h>
- #include <linux/pwm_backlight.h>
-+#include <linux/i2c.h>
- #include <video/platform_lcd.h>
- 
- #include <linux/mmc/host.h>
-@@ -59,6 +60,8 @@
- #include <plat/mci.h>
- #include <plat/ts.h>
- 
-+#include <sound/uda1380.h>
-+
- #define H1940_LATCH		((void __force __iomem *)0xF8000000)
- 
- #define H1940_PA_LATCH		S3C2410_CS2
-@@ -365,12 +368,26 @@ static struct platform_device h1940_lcd_powerdev = {
- 	.dev.platform_data      = &h1940_lcd_power_data,
- };
- 
-+static struct uda1380_platform_data uda1380_info = {
-+	.gpio_power	= H1940_LATCH_UDA_POWER,
-+	.gpio_reset	= S3C2410_GPA(12),
-+	.dac_clk	= UDA1380_DAC_CLK_SYSCLK,
-+};
-+
-+static struct i2c_board_info h1940_i2c_devices[] = {
-+	{
-+		I2C_BOARD_INFO("uda1380", 0x1a),
-+		.platform_data = &uda1380_info,
-+	},
-+};
-+
- static struct platform_device *h1940_devices[] __initdata = {
- 	&s3c_device_ohci,
- 	&s3c_device_lcd,
- 	&s3c_device_wdt,
- 	&s3c_device_i2c0,
- 	&s3c_device_iis,
-+	&s3c_device_pcm,
- 	&s3c_device_usbgadget,
- 	&h1940_device_leds,
- 	&h1940_device_bluetooth,
-@@ -465,6 +482,9 @@ static void __init h1940_init(void)
- 	gpio_direction_output(H1940_LATCH_SD_POWER, 0);
- 
- 	platform_add_devices(h1940_devices, ARRAY_SIZE(h1940_devices));
-+
-+	i2c_register_board_info(0, h1940_i2c_devices,
-+		ARRAY_SIZE(h1940_i2c_devices));
- }
- 
- MACHINE_START(H1940, "IPAQ-H1940")
+http://git.fluff.org/gitweb?p=bjdooks/linux.git;a=commitdiff;h=57c364b57fbcfd5b084e5edb6776da1ef583c2cf
+
 -- 
-1.7.2.2
+Maurus Cuelenaere
