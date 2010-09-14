@@ -1,154 +1,95 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH v2] ARM: Samsung: s5p-fimc: fix dma coherent mask
-Date: Tue, 14 Sep 2010 11:27:01 +0200
-Message-ID: <004201cb53ee$ff8e2a60$feaa7f20$%szyprowski@samsung.com>
-References: <000301cb4fb7$b4448530$1ccd8f90$%kim@samsung.com>
- <1283998673-14899-1-git-send-email-m.szyprowski@samsung.com>
- <011101cb5010$fdb1d520$f9157f60$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 3/3] ARM: S5PC210: Set the common L2 cache configurations
+Date: Tue, 14 Sep 2010 18:48:14 +0900
+Message-ID: <017301cb53f1$f57f3750$e07da5f0$%kim@samsung.com>
+References: <20100911053115.GA23209@july>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:14713 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752605Ab0INJ1J (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:32977 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752174Ab0INJsB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 Sep 2010 05:27:09 -0400
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Tue, 14 Sep 2010 05:48:01 -0400
+Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L8Q00CB2CX7C470@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 14 Sep 2010 18:27:07 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
+ with ESMTP id <0L8Q0091RDVZPOA0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 14 Sep 2010 18:47:59 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L8Q000N9CX328@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 14 Sep 2010 18:27:07 +0900 (KST)
-In-reply-to: <011101cb5010$fdb1d520$f9157f60$%kim@samsung.com>
-Content-language: pl
+ with ESMTPA id <0L8Q000SQDVZ9E@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 14 Sep 2010 18:47:59 +0900 (KST)
+In-reply-to: <20100911053115.GA23209@july>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
+To: 'Kyungmin Park' <kmpark@infradead.org>, linux-arm-kernel@lists.infradead.org
+Cc: linux@arm.linux.org.uk, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-Hello,
-
-On Thursday, September 09, 2010 1:20 PM Kukjin Kim wrote:
-
-> Marek Szyprowski wrote:
-> >
-> > FIMC driver uses DMA_coherent allocator, which requires proper dma mask
-> > to be set.
-> >
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> >
-> > Chnages since v1:
-> > - use DMA_BIT_MASK() macro, minor coding style change
-> >
-> > ---
-> >  arch/arm/plat-s5p/dev-fimc0.c |    7 +++++++
-> >  arch/arm/plat-s5p/dev-fimc1.c |    7 +++++++
-> >  arch/arm/plat-s5p/dev-fimc2.c |    7 +++++++
-> >  3 files changed, 21 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/arch/arm/plat-s5p/dev-fimc0.c b/arch/arm/plat-s5p/dev-
-> fimc0.c
-> > index d3f1a9b..f9203fa 100644
-> > --- a/arch/arm/plat-s5p/dev-fimc0.c
-> > +++ b/arch/arm/plat-s5p/dev-fimc0.c
-> > @@ -10,6 +10,7 @@
-> >   */
-> >
-> >  #include <linux/kernel.h>
-> > +#include <linux/dma-mapping.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/interrupt.h>
-> >  #include <linux/ioport.h>
-> > @@ -28,9 +29,15 @@ static struct resource s5p_fimc0_resource[] = {
-> >  	},
-> >  };
-> >
-> > +static u64 s5p_fimc0_dma_mask = DMA_BIT_MASK(32);
-> > +
-> >  struct platform_device s5p_device_fimc0 = {
-> >  	.name		= "s5p-fimc",
-> >  	.id		= 0,
-> >  	.num_resources	= ARRAY_SIZE(s5p_fimc0_resource),
-> >  	.resource	= s5p_fimc0_resource,
-> > +	.dev		= {
-> > +		.dma_mask		= &s5p_fimc0_dma_mask,
-> > +		.coherent_dma_mask	= DMA_BIT_MASK(32),
-> > +	},
-> >  };
-> > diff --git a/arch/arm/plat-s5p/dev-fimc1.c b/arch/arm/plat-s5p/dev-
-> fimc1.c
-> > index 41bd698..7ed91a3 100644
-> > --- a/arch/arm/plat-s5p/dev-fimc1.c
-> > +++ b/arch/arm/plat-s5p/dev-fimc1.c
-> > @@ -10,6 +10,7 @@
-> >   */
-> >
-> >  #include <linux/kernel.h>
-> > +#include <linux/dma-mapping.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/interrupt.h>
-> >  #include <linux/ioport.h>
-> > @@ -28,9 +29,15 @@ static struct resource s5p_fimc1_resource[] = {
-> >  	},
-> >  };
-> >
-> > +static u64 s5p_fimc1_dma_mask = DMA_BIT_MASK(32);
-> > +
-> >  struct platform_device s5p_device_fimc1 = {
-> >  	.name		= "s5p-fimc",
-> >  	.id		= 1,
-> >  	.num_resources	= ARRAY_SIZE(s5p_fimc1_resource),
-> >  	.resource	= s5p_fimc1_resource,
-> > +	.dev		= {
-> > +		.dma_mask		= &s5p_fimc1_dma_mask,
-> > +		.coherent_dma_mask	= DMA_BIT_MASK(32),
-> > +	},
-> >  };
-> > diff --git a/arch/arm/plat-s5p/dev-fimc2.c b/arch/arm/plat-s5p/dev-
-> fimc2.c
-> > index dfddeda..5543d6373 100644
-> > --- a/arch/arm/plat-s5p/dev-fimc2.c
-> > +++ b/arch/arm/plat-s5p/dev-fimc2.c
-> > @@ -10,6 +10,7 @@
-> >   */
-> >
-> >  #include <linux/kernel.h>
-> > +#include <linux/dma-mapping.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/interrupt.h>
-> >  #include <linux/ioport.h>
-> > @@ -28,9 +29,15 @@ static struct resource s5p_fimc2_resource[] = {
-> >  	},
-> >  };
-> >
-> > +static u64 s5p_fimc2_dma_mask = DMA_BIT_MASK(32);
-> > +
-> >  struct platform_device s5p_device_fimc2 = {
-> >  	.name		= "s5p-fimc",
-> >  	.id		= 2,
-> >  	.num_resources	= ARRAY_SIZE(s5p_fimc2_resource),
-> >  	.resource	= s5p_fimc2_resource,
-> > +	.dev		= {
-> > +		.dma_mask		= &s5p_fimc2_dma_mask,
-> > +		.coherent_dma_mask	= DMA_BIT_MASK(32),
-> > +	},
-> >  };
-> > --
-> > 1.7.2.2
+Kyungmin Park wrote:
 > 
-> looks good to me..will apply :-)
+> From: Kyungmin Park <kyungmin.park@samsung.com>
+> 
+> S5PC210 has PL310 1MiB L2 cache.
+> It uses the optimized data & tag latency and also enable the prefetch.
+> 
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-s5pv310/cpu.c |   19 +++++++++++++++++++
+>  1 files changed, 19 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-s5pv310/cpu.c b/arch/arm/mach-s5pv310/cpu.c
+> index e5b261a..b50312e 100644
+> --- a/arch/arm/mach-s5pv310/cpu.c
+> +++ b/arch/arm/mach-s5pv310/cpu.c
+> @@ -15,6 +15,7 @@
+>  #include <asm/mach/irq.h>
+> 
+>  #include <asm/proc-fns.h>
+> +#include <asm/hardware/cache-l2x0.h>
+> 
+>  #include <plat/cpu.h>
+>  #include <plat/clock.h>
+> @@ -121,6 +122,24 @@ static int __init s5pv310_core_init(void)
+> 
+>  core_initcall(s5pv310_core_init);
+> 
+> +static int __init s5pv310_init_cache(void)
+> +{
+> +#ifdef CONFIG_CACHE_L2X0
+> +	void __iomem *p = S5P_VA_L2CC;
+> +
+> +	/* TAG,  Data latency control */
+> +	writel(0x110, p + L2X0_TAG_LATENCY_CTRL);
 
-What about merging this patch also to the kgene/s5p-fixes-for-linus branch?
-IMHO this and the fimc clocks patch are pure bug fixes that should be merged
-into final 2.6.36 kernel. Without these two patches fimc driver is useless.
+Please use '__raw_writel' instead of 'writel' here...
 
-Best regards
+> +	writel(0x110, p + L2X0_DATA_LATENCY_CTRL);
+> +
+> +	/* L2 cache prefetch control */
+> +	writel(0x6, p + L2X0_PREFETCH_CTRL);
+
+As I know, there is more suitable value which has been tested.
+It means should be changed...but now it is under testing.
+
+> +
+> +	l2x0_init(p, 0x3C070001, 0xC200FFFF);
+> +#endif
+> +	return 0;
+> +}
+> +early_initcall(s5pv310_init_cache);
+> +
+>  int __init s5pv310_init(void)
+>  {
+>  	printk(KERN_INFO "S5PV310: Initializing architecture\n");
+> --
+
+Thanks.
+
+Best regards,
+Kgene.
 --
-Marek Szyprowski
-Samsung Poland R&D Center
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
