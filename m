@@ -1,448 +1,761 @@
-From: Jaecheol Lee <jc.lee@samsung.com>
-Subject: [PATCH 4/5] ARM: S5PV210: Add support CPUFREQ
-Date: Wed, 15 Sep 2010 16:52:41 +0900
-Message-ID: <1284537162-3129-5-git-send-email-jc.lee@samsung.com>
-References: <1284537162-3129-1-git-send-email-jc.lee@samsung.com>
+From: Sangbeom Kim <sbkim73@samsung.com>
+Subject: [PATCH v3] ARM: S5PV210: Add Power Management Support
+Date: Wed, 15 Sep 2010 17:33:18 +0900
+Message-ID: <1284539598-7917-1-git-send-email-sbkim73@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:48440 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:60257 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751774Ab0IOIId (ORCPT
+	with ESMTP id S1751699Ab0IOIsc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Sep 2010 04:08:33 -0400
-In-Reply-To: <1284537162-3129-1-git-send-email-jc.lee@samsung.com>
+	Wed, 15 Sep 2010 04:48:32 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com, Jaecheol Lee <jc.lee@samsung.com>
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, Jongpill Lee <boyko.lee@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>
 
-This patch adds CPUFREQ driver for supporting DFS(Dynamic Frequency Scaling).
+From: Jongpill Lee <boyko.lee@samsung.com>
 
-Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
+This patch adds suspend-to-ram support for S5PV210.
+Note. This patch is confirmed on SMDKV210 and SMDKC110 board.
+
+Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
+Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
 ---
- arch/arm/mach-s5pv210/cpufreq.c |  415 +++++++++++++++++++++++++++++++++++++++
- 1 files changed, 415 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s5pv210/cpufreq.c
+Changes since v2:
+1. Fixed comments as per commnets from Ben Dooks
+2. Removed backup and restore function for VIC 2 and 3
 
-diff --git a/arch/arm/mach-s5pv210/cpufreq.c b/arch/arm/mach-s5pv210/cpufreq.c
+Changes since v1:
+1. Fixed comments as per comments from Ben Dooks
+2. Removed redunt #if defined(CONFIG_PM)
+3. Removed redunt including header files
+4. Removed <mach/pm.h> and <plat/pm-s5p.h>
+5. Moved 's5pv210_core_save' into machine directory
+6. Moved sleep.S into machine directory for S5P SoCs compatibility
+7. Added CF retension configuration when wake-up
+
+
+ arch/arm/mach-s5pv210/Kconfig                   |    6 +
+ arch/arm/mach-s5pv210/Makefile                  |    1 +
+ arch/arm/mach-s5pv210/include/mach/pm-core.h    |   43 ++++++
+ arch/arm/mach-s5pv210/include/mach/regs-clock.h |    7 +-
+ arch/arm/mach-s5pv210/mach-smdkc110.c           |    3 +
+ arch/arm/mach-s5pv210/mach-smdkv210.c           |    3 +
+ arch/arm/mach-s5pv210/pm.c                      |  166 ++++++++++++++++++++++
+ arch/arm/mach-s5pv210/sleep.S                   |  171 +++++++++++++++++++++++
+ arch/arm/plat-s5p/Makefile                      |    2 +
+ arch/arm/plat-s5p/include/plat/irqs.h           |    1 +
+ arch/arm/plat-s5p/irq-pm.c                      |   93 ++++++++++++
+ arch/arm/plat-s5p/pm.c                          |   52 +++++++
+ arch/arm/plat-samsung/pm-gpio.c                 |    4 +-
+ 13 files changed, 548 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm/mach-s5pv210/include/mach/pm-core.h
+ create mode 100644 arch/arm/mach-s5pv210/pm.c
+ create mode 100644 arch/arm/mach-s5pv210/sleep.S
+ create mode 100644 arch/arm/plat-s5p/irq-pm.c
+ create mode 100644 arch/arm/plat-s5p/pm.c
+
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index b46925b..6649170 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -14,6 +14,7 @@ config CPU_S5PV210
+ 	select PLAT_S5P
+ 	select S3C_PL330_DMA
+ 	select S5P_EXT_INT
++	select S5PV210_PM if PM
+ 	help
+ 	  Enable S5PV210 CPU support
+ 
+@@ -138,4 +139,9 @@ config MACH_SMDKV210
+ 
+ endmenu
+ 
++config S5PV210_PM
++	bool
++	help
++	  Power Management code common to S5PV210
++
+ endif
+diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
+index 7045489..c63c162 100644
+--- a/arch/arm/mach-s5pv210/Makefile
++++ b/arch/arm/mach-s5pv210/Makefile
+@@ -14,6 +14,7 @@ obj-				:=
+ 
+ obj-$(CONFIG_CPU_S5PV210)	+= cpu.o init.o clock.o dma.o gpiolib.o
+ obj-$(CONFIG_CPU_S5PV210)	+= setup-i2c0.o
++obj-$(CONFIG_S5PV210_PM)	+= pm.o sleep.o
+ 
+ # machine support
+ 
+diff --git a/arch/arm/mach-s5pv210/include/mach/pm-core.h b/arch/arm/mach-s5pv210/include/mach/pm-core.h
 new file mode 100644
-index 0000000..aa39c2e
+index 0000000..e8d394f
 --- /dev/null
-+++ b/arch/arm/mach-s5pv210/cpufreq.c
-@@ -0,0 +1,415 @@
-+/* linux/arch/arm/mach-s5pv210/cpufreq.c
++++ b/arch/arm/mach-s5pv210/include/mach/pm-core.h
+@@ -0,0 +1,43 @@
++/* linux/arch/arm/mach-s5pv210/include/mach/pm-core.h
 + *
 + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
 + *		http://www.samsung.com
 + *
-+ * CPU frequency scaling for S5PC110/S5PV210
++ * Based on arch/arm/mach-s3c2410/include/mach/pm-core.h,
++ * Copyright 2008 Simtec Electronics
++ *      Ben Dooks <ben@simtec.co.uk>
++ *      http://armlinux.simtec.co.uk/
++ *
++ * S5PV210 - PM core support for arch/arm/plat-s5p/pm.c
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 +*/
 +
-+#include <linux/types.h>
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/err.h>
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+#include <linux/cpufreq.h>
++static inline void s3c_pm_debug_init_uart(void)
++{
++	/* nothing here yet */
++}
 +
-+#include <mach/map.h>
++static inline void s3c_pm_arch_prepare_irqs(void)
++{
++	__raw_writel(s3c_irqwake_intmask, S5P_WAKEUP_MASK);
++	__raw_writel(s3c_irqwake_eintmask, S5P_EINT_WAKEUP_MASK);
++}
++
++static inline void s3c_pm_arch_stop_clocks(void)
++{
++	/* nothing here yet */
++}
++
++static inline void s3c_pm_arch_show_resume_irqs(void)
++{
++	/* nothing here yet */
++}
++
++static inline void s3c_pm_arch_update_uart(void __iomem *regs,
++					   struct pm_uart_save *save)
++{
++	/* nothing here yet */
++}
+diff --git a/arch/arm/mach-s5pv210/include/mach/regs-clock.h b/arch/arm/mach-s5pv210/include/mach/regs-clock.h
+index 499aef7..929fd3a 100644
+--- a/arch/arm/mach-s5pv210/include/mach/regs-clock.h
++++ b/arch/arm/mach-s5pv210/include/mach/regs-clock.h
+@@ -95,7 +95,7 @@
+ /* Registers related to power management */
+ #define S5P_PWR_CFG		S5P_CLKREG(0xC000)
+ #define S5P_EINT_WAKEUP_MASK	S5P_CLKREG(0xC004)
+-#define S5P_WAKEUP_MASK 	S5P_CLKREG(0xC008)
++#define S5P_WAKEUP_MASK		S5P_CLKREG(0xC008)
+ #define S5P_PWR_MODE		S5P_CLKREG(0xC00C)
+ #define S5P_NORMAL_CFG		S5P_CLKREG(0xC010)
+ #define S5P_IDLE_CFG		S5P_CLKREG(0xC020)
+@@ -159,8 +159,11 @@
+ #define S5P_SLEEP_CFG_USBOSC_EN		(1 << 1)
+ 
+ /* OTHERS Resgister */
++#define S5P_OTHERS_RET_IO		(1 << 31)
++#define S5P_OTHERS_RET_CF		(1 << 30)
++#define S5P_OTHERS_RET_MMC		(1 << 29)
++#define S5P_OTHERS_RET_UART		(1 << 28)
+ #define S5P_OTHERS_USB_SIG_MASK		(1 << 16)
+-#define S5P_OTHERS_MIPI_DPHY_EN		(1 << 28)
+ 
+ /* MIPI */
+ #define S5P_MIPI_DPHY_EN		(3)
+diff --git a/arch/arm/mach-s5pv210/mach-smdkc110.c b/arch/arm/mach-s5pv210/mach-smdkc110.c
+index 8211bb8..053b50d 100644
+--- a/arch/arm/mach-s5pv210/mach-smdkc110.c
++++ b/arch/arm/mach-s5pv210/mach-smdkc110.c
+@@ -28,6 +28,7 @@
+ #include <plat/cpu.h>
+ #include <plat/ata.h>
+ #include <plat/iic.h>
++#include <plat/pm.h>
+ 
+ /* Following are default values for UCON, ULCON and UFCON UART registers */
+ #define SMDKC110_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+@@ -110,6 +111,8 @@ static void __init smdkc110_map_io(void)
+ 
+ static void __init smdkc110_machine_init(void)
+ {
++	s3c_pm_init();
++
+ 	s3c_i2c0_set_platdata(NULL);
+ 	s3c_i2c1_set_platdata(NULL);
+ 	s3c_i2c2_set_platdata(NULL);
+diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
+index fbbc0a3..5a9c79c 100644
+--- a/arch/arm/mach-s5pv210/mach-smdkv210.c
++++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
+@@ -31,6 +31,7 @@
+ #include <plat/ata.h>
+ #include <plat/iic.h>
+ #include <plat/keypad.h>
++#include <plat/pm.h>
+ 
+ /* Following are default values for UCON, ULCON and UFCON UART registers */
+ #define SMDKV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+@@ -145,6 +146,8 @@ static void __init smdkv210_map_io(void)
+ 
+ static void __init smdkv210_machine_init(void)
+ {
++	s3c_pm_init();
++
+ 	samsung_keypad_set_platdata(&smdkv210_keypad_data);
+ 	s3c24xx_ts_set_platdata(&s3c_ts_platform);
+ 
+diff --git a/arch/arm/mach-s5pv210/pm.c b/arch/arm/mach-s5pv210/pm.c
+new file mode 100644
+index 0000000..549d792
+--- /dev/null
++++ b/arch/arm/mach-s5pv210/pm.c
+@@ -0,0 +1,166 @@
++/* linux/arch/arm/mach-s5pv210/pm.c
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * S5PV210 - Power Management support
++ *
++ * Based on arch/arm/mach-s3c2410/pm.c
++ * Copyright (c) 2006 Simtec Electronics
++ *	Ben Dooks <ben@simtec.co.uk>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/init.h>
++#include <linux/suspend.h>
++#include <linux/io.h>
++
++#include <plat/cpu.h>
++#include <plat/pm.h>
++#include <plat/regs-timer.h>
++
++#include <mach/regs-irq.h>
 +#include <mach/regs-clock.h>
 +
-+static struct clk *cpu_clk;
-+static struct cpufreq_freqs freqs;
++static struct sleep_save s5pv210_core_save[] = {
++	/* Clock source */
++	SAVE_ITEM(S5P_CLK_SRC0),
++	SAVE_ITEM(S5P_CLK_SRC1),
++	SAVE_ITEM(S5P_CLK_SRC2),
++	SAVE_ITEM(S5P_CLK_SRC3),
++	SAVE_ITEM(S5P_CLK_SRC4),
++	SAVE_ITEM(S5P_CLK_SRC5),
++	SAVE_ITEM(S5P_CLK_SRC6),
 +
-+/* APLL M,P,S values for 1G/800Mhz */
-+#define APLL_VAL_1000	(1 << 31) | (125 << 16) | (3 << 8) | 1
-+#define APLL_VAL_800	(1 << 31) | (100 << 16) | (3 << 8) | 1
++	/* Clock source Mask */
++	SAVE_ITEM(S5P_CLK_SRC_MASK0),
++	SAVE_ITEM(S5P_CLK_SRC_MASK1),
 +
-+enum perf_level {
-+	L0, L1, L2, L3, L4,
++	/* Clock Divider */
++	SAVE_ITEM(S5P_CLK_DIV0),
++	SAVE_ITEM(S5P_CLK_DIV1),
++	SAVE_ITEM(S5P_CLK_DIV2),
++	SAVE_ITEM(S5P_CLK_DIV3),
++	SAVE_ITEM(S5P_CLK_DIV4),
++	SAVE_ITEM(S5P_CLK_DIV5),
++	SAVE_ITEM(S5P_CLK_DIV6),
++	SAVE_ITEM(S5P_CLK_DIV7),
++
++	/* Clock Main Gate */
++	SAVE_ITEM(S5P_CLKGATE_MAIN0),
++	SAVE_ITEM(S5P_CLKGATE_MAIN1),
++	SAVE_ITEM(S5P_CLKGATE_MAIN2),
++
++	/* Clock source Peri Gate */
++	SAVE_ITEM(S5P_CLKGATE_PERI0),
++	SAVE_ITEM(S5P_CLKGATE_PERI1),
++
++	/* Clock source SCLK Gate */
++	SAVE_ITEM(S5P_CLKGATE_SCLK0),
++	SAVE_ITEM(S5P_CLKGATE_SCLK1),
++
++	/* Clock IP Clock gate */
++	SAVE_ITEM(S5P_CLKGATE_IP0),
++	SAVE_ITEM(S5P_CLKGATE_IP1),
++	SAVE_ITEM(S5P_CLKGATE_IP2),
++	SAVE_ITEM(S5P_CLKGATE_IP3),
++	SAVE_ITEM(S5P_CLKGATE_IP4),
++
++	/* Clock Blcok and Bus gate */
++	SAVE_ITEM(S5P_CLKGATE_BLOCK),
++	SAVE_ITEM(S5P_CLKGATE_BUS0),
++
++	/* Clock ETC */
++	SAVE_ITEM(S5P_CLK_OUT),
++	SAVE_ITEM(S5P_MDNIE_SEL),
++
++	/* PWM Register */
++	SAVE_ITEM(S3C2410_TCFG0),
++	SAVE_ITEM(S3C2410_TCFG1),
++	SAVE_ITEM(S3C64XX_TINT_CSTAT),
++	SAVE_ITEM(S3C2410_TCON),
++	SAVE_ITEM(S3C2410_TCNTB(0)),
++	SAVE_ITEM(S3C2410_TCMPB(0)),
++	SAVE_ITEM(S3C2410_TCNTO(0)),
 +};
 +
-+enum s5pv210_mem_type {
-+	LPDDR	= 0x1,
-+	LPDDR2	= 0x2,
-+	DDR2	= 0x4,
++void s5pv210_cpu_suspend(void)
++{
++	unsigned long tmp;
++
++	/* issue the standby signal into the pm unit. Note, we
++	 * issue a write-buffer drain just in case */
++
++	tmp = 0;
++
++	asm("b 1f\n\t"
++	    ".align 5\n\t"
++	    "1:\n\t"
++	    "mcr p15, 0, %0, c7, c10, 5\n\t"
++	    "mcr p15, 0, %0, c7, c10, 4\n\t"
++	    "wfi" : : "r" (tmp));
++
++	/* we should never get past here */
++	panic("sleep resumed to originator?");
++}
++
++static void s5pv210_pm_prepare(void)
++{
++	unsigned int tmp;
++
++	/* ensure at least INFORM0 has the resume address */
++	__raw_writel(virt_to_phys(s3c_cpu_resume), S5P_INFORM0);
++
++	tmp = __raw_readl(S5P_SLEEP_CFG);
++	tmp &= ~(S5P_SLEEP_CFG_OSC_EN | S5P_SLEEP_CFG_USBOSC_EN);
++	__raw_writel(tmp, S5P_SLEEP_CFG);
++
++	/* WFI for SLEEP mode configuration by SYSCON */
++	tmp = __raw_readl(S5P_PWR_CFG);
++	tmp &= S5P_CFG_WFI_CLEAN;
++	tmp |= S5P_CFG_WFI_SLEEP;
++	__raw_writel(tmp, S5P_PWR_CFG);
++
++	/* SYSCON interrupt handling disable */
++	tmp = __raw_readl(S5P_OTHERS);
++	tmp |= S5P_OTHER_SYSC_INTOFF;
++	__raw_writel(tmp, S5P_OTHERS);
++
++	s3c_pm_do_save(s5pv210_core_save, ARRAY_SIZE(s5pv210_core_save));
++}
++
++static int s5pv210_pm_add(struct sys_device *sysdev)
++{
++	pm_cpu_prep = s5pv210_pm_prepare;
++	pm_cpu_sleep = s5pv210_cpu_suspend;
++
++	return 0;
++}
++
++static int s5pv210_pm_resume(struct sys_device *dev)
++{
++	u32 tmp;
++
++	tmp = __raw_readl(S5P_OTHERS);
++	tmp |= (S5P_OTHERS_RET_IO | S5P_OTHERS_RET_CF |\
++		S5P_OTHERS_RET_MMC | S5P_OTHERS_RET_UART);
++	__raw_writel(tmp , S5P_OTHERS);
++
++	s3c_pm_do_restore_core(s5pv210_core_save, ARRAY_SIZE(s5pv210_core_save));
++
++	return 0;
++}
++
++static struct sysdev_driver s5pv210_pm_driver = {
++	.add		= s5pv210_pm_add,
++	.resume		= s5pv210_pm_resume,
 +};
 +
-+static struct cpufreq_frequency_table s5pv210_freq_table[] = {
-+	{L0, 1000*1000},
-+	{L1, 800*1000},
-+	{L2, 400*1000},
-+	{L3, 200*1000},
-+	{L4, 100*1000},
-+	{0, CPUFREQ_TABLE_END},
-+};
++static __init int s5pv210_pm_drvinit(void)
++{
++	return sysdev_driver_register(&s5pv210_sysclass, &s5pv210_pm_driver);
++}
++arch_initcall(s5pv210_pm_drvinit);
+diff --git a/arch/arm/mach-s5pv210/sleep.S b/arch/arm/mach-s5pv210/sleep.S
+new file mode 100644
+index 0000000..4124fd4
+--- /dev/null
++++ b/arch/arm/mach-s5pv210/sleep.S
+@@ -0,0 +1,171 @@
++/* linux/arch/arm/plat-s5p/sleep.S
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * S5PV210 power Manager (Suspend-To-RAM) support
++ * Based on S3C2410 sleep code by:
++ * 	Ben Dooks, (c) 2004 Simtec Electronics
++ *
++ * Based on PXA/SA1100 sleep code by:
++ *	Nicolas Pitre, (c) 2002 Monta Vista Software Inc
++ *	Cliff Brake, (c) 2001
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++*/
 +
-+static u32 clkdiv_val[5][11] = {
++#include <linux/linkage.h>
++#include <asm/assembler.h>
++#include <asm/memory.h>
++
++	.text
++
++	/* s3c_cpu_save
++	 *
++	 * entry:
++	 *	r0 = save address (virtual addr of s3c_sleep_save_phys)
++	*/
++
++ENTRY(s3c_cpu_save)
++
++	stmfd	sp!, { r3 - r12, lr }
++
++	mrc	p15, 0, r4, c13, c0, 0	@ FCSE/PID
++	mrc	p15, 0, r5, c3, c0, 0	@ Domain ID
++	mrc	p15, 0, r6, c2, c0, 0	@ Translation Table BASE0
++	mrc	p15, 0, r7, c2, c0, 1	@ Translation Table BASE1
++	mrc	p15, 0, r8, c2, c0, 2	@ Translation Table Control
++	mrc	p15, 0, r9, c1, c0, 0	@ Control register
++	mrc	p15, 0, r10, c1, c0, 1	@ Auxiliary control register
++	mrc	p15, 0, r11, c1, c0, 2	@ Co-processor access controls
++	mrc	p15, 0, r12, c10, c2, 0	@ Read PRRR
++	mrc	p15, 0, r3, c10, c2, 1	@ READ NMRR
++
++	stmia	r0, { r3 - r13 }
++
++	bl	s3c_pm_cb_flushcache
++
++	ldr	r0, =pm_cpu_sleep
++	ldr	r0, [ r0 ]
++	mov	pc, r0
++
++resume_with_mmu:
 +	/*
-+	 * Clock divider value for following
-+	 * { APLL, A2M, HCLK_MSYS, PCLK_MSYS,
-+	 *   HCLK_DSYS, PCLK_DSYS, HCLK_PSYS, PCLK_PSYS,
-+	 *   ONEDRAM, MFC, G3D }
++	 * After MMU is turned on, restore the previous MMU table.
 +	 */
++	ldr	r9 , =(PAGE_OFFSET - PHYS_OFFSET)
++	add	r4, r4, r9
++	str	r12, [r4]
 +
-+	/* L0 : [1000/200/100][166/83][133/66][200/200] */
-+	{0, 4, 4, 1, 3, 1, 4, 1, 3, 0, 0},
++	ldmfd	sp!, { r3 - r12, pc }
 +
-+	/* L1 : [800/200/100][166/83][133/66][200/200] */
-+	{0, 3, 3, 1, 3, 1, 4, 1, 3, 0, 0},
++	.ltorg
 +
-+	/* L2 : [400/200/100][166/83][133/66][200/200] */
-+	{1, 3, 1, 1, 3, 1, 4, 1, 3, 0, 0},
++	.data
 +
-+	/* L3 : [200/200/100][166/83][133/66][200/200] */
-+	{3, 3, 1, 1, 3, 1, 4, 1, 3, 0, 0},
++	.global	s3c_sleep_save_phys
++s3c_sleep_save_phys:
++	.word	0
 +
-+	/* L4 : [100/100/100][83/83][66/66][100/100] */
-+	{7, 7, 0, 0, 7, 0, 9, 0, 7, 0, 0},
-+};
++	/* sleep magic, to allow the bootloader to check for an valid
++	 * image to resume to. Must be the first word before the
++	 * s3c_cpu_resume entry.
++	*/
 +
-+int s5pv210_verify_speed(struct cpufreq_policy *policy)
++	.word	0x2bedf00d
++
++	/* s3c_cpu_resume
++	 *
++	 * resume code entry for bootloader to call
++	 *
++	 * we must put this code here in the data segment as we have no
++	 * other way of restoring the stack pointer after sleep, and we
++	 * must not write to the code segment (code is read-only)
++	*/
++
++ENTRY(s3c_cpu_resume)
++	mov	r0, #PSR_I_BIT | PSR_F_BIT | SVC_MODE
++	msr	cpsr_c, r0
++
++	mov	r1, #0
++	mcr	p15, 0, r1, c8, c7, 0		@ invalidate TLBs
++	mcr	p15, 0, r1, c7, c5, 0		@ invalidate I Cache
++
++	ldr	r0, s3c_sleep_save_phys		@ address of restore block
++	ldmia	r0, { r3 - r13 }
++
++	mcr	p15, 0, r4, c13, c0, 0		@ FCSE/PID
++	mcr	p15, 0, r5, c3, c0, 0		@ Domain ID
++
++	mcr	p15, 0, r8, c2, c0, 2		@ Translation Table Control
++	mcr	p15, 0, r7, c2, c0, 1		@ Translation Table BASE1
++	mcr	p15, 0, r6, c2, c0, 0		@ Translation Table BASE0
++
++	mcr	p15, 0, r10, c1, c0, 1		@ Auxiliary control register
++
++	mov	r0, #0
++	mcr	p15, 0, r0, c8, c7, 0		@ Invalidate I & D TLB
++
++	mov	r0, #0				@ restore copro access
++	mcr	p15, 0, r11, c1, c0, 2		@ Co-processor access
++	mcr 	p15, 0, r0, c7, c5, 4
++
++	mcr	p15, 0, r12, c10, c2, 0		@ write PRRR
++	mcr	p15, 0, r3, c10, c2, 1		@ write NMRR
++
++	/*
++	 * In Cortex-A8, when MMU is turned on, the pipeline is flushed.
++	 * And there are no valid entries in the MMU table at this point.
++	 * So before turning on the MMU, the MMU entry for the DRAM address
++	 * range is added. After the MMU is turned on, the other entries
++	 * in the MMU table will be restored.
++	*/
++
++	/* r6 = Translation Table BASE0 */
++	mov	r4, r6
++	mov	r4, r4, LSR #14
++	mov	r4, r4, LSL #14
++
++	/* Load address for adding to MMU table list */
++	ldr	r11, =0xE010F000
++	ldr	r10, [r11, #0]
++	mov	r10, r10, LSR #18
++	bic	r10, r10, #0x3
++	orr	r4, r4, r10
++
++	/* Calculate MMU table entry */
++	mov 	r10, r10, LSL #18
++	ldr	r5, =0x40E
++	orr	r10, r10, r5
++
++	/* Back up originally data */
++	ldr	r12, [r4]
++
++	/* Add calculated MMU table entry into MMU table list */
++	str	r10, [r4]
++
++	ldr	r2, =resume_with_mmu
++	mcr	p15, 0, r9, c1, c0, 0		@ turn on MMU, etc
++
++	nop
++	nop
++	nop
++	nop
++	nop					@ second-to-last before mmu
++
++	mov	pc, r2				@ go back to virtual address
++
++	.ltorg
++
+diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
+index f3e917e..4b838f6 100644
+--- a/arch/arm/plat-s5p/Makefile
++++ b/arch/arm/plat-s5p/Makefile
+@@ -18,6 +18,8 @@ obj-y				+= cpu.o
+ obj-y				+= clock.o
+ obj-y				+= irq.o
+ obj-$(CONFIG_S5P_EXT_INT)	+= irq-eint.o
++obj-$(CONFIG_PM)		+= pm.o
++obj-$(CONFIG_PM)		+= irq-pm.o
+ 
+ # devices
+ 
+diff --git a/arch/arm/plat-s5p/include/plat/irqs.h b/arch/arm/plat-s5p/include/plat/irqs.h
+index 3fb3a3a..2f8128a 100644
+--- a/arch/arm/plat-s5p/include/plat/irqs.h
++++ b/arch/arm/plat-s5p/include/plat/irqs.h
+@@ -94,4 +94,5 @@
+ 						((irq) - S5P_EINT_BASE1) : \
+ 						((irq) + 16 - S5P_EINT_BASE2))
+ 
++#define IRQ_EINT_BIT(x)		EINT_OFFSET(x)
+ #endif /* __ASM_PLAT_S5P_IRQS_H */
+diff --git a/arch/arm/plat-s5p/irq-pm.c b/arch/arm/plat-s5p/irq-pm.c
+new file mode 100644
+index 0000000..dc33b9e
+--- /dev/null
++++ b/arch/arm/plat-s5p/irq-pm.c
+@@ -0,0 +1,93 @@
++/* linux/arch/arm/plat-s5p/irq-pm.c
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Based on arch/arm/plat-s3c24xx/irq-pm.c,
++ * Copyright (c) 2003,2004 Simtec Electronics
++ *	Ben Dooks <ben@simtec.co.uk>
++ *	http://armlinux.simtec.co.uk/
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/interrupt.h>
++#include <linux/sysdev.h>
++
++#include <plat/cpu.h>
++#include <plat/irqs.h>
++#include <plat/pm.h>
++#include <mach/map.h>
++
++#include <mach/regs-gpio.h>
++#include <mach/regs-irq.h>
++
++/* state for IRQs over sleep */
++
++/* default is to allow for EINT0..EINT31, and IRQ_RTC_TIC, IRQ_RTC_ALARM,
++ * as wakeup sources
++ *
++ * set bit to 1 in allow bitfield to enable the wakeup settings on it
++*/
++
++unsigned long s3c_irqwake_intallow	= 0x00000006L;
++unsigned long s3c_irqwake_eintallow	= 0xffffffffL;
++
++int s3c_irq_wake(unsigned int irqno, unsigned int state)
 +{
-+	if (policy->cpu)
-+		return -EINVAL;
++	unsigned long irqbit;
 +
-+	return cpufreq_frequency_table_verify(policy, s5pv210_freq_table);
-+}
-+
-+unsigned int s5pv210_getspeed(unsigned int cpu)
-+{
-+	if (cpu)
-+		return 0;
-+
-+	return clk_get_rate(cpu_clk) / 1000;
-+}
-+
-+static int s5pv210_target(struct cpufreq_policy *policy,
-+		          unsigned int target_freq,
-+		          unsigned int relation)
-+{
-+	unsigned long reg;
-+	unsigned int index, priv_index;
-+	unsigned int pll_changing = 0;
-+	unsigned int bus_speed_changing = 0;
-+
-+	freqs.old = s5pv210_getspeed(0);
-+
-+	if (cpufreq_frequency_table_target(policy, s5pv210_freq_table,
-+					   target_freq, relation, &index))
-+		return -EINVAL;
-+
-+	freqs.new = s5pv210_freq_table[index].frequency;
-+	freqs.cpu = 0;
-+
-+	if (freqs.new == freqs.old)
-+		return 0;
-+
-+	/* Finding current running level index */
-+	if (cpufreq_frequency_table_target(policy, s5pv210_freq_table,
-+					   freqs.old, relation, &priv_index))
-+		return -EINVAL;
-+
-+	cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
-+
-+	if (freqs.new > freqs.old) {
-+		/* Voltage up: will be implemented */
-+	}
-+
-+	/* Check if there need to change PLL */
-+	if ((index == L0) || (priv_index == L0))
-+		pll_changing = 1;
-+
-+	/* Check if there need to change System bus clock */
-+	if ((index == L4) || (priv_index == L4))
-+		bus_speed_changing = 1;
-+
-+	if (bus_speed_changing) {
-+		/*
-+		 * Reconfigure DRAM refresh counter value for minimum
-+		 * temporary clock while changing divider.
-+		 * expected clock is 83Mhz : 7.8usec/(1/83Mhz) = 0x287
-+		 */
-+		if (pll_changing)
-+			__raw_writel(0x287, S5P_VA_DMC1 + 0x30);
++	switch (irqno) {
++	case IRQ_RTC_TIC:
++	case IRQ_RTC_ALARM:
++		irqbit = 1 << (irqno + 1 - IRQ_RTC_ALARM);
++		if (!state)
++			s3c_irqwake_intmask |= irqbit;
 +		else
-+			__raw_writel(0x30c, S5P_VA_DMC1 + 0x30);
-+
-+		__raw_writel(0x287, S5P_VA_DMC0 + 0x30);
++			s3c_irqwake_intmask &= ~irqbit;
++		break;
++	default:
++		return -ENOENT;
 +	}
-+
-+	/*
-+	 * APLL should be changed in this level
-+	 * APLL -> MPLL(for stable transition) -> APLL
-+	 * Some clock source's clock API are not prepared.
-+	 * Do not use clock API in below code.
-+	 */
-+	if (pll_changing) {
-+		/*
-+		 * 1. Temporary Change divider for MFC and G3D
-+		 * SCLKA2M(200/1=200)->(200/4=50)Mhz
-+		 */
-+		reg = __raw_readl(S5P_CLK_DIV2);
-+		reg &= ~(S5P_CLKDIV2_G3D_MASK | S5P_CLKDIV2_MFC_MASK);
-+		reg |= (3 << S5P_CLKDIV2_G3D_SHIFT) |
-+			(3 << S5P_CLKDIV2_MFC_SHIFT);
-+		__raw_writel(reg, S5P_CLK_DIV2);
-+
-+		/* For MFC, G3D dividing */
-+		do {
-+			reg = __raw_readl(S5P_CLKDIV_STAT0);
-+		} while (reg & ((1 << 16) | (1 << 17)));
-+
-+		/*
-+		 * 2. Change SCLKA2M(200Mhz)to SCLKMPLL in MFC_MUX, G3D MUX
-+		 * (200/4=50)->(667/4=166)Mhz
-+		 */
-+		reg = __raw_readl(S5P_CLK_SRC2);
-+		reg &= ~(S5P_CLKSRC2_G3D_MASK | S5P_CLKSRC2_MFC_MASK);
-+		reg |= (1 << S5P_CLKSRC2_G3D_SHIFT) |
-+			(1 << S5P_CLKSRC2_MFC_SHIFT);
-+		__raw_writel(reg, S5P_CLK_SRC2);
-+
-+		do {
-+			reg = __raw_readl(S5P_CLKMUX_STAT1);
-+		} while (reg & ((1 << 7) | (1 << 3)));
-+
-+		/*
-+		 * 3. DMC1 refresh count for 133Mhz if (index == L4) is
-+		 * true refresh counter is already programed in upper
-+		 * code. 0x287@83Mhz
-+		 */
-+		if (!bus_speed_changing)
-+			__raw_writel(0x40d, S5P_VA_DMC1 + 0x30);
-+
-+		/* 4. SCLKAPLL -> SCLKMPLL */
-+		reg = __raw_readl(S5P_CLK_SRC0);
-+		reg &= ~(S5P_CLKSRC0_MUX200_MASK);
-+		reg |= (0x1 << S5P_CLKSRC0_MUX200_SHIFT);
-+		__raw_writel(reg, S5P_CLK_SRC0);
-+
-+		do {
-+			reg = __raw_readl(S5P_CLKMUX_STAT0);
-+		} while (reg & (0x1 << 18));
-+
-+	}
-+
-+	/* Change divider */
-+	reg = __raw_readl(S5P_CLK_DIV0);
-+
-+	reg &= ~(S5P_CLKDIV0_APLL_MASK | S5P_CLKDIV0_A2M_MASK |
-+		S5P_CLKDIV0_HCLK200_MASK | S5P_CLKDIV0_PCLK100_MASK |
-+		S5P_CLKDIV0_HCLK166_MASK | S5P_CLKDIV0_PCLK83_MASK |
-+		S5P_CLKDIV0_HCLK133_MASK | S5P_CLKDIV0_PCLK66_MASK);
-+
-+	reg |= ((clkdiv_val[index][0] << S5P_CLKDIV0_APLL_SHIFT) |
-+		(clkdiv_val[index][1] << S5P_CLKDIV0_A2M_SHIFT) |
-+		(clkdiv_val[index][2] << S5P_CLKDIV0_HCLK200_SHIFT) |
-+		(clkdiv_val[index][3] << S5P_CLKDIV0_PCLK100_SHIFT) |
-+		(clkdiv_val[index][4] << S5P_CLKDIV0_HCLK166_SHIFT) |
-+		(clkdiv_val[index][5] << S5P_CLKDIV0_PCLK83_SHIFT) |
-+		(clkdiv_val[index][6] << S5P_CLKDIV0_HCLK133_SHIFT) |
-+		(clkdiv_val[index][7] << S5P_CLKDIV0_PCLK66_SHIFT));
-+
-+	__raw_writel(reg, S5P_CLK_DIV0);
-+
-+	do {
-+		reg = __raw_readl(S5P_CLKDIV_STAT0);
-+	} while (reg & 0xff);
-+
-+	/* ARM MCS value changed */
-+	reg = __raw_readl(S5P_ARM_MCS_CON);
-+	reg &= ~0x3;
-+	if (index >= L3)
-+		reg |= 0x3;
-+	else
-+		reg |= 0x1;
-+
-+	__raw_writel(reg, S5P_ARM_MCS_CON);
-+
-+	if (pll_changing) {
-+		/* 5. Set Lock time = 30us*24Mhz = 0x2cf */
-+		__raw_writel(0x2cf, S5P_APLL_LOCK);
-+
-+		/*
-+		 * 6. Turn on APLL
-+		 * 6-1. Set PMS values
-+		 * 6-2. Wait untile the PLL is locked
-+		 */
-+		if (index == L0)
-+			__raw_writel(APLL_VAL_1000, S5P_APLL_CON);
-+		else
-+			__raw_writel(APLL_VAL_800, S5P_APLL_CON);
-+
-+		do {
-+			reg = __raw_readl(S5P_APLL_CON);
-+		} while (!(reg & (0x1 << 29)));
-+
-+		/*
-+		 * 7. Change souce clock from SCLKMPLL(667Mhz)
-+		 * to SCLKA2M(200Mhz) in MFC_MUX and G3D MUX
-+		 * (667/4=166)->(200/4=50)Mhz
-+		 */
-+		reg = __raw_readl(S5P_CLK_SRC2);
-+		reg &= ~(S5P_CLKSRC2_G3D_MASK | S5P_CLKSRC2_MFC_MASK);
-+		reg |= (0 << S5P_CLKSRC2_G3D_SHIFT) |
-+			(0 << S5P_CLKSRC2_MFC_SHIFT);
-+		__raw_writel(reg, S5P_CLK_SRC2);
-+
-+		do {
-+			reg = __raw_readl(S5P_CLKMUX_STAT1);
-+		} while (reg & ((1 << 7) | (1 << 3)));
-+
-+		/*
-+		 * 8. Change divider for MFC and G3D
-+		 * (200/4=50)->(200/1=200)Mhz
-+		 */
-+		reg = __raw_readl(S5P_CLK_DIV2);
-+		reg &= ~(S5P_CLKDIV2_G3D_MASK | S5P_CLKDIV2_MFC_MASK);
-+		reg |= (clkdiv_val[index][10] << S5P_CLKDIV2_G3D_SHIFT) |
-+			(clkdiv_val[index][9] << S5P_CLKDIV2_MFC_SHIFT);
-+		__raw_writel(reg, S5P_CLK_DIV2);
-+
-+		/* For MFC, G3D dividing */
-+		do {
-+			reg = __raw_readl(S5P_CLKDIV_STAT0);
-+		} while (reg & ((1 << 16) | (1 << 17)));
-+
-+		/* 9. Change MPLL to APLL in MSYS_MUX */
-+		reg = __raw_readl(S5P_CLK_SRC0);
-+		reg &= ~(S5P_CLKSRC0_MUX200_MASK);
-+		reg |= (0x0 << S5P_CLKSRC0_MUX200_SHIFT);
-+		__raw_writel(reg, S5P_CLK_SRC0);
-+
-+		do {
-+			reg = __raw_readl(S5P_CLKMUX_STAT0);
-+		} while (reg & (0x1 << 18));
-+
-+		/*
-+		 * 10. DMC1 refresh counter
-+		 * L4 : DMC1 = 100Mhz 7.8us/(1/100) = 0x30c
-+		 * Others : DMC1 = 200Mhz 7.8us/(1/200) = 0x618
-+		 */
-+		if (!bus_speed_changing)
-+			__raw_writel(0x618, S5P_VA_DMC1 + 0x30);
-+	}
-+
-+	/*
-+	 * L4 level need to change memory bus speed, hence onedram clock divier
-+	 * and memory refresh parameter should be changed
-+	 */
-+	if (bus_speed_changing) {
-+		reg = __raw_readl(S5P_CLK_DIV6);
-+		reg &= ~S5P_CLKDIV6_ONEDRAM_MASK;
-+		reg |= (clkdiv_val[index][8] << S5P_CLKDIV6_ONEDRAM_SHIFT);
-+		__raw_writel(reg, S5P_CLK_DIV6);
-+
-+		do {
-+			reg = __raw_readl(S5P_CLKDIV_STAT1);
-+		} while (reg & (1 << 15));
-+
-+		/* Reconfigure DRAM refresh counter value */
-+		if (index != L4) {
-+			/*
-+			 * DMC0 : 166Mhz
-+			 * DMC1 : 200Mhz
-+			 */
-+			__raw_writel(0x618, S5P_VA_DMC1 + 0x30);
-+			__raw_writel(0x50e, S5P_VA_DMC0 + 0x30);
-+		} else {
-+			/*
-+			 * DMC0 : 83Mhz
-+			 * DMC1 : 100Mhz
-+			 */
-+			__raw_writel(0x30c, S5P_VA_DMC1 + 0x30);
-+			__raw_writel(0x287, S5P_VA_DMC0 + 0x30);
-+		}
-+	}
-+
-+	if (freqs.new < freqs.old) {
-+		/* Voltage down: will be implemented */
-+	}
-+
-+	cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
-+
-+	printk(KERN_INFO "Perf changed[L%d]\n", index);
-+
 +	return 0;
 +}
 +
-+#ifdef CONFIG_PM
-+static int s5pv210_cpufreq_suspend(struct cpufreq_policy *policy,
-+				   pm_message_t pmsg)
-+{
-+	return 0;
-+}
++static struct sleep_save eint_save[] = {
++	SAVE_ITEM(S5P_EINT_CON(0)),
++	SAVE_ITEM(S5P_EINT_CON(1)),
++	SAVE_ITEM(S5P_EINT_CON(2)),
++	SAVE_ITEM(S5P_EINT_CON(3)),
 +
-+static int s5pv210_cpufreq_resume(struct cpufreq_policy *policy)
-+{
-+	return 0;
-+}
-+#endif
++	SAVE_ITEM(S5P_EINT_FLTCON(0)),
++	SAVE_ITEM(S5P_EINT_FLTCON(1)),
++	SAVE_ITEM(S5P_EINT_FLTCON(2)),
++	SAVE_ITEM(S5P_EINT_FLTCON(3)),
++	SAVE_ITEM(S5P_EINT_FLTCON(4)),
++	SAVE_ITEM(S5P_EINT_FLTCON(5)),
++	SAVE_ITEM(S5P_EINT_FLTCON(6)),
++	SAVE_ITEM(S5P_EINT_FLTCON(7)),
 +
-+static int check_mem_type(void __iomem *dmc_reg)
-+{
-+	unsigned long val;
-+
-+	val = __raw_readl(dmc_reg + 0x4);
-+	val = (val & (0xf << 8));
-+
-+	return (val >> 8);
-+}
-+
-+static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
-+{
-+	unsigned long mem_type;
-+
-+	cpu_clk = clk_get(NULL, "armclk");
-+	if (IS_ERR(cpu_clk))
-+		return PTR_ERR(cpu_clk);
-+
-+	if (policy->cpu != 0)
-+		return -EINVAL;
-+
-+	/*
-+	 * check_mem_type : This driver only support LPDDR & LPDDR2.
-+	 * other memory type is not supported.
-+	 */
-+	mem_type = check_mem_type(S5P_VA_DMC0);
-+
-+	if ((mem_type != LPDDR) && (mem_type != LPDDR2)) {
-+		printk(KERN_ERR "CPUFreq doesn't support this memory type\n");
-+		return -EINVAL;
-+	}
-+
-+	policy->cur = policy->min = policy->max = s5pv210_getspeed(0);
-+
-+	cpufreq_frequency_table_get_attr(s5pv210_freq_table, policy->cpu);
-+
-+	policy->cpuinfo.transition_latency = 40000;
-+
-+	return cpufreq_frequency_table_cpuinfo(policy, s5pv210_freq_table);
-+}
-+
-+static struct cpufreq_driver s5pv210_driver = {
-+	.flags		= CPUFREQ_STICKY,
-+	.verify		= s5pv210_verify_speed,
-+	.target		= s5pv210_target,
-+	.get		= s5pv210_getspeed,
-+	.init		= s5pv210_cpu_init,
-+	.name		= "s5pv210",
-+#ifdef CONFIG_PM
-+	.suspend	= s5pv210_cpufreq_suspend,
-+	.resume		= s5pv210_cpufreq_resume,
-+#endif
++	SAVE_ITEM(S5P_EINT_MASK(0)),
++	SAVE_ITEM(S5P_EINT_MASK(1)),
++	SAVE_ITEM(S5P_EINT_MASK(2)),
++	SAVE_ITEM(S5P_EINT_MASK(3)),
 +};
 +
-+static int __init s5pv210_cpufreq_init(void)
++int s3c24xx_irq_suspend(struct sys_device *dev, pm_message_t state)
 +{
-+	return cpufreq_register_driver(&s5pv210_driver);
++	s3c_pm_do_save(eint_save, ARRAY_SIZE(eint_save));
++
++	return 0;
 +}
 +
-+late_initcall(s5pv210_cpufreq_init);
++int s3c24xx_irq_resume(struct sys_device *dev)
++{
++	s3c_pm_do_restore(eint_save, ARRAY_SIZE(eint_save));
++
++	return 0;
++}
++
+diff --git a/arch/arm/plat-s5p/pm.c b/arch/arm/plat-s5p/pm.c
+new file mode 100644
+index 0000000..d592b63
+--- /dev/null
++++ b/arch/arm/plat-s5p/pm.c
+@@ -0,0 +1,52 @@
++/* linux/arch/arm/plat-s5p/pm.c
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * S5P Power Manager (Suspend-To-RAM) support
++ *
++ * Based on arch/arm/plat-s3c24xx/pm.c
++ * Copyright (c) 2004,2006 Simtec Electronics
++ *	Ben Dooks <ben@simtec.co.uk>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/suspend.h>
++#include <plat/pm.h>
++
++#define PFX "s5p pm: "
++
++/* s3c_pm_check_resume_pin
++ *
++ * check to see if the pin is configured correctly for sleep mode, and
++ * make any necessary adjustments if it is not
++*/
++
++static void s3c_pm_check_resume_pin(unsigned int pin, unsigned int irqoffs)
++{
++	/* nothing here yet */
++}
++
++/* s3c_pm_configure_extint
++ *
++ * configure all external interrupt pins
++*/
++
++void s3c_pm_configure_extint(void)
++{
++	/* nothing here yet */
++}
++
++void s3c_pm_restore_core(void)
++{
++	/* nothing here yet */
++}
++
++void s3c_pm_save_core(void)
++{
++	/* nothing here yet */
++}
++
+diff --git a/arch/arm/plat-samsung/pm-gpio.c b/arch/arm/plat-samsung/pm-gpio.c
+index 7df03f8..9652820 100644
+--- a/arch/arm/plat-samsung/pm-gpio.c
++++ b/arch/arm/plat-samsung/pm-gpio.c
+@@ -192,7 +192,7 @@ struct s3c_gpio_pm s3c_gpio_pm_2bit = {
+ 	.resume = s3c_gpio_pm_2bit_resume,
+ };
+ 
+-#ifdef CONFIG_ARCH_S3C64XX
++#if defined(CONFIG_ARCH_S3C64XX) || defined(CONFIG_PLAT_S5P)
+ static void s3c_gpio_pm_4bit_save(struct s3c_gpio_chip *chip)
+ {
+ 	chip->pm_save[1] = __raw_readl(chip->base + OFFS_CON);
+@@ -302,7 +302,7 @@ struct s3c_gpio_pm s3c_gpio_pm_4bit = {
+ 	.save	= s3c_gpio_pm_4bit_save,
+ 	.resume = s3c_gpio_pm_4bit_resume,
+ };
+-#endif /* CONFIG_ARCH_S3C64XX */
++#endif /* CONFIG_ARCH_S3C64XX || CONFIG_PLAT_S5P */
+ 
+ /**
+  * s3c_pm_save_gpio() - save gpio chip data for suspend
 -- 
 1.6.2.5
