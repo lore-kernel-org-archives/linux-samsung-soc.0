@@ -1,12 +1,12 @@
 From: Jaecheol Lee <jc.lee@samsung.com>
-Subject: [PATCH 2/5] ARM: S5PV210: Add struct clk_ops for clk_fout_apll
-Date: Wed, 15 Sep 2010 16:52:39 +0900
-Message-ID: <1284537162-3129-3-git-send-email-jc.lee@samsung.com>
+Subject: [PATCH 1/5] ARM: S5PV210: Add support DMC map_desc table
+Date: Wed, 15 Sep 2010 16:52:38 +0900
+Message-ID: <1284537162-3129-2-git-send-email-jc.lee@samsung.com>
 References: <1284537162-3129-1-git-send-email-jc.lee@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:48438 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:48441 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751567Ab0IOIId (ORCPT
+	with ESMTP id S1751947Ab0IOIId (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 15 Sep 2010 04:08:33 -0400
 In-Reply-To: <1284537162-3129-1-git-send-email-jc.lee@samsung.com>
@@ -15,62 +15,63 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: ben-linux@fluff.org, kgene.kim@samsung.com, Jaecheol Lee <jc.lee@samsung.com>
 
-Current fout_apll has fixed rate value which was set in initializing
-S5PV210 clock structures. CPUFREQ driver gets incorrect frequency when
-finding current cpu frequency, because some operation level need to
-change APLL. Newly added get_rate function for fout_apll can give
-correct frequency when calling get_rate function by CPUFREQ driver.
+This patch adds DMC(DRAM Memory Controller) map_desc table.
+Because some driver such as CPUFREQ need to access DMC register.
 
 Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
 ---
- arch/arm/mach-s5pv210/clock.c |   14 ++++++++++++--
- 1 files changed, 12 insertions(+), 2 deletions(-)
+ arch/arm/mach-s5pv210/cpu.c              |   10 ++++++++++
+ arch/arm/mach-s5pv210/include/mach/map.h |    3 +++
+ arch/arm/plat-s5p/include/plat/map-s5p.h |    2 ++
+ 3 files changed, 15 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-index d562670..e18e098 100644
---- a/arch/arm/mach-s5pv210/clock.c
-+++ b/arch/arm/mach-s5pv210/clock.c
-@@ -31,6 +31,8 @@
- #include <plat/clock-clksrc.h>
- #include <plat/s5pv210.h>
- 
-+static unsigned long xtal;
-+
- static struct clksrc_clk clk_mout_apll = {
- 	.clk	= {
- 		.name		= "mout_apll",
-@@ -268,6 +270,15 @@ static struct clk_ops clk_hclk_imem_ops = {
- 	.get_rate	= s5pv210_clk_imem_get_rate,
+diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
+index c551ab1..aebbb7f 100644
+--- a/arch/arm/mach-s5pv210/cpu.c
++++ b/arch/arm/mach-s5pv210/cpu.c
+@@ -84,6 +84,16 @@ static struct map_desc s5pv210_iodesc[] __initdata = {
+ 		.pfn		= __phys_to_pfn(S5PV210_PA_SROMC),
+ 		.length		= SZ_4K,
+ 		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S5P_VA_DMC0,
++		.pfn		= __phys_to_pfn(S5PV210_PA_DMC0),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S5P_VA_DMC1,
++		.pfn		= __phys_to_pfn(S5PV210_PA_DMC1),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
+ 	}
  };
  
-+static unsigned long s5pv210_clk_fout_apll_get_rate(struct clk *clk)
-+{
-+	return s5p_get_pll45xx(xtal, __raw_readl(S5P_APLL_CON), pll_4508);
-+}
-+
-+static struct clk_ops clk_fout_apll_ops = {
-+	.get_rate	= s5pv210_clk_fout_apll_get_rate,
-+};
-+
- static struct clk init_clocks_disable[] = {
- 	{
- 		.name		= "rot",
-@@ -958,7 +969,6 @@ static struct clksrc_clk *sysclks[] = {
- void __init_or_cpufreq s5pv210_setup_clocks(void)
- {
- 	struct clk *xtal_clk;
--	unsigned long xtal;
- 	unsigned long vpllsrc;
- 	unsigned long armclk;
- 	unsigned long hclk_msys;
-@@ -996,7 +1006,7 @@ void __init_or_cpufreq s5pv210_setup_clocks(void)
- 	vpllsrc = clk_get_rate(&clk_vpllsrc.clk);
- 	vpll = s5p_get_pll45xx(vpllsrc, __raw_readl(S5P_VPLL_CON), pll_4502);
+diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
+index bd9afd5..3e89c22 100644
+--- a/arch/arm/mach-s5pv210/include/mach/map.h
++++ b/arch/arm/mach-s5pv210/include/mach/map.h
+@@ -96,6 +96,9 @@
  
--	clk_fout_apll.rate = apll;
-+	clk_fout_apll.ops = &clk_fout_apll_ops;
- 	clk_fout_mpll.rate = mpll;
- 	clk_fout_epll.rate = epll;
- 	clk_fout_vpll.rate = vpll;
+ #define S5PV210_PA_ADC		(0xE1700000)
+ 
++#define S5PV210_PA_DMC0		(0xF0000000)
++#define S5PV210_PA_DMC1		(0xF1400000)
++
+ /* compatibiltiy defines. */
+ #define S3C_PA_UART		S5PV210_PA_UART
+ #define S3C_PA_HSMMC0		S5PV210_PA_HSMMC(0)
+diff --git a/arch/arm/plat-s5p/include/plat/map-s5p.h b/arch/arm/plat-s5p/include/plat/map-s5p.h
+index c4ff88b..2472894 100644
+--- a/arch/arm/plat-s5p/include/plat/map-s5p.h
++++ b/arch/arm/plat-s5p/include/plat/map-s5p.h
+@@ -18,6 +18,8 @@
+ #define S5P_VA_SYSTIMER		S3C_ADDR(0x01200000)
+ #define S5P_VA_SROMC		S3C_ADDR(0x01100000)
+ #define S5P_VA_SYSRAM		S3C_ADDR(0x01180000)
++#define S5P_VA_DMC0		S3C_ADDR(0x00A00000)
++#define S5P_VA_DMC1		S3C_ADDR(0x00A80000)
+ 
+ #define S5P_VA_COMBINER_BASE	S3C_ADDR(0x00600000)
+ #define S5P_VA_COMBINER(x)	(S5P_VA_COMBINER_BASE + ((x) >> 2) * 0x10)
 -- 
 1.6.2.5
