@@ -1,88 +1,76 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: S5P: Bug fix on errors of build with CONFIG_PREEMPT_NONE
-Date: Wed, 15 Sep 2010 08:41:33 +0900
-Message-ID: <1284507693-12156-1-git-send-email-kgene.kim@samsung.com>
+From: Jaecheol Lee <jc.lee@samsung.com>
+Subject: [PATCH 2/5] ARM: S5PV210: Add struct clk_ops for clk_fout_apll
+Date: Wed, 15 Sep 2010 16:52:39 +0900
+Message-ID: <1284537162-3129-3-git-send-email-jc.lee@samsung.com>
+References: <1284537162-3129-1-git-send-email-jc.lee@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:41415 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:48438 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752400Ab0INX61 (ORCPT
+	with ESMTP id S1751567Ab0IOIId (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 Sep 2010 19:58:27 -0400
+	Wed, 15 Sep 2010 04:08:33 -0400
+In-Reply-To: <1284537162-3129-1-git-send-email-jc.lee@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Seung-Chull Suh <sc.suh@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, Jaecheol Lee <jc.lee@samsung.com>
 
-From: Seung-Chull Suh <sc.suh@samsung.com>
+Current fout_apll has fixed rate value which was set in initializing
+S5PV210 clock structures. CPUFREQ driver gets incorrect frequency when
+finding current cpu frequency, because some operation level need to
+change APLL. Newly added get_rate function for fout_apll can give
+correct frequency when calling get_rate function by CPUFREQ driver.
 
-This patch adds header <linux/sched.h> into the below files for build with
-CONFIG_PREEMPT_NONE.
-
-arch/arm/mach-s5p6442/cpu.c
-arch/arm/mach-s5p64x0/cpu.c
-arch/arm/mach-s5pc100/cpu.c
-arch/arm/mach-s5pv210/cpu.c
-
-Following is error message of in case of s5pv210_defconfig with CONFIG_PREEMPT_NONE.
-
-arch/arm/mach-s5pv210/cpu.c:91: error: implicit declaration of function 'need_resched'
-
-Signed-off-by: Seung-Chull Suh <sc.suh@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
 ---
- arch/arm/mach-s5p6442/cpu.c |    1 +
- arch/arm/mach-s5p64x0/cpu.c |    1 +
- arch/arm/mach-s5pc100/cpu.c |    1 +
- arch/arm/mach-s5pv210/cpu.c |    1 +
- 4 files changed, 4 insertions(+), 0 deletions(-)
+ arch/arm/mach-s5pv210/clock.c |   14 ++++++++++++--
+ 1 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-s5p6442/cpu.c b/arch/arm/mach-s5p6442/cpu.c
-index d3ab268..842af86 100644
---- a/arch/arm/mach-s5p6442/cpu.c
-+++ b/arch/arm/mach-s5p6442/cpu.c
-@@ -19,6 +19,7 @@
- #include <linux/sysdev.h>
- #include <linux/serial_core.h>
- #include <linux/platform_device.h>
-+#include <linux/sched.h>
+diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
+index d562670..e18e098 100644
+--- a/arch/arm/mach-s5pv210/clock.c
++++ b/arch/arm/mach-s5pv210/clock.c
+@@ -31,6 +31,8 @@
+ #include <plat/clock-clksrc.h>
+ #include <plat/s5pv210.h>
  
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
-diff --git a/arch/arm/mach-s5p64x0/cpu.c b/arch/arm/mach-s5p64x0/cpu.c
-index fb90a30..2f244db 100644
---- a/arch/arm/mach-s5p64x0/cpu.c
-+++ b/arch/arm/mach-s5p64x0/cpu.c
-@@ -19,6 +19,7 @@
- #include <linux/sysdev.h>
- #include <linux/serial_core.h>
- #include <linux/platform_device.h>
-+#include <linux/sched.h>
++static unsigned long xtal;
++
+ static struct clksrc_clk clk_mout_apll = {
+ 	.clk	= {
+ 		.name		= "mout_apll",
+@@ -268,6 +270,15 @@ static struct clk_ops clk_hclk_imem_ops = {
+ 	.get_rate	= s5pv210_clk_imem_get_rate,
+ };
  
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
-diff --git a/arch/arm/mach-s5pc100/cpu.c b/arch/arm/mach-s5pc100/cpu.c
-index d13552c..fd2708e 100644
---- a/arch/arm/mach-s5pc100/cpu.c
-+++ b/arch/arm/mach-s5pc100/cpu.c
-@@ -24,6 +24,7 @@
- #include <linux/sysdev.h>
- #include <linux/serial_core.h>
- #include <linux/platform_device.h>
-+#include <linux/sched.h>
++static unsigned long s5pv210_clk_fout_apll_get_rate(struct clk *clk)
++{
++	return s5p_get_pll45xx(xtal, __raw_readl(S5P_APLL_CON), pll_4508);
++}
++
++static struct clk_ops clk_fout_apll_ops = {
++	.get_rate	= s5pv210_clk_fout_apll_get_rate,
++};
++
+ static struct clk init_clocks_disable[] = {
+ 	{
+ 		.name		= "rot",
+@@ -958,7 +969,6 @@ static struct clksrc_clk *sysclks[] = {
+ void __init_or_cpufreq s5pv210_setup_clocks(void)
+ {
+ 	struct clk *xtal_clk;
+-	unsigned long xtal;
+ 	unsigned long vpllsrc;
+ 	unsigned long armclk;
+ 	unsigned long hclk_msys;
+@@ -996,7 +1006,7 @@ void __init_or_cpufreq s5pv210_setup_clocks(void)
+ 	vpllsrc = clk_get_rate(&clk_vpllsrc.clk);
+ 	vpll = s5p_get_pll45xx(vpllsrc, __raw_readl(S5P_VPLL_CON), pll_4502);
  
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
-diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
-index c551ab1..2f16bfc 100644
---- a/arch/arm/mach-s5pv210/cpu.c
-+++ b/arch/arm/mach-s5pv210/cpu.c
-@@ -19,6 +19,7 @@
- #include <linux/io.h>
- #include <linux/sysdev.h>
- #include <linux/platform_device.h>
-+#include <linux/sched.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
+-	clk_fout_apll.rate = apll;
++	clk_fout_apll.ops = &clk_fout_apll_ops;
+ 	clk_fout_mpll.rate = mpll;
+ 	clk_fout_epll.rate = epll;
+ 	clk_fout_vpll.rate = vpll;
 -- 
 1.6.2.5
