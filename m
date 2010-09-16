@@ -1,35 +1,40 @@
 From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: [PATCH 0/4] ARM: S3C64XX: SmartQ suspend support
-Date: Thu, 21 Oct 2010 19:14:16 +0200
-Message-ID: <cover.1287681256.git.mcuelenaere@gmail.com>
+Subject: [PATCH 1/4] ARM: SAMSUNG: make SAMSUNG_PM_DEBUG select DEBUG_LL
+Date: Thu, 16 Sep 2010 14:12:23 +0200
+Message-ID: <abb98ea05ee7deeffcf69e5f0980a397c8a6b56e.1287681256.git.mcuelenaere@gmail.com>
+References: <cover.1287681256.git.mcuelenaere@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mail-ew0-f46.google.com ([209.85.215.46]:55411 "EHLO
 	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751437Ab0JURPo (ORCPT
+	with ESMTP id S1753644Ab0JURPw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Oct 2010 13:15:44 -0400
-Received: by ewy7 with SMTP id 7so392477ewy.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2010 10:15:43 -0700 (PDT)
+	Thu, 21 Oct 2010 13:15:52 -0400
+Received: by mail-ew0-f46.google.com with SMTP id 7so392477ewy.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Oct 2010 10:15:52 -0700 (PDT)
+In-Reply-To: <cover.1287681256.git.mcuelenaere@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-These patches add suspend support to SmartQ boards, plus some S3C PM related
-cleanups.
+When selecting SAMSUNG_PM_DEBUG, it complains about a missing printascii()
+function if you do not select DEBUG_LL, so make the former select the latter.
 
-Maurus Cuelenaere (4):
-  ARM: SAMSUNG: make SAMSUNG_PM_DEBUG select DEBUG_LL
-  ARM: SAMSUNG: Fix warning 's3c_pm_show_resume_irqs' defined but not
-    used
-  ARM: S3C64XX: Add suspend support to SmartQ boards
-  ARM: S3C64XX: Add wakeup sources to SmartQ boards
+Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
+---
+ arch/arm/plat-samsung/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
- arch/arm/mach-s3c64xx/mach-smartq.c  |    4 ++++
- arch/arm/mach-s3c64xx/mach-smartq5.c |    1 +
- arch/arm/mach-s3c64xx/mach-smartq7.c |    1 +
- arch/arm/plat-samsung/Kconfig        |    1 +
- arch/arm/plat-samsung/pm.c           |    5 +++--
- 5 files changed, 10 insertions(+), 2 deletions(-)
-
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index 7c0bde7..d5816e7 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -260,6 +260,7 @@ comment "Power management"
+ config SAMSUNG_PM_DEBUG
+ 	bool "S3C2410 PM Suspend debug"
+ 	depends on PM
++	select DEBUG_LL
+ 	help
+ 	  Say Y here if you want verbose debugging from the PM Suspend and
+ 	  Resume code. See <file:Documentation/arm/Samsung-S3C24XX/Suspend.txt>
 -- 
 1.7.2.3
