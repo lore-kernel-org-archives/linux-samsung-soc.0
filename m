@@ -1,47 +1,37 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] regulator: Add support samsung power domain
-Date: Fri, 17 Sep 2010 13:07:02 +0100
-Message-ID: <20100917120702.GB4322@rakim.wolfsonmicro.main>
-References: <1284717532-9992-1-git-send-email-kgene.kim@samsung.com>
- <20100917113050.GA4322@rakim.wolfsonmicro.main>
- <007b01cb565d$db4376d0$91ca6470$%szyprowski@samsung.com>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH 5/5] sdhci-s3c: Add support no internal clock divider
+	in host controller
+Date: Fri, 17 Sep 2010 16:59:28 +0100
+Message-ID: <20100917155928.GA7561@void.printf.net>
+References: <1284626223-18944-1-git-send-email-jeongbae.seo@samsung.com> <1284626223-18944-6-git-send-email-jeongbae.seo@samsung.com> <AANLkTik23B23RW_kmjaL1PeXNiWtU01aNBwUOPrac6HF@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:59707 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753157Ab0IQMHE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Sep 2010 08:07:04 -0400
+Return-path: <linux-mmc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <007b01cb565d$db4376d0$91ca6470$%szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <AANLkTik23B23RW_kmjaL1PeXNiWtU01aNBwUOPrac6HF@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Kyungmin Park <kmpark@infradead.org>
+Cc: Jeongbae Seo <jeongbae.seo@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, ben-linux@fluff.org, kgene.kim@samsung.com, akpm@linux-foundation.org, Hyuk Lee <hyuk1.lee@samsung.com>, =?utf-8?B?7KCV7J6s7ZuI?= <jh80.chung@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Jeongbae Seo' <jeongbae.seo@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Changhwan Youn' <chaos.youn@samsung.com>, linux-arm-kernel@lists.infradead.org, lrg@slimlogic.co.uk
 
-On Fri, Sep 17, 2010 at 01:45:36PM +0200, Marek Szyprowski wrote:
+Hi,
 
-> The approach with merging power domains with clocks have some disadvantages.
-> In some cases the clock gating and power gating should be distinguished.
+On Thu, Sep 16, 2010 at 06:08:28PM +0900, Kyungmin Park wrote:
+> Well there are two implementations. and no conclusion yet.
+> as s5pc210 don't support internal SDHCI clock, DMC overrides the
+> function operation itself when s5pc210. System LSI use the quirks.
+> 
+> Choose any one from MMC maintainer.
 
-This is not what I suggested.  I suggested using runtime PM instead of
-the regulator API to manage blocks.
+Both approaches are generally acceptable for MMC, so I would want to
+leave it up to the maintainer of the driver in question (which is Ben,
+in this case?) to choose between them.
 
-> Just assume an IP like a video codec. It has it's own internal state machine.
-> It gets reset when the ip is power gated, but it is preserved during clock
-> gating. The driver might want to do a clock gating when it is waiting for a
-> new frame to decode, but should do power gating only when the device has
+That said, I think my own mild preference is for Jaehoon's approach.
 
-There's nothing stopping the drivers enabling and disabling the clocks
-for themselves while they're active, all the rumtime PM stuff I've seen
-for this does is ensure that the clocks are enabled and disabled when
-the device is enabled and disabled.  This matches what you're saying
-above - clearly, if the device is power gated there's no need to provide
-a clock for it - and with aggressive runtime PM it's pretty much exactly
-what a lot of devices end up needing.
+Thanks,
 
-> been closed. Having a set of fake clocks just for power gating imho doesn't
-> look good.
-
-Who said use the clock API?
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
