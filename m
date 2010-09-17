@@ -1,72 +1,120 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH 0/5] ARM: S5PV210: Add support CPUFREQ for S5PV210/S5PC110
-Date: Fri, 17 Sep 2010 13:30:03 +0900
-Message-ID: <AANLkTimT6eWpZrbiW3Segt5XSAa=V5rnsYYHkv1Awz0V@mail.gmail.com>
-References: <1284537162-3129-1-git-send-email-jc.lee@samsung.com>
-	<AANLkTikB288=Y8_jMXCwfsEBqwRdOTKyjMJag=SCKYdP@mail.gmail.com>
-	<03ca01cb5620$42a51b50$c7ef51f0$%kim@samsung.com>
+From: JaeCheol Lee <jc.lee@samsung.com>
+Subject: RE: [PATCH 4/5] ARM: S5PV210: Add support CPUFREQ
+Date: Fri, 17 Sep 2010 04:43:25 +0000 (GMT)
+Message-ID: <20025536.189101284698605181.JavaMail.weblogic@epml03>
+Reply-To: jc.lee@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:63674 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750724Ab0IQEaF convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:14679 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750724Ab0IQEn1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Sep 2010 00:30:05 -0400
-Received: by wyf22 with SMTP id 22so2029572wyf.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Sep 2010 21:30:04 -0700 (PDT)
-In-Reply-To: <03ca01cb5620$42a51b50$c7ef51f0$%kim@samsung.com>
+	Fri, 17 Sep 2010 00:43:27 -0400
+Received: from epms1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L8V009CBJSDY430@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 17 Sep 2010 13:43:25 +0900 (KST)
+Received: from ep_spt01 ("port 14808"@[203.254.225.172])
+ by ms1.samsung.com (Sun Java(tm) System Messaging Server 7u3-15.01 64bit
+ (built Feb 12 2010)) with ESMTP id <0L8V00FOMJSD8320@ms1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 17 Sep 2010 13:43:25 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Jaecheol Lee <jc.lee@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, =?EUC-KR?B?x9S47cHW?= <myungjoo.ham@samsung.com>, Andrew Morton <akpm@linux-foundation.org>
+To: myungjoo.ham@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, kgene.kim@samsung.com
 
-2010/9/17 Kukjin Kim <kgene.kim@samsung.com>:
-> Kyungmin Park wrote:
->>
->> First thank you for posting the patches.
->> but I'm worry about sending the same feature patches from different
-> divisions.
->>
-> It doesn't matter which division it is from.
-> What matters is the quality of the patch.
-> Any patches can be submitted anytime anywhere.
->
->> I'm not sure you're talking with kgene. but there are some codes
->> posted by Mr. Ham and get feedback and reviewed with kgene.
->> http://git.infradead.org/users/kmpark/linux-2.6-
->> samsung/shortlog/refs/heads/cpufreq
->>
->> To kgene,
->> One code from DMC(me), another code from System LSI(you). then which
->> codes do you pick up and apply to mainline?
->
-> As I said, it is not important where it is from.
-> I will apply the best patch.
->
->> and what's rules or principles?
->>
-> The best patch will get merged.
-> And I think that's the purpose of mailing lists
-> - to put all ideas together and find the best solution.
-
-But no need to do same things. Look at the patches. do the same
-mistake, e.g., hard-corded values. but Mr. Ham's patch already fixed
-it and support full features.
-
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+TXl1bmdKb28gSGFtIHdyb3RlOg0KPiANCj4gSGVsbG8sDQo+IA0KSGksDQoNCj4gT24gV2VkLCBT
+ZXAgMTUsIDIwMTAgYXQgNDo1MiBQTSwgSmFlY2hlb2wgTGVlIDxqYy5sZWVAc2Ftc3VuZy5jb20+
+IHdyb3RlOg0KPiA+IFRoaXMgcGF0Y2ggYWRkcyBDUFVGUkVRIGRyaXZlciBmb3Igc3VwcG9ydGlu
+ZyBERlMoRHluYW1pYyBGcmVxdWVuY3kNCj4gU2NhbGluZykuDQo+ID4NCj4gPiBTaWduZWQtb2Zm
+LWJ5OiBKYWVjaGVvbCBMZWUgPGpjLmxlZUBzYW1zdW5nLmNvbT4NCj4gPiAtLS0NCj4gPiDCoGFy
+Y2gvYXJtL21hY2gtczVwdjIxMC9jcHVmcmVxLmMgfCDCoDQxNQ0KPiArKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysNCj4gPiDCoDEgZmlsZXMgY2hhbmdlZCwgNDE1IGluc2Vy
+dGlvbnMoKyksIDAgZGVsZXRpb25zKC0pDQo+ID4gwqBjcmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9h
+cm0vbWFjaC1zNXB2MjEwL2NwdWZyZXEuYw0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gvYXJt
+L21hY2gtczVwdjIxMC9jcHVmcmVxLmMgYi9hcmNoL2FybS9tYWNoLQ0KPiBzNXB2MjEwL2NwdWZy
+ZXEuYw0KPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4gaW5kZXggMDAwMDAwMC4uYWEzOWMy
+ZQ0KPiANCj4gKHNuaXApDQo+IA0KPiA+ICtzdGF0aWMgaW50IHM1cHYyMTBfdGFyZ2V0KHN0cnVj
+dCBjcHVmcmVxX3BvbGljeSAqcG9saWN5LA0KPiA+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgdW5zaWduZWQgaW50IHRhcmdldF9mcmVxLA0KPiA+ICsgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgdW5zaWduZWQgaW50IHJlbGF0aW9uKQ0KPiA+ICt7DQo+
+ID4gKyDCoCDCoCDCoCB1bnNpZ25lZCBsb25nIHJlZzsNCj4gPiArIMKgIMKgIMKgIHVuc2lnbmVk
+IGludCBpbmRleCwgcHJpdl9pbmRleDsNCj4gPiArIMKgIMKgIMKgIHVuc2lnbmVkIGludCBwbGxf
+Y2hhbmdpbmcgPSAwOw0KPiA+ICsgwqAgwqAgwqAgdW5zaWduZWQgaW50IGJ1c19zcGVlZF9jaGFu
+Z2luZyA9IDA7DQo+ID4gKw0KPiA+ICsgwqAgwqAgwqAgZnJlcXMub2xkID0gczVwdjIxMF9nZXRz
+cGVlZCA7DQo+ID4gKw0KPiA+ICsgwqAgwqAgwqAgaWYgKGNwdWZyZXFfZnJlcXVlbmN5X3RhYmxl
+X3RhcmdldChwb2xpY3ksIHM1cHYyMTBfZnJlcV90YWJsZSwNCj4gPiArIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgdGFyZ2V0X2Zy
+ZXEsIHJlbGF0aW9uLCAmaW5kZXgpKQ0KPiA+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgcmV0dXJu
+IC1FSU5WQUw7DQo+ID4gKw0KPiA+ICsgwqAgwqAgwqAgZnJlcXMubmV3ID0gczVwdjIxMF9mcmVx
+X3RhYmxlW2luZGV4XS5mcmVxdWVuY3k7DQo+ID4gKyDCoCDCoCDCoCBmcmVxcy5jcHUgPSAwOw0K
+PiA+ICsNCj4gPiArIMKgIMKgIMKgIGlmIChmcmVxcy5uZXcgPT0gZnJlcXMub2xkKQ0KPiA+ICsg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgcmV0dXJuIDA7DQo+ID4gKw0KPiA+ICsgwqAgwqAgwqAgLyog
+RmluZGluZyBjdXJyZW50IHJ1bm5pbmcgbGV2ZWwgaW5kZXggKi8NCj4gPiArIMKgIMKgIMKgIGlm
+IChjcHVmcmVxX2ZyZXF1ZW5jeV90YWJsZV90YXJnZXQocG9saWN5LCBzNXB2MjEwX2ZyZXFfdGFi
+bGUsDQo+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoGZyZXFzLm9sZCwgcmVsYXRpb24sICZwcml2X2luZGV4KSkNCj4gPiAr
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIHJldHVybiAtRUlOVkFMOw0KPiA+ICsNCj4gPiArIMKgIMKg
+IMKgIGNwdWZyZXFfbm90aWZ5X3RyYW5zaXRpb24oJmZyZXFzLCBDUFVGUkVRX1BSRUNIQU5HRSk7
+DQo+ID4gKw0KPiA+ICsgwqAgwqAgwqAgaWYgKGZyZXFzLm5ldyA+IGZyZXFzLm9sZCkgew0KPiA+
+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLyogVm9sdGFnZSB1cDogd2lsbCBiZSBpbXBsZW1lbnRl
+ZCAqLw0KPiANCj4gVGhpcyBjb3VsZCBiZSBjcnVjaWFsIHRvIHRoZSBzeXN0ZW0gc3RhYmlsaXR5
+LiBJdCBpcyB1c3VhbGx5IG5vdCBvcHRpb25hbC4NCj4gDQpJIHRoaW5rIGl0IGRvZXMgbm90IG9j
+Y3VyIGFueSBzdGFiaWxpdHkgcHJvYmxlbSBiZWNhdXNlIGN1cnJlbnQgZGVmYXVsdCB2b2x0YWdl
+IGlzIG1heGltdW0gdmFsdWUuDQoNCkFjdHVhbGx5LCB0ZXN0ZWQgaXRzIGZ1bmN0aW9uYWxpdHkg
+b24gdGhlIFNNREsgd2l0aCBtYXg4Njk4IFBNSUMgZHJpdmVyIGludGVybmFsbHkuDQouLmJ1dCB0
+aGVyZSBpcyBubyBtYXg4Njk4IGRldmljZSBkcml2ZXIgaW4gdGhlIGN1cnJlbnQgbWFpbmxpbmUu
+Li4NCg0KU28gdGhpcyBmZWF0dXJlIGhhcyBiZWVuIHJlbW92ZWQgaW4gdGhpcyBwYXRjaC4uLg0K
+QW55d2F5LCB3aWxsIGJlIGltcGxlbWVudGVkIGFmdGVyIHN1Ym1pdHRpbmcgbWF4ODY5OCBsYXRl
+ci4NCg0KPiA+ICsgwqAgwqAgwqAgfQ0KPiA+ICsNCj4gPiArIMKgIMKgIMKgIC8qIENoZWNrIGlm
+IHRoZXJlIG5lZWQgdG8gY2hhbmdlIFBMTCAqLw0KPiA+ICsgwqAgwqAgwqAgaWYgKChpbmRleCA9
+PSBMMCkgfHwgKHByaXZfaW5kZXggPT0gTDApKQ0KPiA+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+cGxsX2NoYW5naW5nID0gMTsNCj4gPiArDQo+ID4gKyDCoCDCoCDCoCAvKiBDaGVjayBpZiB0aGVy
+ZSBuZWVkIHRvIGNoYW5nZSBTeXN0ZW0gYnVzIGNsb2NrICovDQo+ID4gKyDCoCDCoCDCoCBpZiAo
+KGluZGV4ID09IEw0KSB8fCAocHJpdl9pbmRleCA9PSBMNCkpDQo+ID4gKyDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCBidXNfc3BlZWRfY2hhbmdpbmcgPSAxOw0KPiA+ICsNCj4gPiArIMKgIMKgIMKgIGlm
+IChidXNfc3BlZWRfY2hhbmdpbmcpIHsNCj4gPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC8qDQo+
+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCogUmVjb25maWd1cmUgRFJBTSByZWZyZXNoIGNv
+dW50ZXIgdmFsdWUgZm9yIG1pbmltdW0NCj4gPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgKiB0
+ZW1wb3JhcnkgY2xvY2sgd2hpbGUgY2hhbmdpbmcgZGl2aWRlci4NCj4gPiArIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgKiBleHBlY3RlZCBjbG9jayBpcyA4M01oeiA6IDcuOHVzZWMvKDEvODNNaHop
+ID0gMHgyODcNCj4gPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgKi8NCj4gPiArIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIGlmIChwbGxfY2hhbmdpbmcpDQo+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCBfX3Jhd193cml0ZWwoMHgyODcsIFM1UF9WQV9ETUMxICsgMHgzMCk7DQo+
+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBlbHNlDQo+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCBfX3Jhd193cml0ZWwoMHgzMGMsIFM1UF9WQV9ETUMxICsgMHgzMCk7DQo+
+ID4gKw0KPiA+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgX19yYXdfd3JpdGVsKDB4Mjg3LCBTNVBf
+VkFfRE1DMCArIDB4MzApOw0KPiANCj4gSXQnZCBiZSBiZXR0ZXIgdG8gc2V0IHZhbHVlcyBiYXNl
+ZCBvbiB0aGUgcmVhbCBNUExMLCBBUExMIGNsb2NrDQo+IHNwZWVkcywgbm90IGhhcmQtY29kaW5n
+IHRoZW0uDQo+IA0KDQpXaWxsIG1vZGlmeS4NCg0KKHNuaXApDQoNCj4gPiArDQo+ID4gKyDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCAvKiBSZWNvbmZpZ3VyZSBEUkFNIHJlZnJlc2ggY291bnRlciB2YWx1
+ZSAqLw0KPiA+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgaWYgKGluZGV4ICE9IEw0KSB7DQo+ID4g
+KyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAvKg0KPiA+ICsgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAqIERNQzAgOiAxNjZNaHoNCj4gPiArIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgKiBETUMxIDogMjAwTWh6DQo+ID4gKyDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCovDQo+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCBfX3Jhd193cml0ZWwoMHg2MTgsIFM1UF9WQV9ETUMxICsgMHgzMCk7DQo+ID4g
+KyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBfX3Jhd193cml0ZWwoMHg1MGUsIFM1
+UF9WQV9ETUMwICsgMHgzMCk7DQo+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCB9IGVsc2Ugew0K
+PiA+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLyoNCj4gPiArIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgKiBETUMwIDogODNNaHoNCj4gPiArIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgKiBETUMxIDogMTAwTWh6DQo+ID4gKyDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCovDQo+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCBfX3Jhd193cml0ZWwoMHgzMGMsIFM1UF9WQV9ETUMxICsgMHgzMCk7DQo+
+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBfX3Jhd193cml0ZWwoMHgyODcs
+IFM1UF9WQV9ETUMwICsgMHgzMCk7DQo+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCB9DQo+IA0K
+PiBTYW1lIGhlcmUuIEl0J2QgYmV0dGVyIG5vdCBiZSBoYXJkIGNvZGVkLiBXZSBjYW4ndCBzdXJl
+IGFib3V0IHRoZQ0KPiBjbG9jayBzcGVlZHMgZm9yIGRpZmZlcmVudCBib2FyZHMuDQo+IA0KDQpX
+aWxsIG1vZGlmeS4NCiANCj4gPiArIMKgIMKgIMKgIH0NCj4gPiArDQo+ID4gKyDCoCDCoCDCoCBp
+ZiAoZnJlcXMubmV3IDwgZnJlcXMub2xkKSB7DQo+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAv
+KiBWb2x0YWdlIGRvd246IHdpbGwgYmUgaW1wbGVtZW50ZWQgKi8NCj4gPiArIMKgIMKgIMKgIH0N
+Cj4gPiArDQo+ID4gKyDCoCDCoCDCoCBjcHVmcmVxX25vdGlmeV90cmFuc2l0aW9uKCZmcmVxcywg
+Q1BVRlJFUV9QT1NUQ0hBTkdFKTsNCj4gPiArDQo+ID4gKyDCoCDCoCDCoCBwcmludGsoS0VSTl9J
+TkZPICJQZXJmIGNoYW5nZWRbTCVkXVxuIiwgaW5kZXgpOw0KPiANCj4gVGhpcyBtYXkgaW5jdXIg
+dG9vIG1hbnkgY2x1dHRlcnMuDQo+IA0KDQpZZWFoLCB5b3UncmUgcmlnaHQuLi5zaG91bGQgYmUg
+b3RoZXIgcHJpbnQgbGV2ZWwgc3VjaCBhcyBLRVJOX0RFQlVHLg0KDQooc25pcCkNCg0KVGhhbmtz
+Lg0K
