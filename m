@@ -1,39 +1,142 @@
-From: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Subject: [PATCH] ARM: SAMSUNG: make SAMSUNG_PM_DEBUG select DEBUG_LL
-Date: Thu, 16 Sep 2010 14:16:38 +0200
-Message-ID: <4c920aa8.d37b0e0a.4ee4.ffffc4bc@mx.google.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f46.google.com ([209.85.215.46]:48473 "EHLO
-	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753856Ab0IPMQm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Sep 2010 08:16:42 -0400
-Received: by ewy23 with SMTP id 23so506285ewy.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Sep 2010 05:16:41 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 1/5] ARM: S5PV310: Add HSMMC support and SDHCI configuration
+Date: Fri, 17 Sep 2010 09:57:16 +0900
+Message-ID: <039f01cb5603$49205f20$db611d60$%kim@samsung.com>
+References: <1284626223-18944-1-git-send-email-jeongbae.seo@samsung.com>
+ <1284626223-18944-2-git-send-email-jeongbae.seo@samsung.com>
+ <AANLkTi=Vx42siGBno7sLrirCRSiMvEr=2-toHHYU7405@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <AANLkTi=Vx42siGBno7sLrirCRSiMvEr=2-toHHYU7405@mail.gmail.com>
+Content-language: ko
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Kyungmin Park' <kmpark@infradead.org>, 'Jeongbae Seo' <jeongbae.seo@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, ben-linux@fluff.org, akpm@linux-foundation.org, 'Hyuk Lee' <hyuk1.lee@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com
 
-When selecting SAMSUNG_PM_DEBUG, it complains about a missing printascii()
-function if you do not select DEBUG_LL, so make the former select the latter.
+Kyungmin Park wrote:
+>=20
+> On Thu, Sep 16, 2010 at 5:36 PM, Jeongbae Seo <jeongbae.seo@samsung.c=
+om>
+> wrote:
+> > From: Hyuk Lee <hyuk1.lee@samsung.com>
+> >
+> > This patch adds to support HSMMC for S5PV310 and S5PC210 and setup =
+for
+> > HSMMC host controller and also related GPIO.
+> > At most 4 channel can be used at the same time.
+> > A user can configure SDHCI data bus as 8bit or 4bit.
+> >
+> > Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
+> > Signed-off-by: Jeongbae Seo <jeongbae.seo@samsung.com>
+> > ---
+> > =A0arch/arm/mach-s5pv310/Kconfig =A0 =A0 =A0 =A0 =A0 =A0| =A0 39 ++=
+++++++
+> > =A0arch/arm/mach-s5pv310/Makefile =A0 =A0 =A0 =A0 =A0 | =A0 =A02 +
+> > =A0arch/arm/mach-s5pv310/setup-sdhci-gpio.c | =A0156
+> ++++++++++++++++++++++++++++++
+> > =A0arch/arm/mach-s5pv310/setup-sdhci.c =A0 =A0 =A0| =A0 69 ++++++++=
++++++
+> > =A04 files changed, 266 insertions(+), 0 deletions(-)
+> > =A0create mode 100644 arch/arm/mach-s5pv310/setup-sdhci-gpio.c
+> > =A0create mode 100644 arch/arm/mach-s5pv310/setup-sdhci.c
+> >
+> > diff --git a/arch/arm/mach-s5pv310/Kconfig
+b/arch/arm/mach-s5pv310/Kconfig
+> > index 9ac29fe..6a07968 100644
+> > --- a/arch/arm/mach-s5pv310/Kconfig
+> > +++ b/arch/arm/mach-s5pv310/Kconfig
+> > @@ -25,6 +25,17 @@ config S5PV310_SETUP_I2C2
+> > =A0 =A0 =A0 =A0help
+> > =A0 =A0 =A0 =A0 =A0Common setup code for i2c bus 2.
+> >
+> > +config S5PV310_SETUP_SDHCI
+> > + =A0 =A0 =A0 bool
+> > + =A0 =A0 =A0 select S5PV310_SETUP_SDHCI_GPIO
+> > + =A0 =A0 =A0 help
+> > + =A0 =A0 =A0 =A0 Internal helper functions for S5PV310 based SDHCI=
+ systems.
+> > +
+> > +config S5PV310_SETUP_SDHCI_GPIO
+> > + =A0 =A0 =A0 bool
+> > + =A0 =A0 =A0 help
+> > + =A0 =A0 =A0 =A0 Common setup code for SDHCI gpio.
+> > +
+> > =A0# machine support
+> >
+> > =A0menu "S5PC210 Machines"
+> > @@ -33,6 +44,11 @@ config MACH_SMDKC210
+> > =A0 =A0 =A0 =A0bool "SMDKC210"
+> > =A0 =A0 =A0 =A0select CPU_S5PV310
+> > =A0 =A0 =A0 =A0select ARCH_SPARSEMEM_ENABLE
+> > + =A0 =A0 =A0 select S3C_DEV_HSMMC
+> > + =A0 =A0 =A0 select S3C_DEV_HSMMC1
+> > + =A0 =A0 =A0 select S3C_DEV_HSMMC2
+> > + =A0 =A0 =A0 select S3C_DEV_HSMMC3
+> > + =A0 =A0 =A0 select S5PV310_SETUP_SDHCI
+> > =A0 =A0 =A0 =A0help
+> > =A0 =A0 =A0 =A0 =A0Machine support for Samsung SMDKC210
+> > =A0 =A0 =A0 =A0 =A0S5PC210(MCP) is one of package option of S5PV310
+> > @@ -53,9 +69,32 @@ config MACH_SMDKV310
+> > =A0 =A0 =A0 =A0bool "SMDKV310"
+> > =A0 =A0 =A0 =A0select CPU_S5PV310
+> > =A0 =A0 =A0 =A0select ARCH_SPARSEMEM_ENABLE
+> > + =A0 =A0 =A0 select S3C_DEV_HSMMC
+> > + =A0 =A0 =A0 select S3C_DEV_HSMMC1
+> > + =A0 =A0 =A0 select S3C_DEV_HSMMC2
+> > + =A0 =A0 =A0 select S3C_DEV_HSMMC3
+> > + =A0 =A0 =A0 select S5PV310_SETUP_SDHCI
+> > =A0 =A0 =A0 =A0help
+> > =A0 =A0 =A0 =A0 =A0Machine support for Samsung SMDKV310
+> >
+> > =A0endmenu
+> >
+> > +comment "Configuration for HSMMC bus width"
+> > +
+> > +menu "Use 8-bit bus width"
+> > +
+> > +config S5PV310_SDHCI_CH0_8BIT
+> > + =A0 =A0 =A0 bool "Channel 0 with 8-bit bus"
+> > + =A0 =A0 =A0 help
+> > + =A0 =A0 =A0 =A0 Support HSMMC Channel 0 8-bit bus.
+> > + =A0 =A0 =A0 =A0 If selected, Channel 1 is disabled.
+> > +
+> > +config S5PV310_SDHCI_CH2_8BIT
+> > + =A0 =A0 =A0 bool "Channel 2 with 8-bit bus"
+> > + =A0 =A0 =A0 help
+> > + =A0 =A0 =A0 =A0 Support HSMMC Channel 2 8-bit bus.
+> > + =A0 =A0 =A0 =A0 If selected, Channel 3 is disabled.
+>=20
+> I think it's not needed since most boards have fixed bandwith and
+> cfg_gpio handle it regardless these configuration.
+> Also we use the select state if needed, e.g., when MMC0 uses
+> 8-buswidth then don't select MMC1.
+> I saw the SMDK board use this configuration. but just choose bandwidt=
+h 4
+or 8.
+>=20
+Hmm...
 
-Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
----
- arch/arm/plat-samsung/Kconfig |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+If it can be supported 4bit or 8bit option on each board, should be add=
+ed
+above configuration for selecting it.
 
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 7c0bde7..d5816e7 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -260,6 +260,7 @@ comment "Power management"
- config SAMSUNG_PM_DEBUG
- 	bool "S3C2410 PM Suspend debug"
- 	depends on PM
-+	select DEBUG_LL
- 	help
- 	  Say Y here if you want verbose debugging from the PM Suspend and
- 	  Resume code. See <file:Documentation/arm/Samsung-S3C24XX/Suspend.txt>
--- 
-1.7.0.4
+Mr. Seo, it would be nice if you could add un-selection CH1 or CH3 when
+selecting 8bit support later.
+
+Anyway, looks ok to me now..will apply.
+
+> Others good.
+>=20
+(snip)
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
