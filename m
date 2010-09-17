@@ -1,132 +1,138 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/2] ARM: S5PV310: Add PMU for S5PV310 hotplug
-Date: Fri, 17 Sep 2010 16:58:49 +0900
-Message-ID: <000301cb563e$2e4424d0$8acc6e70$%kim@samsung.com>
-References: <1284700388-9394-1-git-send-email-kgene.kim@samsung.com>
-	<1284700388-9394-2-git-send-email-kgene.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1284700388-9394-2-git-send-email-kgene.kim@samsung.com>
-Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Changhwan Youn' <chaos.youn@samsung.com>, ben-linux@fluff.org
+Subject: [PATCH v2 2/2] sdhci-s3c: Add support no internal clock divider in host controller
+Date: Fri, 17 Sep 2010 18:45:01 +0900
+Message-ID: <1284716701-5140-3-git-send-email-kgene.kim@samsung.com>
+References: <1284716701-5140-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:43919 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753163Ab0IQKEA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 17 Sep 2010 06:04:00 -0400
+In-Reply-To: <1284716701-5140-1-git-send-email-kgene.kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
+Cc: ben-linux@fluff.org, akpm@linux-foundation.org, cjb@laptop.org, Hyuk Lee <hyuk1.lee@samsung.com>, Jeongbae Seo <jeongbae.seo@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Kukjin Kim wrote:
-> 
-> From: Changhwan Youn <chaos.youn@samsung.com>
-> 
-> This patch adds PMU(Power Management Unit) for S5PV310/S5PC210 hotplug.
-> 
-> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+From: Hyuk Lee <hyuk1.lee@samsung.com>
 
-missed...when submitted...
+This patch adds to support no internal clock divider in SDHCI.
+The external clock divider can be used to make a proper clock
+because SDHCI doesn't support internal clock divider by itself.
+
+Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
+Signed-off-by: Jeongbae Seo <jeongbae.seo@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ drivers/mmc/host/sdhci-s3c.c |   60 ++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 60 insertions(+), 0 deletions(-)
 
-> ---
->  arch/arm/mach-s5pv310/cpu.c                   |    5 +++++
->  arch/arm/mach-s5pv310/include/mach/map.h      |    2 ++
->  arch/arm/mach-s5pv310/include/mach/regs-pmu.h |   25
-> +++++++++++++++++++++++++
->  arch/arm/plat-s5p/include/plat/map-s5p.h      |    1 +
->  4 files changed, 33 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-s5pv310/include/mach/regs-pmu.h
-> 
-> diff --git a/arch/arm/mach-s5pv310/cpu.c b/arch/arm/mach-s5pv310/cpu.c
-> index 4add398..3a3f90a 100644
-> --- a/arch/arm/mach-s5pv310/cpu.c
-> +++ b/arch/arm/mach-s5pv310/cpu.c
-> @@ -41,6 +41,11 @@ static struct map_desc s5pv310_iodesc[] __initdata = {
->  		.length		= SZ_128K,
->  		.type		= MT_DEVICE,
->  	}, {
-> +		.virtual	= (unsigned long)S5P_VA_PMU,
-> +		.pfn		= __phys_to_pfn(S5PV310_PA_PMU),
-> +		.length		= SZ_16K,
-> +		.type		= MT_DEVICE,
-> +	}, {
->  		.virtual	= (unsigned long)S5P_VA_COMBINER_BASE,
->  		.pfn		= __phys_to_pfn(S5PV310_PA_COMBINER),
->  		.length		= SZ_4K,
-> diff --git a/arch/arm/mach-s5pv310/include/mach/map.h b/arch/arm/mach-
-> s5pv310/include/mach/map.h
-> index aff6d23..c953c94 100644
-> --- a/arch/arm/mach-s5pv310/include/mach/map.h
-> +++ b/arch/arm/mach-s5pv310/include/mach/map.h
-> @@ -37,6 +37,8 @@
->  #define S5PV310_PA_SYSCON		(0x10010000)
->  #define S5P_PA_SYSCON			S5PV310_PA_SYSCON
-> 
-> +#define S5PV310_PA_PMU			(0x10020000)
-> +
->  #define S5PV310_PA_CMU			(0x10030000)
-> 
->  #define S5PV310_PA_WATCHDOG		(0x10060000)
-> diff --git a/arch/arm/mach-s5pv310/include/mach/regs-pmu.h
-b/arch/arm/mach-
-> s5pv310/include/mach/regs-pmu.h
-> new file mode 100644
-> index 0000000..bb15a40
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv310/include/mach/regs-pmu.h
-> @@ -0,0 +1,25 @@
-> +/* linux/arch/arm/mach-s5pv310/include/mach/regs-pmu.h
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * S5PV310 - Power management unit definition
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#ifndef __ASM_ARCH_REGS_PMU_H
-> +#define __ASM_ARCH_REGS_PMU_H __FILE__
-> +
-> +#include <mach/map.h>
-> +
-> +#define S5PV310_PMU(x)			(S5P_VA_PMU + (x))
-> +
-> +#define S5PV310_ARM_CORE1_CONF		S5P_PMU(0x2080)
-> +#define S5PV310_ARM_CORE1_STAT		S5P_PMU(0x2084)
-> +
-> +#define S5PV310_CORE_PWR_EN		0x3
-> +
-> +#endif /* __ASM_ARCH_REGS_PMU_H */
-> diff --git a/arch/arm/plat-s5p/include/plat/map-s5p.h b/arch/arm/plat-
-> s5p/include/plat/map-s5p.h
-> index c4ff88b..bee029e 100644
-> --- a/arch/arm/plat-s5p/include/plat/map-s5p.h
-> +++ b/arch/arm/plat-s5p/include/plat/map-s5p.h
-> @@ -31,6 +31,7 @@
-> 
->  #define S5P_VA_L2CC		S3C_ADDR(0x00900000)
->  #define S5P_VA_CMU		S3C_ADDR(0x00920000)
-> +#define S5P_VA_PMU		S3C_ADDR(0x00940000)
-> 
->  #define S5P_VA_UART(x)		(S3C_VA_UART + ((x) *
-> S3C_UART_OFFSET))
->  #define S5P_VA_UART0		S5P_VA_UART(0)
-> --
-
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+index e6e0438..5ad5ed7 100644
+--- a/drivers/mmc/host/sdhci-s3c.c
++++ b/drivers/mmc/host/sdhci-s3c.c
+@@ -96,6 +96,13 @@ static unsigned int sdhci_s3c_get_max_clk(struct sdhci_host *host)
+ 	unsigned int rate, max;
+ 	int clk;
+ 
++	/*
++	 * There is only one clock source(sclk) if there is no clock divider
++	 * in the host controller
++	 */
++	if (host->quirks & SDHCI_QUIRK_NONSTANDARD_CLOCK)
++		return clk_round_rate(ourhost->clk_bus[2], UINT_MAX);
++
+ 	/* note, a reset will reset the clock source */
+ 
+ 	sdhci_s3c_check_sclk(host);
+@@ -130,6 +137,15 @@ static unsigned int sdhci_s3c_consider_clock(struct sdhci_s3c *ourhost,
+ 	if (!clksrc)
+ 		return UINT_MAX;
+ 
++	/*
++	 * There is only one clock source(sclk) if there is no clock divider
++	 * in the host controller
++	 */
++	if (ourhost->host->quirks & SDHCI_QUIRK_NONSTANDARD_CLOCK) {
++		rate = clk_round_rate(clksrc, wanted);
++		return wanted - rate;
++	}
++
+ 	rate = clk_get_rate(clksrc);
+ 
+ 	for (div = 1; div < 256; div *= 2) {
+@@ -159,6 +175,7 @@ static void sdhci_s3c_set_clock(struct sdhci_host *host, unsigned int clock)
+ 	int best_src = 0;
+ 	int src;
+ 	u32 ctrl;
++	unsigned int timeout;
+ 
+ 	/* don't bother if the clock is going off. */
+ 	if (clock == 0)
+@@ -204,6 +221,35 @@ static void sdhci_s3c_set_clock(struct sdhci_host *host, unsigned int clock)
+ 			(ourhost->pdata->cfg_card)(ourhost->pdev, host->ioaddr,
+ 						   &ios, NULL);
+ 	}
++
++	/*
++	 * There is only one clock source(sclk) if there is no clock divider
++	 * in the host controller
++	 */
++	if (host->quirks & SDHCI_QUIRK_NONSTANDARD_CLOCK) {
++		writew(0, host->ioaddr + SDHCI_CLOCK_CONTROL);
++		clk_set_rate(ourhost->clk_bus[ourhost->cur_clk], clock);
++
++		writew(SDHCI_CLOCK_INT_EN, host->ioaddr + SDHCI_CLOCK_CONTROL);
++
++		/* Wait max 20 ms */
++		timeout = 20;
++		while (!((sdhci_readw(host, SDHCI_CLOCK_CONTROL))
++			& SDHCI_CLOCK_INT_STABLE)) {
++			if (timeout == 0) {
++				printk(KERN_ERR "%s: clock never stabilised.\n"
++						, mmc_hostname(host->mmc));
++				return;
++			}
++			timeout--;
++			mdelay(1);
++		}
++
++		writew(SDHCI_CLOCK_INT_EN | SDHCI_CLOCK_CARD_EN,
++				host->ioaddr + SDHCI_CLOCK_CONTROL);
++
++		host->clock = clock;
++	}
+ }
+ 
+ /**
+@@ -221,6 +267,13 @@ static unsigned int sdhci_s3c_get_min_clock(struct sdhci_host *host)
+ 	unsigned int delta, min = UINT_MAX;
+ 	int src;
+ 
++	/*
++	 * There is only one clock source(sclk) if there is no clock divider
++	 * in the host controller
++	 */
++	if (host->quirks & SDHCI_QUIRK_NONSTANDARD_CLOCK)
++		return clk_round_rate(ourhost->clk_bus[2], 400000);
++
+ 	for (src = 0; src < MAX_BUS_CLK; src++) {
+ 		delta = sdhci_s3c_consider_clock(ourhost, src, 0);
+ 		if (delta == UINT_MAX)
+@@ -425,6 +478,13 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+ 	/* HSMMC on Samsung SoCs uses SDCLK as timeout clock */
+ 	host->quirks |= SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK;
+ 
++	/*
++	 * If controller does not have internal clock divider,
++	 * we need to use another method with setup a quirk.
++	 */
++	if (pdata->clk_type)
++		host->quirks |= SDHCI_QUIRK_NONSTANDARD_CLOCK;
++
+ 	/* It supports additional host capabilities if needed */
+ 	if (pdata->host_caps)
+ 		host->mmc->caps |= pdata->host_caps;
+-- 
+1.6.2.5
