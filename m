@@ -1,37 +1,83 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH 5/5] sdhci-s3c: Add support no internal clock divider
-	in host controller
-Date: Fri, 17 Sep 2010 16:59:28 +0100
-Message-ID: <20100917155928.GA7561@void.printf.net>
-References: <1284626223-18944-1-git-send-email-jeongbae.seo@samsung.com> <1284626223-18944-6-git-send-email-jeongbae.seo@samsung.com> <AANLkTik23B23RW_kmjaL1PeXNiWtU01aNBwUOPrac6HF@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung fixes for 2.6.36-rc5
+Date: Sat, 18 Sep 2010 10:47:19 +0900
+Message-ID: <006001cb56d3$71a63fc0$54f2bf40$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <AANLkTik23B23RW_kmjaL1PeXNiWtU01aNBwUOPrac6HF@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>
-Cc: Jeongbae Seo <jeongbae.seo@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, ben-linux@fluff.org, kgene.kim@samsung.com, akpm@linux-foundation.org, Hyuk Lee <hyuk1.lee@samsung.com>, =?utf-8?B?7KCV7J6s7ZuI?= <jh80.chung@samsung.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:48611 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754594Ab0IRBrI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 17 Sep 2010 21:47:08 -0400
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Linus Torvalds' <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-Hi,
+Hi Linus,
 
-On Thu, Sep 16, 2010 at 06:08:28PM +0900, Kyungmin Park wrote:
-> Well there are two implementations. and no conclusion yet.
-> as s5pc210 don't support internal SDHCI clock, DMC overrides the
-> function operation itself when s5pc210. System LSI use the quirks.
-> 
-> Choose any one from MMC maintainer.
+Please pull Samsung fixes from:
 
-Both approaches are generally acceptable for MMC, so I would want to
-leave it up to the maintainer of the driver in question (which is Ben,
-in this case?) to choose between them.
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+s5p-fixes-for-linus
 
-That said, I think my own mild preference is for Jaehoon's approach.
+These things are for bug fix on 2.6.36-rc5.
+If any problems, please let me know.
 
-Thanks,
+Thanks.
 
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+
+The following changes since commit 49553c2ef88749dd502687f4eb9c258bb10a4f44:
+
+  Linux 2.6.36-rc4 (2010-09-12 16:07:37 -0700)
+
+are available in the git repository at:
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+s5p-fixes-for-linus
+
+Darius Augulis (2):
+      ARM: S3C64XX: Fix coding style errors on mach-real6410
+      ARM: S3C64XX: Add IORESOURCE_IRQ_HIGHLEVEL flag to dm9000 on
+mach-real6410
+
+Kukjin Kim (2):
+      ARM: SAMSUNG: Fix on drive strength value
+      ARM: SAMSUNG: Fix on s5p_gpio_[get,set]_drvstr
+
+Kyungmin Park (1):
+      ARM: S5PV210: Reduce the iodesc length of systimer
+
+Marek Szyprowski (2):
+      ARM: S5P: Fix DMA coherent mask for FIMC
+      ARM: S5PV210: Add FIMC clocks
+
+Mark Brown (2):
+      ARM: S3C64XX: Fix dev-spi build
+      ARM: S3C64XX: Prototype SPI devices
+
+MyungJoo Ham (1):
+      ARM: S5PV210: Update I2C-1 Clock Register Property.
+
+Sylwester Nawrocki (1):
+      ARM: S5P: Decrease IO Registers memory region size on FIMC
+
+ arch/arm/mach-s3c64xx/dev-spi.c               |    3 +-
+ arch/arm/mach-s3c64xx/mach-real6410.c         |  104
+++++++++++++------------
+ arch/arm/mach-s5pv210/clock.c                 |   20 +++++-
+ arch/arm/mach-s5pv210/cpu.c                   |    2 +-
+ arch/arm/plat-s5p/dev-fimc0.c                 |    9 ++-
+ arch/arm/plat-s5p/dev-fimc1.c                 |    9 ++-
+ arch/arm/plat-s5p/dev-fimc2.c                 |    9 ++-
+ arch/arm/plat-samsung/gpio-config.c           |    7 +-
+ arch/arm/plat-samsung/include/plat/gpio-cfg.h |   10 +-
+ 9 files changed, 107 insertions(+), 66 deletions(-)
