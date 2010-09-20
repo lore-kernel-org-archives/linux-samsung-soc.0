@@ -1,124 +1,56 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCHv2 7/7] ARM: S5PC110: add support for MMC regulators on Goni
- board
-Date: Mon, 20 Sep 2010 14:55:37 +0200
-Message-ID: <1284987337-15365-8-git-send-email-m.szyprowski@samsung.com>
-References: <1284987337-15365-1-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH] sdhci-s3c: fix incorrect spinlock usage after merge
+Date: Mon, 20 Sep 2010 15:03:42 +0200
+Message-ID: <1284987822-17955-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:43712 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755927Ab0ITMzp (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:41205 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756384Ab0ITNDq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Sep 2010 08:55:45 -0400
-Received: from eu_spt2 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0L9100BEKQKTKE@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 20 Sep 2010 13:55:42 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L91008ACQKSRE@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 20 Sep 2010 13:55:41 +0100 (BST)
-In-reply-to: <1284987337-15365-1-git-send-email-m.szyprowski@samsung.com>
+	Mon, 20 Sep 2010 09:03:46 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, akpm@linux-foundation.org, w.sang@pengutronix.de
 
-Add required platform definitions for MMC power regulators on Samsung
-Goni board. GPIO pin GONI_EXT_FLASH_EN has been transferred from machine
-startup code to fixed voltage regulator.
+In the commit f522886e202a34a2191dd5d471b3c4d46410a9a0 a merge conflict
+in the sdhci-s3c driver been fixed. However the fix used incorrect
+spinlock operation - it cause a race with sdhci interrupt service. The
+correct way to solve it is to use spin_lock_irqsave/irqrestore() calls.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-CC: Mark Brown <broonie@opensource.wolfsonmicro.com>
 ---
- arch/arm/mach-s5pv210/mach-goni.c |   40 ++++++++++++++++++++++++++++++++++--
- 1 files changed, 37 insertions(+), 3 deletions(-)
+ drivers/mmc/host/sdhci-s3c.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
-index 68e22f2..a7fbe08 100644
---- a/arch/arm/mach-s5pv210/mach-goni.c
-+++ b/arch/arm/mach-s5pv210/mach-goni.c
-@@ -16,6 +16,7 @@
- #include <linux/i2c.h>
- #include <linux/i2c-gpio.h>
- #include <linux/mfd/max8998.h>
-+#include <linux/regulator/fixed.h>
- #include <linux/spi/spi.h>
- #include <linux/spi/spi_gpio.h>
- #include <linux/lcd.h>
-@@ -226,6 +227,10 @@ static void __init goni_radio_init(void)
- /* MAX8998 regulators */
- #if defined(CONFIG_REGULATOR_MAX8998) || defined(CONFIG_REGULATOR_MAX8998_MODULE)
- 
-+static struct regulator_consumer_supply goni_ldo5_consumers[] = {
-+	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
-+};
-+
- static struct regulator_init_data goni_ldo2_data = {
- 	.constraints	= {
- 		.name		= "VALIVE_1.1V",
-@@ -265,6 +270,8 @@ static struct regulator_init_data goni_ldo5_data = {
- 		.max_uV		= 2800000,
- 		.apply_uV	= 1,
- 	},
-+	.num_consumer_supplies = ARRAY_SIZE(goni_ldo5_consumers),
-+	.consumer_supplies = goni_ldo5_consumers,
- };
- 
- static struct regulator_init_data goni_ldo6_data = {
-@@ -556,11 +563,37 @@ static struct s3c_sdhci_platdata goni_hsmmc2_data __initdata = {
- 	.ext_cd_gpio_invert	= 1,
- };
- 
-+static struct regulator_consumer_supply mmc2_supplies[] = {
-+	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.2"),
-+};
-+
-+static struct regulator_init_data mmc2_fixed_voltage_init_data = {
-+	.constraints		= {
-+		.name		= "V_TF_2.8V",
-+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(mmc2_supplies),
-+	.consumer_supplies	= mmc2_supplies,
-+};
-+
-+static struct fixed_voltage_config mmc2_fixed_voltage_config = {
-+	.supply_name		= "EXT_FLASH_EN",
-+	.microvolts		= 2800000,
-+	.gpio			= GONI_EXT_FLASH_EN,
-+	.enable_high		= true,
-+	.init_data		= &mmc2_fixed_voltage_init_data,
-+};
-+
-+static struct platform_device mmc2_fixed_voltage = {
-+	.name		= "reg-fixed-voltage",
-+	.id		= 2,
-+	.dev		= {
-+		.platform_data	= &mmc2_fixed_voltage_config,
-+	},
-+};
-+
- static void goni_setup_sdhci(void)
+diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+index 71ad416..735d431 100644
+--- a/drivers/mmc/host/sdhci-s3c.c
++++ b/drivers/mmc/host/sdhci-s3c.c
+@@ -241,8 +241,10 @@ static struct sdhci_ops sdhci_s3c_ops = {
+ static void sdhci_s3c_notify_change(struct platform_device *dev, int state)
  {
--	gpio_request(GONI_EXT_FLASH_EN, "FLASH_EN");
--	gpio_direction_output(GONI_EXT_FLASH_EN, 1);
--
- 	s3c_sdhci0_set_platdata(&goni_hsmmc0_data);
- 	s3c_sdhci1_set_platdata(&goni_hsmmc1_data);
- 	s3c_sdhci2_set_platdata(&goni_hsmmc2_data);
-@@ -572,6 +605,7 @@ static struct platform_device *goni_devices[] __initdata = {
- 	&goni_spi_gpio,
- 	&s3c_device_usb_hsotg,
- 	&goni_i2c_gpio_pmic,
-+	&mmc2_fixed_voltage,
- 	&goni_device_gpiokeys,
- 	&s5p_device_fimc0,
- 	&s5p_device_fimc1,
+ 	struct sdhci_host *host = platform_get_drvdata(dev);
++	unsigned long flags;
++
+ 	if (host) {
+-		spin_lock(&host->lock);
++		spin_lock_irqsave(&host->lock, flags);
+ 		if (state) {
+ 			dev_dbg(&dev->dev, "card inserted.\n");
+ 			host->flags &= ~SDHCI_DEVICE_DEAD;
+@@ -253,7 +255,7 @@ static void sdhci_s3c_notify_change(struct platform_device *dev, int state)
+ 			host->quirks &= ~SDHCI_QUIRK_BROKEN_CARD_DETECTION;
+ 		}
+ 		tasklet_schedule(&host->card_tasklet);
+-		spin_unlock(&host->lock);
++		spin_unlock_irqrestore(&host->lock, flags);
+ 	}
+ }
+ 
 -- 
 1.7.1.569.g6f426
