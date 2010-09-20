@@ -1,49 +1,55 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] regulator: Add support samsung power domain
-Date: Mon, 20 Sep 2010 10:50:01 +0100
-Message-ID: <20100920095001.GB31167@sirena.org.uk>
-References: <1284717532-9992-1-git-send-email-kgene.kim@samsung.com> <20100917113050.GA4322@rakim.wolfsonmicro.main> <009d01cb588a$d45ce520$7d16af60$%kim@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCHv2 2/7] ARM: S5PC110: fb setup for Goni - remove pixel clock
+Date: Mon, 20 Sep 2010 14:55:32 +0200
+Message-ID: <1284987337-15365-3-git-send-email-m.szyprowski@samsung.com>
+References: <1284987337-15365-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:41660 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755851Ab0ITJuE (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:43712 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753111Ab0ITMzm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Sep 2010 05:50:04 -0400
-Content-Disposition: inline
-In-Reply-To: <009d01cb588a$d45ce520$7d16af60$%kim@samsung.com>
+	Mon, 20 Sep 2010 08:55:42 -0400
+Received: from eu_spt1 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L9100G9OQKS7T@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 20 Sep 2010 13:55:40 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0L9100C3WQKRVC@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 20 Sep 2010 13:55:40 +0100 (BST)
+In-reply-to: <1284987337-15365-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, lrg@slimlogic.co.uk, 'Changhwan Youn' <chaos.youn@samsung.com>, 'Jeongbae Seo' <jeongbae.seo@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
 
-On Mon, Sep 20, 2010 at 03:12:34PM +0900, Kukjin Kim wrote:
+Since commit 67a38950f0917aecfe1a3e46720d8bbb0020 there is no need
+to set pixel clock for the s3c-fb driver's window information.
+The correct pixel clock value can be automatically calculated from
+the other screen parameters. This patch removes the redundant pixel clock
+parameter.
 
-> The reason the implementation is located in machine-specific code is that
-> the way to handle power domain in S5PV210 and S5PV310 is different but we
-> can handle this using platform_device_id.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-s5pv210/mach-goni.c |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
-Yes, I think it's reasonable to implement stuff under arch/arm - my only
-issue with what you'd done was that I didn't feel the glue layer was
-adding anything.
-
-> > Another option to consider here is using runtime PM - other platforms
-> > seem to be going down that route, and are using it to also factor clock
-> > management for the IP blocks out (so that the block's clocks get enabled
-> > and disabled automatically when the block is active without needing any
-> > code in the driver).
-
-> To use runtime PM cannot be a substitute for using regulator API.
-> It's related to when to control the power domain whether using regulator API
-> is to how to control the power domain.
-
-The runtime PM API will give you very similar reference counting to the
-regulator API, for all you're using the regulator API for here there's
-not a massive difference.  If you started using voltage scaling then
-there'd be more win.
-
-> We have a plan to support runtime PM using regulator API.
-> Am I on the right track ?
-
-That's doable.
+diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
+index 4bd5582..b0ae208 100644
+--- a/arch/arm/mach-s5pv210/mach-goni.c
++++ b/arch/arm/mach-s5pv210/mach-goni.c
+@@ -88,7 +88,6 @@ static struct s3c2410_uartcfg goni_uartcfgs[] __initdata = {
+ /* Frame Buffer */
+ static struct s3c_fb_pd_win goni_fb_win0 = {
+ 	.win_mode = {
+-		.pixclock = 1000000000000ULL / ((16+16+2+480)*(28+3+2+800)*55),
+ 		.left_margin	= 16,
+ 		.right_margin	= 16,
+ 		.upper_margin	= 2,
+-- 
+1.7.1.569.g6f426
