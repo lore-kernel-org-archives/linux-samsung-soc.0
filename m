@@ -1,120 +1,80 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] regulator: Add support samsung power domain
-Date: Mon, 20 Sep 2010 15:12:34 +0900
-Message-ID: <009d01cb588a$d45ce520$7d16af60$%kim@samsung.com>
-References: <1284717532-9992-1-git-send-email-kgene.kim@samsung.com>
- <20100917113050.GA4322@rakim.wolfsonmicro.main>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20100917113050.GA4322@rakim.wolfsonmicro.main>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, lrg@slimlogic.co.uk, 'Changhwan Youn' <chaos.youn@samsung.com>, 'Jeongbae Seo' <jeongbae.seo@samsung.com>
+From: Sangbeom Kim <sbkim73@samsung.com>
+Subject: [PATCH v2 1/6] ARM: S5PV210: Add DMC map_desc table for supporting DMC access
+Date: Mon, 20 Sep 2010 15:04:50 +0900
+Message-ID: <1284962695-8542-2-git-send-email-sbkim73@samsung.com>
+References: <1284962695-8542-1-git-send-email-sbkim73@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:38713 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751881Ab0ITGYj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 20 Sep 2010 02:24:39 -0400
+In-Reply-To: <1284962695-8542-1-git-send-email-sbkim73@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org, Jaecheol Lee <jc.lee@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>
 
-Mark Brown wrote:
-> 
-Hi :-)
+From: Jaecheol Lee <jc.lee@samsung.com>
 
-> On Fri, Sep 17, 2010 at 06:58:52PM +0900, Kukjin Kim wrote:
-> 
-> > This patch adds common regulator driver for samsung power domain.
-> > A consumer of controlling power domain uses regulator framework API,
-> > So new samsung pd driver is inserted into regulator directory.
-> 
-> This looks conceptually OK for the regulator API - there's no operating
-> points, it's just straight enable/disable stuff - but I do have a few
-> concerns about this approach.
-> 
-Hmm..ok ;-)
+This patch adds DMC(DRAM Memory Controller) map_desc table.
+Because some driver such as CPUFREQ need to access DMC register.
 
-> > +config REGULATOR_SAMSUNG_POWER_DOMAIN
-> > +	tristate "Samsung power domain support"
-> > +	help
-> > +	  This driver provides support for samsung power domain.
-> > +
-> 
-> This really ought to have a dependency on PLAT_SAMSUNG or something.
+Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
+Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+---
+ arch/arm/mach-s5pv210/cpu.c              |   10 ++++++++++
+ arch/arm/mach-s5pv210/include/mach/map.h |    3 +++
+ arch/arm/plat-s5p/include/plat/map-s5p.h |    2 ++
+ 3 files changed, 15 insertions(+), 0 deletions(-)
 
-Ok..you're right. your suggestion is better.
-
-> However, see below.
-> 
-Ok..
-
-> > +static struct regulator_ops samsung_pd_ops = {
-> > +	.is_enabled	= samsung_pd_is_enabled,
-> > +	.enable		= samsung_pd_enable,
-> > +	.disable	= samsung_pd_disable,
-> > +	.enable_time	= samsung_pd_enable_time,
-> > +};
-> 
-> You've got a microvolts in the platform data but no voltage stuff here.
-> Equally well given that this is for processor internal stuff probably
-> the change you need is to remove the voltage from the config.
-> 
-Yeah...will be removed useless stuff.
-
-> > +	dev_dbg(&pdev->dev, "%s registerd\n", drvdata->desc.name);
-> 
-> Spelling mistake here.  The regulator API is fairly chatty so I'd have
-> thought this was a bit redundant?
-> 
-Oh...thanks.
-
-> > +struct samsung_pd_config {
-> > +	const char *supply_name;
-> > +	int microvolts;
-> > +	unsigned startup_delay;
-> > +	unsigned enabled_at_boot:1;
-> > +	struct regulator_init_data *init_data;
-> > +	int (*enable)(void);
-> > +	int (*disable)(void);
-> > +};
-> 
-> So, this driver is essentially just a mapping of this ops structure into
-> the regulator API.  This is not at all Samsung specific so if it did get
-> included it shouldn't have any Samsung references (other than the author
-> and copyright ones) but I'm not convinced that this is the best approach.
-> 
-> What I'd have expected to see is either a regulator driver that at least
-> knows something about updating registers in the CPU (or whatever else is
-> needed to configure the power domains) or something more generic (along
-> the lines of the existing fixed voltage regulator, possibly just some
-> new features for it).  I'm tending more towards the former approach
-> since if you're having to provide enable and disable operations you're
-> getting very close to just implementing a subset regulator API.
-> 
-As you expected, we've already implemented a regulator API for S5PV210 and
-S5PV310 in the machine-specific code.
-According to your comments, it would be better to move those implementations
-to the regulator driver code and we agree with you.
-The reason the implementation is located in machine-specific code is that
-the way to handle power domain in S5PV210 and S5PV310 is different but we
-can handle this using platform_device_id.
-
-> Another option to consider here is using runtime PM - other platforms
-> seem to be going down that route, and are using it to also factor clock
-> management for the IP blocks out (so that the block's clocks get enabled
-> and disabled automatically when the block is active without needing any
-> code in the driver).
-
-To use runtime PM cannot be a substitute for using regulator API.
-It's related to when to control the power domain whether using regulator API
-is to how to control the power domain.
-
-We have a plan to support runtime PM using regulator API.
-Am I on the right track ?
-
-Thank you for your comments. :-)
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/arch/arm/mach-s5pv210/cpu.c b/arch/arm/mach-s5pv210/cpu.c
+index c551ab1..aebbb7f 100644
+--- a/arch/arm/mach-s5pv210/cpu.c
++++ b/arch/arm/mach-s5pv210/cpu.c
+@@ -84,6 +84,16 @@ static struct map_desc s5pv210_iodesc[] __initdata = {
+ 		.pfn		= __phys_to_pfn(S5PV210_PA_SROMC),
+ 		.length		= SZ_4K,
+ 		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S5P_VA_DMC0,
++		.pfn		= __phys_to_pfn(S5PV210_PA_DMC0),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S5P_VA_DMC1,
++		.pfn		= __phys_to_pfn(S5PV210_PA_DMC1),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
+ 	}
+ };
+ 
+diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
+index bd9afd5..3e89c22 100644
+--- a/arch/arm/mach-s5pv210/include/mach/map.h
++++ b/arch/arm/mach-s5pv210/include/mach/map.h
+@@ -96,6 +96,9 @@
+ 
+ #define S5PV210_PA_ADC		(0xE1700000)
+ 
++#define S5PV210_PA_DMC0		(0xF0000000)
++#define S5PV210_PA_DMC1		(0xF1400000)
++
+ /* compatibiltiy defines. */
+ #define S3C_PA_UART		S5PV210_PA_UART
+ #define S3C_PA_HSMMC0		S5PV210_PA_HSMMC(0)
+diff --git a/arch/arm/plat-s5p/include/plat/map-s5p.h b/arch/arm/plat-s5p/include/plat/map-s5p.h
+index c4ff88b..2472894 100644
+--- a/arch/arm/plat-s5p/include/plat/map-s5p.h
++++ b/arch/arm/plat-s5p/include/plat/map-s5p.h
+@@ -18,6 +18,8 @@
+ #define S5P_VA_SYSTIMER		S3C_ADDR(0x01200000)
+ #define S5P_VA_SROMC		S3C_ADDR(0x01100000)
+ #define S5P_VA_SYSRAM		S3C_ADDR(0x01180000)
++#define S5P_VA_DMC0		S3C_ADDR(0x00A00000)
++#define S5P_VA_DMC1		S3C_ADDR(0x00A80000)
+ 
+ #define S5P_VA_COMBINER_BASE	S3C_ADDR(0x00600000)
+ #define S5P_VA_COMBINER(x)	(S5P_VA_COMBINER_BASE + ((x) >> 2) * 0x10)
+-- 
+1.6.2.5
