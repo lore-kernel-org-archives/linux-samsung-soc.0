@@ -1,182 +1,49 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 1/2] ARM: S5PV310: Add support RTC
-Date: Mon, 20 Sep 2010 15:38:05 +0900
-Message-ID: <1284964685-15717-1-git-send-email-kgene.kim@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] regulator: Add support samsung power domain
+Date: Mon, 20 Sep 2010 10:50:01 +0100
+Message-ID: <20100920095001.GB31167@sirena.org.uk>
+References: <1284717532-9992-1-git-send-email-kgene.kim@samsung.com> <20100917113050.GA4322@rakim.wolfsonmicro.main> <009d01cb588a$d45ce520$7d16af60$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:44234 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751370Ab0ITGyg (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:41660 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755851Ab0ITJuE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Sep 2010 02:54:36 -0400
+	Mon, 20 Sep 2010 05:50:04 -0400
+Content-Disposition: inline
+In-Reply-To: <009d01cb588a$d45ce520$7d16af60$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>, Jemings Ko <jemings@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, lrg@slimlogic.co.uk, 'Changhwan Youn' <chaos.youn@samsung.com>, 'Jeongbae Seo' <jeongbae.seo@samsung.com>
 
-From: Changhwan Youn <chaos.youn@samsung.com>
+On Mon, Sep 20, 2010 at 03:12:34PM +0900, Kukjin Kim wrote:
 
-This patch adds support RTC for S5PV310 and S5PC210.
+> The reason the implementation is located in machine-specific code is that
+> the way to handle power domain in S5PV210 and S5PV310 is different but we
+> can handle this using platform_device_id.
 
-Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
-Signed-off-by: Jemings Ko <jemings@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
-NOTE: tested on SMDKV310 and SMDKC210.
+Yes, I think it's reasonable to implement stuff under arch/arm - my only
+issue with what you'd done was that I didn't feel the glue layer was
+adding anything.
 
- arch/arm/Kconfig                          |    1 +
- arch/arm/mach-s5pv310/Kconfig             |    2 ++
- arch/arm/mach-s5pv310/clock.c             |    5 +++++
- arch/arm/mach-s5pv310/include/mach/irqs.h |    3 +++
- arch/arm/mach-s5pv310/include/mach/map.h  |    2 ++
- arch/arm/mach-s5pv310/mach-smdkc210.c     |    7 +++++++
- arch/arm/mach-s5pv310/mach-smdkv310.c     |    7 +++++++
- 7 files changed, 27 insertions(+), 0 deletions(-)
+> > Another option to consider here is using runtime PM - other platforms
+> > seem to be going down that route, and are using it to also factor clock
+> > management for the IP blocks out (so that the block's clocks get enabled
+> > and disabled automatically when the block is active without needing any
+> > code in the driver).
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index bce9193..efa8d7e 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -734,6 +734,7 @@ config ARCH_S5PV310
- 	select GENERIC_GPIO
- 	select HAVE_CLK
- 	select GENERIC_CLOCKEVENTS
-+	select HAVE_S3C_RTC
- 	help
- 	  Samsung S5PV310 series based systems
- 
-diff --git a/arch/arm/mach-s5pv310/Kconfig b/arch/arm/mach-s5pv310/Kconfig
-index 9ac29fe..4de5d72 100644
---- a/arch/arm/mach-s5pv310/Kconfig
-+++ b/arch/arm/mach-s5pv310/Kconfig
-@@ -33,6 +33,7 @@ config MACH_SMDKC210
- 	bool "SMDKC210"
- 	select CPU_S5PV310
- 	select ARCH_SPARSEMEM_ENABLE
-+	select S3C_DEV_RTC
- 	help
- 	  Machine support for Samsung SMDKC210
- 	  S5PC210(MCP) is one of package option of S5PV310
-@@ -53,6 +54,7 @@ config MACH_SMDKV310
- 	bool "SMDKV310"
- 	select CPU_S5PV310
- 	select ARCH_SPARSEMEM_ENABLE
-+	select S3C_DEV_RTC
- 	help
- 	  Machine support for Samsung SMDKV310
- 
-diff --git a/arch/arm/mach-s5pv310/clock.c b/arch/arm/mach-s5pv310/clock.c
-index 262a46f..8ffd80e 100644
---- a/arch/arm/mach-s5pv310/clock.c
-+++ b/arch/arm/mach-s5pv310/clock.c
-@@ -472,6 +472,11 @@ static struct clk init_clocks_disable[] = {
- 		.enable		= s5pv310_clk_ip_peril_ctrl,
- 		.ctrlbit	= (1 << 15),
- 	}, {
-+		.name		= "rtc",
-+		.id		= -1,
-+		.enable		= s5pv310_clk_ip_perir_ctrl,
-+		.ctrlbit	= (1 << 15),
-+	}, {
- 		.name		= "watchdog",
- 		.id		= -1,
- 		.enable		= s5pv310_clk_ip_perir_ctrl,
-diff --git a/arch/arm/mach-s5pv310/include/mach/irqs.h b/arch/arm/mach-s5pv310/include/mach/irqs.h
-index 7b4b09f..e81332f 100644
---- a/arch/arm/mach-s5pv310/include/mach/irqs.h
-+++ b/arch/arm/mach-s5pv310/include/mach/irqs.h
-@@ -60,6 +60,9 @@
- #define IRQ_TIMER3_VIC		COMBINER_IRQ(22, 3)
- #define IRQ_TIMER4_VIC		COMBINER_IRQ(22, 4)
- 
-+#define IRQ_RTC_ALARM		COMBINER_IRQ(23, 0)
-+#define IRQ_RTC_TIC		COMBINER_IRQ(23, 1)
-+
- #define IRQ_UART0		COMBINER_IRQ(26, 0)
- #define IRQ_UART1		COMBINER_IRQ(26, 1)
- #define IRQ_UART2		COMBINER_IRQ(26, 2)
-diff --git a/arch/arm/mach-s5pv310/include/mach/map.h b/arch/arm/mach-s5pv310/include/mach/map.h
-index aff6d23..7523653 100644
---- a/arch/arm/mach-s5pv310/include/mach/map.h
-+++ b/arch/arm/mach-s5pv310/include/mach/map.h
-@@ -40,6 +40,7 @@
- #define S5PV310_PA_CMU			(0x10030000)
- 
- #define S5PV310_PA_WATCHDOG		(0x10060000)
-+#define S5PV310_PA_RTC			(0x10070000)
- 
- #define S5PV310_PA_COMBINER		(0x10448000)
- 
-@@ -81,6 +82,7 @@
- #define S3C_PA_HSMMC2			S5PV310_PA_HSMMC(2)
- #define S3C_PA_HSMMC3			S5PV310_PA_HSMMC(3)
- #define S3C_PA_IIC			S5PV310_PA_IIC0
-+#define S3C_PA_RTC			S5PV310_PA_RTC
- #define S3C_PA_WDT			S5PV310_PA_WATCHDOG
- 
- #endif /* __ASM_ARCH_MAP_H */
-diff --git a/arch/arm/mach-s5pv310/mach-smdkc210.c b/arch/arm/mach-s5pv310/mach-smdkc210.c
-index 71a3bec..5b34d9e 100644
---- a/arch/arm/mach-s5pv310/mach-smdkc210.c
-+++ b/arch/arm/mach-s5pv310/mach-smdkc210.c
-@@ -17,6 +17,7 @@
- #include <plat/regs-serial.h>
- #include <plat/s5pv310.h>
- #include <plat/cpu.h>
-+#include <plat/devs.h>
- 
- #include <mach/map.h>
- 
-@@ -65,6 +66,10 @@ static struct s3c2410_uartcfg smdkc210_uartcfgs[] __initdata = {
- 	},
- };
- 
-+static struct platform_device *smdkc210_devices[] __initdata = {
-+	&s3c_device_rtc,
-+};
-+
- static void __init smdkc210_map_io(void)
- {
- 	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
-@@ -77,6 +82,8 @@ static void __init smdkc210_machine_init(void)
- #ifdef CONFIG_CACHE_L2X0
- 	l2x0_init(S5P_VA_L2CC, 1 << 28, 0xffffffff);
- #endif
-+
-+	platform_add_devices(smdkc210_devices, ARRAY_SIZE(smdkc210_devices));
- }
- 
- MACHINE_START(SMDKC210, "SMDKC210")
-diff --git a/arch/arm/mach-s5pv310/mach-smdkv310.c b/arch/arm/mach-s5pv310/mach-smdkv310.c
-index 0d6ab77..06062c8 100644
---- a/arch/arm/mach-s5pv310/mach-smdkv310.c
-+++ b/arch/arm/mach-s5pv310/mach-smdkv310.c
-@@ -17,6 +17,7 @@
- #include <plat/regs-serial.h>
- #include <plat/s5pv310.h>
- #include <plat/cpu.h>
-+#include <plat/devs.h>
- 
- #include <mach/map.h>
- 
-@@ -65,6 +66,10 @@ static struct s3c2410_uartcfg smdkv310_uartcfgs[] __initdata = {
- 	},
- };
- 
-+static struct platform_device *smdkv310_devices[] __initdata = {
-+	&s3c_device_rtc,
-+};
-+
- static void __init smdkv310_map_io(void)
- {
- 	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
-@@ -77,6 +82,8 @@ static void __init smdkv310_machine_init(void)
- #ifdef CONFIG_CACHE_L2X0
- 	l2x0_init(S5P_VA_L2CC, 1 << 28, 0xffffffff);
- #endif
-+
-+	platform_add_devices(smdkv310_devices, ARRAY_SIZE(smdkv310_devices));
- }
- 
- MACHINE_START(SMDKV310, "SMDKV310")
--- 
-1.6.2.5
+> To use runtime PM cannot be a substitute for using regulator API.
+> It's related to when to control the power domain whether using regulator API
+> is to how to control the power domain.
+
+The runtime PM API will give you very similar reference counting to the
+regulator API, for all you're using the regulator API for here there's
+not a massive difference.  If you started using voltage scaling then
+there'd be more win.
+
+> We have a plan to support runtime PM using regulator API.
+> Am I on the right track ?
+
+That's doable.
