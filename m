@@ -1,55 +1,88 @@
-From: Sangbeom Kim <sbkim73@samsung.com>
-Subject: [PATCH v2 6/6] ARM: S5PV210: Update Kconfig and Makefile for supporting CPUFREQ driver
-Date: Mon, 20 Sep 2010 15:04:55 +0900
-Message-ID: <1284962695-8542-7-git-send-email-sbkim73@samsung.com>
-References: <1284962695-8542-1-git-send-email-sbkim73@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH 2/2] ARM: S5PV310: Add support Watchdog Timer
+Date: Mon, 20 Sep 2010 15:38:11 +0900
+Message-ID: <1284964691-15751-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:38720 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:44238 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751875Ab0ITGYj (ORCPT
+	with ESMTP id S1752642Ab0ITGyg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Sep 2010 02:24:39 -0400
-In-Reply-To: <1284962695-8542-1-git-send-email-sbkim73@samsung.com>
+	Mon, 20 Sep 2010 02:54:36 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, Jaecheol Lee <jc.lee@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>
+Cc: ben-linux@fluff.org, Jemings Ko <jemings@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Jaecheol Lee <jc.lee@samsung.com>
+From: Jemings Ko <jemings@samsung.com>
 
-This patch adds ARCH_HAS_CPUFREQ in arch/arm/Kconfig for S5PV210,
-and updates mach-s5pv210/Makefile for supporting build CPUFREQ driver.
+This patch adds support Watchdog Timer for S5PV310 and S5PC210.
 
-Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
-Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+Signed-off-by: Jemings Ko <jemings@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/Kconfig               |    1 +
- arch/arm/mach-s5pv210/Makefile |    1 +
- 2 files changed, 2 insertions(+), 0 deletions(-)
+NOTE: tested on SMDKV310 and SMDKC210.
+
+ arch/arm/Kconfig                      |    1 +
+ arch/arm/mach-s5pv310/Kconfig         |    2 ++
+ arch/arm/mach-s5pv310/mach-smdkc210.c |    1 +
+ arch/arm/mach-s5pv310/mach-smdkv310.c |    1 +
+ 4 files changed, 5 insertions(+), 0 deletions(-)
 
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index bce9193..7bff1d2 100644
+index efa8d7e..9383020 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
-@@ -721,6 +721,7 @@ config ARCH_S5PV210
- 	select GENERIC_GPIO
+@@ -735,6 +735,7 @@ config ARCH_S5PV310
  	select HAVE_CLK
- 	select ARM_L1_CACHE_SHIFT_6
-+	select ARCH_HAS_CPUFREQ
- 	select ARCH_USES_GETTIMEOFFSET
- 	select HAVE_S3C2410_I2C
+ 	select GENERIC_CLOCKEVENTS
  	select HAVE_S3C_RTC
-diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
-index 7045489..833d803 100644
---- a/arch/arm/mach-s5pv210/Makefile
-+++ b/arch/arm/mach-s5pv210/Makefile
-@@ -14,6 +14,7 @@ obj-				:=
++	select HAVE_S3C2410_WATCHDOG
+ 	help
+ 	  Samsung S5PV310 series based systems
  
- obj-$(CONFIG_CPU_S5PV210)	+= cpu.o init.o clock.o dma.o gpiolib.o
- obj-$(CONFIG_CPU_S5PV210)	+= setup-i2c0.o
-+obj-$(CONFIG_CPU_FREQ)		+= cpufreq.o
+diff --git a/arch/arm/mach-s5pv310/Kconfig b/arch/arm/mach-s5pv310/Kconfig
+index 4de5d72..1d59ce9 100644
+--- a/arch/arm/mach-s5pv310/Kconfig
++++ b/arch/arm/mach-s5pv310/Kconfig
+@@ -34,6 +34,7 @@ config MACH_SMDKC210
+ 	select CPU_S5PV310
+ 	select ARCH_SPARSEMEM_ENABLE
+ 	select S3C_DEV_RTC
++	select S3C_DEV_WDT
+ 	help
+ 	  Machine support for Samsung SMDKC210
+ 	  S5PC210(MCP) is one of package option of S5PV310
+@@ -55,6 +56,7 @@ config MACH_SMDKV310
+ 	select CPU_S5PV310
+ 	select ARCH_SPARSEMEM_ENABLE
+ 	select S3C_DEV_RTC
++	select S3C_DEV_WDT
+ 	help
+ 	  Machine support for Samsung SMDKV310
  
- # machine support
+diff --git a/arch/arm/mach-s5pv310/mach-smdkc210.c b/arch/arm/mach-s5pv310/mach-smdkc210.c
+index 5b34d9e..1384d8b 100644
+--- a/arch/arm/mach-s5pv310/mach-smdkc210.c
++++ b/arch/arm/mach-s5pv310/mach-smdkc210.c
+@@ -68,6 +68,7 @@ static struct s3c2410_uartcfg smdkc210_uartcfgs[] __initdata = {
  
+ static struct platform_device *smdkc210_devices[] __initdata = {
+ 	&s3c_device_rtc,
++	&s3c_device_wdt,
+ };
+ 
+ static void __init smdkc210_map_io(void)
+diff --git a/arch/arm/mach-s5pv310/mach-smdkv310.c b/arch/arm/mach-s5pv310/mach-smdkv310.c
+index 06062c8..9cb827d 100644
+--- a/arch/arm/mach-s5pv310/mach-smdkv310.c
++++ b/arch/arm/mach-s5pv310/mach-smdkv310.c
+@@ -68,6 +68,7 @@ static struct s3c2410_uartcfg smdkv310_uartcfgs[] __initdata = {
+ 
+ static struct platform_device *smdkv310_devices[] __initdata = {
+ 	&s3c_device_rtc,
++	&s3c_device_wdt,
+ };
+ 
+ static void __init smdkv310_map_io(void)
 -- 
 1.6.2.5
