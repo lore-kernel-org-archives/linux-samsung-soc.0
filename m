@@ -1,103 +1,57 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 4/6] ARM: S5PC100: Move external interrupt defines
-Date: Tue, 21 Sep 2010 07:16:41 +0200
-Message-ID: <000001cb594c$3025c7c0$90715740$%szyprowski@samsung.com>
-References: <1283764347-460-1-git-send-email-m.szyprowski@samsung.com>
- <1283764347-460-5-git-send-email-m.szyprowski@samsung.com>
- <001001cb50df$c0ed7e30$42c87a90$%kim@samsung.com>
+From: Abdoulaye Walsimou GAYE <awg@embtoolkit.org>
+Subject: Re: [PATCH] ARM: s3c2442: Setup gpio {set,get}_pull callbacks
+Date: Tue, 21 Sep 2010 07:28:39 +0200
+Message-ID: <4C984287.7020009@embtoolkit.org>
+References: <1285020052-20020-1-git-send-email-lars@metafoo.de>
+	<4C97F11B.50806@fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:32952 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752227Ab0IUFRF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Sep 2010 01:17:05 -0400
-Received: from epmmp2 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L9300BDF00FVB20@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 21 Sep 2010 14:17:03 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L9300DTO004M3@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 21 Sep 2010 14:17:03 +0900 (KST)
-In-reply-to: <001001cb50df$c0ed7e30$42c87a90$%kim@samsung.com>
-Content-language: pl
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <4C97F11B.50806@fluff.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ben Dooks <ben@fluff.org>
+Cc: linux-samsung-soc@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, ben-linux@fluff.org, jy0922.shim@samsung.com
+
+On 09/21/2010 01:41 AM, Ben Dooks wrote:
+> On 20/09/10 23:00, Lars-Peter Clausen wrote:
+>    
+>> Currently the {set,get}_pull callbacks of the s3c24xx_gpiocfg_default structure
+>> are not initalized for the s3c2442 cpu type. This results in a NULL-pointer
+>> deref upon calling s3c_gpio_setpull.
+>>
+>> The s3c2442 has pulldowns instead of pullups compared to the s3c2440.
+>> The method of controlling them is the same though.
+>> So this patch modifies the existing s3c_gpio_{get,set}pull_1up helper functions
+>> to take an additional parameter deciding whether the pin has a pullup or
+>> pulldown.
+>> The s3c_gpio_{get,set}pull_1{down,up} functions then wrap that functions passing
+>> either S3C_GPIO_PULL_UP or S3C_GPIO_PULL_DOWN.
+>>
+>> Furthermore this patch sets up the s3c24xx_gpiocfg_default.{get,set}_pull fields
+>> in the s3c2442 cpu init function to the new pulldown helper functions.
+>>
+>> Signed-off-by: Lars-Peter Clausen<lars@metafoo.de>
+>>      
+> Initial reading looks ok, will see about adding it to my -next tree.
+>    
+
 
 Hello,
+It is very urgent to get rid on these issues in gpiolib, I think they 
+prevent many
+s3c24xx based boards to boot and I reported it 3 months ago.
+So fixes in this area should not go in any kind on of -next branch but 
+instead -urgent-fixes.
 
-On Friday, September 10, 2010 2:00 PM Kukjin Kim wrote:
-
-> Marek Szyprowski wrote:
-> >
-> > From: Joonyoung Shim <jy0922.shim@samsung.com>
-> >
-> > This patch moves external interrupt defines from gpio.h to regs-gpio.h
-> > for consistency with s5pv210.
-> >
-> > Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > ---
-> >  arch/arm/mach-s5pc100/include/mach/gpio.h      |    7 -------
-> >  arch/arm/mach-s5pc100/include/mach/regs-gpio.h |    7 +++++++
-> >  2 files changed, 7 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-s5pc100/include/mach/gpio.h b/arch/arm/mach-
-> > s5pc100/include/mach/gpio.h
-> > index 71ae1f5..29a8a12 100644
-> > --- a/arch/arm/mach-s5pc100/include/mach/gpio.h
-> > +++ b/arch/arm/mach-s5pc100/include/mach/gpio.h
-> > @@ -146,13 +146,6 @@ enum s5p_gpio_number {
-> >  /* define the number of gpios we need to the one after the MP04() range
-> */
-> >  #define ARCH_NR_GPIOS		(S5PC100_GPIO_END + 1)
-> >
-> > -#define EINT_MODE		S3C_GPIO_SFN(0x2)
-> > -
-> > -#define EINT_GPIO_0(x)		S5PC100_GPH0(x)
-> > -#define EINT_GPIO_1(x)		S5PC100_GPH1(x)
-> > -#define EINT_GPIO_2(x)		S5PC100_GPH2(x)
-> > -#define EINT_GPIO_3(x)		S5PC100_GPH3(x)
-> > -
-> >  #include <asm-generic/gpio.h>
-> >
-> >  #endif /* __ASM_ARCH_GPIO_H */
-> > diff --git a/arch/arm/mach-s5pc100/include/mach/regs-gpio.h
-> b/arch/arm/mach-
-> > s5pc100/include/mach/regs-gpio.h
-> > index dd6295e..6abe481 100644
-> > --- a/arch/arm/mach-s5pc100/include/mach/regs-gpio.h
-> > +++ b/arch/arm/mach-s5pc100/include/mach/regs-gpio.h
-> > @@ -71,5 +71,12 @@
-> >  #define S5P_EXTINT_RISEEDGE		(0x03)
-> >  #define S5P_EXTINT_BOTHEDGE		(0x04)
-> >
-> > +#define EINT_MODE		S3C_GPIO_SFN(0x2)
-> > +
-> > +#define EINT_GPIO_0(x)		S5PC100_GPH0(x)
-> > +#define EINT_GPIO_1(x)		S5PC100_GPH1(x)
-> > +#define EINT_GPIO_2(x)		S5PC100_GPH2(x)
-> > +#define EINT_GPIO_3(x)		S5PC100_GPH3(x)
-> > +
-> >  #endif /* __ASM_MACH_S5PC100_REGS_GPIO_H */
-> >
-> > --
-> 
-> This is ok to me, will apply.
-> 
-> And will check other regarding gpio interrupt in this weekend ;-)
-
-Is there any progress on gpio interrupts? Over 2 weeks passed since I
-posted the patches...
-
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+Best regards,
+AWG
