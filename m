@@ -1,75 +1,30 @@
-From: Ben Dooks <ben@simtec.co.uk>
-Subject: Re: [PATCH v2 2/2] sdhci-s3c: Add support no internal clock divider
- in	host controller
-Date: Tue, 21 Sep 2010 01:24:20 +0100
-Message-ID: <4C97FB34.1000802@simtec.co.uk>
-References: <1284716701-5140-1-git-send-email-kgene.kim@samsung.com> <1284716701-5140-3-git-send-email-kgene.kim@samsung.com>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH] sdhci-s3c: fix incorrect spinlock usage after merge
+Date: Tue, 21 Sep 2010 02:17:11 +0100
+Message-ID: <20100921011711.GB5873@void.printf.net>
+References: <1284987822-17955-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from hull.simtec.co.uk ([78.105.113.97]:40113 "EHLO
-	preston.local.simtec.co.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1757946Ab0IUAZL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Sep 2010 20:25:11 -0400
-In-Reply-To: <1284716701-5140-3-git-send-email-kgene.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1284987822-17955-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, akpm@linux-foundation.org, w.sang@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, Jeongbae Seo <jeongbae.seo@samsung.com>, Hyuk Lee <hyuk1.lee@samsung.com>, ben-linux@fluff.org, akpm@linux-foundation.org, cjb@laptop.org
 
-On 17/09/10 10:45, Kukjin Kim wrote:
-> From: Hyuk Lee <hyuk1.lee@samsung.com>
-> 
-> This patch adds to support no internal clock divider in SDHCI.
-> The external clock divider can be used to make a proper clock
-> because SDHCI doesn't support internal clock divider by itself.
-> 
-> Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
-> Signed-off-by: Jeongbae Seo <jeongbae.seo@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
->  drivers/mmc/host/sdhci-s3c.c |   60 ++++++++++++++++++++++++++++++++++++++++++
->  1 files changed, 60 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-> index e6e0438..5ad5ed7 100644
-> --- a/drivers/mmc/host/sdhci-s3c.c
-> +++ b/drivers/mmc/host/sdhci-s3c.c
-> @@ -96,6 +96,13 @@ static unsigned int sdhci_s3c_get_max_clk(struct sdhci_host *host)
->  	unsigned int rate, max;
->  	int clk;
->  
-> +	/*
-> +	 * There is only one clock source(sclk) if there is no clock divider
-> +	 * in the host controller
-> +	 */
-> +	if (host->quirks & SDHCI_QUIRK_NONSTANDARD_CLOCK)
-> +		return clk_round_rate(ourhost->clk_bus[2], UINT_MAX);
+On Mon, Sep 20, 2010 at 03:03:42PM +0200, Marek Szyprowski wrote:
+> In the commit f522886e202a34a2191dd5d471b3c4d46410a9a0 a merge conflict
+> in the sdhci-s3c driver been fixed. However the fix used incorrect
+> spinlock operation - it cause a race with sdhci interrupt service. The
+> correct way to solve it is to use spin_lock_irqsave/irqrestore() calls.
 
-interesting, <linux/clk.h> doesn't have a second parameter to
-clk_round_rate().
+Thanks, applied to mmc-next with:
+Signed-off-by: Chris Ball <cjb@laptop.org>
 
-
->  	/* note, a reset will reset the clock source */
->  
->  	sdhci_s3c_check_sclk(host);
-> @@ -130,6 +137,15 @@ static unsigned int sdhci_s3c_consider_clock(struct sdhci_s3c *ourhost,
->  	if (!clksrc)
->  		return UINT_MAX;
->  
-> +	/*
-> +	 * There is only one clock source(sclk) if there is no clock divider
-> +	 * in the host controller
-> +	 */
-> +	if (ourhost->host->quirks & SDHCI_QUIRK_NONSTANDARD_CLOCK) {
-> +		rate = clk_round_rate(clksrc, wanted);
-> +		return wanted - rate;
-> +	}
-
-Why does this need a quirk, instead of just having one clock available
-in the list of usable clocks?
+Andrew, not sure how best to get this upstream -- do you want to send
+this up to Linus (for -rc5) via your queue in -mm?
 
 -- 
-Ben
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
