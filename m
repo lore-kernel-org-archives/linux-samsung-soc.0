@@ -1,21 +1,26 @@
-From: Andrew Morton <akpm@linux-foundation.org>
+From: Chris Ball <cjb@laptop.org>
 Subject: Re: [PATCH] sdhci-s3c: fix NULL ptr access in sdhci_s3c_remove
-Date: Thu, 23 Sep 2010 12:08:03 -0700
-Message-ID: <20100923120803.832975f6.akpm@linux-foundation.org>
+Date: Thu, 23 Sep 2010 20:12:57 +0100
+Message-ID: <20100923191257.GA2739@void.printf.net>
 References: <1285251725-6210-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from void.printf.net ([89.145.121.20]:55982 "EHLO void.printf.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752066Ab0IWTM7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Sep 2010 15:12:59 -0400
+Content-Disposition: inline
 In-Reply-To: <1285251725-6210-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, w.sang@pengutronix.de
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: ben-linux@fluff.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, akpm@linux-foundation.org, w.sang@pengutronix.de
 
-On Thu, 23 Sep 2010 16:22:05 +0200
-Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+Hi Ben,
 
+On Thu, Sep 23, 2010 at 04:22:05PM +0200, Marek Szyprowski wrote:
 > If not all clocks has been defined in platform data, driver will cause
 > a null pointer dereference when it is being removed. This patch fixes
 > this issue.
@@ -44,10 +49,10 @@ Marek Szyprowski <m.szyprowski@samsung.com> wrote:
 >  	clk_disable(sc->clk_io);
 >  	clk_put(sc->clk_io);
 
-The patch applies OK to 2.6.35.  Is the bug present there as well?  If
-so, should we fix it in earlier kernels?  If so then the way in which
-we indicate this is by adding
+I'll send this to Linus for .36 after you reply with an ACK.
 
-	Cc: <stable@kernel.org>
+Thanks,
 
-to the changelog.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
