@@ -1,58 +1,47 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH] sdhci-s3c: fix NULL ptr access in sdhci_s3c_remove
-Date: Thu, 23 Sep 2010 20:12:57 +0100
-Message-ID: <20100923191257.GA2739@void.printf.net>
-References: <1285251725-6210-1-git-send-email-m.szyprowski@samsung.com>
+From: Ben Dooks <ben@simtec.co.uk>
+Subject: Re: [PATCH] ARM: SAMSUNG: make SAMSUNG_PM_DEBUG select DEBUG_LL
+Date: Fri, 24 Sep 2010 00:54:34 +0100
+Message-ID: <4C9BE8BA.7000804@simtec.co.uk>
+References: <4c920aa8.d37b0e0a.4ee4.ffffc4bc@mx.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:55982 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752066Ab0IWTM7 (ORCPT
+Received: from hull.simtec.co.uk ([78.105.113.97]:36790 "EHLO
+	preston.local.simtec.co.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752546Ab0IWXyj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Sep 2010 15:12:59 -0400
-Content-Disposition: inline
-In-Reply-To: <1285251725-6210-1-git-send-email-m.szyprowski@samsung.com>
+	Thu, 23 Sep 2010 19:54:39 -0400
+In-Reply-To: <4c920aa8.d37b0e0a.4ee4.ffffc4bc@mx.google.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, akpm@linux-foundation.org, w.sang@pengutronix.de
+To: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org
 
-Hi Ben,
-
-On Thu, Sep 23, 2010 at 04:22:05PM +0200, Marek Szyprowski wrote:
-> If not all clocks has been defined in platform data, driver will cause
-> a null pointer dereference when it is being removed. This patch fixes
-> this issue.
+On 16/09/10 13:16, Maurus Cuelenaere wrote:
+> When selecting SAMSUNG_PM_DEBUG, it complains about a missing printascii()
+> function if you do not select DEBUG_LL, so make the former select the latter.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
 > ---
->  drivers/mmc/host/sdhci-s3c.c |    6 ++++--
->  1 files changed, 4 insertions(+), 2 deletions(-)
+>  arch/arm/plat-samsung/Kconfig |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
 > 
-> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-> index 71ad416..757d92c 100644
-> --- a/drivers/mmc/host/sdhci-s3c.c
-> +++ b/drivers/mmc/host/sdhci-s3c.c
-> @@ -481,8 +481,10 @@ static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
->  	sdhci_remove_host(host, 1);
->  
->  	for (ptr = 0; ptr < 3; ptr++) {
-> -		clk_disable(sc->clk_bus[ptr]);
-> -		clk_put(sc->clk_bus[ptr]);
-> +		if (sc->clk_bus[ptr]) {
-> +			clk_disable(sc->clk_bus[ptr]);
-> +			clk_put(sc->clk_bus[ptr]);
-> +		}
->  	}
->  	clk_disable(sc->clk_io);
->  	clk_put(sc->clk_io);
+> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+> index 7c0bde7..d5816e7 100644
+> --- a/arch/arm/plat-samsung/Kconfig
+> +++ b/arch/arm/plat-samsung/Kconfig
+> @@ -260,6 +260,7 @@ comment "Power management"
+>  config SAMSUNG_PM_DEBUG
+>  	bool "S3C2410 PM Suspend debug"
+>  	depends on PM
+> +	select DEBUG_LL
+>  	help
+>  	  Say Y here if you want verbose debugging from the PM Suspend and
+>  	  Resume code. See <file:Documentation/arm/Samsung-S3C24XX/Suspend.txt>
 
-I'll send this to Linus for .36 after you reply with an ACK.
-
-Thanks,
+Either this, or having SAMSUNG_PM_DEBUG depend on DEBUG_LL.. Personally
+I think this is probably best, unless it's offensive to anyone else?
 
 -- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+Ben
