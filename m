@@ -1,57 +1,43 @@
-From: Abdoulaye Walsimou GAYE <awg@embtoolkit.org>
-Subject: Re: [PATCH] ARM: s3c2442: Setup gpio {set,get}_pull callbacks
-Date: Tue, 21 Sep 2010 07:28:39 +0200
-Message-ID: <4C984287.7020009@embtoolkit.org>
-References: <1285020052-20020-1-git-send-email-lars@metafoo.de>
-	<4C97F11B.50806@fluff.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] sdhci-s3c: fix NULL ptr access in sdhci_s3c_remove
+Date: Thu, 23 Sep 2010 16:22:05 +0200
+Message-ID: <1285251725-6210-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <4C97F11B.50806@fluff.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ben Dooks <ben@fluff.org>
-Cc: linux-samsung-soc@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, akpm@linux-foundation.org, w.sang@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 09/21/2010 01:41 AM, Ben Dooks wrote:
-> On 20/09/10 23:00, Lars-Peter Clausen wrote:
->    
->> Currently the {set,get}_pull callbacks of the s3c24xx_gpiocfg_default structure
->> are not initalized for the s3c2442 cpu type. This results in a NULL-pointer
->> deref upon calling s3c_gpio_setpull.
->>
->> The s3c2442 has pulldowns instead of pullups compared to the s3c2440.
->> The method of controlling them is the same though.
->> So this patch modifies the existing s3c_gpio_{get,set}pull_1up helper functions
->> to take an additional parameter deciding whether the pin has a pullup or
->> pulldown.
->> The s3c_gpio_{get,set}pull_1{down,up} functions then wrap that functions passing
->> either S3C_GPIO_PULL_UP or S3C_GPIO_PULL_DOWN.
->>
->> Furthermore this patch sets up the s3c24xx_gpiocfg_default.{get,set}_pull fields
->> in the s3c2442 cpu init function to the new pulldown helper functions.
->>
->> Signed-off-by: Lars-Peter Clausen<lars@metafoo.de>
->>      
-> Initial reading looks ok, will see about adding it to my -next tree.
->    
+If not all clocks has been defined in platform data, driver will cause
+a null pointer dereference when it is being removed. This patch fixes
+this issue.
 
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/mmc/host/sdhci-s3c.c |    6 ++++--
+ 1 files changed, 4 insertions(+), 2 deletions(-)
 
-Hello,
-It is very urgent to get rid on these issues in gpiolib, I think they 
-prevent many
-s3c24xx based boards to boot and I reported it 3 months ago.
-So fixes in this area should not go in any kind on of -next branch but 
-instead -urgent-fixes.
+diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+index 71ad416..757d92c 100644
+--- a/drivers/mmc/host/sdhci-s3c.c
++++ b/drivers/mmc/host/sdhci-s3c.c
+@@ -481,8 +481,10 @@ static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
+ 	sdhci_remove_host(host, 1);
+ 
+ 	for (ptr = 0; ptr < 3; ptr++) {
+-		clk_disable(sc->clk_bus[ptr]);
+-		clk_put(sc->clk_bus[ptr]);
++		if (sc->clk_bus[ptr]) {
++			clk_disable(sc->clk_bus[ptr]);
++			clk_put(sc->clk_bus[ptr]);
++		}
+ 	}
+ 	clk_disable(sc->clk_io);
+ 	clk_put(sc->clk_io);
+-- 
+1.7.1.569.g6f426
 
-Best regards,
-AWG
