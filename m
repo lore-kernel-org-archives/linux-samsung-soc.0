@@ -1,65 +1,42 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: [PATCH] ARM: s3c2442: gta02: Fix usage gpio bank j pin definitions
-Date: Fri, 24 Sep 2010 20:24:18 +0200
-Message-ID: <1285352658-20355-1-git-send-email-lars@metafoo.de>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH] sdhci-s3c: fix NULL ptr access in sdhci_s3c_remove
+Date: Sat, 25 Sep 2010 23:53:24 +0100
+Message-ID: <20100925225324.GA30732@void.printf.net>
+References: <1285251725-6210-1-git-send-email-m.szyprowski@samsung.com> <20100923120803.832975f6.akpm@linux-foundation.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp-out-027.synserver.de ([212.40.180.27]:1029 "HELO
-	smtp-out-026.synserver.de" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with SMTP id S1754334Ab0IXSYo (ORCPT
+Received: from void.printf.net ([89.145.121.20]:43432 "EHLO void.printf.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754045Ab0IYWx2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Sep 2010 14:24:44 -0400
+	Sat, 25 Sep 2010 18:53:28 -0400
+Content-Disposition: inline
+In-Reply-To: <20100923120803.832975f6.akpm@linux-foundation.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, w.sang@pengutronix.de
 
-The gta02 header file still uses the old S3C2410_GPJx defines instead of the
-S3C2410_GPJ(x) macro. Since the S3C2410_GPJx defines have already been removed
-this causes a build failure.
-This patches fixes the issue by doing a s,S3C2410_GPJ([\d]+),S3C2410_GPJ(\1),g
-on the file.
+On Thu, Sep 23, 2010 at 12:08:03PM -0700, Andrew Morton wrote:
+> The patch applies OK to 2.6.35.  Is the bug present there as well?  If
+> so, should we fix it in earlier kernels?  If so then the way in which
+> we indicate this is by adding
+> 
+> 	Cc: <stable@kernel.org>
+> 
+> to the changelog.
 
-Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
----
- arch/arm/mach-s3c2440/include/mach/gta02.h |   26 +++++++++++++-------------
- 1 files changed, 13 insertions(+), 13 deletions(-)
+Marek, Kyungmin, what do you think?
 
-diff --git a/arch/arm/mach-s3c2440/include/mach/gta02.h b/arch/arm/mach-s3c2440/include/mach/gta02.h
-index 0147ed6..2e84b5a 100644
---- a/arch/arm/mach-s3c2440/include/mach/gta02.h
-+++ b/arch/arm/mach-s3c2440/include/mach/gta02.h
-@@ -44,19 +44,19 @@
- #define GTA02v3_GPIO_nUSB_FLT	S3C2410_GPG(10)	/* v3 + v4 only */
- #define GTA02v3_GPIO_nGSM_OC	S3C2410_GPG(11)	/* v3 + v4 only */
- 
--#define GTA02_GPIO_AMP_SHUT	S3C2440_GPJ1	/* v2 + v3 + v4 only */
--#define GTA02v1_GPIO_WLAN_GPIO10	S3C2440_GPJ2
--#define GTA02_GPIO_HP_IN	S3C2440_GPJ2	/* v2 + v3 + v4 only */
--#define GTA02_GPIO_INT0		S3C2440_GPJ3	/* v2 + v3 + v4 only */
--#define GTA02_GPIO_nGSM_EN	S3C2440_GPJ4
--#define GTA02_GPIO_3D_RESET	S3C2440_GPJ5
--#define GTA02_GPIO_nDL_GSM	S3C2440_GPJ6	/* v4 + v5 only */
--#define GTA02_GPIO_WLAN_GPIO0	S3C2440_GPJ7
--#define GTA02v1_GPIO_BAT_ID	S3C2440_GPJ8
--#define GTA02_GPIO_KEEPACT	S3C2440_GPJ8
--#define GTA02v1_GPIO_HP_IN	S3C2440_GPJ10
--#define GTA02_CHIP_PWD		S3C2440_GPJ11	/* v2 + v3 + v4 only */
--#define GTA02_GPIO_nWLAN_RESET	S3C2440_GPJ12	/* v2 + v3 + v4 only */
-+#define GTA02_GPIO_AMP_SHUT	S3C2410_GPJ(1)	/* v2 + v3 + v4 only */
-+#define GTA02v1_GPIO_WLAN_GPIO10	S3C2410_GPJ(2)
-+#define GTA02_GPIO_HP_IN	S3C2410_GPJ(2)	/* v2 + v3 + v4 only */
-+#define GTA02_GPIO_INT0		S3C2410_GPJ(3)	/* v2 + v3 + v4 only */
-+#define GTA02_GPIO_nGSM_EN	S3C2410_GPJ(4)
-+#define GTA02_GPIO_3D_RESET	S3C2410_GPJ(5)
-+#define GTA02_GPIO_nDL_GSM	S3C2410_GPJ(6)	/* v4 + v5 only */
-+#define GTA02_GPIO_WLAN_GPIO0	S3C2410_GPJ(7)
-+#define GTA02v1_GPIO_BAT_ID	S3C2410_GPJ(8)
-+#define GTA02_GPIO_KEEPACT	S3C2410_GPJ(8)
-+#define GTA02v1_GPIO_HP_IN	S3C2410_GPJ(10)
-+#define GTA02_CHIP_PWD		S3C2410_GPJ(11)	/* v2 + v3 + v4 only */
-+#define GTA02_GPIO_nWLAN_RESET	S3C2410_GPJ(12)	/* v2 + v3 + v4 only */
- 
- #define GTA02_IRQ_GSENSOR_1	IRQ_EINT0
- #define GTA02_IRQ_MODEM		IRQ_EINT1
+Andrew, I've been waiting for an ACK from Ben Dooks, since he's listed
+in MAINTAINERS for this driver, but he hasn't replied yet (I've tried 
+pinging privately).  I'll plan on sending Marek's two s3c fixes to
+Linus tomorrow regardless (this one with Cc: <stable@kernel.org>)
+along with my MAINTAINERS update for MMC unless anyone objects.
+
+Thanks,
+
 -- 
-1.5.6.5
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
