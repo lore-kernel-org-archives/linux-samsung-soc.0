@@ -1,42 +1,33 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH] sdhci-s3c: fix NULL ptr access in sdhci_s3c_remove
-Date: Sat, 25 Sep 2010 23:53:24 +0100
-Message-ID: <20100925225324.GA30732@void.printf.net>
-References: <1285251725-6210-1-git-send-email-m.szyprowski@samsung.com> <20100923120803.832975f6.akpm@linux-foundation.org>
+From: Ben Dooks <ben@simtec.co.uk>
+Subject: Re: [PATCH 2/5] h1940: fix h1940-bluetooth compilation
+Date: Sun, 26 Sep 2010 00:22:59 +0100
+Message-ID: <4C9E8453.2020306@simtec.co.uk>
+References: <1283871605-32068-1-git-send-email-anarsoul@gmail.com> <1283871605-32068-3-git-send-email-anarsoul@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:43432 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754045Ab0IYWx2 (ORCPT
+Received: from hull.simtec.co.uk ([78.105.113.97]:46818 "EHLO
+	preston.local.simtec.co.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751448Ab0IYXXU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 25 Sep 2010 18:53:28 -0400
-Content-Disposition: inline
-In-Reply-To: <20100923120803.832975f6.akpm@linux-foundation.org>
+	Sat, 25 Sep 2010 19:23:20 -0400
+In-Reply-To: <1283871605-32068-3-git-send-email-anarsoul@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, w.sang@pengutronix.de
+To: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Thu, Sep 23, 2010 at 12:08:03PM -0700, Andrew Morton wrote:
-> The patch applies OK to 2.6.35.  Is the bug present there as well?  If
-> so, should we fix it in earlier kernels?  If so then the way in which
-> we indicate this is by adding
+On 07/09/10 16:00, Vasily Khoruzhick wrote:
+> h1940-bluetooth.c doesn't compile after s3c gpio API changes,
+> this patch fixes issue.
 > 
-> 	Cc: <stable@kernel.org>
-> 
-> to the changelog.
+> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> ---
+>  arch/arm/mach-s3c2410/h1940-bluetooth.c |    8 ++++----
+>  1 files changed, 4 insertions(+), 4 deletions(-)
 
-Marek, Kyungmin, what do you think?
-
-Andrew, I've been waiting for an ACK from Ben Dooks, since he's listed
-in MAINTAINERS for this driver, but he hasn't replied yet (I've tried 
-pinging privately).  I'll plan on sending Marek's two s3c fixes to
-Linus tomorrow regardless (this one with Cc: <stable@kernel.org>)
-along with my MAINTAINERS update for MMC unless anyone objects.
-
-Thanks,
+thanks, applied to for-linus/2636/s3c24xx-fixes.
 
 -- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+Ben
