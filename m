@@ -1,98 +1,39 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH v2 3/5] h1940: implement mmc_power function
-Date: Mon, 27 Sep 2010 00:27:41 +0300
-Message-ID: <1285536461-15049-1-git-send-email-anarsoul@gmail.com>
-References: <4C9E8916.3010904@fluff.org>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: [PATCH v2 4/5] h1940: Fix backlight and LCD power functions
+Date: Mon, 27 Sep 2010 00:15:36 +0100
+Message-ID: <4C9FD418.8030101@fluff.org>
+References: <1283871605-32068-5-git-send-email-anarsoul@gmail.com> <1284241518-32587-1-git-send-email-anarsoul@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f46.google.com ([209.85.215.46]:61030 "EHLO
-	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932151Ab0IZV3c (ORCPT
+Received: from dsl78-143-211-26.in-addr.fast.co.uk ([78.143.211.26]:58648 "EHLO
+	ben-laptop" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1758496Ab0IZXPo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 26 Sep 2010 17:29:32 -0400
-Received: by ewy23 with SMTP id 23so1126988ewy.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 26 Sep 2010 14:29:30 -0700 (PDT)
-In-Reply-To: <4C9E8916.3010904@fluff.org>
+	Sun, 26 Sep 2010 19:15:44 -0400
+In-Reply-To: <1284241518-32587-1-git-send-email-anarsoul@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Vasily Khoruzhick <anarsoul@gmail.com>
+To: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-This patch implements h1940-specific set_power callback for
-s3cmci driver, so card power can be disabled when card is not inserted
-or before suspend. Without this patch PDA consumes power in suspend when
-card is inserted.
+On 11/09/10 22:45, Vasily Khoruzhick wrote:
 
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
----
-v2: Add description to patch
+Could I have a better explanation of what this part is doing
+please.
 
- arch/arm/mach-s3c2410/include/mach/h1940-latch.h |    2 +-
- arch/arm/mach-s3c2410/mach-h1940.c               |   23 +++++++++++++++++++--
- 2 files changed, 21 insertions(+), 4 deletions(-)
+for future reference, you don't need to put 'this patch' in
+the description, that part is pretty clear.
 
-diff --git a/arch/arm/mach-s3c2410/include/mach/h1940-latch.h b/arch/arm/mach-s3c2410/include/mach/h1940-latch.h
-index 73586f2..ef7d8cf 100644
---- a/arch/arm/mach-s3c2410/include/mach/h1940-latch.h
-+++ b/arch/arm/mach-s3c2410/include/mach/h1940-latch.h
-@@ -35,7 +35,7 @@
- #define H1940_LATCH_AUDIO_POWER		H1940_LATCH_GPIO(9)
- #define H1940_LATCH_SM803_ENABLE	H1940_LATCH_GPIO(10)
- #define H1940_LATCH_LCD_P4		H1940_LATCH_GPIO(11)
--#define H1940_LATCH_CPUQ5		H1940_LATCH_GPIO(12)
-+#define H1940_LATCH_SD_POWER		H1940_LATCH_GPIO(12)
- #define H1940_LATCH_BLUETOOTH_POWER	H1940_LATCH_GPIO(13)
- #define H1940_LATCH_LED_GREEN		H1940_LATCH_GPIO(14)
- #define H1940_LATCH_LED_FLASH		H1940_LATCH_GPIO(15)
-diff --git a/arch/arm/mach-s3c2410/mach-h1940.c b/arch/arm/mach-s3c2410/mach-h1940.c
-index f0493bd..cc8660e 100644
---- a/arch/arm/mach-s3c2410/mach-h1940.c
-+++ b/arch/arm/mach-s3c2410/mach-h1940.c
-@@ -112,8 +112,7 @@ static unsigned int latch_state = H1940_LATCH_BIT(H1940_LATCH_LCD_P4) |
- 	H1940_LATCH_BIT(H1940_LATCH_LCD_P1)			|
- 	H1940_LATCH_BIT(H1940_LATCH_LCD_P2)			|
- 	H1940_LATCH_BIT(H1940_LATCH_LCD_P3)			|
--	H1940_LATCH_BIT(H1940_LATCH_MAX1698_nSHUTDOWN)   |
--	H1940_LATCH_BIT(H1940_LATCH_CPUQ5);
-+	H1940_LATCH_BIT(H1940_LATCH_MAX1698_nSHUTDOWN);
- 
- static void h1940_latch_control(unsigned int clear, unsigned int set)
- {
-@@ -247,10 +246,25 @@ static struct platform_device h1940_device_bluetooth = {
- 	.id               = -1,
- };
- 
-+static void h1940_set_mmc_power(unsigned char power_mode, unsigned short vdd)
-+{
-+	switch (power_mode) {
-+	case MMC_POWER_OFF:
-+		gpio_set_value(H1940_LATCH_SD_POWER, 0);
-+		break;
-+	case MMC_POWER_UP:
-+	case MMC_POWER_ON:
-+		gpio_set_value(H1940_LATCH_SD_POWER, 1);
-+		break;
-+	default:
-+		break;
-+	};
-+}
-+
- static struct s3c24xx_mci_pdata h1940_mmc_cfg __initdata = {
- 	.gpio_detect   = S3C2410_GPF(5),
- 	.gpio_wprotect = S3C2410_GPH(8),
--	.set_power     = NULL,
-+	.set_power     = h1940_set_mmc_power,
- 	.ocr_avail     = MMC_VDD_32_33,
- };
- 
-@@ -397,6 +411,9 @@ static void __init h1940_init(void)
- 	gpio_request(H1940_LATCH_USB_DP, "USB pullup");
- 	gpio_direction_output(H1940_LATCH_USB_DP, 0);
- 
-+	gpio_request(H1940_LATCH_SD_POWER, "SD power");
-+	gpio_direction_output(H1940_LATCH_SD_POWER, 0);
-+
- 	platform_add_devices(h1940_devices, ARRAY_SIZE(h1940_devices));
- }
- 
--- 
-1.7.3
+> v2: init gpio mode/value right after gpio_request
+
+It would be helpful to move the changes between submisisons
+to under the --- lines to make them easier to remove when
+applying to the tree.
+
+> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> ---
+>  arch/arm/mach-s3c2410/include/mach/h1940-latch.h |    2 +-
+>  arch/arm/mach-s3c2410/mach-h1940.c               |   80 ++++++++++++++++++----
+>  2 files changed, 66 insertions(+), 16 deletions(-)
