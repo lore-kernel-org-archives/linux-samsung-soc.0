@@ -1,47 +1,44 @@
 From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH] sdhci-s3c: fix NULL ptr access in sdhci_s3c_remove
-Date: Sun, 26 Sep 2010 16:25:11 +0100
-Message-ID: <20100926152511.GA19772@void.printf.net>
-References: <1285251725-6210-1-git-send-email-m.szyprowski@samsung.com> <20100923120803.832975f6.akpm@linux-foundation.org> <20100925225324.GA30732@void.printf.net> <AANLkTikXX4eUEKmBMOH1PuioGgztGN4jKPnPBDqf=4zf@mail.gmail.com>
+Subject: [GIT PULL] MMC fixes for .36-rc6
+Date: Sun, 26 Sep 2010 17:22:11 -0400
+Message-ID: <m362xs42v0.fsf@pullcord.laptop.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
 Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <AANLkTikXX4eUEKmBMOH1PuioGgztGN4jKPnPBDqf=4zf@mail.gmail.com>
 Sender: linux-mmc-owner@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, ben-linux@fluff.org, w.sang@pengutronix.de
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Kyungmin,
+Linus,
 
-On Sun, Sep 26, 2010 at 07:53:48PM +0900, Kyungmin Park wrote:
-> On Sun, Sep 26, 2010 at 7:53 AM, Chris Ball <cjb@laptop.org> wrote:
-> > On Thu, Sep 23, 2010 at 12:08:03PM -0700, Andrew Morton wrote:
-> >> The patch applies OK to 2.6.35. =A0Is the bug present there as wel=
-l? =A0If
-> >> so, should we fix it in earlier kernels? =A0If so then the way in =
-which
-> >> we indicate this is by adding
-> >>
-> >> =A0 =A0 =A0 Cc: <stable@kernel.org>
-> >>
-> >> to the changelog.
-> >
-> > Marek, Kyungmin, what do you think?
->=20
-> Of course my opinion is should be merged at this time.
-> In normal case it's built as static module. so there's no complains.
-> but it should be fixed.
-> My SOB is already included at patch. so no need to ACK from me.
+Please pull from:
 
-Andrew's question isn't whether it should be merged, but whether it
-should also be applied to the stable kernel, since the bug appears
-to be present in the 2.6.35 release as well.
+  git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git for-linus
 
-Thanks,
+to fix a regression from -rc2 and a NULL dereference against 2.6.35, both
+with Samsung S3C controllers.  There's also a MAINTAINERS update -- I've
+volunteered to take over MMC, and am running a tree in -next.  Thanks.
 
---=20
+The following changes since commit 32163f4b2cef28a5aab8b226ffecfc6379a53786:
+  Al Viro (1):
+        alpha: fix usp value in multithreaded coredumps
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/cjb/mmc.git for-linus
+
+Chris Ball (1):
+      mmc: MAINTAINERS: add myself as MMC maintainer
+
+Marek Szyprowski (2):
+      mmc: sdhci-s3c: fix incorrect spinlock usage after merge
+      mmc: sdhci-s3c: fix NULL ptr access in sdhci_s3c_remove
+
+ MAINTAINERS                  |    8 ++++++--
+ drivers/mmc/host/sdhci-s3c.c |   12 ++++++++----
+ 2 files changed, 14 insertions(+), 6 deletions(-)
+
+-- 
 Chris Ball   <cjb@laptop.org>   <http://printf.net/>
 One Laptop Per Child
