@@ -1,42 +1,42 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Came back from Korean thanksginving holidays
-Date: Tue, 28 Sep 2010 07:34:07 +0900
-Message-ID: <032201cb5e94$1b2e6ff0$518b4fd0$%kim@samsung.com>
+From: Ben Dooks <ben@trinity.fluff.org>
+Subject: Re: Came back from Korean thanksginving holidays
+Date: Mon, 27 Sep 2010 23:46:41 +0100
+Message-ID: <20100927224640.GE24469@trinity.fluff.org>
+References: <032201cb5e94$1b2e6ff0$518b4fd0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:52990 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757494Ab0I0Wdw (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:39097 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750865Ab0I0Wqr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Sep 2010 18:33:52 -0400
-Received: from epmmp2 (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L9F004VQG0FLG40@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Sep 2010 07:33:51 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L9F00FDOG0FZV@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Sep 2010 07:33:51 +0900 (KST)
-Content-language: ko
+	Mon, 27 Sep 2010 18:46:47 -0400
+Content-Disposition: inline
+In-Reply-To: <032201cb5e94$1b2e6ff0$518b4fd0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-Hi all,
+On Tue, Sep 28, 2010 at 07:34:07AM +0900, Kukjin Kim wrote:
+> Hi all,
+> 
+> I came back from Korean thanksgiving holidays, 'Chu-Seok' just now.
+> So I couldn't check your patches in the last 1-week...sorry :-)
 
-I came back from Korean thanksgiving holidays, 'Chu-Seok' just now.
-So I couldn't check your patches in the last 1-week...sorry :-)
+Hope you had a good time.
 
-Anyway, will review them in my e-mail box as soon as possible.
+> Anyway, will review them in my e-mail box as soon as possible.
 
-Thanks.
+There's not a lot to review at the moment, are you still going to
+handle the s3c64xx merges?
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Everything seems to be going smoothly at the moment, but we do need
+to spend some time sorting out issues for 2.6.38 merge, there's too
+little time for 2.6.37 now.
+
+-- 
+Ben
+
+Q:      What's a light-year?
+A:      One-third less calories than a regular year.
