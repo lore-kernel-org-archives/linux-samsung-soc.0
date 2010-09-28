@@ -1,100 +1,90 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCHv2 6/7] ARM: S5PC110: add support for otg usb gadget on Goni
- board
-Date: Tue, 28 Sep 2010 16:54:24 +0900
-Message-ID: <006101cb5ee2$61c6a7e0$2553f7a0$%kim@samsung.com>
-References: <1284987337-15365-1-git-send-email-m.szyprowski@samsung.com>
- <1284987337-15365-7-git-send-email-m.szyprowski@samsung.com>
+Subject: RE: [PATCH v3] regulators: add support max8952 regulator
+Date: Tue, 28 Sep 2010 16:58:49 +0900
+Message-ID: <006201cb5ee3$0100fc20$0302f460$%kim@samsung.com>
+References: <1283901976-32588-1-git-send-email-kgene.kim@samsung.com>
+ <01a401cb4f01$73d60ac0$5b822040$%park@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:48432 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750992Ab0I1HyO (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:34124 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750992Ab0I1H6i (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Sep 2010 03:54:14 -0400
-Received: from epmmp2 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L9G00KGQ5YAYKC0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Sep 2010 16:54:10 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L9G0089Q5YAZO@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Sep 2010 16:54:10 +0900 (KST)
-In-reply-to: <1284987337-15365-7-git-send-email-m.szyprowski@samsung.com>
+	Tue, 28 Sep 2010 03:58:38 -0400
+In-reply-to: 
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: lrg@slimlogic.co.uk, 'Changhwan Youn' <chaos.youn@samsung.com>, 'MyungJoo Ham' <myungjoo.ham@samsung.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
 
-Marek Szyprowski wrote:
+Kukjin Kim wrote:
 > 
-> Add required platform definitions for s3c-hsotg driver to enable usb
-> gadget support on Samsung Goni board.
+> Kyungmin Park wrote:
+> >
+> > Do you check the DVS feature?
+> > It can support the DVS by GPIOs and platform can set the each voltages
+at
+> > each mode.
+> >
+> Ok...I agree about the feature's necessity that you said.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/mach-s5pv210/Kconfig     |    1 +
->  arch/arm/mach-s5pv210/mach-goni.c |    4 ++++
->  2 files changed, 5 insertions(+), 0 deletions(-)
+> However, we don't need separate driver which has same/similar
+functionality.
+> So...would be better that could implement it in max8649...
 > 
-> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-> index b1f671d..f8bac5a 100644
-> --- a/arch/arm/mach-s5pv210/Kconfig
-> +++ b/arch/arm/mach-s5pv210/Kconfig
-> @@ -85,6 +85,7 @@ config MACH_GONI
->  	select S3C_DEV_HSMMC2
->  	select S3C_DEV_I2C1
->  	select S5P_DEV_ONENAND
-> +	select S3C_DEV_USB_HSOTG
->  	select SAMSUNG_DEV_KEYPAD
->  	select S5PV210_SETUP_FB_24BPP
->  	select S5PV210_SETUP_I2C1
-> diff --git a/arch/arm/mach-s5pv210/mach-goni.c
-b/arch/arm/mach-s5pv210/mach-
-> goni.c
-> index 5677c4d..68e22f2 100644
-> --- a/arch/arm/mach-s5pv210/mach-goni.c
-> +++ b/arch/arm/mach-s5pv210/mach-goni.c
-> @@ -41,6 +41,7 @@
->  #include <plat/iic.h>
->  #include <plat/keypad.h>
->  #include <plat/sdhci.h>
-> +#include <plat/clock.h>
+> Could you please do it based on this?...in fact, can't test it on SMDK.
 > 
->  /* Following are default values for UCON, ULCON and UFCON UART registers
-*/
->  #define GONI_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-> @@ -569,6 +570,7 @@ static struct platform_device *goni_devices[]
-__initdata = {
->  	&s3c_device_fb,
->  	&s5p_device_onenand,
->  	&goni_spi_gpio,
-> +	&s3c_device_usb_hsotg,
->  	&goni_i2c_gpio_pmic,
->  	&goni_device_gpiokeys,
->  	&s5p_device_fimc0,
-> @@ -614,6 +616,8 @@ static void __init goni_machine_init(void)
->  	samsung_keypad_set_platdata(&keypad_data);
+Hmm...
+Kyungmin, if you have no time to do it, my team will do it.
+
+Is it ok?
+
+> Thanks.
 > 
->  	platform_add_devices(goni_devices, ARRAY_SIZE(goni_devices));
-> +
-> +	clk_xusbxti.rate = 24000000;
->  }
-> 
->  MACHINE_START(GONI, "GONI")
+> Best regards,
+> Kgene.
 > --
-
-Ok...will apply.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+> 
+> > As quick review of max8649. It can't support it.
+> >
+> > Thank you,
+> > Kyungmin Park
+> >
+> > -----Original Message-----
+> > From: Kukjin Kim [mailto:kgene.kim@samsung.com]
+> > Sent: Wednesday, September 08, 2010 8:26 AM
+> > To: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> > linux-samsung-soc@vger.kernel.org
+> > Cc: lrg@slimlogic.co.uk; Changhwan Youn; Kukjin Kim; MyungJoo Ham;
+> Kyungmin
+> > Park
+> > Subject: [PATCH v3] regulators: add support max8952 regulator
+> >
+> > From: Changhwan Youn <chaos.youn@samsung.com>
+> >
+> > The operation of max8952 is almost similar to max8649 except the output
+> > voltage range. This patch adds support the max8952 regulator using
+> > current max8649 implementation. And removes separate max8952.[ch] files
+> > since the functionality is now merged into this driver.
+> >
+> > Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+> > Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> > Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> > ---
+> > Following is as per Mark Brown's suggestion.
+> > Changes since v2:
+> > - Removed separate max8952.[ch] files
+> >
+> > Changes since v1:
+> > - Added returning fail when detected wrong ID
+> > - Added matching the ID from the chip in case the user got things wrong
+> > - Added enum chip ID instead of 0, 1
+> >
+> (snip)
