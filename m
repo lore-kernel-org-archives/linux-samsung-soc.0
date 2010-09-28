@@ -1,43 +1,84 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: S5PC100: Bug fix EPLL_CON MASK settings
-Date: Tue, 28 Sep 2010 18:23:24 +0900
-Message-ID: <1285665804-8922-1-git-send-email-kgene.kim@samsung.com>
+From: =?UTF-8?B?7LWc6rec7Zi4?= <chlrbgh0@gmail.com>
+Subject: Re: [PATCH] ARM: S5PV210: Add Torbreck board support
+Date: Tue, 28 Sep 2010 20:30:38 +0900
+Message-ID: <AANLkTi=J692UG8M0BgTZZrHVAYjyGyQQ61azcUWGtb+o@mail.gmail.com>
+References: <1285463130-14227-1-git-send-email-chlrbgh0@gmail.com>
+ <AANLkTik5SkqjEz5Ymtg6RvwfrU0i8XzhPQq3Un7gMbP=@mail.gmail.com>
+ <AANLkTik1YAd8W75DzrDmfhFYG-JE8__Tu4uq83RKsioC@mail.gmail.com> <004c01cb5ed1$bb44b890$31ce29b0$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:48413 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753813Ab0I1JlY (ORCPT
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:38449 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751869Ab0I1La7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Sep 2010 05:41:24 -0400
+	Tue, 28 Sep 2010 07:30:59 -0400
+Received: by wyb28 with SMTP id 28so4833302wyb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Sep 2010 04:30:58 -0700 (PDT)
+In-Reply-To: <004c01cb5ed1$bb44b890$31ce29b0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Seungwhan Youn <sw.youn@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Kyungmin Park <kmpark@infradead.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Hyunchul Ko <ghcstop@gmail.com>
 
-From: Seungwhan Youn <sw.youn@samsung.com>
-
-This patch fixes EPLL_CON MASK settings which did not contain its
-shift values when set epll rate on S5PC100.
-
-Signed-off-by: Seungwhan Youn <sw.youn@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s5pc100/clock.c |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
-
-diff --git a/arch/arm/mach-s5pc100/clock.c b/arch/arm/mach-s5pc100/clock.c
-index 084abd1..ff125b4 100644
---- a/arch/arm/mach-s5pc100/clock.c
-+++ b/arch/arm/mach-s5pc100/clock.c
-@@ -323,7 +323,9 @@ static int s5pc100_epll_set_rate(struct clk *clk, unsigned long rate)
- 
- 	epll_con = __raw_readl(S5P_EPLL_CON);
- 
--	epll_con &= ~(PLL65XX_MDIV_MASK | PLL65XX_PDIV_MASK | PLL65XX_SDIV_MASK);
-+	epll_con &= ~((PLL65XX_MDIV_MASK << PLL65XX_MDIV_SHIFT) |
-+		      (PLL65XX_PDIV_MASK << PLL65XX_PDIV_SHIFT) |
-+		      (PLL65XX_SDIV_MASK << PLL65XX_SDIV_SHIFT));
- 
- 	for (i = 0; i < ARRAY_SIZE(epll_div); i++) {
- 		if (epll_div[i][0] == rate) {
--- 
-1.6.2.5
+T24gVHVlLCBTZXAgMjgsIDIwMTAgYXQgMjo1NSBQTSwgS3VramluIEtpbSA8a2dlbmUua2ltQHNh
+bXN1bmcuY29tPiB3cm90ZToKPgo+IOy1nOq3nO2YuCB3cm90ZToKPiBIaSwKPgo+IFdlbGNvbWUg
+dG8gTGludXggbWFpbmxpbmUgOy0pCj4gSSBoYXZlIHNvbWUgY29tbWVudHMgYWJvdXQgeW91ciBw
+YXRjaGVzLgo+Cj4gRmlyc3RseSBjb3VsZCB5b3UgcGxlYXNlIHVzZSBFbmdsaXNoIGNoYXJhY3Rl
+ciBpbiB0aGUgcmVwcmVzZW50aW5nIG5hbWUgaW4gZS1tYWlsIGNsaWVudCBub3QgS29yZWFuIGNo
+YXJhY3RlciA6LSkKPiBBbmQgbWFrZSBzdXJlIGl0J3MgdGV4dCB0eXBlLgo+Cj4gPkhpLAo+ID5U
+aGFuayB5b3UgZm9yIHlvdXIgaW50ZXJlc3RpbmcuCj4gPk9uIE1vbiwgU2VwIDI3LCAyMDEwIGF0
+IDExOjU4IEFNLCBLeXVuZ21pbiBQYXJrIDxrbXBhcmtAaW5mcmFkZWFkLm9yZz4gd3JvdGU6Cj4K
+PiAoc25pcCkKPgo+ID4+ICsjZGVmaW5lIFRPUkJSRUNLX1VGQ09OX0RFRkFVTFQgKFMzQzI0MTBf
+VUZDT05fRklGT01PREUgfCDCoCDCoCDCoCBcCj4gPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoFM1UFYyMTBfVUZDT05fVFhUUklHNCB8IMKgIMKgIMKg
+IMKgXAo+ID4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqBTNVBWMjEwX1VGQ09OX1JYVFJJRzQpCj4gPkFueSByZWFzb24gdG8gdXNlIFRSSUc0PyBqdXN0
+IHVzZSB0aGUgZnVsbCB0cmlnZ2VyIGUuZy4sIDI1Ni4KPiA+Cj4gPk9rYXksIEknbGwgZml4IGl0
+Lgo+ID4KPiBIbW0uLi5LeXVuZ21pbiwgYW55IHJlYXNvbiB0byB1c2UgZnVsbCB0cmlnZ2VyIGhl
+cmU/Cj4KPiBJdCBkZXBlbmRzIG9uIGJvYXJkLi4uc28gaXQgZG9lc24ndCBtYXR0ZXIgVFJJRzQg
+b3IgYW55dGhpbmcgZWxzZSBpZiB0aGVyZSBpcyBubyBwcm9ibGVtIG9uIHlvdXIgYm9hcmQuCj4g
+SXQgbWVhbnMgdGhlIG1heGltdW0gdmFsdWUgaXMgbm90IGJlc3QgY29uZGl0aW9uLi4ub25seSBk
+ZXBlbmRzIG9uIHlvdXIgc2l0dWF0aW9uL2NvbmRpdGlvbi4KPgoKT2theSwgaWYgdGhpcyBpcyBu
+b3QgYSBtYW5kYXRvcnksIEkgd2FudCB0byBrZWVwIHRoaXMgb3JpZ2luYWwsIEkgaGFkIG5vIHBy
+b2JsZW0Kd2l0aCB0aGlzIHNldHRpbmcgd2hlbiBJIHRlc3RlZC4KCj4gPj4gKwo+ID4+ICtzdGF0
+aWMgc3RydWN0IHMzYzI0MTBfdWFydGNmZyB0b3JicmVja191YXJ0Y2Znc1tdIF9faW5pdGRhdGEg
+PSB7Cj4gPj4gKyDCoCDCoCDCoCBbMF0gPSB7Cj4gPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAu
+aHdwb3J0IMKgIMKgIMKgIMKgID0gMCwKPiA+PiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5mbGFn
+cyDCoCDCoCDCoCDCoCDCoD0gMCwKPiA+VGhlcmUncyBubyBjb2RlIGZvciBmbGFncywgcGxlYXNl
+IHJlbW92ZSBpdCBhbGwuCj4gPgo+ID5Pa2F5LCBJJ2xsIHJlbW92ZSBpdC4KPiA+Cj4gSSB0aGlu
+ayBubyBuZWVkIHRvIG1vZGlmeSBpdC4KPiBBY3R1YWxseSBJIHNhaWQgbWFueSB0aW1lcyBhYm91
+dCB0aGlzLi4uCj4KPiBBbmQgYXMgQmVuIERvb2tzIHNhaWQgaW4gb3RoZXIgcGF0Y2gsIHRoZSBm
+b3JtYXQgd2lsbCBiZSBjaGFuZ2VkIHNvb24uCj4KClRoaXMgYWxzbywgSSBkb24ndCB3YW50IHRv
+IHRha2UgX3Vua25vd25fIHNpZGUgZWZmZWN0cyB0byBtb2RpZnkgdGhpcyBhbG9uZS4gOigKQWN0
+dWFsbHksIG90aGVycyhzbWRrcywgYXF1aWxsYSwgZ29uaSkgYXJlIGFsc28gc2V0IHRoaXMgZmll
+bGQuIFNvLCBJIGhvcGUgdGhpcwphbHNvIG1vZGlmeSB3aXRoIEJlbidzIG90aGVyIHBhdGNoIHRo
+YXQgeW91IG1lbnRpb25lZC4KCj4gPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAudWNvbiDCoCDC
+oCDCoCDCoCDCoCA9IFRPUkJSRUNLX1VDT05fREVGQVVMVCwKPiA+PiArIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIC51bGNvbiDCoCDCoCDCoCDCoCDCoD0gVE9SQlJFQ0tfVUxDT05fREVGQVVMVCwKPiA+
+PiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC51ZmNvbiDCoCDCoCDCoCDCoCDCoD0gVE9SQlJFQ0tf
+VUZDT05fREVGQVVMVCwKPiA+PiArIMKgIMKgIMKgIH0sCj4gPj4gKyDCoCDCoCDCoCBbMV0gPSB7
+Cj4gPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAuaHdwb3J0IMKgIMKgIMKgIMKgID0gMSwKPiA+
+PiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5mbGFncyDCoCDCoCDCoCDCoCDCoD0gMCwKPiA+PiAr
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIC51Y29uIMKgIMKgIMKgIMKgIMKgID0gVE9SQlJFQ0tfVUNP
+Tl9ERUZBVUxULAo+ID4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLnVsY29uIMKgIMKgIMKgIMKg
+IMKgPSBUT1JCUkVDS19VTENPTl9ERUZBVUxULAo+ID4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+LnVmY29uIMKgIMKgIMKgIMKgIMKgPSBUT1JCUkVDS19VRkNPTl9ERUZBVUxULAo+ID4+ICsgwqAg
+wqAgwqAgfSwKPiA+PiArIMKgIMKgIMKgIFsyXSA9IHsKPiA+PiArIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIC5od3BvcnQgwqAgwqAgwqAgwqAgPSAyLAo+ID4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+LmZsYWdzIMKgIMKgIMKgIMKgIMKgPSAwLAo+ID4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLnVj
+b24gwqAgwqAgwqAgwqAgwqAgPSBUT1JCUkVDS19VQ09OX0RFRkFVTFQsCj4gPj4gKyDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCAudWxjb24gwqAgwqAgwqAgwqAgwqA9IFRPUkJSRUNLX1VMQ09OX0RFRkFV
+TFQsCj4gPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAudWZjb24gwqAgwqAgwqAgwqAgwqA9IFRP
+UkJSRUNLX1VGQ09OX0RFRkFVTFQsCj4gPj4gKyDCoCDCoCDCoCB9LAo+ID4+ICsgwqAgwqAgwqAg
+WzNdID0gewo+ID4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLmh3cG9ydCDCoCDCoCDCoCDCoCA9
+IDMsCj4gPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAuZmxhZ3MgwqAgwqAgwqAgwqAgwqA9IDAs
+Cj4gPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAudWNvbiDCoCDCoCDCoCDCoCDCoCA9IFRPUkJS
+RUNLX1VDT05fREVGQVVMVCwKPiA+PiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC51bGNvbiDCoCDC
+oCDCoCDCoCDCoD0gVE9SQlJFQ0tfVUxDT05fREVGQVVMVCwKPiA+PiArIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIC51ZmNvbiDCoCDCoCDCoCDCoCDCoD0gVE9SQlJFQ0tfVUZDT05fREVGQVVMVCwKPiA+
+PiArIMKgIMKgIMKgIH0sCj4gPj4gK307Cj4gPj4gKwo+Cj4gKHNuaXApCj4KPiA+PiAtLQo+ID4+
+IDEuNS42LjMKPiA+Pgo+IElmIHBvc3NpYmxlLCBwbGVhc2UgdXNlIGxhdGVyIHZlcnNpb24gZ2l0
+Lgo+IEl0IGRvZXNuJ3QgbWVhbiBsYXRlc3QgZ2l0IGlzIGJlc3QuLi4KPiBUaGlzIGlzIGp1c3Qg
+cHJpdmF0ZSBvcGluaW9uLiA6LSkKClllcy4gOi0pCgpUaGFua3MsCkt5dWhvIENob2kK
