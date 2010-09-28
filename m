@@ -1,77 +1,167 @@
-From: =?utf-8?B?TWljaGHFgiBOYXphcmV3aWN6?= <m.nazarewicz@samsung.com>
-Subject: Re: [PATCH] ARM: S5PV310: Optimize interrupt source searching code
-Date: Tue, 28 Sep 2010 15:01:01 +0200
-Message-ID: <op.vjqufzs47p4s8u@pikus>
-References: <1285637510-16740-1-git-send-email-kgene.kim@samsung.com>
- <4CA1E387.709@ru.mvista.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCHv2 4/7] ARM: S5PC110: Add si470x radio device to the GONI
+ board
+Date: Tue, 28 Sep 2010 15:08:19 +0200
+Message-ID: <007401cb5f0e$3b4e5000$b1eaf000$%szyprowski@samsung.com>
+References: <1284987337-15365-1-git-send-email-m.szyprowski@samsung.com>
+ <1284987337-15365-5-git-send-email-m.szyprowski@samsung.com>
+ <005f01cb5ee0$e16f63d0$a44e2b70$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed	delsp=yes
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:10361 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753274Ab0I1M7E convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:25286 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753724Ab0I1NIu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Sep 2010 08:59:04 -0400
-Received: from eu_spt1 ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0L9G0052QK2B9860@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Sep 2010 13:58:59 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0L9G00705K2AV3@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Sep 2010 13:58:59 +0100 (BST)
-In-reply-to: <4CA1E387.709@ru.mvista.com>
+	Tue, 28 Sep 2010 09:08:50 -0400
+Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L9G00BFVKIOXZ60@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 28 Sep 2010 22:08:48 +0900 (KST)
+Received: from AMDC159 ([106.116.37.153])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L9G00B05KIDLM@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 28 Sep 2010 22:08:48 +0900 (KST)
+In-reply-to: <005f01cb5ee0$e16f63d0$a44e2b70$%kim@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Sergei Shtylyov <sshtylyov@mvista.com>
-Cc: linux-samsung-soc@vger.kernel.org, Changhwan Youn <chaos.youn@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, ben-linux@fluff.org, 'Joonyoung Shim' <jy0922.shim@samsung.com>
 
-On Tue, 28 Sep 2010 14:45:59 +0200, Sergei Shtylyov <sshtylyov@mvista.c=
-om> wrote:
+Hello,
 
-> Hello.
->
-> On 28-09-2010 5:31, Kukjin Kim wrote:
->
->> From: Changhwan Youn<chaos.youn@samsung.com>
->
->> It is reported by Junseok Jung that using clz instruction is
->> better instead of using for-loop to find the interrupt source.
->> This patch modifies interrupt source searching code using __fls().
->> The __fls() is implemented using clz instruction.
->
->> Suggested-by: Junseok Jung<jundols.jung@samsung.com>
->> Signed-off-by: Changhwan Youn<chaos.youn@samsung.com>
->> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
->> ---
->>   arch/arm/mach-s5pv310/irq-combiner.c |    6 +-----
->>   1 files changed, 1 insertions(+), 5 deletions(-)
->
->> diff --git a/arch/arm/mach-s5pv310/irq-combiner.c b/arch/arm/mach-s5=
-pv310/irq-combiner.c
->> index 0f70521..39e3647 100644
->> --- a/arch/arm/mach-s5pv310/irq-combiner.c
->> +++ b/arch/arm/mach-s5pv310/irq-combiner.c
->> @@ -66,11 +66,7 @@ static void combiner_handle_cascade_irq(unsigned =
-int irq, struct irq_desc *desc)
->>   	if (status =3D=3D 0)
->>   		goto out;
->>
->> -	for (combiner_irq =3D 0; combiner_irq<  32; combiner_irq++) {
->> -		if (status & 0x1)
->> -			break;
->> -		status>>=3D 1;
->> -	}
->> +	combiner_irq =3D __fls(status);
->
->     But the loop finds the *first* set bit, not the last...
+On Tuesday, September 28, 2010 9:44 AM Kukjin Kim wrote:
 
-__ffs than?
+> Marek Szyprowski wrote:
+> >
+> > Add required platform definitions for si470x radio device on Samsung
+> > Goni board.
+> >
+> > Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > ---
+> >  arch/arm/mach-s5pv210/Kconfig     |    2 ++
+> >  arch/arm/mach-s5pv210/mach-goni.c |   30
+> > ++++++++++++++++++++++++++++++
+> >  2 files changed, 32 insertions(+), 0 deletions(-)
+> >
+> > diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+> > index b46925b..b1f671d 100644
+> > --- a/arch/arm/mach-s5pv210/Kconfig
+> > +++ b/arch/arm/mach-s5pv210/Kconfig
+> > @@ -83,9 +83,11 @@ config MACH_GONI
+> >  	select S3C_DEV_HSMMC
+> >  	select S3C_DEV_HSMMC1
+> >  	select S3C_DEV_HSMMC2
+> > +	select S3C_DEV_I2C1
+> >  	select S5P_DEV_ONENAND
+> >  	select SAMSUNG_DEV_KEYPAD
+> >  	select S5PV210_SETUP_FB_24BPP
+> > +	select S5PV210_SETUP_I2C1
+> >  	select S5PV210_SETUP_KEYPAD
+> >  	select S5PV210_SETUP_SDHCI
+> >  	help
+> > diff --git a/arch/arm/mach-s5pv210/mach-goni.c
+> b/arch/arm/mach-s5pv210/mach-
+> > goni.c
+> > index b263f3a..5677c4d 100644
+> > --- a/arch/arm/mach-s5pv210/mach-goni.c
+> > +++ b/arch/arm/mach-s5pv210/mach-goni.c
+> > @@ -38,6 +38,7 @@
+> >  #include <plat/devs.h>
+> >  #include <plat/cpu.h>
+> >  #include <plat/fb.h>
+> > +#include <plat/iic.h>
+> >  #include <plat/keypad.h>
+> >  #include <plat/sdhci.h>
+> >
+> > @@ -200,6 +201,27 @@ static struct samsung_keypad_platdata keypad_data
+> > __initdata = {
+> >  	.cols		= 3,
+> >  };
+> >
+> > +/* Radio */
+> > +static struct i2c_board_info i2c1_devs[] __initdata = {
+> > +	{
+> > +		I2C_BOARD_INFO("si470x", 0x10),
+> > +	},
+> > +};
+> > +
+> > +static void __init goni_radio_init(void)
+> > +{
+> > +	int gpio;
+> > +
+> > +	gpio = S5PV210_GPJ2(4);			/* XMSMDATA_4 */
+> > +	gpio_request(gpio, "FM_INT");
+> 
+> If returned fail?
 
---=20
-Best regards,                                        _     _
-| Humble Liege of Serenely Enlightened Majesty of  o' \,=3D./ `o
-| Computer Science,  Micha=C5=82 "mina86" Nazarewicz       (o o)
-+----[mina86*mina86.com]---[mina86*jabber.org]----ooO--(_)--Ooo--
+Then there is something seriously wrong either with the platform or machine
+startup code. 
+
+It is quite common to omit a check in the machine init code. Just take a look
+at mach-s3c64xx/mach-smdk6410.c, smdk6410_machine_init() function. Lack of
+checks here doesn't really have ANY impact on the stability of the kernel imho.
+ 
+> > +	s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0xf));
+> > +	i2c1_devs[0].irq = gpio_to_irq(gpio);
+> 
+> Need to sort out gpio interrupt stuff for this.
+
+Right, forgot that this also requires interrupt support for gpio. This
+definitely shows how important the gpio interrupt patches are and how much
+is blocked because they are still no merged or even commented yet.
+
+> Anyway, will check it soon.
+> 
+> 
+> > +
+> > +	gpio = S5PV210_GPJ2(5);			/* XMSMDATA_5 */
+> > +	gpio_request(gpio, "FM_RST");
+> 
+> Same.
+> 
+> > +	gpio_direction_output(gpio, 1);
+> > +}
+> > +
+> >  /* MAX8998 regulators */
+> >  #if defined(CONFIG_REGULATOR_MAX8998) ||
+> > defined(CONFIG_REGULATOR_MAX8998_MODULE)
+> >
+> > @@ -556,6 +578,7 @@ static struct platform_device *goni_devices[]
+> __initdata = {
+> >  	&s3c_device_hsmmc1,
+> >  	&s3c_device_hsmmc2,
+> >  	&samsung_device_keypad,
+> > +	&s3c_device_i2c1,
+> >  };
+> >
+> >  static void __init goni_map_io(void)
+> > @@ -567,6 +590,13 @@ static void __init goni_map_io(void)
+> >
+> >  static void __init goni_machine_init(void)
+> >  {
+> > +	/* Radio: call before I2C 1 registeration */
+> > +	goni_radio_init();
+> > +
+> > +	/* I2C1 */
+> > +	s3c_i2c1_set_platdata(NULL);
+> > +	i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
+> > +
+> >  	/* PMIC */
+> >  	goni_pmic_init();
+> >  	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4,
+> > i2c_gpio_pmic_devs,
+> > --
+> 
+> Others, looks ok.
+> 
+
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
