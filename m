@@ -1,188 +1,58 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCHv2 3/7] ARM: S5PC110: add support for S6E63M0 LCD controller
- on Goni board
-Date: Tue, 28 Sep 2010 14:27:15 +0200
-Message-ID: <006f01cb5f08$7e26a4f0$7a73eed0$%szyprowski@samsung.com>
-References: <1284987337-15365-1-git-send-email-m.szyprowski@samsung.com>
- <1284987337-15365-4-git-send-email-m.szyprowski@samsung.com>
- <005b01cb5ee0$2d266f90$87734eb0$%kim@samsung.com>
+From: Sergei Shtylyov <sshtylyov@mvista.com>
+Subject: Re: [PATCH] ARM: S5PV310: Optimize interrupt source searching code
+Date: Tue, 28 Sep 2010 16:45:59 +0400
+Message-ID: <4CA1E387.709@ru.mvista.com>
+References: <1285637510-16740-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:58731 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752119Ab0I1M1o (ORCPT
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:61048 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753302Ab0I1Mrn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Sep 2010 08:27:44 -0400
-Received: from epmmp2 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L9G001YKIM650C0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Sep 2010 21:27:42 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L9G003CFILX8S@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Sep 2010 21:27:42 +0900 (KST)
-In-reply-to: <005b01cb5ee0$2d266f90$87734eb0$%kim@samsung.com>
-Content-language: pl
+	Tue, 28 Sep 2010 08:47:43 -0400
+Received: by ewy23 with SMTP id 23so1733564ewy.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Sep 2010 05:47:42 -0700 (PDT)
+In-Reply-To: <1285637510-16740-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Changhwan Youn <chaos.youn@samsung.com>, ben-linux@fluff.org
 
-Hello,
+Hello.
 
-On Tuesday, September 28, 2010 9:39 AM wrote:
+On 28-09-2010 5:31, Kukjin Kim wrote:
 
-> Marek Szyprowski wrote:
-> >
-> > Add required platform definitions for S6E63M0 LCD controller on Samsung
-> > Goni board.
-> >
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> >  arch/arm/mach-s5pv210/mach-goni.c |   71
-> > +++++++++++++++++++++++++++++++++++++
-> >  1 files changed, 71 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-s5pv210/mach-goni.c
-> b/arch/arm/mach-s5pv210/mach-
-> > goni.c
-> > index b0ae208..b263f3a 100644
-> > --- a/arch/arm/mach-s5pv210/mach-goni.c
-> > +++ b/arch/arm/mach-s5pv210/mach-goni.c
-> > @@ -16,6 +16,9 @@
-> >  #include <linux/i2c.h>
-> >  #include <linux/i2c-gpio.h>
-> >  #include <linux/mfd/max8998.h>
-> > +#include <linux/spi/spi.h>
-> > +#include <linux/spi/spi_gpio.h>
-> > +#include <linux/lcd.h>
-> >  #include <linux/gpio_keys.h>
-> >  #include <linux/input.h>
-> >  #include <linux/gpio.h>
-> > @@ -111,6 +114,70 @@ static struct s3c_fb_platdata goni_lcd_pdata
-> __initdata =
-> > {
-> >  	.setup_gpio	= s5pv210_fb_gpio_setup_24bpp,
-> >  };
-> >
-> > +static int lcd_power_on(struct lcd_device *ld, int enable)
-> > +{
-> > +	return 1;
-> 
-> Always 1?
+> From: Changhwan Youn<chaos.youn@samsung.com>
 
-Yes, currently LCD panel is always powered, so this function is just a stub. Lack
-of it would cause a different driver behavior.
+> It is reported by Junseok Jung that using clz instruction is
+> better instead of using for-loop to find the interrupt source.
+> This patch modifies interrupt source searching code using __fls().
+> The __fls() is implemented using clz instruction.
 
-> > +}
-> > +
-> > +static int reset_lcd(struct lcd_device *ld)
-> > +{
-> > +	static unsigned int first = 1;
-> > +	int reset_gpio = -1;
-> > +
-> > +	reset_gpio = S5PV210_MP05(5);
-> > +
-> > +	if (first) {
-> > +		gpio_request(reset_gpio, "MLCD_RST");
-> > +		first = 0;
-> > +	}
-> > +
-> > +	gpio_direction_output(reset_gpio, 1);
-> > +	return 1;
-> > +}
-> 
-> Hmm...
-> Could you please explain about the functionality of above reset_lcd()?
+> Suggested-by: Junseok Jung<jundols.jung@samsung.com>
+> Signed-off-by: Changhwan Youn<chaos.youn@samsung.com>
+> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
+> ---
+>   arch/arm/mach-s5pv310/irq-combiner.c |    6 +-----
+>   1 files changed, 1 insertions(+), 5 deletions(-)
 
-It sets the S5PV210_MP05(5) pin to value 1. This function can be called many times
-by the driver so a simple singleton template has been used.
+> diff --git a/arch/arm/mach-s5pv310/irq-combiner.c b/arch/arm/mach-s5pv310/irq-combiner.c
+> index 0f70521..39e3647 100644
+> --- a/arch/arm/mach-s5pv310/irq-combiner.c
+> +++ b/arch/arm/mach-s5pv310/irq-combiner.c
+> @@ -66,11 +66,7 @@ static void combiner_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
+>   	if (status == 0)
+>   		goto out;
+>
+> -	for (combiner_irq = 0; combiner_irq<  32; combiner_irq++) {
+> -		if (status & 0x1)
+> -			break;
+> -		status>>= 1;
+> -	}
+> +	combiner_irq = __fls(status);
 
-> > +
-> > +static struct lcd_platform_data s6e63m0_platform_data = {
-> > +	.reset			= reset_lcd,
-> > +	.power_on		= lcd_power_on,
-> > +	.lcd_enabled		= 0,
-> > +
-> > +	.reset_delay		= 120,	/* 120ms */
-> > +	.power_on_delay		= 25,	/* 25ms */
-> > +	.power_off_delay	= 200,	/* 200ms */
-> > +};
-> > +
-> > +#define LCD_BUS_NUM	3
-> > +#define DISPLAY_CS	S5PV210_MP01(1)
-> > +static struct spi_board_info spi_board_info[] __initdata = {
-> > +	{
-> > +		.modalias	= "s6e63m0",
-> > +		.platform_data	= (void *)&s6e63m0_platform_data,
->                                   ^^^^^^^^
-> No need.
+    But the loop finds the *first* set bit, not the last...
 
-Right.
-
-> 
-> > +		.max_speed_hz	= 1200000,
-> > +		.bus_num	= LCD_BUS_NUM,
-> > +		.chip_select	= 0,
-> > +		.mode		= SPI_MODE_3,
-> > +		.controller_data = (void *)DISPLAY_CS,
-> 
-> 
-> 
-> > +	},
-> > +};
-> > +
-> > +#define DISPLAY_CLK	S5PV210_MP04(1)
-> > +#define DISPLAY_SI	S5PV210_MP04(3)
-> > +static struct spi_gpio_platform_data lcd_spi_gpio_data = {
-> > +	.sck	= DISPLAY_CLK,
-> > +	.mosi	= DISPLAY_SI,
-> 
-> How about use the S5PV210_MPXX directly with comment?
-
-Ok, no problem, I will resend a new version.
-
-> 
-> > +	.miso	= SPI_GPIO_NO_MISO,
-> > +
-> > +	.num_chipselect	= 1,
-> > +};
-> > +
-> > +static struct platform_device goni_spi_gpio = {
-> > +	.name	= "spi_gpio",
-> > +	.id	= LCD_BUS_NUM,
-> > +	.dev	= {
-> > +		.parent		= &s3c_device_fb.dev,
-> > +		.platform_data	= &lcd_spi_gpio_data,
-> > +	},
-> > +};
-> > +
-> >  /* KEYPAD */
-> >  static uint32_t keymap[] __initdata = {
-> >  	/* KEY(row, col, keycode) */
-> > @@ -479,6 +546,7 @@ static void goni_setup_sdhci(void)
-> >  static struct platform_device *goni_devices[] __initdata = {
-> >  	&s3c_device_fb,
-> >  	&s5p_device_onenand,
-> > +	&goni_spi_gpio,
-> >  	&goni_i2c_gpio_pmic,
-> >  	&goni_device_gpiokeys,
-> >  	&s5p_device_fimc0,
-> > @@ -509,6 +577,9 @@ static void __init goni_machine_init(void)
-> >  	/* FB */
-> >  	s3c_fb_set_platdata(&goni_lcd_pdata);
-> >
-> > +	/* SPI */
-> > +	spi_register_board_info(spi_board_info, ARRAY_SIZE(spi_board_info));
-> > +
-> >  	/* KEYPAD */
-> >  	samsung_keypad_set_platdata(&keypad_data);
-
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+WBR, Sergei
