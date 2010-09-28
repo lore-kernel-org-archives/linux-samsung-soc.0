@@ -1,132 +1,71 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCHv2 7/7] ARM: S5PC110: add support for MMC regulators on Goni
-	board
-Date: Tue, 28 Sep 2010 15:27:49 +0900
-Message-ID: <005001cb5ed6$490137e0$db03a7a0$%kim@samsung.com>
+Subject: RE: [PATCHv2 1/7] ARM: S5PC110: update framebuffer setup information
+ for Goni
+Date: Tue, 28 Sep 2010 16:07:29 +0900
+Message-ID: <005801cb5edb$d46579e0$7d306da0$%kim@samsung.com>
 References: <1284987337-15365-1-git-send-email-m.szyprowski@samsung.com>
-	<1284987337-15365-8-git-send-email-m.szyprowski@samsung.com>
+ <1284987337-15365-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1284987337-15365-8-git-send-email-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:45100 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752712Ab0I1HHR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 28 Sep 2010 03:07:17 -0400
+Received: from epmmp2 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L9G00H7C3S4E8C0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 28 Sep 2010 16:07:16 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L9G008LD3S4ZO@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 28 Sep 2010 16:07:16 +0900 (KST)
+In-reply-to: <1284987337-15365-2-git-send-email-m.szyprowski@samsung.com>
 Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, ben-linux@fluff.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
 
 Marek Szyprowski wrote:
 > 
-> Add required platform definitions for MMC power regulators on Samsung
-> Goni board. GPIO pin GONI_EXT_FLASH_EN has been transferred from machine
-> startup code to fixed voltage regulator.
+> Change the default upper_margin and vsync_len to get rid of repeated last
+> line on the display.
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> CC: Mark Brown <broonie@opensource.wolfsonmicro.com>
 > ---
->  arch/arm/mach-s5pv210/mach-goni.c |   40
-> ++++++++++++++++++++++++++++++++++--
->  1 files changed, 37 insertions(+), 3 deletions(-)
+>  arch/arm/mach-s5pv210/mach-goni.c |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
 > 
 > diff --git a/arch/arm/mach-s5pv210/mach-goni.c
 b/arch/arm/mach-s5pv210/mach-
 > goni.c
-> index 68e22f2..a7fbe08 100644
+> index d9fe739..4bd5582 100644
 > --- a/arch/arm/mach-s5pv210/mach-goni.c
 > +++ b/arch/arm/mach-s5pv210/mach-goni.c
-> @@ -16,6 +16,7 @@
->  #include <linux/i2c.h>
->  #include <linux/i2c-gpio.h>
->  #include <linux/mfd/max8998.h>
-> +#include <linux/regulator/fixed.h>
->  #include <linux/spi/spi.h>
->  #include <linux/spi/spi_gpio.h>
->  #include <linux/lcd.h>
-> @@ -226,6 +227,10 @@ static void __init goni_radio_init(void)
->  /* MAX8998 regulators */
->  #if defined(CONFIG_REGULATOR_MAX8998) ||
-> defined(CONFIG_REGULATOR_MAX8998_MODULE)
-> 
-> +static struct regulator_consumer_supply goni_ldo5_consumers[] = {
-> +	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
-> +};
-> +
->  static struct regulator_init_data goni_ldo2_data = {
->  	.constraints	= {
->  		.name		= "VALIVE_1.1V",
-> @@ -265,6 +270,8 @@ static struct regulator_init_data goni_ldo5_data = {
->  		.max_uV		= 2800000,
->  		.apply_uV	= 1,
->  	},
-> +	.num_consumer_supplies = ARRAY_SIZE(goni_ldo5_consumers),
-> +	.consumer_supplies = goni_ldo5_consumers,
->  };
-> 
->  static struct regulator_init_data goni_ldo6_data = {
-> @@ -556,11 +563,37 @@ static struct s3c_sdhci_platdata goni_hsmmc2_data
-> __initdata = {
->  	.ext_cd_gpio_invert	= 1,
->  };
-> 
-> +static struct regulator_consumer_supply mmc2_supplies[] = {
-> +	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.2"),
-> +};
-> +
-> +static struct regulator_init_data mmc2_fixed_voltage_init_data = {
-> +	.constraints		= {
-> +		.name		= "V_TF_2.8V",
-> +		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
-> +	},
-> +	.num_consumer_supplies	= ARRAY_SIZE(mmc2_supplies),
-> +	.consumer_supplies	= mmc2_supplies,
-> +};
-> +
-> +static struct fixed_voltage_config mmc2_fixed_voltage_config = {
-> +	.supply_name		= "EXT_FLASH_EN",
-> +	.microvolts		= 2800000,
-> +	.gpio			= GONI_EXT_FLASH_EN,
-> +	.enable_high		= true,
-> +	.init_data		= &mmc2_fixed_voltage_init_data,
-> +};
-> +
-> +static struct platform_device mmc2_fixed_voltage = {
-> +	.name		= "reg-fixed-voltage",
-> +	.id		= 2,
-> +	.dev		= {
-> +		.platform_data	= &mmc2_fixed_voltage_config,
-> +	},
-> +};
-> +
->  static void goni_setup_sdhci(void)
->  {
-> -	gpio_request(GONI_EXT_FLASH_EN, "FLASH_EN");
-> -	gpio_direction_output(GONI_EXT_FLASH_EN, 1);
-> -
->  	s3c_sdhci0_set_platdata(&goni_hsmmc0_data);
->  	s3c_sdhci1_set_platdata(&goni_hsmmc1_data);
->  	s3c_sdhci2_set_platdata(&goni_hsmmc2_data);
-> @@ -572,6 +605,7 @@ static struct platform_device *goni_devices[]
-__initdata = {
->  	&goni_spi_gpio,
->  	&s3c_device_usb_hsotg,
->  	&goni_i2c_gpio_pmic,
-> +	&mmc2_fixed_voltage,
->  	&goni_device_gpiokeys,
->  	&s5p_device_fimc0,
->  	&s5p_device_fimc1,
+> @@ -91,10 +91,10 @@ static struct s3c_fb_pd_win goni_fb_win0 = {
+>  		.pixclock = 1000000000000ULL /
+> ((16+16+2+480)*(28+3+2+800)*55),
+>  		.left_margin	= 16,
+>  		.right_margin	= 16,
+> -		.upper_margin	= 3,
+> +		.upper_margin	= 2,
+>  		.lower_margin	= 28,
+>  		.hsync_len	= 2,
+> -		.vsync_len	= 2,
+> +		.vsync_len	= 1,
+>  		.xres		= 480,
+>  		.yres		= 800,
+>  		.refresh	= 55,
 > --
 
-Ok...will apply with Mark Brown's reviewed-by.
+This is better than your previous patch to me.
+
+Will apply.
 
 Thanks.
 
