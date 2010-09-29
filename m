@@ -1,57 +1,91 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: S5P64XX: Remove redundant selection PLAT_S5P.
-Date: Wed, 29 Sep 2010 21:23:51 +0900
-Message-ID: <1285763031-4720-1-git-send-email-kgene.kim@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] ARM: Samsung: add a workaround for get_clock() for serial
+ driver
+Date: Wed, 29 Sep 2010 16:14:45 +0200
+Message-ID: <1285769685-11849-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:40592 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755748Ab0I2Mll (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:16521 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751037Ab0I2OOx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Sep 2010 08:41:41 -0400
+	Wed, 29 Sep 2010 10:14:53 -0400
+Received: from eu_spt2 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0L9I00M4TI8QKZ@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 29 Sep 2010 15:14:50 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0L9I00HS5I8P7L@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 29 Sep 2010 15:14:50 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
 
-This patch removes redundant selection PLAT_S5P in the CPU_S5P64XX config.
-Because PLAT_S5P is selected if select ARCH_S5P64XX in the plat-s5p/Kconfig.
+Serial drivers call get_clock() very early, before platform bus
+has been set up, this requires a special check to let them get
+a proper clock. Without this patch, a serial console is broken
+on Universal C210 board.
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-s5p6442/Kconfig |    1 -
- arch/arm/mach-s5p64x0/Kconfig |    2 --
- 2 files changed, 0 insertions(+), 3 deletions(-)
+ arch/arm/plat-samsung/clock.c |   25 ++++++++++++++++++++++++-
+ 1 files changed, 24 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-s5p6442/Kconfig b/arch/arm/mach-s5p6442/Kconfig
-index 0fda0a5..33569e4 100644
---- a/arch/arm/mach-s5p6442/Kconfig
-+++ b/arch/arm/mach-s5p6442/Kconfig
-@@ -11,7 +11,6 @@ if ARCH_S5P6442
+diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
+index 90a2051..da847f1 100644
+--- a/arch/arm/plat-samsung/clock.c
++++ b/arch/arm/plat-samsung/clock.c
+@@ -48,6 +48,9 @@
+ #include <plat/clock.h>
+ #include <plat/cpu.h>
  
- config CPU_S5P6442
- 	bool
--	select PLAT_S5P
- 	select S3C_PL330_DMA
- 	help
- 	  Enable S5P6442 CPU support
-diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
-index fbcae93..164d278 100644
---- a/arch/arm/mach-s5p64x0/Kconfig
-+++ b/arch/arm/mach-s5p64x0/Kconfig
-@@ -9,14 +9,12 @@ if ARCH_S5P64X0
++#include <linux/serial_core.h>
++#include <plat/regs-serial.h> /* for s3c24xx_uart_devs */
++
+ /* clock information */
  
- config CPU_S5P6440
- 	bool
--	select PLAT_S5P
- 	select S3C_PL330_DMA
- 	help
- 	  Enable S5P6440 CPU support
+ static LIST_HEAD(clocks);
+@@ -65,6 +68,26 @@ static int clk_null_enable(struct clk *clk, int enable)
+ 	return 0;
+ }
  
- config CPU_S5P6450
- 	bool
--	select PLAT_S5P
- 	select S3C_PL330_DMA
- 	help
- 	  Enable S5P6450 CPU support
++static int dev_is_s3c_uart(struct device *dev)
++{
++	struct platform_device **pdev = s3c24xx_uart_devs;
++	int i;
++	for (i=0; i<ARRAY_SIZE(s3c24xx_uart_devs); i++, pdev++)
++		if (*pdev && dev == &(*pdev)->dev)
++			return 1;
++	return 0;
++}
++
++/* Serial drivers call get_clock() very early, before platform bus
++   has been set up, this requires a special check to let them get
++   a proper clock */
++
++static int dev_is_platform_device(struct device *dev)
++{
++	return dev->bus == &platform_bus_type ||
++	       (dev->bus == NULL && dev_is_s3c_uart(dev));
++}
++
+ /* Clock API calls */
+ 
+ struct clk *clk_get(struct device *dev, const char *id)
+@@ -73,7 +96,7 @@ struct clk *clk_get(struct device *dev, const char *id)
+ 	struct clk *clk = ERR_PTR(-ENOENT);
+ 	int idno;
+ 
+-	if (dev == NULL || dev->bus != &platform_bus_type)
++	if (dev == NULL || !dev_is_platform_device(dev))
+ 		idno = -1;
+ 	else
+ 		idno = to_platform_device(dev)->id;
 -- 
-1.6.2.5
+1.7.1.569.g6f426
