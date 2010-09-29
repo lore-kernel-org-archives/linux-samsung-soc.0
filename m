@@ -1,73 +1,70 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3] ARM: S5P: Add support for gpio interrupts
-Date: Wed, 29 Sep 2010 15:49:19 +0900
-Message-ID: <014101cb5fa2$7701f9f0$6505edd0$%kim@samsung.com>
-References: <1283764347-460-1-git-send-email-m.szyprowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v2] Add support for camera capture in s5p-fimc driver
+Date: Wed, 29 Sep 2010 12:23:44 +0200
+Message-ID: <1285755828-7815-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:35104 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751155Ab0I2GtU (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:52321 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751600Ab0I2KXy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Sep 2010 02:49:20 -0400
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L9H00H9DXLX1P30@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Sep 2010 15:49:09 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L9H00KVOXLWL1@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Sep 2010 15:49:09 +0900 (KST)
-In-reply-to: <1283764347-460-1-git-send-email-m.szyprowski@samsung.com>
-Content-language: ko
+	Wed, 29 Sep 2010 06:23:54 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, ben-linux@fluff.org, jy0922.shim@samsung.com
+To: linux-media@vger.kernel.org, linux-arm-kernel@lists.infraded.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com
 
-Marek Szyprowski wrote:
-> 
-> Hello,
-> 
-Hi :-)
+Hi all,
 
-> This patch series adds support for gpio interrupts on Samsung S5P SoC
-> series (S5PC100 and S5PC110/S5PV210). It is based on the previous
-> version created by Joonyoung Shim (which is available from the
-> "[PATCH v2 0/4] ARM: S5P: Support gpio interrupts" thread:
-> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/1662 ).
-> 
-> This version has been redesigned to assign irq numbers dynamically to
-> reduce resource waste. Such idea has proposed by Ben Dooks some time ago
-> (see "[PATCH] ARM: S5P: Dynamicly numbered GPIO interrupt support"
-> thread: http://comments.gmane.org/gmane.linux.kernel.samsung-soc/1198 ).
-> 
-> The last patch in this series is an example how to use the dynamically
-> registered gpio interrupt. The QT602240 touch screen device on Goni
-> machine requires it.
-> 
-> The patch series has been rebased onto latest kgene/for-next kernel
-> tree.
-> 
-> The complete list of patches:
-> 
-> [PATCH 1/6] ARM: Samsung: Add common s5p gpio interrupt support
-> [PATCH 2/6] ARM: S5PC110: add support for gpio interrupts
-> [PATCH 3/6] ARM: S5PC100: Use generic S5P gpio interrupts interface
-> [PATCH 4/6] ARM: S5PC100: Move external interrupt defines
-> [PATCH 5/6] ARM: Samsung: Add common samsung_gpiolib_to_irq function
-> [PATCH 6/6] ARM: S5PC110: GONI: Add support for QT602240 TS driver
-> 
-Ok...initial reading your 2nd to 5th patches, looks ok to me...will apply.
-Others, will check/review soon.
+The following is a second version of patches adding camera capture 
+capability to the s5p-fimc driver, ready for review. The driver 
+uses videobuf however it is meant as a first step to vb2 based 
+implementation.
 
-Thanks.
+The host interface driver has been tested on Samsung Aquila and GONI
+boards (S5PC110) with SR030PC30 (VGA) and NOON010PC30 (CIF) image sensors.
+I am working on common driver for these image sensors so the patches
+providing support for them might be available soon.
 
-Best regards,
-Kgene.
+
+Changes since v1:
+
+- entirely removed plat-samsung/include/plat/fimc.h header so there is no
+ platform code dependency
+
+- improved s/try_fmt ioctl and introduced more common ioctl handlers
+ (enum/try/g_fmt, g_crop, cropcap) rather than having them separate 
+ for mem2mem and capture node
+
+- register definition changes merged with previous commit   
+ [3/8] v4l: s5p-fimc: Register definition cleanup
+
+
+The patch series contains:
+
+[PATCH v2 1/4] V4L/DVB: s5p-fimc: Register definition cleanup
+[PATCH v2 2/4] V4L/DVB: s5p-fimc: M2M driver cleanup and minor improvements
+[PATCH v2 3/4] V4L/DVB: s5p-fimc: Do not lock both capture and output buffer queue in s_fmt
+[PATCH v2 4/4] V4L/DVB: s5p-fimc: Add camera capture support
+
+It has been prepared in assumption that the following patches,
+posted by Marek Szyprowski, were applied:
+
+v4l: s5p-fimc: Fix 3-planar formats handling and pixel
+offset error on S5PV210 SoCs
+v4l: s5p-fimc: Fix return value on probe() failure
+
+For easier review the commits will be also available in few hours
+in git repository at:
+
+http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/v4l/s5p-fimc-capture-for-2.6.37
+
+Regards,
+Sylwester
+
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Sylwester Nawrocki
+Linux Platform Group
+Samsung Poland R&D Center
