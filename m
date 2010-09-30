@@ -1,70 +1,78 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH RESEND] drivers: s3c2410-i2c: fix calculation of SDA line delay
-Date: Thu, 30 Sep 2010 15:54:46 +0200
-Message-ID: <1285854886-21459-1-git-send-email-m.szyprowski@samsung.com>
-References: <1285853909-16056-1-git-send-email-m.szyprowski@samsung.com>
+From: Colin Cross <ccross@android.com>
+Subject: Re: [PATCH 2/2] ARM: S5PV310: Update CPU hotplug implementation
+Date: Thu, 30 Sep 2010 10:02:37 -0700
+Message-ID: <AANLkTinaGsnZg-nTGvXS4xw-_8e8+pLpL4hYN-HMNYfh@mail.gmail.com>
+References: <1284700388-9394-1-git-send-email-kgene.kim@samsung.com>
+	<1284700388-9394-3-git-send-email-kgene.kim@samsung.com>
+	<001901cb5fcd$a0a5b5a0$e1f120e0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:54032 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756129Ab0I3N4T (ORCPT
+Received: from smtp-out.google.com ([216.239.44.51]:19608 "EHLO
+	smtp-out.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932227Ab0I3RCl convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Sep 2010 09:56:19 -0400
-In-reply-to: <1285853909-16056-1-git-send-email-m.szyprowski@samsung.com>
+	Thu, 30 Sep 2010 13:02:41 -0400
+Received: from wpaz33.hot.corp.google.com (wpaz33.hot.corp.google.com [172.24.198.97])
+	by smtp-out.google.com with ESMTP id o8UH2eAN005742
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2010 10:02:40 -0700
+Received: from eyg24 (eyg24.prod.google.com [10.208.7.24])
+	by wpaz33.hot.corp.google.com with ESMTP id o8UH2ONq020873
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2010 10:02:39 -0700
+Received: by eyg24 with SMTP id 24so1574817eyg.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2010 10:02:38 -0700 (PDT)
+In-Reply-To: <001901cb5fcd$a0a5b5a0$e1f120e0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, myungjoo.ham@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>, Russell King <rmk@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Erik Gilling <konkers@android.com>, Olof Johansson <olof@lixom.net>
 
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
+On Wed, Sep 29, 2010 at 4:58 AM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> Kukjin Kim wrote:
+>>
+>> From: Changhwan Youn <chaos.youn@samsung.com>
+>>
+>> This patch updates CPU hotplug implementation to reduce CPU power
+>> consumption
+>> and will turn off the CPU power when CPU1 is unplugged while previou=
+s CPU
+>> hotplug
+>> used CPU idle.
+>> This patch removes init memory freeing code to use CPU boot code whe=
+n CPU1
+> is
+>> plugged-in again and adds vfp_enable() call to allow to access CP10 =
+and
+> CP11.
+>>
+>> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+>> Cc: Russell King <rmk@arm.linux.org.uk>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Colin Cross <ccross@android.com>
+> Cc: Erik Gilling <konkers@android.com>
+> Cc: Olof Johansson <olof@lixom.net>
+>
 
-S3C2440 style I2C controller uses PCLK to calculate the SDA line delay.
-The driver wrongly assumed that this delay is calculated from the
-frequency that the controller is operating on. This patch fixes this
-issue.
+snip
 
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> +#ifndef CONFIG_HOTPLUG_CPU
+>> =A0 =A0 =A0 if (!machine_is_integrator() && !machine_is_cintegrator(=
+))
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 totalram_pages +=3D
+> free_area(__phys_to_pfn(__pa(__init_begin)),
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 __phys_to_pfn(__pa(__init_end)),
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 "init");
+>> +#endif
+>> =A0}
+>>
+>> =A0#ifdef CONFIG_BLK_DEV_INITRD
 
----
-
-Hello,
-
-I've checked all the user manuals I have and in all cases (S3C2440,
-S3C6410, S5PC100, S5PC110 and S5PC210) the SDA line delay is calculated
-from PCLK not the I2C operating frequency. This patch fixes problems
-with I2C bus on Universal C210 board and LP3974 PMIC chip.
-
-This is a resend of the previous patch with the correct authorship. I've
-lost the information about the original author while rebasing and
-resolving conflicts in my kernel tree. I'm sorry for the confusion. 
-
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
-
----
- drivers/i2c/busses/i2c-s3c2410.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 72902e0..bf831bf 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -662,8 +662,8 @@ static int s3c24xx_i2c_clockrate(struct s3c24xx_i2c *i2c, unsigned int *got)
- 		unsigned long sda_delay;
- 
- 		if (pdata->sda_delay) {
--			sda_delay = (freq / 1000) * pdata->sda_delay;
--			sda_delay /= 1000000;
-+			sda_delay = clkin * pdata->sda_delay;
-+			sda_delay = DIV_ROUND_UP(sda_delay, 1000000);
- 			sda_delay = DIV_ROUND_UP(sda_delay, 5);
- 			if (sda_delay > 3)
- 				sda_delay = 3;
--- 
-1.7.1.569.g6f426
+I don't think this is necessary.  Any symbol that is necessary for CPU
+hotplug should be marked with __cpuinit instead of __init.  The linker
+script will put __cpuinit symbols outside the __init_begin -
+__init_end section if CONFIG_HOTPLUG_CPU is enabled.
