@@ -1,59 +1,166 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH 5/5] sdhci-s3c: Add support no internal clock divider in
- host controller
-Date: Thu, 30 Sep 2010 10:18:12 +0900
-Message-ID: <AANLkTimyvrSxQiF4A4pbmK8nME2ko9MRtqvcuMrY2rKR@mail.gmail.com>
-References: <1284626223-18944-1-git-send-email-jeongbae.seo@samsung.com>
-	<1284626223-18944-6-git-send-email-jeongbae.seo@samsung.com>
-	<AANLkTik23B23RW_kmjaL1PeXNiWtU01aNBwUOPrac6HF@mail.gmail.com>
-	<20100917155928.GA7561@void.printf.net>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: S5PV210: Add audio support to
+	Aquila
+Date: Thu, 30 Sep 2010 10:23:06 +0900
+Message-ID: <4CA3E67A.3070309@gmail.com>
+References: <4C4F9E4C.7000001@samsung.com>
+	<20100729173825.GE24781@opensource.wolfsonmicro.com>
+	<4C527C11.5090409@samsung.com>
+	<001b01cb5fd0$2c73bd50$855b37f0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:59525 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751159Ab0I3BSN convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Sep 2010 21:18:13 -0400
-In-Reply-To: <20100917155928.GA7561@void.printf.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-reply-to: <001b01cb5fd0$2c73bd50$855b37f0$%kim@samsung.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: alsa-devel@alsa-project.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Ben Dooks' <ben@simtec.co.uk>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Myungjoo Ham' <myungjoo.ham@samsung.com>, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>, 'Liam Girdwood' <lrg@slimlogic.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: Jeongbae Seo <jeongbae.seo@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, ben-linux@fluff.org, kgene.kim@samsung.com, akpm@linux-foundation.org, Hyuk Lee <hyuk1.lee@samsung.com>, =?UTF-8?B?7KCV7J6s7ZuI?= <jh80.chung@samsung.com>
 
-On Sat, Sep 18, 2010 at 12:59 AM, Chris Ball <cjb@laptop.org> wrote:
-> Hi,
->
-> On Thu, Sep 16, 2010 at 06:08:28PM +0900, Kyungmin Park wrote:
->> Well there are two implementations. and no conclusion yet.
->> as s5pc210 don't support internal SDHCI clock, DMC overrides the
->> function operation itself when s5pc210. System LSI use the quirks.
+
+
+Kukjin Kim wrote:
+> Chanwoo Choi wrote:
+>> Mark Brown wrote:
+>>> On Wed, Jul 28, 2010 at 12:04:44PM +0900, Chanwoo Choi wrote:
+>>>
+>>>> +static struct regulator_consumer_supply wm8994_fixed_voltage0_supplies[] =
+>> {
+>>>> +	{
+>>>> +		.dev_name	= "5-001a",
+>>>> +		.supply		= "DBVDD",
+>>>> +	}, {
+>>>> +		.dev_name	= "5-001a",
+>>>> +		.supply		= "AVDD2",
+>>>> +	}, {
+>>>> +		.dev_name	= "5-001a",
+>>>> +		.supply		= "CPVDD",
+>>>> +	},
+>>>> +
+>>>> +};
+>>>> +
+>>>> +static struct regulator_consumer_supply wm8994_fixed_voltage1_supplies[] =
+>> {
+>>> All these fixed voltage regulators seem a bit suspicous for a mobile
+>>> phone - I'd have expected that the supplies would all be being provided
+>>> by your PMIC except for things taken directly from the battery supply
+>>> (like the speakers tend to be, for example)?  There's no problem with
+>>> the code itself, it just looks a bit odd.
+>>>
+>> All these consumer supply of WM8994 codec connected the below
+>> regulator(VCC_1.8V) on
+>> a circuit diagram. "VCC_1.8V" regualtor is always enabled, because it is used to
+>> many devices.
+>> Then I haven't connected all these consumer supply of WM8994 codec to
+>> "VCC_1.8V" regulator.
+>> I will modify that the consumer supply would be provided by PMIC.
 >>
->> Choose any one from MMC maintainer.
->
-> Both approaches are generally acceptable for MMC, so I would want to
-> leave it up to the maintainer of the driver in question (which is Ben=
-,
-> in this case?) to choose between them.
+>> static struct regulator_init_data aquila_buck3_data = {
+>> 	.constraints	= {
+>> 		.name		= "VCC_1.8V",
+>> 		.min_uV		= 1800000,
+>> 		.max_uV		= 1800000,
+>> 		.apply_uV	= 1,
+>> 		.state_mem	= {
+>> 			.enabled = 1,
+>> 		},
+>> 	},
+>> };
+>>
+>>>> +static struct i2c_board_info i2c_gpio5_devs[] __initdata = {
+>>>> +	{
+>>>> +		/* CS/ADDR = low 0x34 (FYI: high = 0x36) */
+>>>> +		I2C_BOARD_INFO("wm8994", 0x34 >> 1),
+>>>> +		.platform_data	= &wm8994_platform_data,
+>>>> +	},
+>>>> +};
+>>> Probably clearer for generic Linux use to specify the address as 0x1a
+>>> directly.
+>> Ok, I will do.
+>>
+>>>> +static void __init aquila_sound_init(void)
+>>>> +{
+>>>> +	unsigned int gpio;
+>>>> +
+>>>> +	/* CODEC_XTAL_EN */
+>>>> +	gpio = S5PV210_GPH3(2);		/* XEINT_26 */
+>>>> +	gpio_request(gpio, "CODEC_XTAL_EN");
+>>>> +	s3c_gpio_cfgpin(gpio, S3C_GPIO_OUTPUT);
+>>>> +	s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+>>>> +	gpio_direction_output(gpio, 1);
+>>> Might be as well to provide some or all this stuff in your audio machine
+>>> driver?
+>> The Aquila board have a oscillator which provide main clock to
+>> WM8994 audio codec. The oscillator provide 24MHz clock to WM8994 audio codec
+>> (MCLK1 pin). I set gpio setting of "CODEC_XTAL_EN" to enable a oscillator.
+>>
+>>>> +	/* MICBIAS_EN */
+>>>> +	gpio = S5PV210_GPJ4(2);			/* XMSMRN */
+>>>> +	gpio_request(gpio, "MICBIAS_EN");
+>>>> +	s3c_gpio_cfgpin(gpio, S3C_GPIO_OUTPUT);
+>>>> +	gpio_direction_output(gpio, 1);
+>>> This in particular would benefit from keeping the request of the GPIO
+>>> joined up with the driver that uses it.
+>> Ok, I will move this code to machine driver(sound/soc/s3c24xxx/aquila_wm8994.c).
+>>
+>>>> +	/* ADC_EN */
+>>>> +	gpio = S5PV210_GPJ3(2);
+>>>> +	gpio_request(gpio, "ADC_EN");
+>>>> +	s3c_gpio_cfgpin(gpio, S3C_GPIO_OUTPUT);
+>>>> +	gpio_direction_output(gpio, 1);
+>>> I'm not sure what this does?
+>>>
+>> I explained below description about "ADC_EN" :
+>> "ADC_EN : This gpio enable the ADC device which is used to detect
+>>  the kind of jack. (SND_JACK_HEADPHONE/HEADSET/MECHANICAL/AVOUT)
+>>  According to the kind of jack, an electric current is changed.
+>>  (Only used on Aquila board) "
+>>
+>> When inserting the jack to Aquila board, I used ADC driver so that, detecting
+>> the kind of jack(SND_JACK_HEADPHONE/HEADSET/MECHANICAL/AVOUT).
+>>
+>> I will separately make the another function to initialize ADC driver.
+>>
+>> Thank you for your comment.
+>> Chanwoo Choi
+>>
+> Hi,
+> 
+> How was going on?
+> 
 
-Hi Chris,
+I did post this patch and reviewed by maintainer.
+The request was reflected to following patch.
+Also, I did explain the constraints of the regulator of WM8994 codec
+and resend following patch. This patch include Goni and Aquila board code
+related to audio.
+	[PATCH] ARM: S5PV210: Add audio support to Goni and Aquila board
 
-Did you get the opinion from Ben?
+This is my mistake, "RESEND" word is leaved out in the subject.
 
-I hope this decision will be done before 2.6.37 merge windows start to
-support SDHCI support on s5pc210.
+Thanks,
+Chanwoo Choi
 
-Thank you,
-Kyungmin Park
 
->
-> That said, I think my own mild preference is for Jaehoon's approach.
->
-> Thanks,
->
-> - Chris.
+> Thanks.
+> 
+> Best regards,
+> Kgene.
 > --
-> Chris Ball =A0 <cjb@laptop.org> =A0 <http://printf.net/>
-> One Laptop Per Child
->
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
