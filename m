@@ -1,101 +1,64 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH 5/5] sdhci-s3c: Add support no internal clock divider in
- host controller
-Date: Thu, 30 Sep 2010 15:00:25 +0900
-Message-ID: <AANLkTi=r0x-ciYG7JVyidgan12JUKmVRhNjNCR_uSfFf@mail.gmail.com>
-References: <1284626223-18944-1-git-send-email-jeongbae.seo@samsung.com>
-	<1284626223-18944-6-git-send-email-jeongbae.seo@samsung.com>
-	<AANLkTik23B23RW_kmjaL1PeXNiWtU01aNBwUOPrac6HF@mail.gmail.com>
-	<20100917155928.GA7561@void.printf.net>
-	<AANLkTimyvrSxQiF4A4pbmK8nME2ko9MRtqvcuMrY2rKR@mail.gmail.com>
-	<20100930015154.GA1269@void.printf.net>
-	<000a01cb6061$f9fc3220$edf49660$%seo@samsung.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH] ARM: S5PV210: Add audio support to Goni and Aquila board
+Date: Thu, 30 Sep 2010 16:06:00 +0900
+Message-ID: <AANLkTi=ibP77PvqzJCaQC++=WRkfgNYHfsRiCM38+4hc@mail.gmail.com>
+References: <4C8D8233.2060602@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:51601 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753171Ab0I3GA1 convert rfc822-to-8bit (ORCPT
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:53894 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754446Ab0I3HGC convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Sep 2010 02:00:27 -0400
-In-Reply-To: <000a01cb6061$f9fc3220$edf49660$%seo@samsung.com>
+	Thu, 30 Sep 2010 03:06:02 -0400
+Received: by bwz11 with SMTP id 11so1154948bwz.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2010 00:06:00 -0700 (PDT)
+In-Reply-To: <4C8D8233.2060602@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jeongbae Seo <jeongbae.seo@samsung.com>
-Cc: Chris Ball <cjb@laptop.org>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, kgene.kim@samsung.com, akpm@linux-foundation.org, Hyuk Lee <hyuk1.lee@samsung.com>, ??? <jh80.chung@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Myungjoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
 
-On Thu, Sep 30, 2010 at 2:40 PM, Jeongbae Seo <jeongbae.seo@samsung.com=
-> wrote:
-> Chris wrote:
+On Mon, Sep 13, 2010 at 10:45 AM, Chanwoo Choi <cw00.choi@samsung.com> =
+wrote:
+> This patch the I2C board information for the WM8994 used in the Goni/=
+Aquila
+> as audio codec and adds the I2C/I2S platform drivers. Additionlly, to
+> control power consumption have registerd the voltage consumer of WM89=
+94
+> to the regulator framework.
 >
->> Hi Kyungmin, Ben,
->>
->> On Thu, Sep 30, 2010 at 10:18:12AM +0900, Kyungmin Park wrote:
->> > On Sat, Sep 18, 2010 at 12:59 AM, Chris Ball <cjb@laptop.org> wrot=
-e:
->> > > Hi,
->> > >
->> > > On Thu, Sep 16, 2010 at 06:08:28PM +0900, Kyungmin Park wrote:
->> > >> Well there are two implementations. and no conclusion yet.
->> > >> as s5pc210 don't support internal SDHCI clock, DMC overrides th=
-e
->> > >> function operation itself when s5pc210. System LSI use the quir=
-ks.
->> > >>
->> > >> Choose any one from MMC maintainer.
->> > >
->> > > Both approaches are generally acceptable for MMC, so I would wan=
-t to
->> > > leave it up to the maintainer of the driver in question (which i=
-s Ben,
->> > > in this case?) to choose between them.
->> >
->> > Hi Chris,
->> >
->> > Did you get the opinion from Ben?
->> >
->> > I hope this decision will be done before 2.6.37 merge windows star=
-t to
->> > support SDHCI support on s5pc210.
->>
->> Hm, I didn't, and Ben's been silent about the urgent sdhci-s3c patch=
-es
->> too. =A0Ben, are you just dealing with a large backlog, or are you
->> interested in nominating someone else to take over sdhci-s3c?
+> Additionally, I explain the constraints of the regulator of WM8994 co=
+dec.
+> All these consumer supply of WM8994 codec connected the regulator(VCC=
+_1.8V)
+> on a circuit diagram. "VCC_1.8V" regulator is always enabled, because=
+ it is
+> used to many devices on Goni/Aquila board. This is required especiall=
+y
+> when there are many devices physically attached to "VCC_1.8V" and som=
+e of
+> they did not "register" as consumers to "VCC_1.8V". "VCC_1.8V" might =
+be
+> turned off by those who are registered while "unregistered" are still=
+ active.
 >
-> Hi Chris, Kyungmin
->
-> I'd like to let you know that Ben had reviewed and commented for
-> "[PATCH v2 2/2] sdhci-s3c: Add support no internal clock divider" in =
-host
-> controller in 9/21. However, our response was late due to our holiday=
-s. I
-> made a response in 9/28 that why we use this quirk and now we're wait=
-ing for
-> his opinion.
->
-> Kyungmin, did you check Ben's review comments for this ? When I saw i=
-t, his
-> approach is just a bit different from you and me. Please let us know =
-if you
-> have any idea about his comments.
+> Signed-off-by : Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by : Joonyoung Shim <jy0922.shim@samsung.com>
+> Signed-off-by : Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+> =C2=A0arch/arm/mach-s5pv210/mach-aquila.c | =C2=A0170 +++++++++++++++=
+++++++++++++++++++++
+> =C2=A0arch/arm/mach-s5pv210/mach-goni.c =C2=A0 | =C2=A0157 ++++++++++=
+++++++++++++++++++++++
 
-I think he just ask "why these quirk are needed" and you already
-explained it. I don't have any clue this approach.
-Anyway he suggest any ideas I will check it. but no comments then no wa=
-y.
+The contents seem ok (at least the audio related).
 
-Thank you,
-Kyungmin Park
->
-> Thanks,
-> Best Regards
-> Jeongbae Seo
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+But it would have been better if you had broken the patch into three
+   a) Regulator support adding  (90% of the code and should have been
+CC'd to Mark and Liam as well)
+   b) I2C related.
+   c) Audio related
+
+Preferably further divided for each machine.
