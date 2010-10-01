@@ -1,12 +1,12 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 19/27] ARM: S5PC100: 2nd Change to using s3c_gpio_cfgall_range()
-Date: Fri,  1 Oct 2010 21:05:16 +0900
-Message-ID: <1285934724-5007-20-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 10/27] ARM: SAMSUNG: Add s3c_gpio_cfgall_range() function
+Date: Fri,  1 Oct 2010 21:05:07 +0900
+Message-ID: <1285934724-5007-11-git-send-email-kgene.kim@samsung.com>
 References: <1285934724-5007-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:34813 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:34793 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932454Ab0JAMrL (ORCPT
+	with ESMTP id S932370Ab0JAMrL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 1 Oct 2010 08:47:11 -0400
 In-Reply-To: <1285934724-5007-1-git-send-email-kgene.kim@samsung.com>
@@ -15,185 +15,76 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch changes the code setting range of GPIO pins' configuration and
-pull state to use the recently introduced s3c_gpio_cfgpin_range().
-NOTE: This is for missed things from the previous patch.
+From: Ben Dooks <ben-linux@fluff.org>
 
+Add a function to configure a range of GPIOs function and
+pull in one go, mainly for the SDHCI and framebuffer helpers
+which tend to do this.
+
+Signed-off-by: Ben Dooks <ben-linux@fluff.org>
+[kgene.kim@samsung.com: Fix small comments]
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pc100/dev-spi.c      |   17 +++++---------
- arch/arm/mach-s5pc100/setup-i2c0.c   |    6 +---
- arch/arm/mach-s5pc100/setup-i2c1.c   |    6 +---
- arch/arm/mach-s5pc100/setup-ide.c    |   42 ++++++++++++---------------------
- arch/arm/mach-s5pc100/setup-keypad.c |   17 +++----------
- 5 files changed, 29 insertions(+), 59 deletions(-)
+ arch/arm/plat-samsung/gpio-config.c           |   16 ++++++++++++++++
+ arch/arm/plat-samsung/include/plat/gpio-cfg.h |   19 +++++++++++++++++++
+ 2 files changed, 35 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-s5pc100/dev-spi.c b/arch/arm/mach-s5pc100/dev-spi.c
-index c1c5aed..57b1979 100644
---- a/arch/arm/mach-s5pc100/dev-spi.c
-+++ b/arch/arm/mach-s5pc100/dev-spi.c
-@@ -38,25 +38,20 @@ static int s5pc100_spi_cfg_gpio(struct platform_device *pdev)
- {
- 	switch (pdev->id) {
- 	case 0:
--		s3c_gpio_cfgpin_range(S5PC100_GPB(0), 3, S3C_GPIO_SFN(2));
--		s3c_gpio_setpull(S5PC100_GPB(0), S3C_GPIO_PULL_UP);
--		s3c_gpio_setpull(S5PC100_GPB(1), S3C_GPIO_PULL_UP);
--		s3c_gpio_setpull(S5PC100_GPB(2), S3C_GPIO_PULL_UP);
-+		s3c_gpio_cfgall_range(S5PC100_GPB(0), 3,
-+				      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
- 		break;
- 
- 	case 1:
--		s3c_gpio_cfgpin_range(S5PC100_GPB(4), 3, S3C_GPIO_SFN(2));
--		s3c_gpio_setpull(S5PC100_GPB(4), S3C_GPIO_PULL_UP);
--		s3c_gpio_setpull(S5PC100_GPB(5), S3C_GPIO_PULL_UP);
--		s3c_gpio_setpull(S5PC100_GPB(6), S3C_GPIO_PULL_UP);
-+		s3c_gpio_cfgall_range(S5PC100_GPB(4), 3,
-+				      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
- 		break;
- 
- 	case 2:
- 		s3c_gpio_cfgpin(S5PC100_GPG3(0), S3C_GPIO_SFN(3));
--		s3c_gpio_cfgpin_range(S5PC100_GPB(2), 2, S3C_GPIO_SFN(3));
- 		s3c_gpio_setpull(S5PC100_GPG3(0), S3C_GPIO_PULL_UP);
--		s3c_gpio_setpull(S5PC100_GPG3(2), S3C_GPIO_PULL_UP);
--		s3c_gpio_setpull(S5PC100_GPG3(3), S3C_GPIO_PULL_UP);
-+		s3c_gpio_cfgall_range(S5PC100_GPB(2), 2,
-+				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
- 		break;
- 
- 	default:
-diff --git a/arch/arm/mach-s5pc100/setup-i2c0.c b/arch/arm/mach-s5pc100/setup-i2c0.c
-index dd3174e..eaef7a3 100644
---- a/arch/arm/mach-s5pc100/setup-i2c0.c
-+++ b/arch/arm/mach-s5pc100/setup-i2c0.c
-@@ -23,8 +23,6 @@ struct platform_device; /* don't need the contents */
- 
- void s3c_i2c0_cfg_gpio(struct platform_device *dev)
- {
--	s3c_gpio_cfgpin(S5PC100_GPD(3), S3C_GPIO_SFN(2));
--	s3c_gpio_setpull(S5PC100_GPD(3), S3C_GPIO_PULL_UP);
--	s3c_gpio_cfgpin(S5PC100_GPD(4), S3C_GPIO_SFN(2));
--	s3c_gpio_setpull(S5PC100_GPD(4), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgall_range(S5PC100_GPD(3), 2,
-+			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
+diff --git a/arch/arm/plat-samsung/gpio-config.c b/arch/arm/plat-samsung/gpio-config.c
+index fa180dc..8a37211 100644
+--- a/arch/arm/plat-samsung/gpio-config.c
++++ b/arch/arm/plat-samsung/gpio-config.c
+@@ -56,6 +56,22 @@ int s3c_gpio_cfgpin_range(unsigned int start, unsigned int nr,
  }
-diff --git a/arch/arm/mach-s5pc100/setup-i2c1.c b/arch/arm/mach-s5pc100/setup-i2c1.c
-index d1fec26..aaff74a 100644
---- a/arch/arm/mach-s5pc100/setup-i2c1.c
-+++ b/arch/arm/mach-s5pc100/setup-i2c1.c
-@@ -23,8 +23,6 @@ struct platform_device; /* don't need the contents */
+ EXPORT_SYMBOL_GPL(s3c_gpio_cfgpin_range);
  
- void s3c_i2c1_cfg_gpio(struct platform_device *dev)
- {
--	s3c_gpio_cfgpin(S5PC100_GPD(5), S3C_GPIO_SFN(2));
--	s3c_gpio_setpull(S5PC100_GPD(5), S3C_GPIO_PULL_UP);
--	s3c_gpio_cfgpin(S5PC100_GPD(6), S3C_GPIO_SFN(2));
--	s3c_gpio_setpull(S5PC100_GPD(6), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgall_range(S5PC100_GPD(5), 2,
-+			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
- }
-diff --git a/arch/arm/mach-s5pc100/setup-ide.c b/arch/arm/mach-s5pc100/setup-ide.c
-index 8357567..d8b0d0e 100644
---- a/arch/arm/mach-s5pc100/setup-ide.c
-+++ b/arch/arm/mach-s5pc100/setup-ide.c
-@@ -17,52 +17,40 @@
- #include <mach/regs-clock.h>
- #include <plat/gpio-cfg.h>
- 
-+static void s5pc100_ide_cfg_gpios(unsigned int base, unsigned int nr)
++int s3c_gpio_cfgall_range(unsigned int start, unsigned int nr,
++			  unsigned int cfg, s3c_gpio_pull_t pull)
 +{
-+	s3c_gpio_cfgall_range(base, nr, S3C_GPIO_SFN(4), S3C_GPIO_PULL_NONE);
++	int ret;
 +
-+	for (; nr > 0; nr--, base++)
-+		s5p_gpio_set_drvstr(base, S5P_GPIO_DRVSTR_LV4);
++	for (; nr > 0; nr--, start++) {
++		s3c_gpio_setpull(start, pull);
++		ret = s3c_gpio_cfgpin(start, cfg);
++		if (ret != 0)
++			return ret;
++	}
++
++	return 0;
 +}
++EXPORT_SYMBOL_GPL(s3c_gpio_cfgall_range);
 +
- void s5pc100_ide_setup_gpio(void)
+ unsigned s3c_gpio_getcfg(unsigned int pin)
  {
- 	u32 reg;
--	u32 gpio = 0;
+ 	struct s3c_gpio_chip *chip = s3c_gpiolib_getchip(pin);
+diff --git a/arch/arm/plat-samsung/include/plat/gpio-cfg.h b/arch/arm/plat-samsung/include/plat/gpio-cfg.h
+index 5fa3d89..ef0f1e3 100644
+--- a/arch/arm/plat-samsung/include/plat/gpio-cfg.h
++++ b/arch/arm/plat-samsung/include/plat/gpio-cfg.h
+@@ -153,6 +153,25 @@ extern int s3c_gpio_setpull(unsigned int pin, s3c_gpio_pull_t pull);
+ */
+ extern s3c_gpio_pull_t s3c_gpio_getpull(unsigned int pin);
  
- 	/* Independent CF interface, CF chip select configuration */
- 	reg = readl(S5PC100_MEM_SYS_CFG) & (~0x3f);
- 	writel(reg | MEM_SYS_CFG_EBI_FIX_PRI_CFCON, S5PC100_MEM_SYS_CFG);
- 
- 	/* CF_Add[0 - 2], CF_IORDY, CF_INTRQ, CF_DMARQ, CF_DMARST, CF_DMACK */
--	for (gpio = S5PC100_GPJ0(0); gpio <= S5PC100_GPJ0(7); gpio++) {
--		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(4));
--		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
--		s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV4);
--	}
-+	s5pc100_ide_cfg_gpios(S5PC100_GPJ0(0), 8);
- 
- 	/*CF_Data[0 - 7] */
--	for (gpio = S5PC100_GPJ2(0); gpio <= S5PC100_GPJ2(7); gpio++) {
--		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(4));
--		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
--		s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV4);
--	}
-+	s5pc100_ide_cfg_gpios(S5PC100_GPJ2(0), 8);
- 
- 	/* CF_Data[8 - 15] */
--	for (gpio = S5PC100_GPJ3(0); gpio <= S5PC100_GPJ3(7); gpio++) {
--		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(4));
--		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
--		s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV4);
--	}
-+	s5pc100_ide_cfg_gpios(S5PC100_GPJ3(0), 8);
- 
- 	/* CF_CS0, CF_CS1, CF_IORD, CF_IOWR */
--	for (gpio = S5PC100_GPJ4(0); gpio <= S5PC100_GPJ4(3); gpio++) {
--		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(4));
--		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
--		s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV4);
--	}
-+	s5pc100_ide_cfg_gpios(S5PC100_GPJ4(0), 4);
- 
- 	/* EBI_OE, EBI_WE */
--	for (gpio = S5PC100_GPK0(6); gpio <= S5PC100_GPK0(7); gpio++)
--		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0));
-+	s3c_gpio_cfgpin_range(S5PC100_GPK0(6), 2, S3C_GPIO_SFN(0));
- 
- 	/* CF_OE, CF_WE */
--	for (gpio = S5PC100_GPK1(6); gpio <= S5PC100_GPK1(7); gpio++) {
--		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
--		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
--	}
-+	s3c_gpio_cfgall_range(S5PC100_GPK1(6), 8,
-+			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
- 
- 	/* CF_CD */
- 	s3c_gpio_cfgpin(S5PC100_GPK3(5), S3C_GPIO_SFN(2));
-diff --git a/arch/arm/mach-s5pc100/setup-keypad.c b/arch/arm/mach-s5pc100/setup-keypad.c
-index d0837a7..966b49f 100644
---- a/arch/arm/mach-s5pc100/setup-keypad.c
-+++ b/arch/arm/mach-s5pc100/setup-keypad.c
-@@ -15,20 +15,11 @@
- 
- void samsung_keypad_cfg_gpio(unsigned int rows, unsigned int cols)
- {
--	unsigned int gpio;
--	unsigned int end;
--
- 	/* Set all the necessary GPH3 pins to special-function 3: KP_ROW[x] */
--	end = S5PC100_GPH3(rows);
--	for (gpio = S5PC100_GPH3(0); gpio < end; gpio++) {
--		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(3));
--		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
--	}
-+	s3c_gpio_cfgall_range(S5PC100_GPH3(0), rows,
-+			      S3C_GPIO_SFN(3), S3C_GPIO_PULL_NONE);
- 
- 	/* Set all the necessary GPH2 pins to special-function 3: KP_COL[x] */
--	end = S5PC100_GPH2(cols);
--	for (gpio = S5PC100_GPH2(0); gpio < end; gpio++) {
--		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(3));
--		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
--	}
-+	s3c_gpio_cfgall_range(S5PC100_GPH2(0), cols,
-+			      S3C_GPIO_SFN(3), S3C_GPIO_PULL_NONE);
- }
++/* configure `all` aspects of an gpio */
++
++/**
++ * s3c_gpio_cfgall_range() - configure range of gpio functtion and pull.
++ * @start: The gpio number to start at.
++ * @nr: The number of gpio to configure from @start.
++ * @cfg: The configuration to use
++ * @pull: The pull setting to use.
++ *
++ * Run s3c_gpio_cfgpin() and s3c_gpio_setpull() over the gpio range starting
++ * @gpio and running for @size.
++ *
++ * @sa s3c_gpio_cfgpin
++ * @sa s3c_gpio_setpull
++ * @sa s3c_gpio_cfgpin_range
++ */
++extern int s3c_gpio_cfgall_range(unsigned int start, unsigned int nr,
++				 unsigned int cfg, s3c_gpio_pull_t pull);
++
+ /* Define values for the drvstr available for each gpio pin.
+  *
+  * These values control the value of the output signal driver strength,
 -- 
 1.6.2.5
