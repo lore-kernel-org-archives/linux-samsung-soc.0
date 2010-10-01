@@ -1,53 +1,71 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH 3/3] ARM: S5PV210: Add voltage consumer of WM8994 to the
- regulator framework
-Date: Fri, 1 Oct 2010 17:25:43 +0900
-Message-ID: <AANLkTi=4XjbTDb_vukFicO2tXYvww-dGFyaErwx1i-BF@mail.gmail.com>
-References: <4CA5623D.3000002@samsung.com>
-	<20101001053139.GE30949@sirena.org.uk>
-	<AANLkTinRgTJdPowTEZX0nix2FR31A-8cVmBUf7n8zdE7@mail.gmail.com>
-	<20101001072425.GD20529@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH 09/27] ARM: S5PV310: Change to using s3c_gpio_cfgpin_range()
+Date: Fri,  1 Oct 2010 21:05:06 +0900
+Message-ID: <1285934724-5007-10-git-send-email-kgene.kim@samsung.com>
+References: <1285934724-5007-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:58956 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754125Ab0JAIZp (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:39213 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756654Ab0JAM1I (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Oct 2010 04:25:45 -0400
-Received: by wwj40 with SMTP id 40so992504wwj.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Oct 2010 01:25:44 -0700 (PDT)
-In-Reply-To: <20101001072425.GD20529@opensource.wolfsonmicro.com>
+	Fri, 1 Oct 2010 08:27:08 -0400
+In-Reply-To: <1285934724-5007-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Myungjoo Ham <myungjoo.ham@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Liam Girdwood <lrg@slimlogic.co.uk>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-On Fri, Oct 1, 2010 at 4:24 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Fri, Oct 01, 2010 at 02:40:02PM +0900, Kyungmin Park wrote:
->
->> FYI: now wm8994 codec is connected to I/O power directly. and there's
->> no connection with PMIC.
->
-> Presumably there's a power rail connection...
->
->> Maybe you mean the I/O power LDO and use it. but it's always on in
->> case of s5pc110.
->
-> ...like this.
->
->> and can't turn off the this LDO on max8998 except the sleep.
->
-> It's still good to show the actual connection on the board for clarity -
-> like I say, the regulator API can handle always on regulators and
-> keeping the regulator setup in software close to the schematic helps
-> make the code easier to follow.
+This patch changes the code setting ranges of GPIO pins in mach-s5pv310 using
+s3c_gpio_cfgpin() to use the recently introduced s3c_gpio_cfgpin_range().
 
-It's best but in most case schematic is confidential. so it's impossible.
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s5pv310/setup-i2c0.c |    3 +--
+ arch/arm/mach-s5pv310/setup-i2c1.c |    3 +--
+ arch/arm/mach-s5pv310/setup-i2c2.c |    3 +--
+ 3 files changed, 3 insertions(+), 6 deletions(-)
 
-And as you concerns there's no power issues related with codes. it's
-already verified design. I think wolfsonmicro already confirmed.
-
-Thank you,
-Kyungmin Park
+diff --git a/arch/arm/mach-s5pv310/setup-i2c0.c b/arch/arm/mach-s5pv310/setup-i2c0.c
+index 4367128..17c54c8 100644
+--- a/arch/arm/mach-s5pv310/setup-i2c0.c
++++ b/arch/arm/mach-s5pv310/setup-i2c0.c
+@@ -21,8 +21,7 @@ struct platform_device; /* don't need the contents */
+ 
+ void s3c_i2c0_cfg_gpio(struct platform_device *dev)
+ {
+-	s3c_gpio_cfgpin(S5PV310_GPD1(0), S3C_GPIO_SFN(2));
++	s3c_gpio_cfgpin_range(S5PV310_GPD1(0), 2, S3C_GPIO_SFN(2));
+ 	s3c_gpio_setpull(S5PV310_GPD1(0), S3C_GPIO_PULL_UP);
+-	s3c_gpio_cfgpin(S5PV310_GPD1(1), S3C_GPIO_SFN(2));
+ 	s3c_gpio_setpull(S5PV310_GPD1(1), S3C_GPIO_PULL_UP);
+ }
+diff --git a/arch/arm/mach-s5pv310/setup-i2c1.c b/arch/arm/mach-s5pv310/setup-i2c1.c
+index 1ecd5bc..1740c9f 100644
+--- a/arch/arm/mach-s5pv310/setup-i2c1.c
++++ b/arch/arm/mach-s5pv310/setup-i2c1.c
+@@ -18,8 +18,7 @@ struct platform_device; /* don't need the contents */
+ 
+ void s3c_i2c1_cfg_gpio(struct platform_device *dev)
+ {
+-	s3c_gpio_cfgpin(S5PV310_GPD1(2), S3C_GPIO_SFN(2));
++	s3c_gpio_cfgpin_range(S5PV310_GPD1(2), 2, S3C_GPIO_SFN(2));
+ 	s3c_gpio_setpull(S5PV310_GPD1(2), S3C_GPIO_PULL_UP);
+-	s3c_gpio_cfgpin(S5PV310_GPD1(3), S3C_GPIO_SFN(2));
+ 	s3c_gpio_setpull(S5PV310_GPD1(3), S3C_GPIO_PULL_UP);
+ }
+diff --git a/arch/arm/mach-s5pv310/setup-i2c2.c b/arch/arm/mach-s5pv310/setup-i2c2.c
+index 4c0d8de..860f77b 100644
+--- a/arch/arm/mach-s5pv310/setup-i2c2.c
++++ b/arch/arm/mach-s5pv310/setup-i2c2.c
+@@ -18,8 +18,7 @@ struct platform_device; /* don't need the contents */
+ 
+ void s3c_i2c2_cfg_gpio(struct platform_device *dev)
+ {
+-	s3c_gpio_cfgpin(S5PV310_GPA0(6), S3C_GPIO_SFN(3));
++	s3c_gpio_cfgpin_range(S5PV310_GPA0(6), 2, S3C_GPIO_SFN(3));
+ 	s3c_gpio_setpull(S5PV310_GPA0(6), S3C_GPIO_PULL_UP);
+-	s3c_gpio_cfgpin(S5PV310_GPA0(7), S3C_GPIO_SFN(3));
+ 	s3c_gpio_setpull(S5PV310_GPA0(7), S3C_GPIO_PULL_UP);
+ }
+-- 
+1.6.2.5
