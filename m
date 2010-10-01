@@ -1,12 +1,12 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 10/27] ARM: SAMSUNG: Add s3c_gpio_cfgall_range() function
-Date: Fri,  1 Oct 2010 21:05:07 +0900
-Message-ID: <1285934724-5007-11-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 24/27] ARM: S5PV210: Change to using s3c_gpio_cfgrange_nopull()
+Date: Fri,  1 Oct 2010 21:05:21 +0900
+Message-ID: <1285934724-5007-25-git-send-email-kgene.kim@samsung.com>
 References: <1285934724-5007-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:34793 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:34794 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932370Ab0JAMrL (ORCPT
+	with ESMTP id S932327Ab0JAMrL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 1 Oct 2010 08:47:11 -0400
 In-Reply-To: <1285934724-5007-1-git-send-email-kgene.kim@samsung.com>
@@ -17,74 +17,70 @@ Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
 From: Ben Dooks <ben-linux@fluff.org>
 
-Add a function to configure a range of GPIOs function and
-pull in one go, mainly for the SDHCI and framebuffer helpers
-which tend to do this.
+Change code setting special-function and no pull-up to use
+the s3c_gpio_cfgrange_nopull() wrapper.
 
 Signed-off-by: Ben Dooks <ben-linux@fluff.org>
-[kgene.kim@samsung.com: Fix small comments]
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/plat-samsung/gpio-config.c           |   16 ++++++++++++++++
- arch/arm/plat-samsung/include/plat/gpio-cfg.h |   19 +++++++++++++++++++
- 2 files changed, 35 insertions(+), 0 deletions(-)
+ arch/arm/mach-s5pv210/setup-sdhci-gpio.c |   21 +++++++--------------
+ 1 files changed, 7 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/gpio-config.c b/arch/arm/plat-samsung/gpio-config.c
-index fa180dc..8a37211 100644
---- a/arch/arm/plat-samsung/gpio-config.c
-+++ b/arch/arm/plat-samsung/gpio-config.c
-@@ -56,6 +56,22 @@ int s3c_gpio_cfgpin_range(unsigned int start, unsigned int nr,
- }
- EXPORT_SYMBOL_GPL(s3c_gpio_cfgpin_range);
+diff --git a/arch/arm/mach-s5pv210/setup-sdhci-gpio.c b/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
+index f5499ae..927d588 100644
+--- a/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
++++ b/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
+@@ -34,12 +34,10 @@ void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
+ 	switch (width) {
+ 	case 8:
+ 		/* GPG1[3:6] special-funtion 3 */
+-		s3c_gpio_cfgall_range(S5PV210_GPG1(3), 4,
+-				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_NONE);
++		s3c_gpio_cfgrange_nopull(S5PV210_GPG1(3), 4, S3C_GPIO_SFN(3));
+ 	case 4:
+ 		/* GPG0[3:6] special-funtion 2 */
+-		s3c_gpio_cfgall_range(S5PV210_GPG0(3), 4,
+-				      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
++		s3c_gpio_cfgrange_nopull(S5PV210_GPG0(3), 4, S3C_GPIO_SFN(2));
+ 	default:
+ 		break;
+ 	}
+@@ -55,12 +53,10 @@ void s5pv210_setup_sdhci1_cfg_gpio(struct platform_device *dev, int width)
+ 	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
  
-+int s3c_gpio_cfgall_range(unsigned int start, unsigned int nr,
-+			  unsigned int cfg, s3c_gpio_pull_t pull)
-+{
-+	int ret;
-+
-+	for (; nr > 0; nr--, start++) {
-+		s3c_gpio_setpull(start, pull);
-+		ret = s3c_gpio_cfgpin(start, cfg);
-+		if (ret != 0)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(s3c_gpio_cfgall_range);
-+
- unsigned s3c_gpio_getcfg(unsigned int pin)
- {
- 	struct s3c_gpio_chip *chip = s3c_gpiolib_getchip(pin);
-diff --git a/arch/arm/plat-samsung/include/plat/gpio-cfg.h b/arch/arm/plat-samsung/include/plat/gpio-cfg.h
-index 5fa3d89..ef0f1e3 100644
---- a/arch/arm/plat-samsung/include/plat/gpio-cfg.h
-+++ b/arch/arm/plat-samsung/include/plat/gpio-cfg.h
-@@ -153,6 +153,25 @@ extern int s3c_gpio_setpull(unsigned int pin, s3c_gpio_pull_t pull);
- */
- extern s3c_gpio_pull_t s3c_gpio_getpull(unsigned int pin);
+ 	/* Set all the necessary GPG1[0:1] pins to special-function 2 */
+-	s3c_gpio_cfgall_range(S5PV210_GPG1(0), 2,
+-			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
++	s3c_gpio_cfgrange_nopull(S5PV210_GPG1(0), 2, S3C_GPIO_SFN(2));
  
-+/* configure `all` aspects of an gpio */
-+
-+/**
-+ * s3c_gpio_cfgall_range() - configure range of gpio functtion and pull.
-+ * @start: The gpio number to start at.
-+ * @nr: The number of gpio to configure from @start.
-+ * @cfg: The configuration to use
-+ * @pull: The pull setting to use.
-+ *
-+ * Run s3c_gpio_cfgpin() and s3c_gpio_setpull() over the gpio range starting
-+ * @gpio and running for @size.
-+ *
-+ * @sa s3c_gpio_cfgpin
-+ * @sa s3c_gpio_setpull
-+ * @sa s3c_gpio_cfgpin_range
-+ */
-+extern int s3c_gpio_cfgall_range(unsigned int start, unsigned int nr,
-+				 unsigned int cfg, s3c_gpio_pull_t pull);
-+
- /* Define values for the drvstr available for each gpio pin.
-  *
-  * These values control the value of the output signal driver strength,
+ 	/* Data pin GPG1[3:6] to special-function 2 */
+-	s3c_gpio_cfgall_range(S5PV210_GPG1(3), 4,
+-			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
++	s3c_gpio_cfgrange_nopull(S5PV210_GPG1(3), 4, S3C_GPIO_SFN(2));
+ 
+ 	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
+ 		s3c_gpio_setpull(S5PV210_GPG1(2), S3C_GPIO_PULL_UP);
+@@ -73,18 +69,15 @@ void s5pv210_setup_sdhci2_cfg_gpio(struct platform_device *dev, int width)
+ 	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
+ 
+ 	/* Set all the necessary GPG2[0:1] pins to special-function 2 */
+-	s3c_gpio_cfgall_range(S5PV210_GPG2(0), 2,
+-			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
++	s3c_gpio_cfgrange_nopull(S5PV210_GPG2(0), 2, S3C_GPIO_SFN(2));
+ 
+ 	switch (width) {
+ 	case 8:
+ 		/* Data pin GPG3[3:6] to special-function 3 */
+-		s3c_gpio_cfgall_range(S5PV210_GPG3(3), 4,
+-				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_NONE);
++		s3c_gpio_cfgrange_nopull(S5PV210_GPG3(3), 4, S3C_GPIO_SFN(3));
+ 	case 4:
+ 		/* Data pin GPG2[3:6] to special-function 2 */
+-		s3c_gpio_cfgall_range(S5PV210_GPG2(3), 4,
+-				      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
++		s3c_gpio_cfgrange_nopull(S5PV210_GPG2(3), 4, S3C_GPIO_SFN(2));
+ 	default:
+ 		break;
+ 	}
 -- 
 1.6.2.5
