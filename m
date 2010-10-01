@@ -1,50 +1,41 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: Re: [PATCH v3 5/5] h1940: add UDA1380 to i2c devices list
-Date: Fri, 1 Oct 2010 09:36:15 +0300
-Message-ID: <201010010936.20919.anarsoul@gmail.com>
-References: <1284241600-32738-1-git-send-email-anarsoul@gmail.com> <1285569169-5034-1-git-send-email-anarsoul@gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 3/3] ARM: S5PV210: Add voltage consumer of WM8994 to
+ the regulator framework
+Date: Fri, 1 Oct 2010 00:24:26 -0700
+Message-ID: <20101001072425.GD20529@opensource.wolfsonmicro.com>
+References: <4CA5623D.3000002@samsung.com>
+ <20101001053139.GE30949@sirena.org.uk>
+ <AANLkTinRgTJdPowTEZX0nix2FR31A-8cVmBUf7n8zdE7@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed;
-  boundary="nextPart1536084.Z7ZGIV6QGC";
-  protocol="application/pgp-signature";
-  micalg=pgp-sha1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f46.google.com ([209.85.215.46]:44646 "EHLO
-	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750706Ab0JAGhs (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:37434 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751862Ab0JAHYQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Oct 2010 02:37:48 -0400
-Received: by ewy23 with SMTP id 23so1149420ewy.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Sep 2010 23:37:46 -0700 (PDT)
-In-Reply-To: <1285569169-5034-1-git-send-email-anarsoul@gmail.com>
+	Fri, 1 Oct 2010 03:24:16 -0400
+Content-Disposition: inline
+In-Reply-To: <AANLkTinRgTJdPowTEZX0nix2FR31A-8cVmBUf7n8zdE7@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Kyungmin Park <kmpark@infradead.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Myungjoo Ham <myungjoo.ham@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Liam Girdwood <lrg@slimlogic.co.uk>
 
---nextPart1536084.Z7ZGIV6QGC
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: quoted-printable
+On Fri, Oct 01, 2010 at 02:40:02PM +0900, Kyungmin Park wrote:
 
-On 27 of September 2010 09:32:49 Vasily Khoruzhick wrote:
-> Register UDA1380 codec during H1940 machine init
->=20
-> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> FYI: now wm8994 codec is connected to I/O power directly. and there's
+> no connection with PMIC.
 
-Ping
+Presumably there's a power rail connection...
 
---nextPart1536084.Z7ZGIV6QGC
-Content-Type: application/pgp-signature; name=signature.asc 
-Content-Description: This is a digitally signed message part.
+> Maybe you mean the I/O power LDO and use it. but it's always on in
+> case of s5pc110.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.16 (GNU/Linux)
+...like this.
 
-iEYEABECAAYFAkylgWQACgkQRM6pQpltKE5RJwCeKFrgnwgyJaGRGu/kg90fO5MS
-z8YAoLK+ByQP4nVxweMBX16nuLchSTV7
-=lAhm
------END PGP SIGNATURE-----
+> and can't turn off the this LDO on max8998 except the sleep.
 
---nextPart1536084.Z7ZGIV6QGC--
+It's still good to show the actual connection on the board for clarity -
+like I say, the regulator API can handle always on regulators and
+keeping the regulator setup in software close to the schematic helps
+make the code easier to follow.
