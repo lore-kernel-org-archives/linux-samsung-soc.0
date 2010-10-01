@@ -1,12 +1,12 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 23/27] ARM: S5PC100: Change to using s3c_gpio_cfgrange_nopull()
-Date: Fri,  1 Oct 2010 21:05:20 +0900
-Message-ID: <1285934724-5007-24-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 17/27] ARM: S3C64XX: 2nd Change to using s3c_gpio_cfgall_range()
+Date: Fri,  1 Oct 2010 21:05:14 +0900
+Message-ID: <1285934724-5007-18-git-send-email-kgene.kim@samsung.com>
 References: <1285934724-5007-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:34807 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:34797 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932455Ab0JAMrL (ORCPT
+	with ESMTP id S932344Ab0JAMrL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 1 Oct 2010 08:47:11 -0400
 In-Reply-To: <1285934724-5007-1-git-send-email-kgene.kim@samsung.com>
@@ -15,55 +15,75 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Ben Dooks <ben-linux@fluff.org>
+This patch changes the code setting range of GPIO pins' configuration and
+pull state to use the recently introduced s3c_gpio_cfgpin_range().
+NOTE: This is for missed things from the previous patch.
 
-Change code setting special-function and no pull-up to use
-the s3c_gpio_cfgrange_nopull() wrapper.
-
-Signed-off-by: Ben Dooks <ben-linux@fluff.org>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pc100/setup-sdhci-gpio.c |   12 ++++--------
- 1 files changed, 4 insertions(+), 8 deletions(-)
+ arch/arm/mach-s3c64xx/setup-ide.c    |   10 +++-------
+ arch/arm/mach-s3c64xx/setup-keypad.c |   17 ++++-------------
+ 2 files changed, 7 insertions(+), 20 deletions(-)
 
-diff --git a/arch/arm/mach-s5pc100/setup-sdhci-gpio.c b/arch/arm/mach-s5pc100/setup-sdhci-gpio.c
-index a8d22a7..03c02d0 100644
---- a/arch/arm/mach-s5pc100/setup-sdhci-gpio.c
-+++ b/arch/arm/mach-s5pc100/setup-sdhci-gpio.c
-@@ -33,12 +33,10 @@ void s5pc100_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
- 		num = width - 2;
+diff --git a/arch/arm/mach-s3c64xx/setup-ide.c b/arch/arm/mach-s3c64xx/setup-ide.c
+index c12c315..de645e9 100644
+--- a/arch/arm/mach-s3c64xx/setup-ide.c
++++ b/arch/arm/mach-s3c64xx/setup-ide.c
+@@ -21,7 +21,6 @@
+ void s3c64xx_ide_setup_gpio(void)
+ {
+ 	u32 reg;
+-	u32 gpio = 0;
  
- 	/* Set all the necessary GPG0/GPG1 pins to special-function 0 */
--	s3c_gpio_cfgall_range(S5PC100_GPG0(0), 2 + num,
--			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
-+	s3c_gpio_cfgrange_nopull(S5PC100_GPG0(0), 2 + num, S3C_GPIO_SFN(2));
+ 	reg = readl(S3C_MEM_SYS_CFG) & (~0x3f);
  
- 	if (width == 8)
--		s3c_gpio_cfgall_range(S5PC100_GPG1(0), 2,
--				      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
-+		s3c_gpio_cfgrange_nopull(S5PC100_GPG1(0), 2, S3C_GPIO_SFN(2));
+@@ -32,15 +31,12 @@ void s3c64xx_ide_setup_gpio(void)
+ 	s3c_gpio_cfgpin(S3C64XX_GPB(4), S3C_GPIO_SFN(4));
  
- 	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
- 		s3c_gpio_setpull(S5PC100_GPG1(2), S3C_GPIO_PULL_UP);
-@@ -51,8 +49,7 @@ void s5pc100_setup_sdhci1_cfg_gpio(struct platform_device *dev, int width)
- 	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
+ 	/* Set XhiDATA[15:0] pins as CF Data[15:0] */
+-	for (gpio = S3C64XX_GPK(0); gpio <= S3C64XX_GPK(15); gpio++)
+-		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(5));
++	s3c_gpio_cfgpin_range(S3C64XX_GPK(0), 16, S3C_GPIO_SFN(5));
  
- 	/* Set all the necessary GPG2 pins to special-function 2 */
--	s3c_gpio_cfgall_range(S5PC100_GPG2(0), 2 + width,
--			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
-+	s3c_gpio_cfgrange_nopull(S5PC100_GPG2(0), 2 + width, S3C_GPIO_SFN(2));
+ 	/* Set XhiADDR[2:0] pins as CF ADDR[2:0] */
+-	for (gpio = S3C64XX_GPL(0); gpio <= S3C64XX_GPL(2); gpio++)
+-		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(6));
++	s3c_gpio_cfgpin_range(S3C64XX_GPL(0), 3, S3C_GPIO_SFN(6));
  
- 	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
- 		s3c_gpio_setpull(S5PC100_GPG2(6), S3C_GPIO_PULL_UP);
-@@ -65,8 +62,7 @@ void s5pc100_setup_sdhci2_cfg_gpio(struct platform_device *dev, int width)
- 	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
+ 	/* Set Xhi ctrl pins as CF ctrl pins(IORDY, IOWR, IORD, CE[0:1]) */
+ 	s3c_gpio_cfgpin(S3C64XX_GPM(5), S3C_GPIO_SFN(1));
+-	for (gpio = S3C64XX_GPM(0); gpio <= S3C64XX_GPM(4); gpio++)
+-		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(6));
++	s3c_gpio_cfgpin_range(S3C64XX_GPM(0), 5, S3C_GPIO_SFN(6));
+ }
+diff --git a/arch/arm/mach-s3c64xx/setup-keypad.c b/arch/arm/mach-s3c64xx/setup-keypad.c
+index abc34e4..cc9b09c 100644
+--- a/arch/arm/mach-s3c64xx/setup-keypad.c
++++ b/arch/arm/mach-s3c64xx/setup-keypad.c
+@@ -15,20 +15,11 @@
  
- 	/* Set all the necessary GPG3 pins to special-function 2 */
--	s3c_gpio_cfgall_range(S5PC100_GPG3(0), 2 + width,
--			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_NONE);
-+	s3c_gpio_cfgrange_nopull(S5PC100_GPG3(0), 2 + width, S3C_GPIO_SFN(2));
+ void samsung_keypad_cfg_gpio(unsigned int rows, unsigned int cols)
+ {
+-	unsigned int gpio;
+-	unsigned int end;
+-
+ 	/* Set all the necessary GPK pins to special-function 3: KP_ROW[x] */
+-	end = S3C64XX_GPK(8 + rows);
+-	for (gpio = S3C64XX_GPK(8); gpio < end; gpio++) {
+-		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(3));
+-		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+-	}
++	s3c_gpio_cfgall_range(S3C64XX_GPK(8), 8 + rows,
++			      S3C_GPIO_SFN(3), S3C_GPIO_PULL_NONE);
  
- 	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
- 		s3c_gpio_setpull(S5PC100_GPG3(6), S3C_GPIO_PULL_UP);
+ 	/* Set all the necessary GPL pins to special-function 3: KP_COL[x] */
+-	end = S3C64XX_GPL(0 + cols);
+-	for (gpio = S3C64XX_GPL(0); gpio < end; gpio++) {
+-		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(3));
+-		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+-	}
++	s3c_gpio_cfgall_range(S3C64XX_GPL(0), cols,
++			      S3C_GPIO_SFN(3), S3C_GPIO_PULL_NONE);
+ }
 -- 
 1.6.2.5
