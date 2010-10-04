@@ -1,32 +1,31 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 3/3] ARM: S5PV210: Add voltage consumer of WM8994 to
- the regulator framework
-Date: Mon, 4 Oct 2010 08:17:21 -0700
-Message-ID: <20101004151721.GE1505@opensource.wolfsonmicro.com>
-References: <4CA5623D.3000002@samsung.com>
- <20101001053139.GE30949@sirena.org.uk>
- <AANLkTinRgTJdPowTEZX0nix2FR31A-8cVmBUf7n8zdE7@mail.gmail.com>
- <20101001072425.GD20529@opensource.wolfsonmicro.com>
- <AANLkTi=4XjbTDb_vukFicO2tXYvww-dGFyaErwx1i-BF@mail.gmail.com>
- <20101001182752.GD21157@opensource.wolfsonmicro.com>
- <4CA9CD7C.5080907@samsung.com>
+Subject: Re: [PATCH 5/10] ARM: S5PV210: Add SCLK_SPDIF clock
+Date: Mon, 4 Oct 2010 11:39:06 -0700
+Message-ID: <20101004183903.GF2835@opensource.wolfsonmicro.com>
+References: <1286191550-22197-1-git-send-email-sw.youn@samsung.com>
+ <1286193154-17201-1-git-send-email-sw.youn@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:36654 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:47850 "EHLO
 	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1755901Ab0JDPRI (ORCPT
+	by vger.kernel.org with ESMTP id S1756684Ab0JDWjT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Oct 2010 11:17:08 -0400
+	Mon, 4 Oct 2010 18:39:19 -0400
 Content-Disposition: inline
-In-Reply-To: <4CA9CD7C.5080907@samsung.com>
+In-Reply-To: <1286193154-17201-1-git-send-email-sw.youn@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Kyungmin Park <kmpark@infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Liam Girdwood <lrg@slimlogic.co.uk>
+To: Seungwhan Youn <sw.youn@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, ben-linux@fluff.org, kgene.kim@samsung.com, lrg@slimlogic.co.uk, jassi.brar@samsung.com
 
-On Mon, Oct 04, 2010 at 09:50:04PM +0900, Chanwoo Choi wrote:
+On Mon, Oct 04, 2010 at 08:52:34PM +0900, Seungwhan Youn wrote:
+> This patch add SCLK_SPDIF clock to support source clock of S/PDIF
+> on S5PV210.
+> 
+> Signed-off-by: Seungwhan Youn <sw.youn@samsung.com>
 
-> Do you have additional comment on this patch?
+Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-No, just what I said already.
+but this looks like an example of where the get and set rate operations
+could readily be shared as mentioned in reply to the previous patch.
