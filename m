@@ -1,99 +1,101 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 06/27] ARM: S5P64X0: 2nd Change to using
- s3c_gpio_cfgpin_range()
-Date: Sat, 02 Oct 2010 20:16:48 +0900
-Message-ID: <014b01cb6223$510dafe0$f3290fa0$%kim@samsung.com>
-References: <1285934724-5007-1-git-send-email-kgene.kim@samsung.com>
- <1285934724-5007-7-git-send-email-kgene.kim@samsung.com>
- <AANLkTimBW5udfRN=0=ZHoAwkn+2ewyUX-0B5jLfrsT+i@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH v3] ARM: S5PC110: add support for S6E63M0 LCD controller on
+ Goni board
+Date: Mon, 04 Oct 2010 07:42:23 +0200
+Message-ID: <011e01cb6386$f0487900$d0d96b00$%szyprowski@samsung.com>
+References: <005b01cb5ee0$2d266f90$87734eb0$%kim@samsung.com>
+ <1285679744-21621-1-git-send-email-m.szyprowski@samsung.com>
+ <014801cb621e$3edd42e0$bc97c8a0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:36841 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754734Ab0JBLQe convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:50246 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752136Ab0JDFmk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 2 Oct 2010 07:16:34 -0400
-Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Mon, 4 Oct 2010 01:42:40 -0400
+Received: from epmmp2 (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L9N006FLTZKAE90@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 02 Oct 2010 20:16:32 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L9N0097ATZKHY@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 02 Oct 2010 20:16:32 +0900 (KST)
-In-reply-to: <AANLkTimBW5udfRN=0=ZHoAwkn+2ewyUX-0B5jLfrsT+i@mail.gmail.com>
-Content-language: ko
+ with ESMTP id <0L9R00GT13V234D0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 04 Oct 2010 14:42:38 +0900 (KST)
+Received: from AMDC159 ([106.116.37.153])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L9R0026F3URME@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 04 Oct 2010 14:42:39 +0900 (KST)
+In-reply-to: <014801cb621e$3edd42e0$bc97c8a0$%kim@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kyungmin Park' <kmpark@infradead.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
 
-Kyungmin Park wrote:
->=20
-> Hi,
->=20
-Hi :-)
+Hello,
 
-> On Fri, Oct 1, 2010 at 9:05 PM, Kukjin Kim <kgene.kim@samsung.com> wr=
-ote:
-> > This patch changes the code setting ranges of GPIO pins in mach-s5p=
-64x0
-using
-> > s3c_gpio_cfgpin() to use the recently introduced
-s3c_gpio_cfgpin_range().
-> > NOTE: This is for missed things from the previous patch.
+On Saturday, October 02, 2010 12:41 PM Kukjin Kim wrote:
+
+> Marek Szyprowski wrote:
 > >
-> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > Add required platform definitions for S6E63M0 LCD controller on Samsung
+> > Goni board.
+> >
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > > ---
-> > =A0arch/arm/mach-s5p64x0/dev-spi.c =A0 =A0| =A0 24 ++++++++++++----=
---------
-> > =A0arch/arm/mach-s5p64x0/setup-i2c0.c | =A0 =A06 ++----
-> > =A0arch/arm/mach-s5p64x0/setup-i2c1.c | =A0 =A06 ++----
-> > =A03 files changed, 16 insertions(+), 20 deletions(-)
 > >
-> > diff --git a/arch/arm/mach-s5p64x0/dev-spi.c
-b/arch/arm/mach-s5p64x0/dev-spi.c
-> > index 5b69ec4..be64fee 100644
-> > --- a/arch/arm/mach-s5p64x0/dev-spi.c
-> > +++ b/arch/arm/mach-s5p64x0/dev-spi.c
-> > @@ -39,20 +39,18 @@ static char *s5p64x0_spi_src_clks[] =3D {
-> > =A0*/
-> > =A0static int s5p6440_spi_cfg_gpio(struct platform_device *pdev)
-> > =A0{
-> > + =A0 =A0 =A0 unsigned int base;
+> > Changes since v2:
+> > - removed defines for lcd pin names
+> >
+> >  arch/arm/mach-s5pv210/mach-goni.c |   66
+> > +++++++++++++++++++++++++++++++++++++
+> >  1 files changed, 66 insertions(+), 0 deletions(-)
+> >
+> > diff --git a/arch/arm/mach-s5pv210/mach-goni.c
+> b/arch/arm/mach-s5pv210/mach-
+> > goni.c
+> > index b0ae208..ac6ebab 100644
+> > --- a/arch/arm/mach-s5pv210/mach-goni.c
+> > +++ b/arch/arm/mach-s5pv210/mach-goni.c
+> 
+> (snip)
+> 
+> > +static struct lcd_platform_data s6e63m0_platform_data = {
+> > +	.reset			= reset_lcd,
+> > +	.power_on		= lcd_power_on,
+> > +	.lcd_enabled		= 0,
+> > +	.reset_delay		= 120,	/* 120ms */
+> > +	.power_on_delay		= 25,	/* 25ms */
+> > +	.power_off_delay	= 200,	/* 200ms */
+> > +};
 > > +
-> > =A0 =A0 =A0 =A0switch (pdev->id) {
-> > =A0 =A0 =A0 =A0case 0:
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6440_GPC(0), S3C_G=
-PIO_SFN(2));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6440_GPC(1), S3C_G=
-PIO_SFN(2));
-> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_gpio_cfgpin(S5P6440_GPC(2), S3C_G=
-PIO_SFN(2));
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 base =3D S5P6440_GPC(0);
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0s3c_gpio_setpull(S5P6440_GPC(0), S3C=
-_GPIO_PULL_UP);
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0s3c_gpio_setpull(S5P6440_GPC(1), S3C=
-_GPIO_PULL_UP);
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0s3c_gpio_setpull(S5P6440_GPC(2), S3C=
-_GPIO_PULL_UP);
->=20
-> Also make a wrapper, s3c_gpio_cfgrange_pullup, then you can also
-> remove above codes.
-> There's lots of codes use PULL_UP as default pin setup.
->=20
-Thanks for your suggestion.
-Ok..will consider it.
+> > +#define LCD_BUS_NUM	3
+> > +static struct spi_board_info spi_board_info[] __initdata = {
+> > +	{
+> > +		.modalias	= "s6e63m0",
+> > +		.platform_data	= &goni_lcd_platform_data,
+> 
+> Happened following build error.
+> arch/arm/mach-s5pv210/mach-goni.c:153: error: 'goni_lcd_platform_data'
+> undeclared here (not in a function)
+> 
+> should be 's6e63m0_platform_data'?..let me know your preferred name.
+> Will apply with changing it.
 
-(snip)
+goni_lcd_platform_data is ihmo more appropriate. I'm sorry again for a problem,
+looks that I mixed something up and I've sent a patch before final cleaning.
 
-Thanks.
+> > +		.max_speed_hz	= 1200000,
+> > +		.bus_num	= LCD_BUS_NUM,
+> > +		.chip_select	= 0,
+> > +		.mode		= SPI_MODE_3,
+> > +		.controller_data = (void *)S5PV210_MP01(1), /* DISPLAY_CS */
+> > +	},
+> > +};
+> 
+> (snip)
 
-Best regards,
-Kgene.
+Best regards
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Marek Szyprowski
+Samsung Poland R&D Center
