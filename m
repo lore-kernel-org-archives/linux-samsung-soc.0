@@ -1,64 +1,35 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 10/10] ASoC: SAMSUNG: Add Machine driver
- for S/PDIF PCM audio
-Date: Tue, 5 Oct 2010 09:54:28 -0700
-Message-ID: <20101005165427.GB20555@opensource.wolfsonmicro.com>
-References: <1286191550-22197-1-git-send-email-sw.youn@samsung.com>
-	<1286194583-19937-1-git-send-email-sw.youn@samsung.com>
-	<20101004224159.GA4972@opensource.wolfsonmicro.com>
-	<AANLkTi=FHGw+qzL507K546vr8zEZgXBP3Mk=O__Rpd4H@mail.gmail.com>
-	<AANLkTincwL_nQAmu7Dcmht0FV43BiN7OoecE_60QJhS2@mail.gmail.com>
-	<20101005044304.GA26509@opensource.wolfsonmicro.com>
-	<AANLkTi=x_fi5HTBBmMUv8YTxSdbgcnJ=ZbacJQj6rcgf@mail.gmail.com>
-	<20101005055937.GA19989@opensource.wolfsonmicro.com>
-	<AANLkTimi1t5S2XWdUFzaPttD4Hywm0SLt5CvR1YnVOjj@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <AANLkTimi1t5S2XWdUFzaPttD4Hywm0SLt5CvR1YnVOjj@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, jassi.brar@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, lrg@slimlogic.co.uk, linux-arm-kernel@lists.infradead.org, Seungwhan Youn <sw.youn@samsung.com>
+From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+Subject: [PATCH 0/2] ARM: S3C64XX: SmartQ: add suspend support
+Date: Wed,  6 Oct 2010 01:09:49 +0200
+Message-ID: <cover.1286319272.git.mcuelenaere@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:33889 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756046Ab0JEXJ7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 5 Oct 2010 19:09:59 -0400
+Received: by eyb6 with SMTP id 6so2663757eyb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Oct 2010 16:09:58 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org
 
-On Tue, Oct 05, 2010 at 04:09:47PM +0900, Jassi Brar wrote:
-> On Tue, Oct 5, 2010 at 2:59 PM, Mark Brown
+These patches add suspend support to the SmartQ (and other S3C64XX) boards.
 
-> > Well, there's two approaches the driver can take: one is to change the
-> > EPLL to deliver the clock rates which allow maximum flexibility, the
-> > other is to constrain the clock rates offered to applications based on
-> > the frequencies that can be generated from the current EPLL setup.
+Currently the LCD needs re-initializing when waking up, otherwise it'll just
+display a WSOD.
 
-> For SMDKs(our reference platform) I would like to change EPLL in order
-> to be able to verify accuracy and provide all capabilities of the controllers.
+This was tested on a SmartQ 7.
 
-That's why I'm saying provide an option to turn this behaviour on - I
-agree that it's useful to be able to show the feature, I just think it's
-going to catch users out if they're not warned that it's happening
-somehow.
+Maurus Cuelenaere (2):
+  ARM: S3C64XX: Add suspend support
+  ARM: S3C64XX: Add wakeup sources to SmartQ boards
 
-> >> (our priority is accuracy of each IP's functioning rather than having
-> >> all parts of
-> >> SMDK playing nice with each other on such h/w design issues)
+ arch/arm/mach-s3c64xx/mach-smartq5.c |    1 +
+ arch/arm/mach-s3c64xx/mach-smartq7.c |    1 +
+ arch/arm/mach-s3c64xx/pm.c           |    3 +++
+ 3 files changed, 5 insertions(+), 0 deletions(-)
 
-> > That'd be the problem, kind of - it does mean people can get burned when
-> > they pick up the BSP code and use it as a reference for their systems.
-
-> I expect people to replace/modify/inspect board specific code before they
-> run the BSP on their systems. IMO reference platforms are not good for
-> integrated-testing.
-
-To be fair the users doing this the individual drivers do look OK by
-themselves - there's only a problem when it comes to system integration
-and that's not going to be obvious unless someone has reviewed the
-drivers while understanding the clock tree for the chip as a whole.
+-- 
+1.7.2.3
