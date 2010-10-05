@@ -1,54 +1,62 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [alsa-devel] [PATCH 10/10] ASoC: SAMSUNG: Add Machine driver
- for S/PDIF PCM audio
-Date: Mon, 4 Oct 2010 22:59:37 -0700
-Message-ID: <20101005055937.GA19989@opensource.wolfsonmicro.com>
-References: <1286191550-22197-1-git-send-email-sw.youn@samsung.com>
- <1286194583-19937-1-git-send-email-sw.youn@samsung.com>
- <20101004224159.GA4972@opensource.wolfsonmicro.com>
- <AANLkTi=FHGw+qzL507K546vr8zEZgXBP3Mk=O__Rpd4H@mail.gmail.com>
- <AANLkTincwL_nQAmu7Dcmht0FV43BiN7OoecE_60QJhS2@mail.gmail.com>
- <20101005044304.GA26509@opensource.wolfsonmicro.com>
- <AANLkTi=x_fi5HTBBmMUv8YTxSdbgcnJ=ZbacJQj6rcgf@mail.gmail.com>
+From: Jeongbae Seo <jeongbae.seo@samsung.com>
+Subject: RE: [PATCH 2/5] ARM: S5PV310: Add HSMMC support into S5PV310 and
+ S5PC210
+Date: Tue, 05 Oct 2010 15:46:51 +0900
+Message-ID: <001201cb6459$1b3c1360$51b43a20$%seo@samsung.com>
+References: <1284626223-18944-1-git-send-email-jeongbae.seo@samsung.com>
+ <1284626223-18944-3-git-send-email-jeongbae.seo@samsung.com>
+ <012c01cb63b3$b7053a20$250fae60$%szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=Windows-1252
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:37321 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754417Ab0JEF7Z (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:10154 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753721Ab0JEGqi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Oct 2010 01:59:25 -0400
-Content-Disposition: inline
-In-Reply-To: <AANLkTi=x_fi5HTBBmMUv8YTxSdbgcnJ=ZbacJQj6rcgf@mail.gmail.com>
+	Tue, 5 Oct 2010 02:46:38 -0400
+In-reply-to: <012c01cb63b3$b7053a20$250fae60$%szyprowski@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Seungwhan Youn <sw.youn@samsung.com>, alsa-devel@alsa-project.org, kgene.kim@samsung.com, jassi.brar@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, lrg@slimlogic.co.uk
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
+Cc: akpm@linux-foundation.org, kgene.kim@samsung.com, 'Hyuk Lee' <hyuk1.lee@samsung.com>, ben-linux@fluff.org
 
-On Tue, Oct 05, 2010 at 02:39:00PM +0900, Jassi Brar wrote:
+Marek Szyprowski wrote:
+> Hello,
+> 
+> I'm sorry for a late replay, I've just noticed this patch and have some
+> comments.
+> 
+> On Thursday, September 16, 2010 10:37 AM Jeongbae Seo wrote:
+> 
+> > From: Hyuk Lee <hyuk1.lee@samsung.com>
+> >
+> > This patch adds to use of HSMMC on S5PV310 and S5PC210.
+> > The HSMMC platform data like card detect, data bus width
+> > and capability is configured.
+> >
+> > Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
+> > Signed-off-by: Jeongbae Seo <jeongbae.seo@samsung.com>
+> > ---
+> >  arch/arm/mach-s5pv310/cpu.c                |    7 +++
+> >  arch/arm/mach-s5pv310/mach-smdkc210.c      |   50
+> ++++++++++++++++++++++++
+> >  arch/arm/mach-s5pv310/mach-smdkv310.c      |   50
+> ++++++++++++++++++++++++
+> >  arch/arm/plat-samsung/include/plat/sdhci.h |   57
+> ++++++++++++++++++++++++++++
+> >  4 files changed, 164 insertions(+), 0 deletions(-)
+> 
+> IMHO, changes to arch/arm/mach-s5pv310/{cpu.c, include/plat/sdhci.h}
+> should be separated from changes to board specific changes
+> (arch/arm/mach-s5pv310/mach-smdk*.c), so this patch should be split
+> into 2 separate patches.
 
-> Yes we can have a kconfig entry for 'Controllable EPLL' but that seems
-> orthogonal to ASoC because, for SMDKs, we choose to produce
-> accurate signals hence need to manipulate EPLL. The only point is
-> where to do it.
+Hi, Marek
 
-Well, there's two approaches the driver can take: one is to change the
-EPLL to deliver the clock rates which allow maximum flexibility, the
-other is to constrain the clock rates offered to applications based on
-the frequencies that can be generated from the current EPLL setup.
+Okay, I'll make it as two patches.
+Thanks for your comments.
 
-> (our priority is accuracy of each IP's functioning rather than having
-> all parts of
-> SMDK playing nice with each other on such h/w design issues)
-
-That'd be the problem, kind of - it does mean people can get burned when
-they pick up the BSP code and use it as a reference for their systems.
-
-> I hope you noticed that this clock hierarchy is a _very_ board specific thing.
-> We can easily place SoCs' shared stuff in arch/arm/plat-samsung (or similar)
-> Any suggestions, where do we place code shared by SMDK-boards ?
-
-plat-samsung would probably be fine for that also - create a file called
-common-smdk or something.  Some other things have gone for a plat-smdk
-style approach too, though I'm not sure how tasteful I find that
-personally.
+Best Regards
+Jeongbae Seo
