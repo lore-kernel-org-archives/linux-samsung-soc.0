@@ -1,62 +1,64 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 1/4] ARM: SAMSUNG: Move the start address of Samsung SoCs'
- VA space
-Date: Tue, 5 Oct 2010 13:06:25 +0900
-Message-ID: <AANLkTikfjiKunxZdWwbUi3cbj-20U=Fb1sO8j+Hcr8iy@mail.gmail.com>
-References: <1286244398-9333-1-git-send-email-kgene.kim@samsung.com>
-	<1286244398-9333-2-git-send-email-kgene.kim@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [alsa-devel] [PATCH 10/10] ASoC: SAMSUNG: Add Machine driver
+ for S/PDIF PCM audio
+Date: Mon, 4 Oct 2010 21:43:05 -0700
+Message-ID: <20101005044304.GA26509@opensource.wolfsonmicro.com>
+References: <1286191550-22197-1-git-send-email-sw.youn@samsung.com>
+ <1286194583-19937-1-git-send-email-sw.youn@samsung.com>
+ <20101004224159.GA4972@opensource.wolfsonmicro.com>
+ <AANLkTi=FHGw+qzL507K546vr8zEZgXBP3Mk=O__Rpd4H@mail.gmail.com>
+ <AANLkTincwL_nQAmu7Dcmht0FV43BiN7OoecE_60QJhS2@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:36123 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750716Ab0JEEG0 convert rfc822-to-8bit (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:53337 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751673Ab0JEEmy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Oct 2010 00:06:26 -0400
-Received: by bwz11 with SMTP id 11so4274660bwz.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Oct 2010 21:06:25 -0700 (PDT)
-In-Reply-To: <1286244398-9333-2-git-send-email-kgene.kim@samsung.com>
+	Tue, 5 Oct 2010 00:42:54 -0400
+Content-Disposition: inline
+In-Reply-To: <AANLkTincwL_nQAmu7Dcmht0FV43BiN7OoecE_60QJhS2@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Seungwhan Youn <sw.youn@samsung.com>, alsa-devel@alsa-project.org, kgene.kim@samsung.com, jassi.brar@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, lrg@slimlogic.co.uk
 
-On Tue, Oct 5, 2010 at 11:06 AM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> This patch moves the start address of Samsung SoCs' VA space so that
-> can use more vmalloc()/ioremap() space. Of course need to change the
-> VMALLOC_END for it.
-> Actually Samsung SoCs' VA space (free for platform use area) becomes
-> 80MiB with this patch, it's enough.
->
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> ---
-> =C2=A0arch/arm/plat-samsung/include/plat/map-base.h | =C2=A0 =C2=A04 =
-++--
-> =C2=A01 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/plat-samsung/include/plat/map-base.h b/arch/arm=
-/plat-samsung/include/plat/map-base.h
-> index 250be31..86f66be 100644
-> --- a/arch/arm/plat-samsung/include/plat/map-base.h
-> +++ b/arch/arm/plat-samsung/include/plat/map-base.h
-> @@ -14,7 +14,7 @@
-> =C2=A0#ifndef __ASM_PLAT_MAP_H
-> =C2=A0#define __ASM_PLAT_MAP_H __FILE__
->
-> -/* Fit all our registers in at 0xF4000000 upwards, trying to use as
-> +/* Fit all our registers in at 0xFA000000 upwards, trying to use as
-> =C2=A0* little of the VA space as possible so vmalloc and friends hav=
-e a
-> =C2=A0* better chance of getting memory.
-> =C2=A0*
-> @@ -22,7 +22,7 @@
-> =C2=A0* an single MOVS instruction (ie, only 8 bits of set data)
-> =C2=A0*/
->
-> -#define S3C_ADDR_BASE =C2=A0(0xF4000000)
-> +#define S3C_ADDR_BASE =C2=A0(0xFA000000)
+On Tue, Oct 05, 2010 at 11:19:35AM +0900, Jassi Brar wrote:
+> On Tue, Oct 5, 2010 at 10:10 AM, Jassi Brar <jassisinghbrar@gmail.com> wrote:
+> > On Tue, Oct 5, 2010 at 7:42 AM, Mark Brown
 
-maybe you could drop the brackets from the address value
+> >> I'd expect this to be with the other clock configuration code under
+> >> arch/arm, especially as it's involving the EPLL which can have fairly
+> >> wide usage - it seems better to make sure people working with other,
+> >> non-audio, bits of the system are aware of the EPLL usage.
+
+> > But that would have made us have EPLL manipulation in two places -
+> > one in arch/arm/mach/board-init and other in ASoC Machine driver because
+> > we would need to change the source clock's rate in runtime(using
+> > callback pointers
+> > for the purpose seemed too over the top).
+> > If ASoC doesn't change EPLL, it doesn't matter to other devices, if it
+> > does there
+> > is currently no means for other drivers to know about it. So, we might just
+> > as well move the EPLL related code to ASoC machine driver.
+
+The reason I'm concerned about this is that I've had actual problems
+with users of your out of tree BSPs getting confused by similar code
+there.  Thinking about it some more it's not so much the fact that
+the code is spread out as the fact that the the EPLL is so widely used
+within the system that having one driver change it can easily disrupt
+another subsystem in surprising ways.
+
+Since the clock API currently doesn't have a good way of resolving this
+perhaps a config option or something which masks the EPLL behaviour
+controllable and leaves it alone by default?  That would show people how
+to use this chip feature without affecting the other subsystems so
+non-obviously.
+
+> Btw, another important reason is that having EPLL manipulation in board-int
+> would result in code-duplication on other SMDK platforms as most have the
+> same clock routing options available in h/w and we want to use the same ASoC
+> machine driver for SoCs whenever possible.
+
+This doesn't seem such a big deal - you could create a shared file for
+the code under arch/arm.
