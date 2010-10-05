@@ -1,55 +1,49 @@
-From: Jaecheol Lee <jc.lee@samsung.com>
-Subject: [PATCH] ARM: SAMSUNG: Fix on default of s3c24xx_uart_devs
-Date: Tue,  5 Oct 2010 21:28:56 +0900
-Message-ID: <1286281736-29821-1-git-send-email-jc.lee@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: S5P64X0: FIX typo in the ADC device name
+Date: Tue,  5 Oct 2010 22:14:40 +0900
+Message-ID: <1286284480-1236-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:47836 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:49496 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750850Ab0JEMjV (ORCPT
+	with ESMTP id S1752794Ab0JENYV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Oct 2010 08:39:21 -0400
+	Tue, 5 Oct 2010 09:24:21 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com, Jaecheol Lee <jc.lee@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Naveen Krishna Ch <ch.naveen@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch adds default dev->bus, platform_bus_type of s3c24xx_uart_devs.
-If there is no default dev->bus, we cannot get the proper clock 'id' from
-clk_get() in the console_initcall().
-This problem occurs when only defined 'uclk1' as uart clock.
+From: Naveen Krishna Ch <ch.naveen@samsung.com>
 
-Reported-by: Jongpill Lee <boyko.lee@samsung.com>
-Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
+Fix the touch screen device name from s3c64x0-adc to s3c64xx-adc.
+
+Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/plat-samsung/dev-uart.c |    4 ++++
- 1 files changed, 4 insertions(+), 0 deletions(-)
+ arch/arm/mach-s5p64x0/cpu.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/dev-uart.c b/arch/arm/plat-samsung/dev-uart.c
-index 3776cd9..519e1bc 100644
---- a/arch/arm/plat-samsung/dev-uart.c
-+++ b/arch/arm/plat-samsung/dev-uart.c
-@@ -19,18 +19,22 @@
+diff --git a/arch/arm/mach-s5p64x0/cpu.c b/arch/arm/mach-s5p64x0/cpu.c
+index fb90a30..0a2d88a 100644
+--- a/arch/arm/mach-s5p64x0/cpu.c
++++ b/arch/arm/mach-s5p64x0/cpu.c
+@@ -106,7 +106,7 @@ static void s5p64x0_idle(void)
+ void __init s5p6440_map_io(void)
+ {
+ 	/* initialize any device information early */
+-	s3c_adc_setname("s3c64x0-adc");
++	s3c_adc_setname("s3c64xx-adc");
  
- static struct platform_device s3c24xx_uart_device0 = {
- 	.id		= 0,
-+	.dev		= { .bus = &platform_bus_type },
- };
+ 	iotable_init(s5p64x0_iodesc, ARRAY_SIZE(s5p64x0_iodesc));
+ 	iotable_init(s5p6440_iodesc, ARRAY_SIZE(s5p6440_iodesc));
+@@ -115,7 +115,7 @@ void __init s5p6440_map_io(void)
+ void __init s5p6450_map_io(void)
+ {
+ 	/* initialize any device information early */
+-	s3c_adc_setname("s3c64x0-adc");
++	s3c_adc_setname("s3c64xx-adc");
  
- static struct platform_device s3c24xx_uart_device1 = {
- 	.id		= 1,
-+	.dev		= { .bus = &platform_bus_type },
- };
- 
- static struct platform_device s3c24xx_uart_device2 = {
- 	.id		= 2,
-+	.dev		= { .bus = &platform_bus_type },
- };
- 
- static struct platform_device s3c24xx_uart_device3 = {
- 	.id		= 3,
-+	.dev		= { .bus = &platform_bus_type },
- };
- 
- struct platform_device *s3c24xx_uart_src[4] = {
+ 	iotable_init(s5p64x0_iodesc, ARRAY_SIZE(s5p64x0_iodesc));
+ 	iotable_init(s5p6450_iodesc, ARRAY_SIZE(s5p6440_iodesc));
 -- 
 1.6.2.5
