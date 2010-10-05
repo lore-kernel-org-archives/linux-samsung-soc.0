@@ -1,68 +1,124 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH 0/7] ARM: S5PC210: I2C devices support and Universal board updates
-Date: Tue, 5 Oct 2010 17:46:58 +0900
-Message-ID: <AANLkTik022VftXnVXgxEKkATnafPV2U8ZFOQqd+2jXNC@mail.gmail.com>
-References: <20100930044814.GA16892@july>
-	<AANLkTiknkbts6AtiBpqceSDqEXsE9E+qpMKJx2fzygB6@mail.gmail.com>
-	<001401cb6468$ed8d06d0$c8a71470$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 3/3] ARM: S5PC210: Set the common L2 cache configurations
+Date: Tue, 05 Oct 2010 17:47:30 +0900
+Message-ID: <001f01cb6469$f65aa370$e30fea50$%kim@samsung.com>
+References: <20100930074959.GA11798@july>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:43755 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757979Ab0JEIq7 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:64264 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755383Ab0JEIrS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Oct 2010 04:46:59 -0400
-Received: by pzk34 with SMTP id 34so1550357pzk.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Oct 2010 01:46:58 -0700 (PDT)
-In-Reply-To: <001401cb6468$ed8d06d0$c8a71470$%kim@samsung.com>
+	Tue, 5 Oct 2010 04:47:18 -0400
+Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0L9T0039672SCC20@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 05 Oct 2010 17:47:16 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0L9T00ICI72S5D@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 05 Oct 2010 17:47:16 +0900 (KST)
+In-reply-to: <20100930074959.GA11798@july>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: 'Kyungmin Park' <kmpark@infradead.org>, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On Tue, Oct 5, 2010 at 5:40 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Kyungmin Park wrote:
->>
->> Hi,
->>
-> Hi,
->
->> I think we made some conclusion. first apply the current style and
->> improve it later for consistency.
->>
-> Yeah, we should decide for this.
->
-> However, it's expected following problem with current I2C style.
->
-> Suppose A board want to use only I2C0, 1, 2, 3, 4, 7 as I2C and B board want
-> to use all of I2C channels as I2C. If use one kernel image for A and B,
-> maybe selected all I2C channels. It can be happened the some problem about
-> I2C5 and I2C6 on A board when it used for other purpose.
+Kyungmin Park wrote:
+> 
+> From: Kyungmin Park <kyungmin.park@samsung.com>
+> 
+> S5PC210 has PL310 1MiB L2 cache.
+> It uses the optimized data & tag latency and also enable the prefetch.
+> 
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-s5pv310/cpu.c |   19 +++++++++++++++++++
+>  1 files changed, 19 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-s5pv310/cpu.c b/arch/arm/mach-s5pv310/cpu.c
+> index e5b261a..b50312e 100644
+> --- a/arch/arm/mach-s5pv310/cpu.c
+> +++ b/arch/arm/mach-s5pv310/cpu.c
+> @@ -15,6 +15,7 @@
+>  #include <asm/mach/irq.h>
+> 
+>  #include <asm/proc-fns.h>
+> +#include <asm/hardware/cache-l2x0.h>
+> 
+>  #include <plat/cpu.h>
+>  #include <plat/clock.h>
+> @@ -121,6 +122,24 @@ static int __init s5pv310_core_init(void)
+> 
+>  core_initcall(s5pv310_core_init);
+> 
+> +static int __init s5pv310_init_cache(void)
 
-It's handled by platform_device id. Even though turn on all I2C. A
-board don't register 5 or 6 then no configure any GPIOs.
+It would be helpful that could use more detailed function name like
+s5pv310_l2x0_cache_init().
 
->
-> Of course can happen regardless of number of I2C channel, but if more I2C
-> channels, the probability can be increased.
->
-> Anyway I know Mr. Han is preparing I2C patches for it and almost done.
-> How about continuing discussion for this after submitting it?
->
-> I think we have some time that talk about this issue.
->
-> Thanks.
->
-> Best regards,
-> Kgene.
+> +{
+> +#ifdef CONFIG_CACHE_L2X0
+> +	void __iomem *p = S5P_VA_L2CC;
+> +
+> +	/* TAG,  Data latency control */
+> +	writel(0x110, p + L2X0_TAG_LATENCY_CTRL);
+> +	writel(0x110, p + L2X0_DATA_LATENCY_CTRL);
+
+I still thinking, __raw_writel is more suitable here...
+Because no need to add barriers between each write here.
+
+> +
+> +	/* L2 cache prefetch control */
+> +	writel(0x30000007, p + L2X0_PREFETCH_CTRL);
+> +
+> +	l2x0_init(p, 0x3C070001, 0xC200FFFF);
+
+0x7C070001 is better...or should be?...because it is for early write
+response.
+I think need it for optimization...so please change it.
+
+And it'd better if you could add PL310(L2 cache controller) power control
+here.
+It can help to reduce power consumption.
+
+> +#endif
+> +	return 0;
+> +}
+> +early_initcall(s5pv310_init_cache);
+> +
+
+And in my opinion, following format is better even if do not consider the
+coding-style.
+Because if not defined CACHE_L2X0, no need to add empty function into
+early_initcall().
+
+#ifdef CONFIG_CACHE_L2X0
+static int __init s5pv310_l2x0_cache_init(void)
+{
+
+/* */
+
+	return 0;
+}
+early_initcall(s5p_l2x0_cache_init);
+#endif
+
+
+>  int __init s5pv310_init(void)
+>  {
+>  	printk(KERN_INFO "S5PV310: Initializing architecture\n");
 > --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
+
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
