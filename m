@@ -1,87 +1,64 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH] ARM: SAMSUNG: Fix on default of s3c24xx_uart_devs
-Date: Tue, 05 Oct 2010 15:32:31 +0200
-Message-ID: <014301cb6491$c649ec40$52ddc4c0$%szyprowski@samsung.com>
-References: <1286281736-29821-1-git-send-email-jc.lee@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 10/10] ASoC: SAMSUNG: Add Machine driver
+ for S/PDIF PCM audio
+Date: Tue, 5 Oct 2010 09:54:28 -0700
+Message-ID: <20101005165427.GB20555@opensource.wolfsonmicro.com>
+References: <1286191550-22197-1-git-send-email-sw.youn@samsung.com>
+	<1286194583-19937-1-git-send-email-sw.youn@samsung.com>
+	<20101004224159.GA4972@opensource.wolfsonmicro.com>
+	<AANLkTi=FHGw+qzL507K546vr8zEZgXBP3Mk=O__Rpd4H@mail.gmail.com>
+	<AANLkTincwL_nQAmu7Dcmht0FV43BiN7OoecE_60QJhS2@mail.gmail.com>
+	<20101005044304.GA26509@opensource.wolfsonmicro.com>
+	<AANLkTi=x_fi5HTBBmMUv8YTxSdbgcnJ=ZbacJQj6rcgf@mail.gmail.com>
+	<20101005055937.GA19989@opensource.wolfsonmicro.com>
+	<AANLkTimi1t5S2XWdUFzaPttD4Hywm0SLt5CvR1YnVOjj@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:30121 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752779Ab0JENcj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Oct 2010 09:32:39 -0400
-Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L9T00GBFKADXG80@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 05 Oct 2010 22:32:37 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L9T00756KA8W0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 05 Oct 2010 22:32:37 +0900 (KST)
-In-reply-to: <1286281736-29821-1-git-send-email-jc.lee@samsung.com>
-Content-language: pl
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Disposition: inline
+In-Reply-To: <AANLkTimi1t5S2XWdUFzaPttD4Hywm0SLt5CvR1YnVOjj@mail.gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, jassi.brar@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, lrg@slimlogic.co.uk, linux-arm-kernel@lists.infradead.org, Seungwhan Youn <sw.youn@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jaecheol Lee' <jc.lee@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org
 
-Hello,
+On Tue, Oct 05, 2010 at 04:09:47PM +0900, Jassi Brar wrote:
+> On Tue, Oct 5, 2010 at 2:59 PM, Mark Brown
 
-On Tuesday, October 05, 2010 2:29 PM Jaecheol Lee wrote:
+> > Well, there's two approaches the driver can take: one is to change the
+> > EPLL to deliver the clock rates which allow maximum flexibility, the
+> > other is to constrain the clock rates offered to applications based on
+> > the frequencies that can be generated from the current EPLL setup.
 
-> This patch adds default dev->bus, platform_bus_type of s3c24xx_uart_devs.
-> If there is no default dev->bus, we cannot get the proper clock 'id' from
-> clk_get() in the console_initcall().
-> This problem occurs when only defined 'uclk1' as uart clock.
-> 
-> Reported-by: Jongpill Lee <boyko.lee@samsung.com>
-> Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
-> ---
->  arch/arm/plat-samsung/dev-uart.c |    4 ++++
->  1 files changed, 4 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/dev-uart.c b/arch/arm/plat-samsung/dev-uart.c
-> index 3776cd9..519e1bc 100644
-> --- a/arch/arm/plat-samsung/dev-uart.c
-> +++ b/arch/arm/plat-samsung/dev-uart.c
-> @@ -19,18 +19,22 @@
-> 
->  static struct platform_device s3c24xx_uart_device0 = {
->  	.id		= 0,
-> +	.dev		= { .bus = &platform_bus_type },
->  };
-> 
->  static struct platform_device s3c24xx_uart_device1 = {
->  	.id		= 1,
-> +	.dev		= { .bus = &platform_bus_type },
->  };
-> 
->  static struct platform_device s3c24xx_uart_device2 = {
->  	.id		= 2,
-> +	.dev		= { .bus = &platform_bus_type },
->  };
-> 
->  static struct platform_device s3c24xx_uart_device3 = {
->  	.id		= 3,
-> +	.dev		= { .bus = &platform_bus_type },
->  };
-> 
->  struct platform_device *s3c24xx_uart_src[4] = {
+> For SMDKs(our reference platform) I would like to change EPLL in order
+> to be able to verify accuracy and provide all capabilities of the controllers.
 
-I've ran into the same problem and I considered the same approach to solve
-this issue. However I found that such solution is an ugly hack rather a real
-fix or workaround. Nobody can grant that platform device framework would
-accept registering a device with .bus already set in the future version
-of the kernel. This might also cause other strange problems in the future.
+That's why I'm saying provide an option to turn this behaviour on - I
+agree that it's useful to be able to show the feature, I just think it's
+going to catch users out if they're not warned that it's happening
+somehow.
 
-My proposition for a real workaround is in the patch named "[PATCH] ARM:
-Samsung: add a workaround for get_clock() for serial driver" 
-(see http://www.spinics.net/lists/linux-samsung-soc/msg03050.html ).
+> >> (our priority is accuracy of each IP's functioning rather than having
+> >> all parts of
+> >> SMDK playing nice with each other on such h/w design issues)
 
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+> > That'd be the problem, kind of - it does mean people can get burned when
+> > they pick up the BSP code and use it as a reference for their systems.
+
+> I expect people to replace/modify/inspect board specific code before they
+> run the BSP on their systems. IMO reference platforms are not good for
+> integrated-testing.
+
+To be fair the users doing this the individual drivers do look OK by
+themselves - there's only a problem when it comes to system integration
+and that's not going to be obvious unless someone has reviewed the
+drivers while understanding the clock tree for the chip as a whole.
