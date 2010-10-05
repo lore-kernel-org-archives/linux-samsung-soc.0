@@ -1,245 +1,77 @@
-From: Jeongbae Seo <jeongbae.seo@samsung.com>
-Subject: RE: [PATCH 1/5] ARM: S5PV310: Add HSMMC support and SDHCI configuration
-Date: Tue, 05 Oct 2010 15:58:26 +0900
-Message-ID: <001301cb645a$ba594d40$2f0be7c0$%seo@samsung.com>
-References: <1284626223-18944-1-git-send-email-jeongbae.seo@samsung.com>
- <1284626223-18944-2-git-send-email-jeongbae.seo@samsung.com>
- <012d01cb63b3$d26bb140$774313c0$%szyprowski@samsung.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH 10/10] ASoC: SAMSUNG: Add Machine driver
+ for S/PDIF PCM audio
+Date: Tue, 5 Oct 2010 16:09:47 +0900
+Message-ID: <AANLkTimi1t5S2XWdUFzaPttD4Hywm0SLt5CvR1YnVOjj@mail.gmail.com>
+References: <1286191550-22197-1-git-send-email-sw.youn@samsung.com>
+	<1286194583-19937-1-git-send-email-sw.youn@samsung.com>
+	<20101004224159.GA4972@opensource.wolfsonmicro.com>
+	<AANLkTi=FHGw+qzL507K546vr8zEZgXBP3Mk=O__Rpd4H@mail.gmail.com>
+	<AANLkTincwL_nQAmu7Dcmht0FV43BiN7OoecE_60QJhS2@mail.gmail.com>
+	<20101005044304.GA26509@opensource.wolfsonmicro.com>
+	<AANLkTi=x_fi5HTBBmMUv8YTxSdbgcnJ=ZbacJQj6rcgf@mail.gmail.com>
+	<20101005055937.GA19989@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=Windows-1252
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <012d01cb63b3$d26bb140$774313c0$%szyprowski@samsung.com>
-Content-language: ko
-Sender: linux-mmc-owner@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
-Cc: akpm@linux-foundation.org, kgene.kim@samsung.com, 'Hyuk Lee' <hyuk1.lee@samsung.com>, ben-linux@fluff.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20101005055937.GA19989@opensource.wolfsonmicro.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, jassi.brar@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, lrg@slimlogic.co.uk, linux-arm-kernel@lists.infradead.org, Seungwhan Youn <sw.youn@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Marek Szyprowski wrote:
-> Hello,
-> 
-> On Thursday, September 16, 2010 10:37 AM Jeongbae Seo wrote:
-> 
-> > From: Hyuk Lee <hyuk1.lee@samsung.com>
-> >
-> > This patch adds to support HSMMC for S5PV310 and S5PC210 and setup for
-> > HSMMC host controller and also related GPIO.
-> > At most 4 channel can be used at the same time.
-> > A user can configure SDHCI data bus as 8bit or 4bit.
-> >
-> > Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
-> > Signed-off-by: Jeongbae Seo <jeongbae.seo@samsung.com>
-> > ---
-> >  arch/arm/mach-s5pv310/Kconfig            |   39 ++++++++
-> >  arch/arm/mach-s5pv310/Makefile           |    2 +
-> >  arch/arm/mach-s5pv310/setup-sdhci-gpio.c |  156
-> ++++++++++++++++++++++++++++++
-> >  arch/arm/mach-s5pv310/setup-sdhci.c      |   69 +++++++++++++
-> >  4 files changed, 266 insertions(+), 0 deletions(-)
-> >  create mode 100644 arch/arm/mach-s5pv310/setup-sdhci-gpio.c
-> >  create mode 100644 arch/arm/mach-s5pv310/setup-sdhci.c
-> >
-> 
-> <snip>
-> 
-> > diff --git a/arch/arm/mach-s5pv310/setup-sdhci-gpio.c b/arch/arm/mach-
-> s5pv310/setup-sdhci-gpio.c
-> > new file mode 100644
-> > index 0000000..8db8c81
-> > --- /dev/null
-> > +++ b/arch/arm/mach-s5pv310/setup-sdhci-gpio.c
-> > @@ -0,0 +1,156 @@
-> > +/* linux/arch/arm/mach-s5pv310/setup-sdhci-gpio.c
-> > + *
-> > + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> > + *		http://www.samsung.com/
-> > + *
-> > + * S5PV310 - Helper functions for setting up SDHCI device(s) GPIO
-> (HSMMC)
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License version 2 as
-> > + * published by the Free Software Foundation.
-> > +*/
-> > +
-> > +#include <linux/kernel.h>
-> > +#include <linux/types.h>
-> > +#include <linux/interrupt.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/io.h>
-> > +#include <linux/gpio.h>
-> > +#include <linux/mmc/host.h>
-> > +#include <linux/mmc/card.h>
-> > +
-> > +#include <plat/gpio-cfg.h>
-> > +#include <plat/regs-sdhci.h>
-> > +#include <plat/sdhci.h>
-> > +
-> > +void s5pv310_setup_sdhci0_cfg_gpio(struct platform_device *dev, int
-> width)
-> > +{
-> > +	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
-> > +	unsigned int gpio;
-> > +
-> > +	/* Set all the necessary GPK0[0:1] pins to special-function 2 */
-> > +	for (gpio = S5PV310_GPK0(0); gpio < S5PV310_GPK0(2); gpio++) {
-> > +		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
-> > +		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
-> > +	}
-> > +
-> > +	switch (width) {
-> > +	case 8:
-> > +		for (gpio = S5PV310_GPK1(3); gpio <= S5PV310_GPK1(6);
-gpio++)
-> {
-> > +			/* Data pin GPK1[3:6] to special-funtion 3 */
-> > +			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(3));
-> > +			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_UP);
-> > +
-> > +			/* Setup Drive Strength */
-> > +			s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV4);
-> > +		}
-> > +	case 4:
-> > +		for (gpio = S5PV310_GPK0(3); gpio <= S5PV310_GPK0(6);
-gpio++)
-> {
-> > +			/* Data pin GPK0[3:6] to special-funtion 2 */
-> > +			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
-> > +			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_UP);
-> > +
-> > +			/* Setup Drive Strength */
-> > +			s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV4);
-> > +		}
-> > +	default:
-> > +		break;
-> > +	}
-> > +
-> > +	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
-> > +		s3c_gpio_cfgpin(S5PV310_GPK0(2), S3C_GPIO_SFN(2));
-> > +		s3c_gpio_setpull(S5PV310_GPK0(2), S3C_GPIO_PULL_UP);
-> > +	}
-> > +}
-> > +
-> > +void s5pv310_setup_sdhci1_cfg_gpio(struct platform_device *dev, int
-> width)
-> > +{
-> > +	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
-> > +	unsigned int gpio;
-> > +
-> > +	/* Set all the necessary GPK1[0:1] pins to special-function 2 */
-> > +	for (gpio = S5PV310_GPK1(0); gpio < S5PV310_GPK1(2); gpio++) {
-> > +		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
-> > +		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
-> > +	}
-> > +
-> > +	for (gpio = S5PV310_GPK1(3); gpio <= S5PV310_GPK1(6); gpio++) {
-> > +		/* Data pin GPK1[3:6] to special-function 2 */
-> > +		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
-> > +		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_UP);
-> > +
-> > +		/* Setup Drive Strength */
-> > +		s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV4);
-> > +	}
-> > +
-> > +	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
-> > +		s3c_gpio_cfgpin(S5PV310_GPK1(2), S3C_GPIO_SFN(2));
-> > +		s3c_gpio_setpull(S5PV310_GPK1(2), S3C_GPIO_PULL_UP);
-> > +	}
-> > +}
-> > +
-> > +void s5pv310_setup_sdhci2_cfg_gpio(struct platform_device *dev, int
-> width)
-> > +{
-> > +	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
-> > +	unsigned int gpio;
-> > +
-> > +	/* Set all the necessary GPK2[0:1] pins to special-function 2 */
-> > +	for (gpio = S5PV310_GPK2(0); gpio < S5PV310_GPK2(2); gpio++) {
-> > +		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
-> > +		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
-> 
-> Lack of "s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV4)" here causes
-> problems with
-> Universal C210 and external SD-card. IMHO driver strength should be set
-> for all MMC
-> pins, not only for data pins like below (and do this for all MMC blocks of
-> course).
-
-Okay, if a problem can be occurred owing to the lack of driver strength,
-we'd better set all MMC with driver strength. I will re-make it and thanks
-for your comment.
-
-Best Regards
-Jeongbae Seo
-
-> > +	}
-> > +
-> > +	switch (width) {
-> > +	case 8:
-> > +		for (gpio = S5PV310_GPK3(3); gpio <= S5PV310_GPK3(6);
-gpio++)
-> {
-> > +			/* Data pin GPK3[3:6] to special-function 3 */
-> > +			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(3));
-> > +			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_UP);
-> > +
-> > +			/* Setup Drive Strength */
-> > +			s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV4);
-> > +		}
-> > +	case 4:
-> > +		for (gpio = S5PV310_GPK2(3); gpio <= S5PV310_GPK2(6);
-gpio++)
-> {
-> > +			/* Data pin GPK2[3:6] to special-function 2 */
-> > +			s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
-> > +			s3c_gpio_setpull(gpio, S3C_GPIO_PULL_UP);
-> > +
-> > +			/* Setup Drive Strength */
-> > +			s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV4);
-> > +		}
-> > +	default:
-> > +		break;
-> > +	}
-> > +
-> > +	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
-> > +		s3c_gpio_cfgpin(S5PV310_GPK2(2), S3C_GPIO_SFN(2));
-> > +		s3c_gpio_setpull(S5PV310_GPK2(2), S3C_GPIO_PULL_UP);
-> > +	}
-> > +}
-> > +
-> > +void s5pv310_setup_sdhci3_cfg_gpio(struct platform_device *dev, int
-> width)
-> > +{
-> > +	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
-> > +	unsigned int gpio;
-> > +
-> > +	/* Set all the necessary GPK3[0:1] pins to special-function 2 */
-> > +	for (gpio = S5PV310_GPK3(0); gpio < S5PV310_GPK3(2); gpio++) {
-> > +		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
-> > +		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
-> > +	}
-> > +
-> > +	for (gpio = S5PV310_GPK3(3); gpio <= S5PV310_GPK3(6); gpio++) {
-> > +		/* Data pin GPK3[3:6] to special-function 2 */
-> > +		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
-> > +		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_UP);
-> > +
-> > +		/* Setup Drive Strength */
-> > +		s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV4);
-> > +	}
-> > +
-> > +	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
-> > +		s3c_gpio_cfgpin(S5PV310_GPK3(2), S3C_GPIO_SFN(2));
-> > +		s3c_gpio_setpull(S5PV310_GPK3(2), S3C_GPIO_PULL_UP);
-> > +	}
-> > +}
-> 
-> <snip>
-> 
-> Best regards
-> --
-> Marek Szyprowski
-> Samsung Poland R&D Center
-
-
+T24gVHVlLCBPY3QgNSwgMjAxMCBhdCAyOjU5IFBNLCBNYXJrIEJyb3duCjxicm9vbmllQG9wZW5z
+b3VyY2Uud29sZnNvbm1pY3JvLmNvbT4gd3JvdGU6Cj4gT24gVHVlLCBPY3QgMDUsIDIwMTAgYXQg
+MDI6Mzk6MDBQTSArMDkwMCwgSmFzc2kgQnJhciB3cm90ZToKPgo+PiBZZXMgd2UgY2FuIGhhdmUg
+YSBrY29uZmlnIGVudHJ5IGZvciAnQ29udHJvbGxhYmxlIEVQTEwnIGJ1dCB0aGF0IHNlZW1zCj4+
+IG9ydGhvZ29uYWwgdG8gQVNvQyBiZWNhdXNlLCBmb3IgU01ES3MsIHdlIGNob29zZSB0byBwcm9k
+dWNlCj4+IGFjY3VyYXRlIHNpZ25hbHMgaGVuY2UgbmVlZCB0byBtYW5pcHVsYXRlIEVQTEwuIFRo
+ZSBvbmx5IHBvaW50IGlzCj4+IHdoZXJlIHRvIGRvIGl0Lgo+Cj4gV2VsbCwgdGhlcmUncyB0d28g
+YXBwcm9hY2hlcyB0aGUgZHJpdmVyIGNhbiB0YWtlOiBvbmUgaXMgdG8gY2hhbmdlIHRoZQo+IEVQ
+TEwgdG8gZGVsaXZlciB0aGUgY2xvY2sgcmF0ZXMgd2hpY2ggYWxsb3cgbWF4aW11bSBmbGV4aWJp
+bGl0eSwgdGhlCj4gb3RoZXIgaXMgdG8gY29uc3RyYWluIHRoZSBjbG9jayByYXRlcyBvZmZlcmVk
+IHRvIGFwcGxpY2F0aW9ucyBiYXNlZCBvbgo+IHRoZSBmcmVxdWVuY2llcyB0aGF0IGNhbiBiZSBn
+ZW5lcmF0ZWQgZnJvbSB0aGUgY3VycmVudCBFUExMIHNldHVwLgpGb3IgU01ES3Mob3VyIHJlZmVy
+ZW5jZSBwbGF0Zm9ybSkgSSB3b3VsZCBsaWtlIHRvIGNoYW5nZSBFUExMIGluIG9yZGVyCnRvIGJl
+IGFibGUgdG8gdmVyaWZ5IGFjY3VyYWN5IGFuZCBwcm92aWRlIGFsbCBjYXBhYmlsaXRpZXMgb2Yg
+dGhlIGNvbnRyb2xsZXJzLgpGb3IgYSBmaW5hbCBwcm9kdWN0LCBpdCB3b3VsZCBtYWtlIHNlbnNl
+IHRvIGZpeCB0aGUgRVBMTCB0byBvbmUgb3B0aW1hbCB2YWx1ZQphY2NvcmRpbmcgdG8gdGhlIHR5
+cGUgb2YgaC93IGFuZCBzL3cgY29tcG9uZW50cyhleCBQQSBjYW4gYmUgY29uZmlndXJlZAp0byA0
+OEtIeiBhZnRlciBtYWtpbmcgc3VyZSBFUExMIGNhbiBhbHNvIGJlIHVzZWQgdG8gZ2VuZXJhdGUg
+c3VpdGFibGUKY2xvY2tzIGZvciB0aGUgU1BJIGRldmljZXMgb24gYm9hcmQpCgo+PiAob3VyIHBy
+aW9yaXR5IGlzIGFjY3VyYWN5IG9mIGVhY2ggSVAncyBmdW5jdGlvbmluZyByYXRoZXIgdGhhbiBo
+YXZpbmcKPj4gYWxsIHBhcnRzIG9mCj4+IFNNREsgcGxheWluZyBuaWNlIHdpdGggZWFjaCBvdGhl
+ciBvbiBzdWNoIGgvdyBkZXNpZ24gaXNzdWVzKQo+Cj4gVGhhdCdkIGJlIHRoZSBwcm9ibGVtLCBr
+aW5kIG9mIC0gaXQgZG9lcyBtZWFuIHBlb3BsZSBjYW4gZ2V0IGJ1cm5lZCB3aGVuCj4gdGhleSBw
+aWNrIHVwIHRoZSBCU1AgY29kZSBhbmQgdXNlIGl0IGFzIGEgcmVmZXJlbmNlIGZvciB0aGVpciBz
+eXN0ZW1zLgpJIGV4cGVjdCBwZW9wbGUgdG8gcmVwbGFjZS9tb2RpZnkvaW5zcGVjdCBib2FyZCBz
+cGVjaWZpYyBjb2RlIGJlZm9yZSB0aGV5CnJ1biB0aGUgQlNQIG9uIHRoZWlyIHN5c3RlbXMuIElN
+TyByZWZlcmVuY2UgcGxhdGZvcm1zIGFyZSBub3QgZ29vZCBmb3IKaW50ZWdyYXRlZC10ZXN0aW5n
+LgpNZWFud2hpbGUsIHdlIHNob3VsZCBtYWtlIHN1cmUgdGhlIFNvQyBzcGVjaWZpYyBzdHVmZiBz
+dXBwb3J0cyBhbmQgaXMKdGVzdGVkIHdpdGgKYXMgbWFueSBjb25maWd1cmF0aW9ucyBhcyBhcmUg
+cG9zc2libGUgb24gU01ES3MuCgo+PiBJIGhvcGUgeW91IG5vdGljZWQgdGhhdCB0aGlzIGNsb2Nr
+IGhpZXJhcmNoeSBpcyBhIF92ZXJ5XyBib2FyZCBzcGVjaWZpYyB0aGluZy4KPj4gV2UgY2FuIGVh
+c2lseSBwbGFjZSBTb0NzJyBzaGFyZWQgc3R1ZmYgaW4gYXJjaC9hcm0vcGxhdC1zYW1zdW5nIChv
+ciBzaW1pbGFyKQo+PiBBbnkgc3VnZ2VzdGlvbnMsIHdoZXJlIGRvIHdlIHBsYWNlIGNvZGUgc2hh
+cmVkIGJ5IFNNREstYm9hcmRzID8KPgo+IHBsYXQtc2Ftc3VuZyB3b3VsZCBwcm9iYWJseSBiZSBm
+aW5lIGZvciB0aGF0IGFsc28gLSBjcmVhdGUgYSBmaWxlIGNhbGxlZAo+IGNvbW1vbi1zbWRrIG9y
+IHNvbWV0aGluZy4gwqBTb21lIG90aGVyIHRoaW5ncyBoYXZlIGdvbmUgZm9yIGEgcGxhdC1zbWRr
+Cj4gc3R5bGUgYXBwcm9hY2ggdG9vLCB0aG91Z2ggSSdtIG5vdCBzdXJlIGhvdyB0YXN0ZWZ1bCBJ
+IGZpbmQgdGhhdAo+IHBlcnNvbmFsbHkuCkV2ZW4gdGhvdWdoIEkgd291bGQgcGVyc29uYWxseSBs
+aWtlIHRvIGhhdmUgRVBMTCBjb250cm9sIGZvciBhIGRldmljZQppbiBtYWNoaW5lIHNwZWNpZmlj
+IG1hbm5lciBhcyBwYXJ0IG9mIGl0cyBkcml2ZXIsIEkgYWNjZXB0IHlvdXIgb3Bpbmlvbi4KCkNs
+YXVkZSwgbGV0IHVzIGNyZWF0ZSBvbmUgYXJjaC9hcm0vcGxhdC1zYW1zdW5nL3NtZGsuYyB0byBk
+byBjb21tb24Kc3R1ZmYgZm9yIFNNS0RzIGxpa2UgRVBMTCBjb250cm9sLiBXaGF0IGRvIHlvdSB0
+aGluayA/CgoKVGhhbmtzLgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fXwpBbHNhLWRldmVsIG1haWxpbmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVjdC5v
+cmcKaHR0cDovL21haWxtYW4uYWxzYS1wcm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Fsc2Et
+ZGV2ZWwK
