@@ -1,73 +1,130 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH 1/2] ARM: S3C64XX: Add suspend support
-Date: Wed, 6 Oct 2010 08:39:50 +0900
-Message-ID: <AANLkTimL_G7E5u1Q8ttqbkTZ8N2D_sSELZ0RfTJQpJV1@mail.gmail.com>
-References: <cover.1286319272.git.mcuelenaere@gmail.com>
-	<1fa4a7a39d9fd48b8329e1a1077a65adb96475b5.1286319272.git.mcuelenaere@gmail.com>
-	<AANLkTi=CH6BJZDYsCHXmcYAVuu-LTsqjKXUVGnBAikiN@mail.gmail.com>
-	<4CABB459.6070209@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:41408 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756434Ab0JEXjv convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Oct 2010 19:39:51 -0400
-Received: by wwj40 with SMTP id 40so6353223wwj.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Oct 2010 16:39:50 -0700 (PDT)
-In-Reply-To: <4CABB459.6070209@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jeongbae Seo <jeongbae.seo@samsung.com>
+Subject: [PATCH V2 2/3] ARM: S5PV310: Add HSMMC platform data
+Date: Wed,  6 Oct 2010 15:00:45 +0900
+Message-ID: <1286344846-21244-3-git-send-email-jeongbae.seo@samsung.com>
+References: <1286344846-21244-1-git-send-email-jeongbae.seo@samsung.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1286344846-21244-1-git-send-email-jeongbae.seo@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, akpm@linux-foundation.org, cjb@laptop.org, Hyuk Lee <hyuk1.lee@samsung.com>, Jeongbae Seo <jeongbae.seo@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-On Wed, Oct 6, 2010 at 8:27 AM, Maurus Cuelenaere <mcuelenaere@gmail.co=
-m> wrote:
-> =A0Op 06-10-10 01:23, Kyungmin Park schreef:
->> Hi,
->>
->> I agree your approach, put the common features in common place.
->> but Samsung maintainers insist put these at each machine file at cur=
-rent time.
->>
->> So move this to the each machines for their tastes.
-> I did it that way first, but then wondered why this wasn't done for a=
-ll boards.
->
-> When looking at some S3C24XX boards, you'll see that these need chang=
-es to the
-> bootloader to support suspend; but IIRC this isn't needed for S3C64XX=
- so I think
-> this can be safely enabled for all S3C64XX boards?
+From: Hyuk Lee <hyuk1.lee@samsung.com>
 
-There are be answered by Samsung maintainers.
-I'm have same opinions since it's common feature. Previous time I
-already argued with them but they reject it.
-you can issue it again.
+This patch adds initialization HSMMC device information.
+And HSMMC platform data like card detect, data bus width
+and capability is configured.
 
-and current status.
-# grep s3c_pm_init -H -R arch/arm/mach-*
-arch/arm/mach-s3c2410/mach-qt2410.c:    s3c_pm_init();
-arch/arm/mach-s3c2410/mach-h1940.c:     s3c_pm_init();
-arch/arm/mach-s3c2412/mach-jive.c:      s3c_pm_init();
-arch/arm/mach-s3c2440/mach-rx3715.c:    s3c_pm_init();
-arch/arm/mach-s3c2440/mach-gta02.c:     s3c_pm_init();
-arch/arm/mach-s3c2440/mach-rx1950.c:    s3c_pm_init();
-arch/arm/mach-s5pv210/mach-smdkv210.c:  s3c_pm_init();
-arch/arm/mach-s5pv210/mach-smdkc110.c:  s3c_pm_init();
+Signed-off-by: Hyuk Lee <hyuk1.lee@samsung.com>
+Signed-off-by: Jeongbae Seo <jeongbae.seo@samsung.com>
+---
+Changes since v1:
+- Separated to board specific and common changes
+  (This is for common part)
 
-Thank you,
-Kyungmin Park
+ arch/arm/mach-s5pv310/cpu.c                |    7 +++
+ arch/arm/plat-samsung/include/plat/sdhci.h |   57 ++++++++++++++++++++++++++++
+ 2 files changed, 64 insertions(+), 0 deletions(-)
 
->
-> --
-> Maurus Cuelenaere
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
+diff --git a/arch/arm/mach-s5pv310/cpu.c b/arch/arm/mach-s5pv310/cpu.c
+index 225ca53..3345cf6 100644
+--- a/arch/arm/mach-s5pv310/cpu.c
++++ b/arch/arm/mach-s5pv310/cpu.c
+@@ -19,6 +19,7 @@
+ #include <plat/cpu.h>
+ #include <plat/clock.h>
+ #include <plat/s5pv310.h>
++#include <plat/sdhci.h>
+ 
+ #include <mach/regs-irq.h>
+ 
+@@ -88,6 +89,12 @@ static void s5pv310_idle(void)
+ void __init s5pv310_map_io(void)
+ {
+ 	iotable_init(s5pv310_iodesc, ARRAY_SIZE(s5pv310_iodesc));
++
++	/* initialize device information early */
++	s5pv310_default_sdhci0();
++	s5pv310_default_sdhci1();
++	s5pv310_default_sdhci2();
++	s5pv310_default_sdhci3();
+ }
+ 
+ void __init s5pv310_init_clocks(int xtal)
+diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-samsung/include/plat/sdhci.h
+index 30844c2..d92670a 100644
+--- a/arch/arm/plat-samsung/include/plat/sdhci.h
++++ b/arch/arm/plat-samsung/include/plat/sdhci.h
+@@ -110,6 +110,10 @@ extern void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *, int w);
+ extern void s5pv210_setup_sdhci1_cfg_gpio(struct platform_device *, int w);
+ extern void s5pv210_setup_sdhci2_cfg_gpio(struct platform_device *, int w);
+ extern void s5pv210_setup_sdhci3_cfg_gpio(struct platform_device *, int w);
++extern void s5pv310_setup_sdhci0_cfg_gpio(struct platform_device *, int w);
++extern void s5pv310_setup_sdhci1_cfg_gpio(struct platform_device *, int w);
++extern void s5pv310_setup_sdhci2_cfg_gpio(struct platform_device *, int w);
++extern void s5pv310_setup_sdhci3_cfg_gpio(struct platform_device *, int w);
+ 
+ /* S3C64XX SDHCI setup */
+ 
+@@ -288,4 +292,57 @@ static inline void s5pv210_default_sdhci3(void) { }
+ 
+ #endif /* CONFIG_S5PV210_SETUP_SDHCI */
+ 
++/* S5PV310 SDHCI setup */
++#ifdef CONFIG_S5PV310_SETUP_SDHCI
++extern char *s5pv310_hsmmc_clksrcs[4];
++
++extern void s5pv310_setup_sdhci_cfg_card(struct platform_device *dev,
++					   void __iomem *r,
++					   struct mmc_ios *ios,
++					   struct mmc_card *card);
++
++static inline void s5pv310_default_sdhci0(void)
++{
++#ifdef CONFIG_S3C_DEV_HSMMC
++	s3c_hsmmc0_def_platdata.clocks = s5pv310_hsmmc_clksrcs;
++	s3c_hsmmc0_def_platdata.cfg_gpio = s5pv310_setup_sdhci0_cfg_gpio;
++	s3c_hsmmc0_def_platdata.cfg_card = s5pv310_setup_sdhci_cfg_card;
++#endif
++}
++
++static inline void s5pv310_default_sdhci1(void)
++{
++#ifdef CONFIG_S3C_DEV_HSMMC1
++	s3c_hsmmc1_def_platdata.clocks = s5pv310_hsmmc_clksrcs;
++	s3c_hsmmc1_def_platdata.cfg_gpio = s5pv310_setup_sdhci1_cfg_gpio;
++	s3c_hsmmc1_def_platdata.cfg_card = s5pv310_setup_sdhci_cfg_card;
++#endif
++}
++
++static inline void s5pv310_default_sdhci2(void)
++{
++#ifdef CONFIG_S3C_DEV_HSMMC2
++	s3c_hsmmc2_def_platdata.clocks = s5pv310_hsmmc_clksrcs;
++	s3c_hsmmc2_def_platdata.cfg_gpio = s5pv310_setup_sdhci2_cfg_gpio;
++	s3c_hsmmc2_def_platdata.cfg_card = s5pv310_setup_sdhci_cfg_card;
++#endif
++}
++
++static inline void s5pv310_default_sdhci3(void)
++{
++#ifdef CONFIG_S3C_DEV_HSMMC3
++	s3c_hsmmc3_def_platdata.clocks = s5pv310_hsmmc_clksrcs;
++	s3c_hsmmc3_def_platdata.cfg_gpio = s5pv310_setup_sdhci3_cfg_gpio;
++	s3c_hsmmc3_def_platdata.cfg_card = s5pv310_setup_sdhci_cfg_card;
++#endif
++}
++
++#else
++static inline void s5pv310_default_sdhci0(void) { }
++static inline void s5pv310_default_sdhci1(void) { }
++static inline void s5pv310_default_sdhci2(void) { }
++static inline void s5pv310_default_sdhci3(void) { }
++
++#endif /* CONFIG_S5PV310_SETUP_SDHCI */
++
+ #endif /* __PLAT_S3C_SDHCI_H */
+-- 
+1.6.2.5
+
