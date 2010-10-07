@@ -1,112 +1,138 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: Samsung: add a workaround for get_clock() for serial
- driver
-Date: Thu, 07 Oct 2010 17:16:18 +0900
-Message-ID: <009601cb65f7$f0ee2ee0$d2ca8ca0$%kim@samsung.com>
-References: <1285769685-11849-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Subject: [PATCH v2 1/3] rtc: rtc-s3c: Fix access unit from byte to word on RTCCON
+Date: Thu,  7 Oct 2010 17:20:06 +0900
+Message-ID: <1286439608-22722-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:30924 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753381Ab0JGIQJ (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:49901 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753293Ab0JGI3s (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Oct 2010 04:16:09 -0400
-Received: from epmmp2 (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L9W00LKWUYVNK40@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 07 Oct 2010 17:16:07 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L9W00DFWUYV43@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 07 Oct 2010 17:16:07 +0900 (KST)
-In-reply-to: <1285769685-11849-1-git-send-email-m.szyprowski@samsung.com>
-Content-language: ko
+	Thu, 7 Oct 2010 04:29:48 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com
+Cc: ben-linux@fluff.org, p_gortmaker@yahoo.com, a.zummo@towertech.it, Changhwan Youn <chaos.youn@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Marek Szyprowski wrote:
-> 
-> Serial drivers call get_clock() very early, before platform bus
-> has been set up, this requires a special check to let them get
-> a proper clock. Without this patch, a serial console is broken
-> on Universal C210 board.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/plat-samsung/clock.c |   25 ++++++++++++++++++++++++-
->  1 files changed, 24 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
-> index 90a2051..da847f1 100644
-> --- a/arch/arm/plat-samsung/clock.c
-> +++ b/arch/arm/plat-samsung/clock.c
-> @@ -48,6 +48,9 @@
->  #include <plat/clock.h>
->  #include <plat/cpu.h>
-> 
-> +#include <linux/serial_core.h>
-> +#include <plat/regs-serial.h> /* for s3c24xx_uart_devs */
-> +
->  /* clock information */
-> 
->  static LIST_HEAD(clocks);
-> @@ -65,6 +68,26 @@ static int clk_null_enable(struct clk *clk, int enable)
->  	return 0;
->  }
-> 
-> +static int dev_is_s3c_uart(struct device *dev)
-> +{
-> +	struct platform_device **pdev = s3c24xx_uart_devs;
-> +	int i;
-> +	for (i=0; i<ARRAY_SIZE(s3c24xx_uart_devs); i++, pdev++)
-> +		if (*pdev && dev == &(*pdev)->dev)
-> +			return 1;
-> +	return 0;
-> +}
-> +
-> +/* Serial drivers call get_clock() very early, before platform bus
-> +   has been set up, this requires a special check to let them get
-> +   a proper clock */
-> +
-> +static int dev_is_platform_device(struct device *dev)
-> +{
-> +	return dev->bus == &platform_bus_type ||
-> +	       (dev->bus == NULL && dev_is_s3c_uart(dev));
-> +}
-> +
->  /* Clock API calls */
-> 
->  struct clk *clk_get(struct device *dev, const char *id)
-> @@ -73,7 +96,7 @@ struct clk *clk_get(struct device *dev, const char *id)
->  	struct clk *clk = ERR_PTR(-ENOENT);
->  	int idno;
-> 
-> -	if (dev == NULL || dev->bus != &platform_bus_type)
-> +	if (dev == NULL || !dev_is_platform_device(dev))
->  		idno = -1;
->  	else
->  		idno = to_platform_device(dev)->id;
-> --
-Hi,
+From: Changhwan Youn <chaos.youn@samsung.com>
 
-It works well on SMDKV310 and SMDKC210 with your patch.
-But I'm not sure whether this is real solution for this situation.
+S3C2410_RTCCON of TYPE_S3C64XX RTC should be read/written by
+readw and writew, because TYPE_S3C64XX RTC uses bit 8 and 9.
+And TYPE_S3C2410 RTC also can access it by readw and writew.
 
-Anyway I think we need to sort out this stuff in future time.
+Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+[atul.dahiya@samsung.com: tested on smdk2416]
+Tested-by: Atul Dahiya <atul.dahiya@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Ben Dooks <ben-linux@fluff.org>
+---
+Changes since v1:
+- Checked this patch on s3c24xx
+- Added some missing modifications in s3c_rtc_enable()
 
-Ben,
-If you're ok, I will apply this.
+ drivers/rtc/rtc-s3c.c |   36 ++++++++++++++++++------------------
+ 1 files changed, 18 insertions(+), 18 deletions(-)
 
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index f57a87f..4a0b875 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -100,7 +100,7 @@ static int s3c_rtc_setpie(struct device *dev, int enabled)
+ 	spin_lock_irq(&s3c_rtc_pie_lock);
+ 
+ 	if (s3c_rtc_cpu_type == TYPE_S3C64XX) {
+-		tmp = readb(s3c_rtc_base + S3C2410_RTCCON);
++		tmp = readw(s3c_rtc_base + S3C2410_RTCCON);
+ 		tmp &= ~S3C64XX_RTCCON_TICEN;
+ 
+ 		if (enabled)
+@@ -318,7 +318,7 @@ static int s3c_rtc_proc(struct device *dev, struct seq_file *seq)
+ 	unsigned int ticnt;
+ 
+ 	if (s3c_rtc_cpu_type == TYPE_S3C64XX) {
+-		ticnt = readb(s3c_rtc_base + S3C2410_RTCCON);
++		ticnt = readw(s3c_rtc_base + S3C2410_RTCCON);
+ 		ticnt &= S3C64XX_RTCCON_TICEN;
+ 	} else {
+ 		ticnt = readb(s3c_rtc_base + S3C2410_TICNT);
+@@ -391,11 +391,11 @@ static void s3c_rtc_enable(struct platform_device *pdev, int en)
+ 		return;
+ 
+ 	if (!en) {
+-		tmp = readb(base + S3C2410_RTCCON);
++		tmp = readw(base + S3C2410_RTCCON);
+ 		if (s3c_rtc_cpu_type == TYPE_S3C64XX)
+ 			tmp &= ~S3C64XX_RTCCON_TICEN;
+ 		tmp &= ~S3C2410_RTCCON_RTCEN;
+-		writeb(tmp, base + S3C2410_RTCCON);
++		writew(tmp, base + S3C2410_RTCCON);
+ 
+ 		if (s3c_rtc_cpu_type == TYPE_S3C2410) {
+ 			tmp = readb(base + S3C2410_TICNT);
+@@ -405,25 +405,25 @@ static void s3c_rtc_enable(struct platform_device *pdev, int en)
+ 	} else {
+ 		/* re-enable the device, and check it is ok */
+ 
+-		if ((readb(base+S3C2410_RTCCON) & S3C2410_RTCCON_RTCEN) == 0){
++		if ((readw(base+S3C2410_RTCCON) & S3C2410_RTCCON_RTCEN) == 0){
+ 			dev_info(&pdev->dev, "rtc disabled, re-enabling\n");
+ 
+-			tmp = readb(base + S3C2410_RTCCON);
+-			writeb(tmp|S3C2410_RTCCON_RTCEN, base+S3C2410_RTCCON);
++			tmp = readw(base + S3C2410_RTCCON);
++			writew(tmp|S3C2410_RTCCON_RTCEN, base+S3C2410_RTCCON);
+ 		}
+ 
+-		if ((readb(base + S3C2410_RTCCON) & S3C2410_RTCCON_CNTSEL)){
++		if ((readw(base + S3C2410_RTCCON) & S3C2410_RTCCON_CNTSEL)){
+ 			dev_info(&pdev->dev, "removing RTCCON_CNTSEL\n");
+ 
+-			tmp = readb(base + S3C2410_RTCCON);
+-			writeb(tmp& ~S3C2410_RTCCON_CNTSEL, base+S3C2410_RTCCON);
++			tmp = readw(base + S3C2410_RTCCON);
++			writew(tmp& ~S3C2410_RTCCON_CNTSEL, base+S3C2410_RTCCON);
+ 		}
+ 
+-		if ((readb(base + S3C2410_RTCCON) & S3C2410_RTCCON_CLKRST)){
++		if ((readw(base + S3C2410_RTCCON) & S3C2410_RTCCON_CLKRST)){
+ 			dev_info(&pdev->dev, "removing RTCCON_CLKRST\n");
+ 
+-			tmp = readb(base + S3C2410_RTCCON);
+-			writeb(tmp & ~S3C2410_RTCCON_CLKRST, base+S3C2410_RTCCON);
++			tmp = readw(base + S3C2410_RTCCON);
++			writew(tmp & ~S3C2410_RTCCON_CLKRST, base+S3C2410_RTCCON);
+ 		}
+ 	}
+ }
+@@ -514,8 +514,8 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
+ 
+ 	s3c_rtc_enable(pdev, 1);
+ 
+- 	pr_debug("s3c2410_rtc: RTCCON=%02x\n",
+-		 readb(s3c_rtc_base + S3C2410_RTCCON));
++	pr_debug("s3c2410_rtc: RTCCON=%02x\n",
++		 readw(s3c_rtc_base + S3C2410_RTCCON));
+ 
+ 	device_init_wakeup(&pdev->dev, 1);
+ 
+@@ -578,7 +578,7 @@ static int s3c_rtc_suspend(struct platform_device *pdev, pm_message_t state)
+ 	/* save TICNT for anyone using periodic interrupts */
+ 	ticnt_save = readb(s3c_rtc_base + S3C2410_TICNT);
+ 	if (s3c_rtc_cpu_type == TYPE_S3C64XX) {
+-		ticnt_en_save = readb(s3c_rtc_base + S3C2410_RTCCON);
++		ticnt_en_save = readw(s3c_rtc_base + S3C2410_RTCCON);
+ 		ticnt_en_save &= S3C64XX_RTCCON_TICEN;
+ 	}
+ 	s3c_rtc_enable(pdev, 0);
+@@ -596,8 +596,8 @@ static int s3c_rtc_resume(struct platform_device *pdev)
+ 	s3c_rtc_enable(pdev, 1);
+ 	writeb(ticnt_save, s3c_rtc_base + S3C2410_TICNT);
+ 	if (s3c_rtc_cpu_type == TYPE_S3C64XX && ticnt_en_save) {
+-		tmp = readb(s3c_rtc_base + S3C2410_RTCCON);
+-		writeb(tmp | ticnt_en_save, s3c_rtc_base + S3C2410_RTCCON);
++		tmp = readw(s3c_rtc_base + S3C2410_RTCCON);
++		writew(tmp | ticnt_en_save, s3c_rtc_base + S3C2410_RTCCON);
+ 	}
+ 
+ 	if (device_may_wakeup(&pdev->dev))
+-- 
+1.6.2.5
