@@ -1,73 +1,76 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 3/7] ARM: Samsung: Use the correct I2C2 interrupt
-Date: Thu, 07 Oct 2010 10:29:44 +0900
-Message-ID: <004301cb65bf$225c62f0$671528d0$%kim@samsung.com>
-References: <20100930044832.GA16905@july>
+From: Seungwhan Youn <claude.youn@gmail.com>
+Subject: Re: [alsa-devel] [PATCH 10/10] ASoC: SAMSUNG: Add Machine driver for
+ S/PDIF PCM audio
+Date: Thu, 7 Oct 2010 10:33:50 +0900
+Message-ID: <AANLkTikf4CAWm49Q_AfcfiQDBQUVcE_BC-a_4F7d8xOz@mail.gmail.com>
+References: <1286191550-22197-1-git-send-email-sw.youn@samsung.com>
+	<1286194583-19937-1-git-send-email-sw.youn@samsung.com>
+	<20101004224159.GA4972@opensource.wolfsonmicro.com>
+	<AANLkTi=FHGw+qzL507K546vr8zEZgXBP3Mk=O__Rpd4H@mail.gmail.com>
+	<AANLkTincwL_nQAmu7Dcmht0FV43BiN7OoecE_60QJhS2@mail.gmail.com>
+	<20101005044304.GA26509@opensource.wolfsonmicro.com>
+	<AANLkTi=x_fi5HTBBmMUv8YTxSdbgcnJ=ZbacJQj6rcgf@mail.gmail.com>
+	<20101005055937.GA19989@opensource.wolfsonmicro.com>
+	<AANLkTimi1t5S2XWdUFzaPttD4Hywm0SLt5CvR1YnVOjj@mail.gmail.com>
+	<AANLkTin4skx+aiL2FXwWO1ekKqT2YWDd3SM1H5WnGkhC@mail.gmail.com>
+	<00c401cb6520$9484ef90$bd8eceb0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:59913 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756371Ab0JGB3a (ORCPT
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:39350 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759655Ab0JGBeB convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Oct 2010 21:29:30 -0400
-Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L9W00FF5C54HI50@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 07 Oct 2010 10:29:28 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L9W0017HC53UM@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 07 Oct 2010 10:29:28 +0900 (KST)
-In-reply-to: <20100930044832.GA16905@july>
-Content-language: ko
+	Wed, 6 Oct 2010 21:34:01 -0400
+Received: by wwj40 with SMTP id 40so244647wwj.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Oct 2010 18:34:00 -0700 (PDT)
+In-Reply-To: <00c401cb6520$9484ef90$bd8eceb0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kyungmin Park' <kmpark@infradead.org>, linux-arm-kernel@lists.infradead.org
-Cc: ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, Jassi Brar <jassisinghbrar@gmail.com>, lrg@slimlogic.co.uk, Mark Brown <broonie@opensource.wolfsonmicro.com>, jassi.brar@samsung.com
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Seungwhan Youn <sw.youn@samsung.com>
 
-Kyungmin Park wrote:
-> 
-> From: Kyungmin Park <kyungmin.park@samsung.com>
-> 
-> Use the correct I2C2 interrupt.
-> 
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/plat-samsung/dev-i2c2.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/dev-i2c2.c
-b/arch/arm/plat-samsung/dev-i2c2.c
-> index 07036de..ff4ba69 100644
-> --- a/arch/arm/plat-samsung/dev-i2c2.c
-> +++ b/arch/arm/plat-samsung/dev-i2c2.c
-> @@ -32,8 +32,8 @@ static struct resource s3c_i2c_resource[] = {
->  		.flags = IORESOURCE_MEM,
->  	},
->  	[1] = {
-> -		.start = IRQ_CAN0,
-> -		.end   = IRQ_CAN0,
-> +		.start = IRQ_IIC2,
-> +		.end   = IRQ_IIC2,
->  		.flags = IORESOURCE_IRQ,
->  	},
->  };
-> --
+Dear Maintainers,
 
-Hi,
+>> >> plat-samsung would probably be fine for that also - create a file=
+ called
+>> >> common-smdk or something. =C2=A0Some other things have gone for a=
+ plat-smdk
+>> >> style approach too, though I'm not sure how tasteful I find that
+>> >> personally.
+>> > Even though I would personally like to have EPLL control for a dev=
+ice
+>> > in machine specific manner as part of its driver, I accept your op=
+inion.
+>> >
+>> > Claude, let us create one arch/arm/plat-samsung/smdk.c to do commo=
+n
+>> > stuff for SMKDs like EPLL control. What do you think ?
+>>
+>> Actually if we add this file on plat-samsung, board-init will be
+>> separated two-part, one is machine(board) specific and other is all
+>> smdk specific. So, If it doesn't make confusion to other guys who
+>> wants to add settings for their features on board-init, it looks goo=
+d
+>> to me. But I think that we also have to listen Mr. Ben Dooks and Mr.
+>> Kukjin Kim's opinion about this before we get a conclusion.
+>
+> Hi all,
+>
+> I think, basically it'd better if could control clock stuff in each d=
+river for it when need it such as clk_get, clk_enable and so on.
+> Actually there is no policy/protection for EPLL usage in plat-samsung=
+ or plat-s5p now and need to sort out other similar case for it also...=
+=2Eso in my opinion, right now to proceed with the current style is hel=
+pful to me and will consider it in the future.
+>
 
-Looks ok...
-In my opinion, could you please merge your 2nd and this patch to one,
-changing I2C2 interrupt name?
-And need to add s5pc100's I2C2 interrupt name changing in there.
+I wander to know that this is a last discussion, or more, and also
+know about finial decision. Of course, if we didn't get reached to the
+conclusion, we can talk more.
 
-Thanks.
+Can you give me a hand to finish this? :-)
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+with Best Regards,
+Claude
