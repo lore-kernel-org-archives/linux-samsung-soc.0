@@ -1,179 +1,141 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 1/4 v3] V4L/DVB: s5p-fimc: Register definition cleanup
-Date: Thu, 07 Oct 2010 16:43:59 +0200
-Message-ID: <1286462642-28211-2-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 3/4 v3] V4L/DVB: s5p-fimc: Do not lock both capture and output
+ buffer queue in s_fmt
+Date: Thu, 07 Oct 2010 16:44:01 +0200
+Message-ID: <1286462642-28211-4-git-send-email-s.nawrocki@samsung.com>
 References: <1286462642-28211-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:56320 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754227Ab0JGOoJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Oct 2010 10:44:09 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1286462642-28211-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Add MIPI CSI format definitions, prepare DMA address
-definitions for interlaced input frame mode.
+It is not necessary to lock both capture and output buffer queue while
+setting format for single queue.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-reg.c  |    6 +-
- drivers/media/video/s5p-fimc/regs-fimc.h |   61 ++++++++++++-----------------
- 2 files changed, 28 insertions(+), 39 deletions(-)
+ drivers/media/video/s5p-fimc/fimc-core.c |   69 +++++++++++++----------------
+ 1 files changed, 31 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-reg.c b/drivers/media/video/s5p-fimc/fimc-reg.c
-index 5570f1c..70f29c5 100644
---- a/drivers/media/video/s5p-fimc/fimc-reg.c
-+++ b/drivers/media/video/s5p-fimc/fimc-reg.c
-@@ -507,9 +507,9 @@ void fimc_hw_set_input_addr(struct fimc_dev *dev, struct fimc_addr *paddr)
- 	cfg |= S5P_CIREAL_ISIZE_ADDR_CH_DIS;
- 	writel(cfg, dev->regs + S5P_CIREAL_ISIZE);
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
+index fe46aea..a83977f 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.c
++++ b/drivers/media/video/s5p-fimc/fimc-core.c
+@@ -743,8 +743,9 @@ static int fimc_m2m_try_fmt(struct file *file, void *priv,
+ static int fimc_m2m_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
+ {
+ 	struct fimc_ctx *ctx = priv;
+-	struct v4l2_device *v4l2_dev = &ctx->fimc_dev->m2m.v4l2_dev;
+-	struct videobuf_queue *src_vq, *dst_vq;
++	struct fimc_dev *fimc = ctx->fimc_dev;
++	struct v4l2_device *v4l2_dev = &fimc->m2m.v4l2_dev;
++	struct videobuf_queue *vq;
+ 	struct fimc_frame *frame;
+ 	struct v4l2_pix_format *pix;
+ 	unsigned long flags;
+@@ -756,69 +757,61 @@ static int fimc_m2m_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
+ 	if (ret)
+ 		return ret;
  
--	writel(paddr->y, dev->regs + S5P_CIIYSA0);
--	writel(paddr->cb, dev->regs + S5P_CIICBSA0);
--	writel(paddr->cr, dev->regs + S5P_CIICRSA0);
-+	writel(paddr->y, dev->regs + S5P_CIIYSA(0));
-+	writel(paddr->cb, dev->regs + S5P_CIICBSA(0));
-+	writel(paddr->cr, dev->regs + S5P_CIICRSA(0));
+-	mutex_lock(&ctx->fimc_dev->lock);
++	if (mutex_lock_interruptible(&fimc->lock))
++		return -ERESTARTSYS;
  
- 	cfg &= ~S5P_CIREAL_ISIZE_ADDR_CH_DIS;
- 	writel(cfg, dev->regs + S5P_CIREAL_ISIZE);
-diff --git a/drivers/media/video/s5p-fimc/regs-fimc.h b/drivers/media/video/s5p-fimc/regs-fimc.h
-index a3cfe82..9e83315 100644
---- a/drivers/media/video/s5p-fimc/regs-fimc.h
-+++ b/drivers/media/video/s5p-fimc/regs-fimc.h
-@@ -11,10 +11,6 @@
- #ifndef REGS_FIMC_H_
- #define REGS_FIMC_H_
+-	src_vq = v4l2_m2m_get_src_vq(ctx->m2m_ctx);
+-	dst_vq = v4l2_m2m_get_dst_vq(ctx->m2m_ctx);
++	vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
++	mutex_lock(&vq->vb_lock);
  
--#define S5P_CIOYSA(__x)			(0x18 + (__x) * 4)
--#define S5P_CIOCBSA(__x)		(0x28 + (__x) * 4)
--#define S5P_CIOCRSA(__x)		(0x38 + (__x) * 4)
+-	mutex_lock(&src_vq->vb_lock);
+-	mutex_lock(&dst_vq->vb_lock);
++	if (videobuf_queue_is_busy(vq)) {
++		v4l2_err(v4l2_dev, "%s: queue (%d) busy\n", __func__, f->type);
++		ret = -EBUSY;
++		goto sf_out;
++	}
+ 
++	spin_lock_irqsave(&ctx->slock, flags);
+ 	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT) {
+-		if (videobuf_queue_is_busy(src_vq)) {
+-			v4l2_err(v4l2_dev, "%s queue busy\n", __func__);
+-			ret = -EBUSY;
+-			goto s_fmt_out;
+-		}
+ 		frame = &ctx->s_frame;
+-		spin_lock_irqsave(&ctx->slock, flags);
+ 		ctx->state |= FIMC_SRC_FMT;
+-		spin_unlock_irqrestore(&ctx->slock, flags);
 -
- /* Input source format */
- #define S5P_CISRCFMT			0x00
- #define S5P_CISRCFMT_ITU601_8BIT	(1 << 31)
-@@ -28,22 +24,21 @@
+ 	} else if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE) {
+-		if (videobuf_queue_is_busy(dst_vq)) {
+-			v4l2_err(v4l2_dev, "%s queue busy\n", __func__);
+-			ret = -EBUSY;
+-			goto s_fmt_out;
+-		}
+ 		frame = &ctx->d_frame;
+-		spin_lock_irqsave(&ctx->slock, flags);
+ 		ctx->state |= FIMC_DST_FMT;
+-		spin_unlock_irqrestore(&ctx->slock, flags);
+ 	} else {
++		spin_unlock_irqrestore(&ctx->slock, flags);
+ 		v4l2_err(&ctx->fimc_dev->m2m.v4l2_dev,
+ 			 "Wrong buffer/video queue type (%d)\n", f->type);
+ 		ret = -EINVAL;
+-		goto s_fmt_out;
++		goto sf_out;
+ 	}
++	spin_unlock_irqrestore(&ctx->slock, flags);
  
- /* Window offset */
- #define S5P_CIWDOFST			0x04
--#define S5P_CIWDOFST_WINOFSEN		(1 << 31)
-+#define S5P_CIWDOFST_OFF_EN		(1 << 31)
- #define S5P_CIWDOFST_CLROVFIY		(1 << 30)
- #define S5P_CIWDOFST_CLROVRLB		(1 << 29)
--#define S5P_CIWDOFST_WINHOROFST_MASK	(0x7ff << 16)
-+#define S5P_CIWDOFST_HOROFF_MASK	(0x7ff << 16)
- #define S5P_CIWDOFST_CLROVFICB		(1 << 15)
- #define S5P_CIWDOFST_CLROVFICR		(1 << 14)
--#define S5P_CIWDOFST_WINHOROFST(x)	((x) << 16)
--#define S5P_CIWDOFST_WINVEROFST(x)	((x) << 0)
--#define S5P_CIWDOFST_WINVEROFST_MASK	(0xfff << 0)
-+#define S5P_CIWDOFST_HOROFF(x)		((x) << 16)
-+#define S5P_CIWDOFST_VEROFF(x)		((x) << 0)
-+#define S5P_CIWDOFST_VEROFF_MASK	(0xfff << 0)
+ 	pix = &f->fmt.pix;
+ 	frame->fmt = find_format(f);
+ 	if (!frame->fmt) {
+ 		ret = -EINVAL;
+-		goto s_fmt_out;
++		goto sf_out;
+ 	}
  
- /* Global control */
- #define S5P_CIGCTRL			0x08
- #define S5P_CIGCTRL_SWRST		(1 << 31)
- #define S5P_CIGCTRL_CAMRST_A		(1 << 30)
- #define S5P_CIGCTRL_SELCAM_ITU_A	(1 << 29)
--#define S5P_CIGCTRL_SELCAM_ITU_MASK	(1 << 29)
- #define S5P_CIGCTRL_TESTPAT_NORMAL	(0 << 27)
- #define S5P_CIGCTRL_TESTPAT_COLOR_BAR	(1 << 27)
- #define S5P_CIGCTRL_TESTPAT_HOR_INC	(2 << 27)
-@@ -61,6 +56,8 @@
- #define S5P_CIGCTRL_SHDW_DISABLE	(1 << 12)
- #define S5P_CIGCTRL_SELCAM_MIPI_A	(1 << 7)
- #define S5P_CIGCTRL_CAMIF_SELWB		(1 << 6)
-+/* 0 - ITU601; 1 - ITU709 */
-+#define S5P_CIGCTRL_CSC_ITU601_709	(1 << 5)
- #define S5P_CIGCTRL_INVPOLHSYNC		(1 << 4)
- #define S5P_CIGCTRL_SELCAM_MIPI		(1 << 3)
- #define S5P_CIGCTRL_INTERLACE		(1 << 0)
-@@ -72,23 +69,10 @@
- #define S5P_CIWDOFST2_HOROFF(x)		((x) << 16)
- #define S5P_CIWDOFST2_VEROFF(x)		((x) << 0)
+-	frame->f_width = pix->bytesperline * 8 / frame->fmt->depth;
+-	frame->f_height = pix->sizeimage/pix->bytesperline;
+-	frame->width = pix->width;
+-	frame->height = pix->height;
+-	frame->o_width = pix->width;
++	frame->f_width	= pix->bytesperline * 8 / frame->fmt->depth;
++	frame->f_height	= pix->height;
++	frame->width	= pix->width;
++	frame->height	= pix->height;
++	frame->o_width	= pix->width;
+ 	frame->o_height = pix->height;
+-	frame->offs_h = 0;
+-	frame->offs_v = 0;
+-	frame->size = (pix->width * pix->height * frame->fmt->depth) >> 3;
+-	src_vq->field = dst_vq->field = pix->field;
++	frame->offs_h	= 0;
++	frame->offs_v	= 0;
++	frame->size	= (pix->width * pix->height * frame->fmt->depth) >> 3;
++	vq->field	= pix->field;
++
+ 	spin_lock_irqsave(&ctx->slock, flags);
+ 	ctx->state |= FIMC_PARAMS;
+ 	spin_unlock_irqrestore(&ctx->slock, flags);
  
--/* Output DMA Y plane start address */
--#define S5P_CIOYSA1			0x18
--#define S5P_CIOYSA2			0x1c
--#define S5P_CIOYSA3			0x20
--#define S5P_CIOYSA4			0x24
--
--/* Output DMA Cb plane start address */
--#define S5P_CIOCBSA1			0x28
--#define S5P_CIOCBSA2			0x2c
--#define S5P_CIOCBSA3			0x30
--#define S5P_CIOCBSA4			0x34
--
--/* Output DMA Cr plane start address */
--#define S5P_CIOCRSA1			0x38
--#define S5P_CIOCRSA2			0x3c
--#define S5P_CIOCRSA3			0x40
--#define S5P_CIOCRSA4			0x44
-+/* Output DMA Y/Cb/Cr plane start addresses */
-+#define S5P_CIOYSA(n)			(0x18 + (n) * 4)
-+#define S5P_CIOCBSA(n)			(0x28 + (n) * 4)
-+#define S5P_CIOCRSA(n)			(0x38 + (n) * 4)
+-	dbg("f_width= %d, f_height= %d", frame->f_width, frame->f_height);
++	dbg("f_w: %d, f_h: %d", frame->f_width, frame->f_height);
  
- /* Target image format */
- #define S5P_CITRGFMT			0x48
-@@ -168,6 +152,8 @@
- #define S5P_CISTATUS_OVFICB		(1 << 30)
- #define S5P_CISTATUS_OVFICR		(1 << 29)
- #define S5P_CISTATUS_VSYNC		(1 << 28)
-+#define S5P_CISTATUS_FRAMECNT_MASK	(3 << 26)
-+#define S5P_CISTATUS_FRAMECNT_SHIFT	26
- #define S5P_CISTATUS_WINOFF_EN		(1 << 25)
- #define S5P_CISTATUS_IMGCPT_EN		(1 << 22)
- #define S5P_CISTATUS_IMGCPT_SCEN	(1 << 21)
-@@ -206,10 +192,10 @@
- #define S5P_CIIMGEFF_PAT_CB(x)		((x) << 13)
- #define S5P_CIIMGEFF_PAT_CR(x)		((x) << 0)
+-s_fmt_out:
+-	mutex_unlock(&dst_vq->vb_lock);
+-	mutex_unlock(&src_vq->vb_lock);
+-	mutex_unlock(&ctx->fimc_dev->lock);
++sf_out:
++	mutex_unlock(&vq->vb_lock);
++	mutex_unlock(&fimc->lock);
+ 	return ret;
+ }
  
--/* Input DMA Y/Cb/Cr plane start address 0 */
--#define S5P_CIIYSA0			0xd4
--#define S5P_CIICBSA0			0xd8
--#define S5P_CIICRSA0			0xdc
-+/* Input DMA Y/Cb/Cr plane start address 0/1 */
-+#define S5P_CIIYSA(n)			(0xd4 + (n) * 0x70)
-+#define S5P_CIICBSA(n)			(0xd8 + (n) * 0x70)
-+#define S5P_CIICRSA(n)			(0xdc + (n) * 0x70)
- 
- /* Real input DMA image size */
- #define S5P_CIREAL_ISIZE		0xf8
-@@ -250,11 +236,6 @@
- #define S5P_MSCTRL_ENVID		(1 << 0)
- #define S5P_MSCTRL_FRAME_COUNT(x)	((x) << 24)
- 
--/* Input DMA Y/Cb/Cr plane start address 1 */
--#define S5P_CIIYSA1			0x144
--#define S5P_CIICBSA1			0x148
--#define S5P_CIICRSA1			0x14c
--
- /* Output DMA Y/Cb/Cr offset */
- #define S5P_CIOYOFF			0x168
- #define S5P_CIOCBOFF			0x16c
-@@ -289,5 +270,13 @@
- 
- /* MIPI CSI image format */
- #define S5P_CSIIMGFMT			0x194
-+#define S5P_CSIIMGFMT_YCBCR422_8BIT	0x1e
-+#define S5P_CSIIMGFMT_RAW8		0x2a
-+#define S5P_CSIIMGFMT_RAW10		0x2b
-+#define S5P_CSIIMGFMT_RAW12		0x2c
-+#define S5P_CSIIMGFMT_USER1		0x30
-+#define S5P_CSIIMGFMT_USER2		0x31
-+#define S5P_CSIIMGFMT_USER3		0x32
-+#define S5P_CSIIMGFMT_USER4		0x33
- 
- #endif /* REGS_FIMC_H_ */
 -- 
 1.7.3.1
