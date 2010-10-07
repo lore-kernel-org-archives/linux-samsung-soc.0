@@ -1,78 +1,76 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [rtc-linux] RE: [PATCH 5/5] rtc: rtc-s3c: Fix debug message format
- on RTC
-Date: Fri, 08 Oct 2010 08:46:47 +0900
-Message-ID: <00c301cb6679$ea0679c0$be136d40$%kim@samsung.com>
-References: <1283837381-9575-1-git-send-email-kgene.kim@samsung.com>
- <1283837381-9575-6-git-send-email-kgene.kim@samsung.com>
- <4C86CAC1.2050205@fluff.org> <000601cb4fbb$f9fbab90$edf302b0$%kim@samsung.com>
- <AANLkTi=Jb04ySn1WaGktY-hJQQoGvRpr6kz9DcSHrBZA@mail.gmail.com>
- <000f01cb50dc$ba4a74a0$2edf5de0$%kim@samsung.com>
- <20100910162354.9b96f1df.akpm@linux-foundation.org>
- <00c101cb6675$bb8e67f0$32ab37d0$%kim@samsung.com>
- <20101007162856.38b184ea.akpm@linux-foundation.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Subject: [PATCH 2/6] rtc: rtc-s3c: Fix setting missing field of getalarm
+Date: Fri,  8 Oct 2010 08:41:15 +0900
+Message-ID: <1286494879-2932-3-git-send-email-kgene.kim@samsung.com>
+References: <1286494879-2932-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:43309 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750992Ab0JGXqg (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:46159 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751655Ab0JGXt5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Oct 2010 19:46:36 -0400
-Received: from epmmp2 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L9Y00F5S21I5M10@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 08 Oct 2010 08:46:30 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L9Y006UF21IRI@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 08 Oct 2010 08:46:30 +0900 (KST)
-In-reply-to: <20101007162856.38b184ea.akpm@linux-foundation.org>
-Content-language: ko
+	Thu, 7 Oct 2010 19:49:57 -0400
+In-Reply-To: <1286494879-2932-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Andrew Morton' <akpm@linux-foundation.org>
-Cc: 'Wan ZongShun' <mcuos.com@gmail.com>, rtc-linux@googlegroups.com, p_gortmaker@yahoo.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Ben Dooks' <ben-linux@fluff.org>, a.zummo@towertech.it
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com
+Cc: ben-linux@fluff.org, p_gortmaker@yahoo.com, a.zummo@towertech.it, akpm@linux-foundation.org, Changhwan Youn <chaos.youn@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Andrew Morton wrote:
-> 
-> On Fri, 08 Oct 2010 08:16:44 +0900
-> Kukjin Kim <kgene.kim@samsung.com> wrote:
-> 
-> > Updated patch 1/5 has been tested on S3C24XX and its working fine.
-> > Its remained issue is that Ben was wondering its working on S3C24XX.
-> >
-> > And about the patch 4/5, I did address comments from Ben Dooks and Wan
-> > ZongShun.
-> 
-> ok...
-> 
-> > So could you please handle this series?
-> > If any problems, please kindly let me know.
-> >
-> > They are since commit cb655d0f3d57c23db51b981648e452988c0223f9:
-> >   Linux 2.6.36-rc7 (2010-10-06 13:39:52 -0700)
-> >
-> > are available in the git repository at:
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > next-rtc-s3c
-> 
-> Can you please email them all out in the old-fashioned way?  Because a)
-> I don't manage patches with git and b) that way people will actually
-> look at the code.
-> 
-Sure...it's no problem.
-You mean...old-fashioned way is re-sending patches to mailinglist including
-Cc'ed you?
+From: Changhwan Youn <chaos.youn@samsung.com>
 
-> Thanks.
+Current s3c_rtc_getalarm() sets missing field of alarm time with 0xff.
+But this value should be -1 according to drivers/rtc/interface.c.
 
-Thanks :-)
+Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Acked-by: Ben Dooks <ben-linux@fluff.org>
+---
+ drivers/rtc/rtc-s3c.c |   12 ++++++------
+ 1 files changed, 6 insertions(+), 6 deletions(-)
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index 4a0b875..fd08876 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -242,34 +242,34 @@ static int s3c_rtc_getalarm(struct device *dev, struct rtc_wkalrm *alrm)
+ 	if (alm_en & S3C2410_RTCALM_SECEN)
+ 		alm_tm->tm_sec = bcd2bin(alm_tm->tm_sec);
+ 	else
+-		alm_tm->tm_sec = 0xff;
++		alm_tm->tm_sec = -1;
+ 
+ 	if (alm_en & S3C2410_RTCALM_MINEN)
+ 		alm_tm->tm_min = bcd2bin(alm_tm->tm_min);
+ 	else
+-		alm_tm->tm_min = 0xff;
++		alm_tm->tm_min = -1;
+ 
+ 	if (alm_en & S3C2410_RTCALM_HOUREN)
+ 		alm_tm->tm_hour = bcd2bin(alm_tm->tm_hour);
+ 	else
+-		alm_tm->tm_hour = 0xff;
++		alm_tm->tm_hour = -1;
+ 
+ 	if (alm_en & S3C2410_RTCALM_DAYEN)
+ 		alm_tm->tm_mday = bcd2bin(alm_tm->tm_mday);
+ 	else
+-		alm_tm->tm_mday = 0xff;
++		alm_tm->tm_mday = -1;
+ 
+ 	if (alm_en & S3C2410_RTCALM_MONEN) {
+ 		alm_tm->tm_mon = bcd2bin(alm_tm->tm_mon);
+ 		alm_tm->tm_mon -= 1;
+ 	} else {
+-		alm_tm->tm_mon = 0xff;
++		alm_tm->tm_mon = -1;
+ 	}
+ 
+ 	if (alm_en & S3C2410_RTCALM_YEAREN)
+ 		alm_tm->tm_year = bcd2bin(alm_tm->tm_year);
+ 	else
+-		alm_tm->tm_year = 0xffff;
++		alm_tm->tm_year = -1;
+ 
+ 	return 0;
+ }
+-- 
+1.6.2.5
