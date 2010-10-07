@@ -1,12 +1,12 @@
 From: Jongsun Han <jongsun.han@samsung.com>
-Subject: [PATCH 3/3] ARM: S5PV310: Add I2C(0,1,3,4,5,6,7) support
-Date: Thu,  7 Oct 2010 20:15:32 +0900
-Message-ID: <1286450132-7985-4-git-send-email-jongsun.han@samsung.com>
+Subject: [PATCH 1/3] ARM: SAMSUNG: Add a helper function for I2C(3,4,5,6,7) platform devices
+Date: Thu,  7 Oct 2010 20:15:30 +0900
+Message-ID: <1286450132-7985-2-git-send-email-jongsun.han@samsung.com>
 References: <1286450132-7985-1-git-send-email-jongsun.han@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:36987 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:36990 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752210Ab0JGLYs (ORCPT
+	with ESMTP id S1752434Ab0JGLYs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Thu, 7 Oct 2010 07:24:48 -0400
 In-Reply-To: <1286450132-7985-1-git-send-email-jongsun.han@samsung.com>
@@ -15,392 +15,571 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: kgene.kim@samsung.com, ben-linux@fluff.org, Jongsun Han <jongsun.han@samsung.com>
 
-This patch adds the I2C support for S5PV310.
+This patch adds a helper function for I2C(3,4,5,6,7) in dev-i2c.c.
 
-S5PV310 supports 8 I2C channels.
-mach-smdkv310.c doesn't support I2C(2,3) because the GPIOs of these
-I2C channels are used by UART channel(1,2)
-All I2C platform helper functions are moved to setup-i2c.c and
-setup-i2c(0,1,2).c files are removed.
+I2C(0,1,2) helper functions and definitions are moved to dev-i2c.c and
+dev-i2c(0,1,2).c are removed.
 
 Signed-off-by: Jongsun Han <jongsun.han@samsung.com>
 ---
- arch/arm/Kconfig                      |    1 +
- arch/arm/mach-s5pv310/Kconfig         |   40 +++++++++++++
- arch/arm/mach-s5pv310/Makefile        |    5 +-
- arch/arm/mach-s5pv310/mach-smdkv310.c |   39 +++++++++++++
- arch/arm/mach-s5pv310/setup-i2c.c     |   98 +++++++++++++++++++++++++++++++++
- arch/arm/mach-s5pv310/setup-i2c0.c    |   28 ---------
- arch/arm/mach-s5pv310/setup-i2c1.c    |   25 --------
- arch/arm/mach-s5pv310/setup-i2c2.c    |   25 --------
- 8 files changed, 179 insertions(+), 82 deletions(-)
- create mode 100644 arch/arm/mach-s5pv310/setup-i2c.c
- delete mode 100644 arch/arm/mach-s5pv310/setup-i2c0.c
- delete mode 100644 arch/arm/mach-s5pv310/setup-i2c1.c
- delete mode 100644 arch/arm/mach-s5pv310/setup-i2c2.c
+ arch/arm/plat-samsung/Kconfig             |   25 +++
+ arch/arm/plat-samsung/Makefile            |    4 +-
+ arch/arm/plat-samsung/dev-i2c.c           |  226 +++++++++++++++++++++++++++++
+ arch/arm/plat-samsung/dev-i2c0.c          |   72 ---------
+ arch/arm/plat-samsung/dev-i2c1.c          |   69 ---------
+ arch/arm/plat-samsung/dev-i2c2.c          |   70 ---------
+ arch/arm/plat-samsung/include/plat/devs.h |    1 +
+ arch/arm/plat-samsung/include/plat/iic.h  |    6 +
+ 8 files changed, 259 insertions(+), 214 deletions(-)
+ create mode 100644 arch/arm/plat-samsung/dev-i2c.c
+ delete mode 100644 arch/arm/plat-samsung/dev-i2c0.c
+ delete mode 100644 arch/arm/plat-samsung/dev-i2c1.c
+ delete mode 100644 arch/arm/plat-samsung/dev-i2c2.c
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 903ab04..8b489a8 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -738,6 +738,7 @@ config ARCH_S5PV310
- 	select GENERIC_CLOCKEVENTS
- 	select HAVE_S3C_RTC
- 	select HAVE_S3C2410_WATCHDOG
-+	select HAVE_S3C2410_I2C
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index 7c0bde7..701f390 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -180,6 +180,31 @@ config S3C_DEV_I2C2
  	help
- 	  Samsung S5PV310 series based systems
+ 	  Compile in platform device definitions for I2C channel 2
  
-diff --git a/arch/arm/mach-s5pv310/Kconfig b/arch/arm/mach-s5pv310/Kconfig
-index 9941852..dd92ef2 100644
---- a/arch/arm/mach-s5pv310/Kconfig
-+++ b/arch/arm/mach-s5pv310/Kconfig
-@@ -24,6 +24,31 @@ config S5PV310_SETUP_I2C2
++config S3C_DEV_I2C3
++	bool
++	help
++	  Compile in platform device definitions for I2C channel 3
++
++config S3C_DEV_I2C4
++	bool
++	help
++	  Compile in platform device definitions for I2C channel 4
++
++config S3C_DEV_I2C5
++	bool
++	help
++	  Compile in platform device definitions for I2C channel 5
++
++config S3C_DEV_I2C6
++	bool
++	help
++	  Compile in platform device definitions for I2C channel 6
++
++config S3C_DEV_I2C7
++	bool
++	help
++	  Compile in platform device definitions for I2C channel 7
++
+ config S3C_DEV_FB
+ 	bool
  	help
- 	  Common setup code for i2c bus 2.
- 
-+config S5PV310_SETUP_I2C3
-+	bool
-+	help
-+	  Common setup code for i2c bus 3.
-+
-+config S5PV310_SETUP_I2C4
-+	bool
-+	help
-+	  Common setup code for i2c bus 4.
-+
-+config S5PV310_SETUP_I2C5
-+	bool
-+	help
-+	  Common setup code for i2c bus 5.
-+
-+config S5PV310_SETUP_I2C6
-+	bool
-+	help
-+	  Common setup code for i2c bus 6.
-+
-+config S5PV310_SETUP_I2C7
-+	bool
-+	help
-+	  Common setup code for i2c bus 7.
-+
- # machine support
- 
- menu "S5PC210 Machines"
-@@ -51,8 +76,23 @@ menu "S5PV310 Machines"
- config MACH_SMDKV310
- 	bool "SMDKV310"
- 	select CPU_S5PV310
-+	select ARCH_SPARSEMEM_ENABLE
- 	select S3C_DEV_RTC
- 	select S3C_DEV_WDT
-+	select S3C_DEV_I2C1
-+	select S3C_DEV_I2C2
-+	select S3C_DEV_I2C3
-+	select S3C_DEV_I2C4
-+	select S3C_DEV_I2C5
-+	select S3C_DEV_I2C6
-+	select S3C_DEV_I2C7
-+	select S5PV310_SETUP_I2C1
-+	select S5PV310_SETUP_I2C2
-+	select S5PV310_SETUP_I2C3
-+	select S5PV310_SETUP_I2C4
-+	select S5PV310_SETUP_I2C5
-+	select S5PV310_SETUP_I2C6
-+	select S5PV310_SETUP_I2C7
- 	help
- 	  Machine support for Samsung SMDKV310
- 
-diff --git a/arch/arm/mach-s5pv310/Makefile b/arch/arm/mach-s5pv310/Makefile
-index d17c8c7..32ea94f 100644
---- a/arch/arm/mach-s5pv310/Makefile
-+++ b/arch/arm/mach-s5pv310/Makefile
-@@ -13,7 +13,7 @@ obj-				:=
- # Core support for S5PV310 system
- 
- obj-$(CONFIG_CPU_S5PV310)	+= cpu.o init.o clock.o irq-combiner.o
--obj-$(CONFIG_CPU_S5PV310)	+= setup-i2c0.o time.o
-+obj-$(CONFIG_CPU_S5PV310)	+= setup-i2c.o time.o
- obj-$(CONFIG_CPU_FREQ)		+= cpufreq.o
- 
- obj-$(CONFIG_SMP)		+= platsmp.o headsmp.o
-@@ -27,6 +27,3 @@ obj-$(CONFIG_MACH_SMDKV310)	+= mach-smdkv310.o
- obj-$(CONFIG_MACH_UNIVERSAL_C210)	+= mach-universal_c210.o
- 
- # device support
--
--obj-$(CONFIG_S5PV310_SETUP_I2C1)	+= setup-i2c1.o
--obj-$(CONFIG_S5PV310_SETUP_I2C2)	+= setup-i2c2.o
-diff --git a/arch/arm/mach-s5pv310/mach-smdkv310.c b/arch/arm/mach-s5pv310/mach-smdkv310.c
-index 9cb827d..404a7cc 100644
---- a/arch/arm/mach-s5pv310/mach-smdkv310.c
-+++ b/arch/arm/mach-s5pv310/mach-smdkv310.c
-@@ -9,6 +9,7 @@
- */
- 
- #include <linux/serial_core.h>
-+#include <linux/i2c.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
-@@ -18,6 +19,7 @@
- #include <plat/s5pv310.h>
- #include <plat/cpu.h>
- #include <plat/devs.h>
-+#include <plat/iic.h>
- 
- #include <mach/map.h>
- 
-@@ -69,6 +71,32 @@ static struct s3c2410_uartcfg smdkv310_uartcfgs[] __initdata = {
- static struct platform_device *smdkv310_devices[] __initdata = {
- 	&s3c_device_rtc,
- 	&s3c_device_wdt,
-+	&s3c_device_i2c0,
-+	&s3c_device_i2c1,
-+	&s3c_device_i2c[4],
-+	&s3c_device_i2c[5],
-+	&s3c_device_i2c[6],
-+	&s3c_device_i2c[7],
-+};
-+
-+static struct i2c_board_info i2c_devs0[] __initdata = {
-+	{ I2C_BOARD_INFO("24c128", 0x50), },	 /* Samsung S524AD0XD1 */
-+	{ I2C_BOARD_INFO("24c128", 0x52), },	 /* Samsung S524AD0XD1 */
-+};
-+
-+static struct i2c_board_info i2c_devs1[] __initdata = {
-+};
-+
-+static struct i2c_board_info i2c_devs4[] __initdata = {
-+};
-+
-+static struct i2c_board_info i2c_devs5[] __initdata = {
-+};
-+
-+static struct i2c_board_info i2c_devs6[] __initdata = {
-+};
-+
-+static struct i2c_board_info i2c_devs7[] __initdata = {
- };
- 
- static void __init smdkv310_map_io(void)
-@@ -84,6 +112,17 @@ static void __init smdkv310_machine_init(void)
- 	l2x0_init(S5P_VA_L2CC, 1 << 28, 0xffffffff);
- #endif
- 
-+	s3c_i2c0_set_platdata(NULL);
-+	s3c_i2c1_set_platdata(NULL);
-+	s3c_i2c_set_platdata(NULL);
-+
-+	i2c_register_board_info(0, i2c_devs0, ARRAY_SIZE(i2c_devs0));
-+	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
-+	i2c_register_board_info(4, i2c_devs4, ARRAY_SIZE(i2c_devs4));
-+	i2c_register_board_info(5, i2c_devs5, ARRAY_SIZE(i2c_devs5));
-+	i2c_register_board_info(6, i2c_devs6, ARRAY_SIZE(i2c_devs6));
-+	i2c_register_board_info(7, i2c_devs7, ARRAY_SIZE(i2c_devs7));
-+
- 	platform_add_devices(smdkv310_devices, ARRAY_SIZE(smdkv310_devices));
- }
- 
-diff --git a/arch/arm/mach-s5pv310/setup-i2c.c b/arch/arm/mach-s5pv310/setup-i2c.c
+diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+index 4d8ff92..f8ef381 100644
+--- a/arch/arm/plat-samsung/Makefile
++++ b/arch/arm/plat-samsung/Makefile
+@@ -37,9 +37,7 @@ obj-$(CONFIG_S3C_DEV_HSMMC1)	+= dev-hsmmc1.o
+ obj-$(CONFIG_S3C_DEV_HSMMC2)	+= dev-hsmmc2.o
+ obj-$(CONFIG_S3C_DEV_HSMMC3)	+= dev-hsmmc3.o
+ obj-$(CONFIG_S3C_DEV_HWMON)	+= dev-hwmon.o
+-obj-y				+= dev-i2c0.o
+-obj-$(CONFIG_S3C_DEV_I2C1)	+= dev-i2c1.o
+-obj-$(CONFIG_S3C_DEV_I2C2)	+= dev-i2c2.o
++obj-y				+= dev-i2c.o
+ obj-$(CONFIG_S3C_DEV_FB)	+= dev-fb.o
+ obj-y				+= dev-uart.o
+ obj-$(CONFIG_S3C_DEV_USB_HOST)	+= dev-usb.o
+diff --git a/arch/arm/plat-samsung/dev-i2c.c b/arch/arm/plat-samsung/dev-i2c.c
 new file mode 100644
-index 0000000..c8021f8
+index 0000000..4ac0a6a
 --- /dev/null
-+++ b/arch/arm/mach-s5pv310/setup-i2c.c
-@@ -0,0 +1,98 @@
-+/*
-+ * linux/arch/arm/mach-s5pv310/setup-i2c.c
++++ b/arch/arm/plat-samsung/dev-i2c.c
+@@ -0,0 +1,226 @@
++/* linux/arch/arm/plat-s3c/dev-i2c.c
 + *
 + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
 + *		http://www.samsung.com/
 + *
-+ * I2C0 GPIO configuration.
-+ *
-+ * Based on plat-s3c64xx/setup-i2c0.c
++ * I2C device definition for Samsung SOC
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 +*/
 +
-+struct platform_device; /* don't need the contents */
++#include <linux/gfp.h>
++#include <linux/kernel.h>
++#include <linux/string.h>
++#include <linux/platform_device.h>
 +
-+#include <linux/gpio.h>
++#include <mach/irqs.h>
++#include <mach/map.h>
++
++#include <plat/regs-iic.h>
 +#include <plat/iic.h>
-+#include <plat/gpio-cfg.h>
++#include <plat/devs.h>
++#include <plat/cpu.h>
 +
-+void s3c_i2c0_cfg_gpio(struct platform_device *dev)
++#define S3C_ADD_I2C_RESOURCE(i2c_mem, i2c_irq)		\
++	{						\
++		.start = (i2c_mem),			\
++		.end   = (i2c_mem) + SZ_4K - 1,		\
++		.flags = IORESOURCE_MEM,		\
++	},						\
++	{						\
++		.start = (i2c_irq),			\
++		.end   = (i2c_irq),			\
++		.flags = IORESOURCE_IRQ,		\
++	},
++
++static struct resource s3c_i2c_resource[][2] = {
++	{ S3C_ADD_I2C_RESOURCE(S3C_PA_IIC, IRQ_IIC) },
++#ifdef CONFIG_S3C_DEV_I2C1
++	{ S3C_ADD_I2C_RESOURCE(S3C_PA_IIC1, IRQ_IIC1) },
++#endif
++#ifdef CONFIG_S3C_DEV_I2C2
++	{ S3C_ADD_I2C_RESOURCE(S3C_PA_IIC2, IRQ_IIC2) },
++#endif
++#ifdef CONFIG_S3C_DEV_I2C3
++	{ S3C_ADD_I2C_RESOURCE(S3C_PA_IIC3, IRQ_IIC3) },
++#endif
++#ifdef CONFIG_S3C_DEV_I2C4
++	{ S3C_ADD_I2C_RESOURCE(S3C_PA_IIC4, IRQ_IIC4) },
++#endif
++#ifdef CONFIG_S3C_DEV_I2C5
++	{ S3C_ADD_I2C_RESOURCE(S3C_PA_IIC5, IRQ_IIC5) },
++#endif
++#ifdef CONFIG_S3C_DEV_I2C6
++	{ S3C_ADD_I2C_RESOURCE(S3C_PA_IIC6, IRQ_IIC6) },
++#endif
++#ifdef CONFIG_S3C_DEV_I2C7
++	{ S3C_ADD_I2C_RESOURCE(S3C_PA_IIC7, IRQ_IIC7) },
++#endif
++};
++
++#define S3C_ADD_I2C_PLATFORM(bus, freq, gpio)		\
++	{						\
++		.flags		= 0,			\
++		.bus_num	= (bus),		\
++		.slave_addr	= 0x10,			\
++		.frequency	= (freq),		\
++		.sda_delay	= 100,			\
++		.cfg_gpio	= (gpio),		\
++	}
++
++static struct s3c2410_platform_i2c default_i2c_data[] __initdata = {
++	S3C_ADD_I2C_PLATFORM(0, 100*1000, s3c_i2c0_cfg_gpio),
++#ifdef CONFIG_S3C_DEV_I2C1
++	S3C_ADD_I2C_PLATFORM(1, 100*1000, s3c_i2c1_cfg_gpio),
++#endif
++#ifdef CONFIG_S3C_DEV_I2C2
++	S3C_ADD_I2C_PLATFORM(2, 100*1000, s3c_i2c2_cfg_gpio),
++#endif
++#ifdef CONFIG_S3C_DEV_I2C3
++	S3C_ADD_I2C_PLATFORM(3, 100*1000, s3c_i2c3_cfg_gpio),
++#endif
++#ifdef CONFIG_S3C_DEV_I2C4
++	S3C_ADD_I2C_PLATFORM(4, 100*1000, s3c_i2c4_cfg_gpio),
++#endif
++#ifdef CONFIG_S3C_DEV_I2C5
++	S3C_ADD_I2C_PLATFORM(5, 100*1000, s3c_i2c5_cfg_gpio),
++#endif
++#ifdef CONFIG_S3C_DEV_I2C6
++	S3C_ADD_I2C_PLATFORM(6, 100*1000, s3c_i2c6_cfg_gpio),
++#endif
++#ifdef CONFIG_S3C_DEV_I2C7
++	S3C_ADD_I2C_PLATFORM(7, 100*1000, s3c_i2c7_cfg_gpio),
++#endif
++};
++
++static const char s3c_i2c_name[] = "s3c2410-i2c";
++
++#define S3C_ADD_I2C_DEVICE(i2c_id, res)			\
++	{						\
++		.name		  = s3c_i2c_name,	\
++		.id		  = (i2c_id),		\
++		.num_resources	  = ARRAY_SIZE(res),	\
++		.resource	  = (res),		\
++	}
++
++struct platform_device s3c_device_i2c[] = {
++#ifdef CONFIG_S3C_DEV_I2C1
++	S3C_ADD_I2C_DEVICE(0, s3c_i2c_resource[0]),
++	S3C_ADD_I2C_DEVICE(1, s3c_i2c_resource[1]),
++#else
++	S3C_ADD_I2C_DEVICE(-1, s3c_i2c_resource[0]),
++#endif
++#ifdef CONFIG_S3C_DEV_I2C2
++	S3C_ADD_I2C_DEVICE(2, s3c_i2c_resource[2]),
++#endif
++#ifdef CONFIG_S3C_DEV_I2C3
++	S3C_ADD_I2C_DEVICE(3, s3c_i2c_resource[3]),
++#endif
++#ifdef CONFIG_S3C_DEV_I2C4
++	S3C_ADD_I2C_DEVICE(4, s3c_i2c_resource[4]),
++#endif
++#ifdef CONFIG_S3C_DEV_I2C5
++	S3C_ADD_I2C_DEVICE(5, s3c_i2c_resource[5]),
++#endif
++#ifdef CONFIG_S3C_DEV_I2C6
++	S3C_ADD_I2C_DEVICE(6, s3c_i2c_resource[6]),
++#endif
++#ifdef CONFIG_S3C_DEV_I2C7
++	S3C_ADD_I2C_DEVICE(7, s3c_i2c_resource[7]),
++#endif
++};
++
++#define I2C_DEV_NUM	ARRAY_SIZE(s3c_device_i2c)
++
++struct platform_device s3c_device_i2c0 = {
++	.name		  = "s3c2410-i2c",
++#ifdef CONFIG_S3C_DEV_I2C1
++	.id		  = 0,
++#else
++	.id		  = -1,
++#endif
++	.num_resources	  = ARRAY_SIZE(s3c_i2c_resource[0]),
++	.resource	  = s3c_i2c_resource[0],
++};
++
++#ifdef CONFIG_S3C_DEV_I2C1
++struct platform_device s3c_device_i2c1 = {
++	.name		  = "s3c2410-i2c",
++	.id		  = 1,
++	.num_resources	  = ARRAY_SIZE(s3c_i2c_resource[1]),
++	.resource	  = s3c_i2c_resource[1],
++};
++#endif
++
++#ifdef CONFIG_S3C_DEV_I2C2
++struct platform_device s3c_device_i2c2 = {
++	.name		  = "s3c2410-i2c",
++	.id		  = 2,
++	.num_resources	  = ARRAY_SIZE(s3c_i2c_resource[2]),
++	.resource	  = s3c_i2c_resource[2],
++};
++#endif
++
++void __init s3c_i2c0_set_platdata(struct s3c2410_platform_i2c *pd)
 +{
-+	s3c_gpio_cfgpin(S5PV310_GPD1(0), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(S5PV310_GPD1(0), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgpin(S5PV310_GPD1(1), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(S5PV310_GPD1(1), S3C_GPIO_PULL_UP);
++	struct s3c2410_platform_i2c *npd;
++
++	if (!pd)
++		pd = &default_i2c_data[0];
++
++	npd = kmemdup(pd, sizeof(struct s3c2410_platform_i2c), GFP_KERNEL);
++	if (!npd)
++		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
++
++	s3c_device_i2c0.dev.platform_data = npd;
 +}
 +
-+#ifdef CONFIG_S5PV310_SETUP_I2C1
-+void s3c_i2c1_cfg_gpio(struct platform_device *dev)
++#ifdef CONFIG_S3C_DEV_I2C1
++void __init s3c_i2c1_set_platdata(struct s3c2410_platform_i2c *pd)
 +{
-+	s3c_gpio_cfgpin(S5PV310_GPD1(2), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(S5PV310_GPD1(2), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgpin(S5PV310_GPD1(3), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(S5PV310_GPD1(3), S3C_GPIO_PULL_UP);
++	struct s3c2410_platform_i2c *npd;
++
++	if (!pd)
++		pd = &default_i2c_data[1];
++
++	npd = kmemdup(pd, sizeof(struct s3c2410_platform_i2c), GFP_KERNEL);
++	if (!npd)
++		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
++
++	s3c_device_i2c1.dev.platform_data = npd;
 +}
 +#endif
 +
-+#ifdef CONFIG_S5PV310_SETUP_I2C2
-+void s3c_i2c2_cfg_gpio(struct platform_device *dev)
++#ifdef CONFIG_S3C_DEV_I2C2
++void __init s3c_i2c2_set_platdata(struct s3c2410_platform_i2c *pd)
 +{
-+	s3c_gpio_cfgpin(S5PV310_GPA0(6), S3C_GPIO_SFN(3));
-+	s3c_gpio_setpull(S5PV310_GPA0(6), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgpin(S5PV310_GPA0(7), S3C_GPIO_SFN(3));
-+	s3c_gpio_setpull(S5PV310_GPA0(7), S3C_GPIO_PULL_UP);
++	struct s3c2410_platform_i2c *npd;
++
++	if (!pd)
++		pd = &default_i2c_data[2];
++
++	npd = kmemdup(pd, sizeof(struct s3c2410_platform_i2c), GFP_KERNEL);
++	if (!npd)
++		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
++
++	s3c_device_i2c2.dev.platform_data = npd;
 +}
 +#endif
 +
-+#ifdef CONFIG_S5PV310_SETUP_I2C3
-+void s3c_i2c3_cfg_gpio(struct platform_device *dev)
++void __init s3c_i2c_set_platdata(struct s3c2410_platform_i2c *pd)
 +{
-+	s3c_gpio_cfgpin(S5PV310_GPA1(2), S3C_GPIO_SFN(3));
-+	s3c_gpio_setpull(S5PV310_GPA1(2), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgpin(S5PV310_GPA1(3), S3C_GPIO_SFN(3));
-+	s3c_gpio_setpull(S5PV310_GPA1(3), S3C_GPIO_PULL_UP);
-+}
-+#endif
++	struct s3c2410_platform_i2c *npd[I2C_DEV_NUM];
++	int i;
 +
-+#ifdef CONFIG_S5PV310_SETUP_I2C4
-+void s3c_i2c4_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgpin(S5PV310_GPB(2), S3C_GPIO_SFN(3));
-+	s3c_gpio_setpull(S5PV310_GPB(2), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgpin(S5PV310_GPB(3), S3C_GPIO_SFN(3));
-+	s3c_gpio_setpull(S5PV310_GPB(3), S3C_GPIO_PULL_UP);
-+}
-+#endif
++	for (i = 3; i < I2C_DEV_NUM; i++) {
++		if (!pd)
++			pd = &default_i2c_data[i];
 +
-+#ifdef CONFIG_S5PV310_SETUP_I2C5
-+void s3c_i2c5_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgpin(S5PV310_GPB(6), S3C_GPIO_SFN(3));
-+	s3c_gpio_setpull(S5PV310_GPB(6), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgpin(S5PV310_GPB(7), S3C_GPIO_SFN(3));
-+	s3c_gpio_setpull(S5PV310_GPB(7), S3C_GPIO_PULL_UP);
++		npd[i] = kmemdup(pd, sizeof(struct s3c2410_platform_i2c)
++				, GFP_KERNEL);
++		s3c_device_i2c[i].dev.platform_data = npd[i];
++		pd = NULL;
++	}
 +}
-+#endif
-+
-+#ifdef CONFIG_S5PV310_SETUP_I2C6
-+void s3c_i2c6_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgpin(S5PV310_GPC1(3), S3C_GPIO_SFN(4));
-+	s3c_gpio_setpull(S5PV310_GPC1(3), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgpin(S5PV310_GPC1(4), S3C_GPIO_SFN(4));
-+	s3c_gpio_setpull(S5PV310_GPC1(4), S3C_GPIO_PULL_UP);
-+}
-+#endif
-+
-+#ifdef CONFIG_S5PV310_SETUP_I2C7
-+void s3c_i2c7_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgpin(S5PV310_GPD0(2), S3C_GPIO_SFN(3));
-+	s3c_gpio_setpull(S5PV310_GPD0(2), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgpin(S5PV310_GPD0(3), S3C_GPIO_SFN(3));
-+	s3c_gpio_setpull(S5PV310_GPD0(3), S3C_GPIO_PULL_UP);
-+}
-+#endif
-diff --git a/arch/arm/mach-s5pv310/setup-i2c0.c b/arch/arm/mach-s5pv310/setup-i2c0.c
+diff --git a/arch/arm/plat-samsung/dev-i2c0.c b/arch/arm/plat-samsung/dev-i2c0.c
 deleted file mode 100644
-index 4367128..0000000
---- a/arch/arm/mach-s5pv310/setup-i2c0.c
+index 3a601c1..0000000
+--- a/arch/arm/plat-samsung/dev-i2c0.c
 +++ /dev/null
-@@ -1,28 +0,0 @@
--/*
-- * linux/arch/arm/mach-s5pv310/setup-i2c0.c
+@@ -1,72 +0,0 @@
+-/* linux/arch/arm/plat-s3c/dev-i2c0.c
 - *
-- * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
+- * Copyright 2008-2009 Simtec Electronics
+- *	Ben Dooks <ben@simtec.co.uk>
+- *	http://armlinux.simtec.co.uk/
+- *
+- * S3C series device definition for i2c device 0
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#include <linux/gfp.h>
+-#include <linux/kernel.h>
+-#include <linux/string.h>
+-#include <linux/platform_device.h>
+-
+-#include <mach/irqs.h>
+-#include <mach/map.h>
+-
+-#include <plat/regs-iic.h>
+-#include <plat/iic.h>
+-#include <plat/devs.h>
+-#include <plat/cpu.h>
+-
+-static struct resource s3c_i2c_resource[] = {
+-	[0] = {
+-		.start = S3C_PA_IIC,
+-		.end   = S3C_PA_IIC + SZ_4K - 1,
+-		.flags = IORESOURCE_MEM,
+-	},
+-	[1] = {
+-		.start = IRQ_IIC,
+-		.end   = IRQ_IIC,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-};
+-
+-struct platform_device s3c_device_i2c0 = {
+-	.name		  = "s3c2410-i2c",
+-#ifdef CONFIG_S3C_DEV_I2C1
+-	.id		  = 0,
+-#else
+-	.id		  = -1,
+-#endif
+-	.num_resources	  = ARRAY_SIZE(s3c_i2c_resource),
+-	.resource	  = s3c_i2c_resource,
+-};
+-
+-static struct s3c2410_platform_i2c default_i2c_data0 __initdata = {
+-	.flags		= 0,
+-	.slave_addr	= 0x10,
+-	.frequency	= 100*1000,
+-	.sda_delay	= 100,
+-};
+-
+-void __init s3c_i2c0_set_platdata(struct s3c2410_platform_i2c *pd)
+-{
+-	struct s3c2410_platform_i2c *npd;
+-
+-	if (!pd)
+-		pd = &default_i2c_data0;
+-
+-	npd = kmemdup(pd, sizeof(struct s3c2410_platform_i2c), GFP_KERNEL);
+-	if (!npd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-	else if (!npd->cfg_gpio)
+-		npd->cfg_gpio = s3c_i2c0_cfg_gpio;
+-
+-	s3c_device_i2c0.dev.platform_data = npd;
+-}
+diff --git a/arch/arm/plat-samsung/dev-i2c1.c b/arch/arm/plat-samsung/dev-i2c1.c
+deleted file mode 100644
+index 858ee2a..0000000
+--- a/arch/arm/plat-samsung/dev-i2c1.c
++++ /dev/null
+@@ -1,69 +0,0 @@
+-/* linux/arch/arm/plat-s3c/dev-i2c1.c
+- *
+- * Copyright 2008-2009 Simtec Electronics
+- *	Ben Dooks <ben@simtec.co.uk>
+- *	http://armlinux.simtec.co.uk/
+- *
+- * S3C series device definition for i2c device 1
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#include <linux/gfp.h>
+-#include <linux/kernel.h>
+-#include <linux/string.h>
+-#include <linux/platform_device.h>
+-
+-#include <mach/irqs.h>
+-#include <mach/map.h>
+-
+-#include <plat/regs-iic.h>
+-#include <plat/iic.h>
+-#include <plat/devs.h>
+-#include <plat/cpu.h>
+-
+-static struct resource s3c_i2c_resource[] = {
+-	[0] = {
+-		.start = S3C_PA_IIC1,
+-		.end   = S3C_PA_IIC1 + SZ_4K - 1,
+-		.flags = IORESOURCE_MEM,
+-	},
+-	[1] = {
+-		.start = IRQ_IIC1,
+-		.end   = IRQ_IIC1,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-};
+-
+-struct platform_device s3c_device_i2c1 = {
+-	.name		  = "s3c2410-i2c",
+-	.id		  = 1,
+-	.num_resources	  = ARRAY_SIZE(s3c_i2c_resource),
+-	.resource	  = s3c_i2c_resource,
+-};
+-
+-static struct s3c2410_platform_i2c default_i2c_data1 __initdata = {
+-	.flags		= 0,
+-	.bus_num	= 1,
+-	.slave_addr	= 0x10,
+-	.frequency	= 100*1000,
+-	.sda_delay	= 100,
+-};
+-
+-void __init s3c_i2c1_set_platdata(struct s3c2410_platform_i2c *pd)
+-{
+-	struct s3c2410_platform_i2c *npd;
+-
+-	if (!pd)
+-		pd = &default_i2c_data1;
+-
+-	npd = kmemdup(pd, sizeof(struct s3c2410_platform_i2c), GFP_KERNEL);
+-	if (!npd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-	else if (!npd->cfg_gpio)
+-		npd->cfg_gpio = s3c_i2c1_cfg_gpio;
+-
+-	s3c_device_i2c1.dev.platform_data = npd;
+-}
+diff --git a/arch/arm/plat-samsung/dev-i2c2.c b/arch/arm/plat-samsung/dev-i2c2.c
+deleted file mode 100644
+index 07036de..0000000
+--- a/arch/arm/plat-samsung/dev-i2c2.c
++++ /dev/null
+@@ -1,70 +0,0 @@
+-/* linux/arch/arm/plat-s3c/dev-i2c2.c
+- *
+- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
 - *		http://www.samsung.com/
 - *
-- * I2C0 GPIO configuration.
+- * S3C series device definition for i2c device 2
 - *
-- * Based on plat-s3c64xx/setup-i2c0.c
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--struct platform_device; /* don't need the contents */
--
--#include <linux/gpio.h>
--#include <plat/iic.h>
--#include <plat/gpio-cfg.h>
--
--void s3c_i2c0_cfg_gpio(struct platform_device *dev)
--{
--	s3c_gpio_cfgpin(S5PV310_GPD1(0), S3C_GPIO_SFN(2));
--	s3c_gpio_setpull(S5PV310_GPD1(0), S3C_GPIO_PULL_UP);
--	s3c_gpio_cfgpin(S5PV310_GPD1(1), S3C_GPIO_SFN(2));
--	s3c_gpio_setpull(S5PV310_GPD1(1), S3C_GPIO_PULL_UP);
--}
-diff --git a/arch/arm/mach-s5pv310/setup-i2c1.c b/arch/arm/mach-s5pv310/setup-i2c1.c
-deleted file mode 100644
-index 1ecd5bc..0000000
---- a/arch/arm/mach-s5pv310/setup-i2c1.c
-+++ /dev/null
-@@ -1,25 +0,0 @@
--/*
-- * linux/arch/arm/mach-s5pv310/setup-i2c1.c
-- *
-- * Copyright (C) 2010 Samsung Electronics Co., Ltd.
-- *
-- * I2C1 GPIO configuration.
+- * Based on plat-samsung/dev-i2c0.c
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
 -*/
 -
--struct platform_device; /* don't need the contents */
+-#include <linux/gfp.h>
+-#include <linux/kernel.h>
+-#include <linux/string.h>
+-#include <linux/platform_device.h>
 -
--#include <linux/gpio.h>
+-#include <mach/irqs.h>
+-#include <mach/map.h>
+-
+-#include <plat/regs-iic.h>
 -#include <plat/iic.h>
--#include <plat/gpio-cfg.h>
+-#include <plat/devs.h>
+-#include <plat/cpu.h>
 -
--void s3c_i2c1_cfg_gpio(struct platform_device *dev)
+-static struct resource s3c_i2c_resource[] = {
+-	[0] = {
+-		.start = S3C_PA_IIC2,
+-		.end   = S3C_PA_IIC2 + SZ_4K - 1,
+-		.flags = IORESOURCE_MEM,
+-	},
+-	[1] = {
+-		.start = IRQ_CAN0,
+-		.end   = IRQ_CAN0,
+-		.flags = IORESOURCE_IRQ,
+-	},
+-};
+-
+-struct platform_device s3c_device_i2c2 = {
+-	.name		  = "s3c2410-i2c",
+-	.id		  = 2,
+-	.num_resources	  = ARRAY_SIZE(s3c_i2c_resource),
+-	.resource	  = s3c_i2c_resource,
+-};
+-
+-static struct s3c2410_platform_i2c default_i2c_data2 __initdata = {
+-	.flags		= 0,
+-	.bus_num	= 2,
+-	.slave_addr	= 0x10,
+-	.frequency	= 100*1000,
+-	.sda_delay	= 100,
+-};
+-
+-void __init s3c_i2c2_set_platdata(struct s3c2410_platform_i2c *pd)
 -{
--	s3c_gpio_cfgpin(S5PV310_GPD1(2), S3C_GPIO_SFN(2));
--	s3c_gpio_setpull(S5PV310_GPD1(2), S3C_GPIO_PULL_UP);
--	s3c_gpio_cfgpin(S5PV310_GPD1(3), S3C_GPIO_SFN(2));
--	s3c_gpio_setpull(S5PV310_GPD1(3), S3C_GPIO_PULL_UP);
+-	struct s3c2410_platform_i2c *npd;
+-
+-	if (!pd)
+-		pd = &default_i2c_data2;
+-
+-	npd = kmemdup(pd, sizeof(struct s3c2410_platform_i2c), GFP_KERNEL);
+-	if (!npd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-	else if (!npd->cfg_gpio)
+-		npd->cfg_gpio = s3c_i2c2_cfg_gpio;
+-
+-	s3c_device_i2c2.dev.platform_data = npd;
 -}
-diff --git a/arch/arm/mach-s5pv310/setup-i2c2.c b/arch/arm/mach-s5pv310/setup-i2c2.c
-deleted file mode 100644
-index 4c0d8de..0000000
---- a/arch/arm/mach-s5pv310/setup-i2c2.c
-+++ /dev/null
-@@ -1,25 +0,0 @@
--/*
-- * linux/arch/arm/mach-s5pv310/setup-i2c2.c
-- *
-- * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
-- *
-- * I2C2 GPIO configuration.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--struct platform_device; /* don't need the contents */
--
--#include <linux/gpio.h>
--#include <plat/iic.h>
--#include <plat/gpio-cfg.h>
--
--void s3c_i2c2_cfg_gpio(struct platform_device *dev)
--{
--	s3c_gpio_cfgpin(S5PV310_GPA0(6), S3C_GPIO_SFN(3));
--	s3c_gpio_setpull(S5PV310_GPA0(6), S3C_GPIO_PULL_UP);
--	s3c_gpio_cfgpin(S5PV310_GPA0(7), S3C_GPIO_SFN(3));
--	s3c_gpio_setpull(S5PV310_GPA0(7), S3C_GPIO_PULL_UP);
--}
+diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
+index 7d448e1..b346957 100644
+--- a/arch/arm/plat-samsung/include/plat/devs.h
++++ b/arch/arm/plat-samsung/include/plat/devs.h
+@@ -46,6 +46,7 @@ extern struct platform_device s3c_device_wdt;
+ extern struct platform_device s3c_device_i2c0;
+ extern struct platform_device s3c_device_i2c1;
+ extern struct platform_device s3c_device_i2c2;
++extern struct platform_device s3c_device_i2c[];
+ extern struct platform_device s3c_device_rtc;
+ extern struct platform_device s3c_device_adc;
+ extern struct platform_device s3c_device_sdi;
+diff --git a/arch/arm/plat-samsung/include/plat/iic.h b/arch/arm/plat-samsung/include/plat/iic.h
+index 133308b..0fb9c6e 100644
+--- a/arch/arm/plat-samsung/include/plat/iic.h
++++ b/arch/arm/plat-samsung/include/plat/iic.h
+@@ -55,10 +55,16 @@ struct s3c2410_platform_i2c {
+ extern void s3c_i2c0_set_platdata(struct s3c2410_platform_i2c *i2c);
+ extern void s3c_i2c1_set_platdata(struct s3c2410_platform_i2c *i2c);
+ extern void s3c_i2c2_set_platdata(struct s3c2410_platform_i2c *i2c);
++extern void s3c_i2c_set_platdata(struct s3c2410_platform_i2c *i2c);
+ 
+ /* defined by architecture to configure gpio */
+ extern void s3c_i2c0_cfg_gpio(struct platform_device *dev);
+ extern void s3c_i2c1_cfg_gpio(struct platform_device *dev);
+ extern void s3c_i2c2_cfg_gpio(struct platform_device *dev);
++extern void s3c_i2c3_cfg_gpio(struct platform_device *dev);
++extern void s3c_i2c4_cfg_gpio(struct platform_device *dev);
++extern void s3c_i2c5_cfg_gpio(struct platform_device *dev);
++extern void s3c_i2c6_cfg_gpio(struct platform_device *dev);
++extern void s3c_i2c7_cfg_gpio(struct platform_device *dev);
+ 
+ #endif /* __ASM_ARCH_IIC_H */
 -- 
 1.6.3.3
