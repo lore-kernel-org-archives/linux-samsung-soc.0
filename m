@@ -1,147 +1,91 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V3 2/2] sdhci-s3c: Add support no internal clock divider in host controller
-Date: Fri,  8 Oct 2010 17:46:21 +0900
-Message-ID: <1286527581-24903-3-git-send-email-kgene.kim@samsung.com>
-References: <1286527581-24903-1-git-send-email-kgene.kim@samsung.com>
+From: Seungwhan Youn <claude.youn@gmail.com>
+Subject: Re: [alsa-devel] [PATCH 10/10] ASoC: SAMSUNG: Add Machine driver for
+ S/PDIF PCM audio
+Date: Fri, 8 Oct 2010 18:07:37 +0900
+Message-ID: <AANLkTinPXcjHcaM1puzz00Sfhob9Y-X4HGDDVGMTqhH5@mail.gmail.com>
+References: <1286191550-22197-1-git-send-email-sw.youn@samsung.com>
+	<1286194583-19937-1-git-send-email-sw.youn@samsung.com>
+	<20101004224159.GA4972@opensource.wolfsonmicro.com>
+	<AANLkTi=FHGw+qzL507K546vr8zEZgXBP3Mk=O__Rpd4H@mail.gmail.com>
+	<AANLkTincwL_nQAmu7Dcmht0FV43BiN7OoecE_60QJhS2@mail.gmail.com>
+	<20101005044304.GA26509@opensource.wolfsonmicro.com>
+	<AANLkTi=x_fi5HTBBmMUv8YTxSdbgcnJ=ZbacJQj6rcgf@mail.gmail.com>
+	<20101005055937.GA19989@opensource.wolfsonmicro.com>
+	<AANLkTimi1t5S2XWdUFzaPttD4Hywm0SLt5CvR1YnVOjj@mail.gmail.com>
+	<AANLkTin4skx+aiL2FXwWO1ekKqT2YWDd3SM1H5WnGkhC@mail.gmail.com>
+	<00c401cb6520$9484ef90$bd8eceb0$%kim@samsung.com>
+	<AANLkTikf4CAWm49Q_AfcfiQDBQUVcE_BC-a_4F7d8xOz@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:34502 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755885Ab0JHIzD (ORCPT
+Received: from mail-ww0-f42.google.com ([74.125.82.42]:39732 "EHLO
+	mail-ww0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754309Ab0JHJHj convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Oct 2010 04:55:03 -0400
-In-Reply-To: <1286527581-24903-1-git-send-email-kgene.kim@samsung.com>
+	Fri, 8 Oct 2010 05:07:39 -0400
+Received: by wwb34 with SMTP id 34so15552wwb.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Oct 2010 02:07:38 -0700 (PDT)
+In-Reply-To: <AANLkTikf4CAWm49Q_AfcfiQDBQUVcE_BC-a_4F7d8xOz@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
-Cc: ben-linux@fluff.org, akpm@linux-foundation.org, cjb@laptop.org, Jeongbae Seo <jeongbae.seo@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, jassi.brar@samsung.com
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Seungwhan Youn <sw.youn@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, lrg@slimlogic.co.uk
 
-From: Jeongbae Seo <jeongbae.seo@samsung.com>
+On Thu, Oct 7, 2010 at 10:33 AM, Seungwhan Youn <claude.youn@gmail.com>=
+ wrote:
+> Dear Maintainers,
+>
+>>> >> plat-samsung would probably be fine for that also - create a fil=
+e called
+>>> >> common-smdk or something. =C2=A0Some other things have gone for =
+a plat-smdk
+>>> >> style approach too, though I'm not sure how tasteful I find that
+>>> >> personally.
+>>> > Even though I would personally like to have EPLL control for a de=
+vice
+>>> > in machine specific manner as part of its driver, I accept your o=
+pinion.
+>>> >
+>>> > Claude, let us create one arch/arm/plat-samsung/smdk.c to do comm=
+on
+>>> > stuff for SMKDs like EPLL control. What do you think ?
+>>>
+>>> Actually if we add this file on plat-samsung, board-init will be
+>>> separated two-part, one is machine(board) specific and other is all
+>>> smdk specific. So, If it doesn't make confusion to other guys who
+>>> wants to add settings for their features on board-init, it looks go=
+od
+>>> to me. But I think that we also have to listen Mr. Ben Dooks and Mr=
+=2E
+>>> Kukjin Kim's opinion about this before we get a conclusion.
+>>
+>> Hi all,
+>>
+>> I think, basically it'd better if could control clock stuff in each =
+driver for it when need it such as clk_get, clk_enable and so on.
+>> Actually there is no policy/protection for EPLL usage in plat-samsun=
+g or plat-s5p now and need to sort out other similar case for it also..=
+=2E.so in my opinion, right now to proceed with the current style is he=
+lpful to me and will consider it in the future.
+>>
+>
+> I wander to know that this is a last discussion, or more, and also
+> know about finial decision. Of course, if we didn't get reached to th=
+e
+> conclusion, we can talk more.
+>
+> Can you give me a hand to finish this? :-)
+>
 
-This patch adds to support no internal clock divider in SDHCI.
-The external clock divider can be used to make a proper clock
-because SDHCI doesn't support internal clock divider by itself.
+Dear Mr. Mark and Mr. Jassi,
 
-If external clock divider type is selected, some functions related
-with clock control will be overridened by other functions.
+Now, I'm almost finished 2nd patch for submit except this audio clock
+setting. For now, I can only think that remove audio clock setting
+from this machine code, and add audio clock settings in arch later(may
+be after arch/arm/plat-samsung get EPLL policy as Mr. Kukjin said).
 
-The current clock control index is added to let you know which
-clock bus is used for SDHCI when using overriding functions.
+Is this okay?
 
-The checking functions is added into sdhci_s3c_consider_clock,
-because clock divider step is different from that of host controller.
-
-Signed-off-by: Jeongbae Seo <jeongbae.seo@samsung.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Ben Dooks <ben-linux@fluff.org>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
-Changes since v2:
-- Changed clock control method to overriding from using quirk
-- This patch is referred from that of Jaehoon Chung's support non-standard clock setting
-
-Changes since v1:
-- Separated to each topic
-
-NOTE :
-- This patch depends on following.
-  [PATCH 4/5] ARM: SAMSUNG : Add clock types into platform data
-
- drivers/mmc/host/sdhci-s3c.c |   62 ++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 62 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index a7710f5..1720358 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -130,6 +130,15 @@ static unsigned int sdhci_s3c_consider_clock(struct sdhci_s3c *ourhost,
- 	if (!clksrc)
- 		return UINT_MAX;
- 
-+	/*
-+	 * Clock divider's step is different as 1 from that of host controller
-+	 * when 'clk_type' is S3C_SDHCI_CLK_DIV_EXTERNAL.
-+	 */
-+	if (ourhost->pdata->clk_type) {
-+		rate = clk_round_rate(clksrc, wanted);
-+		return wanted - rate;
-+	}
-+
- 	rate = clk_get_rate(clksrc);
- 
- 	for (div = 1; div < 256; div *= 2) {
-@@ -232,6 +241,42 @@ static unsigned int sdhci_s3c_get_min_clock(struct sdhci_host *host)
- 	return min;
- }
- 
-+/* sdhci_cmu_get_max_clk - callback to get maximum clock frequency.*/
-+static unsigned int sdhci_cmu_get_max_clock(struct sdhci_host *host)
-+{
-+	struct sdhci_s3c *ourhost = to_s3c(host);
-+
-+	return clk_round_rate(ourhost->clk_bus[ourhost->cur_clk], UINT_MAX);
-+}
-+
-+/* sdhci_cmu_get_min_clock - callback to get minimal supported clock value. */
-+static unsigned int sdhci_cmu_get_min_clock(struct sdhci_host *host)
-+{
-+	struct sdhci_s3c *ourhost = to_s3c(host);
-+
-+	/*
-+	 * initial clock can be in the frequency range of
-+	 * 100KHz-400KHz, so we set it as max value.
-+	 */
-+	return clk_round_rate(ourhost->clk_bus[ourhost->cur_clk], 400000);
-+}
-+
-+/* sdhci_cmu_set_clock - callback on clock change.*/
-+static void sdhci_cmu_set_clock(struct sdhci_host *host, unsigned int clock)
-+{
-+	struct sdhci_s3c *ourhost = to_s3c(host);
-+
-+	/* don't bother if the clock is going off */
-+	if (clock == 0)
-+		return;
-+
-+	sdhci_s3c_set_clock(host, clock);
-+
-+	clk_set_rate(ourhost->clk_bus[ourhost->cur_clk], clock);
-+
-+	host->clock = clock;
-+}
-+
- static struct sdhci_ops sdhci_s3c_ops = {
- 	.get_max_clock		= sdhci_s3c_get_max_clk,
- 	.set_clock		= sdhci_s3c_set_clock,
-@@ -361,6 +406,13 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 
- 		clks++;
- 		sc->clk_bus[ptr] = clk;
-+
-+		/*
-+		 * save current clock index to know which clock bus
-+		 * is used later in overriding functions.
-+		 */
-+		sc->cur_clk = ptr;
-+
- 		clk_enable(clk);
- 
- 		dev_info(dev, "clock source %d: %s (%ld Hz)\n",
-@@ -427,6 +479,16 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 	/* HSMMC on Samsung SoCs uses SDCLK as timeout clock */
- 	host->quirks |= SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK;
- 
-+	/*
-+	 * If controller does not have internal clock divider,
-+	 * we can use overriding functions instead of default.
-+	 */
-+	if (pdata->clk_type) {
-+		sdhci_s3c_ops.set_clock = sdhci_cmu_set_clock;
-+		sdhci_s3c_ops.get_min_clock = sdhci_cmu_get_min_clock;
-+		sdhci_s3c_ops.get_max_clock = sdhci_cmu_get_max_clock;
-+	}
-+
- 	/* It supports additional host capabilities if needed */
- 	if (pdata->host_caps)
- 		host->mmc->caps |= pdata->host_caps;
--- 
-1.6.2.5
+BRs,
+Claude.
