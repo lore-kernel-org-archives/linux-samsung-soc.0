@@ -1,69 +1,64 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S5PV210: Fix build error on pm debug
-Date: Fri, 08 Oct 2010 17:08:17 +0900
-Message-ID: <000201cb66c0$012c8540$03858fc0$%kim@samsung.com>
-References: <1286430096-23111-1-git-send-email-sbkim73@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v4 0/4] Add support for camera capture in s5p-fimc driver
+Date: Fri, 08 Oct 2010 10:50:32 +0200
+Message-ID: <1286527837-4980-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:39798 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753924Ab0JHIIp (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:16182 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753504Ab0JHIuq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Oct 2010 04:08:45 -0400
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L9Y0071FP9P8300@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 08 Oct 2010 17:08:13 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L9Y001MCP9PMG@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 08 Oct 2010 17:08:13 +0900 (KST)
-In-reply-to: <1286430096-23111-1-git-send-email-sbkim73@samsung.com>
-Content-language: ko
+	Fri, 8 Oct 2010 04:50:46 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sangbeom Kim' <sbkim73@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org
+To: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com
 
-Sangbeom Kim wrote:
-> 
->     This patch fixes build error by S3C2410 PM
->     Suspend debug option due to undefined address
- ^^^^^
-No need above blank?
+Hi all,
 
-Looks ok anyway...will apply.
+here is a fourth version of patches adding camera capture capability
+to the s5p-fimc driver. It contains minor changes to adhere to patch
+submitting rules. 
 
-> Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
-> ---
->  arch/arm/mach-s5pv210/include/mach/map.h |    2 ++
->  1 files changed, 2 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-
-> s5pv210/include/mach/map.h
-> index bd9afd5..9f2bee2 100644
-> --- a/arch/arm/mach-s5pv210/include/mach/map.h
-> +++ b/arch/arm/mach-s5pv210/include/mach/map.h
-> @@ -57,6 +57,8 @@
-> 
->  #define S5P_SZ_UART		SZ_256
-> 
-> +#define S3C_VA_UARTx(x)		(S3C_VA_UART + ((x) *
-> S3C_UART_OFFSET))
-> +
->  #define S5PV210_PA_SROMC	(0xE8000000)
-> 
->  #define S5PV210_PA_CFCON	(0xE8200000)
-> --
+Changes since v1:
+- entirely removed plat-samsung/include/plat/fimc.h header so there is no
+  platform code dependency
+- improved s/try_fmt ioctl and introduced common ioctl handlers for mem2mem 
+  and capture node where it's reasonable
+- register definition changes merged with previous commit   
+  [3/8] v4l: s5p-fimc: Register definition cleanup
 
+Changes since v2:
+- improved s/g/crop(cap) handling in capture node
+- added passing of v4l controls to the sensor subdevice
 
-Thanks.
+Changes since v3:
+- changed summary of patch [4/4] to adhere to patch submitting guidelines
+- patch "V4L/DVB: s5p-fimc: M2M driver cleanup.." split to 2 separate
+  commits - 2/5 and 3/5 in this series
 
-Best regards,
-Kgene.
+The patch series contains:
+
+[PATCH 1/5] V4L/DVB: s5p-fimc: Register definition cleanup
+[PATCH 2/5] V4L/DVB: s5p-fimc: mem2mem driver refactoring and cleanup
+[PATCH 3/5] V4L/DVB: s5p-fimc: Fix 90/270 deg rotation errors
+[PATCH 4/5] V4L/DVB: s5p-fimc: Do not lock both capture and output buffer queue in s_fmt
+[PATCH 5/5] V4L/DVB: s5p-fimc: Add camera capture support
+
+It has been rebased onto linuxtv/staging-2.6.37 branch at
+git://linuxtv.org/media_tree.git with 2 bugfix patches:
+
+v4l: s5p-fimc: Fix 3-planar formats handling and pixel offset error on S5PV210 SoCs
+v4l: s5p-fimc: Fix return value on probe() failure
+
+also applied.
+
+Regards,
+Sylwester
+
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Sylwester Nawrocki
+Linux Platform Group
+Samsung Poland R&D Center
