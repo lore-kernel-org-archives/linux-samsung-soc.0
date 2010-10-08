@@ -1,63 +1,70 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: missing definition of 's3c_gpio_getpull' function in 'plat-samsung'
-Date: Fri, 08 Oct 2010 15:50:07 +0900
-Message-ID: <00e301cb66b5$14ce28c0$3e6a7a40$%kim@samsung.com>
-References: <000301cb66af$276b8960$76429c20$@com>
+Subject: RE: [PATCH] ARM: S5P64X0: fix gpio rbank support
+Date: Fri, 08 Oct 2010 17:05:56 +0900
+Message-ID: <000001cb66bf$a5f5d7d0$f1e18770$%kim@samsung.com>
+References: <1286425239-11632-1-git-send-email-sbkim73@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:57183 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751822Ab0JHGuE (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:55364 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755495Ab0JHIFl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Oct 2010 02:50:04 -0400
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Fri, 8 Oct 2010 04:05:41 -0400
+Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L9Y000J3LND5190@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 08 Oct 2010 15:50:02 +0900 (KST)
+ with ESMTP id <0L9Y009WZP5GGS70@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 08 Oct 2010 17:05:40 +0900 (KST)
 Received: from kgenekim ([12.23.103.96])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L9Y00LQ6LNDEU@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 08 Oct 2010 15:50:01 +0900 (KST)
-In-reply-to: <000301cb66af$276b8960$76429c20$@com>
+ with ESMTPA id <0L9Y001RRP5GSS@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 08 Oct 2010 17:05:40 +0900 (KST)
+In-reply-to: <1286425239-11632-1-git-send-email-sbkim73@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Daein Moon' <moon9124@samsung.com>, ben-linux@fluff.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: 'Sangbeom Kim' <sbkim73@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, 'Atul Dahiya' <atul.dahiya@samsung.com>
 
-Daein Moon wrote:
+Sangbeom Kim wrote:
 > 
-> Hi Ben Dooks and Kukjin,
+> From: Atul Dahiya <atul.dahiya@samsung.com>
 > 
-> I found an issue about s3c_gpio_getpull API.
+> The patch removes s3c_gpio_lock/unlock to avoid acquiring the lock
+> recursively as lock is already acquired by calling function.
 > 
-> The 'plat-samsung' provides 's3c_gpio_setpull' and 's3c_gpio_getpull'
-> to set and get pull-{none|up|down} of GPIO. But there is no
-> 's3c_gpio_getpull' definition in 'arch/arm/plat-samsung/gpio-config.c',
-> and there is only declaration in the corresponding header file.
+> Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
+> Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+> ---
+>  arch/arm/mach-s5p64x0/gpio.c |    4 ----
+>  1 files changed, 0 insertions(+), 4 deletions(-)
 > 
-> 's3c_gpio_getpull' isn't supported/used. So if providing this api, its
-> definition should be inserted.
+> diff --git a/arch/arm/mach-s5p64x0/gpio.c b/arch/arm/mach-s5p64x0/gpio.c
+> index 3073ed0..533c1a3 100644
+> --- a/arch/arm/mach-s5p64x0/gpio.c
+> +++ b/arch/arm/mach-s5p64x0/gpio.c
+> @@ -158,15 +158,11 @@ int s5p64x0_gpio_setcfg_4bit_rbank(struct
+> s3c_gpio_chip *chip,
+>  		cfg <<= shift;
+>  	}
 > 
-> Otherwise, code that is used to provide s3c_gpio_getpull including
-> following code should be removed.
+> -	s3c_gpio_lock(chip, flags);
+> -
+>  	con = __raw_readl(reg);
+>  	con &= ~(0xf << shift);
+>  	con |= cfg;
+>  	__raw_writel(con, reg);
 > 
-> arch/arm/plat-samsung/include/plat/gpio-cfg.h:
-> 	extern s3c_gpio_pull_t s3c_gpio_getpull(unsigned int pin);
+> -	s3c_gpio_unlock(chip, flags);
+> -
+>  	return 0;
+>  }
 > 
-> arch/arm/mach-{s3c*|s5p*}/gpiolib.c:
->         .get_pull       = s3c_gpio_getpull_updown,
-> 
-> 
-> What do you think about that?
-> 
-Oh...you mean s3c_gpio_getpull()?
-Yes right..there is no it in gpio-config.c..maybe missed.
+> --
 
-Anyway...in this case, I think to add missed function is better.
+Right...will apply.
 
 Thanks.
 
