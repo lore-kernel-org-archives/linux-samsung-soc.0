@@ -1,87 +1,74 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 7/10] ARM: S5PV210: Fix wrong EPLL rate getting on setup
- clocks
-Date: Fri, 08 Oct 2010 19:37:00 +0900
-Message-ID: <001e01cb66d4$c178a400$4469ec00$%kim@samsung.com>
+From: Seungwhan Youn <claude.youn@gmail.com>
+Subject: Re: [PATCH 3/10] ARM: S5PC100: Add SCLK_SPDIF clock
+Date: Fri, 8 Oct 2010 19:45:14 +0900
+Message-ID: <AANLkTinZuMkDNotnwDFS8_EPhbG+p_GWEZjU5thzvW++@mail.gmail.com>
 References: <1286191550-22197-1-git-send-email-sw.youn@samsung.com>
- <1286193919-19830-1-git-send-email-sw.youn@samsung.com>
+	<1286192545-18327-1-git-send-email-sw.youn@samsung.com>
+	<001901cb66d1$32db1e10$98915a30$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:40044 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753043Ab0JHKgr (ORCPT
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:43830 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753043Ab0JHKpR convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Oct 2010 06:36:47 -0400
-Received: from epmmp2 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L9Y007BHW5AGV60@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 08 Oct 2010 19:36:46 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L9Y00MI3W5AK5@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 08 Oct 2010 19:36:46 +0900 (KST)
-In-reply-to: <1286193919-19830-1-git-send-email-sw.youn@samsung.com>
-Content-language: ko
+	Fri, 8 Oct 2010 06:45:17 -0400
+Received: by wyb28 with SMTP id 28so954765wyb.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Oct 2010 03:45:15 -0700 (PDT)
+In-Reply-To: <001901cb66d1$32db1e10$98915a30$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Seungwhan Youn' <sw.youn@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: ben-linux@fluff.org, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com, jassi.brar@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Seungwhan Youn <sw.youn@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, ben-linux@fluff.org, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com, jassi.brar@samsung.com
 
-Seungwhan Youn wrote:
-> 
-> This patch fix wrong EPLL getting on setup clocks on S5PV210.
-> 
-> Signed-off-by: Seungwhan Youn <sw.youn@samsung.com>
-> ---
->  arch/arm/mach-s5pv210/clock.c                   |    3 ++-
->  arch/arm/mach-s5pv210/include/mach/regs-clock.h |    3 ++-
->  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-> index 3f3b7ba..bcbe7e9 100644
-> --- a/arch/arm/mach-s5pv210/clock.c
-> +++ b/arch/arm/mach-s5pv210/clock.c
-> @@ -1040,7 +1040,8 @@ void __init_or_cpufreq s5pv210_setup_clocks(void)
-> 
->  	apll = s5p_get_pll45xx(xtal, __raw_readl(S5P_APLL_CON), pll_4508);
->  	mpll = s5p_get_pll45xx(xtal, __raw_readl(S5P_MPLL_CON), pll_4502);
-> -	epll = s5p_get_pll45xx(xtal, __raw_readl(S5P_EPLL_CON), pll_4500);
-> +	epll = s5p_get_pll90xx(xtal, __raw_readl(S5P_EPLL_CON0),
-> +				__raw_readl(S5P_EPLL_CON1));
+Hi,
 
-Maybe you wanted to implement fractional PLL 4600B...not used 90xx in there.
-So need to update plat/pll.h to epll of s5pv210.
+>> +static int s5pc100_spdif_set_rate(struct clk *clk, unsigned long ra=
+te)
+>> +{
+>> + =C2=A0 =C2=A0 struct clk *pclk;
+>> + =C2=A0 =C2=A0 int ret;
+>> +
+>> + =C2=A0 =C2=A0 pclk =3D clk_get_parent(clk);
+>> + =C2=A0 =C2=A0 if (IS_ERR(pclk))
+>> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -EINVAL;
+>> +
+>> + =C2=A0 =C2=A0 ret =3D pclk->ops->set_rate(pclk, rate);
+>> + =C2=A0 =C2=A0 clk_put(pclk);
+>> +
+>> + =C2=A0 =C2=A0 return ret;
+>
+> How about following?
+>
+> static int parent_set_rate(struct clk *clk, unsigned long rate)
+> {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0struct clk *p_clk;
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0int ret;
+>
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0p_clk =3D clk_get_parent(clk);
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0ret =3D clk_set_rate(p_clk, rate);
+>
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0clk_put(p_clk);
+>
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;
+> }
+>
+> Hmm...isn't there any method?...
 
->  	vpllsrc = clk_get_rate(&clk_vpllsrc.clk);
->  	vpll = s5p_get_pll45xx(vpllsrc, __raw_readl(S5P_VPLL_CON),
-pll_4502);
-> 
-> diff --git a/arch/arm/mach-s5pv210/include/mach/regs-clock.h
-b/arch/arm/mach-
-> s5pv210/include/mach/regs-clock.h
-> index 499aef7..5968535 100644
-> --- a/arch/arm/mach-s5pv210/include/mach/regs-clock.h
-> +++ b/arch/arm/mach-s5pv210/include/mach/regs-clock.h
-> @@ -24,7 +24,8 @@
-> 
->  #define S5P_APLL_CON		S5P_CLKREG(0x100)
->  #define S5P_MPLL_CON		S5P_CLKREG(0x108)
-> -#define S5P_EPLL_CON		S5P_CLKREG(0x110)
-> +#define S5P_EPLL_CON0		S5P_CLKREG(0x110)
-> +#define S5P_EPLL_CON1		S5P_CLKREG(0x114)
->  #define S5P_VPLL_CON		S5P_CLKREG(0x120)
-> 
->  #define S5P_CLK_SRC0		S5P_CLKREG(0x200)
-> --
+I think you mean is that adds a new clock api function that sets
+parent clock rate.(am I right?) But as you know, this also needs that
+S/PDIF knows it's source clock can not set rate directly and set it's
+parent clock.
 
+Actually my point was that I want to make S/PDIF does not care about
+clock characteristics, so I did make it solve in clock part, not in
+audio driver. And also, I do not want to modify a common function
+'clk_set_rate()' that can support jassi's opinion, because I'm not
+sure about side effect that I can not grantee it's safety with other
+drivers.
 
-Thanks.
+(snip)
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Thanks,
+Claude
