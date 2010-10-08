@@ -1,28 +1,28 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 3/10] ARM: S5PC100: Add SCLK_SPDIF clock
-Date: Fri, 08 Oct 2010 19:11:34 +0900
-Message-ID: <001901cb66d1$32db1e10$98915a30$%kim@samsung.com>
+Subject: RE: [PATCH 4/10] ARM: S5PV210: Add S/PDIF platform device
+Date: Fri, 08 Oct 2010 19:14:01 +0900
+Message-ID: <001a01cb66d1$9a5f83a0$cf1e8ae0$%kim@samsung.com>
 References: <1286191550-22197-1-git-send-email-sw.youn@samsung.com>
- <1286192545-18327-1-git-send-email-sw.youn@samsung.com>
+ <1286192800-18487-1-git-send-email-sw.youn@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:33208 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:34339 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755277Ab0JHKL4 (ORCPT
+	with ESMTP id S1756914Ab0JHKOv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Oct 2010 06:11:56 -0400
+	Fri, 8 Oct 2010 06:14:51 -0400
 Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0L9Y00AIFUYUXC40@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 08 Oct 2010 19:11:18 +0900 (KST)
+ with ESMTP id <0L9Y007OJV3OGV50@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 08 Oct 2010 19:14:12 +0900 (KST)
 Received: from kgenekim ([12.23.103.96])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0L9Y004FDUYTGB@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 08 Oct 2010 19:11:18 +0900 (KST)
-In-reply-to: <1286192545-18327-1-git-send-email-sw.youn@samsung.com>
+ with ESMTPA id <0L9Y0071SV3NDZ@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 08 Oct 2010 19:14:12 +0900 (KST)
+In-reply-to: <1286192800-18487-1-git-send-email-sw.youn@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -31,115 +31,128 @@ Cc: ben-linux@fluff.org, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.co
 
 Seungwhan Youn wrote:
 > 
-> This patch add SCLK_SPDIF clock to support source clock of S/PDIF
-> on S5PC100.
+> This patch add S/PDIF platform device to support S/PDIF PCM audio
+> on S5PV210.
 > 
 > Signed-off-by: Seungwhan Youn <sw.youn@samsung.com>
 > ---
->  arch/arm/mach-s5pc100/clock.c |   59
-> +++++++++++++++++++++++++++++++++++++++++
->  1 files changed, 59 insertions(+), 0 deletions(-)
+>  arch/arm/mach-s5pv210/dev-audio.c         |   40
+> +++++++++++++++++++++++++++++
+>  arch/arm/mach-s5pv210/include/mach/map.h  |    3 ++
+>  arch/arm/mach-s5pv210/mach-smdkc110.c     |    1 +
+>  arch/arm/mach-s5pv210/mach-smdkv210.c     |    1 +
+>  arch/arm/plat-samsung/include/plat/devs.h |    1 +
+>  5 files changed, 46 insertions(+), 0 deletions(-)
 > 
-> diff --git a/arch/arm/mach-s5pc100/clock.c b/arch/arm/mach-s5pc100/clock.c
-> index 42b7138..306ae74 100644
-> --- a/arch/arm/mach-s5pc100/clock.c
-> +++ b/arch/arm/mach-s5pc100/clock.c
-> @@ -980,6 +980,64 @@ struct clksrc_sources clk_src_pwi = {
->  	.nr_sources	= ARRAY_SIZE(clk_src_pwi_list),
+> diff --git a/arch/arm/mach-s5pv210/dev-audio.c
+b/arch/arm/mach-s5pv210/dev-
+> audio.c
+> index 21dc6cf..4a02cdd 100644
+> --- a/arch/arm/mach-s5pv210/dev-audio.c
+> +++ b/arch/arm/mach-s5pv210/dev-audio.c
+> @@ -325,3 +325,43 @@ struct platform_device s5pv210_device_ac97 = {
+>  		.coherent_dma_mask = DMA_BIT_MASK(32),
+>  	},
 >  };
-> 
-> +static struct clk *clk_sclk_spdif_list[] = {
-> +	[0] = &clk_sclk_audio0.clk,
-> +	[1] = &clk_sclk_audio1.clk,
-> +	[2] = &clk_sclk_audio2.clk,
-> +};
 > +
-> +struct clksrc_sources clk_src_sclk_spdif = {
-> +	.sources	= clk_sclk_spdif_list,
-> +	.nr_sources	= ARRAY_SIZE(clk_sclk_spdif_list),
-> +};
+> +/* S/PDIF Controller platform_device */
 > +
-> +static int s5pc100_spdif_set_rate(struct clk *clk, unsigned long rate)
+> +static int s5pv210_spdif_cfg_gpio(struct platform_device *pdev)
 > +{
-> +	struct clk *pclk;
-> +	int ret;
+> +	s3c_gpio_cfgpin_range(S5PV210_GPC1(0), 2, S3C_GPIO_SFN(3));
 > +
-> +	pclk = clk_get_parent(clk);
-> +	if (IS_ERR(pclk))
-> +		return -EINVAL;
-> +
-> +	ret = pclk->ops->set_rate(pclk, rate);
-> +	clk_put(pclk);
-> +
-> +	return ret;
-
-How about following?
-
-static int parent_set_rate(struct clk *clk, unsigned long rate)
-{
-	struct clk *p_clk;
-	int ret;
-	
-	p_clk = clk_get_parent(clk);
-	ret = clk_set_rate(p_clk, rate);
-
-	clk_put(p_clk);
-
-	return ret;
-}
-
-Hmm...isn't there any method?...
-
+> +	return 0;
 > +}
 > +
-> +static unsigned long s5pc100_spdif_get_rate(struct clk *clk)
-> +{
-> +	struct clk *pclk;
-> +	int rate;
-> +
-> +	pclk = clk_get_parent(clk);
-> +	if (IS_ERR(pclk))
-> +		return -EINVAL;
-> +
-> +	rate = pclk->ops->get_rate(clk);
-> +	clk_put(pclk);
-> +
-> +	return rate;
-> +}
-> +
-
-Similar...
-
-> +static struct clk_ops s5pc100_sclk_spdif_ops = {
-> +	.set_rate	= s5pc100_spdif_set_rate,
-> +	.get_rate	= s5pc100_spdif_get_rate,
-> +};
-> +
-> +static struct clksrc_clk clk_sclk_spdif = {
-> +	.clk	= {
-> +		.name		= "sclk_spdif",
-> +		.id		= -1,
-> +		.ctrlbit	= (1 << 11),
-> +		.enable		= s5pc100_sclk1_ctrl,
-> +		.ops		= &s5pc100_sclk_spdif_ops,
+> +static struct resource s5pv210_spdif_resource[] = {
+> +	[0] = {
+> +		.start	= S5PV210_PA_SPDIF,
+> +		.end	= S5PV210_PA_SPDIF + 0x100 - 1,
+> +		.flags	= IORESOURCE_MEM,
 > +	},
-> +	.sources = &clk_src_sclk_spdif,
-> +	.reg_src = { .reg = S5P_CLK_SRC3, .shift = 24, .size = 2 },
+> +	[1] = {
+> +		.start	= DMACH_SPDIF,
+> +		.end	= DMACH_SPDIF,
+> +		.flags	= IORESOURCE_DMA,
+> +	},
 > +};
 > +
->  static struct clksrc_clk clksrcs[] = {
->  	{
->  		.clk	= {
-> @@ -1185,6 +1243,7 @@ static struct clksrc_clk *sysclks[] = {
->  	&clk_sclk_audio0,
->  	&clk_sclk_audio1,
->  	&clk_sclk_audio2,
-> +	&clk_sclk_spdif,
->  };
+> +static struct s3c_audio_pdata samsung_spdif_pdata = {
+> +	.cfg_gpio = s5pv210_spdif_cfg_gpio,
+> +};
+> +
+> +static u64 s5pv210_spdif_dmamask = DMA_BIT_MASK(32);
+> +
+> +struct platform_device s5pv210_device_spdif = {
+> +	.name		= "samsung-spdif",
+> +	.id		= -1,
+> +	.num_resources	= ARRAY_SIZE(s5pv210_spdif_resource),
+> +	.resource	= s5pv210_spdif_resource,
+> +	.dev = {
+> +		.platform_data = &samsung_spdif_pdata,
+> +		.dma_mask = &s5pv210_spdif_dmamask,
+> +		.coherent_dma_mask = DMA_BIT_MASK(32),
+> +	},
+> +};
+> diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-
+> s5pv210/include/mach/map.h
+> index 12a409f..9669f69 100644
+> --- a/arch/arm/mach-s5pv210/include/mach/map.h
+> +++ b/arch/arm/mach-s5pv210/include/mach/map.h
+> @@ -84,6 +84,9 @@
+>  #define S5PV210_PA_SDRAM	(0x20000000)
+>  #define S5P_PA_SDRAM		S5PV210_PA_SDRAM
 > 
->  void __init_or_cpufreq s5pc100_setup_clocks(void)
+> +/* S/PDIF */
+> +#define S5PV210_PA_SPDIF	0xE1100000
+> +
+>  /* I2S */
+>  #define S5PV210_PA_IIS0		0xEEE30000
+>  #define S5PV210_PA_IIS1		0xE2100000
+> diff --git a/arch/arm/mach-s5pv210/mach-smdkc110.c b/arch/arm/mach-
+> s5pv210/mach-smdkc110.c
+> index 8211bb8..a282513 100644
+> --- a/arch/arm/mach-s5pv210/mach-smdkc110.c
+> +++ b/arch/arm/mach-s5pv210/mach-smdkc110.c
+> @@ -81,6 +81,7 @@ static struct s3c_ide_platdata smdkc110_ide_pdata
+> __initdata = {
+>  static struct platform_device *smdkc110_devices[] __initdata = {
+>  	&s5pv210_device_iis0,
+>  	&s5pv210_device_ac97,
+> +	&s5pv210_device_spdif,
+>  	&s3c_device_cfcon,
+>  	&s3c_device_i2c0,
+>  	&s3c_device_i2c1,
+> diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-
+> s5pv210/mach-smdkv210.c
+> index fbbc0a3..c38c110 100644
+> --- a/arch/arm/mach-s5pv210/mach-smdkv210.c
+> +++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
+> @@ -103,6 +103,7 @@ static struct samsung_keypad_platdata
+> smdkv210_keypad_data __initdata = {
+>  static struct platform_device *smdkv210_devices[] __initdata = {
+>  	&s5pv210_device_iis0,
+>  	&s5pv210_device_ac97,
+> +	&s5pv210_device_spdif,
+>  	&s3c_device_adc,
+>  	&s3c_device_cfcon,
+>  	&s3c_device_hsmmc0,
+> diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-
+> samsung/include/plat/devs.h
+> index a1c3b93..328b40d 100644
+> --- a/arch/arm/plat-samsung/include/plat/devs.h
+> +++ b/arch/arm/plat-samsung/include/plat/devs.h
+> @@ -87,6 +87,7 @@ extern struct platform_device s5pv210_device_pcm2;
+>  extern struct platform_device s5pv210_device_iis0;
+>  extern struct platform_device s5pv210_device_iis1;
+>  extern struct platform_device s5pv210_device_iis2;
+> +extern struct platform_device s5pv210_device_spdif;
+> 
+>  extern struct platform_device s5p6442_device_pcm0;
+>  extern struct platform_device s5p6442_device_pcm1;
 > --
 
+Ok...will apply.
 
 Thanks.
 
