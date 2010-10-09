@@ -1,49 +1,66 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 10/10] ASoC: SAMSUNG: Add Machine driver
- for S/PDIF PCM audio
-Date: Sat, 9 Oct 2010 10:52:26 +0900
-Message-ID: <AANLkTindvBBOyWwkbwUo+oG31r8xSgCLbjuDNgvTNY_Q@mail.gmail.com>
-References: <1286191550-22197-1-git-send-email-sw.youn@samsung.com>
-	<1286194583-19937-1-git-send-email-sw.youn@samsung.com>
-	<20101004224159.GA4972@opensource.wolfsonmicro.com>
-	<AANLkTi=FHGw+qzL507K546vr8zEZgXBP3Mk=O__Rpd4H@mail.gmail.com>
-	<AANLkTincwL_nQAmu7Dcmht0FV43BiN7OoecE_60QJhS2@mail.gmail.com>
-	<20101005044304.GA26509@opensource.wolfsonmicro.com>
-	<AANLkTi=x_fi5HTBBmMUv8YTxSdbgcnJ=ZbacJQj6rcgf@mail.gmail.com>
-	<20101005055937.GA19989@opensource.wolfsonmicro.com>
-	<AANLkTimi1t5S2XWdUFzaPttD4Hywm0SLt5CvR1YnVOjj@mail.gmail.com>
-	<AANLkTin4skx+aiL2FXwWO1ekKqT2YWDd3SM1H5WnGkhC@mail.gmail.com>
-	<00c401cb6520$9484ef90$bd8eceb0$%kim@samsung.com>
-	<AANLkTikf4CAWm49Q_AfcfiQDBQUVcE_BC-a_4F7d8xOz@mail.gmail.com>
-	<AANLkTinPXcjHcaM1puzz00Sfhob9Y-X4HGDDVGMTqhH5@mail.gmail.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 3/3] ARM: S5PV310: Add external interrupt support
+Date: Sat, 9 Oct 2010 11:16:46 +0100
+Message-ID: <20101009101646.GC20975@n2100.arm.linux.org.uk>
+References: <1286450698-12029-1-git-send-email-jongsun.han@samsung.com> <1286450698-12029-4-git-send-email-jongsun.han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <AANLkTinPXcjHcaM1puzz00Sfhob9Y-X4HGDDVGMTqhH5@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Seungwhan Youn <claude.youn@gmail.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, jassi.brar@samsung.com, Mark Brown <broonie@opensource.wolfsonmicro.com>, Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, lrg@slimlogic.co.uk, linux-arm-kernel@lists.infradead.org, Seungwhan Youn <sw.youn@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:38617 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754381Ab0JIKRH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 9 Oct 2010 06:17:07 -0400
+Content-Disposition: inline
+In-Reply-To: <1286450698-12029-4-git-send-email-jongsun.han@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jongsun Han <jongsun.han@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, Jongpill Lee <boyko.lee@samsung.com>, ben-linux@fluff.org
 
-On Fri, Oct 8, 2010 at 6:07 PM, Seungwhan Youn <claude.youn@gmail.com> wrote:
-> Dear Mr. Mark and Mr. Jassi,
->
-> Now, I'm almost finished 2nd patch for submit except this audio clock
-> setting. For now, I can only think that remove audio clock setting
-> from this machine code, and add audio clock settings in arch later(may
-> be after arch/arm/plat-samsung get EPLL policy as Mr. Kukjin said).
->
-> Is this okay?
-IMO neither of the method is much better than the other.
+On Thu, Oct 07, 2010 at 08:24:58PM +0900, Jongsun Han wrote:
+> +static unsigned int s5pv310_irq_split(unsigned int number)
+> +{
+> +	u32 ret;
+> +	u32 test = number;
+> +
+> +	ret = do_div(test, IRQ_EINT_BASE);
+> +
+> +	do_div(ret, 8);
+> +
+> +	return ret;
+> +}
+> +
+> +static unsigned int s5pv310_irq_to_bit(unsigned int irq)
+> +{
+> +	u32 ret;
+> +	u32 tmp;
+> +
+> +	tmp = do_div(irq, IRQ_EINT_BASE);
+> +
+> +	ret = do_div(tmp, 8);
+> +
+> +	return 1 << ret;
+> +}
 
-If neither of the maintainers relent, maybe drop the clock setting altogether
-and mark the machine driver 'BROKEN' until the EPLL management is fixed?
+These are a silly use of do_div().  do_div() is for 64-bit modulus/division,
+not 32-bit.  If you want to do 32-bit, then use the normal C maths.
+
+What the above equates to is:
+
+        tmp = irq % IRQ_EINT_BASE;
+        ret = tmp % 8;
+
+However, I don't think you want to do modulus operations there at all.
+What I think you actually want is:
+
+	return 1 << ((irq - IRQ_EINT_BASE) % 7);
+
+noting that the compiler will optimize this to a subtract and bit-wise and
+operation.
+
+For the former:
+
+	return ((irq - IRQ_EINT_BASE) / 8);
+
+noting that the compiler will optimize this to a subtract and shift.
