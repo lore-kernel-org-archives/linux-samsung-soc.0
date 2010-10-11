@@ -1,145 +1,200 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 4/6 v5] V4L/DVB: s5p-fimc: Do not lock both buffer queues in
- s_fmt
-Date: Mon, 11 Oct 2010 19:26:31 +0200
-Message-ID: <1286817993-21558-5-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 3/6 v5] V4L/DVB: s5p-fimc: Fix 90/270 deg rotation errors
+Date: Mon, 11 Oct 2010 19:26:30 +0200
+Message-ID: <1286817993-21558-4-git-send-email-s.nawrocki@samsung.com>
 References: <1286817993-21558-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:65331 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755486Ab0JKR0k (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:34155 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755492Ab0JKR0l (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Oct 2010 13:26:40 -0400
+	Mon, 11 Oct 2010 13:26:41 -0400
 In-reply-to: <1286817993-21558-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com
 
-It is not necessary to lock both capture and output buffer queue while
-setting format for single queue.
+Due to errorneous swapping of image dimensions the rotation
+control was not handled properly in subsequent calls.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-core.c |   69 +++++++++++++----------------
- 1 files changed, 31 insertions(+), 38 deletions(-)
+ drivers/media/video/s5p-fimc/fimc-core.c |   15 ++---
+ drivers/media/video/s5p-fimc/fimc-reg.c  |  101 +++++++++++++++---------------
+ 2 files changed, 57 insertions(+), 59 deletions(-)
 
 diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index 6bddec3..85a7e72 100644
+index 99ab46f..6bddec3 100644
 --- a/drivers/media/video/s5p-fimc/fimc-core.c
 +++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -742,8 +742,9 @@ static int fimc_m2m_try_fmt(struct file *file, void *priv,
- static int fimc_m2m_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
- {
- 	struct fimc_ctx *ctx = priv;
--	struct v4l2_device *v4l2_dev = &ctx->fimc_dev->m2m.v4l2_dev;
--	struct videobuf_queue *src_vq, *dst_vq;
-+	struct fimc_dev *fimc = ctx->fimc_dev;
-+	struct v4l2_device *v4l2_dev = &fimc->m2m.v4l2_dev;
-+	struct videobuf_queue *vq;
- 	struct fimc_frame *frame;
- 	struct v4l2_pix_format *pix;
- 	unsigned long flags;
-@@ -755,69 +756,61 @@ static int fimc_m2m_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
- 	if (ret)
- 		return ret;
+@@ -207,8 +207,13 @@ static int fimc_set_scaler_info(struct fimc_ctx *ctx)
+ 	int tx, ty, sx, sy;
+ 	int ret;
  
--	mutex_lock(&ctx->fimc_dev->lock);
-+	if (mutex_lock_interruptible(&fimc->lock))
-+		return -ERESTARTSYS;
- 
--	src_vq = v4l2_m2m_get_src_vq(ctx->m2m_ctx);
--	dst_vq = v4l2_m2m_get_dst_vq(ctx->m2m_ctx);
-+	vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
-+	mutex_lock(&vq->vb_lock);
- 
--	mutex_lock(&src_vq->vb_lock);
--	mutex_lock(&dst_vq->vb_lock);
-+	if (videobuf_queue_is_busy(vq)) {
-+		v4l2_err(v4l2_dev, "%s: queue (%d) busy\n", __func__, f->type);
-+		ret = -EBUSY;
-+		goto sf_out;
+-	tx = d_frame->width;
+-	ty = d_frame->height;
++	if (ctx->rotation == 90 || ctx->rotation == 270) {
++		ty = d_frame->width;
++		tx = d_frame->height;
++	} else {
++		tx = d_frame->width;
++		ty = d_frame->height;
 +	}
- 
-+	spin_lock_irqsave(&ctx->slock, flags);
- 	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT) {
--		if (videobuf_queue_is_busy(src_vq)) {
--			v4l2_err(v4l2_dev, "%s queue busy\n", __func__);
--			ret = -EBUSY;
--			goto s_fmt_out;
--		}
- 		frame = &ctx->s_frame;
--		spin_lock_irqsave(&ctx->slock, flags);
- 		ctx->state |= FIMC_SRC_FMT;
--		spin_unlock_irqrestore(&ctx->slock, flags);
--
- 	} else if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE) {
--		if (videobuf_queue_is_busy(dst_vq)) {
--			v4l2_err(v4l2_dev, "%s queue busy\n", __func__);
--			ret = -EBUSY;
--			goto s_fmt_out;
--		}
- 		frame = &ctx->d_frame;
--		spin_lock_irqsave(&ctx->slock, flags);
- 		ctx->state |= FIMC_DST_FMT;
--		spin_unlock_irqrestore(&ctx->slock, flags);
- 	} else {
-+		spin_unlock_irqrestore(&ctx->slock, flags);
+ 	if (tx <= 0 || ty <= 0) {
  		v4l2_err(&ctx->fimc_dev->m2m.v4l2_dev,
- 			 "Wrong buffer/video queue type (%d)\n", f->type);
- 		ret = -EINVAL;
--		goto s_fmt_out;
-+		goto sf_out;
- 	}
-+	spin_unlock_irqrestore(&ctx->slock, flags);
+ 			"invalid target size: %d x %d", tx, ty);
+@@ -429,12 +434,6 @@ static int fimc_prepare_config(struct fimc_ctx *ctx, u32 flags)
+ 	d_frame = &ctx->d_frame;
  
- 	pix = &f->fmt.pix;
- 	frame->fmt = find_format(f);
- 	if (!frame->fmt) {
- 		ret = -EINVAL;
--		goto s_fmt_out;
-+		goto sf_out;
- 	}
+ 	if (flags & FIMC_PARAMS) {
+-		if ((ctx->out_path == FIMC_DMA) &&
+-			(ctx->rotation == 90 || ctx->rotation == 270)) {
+-			swap(d_frame->f_width, d_frame->f_height);
+-			swap(d_frame->width, d_frame->height);
+-		}
+-
+ 		/* Prepare the DMA offset ratios for scaler. */
+ 		fimc_prepare_dma_offset(ctx, &ctx->s_frame);
+ 		fimc_prepare_dma_offset(ctx, &ctx->d_frame);
+diff --git a/drivers/media/video/s5p-fimc/fimc-reg.c b/drivers/media/video/s5p-fimc/fimc-reg.c
+index 94e98d4..95adc84 100644
+--- a/drivers/media/video/s5p-fimc/fimc-reg.c
++++ b/drivers/media/video/s5p-fimc/fimc-reg.c
+@@ -34,44 +34,6 @@ void fimc_hw_reset(struct fimc_dev *dev)
+ 	cfg = readl(dev->regs + S5P_CIGCTRL);
+ 	cfg &= ~S5P_CIGCTRL_SWRST;
+ 	writel(cfg, dev->regs + S5P_CIGCTRL);
+-
+-}
+-
+-void fimc_hw_set_rotation(struct fimc_ctx *ctx)
+-{
+-	u32 cfg, flip;
+-	struct fimc_dev *dev = ctx->fimc_dev;
+-
+-	cfg = readl(dev->regs + S5P_CITRGFMT);
+-	cfg &= ~(S5P_CITRGFMT_INROT90 | S5P_CITRGFMT_OUTROT90);
+-
+-	flip = readl(dev->regs + S5P_MSCTRL);
+-	flip &= ~S5P_MSCTRL_FLIP_MASK;
+-
+-	/*
+-	 * The input and output rotator cannot work simultaneously.
+-	 * Use the output rotator in output DMA mode or the input rotator
+-	 * in direct fifo output mode.
+-	 */
+-	if (ctx->rotation == 90 || ctx->rotation == 270) {
+-		if (ctx->out_path == FIMC_LCDFIFO) {
+-			cfg |= S5P_CITRGFMT_INROT90;
+-			if (ctx->rotation == 270)
+-				flip |= S5P_MSCTRL_FLIP_180;
+-		} else {
+-			cfg |= S5P_CITRGFMT_OUTROT90;
+-			if (ctx->rotation == 270)
+-				cfg |= S5P_CITRGFMT_FLIP_180;
+-		}
+-	} else if (ctx->rotation == 180) {
+-		if (ctx->out_path == FIMC_LCDFIFO)
+-			flip |= S5P_MSCTRL_FLIP_180;
+-		else
+-			cfg |= S5P_CITRGFMT_FLIP_180;
+-	}
+-	if (ctx->rotation == 180 || ctx->rotation == 270)
+-		writel(flip, dev->regs + S5P_MSCTRL);
+-	writel(cfg, dev->regs + S5P_CITRGFMT);
+ }
  
--	frame->f_width = pix->bytesperline * 8 / frame->fmt->depth;
--	frame->f_height = pix->sizeimage/pix->bytesperline;
--	frame->width = pix->width;
--	frame->height = pix->height;
--	frame->o_width = pix->width;
-+	frame->f_width	= pix->bytesperline * 8 / frame->fmt->depth;
-+	frame->f_height	= pix->height;
-+	frame->width	= pix->width;
-+	frame->height	= pix->height;
-+	frame->o_width	= pix->width;
- 	frame->o_height = pix->height;
--	frame->offs_h = 0;
--	frame->offs_v = 0;
--	frame->size = (pix->width * pix->height * frame->fmt->depth) >> 3;
--	src_vq->field = dst_vq->field = pix->field;
-+	frame->offs_h	= 0;
-+	frame->offs_v	= 0;
-+	frame->size	= (pix->width * pix->height * frame->fmt->depth) >> 3;
-+	vq->field	= pix->field;
+ static u32 fimc_hw_get_in_flip(u32 ctx_flip)
+@@ -114,6 +76,46 @@ static u32 fimc_hw_get_target_flip(u32 ctx_flip)
+ 	return flip;
+ }
+ 
++void fimc_hw_set_rotation(struct fimc_ctx *ctx)
++{
++	u32 cfg, flip;
++	struct fimc_dev *dev = ctx->fimc_dev;
 +
- 	spin_lock_irqsave(&ctx->slock, flags);
- 	ctx->state |= FIMC_PARAMS;
- 	spin_unlock_irqrestore(&ctx->slock, flags);
++	cfg = readl(dev->regs + S5P_CITRGFMT);
++	cfg &= ~(S5P_CITRGFMT_INROT90 | S5P_CITRGFMT_OUTROT90 |
++		  S5P_CITRGFMT_FLIP_180);
++
++	flip = readl(dev->regs + S5P_MSCTRL);
++	flip &= ~S5P_MSCTRL_FLIP_MASK;
++
++	/*
++	 * The input and output rotator cannot work simultaneously.
++	 * Use the output rotator in output DMA mode or the input rotator
++	 * in direct fifo output mode.
++	 */
++	if (ctx->rotation == 90 || ctx->rotation == 270) {
++		if (ctx->out_path == FIMC_LCDFIFO) {
++			cfg |= S5P_CITRGFMT_INROT90;
++			if (ctx->rotation == 270)
++				flip |= S5P_MSCTRL_FLIP_180;
++		} else {
++			cfg |= S5P_CITRGFMT_OUTROT90;
++			if (ctx->rotation == 270)
++				cfg |= S5P_CITRGFMT_FLIP_180;
++		}
++	} else if (ctx->rotation == 180) {
++		if (ctx->out_path == FIMC_LCDFIFO)
++			flip |= S5P_MSCTRL_FLIP_180;
++		else
++			cfg |= S5P_CITRGFMT_FLIP_180;
++	}
++	if (ctx->rotation == 180 || ctx->rotation == 270)
++		writel(flip, dev->regs + S5P_MSCTRL);
++
++	cfg |= fimc_hw_get_target_flip(ctx->flip);
++	writel(cfg, dev->regs + S5P_CITRGFMT);
++}
++
+ void fimc_hw_set_target_format(struct fimc_ctx *ctx)
+ {
+ 	u32 cfg;
+@@ -149,13 +151,15 @@ void fimc_hw_set_target_format(struct fimc_ctx *ctx)
+ 		break;
+ 	}
  
--	dbg("f_width= %d, f_height= %d", frame->f_width, frame->f_height);
-+	dbg("f_w: %d, f_h: %d", frame->f_width, frame->f_height);
+-	cfg |= S5P_CITRGFMT_HSIZE(frame->width);
+-	cfg |= S5P_CITRGFMT_VSIZE(frame->height);
++	if (ctx->rotation == 90 || ctx->rotation == 270) {
++		cfg |= S5P_CITRGFMT_HSIZE(frame->height);
++		cfg |= S5P_CITRGFMT_VSIZE(frame->width);
++	} else {
  
--s_fmt_out:
--	mutex_unlock(&dst_vq->vb_lock);
--	mutex_unlock(&src_vq->vb_lock);
--	mutex_unlock(&ctx->fimc_dev->lock);
-+sf_out:
-+	mutex_unlock(&vq->vb_lock);
-+	mutex_unlock(&fimc->lock);
- 	return ret;
+-	if (ctx->rotation == 0) {
+-		cfg &= ~S5P_CITRGFMT_FLIP_MASK;
+-		cfg |= fimc_hw_get_target_flip(ctx->flip);
++		cfg |= S5P_CITRGFMT_HSIZE(frame->width);
++		cfg |= S5P_CITRGFMT_VSIZE(frame->height);
+ 	}
++
+ 	writel(cfg, dev->regs + S5P_CITRGFMT);
+ 
+ 	cfg = readl(dev->regs + S5P_CITAREA) & ~S5P_CITAREA_MASK;
+@@ -167,15 +171,10 @@ static void fimc_hw_set_out_dma_size(struct fimc_ctx *ctx)
+ {
+ 	struct fimc_dev *dev = ctx->fimc_dev;
+ 	struct fimc_frame *frame = &ctx->d_frame;
+-	u32 cfg = 0;
++	u32 cfg;
+ 
+-	if (ctx->rotation == 90 || ctx->rotation == 270) {
+-		cfg |= S5P_ORIG_SIZE_HOR(frame->f_height);
+-		cfg |= S5P_ORIG_SIZE_VER(frame->f_width);
+-	} else {
+-		cfg |= S5P_ORIG_SIZE_HOR(frame->f_width);
+-		cfg |= S5P_ORIG_SIZE_VER(frame->f_height);
+-	}
++	cfg = S5P_ORIG_SIZE_HOR(frame->f_width);
++	cfg |= S5P_ORIG_SIZE_VER(frame->f_height);
+ 	writel(cfg, dev->regs + S5P_ORGOSIZE);
  }
  
 -- 
