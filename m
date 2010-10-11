@@ -1,200 +1,40 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH v2 0/6] ARM: S5PV210: Add support S5PV210/S5PC110 CPUFREQ
-Date: Mon, 11 Oct 2010 17:22:59 +0900
-Message-ID: <AANLkTi=pQWw2rZ0ujQ5frkJR30Vz-WDfQEYDX4y6kPa9@mail.gmail.com>
-References: <1284962695-8542-1-git-send-email-sbkim73@samsung.com>
-	<004001cb6605$01ff4f90$05fdeeb0$@com>
-	<001501cb66ce$9dc54b40$d94fe1c0$%kim@samsung.com>
-	<AANLkTikJL+94qODxkQGxzEPj0SCS3BA4=XQozJSHCpyR@mail.gmail.com>
-	<003d01cb691a$eb71c8c0$c2555a40$@com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [alsa-devel] [PATCH 10/10] ASoC: SAMSUNG: Add Machine driver
+	for S/PDIF PCM audio
+Date: Mon, 11 Oct 2010 11:47:38 +0100
+Message-ID: <20101011104737.GB16777@sirena.org.uk>
+References: <AANLkTincwL_nQAmu7Dcmht0FV43BiN7OoecE_60QJhS2@mail.gmail.com> <20101005044304.GA26509@opensource.wolfsonmicro.com> <AANLkTi=x_fi5HTBBmMUv8YTxSdbgcnJ=ZbacJQj6rcgf@mail.gmail.com> <20101005055937.GA19989@opensource.wolfsonmicro.com> <AANLkTimi1t5S2XWdUFzaPttD4Hywm0SLt5CvR1YnVOjj@mail.gmail.com> <AANLkTin4skx+aiL2FXwWO1ekKqT2YWDd3SM1H5WnGkhC@mail.gmail.com> <00c401cb6520$9484ef90$bd8eceb0$%kim@samsung.com> <AANLkTikf4CAWm49Q_AfcfiQDBQUVcE_BC-a_4F7d8xOz@mail.gmail.com> <AANLkTinPXcjHcaM1puzz00Sfhob9Y-X4HGDDVGMTqhH5@mail.gmail.com> <AANLkTindvBBOyWwkbwUo+oG31r8xSgCLbjuDNgvTNY_Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=EUC-KR
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:38529 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753149Ab0JKIXA convert rfc822-to-8bit (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:55039 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751114Ab0JKKrk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Oct 2010 04:23:00 -0400
-Received: by iwn6 with SMTP id 6so3044981iwn.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Oct 2010 01:22:59 -0700 (PDT)
-In-Reply-To: <003d01cb691a$eb71c8c0$c2555a40$@com>
+	Mon, 11 Oct 2010 06:47:40 -0400
+Content-Disposition: inline
+In-Reply-To: <AANLkTindvBBOyWwkbwUo+oG31r8xSgCLbjuDNgvTNY_Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Seungwhan Youn <claude.youn@gmail.com>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, jassi.brar@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, lrg@slimlogic.co.uk, linux-arm-kernel@lists.infradead.org, Seungwhan Youn <sw.youn@samsung.com>
 
-On Mon, Oct 11, 2010 at 5:04 PM, Sangbeom Kim <sbkim73@samsung.com> wro=
-te:
-> On Monday, Oct 11, 2010 9:12 AM, MyungJoo Ham <myungjoo.ham@samsung.c=
-om> wrote:
->>
->> Hello,
->>
->> On Fri, Oct 8, 2010 at 6:52 PM, Kukjin Kim <kgene.kim@samsung.com> w=
-rote:
->> > Sangbeom Kim wrote:
->> >>
->> >> Hi all,
->> >> I know that there is another S5PV210 CPUFREQ patch from Mr. Ham.
->> >> But, That patchset seems to have unclear part.
->> >>
->> > http://lists.infradead.org/pipermail/linux-arm-kernel/2010-
->> August/023626.htm
->> >> l
->> >> The part of 'CONFIG_PM' is unclear and still have PM support part=
-=2E
->> >> So, I think that this patch is more suitable for S5PV210/S5PC110
->> CPUFREQ
->> > in
->> >> the mainline.
->> >> because this patch implemented basic pm functionality and already
->> tested
->> > on
->> >> smdkv210 board.
->> >>
->> > Hi,
->> >
->> > So...I'd like to merge this for this merge window.
->> >
->> > Mr. Ham, how do you think?
->> > If any problems or opinions, please let me know.
->>
->>
->> You can go ahead as long as this patch include features that the
->> another addresses.
->>
->>
->> Anyway, the part that is under "CONFIG_PM" is intended to block
->> frequency changing while PM is doing something. For example, when th=
-e
->> system enters a sleep, if CPUFREQ somehow enters "100MHz/0.95V" just
->> before the sleep and wakes up, the voltage may stay at 0.95V (PMIC i=
-s
->> not turned off during sleep) while the frequency is reset to 800MHz
->> (by the bootloader), which requires, let's say, 1.1V. Such
->> inconsistency may lead to system hang and we have observed such case=
-s
->> a few times. I intended to refuse any CPUFREQ requests at the
->> /mach-s5pv210/cpufreq.c when PM seems to start.
->>
->
-> We knew already that issue,
-> So we have a plan to implement with other solution.
-> (using regulator suspend feature)
->
->> It may seem that such feature is not needed if the voltage is not
->> optimized, however, CPUFREQ is useless if the voltage stays at 1.2V
->> and if the voltage changes properly according to the frequency, such
->> feature is required anyway.
->
-> Currently, there is no max8698 regulator driver on mainline.
-> After submission that driver, we can add voltage scaling feature.
->
-> Both issues have dependency on regulator driver.
+On Sat, Oct 09, 2010 at 10:52:26AM +0900, Jassi Brar wrote:
+> On Fri, Oct 8, 2010 at 6:07 PM, Seungwhan Youn <claude.youn@gmail.com> wrote:
 
-Nope. it does not need to depend on any regulator drivers. We can
-simply stop changing frequency (or hold at a specific frequency) after
-suspend-to-mem is called. (probably at ".begin" stage). This depends
-on PM, but does NOT depend on REGULATOR.
+> > Now, I'm almost finished 2nd patch for submit except this audio clock
+> > setting. For now, I can only think that remove audio clock setting
+> > from this machine code, and add audio clock settings in arch later(may
+> > be after arch/arm/plat-samsung get EPLL policy as Mr. Kukjin said).
 
-The approach in the removed patch was to set a flag at the .begin PM
-ops and deflag it at .end PM ops and let target function of CPUFREQ to
-read the flag to decide whether to accept the frequency change request
-and to set at the default frequency (i.e., 800MHz) when .begin ops is
-called and restore the frequency when .end ops is called.
+> > Is this okay?
 
+> IMO neither of the method is much better than the other.
 
->
->>
->>
->> ps. Anyway, such feature is also not included in my patch, either. :=
-(
->> (tried to included, but the code was excluded at the patch patching
->> the patch.)
->>
->> >
->> > Thanks.
->> >
->> > Best regards,
->> > Kgene.
->> > --
->> > Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
->> > SW Solution Development Team, Samsung Electronics Co., Ltd.
->> >
->> >> Thanks and regards,
->> >> S.B. Kim
->> >>
->> >> > on Monday, September 20, 2010 3:05 PM, Sangbeom Kim
->> >> <sbkim73@samsung.com>
->> >> wrote:
->> >> >
->> >> > This patch adds CPUFREQ for S5PV210/S5PC110.
->> >> >
->> >> > Changes since v1:
->> >> >
->> >> > - Added MOUT_DMC0 and SCLK_DMC0 for checking the dmc0 clock in
->> >> CPUFREQ
->> >> > driver.
->> >> > - Removed hardcoding of DRAM refresh counter.
->> >> > - Added to calculate refresh counter function based on DRAM ope=
-ration
->> >> freq.
->> >> >
->> >> > [PATCH v2 1/6] ARM: S5PV210: Add DMC map_desc table for support=
-ing
->> DMC
->> >> > access
->> >> > [PATCH v2 2/6] ARM: S5PV210: Add struct clk_ops for clk_fout_ap=
-ll
->> >> > [PATCH v2 3/6] ARM: S5PV210: Add MOUT_DMC0 and SCLK_DMC0 clocks
->> >> > [PATCH v2 4/6] ARM: S5PV210: Add Register definition for CMU
->> >> > [PATCH v2 5/6] ARM: S5PV210: Add support CPUFREQ
->> >> > [PATCH v2 6/6] ARM: S5PV210: Update Kconfig and Makefile for
->> supporting
->> >> > CPUFREQ driver
->> >> > --
->> >> > To unsubscribe from this list: send the line "unsubscribe linux=
--
->> samsung-
->> >> > soc" in
->> >> > the body of a message to majordomo@vger.kernel.org
->> >> > More majordomo info at  http://vger.kernel.org/majordomo-info.h=
-tml
->> >
->> >
->> > _______________________________________________
->> > linux-arm-kernel mailing list
->> > linux-arm-kernel@lists.infradead.org
->> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->> >
->>
->>
->>
->> --
->> MyungJoo Ham (=C7=D4=B8=ED=C1=D6), Ph.D.
->> Mobile Software Platform Lab,
->> Digital Media and Communications (DMC) Business
->> Samsung Electronics
->> cell: 82-10-6714-2858
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
+> If neither of the maintainers relent, maybe drop the clock setting altogether
+> and mark the machine driver 'BROKEN' until the EPLL management is fixed?
 
-
-
---=20
-MyungJoo Ham (=C7=D4=B8=ED=C1=D6), Ph.D.
-Mobile Software Platform Lab,
-Digital Media and Communications (DMC) Business
-Samsung Electronics
-cell: 82-10-6714-2858
+I'm OK with having the code in the driver, I just want something there
+that makes it more discoverable that it's there like a config option.
+Having the driver log loudly when it reconfigures the EPLL would
+probably also cover it.
