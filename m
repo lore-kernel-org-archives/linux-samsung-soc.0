@@ -1,71 +1,146 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v5 0/6] Add support for camera capture in s5p-fimc driver
-Date: Mon, 11 Oct 2010 19:26:27 +0200
-Message-ID: <1286817993-21558-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 4/6 v5] V4L/DVB: s5p-fimc: Do not lock both buffer queues in
+ s_fmt
+Date: Mon, 11 Oct 2010 19:26:31 +0200
+Message-ID: <1286817993-21558-5-git-send-email-s.nawrocki@samsung.com>
+References: <1286817993-21558-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:34262 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755492Ab0JKR0j (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:65331 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755486Ab0JKR0k (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Oct 2010 13:26:39 -0400
+	Mon, 11 Oct 2010 13:26:40 -0400
+In-reply-to: <1286817993-21558-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com
 
-Hi all,
+It is not necessary to lock both capture and output buffer queue while
+setting format for single queue.
 
-this is a fifth version of patches adding camera capture capability
-to the s5p-fimc driver. It incorporates minor fixes that I tracked
-just after sending v4, my apologies for spaming the list..
-Hopefully that is the last version to be merged.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/media/video/s5p-fimc/fimc-core.c |   69 +++++++++++++----------------
+ 1 files changed, 31 insertions(+), 38 deletions(-)
 
-
-Changes since v1:
-- entirely removed plat-samsung/include/plat/fimc.h header so there is no
- platform code dependency
-- improved s/try_fmt ioctl and introduced common ioctl handlers for mem2mem 
-  and capture node where it's reasonable
-- register definition changes merged with previous commit   
- [3/8] v4l: s5p-fimc: Register definition cleanup
-
-Changes since v2:
-- improved s/g/crop(cap) handling in capture node
-- added passing of v4l controls to the sensor subdevice
-
-Changes since v3:
-- changed summary of patch [4/4] to adhere to patch submitting guidelines
-- patch "V4L/DVB: s5p-fimc: M2M driver cleanup.." split to 2 separate
- commits - 2/5 and 3/5 in this series
-
-Changes since v4:
-- fixed passing control to the subdev, removed silly use of check_stream_type()
-- add support for FIMC on S5PC210 (S5PV310) SoCs
-
-The patch series contains:
-[PATCH 1/6 v5] V4L/DVB: s5p-fimc: Register definition cleanup
-[PATCH 2/6 v5] V4L/DVB: s5p-fimc: mem2mem driver refactoring and cleanup
-[PATCH 3/6 v5] V4L/DVB: s5p-fimc: Fix 90/270 deg rotation errors
-[PATCH 4/6 v5] V4L/DVB: s5p-fimc: Do not lock both buffer queues in s_fmt
-[PATCH 5/6 v5] V4L/DVB: s5p-fimc: Add camera capture support
-[PATCH 6/6 v5] V4L/DVB: s5p-fimc: Add suport for FIMC on S5PC210 SoCs
-
-
-It has been rebased onto linuxtv/staging-2.6.37 branch at
-git://linuxtv.org/media_tree.git with the below 2 bugfix patches already present 
-in 2.6.36 also applied:
-
-v4l: s5p-fimc: Fix 3-planar formats handling and pixel offset error on S5PV210 SoCs
-v4l: s5p-fimc: Fix return value on probe() failure
-
-Regards,
-Sylwester
-
-
---
-Sylwester Nawrocki
-Linux Platform Group
-Samsung Poland R&D Center
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
+index 6bddec3..85a7e72 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.c
++++ b/drivers/media/video/s5p-fimc/fimc-core.c
+@@ -742,8 +742,9 @@ static int fimc_m2m_try_fmt(struct file *file, void *priv,
+ static int fimc_m2m_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
+ {
+ 	struct fimc_ctx *ctx = priv;
+-	struct v4l2_device *v4l2_dev = &ctx->fimc_dev->m2m.v4l2_dev;
+-	struct videobuf_queue *src_vq, *dst_vq;
++	struct fimc_dev *fimc = ctx->fimc_dev;
++	struct v4l2_device *v4l2_dev = &fimc->m2m.v4l2_dev;
++	struct videobuf_queue *vq;
+ 	struct fimc_frame *frame;
+ 	struct v4l2_pix_format *pix;
+ 	unsigned long flags;
+@@ -755,69 +756,61 @@ static int fimc_m2m_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
+ 	if (ret)
+ 		return ret;
+ 
+-	mutex_lock(&ctx->fimc_dev->lock);
++	if (mutex_lock_interruptible(&fimc->lock))
++		return -ERESTARTSYS;
+ 
+-	src_vq = v4l2_m2m_get_src_vq(ctx->m2m_ctx);
+-	dst_vq = v4l2_m2m_get_dst_vq(ctx->m2m_ctx);
++	vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
++	mutex_lock(&vq->vb_lock);
+ 
+-	mutex_lock(&src_vq->vb_lock);
+-	mutex_lock(&dst_vq->vb_lock);
++	if (videobuf_queue_is_busy(vq)) {
++		v4l2_err(v4l2_dev, "%s: queue (%d) busy\n", __func__, f->type);
++		ret = -EBUSY;
++		goto sf_out;
++	}
+ 
++	spin_lock_irqsave(&ctx->slock, flags);
+ 	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT) {
+-		if (videobuf_queue_is_busy(src_vq)) {
+-			v4l2_err(v4l2_dev, "%s queue busy\n", __func__);
+-			ret = -EBUSY;
+-			goto s_fmt_out;
+-		}
+ 		frame = &ctx->s_frame;
+-		spin_lock_irqsave(&ctx->slock, flags);
+ 		ctx->state |= FIMC_SRC_FMT;
+-		spin_unlock_irqrestore(&ctx->slock, flags);
+-
+ 	} else if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE) {
+-		if (videobuf_queue_is_busy(dst_vq)) {
+-			v4l2_err(v4l2_dev, "%s queue busy\n", __func__);
+-			ret = -EBUSY;
+-			goto s_fmt_out;
+-		}
+ 		frame = &ctx->d_frame;
+-		spin_lock_irqsave(&ctx->slock, flags);
+ 		ctx->state |= FIMC_DST_FMT;
+-		spin_unlock_irqrestore(&ctx->slock, flags);
+ 	} else {
++		spin_unlock_irqrestore(&ctx->slock, flags);
+ 		v4l2_err(&ctx->fimc_dev->m2m.v4l2_dev,
+ 			 "Wrong buffer/video queue type (%d)\n", f->type);
+ 		ret = -EINVAL;
+-		goto s_fmt_out;
++		goto sf_out;
+ 	}
++	spin_unlock_irqrestore(&ctx->slock, flags);
+ 
+ 	pix = &f->fmt.pix;
+ 	frame->fmt = find_format(f);
+ 	if (!frame->fmt) {
+ 		ret = -EINVAL;
+-		goto s_fmt_out;
++		goto sf_out;
+ 	}
+ 
+-	frame->f_width = pix->bytesperline * 8 / frame->fmt->depth;
+-	frame->f_height = pix->sizeimage/pix->bytesperline;
+-	frame->width = pix->width;
+-	frame->height = pix->height;
+-	frame->o_width = pix->width;
++	frame->f_width	= pix->bytesperline * 8 / frame->fmt->depth;
++	frame->f_height	= pix->height;
++	frame->width	= pix->width;
++	frame->height	= pix->height;
++	frame->o_width	= pix->width;
+ 	frame->o_height = pix->height;
+-	frame->offs_h = 0;
+-	frame->offs_v = 0;
+-	frame->size = (pix->width * pix->height * frame->fmt->depth) >> 3;
+-	src_vq->field = dst_vq->field = pix->field;
++	frame->offs_h	= 0;
++	frame->offs_v	= 0;
++	frame->size	= (pix->width * pix->height * frame->fmt->depth) >> 3;
++	vq->field	= pix->field;
++
+ 	spin_lock_irqsave(&ctx->slock, flags);
+ 	ctx->state |= FIMC_PARAMS;
+ 	spin_unlock_irqrestore(&ctx->slock, flags);
+ 
+-	dbg("f_width= %d, f_height= %d", frame->f_width, frame->f_height);
++	dbg("f_w: %d, f_h: %d", frame->f_width, frame->f_height);
+ 
+-s_fmt_out:
+-	mutex_unlock(&dst_vq->vb_lock);
+-	mutex_unlock(&src_vq->vb_lock);
+-	mutex_unlock(&ctx->fimc_dev->lock);
++sf_out:
++	mutex_unlock(&vq->vb_lock);
++	mutex_unlock(&fimc->lock);
+ 	return ret;
+ }
+ 
+-- 
+1.7.3.1
