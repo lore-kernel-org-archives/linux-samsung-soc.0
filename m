@@ -1,72 +1,85 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V2] ARM: S5PV310: Change to using s3c_gpio_cfgall_range()
-Date: Tue, 12 Oct 2010 07:38:16 +0900
-Message-ID: <1286836696-26659-1-git-send-email-kgene.kim@samsung.com>
+Subject: RE: [PATCH V3] ARM: S5PV310: Add I2C channel 3, 4, 5, 6,
+ and 7 device support
+Date: Tue, 12 Oct 2010 07:54:34 +0900
+Message-ID: <00ec01cb6997$48fe3ab0$dafab010$%kim@samsung.com>
+References: <1286455601-25360-4-git-send-email-m.szyprowski@samsung.com>
+ <1286784948-27094-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:39016 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756672Ab0JKWpr (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:58535 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751108Ab0JKWyT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Oct 2010 18:45:47 -0400
+	Mon, 11 Oct 2010 18:54:19 -0400
+Received: from epmmp2 (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0LA5000A7EAHYVB0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 12 Oct 2010 07:54:17 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LA500JNGEAH1L@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 12 Oct 2010 07:54:17 +0900 (KST)
+In-reply-to: <1286784948-27094-1-git-send-email-m.szyprowski@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
 
-Change the code setting a range of GPIO pins' configuration and
-pull state to use the recently introduced s3c_gpio_cfgall_range().
+Marek Szyprowski wrote:
+> 
+> S5PV310 and S5PC210 support more I2C devices than previous SoCs.
+> Add the device support code for them.
+> 
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+> 
+> Changes since V2:
+> - removed some s5p reference leftovers from V1
+> - adapted setup-i2cX.c to use s3c_gpio_cfgall_range()
+> - added missing entries in plat-samsung/include/plat/devs.h
+> - added missing 'select HAVE_S3C2410_I2C' in KConfig
+> 
+Hi, Marek
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
-Changes since v1: 
-- Fix wrong s3c_gpio_cfgall_range
+Thanks for your update.
 
- arch/arm/mach-s5pv310/setup-i2c0.c |    5 ++---
- arch/arm/mach-s5pv310/setup-i2c1.c |    5 ++---
- arch/arm/mach-s5pv310/setup-i2c2.c |    5 ++---
- 3 files changed, 6 insertions(+), 9 deletions(-)
+(snip)
 
-diff --git a/arch/arm/mach-s5pv310/setup-i2c0.c b/arch/arm/mach-s5pv310/setup-i2c0.c
-index 17c54c8..f47f8f3 100644
---- a/arch/arm/mach-s5pv310/setup-i2c0.c
-+++ b/arch/arm/mach-s5pv310/setup-i2c0.c
-@@ -21,7 +21,6 @@ struct platform_device; /* don't need the contents */
- 
- void s3c_i2c0_cfg_gpio(struct platform_device *dev)
- {
--	s3c_gpio_cfgpin_range(S5PV310_GPD1(0), 2, S3C_GPIO_SFN(2));
--	s3c_gpio_setpull(S5PV310_GPD1(0), S3C_GPIO_PULL_UP);
--	s3c_gpio_setpull(S5PV310_GPD1(1), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgall_range(S5PV310_GPD1(0), 2,
-+			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
- }
-diff --git a/arch/arm/mach-s5pv310/setup-i2c1.c b/arch/arm/mach-s5pv310/setup-i2c1.c
-index 1740c9f..9d07e4e 100644
---- a/arch/arm/mach-s5pv310/setup-i2c1.c
-+++ b/arch/arm/mach-s5pv310/setup-i2c1.c
-@@ -18,7 +18,6 @@ struct platform_device; /* don't need the contents */
- 
- void s3c_i2c1_cfg_gpio(struct platform_device *dev)
- {
--	s3c_gpio_cfgpin_range(S5PV310_GPD1(2), 2, S3C_GPIO_SFN(2));
--	s3c_gpio_setpull(S5PV310_GPD1(2), S3C_GPIO_PULL_UP);
--	s3c_gpio_setpull(S5PV310_GPD1(3), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgall_range(S5PV310_GPD1(2), 2,
-+			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
- }
-diff --git a/arch/arm/mach-s5pv310/setup-i2c2.c b/arch/arm/mach-s5pv310/setup-i2c2.c
-index 860f77b..ad0f431 100644
---- a/arch/arm/mach-s5pv310/setup-i2c2.c
-+++ b/arch/arm/mach-s5pv310/setup-i2c2.c
-@@ -18,7 +18,6 @@ struct platform_device; /* don't need the contents */
- 
- void s3c_i2c2_cfg_gpio(struct platform_device *dev)
- {
--	s3c_gpio_cfgpin_range(S5PV310_GPA0(6), 2, S3C_GPIO_SFN(3));
--	s3c_gpio_setpull(S5PV310_GPA0(6), S3C_GPIO_PULL_UP);
--	s3c_gpio_setpull(S5PV310_GPA0(7), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgall_range(S5PV310_GPA0(6), 2,
-+			      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
- }
--- 
-1.6.2.5
+> +void s3c_i2c4_cfg_gpio(struct platform_device *dev)
+> +{
+> +	s3c_gpio_cfgall_range(S5PV310_GPB(2), 2,
+> +			      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
+
+Following is from your previous patch.
+
+void s3c_i2c4_cfg_gpio(struct platform_device *dev)
+{
+	s3c_gpio_cfgpin(S5PV310_GPB(0), S3C_GPIO_SFN(3));
+	s3c_gpio_setpull(S5PV310_GPB(0), S3C_GPIO_PULL_UP);
+	s3c_gpio_cfgpin(S5PV310_GPB(1), S3C_GPIO_SFN(3));
+	s3c_gpio_setpull(S5PV310_GPB(1), S3C_GPIO_PULL_UP);
+}
+
+So...should be...
+s3c_gpio_cfgall_range(S5PV310_GPB(0), 2, S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
+
+will fix it myself :-)
+
+(snip)
+
+others, ok to me...will apply.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
