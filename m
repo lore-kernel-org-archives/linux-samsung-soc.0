@@ -1,152 +1,170 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v5 2/2] sdhci-s3c: Add support no internal clock divider in host controller
-Date: Mon, 11 Oct 2010 16:50:00 +0900
-Message-ID: <1286783400-7277-1-git-send-email-kgene.kim@samsung.com>
+From: Sangbeom Kim <sbkim73@samsung.com>
+Subject: RE: [PATCH v2 0/6] ARM: S5PV210: Add support S5PV210/S5PC110 CPUFREQ
+Date: Mon, 11 Oct 2010 17:04:17 +0900
+Message-ID: <003d01cb691a$eb71c8c0$c2555a40$@com>
+References: <1284962695-8542-1-git-send-email-sbkim73@samsung.com>
+ <004001cb6605$01ff4f90$05fdeeb0$@com>
+ <001501cb66ce$9dc54b40$d94fe1c0$%kim@samsung.com>
+ <AANLkTikJL+94qODxkQGxzEPj0SCS3BA4=XQozJSHCpyR@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:58828 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752527Ab0JKIAl (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:57499 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752527Ab0JKIEE convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Oct 2010 04:00:41 -0400
+	Mon, 11 Oct 2010 04:04:04 -0400
+Received: from epmmp2 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0LA400FOH92RLR60@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 11 Oct 2010 17:04:03 +0900 (KST)
+Received: from DOSBKIM7301 ([12.23.103.65])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LA400F0F92R6T@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 11 Oct 2010 17:04:03 +0900 (KST)
+In-reply-to: <AANLkTikJL+94qODxkQGxzEPj0SCS3BA4=XQozJSHCpyR@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
-Cc: ben-linux@fluff.org, akpm@linux-foundation.org, cjb@laptop.org, Jeongbae Seo <jeongbae.seo@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: 'MyungJoo Ham' <myungjoo.ham@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-From: Jeongbae Seo <jeongbae.seo@samsung.com>
+On Monday, Oct 11, 2010 9:12 AM, MyungJoo Ham <myungjoo.ham@samsung.com=
+> wrote:
+>=20
+> Hello,
+>=20
+> On Fri, Oct 8, 2010 at 6:52 PM, Kukjin Kim <kgene.kim@samsung.com> wr=
+ote:
+> > Sangbeom Kim wrote:
+> >>
+> >> Hi all,
+> >> I know that there is another S5PV210 CPUFREQ patch from Mr. Ham.
+> >> But, That patchset seems to have unclear part.
+> >>
+> > http://lists.infradead.org/pipermail/linux-arm-kernel/2010-
+> August/023626.htm
+> >> l
+> >> The part of 'CONFIG_PM' is unclear and still have PM support part.
+> >> So, I think that this patch is more suitable for S5PV210/S5PC110
+> CPUFREQ
+> > in
+> >> the mainline.
+> >> because this patch implemented basic pm functionality and already
+> tested
+> > on
+> >> smdkv210 board.
+> >>
+> > Hi,
+> >
+> > So...I'd like to merge this for this merge window.
+> >
+> > Mr. Ham, how do you think?
+> > If any problems or opinions, please let me know.
+>=20
+>=20
+> You can go ahead as long as this patch include features that the
+> another addresses.
+>=20
+>=20
+> Anyway, the part that is under "CONFIG_PM" is intended to block
+> frequency changing while PM is doing something. For example, when the
+> system enters a sleep, if CPUFREQ somehow enters "100MHz/0.95V" just
+> before the sleep and wakes up, the voltage may stay at 0.95V (PMIC is
+> not turned off during sleep) while the frequency is reset to 800MHz
+> (by the bootloader), which requires, let's say, 1.1V. Such
+> inconsistency may lead to system hang and we have observed such cases
+> a few times. I intended to refuse any CPUFREQ requests at the
+> /mach-s5pv210/cpufreq.c when PM seems to start.
+>=20
 
-This patch adds to support no internal clock divider in SDHCI.
-The external clock divider can be used to make a proper clock
-because SDHCI doesn't support internal clock divider by itself.
+We knew already that issue,=20
+So we have a plan to implement with other solution.=20
+(using regulator suspend feature)
 
-If external clock divider type is selected, some functions related
-with clock control will be overridened by other functions.
+> It may seem that such feature is not needed if the voltage is not
+> optimized, however, CPUFREQ is useless if the voltage stays at 1.2V
+> and if the voltage changes properly according to the frequency, such
+> feature is required anyway.
 
-The current clock control index is added to let you know which
-clock bus is used for SDHCI when using overriding functions.
+Currently, there is no max8698 regulator driver on mainline.
+After submission that driver, we can add voltage scaling feature.
 
-The checking functions is added into sdhci_s3c_consider_clock,
-because clock divider step is different from that of host controller.
+Both issues have dependency on regulator driver.
 
-Signed-off-by: Jeongbae Seo <jeongbae.seo@samsung.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Ben Dooks <ben-linux@fluff.org>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
-Changes since v4:
-- Added missing change
-
-Changes since v3:
-- Modified comparision condition as per Kyungmin Park's suggestion
-
-Changes since v2:
-- Changed clock control method to overriding from using quirk
-- This patch is referred from that of Jaehoon Chung's support non-standard clock setting
-
-Changes since v1:
-- Separated to each topic
-
-NOTE :
-- This patch depends on following.
-  [PATCH 4/5] ARM: SAMSUNG : Add clock types into platform data
-
- drivers/mmc/host/sdhci-s3c.c |   62 ++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 62 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index a7710f5..e7208f6 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -130,6 +130,15 @@ static unsigned int sdhci_s3c_consider_clock(struct sdhci_s3c *ourhost,
- 	if (!clksrc)
- 		return UINT_MAX;
- 
-+	/*
-+	 * Clock divider's step is different as 1 from that of host controller
-+	 * when 'clk_type' is S3C_SDHCI_CLK_DIV_EXTERNAL.
-+	 */
-+	if (ourhost->pdata->clk_type == S3C_SDHCI_CLK_DIV_EXTERNAL) {
-+		rate = clk_round_rate(clksrc, wanted);
-+		return wanted - rate;
-+	}
-+
- 	rate = clk_get_rate(clksrc);
- 
- 	for (div = 1; div < 256; div *= 2) {
-@@ -232,6 +241,42 @@ static unsigned int sdhci_s3c_get_min_clock(struct sdhci_host *host)
- 	return min;
- }
- 
-+/* sdhci_cmu_get_max_clk - callback to get maximum clock frequency.*/
-+static unsigned int sdhci_cmu_get_max_clock(struct sdhci_host *host)
-+{
-+	struct sdhci_s3c *ourhost = to_s3c(host);
-+
-+	return clk_round_rate(ourhost->clk_bus[ourhost->cur_clk], UINT_MAX);
-+}
-+
-+/* sdhci_cmu_get_min_clock - callback to get minimal supported clock value. */
-+static unsigned int sdhci_cmu_get_min_clock(struct sdhci_host *host)
-+{
-+	struct sdhci_s3c *ourhost = to_s3c(host);
-+
-+	/*
-+	 * initial clock can be in the frequency range of
-+	 * 100KHz-400KHz, so we set it as max value.
-+	 */
-+	return clk_round_rate(ourhost->clk_bus[ourhost->cur_clk], 400000);
-+}
-+
-+/* sdhci_cmu_set_clock - callback on clock change.*/
-+static void sdhci_cmu_set_clock(struct sdhci_host *host, unsigned int clock)
-+{
-+	struct sdhci_s3c *ourhost = to_s3c(host);
-+
-+	/* don't bother if the clock is going off */
-+	if (clock == 0)
-+		return;
-+
-+	sdhci_s3c_set_clock(host, clock);
-+
-+	clk_set_rate(ourhost->clk_bus[ourhost->cur_clk], clock);
-+
-+	host->clock = clock;
-+}
-+
- static struct sdhci_ops sdhci_s3c_ops = {
- 	.get_max_clock		= sdhci_s3c_get_max_clk,
- 	.set_clock		= sdhci_s3c_set_clock,
-@@ -361,6 +406,13 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 
- 		clks++;
- 		sc->clk_bus[ptr] = clk;
-+
-+		/*
-+		 * save current clock index to know which clock bus
-+		 * is used later in overriding functions.
-+		 */
-+		sc->cur_clk = ptr;
-+
- 		clk_enable(clk);
- 
- 		dev_info(dev, "clock source %d: %s (%ld Hz)\n",
-@@ -427,6 +479,16 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 	/* HSMMC on Samsung SoCs uses SDCLK as timeout clock */
- 	host->quirks |= SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK;
- 
-+	/*
-+	 * If controller does not have internal clock divider,
-+	 * we can use overriding functions instead of default.
-+	 */
-+	if (pdata->clk_type == S3C_SDHCI_CLK_DIV_EXTERNAL) {
-+		sdhci_s3c_ops.set_clock = sdhci_cmu_set_clock;
-+		sdhci_s3c_ops.get_min_clock = sdhci_cmu_get_min_clock;
-+		sdhci_s3c_ops.get_max_clock = sdhci_cmu_get_max_clock;
-+	}
-+
- 	/* It supports additional host capabilities if needed */
- 	if (pdata->host_caps)
- 		host->mmc->caps |= pdata->host_caps;
--- 
-1.6.2.5
+>=20
+>=20
+> ps. Anyway, such feature is also not included in my patch, either. :(
+> (tried to included, but the code was excluded at the patch patching
+> the patch.)
+>=20
+> >
+> > Thanks.
+> >
+> > Best regards,
+> > Kgene.
+> > --
+> > Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> > SW Solution Development Team, Samsung Electronics Co., Ltd.
+> >
+> >> Thanks and regards,
+> >> S.B. Kim
+> >>
+> >> > on Monday, September 20, 2010 3:05 PM, Sangbeom Kim
+> >> <sbkim73@samsung.com>
+> >> wrote:
+> >> >
+> >> > This patch adds CPUFREQ for S5PV210/S5PC110.
+> >> >
+> >> > Changes since v1:
+> >> >
+> >> > - Added MOUT_DMC0 and SCLK_DMC0 for checking the dmc0 clock in
+> >> CPUFREQ
+> >> > driver.
+> >> > - Removed hardcoding of DRAM refresh counter.
+> >> > - Added to calculate refresh counter function based on DRAM oper=
+ation
+> >> freq.
+> >> >
+> >> > [PATCH v2 1/6] ARM: S5PV210: Add DMC map_desc table for supporti=
+ng
+> DMC
+> >> > access
+> >> > [PATCH v2 2/6] ARM: S5PV210: Add struct clk_ops for clk_fout_apl=
+l
+> >> > [PATCH v2 3/6] ARM: S5PV210: Add MOUT_DMC0 and SCLK_DMC0 clocks
+> >> > [PATCH v2 4/6] ARM: S5PV210: Add Register definition for CMU
+> >> > [PATCH v2 5/6] ARM: S5PV210: Add support CPUFREQ
+> >> > [PATCH v2 6/6] ARM: S5PV210: Update Kconfig and Makefile for
+> supporting
+> >> > CPUFREQ driver
+> >> > --
+> >> > To unsubscribe from this list: send the line "unsubscribe linux-
+> samsung-
+> >> > soc" in
+> >> > the body of a message to majordomo@vger.kernel.org
+> >> > More majordomo info at  http://vger.kernel.org/majordomo-info.ht=
+ml
+> >
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> >
+>=20
+>=20
+>=20
+> --
+> MyungJoo Ham (=ED=95=A8=EB=AA=85=EC=A3=BC), Ph.D.
+> Mobile Software Platform Lab,
+> Digital Media and Communications (DMC) Business
+> Samsung Electronics
+> cell: 82-10-6714-2858
+>=20
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
