@@ -1,13 +1,15 @@
 From: Sangbeom Kim <sbkim73@samsung.com>
-Subject: [PATCH] ARM: S5PV310: Update MAX_COMBINER_NR
-Date: Tue, 12 Oct 2010 16:16:03 +0900
-Message-ID: <1286867763-21515-1-git-send-email-sbkim73@samsung.com>
+Subject: [PATCH V2 1/2] ARM: S5P: Add initial map for GPIO2 and GPIO3
+Date: Tue, 12 Oct 2010 16:34:35 +0900
+Message-ID: <1286868876-3748-2-git-send-email-sbkim73@samsung.com>
+References: <1286868876-3748-1-git-send-email-sbkim73@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:47063 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:50151 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754413Ab0JLHZw (ORCPT
+	with ESMTP id S1756536Ab0JLHkv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Oct 2010 03:25:52 -0400
+	Tue, 12 Oct 2010 03:40:51 -0400
+In-Reply-To: <1286868876-3748-1-git-send-email-sbkim73@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
@@ -15,26 +17,60 @@ Cc: kgene.kim@samsung.com, ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.
 
 From: Jongpill Lee <boyko.lee@samsung.com>
 
-This patch updates MAX_COMBINER_NR from 39 to 40 because
-S5PV310 need 39th combiner for including EINT16_31.
+This patch adds initial map for GPIO2 and GPIO3.
+S5PV310/S5PC210 has separated GPIO1, GPIO2 and GPIO3.
 
 Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
 Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
 ---
- arch/arm/mach-s5pv310/include/mach/irqs.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Changes since v1:
+- Rebased on latest for-next from Kukjin Kim's git tree
+- Added S5P_VA_GPIO1 according to S5PV310_PA_GPIO1
 
-diff --git a/arch/arm/mach-s5pv310/include/mach/irqs.h b/arch/arm/mach-s5pv310/include/mach/irqs.h
-index b2acc62..f301af7 100644
---- a/arch/arm/mach-s5pv310/include/mach/irqs.h
-+++ b/arch/arm/mach-s5pv310/include/mach/irqs.h
-@@ -89,6 +89,6 @@
+ arch/arm/mach-s5pv310/cpu.c              |   12 +++++++++++-
+ arch/arm/plat-s5p/include/plat/map-s5p.h |    3 +++
+ 2 files changed, 14 insertions(+), 1 deletions(-)
+
+diff --git a/arch/arm/mach-s5pv310/cpu.c b/arch/arm/mach-s5pv310/cpu.c
+index 3345cf6..ffed262 100644
+--- a/arch/arm/mach-s5pv310/cpu.c
++++ b/arch/arm/mach-s5pv310/cpu.c
+@@ -57,11 +57,21 @@ static struct map_desc s5pv310_iodesc[] __initdata = {
+ 		.length		= SZ_4K,
+ 		.type		= MT_DEVICE,
+ 	}, {
+-		.virtual	= (unsigned long)S5P_VA_GPIO,
++		.virtual	= (unsigned long)S5P_VA_GPIO1,
+ 		.pfn		= __phys_to_pfn(S5PV310_PA_GPIO1),
+ 		.length		= SZ_4K,
+ 		.type		= MT_DEVICE,
+ 	}, {
++		.virtual	= (unsigned long)S5P_VA_GPIO2,
++		.pfn		= __phys_to_pfn(S5PV310_PA_GPIO2),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S5P_VA_GPIO3,
++		.pfn		= __phys_to_pfn(S5PV310_PA_GPIO3),
++		.length		= SZ_256K,
++		.type		= MT_DEVICE,
++	}, {
+ 		.virtual	= (unsigned long)S5P_VA_DMC0,
+ 		.pfn		= __phys_to_pfn(S5PV310_PA_DMC0),
+ 		.length		= SZ_4K,
+diff --git a/arch/arm/plat-s5p/include/plat/map-s5p.h b/arch/arm/plat-s5p/include/plat/map-s5p.h
+index ec96a19..fef353d 100644
+--- a/arch/arm/plat-s5p/include/plat/map-s5p.h
++++ b/arch/arm/plat-s5p/include/plat/map-s5p.h
+@@ -16,6 +16,9 @@
+ #define S5P_VA_CHIPID		S3C_ADDR(0x02000000)
+ #define S5P_VA_CMU		S3C_ADDR(0x02100000)
+ #define S5P_VA_GPIO		S3C_ADDR(0x02200000)
++#define S5P_VA_GPIO1		S5P_VA_GPIO
++#define S5P_VA_GPIO2		S3C_ADDR(0x02240000)
++#define S5P_VA_GPIO3		S3C_ADDR(0x02280000)
  
- #define NR_IRQS			COMBINER_IRQ(MAX_COMBINER_NR, 0)
- 
--#define MAX_COMBINER_NR		39
-+#define MAX_COMBINER_NR		40
- 
- #endif /* __ASM_ARCH_IRQS_H */
+ #define S5P_VA_SYSRAM		S3C_ADDR(0x02400000)
+ #define S5P_VA_DMC0		S3C_ADDR(0x02440000)
 -- 
 1.6.2.5
