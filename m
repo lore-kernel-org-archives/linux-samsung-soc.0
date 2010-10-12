@@ -1,180 +1,72 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH v2 0/6] ARM: S5PV210: Add support S5PV210/S5PC110 CPUFREQ
-Date: Tue, 12 Oct 2010 09:39:34 +0900
-Message-ID: <AANLkTik730Lv7ZhkLe2hBHmksK-0F9jHoxun=E6zYQFN@mail.gmail.com>
-References: <1284962695-8542-1-git-send-email-sbkim73@samsung.com>
-	<004001cb6605$01ff4f90$05fdeeb0$@com>
-	<001501cb66ce$9dc54b40$d94fe1c0$%kim@samsung.com>
-	<AANLkTikJL+94qODxkQGxzEPj0SCS3BA4=XQozJSHCpyR@mail.gmail.com>
-	<003d01cb691a$eb71c8c0$c2555a40$@com>
-	<AANLkTi=pQWw2rZ0ujQ5frkJR30Vz-WDfQEYDX4y6kPa9@mail.gmail.com>
-	<00f001cb69a2$8b7462b0$a25d2810$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Jaecheol Lee <jc.lee@samsung.com>
+Subject: [PATCH] ARM: SAMSUNG: Bug fix spin_lock recursion in clk_enable() and clk_disable()
+Date: Tue, 12 Oct 2010 09:39:40 +0900
+Message-ID: <1286843980-23684-1-git-send-email-jc.lee@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:37100 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755124Ab0JLAjh convert rfc822-to-8bit (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:50249 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755124Ab0JLApr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Oct 2010 20:39:37 -0400
-Received: by iwn7 with SMTP id 7so25266iwn.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Oct 2010 17:39:37 -0700 (PDT)
-In-Reply-To: <00f001cb69a2$8b7462b0$a25d2810$%kim@samsung.com>
+	Mon, 11 Oct 2010 20:45:47 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, =?EUC-KR?B?wMzA58O2L1MvVyBTb2x1dGlvbrCzud/GwChTLkxTSSkvRTUow6XA0ykvu++8usD8?= =?EUC-KR?B?wNo=?= <jc.lee@samsung.com>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, Minho Ban <mhban@samsung.com>, Jaecheol Lee <jc.lee@samsung.com>
 
-On Tue, Oct 12, 2010 at 9:15 AM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> MyungJoo Ham wrote:
->>
->> On Mon, Oct 11, 2010 at 5:04 PM, Sangbeom Kim <sbkim73@samsung.com>
->> wrote:
->> > On Monday, Oct 11, 2010 9:12 AM, MyungJoo Ham
->> <myungjoo.ham@samsung.com> wrote:
->> >>
->> >> Hello,
->> >>
->> >> On Fri, Oct 8, 2010 at 6:52 PM, Kukjin Kim <kgene.kim@samsung.com=
->
-> wrote:
->> >> > Sangbeom Kim wrote:
->> >> >>
->> >> >> Hi all,
->> >> >> I know that there is another S5PV210 CPUFREQ patch from Mr. Ha=
-m.
->> >> >> But, That patchset seems to have unclear part.
->> >> >>
->> >> > http://lists.infradead.org/pipermail/linux-arm-kernel/2010-
->> >> August/023626.htm
->> >> >> l
->> >> >> The part of 'CONFIG_PM' is unclear and still have PM support p=
-art.
->> >> >> So, I think that this patch is more suitable for S5PV210/S5PC1=
-10
->> >> CPUFREQ
->> >> > in
->> >> >> the mainline.
->> >> >> because this patch implemented basic pm functionality and alre=
-ady
->> >> tested
->> >> > on
->> >> >> smdkv210 board.
->> >> >>
->> >> > Hi,
->> >> >
->> >> > So...I'd like to merge this for this merge window.
->> >> >
->> >> > Mr. Ham, how do you think?
->> >> > If any problems or opinions, please let me know.
->> >>
->> >>
->> >> You can go ahead as long as this patch include features that the
->> >> another addresses.
->> >>
->> >>
->> >> Anyway, the part that is under "CONFIG_PM" is intended to block
->> >> frequency changing while PM is doing something. For example, when=
- the
->> >> system enters a sleep, if CPUFREQ somehow enters "100MHz/0.95V" j=
-ust
->> >> before the sleep and wakes up, the voltage may stay at 0.95V (PMI=
-C is
->> >> not turned off during sleep) while the frequency is reset to 800M=
-Hz
->> >> (by the bootloader), which requires, let's say, 1.1V. Such
->> >> inconsistency may lead to system hang and we have observed such c=
-ases
->> >> a few times. I intended to refuse any CPUFREQ requests at the
->> >> /mach-s5pv210/cpufreq.c when PM seems to start.
->> >>
->> >
->> > We knew already that issue,
->> > So we have a plan to implement with other solution.
->> > (using regulator suspend feature)
->> >
->> >> It may seem that such feature is not needed if the voltage is not
->> >> optimized, however, CPUFREQ is useless if the voltage stays at 1.=
-2V
->> >> and if the voltage changes properly according to the frequency, s=
-uch
->> >> feature is required anyway.
->> >
->> > Currently, there is no max8698 regulator driver on mainline.
->> > After submission that driver, we can add voltage scaling feature.
->> >
->> > Both issues have dependency on regulator driver.
->>
->> Nope. it does not need to depend on any regulator drivers. We can
->> simply stop changing frequency (or hold at a specific frequency) aft=
-er
->> suspend-to-mem is called. (probably at ".begin" stage). This depends
->> on PM, but does NOT depend on REGULATOR.
->>
->> The approach in the removed patch was to set a flag at the .begin PM
->> ops and deflag it at .end PM ops and let target function of CPUFREQ =
-to
->> read the flag to decide whether to accept the frequency change reque=
-st
->> and to set at the default frequency (i.e., 800MHz) when .begin ops i=
-s
->> called and restore the frequency when .end ops is called.
->>
->
-> Hi all,
->
-> Both looks reasonable to me, in my opinion, need to decide one thing.
->
-> As I said, I'd like to apply basic functionality of CPUFREQ, Jaecheol=
- Lee's
-> patch in this merge window.
-> It would be better if could keep going update its other functionality=
- next
-> time.
->
-> Thanks.
+From: Minho Ban <mhban@samsung.com>
 
-Yes, we can focus on the basic functionality for now and add
-additional features later.
+The clk_enable() and clk_disable() can be used process and ISR either.
+So spin_lock_irqsave should be used instead.
 
-However, if we implement "stop changing voltage in suspend ops of
-regulator", there is a risk of "changing frequency in suspend routine"
-while "voltage is not changing" depending on when it stops changing
-the voltage. Note that "suspend" function of regulator driver would be
-too soon because cpufreq may keep running at that time. Because the
-duration between cpu enters wfi and running suspend ops of regulator
-driver is very short, the system may seem reliable, but there still
-exists a risk (like one fail every 10,000 sleeps?) Besides, utilizing
-regulator_suspend_prepare() would be not a good solution either:
-running regulator_suspend_prepare() before device suspend loop makes
-devices fail (regulators turned off too soon) and running it after the
-loop would make cpufreq fail.
+Signed-off-by: Minho Ban <mhban@samsung.com>
+Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
+---
+ arch/arm/plat-samsung/clock.c |   12 ++++++++----
+ 1 files changed, 8 insertions(+), 4 deletions(-)
 
-
-Cheers!
-
-- MyungJoo
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
-
-
-
---=20
-MyungJoo Ham (=ED=95=A8=EB=AA=85=EC=A3=BC), Ph.D.
-Mobile Software Platform Lab,
-Digital Media and Communications (DMC) Business
-Samsung Electronics
-cell: 82-10-6714-2858
+diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
+index e8d20b0..2a991a5 100644
+--- a/arch/arm/plat-samsung/clock.c
++++ b/arch/arm/plat-samsung/clock.c
+@@ -138,31 +138,35 @@ void clk_put(struct clk *clk)
+ 
+ int clk_enable(struct clk *clk)
+ {
++	unsigned long flags;
++
+ 	if (IS_ERR(clk) || clk == NULL)
+ 		return -EINVAL;
+ 
+ 	clk_enable(clk->parent);
+ 
+-	spin_lock(&clocks_lock);
++	spin_lock_irqsave(&clocks_lock, flags);
+ 
+ 	if ((clk->usage++) == 0)
+ 		(clk->enable)(clk, 1);
+ 
+-	spin_unlock(&clocks_lock);
++	spin_unlock_irqrestore(&clocks_lock, flags);
+ 	return 0;
+ }
+ 
+ void clk_disable(struct clk *clk)
+ {
++	unsigned long flags;
++
+ 	if (IS_ERR(clk) || clk == NULL)
+ 		return;
+ 
+-	spin_lock(&clocks_lock);
++	spin_lock_irqsave(&clocks_lock, flags);
+ 
+ 	if ((--clk->usage) == 0)
+ 		(clk->enable)(clk, 0);
+ 
+-	spin_unlock(&clocks_lock);
++	spin_unlock_irqrestore(&clocks_lock, flags);
+ 	clk_disable(clk->parent);
+ }
+ 
+-- 
+1.6.2.5
