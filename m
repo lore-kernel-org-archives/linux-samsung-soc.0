@@ -1,19 +1,26 @@
 From: Seungwhan Youn <sw.youn@samsung.com>
-Subject: [PATCH v2 2/6] ARM: S5PV210: Fix wrong EPLL rate getting on setup clocks
-Date: Tue, 12 Oct 2010 20:37:00 +0900
-Message-ID: <1286883420-27716-1-git-send-email-sw.youn@samsung.com>
-References: <1286882399-27595-1-git-send-email-sw.youn@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:53355 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932188Ab0JLLpx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Oct 2010 07:45:53 -0400
-In-Reply-To: <1286882399-27595-1-git-send-email-sw.youn@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 2/6] ARM: S5PV210: Fix wrong EPLL rate
+	getting on setup clocks
+Date: Tue, 12 Oct 2010 20:36:19 +0900
+Message-ID: <1286883379-27688-1-git-send-email-sw.youn@samsung.com>
+References: <방식인 유럽형 이동전화(GSM)와 CDMA를 모두 지원하는 듀얼모드 아이폰을 생산할 것”이라고 보도했다.>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <방식인 유럽형 이동전화(GSM)와 CDMA를 모두 지원하는 듀얼모드 아이폰을 생산할 것”이라고 보도했다.>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Sender: alsa-devel-bounces@alsa-project.org
+Errors-To: alsa-devel-bounces@alsa-project.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com, jassi.brar@samsung.com, Seungwhan Youn <sw.youn@samsung.com>
+Cc: kgene.kim@samsung.com, jassi.brar@samsung.com, broonie@opensource.wolfsonmicro.com, ben-linux@fluff.org, lrg@slimlogic.co.uk, Seungwhan Youn <sw.youn@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 This patch fix wrong EPLL getting on setup clocks on S5PV210.
 
