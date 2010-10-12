@@ -1,387 +1,45 @@
-From: Sangbeom Kim <sbkim73@samsung.com>
-Subject: [PATCH V2 2/2] ARM: S5PV310: Add support GPIOlib
-Date: Tue, 12 Oct 2010 16:34:36 +0900
-Message-ID: <1286868876-3748-3-git-send-email-sbkim73@samsung.com>
-References: <1286868876-3748-1-git-send-email-sbkim73@samsung.com>
+From: Seungwhan Youn <sw.youn@samsung.com>
+Subject: [PATCH v2 0/6] Add S/PDIF common driver for Samsung SoCs
+Date: Tue, 12 Oct 2010 20:19:59 +0900
+Message-ID: <1286882399-27595-1-git-send-email-sw.youn@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:50147 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:36273 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756668Ab0JLHkv (ORCPT
+	with ESMTP id S1754263Ab0JLLZy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Oct 2010 03:40:51 -0400
-In-Reply-To: <1286868876-3748-1-git-send-email-sbkim73@samsung.com>
+	Tue, 12 Oct 2010 07:25:54 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com, jassi.brar@samsung.com
 
-From: Jongpill Lee <boyko.lee@samsung.com>
+Hi,
 
-This patch adds GPIOlib support for S5PV310 and S5PC210.
+This patch-set is a 2nd version for new S/PDIF common driver that supports
+S/PDIF PCM audio on S5PC100, S5PC110 and S5PV210.
 
-Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
-Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
----
-NOTE:
-This patch used mapped VA IO as GPIO virtual address.
-because firstly other Samsung SoC's GPIO used same method.
-and I think that  it's better to keep the same method. 
-And ioremap also can be used for it. 
-But in the GPIO, there is no need to allocate VA area dynamically.
-because GPIO can be used in any drivers anytime so it can't iounmap GPIO
-VA area.
+This patch-set is based on two different branches that :-
+ o ARM patches are based on Kukjin Kim's git branch 'for-next'
+   (commit id - 64dcc6aef86593e478cf297a8508e55b54cceaf8)
+ o ASoC patches are based on Mark Brown's git branch 'for-next'
+   (commit id - fe3e2e7ff2da41bd7a985c4c206e05a95ebe7a6b)
 
- arch/arm/mach-s5pv310/Makefile            |    2 +-
- arch/arm/mach-s5pv310/gpiolib.c           |  304 +++++++++++++++++++++++++++++
- arch/arm/mach-s5pv310/include/mach/irqs.h |    7 +-
- 3 files changed, 311 insertions(+), 2 deletions(-)
- create mode 100644 arch/arm/mach-s5pv310/gpiolib.c
+This patch-set updates followings from the 1st submit :-
+ o Add EPLL enable and get_rate function as common EPLL function
+ o Add EPLL rate change warning
+ o Fix S/PDIF's audio clock divider set dynamically at CPU driver
+ o Move S/PDIF specific register macros and structure into CPU driver
 
-diff --git a/arch/arm/mach-s5pv310/Makefile b/arch/arm/mach-s5pv310/Makefile
-index a3e0240..97aba6d 100644
---- a/arch/arm/mach-s5pv310/Makefile
-+++ b/arch/arm/mach-s5pv310/Makefile
-@@ -13,7 +13,7 @@ obj-				:=
- # Core support for S5PV310 system
- 
- obj-$(CONFIG_CPU_S5PV310)	+= cpu.o init.o clock.o irq-combiner.o
--obj-$(CONFIG_CPU_S5PV310)	+= setup-i2c0.o time.o
-+obj-$(CONFIG_CPU_S5PV310)	+= setup-i2c0.o time.o gpiolib.o
- obj-$(CONFIG_CPU_FREQ)		+= cpufreq.o
- 
- obj-$(CONFIG_SMP)		+= platsmp.o headsmp.o
-diff --git a/arch/arm/mach-s5pv310/gpiolib.c b/arch/arm/mach-s5pv310/gpiolib.c
-new file mode 100644
-index 0000000..55217b8
---- /dev/null
-+++ b/arch/arm/mach-s5pv310/gpiolib.c
-@@ -0,0 +1,304 @@
-+/* linux/arch/arm/mach-s5pv310/gpiolib.c
-+ *
-+ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * S5PV310 - GPIOlib support
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/irq.h>
-+#include <linux/io.h>
-+#include <linux/gpio.h>
-+
-+#include <mach/map.h>
-+
-+#include <plat/gpio-core.h>
-+#include <plat/gpio-cfg.h>
-+#include <plat/gpio-cfg-helpers.h>
-+
-+static struct s3c_gpio_cfg gpio_cfg = {
-+	.set_config	= s3c_gpio_setcfg_s3c64xx_4bit,
-+	.set_pull	= s3c_gpio_setpull_updown,
-+	.get_pull	= s3c_gpio_getpull_updown,
-+};
-+
-+static struct s3c_gpio_cfg gpio_cfg_noint = {
-+	.set_config	= s3c_gpio_setcfg_s3c64xx_4bit,
-+	.set_pull	= s3c_gpio_setpull_updown,
-+	.get_pull	= s3c_gpio_getpull_updown,
-+};
-+
-+/*
-+ * Following are the gpio banks in v310.
-+ *
-+ * The 'config' member when left to NULL, is initialized to the default
-+ * structure gpio_cfg in the init function below.
-+ *
-+ * The 'base' member is also initialized in the init function below.
-+ * Note: The initialization of 'base' member of s3c_gpio_chip structure
-+ * uses the above macro and depends on the banks being listed in order here.
-+ */
-+static struct s3c_gpio_chip s5pv310_gpio_part1_4bit[] = {
-+	{
-+		.chip	= {
-+			.base	= S5PV310_GPA0(0),
-+			.ngpio	= S5PV310_GPIO_A0_NR,
-+			.label	= "GPA0",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPA1(0),
-+			.ngpio	= S5PV310_GPIO_A1_NR,
-+			.label	= "GPA1",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPB(0),
-+			.ngpio	= S5PV310_GPIO_B_NR,
-+			.label	= "GPB",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPC0(0),
-+			.ngpio	= S5PV310_GPIO_C0_NR,
-+			.label	= "GPC0",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPC1(0),
-+			.ngpio	= S5PV310_GPIO_C1_NR,
-+			.label	= "GPC1",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPD0(0),
-+			.ngpio	= S5PV310_GPIO_D0_NR,
-+			.label	= "GPD0",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPD1(0),
-+			.ngpio	= S5PV310_GPIO_D1_NR,
-+			.label	= "GPD1",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPE0(0),
-+			.ngpio	= S5PV310_GPIO_E0_NR,
-+			.label	= "GPE0",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPE1(0),
-+			.ngpio	= S5PV310_GPIO_E1_NR,
-+			.label	= "GPE1",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPE2(0),
-+			.ngpio	= S5PV310_GPIO_E2_NR,
-+			.label	= "GPE2",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPE3(0),
-+			.ngpio	= S5PV310_GPIO_E3_NR,
-+			.label	= "GPE3",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPE4(0),
-+			.ngpio	= S5PV310_GPIO_E4_NR,
-+			.label	= "GPE4",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPF0(0),
-+			.ngpio	= S5PV310_GPIO_F0_NR,
-+			.label	= "GPF0",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPF1(0),
-+			.ngpio	= S5PV310_GPIO_F1_NR,
-+			.label	= "GPF1",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPF2(0),
-+			.ngpio	= S5PV310_GPIO_F2_NR,
-+			.label	= "GPF2",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPF3(0),
-+			.ngpio	= S5PV310_GPIO_F3_NR,
-+			.label	= "GPF3",
-+		},
-+	},
-+};
-+
-+static struct s3c_gpio_chip s5pv310_gpio_part2_4bit[] = {
-+	{
-+		.chip	= {
-+			.base	= S5PV310_GPJ0(0),
-+			.ngpio	= S5PV310_GPIO_J0_NR,
-+			.label	= "GPJ0",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPJ1(0),
-+			.ngpio	= S5PV310_GPIO_J1_NR,
-+			.label	= "GPJ1",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPK0(0),
-+			.ngpio	= S5PV310_GPIO_K0_NR,
-+			.label	= "GPK0",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPK1(0),
-+			.ngpio	= S5PV310_GPIO_K1_NR,
-+			.label	= "GPK1",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPK2(0),
-+			.ngpio	= S5PV310_GPIO_K2_NR,
-+			.label	= "GPK2",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPK3(0),
-+			.ngpio	= S5PV310_GPIO_K3_NR,
-+			.label	= "GPK3",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPL0(0),
-+			.ngpio	= S5PV310_GPIO_L0_NR,
-+			.label	= "GPL0",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPL1(0),
-+			.ngpio	= S5PV310_GPIO_L1_NR,
-+			.label	= "GPL1",
-+		},
-+	}, {
-+		.chip	= {
-+			.base	= S5PV310_GPL2(0),
-+			.ngpio	= S5PV310_GPIO_L2_NR,
-+			.label	= "GPL2",
-+		},
-+	}, {
-+		.base	= (S5P_VA_GPIO2 + 0xC00),
-+		.config	= &gpio_cfg_noint,
-+		.irq_base = IRQ_EINT(0),
-+		.chip	= {
-+			.base	= S5PV310_GPX0(0),
-+			.ngpio	= S5PV310_GPIO_X0_NR,
-+			.label	= "GPX0",
-+			.to_irq	= samsung_gpiolib_to_irq,
-+		},
-+	}, {
-+		.base	= (S5P_VA_GPIO2 + 0xC20),
-+		.config	= &gpio_cfg_noint,
-+		.irq_base = IRQ_EINT(8),
-+		.chip	= {
-+			.base	= S5PV310_GPX1(0),
-+			.ngpio	= S5PV310_GPIO_X1_NR,
-+			.label	= "GPX1",
-+			.to_irq	= samsung_gpiolib_to_irq,
-+		},
-+	}, {
-+		.base	= (S5P_VA_GPIO2 + 0xC40),
-+		.config	= &gpio_cfg_noint,
-+		.irq_base = IRQ_EINT(16),
-+		.chip	= {
-+			.base	= S5PV310_GPX2(0),
-+			.ngpio	= S5PV310_GPIO_X2_NR,
-+			.label	= "GPX2",
-+			.to_irq	= samsung_gpiolib_to_irq,
-+		},
-+	}, {
-+		.base	= (S5P_VA_GPIO2 + 0xC60),
-+		.config	= &gpio_cfg_noint,
-+		.irq_base = IRQ_EINT(24),
-+		.chip	= {
-+			.base	= S5PV310_GPX3(0),
-+			.ngpio	= S5PV310_GPIO_X3_NR,
-+			.label	= "GPX3",
-+			.to_irq	= samsung_gpiolib_to_irq,
-+		},
-+	},
-+};
-+
-+static struct s3c_gpio_chip s5pv310_gpio_part3_4bit[] = {
-+	{
-+		.chip	= {
-+			.base	= S5PV310_GPZ(0),
-+			.ngpio	= S5PV310_GPIO_Z_NR,
-+			.label	= "GPZ",
-+		},
-+	},
-+};
-+
-+static __init int s5pv310_gpiolib_init(void)
-+{
-+	struct s3c_gpio_chip *chip;
-+	int i;
-+	int nr_chips;
-+
-+	/* GPIO part 1 */
-+
-+	chip = s5pv310_gpio_part1_4bit;
-+	nr_chips = ARRAY_SIZE(s5pv310_gpio_part1_4bit);
-+
-+	for (i = 0; i < nr_chips; i++, chip++) {
-+		if (chip->config == NULL)
-+			chip->config = &gpio_cfg;
-+		if (chip->base == NULL)
-+			chip->base = S5P_VA_GPIO1 + (i) * 0x20;
-+	}
-+
-+	samsung_gpiolib_add_4bit_chips(s5pv310_gpio_part1_4bit, nr_chips);
-+
-+	/* GPIO part 2 */
-+
-+	chip = s5pv310_gpio_part2_4bit;
-+	nr_chips = ARRAY_SIZE(s5pv310_gpio_part2_4bit);
-+
-+	for (i = 0; i < nr_chips; i++, chip++) {
-+		if (chip->config == NULL)
-+			chip->config = &gpio_cfg;
-+		if (chip->base == NULL)
-+			chip->base = S5P_VA_GPIO2 + (i) * 0x20;
-+	}
-+
-+	samsung_gpiolib_add_4bit_chips(s5pv310_gpio_part2_4bit, nr_chips);
-+
-+	/* GPIO part 3 */
-+
-+	chip = s5pv310_gpio_part3_4bit;
-+	nr_chips = ARRAY_SIZE(s5pv310_gpio_part3_4bit);
-+
-+	for (i = 0; i < nr_chips; i++, chip++) {
-+		if (chip->config == NULL)
-+			chip->config = &gpio_cfg;
-+		if (chip->base == NULL)
-+			chip->base = S5P_VA_GPIO3 + (i) * 0x20;
-+	}
-+
-+	samsung_gpiolib_add_4bit_chips(s5pv310_gpio_part3_4bit, nr_chips);
-+
-+	return 0;
-+}
-+core_initcall(s5pv310_gpiolib_init);
-diff --git a/arch/arm/mach-s5pv310/include/mach/irqs.h b/arch/arm/mach-s5pv310/include/mach/irqs.h
-index f301af7..fec5357 100644
---- a/arch/arm/mach-s5pv310/include/mach/irqs.h
-+++ b/arch/arm/mach-s5pv310/include/mach/irqs.h
-@@ -3,7 +3,7 @@
-  * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com/
-  *
-- * S5PV210 - IRQ definitions
-+ * S5PV310 - IRQ definitions
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -91,4 +91,9 @@
- 
- #define MAX_COMBINER_NR		40
- 
-+#define S5P_IRQ_EINT_BASE	COMBINER_IRQ(MAX_COMBINER_NR, 0)
-+
-+#define S5P_EINT_BASE1		(S5P_IRQ_EINT_BASE + 0)
-+#define S5P_EINT_BASE2		(S5P_IRQ_EINT_BASE + 16)
-+
- #endif /* __ASM_ARCH_IRQS_H */
--- 
-1.6.2.5
+This patch-set contains followings :-
+ o To Kukjin Kim and Ben Dooks,
+  - [PATCH v2 1/6] ARM: S5P: Reduce duplicated EPLL control codes
+  - [PATCH v2 2/6] ARM: S5PV210: Fix wrong EPLL rate getting on setup clocks
+  - [PATCH v2 3/6] ARM: S5PV210: Add EPLL clock operations
+  - [PATCH v2 4/6] ARM: S5P: Add EPLL rate change warning
+ o To Jassi Brar, Mark Brown and Liam Girdwood,
+  - [PATCH v2 5/6] ASoC: SAMSUNG: Add S/PDIF CPU driver
+  - [PATCH v2 6/6] ASoC: SAMSUNG: Add Machine driver for S/PDIF PCM audio
+
+
+Best Regards,
+Claude(Seungwhan Youn)
