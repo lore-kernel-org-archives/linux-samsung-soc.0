@@ -1,61 +1,40 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v5 2/2] sdhci-s3c: Add support no internal clock	divider in
- host controller
-Date: Tue, 12 Oct 2010 12:37:30 +0900
-Message-ID: <011101cb69be$ceda5930$6c8f0b90$%kim@samsung.com>
-References: <1286783400-7277-1-git-send-email-kgene.kim@samsung.com>
- <AANLkTinC850pde5Diuz5U40RCDGR1DeQzTAfLUHWm0rB@mail.gmail.com>
- <20101012025946.GA8534@void.printf.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+From: Sangbeom Kim <sbkim73@samsung.com>
+Subject: [PATCH] ARM: S5PV310: Update MAX_COMBINER_NR
+Date: Tue, 12 Oct 2010 16:16:03 +0900
+Message-ID: <1286867763-21515-1-git-send-email-sbkim73@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:57078 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754653Ab0JLDhO (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:47063 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754413Ab0JLHZw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Oct 2010 23:37:14 -0400
-In-reply-to: <20101012025946.GA8534@void.printf.net>
-Content-language: ko
+	Tue, 12 Oct 2010 03:25:52 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Chris Ball' <cjb@laptop.org>, 'Kyungmin Park' <kmpark@infradead.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, ben-linux@fluff.org, akpm@linux-foundation.org, 'Jeongbae Seo' <jeongbae.seo@samsung.com>, 'Jaehoon Chung' <jh80.chung@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>
 
-Chris Ball wrote:
-> 
-> Hi Kyungmin,
-> 
-> On Tue, Oct 12, 2010 at 11:53:35AM +0900, Kyungmin Park wrote:
-> > Hi Chris,
-> >
-> > we make a conclusion use this patch. Can you merge it for 2.6.37?
-> >
-> > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> 
-> I don't feel that I can, because Ben Dooks is listed as the maintainer
-> for this driver and the patch does not have his ACK.
-> 
-> I don't know what to do about this; I've already tried asking Ben
-> whether he intends to continue maintaining sdhci-s3c, with no reply.
-> 
+From: Jongpill Lee <boyko.lee@samsung.com>
 
-Hi Chris,
+This patch updates MAX_COMBINER_NR from 39 to 40 because
+S5PV310 need 39th combiner for including EINT16_31.
 
-Yeah, you're right. The sdhci-s3c's maintainer is Ben Dooks. So if get a his
-ack, it's best. But if you're ok this, in my opinion, you can merge this.
-And as I'm a maintainer of Samsung stuff with Ben Dooks, I already merged
-regarding patches, such as sdhci-s3c platform handling into my tree for 37
-merge window.
-...
+Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
+Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+---
+ arch/arm/mach-s5pv310/include/mach/irqs.h |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Ben, could you please check this patch?...this is ok to me for Samsung
-HSMMC...if any opinions, please kindly let us know.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/arch/arm/mach-s5pv310/include/mach/irqs.h b/arch/arm/mach-s5pv310/include/mach/irqs.h
+index b2acc62..f301af7 100644
+--- a/arch/arm/mach-s5pv310/include/mach/irqs.h
++++ b/arch/arm/mach-s5pv310/include/mach/irqs.h
+@@ -89,6 +89,6 @@
+ 
+ #define NR_IRQS			COMBINER_IRQ(MAX_COMBINER_NR, 0)
+ 
+-#define MAX_COMBINER_NR		39
++#define MAX_COMBINER_NR		40
+ 
+ #endif /* __ASM_ARCH_IRQS_H */
+-- 
+1.6.2.5
