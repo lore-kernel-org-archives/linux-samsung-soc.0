@@ -1,162 +1,170 @@
 From: Kamil Debski <k.debski@samsung.com>
-Subject: [PATCH 2/4] MFC: Add MFC 5.1 driver to plat-s5p
-Date: Wed, 13 Oct 2010 13:09:18 +0200
-Message-ID: <1286968160-10629-3-git-send-email-k.debski@samsung.com>
-References: <1286968160-10629-1-git-send-email-k.debski@samsung.com>
+Subject: [RFC/PATCH 0/4] Multi Format Codec 5.0 driver for S5PC110 SoC
+Date: Wed, 13 Oct 2010 13:09:16 +0200
+Message-ID: <1286968160-10629-1-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:29354 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753519Ab0JMLJ2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Oct 2010 07:09:28 -0400
-In-reply-to: <1286968160-10629-1-git-send-email-k.debski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, pawel@osciak.com, kyungmin.park@samsung.com, k.debski@samsung.com, jaeryul.oh@samsung.com, kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Add platform support for Multi Format Codec 5.1 is a module available
-on S5PC110 and S5PC210 Samsung SoCs. Hardware is capable of handling
-a range of video codecs and this driver provides V4L2 interface for
-video decoding.
+Hello,
 
-Signed-off-by: Kamil Debski <k.debski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-s5pv210/clock.c             |    6 ++++
- arch/arm/mach-s5pv210/include/mach/map.h  |    4 +++
- arch/arm/plat-s5p/Kconfig                 |    5 ++++
- arch/arm/plat-s5p/Makefile                |    1 +
- arch/arm/plat-s5p/dev-mfc5.c              |   37 +++++++++++++++++++++++++++++
- arch/arm/plat-samsung/include/plat/devs.h |    2 +
- 6 files changed, 55 insertions(+), 0 deletions(-)
+==============
+ Introduction
+==============
+
+The purpose of this RFC is to discuss the driver for a hw video codec
+embedded in the new Samusng's SoCs. Multi Format Codec 5.0 is able to
+handle video decoding of in a range of formats.
+
+So far no hardware codec was supported in V4L2 and this would be the
+first one. I guess there are more similar device that would benefit from
+a V4L2 unified interface. I suggest a separate control class for codec
+devices - V4L2_CTRL_CLASS_CODEC. 
+
+Internally the driver uses videobuf2 framework and CMA memory allocator.
+I am aware that those have not yet been merged, but I wanted to start
+discussion about the driver earlier so it could be merged sooner. The
+driver posted here is the initial version, so I suppose it will require
+more work.
+
+==================
+ Device interface
+==================
+
+In principle the driver bases on the idea of memory-to-memory devices:
+it provides a single video node and each opened file handle gets its own
+private context with separate buffer queues. Each context consist of 2
+buffer queues: OUTPUT (for source buffers, i.e. encoded video frames)
+and CAPTURE (for destination buffers, i.e. decoded raw video frames).
+The process of decoding video data from stream is a bit more complicated
+than typical memory-to-memory processing, that's why the m2m framework
+is not directly used (it is too limited for this case). The main reason
+for this is the fact that the CAPTURE buffers can be dequeued in a
+different order than they queued. The hw block decides which buffer has
+been completely processed. This is due to the structure of most
+compressed video streams - use of B frames causes that decoding and
+display order may be different.
+
+==============================
+ Decoding initialization path
+==============================
+
+First the OUTPUT queue is initialized. With S_FMT the application
+chooses which video format to decode and what size should be the input
+buffer. Fourcc values have been defined for different codecs e.g.
+V4L2_PIX_FMT_H264 for h264. Then the OUTPUT buffers are requested and
+mmaped. The stream header frame is loaded into the first buffer,
+queued and streaming is enabled. At this point the hardware is able to
+start processing the stream header and afterwards it will have
+information about the video dimensions and the size of the buffers with
+raw video data.
+
+The next step is setting up the CAPTURE queue and buffers. The width,
+height, buffer size and minimum number of buffers can be read with G_FMT
+call. The application can request more output buffer if necessary. After
+requesting and mmaping buffers the device is ready to decode video
+stream.
+
+The stream frames (ES frames) are written to the OUTPUT buffers,
+and decoded video frames can be read from the CAPTURE buffers. When no
+more source frames are present a single buffer with bytesused set to 0
+should be queued. This will inform the driver that processing should be
+finished and it can dequeue all video frames that are still left. The
+number of such frames is dependent on the stream and its internal
+structure (how many frames had to be kept as reference frames for
+decoding, etc).
+
+===============
+ Usage summary
+===============
+
+This is a step by step summary of the video decoding (from user
+application point of view, with 2 treads and blocking api):
+
+01. S_FMT(OUTPUT, V4L2_PIX_FMT_H264, ...)
+02. REQ_BUFS(OUTPUT, n)
+03. for i=1..n MMAP(OUTPUT, i)
+04. put stream header to buffer #1
+05. QBUF(OUTPUT, #1)
+06. STREAM_ON(OUTPUT)
+07. G_FMT(CAPTURE)
+08. REQ_BUFS(CAPTURE, m)
+09. for j=1..m MMAP(CAPTURE, j)
+10. for j=1..m QBUF(CAPTURE, #j)
+11. STREAM_ON(CAPTURE)
+
+display thread:
+12. DQBUF(CAPTURE) -> got decoded video data in buffer #j
+13. display buffer #j
+14. QBUF(CAPTURE, #j)
+15. goto 12
+
+parser thread:
+16. put next ES frame to buffer #i
+17. QBUF(OUTPUT, #i)
+18. DQBUF(OUTPUT) -> get next empty buffer #i
+19. goto 16
+
+...
+
+Similar usage sequence can be achieved with single threaded application
+and non-blocking api with poll() call.
+
+Branch with MFC, CMA and videobuf2 will be soon available at
+http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/mfc
+This tree is based on kgene/for-next (Samsung S5P platform 'next' tree).
+
+Please have a look at the code and the idea of how to introduce codec
+devices to V4L2. Comments will be very much appreciated.
+
+Best regards,
+Kamil Debski
+
+Patch summary:
+
+Kamil Debski (4):
+  MFC: Changes in include/linux/videodev2.h for MFC 5.1 codec
+  MFC: Add MFC 5.1 driver to plat-s5p
+  MFC: Add MFC 5.1 V4L2 driver
+  s5pc110: Enable MFC 5.1 on Goni
+
+ arch/arm/mach-s5pv210/Kconfig                |    1 +
+ arch/arm/mach-s5pv210/clock.c                |    6 +
+ arch/arm/mach-s5pv210/include/mach/map.h     |    4 +
+ arch/arm/mach-s5pv210/mach-goni.c            |    1 +
+ arch/arm/plat-s5p/Kconfig                    |    5 +
+ arch/arm/plat-s5p/Makefile                   |    1 +
+ arch/arm/plat-s5p/dev-mfc5.c                 |   37 +
+ arch/arm/plat-samsung/include/plat/devs.h    |    2 +
+ drivers/media/video/Kconfig                  |    8 +
+ drivers/media/video/Makefile                 |    1 +
+ drivers/media/video/s5p-mfc/Makefile         |    3 +
+ drivers/media/video/s5p-mfc/regs-mfc5.h      |  305 +++++
+ drivers/media/video/s5p-mfc/s5p_mfc.c        | 1879 ++++++++++++++++++++++++++
+ drivers/media/video/s5p-mfc/s5p_mfc_common.h |  190 +++
+ drivers/media/video/s5p-mfc/s5p_mfc_ctrls.h  |  173 +++
+ drivers/media/video/s5p-mfc/s5p_mfc_intr.c   |   77 ++
+ drivers/media/video/s5p-mfc/s5p_mfc_intr.h   |   26 +
+ drivers/media/video/s5p-mfc/s5p_mfc_logmsg.h |   65 +
+ drivers/media/video/s5p-mfc/s5p_mfc_memory.h |   32 +
+ drivers/media/video/s5p-mfc/s5p_mfc_opr.c    |  800 +++++++++++
+ drivers/media/video/s5p-mfc/s5p_mfc_opr.h    |   90 ++
+ include/linux/videodev2.h                    |   48 +
+ 22 files changed, 3754 insertions(+), 0 deletions(-)
  create mode 100644 arch/arm/plat-s5p/dev-mfc5.c
-
-diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-index d562670..0717a07 100644
---- a/arch/arm/mach-s5pv210/clock.c
-+++ b/arch/arm/mach-s5pv210/clock.c
-@@ -294,6 +294,12 @@ static struct clk init_clocks_disable[] = {
- 		.enable		= s5pv210_clk_ip0_ctrl,
- 		.ctrlbit	= (1 << 26),
- 	}, {
-+		.name		= "mfc",
-+		.id		= -1,
-+		.parent		= &clk_pclk_psys.clk,
-+		.enable		= s5pv210_clk_ip0_ctrl,
-+		.ctrlbit	= (1 << 16),
-+	}, {
- 		.name		= "otg",
- 		.id		= -1,
- 		.parent		= &clk_hclk_psys.clk,
-diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
-index 586652f..9960d50 100644
---- a/arch/arm/mach-s5pv210/include/mach/map.h
-+++ b/arch/arm/mach-s5pv210/include/mach/map.h
-@@ -104,6 +104,9 @@
- #define S5PV210_PA_DMC0		(0xF0000000)
- #define S5PV210_PA_DMC1		(0xF1400000)
- 
-+/* MFC */
-+#define S5PV210_PA_MFC		(0xF1700000)
-+
- /* compatibiltiy defines. */
- #define S3C_PA_UART		S5PV210_PA_UART
- #define S3C_PA_HSMMC0		S5PV210_PA_HSMMC(0)
-@@ -120,6 +123,7 @@
- #define S5P_PA_FIMC0		S5PV210_PA_FIMC0
- #define S5P_PA_FIMC1		S5PV210_PA_FIMC1
- #define S5P_PA_FIMC2		S5PV210_PA_FIMC2
-+#define S5P_PA_MFC		S5PV210_PA_MFC
- 
- #define SAMSUNG_PA_ADC		S5PV210_PA_ADC
- #define SAMSUNG_PA_CFCON	S5PV210_PA_CFCON
-diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-index 65dbfa8..a1918fc 100644
---- a/arch/arm/plat-s5p/Kconfig
-+++ b/arch/arm/plat-s5p/Kconfig
-@@ -5,6 +5,11 @@
- #
- # Licensed under GPLv2
- 
-+config S5P_DEV_MFC
-+	bool
-+	help
-+	  Compile in platform device definitions for MFC 
-+	  
- config PLAT_S5P
- 	bool
- 	depends on (ARCH_S5P64X0 || ARCH_S5P6442 || ARCH_S5PC100 || ARCH_S5PV210 || ARCH_S5PV310)
-diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-index de65238..d1d1ea9 100644
---- a/arch/arm/plat-s5p/Makefile
-+++ b/arch/arm/plat-s5p/Makefile
-@@ -23,6 +23,7 @@ obj-$(CONFIG_PM)		+= pm.o
- obj-$(CONFIG_PM)		+= irq-pm.o
- 
- # devices
-+obj-$(CONFIG_S5P_DEV_MFC)	+= dev-mfc5.o
- 
- obj-$(CONFIG_S5P_DEV_FIMC0)	+= dev-fimc0.o
- obj-$(CONFIG_S5P_DEV_FIMC1)	+= dev-fimc1.o
-diff --git a/arch/arm/plat-s5p/dev-mfc5.c b/arch/arm/plat-s5p/dev-mfc5.c
-new file mode 100644
-index 0000000..c06ea97
---- /dev/null
-+++ b/arch/arm/plat-s5p/dev-mfc5.c
-@@ -0,0 +1,37 @@
-+/* Base S3C64XX mfc resource and device definitions */
-+
-+
-+#include <linux/kernel.h>
-+#include <linux/interrupt.h>
-+#include <linux/platform_device.h>
-+#include <linux/ioport.h>
-+
-+#include <mach/map.h>
-+#include <plat/map-base.h>
-+#include <plat/devs.h>
-+#include <plat/irqs.h>
-+
-+/* MFC controller */
-+static struct resource s5p_mfc_resource[] = {
-+	[0] = {
-+		.start  = S5P_PA_MFC,
-+		.end    = S5P_PA_MFC + SZ_64K - 1,
-+		.flags  = IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start  = IRQ_MFC,
-+		.end    = IRQ_MFC,
-+		.flags  = IORESOURCE_IRQ,
-+	}
-+};
-+
-+struct platform_device s5p_device_mfc5 = {
-+	.name          = "s5p-mfc5",
-+	.id            = -1,
-+	.num_resources = ARRAY_SIZE(s5p_mfc_resource),
-+	.resource      = s5p_mfc_resource,
-+};
-+
-+EXPORT_SYMBOL(s5p_device_mfc5);
-+
-+
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index 71bcc0f..39948de 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -118,6 +118,8 @@ extern struct platform_device s5p_device_fimc0;
- extern struct platform_device s5p_device_fimc1;
- extern struct platform_device s5p_device_fimc2;
- 
-+extern struct platform_device s5p_device_mfc5;
-+
- /* s3c2440 specific devices */
- 
- #ifdef CONFIG_CPU_S3C2440
--- 
-1.6.3.3
+ create mode 100644 drivers/media/video/s5p-mfc/Makefile
+ create mode 100644 drivers/media/video/s5p-mfc/regs-mfc5.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc.c
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_common.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_ctrls.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_intr.c
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_intr.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_logmsg.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_memory.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_opr.c
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_opr.h
