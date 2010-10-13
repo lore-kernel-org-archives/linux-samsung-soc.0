@@ -1,91 +1,119 @@
-From: Seungwhan Youn <sw.youn@samsung.com>
-Subject: [PATCH v3 4/6] ARM: S5P: Add EPLL rate change warning
-Date: Wed, 13 Oct 2010 18:51:08 +0900
-Message-ID: <1286963468-17469-1-git-send-email-sw.youn@samsung.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: [PATCH 1/4] MFC: Changes in include/linux/videodev2.h for MFC 5.1 codec
+Date: Wed, 13 Oct 2010 13:09:17 +0200
+Message-ID: <1286968160-10629-2-git-send-email-k.debski@samsung.com>
+References: <1286968160-10629-1-git-send-email-k.debski@samsung.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:56480 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750713Ab0JMKBH (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:29354 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753149Ab0JMLJ1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Oct 2010 06:01:07 -0400
+	Wed, 13 Oct 2010 07:09:27 -0400
+In-reply-to: <1286968160-10629-1-git-send-email-k.debski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com, jassi.brar@samsung.com, Seungwhan Youn <sw.youn@samsung.com>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, pawel@osciak.com, kyungmin.park@samsung.com, k.debski@samsung.com, jaeryul.oh@samsung.com, kgene.kim@samsung.com
 
-This patch adds warning about changing EPLL rate to notice that other
-driver that controls H/W, which is using EPLL, will has unknown effects
-by this EPLL rate change.
+Add fourcc values for compressed video stream formats and
+V4L2_CTRL_CLASS_CODEC. Also adds controls used by MFC driver.
 
-Signed-off-by: Seungwhan Youn <sw.youn@samsung.com>
+
+Signed-off-by: Kamil Debski <k.debski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
-This patch is re-worked to avoid conflict with previous re-worked patch(
-[PATCH v3 1/6] ARM: S5P: Reduce duplicated EPLL control codes).
+ include/linux/videodev2.h |   48 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 48 insertions(+), 0 deletions(-)
 
-This patch also depends on previous v1 and v2 petch-set which was accepted,
-and depends on re-workd patch v3 1/6.
---
- arch/arm/mach-s5p64x0/clock-s5p6440.c |    3 +++
- arch/arm/mach-s5p64x0/clock-s5p6450.c |    3 +++
- arch/arm/mach-s5pc100/clock.c         |    3 +++
- arch/arm/mach-s5pv210/clock.c         |    3 +++
- 4 files changed, 12 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-s5p64x0/clock-s5p6440.c b/arch/arm/mach-s5p64x0/clock-s5p6440.c
-index cfccdff..0d728d3 100644
---- a/arch/arm/mach-s5p64x0/clock-s5p6440.c
-+++ b/arch/arm/mach-s5p64x0/clock-s5p6440.c
-@@ -79,6 +79,9 @@ static int s5p6440_epll_set_rate(struct clk *clk, unsigned long rate)
- 	__raw_writel(epll_con, S5P64X0_EPLL_CON);
- 	__raw_writel(epll_con_k, S5P64X0_EPLL_CON_K);
+diff --git a/include/linux/videodev2.h b/include/linux/videodev2.h
+index dd3d93d..2614a62 100644
+--- a/include/linux/videodev2.h
++++ b/include/linux/videodev2.h
+@@ -349,6 +349,14 @@ struct v4l2_pix_format {
+ /* three non-contiguous planes -- Y, Cb, Cr */
+ #define V4L2_PIX_FMT_YUV420M v4l2_fourcc('Y', 'M', '1', '2') /* 12  YUV420 planar */
  
-+	printk(KERN_WARNING "EPLL Rate changes from %lu to %lu\n",
-+			clk->rate, rate);
++/* two non contiguous planes -- one Y, one Cr + Cb interleaved  */
++#define V4L2_PIX_FMT_NV12M   v4l2_fourcc('N', 'M', '1', '2') /* 12  Y/CbCr 4:2:0  */
++/* 12  Y/CbCr 4:2:0 64x32 macroblocks */
++#define V4L2_PIX_FMT_NV12MT  v4l2_fourcc('T', 'M', '1', '2')
 +
- 	clk->rate = rate;
- 
- 	return 0;
-diff --git a/arch/arm/mach-s5p64x0/clock-s5p6450.c b/arch/arm/mach-s5p64x0/clock-s5p6450.c
-index f1498d3..1b9b0f9 100644
---- a/arch/arm/mach-s5p64x0/clock-s5p6450.c
-+++ b/arch/arm/mach-s5p64x0/clock-s5p6450.c
-@@ -80,6 +80,9 @@ static int s5p6450_epll_set_rate(struct clk *clk, unsigned long rate)
- 	__raw_writel(epll_con, S5P64X0_EPLL_CON);
- 	__raw_writel(epll_con_k, S5P64X0_EPLL_CON_K);
- 
-+	printk(KERN_WARNING "EPLL Rate changes from %lu to %lu\n",
-+			clk->rate, rate);
++/* three non contiguous planes -- Y, Cb, Cr */
++#define V4L2_PIX_FMT_YUV420M v4l2_fourcc('Y', 'M', '1', '2') /* 12  YUV420 planar */
 +
- 	clk->rate = rate;
+ /* Bayer formats - see http://www.siliconimaging.com/RGB%20Bayer.htm */
+ #define V4L2_PIX_FMT_SBGGR8  v4l2_fourcc('B', 'A', '8', '1') /*  8  BGBG.. GRGR.. */
+ #define V4L2_PIX_FMT_SGBRG8  v4l2_fourcc('G', 'B', 'R', 'G') /*  8  GBGB.. RGRG.. */
+@@ -372,6 +380,21 @@ struct v4l2_pix_format {
+ #define V4L2_PIX_FMT_DV       v4l2_fourcc('d', 'v', 's', 'd') /* 1394          */
+ #define V4L2_PIX_FMT_MPEG     v4l2_fourcc('M', 'P', 'E', 'G') /* MPEG-1/2/4    */
  
- 	return 0;
-diff --git a/arch/arm/mach-s5pc100/clock.c b/arch/arm/mach-s5pc100/clock.c
-index 42c2636..9e192a0 100644
---- a/arch/arm/mach-s5pc100/clock.c
-+++ b/arch/arm/mach-s5pc100/clock.c
-@@ -323,6 +323,9 @@ static int s5pc100_epll_set_rate(struct clk *clk, unsigned long rate)
- 
- 	__raw_writel(epll_con, S5P_EPLL_CON);
- 
-+	printk(KERN_WARNING "EPLL Rate changes from %lu to %lu\n",
-+			clk->rate, rate);
 +
- 	clk->rate = rate;
- 
- 	return 0;
-diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-index fdfadac..25eb839 100644
---- a/arch/arm/mach-s5pv210/clock.c
-+++ b/arch/arm/mach-s5pv210/clock.c
-@@ -1066,6 +1066,9 @@ static int s5pv210_epll_set_rate(struct clk *clk, unsigned long rate)
- 	__raw_writel(epll_con, S5P_EPLL_CON);
- 	__raw_writel(epll_con_k, S5P_EPLL_CON1);
- 
-+	printk(KERN_WARNING "EPLL Rate changes from %lu to %lu\n",
-+			clk->rate, rate);
++#define V4L2_PIX_FMT_H264     v4l2_fourcc('H', '2', '6', '4') /* H264    */
++#define V4L2_PIX_FMT_H263     v4l2_fourcc('H', '2', '6', '3') /* H263    */
++#define V4L2_PIX_FMT_MPEG12   v4l2_fourcc('M', 'P', '1', '2') /* MPEG-1/2  */
++#define V4L2_PIX_FMT_MPEG4    v4l2_fourcc('M', 'P', 'G', '4') /* MPEG-4  */
++#define V4L2_PIX_FMT_DIVX     v4l2_fourcc('D', 'I', 'V', 'X') /* DivX  */
++#define V4L2_PIX_FMT_DIVX3    v4l2_fourcc('D', 'I', 'V', '3') /* DivX 3.11  */
++#define V4L2_PIX_FMT_DIVX4    v4l2_fourcc('D', 'I', 'V', '4') /* DivX 4.12  */
++#define V4L2_PIX_FMT_DIVX500    v4l2_fourcc('D', 'X', '5', '2') /* DivX 5.00 - 5.02  */
++#define V4L2_PIX_FMT_DIVX503    v4l2_fourcc('D', 'X', '5', '3') /* DivX 5.03 - x  */
++#define V4L2_PIX_FMT_XVID     v4l2_fourcc('X', 'V', 'I', 'D') /* Xvid */
++#define V4L2_PIX_FMT_VC1      v4l2_fourcc('V', 'C', '1', 'A') /* VC-1 */
++#define V4L2_PIX_FMT_VC1_RCV      v4l2_fourcc('V', 'C', '1', 'R') /* VC-1 RCV */
 +
- 	clk->rate = rate;
++
+ /*  Vendor-specific formats   */
+ #define V4L2_PIX_FMT_CPIA1    v4l2_fourcc('C', 'P', 'I', 'A') /* cpia1 YUV */
+ #define V4L2_PIX_FMT_WNVA     v4l2_fourcc('W', 'N', 'V', 'A') /* Winnov hw compress */
+@@ -980,6 +1003,7 @@ struct v4l2_output {
+ #define V4L2_OUTPUT_TYPE_ANALOG			2
+ #define V4L2_OUTPUT_TYPE_ANALOGVGAOVERLAY	3
  
- 	return 0;
++
+ /* capabilities flags */
+ #define V4L2_OUT_CAP_PRESETS		0x00000001 /* Supports S_DV_PRESET */
+ #define V4L2_OUT_CAP_CUSTOM_TIMINGS	0x00000002 /* Supports S_DV_TIMINGS */
+@@ -1017,6 +1041,7 @@ struct v4l2_ext_controls {
+ #define V4L2_CTRL_CLASS_MPEG 0x00990000	/* MPEG-compression controls */
+ #define V4L2_CTRL_CLASS_CAMERA 0x009a0000	/* Camera class controls */
+ #define V4L2_CTRL_CLASS_FM_TX 0x009b0000	/* FM Modulator control class */
++#define V4L2_CTRL_CLASS_CODEC 0x009c0000	/* Codec control class */
+ 
+ #define V4L2_CTRL_ID_MASK      	  (0x0fffffff)
+ #define V4L2_CTRL_ID2CLASS(id)    ((id) & 0x0fff0000UL)
+@@ -1347,6 +1372,29 @@ enum v4l2_mpeg_cx2341x_video_median_filter_type {
+ #define V4L2_CID_MPEG_CX2341X_VIDEO_CHROMA_MEDIAN_FILTER_TOP 	(V4L2_CID_MPEG_CX2341X_BASE+10)
+ #define V4L2_CID_MPEG_CX2341X_STREAM_INSERT_NAV_PACKETS 	(V4L2_CID_MPEG_CX2341X_BASE+11)
+ 
++/* For codecs */
++
++#define V4L2_CID_CODEC_BASE 			(V4L2_CTRL_CLASS_CODEC | 0x900)
++#define V4L2_CID_CODEC_CLASS 			(V4L2_CTRL_CLASS_CODEC | 1)
++
++/* For both decoding and encoding */
++
++/* For encoding */
++#define V4L2_CID_CODEC_LOOP_FILTER_H264		(V4L2_CID_CODEC_BASE + 9)
++enum v4l2_cid_codec_loop_filter_h264 {
++	V4L2_CID_CODEC_LOOP_FILTER_H264_ENABLE = 0,
++	V4L2_CID_CODEC_LOOP_FILTER_H264_DISABLE = 1,
++	V4L2_CID_CODEC_LOOP_FILTER_H264_DISABLE_AT_BOUNDARY = 2,
++};
++
++/* For decoding */
++
++#define V4L2_CID_CODEC_LOOP_FILTER_MPEG4_ENABLE	(V4L2_CID_CODEC_BASE + 110)
++#define V4L2_CID_CODEC_DISPLAY_DELAY		(V4L2_CID_CODEC_BASE + 137)
++#define V4L2_CID_CODEC_REQ_NUM_BUFS		(V4L2_CID_CODEC_BASE + 140)
++#define V4L2_CID_CODEC_SLICE_INTERFACE		(V4L2_CID_CODEC_BASE + 141)
++#define V4L2_CID_CODEC_PACKED_PB		(V4L2_CID_CODEC_BASE + 142)
++
+ /*  Camera class control IDs */
+ #define V4L2_CID_CAMERA_CLASS_BASE 	(V4L2_CTRL_CLASS_CAMERA | 0x900)
+ #define V4L2_CID_CAMERA_CLASS 		(V4L2_CTRL_CLASS_CAMERA | 1)
 -- 
-1.6.2.5
+1.6.3.3
