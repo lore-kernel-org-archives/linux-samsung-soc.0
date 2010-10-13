@@ -1,42 +1,25 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v5 2/2] sdhci-s3c: Add support no internal clock divider
- in host controller
-Date: Tue, 12 Oct 2010 14:37:00 -0700
-Message-ID: <20101012143700.93ea1812.akpm@linux-foundation.org>
-References: <1286783400-7277-1-git-send-email-kgene.kim@samsung.com>
-	<AANLkTinC850pde5Diuz5U40RCDGR1DeQzTAfLUHWm0rB@mail.gmail.com>
-	<20101012025946.GA8534@void.printf.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <20101012025946.GA8534@void.printf.net>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: Kyungmin Park <kmpark@infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, ben-linux@fluff.org, Jeongbae Seo <jeongbae.seo@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
+From: Sangbeom Kim <sbkim73@samsung.com>
+Subject: [PATCH 0/4] USB: gadget: Add Samsung S3C24xx USB HS controller driver
+Date: Wed, 13 Oct 2010 09:10:23 +0900
+Message-ID: <1286928627-22824-1-git-send-email-sbkim73@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:45459 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751363Ab0JMAVD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 12 Oct 2010 20:21:03 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org
 
-On Tue, 12 Oct 2010 03:59:46 +0100
-Chris Ball <cjb@laptop.org> wrote:
+The Samsung's S3C2416, S3C2443 and S3C2450 includes a USB High-Speed
+device controller module. This driver enables support for USB high-speed
+gadget functionality for the Samsung S3C24xx SoC's that include this
+controller.
 
-> Hi Kyungmin,
-> 
-> On Tue, Oct 12, 2010 at 11:53:35AM +0900, Kyungmin Park wrote:
-> > Hi Chris,
-> > 
-> > we make a conclusion use this patch. Can you merge it for 2.6.37?
-> > 
-> > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> 
-> I don't feel that I can, because Ben Dooks is listed as the maintainer
-> for this driver and the patch does not have his ACK.
-> 
-> I don't know what to do about this; I've already tried asking Ben
-> whether he intends to continue maintaining sdhci-s3c, with no reply.
-> 
-
-People get busy and take vacations and change roles, etc.
-
-Sometimes, the best you can do is to make everyone aware of what's
-going on and then simply proceed on your own.
-
+The patch series contains:
+[PATCH 1/4] ARM: S3C2416: Add USB Phy register definitions
+[PATCH 2/4] ARM: S3C24XX: Add plaform device definition for USB High-Speed gadget controller.
+[PATCH 3/4] USB: Gadget: Add Samsung S3C24XX USB High-Speed controller driver
+[PATCH 4/4] ARM: S3C2416: Add support for USB 2.0 High-Speed gadget controller
