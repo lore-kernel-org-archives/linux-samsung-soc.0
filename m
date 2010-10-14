@@ -1,165 +1,120 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 1/2] ARM: S5PV210: Add i2c information to Goni and
- Aquila board
-Date: Thu, 14 Oct 2010 14:28:56 +0900
-Message-ID: <006701cb6b60$b3cead50$1b6c07f0$%kim@samsung.com>
-References: <4CB66396.8010004@samsung.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH V2 1/2] ARM: S5P: Add initial map for GPIO2 and GPIO3
+Date: Thu, 14 Oct 2010 14:29:33 +0900
+Message-ID: <AANLkTimKNBfDpz_3E4z6MHV7V1Ht9Yobf6qbGMxyWWAy@mail.gmail.com>
+References: <1286868876-3748-1-git-send-email-sbkim73@samsung.com>
+	<1286868876-3748-2-git-send-email-sbkim73@samsung.com>
+	<006601cb6b60$0a0e4190$1e2ac4b0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:15568 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754513Ab0JNF3L (ORCPT
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:52035 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754513Ab0JNF3f convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Oct 2010 01:29:11 -0400
-Received: from epmmp2 (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0LA9006WYLVONG20@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 14 Oct 2010 14:28:36 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LA9008DMLVODE@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 14 Oct 2010 14:28:36 +0900 (KST)
-In-reply-to: <4CB66396.8010004@samsung.com>
-Content-language: ko
+	Thu, 14 Oct 2010 01:29:35 -0400
+Received: by wyb28 with SMTP id 28so1773193wyb.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Oct 2010 22:29:34 -0700 (PDT)
+In-Reply-To: <006601cb6b60$0a0e4190$1e2ac4b0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Chanwoo Choi' <cw00.choi@samsung.com>, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>
-Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Ben Dooks' <ben-linux@fluff.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Jongpill Lee <boyko.lee@samsung.com>, ben-linux@fluff.org
 
-Chanwoo Choi wrote:
-> 
-> This patch the I2C board information for the WM8994 used in the Goni/Aquila
-> as audio codec and adds the I2C platform drivers.
-> 
-> Signed-off-by : Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by : Joonyoung Shim <jy0922.shim@samsung.com>
-> Signed-off-by : Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/mach-s5pv210/mach-aquila.c |   27
-> +++++++++++++++++++++++++++
->  arch/arm/mach-s5pv210/mach-goni.c   |   27
-> +++++++++++++++++++++++++++
->  2 files changed, 54 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s5pv210/mach-aquila.c b/arch/arm/mach-s5pv210/mach-
-> aquila.c
-> index 0dda801..0663ec4 100644
-> --- a/arch/arm/mach-s5pv210/mach-aquila.c
-> +++ b/arch/arm/mach-s5pv210/mach-aquila.c
-> @@ -404,6 +404,28 @@ static struct i2c_board_info i2c_gpio_pmic_devs[]
-> __initdata = {
->  #endif
->  };
-> 
-> +/* GPIO I2C AP 1.8V */
-> +#define AP_I2C_GPIO_BUS_5	5
-> +static struct i2c_gpio_platform_data aquila_i2c_gpio5_data = {
-> +	.sda_pin	= S5PV210_MP05(3),	/* XM0ADDR_11 */
-> +	.scl_pin	= S5PV210_MP05(2),	/* XM0ADDR_10 */
-> +};
-> +
-> +static struct platform_device aquila_i2c_gpio5 = {
-> +	.name		= "i2c-gpio",
-> +	.id		= AP_I2C_GPIO_BUS_5,
-> +	.dev		= {
-> +		.platform_data	= &aquila_i2c_gpio5_data,
-> +	},
-> +};
-> +
-> +static struct i2c_board_info i2c_gpio5_devs[] __initdata = {
-> +	{
-> +		/* CS/ADDR = low 0x34 (FYI: high = 0x36) */
-> +		I2C_BOARD_INFO("wm8994", 0x1a),
-> +	},
-> +};
-> +
->  /* PMIC Power button */
->  static struct gpio_keys_button aquila_gpio_keys_table[] = {
->  	{
-> @@ -475,6 +497,7 @@ static void aquila_setup_sdhci(void)
-> 
->  static struct platform_device *aquila_devices[] __initdata = {
->  	&aquila_i2c_gpio_pmic,
-> +	&aquila_i2c_gpio5,
->  	&aquila_device_gpiokeys,
->  	&s3c_device_fb,
->  	&s5pc110_device_onenand,
-> @@ -506,6 +529,10 @@ static void __init aquila_machine_init(void)
->  	s3c_fimc_setname(1, "s5p-fimc");
->  	s3c_fimc_setname(2, "s5p-fimc");
-> 
-> +	/* SOUND */
-> +	i2c_register_board_info(AP_I2C_GPIO_BUS_5, i2c_gpio5_devs,
-> +			ARRAY_SIZE(i2c_gpio5_devs));
-> +
->  	/* FB */
->  	s3c_fb_set_platdata(&aquila_lcd_pdata);
-> 
-> diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-
-> goni.c
-> index 53754d7..df5c2d1 100644
-> --- a/arch/arm/mach-s5pv210/mach-goni.c
-> +++ b/arch/arm/mach-s5pv210/mach-goni.c
-> @@ -385,6 +385,28 @@ static struct i2c_board_info i2c_gpio_pmic_devs[]
-> __initdata = {
->  #endif
->  };
-> 
-> +/* GPIO I2C AP 1.8V */
-> +#define AP_I2C_GPIO_BUS_5	5
-> +static struct i2c_gpio_platform_data goni_i2c_gpio5_data = {
-> +	.sda_pin	= S5PV210_MP05(3),	/* XM0ADDR_11 */
-> +	.scl_pin	= S5PV210_MP05(2),	/* XM0ADDR_10 */
-> +};
-> +
-> +static struct platform_device goni_i2c_gpio5 = {
-> +	.name		= "i2c-gpio",
-> +	.id		= AP_I2C_GPIO_BUS_5,
-> +	.dev		= {
-> +		.platform_data	= &goni_i2c_gpio5_data,
-> +	},
-> +};
-> +
-> +static struct i2c_board_info i2c_gpio5_devs[] __initdata = {
-> +	{
-> +		/* CS/ADDR = low 0x34 (FYI: high = 0x36) */
-> +		I2C_BOARD_INFO("wm8994", 0x1a),
-> +	},
-> +};
-> +
->  /* PMIC Power button */
->  static struct gpio_keys_button goni_gpio_keys_table[] = {
->  	{
-> @@ -458,6 +480,7 @@ static struct platform_device *goni_devices[] __initdata = {
->  	&s3c_device_fb,
->  	&s5pc110_device_onenand,
->  	&goni_i2c_gpio_pmic,
-> +	&goni_i2c_gpio5,
->  	&goni_device_gpiokeys,
->  	&s5p_device_fimc0,
->  	&s5p_device_fimc1,
-> @@ -483,6 +506,10 @@ static void __init goni_machine_init(void)
->  	/* SDHCI */
->  	goni_setup_sdhci();
-> 
-> +	/* SOUND */
-> +	i2c_register_board_info(AP_I2C_GPIO_BUS_5, i2c_gpio5_devs,
-> +			ARRAY_SIZE(i2c_gpio5_devs));
-> +
->  	/* FB */
->  	s3c_fb_set_platdata(&goni_lcd_pdata);
-> 
+On Thu, Oct 14, 2010 at 2:24 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> Sangbeom Kim wrote:
+>>
+>> From: Jongpill Lee <boyko.lee@samsung.com>
+>>
+>> This patch adds initial map for GPIO2 and GPIO3.
+>> S5PV310/S5PC210 has separated GPIO1, GPIO2 and GPIO3.
+>>
+>> Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
+>> Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+>> ---
+>> Changes since v1:
+>> - Rebased on latest for-next from Kukjin Kim's git tree
+>> - Added S5P_VA_GPIO1 according to S5PV310_PA_GPIO1
+>>
+>> =A0arch/arm/mach-s5pv310/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 12 +=
+++++++++++-
+>> =A0arch/arm/plat-s5p/include/plat/map-s5p.h | =A0 =A03 +++
+>> =A02 files changed, 14 insertions(+), 1 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-s5pv310/cpu.c b/arch/arm/mach-s5pv310/cpu=
+=2Ec
+>> index 3345cf6..ffed262 100644
+>> --- a/arch/arm/mach-s5pv310/cpu.c
+>> +++ b/arch/arm/mach-s5pv310/cpu.c
+>> @@ -57,11 +57,21 @@ static struct map_desc s5pv310_iodesc[] __initda=
+ta =3D {
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_4K,
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVICE,
+>> =A0 =A0 =A0 }, {
+>> - =A0 =A0 =A0 =A0 =A0 =A0 .virtual =A0 =A0 =A0 =A0=3D (unsigned long=
+)S5P_VA_GPIO,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .virtual =A0 =A0 =A0 =A0=3D (unsigned long=
+)S5P_VA_GPIO1,
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_t=
+o_pfn(S5PV310_PA_GPIO1),
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_4K,
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVICE,
+>> =A0 =A0 =A0 }, {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .virtual =A0 =A0 =A0 =A0=3D (unsigned long=
+)S5P_VA_GPIO2,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_to_=
+pfn(S5PV310_PA_GPIO2),
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_4K,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVICE,
+>> + =A0 =A0 }, {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .virtual =A0 =A0 =A0 =A0=3D (unsigned long=
+)S5P_VA_GPIO3,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_to_=
+pfn(S5PV310_PA_GPIO3),
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_256K,
+Why 256K?
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVICE,
+>> + =A0 =A0 }, {
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .virtual =A0 =A0 =A0 =A0=3D (unsigned lo=
+ng)S5P_VA_DMC0,
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_t=
+o_pfn(S5PV310_PA_DMC0),
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_4K,
+>> diff --git a/arch/arm/plat-s5p/include/plat/map-s5p.h b/arch/arm/pla=
+t-
+>> s5p/include/plat/map-s5p.h
+>> index ec96a19..fef353d 100644
+>> --- a/arch/arm/plat-s5p/include/plat/map-s5p.h
+>> +++ b/arch/arm/plat-s5p/include/plat/map-s5p.h
+>> @@ -16,6 +16,9 @@
+>> =A0#define S5P_VA_CHIPID =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0S3C_ADDR(0x0=
+2000000)
+>> =A0#define S5P_VA_CMU =A0 =A0 =A0 =A0 =A0 S3C_ADDR(0x02100000)
+>> =A0#define S5P_VA_GPIO =A0 =A0 =A0 =A0 =A0S3C_ADDR(0x02200000)
+>> +#define S5P_VA_GPIO1 =A0 =A0 =A0 =A0 S5P_VA_GPIO
+>> +#define S5P_VA_GPIO2 =A0 =A0 =A0 =A0 S3C_ADDR(0x02240000)
+>> +#define S5P_VA_GPIO3 =A0 =A0 =A0 =A0 S3C_ADDR(0x02280000)
+>>
+>> =A0#define S5P_VA_SYSRAM =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0S3C_ADDR(0x0=
+2400000)
+>> =A0#define S5P_VA_DMC0 =A0 =A0 =A0 =A0 =A0S3C_ADDR(0x02440000)
+>> --
+>
+> Looks ok to me...will apply.
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
 > --
-
-Ok...will apply.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
