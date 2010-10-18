@@ -1,22 +1,73 @@
 From: Sangbeom Kim <sbkim73@samsung.com>
-Subject: [PATCH 0/4] ARM: S5PV310: Add support FIMD
-Date: Mon, 18 Oct 2010 21:55:24 +0900
-Message-ID: <1287406528-15324-1-git-send-email-sbkim73@samsung.com>
+Subject: [PATCH 1/4] ARM: S5PV310: Add FIMD resource definition
+Date: Mon, 18 Oct 2010 21:55:25 +0900
+Message-ID: <1287406528-15324-2-git-send-email-sbkim73@samsung.com>
+References: <1287406528-15324-1-git-send-email-sbkim73@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:39782 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:39787 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753939Ab0JRNCQ (ORCPT
+	with ESMTP id S1754333Ab0JRNCQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Mon, 18 Oct 2010 09:02:16 -0400
+In-Reply-To: <1287406528-15324-1-git-send-email-sbkim73@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com, akpm@linux-foundation.org
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, akpm@linux-foundation.org, Jonghun Han <jonghun.han@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>
 
-This patch adds support FIMD(Fully Interactive Mobile Display) on S5PV310 and S5PC210.
-The 3rd patch is update s3c-fb for it and others are for platform data.
+From: Jonghun Han <jonghun.han@samsung.com>
 
-[PATCH 1/4] ARM: S5PV310: Add FIMD resource definition
-[PATCH 2/4] ARM: S5PV310: Add platform device and helper functions for FIMD
-[PATCH 3/4] s3c-fb: Add support S5PV310 FIMD
-[PATCH 4/4] ARM: S5PV310: Add platform data for S5PV310 FIMD and LTE480WV platform-lcd
+This patch adds resource definitions for S5PV310 FIMD.
+IRQ and SFR definitions are added.
+
+Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
+Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+---
+ arch/arm/mach-s5pv310/include/mach/irqs.h |    8 ++++++++
+ arch/arm/mach-s5pv310/include/mach/map.h  |    5 +++++
+ 2 files changed, 13 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-s5pv310/include/mach/irqs.h b/arch/arm/mach-s5pv310/include/mach/irqs.h
+index fa7a8a3..16a910d 100644
+--- a/arch/arm/mach-s5pv310/include/mach/irqs.h
++++ b/arch/arm/mach-s5pv310/include/mach/irqs.h
+@@ -54,6 +54,14 @@
+ #define COMBINER_GROUP(x)	((x) * MAX_IRQ_IN_COMBINER + IRQ_SPI(64))
+ #define COMBINER_IRQ(x, y)	(COMBINER_GROUP(x) + y)
+ 
++#define IRQ_FIMD0_FIFO		COMBINER_IRQ(11, 0)
++#define IRQ_FIMD0_VSYNC		COMBINER_IRQ(11, 1)
++#define IRQ_FIMD0_SYSTEM	COMBINER_IRQ(11, 2)
++
++#define IRQ_FIMD1_FIFO		COMBINER_IRQ(12, 0)
++#define IRQ_FIMD1_VSYNC		COMBINER_IRQ(12, 1)
++#define IRQ_FIMD1_SYSTEM	COMBINER_IRQ(12, 2)
++
+ #define IRQ_TIMER0_VIC		COMBINER_IRQ(22, 0)
+ #define IRQ_TIMER1_VIC		COMBINER_IRQ(22, 1)
+ #define IRQ_TIMER2_VIC		COMBINER_IRQ(22, 2)
+diff --git a/arch/arm/mach-s5pv310/include/mach/map.h b/arch/arm/mach-s5pv310/include/mach/map.h
+index 1429510..65fe077 100644
+--- a/arch/arm/mach-s5pv310/include/mach/map.h
++++ b/arch/arm/mach-s5pv310/include/mach/map.h
+@@ -56,6 +56,9 @@
+ #define S5PV310_PA_GPIO2		(0x11000000)
+ #define S5PV310_PA_GPIO3		(0x03860000)
+ 
++#define S5PV310_PA_FIMD0		(0x11C00000)
++#define S5PV310_PA_FIMD1		(0x12000000)
++
+ #define S5PV310_PA_HSMMC(x)		(0x12510000 + ((x) * 0x10000))
+ 
+ #define S5PV310_PA_UART			(0x13800000)
+@@ -78,6 +81,8 @@
+ #define S5P_PA_SDRAM			S5PV310_PA_SDRAM
+ 
+ /* compatibiltiy defines. */
++#define S5P_PA_FIMD0			S5PV310_PA_FIMD0
++#define S5P_PA_FIMD1			S5PV310_PA_FIMD1
+ #define S3C_PA_UART			S5PV310_PA_UART
+ #define S3C_PA_HSMMC0			S5PV310_PA_HSMMC(0)
+ #define S3C_PA_HSMMC1			S5PV310_PA_HSMMC(1)
+-- 
+1.6.2.5
