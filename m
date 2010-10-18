@@ -1,50 +1,23 @@
-From: Abdoulaye Walsimou Gaye <awg@embtoolkit.org>
-Subject: [PATCH RESEND 2/2] ARM: s3c2440: fix boot failure introduced by recent changes in gpiolib
-Date: Sat, 16 Oct 2010 13:55:52 +0200
-Message-ID: <1287230152-5544-2-git-send-email-awg@embtoolkit.org>
-References: <1287230152-5544-1-git-send-email-awg@embtoolkit.org>
+From: Jongsun Han <jongsun.han@samsung.com>
+Subject: [PATCH V2 0/3] ARM: S5PV310: Add EINT support
+Date: Mon, 18 Oct 2010 14:06:31 +0900
+Message-ID: <1287378393-15699-1-git-send-email-jongsun.han@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from walscop001.walsimou.com ([82.228.201.70]:3585 "EHLO
-	bekkor.walsimou.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753795Ab0JPL4w (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:39700 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750718Ab0JRFMK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 16 Oct 2010 07:56:52 -0400
-In-Reply-To: <1287230152-5544-1-git-send-email-awg@embtoolkit.org>
+	Mon, 18 Oct 2010 01:12:10 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Abdoulaye Walsimou Gaye <awg@embtoolkit.org>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org
 
-Recent changes in s3c gpio break mini2440 board and may be others.
-The problem is that mach-mini2440.c: mini2440_init()
-(where we call s3c_gpio_setpull()) is called before s3c2440.c: s3c2440_init()
-(where we initialize s3c24xx_gpiocfg_default.set_pull function pointer).
-This causes dereferencing of NULL pointer at boot time and a kernel panic.
+This is a sencond version of patches adding EINT for S5PV310/C210
 
-Signed-off-by: Abdoulaye Walsimou Gaye <awg@embtoolkit.org>
+Changes since v1:
+- Replace some functions with macro define
+- Add register definition and macro
 
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
----
-
-Issue reported 4 months ago[1] and since prevents boards to boot
-[1]: http://www.spinics.net/lists/arm-kernel/msg90151.html
-
- arch/arm/plat-s3c24xx/gpiolib.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/plat-s3c24xx/gpiolib.c b/arch/arm/plat-s3c24xx/gpiolib.c
-index 4c0896f..ae9d3c2 100644
---- a/arch/arm/plat-s3c24xx/gpiolib.c
-+++ b/arch/arm/plat-s3c24xx/gpiolib.c
-@@ -87,6 +87,8 @@ static struct s3c_gpio_cfg s3c24xx_gpiocfg_banka = {
- struct s3c_gpio_cfg s3c24xx_gpiocfg_default = {
- 	.set_config	= s3c_gpio_setcfg_s3c24xx,
- 	.get_config	= s3c_gpio_getcfg_s3c24xx,
-+	.set_pull	= s3c_gpio_setpull_1up,
-+	.get_pull	= s3c_gpio_getpull_1up,
- };
- 
- struct s3c_gpio_chip s3c24xx_gpios[] = {
--- 
-1.7.0.4
+[PATCH 1/2] ARM: S5PV310: Add the definition for external interrupt
+[PATCH 2/2] ARM: S5PV310: Add external interrupt support
