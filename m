@@ -1,127 +1,80 @@
-From: mhban <mhban@samsung.com>
-Subject: Re: [PATCH] ARM: SAMSUNG: Bug fix spin_lock recursion in clk_enable()
- and clk_disable()
-Date: Tue, 19 Oct 2010 11:55:53 +0900
-Message-ID: <1287456953.19640.43.camel@puffmine-laptop>
-References: <1286843980-23684-1-git-send-email-jc.lee@samsung.com>
- <4CBCD3A5.5070701@fluff.org>
- <AANLkTimWLcPGTYp+ShXzVu11TtzThj5O57rWxqOfZV=0@mail.gmail.com>
-Reply-To: mhban@samsung.com
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH 4/4] ARM: S5PV310: Add platform data for S5PV310 FIMD and
+ LTE480WV platform-lcd
+Date: Tue, 19 Oct 2010 08:50:56 +0200
+Message-ID: <002f01cb6f59$ff98d650$feca82f0$%szyprowski@samsung.com>
+References: <1287406528-15324-1-git-send-email-sbkim73@samsung.com>
+ <1287406528-15324-5-git-send-email-sbkim73@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:12044 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756852Ab0JSCzx (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:35954 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757828Ab0JSGvM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Oct 2010 22:55:53 -0400
-Received: from epmmp2 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0LAI00LXPO539B00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 19 Oct 2010 11:55:51 +0900 (KST)
-Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LAI000BIO54SS@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 19 Oct 2010 11:55:52 +0900 (KST)
-In-reply-to: <AANLkTimWLcPGTYp+ShXzVu11TtzThj5O57rWxqOfZV=0@mail.gmail.com>
+	Tue, 19 Oct 2010 02:51:12 -0400
+In-reply-to: <1287406528-15324-5-git-send-email-sbkim73@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, Jaecheol Lee <jc.lee@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-
-On Tue, 2010-10-19 at 10:12 +0900, Jassi Brar wrote:
-> On Tue, Oct 19, 2010 at 8:09 AM, Ben Dooks <ben-linux@fluff.org> wrote:
-> > On 12/10/10 01:39, Jaecheol Lee wrote:
-> >> From: Minho Ban <mhban@samsung.com>
-> >>
-> >> The clk_enable() and clk_disable() can be used process and ISR either.
-> >> So spin_lock_irqsave should be used instead.
-> >>
-> >> Signed-off-by: Minho Ban <mhban@samsung.com>
-> >> Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
-> >> ---
-> >>  arch/arm/plat-samsung/clock.c |   12 ++++++++----
-> >>  1 files changed, 8 insertions(+), 4 deletions(-)
-> >>
-> >> diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
-> >> index e8d20b0..2a991a5 100644
-> >> --- a/arch/arm/plat-samsung/clock.c
-> >> +++ b/arch/arm/plat-samsung/clock.c
-> >> @@ -138,31 +138,35 @@ void clk_put(struct clk *clk)
-> >>
-> >>  int clk_enable(struct clk *clk)
-> >>  {
-> >> +     unsigned long flags;
-> >> +
-> >>       if (IS_ERR(clk) || clk == NULL)
-> >>               return -EINVAL;
-> >>
-> >>       clk_enable(clk->parent);
-> >>
-> >> -     spin_lock(&clocks_lock);
-> >> +     spin_lock_irqsave(&clocks_lock, flags);
-> >>
-> >>       if ((clk->usage++) == 0)
-> >>               (clk->enable)(clk, 1);
-> >>
-> >> -     spin_unlock(&clocks_lock);
-> >> +     spin_unlock_irqrestore(&clocks_lock, flags);
-> >>       return 0;
-> >>  }
-> >>
-> >>  void clk_disable(struct clk *clk)
-> >>  {
-> >> +     unsigned long flags;
-> >> +
-> >>       if (IS_ERR(clk) || clk == NULL)
-> >>               return;
-> >>
-> >> -     spin_lock(&clocks_lock);
-> >> +     spin_lock_irqsave(&clocks_lock, flags);
-> >>
-> >>       if ((--clk->usage) == 0)
-> >>               (clk->enable)(clk, 0);
-> >>
-> >> -     spin_unlock(&clocks_lock);
-> >> +     spin_unlock_irqrestore(&clocks_lock, flags);
-> >>       clk_disable(clk->parent);
-> >
-> > I'm not sure, but I don't belive that the clk_ api has
-> > ever been callable from non-sleepable contexts such as
-> > interrupt handlers.
-> >
-> > I would welcome RMK's response (or any other response)
-> > about this issue?
-> >
-> > Personally, given that some clk_ calls may sleep esp.
-> > for pll enables, I would prefer to see this patch
-> > dropped in favour of fixing the users.
-> 
-> I tend to agree.
-> I would like to know any such case where enabling/disabling of some
-> clock is so urgent as to require doing from ISR and not from a tasklet
-> scheduled from ISR.
-> Also let us not make it impossible in future to switch to common clock api
-> by Jeremy Kerr, that doesn't allow calls from IRQ context.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+To: 'Sangbeom Kim' <sbkim73@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org
+Cc: 'Jonghun Han' <jonghun.han@samsung.com>, akpm@linux-foundation.org, kgene.kim@samsung.com, ben-linux@fluff.org, kyungmin.park@samsung.com
 
 Hello,
 
-Mostly you are right but it would require some explicit comment in clk.h
-(eg, clk_get/put) not to be confusing to the driver developer.
+On Monday, October 18, 2010 2:55 PM Sangbeom Kim wrote:
 
-Thanks.
+> From: Jonghun Han <jonghun.han@samsung.com>
+> 
+> Some platform data for S5PV310 FIMD0 are added.
+> LTE480WV lcd pannel used by SMDKV310 are added via platform-lcd interface.
+> extern helper functions used by machine file are added.
+> 
+> Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
+> Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+> ---
+>  arch/arm/mach-s5pv310/mach-smdkv310.c   |   72 +++++++++++++++++++++++++++++++
+>  arch/arm/plat-samsung/include/plat/fb.h |   14 ++++++
+>  2 files changed, 86 insertions(+), 0 deletions(-)
+> 
+> ...
 
-Regards,
-Minho Ban
+> diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/plat-samsung/include/plat/fb.h
+> index cb3ca3a..67733b5 100644
+> --- a/arch/arm/plat-samsung/include/plat/fb.h
+> +++ b/arch/arm/plat-samsung/include/plat/fb.h
+> @@ -74,6 +74,14 @@ struct s3c_fb_platdata {
+>  extern void s3c_fb_set_platdata(struct s3c_fb_platdata *pd);
+> 
+>  /**
+> + * s5p_fimd0_set_platdata() - Setup the FB device with platform data.
+> + * @pd: The platform data to set. The data is copied from the passed structure
+> + *      so the machine data can mark the data __initdata so that any unused
+> + *      machines will end up dumping their data at runtime.
+> + */
+> +extern void s5p_fimd0_set_platdata(struct s3c_fb_platdata *pd);
+> +
+> +/**
+>   * s3c64xx_fb_gpio_setup_24bpp() - S3C64XX setup function for 24bpp LCD
+>   *
+>   * Initialise the GPIO for an 24bpp LCD display on the RGB interface.
+> @@ -94,4 +102,10 @@ extern void s5pc100_fb_gpio_setup_24bpp(void);
+>   */
+>  extern void s5pv210_fb_gpio_setup_24bpp(void);
+> 
+> +/**
+> + * s5pv310_fimd0_gpio_setup_24bpp() - S5PV310/S5PC210 setup function for 24bpp LCD0
+> + *
+> + * Initialise the GPIO for an 24bpp LCD display on the RGB interface 0.
+> + */
+> +extern void s5pv310_fimd0_gpio_setup_24bpp(void);
+>  #endif /* __PLAT_S3C_FB_H */
 
--- 
-Minho Ban (mhban@samsung.com)
-Senior Engineer
-Platform R&D Team,  Mobile Comm.
-SAMSUNG ELECTRONICS Co.Ltd.
+Changes to arch/arm/plat-samsung/include/plat/fb.h file should go together with patch
+2/4 from your series - they are not related to SMDK board at all.
+
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
