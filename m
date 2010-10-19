@@ -1,25 +1,28 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 4/4] ARM: S5PV310: Add platform data for S5PV310 FIMD and
- LTE480WV platform-lcd
-Date: Tue, 19 Oct 2010 08:50:56 +0200
-Message-ID: <002f01cb6f59$ff98d650$feca82f0$%szyprowski@samsung.com>
+Subject: RE: [PATCH 3/4] s3c-fb: Add support S5PV310 FIMD
+Date: Tue, 19 Oct 2010 09:22:14 +0200
+Message-ID: <003001cb6f5e$5db43050$191c90f0$%szyprowski@samsung.com>
 References: <1287406528-15324-1-git-send-email-sbkim73@samsung.com>
- <1287406528-15324-5-git-send-email-sbkim73@samsung.com>
+ <1287406528-15324-4-git-send-email-sbkim73@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:35954 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:52050 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757828Ab0JSGvM (ORCPT
+	with ESMTP id S1755798Ab0JSHW3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Oct 2010 02:51:12 -0400
-In-reply-to: <1287406528-15324-5-git-send-email-sbkim73@samsung.com>
+	Tue, 19 Oct 2010 03:22:29 -0400
+In-reply-to: <1287406528-15324-4-git-send-email-sbkim73@samsung.com>
 Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Sangbeom Kim' <sbkim73@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org
 Cc: 'Jonghun Han' <jonghun.han@samsung.com>, akpm@linux-foundation.org, kgene.kim@samsung.com, ben-linux@fluff.org, kyungmin.park@samsung.com
+
+1AFAAVgAzADEAMAAgAEY
+	ASQBNAEQA
+x-cr-puzzleid: {C4CCB40E-D5C6-4119-AA7C-BBBA7A1503E4}
 
 Hello,
 
@@ -27,52 +30,285 @@ On Monday, October 18, 2010 2:55 PM Sangbeom Kim wrote:
 
 > From: Jonghun Han <jonghun.han@samsung.com>
 > 
-> Some platform data for S5PV310 FIMD0 are added.
-> LTE480WV lcd pannel used by SMDKV310 are added via platform-lcd interface.
-> extern helper functions used by machine file are added.
+> This patch adds s3c_fb_driverdata for S5PV310 FIMD0. The clk_type is added
+> to distinguish clock type in structure s3c_fb_variant and lcd_clk is added
+> in structure s3c_fb to calculate divider for lcd panel.
+> FIMD can handles two clocks. The one is for FIMD IP and the other is for
+> LCD pixel clock. Before S5PV310 LCD pixel clock can be same with FIMD IP
+> clock. From S5PV310 LCD pixel clock is separated from FIMD IP clock.
 > 
 > Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
+> Reviewed-by: Kukjin Kim <kgene.kim@samsung.com>
 > Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+> Cc: Ben Dooks <ben-linux@fluff.org>
 > ---
->  arch/arm/mach-s5pv310/mach-smdkv310.c   |   72 +++++++++++++++++++++++++++++++
->  arch/arm/plat-samsung/include/plat/fb.h |   14 ++++++
->  2 files changed, 86 insertions(+), 0 deletions(-)
+> NOTE: This patch is only for FIMD0.
+> FIMD1 will be implemented later.
+>  drivers/video/Kconfig  |    2 +-
+>  drivers/video/s3c-fb.c |  128 ++++++++++++++++++++++++++++++++++++++++++------
+>  2 files changed, 114 insertions(+), 16 deletions(-)
 > 
-> ...
-
-> diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/plat-samsung/include/plat/fb.h
-> index cb3ca3a..67733b5 100644
-> --- a/arch/arm/plat-samsung/include/plat/fb.h
-> +++ b/arch/arm/plat-samsung/include/plat/fb.h
-> @@ -74,6 +74,14 @@ struct s3c_fb_platdata {
->  extern void s3c_fb_set_platdata(struct s3c_fb_platdata *pd);
+> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
+> index 8b31fdf..3e2e02a 100644
+> --- a/drivers/video/Kconfig
+> +++ b/drivers/video/Kconfig
+> @@ -1946,7 +1946,7 @@ config FB_TMIO_ACCELL
+> 
+>  config FB_S3C
+>  	tristate "Samsung S3C framebuffer support"
+> -	depends on FB && S3C_DEV_FB
+> +	depends on FB && (S3C_DEV_FB || S5P_DEV_FIMD0)
+>  	select FB_CFB_FILLRECT
+>  	select FB_CFB_COPYAREA
+>  	select FB_CFB_IMAGEBLIT
+> diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+> index f9aca9d..bc182ea 100644
+> --- a/drivers/video/s3c-fb.c
+> +++ b/drivers/video/s3c-fb.c
+> @@ -65,6 +65,9 @@ struct s3c_fb;
+>  #define VIDOSD_C(win, variant) (OSD_BASE(win, variant) + 0x08)
+>  #define VIDOSD_D(win, variant) (OSD_BASE(win, variant) + 0x0C)
+> 
+> +#define FIMD_CLK_TYPE0	0
+> +#define FIMD_CLK_TYPE1	1
+> +
+>  /**
+>   * struct s3c_fb_variant - fb variant information
+>   * @is_2443: Set if S3C2443/S3C2416 style hardware.
+> @@ -97,6 +100,7 @@ struct s3c_fb_variant {
+> 
+>  	unsigned int	has_prtcon:1;
+>  	unsigned int	has_shadowcon:1;
+> +	unsigned int	clk_type:1;
+>  };
 > 
 >  /**
-> + * s5p_fimd0_set_platdata() - Setup the FB device with platform data.
-> + * @pd: The platform data to set. The data is copied from the passed structure
-> + *      so the machine data can mark the data __initdata so that any unused
-> + *      machines will end up dumping their data at runtime.
-> + */
-> +extern void s5p_fimd0_set_platdata(struct s3c_fb_platdata *pd);
-> +
-> +/**
->   * s3c64xx_fb_gpio_setup_24bpp() - S3C64XX setup function for 24bpp LCD
->   *
->   * Initialise the GPIO for an 24bpp LCD display on the RGB interface.
-> @@ -94,4 +102,10 @@ extern void s5pc100_fb_gpio_setup_24bpp(void);
->   */
->  extern void s5pv210_fb_gpio_setup_24bpp(void);
+> @@ -183,7 +187,8 @@ struct s3c_fb_vsync {
+>   * struct s3c_fb - overall hardware state of the hardware
+>   * @dev: The device that we bound to, for printing, etc.
+>   * @regs_res: The resource we claimed for the IO registers.
+> - * @bus_clk: The clk (hclk) feeding our interface and possibly pixclk.
+> + * @bus_clk: The clk (hclk) feeding FIMD IP core.
+> + * @lcd_clk: The clk (sclk) feeding our interface and possibly pixclk.
+>   * @regs: The mapped hardware registers.
+>   * @variant: Variant information for this hardware.
+>   * @enabled: A bitmask of enabled hardware windows.
+> @@ -197,6 +202,7 @@ struct s3c_fb {
+>  	struct device		*dev;
+>  	struct resource		*regs_res;
+>  	struct clk		*bus_clk;
+> +	struct clk		*lcd_clk;
+>  	void __iomem		*regs;
+>  	struct s3c_fb_variant	 variant;
 > 
-> +/**
-> + * s5pv310_fimd0_gpio_setup_24bpp() - S5PV310/S5PC210 setup function for 24bpp LCD0
-> + *
-> + * Initialise the GPIO for an 24bpp LCD display on the RGB interface 0.
-> + */
-> +extern void s5pv310_fimd0_gpio_setup_24bpp(void);
->  #endif /* __PLAT_S3C_FB_H */
+> @@ -334,7 +340,7 @@ static int s3c_fb_check_var(struct fb_var_screeninfo *var,
+>   */
+>  static int s3c_fb_calc_pixclk(struct s3c_fb *sfb, unsigned int pixclk)
+>  {
+> -	unsigned long clk = clk_get_rate(sfb->bus_clk);
+> +	unsigned long clk = clk_get_rate(sfb->lcd_clk);
+>  	unsigned long long tmp;
+>  	unsigned int result;
+> 
+> @@ -517,7 +523,7 @@ static int s3c_fb_set_par(struct fb_info *info)
+> 
+>  		data = VIDTCON2_LINEVAL(var->yres - 1) |
+>  		       VIDTCON2_HOZVAL(var->xres - 1);
+> -		writel(data, regs +sfb->variant.vidtcon + 8 );
+> +		writel(data, regs + sfb->variant.vidtcon + 8);
+>  	}
+> 
+>  	/* write the buffer address */
+> @@ -1286,8 +1292,10 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
+>  	struct s3c_fb_platdata *pd;
+>  	struct s3c_fb *sfb;
+>  	struct resource *res;
+> +	struct clk *mout_mpll = NULL;
+>  	int win;
+>  	int ret = 0;
+> +	u32 rate = 134000000;
+> 
+>  	fbdrv = (struct s3c_fb_driverdata *)platform_get_device_id(pdev)->driver_data;
+> 
+> @@ -1314,19 +1322,56 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
+>  	sfb->pdata = pd;
+>  	sfb->variant = fbdrv->variant;
+> 
+> -	sfb->bus_clk = clk_get(dev, "lcd");
+> -	if (IS_ERR(sfb->bus_clk)) {
+> -		dev_err(dev, "failed to get bus clock\n");
+> +	switch (sfb->variant.clk_type) {
+> +	case FIMD_CLK_TYPE0:
+> +		sfb->bus_clk = clk_get(dev, "lcd");
+> +		if (IS_ERR(sfb->bus_clk)) {
+> +			dev_err(dev, "failed to get bus clock\n");
+> +			goto err_sfb;
+> +		}
+> +
+> +		clk_enable(sfb->bus_clk);
+> +
+> +		sfb->lcd_clk = sfb->bus_clk;
+> +		break;
+> +
+> +	case FIMD_CLK_TYPE1:
+> +		sfb->bus_clk = clk_get(&pdev->dev, "fimd");
+> +		if (IS_ERR(sfb->bus_clk)) {
+> +			dev_err(&pdev->dev, "failed to get clock for fimd\n");
+> +			goto err_sfb;
+> +		}
+> +		clk_enable(sfb->bus_clk);
+> +
+> +		sfb->lcd_clk = clk_get(&pdev->dev, "sclk_fimd");
+> +		if (IS_ERR(sfb->lcd_clk)) {
+> +			dev_err(&pdev->dev, "failed to get sclk for fimd\n");
+> +			goto err_bus_clk;
+> +		}
+> +
+> +		mout_mpll = clk_get(&pdev->dev, "mout_mpll");
+> +		if (IS_ERR(mout_mpll)) {
+> +			dev_err(&pdev->dev, "failed to get mout_mpll\n");
+> +			goto err_lcd_clk;
+> +		}
+> +		clk_set_parent(sfb->lcd_clk, mout_mpll);
+> +		clk_put(mout_mpll);
 
-Changes to arch/arm/plat-samsung/include/plat/fb.h file should go together with patch
-2/4 from your series - they are not related to SMDK board at all.
+I don't think that the driver is the right place to change the parent of the sclk_fimd
+clock. It should be done in the boot loader or the board startup code.
+
+We should also be a bit more consistent on clock naming. s3c6410..s5pv210 used the 'lcd'
+clock name. Maybe you should also provide a patch to rename all these clocks to common
+name.
+
+> +
+> +		clk_set_rate(sfb->lcd_clk, rate);
+> +		clk_enable(sfb->lcd_clk);
+> +		dev_dbg(&pdev->dev, "set fimd sclk rate to %d\n", rate);
+> +		break;
+> +
+> +	default:
+> +		dev_err(dev, "failed to enable clock for FIMD\n");
+>  		goto err_sfb;
+>  	}
+> 
+> -	clk_enable(sfb->bus_clk);
+> -
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	if (!res) {
+>  		dev_err(dev, "failed to find registers\n");
+>  		ret = -ENOENT;
+> -		goto err_clk;
+> +		goto err_lcd_clk;
+>  	}
+> 
+>  	sfb->regs_res = request_mem_region(res->start, resource_size(res),
+> @@ -1334,7 +1379,7 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
+>  	if (!sfb->regs_res) {
+>  		dev_err(dev, "failed to claim register region\n");
+>  		ret = -ENOENT;
+> -		goto err_clk;
+> +		goto err_lcd_clk;
+>  	}
+> 
+>  	sfb->regs = ioremap(res->start, resource_size(res));
+> @@ -1413,9 +1458,15 @@ err_req_region:
+>  	release_resource(sfb->regs_res);
+>  	kfree(sfb->regs_res);
+> 
+> -err_clk:
+> -	clk_disable(sfb->bus_clk);
+> -	clk_put(sfb->bus_clk);
+> +err_lcd_clk:
+> +	clk_disable(sfb->lcd_clk);
+> +	clk_put(sfb->lcd_clk);
+> +
+> +err_bus_clk:
+> +	if (sfb->variant.clk_type != FIMD_CLK_TYPE0) {
+> +		clk_disable(sfb->bus_clk);
+> +		clk_put(sfb->bus_clk);
+> +	}
+> 
+>  err_sfb:
+>  	kfree(sfb);
+> @@ -1442,8 +1493,20 @@ static int __devexit s3c_fb_remove(struct platform_device *pdev)
+> 
+>  	iounmap(sfb->regs);
+> 
+> -	clk_disable(sfb->bus_clk);
+> -	clk_put(sfb->bus_clk);
+> +	switch (sfb->variant.clk_type) {
+> +	case FIMD_CLK_TYPE1:
+> +		clk_disable(sfb->lcd_clk);
+> +		clk_put(sfb->lcd_clk);
+> +		/* fall through to default case */
+> +	case FIMD_CLK_TYPE0:
+> +		clk_disable(sfb->bus_clk);
+> +		clk_put(sfb->bus_clk);
+> +		break;
+> +	default:
+> +		dev_err(sfb->dev, "invalid clock type(%d)\n",
+> +			sfb->variant.clk_type);
+> +		break;
+> +	}
+> 
+>  	release_resource(sfb->regs_res);
+>  	kfree(sfb->regs_res);
+> @@ -1470,6 +1533,7 @@ static int s3c_fb_suspend(struct platform_device *pdev, pm_message_t state)
+>  	}
+> 
+>  	clk_disable(sfb->bus_clk);
+> +
+>  	return 0;
+>  }
+> 
+> @@ -1656,6 +1720,37 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pv210 = {
+>  	.win[4]	= &s3c_fb_data_64xx_wins[4],
+>  };
+> 
+> +static struct s3c_fb_driverdata s3c_fb_data_s5pv310 = {
+> +	.variant = {
+> +		.nr_windows	= 5,
+> +		.vidtcon	= VIDTCON0,
+> +		.wincon		= WINCON(0),
+> +		.winmap		= WINxMAP(0),
+> +		.keycon		= WKEYCON,
+> +		.osd		= VIDOSD_BASE,
+> +		.osd_stride	= 16,
+> +		.buf_start	= VIDW_BUF_START(0),
+> +		.buf_size	= VIDW_BUF_SIZE(0),
+> +		.buf_end	= VIDW_BUF_END(0),
+> +
+> +		.palette = {
+> +			[0] = 0x2400,
+> +			[1] = 0x2800,
+> +			[2] = 0x2c00,
+> +			[3] = 0x3000,
+> +			[4] = 0x3400,
+> +		},
+> +
+> +		.has_shadowcon	= 1,
+> +		.clk_type	= FIMD_CLK_TYPE1,
+> +	},
+> +	.win[0]	= &s3c_fb_data_64xx_wins[0],
+> +	.win[1]	= &s3c_fb_data_64xx_wins[1],
+> +	.win[2]	= &s3c_fb_data_64xx_wins[2],
+> +	.win[3]	= &s3c_fb_data_64xx_wins[3],
+> +	.win[4]	= &s3c_fb_data_64xx_wins[4],
+> +};
+> +
+>  /* S3C2443/S3C2416 style hardware */
+>  static struct s3c_fb_driverdata s3c_fb_data_s3c2443 = {
+>  	.variant = {
+> @@ -1703,6 +1798,9 @@ static struct platform_device_id s3c_fb_driver_ids[] = {
+>  		.name		= "s5pv210-fb",
+>  		.driver_data	= (unsigned long)&s3c_fb_data_s5pv210,
+>  	}, {
+> +		.name		= "s5pv310-fb",
+> +		.driver_data	= (unsigned long)&s3c_fb_data_s5pv310,
+> +	}, {
+>  		.name		= "s3c2443-fb",
+>  		.driver_data	= (unsigned long)&s3c_fb_data_s3c2443,
+>  	},
+> --
 
 Best regards
 --
