@@ -1,67 +1,74 @@
 From: Kamil Debski <k.debski@samsung.com>
 Subject: RE: [PATCH 3/4] MFC: Add MFC 5.1 V4L2 driver
-Date: Wed, 20 Oct 2010 16:29:27 +0200
-Message-ID: <000101cb7063$366960a0$a33c21e0$%debski@samsung.com>
+Date: Wed, 20 Oct 2010 16:30:42 +0200
+Message-ID: <000201cb7063$63119140$2934b3c0$%debski@samsung.com>
 References: <1286968160-10629-1-git-send-email-k.debski@samsung.com>
  <1286968160-10629-4-git-send-email-k.debski@samsung.com>
- <004b01cb6b68$9d45a8b0$d7d0fa10$%oh@samsung.com>
- <005b01cb6b9f$304dd390$90e97ab0$%debski@samsung.com>
- <000301cb6c21$539ed5b0$fadc8110$%oh@samsung.com>
+ <002f01cb6e9e$b4ce2cd0$1e6a8670$%oh@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:20688 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753121Ab0JTO3f (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Oct 2010 10:29:35 -0400
-In-reply-to: <000301cb6c21$539ed5b0$fadc8110$%oh@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <002f01cb6e9e$b4ce2cd0$1e6a8670$%oh@samsung.com>
 Content-language: en-us
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: jaeryul.oh@samsung.com, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, pawel@osciak.com, kyungmin.park@samsung.com, kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
->Thank you for your reply about my comments. 
->Refer to as below.
+>Hi, Kamil
+>This is third feedback about watchdog timer. 
+>(s5p_mfc.c)
 
-Hi,
+Hi, Peter
 
+Thanks for pointing that out, enabling and disabling watchdog in
+open/release is reasonable.
 
->> 
->> I don't know if this is necessary. MFC_NUM_CONTEXTS can be fixed at 
->> the maximum number allowed by MFC hw: 16. I highly doubt someone will 
->> open that many contexts. Increasing this number will not significantly 
->> increase storage space used by MFC if no contexts are used. It will 
->> only change size of one pointer array ( struct s5p_mfc_ctx 
->> *ctx[MFC_NUM_CONTEXTS]; ).
->> 
->In many project, user can open many contexts according to the scenario
->of not only phone but also netbook, tablet. 'cause MFC supports multiple
->instance. That's why I suggested this param. be configurable.
+>[...]
 
-I see no problem with setting it to the maximum number allowed by MFC - 16.
-There would be no use of setting a smaller value. Except a _minimal_ saving
-of memory.
+>> +	platform_set_drvdata(pdev, dev);
+>> +	dev->hw_lock = 0;
+>> +	dev->watchdog_workqueue = create_singlethread_workqueue("s5p-mfc");
+>> +	INIT_WORK(&dev->watchdog_work, s5p_mfc_watchdog_worker);
+>> +	atomic_set(&dev->watchdog_cnt, 0);
+>> +	init_timer(&dev->watchdog_timer);
+>> +	dev->watchdog_timer.data = 0;
+>> +	dev->watchdog_timer.function = s5p_mfc_watchdog;
+>> +	dev->watchdog_timer.expires = jiffies +
+>> + msecs_to_jiffies(MFC_WATCHDOG_INTERVAL);
+>> +	add_timer(&dev->watchdog_timer);
 
->> >
->> > > +
->> > > +/* Check whether a context should be run on hardware */ int 
->> > > +s5p_mfc_ctx_ready(struct s5p_mfc_ctx *ctx) {
->> > > +	mfc_debug("s5p_mfc_ctx_ready: src=%d, dst=%d, state=%d\n",
->> > > +		  ctx->src_queue_cnt, ctx->dst_queue_cnt,
-ctx->state);
->> > > +	/* Context is to parse header */
->> > > +	if (ctx->src_queue_cnt >= 1 && ctx->state ==
->> > MFCINST_DEC_GOT_INST)
->> > > +		return 1;
->> > > +	/* Context is to decode a frame */
->> > > +	if (ctx->src_queue_cnt >= 1 && ctx->state ==
-MFCINST_DEC_RUNNING
->> > &&
->> > > +					ctx->dst_queue_cnt >= ctx-
+>Watch_dog single thread runs right after probing MFC, but this doesn't look
+>like
+>nice way in terms of purpose of this timer which is for error handling in
+>the 
+>middle of decoding. What about moving point running this timer to the
+>open().
+>And it should be stopped in release time. Of course, dev->num_inst should
+>be 
+>considered.
 
+Yes, I agree. I've changed that.
+
+> 
+>> +
+>> +	dev->alloc_ctx = vb2_cma_init_multi(&pdev->dev, 2, s5p_mem_types,
+>> +							s5p_mem_alignments);
+>> +	if (IS_ERR(dev->alloc_ctx)) {
+>> +		mfc_err("Couldn't prepare allocator context.\n");
+>> +		ret = PTR_ERR(dev->alloc_ctx);
+>> +		goto alloc_ctx_fail;
+>> +	}
+>> +
+>> +	ret = video_register_device(vfd, VFL_TYPE_GRABBER, 0);
+>> +	if (ret) {
+>> +		v4l2_err(&dev->v4l2_dev, "Failed to register video
+>> device\n");
+>> +		video_device_release(vfd);
+>> +		goto rel_vdev;
+>> +	}
+>>
 
 --
 Kamil Debski
