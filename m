@@ -1,222 +1,56 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S3C2416: Add Power Management support for SMDK2416
-Date: Wed, 20 Oct 2010 19:53:21 +0900
-Message-ID: <05da01cb7045$051f41e0$0f5dc5a0$%kim@samsung.com>
-References: <1279003800-16899-1-git-send-email-sbkim73@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Subject: [PATCH] ARM: S3C24XX: Fix the S3C24XX_VA_GPIO mapping
+Date: Wed, 20 Oct 2010 22:33:42 +0900
+Message-ID: <1287581622-8335-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:55056 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750874Ab0JTKxE (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:35855 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750875Ab0JTNml (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Oct 2010 06:53:04 -0400
-Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0LAL00D084WEZT30@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 20 Oct 2010 19:53:02 +0900 (KST)
-Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LAL00I1D4WDMP@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 20 Oct 2010 19:53:01 +0900 (KST)
-In-reply-to: <1279003800-16899-1-git-send-email-sbkim73@samsung.com>
-Content-language: ko
+	Wed, 20 Oct 2010 09:42:41 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sangbeom Kim' <sbkim73@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, 'Abhilash Kesavan' <a.kesavan@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Sangbeom Kim wrote:
-> 
-> From: Abhilash Kesavan <a.kesavan@samsung.com>
-> 
-> Adds suspend-to-ram support for SMDK2416 based on existing 2412 PM code
-> 
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
-> ---
-> Note: it depends on patches:
-> 
-> ARM: S3C24XX: Fix gpiolib support for ports K..M
-> 
->  .../mach-s3c2410/include/mach/regs-s3c2443-clock.h |    2 +
->  arch/arm/mach-s3c2416/Kconfig                      |    6 ++
->  arch/arm/mach-s3c2416/Makefile                     |    2 +-
->  arch/arm/mach-s3c2416/irq.c                        |    2 +
->  arch/arm/mach-s3c2416/pm.c                         |   84
-> ++++++++++++++++++++
->  5 files changed, 95 insertions(+), 1 deletions(-)
->  create mode 100644 arch/arm/mach-s3c2416/pm.c
-> 
-> diff --git a/arch/arm/mach-s3c2410/include/mach/regs-s3c2443-clock.h
-> b/arch/arm/mach-s3c2410/include/mach/regs-s3c2443-clock.h
-> index 08ab9df..101aeea 100644
-> --- a/arch/arm/mach-s3c2410/include/mach/regs-s3c2443-clock.h
-> +++ b/arch/arm/mach-s3c2410/include/mach/regs-s3c2443-clock.h
-> @@ -118,6 +118,8 @@
->  #define S3C2443_SCLKCON_UARTCLK		(1<<8)
->  #define S3C2443_SCLKCON_USBHOST		(1<<1)
-> 
-> +#define S3C2443_PWRCFG_SLEEP		(1<<15)
-> +
->  #include <asm/div64.h>
-> 
->  static inline unsigned int
-> diff --git a/arch/arm/mach-s3c2416/Kconfig b/arch/arm/mach-s3c2416/Kconfig
-> index 657e4fe..87b9c9f 100644
-> --- a/arch/arm/mach-s3c2416/Kconfig
-> +++ b/arch/arm/mach-s3c2416/Kconfig
-> @@ -25,6 +25,11 @@ config S3C2416_DMA
->  	help
->  	  Internal config node for S3C2416 DMA support
-> 
-> +config S3C2416_PM
-> +	bool
-> +	help
-> +	  Internal config node to apply S3C2416 power management
-> +
->  menu "S3C2416 Machines"
-> 
->  config MACH_SMDK2416
-> @@ -33,6 +38,7 @@ config MACH_SMDK2416
->  	select S3C_DEV_FB
->  	select S3C_DEV_HSMMC
->  	select S3C_DEV_HSMMC1
-> +	select S3C2416_PM if PM
->  	help
->  	  Say Y here if you are using an SMDK2416
-> 
-> diff --git a/arch/arm/mach-s3c2416/Makefile
-b/arch/arm/mach-s3c2416/Makefile
-> index 6c12c7b..ef038d6 100644
-> --- a/arch/arm/mach-s3c2416/Makefile
-> +++ b/arch/arm/mach-s3c2416/Makefile
-> @@ -11,7 +11,7 @@ obj-				:=
-> 
->  obj-$(CONFIG_CPU_S3C2416)	+= s3c2416.o clock.o
->  obj-$(CONFIG_CPU_S3C2416)	+= irq.o
-> -
-> +obj-$(CONFIG_S3C2416_PM)	+= pm.o
->  #obj-$(CONFIG_S3C2416_DMA)	+= dma.o
-> 
->  # Machine support
-> diff --git a/arch/arm/mach-s3c2416/irq.c b/arch/arm/mach-s3c2416/irq.c
-> index 89f521d..084d121 100644
-> --- a/arch/arm/mach-s3c2416/irq.c
-> +++ b/arch/arm/mach-s3c2416/irq.c
-> @@ -243,6 +243,8 @@ static int __init s3c2416_irq_add(struct sys_device
-> *sysdev)
-> 
->  static struct sysdev_driver s3c2416_irq_driver = {
->  	.add		= s3c2416_irq_add,
-> +	.suspend	= s3c24xx_irq_suspend,
-> +	.resume		= s3c24xx_irq_resume,
->  };
-> 
->  static int __init s3c2416_irq_init(void)
-> diff --git a/arch/arm/mach-s3c2416/pm.c b/arch/arm/mach-s3c2416/pm.c
-> new file mode 100644
-> index 0000000..4d41f28
-> --- /dev/null
-> +++ b/arch/arm/mach-s3c2416/pm.c
-> @@ -0,0 +1,84 @@
-> +/* linux/arch/arm/mach-s3c2416/pm.c
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * S3C2416 - PM support (Based on Ben Dooks' S3C2412 PM support)
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#include <linux/sysdev.h>
-> +#include <linux/io.h>
-> +
-> +#include <asm/cacheflush.h>
-> +
-> +#include <mach/regs-power.h>
-> +#include <mach/regs-s3c2443-clock.h>
-> +
-> +#include <plat/cpu.h>
-> +#include <plat/pm.h>
-> +
-> +extern void s3c2412_sleep_enter(void);
-> +
-> +static void s3c2416_cpu_suspend(void)
-> +{
-> +	flush_cache_all();
-> +
-> +	/* enable wakeup sources regardless of battery state */
-> +	__raw_writel(S3C2443_PWRCFG_SLEEP, S3C2443_PWRCFG);
-> +
-> +	/* set the mode as sleep, 2BED represents "Go to BED" */
-> +	__raw_writel(0x2BED, S3C2443_PWRMODE);
-> +
-> +	s3c2412_sleep_enter();
-> +}
-> +
-> +static void s3c2416_pm_prepare(void)
-> +{
-> +	/*
-> +	 * write the magic value u-boot uses to check for resume into
-> +	 * the INFORM0 register, and ensure INFORM1 is set to the
-> +	 * correct address to resume from.
-> +	 */
-> +	__raw_writel(0x2BED, S3C2412_INFORM0);
-> +	__raw_writel(virt_to_phys(s3c_cpu_resume), S3C2412_INFORM1);
-> +}
-> +
-> +static int s3c2416_pm_add(struct sys_device *sysdev)
-> +{
-> +	pm_cpu_prep = s3c2416_pm_prepare;
-> +	pm_cpu_sleep = s3c2416_cpu_suspend;
-> +
-> +	return 0;
-> +}
-> +
-> +static int s3c2416_pm_suspend(struct sys_device *dev, pm_message_t state)
-> +{
-> +	return 0;
-> +}
-> +
-> +static int s3c2416_pm_resume(struct sys_device *dev)
-> +{
-> +	/* unset the return-from-sleep amd inform flags */
-> +	__raw_writel(0x0, S3C2443_PWRMODE);
-> +	__raw_writel(0x0, S3C2412_INFORM0);
-> +	__raw_writel(0x0, S3C2412_INFORM1);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct sysdev_driver s3c2416_pm_driver = {
-> +	.add		= s3c2416_pm_add,
-> +	.suspend	= s3c2416_pm_suspend,
-> +	.resume		= s3c2416_pm_resume,
-> +};
-> +
-> +static __init int s3c2416_pm_init(void)
-> +{
-> +	return sysdev_driver_register(&s3c2416_sysclass,
-&s3c2416_pm_driver);
-> +}
-> +
-> +arch_initcall(s3c2416_pm_init);
-> --
+This patch changes the S3C24XX_VA_GPIO for to fix following BUG.
+BUG: not creating mapping for 0x56000000 at 0x01000000 in user region
 
-Ok...will apply.
+It is due to commit 8fecfe9d(ARM: SAMSUNG: Move the start address of
+Samsung SoCs' VA space) which changes S3C_ADDR_BASE from 0xF4000000
+to 0xFA000000.
 
-Ben, if any problems, please let me know.
+Reported-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Ben Dooks <ben-linux@fluff.org>
+---
+ arch/arm/plat-s3c24xx/include/plat/map.h |   14 +++-----------
+ 1 files changed, 3 insertions(+), 11 deletions(-)
 
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/arch/arm/plat-s3c24xx/include/plat/map.h b/arch/arm/plat-s3c24xx/include/plat/map.h
+index bd534d3..771491e 100644
+--- a/arch/arm/plat-s3c24xx/include/plat/map.h
++++ b/arch/arm/plat-s3c24xx/include/plat/map.h
+@@ -61,17 +61,9 @@
+ 
+ /* GPIO ports */
+ 
+-/* the calculation for the VA of this must ensure that
+- * it is the same distance apart from the UART in the
+- * phsyical address space, as the initial mapping for the IO
+- * is done as a 1:1 mapping. This puts it (currently) at
+- * 0xFA800000, which is not in the way of any current mapping
+- * by the base system.
+-*/
+-
+-#define S3C2410_PA_GPIO	   (0x56000000)
+-#define S3C24XX_VA_GPIO	   ((S3C24XX_PA_GPIO - S3C24XX_PA_UART) + S3C24XX_VA_UART)
+-#define S3C24XX_SZ_GPIO	   SZ_1M
++#define S3C2410_PA_GPIO		(0x56000000)
++#define S3C24XX_VA_GPIO		S3C2410_ADDR(0x00F00000)
++#define S3C24XX_SZ_GPIO		SZ_1M
+ 
+ 
+ /* ISA style IO, for each machine to sort out mappings for, if it
+-- 
+1.6.2.5
