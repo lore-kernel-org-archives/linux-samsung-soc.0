@@ -1,24 +1,92 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 0/5] ARM: S5P: Update DMA operation clock
-Date: Thu, 21 Oct 2010 09:58:28 +0900
-Message-ID: <1287622713-1657-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 3/5] ARM: S5P64X0: Set DMA clock disable as default
+Date: Thu, 21 Oct 2010 09:58:31 +0900
+Message-ID: <1287622713-1657-4-git-send-email-kgene.kim@samsung.com>
+References: <1287622713-1657-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:41931 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:41934 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755286Ab0JUBHr (ORCPT
+	with ESMTP id S1755286Ab0JUBHs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Oct 2010 21:07:47 -0400
+	Wed, 20 Oct 2010 21:07:48 -0400
+In-Reply-To: <1287622713-1657-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org
+Cc: ben-linux@fluff.org, Seungwhan Youn <sw.youn@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch updates Peri-DMA (PL330) operation clock on S5P SoCs which
-have PL330 DMAC. Basically, registered PDMA clocks as disabled clock
-and enabled when called pl330-probe() in s3c-pl330.c.
+From: Seungwhan Youn <sw.youn@samsung.com>
 
-[PATCH 1/5] ARM: S5P6442: Add DMA operation clock
-[PATCH 2/5] ARM: S5PV210: Add DMA operation clock
-[PATCH 3/5] ARM: S5P64X0: Set DMA clock disable as default
-[PATCH 4/5] ARM: S5P: Reorder DMA platform device id
-[PATCH 5/5] ARM: SAMSUNG: Add to enable/disable clock on S3C PL330
+This patch modify to DMA operation clock into disable list for default
+clock setting.
+
+Signed-off-by: Seungwhan Youn <sw.youn@samsung.com>
+Acked-by: Jassi Brar <jassi.brar@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s5p64x0/clock-s5p6440.c |   12 ++++++------
+ arch/arm/mach-s5p64x0/clock-s5p6450.c |   12 ++++++------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/arch/arm/mach-s5p64x0/clock-s5p6440.c b/arch/arm/mach-s5p64x0/clock-s5p6440.c
+index 0d728d3..e4883dc 100644
+--- a/arch/arm/mach-s5p64x0/clock-s5p6440.c
++++ b/arch/arm/mach-s5p64x0/clock-s5p6440.c
+@@ -153,6 +153,12 @@ static struct clk init_clocks_disable[] = {
+ 		.enable		= s5p64x0_hclk0_ctrl,
+ 		.ctrlbit	= (1 << 8),
+ 	}, {
++		.name		= "pdma",
++		.id		= -1,
++		.parent		= &clk_hclk_low.clk,
++		.enable		= s5p64x0_hclk0_ctrl,
++		.ctrlbit	= (1 << 12),
++	}, {
+ 		.name		= "hsmmc",
+ 		.id		= 0,
+ 		.parent		= &clk_hclk_low.clk,
+@@ -334,12 +340,6 @@ static struct clk init_clocks[] = {
+ 		.enable		= s5p64x0_hclk0_ctrl,
+ 		.ctrlbit	= (1 << 21),
+ 	}, {
+-		.name		= "dma",
+-		.id		= -1,
+-		.parent		= &clk_hclk_low.clk,
+-		.enable		= s5p64x0_hclk0_ctrl,
+-		.ctrlbit	= (1 << 12),
+-	}, {
+ 		.name		= "uart",
+ 		.id		= 0,
+ 		.parent		= &clk_pclk_low.clk,
+diff --git a/arch/arm/mach-s5p64x0/clock-s5p6450.c b/arch/arm/mach-s5p64x0/clock-s5p6450.c
+index 1b9b0f9..7dbf3c9 100644
+--- a/arch/arm/mach-s5p64x0/clock-s5p6450.c
++++ b/arch/arm/mach-s5p64x0/clock-s5p6450.c
+@@ -189,6 +189,12 @@ static struct clk init_clocks_disable[] = {
+ 		.enable		= s5p64x0_hclk0_ctrl,
+ 		.ctrlbit	= (1 << 3),
+ 	}, {
++		.name		= "pdma",
++		.id		= -1,
++		.parent		= &clk_hclk_low.clk,
++		.enable		= s5p64x0_hclk0_ctrl,
++		.ctrlbit	= (1 << 12),
++	}, {
+ 		.name		= "hsmmc",
+ 		.id		= 0,
+ 		.parent		= &clk_hclk_low.clk,
+@@ -286,12 +292,6 @@ static struct clk init_clocks[] = {
+ 		.enable		= s5p64x0_hclk0_ctrl,
+ 		.ctrlbit	= (1 << 21),
+ 	}, {
+-		.name		= "dma",
+-		.id		= -1,
+-		.parent		= &clk_hclk_low.clk,
+-		.enable		= s5p64x0_hclk0_ctrl,
+-		.ctrlbit	= (1 << 12),
+-	}, {
+ 		.name		= "uart",
+ 		.id		= 0,
+ 		.parent		= &clk_pclk_low.clk,
+-- 
+1.6.2.5
