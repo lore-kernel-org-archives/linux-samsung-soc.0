@@ -1,12 +1,12 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 2/5] ARM: S5PV210: Add DMA operation clock
-Date: Thu, 21 Oct 2010 09:58:30 +0900
-Message-ID: <1287622713-1657-3-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 5/5] ARM: SAMSUNG: Add to enable/disable clock on S3C PL330
+Date: Thu, 21 Oct 2010 09:58:33 +0900
+Message-ID: <1287622713-1657-6-git-send-email-kgene.kim@samsung.com>
 References: <1287622713-1657-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:41944 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:41943 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756289Ab0JUBHs (ORCPT
+	with ESMTP id S1756245Ab0JUBHs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 20 Oct 2010 21:07:48 -0400
 In-Reply-To: <1287622713-1657-1-git-send-email-kgene.kim@samsung.com>
@@ -17,37 +17,110 @@ Cc: ben-linux@fluff.org, Seungwhan Youn <sw.youn@samsung.com>, Kukjin Kim <kgene
 
 From: Seungwhan Youn <sw.youn@samsung.com>
 
-This patch adds DMA operation clock which is disabled as default.
+This patch adds to enable/disable DMA operation clock on S3C-PL330
+DMA controller driver.
 
 Signed-off-by: Seungwhan Youn <sw.youn@samsung.com>
 Acked-by: Jassi Brar <jassi.brar@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv210/clock.c |   12 ++++++++++++
- 1 files changed, 12 insertions(+), 0 deletions(-)
+ arch/arm/plat-samsung/s3c-pl330.c |   34 +++++++++++++++++++++++++++-------
+ 1 files changed, 27 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-index 38ad7e5..019c3a6 100644
---- a/arch/arm/mach-s5pv210/clock.c
-+++ b/arch/arm/mach-s5pv210/clock.c
-@@ -311,6 +311,18 @@ static struct clk_ops clk_fout_apll_ops = {
+diff --git a/arch/arm/plat-samsung/s3c-pl330.c b/arch/arm/plat-samsung/s3c-pl330.c
+index a91305a..b4ff8d7 100644
+--- a/arch/arm/plat-samsung/s3c-pl330.c
++++ b/arch/arm/plat-samsung/s3c-pl330.c
+@@ -15,6 +15,8 @@
+ #include <linux/io.h>
+ #include <linux/slab.h>
+ #include <linux/platform_device.h>
++#include <linux/clk.h>
++#include <linux/err.h>
  
- static struct clk init_clocks_disable[] = {
- 	{
-+		.name		= "pdma",
-+		.id		= 0,
-+		.parent		= &clk_hclk_psys.clk,
-+		.enable		= s5pv210_clk_ip0_ctrl,
-+		.ctrlbit	= (1 << 3),
-+	}, {
-+		.name		= "pdma",
-+		.id		= 1,
-+		.parent		= &clk_hclk_psys.clk,
-+		.enable		= s5pv210_clk_ip0_ctrl,
-+		.ctrlbit	= (1 << 4),
-+	}, {
- 		.name		= "rot",
- 		.id		= -1,
- 		.parent		= &clk_hclk_dsys.clk,
+ #include <asm/hardware/pl330.h>
+ 
+@@ -27,6 +29,7 @@
+  * @node: To attach to the global list of DMACs.
+  * @pi: PL330 configuration info for the DMAC.
+  * @kmcache: Pool to quickly allocate xfers for all channels in the dmac.
++ * @clk: Pointer of DMAC operation clock.
+  */
+ struct s3c_pl330_dmac {
+ 	unsigned		busy_chan;
+@@ -34,6 +37,7 @@ struct s3c_pl330_dmac {
+ 	struct list_head	node;
+ 	struct pl330_info	*pi;
+ 	struct kmem_cache	*kmcache;
++	struct clk		*clk;
+ };
+ 
+ /**
+@@ -1072,16 +1076,25 @@ static int pl330_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto probe_err4;
+ 
+-	ret = pl330_add(pl330_info);
+-	if (ret)
+-		goto probe_err5;
+-
+ 	/* Allocate a new DMAC */
+ 	s3c_pl330_dmac = kmalloc(sizeof(*s3c_pl330_dmac), GFP_KERNEL);
+ 	if (!s3c_pl330_dmac) {
+ 		ret = -ENOMEM;
++		goto probe_err5;
++	}
++
++	/* Get operation clock and enable it */
++	s3c_pl330_dmac->clk = clk_get(&pdev->dev, "pdma");
++	if (IS_ERR(s3c_pl330_dmac->clk)) {
++		dev_err(&pdev->dev, "Cannot get operation clock.\n");
++		ret = -EINVAL;
+ 		goto probe_err6;
+ 	}
++	clk_enable(s3c_pl330_dmac->clk);
++
++	ret = pl330_add(pl330_info);
++	if (ret)
++		goto probe_err7;
+ 
+ 	/* Hook the info */
+ 	s3c_pl330_dmac->pi = pl330_info;
+@@ -1094,7 +1107,7 @@ static int pl330_probe(struct platform_device *pdev)
+ 
+ 	if (!s3c_pl330_dmac->kmcache) {
+ 		ret = -ENOMEM;
+-		goto probe_err7;
++		goto probe_err8;
+ 	}
+ 
+ 	/* Get the list of peripherals */
+@@ -1120,10 +1133,13 @@ static int pl330_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
++probe_err8:
++	pl330_del(pl330_info);
+ probe_err7:
+-	kfree(s3c_pl330_dmac);
++	clk_disable(s3c_pl330_dmac->clk);
++	clk_put(s3c_pl330_dmac->clk);
+ probe_err6:
+-	pl330_del(pl330_info);
++	kfree(s3c_pl330_dmac);
+ probe_err5:
+ 	free_irq(irq, pl330_info);
+ probe_err4:
+@@ -1188,6 +1204,10 @@ static int pl330_remove(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	/* Disable operation clock */
++	clk_disable(dmac->clk);
++	clk_put(dmac->clk);
++
+ 	/* Remove the DMAC */
+ 	list_del(&dmac->node);
+ 	kfree(dmac);
 -- 
 1.6.2.5
