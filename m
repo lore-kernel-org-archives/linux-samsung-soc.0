@@ -1,12 +1,12 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 3/5] ARM: S5P64X0: Set DMA clock disable as default
-Date: Thu, 21 Oct 2010 09:58:31 +0900
-Message-ID: <1287622713-1657-4-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 4/5] ARM: S5P: Reorder DMA platform device id
+Date: Thu, 21 Oct 2010 09:58:32 +0900
+Message-ID: <1287622713-1657-5-git-send-email-kgene.kim@samsung.com>
 References: <1287622713-1657-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:41934 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:41937 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755286Ab0JUBHs (ORCPT
+	with ESMTP id S1755880Ab0JUBHs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 20 Oct 2010 21:07:48 -0400
 In-Reply-To: <1287622713-1657-1-git-send-email-kgene.kim@samsung.com>
@@ -17,76 +17,87 @@ Cc: ben-linux@fluff.org, Seungwhan Youn <sw.youn@samsung.com>, Kukjin Kim <kgene
 
 From: Seungwhan Youn <sw.youn@samsung.com>
 
-This patch modify to DMA operation clock into disable list for default
-clock setting.
+This patch is matched-up DMA platform device id to it's clock id.
 
 Signed-off-by: Seungwhan Youn <sw.youn@samsung.com>
 Acked-by: Jassi Brar <jassi.brar@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5p64x0/clock-s5p6440.c |   12 ++++++------
- arch/arm/mach-s5p64x0/clock-s5p6450.c |   12 ++++++------
- 2 files changed, 12 insertions(+), 12 deletions(-)
+ arch/arm/mach-s5p6442/dma.c |    2 +-
+ arch/arm/mach-s5p64x0/dma.c |    2 +-
+ arch/arm/mach-s5pc100/dma.c |    4 ++--
+ arch/arm/mach-s5pv210/dma.c |    4 ++--
+ 4 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/mach-s5p64x0/clock-s5p6440.c b/arch/arm/mach-s5p64x0/clock-s5p6440.c
-index 0d728d3..e4883dc 100644
---- a/arch/arm/mach-s5p64x0/clock-s5p6440.c
-+++ b/arch/arm/mach-s5p64x0/clock-s5p6440.c
-@@ -153,6 +153,12 @@ static struct clk init_clocks_disable[] = {
- 		.enable		= s5p64x0_hclk0_ctrl,
- 		.ctrlbit	= (1 << 8),
- 	}, {
-+		.name		= "pdma",
-+		.id		= -1,
-+		.parent		= &clk_hclk_low.clk,
-+		.enable		= s5p64x0_hclk0_ctrl,
-+		.ctrlbit	= (1 << 12),
-+	}, {
- 		.name		= "hsmmc",
- 		.id		= 0,
- 		.parent		= &clk_hclk_low.clk,
-@@ -334,12 +340,6 @@ static struct clk init_clocks[] = {
- 		.enable		= s5p64x0_hclk0_ctrl,
- 		.ctrlbit	= (1 << 21),
- 	}, {
--		.name		= "dma",
--		.id		= -1,
--		.parent		= &clk_hclk_low.clk,
--		.enable		= s5p64x0_hclk0_ctrl,
--		.ctrlbit	= (1 << 12),
--	}, {
- 		.name		= "uart",
- 		.id		= 0,
- 		.parent		= &clk_pclk_low.clk,
-diff --git a/arch/arm/mach-s5p64x0/clock-s5p6450.c b/arch/arm/mach-s5p64x0/clock-s5p6450.c
-index 1b9b0f9..7dbf3c9 100644
---- a/arch/arm/mach-s5p64x0/clock-s5p6450.c
-+++ b/arch/arm/mach-s5p64x0/clock-s5p6450.c
-@@ -189,6 +189,12 @@ static struct clk init_clocks_disable[] = {
- 		.enable		= s5p64x0_hclk0_ctrl,
- 		.ctrlbit	= (1 << 3),
- 	}, {
-+		.name		= "pdma",
-+		.id		= -1,
-+		.parent		= &clk_hclk_low.clk,
-+		.enable		= s5p64x0_hclk0_ctrl,
-+		.ctrlbit	= (1 << 12),
-+	}, {
- 		.name		= "hsmmc",
- 		.id		= 0,
- 		.parent		= &clk_hclk_low.clk,
-@@ -286,12 +292,6 @@ static struct clk init_clocks[] = {
- 		.enable		= s5p64x0_hclk0_ctrl,
- 		.ctrlbit	= (1 << 21),
- 	}, {
--		.name		= "dma",
--		.id		= -1,
--		.parent		= &clk_hclk_low.clk,
--		.enable		= s5p64x0_hclk0_ctrl,
--		.ctrlbit	= (1 << 12),
--	}, {
- 		.name		= "uart",
- 		.id		= 0,
- 		.parent		= &clk_pclk_low.clk,
+diff --git a/arch/arm/mach-s5p6442/dma.c b/arch/arm/mach-s5p6442/dma.c
+index ad4f870..7dfb136 100644
+--- a/arch/arm/mach-s5p6442/dma.c
++++ b/arch/arm/mach-s5p6442/dma.c
+@@ -82,7 +82,7 @@ static struct s3c_pl330_platdata s5p6442_pdma_pdata = {
+ 
+ static struct platform_device s5p6442_device_pdma = {
+ 	.name		= "s3c-pl330",
+-	.id		= 1,
++	.id		= -1,
+ 	.num_resources	= ARRAY_SIZE(s5p6442_pdma_resource),
+ 	.resource	= s5p6442_pdma_resource,
+ 	.dev		= {
+diff --git a/arch/arm/mach-s5p64x0/dma.c b/arch/arm/mach-s5p64x0/dma.c
+index 29a8c24..d7ad944 100644
+--- a/arch/arm/mach-s5p64x0/dma.c
++++ b/arch/arm/mach-s5p64x0/dma.c
+@@ -122,7 +122,7 @@ static struct s3c_pl330_platdata s5p6450_pdma_pdata = {
+ 
+ static struct platform_device s5p64x0_device_pdma = {
+ 	.name		= "s3c-pl330",
+-	.id		= 0,
++	.id		= -1,
+ 	.num_resources	= ARRAY_SIZE(s5p64x0_pdma_resource),
+ 	.resource	= s5p64x0_pdma_resource,
+ 	.dev		= {
+diff --git a/arch/arm/mach-s5pc100/dma.c b/arch/arm/mach-s5pc100/dma.c
+index 0f55175..bf4cd0f 100644
+--- a/arch/arm/mach-s5pc100/dma.c
++++ b/arch/arm/mach-s5pc100/dma.c
+@@ -81,7 +81,7 @@ static struct s3c_pl330_platdata s5pc100_pdma0_pdata = {
+ 
+ static struct platform_device s5pc100_device_pdma0 = {
+ 	.name		= "s3c-pl330",
+-	.id		= 1,
++	.id		= 0,
+ 	.num_resources	= ARRAY_SIZE(s5pc100_pdma0_resource),
+ 	.resource	= s5pc100_pdma0_resource,
+ 	.dev		= {
+@@ -143,7 +143,7 @@ static struct s3c_pl330_platdata s5pc100_pdma1_pdata = {
+ 
+ static struct platform_device s5pc100_device_pdma1 = {
+ 	.name		= "s3c-pl330",
+-	.id		= 2,
++	.id		= 1,
+ 	.num_resources	= ARRAY_SIZE(s5pc100_pdma1_resource),
+ 	.resource	= s5pc100_pdma1_resource,
+ 	.dev		= {
+diff --git a/arch/arm/mach-s5pv210/dma.c b/arch/arm/mach-s5pv210/dma.c
+index 778ad5f..497d343 100644
+--- a/arch/arm/mach-s5pv210/dma.c
++++ b/arch/arm/mach-s5pv210/dma.c
+@@ -82,7 +82,7 @@ static struct s3c_pl330_platdata s5pv210_pdma0_pdata = {
+ 
+ static struct platform_device s5pv210_device_pdma0 = {
+ 	.name		= "s3c-pl330",
+-	.id		= 1,
++	.id		= 0,
+ 	.num_resources	= ARRAY_SIZE(s5pv210_pdma0_resource),
+ 	.resource	= s5pv210_pdma0_resource,
+ 	.dev		= {
+@@ -144,7 +144,7 @@ static struct s3c_pl330_platdata s5pv210_pdma1_pdata = {
+ 
+ static struct platform_device s5pv210_device_pdma1 = {
+ 	.name		= "s3c-pl330",
+-	.id		= 2,
++	.id		= 1,
+ 	.num_resources	= ARRAY_SIZE(s5pv210_pdma1_resource),
+ 	.resource	= s5pv210_pdma1_resource,
+ 	.dev		= {
 -- 
 1.6.2.5
