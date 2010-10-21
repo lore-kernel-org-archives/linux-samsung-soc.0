@@ -1,89 +1,64 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH 1/5] ARM: S5P6442: Add DMA operation clock
-Date: Thu, 21 Oct 2010 23:22:11 +0100
-Message-ID: <4CC0BD13.5060303@fluff.org>
-References: <1287622713-1657-1-git-send-email-kgene.kim@samsung.com> <1287622713-1657-2-git-send-email-kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: S3C24XX: Fix the S3C24XX_VA_GPIO mapping
+Date: Thu, 21 Oct 2010 23:25:46 +0100
+Message-ID: <4CC0BDEA.8090407@fluff.org>
+References: <1287581622-8335-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from dsl78-143-211-26.in-addr.fast.co.uk ([78.143.211.26]:57316 "EHLO
+Received: from dsl78-143-211-26.in-addr.fast.co.uk ([78.143.211.26]:57336 "EHLO
 	ben-laptop" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1751149Ab0JUWWN (ORCPT
+	id S1752053Ab0JUWZw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Oct 2010 18:22:13 -0400
-In-Reply-To: <1287622713-1657-2-git-send-email-kgene.kim@samsung.com>
+	Thu, 21 Oct 2010 18:25:52 -0400
+In-Reply-To: <1287581622-8335-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Seungwhan Youn <sw.youn@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On 21/10/10 01:58, Kukjin Kim wrote:
-> From: Seungwhan Youn <sw.youn@samsung.com>
+On 20/10/10 14:33, Kukjin Kim wrote:
+> This patch changes the S3C24XX_VA_GPIO for to fix following BUG.
+> BUG: not creating mapping for 0x56000000 at 0x01000000 in user region
 > 
-> This patch adds DMA operation clock which is disabled as default.
+> It is due to commit 8fecfe9d(ARM: SAMSUNG: Move the start address of
+> Samsung SoCs' VA space) which changes S3C_ADDR_BASE from 0xF4000000
+> to 0xFA000000.
 > 
-> Signed-off-by: Seungwhan Youn <sw.youn@samsung.com>
-> Acked-by: Jassi Brar <jassi.brar@samsung.com>
+> Reported-by: Abhilash Kesavan <a.kesavan@samsung.com>
 > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Ben Dooks <ben-linux@fluff.org>
 > ---
->  arch/arm/mach-s5p6442/clock.c                   |   28 +++++++++++++++++++++++
->  arch/arm/mach-s5p6442/include/mach/regs-clock.h |    1 +
->  2 files changed, 29 insertions(+), 0 deletions(-)
+>  arch/arm/plat-s3c24xx/include/plat/map.h |   14 +++-----------
+>  1 files changed, 3 insertions(+), 11 deletions(-)
 > 
-> diff --git a/arch/arm/mach-s5p6442/clock.c b/arch/arm/mach-s5p6442/clock.c
-> index dcd20f1..16d6e7e 100644
-> --- a/arch/arm/mach-s5p6442/clock.c
-> +++ b/arch/arm/mach-s5p6442/clock.c
-> @@ -192,6 +192,11 @@ static struct clk clk_pclkd1 = {
->  	.parent		= &clk_hclkd1,
->  };
+> diff --git a/arch/arm/plat-s3c24xx/include/plat/map.h b/arch/arm/plat-s3c24xx/include/plat/map.h
+> index bd534d3..771491e 100644
+> --- a/arch/arm/plat-s3c24xx/include/plat/map.h
+> +++ b/arch/arm/plat-s3c24xx/include/plat/map.h
+> @@ -61,17 +61,9 @@
 >  
-> +int s5p6442_clk_ip0_ctrl(struct clk *clk, int enable)
-> +{
-> +	return s5p_gatectrl(S5P_CLKGATE_IP0, clk, enable);
-> +}
-> +
->  int s5p6442_clk_ip3_ctrl(struct clk *clk, int enable)
->  {
->  	return s5p_gatectrl(S5P_CLKGATE_IP3, clk, enable);
-> @@ -335,6 +340,16 @@ void __init_or_cpufreq s5p6442_setup_clocks(void)
->  	clk_pclkd1.rate = pclkd1;
->  }
+>  /* GPIO ports */
 >  
-> +static struct clk init_clocks_disable[] = {
-> +	{
-> +		.name		= "pdma",
-> +		.id		= -1,
-> +		.parent		= &clk_pclkd1,
-> +		.enable		= s5p6442_clk_ip0_ctrl,
-> +		.ctrlbit	= (1 << 3),
-> +	},
-> +};
-> +
->  static struct clk init_clocks[] = {
->  	{
->  		.name		= "systimer",
-> @@ -393,10 +408,23 @@ static struct clk *clks[] __initdata = {
->  
->  void __init s5p6442_register_clocks(void)
->  {
-> +	struct clk *clkptr;
-> +	int i, ret;
-> +
->  	s3c24xx_register_clocks(clks, ARRAY_SIZE(clks));
->  
->  	s3c_register_clksrc(clksrcs, ARRAY_SIZE(clksrcs));
->  	s3c_register_clocks(init_clocks, ARRAY_SIZE(init_clocks));
->  
-> +	clkptr = init_clocks_disable;
-> +	for (i = 0; i < ARRAY_SIZE(init_clocks_disable); i++, clkptr++) {
-> +		ret = s3c24xx_register_clock(clkptr);
-> +		if (ret < 0) {
-> +			printk(KERN_ERR "Fail to register clock %s (%d)\n",
-> +					clkptr->name, ret);
-> +		} else
-> +			(clkptr->enable)(clkptr, 0);
-> +	}
+> -/* the calculation for the VA of this must ensure that
+> - * it is the same distance apart from the UART in the
+> - * phsyical address space, as the initial mapping for the IO
+> - * is done as a 1:1 mapping. This puts it (currently) at
+> - * 0xFA800000, which is not in the way of any current mapping
+> - * by the base system.
+> -*/
 
-how about using s3c_register_clocks and then s3c_disable_clocks() ?
+This comment is really important, and it is possible this will
+break some of the s3c24xx platforms duing the boot process as
+there can be problems during the changes of mmu when booting.
+
+> -#define S3C2410_PA_GPIO	   (0x56000000)
+> -#define S3C24XX_VA_GPIO	   ((S3C24XX_PA_GPIO - S3C24XX_PA_UART) + S3C24XX_VA_UART)
+> -#define S3C24XX_SZ_GPIO	   SZ_1M
+> +#define S3C2410_PA_GPIO		(0x56000000)
+> +#define S3C24XX_VA_GPIO		S3C2410_ADDR(0x00F00000)
+> +#define S3C24XX_SZ_GPIO		SZ_1M
+>  
+>  
+>  /* ISA style IO, for each machine to sort out mappings for, if it
