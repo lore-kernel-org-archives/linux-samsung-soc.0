@@ -1,104 +1,81 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V4 2/3] ARM: S5PV310: Remove L2 cache init in machine
-Date: Thu, 21 Oct 2010 16:30:01 +0900
-Message-ID: <1287646201-14183-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH] ARM: SAMSUNG: Add the missed s3c_gpio_getpull() API
+Date: Thu, 21 Oct 2010 17:04:46 +0900
+Message-ID: <1287648286-7202-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:58166 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:51850 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752053Ab0JUHhu (ORCPT
+	with ESMTP id S1752411Ab0JUIMv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Oct 2010 03:37:50 -0400
+	Thu, 21 Oct 2010 04:12:51 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kyungmin Park <kyungmin.park@samsung.com>, Changhwan Youn <chaos.youn@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, Daein Moon <moon9124@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Kyungmin Park <kyungmin.park@samsung.com>
+From: Daein Moon <moon9124@samsung.com>
 
-Basically, need L2 cache initialize function in ARCH_S5PV310. So it would
-be better to move it into ARCH_S5PV310 common part. This patch removes L2
-cache initialization code at the each board file.
+This patch adds the s3c_gpio_getpull() API that has been missed in the
+plat-samsung/gpio-config.c and actullay there is its extern declaration
+in plat/gpio-cfg.h.
 
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+Signed-off-by: Daein Moon <moon9124@samsung.com>
+Cc: Ben Dooks <ben-linux@fluff.org>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
-Changes since v3:
-- Removed useless header in each mach-xxx.c
+NOTE:
+- already issued about this
 
- arch/arm/mach-s5pv310/mach-smdkc210.c       |    5 -----
- arch/arm/mach-s5pv310/mach-smdkv310.c       |    5 -----
- arch/arm/mach-s5pv310/mach-universal_c210.c |    5 -----
- 3 files changed, 0 insertions(+), 15 deletions(-)
+ arch/arm/plat-samsung/gpio-config.c                |   19 +++++++++++++++++++
+ .../plat-samsung/include/plat/gpio-cfg-helpers.h   |    6 ++++++
+ 2 files changed, 25 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv310/mach-smdkc210.c b/arch/arm/mach-s5pv310/mach-smdkc210.c
-index 93d537b..9f7f77d 100644
---- a/arch/arm/mach-s5pv310/mach-smdkc210.c
-+++ b/arch/arm/mach-s5pv310/mach-smdkc210.c
-@@ -15,7 +15,6 @@
+diff --git a/arch/arm/plat-samsung/gpio-config.c b/arch/arm/plat-samsung/gpio-config.c
+index 8a37211..b732b77 100644
+--- a/arch/arm/plat-samsung/gpio-config.c
++++ b/arch/arm/plat-samsung/gpio-config.c
+@@ -111,6 +111,25 @@ int s3c_gpio_setpull(unsigned int pin, s3c_gpio_pull_t pull)
+ }
+ EXPORT_SYMBOL(s3c_gpio_setpull);
  
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
--#include <asm/hardware/cache-l2x0.h>
- 
- #include <plat/regs-serial.h>
- #include <plat/s5pv310.h>
-@@ -129,10 +128,6 @@ static void __init smdkc210_machine_init(void)
- 	s3c_sdhci2_set_platdata(&smdkc210_hsmmc2_pdata);
- 	s3c_sdhci3_set_platdata(&smdkc210_hsmmc3_pdata);
- 
--#ifdef CONFIG_CACHE_L2X0
--	l2x0_init(S5P_VA_L2CC, 1 << 28, 0xffffffff);
--#endif
--
- 	platform_add_devices(smdkc210_devices, ARRAY_SIZE(smdkc210_devices));
++s3c_gpio_pull_t s3c_gpio_getpull(unsigned int pin)
++{
++	struct s3c_gpio_chip *chip = s3c_gpiolib_getchip(pin);
++	unsigned long flags;
++	int offset;
++	u32 pup = 0;
++
++	if (chip) {
++		offset = pin - chip->chip.base;
++
++		s3c_gpio_lock(chip, flags);
++		pup = s3c_gpio_do_getpull(chip, offset);
++		s3c_gpio_unlock(chip, flags);
++	}
++
++	return (__force s3c_gpio_pull_t)pup;
++}
++EXPORT_SYMBOL(s3c_gpio_getpull);
++
+ #ifdef CONFIG_S3C_GPIO_CFG_S3C24XX
+ int s3c_gpio_setcfg_s3c24xx_a(struct s3c_gpio_chip *chip,
+ 			      unsigned int off, unsigned int cfg)
+diff --git a/arch/arm/plat-samsung/include/plat/gpio-cfg-helpers.h b/arch/arm/plat-samsung/include/plat/gpio-cfg-helpers.h
+index 3e21c75..c417f85 100644
+--- a/arch/arm/plat-samsung/include/plat/gpio-cfg-helpers.h
++++ b/arch/arm/plat-samsung/include/plat/gpio-cfg-helpers.h
+@@ -42,6 +42,12 @@ static inline int s3c_gpio_do_setpull(struct s3c_gpio_chip *chip,
+ 	return (chip->config->set_pull)(chip, off, pull);
  }
  
-diff --git a/arch/arm/mach-s5pv310/mach-smdkv310.c b/arch/arm/mach-s5pv310/mach-smdkv310.c
-index 10f8056..e350a75 100644
---- a/arch/arm/mach-s5pv310/mach-smdkv310.c
-+++ b/arch/arm/mach-s5pv310/mach-smdkv310.c
-@@ -15,7 +15,6 @@
- 
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
--#include <asm/hardware/cache-l2x0.h>
- 
- #include <plat/regs-serial.h>
- #include <plat/s5pv310.h>
-@@ -129,10 +128,6 @@ static void __init smdkv310_machine_init(void)
- 	s3c_sdhci2_set_platdata(&smdkv310_hsmmc2_pdata);
- 	s3c_sdhci3_set_platdata(&smdkv310_hsmmc3_pdata);
- 
--#ifdef CONFIG_CACHE_L2X0
--	l2x0_init(S5P_VA_L2CC, 1 << 28, 0xffffffff);
--#endif
--
- 	platform_add_devices(smdkv310_devices, ARRAY_SIZE(smdkv310_devices));
- }
- 
-diff --git a/arch/arm/mach-s5pv310/mach-universal_c210.c b/arch/arm/mach-s5pv310/mach-universal_c210.c
-index deffeb1..9ea7836 100644
---- a/arch/arm/mach-s5pv310/mach-universal_c210.c
-+++ b/arch/arm/mach-s5pv310/mach-universal_c210.c
-@@ -16,7 +16,6 @@
- 
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
--#include <asm/hardware/cache-l2x0.h>
- 
- #include <plat/regs-serial.h>
- #include <plat/s5pv310.h>
-@@ -141,10 +140,6 @@ static void __init universal_map_io(void)
- 
- static void __init universal_machine_init(void)
- {
--#ifdef CONFIG_CACHE_L2X0
--	l2x0_init(S5P_VA_L2CC, 1 << 28, 0xffffffff);
--#endif
--
- 	i2c_register_board_info(0, i2c0_devs, ARRAY_SIZE(i2c0_devs));
- 	i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
- 
++static inline unsigned s3c_gpio_do_getpull(struct s3c_gpio_chip *chip,
++					   unsigned int off)
++{
++	return (chip->config->get_pull)(chip, off);
++}
++
+ /**
+  * s3c_gpio_setcfg_s3c24xx - S3C24XX style GPIO configuration.
+  * @chip: The gpio chip that is being configured.
 -- 
-1.6.2.5
+1.6.3.3
