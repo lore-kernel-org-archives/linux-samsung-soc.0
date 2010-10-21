@@ -1,61 +1,144 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V3 1/3] ARM: Add L2X0 PREFETCH and POWER control register
-Date: Thu, 21 Oct 2010 17:55:26 +0900
-Message-ID: <034401cb70fd$b6431ec0$22c95c40$%kim@samsung.com>
-References: <1287643483-16046-1-git-send-email-kgene.kim@samsung.com>
- <1287643483-16046-2-git-send-email-kgene.kim@samsung.com>
- <1287650681.23297.0.camel@e102109-lin.cambridge.arm.com>
+From: Jaeryul Oh <jaeryul.oh@samsung.com>
+Subject: RE: [PATCH 3/4] MFC: Add MFC 5.1 V4L2 driver
+Date: Thu, 21 Oct 2010 19:59:25 +0900
+Message-ID: <008101cb710f$08af85c0$1a0e9140$%oh@samsung.com>
+References: <1286968160-10629-1-git-send-email-k.debski@samsung.com>
+ <1286968160-10629-4-git-send-email-k.debski@samsung.com>
+Reply-To: jaeryul.oh@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:11531 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751694Ab0JUIzU (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:27160 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753745Ab0JUK7I convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Oct 2010 04:55:20 -0400
-Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0LAM00D1EU3UBT40@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Oct 2010 17:55:06 +0900 (KST)
-Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LAM00HQIU3URN@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Oct 2010 17:55:06 +0900 (KST)
-In-reply-to: <1287650681.23297.0.camel@e102109-lin.cambridge.arm.com>
+	Thu, 21 Oct 2010 06:59:08 -0400
+In-reply-to: <1286968160-10629-4-git-send-email-k.debski@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Catalin Marinas' <catalin.marinas@arm.com>, 'Russell King' <rmk@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: 'Kamil Debski' <k.debski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, pawel@osciak.com, kyungmin.park@samsung.com, kgene.kim@samsung.com
 
-Catalin Marinas wrote:
-> 
-> On Thu, 2010-10-21 at 07:44 +0100, Kukjin Kim wrote:
-> > From: Kyungmin Park <kyungmin.park@samsung.com>
-> >
-> > This patch adds L2X0 Prefetch and Power control register.
-> >
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> 
-> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-
-Catalin, thanks for your ack :-)
+I have some opinion about the usage of wait_event_interruptible_timeout=
+()
 
 
-Russell,
-May I handle this patch in my tree?..other patch needs this.
-(of course, the tree will be pulled to you after requesting pull...soon)
+k.debski@samsung.com wrote:
+[snip]
 
-If any problems or opinions, please let me know.
+> +
+> diff --git a/drivers/media/video/s5p-mfc/s5p_mfc_intr.c
+> b/drivers/media/video/s5p-mfc/s5p_mfc_intr.c
+> new file mode 100644
+> index 0000000..543f3fb
+> --- /dev/null
+> +++ b/drivers/media/video/s5p-mfc/s5p_mfc_intr.c
+> @@ -0,0 +1,77 @@
+> +/*
+> + * drivers/media/video/samsung/mfc5/s5p_mfc_intr.c
+> + *
+> + * C file for Samsung MFC (Multi Function Codec - FIMV) driver
+> + * This file contains functions used to wait for command completion.
+> + *
+> + * Kamil Debski, Copyright (c) 2010 Samsung Electronics
+> + * http://www.samsung.com/
+> + *
+> + * This program is free software; you can redistribute it and/or mod=
+ify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/errno.h>
+> +#include <linux/wait.h>
+> +#include <linux/sched.h>
+> +#include <linux/io.h>
+> +#include "regs-mfc5.h"
+> +#include "s5p_mfc_intr.h"
+> +#include "s5p_mfc_logmsg.h"
+> +#include "s5p_mfc_common.h"
+> +
+> +int s5p_mfc_wait_for_done_dev(struct s5p_mfc_dev *dev, int command)
+> +{
+> +	if (wait_event_interruptible_timeout(dev->queue,
+> +		(dev->int_cond && (dev->int_type =3D=3D command
+> +		|| dev->int_type =3D=3D S5P_FIMV_R2H_CMD_DECODE_ERR_RET)),
+> +		msecs_to_jiffies(MFC_INT_TIMEOUT)) =3D=3D 0) {
+> +		mfc_err("Interrupt (%d dev) timed out.\n", dev->int_type);
+> +		return 1;
+> +	}
+> +	mfc_debug("Finished waiting (dev->queue, %d).\n", dev->int_type);
+> +	if (dev->int_type =3D=3D S5P_FIMV_R2H_CMD_ERROR_RET)
+> +		return 1;
+> +	return 0;
+> +}
 
-Thanks.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+You used wait_event_interruptible_timeout() in the driver, but this
+function is=20
+considered not only int. by MFC but also int. by some signal. I'm wonde=
+ring
+whether we have to consider interrupt by signal in the middle of hw
+operation.
+and also I cannot see some operation(handler) in case of wake-up by sig=
+nal.
+So, why don=A1=AFt you remove the interruptible function or add some op=
+eration
+in case of=20
+wake-up by signal. (refer to the other driver in the kernel)
+
+> +
+> +void s5p_mfc_clean_dev_int_flags(struct s5p_mfc_dev *dev)
+> +{
+> +	dev->int_cond =3D 0;
+> +	dev->int_type =3D 0;
+> +	dev->int_err =3D 0;
+> +}
+> +
+> +int s5p_mfc_wait_for_done_ctx(struct s5p_mfc_ctx *ctx,
+> +				    int command, int interrupt)
+> +{
+> +	int ret;
+> +	if (interrupt) {
+> +		ret =3D wait_event_interruptible_timeout(ctx->queue,
+> +				(ctx->int_cond && (ctx->int_type =3D=3D command
+> +			|| ctx->int_type =3D=3D
+S5P_FIMV_R2H_CMD_DECODE_ERR_RET)),
+> +					msecs_to_jiffies(MFC_INT_TIMEOUT));
+> +	} else {
+> +		ret =3D wait_event_timeout(ctx->queue,
+> +				(ctx->int_cond && (ctx->int_type =3D=3D command
+> +			|| ctx->int_type =3D=3D
+S5P_FIMV_R2H_CMD_DECODE_ERR_RET)),
+> +					msecs_to_jiffies(MFC_INT_TIMEOUT));
+> +	}
+> +	if (ret =3D=3D 0) {
+> +		mfc_err("Interrupt (%d ctx) timed out.\n", ctx->int_type);
+> +		return 1;
+> +	}
+> +	mfc_debug("Finished waiting (ctx->queue, %d).\n", ctx->int_type);
+> +	if (ctx->int_type =3D=3D S5P_FIMV_R2H_CMD_ERROR_RET)
+> +		return 1;
+> +	return 0;
+> +}
+> +
+> +void s5p_mfc_clean_ctx_int_flags(struct s5p_mfc_ctx *ctx)
+> +{
+> +	ctx->int_cond =3D 0;
+> +	ctx->int_type =3D 0;
+> +	ctx->int_err =3D 0;
+> +}
+
+[snip]
+
+> --
+> 1.6.3.3
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media=
+" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
