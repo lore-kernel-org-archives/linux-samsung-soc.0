@@ -1,94 +1,90 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V2 3/4] ARM: S5P: Change VMALLOC_END to use more vmalloc()/ioremap() area
-Date: Fri, 22 Oct 2010 15:21:49 +0900
-Message-ID: <1287728509-12885-1-git-send-email-kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: SAMSUNG: Add the missed s3c_gpio_getpull() API
+Date: Fri, 22 Oct 2010 17:05:32 +0900
+Message-ID: <004901cb71bf$e8be50f0$ba3af2d0$%kim@samsung.com>
+References: <1287648286-7202-1-git-send-email-kgene.kim@samsung.com>
+ <4CC07CC2.50206@mvista.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:33216 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752738Ab0JVG2E (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:54655 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752952Ab0JVIFa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Oct 2010 02:28:04 -0400
+	Fri, 22 Oct 2010 04:05:30 -0400
+Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0LAO007Y7MGPQKD0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 22 Oct 2010 17:05:13 +0900 (KST)
+Received: from DOKGENEKIM02 ([12.23.103.104])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LAO00H3UMGOUF@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 22 Oct 2010 17:05:13 +0900 (KST)
+In-reply-to: <4CC07CC2.50206@mvista.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
+To: 'Sergei Shtylyov' <sshtylyov@mvista.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Daein Moon' <moon9124@samsung.com>, ben-linux@fluff.org
 
-This patch changes VMALLOC_END from 0xE0000000 to 0xF6000000, because
-some systems want to use more vmalloc()/ioremap() area and now don't use
-from at 0xE0000000 to 0xF6000000 (the start of Samsung SoCs' VA space)
+Sergei Shtylyov wrote:
+> 
+> Hello.
+> 
+Hi,
 
-Cc: Ben Dooks <ben-linux@fluff.org>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
-Changes since v1:
-- According to S3C_ADDR_BASE, fixed
+> On 21-10-2010 12:04, Kukjin Kim wrote:
+> 
+> > From: Daein Moon<moon9124@samsung.com>
+> 
+> > This patch adds the s3c_gpio_getpull() API that has been missed in the
+> > plat-samsung/gpio-config.c and actullay there is its extern declaration
+> > in plat/gpio-cfg.h.
+> 
+> > Signed-off-by: Daein Moon<moon9124@samsung.com>
+> > Cc: Ben Dooks<ben-linux@fluff.org>
+> > Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
+> > ---
+> > NOTE:
+> > - already issued about this
+> 
+> >   arch/arm/plat-samsung/gpio-config.c                |   19
+> +++++++++++++++++++
+> >   .../plat-samsung/include/plat/gpio-cfg-helpers.h   |    6 ++++++
+> >   2 files changed, 25 insertions(+), 0 deletions(-)
+> 
+> > diff --git a/arch/arm/plat-samsung/gpio-config.c b/arch/arm/plat-
+> samsung/gpio-config.c
+> > index 8a37211..b732b77 100644
+> > --- a/arch/arm/plat-samsung/gpio-config.c
+> > +++ b/arch/arm/plat-samsung/gpio-config.c
+> [...]
+> > diff --git a/arch/arm/plat-samsung/include/plat/gpio-cfg-helpers.h
+> b/arch/arm/plat-samsung/include/plat/gpio-cfg-helpers.h
+> > index 3e21c75..c417f85 100644
+> > --- a/arch/arm/plat-samsung/include/plat/gpio-cfg-helpers.h
+> > +++ b/arch/arm/plat-samsung/include/plat/gpio-cfg-helpers.h
+> > @@ -42,6 +42,12 @@ static inline int s3c_gpio_do_setpull(struct
+> s3c_gpio_chip *chip,
+> >   	return (chip->config->set_pull)(chip, off, pull);
+> >   }
+> >
+> > +static inline unsigned s3c_gpio_do_getpull(struct s3c_gpio_chip *chip,
+> > +					   unsigned int off)
+> > +{
+> > +	return (chip->config->get_pull)(chip, off);
+> 
+>     Parens are not necessary here.
+> 
+Thanks for your pointing out :-)
+Will fix it.
 
- arch/arm/mach-s5p6442/include/mach/vmalloc.h |    2 +-
- arch/arm/mach-s5p64x0/include/mach/vmalloc.h |    2 +-
- arch/arm/mach-s5pc100/include/mach/vmalloc.h |    2 +-
- arch/arm/mach-s5pv210/include/mach/vmalloc.h |    2 +-
- arch/arm/mach-s5pv310/include/mach/vmalloc.h |    2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+Thanks.
 
-diff --git a/arch/arm/mach-s5p6442/include/mach/vmalloc.h b/arch/arm/mach-s5p6442/include/mach/vmalloc.h
-index f5c83f0..a337ba2 100644
---- a/arch/arm/mach-s5p6442/include/mach/vmalloc.h
-+++ b/arch/arm/mach-s5p6442/include/mach/vmalloc.h
-@@ -12,6 +12,6 @@
- #ifndef __ASM_ARCH_VMALLOC_H
- #define __ASM_ARCH_VMALLOC_H
- 
--#define VMALLOC_END	0xE0000000UL
-+#define VMALLOC_END	0xF6000000UL
- 
- #endif /* __ASM_ARCH_VMALLOC_H */
-diff --git a/arch/arm/mach-s5p64x0/include/mach/vmalloc.h b/arch/arm/mach-s5p64x0/include/mach/vmalloc.h
-index 97a9df3..3371d93 100644
---- a/arch/arm/mach-s5p64x0/include/mach/vmalloc.h
-+++ b/arch/arm/mach-s5p64x0/include/mach/vmalloc.h
-@@ -15,6 +15,6 @@
- #ifndef __ASM_ARCH_VMALLOC_H
- #define __ASM_ARCH_VMALLOC_H
- 
--#define VMALLOC_END	0xE0000000UL
-+#define VMALLOC_END	0xF6000000UL
- 
- #endif /* __ASM_ARCH_VMALLOC_H */
-diff --git a/arch/arm/mach-s5pc100/include/mach/vmalloc.h b/arch/arm/mach-s5pc100/include/mach/vmalloc.h
-index be9df79..6218c55 100644
---- a/arch/arm/mach-s5pc100/include/mach/vmalloc.h
-+++ b/arch/arm/mach-s5pc100/include/mach/vmalloc.h
-@@ -12,6 +12,6 @@
- #ifndef __ASM_ARCH_VMALLOC_H
- #define __ASM_ARCH_VMALLOC_H
- 
--#define VMALLOC_END	  (0xe0000000UL)
-+#define VMALLOC_END	0xF6000000UL
- 
- #endif /* __ASM_ARCH_VMALLOC_H */
-diff --git a/arch/arm/mach-s5pv210/include/mach/vmalloc.h b/arch/arm/mach-s5pv210/include/mach/vmalloc.h
-index df9a288..6507a4b 100644
---- a/arch/arm/mach-s5pv210/include/mach/vmalloc.h
-+++ b/arch/arm/mach-s5pv210/include/mach/vmalloc.h
-@@ -17,6 +17,6 @@
- #ifndef __ASM_ARCH_VMALLOC_H
- #define __ASM_ARCH_VMALLOC_H __FILE__
- 
--#define VMALLOC_END	(0xE0000000UL)
-+#define VMALLOC_END	0xF6000000UL
- 
- #endif /* __ASM_ARCH_VMALLOC_H */
-diff --git a/arch/arm/mach-s5pv310/include/mach/vmalloc.h b/arch/arm/mach-s5pv310/include/mach/vmalloc.h
-index 256f221..2f10840 100644
---- a/arch/arm/mach-s5pv310/include/mach/vmalloc.h
-+++ b/arch/arm/mach-s5pv310/include/mach/vmalloc.h
-@@ -17,6 +17,6 @@
- #ifndef __ASM_ARCH_VMALLOC_H
- #define __ASM_ARCH_VMALLOC_H __FILE__
- 
--#define VMALLOC_END	(0xF0000000UL)
-+#define VMALLOC_END	0xF6000000UL
- 
- #endif /* __ASM_ARCH_VMALLOC_H */
--- 
-1.6.2.5
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
