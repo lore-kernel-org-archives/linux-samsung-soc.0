@@ -1,95 +1,53 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/2] ARM: S5PV310: Add support SROMC
-Date: Fri, 22 Oct 2010 14:50:20 +0900
-Message-ID: <002e01cb71ad$14fff230$3effd690$%kim@samsung.com>
-References: <1286972144-763-1-git-send-email-sbkim73@samsung.com>
- <1286972144-763-2-git-send-email-sbkim73@samsung.com>
- <00e301cb6ad7$3842b5c0$a8c82140$%szyprowski@samsung.com>
+From: Thomas Abraham <thomas.ab@samsung.com>
+Subject: Re: [PATCH 0/4] USB: gadget: Add Samsung S3C24xx USB HS controller driver
+Date: Fri, 22 Oct 2010 11:45:09 +0530
+Message-ID: <AANLkTimmFWNzWRQ8AYmS5tzzF9+gZYspwyJgm5rXP-zR@mail.gmail.com>
+References: <1286928627-22824-1-git-send-email-sbkim73@samsung.com>
+	<4CC0C0C4.8050308@fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:46392 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750967Ab0JVFu2 (ORCPT
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:47139 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751594Ab0JVGPL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Oct 2010 01:50:28 -0400
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
- with ESMTP id <0LAO00GZZG83A310@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 22 Oct 2010 14:50:27 +0900 (KST)
-Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LAO00BXTG82XA@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 22 Oct 2010 14:50:27 +0900 (KST)
-In-reply-to: <00e301cb6ad7$3842b5c0$a8c82140$%szyprowski@samsung.com>
-Content-language: ko
+	Fri, 22 Oct 2010 02:15:11 -0400
+In-Reply-To: <4CC0C0C4.8050308@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Sangbeom Kim' <sbkim73@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Daein Moon' <moon9124@samsung.com>, ben-linux@fluff.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-Marek Szyprowski wrote:
-> 
-> Hello,
-> 
-> On Wednesday, October 13, 2010 2:16 PM Sangbeom Kim wrote:
-> 
-> > From: Daein Moon <moon9124@samsung.com>
-> >
-> > This patch adds support SROMC for S5PV310 and S5PC210.
-> >
-> > Signed-off-by: Daein Moon <moon9124@samsung.com>
-> > Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
-> > ---
-> >  arch/arm/mach-s5pv310/cpu.c                    |    5 ++
-> >  arch/arm/mach-s5pv310/include/mach/map.h       |    4 ++
-> >  arch/arm/mach-s5pv310/include/mach/regs-srom.h |   50
-> ++++++++++++++++++++++++
-> >  3 files changed, 59 insertions(+), 0 deletions(-)
-> >  create mode 100644 arch/arm/mach-s5pv310/include/mach/regs-srom.h
-> >
-> > diff --git a/arch/arm/mach-s5pv310/cpu.c b/arch/arm/mach-s5pv310/cpu.c
-> > index ffed262..873783a 100644
-> > --- a/arch/arm/mach-s5pv310/cpu.c
-> > +++ b/arch/arm/mach-s5pv310/cpu.c
-> > @@ -81,6 +81,11 @@ static struct map_desc s5pv310_iodesc[] __initdata =
-{
-> >  		.pfn		= __phys_to_pfn(S3C_PA_UART),
-> >  		.length		= SZ_512K,
-> >  		.type		= MT_DEVICE,
-> > +	}, {
-> > +		.virtual	= (unsigned long)S5P_VA_SROMC,
-> > +		.pfn		= __phys_to_pfn(S5PV310_PA_SROMC),
-> > +		.length		= SZ_4K,
-> > +		.type		= MT_DEVICE,
-> >  	},
-> >  };
-> 
-> Do You really need to make a permanent mapping for the SROMC area? Cannot
-the
-> setup code in the mach-smdk*.c call ioremap(S5PV310_PA_SROMC) and put the
-> address it
-> got to the ethernet device? This area will be probably useless for boards
-> other than
-> SMDK.
+On Fri, Oct 22, 2010 at 4:07 AM, Ben Dooks <ben-linux@fluff.org> wrote:
+> On 13/10/10 01:10, Sangbeom Kim wrote:
+>> The Samsung's S3C2416, S3C2443 and S3C2450 includes a USB High-Speed
+>> device controller module. This driver enables support for USB high-speed
+>> gadget functionality for the Samsung S3C24xx SoC's that include this
+>> controller.
+>>
+>> The patch series contains:
+>> [PATCH 1/4] ARM: S3C2416: Add USB Phy register definitions
+>> [PATCH 2/4] ARM: S3C24XX: Add plaform device definition for USB High-Speed gadget controller.
+>> [PATCH 3/4] USB: Gadget: Add Samsung S3C24XX USB High-Speed controller driver
+>> [PATCH 4/4] ARM: S3C2416: Add support for USB 2.0 High-Speed gadget controller
+>
+> patch 3/4 needs a bit of work, otherwise looks ok.
+>
+> I'll look at applying the s3c24xx items in the next day or so.
 
-Hi Marek,
+Hi Ben,
 
-I think, this mapping is no problem to me even though only SMDK needs it
-now.
-Actually, SROM bank can be used to connect other outside chips...we don't
-know that now.
-Also S3C64XX also mapped SROM bank with same method...
+Thanks for your review. I will update patch 3/4 as per your comments.
 
-But seems need to update it for common usage when we implement SROMC for
-other SoCs later.
+Regards,
+Thomas.
 
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+> --
+> Ben
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
