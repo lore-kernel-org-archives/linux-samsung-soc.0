@@ -1,53 +1,68 @@
-From: Thomas Abraham <thomas.ab@samsung.com>
-Subject: Re: [PATCH 0/4] USB: gadget: Add Samsung S3C24xx USB HS controller driver
-Date: Fri, 22 Oct 2010 11:45:09 +0530
-Message-ID: <AANLkTimmFWNzWRQ8AYmS5tzzF9+gZYspwyJgm5rXP-zR@mail.gmail.com>
-References: <1286928627-22824-1-git-send-email-sbkim73@samsung.com>
-	<4CC0C0C4.8050308@fluff.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH V2 2/4] ARM: S3C: Change VMALLOC_END to use more vmalloc()/ioremap() area
+Date: Fri, 22 Oct 2010 15:21:40 +0900
+Message-ID: <1287728500-12849-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:47139 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751594Ab0JVGPL (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:33212 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751594Ab0JVG2E (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Oct 2010 02:15:11 -0400
-In-Reply-To: <4CC0C0C4.8050308@fluff.org>
+	Fri, 22 Oct 2010 02:28:04 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-On Fri, Oct 22, 2010 at 4:07 AM, Ben Dooks <ben-linux@fluff.org> wrote:
-> On 13/10/10 01:10, Sangbeom Kim wrote:
->> The Samsung's S3C2416, S3C2443 and S3C2450 includes a USB High-Speed
->> device controller module. This driver enables support for USB high-speed
->> gadget functionality for the Samsung S3C24xx SoC's that include this
->> controller.
->>
->> The patch series contains:
->> [PATCH 1/4] ARM: S3C2416: Add USB Phy register definitions
->> [PATCH 2/4] ARM: S3C24XX: Add plaform device definition for USB High-Speed gadget controller.
->> [PATCH 3/4] USB: Gadget: Add Samsung S3C24XX USB High-Speed controller driver
->> [PATCH 4/4] ARM: S3C2416: Add support for USB 2.0 High-Speed gadget controller
->
-> patch 3/4 needs a bit of work, otherwise looks ok.
->
-> I'll look at applying the s3c24xx items in the next day or so.
+This patch changes VMALLOC_END from 0xE0000000 to 0xF6000000, because
+some systems want to use more vmalloc()/ioremap() area and now don't use
+from at 0xE0000000 to 0xF6000000 (the start of Samsung SoCs' VA space)
 
-Hi Ben,
+Cc: Ben Dooks <ben-linux@fluff.org>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+Changes since v1:
+- According to S3C_ADDR_BASE, fixed
 
-Thanks for your review. I will update patch 3/4 as per your comments.
+ arch/arm/mach-s3c2410/include/mach/vmalloc.h |    2 +-
+ arch/arm/mach-s3c24a0/include/mach/vmalloc.h |    2 +-
+ arch/arm/mach-s3c64xx/include/mach/vmalloc.h |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Regards,
-Thomas.
-
->
-> --
-> Ben
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
+diff --git a/arch/arm/mach-s3c2410/include/mach/vmalloc.h b/arch/arm/mach-s3c2410/include/mach/vmalloc.h
+index 54297eb..4093bc9 100644
+--- a/arch/arm/mach-s3c2410/include/mach/vmalloc.h
++++ b/arch/arm/mach-s3c2410/include/mach/vmalloc.h
+@@ -15,6 +15,6 @@
+ #ifndef __ASM_ARCH_VMALLOC_H
+ #define __ASM_ARCH_VMALLOC_H
+ 
+-#define VMALLOC_END	0xE0000000UL
++#define VMALLOC_END	0xF6000000UL
+ 
+ #endif /* __ASM_ARCH_VMALLOC_H */
+diff --git a/arch/arm/mach-s3c24a0/include/mach/vmalloc.h b/arch/arm/mach-s3c24a0/include/mach/vmalloc.h
+index 9146568..29d0002 100644
+--- a/arch/arm/mach-s3c24a0/include/mach/vmalloc.h
++++ b/arch/arm/mach-s3c24a0/include/mach/vmalloc.h
+@@ -12,6 +12,6 @@
+ #ifndef __ASM_ARCH_VMALLOC_H
+ #define __ASM_ARCH_VMALLOC_H
+ 
+-#define VMALLOC_END	  (0xe0000000UL)
++#define VMALLOC_END	0xF6000000UL
+ 
+ #endif /* __ASM_ARCH_VMALLOC_H */
+diff --git a/arch/arm/mach-s3c64xx/include/mach/vmalloc.h b/arch/arm/mach-s3c64xx/include/mach/vmalloc.h
+index bc0e913..0df9597 100644
+--- a/arch/arm/mach-s3c64xx/include/mach/vmalloc.h
++++ b/arch/arm/mach-s3c64xx/include/mach/vmalloc.h
+@@ -15,6 +15,6 @@
+ #ifndef __ASM_ARCH_VMALLOC_H
+ #define __ASM_ARCH_VMALLOC_H
+ 
+-#define VMALLOC_END	0xE0000000UL
++#define VMALLOC_END	0xF6000000UL
+ 
+ #endif /* __ASM_ARCH_VMALLOC_H */
+-- 
+1.6.2.5
