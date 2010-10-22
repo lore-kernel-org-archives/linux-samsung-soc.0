@@ -1,59 +1,90 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v5 2/2] sdhci-s3c: Add support no internal clock divider in
- host controller
-Date: Fri, 22 Oct 2010 14:44:11 +0900
-Message-ID: <002d01cb71ac$298fbab0$7caf3010$%kim@samsung.com>
-References: <1286783400-7277-1-git-send-email-kgene.kim@samsung.com>
- <AANLkTinC850pde5Diuz5U40RCDGR1DeQzTAfLUHWm0rB@mail.gmail.com>
- <20101012025946.GA8534@void.printf.net>
- <20101012143700.93ea1812.akpm@linux-foundation.org>
+Subject: RE: [PATCH 1/2] ARM: S5PV310: Add support SROMC
+Date: Fri, 22 Oct 2010 14:50:20 +0900
+Message-ID: <002e01cb71ad$14fff230$3effd690$%kim@samsung.com>
+References: <1286972144-763-1-git-send-email-sbkim73@samsung.com>
+ <1286972144-763-2-git-send-email-sbkim73@samsung.com>
+ <00e301cb6ad7$3842b5c0$a8c82140$%szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <20101012143700.93ea1812.akpm@linux-foundation.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:46392 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750967Ab0JVFu2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 22 Oct 2010 01:50:28 -0400
+Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0LAO00GZZG83A310@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 22 Oct 2010 14:50:27 +0900 (KST)
+Received: from DOKGENEKIM02 ([12.23.103.104])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LAO00BXTG82XA@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 22 Oct 2010 14:50:27 +0900 (KST)
+In-reply-to: <00e301cb6ad7$3842b5c0$a8c82140$%szyprowski@samsung.com>
 Content-language: ko
-Sender: linux-mmc-owner@vger.kernel.org
-To: 'Andrew Morton' <akpm@linux-foundation.org>, 'Chris Ball' <cjb@laptop.org>
-Cc: 'Kyungmin Park' <kmpark@infradead.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, ben-linux@fluff.org, 'Jeongbae Seo' <jeongbae.seo@samsung.com>, 'Jaehoon Chung' <jh80.chung@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Sangbeom Kim' <sbkim73@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Daein Moon' <moon9124@samsung.com>, ben-linux@fluff.org
 
-Andrew Morton wrote:
+Marek Szyprowski wrote:
 > 
-> On Tue, 12 Oct 2010 03:59:46 +0100
-> Chris Ball <cjb@laptop.org> wrote:
+> Hello,
 > 
-> > Hi Kyungmin,
-> >
-> > On Tue, Oct 12, 2010 at 11:53:35AM +0900, Kyungmin Park wrote:
-> > > Hi Chris,
-> > >
-> > > we make a conclusion use this patch. Can you merge it for 2.6.37?
-> > >
-> > > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> >
-> > I don't feel that I can, because Ben Dooks is listed as the maintainer
-> > for this driver and the patch does not have his ACK.
-> >
-> > I don't know what to do about this; I've already tried asking Ben
-> > whether he intends to continue maintaining sdhci-s3c, with no reply.
-> >
+> On Wednesday, October 13, 2010 2:16 PM Sangbeom Kim wrote:
 > 
-> People get busy and take vacations and change roles, etc.
+> > From: Daein Moon <moon9124@samsung.com>
+> >
+> > This patch adds support SROMC for S5PV310 and S5PC210.
+> >
+> > Signed-off-by: Daein Moon <moon9124@samsung.com>
+> > Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+> > ---
+> >  arch/arm/mach-s5pv310/cpu.c                    |    5 ++
+> >  arch/arm/mach-s5pv310/include/mach/map.h       |    4 ++
+> >  arch/arm/mach-s5pv310/include/mach/regs-srom.h |   50
+> ++++++++++++++++++++++++
+> >  3 files changed, 59 insertions(+), 0 deletions(-)
+> >  create mode 100644 arch/arm/mach-s5pv310/include/mach/regs-srom.h
+> >
+> > diff --git a/arch/arm/mach-s5pv310/cpu.c b/arch/arm/mach-s5pv310/cpu.c
+> > index ffed262..873783a 100644
+> > --- a/arch/arm/mach-s5pv310/cpu.c
+> > +++ b/arch/arm/mach-s5pv310/cpu.c
+> > @@ -81,6 +81,11 @@ static struct map_desc s5pv310_iodesc[] __initdata =
+{
+> >  		.pfn		= __phys_to_pfn(S3C_PA_UART),
+> >  		.length		= SZ_512K,
+> >  		.type		= MT_DEVICE,
+> > +	}, {
+> > +		.virtual	= (unsigned long)S5P_VA_SROMC,
+> > +		.pfn		= __phys_to_pfn(S5PV310_PA_SROMC),
+> > +		.length		= SZ_4K,
+> > +		.type		= MT_DEVICE,
+> >  	},
+> >  };
 > 
-> Sometimes, the best you can do is to make everyone aware of what's
-> going on and then simply proceed on your own.
+> Do You really need to make a permanent mapping for the SROMC area? Cannot
+the
+> setup code in the mach-smdk*.c call ioremap(S5PV310_PA_SROMC) and put the
+> address it
+> got to the ethernet device? This area will be probably useless for boards
+> other than
+> SMDK.
 
-Hi Chris,
+Hi Marek,
 
-How was going on?
-I couldn't find this in your tree yet :-(
-Please let me know about your merge plan of this.
-If any problems, please kindly let me know :-)
+I think, this mapping is no problem to me even though only SMDK needs it
+now.
+Actually, SROM bank can be used to connect other outside chips...we don't
+know that now.
+Also S3C64XX also mapped SROM bank with same method...
 
-Ben,
-If you're ok this to you, please send your ack...
-it would be helpful to Chris to handle this ;-)
+But seems need to update it for common usage when we implement SROMC for
+other SoCs later.
 
 Thanks.
 
@@ -62,4 +93,3 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
