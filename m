@@ -1,280 +1,495 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: RE: [PATCH 5/6 v5] V4L/DVB: s5p-fimc: Add camera capture support
-Date: Mon, 25 Oct 2010 10:33:06 +0200
-Message-ID: <000801cb741f$3f680160$be380420$%nawrocki@samsung.com>
-References: <1286817993-21558-1-git-send-email-s.nawrocki@samsung.com>
- <1286817993-21558-6-git-send-email-s.nawrocki@samsung.com>
- <001a01cb70f8$ea978530$bfc68f90$%park@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung S5P for 2.6.37 merge window
+Date: Tue, 26 Oct 2010 19:53:38 +0900
+Message-ID: <025a01cb74fc$0d9c7890$28d569b0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:46644 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751712Ab0JYIdL (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:58830 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751561Ab0JZKxU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Oct 2010 04:33:11 -0400
-In-reply-to: <001a01cb70f8$ea978530$bfc68f90$%park@samsung.com>
-Content-language: en-us
+	Tue, 26 Oct 2010 06:53:20 -0400
+Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Sun Java(tm) System Messaging Server 7u3-15.01 64bit (built Feb 12 2010))
+ with ESMTP id <0LAW005IS8WUPY90@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 26 Oct 2010 19:53:18 +0900 (KST)
+Received: from DOKGENEKIM02 ([12.23.103.104])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LAW001YS8WTDF@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 26 Oct 2010 19:53:17 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sewoon Park' <seuni.park@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, kyungmin.park@samsung.com, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-Hi Sewoon,
+Hi Russell,
 
-thanks you for your further review!
+Please pull Samsung S5P updates from:
 
-> -----Original Message-----
-> From: Sewoon Park [mailto:seuni.park@samsung.com]
-> Sent: Thursday, October 21, 2010 10:21 AM
-> To: 'Sylwester Nawrocki'; linux-media@vger.kernel.org; linux-samsung-
-> soc@vger.kernel.org
-> Cc: m.szyprowski@samsung.com; kyungmin.park@samsung.com
-> Subject: RE: [PATCH 5/6 v5] V4L/DVB: s5p-fimc: Add camera capture
-> support
-> 
-> Latest your reply is easy to understand.
-> And I send you another parts review comments.
-> 
-> Tuesday, October 12, 2010 2:27, Sylwester Nawrocki wrote :
-> >
-> > Add a video device driver per each FIMC entity to support
-> > the camera capture input mode. Video capture node is registered
-> > only if CCD sensor data is provided through driver's platfrom data
-> > and board setup code.
-> >
-> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > ---
-> >  drivers/media/video/s5p-fimc/Makefile       |    2 +-
-> >  drivers/media/video/s5p-fimc/fimc-capture.c |  819
-> > +++++++++++++++++++++++++++
-> >  drivers/media/video/s5p-fimc/fimc-core.c    |  563 +++++++++++++----
-> --
-> >  drivers/media/video/s5p-fimc/fimc-core.h    |  205 +++++++-
-> >  drivers/media/video/s5p-fimc/fimc-reg.c     |  173 +++++-
-> >  include/media/s3c_fimc.h                    |   60 ++
-> >  6 files changed, 1630 insertions(+), 192 deletions(-)
-> >  create mode 100644 drivers/media/video/s5p-fimc/fimc-capture.c
-> >  create mode 100644 include/media/s3c_fimc.h
-> >
-> > diff --git a/drivers/media/video/s5p-fimc/Makefile
-> > b/drivers/media/video/s5p-fimc/Makefile
-> > index 0d9d541..7ea1b14 100644
-> > --- a/drivers/media/video/s5p-fimc/Makefile
-> > +++ b/drivers/media/video/s5p-fimc/Makefile
-> > @@ -1,3 +1,3 @@
-> >
-> >  obj-$(CONFIG_VIDEO_SAMSUNG_S5P_FIMC) := s5p-fimc.o
-> > -s5p-fimc-y := fimc-core.o fimc-reg.o
-> > +s5p-fimc-y := fimc-core.o fimc-reg.o fimc-capture.o
-> > diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c
-> > b/drivers/media/video/s5p-fimc/fimc-capture.c
-> > new file mode 100644
-> > index 0000000..e8f13d3
-> > --- /dev/null
-> > +++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-> > @@ -0,0 +1,819 @@
-> > +/*
-[snip]
-> > +
-> > +	vid_cap->input_index = -1;
-> > +}
-> 
-> (snip)
-> 
-> > +static int fimc_cap_s_fmt(struct file *file, void *priv,
-> > +			     struct v4l2_format *f)
-> > +{
-> > +	struct fimc_ctx *ctx = priv;
-> > +	struct fimc_dev *fimc = ctx->fimc_dev;
-> > +	struct fimc_frame *frame;
-> > +	struct v4l2_pix_format *pix;
-> > +	int ret;
-> > +
-> > +	if (f->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
-> > +		return -EINVAL;
-> > +
-> > +	ret = fimc_vidioc_try_fmt(file, priv, f);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	if (mutex_lock_interruptible(&fimc->lock))
-> > +		return -ERESTARTSYS;
-> > +
-> > +	if (fimc_capture_active(fimc)) {
-> > +		ret = -EBUSY;
-> > +		goto sf_unlock;
-> > +	}
-> 
-> I suggest to use vb_lock on here.
-> You already use vb_lock "fimc_m2m_s_fmt" function in fimc-core.c code
-> 
-> -- sample --
-> struct fimc_capture_device *cap = &ctx->fimc_dev->vid_cap;
-> mutex_lock(&cap->vbq->vb->lock);
-> 
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+for-rmk
 
-I don't really think it is needed since the output frame parameters
-are used only in fimc_cap_streamon() to setup the device and fimc->lock
-is also used there for serialization. Can you point to any specific
-use case where it is needed?
+These things are for 2.6.37 and include already merged items into your tree
+like S5P64X0 support patches when you requested 'Last call for new machine
+support'.
 
-> > +
-> > +	frame = &ctx->d_frame;
-> > +
-> > +	pix = &f->fmt.pix;
-> > +	frame->fmt = find_format(f, FMT_FLAGS_M2M | FMT_FLAGS_CAM);
-> > +	if (!frame->fmt) {
-> > +		err("fimc target format not found\n");
-> > +		ret = -EINVAL;
-> > +		goto sf_unlock;
-> > +	}
-> > +
-> > +	/* Output DMA frame pixel size and offsets. */
-> > +	frame->f_width	= pix->bytesperline * 8 / frame->fmt->depth;
-> > +	frame->f_height = pix->height;
-> > +	frame->width	= pix->width;
-> > +	frame->height	= pix->height;
-> > +	frame->o_width	= pix->width;
-> > +	frame->o_height = pix->height;
-> > +	frame->size	= (pix->width * pix->height * frame->fmt->depth) >>
-> 3;
-> > +	frame->offs_h	= 0;
-> > +	frame->offs_v	= 0;
-> > +
-> > +	ret = sync_capture_fmt(ctx);
-> > +
-> > +	ctx->state |= (FIMC_PARAMS | FIMC_DST_FMT);
-> > +
-> > +sf_unlock:
-> > +	mutex_unlock(&fimc->lock);
-> > +	return ret;
-> > +}
-> 
-> (snip)
-> 
-> > -static int fimc_prepare_config(struct fimc_ctx *ctx, u32 flags)
-> > +int fimc_prepare_config(struct fimc_ctx *ctx, u32 flags)
-> >  {
-> >  	struct fimc_frame *s_frame, *d_frame;
-> >  	struct fimc_vid_buffer *buf = NULL;
-> > @@ -513,9 +585,9 @@ static void fimc_dma_run(void *priv)
-> >  	if (ctx->state & FIMC_PARAMS)
-> >  		fimc_hw_set_out_dma(ctx);
-> >
-> > -	ctx->state = 0;
-> >  	fimc_activate_capture(ctx);
-> >
-> > +	ctx->state &= (FIMC_CTX_M2M | FIMC_CTX_CAP);
-> >  	fimc_hw_activate_input_dma(fimc, true);
-> >
-> >  dma_unlock:
-> > @@ -598,10 +670,31 @@ static void fimc_buf_queue(struct
-> videobuf_queue *vq,
-> >  				  struct videobuf_buffer *vb)
-> >  {
-> >  	struct fimc_ctx *ctx = vq->priv_data;
-> > -	v4l2_m2m_buf_queue(ctx->m2m_ctx, vq, vb);
-> > +	struct fimc_dev *fimc = ctx->fimc_dev;
-> > +	struct fimc_vid_cap *cap = &fimc->vid_cap;
-> > +	unsigned long flags;
-> > +
-> > +	dbg("ctx: %p, ctx->state: 0x%x", ctx, ctx->state);
-> > +
-> > +	if ((ctx->state & FIMC_CTX_M2M) && ctx->m2m_ctx) {
-> > +		v4l2_m2m_buf_queue(ctx->m2m_ctx, vq, vb);
-> > +	} else if (ctx->state & FIMC_CTX_CAP) {
-> > +		spin_lock_irqsave(&fimc->slock, flags);
-> > +		fimc_vid_cap_buf_queue(fimc, (struct fimc_vid_buffer *)vb);
-> > +
-> > +		dbg("fimc->cap.active_buf_cnt: %d",
-> > +		    fimc->vid_cap.active_buf_cnt);
-> > +
-> > +		if (cap->active_buf_cnt >= cap->reqbufs_count ||
-> > +		   cap->active_buf_cnt >= FIMC_MAX_OUT_BUFS) {
-> 
-> 1. purpose of queues
-> In my understand through your code,
-> The qbuf() which call before streamon() is pushed done_list in videobuf
-> framework to use dqbuf().
-I'm not sure what you mean here exactly.
+If any problems, please let me know.
 
-> During streamon(), Number of FIMC h/w output DMA allocated buffers have
-> pushed
-> in active_queue(normally 4) and rest allocated buffers have pushed to
-> pending_queue.
-> 
-> It means that, active_queue is connection to FIMC h/w for output DMA.
-> (maximum 4 in s5pc110, 32 in s5pc210)
-> pending_queue is available buffer list or returned buffer list from
-> user.
-> 
-> Please let me know if I have misunderstanding.
+Thanks.
 
-It's all correct, except that on s5pc210 the maximum is also 4 
-in the driver.
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-The buffers are queued to the driver only after user call to QBUF
-and STREAMON. Then for each buffer fimc_buf_queue is called which in turn 
-calls fimc_vid_cap_buf_queue() if we are in video capture context.
-First buffers right after STREAMON are passed directly to the DMA engine.
-It is done until we reach buffer count of FIMC_MAX_OUT_BUFS 
-or reqbufs.count, whichever is less. Such buffers are put on the 
-active_buf_q queue. Then after those initial buffers were scheduled
-in the output DMA engine the hardware operation is started. 
-All subsequent buffers coming from user while streaming is enabled are
-put on pending_buf_q from then on.   
-They will be scheduled for processing in the interrupt routine and moved
-to active_buf_q.
+The following changes since commit cd07202cc8262e1669edff0d97715f3dd9260917
 
-> 
-> 2. Which case of condition, active_buf_cnt greater than reqbufs_count?
+  Linux 2.6.36-rc8
 
-In normal conditions this will never happen, the >= condition is a bit
-paranoic there.
+are available in the git repository at:
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+for-rmk
 
-> In preview mode normally, reqbufs_count are 4 or more.
+Abhilash Kesavan (2):
+      ARM: S5P64X0: Replace the 6440 system device class definition with
+64x0
+      ARM: S3C2416: Add Power Management support for SMDK2416
 
-reqbufs.count >= 1 is allowed in the driver.
+Atul Dahiya (4):
+      ARM: S5P64X0: Fix GPIO rbank support
+      ARM: S3C24XX: Fix nand partition table for s3c24XX
+      ARM: SAMSUNG: Add setname core function for S3C24XX NAND
+      ARM: S3C2416: Change S3C2416 NAND platform device name
 
-> Likewise, which case of condition, active_buf_cnt greater than
-> FIMC_MAX_OUT_BUFS(4)?
+Ben Dooks (15):
+      ARM: SAMSUNG: Add GPIO configuration for a range of pins
+      ARM: S3C64XX: Change dev-audio.c to use S3C_GPIO_SFN() for special
+functions
+      ARM: S3C64XX: Change to using s3c_gpio_cfgpin_range()
+      ARM: S5P6442: Change to using s3c_gpio_cfgpin_range()
+      ARM: S5P64X0: Change to using s3c_gpio_cfgpin_range()
+      ARM: S5PC100: Change to using s3c_gpio_cfgpin_range()
+      ARM: S5PV210: Change to using s3c_gpio_cfgpin_range()
+      ARM: SAMSUNG: Add s3c_gpio_cfgall_range() function
+      ARM: S3C64XX: Change to using s3c_gpio_cfgall_range()
+      ARM: S5PC100: Change to using s3c_gpio_cfgall_range()
+      ARM: S5PV210: Change to using s3c_gpio_cfgall_range()
+      ARM: SAMSUNG: Add s3c_gpio_cfgrange_nopull() helper
+      ARM: S3C64XX: Change to using s3c_gpio_cfgrange_nopull()
+      ARM: S5PC100: Change to using s3c_gpio_cfgrange_nopull()
+      ARM: S5PV210: Change to using s3c_gpio_cfgrange_nopull()
 
-During normal operation active_buf_cnt will never be greater than
-FIMC_MAX_OUT_BUFS. 
-> 
-> > +			if (!test_and_set_bit(ST_CAPT_STREAM, &fimc->state))
-> > +				fimc_activate_capture(ctx);
-> > +		}
-> 
-> Condition which fimc_deactivate_capture() function run is
-> "cap->active_buf_cnt <= 1".
-> Then I think condition which fimc_activate_capture() function run is
-> "cap->active_buf_cnt >= 2".
-> But, your code wait 4 or more.
+Boojin Kim (1):
+      ARM: S5PV310: Fix physical address of System Controller Register
 
-I assume you are referring to this:
+Changhwan Youn (3):
+      ARM: S5PV310: Add CPU hotplug support for S5PV310
+      ARM: S5PV310: Add support RTC
+      ARM: S5PV310: Optimize interrupt source searching code
 
-	if (cap->active_buf_cnt >= cap->reqbufs_count ||
-	   cap->active_buf_cnt >= FIMC_MAX_OUT_BUFS) {
-		if (!test_and_set_bit(ST_CAPT_STREAM, &fimc->state))
-			fimc_activate_capture(ctx);
-	}
+Chanwoo Choi (3):
+      ARM: S5PV210: Add i2c information to Goni and Aquila board
+      ARM: S5PV210: Add init code of audio to Goni and Auqila board
+      ARM: S5PV210: Add voltage consumer of WM8994 to the regulator
+framework
 
-The driver waits for reqbufs.count or FIMC_MAX_OUT_BUFS (4), whichever
-is less as I mentioned above.
-When reqbufs.count == 1 condition "cap->active_buf_cnt >= 2" is
-never true and hardware would have never been re-enabled.
-I have tested the driver with delayed DQBUF and it worked fine with
-reqbufs.count = 1.
-However I observed some problems in synchronizing video buffers setup
-with the DMA engine when DQBUF is delayed, since the hw doesn't
-start writing at the beginning from buffer 0 as expected but from
-index 2. I will address that soon after I get back from ELC-E.  
+Daein Moon (3):
+      ARM: SAMSUNG: Add the missed s3c_gpio_getpull() API
+      ARM: S5PV310: Add support SROMC
+      ARM: S5PV310: Support ethernet for SMDKV310 and SMDKC210
 
+Darius Augulis (9):
+      ARM: S3C64XX: add frame buffer support for mach-real6410
+      ARM: S3C64XX: add nand support for mach-real6410
+      ARM: S3C64XX: add touchscreen support for mach-real6410
+      ARM: S3C64XX: add USB host support for mach-real6410
+      ARM: S3C64XX: add support for mach-mini6410
+      ARM: S3C64XX: add nand support for mach-mini6410
+      ARM: S3C64XX: add frame buffer support for mach-mini6410
+      ARM: S3C64XX: add backlight control for mach-mini6410
+      ARM: S3C64XX: add touchscreen support for mach-mini6410
 
-Thank you,
-Sylwester
+Hyuk Lee (4):
+      ARM: S5PV310: Add support HSMMC and SDHCI configuration
+      ARM: S5PV310: Add HSMMC platform data
+      ARM: S5PV310: Add support HSMMC on SMDKV310 and SMDKC210
+      ARM: SAMSUNG: Modified to change of bus width and host caps
+
+Jaecheol Lee (7):
+      ARM: S5PV310: Fix clkset_moutcore_list
+      ARM: S5PV210: Add DMC map_desc table for supporting DMC access
+      ARM: S5PV210: Add struct clk_ops for clk_fout_apll
+      ARM: S5PV210: Add MOUT_DMC0 and SCLK_DMC0 clocks
+      ARM: S5PV210: Add Register definition for CMU
+      ARM: S5PV210: Add support CPUFREQ
+      ARM: S5PV210: Update Kconfig and Makefile for supporting CPUFREQ
+driver
+
+Jassi Brar (1):
+      ARM: S5PC100: Fix Audio, Keypad and ADC clock sources
+
+Jemings Ko (1):
+      ARM: S5PV310: Add support Watchdog Timer
+
+Jeongbae Seo (1):
+      ARM: SAMSUNG: Add clock types into platform data
+
+Jongpill Lee (11):
+      ARM: S5PV310: Adds clk_sclk_usbphy0, _usbphy1, and _hdmiphy
+      ARM: S5PV310: Adds printing ACLK200, ACLK100, ACLK160 and ACLK133
+      ARM: S5PV310: Adds enable and ctrlbit for clk_vpllsrc
+      ARM: S5PV310: Adds SDMMC clock for S5PV310
+      ARM: S5PV310: Add various clocks
+      ARM: S5PV310: Add video clocks
+      ARM: S5PV310: Adds various special clocks
+      ARM: S5PV210: Add Power Management Support
+      ARM: S5PV310: Update MAX_COMBINER_NR
+      ARM: S5P: Add initial map for GPIO2 and GPIO3
+      ARM: S5PV310: Add support GPIOlib
+
+Jongsun Han (2):
+      ARM: S5PV310: Add the definition for external interrupt
+      ARM: S5PV310: Add support External Interrupt
+
+Joonyoung Shim (4):
+      ARM: S5PV210: Add keypad device to the GONI board
+      ARM: S5PC100: Use generic S5P GPIO Interrupt interface
+      ARM: S5PC100: Move External Interrupt definitions
+      ARM: SAMSUNG: Add common samsung_gpiolib_to_irq function
+
+Kukjin Kim (44):
+      ARM: S5P: Move OneNAND device definitions in plat-s5p
+      ARM: S5P: Moves initial map for merging S5P64X0
+      ARM: S5P64X0: Update Kconfig and Makefile
+      ARM: S5P64X0: Add S5P64X0(S5P6440 and S5P6450) initialization support
+      ARM: S5P64X0: Update Clock for S5P6440 and S5P6450
+      ARM: S5P64X0: Update IRQ support
+      ARM: S5P64X0: Update Timer support
+      ARM: S5P64X0: Update Audio support
+      ARM: S5P64X0: Move DMA support for S5P64X0
+      ARM: S5P64X0: Add S5P6450 I2C support
+      ARM: S5P64X0: Move GPIO support files for merge S5P64X0
+      ARM: S5P64X0: Move SMDK6440 board file and Add SMDK6450 board file
+      ARM: S5P64X0: Add UART serial support for S5P6450
+      ARM: s5p64x0_defconfig: Update for support S5P6440 and S5P6450
+      ARM: S5PV310: Fix build error on GPIO map
+      ARM: S5PV310: Add SMDKC210 board support file
+      ARM: S5PV310: update S5PV310 Kconfig for supporting multiple machines
+      ARM: S5PV310: Adds clock addresses for S5PV310
+      ARM: S5PV310: Removed unused clock
+      ARM: S5PV310: Adds clkset_aclk for removing clkset_aclk_xxx
+      ARM: SAMSUNG: Change the 3rd HSMMC interrupt name for compatibility
+      ARM: S5P64XX: Remove redundant selection PLAT_S5P.
+      ARM: S5P64X0: 2nd Change to using s3c_gpio_cfgpin_range()
+      ARM: S5PV310: Change to using s3c_gpio_cfgpin_range()
+      ARM: S5P6442: Change to using s3c_gpio_cfgall_range()
+      ARM: S5P64X0: Change to using s3c_gpio_cfgall_range()
+      ARM: S5PV310: Change to using s3c_gpio_cfgall_range()
+      ARM: S3C64XX: 2nd Change to using s3c_gpio_cfgall_range()
+      ARM: S5P64X0: 2nd Change to using s3c_gpio_cfgall_range()
+      ARM: S5PC100: 2nd Change to using s3c_gpio_cfgall_range()
+      ARM: S5PV210: 2nd Change to using s3c_gpio_cfgall_range()
+      ARM: S3C64XX: 2nd Change to using s3c_gpio_cfgrange_nopull()
+      ARM: S5PC100: 2nd Change to using s3c_gpio_cfgrange_nopull()
+      ARM: S5PV210: 2nd Change to using s3c_gpio_cfgrange_nopull()
+      ARM: S5P: Fix missed IRQ_EINT_BIT()
+      Merge branch 'next-gpio-update' into for-next
+      ARM: S5PC100: Cleanup the GPIOlib code
+      ARM: S5P: Cleanup the S5P SoCs' VA address mapping
+      ARM: S5PC100: Change I2C2 and I2C3 IRQ names
+      Merge branch 'next-s3c24xx' into for-next
+      Merge branch 'next-s3c64xx' into for-next
+      ARM: SAMSUNG: Move the start address of Samsung SoCs' VA space
+      ARM: S3C: Change VMALLOC_END to use more vmalloc()/ioremap() area
+      ARM: S5P: Change VMALLOC_END to use more vmalloc()/ioremap() area
+
+Kyuho Choi (1):
+      ARM: S5PV210: Add Torbreck board support
+
+Kyungmin Park (12):
+      ARM: S5PV310: Add GPIO keys at Universal board
+      ARM: S5PV210: Place the common SPARSEMEM at ARCH_S5PV210
+      ARM: S5PV310: Place the common SPARSEMEM at ARCH_S5PV310
+      ARM: S5P: Remove redundant selection PLAT_S5P for S5PC100, S5PV210 and
+S5PV310
+      ARM: S5PV310: Universal OneNAND support
+      ARM: S5PV310: I2C0/1 devices support on Universal board
+      ARM: S5PV210: Fix wrong interrupt I2C2 and I2C3 number
+      ARM: S5PV310: Define address & interrupt for all I2C blocks
+      ARM: S5PV310: Add I2C channel 3, 4, 5, 6, and 7 device support
+      ARM: Add L2X0 PREFETCH and POWER control register
+      ARM: S5PV310: Remove L2 cache init in machine
+      ARM: S5PV310: Add L2 cache init function in cpu.c
+
+Marek Szyprowski (11):
+      ARM: S5PV210: update framebuffer setup information for GONI
+      ARM: S5PV210: fb setup for GONI - remove pixel clock
+      ARM: S5PV210: Add Support for OTG USB Gadget on GONI board
+      ARM: S5PV210: Add Support for MMC regulators on GONI board
+      ARM: S5PV210: Enable USB HSOTG gadget build
+      ARM: S5P: Add common S5P GPIO Interrupt support
+      ARM: S5PV210: Add support for GPIO Interrupt
+      ARM: S5P: Unify defines for both gpio interrupt types
+      ARM: S5PV210: Add support for S6E63M0 LCD controller on GONI board
+      ARM: S5PV210: Add si470x radio device to the GONI board
+      ARM: S5PV210: GONI: Add support for QT602240 TS driver
+
+Mark Brown (3):
+      ARM: S3C64XX: Fix special function for IISv4 port
+      ARM: S3C64XX: Ensure samsung_keypad_cfg_gpio() is prototyped
+      ARM: S3C64XX: Ensure s3c64xx_ide_setup_gpio() is prototyped
+
+Naveen Krishna Ch (1):
+      ARM: S5P64X0: FIX typo in the ADC device name
+
+Sangbeom Kim (1):
+      ARM: S5PV210: Fix build error on pm debug
+
+SeungChull Suh (1):
+      ARM: S5P64X0: Bug fix on errors of build with CONFIG_PREEMPT_NONE
+
+Seungwhan Youn (15):
+      ARM: S5PC100: Add S/PDIF platform device
+      ARM: S5PC100: Modify SCLK_AUDIO{0,1,2} clock as sysclks
+      ARM: S5PC100: Add SCLK_SPDIF clock
+      ARM: S5PV210: Add S/PDIF platform device
+      ARM: S5PV210: Add SCLK_SPDIF clock
+      ARM: S5PV210: Add audio clocks as sysclk
+      ARM: S5P: Reduce duplicated EPLL control codes
+      ARM: S5PV210: Fix wrong EPLL rate getting on setup clocks
+      ARM: S5PV210: Add EPLL clock operations
+      ARM: S5P: Add EPLL rate change warning
+      ARM: S5P6442: Add DMA operation clock
+      ARM: S5PV210: Add DMA operation clock
+      ARM: S5P64X0: Set DMA clock disable as default
+      ARM: S5P: Reorder DMA platform device id
+      ARM: SAMSUNG: Move DMA clock enable into S3C PL330 driver
+
+Thomas Abraham (1):
+      ARM: S5P: Remove the unused clk_arm clock from plat-s5p
+
+Yauhen Kharuzhy (1):
+      ARM: S3C24XX: Fix gpiolib support for ports K..M
+
+ arch/arm/Kconfig                                   |   17 +-
+ arch/arm/Makefile                                  |    2 +-
+ .../{s5p6440_defconfig => s5p64x0_defconfig}       |    3 +-
+ arch/arm/include/asm/hardware/cache-l2x0.h         |    4 +
+ arch/arm/mach-s3c2410/include/mach/gpio.h          |   10 +-
+ .../mach-s3c2410/include/mach/regs-s3c2443-clock.h |    2 +
+ arch/arm/mach-s3c2410/include/mach/vmalloc.h       |    2 +-
+ arch/arm/mach-s3c2412/s3c2412.c                    |    3 +-
+ arch/arm/mach-s3c2416/Kconfig                      |    6 +
+ arch/arm/mach-s3c2416/Makefile                     |    2 +-
+ arch/arm/mach-s3c2416/irq.c                        |    2 +
+ arch/arm/mach-s3c2416/pm.c                         |   84 ++
+ arch/arm/mach-s3c2416/s3c2416.c                    |    3 +-
+ arch/arm/mach-s3c2440/s3c244x.c                    |    3 +-
+ arch/arm/mach-s3c2443/s3c2443.c                    |    3 +-
+ arch/arm/mach-s3c24a0/include/mach/vmalloc.h       |    2 +-
+ arch/arm/mach-s3c64xx/Kconfig                      |   21 +
+ arch/arm/mach-s3c64xx/Makefile                     |    1 +
+ arch/arm/mach-s3c64xx/dev-audio.c                  |   64 +--
+ arch/arm/mach-s3c64xx/gpiolib.c                    |    8 +-
+ arch/arm/mach-s3c64xx/include/mach/vmalloc.h       |    2 +-
+ arch/arm/mach-s3c64xx/mach-mini6410.c              |  357 +++++++++
+ arch/arm/mach-s3c64xx/mach-real6410.c              |  198 +++++-
+ arch/arm/mach-s3c64xx/setup-fb-24bpp.c             |   13 +-
+ arch/arm/mach-s3c64xx/setup-ide.c                  |   11 +-
+ arch/arm/mach-s3c64xx/setup-keypad.c               |   16 +-
+ arch/arm/mach-s3c64xx/setup-sdhci-gpio.c           |   41 +-
+ arch/arm/mach-s5p6440/Kconfig                      |   33 -
+ arch/arm/mach-s5p6440/Makefile                     |   25 -
+ arch/arm/mach-s5p6440/clock.c                      |  846
+--------------------
+ arch/arm/mach-s5p6440/cpu.c                        |  117 ---
+ arch/arm/mach-s5p6440/dev-audio.c                  |  127 ---
+ arch/arm/mach-s5p6440/dev-spi.c                    |  176 ----
+ arch/arm/mach-s5p6440/include/mach/debug-macro.S   |   37 -
+ arch/arm/mach-s5p6440/include/mach/gpio.h          |   80 --
+ arch/arm/mach-s5p6440/include/mach/io.h            |   18 -
+ arch/arm/mach-s5p6440/include/mach/map.h           |   86 --
+ arch/arm/mach-s5p6440/include/mach/regs-clock.h    |  130 ---
+ arch/arm/mach-s5p6440/include/mach/spi-clocks.h    |   17 -
+ arch/arm/mach-s5p6440/include/mach/uncompress.h    |   24 -
+ arch/arm/mach-s5p6440/init.c                       |   52 --
+ arch/arm/mach-s5p6440/setup-i2c0.c                 |   30 -
+ arch/arm/mach-s5p6440/setup-i2c1.c                 |   30 -
+ arch/arm/mach-s5p6442/Kconfig                      |    1 -
+ arch/arm/mach-s5p6442/clock.c                      |   28 +
+ arch/arm/mach-s5p6442/cpu.c                        |   27 +-
+ arch/arm/mach-s5p6442/dev-audio.c                  |   30 +-
+ arch/arm/mach-s5p6442/dev-spi.c                    |    6 +-
+ arch/arm/mach-s5p6442/dma.c                        |    2 +-
+ arch/arm/mach-s5p6442/include/mach/map.h           |    6 -
+ arch/arm/mach-s5p6442/include/mach/regs-clock.h    |    1 +
+ arch/arm/mach-s5p6442/include/mach/vmalloc.h       |    2 +-
+ arch/arm/mach-s5p64x0/Kconfig                      |   55 ++
+ arch/arm/mach-s5p64x0/Makefile                     |   30 +
+ .../{mach-s5p6440 => mach-s5p64x0}/Makefile.boot   |    0
+ arch/arm/mach-s5p64x0/clock-s5p6440.c              |  629 +++++++++++++++
+ arch/arm/mach-s5p64x0/clock-s5p6450.c              |  658 +++++++++++++++
+ arch/arm/mach-s5p64x0/clock.c                      |  235 ++++++
+ arch/arm/mach-s5p64x0/cpu.c                        |  209 +++++
+ arch/arm/mach-s5p64x0/dev-audio.c                  |  152 ++++
+ arch/arm/mach-s5p64x0/dev-spi.c                    |  222 +++++
+ arch/arm/{mach-s5p6440 => mach-s5p64x0}/dma.c      |   86 ++-
+ arch/arm/{mach-s5p6440 => mach-s5p64x0}/gpio.c     |  104 ++--
+ arch/arm/mach-s5p64x0/include/mach/debug-macro.S   |   33 +
+ .../include/mach/dma.h                             |    0
+ .../include/mach/entry-macro.S                     |    8 +-
+ arch/arm/mach-s5p64x0/include/mach/gpio.h          |  139 ++++
+ .../include/mach/hardware.h                        |    8 +-
+ arch/arm/mach-s5p64x0/include/mach/i2c.h           |   17 +
+ arch/arm/mach-s5p64x0/include/mach/io.h            |   25 +
+ .../include/mach/irqs.h                            |   48 +-
+ arch/arm/mach-s5p64x0/include/mach/map.h           |   83 ++
+ .../include/mach/memory.h                          |   12 +-
+ .../include/mach/pwm-clock.h                       |   10 +-
+ arch/arm/mach-s5p64x0/include/mach/regs-clock.h    |   65 ++
+ .../include/mach/regs-gpio.h                       |   28 +-
+ .../include/mach/regs-irq.h                        |    8 +-
+ arch/arm/mach-s5p64x0/include/mach/s5p64x0-clock.h |   46 ++
+ arch/arm/mach-s5p64x0/include/mach/spi-clocks.h    |   20 +
+ .../include/mach/system.h                          |    8 +-
+ .../include/mach/tick.h                            |   13 +-
+ .../include/mach/timex.h                           |    7 +-
+ arch/arm/mach-s5p64x0/include/mach/uncompress.h    |  212 +++++
+ .../include/mach/vmalloc.h                         |    7 +-
+ arch/arm/mach-s5p64x0/init.c                       |   73 ++
+ .../{mach-s5p6440 => mach-s5p64x0}/mach-smdk6440.c |   87 ++-
+ arch/arm/mach-s5p64x0/mach-smdk6450.c              |  182 +++++
+ arch/arm/mach-s5p64x0/setup-i2c0.c                 |   38 +
+ arch/arm/mach-s5p64x0/setup-i2c1.c                 |   38 +
+ arch/arm/mach-s5pc100/Kconfig                      |    1 -
+ arch/arm/mach-s5pc100/Makefile                     |    2 +-
+ arch/arm/mach-s5pc100/clock.c                      |  174 +++--
+ arch/arm/mach-s5pc100/cpu.c                        |   25 +-
+ arch/arm/mach-s5pc100/dev-audio.c                  |   86 ++-
+ arch/arm/mach-s5pc100/dev-spi.c                    |   22 +-
+ arch/arm/mach-s5pc100/dma.c                        |    4 +-
+ arch/arm/mach-s5pc100/gpiolib.c                    |  216 ++----
+ arch/arm/mach-s5pc100/include/mach/gpio.h          |    7 -
+ arch/arm/mach-s5pc100/include/mach/irqs.h          |   13 +-
+ arch/arm/mach-s5pc100/include/mach/map.h           |   13 +-
+ arch/arm/mach-s5pc100/include/mach/regs-gpio.h     |   49 +-
+ arch/arm/mach-s5pc100/include/mach/vmalloc.h       |    2 +-
+ arch/arm/mach-s5pc100/irq-gpio.c                   |  266 ------
+ arch/arm/mach-s5pc100/mach-smdkc100.c              |    4 +
+ arch/arm/mach-s5pc100/setup-fb-24bpp.c             |   30 +-
+ arch/arm/mach-s5pc100/setup-i2c0.c                 |    6 +-
+ arch/arm/mach-s5pc100/setup-i2c1.c                 |    6 +-
+ arch/arm/mach-s5pc100/setup-ide.c                  |   41 +-
+ arch/arm/mach-s5pc100/setup-keypad.c               |   15 +-
+ arch/arm/mach-s5pc100/setup-sdhci-gpio.c           |   35 +-
+ arch/arm/mach-s5pv210/Kconfig                      |   46 +-
+ arch/arm/mach-s5pv210/Makefile                     |    4 +-
+ arch/arm/mach-s5pv210/clock.c                      |  207 +++++-
+ arch/arm/mach-s5pv210/cpu.c                        |   37 +-
+ arch/arm/mach-s5pv210/cpufreq.c                    |  484 +++++++++++
+ arch/arm/mach-s5pv210/dev-audio.c                  |   86 ++-
+ arch/arm/mach-s5pv210/dev-spi.c                    |   19 +-
+ arch/arm/mach-s5pv210/dma.c                        |    4 +-
+ arch/arm/mach-s5pv210/gpiolib.c                    |   14 +-
+ arch/arm/mach-s5pv210/include/mach/irqs.h          |   12 +-
+ arch/arm/mach-s5pv210/include/mach/map.h           |   23 +-
+ arch/arm/mach-s5pv210/include/mach/pm-core.h       |   43 +
+ arch/arm/mach-s5pv210/include/mach/regs-clock.h    |   39 +-
+ arch/arm/mach-s5pv210/include/mach/regs-gpio.h     |    7 -
+ arch/arm/mach-s5pv210/include/mach/regs-sys.h      |   19 +
+ arch/arm/mach-s5pv210/include/mach/vmalloc.h       |    2 +-
+ arch/arm/mach-s5pv210/mach-aquila.c                |  171 ++++-
+ arch/arm/mach-s5pv210/mach-goni.c                  |  383 +++++++++-
+ arch/arm/mach-s5pv210/mach-smdkc110.c              |    4 +
+ arch/arm/mach-s5pv210/mach-smdkv210.c              |    4 +
+ arch/arm/mach-s5pv210/mach-torbreck.c              |  131 +++
+ arch/arm/mach-s5pv210/pm.c                         |  166 ++++
+ arch/arm/mach-s5pv210/setup-fb-24bpp.c             |   34 +-
+ arch/arm/mach-s5pv210/setup-i2c0.c                 |    6 +-
+ arch/arm/mach-s5pv210/setup-i2c1.c                 |    6 +-
+ arch/arm/mach-s5pv210/setup-i2c2.c                 |    6 +-
+ arch/arm/mach-s5pv210/setup-ide.c                  |   49 +-
+ arch/arm/mach-s5pv210/setup-keypad.c               |   14 +-
+ arch/arm/mach-s5pv210/setup-sdhci-gpio.c           |   57 +-
+ arch/arm/mach-s5pv210/sleep.S                      |  170 ++++
+ arch/arm/mach-s5pv310/Kconfig                      |   95 ++-
+ arch/arm/mach-s5pv310/Makefile                     |   10 +-
+ arch/arm/mach-s5pv310/clock.c                      |  635 +++++++++++++--
+ arch/arm/mach-s5pv310/cpu.c                        |   71 ++-
+ arch/arm/mach-s5pv310/gpiolib.c                    |  304 +++++++
+ arch/arm/mach-s5pv310/hotplug.c                    |  144 ++++
+ arch/arm/mach-s5pv310/include/mach/irqs.h          |   46 +-
+ arch/arm/mach-s5pv310/include/mach/map.h           |   26 +-
+ arch/arm/mach-s5pv310/include/mach/regs-clock.h    |   32 +-
+ arch/arm/mach-s5pv310/include/mach/regs-gpio.h     |   42 +
+ arch/arm/mach-s5pv310/include/mach/regs-srom.h     |   50 ++
+ arch/arm/mach-s5pv310/include/mach/vmalloc.h       |    2 +-
+ arch/arm/mach-s5pv310/irq-combiner.c               |    6 +-
+ arch/arm/mach-s5pv310/irq-eint.c                   |  228 ++++++
+ arch/arm/mach-s5pv310/mach-smdkc210.c              |  202 +++++
+ arch/arm/mach-s5pv310/mach-smdkv310.c              |  121 +++-
+ arch/arm/mach-s5pv310/mach-universal_c210.c        |   81 ++-
+ arch/arm/mach-s5pv310/setup-i2c0.c                 |    6 +-
+ arch/arm/mach-s5pv310/setup-i2c1.c                 |    6 +-
+ arch/arm/mach-s5pv310/setup-i2c2.c                 |    6 +-
+ arch/arm/mach-s5pv310/setup-i2c3.c                 |   23 +
+ arch/arm/mach-s5pv310/setup-i2c4.c                 |   23 +
+ arch/arm/mach-s5pv310/setup-i2c5.c                 |   23 +
+ arch/arm/mach-s5pv310/setup-i2c6.c                 |   23 +
+ arch/arm/mach-s5pv310/setup-i2c7.c                 |   23 +
+ arch/arm/mach-s5pv310/setup-sdhci-gpio.c           |  152 ++++
+ arch/arm/mach-s5pv310/setup-sdhci.c                |   69 ++
+ arch/arm/plat-s3c24xx/common-smdk.c                |    2 +-
+ arch/arm/plat-s3c24xx/gpiolib.c                    |    8 +-
+ arch/arm/plat-s5p/Kconfig                          |   14 +-
+ arch/arm/plat-s5p/Makefile                         |    4 +
+ arch/arm/plat-s5p/clock.c                          |   48 +-
+ arch/arm/plat-s5p/cpu.c                            |   34 +-
+ arch/arm/{mach-s5pv210 => plat-s5p}/dev-onenand.c  |   28 +-
+ arch/arm/plat-s5p/dev-uart.c                       |   58 ++
+ arch/arm/plat-s5p/include/plat/irqs.h              |   18 +
+ arch/arm/plat-s5p/include/plat/map-s5p.h           |   40 +-
+ arch/arm/plat-s5p/include/plat/pll.h               |    7 +
+ arch/arm/plat-s5p/include/plat/s5p-clock.h         |   12 +-
+ arch/arm/plat-s5p/include/plat/s5p6440.h           |    7 +-
+ arch/arm/plat-s5p/include/plat/s5p6450.h           |   36 +
+ arch/arm/plat-s5p/irq-eint.c                       |   10 +-
+ arch/arm/plat-s5p/irq-gpioint.c                    |  237 ++++++
+ arch/arm/plat-s5p/irq-pm.c                         |   93 +++
+ arch/arm/plat-s5p/pm.c                             |   52 ++
+ arch/arm/plat-samsung/Kconfig                      |   25 +
+ arch/arm/plat-samsung/Makefile                     |    5 +
+ arch/arm/plat-samsung/dev-hsmmc.c                  |    8 +-
+ arch/arm/plat-samsung/dev-hsmmc1.c                 |    8 +-
+ arch/arm/plat-samsung/dev-hsmmc2.c                 |    8 +-
+ arch/arm/plat-samsung/dev-hsmmc3.c                 |   12 +-
+ arch/arm/plat-samsung/dev-i2c2.c                   |    4 +-
+ arch/arm/plat-samsung/dev-i2c3.c                   |   68 ++
+ arch/arm/plat-samsung/dev-i2c4.c                   |   68 ++
+ arch/arm/plat-samsung/dev-i2c5.c                   |   68 ++
+ arch/arm/plat-samsung/dev-i2c6.c                   |   68 ++
+ arch/arm/plat-samsung/dev-i2c7.c                   |   68 ++
+ arch/arm/plat-samsung/gpio-config.c                |   50 ++
+ arch/arm/plat-samsung/gpio.c                       |    8 +
+ arch/arm/plat-samsung/include/plat/audio.h         |    9 +
+ arch/arm/plat-samsung/include/plat/cpu.h           |    2 +-
+ arch/arm/plat-samsung/include/plat/devs.h          |   14 +-
+ .../plat-samsung/include/plat/gpio-cfg-helpers.h   |    6 +
+ arch/arm/plat-samsung/include/plat/gpio-cfg.h      |   56 ++
+ arch/arm/plat-samsung/include/plat/gpio-core.h     |   15 +
+ arch/arm/plat-samsung/include/plat/iic.h           |   10 +
+ arch/arm/plat-samsung/include/plat/map-base.h      |    4 +-
+ arch/arm/plat-samsung/include/plat/nand-core.h     |   28 +
+ arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h |   20 +
+ arch/arm/plat-samsung/include/plat/s3c64xx-spi.h   |    2 +-
+ arch/arm/plat-samsung/include/plat/sdhci.h         |   64 ++
+ arch/arm/plat-samsung/pm-gpio.c                    |    4 +-
+ arch/arm/plat-samsung/s3c-pl330.c                  |   34 +-
+ drivers/serial/Kconfig                             |    7 +-
+ drivers/serial/samsung.c                           |    2 +-
+ 215 files changed, 10257 insertions(+), 3315 deletions(-)
