@@ -1,159 +1,58 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH 2/2] h1940-leds: Fix compile issue introduced by latch-related changes
-Date: Mon,  8 Nov 2010 22:31:48 +0200
-Message-ID: <1289248308-21272-2-git-send-email-anarsoul@gmail.com>
-References: <1289248308-21272-1-git-send-email-anarsoul@gmail.com>
+From: Abdoulaye Walsimou GAYE <awg@embtoolkit.org>
+Subject: Re: [PATCH v3] ARM: s3c2442: Setup gpio {set,get}_pull callbacks
+Date: Mon, 08 Nov 2010 22:41:11 +0100
+Message-ID: <4CD86E77.9000906@embtoolkit.org>
+References: <1289030074-5233-1-git-send-email-anarsoul@gmail.com> <1289247983-20747-1-git-send-email-anarsoul@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:38252 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755346Ab0KHUc6 (ORCPT
+Received: from walscop001.walsimou.com ([82.228.201.70]:63337 "EHLO
+	bekkor.walsimou.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755511Ab0KHVl3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Nov 2010 15:32:58 -0500
-Received: by mail-ey0-f174.google.com with SMTP id 27so3089869eye.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Nov 2010 12:32:57 -0800 (PST)
-In-Reply-To: <1289248308-21272-1-git-send-email-anarsoul@gmail.com>
+	Mon, 8 Nov 2010 16:41:29 -0500
+In-Reply-To: <1289247983-20747-1-git-send-email-anarsoul@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Vasily Khoruzhick <anarsoul@gmail.com>
+To: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Latch API was converted to gpiolib API as result we got this compile
-error:
+On 11/08/2010 09:26 PM, Vasily Khoruzhick wrote:
+> Currently the {set,get}_pull callbacks of the s3c24xx_gpiocfg_default structure
+> are initalized via s3c_gpio_{get,set}pull_1up. This results in a linker
+> error when compiling kernel for s3c2442:
+>
+> arch/arm/plat-s3c24xx/built-in.o:(.data+0x13f4): undefined reference to
+> `s3c_gpio_getpull_1up'
+> arch/arm/plat-s3c24xx/built-in.o:(.data+0x13f8): undefined reference to
+> `s3c_gpio_setpull_1up'
+>
+> The s3c2442 has pulldowns instead of pullups compared to the s3c2440.
+> The method of controlling them is the same though.
+> So this patch modifies the existing s3c_gpio_{get,set}pull_1up helper functions
+> to take an additional parameter deciding whether the pin has a pullup or pulldown.
+> The s3c_gpio_{get,set}pull_1{down,up} functions then wrap that functions passing
+> either S3C_GPIO_PULL_UP or S3C_GPIO_PULL_DOWN.
+>
+> Furthermore this patch sets up the s3c24xx_gpiocfg_default.{get,set}_pull fields
+> in the s3c2442 cpu init function to the new pulldown helper functions.
+>
+> Based on patch from "Lars-Peter Clausen"<lars@metafoo.de>
+>
+> Signed-off-by: Vasily Khoruzhick<anarsoul@gmail.com>
+> ---
+> v2: adapt patch for 2.6.37-rc1
+> v3: restore default pull callbacks, add default pull callbacks for s3c2442
+>   arch/arm/mach-s3c2440/Kconfig                      |    1 +
+>   arch/arm/mach-s3c2440/s3c2442.c                    |    7 +++
+>   arch/arm/plat-s3c24xx/gpiolib.c                    |    9 +++-
+>   arch/arm/plat-samsung/gpio-config.c                |   44 ++++++++++++++++---
+>   .../plat-samsung/include/plat/gpio-cfg-helpers.h   |   11 +++++
+>   5 files changed, 63 insertions(+), 9 deletions(-)
+>
+>    
 
-drivers/leds/leds-h1940.c: In function 'h1940_greenled_set':
-drivers/leds/leds-h1940.c:33: error: implicit declaration of function
-'h1940_latch_control
+Ackey-by: Abdoulaye Walsimou GAYE <awg@embtoolkit.org>
 
-Adapt h1940-leds driver to new changes and fix compile issue.
-
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
----
- drivers/leds/leds-h1940.c |   67 ++++++++++++++++++++++++++++++++-------------
- 1 files changed, 48 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/leds/leds-h1940.c b/drivers/leds/leds-h1940.c
-index 173d104..d9c2729 100644
---- a/drivers/leds/leds-h1940.c
-+++ b/drivers/leds/leds-h1940.c
-@@ -30,18 +30,18 @@ static void h1940_greenled_set(struct led_classdev *led_dev,
- {
- 	switch (value) {
- 	case LED_HALF:
--		h1940_latch_control(0, H1940_LATCH_LED_FLASH);
--		s3c2410_gpio_setpin(S3C2410_GPA7, 1);
-+		gpio_set_value(H1940_LATCH_LED_FLASH, 1);
-+		gpio_set_value(S3C2410_GPA(7), 1);
- 		break;
- 	case LED_FULL:
--		h1940_latch_control(0, H1940_LATCH_LED_GREEN);
--		s3c2410_gpio_setpin(S3C2410_GPA7, 1);
-+		gpio_set_value(H1940_LATCH_LED_GREEN, 1);
-+		gpio_set_value(S3C2410_GPA(7), 1);
- 		break;
- 	default:
- 	case LED_OFF:
--		h1940_latch_control(H1940_LATCH_LED_FLASH, 0);
--		h1940_latch_control(H1940_LATCH_LED_GREEN, 0);
--		s3c2410_gpio_setpin(S3C2410_GPA7, 0);
-+		gpio_set_value(H1940_LATCH_LED_FLASH, 0);
-+		gpio_set_value(H1940_LATCH_LED_GREEN, 0);
-+		gpio_set_value(S3C2410_GPA(7), 0);
- 		break;
- 	}
- }
-@@ -60,18 +60,18 @@ static void h1940_redled_set(struct led_classdev *led_dev,
- {
- 	switch (value) {
- 	case LED_HALF:
--		h1940_latch_control(0, H1940_LATCH_LED_FLASH);
--		s3c2410_gpio_setpin(S3C2410_GPA1, 1);
-+		gpio_set_value(H1940_LATCH_LED_FLASH, 1);
-+		gpio_set_value(S3C2410_GPA(1), 1);
- 		break;
- 	case LED_FULL:
--		h1940_latch_control(0, H1940_LATCH_LED_RED);
--		s3c2410_gpio_setpin(S3C2410_GPA1, 1);
-+		gpio_set_value(H1940_LATCH_LED_RED, 1);
-+		gpio_set_value(S3C2410_GPA(1), 1);
- 		break;
- 	default:
- 	case LED_OFF:
--		h1940_latch_control(H1940_LATCH_LED_FLASH, 0);
--		h1940_latch_control(H1940_LATCH_LED_RED, 0);
--		s3c2410_gpio_setpin(S3C2410_GPA1, 0);
-+		gpio_set_value(H1940_LATCH_LED_FLASH, 0);
-+		gpio_set_value(H1940_LATCH_LED_RED, 0);
-+		gpio_set_value(S3C2410_GPA(1), 0);
- 		break;
- 	}
- }
-@@ -91,11 +91,11 @@ static void h1940_blueled_set(struct led_classdev *led_dev,
- {
- 	if (value) {
- 		/* flashing Blue */
--		h1940_latch_control(0, H1940_LATCH_LED_FLASH);
--		s3c2410_gpio_setpin(S3C2410_GPA3, 1);
-+		gpio_set_value(H1940_LATCH_LED_FLASH, 1);
-+		gpio_set_value(S3C2410_GPA(3), 1);
- 	} else {
--		h1940_latch_control(H1940_LATCH_LED_FLASH, 0);
--		s3c2410_gpio_setpin(S3C2410_GPA3, 0);
-+		gpio_set_value(H1940_LATCH_LED_FLASH, 0);
-+		gpio_set_value(S3C2410_GPA(3), 0);
- 	}
- 
- }
-@@ -108,7 +108,24 @@ static struct led_classdev h1940_blueled = {
- 
- static int __devinit h1940leds_probe(struct platform_device *pdev)
- {
--	int ret;
-+	int ret, gpioidx = 0;
-+	int led_gpios[] = {
-+		H1940_LATCH_LED_GREEN,
-+		H1940_LATCH_LED_RED,
-+		H1940_LATCH_LED_FLASH,
-+		S3C2410_GPA(1),
-+		S3C2410_GPA(3),
-+		S3C2410_GPA(7),
-+	};
-+
-+	for (gpioidx = 0; gpioidx < ARRAY_SIZE(led_gpios); gpioidx++) {
-+		ret = gpio_request(led_gpios[gpioidx], "h1940 leds");
-+		if (ret < 0)
-+			goto err_gpio;
-+		ret = gpio_direction_output(led_gpios[gpioidx], 0);
-+		if (ret < 0)
-+			goto err_gpio;
-+	}
- 
- 	ret = led_classdev_register(&pdev->dev, &h1940_greenled);
- 	if (ret)
-@@ -129,6 +146,10 @@ err_blue:
- err_red:
- 	led_classdev_unregister(&h1940_greenled);
- err_green:
-+err_gpio:
-+	while (--gpioidx >= 0)
-+		gpio_free(led_gpios[gpioidx]);
-+
- 	return ret;
- }
- 
-@@ -137,6 +158,14 @@ static int h1940leds_remove(struct platform_device *pdev)
- 	led_classdev_unregister(&h1940_greenled);
- 	led_classdev_unregister(&h1940_redled);
- 	led_classdev_unregister(&h1940_blueled);
-+
-+	gpio_free(H1940_LATCH_LED_GREEN);
-+	gpio_free(H1940_LATCH_LED_RED);
-+	gpio_free(H1940_LATCH_LED_FLASH);
-+	gpio_free(S3C2410_GPA(1));
-+	gpio_free(S3C2410_GPA(3));
-+	gpio_free(S3C2410_GPA(7));
-+
- 	return 0;
- }
- 
--- 
-1.7.3.2
+Thanks
