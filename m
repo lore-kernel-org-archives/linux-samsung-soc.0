@@ -1,58 +1,48 @@
-From: Abdoulaye Walsimou GAYE <awg@embtoolkit.org>
-Subject: Re: [PATCH v3] ARM: s3c2442: Setup gpio {set,get}_pull callbacks
-Date: Mon, 08 Nov 2010 22:41:11 +0100
-Message-ID: <4CD86E77.9000906@embtoolkit.org>
-References: <1289030074-5233-1-git-send-email-anarsoul@gmail.com> <1289247983-20747-1-git-send-email-anarsoul@gmail.com>
+From: Dron Gus <dron0gus@gmail.com>
+Subject: S3C2416 clock tree
+Date: Tue, 9 Nov 2010 18:52:20 +0300
+Message-ID: <AANLkTinOCFtYW1BNydU7CMw-jL+Pwbazeq9KgW8PPibT@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from walscop001.walsimou.com ([82.228.201.70]:63337 "EHLO
-	bekkor.walsimou.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755511Ab0KHVl3 (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:60927 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750815Ab0KIPwV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Nov 2010 16:41:29 -0500
-In-Reply-To: <1289247983-20747-1-git-send-email-anarsoul@gmail.com>
+	Tue, 9 Nov 2010 10:52:21 -0500
+Received: by pzk28 with SMTP id 28so1313341pzk.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Nov 2010 07:52:20 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org
 
-On 11/08/2010 09:26 PM, Vasily Khoruzhick wrote:
-> Currently the {set,get}_pull callbacks of the s3c24xx_gpiocfg_default structure
-> are initalized via s3c_gpio_{get,set}pull_1up. This results in a linker
-> error when compiling kernel for s3c2442:
->
-> arch/arm/plat-s3c24xx/built-in.o:(.data+0x13f4): undefined reference to
-> `s3c_gpio_getpull_1up'
-> arch/arm/plat-s3c24xx/built-in.o:(.data+0x13f8): undefined reference to
-> `s3c_gpio_setpull_1up'
->
-> The s3c2442 has pulldowns instead of pullups compared to the s3c2440.
-> The method of controlling them is the same though.
-> So this patch modifies the existing s3c_gpio_{get,set}pull_1up helper functions
-> to take an additional parameter deciding whether the pin has a pullup or pulldown.
-> The s3c_gpio_{get,set}pull_1{down,up} functions then wrap that functions passing
-> either S3C_GPIO_PULL_UP or S3C_GPIO_PULL_DOWN.
->
-> Furthermore this patch sets up the s3c24xx_gpiocfg_default.{get,set}_pull fields
-> in the s3c2442 cpu init function to the new pulldown helper functions.
->
-> Based on patch from "Lars-Peter Clausen"<lars@metafoo.de>
->
-> Signed-off-by: Vasily Khoruzhick<anarsoul@gmail.com>
-> ---
-> v2: adapt patch for 2.6.37-rc1
-> v3: restore default pull callbacks, add default pull callbacks for s3c2442
->   arch/arm/mach-s3c2440/Kconfig                      |    1 +
->   arch/arm/mach-s3c2440/s3c2442.c                    |    7 +++
->   arch/arm/plat-s3c24xx/gpiolib.c                    |    9 +++-
->   arch/arm/plat-samsung/gpio-config.c                |   44 ++++++++++++++++---
->   .../plat-samsung/include/plat/gpio-cfg-helpers.h   |   11 +++++
->   5 files changed, 63 insertions(+), 9 deletions(-)
->
->    
+Hi!
 
-Ackey-by: Abdoulaye Walsimou GAYE <awg@embtoolkit.org>
+I work with custom board based on s3c2416 SoC. I'm trying to make
+cpufreq work. I wrote the driver based on cpu-freq.c from
+mach-s3c2410.
+On kernel start i get error message:
+cpufreq: failed to get clock 'armclk'
+s3c2416_cpufreq_add: failed to get clocks
+So i have to add dummy 'armclk' and some dummy clk_ops functions.
+Now cpufreq starts, and tries to change freqs, calling to my
+s3c2416_cpufreq_calcdivs. But the problem is that it passes wrong fclk
+value. Pll rums on 800 MHz, armclk = 400 MHz, hclk = 133, pclk = 66. I
+get fclk = 400 MHz. It is two time smaller than mpll.
+I can not understood is value of fclk the same as armclk or as mpll?
+To count correct armclk divider i must know mpll freq. But as i see in
+s3c2443_common_setup_clocks and in s3c24xx_setup_clocks, mpll rate is
+set the same as fclk, but fclk = pll / get_fdiv(clkdiv0);
+So there is three ways to solve this problem, as i see:
+1) pass one more argument to s3c24xx_setup_clocks with value of mpll.
+This will break to many mach-s3c****
+2) write get_rate for mpll clock and set mpll as a parent for fclk.
+Problem is that PLLs are diferent on diferent s3c SoCs.
+3) the same as 2, but use function get_mpll, wich is passed to
+s3c2443_common_setup_clocks.
 
-Thanks
+Witch way is preferred?
+
+Thanks.
+
+Andrey.
