@@ -1,28 +1,20 @@
-From: <amandasaleeby1@centrum.sk>
-Subject: hello
-Date: Mon, 15 Nov 2010 18:30:55 +0100
-Message-ID: <201011151830.24867__35595.6571097069$1289842274$gmane$org@centrum.cz>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH 0/3] rtc: rtc-s3c: Fix and Update s3c_rtc_setaie()
+Date: Tue, 16 Nov 2010 09:02:51 +0900
+Message-ID: <1289865774-31073-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from farizej.centrum.cz ([90.183.38.130]:47898 "EHLO
-	farizej.centrum.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932997Ab0KORbF (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:33024 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752906Ab0KPAOg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Nov 2010 12:31:05 -0500
+	Mon, 15 Nov 2010 19:14:36 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: amandasaleeby1 <amandasaleeby1@centrum.sk>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com
+Cc: ben-linux@fluff.org, p_gortmaker@yahoo.com, a.zummo@towertech.it
 
-hello with love and trust
-my dearest friend compliment of the day to you.my name is Amanda favour a
-girl of 23years old honest trusting kind caring loving and fun with
-compassionate and generous nature viewing your email address which really interest
-me to know more about you that is having communication friendship with you
-if you will have the desire with me.so that we can get to know each other
-better sharing feelings and thought together .i will like you to write me
-through my email for easiest communication.i will be waiting to read from
-you.I will be waiting for your mail;please make sure you replied to me with the email address below,it is very confidential and private,thanks and have a nice day.
-here is my email address
-Amandasaleeby@she.com
+This patch includes fixing s3c_rtc_setaie() function for Samsung SoCs.
+
+[PATCH 1/3] rtc: rtc-s3c: Fix return type and argument of s3c_rtc_setaie
+[PATCH 2/3] rtc: rtc-s3c: Add spin_lock_irq in s3c_rtc_setaie
+[PATCH 3/3] rtc: rtc-s3c: Change set alarm interrupt method in s3c_rtc_setaie
