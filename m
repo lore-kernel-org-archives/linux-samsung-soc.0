@@ -1,34 +1,56 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH 2/2] h1940-leds: Fix compile issue introduced by latch-related
- changes
-Date: Tue, 16 Nov 2010 23:12:58 +0000
-Message-ID: <4CE30FFA.7000204@fluff.org>
-References: <1289248308-21272-1-git-send-email-anarsoul@gmail.com> <1289248308-21272-2-git-send-email-anarsoul@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Sangbeom Kim <sbkim73@samsung.com>
+Subject: [PATCH 2/2] ARM: S3C24XX: Fix UART3 submask on S3C2416 and S3C2443
+Date: Wed, 17 Nov 2010 09:47:48 +0900
+Message-ID: <1289954868-27876-1-git-send-email-sbkim73@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from dsl78-143-211-26.in-addr.fast.co.uk ([78.143.211.26]:58124 "EHLO
-	ben-laptop" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-	id S932586Ab0KPXNF (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:37000 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933482Ab0KQA7q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Nov 2010 18:13:05 -0500
-In-Reply-To: <1289248308-21272-2-git-send-email-anarsoul@gmail.com>
+	Tue, 16 Nov 2010 19:59:46 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, Abhilash Kesavan <a.kesavan@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>
 
-On 08/11/10 20:31, Vasily Khoruzhick wrote:
-> Latch API was converted to gpiolib API as result we got this compile
-> error:
-> 
-> drivers/leds/leds-h1940.c: In function 'h1940_greenled_set':
-> drivers/leds/leds-h1940.c:33: error: implicit declaration of function
-> 'h1940_latch_control
-> 
-> Adapt h1940-leds driver to new changes and fix compile issue.
-> 
+From: Abhilash Kesavan <a.kesavan@samsung.com>
 
-it's a pitty we can't remove the driver totally and use the
-gpio leds.
+The UART3 submask should be 0x7 (SUBSRCPND[26:24]).
+
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+---
+ arch/arm/mach-s3c2416/irq.c |    3 +--
+ arch/arm/mach-s3c2443/irq.c |    3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/mach-s3c2416/irq.c b/arch/arm/mach-s3c2416/irq.c
+index 7844857..00174da 100644
+--- a/arch/arm/mach-s3c2416/irq.c
++++ b/arch/arm/mach-s3c2416/irq.c
+@@ -172,8 +172,7 @@ static void s3c2416_irq_demux_uart3(unsigned int irq, struct irq_desc *desc)
+ }
+ 
+ #define INTMSK_UART3	(1UL << (IRQ_S3C2443_UART3 - IRQ_EINT0))
+-#define SUBMSK_UART3	(0xf << (IRQ_S3C2443_RX3 - S3C2410_IRQSUB(0)))
+-
++#define SUBMSK_UART3	(0x7 << (IRQ_S3C2443_RX3 - S3C2410_IRQSUB(0)))
+ 
+ static void s3c2416_irq_uart3_mask(unsigned int irqno)
+ {
+diff --git a/arch/arm/mach-s3c2443/irq.c b/arch/arm/mach-s3c2443/irq.c
+index df2b8db..8934247 100644
+--- a/arch/arm/mach-s3c2443/irq.c
++++ b/arch/arm/mach-s3c2443/irq.c
+@@ -170,8 +170,7 @@ static void s3c2443_irq_demux_uart3(unsigned int irq, struct irq_desc *desc)
+ }
+ 
+ #define INTMSK_UART3	(1UL << (IRQ_S3C2443_UART3 - IRQ_EINT0))
+-#define SUBMSK_UART3	(0xf << (IRQ_S3C2443_RX3 - S3C2410_IRQSUB(0)))
+-
++#define SUBMSK_UART3	(0x7 << (IRQ_S3C2443_RX3 - S3C2410_IRQSUB(0)))
+ 
+ static void s3c2443_irq_uart3_mask(unsigned int irqno)
+ {
+-- 
+1.6.2.5
