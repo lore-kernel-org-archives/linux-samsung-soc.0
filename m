@@ -1,39 +1,136 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH] ARM: S5PV310: Set bit 22 in the PL310 (cache
- controller) AuxCtlr register
-Date: Wed, 17 Nov 2010 09:07:28 +0000
-Message-ID: <1289984848.2351.2.camel@e102109-lin.cambridge.arm.com>
-References: <1289976931-9759-1-git-send-email-kgene.kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: s5pv310: Correct data alignment in headsmp.S for
+	CONFIG_THUMB2_KERNEL
+Date: Thu, 25 Nov 2010 09:07:18 +0900
+Message-ID: <006301cb8c34$bb650920$322f1b60$%kim@samsung.com>
+References: <1289913260-8772-1-git-send-email-dave.martin@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:37733 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932635Ab0KQJTb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Nov 2010 04:19:31 -0500
-In-Reply-To: <1289976931-9759-1-git-send-email-kgene.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1289913260-8772-1-git-send-email-dave.martin@linaro.org>
+Content-language: ko
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Dave Martin' <dave.martin@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, =?ks_c_5601-1987?B?vK29wsO2L1MvVyBTb2x1dGlvbrCzud/GwChTLkxTSSkvRQ==?= =?ks_c_5601-1987?B?NSjDpcDTKS+777y6wPzA2g==?= <sc.suh@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>, stable@kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>
 
-On Wed, 2010-11-17 at 06:55 +0000, Kukjin Kim wrote:
-> --- a/arch/arm/mach-s5pv310/cpu.c
-> +++ b/arch/arm/mach-s5pv310/cpu.c
-> @@ -168,7 +168,7 @@ static int __init s5pv310_l2x0_cache_init(void)
->         __raw_writel(L2X0_DYNAMIC_CLK_GATING_EN | L2X0_STNDBY_MODE_EN,
->                      S5P_VA_L2CC + L2X0_POWER_CTRL);
+Dave Martin wrote:
 > 
-> -       l2x0_init(S5P_VA_L2CC, 0x7C070001, 0xC200ffff);
-> +       l2x0_init(S5P_VA_L2CC, 0x7C470001, 0xC200ffff);
+> Directives such as .long and .word do not magically cause the
+> assembler location counter to become aligned in gas.  As a
+> result, using these directives in code sections can result in
+> misaligned data words when building a Thumb-2 kernel
+> (CONFIG_THUMB2_KERNEL).
+> 
+> This is a Bad Thing, since the ABI permits the compiler to
+> assume that fundamental types of word size or above are word-
+> aligned when accessing them from C.  If the data is not really
+> word-aligned, this can cause impaired performance and stray
+> alignment faults in some circumstances.
+> 
+> In general, the following rules should be applied when using
+> data word declaration directives inside code sections:
+> 
+>     * .quad and .double:
+>          .align 3
+> 
+>     * .long, .word, .single, .float:
+>          .align (or .align 2)
+> 
+>     * .short:
+>         No explicit alignment required, since Thumb-2
+>         instructions are always 2 or 4 bytes in size.
+>         immediately after an instruction.
+> 
+> Applies cleanly on v2.6.37-rc1.
+> 
+> Signed-off-by: Dave Martin <dave.martin@linaro.org>
+> ---
+>  arch/arm/mach-s5pv310/headsmp.S |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-s5pv310/headsmp.S b/arch/arm/mach-
+> s5pv310/headsmp.S
+> index 164b7b0..65f8574 100644
+> --- a/arch/arm/mach-s5pv310/headsmp.S
+> +++ b/arch/arm/mach-s5pv310/headsmp.S
+> @@ -37,5 +37,6 @@ pen:	ldr	r7, [r6]
+>  	 */
+>  	b	secondary_startup
+> 
+> +	.align
+>  1:	.long	.
+>  	.long	pen_release
+> --
 
-The patch is fine.
+Hi Dave,
 
-But I think we should also set this bit in the cache-l2x0.c file if
-PL310. That's such a fundamental issue and it's easy to miss in the
-platform code.
+Following is from Mr. Suh who is my team member.
+Please refer to that.
 
--- 
-Catalin
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+---
+
+Dear Mr. Martin,
+
+As far as I know, gas adds padding data not to generate misaligned data.
+In your word, gas cannot give any additional treat on assembly code.
+There is a mismatch.
+ 
+Can you give me more comments?
+When I make mis-aligned data like below, gas automatically gives pad.
+During test, I use gcc and gas from Linaro for Ubuntu.
+gcc version 4.5.1 (Ubuntu/Linaro 4.5.1-7ubuntu1) 
+GNU assembler version 2.20.51 (arm-linux-gnueabi) using BFD version (GNU
+Binutils for Ubuntu) 2.20.51.20100908
+ 
+BRs,
+        Suh.
+ 
+modified source to test:
+ENTRY(s5pv310_secondary_startup)
+        mrc     p15, 0, r0, c0, c0, 5
+        and     r0, r0, #15
+        adr     r4, 1f
+        ldmia   r4, {r5, r6}
+        sub     r4, r4, r5
+        add     r6, r6, r4
+pen:    ldr     r7, [r6]
+        cmp     r7, r0
+        bne     pen
+        /*
+         * we've been released from the holding pen: secondary_stack
+         * should now contain the SVC stack for this core
+         */
+        b       secondary_startup
+        nop
+1:      .long   .
+        .long   pen_release
+ 
+ 
+disassembled data:
+8000c832 <pen>:
+8000c832:       6837            ldr     r7, [r6, #0]
+8000c834:       4287            cmp     r7, r0
+8000c836:       d1fc            bne.n   8000c832 <pen>
+8000c838:       f7fb bc00       b.w     8000803c <__bss_stop+0xffc3753c>
+8000c83c:       bf00            nop
+8000c83e:       c83e            .short  0xc83e
+8000c840:       36208000        .word   0x36208000
+8000c844:       bf008039        .word   0xbf008039
