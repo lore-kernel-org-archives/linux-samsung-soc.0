@@ -1,81 +1,31 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: s5pv310: Correct data alignment in headsmp.S for
-	CONFIG_THUMB2_KERNEL
-Date: Thu, 25 Nov 2010 09:07:18 +0900
-Message-ID: <006301cb8c34$bb650920$322f1b60$%kim@samsung.com>
-References: <1289913260-8772-1-git-send-email-dave.martin@linaro.org>
+Subject: [GIT PULL] Samsung fixes for 2.6.37-rc4
+Date: Thu, 25 Nov 2010 13:21:16 +0900
+Message-ID: <008201cb8c58$363980e0$a2ac82a0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1289913260-8772-1-git-send-email-dave.martin@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:10331 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751245Ab0KYEUx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 24 Nov 2010 23:20:53 -0500
 Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Dave Martin' <dave.martin@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, =?ks_c_5601-1987?B?vK29wsO2L1MvVyBTb2x1dGlvbrCzud/GwChTLkxTSSkvRQ==?= =?ks_c_5601-1987?B?NSjDpcDTKS+777y6wPzA2g==?= <sc.suh@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Linus Torvalds' <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-Dave Martin wrote:
-> 
-> Directives such as .long and .word do not magically cause the
-> assembler location counter to become aligned in gas.  As a
-> result, using these directives in code sections can result in
-> misaligned data words when building a Thumb-2 kernel
-> (CONFIG_THUMB2_KERNEL).
-> 
-> This is a Bad Thing, since the ABI permits the compiler to
-> assume that fundamental types of word size or above are word-
-> aligned when accessing them from C.  If the data is not really
-> word-aligned, this can cause impaired performance and stray
-> alignment faults in some circumstances.
-> 
-> In general, the following rules should be applied when using
-> data word declaration directives inside code sections:
-> 
->     * .quad and .double:
->          .align 3
-> 
->     * .long, .word, .single, .float:
->          .align (or .align 2)
-> 
->     * .short:
->         No explicit alignment required, since Thumb-2
->         instructions are always 2 or 4 bytes in size.
->         immediately after an instruction.
-> 
-> Applies cleanly on v2.6.37-rc1.
-> 
-> Signed-off-by: Dave Martin <dave.martin@linaro.org>
-> ---
->  arch/arm/mach-s5pv310/headsmp.S |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s5pv310/headsmp.S b/arch/arm/mach-
-> s5pv310/headsmp.S
-> index 164b7b0..65f8574 100644
-> --- a/arch/arm/mach-s5pv310/headsmp.S
-> +++ b/arch/arm/mach-s5pv310/headsmp.S
-> @@ -37,5 +37,6 @@ pen:	ldr	r7, [r6]
->  	 */
->  	b	secondary_startup
-> 
-> +	.align
->  1:	.long	.
->  	.long	pen_release
-> --
+Hi Linus,
 
-Hi Dave,
+Please pull Samsung fixes from:
 
-Following is from Mr. Suh who is my team member.
-Please refer to that.
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+s5p-fixes-for-linus
+
+These things are for small fix on 2.6.37-rc4.
+If any problems, please let me know.
 
 Thanks.
 
@@ -85,52 +35,36 @@ Kgene.
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
 
----
+The following changes since commit 3561d43fd289f590fdae672e5eb831b8d5cf0bf6:
 
-Dear Mr. Martin,
+  Linux 2.6.37-rc3 (2010-11-21 15:18:56 -0800)
 
-As far as I know, gas adds padding data not to generate misaligned data.
-In your word, gas cannot give any additional treat on assembly code.
-There is a mismatch.
- 
-Can you give me more comments?
-When I make mis-aligned data like below, gas automatically gives pad.
-During test, I use gcc and gas from Linaro for Ubuntu.
-gcc version 4.5.1 (Ubuntu/Linaro 4.5.1-7ubuntu1) 
-GNU assembler version 2.20.51 (arm-linux-gnueabi) using BFD version (GNU
-Binutils for Ubuntu) 2.20.51.20100908
- 
-BRs,
-        Suh.
- 
-modified source to test:
-ENTRY(s5pv310_secondary_startup)
-        mrc     p15, 0, r0, c0, c0, 5
-        and     r0, r0, #15
-        adr     r4, 1f
-        ldmia   r4, {r5, r6}
-        sub     r4, r4, r5
-        add     r6, r6, r4
-pen:    ldr     r7, [r6]
-        cmp     r7, r0
-        bne     pen
-        /*
-         * we've been released from the holding pen: secondary_stack
-         * should now contain the SVC stack for this core
-         */
-        b       secondary_startup
-        nop
-1:      .long   .
-        .long   pen_release
- 
- 
-disassembled data:
-8000c832 <pen>:
-8000c832:       6837            ldr     r7, [r6, #0]
-8000c834:       4287            cmp     r7, r0
-8000c836:       d1fc            bne.n   8000c832 <pen>
-8000c838:       f7fb bc00       b.w     8000803c <__bss_stop+0xffc3753c>
-8000c83c:       bf00            nop
-8000c83e:       c83e            .short  0xc83e
-8000c840:       36208000        .word   0x36208000
-8000c844:       bf008039        .word   0xbf008039
+are available in the git repository at:
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+s5p-fixes-for-linus
+
+Abhilash Kesavan (3):
+      ARM: S3C24XX: Fix Demux error in UART3 irqs on S3C2443 and S3C2416
+      ARM: S3C24XX: Fix UART3 submask on S3C2416 and S3C2443
+      ARM: S5PV210: Fix sysdev related warning messages
+
+Darius Augulis (1):
+      ARM: S3C64XX: fix uart clock setup for mini6410/real6410
+
+Kukjin Kim (1):
+      ARM: S3C24XX: Fix wrong s3c_gpio_cfgpull
+
+Vasily Khoruzhick (1):
+      ARM: S3C2410: Adapt h1940-bluetooth to gpiolib changes
+
+ arch/arm/mach-s3c2410/h1940-bluetooth.c      |    8 ++++----
+ arch/arm/mach-s3c2416/irq.c                  |    5 ++---
+ arch/arm/mach-s3c2443/irq.c                  |    5 ++---
+ arch/arm/mach-s3c64xx/mach-mini6410.c        |    2 +-
+ arch/arm/mach-s3c64xx/mach-real6410.c        |    2 +-
+ arch/arm/mach-s5pv210/mach-smdkc110.c        |    1 +
+ arch/arm/mach-s5pv210/mach-smdkv210.c        |    1 +
+ arch/arm/plat-s3c24xx/spi-bus0-gpe11_12_13.c |    6 +++---
+ arch/arm/plat-s3c24xx/spi-bus1-gpd8_9_10.c   |    6 +++---
+ arch/arm/plat-s3c24xx/spi-bus1-gpg5_6_7.c    |    6 +++---
+ 10 files changed, 21 insertions(+), 21 deletions(-)
