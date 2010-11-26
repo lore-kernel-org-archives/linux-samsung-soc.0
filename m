@@ -1,100 +1,83 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH 2/3] ARM: S3C64XX: Convert S3C64xx irq-eint to use new irq_ methods
-Date: Thu, 25 Nov 2010 15:18:28 +0000
-Message-ID: <1290698309-7691-2-git-send-email-broonie@opensource.wolfsonmicro.com>
-References: <1290698309-7691-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: Darius Augulis <augulis.darius@gmail.com>
+Subject: Re: [GIT PULL] Samsung fixes for 2.6.37-rc4
+Date: Fri, 26 Nov 2010 20:26:46 +0200
+Message-ID: <4CEFFBE6.9040909@gmail.com>
+References: <008201cb8c58$363980e0$a2ac82a0$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:51103 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751793Ab0KYPSd (ORCPT
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:38344 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751798Ab0KZS0x (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Nov 2010 10:18:33 -0500
-In-Reply-To: <1290698309-7691-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+	Fri, 26 Nov 2010 13:26:53 -0500
+In-Reply-To: <008201cb8c58$363980e0$a2ac82a0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-Kernel 2.6.37 adds new interrupt methods which take a struct irq_data
-rather than an irq number. Conver S3C64xx irq-eint to use this with a
-simple textual substitution.
+Hi Kukjin,
 
-Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
----
- arch/arm/mach-s3c64xx/irq-eint.c |   32 ++++++++++++++++----------------
- 1 files changed, 16 insertions(+), 16 deletions(-)
+you have missed "serial: samsung: fix device name" again.
+Please, don't forget to add it to your tree, better do it right now. 
+Perhaps it's fifth or sixth time when remind about that...
 
-diff --git a/arch/arm/mach-s3c64xx/irq-eint.c b/arch/arm/mach-s3c64xx/irq-eint.c
-index 1a1aa5d..169ee29 100644
---- a/arch/arm/mach-s3c64xx/irq-eint.c
-+++ b/arch/arm/mach-s3c64xx/irq-eint.c
-@@ -32,39 +32,39 @@
- #define eint_offset(irq)	((irq) - IRQ_EINT(0))
- #define eint_irq_to_bit(irq)	(1 << eint_offset(irq))
- 
--static inline void s3c_irq_eint_mask(unsigned int irq)
-+static inline void s3c_irq_eint_mask(struct irq_data *data)
- {
- 	u32 mask;
- 
- 	mask = __raw_readl(S3C64XX_EINT0MASK);
--	mask |= eint_irq_to_bit(irq);
-+	mask |= eint_irq_to_bit(data->irq);
- 	__raw_writel(mask, S3C64XX_EINT0MASK);
- }
- 
--static void s3c_irq_eint_unmask(unsigned int irq)
-+static void s3c_irq_eint_unmask(struct irq_data *data)
- {
- 	u32 mask;
- 
- 	mask = __raw_readl(S3C64XX_EINT0MASK);
--	mask &= ~eint_irq_to_bit(irq);
-+	mask &= ~eint_irq_to_bit(data->irq);
- 	__raw_writel(mask, S3C64XX_EINT0MASK);
- }
- 
--static inline void s3c_irq_eint_ack(unsigned int irq)
-+static inline void s3c_irq_eint_ack(struct irq_data *data)
- {
--	__raw_writel(eint_irq_to_bit(irq), S3C64XX_EINT0PEND);
-+	__raw_writel(eint_irq_to_bit(data->irq), S3C64XX_EINT0PEND);
- }
- 
--static void s3c_irq_eint_maskack(unsigned int irq)
-+static void s3c_irq_eint_maskack(struct irq_data *data)
- {
- 	/* compiler should in-line these */
--	s3c_irq_eint_mask(irq);
--	s3c_irq_eint_ack(irq);
-+	s3c_irq_eint_mask(data);
-+	s3c_irq_eint_ack(data);
- }
- 
--static int s3c_irq_eint_set_type(unsigned int irq, unsigned int type)
-+static int s3c_irq_eint_set_type(struct irq_data *data, unsigned int type)
- {
--	int offs = eint_offset(irq);
-+	int offs = eint_offset(data->irq);
- 	int pin, pin_val;
- 	int shift;
- 	u32 ctrl, mask;
-@@ -140,11 +140,11 @@ static int s3c_irq_eint_set_type(unsigned int irq, unsigned int type)
- 
- static struct irq_chip s3c_irq_eint = {
- 	.name		= "s3c-eint",
--	.mask		= s3c_irq_eint_mask,
--	.unmask		= s3c_irq_eint_unmask,
--	.mask_ack	= s3c_irq_eint_maskack,
--	.ack		= s3c_irq_eint_ack,
--	.set_type	= s3c_irq_eint_set_type,
-+	.irq_mask	= s3c_irq_eint_mask,
-+	.irq_unmask	= s3c_irq_eint_unmask,
-+	.irq_mask_ack	= s3c_irq_eint_maskack,
-+	.irq_ack	= s3c_irq_eint_ack,
-+	.irq_set_type	= s3c_irq_eint_set_type,
- 	.irq_set_wake	= s3c_irqext_wake,
- };
- 
--- 
-1.7.1
+thanks,
+Darius
+
+
+On 11/25/2010 06:21 AM, Kukjin Kim wrote:
+> Hi Linus,
+>
+> Please pull Samsung fixes from:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> s5p-fixes-for-linus
+>
+> These things are for small fix on 2.6.37-rc4.
+> If any problems, please let me know.
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim<kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+> The following changes since commit 3561d43fd289f590fdae672e5eb831b8d5cf0bf6:
+>
+>    Linux 2.6.37-rc3 (2010-11-21 15:18:56 -0800)
+>
+> are available in the git repository at:
+>     git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> s5p-fixes-for-linus
+>
+> Abhilash Kesavan (3):
+>        ARM: S3C24XX: Fix Demux error in UART3 irqs on S3C2443 and S3C2416
+>        ARM: S3C24XX: Fix UART3 submask on S3C2416 and S3C2443
+>        ARM: S5PV210: Fix sysdev related warning messages
+>
+> Darius Augulis (1):
+>        ARM: S3C64XX: fix uart clock setup for mini6410/real6410
+>
+> Kukjin Kim (1):
+>        ARM: S3C24XX: Fix wrong s3c_gpio_cfgpull
+>
+> Vasily Khoruzhick (1):
+>        ARM: S3C2410: Adapt h1940-bluetooth to gpiolib changes
+>
+>   arch/arm/mach-s3c2410/h1940-bluetooth.c      |    8 ++++----
+>   arch/arm/mach-s3c2416/irq.c                  |    5 ++---
+>   arch/arm/mach-s3c2443/irq.c                  |    5 ++---
+>   arch/arm/mach-s3c64xx/mach-mini6410.c        |    2 +-
+>   arch/arm/mach-s3c64xx/mach-real6410.c        |    2 +-
+>   arch/arm/mach-s5pv210/mach-smdkc110.c        |    1 +
+>   arch/arm/mach-s5pv210/mach-smdkv210.c        |    1 +
+>   arch/arm/plat-s3c24xx/spi-bus0-gpe11_12_13.c |    6 +++---
+>   arch/arm/plat-s3c24xx/spi-bus1-gpd8_9_10.c   |    6 +++---
+>   arch/arm/plat-s3c24xx/spi-bus1-gpg5_6_7.c    |    6 +++---
+>   10 files changed, 21 insertions(+), 21 deletions(-)
+>
