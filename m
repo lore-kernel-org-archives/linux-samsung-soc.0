@@ -1,28 +1,81 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: Re: [PATCH RESEND v3] ARM: s3c2442: Setup gpio {set,get}_pull callbacks
-Date: Tue, 30 Nov 2010 17:01:02 +0200
-Message-ID: <201011301701.03443.anarsoul@gmail.com>
-References: <000201cb8fae$4d61fd20$e825f760$%kim@samsung.com> <201011301633.05545.anarsoul@gmail.com> <4CF50FD5.1090705@metafoo.de>
+From: Darius Augulis <augulis.darius@gmail.com>
+Subject: Re: [GIT PULL] Samsung fixes for 2.6.37-rc4
+Date: Tue, 30 Nov 2010 17:49:07 +0200
+Message-ID: <AANLkTinuYg2LzwZJUnpT0-b3Gi+vOJr-_fi4o874DAFG@mail.gmail.com>
+References: <008201cb8c58$363980e0$a2ac82a0$%kim@samsung.com>
+	<4CEFFBE6.9040909@gmail.com>
+	<006601cb9024$c9369110$5ba3b330$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f66.google.com ([209.85.215.66]:56641 "EHLO
-	mail-ew0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752837Ab0K3PBh (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:57959 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751311Ab0K3PtI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Nov 2010 10:01:37 -0500
-Received: by ewy24 with SMTP id 24so1369950ewy.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Nov 2010 07:01:36 -0800 (PST)
-In-Reply-To: <4CF50FD5.1090705@metafoo.de>
+	Tue, 30 Nov 2010 10:49:08 -0500
+In-Reply-To: <006601cb9024$c9369110$5ba3b330$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Abdoulaye Walsimou GAYE' <awg@embtoolkit.org>
+To: Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Tuesday 30 November 2010 16:53:09 Lars-Peter Clausen wrote:
+Hi Ben, Kukjin,
 
-> Both the cpu init code and the machine init code are run at arch_initcall.
+could you please both find out who must 'handle' it?
+Do you think it's normal to force people to ping you for the same four
+lines patch for 4 months or more?
+I think, it's at least not optimal and not good for kernel development process.
 
-Yeah, you're right.
+thanks,
+Darius
+
+
+On Tue, Nov 30, 2010 at 2:23 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Darius Augulis wrote:
+>>
+>> Hi Kukjin,
+>>
+> Hi,
+>
+>> you have missed "serial: samsung: fix device name" again.
+>> Please, don't forget to add it to your tree, better do it right now.
+>> Perhaps it's fifth or sixth time when remind about that...
+>>
+> I remember, I've replied about that like following.
+> Maybe you missed...
+>
+> ---
+>> you have missed "serial: samsung: fix device name" which is hanging here
+>> for a long time and was decided to merge in 2.6.37-rc1.
+>> Please, pick it up.
+>>
+> Hmm...I thought it should be handled by Ben Dooks at that time.
+>
+> Anyway, as Ben said, I'm thinking it should be sent upstream when merge
+> window
+> even though have missed it in the last merge window.
+>
+> However, if Ben is ok to merge this during 37-rc, will merge it into
+> s5p-fixes-
+> for-linus for 37-rc.
+> ---
+>
+> But I still thinking it should be handled by Ben Dooks...
+
+handle what? You have Ben ack to merge it. I'm confused how 'optimal'
+is development process when have to ping the same people for the same
+four lines patch for 4 months. You both  Do you think I really have to
+ask help for arm, serial or linux-stable maintainers to 'hadle' this?
+Because I gave up believing it's possible to do by samsung
+maintainers.
+
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+>
