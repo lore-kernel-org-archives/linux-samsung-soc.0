@@ -1,215 +1,60 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH RESEND v3] ARM: s3c2442: Setup gpio {set,get}_pull callbacks
-Date: Mon, 29 Nov 2010 12:26:39 +0200
-Message-ID: <1291026399-14873-1-git-send-email-anarsoul@gmail.com>
-References: <000201cb8fae$4d61fd20$e825f760$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [GIT PULL] Samsung fixes for 2.6.37-rc4
+Date: Tue, 30 Nov 2010 09:23:13 +0900
+Message-ID: <006601cb9024$c9369110$5ba3b330$%kim@samsung.com>
+References: <008201cb8c58$363980e0$a2ac82a0$%kim@samsung.com>
+ <4CEFFBE6.9040909@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:37481 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752569Ab0K2KaJ (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:12355 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753337Ab0K3AX1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Nov 2010 05:30:09 -0500
-Received: by eye27 with SMTP id 27so1798610eye.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Nov 2010 02:30:08 -0800 (PST)
-In-Reply-To: <000201cb8fae$4d61fd20$e825f760$%kim@samsung.com>
+	Mon, 29 Nov 2010 19:23:27 -0500
+In-reply-to: <4CEFFBE6.9040909@gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Lars-Peter Clausen <lars@metafoo.de>, linux-samsung-soc@vger.kernel.org
-Cc: Vasily Khoruzhick <anarsoul@gmail.com>
+To: 'Darius Augulis' <augulis.darius@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-Currently the {set,get}_pull callbacks of the s3c24xx_gpiocfg_default structure
-are initalized via s3c_gpio_{get,set}pull_1up. This results in a linker
-error when compiling kernel for s3c2442:
+Darius Augulis wrote:
+> 
+> Hi Kukjin,
+> 
+Hi,
 
-arch/arm/plat-s3c24xx/built-in.o:(.data+0x13f4): undefined reference to
-`s3c_gpio_getpull_1up'
-arch/arm/plat-s3c24xx/built-in.o:(.data+0x13f8): undefined reference to
-`s3c_gpio_setpull_1up'
+> you have missed "serial: samsung: fix device name" again.
+> Please, don't forget to add it to your tree, better do it right now.
+> Perhaps it's fifth or sixth time when remind about that...
+> 
+I remember, I've replied about that like following.
+Maybe you missed...
 
-The s3c2442 has pulldowns instead of pullups compared to the s3c2440.
-The method of controlling them is the same though.
-So this patch modifies the existing s3c_gpio_{get,set}pull_1up helper functions
-to take an additional parameter deciding whether the pin has a pullup or pulldown.
-The s3c_gpio_{get,set}pull_1{down,up} functions then wrap that functions passing
-either S3C_GPIO_PULL_UP or S3C_GPIO_PULL_DOWN.
-
-Furthermore this patch sets up the s3c24xx_gpiocfg_default.{get,set}_pull fields
-in the s3c2442 cpu init function to the new pulldown helper functions.
-
-Based on patch from "Lars-Peter Clausen" <lars@metafoo.de>
-
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
 ---
-v2: adapt patch for 2.6.37-rc1
-v3: restore default pull callbacks, add default pull callbacks for s3c2442
- arch/arm/mach-s3c2440/Kconfig                      |    1 +
- arch/arm/mach-s3c2440/s3c2442.c                    |    7 +++
- arch/arm/plat-s3c24xx/gpiolib.c                    |    9 +++-
- arch/arm/plat-samsung/gpio-config.c                |   44 ++++++++++++++++---
- .../plat-samsung/include/plat/gpio-cfg-helpers.h   |   11 +++++
- 5 files changed, 63 insertions(+), 9 deletions(-)
+> you have missed "serial: samsung: fix device name" which is hanging here
+> for a long time and was decided to merge in 2.6.37-rc1.
+> Please, pick it up.
+> 
+Hmm...I thought it should be handled by Ben Dooks at that time.
 
-diff --git a/arch/arm/mach-s3c2440/Kconfig b/arch/arm/mach-s3c2440/Kconfig
-index ff024a6..478fae0 100644
---- a/arch/arm/mach-s3c2440/Kconfig
-+++ b/arch/arm/mach-s3c2440/Kconfig
-@@ -18,6 +18,7 @@ config CPU_S3C2440
- config CPU_S3C2442
- 	bool
- 	select CPU_ARM920T
-+	select S3C_GPIO_PULL_DOWN
- 	select S3C2410_CLOCK
- 	select S3C2410_GPIO
- 	select S3C2410_PM if PM
-diff --git a/arch/arm/mach-s3c2440/s3c2442.c b/arch/arm/mach-s3c2440/s3c2442.c
-index 188ad1e..0dbc91c 100644
---- a/arch/arm/mach-s3c2440/s3c2442.c
-+++ b/arch/arm/mach-s3c2440/s3c2442.c
-@@ -32,6 +32,7 @@
- #include <linux/interrupt.h>
- #include <linux/ioport.h>
- #include <linux/mutex.h>
-+#include <linux/gpio.h>
- #include <linux/clk.h>
- #include <linux/io.h>
- 
-@@ -44,6 +45,10 @@
- #include <plat/clock.h>
- #include <plat/cpu.h>
- 
-+#include <plat/gpio-core.h>
-+#include <plat/gpio-cfg.h>
-+#include <plat/gpio-cfg-helpers.h>
-+
- /* S3C2442 extended clock support */
- 
- static unsigned long s3c2442_camif_upll_round(struct clk *clk,
-@@ -160,6 +165,8 @@ static struct sys_device s3c2442_sysdev = {
- int __init s3c2442_init(void)
- {
- 	printk("S3C2442: Initialising architecture\n");
-+	s3c24xx_gpiocfg_default.set_pull = s3c_gpio_setpull_1down;
-+	s3c24xx_gpiocfg_default.get_pull = s3c_gpio_getpull_1down;
- 
- 	return sysdev_register(&s3c2442_sysdev);
- }
-diff --git a/arch/arm/plat-s3c24xx/gpiolib.c b/arch/arm/plat-s3c24xx/gpiolib.c
-index 24c6f5a..b805dab 100644
---- a/arch/arm/plat-s3c24xx/gpiolib.c
-+++ b/arch/arm/plat-s3c24xx/gpiolib.c
-@@ -82,8 +82,13 @@ static struct s3c_gpio_cfg s3c24xx_gpiocfg_banka = {
- struct s3c_gpio_cfg s3c24xx_gpiocfg_default = {
- 	.set_config	= s3c_gpio_setcfg_s3c24xx,
- 	.get_config	= s3c_gpio_getcfg_s3c24xx,
--	.set_pull	= s3c_gpio_setpull_1up,
--	.get_pull	= s3c_gpio_getpull_1up,
-+#if defined(CONFIG_S3C_GPIO_PULL_UP)
-+	.set_pull       = s3c_gpio_setpull_1up,
-+	.get_pull       = s3c_gpio_getpull_1up,
-+#elif defined(CONFIG_S3C_GPIO_PULL_DOWN)
-+	.set_pull	= s3c_gpio_setpull_1down,
-+	.get_pull	= s3c_gpio_getpull_1down,
-+#endif
- };
- 
- struct s3c_gpio_chip s3c24xx_gpios[] = {
-diff --git a/arch/arm/plat-samsung/gpio-config.c b/arch/arm/plat-samsung/gpio-config.c
-index b732b77..ac7f13f 100644
---- a/arch/arm/plat-samsung/gpio-config.c
-+++ b/arch/arm/plat-samsung/gpio-config.c
-@@ -280,16 +280,17 @@ s3c_gpio_pull_t s3c_gpio_getpull_updown(struct s3c_gpio_chip *chip,
- }
- #endif
- 
--#ifdef CONFIG_S3C_GPIO_PULL_UP
--int s3c_gpio_setpull_1up(struct s3c_gpio_chip *chip,
--			 unsigned int off, s3c_gpio_pull_t pull)
-+#if defined(CONFIG_S3C_GPIO_PULL_UP) || defined(CONFIG_S3C_GPIO_PULL_DOWN)
-+static int s3c_gpio_setpull_1(struct s3c_gpio_chip *chip,
-+			 unsigned int off, s3c_gpio_pull_t pull,
-+			 s3c_gpio_pull_t updown)
- {
- 	void __iomem *reg = chip->base + 0x08;
- 	u32 pup = __raw_readl(reg);
- 
- 	pup = __raw_readl(reg);
- 
--	if (pup == S3C_GPIO_PULL_UP)
-+	if (pup == updown)
- 		pup &= ~(1 << off);
- 	else if (pup == S3C_GPIO_PULL_NONE)
- 		pup |= (1 << off);
-@@ -300,17 +301,46 @@ int s3c_gpio_setpull_1up(struct s3c_gpio_chip *chip,
- 	return 0;
- }
- 
--s3c_gpio_pull_t s3c_gpio_getpull_1up(struct s3c_gpio_chip *chip,
--				     unsigned int off)
-+static s3c_gpio_pull_t s3c_gpio_getpull_1(struct s3c_gpio_chip *chip,
-+				     unsigned int off, s3c_gpio_pull_t updown)
- {
- 	void __iomem *reg = chip->base + 0x08;
- 	u32 pup = __raw_readl(reg);
- 
- 	pup &= (1 << off);
--	return pup ? S3C_GPIO_PULL_NONE : S3C_GPIO_PULL_UP;
-+	return pup ? S3C_GPIO_PULL_NONE : updown;
-+}
-+#endif /* CONFIG_S3C_GPIO_PULL_UP || CONFIG_S3C_GPIO_PULL_DOWN */
-+
-+#ifdef CONFIG_S3C_GPIO_PULL_UP
-+s3c_gpio_pull_t s3c_gpio_getpull_1up(struct s3c_gpio_chip *chip,
-+				     unsigned int off)
-+{
-+	return s3c_gpio_getpull_1(chip, off, S3C_GPIO_PULL_UP);
-+}
-+
-+int s3c_gpio_setpull_1up(struct s3c_gpio_chip *chip,
-+			 unsigned int off, s3c_gpio_pull_t pull)
-+{
-+	return s3c_gpio_setpull_1(chip, off, pull, S3C_GPIO_PULL_UP);
- }
- #endif /* CONFIG_S3C_GPIO_PULL_UP */
- 
-+#ifdef CONFIG_S3C_GPIO_PULL_DOWN
-+s3c_gpio_pull_t s3c_gpio_getpull_1down(struct s3c_gpio_chip *chip,
-+				     unsigned int off)
-+{
-+	return s3c_gpio_getpull_1(chip, off, S3C_GPIO_PULL_DOWN);
-+}
-+
-+int s3c_gpio_setpull_1down(struct s3c_gpio_chip *chip,
-+			 unsigned int off, s3c_gpio_pull_t pull)
-+{
-+	return s3c_gpio_setpull_1(chip, off, pull, S3C_GPIO_PULL_DOWN);
-+}
-+#endif /* CONFIG_S3C_GPIO_PULL_DOWN */
-+
-+
- #ifdef CONFIG_S5P_GPIO_DRVSTR
- s5p_gpio_drvstr_t s5p_gpio_get_drvstr(unsigned int pin)
- {
-diff --git a/arch/arm/plat-samsung/include/plat/gpio-cfg-helpers.h b/arch/arm/plat-samsung/include/plat/gpio-cfg-helpers.h
-index 8fd65d8..0d2c570 100644
---- a/arch/arm/plat-samsung/include/plat/gpio-cfg-helpers.h
-+++ b/arch/arm/plat-samsung/include/plat/gpio-cfg-helpers.h
-@@ -210,6 +210,17 @@ extern s3c_gpio_pull_t s3c_gpio_getpull_1up(struct s3c_gpio_chip *chip,
- 					    unsigned int off);
- 
- /**
-+ * s3c_gpio_getpull_1down() - Get configuration for choice of down or none
-+ * @chip: The gpio chip that the GPIO pin belongs to
-+ * @off: The offset to the pin to get the configuration of.
-+ *
-+ * This helper function reads the state of the pull-down resistor for the
-+ * given GPIO in the same case as s3c_gpio_setpull_1down.
-+*/
-+extern s3c_gpio_pull_t s3c_gpio_getpull_1down(struct s3c_gpio_chip *chip,
-+					    unsigned int off);
-+
-+/**
-  * s3c_gpio_setpull_s3c2443() - Pull configuration for s3c2443.
-  * @chip: The gpio chip that is being configured.
-  * @off: The offset for the GPIO being configured.
--- 
-1.7.3.2
+Anyway, as Ben said, I'm thinking it should be sent upstream when merge
+window
+even though have missed it in the last merge window.
+
+However, if Ben is ok to merge this during 37-rc, will merge it into
+s5p-fixes-
+for-linus for 37-rc.
+---
+
+But I still thinking it should be handled by Ben Dooks...
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
