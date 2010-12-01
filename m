@@ -1,44 +1,59 @@
-From: Sangbeom Kim <sbkim73@samsung.com>
-Subject: [PATCH] ARM :S5P64X0 :add clock support for rtc
-Date: Wed,  1 Dec 2010 16:18:56 +0900
-Message-ID: <1291187936-21332-1-git-send-email-sbkim73@samsung.com>
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: Re: [PATCH v5] ARM: s3c244x: Fix mess with gpio {set,get}_pull callbacks
+Date: Wed, 1 Dec 2010 12:17:41 +0200
+Message-ID: <201012011217.41602.anarsoul@gmail.com>
+References: <4CF55785.5090403@metafoo.de> <1291147949-18812-1-git-send-email-anarsoul@gmail.com> <001301cb9129$15f1b5c0$41d52140$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:39071 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751517Ab0LAHc4 (ORCPT
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:42480 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752623Ab0LAKSI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Dec 2010 02:32:56 -0500
+	Wed, 1 Dec 2010 05:18:08 -0500
+Received: by eye27 with SMTP id 27so3348832eye.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Dec 2010 02:18:07 -0800 (PST)
+In-Reply-To: <001301cb9129$15f1b5c0$41d52140$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, Atul Dahiya <atul.dahiya@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Lars-Peter Clausen' <lars@metafoo.de>, 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Abdoulaye Walsimou GAYE' <awg@embtoolkit.org>
 
-From: Atul Dahiya <atul.dahiya@samsung.com>
+On Wednesday 01 December 2010 09:26:31 Kukjin Kim wrote:
 
-This patch adds rtc clock for S5P6450.
+> How about following...
+> 
+> +void __init s3c2440_map_io(void)
+> +{
+> +	s3c24xx_gpiocfg_default.set_pull = s3c_gpio_setpull_1up;
+> +	s3c24xx_gpiocfg_default.get_pull = s3c_gpio_getpull_1up;
+> +
+> +	s3c244x_map_io();
+> +}
 
-Signed-off-by: Atul Dahiya <atul.dahiya@samsung.com>
-Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
----
- arch/arm/mach-s5p64x0/clock-s5p6450.c |    6 ++++++
- 1 files changed, 6 insertions(+), 0 deletions(-)
+What's difference except order?
+ 
+> Yeah, however, in my opinion, need to add following during gpiolib_init().
+> 
+> @@ -222,6 +222,11 @@ static __init int s3c24xx_gpiolib_init(void)
+>                 if (!chip->config)
+>                         chip->config = &s3c24xx_gpiocfg_default;
+> 
+> +               if (!chip->config->set_pull)
+> +                       chip->config->set_pull = s3c_gpio_setpull_1up;
+> +               if (!chip->config->get_pull)
+> +                       chip->config->get_pull = s3c_gpio_getpull_1up;
+> +
+>                 s3c_gpiolib_add(chip);
+>         }
 
-diff --git a/arch/arm/mach-s5p64x0/clock-s5p6450.c b/arch/arm/mach-s5p64x0/clock-s5p6450.c
-index 7dbf3c9..8ba2b3c 100644
---- a/arch/arm/mach-s5p64x0/clock-s5p6450.c
-+++ b/arch/arm/mach-s5p64x0/clock-s5p6450.c
-@@ -231,6 +231,12 @@ static struct clk init_clocks_disable[] = {
- 		.enable		= s5p64x0_pclk_ctrl,
- 		.ctrlbit	= (1 << 5),
- 	}, {
-+		.name		= "rtc",
-+		.id		= -1,
-+		.parent		= &clk_pclk_low.clk,
-+		.enable		= s5p64x0_pclk_ctrl,
-+		.ctrlbit	= (1 << 6),
-+	}, {
- 		.name		= "adc",
- 		.id		= -1,
- 		.parent		= &clk_pclk_low.clk,
--- 
-1.6.6.1
+Pull callbacks are soc-specific, s3c24xx_gpiolib_init is common for all socs, 
+so we can't do like this.
+
+Btw, I've sent v6 version of patch, it still with empty line issues, should I 
+resend v7 version or maintainers can fixup it at their side? :)
+
+Regards
+Vasily
