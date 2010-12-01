@@ -1,87 +1,55 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v5] ARM: s3c244x: Fix mess with gpio {set,get}_pull
- callbacks
-Date: Wed, 01 Dec 2010 21:05:00 +0900
-Message-ID: <003c01cb914f$fc6d3350$f54799f0$%kim@samsung.com>
-References: <4CF55785.5090403@metafoo.de>
- <1291147949-18812-1-git-send-email-anarsoul@gmail.com>
- <001301cb9129$15f1b5c0$41d52140$%kim@samsung.com>
- <201012011217.41602.anarsoul@gmail.com>
+Subject: RE: [PATCH 3/3] ARM: S3C64XX: Use chip_data to store the shift for
+ EINTs
+Date: Wed, 01 Dec 2010 21:11:21 +0900
+Message-ID: <003d01cb9150$e0282690$a07873b0$%kim@samsung.com>
+References: <1290698309-7691-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <1290698309-7691-3-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <003101cb914d$1caf7040$560e50c0$%kim@samsung.com>
+ <20101201115535.GK24176@rakim.wolfsonmicro.main>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:35063 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752629Ab0LAMFP (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:8363 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751417Ab0LAMLh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Dec 2010 07:05:15 -0500
-Received: from epmmp2 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Wed, 1 Dec 2010 07:11:37 -0500
+Received: from epmmp2 (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LCR00H2X08P7A70@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 01 Dec 2010 21:05:13 +0900 (KST)
+ 2010)) with ESMTP id <0LCR000NI0JBW920@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 01 Dec 2010 21:11:35 +0900 (KST)
 Received: from DOKGENEKIM02 ([12.23.103.104])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LCR00J7808PSC@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 01 Dec 2010 21:05:13 +0900 (KST)
-In-reply-to: <201012011217.41602.anarsoul@gmail.com>
+ with ESMTPA id <0LCR00IVT0JBGS@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 01 Dec 2010 21:11:35 +0900 (KST)
+In-reply-to: <20101201115535.GK24176@rakim.wolfsonmicro.main>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Vasily Khoruzhick' <anarsoul@gmail.com>
-Cc: 'Lars-Peter Clausen' <lars@metafoo.de>, 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Abdoulaye Walsimou GAYE' <awg@embtoolkit.org>
+To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
-Vasily Khoruzhick wrote:
+Mark Brown wrote:
 > 
-> On Wednesday 01 December 2010 09:26:31 Kukjin Kim wrote:
+> On Wed, Dec 01, 2010 at 08:44:25PM +0900, Kukjin Kim wrote:
+> > Mark Brown wrote:
 > 
-> > How about following...
-> >
-> > +void __init s3c2440_map_io(void)
-> > +{
-> > +	s3c24xx_gpiocfg_default.set_pull = s3c_gpio_setpull_1up;
-> > +	s3c24xx_gpiocfg_default.get_pull = s3c_gpio_getpull_1up;
-> > +
-> > +	s3c244x_map_io();
-> > +}
+> > > This makes all the functions that use the shift slightly smaller, one
+> > > instruction in most cases but more for ack() and maskack().
 > 
-> What's difference except order?
+> > Uhm...I'm not sure to use chip_data for the eint_irq_to_bit() is best to
+us.
 > 
-Just same ordering is used in other Samsung S3C SoCs.
-Now actually doesn't matter it.
+> Could you elaborate on your concern here?  I can't think of anything
+> else we might want to include in the data, and avoiding the shifts
+> and/or dereferences seems useful for anyone doing interrupt heavy work.
 
-> > Yeah, however, in my opinion, need to add following during
-gpiolib_init().
-> >
-> > @@ -222,6 +222,11 @@ static __init int s3c24xx_gpiolib_init(void)
-> >                 if (!chip->config)
-> >                         chip->config = &s3c24xx_gpiocfg_default;
-> >
-> > +               if (!chip->config->set_pull)
-> > +                       chip->config->set_pull = s3c_gpio_setpull_1up;
-> > +               if (!chip->config->get_pull)
-> > +                       chip->config->get_pull = s3c_gpio_getpull_1up;
-> > +
-> >                 s3c_gpiolib_add(chip);
-> >         }
-> 
-> Pull callbacks are soc-specific, s3c24xx_gpiolib_init is common for all
-socs,
-> so we can't do like this.
-> 
-Yeah, right...it depends on each SoCs. But, if there is no setup it in
-map_io(), there is no functions of set_pull() and get_pull(). As you know,
-used s3c_gpio_{set,get}pull_1up as default before your patch...
-
-Hmm...however, I will think about its necessity again.
-
-> Btw, I've sent v6 version of patch, it still with empty line issues,
-should I
-> resend v7 version or maintainers can fixup it at their side? :)
-> 
-Ok..I will do it and will apply.
-Then, will be sent to Linus during 37-rc.
+Hehehe :-)
+I just thought it again, I agree with you. Your patch looks ok to me...will
+apply.
 
 Thanks.
 
