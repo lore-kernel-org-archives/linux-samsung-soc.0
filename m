@@ -1,29 +1,43 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: Re: [PATCH v4] ARM: s3c244x: Fix mess with gpio {set,get}_pull callbacks
-Date: Wed, 1 Dec 2010 08:19:03 +0200
-Message-ID: <201012010819.03728.anarsoul@gmail.com>
-References: <201011301701.03443.anarsoul@gmail.com> <4CF55785.5090403@metafoo.de> <000d01cb9118$9136c740$b3a455c0$%kim@samsung.com>
+From: Srinidhi Kasagar <srinidhikasagar@gmail.com>
+Subject: Re: [PATCH 1/8] ARM: SCU: Add common routines for secondary CPU bootup
+Date: Wed, 1 Dec 2010 11:51:42 +0530
+Message-ID: <AANLkTi=WHBqq5U8OzkMaprk=vzphZBV0HhLEDF-uAZxW@mail.gmail.com>
+References: <20101130171626.GA6165@oksana.dev.rtsoft.ru>
+	<20101130171658.GA24034@oksana.dev.rtsoft.ru>
+	<20101130233204.GB14383@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:61906 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751167Ab0LAGTb (ORCPT
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:55096 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751167Ab0LAGVn convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Dec 2010 01:19:31 -0500
-Received: by eye27 with SMTP id 27so3285219eye.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Nov 2010 22:19:29 -0800 (PST)
-In-Reply-To: <000d01cb9118$9136c740$b3a455c0$%kim@samsung.com>
+	Wed, 1 Dec 2010 01:21:43 -0500
+In-Reply-To: <20101130233204.GB14383@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Lars-Peter Clausen' <lars@metafoo.de>, 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Abdoulaye Walsimou GAYE' <awg@embtoolkit.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Anton Vorontsov <avorontsov@mvista.com>, Kukjin Kim <kgene.kim@samsung.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Tony Lindgren <tony@atomide.com>, Catalin Marinas <catalin.marinas@arm.com>, Jamie Iles <jamie.iles@picochip.com>, Colin Cross <ccross@android.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, =?ISO-8859-1?Q?Uwe_Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Wednesday 01 December 2010 07:28:17 Kukjin Kim wrote:
-> > >  	else if (pup == S3C_GPIO_PULL_NONE)
-> 
-> pull == S3C_GPIO_PULL_NONE?
+On Wed, Dec 1, 2010 at 5:02 AM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> On Tue, Nov 30, 2010 at 08:16:58PM +0300, Anton Vorontsov wrote:
 
-Yep, thanks
+[...]
+
+>> + =A0 =A0 sub =A0 =A0 r4, r4, r5
+>> + =A0 =A0 add =A0 =A0 r6, r6, r4
+>> +#if __LINUX_ARM_ARCH__ >=3D 7
+>> + =A0 =A0 dsb
+>> +#endif
+>
+> Another question though - probably for Linus though - why is the u850=
+0
+> code needing this dsb whereas other ARMv7 implementations don't appea=
+r
+> to require it?
+
+No strong reason, we can safely ignore this now.
+
+srinidhi
