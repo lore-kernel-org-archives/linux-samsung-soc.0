@@ -1,66 +1,1096 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [RFC 0/4] Porting s5p-fimc m2m/capture driver to videobuf2
-Date: Wed, 01 Dec 2010 15:35:49 +0100
-Message-ID: <1291214153-6335-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [RFC/PATCH 3/4] [media] s5p-fimc: Conversion to multiplanar formats
+Date: Wed, 01 Dec 2010 15:35:52 +0100
+Message-ID: <1291214153-6335-4-git-send-email-s.nawrocki@samsung.com>
+References: <1291214153-6335-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:58013 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754969Ab0LAOgO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Dec 2010 09:36:14 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1291214153-6335-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
+Conversion to multiplanar color formats and minor cleanup.
 
-The following patches are example of porting real v4l2 mem2mem and capture
-driver onto new videobuf 2.
-The first patch converts v4l2-mem2mem framework.
-Patch 2/4 converts s5p-fimc, both m2m and camera capture interface drivers.
-Except that it creates separate videobuf queue operation callback set for
-the m2m and capture video nodes.
-The third patch is na example of using in the driver the multiplane formats
-extension, which was posted by Pawel Osciak some time ago.
-The details of the multiplanar extension can be found here:
-https://patchwork.kernel.org/project/linux-media/list/?=osciak&submitter=4290&state=*&q=v6&archive=both
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/media/video/s5p-fimc/fimc-capture.c |  124 ++++-----
+ drivers/media/video/s5p-fimc/fimc-core.c    |  373 ++++++++++++++++-----------
+ drivers/media/video/s5p-fimc/fimc-core.h    |   36 ++--
+ drivers/media/video/s5p-fimc/fimc-reg.c     |   14 +-
+ 4 files changed, 300 insertions(+), 247 deletions(-)
 
-The driver implements only *_mplane ioctl handlers so in case of
-standard non-multiplane V4L2 application the buffers are converted on
-the fly in v4l2 ioctl handling code.
-
-The last patch just cleans up the driver by removing all locking from 
-ioctl and file operation handlers and using v4l core lock.
-
-
-The patch series contains:
-
-[PATCH 1/4] v4l: mem2mem: port to videobuf2
-[PATCH 2/4] [media] s5p-fimc: Porting to videobuf 2
-[PATCH 3/4] [media] s5p-fimc: Conversion to multiplanar formats
-[PATCH 4/4] [media] s5p-fimc: Use v4l core mutex in ioctl and file operations
-
-
-Full source tree containing the above patches as well as videobuf2, multiplane 
-extensions, CMA allocator and S5P MFC (video codec) driver will be available 
-within few hours at:
-http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/vb2-mfc-fimc
-The tree is based on 2.6.37-rc4.
-
-
-This is rather an initial version of vb2 and the drivers using it and 
-we are expecting further (minor) changes in vb2. 
-Nevertheless any comments at that point would be greatly appreciated.
-
-Thanks,
-Sylwester
-
-
---
-Sylwester Nawrocki
-Linux Platform Group
-Samsung Poland R&D Center
+diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
+index c8a29df..f366bb3 100644
+--- a/drivers/media/video/s5p-fimc/fimc-capture.c
++++ b/drivers/media/video/s5p-fimc/fimc-capture.c
+@@ -268,34 +268,16 @@ static int stop_streaming(struct vb2_queue *q)
+ 	return fimc_stop_capture(fimc);
+ }
+ 
+-static unsigned int get_plane_size(struct fimc_frame *frame, unsigned int plane)
++static unsigned int get_plane_size(struct fimc_frame *fr, unsigned int plane)
+ {
+-	unsigned long size = 0;
+-
+-	if (!frame || plane > frame->fmt->buff_cnt - 1)
++	if (!fr || plane >= fr->fmt->memplanes)
+ 		return 0;
+ 
+-	if (1 == frame->fmt->planes_cnt) {
+-		size = (frame->width * frame->height * frame->fmt->depth) >> 3;
+-	} else if (frame->fmt->planes_cnt <= 3) {
+-		switch (plane) {
+-		case 0:
+-			size = frame->width * frame->height;
+-			break;
+-		case 1:
+-		case 2:
+-			if (S5P_FIMC_YCBCR420 == frame->fmt->color
+-				&& 2 != frame->fmt->planes_cnt)
+-				size = (frame->width * frame->height) >> 2;
+-			else /* 422 */
+-				size = (frame->width * frame->height) >> 1;
+-			break;
+-		}
+-	} else {
+-		size = 0;
+-	}
++	dbg("%s: w: %d. h: %d. depth[%d]: %d",
++	    __func__, fr->width, fr->height, plane, fr->fmt->depth[plane]);
++
++	return fr->f_width * fr->f_height * fr->fmt->depth[plane] / 8;
+ 
+-	return size;
+ }
+ 
+ static int queue_negotiate(struct vb2_queue *vq, unsigned int *num_buffers,
+@@ -304,35 +286,32 @@ static int queue_negotiate(struct vb2_queue *vq, unsigned int *num_buffers,
+ 	struct fimc_ctx *ctx = vq->drv_priv;
+ 	struct fimc_fmt *fmt =	fmt = ctx->d_frame.fmt;
+ 
+-	if (fmt) {
+-		*num_planes = fmt->buff_cnt;
++	if (!fmt)
++		return -EINVAL;
+ 
+-		if (0 == *num_buffers)
+-			*num_buffers = 32;
++	*num_planes = fmt->memplanes;
+ 
+-		dbg("%s, buffer count=%d, plane count=%d",
+-		    __func__, *num_buffers, *num_planes);
+-		return 0;
+-	}
++	dbg("%s, buffer count=%d, plane count=%d",
++	    __func__, *num_buffers, *num_planes);
+ 
+-	return -EINVAL;
++	return 0;
+ }
+ 
+ static int plane_setup(struct vb2_queue *vq, unsigned int plane,
+ 				unsigned long *plane_size)
+ {
+ 	struct fimc_ctx *ctx = vq->drv_priv;
+-	struct fimc_frame *frame;
++	struct fimc_fmt *fmt = 	fmt = ctx->d_frame.fmt;
+ 
+-	frame = ctx_get_frame(ctx, vq->type);
+-	if (IS_ERR(frame))
+-		return PTR_ERR(frame);
++	if (!fmt || vq->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
++		return -EINVAL;
+ 
+-	if (plane >= frame->fmt->buff_cnt) {
+-		dbg("Got invalid plane number %d", plane);
++	if (plane >= ctx->d_frame.fmt->memplanes) {
++		err("Got invalid plane number %d", plane);
+ 		return -EINVAL;
+ 	}
+-	*plane_size = get_plane_size(frame, 0);
++
++	*plane_size = get_plane_size(&ctx->d_frame, plane);
+ 
+ 	dbg("plane: %u, plane_size: %lu", plane, *plane_size);
+ 	return 0;
+@@ -349,16 +328,13 @@ static int buffer_prepare(struct vb2_buffer *vb)
+ 	struct vb2_queue *vq = vb->vb2_queue;
+ 	struct fimc_ctx *ctx = vq->drv_priv;
+ 	struct v4l2_device *v4l2_dev = &ctx->fimc_dev->m2m.v4l2_dev;
+-	struct fimc_frame *frame;
+-	unsigned long size;
+ 	int i;
+ 
+-	frame = ctx_get_frame(ctx, vq->type);
+-	if (IS_ERR(frame))
+-		return PTR_ERR(frame);
++	if (!ctx->d_frame.fmt || vq->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
++		return -EINVAL;
+ 
+-	for (i = 0; i < frame->fmt->buff_cnt; i++) {
+-		size = get_plane_size(frame, i);
++	for (i = 0; i < ctx->d_frame.fmt->memplanes; i++) {
++		unsigned long size = get_plane_size(&ctx->d_frame, i);
+ 
+ 		if (vb2_plane_size(vb, i) < size) {
+ 			v4l2_err(v4l2_dev, "User buffer too small (%ld < %ld)\n",
+@@ -471,7 +447,6 @@ static int fimc_capture_close(struct file *file)
+ 
+ 	if (mutex_lock_interruptible(&fimc->lock))
+ 		return -ERESTARTSYS;
+-
+ 	dbg("pid: %d, state: 0x%lx", task_pid_nr(current), fimc->state);
+ 
+ 	if (--fimc->vid_cap.refcnt == 0) {
+@@ -539,7 +514,8 @@ static int fimc_vidioc_querycap_capture(struct file *file, void *priv,
+ 	strncpy(cap->card, fimc->pdev->name, sizeof(cap->card) - 1);
+ 	cap->bus_info[0] = 0;
+ 	cap->version = KERNEL_VERSION(1, 0, 0);
+-	cap->capabilities = V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_CAPTURE;
++	cap->capabilities = V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_CAPTURE |
++			    V4L2_CAP_VIDEO_CAPTURE_MPLANE;
+ 
+ 	return 0;
+ }
+@@ -580,19 +556,20 @@ static int sync_capture_fmt(struct fimc_ctx *ctx)
+ 	return 0;
+ }
+ 
+-static int fimc_cap_s_fmt(struct file *file, void *priv,
+-			     struct v4l2_format *f)
++static int fimc_cap_s_fmt_mplane(struct file *file, void *priv,
++				 struct v4l2_format *f)
+ {
+ 	struct fimc_ctx *ctx = priv;
+ 	struct fimc_dev *fimc = ctx->fimc_dev;
+ 	struct fimc_frame *frame;
+-	struct v4l2_pix_format *pix;
++	struct v4l2_pix_format_mplane *pix;
+ 	int ret;
++	int i;
+ 
+-	if (f->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
++	if (f->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
+ 		return -EINVAL;
+ 
+-	ret = fimc_vidioc_try_fmt(file, priv, f);
++	ret = fimc_vidioc_try_fmt_mplane(file, priv, f);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -603,10 +580,12 @@ static int fimc_cap_s_fmt(struct file *file, void *priv,
+ 		ret = -EBUSY;
+ 		goto sf_unlock;
+ 	}
++	if (vb2_is_streaming(&fimc->vid_cap.vbq) || fimc_capture_active(fimc))
++		return -EBUSY;
+ 
+ 	frame = &ctx->d_frame;
+ 
+-	pix = &f->fmt.pix;
++	pix = &f->fmt.pix_mp;
+ 	frame->fmt = find_format(f, FMT_FLAGS_M2M | FMT_FLAGS_CAM);
+ 	if (!frame->fmt) {
+ 		err("fimc target format not found\n");
+@@ -614,14 +593,17 @@ static int fimc_cap_s_fmt(struct file *file, void *priv,
+ 		goto sf_unlock;
+ 	}
+ 
++	for (i = 0; i < frame->fmt->colplanes; i++)
++		frame->payload[i] = pix->plane_fmt[i].bytesperline * pix->height;
++
+ 	/* Output DMA frame pixel size and offsets. */
+-	frame->f_width	= pix->bytesperline * 8 / frame->fmt->depth;
++	frame->f_width = pix->plane_fmt[0].bytesperline * 8
++			/ frame->fmt->depth[0];
+ 	frame->f_height = pix->height;
+ 	frame->width	= pix->width;
+ 	frame->height	= pix->height;
+ 	frame->o_width	= pix->width;
+ 	frame->o_height = pix->height;
+-	frame->size	= (pix->width * pix->height * frame->fmt->depth) >> 3;
+ 	frame->offs_h	= 0;
+ 	frame->offs_v	= 0;
+ 
+@@ -789,7 +771,7 @@ static int fimc_cap_streamoff(struct file *file, void *priv,
+ }
+ 
+ static int fimc_cap_reqbufs(struct file *file, void *priv,
+-			  struct v4l2_requestbuffers *reqbufs)
++			    struct v4l2_requestbuffers *reqbufs)
+ {
+ 	struct fimc_ctx *ctx = priv;
+ 	struct fimc_dev *fimc = ctx->fimc_dev;
+@@ -890,13 +872,13 @@ static int fimc_cap_cropcap(struct file *file, void *fh,
+ 	struct fimc_ctx *ctx = fh;
+ 	struct fimc_dev *fimc = ctx->fimc_dev;
+ 
+-	if (cr->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
++	if (cr->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
+ 		return -EINVAL;
+ 
+ 	if (mutex_lock_interruptible(&fimc->lock))
+ 		return -ERESTARTSYS;
+-
+ 	f = &ctx->s_frame;
++
+ 	cr->bounds.left		= 0;
+ 	cr->bounds.top		= 0;
+ 	cr->bounds.width	= f->o_width;
+@@ -973,10 +955,10 @@ sc_unlock:
+ static const struct v4l2_ioctl_ops fimc_capture_ioctl_ops = {
+ 	.vidioc_querycap		= fimc_vidioc_querycap_capture,
+ 
+-	.vidioc_enum_fmt_vid_cap	= fimc_vidioc_enum_fmt,
+-	.vidioc_try_fmt_vid_cap		= fimc_vidioc_try_fmt,
+-	.vidioc_s_fmt_vid_cap		= fimc_cap_s_fmt,
+-	.vidioc_g_fmt_vid_cap		= fimc_vidioc_g_fmt,
++	.vidioc_enum_fmt_vid_cap_mplane	= fimc_vidioc_enum_fmt_mplane,
++	.vidioc_try_fmt_vid_cap_mplane	= fimc_vidioc_try_fmt_mplane,
++	.vidioc_s_fmt_vid_cap_mplane	= fimc_cap_s_fmt_mplane,
++	.vidioc_g_fmt_vid_cap_mplane	= fimc_vidioc_g_fmt_mplane,
+ 
+ 	.vidioc_reqbufs			= fimc_cap_reqbufs,
+ 	.vidioc_querybuf		= fimc_cap_querybuf,
+@@ -1000,6 +982,7 @@ static const struct v4l2_ioctl_ops fimc_capture_ioctl_ops = {
+ 	.vidioc_g_input			= fimc_cap_g_input,
+ };
+ 
++/* fimc->lock must be already initialized */
+ int fimc_register_capture_device(struct fimc_dev *fimc)
+ {
+ 	struct v4l2_device *v4l2_dev = &fimc->vid_cap.v4l2_dev;
+@@ -1007,6 +990,7 @@ int fimc_register_capture_device(struct fimc_dev *fimc)
+ 	struct fimc_vid_cap *vid_cap;
+ 	struct fimc_ctx *ctx;
+ 	struct v4l2_format f;
++	struct fimc_frame *fr;
+ 	int ret;
+ 
+ 	ctx = kzalloc(sizeof *ctx, GFP_KERNEL);
+@@ -1018,8 +1002,12 @@ int fimc_register_capture_device(struct fimc_dev *fimc)
+ 	ctx->out_path	 = FIMC_DMA;
+ 	ctx->state	 = FIMC_CTX_CAP;
+ 
+-	f.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB24;
+-	ctx->d_frame.fmt = find_format(&f, FMT_FLAGS_M2M);
++	/* Default format of the output frames */
++	f.fmt.pix.pixelformat = V4L2_PIX_FMT_RGB32;
++	fr = &ctx->d_frame;
++	fr->fmt = find_format(&f, FMT_FLAGS_M2M);
++	fr->width = fr->f_width = fr->o_width = 640;
++	fr->height = fr->f_height = fr->o_height = 480;
+ 
+ 	if (!v4l2_dev->name[0])
+ 		snprintf(v4l2_dev->name, sizeof(v4l2_dev->name),
+@@ -1049,7 +1037,7 @@ int fimc_register_capture_device(struct fimc_dev *fimc)
+ 	vid_cap->active_buf_cnt = 0;
+ 	vid_cap->reqbufs_count  = 0;
+ 	vid_cap->refcnt = 0;
+-	/* The default color format for image sensor. */
++	/* Default color format for image sensor */
+ 	vid_cap->fmt.code = V4L2_MBUS_FMT_YUYV8_2X8;
+ 
+ 	INIT_LIST_HEAD(&vid_cap->pending_buf_q);
+@@ -1060,7 +1048,7 @@ int fimc_register_capture_device(struct fimc_dev *fimc)
+ 	vb2_queue_init(&fimc->vid_cap.vbq,
+ 		       &fimc_capture_qops,
+ 		       fimc->alloc_ctx,
+-		       V4L2_BUF_TYPE_VIDEO_CAPTURE,
++		       V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE,
+ 		       fimc->vid_cap.ctx);
+ 
+ 	ret = video_register_device(vfd, VFL_TYPE_GRABBER, -1);
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
+index 5574da1..b9fd324 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.c
++++ b/drivers/media/video/s5p-fimc/fimc-core.c
+@@ -33,106 +33,130 @@ static char *fimc_clock_name[NUM_FIMC_CLOCKS] = { "sclk_fimc", "fimc" };
+ 
+ static struct fimc_fmt fimc_formats[] = {
+ 	{
+-		.name	= "RGB565",
+-		.fourcc	= V4L2_PIX_FMT_RGB565X,
+-		.depth	= 16,
+-		.color	= S5P_FIMC_RGB565,
+-		.buff_cnt = 1,
+-		.planes_cnt = 1,
+-		.mbus_code = V4L2_MBUS_FMT_RGB565_2X8_BE,
+-		.flags = FMT_FLAGS_M2M,
++		.name		= "RGB565",
++		.fourcc		= V4L2_PIX_FMT_RGB565X,
++		.depth		= { 16 },
++		.color		= S5P_FIMC_RGB565,
++		.memplanes	= 1,
++		.colplanes	= 1,
++		.mbus_code	= V4L2_MBUS_FMT_RGB565_2X8_BE,
++		.flags		= FMT_FLAGS_M2M,
+ 	}, {
+-		.name	= "BGR666",
+-		.fourcc	= V4L2_PIX_FMT_BGR666,
+-		.depth	= 32,
+-		.color	= S5P_FIMC_RGB666,
+-		.buff_cnt = 1,
+-		.planes_cnt = 1,
+-		.flags = FMT_FLAGS_M2M,
++		.name		= "BGR666",
++		.fourcc		= V4L2_PIX_FMT_BGR666,
++		.depth		= { 32 },
++		.color		= S5P_FIMC_RGB666,
++		.memplanes	= 1,
++		.colplanes	= 1,
++		.flags		= FMT_FLAGS_M2M,
+ 	}, {
+-		.name = "XRGB-8-8-8-8, 32 bpp",
+-		.fourcc	= V4L2_PIX_FMT_RGB32,
+-		.depth = 32,
+-		.color	= S5P_FIMC_RGB888,
+-		.buff_cnt = 1,
+-		.planes_cnt = 1,
+-		.flags = FMT_FLAGS_M2M,
++		.name		= "XRGB-8-8-8-8, 32 bpp",
++		.fourcc		= V4L2_PIX_FMT_RGB32,
++		.depth		= { 32 },
++		.color		= S5P_FIMC_RGB888,
++		.memplanes	= 1,
++		.colplanes	= 1,
++		.flags		= FMT_FLAGS_M2M,
+ 	}, {
+-		.name	= "YUV 4:2:2 packed, YCbYCr",
+-		.fourcc	= V4L2_PIX_FMT_YUYV,
+-		.depth	= 16,
+-		.color	= S5P_FIMC_YCBYCR422,
+-		.buff_cnt = 1,
+-		.planes_cnt = 1,
+-		.mbus_code = V4L2_MBUS_FMT_YUYV8_2X8,
+-		.flags = FMT_FLAGS_M2M | FMT_FLAGS_CAM,
++		.name		= "YUV 4:2:2 packed, YCbYCr",
++		.fourcc		= V4L2_PIX_FMT_YUYV,
++		.depth		= { 16 },
++		.color		= S5P_FIMC_YCBYCR422,
++		.memplanes	= 1,
++		.colplanes	= 1,
++		.mbus_code	= V4L2_MBUS_FMT_YUYV8_2X8,
++		.flags		= FMT_FLAGS_M2M | FMT_FLAGS_CAM,
+ 	}, {
+-		.name	= "YUV 4:2:2 packed, CbYCrY",
+-		.fourcc	= V4L2_PIX_FMT_UYVY,
+-		.depth	= 16,
+-		.color	= S5P_FIMC_CBYCRY422,
+-		.buff_cnt = 1,
+-		.planes_cnt = 1,
+-		.mbus_code = V4L2_MBUS_FMT_UYVY8_2X8,
+-		.flags = FMT_FLAGS_M2M | FMT_FLAGS_CAM,
++		.name		= "YUV 4:2:2 packed, CbYCrY",
++		.fourcc		= V4L2_PIX_FMT_UYVY,
++		.depth		= { 16 },
++		.color		= S5P_FIMC_CBYCRY422,
++		.memplanes	= 1,
++		.colplanes	= 1,
++		.mbus_code	= V4L2_MBUS_FMT_UYVY8_2X8,
++		.flags		= FMT_FLAGS_M2M | FMT_FLAGS_CAM,
+ 	}, {
+-		.name	= "YUV 4:2:2 packed, CrYCbY",
+-		.fourcc	= V4L2_PIX_FMT_VYUY,
+-		.depth	= 16,
+-		.color	= S5P_FIMC_CRYCBY422,
+-		.buff_cnt = 1,
+-		.planes_cnt = 1,
+-		.mbus_code = V4L2_MBUS_FMT_VYUY8_2X8,
+-		.flags = FMT_FLAGS_M2M | FMT_FLAGS_CAM,
++		.name		= "YUV 4:2:2 packed, CrYCbY",
++		.fourcc		= V4L2_PIX_FMT_VYUY,
++		.depth		= { 16 },
++		.color		= S5P_FIMC_CRYCBY422,
++		.memplanes	= 1,
++		.colplanes	= 1,
++		.mbus_code	= V4L2_MBUS_FMT_VYUY8_2X8,
++		.flags		= FMT_FLAGS_M2M | FMT_FLAGS_CAM,
+ 	}, {
+-		.name	= "YUV 4:2:2 packed, YCrYCb",
+-		.fourcc	= V4L2_PIX_FMT_YVYU,
+-		.depth	= 16,
+-		.color	= S5P_FIMC_YCRYCB422,
+-		.buff_cnt = 1,
+-		.planes_cnt = 1,
+-		.mbus_code = V4L2_MBUS_FMT_YVYU8_2X8,
+-		.flags = FMT_FLAGS_M2M | FMT_FLAGS_CAM,
++		.name		= "YUV 4:2:2 packed, YCrYCb",
++		.fourcc		= V4L2_PIX_FMT_YVYU,
++		.depth		= { 16 },
++		.color		= S5P_FIMC_YCRYCB422,
++		.memplanes	= 1,
++		.colplanes	= 1,
++		.mbus_code	= V4L2_MBUS_FMT_YVYU8_2X8,
++		.flags		= FMT_FLAGS_M2M | FMT_FLAGS_CAM,
+ 	}, {
+-		.name	= "YUV 4:2:2 planar, Y/Cb/Cr",
+-		.fourcc	= V4L2_PIX_FMT_YUV422P,
+-		.depth	= 12,
+-		.color	= S5P_FIMC_YCBCR422,
+-		.buff_cnt = 1,
+-		.planes_cnt = 3,
+-		.flags = FMT_FLAGS_M2M,
++		.name		= "YUV 4:2:2 planar, Y/Cb/Cr",
++		.fourcc		= V4L2_PIX_FMT_YUV422P,
++		.depth		= { 12 },
++		.color		= S5P_FIMC_YCBCR422,
++		.memplanes	= 1,
++		.colplanes	= 3,
++		.flags		= FMT_FLAGS_M2M,
+ 	}, {
+-		.name	= "YUV 4:2:2 planar, Y/CbCr",
+-		.fourcc	= V4L2_PIX_FMT_NV16,
+-		.depth	= 16,
+-		.color	= S5P_FIMC_YCBCR422,
+-		.buff_cnt = 1,
+-		.planes_cnt = 2,
+-		.flags = FMT_FLAGS_M2M,
++		.name		= "YUV 4:2:2 planar, Y/CbCr",
++		.fourcc		= V4L2_PIX_FMT_NV16,
++		.depth		= { 16 },
++		.color		= S5P_FIMC_YCBCR422,
++		.memplanes	= 1,
++		.colplanes	= 2,
++		.flags		= FMT_FLAGS_M2M,
+ 	}, {
+-		.name	= "YUV 4:2:2 planar, Y/CrCb",
+-		.fourcc	= V4L2_PIX_FMT_NV61,
+-		.depth	= 16,
+-		.color	= S5P_FIMC_RGB565,
+-		.buff_cnt = 1,
+-		.planes_cnt = 2,
+-		.flags = FMT_FLAGS_M2M,
++		.name		= "YUV 4:2:2 planar, Y/CrCb",
++		.fourcc		= V4L2_PIX_FMT_NV61,
++		.depth		= { 16 },
++		.color		= S5P_FIMC_RGB565,
++		.memplanes	= 1,
++		.colplanes	= 2,
++		.flags		= FMT_FLAGS_M2M,
+ 	}, {
+-		.name	= "YUV 4:2:0 planar, YCbCr",
+-		.fourcc	= V4L2_PIX_FMT_YUV420,
+-		.depth	= 12,
+-		.color	= S5P_FIMC_YCBCR420,
+-		.buff_cnt = 1,
+-		.planes_cnt = 3,
+-		.flags = FMT_FLAGS_M2M,
++		.name		= "YUV 4:2:0 planar, YCbCr",
++		.fourcc		= V4L2_PIX_FMT_YUV420,
++		.depth		= { 12 },
++		.color		= S5P_FIMC_YCBCR420,
++		.memplanes	= 1,
++		.colplanes	= 3,
++		.flags		= FMT_FLAGS_M2M,
+ 	}, {
+-		.name	= "YUV 4:2:0 planar, Y/CbCr",
+-		.fourcc	= V4L2_PIX_FMT_NV12,
+-		.depth	= 12,
+-		.color	= S5P_FIMC_YCBCR420,
+-		.buff_cnt = 1,
+-		.planes_cnt = 2,
+-		.flags = FMT_FLAGS_M2M,
++		.name		= "YUV 4:2:0 planar, Y/CbCr",
++		.fourcc		= V4L2_PIX_FMT_NV12,
++		.depth		= { 12 },
++		.color		= S5P_FIMC_YCBCR420,
++		.memplanes	= 1,
++		.colplanes	= 2,
++		.flags		= FMT_FLAGS_M2M,
++	}, {
++		.name		= "YUV 4:2:0 non-contiguous 2-planar, Y/CbCr",
++		.fourcc		= V4L2_PIX_FMT_NV12M,
++		.color		= S5P_FIMC_YCBCR420,
++		.depth		= { 8, 4 },
++		.memplanes	= 2,
++		.colplanes	= 2,
++		.flags		= FMT_FLAGS_M2M,
++	}, {
++		.name		= "YUV 4:2:0 non-contiguous 3-planar, Y/Cb/Cr",
++		.fourcc		= V4L2_PIX_FMT_YUV420M,
++		.color		= S5P_FIMC_YCBCR420,
++		.depth		= { 8, 2, 2 },
++		.memplanes	= 3,
++		.colplanes	= 3,
++		.flags		= FMT_FLAGS_M2M,
++	}, {
++		.name		= "YUV 4:2:0 non-contiguous 2-planar, Y/CbCr, tiled",
++		.fourcc		= V4L2_PIX_FMT_NV12MT,
++		.color		= S5P_FIMC_YCBCR420,
++		.depth		= { 8, 4 },
++		.memplanes	= 2,
++		.colplanes	= 2,
++		.flags		= FMT_FLAGS_M2M,
+ 	},
+ };
+ 
+@@ -358,7 +382,7 @@ isr_unlock:
+ 	return IRQ_HANDLED;
+ }
+ 
+-/* The color format (planes_cnt, buff_cnt) must be already configured. */
++/* The color format (colplanes, memplanes) must be already configured. */
+ int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
+ 		      struct fimc_frame *frame, struct fimc_addr *paddr)
+ {
+@@ -370,13 +394,13 @@ int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
+ 
+ 	pix_size = frame->width * frame->height;
+ 
+-	dbg("buff_cnt= %d, planes_cnt= %d, frame->size= %d, pix_size= %d",
+-		frame->fmt->buff_cnt, frame->fmt->planes_cnt,
+-		frame->size, pix_size);
++	dbg("memplanes= %d, colplanes= %d, pix_size= %d",
++		frame->fmt->memplanes, frame->fmt->colplanes, pix_size);
++
++	paddr->y = vb2_dma_coherent_plane_paddr(vb, 0);
+ 
+-	if (frame->fmt->buff_cnt == 1) {
+-		paddr->y = vb2_dma_coherent_plane_paddr(vb, 0);
+-		switch (frame->fmt->planes_cnt) {
++	if (frame->fmt->memplanes == 1) {
++		switch (frame->fmt->colplanes) {
+ 		case 1:
+ 			paddr->cb = 0;
+ 			paddr->cr = 0;
+@@ -399,6 +423,12 @@ int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
+ 		default:
+ 			return -EINVAL;
+ 		}
++	} else {
++		if (frame->fmt->memplanes >= 2)
++			paddr->cb = vb2_dma_coherent_plane_paddr(vb, 1);
++
++		if (frame->fmt->memplanes == 3)
++			paddr->cr = vb2_dma_coherent_plane_paddr(vb, 2);
+ 	}
+ 
+ 	dbg("PHYS_ADDR: y= 0x%X  cb= 0x%X cr= 0x%X ret= %d",
+@@ -453,10 +483,14 @@ static void fimc_set_yuv_order(struct fimc_ctx *ctx)
+ static void fimc_prepare_dma_offset(struct fimc_ctx *ctx, struct fimc_frame *f)
+ {
+ 	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
++	u32 i, depth = 0;
++
++	for (i = 0; i < f->fmt->colplanes; i++)
++		depth += f->fmt->depth[i];
+ 
+ 	f->dma_offset.y_h = f->offs_h;
+ 	if (!variant->pix_hoff)
+-		f->dma_offset.y_h *= (f->fmt->depth >> 3);
++		f->dma_offset.y_h *= (depth >> 3);
+ 
+ 	f->dma_offset.y_v = f->offs_v;
+ 
+@@ -467,7 +501,7 @@ static void fimc_prepare_dma_offset(struct fimc_ctx *ctx, struct fimc_frame *f)
+ 	f->dma_offset.cr_v = f->offs_v;
+ 
+ 	if (!variant->pix_hoff) {
+-		if (f->fmt->planes_cnt == 3) {
++		if (f->fmt->colplanes == 3) {
+ 			f->dma_offset.cb_h >>= 1;
+ 			f->dma_offset.cr_h >>= 1;
+ 		}
+@@ -597,7 +631,20 @@ static void fimc_job_abort(void *priv)
+ static int fimc_queue_negotiate(struct vb2_queue *vq, unsigned int *num_buffers,
+ 				unsigned int *num_planes)
+ {
+-	*num_planes = 1;
++	struct fimc_ctx *ctx = vb2_get_drv_priv(vq);
++	struct fimc_frame *f;
++
++	f = ctx_get_frame(ctx, vq->type);
++	if (IS_ERR(f))
++		return PTR_ERR(f);
++
++	/*
++	 * Return number of non-contigous planes (plane buffers)
++	 * depending on the configured color format.
++	 */
++	if (f->fmt)
++		*num_planes = f->fmt->memplanes;
++
+ 	if (*num_buffers == 0)
+ 		*num_buffers = 1;
+ 	return 0;
+@@ -613,7 +660,7 @@ static int fimc_plane_setup(struct vb2_queue *vq, unsigned int plane_no,
+ 	if (IS_ERR(fr))
+ 		return PTR_ERR(fr);
+ 
+-	*size = (fr->width * fr->height * fr->fmt->depth) >> 3;
++	*size = (fr->width * fr->height * fr->fmt->depth[plane_no]) >> 3;
+ 
+ 	return 0;
+ }
+@@ -622,18 +669,15 @@ static int fimc_buf_prepare(struct vb2_buffer *vb)
+ {
+ 	struct fimc_ctx *ctx = vb2_get_drv_priv(vb->vb2_queue);
+ 	struct fimc_frame *frame;
++	int i;
+ 
+ 	frame = ctx_get_frame(ctx, vb->vb2_queue->type);
+ 	if (IS_ERR(frame))
+ 		return PTR_ERR(frame);
+ 
+-	if (vb2_plane_size(vb, 0) < frame->size) {
+-		dbg("%s data will not fit into plane (%lu < %lu)\n",
+-				__func__, vb2_plane_size(vb, 0), (long)frame->size);
+-		return -EINVAL;
+-	}
++	for (i = 0; i < frame->fmt->memplanes; i++)
++		vb2_set_plane_payload(vb, i, frame->payload[i]);
+ 
+-	vb2_set_plane_payload(vb, 0, frame->size);
+ 	return 0;
+ }
+ 
+@@ -681,12 +725,13 @@ static int fimc_m2m_querycap(struct file *file, void *priv,
+ 	cap->bus_info[0] = 0;
+ 	cap->version = KERNEL_VERSION(1, 0, 0);
+ 	cap->capabilities = V4L2_CAP_STREAMING |
+-		V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_VIDEO_OUTPUT;
++		V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_VIDEO_OUTPUT |
++		V4L2_CAP_VIDEO_CAPTURE_MPLANE | V4L2_CAP_VIDEO_OUTPUT_MPLANE;
+ 
+ 	return 0;
+ }
+ 
+-int fimc_vidioc_enum_fmt(struct file *file, void *priv,
++int fimc_vidioc_enum_fmt_mplane(struct file *file, void *priv,
+ 				struct v4l2_fmtdesc *f)
+ {
+ 	struct fimc_fmt *fmt;
+@@ -701,7 +746,8 @@ int fimc_vidioc_enum_fmt(struct file *file, void *priv,
+ 	return 0;
+ }
+ 
+-int fimc_vidioc_g_fmt(struct file *file, void *priv, struct v4l2_format *f)
++int fimc_vidioc_g_fmt_mplane(struct file *file, void *priv,
++			     struct v4l2_format *f)
+ {
+ 	struct fimc_ctx *ctx = priv;
+ 	struct fimc_dev *fimc = ctx->fimc_dev;
+@@ -754,29 +800,28 @@ struct fimc_fmt *find_mbus_format(struct v4l2_mbus_framefmt *f,
+ }
+ 
+ 
+-int fimc_vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
++int fimc_vidioc_try_fmt_mplane(struct file *file, void *priv,
++			       struct v4l2_format *f)
+ {
+ 	struct fimc_ctx *ctx = priv;
+ 	struct fimc_dev *fimc = ctx->fimc_dev;
+ 	struct samsung_fimc_variant *variant = fimc->variant;
+-	struct v4l2_pix_format *pix = &f->fmt.pix;
++	struct v4l2_pix_format_mplane *pix = &f->fmt.pix_mp;
+ 	struct fimc_fmt *fmt;
+ 	u32 max_width, mod_x, mod_y, mask;
+-	int ret = -EINVAL, is_output = 0;
++	int ret, i, is_output = 0;
+ 
+-	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT) {
++	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
+ 		if (ctx->state & FIMC_CTX_CAP)
+ 			return -EINVAL;
+ 		is_output = 1;
+-	} else if (f->type != V4L2_BUF_TYPE_VIDEO_CAPTURE) {
++	} else if (f->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
+ 		return -EINVAL;
+ 	}
+ 
+-	dbg("w: %d, h: %d, bpl: %d",
+-	    pix->width, pix->height, pix->bytesperline);
+-
+ 	if (mutex_lock_interruptible(&fimc->lock))
+ 		return -ERESTARTSYS;
++	dbg("w: %d, h: %d", pix->width, pix->height);
+ 
+ 	mask = is_output ? FMT_FLAGS_M2M : FMT_FLAGS_M2M | FMT_FLAGS_CAM;
+ 	fmt = find_format(f, mask);
+@@ -803,7 +848,7 @@ int fimc_vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
+ 		mod_x = 6; /* 64 x 32 pixels tile */
+ 		mod_y = 5;
+ 	} else {
+-		if (fimc->id == 1 && fimc->variant->pix_hoff)
++		if (fimc->id == 1 && variant->pix_hoff)
+ 			mod_y = fimc_fmt_is_rgb(fmt->color) ? 0 : 1;
+ 		else
+ 			mod_y = mod_x;
+@@ -814,15 +859,26 @@ int fimc_vidioc_try_fmt(struct file *file, void *priv, struct v4l2_format *f)
+ 	v4l_bound_align_image(&pix->width, 16, max_width, mod_x,
+ 		&pix->height, 8, variant->pix_limit->scaler_dis_w, mod_y, 0);
+ 
+-	if (pix->bytesperline == 0 ||
+-	    (pix->bytesperline * 8 / fmt->depth) > pix->width)
+-		pix->bytesperline = (pix->width * fmt->depth) >> 3;
++	pix->num_planes = fmt->memplanes;
+ 
+-	if (pix->sizeimage == 0)
+-		pix->sizeimage = pix->height * pix->bytesperline;
++	for (i = 0; i < pix->num_planes; ++i) {
++		int bpl = pix->plane_fmt[i].bytesperline;
+ 
+-	dbg("w: %d, h: %d, bpl: %d, depth: %d",
+-	    pix->width, pix->height, pix->bytesperline, fmt->depth);
++		dbg("[%d] bpl: %d, depth: %d, w: %d, h: %d",
++		    i, bpl, fmt->depth[i], pix->width, pix->height);
++
++		if (!bpl || (bpl * 8 / fmt->depth[i]) > pix->width)
++			bpl = (pix->width * fmt->depth[0]) >> 3;
++
++		if (!pix->plane_fmt[i].sizeimage)
++			pix->plane_fmt[i].sizeimage = pix->height * bpl;
++
++		pix->plane_fmt[i].bytesperline = bpl;
++
++		dbg("[%d]: bpl: %d, sizeimage: %d",
++		    i, pix->plane_fmt[i].bytesperline,
++		    pix->plane_fmt[i].sizeimage);
++	}
+ 
+ 	ret = 0;
+ 
+@@ -831,18 +887,18 @@ tf_out:
+ 	return ret;
+ }
+ 
+-static int fimc_m2m_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
++static int fimc_m2m_s_fmt_mplane(struct file *file, void *priv,
++				 struct v4l2_format *f)
+ {
+ 	struct fimc_ctx *ctx = priv;
+ 	struct fimc_dev *fimc = ctx->fimc_dev;
+-	struct v4l2_device *v4l2_dev = &fimc->m2m.v4l2_dev;
+ 	struct vb2_queue *vq;
+ 	struct fimc_frame *frame;
+-	struct v4l2_pix_format *pix;
++	struct v4l2_pix_format_mplane *pix;
+ 	unsigned long flags;
+-	int ret = 0;
++	int i, ret = 0;
+ 
+-	ret = fimc_vidioc_try_fmt(file, priv, f);
++	ret = fimc_vidioc_try_fmt_mplane(file, priv, f);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -852,35 +908,40 @@ static int fimc_m2m_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
+ 	vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
+ 
+ 	if (vb2_is_streaming(vq)) {
+-		v4l2_err(v4l2_dev, "%s: queue (%d) busy\n", __func__, f->type);
++		v4l2_err(&fimc->vid_cap.v4l2_dev, "%s: queue (%d) busy\n",
++			 __func__, f->type);
+ 		ret = -EBUSY;
+ 		goto sf_out;
+ 	}
+ 
+ 	spin_lock_irqsave(&ctx->slock, flags);
+-	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT) {
++	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
+ 		frame = &ctx->s_frame;
+ 		ctx->state |= FIMC_SRC_FMT;
+-	} else if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE) {
++	} else if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
+ 		frame = &ctx->d_frame;
+ 		ctx->state |= FIMC_DST_FMT;
+ 	} else {
+ 		spin_unlock_irqrestore(&ctx->slock, flags);
+-		v4l2_err(&ctx->fimc_dev->m2m.v4l2_dev,
++		v4l2_err(&fimc->m2m.v4l2_dev,
+ 			 "Wrong buffer/video queue type (%d)\n", f->type);
+ 		ret = -EINVAL;
+ 		goto sf_out;
+ 	}
+ 	spin_unlock_irqrestore(&ctx->slock, flags);
+ 
+-	pix = &f->fmt.pix;
++	pix = &f->fmt.pix_mp;
+ 	frame->fmt = find_format(f, FMT_FLAGS_M2M);
+ 	if (!frame->fmt) {
+ 		ret = -EINVAL;
+ 		goto sf_out;
+ 	}
+ 
+-	frame->f_width	= pix->bytesperline * 8 / frame->fmt->depth;
++	for (i = 0; i < frame->fmt->colplanes; i++)
++		frame->payload[i] = pix->plane_fmt[i].bytesperline * pix->height;
++
++	frame->f_width	= pix->plane_fmt[0].bytesperline * 8 /
++		frame->fmt->depth[0];
+ 	frame->f_height	= pix->height;
+ 	frame->width	= pix->width;
+ 	frame->height	= pix->height;
+@@ -888,7 +949,6 @@ static int fimc_m2m_s_fmt(struct file *file, void *priv, struct v4l2_format *f)
+ 	frame->o_height = pix->height;
+ 	frame->offs_h	= 0;
+ 	frame->offs_v	= 0;
+-	frame->size	= (pix->width * pix->height * frame->fmt->depth) >> 3;
+ 
+ 	spin_lock_irqsave(&ctx->slock, flags);
+ 	ctx->state |= FIMC_PARAMS;
+@@ -1141,7 +1201,8 @@ int fimc_try_crop(struct fimc_ctx *ctx, struct v4l2_crop *cr)
+ {
+ 	struct fimc_dev *fimc = ctx->fimc_dev;
+ 	struct fimc_frame *f;
+-	u32 min_size, halign;
++	u32 min_size, halign, depth = 0;
++	int i;
+ 
+ 	if (cr->c.top < 0 || cr->c.left < 0) {
+ 		v4l2_err(&fimc->m2m.v4l2_dev,
+@@ -1149,9 +1210,9 @@ int fimc_try_crop(struct fimc_ctx *ctx, struct v4l2_crop *cr)
+ 		return -EINVAL;
+ 	}
+ 
+-	if (cr->type == V4L2_BUF_TYPE_VIDEO_CAPTURE)
++	if (cr->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
+ 		f = (ctx->state & FIMC_CTX_CAP) ? &ctx->s_frame : &ctx->d_frame;
+-	else if (cr->type == V4L2_BUF_TYPE_VIDEO_OUTPUT &&
++	else if (cr->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE &&
+ 		 ctx->state & FIMC_CTX_M2M)
+ 		f = &ctx->s_frame;
+ 	else
+@@ -1171,10 +1232,13 @@ int fimc_try_crop(struct fimc_ctx *ctx, struct v4l2_crop *cr)
+ 		halign = 4;
+ 	}
+ 
++	for (i = 0; i < f->fmt->colplanes; i++)
++		depth += f->fmt->depth[i];
++
+ 	v4l_bound_align_image(&cr->c.width, min_size, f->o_width,
+ 			      ffs(min_size) - 1,
+ 			      &cr->c.height, min_size, f->o_height,
+-			      halign, 64/(ALIGN(f->fmt->depth, 8)));
++			      halign, 64/(ALIGN(depth, 8)));
+ 
+ 	/* adjust left/top if cropping rectangle is out of bounds */
+ 	if (cr->c.left + cr->c.width > f->o_width)
+@@ -1206,7 +1270,7 @@ static int fimc_m2m_s_crop(struct file *file, void *fh, struct v4l2_crop *cr)
+ 	if (ret)
+ 		return ret;
+ 
+-	f = (cr->type == V4L2_BUF_TYPE_VIDEO_OUTPUT) ?
++	f = (cr->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) ?
+ 		&ctx->s_frame : &ctx->d_frame;
+ 
+ 	if (mutex_lock_interruptible(&fimc->lock))
+@@ -1215,7 +1279,7 @@ static int fimc_m2m_s_crop(struct file *file, void *fh, struct v4l2_crop *cr)
+ 	spin_lock_irqsave(&ctx->slock, flags);
+ 	if (~ctx->state & (FIMC_SRC_FMT | FIMC_DST_FMT)) {
+ 		/* Check to see if scaling ratio is within supported range */
+-		if (cr->type == V4L2_BUF_TYPE_VIDEO_OUTPUT)
++		if (cr->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+ 			ret = fimc_check_scaler_ratio(&cr->c, &ctx->d_frame);
+ 		else
+ 			ret = fimc_check_scaler_ratio(&cr->c, &ctx->s_frame);
+@@ -1241,17 +1305,17 @@ scr_unlock:
+ static const struct v4l2_ioctl_ops fimc_m2m_ioctl_ops = {
+ 	.vidioc_querycap		= fimc_m2m_querycap,
+ 
+-	.vidioc_enum_fmt_vid_cap	= fimc_vidioc_enum_fmt,
+-	.vidioc_enum_fmt_vid_out	= fimc_vidioc_enum_fmt,
++	.vidioc_enum_fmt_vid_cap_mplane	= fimc_vidioc_enum_fmt_mplane,
++	.vidioc_enum_fmt_vid_out_mplane	= fimc_vidioc_enum_fmt_mplane,
+ 
+-	.vidioc_g_fmt_vid_cap		= fimc_vidioc_g_fmt,
+-	.vidioc_g_fmt_vid_out		= fimc_vidioc_g_fmt,
++	.vidioc_g_fmt_vid_cap_mplane	= fimc_vidioc_g_fmt_mplane,
++	.vidioc_g_fmt_vid_out_mplane	= fimc_vidioc_g_fmt_mplane,
+ 
+-	.vidioc_try_fmt_vid_cap		= fimc_vidioc_try_fmt,
+-	.vidioc_try_fmt_vid_out		= fimc_vidioc_try_fmt,
++	.vidioc_try_fmt_vid_cap_mplane	= fimc_vidioc_try_fmt_mplane,
++	.vidioc_try_fmt_vid_out_mplane	= fimc_vidioc_try_fmt_mplane,
+ 
+-	.vidioc_s_fmt_vid_cap		= fimc_m2m_s_fmt,
+-	.vidioc_s_fmt_vid_out		= fimc_m2m_s_fmt,
++	.vidioc_s_fmt_vid_cap_mplane	= fimc_m2m_s_fmt_mplane,
++	.vidioc_s_fmt_vid_out_mplane	= fimc_m2m_s_fmt_mplane,
+ 
+ 	.vidioc_reqbufs			= fimc_m2m_reqbufs,
+ 	.vidioc_querybuf		= fimc_m2m_querybuf,
+@@ -1272,19 +1336,20 @@ static const struct v4l2_ioctl_ops fimc_m2m_ioctl_ops = {
+ 
+ };
+ 
+-static int queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *dst_vq)
++static int queue_init(void *priv, struct vb2_queue *src_vq,
++		      struct vb2_queue *dst_vq)
+ {
+ 	struct fimc_ctx *ctx = priv;
+ 	struct fimc_dev *fimc = ctx->fimc_dev;
+ 	int ret;
+ 
+ 	ret = vb2_queue_init(src_vq, &fimc_qops, fimc->alloc_ctx,
+-			V4L2_BUF_TYPE_VIDEO_OUTPUT, ctx);
++			     V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE, ctx);
+ 	if (ret)
+ 		return ret;
+ 
+ 	return vb2_queue_init(dst_vq, &fimc_qops, fimc->alloc_ctx,
+-			      V4L2_BUF_TYPE_VIDEO_CAPTURE, ctx);
++			      V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE, ctx);
+ }
+ 
+ static int fimc_m2m_open(struct file *file)
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
+index 590fbf2..1f1beaa 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.h
++++ b/drivers/media/video/s5p-fimc/fimc-core.h
+@@ -151,18 +151,18 @@ enum fimc_color_fmt {
+  * @name: format description
+  * @fourcc: the fourcc code for this format, 0 if not applicable
+  * @color: the corresponding fimc_color_fmt
+- * @depth: driver's private 'number of bits per pixel'
+- * @buff_cnt: number of physically non-contiguous data planes
+- * @planes_cnt: number of physically contiguous data planes
++ * @depth: per plane driver's private 'number of bits per pixel'
++ * @memplanes: number of physically non-contiguous data planes
++ * @colplanes: number of physically contiguous data planes
+  */
+ struct fimc_fmt {
+ 	enum v4l2_mbus_pixelcode mbus_code;
+ 	char	*name;
+ 	u32	fourcc;
+ 	u32	color;
+-	u16	buff_cnt;
+-	u16	planes_cnt;
+-	u16	depth;
++	u16	memplanes;
++	u16	colplanes;
++	u8	depth[VIDEO_MAX_PLANES];
+ 	u16	flags;
+ #define FMT_FLAGS_CAM	(1 << 0)
+ #define FMT_FLAGS_M2M	(1 << 1)
+@@ -272,7 +272,7 @@ struct fimc_vid_buffer {
+  * @height:	image pixel weight
+  * @paddr:	image frame buffer physical addresses
+  * @buf_cnt:	number of buffers depending on a color format
+- * @size:	image size in bytes
++ * @payload:	image size in bytes (w x h x bpp)
+  * @color:	color format
+  * @dma_offset:	DMA offset in bytes
+  */
+@@ -285,7 +285,7 @@ struct fimc_frame {
+ 	u32	offs_v;
+ 	u32	width;
+ 	u32	height;
+-	u32	size;
++	unsigned long		payload[VIDEO_MAX_PLANES];
+ 	struct fimc_addr	paddr;
+ 	struct fimc_dma_offset	dma_offset;
+ 	struct fimc_fmt		*fmt;
+@@ -479,7 +479,7 @@ struct fimc_ctx {
+ 
+ static inline int tiled_fmt(struct fimc_fmt *fmt)
+ {
+-	return 0;
++	return fmt->fourcc == V4L2_PIX_FMT_NV12MT;
+ }
+ 
+ static inline void fimc_hw_clear_irq(struct fimc_dev *dev)
+@@ -535,12 +535,12 @@ static inline struct fimc_frame *ctx_get_frame(struct fimc_ctx *ctx,
+ {
+ 	struct fimc_frame *frame;
+ 
+-	if (V4L2_BUF_TYPE_VIDEO_OUTPUT == type) {
++	if (V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE == type) {
+ 		if (ctx->state & FIMC_CTX_M2M)
+ 			frame = &ctx->s_frame;
+ 		else
+ 			return ERR_PTR(-EINVAL);
+-	} else if (V4L2_BUF_TYPE_VIDEO_CAPTURE == type) {
++	} else if (V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE == type) {
+ 		frame = &ctx->d_frame;
+ 	} else {
+ 		v4l2_err(&ctx->fimc_dev->m2m.v4l2_dev,
+@@ -582,7 +582,7 @@ void fimc_hw_set_input_path(struct fimc_ctx *ctx);
+ void fimc_hw_set_output_path(struct fimc_ctx *ctx);
+ void fimc_hw_set_input_addr(struct fimc_dev *fimc, struct fimc_addr *paddr);
+ void fimc_hw_set_output_addr(struct fimc_dev *fimc, struct fimc_addr *paddr,
+-			      int index);
++			     int index);
+ int fimc_hw_set_camera_source(struct fimc_dev *fimc,
+ 			      struct s3c_fimc_isp_info *cam);
+ int fimc_hw_set_camera_offset(struct fimc_dev *fimc, struct fimc_frame *f);
+@@ -593,12 +593,12 @@ int fimc_hw_set_camera_type(struct fimc_dev *fimc,
+ 
+ /* -----------------------------------------------------*/
+ /* fimc-core.c */
+-int fimc_vidioc_enum_fmt(struct file *file, void *priv,
+-		      struct v4l2_fmtdesc *f);
+-int fimc_vidioc_g_fmt(struct file *file, void *priv,
+-		      struct v4l2_format *f);
+-int fimc_vidioc_try_fmt(struct file *file, void *priv,
+-			struct v4l2_format *f);
++int fimc_vidioc_enum_fmt_mplane(struct file *file, void *priv,
++				struct v4l2_fmtdesc *f);
++int fimc_vidioc_g_fmt_mplane(struct file *file, void *priv,
++			     struct v4l2_format *f);
++int fimc_vidioc_try_fmt_mplane(struct file *file, void *priv,
++			       struct v4l2_format *f);
+ int fimc_vidioc_queryctrl(struct file *file, void *priv,
+ 			  struct v4l2_queryctrl *qc);
+ int fimc_vidioc_g_ctrl(struct file *file, void *priv,
+diff --git a/drivers/media/video/s5p-fimc/fimc-reg.c b/drivers/media/video/s5p-fimc/fimc-reg.c
+index 511631a..5ed8f06 100644
+--- a/drivers/media/video/s5p-fimc/fimc-reg.c
++++ b/drivers/media/video/s5p-fimc/fimc-reg.c
+@@ -143,7 +143,7 @@ void fimc_hw_set_target_format(struct fimc_ctx *ctx)
+ 	case S5P_FIMC_YCRYCB422:
+ 	case S5P_FIMC_CBYCRY422:
+ 	case S5P_FIMC_CRYCBY422:
+-		if (frame->fmt->planes_cnt == 1)
++		if (frame->fmt->colplanes == 1)
+ 			cfg |= S5P_CITRGFMT_YCBCR422_1P;
+ 		else
+ 			cfg |= S5P_CITRGFMT_YCBCR422;
+@@ -219,11 +219,11 @@ void fimc_hw_set_out_dma(struct fimc_ctx *ctx)
+ 	cfg &= ~(S5P_CIOCTRL_ORDER2P_MASK | S5P_CIOCTRL_ORDER422_MASK |
+ 		 S5P_CIOCTRL_YCBCR_PLANE_MASK);
+ 
+-	if (frame->fmt->planes_cnt == 1)
++	if (frame->fmt->colplanes == 1)
+ 		cfg |= ctx->out_order_1p;
+-	else if (frame->fmt->planes_cnt == 2)
++	else if (frame->fmt->colplanes == 2)
+ 		cfg |= ctx->out_order_2p | S5P_CIOCTRL_YCBCR_2PLANE;
+-	else if (frame->fmt->planes_cnt == 3)
++	else if (frame->fmt->colplanes == 3)
+ 		cfg |= S5P_CIOCTRL_YCBCR_3PLANE;
+ 
+ 	writel(cfg, dev->regs + S5P_CIOCTRL);
+@@ -428,7 +428,7 @@ void fimc_hw_set_in_dma(struct fimc_ctx *ctx)
+ 	case S5P_FIMC_YCBCR420:
+ 		cfg |= S5P_MSCTRL_INFORMAT_YCBCR420;
+ 
+-		if (frame->fmt->planes_cnt == 2)
++		if (frame->fmt->colplanes == 2)
+ 			cfg |= ctx->in_order_2p | S5P_MSCTRL_C_INT_IN_2PLANE;
+ 		else
+ 			cfg |= S5P_MSCTRL_C_INT_IN_3PLANE;
+@@ -438,13 +438,13 @@ void fimc_hw_set_in_dma(struct fimc_ctx *ctx)
+ 	case S5P_FIMC_YCRYCB422:
+ 	case S5P_FIMC_CBYCRY422:
+ 	case S5P_FIMC_CRYCBY422:
+-		if (frame->fmt->planes_cnt == 1) {
++		if (frame->fmt->colplanes == 1) {
+ 			cfg |= ctx->in_order_1p
+ 				| S5P_MSCTRL_INFORMAT_YCBCR422_1P;
+ 		} else {
+ 			cfg |= S5P_MSCTRL_INFORMAT_YCBCR422;
+ 
+-			if (frame->fmt->planes_cnt == 2)
++			if (frame->fmt->colplanes == 2)
+ 				cfg |= ctx->in_order_2p
+ 					| S5P_MSCTRL_C_INT_IN_2PLANE;
+ 			else
+-- 
+1.7.3.2
