@@ -1,813 +1,690 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [RFC/PATCH 4/4] [media] s5p-fimc: Use v4l core mutex in ioctl and file
- operations
-Date: Wed, 01 Dec 2010 15:35:53 +0100
-Message-ID: <1291214153-6335-5-git-send-email-s.nawrocki@samsung.com>
+Subject: [RFC/PATCH 1/4] v4l: mem2mem: port to videobuf2
+Date: Wed, 01 Dec 2010 15:35:50 +0100
+Message-ID: <1291214153-6335-2-git-send-email-s.nawrocki@samsung.com>
 References: <1291214153-6335-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:31266 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754969Ab0LAOgQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Dec 2010 09:36:16 -0500
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1291214153-6335-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+
+Port memory-to-memory framework to videobuf2 framework.
+
+Add support for multi-planar Video for Linux 2 API extensions to the
+memory-to-memory driver framework.
+
+Based on the original patch written by Pawel Osciak.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-capture.c |  210 ++++-----------------------
- drivers/media/video/s5p-fimc/fimc-core.c    |  115 ++++-----------
- 2 files changed, 59 insertions(+), 266 deletions(-)
+ drivers/media/video/Kconfig        |    2 +-
+ drivers/media/video/v4l2-mem2mem.c |  253 +++++++++++++++++++-----------------
+ include/media/v4l2-mem2mem.h       |   55 +++++---
+ 3 files changed, 170 insertions(+), 140 deletions(-)
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index f366bb3..8ab8a11 100644
---- a/drivers/media/video/s5p-fimc/fimc-capture.c
-+++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -301,7 +301,7 @@ static int plane_setup(struct vb2_queue *vq, unsigned int plane,
- 				unsigned long *plane_size)
+diff --git a/drivers/media/video/Kconfig b/drivers/media/video/Kconfig
+index f25b3e0..e069257 100644
+--- a/drivers/media/video/Kconfig
++++ b/drivers/media/video/Kconfig
+@@ -47,7 +47,7 @@ config VIDEO_TUNER
+ 
+ config V4L2_MEM2MEM_DEV
+ 	tristate
+-	depends on VIDEOBUF_GEN
++	depends on VIDEOBUF2_CORE
+ 
+ config VIDEOBUF2_CORE
+ 	tristate
+diff --git a/drivers/media/video/v4l2-mem2mem.c b/drivers/media/video/v4l2-mem2mem.c
+index ac832a2..122888b 100644
+--- a/drivers/media/video/v4l2-mem2mem.c
++++ b/drivers/media/video/v4l2-mem2mem.c
+@@ -17,7 +17,7 @@
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ 
+-#include <media/videobuf-core.h>
++#include <media/videobuf2-core.h>
+ #include <media/v4l2-mem2mem.h>
+ 
+ MODULE_DESCRIPTION("Mem to mem device framework for videobuf");
+@@ -62,24 +62,40 @@ struct v4l2_m2m_dev {
+ 	struct v4l2_m2m_ops	*m2m_ops;
+ };
+ 
++struct v4l2_m2m_buffer {
++	struct vb2_buffer	vb;
++	struct list_head	list;
++};
++
+ static struct v4l2_m2m_queue_ctx *get_queue_ctx(struct v4l2_m2m_ctx *m2m_ctx,
+ 						enum v4l2_buf_type type)
  {
- 	struct fimc_ctx *ctx = vq->drv_priv;
--	struct fimc_fmt *fmt = 	fmt = ctx->d_frame.fmt;
-+	struct fimc_fmt *fmt =	fmt = ctx->d_frame.fmt;
- 
- 	if (!fmt || vq->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
- 		return -EINVAL;
-@@ -424,29 +424,23 @@ static int fimc_capture_open(struct file *file)
- 	if (fimc_m2m_active(fimc))
- 		return -EBUSY;
- 
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
--
- 	if (++fimc->vid_cap.refcnt == 1) {
- 		ret = fimc_isp_subdev_init(fimc, -1);
- 		if (ret) {
- 			fimc->vid_cap.refcnt--;
--			ret = -EIO;
-+			return -EIO;
- 		}
- 	}
- 
- 	file->private_data = fimc->vid_cap.ctx;
- 
--	mutex_unlock(&fimc->lock);
--	return ret;
-+	return 0;
- }
- 
- static int fimc_capture_close(struct file *file)
- {
- 	struct fimc_dev *fimc = video_drvdata(file);
- 
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
- 	dbg("pid: %d, state: 0x%lx", task_pid_nr(current), fimc->state);
- 
- 	if (--fimc->vid_cap.refcnt == 0) {
-@@ -459,7 +453,6 @@ static int fimc_capture_close(struct file *file)
- 		fimc_subdev_unregister(fimc);
- 	}
- 
--	mutex_unlock(&fimc->lock);
- 	return 0;
- }
- 
-@@ -468,30 +461,16 @@ static unsigned int fimc_capture_poll(struct file *file,
- {
- 	struct fimc_ctx *ctx = file->private_data;
- 	struct fimc_dev *fimc = ctx->fimc_dev;
--	int ret;
--
--	if (mutex_lock_interruptible(&fimc->lock))
--		return POLLERR;
--
--	ret = vb2_poll(&fimc->vid_cap.vbq, file, wait);
--	mutex_unlock(&fimc->lock);
- 
--	return ret;
-+	return vb2_poll(&fimc->vid_cap.vbq, file, wait);
- }
- 
- static int fimc_capture_mmap(struct file *file, struct vm_area_struct *vma)
- {
- 	struct fimc_ctx *ctx = file->private_data;
- 	struct fimc_dev *fimc = ctx->fimc_dev;
--	int ret;
--
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
--
--	ret = vb2_mmap(&fimc->vid_cap.vbq, vma);
--	mutex_unlock(&fimc->lock);
- 
--	return ret;
-+	return vb2_mmap(&fimc->vid_cap.vbq, vma);
- }
- 
- /* video device file operations */
-@@ -573,13 +552,6 @@ static int fimc_cap_s_fmt_mplane(struct file *file, void *priv,
- 	if (ret)
- 		return ret;
- 
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
--
--	if (fimc_capture_active(fimc)) {
--		ret = -EBUSY;
--		goto sf_unlock;
+-	switch (type) {
+-	case V4L2_BUF_TYPE_VIDEO_CAPTURE:
+-		return &m2m_ctx->cap_q_ctx;
+-	case V4L2_BUF_TYPE_VIDEO_OUTPUT:
++	if (V4L2_TYPE_IS_OUTPUT(type))
+ 		return &m2m_ctx->out_q_ctx;
+-	default:
+-		printk(KERN_ERR "Invalid buffer type\n");
+-		return NULL;
 -	}
- 	if (vb2_is_streaming(&fimc->vid_cap.vbq) || fimc_capture_active(fimc))
- 		return -EBUSY;
++	else
++		return &m2m_ctx->cap_q_ctx;
++}
++
++struct vb2_buffer *v4l2_m2m_buffer_alloc(struct vb2_queue *q)
++{
++	struct v4l2_m2m_buffer *buf = kzalloc(sizeof(struct v4l2_m2m_buffer), GFP_KERNEL);
++	if (buf)
++		return &buf->vb;
++	return NULL;
++}
++EXPORT_SYMBOL_GPL(v4l2_m2m_buffer_alloc);
++
++void v4l2_m2m_buffer_free(struct vb2_queue *q, struct vb2_buffer *vb)
++{
++	struct v4l2_m2m_buffer *buf = container_of(vb, struct v4l2_m2m_buffer, vb);
++	kfree(buf);
+ }
++EXPORT_SYMBOL_GPL(v4l2_m2m_buffer_free);
  
-@@ -589,8 +561,7 @@ static int fimc_cap_s_fmt_mplane(struct file *file, void *priv,
- 	frame->fmt = find_format(f, FMT_FLAGS_M2M | FMT_FLAGS_CAM);
- 	if (!frame->fmt) {
- 		err("fimc target format not found\n");
--		ret = -EINVAL;
--		goto sf_unlock;
-+		return -EINVAL;
+ /**
+- * v4l2_m2m_get_vq() - return videobuf_queue for the given type
++ * v4l2_m2m_get_vq() - return vb2_queue for the given type
+  */
+-struct videobuf_queue *v4l2_m2m_get_vq(struct v4l2_m2m_ctx *m2m_ctx,
++struct vb2_queue *v4l2_m2m_get_vq(struct v4l2_m2m_ctx *m2m_ctx,
+ 				       enum v4l2_buf_type type)
+ {
+ 	struct v4l2_m2m_queue_ctx *q_ctx;
+@@ -95,27 +111,20 @@ EXPORT_SYMBOL(v4l2_m2m_get_vq);
+ /**
+  * v4l2_m2m_next_buf() - return next buffer from the list of ready buffers
+  */
+-void *v4l2_m2m_next_buf(struct v4l2_m2m_ctx *m2m_ctx, enum v4l2_buf_type type)
++void *v4l2_m2m_next_buf(struct v4l2_m2m_queue_ctx *q_ctx)
+ {
+-	struct v4l2_m2m_queue_ctx *q_ctx;
+-	struct videobuf_buffer *vb = NULL;
++	struct v4l2_m2m_buffer *b = NULL;
+ 	unsigned long flags;
+ 
+-	q_ctx = get_queue_ctx(m2m_ctx, type);
+-	if (!q_ctx)
+-		return NULL;
+-
+-	spin_lock_irqsave(q_ctx->q.irqlock, flags);
++	spin_lock_irqsave(&q_ctx->rdy_spinlock, flags);
+ 
+ 	if (list_empty(&q_ctx->rdy_queue))
+ 		goto end;
+ 
+-	vb = list_entry(q_ctx->rdy_queue.next, struct videobuf_buffer, queue);
+-	vb->state = VIDEOBUF_ACTIVE;
+-
++	b = list_entry(q_ctx->rdy_queue.next, struct v4l2_m2m_buffer, list);
+ end:
+-	spin_unlock_irqrestore(q_ctx->q.irqlock, flags);
+-	return vb;
++	spin_unlock_irqrestore(&q_ctx->rdy_spinlock, flags);
++	return &b->vb;
+ }
+ EXPORT_SYMBOL_GPL(v4l2_m2m_next_buf);
+ 
+@@ -123,26 +132,21 @@ EXPORT_SYMBOL_GPL(v4l2_m2m_next_buf);
+  * v4l2_m2m_buf_remove() - take off a buffer from the list of ready buffers and
+  * return it
+  */
+-void *v4l2_m2m_buf_remove(struct v4l2_m2m_ctx *m2m_ctx, enum v4l2_buf_type type)
++void *v4l2_m2m_buf_remove(struct v4l2_m2m_queue_ctx *q_ctx)
+ {
+-	struct v4l2_m2m_queue_ctx *q_ctx;
+-	struct videobuf_buffer *vb = NULL;
++	struct v4l2_m2m_buffer *b = NULL;
+ 	unsigned long flags;
+ 
+-	q_ctx = get_queue_ctx(m2m_ctx, type);
+-	if (!q_ctx)
+-		return NULL;
+-
+-	spin_lock_irqsave(q_ctx->q.irqlock, flags);
++	spin_lock_irqsave(&q_ctx->rdy_spinlock, flags);
+ 	if (!list_empty(&q_ctx->rdy_queue)) {
+-		vb = list_entry(q_ctx->rdy_queue.next, struct videobuf_buffer,
+-				queue);
+-		list_del(&vb->queue);
++		b = list_entry(q_ctx->rdy_queue.next, struct v4l2_m2m_buffer,
++				list);
++		list_del(&b->list);
+ 		q_ctx->num_rdy--;
+ 	}
+-	spin_unlock_irqrestore(q_ctx->q.irqlock, flags);
++	spin_unlock_irqrestore(&q_ctx->rdy_spinlock, flags);
+ 
+-	return vb;
++	return &b->vb;
+ }
+ EXPORT_SYMBOL_GPL(v4l2_m2m_buf_remove);
+ 
+@@ -235,20 +239,20 @@ static void v4l2_m2m_try_schedule(struct v4l2_m2m_ctx *m2m_ctx)
+ 		return;
  	}
  
- 	for (i = 0; i < frame->fmt->colplanes; i++)
-@@ -607,12 +578,9 @@ static int fimc_cap_s_fmt_mplane(struct file *file, void *priv,
- 	frame->offs_h	= 0;
- 	frame->offs_v	= 0;
+-	spin_lock_irqsave(m2m_ctx->out_q_ctx.q.irqlock, flags);
++	spin_lock_irqsave(&m2m_ctx->out_q_ctx.rdy_spinlock, flags);
+ 	if (list_empty(&m2m_ctx->out_q_ctx.rdy_queue)) {
+-		spin_unlock_irqrestore(m2m_ctx->out_q_ctx.q.irqlock, flags);
++		spin_unlock_irqrestore(&m2m_ctx->out_q_ctx.rdy_spinlock, flags);
+ 		spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags_job);
+ 		dprintk("No input buffers available\n");
+ 		return;
+ 	}
+ 	if (list_empty(&m2m_ctx->cap_q_ctx.rdy_queue)) {
+-		spin_unlock_irqrestore(m2m_ctx->out_q_ctx.q.irqlock, flags);
++		spin_unlock_irqrestore(&m2m_ctx->out_q_ctx.rdy_spinlock, flags);
+ 		spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags_job);
+ 		dprintk("No output buffers available\n");
+ 		return;
+ 	}
+-	spin_unlock_irqrestore(m2m_ctx->out_q_ctx.q.irqlock, flags);
++	spin_unlock_irqrestore(&m2m_ctx->out_q_ctx.rdy_spinlock, flags);
  
--	ret = sync_capture_fmt(ctx);
+ 	if (m2m_dev->m2m_ops->job_ready
+ 		&& (!m2m_dev->m2m_ops->job_ready(m2m_ctx->priv))) {
+@@ -291,6 +295,7 @@ void v4l2_m2m_job_finish(struct v4l2_m2m_dev *m2m_dev,
+ 
+ 	list_del(&m2m_dev->curr_ctx->queue);
+ 	m2m_dev->curr_ctx->job_flags &= ~(TRANS_QUEUED | TRANS_RUNNING);
++	wake_up(&m2m_dev->curr_ctx->finished);
+ 	m2m_dev->curr_ctx = NULL;
+ 
+ 	spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
+@@ -309,10 +314,10 @@ EXPORT_SYMBOL(v4l2_m2m_job_finish);
+ int v4l2_m2m_reqbufs(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
+ 		     struct v4l2_requestbuffers *reqbufs)
+ {
+-	struct videobuf_queue *vq;
++	struct vb2_queue *vq;
+ 
+ 	vq = v4l2_m2m_get_vq(m2m_ctx, reqbufs->type);
+-	return videobuf_reqbufs(vq, reqbufs);
++	return vb2_reqbufs(vq, reqbufs);
+ }
+ EXPORT_SYMBOL_GPL(v4l2_m2m_reqbufs);
+ 
+@@ -324,15 +329,22 @@ EXPORT_SYMBOL_GPL(v4l2_m2m_reqbufs);
+ int v4l2_m2m_querybuf(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
+ 		      struct v4l2_buffer *buf)
+ {
+-	struct videobuf_queue *vq;
+-	int ret;
++	struct vb2_queue *vq;
++	int ret = 0;
++	unsigned int i;
+ 
+ 	vq = v4l2_m2m_get_vq(m2m_ctx, buf->type);
+-	ret = videobuf_querybuf(vq, buf);
 -
- 	ctx->state |= (FIMC_PARAMS | FIMC_DST_FMT);
+-	if (buf->memory == V4L2_MEMORY_MMAP
+-	    && vq->type == V4L2_BUF_TYPE_VIDEO_CAPTURE) {
+-		buf->m.offset += DST_QUEUE_OFF_BASE;
++	ret = vb2_querybuf(vq, buf);
++
++	/* Adjust MMAP memory offsets for the CAPTURE queue */
++	if (buf->memory == V4L2_MEMORY_MMAP && !V4L2_TYPE_IS_OUTPUT(vq->type)) {
++		if (V4L2_TYPE_IS_MULTIPLANAR(vq->type)) {
++			for (i = 0; i < buf->length; ++i)
++				buf->m.planes[i].m.mem_offset
++					+= DST_QUEUE_OFF_BASE;
++		} else {
++			buf->m.offset += DST_QUEUE_OFF_BASE;
++		}
+ 	}
  
--sf_unlock:
--	mutex_unlock(&fimc->lock);
-+	ret = sync_capture_fmt(ctx);
  	return ret;
- }
- 
-@@ -641,21 +609,16 @@ static int fimc_cap_s_input(struct file *file, void *priv,
- 	struct fimc_ctx *ctx = priv;
- 	struct fimc_dev *fimc = ctx->fimc_dev;
- 	struct s3c_platform_fimc *pdata = fimc->pdata;
--	int ret;
- 
- 	if (fimc_capture_active(ctx->fimc_dev))
- 		return -EBUSY;
- 
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
-+	if (i >= FIMC_MAX_CAMIF_CLIENTS || !pdata->isp_info[i])
-+		return -EINVAL;
- 
--	if (i >= FIMC_MAX_CAMIF_CLIENTS || !pdata->isp_info[i]) {
--		ret = -EINVAL;
--		goto si_unlock;
--	}
- 
- 	if (fimc->vid_cap.sd) {
--		ret = v4l2_subdev_call(fimc->vid_cap.sd, core, s_power, 0);
-+		int ret = v4l2_subdev_call(fimc->vid_cap.sd, core, s_power, 0);
- 		if (ret)
- 			err("s_power failed: %d", ret);
- 	}
-@@ -663,11 +626,7 @@ static int fimc_cap_s_input(struct file *file, void *priv,
- 	/* Release the attached sensor subdevice. */
- 	fimc_subdev_unregister(fimc);
- 
--	ret = fimc_isp_subdev_init(fimc, i);
--
--si_unlock:
--	mutex_unlock(&fimc->lock);
--	return ret;
-+	return fimc_isp_subdev_init(fimc, i);
- }
- 
- static int fimc_cap_g_input(struct file *file, void *priv,
-@@ -683,112 +642,41 @@ static int fimc_cap_g_input(struct file *file, void *priv,
- static int fimc_cap_streamon(struct file *file, void *priv,
- 			     enum v4l2_buf_type type)
+@@ -346,11 +358,11 @@ EXPORT_SYMBOL_GPL(v4l2_m2m_querybuf);
+ int v4l2_m2m_qbuf(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
+ 		  struct v4l2_buffer *buf)
  {
--	struct s3c_fimc_isp_info *isp_info;
- 	struct fimc_ctx *ctx = priv;
- 	struct fimc_dev *fimc = ctx->fimc_dev;
--	int ret = -EBUSY;
--
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
- 
- 	if (fimc_capture_active(fimc) || !fimc->vid_cap.sd)
--		goto s_unlock;
-+		return -EBUSY;
- 
- 	if (!(ctx->state & FIMC_DST_FMT)) {
- 		v4l2_err(&fimc->vid_cap.v4l2_dev, "Format is not set\n");
--		ret = -EINVAL;
--		goto s_unlock;
--	}
--
--	ret = v4l2_subdev_call(fimc->vid_cap.sd, video, s_stream, 1);
--	if (ret && ret != -ENOIOCTLCMD)
--		goto s_unlock;
--
--	ret = fimc_prepare_config(ctx, ctx->state);
--	if (ret)
--		goto s_unlock;
--
--	isp_info = fimc->pdata->isp_info[fimc->vid_cap.input_index];
--	fimc_hw_set_camera_type(fimc, isp_info);
--	fimc_hw_set_camera_source(fimc, isp_info);
--	fimc_hw_set_camera_offset(fimc, &ctx->s_frame);
--
--	if (ctx->state & FIMC_PARAMS) {
--		ret = fimc_set_scaler_info(ctx);
--		if (ret) {
--			err("Scaler setup error");
--			goto s_unlock;
--		}
--		fimc_hw_set_input_path(ctx);
--		fimc_hw_set_scaler(ctx);
--		fimc_hw_set_target_format(ctx);
--		fimc_hw_set_rotation(ctx);
--		fimc_hw_set_effect(ctx);
-+		return -EINVAL;
- 	}
- 
--	fimc_hw_set_output_path(ctx);
--	fimc_hw_set_out_dma(ctx);
--
--	INIT_LIST_HEAD(&fimc->vid_cap.pending_buf_q);
--	INIT_LIST_HEAD(&fimc->vid_cap.active_buf_q);
--	fimc->vid_cap.active_buf_cnt = 0;
--	fimc->vid_cap.frame_count = 0;
--	fimc->vid_cap.buf_index = fimc_hw_get_frame_index(fimc);
--
--	set_bit(ST_CAPT_PEND, &fimc->state);
--	ret = vb2_streamon(&fimc->vid_cap.vbq, type);
--
--s_unlock:
--	mutex_unlock(&fimc->lock);
--	return ret;
-+	return vb2_streamon(&fimc->vid_cap.vbq, type);
- }
- 
- static int fimc_cap_streamoff(struct file *file, void *priv,
--			      enum v4l2_buf_type type)
-+			    enum v4l2_buf_type type)
- {
- 	struct fimc_ctx *ctx = priv;
- 	struct fimc_dev *fimc = ctx->fimc_dev;
--	struct fimc_vid_cap *cap = &fimc->vid_cap;
--	unsigned long flags;
--	int ret;
--
--	spin_lock_irqsave(&fimc->slock, flags);
--	if (!fimc_capture_running(fimc) && !fimc_capture_pending(fimc)) {
--		spin_unlock_irqrestore(&fimc->slock, flags);
--		dbg("state: 0x%lx", fimc->state);
--		return -EINVAL;
--	}
--	spin_unlock_irqrestore(&fimc->slock, flags);
--
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
--
--	fimc_stop_capture(fimc);
--	ret = vb2_streamoff(&cap->vbq, type);
- 
--	mutex_unlock(&fimc->lock);
--	return ret;
-+	return vb2_streamoff(&fimc->vid_cap.vbq, type);
- }
- 
- static int fimc_cap_reqbufs(struct file *file, void *priv,
- 			    struct v4l2_requestbuffers *reqbufs)
- {
- 	struct fimc_ctx *ctx = priv;
--	struct fimc_dev *fimc = ctx->fimc_dev;
--	struct fimc_vid_cap *cap = &fimc->vid_cap;
-+	struct fimc_vid_cap *cap = &ctx->fimc_dev->vid_cap;
+-	struct videobuf_queue *vq;
++	struct vb2_queue *vq;
  	int ret;
  
--	if (fimc_capture_active(ctx->fimc_dev))
--		return -EBUSY;
--
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
- 
- 	ret = vb2_reqbufs(&cap->vbq, reqbufs);
+ 	vq = v4l2_m2m_get_vq(m2m_ctx, buf->type);
+-	ret = videobuf_qbuf(vq, buf);
++	ret = vb2_qbuf(vq, buf);
  	if (!ret)
- 		cap->reqbufs_count = reqbufs->count;
+ 		v4l2_m2m_try_schedule(m2m_ctx);
  
--	mutex_unlock(&fimc->lock);
- 	return ret;
- }
- 
-@@ -798,9 +686,6 @@ static int fimc_cap_querybuf(struct file *file, void *priv,
- 	struct fimc_ctx *ctx = priv;
- 	struct fimc_vid_cap *cap = &ctx->fimc_dev->vid_cap;
- 
--	if (fimc_capture_active(ctx->fimc_dev))
--		return -EBUSY;
--
- 	return vb2_querybuf(&cap->vbq, buf);
- }
- 
-@@ -808,33 +693,16 @@ static int fimc_cap_qbuf(struct file *file, void *priv,
- 			  struct v4l2_buffer *buf)
+@@ -365,10 +377,10 @@ EXPORT_SYMBOL_GPL(v4l2_m2m_qbuf);
+ int v4l2_m2m_dqbuf(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
+ 		   struct v4l2_buffer *buf)
  {
- 	struct fimc_ctx *ctx = priv;
--	struct fimc_dev *fimc = ctx->fimc_dev;
--	struct fimc_vid_cap *cap = &fimc->vid_cap;
--	int ret;
--
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
--
--	ret = vb2_qbuf(&cap->vbq, buf);
--
--	mutex_unlock(&fimc->lock);
--	return ret;
-+	struct fimc_vid_cap *cap = &ctx->fimc_dev->vid_cap;
-+	return vb2_qbuf(&cap->vbq, buf);
- }
+-	struct videobuf_queue *vq;
++	struct vb2_queue *vq;
  
- static int fimc_cap_dqbuf(struct file *file, void *priv,
- 			   struct v4l2_buffer *buf)
+ 	vq = v4l2_m2m_get_vq(m2m_ctx, buf->type);
+-	return videobuf_dqbuf(vq, buf, file->f_flags & O_NONBLOCK);
++	return vb2_dqbuf(vq, buf, file->f_flags & O_NONBLOCK);
+ }
+ EXPORT_SYMBOL_GPL(v4l2_m2m_dqbuf);
+ 
+@@ -378,11 +390,11 @@ EXPORT_SYMBOL_GPL(v4l2_m2m_dqbuf);
+ int v4l2_m2m_streamon(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
+ 		      enum v4l2_buf_type type)
  {
- 	struct fimc_ctx *ctx = priv;
--	int ret;
--
--	if (mutex_lock_interruptible(&ctx->fimc_dev->lock))
--		return -ERESTARTSYS;
--
--	ret = vb2_dqbuf(&ctx->fimc_dev->vid_cap.vbq, buf,
-+	return vb2_dqbuf(&ctx->fimc_dev->vid_cap.vbq, buf,
- 		file->f_flags & O_NONBLOCK);
--
--	mutex_unlock(&ctx->fimc_dev->lock);
--	return ret;
- }
+-	struct videobuf_queue *vq;
++	struct vb2_queue *vq;
+ 	int ret;
  
- static int fimc_cap_s_ctrl(struct file *file, void *priv,
-@@ -843,9 +711,6 @@ static int fimc_cap_s_ctrl(struct file *file, void *priv,
- 	struct fimc_ctx *ctx = priv;
- 	int ret = -EINVAL;
+ 	vq = v4l2_m2m_get_vq(m2m_ctx, type);
+-	ret = videobuf_streamon(vq);
++	ret = vb2_streamon(vq, type);
+ 	if (!ret)
+ 		v4l2_m2m_try_schedule(m2m_ctx);
  
--	if (mutex_lock_interruptible(&ctx->fimc_dev->lock))
--		return -ERESTARTSYS;
--
- 	/* Allow any controls but 90/270 rotation while streaming */
- 	if (!fimc_capture_active(ctx->fimc_dev) ||
- 	    ctrl->id != V4L2_CID_ROTATE ||
-@@ -860,8 +725,6 @@ static int fimc_cap_s_ctrl(struct file *file, void *priv,
- 	if (ret == -EINVAL)
- 		ret = v4l2_subdev_call(ctx->fimc_dev->vid_cap.sd,
- 				       core, s_ctrl, ctrl);
--
--	mutex_unlock(&ctx->fimc_dev->lock);
- 	return ret;
- }
- 
-@@ -870,13 +733,10 @@ static int fimc_cap_cropcap(struct file *file, void *fh,
+@@ -396,10 +408,10 @@ EXPORT_SYMBOL_GPL(v4l2_m2m_streamon);
+ int v4l2_m2m_streamoff(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
+ 		       enum v4l2_buf_type type)
  {
- 	struct fimc_frame *f;
- 	struct fimc_ctx *ctx = fh;
--	struct fimc_dev *fimc = ctx->fimc_dev;
+-	struct videobuf_queue *vq;
++	struct vb2_queue *vq;
  
- 	if (cr->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
- 		return -EINVAL;
- 
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
- 	f = &ctx->s_frame;
- 
- 	cr->bounds.left		= 0;
-@@ -885,7 +745,6 @@ static int fimc_cap_cropcap(struct file *file, void *fh,
- 	cr->bounds.height	= f->o_height;
- 	cr->defrect		= cr->bounds;
- 
--	mutex_unlock(&fimc->lock);
- 	return 0;
+ 	vq = v4l2_m2m_get_vq(m2m_ctx, type);
+-	return videobuf_streamoff(vq);
++	return vb2_streamoff(vq, type);
  }
+ EXPORT_SYMBOL_GPL(v4l2_m2m_streamoff);
  
-@@ -893,19 +752,14 @@ static int fimc_cap_g_crop(struct file *file, void *fh, struct v4l2_crop *cr)
+@@ -414,44 +426,53 @@ EXPORT_SYMBOL_GPL(v4l2_m2m_streamoff);
+ unsigned int v4l2_m2m_poll(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
+ 			   struct poll_table_struct *wait)
  {
- 	struct fimc_frame *f;
- 	struct fimc_ctx *ctx = file->private_data;
--	struct fimc_dev *fimc = ctx->fimc_dev;
--
--
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
+-	struct videobuf_queue *src_q, *dst_q;
+-	struct videobuf_buffer *src_vb = NULL, *dst_vb = NULL;
++	struct vb2_queue *src_q, *dst_q;
++	struct vb2_buffer *src_vb = NULL, *dst_vb = NULL;
+ 	unsigned int rc = 0;
++	unsigned long flags;
  
- 	f = &ctx->s_frame;
+ 	src_q = v4l2_m2m_get_src_vq(m2m_ctx);
+ 	dst_q = v4l2_m2m_get_dst_vq(m2m_ctx);
+ 
+-	videobuf_queue_lock(src_q);
+-	videobuf_queue_lock(dst_q);
+-
+-	if (src_q->streaming && !list_empty(&src_q->stream))
+-		src_vb = list_first_entry(&src_q->stream,
+-					  struct videobuf_buffer, stream);
+-	if (dst_q->streaming && !list_empty(&dst_q->stream))
+-		dst_vb = list_first_entry(&dst_q->stream,
+-					  struct videobuf_buffer, stream);
+-
+-	if (!src_vb && !dst_vb) {
++	/*
++	 * There has to be at least one buffer queued on each queued_list, which
++	 * means either in driver already or waiting for driver to claim it
++	 * and start processing.
++	 */
++	if ((!src_q->streaming || list_empty(&src_q->queued_list))
++		&& (!dst_q->streaming || list_empty(&dst_q->queued_list))) {
+ 		rc = POLLERR;
+ 		goto end;
+ 	}
+ 
+-	if (src_vb) {
+-		poll_wait(file, &src_vb->done, wait);
+-		if (src_vb->state == VIDEOBUF_DONE
+-		    || src_vb->state == VIDEOBUF_ERROR)
+-			rc |= POLLOUT | POLLWRNORM;
+-	}
+-	if (dst_vb) {
+-		poll_wait(file, &dst_vb->done, wait);
+-		if (dst_vb->state == VIDEOBUF_DONE
+-		    || dst_vb->state == VIDEOBUF_ERROR)
+-			rc |= POLLIN | POLLRDNORM;
+-	}
++	if (m2m_ctx->m2m_dev->m2m_ops->unlock)
++		m2m_ctx->m2m_dev->m2m_ops->unlock(m2m_ctx->priv);
 +
- 	cr->c.left	= f->offs_h;
- 	cr->c.top	= f->offs_v;
- 	cr->c.width	= f->width;
- 	cr->c.height	= f->height;
- 
--	mutex_unlock(&fimc->lock);
- 	return 0;
- }
- 
-@@ -924,13 +778,10 @@ static int fimc_cap_s_crop(struct file *file, void *fh,
- 	if (ret)
- 		return ret;
- 
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
--
- 	if (!(ctx->state & FIMC_DST_FMT)) {
- 		v4l2_err(&fimc->vid_cap.v4l2_dev,
- 			 "Capture color format not set\n");
--		goto sc_unlock;
-+		return -EINVAL; /* TODO: make sure this is the right value */
- 	}
- 
- 	f = &ctx->s_frame;
-@@ -938,17 +789,15 @@ static int fimc_cap_s_crop(struct file *file, void *fh,
- 	ret = fimc_check_scaler_ratio(&cr->c, &ctx->d_frame);
- 	if (ret) {
- 		v4l2_err(&fimc->vid_cap.v4l2_dev, "Out of the scaler range");
--	} else {
--		ret = 0;
--		f->offs_h = cr->c.left;
--		f->offs_v = cr->c.top;
--		f->width  = cr->c.width;
--		f->height = cr->c.height;
-+		return ret;
- 	}
- 
--sc_unlock:
--	mutex_unlock(&fimc->lock);
--	return ret;
-+	f->offs_h = cr->c.left;
-+	f->offs_v = cr->c.top;
-+	f->width  = cr->c.width;
-+	f->height = cr->c.height;
++	poll_wait(file, &src_q->done_wq, wait);
++	poll_wait(file, &dst_q->done_wq, wait);
 +
-+	return 0;
++	if (m2m_ctx->m2m_dev->m2m_ops->lock)
++		m2m_ctx->m2m_dev->m2m_ops->lock(m2m_ctx->priv);
++
++	spin_lock_irqsave(&src_q->done_lock, flags);
++	if (!list_empty(&src_q->done_list))
++		src_vb = list_first_entry(&src_q->done_list, struct vb2_buffer,
++						done_entry);
++	if (src_vb && (src_vb->state == VB2_BUF_STATE_DONE
++			|| src_vb->state == VB2_BUF_STATE_ERROR))
++		rc |= POLLOUT | POLLWRNORM;
++	spin_unlock_irqrestore(&src_q->done_lock, flags);
++
++	spin_lock_irqsave(&dst_q->done_lock, flags);
++	if (!list_empty(&dst_q->done_list))
++		dst_vb = list_first_entry(&dst_q->done_list, struct vb2_buffer,
++						done_entry);
++	if (dst_vb && (dst_vb->state == VB2_BUF_STATE_DONE
++			|| dst_vb->state == VB2_BUF_STATE_ERROR))
++		rc |= POLLIN | POLLRDNORM;
++	spin_unlock_irqrestore(&dst_q->done_lock, flags);
+ 
+ end:
+-	videobuf_queue_unlock(dst_q);
+-	videobuf_queue_unlock(src_q);
+ 	return rc;
  }
- 
- 
-@@ -1030,6 +879,7 @@ int fimc_register_capture_device(struct fimc_dev *fimc)
- 	vfd->ioctl_ops	= &fimc_capture_ioctl_ops;
- 	vfd->minor	= -1;
- 	vfd->release	= video_device_release;
-+	vfd->lock	= &fimc->lock;
- 	video_set_drvdata(vfd, fimc);
- 
- 	vid_cap = &fimc->vid_cap;
-diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index b9fd324..a494c8f 100644
---- a/drivers/media/video/s5p-fimc/fimc-core.c
-+++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -750,22 +750,17 @@ int fimc_vidioc_g_fmt_mplane(struct file *file, void *priv,
- 			     struct v4l2_format *f)
+ EXPORT_SYMBOL_GPL(v4l2_m2m_poll);
+@@ -470,7 +491,7 @@ int v4l2_m2m_mmap(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
+ 			 struct vm_area_struct *vma)
  {
- 	struct fimc_ctx *ctx = priv;
--	struct fimc_dev *fimc = ctx->fimc_dev;
- 	struct fimc_frame *frame;
+ 	unsigned long offset = vma->vm_pgoff << PAGE_SHIFT;
+-	struct videobuf_queue *vq;
++	struct vb2_queue *vq;
  
- 	frame = ctx_get_frame(ctx, f->type);
- 	if (IS_ERR(frame))
- 		return PTR_ERR(frame);
+ 	if (offset < DST_QUEUE_OFF_BASE) {
+ 		vq = v4l2_m2m_get_src_vq(m2m_ctx);
+@@ -479,7 +500,7 @@ int v4l2_m2m_mmap(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
+ 		vma->vm_pgoff -= (DST_QUEUE_OFF_BASE >> PAGE_SHIFT);
+ 	}
  
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
--
- 	f->fmt.pix.width	= frame->width;
- 	f->fmt.pix.height	= frame->height;
- 	f->fmt.pix.field	= V4L2_FIELD_NONE;
- 	f->fmt.pix.pixelformat	= frame->fmt->fourcc;
- 
--	mutex_unlock(&fimc->lock);
- 	return 0;
+-	return videobuf_mmap_mapper(vq, vma);
++	return vb2_mmap(vq, vma);
  }
+ EXPORT_SYMBOL(v4l2_m2m_mmap);
  
-@@ -809,7 +804,8 @@ int fimc_vidioc_try_fmt_mplane(struct file *file, void *priv,
- 	struct v4l2_pix_format_mplane *pix = &f->fmt.pix_mp;
- 	struct fimc_fmt *fmt;
- 	u32 max_width, mod_x, mod_y, mask;
--	int ret, i, is_output = 0;
-+	int i, is_output = 0;
+@@ -531,36 +552,41 @@ EXPORT_SYMBOL_GPL(v4l2_m2m_release);
+  *
+  * Usually called from driver's open() function.
+  */
+-struct v4l2_m2m_ctx *v4l2_m2m_ctx_init(void *priv, struct v4l2_m2m_dev *m2m_dev,
+-			void (*vq_init)(void *priv, struct videobuf_queue *,
+-					enum v4l2_buf_type))
++struct v4l2_m2m_ctx *v4l2_m2m_ctx_init(struct v4l2_m2m_dev *m2m_dev,
++		void *drv_priv,
++		int (*queue_init)(void *priv, struct vb2_queue *src_vq, struct vb2_queue *dst_vq))
+ {
+ 	struct v4l2_m2m_ctx *m2m_ctx;
+ 	struct v4l2_m2m_queue_ctx *out_q_ctx, *cap_q_ctx;
+-
+-	if (!vq_init)
+-		return ERR_PTR(-EINVAL);
++	int ret;
+ 
+ 	m2m_ctx = kzalloc(sizeof *m2m_ctx, GFP_KERNEL);
+ 	if (!m2m_ctx)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	m2m_ctx->priv = priv;
++	m2m_ctx->priv = drv_priv;
+ 	m2m_ctx->m2m_dev = m2m_dev;
++	init_waitqueue_head(&m2m_ctx->finished);
+ 
+-	out_q_ctx = get_queue_ctx(m2m_ctx, V4L2_BUF_TYPE_VIDEO_OUTPUT);
+-	cap_q_ctx = get_queue_ctx(m2m_ctx, V4L2_BUF_TYPE_VIDEO_CAPTURE);
++	out_q_ctx = &m2m_ctx->out_q_ctx;
++	cap_q_ctx = &m2m_ctx->cap_q_ctx;
+ 
+ 	INIT_LIST_HEAD(&out_q_ctx->rdy_queue);
+ 	INIT_LIST_HEAD(&cap_q_ctx->rdy_queue);
++	spin_lock_init(&out_q_ctx->rdy_spinlock);
++	spin_lock_init(&cap_q_ctx->rdy_spinlock);
+ 
+ 	INIT_LIST_HEAD(&m2m_ctx->queue);
+ 
+-	vq_init(priv, &out_q_ctx->q, V4L2_BUF_TYPE_VIDEO_OUTPUT);
+-	vq_init(priv, &cap_q_ctx->q, V4L2_BUF_TYPE_VIDEO_CAPTURE);
+-	out_q_ctx->q.priv_data = cap_q_ctx->q.priv_data = priv;
++	ret = queue_init(drv_priv, &out_q_ctx->q, &cap_q_ctx->q);
 +
++	if (ret)
++		goto err;
  
- 	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
- 		if (ctx->state & FIMC_CTX_CAP)
-@@ -819,8 +815,6 @@ int fimc_vidioc_try_fmt_mplane(struct file *file, void *priv,
- 		return -EINVAL;
- 	}
- 
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
- 	dbg("w: %d, h: %d", pix->width, pix->height);
- 
- 	mask = is_output ? FMT_FLAGS_M2M : FMT_FLAGS_M2M | FMT_FLAGS_CAM;
-@@ -828,13 +822,13 @@ int fimc_vidioc_try_fmt_mplane(struct file *file, void *priv,
- 	if (!fmt) {
- 		v4l2_err(&fimc->m2m.v4l2_dev, "Fourcc format (0x%X) invalid.\n",
- 			 pix->pixelformat);
--		goto tf_out;
-+		return -EINVAL;
- 	}
- 
- 	if (pix->field == V4L2_FIELD_ANY)
- 		pix->field = V4L2_FIELD_NONE;
- 	else if (V4L2_FIELD_NONE != pix->field)
--		goto tf_out;
-+		return -EINVAL;
- 
- 	if (is_output) {
- 		max_width = variant->pix_limit->scaler_dis_w;
-@@ -880,11 +874,7 @@ int fimc_vidioc_try_fmt_mplane(struct file *file, void *priv,
- 		    pix->plane_fmt[i].sizeimage);
- 	}
- 
--	ret = 0;
--
--tf_out:
--	mutex_unlock(&fimc->lock);
--	return ret;
-+	return 0;
+ 	return m2m_ctx;
++err:
++	kfree(m2m_ctx);
++	return ERR_PTR(ret);
  }
+ EXPORT_SYMBOL_GPL(v4l2_m2m_ctx_init);
  
- static int fimc_m2m_s_fmt_mplane(struct file *file, void *priv,
-@@ -897,45 +887,33 @@ static int fimc_m2m_s_fmt_mplane(struct file *file, void *priv,
- 	struct v4l2_pix_format_mplane *pix;
+@@ -572,7 +598,6 @@ EXPORT_SYMBOL_GPL(v4l2_m2m_ctx_init);
+ void v4l2_m2m_ctx_release(struct v4l2_m2m_ctx *m2m_ctx)
+ {
+ 	struct v4l2_m2m_dev *m2m_dev;
+-	struct videobuf_buffer *vb;
  	unsigned long flags;
- 	int i, ret = 0;
-+	u32 tmp;
  
- 	ret = fimc_vidioc_try_fmt_mplane(file, priv, f);
- 	if (ret)
- 		return ret;
+ 	m2m_dev = m2m_ctx->m2m_dev;
+@@ -582,10 +607,7 @@ void v4l2_m2m_ctx_release(struct v4l2_m2m_ctx *m2m_ctx)
+ 		spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
+ 		m2m_dev->m2m_ops->job_abort(m2m_ctx->priv);
+ 		dprintk("m2m_ctx %p running, will wait to complete", m2m_ctx);
+-		vb = v4l2_m2m_next_dst_buf(m2m_ctx);
+-		BUG_ON(NULL == vb);
+-		wait_event(vb->done, vb->state != VIDEOBUF_ACTIVE
+-				     && vb->state != VIDEOBUF_QUEUED);
++		wait_event(m2m_ctx->finished, !(m2m_ctx->job_flags & TRANS_RUNNING));
+ 	} else if (m2m_ctx->job_flags & TRANS_QUEUED) {
+ 		list_del(&m2m_ctx->queue);
+ 		m2m_ctx->job_flags &= ~(TRANS_QUEUED | TRANS_RUNNING);
+@@ -597,11 +619,8 @@ void v4l2_m2m_ctx_release(struct v4l2_m2m_ctx *m2m_ctx)
+ 		spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
+ 	}
  
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
+-	videobuf_stop(&m2m_ctx->cap_q_ctx.q);
+-	videobuf_stop(&m2m_ctx->out_q_ctx.q);
 -
- 	vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
+-	videobuf_mmap_free(&m2m_ctx->cap_q_ctx.q);
+-	videobuf_mmap_free(&m2m_ctx->out_q_ctx.q);
++	vb2_queue_release(&m2m_ctx->cap_q_ctx.q);
++	vb2_queue_release(&m2m_ctx->out_q_ctx.q);
  
- 	if (vb2_is_streaming(vq)) {
--		v4l2_err(&fimc->vid_cap.v4l2_dev, "%s: queue (%d) busy\n",
--			 __func__, f->type);
--		ret = -EBUSY;
--		goto sf_out;
-+		v4l2_err(&fimc->m2m.v4l2_dev, "queue (%d) busy\n", f->type);
-+		return -EBUSY;
- 	}
- 
--	spin_lock_irqsave(&ctx->slock, flags);
- 	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
- 		frame = &ctx->s_frame;
--		ctx->state |= FIMC_SRC_FMT;
- 	} else if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
- 		frame = &ctx->d_frame;
--		ctx->state |= FIMC_DST_FMT;
- 	} else {
--		spin_unlock_irqrestore(&ctx->slock, flags);
- 		v4l2_err(&fimc->m2m.v4l2_dev,
- 			 "Wrong buffer/video queue type (%d)\n", f->type);
--		ret = -EINVAL;
--		goto sf_out;
-+		return -EINVAL;
- 	}
--	spin_unlock_irqrestore(&ctx->slock, flags);
- 
- 	pix = &f->fmt.pix_mp;
- 	frame->fmt = find_format(f, FMT_FLAGS_M2M);
--	if (!frame->fmt) {
--		ret = -EINVAL;
--		goto sf_out;
--	}
-+	if (!frame->fmt)
-+		return -EINVAL;
- 
- 	for (i = 0; i < frame->fmt->colplanes; i++)
- 		frame->payload[i] = pix->plane_fmt[i].bytesperline * pix->height;
-@@ -951,14 +929,13 @@ static int fimc_m2m_s_fmt_mplane(struct file *file, void *priv,
- 	frame->offs_v	= 0;
- 
- 	spin_lock_irqsave(&ctx->slock, flags);
--	ctx->state |= FIMC_PARAMS;
-+	tmp = (frame == &ctx->d_frame) ? FIMC_DST_FMT : FIMC_SRC_FMT;
-+	ctx->state |= FIMC_PARAMS | tmp;
- 	spin_unlock_irqrestore(&ctx->slock, flags);
- 
- 	dbg("f_w: %d, f_h: %d", frame->f_width, frame->f_height);
- 
--sf_out:
--	mutex_unlock(&fimc->lock);
--	return ret;
-+	return 0;
+ 	kfree(m2m_ctx);
  }
- 
- static int fimc_m2m_reqbufs(struct file *file, void *priv,
-@@ -1023,11 +1000,8 @@ int fimc_vidioc_queryctrl(struct file *file, void *priv,
- 	}
- 
- 	if (ctx->state & FIMC_CTX_CAP) {
--		if (mutex_lock_interruptible(&ctx->fimc_dev->lock))
--			return -ERESTARTSYS;
--		ret = v4l2_subdev_call(ctx->fimc_dev->vid_cap.sd,
-+		return v4l2_subdev_call(ctx->fimc_dev->vid_cap.sd,
- 					core, queryctrl, qc);
--		mutex_unlock(&ctx->fimc_dev->lock);
- 	}
- 	return ret;
- }
-@@ -1037,10 +1011,6 @@ int fimc_vidioc_g_ctrl(struct file *file, void *priv,
+@@ -611,23 +630,21 @@ EXPORT_SYMBOL_GPL(v4l2_m2m_ctx_release);
+  * v4l2_m2m_buf_queue() - add a buffer to the proper ready buffers list.
+  *
+  * Call from buf_queue(), videobuf_queue_ops callback.
+- *
+- * Locking: Caller holds q->irqlock (taken by videobuf before calling buf_queue
+- * callback in the driver).
+  */
+-void v4l2_m2m_buf_queue(struct v4l2_m2m_ctx *m2m_ctx, struct videobuf_queue *vq,
+-			struct videobuf_buffer *vb)
++void v4l2_m2m_buf_queue(struct v4l2_m2m_ctx *m2m_ctx, struct vb2_buffer *vb)
  {
- 	struct fimc_ctx *ctx = priv;
- 	struct fimc_dev *fimc = ctx->fimc_dev;
--	int ret = 0;
++	struct v4l2_m2m_buffer *b = container_of(vb, struct v4l2_m2m_buffer, vb);
+ 	struct v4l2_m2m_queue_ctx *q_ctx;
++	unsigned long flags;
+ 
+-	q_ctx = get_queue_ctx(m2m_ctx, vq->type);
++	q_ctx = get_queue_ctx(m2m_ctx, vb->vb2_queue->type);
+ 	if (!q_ctx)
+ 		return;
+ 
+-	list_add_tail(&vb->queue, &q_ctx->rdy_queue);
++	spin_lock_irqsave(&q_ctx->rdy_spinlock, flags);
++	list_add_tail(&b->list, &q_ctx->rdy_queue);
+ 	q_ctx->num_rdy++;
 -
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
+-	vb->state = VIDEOBUF_QUEUED;
++	spin_unlock_irqrestore(&q_ctx->rdy_spinlock, flags);
+ }
+ EXPORT_SYMBOL_GPL(v4l2_m2m_buf_queue);
  
- 	switch (ctrl->id) {
- 	case V4L2_CID_HFLIP:
-@@ -1054,18 +1024,17 @@ int fimc_vidioc_g_ctrl(struct file *file, void *priv,
- 		break;
- 	default:
- 		if (ctx->state & FIMC_CTX_CAP) {
--			ret = v4l2_subdev_call(fimc->vid_cap.sd, core,
--				       g_ctrl, ctrl);
-+			return v4l2_subdev_call(fimc->vid_cap.sd, core,
-+						g_ctrl, ctrl);
- 		} else {
- 			v4l2_err(&fimc->m2m.v4l2_dev,
- 				 "Invalid control\n");
--			ret = -EINVAL;
-+			return -EINVAL;
- 		}
- 	}
- 	dbg("ctrl->value= %d", ctrl->value);
+diff --git a/include/media/v4l2-mem2mem.h b/include/media/v4l2-mem2mem.h
+index 8d149f1..c187cda 100644
+--- a/include/media/v4l2-mem2mem.h
++++ b/include/media/v4l2-mem2mem.h
+@@ -17,7 +17,7 @@
+ #ifndef _MEDIA_V4L2_MEM2MEM_H
+ #define _MEDIA_V4L2_MEM2MEM_H
  
--	mutex_unlock(&fimc->lock);
--	return ret;
-+	return 0;
+-#include <media/videobuf-core.h>
++#include <media/videobuf2-core.h>
+ 
+ /**
+  * struct v4l2_m2m_ops - mem-to-mem device driver callbacks
+@@ -45,17 +45,20 @@ struct v4l2_m2m_ops {
+ 	void (*device_run)(void *priv);
+ 	int (*job_ready)(void *priv);
+ 	void (*job_abort)(void *priv);
++	void (*lock)(void *priv);
++	void (*unlock)(void *priv);
+ };
+ 
+ struct v4l2_m2m_dev;
+ 
+ struct v4l2_m2m_queue_ctx {
+ /* private: internal use only */
+-	struct videobuf_queue	q;
++	struct vb2_queue	q;
+ 
+ 	/* Queue for buffers ready to be processed as soon as this
+ 	 * instance receives access to the device */
+ 	struct list_head	rdy_queue;
++	spinlock_t		rdy_spinlock;
+ 	u8			num_rdy;
+ };
+ 
+@@ -72,6 +75,7 @@ struct v4l2_m2m_ctx {
+ 	/* For device job queue */
+ 	struct list_head		queue;
+ 	unsigned long			job_flags;
++	wait_queue_head_t		finished;
+ 
+ 	/* Instance private data */
+ 	void				*priv;
+@@ -79,12 +83,18 @@ struct v4l2_m2m_ctx {
+ 
+ void *v4l2_m2m_get_curr_priv(struct v4l2_m2m_dev *m2m_dev);
+ 
+-struct videobuf_queue *v4l2_m2m_get_vq(struct v4l2_m2m_ctx *m2m_ctx,
++struct vb2_queue *v4l2_m2m_get_vq(struct v4l2_m2m_ctx *m2m_ctx,
+ 				       enum v4l2_buf_type type);
+ 
+ void v4l2_m2m_job_finish(struct v4l2_m2m_dev *m2m_dev,
+ 			 struct v4l2_m2m_ctx *m2m_ctx);
+ 
++static inline void
++v4l2_m2m_buf_done(struct vb2_buffer *buf, enum vb2_buffer_state state)
++{
++	vb2_buffer_done(buf, state);
++}
++
+ int v4l2_m2m_reqbufs(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
+ 		     struct v4l2_requestbuffers *reqbufs);
+ 
+@@ -110,13 +120,17 @@ int v4l2_m2m_mmap(struct file *file, struct v4l2_m2m_ctx *m2m_ctx,
+ struct v4l2_m2m_dev *v4l2_m2m_init(struct v4l2_m2m_ops *m2m_ops);
+ void v4l2_m2m_release(struct v4l2_m2m_dev *m2m_dev);
+ 
+-struct v4l2_m2m_ctx *v4l2_m2m_ctx_init(void *priv, struct v4l2_m2m_dev *m2m_dev,
+-			void (*vq_init)(void *priv, struct videobuf_queue *,
+-					enum v4l2_buf_type));
++struct v4l2_m2m_ctx *v4l2_m2m_ctx_init(struct v4l2_m2m_dev *m2m_dev,
++		void *drv_priv,
++		int (*queue_init)(void *priv, struct vb2_queue *src_vq, struct vb2_queue *dst_vq));
++
+ void v4l2_m2m_ctx_release(struct v4l2_m2m_ctx *m2m_ctx);
+ 
+-void v4l2_m2m_buf_queue(struct v4l2_m2m_ctx *m2m_ctx, struct videobuf_queue *vq,
+-			struct videobuf_buffer *vb);
++void v4l2_m2m_buf_queue(struct v4l2_m2m_ctx *m2m_ctx, struct vb2_buffer *vb);
++
++struct vb2_buffer *v4l2_m2m_buffer_alloc(struct vb2_queue *q);
++
++void v4l2_m2m_buffer_free(struct vb2_queue *q, struct vb2_buffer *vb);
+ 
+ /**
+  * v4l2_m2m_num_src_bufs_ready() - return the number of source buffers ready for
+@@ -138,7 +152,7 @@ unsigned int v4l2_m2m_num_dst_bufs_ready(struct v4l2_m2m_ctx *m2m_ctx)
+ 	return m2m_ctx->out_q_ctx.num_rdy;
  }
  
- int check_ctrl_val(struct fimc_ctx *ctx,  struct v4l2_control *ctrl)
-@@ -1156,22 +1125,17 @@ static int fimc_m2m_cropcap(struct file *file, void *fh,
+-void *v4l2_m2m_next_buf(struct v4l2_m2m_ctx *m2m_ctx, enum v4l2_buf_type type);
++void *v4l2_m2m_next_buf(struct v4l2_m2m_queue_ctx *q_ctx);
+ 
+ /**
+  * v4l2_m2m_next_src_buf() - return next source buffer from the list of ready
+@@ -146,7 +160,7 @@ void *v4l2_m2m_next_buf(struct v4l2_m2m_ctx *m2m_ctx, enum v4l2_buf_type type);
+  */
+ static inline void *v4l2_m2m_next_src_buf(struct v4l2_m2m_ctx *m2m_ctx)
  {
- 	struct fimc_frame *frame;
- 	struct fimc_ctx *ctx = fh;
--	struct fimc_dev *fimc = ctx->fimc_dev;
- 
- 	frame = ctx_get_frame(ctx, cr->type);
- 	if (IS_ERR(frame))
- 		return PTR_ERR(frame);
- 
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
--
- 	cr->bounds.left		= 0;
- 	cr->bounds.top		= 0;
- 	cr->bounds.width	= frame->f_width;
- 	cr->bounds.height	= frame->f_height;
- 	cr->defrect		= cr->bounds;
- 
--	mutex_unlock(&fimc->lock);
- 	return 0;
+-	return v4l2_m2m_next_buf(m2m_ctx, V4L2_BUF_TYPE_VIDEO_OUTPUT);
++	return v4l2_m2m_next_buf(&m2m_ctx->out_q_ctx);
  }
  
-@@ -1179,21 +1143,16 @@ static int fimc_m2m_g_crop(struct file *file, void *fh, struct v4l2_crop *cr)
+ /**
+@@ -155,29 +169,28 @@ static inline void *v4l2_m2m_next_src_buf(struct v4l2_m2m_ctx *m2m_ctx)
+  */
+ static inline void *v4l2_m2m_next_dst_buf(struct v4l2_m2m_ctx *m2m_ctx)
  {
- 	struct fimc_frame *frame;
- 	struct fimc_ctx *ctx = file->private_data;
--	struct fimc_dev *fimc = ctx->fimc_dev;
- 
- 	frame = ctx_get_frame(ctx, cr->type);
- 	if (IS_ERR(frame))
- 		return PTR_ERR(frame);
- 
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
--
- 	cr->c.left = frame->offs_h;
- 	cr->c.top = frame->offs_v;
- 	cr->c.width = frame->width;
- 	cr->c.height = frame->height;
- 
--	mutex_unlock(&fimc->lock);
- 	return 0;
+-	return v4l2_m2m_next_buf(m2m_ctx, V4L2_BUF_TYPE_VIDEO_CAPTURE);
++	return v4l2_m2m_next_buf(&m2m_ctx->cap_q_ctx);
  }
  
-@@ -1273,9 +1232,6 @@ static int fimc_m2m_s_crop(struct file *file, void *fh, struct v4l2_crop *cr)
- 	f = (cr->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) ?
- 		&ctx->s_frame : &ctx->d_frame;
- 
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
--
- 	spin_lock_irqsave(&ctx->slock, flags);
- 	if (~ctx->state & (FIMC_SRC_FMT | FIMC_DST_FMT)) {
- 		/* Check to see if scaling ratio is within supported range */
-@@ -1285,8 +1241,8 @@ static int fimc_m2m_s_crop(struct file *file, void *fh, struct v4l2_crop *cr)
- 			ret = fimc_check_scaler_ratio(&cr->c, &ctx->s_frame);
- 		if (ret) {
- 			v4l2_err(&fimc->m2m.v4l2_dev, "Out of scaler range");
--			ret = -EINVAL;
--			goto scr_unlock;
-+			spin_unlock_irqrestore(&ctx->slock, flags);
-+			return -EINVAL;
- 		}
- 	}
- 	ctx->state |= FIMC_PARAMS;
-@@ -1296,9 +1252,7 @@ static int fimc_m2m_s_crop(struct file *file, void *fh, struct v4l2_crop *cr)
- 	f->width  = cr->c.width;
- 	f->height = cr->c.height;
- 
--scr_unlock:
- 	spin_unlock_irqrestore(&ctx->slock, flags);
--	mutex_unlock(&fimc->lock);
- 	return 0;
- }
- 
-@@ -1356,10 +1310,6 @@ static int fimc_m2m_open(struct file *file)
+ /**
+- * v4l2_m2m_get_src_vq() - return videobuf_queue for source buffers
++ * v4l2_m2m_get_src_vq() - return vb2_queue for source buffers
+  */
+ static inline
+-struct videobuf_queue *v4l2_m2m_get_src_vq(struct v4l2_m2m_ctx *m2m_ctx)
++struct vb2_queue *v4l2_m2m_get_src_vq(struct v4l2_m2m_ctx *m2m_ctx)
  {
- 	struct fimc_dev *fimc = video_drvdata(file);
- 	struct fimc_ctx *ctx = NULL;
--	int err = 0;
--
--	if (mutex_lock_interruptible(&fimc->lock))
--		return -ERESTARTSYS;
- 
- 	dbg("pid: %d, state: 0x%lx, refcnt: %d",
- 		task_pid_nr(current), fimc->state, fimc->vid_cap.refcnt);
-@@ -1368,19 +1318,15 @@ static int fimc_m2m_open(struct file *file)
- 	 * Return if the corresponding video capture node
- 	 * is already opened.
- 	 */
--	if (fimc->vid_cap.refcnt > 0) {
--		err = -EBUSY;
--		goto err_unlock;
--	}
-+	if (fimc->vid_cap.refcnt > 0)
-+		return -EBUSY;
- 
- 	fimc->m2m.refcnt++;
- 	set_bit(ST_OUTDMA_RUN, &fimc->state);
- 
- 	ctx = kzalloc(sizeof *ctx, GFP_KERNEL);
--	if (!ctx) {
--		err = -ENOMEM;
--		goto err_unlock;
--	}
-+	if (!ctx)
-+		return -ENOMEM;
- 
- 	file->private_data = ctx;
- 	ctx->fimc_dev = fimc;
-@@ -1396,13 +1342,12 @@ static int fimc_m2m_open(struct file *file)
- 
- 	ctx->m2m_ctx = v4l2_m2m_ctx_init(fimc->m2m.m2m_dev, ctx, queue_init);
- 	if (IS_ERR(ctx->m2m_ctx)) {
--		err = PTR_ERR(ctx->m2m_ctx);
-+		int err = PTR_ERR(ctx->m2m_ctx);
- 		kfree(ctx);
-+		return err;
- 	}
- 
--err_unlock:
--	mutex_unlock(&fimc->lock);
--	return err;
-+	return 0;
+-	return v4l2_m2m_get_vq(m2m_ctx, V4L2_BUF_TYPE_VIDEO_OUTPUT);
++	return &m2m_ctx->out_q_ctx.q;
  }
  
- static int fimc_m2m_release(struct file *file)
-@@ -1410,8 +1355,6 @@ static int fimc_m2m_release(struct file *file)
- 	struct fimc_ctx *ctx = file->private_data;
- 	struct fimc_dev *fimc = ctx->fimc_dev;
- 
--	mutex_lock(&fimc->lock);
--
- 	dbg("pid: %d, state: 0x%lx, refcnt= %d",
- 		task_pid_nr(current), fimc->state, fimc->m2m.refcnt);
- 
-@@ -1420,7 +1363,6 @@ static int fimc_m2m_release(struct file *file)
- 	if (--fimc->m2m.refcnt <= 0)
- 		clear_bit(ST_OUTDMA_RUN, &fimc->state);
- 
--	mutex_unlock(&fimc->lock);
- 	return 0;
+ /**
+- * v4l2_m2m_get_dst_vq() - return videobuf_queue for destination buffers
++ * v4l2_m2m_get_dst_vq() - return vb2_queue for destination buffers
+  */
+ static inline
+-struct videobuf_queue *v4l2_m2m_get_dst_vq(struct v4l2_m2m_ctx *m2m_ctx)
++struct vb2_queue *v4l2_m2m_get_dst_vq(struct v4l2_m2m_ctx *m2m_ctx)
+ {
+-	return v4l2_m2m_get_vq(m2m_ctx, V4L2_BUF_TYPE_VIDEO_CAPTURE);
++	return &m2m_ctx->cap_q_ctx.q;
  }
  
-@@ -1486,6 +1428,7 @@ static int fimc_register_m2m_device(struct fimc_dev *fimc)
- 	vfd->ioctl_ops	= &fimc_m2m_ioctl_ops;
- 	vfd->minor	= -1;
- 	vfd->release	= video_device_release;
-+	vfd->lock	= &fimc->lock;
+-void *v4l2_m2m_buf_remove(struct v4l2_m2m_ctx *m2m_ctx,
+-			  enum v4l2_buf_type type);
++void *v4l2_m2m_buf_remove(struct v4l2_m2m_queue_ctx *q_ctx);
  
- 	snprintf(vfd->name, sizeof(vfd->name), "%s:m2m", dev_name(&pdev->dev));
+ /**
+  * v4l2_m2m_src_buf_remove() - take off a source buffer from the list of ready
+@@ -185,7 +198,7 @@ void *v4l2_m2m_buf_remove(struct v4l2_m2m_ctx *m2m_ctx,
+  */
+ static inline void *v4l2_m2m_src_buf_remove(struct v4l2_m2m_ctx *m2m_ctx)
+ {
+-	return v4l2_m2m_buf_remove(m2m_ctx, V4L2_BUF_TYPE_VIDEO_OUTPUT);
++	return v4l2_m2m_buf_remove(&m2m_ctx->out_q_ctx);
+ }
  
+ /**
+@@ -194,7 +207,7 @@ static inline void *v4l2_m2m_src_buf_remove(struct v4l2_m2m_ctx *m2m_ctx)
+  */
+ static inline void *v4l2_m2m_dst_buf_remove(struct v4l2_m2m_ctx *m2m_ctx)
+ {
+-	return v4l2_m2m_buf_remove(m2m_ctx, V4L2_BUF_TYPE_VIDEO_CAPTURE);
++	return v4l2_m2m_buf_remove(&m2m_ctx->cap_q_ctx);
+ }
+ 
+ #endif /* _MEDIA_V4L2_MEM2MEM_H */
 -- 
 1.7.3.2
