@@ -1,13 +1,15 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 1/3] ARM: S5PV310: Add Interrupt of MCT
-Date: Thu,  2 Dec 2010 18:36:10 +0900
-Message-ID: <1291282572-11735-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 3/3] ARM: S5PV310: Add irq_mask to handle combiner irqs properly
+Date: Thu,  2 Dec 2010 18:36:12 +0900
+Message-ID: <1291282572-11735-3-git-send-email-kgene.kim@samsung.com>
+References: <1291282572-11735-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:60105 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:60108 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751517Ab0LBJxK (ORCPT
+	with ESMTP id S1751053Ab0LBJxK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Thu, 2 Dec 2010 04:53:10 -0500
+In-Reply-To: <1291282572-11735-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
@@ -15,60 +17,50 @@ Cc: ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>, Kukjin Kim <kg
 
 From: Changhwan Youn <chaos.youn@samsung.com>
 
-This patch adds IRQ_MCT0, IRQ_MCT1, IRQ_MCT_L0, and IRQ_MCT_L1.
-(MCT: Multi-Core Timer). And updated MAX_COMBINER_NR.
+The 4 combiner groups use same registers to handle the interrupt.
+In previous implementation, the whole registers are checked to find
+which interupt is occurred and thus interrupt in other groups can
+be detected. This patch adds irq_mask to solve this problem.
 
 Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv310/include/mach/irqs.h |   13 ++++++++++---
- 1 files changed, 10 insertions(+), 3 deletions(-)
+ arch/arm/mach-s5pv310/irq-combiner.c |    6 +++++-
+ 1 files changed, 5 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv310/include/mach/irqs.h b/arch/arm/mach-s5pv310/include/mach/irqs.h
-index 99e7dad..f9a2830 100644
---- a/arch/arm/mach-s5pv310/include/mach/irqs.h
-+++ b/arch/arm/mach-s5pv310/include/mach/irqs.h
-@@ -25,6 +25,8 @@
+diff --git a/arch/arm/mach-s5pv310/irq-combiner.c b/arch/arm/mach-s5pv310/irq-combiner.c
+index c3f88c3..aad5c3d 100644
+--- a/arch/arm/mach-s5pv310/irq-combiner.c
++++ b/arch/arm/mach-s5pv310/irq-combiner.c
+@@ -24,6 +24,7 @@ static DEFINE_SPINLOCK(irq_controller_lock);
  
- #define IRQ_SPI(x)		S5P_IRQ(x+32)
+ struct combiner_chip_data {
+ 	unsigned int irq_offset;
++	unsigned int irq_mask;
+ 	void __iomem *base;
+ };
  
-+#define IRQ_MCT1		IRQ_SPI(35)
-+
- #define IRQ_EINT0		IRQ_SPI(40)
- #define IRQ_EINT1		IRQ_SPI(41)
- #define IRQ_EINT2		IRQ_SPI(42)
-@@ -36,9 +38,8 @@
- #define IRQ_JPEG		IRQ_SPI(48)
- #define IRQ_2D			IRQ_SPI(49)
- #define IRQ_PCIE		IRQ_SPI(50)
--#define IRQ_SYSTEM_TIMER	IRQ_SPI(51)
-+#define IRQ_MCT0		IRQ_SPI(51)
- #define IRQ_MFC			IRQ_SPI(52)
--#define IRQ_WDT			IRQ_SPI(53)
- #define IRQ_AUDIO_SS		IRQ_SPI(54)
- #define IRQ_AC97		IRQ_SPI(55)
- #define IRQ_SPDIF		IRQ_SPI(56)
-@@ -85,6 +86,8 @@
+@@ -62,6 +63,7 @@ static void combiner_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
+ 	spin_lock(&irq_controller_lock);
+ 	status = __raw_readl(chip_data->base + COMBINER_INT_STATUS);
+ 	spin_unlock(&irq_controller_lock);
++	status &= chip_data->irq_mask;
  
- #define IRQ_ONENAND_AUDI	COMBINER_IRQ(34, 0)
+ 	if (status == 0)
+ 		goto out;
+@@ -104,10 +106,12 @@ void __init combiner_init(unsigned int combiner_nr, void __iomem *base,
  
-+#define IRQ_MCT_L1		COMBINER_IRQ(35, 3)
-+
- #define IRQ_EINT4		COMBINER_IRQ(37, 0)
- #define IRQ_EINT5		COMBINER_IRQ(37, 1)
- #define IRQ_EINT6		COMBINER_IRQ(37, 2)
-@@ -101,7 +104,11 @@
+ 	combiner_data[combiner_nr].base = base;
+ 	combiner_data[combiner_nr].irq_offset = irq_start;
++	combiner_data[combiner_nr].irq_mask = 0xff << ((combiner_nr % 4) << 3);
  
- #define IRQ_EINT16_31		COMBINER_IRQ(39, 0)
+ 	/* Disable all interrupts */
  
--#define MAX_COMBINER_NR		40
-+#define IRQ_MCT_L0		COMBINER_IRQ(51, 0)
-+
-+#define IRQ_WDT			COMBINER_IRQ(53, 0)
-+
-+#define MAX_COMBINER_NR		54
+-	__raw_writel(0xffffffff, base + COMBINER_ENABLE_CLEAR);
++	__raw_writel(combiner_data[combiner_nr].irq_mask,
++		     base + COMBINER_ENABLE_CLEAR);
  
- #define S5P_IRQ_EINT_BASE	COMBINER_IRQ(MAX_COMBINER_NR, 0)
+ 	/* Setup the Linux IRQ subsystem */
  
 -- 
 1.6.2.5
