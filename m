@@ -1,44 +1,51 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 3/6] ARM: S5P: Add SROM bank 4 and 5 register offsets
-Date: Thu,  2 Dec 2010 18:29:18 +0900
-Message-ID: <1291282161-1992-4-git-send-email-kgene.kim@samsung.com>
-References: <1291282161-1992-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 2/3] ARM: S5PV310: Limit the irqs which support cascade interrupt
+Date: Thu,  2 Dec 2010 18:36:11 +0900
+Message-ID: <1291282572-11735-2-git-send-email-kgene.kim@samsung.com>
+References: <1291282572-11735-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:38935 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:60104 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757358Ab0LBJnM (ORCPT
+	with ESMTP id S1751492Ab0LBJxK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Dec 2010 04:43:12 -0500
-In-Reply-To: <1291282161-1992-1-git-send-email-kgene.kim@samsung.com>
+	Thu, 2 Dec 2010 04:53:10 -0500
+In-Reply-To: <1291282572-11735-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Thomas Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Thomas Abraham <thomas.ab@samsung.com>
+From: Changhwan Youn <chaos.youn@samsung.com>
 
-Some of the S5P platforms like S5PC100 and S5PV210 include SROM banks
-4 and 5 in addition to SROM banks 0 to 3. This patch adds register
-offsets for SROM bank 4 and 5.
+The irqs from SPI(0) to SPI(39) and SPI(51), SPI(53) are connected to the
+interrupt combiner. This patch limits the irqs which should be initialized
+to support cascade interrupt.
 
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/plat-s5p/include/plat/regs-srom.h |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+ arch/arm/mach-s5pv310/cpu.c |    9 +++++++++
+ 1 files changed, 9 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/plat-s5p/include/plat/regs-srom.h b/arch/arm/plat-s5p/include/plat/regs-srom.h
-index 06189da..f121ab5 100644
---- a/arch/arm/plat-s5p/include/plat/regs-srom.h
-+++ b/arch/arm/plat-s5p/include/plat/regs-srom.h
-@@ -22,6 +22,8 @@
- #define S5P_SROM_BC1		S5P_SROMREG(0x8)
- #define S5P_SROM_BC2		S5P_SROMREG(0xc)
- #define S5P_SROM_BC3		S5P_SROMREG(0x10)
-+#define S5P_SROM_BC4		S5P_SROMREG(0x14)
-+#define S5P_SROM_BC5		S5P_SROMREG(0x18)
+diff --git a/arch/arm/mach-s5pv310/cpu.c b/arch/arm/mach-s5pv310/cpu.c
+index 82ce4aa..3d0c1cb 100644
+--- a/arch/arm/mach-s5pv310/cpu.c
++++ b/arch/arm/mach-s5pv310/cpu.c
+@@ -127,6 +127,15 @@ void __init s5pv310_init_irq(void)
+ 	gic_cpu_init(0, S5P_VA_GIC_CPU);
  
- /* one register BW holds 4 x 4-bit packed settings for NCS0 - NCS3 */
- 
+ 	for (irq = 0; irq < MAX_COMBINER_NR; irq++) {
++
++		/*
++		 * From SPI(0) to SPI(39) and SPI(51), SPI(53) are
++		 * connected to the interrupt combiner. These irqs
++		 * should be initialized to support cascade interrupt.
++		 */
++		if ((irq >= 40) && !(irq == 51) && !(irq == 53))
++			continue;
++
+ 		combiner_init(irq, (void __iomem *)S5P_VA_COMBINER(irq),
+ 				COMBINER_IRQ(irq, 0));
+ 		combiner_cascade_irq(irq, IRQ_SPI(irq));
 -- 
 1.6.2.5
