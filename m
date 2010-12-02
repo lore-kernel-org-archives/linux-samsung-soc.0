@@ -1,66 +1,46 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 3/3] ARM: S5PV310: Add irq_mask to handle combiner irqs properly
-Date: Thu,  2 Dec 2010 18:36:12 +0900
-Message-ID: <1291282572-11735-3-git-send-email-kgene.kim@samsung.com>
-References: <1291282572-11735-1-git-send-email-kgene.kim@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:60108 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751053Ab0LBJxK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Dec 2010 04:53:10 -0500
-In-Reply-To: <1291282572-11735-1-git-send-email-kgene.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH 1/8] ARM: SCU: Add common routines for secondary CPU bootup
+Date: Thu, 2 Dec 2010 15:19:05 +0000
+Message-ID: <AANLkTikpjq-8BVanF5W76j0ZdDBur8DyHWSH8GGgJBQs@mail.gmail.com>
+References: <20101130171626.GA6165@oksana.dev.rtsoft.ru>
+	<20101130171658.GA24034@oksana.dev.rtsoft.ru>
+	<20101130233204.GB14383@n2100.arm.linux.org.uk>
+	<20101201002527.GC14383@n2100.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <20101201002527.GC14383@n2100.arm.linux.org.uk>
+Sender: linux-omap-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Anton Vorontsov <avorontsov@mvista.com>, Kukjin Kim <kgene.kim@samsung.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Tony Lindgren <tony@atomide.com>, Jamie Iles <jamie.iles@picochip.com>, Colin Cross <ccross@android.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Changhwan Youn <chaos.youn@samsung.com>
+On 1 December 2010 00:25, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> On Tue, Nov 30, 2010 at 11:32:04PM +0000, Russell King - ARM Linux wr=
+ote:
+>> Note that I'll go with factoring this out into arch/arm/kernel/smp_s=
+cu.c
+>> for the time being, but I'm not convinced about the other parts yet.
+>
+> IOW, something like the attached. =C2=A0I've gone a little further an=
+d removed
+> the now unnecessary scu_enable() and scu_get_core_count() global func=
+tions,
+> making scu_enable() static, and eliminating scu_get_core_count() enti=
+rely.
 
-The 4 combiner groups use same registers to handle the interrupt.
-In previous implementation, the whole registers are checked to find
-which interupt is occurred and thus interrupt in other groups can
-be detected. This patch adds irq_mask to solve this problem.
+There is some benefit in leaving get_core_count() in the platform
+code. For example, the SCU on Cortex-A15 doesn't expose the core count
+register and we have to get it from somewhere else (for now from some
+L2 cache controller register but in the future it may be hardcoded,
+passed via FDT or simply trying to boot maxcpus).
 
-Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s5pv310/irq-combiner.c |    6 +++++-
- 1 files changed, 5 insertions(+), 1 deletions(-)
-
-diff --git a/arch/arm/mach-s5pv310/irq-combiner.c b/arch/arm/mach-s5pv310/irq-combiner.c
-index c3f88c3..aad5c3d 100644
---- a/arch/arm/mach-s5pv310/irq-combiner.c
-+++ b/arch/arm/mach-s5pv310/irq-combiner.c
-@@ -24,6 +24,7 @@ static DEFINE_SPINLOCK(irq_controller_lock);
- 
- struct combiner_chip_data {
- 	unsigned int irq_offset;
-+	unsigned int irq_mask;
- 	void __iomem *base;
- };
- 
-@@ -62,6 +63,7 @@ static void combiner_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
- 	spin_lock(&irq_controller_lock);
- 	status = __raw_readl(chip_data->base + COMBINER_INT_STATUS);
- 	spin_unlock(&irq_controller_lock);
-+	status &= chip_data->irq_mask;
- 
- 	if (status == 0)
- 		goto out;
-@@ -104,10 +106,12 @@ void __init combiner_init(unsigned int combiner_nr, void __iomem *base,
- 
- 	combiner_data[combiner_nr].base = base;
- 	combiner_data[combiner_nr].irq_offset = irq_start;
-+	combiner_data[combiner_nr].irq_mask = 0xff << ((combiner_nr % 4) << 3);
- 
- 	/* Disable all interrupts */
- 
--	__raw_writel(0xffffffff, base + COMBINER_ENABLE_CLEAR);
-+	__raw_writel(combiner_data[combiner_nr].irq_mask,
-+		     base + COMBINER_ENABLE_CLEAR);
- 
- 	/* Setup the Linux IRQ subsystem */
- 
--- 
-1.6.2.5
+--=20
+Catalin
+--
+To unsubscribe from this list: send the line "unsubscribe linux-omap" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
