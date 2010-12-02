@@ -1,61 +1,44 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH 1/8] ARM: SCU: Add common routines for secondary CPU
- bootup
-Date: Thu, 02 Dec 2010 16:28:40 +0000
-Message-ID: <1291307320.11271.51.camel@e102109-lin.cambridge.arm.com>
-References: <20101130171626.GA6165@oksana.dev.rtsoft.ru>
-	 <20101130171658.GA24034@oksana.dev.rtsoft.ru>
-	 <20101130233204.GB14383@n2100.arm.linux.org.uk>
-	 <20101201002527.GC14383@n2100.arm.linux.org.uk>
-	 <AANLkTikpjq-8BVanF5W76j0ZdDBur8DyHWSH8GGgJBQs@mail.gmail.com>
-	 <20101202152428.GD10461@n2100.arm.linux.org.uk>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 0/4] ARM: S5P: Add platform support for MIPI-CSI2 devices
+Date: Thu, 02 Dec 2010 17:37:38 +0100
+Message-ID: <1291307862-8125-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20101202152428.GD10461@n2100.arm.linux.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Anton Vorontsov <avorontsov@mvista.com>, Kukjin Kim <kgene.kim@samsung.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Tony Lindgren <tony@atomide.com>, Jamie Iles <jamie.iles@picochip.com>, Colin Cross <ccross@android.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:31283 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752829Ab0LBQiD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 Dec 2010 11:38:03 -0500
+Received: from eu_spt1 ([210.118.77.13]) by mailout3.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0LCT004PA7JCMR20@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 02 Dec 2010 16:38:00 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LCT007GK7JB26@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 02 Dec 2010 16:38:00 +0000 (GMT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com
 
-On Thu, 2010-12-02 at 15:24 +0000, Russell King - ARM Linux wrote:
-> On Thu, Dec 02, 2010 at 03:19:05PM +0000, Catalin Marinas wrote:
-> > On 1 December 2010 00:25, Russell King - ARM Linux
-> > <linux@arm.linux.org.uk> wrote:
-> > > On Tue, Nov 30, 2010 at 11:32:04PM +0000, Russell King - ARM Linux wrote:
-> > >> Note that I'll go with factoring this out into arch/arm/kernel/smp_scu.c
-> > >> for the time being, but I'm not convinced about the other parts yet.
-> > >
-> > > IOW, something like the attached.  I've gone a little further and removed
-> > > the now unnecessary scu_enable() and scu_get_core_count() global functions,
-> > > making scu_enable() static, and eliminating scu_get_core_count() entirely.
-> >
-> > There is some benefit in leaving get_core_count() in the platform
-> > code. For example, the SCU on Cortex-A15 doesn't expose the core count
-> > register and we have to get it from somewhere else (for now from some
-> > L2 cache controller register but in the future it may be hardcoded,
-> > passed via FDT or simply trying to boot maxcpus).
-> 
-> I notice that there's no way to tell what revision of SCU is implemented
-> on _any_ mpcore platform.
+Hello,
 
-C-A15 doesn't have any SCU registers exposed (and it's enabled by
-default).
+the following patch series adds S5P platform support for MIPI-CSI2 devices.
+It has been rebased onto next-samsung branch at:
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
 
-> In light of that, I think there's no point what so ever trying to
-> consolidate this code - even the control register bits vary in
-> unpredictable ways between different MPcore implementations.
+[PATCH 1/4] mach-s5pv210: Add platform definitions for mipi-csis
+[PATCH 2/4] mach-s5pv310: Add resource definitions for mipi-csis
+[PATCH 3/4] plat-s5p: Add platform support for MIPI-CSI2 devices
+[PATCH 4/4] mach-s5pv210: Add MIPI-CSI DPHY clock definition
 
-The SCU is part of the core TRM, so I don't expect it to be the same
-across various MP cores (and A15 is an example).
 
-You may want to consolidate functions like scu_prepare_cpus (maybe call
-it smp_prepare_cpus) and something that calls set_cpu_possible() but
-with platform callbacks for getting the number of calls and initialising
-the SMP (SCU for most platforms).
+Thanks.
 
-Whether this is worth, I don't know.
-
--- 
-Catalin
+--
+Sylwester Nawrocki
+Linux Platform Group
+Samsung Poland R&D Center
