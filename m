@@ -1,147 +1,51 @@
-From: Jamie Iles <jamie@jamieiles.com>
-Subject: Re: [PATCH 3/4] plat-s5p: Add platform support for MIPI-CSI2 devices
-Date: Thu, 2 Dec 2010 17:15:38 +0000
-Message-ID: <20101202171538.GB30933@pulham.picochip.com>
-References: <1291307862-8125-1-git-send-email-s.nawrocki@samsung.com>
- <1291307862-8125-4-git-send-email-s.nawrocki@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 1/8] ARM: SCU: Add common routines for secondary CPU
+	bootup
+Date: Thu, 2 Dec 2010 17:38:24 +0000
+Message-ID: <20101202173824.GE10461@n2100.arm.linux.org.uk>
+References: <20101130171626.GA6165@oksana.dev.rtsoft.ru> <20101130171658.GA24034@oksana.dev.rtsoft.ru> <20101130233204.GB14383@n2100.arm.linux.org.uk> <20101201002527.GC14383@n2100.arm.linux.org.uk> <AANLkTikpjq-8BVanF5W76j0ZdDBur8DyHWSH8GGgJBQs@mail.gmail.com> <20101202152428.GD10461@n2100.arm.linux.org.uk> <1291307320.11271.51.camel@e102109-lin.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f46.google.com ([209.85.215.46]:64765 "EHLO
-	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756171Ab0LBRPl (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:33878 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757670Ab0LBRjD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Dec 2010 12:15:41 -0500
-Received: by ewy5 with SMTP id 5so4430003ewy.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Dec 2010 09:15:40 -0800 (PST)
+	Thu, 2 Dec 2010 12:39:03 -0500
 Content-Disposition: inline
-In-Reply-To: <1291307862-8125-4-git-send-email-s.nawrocki@samsung.com>
+In-Reply-To: <1291307320.11271.51.camel@e102109-lin.cambridge.arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Anton Vorontsov <avorontsov@mvista.com>, Kukjin Kim <kgene.kim@samsung.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Tony Lindgren <tony@atomide.com>, Jamie Iles <jamie.iles@picochip.com>, Colin Cross <ccross@android.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Sylwester,
+On Thu, Dec 02, 2010 at 04:28:40PM +0000, Catalin Marinas wrote:
+> The SCU is part of the core TRM, so I don't expect it to be the same
+> across various MP cores (and A15 is an example).
+> 
+> You may want to consolidate functions like scu_prepare_cpus (maybe call
+> it smp_prepare_cpus)
 
-On Thu, Dec 02, 2010 at 05:37:41PM +0100, Sylwester Nawrocki wrote:
-> diff --git a/arch/arm/plat-s5p/dev-csis0.c b/arch/arm/plat-s5p/dev-csis0.c
-> new file mode 100644
-> index 0000000..2b1ba43
-> --- /dev/null
-> +++ b/arch/arm/plat-s5p/dev-csis0.c
-> @@ -0,0 +1,34 @@
-> +/*
-> + * Copyright (C) 2010 Samsung Electronics
-> + *
-> + * S5P series device definition for MIPI-CSI device 0
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/platform_device.h>
-> +#include <mach/map.h>
-> +
-> +static struct resource s5p_csis_resource[] = {
-> +	[0] = {
-> +		.start = S5P_PA_CSIS0,
-> +		.end   = S5P_PA_CSIS0 + SZ_4K - 1,
-> +		.flags = IORESOURCE_MEM,
-> +	},
-> +	[1] = {
-> +		.start = IRQ_MIPICSI0,
-> +		.end   = IRQ_MIPICSI0,
-> +		.flags = IORESOURCE_IRQ,
-> +	}
-> +};
-Do you really need the [0] and [1] here? These are only needed if you are 
-sparsely initialising an array.
+You do realise the function called from architecture independent code is
+called 'smp_prepare_cpus' ?
 
-> +
-> +struct platform_device s5p_device_mipi_csis0 = {
-> +	.name		  = "s5p-mipi-csis",
-> +	.id		  = 0,
-> +	.num_resources	  = 2,
-.num_resources = ARRAY_SIZE(s5p_csis_resource),
-> +	.resource	  = &s5p_csis_resource[0],
-.resource = s5p_csis_resource,
-> diff --git a/arch/arm/plat-s5p/dev-csis1.c b/arch/arm/plat-s5p/dev-csis1.c
-> new file mode 100644
-> index 0000000..7f21ea8
-> --- /dev/null
-> +++ b/arch/arm/plat-s5p/dev-csis1.c
-> @@ -0,0 +1,33 @@
-> +/*
-> + * Copyright (C) 2010 Samsung Electronics
-> + *
-> + * S5P series device definition for MIPI-CSI device 1
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/platform_device.h>
-> +#include <mach/map.h>
-> +
-> +static struct resource s5p_csis_resource[] = {
-> +	[0] = {
-> +		.start = S5P_PA_CSIS1,
-> +		.end   = S5P_PA_CSIS1 + SZ_4K - 1,
-> +		.flags = IORESOURCE_MEM,
-> +	},
-> +	[1] = {
-> +		.start = IRQ_MIPICSI1,
-> +		.end   = IRQ_MIPICSI1,
-> +		.flags = IORESOURCE_IRQ,
-> +	},
-> +};
-> +struct platform_device s5p_device_mipi_csis1 = {
-> +	.name		  = "s5p-mipi-csis",
-> +	.id		  = 1,
-> +	.num_resources	  = 2,
-> +	.resource	  = &s5p_csis_resource[0],
-> +};
-The same goes here as for device 0.
-> diff --git a/arch/arm/plat-samsung/include/plat/csis.h b/arch/arm/plat-samsung/include/plat/csis.h
-> new file mode 100644
-> index 0000000..6ea3a40
-> --- /dev/null
-> +++ b/arch/arm/plat-samsung/include/plat/csis.h
-> @@ -0,0 +1,28 @@
-> +/*
-> + * Copyright (C) 2010 Samsung Electronics Co., Ltd
-> + *
-> + * S5P series MIPI CSI2 device support
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#ifndef PLAT_CSIS_H_
-> +#define PLAT_CSIS_H_ __FILE__
-> +
-> +/**
-> + * struct s3c_platform_csis - default platform data for MIPI CSI2 interface
-> + * @clock_rate: bus clock frequency
-Should be @clk_rate to match the code below.
-> + * @nlanes: number of MIPI data lanes used
-> + * @alignment: MIPI data alignment in bits
-> + * @hs_settle: HSYNC settle time (see CSIS_DPHYCTRL register description)
-> + */
-> +struct s3c_platform_csis {
-> +	unsigned long clk_rate;
-> +	u8 nlanes;
-> +	u8 alignment;
-> +	u8 hs_settle;
-> +};
-> +
-> +#endif /* PLAT_CSIS_H_ */
+> and something that calls set_cpu_possible() but
+> with platform callbacks for getting the number of calls and initialising
+> the SMP (SCU for most platforms).
 
-Jamie
+What if a platform, for what ever reason, wants to have 3 CPUs,
+numbered 0, 2, 3 ?  That's the reason why the code which sets the
+possible and present maps isn't in the ARM core code - Eg, we don't
+know if a platform wants to keep CPU 1 in AMP mode to run some
+special software on it.
+
+> Whether this is worth, I don't know.
+
+I don't think it's worth it because I think trying to considate this
+is going to cripple the code structure in the future.
+
+What we currently have is a nice sane separation of the core SMP
+support from the platform specific parts of the SMP support.
+
+BTW, is it worth making sure that the IC and SCU standby mode bits
+are set for A9 MPCore ?
