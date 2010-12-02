@@ -1,201 +1,147 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 3/4] plat-s5p: Add platform support for MIPI-CSI2 devices
-Date: Thu, 02 Dec 2010 17:37:41 +0100
-Message-ID: <1291307862-8125-4-git-send-email-s.nawrocki@samsung.com>
+From: Jamie Iles <jamie@jamieiles.com>
+Subject: Re: [PATCH 3/4] plat-s5p: Add platform support for MIPI-CSI2 devices
+Date: Thu, 2 Dec 2010 17:15:38 +0000
+Message-ID: <20101202171538.GB30933@pulham.picochip.com>
 References: <1291307862-8125-1-git-send-email-s.nawrocki@samsung.com>
+ <1291307862-8125-4-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:48417 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757758Ab0LBQjR (ORCPT
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:64765 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756171Ab0LBRPl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Dec 2010 11:39:17 -0500
-Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LCT00IIK7LFCD80@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 02 Dec 2010 16:39:15 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LCT005CT7LEV7@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 02 Dec 2010 16:39:15 +0000 (GMT)
-In-reply-to: <1291307862-8125-1-git-send-email-s.nawrocki@samsung.com>
+	Thu, 2 Dec 2010 12:15:41 -0500
+Received: by ewy5 with SMTP id 5so4430003ewy.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Dec 2010 09:15:40 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1291307862-8125-4-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com
 
-There may be up to 2 MIPI-CSI2 interfaces depending on SoC version.
+Hi Sylwester,
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/plat-s5p/Kconfig                 |   10 ++++++++
- arch/arm/plat-s5p/Makefile                |    2 +
- arch/arm/plat-s5p/dev-csis0.c             |   34 +++++++++++++++++++++++++++++
- arch/arm/plat-s5p/dev-csis1.c             |   33 ++++++++++++++++++++++++++++
- arch/arm/plat-samsung/include/plat/csis.h |   28 +++++++++++++++++++++++
- arch/arm/plat-samsung/include/plat/devs.h |    3 ++
- 6 files changed, 110 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/plat-s5p/dev-csis0.c
- create mode 100644 arch/arm/plat-s5p/dev-csis1.c
- create mode 100644 arch/arm/plat-samsung/include/plat/csis.h
+On Thu, Dec 02, 2010 at 05:37:41PM +0100, Sylwester Nawrocki wrote:
+> diff --git a/arch/arm/plat-s5p/dev-csis0.c b/arch/arm/plat-s5p/dev-csis0.c
+> new file mode 100644
+> index 0000000..2b1ba43
+> --- /dev/null
+> +++ b/arch/arm/plat-s5p/dev-csis0.c
+> @@ -0,0 +1,34 @@
+> +/*
+> + * Copyright (C) 2010 Samsung Electronics
+> + *
+> + * S5P series device definition for MIPI-CSI device 0
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/platform_device.h>
+> +#include <mach/map.h>
+> +
+> +static struct resource s5p_csis_resource[] = {
+> +	[0] = {
+> +		.start = S5P_PA_CSIS0,
+> +		.end   = S5P_PA_CSIS0 + SZ_4K - 1,
+> +		.flags = IORESOURCE_MEM,
+> +	},
+> +	[1] = {
+> +		.start = IRQ_MIPICSI0,
+> +		.end   = IRQ_MIPICSI0,
+> +		.flags = IORESOURCE_IRQ,
+> +	}
+> +};
+Do you really need the [0] and [1] here? These are only needed if you are 
+sparsely initialising an array.
 
-diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-index 65dbfa8..2fb0c88 100644
---- a/arch/arm/plat-s5p/Kconfig
-+++ b/arch/arm/plat-s5p/Kconfig
-@@ -56,3 +56,13 @@ config S5P_DEV_ONENAND
- 	bool
- 	help
- 	  Compile in platform device definition for OneNAND controller
-+
-+config S5P_DEV_CSIS0
-+	bool
-+	help
-+	  Compile in platform device definitions for MIPI-CSI2 interface 0
-+
-+config S5P_DEV_CSIS1
-+	bool
-+	help
-+	  Compile in platform device definitions for MIPI-CSI2 interface 1
-diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-index de65238..2b73173 100644
---- a/arch/arm/plat-s5p/Makefile
-+++ b/arch/arm/plat-s5p/Makefile
-@@ -28,3 +28,5 @@ obj-$(CONFIG_S5P_DEV_FIMC0)	+= dev-fimc0.o
- obj-$(CONFIG_S5P_DEV_FIMC1)	+= dev-fimc1.o
- obj-$(CONFIG_S5P_DEV_FIMC2)	+= dev-fimc2.o
- obj-$(CONFIG_S5P_DEV_ONENAND)	+= dev-onenand.o
-+obj-$(CONFIG_S5P_DEV_CSIS0)	+= dev-csis0.o
-+obj-$(CONFIG_S5P_DEV_CSIS1)	+= dev-csis1.o
-diff --git a/arch/arm/plat-s5p/dev-csis0.c b/arch/arm/plat-s5p/dev-csis0.c
-new file mode 100644
-index 0000000..2b1ba43
---- /dev/null
-+++ b/arch/arm/plat-s5p/dev-csis0.c
-@@ -0,0 +1,34 @@
-+/*
-+ * Copyright (C) 2010 Samsung Electronics
-+ *
-+ * S5P series device definition for MIPI-CSI device 0
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/interrupt.h>
-+#include <linux/platform_device.h>
-+#include <mach/map.h>
-+
-+static struct resource s5p_csis_resource[] = {
-+	[0] = {
-+		.start = S5P_PA_CSIS0,
-+		.end   = S5P_PA_CSIS0 + SZ_4K - 1,
-+		.flags = IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start = IRQ_MIPICSI0,
-+		.end   = IRQ_MIPICSI0,
-+		.flags = IORESOURCE_IRQ,
-+	}
-+};
-+
-+struct platform_device s5p_device_mipi_csis0 = {
-+	.name		  = "s5p-mipi-csis",
-+	.id		  = 0,
-+	.num_resources	  = 2,
-+	.resource	  = &s5p_csis_resource[0],
-+};
-diff --git a/arch/arm/plat-s5p/dev-csis1.c b/arch/arm/plat-s5p/dev-csis1.c
-new file mode 100644
-index 0000000..7f21ea8
---- /dev/null
-+++ b/arch/arm/plat-s5p/dev-csis1.c
-@@ -0,0 +1,33 @@
-+/*
-+ * Copyright (C) 2010 Samsung Electronics
-+ *
-+ * S5P series device definition for MIPI-CSI device 1
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/interrupt.h>
-+#include <linux/platform_device.h>
-+#include <mach/map.h>
-+
-+static struct resource s5p_csis_resource[] = {
-+	[0] = {
-+		.start = S5P_PA_CSIS1,
-+		.end   = S5P_PA_CSIS1 + SZ_4K - 1,
-+		.flags = IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start = IRQ_MIPICSI1,
-+		.end   = IRQ_MIPICSI1,
-+		.flags = IORESOURCE_IRQ,
-+	},
-+};
-+struct platform_device s5p_device_mipi_csis1 = {
-+	.name		  = "s5p-mipi-csis",
-+	.id		  = 1,
-+	.num_resources	  = 2,
-+	.resource	  = &s5p_csis_resource[0],
-+};
-diff --git a/arch/arm/plat-samsung/include/plat/csis.h b/arch/arm/plat-samsung/include/plat/csis.h
-new file mode 100644
-index 0000000..6ea3a40
---- /dev/null
-+++ b/arch/arm/plat-samsung/include/plat/csis.h
-@@ -0,0 +1,28 @@
-+/*
-+ * Copyright (C) 2010 Samsung Electronics Co., Ltd
-+ *
-+ * S5P series MIPI CSI2 device support
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef PLAT_CSIS_H_
-+#define PLAT_CSIS_H_ __FILE__
-+
-+/**
-+ * struct s3c_platform_csis - default platform data for MIPI CSI2 interface
-+ * @clock_rate: bus clock frequency
-+ * @nlanes: number of MIPI data lanes used
-+ * @alignment: MIPI data alignment in bits
-+ * @hs_settle: HSYNC settle time (see CSIS_DPHYCTRL register description)
-+ */
-+struct s3c_platform_csis {
-+	unsigned long clk_rate;
-+	u8 nlanes;
-+	u8 alignment;
-+	u8 hs_settle;
-+};
-+
-+#endif /* PLAT_CSIS_H_ */
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index 2d82a6c..7935a8b 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -122,6 +122,9 @@ extern struct platform_device s5p_device_fimc0;
- extern struct platform_device s5p_device_fimc1;
- extern struct platform_device s5p_device_fimc2;
- 
-+extern struct platform_device s5p_device_mipi_csis0;
-+extern struct platform_device s5p_device_mipi_csis1;
-+
- /* s3c2440 specific devices */
- 
- #ifdef CONFIG_CPU_S3C2440
--- 
-1.7.1
+> +
+> +struct platform_device s5p_device_mipi_csis0 = {
+> +	.name		  = "s5p-mipi-csis",
+> +	.id		  = 0,
+> +	.num_resources	  = 2,
+.num_resources = ARRAY_SIZE(s5p_csis_resource),
+> +	.resource	  = &s5p_csis_resource[0],
+.resource = s5p_csis_resource,
+> diff --git a/arch/arm/plat-s5p/dev-csis1.c b/arch/arm/plat-s5p/dev-csis1.c
+> new file mode 100644
+> index 0000000..7f21ea8
+> --- /dev/null
+> +++ b/arch/arm/plat-s5p/dev-csis1.c
+> @@ -0,0 +1,33 @@
+> +/*
+> + * Copyright (C) 2010 Samsung Electronics
+> + *
+> + * S5P series device definition for MIPI-CSI device 1
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/platform_device.h>
+> +#include <mach/map.h>
+> +
+> +static struct resource s5p_csis_resource[] = {
+> +	[0] = {
+> +		.start = S5P_PA_CSIS1,
+> +		.end   = S5P_PA_CSIS1 + SZ_4K - 1,
+> +		.flags = IORESOURCE_MEM,
+> +	},
+> +	[1] = {
+> +		.start = IRQ_MIPICSI1,
+> +		.end   = IRQ_MIPICSI1,
+> +		.flags = IORESOURCE_IRQ,
+> +	},
+> +};
+> +struct platform_device s5p_device_mipi_csis1 = {
+> +	.name		  = "s5p-mipi-csis",
+> +	.id		  = 1,
+> +	.num_resources	  = 2,
+> +	.resource	  = &s5p_csis_resource[0],
+> +};
+The same goes here as for device 0.
+> diff --git a/arch/arm/plat-samsung/include/plat/csis.h b/arch/arm/plat-samsung/include/plat/csis.h
+> new file mode 100644
+> index 0000000..6ea3a40
+> --- /dev/null
+> +++ b/arch/arm/plat-samsung/include/plat/csis.h
+> @@ -0,0 +1,28 @@
+> +/*
+> + * Copyright (C) 2010 Samsung Electronics Co., Ltd
+> + *
+> + * S5P series MIPI CSI2 device support
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef PLAT_CSIS_H_
+> +#define PLAT_CSIS_H_ __FILE__
+> +
+> +/**
+> + * struct s3c_platform_csis - default platform data for MIPI CSI2 interface
+> + * @clock_rate: bus clock frequency
+Should be @clk_rate to match the code below.
+> + * @nlanes: number of MIPI data lanes used
+> + * @alignment: MIPI data alignment in bits
+> + * @hs_settle: HSYNC settle time (see CSIS_DPHYCTRL register description)
+> + */
+> +struct s3c_platform_csis {
+> +	unsigned long clk_rate;
+> +	u8 nlanes;
+> +	u8 alignment;
+> +	u8 hs_settle;
+> +};
+> +
+> +#endif /* PLAT_CSIS_H_ */
+
+Jamie
