@@ -1,62 +1,85 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH] SPI: S5P64X0: Enable SPI driver for S5P6440 and S5P6450
-Date: Fri, 3 Dec 2010 19:12:21 +0900
-Message-ID: <AANLkTin1UkkQOhtScPqsPGMPJYPQuVhj9ddXZhbYddkj@mail.gmail.com>
-References: <1291338253-16461-1-git-send-email-sbkim73@samsung.com>
-	<015201cb92d0$d03777a0$70a666e0$%kim@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 2/4] mach-s5pv310: Add resource definitions for mipi-csis
+Date: Fri, 03 Dec 2010 11:24:24 +0100
+Message-ID: <4CF8C558.8020606@samsung.com>
+References: <1291307862-8125-1-git-send-email-s.nawrocki@samsung.com>
+ <1291307862-8125-3-git-send-email-s.nawrocki@samsung.com>
+ <012401cb92a3$a46443b0$ed2ccb10$%kim@samsung.com>
+ <AANLkTimEEf5eD+q-qx7gw21ryFp1bbQ084Lo=eX+Bqjz@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:52316 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751396Ab0LCKMX convert rfc822-to-8bit (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:34801 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752441Ab0LCKY1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Dec 2010 05:12:23 -0500
-Received: by bwz15 with SMTP id 15so8156878bwz.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Dec 2010 02:12:21 -0800 (PST)
-In-Reply-To: <015201cb92d0$d03777a0$70a666e0$%kim@samsung.com>
+	Fri, 3 Dec 2010 05:24:27 -0500
+Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0LCU000QXKWPT110@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 03 Dec 2010 10:24:25 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LCU00JLRKWON6@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 03 Dec 2010 10:24:25 +0000 (GMT)
+In-reply-to: <AANLkTimEEf5eD+q-qx7gw21ryFp1bbQ084Lo=eX+Bqjz@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net, Abhilash Kesavan <a.kesavan@samsung.com>, dbrownell@users.sourceforge.net, ben-linux@fluff.org
-
-On Fri, Dec 3, 2010 at 6:59 PM, Kukjin Kim <kgene.kim@samsung.com> wrot=
-e:
-> Sangbeom Kim wrote:
->>
->> From: Abhilash Kesavan <a.kesavan@samsung.com>
->>
->> This patch enable the existing S3C64XX series SPI driver for S5P64X0
->>
->> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
->> Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
->> ---
->> =C2=A0drivers/spi/Kconfig | =C2=A0 =C2=A04 ++--
->
-> Added following mailing list and maintainers.
-> spi-devel-general@lists.sourceforge.net
-> David Brownell and Grant Likely (SPI Subsystem's maintainer)
-
-I would have appreciated being CC'ed.
-
->> =C2=A0config SPI_S3C64XX
->> =C2=A0 =C2=A0 =C2=A0 tristate "Samsung S3C64XX series type SPI"
->> - =C2=A0 =C2=A0 depends on ARCH_S3C64XX && EXPERIMENTAL
->> - =C2=A0 =C2=A0 select S3C64XX_DMA
->> + =C2=A0 =C2=A0 depends on (ARCH_S3C64XX || ARCH_S5P64X0) && EXPERIM=
-ENTAL
->
-> Do we really still need CONFIG_EXPERIMENTAL here?
-
-I think we can drop it.
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com
 
 
->> + =C2=A0 =C2=A0 select S3C64XX_DMA if !ARCH_S5P64X0
->> =C2=A0 =C2=A0 =C2=A0 help
->> =C2=A0 =C2=A0 =C2=A0 =C2=A0 SPI driver for Samsung S3C64XX and newer=
- SoCs.
->
-> SPI driver for Samsung S3C64XX, S5P64X0 and newer Socs.
+On 12/03/2010 05:59 AM, Jassi Brar wrote:
+> On Fri, Dec 3, 2010 at 1:36 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>> Sylwester Nawrocki wrote:
+>>>
+>>> Add IRQ and register base address definitions for mipi-csis devices.
+>>>
+>>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> ---
+>>>  arch/arm/mach-s5pv310/include/mach/irqs.h |    3 +++
+>>>  arch/arm/mach-s5pv310/include/mach/map.h  |    5 +++++
+>>>  2 files changed, 8 insertions(+), 0 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-s5pv310/include/mach/irqs.h b/arch/arm/mach-
+>>> s5pv310/include/mach/irqs.h
+>>> index 99e7dad..db63773 100644
+>>> --- a/arch/arm/mach-s5pv310/include/mach/irqs.h
+>>> +++ b/arch/arm/mach-s5pv310/include/mach/irqs.h
+>>> @@ -83,6 +83,9 @@
+>>>  #define IRQ_HSMMC2           COMBINER_IRQ(29, 2)
+>>>  #define IRQ_HSMMC3           COMBINER_IRQ(29, 3)
+>>>
+>>> +#define IRQ_MIPICSI0         COMBINER_IRQ(30, 0)
+>>> +#define IRQ_MIPICSI1         COMBINER_IRQ(30, 1)
+>>> +
+>>>  #define IRQ_ONENAND_AUDI     COMBINER_IRQ(34, 0)
+>>>
+>>>  #define IRQ_EINT4            COMBINER_IRQ(37, 0)
+>>> diff --git a/arch/arm/mach-s5pv310/include/mach/map.h b/arch/arm/mach-
+>>> s5pv310/include/mach/map.h
+>>> index 7acf4e7..9905bfe 100644
+>>> --- a/arch/arm/mach-s5pv310/include/mach/map.h
+>>> +++ b/arch/arm/mach-s5pv310/include/mach/map.h
+>>> @@ -56,6 +56,9 @@
+>>>  #define S5PV310_PA_GPIO2             (0x11000000)
+>>>  #define S5PV310_PA_GPIO3             (0x03860000)
+>>>
+>>> +#define S5PV310_PA_CSIS0             (0x11880000)
+>>> +#define S5PV310_PA_CSIS1             (0x11890000)
+> 
+> Let us please not contain constants in brackets.
+> 
+I don't like those brackets too, so I am going to remove them
+in the next patch version. Unless anyone raises an objection.
+It is hard to make everyone happy though. Sometimes good coding
+practice prevails over consistency. However this time it looks like
+me judgement was wrong ;-)
 
-S5P64X0 is already a part of  'newer Socs'
+Thanks,
+-- 
+Sylwester Nawrocki
+Linux Platform Group
+Samsung Poland R&D Center
