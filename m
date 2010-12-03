@@ -1,111 +1,372 @@
-From: Jamie Iles <jamie@jamieiles.com>
-Subject: Re: [PATCH 3/4] plat-s5p: Add platform support for MIPI-CSI2 devices
-Date: Fri, 3 Dec 2010 09:18:09 +0000
-Message-ID: <20101203091809.GB12385@pulham.picochip.com>
-References: <1291307862-8125-1-git-send-email-s.nawrocki@samsung.com>
- <1291307862-8125-4-git-send-email-s.nawrocki@samsung.com>
- <20101202171538.GB30933@pulham.picochip.com>
- <4CF7D9E6.5000409@samsung.com>
- <AANLkTikjQkmD-bvtTV=fh-xqMkhsxt67LhAUWuCv5mU3@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH V2 2/2] ARM: S5PV310: Add support Power Domain
+Date: Fri,  3 Dec 2010 18:39:44 +0900
+Message-ID: <1291369184-31460-3-git-send-email-kgene.kim@samsung.com>
+References: <1291369184-31460-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:57928 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752806Ab0LCJSN (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:58956 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932292Ab0LCJxY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Dec 2010 04:18:13 -0500
-Received: by wyb28 with SMTP id 28so9202855wyb.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Dec 2010 01:18:12 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <AANLkTikjQkmD-bvtTV=fh-xqMkhsxt67LhAUWuCv5mU3@mail.gmail.com>
+	Fri, 3 Dec 2010 04:53:24 -0500
+In-Reply-To: <1291369184-31460-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Jamie Iles <jamie@jamieiles.com>, kgene.kim@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, Changhwan Youn <chaos.youn@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Fri, Dec 03, 2010 at 10:37:10AM +0900, Jassi Brar wrote:
-> On Fri, Dec 3, 2010 at 2:39 AM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
-> >
-> > Hi Jamie,
-> >
-> > On 12/02/2010 06:15 PM, Jamie Iles wrote:
-> >> Hi Sylwester,
-> >>
-> >> On Thu, Dec 02, 2010 at 05:37:41PM +0100, Sylwester Nawrocki wrote=
-:
-> >>> diff --git a/arch/arm/plat-s5p/dev-csis0.c b/arch/arm/plat-s5p/de=
-v-csis0.c
-> >>> new file mode 100644
-> >>> index 0000000..2b1ba43
-> >>> --- /dev/null
-> >>> +++ b/arch/arm/plat-s5p/dev-csis0.c
-> >>> @@ -0,0 +1,34 @@
-> >>> +/*
-> >>> + * Copyright (C) 2010 Samsung Electronics
-> >>> + *
-> >>> + * S5P series device definition for MIPI-CSI device 0
-> >>> + *
-> >>> + * This program is free software; you can redistribute it and/or=
- modify
-> >>> + * it under the terms of the GNU General Public License version =
-2 as
-> >>> + * published by the Free Software Foundation.
-> >>> +*/
-> >>> +
-> >>> +#include <linux/kernel.h>
-> >>> +#include <linux/interrupt.h>
-> >>> +#include <linux/platform_device.h>
-> >>> +#include <mach/map.h>
-> >>> +
-> >>> +static struct resource s5p_csis_resource[] =3D {
-> >>> + =A0 =A0[0] =3D {
-> >>> + =A0 =A0 =A0 =A0 =A0 =A0.start =3D S5P_PA_CSIS0,
-> >>> + =A0 =A0 =A0 =A0 =A0 =A0.end =A0 =3D S5P_PA_CSIS0 + SZ_4K - 1,
-> >>> + =A0 =A0 =A0 =A0 =A0 =A0.flags =3D IORESOURCE_MEM,
-> >>> + =A0 =A0},
-> >>> + =A0 =A0[1] =3D {
-> >>> + =A0 =A0 =A0 =A0 =A0 =A0.start =3D IRQ_MIPICSI0,
-> >>> + =A0 =A0 =A0 =A0 =A0 =A0.end =A0 =3D IRQ_MIPICSI0,
-> >>> + =A0 =A0 =A0 =A0 =A0 =A0.flags =3D IORESOURCE_IRQ,
-> >>> + =A0 =A0}
-> >>> +};
-> >> Do you really need the [0] and [1] here? These are only needed if =
-you are
-> >> sparsely initialising an array.
-> >
-> > I agree explicit indices are not really needed. I just followed the=
- style of
-> > all other resource definitions already there.
-> > I am not quite sure what is the preference of the maintainer, I gue=
-ss they want
-> > all devices to follow same style for consistence.
->=20
-> And that style has its origin because explicit indices are as because
-> they stress the fact that
-> drivers expect  a particular resource at a particular index (when we
-> have more than 1
-> resource of a type).
-> IMO we should use some macro shared between platform devices and thei=
-r drivers.
-> Something like -
-> static struct resource s5p_csis_resource[] =3D {
->        [PA_CSIS] =3D {
->                .start =3D S5P_PA_CSIS0,
->                .end   =3D S5P_PA_CSIS0 + SZ_4K - 1,
->                .flags =3D IORESOURCE_MEM,
->        },
->        [IRQ_CSIS] =3D {
->                .start =3D IRQ_MIPICSI0,
->                .end   =3D IRQ_MIPICSI0,
->                .flags =3D IORESOURCE_IRQ,
->        }
-> };
-Or you could use the .name field of struct resource and use=20
-platform_get_resource_byname() in the driver. The disadvantage would be=
- that=20
-this takes up a few more bytes though.
+From: Changhwan Youn <chaos.youn@samsung.com>
 
-Jamie
+This patch adds support Power Domain for S5PV310 and S5PC210.
+
+Signed-off-by: Changhwan Youn <chaos.youn at samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s5pv310/Kconfig                 |    7 ++
+ arch/arm/mach-s5pv310/Makefile                |    2 +
+ arch/arm/mach-s5pv310/cpu.c                   |    5 +
+ arch/arm/mach-s5pv310/dev-pd.c                |  139 +++++++++++++++++++++++++
+ arch/arm/mach-s5pv310/include/mach/map.h      |    2 +
+ arch/arm/mach-s5pv310/include/mach/regs-pmu.h |   30 ++++++
+ arch/arm/mach-s5pv310/mach-smdkc210.c         |    8 ++
+ arch/arm/mach-s5pv310/mach-smdkv310.c         |    8 ++
+ arch/arm/plat-s5p/include/plat/map-s5p.h      |    1 +
+ arch/arm/plat-samsung/include/plat/devs.h     |    2 +
+ 10 files changed, 204 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5pv310/dev-pd.c
+ create mode 100644 arch/arm/mach-s5pv310/include/mach/regs-pmu.h
+
+diff --git a/arch/arm/mach-s5pv310/Kconfig b/arch/arm/mach-s5pv310/Kconfig
+index d64efe0..2558f2f 100644
+--- a/arch/arm/mach-s5pv310/Kconfig
++++ b/arch/arm/mach-s5pv310/Kconfig
+@@ -15,6 +15,11 @@ config CPU_S5PV310
+ 	help
+ 	  Enable S5PV310 CPU support
+ 
++config S5PV310_DEV_PD
++	bool
++	help
++	  Compile in platform device definitions for Power Domain
++
+ config S5PV310_SETUP_I2C1
+ 	bool
+ 	help
+@@ -74,6 +79,7 @@ config MACH_SMDKC210
+ 	select S3C_DEV_HSMMC1
+ 	select S3C_DEV_HSMMC2
+ 	select S3C_DEV_HSMMC3
++	select S5PV310_DEV_PD
+ 	select S5PV310_SETUP_SDHCI
+ 	help
+ 	  Machine support for Samsung SMDKC210
+@@ -102,6 +108,7 @@ config MACH_SMDKV310
+ 	select S3C_DEV_HSMMC1
+ 	select S3C_DEV_HSMMC2
+ 	select S3C_DEV_HSMMC3
++	select S5PV310_DEV_PD
+ 	select S5PV310_SETUP_SDHCI
+ 	help
+ 	  Machine support for Samsung SMDKV310
+diff --git a/arch/arm/mach-s5pv310/Makefile b/arch/arm/mach-s5pv310/Makefile
+index 61e3cb6..74cde8a 100644
+--- a/arch/arm/mach-s5pv310/Makefile
++++ b/arch/arm/mach-s5pv310/Makefile
+@@ -27,6 +27,8 @@ obj-$(CONFIG_MACH_UNIVERSAL_C210)	+= mach-universal_c210.o
+ 
+ # device support
+ 
++obj-$(CONFIG_S5PV310_DEV_PD)		+= dev-pd.o
++
+ obj-y += dev-audio.o
+ obj-$(CONFIG_S5PV310_SETUP_I2C1)	+= setup-i2c1.o
+ obj-$(CONFIG_S5PV310_SETUP_I2C2)	+= setup-i2c2.o
+diff --git a/arch/arm/mach-s5pv310/cpu.c b/arch/arm/mach-s5pv310/cpu.c
+index b2a37d0..7b6e066 100644
+--- a/arch/arm/mach-s5pv310/cpu.c
++++ b/arch/arm/mach-s5pv310/cpu.c
+@@ -43,6 +43,11 @@ static struct map_desc s5pv310_iodesc[] __initdata = {
+ 		.length		= SZ_128K,
+ 		.type		= MT_DEVICE,
+ 	}, {
++		.virtual	= (unsigned long)S5P_VA_PMU,
++		.pfn		= __phys_to_pfn(S5PV310_PA_PMU),
++		.length		= SZ_64K,
++		.type		= MT_DEVICE,
++	}, {
+ 		.virtual	= (unsigned long)S5P_VA_COMBINER_BASE,
+ 		.pfn		= __phys_to_pfn(S5PV310_PA_COMBINER),
+ 		.length		= SZ_4K,
+diff --git a/arch/arm/mach-s5pv310/dev-pd.c b/arch/arm/mach-s5pv310/dev-pd.c
+new file mode 100644
+index 0000000..58a50c2
+--- /dev/null
++++ b/arch/arm/mach-s5pv310/dev-pd.c
+@@ -0,0 +1,139 @@
++/* linux/arch/arm/mach-s5pv310/dev-pd.c
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * S5PV310 - Power Domain support
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/platform_device.h>
++#include <linux/delay.h>
++
++#include <mach/regs-pmu.h>
++
++#include <plat/pd.h>
++
++static int s5pv310_pd_enable(struct device *dev)
++{
++	struct samsung_pd_info *pdata =  dev->platform_data;
++	u32 timeout;
++
++	__raw_writel(S5P_INT_LOCAL_PWR_EN, pdata->base);
++
++	/* Wait max 1ms */
++	timeout = 10;
++	while ((__raw_readl(pdata->base + 0x4) & S5P_INT_LOCAL_PWR_EN)
++		!= S5P_INT_LOCAL_PWR_EN) {
++		if (timeout == 0) {
++			printk(KERN_ERR "Power domain %s enable failed.\n",
++				dev_name(dev));
++			return -ETIMEDOUT;
++		}
++		timeout--;
++		udelay(100);
++	}
++
++	return 0;
++}
++
++static int s5pv310_pd_disable(struct device *dev)
++{
++	struct samsung_pd_info *pdata =  dev->platform_data;
++	u32 timeout;
++
++	__raw_writel(0, pdata->base);
++
++	/* Wait max 1ms */
++	timeout = 10;
++	while (__raw_readl(pdata->base + 0x4) & S5P_INT_LOCAL_PWR_EN) {
++		if (timeout == 0) {
++			printk(KERN_ERR "Power domain %s disable failed.\n",
++				dev_name(dev));
++			return -ETIMEDOUT;
++		}
++		timeout--;
++		udelay(100);
++	}
++
++	return 0;
++}
++
++struct platform_device s5pv310_device_pd[] = {
++	{
++		.name		= "samsung-pd",
++		.id		= 0,
++		.dev = {
++			.platform_data = &(struct samsung_pd_info) {
++				.enable		= s5pv310_pd_enable,
++				.disable	= s5pv310_pd_disable,
++				.base		= S5P_PMU_MFC_CONF,
++			},
++		},
++	}, {
++		.name		= "samsung-pd",
++		.id		= 1,
++		.dev = {
++			.platform_data = &(struct samsung_pd_info) {
++				.enable		= s5pv310_pd_enable,
++				.disable	= s5pv310_pd_disable,
++				.base		= S5P_PMU_G3D_CONF,
++			},
++		},
++	}, {
++		.name		= "samsung-pd",
++		.id		= 2,
++		.dev = {
++			.platform_data = &(struct samsung_pd_info) {
++				.enable		= s5pv310_pd_enable,
++				.disable	= s5pv310_pd_disable,
++				.base		= S5P_PMU_LCD0_CONF,
++			},
++		},
++	}, {
++		.name		= "samsung-pd",
++		.id		= 3,
++		.dev = {
++			.platform_data = &(struct samsung_pd_info) {
++				.enable		= s5pv310_pd_enable,
++				.disable	= s5pv310_pd_disable,
++				.base		= S5P_PMU_LCD1_CONF,
++			},
++		},
++	}, {
++		.name		= "samsung-pd",
++		.id		= 4,
++		.dev = {
++			.platform_data = &(struct samsung_pd_info) {
++				.enable		= s5pv310_pd_enable,
++				.disable	= s5pv310_pd_disable,
++				.base		= S5P_PMU_TV_CONF,
++			},
++		},
++	}, {
++		.name		= "samsung-pd",
++		.id		= 5,
++		.dev = {
++			.platform_data = &(struct samsung_pd_info) {
++				.enable		= s5pv310_pd_enable,
++				.disable	= s5pv310_pd_disable,
++				.base		= S5P_PMU_CAM_CONF,
++			},
++		},
++	}, {
++		.name		= "samsung-pd",
++		.id		= 6,
++		.dev = {
++			.platform_data = &(struct samsung_pd_info) {
++				.enable		= s5pv310_pd_enable,
++				.disable	= s5pv310_pd_disable,
++				.base		= S5P_PMU_GPS_CONF,
++			},
++		},
++	},
++};
+diff --git a/arch/arm/mach-s5pv310/include/mach/map.h b/arch/arm/mach-s5pv310/include/mach/map.h
+index 5399446..85d2e5c 100644
+--- a/arch/arm/mach-s5pv310/include/mach/map.h
++++ b/arch/arm/mach-s5pv310/include/mach/map.h
+@@ -39,6 +39,8 @@
+ #define S5PV310_PA_SYSCON		(0x10010000)
+ #define S5P_PA_SYSCON			S5PV310_PA_SYSCON
+ 
++#define S5PV310_PA_PMU			(0x10020000)
++
+ #define S5PV310_PA_CMU			(0x10030000)
+ 
+ #define S5PV310_PA_WATCHDOG		(0x10060000)
+diff --git a/arch/arm/mach-s5pv310/include/mach/regs-pmu.h b/arch/arm/mach-s5pv310/include/mach/regs-pmu.h
+new file mode 100644
+index 0000000..fb333d0
+--- /dev/null
++++ b/arch/arm/mach-s5pv310/include/mach/regs-pmu.h
+@@ -0,0 +1,30 @@
++/* linux/arch/arm/mach-s5pv310/include/mach/regs-pmu.h
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * S5PV310 - Power management unit definition
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __ASM_ARCH_REGS_PMU_H
++#define __ASM_ARCH_REGS_PMU_H __FILE__
++
++#include <mach/map.h>
++
++#define S5P_PMUREG(x)			(S5P_VA_PMU + (x))
++
++#define S5P_PMU_CAM_CONF		S5P_PMUREG(0x3C00)
++#define S5P_PMU_TV_CONF		S5P_PMUREG(0x3C20)
++#define S5P_PMU_MFC_CONF		S5P_PMUREG(0x3C40)
++#define S5P_PMU_G3D_CONF		S5P_PMUREG(0x3C60)
++#define S5P_PMU_LCD0_CONF		S5P_PMUREG(0x3C80)
++#define S5P_PMU_LCD1_CONF		S5P_PMUREG(0x3CA0)
++#define S5P_PMU_GPS_CONF		S5P_PMUREG(0x3CE0)
++
++#define S5P_INT_LOCAL_PWR_EN		0x7
++
++#endif /* __ASM_ARCH_REGS_PMU_H */
+diff --git a/arch/arm/mach-s5pv310/mach-smdkc210.c b/arch/arm/mach-s5pv310/mach-smdkc210.c
+index 2b8d4fc..f65e668 100644
+--- a/arch/arm/mach-s5pv310/mach-smdkc210.c
++++ b/arch/arm/mach-s5pv310/mach-smdkc210.c
+@@ -23,6 +23,7 @@
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+ #include <plat/sdhci.h>
++#include <plat/pd.h>
+ 
+ #include <mach/map.h>
+ #include <mach/regs-srom.h>
+@@ -147,6 +148,13 @@ static struct platform_device *smdkc210_devices[] __initdata = {
+ 	&s3c_device_rtc,
+ 	&s3c_device_wdt,
+ 	&smdkc210_smsc911x,
++	&s5pv310_device_pd[PD_MFC],
++	&s5pv310_device_pd[PD_G3D],
++	&s5pv310_device_pd[PD_LCD0],
++	&s5pv310_device_pd[PD_LCD1],
++	&s5pv310_device_pd[PD_CAM],
++	&s5pv310_device_pd[PD_TV],
++	&s5pv310_device_pd[PD_GPS],
+ };
+ 
+ static void __init smdkc210_smsc911x_init(void)
+diff --git a/arch/arm/mach-s5pv310/mach-smdkv310.c b/arch/arm/mach-s5pv310/mach-smdkv310.c
+index 35826d6..19aa3e3 100644
+--- a/arch/arm/mach-s5pv310/mach-smdkv310.c
++++ b/arch/arm/mach-s5pv310/mach-smdkv310.c
+@@ -23,6 +23,7 @@
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+ #include <plat/sdhci.h>
++#include <plat/pd.h>
+ 
+ #include <mach/map.h>
+ #include <mach/regs-srom.h>
+@@ -147,6 +148,13 @@ static struct platform_device *smdkv310_devices[] __initdata = {
+ 	&s3c_device_rtc,
+ 	&s3c_device_wdt,
+ 	&smdkv310_smsc911x,
++	&s5pv310_device_pd[PD_MFC],
++	&s5pv310_device_pd[PD_G3D],
++	&s5pv310_device_pd[PD_LCD0],
++	&s5pv310_device_pd[PD_LCD1],
++	&s5pv310_device_pd[PD_CAM],
++	&s5pv310_device_pd[PD_TV],
++	&s5pv310_device_pd[PD_GPS],
+ };
+ 
+ static void __init smdkv310_smsc911x_init(void)
+diff --git a/arch/arm/plat-s5p/include/plat/map-s5p.h b/arch/arm/plat-s5p/include/plat/map-s5p.h
+index fef353d..d973d39 100644
+--- a/arch/arm/plat-s5p/include/plat/map-s5p.h
++++ b/arch/arm/plat-s5p/include/plat/map-s5p.h
+@@ -15,6 +15,7 @@
+ 
+ #define S5P_VA_CHIPID		S3C_ADDR(0x02000000)
+ #define S5P_VA_CMU		S3C_ADDR(0x02100000)
++#define S5P_VA_PMU		S3C_ADDR(0x02180000)
+ #define S5P_VA_GPIO		S3C_ADDR(0x02200000)
+ #define S5P_VA_GPIO1		S5P_VA_GPIO
+ #define S5P_VA_GPIO2		S3C_ADDR(0x02240000)
+diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
+index dec0ded..46d0847 100644
+--- a/arch/arm/plat-samsung/include/plat/devs.h
++++ b/arch/arm/plat-samsung/include/plat/devs.h
+@@ -131,6 +131,8 @@ extern struct platform_device s5p_device_fimc0;
+ extern struct platform_device s5p_device_fimc1;
+ extern struct platform_device s5p_device_fimc2;
+ 
++extern struct platform_device s5pv310_device_pd[];
++
+ /* s3c2440 specific devices */
+ 
+ #ifdef CONFIG_CPU_S3C2440
+-- 
+1.6.2.5
