@@ -1,67 +1,73 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S5P64X0: Change gpiolib initialization for S5P64X0 to
- core_initcall
-Date: Fri, 03 Dec 2010 18:53:02 +0900
-Message-ID: <014e01cb92cf$e1c23d80$a546b880$%kim@samsung.com>
-References: <1291337567-9064-1-git-send-email-sbkim73@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH 3/4] plat-s5p: Add platform support for MIPI-CSI2 devices
+Date: Fri, 03 Dec 2010 10:59:07 +0100
+Message-ID: <000301cb92d0$bd2a7400$377f5c00$%szyprowski@samsung.com>
+References: <1291307862-8125-1-git-send-email-s.nawrocki@samsung.com>
+ <1291307862-8125-4-git-send-email-s.nawrocki@samsung.com>
+ <20101202171538.GB30933@pulham.picochip.com> <4CF7D9E6.5000409@samsung.com>
+ <AANLkTikjQkmD-bvtTV=fh-xqMkhsxt67LhAUWuCv5mU3@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:63314 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932347Ab0LCKBt (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:47562 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752716Ab0LCKEA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Dec 2010 05:01:49 -0500
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Fri, 3 Dec 2010 05:04:00 -0500
+Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LCU008YEJGHAVD0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 03 Dec 2010 18:53:05 +0900 (KST)
-Received: from DOKGENEKIM02 ([12.23.103.104])
+ 2010)) with ESMTP id <0LCU0025DJQPQA50@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 03 Dec 2010 18:59:13 +0900 (KST)
+Received: from AMDC159 ([106.116.37.153])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LCU001E8JGHDL@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 03 Dec 2010 18:53:05 +0900 (KST)
-In-reply-to: <1291337567-9064-1-git-send-email-sbkim73@samsung.com>
-Content-language: ko
+ with ESMTPA id <0LCU0013VJQKW2@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 03 Dec 2010 18:59:13 +0900 (KST)
+In-reply-to: <AANLkTikjQkmD-bvtTV=fh-xqMkhsxt67LhAUWuCv5mU3@mail.gmail.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sangbeom Kim' <sbkim73@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, 'Abhilash Kesavan' <a.kesavan@samsung.com>
+To: 'Jassi Brar' <jassisinghbrar@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: 'Jamie Iles' <jamie@jamieiles.com>, kgene.kim@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Sangbeom Kim wrote:
-> 
-> From: Abhilash Kesavan <a.kesavan@samsung.com>
-> 
-> Changing the gpiolib initialization from arch_initcall to core_initcall
-> will allow us to make use of gpio functions in smdk64x0_machine_init
-> function.
-> 
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
-> ---
->  arch/arm/mach-s5p64x0/gpiolib.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s5p64x0/gpiolib.c b/arch/arm/mach-
-> s5p64x0/gpiolib.c
-> index 072668a..e7fb3b0 100644
-> --- a/arch/arm/mach-s5p64x0/gpiolib.c
-> +++ b/arch/arm/mach-s5p64x0/gpiolib.c
-> @@ -508,4 +508,4 @@ static int __init s5p64x0_gpiolib_init(void)
-> 
->  	return 0;
->  }
-> -arch_initcall(s5p64x0_gpiolib_init);
-> +core_initcall(s5p64x0_gpiolib_init);
-> --
+Hello,
 
-Ok...will apply.
+On Friday, December 03, 2010 2:37 AM Jassi Brar wrote:
 
-Thanks.
+> On Fri, Dec 3, 2010 at 2:39 AM, Sylwester Nawrocki
 
-Best regards,
-Kgene.
+<snip>
+
+> > I agree explicit indices are not really needed. I just followed the style of
+> > all other resource definitions already there.
+> > I am not quite sure what is the preference of the maintainer, I guess they want
+> > all devices to follow same style for consistence.
+> 
+> And that style has its origin because explicit indices are as because
+> they stress the fact that
+> drivers expect  a particular resource at a particular index (when we
+> have more than 1
+> resource of a type).
+> IMO we should use some macro shared between platform devices and their drivers.
+> Something like -
+> static struct resource s5p_csis_resource[] = {
+>        [PA_CSIS] = {
+>                .start = S5P_PA_CSIS0,
+>                .end   = S5P_PA_CSIS0 + SZ_4K - 1,
+>                .flags = IORESOURCE_MEM,
+>        },
+>        [IRQ_CSIS] = {
+>                .start = IRQ_MIPICSI0,
+>                .end   = IRQ_MIPICSI0,
+>                .flags = IORESOURCE_IRQ,
+>        }
+> };
+
+This looks like a huge over-engineering for me, especially for the simple device
+that has only one register area and interrupt.
+
+Best regards
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Marek Szyprowski
+Samsung Poland R&D Center
