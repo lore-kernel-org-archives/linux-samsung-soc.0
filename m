@@ -1,28 +1,42 @@
-From: tarek attia <tarek.m.attia@gmail.com>
-Subject: CpuFreq for mini2440
-Date: Fri, 3 Dec 2010 03:12:43 +0200
-Message-ID: <AANLkTi=55k8Dr6CAe6O92j6P2ht4D+onFAEu7J0Q+Nvn@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Sangbeom Kim <sbkim73@samsung.com>
+Subject: [PATCH] SPI: S5P64X0: Enable SPI driver for S5P6440 and S5P6450
+Date: Fri,  3 Dec 2010 10:04:13 +0900
+Message-ID: <1291338253-16461-1-git-send-email-sbkim73@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:54131 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758120Ab0LCBMp (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:43597 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758254Ab0LCBSU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Dec 2010 20:12:45 -0500
-Received: by wyb28 with SMTP id 28so8870475wyb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Dec 2010 17:12:43 -0800 (PST)
+	Thu, 2 Dec 2010 20:18:20 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org, Abhilash Kesavan <a.kesavan@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>
 
-Hi all,
+From: Abhilash Kesavan <a.kesavan@samsung.com>
 
-I tried many times to enable the Cpufreq for the mini2440 "Friendly
-Arm board" but each time I enable it in the kernel it ended up by a
-successful compilation ,but when I mount the kernel image on the board
-,just I dun find it's folder nor it's kernel objects,,,what I miss
-,,or what track should I go to make it working ?
+This patch enable the existing S3C64XX series SPI driver for S5P64X0
 
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+---
+ drivers/spi/Kconfig |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 78f9fd0..56e6249 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -304,8 +304,8 @@ config SPI_S3C24XX_GPIO
+ 
+ config SPI_S3C64XX
+ 	tristate "Samsung S3C64XX series type SPI"
+-	depends on ARCH_S3C64XX && EXPERIMENTAL
+-	select S3C64XX_DMA
++	depends on (ARCH_S3C64XX || ARCH_S5P64X0) && EXPERIMENTAL
++	select S3C64XX_DMA if !ARCH_S5P64X0
+ 	help
+ 	  SPI driver for Samsung S3C64XX and newer SoCs.
+ 
 -- 
-tarek
+1.6.6.1
