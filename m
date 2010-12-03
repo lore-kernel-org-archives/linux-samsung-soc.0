@@ -1,79 +1,93 @@
 From: Kyungmin Park <kyungmin.park@samsung.com>
-Subject: Re: [PATCH 2/4] mach-s5pv310: Add resource definitions for mipi-csis
-Date: Fri, 3 Dec 2010 14:34:23 +0900
-Message-ID: <AANLkTiksQM8V9QeF+P2qvCQ1uOgcq-yzKp-kgnPVmMsJ@mail.gmail.com>
+Subject: Re: [PATCH 3/4] plat-s5p: Add platform support for MIPI-CSI2 devices
+Date: Fri, 3 Dec 2010 14:36:34 +0900
+Message-ID: <AANLkTimg_COsOnfLbgTC36EgZvBnuWaGrygbWz-Sk+6m@mail.gmail.com>
 References: <1291307862-8125-1-git-send-email-s.nawrocki@samsung.com>
-	<1291307862-8125-3-git-send-email-s.nawrocki@samsung.com>
-	<012401cb92a3$a46443b0$ed2ccb10$%kim@samsung.com>
-	<AANLkTimEEf5eD+q-qx7gw21ryFp1bbQ084Lo=eX+Bqjz@mail.gmail.com>
+	<1291307862-8125-4-git-send-email-s.nawrocki@samsung.com>
+	<AANLkTimgazoKTyuG37oUbD_45Cv7Un4=GDMsXXxCuH5U@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:43336 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750709Ab0LCFeY convert rfc822-to-8bit (ORCPT
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:41888 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750709Ab0LCFgf convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Dec 2010 00:34:24 -0500
-Received: by ywl5 with SMTP id 5so4581593ywl.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Dec 2010 21:34:23 -0800 (PST)
-In-Reply-To: <AANLkTimEEf5eD+q-qx7gw21ryFp1bbQ084Lo=eX+Bqjz@mail.gmail.com>
+	Fri, 3 Dec 2010 00:36:35 -0500
+Received: by gxk1 with SMTP id 1so1639387gxk.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Dec 2010 21:36:35 -0800 (PST)
+In-Reply-To: <AANLkTimgazoKTyuG37oUbD_45Cv7Un4=GDMsXXxCuH5U@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, m.szyprowski@samsung.com
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com
 
-On Fri, Dec 3, 2010 at 1:59 PM, Jassi Brar <jassisinghbrar@gmail.com> w=
+On Fri, Dec 3, 2010 at 2:14 PM, Jassi Brar <jassisinghbrar@gmail.com> w=
 rote:
-> On Fri, Dec 3, 2010 at 1:36 PM, Kukjin Kim <kgene.kim@samsung.com> wr=
-ote:
->> Sylwester Nawrocki wrote:
->>>
->>> Add IRQ and register base address definitions for mipi-csis devices=
-=2E
->>>
->>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->>> ---
->>> =A0arch/arm/mach-s5pv310/include/mach/irqs.h | =A0 =A03 +++
->>> =A0arch/arm/mach-s5pv310/include/mach/map.h =A0| =A0 =A05 +++++
->>> =A02 files changed, 8 insertions(+), 0 deletions(-)
->>>
->>> diff --git a/arch/arm/mach-s5pv310/include/mach/irqs.h b/arch/arm/m=
-ach-
->>> s5pv310/include/mach/irqs.h
->>> index 99e7dad..db63773 100644
->>> --- a/arch/arm/mach-s5pv310/include/mach/irqs.h
->>> +++ b/arch/arm/mach-s5pv310/include/mach/irqs.h
->>> @@ -83,6 +83,9 @@
->>> =A0#define IRQ_HSMMC2 =A0 =A0 =A0 =A0 =A0 COMBINER_IRQ(29, 2)
->>> =A0#define IRQ_HSMMC3 =A0 =A0 =A0 =A0 =A0 COMBINER_IRQ(29, 3)
->>>
->>> +#define IRQ_MIPICSI0 =A0 =A0 =A0 =A0 COMBINER_IRQ(30, 0)
->>> +#define IRQ_MIPICSI1 =A0 =A0 =A0 =A0 COMBINER_IRQ(30, 1)
->>> +
->>> =A0#define IRQ_ONENAND_AUDI =A0 =A0 COMBINER_IRQ(34, 0)
->>>
->>> =A0#define IRQ_EINT4 =A0 =A0 =A0 =A0 =A0 =A0COMBINER_IRQ(37, 0)
->>> diff --git a/arch/arm/mach-s5pv310/include/mach/map.h b/arch/arm/ma=
-ch-
->>> s5pv310/include/mach/map.h
->>> index 7acf4e7..9905bfe 100644
->>> --- a/arch/arm/mach-s5pv310/include/mach/map.h
->>> +++ b/arch/arm/mach-s5pv310/include/mach/map.h
->>> @@ -56,6 +56,9 @@
->>> =A0#define S5PV310_PA_GPIO2 =A0 =A0 =A0 =A0 =A0 =A0 (0x11000000)
->>> =A0#define S5PV310_PA_GPIO3 =A0 =A0 =A0 =A0 =A0 =A0 (0x03860000)
->>>
->>> +#define S5PV310_PA_CSIS0 =A0 =A0 =A0 =A0 =A0 =A0 (0x11880000)
->>> +#define S5PV310_PA_CSIS1 =A0 =A0 =A0 =A0 =A0 =A0 (0x11890000)
+> On Fri, Dec 3, 2010 at 1:37 AM, Sylwester Nawrocki
+> <s.nawrocki@samsung.com> wrote:
+>> There may be up to 2 MIPI-CSI2 interfaces depending on SoC version.
+>>
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>> =A0arch/arm/plat-s5p/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 1=
+0 ++++++++
+>> =A0arch/arm/plat-s5p/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A0=
+2 +
+>> =A0arch/arm/plat-s5p/dev-csis0.c =A0 =A0 =A0 =A0 =A0 =A0 | =A0 34 ++=
++++++++++++++++++++++++++++
+>> =A0arch/arm/plat-s5p/dev-csis1.c =A0 =A0 =A0 =A0 =A0 =A0 | =A0 33 ++=
+++++++++++++++++++++++++++
+>> =A0arch/arm/plat-samsung/include/plat/csis.h | =A0 28 ++++++++++++++=
++++++++++
+>> =A0arch/arm/plat-samsung/include/plat/devs.h | =A0 =A03 ++
+>> =A06 files changed, 110 insertions(+), 0 deletions(-)
+>> =A0create mode 100644 arch/arm/plat-s5p/dev-csis0.c
+>> =A0create mode 100644 arch/arm/plat-s5p/dev-csis1.c
+>> =A0create mode 100644 arch/arm/plat-samsung/include/plat/csis.h
+>>
+>> diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
+>> index 65dbfa8..2fb0c88 100644
+>> --- a/arch/arm/plat-s5p/Kconfig
+>> +++ b/arch/arm/plat-s5p/Kconfig
+>> @@ -56,3 +56,13 @@ config S5P_DEV_ONENAND
+>> =A0 =A0 =A0 =A0bool
+>> =A0 =A0 =A0 =A0help
+>> =A0 =A0 =A0 =A0 =A0Compile in platform device definition for OneNAND=
+ controller
+>> +
+>> +config S5P_DEV_CSIS0
+>> + =A0 =A0 =A0 bool
+>> + =A0 =A0 =A0 help
+>> + =A0 =A0 =A0 =A0 Compile in platform device definitions for MIPI-CS=
+I2 interface 0
+>> +
+>> +config S5P_DEV_CSIS1
+>> + =A0 =A0 =A0 bool
+>> + =A0 =A0 =A0 help
+>> + =A0 =A0 =A0 =A0 Compile in platform device definitions for MIPI-CS=
+I2 interface 1
+>> diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
+>> index de65238..2b73173 100644
+>> --- a/arch/arm/plat-s5p/Makefile
+>> +++ b/arch/arm/plat-s5p/Makefile
+>> @@ -28,3 +28,5 @@ obj-$(CONFIG_S5P_DEV_FIMC0) =A0 +=3D dev-fimc0.o
+>> =A0obj-$(CONFIG_S5P_DEV_FIMC1) =A0 =A0+=3D dev-fimc1.o
+>> =A0obj-$(CONFIG_S5P_DEV_FIMC2) =A0 =A0+=3D dev-fimc2.o
+>> =A0obj-$(CONFIG_S5P_DEV_ONENAND) =A0+=3D dev-onenand.o
+>> +obj-$(CONFIG_S5P_DEV_CSIS0) =A0 =A0+=3D dev-csis0.o
+>> +obj-$(CONFIG_S5P_DEV_CSIS1) =A0 =A0+=3D dev-csis1.o
 >
-> Let us please not contain constants in brackets.
+> When we do have defines for each device, why not have both in one fil=
+e
+> with each contained in ifdef for it's define ? That will reduce file =
+count.
 
-I think consistency is more higher than your comment normally.
+To Jassi,
 
-if you think these, then make a cleanup first.
-
+Please make a conclusion from LSI first, I'm confused, I insisted it
+as you, but kgene rejected it.
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-samsu=
 ng-soc" in
