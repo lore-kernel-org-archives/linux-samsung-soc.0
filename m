@@ -1,123 +1,169 @@
-From: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Subject: RE: [PATCH 1/8] ARM: SCU: Add common routines for secondary CPUbootup
-Date: Mon, 6 Dec 2010 12:58:02 +0530
-Message-ID: <a77f1800c9be01e7c81532a716b4e260__3296.5050930672$1291620932$gmane$org@mail.gmail.com>
-References: <20101130171626.GA6165@oksana.dev.rtsoft.ru> <20101130171658.GA24034@oksana.dev.rtsoft.ru>
- <20101130233204.GB14383@n2100.arm.linux.org.uk> <20101201002527.GC14383@n2100.arm.linux.org.uk>
- <AANLkTikpjq-8BVanF5W76j0ZdDBur8DyHWSH8GGgJBQs@mail.gmail.com>
- <20101202152428.GD10461@n2100.arm.linux.org.uk> <1291307320.11271.51.camel@e102109-lin.cambridge.arm.com>
- <20101202173824.GE10461@n2100.arm.linux.org.uk> <20101202180150.GF10461@n2100.arm.linux.org.uk>
- <20101204084815.GA20969@n2100.arm.linux.org.uk>
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: Re: [PATCH 2/2] h1940-leds: Fix compile issue introduced by latch-related changes
+Date: Mon, 6 Dec 2010 18:43:13 +0200
+Message-ID: <201012061843.13558.anarsoul@gmail.com>
+References: <1289248308-21272-1-git-send-email-anarsoul@gmail.com> <1289248308-21272-2-git-send-email-anarsoul@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from na3sys009aog101.obsmtp.com ([74.125.149.67]:45678 "EHLO
-	na3sys009aog101.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750990Ab0LFHfW convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Dec 2010 02:35:22 -0500
-In-Reply-To: <20101204084815.GA20969@n2100.arm.linux.org.uk>
+Received: from mail-ew0-f45.google.com ([209.85.215.45]:59717 "EHLO
+	mail-ew0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752699Ab0LFQnx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 6 Dec 2010 11:43:53 -0500
+Received: by ewy10 with SMTP id 10so7178185ewy.4
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Dec 2010 08:43:52 -0800 (PST)
+In-Reply-To: <1289248308-21272-2-git-send-email-anarsoul@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Kukjin Kim <kgene.kim@samsung.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Jamie
+To: Ben Dooks <ben-linux@fluff.org>, Richard Purdie <rpurdie@linux.intel.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>
 
-> -----Original Message-----
-> From: linux-omap-owner@vger.kernel.org [mailto:linux-omap-
-> owner@vger.kernel.org] On Behalf Of Russell King - ARM Linux
-> Sent: Saturday, December 04, 2010 2:18 PM
-> To: Tony Lindgren; Kukjin Kim; Srinidhi Kasagar; Jamie Iles; Anton
-> Vorontsov; linux-kernel@vger.kernel.org; linux-samsung-
-> soc@vger.kernel.org; Colin Cross; linux-tegra@vger.kernel.org; Uwe
-Kleine-
-> K=F6nig; linux-omap@vger.kernel.org; linux-arm-kernel@lists.infradead=
-=2Eorg
-> Subject: Re: [PATCH 1/8] ARM: SCU: Add common routines for secondary
-> CPUbootup
->
-> On Thu, Dec 02, 2010 at 06:01:50PM +0000, Russell King - ARM Linux
-wrote:
-> > On Thu, Dec 02, 2010 at 05:38:24PM +0000, Russell King - ARM Linux
-> wrote:
-> > > What if a platform, for what ever reason, wants to have 3 CPUs,
-> > > numbered 0, 2, 3 ?  That's the reason why the code which sets the
-> > > possible and present maps isn't in the ARM core code - Eg, we don=
-'t
-> > > know if a platform wants to keep CPU 1 in AMP mode to run some
-> > > special software on it.
-> > >
-> > > I don't think it's worth it because I think trying to considate t=
-his
-> > > is going to cripple the code structure in the future.
-> >
-> > I don't think this is particularly worth it either:
->
-> As Catalin has pointed out:
->
->
-http://lists.arm.linux.org.uk/lurker/message/20101202.162840.5465758c.e=
-n.h
-> tml
->
-> The SCU is part of the core, and if you consult the TRMs for the MPCo=
-re
-> devices, it is actually different in ARM11 MPCore vs Cortex-A9 MPCore=
-=2E
-> Cortex-A15 doesn't have a MMIO addressable SCU at all.
->
-> So, this is about as far as I want to go with stripping out the commo=
-n
-> code from the various platforms (this includes my previous SMP series=
-):
->
->
-http://lists.arm.linux.org.uk/lurker/message/20101203.200746.31424430.e=
-n.h
-> tml
->
-> This results in a net reduction of 242 LOC, as shown in the following
-> diffstat:
->
->  arch/arm/include/asm/hardirq.h            |   18 ++
->  arch/arm/include/asm/mach/irq.h           |    2 +-
->  arch/arm/include/asm/smp.h                |   17 +-
->  arch/arm/include/asm/smp_mpidr.h          |   17 --
->  arch/arm/kernel/entry-armv.S              |    2 +-
->  arch/arm/kernel/fiq.c                     |    5 +-
->  arch/arm/kernel/head.S                    |   39 +++--
->  arch/arm/kernel/irq.c                     |   23 ++-
->  arch/arm/kernel/smp.c                     |  243
-++++++++++++++++--------
-> -----
->  arch/arm/mach-msm/include/mach/smp.h      |    4 +-
->  arch/arm/mach-omap2/omap-hotplug.c        |   14 +--
->  arch/arm/mach-omap2/omap-smp.c            |   66 ++------
->  arch/arm/mach-realview/hotplug.c          |   18 +--
->  arch/arm/mach-realview/include/mach/smp.h |    5 +-
->  arch/arm/mach-realview/platsmp.c          |   95 +++---------
->  arch/arm/mach-s5pv310/hotplug.c           |   18 +--
->  arch/arm/mach-s5pv310/include/mach/smp.h  |    5 +-
->  arch/arm/mach-s5pv310/platsmp.c           |   46 +-----
->  arch/arm/mach-tegra/hotplug.c             |   18 +--
->  arch/arm/mach-tegra/include/mach/smp.h    |   12 +--
->  arch/arm/mach-tegra/platsmp.c             |   33 +---
->  arch/arm/mach-ux500/hotplug.c             |   18 +--
->  arch/arm/mach-ux500/include/mach/smp.h    |    5 +-
->  arch/arm/mach-ux500/platsmp.c             |   57 ++-----
->  arch/arm/mach-vexpress/include/mach/smp.h |    5 +-
->  arch/arm/mach-vexpress/platsmp.c          |   54 ++-----
->  arch/arm/plat-omap/include/plat/smp.h     |    5 +-
->  27 files changed, 301 insertions(+), 543 deletions(-)
->
-> Can someone also explain why OMAP uses different file naming from
-everyone
-> else?  It's annoying as (eg) arch/arm/*/platsmp.c for editing the
-platform
-> SMP support files gets everyone except OMAP.
+On Monday 08 November 2010 22:31:48 Vasily Khoruzhick wrote:
+> Latch API was converted to gpiolib API as result we got this compile
+> error:
+> 
+> drivers/leds/leds-h1940.c: In function 'h1940_greenled_set':
+> drivers/leds/leds-h1940.c:33: error: implicit declaration of function
+> 'h1940_latch_control
+> 
+> Adapt h1940-leds driver to new changes and fix compile issue.
+> 
+> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> ---
+>  drivers/leds/leds-h1940.c |   67
+> ++++++++++++++++++++++++++++++++------------- 1 files changed, 48
+> insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/leds/leds-h1940.c b/drivers/leds/leds-h1940.c
+> index 173d104..d9c2729 100644
+> --- a/drivers/leds/leds-h1940.c
+> +++ b/drivers/leds/leds-h1940.c
+> @@ -30,18 +30,18 @@ static void h1940_greenled_set(struct led_classdev
+> *led_dev, {
+>  	switch (value) {
+>  	case LED_HALF:
+> -		h1940_latch_control(0, H1940_LATCH_LED_FLASH);
+> -		s3c2410_gpio_setpin(S3C2410_GPA7, 1);
+> +		gpio_set_value(H1940_LATCH_LED_FLASH, 1);
+> +		gpio_set_value(S3C2410_GPA(7), 1);
+>  		break;
+>  	case LED_FULL:
+> -		h1940_latch_control(0, H1940_LATCH_LED_GREEN);
+> -		s3c2410_gpio_setpin(S3C2410_GPA7, 1);
+> +		gpio_set_value(H1940_LATCH_LED_GREEN, 1);
+> +		gpio_set_value(S3C2410_GPA(7), 1);
+>  		break;
+>  	default:
+>  	case LED_OFF:
+> -		h1940_latch_control(H1940_LATCH_LED_FLASH, 0);
+> -		h1940_latch_control(H1940_LATCH_LED_GREEN, 0);
+> -		s3c2410_gpio_setpin(S3C2410_GPA7, 0);
+> +		gpio_set_value(H1940_LATCH_LED_FLASH, 0);
+> +		gpio_set_value(H1940_LATCH_LED_GREEN, 0);
+> +		gpio_set_value(S3C2410_GPA(7), 0);
+>  		break;
+>  	}
+>  }
+> @@ -60,18 +60,18 @@ static void h1940_redled_set(struct led_classdev
+> *led_dev, {
+>  	switch (value) {
+>  	case LED_HALF:
+> -		h1940_latch_control(0, H1940_LATCH_LED_FLASH);
+> -		s3c2410_gpio_setpin(S3C2410_GPA1, 1);
+> +		gpio_set_value(H1940_LATCH_LED_FLASH, 1);
+> +		gpio_set_value(S3C2410_GPA(1), 1);
+>  		break;
+>  	case LED_FULL:
+> -		h1940_latch_control(0, H1940_LATCH_LED_RED);
+> -		s3c2410_gpio_setpin(S3C2410_GPA1, 1);
+> +		gpio_set_value(H1940_LATCH_LED_RED, 1);
+> +		gpio_set_value(S3C2410_GPA(1), 1);
+>  		break;
+>  	default:
+>  	case LED_OFF:
+> -		h1940_latch_control(H1940_LATCH_LED_FLASH, 0);
+> -		h1940_latch_control(H1940_LATCH_LED_RED, 0);
+> -		s3c2410_gpio_setpin(S3C2410_GPA1, 0);
+> +		gpio_set_value(H1940_LATCH_LED_FLASH, 0);
+> +		gpio_set_value(H1940_LATCH_LED_RED, 0);
+> +		gpio_set_value(S3C2410_GPA(1), 0);
+>  		break;
+>  	}
+>  }
+> @@ -91,11 +91,11 @@ static void h1940_blueled_set(struct led_classdev
+> *led_dev, {
+>  	if (value) {
+>  		/* flashing Blue */
+> -		h1940_latch_control(0, H1940_LATCH_LED_FLASH);
+> -		s3c2410_gpio_setpin(S3C2410_GPA3, 1);
+> +		gpio_set_value(H1940_LATCH_LED_FLASH, 1);
+> +		gpio_set_value(S3C2410_GPA(3), 1);
+>  	} else {
+> -		h1940_latch_control(H1940_LATCH_LED_FLASH, 0);
+> -		s3c2410_gpio_setpin(S3C2410_GPA3, 0);
+> +		gpio_set_value(H1940_LATCH_LED_FLASH, 0);
+> +		gpio_set_value(S3C2410_GPA(3), 0);
+>  	}
+> 
+>  }
+> @@ -108,7 +108,24 @@ static struct led_classdev h1940_blueled = {
+> 
+>  static int __devinit h1940leds_probe(struct platform_device *pdev)
+>  {
+> -	int ret;
+> +	int ret, gpioidx = 0;
+> +	int led_gpios[] = {
+> +		H1940_LATCH_LED_GREEN,
+> +		H1940_LATCH_LED_RED,
+> +		H1940_LATCH_LED_FLASH,
+> +		S3C2410_GPA(1),
+> +		S3C2410_GPA(3),
+> +		S3C2410_GPA(7),
+> +	};
+> +
+> +	for (gpioidx = 0; gpioidx < ARRAY_SIZE(led_gpios); gpioidx++) {
+> +		ret = gpio_request(led_gpios[gpioidx], "h1940 leds");
+> +		if (ret < 0)
+> +			goto err_gpio;
+> +		ret = gpio_direction_output(led_gpios[gpioidx], 0);
+> +		if (ret < 0)
+> +			goto err_gpio;
+> +	}
+> 
+>  	ret = led_classdev_register(&pdev->dev, &h1940_greenled);
+>  	if (ret)
+> @@ -129,6 +146,10 @@ err_blue:
+>  err_red:
+>  	led_classdev_unregister(&h1940_greenled);
+>  err_green:
+> +err_gpio:
+> +	while (--gpioidx >= 0)
+> +		gpio_free(led_gpios[gpioidx]);
+> +
+>  	return ret;
+>  }
+> 
+> @@ -137,6 +158,14 @@ static int h1940leds_remove(struct platform_device
+> *pdev) led_classdev_unregister(&h1940_greenled);
+>  	led_classdev_unregister(&h1940_redled);
+>  	led_classdev_unregister(&h1940_blueled);
+> +
+> +	gpio_free(H1940_LATCH_LED_GREEN);
+> +	gpio_free(H1940_LATCH_LED_RED);
+> +	gpio_free(H1940_LATCH_LED_FLASH);
+> +	gpio_free(S3C2410_GPA(1));
+> +	gpio_free(S3C2410_GPA(3));
+> +	gpio_free(S3C2410_GPA(7));
+> +
+>  	return 0;
+>  }
 
-Nothing specific Russell?.
-Its just to keep in sync with the way other files are named
-under omap directories. We could rename this if it helps.
+Added Richard Purdie to CC (it seems he changed email address).
 
-Regards,
-Ssantosh
+Richard, could you review/merge this patch?
+
+Regards
+Vasily
