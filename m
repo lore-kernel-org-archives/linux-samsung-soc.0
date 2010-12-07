@@ -1,169 +1,72 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: Re: [PATCH 2/2] h1940-leds: Fix compile issue introduced by latch-related changes
-Date: Mon, 6 Dec 2010 18:43:13 +0200
-Message-ID: <201012061843.13558.anarsoul@gmail.com>
-References: <1289248308-21272-1-git-send-email-anarsoul@gmail.com> <1289248308-21272-2-git-send-email-anarsoul@gmail.com>
+From: Jonghun Han <jonghun.han@samsung.com>
+Subject: RE: [RFC/PATCH 2/4] [media] s5p-fimc: Porting to videobuf 2
+Date: Tue, 07 Dec 2010 15:12:13 +0900
+Message-ID: <00e501cb95d5$b2de31f0$189a95d0$%han@samsung.com>
+References: <1291214153-6335-1-git-send-email-s.nawrocki@samsung.com>
+ <1291214153-6335-3-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f45.google.com ([209.85.215.45]:59717 "EHLO
-	mail-ew0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752699Ab0LFQnx (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:32272 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751996Ab0LGGMS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Dec 2010 11:43:53 -0500
-Received: by ewy10 with SMTP id 10so7178185ewy.4
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Dec 2010 08:43:52 -0800 (PST)
-In-Reply-To: <1289248308-21272-2-git-send-email-anarsoul@gmail.com>
+	Tue, 7 Dec 2010 01:12:18 -0500
+In-reply-to: <1291214153-6335-3-git-send-email-s.nawrocki@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, Richard Purdie <rpurdie@linux.intel.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>
+To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com
 
-On Monday 08 November 2010 22:31:48 Vasily Khoruzhick wrote:
-> Latch API was converted to gpiolib API as result we got this compile
-> error:
+
+Sylwester Nawrocki wrote:
+
+> -----Original Message-----
+> From: linux-media-owner@vger.kernel.org [mailto:linux-media-
+> owner@vger.kernel.org] On Behalf Of Sylwester Nawrocki
+> Sent: Wednesday, December 01, 2010 11:36 PM
+> To: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org
+> Cc: m.szyprowski@samsung.com; kyungmin.park@samsung.com;
+> s.nawrocki@samsung.com
+> Subject: [RFC/PATCH 2/4] [media] s5p-fimc: Porting to videobuf 2
 > 
-> drivers/leds/leds-h1940.c: In function 'h1940_greenled_set':
-> drivers/leds/leds-h1940.c:33: error: implicit declaration of function
-> 'h1940_latch_control
+> Porting to videobuf 2 and minor cleanup.
+> Separate videobuf_queue_ops are are created for m2m
+> and capture video nodes.
 > 
-> Adapt h1940-leds driver to new changes and fix compile issue.
-> 
-> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  drivers/leds/leds-h1940.c |   67
-> ++++++++++++++++++++++++++++++++------------- 1 files changed, 48
-> insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/leds/leds-h1940.c b/drivers/leds/leds-h1940.c
-> index 173d104..d9c2729 100644
-> --- a/drivers/leds/leds-h1940.c
-> +++ b/drivers/leds/leds-h1940.c
-> @@ -30,18 +30,18 @@ static void h1940_greenled_set(struct led_classdev
-> *led_dev, {
->  	switch (value) {
->  	case LED_HALF:
-> -		h1940_latch_control(0, H1940_LATCH_LED_FLASH);
-> -		s3c2410_gpio_setpin(S3C2410_GPA7, 1);
-> +		gpio_set_value(H1940_LATCH_LED_FLASH, 1);
-> +		gpio_set_value(S3C2410_GPA(7), 1);
->  		break;
->  	case LED_FULL:
-> -		h1940_latch_control(0, H1940_LATCH_LED_GREEN);
-> -		s3c2410_gpio_setpin(S3C2410_GPA7, 1);
-> +		gpio_set_value(H1940_LATCH_LED_GREEN, 1);
-> +		gpio_set_value(S3C2410_GPA(7), 1);
->  		break;
->  	default:
->  	case LED_OFF:
-> -		h1940_latch_control(H1940_LATCH_LED_FLASH, 0);
-> -		h1940_latch_control(H1940_LATCH_LED_GREEN, 0);
-> -		s3c2410_gpio_setpin(S3C2410_GPA7, 0);
-> +		gpio_set_value(H1940_LATCH_LED_FLASH, 0);
-> +		gpio_set_value(H1940_LATCH_LED_GREEN, 0);
-> +		gpio_set_value(S3C2410_GPA(7), 0);
->  		break;
->  	}
->  }
-> @@ -60,18 +60,18 @@ static void h1940_redled_set(struct led_classdev
-> *led_dev, {
->  	switch (value) {
->  	case LED_HALF:
-> -		h1940_latch_control(0, H1940_LATCH_LED_FLASH);
-> -		s3c2410_gpio_setpin(S3C2410_GPA1, 1);
-> +		gpio_set_value(H1940_LATCH_LED_FLASH, 1);
-> +		gpio_set_value(S3C2410_GPA(1), 1);
->  		break;
->  	case LED_FULL:
-> -		h1940_latch_control(0, H1940_LATCH_LED_RED);
-> -		s3c2410_gpio_setpin(S3C2410_GPA1, 1);
-> +		gpio_set_value(H1940_LATCH_LED_RED, 1);
-> +		gpio_set_value(S3C2410_GPA(1), 1);
->  		break;
->  	default:
->  	case LED_OFF:
-> -		h1940_latch_control(H1940_LATCH_LED_FLASH, 0);
-> -		h1940_latch_control(H1940_LATCH_LED_RED, 0);
-> -		s3c2410_gpio_setpin(S3C2410_GPA1, 0);
-> +		gpio_set_value(H1940_LATCH_LED_FLASH, 0);
-> +		gpio_set_value(H1940_LATCH_LED_RED, 0);
-> +		gpio_set_value(S3C2410_GPA(1), 0);
->  		break;
->  	}
->  }
-> @@ -91,11 +91,11 @@ static void h1940_blueled_set(struct led_classdev
-> *led_dev, {
->  	if (value) {
->  		/* flashing Blue */
-> -		h1940_latch_control(0, H1940_LATCH_LED_FLASH);
-> -		s3c2410_gpio_setpin(S3C2410_GPA3, 1);
-> +		gpio_set_value(H1940_LATCH_LED_FLASH, 1);
-> +		gpio_set_value(S3C2410_GPA(3), 1);
->  	} else {
-> -		h1940_latch_control(H1940_LATCH_LED_FLASH, 0);
-> -		s3c2410_gpio_setpin(S3C2410_GPA3, 0);
-> +		gpio_set_value(H1940_LATCH_LED_FLASH, 0);
-> +		gpio_set_value(S3C2410_GPA(3), 0);
->  	}
-> 
->  }
-> @@ -108,7 +108,24 @@ static struct led_classdev h1940_blueled = {
-> 
->  static int __devinit h1940leds_probe(struct platform_device *pdev)
+
+
+<snip>
+
+Hi, 
+
+> @@ -968,6 +934,11 @@ static int fimc_m2m_streamon(struct file *file, void
+*priv,
+>  			   enum v4l2_buf_type type)
 >  {
-> -	int ret;
-> +	int ret, gpioidx = 0;
-> +	int led_gpios[] = {
-> +		H1940_LATCH_LED_GREEN,
-> +		H1940_LATCH_LED_RED,
-> +		H1940_LATCH_LED_FLASH,
-> +		S3C2410_GPA(1),
-> +		S3C2410_GPA(3),
-> +		S3C2410_GPA(7),
-> +	};
+>  	struct fimc_ctx *ctx = priv;
 > +
-> +	for (gpioidx = 0; gpioidx < ARRAY_SIZE(led_gpios); gpioidx++) {
-> +		ret = gpio_request(led_gpios[gpioidx], "h1940 leds");
-> +		if (ret < 0)
-> +			goto err_gpio;
-> +		ret = gpio_direction_output(led_gpios[gpioidx], 0);
-> +		if (ret < 0)
-> +			goto err_gpio;
-> +	}
-> 
->  	ret = led_classdev_register(&pdev->dev, &h1940_greenled);
->  	if (ret)
-> @@ -129,6 +146,10 @@ err_blue:
->  err_red:
->  	led_classdev_unregister(&h1940_greenled);
->  err_green:
-> +err_gpio:
-> +	while (--gpioidx >= 0)
-> +		gpio_free(led_gpios[gpioidx]);
+> +	/* The source and target color format need to be set */
+> +	if (~ctx->state & (FIMC_DST_FMT | FIMC_SRC_FMT))
+> +		return -EINVAL;
 > +
->  	return ret;
->  }
-> 
-> @@ -137,6 +158,14 @@ static int h1940leds_remove(struct platform_device
-> *pdev) led_classdev_unregister(&h1940_greenled);
->  	led_classdev_unregister(&h1940_redled);
->  	led_classdev_unregister(&h1940_blueled);
-> +
-> +	gpio_free(H1940_LATCH_LED_GREEN);
-> +	gpio_free(H1940_LATCH_LED_RED);
-> +	gpio_free(H1940_LATCH_LED_FLASH);
-> +	gpio_free(S3C2410_GPA(1));
-> +	gpio_free(S3C2410_GPA(3));
-> +	gpio_free(S3C2410_GPA(7));
-> +
->  	return 0;
+>  	return v4l2_m2m_streamon(file, ctx->m2m_ctx, type);
 >  }
 
-Added Richard Purdie to CC (it seems he changed email address).
+You had better divide a state checking according to v4l2_buf_type to make
+easier 
+for application to use it. For example application can have two threads 
+for handling m2m device. The one is for source control(OUTPUT) and 
+the other is for destination control(CAPTURE). If state checking is not
+divided, 
+application should consider other thread's state whether VIDIOC_S_FMT was
+called or not 
+before VIDIOC_STREAMON.
 
-Richard, could you review/merge this patch?
-
-Regards
-Vasily
+BRs,
