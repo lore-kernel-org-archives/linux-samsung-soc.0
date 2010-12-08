@@ -1,32 +1,52 @@
-From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: CpuFreq for mini2440
-Date: Wed, 08 Dec 2010 00:45:35 +0000
-Message-ID: <4CFED52F.8070307@fluff.org>
-References: <AANLkTi=55k8Dr6CAe6O92j6P2ht4D+onFAEu7J0Q+Nvn@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: [PATCH] ARM: S3C2442: rx1950: Retain LEDs state in suspend
+Date: Wed,  8 Dec 2010 22:10:19 +0200
+Message-ID: <1291839019-27336-1-git-send-email-anarsoul@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from dsl78-143-211-26.in-addr.fast.co.uk ([78.143.211.26]:54826 "EHLO
-	ben-laptop" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1754713Ab0LHAph (ORCPT
+Received: from mail-ey0-f171.google.com ([209.85.215.171]:65228 "EHLO
+	mail-ey0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751918Ab0LHULM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Dec 2010 19:45:37 -0500
-In-Reply-To: <AANLkTi=55k8Dr6CAe6O92j6P2ht4D+onFAEu7J0Q+Nvn@mail.gmail.com>
+	Wed, 8 Dec 2010 15:11:12 -0500
+Received: by eyg5 with SMTP id 5so1289532eyg.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Dec 2010 12:11:11 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: tarek attia <tarek.m.attia@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Vasily Khoruzhick <anarsoul@gmail.com>
 
-On 03/12/10 01:12, tarek attia wrote:
-> Hi all,
-> 
-> I tried many times to enable the Cpufreq for the mini2440 "Friendly
-> Arm board" but each time I enable it in the kernel it ended up by a
-> successful compilation ,but when I mount the kernel image on the board
-> ,just I dun find it's folder nor it's kernel objects,,,what I miss
-> ,,or what track should I go to make it working ?
+s3c_adc_battery uses LEDs to indicate charging process,
+retain LEDs state in suspend, otherwise user have no information if PDA
+battery is charging after he put it to suspend.
 
-The board's init code may not support it. If no-one else comes
-forward, I will try as I think I still have one of these boards
-somewhere.
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+---
+ arch/arm/mach-s3c2440/mach-rx1950.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-s3c2440/mach-rx1950.c b/arch/arm/mach-s3c2440/mach-rx1950.c
+index e0622bb..2c41254 100644
+--- a/arch/arm/mach-s3c2440/mach-rx1950.c
++++ b/arch/arm/mach-s3c2440/mach-rx1950.c
+@@ -268,16 +268,19 @@ static struct gpio_led rx1950_leds_desc[] = {
+ 		.name				= "Green",
+ 		.default_trigger	= "main-battery-charging-or-full",
+ 		.gpio				= S3C2410_GPA(6),
++		.retain_state_suspended		= 1,
+ 	},
+ 	{
+ 		.name				= "Red",
+ 		.default_trigger	= "main-battery-full",
+ 		.gpio				= S3C2410_GPA(7),
++		.retain_state_suspended		= 1,
+ 	},
+ 	{
+ 		.name				= "Blue",
+ 		.default_trigger	= "rx1950-acx-mem",
+ 		.gpio				= S3C2410_GPA(11),
++		.retain_state_suspended		= 1,
+ 	},
+ };
+ 
+-- 
+1.7.3.2
