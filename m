@@ -1,39 +1,32 @@
 From: Ben Dooks <ben-linux@fluff.org>
-Subject: Re: [PATCH 3/3] ARM: S3C64XX: Use chip_data to store the shift for
-	EINTs
-Date: Wed, 08 Dec 2010 00:36:01 +0000
-Message-ID: <4CFED2F1.3010902@fluff.org>
-References: <1290698309-7691-1-git-send-email-broonie@opensource.wolfsonmicro.com>	<1290698309-7691-3-git-send-email-broonie@opensource.wolfsonmicro.com>	<003101cb914d$1caf7040$560e50c0$%kim@samsung.com>
-	<20101201115535.GK24176@rakim.wolfsonmicro.main>
+Subject: Re: CpuFreq for mini2440
+Date: Wed, 08 Dec 2010 00:45:35 +0000
+Message-ID: <4CFED52F.8070307@fluff.org>
+References: <AANLkTi=55k8Dr6CAe6O92j6P2ht4D+onFAEu7J0Q+Nvn@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20101201115535.GK24176@rakim.wolfsonmicro.main>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, patches@opensource.wolfsonmicro.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from dsl78-143-211-26.in-addr.fast.co.uk ([78.143.211.26]:54826 "EHLO
+	ben-laptop" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+	id S1754713Ab0LHAph (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 7 Dec 2010 19:45:37 -0500
+In-Reply-To: <AANLkTi=55k8Dr6CAe6O92j6P2ht4D+onFAEu7J0Q+Nvn@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: tarek attia <tarek.m.attia@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 01/12/10 11:55, Mark Brown wrote:
-> On Wed, Dec 01, 2010 at 08:44:25PM +0900, Kukjin Kim wrote:
->> Mark Brown wrote:
+On 03/12/10 01:12, tarek attia wrote:
+> Hi all,
 > 
->>> This makes all the functions that use the shift slightly smaller, one
->>> instruction in most cases but more for ack() and maskack().
-> 
->> Uhm...I'm not sure to use chip_data for the eint_irq_to_bit() is best to us.
-> 
-> Could you elaborate on your concern here?  I can't think of anything
-> else we might want to include in the data, and avoiding the shifts
-> and/or dereferences seems useful for anyone doing interrupt heavy work.
+> I tried many times to enable the Cpufreq for the mini2440 "Friendly
+> Arm board" but each time I enable it in the kernel it ended up by a
+> successful compilation ,but when I mount the kernel image on the board
+> ,just I dun find it's folder nor it's kernel objects,,,what I miss
+> ,,or what track should I go to make it working ?
 
-Hi, post code to show difference in output would be good!
+The board's init code may not support it. If no-one else comes
+forward, I will try as I think I still have one of these boards
+somewhere.
