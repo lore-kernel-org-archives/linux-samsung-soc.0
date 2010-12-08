@@ -1,100 +1,39 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: RE: [RFC/PATCH 2/4] [media] s5p-fimc: Porting to videobuf 2
-Date: Tue, 07 Dec 2010 10:33:34 +0100
-Message-ID: <000001cb95f1$d1499af0$73dcd0d0$%nawrocki@samsung.com>
-References: <1291214153-6335-1-git-send-email-s.nawrocki@samsung.com>
- <1291214153-6335-3-git-send-email-s.nawrocki@samsung.com>
- <00e501cb95d5$b2de31f0$189a95d0$%han@samsung.com>
+From: Ben Dooks <ben-linux@fluff.org>
+Subject: Re: [PATCH 3/3] ARM: S3C64XX: Use chip_data to store the shift for
+	EINTs
+Date: Wed, 08 Dec 2010 00:36:01 +0000
+Message-ID: <4CFED2F1.3010902@fluff.org>
+References: <1290698309-7691-1-git-send-email-broonie@opensource.wolfsonmicro.com>	<1290698309-7691-3-git-send-email-broonie@opensource.wolfsonmicro.com>	<003101cb914d$1caf7040$560e50c0$%kim@samsung.com>
+	<20101201115535.GK24176@rakim.wolfsonmicro.main>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:28372 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755079Ab0LGJdj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Dec 2010 04:33:39 -0500
-In-reply-to: <00e501cb95d5$b2de31f0$189a95d0$%han@samsung.com>
-Content-language: en-us
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20101201115535.GK24176@rakim.wolfsonmicro.main>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, patches@opensource.wolfsonmicro.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jonghun Han' <jonghun.han@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, kyungmin.park@samsung.com, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hi Jonghun,
+On 01/12/10 11:55, Mark Brown wrote:
+> On Wed, Dec 01, 2010 at 08:44:25PM +0900, Kukjin Kim wrote:
+>> Mark Brown wrote:
+> 
+>>> This makes all the functions that use the shift slightly smaller, one
+>>> instruction in most cases but more for ack() and maskack().
+> 
+>> Uhm...I'm not sure to use chip_data for the eint_irq_to_bit() is best to us.
+> 
+> Could you elaborate on your concern here?  I can't think of anything
+> else we might want to include in the data, and avoiding the shifts
+> and/or dereferences seems useful for anyone doing interrupt heavy work.
 
-> -----Original Message-----
-> From: linux-media-owner@vger.kernel.org [mailto:linux-media-
-> owner@vger.kernel.org] On Behalf Of Jonghun Han
-> Sent: Tuesday, December 07, 2010 7:12 AM
-> To: 'Sylwester Nawrocki'; linux-media@vger.kernel.org; linux-samsung-
-> soc@vger.kernel.org
-> Cc: m.szyprowski@samsung.com; kyungmin.park@samsung.com
-> Subject: RE: [RFC/PATCH 2/4] [media] s5p-fimc: Porting to videobuf 2
-> 
-> 
-> Sylwester Nawrocki wrote:
-> 
-> > -----Original Message-----
-> > From: linux-media-owner@vger.kernel.org [mailto:linux-media-
-> > owner@vger.kernel.org] On Behalf Of Sylwester Nawrocki
-> > Sent: Wednesday, December 01, 2010 11:36 PM
-> > To: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org
-> > Cc: m.szyprowski@samsung.com; kyungmin.park@samsung.com;
-> > s.nawrocki@samsung.com
-> > Subject: [RFC/PATCH 2/4] [media] s5p-fimc: Porting to videobuf 2
-> >
-> > Porting to videobuf 2 and minor cleanup.
-> > Separate videobuf_queue_ops are are created for m2m
-> > and capture video nodes.
-> >
-> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> 
-> 
-> <snip>
-> 
-> Hi,
-> 
-> > @@ -968,6 +934,11 @@ static int fimc_m2m_streamon(struct file *file,
-> void
-> *priv,
-> >  			   enum v4l2_buf_type type)
-> >  {
-> >  	struct fimc_ctx *ctx = priv;
-> > +
-> > +	/* The source and target color format need to be set */
-> > +	if (~ctx->state & (FIMC_DST_FMT | FIMC_SRC_FMT))
-> > +		return -EINVAL;
-> > +
-> >  	return v4l2_m2m_streamon(file, ctx->m2m_ctx, type);
-> >  }
-> 
-> You had better divide a state checking according to v4l2_buf_type to
-> make
-> easier
-> for application to use it. For example application can have two threads
-> for handling m2m device. The one is for source control(OUTPUT) and
-> the other is for destination control(CAPTURE). If state checking is not
-> divided,
-> application should consider other thread's state whether VIDIOC_S_FMT
-> was
-> called or not
-> before VIDIOC_STREAMON.
-> 
-> BRs,
-
-I would rather expect having separate threads for video buffer
-queueing/dequeing only and formats configured in main thread. Anyway your
-use case can be easily supported as you pointed out, since device_run
-callback is called only after VIDIOC_STREAMON was called on both m2m
-streams. I will incorporate your comments in the next patch set version.
-
-Thank you,
-Sylwester
-
---
-Sylwester Nawrocki
-Samsung Poland R&D Center
+Hi, post code to show difference in output would be good!
