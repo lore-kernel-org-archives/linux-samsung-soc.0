@@ -1,115 +1,77 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 4/4 v2] ARM: S5PV210: Add clock definition for MIPI-CSIS
- DPHY
-Date: Fri, 10 Dec 2010 14:14:18 +0900
-Message-ID: <028901cb9829$1ad1cfb0$50756f10$%kim@samsung.com>
-References: <1291405965-19482-1-git-send-email-s.nawrocki@samsung.com>
- <1291405965-19482-5-git-send-email-s.nawrocki@samsung.com>
+Subject: RE: [RFC/PATCH v4 0/4] Multi Format Codec 5.0 driver for S5PC110 SoC
+Date: Fri, 10 Dec 2010 14:23:24 +0900
+Message-ID: <028b01cb982a$601f6630$205e3290$%kim@samsung.com>
+References: <1291901723-20361-1-git-send-email-k.debski@samsung.com>
+ <026901cb9812$8e28c160$aa7a4420$%kim@samsung.com>
+ <AANLkTikP6V47pcvJFyWS9gZHOG90qXDyU4BnQKLWgiJH@mail.gmail.com>
+ <028601cb981b$f04035f0$d0c0a1d0$%kim@samsung.com>
+ <AANLkTikD7UUHrao9SWsNS1YT9uTM88kH2ugOdKm6yhbS@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:20467 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750739Ab0LJFOX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Dec 2010 00:14:23 -0500
-Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LD7005JV57YNK60@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Dec 2010 14:14:22 +0900 (KST)
-Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LD7001JX57XI5@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Dec 2010 14:14:22 +0900 (KST)
-In-reply-to: <1291405965-19482-5-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <AANLkTikD7UUHrao9SWsNS1YT9uTM88kH2ugOdKm6yhbS@mail.gmail.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
+To: 'Kyungmin Park' <kyungmin.park@samsung.com>
+Cc: 'Kamil Debski' <k.debski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, pawel@osciak.com, jaeryul.oh@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com
 
-Sylwester Nawrocki wrote:
+Kyungmin Park wrote:
 > 
-> MIPI DPHY control register requires special handling since it is shared
-> between CSI (camera serial interface) and DSI (display serial interface).
-> By creating this clock a serialized interface is provided for mipi-csis
-> and mipi-dsim drivers, so DPHYs may be safely controlled by both drivers.
-> Similarly dsim_dphy clock could be added for mipi-dsim.
+> >> >
+> >> > Hi Kamil,
+> >> >
+> >> > I think, should be added my e-mail in Cc...
+> >>
+> >> No need to cc all, only machine specific only.
+> >> and I hope minimal modification at machine specific and move to media
+> >> if possible.
+> >>
+> > Should be reviewed proper maintainer even though it is small changes.
+> > Really, I don't want to argue to you about my maintaining ship...
 > 
-> ---
+> Each preference is different and you and me are different unfortunately.
 > 
-> I am not quite sure about_"dphy_clock", perhaps power domain
-> handling code would be better place for it.
+Hmm...What's different? If you want to submit something, should be sent to
+proper maintainer.
+If two maintainers, you need both maintainers' agreement or at least ack to
+merge it.
+
+> >
+> > And I have a wondering about your sign.
+> > Did you really check this patch before Kamil's submitting?
+> > Unfortunately, I don't think so...
 > 
-Yeah, it is MIPI DPHY enable/disable control register not clock control.
-So its proper position is not here...
-
-Hmm...how about driver's probe/open or some kind of setup in machine
-directory?
-
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/mach-s5pv210/clock.c |   25 +++++++++++++++++++++++++
->  1 files changed, 25 insertions(+), 0 deletions(-)
+> I don't care minor issues I'm more focus on the logic.
 > 
-> diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-> index b774ff1..b880b85 100644
-> --- a/arch/arm/mach-s5pv210/clock.c
-> +++ b/arch/arm/mach-s5pv210/clock.c
-> @@ -185,6 +185,19 @@ static int s5pv210_clk_mask1_ctrl(struct clk *clk,
-int
-> enable)
->  	return s5p_gatectrl(S5P_CLK_SRC_MASK1, clk, enable);
->  }
+Maybe you didn't check/review Kamil's patch before submitting.
+So your sign has a problem. Please see "Documentation/SubmittingPatches".
+
+I don't think that something like missing GPL license is minor issue.
+I mean if you want to add your sign, you had to check it before posting.
+
+And it doesn't matter it's small or big.
+
+> What's the matter mfc or mfc5 and so on? some time later these names
+> are changed if new mfc are introduced.
+> Currently we're use the mfc version 5.
 > 
-> +static int s5pv210_clk_mipi_dphy_ctrl(struct clk *clk, int enable)
-> +{
-> +	return s5p_gatectrl(S5P_MIPI_DPHY_CONTROL, clk, enable);
-> +}
-> +
-> +/* The common parent clock for mipi-csi/dsi clocks. */
-> +static struct clk clk_vp_mipi_dphy = {
-> +	.name		= "vpclk_csis_dphy",
-> +	.id		= -1,
-> +	.enable		= s5pv210_clk_mipi_dphy_ctrl,
-> +	.ctrlbit	= (1 << 0),
-> +};
-> +
+How about fimc0 or fimc1...it is used as hardware version?
+No...it means channel. Why do you use mixed rule?
 
-Hmm...
+As I said, if separate hardware version required, we can do it later.
 
->  static struct clk clk_sclk_hdmi27m = {
->  	.name		= "sclk_hdmi27m",
->  	.id		= -1,
-> @@ -323,6 +336,18 @@ static struct clk init_clocks_disable[] = {
->  		.enable		= s5pv210_clk_ip0_ctrl,
->  		.ctrlbit	= (1 << 4),
->  	}, {
-> +		.name		= "csis",
-> +		.id		= -1,
-> +		.parent		= &clk_pclk_dsys.clk,
-> +		.enable		= s5pv210_clk_ip0_ctrl,
-> +		.ctrlbit	= (1 << 31),
-> +	}, {
+> Do you have any rules on samsung soc variable, module naming? I think
+> it depends on each case by case.
+> 
+Already mentioned.
 
-ok.
+...
 
-> +		.name		= "csis_dphy",
-> +		.id		= -1,
-> +		.parent		= &clk_vp_mipi_dphy,
-> +		.enable		= s5pv210_clk_mipi_dphy_ctrl,
-> +		.ctrlbit	= (1 << 1),
-> +	}, {
-
-Same as above.
-
->  		.name		= "rot",
->  		.id		= -1,
->  		.parent		= &clk_hclk_dsys.clk,
-> --
+I'd like to stop this here, we already talked about similar issues many
+times.
 
 Thanks.
 
