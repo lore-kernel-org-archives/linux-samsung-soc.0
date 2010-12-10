@@ -1,88 +1,43 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 4/4 v2] ARM: S5PV210: Add clock definition for MIPI-CSIS
- DPHY
-Date: Fri, 10 Dec 2010 14:24:11 +0100
-Message-ID: <011301cb986d$8b85f3a0$a291dae0$%szyprowski@samsung.com>
-References: <1291405965-19482-1-git-send-email-s.nawrocki@samsung.com>
- <1291405965-19482-5-git-send-email-s.nawrocki@samsung.com>
- <028901cb9829$1ad1cfb0$50756f10$%kim@samsung.com>
- <011101cb984a$701446d0$503cd470$%szyprowski@samsung.com>
- <4D021684.1000103@gmail.com>
+From: tarek attia <tarek.m.attia@gmail.com>
+Subject: Re: CpuFreq for mini2440
+Date: Fri, 10 Dec 2010 16:42:57 +0200
+Message-ID: <AANLkTimYReh+Uj8keqtiBuZUNUAvRjqE_-jHwjw=KP+O@mail.gmail.com>
+References: <AANLkTi=55k8Dr6CAe6O92j6P2ht4D+onFAEu7J0Q+Nvn@mail.gmail.com>
+	<4CFED52F.8070307@fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:37274 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755969Ab0LJNYU (ORCPT
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:46360 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751042Ab0LJOm6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Dec 2010 08:24:20 -0500
-Received: from epmmp2 (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LD700CUNRWH1K20@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Dec 2010 22:24:17 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LD700GEVRWD1V@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Dec 2010 22:24:18 +0900 (KST)
-In-reply-to: <4D021684.1000103@gmail.com>
-Content-language: pl
+	Fri, 10 Dec 2010 09:42:58 -0500
+Received: by yxt3 with SMTP id 3so2081343yxt.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Dec 2010 06:42:57 -0800 (PST)
+In-Reply-To: <4CFED52F.8070307@fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <spnlinux@gmail.com>, 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hello,
+Thxxxx Ben,,can you tell me from where to start ??what code should I care about
 
-On Friday, December 10, 2010 1:01 PM Sylwester Nawrocki wrote:
+On Wed, Dec 8, 2010 at 2:45 AM, Ben Dooks <ben-linux@fluff.org> wrote:
+> On 03/12/10 01:12, tarek attia wrote:
+>> Hi all,
+>>
+>> I tried many times to enable the Cpufreq for the mini2440 "Friendly
+>> Arm board" but each time I enable it in the kernel it ended up by a
+>> successful compilation ,but when I mount the kernel image on the board
+>> ,just I dun find it's folder nor it's kernel objects,,,what I miss
+>> ,,or what track should I go to make it working ?
+>
+> The board's init code may not support it. If no-one else comes
+> forward, I will try as I think I still have one of these boards
+> somewhere.
+>
 
-> On 2010-12-10 10:12, Marek Szyprowski wrote:
-> > On Friday, December 10, 2010 6:14 AM Kukjin Kim wrote:
-> >> Sylwester Nawrocki wrote:
-> >>>
-> >>> MIPI DPHY control register requires special handling since it is shared
-> >>> between CSI (camera serial interface) and DSI (display serial interface).
-> >>> By creating this clock a serialized interface is provided for mipi-csis
-> >>> and mipi-dsim drivers, so DPHYs may be safely controlled by both drivers.
-> >>> Similarly dsim_dphy clock could be added for mipi-dsim.
-> >>>
-> >>> ---
-> >>>
-> >>> I am not quite sure about_"dphy_clock", perhaps power domain
-> >>> handling code would be better place for it.
-> >>>
-> >> Yeah, it is MIPI DPHY enable/disable control register not clock control.
-> >> So its proper position is not here...
-> >>
-> >> Hmm...how about driver's probe/open or some kind of setup in machine
-> >> directory?
-> >
-> > I'm not sure that this is the best way of handling this phy controller. Please
-> > notice that mipi phy controller has different register location on S5PC110 and
-> > S5PC210. Please also notice that S5PC210 has 2 mipi csci controllers and phy
-> > interfaces, while s5pc110 has only one. Hiding all the logic and register
-> > specific writes behind this 'csi_dphy' clock easily resolves all these issues
-> > on all different samsung platforms and makes it easy to use it from the driver.
-> > Similar patch has been proposed some time ago for usb_phy interface and imho
-> > this is the right way to go.
-> >
-> More importantly S5P_MIPI_DPHY_CONTROL* register is shared between two
-> devices - MIPI-CSIS and MIPI-DSIM. It means some kind of serialization
-> mechanism need to be employed while accessing this register, a spinlock
-> seems to fit best here. It also means that if we decided to create the
-> platform callback such a code would have to be placed in a common
-> compilation unit which would be built when either mipi-csis or mipi-dsim
-> is selected. And this callback would have to account the differences
-> between various SoC flavours or it would have to be repeated for each
-> mach-s5pvXXX.
-> So if the platform callback is the preferred way, where do we put an
-> implementation of it?
 
-That's yet another advantage of clock-based approach. All clock related operations
-are automatically serialized by global clock API spinlock.
 
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+-- 
+tarek
