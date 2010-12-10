@@ -1,192 +1,72 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [RFC/PATCH v4 2/4] MFC: Add MFC 5.1 driver to plat-s5p
-Date: Fri, 10 Dec 2010 11:10:51 +0100
-Message-ID: <001401cb9852$893456c0$9b9d0440$%debski@samsung.com>
-References: <1291901723-20361-1-git-send-email-k.debski@samsung.com>
- <1291901723-20361-3-git-send-email-k.debski@samsung.com>
- <027501cb9814$3a9089f0$afb19dd0$%kim@samsung.com>
+From: Sylwester Nawrocki <spnlinux@gmail.com>
+Subject: Re: [PATCH 4/4 v2] ARM: S5PV210: Add clock definition for MIPI-CSIS
+ DPHY
+Date: Fri, 10 Dec 2010 13:01:08 +0100
+Message-ID: <4D021684.1000103@gmail.com>
+References: <1291405965-19482-1-git-send-email-s.nawrocki@samsung.com>	<1291405965-19482-5-git-send-email-s.nawrocki@samsung.com>	<028901cb9829$1ad1cfb0$50756f10$%kim@samsung.com> <011101cb984a$701446d0$503cd470$%szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <027501cb9814$3a9089f0$afb19dd0$%kim@samsung.com>
-Content-language: en-gb
-Sender: linux-media-owner@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, pawel@osciak.com, kyungmin.park@samsung.com, jaeryul.oh@samsung.com
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bw0-f45.google.com ([209.85.214.45]:59682 "EHLO
+	mail-bw0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755704Ab0LJMBN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 10 Dec 2010 07:01:13 -0500
+Received: by bwz16 with SMTP id 16so3883321bwz.4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Dec 2010 04:01:11 -0800 (PST)
+In-Reply-To: <011101cb984a$701446d0$503cd470$%szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, ben-linux@fluff.org
 
 Hi,
 
-> From: Kukjin Kim [mailto:kgene.kim@samsung.com]
-> Kamil Debski wrote:
-> >
-> Would be better if you could keep the subject style...
+On 2010-12-10 10:12, Marek Szyprowski wrote:
+> Hello,
 > 
-
-Ok, I'll make the comment more consistent.
-
-(snip)
-
-> > diff --git a/arch/arm/mach-s5pv210/include/mach/map.h
-> b/arch/arm/mach-
-> > s5pv210/include/mach/map.h
-> > index 0982443..8f887c4 100644
-> > --- a/arch/arm/mach-s5pv210/include/mach/map.h
-> > +++ b/arch/arm/mach-s5pv210/include/mach/map.h
-> > @@ -107,6 +107,9 @@
-> >  #define S5PV210_PA_DMC0		(0xF0000000)
-> >  #define S5PV210_PA_DMC1		(0xF1400000)
-> >
-> > +/* MFC */
+> On Friday, December 10, 2010 6:14 AM Kukjin Kim wrote:
 > 
-> No need useless comment.
-
-Just above the place, where I have added MFC, there are defines
-for AC97, PCM, I2S etc. and all of them have such comment before
-( /* AC97 */ for AC97 codec). As such I wanted to keep the style.
-I agree that it is not necessary, but removing it could make the
-file less consistent. Are you sure you want me to remove it?
-
+>> Sylwester Nawrocki wrote:
+>>>
+>>> MIPI DPHY control register requires special handling since it is shared
+>>> between CSI (camera serial interface) and DSI (display serial interface).
+>>> By creating this clock a serialized interface is provided for mipi-csis
+>>> and mipi-dsim drivers, so DPHYs may be safely controlled by both drivers.
+>>> Similarly dsim_dphy clock could be added for mipi-dsim.
+>>>
+>>> ---
+>>>
+>>> I am not quite sure about_"dphy_clock", perhaps power domain
+>>> handling code would be better place for it.
+>>>
+>> Yeah, it is MIPI DPHY enable/disable control register not clock control.
+>> So its proper position is not here...
+>>
+>> Hmm...how about driver's probe/open or some kind of setup in machine
+>> directory?
 > 
-> > +#define S5PV210_PA_MFC		(0xF1700000)
-> > +
-> >  /* compatibiltiy defines. */
-> >  #define S3C_PA_UART		S5PV210_PA_UART
-> >  #define S3C_PA_HSMMC0		S5PV210_PA_HSMMC(0)
-> > @@ -123,6 +126,7 @@
-> >  #define S5P_PA_FIMC0		S5PV210_PA_FIMC0
-> >  #define S5P_PA_FIMC1		S5PV210_PA_FIMC1
-> >  #define S5P_PA_FIMC2		S5PV210_PA_FIMC2
-> > +#define S5P_PA_MFC		S5PV210_PA_MFC
-> >
-> >  #define SAMSUNG_PA_ADC		S5PV210_PA_ADC
-> >  #define SAMSUNG_PA_CFCON	S5PV210_PA_CFCON
-> > diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-> > index 9755df9..c7a048e 100644
-> > --- a/arch/arm/plat-s5p/Kconfig
-> > +++ b/arch/arm/plat-s5p/Kconfig
-> > @@ -5,6 +5,11 @@
-> >  #
-> >  # Licensed under GPLv2
-> >
-> > +config S5P_DEV_MFC
-> > +	bool
-> > +	help
-> > +	  Compile in platform device definitions for MFC
-> > +
-> >  config PLAT_S5P
-> >  	bool
-> >  	depends on (ARCH_S5P64X0 || ARCH_S5P6442 || ARCH_S5PC100 ||
-> > ARCH_S5PV210 || ARCH_S5PV310)
-> > diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-> > index df65cb7..ed0f33d 100644
-> > --- a/arch/arm/plat-s5p/Makefile
-> > +++ b/arch/arm/plat-s5p/Makefile
-> > @@ -23,6 +23,7 @@ obj-$(CONFIG_PM)		+= pm.o
-> >  obj-$(CONFIG_PM)		+= irq-pm.o
-> >
-> >  # devices
-> > +obj-$(CONFIG_S5P_DEV_MFC)	+= dev-mfc5.o
+> I'm not sure that this is the best way of handling this phy controller. Please
+> notice that mipi phy controller has different register location on S5PC110 and
+> S5PC210. Please also notice that S5PC210 has 2 mipi csci controllers and phy
+> interfaces, while s5pc110 has only one. Hiding all the logic and register
+> specific writes behind this 'csi_dphy' clock easily resolves all these issues
+> on all different samsung platforms and makes it easy to use it from the driver.
+> Similar patch has been proposed some time ago for usb_phy interface and imho
+> this is the right way to go.
 > 
-> Do we really need to distinguish mfc version in file name?
-> So why did you use just CONFIG_S5P_DEV_MFC as config name?
-> 
-> I mean don't use mixed name in there.
+More importantly S5P_MIPI_DPHY_CONTROL* register is shared between two
+devices - MIPI-CSIS and MIPI-DSIM. It means some kind of serialization
+mechanism need to be employed while accessing this register, a spinlock
+seems to fit best here. It also means that if we decided to create the
+platform callback such a code would have to be placed in a common
+compilation unit which would be built when either mipi-csis or mipi-dsim
+is selected. And this callback would have to account the differences
+between various SoC flavours or it would have to be repeated for each
+mach-s5pvXXX.
+So if the platform callback is the preferred way, where do we put an
+implementation of it?
 
-Right, I think removing the version number is ok. Another way would be
-adding
-"v5" everywhere. But I don't think it is necessary. 
- 
-> +obj-$(CONFIG_S5P_DEV_MFC5)	+= dev-mfc5.o
-> 
-> Or
-> 
-> +obj-$(CONFIG_S5P_DEV_MFC)	+= dev-mfc.o
-> 
-> I prefer the latter...because no need to separate the hardware version
-> in
-> platform data now.
-
-Ok.
-
-> >
-> >  obj-$(CONFIG_S5P_DEV_FIMC0)	+= dev-fimc0.o
-> >  obj-$(CONFIG_S5P_DEV_FIMC1)	+= dev-fimc1.o
-> > diff --git a/arch/arm/plat-s5p/dev-mfc5.c b/arch/arm/plat-s5p/dev-
-> mfc5.c
-> > new file mode 100644
-> > index 0000000..c06ea97
-> > --- /dev/null
-> > +++ b/arch/arm/plat-s5p/dev-mfc5.c
-> > @@ -0,0 +1,37 @@
-> > +/* Base S3C64XX mfc resource and device definitions */
-> > +
-> > +
-> 
-> Where is the GPL license?
-> This is very important...
-
-The file lacks a proper comment altogether. Thanks for pointing
-this out, indeed it is important. 
- 
-> > +#include <linux/kernel.h>
-> > +#include <linux/interrupt.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/ioport.h>
-> > +
-> > +#include <mach/map.h>
-> > +#include <plat/map-base.h>
-> 
-> Do we _really_ need <plat/map-base.h> inclusion?
-> NO.
-
-Right.
-
-> 
-> > +#include <plat/devs.h>
-> > +#include <plat/irqs.h>
-> > +
-> > +/* MFC controller */
-> 
-> No need above comment.
-
-Ok.
- 
-> > +static struct resource s5p_mfc_resource[] = {
-> > +	[0] = {
-> > +		.start  = S5P_PA_MFC,
-> > +		.end    = S5P_PA_MFC + SZ_64K - 1,
-> > +		.flags  = IORESOURCE_MEM,
-> > +	},
-> > +	[1] = {
-> > +		.start  = IRQ_MFC,
-> > +		.end    = IRQ_MFC,
-> > +		.flags  = IORESOURCE_IRQ,
-> > +	}
-> > +};
-> > +
-> > +struct platform_device s5p_device_mfc5 = {
-> > +	.name          = "s5p-mfc5",
-> > +	.id            = -1,
-> > +	.num_resources = ARRAY_SIZE(s5p_mfc_resource),
-> > +	.resource      = s5p_mfc_resource,
-> > +};
-> > +
-> > +EXPORT_SYMBOL(s5p_device_mfc5);
-> > +
-> > +
-> 
-> No need useless 2 empty lines here.
-
-Ok.
-
-(snip)
-
-Thank you for your comments.
-
-Best regards,
--- 
-Kamil Debski
-Linux Platform Group
-Samsung Poland R&D Center
+Regards,
+Sylwester
