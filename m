@@ -1,82 +1,63 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [RFC/PATCH v4 0/4] Multi Format Codec 5.0 driver for S5PC110 SoC
-Date: Fri, 10 Dec 2010 14:23:24 +0900
-Message-ID: <028b01cb982a$601f6630$205e3290$%kim@samsung.com>
-References: <1291901723-20361-1-git-send-email-k.debski@samsung.com>
- <026901cb9812$8e28c160$aa7a4420$%kim@samsung.com>
- <AANLkTikP6V47pcvJFyWS9gZHOG90qXDyU4BnQKLWgiJH@mail.gmail.com>
- <028601cb981b$f04035f0$d0c0a1d0$%kim@samsung.com>
- <AANLkTikD7UUHrao9SWsNS1YT9uTM88kH2ugOdKm6yhbS@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH 4/4 v2] ARM: S5PV210: Add clock definition for MIPI-CSIS
+	DPHY
+Date: Fri, 10 Dec 2010 10:12:53 +0100
+Message-ID: <011101cb984a$701446d0$503cd470$%szyprowski@samsung.com>
+References: <1291405965-19482-1-git-send-email-s.nawrocki@samsung.com>
+	<1291405965-19482-5-git-send-email-s.nawrocki@samsung.com>
+	<028901cb9829$1ad1cfb0$50756f10$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <AANLkTikD7UUHrao9SWsNS1YT9uTM88kH2ugOdKm6yhbS@mail.gmail.com>
-Content-language: ko
-Sender: linux-media-owner@vger.kernel.org
-To: 'Kyungmin Park' <kyungmin.park@samsung.com>
-Cc: 'Kamil Debski' <k.debski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, pawel@osciak.com, jaeryul.oh@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <028901cb9829$1ad1cfb0$50756f10$%kim@samsung.com>
+Content-language: pl
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Kyungmin Park wrote:
-> 
-> >> >
-> >> > Hi Kamil,
-> >> >
-> >> > I think, should be added my e-mail in Cc...
-> >>
-> >> No need to cc all, only machine specific only.
-> >> and I hope minimal modification at machine specific and move to media
-> >> if possible.
-> >>
-> > Should be reviewed proper maintainer even though it is small changes.
-> > Really, I don't want to argue to you about my maintaining ship...
-> 
-> Each preference is different and you and me are different unfortunately.
-> 
-Hmm...What's different? If you want to submit something, should be sent to
-proper maintainer.
-If two maintainers, you need both maintainers' agreement or at least ack to
-merge it.
+Hello,
 
+On Friday, December 10, 2010 6:14 AM Kukjin Kim wrote:
+
+> Sylwester Nawrocki wrote:
 > >
-> > And I have a wondering about your sign.
-> > Did you really check this patch before Kamil's submitting?
-> > Unfortunately, I don't think so...
+> > MIPI DPHY control register requires special handling since it is shared
+> > between CSI (camera serial interface) and DSI (display serial interface).
+> > By creating this clock a serialized interface is provided for mipi-csis
+> > and mipi-dsim drivers, so DPHYs may be safely controlled by both drivers.
+> > Similarly dsim_dphy clock could be added for mipi-dsim.
+> >
+> > ---
+> >
+> > I am not quite sure about_"dphy_clock", perhaps power domain
+> > handling code would be better place for it.
+> >
+> Yeah, it is MIPI DPHY enable/disable control register not clock control.
+> So its proper position is not here...
 > 
-> I don't care minor issues I'm more focus on the logic.
-> 
-Maybe you didn't check/review Kamil's patch before submitting.
-So your sign has a problem. Please see "Documentation/SubmittingPatches".
+> Hmm...how about driver's probe/open or some kind of setup in machine
+> directory?
 
-I don't think that something like missing GPL license is minor issue.
-I mean if you want to add your sign, you had to check it before posting.
+I'm not sure that this is the best way of handling this phy controller. Please
+notice that mipi phy controller has different register location on S5PC110 and
+S5PC210. Please also notice that S5PC210 has 2 mipi csci controllers and phy
+interfaces, while s5pc110 has only one. Hiding all the logic and register
+specific writes behind this 'csi_dphy' clock easily resolves all these issues
+on all different samsung platforms and makes it easy to use it from the driver.
+Similar patch has been proposed some time ago for usb_phy interface and imho
+this is the right way to go.
 
-And it doesn't matter it's small or big.
-
-> What's the matter mfc or mfc5 and so on? some time later these names
-> are changed if new mfc are introduced.
-> Currently we're use the mfc version 5.
-> 
-How about fimc0 or fimc1...it is used as hardware version?
-No...it means channel. Why do you use mixed rule?
-
-As I said, if separate hardware version required, we can do it later.
-
-> Do you have any rules on samsung soc variable, module naming? I think
-> it depends on each case by case.
-> 
-Already mentioned.
-
-...
-
-I'd like to stop this here, we already talked about similar issues many
-times.
-
-Thanks.
-
-Best regards,
-Kgene.
+Best regards
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Marek Szyprowski
+Samsung Poland R&D Center
