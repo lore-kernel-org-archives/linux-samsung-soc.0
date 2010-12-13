@@ -1,228 +1,100 @@
-From: Sangbeom Kim <sbkim73@samsung.com>
-Subject: [PATCH 2/4] ARM: S5P64X0: Add support for SDHCI configuration
-Date: Mon, 13 Dec 2010 14:46:23 +0900
-Message-ID: <1292219185-3911-3-git-send-email-sbkim73@samsung.com>
-References: <1292219185-3911-1-git-send-email-sbkim73@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] [media] s5p-fimc: fix the value of YUV422 1plane formats
+Date: Mon, 13 Dec 2010 12:58:47 +0100
+Message-ID: <4D060A77.9020205@samsung.com>
+References: <1292205051-26707-1-git-send-email-khw0178.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:41978 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751440Ab0LMGFh (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:64157 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757184Ab0LML6u (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Dec 2010 01:05:37 -0500
-In-Reply-To: <1292219185-3911-1-git-send-email-sbkim73@samsung.com>
+	Mon, 13 Dec 2010 06:58:50 -0500
+In-reply-to: <1292205051-26707-1-git-send-email-khw0178.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, Abhilash Kesavan <a.kesavan@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>
+To: Hyunwoong Kim <khw0178.kim@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-From: Abhilash Kesavan <a.kesavan@samsung.com>
 
-Adds support for HSMMC for S5P6440 and S5P6450, performs
-setup for host controller and related GPIO.
+Hi HyunWoong,
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
----
- arch/arm/mach-s5p64x0/Kconfig            |   19 ++++++++
- arch/arm/mach-s5p64x0/Makefile           |    2 +
- arch/arm/mach-s5p64x0/setup-sdhci-gpio.c |   67 ++++++++++++++++++++++++++++++
- arch/arm/mach-s5p64x0/setup-sdhci.c      |   58 ++++++++++++++++++++++++++
- 4 files changed, 146 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s5p64x0/setup-sdhci-gpio.c
- create mode 100644 arch/arm/mach-s5p64x0/setup-sdhci.c
+Thanks for catching those YUV order errors.
 
-diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
-index 164d278..3946728 100644
---- a/arch/arm/mach-s5p64x0/Kconfig
-+++ b/arch/arm/mach-s5p64x0/Kconfig
-@@ -24,6 +24,17 @@ config S5P64X0_SETUP_I2C1
- 	help
- 	  Common setup code for i2c bus 1.
- 
-+config S5P64X0_SETUP_SDHCI
-+        bool
-+        select S5P64X0_SETUP_SDHCI_GPIO
-+        help
-+          Internal helper functions for S5P64X0 based SDHCI systems
-+
-+config S5P64X0_SETUP_SDHCI_GPIO
-+	bool
-+	help
-+	  Common setup code for SDHCI gpio.
-+
- # machine support
- 
- config MACH_SMDK6440
-@@ -35,7 +46,11 @@ config MACH_SMDK6440
- 	select S3C64XX_DEV_SPI
- 	select SAMSUNG_DEV_ADC
- 	select SAMSUNG_DEV_TS
-+	select S3C_DEV_HSMMC
-+	select S3C_DEV_HSMMC1
-+	select S3C_DEV_HSMMC2
- 	select S5P64X0_SETUP_I2C1
-+	select S5P64X0_SETUP_SDHCI
- 	help
- 	  Machine support for the Samsung SMDK6440
- 
-@@ -48,7 +63,11 @@ config MACH_SMDK6450
- 	select S3C64XX_DEV_SPI
- 	select SAMSUNG_DEV_ADC
- 	select SAMSUNG_DEV_TS
-+	select S3C_DEV_HSMMC
-+	select S3C_DEV_HSMMC1
-+	select S3C_DEV_HSMMC2
- 	select S5P64X0_SETUP_I2C1
-+	select S5P64X0_SETUP_SDHCI
- 	help
- 	  Machine support for the Samsung SMDK6450
- 
-diff --git a/arch/arm/mach-s5p64x0/Makefile b/arch/arm/mach-s5p64x0/Makefile
-index 669f470..cbc9d1c 100644
---- a/arch/arm/mach-s5p64x0/Makefile
-+++ b/arch/arm/mach-s5p64x0/Makefile
-@@ -29,3 +29,5 @@ obj-y				+= dev-audio.o
- obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
- 
- obj-$(CONFIG_S5P64X0_SETUP_I2C1)	+= setup-i2c1.o
-+obj-$(CONFIG_S5P64X0_SETUP_SDHCI)       += setup-sdhci.o
-+obj-$(CONFIG_S5P64X0_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
-diff --git a/arch/arm/mach-s5p64x0/setup-sdhci-gpio.c b/arch/arm/mach-s5p64x0/setup-sdhci-gpio.c
-new file mode 100644
-index 0000000..3266c68
---- /dev/null
-+++ b/arch/arm/mach-s5p64x0/setup-sdhci-gpio.c
-@@ -0,0 +1,67 @@
-+/* linux/arch/arm/plat-s5p64x0/setup-sdhci-gpio.c
-+ *
-+ * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * S5P64X0 - Helper functions for setting up SDHCI device(s) GPIO (HSMMC)
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/platform_device.h>
-+#include <linux/io.h>
-+
-+#include <mach/gpio.h>
-+#include <mach/regs-gpio.h>
-+
-+#include <plat/gpio-cfg.h>
-+#include <plat/sdhci.h>
-+
-+void s5p64x0_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
-+{
-+	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
-+
-+	/* Set all the necessary GPG pins to special-function 2 */
-+	s3c_gpio_cfgrange_nopull(S5P6450_GPG(0), 2 + width, S3C_GPIO_SFN(2));
-+
-+	/* Set GPG[6] pin to special-funtion 2 - MMC0 CDn */
-+	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
-+		s3c_gpio_setpull(S5P6450_GPG(6), S3C_GPIO_PULL_UP);
-+		s3c_gpio_cfgpin(S5P6450_GPG(6), S3C_GPIO_SFN(2));
-+	}
-+}
-+
-+void s5p64x0_setup_sdhci1_cfg_gpio(struct platform_device *dev, int width)
-+{
-+	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
-+
-+	/* Set all the necessary GPH pins to special-function 2 */
-+	s3c_gpio_cfgrange_nopull(S5P6450_GPH(0), 2 + width, S3C_GPIO_SFN(2));
-+
-+	/* Set GPG[6] pin to special-funtion 3 - MMC1 CDn */
-+	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
-+		s3c_gpio_setpull(S5P6450_GPG(6), S3C_GPIO_PULL_UP);
-+		s3c_gpio_cfgpin(S5P6450_GPG(6), S3C_GPIO_SFN(3));
-+	}
-+}
-+
-+void s5p6440_setup_sdhci2_cfg_gpio(struct platform_device *dev, int width)
-+{
-+	/* Set GPC[4:5] pins to special-function 3 - CLK and CMD */
-+	s3c_gpio_cfgrange_nopull(S5P6440_GPC(4), 2, S3C_GPIO_SFN(3));
-+
-+	/* Set GPH[6:9] pins to special-function 3 - Data[0:3] */
-+	s3c_gpio_cfgrange_nopull(S5P6440_GPH(6), 4, S3C_GPIO_SFN(3));
-+
-+	/* No MMC2 CDn available */
-+}
-+
-+void s5p6450_setup_sdhci2_cfg_gpio(struct platform_device *dev, int width)
-+{
-+	/* Set all the necessary GPG pins to special-function 2 */
-+	s3c_gpio_cfgrange_nopull(S5P6450_GPG(7), 2 + width, S3C_GPIO_SFN(3));
-+
-+	/* No MMC2 CDn available */
-+}
-diff --git a/arch/arm/mach-s5p64x0/setup-sdhci.c b/arch/arm/mach-s5p64x0/setup-sdhci.c
-new file mode 100644
-index 0000000..7ea4c0d
---- /dev/null
-+++ b/arch/arm/mach-s5p64x0/setup-sdhci.c
-@@ -0,0 +1,58 @@
-+/* linux/arch/arm/mach-s5p64x0/setup-sdhci.c
-+ *
-+ * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * S5P64X0 - Helper functions for setting up SDHCI device(s) (HSMMC)
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/platform_device.h>
-+#include <linux/io.h>
-+#include <linux/mmc/host.h>
-+
-+#include <plat/regs-sdhci.h>
-+
-+/* clock sources for the mmc bus clock, order as for the ctrl2[5..4] */
-+
-+char *s5p64x0_hsmmc_clksrcs[4] = {
-+	/* [0] = NULL,		- reserved */
-+	/* [1] = NULL,		- reserved */
-+	[2] = "sclk_mmc",	/* mmc_bus */
-+	/* [3] = NULL,		- reserved */
-+};
-+
-+void s5p64x0_setup_sdhci_cfg_card(struct platform_device *dev,
-+				  void __iomem *r,
-+				  struct mmc_ios *ios,
-+				  struct mmc_card *card)
-+{
-+	u32 ctrl2, ctrl3;
-+
-+	/* don't need to alter anything acording to card-type */
-+
-+	writel(S3C64XX_SDHCI_CONTROL4_DRIVE_9mA, r + S3C64XX_SDHCI_CONTROL4);
-+
-+	ctrl2 = readl(r + S3C_SDHCI_CONTROL2);
-+	ctrl2 &= S3C_SDHCI_CTRL2_SELBASECLK_MASK;
-+
-+	/*
-+	 * clear async mode, enable conflict mask, rx feedback ctrl, SD clock
-+	 * hold and no use debounce count
-+	 */
-+	ctrl2 |= (S3C64XX_SDHCI_CTRL2_ENSTAASYNCCLR |
-+		  S3C64XX_SDHCI_CTRL2_ENCMDCNFMSK |
-+		  S3C_SDHCI_CTRL2_DFCNT_NONE |
-+		  S3C_SDHCI_CTRL2_ENCLKOUTHOLD);
-+
-+	if (ios)
-+		if (ios->clock > 400000)
-+			ctrl2 |= S3C_SDHCI_CTRL2_ENFBCLKRX;
-+	ctrl3 = 0;
-+
-+	writel(ctrl2, r + S3C_SDHCI_CONTROL2);
-+	writel(ctrl3, r + S3C_SDHCI_CONTROL3);
-+}
+On 12/13/2010 02:50 AM, Hyunwoong Kim wrote:
+> Some color formats are mismatched in s5p-fimc driver.
+> CICICTRL[1:0], order422_out, should be set 2b'00 not 2b'11 to use V4L2_PIX_FMT_YUYV.
+
+s/CICICTRL[1:0]/CIOCTRL[1:0]
+
+> Because in V4L2 standard V4L2_PIX_FMT_YUYV means "start + 0: Y'00 Cb00 Y'01 Cr00 Y'02 Cb01 Y'03 Cr01".
+> According to datasheet 2b'00 is right value for V4L2_PIX_FMT_YUYV.
+> 
+> ================================================================
+>   bit |    MSB                                        LSB
+> ================================================================
+>   00  |  Cr1    Y3    Cb1    Y2    Cr0    Y1    Cb0    Y0
+> ================================================================
+>   01  |  Cb1    Y3    Cr1    Y2    Cb0    Y1    Cr0    Y0
+> ================================================================
+>   10  |  Y3    Cr1    Y2    Cb1    Y1    Cr0    Y0    Cb0
+> ================================================================
+>   11  |  Y3    Cb1    Y2    Cr1    Y1    Cb0    Y0    Cr0
+> ================================================================
+> 
+> V4L2_PIX_FMT_YVYU, V4L2_PIX_FMT_UYVY, V4L2_PIX_FMT_VYUY are also mismatched with datasheet.
+> MSCTRL[17:16], order2p_in, is also mismatched in V4L2_PIX_FMT_UYVY, V4L2_PIX_FMT_YVYU.
+> 
+> Signed-off-by: Hyunwoong Kim <khw0178.kim@samsung.com>
+> Reviewed-by: Jonghun Han <jonghun.han@samsung.com>
+> ---
+> 
+> I wonder why fimc_fmt struct has fourcc and color together as member of structure.
+> It seems that the meaning of color is the same as fourcc's meaning.
+
+struct fimc_fmt::color is a common denominator for v4l2_format and
+v4l2_mbus_format and it is also meant to simplify hardware configuration
+for the colour format groups.
+
+> 
+>  drivers/media/video/s5p-fimc/fimc-core.h |   12 ++++++------
+>  1 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
+> index a707060..4efc1a1 100644
+> --- a/drivers/media/video/s5p-fimc/fimc-core.h
+> +++ b/drivers/media/video/s5p-fimc/fimc-core.h
+> @@ -96,15 +96,15 @@ enum fimc_color_fmt {
+>  #define fimc_fmt_is_rgb(x) ((x) & 0x10)
+>  
+>  /* Y/Cb/Cr components order at DMA output for 1 plane YCbCr 4:2:2 formats. */
+> -#define	S5P_FIMC_OUT_CRYCBY	S5P_CIOCTRL_ORDER422_CRYCBY
+> -#define	S5P_FIMC_OUT_CBYCRY	S5P_CIOCTRL_ORDER422_YCRYCB
+> -#define	S5P_FIMC_OUT_YCRYCB	S5P_CIOCTRL_ORDER422_CBYCRY
+> -#define	S5P_FIMC_OUT_YCBYCR	S5P_CIOCTRL_ORDER422_YCBYCR
+> +#define	S5P_FIMC_OUT_CRYCBY	S5P_CIOCTRL_ORDER422_YCBYCR
+> +#define	S5P_FIMC_OUT_CBYCRY	S5P_CIOCTRL_ORDER422_CBYCRY
+> +#define	S5P_FIMC_OUT_YCRYCB	S5P_CIOCTRL_ORDER422_YCRYCB
+> +#define	S5P_FIMC_OUT_YCBYCR	S5P_CIOCTRL_ORDER422_CRYCBY
+>  
+>  /* Input Y/Cb/Cr components order for 1 plane YCbCr 4:2:2 color formats. */
+>  #define	S5P_FIMC_IN_CRYCBY	S5P_MSCTRL_ORDER422_CRYCBY
+> -#define	S5P_FIMC_IN_CBYCRY	S5P_MSCTRL_ORDER422_YCRYCB
+> -#define	S5P_FIMC_IN_YCRYCB	S5P_MSCTRL_ORDER422_CBYCRY
+> +#define	S5P_FIMC_IN_CBYCRY	S5P_MSCTRL_ORDER422_CBYCRY
+> +#define	S5P_FIMC_IN_YCRYCB	S5P_MSCTRL_ORDER422_YCRYCB
+>  #define	S5P_FIMC_IN_YCBYCR	S5P_MSCTRL_ORDER422_YCBYCR
+>  
+>  /* Cb/Cr chrominance components order for 2 plane Y/CbCr 4:2:2 formats. */
+
+Could you instead remove all S5P_FIMC_IN_*, S5P_FIMC_OUT_* definitions from
+fimc-core.h and make corrections directly in function fimc_set_yuv_order?
+S5P_FIMC_IN_*/S5P_FIMC_OUT_* are now used only in fimc_set_yuv_order.
+
+
+Thanks,
 -- 
-1.6.6.1
+Sylwester Nawrocki
+Samsung Poland R&D Center
