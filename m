@@ -1,43 +1,73 @@
-From: tarek attia <tarek.m.attia@gmail.com>
-Subject: Re: CpuFreq for mini2440
-Date: Fri, 10 Dec 2010 16:42:57 +0200
-Message-ID: <AANLkTimYReh+Uj8keqtiBuZUNUAvRjqE_-jHwjw=KP+O@mail.gmail.com>
-References: <AANLkTi=55k8Dr6CAe6O92j6P2ht4D+onFAEu7J0Q+Nvn@mail.gmail.com>
-	<4CFED52F.8070307@fluff.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Hyunwoong Kim <khw0178.kim@samsung.com>
+Subject: [PATCH] [media] s5p-fimc: fix the value of YUV422 1plane formats
+Date: Mon, 13 Dec 2010 10:50:51 +0900
+Message-ID: <1292205051-26707-1-git-send-email-khw0178.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:46360 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751042Ab0LJOm6 (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:39354 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756189Ab0LMCKf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Dec 2010 09:42:58 -0500
-Received: by yxt3 with SMTP id 3so2081343yxt.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Dec 2010 06:42:57 -0800 (PST)
-In-Reply-To: <4CFED52F.8070307@fluff.org>
+	Sun, 12 Dec 2010 21:10:35 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, Hyunwoong Kim <khw0178.kim@samsung.com>
 
-Thxxxx Ben,,can you tell me from where to start ??what code should I care about
+Some color formats are mismatched in s5p-fimc driver.
+CICICTRL[1:0], order422_out, should be set 2b'00 not 2b'11 to use V4L2_PIX_FMT_YUYV.
+Because in V4L2 standard V4L2_PIX_FMT_YUYV means "start + 0: Y'00 Cb00 Y'01 Cr00 Y'02 Cb01 Y'03 Cr01".
+According to datasheet 2b'00 is right value for V4L2_PIX_FMT_YUYV.
 
-On Wed, Dec 8, 2010 at 2:45 AM, Ben Dooks <ben-linux@fluff.org> wrote:
-> On 03/12/10 01:12, tarek attia wrote:
->> Hi all,
->>
->> I tried many times to enable the Cpufreq for the mini2440 "Friendly
->> Arm board" but each time I enable it in the kernel it ended up by a
->> successful compilation ,but when I mount the kernel image on the board
->> ,just I dun find it's folder nor it's kernel objects,,,what I miss
->> ,,or what track should I go to make it working ?
->
-> The board's init code may not support it. If no-one else comes
-> forward, I will try as I think I still have one of these boards
-> somewhere.
->
+================================================================
+  bit |    MSB                                        LSB
+================================================================
+  00  |  Cr1    Y3    Cb1    Y2    Cr0    Y1    Cb0    Y0
+================================================================
+  01  |  Cb1    Y3    Cr1    Y2    Cb0    Y1    Cr0    Y0
+================================================================
+  10  |  Y3    Cr1    Y2    Cb1    Y1    Cr0    Y0    Cb0
+================================================================
+  11  |  Y3    Cb1    Y2    Cr1    Y1    Cb0    Y0    Cr0
+================================================================
 
+V4L2_PIX_FMT_YVYU, V4L2_PIX_FMT_UYVY, V4L2_PIX_FMT_VYUY are also mismatched with datasheet.
+MSCTRL[17:16], order2p_in, is also mismatched in V4L2_PIX_FMT_UYVY, V4L2_PIX_FMT_YVYU.
 
+Signed-off-by: Hyunwoong Kim <khw0178.kim@samsung.com>
+Reviewed-by: Jonghun Han <jonghun.han@samsung.com>
+---
 
+I wonder why fimc_fmt struct has fourcc and color together as member of structure.
+It seems that the meaning of color is the same as fourcc's meaning.
+
+ drivers/media/video/s5p-fimc/fimc-core.h |   12 ++++++------
+ 1 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
+index a707060..4efc1a1 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.h
++++ b/drivers/media/video/s5p-fimc/fimc-core.h
+@@ -96,15 +96,15 @@ enum fimc_color_fmt {
+ #define fimc_fmt_is_rgb(x) ((x) & 0x10)
+ 
+ /* Y/Cb/Cr components order at DMA output for 1 plane YCbCr 4:2:2 formats. */
+-#define	S5P_FIMC_OUT_CRYCBY	S5P_CIOCTRL_ORDER422_CRYCBY
+-#define	S5P_FIMC_OUT_CBYCRY	S5P_CIOCTRL_ORDER422_YCRYCB
+-#define	S5P_FIMC_OUT_YCRYCB	S5P_CIOCTRL_ORDER422_CBYCRY
+-#define	S5P_FIMC_OUT_YCBYCR	S5P_CIOCTRL_ORDER422_YCBYCR
++#define	S5P_FIMC_OUT_CRYCBY	S5P_CIOCTRL_ORDER422_YCBYCR
++#define	S5P_FIMC_OUT_CBYCRY	S5P_CIOCTRL_ORDER422_CBYCRY
++#define	S5P_FIMC_OUT_YCRYCB	S5P_CIOCTRL_ORDER422_YCRYCB
++#define	S5P_FIMC_OUT_YCBYCR	S5P_CIOCTRL_ORDER422_CRYCBY
+ 
+ /* Input Y/Cb/Cr components order for 1 plane YCbCr 4:2:2 color formats. */
+ #define	S5P_FIMC_IN_CRYCBY	S5P_MSCTRL_ORDER422_CRYCBY
+-#define	S5P_FIMC_IN_CBYCRY	S5P_MSCTRL_ORDER422_YCRYCB
+-#define	S5P_FIMC_IN_YCRYCB	S5P_MSCTRL_ORDER422_CBYCRY
++#define	S5P_FIMC_IN_CBYCRY	S5P_MSCTRL_ORDER422_CBYCRY
++#define	S5P_FIMC_IN_YCRYCB	S5P_MSCTRL_ORDER422_YCRYCB
+ #define	S5P_FIMC_IN_YCBYCR	S5P_MSCTRL_ORDER422_YCBYCR
+ 
+ /* Cb/Cr chrominance components order for 2 plane Y/CbCr 4:2:2 formats. */
 -- 
-tarek
+1.6.2.5
