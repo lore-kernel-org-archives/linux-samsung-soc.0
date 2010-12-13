@@ -1,100 +1,44 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] [media] s5p-fimc: fix the value of YUV422 1plane formats
-Date: Mon, 13 Dec 2010 12:58:47 +0100
-Message-ID: <4D060A77.9020205@samsung.com>
-References: <1292205051-26707-1-git-send-email-khw0178.kim@samsung.com>
+From: Abhijeet Dharmapurikar <adharmap@codeaurora.org>
+Subject: Re: [PATCH 0/5] ARM: GIC: cleanup
+Date: Mon, 13 Dec 2010 09:23:29 -0800
+Message-ID: <4D065691.9010802@codeaurora.org>
+References: <20101205113311.GC9138@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:64157 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757184Ab0LML6u (ORCPT
+Received: from wolverine01.qualcomm.com ([199.106.114.254]:36435 "EHLO
+	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752611Ab0LMRX3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Dec 2010 06:58:50 -0500
-In-reply-to: <1292205051-26707-1-git-send-email-khw0178.kim@samsung.com>
+	Mon, 13 Dec 2010 12:23:29 -0500
+In-Reply-To: <20101205113311.GC9138@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hyunwoong Kim <khw0178.kim@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Anton Vorontsov <avorontsov@mvista.com>, Bryan Huntsman <bryanh@codeaurora.org>, Colin Cross <ccross@android.com>, Daniel Walker <dwalker@codeaurora.org>, David Brown <davidb@codeaurora.org>, Erik Gilling <konkers@android.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Olof Johansson <olof@lixom.net>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Tony Lindgren <tony@atomide.com>
+
+Sorry for being late on testing this out. The patch series and works on 
+the msm 8660.
+
+Acked-By: Abhijeet Dharmapurikar <adharmap@codeaurora.org>
 
 
-Hi HyunWoong,
-
-Thanks for catching those YUV order errors.
-
-On 12/13/2010 02:50 AM, Hyunwoong Kim wrote:
-> Some color formats are mismatched in s5p-fimc driver.
-> CICICTRL[1:0], order422_out, should be set 2b'00 not 2b'11 to use V4L2_PIX_FMT_YUYV.
-
-s/CICICTRL[1:0]/CIOCTRL[1:0]
-
-> Because in V4L2 standard V4L2_PIX_FMT_YUYV means "start + 0: Y'00 Cb00 Y'01 Cr00 Y'02 Cb01 Y'03 Cr01".
-> According to datasheet 2b'00 is right value for V4L2_PIX_FMT_YUYV.
+Russell King - ARM Linux wrote:
+> This patch series cleans up the GIC code, consolidating some of the
+> per-platform practices into the common GIC code.
 > 
-> ================================================================
->   bit |    MSB                                        LSB
-> ================================================================
->   00  |  Cr1    Y3    Cb1    Y2    Cr0    Y1    Cb0    Y0
-> ================================================================
->   01  |  Cb1    Y3    Cr1    Y2    Cb0    Y1    Cr0    Y0
-> ================================================================
->   10  |  Y3    Cr1    Y2    Cb1    Y1    Cr0    Y0    Cb0
-> ================================================================
->   11  |  Y3    Cb1    Y2    Cr1    Y1    Cb0    Y0    Cr0
-> ================================================================
+> One notable change is to the initialization methods - we used to
+> require platforms to pass in the address of the per-CPU interfaces
+> despite them always being identical between all cores.  This was
+> nonsense, as even in the extremely unlikely event that they were
+> different, we aren't storing them in a per-CPU manner.
 > 
-> V4L2_PIX_FMT_YVYU, V4L2_PIX_FMT_UYVY, V4L2_PIX_FMT_VYUY are also mismatched with datasheet.
-> MSCTRL[17:16], order2p_in, is also mismatched in V4L2_PIX_FMT_UYVY, V4L2_PIX_FMT_YVYU.
-> 
-> Signed-off-by: Hyunwoong Kim <khw0178.kim@samsung.com>
-> Reviewed-by: Jonghun Han <jonghun.han@samsung.com>
-> ---
-> 
-> I wonder why fimc_fmt struct has fourcc and color together as member of structure.
-> It seems that the meaning of color is the same as fourcc's meaning.
+> The GIC initialization methods are now simpler: one call to gic_init()
+> from the boot CPU, and a call to gic_secondary_init() as each
+> secondary CPU starts - and no need for platforms to keep track of
+> the address anymore.
 
-struct fimc_fmt::color is a common denominator for v4l2_format and
-v4l2_mbus_format and it is also meant to simplify hardware configuration
-for the colour format groups.
-
-> 
->  drivers/media/video/s5p-fimc/fimc-core.h |   12 ++++++------
->  1 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-> index a707060..4efc1a1 100644
-> --- a/drivers/media/video/s5p-fimc/fimc-core.h
-> +++ b/drivers/media/video/s5p-fimc/fimc-core.h
-> @@ -96,15 +96,15 @@ enum fimc_color_fmt {
->  #define fimc_fmt_is_rgb(x) ((x) & 0x10)
->  
->  /* Y/Cb/Cr components order at DMA output for 1 plane YCbCr 4:2:2 formats. */
-> -#define	S5P_FIMC_OUT_CRYCBY	S5P_CIOCTRL_ORDER422_CRYCBY
-> -#define	S5P_FIMC_OUT_CBYCRY	S5P_CIOCTRL_ORDER422_YCRYCB
-> -#define	S5P_FIMC_OUT_YCRYCB	S5P_CIOCTRL_ORDER422_CBYCRY
-> -#define	S5P_FIMC_OUT_YCBYCR	S5P_CIOCTRL_ORDER422_YCBYCR
-> +#define	S5P_FIMC_OUT_CRYCBY	S5P_CIOCTRL_ORDER422_YCBYCR
-> +#define	S5P_FIMC_OUT_CBYCRY	S5P_CIOCTRL_ORDER422_CBYCRY
-> +#define	S5P_FIMC_OUT_YCRYCB	S5P_CIOCTRL_ORDER422_YCRYCB
-> +#define	S5P_FIMC_OUT_YCBYCR	S5P_CIOCTRL_ORDER422_CRYCBY
->  
->  /* Input Y/Cb/Cr components order for 1 plane YCbCr 4:2:2 color formats. */
->  #define	S5P_FIMC_IN_CRYCBY	S5P_MSCTRL_ORDER422_CRYCBY
-> -#define	S5P_FIMC_IN_CBYCRY	S5P_MSCTRL_ORDER422_YCRYCB
-> -#define	S5P_FIMC_IN_YCRYCB	S5P_MSCTRL_ORDER422_CBYCRY
-> +#define	S5P_FIMC_IN_CBYCRY	S5P_MSCTRL_ORDER422_CBYCRY
-> +#define	S5P_FIMC_IN_YCRYCB	S5P_MSCTRL_ORDER422_YCRYCB
->  #define	S5P_FIMC_IN_YCBYCR	S5P_MSCTRL_ORDER422_YCBYCR
->  
->  /* Cb/Cr chrominance components order for 2 plane Y/CbCr 4:2:2 formats. */
-
-Could you instead remove all S5P_FIMC_IN_*, S5P_FIMC_OUT_* definitions from
-fimc-core.h and make corrections directly in function fimc_set_yuv_order?
-S5P_FIMC_IN_*/S5P_FIMC_OUT_* are now used only in fimc_set_yuv_order.
-
-
-Thanks,
--- 
-Sylwester Nawrocki
-Samsung Poland R&D Center
+--
+"Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum."
