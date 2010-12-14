@@ -1,55 +1,32 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: [PATCH 13/24] ARM: s5pv310: update clock source registration
-Date: Mon, 13 Dec 2010 19:19:24 +0000
-Message-ID: <E1PSDvg-0008D8-6F@rmk-PC.arm.linux.org.uk>
-References: <20101213191437.GN8665@n2100.arm.linux.org.uk>
+From: Abhijeet Dharmapurikar <adharmap@codeaurora.org>
+Subject: Re: [PATCH 0/5] ARM: GIC: cleanup
+Date: Tue, 14 Dec 2010 10:11:52 -0800
+Message-ID: <4D07B368.7040005@codeaurora.org>
+References: <20101205113311.GC9138@n2100.arm.linux.org.uk>	<4D065691.9010802@codeaurora.org> <20101213173129.GB11730@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:35322 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752470Ab0LMTTk (ORCPT
+Received: from wolverine01.qualcomm.com ([199.106.114.254]:39121 "EHLO
+	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757961Ab0LNSLx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Dec 2010 14:19:40 -0500
-In-Reply-To: <20101213191437.GN8665@n2100.arm.linux.org.uk>
-Content-Disposition: inline
+	Tue, 14 Dec 2010 13:11:53 -0500
+In-Reply-To: <20101213173129.GB11730@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Daniel Walker <dwalker@codeaurora.org>, Erik Gilling <konkers@android.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Olof Johansson <olof@lixom.net>, linux-arm-msm@vger.kernel.org, Anton Vorontsov <avorontsov@mvista.com>, linux-samsung-soc@vger.kernel.org, Bryan Huntsman <bryanh@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>, Tony Lindgren <tony@atomide.com>, Colin Cross <ccross@android.com>, linux-tegra@vger.kernel.org, David Brown <davidb@codeaurora.org>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-In d7e81c2 (clocksource: Add clocksource_register_hz/khz interface) new
-interfaces were added which simplify (and optimize) the selection of the
-divisor shift/mult constants.  Switch over to using this new interface.
+Russell King - ARM Linux wrote:
+> On Mon, Dec 13, 2010 at 09:23:29AM -0800, Abhijeet Dharmapurikar wrote:
+>> Sorry for being late on testing this out. The patch series and works on  
+>> the msm 8660.
+>>
+>> Acked-By: Abhijeet Dharmapurikar <adharmap@codeaurora.org>
+> 
+> Would you prefer a Tested-by: ?
 
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
----
- arch/arm/mach-s5pv310/time.c |    6 +-----
- 1 files changed, 1 insertions(+), 5 deletions(-)
+Yes, Tested-by is more appropriate.
 
-diff --git a/arch/arm/mach-s5pv310/time.c b/arch/arm/mach-s5pv310/time.c
-index 01b012a..b262d46 100644
---- a/arch/arm/mach-s5pv310/time.c
-+++ b/arch/arm/mach-s5pv310/time.c
-@@ -211,7 +211,6 @@ struct clocksource pwm_clocksource = {
- 	.rating		= 250,
- 	.read		= s5pv310_pwm4_read,
- 	.mask		= CLOCKSOURCE_MASK(32),
--	.shift		= 20,
- 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS ,
- };
- 
-@@ -230,10 +229,7 @@ static void __init s5pv310_clocksource_init(void)
- 	s5pv310_pwm_init(4, ~0);
- 	s5pv310_pwm_start(4, 1);
- 
--	pwm_clocksource.mult =
--		clocksource_khz2mult(clock_rate/1000, pwm_clocksource.shift);
--
--	if (clocksource_register(&pwm_clocksource))
-+	if (clocksource_register_hz(&pwm_clocksource, clock_rate))
- 		panic("%s: can't register clocksource\n", pwm_clocksource.name);
- }
- 
--- 
-1.6.2.5
+Tested-by: Abhijeet Dharmapurikar <adharmap@codeaurora.org>
