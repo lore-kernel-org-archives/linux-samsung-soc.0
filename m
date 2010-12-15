@@ -1,32 +1,117 @@
-From: Abhijeet Dharmapurikar <adharmap@codeaurora.org>
-Subject: Re: [PATCH 0/5] ARM: GIC: cleanup
-Date: Tue, 14 Dec 2010 10:11:52 -0800
-Message-ID: <4D07B368.7040005@codeaurora.org>
-References: <20101205113311.GC9138@n2100.arm.linux.org.uk>	<4D065691.9010802@codeaurora.org> <20101213173129.GB11730@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from wolverine01.qualcomm.com ([199.106.114.254]:39121 "EHLO
-	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757961Ab0LNSLx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 Dec 2010 13:11:53 -0500
-In-Reply-To: <20101213173129.GB11730@n2100.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Hyunwoong Kim <khw0178.kim@samsung.com>
+Subject: [PATCH v2] [media] s5p-fimc: fix the value of YUV422 1-plane formats
+Date: Wed, 15 Dec 2010 11:18:48 +0900
+Message-ID: <1292379528-16994-1-git-send-email-khw0178.kim@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, Hyunwoong Kim <khw0178.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Daniel Walker <dwalker@codeaurora.org>, Erik Gilling <konkers@android.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Olof Johansson <olof@lixom.net>, linux-arm-msm@vger.kernel.org, Anton Vorontsov <avorontsov@mvista.com>, linux-samsung-soc@vger.kernel.org, Bryan Huntsman <bryanh@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>, Tony Lindgren <tony@atomide.com>, Colin Cross <ccross@android.com>, linux-tegra@vger.kernel.org, David Brown <davidb@codeaurora.org>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Russell King - ARM Linux wrote:
-> On Mon, Dec 13, 2010 at 09:23:29AM -0800, Abhijeet Dharmapurikar wrote:
->> Sorry for being late on testing this out. The patch series and works on  
->> the msm 8660.
->>
->> Acked-By: Abhijeet Dharmapurikar <adharmap@codeaurora.org>
-> 
-> Would you prefer a Tested-by: ?
+Some color formats are mismatched in s5p-fimc driver.
+CICICTRL[1:0], order422_out, should be set 2b'00 not 2b'11
+to use V4L2_PIX_FMT_YUYV. Because in V4L2 standard V4L2_PIX_FMT_YUYV means
+"start + 0: Y'00 Cb00 Y'01 Cr00 Y'02 Cb01 Y'03 Cr01". According to datasheet
+2b'00 is right value for V4L2_PIX_FMT_YUYV.
 
-Yes, Tested-by is more appropriate.
+---------------------------------------------------------
+bit |    MSB                                        LSB
+---------------------------------------------------------
+00  |  Cr1    Y3    Cb1    Y2    Cr0    Y1    Cb0    Y0
+---------------------------------------------------------
+01  |  Cb1    Y3    Cr1    Y2    Cb0    Y1    Cr0    Y0
+---------------------------------------------------------
+10  |  Y3    Cr1    Y2    Cb1    Y1    Cr0    Y0    Cb0
+---------------------------------------------------------
+11  |  Y3    Cb1    Y2    Cr1    Y1    Cb0    Y0    Cr0
+---------------------------------------------------------
 
-Tested-by: Abhijeet Dharmapurikar <adharmap@codeaurora.org>
+V4L2_PIX_FMT_YVYU, V4L2_PIX_FMT_UYVY, V4L2_PIX_FMT_VYUY are also mismatched
+with datasheet. MSCTRL[17:16], order2p_in, is also mismatched
+in V4L2_PIX_FMT_UYVY, V4L2_PIX_FMT_YVYU.
+
+Signed-off-by: Hyunwoong Kim <khw0178.kim@samsung.com>
+Reviewed-by: Jonghun han <jonghun.han@samsung.com>
+---
+Changes since V1:
+=================
+- make corrections directly in function fimc_set_yuv_order
+  commented by Sylwester Nawrocki.
+- remove S5P_FIMC_IN_* and S5P_FIMC_OUT_* definitions from fimc-core.h
+
+ drivers/media/video/s5p-fimc/fimc-core.c |   16 ++++++++--------
+ drivers/media/video/s5p-fimc/fimc-core.h |   12 ------------
+ 2 files changed, 8 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
+index 7f56987..71e1536 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.c
++++ b/drivers/media/video/s5p-fimc/fimc-core.c
+@@ -448,34 +448,34 @@ static void fimc_set_yuv_order(struct fimc_ctx *ctx)
+ 	/* Set order for 1 plane input formats. */
+ 	switch (ctx->s_frame.fmt->color) {
+ 	case S5P_FIMC_YCRYCB422:
+-		ctx->in_order_1p = S5P_FIMC_IN_YCRYCB;
++		ctx->in_order_1p = S5P_MSCTRL_ORDER422_YCRYCB;
+ 		break;
+ 	case S5P_FIMC_CBYCRY422:
+-		ctx->in_order_1p = S5P_FIMC_IN_CBYCRY;
++		ctx->in_order_1p = S5P_MSCTRL_ORDER422_CBYCRY;
+ 		break;
+ 	case S5P_FIMC_CRYCBY422:
+-		ctx->in_order_1p = S5P_FIMC_IN_CRYCBY;
++		ctx->in_order_1p = S5P_MSCTRL_ORDER422_CRYCBY;
+ 		break;
+ 	case S5P_FIMC_YCBYCR422:
+ 	default:
+-		ctx->in_order_1p = S5P_FIMC_IN_YCBYCR;
++		ctx->in_order_1p = S5P_MSCTRL_ORDER422_YCBYCR;
+ 		break;
+ 	}
+ 	dbg("ctx->in_order_1p= %d", ctx->in_order_1p);
+ 
+ 	switch (ctx->d_frame.fmt->color) {
+ 	case S5P_FIMC_YCRYCB422:
+-		ctx->out_order_1p = S5P_FIMC_OUT_YCRYCB;
++		ctx->out_order_1p = S5P_CIOCTRL_ORDER422_YCRYCB;
+ 		break;
+ 	case S5P_FIMC_CBYCRY422:
+-		ctx->out_order_1p = S5P_FIMC_OUT_CBYCRY;
++		ctx->out_order_1p = S5P_CIOCTRL_ORDER422_CBYCRY;
+ 		break;
+ 	case S5P_FIMC_CRYCBY422:
+-		ctx->out_order_1p = S5P_FIMC_OUT_CRYCBY;
++		ctx->out_order_1p = S5P_CIOCTRL_ORDER422_YCBYCR;
+ 		break;
+ 	case S5P_FIMC_YCBYCR422:
+ 	default:
+-		ctx->out_order_1p = S5P_FIMC_OUT_YCBYCR;
++		ctx->out_order_1p = S5P_CIOCTRL_ORDER422_CRYCBY;
+ 		break;
+ 	}
+ 	dbg("ctx->out_order_1p= %d", ctx->out_order_1p);
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
+index 4efc1a1..92cca62 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.h
++++ b/drivers/media/video/s5p-fimc/fimc-core.h
+@@ -95,18 +95,6 @@ enum fimc_color_fmt {
+ 
+ #define fimc_fmt_is_rgb(x) ((x) & 0x10)
+ 
+-/* Y/Cb/Cr components order at DMA output for 1 plane YCbCr 4:2:2 formats. */
+-#define	S5P_FIMC_OUT_CRYCBY	S5P_CIOCTRL_ORDER422_YCBYCR
+-#define	S5P_FIMC_OUT_CBYCRY	S5P_CIOCTRL_ORDER422_CBYCRY
+-#define	S5P_FIMC_OUT_YCRYCB	S5P_CIOCTRL_ORDER422_YCRYCB
+-#define	S5P_FIMC_OUT_YCBYCR	S5P_CIOCTRL_ORDER422_CRYCBY
+-
+-/* Input Y/Cb/Cr components order for 1 plane YCbCr 4:2:2 color formats. */
+-#define	S5P_FIMC_IN_CRYCBY	S5P_MSCTRL_ORDER422_CRYCBY
+-#define	S5P_FIMC_IN_CBYCRY	S5P_MSCTRL_ORDER422_CBYCRY
+-#define	S5P_FIMC_IN_YCRYCB	S5P_MSCTRL_ORDER422_YCRYCB
+-#define	S5P_FIMC_IN_YCBYCR	S5P_MSCTRL_ORDER422_YCBYCR
+-
+ /* Cb/Cr chrominance components order for 2 plane Y/CbCr 4:2:2 formats. */
+ #define	S5P_FIMC_LSB_CRCB	S5P_CIOCTRL_ORDER422_2P_LSB_CRCB
+ 
+-- 
+1.6.2.5
