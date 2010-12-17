@@ -1,273 +1,233 @@
-From: Hyunwoong Kim <khw0178.kim@samsung.com>
-Subject: [PATCH] [media] s5p-fimc: fix main scaler SFRs depends on FIMC version
-Date: Fri, 17 Dec 2010 16:43:56 +0900
-Message-ID: <1292571836-10684-1-git-send-email-khw0178.kim@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, Hyunwoong Kim <khw0178.kim@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH] s3c-fb: add support for runtime pm
+Date: Fri, 17 Dec 2010 16:45:46 +0900
+Message-ID: <1292571946-13595-1-git-send-email-jg1.han@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:40488 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751813Ab0LQIGa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 17 Dec 2010 03:06:30 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-fbdev@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Ilho Lee <ilho215.lee@samsung.com>, Jingoo Han <jg1.han@samsung.com>
 
-The main scaler has four SFRs for main scaler ratio depends on FIMC version.
-FIMC 4.x has only two SFRs and FIMC 5.x has four SFRs for main scaler.
-Those are MainHorRatio, MainHorRatio_ext, MainVerRatio and MainverRatio_ext.
+This patch adds support for runtime pm using the functions.
+ - pm_runtime_get_sync()
+ - pm_runtime_put_sync()
 
-The FIMC 5.x has 15 bit resolution for scaling ratio as below.
-{MainHorRatio,MainHorRatio_ext} = {[14:6],[5:0]}.
-{MainVerRatio,MainVerRatio_ext} = {[14:6],[5:0]}.
-MainHorRatio = CISCCTRL[24:16], MainHorRatio_ext = CIEXTEN[15:10]
-MainVerRatio = CISCCTRL[8:0],   MainVerRatio_ext = CIEXTEN[5:0]
+pm_runtime_get_sync() and pm_runtime_put_sync() are called when
+open or release function of framebufer driver is called to inform
+the system if hardware is idle or not.
 
-This patch supports FIMC 4.x and FIMC 5.x using platform_device_id::driver_data.
-
-Signed-off-by: Hyunwoong Kim <khw0178.kim@samsung.com>
-Reviewed-by: Jonghun Han <jonghun.han@samsung.com>
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-capture.c |    7 +++-
- drivers/media/video/s5p-fimc/fimc-core.c    |   21 ++++++++++--
- drivers/media/video/s5p-fimc/fimc-core.h    |    5 ++-
- drivers/media/video/s5p-fimc/fimc-reg.c     |   48 ++++++++++++++++++++++++--
- drivers/media/video/s5p-fimc/regs-fimc.h    |   10 +++++-
- 5 files changed, 81 insertions(+), 10 deletions(-)
+ drivers/video/s3c-fb.c |  111 ++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 files changed, 107 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index b216530..ca48e02 100644
---- a/drivers/media/video/s5p-fimc/fimc-capture.c
-+++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -208,6 +208,7 @@ static int start_streaming(struct vb2_queue *q)
- 	struct fimc_ctx *ctx = q->drv_priv;
- 	struct fimc_dev *fimc = ctx->fimc_dev;
- 	struct s3c_fimc_isp_info *isp_info;
-+	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
- 	int ret;
+diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+index f9aca9d..83ce9a0 100644
+--- a/drivers/video/s3c-fb.c
++++ b/drivers/video/s3c-fb.c
+@@ -23,6 +23,7 @@
+ #include <linux/io.h>
+ #include <linux/uaccess.h>
+ #include <linux/interrupt.h>
++#include <linux/pm_runtime.h>
  
- 	ret = v4l2_subdev_call(fimc->vid_cap.sd, video, s_stream, 1);
-@@ -230,7 +231,11 @@ static int start_streaming(struct vb2_queue *q)
- 			return ret;
- 		}
- 		fimc_hw_set_input_path(ctx);
--		fimc_hw_set_scaler(ctx);
-+		fimc_hw_set_prescaler(ctx);
-+		if (!variant->has_mainscaler_ext)
-+			fimc_hw_set_mainscaler(ctx);
-+		else
-+			fimc_hw_set_mainscaler_ext(ctx);
- 		fimc_hw_set_target_format(ctx);
- 		fimc_hw_set_rotation(ctx);
- 		fimc_hw_set_effect(ctx);
-diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index 7f56987..3cfa4b6 100644
---- a/drivers/media/video/s5p-fimc/fimc-core.c
-+++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -246,6 +246,7 @@ int fimc_set_scaler_info(struct fimc_ctx *ctx)
- 	struct fimc_scaler *sc = &ctx->scaler;
- 	struct fimc_frame *s_frame = &ctx->s_frame;
- 	struct fimc_frame *d_frame = &ctx->d_frame;
-+	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
- 	int tx, ty, sx, sy;
- 	int ret;
+ #include <mach/map.h>
+ #include <plat/regs-fb-v4.h>
+@@ -1013,8 +1014,30 @@ static int s3c_fb_ioctl(struct fb_info *info, unsigned int cmd,
+ 	return ret;
+ }
  
-@@ -284,8 +285,13 @@ int fimc_set_scaler_info(struct fimc_ctx *ctx)
- 	sc->pre_dst_width = sx / sc->pre_hratio;
- 	sc->pre_dst_height = sy / sc->pre_vratio;
- 
--	sc->main_hratio = (sx << 8) / (tx << sc->hfactor);
--	sc->main_vratio = (sy << 8) / (ty << sc->vfactor);
-+	if (!variant->has_mainscaler_ext) {
-+		sc->main_hratio = (sx << 8) / (tx << sc->hfactor);
-+		sc->main_vratio = (sy << 8) / (ty << sc->vfactor);
-+	} else {
-+		sc->main_hratio = (sx << 14) / (tx << sc->hfactor);
-+		sc->main_vratio = (sy << 14) / (ty << sc->vfactor);
-+	}
- 
- 	sc->scaleup_h = (tx >= sx) ? 1 : 0;
- 	sc->scaleup_v = (ty >= sy) ? 1 : 0;
-@@ -569,6 +575,7 @@ static void fimc_dma_run(void *priv)
- {
- 	struct fimc_ctx *ctx = priv;
- 	struct fimc_dev *fimc;
-+	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
- 	unsigned long flags;
- 	u32 ret;
- 
-@@ -601,7 +608,12 @@ static void fimc_dma_run(void *priv)
- 			err("Scaler setup error");
- 			goto dma_unlock;
- 		}
--		fimc_hw_set_scaler(ctx);
++static int s3c_fb_open(struct fb_info *info, int user)
++{
++	struct s3c_fb_win *win = info->par;
++	struct s3c_fb *sfb = win->parent;
 +
-+		fimc_hw_set_prescaler(ctx);
-+		if (!variant->has_mainscaler_ext)
-+			fimc_hw_set_mainscaler(ctx);
-+		else
-+			fimc_hw_set_mainscaler_ext(ctx);
- 		fimc_hw_set_target_format(ctx);
- 		fimc_hw_set_rotation(ctx);
- 		fimc_hw_set_effect(ctx);
-@@ -1722,6 +1734,7 @@ static struct samsung_fimc_variant fimc1_variant_s5pv210 = {
- 	.pix_hoff	 = 1,
- 	.has_inp_rot	 = 1,
- 	.has_out_rot	 = 1,
-+	.has_mainscaler_ext = 1,
- 	.min_inp_pixsize = 16,
- 	.min_out_pixsize = 16,
- 	.hor_offs_align	 = 1,
-@@ -1743,6 +1756,7 @@ static struct samsung_fimc_variant fimc0_variant_s5pv310 = {
- 	.has_inp_rot	 = 1,
- 	.has_out_rot	 = 1,
- 	.has_cistatus2	 = 1,
-+	.has_mainscaler_ext = 1,
- 	.min_inp_pixsize = 16,
- 	.min_out_pixsize = 16,
- 	.hor_offs_align	 = 1,
-@@ -1753,6 +1767,7 @@ static struct samsung_fimc_variant fimc0_variant_s5pv310 = {
- static struct samsung_fimc_variant fimc2_variant_s5pv310 = {
- 	.pix_hoff	 = 1,
- 	.has_cistatus2	 = 1,
-+	.has_mainscaler_ext = 1,
- 	.min_inp_pixsize = 16,
- 	.min_out_pixsize = 16,
- 	.hor_offs_align	 = 1,
-diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-index 4efc1a1..dd5b949 100644
---- a/drivers/media/video/s5p-fimc/fimc-core.h
-+++ b/drivers/media/video/s5p-fimc/fimc-core.h
-@@ -380,6 +380,7 @@ struct samsung_fimc_variant {
- 	unsigned int	has_inp_rot:1;
- 	unsigned int	has_out_rot:1;
- 	unsigned int	has_cistatus2:1;
-+	unsigned int	has_mainscaler_ext:1;
- 	struct fimc_pix_limit *pix_limit;
- 	u16		min_inp_pixsize;
- 	u16		min_out_pixsize;
-@@ -575,7 +576,9 @@ void fimc_hw_set_target_format(struct fimc_ctx *ctx);
- void fimc_hw_set_out_dma(struct fimc_ctx *ctx);
- void fimc_hw_en_lastirq(struct fimc_dev *fimc, int enable);
- void fimc_hw_en_irq(struct fimc_dev *fimc, int enable);
--void fimc_hw_set_scaler(struct fimc_ctx *ctx);
-+void fimc_hw_set_prescaler(struct fimc_ctx *ctx);
-+void fimc_hw_set_mainscaler(struct fimc_ctx *ctx);
-+void fimc_hw_set_mainscaler_ext(struct fimc_ctx *ctx);
- void fimc_hw_en_capture(struct fimc_ctx *ctx);
- void fimc_hw_set_effect(struct fimc_ctx *ctx);
- void fimc_hw_set_in_dma(struct fimc_ctx *ctx);
-diff --git a/drivers/media/video/s5p-fimc/fimc-reg.c b/drivers/media/video/s5p-fimc/fimc-reg.c
-index 5ed8f06..bc75298 100644
---- a/drivers/media/video/s5p-fimc/fimc-reg.c
-+++ b/drivers/media/video/s5p-fimc/fimc-reg.c
-@@ -249,7 +249,7 @@ void fimc_hw_en_lastirq(struct fimc_dev *dev, int enable)
- 	writel(cfg, dev->regs + S5P_CIOCTRL);
- }
++	pm_runtime_get_sync(sfb->dev);
++
++	return 0;
++}
++
++static int s3c_fb_release(struct fb_info *info, int user)
++{
++	struct s3c_fb_win *win = info->par;
++	struct s3c_fb *sfb = win->parent;
++
++	pm_runtime_put_sync(sfb->dev);
++
++	return 0;
++}
++
+ static struct fb_ops s3c_fb_ops = {
+ 	.owner		= THIS_MODULE,
++	.fb_open	= s3c_fb_open,
++	.fb_release	= s3c_fb_release,
+ 	.fb_check_var	= s3c_fb_check_var,
+ 	.fb_set_par	= s3c_fb_set_par,
+ 	.fb_blank	= s3c_fb_blank,
+@@ -1322,6 +1345,8 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
  
--static void fimc_hw_set_prescaler(struct fimc_ctx *ctx)
-+void fimc_hw_set_prescaler(struct fimc_ctx *ctx)
- {
- 	struct fimc_dev *dev =  ctx->fimc_dev;
- 	struct fimc_scaler *sc = &ctx->scaler;
-@@ -267,7 +267,7 @@ static void fimc_hw_set_prescaler(struct fimc_ctx *ctx)
- 	writel(cfg, dev->regs + S5P_CISCPREDST);
- }
+ 	clk_enable(sfb->bus_clk);
  
--void fimc_hw_set_scaler(struct fimc_ctx *ctx)
-+static void fimc_hw_set_scaler(struct fimc_ctx *ctx)
- {
- 	struct fimc_dev *dev = ctx->fimc_dev;
- 	struct fimc_scaler *sc = &ctx->scaler;
-@@ -275,8 +275,6 @@ void fimc_hw_set_scaler(struct fimc_ctx *ctx)
- 	struct fimc_frame *dst_frame = &ctx->d_frame;
- 	u32 cfg = 0;
++	pm_runtime_enable(sfb->dev);
++
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res) {
+ 		dev_err(dev, "failed to find registers\n");
+@@ -1360,6 +1385,9 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
  
--	fimc_hw_set_prescaler(ctx);
--
- 	if (!(ctx->flags & FIMC_COLOR_RANGE_NARROW))
- 		cfg |= (S5P_CISCCTRL_CSCR2Y_WIDE | S5P_CISCCTRL_CSCY2R_WIDE);
+ 	dev_dbg(dev, "got resources (regs %p), probing windows\n", sfb->regs);
  
-@@ -316,15 +314,57 @@ void fimc_hw_set_scaler(struct fimc_ctx *ctx)
- 			cfg |= S5P_CISCCTRL_INTERLACE;
++	platform_set_drvdata(pdev, sfb);
++	pm_runtime_get_sync(sfb->dev);
++
+ 	/* setup gpio and output polarity controls */
+ 
+ 	pd->setup_gpio();
+@@ -1400,6 +1428,7 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
  	}
  
-+	writel(cfg, dev->regs + S5P_CISCCTRL);
-+}
-+
-+void fimc_hw_set_mainscaler(struct fimc_ctx *ctx)
-+{
-+	struct fimc_dev *dev = ctx->fimc_dev;
-+	struct fimc_scaler *sc = &ctx->scaler;
-+	u32 cfg;
-+
- 	dbg("main_hratio= 0x%X  main_vratio= 0x%X",
- 		sc->main_hratio, sc->main_vratio);
+ 	platform_set_drvdata(pdev, sfb);
++	pm_runtime_put_sync(sfb->dev);
  
-+	fimc_hw_set_scaler(ctx);
-+
-+	cfg = readl(dev->regs + S5P_CISCCTRL);
-+	cfg &= ~S5P_CISCCTRL_SC_HORRATIO_MASK;
-+	cfg &= ~S5P_CISCCTRL_SC_VERRATIO_MASK;
- 	cfg |= S5P_CISCCTRL_SC_HORRATIO(sc->main_hratio);
- 	cfg |= S5P_CISCCTRL_SC_VERRATIO(sc->main_vratio);
+ 	return 0;
  
- 	writel(cfg, dev->regs + S5P_CISCCTRL);
+@@ -1434,6 +1463,8 @@ static int __devexit s3c_fb_remove(struct platform_device *pdev)
+ 	struct s3c_fb *sfb = platform_get_drvdata(pdev);
+ 	int win;
+ 
++	pm_runtime_get_sync(sfb->dev);
++
+ 	for (win = 0; win < S3C_FB_MAX_WIN; win++)
+ 		if (sfb->windows[win])
+ 			s3c_fb_release_win(sfb, sfb->windows[win]);
+@@ -1450,12 +1481,74 @@ static int __devexit s3c_fb_remove(struct platform_device *pdev)
+ 
+ 	kfree(sfb);
+ 
++	pm_runtime_put_sync(sfb->dev);
++	pm_runtime_disable(sfb->dev);
++
+ 	return 0;
  }
  
-+void fimc_hw_set_mainscaler_ext(struct fimc_ctx *ctx)
+ #ifdef CONFIG_PM
+-static int s3c_fb_suspend(struct platform_device *pdev, pm_message_t state)
++static int s3c_fb_suspend(struct device *dev)
 +{
-+	struct fimc_dev *dev = ctx->fimc_dev;
-+	struct fimc_scaler *sc = &ctx->scaler;
-+	u32 cfg, cfg_ext;
++	struct platform_device *pdev = to_platform_device(dev);
++	struct s3c_fb *sfb = platform_get_drvdata(pdev);
++	struct s3c_fb_win *win;
++	int win_no;
 +
-+	dbg("main_hratio= 0x%X  main_vratio= 0x%X",
-+		sc->main_hratio, sc->main_vratio);
++	for (win_no = S3C_FB_MAX_WIN - 1; win_no >= 0; win_no--) {
++		win = sfb->windows[win_no];
++		if (!win)
++			continue;
 +
-+	fimc_hw_set_scaler(ctx);
++		/* use the blank function to push into power-down */
++		s3c_fb_blank(FB_BLANK_POWERDOWN, win->fbinfo);
++	}
 +
-+	cfg = readl(dev->regs + S5P_CISCCTRL);
-+	cfg &= ~S5P_CISCCTRL_SC_HORRATIO_MASK;
-+	cfg &= ~S5P_CISCCTRL_SC_VERRATIO_MASK;
-+	cfg |= S5P_CISCCTRL_SC_HORRATIO_EXT(sc->main_hratio);
-+	cfg |= S5P_CISCCTRL_SC_VERRATIO_EXT(sc->main_vratio);
-+
-+	writel(cfg, dev->regs + S5P_CISCCTRL);
-+
-+	cfg_ext = readl(dev->regs + S5P_CIEXTEN);
-+	cfg_ext &= ~S5P_CIEXTEN_MAINHORRATIO_EXT_MASK;
-+	cfg_ext &= ~S5P_CIEXTEN_MAINVERRATIO_EXT_MASK;
-+	cfg_ext |= S5P_CIEXTEN_MAINHORRATIO_EXT(sc->main_hratio);
-+	cfg_ext |= S5P_CIEXTEN_MAINVERRATIO_EXT(sc->main_vratio);
-+
-+	writel(cfg_ext, dev->regs + S5P_CIEXTEN);
++	clk_disable(sfb->bus_clk);
++	return 0;
 +}
 +
- void fimc_hw_en_capture(struct fimc_ctx *ctx)
++static int s3c_fb_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct s3c_fb *sfb = platform_get_drvdata(pdev);
++	struct s3c_fb_platdata *pd = sfb->pdata;
++	struct s3c_fb_win *win;
++	int win_no;
++
++	clk_enable(sfb->bus_clk);
++
++	/* setup registers */
++	writel(pd->vidcon1, sfb->regs + VIDCON1);
++
++	/* zero all windows before we do anything */
++	for (win_no = 0; win_no < sfb->variant.nr_windows; win_no++)
++		s3c_fb_clear_win(sfb, win_no);
++
++	for (win_no = 0; win_no < sfb->variant.nr_windows - 1; win_no++) {
++		void __iomem *regs = sfb->regs + sfb->variant.keycon;
++
++		regs += (win_no * 8);
++		writel(0xffffff, regs + WKEYCON0);
++		writel(0xffffff, regs + WKEYCON1);
++	}
++
++	/* restore framebuffers */
++	for (win_no = 0; win_no < S3C_FB_MAX_WIN; win_no++) {
++		win = sfb->windows[win_no];
++		if (!win)
++			continue;
++
++		dev_dbg(&pdev->dev, "resuming window %d\n", win_no);
++		s3c_fb_set_par(win->fbinfo);
++	}
++
++	return 0;
++}
++
++int s3c_fb_runtime_suspend(struct device *dev)
  {
- 	struct fimc_dev *dev = ctx->fimc_dev;
-diff --git a/drivers/media/video/s5p-fimc/regs-fimc.h b/drivers/media/video/s5p-fimc/regs-fimc.h
-index 57e33f8..4d1abd1 100644
---- a/drivers/media/video/s5p-fimc/regs-fimc.h
-+++ b/drivers/media/video/s5p-fimc/regs-fimc.h
-@@ -141,6 +141,10 @@
- #define S5P_CISCCTRL_ONE2ONE		(1 << 9)
- #define S5P_CISCCTRL_SC_HORRATIO(x)	((x) << 16)
- #define S5P_CISCCTRL_SC_VERRATIO(x)	((x) << 0)
-+#define S5P_CISCCTRL_SC_HORRATIO_MASK	(0x1ff << 16)
-+#define S5P_CISCCTRL_SC_VERRATIO_MASK	(0x1ff << 0)
-+#define S5P_CISCCTRL_SC_HORRATIO_EXT(x) ((x >> 6) << 16)
-+#define S5P_CISCCTRL_SC_VERRATIO_EXT(x)	((x >> 6) << 0)
++	struct platform_device *pdev = to_platform_device(dev);
+ 	struct s3c_fb *sfb = platform_get_drvdata(pdev);
+ 	struct s3c_fb_win *win;
+ 	int win_no;
+@@ -1473,8 +1566,9 @@ static int s3c_fb_suspend(struct platform_device *pdev, pm_message_t state)
+ 	return 0;
+ }
  
- /* Target area */
- #define S5P_CITAREA			0x5c
-@@ -262,7 +266,11 @@
- #define S5P_ORIG_SIZE_HOR(x)		((x) << 0)
+-static int s3c_fb_resume(struct platform_device *pdev)
++int s3c_fb_runtime_resume(struct device *dev)
+ {
++	struct platform_device *pdev = to_platform_device(dev);
+ 	struct s3c_fb *sfb = platform_get_drvdata(pdev);
+ 	struct s3c_fb_platdata *pd = sfb->pdata;
+ 	struct s3c_fb_win *win;
+@@ -1509,9 +1603,12 @@ static int s3c_fb_resume(struct platform_device *pdev)
  
- /* Real output DMA image size (extension register) */
--#define S5P_CIEXTEN			0x188
-+#define S5P_CIEXTEN 				0x188
-+#define S5P_CIEXTEN_MAINHORRATIO_EXT(x)		(((x) & 0x3f) << 10)
-+#define S5P_CIEXTEN_MAINVERRATIO_EXT(x)		((x) & 0x3f)
-+#define S5P_CIEXTEN_MAINHORRATIO_EXT_MASK 	(0x3f << 10)
-+#define S5P_CIEXTEN_MAINVERRATIO_EXT_MASK 	(0x3f)
+ 	return 0;
+ }
++
+ #else
+ #define s3c_fb_suspend NULL
+ #define s3c_fb_resume  NULL
++#define s3c_fb_runtime_suspend NULL
++#define s3c_fb_runtime_resume NULL
+ #endif
  
- #define S5P_CIDMAPARAM			0x18c
- #define S5P_CIDMAPARAM_R_LINEAR		(0 << 29)
+ 
+@@ -1710,15 +1807,21 @@ static struct platform_device_id s3c_fb_driver_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(platform, s3c_fb_driver_ids);
+ 
++static const struct dev_pm_ops s3cfb_pm_ops = {
++	.suspend	= s3c_fb_suspend,
++	.resume		= s3c_fb_resume,
++	.runtime_suspend	= s3c_fb_runtime_suspend,
++	.runtime_resume		= s3c_fb_runtime_resume,
++};
++
+ static struct platform_driver s3c_fb_driver = {
+ 	.probe		= s3c_fb_probe,
+ 	.remove		= __devexit_p(s3c_fb_remove),
+-	.suspend	= s3c_fb_suspend,
+-	.resume		= s3c_fb_resume,
+ 	.id_table	= s3c_fb_driver_ids,
+ 	.driver		= {
+ 		.name	= "s3c-fb",
+ 		.owner	= THIS_MODULE,
++		.pm	= &s3cfb_pm_ops,
+ 	},
+ };
+ 
 -- 
 1.6.2.5
