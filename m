@@ -1,203 +1,159 @@
-From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: [RFCv2,2/8] mm: vcm: reference counting on a reservation added
-Date: Fri, 17 Dec 2010 12:56:21 +0900
-Message-ID: <1292558187-17348-3-git-send-email-pullip.cho@samsung.com>
-References: <1292558187-17348-1-git-send-email-pullip.cho@samsung.com>
- <1292558187-17348-2-git-send-email-pullip.cho@samsung.com>
+From: Hyunwoong Kim <khw0178.kim@samsung.com>
+Subject: [PATCH v3] [media] s5p-fimc: fix the value of YUV422 1-plane formats
+Date: Fri, 17 Dec 2010 13:24:15 +0900
+Message-ID: <1292559855-2977-1-git-send-email-khw0178.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:37658 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:48672 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752676Ab0LQEQi (ORCPT
+	with ESMTP id S1752721Ab0LQEl1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Dec 2010 23:16:38 -0500
-In-Reply-To: <1292558187-17348-2-git-send-email-pullip.cho@samsung.com>
+	Thu, 16 Dec 2010 23:41:27 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Inho Lee <ilho215.lee@samsung.com>, Inki Dae <inki.dae@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Ankita Garg <ankita@in.ibm.com>, Daniel Walker <dwalker@codeaurora.org>, Johan MOSSBERG <johan.xx.mossberg@stericsson.com>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mel Gorman <mel@csn.ul.ie>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-mm@kvack.org, linux-samsung-soc@vger.kernel.org, KyongHo Cho <pullip.cho@samsung.com>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, Hyunwoong Kim <khw0178.kim@samsung.com>
 
-This commits adds vcm_ref_reserve() and refcnt member into vcm_res
-structure. This feature is enabled by turnning on
-CONFIG_VCM_RES_REFCNT. This enables the users of the vcm framework
-not to care about the sequence of reserving and unreserving
-in complex scenarios.
+Some color formats are mismatched in s5p-fimc driver.
+CIOCTRL[1:0], order422_out, should be set 2b'00 not 2b'11
+to use V4L2_PIX_FMT_YUYV. Because in V4L2 standard V4L2_PIX_FMT_YUYV means
+"start + 0: Y'00 Cb00 Y'01 Cr00 Y'02 Cb01 Y'03 Cr01". According to datasheet
+2b'00 is right value for V4L2_PIX_FMT_YUYV.
 
-Signed-off-by: KyongHo Cho <pullip.cho@samsung.com>
+---------------------------------------------------------
+bit |    MSB                                        LSB
+---------------------------------------------------------
+00  |  Cr1    Y3    Cb1    Y2    Cr0    Y1    Cb0    Y0
+---------------------------------------------------------
+01  |  Cb1    Y3    Cr1    Y2    Cb0    Y1    Cr0    Y0
+---------------------------------------------------------
+10  |  Y3    Cr1    Y2    Cb1    Y1    Cr0    Y0    Cb0
+---------------------------------------------------------
+11  |  Y3    Cb1    Y2    Cr1    Y1    Cb0    Y0    Cr0
+---------------------------------------------------------
+
+V4L2_PIX_FMT_YVYU, V4L2_PIX_FMT_UYVY, V4L2_PIX_FMT_VYUY are also mismatched
+with datasheet. MSCTRL[17:16], order2p_in, is also mismatched
+in V4L2_PIX_FMT_UYVY, V4L2_PIX_FMT_YVYU.
+
+Signed-off-by: Hyunwoong Kim <khw0178.kim@samsung.com>
+Reviewed-by: Jonghun Han <jonghun.han@samsung.com>
 ---
- Documentation/virtual-contiguous-memory.txt |   47 +++++++++++++++++++++++++++
- include/linux/vcm.h                         |   23 +++++++++++++
- mm/Kconfig                                  |    7 ++++
- mm/vcm.c                                    |   17 ++++++++++
- 4 files changed, 94 insertions(+), 0 deletions(-)
+Changes since V2:
+=================
+- Correct the name of Output DMA control register
+- Change definitions of YUV422 input/outut format with datasheet
+  commented by Sylwester Nawrocki.
 
-diff --git a/Documentation/virtual-contiguous-memory.txt b/Documentation/virtual-contiguous-memory.txt
-index 9793a86..2008465 100644
---- a/Documentation/virtual-contiguous-memory.txt
-+++ b/Documentation/virtual-contiguous-memory.txt
-@@ -275,6 +275,34 @@ To deactivate the VCM context vcm_deactivate() function is used:
- Both of those functions can be called several times if all calls to
- vcm_activate() are paired with a later call to vcm_deactivate().
+Changes since V1:
+=================
+- make corrections directly in function fimc_set_yuv_order
+  commented by Sylwester Nawrocki.
+- remove S5P_FIMC_IN_* and S5P_FIMC_OUT_* definitions from fimc-core.h
+
+ drivers/media/video/s5p-fimc/fimc-core.c |   16 ++++++++--------
+ drivers/media/video/s5p-fimc/fimc-core.h |   12 ------------
+ drivers/media/video/s5p-fimc/regs-fimc.h |   12 ++++++------
+ 3 files changed, 14 insertions(+), 26 deletions(-)
+
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
+index 7f56987..e2b3db1 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.c
++++ b/drivers/media/video/s5p-fimc/fimc-core.c
+@@ -448,34 +448,34 @@ static void fimc_set_yuv_order(struct fimc_ctx *ctx)
+ 	/* Set order for 1 plane input formats. */
+ 	switch (ctx->s_frame.fmt->color) {
+ 	case S5P_FIMC_YCRYCB422:
+-		ctx->in_order_1p = S5P_FIMC_IN_YCRYCB;
++		ctx->in_order_1p = S5P_MSCTRL_ORDER422_CBYCRY;
+ 		break;
+ 	case S5P_FIMC_CBYCRY422:
+-		ctx->in_order_1p = S5P_FIMC_IN_CBYCRY;
++		ctx->in_order_1p = S5P_MSCTRL_ORDER422_YCRYCB;
+ 		break;
+ 	case S5P_FIMC_CRYCBY422:
+-		ctx->in_order_1p = S5P_FIMC_IN_CRYCBY;
++		ctx->in_order_1p = S5P_MSCTRL_ORDER422_YCBYCR;
+ 		break;
+ 	case S5P_FIMC_YCBYCR422:
+ 	default:
+-		ctx->in_order_1p = S5P_FIMC_IN_YCBYCR;
++		ctx->in_order_1p = S5P_MSCTRL_ORDER422_CRYCBY;
+ 		break;
+ 	}
+ 	dbg("ctx->in_order_1p= %d", ctx->in_order_1p);
  
-+** Aquiring and releasing ownership of a reservation
-+
-+Once a device driver reserve a reservation, it may want to pass other device
-+drivers or attach the reservation in a data structre. Since the reservation
-+may be shared among many device drivers, the VCM context is needed to provide
-+a simple way to unreserve a reservation.
-+
-+Below 2 functions gives the ownership of a reservation to the caller:
-+
-+	struct vcm_res *__must_check
-+	vcm_reserve(struct vcm *vcm, resource_size_t size, unsigned flags);
-+
-+	int __must_check vcm_ref_reserve(struct vcm_res *res);
-+
-+vcm_reserve() creates a new reservation, thus the first owner of the
-+reservation is set to the caller of vcm_reservation(). It then passes to a
-+function the reservation. The function that received the reservation calls
-+vcm_ref_reserve() to acquire the ownership of the given reservation. If the
-+function decides that it does not need the reservation any more, it calls
-+vcm_release() to release the ownership of the reservation.
-+
-+	void vcm_unreserve(struct vcm_res *res);
-+
-+It is not required to determine if other functions and drivers still need to
-+access the reservation because this function just release the ownership of the
-+reservation. If vcm_unreserve() finds no one has the ownership of the given
-+reservation, only then does it unreserve (remove) the given reservation.
-+
- ** Device driver example
+ 	switch (ctx->d_frame.fmt->color) {
+ 	case S5P_FIMC_YCRYCB422:
+-		ctx->out_order_1p = S5P_FIMC_OUT_YCRYCB;
++		ctx->out_order_1p = S5P_CIOCTRL_ORDER422_CBYCRY;
+ 		break;
+ 	case S5P_FIMC_CBYCRY422:
+-		ctx->out_order_1p = S5P_FIMC_OUT_CBYCRY;
++		ctx->out_order_1p = S5P_CIOCTRL_ORDER422_YCRYCB;
+ 		break;
+ 	case S5P_FIMC_CRYCBY422:
+-		ctx->out_order_1p = S5P_FIMC_OUT_CRYCBY;
++		ctx->out_order_1p = S5P_CIOCTRL_ORDER422_YCBYCR;
+ 		break;
+ 	case S5P_FIMC_YCBYCR422:
+ 	default:
+-		ctx->out_order_1p = S5P_FIMC_OUT_YCBYCR;
++		ctx->out_order_1p = S5P_CIOCTRL_ORDER422_CRYCBY;
+ 		break;
+ 	}
+ 	dbg("ctx->out_order_1p= %d", ctx->out_order_1p);
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
+index 4efc1a1..92cca62 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.h
++++ b/drivers/media/video/s5p-fimc/fimc-core.h
+@@ -95,18 +95,6 @@ enum fimc_color_fmt {
  
- The following is a simple, untested example of how platform and
-@@ -706,6 +734,25 @@ automatically reflect new mappings on the hardware MMU.
- Neither of the operations are required and if missing, VCM will
- assume they are a no-operation and no warning will be generated.
+ #define fimc_fmt_is_rgb(x) ((x) & 0x10)
  
-+*** Ownership of a reservation
-+
-+When to aquire the ownership of a reservation:
-+  - When creating a new reservation (having the ownership automatically)
-+  - When assigning a reservation to a member of data structure
-+  - When a reservation is passed from the caller function
-+  - When requiring to access a reservation (that is a global variable)
-+    at first in its context.
-+The first one is done with vcm_reserve() and others with vcm_ref_reserve().
-+
-+When to release the ownership of a reservation:
-+  - When a reservation is no longer needed in its context.
-+  - When returning from a function and the function received a reservation
-+    from its caller and acquired the ownership of the reservation.
-+  - When removing a reservation from a data structure that includes a pointer
-+    to the reservation
-+It is not required as well unable to remove the reservation explicitly. The
-+last call to vcm_unreserve() will cause the reservation to be removed.
-+
- * Epilogue
+-/* Y/Cb/Cr components order at DMA output for 1 plane YCbCr 4:2:2 formats. */
+-#define	S5P_FIMC_OUT_CRYCBY	S5P_CIOCTRL_ORDER422_YCBYCR
+-#define	S5P_FIMC_OUT_CBYCRY	S5P_CIOCTRL_ORDER422_CBYCRY
+-#define	S5P_FIMC_OUT_YCRYCB	S5P_CIOCTRL_ORDER422_YCRYCB
+-#define	S5P_FIMC_OUT_YCBYCR	S5P_CIOCTRL_ORDER422_CRYCBY
+-
+-/* Input Y/Cb/Cr components order for 1 plane YCbCr 4:2:2 color formats. */
+-#define	S5P_FIMC_IN_CRYCBY	S5P_MSCTRL_ORDER422_CRYCBY
+-#define	S5P_FIMC_IN_CBYCRY	S5P_MSCTRL_ORDER422_CBYCRY
+-#define	S5P_FIMC_IN_YCRYCB	S5P_MSCTRL_ORDER422_YCRYCB
+-#define	S5P_FIMC_IN_YCBYCR	S5P_MSCTRL_ORDER422_YCBYCR
+-
+ /* Cb/Cr chrominance components order for 2 plane Y/CbCr 4:2:2 formats. */
+ #define	S5P_FIMC_LSB_CRCB	S5P_CIOCTRL_ORDER422_2P_LSB_CRCB
  
- The initial version of the VCM framework was written by Zach Pfeffer
-diff --git a/include/linux/vcm.h b/include/linux/vcm.h
-index 965dc9b..3d54f18 100644
---- a/include/linux/vcm.h
-+++ b/include/linux/vcm.h
-@@ -52,6 +52,9 @@ struct vcm {
-  * @bound_size:	number of bytes actually bound to the virtual address;
-  *		read only.
-  * @res_size:	size of the reserved address space in bytes; read only.
-+ * @refcnt:	reference count of a reservation to pass ownership of
-+ *		a reservation in a safe way; internal.
-+ *		Implemented only when CONFIG_VCM_RES_REFCNT is enabled.
-  * @vcm:	VCM context; internal, read only for MMU drivers.
-  * @phys:	pointer to physical memory bound to this reservation; NULL
-  *		if no physical memory is bound; read only.
-@@ -65,6 +68,9 @@ struct vcm_res {
- 	dma_addr_t		start;
- 	resource_size_t		bound_size;
- 	resource_size_t		res_size;
-+#ifdef CONFIG_VCM_RES_REFCNT
-+	atomic_t		refcnt;
-+#endif
- 
- 	struct vcm		*vcm;
- 	struct vcm_phys		*phys;
-@@ -180,6 +186,23 @@ struct vcm_res *__must_check
- vcm_reserve(struct vcm *vcm, resource_size_t size, unsigned flags);
- 
- /**
-+ * vcm_ref_reserve() - acquires the ownership of a reservation.
-+ * @res:	a valid reservation to access
-+ *
-+ * On success returns 0 and leads the same effect as vcm_reserve() in the
-+ * context of the caller of this function. In other words, once a function
-+ * acquire the ownership of a reservation with vcm_ref_reserve(), it must
-+ * release the ownership with vcm_release() as soon as it does not need
-+ * the reservation.
-+ *
-+ * On error returns -EINVAL. The only reason of the error is passing an invalid
-+ * reservation like NULL or an unreserved reservation.
-+ */
-+#ifdef CONFIG_VCM_RES_REFCNT
-+int __must_check vcm_ref_reserve(struct vcm_res *res);
-+#endif
-+
-+/**
-  * vcm_unreserve() - destroyers a virtual address space reservation
-  * @res:	reservation to destroy.
-  *
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 7f0e4b1..b937f32 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -353,6 +353,13 @@ config VCM
-  	  <Documentation/virtual-contiguous-memory.txt>.  If unsure, say
-  	  "n".
- 
-+config VCM_RES_REFCNT
-+	bool "Reference counting on reservations"
-+	depends on VCM
-+	help
-+	  This enables reference counting on a reservation to make sharing
-+	  and migrating the ownership of the reservation easier.
-+
- #
- # UP and nommu archs use km based percpu allocator
- #
-diff --git a/mm/vcm.c b/mm/vcm.c
-index 1389ee6..5819f0f 100644
---- a/mm/vcm.c
-+++ b/mm/vcm.c
-@@ -156,10 +156,23 @@ vcm_reserve(struct vcm *vcm, resource_size_t size, unsigned flags)
- 
- 	__vcm_alloc_and_reserve(vcm, size, NULL, 0, &res, flags);
- 
-+#ifdef CONFIG_VCM_RES_REFCNT
-+	if (!IS_ERR(res))
-+		atomic_inc(&res->refcnt);
-+#endif
-+
- 	return res;
- }
- EXPORT_SYMBOL_GPL(vcm_reserve);
- 
-+int __must_check vcm_ref_reserve(struct vcm_res *res)
-+{
-+	if (WARN_ON(!res) || (atomic_inc_return(&res->refcnt) < 2))
-+		return -EINVAL;
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(vcm_ref_reserve);
-+
- struct vcm_res *__must_check
- vcm_map(struct vcm *vcm, struct vcm_phys *phys, unsigned flags)
- {
-@@ -196,6 +209,10 @@ EXPORT_SYMBOL_GPL(vcm_map);
- void vcm_unreserve(struct vcm_res *res)
- {
- 	if (!WARN_ON(!res)) {
-+#ifdef CONFIG_VCM_RES_REFCNT
-+		if (!atomic_dec_and_test(&res->refcnt))
-+			return;
-+#endif
- 		if (WARN_ON(res->phys))
- 			vcm_unbind(res);
- 		if (!WARN_ON_ONCE(!res->vcm->driver->unreserve))
+diff --git a/drivers/media/video/s5p-fimc/regs-fimc.h b/drivers/media/video/s5p-fimc/regs-fimc.h
+index 57e33f8..cd86c18 100644
+--- a/drivers/media/video/s5p-fimc/regs-fimc.h
++++ b/drivers/media/video/s5p-fimc/regs-fimc.h
+@@ -98,8 +98,8 @@
+ #define S5P_CIOCTRL			0x4c
+ #define S5P_CIOCTRL_ORDER422_MASK	(3 << 0)
+ #define S5P_CIOCTRL_ORDER422_CRYCBY	(0 << 0)
+-#define S5P_CIOCTRL_ORDER422_YCRYCB	(1 << 0)
+-#define S5P_CIOCTRL_ORDER422_CBYCRY	(2 << 0)
++#define S5P_CIOCTRL_ORDER422_CBYCRY	(1 << 0)
++#define S5P_CIOCTRL_ORDER422_YCRYCB	(2 << 0)
+ #define S5P_CIOCTRL_ORDER422_YCBYCR	(3 << 0)
+ #define S5P_CIOCTRL_LASTIRQ_ENABLE	(1 << 2)
+ #define S5P_CIOCTRL_YCBCR_3PLANE	(0 << 3)
+@@ -223,10 +223,10 @@
+ #define S5P_MSCTRL_FLIP_Y_MIRROR	(2 << 13)
+ #define S5P_MSCTRL_FLIP_180		(3 << 13)
+ #define S5P_MSCTRL_ORDER422_SHIFT	4
+-#define S5P_MSCTRL_ORDER422_CRYCBY	(0 << 4)
+-#define S5P_MSCTRL_ORDER422_YCRYCB	(1 << 4)
+-#define S5P_MSCTRL_ORDER422_CBYCRY	(2 << 4)
+-#define S5P_MSCTRL_ORDER422_YCBYCR	(3 << 4)
++#define S5P_MSCTRL_ORDER422_YCBYCR	(0 << 4)
++#define S5P_MSCTRL_ORDER422_CBYCRY	(1 << 4)
++#define S5P_MSCTRL_ORDER422_YCRYCB	(2 << 4)
++#define S5P_MSCTRL_ORDER422_CRYCBY	(3 << 4)
+ #define S5P_MSCTRL_ORDER422_MASK	(3 << 4)
+ #define S5P_MSCTRL_INPUT_EXTCAM		(0 << 3)
+ #define S5P_MSCTRL_INPUT_MEMORY		(1 << 3)
 -- 
 1.6.2.5
