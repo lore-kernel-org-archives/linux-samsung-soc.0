@@ -1,161 +1,89 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2] [media] s5p-fimc: fix the value of YUV422 1-plane
- formats
-Date: Wed, 15 Dec 2010 10:44:47 +0100
-Message-ID: <4D088E0F.1040403@samsung.com>
-References: <1292379528-16994-1-git-send-email-khw0178.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1292379528-16994-1-git-send-email-khw0178.kim@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Hyunwoong Kim <khw0178.kim@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: [RFCv2,0/8] mm: vcm: The Virtual Memory Manager for multiple IOMMUs
+Date: Fri, 17 Dec 2010 12:56:19 +0900
+Message-ID: <1292558187-17348-1-git-send-email-pullip.cho@samsung.com>
+Return-path: <owner-linux-mm@kvack.org>
+Sender: owner-linux-mm@kvack.org
+To: KyongHo Cho <pullip.cho@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Inho Lee <ilho215.lee@samsung.com>, Inki Dae <inki.dae@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Ankita Garg <ankita@in.ibm.com>, Daniel Walker <dwalker@codeaurora.org>, Johan MOSSBERG <johan.xx.mossberg@stericsson.com>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Mel Gorman <mel@csn.ul.ie>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-mm@kvack.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi HyunWoong,
+Hello,
 
-thanks for the patch.
+The VCM is a framework to deal with multiple IOMMUs in a system 
+with intuitive and abstract objects
+These patches are the bugfix and enhanced version of previous RFC by Michal Nazarewicz.
+(https://patchwork.kernel.org/patch/157451/)
 
-On 12/15/2010 03:18 AM, Hyunwoong Kim wrote:
-> Some color formats are mismatched in s5p-fimc driver.
-> CICICTRL[1:0], order422_out, should be set 2b'00 not 2b'11
+It is introduced by Zach Pfeffer and implemented by Michal Nazarewicz.
+These patches include entirely new implementation of VCM than the one submitted by Zach Pfeffer.
 
-Should be CIOCTRL instead of CICICTRL.
+The prerequisites of these patches are the followings by Michal Nazarewicz:
+https://patchwork.kernel.org/patch/340281/
+https://patchwork.kernel.org/patch/414381/
+https://patchwork.kernel.org/patch/414541/
 
-> to use V4L2_PIX_FMT_YUYV. Because in V4L2 standard V4L2_PIX_FMT_YUYV means
-> "start + 0: Y'00 Cb00 Y'01 Cr00 Y'02 Cb01 Y'03 Cr01". According to datasheet
-> 2b'00 is right value for V4L2_PIX_FMT_YUYV.
-> 
-> ---------------------------------------------------------
-> bit |    MSB                                        LSB
-> ---------------------------------------------------------
-> 00  |  Cr1    Y3    Cb1    Y2    Cr0    Y1    Cb0    Y0
-> ---------------------------------------------------------
-> 01  |  Cb1    Y3    Cr1    Y2    Cb0    Y1    Cr0    Y0
-> ---------------------------------------------------------
-> 10  |  Y3    Cr1    Y2    Cb1    Y1    Cr0    Y0    Cb0
-> ---------------------------------------------------------
-> 11  |  Y3    Cb1    Y2    Cr1    Y1    Cb0    Y0    Cr0
-> ---------------------------------------------------------
-> 
-> V4L2_PIX_FMT_YVYU, V4L2_PIX_FMT_UYVY, V4L2_PIX_FMT_VYUY are also mismatched
-> with datasheet. MSCTRL[17:16], order2p_in, is also mismatched
-> in V4L2_PIX_FMT_UYVY, V4L2_PIX_FMT_YVYU.
-> 
-> Signed-off-by: Hyunwoong Kim <khw0178.kim@samsung.com>
-> Reviewed-by: Jonghun han <jonghun.han@samsung.com>
-> ---
-> Changes since V1:
-> =================
-> - make corrections directly in function fimc_set_yuv_order
->   commented by Sylwester Nawrocki.
-> - remove S5P_FIMC_IN_* and S5P_FIMC_OUT_* definitions from fimc-core.h
-> 
->  drivers/media/video/s5p-fimc/fimc-core.c |   16 ++++++++--------
->  drivers/media/video/s5p-fimc/fimc-core.h |   12 ------------
->  2 files changed, 8 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-> index 7f56987..71e1536 100644
-> --- a/drivers/media/video/s5p-fimc/fimc-core.c
-> +++ b/drivers/media/video/s5p-fimc/fimc-core.c
-> @@ -448,34 +448,34 @@ static void fimc_set_yuv_order(struct fimc_ctx *ctx)
->  	/* Set order for 1 plane input formats. */
->  	switch (ctx->s_frame.fmt->color) {
->  	case S5P_FIMC_YCRYCB422:
-> -		ctx->in_order_1p = S5P_FIMC_IN_YCRYCB;
-> +		ctx->in_order_1p = S5P_MSCTRL_ORDER422_YCRYCB;
->  		break;
->  	case S5P_FIMC_CBYCRY422:
-> -		ctx->in_order_1p = S5P_FIMC_IN_CBYCRY;
-> +		ctx->in_order_1p = S5P_MSCTRL_ORDER422_CBYCRY;
->  		break;
->  	case S5P_FIMC_CRYCBY422:
-> -		ctx->in_order_1p = S5P_FIMC_IN_CRYCBY;
-> +		ctx->in_order_1p = S5P_MSCTRL_ORDER422_CRYCBY;
->  		break;
->  	case S5P_FIMC_YCBYCR422:
->  	default:
-> -		ctx->in_order_1p = S5P_FIMC_IN_YCBYCR;
-> +		ctx->in_order_1p = S5P_MSCTRL_ORDER422_YCBYCR;
->  		break;
->  	}
->  	dbg("ctx->in_order_1p= %d", ctx->in_order_1p);
->  
->  	switch (ctx->d_frame.fmt->color) {
->  	case S5P_FIMC_YCRYCB422:
-> -		ctx->out_order_1p = S5P_FIMC_OUT_YCRYCB;
-> +		ctx->out_order_1p = S5P_CIOCTRL_ORDER422_YCRYCB;
->  		break;
->  	case S5P_FIMC_CBYCRY422:
-> -		ctx->out_order_1p = S5P_FIMC_OUT_CBYCRY;
-> +		ctx->out_order_1p = S5P_CIOCTRL_ORDER422_CBYCRY;
->  		break;
->  	case S5P_FIMC_CRYCBY422:
-> -		ctx->out_order_1p = S5P_FIMC_OUT_CRYCBY;
-> +		ctx->out_order_1p = S5P_CIOCTRL_ORDER422_YCBYCR;
+In addition to the above patches, 
+the prerequisites of "[RFCv2,7/8] mm: vcm: vcm-cma: VCM CMA driver added" is
+CMA RFCv8 introduced by Michal Nazarewicz:
+https://patchwork.kernel.org/patch/414351/
 
-We could avoid a bit confusing assignment:
-S5P_FIMC_CRYCBY422 <-> S5P_CIOCTRL_ORDER422_YCBYCR
+The VCM also works correctly without "[RFC,6/7] mm: vcm: vcm-cma: VCM CMA driver added"
 
->  		break;
->  	case S5P_FIMC_YCBYCR422:
->  	default:
-> -		ctx->out_order_1p = S5P_FIMC_OUT_YCBYCR;
-> +		ctx->out_order_1p = S5P_CIOCTRL_ORDER422_CRYCBY;
+The last patch, "[RFC,7/7] mm: vcm: Sample driver added" is not the one to be submitted
+but is an example to show how to use the VCM.
 
-...and S5P_FIMC_YCBYCR422 <-> S5P_CIOCTRL_ORDER422_CRYCBY
+The VCM provides generic interfaces and objects to deal with IOMMUs in various architectures
+especially the ones that embed multiple IOMMUs including GART.
 
-by a correction in file regs-fimc.h. No we have:
+Chagelog:
+v2:  1. Added reference counting on a reservation.
+	When vcm_reserve() creates a reservation, it sets the reference counter
+	of the reservation to 1. The ownership of the reservation is only owned by
+	the caller of vcm_reserve. If the caller passes the reservation to another
+	callee functions, the callee functions must increment the reference counter
+	with vcm_ref_reserve() to set the ownership of the reservation.
+	To release the ownership, just call vcm_unreserve(). vcm_unreserve decrements
+	the reference counter of the given reservation. vcm_unreserve() eventually
+	unreserves the reservation when its reference counter becomes 0.
+     2. Applied the design changes of CMA by Michal Nazarewicz.
+	Since it is dramatically changed, vcm-cma also followed.
 
-#define S5P_CIOCTRL_ORDER422_CRYCBY	(0 << 0)
-#define S5P_CIOCTRL_ORDER422_YCRYCB	(1 << 0)
-#define S5P_CIOCTRL_ORDER422_CBYCRY	(2 << 0)
-#define S5P_CIOCTRL_ORDER422_YCBYCR	(3 << 0)
+Patch list:
+[RFCv2,1/8] mm: vcm: Virtual Contiguous Memory framework added
+[RFCv2,2/8] mm: vcm: reference counting on a reservation added
+[RFCv2,3/8] mm: vcm: physical memory allocator added
+[RFCv2,4/8] mm: vcm: VCM VMM driver added
+[RFCv2,5/8] mm: vcm: VCM MMU wrapper added
+[RFCv2,6/8] mm: vcm: VCM One-to-One wrapper added
+[RFCv2,7/8] mm: vcm: vcm-cma: VCM CMA driver added
+[RFCv2,8/8] mm: vcm: Sample driver added
 
-and it should be:
+Summery:
+Documentation/00-INDEX                      |    2 +
+Documentation/virtual-contiguous-memory.txt |  940 +++++++++++++++++++++++++
+include/linux/vcm-cma.h                     |   38 +
+include/linux/vcm-drv.h                     |  326 +++++++++
+include/linux/vcm-sample.h                  |   30 +
+include/linux/vcm.h                         |  311 +++++++++
+mm/Kconfig                                  |   79 +++
+mm/Makefile                                 |    3 +
+mm/vcm-cma.c                                |   99 +++
+mm/vcm-sample.c                             |  119 ++++
+mm/vcm.c                                    |  987 +++++++++++++++++++++++++++
+11 files changed, 2934 insertions(+), 0 deletions(-)
+create mode 100644 Documentation/virtual-contiguous-memory.txt
+create mode 100644 include/linux/vcm-cma.h
+create mode 100644 include/linux/vcm-drv.h
+create mode 100644 include/linux/vcm-sample.h
+create mode 100644 include/linux/vcm.h
+create mode 100644 mm/vcm-cma.c
+create mode 100644 mm/vcm-sample.c
+create mode 100644 mm/vcm.c
 
-#define S5P_CIOCTRL_ORDER422_CRYCBY	(0 << 0)
-#define S5P_CIOCTRL_ORDER422_CBYCRY	(1 << 0)
-#define S5P_CIOCTRL_ORDER422_YCRYCB	(2 << 0)
-#define S5P_CIOCTRL_ORDER422_YCBYCR	(3 << 0)
-
-I think this is where the root cause is. Can you please make a change
-in regs-fimc.h and modify the above "case" lines I have commented?
-I hope this time we get it all right. Sorry for troubling.
-
-Regards,
-Sylwester
-
->  		break;
->  	}
->  	dbg("ctx->out_order_1p= %d", ctx->out_order_1p);
-> diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-> index 4efc1a1..92cca62 100644
-> --- a/drivers/media/video/s5p-fimc/fimc-core.h
-> +++ b/drivers/media/video/s5p-fimc/fimc-core.h
-> @@ -95,18 +95,6 @@ enum fimc_color_fmt {
->  
->  #define fimc_fmt_is_rgb(x) ((x) & 0x10)
->  
-> -/* Y/Cb/Cr components order at DMA output for 1 plane YCbCr 4:2:2 formats. */
-> -#define	S5P_FIMC_OUT_CRYCBY	S5P_CIOCTRL_ORDER422_YCBYCR
-> -#define	S5P_FIMC_OUT_CBYCRY	S5P_CIOCTRL_ORDER422_CBYCRY
-> -#define	S5P_FIMC_OUT_YCRYCB	S5P_CIOCTRL_ORDER422_YCRYCB
-> -#define	S5P_FIMC_OUT_YCBYCR	S5P_CIOCTRL_ORDER422_CRYCBY
-> -
-> -/* Input Y/Cb/Cr components order for 1 plane YCbCr 4:2:2 color formats. */
-> -#define	S5P_FIMC_IN_CRYCBY	S5P_MSCTRL_ORDER422_CRYCBY
-> -#define	S5P_FIMC_IN_CBYCRY	S5P_MSCTRL_ORDER422_CBYCRY
-> -#define	S5P_FIMC_IN_YCRYCB	S5P_MSCTRL_ORDER422_YCRYCB
-> -#define	S5P_FIMC_IN_YCBYCR	S5P_MSCTRL_ORDER422_YCBYCR
-> -
->  /* Cb/Cr chrominance components order for 2 plane Y/CbCr 4:2:2 formats. */
->  #define	S5P_FIMC_LSB_CRCB	S5P_CIOCTRL_ORDER422_2P_LSB_CRCB
->  
-
--- 
-Sylwester Nawrocki
-Samsung Poland R&D Center
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Fight unfair telecom policy in Canada: sign http://dissolvethecrtc.ca/
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
