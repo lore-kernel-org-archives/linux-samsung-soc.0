@@ -1,184 +1,263 @@
-From: Sylwester Nawrocki <snjw23@gmail.com>
-Subject: Re: [PATCH v3] [media] s5p-fimc: fix the value of YUV422 1-plane
- formats
-Date: Sat, 18 Dec 2010 11:54:42 +0100
-Message-ID: <4D0C92F2.90901@gmail.com>
-References: <1292559855-2977-1-git-send-email-khw0178.kim@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: [PATCH] ARM: Fix subtle race in CPU pen_release hotplug code
+Date: Sat, 18 Dec 2010 11:04:25 +0000
+Message-ID: <E1PTuaP-0000Fl-EF@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f43.google.com ([209.85.161.43]:49005 "EHLO
-	mail-fx0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753439Ab0LRKyq (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:46889 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755295Ab0LRLEo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 18 Dec 2010 05:54:46 -0500
-In-Reply-To: <1292559855-2977-1-git-send-email-khw0178.kim@samsung.com>
+	Sat, 18 Dec 2010 06:04:44 -0500
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hyunwoong Kim <khw0178.kim@samsung.com>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com
+To: linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, linux-samsung-soc@vger.kernel.org
 
-Hi Hyunwoong,
+There is a subtle race in the CPU hotplug code, where a CPU which has
+been offlined can online itself before being requested, which results
+in things going astray on the next online/offline cycle.
 
-I wish I could apply and test the patch but there are still some
-problems with it. Now it doesn't apply and it seem to be mangled
-somehow. Even the patchwork didn't accept it, and v2 looks strange:
-https://patchwork.kernel.org/patch/412231/
-It is better avoided using "==...==" separators in the change log.
+What happens in the normal online/offline/online cycle is:
 
-Please also make sure it is rebased onto staging/for_v2.6.37-rc1
-branch from repository git://linuxtv.org/media_tree.git
-or better onto s5p_fimc_fixes_for_2.6.37 branch in repository
-git://git.infradead.org/users/kmpark/linux-2.6-samsung
+	CPU0			CPU3
+	requests boot of CPU3
+	pen_release = 3
+	flush cache line
+				checks pen_release, reads 3
+				starts boot
+				pen_release = -1
+	... requests CPU3 offline ...
+				... dies ...
+				checks pen_release, reads -1
+	requests boot of CPU3
+	pen_release = 3
+	flush cache line
+				checks pen_release, reads 3
+				starts boot
+				pen_release = -1
 
-Your second patch
-[PATCH][media] s5p-fimc: fix main scaler SFRs depends on FIMC version
-looks OK, except it is created against wrong source tree.
-Was there any difference in your environment setup while sending those
-2 patches?
+However, as the write of -1 of pen_release is not fully flushed back to
+memory, and the checking of pen_release is done with caches disabled,
+this allows CPU3 the opportunity to read the old value of pen_release:
 
-On 12/17/2010 05:24 AM, Hyunwoong Kim wrote:
-> Some color formats are mismatched in s5p-fimc driver.
-> CIOCTRL[1:0], order422_out, should be set 2b'00 not 2b'11
-> to use V4L2_PIX_FMT_YUYV. Because in V4L2 standard V4L2_PIX_FMT_YUYV means
-> "start + 0: Y'00 Cb00 Y'01 Cr00 Y'02 Cb01 Y'03 Cr01". According to datasheet
-> 2b'00 is right value for V4L2_PIX_FMT_YUYV.
->
-> ---------------------------------------------------------
-> bit |    MSB                                        LSB
-> ---------------------------------------------------------
-> 00  |  Cr1    Y3    Cb1    Y2    Cr0    Y1    Cb0    Y0
-> ---------------------------------------------------------
-> 01  |  Cb1    Y3    Cr1    Y2    Cb0    Y1    Cr0    Y0
-> ---------------------------------------------------------
-> 10  |  Y3    Cr1    Y2    Cb1    Y1    Cr0    Y0    Cb0
-> ---------------------------------------------------------
-> 11  |  Y3    Cb1    Y2    Cr1    Y1    Cb0    Y0    Cr0
-> ---------------------------------------------------------
->
-> V4L2_PIX_FMT_YVYU, V4L2_PIX_FMT_UYVY, V4L2_PIX_FMT_VYUY are also mismatched
-> with datasheet. MSCTRL[17:16], order2p_in, is also mismatched
+	CPU0			CPU3
+	requests boot of CPU3
+	pen_release = 3
+	flush cache line
+				checks pen_release, reads 3
+				starts boot
+				pen_release = -1
+	... requests CPU3 offline ...
+				... dies ...
+				checks pen_release, reads 3
+				starts boot
+				pen_release = -1
+	requests boot of CPU3
+	pen_release = 3
+	flush cache line
 
-> in V4L2_PIX_FMT_UYVY, V4L2_PIX_FMT_YVYU.
->
-> Signed-off-by: Hyunwoong Kim<khw0178.kim@samsung.com>
-> Reviewed-by: Jonghun Han<jonghun.han@samsung.com>
-> ---
-> Changes since V2:
-> =================
-> - Correct the name of Output DMA control register
-> - Change definitions of YUV422 input/outut format with datasheet
->    commented by Sylwester Nawrocki.
->
-> Changes since V1:
-> =================
-> - make corrections directly in function fimc_set_yuv_order
->    commented by Sylwester Nawrocki.
-> - remove S5P_FIMC_IN_* and S5P_FIMC_OUT_* definitions from fimc-core.h
->
->   drivers/media/video/s5p-fimc/fimc-core.c |   16 ++++++++--------
->   drivers/media/video/s5p-fimc/fimc-core.h |   12 ------------
->   drivers/media/video/s5p-fimc/regs-fimc.h |   12 ++++++------
->   3 files changed, 14 insertions(+), 26 deletions(-)
->
-> diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-> index 7f56987..e2b3db1 100644
-> --- a/drivers/media/video/s5p-fimc/fimc-core.c
-> +++ b/drivers/media/video/s5p-fimc/fimc-core.c
-> @@ -448,34 +448,34 @@ static void fimc_set_yuv_order(struct fimc_ctx *ctx)
->   	/* Set order for 1 plane input formats. */
->   	switch (ctx->s_frame.fmt->color) {
->   	case S5P_FIMC_YCRYCB422:
-> -		ctx->in_order_1p = S5P_FIMC_IN_YCRYCB;
-> +		ctx->in_order_1p = S5P_MSCTRL_ORDER422_CBYCRY;
->   		break;
->   	case S5P_FIMC_CBYCRY422:
-> -		ctx->in_order_1p = S5P_FIMC_IN_CBYCRY;
-> +		ctx->in_order_1p = S5P_MSCTRL_ORDER422_YCRYCB;
->   		break;
->   	case S5P_FIMC_CRYCBY422:
-> -		ctx->in_order_1p = S5P_FIMC_IN_CRYCBY;
-> +		ctx->in_order_1p = S5P_MSCTRL_ORDER422_YCBYCR;
->   		break;
->   	case S5P_FIMC_YCBYCR422:
->   	default:
-> -		ctx->in_order_1p = S5P_FIMC_IN_YCBYCR;
-> +		ctx->in_order_1p = S5P_MSCTRL_ORDER422_CRYCBY;
->   		break;
->   	}
->   	dbg("ctx->in_order_1p= %d", ctx->in_order_1p);
->
->   	switch (ctx->d_frame.fmt->color) {
->   	case S5P_FIMC_YCRYCB422:
-> -		ctx->out_order_1p = S5P_FIMC_OUT_YCRYCB;
-> +		ctx->out_order_1p = S5P_CIOCTRL_ORDER422_CBYCRY;
->   		break;
->   	case S5P_FIMC_CBYCRY422:
-> -		ctx->out_order_1p = S5P_FIMC_OUT_CBYCRY;
-> +		ctx->out_order_1p = S5P_CIOCTRL_ORDER422_YCRYCB;
->   		break;
->   	case S5P_FIMC_CRYCBY422:
-> -		ctx->out_order_1p = S5P_FIMC_OUT_CRYCBY;
-> +		ctx->out_order_1p = S5P_CIOCTRL_ORDER422_YCBYCR;
->   		break;
->   	case S5P_FIMC_YCBYCR422:
->   	default:
-> -		ctx->out_order_1p = S5P_FIMC_OUT_YCBYCR;
-> +		ctx->out_order_1p = S5P_CIOCTRL_ORDER422_CRYCBY;
->   		break;
->   	}
->   	dbg("ctx->out_order_1p= %d", ctx->out_order_1p);
-> diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-> index 4efc1a1..92cca62 100644
-> --- a/drivers/media/video/s5p-fimc/fimc-core.h
-> +++ b/drivers/media/video/s5p-fimc/fimc-core.h
-> @@ -95,18 +95,6 @@ enum fimc_color_fmt {
->
->   #define fimc_fmt_is_rgb(x) ((x)&  0x10)
->
-> -/* Y/Cb/Cr components order at DMA output for 1 plane YCbCr 4:2:2 formats. */
-> -#define	S5P_FIMC_OUT_CRYCBY	S5P_CIOCTRL_ORDER422_YCBYCR
-> -#define	S5P_FIMC_OUT_CBYCRY	S5P_CIOCTRL_ORDER422_CBYCRY
-> -#define	S5P_FIMC_OUT_YCRYCB	S5P_CIOCTRL_ORDER422_YCRYCB
-> -#define	S5P_FIMC_OUT_YCBYCR	S5P_CIOCTRL_ORDER422_CRYCBY
-> -
-> -/* Input Y/Cb/Cr components order for 1 plane YCbCr 4:2:2 color formats. */
-> -#define	S5P_FIMC_IN_CRYCBY	S5P_MSCTRL_ORDER422_CRYCBY
-> -#define	S5P_FIMC_IN_CBYCRY	S5P_MSCTRL_ORDER422_CBYCRY
-> -#define	S5P_FIMC_IN_YCRYCB	S5P_MSCTRL_ORDER422_YCRYCB
-> -#define	S5P_FIMC_IN_YCBYCR	S5P_MSCTRL_ORDER422_YCBYCR
-> -
->   /* Cb/Cr chrominance components order for 2 plane Y/CbCr 4:2:2 formats. */
->   #define	S5P_FIMC_LSB_CRCB	S5P_CIOCTRL_ORDER422_2P_LSB_CRCB
->
-> diff --git a/drivers/media/video/s5p-fimc/regs-fimc.h b/drivers/media/video/s5p-fimc/regs-fimc.h
-> index 57e33f8..cd86c18 100644
-> --- a/drivers/media/video/s5p-fimc/regs-fimc.h
-> +++ b/drivers/media/video/s5p-fimc/regs-fimc.h
-> @@ -98,8 +98,8 @@
->   #define S5P_CIOCTRL			0x4c
->   #define S5P_CIOCTRL_ORDER422_MASK	(3<<  0)
->   #define S5P_CIOCTRL_ORDER422_CRYCBY	(0<<  0)
-> -#define S5P_CIOCTRL_ORDER422_YCRYCB	(1<<  0)
-> -#define S5P_CIOCTRL_ORDER422_CBYCRY	(2<<  0)
-> +#define S5P_CIOCTRL_ORDER422_CBYCRY	(1<<  0)
-> +#define S5P_CIOCTRL_ORDER422_YCRYCB	(2<<  0)
->   #define S5P_CIOCTRL_ORDER422_YCBYCR	(3<<  0)
->   #define S5P_CIOCTRL_LASTIRQ_ENABLE	(1<<  2)
->   #define S5P_CIOCTRL_YCBCR_3PLANE	(0<<  3)
-> @@ -223,10 +223,10 @@
->   #define S5P_MSCTRL_FLIP_Y_MIRROR	(2<<  13)
->   #define S5P_MSCTRL_FLIP_180		(3<<  13)
->   #define S5P_MSCTRL_ORDER422_SHIFT	4
-> -#define S5P_MSCTRL_ORDER422_CRYCBY	(0<<  4)
-> -#define S5P_MSCTRL_ORDER422_YCRYCB	(1<<  4)
-> -#define S5P_MSCTRL_ORDER422_CBYCRY	(2<<  4)
-> -#define S5P_MSCTRL_ORDER422_YCBYCR	(3<<  4)
-> +#define S5P_MSCTRL_ORDER422_YCBYCR	(0<<  4)
-> +#define S5P_MSCTRL_ORDER422_CBYCRY	(1<<  4)
-> +#define S5P_MSCTRL_ORDER422_YCRYCB	(2<<  4)
-> +#define S5P_MSCTRL_ORDER422_CRYCBY	(3<<  4)
->   #define S5P_MSCTRL_ORDER422_MASK	(3<<  4)
->   #define S5P_MSCTRL_INPUT_EXTCAM		(0<<  3)
->   #define S5P_MSCTRL_INPUT_MEMORY		(1<<  3)
+Fix this by grouping the write of pen_release along with its cache line
+flushing code to ensure that any update to pen_release is always pushed
+out to physical memory.
+
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+ arch/arm/mach-realview/platsmp.c |   19 +++++++++++++++----
+ arch/arm/mach-s5pv310/platsmp.c  |   20 +++++++++++++++-----
+ arch/arm/mach-ux500/platsmp.c    |   22 +++++++++++++++-------
+ arch/arm/mach-vexpress/platsmp.c |   20 +++++++++++++++-----
+ 4 files changed, 60 insertions(+), 21 deletions(-)
+
+diff --git a/arch/arm/mach-realview/platsmp.c b/arch/arm/mach-realview/platsmp.c
+index 226c631..bb8d6c4 100644
+--- a/arch/arm/mach-realview/platsmp.c
++++ b/arch/arm/mach-realview/platsmp.c
+@@ -36,6 +36,19 @@ extern void realview_secondary_startup(void);
+  */
+ volatile int __cpuinitdata pen_release = -1;
+ 
++/*
++ * Write pen_release in a way that is guaranteed to be visible to all
++ * observers, irrespective of whether they're taking part in coherency
++ * or not.  This is necessary for the hotplug code to work reliably.
++ */
++static void write_pen_release(int val)
++{
++	pen_release = val;
++	smp_wmb();
++	__cpuc_flush_dcache_area((void *)&pen_release, sizeof(pen_release));
++	outer_clean_range(__pa(&pen_release), __pa(&pen_release + 1));
++}
++
+ static void __iomem *scu_base_addr(void)
+ {
+ 	if (machine_is_realview_eb_mp())
+@@ -64,8 +77,7 @@ void __cpuinit platform_secondary_init(unsigned int cpu)
+ 	 * let the primary processor know we're out of the
+ 	 * pen, then head off into the C entry point
+ 	 */
+-	pen_release = -1;
+-	smp_wmb();
++	write_pen_release(-1);
+ 
+ 	/*
+ 	 * Synchronise with the boot thread.
+@@ -92,8 +104,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 	 * Note that "pen_release" is the hardware CPU ID, whereas
+ 	 * "cpu" is Linux's internal ID.
+ 	 */
+-	pen_release = cpu;
+-	flush_cache_all();
++	write_pen_release(cpu);
+ 
+ 	/*
+ 	 * Send the secondary CPU a soft interrupt, thereby causing
+diff --git a/arch/arm/mach-s5pv310/platsmp.c b/arch/arm/mach-s5pv310/platsmp.c
+index 18aaf5f..98c0474 100644
+--- a/arch/arm/mach-s5pv310/platsmp.c
++++ b/arch/arm/mach-s5pv310/platsmp.c
+@@ -37,6 +37,19 @@ extern void s5pv310_secondary_startup(void);
+ 
+ volatile int __cpuinitdata pen_release = -1;
+ 
++/*
++ * Write pen_release in a way that is guaranteed to be visible to all
++ * observers, irrespective of whether they're taking part in coherency
++ * or not.  This is necessary for the hotplug code to work reliably.
++ */
++static void write_pen_release(int val)
++{
++	pen_release = val;
++	smp_wmb();
++	__cpuc_flush_dcache_area((void *)&pen_release, sizeof(pen_release));
++	outer_clean_range(__pa(&pen_release), __pa(&pen_release + 1));
++}
++
+ static void __iomem *scu_base_addr(void)
+ {
+ 	return (void __iomem *)(S5P_VA_SCU);
+@@ -57,8 +70,7 @@ void __cpuinit platform_secondary_init(unsigned int cpu)
+ 	 * let the primary processor know we're out of the
+ 	 * pen, then head off into the C entry point
+ 	 */
+-	pen_release = -1;
+-	smp_wmb();
++	write_pen_release(-1);
+ 
+ 	/*
+ 	 * Synchronise with the boot thread.
+@@ -85,9 +97,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 	 * Note that "pen_release" is the hardware CPU ID, whereas
+ 	 * "cpu" is Linux's internal ID.
+ 	 */
+-	pen_release = cpu;
+-	__cpuc_flush_dcache_area((void *)&pen_release, sizeof(pen_release));
+-	outer_clean_range(__pa(&pen_release), __pa(&pen_release + 1));
++	write_pen_release(cpu);
+ 
+ 	/*
+ 	 * Send the secondary CPU a soft interrupt, thereby causing
+diff --git a/arch/arm/mach-ux500/platsmp.c b/arch/arm/mach-ux500/platsmp.c
+index ddedbc8..f71175a 100644
+--- a/arch/arm/mach-ux500/platsmp.c
++++ b/arch/arm/mach-ux500/platsmp.c
+@@ -27,6 +27,19 @@
+  */
+ volatile int __cpuinitdata pen_release = -1;
+ 
++/*
++ * Write pen_release in a way that is guaranteed to be visible to all
++ * observers, irrespective of whether they're taking part in coherency
++ * or not.  This is necessary for the hotplug code to work reliably.
++ */
++static void write_pen_release(int val)
++{
++	pen_release = val;
++	smp_wmb();
++	__cpuc_flush_dcache_area((void *)&pen_release, sizeof(pen_release));
++	outer_clean_range(__pa(&pen_release), __pa(&pen_release + 1));
++}
++
+ static DEFINE_SPINLOCK(boot_lock);
+ 
+ void __cpuinit platform_secondary_init(unsigned int cpu)
+@@ -42,7 +55,7 @@ void __cpuinit platform_secondary_init(unsigned int cpu)
+ 	 * let the primary processor know we're out of the
+ 	 * pen, then head off into the C entry point
+ 	 */
+-	pen_release = -1;
++	write_pen_release(-1);
+ 
+ 	/*
+ 	 * Synchronise with the boot thread.
+@@ -66,9 +79,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 	 * the holding pen - release it, then wait for it to flag
+ 	 * that it has been released by resetting pen_release.
+ 	 */
+-	pen_release = cpu;
+-	__cpuc_flush_dcache_area((void *)&pen_release, sizeof(pen_release));
+-	outer_clean_range(__pa(&pen_release), __pa(&pen_release) + 1);
++	write_pen_release(cpu);
+ 
+ 	smp_cross_call(cpumask_of(cpu), 1);
+ 
+@@ -89,9 +100,6 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 
+ static void __init wakeup_secondary(void)
+ {
+-	/* nobody is to be released from the pen yet */
+-	pen_release = -1;
+-
+ 	/*
+ 	 * write the address of secondary startup into the backup ram register
+ 	 * at offset 0x1FF4, then write the magic number 0xA1FEED01 to the
+diff --git a/arch/arm/mach-vexpress/platsmp.c b/arch/arm/mach-vexpress/platsmp.c
+index d7e0cb9..8ce9fef 100644
+--- a/arch/arm/mach-vexpress/platsmp.c
++++ b/arch/arm/mach-vexpress/platsmp.c
+@@ -34,6 +34,19 @@ extern void vexpress_secondary_startup(void);
+  */
+ volatile int __cpuinitdata pen_release = -1;
+ 
++/*
++ * Write pen_release in a way that is guaranteed to be visible to all
++ * observers, irrespective of whether they're taking part in coherency
++ * or not.  This is necessary for the hotplug code to work reliably.
++ */
++static void write_pen_release(int val)
++{
++	pen_release = val;
++	smp_wmb();
++	__cpuc_flush_dcache_area((void *)&pen_release, sizeof(pen_release));
++	outer_clean_range(__pa(&pen_release), __pa(&pen_release + 1));
++}
++
+ static void __iomem *scu_base_addr(void)
+ {
+ 	return MMIO_P2V(A9_MPCORE_SCU);
+@@ -54,8 +67,7 @@ void __cpuinit platform_secondary_init(unsigned int cpu)
+ 	 * let the primary processor know we're out of the
+ 	 * pen, then head off into the C entry point
+ 	 */
+-	pen_release = -1;
+-	smp_wmb();
++	write_pen_release(-1);
+ 
+ 	/*
+ 	 * Synchronise with the boot thread.
+@@ -80,9 +92,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 	 * since we haven't sent them a soft interrupt, they shouldn't
+ 	 * be there.
+ 	 */
+-	pen_release = cpu;
+-	__cpuc_flush_dcache_area((void *)&pen_release, sizeof(pen_release));
+-	outer_clean_range(__pa(&pen_release), __pa(&pen_release + 1));
++	write_pen_release(cpu);
+ 
+ 	/*
+ 	 * Send the secondary CPU a soft interrupt, thereby causing
+-- 
+1.6.2.5
