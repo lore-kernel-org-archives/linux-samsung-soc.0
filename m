@@ -1,263 +1,46 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: [PATCH] ARM: Fix subtle race in CPU pen_release hotplug code
-Date: Sat, 18 Dec 2010 11:04:25 +0000
-Message-ID: <E1PTuaP-0000Fl-EF@rmk-PC.arm.linux.org.uk>
+From: Mikael Pettersson <mikpe@it.uu.se>
+Subject: Re: [PATCH 0/40] Complete set of clocksource/sched_clock patches
+Date: Sun, 19 Dec 2010 11:37:27 +0100
+Message-ID: <19725.57447.256528.883703@pilspetsen.it.uu.se>
+References: <20101217113223.GC9937@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:46889 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755295Ab0LRLEo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 18 Dec 2010 06:04:44 -0500
-Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20101217113223.GC9937@n2100.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Viresh Kumar <viresh.kumar@st.com>, Kevin Hilman <khilman@deeprootsystems.com>, Lennert Buytenhek <kernel@wantstofly.org>, linux-samsung-soc@vger.kernel.org, "Hans J. Koch" <hjk@linutronix.de>, Scott Branden <sbranden@broadcom.com>, Tony Lindgren <tony@atomide.com>, David Brown <davidb@codeaurora.org>, Alessandro Rubini <rubini@unipv.it>, Jiandong Zheng <jdzheng@broadcom.com>, Wan ZongShun <mcuos.com@gmail.com>, linux-arm-msm@vger.kernel.org, STEricsson <STEricsson_nomadik_linux@list.st.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Daniel Walker <dwalker@codeaurora.org>, Eric Miao <eric.y.miao@gmail.com>, Linus Walleij <linus.walleij@stericsson.com>, Erik Gilling <konkers@android.com>, Nicolas Pitre <nico@fluxnic.net>, Bryan Huntsman <bryanh@codeaurora.org>Sascha Hauer <kernel@>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, linux-samsung-soc@vger.kernel.org
 
-There is a subtle race in the CPU hotplug code, where a CPU which has
-been offlined can online itself before being requested, which results
-in things going astray on the next online/offline cycle.
+Russell King - ARM Linux writes:
+ > Here is the entire set of clocksource and sched_clock patches which
+ > have been previously posted.  There's a couple of small tweaks in a
+ > few of the patches (such as adding notrace to OMAP clocksource read
+ > functions), and this also shows the proper ordering of these patches.
+ > 
+ > Still looking for acks or tested-by's for these patches.
 
-What happens in the normal online/offline/online cycle is:
+Which tree is this based on? Is this scheduled for 2.6.37 or .38?
 
-	CPU0			CPU3
-	requests boot of CPU3
-	pen_release = 3
-	flush cache line
-				checks pen_release, reads 3
-				starts boot
-				pen_release = -1
-	... requests CPU3 offline ...
-				... dies ...
-				checks pen_release, reads -1
-	requests boot of CPU3
-	pen_release = 3
-	flush cache line
-				checks pen_release, reads 3
-				starts boot
-				pen_release = -1
+Since the problem affects 2.6.37-rc I tried it on top of 2.6.37-rc6.
 
-However, as the write of -1 of pen_release is not fully flushed back to
-memory, and the checking of pen_release is done with caches disabled,
-this allows CPU3 the opportunity to read the old value of pen_release:
+First there were patch rejects in two sub-archs, but they were easily
+fixed.
 
-	CPU0			CPU3
-	requests boot of CPU3
-	pen_release = 3
-	flush cache line
-				checks pen_release, reads 3
-				starts boot
-				pen_release = -1
-	... requests CPU3 offline ...
-				... dies ...
-				checks pen_release, reads 3
-				starts boot
-				pen_release = -1
-	requests boot of CPU3
-	pen_release = 3
-	flush cache line
+On n2100 (plat-iop) a missing #include <asm/sched_clock.h> in
+plat-iop/time.c caused a compile error. With that added the kernel
+built w/o warnings but hung immediately after being decompressed.
 
-Fix this by grouping the write of pen_release along with its cache line
-flushing code to ensure that any update to pen_release is always pushed
-out to physical memory.
+On mach-ixp4xx the kernel built and booted fine, and the interactivity
+problems were gone.
 
-Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
----
- arch/arm/mach-realview/platsmp.c |   19 +++++++++++++++----
- arch/arm/mach-s5pv310/platsmp.c  |   20 +++++++++++++++-----
- arch/arm/mach-ux500/platsmp.c    |   22 +++++++++++++++-------
- arch/arm/mach-vexpress/platsmp.c |   20 +++++++++++++++-----
- 4 files changed, 60 insertions(+), 21 deletions(-)
-
-diff --git a/arch/arm/mach-realview/platsmp.c b/arch/arm/mach-realview/platsmp.c
-index 226c631..bb8d6c4 100644
---- a/arch/arm/mach-realview/platsmp.c
-+++ b/arch/arm/mach-realview/platsmp.c
-@@ -36,6 +36,19 @@ extern void realview_secondary_startup(void);
-  */
- volatile int __cpuinitdata pen_release = -1;
- 
-+/*
-+ * Write pen_release in a way that is guaranteed to be visible to all
-+ * observers, irrespective of whether they're taking part in coherency
-+ * or not.  This is necessary for the hotplug code to work reliably.
-+ */
-+static void write_pen_release(int val)
-+{
-+	pen_release = val;
-+	smp_wmb();
-+	__cpuc_flush_dcache_area((void *)&pen_release, sizeof(pen_release));
-+	outer_clean_range(__pa(&pen_release), __pa(&pen_release + 1));
-+}
-+
- static void __iomem *scu_base_addr(void)
- {
- 	if (machine_is_realview_eb_mp())
-@@ -64,8 +77,7 @@ void __cpuinit platform_secondary_init(unsigned int cpu)
- 	 * let the primary processor know we're out of the
- 	 * pen, then head off into the C entry point
- 	 */
--	pen_release = -1;
--	smp_wmb();
-+	write_pen_release(-1);
- 
- 	/*
- 	 * Synchronise with the boot thread.
-@@ -92,8 +104,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
- 	 * Note that "pen_release" is the hardware CPU ID, whereas
- 	 * "cpu" is Linux's internal ID.
- 	 */
--	pen_release = cpu;
--	flush_cache_all();
-+	write_pen_release(cpu);
- 
- 	/*
- 	 * Send the secondary CPU a soft interrupt, thereby causing
-diff --git a/arch/arm/mach-s5pv310/platsmp.c b/arch/arm/mach-s5pv310/platsmp.c
-index 18aaf5f..98c0474 100644
---- a/arch/arm/mach-s5pv310/platsmp.c
-+++ b/arch/arm/mach-s5pv310/platsmp.c
-@@ -37,6 +37,19 @@ extern void s5pv310_secondary_startup(void);
- 
- volatile int __cpuinitdata pen_release = -1;
- 
-+/*
-+ * Write pen_release in a way that is guaranteed to be visible to all
-+ * observers, irrespective of whether they're taking part in coherency
-+ * or not.  This is necessary for the hotplug code to work reliably.
-+ */
-+static void write_pen_release(int val)
-+{
-+	pen_release = val;
-+	smp_wmb();
-+	__cpuc_flush_dcache_area((void *)&pen_release, sizeof(pen_release));
-+	outer_clean_range(__pa(&pen_release), __pa(&pen_release + 1));
-+}
-+
- static void __iomem *scu_base_addr(void)
- {
- 	return (void __iomem *)(S5P_VA_SCU);
-@@ -57,8 +70,7 @@ void __cpuinit platform_secondary_init(unsigned int cpu)
- 	 * let the primary processor know we're out of the
- 	 * pen, then head off into the C entry point
- 	 */
--	pen_release = -1;
--	smp_wmb();
-+	write_pen_release(-1);
- 
- 	/*
- 	 * Synchronise with the boot thread.
-@@ -85,9 +97,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
- 	 * Note that "pen_release" is the hardware CPU ID, whereas
- 	 * "cpu" is Linux's internal ID.
- 	 */
--	pen_release = cpu;
--	__cpuc_flush_dcache_area((void *)&pen_release, sizeof(pen_release));
--	outer_clean_range(__pa(&pen_release), __pa(&pen_release + 1));
-+	write_pen_release(cpu);
- 
- 	/*
- 	 * Send the secondary CPU a soft interrupt, thereby causing
-diff --git a/arch/arm/mach-ux500/platsmp.c b/arch/arm/mach-ux500/platsmp.c
-index ddedbc8..f71175a 100644
---- a/arch/arm/mach-ux500/platsmp.c
-+++ b/arch/arm/mach-ux500/platsmp.c
-@@ -27,6 +27,19 @@
-  */
- volatile int __cpuinitdata pen_release = -1;
- 
-+/*
-+ * Write pen_release in a way that is guaranteed to be visible to all
-+ * observers, irrespective of whether they're taking part in coherency
-+ * or not.  This is necessary for the hotplug code to work reliably.
-+ */
-+static void write_pen_release(int val)
-+{
-+	pen_release = val;
-+	smp_wmb();
-+	__cpuc_flush_dcache_area((void *)&pen_release, sizeof(pen_release));
-+	outer_clean_range(__pa(&pen_release), __pa(&pen_release + 1));
-+}
-+
- static DEFINE_SPINLOCK(boot_lock);
- 
- void __cpuinit platform_secondary_init(unsigned int cpu)
-@@ -42,7 +55,7 @@ void __cpuinit platform_secondary_init(unsigned int cpu)
- 	 * let the primary processor know we're out of the
- 	 * pen, then head off into the C entry point
- 	 */
--	pen_release = -1;
-+	write_pen_release(-1);
- 
- 	/*
- 	 * Synchronise with the boot thread.
-@@ -66,9 +79,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
- 	 * the holding pen - release it, then wait for it to flag
- 	 * that it has been released by resetting pen_release.
- 	 */
--	pen_release = cpu;
--	__cpuc_flush_dcache_area((void *)&pen_release, sizeof(pen_release));
--	outer_clean_range(__pa(&pen_release), __pa(&pen_release) + 1);
-+	write_pen_release(cpu);
- 
- 	smp_cross_call(cpumask_of(cpu), 1);
- 
-@@ -89,9 +100,6 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
- 
- static void __init wakeup_secondary(void)
- {
--	/* nobody is to be released from the pen yet */
--	pen_release = -1;
--
- 	/*
- 	 * write the address of secondary startup into the backup ram register
- 	 * at offset 0x1FF4, then write the magic number 0xA1FEED01 to the
-diff --git a/arch/arm/mach-vexpress/platsmp.c b/arch/arm/mach-vexpress/platsmp.c
-index d7e0cb9..8ce9fef 100644
---- a/arch/arm/mach-vexpress/platsmp.c
-+++ b/arch/arm/mach-vexpress/platsmp.c
-@@ -34,6 +34,19 @@ extern void vexpress_secondary_startup(void);
-  */
- volatile int __cpuinitdata pen_release = -1;
- 
-+/*
-+ * Write pen_release in a way that is guaranteed to be visible to all
-+ * observers, irrespective of whether they're taking part in coherency
-+ * or not.  This is necessary for the hotplug code to work reliably.
-+ */
-+static void write_pen_release(int val)
-+{
-+	pen_release = val;
-+	smp_wmb();
-+	__cpuc_flush_dcache_area((void *)&pen_release, sizeof(pen_release));
-+	outer_clean_range(__pa(&pen_release), __pa(&pen_release + 1));
-+}
-+
- static void __iomem *scu_base_addr(void)
- {
- 	return MMIO_P2V(A9_MPCORE_SCU);
-@@ -54,8 +67,7 @@ void __cpuinit platform_secondary_init(unsigned int cpu)
- 	 * let the primary processor know we're out of the
- 	 * pen, then head off into the C entry point
- 	 */
--	pen_release = -1;
--	smp_wmb();
-+	write_pen_release(-1);
- 
- 	/*
- 	 * Synchronise with the boot thread.
-@@ -80,9 +92,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
- 	 * since we haven't sent them a soft interrupt, they shouldn't
- 	 * be there.
- 	 */
--	pen_release = cpu;
--	__cpuc_flush_dcache_area((void *)&pen_release, sizeof(pen_release));
--	outer_clean_range(__pa(&pen_release), __pa(&pen_release + 1));
-+	write_pen_release(cpu);
- 
- 	/*
- 	 * Send the secondary CPU a soft interrupt, thereby causing
--- 
-1.6.2.5
+Tested-by: Mikael Pettersson <mikpe@it.uu.se> (IXP4xx only)
