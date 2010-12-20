@@ -1,32 +1,66 @@
-From: Paul Mundt <lethal@linux-sh.org>
-Subject: Re: [PATCH] s3c-fb: add support for runtime pm
-Date: Tue, 21 Dec 2010 00:58:47 +0900
-Message-ID: <20101220155847.GB26766@linux-sh.org>
-References: <1292571946-13595-1-git-send-email-jg1.han@samsung.com>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH] ARM: Fix subtle race in CPU pen_release hotplug code
+Date: Mon, 20 Dec 2010 16:39:07 +0000
+Message-ID: <AANLkTi=vp_jWMn98+cDs=+r9D7Don9iz+NvuOB6iCv42@mail.gmail.com>
+References: <E1PTuaP-0000Fl-EF@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 124x34x33x190.ap124.ftth.ucom.ne.jp ([124.34.33.190]:57729 "EHLO
-	master.linux-sh.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758034Ab0LTQAS (ORCPT
+Received: from mail-iw0-f174.google.com ([209.85.214.174]:53047 "EHLO
+	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932292Ab0LTQjI convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Dec 2010 11:00:18 -0500
-Content-Disposition: inline
-In-Reply-To: <1292571946-13595-1-git-send-email-jg1.han@samsung.com>
+	Mon, 20 Dec 2010 11:39:08 -0500
+Received: by iwn9 with SMTP id 9so3300149iwn.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Dec 2010 08:39:07 -0800 (PST)
+In-Reply-To: <E1PTuaP-0000Fl-EF@rmk-PC.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Ilho Lee <ilho215.lee@samsung.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>
 
-On Fri, Dec 17, 2010 at 04:45:46PM +0900, Jingoo Han wrote:
-> This patch adds support for runtime pm using the functions.
->  - pm_runtime_get_sync()
->  - pm_runtime_put_sync()
-> 
-> pm_runtime_get_sync() and pm_runtime_put_sync() are called when
-> open or release function of framebufer driver is called to inform
-> the system if hardware is idle or not.
-> 
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+On 18 December 2010 11:04, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> There is a subtle race in the CPU hotplug code, where a CPU which has
+> been offlined can online itself before being requested, which results
+> in things going astray on the next online/offline cycle.
+[...]
+> --- a/arch/arm/mach-realview/platsmp.c
+> +++ b/arch/arm/mach-realview/platsmp.c
+> @@ -36,6 +36,19 @@ extern void realview_secondary_startup(void);
+> =C2=A0*/
+> =C2=A0volatile int __cpuinitdata pen_release =3D -1;
+>
+> +/*
+> + * Write pen_release in a way that is guaranteed to be visible to al=
+l
+> + * observers, irrespective of whether they're taking part in coheren=
+cy
+> + * or not. =C2=A0This is necessary for the hotplug code to work reli=
+ably.
+> + */
+> +static void write_pen_release(int val)
+> +{
+> + =C2=A0 =C2=A0 =C2=A0 pen_release =3D val;
+> + =C2=A0 =C2=A0 =C2=A0 smp_wmb();
+> + =C2=A0 =C2=A0 =C2=A0 __cpuc_flush_dcache_area((void *)&pen_release,=
+ sizeof(pen_release));
+> + =C2=A0 =C2=A0 =C2=A0 outer_clean_range(__pa(&pen_release), __pa(&pe=
+n_release + 1));
+> +}
 
-Barring any objections, I'll apply it, thanks.
+Just a minor thing - I don't think we need any barrier here. According
+to the ARM ARM B2.2.7:
+
+"Any data cache or unified cache maintenance operation by MVA must be
+executed in program order
+relative to any explicit load or store on the same processor to an
+address covered by the MVA of the
+cache operation."
+
+We also have a corresponding smp_rmb() in boot_secondary(), I don't
+think it has any use either.
+
+--=20
+Catalin
