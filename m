@@ -1,43 +1,32 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH v4 2/2] sdhci-s3c: Add support no internal clock divider
- in host controller
-Date: Mon, 20 Dec 2010 16:13:40 +0900
-Message-ID: <AANLkTi=RTT=YjJ4t+BtFikOE_M8TWMNjCHw6z=S3ObcK@mail.gmail.com>
-References: <1286776076-24970-1-git-send-email-kgene.kim@samsung.com>
-	<AANLkTinJE0GOFbVEWNdTxwpv2Dwi6im0ipkPsf8jEhU1@mail.gmail.com>
-	<20101220070601.GA22742@void.printf.net>
+From: Paul Mundt <lethal@linux-sh.org>
+Subject: Re: [PATCH] s3c-fb: add support for runtime pm
+Date: Tue, 21 Dec 2010 00:58:47 +0900
+Message-ID: <20101220155847.GB26766@linux-sh.org>
+References: <1292571946-13595-1-git-send-email-jg1.han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:39356 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753641Ab0LTHNl convert rfc822-to-8bit (ORCPT
+Received: from 124x34x33x190.ap124.ftth.ucom.ne.jp ([124.34.33.190]:57729 "EHLO
+	master.linux-sh.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758034Ab0LTQAS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Dec 2010 02:13:41 -0500
-In-Reply-To: <20101220070601.GA22742@void.printf.net>
+	Mon, 20 Dec 2010 11:00:18 -0500
+Content-Disposition: inline
+In-Reply-To: <1292571946-13595-1-git-send-email-jg1.han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, ben-linux@fluff.org, akpm@linux-foundation.org, Jeongbae Seo <jeongbae.seo@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Ilho Lee <ilho215.lee@samsung.com>
 
-On Mon, Dec 20, 2010 at 4:06 PM, Chris Ball <cjb@laptop.org> wrote:
-> Hi Kyungmin, Ben,
->
-> On Mon, Dec 20, 2010 at 11:08:00AM +0900, Kyungmin Park wrote:
->> Hi Chris,
->>
->> Unfortunately it's not merged your tree.
->> It's required for s5pc210 board. can you merge it for 37-rc6 or late=
-r?
->
-> I'm not comfortable slipping this into .37 (-rc6 has already been
-> released) without an ACK from Ben, but I will accept it into mmc-next
-> for the .38 merge window, and Ben can yell sometime before the merge
-> if he doesn't agree. =A0Does that work okay for you?
+On Fri, Dec 17, 2010 at 04:45:46PM +0900, Jingoo Han wrote:
+> This patch adds support for runtime pm using the functions.
+>  - pm_runtime_get_sync()
+>  - pm_runtime_put_sync()
+> 
+> pm_runtime_get_sync() and pm_runtime_put_sync() are called when
+> open or release function of framebufer driver is called to inform
+> the system if hardware is idle or not.
+> 
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 
-It's actually bug fix for s5pc210. If there are another rc please
-include it if possible. But it's okay to merge .38.
-
-Thank you,
-Kyungmin Park
+Barring any objections, I'll apply it, thanks.
