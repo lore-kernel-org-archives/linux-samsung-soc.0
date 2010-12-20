@@ -1,51 +1,200 @@
-From: Mikael Pettersson <mikpe@it.uu.se>
-Subject: Re: [PATCH 0/40] Complete set of clocksource/sched_clock patches
-Date: Sun, 19 Dec 2010 17:15:09 +0100
-Message-ID: <19726.12173.600912.202134@pilspetsen.it.uu.se>
-References: <20101217113223.GC9937@n2100.arm.linux.org.uk>
-	<19725.57447.256528.883703@pilspetsen.it.uu.se>
-	<20101219105209.GN9937@n2100.arm.linux.org.uk>
-	<19725.64412.395353.947407@pilspetsen.it.uu.se>
-	<20101219125508.GG3047@n2100.arm.linux.org.uk>
-	<19726.4420.289089.490319@pilspetsen.it.uu.se>
-	<20101219144950.GH3047@n2100.arm.linux.org.uk>
+From: Kyungmin Park <kyungmin.park@samsung.com>
+Subject: Re: [PATCH v4 2/2] sdhci-s3c: Add support no internal clock divider
+ in host controller
+Date: Mon, 20 Dec 2010 11:08:00 +0900
+Message-ID: <AANLkTinJE0GOFbVEWNdTxwpv2Dwi6im0ipkPsf8jEhU1@mail.gmail.com>
+References: <1286776076-24970-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20101219144950.GH3047@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Viresh Kumar <viresh.kumar@st.com>, Mikael Pettersson <mikpe@it.uu.se>, Kevin Hilman <khilman@deeprootsystems.com>, Lennert Buytenhek <kernel@wantstofly.org>, Kukjin Kim <kgene.kim@samsung.com>, "Hans J. Koch" <hjk@linutronix.de>, Scott Branden <sbranden@broadcom.com>, Tony Lindgren <tony@atomide.com>, David Brown <davidb@codeaurora.org>, Alessandro Rubini <rubini@unipv.it>, Sascha Hauer <kernel@pengutronix.de>, Wan ZongShun <mcuos.com@gmail.com>, linux-arm-msm@vger.kernel.org, STEricsson <STEricsson_nomadik_linux@list.st.com>, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Daniel Walker <dwalker@codeaurora.org>, Eric Miao <eric.y.miao@gmail.com>, Linus Walleij <linus.walleij@stericsson.com>, Erik Gilling <konkers@android.com>, Nicolas Pitre <nico@fluxnic.net>, Bryan Huntsman <bryanh@code>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:36661 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753639Ab0LTCID convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 19 Dec 2010 21:08:03 -0500
+In-Reply-To: <1286776076-24970-1-git-send-email-kgene.kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chris Ball <cjb@laptop.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, ben-linux@fluff.org, akpm@linux-foundation.org, Jeongbae Seo <jeongbae.seo@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
 
-Russell King - ARM Linux writes:
- > >  >  Does trr need to be written in
- > >  > ->set_mode (if so that's another bug in this code)?
- > > 
- > > trr{0,1} need not and should not be changed after iop_time_init().
- > 
- > It sounds like trr0 needs to be written in ->set_mode's
- > CLOCK_EVT_MODE_PERIODIC path then, because with my patch, we never set
- > this register.
+Hi Chris,
 
-Hmm, yes, your patch does cause that. I think it's better to keep the
-write_trr0() in iop_init_time(), but move it ahead of the
-clockevents_register_device() call; this avoids a needless reinitialization
-of trr0 in ->set_mode's CLOCK_EVT_MODE_PERIODIC case. Writing to trr0 is safe,
-it's only the early write to tmr0 that's dangerous.
+Unfortunately it's not merged your tree.
+It's required for s5pc210 board. can you merge it for 37-rc6 or later?
 
-My kernel survived that bug because I have CONFIG_NO_HZ=y so the clockevents
-timer is always(?) reprogrammed into oneshot-mode, which doesn't use trr0.
+Thank you,
+Kyungmin Park
 
- >  Or will trr0 be updated when we write tcr0 ?
- 
-No, only explicit write_trr0() calls can update trr0.
+On Mon, Oct 11, 2010 at 2:47 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> From: Jeongbae Seo <jeongbae.seo@samsung.com>
+>
+> This patch adds to support no internal clock divider in SDHCI.
+> The external clock divider can be used to make a proper clock
+> because SDHCI doesn't support internal clock divider by itself.
+>
+> If external clock divider type is selected, some functions related
+> with clock control will be overridened by other functions.
+>
+> The current clock control index is added to let you know which
+> clock bus is used for SDHCI when using overriding functions.
+>
+> The checking functions is added into sdhci_s3c_consider_clock,
+> because clock divider step is different from that of host controller.
+>
+> Signed-off-by: Jeongbae Seo <jeongbae.seo@samsung.com>
+> Cc: Jaehoon Chung <jh80.chung@samsung.com>
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+> Changes since v3:
+> - Modified comparision condition as per Kyungmin Park's suggestion
+>
+> Changes since v2:
+> - Changed clock control method to overriding from using quirk
+> - This patch is referred from that of Jaehoon Chung's support non-sta=
+ndard clock setting
+>
+> Changes since v1:
+> - Separated to each topic
+>
+> NOTE :
+> - This patch depends on following.
+> =A0[PATCH 4/5] ARM: SAMSUNG : Add clock types into platform data
+>
+> =A0drivers/mmc/host/sdhci-s3c.c | =A0 62 ++++++++++++++++++++++++++++=
+++++++++++++++
+> =A01 files changed, 62 insertions(+), 0 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3=
+c.c
+> index a7710f5..e7208f6 100644
+> --- a/drivers/mmc/host/sdhci-s3c.c
+> +++ b/drivers/mmc/host/sdhci-s3c.c
+> @@ -130,6 +130,15 @@ static unsigned int sdhci_s3c_consider_clock(str=
+uct sdhci_s3c *ourhost,
+> =A0 =A0 =A0 =A0if (!clksrc)
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return UINT_MAX;
+>
+> + =A0 =A0 =A0 /*
+> + =A0 =A0 =A0 =A0* Clock divider's step is different as 1 from that o=
+f host controller
+> + =A0 =A0 =A0 =A0* when 'clk_type' is S3C_SDHCI_CLK_DIV_EXTERNAL.
+> + =A0 =A0 =A0 =A0*/
+> + =A0 =A0 =A0 if (ourhost->pdata->clk_type =3D=3D S3C_SDHCI_CLK_DIV_E=
+XTERNAL) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 rate =3D clk_round_rate(clksrc, wanted)=
+;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return wanted - rate;
+> + =A0 =A0 =A0 }
+> +
+> =A0 =A0 =A0 =A0rate =3D clk_get_rate(clksrc);
+>
+> =A0 =A0 =A0 =A0for (div =3D 1; div < 256; div *=3D 2) {
+> @@ -232,6 +241,42 @@ static unsigned int sdhci_s3c_get_min_clock(stru=
+ct sdhci_host *host)
+> =A0 =A0 =A0 =A0return min;
+> =A0}
+>
+> +/* sdhci_cmu_get_max_clk - callback to get maximum clock frequency.*=
+/
+> +static unsigned int sdhci_cmu_get_max_clock(struct sdhci_host *host)
+> +{
+> + =A0 =A0 =A0 struct sdhci_s3c *ourhost =3D to_s3c(host);
+> +
+> + =A0 =A0 =A0 return clk_round_rate(ourhost->clk_bus[ourhost->cur_clk=
+], UINT_MAX);
+> +}
+> +
+> +/* sdhci_cmu_get_min_clock - callback to get minimal supported clock=
+ value. */
+> +static unsigned int sdhci_cmu_get_min_clock(struct sdhci_host *host)
+> +{
+> + =A0 =A0 =A0 struct sdhci_s3c *ourhost =3D to_s3c(host);
+> +
+> + =A0 =A0 =A0 /*
+> + =A0 =A0 =A0 =A0* initial clock can be in the frequency range of
+> + =A0 =A0 =A0 =A0* 100KHz-400KHz, so we set it as max value.
+> + =A0 =A0 =A0 =A0*/
+> + =A0 =A0 =A0 return clk_round_rate(ourhost->clk_bus[ourhost->cur_clk=
+], 400000);
+> +}
+> +
+> +/* sdhci_cmu_set_clock - callback on clock change.*/
+> +static void sdhci_cmu_set_clock(struct sdhci_host *host, unsigned in=
+t clock)
+> +{
+> + =A0 =A0 =A0 struct sdhci_s3c *ourhost =3D to_s3c(host);
+> +
+> + =A0 =A0 =A0 /* don't bother if the clock is going off */
+> + =A0 =A0 =A0 if (clock =3D=3D 0)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return;
+> +
+> + =A0 =A0 =A0 sdhci_s3c_set_clock(host, clock);
+> +
+> + =A0 =A0 =A0 clk_set_rate(ourhost->clk_bus[ourhost->cur_clk], clock)=
+;
+> +
+> + =A0 =A0 =A0 host->clock =3D clock;
+> +}
+> +
+> =A0static struct sdhci_ops sdhci_s3c_ops =3D {
+> =A0 =A0 =A0 =A0.get_max_clock =A0 =A0 =A0 =A0 =A0=3D sdhci_s3c_get_ma=
+x_clk,
+> =A0 =A0 =A0 =A0.set_clock =A0 =A0 =A0 =A0 =A0 =A0 =A0=3D sdhci_s3c_se=
+t_clock,
+> @@ -361,6 +406,13 @@ static int __devinit sdhci_s3c_probe(struct plat=
+form_device *pdev)
+>
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0clks++;
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0sc->clk_bus[ptr] =3D clk;
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 /*
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* save current clock index to know w=
+hich clock bus
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* is used later in overriding functi=
+ons.
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0*/
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 sc->cur_clk =3D ptr;
+> +
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0clk_enable(clk);
+>
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0dev_info(dev, "clock source %d: %s (%l=
+d Hz)\n",
+> @@ -427,6 +479,16 @@ static int __devinit sdhci_s3c_probe(struct plat=
+form_device *pdev)
+> =A0 =A0 =A0 =A0/* HSMMC on Samsung SoCs uses SDCLK as timeout clock *=
+/
+> =A0 =A0 =A0 =A0host->quirks |=3D SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK;
+>
+> + =A0 =A0 =A0 /*
+> + =A0 =A0 =A0 =A0* If controller does not have internal clock divider=
+,
+> + =A0 =A0 =A0 =A0* we can use overriding functions instead of default=
+=2E
+> + =A0 =A0 =A0 =A0*/
+> + =A0 =A0 =A0 if (pdata->clk_type) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 sdhci_s3c_ops.set_clock =3D sdhci_cmu_s=
+et_clock;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 sdhci_s3c_ops.get_min_clock =3D sdhci_c=
+mu_get_min_clock;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 sdhci_s3c_ops.get_max_clock =3D sdhci_c=
+mu_get_max_clock;
+> + =A0 =A0 =A0 }
+> +
+> =A0 =A0 =A0 =A0/* It supports additional host capabilities if needed =
+*/
+> =A0 =A0 =A0 =A0if (pdata->host_caps)
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0host->mmc->caps |=3D pdata->host_caps;
+> --
+> 1.6.2.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
