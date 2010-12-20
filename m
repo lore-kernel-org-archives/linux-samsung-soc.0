@@ -1,38 +1,92 @@
-From: Eric Miao <eric.y.miao@gmail.com>
-Subject: Re: [PATCH 0/40] Complete set of clocksource/sched_clock patches
-Date: Mon, 20 Dec 2010 11:32:21 +0800
-Message-ID: <AANLkTimarRAf-_ykQNLgzXd3TtUHhSw+gZ6cZ5pW=Y-9@mail.gmail.com>
-References: <20101217113223.GC9937@n2100.arm.linux.org.uk>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 1/4] ARM: S5P64X0: Changed the name for mmc special clock
+ on s5p6440
+Date: Mon, 20 Dec 2010 14:52:32 +0900
+Message-ID: <010501cba00a$1b2185d0$51649170$%kim@samsung.com>
+References: <1292219185-3911-1-git-send-email-sbkim73@samsung.com>
+ <1292219185-3911-2-git-send-email-sbkim73@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:55669 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752374Ab0LTDcm convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:64280 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752882Ab0LTFwj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 19 Dec 2010 22:32:42 -0500
-In-Reply-To: <20101217113223.GC9937@n2100.arm.linux.org.uk>
+	Mon, 20 Dec 2010 00:52:39 -0500
+Received: from epmmp2 (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LDP00LKZPNP5G30@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 20 Dec 2010 14:52:37 +0900 (KST)
+Received: from DOKGENEKIM02 ([12.23.103.104])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LDP007O5PNPD8@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 20 Dec 2010 14:52:37 +0900 (KST)
+In-reply-to: <1292219185-3911-2-git-send-email-sbkim73@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Alessandro Rubini <rubini@unipv.it>, Bryan Huntsman <bryanh@codeaurora.org>, Colin Cross <ccross@android.com>, Daniel Walker <dwalker@codeaurora.org>, David Brown <davidb@codeaurora.org>, Erik Gilling <konkers@android.com>, "Hans J. Koch" <hjk@linutronix.de>, Imre Kaloz <kaloz@openwrt.org>, Kevin Hilman <khilman@deeprootsystems.com>, Krzysztof Halasa <khc@pm.waw.pl>, Kukjin Kim <kgene.kim@samsung.com>, Lennert Buytenhek <kernel@wantstofly.org>, Jiandong Zheng <jdzheng@broadcom.com>, Linus Walleij <linus.walleij@stericsson.com>, linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Nicolas Pitre <nico@fluxnic.net>, Olof Johansson <olof@lixom.net>, Sascha Hauer <kernel@pengutronix.de>, Scott Branden <sbranden@broadcom.com>, STEricsson <STEricsson_nomadik_linux@list.st.com>, Tony Lindgren <tony@atom>
+To: 'Sangbeom Kim' <sbkim73@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, 'Abhilash Kesavan' <a.kesavan@samsung.com>
 
-On Fri, Dec 17, 2010 at 7:32 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> Here is the entire set of clocksource and sched_clock patches which
-> have been previously posted. =C2=A0There's a couple of small tweaks i=
-n a
-> few of the patches (such as adding notrace to OMAP clocksource read
-> functions), and this also shows the proper ordering of these patches.
->
-> Still looking for acks or tested-by's for these patches.
->
+Sangbeom Kim wrote:
+> 
+> From: Abhilash Kesavan <a.kesavan@samsung.com>
+> 
+> Change the name of mmc spcial clock from mmc_bus to sclk_mmc to be
+> in line with the naming across the s5p series
+> 
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+> ---
+>  arch/arm/mach-s5p64x0/clock-s5p6440.c |    6 +++---
+>  1 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/mach-s5p64x0/clock-s5p6440.c b/arch/arm/mach-
+> s5p64x0/clock-s5p6440.c
+> index e4883dc..d27ff1a 100644
+> --- a/arch/arm/mach-s5p64x0/clock-s5p6440.c
+> +++ b/arch/arm/mach-s5p64x0/clock-s5p6440.c
+> @@ -419,7 +419,7 @@ static struct clksrc_sources clkset_audio = {
+>  static struct clksrc_clk clksrcs[] = {
+>  	{
+>  		.clk	= {
+> -			.name		= "mmc_bus",
+> +			.name		= "sclk_mmc",
+>  			.id		= 0,
+>  			.ctrlbit	= (1 << 24),
+>  			.enable		= s5p64x0_sclk_ctrl,
+> @@ -429,7 +429,7 @@ static struct clksrc_clk clksrcs[] = {
+>  		.reg_div = { .reg = S5P64X0_CLK_DIV1, .shift = 0, .size = 4
+},
+>  	}, {
+>  		.clk	= {
+> -			.name		= "mmc_bus",
+> +			.name		= "sclk_mmc",
+>  			.id		= 1,
+>  			.ctrlbit	= (1 << 25),
+>  			.enable		= s5p64x0_sclk_ctrl,
+> @@ -439,7 +439,7 @@ static struct clksrc_clk clksrcs[] = {
+>  		.reg_div = { .reg = S5P64X0_CLK_DIV1, .shift = 4, .size = 4
+},
+>  	}, {
+>  		.clk	= {
+> -			.name		= "mmc_bus",
+> +			.name		= "sclk_mmc",
+>  			.id		= 2,
+>  			.ctrlbit	= (1 << 26),
+>  			.enable		= s5p64x0_sclk_ctrl,
+> --
 
-Hi Russell,
+Yeah, you're right.
 
-Sorry for late feedback. Tested the branch 'clksrc' on Littleton/PXA3xx=
-,
-seems to be good.
+Looks ok to me...will apply.
 
-Tested-by: Eric Miao <eric.y.miao@gmail.com>
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
