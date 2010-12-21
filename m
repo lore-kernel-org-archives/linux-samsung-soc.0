@@ -1,7 +1,7 @@
 From: Kamil Debski <k.debski@samsung.com>
-Subject: [RFC/PATCH v5 1/4] Changes in include/linux/videodev2.h for MFC 5.1
-Date: Tue, 21 Dec 2010 10:55:15 +0100
-Message-ID: <1292925318-2911-2-git-send-email-k.debski@samsung.com>
+Subject: [RFC/PATCH v5 2/4] MFC: Add MFC 5.1 driver to plat-s5p
+Date: Tue, 21 Dec 2010 10:55:16 +0100
+Message-ID: <1292925318-2911-3-git-send-email-k.debski@samsung.com>
 References: <1292925318-2911-1-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -13,101 +13,149 @@ To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, pawel@osciak.com, kyungmin.park@samsung.com, k.debski@samsung.com, jaeryul.oh@samsung.com, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds fourcc values for compressed video stream formats and
-V4L2_CTRL_CLASS_CODEC. Also adds controls used by MFC 5.1 driver.
+This patch adds platform support for Multi Format Codec 5.1.
+MFC 5.1 is capable of handling a range of video codecs and this driver
+provides V4L2 interface for video decoding.
 
 Signed-off-by: Kamil Debski <k.debski@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- include/linux/videodev2.h |   48 +++++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 48 insertions(+), 0 deletions(-)
+ arch/arm/mach-s5pv210/clock.c                   |    6 +++
+ arch/arm/mach-s5pv210/include/mach/map.h        |    3 ++
+ arch/arm/plat-s5p/Kconfig                       |    5 +++
+ arch/arm/plat-s5p/Makefile                      |    2 +-
+ arch/arm/plat-s5p/dev-mfc.c                     |   42 +++++++++++++++++++++++
+ arch/arm/plat-samsung/include/plat/devs.h       |    2 +
+ 9 files changed, 108 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm/plat-s5p/dev-mfc.c
 
-diff --git a/include/linux/videodev2.h b/include/linux/videodev2.h
-index d30c98d..c89f019 100644
---- a/include/linux/videodev2.h
-+++ b/include/linux/videodev2.h
-@@ -339,6 +339,14 @@ struct v4l2_pix_format {
- #define V4L2_PIX_FMT_NV16    v4l2_fourcc('N', 'V', '1', '6') /* 16  Y/CbCr 4:2:2  */
- #define V4L2_PIX_FMT_NV61    v4l2_fourcc('N', 'V', '6', '1') /* 16  Y/CrCb 4:2:2  */
+diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
+index 5014b62..f7d742d 100644
+--- a/arch/arm/mach-s5pv210/clock.c
++++ b/arch/arm/mach-s5pv210/clock.c
+@@ -364,6 +364,12 @@ static struct clk init_clocks_disable[] = {
+ 		.enable		= s5pv210_clk_ip0_ctrl,
+ 		.ctrlbit	= (1 << 26),
+ 	}, {
++		.name		= "mfc",
++		.id		= -1,
++		.parent		= &clk_pclk_psys.clk,
++		.enable		= s5pv210_clk_ip0_ctrl,
++		.ctrlbit	= (1 << 16),
++	}, {
+ 		.name		= "nfcon",
+ 		.id		= -1,
+ 		.parent		= &clk_hclk_psys.clk,
+diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
+index 0982443..8518df7 100644
+--- a/arch/arm/mach-s5pv210/include/mach/map.h
++++ b/arch/arm/mach-s5pv210/include/mach/map.h
+@@ -73,6 +73,8 @@
+ #define S5PV210_PA_FIMC1	(0xFB300000)
+ #define S5PV210_PA_FIMC2	(0xFB400000)
  
-+/* two non contiguous planes -- one Y, one Cr + Cb interleaved  */
-+#define V4L2_PIX_FMT_NV12M   v4l2_fourcc('N', 'M', '1', '2') /* 12  Y/CbCr 4:2:0  */
-+/* 12  Y/CbCr 4:2:0 64x32 macroblocks */
-+#define V4L2_PIX_FMT_NV12MT  v4l2_fourcc('T', 'M', '1', '2')
++#define S5PV210_PA_MFC		(0xF1700000)
 +
-+/* three non contiguous planes -- Y, Cb, Cr */
-+#define V4L2_PIX_FMT_YUV420M v4l2_fourcc('Y', 'M', '1', '2') /* 12  YUV420 planar */
-+
- /* Bayer formats - see http://www.siliconimaging.com/RGB%20Bayer.htm */
- #define V4L2_PIX_FMT_SBGGR8  v4l2_fourcc('B', 'A', '8', '1') /*  8  BGBG.. GRGR.. */
- #define V4L2_PIX_FMT_SGBRG8  v4l2_fourcc('G', 'B', 'R', 'G') /*  8  GBGB.. RGRG.. */
-@@ -362,6 +370,21 @@ struct v4l2_pix_format {
- #define V4L2_PIX_FMT_DV       v4l2_fourcc('d', 'v', 's', 'd') /* 1394          */
- #define V4L2_PIX_FMT_MPEG     v4l2_fourcc('M', 'P', 'E', 'G') /* MPEG-1/2/4    */
+ #define S5PV210_PA_HSMMC(x)	(0xEB000000 + ((x) * 0x100000))
  
-+
-+#define V4L2_PIX_FMT_H264     v4l2_fourcc('H', '2', '6', '4') /* H264    */
-+#define V4L2_PIX_FMT_H263     v4l2_fourcc('H', '2', '6', '3') /* H263    */
-+#define V4L2_PIX_FMT_MPEG12   v4l2_fourcc('M', 'P', '1', '2') /* MPEG-1/2  */
-+#define V4L2_PIX_FMT_MPEG4    v4l2_fourcc('M', 'P', 'G', '4') /* MPEG-4  */
-+#define V4L2_PIX_FMT_DIVX     v4l2_fourcc('D', 'I', 'V', 'X') /* DivX  */
-+#define V4L2_PIX_FMT_DIVX3    v4l2_fourcc('D', 'I', 'V', '3') /* DivX 3.11  */
-+#define V4L2_PIX_FMT_DIVX4    v4l2_fourcc('D', 'I', 'V', '4') /* DivX 4.12  */
-+#define V4L2_PIX_FMT_DIVX500    v4l2_fourcc('D', 'X', '5', '2') /* DivX 5.00 - 5.02  */
-+#define V4L2_PIX_FMT_DIVX503    v4l2_fourcc('D', 'X', '5', '3') /* DivX 5.03 - x  */
-+#define V4L2_PIX_FMT_XVID     v4l2_fourcc('X', 'V', 'I', 'D') /* Xvid */
-+#define V4L2_PIX_FMT_VC1      v4l2_fourcc('V', 'C', '1', 'A') /* VC-1 */
-+#define V4L2_PIX_FMT_VC1_RCV      v4l2_fourcc('V', 'C', '1', 'R') /* VC-1 RCV */
-+
-+
- /*  Vendor-specific formats   */
- #define V4L2_PIX_FMT_CPIA1    v4l2_fourcc('C', 'P', 'I', 'A') /* cpia1 YUV */
- #define V4L2_PIX_FMT_WNVA     v4l2_fourcc('W', 'N', 'V', 'A') /* Winnov hw compress */
-@@ -972,6 +995,7 @@ struct v4l2_output {
- #define V4L2_OUTPUT_TYPE_ANALOG			2
- #define V4L2_OUTPUT_TYPE_ANALOGVGAOVERLAY	3
+ #define S5PV210_PA_HSOTG	(0xEC000000)
+@@ -123,6 +125,7 @@
+ #define S5P_PA_FIMC0		S5PV210_PA_FIMC0
+ #define S5P_PA_FIMC1		S5PV210_PA_FIMC1
+ #define S5P_PA_FIMC2		S5PV210_PA_FIMC2
++#define S5P_PA_MFC		S5PV210_PA_MFC
  
-+
- /* capabilities flags */
- #define V4L2_OUT_CAP_PRESETS		0x00000001 /* Supports S_DV_PRESET */
- #define V4L2_OUT_CAP_CUSTOM_TIMINGS	0x00000002 /* Supports S_DV_TIMINGS */
-@@ -1009,6 +1033,7 @@ struct v4l2_ext_controls {
- #define V4L2_CTRL_CLASS_MPEG 0x00990000	/* MPEG-compression controls */
- #define V4L2_CTRL_CLASS_CAMERA 0x009a0000	/* Camera class controls */
- #define V4L2_CTRL_CLASS_FM_TX 0x009b0000	/* FM Modulator control class */
-+#define V4L2_CTRL_CLASS_CODEC 0x009c0000	/* Codec control class */
+ #define SAMSUNG_PA_ADC		S5PV210_PA_ADC
+ #define SAMSUNG_PA_CFCON	S5PV210_PA_CFCON
+diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
+index 9755df9..c7a048e 100644
+--- a/arch/arm/plat-s5p/Kconfig
++++ b/arch/arm/plat-s5p/Kconfig
+@@ -5,6 +5,11 @@
+ #
+ # Licensed under GPLv2
  
- #define V4L2_CTRL_ID_MASK      	  (0x0fffffff)
- #define V4L2_CTRL_ID2CLASS(id)    ((id) & 0x0fff0000UL)
-@@ -1342,6 +1367,29 @@ enum v4l2_mpeg_cx2341x_video_median_filter_type {
- #define V4L2_CID_MPEG_CX2341X_VIDEO_CHROMA_MEDIAN_FILTER_TOP 	(V4L2_CID_MPEG_CX2341X_BASE+10)
- #define V4L2_CID_MPEG_CX2341X_STREAM_INSERT_NAV_PACKETS 	(V4L2_CID_MPEG_CX2341X_BASE+11)
++config S5P_DEV_MFC
++	bool
++	help
++	  Compile in platform device definitions for MFC 
++	  
+ config PLAT_S5P
+ 	bool
+ 	depends on (ARCH_S5P64X0 || ARCH_S5P6442 || ARCH_S5PC100 || ARCH_S5PV210 || ARCH_S5PV310)
+diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
+index df65cb7..8c1c97c 100644
+--- a/arch/arm/plat-s5p/Makefile
++++ b/arch/arm/plat-s5p/Makefile
+@@ -23,7 +23,7 @@ obj-$(CONFIG_PM)		+= pm.o
+ obj-$(CONFIG_PM)		+= irq-pm.o
  
-+/* For codecs */
+ # devices
+-
++obj-$(CONFIG_S5P_DEV_MFC)	+= dev-mfc.o
+ obj-$(CONFIG_S5P_DEV_FIMC0)	+= dev-fimc0.o
+ obj-$(CONFIG_S5P_DEV_FIMC1)	+= dev-fimc1.o
+ obj-$(CONFIG_S5P_DEV_FIMC2)	+= dev-fimc2.o
+diff --git a/arch/arm/plat-s5p/dev-mfc.c b/arch/arm/plat-s5p/dev-mfc.c
+new file mode 100644
+index 0000000..f480eac
+--- /dev/null
++++ b/arch/arm/plat-s5p/dev-mfc.c
+@@ -0,0 +1,42 @@
++/* linux/arch/arm/plat-s5p/dev-mfc.c
++ *
++ * Copyright (c) 2010 Samsung Electronics
++ *
++ * Base S5P MFC 5.1 resource and device definitions
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
 +
-+#define V4L2_CID_CODEC_BASE 			(V4L2_CTRL_CLASS_CODEC | 0x900)
-+#define V4L2_CID_CODEC_CLASS 			(V4L2_CTRL_CLASS_CODEC | 1)
 +
-+/* For both decoding and encoding */
++#include <linux/kernel.h>
++#include <linux/interrupt.h>
++#include <linux/platform_device.h>
++#include <linux/ioport.h>
 +
-+/* For encoding */
-+#define V4L2_CID_CODEC_LOOP_FILTER_H264		(V4L2_CID_CODEC_BASE + 9)
-+enum v4l2_cid_codec_loop_filter_h264 {
-+	V4L2_CID_CODEC_LOOP_FILTER_H264_ENABLE = 0,
-+	V4L2_CID_CODEC_LOOP_FILTER_H264_DISABLE = 1,
-+	V4L2_CID_CODEC_LOOP_FILTER_H264_DISABLE_AT_BOUNDARY = 2,
++#include <mach/map.h>
++#include <plat/devs.h>
++#include <plat/irqs.h>
++
++static struct resource s5p_mfc_resource[] = {
++	[0] = {
++		.start  = S5P_PA_MFC,
++		.end    = S5P_PA_MFC + SZ_64K - 1,
++		.flags  = IORESOURCE_MEM,
++	},
++	[1] = {
++		.start  = IRQ_MFC,
++		.end    = IRQ_MFC,
++		.flags  = IORESOURCE_IRQ,
++	}
 +};
 +
-+/* For decoding */
++struct platform_device s5p_device_mfc = {
++	.name          = "s5p-mfc",
++	.id            = -1,
++	.num_resources = ARRAY_SIZE(s5p_mfc_resource),
++	.resource      = s5p_mfc_resource,
++};
 +
-+#define V4L2_CID_CODEC_LOOP_FILTER_MPEG4_ENABLE	(V4L2_CID_CODEC_BASE + 110)
-+#define V4L2_CID_CODEC_DISPLAY_DELAY		(V4L2_CID_CODEC_BASE + 137)
-+#define V4L2_CID_CODEC_REQ_NUM_BUFS		(V4L2_CID_CODEC_BASE + 140)
-+#define V4L2_CID_CODEC_SLICE_INTERFACE		(V4L2_CID_CODEC_BASE + 141)
-+#define V4L2_CID_CODEC_PACKED_PB		(V4L2_CID_CODEC_BASE + 142)
++EXPORT_SYMBOL(s5p_device_mfc);
+diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
+index 628b331..67594e2 100644
+--- a/arch/arm/plat-samsung/include/plat/devs.h
++++ b/arch/arm/plat-samsung/include/plat/devs.h
+@@ -124,6 +124,8 @@ extern struct platform_device s5p_device_fimc2;
+ extern struct platform_device s5p_device_fimc3;
+ extern struct platform_device s5pv310_device_fb0;
+ 
++extern struct platform_device s5p_device_mfc;
 +
- /*  Camera class control IDs */
- #define V4L2_CID_CAMERA_CLASS_BASE 	(V4L2_CTRL_CLASS_CAMERA | 0x900)
- #define V4L2_CID_CAMERA_CLASS 		(V4L2_CTRL_CLASS_CAMERA | 1)
+ /* s3c2440 specific devices */
+ 
+ #ifdef CONFIG_CPU_S3C2440
 -- 
 1.6.3.3
