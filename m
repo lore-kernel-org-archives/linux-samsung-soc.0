@@ -1,249 +1,245 @@
-From: Jonghun Han <jonghun.han@samsung.com>
-Subject: RE: [PATCH] s3c-fb: add support for runtime pm
-Date: Tue, 21 Dec 2010 17:57:06 +0900
-Message-ID: <005d01cba0ed$0ef32460$2cd96d20$%han@samsung.com>
-References: <1292571946-13595-1-git-send-email-jg1.han@samsung.com>
- <005c01cba0e9$44957220$cdc05660$%han@samsung.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: [RFC/PATCH v5 0/4] Multi Format Codec 5.1 driver for S5PC110 SoC
+Date: Tue, 21 Dec 2010 10:55:14 +0100
+Message-ID: <1292925318-2911-1-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:55437 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932833Ab0LUJGc (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47174 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754099Ab0LUJza (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Dec 2010 04:06:32 -0500
-In-reply-to: <005c01cba0e9$44957220$cdc05660$%han@samsung.com>
-Content-language: ko
+	Tue, 21 Dec 2010 04:55:30 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jonghun Han' <jonghun.han@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>, linux-fbdev@vger.kernel.org, 'Paul Mundt' <lethal@linux-sh.org>, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, 'Ilho Lee' <ilho215.lee@samsung.com>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, pawel@osciak.com, kyungmin.park@samsung.com, k.debski@samsung.com, jaeryul.oh@samsung.com, kgene.kim@samsung.com
 
+Hello,
 
-Hi Jingoo,
+I have applied changes suggested by Kukjin Kim. Also cache handling has been
+improved.
 
-How about adding pm_runtime_* in s3c_fb_blank ?
-In FB_BLANK_POWERDOWN state no need to enable clock or power-domain.
+I would be grateful for your comments. Original cover letter ant detailed change
+log has been attached below.
 
 Best regards,
+Kamil Debski
 
-> -----Original Message-----
-> From: linux-fbdev-owner@vger.kernel.org [mailto:linux-fbdev-
-> owner@vger.kernel.org] On Behalf Of Jonghun Han
-> Sent: Tuesday, December 21, 2010 5:30 PM
-> To: 'Jingoo Han'; linux-fbdev@vger.kernel.org; 'Paul Mundt';
-linux-samsung-
-> soc@vger.kernel.org
-> Cc: ben-linux@fluff.org; 'Ilho Lee'
-> Subject: RE: [PATCH] s3c-fb: add support for runtime pm
-> 
-> Hi Jingoo,
-> 
-> Here is a quick review.
-> 
-> Best regards,
-> 
-> Jingoo Han wrote:
-> 
-> > This patch adds support for runtime pm using the functions.
-> >  - pm_runtime_get_sync()
-> >  - pm_runtime_put_sync()
-> >
-> > pm_runtime_get_sync() and pm_runtime_put_sync() are called when open
-> > or release function of framebufer driver is called to inform the
-> > system if
-> hardware is
-> > idle or not.
-> >
-> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> > ---
-> >  drivers/video/s3c-fb.c |  111
-> > ++++++++++++++++++++++++++++++++++++++++++++++--
-> >  1 files changed, 107 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c index
-> f9aca9d..83ce9a0
-> > 100644
-> > --- a/drivers/video/s3c-fb.c
-> > +++ b/drivers/video/s3c-fb.c
-> 
-> <snip>
-> 
-> > +static int s3c_fb_release(struct fb_info *info, int user) {
-> > +	struct s3c_fb_win *win = info->par;
-> > +	struct s3c_fb *sfb = win->parent;
-> > +
-> > +	pm_runtime_put_sync(sfb->dev);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static struct fb_ops s3c_fb_ops = {
-> >  	.owner		= THIS_MODULE,
-> > +	.fb_open	= s3c_fb_open,
-> > +	.fb_release	= s3c_fb_release,
-> >  	.fb_check_var	= s3c_fb_check_var,
-> >  	.fb_set_par	= s3c_fb_set_par,
-> >  	.fb_blank	= s3c_fb_blank,
-> 
-> How about use pm_runtime_put (sfb->dev) instead
-> pm_runtime_put_sync(sfb->dev) ?
-> In my opinion no need to sync option in *put* case.
-> 
-> > @@ -1322,6 +1345,8 @@ static int __devinit s3c_fb_probe(struct
-> platform_device
-> > *pdev)
-> >
-> >  	clk_enable(sfb->bus_clk);
-> >
-> > +	pm_runtime_enable(sfb->dev);
-> > +
-> >  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> >  	if (!res) {
-> >  		dev_err(dev, "failed to find registers\n"); @@ -1360,6
-> +1385,9
-> 
-> How about move pm_runtime_enable upper pm_runtime_get_sync in
-s3c_fb_probe?
-> 
-> > @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
-> >
-> >  	dev_dbg(dev, "got resources (regs %p), probing windows\n",
-> sfb->regs);
-> >
-> > +	platform_set_drvdata(pdev, sfb);
-> > +	pm_runtime_get_sync(sfb->dev);
-> > +
-> >  	/* setup gpio and output polarity controls */
-> >
-> >  	pd->setup_gpio();
-> 
-> platform_set_drvdata(pdev, sfb); already exists line# 1402.
-> 
-> <snip>
-> >
-> > @@ -1434,6 +1463,8 @@ static int __devexit s3c_fb_remove(struct
-> > platform_device *pdev)
-> >  	struct s3c_fb *sfb = platform_get_drvdata(pdev);
-> >  	int win;
-> >
-> > +	pm_runtime_get_sync(sfb->dev);
-> > +
-> >  	for (win = 0; win < S3C_FB_MAX_WIN; win++)
-> >  		if (sfb->windows[win])
-> >  			s3c_fb_release_win(sfb, sfb->windows[win]); @@ -
-> 
-> sfb->variant.nr_windows is better than S3C_FB_MAX_WIN.
-> 
-> > 1450,12 +1481,74 @@ static int __devexit s3c_fb_remove(struct
-> platform_device
-> > *pdev)
-> >
-> <snip>
-> > +
-> > +	for (win_no = S3C_FB_MAX_WIN - 1; win_no >= 0; win_no--) {
-> 
-> Ditto
-> 
-> > +		win = sfb->windows[win_no];
-> > +		if (!win)
-> > +			continue;
-> > +
-> > +		/* use the blank function to push into power-down */
-> > +		s3c_fb_blank(FB_BLANK_POWERDOWN, win->fbinfo);
-> > +	}
-> > +
-> > +	clk_disable(sfb->bus_clk);
-> > +	return 0;
-> > +}
-> > +
-> > +static int s3c_fb_resume(struct device *dev) {
-> > +	struct platform_device *pdev = to_platform_device(dev);
-> > +	struct s3c_fb *sfb = platform_get_drvdata(pdev);
-> > +	struct s3c_fb_platdata *pd = sfb->pdata;
-> > +	struct s3c_fb_win *win;
-> > +	int win_no;
-> > +
-> > +	clk_enable(sfb->bus_clk);
-> > +
-> > +	/* setup registers */
-> > +	writel(pd->vidcon1, sfb->regs + VIDCON1);
-> > +
-> > +	/* zero all windows before we do anything */
-> > +	for (win_no = 0; win_no < sfb->variant.nr_windows; win_no++)
-> > +		s3c_fb_clear_win(sfb, win_no);
-> 
-> Is it right "win_no < sfb->variant.nr_windows" not "nr_windows - 1" ?
+* Changelog:
 
-Sorry my mistake.
+==================
+ Changes since v4
+==================
 
-> 
-> > +
-> > +	for (win_no = 0; win_no < sfb->variant.nr_windows - 1; win_no++) {
-> > +		void __iomem *regs = sfb->regs + sfb->variant.keycon;
-> > +
-> > +		regs += (win_no * 8);
-> > +		writel(0xffffff, regs + WKEYCON0);
-> > +		writel(0xffffff, regs + WKEYCON1);
-> > +	}
-> > +
-> > +	/* restore framebuffers */
-> > +	for (win_no = 0; win_no < S3C_FB_MAX_WIN; win_no++) {
-> > +		win = sfb->windows[win_no];
-> > +		if (!win)
-> > +			continue;
-> > +
-> > +		dev_dbg(&pdev->dev, "resuming window %d\n", win_no);
-> > +		s3c_fb_set_par(win->fbinfo);
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> 
-> How about merge three for loop ?
+1) Changes suggested by Kukjin Kim from:
+- removed comment arch/arm/mach-s5pv210/include/mach/map.h
+- changed device name to s5p-mfc (removed "5", MFC version number)
+  also removed the version number from the name of MFC device file
+- added GPL license to arch/arm/plat-s5p/dev-mfc.c
+- removed unused include file from dev-mfc.c and unnecessary comments
 
-So how about merge two for loops ?
+2) Cache handling improvement:
+- changed cache handling to use dma_mape_single and dma_unmap_single
 
-> 
-> In my opinion s3c_fb_blank(FB_BLANK_UNBLANK, win->fbinfo) should be called
-> in resume.
-> Because sfb->enabled was cleared in suspend function using
-> s3c_fb_blank(FB_BLANK_POWERDOWN, win->fbinfo).
-> 
-> <snip>
-> 
-> >
-> > @@ -1710,15 +1807,21 @@ static struct platform_device_id
-> s3c_fb_driver_ids[] =
-> > {  };  MODULE_DEVICE_TABLE(platform, s3c_fb_driver_ids);
-> >
-> > +static const struct dev_pm_ops s3cfb_pm_ops = {
-> > +	.suspend	= s3c_fb_suspend,
-> > +	.resume		= s3c_fb_resume,
-> > +	.runtime_suspend	= s3c_fb_runtime_suspend,
-> > +	.runtime_resume		= s3c_fb_runtime_resume,
-> > +};
-> 
-> s3c_fb_suspend and s3c_fb_resume are exactly same with
-> s3c_fb_runtime_suspend s3c_fb_runtime_resume.
-> Why don't you register the same function ?
-> 
-> <snip>
-> >
-> > --
-> > 1.6.2.5
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-fbdev"
-> > in
-> the body
-> > of a message to majordomo@vger.kernel.org More majordomo info at
-> > http://vger.kernel.org/majordomo-info.html
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-fbdev" in
-the body
-> of a message to majordomo@vger.kernel.org More majordomo info at
-> http://vger.kernel.org/majordomo-info.html
+==================
+ Changes since v3
+==================
+
+1) Update to the v6 videobuf2 API (here thanks go to Marek Szyprowski)
+- s5p_mfc_buf_negotiate and s5p_mfc_buf_setup_plane functions
+have been merged
+- queue initialization has been adapted to the new API
+- use of the allocator memops has been changed, now there are single
+memops for all the allocator contexts
+
+2) Split of the s5p_mfc_try_run and s5p_mfc_handle_frame_int functions
+- parts of the s5p_mfc_try_run function have been moved to separate
+functions (s5p_mfc_get_new_ctx, s5p_mfc_run_dec_last_frames,
+s5p_mfc_run_dec_frame, s5p_mfc_run_get_inst_no, s5p_mfc_run_return_inst
+s5p_mfc_run_init_dec,s5p_mfc_run_init_dec_buffers)
+- s5p_mfc_handle_frame_int has been split to the following functions:
+s5p_mfc_handle_frame_all_extracted, s5p_mfc_handle_frame_new
+and s5p_mfc_handle_frame to handle different cases
+
+3) Remove remaining magic numbers and tidy up comments
+
+==================
+ Changes since v2
+==================
+
+1) Update to newest videobuf2 API
+This is the major change from v2. The videobuf2 API will hopefully have no more
+major API changes. Buffer initialization has been moved from buf_prepare
+callback to buf_init to simplify the process. Locking mechanism has been
+modified to the requirements of new videobuf2 version.
+2) Code cleanup
+Removed more magic contants and replaced them with appropriate defines. Changed
+code to use unlocked_ioctl instead of ioctl in v4l2 file ops.
+3) Allocators
+All internal buffer allocations are done using the selected vb2 allocator,
+instead of using CMA functions directly.
+
+==================
+ Changes since v1
+==================
+
+1) Cleanup accoridng to Peter Oh suggestions on the mailing list (Thanks).
+
+* Original cover letter:
+
+==============
+ Introduction
+==============
+
+The purpose of this RFC is to discuss the driver for a hw video codec
+embedded in the new Samusng's SoCs. Multi Format Codec 5.0 is able to
+handle video decoding of in a range of formats.
+
+So far no hardware codec was supported in V4L2 and this would be the
+first one. I guess there are more similar device that would benefit from
+a V4L2 unified interface. I suggest a separate control class for codec
+devices - V4L2_CTRL_CLASS_CODEC.
+
+Internally the driver uses videobuf2 framework and CMA memory allocator.
+I am aware that those have not yet been merged, but I wanted to start
+discussion about the driver earlier so it could be merged sooner. The
+driver posted here is the initial version, so I suppose it will require
+more work.
+
+==================
+ Device interface
+==================
+
+The driver principle is based on the idea of memory-to-memory devices:
+it provides a single video node and each opened file handle gets its own
+private context with separate buffer queues. Each context consist of 2
+buffer queues: OUTPUT (for source buffers, i.e. encoded video frames)
+and CAPTURE (for destination buffers, i.e. decoded raw video frames).
+The process of decoding video data from stream is a bit more complicated
+than typical memory-to-memory processing, that's why the m2m framework
+is not directly used (it is too limited for this case). The main reason
+for this is the fact that the CAPTURE buffers can be dequeued in a
+different order than they queued. The hw block decides which buffer has
+been completely processed. This is due to the structure of most
+compressed video streams - use of B frames causes that decoding and
+display order may be different.
+
+==============================
+ Decoding initialization path
+==============================
+
+First the OUTPUT queue is initialized. With S_FMT the application
+chooses which video format to decode and what size should be the input
+buffer. Fourcc values have been defined for different codecs e.g.
+V4L2_PIX_FMT_H264 for h264. Then the OUTPUT buffers are requested and
+mmaped. The stream header frame is loaded into the first buffer, queued
+and streaming is enabled. At this point the hardware is able to start
+processing the stream header and afterwards it will have information
+about the video dimensions and the size of the buffers with raw video
+data.
+
+The next step is setting up the CAPTURE queue and buffers. The width,
+height, buffer size and minimum number of buffers can be read with G_FMT
+call. The application can request more output buffer if necessary. After
+requesting and mmaping buffers the device is ready to decode video
+stream.
+
+The stream frames (ES frames) are written to the OUTPUT buffers, and
+decoded video frames can be read from the CAPTURE buffers. When no more
+source frames are present a single buffer with bytesused set to 0 should
+be queued. This will inform the driver that processing should be
+finished and it can dequeue all video frames that are still left. The
+number of such frames is dependent on the stream and its internal
+structure (how many frames had to be kept as reference frames for
+decoding, etc).
+
+===============
+ Usage summary
+===============
+
+This is a step by step summary of the video decoding (from user
+application point of view, with 2 treads and blocking api):
+
+01. S_FMT(OUTPUT, V4L2_PIX_FMT_H264, ...)
+02. REQ_BUFS(OUTPUT, n)
+03. for i=1..n MMAP(OUTPUT, i)
+04. put stream header to buffer #1
+05. QBUF(OUTPUT, #1)
+06. STREAM_ON(OUTPUT)
+07. G_FMT(CAPTURE)
+08. REQ_BUFS(CAPTURE, m)
+09. for j=1..m MMAP(CAPTURE, j)
+10. for j=1..m QBUF(CAPTURE, #j)
+11. STREAM_ON(CAPTURE)
+
+display thread:
+12. DQBUF(CAPTURE) -> got decoded video data in buffer #j
+13. display buffer #j
+14. QBUF(CAPTURE, #j)
+15. goto 12
+
+parser thread:
+16. put next ES frame to buffer #i
+17. QBUF(OUTPUT, #i)
+18. DQBUF(OUTPUT) -> get next empty buffer #i 19. goto 16
+
+...
+
+Similar usage sequence can be achieved with single threaded application
+and non-blocking api with poll() call.
+
+Branch with MFC, CMA and videobuf2 will be soon available at
+http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/vb2-mfc-fimc
+This tree is based on 2.6.37 rc4.
+
+Please have a look at the code and the idea of how to introduce codec
+devices to V4L2. Comments will be very much appreciated.
+
+Patch summary:
+
+
+*** BLURB HERE ***
+
+Kamil Debski (4):
+  Changes in include/linux/videodev2.h for MFC
+  MFC: Add MFC 5.1 driver to plat-s5p, mach-s5pv210 and mach-s5pv210
+  MFC: Added MFC 5.1 V4L2 driver
+  s5pv210: Enable MFC on Goni
+
+ arch/arm/mach-s5pv210/Kconfig                   |    1 +
+ arch/arm/mach-s5pv210/clock.c                   |    6 +
+ arch/arm/mach-s5pv210/include/mach/map.h        |    3 +
+ arch/arm/mach-s5pv210/mach-goni.c               |    3 +-
+ arch/arm/plat-s5p/Kconfig                       |    5 +
+ arch/arm/plat-s5p/Makefile                      |    2 +-
+ arch/arm/plat-s5p/dev-mfc.c                     |   42 +
+ arch/arm/plat-samsung/include/plat/devs.h       |    2 +
+ drivers/media/video/Kconfig                     |    8 +
+ drivers/media/video/Makefile                    |    1 +
+ drivers/media/video/s5p-mfc/Makefile            |    3 +
+ drivers/media/video/s5p-mfc/regs-mfc5.h         |  335 ++++
+ drivers/media/video/s5p-mfc/s5p_mfc.c           | 2056 +++++++++++++++++++++++
+ drivers/media/video/s5p-mfc/s5p_mfc_common.h    |  225 +++
+ drivers/media/video/s5p-mfc/s5p_mfc_ctrls.h     |  173 ++
+ drivers/media/video/s5p-mfc/s5p_mfc_debug.h     |   47 +
+ drivers/media/video/s5p-mfc/s5p_mfc_intr.c      |   92 +
+ drivers/media/video/s5p-mfc/s5p_mfc_intr.h      |   26 +
+ drivers/media/video/s5p-mfc/s5p_mfc_memory.h    |   43 +
+ drivers/media/video/s5p-mfc/s5p_mfc_opr.c       |  885 ++++++++++
+ drivers/media/video/s5p-mfc/s5p_mfc_opr.h       |  127 ++
+ include/linux/videodev2.h                       |   48 +
+ 25 files changed, 4180 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm/plat-s5p/dev-mfc.c
+ create mode 100644 drivers/media/video/s5p-mfc/Makefile
+ create mode 100644 drivers/media/video/s5p-mfc/regs-mfc5.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc.c
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_common.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_ctrls.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_debug.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_intr.c
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_intr.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_memory.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_opr.c
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_opr.h
