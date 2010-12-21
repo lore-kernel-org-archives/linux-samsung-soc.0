@@ -1,299 +1,245 @@
-From: Hyunwoong Kim <khw0178.kim@samsung.com>
-Subject: [PATCH v2] [media] s5p-fimc: Configure scaler registers depending on FIMC version
-Date: Tue, 21 Dec 2010 20:41:22 +0900
-Message-ID: <1292931682-5148-1-git-send-email-khw0178.kim@samsung.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: [RFC/PATCH v5 0/4] Multi Format Codec 5.1 driver for S5PC110 SoC
+Date: Tue, 21 Dec 2010 14:20:07 +0100
+Message-ID: <1292937611-3362-1-git-send-email-k.debski@samsung.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:44008 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750828Ab0LUMC1 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:63353 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750816Ab0LUNUW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Dec 2010 07:02:27 -0500
+	Tue, 21 Dec 2010 08:20:22 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: s.nawrocki@samsung.com
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Hyunwoong Kim <khw0178.kim@samsung.com>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, pawel@osciak.com, kyungmin.park@samsung.com, k.debski@samsung.com, jaeryul.oh@samsung.com, kgene.kim@samsung.com
 
-The main scaler has four SFRs for main scaler ratio depending on FIMC version.
-FIMC 4.x has only two SFRs and FIMC 5.x has four SFRs for main scaler.
-Those are MainHorRatio, MainHorRatio_ext, MainVerRatio and MainverRatio_ext.
+Hello,
 
-The FIMC 5.x has 15 bit resolution for scaling ratio as below.
-{MainHorRatio,MainHorRatio_ext} = {[14:6],[5:0]}.
-{MainVerRatio,MainVerRatio_ext} = {[14:6],[5:0]}.
-MainHorRatio = CISCCTRL[24:16], MainHorRatio_ext = CIEXTEN[15:10]
-MainVerRatio = CISCCTRL[8:0],   MainVerRatio_ext = CIEXTEN[5:0]
+Previous emails had the wrong patch set attached. Those I send now contain
+the correct patches. Sorry for any trouble.
 
-This patch supports FIMC 4.x and FIMC 5.x using platform_device_id::driver_data.
+I have applied changes suggested by Kukjin Kim. Also cache handling has been
+improved.
 
-Reviewed-by: Jonghun Han <jonghun.han@samsung.com>
-Signed-off-by: Hyunwoong Kim <khw0178.kim@samsung.com>
----
-This patch is depended on Hyunwoong's patch.
-- [PATCH v3.1] [media] s5p-fimc: fix the value of YUV422 1-plane formats
+I would be grateful for your comments. Original cover letter ant detailed change
+log has been attached below.
 
-Changes since V1:
-- Change the summary line.
-- Change the definitions of extended mainscaler ratios
-  commented by Sylwester Nawrocki.
-- Change the conditional expressions.
+Best regards,
+Kamil Debski
 
- drivers/media/video/s5p-fimc/fimc-capture.c |    7 +++-
- drivers/media/video/s5p-fimc/fimc-core.c    |   22 ++++++++++--
- drivers/media/video/s5p-fimc/fimc-core.h    |    7 +++-
- drivers/media/video/s5p-fimc/fimc-reg.c     |   52 +++++++++++++++++++++++---
- drivers/media/video/s5p-fimc/regs-fimc.h    |   12 +++++-
- 5 files changed, 87 insertions(+), 13 deletions(-)
+* Changelog:
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index b216530..204acc8 100644
---- a/drivers/media/video/s5p-fimc/fimc-capture.c
-+++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -208,6 +208,7 @@ static int start_streaming(struct vb2_queue *q)
- 	struct fimc_ctx *ctx = q->drv_priv;
- 	struct fimc_dev *fimc = ctx->fimc_dev;
- 	struct s3c_fimc_isp_info *isp_info;
-+	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
- 	int ret;
- 
- 	ret = v4l2_subdev_call(fimc->vid_cap.sd, video, s_stream, 1);
-@@ -230,7 +231,11 @@ static int start_streaming(struct vb2_queue *q)
- 			return ret;
- 		}
- 		fimc_hw_set_input_path(ctx);
--		fimc_hw_set_scaler(ctx);
-+		fimc_hw_set_prescaler(ctx);
-+		if (variant->has_mainscaler_ext)
-+			fimc_hw_set_mainscaler_ext(ctx);
-+		else
-+			fimc_hw_set_mainscaler(ctx);
- 		fimc_hw_set_target_format(ctx);
- 		fimc_hw_set_rotation(ctx);
- 		fimc_hw_set_effect(ctx);
-diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index e2b3db1..89ca8b5 100644
---- a/drivers/media/video/s5p-fimc/fimc-core.c
-+++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -246,6 +246,7 @@ int fimc_set_scaler_info(struct fimc_ctx *ctx)
- 	struct fimc_scaler *sc = &ctx->scaler;
- 	struct fimc_frame *s_frame = &ctx->s_frame;
- 	struct fimc_frame *d_frame = &ctx->d_frame;
-+	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
- 	int tx, ty, sx, sy;
- 	int ret;
- 
-@@ -284,8 +285,14 @@ int fimc_set_scaler_info(struct fimc_ctx *ctx)
- 	sc->pre_dst_width = sx / sc->pre_hratio;
- 	sc->pre_dst_height = sy / sc->pre_vratio;
- 
--	sc->main_hratio = (sx << 8) / (tx << sc->hfactor);
--	sc->main_vratio = (sy << 8) / (ty << sc->vfactor);
-+	if (variant->has_mainscaler_ext) {
-+		sc->main_hratio = (sx << 14) / (tx << sc->hfactor);
-+		sc->main_vratio = (sy << 14) / (ty << sc->vfactor);
-+	} else {
-+		sc->main_hratio = (sx << 8) / (tx << sc->hfactor);
-+		sc->main_vratio = (sy << 8) / (ty << sc->vfactor);
-+
-+	}
- 
- 	sc->scaleup_h = (tx >= sx) ? 1 : 0;
- 	sc->scaleup_v = (ty >= sy) ? 1 : 0;
-@@ -569,6 +576,7 @@ static void fimc_dma_run(void *priv)
- {
- 	struct fimc_ctx *ctx = priv;
- 	struct fimc_dev *fimc;
-+	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
- 	unsigned long flags;
- 	u32 ret;
- 
-@@ -601,7 +609,12 @@ static void fimc_dma_run(void *priv)
- 			err("Scaler setup error");
- 			goto dma_unlock;
- 		}
--		fimc_hw_set_scaler(ctx);
-+
-+		fimc_hw_set_prescaler(ctx);
-+		if (variant->has_mainscaler_ext)
-+			fimc_hw_set_mainscaler_ext(ctx);
-+		else
-+			fimc_hw_set_mainscaler(ctx);
- 		fimc_hw_set_target_format(ctx);
- 		fimc_hw_set_rotation(ctx);
- 		fimc_hw_set_effect(ctx);
-@@ -1722,6 +1735,7 @@ static struct samsung_fimc_variant fimc1_variant_s5pv210 = {
- 	.pix_hoff	 = 1,
- 	.has_inp_rot	 = 1,
- 	.has_out_rot	 = 1,
-+	.has_mainscaler_ext = 1,
- 	.min_inp_pixsize = 16,
- 	.min_out_pixsize = 16,
- 	.hor_offs_align	 = 1,
-@@ -1743,6 +1757,7 @@ static struct samsung_fimc_variant fimc0_variant_s5pv310 = {
- 	.has_inp_rot	 = 1,
- 	.has_out_rot	 = 1,
- 	.has_cistatus2	 = 1,
-+	.has_mainscaler_ext = 1,
- 	.min_inp_pixsize = 16,
- 	.min_out_pixsize = 16,
- 	.hor_offs_align	 = 1,
-@@ -1753,6 +1768,7 @@ static struct samsung_fimc_variant fimc0_variant_s5pv310 = {
- static struct samsung_fimc_variant fimc2_variant_s5pv310 = {
- 	.pix_hoff	 = 1,
- 	.has_cistatus2	 = 1,
-+	.has_mainscaler_ext = 1,
- 	.min_inp_pixsize = 16,
- 	.min_out_pixsize = 16,
- 	.hor_offs_align	 = 1,
-diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-index 92cca62..259157b 100644
---- a/drivers/media/video/s5p-fimc/fimc-core.h
-+++ b/drivers/media/video/s5p-fimc/fimc-core.h
-@@ -357,6 +357,8 @@ struct fimc_pix_limit {
-  * @has_inp_rot: set if has input rotator
-  * @has_out_rot: set if has output rotator
-  * @has_cistatus2: 1 if CISTATUS2 register is present in this IP revision
-+ * @has_mainscaler_ext: 1 if extended mainscaler ratios in CIEXTEN register is
-+ *			present in this IP revision
-  * @pix_limit: pixel size constraints for the scaler
-  * @min_inp_pixsize: minimum input pixel size
-  * @min_out_pixsize: minimum output pixel size
-@@ -368,6 +370,7 @@ struct samsung_fimc_variant {
- 	unsigned int	has_inp_rot:1;
- 	unsigned int	has_out_rot:1;
- 	unsigned int	has_cistatus2:1;
-+	unsigned int	has_mainscaler_ext:1;
- 	struct fimc_pix_limit *pix_limit;
- 	u16		min_inp_pixsize;
- 	u16		min_out_pixsize;
-@@ -563,7 +566,9 @@ void fimc_hw_set_target_format(struct fimc_ctx *ctx);
- void fimc_hw_set_out_dma(struct fimc_ctx *ctx);
- void fimc_hw_en_lastirq(struct fimc_dev *fimc, int enable);
- void fimc_hw_en_irq(struct fimc_dev *fimc, int enable);
--void fimc_hw_set_scaler(struct fimc_ctx *ctx);
-+void fimc_hw_set_prescaler(struct fimc_ctx *ctx);
-+void fimc_hw_set_mainscaler(struct fimc_ctx *ctx);
-+void fimc_hw_set_mainscaler_ext(struct fimc_ctx *ctx);
- void fimc_hw_en_capture(struct fimc_ctx *ctx);
- void fimc_hw_set_effect(struct fimc_ctx *ctx);
- void fimc_hw_set_in_dma(struct fimc_ctx *ctx);
-diff --git a/drivers/media/video/s5p-fimc/fimc-reg.c b/drivers/media/video/s5p-fimc/fimc-reg.c
-index 5ed8f06..88951b8 100644
---- a/drivers/media/video/s5p-fimc/fimc-reg.c
-+++ b/drivers/media/video/s5p-fimc/fimc-reg.c
-@@ -249,7 +249,7 @@ void fimc_hw_en_lastirq(struct fimc_dev *dev, int enable)
- 	writel(cfg, dev->regs + S5P_CIOCTRL);
- }
- 
--static void fimc_hw_set_prescaler(struct fimc_ctx *ctx)
-+void fimc_hw_set_prescaler(struct fimc_ctx *ctx)
- {
- 	struct fimc_dev *dev =  ctx->fimc_dev;
- 	struct fimc_scaler *sc = &ctx->scaler;
-@@ -267,7 +267,7 @@ static void fimc_hw_set_prescaler(struct fimc_ctx *ctx)
- 	writel(cfg, dev->regs + S5P_CISCPREDST);
- }
- 
--void fimc_hw_set_scaler(struct fimc_ctx *ctx)
-+static void fimc_hw_set_scaler(struct fimc_ctx *ctx)
- {
- 	struct fimc_dev *dev = ctx->fimc_dev;
- 	struct fimc_scaler *sc = &ctx->scaler;
-@@ -275,8 +275,6 @@ void fimc_hw_set_scaler(struct fimc_ctx *ctx)
- 	struct fimc_frame *dst_frame = &ctx->d_frame;
- 	u32 cfg = 0;
- 
--	fimc_hw_set_prescaler(ctx);
--
- 	if (!(ctx->flags & FIMC_COLOR_RANGE_NARROW))
- 		cfg |= (S5P_CISCCTRL_CSCR2Y_WIDE | S5P_CISCCTRL_CSCY2R_WIDE);
- 
-@@ -316,13 +314,55 @@ void fimc_hw_set_scaler(struct fimc_ctx *ctx)
- 			cfg |= S5P_CISCCTRL_INTERLACE;
- 	}
- 
-+	writel(cfg, dev->regs + S5P_CISCCTRL);
-+}
-+
-+void fimc_hw_set_mainscaler(struct fimc_ctx *ctx)
-+{
-+	struct fimc_dev *dev = ctx->fimc_dev;
-+	struct fimc_scaler *sc = &ctx->scaler;
-+	u32 cfg;
-+
-+	dbg("main_hratio= 0x%X  main_vratio= 0x%X",
-+		sc->main_hratio, sc->main_vratio);
-+
-+	fimc_hw_set_scaler(ctx);
-+
-+	cfg = readl(dev->regs + S5P_CISCCTRL);
-+	cfg &= ~S5P_CISCCTRL_MHRATIO_MASK;
-+	cfg &= ~S5P_CISCCTRL_MVRATIO_MASK;
-+	cfg |= S5P_CISCCTRL_MHRATIO(sc->main_hratio);
-+	cfg |= S5P_CISCCTRL_MVRATIO(sc->main_vratio);
-+
-+	writel(cfg, dev->regs + S5P_CISCCTRL);
-+}
-+
-+void fimc_hw_set_mainscaler_ext(struct fimc_ctx *ctx)
-+{
-+	struct fimc_dev *dev = ctx->fimc_dev;
-+	struct fimc_scaler *sc = &ctx->scaler;
-+	u32 cfg, cfg_ext;
-+
- 	dbg("main_hratio= 0x%X  main_vratio= 0x%X",
- 		sc->main_hratio, sc->main_vratio);
- 
--	cfg |= S5P_CISCCTRL_SC_HORRATIO(sc->main_hratio);
--	cfg |= S5P_CISCCTRL_SC_VERRATIO(sc->main_vratio);
-+	fimc_hw_set_scaler(ctx);
-+
-+	cfg = readl(dev->regs + S5P_CISCCTRL);
-+	cfg &= ~S5P_CISCCTRL_MHRATIO_MASK;
-+	cfg &= ~S5P_CISCCTRL_MVRATIO_MASK;
-+	cfg |= S5P_CISCCTRL_MHRATIO_EXT(sc->main_hratio);
-+	cfg |= S5P_CISCCTRL_MVRATIO_EXT(sc->main_vratio);
- 
- 	writel(cfg, dev->regs + S5P_CISCCTRL);
-+
-+	cfg_ext = readl(dev->regs + S5P_CIEXTEN);
-+	cfg_ext &= ~S5P_CIEXTEN_MHRATIO_EXT_MASK;
-+	cfg_ext &= ~S5P_CIEXTEN_MVRATIO_EXT_MASK;
-+	cfg_ext |= S5P_CIEXTEN_MHRATIO_EXT(sc->main_hratio);
-+	cfg_ext |= S5P_CIEXTEN_MVRATIO_EXT(sc->main_vratio);
-+
-+	writel(cfg_ext, dev->regs + S5P_CIEXTEN);
- }
- 
- void fimc_hw_en_capture(struct fimc_ctx *ctx)
-diff --git a/drivers/media/video/s5p-fimc/regs-fimc.h b/drivers/media/video/s5p-fimc/regs-fimc.h
-index cd86c18..28bd2fb 100644
---- a/drivers/media/video/s5p-fimc/regs-fimc.h
-+++ b/drivers/media/video/s5p-fimc/regs-fimc.h
-@@ -139,8 +139,12 @@
- #define S5P_CISCCTRL_OUTRGB_FMT_MASK	(3 << 11)
- #define S5P_CISCCTRL_RGB_EXT		(1 << 10)
- #define S5P_CISCCTRL_ONE2ONE		(1 << 9)
--#define S5P_CISCCTRL_SC_HORRATIO(x)	((x) << 16)
--#define S5P_CISCCTRL_SC_VERRATIO(x)	((x) << 0)
-+#define S5P_CISCCTRL_MHRATIO(x)		((x) << 16)
-+#define S5P_CISCCTRL_MVRATIO(x)		((x) << 0)
-+#define S5P_CISCCTRL_MHRATIO_MASK	(0x1ff << 16)
-+#define S5P_CISCCTRL_MVRATIO_MASK	(0x1ff << 0)
-+#define S5P_CISCCTRL_MHRATIO_EXT(x)	(((x) >> 6) << 16)
-+#define S5P_CISCCTRL_MVRATIO_EXT(x)	(((x) >> 6) << 0)
- 
- /* Target area */
- #define S5P_CITAREA			0x5c
-@@ -263,6 +267,10 @@
- 
- /* Real output DMA image size (extension register) */
- #define S5P_CIEXTEN			0x188
-+#define S5P_CIEXTEN_MHRATIO_EXT(x)	(((x) & 0x3f) << 10)
-+#define S5P_CIEXTEN_MVRATIO_EXT(x)	((x) & 0x3f)
-+#define S5P_CIEXTEN_MHRATIO_EXT_MASK	(0x3f << 10)
-+#define S5P_CIEXTEN_MVRATIO_EXT_MASK	0x3f
- 
- #define S5P_CIDMAPARAM			0x18c
- #define S5P_CIDMAPARAM_R_LINEAR		(0 << 29)
--- 
-1.6.2.5
+==================
+ Changes since v4
+==================
+
+1) Changes suggested by Kukjin Kim from:
+- removed comment arch/arm/mach-s5pv210/include/mach/map.h
+- changed device name to s5p-mfc (removed "5", MFC version number)
+  also removed the version number from the name of MFC device file
+- added GPL license to arch/arm/plat-s5p/dev-mfc.c
+- removed unused include file from dev-mfc.c and unnecessary comments
+
+2) Cache handling improvement:
+- changed cache handling to use dma_mape_single and dma_unmap_single
+
+==================
+ Changes since v3
+==================
+
+1) Update to the v6 videobuf2 API (here thanks go to Marek Szyprowski)
+- s5p_mfc_buf_negotiate and s5p_mfc_buf_setup_plane functions
+have been merged
+- queue initialization has been adapted to the new API
+- use of the allocator memops has been changed, now there are single
+memops for all the allocator contexts
+
+2) Split of the s5p_mfc_try_run and s5p_mfc_handle_frame_int functions
+- parts of the s5p_mfc_try_run function have been moved to separate
+functions (s5p_mfc_get_new_ctx, s5p_mfc_run_dec_last_frames,
+s5p_mfc_run_dec_frame, s5p_mfc_run_get_inst_no, s5p_mfc_run_return_inst
+s5p_mfc_run_init_dec,s5p_mfc_run_init_dec_buffers)
+- s5p_mfc_handle_frame_int has been split to the following functions:
+s5p_mfc_handle_frame_all_extracted, s5p_mfc_handle_frame_new
+and s5p_mfc_handle_frame to handle different cases
+
+3) Remove remaining magic numbers and tidy up comments
+
+==================
+ Changes since v2
+==================
+
+1) Update to newest videobuf2 API
+This is the major change from v2. The videobuf2 API will hopefully have no more
+major API changes. Buffer initialization has been moved from buf_prepare
+callback to buf_init to simplify the process. Locking mechanism has been
+modified to the requirements of new videobuf2 version.
+2) Code cleanup
+Removed more magic contants and replaced them with appropriate defines. Changed
+code to use unlocked_ioctl instead of ioctl in v4l2 file ops.
+3) Allocators
+All internal buffer allocations are done using the selected vb2 allocator,
+instead of using CMA functions directly.
+
+==================
+ Changes since v1
+==================
+
+1) Cleanup accoridng to Peter Oh suggestions on the mailing list (Thanks).
+
+* Original cover letter:
+
+==============
+ Introduction
+==============
+
+The purpose of this RFC is to discuss the driver for a hw video codec
+embedded in the new Samusng's SoCs. Multi Format Codec 5.0 is able to
+handle video decoding of in a range of formats.
+
+So far no hardware codec was supported in V4L2 and this would be the
+first one. I guess there are more similar device that would benefit from
+a V4L2 unified interface. I suggest a separate control class for codec
+devices - V4L2_CTRL_CLASS_CODEC.
+
+Internally the driver uses videobuf2 framework and CMA memory allocator.
+I am aware that those have not yet been merged, but I wanted to start
+discussion about the driver earlier so it could be merged sooner. The
+driver posted here is the initial version, so I suppose it will require
+more work.
+
+==================
+ Device interface
+==================
+
+The driver principle is based on the idea of memory-to-memory devices:
+it provides a single video node and each opened file handle gets its own
+private context with separate buffer queues. Each context consist of 2
+buffer queues: OUTPUT (for source buffers, i.e. encoded video frames)
+and CAPTURE (for destination buffers, i.e. decoded raw video frames).
+The process of decoding video data from stream is a bit more complicated
+than typical memory-to-memory processing, that's why the m2m framework
+is not directly used (it is too limited for this case). The main reason
+for this is the fact that the CAPTURE buffers can be dequeued in a
+different order than they queued. The hw block decides which buffer has
+been completely processed. This is due to the structure of most
+compressed video streams - use of B frames causes that decoding and
+display order may be different.
+
+==============================
+ Decoding initialization path
+==============================
+
+First the OUTPUT queue is initialized. With S_FMT the application
+chooses which video format to decode and what size should be the input
+buffer. Fourcc values have been defined for different codecs e.g.
+V4L2_PIX_FMT_H264 for h264. Then the OUTPUT buffers are requested and
+mmaped. The stream header frame is loaded into the first buffer, queued
+and streaming is enabled. At this point the hardware is able to start
+processing the stream header and afterwards it will have information
+about the video dimensions and the size of the buffers with raw video
+data.
+
+The next step is setting up the CAPTURE queue and buffers. The width,
+height, buffer size and minimum number of buffers can be read with G_FMT
+call. The application can request more output buffer if necessary. After
+requesting and mmaping buffers the device is ready to decode video
+stream.
+
+The stream frames (ES frames) are written to the OUTPUT buffers, and
+decoded video frames can be read from the CAPTURE buffers. When no more
+source frames are present a single buffer with bytesused set to 0 should
+be queued. This will inform the driver that processing should be
+finished and it can dequeue all video frames that are still left. The
+number of such frames is dependent on the stream and its internal
+structure (how many frames had to be kept as reference frames for
+decoding, etc).
+
+===============
+ Usage summary
+===============
+
+This is a step by step summary of the video decoding (from user
+application point of view, with 2 treads and blocking api):
+
+01. S_FMT(OUTPUT, V4L2_PIX_FMT_H264, ...)
+02. REQ_BUFS(OUTPUT, n)
+03. for i=1..n MMAP(OUTPUT, i)
+04. put stream header to buffer #1
+05. QBUF(OUTPUT, #1)
+06. STREAM_ON(OUTPUT)
+07. G_FMT(CAPTURE)
+08. REQ_BUFS(CAPTURE, m)
+09. for j=1..m MMAP(CAPTURE, j)
+10. for j=1..m QBUF(CAPTURE, #j)
+11. STREAM_ON(CAPTURE)
+
+display thread:
+12. DQBUF(CAPTURE) -> got decoded video data in buffer #j
+13. display buffer #j
+14. QBUF(CAPTURE, #j)
+15. goto 12
+
+parser thread:
+16. put next ES frame to buffer #i
+17. QBUF(OUTPUT, #i)
+18. DQBUF(OUTPUT) -> get next empty buffer #i 19. goto 16
+
+...
+
+Similar usage sequence can be achieved with single threaded application
+and non-blocking api with poll() call.
+
+Branch with MFC, CMA and videobuf2 will be soon available at
+http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/vb2-mfc-fimc
+This tree is based on 2.6.37 rc4.
+
+Please have a look at the code and the idea of how to introduce codec
+devices to V4L2. Comments will be very much appreciated.
+
+Patch summary:
+
+Kamil Debski (4):
+  Changes in include/linux/videodev2.h for MFC
+  MFC: Add MFC 5.1 driver to plat-s5p, mach-s5pv210 and mach-s5pv210
+  MFC: Add MFC 5.1 V4L2 driver
+  s5pv210: Enable MFC on Goni
+
+ arch/arm/mach-s5pv210/Kconfig                   |    1 +
+ arch/arm/mach-s5pv210/clock.c                   |    6 +
+ arch/arm/mach-s5pv210/include/mach/map.h        |    4 +
+ arch/arm/mach-s5pv210/mach-goni.c               |    3 +-
+ arch/arm/plat-s5p/Kconfig                       |    5 +
+ arch/arm/plat-s5p/Makefile                      |    2 +-
+ arch/arm/plat-s5p/dev-mfc.c                     |   49 +
+ arch/arm/plat-samsung/include/plat/devs.h       |    2 +
+ drivers/media/video/Kconfig                     |    8 +
+ drivers/media/video/Makefile                    |    1 +
+ drivers/media/video/s5p-mfc/Makefile            |    3 +
+ drivers/media/video/s5p-mfc/regs-mfc5.h         |  335 ++++
+ drivers/media/video/s5p-mfc/s5p_mfc.c           | 2038 +++++++++++++++++++++++
+ drivers/media/video/s5p-mfc/s5p_mfc_common.h    |  225 +++
+ drivers/media/video/s5p-mfc/s5p_mfc_ctrls.h     |  173 ++
+ drivers/media/video/s5p-mfc/s5p_mfc_debug.h     |   47 +
+ drivers/media/video/s5p-mfc/s5p_mfc_intr.c      |   92 +
+ drivers/media/video/s5p-mfc/s5p_mfc_intr.h      |   26 +
+ drivers/media/video/s5p-mfc/s5p_mfc_memory.h    |   43 +
+ drivers/media/video/s5p-mfc/s5p_mfc_opr.c       |  885 ++++++++++
+ drivers/media/video/s5p-mfc/s5p_mfc_opr.h       |  160 ++
+ include/linux/videodev2.h                       |   48 +
+ 25 files changed, 4203 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm/plat-s5p/dev-mfc.c
+ create mode 100644 drivers/media/video/s5p-mfc/Makefile
+ create mode 100644 drivers/media/video/s5p-mfc/regs-mfc5.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc.c
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_common.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_ctrls.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_debug.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_intr.c
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_intr.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_memory.h
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_opr.c
+ create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_opr.h
