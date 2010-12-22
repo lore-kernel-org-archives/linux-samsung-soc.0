@@ -1,86 +1,159 @@
 From: Jeongtae Park <jtp.park@samsung.com>
-Subject: [PATCH 6/9] ARM: S5PV310: Add CMA support for MFC v5.1 on SMDKV310
-Date: Wed, 22 Dec 2010 20:54:42 +0900
-Message-ID: <1293018885-15239-7-git-send-email-jtp.park@samsung.com>
+Subject: [PATCH 2/9] ARM: S5PV310: Add clock support for MFC v5.1
+Date: Wed, 22 Dec 2010 20:54:38 +0900
+Message-ID: <1293018885-15239-3-git-send-email-jtp.park@samsung.com>
 References: <1293018885-15239-1-git-send-email-jtp.park@samsung.com>
  <1293018885-15239-2-git-send-email-jtp.park@samsung.com>
- <1293018885-15239-3-git-send-email-jtp.park@samsung.com>
- <1293018885-15239-4-git-send-email-jtp.park@samsung.com>
- <1293018885-15239-5-git-send-email-jtp.park@samsung.com>
- <1293018885-15239-6-git-send-email-jtp.park@samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1293018885-15239-6-git-send-email-jtp.park@samsung.com>
+In-Reply-To: <1293018885-15239-2-git-send-email-jtp.park@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: k.debski@samsung.com, jaeryul.oh@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, jonghun.han@samsung.com, Jeongtae Park <jtp.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds CMA support for MFC v5.1. It includes CMA region
-definition and reserve callback addition.
+This patch adds clock support for MFC v5.1.
 
 Reviewed-by: Peter Oh <jaeryul.oh@samsung.com>
 Signed-off-by: Jeongtae Park <jtp.park@samsung.com>
 ---
- arch/arm/mach-s5pv310/mach-smdkv310.c |   35 +++++++++++++++++++++++++++++++++
- 1 files changed, 35 insertions(+), 0 deletions(-)
+ arch/arm/mach-s5pv310/clock.c                   |   68 +++++++++++++++++++++++
+ arch/arm/mach-s5pv310/include/mach/regs-clock.h |    3 +
+ 2 files changed, 71 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv310/mach-smdkv310.c b/arch/arm/mach-s5pv310/mach-smdkv310.c
-index e29df7f..bdc19ba 100644
---- a/arch/arm/mach-s5pv310/mach-smdkv310.c
-+++ b/arch/arm/mach-s5pv310/mach-smdkv310.c
-@@ -18,6 +18,9 @@
- #include <linux/smsc911x.h>
- #include <linux/io.h>
- #include <linux/lcd.h>
-+#ifdef CONFIG_CMA
-+#include <linux/cma.h>
-+#endif
- 
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
-@@ -296,6 +299,35 @@ static void __init smdkv310_smsc911x_init(void)
- 		     (0x1 << S5PV310_SROM_BCX__TACS__SHIFT), S5PV310_SROM_BC1);
+diff --git a/arch/arm/mach-s5pv310/clock.c b/arch/arm/mach-s5pv310/clock.c
+index a109bc1..158ccd0 100644
+--- a/arch/arm/mach-s5pv310/clock.c
++++ b/arch/arm/mach-s5pv310/clock.c
+@@ -56,6 +56,11 @@ static int s5pv310_clksrc_mask_cam_ctrl(struct clk *clk, int enable)
+ 	return s5p_gatectrl(S5P_CLKSRC_MASK_CAM, clk, enable);
  }
  
-+static void __init smdkv310_reserve_cma(void)
++static int s5pv310_clk_ip_mfc_ctrl(struct clk *clk, int enable)
 +{
-+	static struct cma_region regions[] = {
-+		{
-+			.name		= "fw",
-+			.size		=   1 << 20,
-+			{ .alignment	= 128 << 10 },
-+			.start		= 0x42000000,
-+		},
-+		{
-+			.name		= "b1",
-+			.size		=  32 << 20,
-+			.start		= 0x43000000,
-+		},
-+		{
-+			.name		= "b2",
-+			.size		=  16 << 20,
-+			.start		= 0x51000000,
-+		},
-+		{}
-+	};
-+
-+	static const char map[] __initconst =
-+		"s5p-mfc/f=fw;s5p-mfc/a=b1;s5p-mfc/b=b2;*=b1,b2";
-+
-+	cma_set_defaults(regions, map);
-+	cma_early_regions_reserve(NULL);
++	return s5p_gatectrl(S5P_CLKGATE_IP_MFC, clk, enable);
 +}
 +
- static void __init smdkv310_map_io(void)
+ static int s5pv310_clksrc_mask_lcd0_ctrl(struct clk *clk, int enable)
  {
- 	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
-@@ -326,4 +358,7 @@ MACHINE_START(SMDKV310, "SMDKV310")
- 	.map_io		= smdkv310_map_io,
- 	.init_machine	= smdkv310_machine_init,
- 	.timer		= &s5pv310_timer,
-+#ifdef CONFIG_CMA
-+	.reserve	= &smdkv310_reserve_cma,
-+#endif
- MACHINE_END
+ 	return s5p_gatectrl(S5P_CLKSRC_MASK_LCD0, clk, enable);
+@@ -422,6 +427,11 @@ static struct clk init_clocks_disable[] = {
+ 		.enable		= s5pv310_clk_ip_cam_ctrl,
+ 		.ctrlbit	= (1 << 3),
+ 	}, {
++		.name		= "mfc",
++		.id		= -1,
++		.enable		= s5pv310_clk_ip_mfc_ctrl,
++		.ctrlbit	= (1 << 0),
++	}, {
+ 		.name		= "fimd0",
+ 		.id		= -1,
+ 		.enable		= s5pv310_clk_ip_lcd0_ctrl,
+@@ -613,6 +623,54 @@ static struct clksrc_sources clkset_group = {
+ 	.nr_sources	= ARRAY_SIZE(clkset_group_list),
+ };
+ 
++static struct clk *clkset_mout_mfc0_list[] = {
++	[0] = &clk_mout_mpll.clk,
++	[1] = &clk_sclk_apll.clk,
++};
++
++static struct clksrc_sources clkset_mout_mfc0 = {
++	.sources	= clkset_mout_mfc0_list,
++	.nr_sources	= ARRAY_SIZE(clkset_mout_mfc0_list),
++};
++
++static struct clksrc_clk clk_mout_mfc0 = {
++	.clk	= {
++		.name		= "mout_mfc0",
++		.id		= -1,
++	},
++	.sources	= &clkset_mout_mfc0,
++	.reg_src	= { .reg = S5P_CLKSRC_MFC, .shift = 0, .size = 1 },
++};
++
++static struct clk *clkset_mout_mfc1_list[] = {
++	[0] = &clk_mout_epll.clk,
++	[1] = &clk_sclk_vpll.clk,
++};
++
++static struct clksrc_sources clkset_mout_mfc1 = {
++	.sources	= clkset_mout_mfc1_list,
++	.nr_sources	= ARRAY_SIZE(clkset_mout_mfc1_list),
++};
++
++static struct clksrc_clk clk_mout_mfc1 = {
++	.clk	= {
++		.name		= "mout_mfc1",
++		.id		= -1,
++	},
++	.sources	= &clkset_mout_mfc1,
++	.reg_src	= { .reg = S5P_CLKSRC_MFC, .shift = 4, .size = 1 },
++};
++
++static struct clk *clkset_mout_mfc_list[] = {
++	[0] = &clk_mout_mfc0.clk,
++	[1] = &clk_mout_mfc1.clk,
++};
++
++static struct clksrc_sources clkset_mout_mfc = {
++	.sources	= clkset_mout_mfc_list,
++	.nr_sources	= ARRAY_SIZE(clkset_mout_mfc_list),
++};
++
+ static struct clk *clkset_mout_g2d0_list[] = {
+ 	[0] = &clk_mout_mpll.clk,
+ 	[1] = &clk_sclk_apll.clk,
+@@ -844,6 +902,14 @@ static struct clksrc_clk clksrcs[] = {
+ 		.reg_div = { .reg = S5P_CLKDIV_CAM, .shift = 12, .size = 4 },
+ 	}, {
+ 		.clk		= {
++			.name		= "sclk_mfc",
++			.id		= -1,
++		},
++		.sources = &clkset_mout_mfc,
++		.reg_src = { .reg = S5P_CLKSRC_MFC, .shift = 8, .size = 1 },
++		.reg_div = { .reg = S5P_CLKDIV_MFC, .shift = 0, .size = 4 },
++	}, {
++		.clk		= {
+ 			.name		= "sclk_fimd0",
+ 			.id		= -1,
+ 			.enable		= s5pv310_clksrc_mask_lcd0_ctrl,
+@@ -988,6 +1054,8 @@ static struct clksrc_clk *sysclks[] = {
+ 	&clk_dout_mmc2,
+ 	&clk_dout_mmc3,
+ 	&clk_dout_mmc4,
++	&clk_mout_mfc0,
++	&clk_mout_mfc1,
+ };
+ 
+ void __init_or_cpufreq s5pv310_setup_clocks(void)
+diff --git a/arch/arm/mach-s5pv310/include/mach/regs-clock.h b/arch/arm/mach-s5pv310/include/mach/regs-clock.h
+index f1028ca..0222aff 100644
+--- a/arch/arm/mach-s5pv310/include/mach/regs-clock.h
++++ b/arch/arm/mach-s5pv310/include/mach/regs-clock.h
+@@ -27,6 +27,7 @@
+ #define S5P_CLKSRC_TOP0			S5P_CLKREG(0x0C210)
+ #define S5P_CLKSRC_TOP1			S5P_CLKREG(0x0C214)
+ #define S5P_CLKSRC_CAM			S5P_CLKREG(0x0C220)
++#define S5P_CLKSRC_MFC			S5P_CLKREG(0x0C228)
+ #define S5P_CLKSRC_IMAGE		S5P_CLKREG(0x0C230)
+ #define S5P_CLKSRC_LCD0			S5P_CLKREG(0x0C234)
+ #define S5P_CLKSRC_LCD1			S5P_CLKREG(0x0C238)
+@@ -36,6 +37,7 @@
+ 
+ #define S5P_CLKDIV_TOP			S5P_CLKREG(0x0C510)
+ #define S5P_CLKDIV_CAM			S5P_CLKREG(0x0C520)
++#define S5P_CLKDIV_MFC			S5P_CLKREG(0x0C528)
+ #define S5P_CLKDIV_IMAGE		S5P_CLKREG(0x0C530)
+ #define S5P_CLKDIV_LCD0			S5P_CLKREG(0x0C534)
+ #define S5P_CLKDIV_LCD1			S5P_CLKREG(0x0C538)
+@@ -59,6 +61,7 @@
+ #define S5P_CLKSRC_MASK_PERIL1		S5P_CLKREG(0x0C354)
+ 
+ #define S5P_CLKGATE_IP_CAM		S5P_CLKREG(0x0C920)
++#define S5P_CLKGATE_IP_MFC		S5P_CLKREG(0x0C928)
+ #define S5P_CLKGATE_IP_IMAGE		S5P_CLKREG(0x0C930)
+ #define S5P_CLKGATE_IP_LCD0		S5P_CLKREG(0x0C934)
+ #define S5P_CLKGATE_IP_LCD1		S5P_CLKREG(0x0C938)
 -- 
 1.6.2.5
