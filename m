@@ -1,85 +1,98 @@
-From: Jeongtae Park <jtp.park@samsung.com>
-Subject: [PATCH 5/9] ARM: S5PV310: Add CMA support for MFC v5.1 on SMDKC210
-Date: Wed, 22 Dec 2010 20:54:41 +0900
-Message-ID: <1293018885-15239-6-git-send-email-jtp.park@samsung.com>
-References: <1293018885-15239-1-git-send-email-jtp.park@samsung.com>
- <1293018885-15239-2-git-send-email-jtp.park@samsung.com>
- <1293018885-15239-3-git-send-email-jtp.park@samsung.com>
- <1293018885-15239-4-git-send-email-jtp.park@samsung.com>
- <1293018885-15239-5-git-send-email-jtp.park@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1293018885-15239-5-git-send-email-jtp.park@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, jaeryul.oh@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, jonghun.han@samsung.com, Jeongtae Park <jtp.park@samsung.com>
+From: Jamie Iles <jamie@jamieiles.com>
+Subject: Re: [PATCH] ARM: S5PV310: Implement kernel timers using MCT
+Date: Wed, 22 Dec 2010 12:35:02 +0000
+Message-ID: <20101222123502.GB2838@pulham.picochip.com>
+References: <1293017221-31037-1-git-send-email-kgene.kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:64533 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751791Ab0LVMfF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Dec 2010 07:35:05 -0500
+Received: by wwa36 with SMTP id 36so5223119wwa.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Dec 2010 04:35:03 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1293017221-31037-1-git-send-email-kgene.kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, Changhwan Youn <chaos.youn@samsung.com>, ben-linux@fluff.org
 
-This patch adds CMA support for MFC v5.1. It includes CMA region
-definition and reserve callback addition.
+Hi Kukjin,
 
-Reviewed-by: Peter Oh <jaeryul.oh@samsung.com>
-Signed-off-by: Jeongtae Park <jtp.park@samsung.com>
----
- arch/arm/mach-s5pv310/mach-smdkc210.c |   35 +++++++++++++++++++++++++++++++++
- 1 files changed, 35 insertions(+), 0 deletions(-)
+Just trying to learn what other people are doing in their platforms, so 
+apologies if my comments aren't applicable! Looks good to me though.
 
-diff --git a/arch/arm/mach-s5pv310/mach-smdkc210.c b/arch/arm/mach-s5pv310/mach-smdkc210.c
-index 6a1d3a1..7de3092 100644
---- a/arch/arm/mach-s5pv310/mach-smdkc210.c
-+++ b/arch/arm/mach-s5pv310/mach-smdkc210.c
-@@ -18,6 +18,9 @@
- #include <linux/smsc911x.h>
- #include <linux/io.h>
- #include <linux/lcd.h>
-+#ifdef CONFIG_CMA
-+#include <linux/cma.h>
-+#endif
- 
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
-@@ -296,6 +299,35 @@ static void __init smdkc210_smsc911x_init(void)
- 		     (0x1 << S5PV310_SROM_BCX__TACS__SHIFT), S5PV310_SROM_BC1);
- }
- 
-+static void __init smdkc210_reserve_cma(void)
-+{
-+	static struct cma_region regions[] = {
-+		{
-+			.name		= "fw",
-+			.size		=   1 << 20,
-+			{ .alignment	= 128 << 10 },
-+			.start		= 0x42000000,
-+		},
-+		{
-+			.name		= "b1",
-+			.size		=  32 << 20,
-+			.start		= 0x43000000,
-+		},
-+		{
-+			.name		= "b2",
-+			.size		=  16 << 20,
-+			.start		= 0x51000000,
-+		},
-+		{}
-+	};
-+
-+	static const char map[] __initconst =
-+		"s5p-mfc/f=fw;s5p-mfc/a=b1;s5p-mfc/b=b2;*=b1,b2";
-+
-+	cma_set_defaults(regions, map);
-+	cma_early_regions_reserve(NULL);
-+}
-+
- static void __init smdkc210_map_io(void)
- {
- 	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
-@@ -325,4 +357,7 @@ MACHINE_START(SMDKC210, "SMDKC210")
- 	.map_io		= smdkc210_map_io,
- 	.init_machine	= smdkc210_machine_init,
- 	.timer		= &s5pv310_timer,
-+#ifdef CONFIG_CMA
-+	.reserve	= &smdkc210_reserve_cma,
-+#endif
- MACHINE_END
--- 
-1.6.2.5
+On Wed, Dec 22, 2010 at 08:27:01PM +0900, Kukjin Kim wrote:
+> From: Changhwan Youn <chaos.youn@samsung.com>
+> 
+> The Multi-Core Timer(MCT) of S5PV310 is designed for implementing
+> clock source timer and clock event timers. This patch implements
+> 1 clock source timer with 64 bit free running counter of MCT and
+> 2 clock event timers with two of 31-bit tick counters.
+> 
+> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+>  arch/arm/mach-s5pv310/Kconfig                 |    7 +
+>  arch/arm/mach-s5pv310/Makefile                |    8 +-
+>  arch/arm/mach-s5pv310/include/mach/regs-mct.h |   47 ++++
+>  arch/arm/mach-s5pv310/mct.c                   |  365 +++++++++++++++++++++++++
+>  4 files changed, 426 insertions(+), 1 deletions(-)
+>  create mode 100644 arch/arm/mach-s5pv310/include/mach/regs-mct.h
+>  create mode 100644 arch/arm/mach-s5pv310/mct.c
+[...]
+> diff --git a/arch/arm/mach-s5pv310/mct.c b/arch/arm/mach-s5pv310/mct.c
+> new file mode 100644
+> index 0000000..2fe189c
+> --- /dev/null
+> +++ b/arch/arm/mach-s5pv310/mct.c
+[...]
+> +static struct clock_event_device mct_tick0_device = {
+> +	.name		= "mct-tick0",
+> +	.features	= CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
+> +	.rating		= 450,
+> +	.shift		= 20,
+> +	.set_next_event	= s5pv310_tick0_set_next_event,
+> +	.set_mode	= s5pv310_tick0_set_mode,
+> +};
+> +
+> +static struct clock_event_device mct_tick1_device = {
+> +	.name		= "mct-tick1",
+> +	.features	= CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
+> +	.rating		= 450,
+> +	.shift		= 20,
+> +	.set_next_event	= s5pv310_tick1_set_next_event,
+> +	.set_mode	= s5pv310_tick1_set_mode,
+> +};
+
+Do you need to specify .shift here? Could you use 
+clockevents_calc_mult_shift() to calculate mult and shift for you?
+
+> +irqreturn_t s5pv310_mct0_event_isr(int irq, void *dev_id)
+> +{
+> +	struct clock_event_device *evt;
+> +
+> +	/* Clear the MCT tick interrupt */
+> +
+> +	evt = &mct_tick0_device;
+> +	if (evt->mode != CLOCK_EVT_MODE_PERIODIC)
+> +		s5pv310_mct_tick_stop(MCT_TICK0);
+
+I don't think you need to stop the timer here, the clockevents layer 
+will handle this for you.
+
+[...]
+> +static void s5pv310_mct_clockevent_init(struct clock_event_device *dev)
+> +{
+> +	dev->mult = div_sc(clk_rate / 2, NSEC_PER_SEC, dev->shift);
+> +
+> +	dev->max_delta_ns = clockevent_delta2ns(0xfffffff, dev);
+
+Is there a reason that the delta is only using 28 bits here?
+
+Jamie
