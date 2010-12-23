@@ -1,488 +1,302 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] ARM: S5PV310: Implement kernel timers using MCT
-Date: Wed, 22 Dec 2010 22:55:55 +0000
-Message-ID: <20101222225555.GH14693@n2100.arm.linux.org.uk>
-References: <1293017221-31037-1-git-send-email-kgene.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Hyunwoong Kim <khw0178.kim@samsung.com>
+Subject: [PATCH v2.1] [media] s5p-fimc: Configure scaler registers depending on FIMC version
+Date: Thu, 23 Dec 2010 10:26:16 +0900
+Message-ID: <1293067576-18614-1-git-send-email-khw0178.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:37383 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752452Ab0LVW4P (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:37195 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752055Ab0LWBrp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Dec 2010 17:56:15 -0500
-Content-Disposition: inline
-In-Reply-To: <1293017221-31037-1-git-send-email-kgene.kim@samsung.com>
+	Wed, 22 Dec 2010 20:47:45 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>
+To: s.nawrocki@samsung.com
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Hyunwoong Kim <khw0178.kim@samsung.com>
 
-On Wed, Dec 22, 2010 at 08:27:01PM +0900, Kukjin Kim wrote:
-> From: Changhwan Youn <chaos.youn@samsung.com>
-> 
-> The Multi-Core Timer(MCT) of S5PV310 is designed for implementing
-> clock source timer and clock event timers. This patch implements
-> 1 clock source timer with 64 bit free running counter of MCT and
-> 2 clock event timers with two of 31-bit tick counters.
-> 
-> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
->  arch/arm/mach-s5pv310/Kconfig                 |    7 +
->  arch/arm/mach-s5pv310/Makefile                |    8 +-
->  arch/arm/mach-s5pv310/include/mach/regs-mct.h |   47 ++++
->  arch/arm/mach-s5pv310/mct.c                   |  365 +++++++++++++++++++++++++
->  4 files changed, 426 insertions(+), 1 deletions(-)
->  create mode 100644 arch/arm/mach-s5pv310/include/mach/regs-mct.h
->  create mode 100644 arch/arm/mach-s5pv310/mct.c
-> 
-> diff --git a/arch/arm/mach-s5pv310/Kconfig b/arch/arm/mach-s5pv310/Kconfig
-> index e0cef3f..02d7b4d 100644
-> --- a/arch/arm/mach-s5pv310/Kconfig
-> +++ b/arch/arm/mach-s5pv310/Kconfig
-> @@ -14,6 +14,13 @@ config CPU_S5PV310
->  	help
->  	  Enable S5PV310 CPU support
->  
-> +config S5PV310_MCT
-> +	bool "Kernel timer support by MCT"
-> +	depends on !LOCAL_TIMERS
-> +	help
-> +	  Use MCT (Multi Core Timer) as kernel timers
-> +	  NOTE: Can not choose this with LOCAL_TIMERS
-> +
->  config S5PV310_DEV_PD
->  	bool
->  	help
-> diff --git a/arch/arm/mach-s5pv310/Makefile b/arch/arm/mach-s5pv310/Makefile
-> index e310609..08158e3 100644
-> --- a/arch/arm/mach-s5pv310/Makefile
-> +++ b/arch/arm/mach-s5pv310/Makefile
-> @@ -13,7 +13,13 @@ obj-				:=
->  # Core support for S5PV310 system
->  
->  obj-$(CONFIG_CPU_S5PV310)	+= cpu.o init.o clock.o irq-combiner.o
-> -obj-$(CONFIG_CPU_S5PV310)	+= setup-i2c0.o time.o gpiolib.o irq-eint.o
-> +obj-$(CONFIG_CPU_S5PV310)	+= setup-i2c0.o gpiolib.o irq-eint.o
-> +
-> +ifeq ($(CONFIG_S5PV310_MCT),y)
-> +obj-y				+= mct.o
-> +else
-> +obj-y				+= time.o
-> +endif
->  
->  obj-$(CONFIG_SMP)		+= platsmp.o headsmp.o
->  obj-$(CONFIG_LOCAL_TIMERS)	+= localtimer.o
-> diff --git a/arch/arm/mach-s5pv310/include/mach/regs-mct.h b/arch/arm/mach-s5pv310/include/mach/regs-mct.h
-> new file mode 100644
-> index 0000000..1480e2a
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv310/include/mach/regs-mct.h
-> @@ -0,0 +1,47 @@
-> +/* arch/arm/mach-s5pv310/include/mach/regs-mct.h
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * S5PV310 MCT(Multi-Core Timer) configutation
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#ifndef __ASM_ARCH_REGS_MCT_H
-> +#define __ASM_ARCH_REGS_MCT_H __FILE__
-> +
-> +#include <mach/map.h>
-> +
-> +#define S5PV310_MCTREG(x)		(S5P_VA_SYSTIMER + (x))
-> +
-> +#define S5PV310_MCT_G_CNT_L		S5PV310_MCTREG(0x100)
-> +#define S5PV310_MCT_G_CNT_U		S5PV310_MCTREG(0x104)
-> +#define S5PV310_MCT_G_CNT_WSTAT		S5PV310_MCTREG(0x110)
-> +
-> +#define S5PV310_MCT_G_TCON		S5PV310_MCTREG(0x240)
-> +
-> +#define S5PV310_MCT_G_WSTAT		S5PV310_MCTREG(0x24C)
-> +
-> +#define S5PV310_MCT_L0_TCNTB		S5PV310_MCTREG(0x300)
-> +#define S5PV310_MCT_L0_ICNTB		S5PV310_MCTREG(0x308)
-> +#define S5PV310_MCT_L0_TCON		S5PV310_MCTREG(0x320)
-> +
-> +#define S5PV310_MCT_L0_INT_CSTAT	S5PV310_MCTREG(0x330)
-> +#define S5PV310_MCT_L0_INT_ENB		S5PV310_MCTREG(0x334)
-> +#define S5PV310_MCT_L0_WSTAT		S5PV310_MCTREG(0x340)
-> +
-> +#define S5PV310_MCT_L1_TCNTB		S5PV310_MCTREG(0x400)
-> +#define S5PV310_MCT_L1_ICNTB		S5PV310_MCTREG(0x408)
-> +#define S5PV310_MCT_L1_TCON		S5PV310_MCTREG(0x420)
-> +#define S5PV310_MCT_L1_INT_CSTAT	S5PV310_MCTREG(0x430)
-> +#define S5PV310_MCT_L1_INT_ENB		S5PV310_MCTREG(0x434)
-> +#define S5PV310_MCT_L1_WSTAT		S5PV310_MCTREG(0x440)
-> +
-> +#define MCT_L_TCON_INTERVAL_MODE	(1 << 2)
-> +#define MCT_L_TCON_INT_START		(1 << 1)
-> +#define MCT_L_TCON_TIMER_START		(1 << 0)
-> +
-> +#endif /* __ASM_ARCH_REGS_MCT_H */
-> diff --git a/arch/arm/mach-s5pv310/mct.c b/arch/arm/mach-s5pv310/mct.c
-> new file mode 100644
-> index 0000000..2fe189c
-> --- /dev/null
-> +++ b/arch/arm/mach-s5pv310/mct.c
-> @@ -0,0 +1,365 @@
-> +/* linux/arch/arm/mach-s5pv310/mct.c
-> + *
-> + * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * S5PV310 MCT(Multi-Core Timer) support
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#include <linux/sched.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/err.h>
-> +#include <linux/clk.h>
-> +#include <linux/clockchips.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/delay.h>
-> +
-> +#include <mach/map.h>
-> +#include <mach/regs-mct.h>
-> +#include <asm/mach/time.h>
-> +
-> +static unsigned long clk_cnt_per_tick;
-> +static unsigned long clk_rate;
-> +
-> +enum mct_tick_type {
-> +	MCT_TICK0,
-> +	MCT_TICK1,
-> +};
-> +
-> +static void s5pv310_mct_write(unsigned int value, void *addr)
-> +{
-> +	void __iomem *stat_addr;
-> +	u32 mask;
-> +	u32 i;
-> +
-> +	__raw_writel(value, addr);
-> +
-> +	switch ((u32) addr) {
-> +	case (u32) S5PV310_MCT_G_TCON:
-> +		stat_addr = S5PV310_MCT_G_WSTAT;
-> +		mask = 1 << 16;		/* G_WSTAT_TCON_STAT */
-> +		break;
-> +
-> +	case (u32) S5PV310_MCT_G_CNT_L:
-> +		stat_addr = S5PV310_MCT_G_CNT_WSTAT;
-> +		mask = 1 << 0;		/* G_CNT_L_STAT */
-> +		break;
-> +
-> +	case (u32) S5PV310_MCT_G_CNT_U:
-> +		stat_addr = S5PV310_MCT_G_CNT_WSTAT;
-> +		mask = 1 << 1;		/* G_CNT_U_STAT */
-> +		break;
-> +
-> +	case (u32) S5PV310_MCT_L0_TCON:
-> +		stat_addr = S5PV310_MCT_L0_WSTAT;
-> +		mask = 1 << 3;		/* L_TCON_STAT */
-> +		break;
-> +
-> +	case (u32) S5PV310_MCT_L1_TCON:
-> +		stat_addr = S5PV310_MCT_L1_WSTAT;
-> +		mask = 1 << 3;		/* L_TCON_STAT */
-> +		break;
-> +
-> +	case (u32) S5PV310_MCT_L0_TCNTB:
-> +		stat_addr = S5PV310_MCT_L0_WSTAT;
-> +		mask = 1 << 0;		/* L_TCNTB_STAT	*/
-> +		break;
-> +
-> +	case (u32) S5PV310_MCT_L1_TCNTB:
-> +		stat_addr = S5PV310_MCT_L1_WSTAT;
-> +		mask = 1 << 0;		/* L_TCNTB_STAT	*/
-> +		break;
-> +
-> +	case (u32) S5PV310_MCT_L0_ICNTB:
-> +		stat_addr = S5PV310_MCT_L0_WSTAT;
-> +		mask = 1 << 1;		/* L_ICNTB_STAT */
-> +		break;
-> +
-> +	case (u32) S5PV310_MCT_L1_ICNTB:
-> +		stat_addr = S5PV310_MCT_L1_WSTAT;
-> +		mask = 1 << 1;		/* L_ICNTB_STAT */
-> +		break;
-> +
-> +	default:
-> +		return;
-> +	}
-> +
-> +	/* Wait maximum 1 ms until written values are applied */
-> +	for (i = 0; i < loops_per_jiffy / 1000 * HZ; i++)
-> +		if (__raw_readl(stat_addr) & mask) {
-> +			__raw_writel(mask, stat_addr);
-> +			return;
-> +		}
-> +
-> +	panic("MCT hangs after writing %d (addr:0x%08x)\n", value, (u32)addr);
-> +}
-> +
-> +static void s5pv310_mct_tick_stop(enum mct_tick_type type)
-> +{
-> +	unsigned long tmp;
-> +	void __iomem *addr;
-> +
-> +	if (type == MCT_TICK0)
-> +		addr = S5PV310_MCT_L0_TCON;
-> +	else
-> +		addr = S5PV310_MCT_L1_TCON;
-> +
-> +	tmp = __raw_readl(addr);
-> +	tmp &= ~(MCT_L_TCON_INT_START | MCT_L_TCON_TIMER_START);
-> +	s5pv310_mct_write(tmp, addr);
-> +}
-> +
-> +static void s5pv310_mct_tick_start(enum mct_tick_type type,
-> +				   unsigned long cycles)
-> +{
-> +	unsigned long tmp;
-> +	unsigned int tmp1, tmp2;
-> +	void __iomem *addr;
-> +
-> +	s5pv310_mct_tick_stop(type);
-> +
-> +	tmp1 = (1 << 31) | cycles;	/* MCT_L_UPDATE_ICNTB */
-> +	tmp2 = 1 << 0;			/* L_INT_ENB_CNTIE */
-> +
-> +	if (type == MCT_TICK0) {
-> +		s5pv310_mct_write(tmp1, S5PV310_MCT_L0_ICNTB);
-> +		s5pv310_mct_write(tmp2, S5PV310_MCT_L0_INT_ENB);
-> +
-> +		addr = S5PV310_MCT_L0_TCON;
-> +	} else {
-> +		s5pv310_mct_write(tmp1, S5PV310_MCT_L1_ICNTB);
-> +		s5pv310_mct_write(tmp2, S5PV310_MCT_L1_INT_ENB);
-> +
-> +		addr = S5PV310_MCT_L1_TCON;
-> +	}
-> +
-> +	tmp = __raw_readl(addr);
-> +	tmp |= MCT_L_TCON_INT_START | MCT_L_TCON_TIMER_START |
-> +	       MCT_L_TCON_INTERVAL_MODE;
-> +	s5pv310_mct_write(tmp, addr);
-> +}
-> +
-> +static inline int s5pv310_tick_set_next_event(enum mct_tick_type type,
-> +					      unsigned long cycles)
-> +{
-> +	s5pv310_mct_tick_start(type, cycles);
-> +
-> +	return 0;
-> +}
-> +
-> +static inline void s5pv310_tick_set_mode(enum mct_tick_type type,
-> +					 enum clock_event_mode mode)
-> +{
-> +	s5pv310_mct_tick_stop(type);
-> +
-> +	switch (mode) {
-> +	case CLOCK_EVT_MODE_PERIODIC:
-> +		s5pv310_mct_tick_start(type, clk_cnt_per_tick);
-> +		break;
-> +
-> +	case CLOCK_EVT_MODE_ONESHOT:
-> +	case CLOCK_EVT_MODE_UNUSED:
-> +	case CLOCK_EVT_MODE_SHUTDOWN:
-> +	case CLOCK_EVT_MODE_RESUME:
-> +		break;
-> +	}
-> +}
-> +
-> +static int s5pv310_tick0_set_next_event(unsigned long cycles,
-> +					struct clock_event_device *evt)
-> +{
-> +	return s5pv310_tick_set_next_event(MCT_TICK0, cycles);
-> +}
-> +
-> +static int s5pv310_tick1_set_next_event(unsigned long cycles,
-> +					struct clock_event_device *evt)
-> +{
-> +	return s5pv310_tick_set_next_event(MCT_TICK1, cycles);
-> +}
-> +
-> +static void s5pv310_tick0_set_mode(enum clock_event_mode mode,
-> +				   struct clock_event_device *evt)
-> +{
-> +	s5pv310_tick_set_mode(MCT_TICK0, mode);
-> +}
-> +
-> +static void s5pv310_tick1_set_mode(enum clock_event_mode mode,
-> +				   struct clock_event_device *evt)
-> +{
-> +	s5pv310_tick_set_mode(MCT_TICK1, mode);
-> +}
-> +
-> +static struct clock_event_device mct_tick0_device = {
-> +	.name		= "mct-tick0",
-> +	.features	= CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
-> +	.rating		= 450,
-> +	.shift		= 20,
-> +	.set_next_event	= s5pv310_tick0_set_next_event,
-> +	.set_mode	= s5pv310_tick0_set_mode,
-> +};
-> +
-> +static struct clock_event_device mct_tick1_device = {
-> +	.name		= "mct-tick1",
-> +	.features	= CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
-> +	.rating		= 450,
-> +	.shift		= 20,
-> +	.set_next_event	= s5pv310_tick1_set_next_event,
-> +	.set_mode	= s5pv310_tick1_set_mode,
-> +};
-> +
-> +irqreturn_t s5pv310_mct0_event_isr(int irq, void *dev_id)
-> +{
-> +	struct clock_event_device *evt;
-> +
-> +	/* Clear the MCT tick interrupt */
-> +
-> +	evt = &mct_tick0_device;
-> +	if (evt->mode != CLOCK_EVT_MODE_PERIODIC)
-> +		s5pv310_mct_tick_stop(MCT_TICK0);
-> +
-> +	s5pv310_mct_write(0x1, S5PV310_MCT_L0_INT_CSTAT);
-> +
-> +	evt->event_handler(evt);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +irqreturn_t s5pv310_mct1_event_isr(int irq, void *dev_id)
-> +{
-> +	struct clock_event_device *evt;
-> +
-> +	/* Clear the MCT tick interrupt */
-> +
-> +	evt = &mct_tick1_device;
-> +
-> +	if (evt->mode != CLOCK_EVT_MODE_PERIODIC)
-> +		s5pv310_mct_tick_stop(MCT_TICK1);
-> +
-> +	s5pv310_mct_write(0x1, S5PV310_MCT_L1_INT_CSTAT);
-> +
-> +	evt->event_handler(evt);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static struct irqaction mct_tick0_event_irq = {
-> +	.name		= "mct_tick0_irq",
-> +	.flags		= IRQF_TIMER | IRQF_IRQPOLL | IRQF_NOBALANCING,
-> +	.handler	= s5pv310_mct0_event_isr,
-> +};
-> +
-> +static struct irqaction mct_tick1_event_irq = {
-> +	.name		= "mct_tick1_irq",
-> +	.flags		= IRQF_TIMER | IRQF_NOBALANCING,
-> +	.handler	= s5pv310_mct1_event_isr,
-> +};
-> +
-> +static void s5pv310_mct_clockevent_init(struct clock_event_device *dev)
-> +{
-> +	dev->mult = div_sc(clk_rate / 2, NSEC_PER_SEC, dev->shift);
+The main scaler has four SFRs for main scaler ratio depending on FIMC version.
+FIMC 4.x has only two SFRs and FIMC 5.x has four SFRs for main scaler.
+Those are MainHorRatio, MainHorRatio_ext, MainVerRatio and MainverRatio_ext.
 
-Best use the helper function to calculate both the multipler and shift,
-rather than hard-coding the shift.  As the shift is defined to be '20'
-I guess this was copied rather than calculated for the optimal value.
+The FIMC 5.x has 15 bit resolution for scaling ratio as below.
+{MainHorRatio,MainHorRatio_ext} = {[14:6],[5:0]}.
+{MainVerRatio,MainVerRatio_ext} = {[14:6],[5:0]}.
+MainHorRatio = CISCCTRL[24:16], MainHorRatio_ext = CIEXTEN[15:10]
+MainVerRatio = CISCCTRL[8:0],   MainVerRatio_ext = CIEXTEN[5:0]
 
-> +
-> +	dev->max_delta_ns = clockevent_delta2ns(0xfffffff, dev);
-> +	dev->min_delta_ns = clockevent_delta2ns(0xf, dev);
-> +}
-> +
-> +static void __init s5pv310_clockevent0_init(void)
-> +{
-> +	clk_cnt_per_tick = clk_rate / 2 / HZ;
-> +
-> +	s5pv310_mct_write(0x1, S5PV310_MCT_L0_TCNTB);
-> +	s5pv310_mct_clockevent_init(&mct_tick0_device);
-> +	mct_tick0_device.cpumask = cpumask_of(0);
-> +	clockevents_register_device(&mct_tick0_device);
-> +
-> +	setup_irq(IRQ_MCT_L0, &mct_tick0_event_irq);
-> +}
-> +
-> +static void __init s5pv310_clockevent1_init(void *info)
-> +{
-> +	s5pv310_mct_write(0x1, S5PV310_MCT_L1_TCNTB);
-> +	s5pv310_mct_clockevent_init(&mct_tick1_device);
-> +	mct_tick1_device.cpumask = cpumask_of(1);
-> +	clockevents_register_device(&mct_tick1_device);
-> +
-> +	irq_set_affinity(IRQ_MCT1, cpumask_of(1));
-> +	setup_irq(IRQ_MCT_L1, &mct_tick1_event_irq);
+This patch supports FIMC 4.x and FIMC 5.x using platform_device_id::driver_data.
 
-This looks like it's supporting SMP - is there some reason not to use
-the localtimer support built into SMP, which also supports hotplug CPU
-(the above doesn't because the local clockevents will be automatically
-unregistered.)
+Reviewed-by: Jonghun Han <jonghun.han@samsung.com>
+Signed-off-by: Hyunwoong Kim <khw0178.kim@samsung.com>
+---
+Depends on the below patch
+- [PATCH v3.2] [media] s5p-fimc: fix the value of YUV422 1-plane formats
 
-If you don't have a global timer, then register your boot CPU's clock
-event timer as the global timer for the time being - the SMP code needs
-tweaking so that a local timer can be registered early for those without
-global timers.  Until then, if you have a global timer, I strongly
-suggest you register that as a clock event too (it'll automatically
-get shutdown when not needed.)
+Changes since V2:
+- Code sync with http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/vb2-mfc-fimc
 
-> +}
-> +
-> +static void s5pv310_mct_frc_start(unsigned int hi, unsigned int lo)
-> +{
-> +	unsigned int tmp;
-> +
-> +	s5pv310_mct_write(lo, S5PV310_MCT_G_CNT_L);
-> +	s5pv310_mct_write(hi, S5PV310_MCT_G_CNT_U);
-> +
-> +	tmp = __raw_readl(S5PV310_MCT_G_TCON);
-> +	tmp |= (1 << 8);	/* G_TCON_START */
-> +	s5pv310_mct_write(tmp, S5PV310_MCT_G_TCON);
-> +}
-> +
-> +/* Clocksource handling */
-> +
-> +static cycle_t s5pv310_frc_read(struct clocksource *cs)
-> +{
-> +	unsigned int lo, hi0, hi1;
-> +
-> +	hi0 = __raw_readl(S5PV310_MCT_G_CNT_U);
-> +	lo = __raw_readl(S5PV310_MCT_G_CNT_L);
-> +	dsb();
-> +	hi1 = __raw_readl(S5PV310_MCT_G_CNT_U);
-> +
-> +	if (hi0 != hi1) {
-> +		lo = __raw_readl(S5PV310_MCT_G_CNT_L);
-> +		hi1 = __raw_readl(S5PV310_MCT_G_CNT_U);
-> +	}
+Changes since V1:
+- Change the summary line.
+- Change the definitions of extended mainscaler ratios
+  commented by Sylwester Nawrocki.
+- Change the conditional expressions.
 
-Are you sure this is safe?  Would it not be better to do this as:
+ drivers/media/video/s5p-fimc/fimc-capture.c |    7 +++-
+ drivers/media/video/s5p-fimc/fimc-core.c    |   22 ++++++++++--
+ drivers/media/video/s5p-fimc/fimc-core.h    |    7 +++-
+ drivers/media/video/s5p-fimc/fimc-reg.c     |   52 +++++++++++++++++++++++---
+ drivers/media/video/s5p-fimc/regs-fimc.h    |   12 +++++-
+ 5 files changed, 87 insertions(+), 13 deletions(-)
 
-	hi1 = __raw_readl(S5PV310_MCT_G_CNT_U);
-	do {
-		hi0 = hi1;
-		lo = __raw_readl(S5PV310_MCT_G_CNT_L);
-		hi1 = __raw_readl(S5PV310_MCT_G_CNT_U);
-	} while (hi0 != hi1);
-
-Note that I don't believe you need a dsb() in there either, as device
-accesses are ordered with respect to themselves.  I know it's highly
-unlikely that we'll see two updates, but I think having it obviously
-robust is a good idea.
+diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
+index 4e4441f..b1cb937 100644
+--- a/drivers/media/video/s5p-fimc/fimc-capture.c
++++ b/drivers/media/video/s5p-fimc/fimc-capture.c
+@@ -210,6 +210,7 @@ static int start_streaming(struct vb2_queue *q)
+ 	struct fimc_ctx *ctx = q->drv_priv;
+ 	struct fimc_dev *fimc = ctx->fimc_dev;
+ 	struct s3c_fimc_isp_info *isp_info;
++	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
+ 	int ret;
+ 
+ 	ret = v4l2_subdev_call(fimc->vid_cap.sd, video, s_stream, 1);
+@@ -232,7 +233,11 @@ static int start_streaming(struct vb2_queue *q)
+ 			return ret;
+ 		}
+ 		fimc_hw_set_input_path(ctx);
+-		fimc_hw_set_scaler(ctx);
++		fimc_hw_set_prescaler(ctx);
++		if (variant->has_mainscaler_ext)
++			fimc_hw_set_mainscaler_ext(ctx);
++		else
++			fimc_hw_set_mainscaler(ctx);
+ 		fimc_hw_set_target_format(ctx);
+ 		fimc_hw_set_rotation(ctx);
+ 		fimc_hw_set_effect(ctx);
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
+index 6e388ff..2b65961 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.c
++++ b/drivers/media/video/s5p-fimc/fimc-core.c
+@@ -246,6 +246,7 @@ int fimc_set_scaler_info(struct fimc_ctx *ctx)
+ 	struct fimc_scaler *sc = &ctx->scaler;
+ 	struct fimc_frame *s_frame = &ctx->s_frame;
+ 	struct fimc_frame *d_frame = &ctx->d_frame;
++	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
+ 	int tx, ty, sx, sy;
+ 	int ret;
+ 
+@@ -284,8 +285,14 @@ int fimc_set_scaler_info(struct fimc_ctx *ctx)
+ 	sc->pre_dst_width = sx / sc->pre_hratio;
+ 	sc->pre_dst_height = sy / sc->pre_vratio;
+ 
+-	sc->main_hratio = (sx << 8) / (tx << sc->hfactor);
+-	sc->main_vratio = (sy << 8) / (ty << sc->vfactor);
++	if (variant->has_mainscaler_ext) {
++		sc->main_hratio = (sx << 14) / (tx << sc->hfactor);
++		sc->main_vratio = (sy << 14) / (ty << sc->vfactor);
++	} else {
++		sc->main_hratio = (sx << 8) / (tx << sc->hfactor);
++		sc->main_vratio = (sy << 8) / (ty << sc->vfactor);
++
++	}
+ 
+ 	sc->scaleup_h = (tx >= sx) ? 1 : 0;
+ 	sc->scaleup_v = (ty >= sy) ? 1 : 0;
+@@ -569,6 +576,7 @@ static void fimc_dma_run(void *priv)
+ {
+ 	struct fimc_ctx *ctx = priv;
+ 	struct fimc_dev *fimc;
++	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
+ 	unsigned long flags;
+ 	u32 ret;
+ 
+@@ -601,7 +609,12 @@ static void fimc_dma_run(void *priv)
+ 			err("Scaler setup error");
+ 			goto dma_unlock;
+ 		}
+-		fimc_hw_set_scaler(ctx);
++
++		fimc_hw_set_prescaler(ctx);
++		if (variant->has_mainscaler_ext)
++			fimc_hw_set_mainscaler_ext(ctx);
++		else
++			fimc_hw_set_mainscaler(ctx);
+ 		fimc_hw_set_target_format(ctx);
+ 		fimc_hw_set_rotation(ctx);
+ 		fimc_hw_set_effect(ctx);
+@@ -1720,6 +1733,7 @@ static struct samsung_fimc_variant fimc1_variant_s5pv210 = {
+ 	.pix_hoff	 = 1,
+ 	.has_inp_rot	 = 1,
+ 	.has_out_rot	 = 1,
++	.has_mainscaler_ext = 1,
+ 	.min_inp_pixsize = 16,
+ 	.min_out_pixsize = 16,
+ 	.hor_offs_align	 = 1,
+@@ -1741,6 +1755,7 @@ static struct samsung_fimc_variant fimc0_variant_s5pv310 = {
+ 	.has_inp_rot	 = 1,
+ 	.has_out_rot	 = 1,
+ 	.has_cistatus2	 = 1,
++	.has_mainscaler_ext = 1,
+ 	.min_inp_pixsize = 16,
+ 	.min_out_pixsize = 16,
+ 	.hor_offs_align	 = 1,
+@@ -1751,6 +1766,7 @@ static struct samsung_fimc_variant fimc0_variant_s5pv310 = {
+ static struct samsung_fimc_variant fimc2_variant_s5pv310 = {
+ 	.pix_hoff	 = 1,
+ 	.has_cistatus2	 = 1,
++	.has_mainscaler_ext = 1,
+ 	.min_inp_pixsize = 16,
+ 	.min_out_pixsize = 16,
+ 	.hor_offs_align	 = 1,
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
+index d684138..d690398 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.h
++++ b/drivers/media/video/s5p-fimc/fimc-core.h
+@@ -356,6 +356,8 @@ struct fimc_pix_limit {
+  * @has_inp_rot: set if has input rotator
+  * @has_out_rot: set if has output rotator
+  * @has_cistatus2: 1 if CISTATUS2 register is present in this IP revision
++ * @has_mainscaler_ext: 1 if extended mainscaler ratios in CIEXTEN register are
++ *			present in this IP revision
+  * @pix_limit: pixel size constraints for the scaler
+  * @min_inp_pixsize: minimum input pixel size
+  * @min_out_pixsize: minimum output pixel size
+@@ -367,6 +369,7 @@ struct samsung_fimc_variant {
+ 	unsigned int	has_inp_rot:1;
+ 	unsigned int	has_out_rot:1;
+ 	unsigned int	has_cistatus2:1;
++	unsigned int	has_mainscaler_ext:1;
+ 	struct fimc_pix_limit *pix_limit;
+ 	u16		min_inp_pixsize;
+ 	u16		min_out_pixsize;
+@@ -562,7 +565,9 @@ void fimc_hw_set_target_format(struct fimc_ctx *ctx);
+ void fimc_hw_set_out_dma(struct fimc_ctx *ctx);
+ void fimc_hw_en_lastirq(struct fimc_dev *fimc, int enable);
+ void fimc_hw_en_irq(struct fimc_dev *fimc, int enable);
+-void fimc_hw_set_scaler(struct fimc_ctx *ctx);
++void fimc_hw_set_prescaler(struct fimc_ctx *ctx);
++void fimc_hw_set_mainscaler(struct fimc_ctx *ctx);
++void fimc_hw_set_mainscaler_ext(struct fimc_ctx *ctx);
+ void fimc_hw_en_capture(struct fimc_ctx *ctx);
+ void fimc_hw_set_effect(struct fimc_ctx *ctx);
+ void fimc_hw_set_in_dma(struct fimc_ctx *ctx);
+diff --git a/drivers/media/video/s5p-fimc/fimc-reg.c b/drivers/media/video/s5p-fimc/fimc-reg.c
+index 5ed8f06..88951b8 100644
+--- a/drivers/media/video/s5p-fimc/fimc-reg.c
++++ b/drivers/media/video/s5p-fimc/fimc-reg.c
+@@ -249,7 +249,7 @@ void fimc_hw_en_lastirq(struct fimc_dev *dev, int enable)
+ 	writel(cfg, dev->regs + S5P_CIOCTRL);
+ }
+ 
+-static void fimc_hw_set_prescaler(struct fimc_ctx *ctx)
++void fimc_hw_set_prescaler(struct fimc_ctx *ctx)
+ {
+ 	struct fimc_dev *dev =  ctx->fimc_dev;
+ 	struct fimc_scaler *sc = &ctx->scaler;
+@@ -267,7 +267,7 @@ static void fimc_hw_set_prescaler(struct fimc_ctx *ctx)
+ 	writel(cfg, dev->regs + S5P_CISCPREDST);
+ }
+ 
+-void fimc_hw_set_scaler(struct fimc_ctx *ctx)
++static void fimc_hw_set_scaler(struct fimc_ctx *ctx)
+ {
+ 	struct fimc_dev *dev = ctx->fimc_dev;
+ 	struct fimc_scaler *sc = &ctx->scaler;
+@@ -275,8 +275,6 @@ void fimc_hw_set_scaler(struct fimc_ctx *ctx)
+ 	struct fimc_frame *dst_frame = &ctx->d_frame;
+ 	u32 cfg = 0;
+ 
+-	fimc_hw_set_prescaler(ctx);
+-
+ 	if (!(ctx->flags & FIMC_COLOR_RANGE_NARROW))
+ 		cfg |= (S5P_CISCCTRL_CSCR2Y_WIDE | S5P_CISCCTRL_CSCY2R_WIDE);
+ 
+@@ -316,13 +314,55 @@ void fimc_hw_set_scaler(struct fimc_ctx *ctx)
+ 			cfg |= S5P_CISCCTRL_INTERLACE;
+ 	}
+ 
++	writel(cfg, dev->regs + S5P_CISCCTRL);
++}
++
++void fimc_hw_set_mainscaler(struct fimc_ctx *ctx)
++{
++	struct fimc_dev *dev = ctx->fimc_dev;
++	struct fimc_scaler *sc = &ctx->scaler;
++	u32 cfg;
++
++	dbg("main_hratio= 0x%X  main_vratio= 0x%X",
++		sc->main_hratio, sc->main_vratio);
++
++	fimc_hw_set_scaler(ctx);
++
++	cfg = readl(dev->regs + S5P_CISCCTRL);
++	cfg &= ~S5P_CISCCTRL_MHRATIO_MASK;
++	cfg &= ~S5P_CISCCTRL_MVRATIO_MASK;
++	cfg |= S5P_CISCCTRL_MHRATIO(sc->main_hratio);
++	cfg |= S5P_CISCCTRL_MVRATIO(sc->main_vratio);
++
++	writel(cfg, dev->regs + S5P_CISCCTRL);
++}
++
++void fimc_hw_set_mainscaler_ext(struct fimc_ctx *ctx)
++{
++	struct fimc_dev *dev = ctx->fimc_dev;
++	struct fimc_scaler *sc = &ctx->scaler;
++	u32 cfg, cfg_ext;
++
+ 	dbg("main_hratio= 0x%X  main_vratio= 0x%X",
+ 		sc->main_hratio, sc->main_vratio);
+ 
+-	cfg |= S5P_CISCCTRL_SC_HORRATIO(sc->main_hratio);
+-	cfg |= S5P_CISCCTRL_SC_VERRATIO(sc->main_vratio);
++	fimc_hw_set_scaler(ctx);
++
++	cfg = readl(dev->regs + S5P_CISCCTRL);
++	cfg &= ~S5P_CISCCTRL_MHRATIO_MASK;
++	cfg &= ~S5P_CISCCTRL_MVRATIO_MASK;
++	cfg |= S5P_CISCCTRL_MHRATIO_EXT(sc->main_hratio);
++	cfg |= S5P_CISCCTRL_MVRATIO_EXT(sc->main_vratio);
+ 
+ 	writel(cfg, dev->regs + S5P_CISCCTRL);
++
++	cfg_ext = readl(dev->regs + S5P_CIEXTEN);
++	cfg_ext &= ~S5P_CIEXTEN_MHRATIO_EXT_MASK;
++	cfg_ext &= ~S5P_CIEXTEN_MVRATIO_EXT_MASK;
++	cfg_ext |= S5P_CIEXTEN_MHRATIO_EXT(sc->main_hratio);
++	cfg_ext |= S5P_CIEXTEN_MVRATIO_EXT(sc->main_vratio);
++
++	writel(cfg_ext, dev->regs + S5P_CIEXTEN);
+ }
+ 
+ void fimc_hw_en_capture(struct fimc_ctx *ctx)
+diff --git a/drivers/media/video/s5p-fimc/regs-fimc.h b/drivers/media/video/s5p-fimc/regs-fimc.h
+index cd86c18..28bd2fb 100644
+--- a/drivers/media/video/s5p-fimc/regs-fimc.h
++++ b/drivers/media/video/s5p-fimc/regs-fimc.h
+@@ -139,8 +139,12 @@
+ #define S5P_CISCCTRL_OUTRGB_FMT_MASK	(3 << 11)
+ #define S5P_CISCCTRL_RGB_EXT		(1 << 10)
+ #define S5P_CISCCTRL_ONE2ONE		(1 << 9)
+-#define S5P_CISCCTRL_SC_HORRATIO(x)	((x) << 16)
+-#define S5P_CISCCTRL_SC_VERRATIO(x)	((x) << 0)
++#define S5P_CISCCTRL_MHRATIO(x)		((x) << 16)
++#define S5P_CISCCTRL_MVRATIO(x)		((x) << 0)
++#define S5P_CISCCTRL_MHRATIO_MASK	(0x1ff << 16)
++#define S5P_CISCCTRL_MVRATIO_MASK	(0x1ff << 0)
++#define S5P_CISCCTRL_MHRATIO_EXT(x)	(((x) >> 6) << 16)
++#define S5P_CISCCTRL_MVRATIO_EXT(x)	(((x) >> 6) << 0)
+ 
+ /* Target area */
+ #define S5P_CITAREA			0x5c
+@@ -263,6 +267,10 @@
+ 
+ /* Real output DMA image size (extension register) */
+ #define S5P_CIEXTEN			0x188
++#define S5P_CIEXTEN_MHRATIO_EXT(x)	(((x) & 0x3f) << 10)
++#define S5P_CIEXTEN_MVRATIO_EXT(x)	((x) & 0x3f)
++#define S5P_CIEXTEN_MHRATIO_EXT_MASK	(0x3f << 10)
++#define S5P_CIEXTEN_MVRATIO_EXT_MASK	0x3f
+ 
+ #define S5P_CIDMAPARAM			0x18c
+ #define S5P_CIDMAPARAM_R_LINEAR		(0 << 29)
+-- 
+1.6.2.5
