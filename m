@@ -1,198 +1,486 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 1/7] ARM: S5PV310: Update CMU registers for CPUFREQ
-Date: Thu, 23 Dec 2010 14:49:51 +0900
-Message-ID: <1293083397-15969-2-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH V3 5/7] ARM: S5PV310: Update CPUFREQ
+Date: Thu, 23 Dec 2010 14:49:55 +0900
+Message-ID: <1293083397-15969-6-git-send-email-kgene.kim@samsung.com>
 References: <1293083397-15969-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:56546 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:56529 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751349Ab0LWGHu (ORCPT
+	with ESMTP id S1751076Ab0LWGHv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Dec 2010 01:07:50 -0500
+	Thu, 23 Dec 2010 01:07:51 -0500
 In-Reply-To: <1293083397-15969-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Sunyoung Kang <sy0816.kang@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, Sangwook Ju <sw.ju@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Sunyoung Kang <sy0816.kang@samsung.com>
+From: Sangwook Ju <sw.ju@samsung.com>
 
-This patch adds CMU(Clock Management Unit) registers for S5PV310/S5PC210
-CPUFREQ driver and modifies some register names according to datasheet.
+This patch updates following of CPUFREQ.
 
-Signed-off-by: Sunyoung Kang <sy0816.kang@samsung.com>
+- Updated DVFS table and divider value
+- Added common function
+- Added some function for changing APLL and setting
+
+Signed-off-by: Sangwook Ju <sw.ju@samsung.com>
+Reviewed-by: Jaecheol Lee <jc.lee@samsung.com>
+Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv310/clock.c                   |   12 ++--
- arch/arm/mach-s5pv310/include/mach/regs-clock.h |   77 ++++++++++++++++++++++-
- 2 files changed, 81 insertions(+), 8 deletions(-)
+ arch/arm/mach-s5pv310/cpufreq.c |  301 +++++++++++++++++++++------------------
+ 1 files changed, 160 insertions(+), 141 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv310/clock.c b/arch/arm/mach-s5pv310/clock.c
-index 58c9d33..fdce2b4 100644
---- a/arch/arm/mach-s5pv310/clock.c
-+++ b/arch/arm/mach-s5pv310/clock.c
-@@ -244,7 +244,7 @@ static struct clksrc_clk clk_mout_corebus = {
- 		.id		= -1,
- 	},
- 	.sources	= &clkset_mout_corebus,
--	.reg_src	= { .reg = S5P_CLKSRC_CORE, .shift = 4, .size = 1 },
-+	.reg_src	= { .reg = S5P_CLKSRC_DMC, .shift = 4, .size = 1 },
+diff --git a/arch/arm/mach-s5pv310/cpufreq.c b/arch/arm/mach-s5pv310/cpufreq.c
+index bcd4ebf..b04cbc7 100644
+--- a/arch/arm/mach-s5pv310/cpufreq.c
++++ b/arch/arm/mach-s5pv310/cpufreq.c
+@@ -24,6 +24,7 @@
+ #include <mach/regs-mem.h>
+ 
+ #include <plat/clock.h>
++#include <plat/pm.h>
+ 
+ static struct clk *cpu_clk;
+ static struct clk *moutcore;
+@@ -36,7 +37,6 @@ static struct regulator *int_regulator;
+ #endif
+ 
+ static struct cpufreq_freqs freqs;
+-static unsigned int armclk_use_apll;
+ static unsigned int memtype;
+ 
+ enum s5pv310_memory_type {
+@@ -46,19 +46,18 @@ enum s5pv310_memory_type {
  };
  
- static struct clksrc_clk clk_sclk_dmc = {
-@@ -253,7 +253,7 @@ static struct clksrc_clk clk_sclk_dmc = {
- 		.id		= -1,
- 		.parent		= &clk_mout_corebus.clk,
- 	},
--	.reg_div	= { .reg = S5P_CLKDIV_CORE0, .shift = 12, .size = 3 },
-+	.reg_div	= { .reg = S5P_CLKDIV_DMC0, .shift = 12, .size = 3 },
+ enum cpufreq_level_index {
+-	L0, L1, L2, L3, L4, CPUFREQ_LEVEL_END,
++	L0, L1, L2, L3, CPUFREQ_LEVEL_END,
  };
  
- static struct clksrc_clk clk_aclk_cored = {
-@@ -262,7 +262,7 @@ static struct clksrc_clk clk_aclk_cored = {
- 		.id		= -1,
- 		.parent		= &clk_sclk_dmc.clk,
- 	},
--	.reg_div	= { .reg = S5P_CLKDIV_CORE0, .shift = 16, .size = 3 },
-+	.reg_div	= { .reg = S5P_CLKDIV_DMC0, .shift = 16, .size = 3 },
+ static struct cpufreq_frequency_table s5pv310_freq_table[] = {
+ 	{L0, 1000*1000},
+ 	{L1, 800*1000},
+ 	{L2, 400*1000},
+-	{L3, 200*1000},
+-	{L4, 100*1000},
++	{L3, 100*1000},
+ 	{0, CPUFREQ_TABLE_END},
  };
  
- static struct clksrc_clk clk_aclk_corep = {
-@@ -271,7 +271,7 @@ static struct clksrc_clk clk_aclk_corep = {
- 		.id		= -1,
- 		.parent		= &clk_aclk_cored.clk,
- 	},
--	.reg_div	= { .reg = S5P_CLKDIV_CORE0, .shift = 20, .size = 3 },
-+	.reg_div	= { .reg = S5P_CLKDIV_DMC0, .shift = 20, .size = 3 },
+-static unsigned int clkdiv_cpu0[CPUFREQ_LEVEL_END + 1][7] = {
++static unsigned int clkdiv_cpu0[CPUFREQ_LEVEL_END][7] = {
+ 	/*
+ 	 * Clock divider value for following
+ 	 * { DIVCORE, DIVCOREM0, DIVCOREM1, DIVPERIPH,
+@@ -66,25 +65,38 @@ static unsigned int clkdiv_cpu0[CPUFREQ_LEVEL_END + 1][7] = {
+ 	 */
+ 
+ 	/* ARM L0: 1000MHz */
+-	{ 0, 3, 7, 3, 3, 0, 0 },
++	{ 0, 3, 7, 3, 3, 0, 1 },
+ 
+ 	/* ARM L1: 800MHz */
+-	{ 0, 3, 7, 3, 3, 0, 0 },
++	{ 0, 3, 7, 3, 3, 0, 1 },
+ 
+ 	/* ARM L2: 400MHz */
+-	{ 1, 1, 3, 1, 1, 0, 0 },
++	{ 0, 1, 3, 1, 3, 0, 1 },
+ 
+-	/* ARM L3: 200MHz */
+-	{ 3, 0, 1, 0, 0, 0, 0 },
++	/* ARM L3: 100MHz */
++	{ 0, 0, 1, 0, 3, 1, 1 },
++};
+ 
+-	/* ARM L4A: 100MHz, for DDR2/3 */
+-	{ 7, 0, 1, 0, 0, 0, 0 },
++static unsigned int clkdiv_cpu1[CPUFREQ_LEVEL_END][2] = {
++	/*
++	 * Clock divider value for following
++	 * { DIVCOPY, DIVHPM }
++	 */
++
++	 /* ARM L0: 1000MHz */
++	{ 3, 0 },
++
++	/* ARM L1: 800MHz */
++	{ 3, 0 },
+ 
+-	/* ARM L4B: 100MHz, for LPDDR2 (SMDKV310 has LPDDR2) */
+-	{ 7, 0, 1, 0, 0, 0, 0 },
++	/* ARM L2: 400MHz */
++	{ 3, 0 },
++
++	/* ARM L3: 100MHz */
++	{ 3, 0 },
  };
  
- static struct clksrc_clk clk_aclk_acp = {
-@@ -280,7 +280,7 @@ static struct clksrc_clk clk_aclk_acp = {
- 		.id		= -1,
- 		.parent		= &clk_mout_corebus.clk,
- 	},
--	.reg_div	= { .reg = S5P_CLKDIV_CORE0, .shift = 0, .size = 3 },
-+	.reg_div	= { .reg = S5P_CLKDIV_DMC0, .shift = 0, .size = 3 },
+-static unsigned int clkdiv_dmc0[CPUFREQ_LEVEL_END + 1][8] = {
++static unsigned int clkdiv_dmc0[CPUFREQ_LEVEL_END][8] = {
+ 	/*
+ 	 * Clock divider value for following
+ 	 * { DIVACP, DIVACP_PCLK, DIVDPHY, DIVDMC, DIVDMCD
+@@ -97,20 +109,14 @@ static unsigned int clkdiv_dmc0[CPUFREQ_LEVEL_END + 1][8] = {
+ 	/* DMC L1: 400MHz */
+ 	{ 3, 1, 1, 1, 1, 1, 3, 1 },
+ 
+-	/* DMC L2: 400MHz */
+-	{ 3, 1, 1, 1, 1, 1, 3, 1 },
+-
+-	/* DMC L3: 400MHz */
+-	{ 3, 1, 1, 1, 1, 1, 3, 1 },
+-
+-	/* DMC L4A: 400MHz, for DDR2/3 */
+-	{ 7, 1, 1, 1, 1, 1, 3, 1 },
++	/* DMC L2: 266.7MHz */
++	{ 7, 1, 1, 2, 1, 1, 3, 1 },
+ 
+-	/* DMC L4B: 200MHz, for LPDDR2 */
++	/* DMC L3: 200MHz */
+ 	{ 7, 1, 1, 3, 1, 1, 3, 1 },
  };
  
- static struct clksrc_clk clk_pclk_acp = {
-@@ -289,7 +289,7 @@ static struct clksrc_clk clk_pclk_acp = {
- 		.id		= -1,
- 		.parent		= &clk_aclk_acp.clk,
- 	},
--	.reg_div	= { .reg = S5P_CLKDIV_CORE0, .shift = 4, .size = 3 },
-+	.reg_div	= { .reg = S5P_CLKDIV_DMC0, .shift = 4, .size = 3 },
+-static unsigned int clkdiv_top[CPUFREQ_LEVEL_END + 1][5] = {
++static unsigned int clkdiv_top[CPUFREQ_LEVEL_END][5] = {
+ 	/*
+ 	 * Clock divider value for following
+ 	 * { DIVACLK200, DIVACLK100, DIVACLK160, DIVACLK133, DIVONENAND }
+@@ -122,20 +128,14 @@ static unsigned int clkdiv_top[CPUFREQ_LEVEL_END + 1][5] = {
+ 	/* ACLK200 L1: 200MHz */
+ 	{ 3, 7, 4, 5, 1 },
+ 
+-	/* ACLK200 L2: 200MHz */
+-	{ 3, 7, 4, 5, 1 },
+-
+-	/* ACLK200 L3: 200MHz */
+-	{ 3, 7, 4, 5, 1 },
+-
+-	/* ACLK200 L4A: 100MHz */
+-	{ 7, 7, 7, 7, 1 },
++	/* ACLK200 L2: 160MHz */
++	{ 4, 7, 5, 7, 1 },
+ 
+-	/* ACLK200 L4B: 100MHz */
+-	{ 7, 7, 7, 7, 1 },
++	/* ACLK200 L3: 133.3MHz */
++	{ 5, 7, 7, 7, 1 },
  };
  
- /* Core list of CMU_TOP side */
-diff --git a/arch/arm/mach-s5pv310/include/mach/regs-clock.h b/arch/arm/mach-s5pv310/include/mach/regs-clock.h
-index f1028ca..9e9e44c 100644
---- a/arch/arm/mach-s5pv310/include/mach/regs-clock.h
-+++ b/arch/arm/mach-s5pv310/include/mach/regs-clock.h
-@@ -19,6 +19,12 @@
+-static unsigned int clkdiv_lr_bus[CPUFREQ_LEVEL_END + 1][2] = {
++static unsigned int clkdiv_lr_bus[CPUFREQ_LEVEL_END][2] = {
+ 	/*
+ 	 * Clock divider value for following
+ 	 * { DIVGDL/R, DIVGPL/R }
+@@ -147,17 +147,11 @@ static unsigned int clkdiv_lr_bus[CPUFREQ_LEVEL_END + 1][2] = {
+ 	/* ACLK_GDL/R L1: 200MHz */
+ 	{ 3, 1 },
  
- #define S5P_INFORM0			S5P_CLKREG(0x800)
+-	/* ACLK_GDL/R L2: 200MHz */
+-	{ 3, 1 },
+-
+-	/* ACLK_GDL/R L3: 200MHz */
+-	{ 3, 1 },
++	/* ACLK_GDL/R L2: 160MHz */
++	{ 4, 1 },
  
-+#define S5P_CLKDIV_LEFTBUS		S5P_CLKREG(0x04500)
-+#define S5P_CLKDIV_STAT_LEFTBUS		S5P_CLKREG(0x04600)
-+
-+#define S5P_CLKDIV_RIGHTBUS		S5P_CLKREG(0x08500)
-+#define S5P_CLKDIV_STAT_RIGHTBUS	S5P_CLKREG(0x08600)
-+
- #define S5P_EPLL_CON0			S5P_CLKREG(0x0C110)
- #define S5P_EPLL_CON1			S5P_CLKREG(0x0C114)
- #define S5P_VPLL_CON0			S5P_CLKREG(0x0C120)
-@@ -58,6 +64,8 @@
- #define S5P_CLKSRC_MASK_PERIL0		S5P_CLKREG(0x0C350)
- #define S5P_CLKSRC_MASK_PERIL1		S5P_CLKREG(0x0C354)
+-	/* ACLK_GDL/R L4A: 100MHz */
+-	{ 7, 1 },
+-
+-	/* ACLK_GDL/R L4B: 100MHz */
+-	{ 7, 1 },
++	/* ACLK_GDL/R L3: 133.3MHz */
++	{ 5, 1 },
+ };
  
-+#define S5P_CLKDIV_STAT_TOP		S5P_CLKREG(0x0C610)
-+
- #define S5P_CLKGATE_IP_CAM		S5P_CLKREG(0x0C920)
- #define S5P_CLKGATE_IP_IMAGE		S5P_CLKREG(0x0C930)
- #define S5P_CLKGATE_IP_LCD0		S5P_CLKREG(0x0C934)
-@@ -66,8 +74,9 @@
- #define S5P_CLKGATE_IP_PERIL		S5P_CLKREG(0x0C950)
- #define S5P_CLKGATE_IP_PERIR		S5P_CLKREG(0x0C960)
+ struct cpufreq_voltage_table {
+@@ -166,7 +160,7 @@ struct cpufreq_voltage_table {
+ 	unsigned int	int_volt;
+ };
  
--#define S5P_CLKSRC_CORE			S5P_CLKREG(0x10200)
--#define S5P_CLKDIV_CORE0		S5P_CLKREG(0x10500)
-+#define S5P_CLKSRC_DMC			S5P_CLKREG(0x10200)
-+#define S5P_CLKDIV_DMC0			S5P_CLKREG(0x10500)
-+#define S5P_CLKDIV_STAT_DMC0		S5P_CLKREG(0x10600)
+-static struct cpufreq_voltage_table s5pv310_volt_table[] = {
++static struct cpufreq_voltage_table s5pv310_volt_table[CPUFREQ_LEVEL_END] = {
+ 	{
+ 		.index		= L0,
+ 		.arm_volt	= 1200000,
+@@ -177,19 +171,29 @@ static struct cpufreq_voltage_table s5pv310_volt_table[] = {
+ 		.int_volt	= 1100000,
+ 	}, {
+ 		.index		= L2,
+-		.arm_volt	= 1050000,
+-		.int_volt	= 1100000,
++		.arm_volt	= 1000000,
++		.int_volt	= 1000000,
+ 	}, {
+ 		.index		= L3,
+-		.arm_volt	= 1050000,
+-		.int_volt	= 1100000,
+-	}, {
+-		.index		= L4,
+-		.arm_volt	= 1000000,
++		.arm_volt	= 900000,
+ 		.int_volt	= 1000000,
+ 	},
+ };
  
- #define S5P_APLL_LOCK			S5P_CLKREG(0x14000)
- #define S5P_MPLL_LOCK			S5P_CLKREG(0x14004)
-@@ -84,6 +93,70 @@
++static unsigned int s5pv310_apll_pms_table[CPUFREQ_LEVEL_END] = {
++	/* APLL FOUT L0: 1000MHz */
++	((250 << 16) | (6 << 8) | 1),
++
++	/* APLL FOUT L1: 800MHz */
++	((200 << 16) | (6 << 8) | 1),
++
++	/* APLL FOUT L2 : 400MHz */
++	((200 << 16) | (6 << 8) | 2),
++
++	/* APLL FOUT L3: 100MHz */
++	((200 << 16) | (6 << 8) | 4),
++};
++
+ int s5pv310_verify_speed(struct cpufreq_policy *policy)
+ {
+ 	return cpufreq_frequency_table_verify(policy, s5pv310_freq_table);
+@@ -227,6 +231,21 @@ void s5pv310_set_clkdiv(unsigned int div_index)
+ 		tmp = __raw_readl(S5P_CLKDIV_STATCPU);
+ 	} while (tmp & 0x1111111);
  
- #define S5P_CLKGATE_SCLKCPU		S5P_CLKREG(0x14800)
++	/* Change Divider - CPU1 */
++
++	tmp = __raw_readl(S5P_CLKDIV_CPU1);
++
++	tmp &= ~((0x7 << 4) | 0x7);
++
++	tmp |= ((clkdiv_cpu1[div_index][0] << 4) |
++		(clkdiv_cpu1[div_index][1] << 0));
++
++	__raw_writel(tmp, S5P_CLKDIV_CPU1);
++
++	do {
++		tmp = __raw_readl(S5P_CLKDIV_STATCPU1);
++	} while (tmp & 0x11);
++
+ 	/* Change Divider - DMC0 */
  
-+/* APLL_LOCK */
-+#define S5P_APLL_LOCKTIME		(0x1C20)	/* 300us */
-+
-+/* APLL_CON0 */
-+#define S5P_APLLCON0_ENABLE_SHIFT	(31)
-+#define S5P_APLLCON0_LOCKED_SHIFT	(29)
-+#define S5P_APLL_VAL_1000		((250 << 16) | (6 << 8) | 1)
-+
-+/* CLK_SRC_CPU */
-+#define S5P_CLKSRC_CPU_MUXCORE_SHIFT	(16)
-+#define S5P_CLKMUX_STATCPU_MUXCORE_MASK	(0x7 << S5P_CLKSRC_CPU_MUXCORE_SHIFT)
-+
-+/* CLKDIV_CPU0 */
-+#define S5P_CLKDIV_CPU0_CORE_SHIFT	(0)
-+#define S5P_CLKDIV_CPU0_CORE_MASK	(0x7 << S5P_CLKDIV_CPU0_CORE_SHIFT)
-+#define S5P_CLKDIV_CPU0_COREM0_SHIFT	(4)
-+#define S5P_CLKDIV_CPU0_COREM0_MASK	(0x7 << S5P_CLKDIV_CPU0_COREM0_SHIFT)
-+#define S5P_CLKDIV_CPU0_COREM1_SHIFT	(8)
-+#define S5P_CLKDIV_CPU0_COREM1_MASK	(0x7 << S5P_CLKDIV_CPU0_COREM1_SHIFT)
-+#define S5P_CLKDIV_CPU0_PERIPH_SHIFT	(12)
-+#define S5P_CLKDIV_CPU0_PERIPH_MASK	(0x7 << S5P_CLKDIV_CPU0_PERIPH_SHIFT)
-+#define S5P_CLKDIV_CPU0_ATB_SHIFT	(16)
-+#define S5P_CLKDIV_CPU0_ATB_MASK	(0x7 << S5P_CLKDIV_CPU0_ATB_SHIFT)
-+#define S5P_CLKDIV_CPU0_PCLKDBG_SHIFT	(20)
-+#define S5P_CLKDIV_CPU0_PCLKDBG_MASK	(0x7 << S5P_CLKDIV_CPU0_PCLKDBG_SHIFT)
-+#define S5P_CLKDIV_CPU0_APLL_SHIFT	(24)
-+#define S5P_CLKDIV_CPU0_APLL_MASK	(0x7 << S5P_CLKDIV_CPU0_APLL_SHIFT)
-+
-+/* CLKDIV_DMC0 */
-+#define S5P_CLKDIV_DMC0_ACP_SHIFT	(0)
-+#define S5P_CLKDIV_DMC0_ACP_MASK	(0x7 << S5P_CLKDIV_DMC0_ACP_SHIFT)
-+#define S5P_CLKDIV_DMC0_ACPPCLK_SHIFT	(4)
-+#define S5P_CLKDIV_DMC0_ACPPCLK_MASK	(0x7 << S5P_CLKDIV_DMC0_ACPPCLK_SHIFT)
-+#define S5P_CLKDIV_DMC0_DPHY_SHIFT	(8)
-+#define S5P_CLKDIV_DMC0_DPHY_MASK	(0x7 << S5P_CLKDIV_DMC0_DPHY_SHIFT)
-+#define S5P_CLKDIV_DMC0_DMC_SHIFT	(12)
-+#define S5P_CLKDIV_DMC0_DMC_MASK	(0x7 << S5P_CLKDIV_DMC0_DMC_SHIFT)
-+#define S5P_CLKDIV_DMC0_DMCD_SHIFT	(16)
-+#define S5P_CLKDIV_DMC0_DMCD_MASK	(0x7 << S5P_CLKDIV_DMC0_DMCD_SHIFT)
-+#define S5P_CLKDIV_DMC0_DMCP_SHIFT	(20)
-+#define S5P_CLKDIV_DMC0_DMCP_MASK	(0x7 << S5P_CLKDIV_DMC0_DMCP_SHIFT)
-+#define S5P_CLKDIV_DMC0_COPY2_SHIFT	(24)
-+#define S5P_CLKDIV_DMC0_COPY2_MASK	(0x7 << S5P_CLKDIV_DMC0_COPY2_SHIFT)
-+#define S5P_CLKDIV_DMC0_CORETI_SHIFT	(28)
-+#define S5P_CLKDIV_DMC0_CORETI_MASK	(0x7 << S5P_CLKDIV_DMC0_CORETI_SHIFT)
-+
-+/* CLKDIV_TOP */
-+#define S5P_CLKDIV_TOP_ACLK200_SHIFT	(0)
-+#define S5P_CLKDIV_TOP_ACLK200_MASK	(0x7 << S5P_CLKDIV_TOP_ACLK200_SHIFT)
-+#define S5P_CLKDIV_TOP_ACLK100_SHIFT	(4)
-+#define S5P_CLKDIV_TOP_ACLK100_MASK	(0xf << S5P_CLKDIV_TOP_ACLK100_SHIFT)
-+#define S5P_CLKDIV_TOP_ACLK160_SHIFT	(8)
-+#define S5P_CLKDIV_TOP_ACLK160_MASK	(0x7 << S5P_CLKDIV_TOP_ACLK160_SHIFT)
-+#define S5P_CLKDIV_TOP_ACLK133_SHIFT	(12)
-+#define S5P_CLKDIV_TOP_ACLK133_MASK	(0x7 << S5P_CLKDIV_TOP_ACLK133_SHIFT)
-+#define S5P_CLKDIV_TOP_ONENAND_SHIFT	(16)
-+#define S5P_CLKDIV_TOP_ONENAND_MASK	(0x7 << S5P_CLKDIV_TOP_ONENAND_SHIFT)
-+
-+/* CLKDIV_LEFTBUS / CLKDIV_RIGHTBUS*/
-+#define S5P_CLKDIV_BUS_GDLR_SHIFT	(0)
-+#define S5P_CLKDIV_BUS_GDLR_MASK	(0x7 << S5P_CLKDIV_BUS_GDLR_SHIFT)
-+#define S5P_CLKDIV_BUS_GPLR_SHIFT	(4)
-+#define S5P_CLKDIV_BUS_GPLR_MASK	(0x7 << S5P_CLKDIV_BUS_GPLR_SHIFT)
-+
- /* Compatibility defines */
+ 	tmp = __raw_readl(S5P_CLKDIV_DMC0);
+@@ -302,17 +321,101 @@ void s5pv310_set_clkdiv(unsigned int div_index)
+ 	} while (tmp & 0x11);
+ }
  
- #define S5P_EPLL_CON			S5P_EPLL_CON0
++static void s5pv310_set_apll(unsigned int index)
++{
++	unsigned int tmp;
++
++	/* 1. MUX_CORE_SEL = MPLL, ARMCLK uses MPLL for lock time */
++	clk_set_parent(moutcore, mout_mpll);
++
++	do {
++		tmp = (__raw_readl(S5P_CLKMUX_STATCPU)
++			>> S5P_CLKSRC_CPU_MUXCORE_SHIFT);
++		tmp &= 0x7;
++	} while (tmp != 0x2);
++
++	/* 2. Set APLL Lock time */
++	__raw_writel(S5P_APLL_LOCKTIME, S5P_APLL_LOCK);
++
++	/* 3. Change PLL PMS values */
++	tmp = __raw_readl(S5P_APLL_CON0);
++	tmp &= ~((0x3ff << 16) | (0x3f << 8) | (0x7 << 0));
++	tmp |= s5pv310_apll_pms_table[index];
++	__raw_writel(tmp, S5P_APLL_CON0);
++
++	/* 4. wait_lock_time */
++	do {
++		tmp = __raw_readl(S5P_APLL_CON0);
++	} while (!(tmp & (0x1 << S5P_APLLCON0_LOCKED_SHIFT)));
++
++	/* 5. MUX_CORE_SEL = APLL */
++	clk_set_parent(moutcore, mout_apll);
++
++	do {
++		tmp = __raw_readl(S5P_CLKMUX_STATCPU);
++		tmp &= S5P_CLKMUX_STATCPU_MUXCORE_MASK;
++	} while (tmp != (0x1 << S5P_CLKSRC_CPU_MUXCORE_SHIFT));
++}
++
++static void s5pv310_set_frequency(unsigned int old_index, unsigned int new_index)
++{
++	unsigned int tmp;
++
++	if (old_index > new_index) {
++		/* The frequency changing to L0 needs to change apll */
++		if (freqs.new == s5pv310_freq_table[L0].frequency) {
++			/* 1. Change the system clock divider values */
++			s5pv310_set_clkdiv(new_index);
++
++			/* 2. Change the apll m,p,s value */
++			s5pv310_set_apll(new_index);
++		} else {
++			/* 1. Change the system clock divider values */
++			s5pv310_set_clkdiv(new_index);
++
++			/* 2. Change just s value in apll m,p,s value */
++			tmp = __raw_readl(S5P_APLL_CON0);
++			tmp &= ~(0x7 << 0);
++			tmp |= (s5pv310_apll_pms_table[new_index] & 0x7);
++			__raw_writel(tmp, S5P_APLL_CON0);
++		}
++	}
++
++	else if (old_index < new_index) {
++		/* The frequency changing from L0 needs to change apll */
++		if (freqs.old == s5pv310_freq_table[L0].frequency) {
++			/* 1. Change the apll m,p,s value */
++			s5pv310_set_apll(new_index);
++
++			/* 2. Change the system clock divider values */
++			s5pv310_set_clkdiv(new_index);
++		} else {
++			/* 1. Change just s value in apll m,p,s value */
++			tmp = __raw_readl(S5P_APLL_CON0);
++			tmp &= ~(0x7 << 0);
++			tmp |= (s5pv310_apll_pms_table[new_index] & 0x7);
++			__raw_writel(tmp, S5P_APLL_CON0);
++
++			/* 2. Change the system clock divider values */
++			s5pv310_set_clkdiv(new_index);
++		}
++	}
++}
++
+ static int s5pv310_target(struct cpufreq_policy *policy,
+ 			  unsigned int target_freq,
+ 			  unsigned int relation)
+ {
+-	unsigned int index, div_index, tmp;
++	unsigned int index, old_index;
+ 	unsigned int arm_volt, int_volt;
+-	unsigned int need_apll = 0;
+ 
+ 	freqs.old = s5pv310_getspeed(policy->cpu);
+ 
+ 	if (cpufreq_frequency_table_target(policy, s5pv310_freq_table,
++					   freqs.old, relation, &old_index))
++		return -EINVAL;
++
++	if (cpufreq_frequency_table_target(policy, s5pv310_freq_table,
+ 					   target_freq, relation, &index))
+ 		return -EINVAL;
+ 
+@@ -322,19 +425,6 @@ static int s5pv310_target(struct cpufreq_policy *policy,
+ 	if (freqs.new == freqs.old)
+ 		return 0;
+ 
+-	/*
+-	 * If freqs.new is higher than 800MHz
+-	 * cpufreq driver should turn on apll
+-	 */
+-	if (index < L1)
+-		need_apll = 1;
+-
+-	/* If the memory type is LPDDR2, use L4-B instead of L4-A */
+-	if ((index == L4) && (memtype == LPDDR2))
+-		div_index = index + 1;
+-	else
+-		div_index = index;
+-
+ 	/* get the voltage value */
+ 	arm_volt = s5pv310_volt_table[index].arm_volt;
+ 	int_volt = s5pv310_volt_table[index].int_volt;
+@@ -351,69 +441,7 @@ static int s5pv310_target(struct cpufreq_policy *policy,
+ 	}
+ 
+ 	/* Clock Configuration Procedure */
+-
+-	/* 1. Change the system clock divider values */
+-	s5pv310_set_clkdiv(div_index);
+-
+-	/* 2. Change the divider values for special clocks in CMU_TOP */
+-	/* currently nothing */
+-
+-	/* 3. Change the XPLL values or Select the parent XPLL */
+-	if (need_apll) {
+-		if (!armclk_use_apll) {
+-			/*
+-			 * If the parent clock of armclk isn't apll
+-			 * here need to set apll (include m,p,s value)
+-			 */
+-
+-			/* a. MUX_CORE_SEL = MPLL,
+-			 * ARMCLK uses MPLL for lock time */
+-			clk_set_parent(moutcore, mout_mpll);
+-
+-			do {
+-				tmp = (__raw_readl(S5P_CLKMUX_STATCPU)
+-					>> S5P_CLKSRC_CPU_MUXCORE_SHIFT);
+-				tmp &= 0x7;
+-			} while (tmp != 0x2);
+-
+-			/* b. Set APLL Lock time */
+-			__raw_writel(S5P_APLL_LOCKTIME, S5P_APLL_LOCK);
+-
+-			/* c. Change PLL PMS values */
+-			__raw_writel(S5P_APLL_VAL_1000, S5P_APLL_CON0);
+-
+-			/* d. Turn on a PLL */
+-			tmp = __raw_readl(S5P_APLL_CON0);
+-			tmp |= (0x1 << S5P_APLLCON0_ENABLE_SHIFT);
+-			__raw_writel(tmp, S5P_APLL_CON0);
+-
+-			/* e. wait_lock_time */
+-			do {
+-				tmp = __raw_readl(S5P_APLL_CON0);
+-			} while (!(tmp & (0x1 << S5P_APLLCON0_LOCKED_SHIFT)));
+-
+-			armclk_use_apll = 1;
+-
+-		}
+-
+-		/* MUX_CORE_SEL = APLL */
+-		clk_set_parent(moutcore, mout_apll);
+-
+-		do {
+-			tmp = __raw_readl(S5P_CLKMUX_STATCPU);
+-			tmp &= S5P_CLKMUX_STATCPU_MUXCORE_MASK;
+-		} while (tmp != (0x1 << S5P_CLKSRC_CPU_MUXCORE_SHIFT));
+-
+-	} else {
+-		if (clk_get_parent(moutcore) != mout_mpll) {
+-			clk_set_parent(moutcore, mout_mpll);
+-
+-			do {
+-				tmp = __raw_readl(S5P_CLKMUX_STATCPU);
+-				tmp &= S5P_CLKMUX_STATCPU_MUXCORE_MASK;
+-			} while (tmp != (0x2 << S5P_CLKSRC_CPU_MUXCORE_SHIFT));
+-		}
+-	}
++	s5pv310_set_frequency(old_index, index);
+ 
+ 	/* control regulator */
+ 	if (freqs.new < freqs.old) {
+@@ -477,8 +505,6 @@ static struct cpufreq_driver s5pv310_driver = {
+ 
+ static int __init s5pv310_cpufreq_init(void)
+ {
+-	unsigned int tmp;
+-
+ 	cpu_clk = clk_get(NULL, "armclk");
+ 	if (IS_ERR(cpu_clk))
+ 		return PTR_ERR(cpu_clk);
+@@ -509,13 +535,6 @@ static int __init s5pv310_cpufreq_init(void)
+ 	}
+ #endif
+ 
+-	/* check parent clock of armclk */
+-	tmp = __raw_readl(S5P_CLKSRC_CPU);
+-	if (tmp & S5P_CLKSRC_CPU_MUXCORE_SHIFT)
+-		armclk_use_apll = 0;
+-	else
+-		armclk_use_apll = 1;
+-
+ 	/*
+ 	 * Check DRAM type.
+ 	 * Because DVFS level is different according to DRAM type.
 -- 
 1.6.2.5
