@@ -1,44 +1,55 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 0/7] ARM: S5PV310: Add support CPUFREQ driver
-Date: Thu, 23 Dec 2010 14:49:50 +0900
-Message-ID: <1293083397-15969-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 7/7] ARM: S5PV310: Update Kconfig and Makefile for supporting CPUFREQ
+Date: Thu, 23 Dec 2010 14:49:57 +0900
+Message-ID: <1293083397-15969-8-git-send-email-kgene.kim@samsung.com>
+References: <1293083397-15969-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:56527 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:56533 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751076Ab0LWGHt (ORCPT
+	with ESMTP id S1751244Ab0LWGHu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Dec 2010 01:07:49 -0500
+	Thu, 23 Dec 2010 01:07:50 -0500
+In-Reply-To: <1293083397-15969-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org
+Cc: ben-linux@fluff.org, Sunyoung Kang <sy0816.kang@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch adds support CPUFREQ for S5PV310(S5PC210) SoC.
+From: Sunyoung Kang <sy0816.kang@samsung.com>
 
-Following 1st, 3rd, 4th, and 7th patches have been submitted several month ago
-and already has been merged in my tree at that time, but I dropped because of
-dependency of ARM localtimer and APLL.
+This patch adds ARCH_HAS_CPUFREQ in Kconfig of ARCH_S5PV310 and updates
+Makefile for supporting build S5PV310 CPUFREQ driver.
 
-Now, submitted MCT(Multi-Core Timer) which can prevent its problem and also other
-localtimer patch for avoding same problem. Anyway so, I think, this can support
-CPUFREQ of S5PV310(S5PC210).
+Signed-off-by: Sunyoung Kang <sy0816.kang@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/Kconfig               |    1 +
+ arch/arm/mach-s5pv310/Makefile |    1 +
+ 2 files changed, 2 insertions(+), 0 deletions(-)
 
-Basically, I re-based old CPUFREQ driver and recent new CPUFREQ patch which has
-been submitted by Mr. Kim, Sangbeom.
-
-[PATCH 1/7] ARM: S5PV310: Update CMU registers for CPUFREQ
-[PATCH V3 2/7] ARM: S5PV310: Define missing CMU register for CPUFREQ
-[PATCH 3/7] ARM: S5PV310: Add DMC registers and map_desc
-[PATCH 4/7] ARM: S5PV310: Add support CPUFREQ
-[PATCH V3 5/7] ARM: S5PV310: Update CPUFREQ
-[PATCH V3 6/7] ARM: S5PV310: Add FOUT APLL get rate function
-[PATCH 7/7] ARM: S5PV310: Update Kconfig and Makefile for supporting CPUFREQ
-
-Merry Christmas :-)
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index d56d21c..5ecaec6 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -738,6 +738,7 @@ config ARCH_S5PV310
+ 	select ARCH_SPARSEMEM_ENABLE
+ 	select GENERIC_GPIO
+ 	select HAVE_CLK
++	select ARCH_HAS_CPUFREQ
+ 	select GENERIC_CLOCKEVENTS
+ 	select HAVE_S3C_RTC if RTC_CLASS
+ 	select HAVE_S3C2410_I2C if I2C
+diff --git a/arch/arm/mach-s5pv310/Makefile b/arch/arm/mach-s5pv310/Makefile
+index 84afc64..6a8a1ef 100644
+--- a/arch/arm/mach-s5pv310/Makefile
++++ b/arch/arm/mach-s5pv310/Makefile
+@@ -14,6 +14,7 @@ obj-				:=
+ 
+ obj-$(CONFIG_CPU_S5PV310)	+= cpu.o init.o clock.o irq-combiner.o
+ obj-$(CONFIG_CPU_S5PV310)	+= setup-i2c0.o time.o gpiolib.o irq-eint.o
++obj-$(CONFIG_CPU_FREQ)		+= cpufreq.o
+ 
+ obj-$(CONFIG_SMP)		+= platsmp.o headsmp.o
+ obj-$(CONFIG_LOCAL_TIMERS)	+= localtimer.o
+-- 
+1.6.2.5
