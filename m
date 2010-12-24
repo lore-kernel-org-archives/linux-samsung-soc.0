@@ -1,39 +1,106 @@
 From: Seungwhan Youn <sw.youn@samsung.com>
-Subject: [PATCH 3/4] ASoC: SAMSUNG: Modify to indepedant depends on configuration
-Date: Fri, 24 Dec 2010 15:46:58 +0900
-Message-ID: <1293173218-3487-1-git-send-email-sw.youn@samsung.com>
+Subject: [PATCH 4/4] ASoC: SAMSUNG: Apply modifications for SMDK audio configuations
+Date: Fri, 24 Dec 2010 15:57:20 +0900
+Message-ID: <1293173840-6138-1-git-send-email-sw.youn@samsung.com>
 References: <1293171965-24416-1-git-send-email-sw.youn@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:60798 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:33361 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750731Ab0LXHID (ORCPT
+	with ESMTP id S1750763Ab0LXHSC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Dec 2010 02:08:03 -0500
+	Fri, 24 Dec 2010 02:18:02 -0500
 In-Reply-To: <1293171965-24416-1-git-send-email-sw.youn@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 Cc: linux@arm.linux.org.uk, ben-linux@fluff.org, kgene.kim@samsung.com, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com, jassi.brar@samsung.com, Seungwhan Youn <sw.youn@samsung.com>
 
-This patch modify to support ASoC Samsung which is selected HAVE_ASOC_SAMSUNG
-from platform configuration automatically. After this, ASoC has not consider
-which arch(or plat) adds to support audio driver.
+This patch apply SMDK audio configurations which depends on platform
+configurations. This makes more seperate select audio configurations,
+because after apply this audio configuration does not consider about
+which SMDK board or ARCH is selected.
 
 Signed-off-by: Seungwhan Youn <sw.youn@samsung.com>
 ---
- sound/soc/samsung/Kconfig |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
+ sound/soc/samsung/Kconfig |   31 ++++++++++++++++++++++++++-----
+ 1 files changed, 26 insertions(+), 5 deletions(-)
 
 diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 11ff4ad..90fe869 100644
+index 90fe869..163dceb 100644
 --- a/sound/soc/samsung/Kconfig
 +++ b/sound/soc/samsung/Kconfig
-@@ -1,6 +1,5 @@
- config ASOC_SAMSUNG
- 	tristate "ASoC support for Samsung"
--	depends on ARCH_S3C2410 || ARCH_S3C64XX || ARCH_S5PC100 || ARCH_S5PV210 || ARCH_S5P64X0 || ARCH_S5P6442 || ARCH_S5PV310
- 	select S3C64XX_DMA if ARCH_S3C64XX
- 	select S3C2410_DMA if ARCH_S3C2410
+@@ -33,6 +33,27 @@ config SND_SAMSUNG_SPDIF
+ config SND_SAMSUNG_I2S
+ 	tristate
+ 
++config SMDK_HAS_WM8580_I2S
++	bool
++
++config SMDK_HAS_WM8994_I2S
++	bool
++
++config SMDK_HAS_WM8580_PCM
++	bool
++
++config SMDK_HAS_WM8994_PCM
++	bool
++
++config SMDK_HAS_WM9710_AC97
++	bool
++
++config SMDK_HAS_WM9713_AC97
++	bool
++
++config SMDK_HAS_SPDIF
++	bool
++
+ config ASOC_SAMSUNG_NEO1973_WM8753
+ 	tristate "SoC I2S Audio support for NEO1973 - WM8753"
+ 	depends on ASOC_SAMSUNG && MACH_NEO1973_GTA01
+@@ -61,7 +82,7 @@ config ASOC_SAMSUNG_JIVE_WM8750
+ 
+ config ASOC_SAMSUNG_SMDK_WM8580
+ 	tristate "SoC I2S Audio support for WM8580 on SMDK"
+-	depends on ASOC_SAMSUNG && (MACH_SMDK6410 || MACH_SMDKC100 || MACH_SMDK6440 || MACH_SMDK6450 || MACH_SMDK6442 || MACH_SMDKV210 || MACH_SMDKC110)
++	depends on SMDK_HAS_WM8580_I2S
+ 	select SND_SOC_WM8580
+ 	select SND_SAMSUNG_I2S
  	help
+@@ -69,7 +90,7 @@ config ASOC_SAMSUNG_SMDK_WM8580
+ 
+ config ASOC_SAMSUNG_SMDK_WM8994
+ 	tristate "SoC I2S Audio support for WM8994 on SMDK"
+-	depends on ASOC_SAMSUNG && (MACH_SMDKV310 || MACH_SMDKC210)
++	depends on SMDK_HAS_WM8994_I2S
+ 	select SND_SOC_WM8994
+ 	select SND_SAMSUNG_I2S
+ 	help
+@@ -77,7 +98,7 @@ config ASOC_SAMSUNG_SMDK_WM8994
+ 
+ config ASOC_SAMSUNG_SMDK2443_WM9710
+ 	tristate "SoC AC97 Audio support for SMDK2443 - WM9710"
+-	depends on ASOC_SAMSUNG && MACH_SMDK2443
++	depends on SMDK_HAS_WM9710_AC97
+ 	select S3C2410_DMA
+ 	select AC97_BUS
+ 	select SND_SOC_AC97_CODEC
+@@ -141,7 +162,7 @@ config ASOC_SAMSUNG_RX1950_UDA1380
+ 
+ config ASOC_SAMSUNG_SMDK_WM9713
+ 	tristate "SoC AC97 Audio support for SMDK with WM9713"
+-	depends on ASOC_SAMSUNG && (MACH_SMDK6410 || MACH_SMDKC100 || MACH_SMDKV210 || MACH_SMDKC110 || MACH_SMDKV310 || MACH_SMDKC210)
++	depends on SMDK_HAS_WM9713_AC97
+ 	select SND_SOC_WM9713
+ 	select SND_SAMSUNG_AC97
+ 	help
+@@ -164,7 +185,7 @@ config ASOC_GONI_AQUILA_WM8994
+ 
+ config ASOC_SAMSUNG_SMDK_SPDIF
+ 	tristate "SoC S/PDIF Audio support for SMDK"
+-	depends on ASOC_SAMSUNG && (MACH_SMDKC100 || MACH_SMDKC110 || MACH_SMDKV210)
++	depends on SMDK_HAS_SPDIF
+ 	select SND_SAMSUNG_SPDIF
+ 	help
+ 	  Say Y if you want to add support for SoC S/PDIF audio on the SMDK.
 -- 
 1.6.2.5
