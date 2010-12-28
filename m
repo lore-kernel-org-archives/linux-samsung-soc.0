@@ -1,258 +1,112 @@
-From: Jaeryul Oh <jaeryul.oh@samsung.com>
-Subject: RE: [PATCH 1/9] media: Changes in include/linux/videodev2.h for MFC 5.1
-Date: Tue, 28 Dec 2010 17:24:17 +0900
-Message-ID: <009701cba668$a0adb7a0$e20926e0$%oh@samsung.com>
-References: <1293018885-15239-1-git-send-email-jtp.park@samsung.com>
- <1293018885-15239-2-git-send-email-jtp.park@samsung.com>
- <201012221342.03713.hverkuil@xs4all.nl>
- <003701cba5e3$097f7ba0$1c7e72e0$%debski@samsung.com>
-Reply-To: jaeryul.oh@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:41247 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751073Ab0L1IY2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Dec 2010 03:24:28 -0500
-In-reply-to: <003701cba5e3$097f7ba0$1c7e72e0$%debski@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Hyunwoong Kim <khw0178.kim@samsung.com>
+Subject: [PATCH] [media] s5p-fimc: Support stop_streaming and job_abort
+Date: Tue, 28 Dec 2010 17:06:56 +0900
+Message-ID: <1293523616-27421-1-git-send-email-khw0178.kim@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, Hyunwoong Kim <khw0178.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kamil Debski' <k.debski@samsung.com>, 'Hans Verkuil' <hverkuil@xs4all.nl>, 'Jeongtae Park' <jtp.park@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, jonghun.han@samsung.com
 
-Hi, Kamil
+This patch adds callback functions, stop_streaming and job_abort,
+to abort or finish any DMA in progress. stop_streaming is called
+by videobuf2 framework and job_abort is called by m2m framework.
+ST_M2M_PEND state is added to discard the next job.
 
-k.debski@samsung.com wrote: 
-> Hi Hans,
-> 
-> > -----Original Message-----
-> > From: Hans Verkuil [mailto:hverkuil@xs4all.nl]
-> > Sent: 22 December 2010 13:42
-> > To: Jeongtae Park
-> > Cc: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
-> > k.debski@samsung.com; jaeryul.oh@samsung.com; kgene.kim@samsung.com;
-> > ben-linux@fluff.org; jonghun.han@samsung.com
-> > Subject: Re: [PATCH 1/9] media: Changes in include/linux/videodev2.h
-> > for MFC 5.1
-> 
-> <snip>
-> 
-> > >  #define V4L2_PIX_FMT_DV       v4l2_fourcc('d', 'v', 's', 'd') /*
-> > 1394          */
-> > >  #define V4L2_PIX_FMT_MPEG     v4l2_fourcc('M', 'P', 'E', 'G') /*
-> > MPEG-1/2/4    */
-> > >
-> > > +
-> > > +#define V4L2_PIX_FMT_H264     v4l2_fourcc('H', '2', '6', '4') /*
-> > H264    */
-> > > +#define V4L2_PIX_FMT_H263     v4l2_fourcc('H', '2', '6', '3') /*
-> > H263    */
-> > > +#define V4L2_PIX_FMT_MPEG12   v4l2_fourcc('M', 'P', '1', '2') /*
-> > MPEG-1/2  */
-> > > +#define V4L2_PIX_FMT_MPEG4    v4l2_fourcc('M', 'P', 'G', '4') /*
-> > MPEG-4  */
-> > > +#define V4L2_PIX_FMT_DIVX     v4l2_fourcc('D', 'I', 'V', 'X') /*
-> > DivX  */
-> > > +#define V4L2_PIX_FMT_DIVX3    v4l2_fourcc('D', 'I', 'V', '3') /*
-> > DivX 3.11  */
-> > > +#define V4L2_PIX_FMT_DIVX4    v4l2_fourcc('D', 'I', 'V', '4') /*
-> > DivX 4.12  */
-> > > +#define V4L2_PIX_FMT_DIVX500    v4l2_fourcc('D', 'X', '5', '2') /*
-> > DivX 5.00 - 5.02  */
-> > > +#define V4L2_PIX_FMT_DIVX503    v4l2_fourcc('D', 'X', '5', '3') /*
-> > DivX 5.03 - x  */
-> > > +#define V4L2_PIX_FMT_XVID     v4l2_fourcc('X', 'V', 'I', 'D') /*
-> > Xvid */
-> > > +#define V4L2_PIX_FMT_VC1      v4l2_fourcc('V', 'C', '1', 'A') /* VC-
-> > 1 */
-> > > +#define V4L2_PIX_FMT_VC1_RCV      v4l2_fourcc('V', 'C', '1', 'R') /*
-> > VC-1 RCV */
-> >
-> > What do these formats describe? Are these container formats or the
-> > actual
-> > compressed video stream that is normally packaged inside a container?
-> 
-> Apart from VC-1 RCV those are elementary streams. If I understand
-> correctly
-> RCV is a simple semi-container that contains necessary information to play
-> the ES. I have asked a person from HW team if all those fourccs are
-> necessary.
-> I am waiting for reply.
-> 
-> The idea was to have a fourcc for each supported codec (by this I mean the
-> elementary stream).
+Reviewed-by: Jonghun Han <jonghun.han@samsung.com>
+Signed-off-by: Hyunwoong Kim <khw0178.kim@samsung.com>
+---
+This patch is depended on Hyunwoong Kim's last patch.
+- [PATCH v2] [media] s5p-fimc: Configure scaler registers depending on FIMC version
 
-I'm reviewing what we really should add for MFC except for  previously
-defined FOURCC type 
-based on http://www.fourcc.org/fourcc.php
-FOURCC there seems that there is  a little bit different from codec
-supported by MFC(HW codec)
+ drivers/media/video/s5p-fimc/fimc-core.c |   41 ++++++++++++++++++++++++++++-
+ drivers/media/video/s5p-fimc/fimc-core.h |    1 +
+ 2 files changed, 40 insertions(+), 2 deletions(-)
 
-> 
-> >
-> > > +
-> > > +
-> > >  /*  Vendor-specific formats   */
-> > >  #define V4L2_PIX_FMT_CPIA1    v4l2_fourcc('C', 'P', 'I', 'A') /*
-> > cpia1 YUV */
-> > >  #define V4L2_PIX_FMT_WNVA     v4l2_fourcc('W', 'N', 'V', 'A') /*
-> > Winnov hw compress */
-> > > @@ -1009,6 +1034,7 @@ struct v4l2_ext_controls {
-> > >  #define V4L2_CTRL_CLASS_MPEG 0x00990000	/* MPEG-compression
-> > controls */
-> > >  #define V4L2_CTRL_CLASS_CAMERA 0x009a0000	/* Camera class
-> > controls */
-> > >  #define V4L2_CTRL_CLASS_FM_TX 0x009b0000	/* FM Modulator control
-> > class */
-> > > +#define V4L2_CTRL_CLASS_CODEC 0x009c0000	/* Codec control class
-> > */
-> > >
-> > >  #define V4L2_CTRL_ID_MASK      	  (0x0fffffff)
-> > >  #define V4L2_CTRL_ID2CLASS(id)    ((id) & 0x0fff0000UL)
-> > > @@ -1342,6 +1368,150 @@ enum
-> > v4l2_mpeg_cx2341x_video_median_filter_type {
-> > >  #define V4L2_CID_MPEG_CX2341X_VIDEO_CHROMA_MEDIAN_FILTER_TOP
-> > 	(V4L2_CID_MPEG_CX2341X_BASE+10)
-> > >  #define V4L2_CID_MPEG_CX2341X_STREAM_INSERT_NAV_PACKETS
-> > 	(V4L2_CID_MPEG_CX2341X_BASE+11)
-> > >
-> > > +/* For codecs */
-> > > +#define V4L2_CID_CODEC_BASE
-> (V4L2_CTRL_CLASS_CODEC
-> > | 0x900)
-> > > +#define V4L2_CID_CODEC_CLASS
-> (V4L2_CTRL_CLASS_CODEC
-> > | 1)
-> > > +
-> > > +/* For decoding */
-> > > +#define V4L2_CID_CODEC_LOOP_FILTER_MPEG4_ENABLE
-> > 	(V4L2_CID_CODEC_BASE + 110)
-> > > +#define V4L2_CID_CODEC_DISPLAY_DELAY		(V4L2_CID_CODEC_BASE
-> +
-> > 137)
-> > > +#define V4L2_CID_CODEC_REQ_NUM_BUFS		(V4L2_CID_CODEC_BASE
-> +
-> > 140)
-> > > +#define V4L2_CID_CODEC_SLICE_INTERFACE		(V4L2_CID_CODEC_BASE
-> +
-> > 141)
-> > > +#define V4L2_CID_CODEC_PACKED_PB		(V4L2_CID_CODEC_BASE + 142)
-> >
-> > ??? Weird CODEC_BASE offsets?
-> >
-> > Are all these codec controls above general? I.e., applicable to any
-> > codec? What
-> > do they mean?
-> 
-> My mistake - I forgot to tidy up the offsets. It is difficult for me to
-> say which of those controls are MFC specific as I have little experience
-> with other codecs.
-> 
-> Currently PACKED_PB has been replaced with a simple mechanism that can
-> detect
-> if the stream has packed PB frames. You can read more about such streams
-> here:
-> http://itsjustonesandzeros.blogspot.com/2007/01/what-is-packed-
-> bitstream.htm
-> l
-> First approach required the application to set if the stream contained
-> packed-PB
-> Frames. Now the driver detects it the stream contains packed-PB frames.
-> Another
-> approach would require the stream parser to detect those frames and divide
-> them
-> into two buffers queued to MFC.
-> 
-> DISPLAY_DELAY is a number of frames that should be decoded before the
-> first
-> frame is
-> returned to the application. It is valid for H264 streams.
-> 
-> REQ_NUM_BUFS is the minimum number of CAPTURE buffers required for MFC
-> decoder to work.
-> This is a read-only control, by reading this value the application can
-> adjust count when
-> doing REQBUFS. If the application needs 3 dequeued CAPTURE buffers for
-> processing it
-> should set count when doing REQBUFS to the value of REQ_NUM_BUFS + 3.
-> 
-> When SLICE_INTERFACE the codec expects compressed slices in OUTPUT buffers
-> instead of
-> full frames.
-> 
-> LOOP_FILTER_MPEG4_ENABLE controls deblocking filter for MPEG4 codec. You
-> are
-> right that
-> name this should be more general and name is not intuitive.
-> DECODING_DEBLOCK_FILTER
-> would be way better, as more codec can have this option.
-> 
-> I think that DECODING_DEBLOCK_FILTER (LOOP_FILTER_MPEG4_ENABLE),
-> SLICE_INTERFACE and
-> DISPLAY_DELAY should be general. Here I would really welcome comment from
-> other
-> developers working on codec v4l2 drivers.
-> 
-> >
-> > > +
-> > > +/* For encoding */
-> > > +#define V4L2_CID_CODEC_LOOP_FILTER_H264
-> > 	(V4L2_CID_CODEC_BASE + 9)
-> > > +enum v4l2_cid_codec_loop_filter_h264 {
-> > > +	V4L2_CID_CODEC_LOOP_FILTER_H264_ENABLE = 0,
-> > > +	V4L2_CID_CODEC_LOOP_FILTER_H264_DISABLE = 1,
-> > > +	V4L2_CID_CODEC_LOOP_FILTER_H264_DISABLE_AT_BOUNDARY = 2,
-> > > +};
-> > > +
-> > > +/* Codec class control IDs specific to the MFC51 driver */
-> > > +#define V4L2_CID_CODEC_MFC51_BASE
-(V4L2_CTRL_CLASS_CODEC
-> > | 0x1000)
-> >
-> > It's probably a good idea to only add this BASE define to videodev2.h
-> > (please include a comment describing the control range reserved for the
-> > MFC51).
-> > All others should go to a public mfc51 header. Which should include
-> > documentation
-> > for these controls as well.
-> 
-> Great idea.
-> 
-> >
-> > > +
-> > > +/* common */
-> > > +enum v4l2_codec_mfc5x_enc_switch {
-> > > +	V4L2_CODEC_MFC51_ENC_SW_DISABLE	= 0,
-> > > +	V4L2_CODEC_MFC51_ENC_SW_ENABLE	= 1,
-> > > +};
-> > > +enum v4l2_codec_mfc5x_enc_switch_inv {
-> > > +	V4L2_CODEC_MFC51_ENC_SW_INV_ENABLE	= 0,
-> > > +	V4L2_CODEC_MFC51_ENC_SW_INV_DISABLE	= 1,
-> > > +};
-> > > +#define V4L2_CID_CODEC_MFC51_ENC_GOP_SIZE
-> > 	(V4L2_CID_CODEC_MFC51_BASE+300)
-> >
-> > Why the +300?
-> 
-> This is question should be answered by Jeongtae Park, as he did the
-> encoding
-> part. Unfortunately our patches got mixed up.
-> 
-> I can only guess that this offset was added to distinguish between
-> decoding
-> and encoding.
-> 
-> <snip>
-> 
-> --
-> Kamil Debski
-> Linux Platform Group
-> Samsung Poland R&D Center
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
+index 2b65961..0eeb6a5 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.c
++++ b/drivers/media/video/s5p-fimc/fimc-core.c
+@@ -308,6 +308,26 @@ int fimc_set_scaler_info(struct fimc_ctx *ctx)
+ 	return 0;
+ }
+ 
++static int stop_streaming(struct vb2_queue *q)
++{
++	struct fimc_ctx *ctx = q->drv_priv;
++	struct fimc_dev *fimc = ctx->fimc_dev;
++	unsigned long flags;
++
++	if (!fimc_m2m_pending(fimc))
++		return 0;
++
++	spin_lock_irqsave(&fimc->slock, flags);
++	set_bit(ST_M2M_SHUT, &fimc->state);
++	spin_unlock_irqrestore(&fimc->slock, flags);
++
++	wait_event_timeout(fimc->irq_queue,
++			!test_bit(ST_M2M_SHUT, &fimc->state),
++			FIMC_SHUTDOWN_TIMEOUT);
++
++	return 0;
++}
++
+ static void fimc_capture_handler(struct fimc_dev *fimc)
+ {
+ 	struct fimc_vid_cap *cap = &fimc->vid_cap;
+@@ -359,7 +379,10 @@ static irqreturn_t fimc_isr(int irq, void *priv)
+ 
+ 	spin_lock(&fimc->slock);
+ 
+-	if (test_and_clear_bit(ST_M2M_PEND, &fimc->state)) {
++	if (test_and_clear_bit(ST_M2M_SHUT, &fimc->state)) {
++		wake_up(&fimc->irq_queue);
++		goto isr_unlock;
++	} else if (test_and_clear_bit(ST_M2M_PEND, &fimc->state)) {
+ 		struct vb2_buffer *src_vb, *dst_vb;
+ 		struct fimc_ctx *ctx = v4l2_m2m_get_curr_priv(fimc->m2m.m2m_dev);
+ 
+@@ -639,7 +662,20 @@ dma_unlock:
+ 
+ static void fimc_job_abort(void *priv)
+ {
+-	/* Nothing done in job_abort. */
++	struct fimc_ctx *ctx = priv;
++	struct fimc_dev *fimc = ctx->fimc_dev;
++	unsigned long flags;
++
++	if (!fimc_m2m_pending(fimc))
++		return;
++
++	spin_lock_irqsave(&fimc->slock, flags);
++	set_bit(ST_M2M_SHUT, &fimc->state);
++	spin_unlock_irqrestore(&fimc->slock, flags);
++
++	wait_event_timeout(fimc->irq_queue,
++			!test_bit(ST_M2M_SHUT, &fimc->state),
++			FIMC_SHUTDOWN_TIMEOUT);
+ }
+ 
+ static int fimc_queue_setup(struct vb2_queue *vq, unsigned int *num_buffers,
+@@ -716,6 +752,7 @@ struct vb2_ops fimc_qops = {
+ 	.buf_queue	 = fimc_buf_queue,
+ 	.wait_prepare	 = fimc_unlock,
+ 	.wait_finish	 = fimc_lock,
++	.stop_streaming	 = stop_streaming,
+ };
+ 
+ static int fimc_m2m_querycap(struct file *file, void *priv,
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
+index d690398..150792d 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.h
++++ b/drivers/media/video/s5p-fimc/fimc-core.h
+@@ -51,6 +51,7 @@ enum fimc_dev_flags {
+ 	ST_IDLE,
+ 	ST_OUTDMA_RUN,
+ 	ST_M2M_PEND,
++	ST_M2M_SHUT,
+ 	/* for capture node */
+ 	ST_CAPT_PEND,
+ 	ST_CAPT_RUN,
+-- 
+1.6.2.5
