@@ -1,45 +1,85 @@
-From: Linus Walleij <linus.walleij@stericsson.com>
-Subject: Re: [PATCH] TWD: enable one-shot mode
-Date: Tue, 28 Dec 2010 02:17:42 +0100
-Message-ID: <AANLkTinU+x2uV34SCO=p2K4z6BO_DSYy2+1BRU5eAgHO@mail.gmail.com>
-References: <20101224191855.GJ20587@n2100.arm.linux.org.uk>
+From: Hyunwoong Kim <khw0178.kim@samsung.com>
+Subject: RE: [PATCH] [media] s5p-fimc: update checking scaling ratio range
+Date: Tue, 28 Dec 2010 10:47:53 +0900
+Message-ID: <004301cba631$4094e820$c1beb860$%kim@samsung.com>
+References: <1293441471-23257-1-git-send-email-khw0178.kim@samsung.com>
+ <4D1870F4.60209@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:47149 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752070Ab0L1BRn convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:16981 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752625Ab0L1Br7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Dec 2010 20:17:43 -0500
-In-Reply-To: <20101224191855.GJ20587@n2100.arm.linux.org.uk>
+	Mon, 27 Dec 2010 20:47:59 -0500
+In-reply-to: <4D1870F4.60209@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Bryan Huntsman <bryanh@codeaurora.org>, Colin Cross <ccross@android.com>, Daniel Walker <dwalker@codeaurora.org>, David Brown <davidb@codeaurora.org>, Erik Gilling <konkers@android.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Tony Lindgren <tony@atomide.com>, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-2010/12/24 Russell King - ARM Linux <linux@arm.linux.org.uk>:
-> Allow one shot timer mode to be used with the TWD. =A0This allows
-> NOHZ mode to be used on SMP systems using the TWD localtimer.
->
-> Tested on Versatile Express.
->
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> ---
-> Acks/Tested-by's would be appreciated, thanks.
+Sylwester Nawrocki wrote:
 
-Tested on the U8500 and doesn't seem to break anything...
+> -----Original Message-----
+> From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-soc-
+> owner@vger.kernel.org] On Behalf Of Sylwester Nawrocki
+> Sent: Monday, December 27, 2010 7:57 PM
+> To: Hyunwoong Kim
+> Cc: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org
+> Subject: Re: [PATCH] [media] s5p-fimc: update checking scaling ratio range
+> 
+> Hi Hyunwoong,
+> 
+> On 12/27/2010 10:17 AM, Hyunwoong Kim wrote:
+> > Horizontal and vertical scaling range are according to the following
+> equations.
+> > If (SRC_Width >= 64 x DST_Width) { Exit(-1);  /* Out of Horizontal scale
+> range}
+> > If (SRC_Height >= 64 x DST_Height) { Exit(-1);  /* Out of Vertical scale
+> range}
 
-Local interrupts after a few minutes of use before patching
-(and enabling NO_HZ):
-LOC:       8203       8224
+<snip>
 
-After patching;
-LOC:        233        322
+> > -int fimc_check_scaler_ratio(struct v4l2_rect *r, struct fimc_frame *f);
+> > +int fimc_check_scaler_ratio(struct v4l2_rect *s, struct v4l2_rect *d,
+> int rot);
+> 
+> This function always compares 2 width/height pairs, don't you think it
+> could
+> be better to do something like:
+> int fimc_check_scaler_ratio(int sw, int sh, int dw, int dh, int rot);
+> considering your changed usage?
+> That could let us avoid copying arguments before each function call.
 
-Looks like it's working, too.
+If we use the 5 parameters as you commented, we can avoid copying arguments.
+However, according to ATPCS(The ARM-THUMB Procedure Call Standard), 
+4 registers from r0 to r3 is used for function's parameters and return
+value.
+If the number of parameters is more than 4, e.g. 5 parameters.
+Four of the parameters are passed by register from r0 to r3. and the fifth
+parameter is pushed in stack.
+That could affect system performance compared to the case that the number of
+parameter is below 4.
+So, I think it's the better way to use 3 parameters according to ATPCS.
+If you don't agree with my opinion, 
+I will send the second patch after modifying the definition of function as
+you mentioned.
 
-Tested-by: Linus Walleij <linus.walleij@stericsson.com>
+Thank you for your comment.
 
-Yours,
-Linus Walleij
+> Otherwise looks good to me.
+> >  int fimc_set_scaler_info(struct fimc_ctx *ctx);
+> >  int fimc_prepare_config(struct fimc_ctx *ctx, u32 flags);
+> >  int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
+> 
+> Regards,
+> --
+> Sylwester Nawrocki
+> Samsung Poland R&D Center
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-
+> soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
