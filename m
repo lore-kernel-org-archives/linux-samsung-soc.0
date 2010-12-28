@@ -1,157 +1,217 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 15/15] [media] s5p-fimc: Move scaler details handling to the
- register API file
-Date: Tue, 28 Dec 2010 18:03:18 +0100
-Message-ID: <1293555798-31578-14-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 11/15] [media] s5p-fimc: Enable simultaneous rotation and
+ flipping
+Date: Tue, 28 Dec 2010 18:03:16 +0100
+Message-ID: <1293555798-31578-12-git-send-email-s.nawrocki@samsung.com>
 References: <1293555798-31578-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:20175 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754153Ab0L1RD1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 28 Dec 2010 12:03:27 -0500
 In-reply-to: <1293555798-31578-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
+
+Map all (0, 90, 180, 270) deg counterclockwise rotation and
+horizontal and vertical flip controls to (0, 90) deg rotation,
+horizontal and vertical flip transformations available in the device.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-capture.c |    6 +---
- drivers/media/video/s5p-fimc/fimc-core.c    |    6 +---
- drivers/media/video/s5p-fimc/fimc-core.h    |    1 -
- drivers/media/video/s5p-fimc/fimc-reg.c     |   49 ++++++++++-----------------
- 4 files changed, 20 insertions(+), 42 deletions(-)
+ drivers/media/video/s5p-fimc/fimc-core.c |    9 +---
+ drivers/media/video/s5p-fimc/fimc-reg.c  |   76 ++++++++++++------------------
+ 2 files changed, 32 insertions(+), 53 deletions(-)
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index 1737753..5646603 100644
---- a/drivers/media/video/s5p-fimc/fimc-capture.c
-+++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -222,7 +222,6 @@ static int start_streaming(struct vb2_queue *q)
- 	struct fimc_ctx *ctx = q->drv_priv;
- 	struct fimc_dev *fimc = ctx->fimc_dev;
- 	struct s5p_fimc_isp_info *isp_info;
--	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
- 	int ret;
- 
- 	ret = v4l2_subdev_call(fimc->vid_cap.sd, video, s_stream, 1);
-@@ -246,10 +245,7 @@ static int start_streaming(struct vb2_queue *q)
- 		}
- 		fimc_hw_set_input_path(ctx);
- 		fimc_hw_set_prescaler(ctx);
--		if (variant->has_mainscaler_ext)
--			fimc_hw_set_mainscaler_ext(ctx);
--		else
--			fimc_hw_set_mainscaler(ctx);
-+		fimc_hw_set_mainscaler(ctx);
- 		fimc_hw_set_target_format(ctx);
- 		fimc_hw_set_rotation(ctx);
- 		fimc_hw_set_effect(ctx);
 diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index 3a4314a..05e0dbd 100644
+index 7899814..b273fe1 100644
 --- a/drivers/media/video/s5p-fimc/fimc-core.c
 +++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -578,7 +578,6 @@ static void fimc_dma_run(void *priv)
+@@ -1051,13 +1051,6 @@ int fimc_s_ctrl(struct fimc_ctx *ctx, struct v4l2_control *ctrl)
+ 	struct fimc_dev *fimc = ctx->fimc_dev;
+ 	unsigned long flags;
+ 
+-	if (ctx->rotation != 0 &&
+-	    (ctrl->id == V4L2_CID_HFLIP || ctrl->id == V4L2_CID_VFLIP)) {
+-		v4l2_err(&fimc->m2m.v4l2_dev,
+-			 "Simultaneous flip and rotation is not supported\n");
+-		return -EINVAL;
+-	}
+-
+ 	spin_lock_irqsave(&ctx->slock, flags);
+ 
+ 	switch (ctrl->id) {
+@@ -1098,7 +1091,7 @@ int fimc_s_ctrl(struct fimc_ctx *ctx, struct v4l2_control *ctrl)
+ }
+ 
+ static int fimc_m2m_s_ctrl(struct file *file, void *priv,
+-			 struct v4l2_control *ctrl)
++			   struct v4l2_control *ctrl)
  {
  	struct fimc_ctx *ctx = priv;
- 	struct fimc_dev *fimc;
--	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
- 	unsigned long flags;
- 	u32 ret;
- 
-@@ -613,10 +612,7 @@ static void fimc_dma_run(void *priv)
- 		}
- 
- 		fimc_hw_set_prescaler(ctx);
--		if (variant->has_mainscaler_ext)
--			fimc_hw_set_mainscaler_ext(ctx);
--		else
--			fimc_hw_set_mainscaler(ctx);
-+		fimc_hw_set_mainscaler(ctx);
- 		fimc_hw_set_target_format(ctx);
- 		fimc_hw_set_rotation(ctx);
- 		fimc_hw_set_effect(ctx);
-diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-index 5ad2762..20144d6 100644
---- a/drivers/media/video/s5p-fimc/fimc-core.h
-+++ b/drivers/media/video/s5p-fimc/fimc-core.h
-@@ -575,7 +575,6 @@ void fimc_hw_en_lastirq(struct fimc_dev *fimc, int enable);
- void fimc_hw_en_irq(struct fimc_dev *fimc, int enable);
- void fimc_hw_set_prescaler(struct fimc_ctx *ctx);
- void fimc_hw_set_mainscaler(struct fimc_ctx *ctx);
--void fimc_hw_set_mainscaler_ext(struct fimc_ctx *ctx);
- void fimc_hw_en_capture(struct fimc_ctx *ctx);
- void fimc_hw_set_effect(struct fimc_ctx *ctx);
- void fimc_hw_set_in_dma(struct fimc_ctx *ctx);
+ 	int ret = 0;
 diff --git a/drivers/media/video/s5p-fimc/fimc-reg.c b/drivers/media/video/s5p-fimc/fimc-reg.c
-index e3b0515..370a3eb 100644
+index 11422e9..a64d41c 100644
 --- a/drivers/media/video/s5p-fimc/fimc-reg.c
 +++ b/drivers/media/video/s5p-fimc/fimc-reg.c
-@@ -314,6 +314,7 @@ static void fimc_hw_set_scaler(struct fimc_ctx *ctx)
- void fimc_hw_set_mainscaler(struct fimc_ctx *ctx)
+@@ -37,11 +37,11 @@ void fimc_hw_reset(struct fimc_dev *dev)
+ 	writel(cfg, dev->regs + S5P_CIGCTRL);
+ }
+ 
+-static u32 fimc_hw_get_in_flip(u32 ctx_flip)
++static u32 fimc_hw_get_in_flip(struct fimc_ctx *ctx)
  {
- 	struct fimc_dev *dev = ctx->fimc_dev;
-+	struct samsung_fimc_variant *variant = dev->variant;
- 	struct fimc_scaler *sc = &ctx->scaler;
- 	u32 cfg;
+ 	u32 flip = S5P_MSCTRL_FLIP_NORMAL;
  
-@@ -323,40 +324,26 @@ void fimc_hw_set_mainscaler(struct fimc_ctx *ctx)
- 	fimc_hw_set_scaler(ctx);
+-	switch (ctx_flip) {
++	switch (ctx->flip) {
+ 	case FLIP_X_AXIS:
+ 		flip = S5P_MSCTRL_FLIP_X_MIRROR;
+ 		break;
+@@ -51,16 +51,20 @@ static u32 fimc_hw_get_in_flip(u32 ctx_flip)
+ 	case FLIP_XY_AXIS:
+ 		flip = S5P_MSCTRL_FLIP_180;
+ 		break;
++	default:
++		return flip;
+ 	}
++	if (ctx->rotation <= 90)
++		return flip;
  
- 	cfg = readl(dev->regs + S5P_CISCCTRL);
--	cfg &= ~S5P_CISCCTRL_MHRATIO_MASK;
--	cfg &= ~S5P_CISCCTRL_MVRATIO_MASK;
--	cfg |= S5P_CISCCTRL_MHRATIO(sc->main_hratio);
--	cfg |= S5P_CISCCTRL_MVRATIO(sc->main_vratio);
+-	return flip;
++	return (flip ^ S5P_MSCTRL_FLIP_180) & S5P_MSCTRL_FLIP_180;
+ }
  
--	writel(cfg, dev->regs + S5P_CISCCTRL);
--}
-+	if (variant->has_mainscaler_ext) {
-+		cfg &= ~(S5P_CISCCTRL_MHRATIO_MASK | S5P_CISCCTRL_MVRATIO_MASK);
-+		cfg |= S5P_CISCCTRL_MHRATIO_EXT(sc->main_hratio);
-+		cfg |= S5P_CISCCTRL_MVRATIO_EXT(sc->main_vratio);
-+		writel(cfg, dev->regs + S5P_CISCCTRL);
+-static u32 fimc_hw_get_target_flip(u32 ctx_flip)
++static u32 fimc_hw_get_target_flip(struct fimc_ctx *ctx)
+ {
+ 	u32 flip = S5P_CITRGFMT_FLIP_NORMAL;
  
--void fimc_hw_set_mainscaler_ext(struct fimc_ctx *ctx)
--{
--	struct fimc_dev *dev = ctx->fimc_dev;
--	struct fimc_scaler *sc = &ctx->scaler;
--	u32 cfg, cfg_ext;
-+		cfg = readl(dev->regs + S5P_CIEXTEN);
+-	switch (ctx_flip) {
++	switch (ctx->flip) {
+ 	case FLIP_X_AXIS:
+ 		flip = S5P_CITRGFMT_FLIP_X_MIRROR;
+ 		break;
+@@ -70,11 +74,13 @@ static u32 fimc_hw_get_target_flip(u32 ctx_flip)
+ 	case FLIP_XY_AXIS:
+ 		flip = S5P_CITRGFMT_FLIP_180;
+ 		break;
+-	case FLIP_NONE:
+-		break;
+-
++	default:
++		return flip;
+ 	}
+-	return flip;
++	if (ctx->rotation <= 90)
++		return flip;
++
++	return (flip ^ S5P_CITRGFMT_FLIP_180) & S5P_CITRGFMT_FLIP_180;
+ }
  
--	dbg("main_hratio= 0x%X  main_vratio= 0x%X",
--		sc->main_hratio, sc->main_vratio);
+ void fimc_hw_set_rotation(struct fimc_ctx *ctx)
+@@ -84,10 +90,7 @@ void fimc_hw_set_rotation(struct fimc_ctx *ctx)
+ 
+ 	cfg = readl(dev->regs + S5P_CITRGFMT);
+ 	cfg &= ~(S5P_CITRGFMT_INROT90 | S5P_CITRGFMT_OUTROT90 |
+-		  S5P_CITRGFMT_FLIP_180);
 -
--	fimc_hw_set_scaler(ctx);
--
--	cfg = readl(dev->regs + S5P_CISCCTRL);
--	cfg &= ~S5P_CISCCTRL_MHRATIO_MASK;
--	cfg &= ~S5P_CISCCTRL_MVRATIO_MASK;
--	cfg |= S5P_CISCCTRL_MHRATIO_EXT(sc->main_hratio);
--	cfg |= S5P_CISCCTRL_MVRATIO_EXT(sc->main_vratio);
--
--	writel(cfg, dev->regs + S5P_CISCCTRL);
--
--	cfg_ext = readl(dev->regs + S5P_CIEXTEN);
--	cfg_ext &= ~S5P_CIEXTEN_MHRATIO_EXT_MASK;
--	cfg_ext &= ~S5P_CIEXTEN_MVRATIO_EXT_MASK;
--	cfg_ext |= S5P_CIEXTEN_MHRATIO_EXT(sc->main_hratio);
--	cfg_ext |= S5P_CIEXTEN_MVRATIO_EXT(sc->main_vratio);
--
--	writel(cfg_ext, dev->regs + S5P_CIEXTEN);
-+		cfg &= ~(S5P_CIEXTEN_MVRATIO_EXT_MASK |
-+			 S5P_CIEXTEN_MHRATIO_EXT_MASK);
-+		cfg |= S5P_CIEXTEN_MHRATIO_EXT(sc->main_hratio);
-+		cfg |= S5P_CIEXTEN_MVRATIO_EXT(sc->main_vratio);
-+		writel(cfg, dev->regs + S5P_CIEXTEN);
+-	flip = readl(dev->regs + S5P_MSCTRL);
+-	flip &= ~S5P_MSCTRL_FLIP_MASK;
++		 S5P_CITRGFMT_FLIP_180);
+ 
+ 	/*
+ 	 * The input and output rotator cannot work simultaneously.
+@@ -95,26 +98,22 @@ void fimc_hw_set_rotation(struct fimc_ctx *ctx)
+ 	 * in direct fifo output mode.
+ 	 */
+ 	if (ctx->rotation == 90 || ctx->rotation == 270) {
+-		if (ctx->out_path == FIMC_LCDFIFO) {
+-			cfg |= S5P_CITRGFMT_INROT90;
+-			if (ctx->rotation == 270)
+-				flip |= S5P_MSCTRL_FLIP_180;
+-		} else {
+-			cfg |= S5P_CITRGFMT_OUTROT90;
+-			if (ctx->rotation == 270)
+-				cfg |= S5P_CITRGFMT_FLIP_180;
+-		}
+-	} else if (ctx->rotation == 180) {
+ 		if (ctx->out_path == FIMC_LCDFIFO)
+-			flip |= S5P_MSCTRL_FLIP_180;
++			cfg |= S5P_CITRGFMT_INROT90;
+ 		else
+-			cfg |= S5P_CITRGFMT_FLIP_180;
++			cfg |= S5P_CITRGFMT_OUTROT90;
+ 	}
+-	if (ctx->rotation == 180 || ctx->rotation == 270)
+-		writel(flip, dev->regs + S5P_MSCTRL);
+ 
+-	cfg |= fimc_hw_get_target_flip(ctx->flip);
+-	writel(cfg, dev->regs + S5P_CITRGFMT);
++	if (ctx->out_path == FIMC_DMA) {
++		cfg |= fimc_hw_get_target_flip(ctx);
++		writel(cfg, dev->regs + S5P_CITRGFMT);
 +	} else {
-+		cfg &= ~(S5P_CISCCTRL_MHRATIO_MASK | S5P_CISCCTRL_MVRATIO_MASK);
-+		cfg |= S5P_CISCCTRL_MHRATIO(sc->main_hratio);
-+		cfg |= S5P_CISCCTRL_MVRATIO(sc->main_vratio);
-+		writel(cfg, dev->regs + S5P_CISCCTRL);
++		/* LCD FIFO path */
++		flip = readl(dev->regs + S5P_MSCTRL);
++		flip &= ~S5P_MSCTRL_FLIP_MASK;
++		flip |= fimc_hw_get_in_flip(ctx);
++		writel(flip, dev->regs + S5P_MSCTRL);
 +	}
  }
  
- void fimc_hw_en_capture(struct fimc_ctx *ctx)
+ void fimc_hw_set_target_format(struct fimc_ctx *ctx)
+@@ -131,18 +130,13 @@ void fimc_hw_set_target_format(struct fimc_ctx *ctx)
+ 		  S5P_CITRGFMT_VSIZE_MASK);
+ 
+ 	switch (frame->fmt->color) {
+-	case S5P_FIMC_RGB565:
+-	case S5P_FIMC_RGB666:
+-	case S5P_FIMC_RGB888:
++	case S5P_FIMC_RGB565...S5P_FIMC_RGB888:
+ 		cfg |= S5P_CITRGFMT_RGB;
+ 		break;
+ 	case S5P_FIMC_YCBCR420:
+ 		cfg |= S5P_CITRGFMT_YCBCR420;
+ 		break;
+-	case S5P_FIMC_YCBYCR422:
+-	case S5P_FIMC_YCRYCB422:
+-	case S5P_FIMC_CBYCRY422:
+-	case S5P_FIMC_CRYCBY422:
++	case S5P_FIMC_YCBYCR422...S5P_FIMC_CRYCBY422:
+ 		if (frame->fmt->colplanes == 1)
+ 			cfg |= S5P_CITRGFMT_YCBCR422_1P;
+ 		else
+@@ -410,8 +404,7 @@ void fimc_hw_set_in_dma(struct fimc_ctx *ctx)
+ 
+ 	/* Set the input DMA to process single frame only. */
+ 	cfg = readl(dev->regs + S5P_MSCTRL);
+-	cfg &= ~(S5P_MSCTRL_FLIP_MASK
+-		| S5P_MSCTRL_INFORMAT_MASK
++	cfg &= ~(S5P_MSCTRL_INFORMAT_MASK
+ 		| S5P_MSCTRL_IN_BURST_COUNT_MASK
+ 		| S5P_MSCTRL_INPUT_MASK
+ 		| S5P_MSCTRL_C_INT_IN_MASK
+@@ -450,13 +443,6 @@ void fimc_hw_set_in_dma(struct fimc_ctx *ctx)
+ 		break;
+ 	}
+ 
+-	/*
+-	 * Input DMA flip mode (and rotation).
+-	 * Do not allow simultaneous rotation and flipping.
+-	 */
+-	if (!ctx->rotation && ctx->out_path == FIMC_LCDFIFO)
+-		cfg |= fimc_hw_get_in_flip(ctx->flip);
+-
+ 	writel(cfg, dev->regs + S5P_MSCTRL);
+ 
+ 	/* Input/output DMA linear/tiled mode. */
 -- 
 1.7.2.3
