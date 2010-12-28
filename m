@@ -1,310 +1,454 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 07/15] [media] s5p-fimc: Rename s3c_fimc* to s5p_fimc*
-Date: Tue, 28 Dec 2010 18:03:12 +0100
-Message-ID: <1293555798-31578-8-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 02/15] v4l: mem2mem: port m2m_testdev to vb2
+Date: Tue, 28 Dec 2010 18:03:07 +0100
+Message-ID: <1293555798-31578-3-git-send-email-s.nawrocki@samsung.com>
 References: <1293555798-31578-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:20175 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754122Ab0L1RDZ (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:15650 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754063Ab0L1RDY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Dec 2010 12:03:25 -0500
+	Tue, 28 Dec 2010 12:03:24 -0500
 In-reply-to: <1293555798-31578-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com
 
-Change s3c_fimc.h header file name to s5p_fimc.h, replace s3c_fimc_*
-names with s5p_fimc_*. s3c_fimc need to be reserved for S3C series
-and s5p-fimc driver will not cover CAMIF devices in S3C SoC series.
+This patch ports mem2mem test device to videobuf2 framework.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-capture.c |   16 ++++----
- drivers/media/video/s5p-fimc/fimc-core.h    |   10 ++--
- drivers/media/video/s5p-fimc/fimc-reg.c     |    8 ++--
- include/media/s3c_fimc.h                    |   60 ---------------------------
- include/media/s5p_fimc.h                    |   60 +++++++++++++++++++++++++++
- 5 files changed, 77 insertions(+), 77 deletions(-)
- delete mode 100644 include/media/s3c_fimc.h
- create mode 100644 include/media/s5p_fimc.h
+ drivers/media/video/Kconfig           |    2 +-
+ drivers/media/video/mem2mem_testdev.c |  227 +++++++++++++++-----------------
+ 2 files changed, 107 insertions(+), 122 deletions(-)
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index 4e4441f..431ec8e 100644
---- a/drivers/media/video/s5p-fimc/fimc-capture.c
-+++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -33,7 +33,7 @@
- #include "fimc-core.h"
- 
- static struct v4l2_subdev *fimc_subdev_register(struct fimc_dev *fimc,
--					    struct s3c_fimc_isp_info *isp_info)
-+					    struct s5p_fimc_isp_info *isp_info)
- {
- 	struct i2c_adapter *i2c_adap;
- 	struct fimc_vid_cap *vid_cap = &fimc->vid_cap;
-@@ -86,8 +86,8 @@ static void fimc_subdev_unregister(struct fimc_dev *fimc)
- static int fimc_subdev_attach(struct fimc_dev *fimc, int index)
- {
- 	struct fimc_vid_cap *vid_cap = &fimc->vid_cap;
--	struct s3c_platform_fimc *pdata = fimc->pdata;
--	struct s3c_fimc_isp_info *isp_info;
-+	struct s5p_platform_fimc *pdata = fimc->pdata;
-+	struct s5p_fimc_isp_info *isp_info;
- 	struct v4l2_subdev *sd;
- 	int i;
- 
-@@ -115,7 +115,7 @@ static int fimc_subdev_attach(struct fimc_dev *fimc, int index)
- 
- static int fimc_isp_subdev_init(struct fimc_dev *fimc, int index)
- {
--	struct s3c_fimc_isp_info *isp_info;
-+	struct s5p_fimc_isp_info *isp_info;
- 	int ret;
- 
- 	ret = fimc_subdev_attach(fimc, index);
-@@ -209,7 +209,7 @@ static int start_streaming(struct vb2_queue *q)
- {
- 	struct fimc_ctx *ctx = q->drv_priv;
- 	struct fimc_dev *fimc = ctx->fimc_dev;
--	struct s3c_fimc_isp_info *isp_info;
-+	struct s5p_fimc_isp_info *isp_info;
- 	int ret;
- 
- 	ret = v4l2_subdev_call(fimc->vid_cap.sd, video, s_stream, 1);
-@@ -558,8 +558,8 @@ static int fimc_cap_enum_input(struct file *file, void *priv,
- 				     struct v4l2_input *i)
- {
- 	struct fimc_ctx *ctx = priv;
--	struct s3c_platform_fimc *pldata = ctx->fimc_dev->pdata;
--	struct s3c_fimc_isp_info *isp_info;
-+	struct s5p_platform_fimc *pldata = ctx->fimc_dev->pdata;
-+	struct s5p_fimc_isp_info *isp_info;
- 
- 	if (i->index >= FIMC_MAX_CAMIF_CLIENTS)
- 		return -EINVAL;
-@@ -578,7 +578,7 @@ static int fimc_cap_s_input(struct file *file, void *priv,
- {
- 	struct fimc_ctx *ctx = priv;
- 	struct fimc_dev *fimc = ctx->fimc_dev;
--	struct s3c_platform_fimc *pdata = fimc->pdata;
-+	struct s5p_platform_fimc *pdata = fimc->pdata;
- 
- 	if (fimc_capture_active(ctx->fimc_dev))
- 		return -EBUSY;
-diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-index 1f1beaa..6431d1a 100644
---- a/drivers/media/video/s5p-fimc/fimc-core.h
-+++ b/drivers/media/video/s5p-fimc/fimc-core.h
-@@ -21,7 +21,7 @@
- #include <media/v4l2-device.h>
+diff --git a/drivers/media/video/Kconfig b/drivers/media/video/Kconfig
+index 8e5116e..38fc077 100644
+--- a/drivers/media/video/Kconfig
++++ b/drivers/media/video/Kconfig
+@@ -992,7 +992,7 @@ if V4L_MEM2MEM_DRIVERS
+ config VIDEO_MEM2MEM_TESTDEV
+ 	tristate "Virtual test device for mem2mem framework"
+ 	depends on VIDEO_DEV && VIDEO_V4L2
+-	select VIDEOBUF_VMALLOC
++	select VIDEOBUF2_VMALLOC
+ 	select V4L2_MEM2MEM_DEV
+ 	default n
+ 	---help---
+diff --git a/drivers/media/video/mem2mem_testdev.c b/drivers/media/video/mem2mem_testdev.c
+index c179041..6ab2d4f 100644
+--- a/drivers/media/video/mem2mem_testdev.c
++++ b/drivers/media/video/mem2mem_testdev.c
+@@ -28,7 +28,7 @@
  #include <media/v4l2-mem2mem.h>
- #include <media/v4l2-mediabus.h>
--#include <media/s3c_fimc.h>
-+#include <media/s5p_fimc.h>
+ #include <media/v4l2-device.h>
+ #include <media/v4l2-ioctl.h>
+-#include <media/videobuf-vmalloc.h>
++#include <media/videobuf2-vmalloc.h>
  
- #include "regs-fimc.h"
+ #define MEM2MEM_TEST_MODULE_NAME "mem2mem-testdev"
  
-@@ -422,7 +422,7 @@ struct fimc_dev {
- 	spinlock_t			slock;
- 	struct mutex			lock;
- 	struct platform_device		*pdev;
--	struct s3c_platform_fimc	*pdata;
-+	struct s5p_platform_fimc	*pdata;
- 	struct samsung_fimc_variant	*variant;
- 	int				id;
- 	struct clk			*clock[NUM_FIMC_CLOCKS];
-@@ -584,12 +584,12 @@ void fimc_hw_set_input_addr(struct fimc_dev *fimc, struct fimc_addr *paddr);
- void fimc_hw_set_output_addr(struct fimc_dev *fimc, struct fimc_addr *paddr,
- 			     int index);
- int fimc_hw_set_camera_source(struct fimc_dev *fimc,
--			      struct s3c_fimc_isp_info *cam);
-+			      struct s5p_fimc_isp_info *cam);
- int fimc_hw_set_camera_offset(struct fimc_dev *fimc, struct fimc_frame *f);
- int fimc_hw_set_camera_polarity(struct fimc_dev *fimc,
--				struct s3c_fimc_isp_info *cam);
-+				struct s5p_fimc_isp_info *cam);
- int fimc_hw_set_camera_type(struct fimc_dev *fimc,
--			    struct s3c_fimc_isp_info *cam);
-+			    struct s5p_fimc_isp_info *cam);
+@@ -201,11 +201,6 @@ struct m2mtest_ctx {
+ 	struct v4l2_m2m_ctx	*m2m_ctx;
+ };
  
- /* -----------------------------------------------------*/
- /* fimc-core.c */
-diff --git a/drivers/media/video/s5p-fimc/fimc-reg.c b/drivers/media/video/s5p-fimc/fimc-reg.c
-index 5ed8f06..ae33bc1 100644
---- a/drivers/media/video/s5p-fimc/fimc-reg.c
-+++ b/drivers/media/video/s5p-fimc/fimc-reg.c
-@@ -13,7 +13,7 @@
- #include <linux/io.h>
- #include <linux/delay.h>
- #include <mach/map.h>
--#include <media/s3c_fimc.h>
-+#include <media/s5p_fimc.h>
- 
- #include "fimc-core.h"
- 
-@@ -532,7 +532,7 @@ void fimc_hw_set_output_addr(struct fimc_dev *dev,
- }
- 
- int fimc_hw_set_camera_polarity(struct fimc_dev *fimc,
--				struct s3c_fimc_isp_info *cam)
-+				struct s5p_fimc_isp_info *cam)
- {
- 	u32 cfg = readl(fimc->regs + S5P_CIGCTRL);
- 
-@@ -557,7 +557,7 @@ int fimc_hw_set_camera_polarity(struct fimc_dev *fimc,
- }
- 
- int fimc_hw_set_camera_source(struct fimc_dev *fimc,
--			      struct s3c_fimc_isp_info *cam)
-+			      struct s5p_fimc_isp_info *cam)
- {
- 	struct fimc_frame *f = &fimc->vid_cap.ctx->s_frame;
- 	u32 cfg = 0;
-@@ -624,7 +624,7 @@ int fimc_hw_set_camera_offset(struct fimc_dev *fimc, struct fimc_frame *f)
- }
- 
- int fimc_hw_set_camera_type(struct fimc_dev *fimc,
--			    struct s3c_fimc_isp_info *cam)
-+			    struct s5p_fimc_isp_info *cam)
- {
- 	u32 cfg, tmp;
- 	struct fimc_vid_cap *vid_cap = &fimc->vid_cap;
-diff --git a/include/media/s3c_fimc.h b/include/media/s3c_fimc.h
-deleted file mode 100644
-index ca1b673..0000000
---- a/include/media/s3c_fimc.h
-+++ /dev/null
-@@ -1,60 +0,0 @@
--/*
-- * Samsung S5P SoC camera interface driver header
-- *
-- * Copyright (c) 2010 Samsung Electronics Co., Ltd
-- * Author: Sylwester Nawrocki, <s.nawrocki@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--
--#ifndef S3C_FIMC_H_
--#define S3C_FIMC_H_
--
--enum cam_bus_type {
--	FIMC_ITU_601 = 1,
--	FIMC_ITU_656,
--	FIMC_MIPI_CSI2,
--	FIMC_LCD_WB, /* FIFO link from LCD mixer */
+-struct m2mtest_buffer {
+-	/* vb must be first! */
+-	struct videobuf_buffer	vb;
 -};
 -
--#define FIMC_CLK_INV_PCLK	(1 << 0)
--#define FIMC_CLK_INV_VSYNC	(1 << 1)
--#define FIMC_CLK_INV_HREF	(1 << 2)
--#define FIMC_CLK_INV_HSYNC	(1 << 3)
+ static struct v4l2_queryctrl *get_ctrl(int id)
+ {
+ 	int i;
+@@ -219,37 +214,41 @@ static struct v4l2_queryctrl *get_ctrl(int id)
+ }
+ 
+ static int device_process(struct m2mtest_ctx *ctx,
+-			  struct m2mtest_buffer *in_buf,
+-			  struct m2mtest_buffer *out_buf)
++			  struct vb2_buffer *in_vb,
++			  struct vb2_buffer *out_vb)
+ {
+ 	struct m2mtest_dev *dev = ctx->dev;
++	struct m2mtest_q_data *q_data;
+ 	u8 *p_in, *p_out;
+ 	int x, y, t, w;
+ 	int tile_w, bytes_left;
+-	struct videobuf_queue *src_q;
+-	struct videobuf_queue *dst_q;
++	int width, height, bytesperline;
+ 
+-	src_q = v4l2_m2m_get_src_vq(ctx->m2m_ctx);
+-	dst_q = v4l2_m2m_get_dst_vq(ctx->m2m_ctx);
+-	p_in = videobuf_queue_to_vaddr(src_q, &in_buf->vb);
+-	p_out = videobuf_queue_to_vaddr(dst_q, &out_buf->vb);
++	q_data = get_q_data(V4L2_BUF_TYPE_VIDEO_OUTPUT);
++
++	width	= q_data->width;
++	height	= q_data->height;
++	bytesperline	= (q_data->width * q_data->fmt->depth) >> 3;
++
++	p_in = vb2_plane_vaddr(in_vb, 0);
++	p_out = vb2_plane_vaddr(out_vb, 0);
+ 	if (!p_in || !p_out) {
+ 		v4l2_err(&dev->v4l2_dev,
+ 			 "Acquiring kernel pointers to buffers failed\n");
+ 		return -EFAULT;
+ 	}
+ 
+-	if (in_buf->vb.size > out_buf->vb.size) {
++	if (vb2_plane_size(in_vb, 0) > vb2_plane_size(out_vb, 0)) {
+ 		v4l2_err(&dev->v4l2_dev, "Output buffer is too small\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	tile_w = (in_buf->vb.width * (q_data[V4L2_M2M_DST].fmt->depth >> 3))
++	tile_w = (width * (q_data[V4L2_M2M_DST].fmt->depth >> 3))
+ 		/ MEM2MEM_NUM_TILES;
+-	bytes_left = in_buf->vb.bytesperline - tile_w * MEM2MEM_NUM_TILES;
++	bytes_left = bytesperline - tile_w * MEM2MEM_NUM_TILES;
+ 	w = 0;
+ 
+-	for (y = 0; y < in_buf->vb.height; ++y) {
++	for (y = 0; y < height; ++y) {
+ 		for (t = 0; t < MEM2MEM_NUM_TILES; ++t) {
+ 			if (w & 0x1) {
+ 				for (x = 0; x < tile_w; ++x)
+@@ -301,6 +300,21 @@ static void job_abort(void *priv)
+ 	ctx->aborting = 1;
+ }
+ 
++static void m2mtest_lock(void *priv)
++{
++	struct m2mtest_ctx *ctx = priv;
++	struct m2mtest_dev *dev = ctx->dev;
++	mutex_lock(&dev->dev_mutex);
++}
++
++static void m2mtest_unlock(void *priv)
++{
++	struct m2mtest_ctx *ctx = priv;
++	struct m2mtest_dev *dev = ctx->dev;
++	mutex_unlock(&dev->dev_mutex);
++}
++
++
+ /* device_run() - prepares and starts the device
+  *
+  * This simulates all the immediate preparations required before starting
+@@ -311,7 +325,7 @@ static void device_run(void *priv)
+ {
+ 	struct m2mtest_ctx *ctx = priv;
+ 	struct m2mtest_dev *dev = ctx->dev;
+-	struct m2mtest_buffer *src_buf, *dst_buf;
++	struct vb2_buffer *src_buf, *dst_buf;
+ 
+ 	src_buf = v4l2_m2m_next_src_buf(ctx->m2m_ctx);
+ 	dst_buf = v4l2_m2m_next_dst_buf(ctx->m2m_ctx);
+@@ -322,12 +336,11 @@ static void device_run(void *priv)
+ 	schedule_irq(dev, ctx->transtime);
+ }
+ 
 -
--struct i2c_board_info;
+ static void device_isr(unsigned long priv)
+ {
+ 	struct m2mtest_dev *m2mtest_dev = (struct m2mtest_dev *)priv;
+ 	struct m2mtest_ctx *curr_ctx;
+-	struct m2mtest_buffer *src_buf, *dst_buf;
++	struct vb2_buffer *src_vb, *dst_vb;
+ 	unsigned long flags;
+ 
+ 	curr_ctx = v4l2_m2m_get_curr_priv(m2mtest_dev->m2m_dev);
+@@ -338,31 +351,26 @@ static void device_isr(unsigned long priv)
+ 		return;
+ 	}
+ 
+-	src_buf = v4l2_m2m_src_buf_remove(curr_ctx->m2m_ctx);
+-	dst_buf = v4l2_m2m_dst_buf_remove(curr_ctx->m2m_ctx);
++	src_vb = v4l2_m2m_src_buf_remove(curr_ctx->m2m_ctx);
++	dst_vb = v4l2_m2m_dst_buf_remove(curr_ctx->m2m_ctx);
++
+ 	curr_ctx->num_processed++;
+ 
++	spin_lock_irqsave(&m2mtest_dev->irqlock, flags);
++	v4l2_m2m_buf_done(src_vb, VB2_BUF_STATE_DONE);
++	v4l2_m2m_buf_done(dst_vb, VB2_BUF_STATE_DONE);
++	spin_unlock_irqrestore(&m2mtest_dev->irqlock, flags);
++
+ 	if (curr_ctx->num_processed == curr_ctx->translen
+ 	    || curr_ctx->aborting) {
+ 		dprintk(curr_ctx->dev, "Finishing transaction\n");
+ 		curr_ctx->num_processed = 0;
+-		spin_lock_irqsave(&m2mtest_dev->irqlock, flags);
+-		src_buf->vb.state = dst_buf->vb.state = VIDEOBUF_DONE;
+-		wake_up(&src_buf->vb.done);
+-		wake_up(&dst_buf->vb.done);
+-		spin_unlock_irqrestore(&m2mtest_dev->irqlock, flags);
+ 		v4l2_m2m_job_finish(m2mtest_dev->m2m_dev, curr_ctx->m2m_ctx);
+ 	} else {
+-		spin_lock_irqsave(&m2mtest_dev->irqlock, flags);
+-		src_buf->vb.state = dst_buf->vb.state = VIDEOBUF_DONE;
+-		wake_up(&src_buf->vb.done);
+-		wake_up(&dst_buf->vb.done);
+-		spin_unlock_irqrestore(&m2mtest_dev->irqlock, flags);
+ 		device_run(curr_ctx);
+ 	}
+ }
+ 
 -
--/**
-- * struct s3c_fimc_isp_info - image sensor information required for host
-- *			      interace configuration.
-- *
-- * @board_info: pointer to I2C subdevice's board info
-- * @bus_type: determines bus type, MIPI, ITU-R BT.601 etc.
-- * @i2c_bus_num: i2c control bus id the sensor is attached to
-- * @mux_id: FIMC camera interface multiplexer index (separate for MIPI and ITU)
-- * @bus_width: camera data bus width in bits
-- * @flags: flags defining bus signals polarity inversion (High by default)
-- */
--struct s3c_fimc_isp_info {
--	struct i2c_board_info *board_info;
--	enum cam_bus_type bus_type;
--	u16 i2c_bus_num;
--	u16 mux_id;
--	u16 bus_width;
--	u16 flags;
--};
+ /*
+  * video ioctls
+  */
+@@ -423,7 +431,7 @@ static int vidioc_enum_fmt_vid_out(struct file *file, void *priv,
+ 
+ static int vidioc_g_fmt(struct m2mtest_ctx *ctx, struct v4l2_format *f)
+ {
+-	struct videobuf_queue *vq;
++	struct vb2_queue *vq;
+ 	struct m2mtest_q_data *q_data;
+ 
+ 	vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
+@@ -434,7 +442,7 @@ static int vidioc_g_fmt(struct m2mtest_ctx *ctx, struct v4l2_format *f)
+ 
+ 	f->fmt.pix.width	= q_data->width;
+ 	f->fmt.pix.height	= q_data->height;
+-	f->fmt.pix.field	= vq->field;
++	f->fmt.pix.field	= V4L2_FIELD_NONE;
+ 	f->fmt.pix.pixelformat	= q_data->fmt->fourcc;
+ 	f->fmt.pix.bytesperline	= (q_data->width * q_data->fmt->depth) >> 3;
+ 	f->fmt.pix.sizeimage	= q_data->sizeimage;
+@@ -523,7 +531,7 @@ static int vidioc_try_fmt_vid_out(struct file *file, void *priv,
+ static int vidioc_s_fmt(struct m2mtest_ctx *ctx, struct v4l2_format *f)
+ {
+ 	struct m2mtest_q_data *q_data;
+-	struct videobuf_queue *vq;
++	struct vb2_queue *vq;
+ 
+ 	vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
+ 	if (!vq)
+@@ -533,7 +541,7 @@ static int vidioc_s_fmt(struct m2mtest_ctx *ctx, struct v4l2_format *f)
+ 	if (!q_data)
+ 		return -EINVAL;
+ 
+-	if (videobuf_queue_is_busy(vq)) {
++	if (vb2_is_busy(vq)) {
+ 		v4l2_err(&ctx->dev->v4l2_dev, "%s queue busy\n", __func__);
+ 		return -EBUSY;
+ 	}
+@@ -543,7 +551,6 @@ static int vidioc_s_fmt(struct m2mtest_ctx *ctx, struct v4l2_format *f)
+ 	q_data->height		= f->fmt.pix.height;
+ 	q_data->sizeimage	= q_data->width * q_data->height
+ 				* q_data->fmt->depth >> 3;
+-	vq->field		= f->fmt.pix.field;
+ 
+ 	dprintk(ctx->dev,
+ 		"Setting format for type %d, wxh: %dx%d, fmt: %d\n",
+@@ -733,120 +740,94 @@ static const struct v4l2_ioctl_ops m2mtest_ioctl_ops = {
+  * Queue operations
+  */
+ 
+-static void m2mtest_buf_release(struct videobuf_queue *vq,
+-				struct videobuf_buffer *vb)
+-{
+-	struct m2mtest_ctx *ctx = vq->priv_data;
 -
+-	dprintk(ctx->dev, "type: %d, index: %d, state: %d\n",
+-		vq->type, vb->i, vb->state);
 -
--#define FIMC_MAX_CAMIF_CLIENTS	2
+-	videobuf_vmalloc_free(vb);
+-	vb->state = VIDEOBUF_NEEDS_INIT;
+-}
 -
--/**
-- * struct s3c_platform_fimc - camera host interface platform data
-- *
-- * @isp_info: properties of camera sensor required for host interface setup
-- */
--struct s3c_platform_fimc {
--	struct s3c_fimc_isp_info *isp_info[FIMC_MAX_CAMIF_CLIENTS];
--};
--#endif /* S3C_FIMC_H_ */
-diff --git a/include/media/s5p_fimc.h b/include/media/s5p_fimc.h
-new file mode 100644
-index 0000000..eb8793f
---- /dev/null
-+++ b/include/media/s5p_fimc.h
-@@ -0,0 +1,60 @@
-+/*
-+ * Samsung S5P SoC camera interface driver header
-+ *
-+ * Copyright (c) 2010 Samsung Electronics Co., Ltd
-+ * Author: Sylwester Nawrocki, <s.nawrocki@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
+-static int m2mtest_buf_setup(struct videobuf_queue *vq, unsigned int *count,
+-			  unsigned int *size)
++static int m2mtest_queue_setup(struct vb2_queue *vq, unsigned int *nbuffers,
++				unsigned int *nplanes, unsigned long sizes[],
++				void *alloc_ctxs[])
+ {
+-	struct m2mtest_ctx *ctx = vq->priv_data;
++	struct m2mtest_ctx *ctx = vb2_get_drv_priv(vq);
+ 	struct m2mtest_q_data *q_data;
++	unsigned int size, count = *nbuffers;
+ 
+ 	q_data = get_q_data(vq->type);
+ 
+-	*size = q_data->width * q_data->height * q_data->fmt->depth >> 3;
+-	dprintk(ctx->dev, "size:%d, w/h %d/%d, depth: %d\n",
+-		*size, q_data->width, q_data->height, q_data->fmt->depth);
++	size = q_data->width * q_data->height * q_data->fmt->depth >> 3;
+ 
+-	if (0 == *count)
+-		*count = MEM2MEM_DEF_NUM_BUFS;
++	while (size * count > MEM2MEM_VID_MEM_LIMIT)
++		(count)--;
+ 
+-	while (*size * *count > MEM2MEM_VID_MEM_LIMIT)
+-		(*count)--;
++	*nplanes = 1;
++	*nbuffers = count;
++	sizes[0] = size;
+ 
+-	v4l2_info(&ctx->dev->v4l2_dev,
+-		  "%d buffers of size %d set up.\n", *count, *size);
++	/*
++	 * videobuf2-vmalloc allocator is context-less so no need to set
++	 * alloc_ctxs array.
++	 */
 +
-+#ifndef S5P_FIMC_H_
-+#define S5P_FIMC_H_
++	dprintk(ctx->dev, "get %d buffer(s) of size %d each.\n", count, size);
+ 
+ 	return 0;
+ }
+ 
+-static int m2mtest_buf_prepare(struct videobuf_queue *vq,
+-			       struct videobuf_buffer *vb,
+-			       enum v4l2_field field)
++static int m2mtest_buf_prepare(struct vb2_buffer *vb)
+ {
+-	struct m2mtest_ctx *ctx = vq->priv_data;
++	struct m2mtest_ctx *ctx = vb2_get_drv_priv(vb->vb2_queue);
+ 	struct m2mtest_q_data *q_data;
+-	int ret;
+ 
+-	dprintk(ctx->dev, "type: %d, index: %d, state: %d\n",
+-		vq->type, vb->i, vb->state);
++	dprintk(ctx->dev, "type: %d\n", vb->vb2_queue->type);
+ 
+-	q_data = get_q_data(vq->type);
++	q_data = get_q_data(vb->vb2_queue->type);
+ 
+-	if (vb->baddr) {
+-		/* User-provided buffer */
+-		if (vb->bsize < q_data->sizeimage) {
+-			/* Buffer too small to fit a frame */
+-			v4l2_err(&ctx->dev->v4l2_dev,
+-				 "User-provided buffer too small\n");
+-			return -EINVAL;
+-		}
+-	} else if (vb->state != VIDEOBUF_NEEDS_INIT
+-			&& vb->bsize < q_data->sizeimage) {
+-		/* We provide the buffer, but it's already been initialized
+-		 * and is too small */
++	if (vb2_plane_size(vb, 0) < q_data->sizeimage) {
++		dprintk(ctx->dev, "%s data will not fit into plane (%lu < %lu)\n",
++				__func__, vb2_plane_size(vb, 0), (long)q_data->sizeimage);
+ 		return -EINVAL;
+ 	}
+ 
+-	vb->width	= q_data->width;
+-	vb->height	= q_data->height;
+-	vb->bytesperline = (q_data->width * q_data->fmt->depth) >> 3;
+-	vb->size	= q_data->sizeimage;
+-	vb->field	= field;
+-
+-	if (VIDEOBUF_NEEDS_INIT == vb->state) {
+-		ret = videobuf_iolock(vq, vb, NULL);
+-		if (ret) {
+-			v4l2_err(&ctx->dev->v4l2_dev,
+-				 "Iolock failed\n");
+-			goto fail;
+-		}
+-	}
+-
+-	vb->state = VIDEOBUF_PREPARED;
++	vb2_set_plane_payload(vb, 0, q_data->sizeimage);
+ 
+ 	return 0;
+-fail:
+-	m2mtest_buf_release(vq, vb);
+-	return ret;
+ }
+ 
+-static void m2mtest_buf_queue(struct videobuf_queue *vq,
+-			   struct videobuf_buffer *vb)
++static void m2mtest_buf_queue(struct vb2_buffer *vb)
+ {
+-	struct m2mtest_ctx *ctx = vq->priv_data;
+-
+-	v4l2_m2m_buf_queue(ctx->m2m_ctx, vq, vb);
++	struct m2mtest_ctx *ctx = vb2_get_drv_priv(vb->vb2_queue);
++	v4l2_m2m_buf_queue(ctx->m2m_ctx, vb);
+ }
+ 
+-static struct videobuf_queue_ops m2mtest_qops = {
+-	.buf_setup	= m2mtest_buf_setup,
+-	.buf_prepare	= m2mtest_buf_prepare,
+-	.buf_queue	= m2mtest_buf_queue,
+-	.buf_release	= m2mtest_buf_release,
++static struct vb2_ops m2mtest_qops = {
++	.queue_setup	 = m2mtest_queue_setup,
++	.buf_prepare	 = m2mtest_buf_prepare,
++	.buf_queue	 = m2mtest_buf_queue,
+ };
+ 
+-static void queue_init(void *priv, struct videobuf_queue *vq,
+-		       enum v4l2_buf_type type)
++static int queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *dst_vq)
+ {
+ 	struct m2mtest_ctx *ctx = priv;
+-	struct m2mtest_dev *dev = ctx->dev;
++	int ret;
+ 
+-	videobuf_queue_vmalloc_init(vq, &m2mtest_qops, dev->v4l2_dev.dev,
+-				    &dev->irqlock, type, V4L2_FIELD_NONE,
+-				    sizeof(struct m2mtest_buffer), priv,
+-				    &dev->dev_mutex);
+-}
++	memset(src_vq, 0, sizeof(*src_vq));
++	src_vq->type = V4L2_BUF_TYPE_VIDEO_OUTPUT;
++	src_vq->io_modes = VB2_MMAP;
++	src_vq->drv_priv = ctx;
++	src_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
++	src_vq->ops = &m2mtest_qops;
++	src_vq->mem_ops = &vb2_vmalloc_memops;
+ 
++	ret = vb2_queue_init(src_vq);
++	if (ret)
++		return ret;
 +
-+enum cam_bus_type {
-+	FIMC_ITU_601 = 1,
-+	FIMC_ITU_656,
-+	FIMC_MIPI_CSI2,
-+	FIMC_LCD_WB, /* FIFO link from LCD mixer */
-+};
++	memset(dst_vq, 0, sizeof(*dst_vq));
++	dst_vq->type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
++	dst_vq->io_modes = VB2_MMAP;
++	dst_vq->drv_priv = ctx;
++	dst_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
++	dst_vq->ops = &m2mtest_qops;
++	dst_vq->mem_ops = &vb2_vmalloc_memops;
 +
-+#define FIMC_CLK_INV_PCLK	(1 << 0)
-+#define FIMC_CLK_INV_VSYNC	(1 << 1)
-+#define FIMC_CLK_INV_HREF	(1 << 2)
-+#define FIMC_CLK_INV_HSYNC	(1 << 3)
++	return vb2_queue_init(dst_vq);
++}
+ 
+ /*
+  * File operations
+@@ -866,7 +847,8 @@ static int m2mtest_open(struct file *file)
+ 	ctx->transtime = MEM2MEM_DEF_TRANSTIME;
+ 	ctx->num_processed = 0;
+ 
+-	ctx->m2m_ctx = v4l2_m2m_ctx_init(ctx, dev->m2m_dev, queue_init);
++	ctx->m2m_ctx = v4l2_m2m_ctx_init(dev->m2m_dev, ctx, &queue_init);
 +
-+struct i2c_board_info;
-+
-+/**
-+ * struct s5p_fimc_isp_info - image sensor information required for host
-+ *			      interace configuration.
-+ *
-+ * @board_info: pointer to I2C subdevice's board info
-+ * @bus_type: determines bus type, MIPI, ITU-R BT.601 etc.
-+ * @i2c_bus_num: i2c control bus id the sensor is attached to
-+ * @mux_id: FIMC camera interface multiplexer index (separate for MIPI and ITU)
-+ * @bus_width: camera data bus width in bits
-+ * @flags: flags defining bus signals polarity inversion (High by default)
-+ */
-+struct s5p_fimc_isp_info {
-+	struct i2c_board_info *board_info;
-+	enum cam_bus_type bus_type;
-+	u16 i2c_bus_num;
-+	u16 mux_id;
-+	u16 bus_width;
-+	u16 flags;
-+};
-+
-+
-+#define FIMC_MAX_CAMIF_CLIENTS	2
-+
-+/**
-+ * struct s5p_platform_fimc - camera host interface platform data
-+ *
-+ * @isp_info: properties of camera sensor required for host interface setup
-+ */
-+struct s5p_platform_fimc {
-+	struct s5p_fimc_isp_info *isp_info[FIMC_MAX_CAMIF_CLIENTS];
-+};
-+#endif /* S5P_FIMC_H_ */
+ 	if (IS_ERR(ctx->m2m_ctx)) {
+ 		int ret = PTR_ERR(ctx->m2m_ctx);
+ 
+@@ -932,6 +914,8 @@ static struct v4l2_m2m_ops m2m_ops = {
+ 	.device_run	= device_run,
+ 	.job_ready	= job_ready,
+ 	.job_abort	= job_abort,
++	.lock		= m2mtest_lock,
++	.unlock		= m2mtest_unlock,
+ };
+ 
+ static int m2mtest_probe(struct platform_device *pdev)
+@@ -990,6 +974,7 @@ static int m2mtest_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
++	v4l2_m2m_release(dev->m2m_dev);
+ err_m2m:
+ 	video_unregister_device(dev->vfd);
+ rel_vdev:
 -- 
 1.7.2.3
