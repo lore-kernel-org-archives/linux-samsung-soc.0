@@ -1,92 +1,54 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 0/10] V4L2 mem-to-mem framework and s5p-fimc driver conversion
- for videobuf2
-Date: Tue, 28 Dec 2010 18:03:05 +0100
-Message-ID: <1293555798-31578-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 03/15] v4l: Add multiplanar format fourccs for s5p-fimc driver
+Date: Tue, 28 Dec 2010 18:03:08 +0100
+Message-ID: <1293555798-31578-4-git-send-email-s.nawrocki@samsung.com>
+References: <1293555798-31578-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:20175 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754033Ab0L1RDX (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:13422 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754027Ab0L1RDX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Tue, 28 Dec 2010 12:03:23 -0500
+In-reply-to: <1293555798-31578-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com
 
-Hi all,
+Add definitions for format with color planes non-contiguous
+in physical memory. These formats apply only if the V4L2 multiplane
+extension is used.
 
-the following patches is a continuation of patch series from Marek adding 
-the videobuf2 framework. Please see this thread for reference:
+V4L2_PIX_FMT_NV12M   - 2-plane Y/CbCr
+V4L2_PIX_FMT_NV12MT  - 2-plane Y/CbCr tiled (64x32 pixel macroblocks)
+V4L2_PIX_FMT_YUV420M - 3-plane Y/Cb/Cr
 
-http://www.mail-archive.com/linux-media@vger.kernel.org/msg25988.html
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ include/linux/videodev2.h |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
 
-The first and second patches convert v4l2-mem2mem framework and the mem2mem testdev
-to videobuf2.
-
-Patch 04/15 converts s5p-fimc, both mem2mem and camera capture interface drivers.
-Except that it creates separate videobuf queue operation callback set for
-the m2m and capture video nodes.
-
-Patch 05/15 converts s5p-fimc driver so it supports multiplanar formats 
-and thus can be used for hardware assisted video playback together with
-S5P MFC (multi-format codec) driver.
-
-The driver implements only *_mplane ioctl handlers so in case of
-standard non-multiplane V4L2 application the buffers are converted
-in v4l2 ioctl handling code.
-
-Patch 06/15 just cleans up the driver by removing all locking from 
-ioctl and file operation handlers and using v4l core lock.
-
-Patches 07..15/15 are various s5p-fimc driver improvements and fixes.
-Patch 15/15 introduces little changes for what was introduced by
-HyounWoong Kim patches.
-
-
-The patch series contains:
-
-[PATCH 01/15] v4l: mem2mem: port to videobuf2
-[PATCH 02/15] v4l: mem2mem: port m2m_testdev to vb2
-[PATCH 03/15] v4l: Add multiplanar format fourccs for s5p-fimc driver
-[PATCH 04/15] [media] s5p-fimc: Porting to videobuf 2
-[PATCH 05/15] [media] s5p-fimc: Conversion to multiplanar formats
-[PATCH 06/15] [media] s5p-fimc: Use v4l core mutex in ioctl and file operations
-[PATCH 07/15] [media] s5p-fimc: Rename s3c_fimc* to s5p_fimc*
-[PATCH 08/15] [media] s5p-fimc: Derive camera bus width from mediabus pixelcode
-[PATCH 09/15] [media] s5p-fimc: Enable interworking without subdev s_stream
-[PATCH 10/15] [media] s5p-fimc: Use default input DMA burst count
-[PATCH 11/15] [media] s5p-fimc: Enable simultaneous rotation and flipping
-[PATCH 12/15] [media] s5p-fimc: Add control of the external sensor clock
-[PATCH 15/15] [media] s5p-fimc: Move scaler details handling to the register API file
-
-Patches 13/15, 14/15 from HyounWoong Kim can be found here:
-
-https://patchwork.kernel.org/patch/428901/
-https://patchwork.kernel.org/patch/428891/
-
-Full source tree containing the last Videobuf2, multiplanar extension patches
-together with vivi, v4l2-mem2mem framework, mem2mem testdev and s5p-fimc driver
-conversion to vb2 patches will be available within few hours on the following 
-GIT tree:
-git://git.infradead.org/users/kmpark/linux-2.6-samsung vb2 branch.
-
-Gitweb:
-http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/vb2
-
-The tree is based on git://linuxtv.org/media_tree.git staging/for_v2.6.38.
-
-I am still working on DocBook entries for new non-contiguous multiplanar fourccs
-introduced in patch 03/15 and I expect to post them tomorrow. 
-
-
-Regards,
-Sylwester 
-
-
---
-Sylwester Nawrocki
-Samsung Poland R&D Center
+diff --git a/include/linux/videodev2.h b/include/linux/videodev2.h
+index d30c98d..b68ca56 100644
+--- a/include/linux/videodev2.h
++++ b/include/linux/videodev2.h
+@@ -339,6 +339,13 @@ struct v4l2_pix_format {
+ #define V4L2_PIX_FMT_NV16    v4l2_fourcc('N', 'V', '1', '6') /* 16  Y/CbCr 4:2:2  */
+ #define V4L2_PIX_FMT_NV61    v4l2_fourcc('N', 'V', '6', '1') /* 16  Y/CrCb 4:2:2  */
+ 
++/* two non contiguous planes - one Y, one Cr + Cb interleaved  */
++#define V4L2_PIX_FMT_NV12M   v4l2_fourcc('N', 'M', '1', '2') /* 12  Y/CbCr 4:2:0  */
++#define V4L2_PIX_FMT_NV12MT  v4l2_fourcc('T', 'M', '1', '2') /* 12  Y/CbCr 4:2:0 64x32 macroblocks */
++
++/* three non contiguous planes - Y, Cb, Cr */
++#define V4L2_PIX_FMT_YUV420M v4l2_fourcc('Y', 'M', '1', '2') /* 12  YUV420 planar */
++
+ /* Bayer formats - see http://www.siliconimaging.com/RGB%20Bayer.htm */
+ #define V4L2_PIX_FMT_SBGGR8  v4l2_fourcc('B', 'A', '8', '1') /*  8  BGBG.. GRGR.. */
+ #define V4L2_PIX_FMT_SGBRG8  v4l2_fourcc('G', 'B', 'R', 'G') /*  8  GBGB.. RGRG.. */
+-- 
+1.7.2.3
