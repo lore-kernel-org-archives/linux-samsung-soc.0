@@ -1,52 +1,45 @@
-From: Jamie Iles <jamie@jamieiles.com>
-Subject: Re: [PATCH] ARM: S5PV310: Implement kernel timers using MCT
-Date: Tue, 28 Dec 2010 00:57:01 +0000
-Message-ID: <20101228005701.GA2835@pulham.picochip.com>
-References: <1293017221-31037-1-git-send-email-kgene.kim@samsung.com>
- <20101222123502.GB2838@pulham.picochip.com>
- <003d01cba28b$a2388cc0$e6a9a640$%kim@samsung.com>
+From: Linus Walleij <linus.walleij@stericsson.com>
+Subject: Re: [PATCH] TWD: enable one-shot mode
+Date: Tue, 28 Dec 2010 02:17:42 +0100
+Message-ID: <AANLkTinU+x2uV34SCO=p2K4z6BO_DSYy2+1BRU5eAgHO@mail.gmail.com>
+References: <20101224191855.GJ20587@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:51281 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752127Ab0L1A5F (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:47149 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752070Ab0L1BRn convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Dec 2010 19:57:05 -0500
-Received: by wwa36 with SMTP id 36so9433500wwa.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Dec 2010 16:57:03 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <003d01cba28b$a2388cc0$e6a9a640$%kim@samsung.com>
+	Mon, 27 Dec 2010 20:17:43 -0500
+In-Reply-To: <20101224191855.GJ20587@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Jamie Iles' <jamie@jamieiles.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, 'Changhwan Youn' <chaos.youn@samsung.com>, ben-linux@fluff.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Bryan Huntsman <bryanh@codeaurora.org>, Colin Cross <ccross@android.com>, Daniel Walker <dwalker@codeaurora.org>, David Brown <davidb@codeaurora.org>, Erik Gilling <konkers@android.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Tony Lindgren <tony@atomide.com>, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Thu, Dec 23, 2010 at 07:24:48PM +0900, Kukjin Kim wrote:
-> Jamie Iles wrote:
-> > > +irqreturn_t s5pv310_mct0_event_isr(int irq, void *dev_id)
-> > > +{
-> > > +	struct clock_event_device *evt;
-> > > +
-> > > +	/* Clear the MCT tick interrupt */
-> > > +
-> > > +	evt = &mct_tick0_device;
-> > > +	if (evt->mode != CLOCK_EVT_MODE_PERIODIC)
-> > > +		s5pv310_mct_tick_stop(MCT_TICK0);
-> > 
-> > I don't think you need to stop the timer here, the clockevents layer
-> > will handle this for you.
-> > 
-> This is to support One-shot mode using MCT. Because basically MCT local
-> timer only supports periodic mode.
-> But will be added comment.
+2010/12/24 Russell King - ARM Linux <linux@arm.linux.org.uk>:
+> Allow one shot timer mode to be used with the TWD. =A0This allows
+> NOHZ mode to be used on SMP systems using the TWD localtimer.
+>
+> Tested on Versatile Express.
+>
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
+> Acks/Tested-by's would be appreciated, thanks.
 
-Actually I think you can simply remove the s5pv310_mct_tick_stop() 
-altogether. The onestop event handlers should schedule the next expiry 
-and will respect the min and max deltas so after the event the timer 
-will be correctly programmed for the next event.
+Tested on the U8500 and doesn't seem to break anything...
 
-I had to try this on hardware to convince myself (the timers on my 
-platform have the same behaviour) but it does work!
+Local interrupts after a few minutes of use before patching
+(and enabling NO_HZ):
+LOC:       8203       8224
 
-Jamie
+After patching;
+LOC:        233        322
+
+Looks like it's working, too.
+
+Tested-by: Linus Walleij <linus.walleij@stericsson.com>
+
+Yours,
+Linus Walleij
