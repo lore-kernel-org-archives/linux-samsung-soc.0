@@ -1,124 +1,171 @@
-From: Sungchun Kang <sungchun.kang@samsung.com>
-Subject: [PATCH] [media]: s5p-fimc: fix ISR and buffer handling for fimc-capture
-Date: Wed, 29 Dec 2010 09:30:28 +0900
-Message-ID: <1293582628-15547-1-git-send-email-sungchun.kang@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, kgene.kim@samsung.com, Sungchun Kang <sungchun.kang@samsung.com>
+From: Hyunwoong Kim <khw0178.kim@samsung.com>
+Subject: [PATCH v2] [media] s5p-fimc: update checking scaling ratio range
+Date: Wed, 29 Dec 2010 10:12:43 +0900
+Message-ID: <1293585163-23907-1-git-send-email-khw0178.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:45390 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750986Ab0L2BeE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 28 Dec 2010 20:34:04 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, Hyunwoong Kim <khw0178.kim@samsung.com>
 
-These patches are related and it may be summarized as follows.
+Horizontal and vertical scaling range are according to the following equations.
+If (SRC_Width >= 64 x DST_Width) { Exit(-1);  /* Out of Horizontal scale range}
+If (SRC_Height >= 64 x DST_Height) { Exit(-1);  /* Out of Vertical scale range}
 
-1. Some of the case are fimc H/W did not stop although there are
-no available output DMA buffer. So, it is modified check the
-routine fimc deactivation. And, the state of ST_CAPT_RUN is cleared
-in LAST-IRQ routine.
+fimc_check_scaler_ratio() is used to check if horizontal and vertical
+scale range are valid or not. To use fimc_check_scaler_ratio,
+source and destination format should be set by VIDIOC_S_FMT.
+And in case of scaling up, it doesn't have to check the scale range.
 
-2. When request buffer count is less than 4, CIOYSAn register did
-not set if VIDIOC_QBUF is called repeatedly. So, clear bit the
-state of ST_CAPT_STREAM in ISR.
-
-3. Because fimc interrupt generated when the frame start to write,
-it is necessary to use LAST-IRQ for processing of the last frame.
-So, added the enumeration for LAST-IRQ.
-
-4. After LAST-IRQ is generated, H/W pointer will be skip 1 frame.
-(reference by user manual) So, S/W pointer should be increased too.
-
-Reviewed-by Jonghun Han <jonghun.han@samsung.com>
-Signed-off-by: Sungchun Kang <sungchun.kang@samsung.com>
+Reviewed-by: Jonghun Han <jonghun.han@samsung.com>
+Signed-off-by: Hyunwoong Kim <khw0178.kim@samsung.com>
 ---
-This patch is depended on:
-http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/vb2-mfc-fimc
+Changes since V1:
+- change the definition of fimc_check_scaler_ratio()
+- remove the code to copy arguments
 
- drivers/media/video/s5p-fimc/fimc-capture.c |   12 +++++++-----
- drivers/media/video/s5p-fimc/fimc-core.c    |   20 ++++++++++++++------
- drivers/media/video/s5p-fimc/fimc-core.h    |    1 +
- 3 files changed, 22 insertions(+), 11 deletions(-)
+This patch is depended on Hyunwoong Kim's last patch.
+- [PATCH v2] [media] s5p-fimc: Configure scaler registers depending on FIMC version
+
+ drivers/media/video/s5p-fimc/fimc-capture.c |    4 +-
+ drivers/media/video/s5p-fimc/fimc-core.c    |   59 ++++++++++++++++++---------
+ drivers/media/video/s5p-fimc/fimc-core.h    |    2 +-
+ 3 files changed, 44 insertions(+), 21 deletions(-)
 
 diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index 4e4441f..0a3b344 100644
+index b1cb937..e22a78c 100644
 --- a/drivers/media/video/s5p-fimc/fimc-capture.c
 +++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -350,13 +350,15 @@ static void buffer_queue(struct vb2_buffer *vb)
+@@ -761,7 +761,9 @@ static int fimc_cap_s_crop(struct file *file, void *fh,
  
- 	dbg("active_buf_cnt: %d", fimc->vid_cap.active_buf_cnt);
- 
--	if (vid_cap->active_buf_cnt >= vid_cap->reqbufs_count ||
--	   vid_cap->active_buf_cnt >= FIMC_MAX_OUT_BUFS) {
--		if (!test_and_set_bit(ST_CAPT_STREAM, &fimc->state)) {
-+	if (vid_cap->active_buf_cnt == FIMC_MAX_OUT_BUFS)
-+		set_bit(ST_CAPT_STREAM, &fimc->state);
-+
-+	if (test_bit(ST_CAPT_LAST_IRQ, &fimc->state) ||
-+		!test_bit(ST_CAPT_RUN, &fimc->state)) {
- 			fimc_activate_capture(ctx);
--			dbg("");
--		}
-+		clear_bit(ST_CAPT_LAST_IRQ, &fimc->state);
- 	}
-+
- 	spin_unlock_irqrestore(&fimc->slock, flags);
- }
- 
+ 	f = &ctx->s_frame;
+ 	/* Check for the pixel scaling ratio when cropping input image. */
+-	ret = fimc_check_scaler_ratio(&cr->c, &ctx->d_frame);
++	ret = fimc_check_scaler_ratio(cr->c.width, cr->c.height,
++				      ctx->d_frame.width, ctx->d_frame.height,
++				      ctx->rotation);
+ 	if (ret) {
+ 		v4l2_err(&fimc->vid_cap.v4l2_dev, "Out of the scaler range");
+ 		return ret;
 diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index 2374fd8..4a85966 100644
+index 2b65961..e608fb8 100644
 --- a/drivers/media/video/s5p-fimc/fimc-core.c
 +++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -334,9 +334,14 @@ static void fimc_capture_handler(struct fimc_dev *fimc)
- 		if (++cap->buf_index >= FIMC_MAX_OUT_BUFS)
- 			cap->buf_index = 0;
+@@ -198,24 +198,21 @@ static struct v4l2_queryctrl *get_ctrl(int id)
+ 	return NULL;
+ }
  
--	} else if (test_and_clear_bit(ST_CAPT_STREAM, &fimc->state) &&
--		   cap->active_buf_cnt <= 1) {
--		fimc_deactivate_capture(fimc);
-+	} else {
-+		clear_bit(ST_CAPT_STREAM, &fimc->state);
-+	}
-+
-+	if (cap->active_buf_cnt == 0) {
-+		clear_bit(ST_CAPT_RUN, &fimc->state);
-+		if (++cap->buf_index >= FIMC_MAX_OUT_BUFS)
-+			cap->buf_index = 0;
- 	}
- 
- 	dbg("frame: %d, active_buf_cnt= %d",
-@@ -346,6 +351,7 @@ static void fimc_capture_handler(struct fimc_dev *fimc)
- static irqreturn_t fimc_isr(int irq, void *priv)
+-int fimc_check_scaler_ratio(struct v4l2_rect *r, struct fimc_frame *f)
++int fimc_check_scaler_ratio(int sw, int sh, int dw, int dh, int rot)
  {
- 	struct fimc_dev *fimc = priv;
-+	struct fimc_vid_cap *cap = &fimc->vid_cap;
+-	if (r->width > f->width) {
+-		if (f->width > (r->width * SCALER_MAX_HRATIO))
+-			return -EINVAL;
+-	} else {
+-		if ((f->width * SCALER_MAX_HRATIO) < r->width)
+-			return -EINVAL;
+-	}
++	int tx, ty;
  
- 	BUG_ON(!fimc);
- 	fimc_hw_clear_irq(fimc);
-@@ -372,10 +378,12 @@ static irqreturn_t fimc_isr(int irq, void *priv)
- 
- 	if (test_bit(ST_CAPT_RUN, &fimc->state))
- 		fimc_capture_handler(fimc);
--
--	if (test_and_clear_bit(ST_CAPT_PEND, &fimc->state)) {
-+	else if (test_bit(ST_CAPT_PEND, &fimc->state))
- 		set_bit(ST_CAPT_RUN, &fimc->state);
--		wake_up(&fimc->irq_queue);
-+
-+	if (cap->active_buf_cnt == 1) {
-+		fimc_deactivate_capture(fimc);
-+		set_bit(ST_CAPT_LAST_IRQ, &fimc->state);
+-	if (r->height > f->height) {
+-		if (f->height > (r->height * SCALER_MAX_VRATIO))
+-			return -EINVAL;
++	if (rot == 90 || rot == 270) {
++		ty = dw;
++		tx = dh;
+ 	} else {
+-		if ((f->height * SCALER_MAX_VRATIO) < r->height)
+-			return -EINVAL;
++		tx = dw;
++		ty = dh;
  	}
  
- isr_unlock:
++	if ((sw >= SCALER_MAX_HRATIO * tx) || (sh >= SCALER_MAX_VRATIO * ty))
++		return -EINVAL;
++
+ 	return 0;
+ }
+ 
+@@ -1063,6 +1060,7 @@ int fimc_s_ctrl(struct fimc_ctx *ctx, struct v4l2_control *ctrl)
+ 	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
+ 	struct fimc_dev *fimc = ctx->fimc_dev;
+ 	unsigned long flags;
++	int ret = 0;
+ 
+ 	if (ctx->rotation != 0 &&
+ 	    (ctrl->id == V4L2_CID_HFLIP || ctrl->id == V4L2_CID_VFLIP)) {
+@@ -1089,6 +1087,20 @@ int fimc_s_ctrl(struct fimc_ctx *ctx, struct v4l2_control *ctrl)
+ 		break;
+ 
+ 	case V4L2_CID_ROTATE:
++		if (!(~ctx->state & (FIMC_DST_FMT | FIMC_SRC_FMT))) {
++			ret = fimc_check_scaler_ratio(ctx->s_frame.width,
++						      ctx->s_frame.height,
++						      ctx->d_frame.width,
++						      ctx->d_frame.height,
++						      ctrl->value);
++			if (ret) {
++				v4l2_err(&fimc->m2m.v4l2_dev,
++					 "Out of scaler range");
++				spin_unlock_irqrestore(&ctx->slock, flags);
++				return -EINVAL;
++			}
++		}
++
+ 		/* Check for the output rotator availability */
+ 		if ((ctrl->value == 90 || ctrl->value == 270) &&
+ 		    (ctx->in_path == FIMC_DMA && !variant->has_out_rot)) {
+@@ -1237,18 +1249,27 @@ static int fimc_m2m_s_crop(struct file *file, void *fh, struct v4l2_crop *cr)
+ 		&ctx->s_frame : &ctx->d_frame;
+ 
+ 	spin_lock_irqsave(&ctx->slock, flags);
+-	if (~ctx->state & (FIMC_SRC_FMT | FIMC_DST_FMT)) {
+-		/* Check to see if scaling ratio is within supported range */
+-		if (cr->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+-			ret = fimc_check_scaler_ratio(&cr->c, &ctx->d_frame);
+-		else
+-			ret = fimc_check_scaler_ratio(&cr->c, &ctx->s_frame);
++	/* Check to see if scaling ratio is within supported range */
++	if (!(~ctx->state & (FIMC_DST_FMT | FIMC_SRC_FMT))) {
++		if (cr->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
++			ret = fimc_check_scaler_ratio(cr->c.width, cr->c.height,
++						      ctx->d_frame.width,
++						      ctx->d_frame.height,
++						      ctx->rotation);
++		} else {
++			ret = fimc_check_scaler_ratio(ctx->s_frame.width,
++						      ctx->s_frame.height,
++						      cr->c.width, cr->c.height,
++						      ctx->rotation);
++		}
++
+ 		if (ret) {
+ 			v4l2_err(&fimc->m2m.v4l2_dev, "Out of scaler range");
+ 			spin_unlock_irqrestore(&ctx->slock, flags);
+ 			return -EINVAL;
+ 		}
+ 	}
++
+ 	ctx->state |= FIMC_PARAMS;
+ 
+ 	f->offs_h = cr->c.left;
 diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-index 1f1beaa..58cb2e0 100644
+index d690398..b442fed 100644
 --- a/drivers/media/video/s5p-fimc/fimc-core.h
 +++ b/drivers/media/video/s5p-fimc/fimc-core.h
-@@ -56,6 +56,7 @@ enum fimc_dev_flags {
- 	ST_CAPT_RUN,
- 	ST_CAPT_STREAM,
- 	ST_CAPT_SHUT,
-+	ST_CAPT_LAST_IRQ,
- };
+@@ -605,7 +605,7 @@ struct fimc_fmt *find_format(struct v4l2_format *f, unsigned int mask);
+ struct fimc_fmt *find_mbus_format(struct v4l2_mbus_framefmt *f,
+ 				  unsigned int mask);
  
- #define fimc_m2m_active(dev) test_bit(ST_OUTDMA_RUN, &(dev)->state)
+-int fimc_check_scaler_ratio(struct v4l2_rect *r, struct fimc_frame *f);
++int fimc_check_scaler_ratio(int sw, int sh, int dw, int dh, int rot);
+ int fimc_set_scaler_info(struct fimc_ctx *ctx);
+ int fimc_prepare_config(struct fimc_ctx *ctx, u32 flags);
+ int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
 -- 
 1.6.2.5
