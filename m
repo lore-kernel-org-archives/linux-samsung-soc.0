@@ -1,134 +1,124 @@
-From: Sylwester Nawrocki <snjw23@gmail.com>
-Subject: Re: [PATCH] [media] s5p-fimc: Support stop_streaming and job_abort
-Date: Wed, 29 Dec 2010 00:33:50 +0100
-Message-ID: <4D1A73DE.2030900@gmail.com>
-References: <1293523616-27421-1-git-send-email-khw0178.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:58191 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752618Ab0L1Xdy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Dec 2010 18:33:54 -0500
-In-Reply-To: <1293523616-27421-1-git-send-email-khw0178.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sungchun Kang <sungchun.kang@samsung.com>
+Subject: [PATCH] [media]: s5p-fimc: fix ISR and buffer handling for fimc-capture
+Date: Wed, 29 Dec 2010 09:30:28 +0900
+Message-ID: <1293582628-15547-1-git-send-email-sungchun.kang@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, kgene.kim@samsung.com, Sungchun Kang <sungchun.kang@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hyunwoong Kim <khw0178.kim@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com
 
-On 12/28/2010 09:06 AM, Hyunwoong Kim wrote:
-> This patch adds callback functions, stop_streaming and job_abort,
-> to abort or finish any DMA in progress. stop_streaming is called
-> by videobuf2 framework and job_abort is called by m2m framework.
-> ST_M2M_PEND state is added to discard the next job.
->
-> Reviewed-by: Jonghun Han<jonghun.han@samsung.com>
-> Signed-off-by: Hyunwoong Kim<khw0178.kim@samsung.com>
-> ---
-> This patch is depended on Hyunwoong Kim's last patch.
-> - [PATCH v2] [media] s5p-fimc: Configure scaler registers depending on FIMC version
->
->   drivers/media/video/s5p-fimc/fimc-core.c |   41 ++++++++++++++++++++++++++++-
->   drivers/media/video/s5p-fimc/fimc-core.h |    1 +
->   2 files changed, 40 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-> index 2b65961..0eeb6a5 100644
-> --- a/drivers/media/video/s5p-fimc/fimc-core.c
-> +++ b/drivers/media/video/s5p-fimc/fimc-core.c
-> @@ -308,6 +308,26 @@ int fimc_set_scaler_info(struct fimc_ctx *ctx)
->   	return 0;
->   }
->
-> +static int stop_streaming(struct vb2_queue *q)
-> +{
-> +	struct fimc_ctx *ctx = q->drv_priv;
-> +	struct fimc_dev *fimc = ctx->fimc_dev;
-> +	unsigned long flags;
-> +
-> +	if (!fimc_m2m_pending(fimc))
-> +		return 0;
-> +
-> +	spin_lock_irqsave(&fimc->slock, flags);
-> +	set_bit(ST_M2M_SHUT,&fimc->state);
-> +	spin_unlock_irqrestore(&fimc->slock, flags);
+These patches are related and it may be summarized as follows.
 
-I think you can safely remove the spinlock protection there.
-IMHO it doesn't earn as anything when set_bit is atomic.
+1. Some of the case are fimc H/W did not stop although there are
+no available output DMA buffer. So, it is modified check the
+routine fimc deactivation. And, the state of ST_CAPT_RUN is cleared
+in LAST-IRQ routine.
 
-> +
-> +	wait_event_timeout(fimc->irq_queue,
-> +			!test_bit(ST_M2M_SHUT,&fimc->state),
-> +			FIMC_SHUTDOWN_TIMEOUT);
-> +
-> +	return 0;
-> +}
-> +
->   static void fimc_capture_handler(struct fimc_dev *fimc)
->   {
->   	struct fimc_vid_cap *cap =&fimc->vid_cap;
-> @@ -359,7 +379,10 @@ static irqreturn_t fimc_isr(int irq, void *priv)
->
->   	spin_lock(&fimc->slock);
->
-> -	if (test_and_clear_bit(ST_M2M_PEND,&fimc->state)) {
-> +	if (test_and_clear_bit(ST_M2M_SHUT,&fimc->state)) {
-> +		wake_up(&fimc->irq_queue);
-> +		goto isr_unlock;
-> +	} else if (test_and_clear_bit(ST_M2M_PEND,&fimc->state)) {
->   		struct vb2_buffer *src_vb, *dst_vb;
->   		struct fimc_ctx *ctx = v4l2_m2m_get_curr_priv(fimc->m2m.m2m_dev);
->
-> @@ -639,7 +662,20 @@ dma_unlock:
->
->   static void fimc_job_abort(void *priv)
->   {
-> -	/* Nothing done in job_abort. */
-> +	struct fimc_ctx *ctx = priv;
-> +	struct fimc_dev *fimc = ctx->fimc_dev;
-> +	unsigned long flags;
-> +
-> +	if (!fimc_m2m_pending(fimc))
-> +		return;
-> +
-> +	spin_lock_irqsave(&fimc->slock, flags);
-> +	set_bit(ST_M2M_SHUT,&fimc->state);
-> +	spin_unlock_irqrestore(&fimc->slock, flags);
+2. When request buffer count is less than 4, CIOYSAn register did
+not set if VIDIOC_QBUF is called repeatedly. So, clear bit the
+state of ST_CAPT_STREAM in ISR.
 
-Ditto.
+3. Because fimc interrupt generated when the frame start to write,
+it is necessary to use LAST-IRQ for processing of the last frame.
+So, added the enumeration for LAST-IRQ.
 
-Otherwise looks good.
+4. After LAST-IRQ is generated, H/W pointer will be skip 1 frame.
+(reference by user manual) So, S/W pointer should be increased too.
 
-> +
-> +	wait_event_timeout(fimc->irq_queue,
-> +			!test_bit(ST_M2M_SHUT,&fimc->state),
-> +			FIMC_SHUTDOWN_TIMEOUT);
->   }
->
->   static int fimc_queue_setup(struct vb2_queue *vq, unsigned int *num_buffers,
-> @@ -716,6 +752,7 @@ struct vb2_ops fimc_qops = {
->   	.buf_queue	 = fimc_buf_queue,
->   	.wait_prepare	 = fimc_unlock,
->   	.wait_finish	 = fimc_lock,
-> +	.stop_streaming	 = stop_streaming,
->   };
->
->   static int fimc_m2m_querycap(struct file *file, void *priv,
-> diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-> index d690398..150792d 100644
-> --- a/drivers/media/video/s5p-fimc/fimc-core.h
-> +++ b/drivers/media/video/s5p-fimc/fimc-core.h
-> @@ -51,6 +51,7 @@ enum fimc_dev_flags {
->   	ST_IDLE,
->   	ST_OUTDMA_RUN,
->   	ST_M2M_PEND,
-> +	ST_M2M_SHUT,
->   	/* for capture node */
->   	ST_CAPT_PEND,
->   	ST_CAPT_RUN,
+Reviewed-by Jonghun Han <jonghun.han@samsung.com>
+Signed-off-by: Sungchun Kang <sungchun.kang@samsung.com>
+---
+This patch is depended on:
+http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/vb2-mfc-fimc
 
---
-Thanks,
-Sylwester
+ drivers/media/video/s5p-fimc/fimc-capture.c |   12 +++++++-----
+ drivers/media/video/s5p-fimc/fimc-core.c    |   20 ++++++++++++++------
+ drivers/media/video/s5p-fimc/fimc-core.h    |    1 +
+ 3 files changed, 22 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
+index 4e4441f..0a3b344 100644
+--- a/drivers/media/video/s5p-fimc/fimc-capture.c
++++ b/drivers/media/video/s5p-fimc/fimc-capture.c
+@@ -350,13 +350,15 @@ static void buffer_queue(struct vb2_buffer *vb)
+ 
+ 	dbg("active_buf_cnt: %d", fimc->vid_cap.active_buf_cnt);
+ 
+-	if (vid_cap->active_buf_cnt >= vid_cap->reqbufs_count ||
+-	   vid_cap->active_buf_cnt >= FIMC_MAX_OUT_BUFS) {
+-		if (!test_and_set_bit(ST_CAPT_STREAM, &fimc->state)) {
++	if (vid_cap->active_buf_cnt == FIMC_MAX_OUT_BUFS)
++		set_bit(ST_CAPT_STREAM, &fimc->state);
++
++	if (test_bit(ST_CAPT_LAST_IRQ, &fimc->state) ||
++		!test_bit(ST_CAPT_RUN, &fimc->state)) {
+ 			fimc_activate_capture(ctx);
+-			dbg("");
+-		}
++		clear_bit(ST_CAPT_LAST_IRQ, &fimc->state);
+ 	}
++
+ 	spin_unlock_irqrestore(&fimc->slock, flags);
+ }
+ 
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
+index 2374fd8..4a85966 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.c
++++ b/drivers/media/video/s5p-fimc/fimc-core.c
+@@ -334,9 +334,14 @@ static void fimc_capture_handler(struct fimc_dev *fimc)
+ 		if (++cap->buf_index >= FIMC_MAX_OUT_BUFS)
+ 			cap->buf_index = 0;
+ 
+-	} else if (test_and_clear_bit(ST_CAPT_STREAM, &fimc->state) &&
+-		   cap->active_buf_cnt <= 1) {
+-		fimc_deactivate_capture(fimc);
++	} else {
++		clear_bit(ST_CAPT_STREAM, &fimc->state);
++	}
++
++	if (cap->active_buf_cnt == 0) {
++		clear_bit(ST_CAPT_RUN, &fimc->state);
++		if (++cap->buf_index >= FIMC_MAX_OUT_BUFS)
++			cap->buf_index = 0;
+ 	}
+ 
+ 	dbg("frame: %d, active_buf_cnt= %d",
+@@ -346,6 +351,7 @@ static void fimc_capture_handler(struct fimc_dev *fimc)
+ static irqreturn_t fimc_isr(int irq, void *priv)
+ {
+ 	struct fimc_dev *fimc = priv;
++	struct fimc_vid_cap *cap = &fimc->vid_cap;
+ 
+ 	BUG_ON(!fimc);
+ 	fimc_hw_clear_irq(fimc);
+@@ -372,10 +378,12 @@ static irqreturn_t fimc_isr(int irq, void *priv)
+ 
+ 	if (test_bit(ST_CAPT_RUN, &fimc->state))
+ 		fimc_capture_handler(fimc);
+-
+-	if (test_and_clear_bit(ST_CAPT_PEND, &fimc->state)) {
++	else if (test_bit(ST_CAPT_PEND, &fimc->state))
+ 		set_bit(ST_CAPT_RUN, &fimc->state);
+-		wake_up(&fimc->irq_queue);
++
++	if (cap->active_buf_cnt == 1) {
++		fimc_deactivate_capture(fimc);
++		set_bit(ST_CAPT_LAST_IRQ, &fimc->state);
+ 	}
+ 
+ isr_unlock:
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
+index 1f1beaa..58cb2e0 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.h
++++ b/drivers/media/video/s5p-fimc/fimc-core.h
+@@ -56,6 +56,7 @@ enum fimc_dev_flags {
+ 	ST_CAPT_RUN,
+ 	ST_CAPT_STREAM,
+ 	ST_CAPT_SHUT,
++	ST_CAPT_LAST_IRQ,
+ };
+ 
+ #define fimc_m2m_active(dev) test_bit(ST_OUTDMA_RUN, &(dev)->state)
+-- 
+1.6.2.5
