@@ -1,42 +1,61 @@
-From: Sungchun Kang <sungchun.kang@samsung.com>
-Subject: [PATCH] [media] s5p-fimc: fimc_stop_capture bug fix
-Date: Thu, 30 Dec 2010 14:35:28 +0900
-Message-ID: <1293687328-26239-1-git-send-email-sungchun.kang@samsung.com>
+From: Sylwester Nawrocki <snjw23@gmail.com>
+Subject: Re: [PATCH] [media] s5p-fimc: fimc_stop_capture bug fix
+Date: Thu, 30 Dec 2010 10:47:56 +0100
+Message-ID: <4D1C554C.2030201@gmail.com>
+References: <1293687328-26239-1-git-send-email-sungchun.kang@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:39944 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751339Ab0L3F7T (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:33878 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752721Ab0L3Jr7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Dec 2010 00:59:19 -0500
+	Thu, 30 Dec 2010 04:47:59 -0500
+In-Reply-To: <1293687328-26239-1-git-send-email-sungchun.kang@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, kgene.kim@samsung.com, Sungchun Kang <sungchun.kang@samsung.com>
+To: Sungchun Kang <sungchun.kang@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com, kgene.kim@samsung.com
 
-When is called fimc_stop_capture, it seems that wait_event_timeout
-used improperly. It should be wake up by irq handler.
+On 12/30/2010 06:35 AM, Sungchun Kang wrote:
+> When is called fimc_stop_capture, it seems that wait_event_timeout
+> used improperly. It should be wake up by irq handler.
+>
+> Reviewed-by Jonghun Han<jonghun.han@samsung.com>
+> Signed-off-by: Sungchun Kang<sungchun.kang@samsung.com>
+> ---
+> This patch is depended on:
+> http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/vb2-mfc-fimc
+>
+>   drivers/media/video/s5p-fimc/fimc-capture.c |    2 +-
+>   1 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
+> index 4e4441f..821f927 100644
+> --- a/drivers/media/video/s5p-fimc/fimc-capture.c
+> +++ b/drivers/media/video/s5p-fimc/fimc-capture.c
+> @@ -187,7 +187,7 @@ static int fimc_stop_capture(struct fimc_dev *fimc)
+>   	spin_unlock_irqrestore(&fimc->slock, flags);
+>
+>   	wait_event_timeout(fimc->irq_queue,
+> -			   test_bit(ST_CAPT_SHUT,&fimc->state),
 
-Reviewed-by Jonghun Han <jonghun.han@samsung.com>
-Signed-off-by: Sungchun Kang <sungchun.kang@samsung.com>
----
-This patch is depended on:
-http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/vb2-mfc-fimc
+just wondering, how this one sneaked in...it looks like a need to take
+a long holiday.. ;)
 
- drivers/media/video/s5p-fimc/fimc-capture.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Starting from the new year I am going to setup a fixed branch
+v4l/fimc-for-next at git://git.infradead.org/users/kmpark/linux-2.6-samsung
+so there is a common up to date tree available.
+Until then please base your work on
+git://git.infradead.org/users/kmpark/linux-2.6-samsung vb2
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index 4e4441f..821f927 100644
---- a/drivers/media/video/s5p-fimc/fimc-capture.c
-+++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -187,7 +187,7 @@ static int fimc_stop_capture(struct fimc_dev *fimc)
- 	spin_unlock_irqrestore(&fimc->slock, flags);
- 
- 	wait_event_timeout(fimc->irq_queue,
--			   test_bit(ST_CAPT_SHUT, &fimc->state),
-+			   !test_bit(ST_CAPT_SHUT, &fimc->state),
- 			   FIMC_SHUTDOWN_TIMEOUT);
- 
- 	ret = v4l2_subdev_call(cap->sd, video, s_stream, 0);
--- 
-1.6.2.5
+I will apply this patch in the next week.
+
+> +			   !test_bit(ST_CAPT_SHUT,&fimc->state),
+>   			   FIMC_SHUTDOWN_TIMEOUT);
+>
+>   	ret = v4l2_subdev_call(cap->sd, video, s_stream, 0);
+
+Thanks,
+Sylwester
