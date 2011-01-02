@@ -1,34 +1,61 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 1/4] ARM: Kconfig: Add audio support dependency
-Date: Sun, 2 Jan 2011 14:05:18 +0000
-Message-ID: <20110102140517.GJ4935@opensource.wolfsonmicro.com>
-References: <1293171965-24416-1-git-send-email-sw.youn@samsung.com>
- <1293172569-21465-1-git-send-email-sw.youn@samsung.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <mmind@debian.org>
+Subject: s3c-sdhci s3c-sdhci.1: failed to get io clock on a s3c2416
+Date: Sun, 2 Jan 2011 18:42:55 +0100
+Message-ID: <201101021842.55281.mmind@debian.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:46513 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751828Ab1ABOFC (ORCPT
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:55252 "EHLO
+	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753913Ab1ABRt7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 2 Jan 2011 09:05:02 -0500
-Content-Disposition: inline
-In-Reply-To: <1293172569-21465-1-git-send-email-sw.youn@samsung.com>
+	Sun, 2 Jan 2011 12:49:59 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwhan Youn <sw.youn@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux@arm.linux.org.uk, ben-linux@fluff.org, kgene.kim@samsung.com, lrg@slimlogic.co.uk, jassi.brar@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: Alexander Neumann <fd0@lochraster.org>
 
-On Fri, Dec 24, 2010 at 03:36:09PM +0900, Seungwhan Youn wrote:
+[please keep the Cc, thanks]
 
-> This patch adds Samsung ASoC audio support dependency for Samsung SoCs.
+Hi,
 
-> Signed-off-by: Seungwhan Youn <sw.youn@samsung.com>
+we are trying to start a current kernel on a device of the Qisda ebook-reader
+family. It uses both hsmmc-channels. The first one is connected to a nand-chip
+from Hynix and the second is connected to a micro-sd-slot.
 
-> +	select ASOC_SAMSUNG if SND_SOC
+The system is based on a s3c2416 soc and is the basis for nearly every ebook
+reader with a sipix-display at the moment. (more than 20 different models
+worldwide).
 
-Hrm, if we're going to do this we probably ought to be doing it for all
-architectures.  It's a good idea, we don't tend to have multiple
-possible architectures supported for a given architecture.  Since the
-second patch didn't apply I'll leave this one too, and patches 3 and 4,
-though they all look good.
+We used kernel 2.6.37rc8 with the sdhci-patch from the next-s3c24xx branch.
+The first channel is initialized correctly but the second channel throws the 
+error mentioned. The relevant bootlog looks like this:
+
+
+s3c-sdhci s3c-sdhci.0: clock source 0: hsmmc (133333333 Hz)
+s3c-sdhci s3c-sdhci.0: clock source 1: hsmmc (133333333 Hz)
+s3c-sdhci s3c-sdhci.0: clock source 2: hsmmc-if (96000000 Hz)
+mmc0: SDHCI controller on samsung-hsmmc [s3c-sdhci.0] using ADMA
+s3c-sdhci s3c-sdhci.1: failed to get io clock
+mmc0: mmc_rescan: trying to init card at 400000 Hz
+s3c-sdhci: probe of s3c-sdhci.1 failed with error -2
+mmc0: new high speed MMC card at address 0001
+mmcblk0: mmc0:0001 HYNIX  1.88 GiB
+ mmcblk0: p1 p2 p3
+
+The complete log can be found on: http://avalon.gnuzifer.de/~fd0/oyo/bootlog
+
+Originally Qisda used something called s3c-linux which is a fork of 2.6.21.5
+implementing support for Samsung SoCs and added some (propably machine
+specific) voodoo to make it work.
+
+One source of this kernel is: http://www.thalia.de/oyo_src/SG060B00_V009.tgz
+
+If anyone could suggest what may be wrong here I would be really grateful as 
+this stuff is way out my league :-)
+
+
+Thanks
+Heiko
