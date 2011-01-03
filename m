@@ -1,41 +1,47 @@
 From: Seungwhan Youn <claude.youn@gmail.com>
-Subject: Re: [PATCH 2/4] ARM: SAMSUNG: Add SMDK audio
-	configuration
-Date: Mon, 3 Jan 2011 10:30:05 +0900
-Message-ID: <AANLkTi=yyE7X1Z-WSP6hj=vb2b38DW=BNm+A7Y=+k2wh@mail.gmail.com>
+Subject: Re: [alsa-devel] [PATCH 1/4] ARM: Kconfig: Add audio support dependency
+Date: Mon, 3 Jan 2011 10:37:29 +0900
+Message-ID: <AANLkTinnzD+cB6QuFJ4NK+-ASLDoTw6EgJiXJBreuzTD@mail.gmail.com>
 References: <1293171965-24416-1-git-send-email-sw.youn@samsung.com>
-	<1293172938-23615-1-git-send-email-sw.youn@samsung.com>
-	<20110102140129.GI4935@opensource.wolfsonmicro.com>
+	<1293172569-21465-1-git-send-email-sw.youn@samsung.com>
+	<20110102140517.GJ4935@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20110102140129.GI4935@opensource.wolfsonmicro.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, jassi.brar@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, lrg@slimlogic.co.uk, linux-arm-kernel@lists.infradead.org, Seungwhan Youn <sw.youn@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:54798 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751782Ab1ACBha convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 2 Jan 2011 20:37:30 -0500
+Received: by wwa36 with SMTP id 36so13775718wwa.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 02 Jan 2011 17:37:29 -0800 (PST)
+In-Reply-To: <20110102140517.GJ4935@opensource.wolfsonmicro.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Seungwhan Youn <sw.youn@samsung.com>, alsa-devel@alsa-project.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, jassi.brar@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, lrg@slimlogic.co.uk
 
-On Sun, Jan 2, 2011 at 11:01 PM, Mark Brown
+On Sun, Jan 2, 2011 at 11:05 PM, Mark Brown
 <broonie@opensource.wolfsonmicro.com> wrote:
-> On Fri, Dec 24, 2010 at 03:42:18PM +0900, Seungwhan Youn wrote:
->> This patch adds SMDK audio select configurations based on platform dependacny.
->> This helps more easyly and clearly to make sure about configuration on audio
->> drivers support on platform side.
->>
+> On Fri, Dec 24, 2010 at 03:36:09PM +0900, Seungwhan Youn wrote:
+>
+>> This patch adds Samsung ASoC audio support dependency for Samsung So=
+Cs.
+>
 >> Signed-off-by: Seungwhan Youn <sw.youn@samsung.com>
 >
-> This doesn't apply against current ASoC; I suspect it needs to be merged
-> via the ARM tree.
+>> + =C2=A0 =C2=A0 select ASOC_SAMSUNG if SND_SOC
+>
+> Hrm, if we're going to do this we probably ought to be doing it for a=
+ll
+> architectures. =C2=A0It's a good idea, we don't tend to have multiple
+> possible architectures supported for a given architecture. =C2=A0Sinc=
+e the
+> second patch didn't apply I'll leave this one too, and patches 3 and =
+4,
+> though they all look good.
 
-Yes, patch 1/4 and 2/4 was based on Mr. Kukjin Kim's for-next branch.
-So, I hope that Mr. Kukjin Kim sync with you, after he apply these 1,2
-patches.
+Yes, I think so, but I didn't think that far when I made these
+patches. If you don't mind, can I re-make this patch-set for all
+architectures with your 'Requested-by'?
