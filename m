@@ -1,147 +1,330 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH/RFC 1/3] ARM: S5P: Add a platform callback for MIPI CSIS PHY
- control
-Date: Tue, 04 Jan 2011 16:09:22 +0100
-Message-ID: <1294153764-25006-2-git-send-email-s.nawrocki@samsung.com>
-References: <1294153764-25006-1-git-send-email-s.nawrocki@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: [RFC 2/5] ARM: P2V: avoid initializers and assembly using PHYS_OFFSET
+Date: Tue, 04 Jan 2011 20:22:37 +0000
+Message-ID: <E1PaDOv-00023d-Gi@rmk-PC.arm.linux.org.uk>
+References: <20110104202052.GE24935@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:52706 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752085Ab1ADPJb (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:38045 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750991Ab1ADUXj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Jan 2011 10:09:31 -0500
-Received: from spt2.w1.samsung.com ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LEI00H1L7FS1P80@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 04 Jan 2011 15:09:29 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LEI003JA7FSLA@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 04 Jan 2011 15:09:28 +0000 (GMT)
-In-reply-to: <1294153764-25006-1-git-send-email-s.nawrocki@samsung.com>
+	Tue, 4 Jan 2011 15:23:39 -0500
+In-Reply-To: <20110104202052.GE24935@n2100.arm.linux.org.uk>
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, inki.dae@samsung.com
+To: Nicolas Pitre <nico@fluxnic.net>
+Cc: David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@codeaurora.org>, Bryan Huntsman <bryanh@codeaurora.org>, Amit Kucheria <amit.kucheria@canonical.com>, Sascha Hauer <kernel@pengutronix.de>, Eric Miao <eric.y.miao@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, "Hans J. Koch" <hjk@linutronix.de>, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-The phy_enable callback in struct s5p_platform_mipi_csis is added
-to allow the CSIS driver to control its PHY enable and reset signals.
-This allows to use same MIPI CSIS driver across various SoCs.
+As PHYS_OFFSET will be becoming a variable, we can't have it used in
+initializers nor assembly code.  Replace those in generic code with
+a run-time initialization.  Replace those in platform code using the
+individual platform specific PLAT_PHYS_OFFSET.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 ---
- arch/arm/plat-s5p/dev-csis0.c              |    2 +-
- arch/arm/plat-s5p/dev-csis1.c              |    2 +-
- arch/arm/plat-s5p/include/plat/csis.h      |   28 --------------------
- arch/arm/plat-s5p/include/plat/mipi_csis.h |   39 ++++++++++++++++++++++++++++
- 4 files changed, 41 insertions(+), 30 deletions(-)
- delete mode 100644 arch/arm/plat-s5p/include/plat/csis.h
- create mode 100644 arch/arm/plat-s5p/include/plat/mipi_csis.h
+ arch/arm/kernel/setup.c                  |    4 +++-
+ arch/arm/mach-msm/board-msm7x27.c        |    8 ++++----
+ arch/arm/mach-msm/board-msm7x30.c        |    6 +++---
+ arch/arm/mach-msm/board-qsd8x50.c        |    4 ++--
+ arch/arm/mach-msm/board-sapphire.c       |    2 +-
+ arch/arm/mach-mx5/board-cpuimx51.c       |    2 +-
+ arch/arm/mach-mx5/board-cpuimx51sd.c     |    2 +-
+ arch/arm/mach-mx5/board-mx51_3ds.c       |    2 +-
+ arch/arm/mach-pxa/balloon3.c             |    2 +-
+ arch/arm/mach-realview/realview_eb.c     |    2 +-
+ arch/arm/mach-realview/realview_pb1176.c |    2 +-
+ arch/arm/mach-realview/realview_pb11mp.c |    2 +-
+ arch/arm/mach-realview/realview_pba8.c   |    2 +-
+ arch/arm/mach-realview/realview_pbx.c    |    2 +-
+ arch/arm/mach-s5pv210/sleep.S            |    2 +-
+ arch/arm/mach-tcc8k/board-tcc8000-sdk.c  |    2 +-
+ arch/arm/mach-vexpress/ct-ca9x4.c        |    2 +-
+ 17 files changed, 25 insertions(+), 23 deletions(-)
 
-diff --git a/arch/arm/plat-s5p/dev-csis0.c b/arch/arm/plat-s5p/dev-csis0.c
-index dfab1c8..57efe9c 100644
---- a/arch/arm/plat-s5p/dev-csis0.c
-+++ b/arch/arm/plat-s5p/dev-csis0.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (C) 2010 Samsung Electronics
-+ * Copyright (C) 2010 Samsung Electronics Co., Ltd
-  *
-  * S5P series device definition for MIPI-CSIS channel 0
-  *
-diff --git a/arch/arm/plat-s5p/dev-csis1.c b/arch/arm/plat-s5p/dev-csis1.c
-index e3053f2..c61b46b 100644
---- a/arch/arm/plat-s5p/dev-csis1.c
-+++ b/arch/arm/plat-s5p/dev-csis1.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (C) 2010 Samsung Electronics
-+ * Copyright (C) 2010 Samsung Electronics Co., Ltd
-  *
-  * S5P series device definition for MIPI-CSIS channel 1
-  *
-diff --git a/arch/arm/plat-s5p/include/plat/csis.h b/arch/arm/plat-s5p/include/plat/csis.h
-deleted file mode 100644
-index 51e308c..0000000
---- a/arch/arm/plat-s5p/include/plat/csis.h
-+++ /dev/null
-@@ -1,28 +0,0 @@
--/*
-- * Copyright (C) 2010 Samsung Electronics
-- *
-- * S5P series MIPI CSI slave device support
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- */
--
--#ifndef PLAT_S5P_CSIS_H_
--#define PLAT_S5P_CSIS_H_ __FILE__
--
--/**
-- * struct s5p_platform_mipi_csis - platform data for MIPI-CSIS
-- * @clk_rate: bus clock frequency
-- * @lanes: number of data lanes used
-- * @alignment: data alignment in bits
-- * @hs_settle: HS-RX settle time
-- */
--struct s5p_platform_mipi_csis {
--	unsigned long clk_rate;
--	u8 lanes;
--	u8 alignment;
--	u8 hs_settle;
--};
--
--#endif /* PLAT_S5P_CSIS_H_ */
-diff --git a/arch/arm/plat-s5p/include/plat/mipi_csis.h b/arch/arm/plat-s5p/include/plat/mipi_csis.h
-new file mode 100644
-index 0000000..0b22065
---- /dev/null
-+++ b/arch/arm/plat-s5p/include/plat/mipi_csis.h
-@@ -0,0 +1,39 @@
-+/*
-+ * Copyright (C) 2010 Samsung Electronics, Co. Ltd
-+ *
-+ * S5P series MIPI CSI slave device support
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
+diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
+index 3455ad3..f67e682 100644
+--- a/arch/arm/kernel/setup.c
++++ b/arch/arm/kernel/setup.c
+@@ -705,7 +705,7 @@ static struct init_tags {
+ 	{ tag_size(tag_core), ATAG_CORE },
+ 	{ 1, PAGE_SIZE, 0xff },
+ 	{ tag_size(tag_mem32), ATAG_MEM },
+-	{ MEM_SIZE, PHYS_OFFSET },
++	{ MEM_SIZE },
+ 	{ 0, ATAG_NONE }
+ };
+ 
+@@ -804,6 +804,8 @@ void __init setup_arch(char **cmdline_p)
+ 	struct machine_desc *mdesc;
+ 	char *from = default_command_line;
+ 
++	tags->mem.start = PHYS_OFFSET;
 +
-+#ifndef PLAT_S5P_MIPI_CSIS_H_
-+#define PLAT_S5P_MIPI_CSIS_H_ __FILE__
-+
-+struct platform_device;
-+
-+/**
-+ * struct s5p_platform_mipi_csis - platform data for MIPI-CSIS
-+ * @clk_rate: bus clock frequency
-+ * @lanes: number of data lanes used
-+ * @alignment: data alignment in bits
-+ * @hs_settle: HS-RX settle time
-+ */
-+struct s5p_platform_mipi_csis {
-+	unsigned long clk_rate;
-+	u8 lanes;
-+	u8 alignment;
-+	u8 hs_settle;
-+	int (*phy_enable)(struct platform_device *pdev, bool on);
-+};
-+
-+/**
-+ * struct s5p_csis_phy_control - global MIPI-CSIS PHY control
-+ * @pdev: platform device the mipi phy state is to be changed for
-+ * @on: true to enable CSIS PHY and assert its reset,
-+ *	false will disable the PHY and put into reset state
-+ */
-+int s5p_csis_phy_enable(struct platform_device *pdev, bool on);
-+
-+#endif /* PLAT_S5P_MIPI_CSIS_H_ */
+ 	unwind_init();
+ 
+ 	setup_processor();
+diff --git a/arch/arm/mach-msm/board-msm7x27.c b/arch/arm/mach-msm/board-msm7x27.c
+index e7a76ef..08fcd40 100644
+--- a/arch/arm/mach-msm/board-msm7x27.c
++++ b/arch/arm/mach-msm/board-msm7x27.c
+@@ -132,7 +132,7 @@ static void __init msm7x2x_map_io(void)
+ MACHINE_START(MSM7X27_SURF, "QCT MSM7x27 SURF")
+ #ifdef CONFIG_MSM_DEBUG_UART
+ #endif
+-	.boot_params	= PHYS_OFFSET + 0x100,
++	.boot_params	= PLAT_PHYS_OFFSET + 0x100,
+ 	.map_io		= msm7x2x_map_io,
+ 	.init_irq	= msm7x2x_init_irq,
+ 	.init_machine	= msm7x2x_init,
+@@ -142,7 +142,7 @@ MACHINE_END
+ MACHINE_START(MSM7X27_FFA, "QCT MSM7x27 FFA")
+ #ifdef CONFIG_MSM_DEBUG_UART
+ #endif
+-	.boot_params	= PHYS_OFFSET + 0x100,
++	.boot_params	= PLAT_PHYS_OFFSET + 0x100,
+ 	.map_io		= msm7x2x_map_io,
+ 	.init_irq	= msm7x2x_init_irq,
+ 	.init_machine	= msm7x2x_init,
+@@ -152,7 +152,7 @@ MACHINE_END
+ MACHINE_START(MSM7X25_SURF, "QCT MSM7x25 SURF")
+ #ifdef CONFIG_MSM_DEBUG_UART
+ #endif
+-	.boot_params	= PHYS_OFFSET + 0x100,
++	.boot_params	= PLAT_PHYS_OFFSET + 0x100,
+ 	.map_io		= msm7x2x_map_io,
+ 	.init_irq	= msm7x2x_init_irq,
+ 	.init_machine	= msm7x2x_init,
+@@ -162,7 +162,7 @@ MACHINE_END
+ MACHINE_START(MSM7X25_FFA, "QCT MSM7x25 FFA")
+ #ifdef CONFIG_MSM_DEBUG_UART
+ #endif
+-	.boot_params	= PHYS_OFFSET + 0x100,
++	.boot_params	= PLAT_PHYS_OFFSET + 0x100,
+ 	.map_io		= msm7x2x_map_io,
+ 	.init_irq	= msm7x2x_init_irq,
+ 	.init_machine	= msm7x2x_init,
+diff --git a/arch/arm/mach-msm/board-msm7x30.c b/arch/arm/mach-msm/board-msm7x30.c
+index 1931e07..eb1d1b1 100644
+--- a/arch/arm/mach-msm/board-msm7x30.c
++++ b/arch/arm/mach-msm/board-msm7x30.c
+@@ -65,7 +65,7 @@ static void __init msm7x30_map_io(void)
+ MACHINE_START(MSM7X30_SURF, "QCT MSM7X30 SURF")
+ #ifdef CONFIG_MSM_DEBUG_UART
+ #endif
+-	.boot_params = PHYS_OFFSET + 0x100,
++	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+ 	.map_io = msm7x30_map_io,
+ 	.init_irq = msm7x30_init_irq,
+ 	.init_machine = msm7x30_init,
+@@ -75,7 +75,7 @@ MACHINE_END
+ MACHINE_START(MSM7X30_FFA, "QCT MSM7X30 FFA")
+ #ifdef CONFIG_MSM_DEBUG_UART
+ #endif
+-	.boot_params = PHYS_OFFSET + 0x100,
++	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+ 	.map_io = msm7x30_map_io,
+ 	.init_irq = msm7x30_init_irq,
+ 	.init_machine = msm7x30_init,
+@@ -85,7 +85,7 @@ MACHINE_END
+ MACHINE_START(MSM7X30_FLUID, "QCT MSM7X30 FLUID")
+ #ifdef CONFIG_MSM_DEBUG_UART
+ #endif
+-	.boot_params = PHYS_OFFSET + 0x100,
++	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+ 	.map_io = msm7x30_map_io,
+ 	.init_irq = msm7x30_init_irq,
+ 	.init_machine = msm7x30_init,
+diff --git a/arch/arm/mach-msm/board-qsd8x50.c b/arch/arm/mach-msm/board-qsd8x50.c
+index ed2af4a..41892ed 100644
+--- a/arch/arm/mach-msm/board-qsd8x50.c
++++ b/arch/arm/mach-msm/board-qsd8x50.c
+@@ -99,7 +99,7 @@ static void __init qsd8x50_init(void)
+ MACHINE_START(QSD8X50_SURF, "QCT QSD8X50 SURF")
+ #ifdef CONFIG_MSM_DEBUG_UART
+ #endif
+-	.boot_params = PHYS_OFFSET + 0x100,
++	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+ 	.map_io = qsd8x50_map_io,
+ 	.init_irq = qsd8x50_init_irq,
+ 	.init_machine = qsd8x50_init,
+@@ -109,7 +109,7 @@ MACHINE_END
+ MACHINE_START(QSD8X50A_ST1_5, "QCT QSD8X50A ST1.5")
+ #ifdef CONFIG_MSM_DEBUG_UART
+ #endif
+-	.boot_params = PHYS_OFFSET + 0x100,
++	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+ 	.map_io = qsd8x50_map_io,
+ 	.init_irq = qsd8x50_init_irq,
+ 	.init_machine = qsd8x50_init,
+diff --git a/arch/arm/mach-msm/board-sapphire.c b/arch/arm/mach-msm/board-sapphire.c
+index 8919ffb..83604f5 100644
+--- a/arch/arm/mach-msm/board-sapphire.c
++++ b/arch/arm/mach-msm/board-sapphire.c
+@@ -107,7 +107,7 @@ MACHINE_START(SAPPHIRE, "sapphire")
+ /* Maintainer: Brian Swetland <swetland@google.com> */
+ #ifdef CONFIG_MSM_DEBUG_UART
+ #endif
+-	.boot_params    = PHYS_OFFSET + 0x100,
++	.boot_params    = PLAT_PHYS_OFFSET + 0x100,
+ 	.fixup          = sapphire_fixup,
+ 	.map_io         = sapphire_map_io,
+ 	.init_irq       = sapphire_init_irq,
+diff --git a/arch/arm/mach-mx5/board-cpuimx51.c b/arch/arm/mach-mx5/board-cpuimx51.c
+index 6a9792f..c4c3a9c 100644
+--- a/arch/arm/mach-mx5/board-cpuimx51.c
++++ b/arch/arm/mach-mx5/board-cpuimx51.c
+@@ -292,7 +292,7 @@ static struct sys_timer mxc_timer = {
+ 
+ MACHINE_START(EUKREA_CPUIMX51, "Eukrea CPUIMX51 Module")
+ 	/* Maintainer: Eric Bénard <eric@eukrea.com> */
+-	.boot_params = PHYS_OFFSET + 0x100,
++	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+ 	.map_io = mx51_map_io,
+ 	.init_irq = mx51_init_irq,
+ 	.init_machine = eukrea_cpuimx51_init,
+diff --git a/arch/arm/mach-mx5/board-cpuimx51sd.c b/arch/arm/mach-mx5/board-cpuimx51sd.c
+index 4b3a611..b887381 100644
+--- a/arch/arm/mach-mx5/board-cpuimx51sd.c
++++ b/arch/arm/mach-mx5/board-cpuimx51sd.c
+@@ -323,7 +323,7 @@ static struct sys_timer mxc_timer = {
+ 
+ MACHINE_START(EUKREA_CPUIMX51SD, "Eukrea CPUIMX51SD")
+ 	/* Maintainer: Eric Bénard <eric@eukrea.com> */
+-	.boot_params = PHYS_OFFSET + 0x100,
++	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+ 	.map_io = mx51_map_io,
+ 	.init_irq = mx51_init_irq,
+ 	.init_machine = eukrea_cpuimx51sd_init,
+diff --git a/arch/arm/mach-mx5/board-mx51_3ds.c b/arch/arm/mach-mx5/board-mx51_3ds.c
+index 79ce8dc..10e6ce3 100644
+--- a/arch/arm/mach-mx5/board-mx51_3ds.c
++++ b/arch/arm/mach-mx5/board-mx51_3ds.c
+@@ -186,7 +186,7 @@ static struct sys_timer mxc_timer = {
+ 
+ MACHINE_START(MX51_3DS, "Freescale MX51 3-Stack Board")
+ 	/* Maintainer: Freescale Semiconductor, Inc. */
+-	.boot_params = PHYS_OFFSET + 0x100,
++	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+ 	.map_io = mx51_map_io,
+ 	.init_irq = mx51_init_irq,
+ 	.init_machine = mxc_board_init,
+diff --git a/arch/arm/mach-pxa/balloon3.c b/arch/arm/mach-pxa/balloon3.c
+index ccb2d0c..abcc646 100644
+--- a/arch/arm/mach-pxa/balloon3.c
++++ b/arch/arm/mach-pxa/balloon3.c
+@@ -824,5 +824,5 @@ MACHINE_START(BALLOON3, "Balloon3")
+ 	.init_irq	= balloon3_init_irq,
+ 	.timer		= &pxa_timer,
+ 	.init_machine	= balloon3_init,
+-	.boot_params	= PHYS_OFFSET + 0x100,
++	.boot_params	= PLAT_PHYS_OFFSET + 0x100,
+ MACHINE_END
+diff --git a/arch/arm/mach-realview/realview_eb.c b/arch/arm/mach-realview/realview_eb.c
+index 6ef5c5e..8ede983 100644
+--- a/arch/arm/mach-realview/realview_eb.c
++++ b/arch/arm/mach-realview/realview_eb.c
+@@ -484,7 +484,7 @@ static void __init realview_eb_init(void)
+ 
+ MACHINE_START(REALVIEW_EB, "ARM-RealView EB")
+ 	/* Maintainer: ARM Ltd/Deep Blue Solutions Ltd */
+-	.boot_params	= PHYS_OFFSET + 0x00000100,
++	.boot_params	= PLAT_PHYS_OFFSET + 0x00000100,
+ 	.fixup		= realview_fixup,
+ 	.map_io		= realview_eb_map_io,
+ 	.init_irq	= gic_init_irq,
+diff --git a/arch/arm/mach-realview/realview_pb1176.c b/arch/arm/mach-realview/realview_pb1176.c
+index cbdc97a..9f26369 100644
+--- a/arch/arm/mach-realview/realview_pb1176.c
++++ b/arch/arm/mach-realview/realview_pb1176.c
+@@ -379,7 +379,7 @@ static void __init realview_pb1176_init(void)
+ 
+ MACHINE_START(REALVIEW_PB1176, "ARM-RealView PB1176")
+ 	/* Maintainer: ARM Ltd/Deep Blue Solutions Ltd */
+-	.boot_params	= PHYS_OFFSET + 0x00000100,
++	.boot_params	= PLAT_PHYS_OFFSET + 0x00000100,
+ 	.fixup		= realview_pb1176_fixup,
+ 	.map_io		= realview_pb1176_map_io,
+ 	.init_irq	= gic_init_irq,
+diff --git a/arch/arm/mach-realview/realview_pb11mp.c b/arch/arm/mach-realview/realview_pb11mp.c
+index 8e8ab7d..dea06b2 100644
+--- a/arch/arm/mach-realview/realview_pb11mp.c
++++ b/arch/arm/mach-realview/realview_pb11mp.c
+@@ -381,7 +381,7 @@ static void __init realview_pb11mp_init(void)
+ 
+ MACHINE_START(REALVIEW_PB11MP, "ARM-RealView PB11MPCore")
+ 	/* Maintainer: ARM Ltd/Deep Blue Solutions Ltd */
+-	.boot_params	= PHYS_OFFSET + 0x00000100,
++	.boot_params	= PLAT_PHYS_OFFSET + 0x00000100,
+ 	.fixup		= realview_fixup,
+ 	.map_io		= realview_pb11mp_map_io,
+ 	.init_irq	= gic_init_irq,
+diff --git a/arch/arm/mach-realview/realview_pba8.c b/arch/arm/mach-realview/realview_pba8.c
+index 841118e..7d0f173 100644
+--- a/arch/arm/mach-realview/realview_pba8.c
++++ b/arch/arm/mach-realview/realview_pba8.c
+@@ -331,7 +331,7 @@ static void __init realview_pba8_init(void)
+ 
+ MACHINE_START(REALVIEW_PBA8, "ARM-RealView PB-A8")
+ 	/* Maintainer: ARM Ltd/Deep Blue Solutions Ltd */
+-	.boot_params	= PHYS_OFFSET + 0x00000100,
++	.boot_params	= PLAT_PHYS_OFFSET + 0x00000100,
+ 	.fixup		= realview_fixup,
+ 	.map_io		= realview_pba8_map_io,
+ 	.init_irq	= gic_init_irq,
+diff --git a/arch/arm/mach-realview/realview_pbx.c b/arch/arm/mach-realview/realview_pbx.c
+index 02b755b..b89e28f 100644
+--- a/arch/arm/mach-realview/realview_pbx.c
++++ b/arch/arm/mach-realview/realview_pbx.c
+@@ -414,7 +414,7 @@ static void __init realview_pbx_init(void)
+ 
+ MACHINE_START(REALVIEW_PBX, "ARM-RealView PBX")
+ 	/* Maintainer: ARM Ltd/Deep Blue Solutions Ltd */
+-	.boot_params	= PHYS_OFFSET + 0x00000100,
++	.boot_params	= PLAT_PHYS_OFFSET + 0x00000100,
+ 	.fixup		= realview_pbx_fixup,
+ 	.map_io		= realview_pbx_map_io,
+ 	.init_irq	= gic_init_irq,
+diff --git a/arch/arm/mach-s5pv210/sleep.S b/arch/arm/mach-s5pv210/sleep.S
+index d4d222b..2737622 100644
+--- a/arch/arm/mach-s5pv210/sleep.S
++++ b/arch/arm/mach-s5pv210/sleep.S
+@@ -65,7 +65,7 @@ resume_with_mmu:
+ 	/*
+ 	 * After MMU is turned on, restore the previous MMU table.
+ 	 */
+-	ldr	r9 , =(PAGE_OFFSET - PHYS_OFFSET)
++	ldr	r9 , =(PAGE_OFFSET - PLAT_PHYS_OFFSET)
+ 	add	r4, r4, r9
+ 	str	r12, [r4]
+ 
+diff --git a/arch/arm/mach-tcc8k/board-tcc8000-sdk.c b/arch/arm/mach-tcc8k/board-tcc8000-sdk.c
+index 7991415..fb6426d 100644
+--- a/arch/arm/mach-tcc8k/board-tcc8000-sdk.c
++++ b/arch/arm/mach-tcc8k/board-tcc8000-sdk.c
+@@ -54,7 +54,7 @@ static void __init tcc8k_map_io(void)
+ }
+ 
+ MACHINE_START(TCC8000_SDK, "Telechips TCC8000-SDK Demo Board")
+-	.boot_params	= PHYS_OFFSET + 0x00000100,
++	.boot_params	= PLAT_PHYS_OFFSET + 0x00000100,
+ 	.map_io		= tcc8k_map_io,
+ 	.init_irq	= tcc8k_init_irq,
+ 	.init_machine	= tcc8k_init,
+diff --git a/arch/arm/mach-vexpress/ct-ca9x4.c b/arch/arm/mach-vexpress/ct-ca9x4.c
+index e628402..e9bccc5 100644
+--- a/arch/arm/mach-vexpress/ct-ca9x4.c
++++ b/arch/arm/mach-vexpress/ct-ca9x4.c
+@@ -243,7 +243,7 @@ static void __init ct_ca9x4_init(void)
+ }
+ 
+ MACHINE_START(VEXPRESS, "ARM-Versatile Express CA9x4")
+-	.boot_params	= PHYS_OFFSET + 0x00000100,
++	.boot_params	= PLAT_PHYS_OFFSET + 0x00000100,
+ 	.map_io		= ct_ca9x4_map_io,
+ 	.init_irq	= ct_ca9x4_init_irq,
+ #if 0
 -- 
-1.7.3.4
+1.6.2.5
