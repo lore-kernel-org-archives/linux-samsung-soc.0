@@ -1,399 +1,192 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: RE: [PATCH RE-SEND] s3c-fb: Add support S5PV310 FIMD
-Date: Tue, 04 Jan 2011 19:04:28 +0900
-Message-ID: <001b01cbabf6$c62180a0$526481e0$%dae@samsung.com>
-References: <1294128333-28736-1-git-send-email-kgene.kim@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH/RFC 2/3] ARM: S5PV310: Add a platform helper for MIPI DSIM/CSIS
+ setup
+Date: Tue, 04 Jan 2011 16:09:23 +0100
+Message-ID: <1294153764-25006-3-git-send-email-s.nawrocki@samsung.com>
+References: <1294153764-25006-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:24671 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750954Ab1ADKJo (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:38600 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752089Ab1ADPJb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Jan 2011 05:09:44 -0500
-In-reply-to: <1294128333-28736-1-git-send-email-kgene.kim@samsung.com>
-Content-language: ko
+	Tue, 4 Jan 2011 10:09:31 -0500
+Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0LEI008407FSIDA0@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 04 Jan 2011 15:09:28 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LEI005CF7FS9J@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 04 Jan 2011 15:09:28 +0000 (GMT)
+In-reply-to: <1294153764-25006-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc: ben-linux@fluff.org, akpm@linux-foundation.org, lethal@linux-sh.org, 'Jonghun Han' <jonghun.han@samsung.com>, 'Sangbeom Kim' <sbkim73@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, inki.dae@samsung.com
 
-Hello, Mr. Kukjin.
+MIPI_PHYn_CONTROL registers are shared between MIPI DSIM
+and MIPI CSIS drivers so a spinlock is used to protect multiple
+access to these registers. Also a proper state of a common
+PHY enable bit is maintained in order to avoid a DSIM
+and CSIS driver conflict.
 
-I know we had a discussion about your patch below.
-after that, did you have some discussion about that?
-If not, Paul advised to use clkdev lookup.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-s5pv310/Kconfig                 |    6 ++
+ arch/arm/mach-s5pv310/Makefile                |    2 +
+ arch/arm/mach-s5pv310/include/mach/map.h      |    7 +--
+ arch/arm/mach-s5pv310/include/mach/regs-pmu.h |    6 ++
+ arch/arm/mach-s5pv310/setup-mipi.c            |   62 +++++++++++++++++++++++++
+ 5 files changed, 79 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm/mach-s5pv310/setup-mipi.c
 
-Please, refer to below mail.
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg03448.html
-
-thank you.
-> -----Original Message-----
-> From: linux-fbdev-owner@vger.kernel.org [mailto:linux-fbdev-
-> owner@vger.kernel.org] On Behalf Of Kukjin Kim
-> Sent: Tuesday, January 04, 2011 5:06 PM
-> To: linux-samsung-soc@vger.kernel.org; linux-fbdev@vger.kernel.org
-> Cc: ben-linux@fluff.org; akpm@linux-foundation.org; lethal@linux-sh.org;
-> Jonghun Han; Sangbeom Kim; InKi Dae; Kukjin Kim
-> Subject: [PATCH RE-SEND] s3c-fb: Add support S5PV310 FIMD
-> 
-> From: Jonghun Han <jonghun.han@samsung.com>
-> 
-> This patch adds struct s3c_fb_driverdata s3c_fb_data_s5pv310 for S5PV310
-> and S5PC210. The clk_type is added to distinguish clock type in it and
-> lcd_clk is added in structure s3c_fb to calculate divider for lcd panel.
-> 
-> Please refer to below diagrams about clocks of FIMD IP. FIMD driver needs
-> two clocks for FIMD IP and LCD pixel clock. Actually, the LCD pixel clock
-> can be selected from 1.clk 'lcd' and 2.SCLK_FIMD before S5PV310. But from
-> S5PV310, the 2.SCLK_FIMD can be used only for source of LCD pixel clock.
-> 
-> FIMD_CLK_TYPE0:
->            ------------------------------------
->                       dsys bus
->            ----------------+-------------------
->                            |
->                            |1.clk 'lcd'
->                            |
->                            | FIMD block
->                        +---+-----------+
-> 4.mout_mpll |\         |   |           |
->     --------|m|        | +-+-+ +----+  |
->             |u|-+      | |   +-+core|  |
->             |x| |      | |     +----+  |
->             |/  |      | | |\          |
->                 |      | +-|m|  +---+  |
->                 |      |   |u|--+div|  |
->                 +------+---|x|  +---+  |
->            2.SCLK_FIMD |   |/     |    |
->                        |          |    |
->                        +----------+----+
->                                   |
->            inside of SoC          |
->            -----------------------+--------------------------
->            outside of SoC         |
->                                   | 3.LCD pixel clock
->                                   |
->                           +--------------+
->                           | LCD module   |
->                           +--------------+
-> 
-> FIMD_CLK_TYPE1:
->            ------------------------------------
->                       dsys bus
->            ----------------+-------------------
->                            |
->                            |1.clk 'fimd'
->                            |
->                            | FIMD block
->                        +---+-----------+
-> 4.mout_mpll |\         |   |           |
->     --------|m|        |   |   +----+  |
->             |u|-+      |   +---+core|  |
->             |x| |      |       +----+  |
->             |/  |      |               |
->                 |      |        +---+  |
->                 |      |     +--+div|  |
->                 +------+-----+  +---+  |
->            2.SCLK_FIMD |          |    |
->                        |          |    |
->                        +----------+----+
->                                   |
->            inside of SoC          |
->            -----------------------+--------------------------
->            outside of SoC         |
->                                   | 3.LCD pixel clock
->                                   |
->                           +--------------+
->                           | LCD module   |
->                           +--------------+
-> 
-> Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
-> Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
-> Cc: InKi Dae <inki.dae@samsung.com>
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
-> Hi Paul,
-> 
-> I and Mr. Han, Jonghun sent below patch several weeks ago.
-> But I couldn't find it in your tree...
-> (Re-made against on your latest fbdev-2.6.git #master)
-> 
-> I think this should be merged for supporting S5PV310/S5PC210 frame buffer.
-> So could you please let me know your opinion or plan about this?
-> 
-> NOTE: Needs following platform device patches for S5PV310/S5PC210 frame
-> buffer.
-> And I already applied that in my tree as S5P SoCs architecture maintainer.
-> 
-> 0001-ARM-S5PV310-Add-FIMD-resource-definition.patch
-> 0002-ARM-S5PV310-Add-platform-device-and-helper-functio.patch
-> 0004-ARM-S5PV310-Add-support-FIMD0-and-LTE480WV-LCD-for.patch
-> 
->  drivers/video/Kconfig  |    2 +-
->  drivers/video/s3c-fb.c |  125
-> +++++++++++++++++++++++++++++++++++++++++++-----
->  2 files changed, 113 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
-> index e231041..dea54c7 100644
-> --- a/drivers/video/Kconfig
-> +++ b/drivers/video/Kconfig
-> @@ -2043,7 +2043,7 @@ config FB_TMIO_ACCELL
-> 
->  config FB_S3C
->  	tristate "Samsung S3C framebuffer support"
-> -	depends on FB && S3C_DEV_FB
-> +	depends on FB && (S3C_DEV_FB || S5P_DEV_FIMD0)
->  	select FB_CFB_FILLRECT
->  	select FB_CFB_COPYAREA
->  	select FB_CFB_IMAGEBLIT
-> diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-> index 83ce9a0..6d478dd 100644
-> --- a/drivers/video/s3c-fb.c
-> +++ b/drivers/video/s3c-fb.c
-> @@ -66,6 +66,9 @@ struct s3c_fb;
->  #define VIDOSD_C(win, variant) (OSD_BASE(win, variant) + 0x08)
->  #define VIDOSD_D(win, variant) (OSD_BASE(win, variant) + 0x0C)
-> 
-> +#define FIMD_CLK_TYPE0	0
-> +#define FIMD_CLK_TYPE1	1
-> +
->  /**
->   * struct s3c_fb_variant - fb variant information
->   * @is_2443: Set if S3C2443/S3C2416 style hardware.
-> @@ -98,6 +101,7 @@ struct s3c_fb_variant {
-> 
->  	unsigned int	has_prtcon:1;
->  	unsigned int	has_shadowcon:1;
-> +	unsigned int	clk_type:1;
->  };
-> 
->  /**
-> @@ -184,7 +188,8 @@ struct s3c_fb_vsync {
->   * struct s3c_fb - overall hardware state of the hardware
->   * @dev: The device that we bound to, for printing, etc.
->   * @regs_res: The resource we claimed for the IO registers.
-> - * @bus_clk: The clk (hclk) feeding our interface and possibly pixclk.
-> + * @bus_clk: The clk (hclk) feeding FIMD IP core.
-> + * @lcd_clk: The clk (sclk) feeding our interface and possibly pixclk.
->   * @regs: The mapped hardware registers.
->   * @variant: Variant information for this hardware.
->   * @enabled: A bitmask of enabled hardware windows.
-> @@ -198,6 +203,7 @@ struct s3c_fb {
->  	struct device		*dev;
->  	struct resource		*regs_res;
->  	struct clk		*bus_clk;
-> +	struct clk		*lcd_clk;
->  	void __iomem		*regs;
->  	struct s3c_fb_variant	 variant;
-> 
-> @@ -335,7 +341,7 @@ static int s3c_fb_check_var(struct fb_var_screeninfo
-> *var,
->   */
->  static int s3c_fb_calc_pixclk(struct s3c_fb *sfb, unsigned int pixclk)
->  {
-> -	unsigned long clk = clk_get_rate(sfb->bus_clk);
-> +	unsigned long clk = clk_get_rate(sfb->lcd_clk);
->  	unsigned long long tmp;
->  	unsigned int result;
-> 
-> @@ -518,7 +524,7 @@ static int s3c_fb_set_par(struct fb_info *info)
-> 
->  		data = VIDTCON2_LINEVAL(var->yres - 1) |
->  		       VIDTCON2_HOZVAL(var->xres - 1);
-> -		writel(data, regs +sfb->variant.vidtcon + 8 );
-> +		writel(data, regs + sfb->variant.vidtcon + 8);
->  	}
-> 
->  	/* write the buffer address */
-> @@ -1309,8 +1315,10 @@ static int __devinit s3c_fb_probe(struct
-> platform_device *pdev)
->  	struct s3c_fb_platdata *pd;
->  	struct s3c_fb *sfb;
->  	struct resource *res;
-> +	struct clk *mout_mpll = NULL;
->  	int win;
->  	int ret = 0;
-> +	u32 rate = 134000000;
-> 
->  	fbdrv = (struct s3c_fb_driverdata *)platform_get_device_id(pdev)-
-> >driver_data;
-> 
-> @@ -1337,9 +1345,48 @@ static int __devinit s3c_fb_probe(struct
-> platform_device *pdev)
->  	sfb->pdata = pd;
->  	sfb->variant = fbdrv->variant;
-> 
-> -	sfb->bus_clk = clk_get(dev, "lcd");
-> -	if (IS_ERR(sfb->bus_clk)) {
-> -		dev_err(dev, "failed to get bus clock\n");
-> +	switch (sfb->variant.clk_type) {
-> +	case FIMD_CLK_TYPE0:
-> +		sfb->bus_clk = clk_get(dev, "lcd");
-> +		if (IS_ERR(sfb->bus_clk)) {
-> +			dev_err(dev, "failed to get bus clock\n");
-> +			goto err_sfb;
-> +		}
-> +
-> +		clk_enable(sfb->bus_clk);
-> +
-> +		sfb->lcd_clk = sfb->bus_clk;
-> +		break;
-> +
-> +	case FIMD_CLK_TYPE1:
-> +		sfb->bus_clk = clk_get(&pdev->dev, "fimd");
-> +		if (IS_ERR(sfb->bus_clk)) {
-> +			dev_err(&pdev->dev, "failed to get clock for
-fimd\n");
-> +			goto err_sfb;
-> +		}
-> +		clk_enable(sfb->bus_clk);
-> +
-> +		sfb->lcd_clk = clk_get(&pdev->dev, "sclk_fimd");
-> +		if (IS_ERR(sfb->lcd_clk)) {
-> +			dev_err(&pdev->dev, "failed to get sclk for
-fimd\n");
-> +			goto err_bus_clk;
-> +		}
-> +
-> +		mout_mpll = clk_get(&pdev->dev, "mout_mpll");
-> +		if (IS_ERR(mout_mpll)) {
-> +			dev_err(&pdev->dev, "failed to get mout_mpll\n");
-> +			goto err_lcd_clk;
-> +		}
-> +		clk_set_parent(sfb->lcd_clk, mout_mpll);
-> +		clk_put(mout_mpll);
-> +
-> +		clk_set_rate(sfb->lcd_clk, rate);
-> +		clk_enable(sfb->lcd_clk);
-> +		dev_dbg(&pdev->dev, "set fimd sclk rate to %d\n", rate);
-> +		break;
-> +
-> +	default:
-> +		dev_err(dev, "failed to enable clock for FIMD\n");
->  		goto err_sfb;
->  	}
-> 
-> @@ -1351,7 +1398,7 @@ static int __devinit s3c_fb_probe(struct
-> platform_device *pdev)
->  	if (!res) {
->  		dev_err(dev, "failed to find registers\n");
->  		ret = -ENOENT;
-> -		goto err_clk;
-> +		goto err_lcd_clk;
->  	}
-> 
->  	sfb->regs_res = request_mem_region(res->start, resource_size(res),
-> @@ -1359,7 +1406,7 @@ static int __devinit s3c_fb_probe(struct
-> platform_device *pdev)
->  	if (!sfb->regs_res) {
->  		dev_err(dev, "failed to claim register region\n");
->  		ret = -ENOENT;
-> -		goto err_clk;
-> +		goto err_lcd_clk;
->  	}
-> 
->  	sfb->regs = ioremap(res->start, resource_size(res));
-> @@ -1442,9 +1489,15 @@ err_req_region:
->  	release_resource(sfb->regs_res);
->  	kfree(sfb->regs_res);
-> 
-> -err_clk:
-> -	clk_disable(sfb->bus_clk);
-> -	clk_put(sfb->bus_clk);
-> +err_lcd_clk:
-> +	clk_disable(sfb->lcd_clk);
-> +	clk_put(sfb->lcd_clk);
-> +
-> +err_bus_clk:
-> +	if (sfb->variant.clk_type != FIMD_CLK_TYPE0) {
-> +		clk_disable(sfb->bus_clk);
-> +		clk_put(sfb->bus_clk);
-> +	}
-> 
->  err_sfb:
->  	kfree(sfb);
-> @@ -1473,8 +1526,20 @@ static int __devexit s3c_fb_remove(struct
-> platform_device *pdev)
-> 
->  	iounmap(sfb->regs);
-> 
-> -	clk_disable(sfb->bus_clk);
-> -	clk_put(sfb->bus_clk);
-> +	switch (sfb->variant.clk_type) {
-> +	case FIMD_CLK_TYPE1:
-> +		clk_disable(sfb->lcd_clk);
-> +		clk_put(sfb->lcd_clk);
-> +		/* fall through to default case */
-> +	case FIMD_CLK_TYPE0:
-> +		clk_disable(sfb->bus_clk);
-> +		clk_put(sfb->bus_clk);
-> +		break;
-> +	default:
-> +		dev_err(sfb->dev, "invalid clock type(%d)\n",
-> +			sfb->variant.clk_type);
-> +		break;
-> +	}
-> 
->  	release_resource(sfb->regs_res);
->  	kfree(sfb->regs_res);
-> @@ -1753,6 +1818,37 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pv210
-> = {
->  	.win[4]	= &s3c_fb_data_64xx_wins[4],
->  };
-> 
-> +static struct s3c_fb_driverdata s3c_fb_data_s5pv310 = {
-> +	.variant = {
-> +		.nr_windows	= 5,
-> +		.vidtcon	= VIDTCON0,
-> +		.wincon		= WINCON(0),
-> +		.winmap		= WINxMAP(0),
-> +		.keycon		= WKEYCON,
-> +		.osd		= VIDOSD_BASE,
-> +		.osd_stride	= 16,
-> +		.buf_start	= VIDW_BUF_START(0),
-> +		.buf_size	= VIDW_BUF_SIZE(0),
-> +		.buf_end	= VIDW_BUF_END(0),
-> +
-> +		.palette = {
-> +			[0] = 0x2400,
-> +			[1] = 0x2800,
-> +			[2] = 0x2c00,
-> +			[3] = 0x3000,
-> +			[4] = 0x3400,
-> +		},
-> +
-> +		.has_shadowcon	= 1,
-> +		.clk_type	= FIMD_CLK_TYPE1,
-> +	},
-> +	.win[0]	= &s3c_fb_data_64xx_wins[0],
-> +	.win[1]	= &s3c_fb_data_64xx_wins[1],
-> +	.win[2]	= &s3c_fb_data_64xx_wins[2],
-> +	.win[3]	= &s3c_fb_data_64xx_wins[3],
-> +	.win[4]	= &s3c_fb_data_64xx_wins[4],
-> +};
-> +
->  /* S3C2443/S3C2416 style hardware */
->  static struct s3c_fb_driverdata s3c_fb_data_s3c2443 = {
->  	.variant = {
-> @@ -1800,6 +1896,9 @@ static struct platform_device_id s3c_fb_driver_ids[]
-> = {
->  		.name		= "s5pv210-fb",
->  		.driver_data	= (unsigned long)&s3c_fb_data_s5pv210,
->  	}, {
-> +		.name		= "s5pv310-fb",
-> +		.driver_data	= (unsigned long)&s3c_fb_data_s5pv310,
-> +	}, {
->  		.name		= "s3c2443-fb",
->  		.driver_data	= (unsigned long)&s3c_fb_data_s3c2443,
->  	},
-> --
-> 1.6.2.5
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-fbdev" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/mach-s5pv310/Kconfig b/arch/arm/mach-s5pv310/Kconfig
+index b7aa3cd..2420076 100644
+--- a/arch/arm/mach-s5pv310/Kconfig
++++ b/arch/arm/mach-s5pv310/Kconfig
+@@ -15,6 +15,11 @@ config CPU_S5PV310
+ 	help
+ 	  Enable S5PV310 CPU support
+ 
++config S5PV310_SETUP_MIPI
++	bool
++	help
++	  Common setup code for MIPI CSIS/DSIM channels 0 and 1.
++
+ config S5PV310_DEV_PD
+ 	bool
+ 	help
+@@ -96,6 +101,7 @@ config MACH_UNIVERSAL_C210
+ 	select S3C_DEV_HSMMC3
+ 	select S5PV310_SETUP_SDHCI
+ 	select S3C_DEV_I2C1
++	select S5PV310_SETUP_MIPI
+ 	select S5PV310_SETUP_I2C1
+ 	help
+ 	  Machine support for Samsung Mobile Universal S5PC210 Reference
+diff --git a/arch/arm/mach-s5pv310/Makefile b/arch/arm/mach-s5pv310/Makefile
+index 651f193..7f1b89b 100644
+--- a/arch/arm/mach-s5pv310/Makefile
++++ b/arch/arm/mach-s5pv310/Makefile
+@@ -29,6 +29,8 @@ obj-$(CONFIG_MACH_UNIVERSAL_C210)	+= mach-universal_c210.o
+ # device support
+ 
+ obj-y					+= dev-audio.o
++
++obj-$(CONFIG_S5PV310_SETUP_MIPI)	+= setup-mipi.o
+ obj-$(CONFIG_S5PV310_DEV_PD)		+= dev-pd.o
+ 
+ obj-$(CONFIG_S5PV310_SETUP_I2C1)	+= setup-i2c1.o
+diff --git a/arch/arm/mach-s5pv310/include/mach/map.h b/arch/arm/mach-s5pv310/include/mach/map.h
+index 33bcff2..6635287 100644
+--- a/arch/arm/mach-s5pv310/include/mach/map.h
++++ b/arch/arm/mach-s5pv310/include/mach/map.h
+@@ -65,8 +65,7 @@
+ #define S5PV310_PA_GPIO2		(0x11000000)
+ #define S5PV310_PA_GPIO3		(0x03860000)
+ 
+-#define S5PV310_PA_MIPI_CSIS0		0x11880000
+-#define S5PV310_PA_MIPI_CSIS1		0x11890000
++#define S5PV310_PA_MIPI_CSIS(x)		(0x11880000 + ((x) * 0x10000))
+ 
+ #define S5PV310_PA_HSMMC(x)		(0x12510000 + ((x) * 0x10000))
+ 
+@@ -124,7 +123,7 @@
+ #define S3C_PA_IIC7			S5PV310_PA_IIC(7)
+ #define S3C_PA_RTC			S5PV310_PA_RTC
+ #define S3C_PA_WDT			S5PV310_PA_WATCHDOG
+-#define S5P_PA_MIPI_CSIS0		S5PV310_PA_MIPI_CSIS0
+-#define S5P_PA_MIPI_CSIS1		S5PV310_PA_MIPI_CSIS1
++#define S5P_PA_MIPI_CSIS0		S5PV310_PA_MIPI_CSIS(0)
++#define S5P_PA_MIPI_CSIS1		S5PV310_PA_MIPI_CSIS(1)
+ 
+ #endif /* __ASM_ARCH_MAP_H */
+diff --git a/arch/arm/mach-s5pv310/include/mach/regs-pmu.h b/arch/arm/mach-s5pv310/include/mach/regs-pmu.h
+index fb333d0..bef8102 100644
+--- a/arch/arm/mach-s5pv310/include/mach/regs-pmu.h
++++ b/arch/arm/mach-s5pv310/include/mach/regs-pmu.h
+@@ -27,4 +27,10 @@
+ 
+ #define S5P_INT_LOCAL_PWR_EN		0x7
+ 
++#define S5P_MIPI_PHY0_CONTROL		S5P_PMUREG(0x0710)
++#define S5P_MIPI_PHY1_CONTROL		S5P_PMUREG(0x0714)
++#define S5P_MIPI_PHY_ENABLE		(1 << 0)
++#define S5P_MIPI_PHY_SRESETN		(1 << 1)
++#define S5P_MIPI_PHY_MRESETN		(1 << 2)
++
+ #endif /* __ASM_ARCH_REGS_PMU_H */
+diff --git a/arch/arm/mach-s5pv310/setup-mipi.c b/arch/arm/mach-s5pv310/setup-mipi.c
+new file mode 100644
+index 0000000..fc91a29
+--- /dev/null
++++ b/arch/arm/mach-s5pv310/setup-mipi.c
+@@ -0,0 +1,62 @@
++/* linux/arch/arm/mach-s5pv310/setup-mipi.c
++ *
++ * Copyright (c) 2010 Samsung Electronics Co., Ltd
++ *
++ * S5PV310 - Helper functions for MIPI CSIS/DSIM PHY control
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/kernel.h>
++#include <linux/platform_device.h>
++#include <linux/io.h>
++#include <linux/spinlock.h>
++#include <mach/regs-pmu.h>
++
++/* Global MIPI CSIS or DSIM PHY enable and reset control. */
++static int s5p_mipi_phy_control(struct platform_device *pdev, bool on, u32 rst)
++{
++	static DEFINE_SPINLOCK(lock);
++	void __iomem *addr;
++	unsigned long flags;
++	int pid;
++	u32 cfg;
++
++	if (pdev == NULL)
++		return -EINVAL;
++
++	pid = pdev->id;
++	if (pid != 0 && pid != 1)
++		return -EINVAL;
++
++	addr = pid ? S5P_MIPI_PHY1_CONTROL : S5P_MIPI_PHY0_CONTROL;
++
++	spin_lock_irqsave(&lock, flags);
++
++	cfg = __raw_readl(addr) & ~rst;
++	if (on)
++		cfg |= rst;
++	__raw_writel(cfg, addr);
++
++	if (on)
++		cfg |= S5P_MIPI_PHY_ENABLE;
++	else if (!(cfg & (S5P_MIPI_PHY_SRESETN | S5P_MIPI_PHY_MRESETN) & ~rst))
++		cfg &= ~S5P_MIPI_PHY_ENABLE;
++
++	__raw_writel(cfg, addr);
++
++	spin_unlock_irqrestore(&lock, flags);
++	return 0;
++}
++
++int s5p_csis_phy_enable(struct platform_device *pdev, bool on)
++{
++	return s5p_mipi_phy_control(pdev, on, S5P_MIPI_PHY_SRESETN);
++}
++
++int s5p_dsim_phy_enable(struct platform_device *pdev, bool on)
++{
++	return s5p_mipi_phy_control(pdev, on, S5P_MIPI_PHY_MRESETN);
++}
+-- 
+1.7.3.4
