@@ -1,28 +1,26 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [RFC 2/5] ARM: P2V: avoid initializers and assembly using
-	PHYS_OFFSET
-Date: Thu, 6 Jan 2011 09:08:55 +0000
-Message-ID: <20110106090855.GR8638@n2100.arm.linux.org.uk>
-References: <20110104202052.GE24935@n2100.arm.linux.org.uk> <E1PaDOv-00023d-Gi@rmk-PC.arm.linux.org.uk> <20110106085145.GB26617@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20110106085145.GB26617@pengutronix.de>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Nicolas Pitre <nico@fluxnic.net>, Daniel Walker <dwalker@codeaurora.org>, Eric Miao <eric.y.miao@gmail.com>, linux-arm-msm@vger.kernel.org, "Hans J. Koch" <hjk@linutronix.de>, linux-samsung-soc@vger.kernel.org, Bryan Huntsman <bryanh@codeaurora.org>, Amit Kucheria <amit.kucheria@canonical.com>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, David Brown <davidb@codeaurora.org>, linux-arm-kernel@lists.infradead.org
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: [PATCH 0/7] ARM: S3C24XX: H1940 and RX1950 series
+Date: Thu,  6 Jan 2011 21:52:45 +0200
+Message-ID: <1294343572-28518-1-git-send-email-anarsoul@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:35968 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752915Ab1AFTy3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Jan 2011 14:54:29 -0500
+Received: by eye27 with SMTP id 27so7378165eye.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Jan 2011 11:54:28 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, anarsoul@gmail.com
 
-On Thu, Jan 06, 2011 at 09:51:45AM +0100, Sascha Hauer wrote:
-> As Russell noted this conflicts with the current i.MX branch. In current
-> i.MX branch we have:
-> 
-> -       .boot_params = PHYS_OFFSET + 0x100,
-> +       .boot_params = MX51_PHYS_OFFSET + 0x100,
-> 
-> PLAT_PHYS_OFFSET should be defined to MX51_PHYS_OFFSET, so it shouldn't
-> matter which solution to the conflict we choose.
+This series improves HP iPAQ H1940 and RX1950 support.
 
-I've actually dropped my modifications to this files as your change
-to them makes more sense longer term.
+Changes introduced by these patches:
+1. Add support for H1940 buttons
+2. Compile fix for h1940-bluetooth.c
+3. Use leds-gpio to drive LEDs on H1940
+4. Add support for battery monitoring and charging on H1940
+5. Improve LCD power-on sequence
+6. Retain LEDs state on RX1950 in suspend
+7. Add support for HW LEDs blinking on RX1950
