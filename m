@@ -1,42 +1,165 @@
-From: Magnus Damm <magnus.damm@gmail.com>
-Subject: Re: [RFC 1/5] ARM: P2V: separate PHYS_OFFSET from platform definitions
-Date: Thu, 6 Jan 2011 14:02:02 +0900
-Message-ID: <AANLkTi=qtRP1tAs1wPnGugE2rGBTERgHuUKKBWhbs=ST@mail.gmail.com>
-References: <20110104202052.GE24935@n2100.arm.linux.org.uk>
-	<E1PaDOb-00023Z-CR@rmk-PC.arm.linux.org.uk>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH RE-SEND] s3c-fb: Add support S5PV310 FIMD
+Date: Thu, 06 Jan 2011 14:19:22 +0900
+Message-ID: <00db01cbad61$4a308d80$de91a880$%kim@samsung.com>
+References: <1294128333-28736-1-git-send-email-kgene.kim@samsung.com>
+ <001b01cbabf6$c62180a0$526481e0$%dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <E1PaDOb-00023Z-CR@rmk-PC.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Viresh Kumar <viresh.kumar@st.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Kevin Hilman <khilman@deeprootsystems.com>, Anton Vorontsov <avorontsov@mvista.com>, Lennert Buytenhek <kernel@wantstofly.org>, Kukjin Kim <kgene.kim@samsung.com>, Erik Gilling <konkers@android.com>, linux-sh@vger.kernel.org, Vincent Sanders <support@simtec.co.uk>, "Hans J. Koch" <hjk@linutronix.de>, Marc Singer <elf@buici.com>, Tony Lindgren <tony@atomide.com>, David Brown <davidb@codeaurora.org>, Alessandro Rubini <rubini@unipv.it>, Jiandong Zheng <jdzheng@broadcom.com>, Wan ZongShun <mcuos.com@gmail.com>, linux-arm-msm@vger.kernel.org, Olof Johansson <olof@lixom.net>, Ryan Mallon <ryan@bluewatersys.com>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Daniel
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:17904 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751811Ab1AFFT3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Jan 2011 00:19:29 -0500
+In-reply-to: <001b01cbabf6$c62180a0$526481e0$%dae@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Inki Dae' <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org
+Cc: ben-linux@fluff.org, akpm@linux-foundation.org, lethal@linux-sh.org, 'Jonghun Han' <jonghun.han@samsung.com>, 'Sangbeom Kim' <sbkim73@samsung.com>
 
-On Wed, Jan 5, 2011 at 5:22 AM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> This uncouple PHYS_OFFSET from the platform definitions, thereby
-> facilitating run-time computation of the physical memory offset.
+Inki Dae wrote:
+> 
+> Hello, Mr. Kukjin.
+> 
+Hi,
+
+> I know we had a discussion about your patch below.
+> after that, did you have some discussion about that?
+> If not, Paul advised to use clkdev lookup.
+> 
+> Please, refer to below mail.
 >
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> ---
-> =A0arch/arm/include/asm/memory.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0=
- =A02 ++
-> =A0arch/arm/kernel/tcm.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0| =A0 =A02 +-
-...
-> =A0arch/arm/mach-shmobile/include/mach/memory.h =A0 | =A0 =A02 +-
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg03448.html
 
-Applied on top of sh-2.6 git c422a5992e9ca072e8e472ee8f518649fb07470e
-and successfully booted on a sh7372-based Mackerel board.
+I think it's different with your approach even though the purpose is similar
+and I know, Mr. Han explained about clock configurable by call.
 
-Acked-by: Magnus Damm <damm@opensource.se>
+Paul, how do you think about this?
+
+Personally, if we want to support S5PV310 FIMD now, this patch is good to
+support it and to us now.
+Of course, I think, we can upgrade it later.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> > -----Original Message-----
+> > From: linux-fbdev-owner@vger.kernel.org [mailto:linux-fbdev-
+> > owner@vger.kernel.org] On Behalf Of Kukjin Kim
+> > Sent: Tuesday, January 04, 2011 5:06 PM
+> > To: linux-samsung-soc@vger.kernel.org; linux-fbdev@vger.kernel.org
+> > Cc: ben-linux@fluff.org; akpm@linux-foundation.org; lethal@linux-sh.org;
+> > Jonghun Han; Sangbeom Kim; InKi Dae; Kukjin Kim
+> > Subject: [PATCH RE-SEND] s3c-fb: Add support S5PV310 FIMD
+> >
+> > From: Jonghun Han <jonghun.han@samsung.com>
+> >
+> > This patch adds struct s3c_fb_driverdata s3c_fb_data_s5pv310 for S5PV310
+> > and S5PC210. The clk_type is added to distinguish clock type in it and
+> > lcd_clk is added in structure s3c_fb to calculate divider for lcd panel.
+> >
+> > Please refer to below diagrams about clocks of FIMD IP. FIMD driver
+needs
+> > two clocks for FIMD IP and LCD pixel clock. Actually, the LCD pixel
+clock
+> > can be selected from 1.clk 'lcd' and 2.SCLK_FIMD before S5PV310. But
+from
+> > S5PV310, the 2.SCLK_FIMD can be used only for source of LCD pixel clock.
+> >
+> > FIMD_CLK_TYPE0:
+> >            ------------------------------------
+> >                       dsys bus
+> >            ----------------+-------------------
+> >                            |
+> >                            |1.clk 'lcd'
+> >                            |
+> >                            | FIMD block
+> >                        +---+-----------+
+> > 4.mout_mpll |\         |   |           |
+> >     --------|m|        | +-+-+ +----+  |
+> >             |u|-+      | |   +-+core|  |
+> >             |x| |      | |     +----+  |
+> >             |/  |      | | |\          |
+> >                 |      | +-|m|  +---+  |
+> >                 |      |   |u|--+div|  |
+> >                 +------+---|x|  +---+  |
+> >            2.SCLK_FIMD |   |/     |    |
+> >                        |          |    |
+> >                        +----------+----+
+> >                                   |
+> >            inside of SoC          |
+> >            -----------------------+--------------------------
+> >            outside of SoC         |
+> >                                   | 3.LCD pixel clock
+> >                                   |
+> >                           +--------------+
+> >                           | LCD module   |
+> >                           +--------------+
+> >
+> > FIMD_CLK_TYPE1:
+> >            ------------------------------------
+> >                       dsys bus
+> >            ----------------+-------------------
+> >                            |
+> >                            |1.clk 'fimd'
+> >                            |
+> >                            | FIMD block
+> >                        +---+-----------+
+> > 4.mout_mpll |\         |   |           |
+> >     --------|m|        |   |   +----+  |
+> >             |u|-+      |   +---+core|  |
+> >             |x| |      |       +----+  |
+> >             |/  |      |               |
+> >                 |      |        +---+  |
+> >                 |      |     +--+div|  |
+> >                 +------+-----+  +---+  |
+> >            2.SCLK_FIMD |          |    |
+> >                        |          |    |
+> >                        +----------+----+
+> >                                   |
+> >            inside of SoC          |
+> >            -----------------------+--------------------------
+> >            outside of SoC         |
+> >                                   | 3.LCD pixel clock
+> >                                   |
+> >                           +--------------+
+> >                           | LCD module   |
+> >                           +--------------+
+> >
+> > Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
+> > Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+> > Cc: InKi Dae <inki.dae@samsung.com>
+> > Cc: Ben Dooks <ben-linux@fluff.org>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > ---
+> > Hi Paul,
+> >
+> > I and Mr. Han, Jonghun sent below patch several weeks ago.
+> > But I couldn't find it in your tree...
+> > (Re-made against on your latest fbdev-2.6.git #master)
+> >
+> > I think this should be merged for supporting S5PV310/S5PC210 frame
+buffer.
+> > So could you please let me know your opinion or plan about this?
+> >
+> > NOTE: Needs following platform device patches for S5PV310/S5PC210 frame
+> > buffer.
+> > And I already applied that in my tree as S5P SoCs architecture
+maintainer.
+> >
+> > 0001-ARM-S5PV310-Add-FIMD-resource-definition.patch
+> > 0002-ARM-S5PV310-Add-platform-device-and-helper-functio.patch
+> > 0004-ARM-S5PV310-Add-support-FIMD0-and-LTE480WV-LCD-for.patch
+> >
+> >  drivers/video/Kconfig  |    2 +-
+> >  drivers/video/s3c-fb.c |  125
+> > +++++++++++++++++++++++++++++++++++++++++++-----
+> >  2 files changed, 113 insertions(+), 14 deletions(-)
