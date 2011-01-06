@@ -1,189 +1,100 @@
-From: daeinki <inki.dae@samsung.com>
-Subject: Re: [PATCH RE-SEND] s3c-fb: Add support S5PV310 FIMD
-Date: Thu, 06 Jan 2011 15:51:24 +0900
-Message-ID: <4D25666C.4060102@samsung.com>
-References: <1294128333-28736-1-git-send-email-kgene.kim@samsung.com>
- <001b01cbabf6$c62180a0$526481e0$%dae@samsung.com>
- <00db01cbad61$4a308d80$de91a880$%kim@samsung.com>
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Subject: Re: [RFC 2/5] ARM: P2V: avoid initializers and assembly using
+ PHYS_OFFSET
+Date: Thu, 6 Jan 2011 09:51:45 +0100
+Message-ID: <20110106085145.GB26617@pengutronix.de>
+References: <20110104202052.GE24935@n2100.arm.linux.org.uk>
+ <E1PaDOv-00023d-Gi@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:24181 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753702Ab1AFGv0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Jan 2011 01:51:26 -0500
-In-reply-to: <00db01cbad61$4a308d80$de91a880$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <E1PaDOv-00023d-Gi@rmk-PC.arm.linux.org.uk>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Nicolas Pitre <nico@fluxnic.net>, Daniel Walker <dwalker@codeaurora.org>, Eric Miao <eric.y.miao@gmail.com>, linux-arm-msm@vger.kernel.org, "Hans J. Koch" <hjk@linutronix.de>, linux-samsung-soc@vger.kernel.org, Bryan Huntsman <bryanh@codeaurora.org>, Amit Kucheria <amit.kucheria@canonical.com>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, David Brown <davidb@codeaurora.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, ben-linux@fluff.org, akpm@linux-foundation.org, lethal@linux-sh.org, 'Jonghun Han' <jonghun.han@samsung.com>, 'Sangbeom Kim' <sbkim73@samsung.com>
 
-Hello, Mr. Kukjin.
+On Tue, Jan 04, 2011 at 08:22:37PM +0000, Russell King - ARM Linux wrote:
+> As PHYS_OFFSET will be becoming a variable, we can't have it used in
+> initializers nor assembly code.  Replace those in generic code with
+> a run-time initialization.  Replace those in platform code using the
+> individual platform specific PLAT_PHYS_OFFSET.
+> 
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
+>  arch/arm/kernel/setup.c                  |    4 +++-
+>  arch/arm/mach-msm/board-msm7x27.c        |    8 ++++----
+>  arch/arm/mach-msm/board-msm7x30.c        |    6 +++---
+>  arch/arm/mach-msm/board-qsd8x50.c        |    4 ++--
+>  arch/arm/mach-msm/board-sapphire.c       |    2 +-
+>  arch/arm/mach-mx5/board-cpuimx51.c       |    2 +-
+>  arch/arm/mach-mx5/board-cpuimx51sd.c     |    2 +-
+>  arch/arm/mach-mx5/board-mx51_3ds.c       |    2 +-
+>  arch/arm/mach-pxa/balloon3.c             |    2 +-
+>  arch/arm/mach-realview/realview_eb.c     |    2 +-
+>  arch/arm/mach-realview/realview_pb1176.c |    2 +-
+>  arch/arm/mach-realview/realview_pb11mp.c |    2 +-
+>  arch/arm/mach-realview/realview_pba8.c   |    2 +-
+>  arch/arm/mach-realview/realview_pbx.c    |    2 +-
+>  arch/arm/mach-s5pv210/sleep.S            |    2 +-
+>  arch/arm/mach-tcc8k/board-tcc8000-sdk.c  |    2 +-
+>  arch/arm/mach-vexpress/ct-ca9x4.c        |    2 +-
+>  17 files changed, 25 insertions(+), 23 deletions(-)
+> 
+> diff --git a/arch/arm/mach-mx5/board-cpuimx51.c b/arch/arm/mach-mx5/board-cpuimx51.c
+> index 6a9792f..c4c3a9c 100644
+> --- a/arch/arm/mach-mx5/board-cpuimx51.c
+> +++ b/arch/arm/mach-mx5/board-cpuimx51.c
+> @@ -292,7 +292,7 @@ static struct sys_timer mxc_timer = {
+>  
+>  MACHINE_START(EUKREA_CPUIMX51, "Eukrea CPUIMX51 Module")
+>  	/* Maintainer: Eric B??nard <eric@eukrea.com> */
+> -	.boot_params = PHYS_OFFSET + 0x100,
+> +	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+>  	.map_io = mx51_map_io,
+>  	.init_irq = mx51_init_irq,
+>  	.init_machine = eukrea_cpuimx51_init,
+> diff --git a/arch/arm/mach-mx5/board-cpuimx51sd.c b/arch/arm/mach-mx5/board-cpuimx51sd.c
+> index 4b3a611..b887381 100644
+> --- a/arch/arm/mach-mx5/board-cpuimx51sd.c
+> +++ b/arch/arm/mach-mx5/board-cpuimx51sd.c
+> @@ -323,7 +323,7 @@ static struct sys_timer mxc_timer = {
+>  
+>  MACHINE_START(EUKREA_CPUIMX51SD, "Eukrea CPUIMX51SD")
+>  	/* Maintainer: Eric B??nard <eric@eukrea.com> */
+> -	.boot_params = PHYS_OFFSET + 0x100,
+> +	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+>  	.map_io = mx51_map_io,
+>  	.init_irq = mx51_init_irq,
+>  	.init_machine = eukrea_cpuimx51sd_init,
+> diff --git a/arch/arm/mach-mx5/board-mx51_3ds.c b/arch/arm/mach-mx5/board-mx51_3ds.c
+> index 79ce8dc..10e6ce3 100644
+> --- a/arch/arm/mach-mx5/board-mx51_3ds.c
+> +++ b/arch/arm/mach-mx5/board-mx51_3ds.c
+> @@ -186,7 +186,7 @@ static struct sys_timer mxc_timer = {
+>  
+>  MACHINE_START(MX51_3DS, "Freescale MX51 3-Stack Board")
+>  	/* Maintainer: Freescale Semiconductor, Inc. */
+> -	.boot_params = PHYS_OFFSET + 0x100,
+> +	.boot_params = PLAT_PHYS_OFFSET + 0x100,
+>  	.map_io = mx51_map_io,
+>  	.init_irq = mx51_init_irq,
+>  	.init_machine = mxc_board_init,
 
-Kukjin Kim =EC=93=B4 =EA=B8=80:
-> Inki Dae wrote:
->> Hello, Mr. Kukjin.
->>
-> Hi,
->=20
->> I know we had a discussion about your patch below.
->> after that, did you have some discussion about that?
->> If not, Paul advised to use clkdev lookup.
->>
->> Please, refer to below mail.
->>
-> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg0344=
-8.html
->=20
-> I think it's different with your approach even though the purpose is =
-similar
-> and I know, Mr. Han explained about clock configurable by call.
+As Russell noted this conflicts with the current i.MX branch. In current
+i.MX branch we have:
 
-please, refer to below.
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg03445.=
-html
+-       .boot_params = PHYS_OFFSET + 0x100,
++       .boot_params = MX51_PHYS_OFFSET + 0x100,
 
-for identify clock types("lcd" for bus clock or "fimd" for sclk_fimd),=20
-using switch-case seems to be bad. for avoiding this one I suggested=20
-other way and the way clock type selection from platform data is also=20
-bad so Paul adviced us to use clk_dev lookup.
+PLAT_PHYS_OFFSET should be defined to MX51_PHYS_OFFSET, so it shouldn't
+matter which solution to the conflict we choose.
 
->=20
-> Paul, how do you think about this?
->=20
-> Personally, if we want to support S5PV310 FIMD now, this patch is goo=
-d to
-> support it and to us now.
-> Of course, I think, we can upgrade it later.
->=20
-> Thanks.
->=20
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->=20
->>> -----Original Message-----
->>> From: linux-fbdev-owner@vger.kernel.org [mailto:linux-fbdev-
->>> owner@vger.kernel.org] On Behalf Of Kukjin Kim
->>> Sent: Tuesday, January 04, 2011 5:06 PM
->>> To: linux-samsung-soc@vger.kernel.org; linux-fbdev@vger.kernel.org
->>> Cc: ben-linux@fluff.org; akpm@linux-foundation.org; lethal@linux-sh=
-=2Eorg;
->>> Jonghun Han; Sangbeom Kim; InKi Dae; Kukjin Kim
->>> Subject: [PATCH RE-SEND] s3c-fb: Add support S5PV310 FIMD
->>>
->>> From: Jonghun Han <jonghun.han@samsung.com>
->>>
->>> This patch adds struct s3c_fb_driverdata s3c_fb_data_s5pv310 for S5=
-PV310
->>> and S5PC210. The clk_type is added to distinguish clock type in it =
-and
->>> lcd_clk is added in structure s3c_fb to calculate divider for lcd p=
-anel.
->>>
->>> Please refer to below diagrams about clocks of FIMD IP. FIMD driver
-> needs
->>> two clocks for FIMD IP and LCD pixel clock. Actually, the LCD pixel
-> clock
->>> can be selected from 1.clk 'lcd' and 2.SCLK_FIMD before S5PV310. Bu=
-t
-> from
->>> S5PV310, the 2.SCLK_FIMD can be used only for source of LCD pixel c=
-lock.
->>>
->>> FIMD_CLK_TYPE0:
->>>            ------------------------------------
->>>                       dsys bus
->>>            ----------------+-------------------
->>>                            |
->>>                            |1.clk 'lcd'
->>>                            |
->>>                            | FIMD block
->>>                        +---+-----------+
->>> 4.mout_mpll |\         |   |           |
->>>     --------|m|        | +-+-+ +----+  |
->>>             |u|-+      | |   +-+core|  |
->>>             |x| |      | |     +----+  |
->>>             |/  |      | | |\          |
->>>                 |      | +-|m|  +---+  |
->>>                 |      |   |u|--+div|  |
->>>                 +------+---|x|  +---+  |
->>>            2.SCLK_FIMD |   |/     |    |
->>>                        |          |    |
->>>                        +----------+----+
->>>                                   |
->>>            inside of SoC          |
->>>            -----------------------+--------------------------
->>>            outside of SoC         |
->>>                                   | 3.LCD pixel clock
->>>                                   |
->>>                           +--------------+
->>>                           | LCD module   |
->>>                           +--------------+
->>>
->>> FIMD_CLK_TYPE1:
->>>            ------------------------------------
->>>                       dsys bus
->>>            ----------------+-------------------
->>>                            |
->>>                            |1.clk 'fimd'
->>>                            |
->>>                            | FIMD block
->>>                        +---+-----------+
->>> 4.mout_mpll |\         |   |           |
->>>     --------|m|        |   |   +----+  |
->>>             |u|-+      |   +---+core|  |
->>>             |x| |      |       +----+  |
->>>             |/  |      |               |
->>>                 |      |        +---+  |
->>>                 |      |     +--+div|  |
->>>                 +------+-----+  +---+  |
->>>            2.SCLK_FIMD |          |    |
->>>                        |          |    |
->>>                        +----------+----+
->>>                                   |
->>>            inside of SoC          |
->>>            -----------------------+--------------------------
->>>            outside of SoC         |
->>>                                   | 3.LCD pixel clock
->>>                                   |
->>>                           +--------------+
->>>                           | LCD module   |
->>>                           +--------------+
->>>
->>> Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
->>> Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
->>> Cc: InKi Dae <inki.dae@samsung.com>
->>> Cc: Ben Dooks <ben-linux@fluff.org>
->>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
->>> ---
->>> Hi Paul,
->>>
->>> I and Mr. Han, Jonghun sent below patch several weeks ago.
->>> But I couldn't find it in your tree...
->>> (Re-made against on your latest fbdev-2.6.git #master)
->>>
->>> I think this should be merged for supporting S5PV310/S5PC210 frame
-> buffer.
->>> So could you please let me know your opinion or plan about this?
->>>
->>> NOTE: Needs following platform device patches for S5PV310/S5PC210 f=
-rame
->>> buffer.
->>> And I already applied that in my tree as S5P SoCs architecture
-> maintainer.
->>> 0001-ARM-S5PV310-Add-FIMD-resource-definition.patch
->>> 0002-ARM-S5PV310-Add-platform-device-and-helper-functio.patch
->>> 0004-ARM-S5PV310-Add-support-FIMD0-and-LTE480WV-LCD-for.patch
->>>
->>>  drivers/video/Kconfig  |    2 +-
->>>  drivers/video/s3c-fb.c |  125
->>> +++++++++++++++++++++++++++++++++++++++++++-----
->>>  2 files changed, 113 insertions(+), 14 deletions(-)
->=20
->=20
+Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
