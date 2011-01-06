@@ -1,165 +1,189 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH RE-SEND] s3c-fb: Add support S5PV310 FIMD
-Date: Thu, 06 Jan 2011 14:19:22 +0900
-Message-ID: <00db01cbad61$4a308d80$de91a880$%kim@samsung.com>
+From: daeinki <inki.dae@samsung.com>
+Subject: Re: [PATCH RE-SEND] s3c-fb: Add support S5PV310 FIMD
+Date: Thu, 06 Jan 2011 15:51:24 +0900
+Message-ID: <4D25666C.4060102@samsung.com>
 References: <1294128333-28736-1-git-send-email-kgene.kim@samsung.com>
  <001b01cbabf6$c62180a0$526481e0$%dae@samsung.com>
+ <00db01cbad61$4a308d80$de91a880$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:17904 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:24181 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751811Ab1AFFT3 (ORCPT
+	with ESMTP id S1753702Ab1AFGv0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Jan 2011 00:19:29 -0500
-In-reply-to: <001b01cbabf6$c62180a0$526481e0$%dae@samsung.com>
-Content-language: ko
+	Thu, 6 Jan 2011 01:51:26 -0500
+In-reply-to: <00db01cbad61$4a308d80$de91a880$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Inki Dae' <inki.dae@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc: ben-linux@fluff.org, akpm@linux-foundation.org, lethal@linux-sh.org, 'Jonghun Han' <jonghun.han@samsung.com>, 'Sangbeom Kim' <sbkim73@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, ben-linux@fluff.org, akpm@linux-foundation.org, lethal@linux-sh.org, 'Jonghun Han' <jonghun.han@samsung.com>, 'Sangbeom Kim' <sbkim73@samsung.com>
 
-Inki Dae wrote:
-> 
-> Hello, Mr. Kukjin.
-> 
-Hi,
+Hello, Mr. Kukjin.
 
-> I know we had a discussion about your patch below.
-> after that, did you have some discussion about that?
-> If not, Paul advised to use clkdev lookup.
-> 
-> Please, refer to below mail.
->
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg03448.html
+Kukjin Kim =EC=93=B4 =EA=B8=80:
+> Inki Dae wrote:
+>> Hello, Mr. Kukjin.
+>>
+> Hi,
+>=20
+>> I know we had a discussion about your patch below.
+>> after that, did you have some discussion about that?
+>> If not, Paul advised to use clkdev lookup.
+>>
+>> Please, refer to below mail.
+>>
+> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg0344=
+8.html
+>=20
+> I think it's different with your approach even though the purpose is =
+similar
+> and I know, Mr. Han explained about clock configurable by call.
 
-I think it's different with your approach even though the purpose is similar
-and I know, Mr. Han explained about clock configurable by call.
+please, refer to below.
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg03445.=
+html
 
-Paul, how do you think about this?
+for identify clock types("lcd" for bus clock or "fimd" for sclk_fimd),=20
+using switch-case seems to be bad. for avoiding this one I suggested=20
+other way and the way clock type selection from platform data is also=20
+bad so Paul adviced us to use clk_dev lookup.
 
-Personally, if we want to support S5PV310 FIMD now, this patch is good to
-support it and to us now.
-Of course, I think, we can upgrade it later.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-> > -----Original Message-----
-> > From: linux-fbdev-owner@vger.kernel.org [mailto:linux-fbdev-
-> > owner@vger.kernel.org] On Behalf Of Kukjin Kim
-> > Sent: Tuesday, January 04, 2011 5:06 PM
-> > To: linux-samsung-soc@vger.kernel.org; linux-fbdev@vger.kernel.org
-> > Cc: ben-linux@fluff.org; akpm@linux-foundation.org; lethal@linux-sh.org;
-> > Jonghun Han; Sangbeom Kim; InKi Dae; Kukjin Kim
-> > Subject: [PATCH RE-SEND] s3c-fb: Add support S5PV310 FIMD
-> >
-> > From: Jonghun Han <jonghun.han@samsung.com>
-> >
-> > This patch adds struct s3c_fb_driverdata s3c_fb_data_s5pv310 for S5PV310
-> > and S5PC210. The clk_type is added to distinguish clock type in it and
-> > lcd_clk is added in structure s3c_fb to calculate divider for lcd panel.
-> >
-> > Please refer to below diagrams about clocks of FIMD IP. FIMD driver
-needs
-> > two clocks for FIMD IP and LCD pixel clock. Actually, the LCD pixel
-clock
-> > can be selected from 1.clk 'lcd' and 2.SCLK_FIMD before S5PV310. But
-from
-> > S5PV310, the 2.SCLK_FIMD can be used only for source of LCD pixel clock.
-> >
-> > FIMD_CLK_TYPE0:
-> >            ------------------------------------
-> >                       dsys bus
-> >            ----------------+-------------------
-> >                            |
-> >                            |1.clk 'lcd'
-> >                            |
-> >                            | FIMD block
-> >                        +---+-----------+
-> > 4.mout_mpll |\         |   |           |
-> >     --------|m|        | +-+-+ +----+  |
-> >             |u|-+      | |   +-+core|  |
-> >             |x| |      | |     +----+  |
-> >             |/  |      | | |\          |
-> >                 |      | +-|m|  +---+  |
-> >                 |      |   |u|--+div|  |
-> >                 +------+---|x|  +---+  |
-> >            2.SCLK_FIMD |   |/     |    |
-> >                        |          |    |
-> >                        +----------+----+
-> >                                   |
-> >            inside of SoC          |
-> >            -----------------------+--------------------------
-> >            outside of SoC         |
-> >                                   | 3.LCD pixel clock
-> >                                   |
-> >                           +--------------+
-> >                           | LCD module   |
-> >                           +--------------+
-> >
-> > FIMD_CLK_TYPE1:
-> >            ------------------------------------
-> >                       dsys bus
-> >            ----------------+-------------------
-> >                            |
-> >                            |1.clk 'fimd'
-> >                            |
-> >                            | FIMD block
-> >                        +---+-----------+
-> > 4.mout_mpll |\         |   |           |
-> >     --------|m|        |   |   +----+  |
-> >             |u|-+      |   +---+core|  |
-> >             |x| |      |       +----+  |
-> >             |/  |      |               |
-> >                 |      |        +---+  |
-> >                 |      |     +--+div|  |
-> >                 +------+-----+  +---+  |
-> >            2.SCLK_FIMD |          |    |
-> >                        |          |    |
-> >                        +----------+----+
-> >                                   |
-> >            inside of SoC          |
-> >            -----------------------+--------------------------
-> >            outside of SoC         |
-> >                                   | 3.LCD pixel clock
-> >                                   |
-> >                           +--------------+
-> >                           | LCD module   |
-> >                           +--------------+
-> >
-> > Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
-> > Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
-> > Cc: InKi Dae <inki.dae@samsung.com>
-> > Cc: Ben Dooks <ben-linux@fluff.org>
-> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> > ---
-> > Hi Paul,
-> >
-> > I and Mr. Han, Jonghun sent below patch several weeks ago.
-> > But I couldn't find it in your tree...
-> > (Re-made against on your latest fbdev-2.6.git #master)
-> >
-> > I think this should be merged for supporting S5PV310/S5PC210 frame
-buffer.
-> > So could you please let me know your opinion or plan about this?
-> >
-> > NOTE: Needs following platform device patches for S5PV310/S5PC210 frame
-> > buffer.
-> > And I already applied that in my tree as S5P SoCs architecture
-maintainer.
-> >
-> > 0001-ARM-S5PV310-Add-FIMD-resource-definition.patch
-> > 0002-ARM-S5PV310-Add-platform-device-and-helper-functio.patch
-> > 0004-ARM-S5PV310-Add-support-FIMD0-and-LTE480WV-LCD-for.patch
-> >
-> >  drivers/video/Kconfig  |    2 +-
-> >  drivers/video/s3c-fb.c |  125
-> > +++++++++++++++++++++++++++++++++++++++++++-----
-> >  2 files changed, 113 insertions(+), 14 deletions(-)
+>=20
+> Paul, how do you think about this?
+>=20
+> Personally, if we want to support S5PV310 FIMD now, this patch is goo=
+d to
+> support it and to us now.
+> Of course, I think, we can upgrade it later.
+>=20
+> Thanks.
+>=20
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>=20
+>>> -----Original Message-----
+>>> From: linux-fbdev-owner@vger.kernel.org [mailto:linux-fbdev-
+>>> owner@vger.kernel.org] On Behalf Of Kukjin Kim
+>>> Sent: Tuesday, January 04, 2011 5:06 PM
+>>> To: linux-samsung-soc@vger.kernel.org; linux-fbdev@vger.kernel.org
+>>> Cc: ben-linux@fluff.org; akpm@linux-foundation.org; lethal@linux-sh=
+=2Eorg;
+>>> Jonghun Han; Sangbeom Kim; InKi Dae; Kukjin Kim
+>>> Subject: [PATCH RE-SEND] s3c-fb: Add support S5PV310 FIMD
+>>>
+>>> From: Jonghun Han <jonghun.han@samsung.com>
+>>>
+>>> This patch adds struct s3c_fb_driverdata s3c_fb_data_s5pv310 for S5=
+PV310
+>>> and S5PC210. The clk_type is added to distinguish clock type in it =
+and
+>>> lcd_clk is added in structure s3c_fb to calculate divider for lcd p=
+anel.
+>>>
+>>> Please refer to below diagrams about clocks of FIMD IP. FIMD driver
+> needs
+>>> two clocks for FIMD IP and LCD pixel clock. Actually, the LCD pixel
+> clock
+>>> can be selected from 1.clk 'lcd' and 2.SCLK_FIMD before S5PV310. Bu=
+t
+> from
+>>> S5PV310, the 2.SCLK_FIMD can be used only for source of LCD pixel c=
+lock.
+>>>
+>>> FIMD_CLK_TYPE0:
+>>>            ------------------------------------
+>>>                       dsys bus
+>>>            ----------------+-------------------
+>>>                            |
+>>>                            |1.clk 'lcd'
+>>>                            |
+>>>                            | FIMD block
+>>>                        +---+-----------+
+>>> 4.mout_mpll |\         |   |           |
+>>>     --------|m|        | +-+-+ +----+  |
+>>>             |u|-+      | |   +-+core|  |
+>>>             |x| |      | |     +----+  |
+>>>             |/  |      | | |\          |
+>>>                 |      | +-|m|  +---+  |
+>>>                 |      |   |u|--+div|  |
+>>>                 +------+---|x|  +---+  |
+>>>            2.SCLK_FIMD |   |/     |    |
+>>>                        |          |    |
+>>>                        +----------+----+
+>>>                                   |
+>>>            inside of SoC          |
+>>>            -----------------------+--------------------------
+>>>            outside of SoC         |
+>>>                                   | 3.LCD pixel clock
+>>>                                   |
+>>>                           +--------------+
+>>>                           | LCD module   |
+>>>                           +--------------+
+>>>
+>>> FIMD_CLK_TYPE1:
+>>>            ------------------------------------
+>>>                       dsys bus
+>>>            ----------------+-------------------
+>>>                            |
+>>>                            |1.clk 'fimd'
+>>>                            |
+>>>                            | FIMD block
+>>>                        +---+-----------+
+>>> 4.mout_mpll |\         |   |           |
+>>>     --------|m|        |   |   +----+  |
+>>>             |u|-+      |   +---+core|  |
+>>>             |x| |      |       +----+  |
+>>>             |/  |      |               |
+>>>                 |      |        +---+  |
+>>>                 |      |     +--+div|  |
+>>>                 +------+-----+  +---+  |
+>>>            2.SCLK_FIMD |          |    |
+>>>                        |          |    |
+>>>                        +----------+----+
+>>>                                   |
+>>>            inside of SoC          |
+>>>            -----------------------+--------------------------
+>>>            outside of SoC         |
+>>>                                   | 3.LCD pixel clock
+>>>                                   |
+>>>                           +--------------+
+>>>                           | LCD module   |
+>>>                           +--------------+
+>>>
+>>> Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
+>>> Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+>>> Cc: InKi Dae <inki.dae@samsung.com>
+>>> Cc: Ben Dooks <ben-linux@fluff.org>
+>>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+>>> ---
+>>> Hi Paul,
+>>>
+>>> I and Mr. Han, Jonghun sent below patch several weeks ago.
+>>> But I couldn't find it in your tree...
+>>> (Re-made against on your latest fbdev-2.6.git #master)
+>>>
+>>> I think this should be merged for supporting S5PV310/S5PC210 frame
+> buffer.
+>>> So could you please let me know your opinion or plan about this?
+>>>
+>>> NOTE: Needs following platform device patches for S5PV310/S5PC210 f=
+rame
+>>> buffer.
+>>> And I already applied that in my tree as S5P SoCs architecture
+> maintainer.
+>>> 0001-ARM-S5PV310-Add-FIMD-resource-definition.patch
+>>> 0002-ARM-S5PV310-Add-platform-device-and-helper-functio.patch
+>>> 0004-ARM-S5PV310-Add-support-FIMD0-and-LTE480WV-LCD-for.patch
+>>>
+>>>  drivers/video/Kconfig  |    2 +-
+>>>  drivers/video/s3c-fb.c |  125
+>>> +++++++++++++++++++++++++++++++++++++++++++-----
+>>>  2 files changed, 113 insertions(+), 14 deletions(-)
+>=20
+>=20
