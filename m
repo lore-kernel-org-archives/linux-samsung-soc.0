@@ -1,7 +1,7 @@
 From: Kamil Debski <k.debski@samsung.com>
-Subject: [RFC/PATCH v6 2/4] MFC: Add MFC 5.1 driver to plat-s5p
-Date: Fri, 07 Jan 2011 17:25:32 +0100
-Message-ID: <1294417534-3856-3-git-send-email-k.debski@samsung.com>
+Subject: [RFC/PATCH v6 4/4] s5pv210: Enable MFC on Goni
+Date: Fri, 07 Jan 2011 17:25:34 +0100
+Message-ID: <1294417534-3856-5-git-send-email-k.debski@samsung.com>
 References: <1294417534-3856-1-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -13,164 +13,48 @@ To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, pawel@osciak.com, kyungmin.park@samsung.com, k.debski@samsung.com, jaeryul.oh@samsung.com, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds platform support for Multi Format Codec 5.1.
-MFC 5.1 is capable of handling a range of video codecs and this driver
-provides V4L2 interface for video decoding.
+This patch enables MFC 5.1 on Goni board. Multi Format Codec 5.1 is capable
+of handling a range of video codecs.
 
 Signed-off-by: Kamil Debski <k.debski@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-s5pv210/clock.c                   |    6 +++
- arch/arm/mach-s5pv210/include/mach/map.h        |    4 ++
- arch/arm/plat-s5p/Kconfig                       |    5 ++
- arch/arm/plat-s5p/Makefile                      |    2 +-
- arch/arm/plat-s5p/dev-mfc.c                     |   49 +++++++++++++++++++++++
- arch/arm/plat-samsung/include/plat/devs.h       |    2 +
- 9 files changed, 116 insertions(+), 2 deletions(-)
- create mode 100644 arch/arm/plat-s5p/dev-mfc.c
+ arch/arm/mach-s5pv210/Kconfig     |    1 +
+ arch/arm/mach-s5pv210/mach-goni.c |    3 ++-
+ 2 files changed, 3 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-index 5014b62..f7d742d 100644
---- a/arch/arm/mach-s5pv210/clock.c
-+++ b/arch/arm/mach-s5pv210/clock.c
-@@ -364,6 +364,12 @@ static struct clk init_clocks_disable[] = {
- 		.enable		= s5pv210_clk_ip0_ctrl,
- 		.ctrlbit	= (1 << 26),
- 	}, {
-+		.name		= "mfc",
-+		.id		= -1,
-+		.parent		= &clk_pclk_psys.clk,
-+		.enable		= s5pv210_clk_ip0_ctrl,
-+		.ctrlbit	= (1 << 16),
-+	}, {
- 		.name		= "nfcon",
- 		.id		= -1,
- 		.parent		= &clk_hclk_psys.clk,
-diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
-index 0982443..d56db00 100644
---- a/arch/arm/mach-s5pv210/include/mach/map.h
-+++ b/arch/arm/mach-s5pv210/include/mach/map.h
-@@ -73,6 +73,8 @@
- #define S5PV210_PA_FIMC1	(0xFB300000)
- #define S5PV210_PA_FIMC2	(0xFB400000)
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index c45a1b7..43f408d 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -85,6 +85,7 @@ config MACH_GONI
+ 	select S3C_DEV_HSMMC2
+ 	select S3C_DEV_I2C1
+ 	select S3C_DEV_I2C2
++	select S5P_DEV_MFC
+ 	select S3C_DEV_USB_HSOTG
+ 	select S5P_DEV_ONENAND
+ 	select SAMSUNG_DEV_KEYPAD
+diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
+index 8d19ead..553a60e 100644
+--- a/arch/arm/mach-s5pv210/mach-goni.c
++++ b/arch/arm/mach-s5pv210/mach-goni.c
+@@ -810,6 +810,7 @@ static struct platform_device *goni_devices[] __initdata = {
+ 	&goni_i2c_gpio5,
+ 	&mmc2_fixed_voltage,
+ 	&goni_device_gpiokeys,
++	&s5p_device_mfc,
+ 	&s5p_device_fimc0,
+ 	&s5p_device_fimc1,
+ 	&s5p_device_fimc2,
+@@ -857,7 +858,7 @@ static void __init goni_reserve(void)
+ 	};
  
-+#define S5PV210_PA_MFC		(0xF1700000)
-+
- #define S5PV210_PA_HSMMC(x)	(0xEB000000 + ((x) * 0x100000))
+ 	static const char map[] __initconst =
+-		"s5p-mfc5/f=fw;s5p-mfc5/a=b1;s5p-mfc5/b=b2;*=b1,b2";
++		"s5p-mfc/f=fw;s5p-mfc/a=b1;s5p-mfc/b=b2;*=b1,b2";
  
- #define S5PV210_PA_HSOTG	(0xEC000000)
-@@ -107,6 +109,7 @@
- #define S5PV210_PA_DMC0		(0xF0000000)
- #define S5PV210_PA_DMC1		(0xF1400000)
- 
-+
- /* compatibiltiy defines. */
- #define S3C_PA_UART		S5PV210_PA_UART
- #define S3C_PA_HSMMC0		S5PV210_PA_HSMMC(0)
-@@ -123,6 +126,7 @@
- #define S5P_PA_FIMC0		S5PV210_PA_FIMC0
- #define S5P_PA_FIMC1		S5PV210_PA_FIMC1
- #define S5P_PA_FIMC2		S5PV210_PA_FIMC2
-+#define S5P_PA_MFC		S5PV210_PA_MFC
- 
- #define SAMSUNG_PA_ADC		S5PV210_PA_ADC
- #define SAMSUNG_PA_CFCON	S5PV210_PA_CFCON
-diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-index 9755df9..c7a048e 100644
---- a/arch/arm/plat-s5p/Kconfig
-+++ b/arch/arm/plat-s5p/Kconfig
-@@ -5,6 +5,11 @@
- #
- # Licensed under GPLv2
- 
-+config S5P_DEV_MFC
-+	bool
-+	help
-+	  Compile in platform device definitions for MFC 
-+	  
- config PLAT_S5P
- 	bool
- 	depends on (ARCH_S5P64X0 || ARCH_S5P6442 || ARCH_S5PC100 || ARCH_S5PV210 || ARCH_S5PV310)
-diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-index df65cb7..8c1c97c 100644
---- a/arch/arm/plat-s5p/Makefile
-+++ b/arch/arm/plat-s5p/Makefile
-@@ -23,7 +23,7 @@ obj-$(CONFIG_PM)		+= pm.o
- obj-$(CONFIG_PM)		+= irq-pm.o
- 
- # devices
--
-+obj-$(CONFIG_S5P_DEV_MFC)	+= dev-mfc.o
- obj-$(CONFIG_S5P_DEV_FIMC0)	+= dev-fimc0.o
- obj-$(CONFIG_S5P_DEV_FIMC1)	+= dev-fimc1.o
- obj-$(CONFIG_S5P_DEV_FIMC2)	+= dev-fimc2.o
-diff --git a/arch/arm/plat-s5p/dev-mfc.c b/arch/arm/plat-s5p/dev-mfc.c
-new file mode 100644
-index 0000000..0dfcb1a
---- /dev/null
-+++ b/arch/arm/plat-s5p/dev-mfc.c
-@@ -0,0 +1,49 @@
-+/* linux/arch/arm/plat-s5p/dev-mfc.c
-+ *
-+ * Copyright (c) 2010 Samsung Electronics
-+ *
-+ * Base S5P MFC 5.1 resource and device definitions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+
-+#include <linux/kernel.h>
-+#include <linux/interrupt.h>
-+#include <linux/platform_device.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/ioport.h>
-+
-+#include <mach/map.h>
-+#include <plat/devs.h>
-+#include <plat/irqs.h>
-+
-+static struct resource s5p_mfc_resource[] = {
-+	[0] = {
-+		.start  = S5P_PA_MFC,
-+		.end    = S5P_PA_MFC + SZ_64K - 1,
-+		.flags  = IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start  = IRQ_MFC,
-+		.end    = IRQ_MFC,
-+		.flags  = IORESOURCE_IRQ,
-+	}
-+};
-+
-+static u64 s5p_mfc_dma_mask = DMA_BIT_MASK(32);
-+
-+struct platform_device s5p_device_mfc = {
-+	.name          = "s5p-mfc",
-+	.id            = -1,
-+	.num_resources = ARRAY_SIZE(s5p_mfc_resource),
-+	.resource      = s5p_mfc_resource,
-+	.dev		= {
-+		.dma_mask		= &s5p_mfc_dma_mask,
-+		.coherent_dma_mask	= DMA_BIT_MASK(32),
-+	},
-+};
-+
-+EXPORT_SYMBOL(s5p_device_mfc);
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index 628b331..67594e2 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -124,6 +124,8 @@ extern struct platform_device s5p_device_fimc2;
- extern struct platform_device s5p_device_fimc3;
- extern struct platform_device s5pv310_device_fb0;
- 
-+extern struct platform_device s5p_device_mfc;
-+
- /* s3c2440 specific devices */
- 
- #ifdef CONFIG_CPU_S3C2440
+ 	cma_set_defaults(regions, map);
+ 	cma_early_regions_reserve(NULL);
 -- 
 1.6.3.3
