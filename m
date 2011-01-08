@@ -1,53 +1,43 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 3/3] ARM: S5PV210: Change framebuffer window 0 size on GONI
-Date: Fri, 07 Jan 2011 17:57:48 +0100
-Message-ID: <1294419468-13700-4-git-send-email-s.nawrocki@samsung.com>
-References: <1294419468-13700-1-git-send-email-s.nawrocki@samsung.com>
+From: Wan ZongShun <mcuos.com@gmail.com>
+Subject: Re: [PATCH 0/40] Complete set of clocksource/sched_clock patches
+Date: Sat, 8 Jan 2011 17:05:53 +0800
+Message-ID: <AANLkTik-MApg7khsUDHuvmfEy0NRnmJQ7ZP-o8+mQpOw@mail.gmail.com>
+References: <20101217113223.GC9937@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:55974 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754555Ab1AGQ5z (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Jan 2011 11:57:55 -0500
-Received: from eu_spt1 (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LEN002BMWGFRN@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Jan 2011 16:57:52 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LEN00LBPWGFIS@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Jan 2011 16:57:51 +0000 (GMT)
-In-reply-to: <1294419468-13700-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <20101217113223.GC9937@n2100.arm.linux.org.uk>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Alessandro Rubini <rubini@unipv.it>, Bryan Huntsman <bryanh@codeaurora.org>, Colin Cross <ccross@android.com>, Daniel Walker <dwalker@codeaurora.org>, David Brown <davidb@codeaurora.org>, Eric Miao <eric.y.miao@gmail.com>, Erik Gilling <konkers@android.com>, "Hans J. Koch" <hjk@linutronix.de>, Imre Kaloz <kaloz@openwrt.org>, Kevin Hilman <khilman@deeprootsystems.com>, Krzysztof Halasa <khc@pm.waw.pl>, Kukjin Kim <kgene.kim@samsung.com>, Lennert Buytenhek <kernel@wantstofly.org>, Jiandong Zheng <jdzheng@broadcom.com>, Linus Walleij <linus.walleij@stericsson.com>, linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Nicolas Pitre <nico@fluxnic.net>, Olof Johansson <olof@lixom.net>, Sascha Hauer <kernel@pengutronix.de>, Scott Branden <sbranden@broadcom.com>, STEricsson <STEricsson_nomadik_linux@lis>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com
 
-Increase virtual size of the frambuffer window 0
-for the display panning support.
+2010/12/17 Russell King - ARM Linux <linux@arm.linux.org.uk>:
+> Here is the entire set of clocksource and sched_clock patches which
+> have been previously posted. =C2=A0There's a couple of small tweaks i=
+n a
+> few of the patches (such as adding notrace to OMAP clocksource read
+> functions), and this also shows the proper ordering of these patches.
+>
+> Still looking for acks or tested-by's for these patches.
+>
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-s5pv210/mach-goni.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+Acked-By: Wan Zongshun <mcuos.com@gmail.com>
 
-diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
-index 2051cee..ed06f20 100644
---- a/arch/arm/mach-s5pv210/mach-goni.c
-+++ b/arch/arm/mach-s5pv210/mach-goni.c
-@@ -108,6 +108,8 @@ static struct s3c_fb_pd_win goni_fb_win0 = {
- 	},
- 	.max_bpp	= 32,
- 	.default_bpp	= 16,
-+	.virtual_x	= 480,
-+	.virtual_y	= 2 * 800,
- };
- 
- static struct s3c_fb_platdata goni_lcd_pdata __initdata = {
--- 
-1.7.3.5
+--=20
+*linux-arm-kernel mailing list
+mail addr:linux-arm-kernel@lists.infradead.org
+you can subscribe by:
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+* linux-arm-NUC900 mailing list
+mail addr:NUC900@googlegroups.com
+main web: https://groups.google.com/group/NUC900
+you can subscribe it by sending me mail:
+mcuos.com@gmail.com
+--
+To unsubscribe from this list: send the line "unsubscribe linux-arm-msm=
+" in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
