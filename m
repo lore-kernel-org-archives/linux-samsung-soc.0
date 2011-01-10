@@ -1,37 +1,52 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 0/40] Complete set of clocksource/sched_clock patches
-Date: Sat, 8 Jan 2011 09:23:31 +0000
-Message-ID: <20110108092330.GX1198@n2100.arm.linux.org.uk>
-References: <20101217113223.GC9937@n2100.arm.linux.org.uk> <AANLkTik-MApg7khsUDHuvmfEy0NRnmJQ7ZP-o8+mQpOw@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] mmc: mshci: Add support Mobile Storage Host Controller
+ Interface
+Date: Mon, 10 Jan 2011 13:09:14 +0900
+Message-ID: <00b101cbb07c$262bf780$7283e680$%kim@samsung.com>
+References: <1294399237-5716-1-git-send-email-kgene.kim@samsung.com>
+ <20110107115123.GD32436@pengutronix.de>
+ <AANLkTimQSQ2GViH3VFj6Z+beuwRStPGJqzqMpxZkYjMo@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <AANLkTik-MApg7khsUDHuvmfEy0NRnmJQ7ZP-o8+mQpOw@mail.gmail.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Wan ZongShun <mcuos.com@gmail.com>
-Cc: Alessandro Rubini <rubini@unipv.it>, Bryan Huntsman <bryanh@codeaurora.org>, Colin Cross <ccross@android.com>, Daniel Walker <dwalker@codeaurora.org>, David Brown <davidb@codeaurora.org>, Eric Miao <eric.y.miao@gmail.com>, Erik Gilling <konkers@android.com>, "Hans J. Koch" <hjk@linutronix.de>, Imre Kaloz <kaloz@openwrt.org>, Kevin Hilman <khilman@deeprootsystems.com>, Krzysztof Halasa <khc@pm.waw.pl>, Kukjin Kim <kgene.kim@samsung.com>, Lennert Buytenhek <kernel@wantstofly.org>, Jiandong Zheng <jdzheng@broadcom.com>, Linus Walleij <linus.walleij@stericsson.com>, linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Nicolas Pitre <nico@fluxnic.net>, Olof Johansson <olof@lixom.net>, Sascha Hauer <kernel@pengutronix.de>, Scott Branden <sbranden@broadcom.com>, STEricsson <STEricsson_nomadik_linux@lis>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <AANLkTimQSQ2GViH3VFj6Z+beuwRStPGJqzqMpxZkYjMo@mail.gmail.com>
+Content-language: ko
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Will Newton' <will.newton@gmail.com>, 'Wolfram Sang' <w.sang@pengutronix.de>
+Cc: linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, ben-linux@fluff.org, akpm@linux-foundation.org, cjb@laptop.org, 'Hyunsung Jang' <hs79.jang@samsung.com>, 'Hyuk Lee' <hyuk1.lee@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat, Jan 08, 2011 at 05:05:53PM +0800, Wan ZongShun wrote:
-> 2010/12/17 Russell King - ARM Linux <linux@arm.linux.org.uk>:
-> > Here is the entire set of clocksource and sched_clock patches which
-> > have been previously posted. =A0There's a couple of small tweaks in=
- a
-> > few of the patches (such as adding notrace to OMAP clocksource read
-> > functions), and this also shows the proper ordering of these patche=
-s.
+Will Newton wrote:
+> 
+> On Fri, Jan 7, 2011 at 11:51 AM, Wolfram Sang <w.sang@pengutronix.de>
+wrote:
 > >
-> > Still looking for acks or tested-by's for these patches.
+> >> The 'mshci.c' is based on 'linux/drivers/mmc/host/sdhci.c' and
+> >> the role is exactly same with that.
 > >
->=20
-> Acked-By: Wan Zongshun <mcuos.com@gmail.com>
+> > Can you sum up the differences why you cannot sdhci.c directly, please?
+> 
+> The driver looks like it is for the same block (or very close) to the
+> Synopsys DesignWare IP driver I submitted last month called dw_mmc. It
+> would be interesting to see if that driver might be a suitable
+> replacement.
 
-I'm afraid you're too late - it's already in mainline so your ack can't
-be added.
+Oops :-( 
+
+Mr. Jang and Mr. Lee didn't know that there was submitted driver which is
+for Synopsys DesignWare MMC controller. Of course me too.
+Actually, they surveyed when needed implementation that, but couldn't find
+any driver for it at that time...
+
+Anyway, Will's dw_mmc can replace this so we can drop this and we'll adopt
+and test it on our platform.
+
+Thanks and Happy New year!
+
+Best regards,
+Kgene.
 --
-To unsubscribe from this list: send the line "unsubscribe linux-arm-msm=
-" in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
