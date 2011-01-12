@@ -1,34 +1,60 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] TWD: enable one-shot mode
-Date: Tue, 11 Jan 2011 11:52:09 +0000
-Message-ID: <20110111115209.GA12781@n2100.arm.linux.org.uk>
-References: <20101224191855.GJ20587@n2100.arm.linux.org.uk> <4D2BE6C4.4040806@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4D2BE6C4.4040806@codeaurora.org>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Bryan Huntsman <bryanh@codeaurora.org>, Colin Cross <ccross@android.com>, Daniel Walker <dwalker@codeaurora.org>, David Brown <davidb@codeaurora.org>, Erik Gilling <konkers@android.com>, Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@stericsson.com>, Olof Johansson <olof@lixom.net>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Tony Lindgren <tony@atomide.com>, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH V2] spi: Enable SPI driver for S5P6440 and S5P6450
+Date: Wed, 12 Jan 2011 14:20:58 +0900
+Message-ID: <1294809658-13974-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:59476 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751276Ab1ALFrV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 12 Jan 2011 00:47:21 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net
+Cc: ben-linux@fluff.org, dbrownell@users.courceforge.net, grant.likely@secretlab.ca, Abhilash Kesavan <a.kesavan@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Jassi Brar <jassi.brar@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Mon, Jan 10, 2011 at 09:12:36PM -0800, Stephen Boyd wrote:
-> On 12/24/2010 11:18 AM, Russell King - ARM Linux wrote:
-> > Allow one shot timer mode to be used with the TWD.  This allows
-> > NOHZ mode to be used on SMP systems using the TWD localtimer.
-> >
-> > Tested on Versatile Express.
-> >
-> > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> > ---
-> > Acks/Tested-by's would be appreciated, thanks.
-> >
-> 
-> I see this patch was already tested and merged but can you elaborate on
-> why this was done? From what I understand, NOHZ selects one-shot (like
-> is done in this patch), so why don't the machines with a TWD choose NOHZ
-> or high res timers?
+From: Abhilash Kesavan <a.kesavan@samsung.com>
 
-You're right - so it's not actually required.  It should probably be
-reverted, though it does no damage...
+This patch enables the existing S3C64XX series SPI driver for S5P64X0
+and removed dependency on EXPERIMENTAL because we don't need it now.
+
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+Cc: Jassi Brar <jassi.brar@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+Changes since v1:
+- Removed dependency on EXPERIMENTAL
+
+Hi David and Grant,
+
+I missed that send to you when I have got this via Linux Samsung SoC mailing list.
+Hmm...I know, it's 38 merge winodw...so I'm not sure can be handled now.
+
+Anyway if any problems, please let me know.
+
+Thanks and Happy New year :)
+
+Best regards,
+Kgene.
+
+ drivers/spi/Kconfig |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 1906840..37aec5e 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -310,8 +310,8 @@ config SPI_S3C24XX_GPIO
+ 
+ config SPI_S3C64XX
+ 	tristate "Samsung S3C64XX series type SPI"
+-	depends on ARCH_S3C64XX && EXPERIMENTAL
+-	select S3C64XX_DMA
++	depends on (ARCH_S3C64XX || ARCH_S5P64X0)
++	select S3C64XX_DMA if !ARCH_S5P64X0
+ 	help
+ 	  SPI driver for Samsung S3C64XX and newer SoCs.
+ 
+-- 
+1.6.2.5
