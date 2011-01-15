@@ -1,71 +1,41 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH] TWD: enable one-shot mode
-Date: Fri, 14 Jan 2011 10:45:08 -0800
-Message-ID: <4D3099B4.40900@codeaurora.org>
-References: <20101224191855.GJ20587@n2100.arm.linux.org.uk> <4D2BE6C4.4040806@codeaurora.org> <20110111115209.GA12781@n2100.arm.linux.org.uk>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [GIT PULL] Samsung S5P for 2.6.38 merge window
+Date: Sat, 15 Jan 2011 13:29:55 +0000
+Message-ID: <20110115132955.GA15996@n2100.arm.linux.org.uk>
+References: <021901cbb2e2$ef4a0630$cdde1290$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <20110111115209.GA12781@n2100.arm.linux.org.uk>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Bryan Huntsman <bryanh@codeaurora.org>, Colin Cross <ccross@android.com>, Daniel Walker <dwalker@codeaurora.org>, David Brown <davidb@codeaurora.org>, Erik Gilling <konkers@android.com>, Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@stericsson.com>, Olof Johansson <olof@lixom.net>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Tony Lindgren <tony@atomide.com>, linux-tegra@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:52638 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752278Ab1AONaL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 15 Jan 2011 08:30:11 -0500
+Content-Disposition: inline
+In-Reply-To: <021901cbb2e2$ef4a0630$cdde1290$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On 01/11/2011 03:52 AM, Russell King - ARM Linux wrote:
-> On Mon, Jan 10, 2011 at 09:12:36PM -0800, Stephen Boyd wrote:
->>
->> I see this patch was already tested and merged but can you elaborate on
->> why this was done? From what I understand, NOHZ selects one-shot (like
->> is done in this patch), so why don't the machines with a TWD choose NOHZ
->> or high res timers?
->
-> You're right - so it's not actually required.  It should probably be
-> reverted, though it does no damage...
+On Thu, Jan 13, 2011 at 02:30:01PM +0900, Kukjin Kim wrote:
+> Hi Russell,
+> 
+> Please pull Samsung S5P updates from:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> for-rmk
+> 
+> These things are for 2.6.38.
 
-Now I'm wondering why there are other 'select TICK_ONESHOT' lines in
-arch/arm/Kconfig. Can we just remove them all? Otherwise it feels like
-we're making it confusing for others later on.
+This looks very large.  I really considered not merging this due to:
 
------>8---[cut here]----8<-----
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index e2f8011..7750a78 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -532,7 +532,6 @@ config ARCH_MMP
-        select CLKDEV_LOOKUP
-        select GENERIC_CLOCKEVENTS
-        select HAVE_SCHED_CLOCK
--       select TICK_ONESHOT
-        select PLAT_PXA
-        select SPARSE_IRQ
-        help
-@@ -613,7 +612,6 @@ config ARCH_PXA
-        select ARCH_REQUIRE_GPIOLIB
-        select GENERIC_CLOCKEVENTS
-        select HAVE_SCHED_CLOCK
--       select TICK_ONESHOT
-        select PLAT_PXA
-        select SPARSE_IRQ
-        help
-@@ -668,7 +666,6 @@ config ARCH_SA1100
-        select GENERIC_CLOCKEVENTS
-        select HAVE_CLK
-        select HAVE_SCHED_CLOCK
--       select TICK_ONESHOT
-        select ARCH_REQUIRE_GPIOLIB
-        help
-          Support for StrongARM 11x0 based boards.
-@@ -1300,7 +1297,6 @@ config HAVE_ARM_SCU
- config HAVE_ARM_TWD
-        bool
-        depends on SMP
--       select TICK_ONESHOT
-        help
-          This options enables support for the ARM timer and watchdog unit
+1. possibly conflicts with Lennert's irq_data conversion patches.
 
--- 
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+2. It's not right to push large quantities of code into mainline towards
+   the end of the merge window.  You should have everything prepared
+   that you want to send before the merge window opens.
 
+In future, please have your tree ready for merging *before* the merge
+window opens and aim to get the bulk in preferably before, at the latest
+during the first week.
