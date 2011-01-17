@@ -1,63 +1,72 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [GIT PULL] Samsung S5P for 2.6.38 merge window
-Date: Sat, 15 Jan 2011 13:44:16 +0000
-Message-ID: <20110115134416.GB15996@n2100.arm.linux.org.uk>
-References: <021901cbb2e2$ef4a0630$cdde1290$%kim@samsung.com> <20110115132955.GA15996@n2100.arm.linux.org.uk>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [GIT PULL] Samsung S5P for 2.6.38 merge window
+Date: Mon, 17 Jan 2011 09:54:03 +0900
+Message-ID: <038201cbb5e1$0bd664a0$23832de0$%kim@samsung.com>
+References: <021901cbb2e2$ef4a0630$cdde1290$%kim@samsung.com>
+ <20110115132955.GA15996@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:42393 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750839Ab1AONo1 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:20968 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751709Ab1AQAyJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 15 Jan 2011 08:44:27 -0500
-Content-Disposition: inline
-In-Reply-To: <20110115132955.GA15996@n2100.arm.linux.org.uk>
+	Sun, 16 Jan 2011 19:54:09 -0500
+Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LF500IIR6I8BC80@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 Jan 2011 09:54:08 +0900 (KST)
+Received: from DOKGENEKIM02 ([12.23.103.104])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LF500LI86I7J2@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 Jan 2011 09:54:08 +0900 (KST)
+In-reply-to: <20110115132955.GA15996@n2100.arm.linux.org.uk>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On Sat, Jan 15, 2011 at 01:29:55PM +0000, Russell King - ARM Linux wrote:
+Russell King - ARM Linux wrote:
+> 
 > On Thu, Jan 13, 2011 at 02:30:01PM +0900, Kukjin Kim wrote:
 > > Hi Russell,
-> > 
+> >
 > > Please pull Samsung S5P updates from:
-> > 
+> >
 > > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
 > > for-rmk
-> > 
+> >
 > > These things are for 2.6.38.
 > 
+Hi,
+
 > This looks very large.  I really considered not merging this due to:
 > 
 > 1. possibly conflicts with Lennert's irq_data conversion patches.
 > 
+Yeah, you're right, but its changes have been merged in my for-next and
+already merged in linux-next also long ago.
+
 > 2. It's not right to push large quantities of code into mainline towards
 >    the end of the merge window.  You should have everything prepared
 >    that you want to send before the merge window opens.
 > 
+I'm afraid that it's late and large stuff 'pull request'. But I asked about
+that...maybe you missed it. Anyway it's my mistake...sorry for it.
+
 > In future, please have your tree ready for merging *before* the merge
 > window opens and aim to get the bulk in preferably before, at the latest
 > during the first week.
 
-And... merging this kills off the ability to get a sane diffstat out
-of git for my devel-stable branch due to multiple common ancestors.
+Ok...I will always remember it.
 
-We'll see what Linus says on this - but there are three outcomes:
+Thanks a lot.
 
-1. Linus responds quickly, and wants his tree merged into mine before
-   he pulls (Linus isn't generally a fan of last minute cross-tree
-   merging.)
-
-2. Linus doesn't respond before the merge window closes, and I leave the
-   tree as is, which means no pull request being sent and therefore it
-   doesn't make mainline.
-
-3. Linus doesn't respond before the merge window closes, I decide to
-   drop your tree, and send a pull request which Linus actions.
-
-Realistically, it's (1) or (3).
-
-This is yet another reason to get your tree ready before the merge
-window opens.
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
