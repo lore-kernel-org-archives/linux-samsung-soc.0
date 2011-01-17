@@ -1,416 +1,303 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [RFC/PATCH v6 3/4] MFC: Add MFC 5.1 V4L2 driver
-Date: Mon, 17 Jan 2011 13:59:28 +0900
-Message-ID: <000301cbb603$54acd0c0$fe067240$%debski@samsung.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [RFC/PATCH v6 0/4] Multi Format Codec 5.1 driver for S5PC110 SoC
+Date: Mon, 17 Jan 2011 07:59:29 +0100
+Message-ID: <201101170759.29752.hverkuil@xs4all.nl>
 References: <1294417534-3856-1-git-send-email-k.debski@samsung.com>
- <1294417534-3856-4-git-send-email-k.debski@samsung.com>
- <008001cbb307$6f8cea00$4ea6be00$%han@samsung.com>
- <001d01cbb3bc$0be39980$23aacc80$%debski@samsung.com>
- <000b01cbb3cf$bbaed330$330c7990$%han@samsung.com>
- <001601cbb3d4$af238390$0d6a8ab0$%oh@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:17289 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752085Ab1AQE7h (ORCPT
+Received: from smtp-vbr5.xs4all.nl ([194.109.24.25]:2627 "EHLO
+	smtp-vbr5.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750761Ab1AQG7p (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 16 Jan 2011 23:59:37 -0500
-In-reply-to: <001601cbb3d4$af238390$0d6a8ab0$%oh@samsung.com>
-Content-language: en-gb
+	Mon, 17 Jan 2011 01:59:45 -0500
+In-Reply-To: <1294417534-3856-1-git-send-email-k.debski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jaeryul.oh@samsung.com, 'Jonghun Han' <jonghun.han@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Marek Szyprowski' <m.szyprowski@samsung.com>, pawel@osciak.com, kyungmin.park@samsung.com, kgene.kim@samsung.com
+To: Kamil Debski <k.debski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, pawel@osciak.com, kyungmin.park@samsung.com, jaeryul.oh@samsung.com, kgene.kim@samsung.com
 
-Hi,
+Hi Kamil,
 
-I don't see the need to do DQBUF on the source buffer that has the
-I-frame with changed resolution. I think that one could notify the 
-application by setting size=0 on the CAPTURE buffer. So the OUTPUT
-buffer would not be dequeued. It would be dequeued after it has
-been decoded. Do you think anything is wrong with this approach?
+I still need to review this carefully since this is the first codec driver.
+I had hoped to do this during the weekend, but I didn't manage it. I hope I
+can get to it on Friday.
 
-I really think that copying the source buffer contents is unnecessary.
+One thing I noticed: you aren't using the control framework in this driver.
+Please switch to that. From now on I will NACK any new driver that is not
+using that framework. I'm in the process of converting all existing drivers
+to it, and I don't want to have to fix new drivers as well :-)
 
-Best wishes,
---
-Kamil Debski
-Linux Platform Group
-Samsung Poland R&D Center
+Documentation is in Documentation/video4linux/v4l2-controls.txt.
 
-> -----Original Message-----
-> From: Jaeryul Oh [mailto:jaeryul.oh@samsung.com]
-> Sent: 14 January 2011 19:21
-> To: 'Jonghun Han'; 'Kamil Debski'; linux-media@vger.kernel.org; linux-
-> samsung-soc@vger.kernel.org
-> Cc: 'Marek Szyprowski'; pawel@osciak.com; kyungmin.park@samsung.com;
-> kgene.kim@samsung.com
-> Subject: RE: [RFC/PATCH v6 3/4] MFC: Add MFC 5.1 V4L2 driver
+Regards,
+
+	Hans
+
+On Friday, January 07, 2011 17:25:30 Kamil Debski wrote:
+> Hello,
 > 
-> I added my comments.
-> I guess that Kamil's way could be possible to run seq. of dynamic
-> resolution
-> change.
+> This is the sixth version of the MFC 5.1 driver, decoding part. The suggestions
+> and comments from the group members have been very helpful.
 > 
-> > -----Original Message-----
-> > From: Jonghun Han [mailto:jonghun.han@samsung.com]
-> > Sent: Friday, January 14, 2011 6:45 PM
-> > To: 'Kamil Debski'; linux-media@vger.kernel.org; linux-samsung-
-> > soc@vger.kernel.org
-> > Cc: 'Marek Szyprowski'; pawel@osciak.com; kyungmin.park@samsung.com;
-> > jaeryul.oh@samsung.com; kgene.kim@samsung.com
-> > Subject: RE: [RFC/PATCH v6 3/4] MFC: Add MFC 5.1 V4L2 driver
-> >
-> >
-> > Hi,
-> >
-> > I was confused the source and destination.
-> > I agree with you mostly.
-> >
-> > In my opinion, the way how to notify the resolution change is return
-> value
-> > of the DQBUF.
-> > But if we use DQBUF, there are some problem as below.
-> >
-> > DQBUF means that the buffer has been operated already and application
-> will
-> > have the buffer's right.
-> >
-> > Although application new QBUF destination buffers after changing
-> > destination(CAPTURE),
-> > driver cannot re-decode the I-frame which has the resolution change
-> > information
-> > because the I-frame has been dequeued already.
-> > If application re-QBUF the buffer, the buffer sequence will be out of
-> > order
-> > as below.
-> > Original: I -> B -> B .....
-> > Out of order: missed -> B -> B -> I .....
-> >
-> > How do you think about the following sequence.
-> >
-> > 1. getting the resolution change from the MFC H/W
-> >
-> > 2. copy the buffer to driver's internal memory.
-> >
-> > 3. send the result with DQBUF
-> >
-> > 4. changing destination buffers by application
-> >
-> > 5. QBUF for new destination buffers
-> >
-> > 6. in the first vb2_try_schedule
-> >   re-decode the driver's internal buffer instead of the B frame.
-> >
-> > 7. in the next vb2_try_schedule
-> >   decode the B frame in order.
-> >
-> > I also welcome your comments.
+> I would be grateful for your comments. Original cover letter ant detailed change
+> log has been attached below.
 > 
-> In the blocking sequence, blocking will be done in DQBUF.
->   1. QBUF done for I1 frame with hdr(first buf, res. chd)
->    : Copy I1 frame in the driver
->   2. DQBUF done for I1 frame
->   3. QBUF P2,P3,P4 frame, but it should NOT be DEQUED which means
->       Qbufed p2,p3,p4 is not executed
->    :  P4(third buf) -> P3(second buf) -> P2 frame(first buf)
->   4. While waiting for DEQUE about P2, copied I1 frame is executed for
-> INIT_CODEC
->   5. Copied I1 frame is runned FRAME_START after dst buffer is
-> reallocated
->       (5~9 in your seq.)
->   6. Queued P2 frame is executed, then DQBUF will be OK
+> Best regards,
+> Kamil Debski
 > 
-> >
-> > Best regards,
-> >
-> > > -----Original Message-----
-> > > From: Kamil Debski [mailto:k.debski@samsung.com]
-> > > Sent: Friday, January 14, 2011 4:24 PM
-> > > To: 'Jonghun Han'; linux-media@vger.kernel.org; linux-samsung-
-> > > soc@vger.kernel.org
-> > > Cc: Marek Szyprowski; pawel@osciak.com; kyungmin.park@samsung.com;
-> > > jaeryul.oh@samsung.com; kgene.kim@samsung.com
-> > > Subject: RE: [RFC/PATCH v6 3/4] MFC: Add MFC 5.1 V4L2 driver
-> > >
-> > > Hi,
-> > >
-> > > > -----Original Message-----
-> > > > From: Jonghun Han [mailto:jonghun.han@samsung.com]
-> > > >
-> > > > Hi,
-> > > >
-> > > > Kamil Debski wrote:
-> > > >
-> > > > <snip>
-> > > >
-> > > > > +/* Reqeust buffers */
-> > > > > +static int vidioc_reqbufs(struct file *file, void *priv,
-> > > > > +					  struct v4l2_requestbuffers
-> > > > *reqbufs)
-> > > > > +{
-> > > > > +	struct s5p_mfc_dev *dev = video_drvdata(file);
-> > > > > +	struct s5p_mfc_ctx *ctx = priv;
-> > > > > +	int ret = 0;
-> > > > > +	unsigned long flags;
-> > > > > +
-> > > > > +	mfc_debug_enter();
-> > > > > +	mfc_debug("Memory type: %d\n", reqbufs->memory);
-> > > > > +	if (reqbufs->memory != V4L2_MEMORY_MMAP) {
-> > > > > +		mfc_err("Only V4L2_MEMORY_MAP is supported.\n");
-> > > > > +		return -EINVAL;
-> > > > > +	}
-> > > > > +	if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
-> > > > > +		/* Can only request buffers after an instance has
-> been
-> > > > opened.*/
-> > > > > +		if (ctx->state == MFCINST_DEC_GOT_INST) {
-> > > > > +			/* Decoding */
-> > > > > +			if (ctx->output_state != QUEUE_FREE) {
-> > > > > +				mfc_err("Bufs have already been
-> > > > requested.\n");
-> > > > > +				return -EINVAL;
-> > > > > +			}
-> > > > > +			ret = vb2_reqbufs(&ctx->vq_src, reqbufs);
-> > > > > +			if (ret) {
-> > > > > +				mfc_err("vb2_reqbufs on output
-> > failed.\n");
-> > > > > +				return ret;
-> > > > > +			}
-> > > > > +			mfc_debug("vb2_reqbufs: %d\n", ret);
-> > > > > +			ctx->output_state = QUEUE_BUFS_REQUESTED;
-> > > > > +		}
-> > > > > +	} else if (reqbufs->type ==
-> > > > > V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
-> > > > > +		if (ctx->capture_state != QUEUE_FREE) {
-> > > > > +			mfc_err("Bufs have already been
-> requested.\n");
-> > > > > +			return -EINVAL;
-> > > > > +		}
-> > > > > +		ctx->capture_state = QUEUE_BUFS_REQUESTED;
-> > > > > +		ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
-> > > > > +		if (ret) {
-> > > > > +			mfc_err("vb2_reqbufs on capture failed.\n");
-> > > > > +			return ret;
-> > > > > +		}
-> > > > > +		if (reqbufs->count < ctx->dpb_count) {
-> > > > > +			mfc_err("Not enough buffers allocated.\n");
-> > > > > +			reqbufs->count = 0;
-> > > > > +			ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
-> > > > > +			return -ENOMEM;
-> > > > > +		}
-> > > > > +		ctx->total_dpb_count = reqbufs->count;
-> > > > > +		ret = s5p_mfc_alloc_dec_buffers(ctx);
-> > > > > +		if (ret) {
-> > > > > +			mfc_err("Failed to allocate decoding
-> > buffers.\n");
-> > > > > +			reqbufs->count = 0;
-> > > > > +			ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
-> > > > > +			return -ENOMEM;
-> > > > > +		}
-> > > > > +		if (ctx->dst_bufs_cnt == ctx->total_dpb_count) {
-> > > > > +			ctx->capture_state = QUEUE_BUFS_MMAPED;
-> > > > > +		} else {
-> > > > > +			mfc_err("Not all buffers passed to
-> > buf_init.\n");
-> > > > > +			reqbufs->count = 0;
-> > > > > +			ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
-> > > > > +			s5p_mfc_release_dec_buffers(ctx);
-> > > > > +			return -ENOMEM;
-> > > > > +		}
-> > > > > +		if (s5p_mfc_ctx_ready(ctx)) {
-> > > > > +			spin_lock_irqsave(&dev->condlock, flags);
-> > > > > +			set_bit(ctx->num, &dev->ctx_work_bits);
-> > > > > +			spin_unlock_irqrestore(&dev->condlock,
-> flags);
-> > > > > +		}
-> > > > > +		s5p_mfc_try_run(dev);
-> > > > > +		s5p_mfc_wait_for_done_ctx(ctx,
-> > > > > +
-> > > > > S5P_FIMV_R2H_CMD_INIT_BUFFERS_RET, 1);
-> > > > > +	}
-> > > > > +	mfc_debug_leave();
-> > > > > +	return ret;
-> > > > > +}
-> > > >
-> > > > I don't know how to handle the followings.
-> > > >
-> > > > So I suggest that in reqbufs->type == V4L2_BUF_TYPE_VIDEO_OUTPUT
-> case,
-> > > > how about return -EINVAL if reqbufs->count is bigger than 1.
-> > > >
-> > > > Because if reqbufs->count is bigger than 1, it is hard to handle
-> the
-> > > > encoded
-> > > > input stream.
-> > > >
-> > > > For example: Dynamic resolution change
-> > > > Dynamic resolution change means that resolution can be changed at
-> any
-> > > > I-frame with header on the fly during streaming.
-> > > >
-> > > > MFC H/W can detect it after getting decoding command from the
-> driver.
-> > > > If the dynamic resolution change is detected by MFC H/W,
-> > > > driver should let application know the fact to do the following
-> > > > Sequence 1
-> > > > by application.
-> > > >
-> > > > Sequence 1:
-> > > > streamoff -> munmap -> reqbufs(0) -> S_FMT(changed resolution) ->
-> > > > querybuf
-> > > > -> mmap -> re-QBUF with the I-frame -> STREAMON -> ...
-> > > >
-> > > > Why it is hard to handle the encoded input stream in multiple
-> input
-> > > > stream
-> > > > case is the following Sequence 2.
-> > > >
-> > > > Sequence 2:
-> > > > QBUF(0) -> QBUF(1: resolution changed I-frame) -> QBUF(2: already
-> > > > changed)
-> > > > -> QBUF(3: already changed) -> DQBUF(0) -> DQBUF(1): return fail
-> ->
+> * Changelog:
+> 
+> ==================
+>  Changes since v5
+> ==================
+> 
+> 1) Changes suggested by Hans Verkuil:
+> - small change in videodev2.h - corrected control offsets
+> - made the code more readable by simplifying if statements and using temporary
+>   pointers
+> - mfc_mutex is now included in s5p_mfc_dev structure
+> - after discussion with Peter Oh modification of fourcc defintions
+>  (replaced DX52 and DX53 with DX50)
+> 
+> 2) Changes suggested by JongHun Han:
+> - comsmetic changed of defines in regs-mfc5.h
+> - in buffers that have no width adn height, such as the buffer for compressed
+>   stream, those values are set to 0 instead of 1
+> - remove redundant pointer to MFC registers
+> - change name of the union in s5p_mfc_buf from paddr to cookie
+> - removed global variable (struct s5p_mfc_dev *dev) and moved to use video_drvdata
+> 
+> 3) Other changes:
+> - added check for values returned after parsing header - in rare circumstances MFC
+>   hw returned 0x0 as image size and this could cause problems
+> 
+> ==================
+>  Changes since v4
+> ==================
+> 
+> 1) Changes suggested by Kukjin Kim from:
+> - removed comment arch/arm/mach-s5pv210/include/mach/map.h
+> - changed device name to s5p-mfc (removed "5", MFC version number)
+>   also removed the version number from the name of MFC device file
+> - added GPL license to arch/arm/plat-s5p/dev-mfc.c
+> - removed unused include file from dev-mfc.c and unnecessary comments
+> 
+> 2) Cache handling improvement:
+> - changed cache handling to use dma_map_single and dma_unmap_single
+> 
+> ==================
+>  Changes since v3
+> ==================
+> 
+> 1) Update to the v6 videobuf2 API (here thanks go to Marek Szyprowski)
+> - s5p_mfc_buf_negotiate and s5p_mfc_buf_setup_plane functions
+> have been merged
+> - queue initialization has been adapted to the new API
+> - use of the allocator memops has been changed, now there are single
+> memops for all the allocator contexts
+> 
+> 2) Split of the s5p_mfc_try_run and s5p_mfc_handle_frame_int functions
+> - parts of the s5p_mfc_try_run function have been moved to separate
+> functions (s5p_mfc_get_new_ctx, s5p_mfc_run_dec_last_frames,
+> s5p_mfc_run_dec_frame, s5p_mfc_run_get_inst_no, s5p_mfc_run_return_inst
+> s5p_mfc_run_init_dec,s5p_mfc_run_init_dec_buffers)
+> - s5p_mfc_handle_frame_int has been split to the following functions:
+> s5p_mfc_handle_frame_all_extracted, s5p_mfc_handle_frame_new
+> and s5p_mfc_handle_frame to handle different cases
+> 
+> 3) Remove remaining magic numbers and tidy up comments
+> 
+> ==================
+>  Changes since v2
+> ==================
+> 
+> 1) Update to newest videobuf2 API
+> This is the major change from v2. The videobuf2 API will hopefully have no more
+> major API changes. Buffer initialization has been moved from buf_prepare
+> callback to buf_init to simplify the process. Locking mechanism has been
+> modified to the requirements of new videobuf2 version.
+> 2) Code cleanup
+> Removed more magic contants and replaced them with appropriate defines. Changed
+> code to use unlocked_ioctl instead of ioctl in v4l2 file ops.
+> 3) Allocators
+> All internal buffer allocations are done using the selected vb2 allocator,
+> instead of using CMA functions directly.
+> 
+> ==================
+>  Changes since v1
+> ==================
+> 
+> 1) Cleanup accoridng to Peter Oh suggestions on the mailing list (Thanks).
+> 
+> * Original cover letter:
+> 
+> ==============
+>  Introduction
+> ==============
+> 
+> The purpose of this RFC is to discuss the driver for a hw video codec
+> embedded in the new Samusng's SoCs. Multi Format Codec 5.0 is able to
+> handle video decoding of in a range of formats.
+> 
+> So far no hardware codec was supported in V4L2 and this would be the
+> first one. I guess there are more similar device that would benefit from
+> a V4L2 unified interface. I suggest a separate control class for codec
+> devices - V4L2_CTRL_CLASS_CODEC.
+> 
+> Internally the driver uses videobuf2 framework and CMA memory allocator.
+> I am aware that those have not yet been merged, but I wanted to start
+> discussion about the driver earlier so it could be merged sooner. The
+> driver posted here is the initial version, so I suppose it will require
+> more work.
+> 
+> ==================
+>  Device interface
+> ==================
+> 
+> The driver principle is based on the idea of memory-to-memory devices:
+> it provides a single video node and each opened file handle gets its own
+> private context with separate buffer queues. Each context consist of 2
+> buffer queues: OUTPUT (for source buffers, i.e. encoded video frames)
+> and CAPTURE (for destination buffers, i.e. decoded raw video frames).
+> The process of decoding video data from stream is a bit more complicated
+> than typical memory-to-memory processing, that's why the m2m framework
+> is not directly used (it is too limited for this case). The main reason
+> for this is the fact that the CAPTURE buffers can be dequeued in a
+> different order than they queued. The hw block decides which buffer has
+> been completely processed. This is due to the structure of most
+> compressed video streams - use of B frames causes that decoding and
+> display order may be different.
+> 
+> ==============================
+>  Decoding initialization path
+> ==============================
+> 
+> First the OUTPUT queue is initialized. With S_FMT the application
+> chooses which video format to decode and what size should be the input
+> buffer. Fourcc values have been defined for different codecs e.g.
+> V4L2_PIX_FMT_H264 for h264. Then the OUTPUT buffers are requested and
+> mmaped. The stream header frame is loaded into the first buffer, queued
+> and streaming is enabled. At this point the hardware is able to start
+> processing the stream header and afterwards it will have information
+> about the video dimensions and the size of the buffers with raw video
+> data.
+> 
+> The next step is setting up the CAPTURE queue and buffers. The width,
+> height, buffer size and minimum number of buffers can be read with G_FMT
+> call. The application can request more output buffer if necessary. After
+> requesting and mmaping buffers the device is ready to decode video
+> stream.
+> 
+> The stream frames (ES frames) are written to the OUTPUT buffers, and
+> decoded video frames can be read from the CAPTURE buffers. When no more
+> source frames are present a single buffer with bytesused set to 0 should
+> be queued. This will inform the driver that processing should be
+> finished and it can dequeue all video frames that are still left. The
+> number of such frames is dependent on the stream and its internal
+> structure (how many frames had to be kept as reference frames for
+> decoding, etc).
+> 
+> ===============
+>  Usage summary
+> ===============
+> 
+> This is a step by step summary of the video decoding (from user
+> application point of view, with 2 treads and blocking api):
+> 
+> 01. S_FMT(OUTPUT, V4L2_PIX_FMT_H264, ...)
+> 02. REQ_BUFS(OUTPUT, n)
+> 03. for i=1..n MMAP(OUTPUT, i)
+> 04. put stream header to buffer #1
+> 05. QBUF(OUTPUT, #1)
+> 06. STREAM_ON(OUTPUT)
+> 07. G_FMT(CAPTURE)
+> 08. REQ_BUFS(CAPTURE, m)
+> 09. for j=1..m MMAP(CAPTURE, j)
+> 10. for j=1..m QBUF(CAPTURE, #j)
+> 11. STREAM_ON(CAPTURE)
+> 
+> display thread:
+> 12. DQBUF(CAPTURE) -> got decoded video data in buffer #j
+> 13. display buffer #j
+> 14. QBUF(CAPTURE, #j)
+> 15. goto 12
+> 
+> parser thread:
+> 16. put next ES frame to buffer #i
+> 17. QBUF(OUTPUT, #i)
+> 18. DQBUF(OUTPUT) -> get next empty buffer #i 19. goto 16
+> 
 > ...
-> > > >
-> > > > Application cannot know the resolution change in the QBUF ioctl.
-> > > > Driver will return 0 at the QBUF because all parameters are fine.
-> > > > But after sending the decode command to MFC H/W, driver can know
-> that
-> > > > the
-> > > > I-frame needs to change resolution.
-> > > > In that case driver can return error at the DQBUF of the buffer.
-> > > >
-> > > > In the sequence 2, application can know the resolution change in
-> the
-> > > > DQBUF(1).
-> > > > So the application should re-QBUF the buffer 2, 3 after Sequence
-> 1.
-> > > > It is hard to re-control the buffers which are already queued in
-> the
-> > > > point
-> > > > of application.
-> > > > Because in the reqbufs(0) buffers will be freed.
-> > > > So application has to copy them to the temporary buffer to re-
-> QBUF
-> > > > after
-> > > > Sequence 1.
-> > > >
-> > > > How can we solve this case ?
-> > >
-> > > There are two buffer queues - the OUTPUT is the queue for the
-> compressed
-> > > source. I don't see the need to do anything with this queue when
-> > resolution
-> > > is changed.
-> > >
-> > > There could be 3 src buffers queued for example. Let's say the
-> first is
-> > an
-> > > I-frame
-> > > with changed resolution. This does not affect the following source
-> > buffers.
-> > > I
-> > > agree with you that it will have impact on the destination
-> (CAPTURE)
-> > > buffers.
-> > > The problem is how to notify the application that the resolution
-> has
-> > been
-> > > changed.
-> > >
-> > > After the application is notified by the driver that resolution has
-> been
-> > > changed it has to do the following:
-> > > 1. DQBUF all the remaining destination CAPTURE buffers (with old
-> > resolution)
-> > > 2. Do stream off on CAPUTRE
-> > > 3. unmap all the CAPTURE buffers
-> > > 4. REQBUFS(0) on CAPTURE
-> > > 5. G_FMT on CAPTURE to get the new resolution
-> > > 6. REQBUFS(n) on CAPTURE
-> > > 7. mmap the CAPTURE buffers
-> > > 8. QBUF all the new CAPTURE buffers
-> > > 9. Do stream on on CAPTURE
-> > >
-> > > As you can see, the OUTPUT queue has not been modified. All the 3
-> source
-> > > buffers
-> > > are still queued until after step 9 when the processing restarts.
-> > >
-> > > From the driver perspective it looks like this:
-> > > a) After it has received DISP_STATUS [5:4] != 0 it sends the
-> > > FRAME_START_REALLOC
-> > > command. Then it behave the same as if the stream was finished -
-> running
-> > > FRAME_START
-> > > and returning the remaining buffers. This is the step 1 for
-> application
-> > > described above.
-> > > b) When no more buffers are left (DISP_STATUS[2:0]= 3) it has to
-> notify
-> > the
-> > > application
-> > > that the resolution have changed. I will discuss how to do it
-> below.
-> > > c) The application was notified and completed steps 2-4, at this
-> time
-> > the
-> > > driver has to
-> > > reinitialize the stream. Here it will use the source buffer that
-> had
-> > > resolution change
-> > > again with command INIT_CODEC.
-> > > d) The instance is reinitialized, and new resolution is read from
-> MFC.
-> > The
-> > > application now
-> > > completes steps 5-9.
-> > > e) As destination (CAPTURE) buffers are now queued the driver
-> continues
-> > > decoding.
-> > > FRAME_START command is issued for the source buffer that had
-> resolution
-> > > change and it is
-> > > decoded. This is the place when this source buffer is marked as
-> done and
-> > it
-> > > can be dequeued
-> > > by the application.
-> > >
-> > > As you can see - there was no need to reinitialize the OUTPUT
-> queue.
-> > Only
-> > > CAPTURE, so there
-> > > is no need to restrict number of source (OUTPUT) buffers to 1.
-> > >
-> > > The question is how to notify the application. I think I could be
-> done
-> > same
-> > > as end of stream
-> > > notification - by returning a buffer with size equal to 0.
-> > > If the application knows that source stream has ended, and queued a
-> > source
-> > > buffer of size 0
-> > > to notify the driver - then a destination buffer of size 0 means
-> that
-> > > decoding is finished.
-> > > In case of resolution change the application still has source
-> buffers
-> > queued
-> > > and it receives
-> > > a destination buffer with size=0. Knowing this the application can
-> do
-> > the
-> > > resolution change
-> > > procedure.
-> > >
-> > > I welcome your comments.
-> > >
-> > > Best regards,
-> > > --
-> > > Kamil Debski
-> > > Linux Platform Group
-> > > Samsung Poland R&D Center
+> 
+> Similar usage sequence can be achieved with single threaded application
+> and non-blocking api with poll() call.
+> 
+> Branch with MFC, CMA and videobuf2 will be soon available at
+> http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/vb2-mfc-fimc
+> This tree is based on 2.6.37 rc4.
+> 
+> Please have a look at the code and the idea of how to introduce codec
+> devices to V4L2. Comments will be very much appreciated.
+> 
+> Patch summary:
+> 
+> 
+> 
+> Subject: [PATCH 0/4] *** SUBJECT HERE ***
+> 
+> *** BLURB HERE ***
+> 
+> Kamil Debski (4):
+>   Changes in include/linux/videodev2.h for MFC
+>   MFC: Add MFC 5.1 driver to plat-s5p and mach-s5pv210
+>   MFC: Add MFC 5.1 V4L2 driver
+>   s5pv210: Enable MFC on Goni
+> 
+>  arch/arm/mach-s5pv210/Kconfig                   |    1 +
+>  arch/arm/mach-s5pv210/clock.c                   |    6 +
+>  arch/arm/mach-s5pv210/include/mach/map.h        |    4 +
+>  arch/arm/mach-s5pv210/mach-goni.c               |    3 +-
+>  arch/arm/plat-s5p/Kconfig                       |    5 +
+>  arch/arm/plat-s5p/Makefile                      |    2 +-
+>  arch/arm/plat-s5p/dev-mfc.c                     |   49 +
+>  arch/arm/plat-samsung/include/plat/devs.h       |    2 +
+>  drivers/media/video/Kconfig                     |    8 +
+>  drivers/media/video/Makefile                    |    1 +
+>  drivers/media/video/s5p-mfc/Makefile            |    3 +
+>  drivers/media/video/s5p-mfc/regs-mfc5.h         |  335 ++++
+>  drivers/media/video/s5p-mfc/s5p_mfc.c           | 2072 +++++++++++++++++++++++
+>  drivers/media/video/s5p-mfc/s5p_mfc_common.h    |  224 +++
+>  drivers/media/video/s5p-mfc/s5p_mfc_ctrls.h     |  173 ++
+>  drivers/media/video/s5p-mfc/s5p_mfc_debug.h     |   47 +
+>  drivers/media/video/s5p-mfc/s5p_mfc_intr.c      |   92 +
+>  drivers/media/video/s5p-mfc/s5p_mfc_intr.h      |   26 +
+>  drivers/media/video/s5p-mfc/s5p_mfc_memory.h    |   43 +
+>  drivers/media/video/s5p-mfc/s5p_mfc_opr.c       |  885 ++++++++++
+>  drivers/media/video/s5p-mfc/s5p_mfc_opr.h       |  160 ++
+>  include/linux/videodev2.h                       |   45 +
+>  25 files changed, 4233 insertions(+), 3 deletions(-)
+>  create mode 100644 arch/arm/plat-s5p/dev-mfc.c
+>  create mode 100644 drivers/media/video/s5p-mfc/Makefile
+>  create mode 100644 drivers/media/video/s5p-mfc/regs-mfc5.h
+>  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc.c
+>  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_common.h
+>  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_ctrls.h
+>  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_debug.h
+>  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_intr.c
+>  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_intr.h
+>  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_memory.h
+>  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_opr.c
+>  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_opr.h
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+
+-- 
+Hans Verkuil - video4linux developer - sponsored by Cisco
