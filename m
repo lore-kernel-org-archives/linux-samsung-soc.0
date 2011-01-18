@@ -1,63 +1,99 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung S5P fixes
-Date: Tue, 18 Jan 2011 16:09:42 +0900
-Message-ID: <03f401cbb6de$b12a85a0$137f90e0$%kim@samsung.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: RE: [RFC/PATCH v6 3/4] MFC: Add MFC 5.1 V4L2 driver
+Date: Tue, 18 Jan 2011 19:08:31 +0900
+Message-ID: <000c01cbb6f7$ac7139f0$0553add0$%debski@samsung.com>
+References: <1294417534-3856-1-git-send-email-k.debski@samsung.com>
+ <1294417534-3856-4-git-send-email-k.debski@samsung.com>
+ <006a01cbb640$9f4b1050$dde130f0$%oh@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:40208 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751428Ab1ARHKB (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:34710 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753368Ab1ARKIl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jan 2011 02:10:01 -0500
-Content-language: ko
+	Tue, 18 Jan 2011 05:08:41 -0500
+In-reply-to: <006a01cbb640$9f4b1050$dde130f0$%oh@samsung.com>
+Content-language: en-gb
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Linus Torvalds' <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: jaeryul.oh@samsung.com, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, pawel@osciak.com, kyungmin.park@samsung.com, kgene.kim@samsung.com
 
-Hi Linus,
+Hi,
 
-Please pull Samsung fixes from:
+> From: Jaeryul Oh [mailto:jaeryul.oh@samsung.com]
+> 
+> Hi, Kamil
+> I have a comment about s5p_mfc_stop_streaming()function.
+> 
+> > -----Original Message-----
+> > From: linux-media-owner@vger.kernel.org [mailto:linux-media-
+> > owner@vger.kernel.org] On Behalf Of Kamil Debski
+> > Sent: Saturday, January 08, 2011 1:26 AM
+> > To: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org
+> > Cc: m.szyprowski@samsung.com; pawel@osciak.com;
+> kyungmin.park@samsung.com;
+> > k.debski@samsung.com; jaeryul.oh@samsung.com; kgene.kim@samsung.com
+> > Subject: [RFC/PATCH v6 3/4] MFC: Add MFC 5.1 V4L2 driver
+> >
+> > Multi Format Codec 5.1 is capable of handling a range of video codecs
+> > and this driver provides V4L2 interface for video decoding.
+> >
+> > Signed-off-by: Kamil Debski <k.debski@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-s5p-fixes-for-linus
+<snip>
 
-These things had build problem with sound tree so couldn't merge it.
-Its dependency has disappeared in mainline now so I'm requesting pull this.
-Of course, it would be nice to see your merging this in before -rc1 :-)
+> > +
+> > +/* Thou shalt stream no more. */
+> > +static int s5p_mfc_stop_streaming(struct vb2_queue *q)
+> > +{
+> > +	unsigned long flags;
+> > +	struct s5p_mfc_ctx *ctx = q->drv_priv;
+> > +	struct s5p_mfc_dev *dev = ctx->dev;
+> > +
+> > +	if ((ctx->state == MFCINST_DEC_FINISHING ||
+> > +		ctx->state ==  MFCINST_DEC_RUNNING) &&
+> > +		dev->curr_ctx == ctx->num && dev->hw_lock) {
+> > +		ctx->state = MFCINST_DEC_ABORT;
+> > +		s5p_mfc_wait_for_done_ctx(ctx,
+> > S5P_FIMV_R2H_CMD_FRAME_DONE_RET,
+> > +									0);
+> > +	}
+> > +	ctx->state = MFCINST_DEC_FINISHED;
+> > +	spin_lock_irqsave(&dev->irqlock, flags);
+> > +	s5p_mfc_error_cleanup_queue(&ctx->dst_queue,
+> > +	        &ctx->vq_dst);
+> > +	s5p_mfc_error_cleanup_queue(&ctx->src_queue,
+> > +	        &ctx->vq_src);
+> > +	if (q->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
+> > +		INIT_LIST_HEAD(&ctx->dst_queue);
+> > +	if (q->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+> > +		INIT_LIST_HEAD(&ctx->src_queue);
+> > +	spin_unlock_irqrestore(&dev->irqlock, flags);
+> > +	return 0;
+> > +}
+> This function is called by __vb2_queue_cancel().and
+> __vb2_queue_cancel()
+> can be
+> called by vb2_queue_release() or vb2_streamoff().
+> But, in this s5p_mfc_stop_streaming(),s5p_mfc_error_cleanup_queue() for
+> src/dst
+> is runned regardless of q->type. Is that right ?
+> and in case of streamoff, queued bufs should be removed, then qbuf is
+> needed
+> before streamon  again, so ctx->dst_queue_cnt = 0; ctx->src_queue_cnt =
+> 0;
+> is required
+> what do you think about this ?
+> 
 
-If any problems, please let me know.
+It has to be changed to support pause and dynamic resolution change.
 
-Thanks.
-
-Best regards,
-Kgene.
+Best wishes,
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-The following changes since commit e6f597a1425b5af64917be3448b29e2d5a585ac8:
-
- staging: fix build failure in bcm driver (2011-01-17 16:11:12 -0800)
-
-are available in the git repository at:
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-s5p-fixes-for-linus
-
-Jassi Brar (5):
-      ARM: S5P6442: Enable I2S device to work on SMDK6442
-      ARM: S5P6440: Add missing virtual ASoC DMA device
-      ARM: S5P6450: Add missing virtual ASoC DMA device
-      ARM: S5PV210: Add missing virtual ASoC DMA device
-      ARM: S5PV310: Add missing virtual ASoC DMA device
-
- arch/arm/mach-s5p6442/mach-smdk6442.c |    1 +
- arch/arm/mach-s5p64x0/mach-smdk6440.c |    1 +
- arch/arm/mach-s5p64x0/mach-smdk6450.c |    1 +
- arch/arm/mach-s5pv210/mach-smdkc110.c |    1 +
- arch/arm/mach-s5pv210/mach-smdkv210.c |    1 +
- arch/arm/mach-s5pv310/mach-smdkc210.c |    3 ++-
- arch/arm/mach-s5pv310/mach-smdkv310.c |    3 ++-
- 7 files changed, 9 insertions(+), 2 deletions(-)
+Kamil Debski
+Linux Platform Group
+Samsung Poland R&D Center
