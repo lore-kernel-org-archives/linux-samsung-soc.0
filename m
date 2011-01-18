@@ -1,99 +1,105 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [RFC/PATCH v6 3/4] MFC: Add MFC 5.1 V4L2 driver
-Date: Tue, 18 Jan 2011 19:08:31 +0900
-Message-ID: <000c01cbb6f7$ac7139f0$0553add0$%debski@samsung.com>
-References: <1294417534-3856-1-git-send-email-k.debski@samsung.com>
- <1294417534-3856-4-git-send-email-k.debski@samsung.com>
- <006a01cbb640$9f4b1050$dde130f0$%oh@samsung.com>
+From: Jeongtae Park <jtp.park@samsung.com>
+Subject: RE: [PATCH 0/1] v4l: videobuf2: Add DMA pool allocator
+Date: Tue, 18 Jan 2011 20:27:32 +0900
+Message-ID: <006a01cbb702$b5d62900$21827b00$%park@samsung.com>
+References: <1293684907-7272-1-git-send-email-jtp.park@samsung.com>
+ <008f01cbb65d$f4c33a40$de49aec0$%szyprowski@samsung.com>
+Reply-To: jtp.park@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=Windows-1252
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:34710 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753368Ab1ARKIl (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:52743 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751157Ab1ARL1k (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jan 2011 05:08:41 -0500
-In-reply-to: <006a01cbb640$9f4b1050$dde130f0$%oh@samsung.com>
-Content-language: en-gb
+	Tue, 18 Jan 2011 06:27:40 -0500
+In-reply-to: <008f01cbb65d$f4c33a40$de49aec0$%szyprowski@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jaeryul.oh@samsung.com, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, pawel@osciak.com, kyungmin.park@samsung.com, kgene.kim@samsung.com
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: k.debski@samsung.com, jaeryul.oh@samsung.com, jonghun.han@samsung.com, kgene.kim@samsung.com
 
 Hi,
 
-> From: Jaeryul Oh [mailto:jaeryul.oh@samsung.com]
+> -----Original Message-----
+> From: linux-media-owner@vger.kernel.org [mailto:linux-media-
+> owner@vger.kernel.org] On Behalf Of Marek Szyprowski
+> Sent: Tuesday, January 18, 2011 12:48 AM
+> To: 'Jeongtae Park'; linux-media@vger.kernel.org; linux-samsung-
+> soc@vger.kernel.org
+> Cc: k.debski@samsung.com; jaeryul.oh@samsung.com; jonghun.han@samsung.com;
+> kgene.kim@samsung.com
+> Subject: RE: [PATCH 0/1] v4l: videobuf2: Add DMA pool allocator
 > 
-> Hi, Kamil
-> I have a comment about s5p_mfc_stop_streaming()function.
+> Hello,
 > 
-> > -----Original Message-----
-> > From: linux-media-owner@vger.kernel.org [mailto:linux-media-
-> > owner@vger.kernel.org] On Behalf Of Kamil Debski
-> > Sent: Saturday, January 08, 2011 1:26 AM
-> > To: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org
-> > Cc: m.szyprowski@samsung.com; pawel@osciak.com;
-> kyungmin.park@samsung.com;
-> > k.debski@samsung.com; jaeryul.oh@samsung.com; kgene.kim@samsung.com
-> > Subject: [RFC/PATCH v6 3/4] MFC: Add MFC 5.1 V4L2 driver
+> On Thursday, December 30, 2010 5:55 AM Jeongtae Park wrote:
+> 
+> > The DMA pool allocator allocates a memory using dma_alloc_coherent(),
+> > creates a pool using generic allocator in the initialization.
+> > For every allocation requests, the allocator returns a part of its
+> > memory pool using generic allocator instead of new memory allocation.
 > >
-> > Multi Format Codec 5.1 is capable of handling a range of video codecs
-> > and this driver provides V4L2 interface for video decoding.
+> > This allocator used for devices have below limitations.
+> > - the start address should be aligned
+> > - the range of memory access limited to the offset from the start
+> >   address (= the allocation address should be existed in a
+> >   constant offset from the start address)
+> > - the allocation address should be aligned
 > >
-> > Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-
-<snip>
-
-> > +
-> > +/* Thou shalt stream no more. */
-> > +static int s5p_mfc_stop_streaming(struct vb2_queue *q)
-> > +{
-> > +	unsigned long flags;
-> > +	struct s5p_mfc_ctx *ctx = q->drv_priv;
-> > +	struct s5p_mfc_dev *dev = ctx->dev;
-> > +
-> > +	if ((ctx->state == MFCINST_DEC_FINISHING ||
-> > +		ctx->state ==  MFCINST_DEC_RUNNING) &&
-> > +		dev->curr_ctx == ctx->num && dev->hw_lock) {
-> > +		ctx->state = MFCINST_DEC_ABORT;
-> > +		s5p_mfc_wait_for_done_ctx(ctx,
-> > S5P_FIMV_R2H_CMD_FRAME_DONE_RET,
-> > +									0);
-> > +	}
-> > +	ctx->state = MFCINST_DEC_FINISHED;
-> > +	spin_lock_irqsave(&dev->irqlock, flags);
-> > +	s5p_mfc_error_cleanup_queue(&ctx->dst_queue,
-> > +	        &ctx->vq_dst);
-> > +	s5p_mfc_error_cleanup_queue(&ctx->src_queue,
-> > +	        &ctx->vq_src);
-> > +	if (q->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
-> > +		INIT_LIST_HEAD(&ctx->dst_queue);
-> > +	if (q->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
-> > +		INIT_LIST_HEAD(&ctx->src_queue);
-> > +	spin_unlock_irqrestore(&dev->irqlock, flags);
-> > +	return 0;
-> > +}
-> This function is called by __vb2_queue_cancel().and
-> __vb2_queue_cancel()
-> can be
-> called by vb2_queue_release() or vb2_streamoff().
-> But, in this s5p_mfc_stop_streaming(),s5p_mfc_error_cleanup_queue() for
-> src/dst
-> is runned regardless of q->type. Is that right ?
-> and in case of streamoff, queued bufs should be removed, then qbuf is
-> needed
-> before streamon  again, so ctx->dst_queue_cnt = 0; ctx->src_queue_cnt =
-> 0;
-> is required
-> what do you think about this ?
+> > I would be grateful for your comments.
+> >
+> > This patch series contains:
+> >
+> > [PATCH 1/1] v4l: videobuf2: Add DMA pool allocator
+> >
+> > Best regards,
+> > Jeongtae Park
+> >
+> > Patch summary:
+> >
+> > Jeongtae Park (1):
+> >       v4l: videobuf2: Add DMA pool allocator
+> >
+> >  drivers/media/video/Kconfig              |    7 +
+> >  drivers/media/video/Makefile             |    1 +
+> >  drivers/media/video/videobuf2-dma-pool.c |  310
+> ++++++++++++++++++++++++++++++
+> >  include/media/videobuf2-dma-pool.h       |   37 ++++
+> >  4 files changed, 355 insertions(+), 0 deletions(-)
+> >  create mode 100644 drivers/media/video/videobuf2-dma-pool.c
+> >  create mode 100644 include/media/videobuf2-dma-pool.h
 > 
+> The code looks nice but I have one suggestion. This dma-pool memory
+allocator
+> make sense only for a s5p-mfc driver. All other drivers can use dma-contig
+> vb2
+> allocator directly. For this reason I suggest to move this allocator
+directly
+> to drivers/media/video/s5p-mfc/ directory.
+>
 
-It has to be changed to support pause and dynamic resolution change.
+Is it not possible that there is the device with above limitations or
+constraints?
+If it's possible, the dma-pool allocator can be useful, but currently this
+allocator
+is useful only for a s5p-mfc.
+But, all other allocators of vb2 framework are drivers/media/video/
+directory.
+I'm not sure which position is right for dma-pool allocator.
 
-Best wishes,
---
-Kamil Debski
-Linux Platform Group
-Samsung Poland R&D Center
+Thanks for your comment.
+
+> Best regards
+> --
+> Marek Szyprowski
+> Samsung Poland R&D Center
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Best regards
