@@ -1,68 +1,63 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 0/1] v4l: videobuf2: Add DMA pool allocator
-Date: Mon, 17 Jan 2011 16:48:11 +0100
-Message-ID: <008f01cbb65d$f4c33a40$de49aec0$%szyprowski@samsung.com>
-References: <1293684907-7272-1-git-send-email-jtp.park@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung S5P fixes
+Date: Tue, 18 Jan 2011 16:09:42 +0900
+Message-ID: <03f401cbb6de$b12a85a0$137f90e0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:11085 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752040Ab1AQPsS (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:40208 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751428Ab1ARHKB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jan 2011 10:48:18 -0500
-In-reply-to: <1293684907-7272-1-git-send-email-jtp.park@samsung.com>
-Content-language: pl
+	Tue, 18 Jan 2011 02:10:01 -0500
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jeongtae Park' <jtp.park@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, jaeryul.oh@samsung.com, jonghun.han@samsung.com, kgene.kim@samsung.com
+To: 'Linus Torvalds' <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hello,
+Hi Linus,
 
-On Thursday, December 30, 2010 5:55 AM Jeongtae Park wrote:
+Please pull Samsung fixes from:
 
-> The DMA pool allocator allocates a memory using dma_alloc_coherent(),
-> creates a pool using generic allocator in the initialization.
-> For every allocation requests, the allocator returns a part of its
-> memory pool using generic allocator instead of new memory allocation.
-> 
-> This allocator used for devices have below limitations.
-> - the start address should be aligned
-> - the range of memory access limited to the offset from the start
->   address (= the allocation address should be existed in a
->   constant offset from the start address)
-> - the allocation address should be aligned
-> 
-> I would be grateful for your comments.
-> 
-> This patch series contains:
-> 
-> [PATCH 1/1] v4l: videobuf2: Add DMA pool allocator
-> 
-> Best regards,
-> Jeongtae Park
-> 
-> Patch summary:
-> 
-> Jeongtae Park (1):
->       v4l: videobuf2: Add DMA pool allocator
-> 
->  drivers/media/video/Kconfig              |    7 +
->  drivers/media/video/Makefile             |    1 +
->  drivers/media/video/videobuf2-dma-pool.c |  310 ++++++++++++++++++++++++++++++
->  include/media/videobuf2-dma-pool.h       |   37 ++++
->  4 files changed, 355 insertions(+), 0 deletions(-)
->  create mode 100644 drivers/media/video/videobuf2-dma-pool.c
->  create mode 100644 include/media/videobuf2-dma-pool.h
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+s5p-fixes-for-linus
 
-The code looks nice but I have one suggestion. This dma-pool memory allocator
-make sense only for a s5p-mfc driver. All other drivers can use dma-contig vb2
-allocator directly. For this reason I suggest to move this allocator directly
-to drivers/media/video/s5p-mfc/ directory.
+These things had build problem with sound tree so couldn't merge it.
+Its dependency has disappeared in mainline now so I'm requesting pull this.
+Of course, it would be nice to see your merging this in before -rc1 :-)
 
-Best regards
+If any problems, please let me know.
+
+Thanks.
+
+Best regards,
+Kgene.
 --
-Marek Szyprowski
-Samsung Poland R&D Center
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+The following changes since commit e6f597a1425b5af64917be3448b29e2d5a585ac8:
+
+ staging: fix build failure in bcm driver (2011-01-17 16:11:12 -0800)
+
+are available in the git repository at:
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+s5p-fixes-for-linus
+
+Jassi Brar (5):
+      ARM: S5P6442: Enable I2S device to work on SMDK6442
+      ARM: S5P6440: Add missing virtual ASoC DMA device
+      ARM: S5P6450: Add missing virtual ASoC DMA device
+      ARM: S5PV210: Add missing virtual ASoC DMA device
+      ARM: S5PV310: Add missing virtual ASoC DMA device
+
+ arch/arm/mach-s5p6442/mach-smdk6442.c |    1 +
+ arch/arm/mach-s5p64x0/mach-smdk6440.c |    1 +
+ arch/arm/mach-s5p64x0/mach-smdk6450.c |    1 +
+ arch/arm/mach-s5pv210/mach-smdkc110.c |    1 +
+ arch/arm/mach-s5pv210/mach-smdkv210.c |    1 +
+ arch/arm/mach-s5pv310/mach-smdkc210.c |    3 ++-
+ arch/arm/mach-s5pv310/mach-smdkv310.c |    3 ++-
+ 7 files changed, 9 insertions(+), 2 deletions(-)
