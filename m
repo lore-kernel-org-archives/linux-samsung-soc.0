@@ -1,105 +1,129 @@
-From: Jeongtae Park <jtp.park@samsung.com>
-Subject: RE: [PATCH 0/1] v4l: videobuf2: Add DMA pool allocator
-Date: Tue, 18 Jan 2011 20:27:32 +0900
-Message-ID: <006a01cbb702$b5d62900$21827b00$%park@samsung.com>
-References: <1293684907-7272-1-git-send-email-jtp.park@samsung.com>
- <008f01cbb65d$f4c33a40$de49aec0$%szyprowski@samsung.com>
-Reply-To: jtp.park@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=Windows-1252
-Content-Transfer-Encoding: 7BIT
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: [PATCH] ARM: mm: Regarding section when dealing with meminfo
+Date: Thu, 20 Jan 2011 18:45:39 +0900
+Message-ID: <1295516739-9839-1-git-send-email-pullip.cho@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:52743 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751157Ab1ARL1k (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:35346 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755317Ab1ATKEF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jan 2011 06:27:40 -0500
-In-reply-to: <008f01cbb65d$f4c33a40$de49aec0$%szyprowski@samsung.com>
-Content-language: ko
+	Thu, 20 Jan 2011 05:04:05 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, jaeryul.oh@samsung.com, jonghun.han@samsung.com, kgene.kim@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Ilho Lee <ilho215.lee@samsung.com>, KeyYoung Park <keyyoung.park@samsung.com>, KyongHo Cho <pullip.cho@samsung.com>
 
-Hi,
+Sparsemem allows that a bank of memory spans over several adjacent
+sections if the start address and the end address of the bank
+belong to different sections.
+When gathering statictics of physical memory in mem_init() and
+show_mem(), this possiblity was not considered.
 
-> -----Original Message-----
-> From: linux-media-owner@vger.kernel.org [mailto:linux-media-
-> owner@vger.kernel.org] On Behalf Of Marek Szyprowski
-> Sent: Tuesday, January 18, 2011 12:48 AM
-> To: 'Jeongtae Park'; linux-media@vger.kernel.org; linux-samsung-
-> soc@vger.kernel.org
-> Cc: k.debski@samsung.com; jaeryul.oh@samsung.com; jonghun.han@samsung.com;
-> kgene.kim@samsung.com
-> Subject: RE: [PATCH 0/1] v4l: videobuf2: Add DMA pool allocator
-> 
-> Hello,
-> 
-> On Thursday, December 30, 2010 5:55 AM Jeongtae Park wrote:
-> 
-> > The DMA pool allocator allocates a memory using dma_alloc_coherent(),
-> > creates a pool using generic allocator in the initialization.
-> > For every allocation requests, the allocator returns a part of its
-> > memory pool using generic allocator instead of new memory allocation.
-> >
-> > This allocator used for devices have below limitations.
-> > - the start address should be aligned
-> > - the range of memory access limited to the offset from the start
-> >   address (= the allocation address should be existed in a
-> >   constant offset from the start address)
-> > - the allocation address should be aligned
-> >
-> > I would be grateful for your comments.
-> >
-> > This patch series contains:
-> >
-> > [PATCH 1/1] v4l: videobuf2: Add DMA pool allocator
-> >
-> > Best regards,
-> > Jeongtae Park
-> >
-> > Patch summary:
-> >
-> > Jeongtae Park (1):
-> >       v4l: videobuf2: Add DMA pool allocator
-> >
-> >  drivers/media/video/Kconfig              |    7 +
-> >  drivers/media/video/Makefile             |    1 +
-> >  drivers/media/video/videobuf2-dma-pool.c |  310
-> ++++++++++++++++++++++++++++++
-> >  include/media/videobuf2-dma-pool.h       |   37 ++++
-> >  4 files changed, 355 insertions(+), 0 deletions(-)
-> >  create mode 100644 drivers/media/video/videobuf2-dma-pool.c
-> >  create mode 100644 include/media/videobuf2-dma-pool.h
-> 
-> The code looks nice but I have one suggestion. This dma-pool memory
-allocator
-> make sense only for a s5p-mfc driver. All other drivers can use dma-contig
-> vb2
-> allocator directly. For this reason I suggest to move this allocator
-directly
-> to drivers/media/video/s5p-mfc/ directory.
->
+This patch guarantees that simple increasing the pointer to page
+descriptors does not exceed the boundary of a section.
 
-Is it not possible that there is the device with above limitations or
-constraints?
-If it's possible, the dma-pool allocator can be useful, but currently this
-allocator
-is useful only for a s5p-mfc.
-But, all other allocators of vb2 framework are drivers/media/video/
-directory.
-I'm not sure which position is right for dma-pool allocator.
+Signed-off-by: KyongHo Cho <pullip.cho@samsung.com>
+---
+ arch/arm/mm/init.c |   74 +++++++++++++++++++++++++++++++++++----------------
+ 1 files changed, 51 insertions(+), 23 deletions(-)
 
-Thanks for your comment.
-
-> Best regards
-> --
-> Marek Szyprowski
-> Samsung Poland R&D Center
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-Best regards
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index 57c4c5c..6ccecbe 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -93,24 +93,38 @@ void show_mem(void)
+ 
+ 		pfn1 = bank_pfn_start(bank);
+ 		pfn2 = bank_pfn_end(bank);
+-
++#ifndef CONFIG_SPARSEMEM
+ 		page = pfn_to_page(pfn1);
+ 		end  = pfn_to_page(pfn2 - 1) + 1;
+-
++#else
++		pfn2--;
+ 		do {
+-			total++;
+-			if (PageReserved(page))
+-				reserved++;
+-			else if (PageSwapCache(page))
+-				cached++;
+-			else if (PageSlab(page))
+-				slab++;
+-			else if (!page_count(page))
+-				free++;
+-			else
+-				shared += page_count(page) - 1;
+-			page++;
+-		} while (page < end);
++			page = pfn_to_page(pfn1);
++			if (pfn_to_section_nr(pfn1) < pfn_to_section_nr(pfn2)) {
++				pfn1 += PAGES_PER_SECTION;
++				pfn1 &= PAGE_SECTION_MASK;
++			} else {
++				pfn1 = pfn2;
++			}
++			end = pfn_to_page(pfn1) + 1;
++#endif
++			do {
++				total++;
++				if (PageReserved(page))
++					reserved++;
++				else if (PageSwapCache(page))
++					cached++;
++				else if (PageSlab(page))
++					slab++;
++				else if (!page_count(page))
++					free++;
++				else
++					shared += page_count(page) - 1;
++				page++;
++			} while (page < end);
++#ifdef CONFIG_SPARSEMEM
++		} while (pfn1 < pfn2);
++#endif
+ 	}
+ 
+ 	printk("%d pages of RAM\n", total);
+@@ -470,17 +484,31 @@ void __init mem_init(void)
+ 
+ 		pfn1 = bank_pfn_start(bank);
+ 		pfn2 = bank_pfn_end(bank);
+-
++#ifndef CONFIG_SPARSEMEM
+ 		page = pfn_to_page(pfn1);
+ 		end  = pfn_to_page(pfn2 - 1) + 1;
+-
++#else
++		pfn2--;
+ 		do {
+-			if (PageReserved(page))
+-				reserved_pages++;
+-			else if (!page_count(page))
+-				free_pages++;
+-			page++;
+-		} while (page < end);
++			page = pfn_to_page(pfn1);
++			if (pfn_to_section_nr(pfn1) < pfn_to_section_nr(pfn2)) {
++				pfn1 += PAGES_PER_SECTION;
++				pfn1 &= PAGE_SECTION_MASK;
++			} else {
++				pfn1 = pfn2;
++			}
++			end = pfn_to_page(pfn1) + 1;
++#endif
++			do {
++				if (PageReserved(page))
++					reserved_pages++;
++				else if (!page_count(page))
++					free_pages++;
++				page++;
++			} while (page < end);
++#ifdef CONFIG_SPARSEMEM
++		} while (pfn1 < pfn2);
++#endif
+ 	}
+ 
+ 	/*
+-- 
+1.6.2.5
