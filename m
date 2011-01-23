@@ -1,52 +1,158 @@
-From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: Re: [PATCH] ARM: mm: Regarding section when dealing with meminfo
-Date: Fri, 21 Jan 2011 20:15:24 +0900
-Message-ID: <AANLkTi=8DnGVJ6j4rHv+bQoTK2UhgMysC95LuKjH-fBy@mail.gmail.com>
-References: <1295516739-9839-1-git-send-email-pullip.cho@samsung.com>
-	<1295544047.9039.609.camel@nimitz>
-	<20110120180146.GH6335@n2100.arm.linux.org.uk>
-	<AANLkTimsL8YfSdXCBpN2cNVpj8HeJF0f-A7MJQoie+Zm@mail.gmail.com>
-	<20110121103850.GI13235@n2100.arm.linux.org.uk>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [RFC/PATCH v6 1/4] Changes in include/linux/videodev2.h for MFC 5.1
+Date: Sun, 23 Jan 2011 18:28:23 +0100
+Message-ID: <201101231828.23723.hverkuil@xs4all.nl>
+References: <1294417534-3856-1-git-send-email-k.debski@samsung.com> <1294417534-3856-2-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:58796 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754301Ab1AULPZ convert rfc822-to-8bit (ORCPT
+Received: from smtp-vbr14.xs4all.nl ([194.109.24.34]:1361 "EHLO
+	smtp-vbr14.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751346Ab1AWR2o (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Jan 2011 06:15:25 -0500
-In-Reply-To: <20110121103850.GI13235@n2100.arm.linux.org.uk>
+	Sun, 23 Jan 2011 12:28:44 -0500
+In-Reply-To: <1294417534-3856-2-git-send-email-k.debski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Dave Hansen <dave@linux.vnet.ibm.com>, Kukjin Kim <kgene.kim@samsung.com>, KeyYoung Park <keyyoung.park@samsung.com>, linux-kernel@vger.kernel.org, Ilho Lee <ilho215.lee@samsung.com>, linux-mm@kvack.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Kamil Debski <k.debski@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, pawel@osciak.com, kyungmin.park@samsung.com, jaeryul.oh@samsung.com, kgene.kim@samsung.com
 
-On Fri, Jan 21, 2011 at 7:38 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Fri, Jan 21, 2011 at 11:12:27AM +0900, KyongHo Cho wrote:
->> Since the size of section is 256 mib and NR_BANKS is defined as 8,
->> no ARM system can have more RAM than 2GiB in the current implementat=
-ion.
->> If you want banks in meminfo not to cross sparsemem boundaries,
->> we need to find another way of physical memory specification in the =
-kernel.
->
-> There is no problem with increasing NR_BANKS.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
-I think it is not reasonable to split a contiguous physical memory
-into several chunks.
-9 banks are required to use 2 gib.
-Even though you think it is no problem,
-it becomes a problem when we want to give physical memory information
-via booting command line but atag
-because there is a restriction in number of characters in booting comma=
-nd line.
+Hi Kamil,
 
-I don't understand why larger bank size than the section size is proble=
-m.
+Here is a review of this patch. I didn't really look that closely at the others,
+other than noticing that they didn't use the control framework yet.
+
+The main issue really is lack of documentation. It's hard to review something if
+you don't know what a new define stands for.
+
+On Friday, January 07, 2011 17:25:31 Kamil Debski wrote:
+> This patch adds fourcc values for compressed video stream formats and
+> V4L2_CTRL_CLASS_CODEC. Also adds controls used by MFC 5.1 driver.
+> 
+> Signed-off-by: Kamil Debski <k.debski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  include/linux/videodev2.h |   45 +++++++++++++++++++++++++++++++++++++++++++++
+>  1 files changed, 45 insertions(+), 0 deletions(-)
+> 
+> diff --git a/include/linux/videodev2.h b/include/linux/videodev2.h
+> index d30c98d..b8952fc 100644
+> --- a/include/linux/videodev2.h
+> +++ b/include/linux/videodev2.h
+> @@ -339,6 +339,14 @@ struct v4l2_pix_format {
+>  #define V4L2_PIX_FMT_NV16    v4l2_fourcc('N', 'V', '1', '6') /* 16  Y/CbCr 4:2:2  */
+>  #define V4L2_PIX_FMT_NV61    v4l2_fourcc('N', 'V', '6', '1') /* 16  Y/CrCb 4:2:2  */
+>  
+> +/* two non contiguous planes -- one Y, one Cr + Cb interleaved  */
+> +#define V4L2_PIX_FMT_NV12M   v4l2_fourcc('N', 'M', '1', '2') /* 12  Y/CbCr 4:2:0  */
+> +/* 12  Y/CbCr 4:2:0 64x32 macroblocks */
+> +#define V4L2_PIX_FMT_NV12MT  v4l2_fourcc('T', 'M', '1', '2')
+> +
+> +/* three non contiguous planes -- Y, Cb, Cr */
+> +#define V4L2_PIX_FMT_YUV420M v4l2_fourcc('Y', 'M', '1', '2') /* 12  YUV420 planar */
+> +
+
+Don't forget to document these formats in the V4L2 spec.
+
+>  /* Bayer formats - see http://www.siliconimaging.com/RGB%20Bayer.htm */
+>  #define V4L2_PIX_FMT_SBGGR8  v4l2_fourcc('B', 'A', '8', '1') /*  8  BGBG.. GRGR.. */
+>  #define V4L2_PIX_FMT_SGBRG8  v4l2_fourcc('G', 'B', 'R', 'G') /*  8  GBGB.. RGRG.. */
+> @@ -362,6 +370,18 @@ struct v4l2_pix_format {
+>  #define V4L2_PIX_FMT_DV       v4l2_fourcc('d', 'v', 's', 'd') /* 1394          */
+>  #define V4L2_PIX_FMT_MPEG     v4l2_fourcc('M', 'P', 'E', 'G') /* MPEG-1/2/4    */
+>  
+> +#define V4L2_PIX_FMT_H264     v4l2_fourcc('H', '2', '6', '4') /* H264    */
+> +#define V4L2_PIX_FMT_H263     v4l2_fourcc('H', '2', '6', '3') /* H263    */
+> +#define V4L2_PIX_FMT_MPEG12   v4l2_fourcc('M', 'P', '1', '2') /* MPEG-1/2  */
+> +#define V4L2_PIX_FMT_MPEG4    v4l2_fourcc('M', 'P', 'G', '4') /* MPEG-4  */
+> +#define V4L2_PIX_FMT_DIVX     v4l2_fourcc('D', 'I', 'V', 'X') /* DivX  */
+> +#define V4L2_PIX_FMT_DIVX3    v4l2_fourcc('D', 'I', 'V', '3') /* DivX 3.11  */
+> +#define V4L2_PIX_FMT_DIVX4    v4l2_fourcc('D', 'I', 'V', '4') /* DivX 4.12  */
+> +#define V4L2_PIX_FMT_DIVX5    v4l2_fourcc('D', 'X', '5', '0') /* DivX 5  */
+> +#define V4L2_PIX_FMT_XVID     v4l2_fourcc('X', 'V', 'I', 'D') /* Xvid */
+> +#define V4L2_PIX_FMT_VC1      v4l2_fourcc('V', 'C', '1', 'A') /* VC-1 */
+> +#define V4L2_PIX_FMT_VC1_RCV      v4l2_fourcc('V', 'C', '1', 'R') /* VC-1 RCV */
+> +
+
+Ditto. Note: FMT_MPEG and FMT_MPEG12 and possibly FMT_MPEG4 seem to describe the
+same format. What's the difference? And do these formats describe raw video
+streams or program/transport streams? Can I just put in any old DivX file or
+does the hardware understand only a specific dialect or even a hardware-specific
+variation of the standard?
+
+Does the codec just go from compressed video to raw video? If it also goes in
+the other direction, how does one set bitrates, etc.?
+
+Does it accept multiplexed streams containing audio as well? If so, what does
+it do with the audio?
+
+>  /*  Vendor-specific formats   */
+>  #define V4L2_PIX_FMT_CPIA1    v4l2_fourcc('C', 'P', 'I', 'A') /* cpia1 YUV */
+>  #define V4L2_PIX_FMT_WNVA     v4l2_fourcc('W', 'N', 'V', 'A') /* Winnov hw compress */
+> @@ -972,6 +992,7 @@ struct v4l2_output {
+>  #define V4L2_OUTPUT_TYPE_ANALOG			2
+>  #define V4L2_OUTPUT_TYPE_ANALOGVGAOVERLAY	3
+>  
+> +
+>  /* capabilities flags */
+>  #define V4L2_OUT_CAP_PRESETS		0x00000001 /* Supports S_DV_PRESET */
+>  #define V4L2_OUT_CAP_CUSTOM_TIMINGS	0x00000002 /* Supports S_DV_TIMINGS */
+> @@ -1009,6 +1030,7 @@ struct v4l2_ext_controls {
+>  #define V4L2_CTRL_CLASS_MPEG 0x00990000	/* MPEG-compression controls */
+>  #define V4L2_CTRL_CLASS_CAMERA 0x009a0000	/* Camera class controls */
+>  #define V4L2_CTRL_CLASS_FM_TX 0x009b0000	/* FM Modulator control class */
+> +#define V4L2_CTRL_CLASS_CODEC 0x009c0000	/* Codec control class */
+>  
+>  #define V4L2_CTRL_ID_MASK      	  (0x0fffffff)
+>  #define V4L2_CTRL_ID2CLASS(id)    ((id) & 0x0fff0000UL)
+> @@ -1342,6 +1364,29 @@ enum v4l2_mpeg_cx2341x_video_median_filter_type {
+>  #define V4L2_CID_MPEG_CX2341X_VIDEO_CHROMA_MEDIAN_FILTER_TOP 	(V4L2_CID_MPEG_CX2341X_BASE+10)
+>  #define V4L2_CID_MPEG_CX2341X_STREAM_INSERT_NAV_PACKETS 	(V4L2_CID_MPEG_CX2341X_BASE+11)
+>  
+> +/* For codecs */
+> +
+> +#define V4L2_CID_CODEC_BASE 			(V4L2_CTRL_CLASS_CODEC | 0x900)
+> +#define V4L2_CID_CODEC_CLASS 			(V4L2_CTRL_CLASS_CODEC | 1)
+> +
+> +/* For both decoding and encoding */
+> +
+> +/* For encoding */
+> +#define V4L2_CID_CODEC_LOOP_FILTER_H264		(V4L2_CID_CODEC_BASE + 0)
+> +enum v4l2_cid_codec_loop_filter_h264 {
+> +	V4L2_CID_CODEC_LOOP_FILTER_H264_ENABLE = 0,
+> +	V4L2_CID_CODEC_LOOP_FILTER_H264_DISABLE = 1,
+> +	V4L2_CID_CODEC_LOOP_FILTER_H264_DISABLE_AT_BOUNDARY = 2,
+> +};
+> +
+> +/* For decoding */
+> +
+> +#define V4L2_CID_CODEC_LOOP_FILTER_MPEG4_ENABLE	(V4L2_CID_CODEC_BASE + 1)
+> +#define V4L2_CID_CODEC_DISPLAY_DELAY		(V4L2_CID_CODEC_BASE + 2)
+> +#define V4L2_CID_CODEC_REQ_NUM_BUFS		(V4L2_CID_CODEC_BASE + 3)
+> +#define V4L2_CID_CODEC_SLICE_INTERFACE		(V4L2_CID_CODEC_BASE + 4)
+> +#define V4L2_CID_CODEC_PACKED_PB		(V4L2_CID_CODEC_BASE + 5)
+> +
+
+This needs to be documented in the spec as well.
+
+It seems to me just looking at the names that these controls are highly
+hardware specific. If so, then these controls would have to be in the range
+of (V4L2_CTRL_CLASS_CODEC | 0x1000) and up and need the name of the chipset
+as part of their ID. Similar to the cx2341x specific controls (see
+V4L2_CID_MPEG_CX2341X_BASE in videodev2.h).
+
+Creating a CODEC control class seems sensible to me, so I'm fine with that.
+
+>  /*  Camera class control IDs */
+>  #define V4L2_CID_CAMERA_CLASS_BASE 	(V4L2_CTRL_CLASS_CAMERA | 0x900)
+>  #define V4L2_CID_CAMERA_CLASS 		(V4L2_CTRL_CLASS_CAMERA | 1)
+> 
+
+Regards,
+
+	Hans
+
+-- 
+Hans Verkuil - video4linux developer - sponsored by Cisco
