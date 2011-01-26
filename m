@@ -1,62 +1,48 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S5PV310: Add support for System MMU on SMDKV310
-Date: Tue, 25 Jan 2011 15:10:45 +0900
-Message-ID: <01db01cbbc56$9f6692a0$de33b7e0$%kim@samsung.com>
-References: <1295934945-29283-1-git-send-email-thomas.ab@samsung.com>
+From: Sylwester Nawrocki <snjw23@gmail.com>
+Subject: Re: [PATCH] ARM: S5PV210: Add GONI board setup for CIF camera support
+Date: Wed, 26 Jan 2011 21:52:55 +0900
+Message-ID: <4D401927.6040005@gmail.com>
+References: <1294419468-13700-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:38046 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751492Ab1AYGK4 (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:54432 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751680Ab1AZMxC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Jan 2011 01:10:56 -0500
-Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LFK00520EI5QI30@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 25 Jan 2011 15:10:53 +0900 (KST)
-Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LFK006KHEI56B@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 25 Jan 2011 15:10:53 +0900 (KST)
-In-reply-to: <1295934945-29283-1-git-send-email-thomas.ab@samsung.com>
-Content-language: ko
+	Wed, 26 Jan 2011 07:53:02 -0500
+Received: by pzk35 with SMTP id 35so52879pzk.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jan 2011 04:53:02 -0800 (PST)
+In-Reply-To: <1294419468-13700-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.ab@samsung.com>, linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com
 
-Thomas Abraham wrote:
-> 
-> This patch enables System MMU support on SMDKV310.
-> 
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> ---
->  arch/arm/mach-s5pv310/Kconfig |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s5pv310/Kconfig b/arch/arm/mach-s5pv310/Kconfig
-> index 09c4c21..b2a9acc 100644
-> --- a/arch/arm/mach-s5pv310/Kconfig
-> +++ b/arch/arm/mach-s5pv310/Kconfig
-> @@ -122,6 +122,7 @@ config MACH_SMDKV310
->  	select S3C_DEV_HSMMC2
->  	select S3C_DEV_HSMMC3
->  	select S5PV310_DEV_PD
-> +	select S5PV310_DEV_SYSMMU
->  	select S5PV310_SETUP_I2C1
->  	select S5PV310_SETUP_SDHCI
->  	help
-> --
-> 1.7.1
+Hello,
 
-Ok...applied.
+On 01/08/2011 01:57 AM, Sylwester Nawrocki wrote:
+> Hello,
+>
+> the following patch series introduces changes in GONI board setup file
+> required for the CIF camera sensor driver.
+> The first patch adds the I2C0 bus driver, the second one adds the regulator
+> supply definitions and the third one just increases virtual size
+> of the framebuffer window 0 for preview double buffering.
+>
+>
+> The patch series contains:
+>
+> [PATCH 1/3] ARM: S5PV210: Enable I2C0 bus on GONI board
+> [PATCH 2/3] ARM: S5PV210: Add supplies for CIF camera on GONI board
+> [PATCH 3/3] ARM: S5PV210: Change framebuffer window 0 size on GONI
+>
+> Created against kgene-for-next branch at:
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+>
 
-Thanks.
+Any comments about these patches?
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Regards,
+Sylwester
