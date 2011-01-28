@@ -1,28 +1,28 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/3] ARM: S5PV210: Enable I2C0 bus on GONI board
-Date: Fri, 28 Jan 2011 18:28:20 +0900
-Message-ID: <02e001cbbecd$b9aee0d0$2d0ca270$%kim@samsung.com>
+Subject: RE: [PATCH 2/3] ARM: S5PV210: Add supplies for CIF camera on GONI board
+Date: Fri, 28 Jan 2011 18:32:47 +0900
+Message-ID: <02e101cbbece$55a77790$00f666b0$%kim@samsung.com>
 References: <1294419468-13700-1-git-send-email-s.nawrocki@samsung.com>
- <1294419468-13700-2-git-send-email-s.nawrocki@samsung.com>
+ <1294419468-13700-3-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:12295 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:15229 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750869Ab1A1J2c (ORCPT
+	with ESMTP id S1750982Ab1A1Jcx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Jan 2011 04:28:32 -0500
-Received: from epmmp2 (mailout3.samsung.com [203.254.224.33])
+	Fri, 28 Jan 2011 04:32:53 -0500
+Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
  by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LFQ00AWS7NIF8D0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 28 Jan 2011 18:28:30 +0900 (KST)
+ 2010)) with ESMTP id <0LFQ00A7O7USF8E0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 28 Jan 2011 18:32:52 +0900 (KST)
 Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LFQ00HN47NI4U@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 28 Jan 2011 18:28:30 +0900 (KST)
-In-reply-to: <1294419468-13700-2-git-send-email-s.nawrocki@samsung.com>
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LFQ009067URVP@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 28 Jan 2011 18:32:52 +0900 (KST)
+In-reply-to: <1294419468-13700-3-git-send-email-s.nawrocki@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -31,62 +31,104 @@ Cc: ben-linux@fluff.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com
 
 Sylwester Nawrocki wrote:
 > 
-> Add I2C0 bus platform device for camera sensors.
+> Add regulator supplies required for NOON010PC30 CIF sensor.
 > 
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  arch/arm/mach-s5pv210/Kconfig     |    1 +
->  arch/arm/mach-s5pv210/mach-goni.c |    4 ++++
->  2 files changed, 5 insertions(+), 0 deletions(-)
+>  arch/arm/mach-s5pv210/mach-goni.c |   24 +++++++++++++++++++++---
+>  1 files changed, 21 insertions(+), 3 deletions(-)
 > 
-> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-> index 53aabef..b0aa462 100644
-> --- a/arch/arm/mach-s5pv210/Kconfig
-> +++ b/arch/arm/mach-s5pv210/Kconfig
-> @@ -75,6 +75,7 @@ config MACH_GONI
->  	bool "GONI"
->  	select CPU_S5PV210
->  	select S5P_GPIO_INT
-> +	select S3C_DEV_I2C0
-
-NO...Where is S3C_DEV_I2C0?
-Basically, platform device of i2c0 which is in
-arch/arm/plat-samsung/dev-i2c0.c is always selected.
-
->  	select S3C_DEV_FB
->  	select S5P_DEV_FIMC0
->  	select S5P_DEV_FIMC1
 > diff --git a/arch/arm/mach-s5pv210/mach-goni.c
 b/arch/arm/mach-s5pv210/mach-
 > goni.c
-> index e22d511..fc34575 100644
+> index fc34575..2051cee 100644
 > --- a/arch/arm/mach-s5pv210/mach-goni.c
 > +++ b/arch/arm/mach-s5pv210/mach-goni.c
-> @@ -800,6 +800,7 @@ static struct platform_device *goni_devices[]
-__initdata
-> = {
->  	&s5pv210_device_iis0,
->  	&s3c_device_usb_hsotg,
->  	&samsung_device_keypad,
-> +	&s3c_device_i2c0,
->  	&s3c_device_i2c1,
->  	&s3c_device_i2c2,
->  	&wm8994_fixed_voltage0,
-> @@ -827,6 +828,9 @@ static void __init goni_machine_init(void)
->  	/* Radio: call before I2C 1 registeration */
->  	goni_radio_init();
+> @@ -273,6 +273,18 @@ static struct regulator_consumer_supply
+> goni_ldo5_consumers[] = {
+>  	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
+>  };
 > 
-> +	/* I2C0 */
-> +	s3c_i2c0_set_platdata(NULL);
+> +static struct regulator_consumer_supply goni_ldo11_consumers[] = {
+> +	REGULATOR_SUPPLY("vddio", "0-0030"), /* "CAM_IO_2.8V" */
+> +};
+
+Need array in goni_ldo11_consumers?
+
++static struct regulator_consumer_supply goni_ldo11_consumers =
++	REGULATOR_SUPPLY("vddio", "0-0030"); /* "CAM_IO_2.8V" */
+
 > +
->  	/* I2C1 */
->  	s3c_i2c1_set_platdata(NULL);
->  	i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
+> +static struct regulator_consumer_supply goni_ldo13_consumers[] = {
+> +	REGULATOR_SUPPLY("vdda", "0-0030"), /* "CAM_A_2.8V" */
+> +};
+
+Same above.
+
+> +
+> +static struct regulator_consumer_supply goni_ldo14_consumers[] = {
+> +	REGULATOR_SUPPLY("vdd_core", "0-0030"), /* "CAM_CIF_1.8V" */
+> +};
+
+Same above.
+
+> +
+>  static struct regulator_init_data goni_ldo2_data = {
+>  	.constraints	= {
+>  		.name		= "VALIVE_1.1V",
+> @@ -371,8 +383,10 @@ static struct regulator_init_data goni_ldo11_data = {
+>  		.min_uV		= 2800000,
+>  		.max_uV		= 2800000,
+>  		.apply_uV	= 1,
+> -		.always_on	= 1,
+> +		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+>  	},
+> +	.num_consumer_supplies	= ARRAY_SIZE(goni_ldo11_consumers),
+> +	.consumer_supplies	= goni_ldo11_consumers,
+
+If you modify as per my suggestion, then need to change this like following.
+
++	.num_consumer_supplies	= 1,
++	.consumer_supplies	= &goni_ldo11_consumers,
+
+>  };
+> 
+>  static struct regulator_init_data goni_ldo12_data = {
+> @@ -391,8 +405,10 @@ static struct regulator_init_data goni_ldo13_data = {
+>  		.min_uV		= 2800000,
+>  		.max_uV		= 2800000,
+>  		.apply_uV	= 1,
+> -		.always_on	= 1,
+> +		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+>  	},
+> +	.num_consumer_supplies	= ARRAY_SIZE(goni_ldo13_consumers),
+> +	.consumer_supplies	= goni_ldo13_consumers,
+
+Same above.
+
+>  };
+> 
+>  static struct regulator_init_data goni_ldo14_data = {
+> @@ -401,8 +417,10 @@ static struct regulator_init_data goni_ldo14_data = {
+>  		.min_uV		= 1800000,
+>  		.max_uV		= 1800000,
+>  		.apply_uV	= 1,
+> -		.always_on	= 1,
+> +		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+>  	},
+> +	.num_consumer_supplies	= ARRAY_SIZE(goni_ldo14_consumers),
+> +	.consumer_supplies	= goni_ldo14_consumers,
+
+Same above.
+
+>  };
+> 
+>  static struct regulator_init_data goni_ldo15_data = {
 > --
 > 1.7.3.5
 
-Others, ok...please re-work this against on latest my for-next.
+If required array in there, please let me know.
 
 Thanks.
 
