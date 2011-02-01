@@ -1,176 +1,263 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: S5PV310: Cleanup System MMU
-Date: Tue,  1 Feb 2011 15:55:01 +0900
-Message-ID: <1296543301-25259-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 3/3] ARM: S5PC100: Clenaup map.h file
+Date: Tue,  1 Feb 2011 17:49:09 +0900
+Message-ID: <1296550149-19084-3-git-send-email-kgene.kim@samsung.com>
+References: <1296550149-19084-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:54331 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:52864 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751455Ab1BAHVj (ORCPT
+	with ESMTP id S1751752Ab1BAJQm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Feb 2011 02:21:39 -0500
+	Tue, 1 Feb 2011 04:16:42 -0500
+In-Reply-To: <1296550149-19084-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch cleans following up.
-- Moved definition of System MMU IPNUM into mach/sysmmu.h
-- Removed useless SYSMMU_DEBUG configuration
-- Removed useless header file plat/sysmmu.h
-
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv310/include/mach/map.h    |    2 --
- arch/arm/mach-s5pv310/include/mach/sysmmu.h |    5 ++++-
- arch/arm/plat-s5p/Kconfig                   |   24 ++++++++----------------
- arch/arm/plat-s5p/Makefile                  |    2 +-
- arch/arm/plat-s5p/include/plat/sysmmu.h     |   23 -----------------------
- arch/arm/plat-s5p/sysmmu.c                  |    4 +---
- 6 files changed, 14 insertions(+), 46 deletions(-)
- delete mode 100644 arch/arm/plat-s5p/include/plat/sysmmu.h
+ arch/arm/mach-s5pc100/include/mach/map.h |  193 +++++++++++++-----------------
+ 1 files changed, 83 insertions(+), 110 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv310/include/mach/map.h b/arch/arm/mach-s5pv310/include/mach/map.h
-index 74d4006..3060f78 100644
---- a/arch/arm/mach-s5pv310/include/mach/map.h
-+++ b/arch/arm/mach-s5pv310/include/mach/map.h
-@@ -124,8 +124,6 @@
- #define S5PV310_PA_SYSMMU_TV		0x12E20000
- #define S5PV310_PA_SYSMMU_MFC_L		0x13620000
- #define S5PV310_PA_SYSMMU_MFC_R		0x13630000
--#define S5PV310_SYSMMU_TOTAL_IPNUM	16
--#define S5P_SYSMMU_TOTAL_IPNUM		S5PV310_SYSMMU_TOTAL_IPNUM
+diff --git a/arch/arm/mach-s5pc100/include/mach/map.h b/arch/arm/mach-s5pc100/include/mach/map.h
+index 328467b..ccbe6b7 100644
+--- a/arch/arm/mach-s5pc100/include/mach/map.h
++++ b/arch/arm/mach-s5pc100/include/mach/map.h
+@@ -1,5 +1,8 @@
+ /* linux/arch/arm/mach-s5pc100/include/mach/map.h
+  *
++ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
+  * Copyright 2009 Samsung Electronics Co.
+  *	Byungho Min <bhmin@samsung.com>
+  *
+@@ -16,145 +19,115 @@
+ #include <plat/map-base.h>
+ #include <plat/map-s5p.h>
  
- /* compatibiltiy defines. */
- #define S3C_PA_UART			S5PV310_PA_UART
-diff --git a/arch/arm/mach-s5pv310/include/mach/sysmmu.h b/arch/arm/mach-s5pv310/include/mach/sysmmu.h
-index 662fe85..598fc5c 100644
---- a/arch/arm/mach-s5pv310/include/mach/sysmmu.h
-+++ b/arch/arm/mach-s5pv310/include/mach/sysmmu.h
-@@ -13,6 +13,9 @@
- #ifndef __ASM_ARM_ARCH_SYSMMU_H
- #define __ASM_ARM_ARCH_SYSMMU_H __FILE__
- 
-+#define S5PV310_SYSMMU_TOTAL_IPNUM	16
-+#define S5P_SYSMMU_TOTAL_IPNUM		S5PV310_SYSMMU_TOTAL_IPNUM
-+
- enum s5pv310_sysmmu_ips {
- 	SYSMMU_MDMA,
- 	SYSMMU_SSS,
-@@ -32,7 +35,7 @@ enum s5pv310_sysmmu_ips {
- 	SYSMMU_MFC_R,
- };
- 
--static char *sysmmu_ips_name[S5P_SYSMMU_TOTAL_IPNUM] = {
-+static char *sysmmu_ips_name[S5PV310_SYSMMU_TOTAL_IPNUM] = {
- 	"SYSMMU_MDMA"	,
- 	"SYSMMU_SSS"	,
- 	"SYSMMU_FIMC0"	,
-diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-index deb3995..557f8c5 100644
---- a/arch/arm/plat-s5p/Kconfig
-+++ b/arch/arm/plat-s5p/Kconfig
-@@ -37,6 +37,14 @@ config S5P_GPIO_INT
- 	help
- 	  Common code for the GPIO interrupts (other than external interrupts.)
- 
-+comment "System MMU"
-+
-+config S5P_SYSTEM_MMU
-+	bool "S5P SYSTEM MMU"
-+	depends on ARCH_S5PV310
-+	help
-+	  Say Y here if you want to enable System MMU
-+
- config S5P_DEV_FIMC0
- 	bool
- 	help
-@@ -66,19 +74,3 @@ config S5P_DEV_CSIS1
- 	bool
- 	help
- 	  Compile in platform device definitions for MIPI-CSIS channel 1
--
--menuconfig S5P_SYSMMU
--	bool "SYSMMU support"
--	depends on ARCH_S5PV310
--	help
--	  This is a System MMU driver for Samsung ARM based Soc.
--
--if S5P_SYSMMU
--
--config S5P_SYSMMU_DEBUG
--	bool "Enables debug messages"
--	depends on S5P_SYSMMU
--	help
--	  This enables SYSMMU driver debug massages.
--
--endif
-diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-index 92efe1a..4bd5cf9 100644
---- a/arch/arm/plat-s5p/Makefile
-+++ b/arch/arm/plat-s5p/Makefile
-@@ -19,6 +19,7 @@ obj-y				+= clock.o
- obj-y				+= irq.o
- obj-$(CONFIG_S5P_EXT_INT)	+= irq-eint.o
- obj-$(CONFIG_S5P_GPIO_INT)	+= irq-gpioint.o
-+obj-$(CONFIG_S5P_SYSTEM_MMU)	+= sysmmu.o
- obj-$(CONFIG_PM)		+= pm.o
- obj-$(CONFIG_PM)		+= irq-pm.o
- 
-@@ -30,4 +31,3 @@ obj-$(CONFIG_S5P_DEV_FIMC2)	+= dev-fimc2.o
- obj-$(CONFIG_S5P_DEV_ONENAND)	+= dev-onenand.o
- obj-$(CONFIG_S5P_DEV_CSIS0)	+= dev-csis0.o
- obj-$(CONFIG_S5P_DEV_CSIS1)	+= dev-csis1.o
--obj-$(CONFIG_S5P_SYSMMU)	+= sysmmu.o
-diff --git a/arch/arm/plat-s5p/include/plat/sysmmu.h b/arch/arm/plat-s5p/include/plat/sysmmu.h
-deleted file mode 100644
-index db298fc..0000000
---- a/arch/arm/plat-s5p/include/plat/sysmmu.h
-+++ /dev/null
-@@ -1,23 +0,0 @@
--/* linux/arch/arm/plat-s5p/include/plat/sysmmu.h
+-/*
+- * map-base.h has already defined virtual memory address
+- * S3C_VA_IRQ		S3C_ADDR(0x00000000)	irq controller(s)
+- * S3C_VA_SYS		S3C_ADDR(0x00100000)	system control
+- * S3C_VA_MEM		S3C_ADDR(0x00200000)	system control (not used)
+- * S3C_VA_TIMER		S3C_ADDR(0x00300000)	timer block
+- * S3C_VA_WATCHDOG	S3C_ADDR(0x00400000)	watchdog
+- * S3C_VA_UART		S3C_ADDR(0x01000000)	UART
 - *
-- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com/
+- * S5PC100 specific virtual memory address can be defined here
+- * S5PC1XX_VA_GPIO	S3C_ADDR(0x00500000)	GPIO
 - *
-- * Samsung sysmmu driver
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_PLAT_S5P_SYSMMU_H
--#define __ASM_PLAT_S5P_SYSMMU_H __FILE__
--
--/* debug macro */
--#ifdef CONFIG_S5P_SYSMMU_DEBUG
--#define sysmmu_debug(fmt, arg...)	printk(KERN_INFO "[%s] " fmt, __func__, ## arg)
--#else
--#define sysmmu_debug(fmt, arg...)	do { } while (0)
--#endif
--
--#endif /* __ASM_PLAT_S5P_SYSMMU_H */
-diff --git a/arch/arm/plat-s5p/sysmmu.c b/arch/arm/plat-s5p/sysmmu.c
-index d804914..ffe8a48 100644
---- a/arch/arm/plat-s5p/sysmmu.c
-+++ b/arch/arm/plat-s5p/sysmmu.c
-@@ -16,8 +16,6 @@
- #include <mach/regs-sysmmu.h>
- #include <mach/sysmmu.h>
+- */
++#define S5PC100_PA_SDRAM		0x20000000
++
++#define S5PC100_PA_ONENAND		0xE7100000
++#define S5PC100_PA_ONENAND_BUF		0xB0000000
++
++#define S5PC100_PA_CHIPID		0xE0000000
  
--#include <plat/sysmmu.h>
+-#define S5PC100_PA_ONENAND_BUF	(0xB0000000)
+-#define S5PC100_SZ_ONENAND_BUF	(SZ_256M - SZ_32M)
++#define S5PC100_PA_SYSCON		0xE0100000
+ 
+-/* Chip ID */
++#define S5PC100_PA_OTHERS		0xE0200000
+ 
+-#define S5PC100_PA_CHIPID	(0xE0000000)
+-#define S5P_PA_CHIPID		S5PC100_PA_CHIPID
++#define S5PC100_PA_GPIO			0xE0300000
+ 
+-#define S5PC100_PA_SYSCON	(0xE0100000)
+-#define S5P_PA_SYSCON		S5PC100_PA_SYSCON
++#define S5PC100_PA_VIC0			0xE4000000
++#define S5PC100_PA_VIC1			0xE4100000
++#define S5PC100_PA_VIC2			0xE4200000
+ 
+-#define S5PC100_PA_OTHERS	(0xE0200000)
+-#define S5PC100_VA_OTHERS	(S3C_VA_SYS + 0x10000)
++#define S5PC100_PA_SROMC		0xE7000000
+ 
+-#define S5PC100_PA_GPIO		(0xE0300000)
+-#define S5PC1XX_VA_GPIO		S3C_ADDR(0x00500000)
++#define S5PC100_PA_CFCON		0xE7800000
+ 
+-/* Interrupt */
+-#define S5PC100_PA_VIC0		(0xE4000000)
+-#define S5PC100_PA_VIC1		(0xE4100000)
+-#define S5PC100_PA_VIC2		(0xE4200000)
+-#define S5PC100_VA_VIC		S3C_VA_IRQ
+-#define S5PC100_VA_VIC_OFFSET	0x10000
+-#define S5PC1XX_VA_VIC(x)	(S5PC100_VA_VIC + ((x) * S5PC100_VA_VIC_OFFSET))
++#define S5PC100_PA_MDMA			0xE8100000
++#define S5PC100_PA_PDMA0		0xE9000000
++#define S5PC100_PA_PDMA1		0xE9200000
+ 
+-#define S5PC100_PA_SROMC	(0xE7000000)
+-#define S5P_PA_SROMC		S5PC100_PA_SROMC
++#define S5PC100_PA_TIMER		0xEA000000
++#define S5PC100_PA_SYSTIMER		0xEA100000
++#define S5PC100_PA_WATCHDOG		0xEA200000
++#define S5PC100_PA_RTC			0xEA300000
+ 
+-#define S5PC100_PA_ONENAND	(0xE7100000)
++#define S5PC100_PA_UART			0xEC000000
+ 
+-#define S5PC100_PA_CFCON	(0xE7800000)
++#define S5PC100_PA_IIC0			0xEC100000
++#define S5PC100_PA_IIC1			0xEC200000
+ 
+-/* DMA */
+-#define S5PC100_PA_MDMA		(0xE8100000)
+-#define S5PC100_PA_PDMA0	(0xE9000000)
+-#define S5PC100_PA_PDMA1	(0xE9200000)
++#define S5PC100_PA_SPI0			0xEC300000
++#define S5PC100_PA_SPI1			0xEC400000
++#define S5PC100_PA_SPI2			0xEC500000
+ 
+-/* Timer */
+-#define S5PC100_PA_TIMER	(0xEA000000)
+-#define S5P_PA_TIMER		S5PC100_PA_TIMER
++#define S5PC100_PA_USB_HSOTG		0xED200000
++#define S5PC100_PA_USB_HSPHY		0xED300000
+ 
+-#define S5PC100_PA_SYSTIMER	(0xEA100000)
++#define S5PC100_PA_HSMMC(x)		(0xED800000 + ((x) * 0x100000))
+ 
+-#define S5PC100_PA_WATCHDOG	(0xEA200000)
+-#define S5PC100_PA_RTC		(0xEA300000)
++#define S5PC100_PA_FB			0xEE000000
+ 
+-#define S5PC100_PA_UART		(0xEC000000)
++#define S5PC100_PA_FIMC0		0xEE200000
++#define S5PC100_PA_FIMC1		0xEE300000
++#define S5PC100_PA_FIMC2		0xEE400000
+ 
+-#define S5P_PA_UART0		(S5PC100_PA_UART + 0x0)
+-#define S5P_PA_UART1		(S5PC100_PA_UART + 0x400)
+-#define S5P_PA_UART2		(S5PC100_PA_UART + 0x800)
+-#define S5P_PA_UART3		(S5PC100_PA_UART + 0xC00)
+-#define S5P_SZ_UART		SZ_256
++#define S5PC100_PA_I2S0			0xF2000000
++#define S5PC100_PA_I2S1			0xF2100000
++#define S5PC100_PA_I2S2			0xF2200000
+ 
+-#define S5PC100_PA_IIC0		(0xEC100000)
+-#define S5PC100_PA_IIC1		(0xEC200000)
++#define S5PC100_PA_AC97			0xF2300000
+ 
+-/* SPI */
+-#define S5PC100_PA_SPI0		0xEC300000
+-#define S5PC100_PA_SPI1		0xEC400000
+-#define S5PC100_PA_SPI2		0xEC500000
++#define S5PC100_PA_PCM0			0xF2400000
++#define S5PC100_PA_PCM1			0xF2500000
+ 
+-/* USB HS OTG */
+-#define S5PC100_PA_USB_HSOTG	(0xED200000)
+-#define S5PC100_PA_USB_HSPHY	(0xED300000)
++#define S5PC100_PA_SPDIF		0xF2600000
+ 
+-#define S5PC100_PA_FB		(0xEE000000)
++#define S5PC100_PA_TSADC		0xF3000000
+ 
+-#define S5PC100_PA_FIMC0	(0xEE200000)
+-#define S5PC100_PA_FIMC1	(0xEE300000)
+-#define S5PC100_PA_FIMC2	(0xEE400000)
++#define S5PC100_PA_KEYPAD		0xF3100000
+ 
+-#define S5PC100_PA_I2S0		(0xF2000000)
+-#define S5PC100_PA_I2S1		(0xF2100000)
+-#define S5PC100_PA_I2S2		(0xF2200000)
++/* Compatibiltiy Defines */
+ 
+-#define S5PC100_PA_AC97		0xF2300000
++#define S3C_PA_FB			S5PC100_PA_FB
++#define S3C_PA_HSMMC0			S5PC100_PA_HSMMC(0)
++#define S3C_PA_HSMMC1			S5PC100_PA_HSMMC(1)
++#define S3C_PA_HSMMC2			S5PC100_PA_HSMMC(2)
++#define S3C_PA_IIC			S5PC100_PA_IIC0
++#define S3C_PA_IIC1			S5PC100_PA_IIC1
++#define S3C_PA_KEYPAD			S5PC100_PA_KEYPAD
++#define S3C_PA_ONENAND			S5PC100_PA_ONENAND
++#define S3C_PA_ONENAND_BUF		S5PC100_PA_ONENAND_BUF
++#define S3C_PA_RTC			S5PC100_PA_RTC
++#define S3C_PA_TSADC			S5PC100_PA_TSADC
++#define S3C_PA_USB_HSOTG		S5PC100_PA_USB_HSOTG
++#define S3C_PA_USB_HSPHY		S5PC100_PA_USB_HSPHY
++#define S3C_PA_WDT			S5PC100_PA_WATCHDOG
+ 
+-/* PCM */
+-#define S5PC100_PA_PCM0		0xF2400000
+-#define S5PC100_PA_PCM1		0xF2500000
++#define S5P_PA_CHIPID			S5PC100_PA_CHIPID
++#define S5P_PA_FIMC0			S5PC100_PA_FIMC0
++#define S5P_PA_FIMC1			S5PC100_PA_FIMC1
++#define S5P_PA_FIMC2			S5PC100_PA_FIMC2
++#define S5P_PA_SDRAM			S5PC100_PA_SDRAM
++#define S5P_PA_SROMC			S5PC100_PA_SROMC
++#define S5P_PA_SYSCON			S5PC100_PA_SYSCON
++#define S5P_PA_TIMER			S5PC100_PA_TIMER
+ 
+-#define S5PC100_PA_SPDIF	0xF2600000
++#define SAMSUNG_PA_ADC			S5PC100_PA_TSADC
++#define SAMSUNG_PA_CFCON		S5PC100_PA_CFCON
++#define SAMSUNG_PA_KEYPAD		S5PC100_PA_KEYPAD
+ 
+-#define S5PC100_PA_TSADC	(0xF3000000)
++#define S5PC100_VA_OTHERS		(S3C_VA_SYS + 0x10000)
+ 
+-/* KEYPAD */
+-#define S5PC100_PA_KEYPAD	(0xF3100000)
++#define S3C_SZ_ONENAND_BUF		(SZ_256M - SZ_32M)
+ 
+-#define S5PC100_PA_HSMMC(x)	(0xED800000 + ((x) * 0x100000))
++/* UART */
+ 
+-#define S5PC100_PA_SDRAM	(0x20000000)
+-#define S5P_PA_SDRAM		S5PC100_PA_SDRAM
++#define S3C_PA_UART			S5PC100_PA_UART
+ 
+-/* compatibiltiy defines. */
+-#define S3C_PA_UART		S5PC100_PA_UART
+-#define S3C_PA_IIC		S5PC100_PA_IIC0
+-#define S3C_PA_IIC1		S5PC100_PA_IIC1
+-#define S3C_PA_FB		S5PC100_PA_FB
+-#define S3C_PA_G2D		S5PC100_PA_G2D
+-#define S3C_PA_G3D		S5PC100_PA_G3D
+-#define S3C_PA_JPEG		S5PC100_PA_JPEG
+-#define S3C_PA_ROTATOR		S5PC100_PA_ROTATOR
+-#define S5P_VA_VIC0		S5PC1XX_VA_VIC(0)
+-#define S5P_VA_VIC1		S5PC1XX_VA_VIC(1)
+-#define S5P_VA_VIC2		S5PC1XX_VA_VIC(2)
+-#define S3C_PA_USB_HSOTG	S5PC100_PA_USB_HSOTG
+-#define S3C_PA_USB_HSPHY	S5PC100_PA_USB_HSPHY
+-#define S3C_PA_HSMMC0		S5PC100_PA_HSMMC(0)
+-#define S3C_PA_HSMMC1		S5PC100_PA_HSMMC(1)
+-#define S3C_PA_HSMMC2		S5PC100_PA_HSMMC(2)
+-#define S3C_PA_KEYPAD		S5PC100_PA_KEYPAD
+-#define S3C_PA_WDT		S5PC100_PA_WATCHDOG
+-#define S3C_PA_TSADC		S5PC100_PA_TSADC
+-#define S3C_PA_ONENAND		S5PC100_PA_ONENAND
+-#define S3C_PA_ONENAND_BUF	S5PC100_PA_ONENAND_BUF
+-#define S3C_SZ_ONENAND_BUF	S5PC100_SZ_ONENAND_BUF
+-#define S3C_PA_RTC		S5PC100_PA_RTC
 -
- struct sysmmu_controller s5p_sysmmu_cntlrs[S5P_SYSMMU_TOTAL_IPNUM];
+-#define SAMSUNG_PA_ADC		S5PC100_PA_TSADC
+-#define SAMSUNG_PA_CFCON	S5PC100_PA_CFCON
+-#define SAMSUNG_PA_KEYPAD	S5PC100_PA_KEYPAD
++#define S5P_PA_UART(x)			(S3C_PA_UART + ((x) * S3C_UART_OFFSET))
++#define S5P_PA_UART0			S5P_PA_UART(0)
++#define S5P_PA_UART1			S5P_PA_UART(1)
++#define S5P_PA_UART2			S5P_PA_UART(2)
++#define S5P_PA_UART3			S5P_PA_UART(3)
  
- void s5p_sysmmu_register(struct sysmmu_controller *sysmmuconp)
-@@ -123,7 +121,7 @@ static int s5p_sysmmu_set_tablebase(sysmmu_ips ips)
- 		: "=r" (pg) : : "cc");		\
- 		pg &= ~0x3fff;
+-#define S5P_PA_FIMC0		S5PC100_PA_FIMC0
+-#define S5P_PA_FIMC1		S5PC100_PA_FIMC1
+-#define S5P_PA_FIMC2		S5PC100_PA_FIMC2
++#define S5P_SZ_UART			SZ_256
  
--	sysmmu_debug("CP15 TTBR0 : 0x%x\n", pg);
-+	printk(KERN_INFO "%s: CP15 TTBR0 : 0x%x\n", __func__, pg);
- 
- 	/* Set sysmmu page table base address */
- 	__raw_writel(pg, sysmmuconp->regs + S5P_PT_BASE_ADDR);
+-#endif /* __ASM_ARCH_C100_MAP_H */
++#endif /* __ASM_ARCH_MAP_H */
 -- 
 1.7.1
