@@ -1,46 +1,31 @@
 From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: USB: Gadget: COMPOSITE: Debug interface number
-Date: Sat, 5 Feb 2011 09:39:28 +0900
-Message-ID: <AANLkTim0tw1-R8efq1Cir4v80rbZ_AbOemG=zV=NsKDF@mail.gmail.com>
-References: <AANLkTimhnJ1dVK8yMz2S7R7r86xYjRSpD=cEx_weh_J1@mail.gmail.com>
-	<20110204195822.GA30229@kroah.com>
+Subject: Re: [alsa-devel] [PATCH 1/7] ASoC: neo1973_wm8753: Remove scenario
+ management code.
+Date: Mon, 7 Feb 2011 11:25:17 +0900
+Message-ID: <AANLkTinOHBA9YHyt8s1PgiJoDNpiOw8EZywt5kwJwTx-@mail.gmail.com>
+References: <1297033463-14577-1-git-send-email-lars@metafoo.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:51616 "EHLO
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:58131 "EHLO
 	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751446Ab1BEAja convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1754293Ab1BGCZT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Feb 2011 19:39:30 -0500
-In-Reply-To: <20110204195822.GA30229@kroah.com>
+	Sun, 6 Feb 2011 21:25:19 -0500
+In-Reply-To: <1297033463-14577-1-git-send-email-lars@metafoo.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-usb@vger.kernel.org, david-b@pacbell.net, gregkh@suse.de, stern@rowland.harvard.edu, maulik@ti.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@slimlogic.co.uk>, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>
 
-On Sat, Feb 5, 2011 at 4:58 AM, Greg KH <greg@kroah.com> wrote:
-> On Fri, Feb 04, 2011 at 06:50:27PM +0900, Jassi Brar wrote:
->> Hi,
->>
->> The commit 'avoid access beyond array max length' incorrectly
->> compares w_index with MAX_CONFIG_INTERFACES. Whereas only
->> lower 8bits of w_index refer to the interface number.
->> So, use 'intf' rather than 'w_index' for comparison.
+On Mon, Feb 7, 2011 at 8:04 AM, Lars-Peter Clausen <lars@metafoo.de> wrote:
+> It has been proven to be inflexible to do scenario management in kernel space.
 >
-> Why did you attach the patch in base64 mode? =C2=A0Please fix your em=
-ail
-> client to not do this and send it to me in a format that I can apply =
-it
-> in.
+> Since actual neo1973 board support has not been merged in mainline and this
+> patch has been in the neo1973 tree for some time now it should be safe to remove
+> this functionality without breaking existing userspace.
 >
-> Try using 'git send-email' instead.
+> Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
 
-I always use git send-email, only this time the network connectivity is=
- down
-and immediate fix out of sight due to long holiday season here. So, I h=
-ad
-to send it as an attachment.
-Will resend next week by git send-email.
-
-Thanks
+All
+Acked-by: Jassi Brar <jassi.brar@samsung.com>
