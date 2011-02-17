@@ -1,104 +1,69 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [RFC 2/5] ARM: P2V: avoid initializers and assembly using
- PHYS_OFFSET
-Date: Thu, 17 Feb 2011 14:36:19 +0900
-Message-ID: <015d01cbce64$9dbf1bf0$d93d53d0$%kim@samsung.com>
-References: <20110104202052.GE24935@n2100.arm.linux.org.uk>
- <E1PaDOv-00023d-Gi@rmk-PC.arm.linux.org.uk>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 0/5] S5PC210/S5PV310/EXYNOS4 interrupts update
+Date: Thu, 17 Feb 2011 08:25:22 +0100
+Message-ID: <1297927527-1338-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:43522 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751300Ab1BQFg0 (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:16816 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751910Ab1BQHZk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Feb 2011 00:36:26 -0500
-In-reply-to: <E1PaDOv-00023d-Gi@rmk-PC.arm.linux.org.uk>
-Content-language: ko
+	Thu, 17 Feb 2011 02:25:40 -0500
+Received: from eu_spt1 ([210.118.77.13]) by mailout3.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0LGR00GZZ3APSU20@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 17 Feb 2011 07:25:37 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LGR0009Y3AO9I@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 17 Feb 2011 07:25:36 +0000 (GMT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Nicolas Pitre' <nico@fluxnic.net>
-Cc: 'David Brown' <davidb@codeaurora.org>, 'Daniel Walker' <dwalker@codeaurora.org>, 'Bryan Huntsman' <bryanh@codeaurora.org>, 'Amit Kucheria' <amit.kucheria@canonical.com>, 'Sascha Hauer' <kernel@pengutronix.de>, 'Eric Miao' <eric.y.miao@gmail.com>, "'Hans J. Koch'" <hjk@linutronix.de>, linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
 
-Russell King - ARM Linux wrote:
-> 
-> As PHYS_OFFSET will be becoming a variable, we can't have it used in
-> initializers nor assembly code.  Replace those in generic code with
-> a run-time initialization.  Replace those in platform code using the
-> individual platform specific PLAT_PHYS_OFFSET.
-> 
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> ---
->  arch/arm/kernel/setup.c                  |    4 +++-
->  arch/arm/mach-msm/board-msm7x27.c        |    8 ++++----
->  arch/arm/mach-msm/board-msm7x30.c        |    6 +++---
->  arch/arm/mach-msm/board-qsd8x50.c        |    4 ++--
->  arch/arm/mach-msm/board-sapphire.c       |    2 +-
->  arch/arm/mach-mx5/board-cpuimx51.c       |    2 +-
->  arch/arm/mach-mx5/board-cpuimx51sd.c     |    2 +-
->  arch/arm/mach-mx5/board-mx51_3ds.c       |    2 +-
->  arch/arm/mach-pxa/balloon3.c             |    2 +-
->  arch/arm/mach-realview/realview_eb.c     |    2 +-
->  arch/arm/mach-realview/realview_pb1176.c |    2 +-
->  arch/arm/mach-realview/realview_pb11mp.c |    2 +-
->  arch/arm/mach-realview/realview_pba8.c   |    2 +-
->  arch/arm/mach-realview/realview_pbx.c    |    2 +-
->  arch/arm/mach-s5pv210/sleep.S            |    2 +-
->  arch/arm/mach-tcc8k/board-tcc8000-sdk.c  |    2 +-
->  arch/arm/mach-vexpress/ct-ca9x4.c        |    2 +-
->  17 files changed, 25 insertions(+), 23 deletions(-)
-> 
-> diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-> index 3455ad3..f67e682 100644
-> --- a/arch/arm/kernel/setup.c
-> +++ b/arch/arm/kernel/setup.c
-> @@ -705,7 +705,7 @@ static struct init_tags {
->  	{ tag_size(tag_core), ATAG_CORE },
->  	{ 1, PAGE_SIZE, 0xff },
->  	{ tag_size(tag_mem32), ATAG_MEM },
-> -	{ MEM_SIZE, PHYS_OFFSET },
-> +	{ MEM_SIZE },
->  	{ 0, ATAG_NONE }
->  };
-> 
-> @@ -804,6 +804,8 @@ void __init setup_arch(char **cmdline_p)
->  	struct machine_desc *mdesc;
->  	char *from = default_command_line;
-> 
-> +	tags->mem.start = PHYS_OFFSET;
-> +
->  	unwind_init();
-> 
->  	setup_processor();
+Hello,
 
-(snip)
+This patch series perform an update on interrupts support for
+S5PC210/S5PV310/EXYNOS4 platform. Two optional features have been added.
+The first one is GPIO interrupts handler, a second is support for board
+specific interrupts. The patches have been prepared to maximise the code
+reuse, so common code for gpio interrupts for s5pc100, s5pc110 & s5pc210
+have been prepared.
 
-> diff --git a/arch/arm/mach-s5pv210/sleep.S b/arch/arm/mach-s5pv210/sleep.S
-> index d4d222b..2737622 100644
-> --- a/arch/arm/mach-s5pv210/sleep.S
-> +++ b/arch/arm/mach-s5pv210/sleep.S
-> @@ -65,7 +65,7 @@ resume_with_mmu:
->  	/*
->  	 * After MMU is turned on, restore the previous MMU table.
->  	 */
-> -	ldr	r9 , =(PAGE_OFFSET - PHYS_OFFSET)
-> +	ldr	r9 , =(PAGE_OFFSET - PLAT_PHYS_OFFSET)
->  	add	r4, r4, r9
->  	str	r12, [r4]
-> 
+The patches have been prepared against
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+for-next branch (commit 857ddb87db).
 
-(snip)
+Patches that make use of these 2 optional features for universal c210
+board will follow soon.
 
-> --
-> 1.6.2.5
-
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-
-Thanks.
-
-Best regards,
-Kgene.
+Best regards
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Marek Szyprowski
+Samsung Poland R&D Center
+
+
+
+Patch summary:
+
+Marek Szyprowski (5):
+  ARM: S5PV310: Add missing GPYx banks.
+  ARM: Samsung: cleanup S5P gpio interrupt code
+  ARM: Samsung: add function to register gpio interrupt bank data
+  ARM: S5PC210: add support for gpio interrupts
+  ARM: S5PC210: add a placeholder for board specific interrupts
+
+ arch/arm/mach-s5pc100/gpiolib.c               |    1 +
+ arch/arm/mach-s5pv210/gpiolib.c               |    1 +
+ arch/arm/mach-s5pv310/gpiolib.c               |   67 ++++++++++-
+ arch/arm/mach-s5pv310/include/mach/gpio.h     |   23 ++++-
+ arch/arm/mach-s5pv310/include/mach/irqs.h     |   16 ++-
+ arch/arm/plat-s5p/irq-gpioint.c               |  169 +++++++++++++++----------
+ arch/arm/plat-samsung/include/plat/gpio-cfg.h |   16 +++
+ 7 files changed, 220 insertions(+), 73 deletions(-)
+
+-- 
+1.7.1.569.g6f426
