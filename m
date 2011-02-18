@@ -1,114 +1,54 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH for 2.6.38] ARM: S5PC110: fix regulator names
-Date: Fri, 18 Feb 2011 18:18:53 +0900
-Message-ID: <020e01cbcf4c$df2af670$9d80e350$%kim@samsung.com>
-References: <1297760487-7930-1-git-send-email-m.szyprowski@samsung.com>
+Subject: RE: [PATCH RE-SEND] s3c-fb: Add support S5PV310 FIMD
+Date: Fri, 18 Feb 2011 18:38:30 +0900
+Message-ID: <021001cbcf4f$9c1551c0$d43ff540$%kim@samsung.com>
+References: <1294128333-28736-1-git-send-email-kgene.kim@samsung.com>
+ <001b01cbabf6$c62180a0$526481e0$%dae@samsung.com>
+ <00db01cbad61$4a308d80$de91a880$%kim@samsung.com>
+ <4D25666C.4060102@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:59563 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757906Ab1BRJTA (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:65036 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752046Ab1BRJig (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Feb 2011 04:19:00 -0500
-Received: from epmmp2 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LGT00IQ237MWOB0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 18 Feb 2011 18:18:58 +0900 (KST)
-Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LGT00D6M37MKE@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 18 Feb 2011 18:18:58 +0900 (KST)
-In-reply-to: <1297760487-7930-1-git-send-email-m.szyprowski@samsung.com>
+	Fri, 18 Feb 2011 04:38:36 -0500
+In-reply-to: <4D25666C.4060102@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com
+To: 'daeinki' <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, ben-linux@fluff.org, akpm@linux-foundation.org, lethal@linux-sh.org, 'Jonghun Han' <jonghun.han@samsung.com>, 'Sangbeom Kim' <sbkim73@samsung.com>
 
-Marek Szyprowski wrote:
+daeinki wrote:
 > 
-> Since commit 1130e5b3ff4 regulators are exported to debugfs. The names
-> of the regulators that contains slash ('/') causes an ops during kernel
-> boot. This patch fixes this issue.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/mach-s5pv210/mach-aquila.c |    6 +++---
->  arch/arm/mach-s5pv210/mach-goni.c   |    6 +++---
->  2 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s5pv210/mach-aquila.c b/arch/arm/mach-
-> s5pv210/mach-aquila.c
-> index 1236e19..557add4 100644
-> --- a/arch/arm/mach-s5pv210/mach-aquila.c
-> +++ b/arch/arm/mach-s5pv210/mach-aquila.c
-> @@ -149,7 +149,7 @@ static struct regulator_init_data aquila_ldo2_data = {
-> 
->  static struct regulator_init_data aquila_ldo3_data = {
->  	.constraints	= {
-> -		.name		= "VUSB/MIPI_1.1V",
-> +		.name		= "VUSB+MIPI_1.1V",
->  		.min_uV		= 1100000,
->  		.max_uV		= 1100000,
->  		.apply_uV	= 1,
-> @@ -197,7 +197,7 @@ static struct regulator_init_data aquila_ldo7_data = {
-> 
->  static struct regulator_init_data aquila_ldo8_data = {
->  	.constraints	= {
-> -		.name		= "VUSB/VADC_3.3V",
-> +		.name		= "VUSB+VADC_3.3V",
->  		.min_uV		= 3300000,
->  		.max_uV		= 3300000,
->  		.apply_uV	= 1,
-> @@ -207,7 +207,7 @@ static struct regulator_init_data aquila_ldo8_data = {
-> 
->  static struct regulator_init_data aquila_ldo9_data = {
->  	.constraints	= {
-> -		.name		= "VCC/VCAM_2.8V",
-> +		.name		= "VCC+VCAM_2.8V",
->  		.min_uV		= 2800000,
->  		.max_uV		= 2800000,
->  		.apply_uV	= 1,
-> diff --git a/arch/arm/mach-s5pv210/mach-goni.c
-b/arch/arm/mach-s5pv210/mach-
-> goni.c
-> index 2beeb66..056f5c7 100644
-> --- a/arch/arm/mach-s5pv210/mach-goni.c
-> +++ b/arch/arm/mach-s5pv210/mach-goni.c
-> @@ -288,7 +288,7 @@ static struct regulator_init_data goni_ldo2_data = {
-> 
->  static struct regulator_init_data goni_ldo3_data = {
->  	.constraints	= {
-> -		.name		= "VUSB/MIPI_1.1V",
-> +		.name		= "VUSB+MIPI_1.1V",
->  		.min_uV		= 1100000,
->  		.max_uV		= 1100000,
->  		.apply_uV	= 1,
-> @@ -337,7 +337,7 @@ static struct regulator_init_data goni_ldo7_data = {
-> 
->  static struct regulator_init_data goni_ldo8_data = {
->  	.constraints	= {
-> -		.name		= "VUSB/VADC_3.3V",
-> +		.name		= "VUSB+VADC_3.3V",
->  		.min_uV		= 3300000,
->  		.max_uV		= 3300000,
->  		.apply_uV	= 1,
-> @@ -347,7 +347,7 @@ static struct regulator_init_data goni_ldo8_data = {
-> 
->  static struct regulator_init_data goni_ldo9_data = {
->  	.constraints	= {
-> -		.name		= "VCC/VCAM_2.8V",
-> +		.name		= "VCC+VCAM_2.8V",
->  		.min_uV		= 2800000,
->  		.max_uV		= 2800000,
->  		.apply_uV	= 1,
-> --
 
-Ok, applied into s5p-fixes-for-linus for 38.
+> >> I know we had a discussion about your patch below.
+> >> after that, did you have some discussion about that?
+> >> If not, Paul advised to use clkdev lookup.
+> >>
+> >> Please, refer to below mail.
+> >>
+> > http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg03448.html
+> >
+> > I think it's different with your approach even though the purpose is
+> similar
+> > and I know, Mr. Han explained about clock configurable by call.
+> 
+> please, refer to below.
+> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg03445.html
+> 
+> for identify clock types("lcd" for bus clock or "fimd" for sclk_fimd),
+> using switch-case seems to be bad. for avoiding this one I suggested
+> other way and the way clock type selection from platform data is also
+> bad so Paul adviced us to use clk_dev lookup.
+> 
+
+I don't think that it's bad. As I said, it's just different with your approach.
+
+Paul, could you please let me know your opinion for this?
 
 Thanks.
 
@@ -117,3 +57,132 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> >
+> > Paul, how do you think about this?
+> >
+> > Personally, if we want to support S5PV310 FIMD now, this patch is good to
+> > support it and to us now.
+> > Of course, I think, we can upgrade it later.
+> >
+> > Thanks.
+> >
+> > Best regards,
+> > Kgene.
+> > --
+> > Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> > SW Solution Development Team, Samsung Electronics Co., Ltd.
+> >
+> >>> -----Original Message-----
+> >>> From: linux-fbdev-owner@vger.kernel.org [mailto:linux-fbdev-
+> >>> owner@vger.kernel.org] On Behalf Of Kukjin Kim
+> >>> Sent: Tuesday, January 04, 2011 5:06 PM
+> >>> To: linux-samsung-soc@vger.kernel.org; linux-fbdev@vger.kernel.org
+> >>> Cc: ben-linux@fluff.org; akpm@linux-foundation.org; lethal@linux-sh.org;
+> >>> Jonghun Han; Sangbeom Kim; InKi Dae; Kukjin Kim
+> >>> Subject: [PATCH RE-SEND] s3c-fb: Add support S5PV310 FIMD
+> >>>
+> >>> From: Jonghun Han <jonghun.han@samsung.com>
+> >>>
+> >>> This patch adds struct s3c_fb_driverdata s3c_fb_data_s5pv310 for S5PV310
+> >>> and S5PC210. The clk_type is added to distinguish clock type in it and
+> >>> lcd_clk is added in structure s3c_fb to calculate divider for lcd panel.
+> >>>
+> >>> Please refer to below diagrams about clocks of FIMD IP. FIMD driver
+> > needs
+> >>> two clocks for FIMD IP and LCD pixel clock. Actually, the LCD pixel
+> > clock
+> >>> can be selected from 1.clk 'lcd' and 2.SCLK_FIMD before S5PV310. But
+> > from
+> >>> S5PV310, the 2.SCLK_FIMD can be used only for source of LCD pixel clock.
+> >>>
+> >>> FIMD_CLK_TYPE0:
+> >>>            ------------------------------------
+> >>>                       dsys bus
+> >>>            ----------------+-------------------
+> >>>                            |
+> >>>                            |1.clk 'lcd'
+> >>>                            |
+> >>>                            | FIMD block
+> >>>                        +---+-----------+
+> >>> 4.mout_mpll |\         |   |           |
+> >>>     --------|m|        | +-+-+ +----+  |
+> >>>             |u|-+      | |   +-+core|  |
+> >>>             |x| |      | |     +----+  |
+> >>>             |/  |      | | |\          |
+> >>>                 |      | +-|m|  +---+  |
+> >>>                 |      |   |u|--+div|  |
+> >>>                 +------+---|x|  +---+  |
+> >>>            2.SCLK_FIMD |   |/     |    |
+> >>>                        |          |    |
+> >>>                        +----------+----+
+> >>>                                   |
+> >>>            inside of SoC          |
+> >>>            -----------------------+--------------------------
+> >>>            outside of SoC         |
+> >>>                                   | 3.LCD pixel clock
+> >>>                                   |
+> >>>                           +--------------+
+> >>>                           | LCD module   |
+> >>>                           +--------------+
+> >>>
+> >>> FIMD_CLK_TYPE1:
+> >>>            ------------------------------------
+> >>>                       dsys bus
+> >>>            ----------------+-------------------
+> >>>                            |
+> >>>                            |1.clk 'fimd'
+> >>>                            |
+> >>>                            | FIMD block
+> >>>                        +---+-----------+
+> >>> 4.mout_mpll |\         |   |           |
+> >>>     --------|m|        |   |   +----+  |
+> >>>             |u|-+      |   +---+core|  |
+> >>>             |x| |      |       +----+  |
+> >>>             |/  |      |               |
+> >>>                 |      |        +---+  |
+> >>>                 |      |     +--+div|  |
+> >>>                 +------+-----+  +---+  |
+> >>>            2.SCLK_FIMD |          |    |
+> >>>                        |          |    |
+> >>>                        +----------+----+
+> >>>                                   |
+> >>>            inside of SoC          |
+> >>>            -----------------------+--------------------------
+> >>>            outside of SoC         |
+> >>>                                   | 3.LCD pixel clock
+> >>>                                   |
+> >>>                           +--------------+
+> >>>                           | LCD module   |
+> >>>                           +--------------+
+> >>>
+> >>> Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
+> >>> Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+> >>> Cc: InKi Dae <inki.dae@samsung.com>
+> >>> Cc: Ben Dooks <ben-linux@fluff.org>
+> >>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> >>> ---
+> >>> Hi Paul,
+> >>>
+> >>> I and Mr. Han, Jonghun sent below patch several weeks ago.
+> >>> But I couldn't find it in your tree...
+> >>> (Re-made against on your latest fbdev-2.6.git #master)
+> >>>
+> >>> I think this should be merged for supporting S5PV310/S5PC210 frame
+> > buffer.
+> >>> So could you please let me know your opinion or plan about this?
+> >>>
+> >>> NOTE: Needs following platform device patches for S5PV310/S5PC210 frame
+> >>> buffer.
+> >>> And I already applied that in my tree as S5P SoCs architecture
+> > maintainer.
+> >>> 0001-ARM-S5PV310-Add-FIMD-resource-definition.patch
+> >>> 0002-ARM-S5PV310-Add-platform-device-and-helper-functio.patch
+> >>> 0004-ARM-S5PV310-Add-support-FIMD0-and-LTE480WV-LCD-for.patch
+> >>>
+> >>>  drivers/video/Kconfig  |    2 +-
+> >>>  drivers/video/s3c-fb.c |  125
+> >>> +++++++++++++++++++++++++++++++++++++++++++-----
+> >>>  2 files changed, 113 insertions(+), 14 deletions(-)
+> >
+> >
