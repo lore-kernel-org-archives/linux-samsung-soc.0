@@ -1,40 +1,60 @@
-From: "JD (Jiandong) Zheng" <jdzheng@broadcom.com>
-Subject: RE: [RFC 1/5] ARM: P2V: separate PHYS_OFFSET from platform definitions
-Date: Thu, 17 Feb 2011 10:07:45 -0800
-Message-ID: <8628FE4E7912BF47A96AE7DD7BAC0AADDDF03CE1D9@SJEXCHCCR02.corp.ad.broadcom.com>
-References: <20110104202052.GE24935@n2100.arm.linux.org.uk>
-	<E1PaDOb-00023Z-CR@rmk-PC.arm.linux.org.uk>
-	<AANLkTinwQwPK7Lg4dxkLGBxvp1hz489iAB6YrSG45e75@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 0/11] ARM: EXYNOS4: Change ARCH name,
+ ARCH_EXYNOS4 from ARCH_S5PV310
+Date: Fri, 18 Feb 2011 10:27:22 +0900
+Message-ID: <01b901cbcf0b$01406b60$03c14220$%kim@samsung.com>
+References: <1297671787-10571-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <AANLkTinwQwPK7Lg4dxkLGBxvp1hz489iAB6YrSG45e75@mail.gmail.com>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Kevin Hilman <khilman@deeprootsystems.com>, Anton Vorontsov <avorontsov@mvista.com>, Lennert Buytenhek <kernel@wantstofly.org>, Kukjin Kim <kgene.kim@samsung.com>, Erik Gilling <konkers@android.com>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, Vincent Sanders <support@simtec.co.uk>, "Hans J. Koch" <hjk@linutronix.de>, Magnus Damm <magnus.damm@gmail.com>, Marc Singer <elf@buici.com>, Tony Lindgren <tony@atomide.com>, David Brown <davidb@codeaurora.org>, Alessandro Rubini <rubini@unipv.it>, Wan ZongShun <mcuos.com@gmail.com>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Ryan Mallon <ryan@bluewatersys.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:36665 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753504Ab1BRB1a (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 17 Feb 2011 20:27:30 -0500
+Received: from epmmp2 (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LGS00EFSHDSJF80@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 Feb 2011 10:27:28 +0900 (KST)
+Received: from DOKGENEKIM02 ([12.23.103.104])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LGS0078YHDSL1@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 Feb 2011 10:27:28 +0900 (KST)
+In-reply-to: <1297671787-10571-1-git-send-email-kgene.kim@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org
 
-On Wed, Jan 5, 2011 at 4:22 AM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> This uncouple PHYS_OFFSET from the platform definitions, thereby
-> facilitating run-time computation of the physical memory offset.
->
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> ---
-> arch/arm/include/asm/memory.h                  |    2 ++
-> arch/arm/kernel/tcm.c                          |    2 +-
+Kukjin Kim wrote:
+> 
+> This patch set changes to ARCH_EXYNOS4 from ARCH_S5PV310 for supporting
+> Samsung's
+> new brand name EXYNOS. Samsung officially announced about the brand name
+of
+> EXYNOS
+> at MWC 2011 and The EXYNOS4 integrates a ARM Cortex A9 microporcessor with
+> several
+> other peripherals to support features such as multimedai, storage,
+graphics
+> and gaming.
+> Especially, the EXYNOS4210 CPU which is one of EXYNOS4 SoC series can be
+used
+> in
+> products such as Mobile devices.
+> 
+Hi all,
 
-> arch/arm/mach-bcmring/include/mach/hardware.h  |    2 +-
-> arch/arm/mach-bcmring/include/mach/memory.h    |    2 +-
+If there are no more comments for this, will merge this into for-next this
+weekend.
 
-Acked-by: Jiandong Zheng <jdzheng@broadcom.com>
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
