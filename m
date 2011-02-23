@@ -1,49 +1,276 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS4: Fix wrong constants in the hotplug assembly
-	code.
-Date: Wed, 23 Feb 2011 17:17:06 +0900
-Message-ID: <01e901cbd332$12a09350$37e1b9f0$%kim@samsung.com>
-References: <1298444621-3739-1-git-send-email-kgene.kim@samsung.com>
-	<AANLkTinpjGwd+pFr1oKQb1jiaih2h81Wp9G7Df8J1LLk@mail.gmail.com>
+Subject: RE: [PATCH 2/5] ARM: Samsung: cleanup S5P gpio interrupt code
+Date: Wed, 23 Feb 2011 19:15:07 +0900
+Message-ID: <01f201cbd342$8e6001f0$ab2005d0$%kim@samsung.com>
+References: <1297927527-1338-1-git-send-email-m.szyprowski@samsung.com>
+ <1297927527-1338-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <AANLkTinpjGwd+pFr1oKQb1jiaih2h81Wp9G7Df8J1LLk@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:43496 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752141Ab1BWKPN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 23 Feb 2011 05:15:13 -0500
+Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LH200B80F5CVMA0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 23 Feb 2011 19:15:12 +0900 (KST)
+Received: from DOKGENEKIM02 ([12.23.103.104])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LH200L25F5BII@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 23 Feb 2011 19:15:12 +0900 (KST)
+In-reply-to: <1297927527-1338-3-git-send-email-m.szyprowski@samsung.com>
 Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Kyungmin Park' <kmpark@infradead.org>
-Cc: 'Russell King' <rmk+kernel@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
 
-Kyungmin Park wrote:
-> =
+Marek Szyprowski wrote:
+> 
+> This patch performs a global cleanup in s5p gpio interrupt support code.
+> The code is prepared for upcoming support for gpio interrupts on S5PC210
+> platform, which has 2 gpio banks (regions) instead of one (like on
+> S5PC110 and S5PC100).
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/plat-s5p/irq-gpioint.c |  106
++++++++++++++++++--------------------
+> --
+>  1 files changed, 46 insertions(+), 60 deletions(-)
+> 
+> diff --git a/arch/arm/plat-s5p/irq-gpioint.c b/arch/arm/plat-s5p/irq-
+> gpioint.c
+> index 3b6bf89..af10328 100644
+> --- a/arch/arm/plat-s5p/irq-gpioint.c
+> +++ b/arch/arm/plat-s5p/irq-gpioint.c
+> @@ -22,77 +22,64 @@
+>  #include <plat/gpio-core.h>
+>  #include <plat/gpio-cfg.h>
+> 
+> -#define S5P_GPIOREG(x)			(S5P_VA_GPIO + (x))
+> +#define GPIO_BASE(chip)		(((unsigned long)(chip)->base) &
+> ~(SZ_4K - 1))
+> 
 
-> Hi,
-> =
+Need SZ_4K here instead of 0xFFFFF000?
 
-Hi :)
+> -#define GPIOINT_CON_OFFSET		0x700
+> -#define GPIOINT_MASK_OFFSET		0x900
+> -#define GPIOINT_PEND_OFFSET		0xA00
+> +#define CON_OFFSET		0x700
+> +#define MASK_OFFSET		0x900
+> +#define PEND_OFFSET		0xA00
 
-> At that time Russell modified the s5cv310, tegra, and realview also. I
-> think you also modify it.
-> =
+I don't know why need to change above definitions...
 
-Maybe you mean commit 30b99d07 (ARM: fix wrongly patched constants).
-It was due to his patch commit e3d9c625 (ARM: CPU hotplug: fix hard-coded
-control register constants) but this is different with that.
-Firstly this patch fixes wrong constants in the hotplug assembly code.
-Then secondly, fixes hard-coded control register constants.
+> +#define REG_OFFSET(x)		((x) << 2)
+> 
+Actually, this is used instead of "group << 2" in this file.
+So how about "GPIOINT_REG_OFFSET(x)" like others?
 
-Of course, first reason is more important on this.
-And I'm not sure whether need to fix on tegra also.
+>  static struct s3c_gpio_chip *irq_chips[S5P_GPIOINT_GROUP_MAXNR];
+> 
+> -static int s5p_gpioint_get_group(struct irq_data *data)
+> -{
+> -	struct gpio_chip *chip = irq_data_get_irq_data(data);
+> -	struct s3c_gpio_chip *s3c_chip = container_of(chip,
+> -			struct s3c_gpio_chip, chip);
+> -	int group;
+> -
+> -	for (group = 0; group < S5P_GPIOINT_GROUP_MAXNR; group++)
+> -		if (s3c_chip == irq_chips[group])
+> -			break;
+> -
+> -	return group;
+> -}
+> -
+>  static int s5p_gpioint_get_offset(struct irq_data *data)
+>  {
+> -	struct gpio_chip *chip = irq_data_get_irq_data(data);
+> -	struct s3c_gpio_chip *s3c_chip = container_of(chip,
+> -			struct s3c_gpio_chip, chip);
+> -
+> -	return data->irq - s3c_chip->irq_base;
+> +	struct s3c_gpio_chip *chip = irq_data_get_irq_data(data);
+> +	return data->irq - chip->irq_base;
+>  }
+> 
+>  static void s5p_gpioint_ack(struct irq_data *data)
+>  {
+> +	struct s3c_gpio_chip *chip = irq_data_get_irq_data(data);
+>  	int group, offset, pend_offset;
+>  	unsigned int value;
+> 
+> -	group = s5p_gpioint_get_group(data);
+> +	group = chip->group;
+>  	offset = s5p_gpioint_get_offset(data);
+> -	pend_offset = group << 2;
+> +	pend_offset = REG_OFFSET(group);
+> 
+> -	value = __raw_readl(S5P_GPIOREG(GPIOINT_PEND_OFFSET) + pend_offset);
+> -	value |= 1 << offset;
+> -	__raw_writel(value, S5P_GPIOREG(GPIOINT_PEND_OFFSET) + pend_offset);
+> +	value = __raw_readl(GPIO_BASE(chip) + PEND_OFFSET + pend_offset);
+> +	value |= BIT(offset);
+
+No need inclusion <linux/bitops.h>?
+
+> +	__raw_writel(value, GPIO_BASE(chip) + PEND_OFFSET + pend_offset);
+>  }
+> 
+>  static void s5p_gpioint_mask(struct irq_data *data)
+>  {
+> +	struct s3c_gpio_chip *chip = irq_data_get_irq_data(data);
+>  	int group, offset, mask_offset;
+>  	unsigned int value;
+> 
+> -	group = s5p_gpioint_get_group(data);
+> +	group = chip->group;
+>  	offset = s5p_gpioint_get_offset(data);
+> -	mask_offset = group << 2;
+> +	mask_offset = REG_OFFSET(group);
+> 
+> -	value = __raw_readl(S5P_GPIOREG(GPIOINT_MASK_OFFSET) + mask_offset);
+> -	value |= 1 << offset;
+> -	__raw_writel(value, S5P_GPIOREG(GPIOINT_MASK_OFFSET) + mask_offset);
+> +	value = __raw_readl(GPIO_BASE(chip) + MASK_OFFSET + mask_offset);
+> +	value |= BIT(offset);
+> +	__raw_writel(value, GPIO_BASE(chip) + MASK_OFFSET + mask_offset);
+>  }
+> 
+>  static void s5p_gpioint_unmask(struct irq_data *data)
+>  {
+> +	struct s3c_gpio_chip *chip = irq_data_get_irq_data(data);
+>  	int group, offset, mask_offset;
+>  	unsigned int value;
+> 
+> -	group = s5p_gpioint_get_group(data);
+> +	group = chip->group;
+>  	offset = s5p_gpioint_get_offset(data);
+> -	mask_offset = group << 2;
+> +	mask_offset = REG_OFFSET(group);
+> 
+> -	value = __raw_readl(S5P_GPIOREG(GPIOINT_MASK_OFFSET) + mask_offset);
+> -	value &= ~(1 << offset);
+> -	__raw_writel(value, S5P_GPIOREG(GPIOINT_MASK_OFFSET) + mask_offset);
+> +	value = __raw_readl(GPIO_BASE(chip) + MASK_OFFSET + mask_offset);
+> +	value &= ~BIT(offset);
+> +	__raw_writel(value, GPIO_BASE(chip) + MASK_OFFSET + mask_offset);
+>  }
+> 
+>  static void s5p_gpioint_mask_ack(struct irq_data *data)
+> @@ -103,12 +90,13 @@ static void s5p_gpioint_mask_ack(struct irq_data
+*data)
+> 
+>  static int s5p_gpioint_set_type(struct irq_data *data, unsigned int type)
+>  {
+> +	struct s3c_gpio_chip *chip = irq_data_get_irq_data(data);
+>  	int group, offset, con_offset;
+>  	unsigned int value;
+> 
+> -	group = s5p_gpioint_get_group(data);
+> +	group = chip->group;
+>  	offset = s5p_gpioint_get_offset(data);
+> -	con_offset = group << 2;
+> +	con_offset = REG_OFFSET(group);
+> 
+>  	switch (type) {
+>  	case IRQ_TYPE_EDGE_RISING:
+> @@ -132,15 +120,15 @@ static int s5p_gpioint_set_type(struct irq_data
+*data,
+> unsigned int type)
+>  		return -EINVAL;
+>  	}
+> 
+> -	value = __raw_readl(S5P_GPIOREG(GPIOINT_CON_OFFSET) + con_offset);
+> +	value = __raw_readl(GPIO_BASE(chip) + CON_OFFSET + con_offset);
+>  	value &= ~(0x7 << (offset * 0x4));
+>  	value |= (type << (offset * 0x4));
+> -	__raw_writel(value, S5P_GPIOREG(GPIOINT_CON_OFFSET) + con_offset);
+> +	__raw_writel(value, GPIO_BASE(chip) + CON_OFFSET + con_offset);
+> 
+>  	return 0;
+>  }
+> 
+> -struct irq_chip s5p_gpioint = {
+> +static struct irq_chip s5p_gpioint = {
+>  	.name		= "s5p_gpioint",
+>  	.irq_ack	= s5p_gpioint_ack,
+>  	.irq_mask	= s5p_gpioint_mask,
+> @@ -151,30 +139,28 @@ struct irq_chip s5p_gpioint = {
+> 
+>  static void s5p_gpioint_handler(unsigned int irq, struct irq_desc *desc)
+>  {
+> -	int group, offset, pend_offset, mask_offset;
+> -	int real_irq;
+> +	int group, pend_offset, mask_offset;
+>  	unsigned int pend, mask;
+> 
+>  	for (group = 0; group < S5P_GPIOINT_GROUP_MAXNR; group++) {
+> -		pend_offset = group << 2;
+> -		pend = __raw_readl(S5P_GPIOREG(GPIOINT_PEND_OFFSET) +
+> -				pend_offset);
+> +		struct s3c_gpio_chip *chip = irq_chips[group];
+> +		if (!chip)
+> +			continue;
+> +
+> +		pend_offset = REG_OFFSET(group);
+> +		pend = __raw_readl(GPIO_BASE(chip) + PEND_OFFSET +
+> pend_offset);
+>  		if (!pend)
+>  			continue;
+> 
+> -		mask_offset = group << 2;
+> -		mask = __raw_readl(S5P_GPIOREG(GPIOINT_MASK_OFFSET) +
+> -				mask_offset);
+> +		mask_offset = REG_OFFSET(group);
+> +		mask = __raw_readl(GPIO_BASE(chip) + MASK_OFFSET +
+> mask_offset);
+>  		pend &= ~mask;
+> 
+> -		for (offset = 0; offset < 8; offset++) {
+> -			if (pend & (1 << offset)) {
+> -				struct s3c_gpio_chip *chip =
+irq_chips[group];
+> -				if (chip) {
+> -					real_irq = chip->irq_base + offset;
+> -					generic_handle_irq(real_irq);
+> -				}
+> -			}
+> +		while (pend) {
+> +			int offset = fls(pend) - 1;
+
+__ffs?
+
+And hmm...do we really need while loop here?
+
+> +			int real_irq = chip->irq_base + offset;
+> +			generic_handle_irq(real_irq);
+> +			pend &= ~BIT(offset);
+>  		}
+>  	}
+>  }
+> @@ -202,7 +188,7 @@ static __init int s5p_gpioint_add(struct s3c_gpio_chip
+> *chip)
+>  	for (i = 0; i < chip->chip.ngpio; i++) {
+>  		irq = chip->irq_base + i;
+>  		set_irq_chip(irq, &s5p_gpioint);
+> -		set_irq_data(irq, &chip->chip);
+> +		set_irq_data(irq, chip);
+
+?
+
+>  		set_irq_handler(irq, handle_level_irq);
+>  		set_irq_flags(irq, IRQF_VALID);
+>  	}
+> --
+
 
 Thanks.
 
@@ -52,53 +279,3 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-
-> On Wed, Feb 23, 2011 at 4:03 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > This patch fixes wrong constants in the hotplug assembly code for
-> > Exynos4 such as Russell's changing in vexpress hotplug and fixes
-> > hard-coded control register constatns also.
-> >
-> > Reported-by: Changhwan Youn <chaos.youn@samsung.com>
-> > Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> > ---
-> > =A0arch/arm/mach-exynos4/hotplug.c | =A0 =A08 ++++----
-> > =A01 files changed, 4 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-exynos4/hotplug.c b/arch/arm/mach-
-> exynos4/hotplug.c
-> > index 4c42f9c..2b5909e 100644
-> > --- a/arch/arm/mach-exynos4/hotplug.c
-> > +++ b/arch/arm/mach-exynos4/hotplug.c
-> > @@ -30,13 +30,13 @@ static inline void cpu_enter_lowpower(void)
-> > =A0 =A0 =A0 =A0 * Turn off coherency
-> > =A0 =A0 =A0 =A0 */
-> > =A0 =A0 =A0 =A0" =A0 =A0 =A0 mrc =A0 =A0 p15, 0, %0, c1, c0, 1\n"
-> > - =A0 =A0 =A0 " =A0 =A0 =A0 bic =A0 =A0 %0, %0, #0x20\n"
-> > + =A0 =A0 =A0 " =A0 =A0 =A0 bic =A0 =A0 %0, %0, %3\n"
-> > =A0 =A0 =A0 =A0" =A0 =A0 =A0 mcr =A0 =A0 p15, 0, %0, c1, c0, 1\n"
-> > =A0 =A0 =A0 =A0" =A0 =A0 =A0 mrc =A0 =A0 p15, 0, %0, c1, c0, 0\n"
-> > =A0 =A0 =A0 =A0" =A0 =A0 =A0 bic =A0 =A0 %0, %0, %2\n"
-> > =A0 =A0 =A0 =A0" =A0 =A0 =A0 mcr =A0 =A0 p15, 0, %0, c1, c0, 0\n"
-> > =A0 =A0 =A0 =A0 =A0: "=3D&r" (v)
-> > - =A0 =A0 =A0 =A0 : "r" (0), "Ir" (CR_C)
-> > + =A0 =A0 =A0 =A0 : "r" (0), "Ir" (CR_C), "Ir" (0x40)
-> > =A0 =A0 =A0 =A0 =A0: "cc");
-> > =A0}
-> >
-> > @@ -49,10 +49,10 @@ static inline void cpu_leave_lowpower(void)
-> > =A0 =A0 =A0 =A0" =A0 =A0 =A0 orr =A0 =A0 %0, %0, %1\n"
-> > =A0 =A0 =A0 =A0" =A0 =A0 =A0 mcr =A0 =A0 p15, 0, %0, c1, c0, 0\n"
-> > =A0 =A0 =A0 =A0" =A0 =A0 =A0 mrc =A0 =A0 p15, 0, %0, c1, c0, 1\n"
-> > - =A0 =A0 =A0 " =A0 =A0 =A0 orr =A0 =A0 %0, %0, #0x20\n"
-> > + =A0 =A0 =A0 " =A0 =A0 =A0 orr =A0 =A0 %0, %0, %2\n"
-> > =A0 =A0 =A0 =A0" =A0 =A0 =A0 mcr =A0 =A0 p15, 0, %0, c1, c0, 1\n"
-> > =A0 =A0 =A0 =A0 =A0: "=3D&r" (v)
-> > - =A0 =A0 =A0 =A0 : "Ir" (CR_C)
-> > + =A0 =A0 =A0 =A0 : "Ir" (CR_C), "Ir" (0x40)
-> > =A0 =A0 =A0 =A0 =A0: "cc");
-> > =A0}
-> >
-> > --
-> > 1.7.1
