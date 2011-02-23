@@ -1,276 +1,136 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/5] ARM: Samsung: cleanup S5P gpio interrupt code
-Date: Wed, 23 Feb 2011 19:15:07 +0900
-Message-ID: <01f201cbd342$8e6001f0$ab2005d0$%kim@samsung.com>
-References: <1297927527-1338-1-git-send-email-m.szyprowski@samsung.com>
- <1297927527-1338-3-git-send-email-m.szyprowski@samsung.com>
+Subject: RE: [PATCH 1/2] ARM: S5PC110: disable unused power regulators on Goni
+	board
+Date: Wed, 23 Feb 2011 19:23:33 +0900
+Message-ID: <01f301cbd343$d0af4c90$720de5b0$%kim@samsung.com>
+References: <1297760784-8486-1-git-send-email-m.szyprowski@samsung.com>
+ <1297760784-8486-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:43496 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752141Ab1BWKPN (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:36171 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751131Ab1BWKYP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Feb 2011 05:15:13 -0500
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Wed, 23 Feb 2011 05:24:15 -0500
+Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LH200B80F5CVMA0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 23 Feb 2011 19:15:12 +0900 (KST)
+ 2010)) with ESMTP id <0LH20016EFKCG600@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 23 Feb 2011 19:24:12 +0900 (KST)
 Received: from DOKGENEKIM02 ([12.23.103.104])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LH200L25F5BII@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 23 Feb 2011 19:15:12 +0900 (KST)
-In-reply-to: <1297927527-1338-3-git-send-email-m.szyprowski@samsung.com>
+ with ESMTPA id <0LH200MKOFKCFQ@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 23 Feb 2011 19:24:12 +0900 (KST)
+In-reply-to: <1297760784-8486-2-git-send-email-m.szyprowski@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, ben-linux@fluff.org
+Cc: kyungmin.park@samsung.com
 
 Marek Szyprowski wrote:
 > 
-> This patch performs a global cleanup in s5p gpio interrupt support code.
-> The code is prepared for upcoming support for gpio interrupts on S5PC210
-> platform, which has 2 gpio banks (regions) instead of one (like on
-> S5PC110 and S5PC100).
+> A lot of power regulator has been enabled by default causing the board
+> to consume a lot of power. This patch fixes this issue.
 > 
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  arch/arm/plat-s5p/irq-gpioint.c |  106
-+++++++++++++++++--------------------
-> --
->  1 files changed, 46 insertions(+), 60 deletions(-)
+>  arch/arm/mach-s5pv210/mach-goni.c |   10 +---------
+>  1 files changed, 1 insertions(+), 9 deletions(-)
 > 
-> diff --git a/arch/arm/plat-s5p/irq-gpioint.c b/arch/arm/plat-s5p/irq-
-> gpioint.c
-> index 3b6bf89..af10328 100644
-> --- a/arch/arm/plat-s5p/irq-gpioint.c
-> +++ b/arch/arm/plat-s5p/irq-gpioint.c
-> @@ -22,77 +22,64 @@
->  #include <plat/gpio-core.h>
->  #include <plat/gpio-cfg.h>
+> diff --git a/arch/arm/mach-s5pv210/mach-goni.c
+b/arch/arm/mach-s5pv210/mach-
+> goni.c
+> index 43c1c1b..10f754b 100644
+> --- a/arch/arm/mach-s5pv210/mach-goni.c
+> +++ b/arch/arm/mach-s5pv210/mach-goni.c
+> @@ -292,7 +292,6 @@ static struct regulator_init_data goni_ldo3_data = {
+>  		.min_uV		= 1100000,
+>  		.max_uV		= 1100000,
+>  		.apply_uV	= 1,
+> -		.always_on	= 1,
+>  	},
+>  };
 > 
-> -#define S5P_GPIOREG(x)			(S5P_VA_GPIO + (x))
-> +#define GPIO_BASE(chip)		(((unsigned long)(chip)->base) &
-> ~(SZ_4K - 1))
+> @@ -311,6 +310,7 @@ static struct regulator_init_data goni_ldo5_data = {
+>  		.min_uV		= 2800000,
+>  		.max_uV		= 2800000,
+>  		.apply_uV	= 1,
+> +		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+>  	},
+>  	.num_consumer_supplies = ARRAY_SIZE(goni_ldo5_consumers),
+>  	.consumer_supplies = goni_ldo5_consumers,
+> @@ -341,7 +341,6 @@ static struct regulator_init_data goni_ldo8_data = {
+>  		.min_uV		= 3300000,
+>  		.max_uV		= 3300000,
+>  		.apply_uV	= 1,
+> -		.always_on	= 1,
+>  	},
+>  };
 > 
-
-Need SZ_4K here instead of 0xFFFFF000?
-
-> -#define GPIOINT_CON_OFFSET		0x700
-> -#define GPIOINT_MASK_OFFSET		0x900
-> -#define GPIOINT_PEND_OFFSET		0xA00
-> +#define CON_OFFSET		0x700
-> +#define MASK_OFFSET		0x900
-> +#define PEND_OFFSET		0xA00
-
-I don't know why need to change above definitions...
-
-> +#define REG_OFFSET(x)		((x) << 2)
+> @@ -351,7 +350,6 @@ static struct regulator_init_data goni_ldo9_data = {
+>  		.min_uV		= 2800000,
+>  		.max_uV		= 2800000,
+>  		.apply_uV	= 1,
+> -		.always_on	= 1,
+>  	},
+>  };
 > 
-Actually, this is used instead of "group << 2" in this file.
-So how about "GPIOINT_REG_OFFSET(x)" like others?
-
->  static struct s3c_gpio_chip *irq_chips[S5P_GPIOINT_GROUP_MAXNR];
+> @@ -371,7 +369,6 @@ static struct regulator_init_data goni_ldo11_data = {
+>  		.min_uV		= 2800000,
+>  		.max_uV		= 2800000,
+>  		.apply_uV	= 1,
+> -		.always_on	= 1,
+>  	},
+>  };
 > 
-> -static int s5p_gpioint_get_group(struct irq_data *data)
-> -{
-> -	struct gpio_chip *chip = irq_data_get_irq_data(data);
-> -	struct s3c_gpio_chip *s3c_chip = container_of(chip,
-> -			struct s3c_gpio_chip, chip);
-> -	int group;
-> -
-> -	for (group = 0; group < S5P_GPIOINT_GROUP_MAXNR; group++)
-> -		if (s3c_chip == irq_chips[group])
-> -			break;
-> -
-> -	return group;
-> -}
-> -
->  static int s5p_gpioint_get_offset(struct irq_data *data)
->  {
-> -	struct gpio_chip *chip = irq_data_get_irq_data(data);
-> -	struct s3c_gpio_chip *s3c_chip = container_of(chip,
-> -			struct s3c_gpio_chip, chip);
-> -
-> -	return data->irq - s3c_chip->irq_base;
-> +	struct s3c_gpio_chip *chip = irq_data_get_irq_data(data);
-> +	return data->irq - chip->irq_base;
->  }
+> @@ -381,7 +378,6 @@ static struct regulator_init_data goni_ldo12_data = {
+>  		.min_uV		= 1200000,
+>  		.max_uV		= 1200000,
+>  		.apply_uV	= 1,
+> -		.always_on	= 1,
+>  	},
+>  };
 > 
->  static void s5p_gpioint_ack(struct irq_data *data)
->  {
-> +	struct s3c_gpio_chip *chip = irq_data_get_irq_data(data);
->  	int group, offset, pend_offset;
->  	unsigned int value;
+> @@ -391,7 +387,6 @@ static struct regulator_init_data goni_ldo13_data = {
+>  		.min_uV		= 2800000,
+>  		.max_uV		= 2800000,
+>  		.apply_uV	= 1,
+> -		.always_on	= 1,
+>  	},
+>  };
 > 
-> -	group = s5p_gpioint_get_group(data);
-> +	group = chip->group;
->  	offset = s5p_gpioint_get_offset(data);
-> -	pend_offset = group << 2;
-> +	pend_offset = REG_OFFSET(group);
+> @@ -401,7 +396,6 @@ static struct regulator_init_data goni_ldo14_data = {
+>  		.min_uV		= 1800000,
+>  		.max_uV		= 1800000,
+>  		.apply_uV	= 1,
+> -		.always_on	= 1,
+>  	},
+>  };
 > 
-> -	value = __raw_readl(S5P_GPIOREG(GPIOINT_PEND_OFFSET) + pend_offset);
-> -	value |= 1 << offset;
-> -	__raw_writel(value, S5P_GPIOREG(GPIOINT_PEND_OFFSET) + pend_offset);
-> +	value = __raw_readl(GPIO_BASE(chip) + PEND_OFFSET + pend_offset);
-> +	value |= BIT(offset);
-
-No need inclusion <linux/bitops.h>?
-
-> +	__raw_writel(value, GPIO_BASE(chip) + PEND_OFFSET + pend_offset);
->  }
+> @@ -411,7 +405,6 @@ static struct regulator_init_data goni_ldo15_data = {
+>  		.min_uV		= 3300000,
+>  		.max_uV		= 3300000,
+>  		.apply_uV	= 1,
+> -		.always_on	= 1,
+>  	},
+>  };
 > 
->  static void s5p_gpioint_mask(struct irq_data *data)
->  {
-> +	struct s3c_gpio_chip *chip = irq_data_get_irq_data(data);
->  	int group, offset, mask_offset;
->  	unsigned int value;
+> @@ -421,7 +414,6 @@ static struct regulator_init_data goni_ldo16_data = {
+>  		.min_uV		= 1800000,
+>  		.max_uV		= 1800000,
+>  		.apply_uV	= 1,
+> -		.always_on	= 1,
+>  	},
+>  };
 > 
-> -	group = s5p_gpioint_get_group(data);
-> +	group = chip->group;
->  	offset = s5p_gpioint_get_offset(data);
-> -	mask_offset = group << 2;
-> +	mask_offset = REG_OFFSET(group);
-> 
-> -	value = __raw_readl(S5P_GPIOREG(GPIOINT_MASK_OFFSET) + mask_offset);
-> -	value |= 1 << offset;
-> -	__raw_writel(value, S5P_GPIOREG(GPIOINT_MASK_OFFSET) + mask_offset);
-> +	value = __raw_readl(GPIO_BASE(chip) + MASK_OFFSET + mask_offset);
-> +	value |= BIT(offset);
-> +	__raw_writel(value, GPIO_BASE(chip) + MASK_OFFSET + mask_offset);
->  }
-> 
->  static void s5p_gpioint_unmask(struct irq_data *data)
->  {
-> +	struct s3c_gpio_chip *chip = irq_data_get_irq_data(data);
->  	int group, offset, mask_offset;
->  	unsigned int value;
-> 
-> -	group = s5p_gpioint_get_group(data);
-> +	group = chip->group;
->  	offset = s5p_gpioint_get_offset(data);
-> -	mask_offset = group << 2;
-> +	mask_offset = REG_OFFSET(group);
-> 
-> -	value = __raw_readl(S5P_GPIOREG(GPIOINT_MASK_OFFSET) + mask_offset);
-> -	value &= ~(1 << offset);
-> -	__raw_writel(value, S5P_GPIOREG(GPIOINT_MASK_OFFSET) + mask_offset);
-> +	value = __raw_readl(GPIO_BASE(chip) + MASK_OFFSET + mask_offset);
-> +	value &= ~BIT(offset);
-> +	__raw_writel(value, GPIO_BASE(chip) + MASK_OFFSET + mask_offset);
->  }
-> 
->  static void s5p_gpioint_mask_ack(struct irq_data *data)
-> @@ -103,12 +90,13 @@ static void s5p_gpioint_mask_ack(struct irq_data
-*data)
-> 
->  static int s5p_gpioint_set_type(struct irq_data *data, unsigned int type)
->  {
-> +	struct s3c_gpio_chip *chip = irq_data_get_irq_data(data);
->  	int group, offset, con_offset;
->  	unsigned int value;
-> 
-> -	group = s5p_gpioint_get_group(data);
-> +	group = chip->group;
->  	offset = s5p_gpioint_get_offset(data);
-> -	con_offset = group << 2;
-> +	con_offset = REG_OFFSET(group);
-> 
->  	switch (type) {
->  	case IRQ_TYPE_EDGE_RISING:
-> @@ -132,15 +120,15 @@ static int s5p_gpioint_set_type(struct irq_data
-*data,
-> unsigned int type)
->  		return -EINVAL;
->  	}
-> 
-> -	value = __raw_readl(S5P_GPIOREG(GPIOINT_CON_OFFSET) + con_offset);
-> +	value = __raw_readl(GPIO_BASE(chip) + CON_OFFSET + con_offset);
->  	value &= ~(0x7 << (offset * 0x4));
->  	value |= (type << (offset * 0x4));
-> -	__raw_writel(value, S5P_GPIOREG(GPIOINT_CON_OFFSET) + con_offset);
-> +	__raw_writel(value, GPIO_BASE(chip) + CON_OFFSET + con_offset);
-> 
->  	return 0;
->  }
-> 
-> -struct irq_chip s5p_gpioint = {
-> +static struct irq_chip s5p_gpioint = {
->  	.name		= "s5p_gpioint",
->  	.irq_ack	= s5p_gpioint_ack,
->  	.irq_mask	= s5p_gpioint_mask,
-> @@ -151,30 +139,28 @@ struct irq_chip s5p_gpioint = {
-> 
->  static void s5p_gpioint_handler(unsigned int irq, struct irq_desc *desc)
->  {
-> -	int group, offset, pend_offset, mask_offset;
-> -	int real_irq;
-> +	int group, pend_offset, mask_offset;
->  	unsigned int pend, mask;
-> 
->  	for (group = 0; group < S5P_GPIOINT_GROUP_MAXNR; group++) {
-> -		pend_offset = group << 2;
-> -		pend = __raw_readl(S5P_GPIOREG(GPIOINT_PEND_OFFSET) +
-> -				pend_offset);
-> +		struct s3c_gpio_chip *chip = irq_chips[group];
-> +		if (!chip)
-> +			continue;
-> +
-> +		pend_offset = REG_OFFSET(group);
-> +		pend = __raw_readl(GPIO_BASE(chip) + PEND_OFFSET +
-> pend_offset);
->  		if (!pend)
->  			continue;
-> 
-> -		mask_offset = group << 2;
-> -		mask = __raw_readl(S5P_GPIOREG(GPIOINT_MASK_OFFSET) +
-> -				mask_offset);
-> +		mask_offset = REG_OFFSET(group);
-> +		mask = __raw_readl(GPIO_BASE(chip) + MASK_OFFSET +
-> mask_offset);
->  		pend &= ~mask;
-> 
-> -		for (offset = 0; offset < 8; offset++) {
-> -			if (pend & (1 << offset)) {
-> -				struct s3c_gpio_chip *chip =
-irq_chips[group];
-> -				if (chip) {
-> -					real_irq = chip->irq_base + offset;
-> -					generic_handle_irq(real_irq);
-> -				}
-> -			}
-> +		while (pend) {
-> +			int offset = fls(pend) - 1;
-
-__ffs?
-
-And hmm...do we really need while loop here?
-
-> +			int real_irq = chip->irq_base + offset;
-> +			generic_handle_irq(real_irq);
-> +			pend &= ~BIT(offset);
->  		}
->  	}
->  }
-> @@ -202,7 +188,7 @@ static __init int s5p_gpioint_add(struct s3c_gpio_chip
-> *chip)
->  	for (i = 0; i < chip->chip.ngpio; i++) {
->  		irq = chip->irq_base + i;
->  		set_irq_chip(irq, &s5p_gpioint);
-> -		set_irq_data(irq, &chip->chip);
-> +		set_irq_data(irq, chip);
-
-?
-
->  		set_irq_handler(irq, handle_level_irq);
->  		set_irq_flags(irq, IRQF_VALID);
->  	}
 > --
 
+Ok...will apply this.
+And how about "mach-aquila.c"?
 
 Thanks.
 
