@@ -1,195 +1,72 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 1/7] s5p-fimc: fix ISR and buffer handling for fimc-capture
-Date: Thu, 24 Feb 2011 15:33:48 +0100
-Message-ID: <1298558034-10768-2-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 5/7] s5p-fimc: Add a platform data entry for MIPI-CSI data
+	alignment
+Date: Thu, 24 Feb 2011 15:33:52 +0100
+Message-ID: <1298558034-10768-6-git-send-email-s.nawrocki@samsung.com>
 References: <1298558034-10768-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:22005 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755417Ab1BXOjd (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38863 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755625Ab1BXOjf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Feb 2011 09:39:33 -0500
+	Thu, 24 Feb 2011 09:39:35 -0500
 In-reply-to: <1298558034-10768-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, Sungchun Kang <sungchun.kang@samsung.com>
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, s.nawrocki@samsung.com
 
-In some cases fimc H/W did not stop although there were no output
-buffers available. So the capture deactivation interrupt routine
-is modified and the state of ST_CAPT_RUN is cleared only
-in the LAST-IRQ call.
+Allow the MIPI-CSI data alignment to be defined in the board setup
+as it may be different across various camera sensors.
 
-After LAST-IRQ is generated, H/W pointer will be skipped by 1 frame.
-(reference by user manual) So, S/W pointer should be increased too.
-
-Reviewed-by Jonghun Han <jonghun.han@samsung.com>
-Signed-off-by: Sungchun Kang <sungchun.kang@samsung.com>
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-capture.c |   65 +++++++++------------------
- drivers/media/video/s5p-fimc/fimc-core.c    |   22 ++++++---
- 2 files changed, 36 insertions(+), 51 deletions(-)
+ drivers/media/video/s5p-fimc/fimc-reg.c |    6 ++++--
+ include/media/s5p_fimc.h                |    2 ++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index 5159cc8..10d6426 100644
---- a/drivers/media/video/s5p-fimc/fimc-capture.c
-+++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -153,40 +153,6 @@ static int fimc_isp_subdev_init(struct fimc_dev *fimc, unsigned int index)
- 	return ret;
- }
- 
--/*
-- * At least one buffer on the pending_buf_q queue is required.
-- * Locking: The caller holds fimc->slock spinlock.
-- */
--int fimc_vid_cap_buf_queue(struct fimc_dev *fimc,
--			   struct fimc_vid_buffer *fimc_vb)
--{
--	struct fimc_vid_cap *cap = &fimc->vid_cap;
--	struct fimc_ctx *ctx = cap->ctx;
--	int ret = 0;
--
--	BUG_ON(!fimc || !fimc_vb);
--
--	ret = fimc_prepare_addr(ctx, &fimc_vb->vb, &ctx->d_frame,
--				&fimc_vb->paddr);
--	if (ret)
--		return ret;
--
--	if (test_bit(ST_CAPT_STREAM, &fimc->state)) {
--		fimc_pending_queue_add(cap, fimc_vb);
--	} else {
--		/* Setup the buffer directly for processing. */
--		int buf_id = (cap->reqbufs_count == 1) ? -1 : cap->buf_index;
--		fimc_hw_set_output_addr(fimc, &fimc_vb->paddr, buf_id);
--
--		fimc_vb->index = cap->buf_index;
--		active_queue_add(cap, fimc_vb);
--
--		if (++cap->buf_index >= FIMC_MAX_OUT_BUFS)
--			cap->buf_index = 0;
--	}
--	return ret;
--}
--
- static int fimc_stop_capture(struct fimc_dev *fimc)
- {
- 	unsigned long flags;
-@@ -239,6 +205,8 @@ static int start_streaming(struct vb2_queue *q)
- 	struct s5p_fimc_isp_info *isp_info;
- 	int ret;
- 
-+	fimc_hw_reset(fimc);
+diff --git a/drivers/media/video/s5p-fimc/fimc-reg.c b/drivers/media/video/s5p-fimc/fimc-reg.c
+index 10684ae..4d929a3 100644
+--- a/drivers/media/video/s5p-fimc/fimc-reg.c
++++ b/drivers/media/video/s5p-fimc/fimc-reg.c
+@@ -665,10 +665,12 @@ int fimc_hw_set_camera_type(struct fimc_dev *fimc,
+ 			    vid_cap->fmt.code);
+ 			return -EINVAL;
+ 		}
+-		writel(tmp | (0x1 << 8), fimc->regs + S5P_CSIIMGFMT);
++		tmp |= (cam->csi_data_align == 32) << 8;
 +
- 	ret = v4l2_subdev_call(fimc->vid_cap.sd, video, s_stream, 1);
- 	if (ret && ret != -ENOIOCTLCMD)
- 		return ret;
-@@ -273,7 +241,7 @@ static int start_streaming(struct vb2_queue *q)
- 	INIT_LIST_HEAD(&fimc->vid_cap.active_buf_q);
- 	fimc->vid_cap.active_buf_cnt = 0;
- 	fimc->vid_cap.frame_count = 0;
--	fimc->vid_cap.buf_index = fimc_hw_get_frame_index(fimc);
-+	fimc->vid_cap.buf_index = 0;
++		writel(tmp, fimc->regs + S5P_CSIIMGFMT);
  
- 	set_bit(ST_CAPT_PEND, &fimc->state);
- 
-@@ -374,17 +342,28 @@ static void buffer_queue(struct vb2_buffer *vb)
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&fimc->slock, flags);
--	fimc_vid_cap_buf_queue(fimc, buf);
-+	fimc_prepare_addr(ctx, &buf->vb, &ctx->d_frame, &buf->paddr);
- 
--	dbg("active_buf_cnt: %d", fimc->vid_cap.active_buf_cnt);
- 
--	if (vid_cap->active_buf_cnt >= vid_cap->reqbufs_count ||
--	   vid_cap->active_buf_cnt >= FIMC_MAX_OUT_BUFS) {
--		if (!test_and_set_bit(ST_CAPT_STREAM, &fimc->state)) {
--			fimc_activate_capture(ctx);
--			dbg("");
--		}
-+	if (!test_bit(ST_CAPT_STREAM, &fimc->state)
-+	     && vid_cap->active_buf_cnt < FIMC_MAX_OUT_BUFS) {
-+		/* Setup the buffer directly for processing. */
-+		int buf_id = (vid_cap->reqbufs_count == 1) ? -1 :
-+				vid_cap->buf_index;
-+
-+		fimc_hw_set_output_addr(fimc, &buf->paddr, buf_id);
-+		buf->index = vid_cap->buf_index;
-+		active_queue_add(vid_cap, buf);
-+
-+		if (++vid_cap->buf_index >= FIMC_MAX_OUT_BUFS)
-+			vid_cap->buf_index = 0;
-+	} else {
-+		fimc_pending_queue_add(vid_cap, buf);
- 	}
-+
-+	if (!test_and_set_bit(ST_CAPT_STREAM, &fimc->state))
-+		fimc_activate_capture(ctx);
-+
- 	spin_unlock_irqrestore(&fimc->slock, flags);
- }
- 
-diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index cd8a300..461f1f2 100644
---- a/drivers/media/video/s5p-fimc/fimc-core.c
-+++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -327,7 +327,7 @@ static int stop_streaming(struct vb2_queue *q)
- static void fimc_capture_handler(struct fimc_dev *fimc)
- {
- 	struct fimc_vid_cap *cap = &fimc->vid_cap;
--	struct fimc_vid_buffer *v_buf = NULL;
-+	struct fimc_vid_buffer *v_buf;
- 
- 	if (!list_empty(&cap->active_buf_q)) {
- 		v_buf = active_queue_pop(cap);
-@@ -356,19 +356,23 @@ static void fimc_capture_handler(struct fimc_dev *fimc)
- 
- 		if (++cap->buf_index >= FIMC_MAX_OUT_BUFS)
- 			cap->buf_index = 0;
-+	}
- 
--	} else if (test_and_clear_bit(ST_CAPT_STREAM, &fimc->state) &&
--		   cap->active_buf_cnt <= 1) {
--		fimc_deactivate_capture(fimc);
-+	if (cap->active_buf_cnt == 0) {
-+		clear_bit(ST_CAPT_RUN, &fimc->state);
-+
-+		if (++cap->buf_index >= FIMC_MAX_OUT_BUFS)
-+			cap->buf_index = 0;
- 	}
- 
--	dbg("frame: %d, active_buf_cnt= %d",
-+	dbg("frame: %d, active_buf_cnt: %d",
- 	    fimc_hw_get_frame_index(fimc), cap->active_buf_cnt);
- }
- 
- static irqreturn_t fimc_isr(int irq, void *priv)
- {
- 	struct fimc_dev *fimc = priv;
-+	struct fimc_vid_cap *cap = &fimc->vid_cap;
- 
- 	BUG_ON(!fimc);
- 	fimc_hw_clear_irq(fimc);
-@@ -398,10 +402,12 @@ static irqreturn_t fimc_isr(int irq, void *priv)
- 
- 	if (test_bit(ST_CAPT_RUN, &fimc->state))
- 		fimc_capture_handler(fimc);
--
--	if (test_and_clear_bit(ST_CAPT_PEND, &fimc->state)) {
-+	else if (test_bit(ST_CAPT_PEND, &fimc->state))
- 		set_bit(ST_CAPT_RUN, &fimc->state);
--		wake_up(&fimc->irq_queue);
-+
-+	if (cap->active_buf_cnt == 1) {
-+		fimc_deactivate_capture(fimc);
-+		clear_bit(ST_CAPT_STREAM, &fimc->state);
- 	}
- 
- isr_unlock:
+ 	} else if (cam->bus_type == FIMC_ITU_601 ||
+-		  cam->bus_type == FIMC_ITU_656) {
++		   cam->bus_type == FIMC_ITU_656) {
+ 		if (cam->mux_id == 0) /* ITU-A, ITU-B: 0, 1 */
+ 			cfg |= S5P_CIGCTRL_SELCAM_ITU_A;
+ 	} else if (cam->bus_type == FIMC_LCD_WB) {
+diff --git a/include/media/s5p_fimc.h b/include/media/s5p_fimc.h
+index 96cd6fc..94c9a00 100644
+--- a/include/media/s5p_fimc.h
++++ b/include/media/s5p_fimc.h
+@@ -33,6 +33,7 @@ struct i2c_board_info;
+  * @board_info: pointer to I2C subdevice's board info
+  * @clk_frequency: frequency of the clock the host interface provides to sensor
+  * @bus_type: determines bus type, MIPI, ITU-R BT.601 etc.
++ * @csi_data_align: MIPI-CSI interface data alignment in bits
+  * @i2c_bus_num: i2c control bus id the sensor is attached to
+  * @mux_id: FIMC camera interface multiplexer index (separate for MIPI and ITU)
+  * @flags: flags defining bus signals polarity inversion (High by default)
+@@ -41,6 +42,7 @@ struct s5p_fimc_isp_info {
+ 	struct i2c_board_info *board_info;
+ 	unsigned long clk_frequency;
+ 	enum cam_bus_type bus_type;
++	u16 csi_data_align;
+ 	u16 i2c_bus_num;
+ 	u16 mux_id;
+ 	u16 flags;
 -- 
 1.7.4.1
