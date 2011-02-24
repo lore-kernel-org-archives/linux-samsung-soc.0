@@ -1,72 +1,49 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 5/7] s5p-fimc: Add a platform data entry for MIPI-CSI data
-	alignment
-Date: Thu, 24 Feb 2011 15:33:52 +0100
-Message-ID: <1298558034-10768-6-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 6/7] s5p-fimc: Use dynamic debug
+Date: Thu, 24 Feb 2011 15:33:53 +0100
+Message-ID: <1298558034-10768-7-git-send-email-s.nawrocki@samsung.com>
 References: <1298558034-10768-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38863 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755625Ab1BXOjf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Feb 2011 09:39:35 -0500
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1298558034-10768-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, s.nawrocki@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Allow the MIPI-CSI data alignment to be defined in the board setup
-as it may be different across various camera sensors.
+Use pr_debug instead of printk so it is possible to control
+debug traces at runtime.
+E.g. to enable debug trace in file fimc-core.c use command:
+echo -n 'file fimc-core.c +p' > /sys/kernel/debug/dynamic_debug/control
+or
+echo -n 'file fimc-core.c -p' > /sys/kernel/debug/dynamic_debug/control
+to disable.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-reg.c |    6 ++++--
- include/media/s5p_fimc.h                |    2 ++
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/media/video/s5p-fimc/fimc-core.h |    6 +-----
+ 1 files changed, 1 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-reg.c b/drivers/media/video/s5p-fimc/fimc-reg.c
-index 10684ae..4d929a3 100644
---- a/drivers/media/video/s5p-fimc/fimc-reg.c
-+++ b/drivers/media/video/s5p-fimc/fimc-reg.c
-@@ -665,10 +665,12 @@ int fimc_hw_set_camera_type(struct fimc_dev *fimc,
- 			    vid_cap->fmt.code);
- 			return -EINVAL;
- 		}
--		writel(tmp | (0x1 << 8), fimc->regs + S5P_CSIIMGFMT);
-+		tmp |= (cam->csi_data_align == 32) << 8;
-+
-+		writel(tmp, fimc->regs + S5P_CSIIMGFMT);
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
+index 41b1352..3beb1e5 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.h
++++ b/drivers/media/video/s5p-fimc/fimc-core.h
+@@ -29,12 +29,8 @@
+ #define err(fmt, args...) \
+ 	printk(KERN_ERR "%s:%d: " fmt "\n", __func__, __LINE__, ##args)
  
- 	} else if (cam->bus_type == FIMC_ITU_601 ||
--		  cam->bus_type == FIMC_ITU_656) {
-+		   cam->bus_type == FIMC_ITU_656) {
- 		if (cam->mux_id == 0) /* ITU-A, ITU-B: 0, 1 */
- 			cfg |= S5P_CIGCTRL_SELCAM_ITU_A;
- 	} else if (cam->bus_type == FIMC_LCD_WB) {
-diff --git a/include/media/s5p_fimc.h b/include/media/s5p_fimc.h
-index 96cd6fc..94c9a00 100644
---- a/include/media/s5p_fimc.h
-+++ b/include/media/s5p_fimc.h
-@@ -33,6 +33,7 @@ struct i2c_board_info;
-  * @board_info: pointer to I2C subdevice's board info
-  * @clk_frequency: frequency of the clock the host interface provides to sensor
-  * @bus_type: determines bus type, MIPI, ITU-R BT.601 etc.
-+ * @csi_data_align: MIPI-CSI interface data alignment in bits
-  * @i2c_bus_num: i2c control bus id the sensor is attached to
-  * @mux_id: FIMC camera interface multiplexer index (separate for MIPI and ITU)
-  * @flags: flags defining bus signals polarity inversion (High by default)
-@@ -41,6 +42,7 @@ struct s5p_fimc_isp_info {
- 	struct i2c_board_info *board_info;
- 	unsigned long clk_frequency;
- 	enum cam_bus_type bus_type;
-+	u16 csi_data_align;
- 	u16 i2c_bus_num;
- 	u16 mux_id;
- 	u16 flags;
+-#ifdef DEBUG
+ #define dbg(fmt, args...) \
+-	printk(KERN_DEBUG "%s:%d: " fmt "\n", __func__, __LINE__, ##args)
+-#else
+-#define dbg(fmt, args...)
+-#endif
++	pr_debug("%s:%d: " fmt "\n", __func__, __LINE__, ##args)
+ 
+ /* Time to wait for next frame VSYNC interrupt while stopping operation. */
+ #define FIMC_SHUTDOWN_TIMEOUT	((100*HZ)/1000)
 -- 
 1.7.4.1
