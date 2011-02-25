@@ -1,326 +1,188 @@
-From: Minkyu Kang <mk7.kang@samsung.com>
-Subject: [PATCH] ARM: EXYNOS4: Adds Samsung NURI board support
-Date: Fri, 25 Feb 2011 17:43:36 +0900
-Message-ID: <4D676BB8.9040803@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH 2/5] ARM: Samsung: cleanup S5P gpio interrupt code
+Date: Fri, 25 Feb 2011 10:00:10 +0100
+Message-ID: <000001cbd4ca$6a7d25e0$3f7771a0$%szyprowski@samsung.com>
+References: <1297927527-1338-1-git-send-email-m.szyprowski@samsung.com>
+ <1297927527-1338-3-git-send-email-m.szyprowski@samsung.com>
+ <01f201cbd342$8e6001f0$ab2005d0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kyungmin.park@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:26003 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932174Ab1BYJAY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 25 Feb 2011 04:00:24 -0500
+Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LH600LYB10MUG70@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 25 Feb 2011 18:00:22 +0900 (KST)
+Received: from AMDC159 ([106.116.37.153])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LH60077J10B4Y@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 25 Feb 2011 18:00:22 +0900 (KST)
+In-reply-to: <01f201cbd342$8e6001f0$ab2005d0$%kim@samsung.com>
+Content-language: pl
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, ben-linux@fluff.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>
 
-This patch adds Samsung NURI board support.
+Hello,
 
-Signed-off-by: Minkyu Kang <mk7.kang@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
-This patch is base on next-exynos4 branch at kgene tree.
+On Wednesday, February 23, 2011 11:15 AM Kukjin Kim wrote:
 
- arch/arm/configs/exynos4_defconfig |    1 +
- arch/arm/mach-exynos4/Kconfig      |   15 +++
- arch/arm/mach-exynos4/Makefile     |    1 +
- arch/arm/mach-exynos4/mach-nuri.c  |  233 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 250 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-exynos4/mach-nuri.c
+> Marek Szyprowski wrote:
+> >
+> > This patch performs a global cleanup in s5p gpio interrupt support code.
+> > The code is prepared for upcoming support for gpio interrupts on S5PC210
+> > platform, which has 2 gpio banks (regions) instead of one (like on
+> > S5PC110 and S5PC100).
+> >
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
+> >  arch/arm/plat-s5p/irq-gpioint.c |  106
+> +++++++++++++++++--------------------
+> > --
+> >  1 files changed, 46 insertions(+), 60 deletions(-)
+> >
+> > diff --git a/arch/arm/plat-s5p/irq-gpioint.c b/arch/arm/plat-s5p/irq-
+> > gpioint.c
+> > index 3b6bf89..af10328 100644
+> > --- a/arch/arm/plat-s5p/irq-gpioint.c
+> > +++ b/arch/arm/plat-s5p/irq-gpioint.c
+> > @@ -22,77 +22,64 @@
+> >  #include <plat/gpio-core.h>
+> >  #include <plat/gpio-cfg.h>
+> >
+> > -#define S5P_GPIOREG(x)			(S5P_VA_GPIO + (x))
+> > +#define GPIO_BASE(chip)		(((unsigned long)(chip)->base) &
+> > ~(SZ_4K - 1))
+> >
+> 
+> Need SZ_4K here instead of 0xFFFFF000?
 
-diff --git a/arch/arm/configs/exynos4_defconfig b/arch/arm/configs/exynos4_defconfig
-index 2ffba24..fd92324 100644
---- a/arch/arm/configs/exynos4_defconfig
-+++ b/arch/arm/configs/exynos4_defconfig
-@@ -9,6 +9,7 @@ CONFIG_S3C_LOWLEVEL_UART_PORT=1
- CONFIG_MACH_SMDKC210=y
- CONFIG_MACH_SMDKV310=y
- CONFIG_MACH_UNIVERSAL_C210=y
-+CONFIG_MACH_NURI=y
- CONFIG_NO_HZ=y
- CONFIG_HIGH_RES_TIMERS=y
- CONFIG_SMP=y
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index ad03840..5bf00b9 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -123,6 +123,21 @@ config MACH_UNIVERSAL_C210
- 	  Machine support for Samsung Mobile Universal S5PC210 Reference
- 	  Board.
- 
-+config MACH_NURI
-+	bool "Mobile NURI Board"
-+	select CPU_EXYNOS4210
-+	select S3C_DEV_WDT
-+	select S3C_DEV_HSMMC
-+	select S3C_DEV_HSMMC2
-+	select S3C_DEV_HSMMC3
-+	select S3C_DEV_I2C1
-+	select S3C_DEV_I2C5
-+	select EXYNOS4_SETUP_I2C1
-+	select EXYNOS4_SETUP_I2C5
-+	select EXYNOS4_SETUP_SDHCI
-+	help
-+	  Machine support for Samsung Mobile NURI Board.
-+
- endmenu
- 
- comment "Configuration for HSMMC bus width"
-diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
-index 0558235..fa9e814 100644
---- a/arch/arm/mach-exynos4/Makefile
-+++ b/arch/arm/mach-exynos4/Makefile
-@@ -25,6 +25,7 @@ obj-$(CONFIG_HOTPLUG_CPU)	+= hotplug.o
- obj-$(CONFIG_MACH_SMDKC210)		+= mach-smdkc210.o
- obj-$(CONFIG_MACH_SMDKV310)		+= mach-smdkv310.o
- obj-$(CONFIG_MACH_UNIVERSAL_C210)	+= mach-universal_c210.o
-+obj-$(CONFIG_MACH_NURI)			+= mach-nuri.o
- 
- # device support
- 
-diff --git a/arch/arm/mach-exynos4/mach-nuri.c b/arch/arm/mach-exynos4/mach-nuri.c
-new file mode 100644
-index 0000000..28010bd
---- /dev/null
-+++ b/arch/arm/mach-exynos4/mach-nuri.c
-@@ -0,0 +1,233 @@
-+/*
-+ * linux/arch/arm/mach-exynos4/mach-nuri.c
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/platform_device.h>
-+#include <linux/serial_core.h>
-+#include <linux/input.h>
-+#include <linux/i2c.h>
-+#include <linux/gpio_keys.h>
-+#include <linux/gpio.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/regulator/fixed.h>
-+#include <linux/mmc/host.h>
-+
-+#include <asm/mach/arch.h>
-+#include <asm/mach-types.h>
-+
-+#include <plat/regs-serial.h>
-+#include <plat/exynos4.h>
-+#include <plat/cpu.h>
-+#include <plat/devs.h>
-+#include <plat/sdhci.h>
-+
-+#include <mach/map.h>
-+
-+/* Following are default values for UCON, ULCON and UFCON UART registers */
-+#define NURI_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-+				 S3C2410_UCON_RXILEVEL |	\
-+				 S3C2410_UCON_TXIRQMODE |	\
-+				 S3C2410_UCON_RXIRQMODE |	\
-+				 S3C2410_UCON_RXFIFO_TOI |	\
-+				 S3C2443_UCON_RXERR_IRQEN)
-+
-+#define NURI_ULCON_DEFAULT	S3C2410_LCON_CS8
-+
-+#define NURI_UFCON_DEFAULT	(S3C2410_UFCON_FIFOMODE |	\
-+				 S5PV210_UFCON_TXTRIG256 |	\
-+				 S5PV210_UFCON_RXTRIG256)
-+
-+enum fixed_regulator_id {
-+	FIXED_REG_ID_MMC = 0,
-+};
-+
-+static struct s3c2410_uartcfg nuri_uartcfgs[] __initdata = {
-+	{
-+		.hwport		= 0,
-+		.ucon		= NURI_UCON_DEFAULT,
-+		.ulcon		= NURI_ULCON_DEFAULT,
-+		.ufcon		= NURI_UFCON_DEFAULT,
-+	},
-+	{
-+		.hwport		= 1,
-+		.ucon		= NURI_UCON_DEFAULT,
-+		.ulcon		= NURI_ULCON_DEFAULT,
-+		.ufcon		= NURI_UFCON_DEFAULT,
-+	},
-+	{
-+		.hwport		= 2,
-+		.ucon		= NURI_UCON_DEFAULT,
-+		.ulcon		= NURI_ULCON_DEFAULT,
-+		.ufcon		= NURI_UFCON_DEFAULT,
-+	},
-+	{
-+		.hwport		= 3,
-+		.ucon		= NURI_UCON_DEFAULT,
-+		.ulcon		= NURI_ULCON_DEFAULT,
-+		.ufcon		= NURI_UFCON_DEFAULT,
-+	},
-+};
-+
-+/* eMMC */
-+static struct s3c_sdhci_platdata nuri_hsmmc0_data __initdata = {
-+	.max_width		= 8,
-+	.host_caps		= (MMC_CAP_8_BIT_DATA | MMC_CAP_4_BIT_DATA |
-+			   MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED |
-+			   MMC_CAP_DISABLE | MMC_CAP_ERASE),
-+	.cd_type		= S3C_SDHCI_CD_PERMANENT,
-+	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
-+};
-+
-+static struct regulator_consumer_supply emmc_supplies[] = {
-+	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
-+	REGULATOR_SUPPLY("vmmc", "dw_mmc"),
-+};
-+
-+static struct regulator_init_data emmc_fixed_voltage_init_data = {
-+	.constraints		= {
-+		.name		= "VMEM_VDD_2.8V",
-+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(emmc_supplies),
-+	.consumer_supplies	= emmc_supplies,
-+};
-+
-+static struct fixed_voltage_config emmc_fixed_voltage_config = {
-+	.supply_name		= "MASSMEMORY_EN (inverted)",
-+	.microvolts		= 2800000,
-+	.gpio			= EXYNOS4_GPL1(1),
-+	.enable_high		= false,
-+	.init_data		= &emmc_fixed_voltage_init_data,
-+};
-+
-+static struct platform_device emmc_fixed_voltage = {
-+	.name			= "reg-fixed-voltage",
-+	.id			= FIXED_REG_ID_MMC,
-+	.dev			= {
-+		.platform_data	= &emmc_fixed_voltage_config,
-+	},
-+};
-+
-+/* SD */
-+static struct s3c_sdhci_platdata nuri_hsmmc2_data __initdata = {
-+	.max_width		= 4,
-+	.host_caps		= MMC_CAP_4_BIT_DATA |
-+				MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED |
-+				MMC_CAP_DISABLE,
-+	.ext_cd_gpio		= EXYNOS4_GPX3(3),	/* XEINT_27 */
-+	.ext_cd_gpio_invert	= 1,
-+	.cd_type		= S3C_SDHCI_CD_GPIO,
-+	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
-+};
-+
-+/* WLAN */
-+static struct s3c_sdhci_platdata nuri_hsmmc3_data __initdata = {
-+	.max_width		= 4,
-+	.host_caps		= MMC_CAP_4_BIT_DATA |
-+				MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED,
-+	.cd_type		= S3C_SDHCI_CD_EXTERNAL,
-+	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
-+};
-+
-+static void __init nuri_sdhci_init(void)
-+{
-+	s3c_sdhci0_set_platdata(&nuri_hsmmc0_data);
-+	s3c_sdhci2_set_platdata(&nuri_hsmmc2_data);
-+	s3c_sdhci3_set_platdata(&nuri_hsmmc3_data);
-+}
-+
-+/* GPIO KEYS */
-+static struct gpio_keys_button nuri_gpio_keys_tables[] = {
-+	{
-+		.code			= KEY_VOLUMEUP,
-+		.gpio			= EXYNOS4_GPX2(0),	/* XEINT16 */
-+		.desc			= "gpio-keys: KEY_VOLUMEUP",
-+		.type			= EV_KEY,
-+		.active_low		= 1,
-+		.debounce_interval	= 1,
-+	}, {
-+		.code			= KEY_VOLUMEDOWN,
-+		.gpio			= EXYNOS4_GPX2(1),	/* XEINT17 */
-+		.desc			= "gpio-keys: KEY_VOLUMEDOWN",
-+		.type			= EV_KEY,
-+		.active_low		= 1,
-+		.debounce_interval	= 1,
-+	}, {
-+		.code			= KEY_POWER,
-+		.gpio			= EXYNOS4_GPX2(7),	/* XEINT23 */
-+		.desc			= "gpio-keys: KEY_POWER",
-+		.type			= EV_KEY,
-+		.active_low		= 1,
-+		.wakeup			= 1,
-+		.debounce_interval	= 1,
-+	},
-+};
-+
-+static struct gpio_keys_platform_data nuri_gpio_keys_data = {
-+	.buttons		= nuri_gpio_keys_tables,
-+	.nbuttons		= ARRAY_SIZE(nuri_gpio_keys_tables),
-+};
-+
-+static struct platform_device nuri_gpio_keys = {
-+	.name			= "gpio-keys",
-+	.dev			= {
-+		.platform_data	= &nuri_gpio_keys_data,
-+	},
-+};
-+
-+/* I2C1 */
-+static struct i2c_board_info i2c1_devs[] __initdata = {
-+	/* Gyro, To be updated */
-+};
-+
-+/* GPIO I2C 5 (PMIC) */
-+static struct i2c_board_info i2c5_devs[] __initdata = {
-+	/* max8997, To be updated */
-+};
-+
-+static struct platform_device *nuri_devices[] __initdata = {
-+	/* Samsung Platform Devices */
-+	&emmc_fixed_voltage,
-+	&s3c_device_hsmmc0,
-+	&s3c_device_hsmmc2,
-+	&s3c_device_hsmmc3,
-+#ifdef CONFIG_S3C2410_WATCHDOG
-+	&s3c_device_wdt,
-+#endif
-+
-+	/* NURI Devices */
-+	&nuri_gpio_keys,
-+};
-+
-+static void __init nuri_map_io(void)
-+{
-+	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
-+	s3c24xx_init_clocks(24000000);
-+	s3c24xx_init_uarts(nuri_uartcfgs, ARRAY_SIZE(nuri_uartcfgs));
-+}
-+
-+static void __init nuri_machine_init(void)
-+{
-+	nuri_sdhci_init();
-+
-+	i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
-+	i2c_register_board_info(5, i2c5_devs, ARRAY_SIZE(i2c5_devs));
-+
-+	/* Last */
-+	platform_add_devices(nuri_devices, ARRAY_SIZE(nuri_devices));
-+}
-+
-+MACHINE_START(NURI, "NURI")
-+	/* Maintainer: Kyungmin Park <kyungmin.park@samsung.com> */
-+	.boot_params	= S5P_PA_SDRAM + 0x100,
-+	.init_irq	= exynos4_init_irq,
-+	.map_io		= nuri_map_io,
-+	.init_machine	= nuri_machine_init,
-+	.timer		= &exynos4_timer,
-+MACHINE_END
--- 
-1.7.1
+No problem, I can change it to 0xFFFFF000
+
+> 
+> > -#define GPIOINT_CON_OFFSET		0x700
+> > -#define GPIOINT_MASK_OFFSET		0x900
+> > -#define GPIOINT_PEND_OFFSET		0xA00
+> > +#define CON_OFFSET		0x700
+> > +#define MASK_OFFSET		0x900
+> > +#define PEND_OFFSET		0xA00
+> 
+> I don't know why need to change above definitions...
+
+I've shortened them to make the code the uses them to fit 80 characters
+per line... They are just a local defines that imho don't need to be
+prefixed with GPIOINT_
+
+> > +#define REG_OFFSET(x)		((x) << 2)
+> >
+> Actually, this is used instead of "group << 2" in this file.
+> So how about "GPIOINT_REG_OFFSET(x)" like others?
+
+Ok.
+
+> >  static void s5p_gpioint_ack(struct irq_data *data)
+> >  {
+> > +	struct s3c_gpio_chip *chip = irq_data_get_irq_data(data);
+> >  	int group, offset, pend_offset;
+> >  	unsigned int value;
+> >
+> > -	group = s5p_gpioint_get_group(data);
+> > +	group = chip->group;
+> >  	offset = s5p_gpioint_get_offset(data);
+> > -	pend_offset = group << 2;
+> > +	pend_offset = REG_OFFSET(group);
+> >
+> > -	value = __raw_readl(S5P_GPIOREG(GPIOINT_PEND_OFFSET) + pend_offset);
+> > -	value |= 1 << offset;
+> > -	__raw_writel(value, S5P_GPIOREG(GPIOINT_PEND_OFFSET) + pend_offset);
+> > +	value = __raw_readl(GPIO_BASE(chip) + PEND_OFFSET + pend_offset);
+> > +	value |= BIT(offset);
+> 
+> No need inclusion <linux/bitops.h>?
+
+It has been included indirectly, because the code compiled fine.
+
+snip
+
+> >  static void s5p_gpioint_handler(unsigned int irq, struct irq_desc *desc)
+> >  {
+> > -	int group, offset, pend_offset, mask_offset;
+> > -	int real_irq;
+> > +	int group, pend_offset, mask_offset;
+> >  	unsigned int pend, mask;
+> >
+> >  	for (group = 0; group < S5P_GPIOINT_GROUP_MAXNR; group++) {
+> > -		pend_offset = group << 2;
+> > -		pend = __raw_readl(S5P_GPIOREG(GPIOINT_PEND_OFFSET) +
+> > -				pend_offset);
+> > +		struct s3c_gpio_chip *chip = irq_chips[group];
+> > +		if (!chip)
+> > +			continue;
+> > +
+> > +		pend_offset = REG_OFFSET(group);
+> > +		pend = __raw_readl(GPIO_BASE(chip) + PEND_OFFSET +
+> > pend_offset);
+> >  		if (!pend)
+> >  			continue;
+> >
+> > -		mask_offset = group << 2;
+> > -		mask = __raw_readl(S5P_GPIOREG(GPIOINT_MASK_OFFSET) +
+> > -				mask_offset);
+> > +		mask_offset = REG_OFFSET(group);
+> > +		mask = __raw_readl(GPIO_BASE(chip) + MASK_OFFSET +
+> > mask_offset);
+> >  		pend &= ~mask;
+> >
+> > -		for (offset = 0; offset < 8; offset++) {
+> > -			if (pend & (1 << offset)) {
+> > -				struct s3c_gpio_chip *chip =
+> irq_chips[group];
+> > -				if (chip) {
+> > -					real_irq = chip->irq_base + offset;
+> > -					generic_handle_irq(real_irq);
+> > -				}
+> > -			}
+> > +		while (pend) {
+> > +			int offset = fls(pend) - 1;
+> 
+> __ffs?
+
+I don't see much difference between ffs and fls here...
+
+> And hmm...do we really need while loop here?
+
+Yes, because more than one gpio pin in a group can issue an interrupt at the
+same time. The previous version used for() loop here.
+
+> 
+> > +			int real_irq = chip->irq_base + offset;
+> > +			generic_handle_irq(real_irq);
+> > +			pend &= ~BIT(offset);
+> >  		}
+> >  	}
+> >  }
+> > @@ -202,7 +188,7 @@ static __init int s5p_gpioint_add(struct s3c_gpio_chip
+> > *chip)
+> >  	for (i = 0; i < chip->chip.ngpio; i++) {
+> >  		irq = chip->irq_base + i;
+> >  		set_irq_chip(irq, &s5p_gpioint);
+> > -		set_irq_data(irq, &chip->chip);
+> > +		set_irq_data(irq, chip);
+> 
+> ?
+
+This simplifies all the functions that use get_irq_data. Now they get s3c_gpio_chip
+directly and don't need to extract it with contrainer_of().
+
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
