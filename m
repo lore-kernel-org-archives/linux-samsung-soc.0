@@ -1,97 +1,93 @@
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
 Subject: Re: [PATCH 1/3] ARM: S5P: Add s5p_timer support for HRT
-Date: Sat, 26 Feb 2011 10:33:54 +0100
-Message-ID: <AANLkTinCyXm_z8tcjRHCYEvi79ifj+joKK7E8Kzboi2G@mail.gmail.com>
-References: <1298688357-20775-1-git-send-email-sbkim73@samsung.com>
-	<1298688357-20775-2-git-send-email-sbkim73@samsung.com>
+Date: Sat, 26 Feb 2011 14:24:13 +0000
+Message-ID: <20110226142413.GC3640@n2100.arm.linux.org.uk>
+References: <1298688357-20775-1-git-send-email-sbkim73@samsung.com> <1298688357-20775-2-git-send-email-sbkim73@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pv0-f174.google.com ([74.125.83.174]:63263 "EHLO
-	mail-pv0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751608Ab1BZJdz convert rfc822-to-8bit (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:50857 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750995Ab1BZOYc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 26 Feb 2011 04:33:55 -0500
-Received: by pvg12 with SMTP id 12so376626pvg.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 26 Feb 2011 01:33:54 -0800 (PST)
+	Sat, 26 Feb 2011 09:24:32 -0500
+Content-Disposition: inline
 In-Reply-To: <1298688357-20775-2-git-send-email-sbkim73@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sangbeom Kim <sbkim73@samsung.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org
 
-2011/2/26 Sangbeom Kim <sbkim73@samsung.com>:
-> (...)
-> +static void s5p_clockevent_init(void)
+On Sat, Feb 26, 2011 at 11:45:55AM +0900, Sangbeom Kim wrote:
+> +static irqreturn_t s5p_clock_event_isr(int irq, void *dev_id)
 > +{
-> + =A0 =A0 =A0 unsigned long pclk;
-> + =A0 =A0 =A0 unsigned long clock_rate;
-> + =A0 =A0 =A0 unsigned int irq_number;
-> + =A0 =A0 =A0 struct clk *tscaler;
-> +
-> + =A0 =A0 =A0 pclk =3D clk_get_rate(timerclk);
-> +
-> + =A0 =A0 =A0 tscaler =3D clk_get_parent(tdiv_event);
-> +
-> + =A0 =A0 =A0 clk_set_rate(tscaler, pclk / 2);
-> + =A0 =A0 =A0 clk_set_rate(tdiv_event, pclk / 2);
-> + =A0 =A0 =A0 clk_set_parent(tin_event, tdiv_event);
-> +
-> + =A0 =A0 =A0 clock_rate =3D clk_get_rate(tin_event);
-> + =A0 =A0 =A0 clock_count_per_tick =3D clock_rate / HZ;
-> +
-> + =A0 =A0 =A0 time_event_device.mult =3D
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 div_sc(clock_rate, NSEC_PER_SEC, time_e=
-vent_device.shift);
-> + =A0 =A0 =A0 time_event_device.max_delta_ns =3D
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clockevent_delta2ns(-1, &time_event_dev=
-ice);
-> + =A0 =A0 =A0 time_event_device.min_delta_ns =3D
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clockevent_delta2ns(1, &time_event_devi=
-ce);
+> +	struct clock_event_device *evt = &time_event_device;
 
-This is a very complicated and inprecise way of doing this nowadays.
-Skip hardcoding the shift value and calculating mult like that and use
+	struct clock_event_device *evt = dev_id;
 
-/* Be able to sleep for atleast 4 seconds (usually more) */
-#define EVT_MIN_RANGE 4
-
-clockevents_calc_mult_shift(&time_event_device,
-                                    clock_rate, EVT_MIN_RANGE);
-
-> (...)
-> +static void s5p_clocksource_init(void)
-> +{
-> + =A0 =A0 =A0 unsigned long pclk;
-> + =A0 =A0 =A0 unsigned long clock_rate;
 > +
-> + =A0 =A0 =A0 pclk =3D clk_get_rate(timerclk);
+> +	evt->event_handler(evt);
 > +
-> + =A0 =A0 =A0 clk_set_rate(tdiv_source, pclk / 2);
-> + =A0 =A0 =A0 clk_set_parent(tin_source, tdiv_source);
-> +
-> + =A0 =A0 =A0 clock_rate =3D clk_get_rate(tin_source);
-> +
-> + =A0 =A0 =A0 s5p_time_setup(timer_source.source_id, TCNT_MAX);
-> + =A0 =A0 =A0 s5p_time_start(timer_source.source_id, PERIODIC);
-> +
-> + =A0 =A0 =A0 if (clocksource_register_hz(&time_clocksource, clock_ra=
-te))
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("%s: can't register clocksource\n=
-", time_clocksource.name);
+> +	return IRQ_HANDLED;
 > +}
+> +
+> +static struct irqaction s5p_clock_event_irq = {
+> +	.name		= "s5p_time_irq",
+> +	.flags		= IRQF_DISABLED | IRQF_TIMER | IRQF_IRQPOLL,
+> +	.handler	= s5p_clock_event_isr,
 
-This is more like it :-)
+	.dev_id	 	= &time_event_device,
 
-But you probably also want to add a sched_clock hook for this
-platform too, so you get some nice scheduling resolution.
+> +};
+...
+> +static void __init s5p_timer_resources(void)
+> +{
+> +	struct platform_device tmpdev;
+> +
+> +	tmpdev.dev.bus = &platform_bus_type;
+> +
+> +	timerclk = clk_get(NULL, "timers");
+> +	if (IS_ERR(timerclk))
+> +		panic("failed to get timers clock for system timer");
+> +
+> +	clk_enable(timerclk);
+> +
+> +	tmpdev.id = timer_source.event_id;
 
-I suggest you look at the simple straight-forward driver
-for U300 in arch/arm/mach-u300/timer.c for inspiration.
-It's using the same timer that is used for clocksource for
-sched_clock().
+So Samsung clock stuff is still being idiotic.  Will this ever be fixed?
 
+> +	tin_event = clk_get(&tmpdev.dev, "pwm-tin");
+> +	if (IS_ERR(tin_event)) {
+> +		clk_put(tin_event);
 
-Yours,
-Linus Walleij
+Don't clk_put errors.
+
+> +		panic("failed to get pwm-tin2 clock for system timer");
+> +	}
+> +
+> +	tdiv_event = clk_get(&tmpdev.dev, "pwm-tdiv");
+> +	if (IS_ERR(tdiv_event)) {
+> +		clk_put(tdiv_event);
+
+Ditto.
+
+> +		panic("failed to get pwm-tdiv2 clock for system timer");
+> +	}
+> +
+> +	clk_enable(tin_event);
+> +
+> +	tmpdev.id = timer_source.source_id;
+> +	tin_source = clk_get(&tmpdev.dev, "pwm-tin");
+> +	if (IS_ERR(tin_source)) {
+> +		clk_put(tin_source);
+
+Ditto.
+
+> +		panic("failed to get pwm-tin4 clock for system timer");
+> +	}
+> +
+> +	tdiv_source = clk_get(&tmpdev.dev, "pwm-tdiv");
+> +	if (IS_ERR(tdiv_source)) {
+> +		clk_put(tdiv_source);
+
+Ditto.
