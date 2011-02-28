@@ -1,158 +1,57 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH 6/6] ARM: S5PV210: Add PWM backlight support on SMDKV210
-Date: Mon, 28 Feb 2011 13:14:33 +0900
-Message-ID: <AANLkTinfgwTtxbkL1t+ris36AvyfTA0zcKhB1HG0e5Qe@mail.gmail.com>
-References: <1298694546-16816-1-git-send-email-banajit.g@samsung.com>
-	<1298694546-16816-7-git-send-email-banajit.g@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH 1/3] ARM: EXYNOS4: Add SYSTIMER IO Address mapping for MCT
+Date: Mon, 28 Feb 2011 14:16:45 +0900
+Message-ID: <1298870207-1850-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:48363 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752209Ab1B1EOd convert rfc822-to-8bit (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:46900 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751154Ab1B1Frj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 27 Feb 2011 23:14:33 -0500
-Received: by yxs7 with SMTP id 7so1397762yxs.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Feb 2011 20:14:33 -0800 (PST)
-In-Reply-To: <1298694546-16816-7-git-send-email-banajit.g@samsung.com>
+	Mon, 28 Feb 2011 00:47:39 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Banajit Goswami <banajit.g@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi,
+From: Changhwan Youn <chaos.youn@samsung.com>
 
-On Sat, Feb 26, 2011 at 1:29 PM, Banajit Goswami <banajit.g@samsung.com=
-> wrote:
-> This patch adds support for LCD backlight control using PWM timer
-> for Samsung's SMDKV210 board.
->
-> Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
-> ---
-> =A0arch/arm/mach-s5pv210/Kconfig =A0 =A0 =A0 =A0 | =A0 =A01 +
-> =A0arch/arm/mach-s5pv210/mach-smdkv210.c | =A0 46 +++++++++++++++++++=
-++++++++++++++
-> =A02 files changed, 47 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kc=
-onfig
-> index 53aabef..d7fd031 100644
-> --- a/arch/arm/mach-s5pv210/Kconfig
-> +++ b/arch/arm/mach-s5pv210/Kconfig
-> @@ -130,6 +130,7 @@ config MACH_SMDKV210
-> =A0 =A0 =A0 =A0select SAMSUNG_DEV_ADC
-> =A0 =A0 =A0 =A0select SAMSUNG_DEV_IDE
-> =A0 =A0 =A0 =A0select SAMSUNG_DEV_KEYPAD
-> + =A0 =A0 =A0 select SAMSUNG_DEV_PWM
-> =A0 =A0 =A0 =A0select SAMSUNG_DEV_TS
-> =A0 =A0 =A0 =A0select S5PV210_SETUP_FB_24BPP
-> =A0 =A0 =A0 =A0select S5PV210_SETUP_I2C1
-> diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5=
-pv210/mach-smdkv210.c
-> index bc9fdb5..8833e7b 100644
-> --- a/arch/arm/mach-s5pv210/mach-smdkv210.c
-> +++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
-> @@ -18,6 +18,7 @@
-> =A0#include <linux/fb.h>
-> =A0#include <linux/gpio.h>
-> =A0#include <linux/delay.h>
-> +#include <linux/pwm_backlight.h>
->
-> =A0#include <asm/mach/arch.h>
-> =A0#include <asm/mach/map.h>
-> @@ -43,6 +44,7 @@
-> =A0#include <plat/keypad.h>
-> =A0#include <plat/pm.h>
-> =A0#include <plat/fb.h>
-> +#include <plat/gpio-cfg.h>
->
-> =A0/* Following are default values for UCON, ULCON and UFCON UART reg=
-isters */
-> =A0#define SMDKV210_UCON_DEFAULT =A0(S3C2410_UCON_TXILEVEL | =A0 =A0 =
-=A0 =A0\
-> @@ -208,6 +210,45 @@ static struct s3c_fb_platdata smdkv210_lcd0_pdat=
-a __initdata =3D {
-> =A0 =A0 =A0 =A0.setup_gpio =A0 =A0 =3D s5pv210_fb_gpio_setup_24bpp,
-> =A0};
->
-> +static int smdkv210_backlight_init(struct device *dev)
-> +{
-> + =A0 =A0 =A0 int ret;
-> +
-> + =A0 =A0 =A0 ret =3D gpio_request(S5PV210_GPD0(3), "Backlight");
-> + =A0 =A0 =A0 if (ret) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 printk(KERN_ERR "failed to request GPD =
-for PWM-OUT 3\n");
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return ret;
-> + =A0 =A0 =A0 }
-> +
-> + =A0 =A0 =A0 /* Configure GPIO pin with S5PV210_GPD_0_3_TOUT_3 */
-> + =A0 =A0 =A0 s3c_gpio_cfgpin(S5PV210_GPD0(3), (0x2 << 12));
+The MCT(Multi-Core Timer) is used for implementing kernel timers for
+EXYNOS4210.
 
-what's (0x2 << 12)? Do you mean S3C_GPIO_SFN(2)?
-please use the macro and other patches are same usage.
+Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-exynos4/cpu.c              |    5 +++++
+ arch/arm/mach-exynos4/include/mach/map.h |    1 +
+ 2 files changed, 6 insertions(+), 0 deletions(-)
 
-> +
-> + =A0 =A0 =A0 return 0;
-> +}
-> +
-> +static void smdkv210_backlight_exit(struct device *dev)
-> +{
-> + =A0 =A0 =A0 s3c_gpio_cfgpin(S5PV210_GPD0(3), S3C_GPIO_OUTPUT);
-> + =A0 =A0 =A0 gpio_free(S5PV210_GPD0(3));
-> +}
-> +
-> +static struct platform_pwm_backlight_data smdkv210_backlight_data =3D=
- {
-> + =A0 =A0 =A0 .pwm_id =A0 =A0 =A0 =A0 =3D 3,
-> + =A0 =A0 =A0 .max_brightness =3D 255,
-> + =A0 =A0 =A0 .dft_brightness =3D 255,
-> + =A0 =A0 =A0 .pwm_period_ns =A0=3D 78770,
-> + =A0 =A0 =A0 .init =A0 =A0 =A0 =A0 =A0 =3D smdkv210_backlight_init,
-> + =A0 =A0 =A0 .exit =A0 =A0 =A0 =A0 =A0 =3D smdkv210_backlight_exit,
-> +};
-> +
-> +static struct platform_device smdkv210_backlight_device =3D {
-> + =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "pwm-backlight",
-> + =A0 =A0 =A0 .dev =A0 =A0 =A0 =A0 =A0 =A0=3D {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &s3c_device=
-_timer[3].dev,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .platform_data =A0=3D &smdkv210_backlig=
-ht_data,
-> + =A0 =A0 =A0 },
-> +};
-> +
-> =A0static struct platform_device *smdkv210_devices[] __initdata =3D {
-> =A0 =A0 =A0 =A0&s3c_device_adc,
-> =A0 =A0 =A0 =A0&s3c_device_cfcon,
-> @@ -229,6 +270,11 @@ static struct platform_device *smdkv210_devices[=
-] __initdata =3D {
-> =A0 =A0 =A0 =A0&samsung_device_keypad,
-> =A0 =A0 =A0 =A0&smdkv210_dm9000,
-> =A0 =A0 =A0 =A0&smdkv210_lcd_lte480wv,
-> + =A0 =A0 =A0 &s3c_device_timer[0],
-> + =A0 =A0 =A0 &s3c_device_timer[1],
-> + =A0 =A0 =A0 &s3c_device_timer[2],
-> + =A0 =A0 =A0 &s3c_device_timer[3],
-
-Why do you register timer[0...2] at here? it's only use the timer[3]
-at this patch.
-Other patches are same usage.
-
-Thank you,
-Kyungmin Park
-
-> + =A0 =A0 =A0 &smdkv210_backlight_device,
-> =A0};
->
-> =A0static void __init smdkv210_dm9000_init(void)
-> --
-> 1.6.5.2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
+index b0ec6d3..479dfa1 100644
+--- a/arch/arm/mach-exynos4/cpu.c
++++ b/arch/arm/mach-exynos4/cpu.c
+@@ -31,6 +31,11 @@ extern void combiner_cascade_irq(unsigned int combiner_nr, unsigned int irq);
+ /* Initial IO mappings */
+ static struct map_desc exynos4_iodesc[] __initdata = {
+ 	{
++		.virtual	= (unsigned long)S5P_VA_SYSTIMER,
++		.pfn		= __phys_to_pfn(EXYNOS4_PA_SYSTIMER),
++		.length		= SZ_4K,
++		.type	 	= MT_DEVICE,
++	}, {
+ 		.virtual	= (unsigned long)S5P_VA_SYSRAM,
+ 		.pfn		= __phys_to_pfn(EXYNOS4_PA_SYSRAM),
+ 		.length		= SZ_4K,
+diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
+index 80a41e0..d678f08 100644
+--- a/arch/arm/mach-exynos4/include/mach/map.h
++++ b/arch/arm/mach-exynos4/include/mach/map.h
+@@ -44,6 +44,7 @@
+ #define EXYNOS4_PA_PMU			0x10020000
+ #define EXYNOS4_PA_CMU			0x10030000
+ 
++#define EXYNOS4_PA_SYSTIMER		0x10050000
+ #define EXYNOS4_PA_WATCHDOG		0x10060000
+ #define EXYNOS4_PA_RTC			0x10070000
+ 
+-- 
+1.7.1
