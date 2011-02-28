@@ -1,58 +1,88 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/6] ARM: SAMSUNG: Add support PWM backlight
-Date: Mon, 28 Feb 2011 19:53:28 +0900
-Message-ID: <003401cbd735$be0b20f0$3a2162d0$%kim@samsung.com>
-References: <1298694546-16816-1-git-send-email-banajit.g@samsung.com>
+Subject: RE: [PATCH] ARM: EXYNOS4: Adds Samsung NURI board support
+Date: Mon, 28 Feb 2011 20:20:29 +0900
+Message-ID: <003701cbd739$85fc8e20$91f5aa60$%kim@samsung.com>
+References: <4D676BB8.9040803@samsung.com>
+ <002301cbd71b$1969bd00$4c3d3700$%kim@samsung.com>
+ <4D6B5949.8020606@samsung.com>
+ <002801cbd721$42e4bad0$c8ae3070$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:48482 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:61845 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753557Ab1B1Kxe (ORCPT
+	with ESMTP id S1753344Ab1B1LUi convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Feb 2011 05:53:34 -0500
-Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
+	Mon, 28 Feb 2011 06:20:38 -0500
+Received: from epmmp2 (mailout3.samsung.com [203.254.224.33])
  by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LHB00CLZQ99W6B0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 28 Feb 2011 19:53:33 +0900 (KST)
+ 2010)) with ESMTP id <0LHB00CLIRID8OE0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 28 Feb 2011 20:20:37 +0900 (KST)
 Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LHB007WZQ99XZ@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 28 Feb 2011 19:53:33 +0900 (KST)
-In-reply-to: <1298694546-16816-1-git-send-email-banajit.g@samsung.com>
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LHB006KERID5F@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 28 Feb 2011 20:20:37 +0900 (KST)
+In-reply-to: <002801cbd721$42e4bad0$c8ae3070$%kim@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Banajit Goswami' <banajit.g@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Minkyu Kang' <mk7.kang@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, kyungmin.park@samsung.com
 
-Banajit Goswami wrote:
-> 
-> This patch adds support PWM backlight for S5P SoCs.
-> 
-> 1. Move PWM timer code from plat-s3c24xx to plat-samsung for common
-> useability
-> 2. Add PWM backlight support for SMDK6410/6440/6450/C100 and SMDKV210
-> 
-> Note: The modification of GPIO F for S5P64X0 patch should be merged first
-as
-> there is a dependency for PWM on S5P64X0.
-> 
-> [PATCH 1/6] ARM: SAMSUNG: Move PWM device definition from plat-s3c24xx to
-> plat-samsung
-> [PATCH 2/6] ARM: S3C64XX: Add PWM backlight support on SMDK6410
-> [PATCH 3/6] ARM: S5P64X0: Add PWM backlight support on SMDK6440
-> [PATCH 4/6] ARM: S5P64X0: Add PWM backlight support on SMDK6450
-> [PATCH 5/6] ARM: S5PC100: Add PWM backlight support on SMDKC100
-> [PATCH 6/6] ARM: S5PV210: Add PWM backlight support on SMDKV210
+Kukjin Kim wrote:
+>=20
+> Minkyu Kang wrote:
+> >
+> > Dear Kukjin Kim,
+> >
+> > 2011-02-28 =EC=98=A4=ED=9B=84 4:42, Kukjin Kim =EC=93=B4 =EA=B8=80:
+> > > Minkyu Kang wrote:
+> > >>
+> > >> This patch adds Samsung NURI board support.
+> > >>
+> > >> Signed-off-by: Minkyu Kang <mk7.kang@samsung.com>
+> > >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > >> ---
+> > >> This patch is base on next-exynos4 branch at kgene tree.
+> > >>
+> > >>  arch/arm/configs/exynos4_defconfig |    1 +
+> > >>  arch/arm/mach-exynos4/Kconfig      |   15 +++
+> > >>  arch/arm/mach-exynos4/Makefile     |    1 +
+> > >>  arch/arm/mach-exynos4/mach-nuri.c  |  233
+> > >> ++++++++++++++++++++++++++++++++++++
+> > >>  4 files changed, 250 insertions(+), 0 deletions(-)
+> > >>  create mode 100644 arch/arm/mach-exynos4/mach-nuri.c
+> > >>
+> > >
+> > >> +enum fixed_regulator_id {
+> > >> +	FIXED_REG_ID_MMC =3D 0,
+> > >
+> > > 	FIXED_REG_ID_MMC,
+> > >
+> > > (snip)
+> > >
+> > >> +static struct platform_device emmc_fixed_voltage =3D {
+> > >> +	.name			=3D "reg-fixed-voltage",
+> > >> +	.id			=3D FIXED_REG_ID_MMC,
+> > >
+> > > Is there any reason to use FIXED_REG_ID_MMC instead directly id 0=
+?
+> > >
+> >
+> > I'm going to add more IDs of fixed regulator that are LCD and Backl=
+ight,
+> and
+> > so on.
+> > So use enum values for avoid the hard coding.
+> >
+>=20
+> Ok, applied this after removing "ifdef WATCHDOG".
 
-Ok, looks ok to me except adding unrelated platform devices.
-Could you please re-work?
-
-And please make sure that it works fine on each board before re-submitting
-:)
+Oops, NURI board is not registered yet :(
+So can't merge this before updating it now.
+Or should drop update defconfig from this...
 
 Thanks.
 
