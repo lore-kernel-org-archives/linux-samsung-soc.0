@@ -1,14 +1,14 @@
-From: Minkyu Kang <mk7.kang@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS4: Adds Samsung NURI board support
-Date: Mon, 28 Feb 2011 17:14:01 +0900
-Message-ID: <4D6B5949.8020606@samsung.com>
-References: <4D676BB8.9040803@samsung.com>
-	<002301cbd71b$1969bd00$4c3d3700$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: S5P64X0: Modify number of GPIO lines in Bank F
+Date: Mon, 28 Feb 2011 17:20:24 +0900
+Message-ID: <002401cbd720$5bfa3280$13ee9780$%kim@samsung.com>
+References: <1298694349-16776-1-git-send-email-banajit.g@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <002301cbd71b$1969bd00$4c3d3700$%kim@samsung.com>
+In-reply-to: <1298694349-16776-1-git-send-email-banajit.g@samsung.com>
+Content-language: ko
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
 	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,30 +18,54 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: linux-arm-kernel-bounces@lists.infradead.org
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+To: 'Banajit Goswami' <banajit.g@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RGVhciBLdWtqaW4gS2ltLAoKMjAxMS0wMi0yOCDsmKTtm4QgNDo0MiwgS3VramluIEtpbSDsk7Qg
-6riAOgo+IE1pbmt5dSBLYW5nIHdyb3RlOgo+Pgo+PiBUaGlzIHBhdGNoIGFkZHMgU2Ftc3VuZyBO
-VVJJIGJvYXJkIHN1cHBvcnQuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IE1pbmt5dSBLYW5nIDxtazcu
-a2FuZ0BzYW1zdW5nLmNvbT4KPj4gU2lnbmVkLW9mZi1ieTogS3l1bmdtaW4gUGFyayA8a3l1bmdt
-aW4ucGFya0BzYW1zdW5nLmNvbT4KPj4gLS0tCj4+IFRoaXMgcGF0Y2ggaXMgYmFzZSBvbiBuZXh0
-LWV4eW5vczQgYnJhbmNoIGF0IGtnZW5lIHRyZWUuCj4+Cj4+ICBhcmNoL2FybS9jb25maWdzL2V4
-eW5vczRfZGVmY29uZmlnIHwgICAgMSArCj4+ICBhcmNoL2FybS9tYWNoLWV4eW5vczQvS2NvbmZp
-ZyAgICAgIHwgICAxNSArKysKPj4gIGFyY2gvYXJtL21hY2gtZXh5bm9zNC9NYWtlZmlsZSAgICAg
-fCAgICAxICsKPj4gIGFyY2gvYXJtL21hY2gtZXh5bm9zNC9tYWNoLW51cmkuYyAgfCAgMjMzCj4+
-ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+PiAgNCBmaWxlcyBjaGFuZ2Vk
-LCAyNTAgaW5zZXJ0aW9ucygrKSwgMCBkZWxldGlvbnMoLSkKPj4gIGNyZWF0ZSBtb2RlIDEwMDY0
-NCBhcmNoL2FybS9tYWNoLWV4eW5vczQvbWFjaC1udXJpLmMKPj4KPiAKPj4gK2VudW0gZml4ZWRf
-cmVndWxhdG9yX2lkIHsKPj4gKwlGSVhFRF9SRUdfSURfTU1DID0gMCwKPiAKPiAJRklYRURfUkVH
-X0lEX01NQywKPiAKPiAoc25pcCkKPiAKPj4gK3N0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
-IGVtbWNfZml4ZWRfdm9sdGFnZSA9IHsKPj4gKwkubmFtZQkJCT0gInJlZy1maXhlZC12b2x0YWdl
-IiwKPj4gKwkuaWQJCQk9IEZJWEVEX1JFR19JRF9NTUMsCj4gCj4gSXMgdGhlcmUgYW55IHJlYXNv
-biB0byB1c2UgRklYRURfUkVHX0lEX01NQyBpbnN0ZWFkIGRpcmVjdGx5IGlkIDA/Cj4gCgpJJ20g
-Z29pbmcgdG8gYWRkIG1vcmUgSURzIG9mIGZpeGVkIHJlZ3VsYXRvciB0aGF0IGFyZSBMQ0QgYW5k
-IEJhY2tsaWdodCwgYW5kIHNvIG9uLgpTbyB1c2UgZW51bSB2YWx1ZXMgZm9yIGF2b2lkIHRoZSBo
-YXJkIGNvZGluZy4KClRoYW5rcy4KTWlua3l1IEthbmcuCgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdAps
-aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVh
-ZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+Banajit Goswami wrote:
+> 
+> This patch modifies the number of total GPIO lines for Bank F
+> for Samsung S5P6440 and S5P6450 SoCs from 2 to 16.
+> This is necessary as the GPIO lines from 0 to 13 are reserved
+> and only lines 14 and 15 are used. As during initialization,
+> the line number starts at 0, putting 2 does not solve the
+> intended purpose.
+> 
+> Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
+> ---
+>  arch/arm/mach-s5p64x0/include/mach/gpio.h |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/mach-s5p64x0/include/mach/gpio.h b/arch/arm/mach-
+> s5p64x0/include/mach/gpio.h
+> index 5486c8f..adb5f29 100644
+> --- a/arch/arm/mach-s5p64x0/include/mach/gpio.h
+> +++ b/arch/arm/mach-s5p64x0/include/mach/gpio.h
+> @@ -23,7 +23,7 @@
+>  #define S5P6440_GPIO_A_NR	(6)
+>  #define S5P6440_GPIO_B_NR	(7)
+>  #define S5P6440_GPIO_C_NR	(8)
+> -#define S5P6440_GPIO_F_NR	(2)
+> +#define S5P6440_GPIO_F_NR	(16)
+>  #define S5P6440_GPIO_G_NR	(7)
+>  #define S5P6440_GPIO_H_NR	(10)
+>  #define S5P6440_GPIO_I_NR	(16)
+> @@ -36,7 +36,7 @@
+>  #define S5P6450_GPIO_B_NR	(7)
+>  #define S5P6450_GPIO_C_NR	(8)
+>  #define S5P6450_GPIO_D_NR	(8)
+> -#define S5P6450_GPIO_F_NR	(2)
+> +#define S5P6450_GPIO_F_NR	(16)
+>  #define S5P6450_GPIO_G_NR	(14)
+>  #define S5P6450_GPIO_H_NR	(10)
+>  #define S5P6450_GPIO_I_NR	(16)
+> --
+
+Ok, applied.
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
