@@ -1,11 +1,16 @@
-From: Donghwa Lee <dh09.lee@samsung.com>
-Subject: [PATCH] ARM: EXYNOS4: enabled lcd and backlight in NURI board
-Date: Wed, 02 Mar 2011 10:17:50 +0900
-Message-ID: <1299028671-9062-1-git-send-email-dh09.lee@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH V4] ARM: EXYNOS4: Implement kernel timers using MCT
+Date: Wed, 02 Mar 2011 16:29:19 +0900
+Message-ID: <010b01cbd8ab$8d575830$a8060890$%kim@samsung.com>
+References: <1298870207-1850-1-git-send-email-kgene.kim@samsung.com>
+	<1298870207-1850-3-git-send-email-kgene.kim@samsung.com>
+	<AANLkTim9XMD=x5dbm0vOcrCcrL0TRKvdb7CuXBv3r_qX@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <AANLkTim9XMD=x5dbm0vOcrCcrL0TRKvdb7CuXBv3r_qX@mail.gmail.com>
+Content-language: ko
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
 	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -15,151 +20,162 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: linux-arm-kernel-bounces@lists.infradead.org
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: dh09.lee@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, kgene.kim@samsung.com
+To: 'Kyungmin Park' <kmpark@infradead.org>
+Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, 'Changhwan Youn' <chaos.youn@samsung.com>, linux-arm-kernel@lists.infradead.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch enables lcd and backlight drivers in NURI board.
+Kyungmin Park wrote:
+> =
 
-Signed-off-by: Donghwa Lee <dh09.lee@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-------
- arch/arm/configs/exynos4_nuri_defconfig |    9 +++-
- arch/arm/mach-exynos4/Kconfig           |    1 +
- arch/arm/mach-exynos4/mach-nuri.c       |   62 +++++++++++++++++++++++++++++++
- 3 files changed, 70 insertions(+), 2 deletions(-)
+> Hi,
+> =
 
-diff --git a/arch/arm/configs/exynos4_nuri_defconfig b/arch/arm/configs/exynos4_nuri_defconfig
-index 5f03027..e2f0bfb 100644
---- a/arch/arm/configs/exynos4_nuri_defconfig
-+++ b/arch/arm/configs/exynos4_nuri_defconfig
-@@ -786,8 +786,13 @@ CONFIG_REGULATOR=y
- # CONFIG_DRM is not set
- # CONFIG_VGASTATE is not set
- # CONFIG_VIDEO_OUTPUT_CONTROL is not set
--# CONFIG_FB is not set
--# CONFIG_BACKLIGHT_LCD_SUPPORT is not set
-+CONFIG_FB=y
-+CONFIG_FB_S3C=y
-+CONFIG_LCD_CLASS_DEVICE=y
-+CONFIG_LCD_PLATFORM=y
-+CONFIG_BACKLIGHT_CLASS_DEVICE=y
-+CONFIG_BACKLIGHT_LCD_SUPPORT=y
-+CONFIG_BACKLIGHT_PWM=y
- 
- #
- # Display device support
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index 5bf00b9..1d0d222 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -135,6 +135,7 @@ config MACH_NURI
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_I2C5
- 	select EXYNOS4_SETUP_SDHCI
-+	select HAVE_PWM
- 	help
- 	  Machine support for Samsung Mobile NURI Board.
- 
-diff --git a/arch/arm/mach-exynos4/mach-nuri.c b/arch/arm/mach-exynos4/mach-nuri.c
-index 28010bd..d06cc91 100644
---- a/arch/arm/mach-exynos4/mach-nuri.c
-+++ b/arch/arm/mach-exynos4/mach-nuri.c
-@@ -17,6 +17,10 @@
- #include <linux/regulator/machine.h>
- #include <linux/regulator/fixed.h>
- #include <linux/mmc/host.h>
-+#include <linux/fb.h>
-+#include <linux/pwm_backlight.h>
-+
-+#include <video/platform_lcd.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
-@@ -26,6 +30,8 @@
- #include <plat/cpu.h>
- #include <plat/devs.h>
- #include <plat/sdhci.h>
-+#include <plat/fb.h>
-+#include <plat/regs-fb.h>
- 
- #include <mach/map.h>
- 
-@@ -181,6 +187,60 @@ static struct platform_device nuri_gpio_keys = {
- 	},
- };
- 
-+static int lcd_power_on(struct lcd_device *ld, int enable)
-+{
-+	int gpio = EXYNOS4_GPE1(5);
-+
-+	gpio_request(gpio, "LVDS_nSHDN");
-+
-+	if (enable)
-+		gpio_direction_output(gpio, 1);
-+	else
-+		gpio_direction_output(gpio, 0);
-+
-+	return 0;
-+}
-+
-+static int backlight_init(struct device *dev)
-+{
-+	return 0;
-+}
-+
-+/* nuri pwm backlight */
-+static struct platform_pwm_backlight_data nuri_backlight_data = {
-+	.pwm_id			= 0,
-+	.pwm_period_ns		= 30000,
-+	.max_brightness		= 100,
-+	.dft_brightness		= 50,
-+	.init			= backlight_init,
-+};
-+
-+static struct platform_device nuri_backlight_device = {
-+	.name			= "pwm-backlight",
-+	.id			= -1,
-+	.dev			= {
-+		.platform_data	= &nuri_backlight_data,
-+	},
-+};
-+
-+static struct plat_lcd_data nuri_lcd_platform_data = {
-+	.set_power		= lcd_power_on,
-+};
-+
-+static struct platform_device nuri_lcd_device = {
-+	.name			= "platform-lcd",
-+	.id			= -1,
-+	.dev			= {
-+		.platform_data	= (void *) &nuri_lcd_platform_data,
-+	},
-+};
-+
-+static void __init nuri_fb_init(void)
-+{
-+	platform_device_register(&nuri_lcd_device);
-+	platform_device_register(&nuri_backlight_device);
-+}
-+
- /* I2C1 */
- static struct i2c_board_info i2c1_devs[] __initdata = {
- 	/* Gyro, To be updated */
-@@ -201,6 +261,7 @@ static struct platform_device *nuri_devices[] __initdata = {
- 	&s3c_device_wdt,
- #endif
- 
-+	&s3c_device_timer[0],
- 	/* NURI Devices */
- 	&nuri_gpio_keys,
- };
-@@ -219,6 +280,7 @@ static void __init nuri_machine_init(void)
- 	i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
- 	i2c_register_board_info(5, i2c5_devs, ARRAY_SIZE(i2c5_devs));
- 
-+	nuri_fb_init();
- 	/* Last */
- 	platform_add_devices(nuri_devices, ARRAY_SIZE(nuri_devices));
- }
--- 
-1.6.0.4
+> MCT is only possible from EVT1.0 or later. The current universal_c210
+> used the EVT0 version.
+> So can you remove the ifdef and board can select which timer is used?
+> Please refer the omap implementation and how to use it.
+> =
+
+Basically, "CONFIG_EXYNOS4_MCT" can be selected in kernel menuconfig.
+It means default one is using local timer which is included in every
+Exynos4210.
+
+> If we use the same configuration, It will be boot failed at
+> universal_c210 board.
+> =
+
+No, see as above.
+
+One more basically, each machine specific CONFIGs should be selected in
+kernel menuconfig after "make exynos4_defconfig". Because each machine
+supports different components on each one now.
+
+As a note, however, I don't want to add each machine's defconfig. Maybe
+Russell also.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> Thank you,
+> Kyungmin Park
+> =
+
+> On Mon, Feb 28, 2011 at 2:16 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > From: Changhwan Youn <chaos.youn@samsung.com>
+> >
+> > The Multi-Core Timer(MCT) of EXYNOS4 is designed for implementing
+> > clock source timer and clock event timers. This patch implements
+> > 1 clock source timer with 64 bit free running counter of MCT and
+> > 2 clock event timers with two of 31-bit tick counters.
+> >
+> > Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+> > Cc: Ben Dooks <ben-linux@fluff.org>
+> > Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > ---
+> > Changes since v3:
+> > - Re-worked based on exynos4
+> > - Changed member of clock_evetn_device like following
+> > =A0struct mct_clock_event_device {
+> > =A0 =A0 =A0 =A0struct clock_event_device *evt;
+> > =A0...
+> > - Address comments from Russell King
+> > =A0Added static into "irqreturn_t exynos4_mct_comp_isr()"
+> > =A0Added .dev_id member into "struct irqaction mct_comp_event_irq"
+> >
+> > Changes since v2:
+> > - Addressed comments from Russell King
+> > =A0Added mct_clock_event_device structure
+> > - Removed suspend()/resume() which are not used now
+> >
+> > Changes since v1:
+> > - Addressed comments from Russell King
+> > =A0(implemented global timer, used local timer and so on)
+> > - Fixed small things
+> >
+> > =A0arch/arm/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0| =A0 =A02 +-
+> > =A0arch/arm/mach-exynos4/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =
+=A05 +
+> > =A0arch/arm/mach-exynos4/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =
+11 +-
+> > =A0arch/arm/mach-exynos4/include/mach/regs-mct.h | =A0 52 +++
+> > =A0arch/arm/mach-exynos4/mct.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =
+=A0421
+> +++++++++++++++++++++++++
+> > =A05 files changed, 488 insertions(+), 3 deletions(-)
+> > =A0create mode 100644 arch/arm/mach-exynos4/include/mach/regs-mct.h
+> > =A0create mode 100644 arch/arm/mach-exynos4/mct.c
+> >
+> > diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> > index ec3bf98..b4db99b 100644
+> > --- a/arch/arm/Kconfig
+> > +++ b/arch/arm/Kconfig
+> > @@ -1366,7 +1366,7 @@ config LOCAL_TIMERS
+> > =A0 =A0 =A0 =A0bool "Use local timer interrupts"
+> > =A0 =A0 =A0 =A0depends on SMP
+> > =A0 =A0 =A0 =A0default y
+> > - =A0 =A0 =A0 select HAVE_ARM_TWD if !ARCH_MSM_SCORPIONMP
+> > + =A0 =A0 =A0 select HAVE_ARM_TWD if (!ARCH_MSM_SCORPIONMP && !EXYNOS4_=
+MCT)
+> > =A0 =A0 =A0 =A0help
+> > =A0 =A0 =A0 =A0 =A0Enable support for local timers on SMP platforms, ra=
+ther then
+the
+> > =A0 =A0 =A0 =A0 =A0legacy IPI broadcast method. =A0Local timers allows =
+the system
+> > diff --git a/arch/arm/mach-exynos4/Kconfig
+b/arch/arm/mach-exynos4/Kconfig
+> > index ad03840..77b5d93 100644
+> > --- a/arch/arm/mach-exynos4/Kconfig
+> > +++ b/arch/arm/mach-exynos4/Kconfig
+> > @@ -15,6 +15,11 @@ config CPU_EXYNOS4210
+> > =A0 =A0 =A0 =A0help
+> > =A0 =A0 =A0 =A0 =A0Enable EXYNOS4210 CPU support
+> >
+> > +config EXYNOS4_MCT
+> > + =A0 =A0 =A0 bool "Kernel timer support by MCT"
+> > + =A0 =A0 =A0 help
+> > + =A0 =A0 =A0 =A0 Use MCT (Multi Core Timer) as kernel timers
+> > +
+> > =A0config EXYNOS4_DEV_PD
+> > =A0 =A0 =A0 =A0bool
+> > =A0 =A0 =A0 =A0help
+> > diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-
+> exynos4/Makefile
+> > index 0558235..de20b91 100644
+> > --- a/arch/arm/mach-exynos4/Makefile
+> > +++ b/arch/arm/mach-exynos4/Makefile
+> > @@ -13,11 +13,18 @@ obj- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0:=3D
+> > =A0# Core support for EXYNOS4 system
+> >
+> > =A0obj-$(CONFIG_CPU_EXYNOS4210) =A0 +=3D cpu.o init.o clock.o irq-combi=
+ner.o
+> > -obj-$(CONFIG_CPU_EXYNOS4210) =A0 +=3D setup-i2c0.o time.o gpiolib.o
+irq-eint.o
+> dma.o
+> > +obj-$(CONFIG_CPU_EXYNOS4210) =A0 +=3D setup-i2c0.o gpiolib.o irq-eint.o
+dma.o
+> > =A0obj-$(CONFIG_CPU_FREQ) =A0 =A0 =A0 =A0 +=3D cpufreq.o
+> >
+> > =A0obj-$(CONFIG_SMP) =A0 =A0 =A0 =A0 =A0 =A0 =A0+=3D platsmp.o headsmp.o
+> > -obj-$(CONFIG_LOCAL_TIMERS) =A0 =A0 +=3D localtimer.o
+> > +
+> > +ifeq ($(CONFIG_EXYNOS4_MCT),y)
+> > +obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0+=3D mct.o
+> > +else
+> > +obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0+=3D time.o
+> > +obj-$(CONFIG_LOCAL_TIMERS) =A0 =A0 +=3D localtimer.o
+> > +endif
+> > +
+> > =A0obj-$(CONFIG_HOTPLUG_CPU) =A0 =A0 =A0+=3D hotplug.o
+> >
+> > =A0# machine support
+
+(snip)
