@@ -1,60 +1,141 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH V4] ARM: EXYNOS4: Implement kernel timers using MCT
-Date: Wed, 2 Mar 2011 16:39:32 +0900
-Message-ID: <AANLkTi=Fe14x9jCH0sLtDLF4rpPSVdhwVUNJ9fWwmRs=@mail.gmail.com>
-References: <1298870207-1850-1-git-send-email-kgene.kim@samsung.com>
-	<1298870207-1850-3-git-send-email-kgene.kim@samsung.com>
-	<AANLkTim9XMD=x5dbm0vOcrCcrL0TRKvdb7CuXBv3r_qX@mail.gmail.com>
-	<010b01cbd8ab$8d575830$a8060890$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Banajit Goswami <banajit.g@samsung.com>
+Subject: [PATCH V2 2/6] ARM: SAMSUNG: Add PWM backlight support on Samsung S3C6410
+Date: Wed,  2 Mar 2011 16:27:23 +0900
+Message-ID: <1299050847-16148-1-git-send-email-banajit.g@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gw0-f51.google.com ([74.125.83.51]:59077 "EHLO
-	mail-gw0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750881Ab1CBHjd (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:41415 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754233Ab1CBH6H (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Mar 2011 02:39:33 -0500
-Received: by gwb15 with SMTP id 15so3477467gwb.10
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Mar 2011 23:39:32 -0800 (PST)
-In-Reply-To: <010b01cbd8ab$8d575830$a8060890$%kim@samsung.com>
+	Wed, 2 Mar 2011 02:58:07 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org, Banajit Goswami <banajit.g@samsung.com>
 
-On Wed, Mar 2, 2011 at 4:29 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Kyungmin Park wrote:
->>
->> Hi,
->>
->> MCT is only possible from EVT1.0 or later. The current universal_c210
->> used the EVT0 version.
->> So can you remove the ifdef and board can select which timer is used?
->> Please refer the omap implementation and how to use it.
->>
-> Basically, "CONFIG_EXYNOS4_MCT" can be selected in kernel menuconfig.
-> It means default one is using local timer which is included in every
-> Exynos4210.
->
->> If we use the same configuration, It will be boot failed at
->> universal_c210 board.
->>
-> No, see as above.
->
-> One more basically, each machine specific CONFIGs should be selected in
-> kernel menuconfig after "make exynos4_defconfig". Because each machine
-> supports different components on each one now.
->
-> As a note, however, I don't want to add each machine's defconfig. Maybe
-> Russell also.
+This patch adds support for LCD backlight using PWM timer for
+Samsung SMDK6410 board.
 
-I agree, but there are better way, make it compile both and select
-timer for each board.
-Of course no need to add any statement if default timer is used.
+Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
+---
+Changes since v1:
+- Used common GPIO macro
+- Removed redundant timers
 
-BTW, What's the purpose of exynos4_defconfig? as you said, If I want
-to use the MCT for EVT1 board,
-then make defconfig and select it again? why do the these job?
+ arch/arm/mach-s3c64xx/Kconfig         |    1 +
+ arch/arm/mach-s3c64xx/mach-smdk6410.c |   45 ++++++++++++++++++++++++++++++--
+ 2 files changed, 44 insertions(+), 3 deletions(-)
 
-Thank you,
-Kyungmin Park
+diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
+index f3a953f..e4177e2 100644
+--- a/arch/arm/mach-s3c64xx/Kconfig
++++ b/arch/arm/mach-s3c64xx/Kconfig
+@@ -143,6 +143,7 @@ config MACH_SMDK6410
+ 	select S3C_DEV_USB_HSOTG
+ 	select S3C_DEV_WDT
+ 	select SAMSUNG_DEV_KEYPAD
++	select SAMSUNG_DEV_PWM
+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+ 	select S3C64XX_SETUP_SDHCI
+ 	select S3C64XX_SETUP_I2C1
+diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+index e85192a..4a3fe0c 100644
+--- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
++++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+@@ -28,6 +28,7 @@
+ #include <linux/delay.h>
+ #include <linux/smsc911x.h>
+ #include <linux/regulator/fixed.h>
++#include <linux/pwm_backlight.h>
+ 
+ #ifdef CONFIG_SMDK6410_WM1190_EV1
+ #include <linux/mfd/wm8350/core.h>
+@@ -48,6 +49,7 @@
+ #include <mach/hardware.h>
+ #include <mach/regs-fb.h>
+ #include <mach/map.h>
++#include <mach/gpio-bank-f.h>
+ 
+ #include <asm/irq.h>
+ #include <asm/mach-types.h>
+@@ -118,7 +120,6 @@ static void smdk6410_lcd_power_set(struct plat_lcd_data *pd,
+ {
+ 	if (power) {
+ 		gpio_direction_output(S3C64XX_GPF(13), 1);
+-		gpio_direction_output(S3C64XX_GPF(15), 1);
+ 
+ 		/* fire nRESET on power up */
+ 		gpio_direction_output(S3C64XX_GPN(5), 0);
+@@ -126,7 +127,6 @@ static void smdk6410_lcd_power_set(struct plat_lcd_data *pd,
+ 		gpio_direction_output(S3C64XX_GPN(5), 1);
+ 		msleep(1);
+ 	} else {
+-		gpio_direction_output(S3C64XX_GPF(15), 0);
+ 		gpio_direction_output(S3C64XX_GPF(13), 0);
+ 	}
+ }
+@@ -269,6 +269,45 @@ static struct samsung_keypad_platdata smdk6410_keypad_data __initdata = {
+ 	.cols		= 8,
+ };
+ 
++static int smdk6410_backlight_init(struct device *dev)
++{
++	int ret;
++
++	ret = gpio_request(S3C64XX_GPF(15), "Backlight");
++	if (ret) {
++		printk(KERN_ERR "failed to request GPF for PWM-OUT1\n");
++		return ret;
++	}
++
++	/* Configure GPIO pin with S3C64XX_GPF15_PWM_TOUT1 */
++	s3c_gpio_cfgpin(S3C64XX_GPF(15), S3C_GPIO_SFN(2));
++
++	return 0;
++}
++
++static void smdk6410_backlight_exit(struct device *dev)
++{
++	s3c_gpio_cfgpin(S3C64XX_GPF(15), S3C_GPIO_OUTPUT);
++	gpio_free(S3C64XX_GPF(15));
++}
++
++static struct platform_pwm_backlight_data smdk6410_backlight_data = {
++	.pwm_id		= 1,
++	.max_brightness	= 255,
++	.dft_brightness	= 255,
++	.pwm_period_ns	= 78770,
++	.init		= smdk6410_backlight_init,
++	.exit		= smdk6410_backlight_exit,
++};
++
++static struct platform_device smdk6410_backlight_device = {
++	.name		= "pwm-backlight",
++	.dev		= {
++		.parent		= &s3c_device_timer[1].dev,
++		.platform_data	= &smdk6410_backlight_data,
++	},
++};
++
+ static struct map_desc smdk6410_iodesc[] = {};
+ 
+ static struct platform_device *smdk6410_devices[] __initdata = {
+@@ -298,6 +337,8 @@ static struct platform_device *smdk6410_devices[] __initdata = {
+ 	&s3c_device_rtc,
+ 	&s3c_device_ts,
+ 	&s3c_device_wdt,
++	&s3c_device_timer[1],
++	&smdk6410_backlight_device,
+ };
+ 
+ #ifdef CONFIG_REGULATOR
+@@ -693,7 +735,6 @@ static void __init smdk6410_machine_init(void)
+ 
+ 	gpio_request(S3C64XX_GPN(5), "LCD power");
+ 	gpio_request(S3C64XX_GPF(13), "LCD power");
+-	gpio_request(S3C64XX_GPF(15), "LCD power");
+ 
+ 	i2c_register_board_info(0, i2c_devs0, ARRAY_SIZE(i2c_devs0));
+ 	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
+-- 
+1.6.5.2
