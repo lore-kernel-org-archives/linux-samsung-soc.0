@@ -1,28 +1,28 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/3] ARM: S5P: Rename MIPI-CSIS header and update Copyright
-Date: Thu, 03 Mar 2011 13:33:01 +0900
-Message-ID: <01a501cbd95c$37069cf0$a513d6d0$%kim@samsung.com>
+Subject: RE: [PATCH/RFC 0/3] ARM: S5P: Add common DPHY control code for
+	MIPI-CSIS/MIPI-DSIM devices
+Date: Thu, 03 Mar 2011 13:43:02 +0900
+Message-ID: <01a701cbd95d$9873c160$c95b4420$%kim@samsung.com>
 References: <1299087289-29926-1-git-send-email-s.nawrocki@samsung.com>
- <1299087289-29926-2-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:10539 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:15791 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756041Ab1CCEeB (ORCPT
+	with ESMTP id S932144Ab1CCEnz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Mar 2011 23:34:01 -0500
-Received: from epmmp2 (mailout4.samsung.com [203.254.224.34])
+	Wed, 2 Mar 2011 23:43:55 -0500
+Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
  by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LHG0022DSONWCE0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 03 Mar 2011 13:33:59 +0900 (KST)
+ 2010)) with ESMTP id <0LHG003FCT54S8D0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 03 Mar 2011 13:43:52 +0900 (KST)
 Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LHG00EQUSONDQ@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 03 Mar 2011 13:33:59 +0900 (KST)
-In-reply-to: <1299087289-29926-2-git-send-email-s.nawrocki@samsung.com>
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LHG007MYT549R@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 03 Mar 2011 13:43:52 +0900 (KST)
+In-reply-to: <1299087289-29926-1-git-send-email-s.nawrocki@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -31,31 +31,41 @@ Cc: ben-linux@fluff.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, in
 
 Sylwester Nawrocki wrote:
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/plat-s5p/dev-csis0.c              |    2 +-
->  arch/arm/plat-s5p/dev-csis1.c              |    2 +-
->  arch/arm/plat-s5p/include/plat/csis.h      |   28
---------------------------
-> --
->  arch/arm/plat-s5p/include/plat/mipi_csis.h |   28
-> ++++++++++++++++++++++++++++
->  4 files changed, 30 insertions(+), 30 deletions(-)
->  delete mode 100644 arch/arm/plat-s5p/include/plat/csis.h
->  create mode 100644 arch/arm/plat-s5p/include/plat/mipi_csis.h
+> Hello,
 > 
-Oops, why didn't use '-M'?
-It can show me this like following.
+> the following patch series adds a common platform code to enable control
+> of MIPI-CSI receiver's DPHY from within it's V4L2 subdev driver. The
+driver
+> is supposed to support possibly all S5P SoCs variants and the PHY handling
+> details need to be hidden in the platform code. The functionality behind
+> "dphy_csis" clocks is not exact a functionality of the clock, but they
+have
+> common features. If the clock API rules are to strict to accept this kind
+> of usage then I'm willing to create some intermediate layer that will
+finally
+> solve PHY handling for MIPI-CSI, MIPI-DSIM, USB, SATA.. devices, without
+> issues
+> on a common kernel binary for multiple boards.
+> 
+> 
+> The patch series contains:
+> [PATCH 1/3] ARM: S5P: Rename MIPI-CSIS header and update Copyright
+> [PATCH 2/3] ARM: S5PV210: Add clock entries for MIPI DPHY control
+> [PATCH 3/3] ARM: EXYNOS4: Add clock entries for MIPI DPHY control
+> 
+> Rebased onto kgene-for-next branch at:
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> 
 
-.../plat-s5p/include/plat/{csis.h => mipi_csis.h}  |   10 +++++-----
- 3 files changed, 7 insertions(+), 7 deletions(-)
- rename arch/arm/plat-s5p/include/plat/{csis.h => mipi_csis.h} (68%)
+Maybe we discussed about this ago.
+I remember, we agree that to control phy cannot be handled in clock part.
 
-Secondly, I remember this...
-Following is your response at that time.
-http://lists.infradead.org/pipermail/linux-arm-kernel/2011-January/038037.ht
+And didn't say to make some kind of common s5p phy setup/control function?
+http://lists.infradead.org/pipermail/linux-arm-kernel/2011-January/038038.ht
 ml
+
+I thought it is possible to make it even though some registers is in
+different place.
 
 Thanks.
 
