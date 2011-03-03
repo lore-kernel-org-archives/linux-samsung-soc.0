@@ -1,232 +1,167 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS4: enabled lcd and backlight in NURI board
-Date: Thu, 03 Mar 2011 14:09:00 +0900
-Message-ID: <01ad01cbd961$40e69720$c2b3c560$%kim@samsung.com>
-References: <1299028671-9062-1-git-send-email-dh09.lee@samsung.com>
+From: ALIM AKHTAR <alim.akhtar@samsung.com>
+Subject: [PATCH] ARM: EXYNOS4: Add ARMLEX4210 Board support file
+Date: Thu, 03 Mar 2011 07:27:10 +0000 (GMT)
+Message-ID: <10012655.143611299137229715.JavaMail.weblogic@epml15>
+Reply-To: alim.akhtar@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:33277 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750742Ab1CCFK1 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:53759 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752657Ab1CCH1O (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Mar 2011 00:10:27 -0500
-Received: from epmmp2 (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Thu, 3 Mar 2011 02:27:14 -0500
+Received: from epms1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LHG00A0XUCRRV10@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 03 Mar 2011 14:10:03 +0900 (KST)
-Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LHG00H2XUCRDS@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 03 Mar 2011 14:10:03 +0900 (KST)
-In-reply-to: <1299028671-9062-1-git-send-email-dh09.lee@samsung.com>
-Content-language: ko
+ 2010)) with ESMTP id <0LHH008AO0PAOTA0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 03 Mar 2011 16:27:10 +0900 (KST)
+Received: from epv6spt1 ("port 56737"@[203.254.225.172])
+ by ms1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTP id <0LHH002J20P98N10@ms1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Thu, 03 Mar 2011 16:27:10 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Donghwa Lee' <dh09.lee@samsung.com>, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org
 
-Donghwa Lee wrote:
-> 
-> This patch enables lcd and backlight drivers in NURI board.
-> 
-> Signed-off-by: Donghwa Lee <dh09.lee@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ------
->  arch/arm/configs/exynos4_nuri_defconfig |    9 +++-
->  arch/arm/mach-exynos4/Kconfig           |    1 +
->  arch/arm/mach-exynos4/mach-nuri.c       |   62
-> +++++++++++++++++++++++++++++++
->  3 files changed, 70 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/configs/exynos4_nuri_defconfig
-> b/arch/arm/configs/exynos4_nuri_defconfig
-> index 5f03027..e2f0bfb 100644
-> --- a/arch/arm/configs/exynos4_nuri_defconfig
-> +++ b/arch/arm/configs/exynos4_nuri_defconfig
-> @@ -786,8 +786,13 @@ CONFIG_REGULATOR=y
->  # CONFIG_DRM is not set
->  # CONFIG_VGASTATE is not set
->  # CONFIG_VIDEO_OUTPUT_CONTROL is not set
-> -# CONFIG_FB is not set
-> -# CONFIG_BACKLIGHT_LCD_SUPPORT is not set
-> +CONFIG_FB=y
-> +CONFIG_FB_S3C=y
-> +CONFIG_LCD_CLASS_DEVICE=y
-> +CONFIG_LCD_PLATFORM=y
-> +CONFIG_BACKLIGHT_CLASS_DEVICE=y
-> +CONFIG_BACKLIGHT_LCD_SUPPORT=y
-> +CONFIG_BACKLIGHT_PWM=y
-> 
-Hmm...where is exynos4_nuri_defconfig?
-
-And as I said, don't add machine specific defconfig now...
-I'm thinking about handling specific CONFIGs on each machine with one
-defconfig.
-
->  #
->  # Display device support
-> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-> index 5bf00b9..1d0d222 100644
-> --- a/arch/arm/mach-exynos4/Kconfig
-> +++ b/arch/arm/mach-exynos4/Kconfig
-> @@ -135,6 +135,7 @@ config MACH_NURI
->  	select EXYNOS4_SETUP_I2C1
->  	select EXYNOS4_SETUP_I2C5
->  	select EXYNOS4_SETUP_SDHCI
-> +	select HAVE_PWM
-
-Since Banajit's PWM backlight patches will be merged, should be following
-your next patch.
-
-+	select SAMSUNG_DEV_PWM
-
->  	help
->  	  Machine support for Samsung Mobile NURI Board.
-> 
-> diff --git a/arch/arm/mach-exynos4/mach-nuri.c
-b/arch/arm/mach-exynos4/mach-
-> nuri.c
-> index 28010bd..d06cc91 100644
-> --- a/arch/arm/mach-exynos4/mach-nuri.c
-> +++ b/arch/arm/mach-exynos4/mach-nuri.c
-> @@ -17,6 +17,10 @@
->  #include <linux/regulator/machine.h>
->  #include <linux/regulator/fixed.h>
->  #include <linux/mmc/host.h>
-> +#include <linux/fb.h>
-> +#include <linux/pwm_backlight.h>
-> +
-> +#include <video/platform_lcd.h>
-> 
->  #include <asm/mach/arch.h>
->  #include <asm/mach-types.h>
-> @@ -26,6 +30,8 @@
->  #include <plat/cpu.h>
->  #include <plat/devs.h>
->  #include <plat/sdhci.h>
-> +#include <plat/fb.h>
-> +#include <plat/regs-fb.h>
-> 
->  #include <mach/map.h>
-> 
-> @@ -181,6 +187,60 @@ static struct platform_device nuri_gpio_keys = {
->  	},
->  };
-> 
-> +static int lcd_power_on(struct lcd_device *ld, int enable)
-
-Should be following..."void" and "struct plat_lcd_data *" ?
-
-static void nuri_lcd_power_on(struct plat_lcd_data *ld, int enable)
-
-> +{
-> +	int gpio = EXYNOS4_GPE1(5);
-> +
-> +	gpio_request(gpio, "LVDS_nSHDN");
-> +
-> +	if (enable)
-> +		gpio_direction_output(gpio, 1);
-> +	else
-> +		gpio_direction_output(gpio, 0);
-
-how about following?
-
-	gpio_direction_output(gpio, enable); ?
-
-> +
-> +	return 0;
-
-So no need...
-
-> +}
-> +
-> +static int backlight_init(struct device *dev)
-
-Please don't use common function name even though it is used with 'static'
-
-> +{
-
-Don't we need any gpio configuration for this?
-
-> +	return 0;
-> +}
-> +
-> +/* nuri pwm backlight */
-> +static struct platform_pwm_backlight_data nuri_backlight_data = {
-> +	.pwm_id			= 0,
-> +	.pwm_period_ns		= 30000,
-> +	.max_brightness		= 100,
-> +	.dft_brightness		= 50,
-> +	.init			= backlight_init,
-> +};
-> +
-> +static struct platform_device nuri_backlight_device = {
-> +	.name			= "pwm-backlight",
-> +	.id			= -1,
-> +	.dev			= {
-
-No need following here?
-		.parent		= &s3c_device_timer[0].dev,
-
-> +		.platform_data	= &nuri_backlight_data,
-> +	},
-> +};
-> +
-> +static struct plat_lcd_data nuri_lcd_platform_data = {
-> +	.set_power		= lcd_power_on,
-> +};
-> +
-> +static struct platform_device nuri_lcd_device = {
-> +	.name			= "platform-lcd",
-> +	.id			= -1,
-> +	.dev			= {
-> +		.platform_data	= (void *) &nuri_lcd_platform_data,
-
-		.platform_data	= &nuri_lcd_platform_data,
-
-> +	},
-> +};
-> +
-> +static void __init nuri_fb_init(void)
-> +{
-> +	platform_device_register(&nuri_lcd_device);
-> +	platform_device_register(&nuri_backlight_device);
-
-How about to add above into nuri_devices[] instead?
-
-> +}
-> +
->  /* I2C1 */
->  static struct i2c_board_info i2c1_devs[] __initdata = {
->  	/* Gyro, To be updated */
-> @@ -201,6 +261,7 @@ static struct platform_device *nuri_devices[]
-__initdata
-> = {
->  	&s3c_device_wdt,
->  #endif
-> 
-> +	&s3c_device_timer[0],
->  	/* NURI Devices */
->  	&nuri_gpio_keys,
->  };
-> @@ -219,6 +280,7 @@ static void __init nuri_machine_init(void)
->  	i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
->  	i2c_register_board_info(5, i2c5_devs, ARRAY_SIZE(i2c5_devs));
-> 
-> +	nuri_fb_init();
->  	/* Last */
->  	platform_add_devices(nuri_devices, ARRAY_SIZE(nuri_devices));
->  }
-> --
-> 1.6.0.4
-
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+VGhpcyBwYXRjaCBpcyBiYXNlZCBvbiAnZm9yLW5leHQnICBicmFuY2ggb2Yga2dlbmUgdHJlZS4K
+ClRoaXMgcGF0Y2ggYWRkcyBTYW1zdW5nIEFSTUxFWDQyMTAgIGJvYXJkIHN1cHBvcnQgZmlsZQp3
+aGljaCBpcyBiYXNlZCBvbiBFeHlub3M0MjEwLgoKU2lnbmVkLW9mZi1ieTogQWxpbSBBa2h0YXIg
+PGFsaW0uYWtodGFyQHNhbXN1bmcuY29tPgotLS0KIGFyY2gvYXJtL21hY2gtZXh5bm9zNC9LY29u
+ZmlnICAgICAgICAgICB8ICAgMTMgKysKIGFyY2gvYXJtL21hY2gtZXh5bm9zNC9NYWtlZmlsZSAg
+ICAgICAgICB8ICAgIDEgKwogYXJjaC9hcm0vbWFjaC1leHlub3M0L21hY2gtYXJtbGV4NDIxMC5j
+IHwgIDIxMyArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCiAzIGZpbGVzIGNoYW5nZWQs
+IDIyNyBpbnNlcnRpb25zKCspLCAwIGRlbGV0aW9ucygtKQogY3JlYXRlIG1vZGUgMTAwNjQ0IGFy
+Y2gvYXJtL21hY2gtZXh5bm9zNC9tYWNoLWFybWxleDQyMTAuYwoKZGlmZiAtLWdpdCBhL2FyY2gv
+YXJtL21hY2gtZXh5bm9zNC9LY29uZmlnIGIvYXJjaC9hcm0vbWFjaC1leHlub3M0L0tjb25maWcK
+aW5kZXggYWQwMzg0MC4uYTEyYmRkZiAxMDA2NDQKLS0tIGEvYXJjaC9hcm0vbWFjaC1leHlub3M0
+L0tjb25maWcKKysrIGIvYXJjaC9hcm0vbWFjaC1leHlub3M0L0tjb25maWcKQEAgLTEwOSw2ICsx
+MDksMTkgQEAgY29uZmlnIE1BQ0hfU01ES1YzMTAKIAloZWxwCiAJICBNYWNoaW5lIHN1cHBvcnQg
+Zm9yIFNhbXN1bmcgU01ES1YzMTAKIAorY29uZmlnIE1BQ0hfQVJNTEVYNDIxMAorCWJvb2wgIkFS
+TUxFWDQyMTAiCisJc2VsZWN0IENQVV9FWFlOT1M0MjEwCisJc2VsZWN0IFMzQ19ERVZfUlRDCisJ
+c2VsZWN0IFMzQ19ERVZfV0RUCisJc2VsZWN0IFMzQ19ERVZfSFNNTUMKKwlzZWxlY3QgUzNDX0RF
+Vl9IU01NQzIKKwlzZWxlY3QgUzNDX0RFVl9IU01NQzMKKwlzZWxlY3QgRVhZTk9TNF9ERVZfU1lT
+TU1VCisJc2VsZWN0IEVYWU5PUzRfU0VUVVBfU0RIQ0kKKwloZWxwCisJICBNYWNoaW5lIHN1cHBv
+cnQgZm9yIFNhbXN1bmcgQVJNTEVYNDIxMCBiYXNlZCBvbiBFWFlOT1M0MjEwCisKIGNvbmZpZyBN
+QUNIX1VOSVZFUlNBTF9DMjEwCiAJYm9vbCAiTW9iaWxlIFVOSVZFUlNBTF9DMjEwIEJvYXJkIgog
+CXNlbGVjdCBDUFVfRVhZTk9TNDIxMApkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1leHlub3M0
+L01ha2VmaWxlIGIvYXJjaC9hcm0vbWFjaC1leHlub3M0L01ha2VmaWxlCmluZGV4IDA1NTgyMzUu
+LjI4NjBhZjggMTAwNjQ0Ci0tLSBhL2FyY2gvYXJtL21hY2gtZXh5bm9zNC9NYWtlZmlsZQorKysg
+Yi9hcmNoL2FybS9tYWNoLWV4eW5vczQvTWFrZWZpbGUKQEAgLTI0LDYgKzI0LDcgQEAgb2JqLSQo
+Q09ORklHX0hPVFBMVUdfQ1BVKQkrPSBob3RwbHVnLm8KIAogb2JqLSQoQ09ORklHX01BQ0hfU01E
+S0MyMTApCQkrPSBtYWNoLXNtZGtjMjEwLm8KIG9iai0kKENPTkZJR19NQUNIX1NNREtWMzEwKQkJ
+Kz0gbWFjaC1zbWRrdjMxMC5vCitvYmotJChDT05GSUdfTUFDSF9BUk1MRVg0MjEwKQkJKz0gbWFj
+aC1hcm1sZXg0MjEwLm8KIG9iai0kKENPTkZJR19NQUNIX1VOSVZFUlNBTF9DMjEwKQkrPSBtYWNo
+LXVuaXZlcnNhbF9jMjEwLm8KIAogIyBkZXZpY2Ugc3VwcG9ydApkaWZmIC0tZ2l0IGEvYXJjaC9h
+cm0vbWFjaC1leHlub3M0L21hY2gtYXJtbGV4NDIxMC5jIGIvYXJjaC9hcm0vbWFjaC1leHlub3M0
+L21hY2gtYXJtbGV4NDIxMC5jCm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAuLjg1
+NmFiNmUKLS0tIC9kZXYvbnVsbAorKysgYi9hcmNoL2FybS9tYWNoLWV4eW5vczQvbWFjaC1hcm1s
+ZXg0MjEwLmMKQEAgLTAsMCArMSwyMTMgQEAKKy8qIGxpbnV4L2FyY2gvYXJtL21hY2gtZXh5bm9z
+NC9tYWNoLWFybWxleDQyMTAuYworICoKKyAqIENvcHlyaWdodCAoYykgMjAxMSBTYW1zdW5nIEVs
+ZWN0cm9uaWNzIENvLiwgTHRkLgorICoJCWh0dHA6Ly93d3cuc2Ftc3VuZy5jb20KKyAqCisgKiBU
+aGlzIHByb2dyYW0gaXMgZnJlZSBzb2Z0d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUgaXQgYW5k
+L29yIG1vZGlmeQorICogaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSBHTlUgR2VuZXJhbCBQdWJs
+aWMgTGljZW5zZSB2ZXJzaW9uIDIgYXMKKyAqIHB1Ymxpc2hlZCBieSB0aGUgRnJlZSBTb2Z0d2Fy
+ZSBGb3VuZGF0aW9uLgorKi8KKworI2luY2x1ZGUgPGxpbnV4L2dwaW8uaD4KKyNpbmNsdWRlIDxs
+aW51eC9pby5oPgorI2luY2x1ZGUgPGxpbnV4L21tYy9ob3N0Lmg+CisjaW5jbHVkZSA8bGludXgv
+cGxhdGZvcm1fZGV2aWNlLmg+CisjaW5jbHVkZSA8bGludXgvc2VyaWFsX2NvcmUuaD4KKyNpbmNs
+dWRlIDxsaW51eC9zbXNjOTExeC5oPgorCisjaW5jbHVkZSA8YXNtL21hY2gvYXJjaC5oPgorI2lu
+Y2x1ZGUgPGFzbS9tYWNoLXR5cGVzLmg+CisKKyNpbmNsdWRlIDxwbGF0L2NwdS5oPgorI2luY2x1
+ZGUgPHBsYXQvZGV2cy5oPgorI2luY2x1ZGUgPHBsYXQvZXh5bm9zNC5oPgorI2luY2x1ZGUgPHBs
+YXQvZ3Bpby1jZmcuaD4KKyNpbmNsdWRlIDxwbGF0L3JlZ3Mtc2VyaWFsLmg+CisjaW5jbHVkZSA8
+cGxhdC9yZWdzLXNyb20uaD4KKyNpbmNsdWRlIDxwbGF0L3NkaGNpLmg+CisKKyNpbmNsdWRlIDxt
+YWNoL21hcC5oPgorCisvKiBGb2xsb3dpbmcgYXJlIGRlZmF1bHQgdmFsdWVzIGZvciBVQ09OLCBV
+TENPTiBhbmQgVUZDT04gVUFSVCByZWdpc3RlcnMgKi8KKyNkZWZpbmUgQVJNTEVYNDIxMF9VQ09O
+X0RFRkFVTFQJKFMzQzI0MTBfVUNPTl9UWElMRVZFTCB8CVwKKwkJCQkgUzNDMjQxMF9VQ09OX1JY
+SUxFVkVMIHwJXAorCQkJCSBTM0MyNDEwX1VDT05fVFhJUlFNT0RFIHwJXAorCQkJCSBTM0MyNDEw
+X1VDT05fUlhJUlFNT0RFIHwJXAorCQkJCSBTM0MyNDEwX1VDT05fUlhGSUZPX1RPSSB8CVwKKwkJ
+CQkgUzNDMjQ0M19VQ09OX1JYRVJSX0lSUUVOKQorCisjZGVmaW5lIEFSTUxFWDQyMTBfVUxDT05f
+REVGQVVMVAlTM0MyNDEwX0xDT05fQ1M4CisKKyNkZWZpbmUgQVJNTEVYNDIxMF9VRkNPTl9ERUZB
+VUxUCShTM0MyNDEwX1VGQ09OX0ZJRk9NT0RFIHwJXAorCQkJCSBTNVBWMjEwX1VGQ09OX1RYVFJJ
+RzQgfAlcCisJCQkJIFM1UFYyMTBfVUZDT05fUlhUUklHNCkKKworc3RhdGljIHN0cnVjdCBzM2My
+NDEwX3VhcnRjZmcgYXJtbGV4NDIxMF91YXJ0Y2Znc1tdIF9faW5pdGRhdGEgPSB7CisJWzBdID0g
+eworCQkuaHdwb3J0CQk9IDAsCisJCS5mbGFncwkJPSAwLAorCQkudWNvbgkJPSBBUk1MRVg0MjEw
+X1VDT05fREVGQVVMVCwKKwkJLnVsY29uCQk9IEFSTUxFWDQyMTBfVUxDT05fREVGQVVMVCwKKwkJ
+LnVmY29uCQk9IEFSTUxFWDQyMTBfVUZDT05fREVGQVVMVCwKKwl9LAorCVsxXSA9IHsKKwkJLmh3
+cG9ydAkJPSAxLAorCQkuZmxhZ3MJCT0gMCwKKwkJLnVjb24JCT0gQVJNTEVYNDIxMF9VQ09OX0RF
+RkFVTFQsCisJCS51bGNvbgkJPSBBUk1MRVg0MjEwX1VMQ09OX0RFRkFVTFQsCisJCS51ZmNvbgkJ
+PSBBUk1MRVg0MjEwX1VGQ09OX0RFRkFVTFQsCisJfSwKKwlbMl0gPSB7CisJCS5od3BvcnQJCT0g
+MiwKKwkJLmZsYWdzCQk9IDAsCisJCS51Y29uCQk9IEFSTUxFWDQyMTBfVUNPTl9ERUZBVUxULAor
+CQkudWxjb24JCT0gQVJNTEVYNDIxMF9VTENPTl9ERUZBVUxULAorCQkudWZjb24JCT0gQVJNTEVY
+NDIxMF9VRkNPTl9ERUZBVUxULAorCX0sCisJWzNdID0geworCQkuaHdwb3J0CQk9IDMsCisJCS5m
+bGFncwkJPSAwLAorCQkudWNvbgkJPSBBUk1MRVg0MjEwX1VDT05fREVGQVVMVCwKKwkJLnVsY29u
+CQk9IEFSTUxFWDQyMTBfVUxDT05fREVGQVVMVCwKKwkJLnVmY29uCQk9IEFSTUxFWDQyMTBfVUZD
+T05fREVGQVVMVCwKKwl9LAorfTsKKworc3RhdGljIHN0cnVjdCBzM2Nfc2RoY2lfcGxhdGRhdGEg
+YXJtbGV4NDIxMF9oc21tYzBfcGRhdGEgX19pbml0ZGF0YSA9IHsKKwkuY2RfdHlwZQkJPSBTM0Nf
+U0RIQ0lfQ0RfUEVSTUFORU5ULAorCS5jbGtfdHlwZQkJPSBTM0NfU0RIQ0lfQ0xLX0RJVl9FWFRF
+Uk5BTCwKKyNpZmRlZiBDT05GSUdfRVhZTk9TNF9TREhDSV9DSDBfOEJJVAorCS5tYXhfd2lkdGgJ
+CT0gOCwKKwkuaG9zdF9jYXBzCQk9IE1NQ19DQVBfOF9CSVRfREFUQSwKKyNlbmRpZgorfTsKKwor
+c3RhdGljIHN0cnVjdCBzM2Nfc2RoY2lfcGxhdGRhdGEgYXJtbGV4NDIxMF9oc21tYzJfcGRhdGEg
+X19pbml0ZGF0YSA9IHsKKwkuY2RfdHlwZQkJPSBTM0NfU0RIQ0lfQ0RfR1BJTywKKwkuZXh0X2Nk
+X2dwaW8JCT0gRVhZTk9TNF9HUFgyKDUpLAorCS5leHRfY2RfZ3Bpb19pbnZlcnQJPSAxLAorCS5j
+bGtfdHlwZQkJPSBTM0NfU0RIQ0lfQ0xLX0RJVl9FWFRFUk5BTCwKKwkubWF4X3dpZHRoCQk9IDQs
+Cit9OworCitzdGF0aWMgc3RydWN0IHMzY19zZGhjaV9wbGF0ZGF0YSBhcm1sZXg0MjEwX2hzbW1j
+M19wZGF0YSBfX2luaXRkYXRhID0geworCS5jZF90eXBlCQk9IFMzQ19TREhDSV9DRF9QRVJNQU5F
+TlQsCisJLm1heF93aWR0aAkJPSA0LAorfTsKKworc3RhdGljIHZvaWQgX19pbml0IGFybWxleDQy
+MTBfc2RoY2lfaW5pdCh2b2lkKQoreworCXMzY19zZGhjaTBfc2V0X3BsYXRkYXRhKCZhcm1sZXg0
+MjEwX2hzbW1jMF9wZGF0YSk7CisJczNjX3NkaGNpMl9zZXRfcGxhdGRhdGEoJmFybWxleDQyMTBf
+aHNtbWMyX3BkYXRhKTsKKwlzM2Nfc2RoY2kzX3NldF9wbGF0ZGF0YSgmYXJtbGV4NDIxMF9oc21t
+YzNfcGRhdGEpOworfQorCitzdGF0aWMgdm9pZCBfX2luaXQgYXJtbGV4NDIxMF93bGFuX2luaXQo
+dm9pZCkKK3sKKwkvKiBlbmFibGUgKi8KKwlzM2NfZ3Bpb19jZmdwaW4oRVhZTk9TNF9HUFgyKDAp
+LCBTM0NfR1BJT19TRk4oMHhmKSk7CisJczNjX2dwaW9fc2V0cHVsbChFWFlOT1M0X0dQWDIoMCks
+IFMzQ19HUElPX1BVTExfVVApOworCisJLyogcmVzZXQgKi8KKwlzM2NfZ3Bpb19jZmdwaW4oRVhZ
+Tk9TNF9HUFgxKDYpLCBTM0NfR1BJT19TRk4oMHhmKSk7CisJczNjX2dwaW9fc2V0cHVsbChFWFlO
+T1M0X0dQWDEoNiksIFMzQ19HUElPX1BVTExfVVApOworCisJLyogd2FrZXVwICovCisJczNjX2dw
+aW9fY2ZncGluKEVYWU5PUzRfR1BYMSg1KSwgUzNDX0dQSU9fU0ZOKDB4ZikpOworCXMzY19ncGlv
+X3NldHB1bGwoRVhZTk9TNF9HUFgxKDUpLCBTM0NfR1BJT19QVUxMX1VQKTsKK30KKworc3RhdGlj
+IHN0cnVjdCByZXNvdXJjZSBhcm1sZXg0MjEwX3Ntc2M5MTF4X3Jlc291cmNlc1tdID0geworCVsw
+XSA9IHsKKwkJLnN0YXJ0CT0gRVhZTk9TNF9QQV9TUk9NX0JBTksoMyksCisJCS5lbmQJPSBFWFlO
+T1M0X1BBX1NST01fQkFOSygzKSArIFNaXzY0SyAtIDEsCisJCS5mbGFncwk9IElPUkVTT1VSQ0Vf
+TUVNLAorCX0sCisJWzFdID0geworCQkuc3RhcnQJPSBJUlFfRUlOVCgyNyksCisJCS5lbmQJPSBJ
+UlFfRUlOVCgyNyksCisJCS5mbGFncwk9IElPUkVTT1VSQ0VfSVJRIHwgSVJRRl9UUklHR0VSX0hJ
+R0gsCisJfSwKK307CisKK3N0YXRpYyBzdHJ1Y3Qgc21zYzkxMXhfcGxhdGZvcm1fY29uZmlnIHNt
+c2M5MjE1X2NvbmZpZyA9IHsKKwkuaXJxX3BvbGFyaXR5CT0gU01TQzkxMVhfSVJRX1BPTEFSSVRZ
+X0FDVElWRV9ISUdILAorCS5pcnFfdHlwZQk9IFNNU0M5MTFYX0lSUV9UWVBFX1BVU0hfUFVMTCwK
+KwkuZmxhZ3MJCT0gU01TQzkxMVhfVVNFXzE2QklUIHwgU01TQzkxMVhfRk9SQ0VfSU5URVJOQUxf
+UEhZLAorCS5waHlfaW50ZXJmYWNlCT0gUEhZX0lOVEVSRkFDRV9NT0RFX01JSSwKKwkubWFjCQk9
+IHsweDAwLCAweDgwLCAweDAwLCAweDIzLCAweDQ1LCAweDY3fSwKK307CisKK3N0YXRpYyBzdHJ1
+Y3QgcGxhdGZvcm1fZGV2aWNlIGFybWxleDQyMTBfc21zYzkxMXggPSB7CisJLm5hbWUJCT0gInNt
+c2M5MTF4IiwKKwkuaWQJCT0gLTEsCisJLm51bV9yZXNvdXJjZXMJPSBBUlJBWV9TSVpFKGFybWxl
+eDQyMTBfc21zYzkxMXhfcmVzb3VyY2VzKSwKKwkucmVzb3VyY2UJPSBhcm1sZXg0MjEwX3Ntc2M5
+MTF4X3Jlc291cmNlcywKKwkuZGV2CQk9IHsKKwkJLnBsYXRmb3JtX2RhdGEJPSAmc21zYzkyMTVf
+Y29uZmlnLAorCX0sCit9OworCitzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RldmljZSAqYXJtbGV4
+NDIxMF9kZXZpY2VzW10gX19pbml0ZGF0YSA9IHsKKwkmczNjX2RldmljZV9oc21tYzAsCisJJnMz
+Y19kZXZpY2VfaHNtbWMyLAorCSZzM2NfZGV2aWNlX2hzbW1jMywKKwkmczNjX2RldmljZV9ydGMs
+CisJJnMzY19kZXZpY2Vfd2R0LAorCSZleHlub3M0X2RldmljZV9zeXNtbXUsCisJJnNhbXN1bmdf
+YXNvY19kbWEsCisJJmFybWxleDQyMTBfc21zYzkxMXgsCit9OworCitzdGF0aWMgdm9pZCBfX2lu
+aXQgYXJtbGV4NDIxMF9zbXNjOTExeF9pbml0KHZvaWQpCit7CisJdTMyIGNzMTsKKworCS8qIGNv
+bmZpZ3VyZSBuQ1MxIHdpZHRoIHRvIDE2IGJpdHMgKi8KKwljczEgPSBfX3Jhd19yZWFkbChTNVBf
+U1JPTV9CVykgJgorCQl+KFM1UF9TUk9NX0JXX19DU19NQVNLIDw8IFM1UF9TUk9NX0JXX19OQ1Mx
+X19TSElGVCk7CisJY3MxIHw9ICgoMSA8PCBTNVBfU1JPTV9CV19fREFUQVdJRFRIX19TSElGVCkg
+fAorCQkoMCA8PCBTNVBfU1JPTV9CV19fV0FJVEVOQUJMRV9fU0hJRlQpIHwKKwkJKDEgPDwgUzVQ
+X1NST01fQldfX0FERFJNT0RFX19TSElGVCkgfAorCQkoMSA8PCBTNVBfU1JPTV9CV19fQllURUVO
+QUJMRV9fU0hJRlQpKSA8PAorCQlTNVBfU1JPTV9CV19fTkNTMV9fU0hJRlQ7CisJX19yYXdfd3Jp
+dGVsKGNzMSwgUzVQX1NST01fQlcpOworCisJLyogc2V0IHRpbWluZyBmb3IgbkNTMSBzdWl0YWJs
+ZSBmb3IgZXRoZXJuZXQgY2hpcCAqLworCV9fcmF3X3dyaXRlbCgoMHgxIDw8IFM1UF9TUk9NX0JD
+WF9fUE1DX19TSElGVCkgfAorCQkgICAgICgweDkgPDwgUzVQX1NST01fQkNYX19UQUNQX19TSElG
+VCkgfAorCQkgICAgICgweGMgPDwgUzVQX1NST01fQkNYX19UQ0FIX19TSElGVCkgfAorCQkgICAg
+ICgweDEgPDwgUzVQX1NST01fQkNYX19UQ09IX19TSElGVCkgfAorCQkgICAgICgweDYgPDwgUzVQ
+X1NST01fQkNYX19UQUNDX19TSElGVCkgfAorCQkgICAgICgweDEgPDwgUzVQX1NST01fQkNYX19U
+Q09TX19TSElGVCkgfAorCQkgICAgICgweDEgPDwgUzVQX1NST01fQkNYX19UQUNTX19TSElGVCks
+IFM1UF9TUk9NX0JDMSk7Cit9CisKK3N0YXRpYyB2b2lkIF9faW5pdCBhcm1sZXg0MjEwX21hcF9p
+byh2b2lkKQoreworCXM1cF9pbml0X2lvKE5VTEwsIDAsIFM1UF9WQV9DSElQSUQpOworCXMzYzI0
+eHhfaW5pdF9jbG9ja3MoMjQwMDAwMDApOworCXMzYzI0eHhfaW5pdF91YXJ0cyhhcm1sZXg0MjEw
+X3VhcnRjZmdzLAorCQkJICAgQVJSQVlfU0laRShhcm1sZXg0MjEwX3VhcnRjZmdzKSk7Cit9CisK
+K3N0YXRpYyB2b2lkIF9faW5pdCBhcm1sZXg0MjEwX21hY2hpbmVfaW5pdCh2b2lkKQoreworCWFy
+bWxleDQyMTBfc21zYzkxMXhfaW5pdCgpOworCisJYXJtbGV4NDIxMF9zZGhjaV9pbml0KCk7CisK
+Kwlhcm1sZXg0MjEwX3dsYW5faW5pdCgpOworCisJcGxhdGZvcm1fYWRkX2RldmljZXMoYXJtbGV4
+NDIxMF9kZXZpY2VzLAorCQkJICAgICBBUlJBWV9TSVpFKGFybWxleDQyMTBfZGV2aWNlcykpOwor
+fQorCitNQUNISU5FX1NUQVJUKEFSTUxFWDQyMTAsICJBUk1MRVg0MjEwIikKKwkvKiBNYWludGFp
+bmVyOiBBbGltIEFraHRhciA8YWxpbS5ha2h0YXJAc2Ftc3VuZy5jb20+ICovCisJLmJvb3RfcGFy
+YW1zCT0gUzVQX1BBX1NEUkFNICsgMHgxMDAsCisJLmluaXRfaXJxCT0gZXh5bm9zNF9pbml0X2ly
+cSwKKwkubWFwX2lvCQk9IGFybWxleDQyMTBfbWFwX2lvLAorCS5pbml0X21hY2hpbmUJPSBhcm1s
+ZXg0MjEwX21hY2hpbmVfaW5pdCwKKwkudGltZXIJCT0gJmV4eW5vczRfdGltZXIsCitNQUNISU5F
+X0VORAotLSAKMS43LjAuNAo=
