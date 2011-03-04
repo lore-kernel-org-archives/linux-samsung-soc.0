@@ -1,148 +1,102 @@
 From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [PATCH 6/6] s5pv310: add s5p-tv to Universal C210 board
-Date: Fri, 04 Mar 2011 16:41:54 +0100
-Message-ID: <1299253314-10065-7-git-send-email-t.stanislaws@samsung.com>
+Subject: [PATCH 1/6] i2c-s3c2410: fix I2C dedicated for hdmiphy
+Date: Fri, 04 Mar 2011 16:41:49 +0100
+Message-ID: <1299253314-10065-2-git-send-email-t.stanislaws@samsung.com>
 References: <1299253314-10065-1-git-send-email-t.stanislaws@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:27370 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759637Ab1CDPmG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Mar 2011 10:42:06 -0500
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1299253314-10065-1-git-send-email-t.stanislaws@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, m.szyprowski@samsung.com, t.stanislaws@samsung.com, kyungmin.park@samsung.com
+Cc: kgene.kim@samsung.com, m.szyprowski@samsung.com, t.stanislaws@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org
+List-Id: linux-samsung-soc@vger.kernel.org
+
+The I2C HDMIPHY dedicated controller has different timeout
+handling and reset conditions.
 
 Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+CC: ben-linux@fluff.org
 ---
- arch/arm/mach-s5pv310/Kconfig               |    2 +
- arch/arm/mach-s5pv310/mach-universal_c210.c |   54 +++++++++++++++++++++++++++
- 2 files changed, 56 insertions(+), 0 deletions(-)
+ drivers/i2c/busses/i2c-s3c2410.c |   36 +++++++++++++++++++++++++++++++++++-
+ 1 files changed, 35 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv310/Kconfig b/arch/arm/mach-s5pv310/Kconfig
-index 4c863850..9acf9c0 100644
---- a/arch/arm/mach-s5pv310/Kconfig
-+++ b/arch/arm/mach-s5pv310/Kconfig
-@@ -112,10 +112,12 @@ config MACH_UNIVERSAL_C210
- 	select S5PV310_SETUP_SDHCI
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_I2C5
-+	select S3C_DEV_I2C8
- 	select S5P_DEV_MFC
- 	select S5PV310_DEV_PD
- 	select S5PV310_DEV_SYSMMU
- 	select S5PV310_SETUP_I2C1
-+	select S5PV310_DEV_TV
- 	select S5PV310_SETUP_I2C5
- 	help
- 	  Machine support for Samsung Mobile Universal S5PC210 Reference
-diff --git a/arch/arm/mach-s5pv310/mach-universal_c210.c b/arch/arm/mach-s5pv310/mach-universal_c210.c
-index ce88262..206c539 100644
---- a/arch/arm/mach-s5pv310/mach-universal_c210.c
-+++ b/arch/arm/mach-s5pv310/mach-universal_c210.c
-@@ -27,6 +27,7 @@
- #include <plat/pd.h>
- #include <plat/sdhci.h>
- #include <plat/sysmmu.h>
-+#include <plat/gpio-cfg.h>
- 
- #include <mach/map.h>
- #include <mach/gpio.h>
-@@ -812,6 +813,35 @@ static struct i2c_board_info i2c1_devs[] __initdata = {
- 	/* Gyro, To be updated */
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 6c00c10..99cfe2f 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -54,6 +54,7 @@ enum s3c24xx_i2c_state {
+ enum s3c24xx_i2c_type {
+ 	TYPE_S3C2410,
+ 	TYPE_S3C2440,
++	TYPE_S3C2440_HDMIPHY,
  };
  
-+static struct regulator_consumer_supply hdmi_supplies[] = {
-+	REGULATOR_SUPPLY("hdmi-en", "s5p-hdmi"),
-+};
-+
-+static struct regulator_init_data hdmi_fixed_voltage_init_data = {
-+	.constraints		= {
-+		.name		= "HDMI_5V",
-+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(mmc0_supplies),
-+	.consumer_supplies	= hdmi_supplies,
-+};
-+
-+static struct fixed_voltage_config hdmi_fixed_voltage_config = {
-+	.supply_name		= "HDMI_EN1",
-+	.microvolts		= 5000000,
-+	.gpio			= S5PV310_GPE0(1),
-+	.enable_high		= true,
-+	.init_data		= &hdmi_fixed_voltage_init_data,
-+};
-+
-+static struct platform_device hdmi_fixed_voltage = {
-+	.name			= "reg-fixed-voltage",
-+	.id			= 6,
-+	.dev			= {
-+		.platform_data	= &hdmi_fixed_voltage_config,
-+	},
-+};
-+
- static struct platform_device *universal_devices[] __initdata = {
- 	/* Samsung Platform Devices */
- 	&mmc0_fixed_voltage,
-@@ -831,8 +861,14 @@ static struct platform_device *universal_devices[] __initdata = {
- 	&s5pv310_device_pd[PD_MFC],
- 	&s5pv310_device_sysmmu[S5P_SYSMMU_MFC_L],
- 	&s5pv310_device_sysmmu[S5P_SYSMMU_MFC_R],
-+	&s3c_device_i2c8,
-+	&s5p_device_hdmi,
-+	&s5p_device_mixer,
-+	&s5pv310_device_pd[PD_TV],
-+	&s5pv310_device_sysmmu[S5P_SYSMMU_TV],
+ struct s3c24xx_i2c {
+@@ -96,7 +97,21 @@ static inline int s3c24xx_i2c_is2440(struct s3c24xx_i2c *i2c)
+ 	enum s3c24xx_i2c_type type;
  
- 	/* Universal Devices */
-+	&hdmi_fixed_voltage,
- 	&universal_gpio_keys,
- 	&s3c_device_i2c5,
- 	&s5p_device_onenand,
-@@ -845,6 +881,21 @@ static void __init universal_map_io(void)
- 	s3c24xx_init_uarts(universal_uartcfgs, ARRAY_SIZE(universal_uartcfgs));
- }
- 
-+void s5p_tv_setup(void)
-+{
-+	/* direct HPD to HDMI chip */
-+	gpio_request(S5PV310_GPX3(7), "hpd-plug");
-+
-+	gpio_direction_input(S5PV310_GPX3(7));
-+	s3c_gpio_cfgpin(S5PV310_GPX3(7), S3C_GPIO_SFN(0x3));
-+	s3c_gpio_setpull(S5PV310_GPX3(7), S3C_GPIO_PULL_NONE);
-+
-+	/* setup dependencies between TV devices */
-+	s5p_device_hdmi.dev.parent = &s5pv310_device_pd[PD_TV].dev;
-+	s5p_device_mixer.dev.parent = &s5pv310_device_pd[PD_TV].dev;
-+	s5pv310_device_sysmmu[S5P_SYSMMU_TV].dev.parent = &s5pv310_device_pd[PD_TV].dev;
+ 	type = platform_get_device_id(pdev)->driver_data;
+-	return type == TYPE_S3C2440;
++	return type == TYPE_S3C2440 || type == TYPE_S3C2440_HDMIPHY;
 +}
 +
- static void __init universal_machine_init(void)
- {
- 	universal_sdhci_init();
-@@ -853,6 +904,7 @@ static void __init universal_machine_init(void)
- 	i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
- 
- 	s3c_i2c5_set_platdata(NULL);
-+	s3c_i2c8_set_platdata(NULL);
- 	i2c_register_board_info(5, i2c_devs5, ARRAY_SIZE(i2c_devs5));
- 
- 	/* Last */
-@@ -870,6 +922,8 @@ static void __init universal_machine_init(void)
- 	s5p_device_mfc.dev.parent = &s5pv310_device_pd[PD_MFC].dev;
- 	s5pv310_device_sysmmu[S5P_SYSMMU_MFC_L].dev.parent = &s5pv310_device_pd[PD_MFC].dev;
- 	s5pv310_device_sysmmu[S5P_SYSMMU_MFC_R].dev.parent = &s5pv310_device_pd[PD_MFC].dev;
++/* s3c24xx_i2c_is2440_hdmiphy()
++ *
++ * return true is this is an s3c2440 dedicated for HDMIPHY interface
++*/
 +
-+	s5p_tv_setup();
++static inline int s3c24xx_i2c_is2440_hdmiphy(struct s3c24xx_i2c *i2c)
++{
++	struct platform_device *pdev = to_platform_device(i2c->dev);
++	enum s3c24xx_i2c_type type;
++
++	type = platform_get_device_id(pdev)->driver_data;
++	return type == TYPE_S3C2440_HDMIPHY;
  }
  
- MACHINE_START(UNIVERSAL_C210, "UNIVERSAL_C210")
+ /* s3c24xx_i2c_master_complete
+@@ -461,6 +476,13 @@ static int s3c24xx_i2c_set_master(struct s3c24xx_i2c *i2c)
+ 	unsigned long iicstat;
+ 	int timeout = 400;
+ 
++	/* if hang-up of HDMIPHY occured reduce timeout
++	 * The controller will work after reset, so waiting
++	 * 400 ms will cause unneccessary system hangup
++	 */
++	if (s3c24xx_i2c_is2440_hdmiphy(i2c))
++		timeout = 10;
++
+ 	while (timeout-- > 0) {
+ 		iicstat = readl(i2c->regs + S3C2410_IICSTAT);
+ 
+@@ -470,6 +492,15 @@ static int s3c24xx_i2c_set_master(struct s3c24xx_i2c *i2c)
+ 		msleep(1);
+ 	}
+ 
++	/* hang-up of bus dedicated for HDMIPHY occured, resetting */
++	if (s3c24xx_i2c_is2440_hdmiphy(i2c)) {
++		writel(0, i2c->regs + S3C2410_IICCON);
++		writel(0, i2c->regs + S3C2410_IICSTAT);
++		writel(0, i2c->regs + S3C2410_IICDS);
++
++		return 0;
++	}
++
+ 	return -ETIMEDOUT;
+ }
+ 
+@@ -1009,6 +1040,9 @@ static struct platform_device_id s3c24xx_driver_ids[] = {
+ 	}, {
+ 		.name		= "s3c2440-i2c",
+ 		.driver_data	= TYPE_S3C2440,
++	}, {
++		.name		= "s3c2440-hdmiphy-i2c",
++		.driver_data	= TYPE_S3C2440_HDMIPHY,
+ 	}, { },
+ };
+ MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
 -- 
 1.7.1.569.g6f426
