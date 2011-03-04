@@ -1,348 +1,279 @@
 From: Kamil Debski <k.debski@samsung.com>
-Subject: [RFC/PATCH v7 0/5] Multi Format Codec 5.1 driver for s5pv310 SoC
-Date: Fri, 04 Mar 2011 12:26:17 +0100
-Message-ID: <1299237982-31687-1-git-send-email-k.debski@samsung.com>
+Subject: =?UTF-8?q?=5BPATCH/RFC=20v7=205/5=5D=20v4l=3A=20Documentation=20for=20the=20codec=20interface?=
+Date: Fri, 04 Mar 2011 12:26:22 +0100
+Message-ID: <1299237982-31687-6-git-send-email-k.debski@samsung.com>
+References: <1299237982-31687-1-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1299237982-31687-1-git-send-email-k.debski@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, k.debski@samsung.com, jaeryul.oh@samsung.com, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+This patch adds documentation for the codec interface of V4L2.
 
-This is the seventh version of the MFC 5.1 driver. It is still a work in progress.
-This version currently supports decoding only, but encoding is heavily developed.
-For nearly two months new features were added and fixes and suggestions were
-implemented.
+Signed-off-by: Kamil Debski <k.debski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ Documentation/DocBook/v4l/dev-codec.xml |  169 +++++++++++++++++++++++=
++++++---
+ 1 files changed, 155 insertions(+), 14 deletions(-)
 
-The main purpose for posting this patch is to show an example driver that
-uses the new IOMMU vb2 allocator. In addition this is the first try to
-create a V4L2 codec driver that I know of. I hope to discuss issues related
-to this type of hardware on the upcoming brainstorming session in Warsaw.
-
-Major new features include:
-- proper handling for stream seeking (stream off + stream on and resume from
-  another point of the stream).
-- support for resolution change in the stream
-- power domain handling
-- clock gating
-- support for IOMMU allocator
-- setting buffer flags according to decoded frame type:
-  V4L2_BUF_FLAG_(KEY|P|B)FRAME
-- proper display delay handling for H264
-
-Things that still need to be done:
-- move to the control framework
-- rebase onto Exynos4 platform name change
-
-* Stream seeking scenario is as follows:
-
-1. Stream off on OUTPUT
-2. Stream off on CAPTURE
-3. Queue at least one new src buffer on OUTPUT (after stream off they all have
-   been dequeued and at least one buffer has to be queued to successfully do a
-   stream on)
-4. Queue dst buffers on CAPTURE (after stream off they all have been dequeued)
-5. Stream on on CAPTURE queue
-6. Stream on on OUTPUT queue
-
-* Resolution change scenario:
-
-1. Stream off on CAPTURE
-2. Unmap the destination buffers
-	Note: To successfully unmap the buffer they cannot be used
-	by any other hardware, such as FIMC. Thus it necessary to
-	shutdown FIMC - either close, or streamoff and reqbufs(0).
-3. Call Reqbufs (0) on CAPTURE
-4. Same as after parsing header
-	a) Run G_FMT on CAPTURE
-	b) Run G_CROP on CAPTURE
-	c) Get the minimum number of buffers (by reading the
-	   V4L2_CID_CODEC_REQ_NUM_BUFS control)
-5. Init CAPTURE stream
-	a) Run Reqbufs with appropriate number of buffers (minimum + extra)
-	b) Run Querybuf and Mmap on each buffer
-	c) Run Q_BUF on the new buffers
-6. Stream on on CAPTURE
-7. Initialize FIMC
-
-Note: application is notified about resolution change in the same way as the
-notification that all decoded buffers have been read. The value of bytesused
-in the capture buffer is set to 0. If the application has sent last encoded
-stream frame then it is waiting for last decoded frame. If the application
-receives a frame with bytesused set to 0 with no error set in the middle of a
-stream then it should treat is as the notification of resolution change.
-
-Best regards,
-Kamil
-
-* Changelog:
-
-==================
- Changes since v6
-==================
-
-1) Stream seeking handling
-   - done by running stream off and then stream on from another point of the
-     stream
-2) Support for streams during which the resolution is changed
-   - done by calling stream off, reallocating the buffers and stream on again to
-     resume
-3) Power domain handling
-4) Clock gating hw related operations
-   - This has introduced a large reduction in power use
-5) Support for IOMMU allocator
-   - Using IOMMU as the memory allocator removes the cache problem
-     and the need for reserving continuous memory at system boot
-6) Flags of v4l2_buffer are set accrodingly to the returned buffer frame type
-   V4L2_BUF_FLAG_(KEY|P|B)FRAME
-7) Fixed display delay handling of H264. Now dealy of 0 frames is possible,
-   although it may cause that the frames are returned out of order.
-8) Minor changes
-   - global s5p_mfc_dev variable has been removed
-   - improved Packed PB handling
-   - fixed error handling - separate for decoding and display frames
-   - some cosmetic changes to simplify the code and make it more readable
-
-==================
- Changes since v5
-==================
-
-1) Changes suggested by Hans Verkuil:
-- small change in videodev2.h - corrected control offsets
-- made the code more readable by simplifying if statements and using temporary
-  pointers
-- mfc_mutex is now included in s5p_mfc_dev structure
-- after discussion with Peter Oh modification of fourcc defintions
- (replaced DX52 and DX53 with DX50)
-
-2) Changes suggested by JongHun Han:
-- comsmetic changed of defines in regs-mfc5.h
-- in buffers that have no width adn height, such as the buffer for compressed
-  stream, those values are set to 0 instead of 1
-- remove redundant pointer to MFC registers
-- change name of the union in s5p_mfc_buf from paddr to cookie
-- removed global variable (struct s5p_mfc_dev *dev) and moved to use video_drvdata
-
-3) Other changes:
-- added check for values returned after parsing header - in rare circumstances MFC
-  hw returned 0x0 as image size and this could cause problems
-
-==================
- Changes since v4
-==================
-
-1) Changes suggested by Kukjin Kim from:
-- removed comment arch/arm/mach-s5pv210/include/mach/map.h
-- changed device name to s5p-mfc (removed "5", MFC version number)
-  also removed the version number from the name of MFC device file
-- added GPL license to arch/arm/plat-s5p/dev-mfc.c
-- removed unused include file from dev-mfc.c and unnecessary comments
-
-2) Cache handling improvement:
-- changed cache handling to use dma_map_single and dma_unmap_single
-
-==================
- Changes since v3
-==================
-
-1) Update to the v6 videobuf2 API (here thanks go to Marek Szyprowski)
-- s5p_mfc_buf_negotiate and s5p_mfc_buf_setup_plane functions
-have been merged
-- queue initialization has been adapted to the new API
-- use of the allocator memops has been changed, now there are single
-memops for all the allocator contexts
-
-2) Split of the s5p_mfc_try_run and s5p_mfc_handle_frame_int functions
-- parts of the s5p_mfc_try_run function have been moved to separate
-functions (s5p_mfc_get_new_ctx, s5p_mfc_run_dec_last_frames,
-s5p_mfc_run_dec_frame, s5p_mfc_run_get_inst_no, s5p_mfc_run_return_inst
-s5p_mfc_run_init_dec,s5p_mfc_run_init_dec_buffers)
-- s5p_mfc_handle_frame_int has been split to the following functions:
-s5p_mfc_handle_frame_all_extracted, s5p_mfc_handle_frame_new
-and s5p_mfc_handle_frame to handle different cases
-
-3) Remove remaining magic numbers and tidy up comments
-
-==================
- Changes since v2
-==================
-
-1) Update to newest videobuf2 API
-This is the major change from v2. The videobuf2 API will hopefully have no more
-major API changes. Buffer initialization has been moved from buf_prepare
-callback to buf_init to simplify the process. Locking mechanism has been
-modified to the requirements of new videobuf2 version.
-2) Code cleanup
-Removed more magic contants and replaced them with appropriate defines. Changed
-code to use unlocked_ioctl instead of ioctl in v4l2 file ops.
-3) Allocators
-All internal buffer allocations are done using the selected vb2 allocator,
-instead of using CMA functions directly.
-
-==================
- Changes since v1
-==================
-
-1) Cleanup accoridng to Peter Oh suggestions on the mailing list (Thanks).
-
-* Original cover letter:
-
-==============
- Introduction
-==============
-
-The purpose of this RFC is to discuss the driver for a hw video codec
-embedded in the new Samusng's SoCs. Multi Format Codec 5.0 is able to
-handle video decoding of in a range of formats.
-
-So far no hardware codec was supported in V4L2 and this would be the
-first one. I guess there are more similar device that would benefit from
-a V4L2 unified interface. I suggest a separate control class for codec
-devices - V4L2_CTRL_CLASS_CODEC.
-
-Internally the driver uses videobuf2 framework and CMA memory allocator.
-I am aware that those have not yet been merged, but I wanted to start
-discussion about the driver earlier so it could be merged sooner. The
-driver posted here is the initial version, so I suppose it will require
-more work.
-
-==================
- Device interface
-==================
-
-The driver principle is based on the idea of memory-to-memory devices:
-it provides a single video node and each opened file handle gets its own
-private context with separate buffer queues. Each context consist of 2
-buffer queues: OUTPUT (for source buffers, i.e. encoded video frames)
-and CAPTURE (for destination buffers, i.e. decoded raw video frames).
-The process of decoding video data from stream is a bit more complicated
-than typical memory-to-memory processing, that's why the m2m framework
-is not directly used (it is too limited for this case). The main reason
-for this is the fact that the CAPTURE buffers can be dequeued in a
-different order than they queued. The hw block decides which buffer has
-been completely processed. This is due to the structure of most
-compressed video streams - use of B frames causes that decoding and
-display order may be different.
-
-==============================
- Decoding initialization path
-==============================
-
-First the OUTPUT queue is initialized. With S_FMT the application
-chooses which video format to decode and what size should be the input
-buffer. Fourcc values have been defined for different codecs e.g.
-V4L2_PIX_FMT_H264 for h264. Then the OUTPUT buffers are requested and
-mmaped. The stream header frame is loaded into the first buffer, queued
-and streaming is enabled. At this point the hardware is able to start
-processing the stream header and afterwards it will have information
-about the video dimensions and the size of the buffers with raw video
-data.
-
-The next step is setting up the CAPTURE queue and buffers. The width,
-height, buffer size and minimum number of buffers can be read with G_FMT
-call. The application can request more output buffer if necessary. After
-requesting and mmaping buffers the device is ready to decode video
-stream.
-
-The stream frames (ES frames) are written to the OUTPUT buffers, and
-decoded video frames can be read from the CAPTURE buffers. When no more
-source frames are present a single buffer with bytesused set to 0 should
-be queued. This will inform the driver that processing should be
-finished and it can dequeue all video frames that are still left. The
-number of such frames is dependent on the stream and its internal
-structure (how many frames had to be kept as reference frames for
-decoding, etc).
-
-===============
- Usage summary
-===============
-
-This is a step by step summary of the video decoding (from user
-application point of view, with 2 treads and blocking api):
-
-01. S_FMT(OUTPUT, V4L2_PIX_FMT_H264, ...)
-02. REQ_BUFS(OUTPUT, n)
-03. for i=1..n MMAP(OUTPUT, i)
-04. put stream header to buffer #1
-05. QBUF(OUTPUT, #1)
-06. STREAM_ON(OUTPUT)
-07. G_FMT(CAPTURE)
-08. REQ_BUFS(CAPTURE, m)
-09. for j=1..m MMAP(CAPTURE, j)
-10. for j=1..m QBUF(CAPTURE, #j)
-11. STREAM_ON(CAPTURE)
-
-display thread:
-12. DQBUF(CAPTURE) -> got decoded video data in buffer #j
-13. display buffer #j
-14. QBUF(CAPTURE, #j)
-15. goto 12
-
-parser thread:
-16. put next ES frame to buffer #i
-17. QBUF(OUTPUT, #i)
-18. DQBUF(OUTPUT) -> get next empty buffer #i 19. goto 16
-
-...
-
-Similar usage sequence can be achieved with single threaded application
-and non-blocking api with poll() call.
-
-Branch with MFC, CMA and videobuf2 will be soon available at
-http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/vb2-mfc-fimc
-This tree is based on 2.6.37 rc4.
-
-Please have a look at the code and the idea of how to introduce codec
-devices to V4L2. Comments will be very much appreciated.
-
-Patch summary:
-
-
-Kamil Debski (5):
-  Changes in include/linux/videodev2.h for MFC
-  MFC: Add MFC 5.1 driver to plat-s5p, mach-s5pv210 and mach-s5pv210
-  MFC: Added MFC 5.1 V4L2 driver
-  s5pv310: Enable MFC on C210_universal
-  v4l: Documentation for the codec interface
-
- Documentation/DocBook/v4l/dev-codec.xml         |  169 ++-
- arch/arm/mach-s5pv310/Kconfig                   |    1 +
- arch/arm/mach-s5pv310/clock.c                   |   28 +-
- arch/arm/mach-s5pv310/include/mach/map.h        |    2 +
- arch/arm/mach-s5pv310/include/mach/regs-clock.h |    3 +
- arch/arm/mach-s5pv310/mach-universal_c210.c     |    8 +
- arch/arm/plat-s5p/Kconfig                       |    5 +
- arch/arm/plat-s5p/Makefile                      |    2 +-
- arch/arm/plat-s5p/dev-mfc.c                     |   49 +
- arch/arm/plat-samsung/include/plat/devs.h       |    1 +
- drivers/media/video/Kconfig                     |    8 +
- drivers/media/video/Makefile                    |    1 +
- drivers/media/video/s5p-mfc/Makefile            |    3 +
- drivers/media/video/s5p-mfc/regs-mfc5.h         |  346 ++++
- drivers/media/video/s5p-mfc/s5p_mfc.c           | 2253 +++++++++++++++++++++++
- drivers/media/video/s5p-mfc/s5p_mfc_common.h    |  240 +++
- drivers/media/video/s5p-mfc/s5p_mfc_ctrls.h     |  182 ++
- drivers/media/video/s5p-mfc/s5p_mfc_debug.h     |   47 +
- drivers/media/video/s5p-mfc/s5p_mfc_intr.c      |   92 +
- drivers/media/video/s5p-mfc/s5p_mfc_intr.h      |   26 +
- drivers/media/video/s5p-mfc/s5p_mfc_memory.h    |   43 +
- drivers/media/video/s5p-mfc/s5p_mfc_opr.c       |  913 +++++++++
- drivers/media/video/s5p-mfc/s5p_mfc_opr.h       |  142 ++
- include/linux/videodev2.h                       |   39 +
- 24 files changed, 4587 insertions(+), 16 deletions(-)
- create mode 100644 arch/arm/plat-s5p/dev-mfc.c
- create mode 100644 drivers/media/video/s5p-mfc/Makefile
- create mode 100644 drivers/media/video/s5p-mfc/regs-mfc5.h
- create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc.c
- create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_common.h
- create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_ctrls.h
- create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_debug.h
- create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_intr.c
- create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_intr.h
- create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_memory.h
- create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_opr.c
- create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_opr.h
+diff --git a/Documentation/DocBook/v4l/dev-codec.xml b/Documentation/Do=
+cBook/v4l/dev-codec.xml
+index 6e156dc..73ecee8 100644
+--- a/Documentation/DocBook/v4l/dev-codec.xml
++++ b/Documentation/DocBook/v4l/dev-codec.xml
+@@ -1,21 +1,162 @@
+-  <title>Codec Interface</title>
++	<title>Codec Interface</title>
+=20
+-  <note>
+-    <title>Suspended</title>
++	<para>
++A V4L2 codec can compress, decompress, transform, or otherwise convert
++video data from one format into another format, in memory. Application=
+s
++can send and receive the data in two ways. First method utilizes
++&func-write; and &func-read; calls to exchange the data. The second
++uses streaming I/O to interact with the driver.
++	</para>
+=20
+-    <para>This interface has been be suspended from the V4L2 API
+-implemented in Linux 2.6 until we have more experience with codec
+-device interfaces.</para>
+-  </note>
++	<para>
++Codec devices belong to the group of memory-to-memory devices =E2=80=93=
+ memory
++buffer containing a frame in one format is converted and stored in ano=
+ther
++buffer in the memory. The format of capture and output buffers is
++determined by the pixel formats passed in the &VIDIOC-S-FMT; call.
++	</para>
+=20
+-  <para>A V4L2 codec can compress, decompress, transform, or otherwise
+-convert video data from one format into another format, in memory.
+-Applications send data to be converted to the driver through a
+-&func-write; call, and receive the converted data through a
+-&func-read; call. For efficiency a driver may also support streaming
+-I/O.</para>
++	<para>
++Many advanced video codecs =E2=80=93 such as H264 and MPEG4 require th=
+at decoded buffers
++are kept as reference for other frames. This requirement may result in=
+ a use
++case where a few output buffers have to be processed before the first =
+capture
++buffer is returned. In addition the buffers may be dequeued in an arbi=
+trary
++order.
++	</para>
+=20
+-  <para>[to do]</para>
++	<para>
++The codec hardware may enable to tweak decoding parameters and will re=
+quire the
++application to set encoding parameters. Hence the <constant>
++V4L2_CTRL_CLASS_CODEC control</constant> class has been introduced.
++	</para>
++
++	<para>
++The standard V4L2 naming of buffers is kept =E2=80=93 output means inp=
+ut of the device,
++capture on the other hand means the device=E2=80=99s output.
++	</para>
++
++<section>
++	<title>Querying Capabilities</title>
++
++	<para>
++Devices that support the codec interface set the
++<costant>V4L2_CAP_VIDEO_M2M</constant> flag of the capabilities field =
+of the
++v4l2_capability struct returned by the &VIDIOC-QUERYCAP; ioctl. At lea=
+st one of
++the read/write or streaming I/O methods must be supported.
++	</para>
++</section>
++
++<section>
++	<title>Multiple Instance Capabilities</title>
++
++	<para>
++Codecs as memory to memory devices can support multiple instances.
++Drivers for devices with such capabilities should store configuration =
+context
++for every open file descriptor. This means that configuration is kept =
+only until
++the descriptor is closed and it is not possible to configure the devic=
+e with one
++application and perform streaming with another. If the device is capab=
+le of
++handling only one stream at a time it can use a single context.
++	</para>
++</section>
++
++<section>
++	<title>Image Format Negotiation</title>
++
++	<para>
++In case of decoding a video stream, the header may need to be parsed b=
+efore the
++stream decoding can take place. Usually only after the header is proce=
+ssed the
++dimensions of the decoded image and the minimum number of buffers is k=
+nown. This
++requires that the output part of the interface has to be able to proce=
+ss the
++header before allocating the buffers for capture. &VIDIOC-G-FMT; can b=
+e used by
++the application to get the parameters of the capture buffers. If neces=
+sary the
++&VIDIOC-S-FMT; call can be used to change those parameters, but it is =
+up to the
++driver to validate and correct those values. In addition it is necessa=
+ry to
++negotiate the number of capture buffers. In many cases the application=
+ may need
++to allocate N more buffers than the minimum required by the codec. It =
+can be
++useful in case the device has a minimum number of buffers that have to=
+ be queued
++in hardware to operate and if the application needs to keep N buffers =
+dequeued
++for processing. This cannot be easily done with &VIDIOC-REQBUFS; alone=
+=2E To
++address this issue the V4L2_CID_CODEC_MIN_REQ_ BUFS_CAP control has be=
+en
++introduced and can be read to determine the minimum buffer count for t=
+he
++capture queue. The application can use this number to calculate the nu=
+mber of
++buffers passed to the REQBUFS call. The V4L2_CID_CODEC_MIN_REQ_ BUFS_O=
+UT
++control can also be used if the minimum number of buffers is determine=
+d for the
++output queue, for example in case of encoding.
++	</para>
++
++	<para>
++When encoding &VIDIOC-S-FMT; has to be done on both capture and output=
+=2E
++&VIDIOC-S-FMT; on capture will determine the video codec to be used an=
+d encoding
++parameters should be configured by setting appropriate controls. &VIDI=
+OC-S-FMT;
++on output will be used to determine the input image parameters.
++	</para>
++</section>
++
++<section>
++	<title>Processing</title>
++
++	<para>
++In case of streaming I/O the processing is done by queueing and dequeu=
+eing
++buffers on both the capture and output queue. In case of decoding it m=
+ay be
++necessary to parse the header before the parameters of the video are d=
+etermined.
++In such case the size and number of capture buffers is unknown, hence =
+only the
++output part of the device is initialized. The application should extra=
+ct the
++header from the stream and queue it as the first buffer on the output =
+queue.
++After the header is parsed by the hardware the capture part of the cod=
+ec can be
++initialized. In case of encoding both capture and output parts have to=
+ be
++initialized before stream on is called.
++	</para>
++
++	<para>
++When streamoff is called then the buffers that were in that queue are =
+discarded.
++This can be used to support compressed stream seeking =E2=80=93 after =
+streamoff on
++capture and output all the frames are discarded. Then buffers from new=
+ position
++in the stream are queued on the output queue and empty buffers are que=
+ued on the
++capture queue. When stream on is called afterwards processing is resum=
+ed from
++the new position in the stream.
++	</para>
++
++	<para>
++Marking end-of-stream is necessary, because a number of buffers may be=
+ kept
++queued in the hardware for the purpose of acting as reference frames. =
+After
++reaching end of compressed stream it is necessary to mark end-of-strea=
+m with a
++buffer which bytesused is set to 0 on the output side. After all remai=
+ning
++buffers are dequeued on the capture side, a buffer with bytesused set =
+to 0 is
++dequeued.
++	</para>
++</section>
++
++<section>
++	<title>Resolution change</title>
++
++	<para>
++The resolution and the minimum number of buffers of the decoded pictur=
+e can be
++changed during streaming. This feature is widely used in digital TV br=
+oadcasts.
++If the hardware is able to support such feature it is necessary that t=
+he driver
++notifies the application about such event. It might be necessary for t=
+he
++application to reallocate the buffers. Such notification is similar to=
+ the
++end-of-stream notification =E2=80=93 if resolution or the number of ne=
+cessary buffers is
++changed then the remaining capture buffers are dequeued and then one b=
+uffer with
++bytesused set to 0 is returned to the application. At this time the ap=
+plication
++should reallocate and queue the capture buffers. To do this it is nece=
+ssary to
++call streamoff on the capture, unmap the buffers, free the memory by c=
+alling
++reqbufs with count set to 0. Now the application can read the new reso=
+lution by
++running &VIDIOC-G-FMT; and the minimum number of buffers by reading th=
+e
++V4L2_CID_CODEC_MIN_REQ_BUFS_CAP control. After allocating, mmaping and=
+ queueing the
++buffers the hardware will continue processing.
++	</para>
++</section>
++
++<section>
++	<title>Supplemental features</title>
++
++	<para>
++Hardware and format constraints may influence the size of the capture =
+buffer.
++For example the hardware may need the image buffer to be aligned to 12=
+8x32
++size.  To read the actual video frame size the application should use =
+the
++&VIDIOC-G-CROP; call for decoding and use &VIDIOC-S-CROP; call in case=
+ of
++encoding.
++	</para>
++</section>
+=20
+   <!--
+ Local Variables:
+--=20
+1.6.3.3
