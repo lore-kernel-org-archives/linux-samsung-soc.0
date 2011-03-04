@@ -1,392 +1,667 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] ARM: Samsung: change suspend/resume code to depend on
-	CONFIG_SUSPEND
-Date: Fri, 04 Mar 2011 08:05:15 +0100
-Message-ID: <1299222315-24000-1-git-send-email-m.szyprowski@samsung.com>
-References: <AANLkTikODhjPh0JRH_3KO3uETjfDZM=3RETvSx3mpzk0@mail.gmail.com>
+From: Sangbeom Kim <sbkim73@samsung.com>
+Subject: RE: [PATCH V2 1/3] ARM: S5P: Add s5p_timer support for HRT
+Date: Fri, 04 Mar 2011 16:06:34 +0900
+Message-ID: <002501cbda3a$b6f37d00$24da7700$@com>
+References: <1299216099-7709-1-git-send-email-sbkim73@samsung.com>
+ <1299216099-7709-2-git-send-email-sbkim73@samsung.com>
+ <AANLkTikywhikDP1a4cMb=SYDhVROn_mk+zkHVLcg92T+@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:23850 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750824Ab1CDHFe (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:26580 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751679Ab1CDHIY convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Mar 2011 02:05:34 -0500
-Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LHI0096TUD7RI00@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 Mar 2011 07:05:31 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LHI00G2UUD69U@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 Mar 2011 07:05:31 +0000 (GMT)
-In-reply-to: <AANLkTikODhjPh0JRH_3KO3uETjfDZM=3RETvSx3mpzk0@mail.gmail.com>
+	Fri, 4 Mar 2011 02:08:24 -0500
+Received: from epmmp2 (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LHI00AKEUF61K10@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 04 Mar 2011 16:06:42 +0900 (KST)
+Received: from DOSBKIM7301 ([12.23.103.65])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LHI0096RUF6JP@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 04 Mar 2011 16:06:42 +0900 (KST)
+In-reply-to: <AANLkTikywhikDP1a4cMb=SYDhVROn_mk+zkHVLcg92T+@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, myungjoo.ham@samsung.com
+To: 'Kyungmin Park' <kmpark@infradead.org>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-Most suspend/resume code depends on CONFIG_PM. This causes problems
-if one wants to enable Runtime PM (to control power domains for example),
-but doesn't need system suspend/resume feature. This also enables to use
-Runtime PM feature on EXYNOS4 which doesn't implement system suspend/resume
-callbacks yet.
+Hi Kyungmin!
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
+I'm sorry, I don't test on exynos4 configuration.
+I will add S5P_HRT configuration in plat-s5p Kconfig.
+And It can be selected on each machine.
+After testing it, I will submit again.
+Thanks,
 
-Changes since v1:
-- rebased onto latest kgene/for-next branch (with s5pv310 to exynos4 rename)
+S.B. Kim
 
- arch/arm/mach-s3c2410/mach-bast.c              |    2 +-
- arch/arm/mach-s3c2412/mach-jive.c              |    2 +-
- arch/arm/mach-s3c2440/mach-osiris.c            |    2 +-
- arch/arm/mach-s3c2440/s3c244x.c                |    2 +-
- arch/arm/mach-s3c64xx/Makefile                 |    6 +++---
- arch/arm/mach-s5pv210/cpufreq.c                |    4 ++--
- arch/arm/mach-exynos4/cpufreq.c                |    4 ++--
- arch/arm/mach-exynos4/irq-eint.c               |    2 +-
- arch/arm/plat-s3c24xx/Makefile                 |    6 +++---
- arch/arm/plat-s3c24xx/cpu-freq.c               |    2 +-
- arch/arm/plat-s3c24xx/dma.c                    |    2 +-
- arch/arm/plat-s3c24xx/include/plat/irq.h       |    2 +-
- arch/arm/plat-s5p/Makefile                     |    4 ++--
- arch/arm/plat-s5p/irq-eint.c                   |    4 ++--
- arch/arm/plat-samsung/Makefile                 |    4 ++--
- arch/arm/plat-samsung/adc.c                    |    2 +-
- arch/arm/plat-samsung/gpio.c                   |    2 +-
- arch/arm/plat-samsung/include/plat/gpio-core.h |    6 +++---
- arch/arm/plat-samsung/include/plat/pm.h        |    4 ++--
- arch/arm/plat-samsung/pwm.c                    |    2 +-
- 20 files changed, 32 insertions(+), 32 deletions(-)
-
-diff --git a/arch/arm/mach-s3c2410/mach-bast.c b/arch/arm/mach-s3c2410/mach-bast.c
-index 2970ea9..18187a4 100644
---- a/arch/arm/mach-s3c2410/mach-bast.c
-+++ b/arch/arm/mach-s3c2410/mach-bast.c
-@@ -213,7 +213,7 @@ static struct s3c2410_uartcfg bast_uartcfgs[] __initdata = {
- 
- /* NAND Flash on BAST board */
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- static int bast_pm_suspend(struct sys_device *sd, pm_message_t state)
- {
- 	/* ensure that an nRESET is not generated on resume. */
-diff --git a/arch/arm/mach-s3c2412/mach-jive.c b/arch/arm/mach-s3c2412/mach-jive.c
-index 923e01b..10643ef8 100644
---- a/arch/arm/mach-s3c2412/mach-jive.c
-+++ b/arch/arm/mach-s3c2412/mach-jive.c
-@@ -485,7 +485,7 @@ static struct s3c2410_udc_mach_info jive_udc_cfg __initdata = {
- 
- /* Jive power management device */
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- static int jive_pm_suspend(struct sys_device *sd, pm_message_t state)
- {
- 	/* Write the magic value u-boot uses to check for resume into
-diff --git a/arch/arm/mach-s3c2440/mach-osiris.c b/arch/arm/mach-s3c2440/mach-osiris.c
-index 14dc678..06d115a 100644
---- a/arch/arm/mach-s3c2440/mach-osiris.c
-+++ b/arch/arm/mach-s3c2440/mach-osiris.c
-@@ -281,7 +281,7 @@ static struct platform_device osiris_pcmcia = {
- 
- /* Osiris power management device */
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- static unsigned char pm_osiris_ctrl0;
- 
- static int osiris_pm_suspend(struct sys_device *sd, pm_message_t state)
-diff --git a/arch/arm/mach-s3c2440/s3c244x.c b/arch/arm/mach-s3c2440/s3c244x.c
-index 90c1707..7e693a0 100644
---- a/arch/arm/mach-s3c2440/s3c244x.c
-+++ b/arch/arm/mach-s3c2440/s3c244x.c
-@@ -134,7 +134,7 @@ void __init s3c244x_init_clocks(int xtal)
- 	s3c2410_baseclk_add();
- }
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- 
- static struct sleep_save s3c244x_sleep[] = {
- 	SAVE_ITEM(S3C2440_DSC0),
-diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
-index 4657363..183ebb3 100644
---- a/arch/arm/mach-s3c64xx/Makefile
-+++ b/arch/arm/mach-s3c64xx/Makefile
-@@ -43,9 +43,9 @@ obj-$(CONFIG_S3C64XX_SETUP_SDHCI_GPIO) += setup-sdhci-gpio.o
- 
- # PM
- 
--obj-$(CONFIG_PM)		+= pm.o
--obj-$(CONFIG_PM)		+= sleep.o
--obj-$(CONFIG_PM)		+= irq-pm.o
-+obj-$(CONFIG_SUSPEND)		+= pm.o
-+obj-$(CONFIG_SUSPEND)		+= sleep.o
-+obj-$(CONFIG_SUSPEND)		+= irq-pm.o
- 
- # Machine support
- 
-diff --git a/arch/arm/mach-s5pv210/cpufreq.c b/arch/arm/mach-s5pv210/cpufreq.c
-index a6f2292..7e697cd 100644
---- a/arch/arm/mach-s5pv210/cpufreq.c
-+++ b/arch/arm/mach-s5pv210/cpufreq.c
-@@ -389,7 +389,7 @@ static int s5pv210_target(struct cpufreq_policy *policy,
- 	return 0;
- }
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- static int s5pv210_cpufreq_suspend(struct cpufreq_policy *policy,
- 				   pm_message_t pmsg)
- {
-@@ -470,7 +470,7 @@ static struct cpufreq_driver s5pv210_driver = {
- 	.get		= s5pv210_getspeed,
- 	.init		= s5pv210_cpu_init,
- 	.name		= "s5pv210",
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- 	.suspend	= s5pv210_cpufreq_suspend,
- 	.resume		= s5pv210_cpufreq_resume,
- #endif
-diff --git a/arch/arm/mach-exynos4/cpufreq.c b/arch/arm/mach-exynos4/cpufreq.c
-index b04cbc7..8493b6d 100644
---- a/arch/arm/mach-exynos4/cpufreq.c
-+++ b/arch/arm/mach-exynos4/cpufreq.c
-@@ -457,7 +457,7 @@ static int exynos4_target(struct cpufreq_policy *policy,
- 	return 0;
- }
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- static int exynos4_cpufreq_suspend(struct cpufreq_policy *policy,
- 				   pm_message_t pmsg)
- {
-@@ -497,7 +497,7 @@ static struct cpufreq_driver exynos4_driver = {
- 	.get		= exynos4_getspeed,
- 	.init		= exynos4_cpufreq_cpu_init,
- 	.name		= "exynos4_cpufreq",
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- 	.suspend	= exynos4_cpufreq_suspend,
- 	.resume		= exynos4_cpufreq_resume,
- #endif
-diff --git a/arch/arm/mach-exynos4/irq-eint.c b/arch/arm/mach-exynos4/irq-eint.c
-index 477bd9e..39c7f7b 100644
---- a/arch/arm/mach-exynos4/irq-eint.c
-+++ b/arch/arm/mach-exynos4/irq-eint.c
-@@ -152,7 +152,7 @@ static struct irq_chip exynos4_irq_eint = {
- 	.irq_mask_ack	= exynos4_irq_eint_maskack,
- 	.irq_ack	= exynos4_irq_eint_ack,
- 	.irq_set_type	= exynos4_irq_eint_set_type,
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- 	.irq_set_wake	= s3c_irqext_wake,
- #endif
- };
-diff --git a/arch/arm/plat-s3c24xx/Makefile b/arch/arm/plat-s3c24xx/Makefile
-index c2064c3..763b7bb 100644
---- a/arch/arm/plat-s3c24xx/Makefile
-+++ b/arch/arm/plat-s3c24xx/Makefile
-@@ -26,9 +26,9 @@ obj-$(CONFIG_CPU_FREQ_S3C24XX_DEBUGFS) += cpu-freq-debugfs.o
- # Architecture dependant builds
- 
- obj-$(CONFIG_PM_SIMTEC)		+= pm-simtec.o
--obj-$(CONFIG_PM)		+= pm.o
--obj-$(CONFIG_PM)		+= irq-pm.o
--obj-$(CONFIG_PM)		+= sleep.o
-+obj-$(CONFIG_SUSPEND)		+= pm.o
-+obj-$(CONFIG_SUSPEND)		+= irq-pm.o
-+obj-$(CONFIG_SUSPEND)		+= sleep.o
- obj-$(CONFIG_S3C2410_CLOCK)	+= s3c2410-clock.o
- obj-$(CONFIG_S3C2443_CLOCK)	+= s3c2443-clock.o
- obj-$(CONFIG_S3C2410_DMA)	+= dma.o
-diff --git a/arch/arm/plat-s3c24xx/cpu-freq.c b/arch/arm/plat-s3c24xx/cpu-freq.c
-index 25a8fc7..1d38db5 100644
---- a/arch/arm/plat-s3c24xx/cpu-freq.c
-+++ b/arch/arm/plat-s3c24xx/cpu-freq.c
-@@ -429,7 +429,7 @@ static int s3c_cpufreq_verify(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- static struct cpufreq_frequency_table suspend_pll;
- static unsigned int suspend_freq;
- 
-diff --git a/arch/arm/plat-s3c24xx/dma.c b/arch/arm/plat-s3c24xx/dma.c
-index 6ad274e..6199b6e 100644
---- a/arch/arm/plat-s3c24xx/dma.c
-+++ b/arch/arm/plat-s3c24xx/dma.c
-@@ -1202,7 +1202,7 @@ static inline struct s3c2410_dma_chan *to_dma_chan(struct sys_device *dev)
- 
- /* system device class */
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- 
- static int s3c2410_dma_suspend(struct sys_device *dev, pm_message_t state)
- {
-diff --git a/arch/arm/plat-s3c24xx/include/plat/irq.h b/arch/arm/plat-s3c24xx/include/plat/irq.h
-index ec087d6..ca6354f 100644
---- a/arch/arm/plat-s3c24xx/include/plat/irq.h
-+++ b/arch/arm/plat-s3c24xx/include/plat/irq.h
-@@ -106,7 +106,7 @@ s3c_irqsub_ack(unsigned int irqno, unsigned int parentmask, unsigned int group)
- 
- /* exported for use in arch/arm/mach-s3c2410 */
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- extern int s3c_irq_wake(struct irq_data *data, unsigned int state);
- #else
- #define s3c_irq_wake NULL
-diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-index 4bd5cf9..ce5a0a7 100644
---- a/arch/arm/plat-s5p/Makefile
-+++ b/arch/arm/plat-s5p/Makefile
-@@ -20,8 +20,8 @@ obj-y				+= irq.o
- obj-$(CONFIG_S5P_EXT_INT)	+= irq-eint.o
- obj-$(CONFIG_S5P_GPIO_INT)	+= irq-gpioint.o
- obj-$(CONFIG_S5P_SYSTEM_MMU)	+= sysmmu.o
--obj-$(CONFIG_PM)		+= pm.o
--obj-$(CONFIG_PM)		+= irq-pm.o
-+obj-$(CONFIG_SUSPEND)		+= pm.o
-+obj-$(CONFIG_SUSPEND)		+= irq-pm.o
- 
- # devices
- 
-diff --git a/arch/arm/plat-s5p/irq-eint.c b/arch/arm/plat-s5p/irq-eint.c
-index 225aa25..e203a65 100644
---- a/arch/arm/plat-s5p/irq-eint.c
-+++ b/arch/arm/plat-s5p/irq-eint.c
-@@ -125,7 +125,7 @@ static struct irq_chip s5p_irq_eint = {
- 	.irq_mask_ack	= s5p_irq_eint_maskack,
- 	.irq_ack	= s5p_irq_eint_ack,
- 	.irq_set_type	= s5p_irq_eint_set_type,
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- 	.irq_set_wake	= s3c_irqext_wake,
- #endif
- };
-@@ -195,7 +195,7 @@ static struct irq_chip s5p_irq_vic_eint = {
- 	.irq_mask_ack	= s5p_irq_vic_eint_maskack,
- 	.irq_ack	= s5p_irq_vic_eint_ack,
- 	.irq_set_type	= s5p_irq_eint_set_type,
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- 	.irq_set_wake	= s3c_irqext_wake,
- #endif
- };
-diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-index 29932f8..7e92457 100644
---- a/arch/arm/plat-samsung/Makefile
-+++ b/arch/arm/plat-samsung/Makefile
-@@ -68,8 +68,8 @@ obj-$(CONFIG_S3C_PL330_DMA)	+= s3c-pl330.o
- 
- # PM support
- 
--obj-$(CONFIG_PM)		+= pm.o
--obj-$(CONFIG_PM)		+= pm-gpio.o
-+obj-$(CONFIG_SUSPEND)		+= pm.o
-+obj-$(CONFIG_SUSPEND)		+= pm-gpio.o
- obj-$(CONFIG_SAMSUNG_PM_CHECK)	+= pm-check.o
- 
- obj-$(CONFIG_SAMSUNG_WAKEMASK)	+= wakeup-mask.o
-diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
-index e8f2be2..d818405 100644
---- a/arch/arm/plat-samsung/adc.c
-+++ b/arch/arm/plat-samsung/adc.c
-@@ -412,7 +412,7 @@ static int __devexit s3c_adc_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- static int s3c_adc_suspend(struct platform_device *pdev, pm_message_t state)
- {
- 	struct adc_device *adc = platform_get_drvdata(pdev);
-diff --git a/arch/arm/plat-samsung/gpio.c b/arch/arm/plat-samsung/gpio.c
-index 7743c4b..4f3700f 100644
---- a/arch/arm/plat-samsung/gpio.c
-+++ b/arch/arm/plat-samsung/gpio.c
-@@ -143,7 +143,7 @@ __init void s3c_gpiolib_add(struct s3c_gpio_chip *chip)
- 	if (!gc->get)
- 		gc->get = s3c_gpiolib_get;
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- 	if (chip->pm != NULL) {
- 		if (!chip->pm->save || !chip->pm->resume)
- 			printk(KERN_ERR "gpio: %s has missing PM functions\n",
-diff --git a/arch/arm/plat-samsung/include/plat/gpio-core.h b/arch/arm/plat-samsung/include/plat/gpio-core.h
-index dac35d0..8b5209b 100644
---- a/arch/arm/plat-samsung/include/plat/gpio-core.h
-+++ b/arch/arm/plat-samsung/include/plat/gpio-core.h
-@@ -68,7 +68,7 @@ struct s3c_gpio_chip {
- 	int			irq_base;
- 	int			group;
- 	spinlock_t		 lock;
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- 	u32			pm_save[4];
- #endif
- };
-@@ -153,7 +153,7 @@ static inline struct s3c_gpio_chip *s3c_gpiolib_getchip(unsigned int chip)
- static inline void s3c_gpiolib_track(struct s3c_gpio_chip *chip) { }
- #endif
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- extern struct s3c_gpio_pm s3c_gpio_pm_1bit;
- extern struct s3c_gpio_pm s3c_gpio_pm_2bit;
- extern struct s3c_gpio_pm s3c_gpio_pm_4bit;
-@@ -164,7 +164,7 @@ extern struct s3c_gpio_pm s3c_gpio_pm_4bit;
- #define s3c_gpio_pm_4bit NULL
- #define __gpio_pm(x) NULL
- 
--#endif /* CONFIG_PM */
-+#endif /* CONFIG_SUSPEND */
- 
- /* locking wrappers to deal with multiple access to the same gpio bank */
- #define s3c_gpio_lock(_oc, _fl) spin_lock_irqsave(&(_oc)->lock, _fl)
-diff --git a/arch/arm/plat-samsung/include/plat/pm.h b/arch/arm/plat-samsung/include/plat/pm.h
-index 30518cc..69f4cc8 100644
---- a/arch/arm/plat-samsung/include/plat/pm.h
-+++ b/arch/arm/plat-samsung/include/plat/pm.h
-@@ -19,7 +19,7 @@
- 
- struct sys_device;
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- 
- extern __init int s3c_pm_init(void);
- 
-@@ -103,7 +103,7 @@ extern void s3c_pm_do_save(struct sleep_save *ptr, int count);
- extern void s3c_pm_do_restore(struct sleep_save *ptr, int count);
- extern void s3c_pm_do_restore_core(struct sleep_save *ptr, int count);
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- extern int s3c_irqext_wake(struct irq_data *data, unsigned int state);
- extern int s3c24xx_irq_suspend(struct sys_device *dev, pm_message_t state);
- extern int s3c24xx_irq_resume(struct sys_device *dev);
-diff --git a/arch/arm/plat-samsung/pwm.c b/arch/arm/plat-samsung/pwm.c
-index 2eeb49f..926f08d 100644
---- a/arch/arm/plat-samsung/pwm.c
-+++ b/arch/arm/plat-samsung/pwm.c
-@@ -380,7 +380,7 @@ static int __devexit s3c_pwm_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_SUSPEND
- static int s3c_pwm_suspend(struct platform_device *pdev, pm_message_t state)
- {
- 	struct pwm_device *pwm = platform_get_drvdata(pdev);
--- 
-1.7.1.569.g6f426
+> On Friday, March 04, 2011 3:32 PM, Kyungmin Park <kmpark@samsung.com>
+wrote:
+> > This patch adds support HR-Timer(High Resolution Timer) and dynamic
+> > tick system for S5P SoCs. There are many clock sources for HR-Timer
+> > on S5P SoCs. The PWM timer, RTC, System Timer, and MCT can be used
+> > for clock source.
+> > This patch can only support PWM timer for clocksource of
+> > S5P64x0 and S5PV210.
+> >
+> > Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+> > ---
+> > =A0arch/arm/plat-s5p/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =
+=A01 +
+> > =A0arch/arm/plat-s5p/include/plat/s5p-time.h | =A0 40 +++
+> > =A0arch/arm/plat-s5p/s5p-time.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0452
+> +++++++++++++++++++++++++++++
+> > =A03 files changed, 493 insertions(+), 0 deletions(-)
+> > =A0create mode 100644 arch/arm/plat-s5p/include/plat/s5p-time.h
+> > =A0create mode 100644 arch/arm/plat-s5p/s5p-time.c
+> >
+> > diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefil=
+e
+> > index 4bd5cf9..3b8cc2f 100644
+> > --- a/arch/arm/plat-s5p/Makefile
+> > +++ b/arch/arm/plat-s5p/Makefile
+> > @@ -22,6 +22,7 @@ obj-$(CONFIG_S5P_GPIO_INT) =A0 =A0+=3D irq-gpioin=
+t.o
+> > =A0obj-$(CONFIG_S5P_SYSTEM_MMU) =A0 +=3D sysmmu.o
+> > =A0obj-$(CONFIG_PM) =A0 =A0 =A0 =A0 =A0 =A0 =A0 +=3D pm.o
+> > =A0obj-$(CONFIG_PM) =A0 =A0 =A0 =A0 =A0 =A0 =A0 +=3D irq-pm.o
+> > +obj-$(CONFIG_GENERIC_CLOCKEVENTS) +=3D s5p-time.o
+>=20
+> Do you test it with exynos4 configuration? it's affect the exynos com=
+pile.
+> First select SAMSUNG_DEV_PWM, it can't compile it since no
+> init_sched_clock
+> Second select HAVE_SCHED_CLOCK, it can't boot.
+>=20
+> I used the for-exynos4 branch.
+>=20
+> Thank you,
+> Kyungmin Park
+> >
+> > =A0# devices
+> >
+> > diff --git a/arch/arm/plat-s5p/include/plat/s5p-time.h b/arch/arm/p=
+lat-
+> s5p/include/plat/s5p-time.h
+> > new file mode 100644
+> > index 0000000..9956136
+> > --- /dev/null
+> > +++ b/arch/arm/plat-s5p/include/plat/s5p-time.h
+> > @@ -0,0 +1,40 @@
+> > +/* linux/arch/arm/plat-s5p/include/plat/s5p-time.h
+> > + *
+> > + * Copyright 2011 Samsung Electronics Co., Ltd.
+> > + * =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com/
+> > + *
+> > + * Header file for s5p time support
+> > + *
+> > + * This program is free software; you can redistribute it and/or m=
+odify
+> > + * it under the terms of the GNU General Public License version 2 =
+as
+> > + * published by the Free Software Foundation.
+> > +*/
+> > +
+> > +#ifndef __ASM_PLAT_S5P_TIME_H
+> > +#define __ASM_PLAT_S5P_TIME_H __FILE__
+> > +
+> > +/* S5P HR-Timer Clock mode */
+> > +enum s5p_timer_mode {
+> > + =A0 =A0 =A0 S5P_PWM0,
+> > + =A0 =A0 =A0 S5P_PWM1,
+> > + =A0 =A0 =A0 S5P_PWM2,
+> > + =A0 =A0 =A0 S5P_PWM3,
+> > + =A0 =A0 =A0 S5P_PWM4,
+> > +};
+> > +
+> > +struct s5p_timer_source {
+> > + =A0 =A0 =A0 unsigned int event_id;
+> > + =A0 =A0 =A0 unsigned int source_id;
+> > +};
+> > +
+> > +/* Be able to sleep for atleast 4 seconds (usually more) */
+> > +#define S5PTIMER_MIN_RANGE =A0 =A0 4
+> > +
+> > +#define TCNT_MAX =A0 =A0 =A0 =A0 =A0 =A0 =A0 0xffffffff
+> > +#define NON_PERIODIC =A0 =A0 =A0 =A0 =A0 0
+> > +#define PERIODIC =A0 =A0 =A0 =A0 =A0 =A0 =A0 1
+> > +
+> > +extern void __init s5p_set_timer_source(enum s5p_timer_mode event,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 enum s5p_timer_mode source);
+> > +extern struct sys_timer s5p_timer;
+> > +#endif /* __ASM_PLAT_S5P_TIME_H */
+> > diff --git a/arch/arm/plat-s5p/s5p-time.c b/arch/arm/plat-s5p/s5p-t=
+ime.c
+> > new file mode 100644
+> > index 0000000..1d2447e
+> > --- /dev/null
+> > +++ b/arch/arm/plat-s5p/s5p-time.c
+> > @@ -0,0 +1,452 @@
+> > +/* linux/arch/arm/plat-s5p/s5p-time.c
+> > + *
+> > + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+> > + * =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com/
+> > + *
+> > + * S5P - Common hr-timer support
+> > + *
+> > + * This program is free software; you can redistribute it and/or m=
+odify
+> > + * it under the terms of the GNU General Public License version 2 =
+as
+> > + * published by the Free Software Foundation.
+> > +*/
+> > +
+> > +#include <linux/sched.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/irq.h>
+> > +#include <linux/err.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/clockchips.h>
+> > +#include <linux/platform_device.h>
+> > +
+> > +#include <asm/smp_twd.h>
+> > +#include <asm/mach/time.h>
+> > +#include <asm/mach/arch.h>
+> > +#include <asm/mach/map.h>
+> > +#include <asm/sched_clock.h>
+> > +
+> > +#include <mach/map.h>
+> > +#include <plat/devs.h>
+> > +#include <plat/regs-timer.h>
+> > +#include <plat/s5p-time.h>
+> > +
+> > +static struct clk *tin_event;
+> > +static struct clk *tin_source;
+> > +static struct clk *tdiv_event;
+> > +static struct clk *tdiv_source;
+> > +static struct clk *timerclk;
+> > +static struct s5p_timer_source timer_source;
+> > +static unsigned long clock_count_per_tick;
+> > +static void s5p_timer_resume(void);
+> > +
+> > +static void s5p_time_stop(enum s5p_timer_mode mode)
+> > +{
+> > + =A0 =A0 =A0 unsigned long tcon;
+> > +
+> > + =A0 =A0 =A0 tcon =3D __raw_readl(S3C2410_TCON);
+> > +
+> > + =A0 =A0 =A0 switch (mode) {
+> > + =A0 =A0 =A0 case S5P_PWM0:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T0START;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case S5P_PWM1:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T1START;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case S5P_PWM2:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T2START;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case S5P_PWM3:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T3START;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case S5P_PWM4:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T4START;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 default:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 printk(KERN_ERR "Invalid Timer %d\n",=
+ mode);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > + =A0 =A0 =A0 }
+> > + =A0 =A0 =A0 __raw_writel(tcon, S3C2410_TCON);
+> > +}
+> > +
+> > +static void s5p_time_setup(enum s5p_timer_mode mode, unsigned long
+tcnt)
+> > +{
+> > + =A0 =A0 =A0 unsigned long tcon;
+> > +
+> > + =A0 =A0 =A0 tcon =3D __raw_readl(S3C2410_TCON);
+> > +
+> > + =A0 =A0 =A0 tcnt--;
+> > +
+> > + =A0 =A0 =A0 switch (mode) {
+> > + =A0 =A0 =A0 case S5P_PWM0:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~(0x0f << 0);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T0MANUALUPD;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case S5P_PWM1:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~(0x0f << 8);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T1MANUALUPD;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case S5P_PWM2:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~(0x0f << 12);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T2MANUALUPD;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case S5P_PWM3:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~(0x0f << 16);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T3MANUALUPD;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case S5P_PWM4:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~(0x07 << 20);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T4MANUALUPD;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 default:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 printk(KERN_ERR "Invalid Timer %d\n",=
+ mode);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > + =A0 =A0 =A0 }
+> > +
+> > + =A0 =A0 =A0 __raw_writel(tcnt, S3C2410_TCNTB(mode));
+> > + =A0 =A0 =A0 __raw_writel(tcnt, S3C2410_TCMPB(mode));
+> > + =A0 =A0 =A0 __raw_writel(tcon, S3C2410_TCON);
+> > +}
+> > +
+> > +static void s5p_time_start(enum s5p_timer_mode mode, bool periodic=
+)
+> > +{
+> > + =A0 =A0 =A0 unsigned long tcon;
+> > +
+> > + =A0 =A0 =A0 tcon =A0=3D __raw_readl(S3C2410_TCON);
+> > +
+> > + =A0 =A0 =A0 switch (mode) {
+> > + =A0 =A0 =A0 case S5P_PWM0:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T0START;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T0MANUALUPD;
+> > +
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (periodic)
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCO=
+N_T0RELOAD;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TC=
+ON_T0RELOAD;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case S5P_PWM1:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T1START;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T1MANUALUPD;
+> > +
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (periodic)
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCO=
+N_T1RELOAD;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TC=
+ON_T1RELOAD;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case S5P_PWM2:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T2START;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T2MANUALUPD;
+> > +
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (periodic)
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCO=
+N_T2RELOAD;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TC=
+ON_T2RELOAD;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case S5P_PWM3:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T3START;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T3MANUALUPD;
+> > +
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (periodic)
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCO=
+N_T3RELOAD;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TC=
+ON_T3RELOAD;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case S5P_PWM4:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCON_T4START;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TCON_T4MANUALUPD;
+> > +
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (periodic)
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon |=3D S3C2410_TCO=
+N_T4RELOAD;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 tcon &=3D ~S3C2410_TC=
+ON_T4RELOAD;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 default:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 printk(KERN_ERR "Invalid Timer %d\n",=
+ mode);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > + =A0 =A0 =A0 }
+> > + =A0 =A0 =A0 __raw_writel(tcon, S3C2410_TCON);
+> > +}
+> > +
+> > +static int s5p_set_next_event(unsigned long cycles,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 struc=
+t clock_event_device *evt)
+> > +{
+> > + =A0 =A0 =A0 s5p_time_setup(timer_source.event_id, cycles);
+> > + =A0 =A0 =A0 s5p_time_start(timer_source.event_id, NON_PERIODIC);
+> > +
+> > + =A0 =A0 =A0 return 0;
+> > +}
+> > +
+> > +static void s5p_set_mode(enum clock_event_mode mode,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 struc=
+t clock_event_device *evt)
+> > +{
+> > + =A0 =A0 =A0 s5p_time_stop(timer_source.event_id);
+> > +
+> > + =A0 =A0 =A0 switch (mode) {
+> > + =A0 =A0 =A0 case CLOCK_EVT_MODE_PERIODIC:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s5p_time_setup(timer_source.event_id,
+> clock_count_per_tick);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s5p_time_start(timer_source.event_id,=
+ PERIODIC);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case CLOCK_EVT_MODE_ONESHOT:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case CLOCK_EVT_MODE_UNUSED:
+> > + =A0 =A0 =A0 case CLOCK_EVT_MODE_SHUTDOWN:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case CLOCK_EVT_MODE_RESUME:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s5p_timer_resume();
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > + =A0 =A0 =A0 }
+> > +}
+> > +
+> > +static void s5p_timer_resume(void)
+> > +{
+> > + =A0 =A0 =A0 /* event timer restart */
+> > + =A0 =A0 =A0 s5p_time_setup(timer_source.event_id, clock_count_per=
+_tick);
+> > + =A0 =A0 =A0 s5p_time_start(timer_source.event_id, PERIODIC);
+> > +
+> > + =A0 =A0 =A0 /* source timer restart */
+> > + =A0 =A0 =A0 s5p_time_setup(timer_source.source_id, TCNT_MAX);
+> > + =A0 =A0 =A0 s5p_time_start(timer_source.source_id, PERIODIC);
+> > +}
+> > +
+> > +void __init s5p_set_timer_source(enum s5p_timer_mode event,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0en=
+um s5p_timer_mode source)
+> > +{
+> > + =A0 =A0 =A0 s3c_device_timer[event].dev.bus =3D &platform_bus_typ=
+e;
+> > + =A0 =A0 =A0 s3c_device_timer[source].dev.bus =3D &platform_bus_ty=
+pe;
+> > +
+> > + =A0 =A0 =A0 timer_source.event_id =3D event;
+> > + =A0 =A0 =A0 timer_source.source_id =3D source;
+> > +}
+> > +
+> > +static struct clock_event_device time_event_device =3D {
+> > + =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "s5p_event_timer",
+> > + =A0 =A0 =A0 .features =A0 =A0 =A0 =3D CLOCK_EVT_FEAT_PERIODIC |
+CLOCK_EVT_FEAT_ONESHOT,
+> > + =A0 =A0 =A0 .rating =A0 =A0 =A0 =A0 =3D 200,
+> > + =A0 =A0 =A0 .shift =A0 =A0 =A0 =A0 =A0=3D 32,
+> > + =A0 =A0 =A0 .set_next_event =3D s5p_set_next_event,
+> > + =A0 =A0 =A0 .set_mode =A0 =A0 =A0 =3D s5p_set_mode,
+> > +};
+> > +
+> > +static irqreturn_t s5p_clock_event_isr(int irq, void *dev_id)
+> > +{
+> > + =A0 =A0 =A0 struct clock_event_device *evt =3D dev_id;
+> > +
+> > + =A0 =A0 =A0 evt->event_handler(evt);
+> > +
+> > + =A0 =A0 =A0 return IRQ_HANDLED;
+> > +}
+> > +
+> > +static struct irqaction s5p_clock_event_irq =3D {
+> > + =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "s5p_time_irq",
+> > + =A0 =A0 =A0 .flags =A0 =A0 =A0 =A0 =A0=3D IRQF_DISABLED | IRQF_TI=
+MER | IRQF_IRQPOLL,
+> > + =A0 =A0 =A0 .handler =A0 =A0 =A0 =A0=3D s5p_clock_event_isr,
+> > + =A0 =A0 =A0 .dev_id =A0 =A0 =A0 =A0 =3D &time_event_device,
+> > +};
+> > +
+> > +static void __init s5p_clockevent_init(void)
+> > +{
+> > + =A0 =A0 =A0 unsigned long pclk;
+> > + =A0 =A0 =A0 unsigned long clock_rate;
+> > + =A0 =A0 =A0 unsigned int irq_number;
+> > + =A0 =A0 =A0 struct clk *tscaler;
+> > +
+> > + =A0 =A0 =A0 pclk =3D clk_get_rate(timerclk);
+> > +
+> > + =A0 =A0 =A0 tscaler =3D clk_get_parent(tdiv_event);
+> > +
+> > + =A0 =A0 =A0 clk_set_rate(tscaler, pclk / 2);
+> > + =A0 =A0 =A0 clk_set_rate(tdiv_event, pclk / 2);
+> > + =A0 =A0 =A0 clk_set_parent(tin_event, tdiv_event);
+> > +
+> > + =A0 =A0 =A0 clock_rate =3D clk_get_rate(tin_event);
+> > + =A0 =A0 =A0 clock_count_per_tick =3D clock_rate / HZ;
+> > +
+> > + =A0 =A0 =A0 clockevents_calc_mult_shift(&time_event_device,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ clock_rate, S5PTIMER_MIN_RANGE);
+> > + =A0 =A0 =A0 time_event_device.max_delta_ns =3D
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clockevent_delta2ns(-1, &time_event_d=
+evice);
+> > + =A0 =A0 =A0 time_event_device.min_delta_ns =3D
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clockevent_delta2ns(1, &time_event_de=
+vice);
+> > +
+> > + =A0 =A0 =A0 time_event_device.cpumask =3D cpumask_of(0);
+> > + =A0 =A0 =A0 clockevents_register_device(&time_event_device);
+> > +
+> > + =A0 =A0 =A0 irq_number =3D timer_source.event_id + IRQ_TIMER0;
+> > + =A0 =A0 =A0 setup_irq(irq_number, &s5p_clock_event_irq);
+> > +}
+> > +
+> > +static cycle_t s5p_timer_read(struct clocksource *cs)
+> > +{
+> > + =A0 =A0 =A0 unsigned long offset =3D 0;
+> > +
+> > + =A0 =A0 =A0 switch (timer_source.source_id) {
+> > + =A0 =A0 =A0 case S5P_PWM0:
+> > + =A0 =A0 =A0 case S5P_PWM1:
+> > + =A0 =A0 =A0 case S5P_PWM2:
+> > + =A0 =A0 =A0 case S5P_PWM3:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 offset =3D (timer_source.source_id * =
+0x0c) + 0x14;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case S5P_PWM4:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 offset =3D 0x40;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 default:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 printk(KERN_ERR "Invalid Timer %d\n",
+> timer_source.source_id);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return 0;
+> > + =A0 =A0 =A0 }
+> > +
+> > + =A0 =A0 =A0 return (cycle_t) ~__raw_readl(S3C_TIMERREG(offset));
+> > +}
+> > +
+> > +/*
+> > + * Override the global weak sched_clock symbol with this
+> > + * local implementation which uses the clocksource to get some
+> > + * better resolution when scheduling the kernel. We accept that
+> > + * this wraps around for now, since it is just a relative time
+> > + * stamp. (Inspired by U300 implementation.)
+> > + */
+> > +static DEFINE_CLOCK_DATA(cd);
+> > +
+> > +unsigned long long notrace sched_clock(void)
+> > +{
+> > + =A0 =A0 =A0 u32 cyc;
+> > + =A0 =A0 =A0 unsigned long offset =3D 0;
+> > +
+> > + =A0 =A0 =A0 switch (timer_source.source_id) {
+> > + =A0 =A0 =A0 case S5P_PWM0:
+> > + =A0 =A0 =A0 case S5P_PWM1:
+> > + =A0 =A0 =A0 case S5P_PWM2:
+> > + =A0 =A0 =A0 case S5P_PWM3:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 offset =3D (timer_source.source_id * =
+0x0c) + 0x14;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case S5P_PWM4:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 offset =3D 0x40;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 default:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 printk(KERN_ERR "Invalid Timer %d\n",
+> timer_source.source_id);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return 0;
+> > + =A0 =A0 =A0 }
+> > +
+> > + =A0 =A0 =A0 cyc =3D ~__raw_readl(S3C_TIMERREG(offset));
+> > + =A0 =A0 =A0 return cyc_to_sched_clock(&cd, cyc, (u32)~0);
+> > +}
+> > +
+> > +static void notrace s5p_update_sched_clock(void)
+> > +{
+> > + =A0 =A0 =A0 u32 cyc;
+> > + =A0 =A0 =A0 unsigned long offset =3D 0;
+> > +
+> > + =A0 =A0 =A0 switch (timer_source.source_id) {
+> > + =A0 =A0 =A0 case S5P_PWM0:
+> > + =A0 =A0 =A0 case S5P_PWM1:
+> > + =A0 =A0 =A0 case S5P_PWM2:
+> > + =A0 =A0 =A0 case S5P_PWM3:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 offset =3D (timer_source.source_id * =
+0x0c) + 0x14;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 case S5P_PWM4:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 offset =3D 0x40;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> > +
+> > + =A0 =A0 =A0 default:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 printk(KERN_ERR "Invalid Timer %d\n",
+> timer_source.source_id);
+> > + =A0 =A0 =A0 }
+> > +
+> > + =A0 =A0 =A0 cyc =3D ~__raw_readl(S3C_TIMERREG(offset));
+> > + =A0 =A0 =A0 update_sched_clock(&cd, cyc, (u32)~0);
+> > +}
+> > +
+> > +struct clocksource time_clocksource =3D {
+> > + =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "s5p_clocksource_timer"=
+,
+> > + =A0 =A0 =A0 .rating =A0 =A0 =A0 =A0 =3D 250,
+> > + =A0 =A0 =A0 .read =A0 =A0 =A0 =A0 =A0 =3D s5p_timer_read,
+> > + =A0 =A0 =A0 .mask =A0 =A0 =A0 =A0 =A0 =3D CLOCKSOURCE_MASK(32),
+> > + =A0 =A0 =A0 .flags =A0 =A0 =A0 =A0 =A0=3D CLOCK_SOURCE_IS_CONTINU=
+OUS,
+> > +};
+> > +
+> > +static void __init s5p_clocksource_init(void)
+> > +{
+> > + =A0 =A0 =A0 unsigned long pclk;
+> > + =A0 =A0 =A0 unsigned long clock_rate;
+> > +
+> > + =A0 =A0 =A0 pclk =3D clk_get_rate(timerclk);
+> > +
+> > + =A0 =A0 =A0 clk_set_rate(tdiv_source, pclk / 2);
+> > + =A0 =A0 =A0 clk_set_parent(tin_source, tdiv_source);
+> > +
+> > + =A0 =A0 =A0 clock_rate =3D clk_get_rate(tin_source);
+> > +
+> > + =A0 =A0 =A0 init_sched_clock(&cd, s5p_update_sched_clock, 32, clo=
+ck_rate);
+> > +
+> > + =A0 =A0 =A0 s5p_time_setup(timer_source.source_id, TCNT_MAX);
+> > + =A0 =A0 =A0 s5p_time_start(timer_source.source_id, PERIODIC);
+> > +
+> > + =A0 =A0 =A0 if (clocksource_register_hz(&time_clocksource, clock_=
+rate))
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("%s: can't register clocksource=
+\n",
+> time_clocksource.name);
+> > +}
+> > +
+> > +static void __init s5p_timer_resources(void)
+> > +{
+> > +
+> > + =A0 =A0 =A0 unsigned long event_id =3D timer_source.event_id;
+> > + =A0 =A0 =A0 unsigned long source_id =3D timer_source.source_id;
+> > +
+> > + =A0 =A0 =A0 timerclk =3D clk_get(NULL, "timers");
+> > +
+> > + =A0 =A0 =A0 clk_enable(timerclk);
+> > +
+> > + =A0 =A0 =A0 if (IS_ERR(timerclk))
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("failed to get timers clock for=
+ timer");
+> > +
+> > + =A0 =A0 =A0 tin_event =3D clk_get(&s3c_device_timer[event_id].dev=
+, "pwm-tin");
+> > +
+> > + =A0 =A0 =A0 if (IS_ERR(tin_event))
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("failed to get pwm-tin clock fo=
+r event timer");
+> > +
+> > + =A0 =A0 =A0 tdiv_event =3D clk_get(&s3c_device_timer[event_id].de=
+v,
+"pwm-tdiv");
+> > +
+> > + =A0 =A0 =A0 if (IS_ERR(tdiv_event))
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("failed to get pwm-tdiv clock f=
+or event timer");
+> > +
+> > + =A0 =A0 =A0 clk_enable(tin_event);
+> > +
+> > + =A0 =A0 =A0 tin_source =3D clk_get(&s3c_device_timer[source_id].d=
+ev,
+"pwm-tin");
+> > + =A0 =A0 =A0 if (IS_ERR(tin_source))
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("failed to get pwm-tin clock fo=
+r source timer");
+> > +
+> > + =A0 =A0 =A0 tdiv_source =3D clk_get(&s3c_device_timer[source_id].=
+dev, "pwm-
+> tdiv");
+> > + =A0 =A0 =A0 if (IS_ERR(tdiv_source))
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 panic("failed to get pwm-tdiv clock f=
+or source timer");
+> > +
+> > + =A0 =A0 =A0 clk_enable(tin_source);
+> > +}
+> > +
+> > +static void __init s5p_timer_init(void)
+> > +{
+> > + =A0 =A0 =A0 s5p_timer_resources();
+> > + =A0 =A0 =A0 s5p_clockevent_init();
+> > + =A0 =A0 =A0 s5p_clocksource_init();
+> > +}
+> > +
+> > +struct sys_timer s5p_timer =3D {
+> > + =A0 =A0 =A0 .init =A0 =A0 =A0 =A0 =A0 =3D s5p_timer_init,
+> > +};
+> > --
+> > 1.7.1
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-sam=
+sung-
+> soc" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at =A0http://vger.kernel.org/majordomo-info.htm=
+l
+> >
+>=20
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
