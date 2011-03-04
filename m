@@ -1,177 +1,118 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V2 2/6] ARM: SAMSUNG: Add PWM backlight support on Samsung
- S3C6410
-Date: Fri, 04 Mar 2011 16:29:30 +0900
-Message-ID: <028301cbda3d$eafb7780$c0f26680$%kim@samsung.com>
-References: <1299050847-16148-1-git-send-email-banajit.g@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 5/7] s5p-fimc: add pm_runtime support
+Date: Fri, 04 Mar 2011 10:01:12 +0100
+Message-ID: <1299229274-9753-6-git-send-email-m.szyprowski@samsung.com>
+References: <1299229274-9753-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:11596 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758364Ab1CDIKa (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Mar 2011 03:10:30 -0500
-Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LHI006J9VHEQ030@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 Mar 2011 16:29:38 +0900 (KST)
-Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LHI000ELVHE80@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 Mar 2011 16:29:38 +0900 (KST)
-In-reply-to: <1299050847-16148-1-git-send-email-banajit.g@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1299229274-9753-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, andrzej.p@samsung.com, t.stanislaws@samsung.com, s.nawrocki@samsung.com, k.debski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Banajit Goswami' <banajit.g@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org
 
-Banajit Goswami wrote:
-> 
-> This patch adds support for LCD backlight using PWM timer for
-> Samsung SMDK6410 board.
-> 
-> Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
-> ---
-> Changes since v1:
-> - Used common GPIO macro
-> - Removed redundant timers
-> 
->  arch/arm/mach-s3c64xx/Kconfig         |    1 +
->  arch/arm/mach-s3c64xx/mach-smdk6410.c |   45
-++++++++++++++++++++++++++++++-
-> -
->  2 files changed, 44 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-> index f3a953f..e4177e2 100644
-> --- a/arch/arm/mach-s3c64xx/Kconfig
-> +++ b/arch/arm/mach-s3c64xx/Kconfig
-> @@ -143,6 +143,7 @@ config MACH_SMDK6410
->  	select S3C_DEV_USB_HSOTG
->  	select S3C_DEV_WDT
->  	select SAMSUNG_DEV_KEYPAD
-> +	select SAMSUNG_DEV_PWM
->  	select HAVE_S3C2410_WATCHDOG if WATCHDOG
->  	select S3C64XX_SETUP_SDHCI
->  	select S3C64XX_SETUP_I2C1
-> diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-
-> s3c64xx/mach-smdk6410.c
-> index e85192a..4a3fe0c 100644
-> --- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-> +++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-> @@ -28,6 +28,7 @@
->  #include <linux/delay.h>
->  #include <linux/smsc911x.h>
->  #include <linux/regulator/fixed.h>
-> +#include <linux/pwm_backlight.h>
-> 
->  #ifdef CONFIG_SMDK6410_WM1190_EV1
->  #include <linux/mfd/wm8350/core.h>
-> @@ -48,6 +49,7 @@
->  #include <mach/hardware.h>
->  #include <mach/regs-fb.h>
->  #include <mach/map.h>
-> +#include <mach/gpio-bank-f.h>
-> 
->  #include <asm/irq.h>
->  #include <asm/mach-types.h>
-> @@ -118,7 +120,6 @@ static void smdk6410_lcd_power_set(struct
-plat_lcd_data
-> *pd,
->  {
->  	if (power) {
->  		gpio_direction_output(S3C64XX_GPF(13), 1);
-> -		gpio_direction_output(S3C64XX_GPF(15), 1);
-> 
->  		/* fire nRESET on power up */
->  		gpio_direction_output(S3C64XX_GPN(5), 0);
-> @@ -126,7 +127,6 @@ static void smdk6410_lcd_power_set(struct
-plat_lcd_data
-> *pd,
->  		gpio_direction_output(S3C64XX_GPN(5), 1);
->  		msleep(1);
->  	} else {
-> -		gpio_direction_output(S3C64XX_GPF(15), 0);
->  		gpio_direction_output(S3C64XX_GPF(13), 0);
->  	}
->  }
-> @@ -269,6 +269,45 @@ static struct samsung_keypad_platdata
-> smdk6410_keypad_data __initdata = {
->  	.cols		= 8,
->  };
-> 
-> +static int smdk6410_backlight_init(struct device *dev)
-> +{
-> +	int ret;
-> +
-> +	ret = gpio_request(S3C64XX_GPF(15), "Backlight");
-> +	if (ret) {
-> +		printk(KERN_ERR "failed to request GPF for PWM-OUT1\n");
-> +		return ret;
-> +	}
-> +
-> +	/* Configure GPIO pin with S3C64XX_GPF15_PWM_TOUT1 */
-> +	s3c_gpio_cfgpin(S3C64XX_GPF(15), S3C_GPIO_SFN(2));
-> +
-> +	return 0;
-> +}
-> +
-> +static void smdk6410_backlight_exit(struct device *dev)
-> +{
-> +	s3c_gpio_cfgpin(S3C64XX_GPF(15), S3C_GPIO_OUTPUT);
-> +	gpio_free(S3C64XX_GPF(15));
-> +}
-> +
-> +static struct platform_pwm_backlight_data smdk6410_backlight_data = {
-> +	.pwm_id		= 1,
-> +	.max_brightness	= 255,
-> +	.dft_brightness	= 255,
-> +	.pwm_period_ns	= 78770,
-> +	.init		= smdk6410_backlight_init,
-> +	.exit		= smdk6410_backlight_exit,
-> +};
-> +
-> +static struct platform_device smdk6410_backlight_device = {
-> +	.name		= "pwm-backlight",
-> +	.dev		= {
-> +		.parent		= &s3c_device_timer[1].dev,
-> +		.platform_data	= &smdk6410_backlight_data,
-> +	},
-> +};
-> +
->  static struct map_desc smdk6410_iodesc[] = {};
-> 
->  static struct platform_device *smdk6410_devices[] __initdata = {
-> @@ -298,6 +337,8 @@ static struct platform_device *smdk6410_devices[]
-> __initdata = {
->  	&s3c_device_rtc,
->  	&s3c_device_ts,
->  	&s3c_device_wdt,
-> +	&s3c_device_timer[1],
-> +	&smdk6410_backlight_device,
->  };
-> 
->  #ifdef CONFIG_REGULATOR
-> @@ -693,7 +735,6 @@ static void __init smdk6410_machine_init(void)
-> 
->  	gpio_request(S3C64XX_GPN(5), "LCD power");
->  	gpio_request(S3C64XX_GPF(13), "LCD power");
-> -	gpio_request(S3C64XX_GPF(15), "LCD power");
-> 
->  	i2c_register_board_info(0, i2c_devs0, ARRAY_SIZE(i2c_devs0));
->  	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
-> --
-> 1.6.5.2
+This patch adds basic support for pm_runtime to s5p-fimc driver. PM
+runtime support is required to enable the driver on S5PV310 series with
+power domain driver enabled.
 
-Ok, applied with others. (your PWM backlight patch-set (#1 to #6))
-Thanks.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/media/video/s5p-fimc/fimc-capture.c |    5 +++++
+ drivers/media/video/s5p-fimc/fimc-core.c    |   14 ++++++++++++++
+ 2 files changed, 19 insertions(+), 0 deletions(-)
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
+index 59123a6..f8d7de5 100644
+--- a/drivers/media/video/s5p-fimc/fimc-capture.c
++++ b/drivers/media/video/s5p-fimc/fimc-capture.c
+@@ -18,6 +18,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/device.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/list.h>
+ #include <linux/slab.h>
+ #include <linux/clk.h>
+@@ -395,6 +396,8 @@ static int fimc_capture_open(struct file *file)
+ 	if (fimc_m2m_active(fimc))
+ 		return -EBUSY;
+ 
++	pm_runtime_get_sync(&fimc->pdev->dev);
++
+ 	if (++fimc->vid_cap.refcnt == 1) {
+ 		ret = fimc_isp_subdev_init(fimc, 0);
+ 		if (ret) {
+@@ -425,6 +428,8 @@ static int fimc_capture_close(struct file *file)
+ 		fimc_subdev_unregister(fimc);
+ 	}
+ 
++	pm_runtime_put_sync(&fimc->pdev->dev);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
+index db3e730..c92dbdb 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.c
++++ b/drivers/media/video/s5p-fimc/fimc-core.c
+@@ -20,6 +20,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/device.h>
+ #include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
+ #include <linux/list.h>
+ #include <linux/io.h>
+ #include <linux/slab.h>
+@@ -1407,6 +1408,8 @@ static int fimc_m2m_open(struct file *file)
+ 	if (fimc->vid_cap.refcnt > 0)
+ 		return -EBUSY;
+ 
++	pm_runtime_get_sync(&fimc->pdev->dev);
++
+ 	fimc->m2m.refcnt++;
+ 	set_bit(ST_OUTDMA_RUN, &fimc->state);
+ 
+@@ -1449,6 +1452,8 @@ static int fimc_m2m_release(struct file *file)
+ 	if (--fimc->m2m.refcnt <= 0)
+ 		clear_bit(ST_OUTDMA_RUN, &fimc->state);
+ 
++	pm_runtime_put_sync(&fimc->pdev->dev);
++
+ 	return 0;
+ }
+ 
+@@ -1646,6 +1651,11 @@ static int fimc_probe(struct platform_device *pdev)
+ 		goto err_req_region;
+ 	}
+ 
++	pm_runtime_set_active(&pdev->dev);
++	pm_runtime_enable(&pdev->dev);
++
++	pm_runtime_get_sync(&pdev->dev);
++
+ 	fimc->num_clocks = MAX_FIMC_CLOCKS - 1;
+ 
+ 	/* Check if a video capture node needs to be registered. */
+@@ -1703,6 +1713,8 @@ static int fimc_probe(struct platform_device *pdev)
+ 	dev_dbg(&pdev->dev, "%s(): fimc-%d registered successfully\n",
+ 		__func__, fimc->id);
+ 
++	pm_runtime_put_sync(&pdev->dev);
++
+ 	return 0;
+ 
+ err_m2m:
+@@ -1737,6 +1749,8 @@ static int __devexit fimc_remove(struct platform_device *pdev)
+ 
+ 	vb2_dma_contig_cleanup_ctx(fimc->alloc_ctx);
+ 
++	pm_runtime_disable(&pdev->dev);
++
+ 	iounmap(fimc->regs);
+ 	release_resource(fimc->regs_res);
+ 	kfree(fimc->regs_res);
+-- 
+1.7.1.569.g6f426
