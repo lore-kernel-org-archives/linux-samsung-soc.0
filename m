@@ -1,98 +1,44 @@
-From: Naveen Krishna Ch <ch.naveen@samsung.com>
-Subject: [PATCH 1/4] ARM: EXYNOS4: Add keypad device helpers
-Date: Sat,  5 Mar 2011 10:25:14 +0900
-Message-ID: <1299288317-13740-2-git-send-email-ch.naveen@samsung.com>
-References: <1299288317-13740-1-git-send-email-ch.naveen@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] ARM: S5PC210: add support for i2c PMICs on
+	Universal_C210 board
+Date: Sat, 5 Mar 2011 11:21:38 +0000
+Message-ID: <20110305112138.GB27468@n2100.arm.linux.org.uk>
+References: <1297767555-13326-1-git-send-email-m.szyprowski@samsung.com> <20110215113504.GF4152@n2100.arm.linux.org.uk> <AANLkTimHPzbWpqFMXr2D46VXxLeHaAVTtpeCSaByweu8@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:44017 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759345Ab1CEBxk (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:51279 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751553Ab1CELVy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Mar 2011 20:53:40 -0500
-In-Reply-To: <1299288317-13740-1-git-send-email-ch.naveen@samsung.com>
+	Sat, 5 Mar 2011 06:21:54 -0500
+Content-Disposition: inline
+In-Reply-To: <AANLkTimHPzbWpqFMXr2D46VXxLeHaAVTtpeCSaByweu8@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Naveen Krishna Ch <ch.naveen@samsung.com>
+To: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com
 
-This patch adds the samsung_keypad_cfg_gpio() for EXYNOS4.
-Now, this helpers are only for keypad operating in PORT-0.
+On Thu, Mar 03, 2011 at 11:40:26AM +0900, Kyungmin Park wrote:
+> On Tue, Feb 15, 2011 at 8:35 PM, Russell King - ARM Linux
+> <linux@arm.linux.org.uk> wrote:
+> > On Tue, Feb 15, 2011 at 11:59:15AM +0100, Marek Szyprowski wrote:
+> >> =A0#include <mach/map.h>
+> >> +#include <mach/gpio.h>
+> >
+> > Need I say anything about this?
+>=20
+> Hi Russell,
+>=20
+> How about to prevent it as compiler error? It's frequent mistake.
+>=20
+> At each mach/gpio.h
+>=20
+> #ifndef __LINUX_GPIO_H
+> #error "You should include <linux/gpio.h> instead of <mach/gpio.h>."
+> #endif
 
-Signed-off-by: Naveen Krishna Ch <ch.naveen@samsung.com>
----
- arch/arm/mach-exynos4/Kconfig        |    5 ++++
- arch/arm/mach-exynos4/Makefile       |    1 +
- arch/arm/mach-exynos4/setup-keypad.c |   35 ++++++++++++++++++++++++++++++++++
- 3 files changed, 41 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-exynos4/setup-keypad.c
-
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index d3893f6..14930a7 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -60,6 +60,11 @@ config EXYNOS4_SETUP_I2C7
- 	help
- 	  Common setup code for i2c bus 7.
- 
-+config EXYNOS4_SETUP_KEYPAD
-+	bool
-+	help
-+	  Common setup code for keypad.
-+
- config EXYNOS4_SETUP_SDHCI
- 	bool
- 	select EXYNOS4_SETUP_SDHCI_GPIO
-diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
-index 45422cb..c13fd36 100644
---- a/arch/arm/mach-exynos4/Makefile
-+++ b/arch/arm/mach-exynos4/Makefile
-@@ -41,5 +41,6 @@ obj-$(CONFIG_EXYNOS4_SETUP_I2C4)	+= setup-i2c4.o
- obj-$(CONFIG_EXYNOS4_SETUP_I2C5)	+= setup-i2c5.o
- obj-$(CONFIG_EXYNOS4_SETUP_I2C6)	+= setup-i2c6.o
- obj-$(CONFIG_EXYNOS4_SETUP_I2C7)	+= setup-i2c7.o
-+obj-$(CONFIG_EXYNOS4_SETUP_KEYPAD)	+= setup-keypad.o
- obj-$(CONFIG_EXYNOS4_SETUP_SDHCI)	+= setup-sdhci.o
- obj-$(CONFIG_EXYNOS4_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
-diff --git a/arch/arm/mach-exynos4/setup-keypad.c b/arch/arm/mach-exynos4/setup-keypad.c
-new file mode 100644
-index 0000000..1ee0ebf
---- /dev/null
-+++ b/arch/arm/mach-exynos4/setup-keypad.c
-@@ -0,0 +1,35 @@
-+/* linux/arch/arm/mach-exynos4/setup-keypad.c
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * GPIO configuration for Exynos4 KeyPad device
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/gpio.h>
-+#include <plat/gpio-cfg.h>
-+
-+void samsung_keypad_cfg_gpio(unsigned int rows, unsigned int cols)
-+{
-+	/* Keypads can be of various combinations, Just making sure */
-+
-+	if (rows > 8) {
-+		/* Set all the necessary GPX2 pins: KP_ROW[0~7] */
-+		s3c_gpio_cfgrange_nopull(EXYNOS4_GPX2(0), 8, S3C_GPIO_SFN(3));
-+
-+		/* Set all the necessary GPX3 pins: KP_ROW[8~] */
-+		s3c_gpio_cfgrange_nopull(EXYNOS4_GPX3(0), (rows - 8),
-+					 S3C_GPIO_SFN(3));
-+	} else {
-+		/* Set all the necessary GPX2 pins: KP_ROW[x] */
-+		s3c_gpio_cfgrange_nopull(EXYNOS4_GPX2(0), rows,
-+					 S3C_GPIO_SFN(3));
-+	}
-+
-+	/* Set all the necessary GPX1 pins to special-function 3: KP_COL[x] */
-+	s3c_gpio_cfgrange_nopull(EXYNOS4_GPX1(0), cols, S3C_GPIO_SFN(3));
-+}
--- 
-1.7.1
+It doesn't stop people including linux/gpio.h and then mach/gpio.h,
+which is also a common mistake.  Besides, it's easy to catch when you
+have a regexp setup in your mail reader to find them...
