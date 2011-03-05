@@ -1,40 +1,25 @@
-From: Jaeryul Oh <jaeryul.oh@samsung.com>
-Subject: RE: [RFC/PATCH v7 1/5] Changes in include/linux/videodev2.h for MFC 5.1
-Date: Sat, 05 Mar 2011 20:59:03 +0900
-Message-ID: <00dd01cbdb2c$d32ff2d0$798fd870$%oh@samsung.com>
-References: <1299237982-31687-1-git-send-email-k.debski@samsung.com>
- <1299237982-31687-2-git-send-email-k.debski@samsung.com>
- <201103041738.43558.laurent.pinchart@ideasonboard.com>
- <005801cbda9d$e5ad94b0$b108be10$%debski@samsung.com>
-Reply-To: jaeryul.oh@samsung.com
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [RFC/PATCH v7 1/5] Changes in include/linux/videodev2.h for MFC 5.1
+Date: Sat, 5 Mar 2011 13:10:42 +0100
+Message-ID: <201103051310.42661.hverkuil@xs4all.nl>
+References: <1299237982-31687-1-git-send-email-k.debski@samsung.com> <201103041738.43558.laurent.pinchart@ideasonboard.com> <005801cbda9d$e5ad94b0$b108be10$%debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7BIT
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:9193 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753117Ab1CEL7v (ORCPT
+Received: from smtp-vbr7.xs4all.nl ([194.109.24.27]:4955 "EHLO
+	smtp-vbr7.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751109Ab1CEMK7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 5 Mar 2011 06:59:51 -0500
-In-reply-to: <005801cbda9d$e5ad94b0$b108be10$%debski@samsung.com>
-Content-language: ko
+	Sat, 5 Mar 2011 07:10:59 -0500
+In-Reply-To: <005801cbda9d$e5ad94b0$b108be10$%debski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kamil Debski' <k.debski@samsung.com>, 'Laurent Pinchart' <laurent.pinchart@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>, kyungmin.park@samsung.com, kgene.kim@samsung.com
+To: Kamil Debski <k.debski@samsung.com>
+Cc: 'Laurent Pinchart' <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, kyungmin.park@samsung.com, jaeryul.oh@samsung.com, kgene.kim@samsung.com
 
-Hi, I commented as below.
-
-> -----Original Message-----
-> From: Kamil Debski [mailto:k.debski@samsung.com]
-> Sent: Saturday, March 05, 2011 3:57 AM
-> To: 'Laurent Pinchart'
-> Cc: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org; Marek
-> Szyprowski; kyungmin.park@samsung.com; jaeryul.oh@samsung.com;
-> kgene.kim@samsung.com
-> Subject: RE: [RFC/PATCH v7 1/5] Changes in include/linux/videodev2.h for
-> MFC 5.1
-> 
+On Friday, March 04, 2011 19:56:35 Kamil Debski wrote:
 > Hi,
 > 
 > > -----Original Message-----
@@ -46,7 +31,7 @@ Hi, I commented as below.
 > > jaeryul.oh@samsung.com; kgene.kim@samsung.com
 > > Subject: Re: [RFC/PATCH v7 1/5] Changes in include/linux/videodev2.h
 > > for MFC 5.1
-> >
+> > 
 > > On Friday 04 March 2011 12:26:18 Kamil Debski wrote:
 > > > This patch adds fourcc values for compressed video stream formats and
 > > > V4L2_CTRL_CLASS_CODEC. Also adds controls used by MFC 5.1 driver.
@@ -93,7 +78,7 @@ Hi, I commented as below.
 > > > +#define V4L2_PIX_FMT_VC1_RCV  v4l2_fourcc('V', 'C', '1', 'R') /* VC-
 > > 1 RCV */
 > > > +
-> >
+> > 
 > > Hans, you mentioned some time ago that you were against ading H.264 or
 > > MPEG4
 > > fourccs, and that drivers should use the MPEG controls instead. Could
@@ -102,19 +87,19 @@ Hi, I commented as below.
 > 
 > If I remember correct there was no clear conclusion on this. I hope we can
 > discuss this
-> during the upcoming meeting.
-> 
+> during the upcoming meeting. 
+
+Yes, we need to discuss this.
+
 > Have you got an alternative suggestion to using fourccs?
 > 
-> The existing MPEG controls won't cover all the functions and parameters
-> that
+> The existing MPEG controls won't cover all the functions and parameters that
 > are
 > used by video codecs. The controls that are in this patch are the ones
 > related to
 > decoding, there is even more for encoding.
 > 
-> Yesterday I have been talking with Hans on the IRC channel about the
-> control
+> Yesterday I have been talking with Hans on the IRC channel about the control
 > for
 > quantization parameters and he has suggested to use different for MPEG4,
 > H263 and H264.
@@ -124,15 +109,15 @@ Hi, I commented as below.
 > So I think that this still is a subject that could use more discussion as
 > there are
 > a few ideas.
-According to the fource.org, and if fourcc definition here has been made
-from fourcc.org,
-We need to have a discussion about new types that Kamil added not only h264
-but divx_xxx.
-QP might be a same topic. So let's discuss more at Poland meeting.
-> 
-> Best regards,
-> 
-> --
-> Kamil Debski
-> Linux Platform Group
-> Samsung Poland R&D Center
+
+When I made the MPEG API originally I did design it to be usable for other
+compression schemes as well. But we need to review that API in light of the
+current developments and see if it can be used unchanged, needs tweaking or
+perhaps should be abandoned altogether.
+
+Regards,
+
+	Hans
+
+-- 
+Hans Verkuil - video4linux developer - sponsored by Cisco
