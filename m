@@ -1,123 +1,29 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [RFC/PATCH v7 1/5] Changes in include/linux/videodev2.h for MFC 5.1
-Date: Sat, 5 Mar 2011 13:10:42 +0100
-Message-ID: <201103051310.42661.hverkuil@xs4all.nl>
-References: <1299237982-31687-1-git-send-email-k.debski@samsung.com> <201103041738.43558.laurent.pinchart@ideasonboard.com> <005801cbda9d$e5ad94b0$b108be10$%debski@samsung.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Sangbeom Kim <sbkim73@samsung.com>
+Subject: [PATCH V3 0/3] ARM: S5P: Add HRT support for s5p series
+Date: Mon,  7 Mar 2011 09:09:11 +0900
+Message-ID: <1299456554-15280-1-git-send-email-sbkim73@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp-vbr7.xs4all.nl ([194.109.24.27]:4955 "EHLO
-	smtp-vbr7.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751109Ab1CEMK7 (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:36549 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753218Ab1CGAjH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 5 Mar 2011 07:10:59 -0500
-In-Reply-To: <005801cbda9d$e5ad94b0$b108be10$%debski@samsung.com>
+	Sun, 6 Mar 2011 19:39:07 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>
-Cc: 'Laurent Pinchart' <laurent.pinchart@ideasonboard.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, kyungmin.park@samsung.com, jaeryul.oh@samsung.com, kgene.kim@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org
 
-On Friday, March 04, 2011 19:56:35 Kamil Debski wrote:
-> Hi,
-> 
-> > -----Original Message-----
-> > From: Laurent Pinchart [mailto:laurent.pinchart@ideasonboard.com]
-> > Sent: 04 March 2011 17:39
-> > To: Kamil Debski
-> > Cc: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
-> > m.szyprowski@samsung.com; kyungmin.park@samsung.com;
-> > jaeryul.oh@samsung.com; kgene.kim@samsung.com
-> > Subject: Re: [RFC/PATCH v7 1/5] Changes in include/linux/videodev2.h
-> > for MFC 5.1
-> > 
-> > On Friday 04 March 2011 12:26:18 Kamil Debski wrote:
-> > > This patch adds fourcc values for compressed video stream formats and
-> > > V4L2_CTRL_CLASS_CODEC. Also adds controls used by MFC 5.1 driver.
-> > >
-> > > Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > > ---
-> > >  include/linux/videodev2.h |   39
-> > +++++++++++++++++++++++++++++++++++++++
-> > >  1 files changed, 39 insertions(+), 0 deletions(-)
-> > >
-> > > diff --git a/include/linux/videodev2.h b/include/linux/videodev2.h
-> > > index a94c4d5..a48a42e 100644
-> > > --- a/include/linux/videodev2.h
-> > > +++ b/include/linux/videodev2.h
-> > > @@ -369,6 +369,19 @@ struct v4l2_pix_format {
-> > >  #define V4L2_PIX_FMT_DV       v4l2_fourcc('d', 'v', 's', 'd') /*
-> > 1394 */
-> > >  #define V4L2_PIX_FMT_MPEG     v4l2_fourcc('M', 'P', 'E', 'G') /*
-> > MPEG-1/2/4 */
-> > >
-> > > +#define V4L2_PIX_FMT_H264     v4l2_fourcc('H', '2', '6', '4') /*
-> > H264 */
-> > > +#define V4L2_PIX_FMT_H263     v4l2_fourcc('H', '2', '6', '3') /*
-> > H263 */
-> > > +#define V4L2_PIX_FMT_MPEG12   v4l2_fourcc('M', 'P', '1', '2') /*
-> > MPEG-1/2  */
-> > > +#define V4L2_PIX_FMT_MPEG4    v4l2_fourcc('M', 'P', 'G', '4') /*
-> > MPEG-4  */
-> > > +#define V4L2_PIX_FMT_DIVX     v4l2_fourcc('D', 'I', 'V', 'X') /*
-> > DivX  */
-> > > +#define V4L2_PIX_FMT_DIVX3    v4l2_fourcc('D', 'I', 'V', '3') /*
-> > DivX 3.11 */
-> > > +#define V4L2_PIX_FMT_DIVX4    v4l2_fourcc('D', 'I', 'V', '4') /*
-> > DivX 4.12 */
-> > > +#define V4L2_PIX_FMT_DIVX500  v4l2_fourcc('D', 'X', '5', '2') /*
-> > DivX 5.00 - 5.02 */
-> > > +#define V4L2_PIX_FMT_DIVX503  v4l2_fourcc('D', 'X', '5', '3') /*
-> > DivX 5.03 - x */
-> > > +#define V4L2_PIX_FMT_XVID     v4l2_fourcc('X', 'V', 'I', 'D') /*
-> > Xvid */
-> > > +#define V4L2_PIX_FMT_VC1      v4l2_fourcc('V', 'C', '1', 'A') /* VC-
-> > 1 */
-> > > +#define V4L2_PIX_FMT_VC1_RCV  v4l2_fourcc('V', 'C', '1', 'R') /* VC-
-> > 1 RCV */
-> > > +
-> > 
-> > Hans, you mentioned some time ago that you were against ading H.264 or
-> > MPEG4
-> > fourccs, and that drivers should use the MPEG controls instead. Could
-> > you
-> > clarify your current position on this ?
-> 
-> If I remember correct there was no clear conclusion on this. I hope we can
-> discuss this
-> during the upcoming meeting. 
+Changes since v2:
+ - Add S5P_HRT configuration for s5p_timer
+ 
+Changes since v1:
+ - Add sched_clock support (Linus Walleij)
+ - Add clockevents_calc_mult_shift
+ - Modify clk_get scheme
+ - Default clockevent is PWM timer3
+ 
+The patch series contains:
 
-Yes, we need to discuss this.
-
-> Have you got an alternative suggestion to using fourccs?
-> 
-> The existing MPEG controls won't cover all the functions and parameters that
-> are
-> used by video codecs. The controls that are in this patch are the ones
-> related to
-> decoding, there is even more for encoding.
-> 
-> Yesterday I have been talking with Hans on the IRC channel about the control
-> for
-> quantization parameters and he has suggested to use different for MPEG4,
-> H263 and H264.
-> Personally I'd like to have a common one, as the QP meaning is the same in
-> those 3
-> cases, the difference is the range of the value.
-> So I think that this still is a subject that could use more discussion as
-> there are
-> a few ideas.
-
-When I made the MPEG API originally I did design it to be usable for other
-compression schemes as well. But we need to review that API in light of the
-current developments and see if it can be used unchanged, needs tweaking or
-perhaps should be abandoned altogether.
-
-Regards,
-
-	Hans
-
--- 
-Hans Verkuil - video4linux developer - sponsored by Cisco
+[PATCH V3 1/3] This patch adds support HR-Timer(High Resolution Timer)
+[PATCH V3 2/3] This patch modify s5pv210_defconfig and s5p64x0_defconfig
+[PATCH V3 3/3] This patch update mach-s5p64x0 and mach-s5pv210
