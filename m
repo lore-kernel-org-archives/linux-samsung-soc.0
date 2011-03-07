@@ -1,12 +1,12 @@
 From: Sangbeom Kim <sbkim73@samsung.com>
-Subject: [PATCH 3/3] This patch update mach-s5p64x0 and mach-s5pv210 machine  initialization for hrt support. S5P_HRT is added and applied in s5pv210, s5p64x0 machines. PWM Timer3 is used for default clockevent. PWM Timer4 is used for defualt clocksource.
-Date: Mon,  7 Mar 2011 09:09:14 +0900
-Message-ID: <1299456554-15280-4-git-send-email-sbkim73@samsung.com>
+Subject: [PATCH 1/3] This patch adds support HR-Timer(High Resolution Timer) and dynamic tick system for S5P SoCs. There are many clock sources for HR-Timer on S5P SoCs. The PWM timer, RTC, System Timer, and MCT can be used for clock source. This patch can only support PWM timer for clocksource of S5P64x0 and S5PV210.
+Date: Mon,  7 Mar 2011 09:09:12 +0900
+Message-ID: <1299456554-15280-2-git-send-email-sbkim73@samsung.com>
 References: <1299456554-15280-1-git-send-email-sbkim73@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:36557 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:36553 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753266Ab1CGAjH (ORCPT
+	with ESMTP id S1752959Ab1CGAjH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Sun, 6 Mar 2011 19:39:07 -0500
 In-Reply-To: <1299456554-15280-1-git-send-email-sbkim73@samsung.com>
@@ -17,107 +17,525 @@ Cc: kgene.kim@samsung.com, ben-linux@fluff.org, Sangbeom Kim <sbkim73@samsung.co
 
 Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
 ---
- arch/arm/Kconfig                   |    6 ++++--
- arch/arm/configs/s5p64x0_defconfig |    2 ++
- arch/arm/configs/s5pv210_defconfig |    2 ++
- arch/arm/mach-s5p64x0/Kconfig      |    2 ++
- arch/arm/mach-s5pv210/Kconfig      |    1 +
- arch/arm/plat-s5p/Kconfig          |    5 +++++
- 6 files changed, 16 insertions(+), 2 deletions(-)
+ arch/arm/plat-s5p/Makefile                |    1 +
+ arch/arm/plat-s5p/include/plat/s5p-time.h |   40 +++
+ arch/arm/plat-s5p/s5p-time.c              |  449 +++++++++++++++++++++++++++++
+ 3 files changed, 490 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/plat-s5p/include/plat/s5p-time.h
+ create mode 100644 arch/arm/plat-s5p/s5p-time.c
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index ec3bf98..f9f33d4 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -715,7 +715,8 @@ config ARCH_S5P64X0
- 	select GENERIC_GPIO
- 	select HAVE_CLK
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
--	select ARCH_USES_GETTIMEOFFSET
-+	select GENERIC_CLOCKEVENTS
-+	select HAVE_SCHED_CLOCK
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C_RTC if RTC_CLASS
- 	help
-@@ -753,7 +754,8 @@ config ARCH_S5PV210
- 	select HAVE_CLK
- 	select ARM_L1_CACHE_SHIFT_6
- 	select ARCH_HAS_CPUFREQ
--	select ARCH_USES_GETTIMEOFFSET
-+	select GENERIC_CLOCKEVENTS
-+	select HAVE_SCHED_CLOCK
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C_RTC if RTC_CLASS
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-diff --git a/arch/arm/configs/s5p64x0_defconfig b/arch/arm/configs/s5p64x0_defconfig
-index 2993ecd..ad6b61b 100644
---- a/arch/arm/configs/s5p64x0_defconfig
-+++ b/arch/arm/configs/s5p64x0_defconfig
-@@ -10,6 +10,8 @@ CONFIG_S3C_BOOT_ERROR_RESET=y
- CONFIG_S3C_LOWLEVEL_UART_PORT=1
- CONFIG_MACH_SMDK6440=y
- CONFIG_MACH_SMDK6450=y
-+CONFIG_NO_HZ=y
-+CONFIG_HIGH_RES_TIMERS=y
- CONFIG_CPU_32v6K=y
- CONFIG_AEABI=y
- CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x20800000,8M console=ttySAC1,115200 init=/linuxrc"
-diff --git a/arch/arm/configs/s5pv210_defconfig b/arch/arm/configs/s5pv210_defconfig
-index 0488a1e..fa98990 100644
---- a/arch/arm/configs/s5pv210_defconfig
-+++ b/arch/arm/configs/s5pv210_defconfig
-@@ -13,6 +13,8 @@ CONFIG_MACH_AQUILA=y
- CONFIG_MACH_GONI=y
- CONFIG_MACH_SMDKC110=y
- CONFIG_MACH_SMDKV210=y
-+CONFIG_NO_HZ=y
-+CONFIG_HIGH_RES_TIMERS=y
- CONFIG_VMSPLIT_2G=y
- CONFIG_PREEMPT=y
- CONFIG_AEABI=y
-diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
-index 08b0a5b..017af4c 100644
---- a/arch/arm/mach-s5p64x0/Kconfig
-+++ b/arch/arm/mach-s5p64x0/Kconfig
-@@ -10,12 +10,14 @@ if ARCH_S5P64X0
- config CPU_S5P6440
- 	bool
- 	select S3C_PL330_DMA
-+	select S5P_HRT
- 	help
- 	  Enable S5P6440 CPU support
+diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
+index 4bd5cf9..588b9b4 100644
+--- a/arch/arm/plat-s5p/Makefile
++++ b/arch/arm/plat-s5p/Makefile
+@@ -22,6 +22,7 @@ obj-$(CONFIG_S5P_GPIO_INT)	+= irq-gpioint.o
+ obj-$(CONFIG_S5P_SYSTEM_MMU)	+= sysmmu.o
+ obj-$(CONFIG_PM)		+= pm.o
+ obj-$(CONFIG_PM)		+= irq-pm.o
++obj-$(CONFIG_S5P_HRT) 		+= s5p-time.o
  
- config CPU_S5P6450
- 	bool
- 	select S3C_PL330_DMA
-+	select S5P_HRT
- 	help
- 	  Enable S5P6450 CPU support
+ # devices
  
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index d7fd031..ac787ed 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -13,6 +13,7 @@ config CPU_S5PV210
- 	bool
- 	select S3C_PL330_DMA
- 	select S5P_EXT_INT
-+	select S5P_HRT
- 	select S5PV210_PM if PM
- 	help
- 	  Enable S5PV210 CPU support
-diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-index 6390ac7..1ef3e09 100644
---- a/arch/arm/plat-s5p/Kconfig
-+++ b/arch/arm/plat-s5p/Kconfig
-@@ -74,3 +74,8 @@ config S5P_DEV_CSIS1
- 	bool
- 	help
- 	  Compile in platform device definitions for MIPI-CSIS channel 1
+diff --git a/arch/arm/plat-s5p/include/plat/s5p-time.h b/arch/arm/plat-s5p/include/plat/s5p-time.h
+new file mode 100644
+index 0000000..575e881
+--- /dev/null
++++ b/arch/arm/plat-s5p/include/plat/s5p-time.h
+@@ -0,0 +1,40 @@
++/* linux/arch/arm/plat-s5p/include/plat/s5p-time.h
++ *
++ * Copyright 2011 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * Header file for s5p time support
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
-+config S5P_HRT
-+	bool
-+	help
-+	  Use the High Resolution timer support
++#ifndef __ASM_PLAT_S5P_TIME_H
++#define __ASM_PLAT_S5P_TIME_H __FILE__
++
++/* S5P HR-Timer Clock mode */
++enum s5p_timer_mode {
++	S5P_PWM0,
++	S5P_PWM1,
++	S5P_PWM2,
++	S5P_PWM3,
++	S5P_PWM4,
++};
++
++struct s5p_timer_source {
++	unsigned int event_id;
++	unsigned int source_id;
++};
++
++/* Be able to sleep for atleast 4 seconds (usually more) */
++#define S5PTIMER_MIN_RANGE	4
++
++#define TCNT_MAX		0xffffffff
++#define NON_PERIODIC		0
++#define PERIODIC		1
++
++extern void __init s5p_set_timer_source(enum s5p_timer_mode event,
++					enum s5p_timer_mode source);
++extern	struct sys_timer s5p_timer;
++#endif /* __ASM_PLAT_S5P_TIME_H */
+diff --git a/arch/arm/plat-s5p/s5p-time.c b/arch/arm/plat-s5p/s5p-time.c
+new file mode 100644
+index 0000000..62c079c
+--- /dev/null
++++ b/arch/arm/plat-s5p/s5p-time.c
+@@ -0,0 +1,449 @@
++/* linux/arch/arm/plat-s5p/s5p-time.c
++ *
++ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * S5P - Common hr-timer support
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/sched.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/err.h>
++#include <linux/clk.h>
++#include <linux/clockchips.h>
++#include <linux/platform_device.h>
++
++#include <asm/smp_twd.h>
++#include <asm/mach/time.h>
++#include <asm/mach/arch.h>
++#include <asm/mach/map.h>
++#include <asm/sched_clock.h>
++
++#include <mach/map.h>
++#include <plat/devs.h>
++#include <plat/regs-timer.h>
++#include <plat/s5p-time.h>
++
++static struct clk *tin_event;
++static struct clk *tin_source;
++static struct clk *tdiv_event;
++static struct clk *tdiv_source;
++static struct clk *timerclk;
++static struct s5p_timer_source timer_source;
++static unsigned long clock_count_per_tick;
++static void s5p_timer_resume(void);
++
++static void s5p_time_stop(enum s5p_timer_mode mode)
++{
++	unsigned long tcon;
++
++	tcon = __raw_readl(S3C2410_TCON);
++
++	switch (mode) {
++	case S5P_PWM0:
++		tcon &= ~S3C2410_TCON_T0START;
++		break;
++
++	case S5P_PWM1:
++		tcon &= ~S3C2410_TCON_T1START;
++		break;
++
++	case S5P_PWM2:
++		tcon &= ~S3C2410_TCON_T2START;
++		break;
++
++	case S5P_PWM3:
++		tcon &= ~S3C2410_TCON_T3START;
++		break;
++
++	case S5P_PWM4:
++		tcon &= ~S3C2410_TCON_T4START;
++		break;
++
++	default:
++		printk(KERN_ERR "Invalid Timer %d\n", mode);
++		break;
++	}
++	__raw_writel(tcon, S3C2410_TCON);
++}
++
++static void s5p_time_setup(enum s5p_timer_mode mode, unsigned long tcnt)
++{
++	unsigned long tcon;
++
++	tcon = __raw_readl(S3C2410_TCON);
++
++	tcnt--;
++
++	switch (mode) {
++	case S5P_PWM0:
++		tcon &= ~(0x0f << 0);
++		tcon |= S3C2410_TCON_T0MANUALUPD;
++		break;
++
++	case S5P_PWM1:
++		tcon &= ~(0x0f << 8);
++		tcon |= S3C2410_TCON_T1MANUALUPD;
++		break;
++
++	case S5P_PWM2:
++		tcon &= ~(0x0f << 12);
++		tcon |= S3C2410_TCON_T2MANUALUPD;
++		break;
++
++	case S5P_PWM3:
++		tcon &= ~(0x0f << 16);
++		tcon |= S3C2410_TCON_T3MANUALUPD;
++		break;
++
++	case S5P_PWM4:
++		tcon &= ~(0x07 << 20);
++		tcon |= S3C2410_TCON_T4MANUALUPD;
++		break;
++
++	default:
++		printk(KERN_ERR "Invalid Timer %d\n", mode);
++		break;
++	}
++
++	__raw_writel(tcnt, S3C2410_TCNTB(mode));
++	__raw_writel(tcnt, S3C2410_TCMPB(mode));
++	__raw_writel(tcon, S3C2410_TCON);
++}
++
++static void s5p_time_start(enum s5p_timer_mode mode, bool periodic)
++{
++	unsigned long tcon;
++
++	tcon  = __raw_readl(S3C2410_TCON);
++
++	switch (mode) {
++	case S5P_PWM0:
++		tcon |= S3C2410_TCON_T0START;
++		tcon &= ~S3C2410_TCON_T0MANUALUPD;
++
++		if (periodic)
++			tcon |= S3C2410_TCON_T0RELOAD;
++		else
++			tcon &= ~S3C2410_TCON_T0RELOAD;
++		break;
++
++	case S5P_PWM1:
++		tcon |= S3C2410_TCON_T1START;
++		tcon &= ~S3C2410_TCON_T1MANUALUPD;
++
++		if (periodic)
++			tcon |= S3C2410_TCON_T1RELOAD;
++		else
++			tcon &= ~S3C2410_TCON_T1RELOAD;
++		break;
++
++	case S5P_PWM2:
++		tcon |= S3C2410_TCON_T2START;
++		tcon &= ~S3C2410_TCON_T2MANUALUPD;
++
++		if (periodic)
++			tcon |= S3C2410_TCON_T2RELOAD;
++		else
++			tcon &= ~S3C2410_TCON_T2RELOAD;
++		break;
++
++	case S5P_PWM3:
++		tcon |= S3C2410_TCON_T3START;
++		tcon &= ~S3C2410_TCON_T3MANUALUPD;
++
++		if (periodic)
++			tcon |= S3C2410_TCON_T3RELOAD;
++		else
++			tcon &= ~S3C2410_TCON_T3RELOAD;
++		break;
++
++	case S5P_PWM4:
++		tcon |= S3C2410_TCON_T4START;
++		tcon &= ~S3C2410_TCON_T4MANUALUPD;
++
++		if (periodic)
++			tcon |= S3C2410_TCON_T4RELOAD;
++		else
++			tcon &= ~S3C2410_TCON_T4RELOAD;
++		break;
++
++	default:
++		printk(KERN_ERR "Invalid Timer %d\n", mode);
++		break;
++	}
++	__raw_writel(tcon, S3C2410_TCON);
++}
++
++static int s5p_set_next_event(unsigned long cycles,
++				struct clock_event_device *evt)
++{
++	s5p_time_setup(timer_source.event_id, cycles);
++	s5p_time_start(timer_source.event_id, NON_PERIODIC);
++
++	return 0;
++}
++
++static void s5p_set_mode(enum clock_event_mode mode,
++				struct clock_event_device *evt)
++{
++	s5p_time_stop(timer_source.event_id);
++
++	switch (mode) {
++	case CLOCK_EVT_MODE_PERIODIC:
++		s5p_time_setup(timer_source.event_id, clock_count_per_tick);
++		s5p_time_start(timer_source.event_id, PERIODIC);
++		break;
++
++	case CLOCK_EVT_MODE_ONESHOT:
++		break;
++
++	case CLOCK_EVT_MODE_UNUSED:
++	case CLOCK_EVT_MODE_SHUTDOWN:
++		break;
++
++	case CLOCK_EVT_MODE_RESUME:
++		s5p_timer_resume();
++		break;
++	}
++}
++
++static void s5p_timer_resume(void)
++{
++	/* event timer restart */
++	s5p_time_setup(timer_source.event_id, clock_count_per_tick);
++	s5p_time_start(timer_source.event_id, PERIODIC);
++
++	/* source timer restart */
++	s5p_time_setup(timer_source.source_id, TCNT_MAX);
++	s5p_time_start(timer_source.source_id, PERIODIC);
++}
++
++void __init s5p_set_timer_source(enum s5p_timer_mode event,
++				 enum s5p_timer_mode source)
++{
++	s3c_device_timer[event].dev.bus = &platform_bus_type;
++	s3c_device_timer[source].dev.bus = &platform_bus_type;
++
++	timer_source.event_id = event;
++	timer_source.source_id = source;
++}
++
++static struct clock_event_device time_event_device = {
++	.name		= "s5p_event_timer",
++	.features	= CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
++	.rating		= 200,
++	.shift		= 32,
++	.set_next_event	= s5p_set_next_event,
++	.set_mode	= s5p_set_mode,
++};
++
++static irqreturn_t s5p_clock_event_isr(int irq, void *dev_id)
++{
++	struct clock_event_device *evt = dev_id;
++
++	evt->event_handler(evt);
++
++	return IRQ_HANDLED;
++}
++
++static struct irqaction s5p_clock_event_irq = {
++	.name		= "s5p_time_irq",
++	.flags		= IRQF_DISABLED | IRQF_TIMER | IRQF_IRQPOLL,
++	.handler	= s5p_clock_event_isr,
++	.dev_id		= &time_event_device,
++};
++
++static void __init s5p_clockevent_init(void)
++{
++	unsigned long pclk;
++	unsigned long clock_rate;
++	unsigned int irq_number;
++	struct clk *tscaler;
++
++	pclk = clk_get_rate(timerclk);
++
++	tscaler = clk_get_parent(tdiv_event);
++
++	clk_set_rate(tscaler, pclk / 2);
++	clk_set_rate(tdiv_event, pclk / 2);
++	clk_set_parent(tin_event, tdiv_event);
++
++	clock_rate = clk_get_rate(tin_event);
++	clock_count_per_tick = clock_rate / HZ;
++
++	clockevents_calc_mult_shift(&time_event_device,
++				    clock_rate, S5PTIMER_MIN_RANGE);
++	time_event_device.max_delta_ns =
++		clockevent_delta2ns(-1, &time_event_device);
++	time_event_device.min_delta_ns =
++		clockevent_delta2ns(1, &time_event_device);
++
++	time_event_device.cpumask = cpumask_of(0);
++	clockevents_register_device(&time_event_device);
++
++	irq_number = timer_source.event_id + IRQ_TIMER0;
++	setup_irq(irq_number, &s5p_clock_event_irq);
++}
++
++static cycle_t s5p_timer_read(struct clocksource *cs)
++{
++	unsigned long offset = 0;
++
++	switch (timer_source.source_id) {
++	case S5P_PWM0:
++	case S5P_PWM1:
++	case S5P_PWM2:
++	case S5P_PWM3:
++		offset = (timer_source.source_id * 0x0c) + 0x14;
++		break;
++
++	case S5P_PWM4:
++		offset = 0x40;
++		break;
++
++	default:
++		printk(KERN_ERR "Invalid Timer %d\n", timer_source.source_id);
++		return 0;
++	}
++
++	return (cycle_t) ~__raw_readl(S3C_TIMERREG(offset));
++}
++
++/*
++ * Override the global weak sched_clock symbol with this
++ * local implementation which uses the clocksource to get some
++ * better resolution when scheduling the kernel. We accept that
++ * this wraps around for now, since it is just a relative time
++ * stamp. (Inspired by U300 implementation.)
++ */
++static DEFINE_CLOCK_DATA(cd);
++
++unsigned long long notrace sched_clock(void)
++{
++	u32 cyc;
++	unsigned long offset = 0;
++
++	switch (timer_source.source_id) {
++	case S5P_PWM0:
++	case S5P_PWM1:
++	case S5P_PWM2:
++	case S5P_PWM3:
++		offset = (timer_source.source_id * 0x0c) + 0x14;
++		break;
++
++	case S5P_PWM4:
++		offset = 0x40;
++		break;
++
++	default:
++		printk(KERN_ERR "Invalid Timer %d\n", timer_source.source_id);
++		return 0;
++	}
++
++	cyc = ~__raw_readl(S3C_TIMERREG(offset));
++	return cyc_to_sched_clock(&cd, cyc, (u32)~0);
++}
++
++static void notrace s5p_update_sched_clock(void)
++{
++	u32 cyc;
++	unsigned long offset = 0;
++
++	switch (timer_source.source_id) {
++	case S5P_PWM0:
++	case S5P_PWM1:
++	case S5P_PWM2:
++	case S5P_PWM3:
++		offset = (timer_source.source_id * 0x0c) + 0x14;
++		break;
++
++	case S5P_PWM4:
++		offset = 0x40;
++		break;
++
++	default:
++		printk(KERN_ERR "Invalid Timer %d\n", timer_source.source_id);
++	}
++
++	cyc = ~__raw_readl(S3C_TIMERREG(offset));
++	update_sched_clock(&cd, cyc, (u32)~0);
++}
++
++struct clocksource time_clocksource = {
++	.name		= "s5p_clocksource_timer",
++	.rating		= 250,
++	.read		= s5p_timer_read,
++	.mask		= CLOCKSOURCE_MASK(32),
++	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
++};
++
++static void __init s5p_clocksource_init(void)
++{
++	unsigned long pclk;
++	unsigned long clock_rate;
++
++	pclk = clk_get_rate(timerclk);
++
++	clk_set_rate(tdiv_source, pclk / 2);
++	clk_set_parent(tin_source, tdiv_source);
++
++	clock_rate = clk_get_rate(tin_source);
++
++	init_sched_clock(&cd, s5p_update_sched_clock, 32, clock_rate);
++
++	s5p_time_setup(timer_source.source_id, TCNT_MAX);
++	s5p_time_start(timer_source.source_id, PERIODIC);
++
++	if (clocksource_register_hz(&time_clocksource, clock_rate))
++		panic("%s: can't register clocksource\n", time_clocksource.name);
++}
++
++static void __init s5p_timer_resources(void)
++{
++
++	unsigned long event_id = timer_source.event_id;
++	unsigned long source_id = timer_source.source_id;
++
++	timerclk = clk_get(NULL, "timers");
++	if (IS_ERR(timerclk))
++		panic("failed to get timers clock for timer");
++
++	clk_enable(timerclk);
++
++	tin_event = clk_get(&s3c_device_timer[event_id].dev, "pwm-tin");
++	if (IS_ERR(tin_event))
++		panic("failed to get pwm-tin clock for event timer");
++
++	tdiv_event = clk_get(&s3c_device_timer[event_id].dev, "pwm-tdiv");
++	if (IS_ERR(tdiv_event))
++		panic("failed to get pwm-tdiv clock for event timer");
++
++	clk_enable(tin_event);
++
++	tin_source = clk_get(&s3c_device_timer[source_id].dev, "pwm-tin");
++	if (IS_ERR(tin_source))
++		panic("failed to get pwm-tin clock for source timer");
++
++	tdiv_source = clk_get(&s3c_device_timer[source_id].dev, "pwm-tdiv");
++	if (IS_ERR(tdiv_source))
++		panic("failed to get pwm-tdiv clock for source timer");
++
++	clk_enable(tin_source);
++}
++
++static void __init s5p_timer_init(void)
++{
++	s5p_timer_resources();
++	s5p_clockevent_init();
++	s5p_clocksource_init();
++}
++
++struct sys_timer s5p_timer = {
++	.init		= s5p_timer_init,
++};
 -- 
 1.7.1
