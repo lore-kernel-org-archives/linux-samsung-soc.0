@@ -1,44 +1,77 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] SAMSUNG: S5PV310: Add I2S playback support
-Date: Tue, 8 Mar 2011 11:37:53 +0000
-Message-ID: <20110308113752.GA5892@sirena.org.uk>
-References: <1299580852-20959-1-git-send-email-giridhar.maruthy@linaro.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH 0/2] ARM: EXYNOS4: Enhancement of System MMU
+Date: Tue, 08 Mar 2011 15:16:11 +0100
+Message-ID: <000701cbdd9b$634c3840$29e4a8c0$%szyprowski@samsung.com>
+References: <1299460768-4077-1-git-send-email-pullip.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:37326 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752982Ab1CHLhz (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:19974 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754370Ab1CHOQ1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Mar 2011 06:37:55 -0500
-Content-Disposition: inline
-In-Reply-To: <1299580852-20959-1-git-send-email-giridhar.maruthy@linaro.org>
+	Tue, 8 Mar 2011 09:16:27 -0500
+Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LHQ000EASZBY930@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 08 Mar 2011 23:16:23 +0900 (KST)
+Received: from AMDC159 ([106.116.37.153])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LHQ00G67SZ0LA@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 08 Mar 2011 23:16:23 +0900 (KST)
+In-reply-to: <1299460768-4077-1-git-send-email-pullip.cho@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Giridhar Maruthy <giridhar.maruthy@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+To: 'KyongHo Cho' <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, =?ks_c_5601-1987?B?J7TrwM6x4ic=?= <inki.dae@samsung.com>, =?ks_c_5601-1987?B?J7Ctuc6x1Cc=?= <mk7.kang@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 
-On Tue, Mar 08, 2011 at 04:10:52PM +0530, Giridhar Maruthy wrote:
+Hello,
 
-> +#ifdef CONFIG_REGULATOR_WM8994
-> +static struct regulator_consumer_supply wm8994_fixed_voltage0_supplies[] = {
-> +	{
-> +		.dev_name	= "1-001a",
-> +		.supply		= "AVDD2",
+On Monday, March 07, 2011 2:19 AM KyongHo Cho wrote:
 
-This ifdef looks wrong - you're testing for the WM8994 regulators but
-the things inside the define are fixed voltage regulators.  Probably
-best to just make the whole lot depend on CONFIG_REGULATOR and then
-select the regulator drivers if that's enabled:
+> This patch includes the following enhancements for System MMU:
+> - Enhanced readability
+> - Removal of unused data structures or their members
+> - Simplified function definitions
+> - Corrections of some logical errors
+> - Full compliance with Linux coding style
+> - Simpler way of registering callback functions of System MMU faults
+> - Add clock gating for System MMU
 
-	select REGULATOR_WM8994 if REGULATOR
-	select REGULATOR_FIXED if REGULATOR
+Thanks for updating the driver, I have however some comments.
 
-(just doing Kconfig symbols from memory, I might be misremembering.)
+EXYNOS4 platform has total of 16 sysmmu blocks. Each of them is exactly the
+same - each has a register region, an interrupt and clock. However your driver
+uses a single platform device for all 16 units and a large resource array (see
+arch/arm/mach-exynos4). This approach also complicates the clock management 
+(you need to create custom names for sysmmu clocks, this will cause a lot of
+problems in the future update to clkdev!). This also heavily complicates the
+driver (you need the arrays of all the resources all over the driver) and is
+against the Linux driver model. In the proper model one should create a
+platform driver for a single module and instantiate it many times for each hw
+module found in the system. For a reference please take a look at the sysmmu
+Andrzej has developed in parallel to You: 
+http://www.mail-archive.com/linux-media@vger.kernel.org/msg28871.html
 
-> +#ifdef CONFIG_I2C_S3C2410
-> +#ifdef CONFIG_S3C_DEV_I2C1
+For a reference please also check the Samsung Power Domains driver 
+(arch/arm/mach-exynos4/dev-pd.c and arch/arm/plat-s5p/pd.c).
 
-The above will break if someone builds I2C modular - there's a separate
-_MODULE define for that.  Though TBH I'm not sure all this ifdefery is
-really buying much.
+The second problem I've noticed is the s5p_sysmmu_set_tablebase_pgd() call. 
+In my opinion it simplifies the sysmmu api too much. This function assumes
+that the sysmmu client (i.e. a multimedia device driver or videobuf2-allocator
+or vcmm) has a knowledge about the pgd/pte descriptors format. As you know the
+format of pgd/pte descriptors is hardware dependent (it may even change in the
+future version of SoCs), so constructing the pgd and pte tables is a low-level
+operation that should be performed by sysmmu driver. Keeping this call in the
+current form results in a requirement that each sysmmu client MUST know the
+hardware details of the sysmmu module. In my opinion SysMMU client should only
+manage the virtual space and have the ability to add or remove a mapping for
+particular range of pages/memory on particular sysmmu chip. 
+
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
