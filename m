@@ -1,110 +1,46 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [GIT PULL] Samsung fixes for 2.6.38-rc8
-Date: Tue, 8 Mar 2011 08:27:26 +0900
-Message-ID: <AANLkTikcmkPAjb0b7PBgATCf6bYOhiQOQK4w5hxggttZ@mail.gmail.com>
-References: <038701cbdd1b$1c11b890$543529b0$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <038701cbdd1b$1c11b890$543529b0$%kim@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: EXYNOS4: Debug wrong S/PDIF register address
+Date: Tue,  8 Mar 2011 12:48:45 +0900
+Message-ID: <1299556125-19440-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:47960 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755942Ab1CHETX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 7 Mar 2011 23:19:23 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Seungwhan Youn <sw.youn@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi,
+From: Seungwhan Youn <sw.youn@samsung.com>
 
-Can you also add this one?
-ARM: Samsung: change suspend/resume code to depend on CONFIG_SUSPEND
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg04141.=
-html
+This patche fixes wrong S/PDIF SFR base address.
 
-Even though suspend is not implemented at exynos4, we can use the
-runtime pm feature.
-Also without this patch, we can't compile the exynos4 when turn on PM.
+Signed-off-by: Seungwhan Youn <sw.youn@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-exynos4/include/mach/map.h |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Thank you,
-Kyungmin Park
-
-On Tue, Mar 8, 2011 at 7:57 AM, Kukjin Kim <kgene.kim@samsung.com> wrot=
-e:
-> Hi Linus,
->
-> Please pull Samsung fixes from:
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> s5p-fixes-for-linus
->
-> These things are for small fixes on 2.6.38-rc8.
-> If any problems, please let me know.
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> The following changes since commit dd9c1549edef02290edced639f67b54a25=
-abbe0e:
->
-> =A0Linux 2.6.38-rc7 (2011-03-01 13:55:12 -0800)
->
-> are available in the git repository at:
-> =A0 git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung=
-=2Egit
-> s5p-fixes-for-linus
->
-> Banajit Goswami (1):
-> =A0 =A0 =A0ARM: S5P64X0: Fix number of GPIO lines in Bank F
->
-> Ben Dooks (3):
-> =A0 =A0 =A0ARM: S3C64XX: Fix keypad setup to configure correct number=
- of rows
-> =A0 =A0 =A0ARM: S3C64XX: Add clock for i2c1
-> =A0 =A0 =A0ARM: S3C64XX: Reduce output of s3c64xx_dma_init1()
->
-> Lars-Peter Clausen (2):
-> =A0 =A0 =A0ARM: S3C2440: Select missing S3C_DEV_USB_HOST on GTA02
-> =A0 =A0 =A0ARM: S3C2440: Fix usage gpio bank j pin definitions on GTA=
-02
->
-> Mark Brown (5):
-> =A0 =A0 =A0ARM: SAMSUNG: Include devs.h in dev-uart.c to prototype de=
-vices
-> =A0 =A0 =A0ARM: S3C64XX: Staticise non-exported GPIO to interrupt fun=
-ctions
-> =A0 =A0 =A0ARM: S3C64XX: Tone down SDHCI debugging
-> =A0 =A0 =A0ARM: S3C64XX: Fix build with WM1190 disabled and WM1192 en=
-abled on
-> SMDK6410
-> =A0 =A0 =A0ARM: S3C64XX: Update regulator names for debugfs compatibl=
-ity on
-> SMDK6410
->
-> =A0arch/arm/mach-s3c2440/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A0=
-1 +
-> =A0arch/arm/mach-s3c2440/include/mach/gta02.h | =A0 26
-> +++++++++++++-------------
-> =A0arch/arm/mach-s3c64xx/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A0=
-6 ++++++
-> =A0arch/arm/mach-s3c64xx/dma.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 1=
-1 ++++++-----
-> =A0arch/arm/mach-s3c64xx/gpiolib.c =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A04 =
-++--
-> =A0arch/arm/mach-s3c64xx/mach-smdk6410.c =A0 =A0 =A0| =A0 13 +++++++-=
------
-> =A0arch/arm/mach-s3c64xx/setup-keypad.c =A0 =A0 =A0 | =A0 =A02 +-
-> =A0arch/arm/mach-s3c64xx/setup-sdhci.c =A0 =A0 =A0 =A0| =A0 =A02 +-
-> =A0arch/arm/mach-s5p64x0/include/mach/gpio.h =A0| =A0 =A04 ++--
-> =A0arch/arm/plat-samsung/dev-uart.c =A0 =A0 =A0 =A0 =A0 | =A0 =A02 ++
-> =A010 files changed, 41 insertions(+), 30 deletions(-)
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
+index 80a41e0..4d7f0ce 100644
+--- a/arch/arm/mach-exynos4/include/mach/map.h
++++ b/arch/arm/mach-exynos4/include/mach/map.h
+@@ -95,12 +95,12 @@
+ 
+ #define EXYNOS4_PA_AC97			0x139A0000
+ 
++#define EXYNOS4_PA_SPDIF		0x139B0000
++
+ #define EXYNOS4_PA_TIMER		0x139D0000
+ 
+ #define EXYNOS4_PA_SDRAM		0x40000000
+ 
+-#define EXYNOS4_PA_SPDIF		0xE1100000
+-
+ /* Compatibiltiy Defines */
+ 
+ #define S3C_PA_HSMMC0			EXYNOS4_PA_HSMMC(0)
+-- 
+1.7.1
