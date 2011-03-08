@@ -1,415 +1,141 @@
-From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH] ARM: EXYNOS4: Add support for SATA on ARMLEX4210
-Date: Tue, 08 Mar 2011 14:46:11 +0530
-Message-ID: <1299575771-2047-1-git-send-email-a.kesavan@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH/RFC 0/7] Samsung IOMMU videobuf2 allocator and s5p-fimc
+ update
+Date: Tue, 08 Mar 2011 10:34:40 +0100
+Message-ID: <001301cbdd74$1044a4b0$30cdee10$%szyprowski@samsung.com>
+References: <1299229274-9753-1-git-send-email-m.szyprowski@samsung.com>
+ <03ab01cbdd62$739550d0$5abff270$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ks_c_5601-1987
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:51789 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751678Ab1CHJKs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Mar 2011 04:10:48 -0500
-Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LHQ00K8QETXAK90@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 08 Mar 2011 18:10:45 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.92])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LHQ001IYETOAN@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 08 Mar 2011 18:10:45 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <03ab01cbdd62$739550d0$5abff270$%kim@samsung.com>
+Content-language: pl
+Sender: linux-media-owner@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, k.debski@samsung.com, =?ks_c_5601-1987?B?J8DMwM/Ioy9TL1cgU29sdXRpb26ws7nfxsAoUy5MU0kpL0U1KA==?= =?ks_c_5601-1987?B?w6XA0ykvu++8usD8wNon?= <ilho215.lee@samsung.com>, =?ks_c_5601-1987?B?J8G2sObIoy9TL1cgU29sdXRpb26ws7nfxsAoUy5MU0kpL0U0KA==?= =?ks_c_5601-1987?B?vLHA0ykvu++8usD8wNon?= <pullip.cho@samsung.com>, =?ks_c_5601-1987?B?J7TrwM6x4ic=?= <inki.dae@samsung.com>, =?ks_c_5601-1987?B?J7Ctuc6x1Cc=?= <mk7.kang@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, Abhilash Kesavan <a.kesavan@samsung.com>
 
-Adds the device definitions, platform specific initialization and
-clocks for SATA on ARMLEX4210.
+Hello,
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
----
- arch/arm/mach-exynos4/Kconfig                 |    1 +
- arch/arm/mach-exynos4/Makefile                |    1 +
- arch/arm/mach-exynos4/clock.c                 |    7 +
- arch/arm/mach-exynos4/dev-ahci.c              |  260 +++++++++++++++++++++++++
- arch/arm/mach-exynos4/include/mach/map.h      |    4 +
- arch/arm/mach-exynos4/include/mach/regs-pmu.h |    3 +
- arch/arm/mach-exynos4/mach-armlex4210.c       |    1 +
- arch/arm/plat-samsung/include/plat/devs.h     |    1 +
- 8 files changed, 278 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-exynos4/dev-ahci.c
+On Tuesday, March 08, 2011 8:29 AM Kukjin Kim wrote:
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index d3893f6..19b3bc6 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -119,6 +119,7 @@ config MACH_ARMLEX4210
- 	select S3C_DEV_HSMMC3
- 	select EXYNOS4_DEV_SYSMMU
- 	select EXYNOS4_SETUP_SDHCI
-+	select SATA_AHCI_PLATFORM
- 	help
- 	  Machine support for Samsung ARMLEX4210 based on EXYNOS4210
+> Hello,
+> 
+> There are comments for your System MMU driver below.
+
+Please take into account that this was an initial version of our SYSMMU
+driver to start the discussion, so there were a few minor problems left.
+Thanks for pointing them out btw. :)
+
  
-diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
-index 45422cb..d3b7cff 100644
---- a/arch/arm/mach-exynos4/Makefile
-+++ b/arch/arm/mach-exynos4/Makefile
-@@ -43,3 +43,4 @@ obj-$(CONFIG_EXYNOS4_SETUP_I2C6)	+= setup-i2c6.o
- obj-$(CONFIG_EXYNOS4_SETUP_I2C7)	+= setup-i2c7.o
- obj-$(CONFIG_EXYNOS4_SETUP_SDHCI)	+= setup-sdhci.o
- obj-$(CONFIG_EXYNOS4_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
-+obj-$(CONFIG_SATA_AHCI_PLATFORM)	+= dev-ahci.o
-diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
-index 72d53d5..a6bca06 100644
---- a/arch/arm/mach-exynos4/clock.c
-+++ b/arch/arm/mach-exynos4/clock.c
-@@ -432,6 +432,12 @@ static struct clk init_clocks_off[] = {
- 		.enable		= exynos4_clk_ip_lcd1_ctrl,
- 		.ctrlbit	= (1 << 0),
- 	}, {
-+		.name		= "sataphy",
-+		.id		= -1,
-+		.parent		= &clk_aclk_133.clk,
-+		.enable		= exynos4_clk_ip_fsys_ctrl,
-+		.ctrlbit	= (1 << 3),
-+	}, {
- 		.name		= "hsmmc",
- 		.id		= 0,
- 		.parent		= &clk_aclk_133.clk,
-@@ -464,6 +470,7 @@ static struct clk init_clocks_off[] = {
- 	}, {
- 		.name		= "sata",
- 		.id		= -1,
-+		.parent		= &clk_aclk_133.clk,
- 		.enable		= exynos4_clk_ip_fsys_ctrl,
- 		.ctrlbit	= (1 << 10),
- 	}, {
-diff --git a/arch/arm/mach-exynos4/dev-ahci.c b/arch/arm/mach-exynos4/dev-ahci.c
-new file mode 100644
-index 0000000..c43d8c6
---- /dev/null
-+++ b/arch/arm/mach-exynos4/dev-ahci.c
-@@ -0,0 +1,260 @@
-+/* linux/arch/arm/mach-exynos4/dev-ahci.c
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * EXYNOS4 - AHCI support
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/platform_device.h>
-+#include <linux/ahci_platform.h>
-+
-+#include <plat/cpu.h>
-+
-+#include <mach/irqs.h>
-+#include <mach/map.h>
-+#include <mach/regs-pmu.h>
-+
-+/* PHY Control Register */
-+#define SATA_CTRL0		0x0
-+/* PHY Link Control Register */
-+#define SATA_CTRL1		0x4
-+/* PHY Status Register */
-+#define SATA_PHY_STATUS		0x8
-+
-+#define SATA_CTRL0_RX_DATA_VALID(x)	(x << 27)
-+#define SATA_CTRL0_SPEED_MODE		(1 << 26)
-+#define SATA_CTRL0_M_PHY_CAL		(1 << 19)
-+#define SATA_CTRL0_PHY_CMU_RST_N	(1 << 10)
-+#define SATA_CTRL0_M_PHY_LN_RST_N	(1 << 9)
-+#define SATA_CTRL0_PHY_POR_N		(1 << 8)
-+
-+#define SATA_CTRL1_RST_PMALIVE_N	(1 << 8)
-+#define SATA_CTRL1_RST_RXOOB_N		(1 << 7)
-+#define SATA_CTRL1_RST_RX_N		(1 << 6)
-+#define SATA_CTRL1_RST_TX_N		(1 << 5)
-+
-+#define SATA_PHY_STATUS_CMU_OK		(1 << 18)
-+#define SATA_PHY_STATUS_LANE_OK		(1 << 16)
-+
-+#define LANE0		0x200
-+#define COM_LANE	0xA00
-+
-+#define HOST_PORTS_IMPL	0xC
-+#define SCLK_SATA_FREQ	(67 * MHZ)
-+
-+static void __iomem *phy_base, *phy_ctrl;
-+
-+struct phy_reg {
-+	u8	reg;
-+	u8	val;
-+};
-+
-+/* SATA PHY setup */
-+static const struct phy_reg exynos4_sataphy_cmu[] = {
-+	{ 0x00, 0x06 }, { 0x02, 0x80 }, { 0x22, 0xa0 }, { 0x23, 0x42 },
-+	{ 0x2e, 0x04 }, { 0x2f, 0x50 }, { 0x30, 0x70 }, { 0x31, 0x02 },
-+	{ 0x32, 0x25 }, { 0x33, 0x40 }, { 0x34, 0x01 }, { 0x35, 0x40 },
-+	{ 0x61, 0x2e }, { 0x63, 0x5e }, { 0x65, 0x42 }, { 0x66, 0xd1 },
-+	{ 0x67, 0x20 }, { 0x68, 0x28 }, { 0x69, 0x78 }, { 0x6a, 0x04 },
-+	{ 0x6b, 0xc8 }, { 0x6c, 0x06 },
-+};
-+
-+static const struct phy_reg exynos4_sataphy_lane[] = {
-+	{ 0x00, 0x02 }, { 0x05, 0x10 }, { 0x06, 0x84 }, { 0x07, 0x04 },
-+	{ 0x08, 0xe0 }, { 0x10, 0x23 }, { 0x13, 0x05 }, { 0x14, 0x30 },
-+	{ 0x15, 0x00 }, { 0x17, 0x70 }, { 0x18, 0xf2 }, { 0x19, 0x1e },
-+	{ 0x1a, 0x18 }, { 0x1b, 0x0d }, { 0x1c, 0x08 }, { 0x50, 0x60 },
-+	{ 0x51, 0x0f },
-+};
-+
-+static const struct phy_reg exynos4_sataphy_comlane[] = {
-+	{ 0x01, 0x20 }, { 0x03, 0x40 }, { 0x04, 0x3c }, { 0x05, 0x7d },
-+	{ 0x06, 0x1d }, { 0x07, 0xcf }, { 0x08, 0x05 }, { 0x09, 0x63 },
-+	{ 0x0a, 0x29 }, { 0x0b, 0xc4 }, { 0x0c, 0x01 }, { 0x0d, 0x03 },
-+	{ 0x0e, 0x28 }, { 0x0f, 0x98 }, { 0x10, 0x19 }, { 0x13, 0x80 },
-+	{ 0x14, 0xf0 }, { 0x15, 0xd0 }, { 0x39, 0xa0 }, { 0x3a, 0xa0 },
-+	{ 0x3b, 0xa0 }, { 0x3c, 0xa0 }, { 0x3d, 0xa0 }, { 0x3e, 0xa0 },
-+	{ 0x3f, 0xa0 }, { 0x40, 0x42 }, { 0x42, 0x80 }, { 0x43, 0x58 },
-+	{ 0x45, 0x44 }, { 0x46, 0x5c }, { 0x47, 0x86 }, { 0x48, 0x8d },
-+	{ 0x49, 0xd0 }, { 0x4a, 0x09 }, { 0x4b, 0x90 }, { 0x4c, 0x07 },
-+	{ 0x4d, 0x40 }, { 0x51, 0x20 }, { 0x52, 0x32 }, { 0x7f, 0xd8 },
-+	{ 0x80, 0x1a }, { 0x81, 0xff }, { 0x82, 0x11 }, { 0x83, 0x00 },
-+	{ 0x87, 0xf0 }, { 0x87, 0xff }, { 0x87, 0xff }, { 0x87, 0xff },
-+	{ 0x87, 0xff }, { 0x8c, 0x1c }, { 0x8d, 0xc2 }, { 0x8e, 0xc3 },
-+	{ 0x8f, 0x3f }, { 0x90, 0x0a }, { 0x96, 0xf8 },
-+};
-+
-+static int wait_for_phy_ready(void __iomem *reg, unsigned long bit)
-+{
-+	unsigned long timeout;
-+
-+	/* wait for maximum of 3 sec */
-+	timeout = jiffies + msecs_to_jiffies(3000);
-+	while (!(__raw_readl(reg) & bit)) {
-+		if (time_after(jiffies, timeout))
-+			return -1;
-+		cpu_relax();
-+	}
-+	return 0;
-+}
-+
-+/* SLSI-Guided PHY Initialization Sequence */
-+static int ahci_phy_init(void __iomem *mmio)
-+{
-+	int i, ctrl0;
-+
-+	for (i = 0; i < ARRAY_SIZE(exynos4_sataphy_cmu); i++)
-+		__raw_writeb(exynos4_sataphy_cmu[i].val,
-+		phy_base + (exynos4_sataphy_cmu[i].reg * 4));
-+
-+	for (i = 0; i < ARRAY_SIZE(exynos4_sataphy_lane); i++)
-+		__raw_writeb(exynos4_sataphy_lane[i].val,
-+		phy_base + (LANE0 + exynos4_sataphy_lane[i].reg) * 4);
-+
-+	for (i = 0; i < ARRAY_SIZE(exynos4_sataphy_comlane); i++)
-+		__raw_writeb(exynos4_sataphy_comlane[i].val,
-+		phy_base + (COM_LANE + exynos4_sataphy_comlane[i].reg) * 4);
-+
-+	__raw_writeb(0x07, phy_base);
-+
-+	ctrl0 = __raw_readl(phy_ctrl + SATA_CTRL0);
-+	ctrl0 |= SATA_CTRL0_PHY_CMU_RST_N;
-+	__raw_writel(ctrl0, phy_ctrl + SATA_CTRL0);
-+
-+	if (wait_for_phy_ready(phy_ctrl + SATA_PHY_STATUS,
-+				SATA_PHY_STATUS_CMU_OK) < 0) {
-+		printk(KERN_ERR "PHY CMU not ready\n");
-+		return -EBUSY;
-+	}
-+
-+	__raw_writeb(0x03, phy_base + (COM_LANE * 4));
-+
-+	ctrl0 = __raw_readl(phy_ctrl + SATA_CTRL0);
-+	ctrl0 |= SATA_CTRL0_M_PHY_LN_RST_N;
-+	__raw_writel(ctrl0, phy_ctrl + SATA_CTRL0);
-+
-+	if (wait_for_phy_ready(phy_ctrl + SATA_PHY_STATUS,
-+				SATA_PHY_STATUS_LANE_OK) < 0) {
-+		printk(KERN_ERR "PHY LANE not ready\n");
-+		return -EBUSY;
-+	}
-+
-+	ctrl0 = __raw_readl(phy_ctrl + SATA_CTRL0);
-+	ctrl0 |= SATA_CTRL0_M_PHY_CAL;
-+	__raw_writel(ctrl0, phy_ctrl + SATA_CTRL0);
-+
-+	return 0;
-+}
-+
-+static int exynos4_ahci_init(struct device *dev, void __iomem *mmio)
-+{
-+	struct clk *clk_sata, *clk_sataphy, *clk_sclk_sata;
-+	int val, ret;
-+
-+	phy_base = ioremap(EXYNOS4_PA_SATAPHY, SZ_64K);
-+	if (!phy_base) {
-+		dev_err(dev, "failed to allocate memory for SATA PHY\n");
-+		return -ENOMEM;
-+	}
-+
-+	phy_ctrl = ioremap(EXYNOS4_PA_SATAPHY_CTRL, SZ_16);
-+	if (!phy_ctrl) {
-+		dev_err(dev, "failed to allocate memory for SATA PHY CTRL\n");
-+		ret = -ENOMEM;
-+		goto err1;
-+	}
-+
-+	clk_sata = clk_get(dev, "sata");
-+	if (IS_ERR(clk_sata)) {
-+		dev_err(dev, "failed to get sata clock\n");
-+		ret = PTR_ERR(clk_sata);
-+		clk_sata = NULL;
-+		goto err2;
-+
-+	}
-+	clk_enable(clk_sata);
-+
-+	clk_sataphy = clk_get(dev, "sataphy");
-+	if (IS_ERR(clk_sataphy)) {
-+		dev_err(dev, "failed to get sataphy clock\n");
-+		ret = PTR_ERR(clk_sataphy);
-+		clk_sataphy = NULL;
-+		goto err3;
-+	}
-+	clk_enable(clk_sataphy);
-+
-+	clk_sclk_sata = clk_get(dev, "sclk_sata");
-+	if (IS_ERR(clk_sclk_sata)) {
-+		dev_err(dev, "failed to get sclk_sata\n");
-+		ret = PTR_ERR(clk_sclk_sata);
-+		clk_sclk_sata = NULL;
-+		goto err4;
-+	}
-+	clk_enable(clk_sclk_sata);
-+	clk_set_rate(clk_sclk_sata, SCLK_SATA_FREQ);
-+
-+	__raw_writel(S5P_PMU_SATA_PHY_CONTROL_EN, S5P_PMU_SATA_PHY_CONTROL);
-+
-+	/* Enable PHY link control */
-+	val = SATA_CTRL1_RST_PMALIVE_N | SATA_CTRL1_RST_RXOOB_N |
-+			SATA_CTRL1_RST_RX_N | SATA_CTRL1_RST_TX_N;
-+	__raw_writel(val, phy_ctrl + SATA_CTRL1);
-+
-+	/* Set communication speed as 3Gbps and enable PHY power */
-+	val = SATA_CTRL0_RX_DATA_VALID(3) | SATA_CTRL0_SPEED_MODE |
-+			SATA_CTRL0_PHY_POR_N;
-+	__raw_writel(val, phy_ctrl + SATA_CTRL0);
-+
-+	/* Port0 is available */
-+	__raw_writel(0x1, mmio + HOST_PORTS_IMPL);
-+
-+	return ahci_phy_init(mmio);
-+
-+err4:
-+	clk_disable(clk_sataphy);
-+	clk_put(clk_sataphy);
-+err3:
-+	clk_disable(clk_sata);
-+	clk_put(clk_sata);
-+err2:
-+	iounmap(phy_ctrl);
-+err1:
-+	iounmap(phy_base);
-+
-+	return ret;
-+}
-+
-+static struct ahci_platform_data exynos4_ahci_pdata = {
-+	.init = exynos4_ahci_init,
-+};
-+
-+static struct resource exynos4_ahci_resource[] = {
-+	[0] = {
-+		.start	= EXYNOS4_PA_SATA,
-+		.end	= EXYNOS4_PA_SATA + SZ_64K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start	= IRQ_SATA,
-+		.end	= IRQ_SATA,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+};
-+
-+struct platform_device exynos4_device_ahci = {
-+	.name			= "ahci",
-+	.id			= -1,
-+	.resource		= exynos4_ahci_resource,
-+	.num_resources		= ARRAY_SIZE(exynos4_ahci_resource),
-+	.dev.dma_mask		= &exynos4_device_ahci.dev.coherent_dma_mask,
-+	.dev.coherent_dma_mask	= DMA_BIT_MASK(32),
-+	.dev.platform_data	= &exynos4_ahci_pdata,
-+};
-diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
-index 80a41e0..234b4ed 100644
---- a/arch/arm/mach-exynos4/include/mach/map.h
-+++ b/arch/arm/mach-exynos4/include/mach/map.h
-@@ -89,6 +89,10 @@
+> It's good that System MMU has functionality of mapping but System MMU have
+> to use other mapping of virtual memory allocator.
+
+Could you elaborate on this? I'm not sure I understand right your problem.
+
+SYSMMU driver is a low-level driver for the SYSMMU module. The driver should
+provide all the basic functionality that is (or might be) hardware dependent.
+Creating a mapping is one of such elementary functionalities. Sysmmu client
+(let it be videobuf2-s5p-iommu, vcmm, maybe even other driver directly)
+should not need to know the format of page descriptors or the way they are
+arranged in the memory. The sysmmu should provide low level functions to create
+and remove a mapping. Managing a virtual space is something that MIGHT be client
+dependent and should be left to the client. 
+
+This design allows for different approaches to coexist. Videobuf2-s5p-iommu
+client will manage the virtual space with gen_alloc framework, while vcmm will
+use its own methods.
+
+It would be great if one decide to unify iommu interfaces across the kernel,
+but this will be a long road. We need to start from something simple (platform
+private) and working first.
  
- #define EXYNOS4_PA_SROMC		0x12570000
- 
-+#define EXYNOS4_PA_SATA			0x12560000
-+#define EXYNOS4_PA_SATAPHY		0x125D0000
-+#define EXYNOS4_PA_SATAPHY_CTRL		0x126B0000
-+
- #define EXYNOS4_PA_UART			0x13800000
- 
- #define EXYNOS4_PA_IIC(x)		(0x13860000 + ((x) * 0x10000))
-diff --git a/arch/arm/mach-exynos4/include/mach/regs-pmu.h b/arch/arm/mach-exynos4/include/mach/regs-pmu.h
-index 2ddd617..b334132 100644
---- a/arch/arm/mach-exynos4/include/mach/regs-pmu.h
-+++ b/arch/arm/mach-exynos4/include/mach/regs-pmu.h
-@@ -17,6 +17,7 @@
- 
- #define S5P_PMUREG(x)			(S5P_VA_PMU + (x))
- 
-+#define S5P_PMU_SATA_PHY_CONTROL	S5P_PMUREG(0x720)
- #define S5P_PMU_CAM_CONF		S5P_PMUREG(0x3C00)
- #define S5P_PMU_TV_CONF			S5P_PMUREG(0x3C20)
- #define S5P_PMU_MFC_CONF		S5P_PMUREG(0x3C40)
-@@ -25,6 +26,8 @@
- #define S5P_PMU_LCD1_CONF		S5P_PMUREG(0x3CA0)
- #define S5P_PMU_GPS_CONF		S5P_PMUREG(0x3CE0)
- 
-+#define S5P_PMU_SATA_PHY_CONTROL_EN	0x1
-+
- #define S5P_INT_LOCAL_PWR_EN		0x7
- 
- #endif /* __ASM_ARCH_REGS_PMU_H */
-diff --git a/arch/arm/mach-exynos4/mach-armlex4210.c b/arch/arm/mach-exynos4/mach-armlex4210.c
-index 1ec7e77..b482c62 100644
---- a/arch/arm/mach-exynos4/mach-armlex4210.c
-+++ b/arch/arm/mach-exynos4/mach-armlex4210.c
-@@ -158,6 +158,7 @@ static struct platform_device *armlex4210_devices[] __initdata = {
- 	&exynos4_device_sysmmu,
- 	&samsung_asoc_dma,
- 	&armlex4210_smsc911x,
-+	&exynos4_device_ahci,
- };
- 
- static void __init armlex4210_smsc911x_init(void)
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index e2b3ab9..b6157cf 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -108,6 +108,7 @@ extern struct platform_device exynos4_device_i2s1;
- extern struct platform_device exynos4_device_i2s2;
- extern struct platform_device exynos4_device_spdif;
- extern struct platform_device exynos4_device_pd[];
-+extern struct platform_device exynos4_device_ahci;
- 
- extern struct platform_device s5p6442_device_pcm0;
- extern struct platform_device s5p6442_device_pcm1;
--- 
-1.6.6.1
+> And would be better to change sysmmu_list to use array of defined in
+> s5p_sysmmu_ip enumeration, so that can get enhancement of memory space
+> usage, speed, and readability of codes.
+
+Yes, the list can be simplified to an array, but this is really a minor issue.
+
+> TLB replacement policy does not need to use LRU. Of course, current System
+> MMU also needs it. I think, the round robin is enough, because to access
+> memory has no temporal locality and to make LRU need to access to System
+> MMU register one more. The reset value is round robin.
+
+Well, the best possibility is to allow sysmmu clients to decide which policy
+should be used. For some devices (I'm thinking of MFC) LRU policy might give
+a little speedup.
+
+> In the setting of SHARED page table in s5p_sysmmu_control_locked, get the
+> page table base address of ARM core from cp15 register now. But current->mm-
+> >pgd is better for more compatibility.
+
+Right, this way the pgd table pointer can be acquired in a more system friendly
+way.
+
+> When it make page table with PRIVATE page table methods, the size of the
+> structure to manage the second page table is quite big. It is much better
+> rather that to make slab with cache size of 1KB.
+
+Yes, our initial driver uses directly 4KB pages to manage 4 consecutive second
+page tables. However usually the allocations of client devices will be few but
+quite large each. So most of pages used to hold second level page tables will
+be effectively reused. 
+
+You are right however that the approach with a slab with 1KB units will
+result in code that is cleaner and easier to understand.
+
+> Besides, the page mapping implementation is not safe in your System MMU
+> driver. Because only first one confirms primary page table entry, when it
+> assigns four second page tables consecutively at a time.
+
+That's a direct result of the 4-second-level-at-once method of allocating
+second level pages, but this can be cleaned by using 1KB with slab.
+
+> The System MMU driver cannot apply runtime pm by oneself with calling
+> pm_runtime_put_sync(). The reason is because a device with System MMU can
+> on/off power. I think just clock gating is enough. However, I can't find
+> clock enable/disable in your driver.
+
+Clock is enabled in probe() and disabled in remove(). pm_runtime_get/put_sync()
+only increases/decreases use count of a respective power domain, so the actual
+device driver also has to call pm_runtime_get/put. Calling pm_runtime_put_sync()
+will not shut down the power if the sysmmu client driver has called
+pm_runtime_get() without pm_runtime_put(). I see no problems here. Could you 
+elaborate your issue?
+
+> 
+> By PRIVATE page table method, each system MMU comes to have a page table
+> only for oneself. In this case, the problem is that each MFC System MMU L
+> and R having another page table.
+
+Yes, true. This is consequence of the MFC hardware design and the fact that
+it has 2 AXI master interfaces and 2 SYSMMU controllers. Each of them have to
+be configured separately. Each of them has a separate virtual driver's address
+space. Such configuration is used by the MFC driver posted in v7 patch series.
+
+> In your System MMU driver, the page size is always 4KB crucially. This says
+> TLB thrashing and produces a result to lose a TLB hit rate. It is a big
+> problem with the device such as rotator which does not do sequential access
+> especially.
+
+The page size is set to 4KB, because Linux kernel uses 4KB pages by default.
+Once support for other page size is available in the kernel, then sysmmu can be
+extended also.
+
+> And the IRQ handler just outputs only a message. It should be implemented
+> in call back function to be able to handle from each device driver.
+
+This was only for debugging purpose, but you are right that the sysmmu API in 
+this area need to be extended.
+
+> When it sets System MMU in SHARED page table, kernel virtual memory is
+> broken by a method such as s5p_sysmmu_map_area()
+
+Yes, there should be a check added to prevent messing with ARM pgd in SHARED 
+mode.
+
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
