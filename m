@@ -1,80 +1,51 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [GIT PULL FOR 2.6.39] s5p-fimc driver and videobuf2 fixes
-Date: Tue, 08 Mar 2011 17:36:31 +0100
-Message-ID: <4D765B0F.8090803@samsung.com>
-References: <4D70C495.5000200@samsung.com>
+From: Dai Otsuka <dai.otsuka@positive-one.com>
+Subject: S3C6410 USB OTG2.0 Host?
+Date: Wed, 09 Mar 2011 04:29:40 +0900
+Message-ID: <4D7683A4.2010206@positive-one.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <4D70C495.5000200@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@infradead.org>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from www497.sakura.ne.jp ([59.106.13.147]:58607 "EHLO
+	www497.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932138Ab1CHUR6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 8 Mar 2011 15:17:58 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, p.osciak@samsung.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com, Dai Otsuka <dai.otsuka@positive-one.com>
 
-Mauro,
+Greeting,
 
-please ignore the below pull request. I've found some issues in s5p-fimc
-patches so I want to fix this and resent the pull request. 
-My apologies for the hassle.
+I know your information below.
+http://lwn.net/Articles/392313/
 
-Regards,
-Sylwester
+I would like to help.
+Where should I talk for S3C6410? Also, I hope to get sample for USB 
+OTG2.0 Host....
 
-On 03/04/2011 11:53 AM, Sylwester Nawrocki wrote:
-> Hi Mauro,
-> 
-> please pull the following change set, it's a couple of s5p-fimc driver
-> fixes and updates after conversion to videobuf2. There are also two small
-> corrections for the videobuf2 and documentation for NV12MT format.
-> 
-> 
-> The following changes since commit 548b491f5a3221e26c0b08dece18fdc62930fe5e:
-> 
->   [media] media/radio/wl1273: fix build errors (2011-02-27 21:36:52 -0300)
-> 
-> are available in the git repository at:
->   git://git.infradead.org/users/kmpark/linux-2.6-samsung s5p_fimc_for_mauro
-> 
-> Andrzej Pietrasiewicz (1):
->       v4l2: vb2-dma-sg: fix memory leak
-> 
-> Kamil Debski (1):
->       v4l: Documentation for the NV12MT format
-> 
-> Marek Szyprowski (1):
->       v4l2: vb2: fix queue reallocation and REQBUFS(0) case
-> 
-> Sungchun Kang (1):
->       s5p-fimc: fix ISR and buffer handling for fimc-capture
-> 
-> Sylwester Nawrocki (6):
->       s5p-fimc: Prevent oops when i2c adapter is not available
->       s5p-fimc: Prevent hanging on device close and fix the locking
->       s5p-fimc: Allow defining number of sensors at runtime
->       s5p-fimc: Add a platform data entry for MIPI-CSI data alignment
->       s5p-fimc: Use dynamic debug
->       s5p-fimc: Fix G_FMT ioctl handler
-> 
->  Documentation/DocBook/media-entities.tmpl    |    1 +
->  Documentation/DocBook/v4l/nv12mt.gif         |  Bin 0 -> 2108 bytes
->  Documentation/DocBook/v4l/nv12mt_example.gif |  Bin 0 -> 6858 bytes
->  Documentation/DocBook/v4l/pixfmt-nv12mt.xml  |   74 +++++++
->  Documentation/DocBook/v4l/pixfmt.xml         |    1 +
->  drivers/media/video/s5p-fimc/fimc-capture.c  |   99 ++++------
->  drivers/media/video/s5p-fimc/fimc-core.c     |  266 ++++++++++++++------------
->  drivers/media/video/s5p-fimc/fimc-core.h     |   50 ++++--
->  drivers/media/video/s5p-fimc/fimc-reg.c      |    6 +-
->  drivers/media/video/videobuf2-core.c         |    9 +-
->  drivers/media/video/videobuf2-dma-sg.c       |    2 +
->  include/media/s5p_fimc.h                     |    9 +-
->  12 files changed, 307 insertions(+), 210 deletions(-)
->  create mode 100644 Documentation/DocBook/v4l/nv12mt.gif
->  create mode 100644 Documentation/DocBook/v4l/nv12mt_example.gif
->  create mode 100644 Documentation/DocBook/v4l/pixfmt-nv12mt.xml
-> 
+I am  testing the image transfer on S3C6410 board on the computer. Then, 
+I send a data flow as follows.
 
--- 
-Sylwester Nawrocki
-Samsung Poland R&D Center
+Analog data -> FIMC-> Digital YUV4: 2:2 (8bit) -> encoding -> USB-> 
+display (XGA)
+
+Regarding the results, XGA display the occasion of the show, it had a 
+handicap.
+
+I think one problem, USB Host1.1 on S3C6410 slow down the frame-rate. In 
+fact, It send three packets in one micro-frame.
+
+I think another one program in Linux version. this hardware is working 
+Linux2.6.29. But Samsung is the latest version is 2.6.36. Maybe, I 
+cannot afford to update new version soon.
+
+I knew that it is different structures in FIMC. I must optimize FIMC and 
+drivers in new version. It must have much time.
+
+I would like to have hight performance of image transfer in this 
+environment. Please have your idea.
+
+Thanks in advance,
+Dai Otsuka
