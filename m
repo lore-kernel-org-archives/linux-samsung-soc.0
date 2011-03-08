@@ -1,160 +1,230 @@
-From: InKi Dae <daeinki@gmail.com>
-Subject: Re: [PATCH/RFC 0/7] Samsung IOMMU videobuf2 allocator and s5p-fimc update
-Date: Tue, 8 Mar 2011 19:05:50 +0900
-Message-ID: <AANLkTin9Lj8cR2cTfz5s72c=rJaNy5ia866+gT1tNnpA@mail.gmail.com>
-References: <1299229274-9753-1-git-send-email-m.szyprowski@samsung.com>
-	<03ab01cbdd62$739550d0$5abff270$%kim@samsung.com>
-	<001301cbdd74$1044a4b0$30cdee10$%szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Giridhar Maruthy <giridhar.maruthy@linaro.org>
+Subject: [PATCH] SAMSUNG: S5PV310: Add I2S playback support
+Date: Tue, 08 Mar 2011 16:10:52 +0530
+Message-ID: <1299580852-20959-1-git-send-email-giridhar.maruthy@linaro.org>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f42.google.com ([74.125.82.42]:59034 "EHLO
-	mail-ww0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752433Ab1CHKFv (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:26467 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753670Ab1CHKwE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Mar 2011 05:05:51 -0500
-In-Reply-To: <001301cbdd74$1044a4b0$30cdee10$%szyprowski@samsung.com>
+	Tue, 8 Mar 2011 05:52:04 -0500
+Received: from epmmp2 (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LHQ00CLRJIPKBD0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 08 Mar 2011 19:52:01 +0900 (KST)
+Received: from Linaro.sisodomain.com ([107.108.215.143])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LHQ00GDZJIJRG@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 08 Mar 2011 19:52:02 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, k.debski@samsung.com, =?EUC-KR?B?sK25zrHU?= <mk7.kang@samsung.com>, =?EUC-KR?B?wMzAz8ijL1MvVyBTb2x1dGlvbrCzud/GwChTLkxTSSkvRTUow6XA0ykvu++8usD8?= =?EUC-KR?B?wNo=?= <ilho215.lee@samsung.com>, =?EUC-KR?B?tOvAzrHi?= <inki.dae@samsung.com>, kyungmin.park@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, =?EUC-KR?B?wbaw5sijL1MvVyBTb2x1dGlvbrCzud/GwChTLkxTSSkvRTQovLHA0ykvu++8usD8?= =?EUC-KR?B?wNo=?= <pullip.cho@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, Giridhar Maruthy <giridhar.maruthy@linaro.org>
 
-Hello, Mr. Kukjin.
+This commit adds the platform device and data of
+wm8994 regulator to enable the I2S playback on
+S5PV310 board on linux-linaro-2.6.38.
 
+Signed-off-by: Giridhar Maruthy <giridhar.maruthy@linaro.org>
+---
+ arch/arm/mach-exynos4/mach-smdkv310.c |  167 ++++++++++++++++++++++++++++++++-
+ 1 files changed, 166 insertions(+), 1 deletions(-)
 
-2011/3/8 Marek Szyprowski <m.szyprowski@samsung.com>:
-> Hello,
->
-> On Tuesday, March 08, 2011 8:29 AM Kukjin Kim wrote:
->
->> Hello,
->>
->> There are comments for your System MMU driver below.
->
-> Please take into account that this was an initial version of our SYSMMU
-> driver to start the discussion, so there were a few minor problems left.
-> Thanks for pointing them out btw. :)
->
->
->> It's good that System MMU has functionality of mapping but System MMU have
->> to use other mapping of virtual memory allocator.
->
-you mean that other page sizes such as large, small page and so on
-should be supported in mapping also? otherwise use 64k not 4k page?
-
-> Could you elaborate on this? I'm not sure I understand right your problem.
->
-> SYSMMU driver is a low-level driver for the SYSMMU module. The driver should
-> provide all the basic functionality that is (or might be) hardware dependent.
-> Creating a mapping is one of such elementary functionalities. Sysmmu client
-> (let it be videobuf2-s5p-iommu, vcmm, maybe even other driver directly)
-> should not need to know the format of page descriptors or the way they are
-> arranged in the memory. The sysmmu should provide low level functions to create
-> and remove a mapping. Managing a virtual space is something that MIGHT be client
-> dependent and should be left to the client.
->
-> This design allows for different approaches to coexist. Videobuf2-s5p-iommu
-> client will manage the virtual space with gen_alloc framework, while vcmm will
-> use its own methods.
->
-> It would be great if one decide to unify iommu interfaces across the kernel,
-> but this will be a long road. We need to start from something simple (platform
-> private) and working first.
->
->> And would be better to change sysmmu_list to use array of defined in
->> s5p_sysmmu_ip enumeration, so that can get enhancement of memory space
->> usage, speed, and readability of codes.
->
-> Yes, the list can be simplified to an array, but this is really a minor issue.
->
->> TLB replacement policy does not need to use LRU. Of course, current System
->> MMU also needs it. I think, the round robin is enough, because to access
->> memory has no temporal locality and to make LRU need to access to System
->> MMU register one more. The reset value is round robin.
->
-> Well, the best possibility is to allow sysmmu clients to decide which policy
-> should be used. For some devices (I'm thinking of MFC) LRU policy might give
-> a little speedup.
->
->> In the setting of SHARED page table in s5p_sysmmu_control_locked, get the
->> page table base address of ARM core from cp15 register now. But current->mm-
->> >pgd is better for more compatibility.
->
-> Right, this way the pgd table pointer can be acquired in a more system friendly
-> way.
->
->> When it make page table with PRIVATE page table methods, the size of the
->> structure to manage the second page table is quite big. It is much better
->> rather that to make slab with cache size of 1KB.
->
-> Yes, our initial driver uses directly 4KB pages to manage 4 consecutive second
-> page tables. However usually the allocations of client devices will be few but
-> quite large each. So most of pages used to hold second level page tables will
-> be effectively reused.
->
-> You are right however that the approach with a slab with 1KB units will
-> result in code that is cleaner and easier to understand.
->
->> Besides, the page mapping implementation is not safe in your System MMU
->> driver. Because only first one confirms primary page table entry, when it
->> assigns four second page tables consecutively at a time.
->
-> That's a direct result of the 4-second-level-at-once method of allocating
-> second level pages, but this can be cleaned by using 1KB with slab.
->
->> The System MMU driver cannot apply runtime pm by oneself with calling
->> pm_runtime_put_sync(). The reason is because a device with System MMU can
->> on/off power. I think just clock gating is enough. However, I can't find
->> clock enable/disable in your driver.
->
-> Clock is enabled in probe() and disabled in remove(). pm_runtime_get/put_sync()
-> only increases/decreases use count of a respective power domain, so the actual
-> device driver also has to call pm_runtime_get/put. Calling pm_runtime_put_sync()
-> will not shut down the power if the sysmmu client driver has called
-> pm_runtime_get() without pm_runtime_put(). I see no problems here. Could you
-> elaborate your issue?
->
->>
->> By PRIVATE page table method, each system MMU comes to have a page table
->> only for oneself. In this case, the problem is that each MFC System MMU L
->> and R having another page table.
->
-> Yes, true. This is consequence of the MFC hardware design and the fact that
-> it has 2 AXI master interfaces and 2 SYSMMU controllers. Each of them have to
-> be configured separately. Each of them has a separate virtual driver's address
-> space. Such configuration is used by the MFC driver posted in v7 patch series.
->
->> In your System MMU driver, the page size is always 4KB crucially. This says
->> TLB thrashing and produces a result to lose a TLB hit rate. It is a big
->> problem with the device such as rotator which does not do sequential access
->> especially.
->
-> The page size is set to 4KB, because Linux kernel uses 4KB pages by default.
-> Once support for other page size is available in the kernel, then sysmmu can be
-> extended also.
->
->> And the IRQ handler just outputs only a message. It should be implemented
->> in call back function to be able to handle from each device driver.
->
-> This was only for debugging purpose, but you are right that the sysmmu API in
-> this area need to be extended.
->
->> When it sets System MMU in SHARED page table, kernel virtual memory is
->> broken by a method such as s5p_sysmmu_map_area()
->
-> Yes, there should be a check added to prevent messing with ARM pgd in SHARED
-> mode.
->
-> Best regards
-> --
-> Marek Szyprowski
-> Samsung Poland R&D Center
->
->
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
+diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
+index 07860a5..a4fa3d9 100644
+--- a/arch/arm/mach-exynos4/mach-smdkv310.c
++++ b/arch/arm/mach-exynos4/mach-smdkv310.c
+@@ -15,6 +15,11 @@
+ #include <linux/smsc911x.h>
+ #include <linux/io.h>
+ #include <linux/i2c.h>
++#include <linux/platform_device.h>
++#include <linux/regulator/machine.h>
++#include <linux/regulator/max8649.h>
++#include <linux/regulator/fixed.h>
++#include <linux/mfd/wm8994/pdata.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach-types.h>
+@@ -142,9 +147,162 @@ static struct platform_device smdkv310_smsc911x = {
+ 	},
+ };
+ 
++
++#if defined(CONFIG_SND_SOC_WM8994) || defined(CONFIG_SND_SOC_WM8994_MODULE)
++
++#ifdef CONFIG_REGULATOR_WM8994
++static struct regulator_consumer_supply wm8994_fixed_voltage0_supplies[] = {
++	{
++		.dev_name	= "1-001a",
++		.supply		= "AVDD2",
++	}, {
++		.dev_name	= "1-001a",
++		.supply		= "CPVDD",
++	},
++};
++
++static struct regulator_consumer_supply wm8994_fixed_voltage1_supplies[] = {
++	{
++		.dev_name	= "1-001a",
++		.supply		= "SPKVDD1",
++	}, {
++		.dev_name	= "1-001a",
++		.supply		= "SPKVDD2",
++	},
++};
++
++static struct regulator_consumer_supply wm8994_fixed_voltage2_supplies[] = {
++	{
++		.dev_name	= "1-001a",
++		.supply		= "DBVDD",
++	},
++};
++
++static struct regulator_init_data wm8994_fixed_voltage0_init_data = {
++	.constraints = {
++		.always_on = 1,
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(wm8994_fixed_voltage0_supplies),
++	.consumer_supplies	= wm8994_fixed_voltage0_supplies,
++};
++
++static struct regulator_init_data wm8994_fixed_voltage1_init_data = {
++	.constraints = {
++		.always_on = 1,
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(wm8994_fixed_voltage1_supplies),
++	.consumer_supplies	= wm8994_fixed_voltage1_supplies,
++};
++
++static struct regulator_init_data wm8994_fixed_voltage2_init_data = {
++	.constraints = {
++		.always_on = 1,
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(wm8994_fixed_voltage2_supplies),
++	.consumer_supplies	= wm8994_fixed_voltage2_supplies,
++};
++
++static struct fixed_voltage_config wm8994_fixed_voltage0_config = {
++	.supply_name	= "VDD_1.8V",
++	.microvolts	= 1800000,
++	.gpio		= -EINVAL,
++	.init_data	= &wm8994_fixed_voltage0_init_data,
++};
++
++static struct fixed_voltage_config wm8994_fixed_voltage1_config = {
++	.supply_name	= "DC_5V",
++	.microvolts	= 5000000,
++	.gpio		= -EINVAL,
++	.init_data	= &wm8994_fixed_voltage1_init_data,
++};
++
++static struct fixed_voltage_config wm8994_fixed_voltage2_config = {
++	.supply_name	= "VDD_3.3V",
++	.microvolts	= 3300000,
++	.gpio		= -EINVAL,
++	.init_data	= &wm8994_fixed_voltage2_init_data,
++};
++
++static struct platform_device wm8994_fixed_voltage0 = {
++	.name		= "reg-fixed-voltage",
++	.id		= 0,
++	.dev		= {
++		.platform_data	= &wm8994_fixed_voltage0_config,
++	},
++};
++
++static struct platform_device wm8994_fixed_voltage1 = {
++	.name		= "reg-fixed-voltage",
++	.id		= 1,
++	.dev		= {
++		.platform_data	= &wm8994_fixed_voltage1_config,
++	},
++};
++
++static struct platform_device wm8994_fixed_voltage2 = {
++	.name		= "reg-fixed-voltage",
++	.id		= 2,
++	.dev		= {
++		.platform_data	= &wm8994_fixed_voltage2_config,
++	},
++};
++
++static struct regulator_consumer_supply wm8994_avdd1_supply = {
++	.dev_name	= "1-001a",
++	.supply		= "AVDD1",
++};
++
++static struct regulator_consumer_supply wm8994_dcvdd_supply = {
++	.dev_name	= "1-001a",
++	.supply		= "DCVDD",
++};
++
++static struct regulator_init_data wm8994_ldo1_data = {
++	.constraints	= {
++		.name		= "AVDD1",
++	},
++	.num_consumer_supplies	= 1,
++	.consumer_supplies	= &wm8994_avdd1_supply,
++};
++
++static struct regulator_init_data wm8994_ldo2_data = {
++	.constraints	= {
++		.name		= "DCVDD",
++	},
++	.num_consumer_supplies	= 1,
++	.consumer_supplies	= &wm8994_dcvdd_supply,
++};
++#endif
++
++static struct wm8994_pdata wm8994_platform_data = {
++	/* configure gpio1 function: 0x0001(Logic level input/output) */
++	.gpio_defaults[0] = 0x0001,
++	/* configure gpio3/4/5/7 function for AIF2 voice */
++	.gpio_defaults[2] = 0x8100,/*BCLK2 in*/
++	.gpio_defaults[3] = 0x8100,/*LRCLK2 in*/
++	.gpio_defaults[4] = 0x8100,/*DACDAT2 in*/
++	/* configure gpio6 function: 0x0001(Logic level input/output) */
++	.gpio_defaults[5] = 0x0001,
++	.gpio_defaults[6] = 0x0100,/*ADCDAT2 out*/
++#ifdef CONFIG_REGULATOR_WM8994
++	.ldo[0]	= { 0, NULL, &wm8994_ldo1_data },
++	.ldo[1] = { 0, NULL, &wm8994_ldo2_data },
++#endif
++};
++#endif
++
++#ifdef CONFIG_I2C_S3C2410
++#ifdef CONFIG_S3C_DEV_I2C1
+ static struct i2c_board_info i2c_devs1[] __initdata = {
+-	{I2C_BOARD_INFO("wm8994", 0x1a),},
++#if defined(CONFIG_SND_SOC_WM8994) || defined(CONFIG_SND_SOC_WM8994_MODULE)
++	{
++		I2C_BOARD_INFO("wm8994", 0x1a),
++		.platform_data	= &wm8994_platform_data,
++	},
++#endif
+ };
++#endif
++#endif
+ 
+ static struct platform_device *smdkv310_devices[] __initdata = {
+ 	&s3c_device_hsmmc0,
+@@ -158,6 +316,13 @@ static struct platform_device *smdkv310_devices[] __initdata = {
+ 	&exynos4_device_i2s0,
+ 	&exynos4_device_pd[PD_MFC],
+ 	&exynos4_device_pd[PD_G3D],
++#if (defined(CONFIG_SND_SOC_WM8994) || \
++		defined(CONFIG_SND_SOC_WM8994_MODULE)) && \
++		defined(CONFIG_REGULATOR_WM8994)
++	&wm8994_fixed_voltage0,
++	&wm8994_fixed_voltage1,
++	&wm8994_fixed_voltage2,
++#endif
+ 	&exynos4_device_pd[PD_LCD0],
+ 	&exynos4_device_pd[PD_LCD1],
+ 	&exynos4_device_pd[PD_CAM],
+-- 
+1.7.1
