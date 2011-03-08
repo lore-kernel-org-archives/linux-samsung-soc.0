@@ -1,77 +1,80 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 0/2] ARM: EXYNOS4: Enhancement of System MMU
-Date: Tue, 08 Mar 2011 15:16:11 +0100
-Message-ID: <000701cbdd9b$634c3840$29e4a8c0$%szyprowski@samsung.com>
-References: <1299460768-4077-1-git-send-email-pullip.cho@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [GIT PULL FOR 2.6.39] s5p-fimc driver and videobuf2 fixes
+Date: Tue, 08 Mar 2011 17:36:31 +0100
+Message-ID: <4D765B0F.8090803@samsung.com>
+References: <4D70C495.5000200@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:19974 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754370Ab1CHOQ1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Mar 2011 09:16:27 -0500
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LHQ000EASZBY930@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 08 Mar 2011 23:16:23 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LHQ00G67SZ0LA@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 08 Mar 2011 23:16:23 +0900 (KST)
-In-reply-to: <1299460768-4077-1-git-send-email-pullip.cho@samsung.com>
-Content-language: pl
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <4D70C495.5000200@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'KyongHo Cho' <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com, =?ks_c_5601-1987?B?J7TrwM6x4ic=?= <inki.dae@samsung.com>, =?ks_c_5601-1987?B?J7Ctuc6x1Cc=?= <mk7.kang@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 
-Hello,
+Mauro,
 
-On Monday, March 07, 2011 2:19 AM KyongHo Cho wrote:
+please ignore the below pull request. I've found some issues in s5p-fimc
+patches so I want to fix this and resent the pull request. 
+My apologies for the hassle.
 
-> This patch includes the following enhancements for System MMU:
-> - Enhanced readability
-> - Removal of unused data structures or their members
-> - Simplified function definitions
-> - Corrections of some logical errors
-> - Full compliance with Linux coding style
-> - Simpler way of registering callback functions of System MMU faults
-> - Add clock gating for System MMU
+Regards,
+Sylwester
 
-Thanks for updating the driver, I have however some comments.
+On 03/04/2011 11:53 AM, Sylwester Nawrocki wrote:
+> Hi Mauro,
+> 
+> please pull the following change set, it's a couple of s5p-fimc driver
+> fixes and updates after conversion to videobuf2. There are also two small
+> corrections for the videobuf2 and documentation for NV12MT format.
+> 
+> 
+> The following changes since commit 548b491f5a3221e26c0b08dece18fdc62930fe5e:
+> 
+>   [media] media/radio/wl1273: fix build errors (2011-02-27 21:36:52 -0300)
+> 
+> are available in the git repository at:
+>   git://git.infradead.org/users/kmpark/linux-2.6-samsung s5p_fimc_for_mauro
+> 
+> Andrzej Pietrasiewicz (1):
+>       v4l2: vb2-dma-sg: fix memory leak
+> 
+> Kamil Debski (1):
+>       v4l: Documentation for the NV12MT format
+> 
+> Marek Szyprowski (1):
+>       v4l2: vb2: fix queue reallocation and REQBUFS(0) case
+> 
+> Sungchun Kang (1):
+>       s5p-fimc: fix ISR and buffer handling for fimc-capture
+> 
+> Sylwester Nawrocki (6):
+>       s5p-fimc: Prevent oops when i2c adapter is not available
+>       s5p-fimc: Prevent hanging on device close and fix the locking
+>       s5p-fimc: Allow defining number of sensors at runtime
+>       s5p-fimc: Add a platform data entry for MIPI-CSI data alignment
+>       s5p-fimc: Use dynamic debug
+>       s5p-fimc: Fix G_FMT ioctl handler
+> 
+>  Documentation/DocBook/media-entities.tmpl    |    1 +
+>  Documentation/DocBook/v4l/nv12mt.gif         |  Bin 0 -> 2108 bytes
+>  Documentation/DocBook/v4l/nv12mt_example.gif |  Bin 0 -> 6858 bytes
+>  Documentation/DocBook/v4l/pixfmt-nv12mt.xml  |   74 +++++++
+>  Documentation/DocBook/v4l/pixfmt.xml         |    1 +
+>  drivers/media/video/s5p-fimc/fimc-capture.c  |   99 ++++------
+>  drivers/media/video/s5p-fimc/fimc-core.c     |  266 ++++++++++++++------------
+>  drivers/media/video/s5p-fimc/fimc-core.h     |   50 ++++--
+>  drivers/media/video/s5p-fimc/fimc-reg.c      |    6 +-
+>  drivers/media/video/videobuf2-core.c         |    9 +-
+>  drivers/media/video/videobuf2-dma-sg.c       |    2 +
+>  include/media/s5p_fimc.h                     |    9 +-
+>  12 files changed, 307 insertions(+), 210 deletions(-)
+>  create mode 100644 Documentation/DocBook/v4l/nv12mt.gif
+>  create mode 100644 Documentation/DocBook/v4l/nv12mt_example.gif
+>  create mode 100644 Documentation/DocBook/v4l/pixfmt-nv12mt.xml
+> 
 
-EXYNOS4 platform has total of 16 sysmmu blocks. Each of them is exactly the
-same - each has a register region, an interrupt and clock. However your driver
-uses a single platform device for all 16 units and a large resource array (see
-arch/arm/mach-exynos4). This approach also complicates the clock management 
-(you need to create custom names for sysmmu clocks, this will cause a lot of
-problems in the future update to clkdev!). This also heavily complicates the
-driver (you need the arrays of all the resources all over the driver) and is
-against the Linux driver model. In the proper model one should create a
-platform driver for a single module and instantiate it many times for each hw
-module found in the system. For a reference please take a look at the sysmmu
-Andrzej has developed in parallel to You: 
-http://www.mail-archive.com/linux-media@vger.kernel.org/msg28871.html
-
-For a reference please also check the Samsung Power Domains driver 
-(arch/arm/mach-exynos4/dev-pd.c and arch/arm/plat-s5p/pd.c).
-
-The second problem I've noticed is the s5p_sysmmu_set_tablebase_pgd() call. 
-In my opinion it simplifies the sysmmu api too much. This function assumes
-that the sysmmu client (i.e. a multimedia device driver or videobuf2-allocator
-or vcmm) has a knowledge about the pgd/pte descriptors format. As you know the
-format of pgd/pte descriptors is hardware dependent (it may even change in the
-future version of SoCs), so constructing the pgd and pte tables is a low-level
-operation that should be performed by sysmmu driver. Keeping this call in the
-current form results in a requirement that each sysmmu client MUST know the
-hardware details of the sysmmu module. In my opinion SysMMU client should only
-manage the virtual space and have the ability to add or remove a mapping for
-particular range of pages/memory on particular sysmmu chip. 
-
-Best regards
---
-Marek Szyprowski
+-- 
+Sylwester Nawrocki
 Samsung Poland R&D Center
