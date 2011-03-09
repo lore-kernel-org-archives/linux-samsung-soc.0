@@ -1,71 +1,133 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 0/3] ARM: S5P: Add D-PHY control platform helpers for
-	MIPI-CSIS/DSIM drivers
-Date: Wed, 09 Mar 2011 08:05:29 +0900
-Message-ID: <042301cbdde5$54047a60$fc0d6f20$%kim@samsung.com>
-References: <01a701cbd95d$9873c160$c95b4420$%kim@samsung.com>
- <1299179061-30959-1-git-send-email-s.nawrocki@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+From: Jaecheol Lee <jc.lee@samsung.com>
+Subject: [PATCH] ARM: EXYNOS4: CPUIDLE Support
+Date: Wed,  9 Mar 2011 10:48:22 +0900
+Message-ID: <1299635302-27759-1-git-send-email-jc.lee@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:12608 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755891Ab1CHXFf (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:48376 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751152Ab1CICTe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Mar 2011 18:05:35 -0500
-Received: from epmmp1 (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LHR007B6HH9OO00@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 09 Mar 2011 08:05:33 +0900 (KST)
-Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LHR00L8RHH9WY@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 09 Mar 2011 08:05:33 +0900 (KST)
-In-reply-to: <1299179061-30959-1-git-send-email-s.nawrocki@samsung.com>
-Content-language: ko
+	Tue, 8 Mar 2011 21:19:34 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, inki.dae@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, Jaecheol Lee <jc.lee@samsung.com>
 
-Sylwester Nawrocki wrote:
-> 
-> Hello,
-> 
-> the following patch series adds the platform helpers for MIPI-CSIS and
-MIPI-
-> DSIM
-> drivers to control their corresponding D-PHYs.
-> MIPI-DSIM driver should use its D-PHY control function from
-plat-s5p/setup-
-> mipi.c.
-> 
-> Changes since v1:
-> - created common setup-mipi.c under plat-s5p for all S5P/EXYNOS4* SoCs
-> 
-> 
-> The patch series contains:
-> [PATCH v2 1/3] ARM: S5P: Rename MIPI-CSIS driver header and update
-Copyright
-> [PATCH v2 2/3] ARM: S5P: Extend MIPI-CSIS platform_data with the PHY
-control
-> callback
-> [PATCH v2 3/3] ARM: S5P: Add support for common MIPI CSIS/DSIM D-PHY
-control
-> 
-Hi Sylwester,
+This patch supports cpuidle framework for EXYNOS4210. Currently,
+Only one idle state is possible to use, but more idle states can
+be added following by this patch.
 
-Basically, I agree with your current approach :)
+Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
+---
+ arch/arm/mach-exynos4/Makefile  |    1 +
+ arch/arm/mach-exynos4/cpuidle.c |   87 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 88 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-exynos4/cpuidle.c
 
-Will review it today and re-think other method about your ifdef(EXYNOS4) so
-that can support single kernel later.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
+index 461ae57..bf206fa 100644
+--- a/arch/arm/mach-exynos4/Makefile
++++ b/arch/arm/mach-exynos4/Makefile
+@@ -16,6 +16,7 @@ obj-$(CONFIG_CPU_EXYNOS4210)	+= cpu.o init.o clock.o irq-combiner.o
+ obj-$(CONFIG_CPU_EXYNOS4210)	+= cpu.o init.o clock.o irq-combiner.o
+ obj-$(CONFIG_CPU_EXYNOS4210)	+= setup-i2c0.o time.o gpiolib.o irq-eint.o dma.o
+ obj-$(CONFIG_CPU_FREQ)		+= cpufreq.o
++obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
+ 
+ obj-$(CONFIG_SMP)		+= platsmp.o headsmp.o
+ obj-$(CONFIG_LOCAL_TIMERS)	+= localtimer.o
+diff --git a/arch/arm/mach-exynos4/cpuidle.c b/arch/arm/mach-exynos4/cpuidle.c
+new file mode 100644
+index 0000000..a543a18
+--- /dev/null
++++ b/arch/arm/mach-exynos4/cpuidle.c
+@@ -0,0 +1,87 @@
++/* linux/arch/arm/mach-exynos4/cpuidle.c
++ *
++ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/cpuidle.h>
++#include <linux/io.h>
++
++#include <asm/proc-fns.h>
++
++static int exynos4_enter_idle(struct cpuidle_device *dev,
++			      struct cpuidle_state *state);
++
++static struct cpuidle_state exynos4_cpuidle_set[] = {
++	[0] = {
++		.enter			= exynos4_enter_idle,
++		.exit_latency		= 1,
++		.target_residency	= 100000,
++		.flags			= CPUIDLE_FLAG_TIME_VALID,
++		.name			= "IDLE",
++		.desc			= "ARM clock gating(WFI)",
++	},
++};
++
++static DEFINE_PER_CPU(struct cpuidle_device, exynos4_cpuidle_device);
++
++static struct cpuidle_driver exynos4_idle_driver = {
++	.name		= "exynos4_idle",
++	.owner		= THIS_MODULE,
++};
++
++static int exynos4_enter_idle(struct cpuidle_device *dev,
++			      struct cpuidle_state *state)
++{
++	struct timeval before, after;
++	int idle_time;
++
++	local_irq_disable();
++	do_gettimeofday(&before);
++
++	cpu_do_idle();
++
++	do_gettimeofday(&after);
++	local_irq_enable();
++	idle_time = (after.tv_sec - before.tv_sec) * USEC_PER_SEC +
++		    (after.tv_usec - before.tv_usec);
++
++	return idle_time;
++}
++
++static int __init exynos4_init_cpuidle(void)
++{
++	int i, max_cpuidle_state, cpu_id;
++	struct cpuidle_device *device;
++
++	cpuidle_register_driver(&exynos4_idle_driver);
++
++	for_each_cpu(cpu_id, cpu_online_mask) {
++		device = &per_cpu(exynos4_cpuidle_device, cpu_id);
++		device->cpu = cpu_id;
++
++		device->state_count = (sizeof(exynos4_cpuidle_set) /
++					       sizeof(struct cpuidle_state));
++
++		max_cpuidle_state = device->state_count;
++
++		for (i = 0; i < max_cpuidle_state; i++) {
++			memcpy(&device->states[i], &exynos4_cpuidle_set[i],
++					sizeof(struct cpuidle_state));
++		}
++
++		if (cpuidle_register_device(device)) {
++			printk(KERN_ERR "CPUidle register device failed\n,");
++			return -EIO;
++		}
++	}
++	return 0;
++}
++
++device_initcall(exynos4_init_cpuidle);
+-- 
+1.7.1
