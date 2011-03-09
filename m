@@ -1,536 +1,254 @@
-From: Jamie Iles <jamie@jamieiles.com>
-Subject: Re: [PATCH v4 1/3] ARM: S5P: Add s5p_timer support for HRT
-Date: Wed, 9 Mar 2011 14:10:16 +0000
-Message-ID: <20110309141016.GB2737@pulham.picochip.com>
-References: <1299636813-4869-1-git-send-email-sbkim73@samsung.com>
- <1299636813-4869-2-git-send-email-sbkim73@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v2] ARM: S5P: Add platform helpers for camera GPIO	configuration
+Date: Wed, 09 Mar 2011 16:17:39 +0100
+Message-ID: <1299683859-9242-1-git-send-email-s.nawrocki@samsung.com>
+References: <01c701cbd975$c7dcd2d0$57967870$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:51921 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932486Ab1CIOKX (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:30990 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756961Ab1CIPRy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Mar 2011 09:10:23 -0500
-Received: by wya21 with SMTP id 21so453484wya.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Mar 2011 06:10:21 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1299636813-4869-2-git-send-email-sbkim73@samsung.com>
+	Wed, 9 Mar 2011 10:17:54 -0500
+Received: from spt2.w1.samsung.com ([210.118.77.14]) by mailout4.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0LHS00L1MQHRYP80@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 09 Mar 2011 15:17:52 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LHS00A82QHQZ7@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 09 Mar 2011 15:17:51 +0000 (GMT)
+In-reply-to: <01c701cbd975$c7dcd2d0$57967870$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com
 
-Hi,
+Add functions for configuration of the parallel camera
+bus pins on S5PV210 and Exynos4 SoC.
 
-A couple of minor comments inline.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
 
-Jamie
+Hello,
 
-On Wed, Mar 09, 2011 at 11:13:31AM +0900, Sangbeom Kim wrote:
-> This patch adds support HR-Timer(High Resolution Timer) and dynamic
-> tick system for S5P SoCs. There are many clock sources for HR-Timer
-> on S5P SoCs. The PWM timer, RTC, System Timer, and MCT can be used
-> for clock source.
-> This patch can only support PWM timer for clocksource of
-> S5P64x0 and S5PV210.
-> 
-> Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
-> ---
->  arch/arm/plat-s5p/Makefile                |    1 +
->  arch/arm/plat-s5p/include/plat/s5p-time.h |   40 +++
->  arch/arm/plat-s5p/s5p-time.c              |  449 +++++++++++++++++++++++++++++
->  3 files changed, 490 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/plat-s5p/include/plat/s5p-time.h
->  create mode 100644 arch/arm/plat-s5p/s5p-time.c
-> 
-> diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-> index 4bd5cf9..588b9b4 100644
-> --- a/arch/arm/plat-s5p/Makefile
-> +++ b/arch/arm/plat-s5p/Makefile
-> @@ -22,6 +22,7 @@ obj-$(CONFIG_S5P_GPIO_INT)	+= irq-gpioint.o
->  obj-$(CONFIG_S5P_SYSTEM_MMU)	+= sysmmu.o
->  obj-$(CONFIG_PM)		+= pm.o
->  obj-$(CONFIG_PM)		+= irq-pm.o
-> +obj-$(CONFIG_S5P_HRT) 		+= s5p-time.o
->  
->  # devices
->  
-> diff --git a/arch/arm/plat-s5p/include/plat/s5p-time.h b/arch/arm/plat-s5p/include/plat/s5p-time.h
-> new file mode 100644
-> index 0000000..575e881
-> --- /dev/null
-> +++ b/arch/arm/plat-s5p/include/plat/s5p-time.h
-> @@ -0,0 +1,40 @@
-> +/* linux/arch/arm/plat-s5p/include/plat/s5p-time.h
-> + *
-> + * Copyright 2011 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * Header file for s5p time support
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#ifndef __ASM_PLAT_S5P_TIME_H
-> +#define __ASM_PLAT_S5P_TIME_H __FILE__
-> +
-> +/* S5P HR-Timer Clock mode */
-> +enum s5p_timer_mode {
-> +	S5P_PWM0,
-> +	S5P_PWM1,
-> +	S5P_PWM2,
-> +	S5P_PWM3,
-> +	S5P_PWM4,
-> +};
-> +
-> +struct s5p_timer_source {
-> +	unsigned int event_id;
-> +	unsigned int source_id;
-> +};
-> +
-> +/* Be able to sleep for atleast 4 seconds (usually more) */
-> +#define S5PTIMER_MIN_RANGE	4
-> +
-> +#define TCNT_MAX		0xffffffff
-> +#define NON_PERIODIC		0
-> +#define PERIODIC		1
-> +
-> +extern void __init s5p_set_timer_source(enum s5p_timer_mode event,
-> +					enum s5p_timer_mode source);
-> +extern	struct sys_timer s5p_timer;
-> +#endif /* __ASM_PLAT_S5P_TIME_H */
-> diff --git a/arch/arm/plat-s5p/s5p-time.c b/arch/arm/plat-s5p/s5p-time.c
-> new file mode 100644
-> index 0000000..62c079c
-> --- /dev/null
-> +++ b/arch/arm/plat-s5p/s5p-time.c
-> @@ -0,0 +1,449 @@
-> +/* linux/arch/arm/plat-s5p/s5p-time.c
-> + *
-> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * S5P - Common hr-timer support
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#include <linux/sched.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/err.h>
-> +#include <linux/clk.h>
-> +#include <linux/clockchips.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include <asm/smp_twd.h>
-> +#include <asm/mach/time.h>
-> +#include <asm/mach/arch.h>
-> +#include <asm/mach/map.h>
-> +#include <asm/sched_clock.h>
-> +
-> +#include <mach/map.h>
-> +#include <plat/devs.h>
-> +#include <plat/regs-timer.h>
-> +#include <plat/s5p-time.h>
-> +
-> +static struct clk *tin_event;
-> +static struct clk *tin_source;
-> +static struct clk *tdiv_event;
-> +static struct clk *tdiv_source;
-> +static struct clk *timerclk;
-> +static struct s5p_timer_source timer_source;
-> +static unsigned long clock_count_per_tick;
-> +static void s5p_timer_resume(void);
-> +
-> +static void s5p_time_stop(enum s5p_timer_mode mode)
-> +{
-> +	unsigned long tcon;
-> +
-> +	tcon = __raw_readl(S3C2410_TCON);
-> +
-> +	switch (mode) {
-> +	case S5P_PWM0:
-> +		tcon &= ~S3C2410_TCON_T0START;
-> +		break;
-> +
-> +	case S5P_PWM1:
-> +		tcon &= ~S3C2410_TCON_T1START;
-> +		break;
-> +
-> +	case S5P_PWM2:
-> +		tcon &= ~S3C2410_TCON_T2START;
-> +		break;
-> +
-> +	case S5P_PWM3:
-> +		tcon &= ~S3C2410_TCON_T3START;
-> +		break;
-> +
-> +	case S5P_PWM4:
-> +		tcon &= ~S3C2410_TCON_T4START;
-> +		break;
-> +
-> +	default:
-> +		printk(KERN_ERR "Invalid Timer %d\n", mode);
-> +		break;
-> +	}
-> +	__raw_writel(tcon, S3C2410_TCON);
-> +}
-> +
-> +static void s5p_time_setup(enum s5p_timer_mode mode, unsigned long tcnt)
-> +{
-> +	unsigned long tcon;
-> +
-> +	tcon = __raw_readl(S3C2410_TCON);
-> +
-> +	tcnt--;
-> +
-> +	switch (mode) {
-> +	case S5P_PWM0:
-> +		tcon &= ~(0x0f << 0);
-> +		tcon |= S3C2410_TCON_T0MANUALUPD;
-> +		break;
-> +
-> +	case S5P_PWM1:
-> +		tcon &= ~(0x0f << 8);
-> +		tcon |= S3C2410_TCON_T1MANUALUPD;
-> +		break;
-> +
-> +	case S5P_PWM2:
-> +		tcon &= ~(0x0f << 12);
-> +		tcon |= S3C2410_TCON_T2MANUALUPD;
-> +		break;
-> +
-> +	case S5P_PWM3:
-> +		tcon &= ~(0x0f << 16);
-> +		tcon |= S3C2410_TCON_T3MANUALUPD;
-> +		break;
-> +
-> +	case S5P_PWM4:
-> +		tcon &= ~(0x07 << 20);
-> +		tcon |= S3C2410_TCON_T4MANUALUPD;
-> +		break;
-> +
-> +	default:
-> +		printk(KERN_ERR "Invalid Timer %d\n", mode);
-> +		break;
-> +	}
-> +
-> +	__raw_writel(tcnt, S3C2410_TCNTB(mode));
-> +	__raw_writel(tcnt, S3C2410_TCMPB(mode));
-> +	__raw_writel(tcon, S3C2410_TCON);
-> +}
-> +
-> +static void s5p_time_start(enum s5p_timer_mode mode, bool periodic)
-> +{
-> +	unsigned long tcon;
-> +
-> +	tcon  = __raw_readl(S3C2410_TCON);
-> +
-> +	switch (mode) {
-> +	case S5P_PWM0:
-> +		tcon |= S3C2410_TCON_T0START;
-> +		tcon &= ~S3C2410_TCON_T0MANUALUPD;
-> +
-> +		if (periodic)
-> +			tcon |= S3C2410_TCON_T0RELOAD;
-> +		else
-> +			tcon &= ~S3C2410_TCON_T0RELOAD;
-> +		break;
-> +
-> +	case S5P_PWM1:
-> +		tcon |= S3C2410_TCON_T1START;
-> +		tcon &= ~S3C2410_TCON_T1MANUALUPD;
-> +
-> +		if (periodic)
-> +			tcon |= S3C2410_TCON_T1RELOAD;
-> +		else
-> +			tcon &= ~S3C2410_TCON_T1RELOAD;
-> +		break;
-> +
-> +	case S5P_PWM2:
-> +		tcon |= S3C2410_TCON_T2START;
-> +		tcon &= ~S3C2410_TCON_T2MANUALUPD;
-> +
-> +		if (periodic)
-> +			tcon |= S3C2410_TCON_T2RELOAD;
-> +		else
-> +			tcon &= ~S3C2410_TCON_T2RELOAD;
-> +		break;
-> +
-> +	case S5P_PWM3:
-> +		tcon |= S3C2410_TCON_T3START;
-> +		tcon &= ~S3C2410_TCON_T3MANUALUPD;
-> +
-> +		if (periodic)
-> +			tcon |= S3C2410_TCON_T3RELOAD;
-> +		else
-> +			tcon &= ~S3C2410_TCON_T3RELOAD;
-> +		break;
-> +
-> +	case S5P_PWM4:
-> +		tcon |= S3C2410_TCON_T4START;
-> +		tcon &= ~S3C2410_TCON_T4MANUALUPD;
-> +
-> +		if (periodic)
-> +			tcon |= S3C2410_TCON_T4RELOAD;
-> +		else
-> +			tcon &= ~S3C2410_TCON_T4RELOAD;
-> +		break;
-> +
-> +	default:
-> +		printk(KERN_ERR "Invalid Timer %d\n", mode);
-> +		break;
-> +	}
-> +	__raw_writel(tcon, S3C2410_TCON);
-> +}
-> +
-> +static int s5p_set_next_event(unsigned long cycles,
-> +				struct clock_event_device *evt)
-> +{
-> +	s5p_time_setup(timer_source.event_id, cycles);
-> +	s5p_time_start(timer_source.event_id, NON_PERIODIC);
-> +
-> +	return 0;
-> +}
-> +
-> +static void s5p_set_mode(enum clock_event_mode mode,
-> +				struct clock_event_device *evt)
-> +{
-> +	s5p_time_stop(timer_source.event_id);
-> +
-> +	switch (mode) {
-> +	case CLOCK_EVT_MODE_PERIODIC:
-> +		s5p_time_setup(timer_source.event_id, clock_count_per_tick);
-> +		s5p_time_start(timer_source.event_id, PERIODIC);
-> +		break;
-> +
-> +	case CLOCK_EVT_MODE_ONESHOT:
-> +		break;
-> +
-> +	case CLOCK_EVT_MODE_UNUSED:
-> +	case CLOCK_EVT_MODE_SHUTDOWN:
-> +		break;
-> +
-> +	case CLOCK_EVT_MODE_RESUME:
-> +		s5p_timer_resume();
-> +		break;
-> +	}
-> +}
-> +
-> +static void s5p_timer_resume(void)
-> +{
-> +	/* event timer restart */
-> +	s5p_time_setup(timer_source.event_id, clock_count_per_tick);
-> +	s5p_time_start(timer_source.event_id, PERIODIC);
-> +
-> +	/* source timer restart */
-> +	s5p_time_setup(timer_source.source_id, TCNT_MAX);
-> +	s5p_time_start(timer_source.source_id, PERIODIC);
-> +}
-> +
-> +void __init s5p_set_timer_source(enum s5p_timer_mode event,
-> +				 enum s5p_timer_mode source)
-> +{
-> +	s3c_device_timer[event].dev.bus = &platform_bus_type;
-> +	s3c_device_timer[source].dev.bus = &platform_bus_type;
-> +
-> +	timer_source.event_id = event;
-> +	timer_source.source_id = source;
-> +}
-> +
-> +static struct clock_event_device time_event_device = {
-> +	.name		= "s5p_event_timer",
-> +	.features	= CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
-> +	.rating		= 200,
-> +	.shift		= 32,
+this is a corrected version of platform helpers for the peripheral
+parallel camera bus configuration in S5PV210 and Exynos4 SoCs.
 
-You are using clockevents_calc_mult_shift so you don't need to specify 
-.shift here.
+Changes since v1:
+- Renamed files: camera.h/camport.h, setup-camera.c/setup-fimc.c
+- Replaced "camif" with "fimc" in function and data type names
+- Removed driver strength setup (it turned out than only the clock
+  source pin needed maximum driver strength on the test boards, 
+  so I've moved its configuration to the board code)
 
-> +	.set_next_event	= s5p_set_next_event,
-> +	.set_mode	= s5p_set_mode,
-> +};
-> +
-> +static irqreturn_t s5p_clock_event_isr(int irq, void *dev_id)
-> +{
-> +	struct clock_event_device *evt = dev_id;
-> +
-> +	evt->event_handler(evt);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static struct irqaction s5p_clock_event_irq = {
-> +	.name		= "s5p_time_irq",
-> +	.flags		= IRQF_DISABLED | IRQF_TIMER | IRQF_IRQPOLL,
-> +	.handler	= s5p_clock_event_isr,
-> +	.dev_id		= &time_event_device,
-> +};
-> +
-> +static void __init s5p_clockevent_init(void)
-> +{
-> +	unsigned long pclk;
-> +	unsigned long clock_rate;
-> +	unsigned int irq_number;
-> +	struct clk *tscaler;
-> +
-> +	pclk = clk_get_rate(timerclk);
-> +
-> +	tscaler = clk_get_parent(tdiv_event);
-> +
-> +	clk_set_rate(tscaler, pclk / 2);
-> +	clk_set_rate(tdiv_event, pclk / 2);
-> +	clk_set_parent(tin_event, tdiv_event);
-> +
-> +	clock_rate = clk_get_rate(tin_event);
-> +	clock_count_per_tick = clock_rate / HZ;
-> +
-> +	clockevents_calc_mult_shift(&time_event_device,
-> +				    clock_rate, S5PTIMER_MIN_RANGE);
-> +	time_event_device.max_delta_ns =
-> +		clockevent_delta2ns(-1, &time_event_device);
-> +	time_event_device.min_delta_ns =
-> +		clockevent_delta2ns(1, &time_event_device);
-> +
-> +	time_event_device.cpumask = cpumask_of(0);
-> +	clockevents_register_device(&time_event_device);
-> +
-> +	irq_number = timer_source.event_id + IRQ_TIMER0;
-> +	setup_irq(irq_number, &s5p_clock_event_irq);
-> +}
-> +
-> +static cycle_t s5p_timer_read(struct clocksource *cs)
-> +{
-> +	unsigned long offset = 0;
-> +
-> +	switch (timer_source.source_id) {
-> +	case S5P_PWM0:
-> +	case S5P_PWM1:
-> +	case S5P_PWM2:
-> +	case S5P_PWM3:
-> +		offset = (timer_source.source_id * 0x0c) + 0x14;
-> +		break;
-> +
-> +	case S5P_PWM4:
-> +		offset = 0x40;
-> +		break;
-> +
-> +	default:
-> +		printk(KERN_ERR "Invalid Timer %d\n", timer_source.source_id);
-> +		return 0;
-> +	}
-> +
-> +	return (cycle_t) ~__raw_readl(S3C_TIMERREG(offset));
-> +}
-> +
-> +/*
-> + * Override the global weak sched_clock symbol with this
-> + * local implementation which uses the clocksource to get some
-> + * better resolution when scheduling the kernel. We accept that
-> + * this wraps around for now, since it is just a relative time
-> + * stamp. (Inspired by U300 implementation.)
-> + */
-> +static DEFINE_CLOCK_DATA(cd);
-> +
-> +unsigned long long notrace sched_clock(void)
-> +{
-> +	u32 cyc;
-> +	unsigned long offset = 0;
-> +
-> +	switch (timer_source.source_id) {
-> +	case S5P_PWM0:
-> +	case S5P_PWM1:
-> +	case S5P_PWM2:
-> +	case S5P_PWM3:
-> +		offset = (timer_source.source_id * 0x0c) + 0x14;
-> +		break;
-> +
-> +	case S5P_PWM4:
-> +		offset = 0x40;
-> +		break;
-> +
-> +	default:
-> +		printk(KERN_ERR "Invalid Timer %d\n", timer_source.source_id);
-> +		return 0;
-> +	}
-> +
-> +	cyc = ~__raw_readl(S3C_TIMERREG(offset));
-> +	return cyc_to_sched_clock(&cd, cyc, (u32)~0);
-> +}
-> +
-> +static void notrace s5p_update_sched_clock(void)
-> +{
-> +	u32 cyc;
-> +	unsigned long offset = 0;
-> +
-> +	switch (timer_source.source_id) {
-> +	case S5P_PWM0:
-> +	case S5P_PWM1:
-> +	case S5P_PWM2:
-> +	case S5P_PWM3:
-> +		offset = (timer_source.source_id * 0x0c) + 0x14;
-> +		break;
-> +
-> +	case S5P_PWM4:
-> +		offset = 0x40;
-> +		break;
-> +
-> +	default:
-> +		printk(KERN_ERR "Invalid Timer %d\n", timer_source.source_id);
-> +	}
-> +
-> +	cyc = ~__raw_readl(S3C_TIMERREG(offset));
-> +	update_sched_clock(&cd, cyc, (u32)~0);
-> +}
-> +
-> +struct clocksource time_clocksource = {
-> +	.name		= "s5p_clocksource_timer",
-> +	.rating		= 250,
-> +	.read		= s5p_timer_read,
-> +	.mask		= CLOCKSOURCE_MASK(32),
-> +	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
-> +};
-> +
-> +static void __init s5p_clocksource_init(void)
-> +{
-> +	unsigned long pclk;
-> +	unsigned long clock_rate;
-> +
-> +	pclk = clk_get_rate(timerclk);
-> +
-> +	clk_set_rate(tdiv_source, pclk / 2);
-> +	clk_set_parent(tin_source, tdiv_source);
-> +
-> +	clock_rate = clk_get_rate(tin_source);
-> +
-> +	init_sched_clock(&cd, s5p_update_sched_clock, 32, clock_rate);
-> +
-> +	s5p_time_setup(timer_source.source_id, TCNT_MAX);
-> +	s5p_time_start(timer_source.source_id, PERIODIC);
-> +
-> +	if (clocksource_register_hz(&time_clocksource, clock_rate))
-> +		panic("%s: can't register clocksource\n", time_clocksource.name);
-> +}
-> +
-> +static void __init s5p_timer_resources(void)
-> +{
-> +
-> +	unsigned long event_id = timer_source.event_id;
-> +	unsigned long source_id = timer_source.source_id;
-> +
-> +	timerclk = clk_get(NULL, "timers");
-> +	if (IS_ERR(timerclk))
-> +		panic("failed to get timers clock for timer");
-> +
-> +	clk_enable(timerclk);
 
-clk_enable() can fail, should you be checking the return here and the 
-other clk_enable() calls?
+Regards,
+Sylwester Nawrocki
+---
+ arch/arm/mach-exynos4/Kconfig            |    5 +++
+ arch/arm/mach-exynos4/Makefile           |    1 +
+ arch/arm/mach-exynos4/setup-fimc.c       |   44 ++++++++++++++++++++++++++++++
+ arch/arm/mach-s5pv210/Kconfig            |    5 +++
+ arch/arm/mach-s5pv210/Makefile           |    1 +
+ arch/arm/mach-s5pv210/setup-fimc.c       |   43 +++++++++++++++++++++++++++++
+ arch/arm/plat-s5p/include/plat/camport.h |   28 +++++++++++++++++++
+ 7 files changed, 127 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-exynos4/setup-fimc.c
+ create mode 100644 arch/arm/mach-s5pv210/setup-fimc.c
+ create mode 100644 arch/arm/plat-s5p/include/plat/camport.h
 
-Jamie
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index ad03840..cfe8c33 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -71,6 +71,11 @@ config EXYNOS4_SETUP_SDHCI_GPIO
+ 	help
+ 	  Common setup code for SDHCI gpio.
+ 
++config EXYNOS4_SETUP_FIMC
++	bool
++	help
++	  Common setup code for the camera interfaces.
++
+ # machine support
+ 
+ menu "EXYNOS4 Machines"
+diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
+index 0558235..57770d6 100644
+--- a/arch/arm/mach-exynos4/Makefile
++++ b/arch/arm/mach-exynos4/Makefile
+@@ -32,6 +32,7 @@ obj-y					+= dev-audio.o
+ obj-$(CONFIG_EXYNOS4_DEV_PD)		+= dev-pd.o
+ obj-$(CONFIG_EXYNOS4_DEV_SYSMMU)	+= dev-sysmmu.o
+ 
++obj-$(CONFIG_EXYNOS4_SETUP_FIMC)	+= setup-fimc.o
+ obj-$(CONFIG_EXYNOS4_SETUP_I2C1)	+= setup-i2c1.o
+ obj-$(CONFIG_EXYNOS4_SETUP_I2C2)	+= setup-i2c2.o
+ obj-$(CONFIG_EXYNOS4_SETUP_I2C3)	+= setup-i2c3.o
+diff --git a/arch/arm/mach-exynos4/setup-fimc.c b/arch/arm/mach-exynos4/setup-fimc.c
+new file mode 100644
+index 0000000..6a45078
+--- /dev/null
++++ b/arch/arm/mach-exynos4/setup-fimc.c
+@@ -0,0 +1,44 @@
++/*
++ * Copyright (C) 2011 Samsung Electronics Co., Ltd.
++ *
++ * Exynos4 camera interface GPIO configuration.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/gpio.h>
++#include <plat/gpio-cfg.h>
++#include <plat/camport.h>
++
++int exynos4_fimc_setup_gpio(enum s5p_camport_id id)
++{
++	u32 gpio8, gpio5;
++	u32 sfn;
++	int ret;
++
++	switch (id) {
++	case S5P_CAMPORT_A:
++		gpio8 = EXYNOS4_GPJ0(0); /* PCLK, VSYNC, HREF, DATA[0:4] */
++		gpio5 = EXYNOS4_GPJ1(0); /* DATA[5:7], CLKOUT, FIELD */
++		sfn = S3C_GPIO_SFN(2);
++		break;
++
++	case S5P_CAMPORT_B:
++		gpio8 = EXYNOS4_GPE0(0); /* DATA[0:7] */
++		gpio5 = EXYNOS4_GPE1(0); /* PCLK, VSYNC, HREF, CLKOUT, FIELD */
++		sfn = S3C_GPIO_SFN(3);
++		break;
++
++	default:
++		WARN(1, "Wrong camport id: %d\n", id);
++		return -EINVAL;
++	}
++
++	ret = s3c_gpio_cfgall_range(gpio8, 8, sfn, S3C_GPIO_PULL_UP);
++	if (ret)
++		return ret;
++
++	return s3c_gpio_cfgall_range(gpio5, 5, sfn, S3C_GPIO_PULL_UP);
++}
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index 53aabef..3b6d0d4 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -53,6 +53,11 @@ config S5PV210_SETUP_SDHCI_GPIO
+ 	help
+ 	  Common setup code for SDHCI gpio.
+ 
++config S5PV210_SETUP_FIMC
++	bool
++	help
++	  Common setup code for the camera interfaces.
++
+ menu "S5PC110 Machines"
+ 
+ config MACH_AQUILA
+diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
+index ff1a0db..11f1790 100644
+--- a/arch/arm/mach-s5pv210/Makefile
++++ b/arch/arm/mach-s5pv210/Makefile
+@@ -31,6 +31,7 @@ obj-y				+= dev-audio.o
+ obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
+ 
+ obj-$(CONFIG_S5PV210_SETUP_FB_24BPP)	+= setup-fb-24bpp.o
++obj-$(CONFIG_S5PV210_SETUP_FIMC)	+= setup-fimc.o
+ obj-$(CONFIG_S5PV210_SETUP_I2C1) 	+= setup-i2c1.o
+ obj-$(CONFIG_S5PV210_SETUP_I2C2) 	+= setup-i2c2.o
+ obj-$(CONFIG_S5PV210_SETUP_IDE)		+= setup-ide.o
+diff --git a/arch/arm/mach-s5pv210/setup-fimc.c b/arch/arm/mach-s5pv210/setup-fimc.c
+new file mode 100644
+index 0000000..54cc5b1
+--- /dev/null
++++ b/arch/arm/mach-s5pv210/setup-fimc.c
+@@ -0,0 +1,43 @@
++/*
++ * Copyright (C) 2011 Samsung Electronics Co., Ltd.
++ *
++ * S5PV210 camera interface GPIO configuration.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/gpio.h>
++#include <plat/gpio-cfg.h>
++#include <plat/camport.h>
++
++int s5pv210_fimc_setup_gpio(enum s5p_camport_id id)
++{
++	u32 gpio8, gpio5;
++	int ret;
++
++	switch (id) {
++	case S5P_CAMPORT_A:
++		gpio8 = S5PV210_GPE0(0);
++		gpio5 = S5PV210_GPE1(0);
++		break;
++
++	case S5P_CAMPORT_B:
++		gpio8 = S5PV210_GPJ0(0);
++		gpio5 = S5PV210_GPJ1(0);
++		break;
++
++	default:
++		WARN(1, "Wrong camport id: %d\n", id);
++		return -EINVAL;
++	}
++
++	ret = s3c_gpio_cfgall_range(gpio8, 8, S3C_GPIO_SFN(2),
++				    S3C_GPIO_PULL_UP);
++	if (ret)
++		return ret;
++
++	return s3c_gpio_cfgall_range(gpio5, 5, S3C_GPIO_SFN(2),
++				     S3C_GPIO_PULL_UP);
++}
+diff --git a/arch/arm/plat-s5p/include/plat/camport.h b/arch/arm/plat-s5p/include/plat/camport.h
+new file mode 100644
+index 0000000..71688c8
+--- /dev/null
++++ b/arch/arm/plat-s5p/include/plat/camport.h
+@@ -0,0 +1,28 @@
++/*
++ * Copyright (C) 2011 Samsung Electronics Co., Ltd.
++ *
++ * S5P series camera interface helper functions
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef PLAT_S5P_CAMPORT_H_
++#define PLAT_S5P_CAMPORT_H_ __FILE__
++
++enum s5p_camport_id {
++	S5P_CAMPORT_A,
++	S5P_CAMPORT_B,
++};
++
++/*
++ * The helper functions to configure GPIO for the camera parallel bus.
++ * The camera port can be multiplexed with any FIMC entity, even multiple
++ * FIMC entities are allowed to be attached to a single port simultaneously.
++ * These functions are to be used in the board setup code.
++ */
++int s5pv210_fimc_setup_gpio(enum s5p_camport_id id);
++int exynos4_fimc_setup_gpio(enum s5p_camport_id id);
++
++#endif
+-- 
+1.7.4.1
