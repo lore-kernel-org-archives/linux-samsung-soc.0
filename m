@@ -1,47 +1,73 @@
-From: Seungwhan Youn <claude.youn@gmail.com>
-Subject: Re: [PATCH] SAMSUNG: S5PV310: Add I2S playback support
-Date: Thu, 10 Mar 2011 19:08:54 +0900
-Message-ID: <AANLkTikoUUJmp6=PnumaCF8JD6pec9KZj_dFbOu66Smo@mail.gmail.com>
-References: <1299580852-20959-1-git-send-email-giridhar.maruthy@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v4 1/3] ARM: S5P: Add s5p_timer support for HRT
+Date: Thu, 10 Mar 2011 19:19:12 +0900
+Message-ID: <008b01cbdf0c$9c8ed8c0$d5ac8a40$%kim@samsung.com>
+References: <1299636813-4869-1-git-send-email-sbkim73@samsung.com>
+ <1299636813-4869-2-git-send-email-sbkim73@samsung.com>
+ <20110309141016.GB2737@pulham.picochip.com>
+ <002d01cbdede$65e19660$31a4c320$@com>
+ <20110310094941.GA3289@pulham.picochip.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:41282 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751116Ab1CJKIz convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:40645 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751285Ab1CJKTS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Mar 2011 05:08:55 -0500
-Received: by wya21 with SMTP id 21so1288257wya.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Mar 2011 02:08:54 -0800 (PST)
-In-Reply-To: <1299580852-20959-1-git-send-email-giridhar.maruthy@linaro.org>
+	Thu, 10 Mar 2011 05:19:18 -0500
+Received: from epmmp2 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LHU00LO87C5VMC0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 Mar 2011 19:19:17 +0900 (KST)
+Received: from DOKGENEKIM02 ([12.23.103.104])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LHU001ZN7C5EB@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 Mar 2011 19:19:17 +0900 (KST)
+In-reply-to: <20110310094941.GA3289@pulham.picochip.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Giridhar Maruthy <giridhar.maruthy@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+To: 'Jamie Iles' <jamie@jamieiles.com>, 'Sangbeom Kim' <sbkim73@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-Hi,
+Jamie Iles wrote:
+> 
+> Hi,
+> 
+Hi Jamie,
 
-On Tue, Mar 8, 2011 at 7:40 PM, Giridhar Maruthy
-<giridhar.maruthy@linaro.org> wrote:
-> This commit adds the platform device and data of
-> wm8994 regulator to enable the I2S playback on
-> S5PV310 board on linux-linaro-2.6.38.
->
-> Signed-off-by: Giridhar Maruthy <giridhar.maruthy@linaro.org>
-> ---
-> =C2=A0arch/arm/mach-exynos4/mach-smdkv310.c | =C2=A0167 +++++++++++++=
-+++++++++++++++++++-
-> =C2=A01 files changed, 166 insertions(+), 1 deletions(-)
->
+> On Thu, Mar 10, 2011 at 01:48:22PM +0900, Sangbeom Kim wrote:
+> > And Do you mean that Is needed error handling of clk_enable  like
+> > below?
+> >
+> > 	clk_enable(timerclk);
+> >
+> > 	if (IS_ERR(timerclk)){
+> > 		clk_put(timerclk)
+> > 		panic("failed to enable timers clock");
+> > 	}
+> 
+> No, clk_enable() returns negative errno on failure, so something like.
+> 
+> 	if (clk_enable(timerclk))
+> 		panic("failed to enable timerclk");
+> 
+Thanks for your suggestion.
 
-I'm so sad about this patch is pretty much same as my previous patch,
-"ARM: SMDKC210: Add regulator settings for WM8994
-audio"(http://git.kernel.org/?p=3Dlinux/kernel/git/kki_ap/linux-2.6-sam=
-sung.git;a=3Dcommitdiff;h=3D1307c0dac85bc5e5f26de4f615040a2b06eb64ac),
-and there is no comment about this source comes from in your patch.
-But, I think that you just _forgot_ to write this comment and you will
-add it into your re-worked patch. ;)
+Yeah, would be better...but I'm thinking we _really_ need that.
+Because it is used timer clock, so if fails, maybe happened hang :(
 
-Thanks,
-Claude.
+> > There is no another clk_enable for timerclk.
+> 
+> I didn't mean for just timerclk, there are several other clk_enable()'s
+> for other clks.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
