@@ -1,73 +1,132 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v4 1/3] ARM: S5P: Add s5p_timer support for HRT
-Date: Thu, 10 Mar 2011 19:19:12 +0900
-Message-ID: <008b01cbdf0c$9c8ed8c0$d5ac8a40$%kim@samsung.com>
-References: <1299636813-4869-1-git-send-email-sbkim73@samsung.com>
- <1299636813-4869-2-git-send-email-sbkim73@samsung.com>
- <20110309141016.GB2737@pulham.picochip.com>
- <002d01cbdede$65e19660$31a4c320$@com>
- <20110310094941.GA3289@pulham.picochip.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v3 1/3] ARM: S5P: Rename MIPI-CSIS driver header and update
+	Copyright
+Date: Thu, 10 Mar 2011 12:06:33 +0100
+Message-ID: <1299755195-9055-2-git-send-email-s.nawrocki@samsung.com>
+References: <002601cbdead$0f1cb840$2d5628c0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:40645 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751285Ab1CJKTS (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:30739 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750904Ab1CJLGm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Mar 2011 05:19:18 -0500
-Received: from epmmp2 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LHU00LO87C5VMC0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 10 Mar 2011 19:19:17 +0900 (KST)
-Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LHU001ZN7C5EB@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 10 Mar 2011 19:19:17 +0900 (KST)
-In-reply-to: <20110310094941.GA3289@pulham.picochip.com>
-Content-language: ko
+	Thu, 10 Mar 2011 06:06:42 -0500
+Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0LHU00LHD9J36660@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 Mar 2011 11:06:39 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LHU00C0U9J2QZ@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 Mar 2011 11:06:39 +0000 (GMT)
+In-reply-to: <002601cbdead$0f1cb840$2d5628c0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jamie Iles' <jamie@jamieiles.com>, 'Sangbeom Kim' <sbkim73@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, inki.dae@samsung.com
 
-Jamie Iles wrote:
-> 
-> Hi,
-> 
-Hi Jamie,
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/plat-s5p/dev-csis0.c              |    2 +-
+ arch/arm/plat-s5p/dev-csis1.c              |    2 +-
+ arch/arm/plat-s5p/include/plat/csis.h      |   28 ----------------------------
+ arch/arm/plat-s5p/include/plat/mipi_csis.h |   28 ++++++++++++++++++++++++++++
+ 4 files changed, 30 insertions(+), 30 deletions(-)
+ delete mode 100644 arch/arm/plat-s5p/include/plat/csis.h
+ create mode 100644 arch/arm/plat-s5p/include/plat/mipi_csis.h
 
-> On Thu, Mar 10, 2011 at 01:48:22PM +0900, Sangbeom Kim wrote:
-> > And Do you mean that Is needed error handling of clk_enable  like
-> > below?
-> >
-> > 	clk_enable(timerclk);
-> >
-> > 	if (IS_ERR(timerclk)){
-> > 		clk_put(timerclk)
-> > 		panic("failed to enable timers clock");
-> > 	}
-> 
-> No, clk_enable() returns negative errno on failure, so something like.
-> 
-> 	if (clk_enable(timerclk))
-> 		panic("failed to enable timerclk");
-> 
-Thanks for your suggestion.
-
-Yeah, would be better...but I'm thinking we _really_ need that.
-Because it is used timer clock, so if fails, maybe happened hang :(
-
-> > There is no another clk_enable for timerclk.
-> 
-> I didn't mean for just timerclk, there are several other clk_enable()'s
-> for other clks.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/arch/arm/plat-s5p/dev-csis0.c b/arch/arm/plat-s5p/dev-csis0.c
+index dfab1c8..882843b 100644
+--- a/arch/arm/plat-s5p/dev-csis0.c
++++ b/arch/arm/plat-s5p/dev-csis0.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2010 Samsung Electronics
++ * Copyright (C) 2010-2011 Samsung Electronics Co., Ltd
+  *
+  * S5P series device definition for MIPI-CSIS channel 0
+  *
+diff --git a/arch/arm/plat-s5p/dev-csis1.c b/arch/arm/plat-s5p/dev-csis1.c
+index e3053f2..77f5d25 100644
+--- a/arch/arm/plat-s5p/dev-csis1.c
++++ b/arch/arm/plat-s5p/dev-csis1.c
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright (C) 2010 Samsung Electronics
++ * Copyright (C) 2010-2011 Samsung Electronics Co., Ltd
+  *
+  * S5P series device definition for MIPI-CSIS channel 1
+  *
+diff --git a/arch/arm/plat-s5p/include/plat/csis.h b/arch/arm/plat-s5p/include/plat/csis.h
+deleted file mode 100644
+index 51e308c..0000000
+--- a/arch/arm/plat-s5p/include/plat/csis.h
++++ /dev/null
+@@ -1,28 +0,0 @@
+-/*
+- * Copyright (C) 2010 Samsung Electronics
+- *
+- * S5P series MIPI CSI slave device support
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-
+-#ifndef PLAT_S5P_CSIS_H_
+-#define PLAT_S5P_CSIS_H_ __FILE__
+-
+-/**
+- * struct s5p_platform_mipi_csis - platform data for MIPI-CSIS
+- * @clk_rate: bus clock frequency
+- * @lanes: number of data lanes used
+- * @alignment: data alignment in bits
+- * @hs_settle: HS-RX settle time
+- */
+-struct s5p_platform_mipi_csis {
+-	unsigned long clk_rate;
+-	u8 lanes;
+-	u8 alignment;
+-	u8 hs_settle;
+-};
+-
+-#endif /* PLAT_S5P_CSIS_H_ */
+diff --git a/arch/arm/plat-s5p/include/plat/mipi_csis.h b/arch/arm/plat-s5p/include/plat/mipi_csis.h
+new file mode 100644
+index 0000000..eb3beab
+--- /dev/null
++++ b/arch/arm/plat-s5p/include/plat/mipi_csis.h
+@@ -0,0 +1,28 @@
++/*
++ * Copyright (C) 2010-2011 Samsung Electronics, Co. Ltd
++ *
++ * S5P series MIPI CSI slave device support
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef PLAT_S5P_MIPI_CSIS_H_
++#define PLAT_S5P_MIPI_CSIS_H_ __FILE__
++
++/**
++ * struct s5p_platform_mipi_csis - platform data for S5P MIPI-CSIS driver
++ * @clk_rate: bus clock frequency
++ * @lanes: number of data lanes used
++ * @alignment: data alignment in bits
++ * @hs_settle: HS-RX settle time
++ */
++struct s5p_platform_mipi_csis {
++	unsigned long clk_rate;
++	u8 lanes;
++	u8 alignment;
++	u8 hs_settle;
++};
++
++#endif /* PLAT_S5P_MIPI_CSIS_H_ */
+-- 
+1.7.4.1
