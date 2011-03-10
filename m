@@ -1,75 +1,47 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2] ARM: S5P: Add platform helpers for camera GPIO
-	configuration
-Date: Thu, 10 Mar 2011 18:56:40 +0900
-Message-ID: <008a01cbdf09$76c5b800$64512800$%kim@samsung.com>
-References: <01c701cbd975$c7dcd2d0$57967870$%kim@samsung.com>
-	<1299683859-9242-1-git-send-email-s.nawrocki@samsung.com>
+From: Seungwhan Youn <claude.youn@gmail.com>
+Subject: Re: [PATCH] SAMSUNG: S5PV310: Add I2S playback support
+Date: Thu, 10 Mar 2011 19:08:54 +0900
+Message-ID: <AANLkTikoUUJmp6=PnumaCF8JD6pec9KZj_dFbOu66Smo@mail.gmail.com>
+References: <1299580852-20959-1-git-send-email-giridhar.maruthy@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1299683859-9242-1-git-send-email-s.nawrocki@samsung.com>
-Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kyungmin.park@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:41282 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751116Ab1CJKIz convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Mar 2011 05:08:55 -0500
+Received: by wya21 with SMTP id 21so1288257wya.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Mar 2011 02:08:54 -0800 (PST)
+In-Reply-To: <1299580852-20959-1-git-send-email-giridhar.maruthy@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Giridhar Maruthy <giridhar.maruthy@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-Sylwester Nawrocki wrote:
-> 
-> Add functions for configuration of the parallel camera
-> bus pins on S5PV210 and Exynos4 SoC.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Hi,
+
+On Tue, Mar 8, 2011 at 7:40 PM, Giridhar Maruthy
+<giridhar.maruthy@linaro.org> wrote:
+> This commit adds the platform device and data of
+> wm8994 regulator to enable the I2S playback on
+> S5PV310 board on linux-linaro-2.6.38.
+>
+> Signed-off-by: Giridhar Maruthy <giridhar.maruthy@linaro.org>
 > ---
-> 
-> Hello,
-> 
-> this is a corrected version of platform helpers for the peripheral
-> parallel camera bus configuration in S5PV210 and Exynos4 SoCs.
-> 
-> Changes since v1:
-> - Renamed files: camera.h/camport.h, setup-camera.c/setup-fimc.c
-> - Replaced "camif" with "fimc" in function and data type names
-> - Removed driver strength setup (it turned out than only the clock
->   source pin needed maximum driver strength on the test boards,
->   so I've moved its configuration to the board code)
-> 
-> 
-> Regards,
-> Sylwester Nawrocki
-> ---
->  arch/arm/mach-exynos4/Kconfig            |    5 +++
->  arch/arm/mach-exynos4/Makefile           |    1 +
->  arch/arm/mach-exynos4/setup-fimc.c       |   44
-> ++++++++++++++++++++++++++++++
->  arch/arm/mach-s5pv210/Kconfig            |    5 +++
->  arch/arm/mach-s5pv210/Makefile           |    1 +
->  arch/arm/mach-s5pv210/setup-fimc.c       |   43
-> +++++++++++++++++++++++++++++
->  arch/arm/plat-s5p/include/plat/camport.h |   28 +++++++++++++++++++
->  7 files changed, 127 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-exynos4/setup-fimc.c
->  create mode 100644 arch/arm/mach-s5pv210/setup-fimc.c
->  create mode 100644 arch/arm/plat-s5p/include/plat/camport.h
-> 
-(snip)
+> =C2=A0arch/arm/mach-exynos4/mach-smdkv310.c | =C2=A0167 +++++++++++++=
++++++++++++++++++++-
+> =C2=A01 files changed, 166 insertions(+), 1 deletions(-)
+>
 
-Looks ok to me, will apply :)
-Thanks.
+I'm so sad about this patch is pretty much same as my previous patch,
+"ARM: SMDKC210: Add regulator settings for WM8994
+audio"(http://git.kernel.org/?p=3Dlinux/kernel/git/kki_ap/linux-2.6-sam=
+sung.git;a=3Dcommitdiff;h=3D1307c0dac85bc5e5f26de4f615040a2b06eb64ac),
+and there is no comment about this source comes from in your patch.
+But, I think that you just _forgot_ to write this comment and you will
+add it into your re-worked patch. ;)
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Thanks,
+Claude.
