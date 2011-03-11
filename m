@@ -1,63 +1,63 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S3C64XX: Fix section mismatch from cpufreq init
-Date: Fri, 11 Mar 2011 16:51:01 +0900
-Message-ID: <010c01cbdfc1$143c2800$3cb47800$%kim@samsung.com>
-References: <1299769093-14516-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH 3/7] ARM: Samsung: update/rewrite Samsung SYSMMU (IOMMU)
+ driver
+Date: Fri, 11 Mar 2011 10:04:36 +0100
+Message-ID: <002101cbdfcb$5c657820$15306860$%szyprowski@samsung.com>
+References: <1299229274-9753-4-git-send-email-m.szyprowski@samsung.com>
+ <1299254660-15765-1-git-send-email-m.szyprowski@samsung.com>
+ <201103101552.15536.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1299769093-14516-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Ben Dooks' <ben-linux@fluff.org>
-Cc: linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:8465 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752484Ab1CKJEx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 11 Mar 2011 04:04:53 -0500
+In-reply-to: <201103101552.15536.arnd@arndb.de>
+Content-language: pl
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, k.debski@samsung.com, kgene.kim@samsung.com, kyungmin.park@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, =?ks_c_5601-1987?B?J7TrwM6x4ic=?= <inki.dae@samsung.com>, =?ks_c_5601-1987?B?J7Ctuc6x1Cc=?= <mk7.kang@samsung.com>, 'KyongHo Cho' <pullip.cho@samsung.com>
 
-Mark Brown wrote:
-> 
-> The cpufreq init function is referenced from the driver structure and
-> we don't appear to have annotations which allow us to mark that it'll
-> never be called after system init, causing the linker consistency
-> infrastructure to complain. Just remove the __init annotation to avoid
-> noise from the build.
-> 
-> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> ---
->  arch/arm/mach-s3c64xx/cpufreq.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s3c64xx/cpufreq.c b/arch/arm/mach-
-> s3c64xx/cpufreq.c
-> index 74c0e83..4375b97 100644
-> --- a/arch/arm/mach-s3c64xx/cpufreq.c
-> +++ b/arch/arm/mach-s3c64xx/cpufreq.c
-> @@ -181,7 +181,7 @@ static void __init
-s3c64xx_cpufreq_config_regulator(void)
->  }
->  #endif
-> 
-> -static int __init s3c64xx_cpufreq_driver_init(struct cpufreq_policy
-*policy)
-> +static int s3c64xx_cpufreq_driver_init(struct cpufreq_policy *policy)
->  {
->  	int ret;
->  	struct cpufreq_frequency_table *freq;
-> --
+Hello,
 
-Looks ok, applied into s5p-fixes-for-linus for 38 :)
-Thanks.
+On Thursday, March 10, 2011 3:52 PM Arnd Bergmann wrote:
 
-Best regards,
-Kgene.
+> On Friday 04 March 2011, Marek Szyprowski wrote:
+> > From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+> >
+> > This patch performs a complete rewrite of sysmmu driver for Samsung platform:
+> > - the new version introduces an api to construct device private page
+> >   tables and enables to use device private address space mode
+> > - simplified the resource management: no more single platform
+> >   device with 32 resources is needed, better fits into linux driver model,
+> >   each sysmmu instance has it's own resource definition
+> > - added support for sysmmu clocks
+> > - some other minor API chages required by upcoming videobuf2 allocator
+> >
+> > Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> 
+> Please explain why create a new IOMMU API when we already have two
+> generic ones (include/linux/iommu.h and include/linux/dma-mapping.h).
+> 
+> Is there something that cannot be done with the common code?
+> The first approach should be to extend the existing APIs to
+> do what you need.
+
+We followed the style of iommu API for other mainline ARM platforms (both OMAP and MSM
+also have custom API for their iommu modules). I've briefly checked include/linux/iommu.h
+API and I've noticed that it has been designed mainly for KVM support. There is also
+include/linux/intel-iommu.h interface, but I it is very specific to intel gfx chips.
+
+Is there any example how include/linux/dma-mapping.h interface can be used for iommu
+mappings?
+
+Best regards
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Marek Szyprowski
+Samsung Poland R&D Center
