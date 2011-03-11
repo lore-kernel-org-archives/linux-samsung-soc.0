@@ -1,63 +1,60 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 3/7] ARM: Samsung: update/rewrite Samsung SYSMMU (IOMMU)
- driver
-Date: Fri, 11 Mar 2011 10:04:36 +0100
-Message-ID: <002101cbdfcb$5c657820$15306860$%szyprowski@samsung.com>
-References: <1299229274-9753-4-git-send-email-m.szyprowski@samsung.com>
- <1299254660-15765-1-git-send-email-m.szyprowski@samsung.com>
- <201103101552.15536.arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 3/7] ARM: Samsung: update/rewrite Samsung SYSMMU (IOMMU) driver
+Date: Fri, 11 Mar 2011 12:50:51 +0100
+Message-ID: <201103111250.51252.arnd@arndb.de>
+References: <1299229274-9753-4-git-send-email-m.szyprowski@samsung.com> <201103101552.15536.arnd@arndb.de> <002101cbdfcb$5c657820$15306860$%szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
-Content-Transfer-Encoding: 7BIT
+Content-Type: Text/Plain;
+  charset="euc-kr"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:8465 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752484Ab1CKJEx (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.9]:65478 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752359Ab1CKLvD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Mar 2011 04:04:53 -0500
-In-reply-to: <201103101552.15536.arnd@arndb.de>
-Content-language: pl
+	Fri, 11 Mar 2011 06:51:03 -0500
+In-Reply-To: <002101cbdfcb$5c657820$15306860$%szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, k.debski@samsung.com, kgene.kim@samsung.com, kyungmin.park@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, =?ks_c_5601-1987?B?J7TrwM6x4ic=?= <inki.dae@samsung.com>, =?ks_c_5601-1987?B?J7Ctuc6x1Cc=?= <mk7.kang@samsung.com>, 'KyongHo Cho' <pullip.cho@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, k.debski@samsung.com, kgene.kim@samsung.com, kyungmin.park@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>,  =?euc-kr?q?=27=B4=EB=C0=CE=B1=E2=27?= <inki.dae@samsung.com>,  =?euc-kr?q?=27=B0=AD=B9=CE=B1=D4=27?= <mk7.kang@samsung.com>, 'KyongHo Cho' <pullip.cho@samsung.com>, linux-kernel@vger.kernel.org
 
-Hello,
-
-On Thursday, March 10, 2011 3:52 PM Arnd Bergmann wrote:
-
-> On Friday 04 March 2011, Marek Szyprowski wrote:
-> > From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-> >
-> > This patch performs a complete rewrite of sysmmu driver for Samsung platform:
-> > - the new version introduces an api to construct device private page
-> >   tables and enables to use device private address space mode
-> > - simplified the resource management: no more single platform
-> >   device with 32 resources is needed, better fits into linux driver model,
-> >   each sysmmu instance has it's own resource definition
-> > - added support for sysmmu clocks
-> > - some other minor API chages required by upcoming videobuf2 allocator
-> >
-> > Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+On Friday 11 March 2011, Marek Szyprowski wrote:
 > 
-> Please explain why create a new IOMMU API when we already have two
-> generic ones (include/linux/iommu.h and include/linux/dma-mapping.h).
-> 
-> Is there something that cannot be done with the common code?
-> The first approach should be to extend the existing APIs to
-> do what you need.
+> We followed the style of iommu API for other mainline ARM platforms (both OMAP and MSM
+> also have custom API for their iommu modules). I've briefly checked include/linux/iommu.h
+> API and I've noticed that it has been designed mainly for KVM support. There is also
+> include/linux/intel-iommu.h interface, but I it is very specific to intel gfx chips.
 
-We followed the style of iommu API for other mainline ARM platforms (both OMAP and MSM
-also have custom API for their iommu modules). I've briefly checked include/linux/iommu.h
-API and I've noticed that it has been designed mainly for KVM support. There is also
-include/linux/intel-iommu.h interface, but I it is very specific to intel gfx chips.
+The MSM code actually uses the generic iommu.h code, using register_iommu, so
+the drivers can use the regular iommu_map.
 
-Is there any example how include/linux/dma-mapping.h interface can be used for iommu
-mappings?
+I believe the omap code predates the iommu API, and should really be changed
+to use that. At least it was added before I started reviewing the code.
 
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+The iommu API is not really meant to be KVM specific, it's just that the
+in-tree users are basically limited to KVM at the moment. Another user that
+is coming up soon is the vmio device driver that can be used to transparently
+pass devices to user space. The idea behind the IOMMU API is that you can
+map arbitrary bus addresses to physical memory addresses, but it does not
+deal with allocating the bus addresses or providing buffer management such
+as cache flushes.
+
+> Is there any example how include/linux/dma-mapping.h interface can be used for iommu
+> mappings?
+
+The dma-mapping API is the normal interface that you should use for IOMMUs
+that sit between DMA devices and kernel memory. The idea is that you
+completely abstract the concept of an IOMMU so the device driver uses
+the same code for talking to a device with an IOMMU and another device with
+a linear mapping or an swiotlb bounce buffer.
+
+This means that the user of the dma-mapping API does not get to choose the
+bus addresses, but instead you use the API to get a bus address for a
+chunk of memory, and then you can pass that address to a device.
+
+See arch/powerpc/kernel/iommu.c and arch/x86/kernel/amd_iommu.c for common
+examples of how this is implemented. The latter one actually implements
+both the iommu_ops for iommu.h and dma_map_ops for dma-mapping.h.
+
+	Arnd
