@@ -1,229 +1,131 @@
-From: Jeongtae Park <jtp.park@samsung.com>
-Subject: RE: [PATCH v2 2/8] ARM: S5PV310: Add clock support for MFC v5.1
-Date: Mon, 14 Mar 2011 13:51:49 +0900
-Message-ID: <001401cbe203$8b8ec540$a2ac4fc0$%park@samsung.com>
-References: <1299676567-14194-1-git-send-email-jtp.park@samsung.com>
- <1299676567-14194-3-git-send-email-jtp.park@samsung.com>
- <002901cbe05e$f05d11d0$d1173570$%kim@samsung.com>
-Reply-To: jtp.park@samsung.com
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 4/4] ARM: EXYNOS4: add support for gpio interrupts
+Date: Mon, 14 Mar 2011 08:04:46 +0100
+Message-ID: <1300086286-9006-5-git-send-email-m.szyprowski@samsung.com>
+References: <1300086286-9006-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:60302 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751316Ab1CNEwA (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:9048 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754366Ab1CNHEx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Mar 2011 00:52:00 -0400
-In-reply-to: <002901cbe05e$f05d11d0$d1173570$%kim@samsung.com>
-Content-language: ko
+	Mon, 14 Mar 2011 03:04:53 -0400
+Received: from spt2.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0LI10082BD00KM@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 14 Mar 2011 07:04:48 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LI1004LED00CU@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 14 Mar 2011 07:04:48 +0000 (GMT)
+In-reply-to: <1300086286-9006-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, kgene.kim@samsung.com
-Cc: k.debski@samsung.com, jaeryul.oh@samsung.com, jemings@samsung.com, ben-linux@fluff.org, jonghun.han@samsung.com, m.szyprowski@samsung.com, nala.la@samsung.com
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com
 
-Hi Kgene,
+This patch adds support for gpio interrupts on Samsung S5PC210 platform.
+Common s5p-gpioint.c code is used for handling gpio interrupts. Each gpio
+line that needs gpio interrupt support must be later registered with
+s5p_register_gpio_interrupt() function.
 
-I see, I will re-work based on lastest 'for-next' ASAP.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos4/gpiolib.c           |   18 +++++++++++++++---
+ arch/arm/mach-exynos4/include/mach/irqs.h |   12 ++++++++++--
+ 2 files changed, 25 insertions(+), 5 deletions(-)
 
-Thanks.
-
-BRs.
-/jtpark
-
-> -----Original Message-----
-> From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-soc-
-> owner@vger.kernel.org] On Behalf Of Kukjin Kim
-> Sent: Saturday, March 12, 2011 11:41 AM
-> To: 'Jeongtae Park'; linux-media@vger.kernel.org; linux-samsung-
-> soc@vger.kernel.org
-> Cc: k.debski@samsung.com; jaeryul.oh@samsung.com; ben-linux@fluff.org;
-> jonghun.han@samsung.com; 'Marek Szyprowski'
-> Subject: RE: [PATCH v2 2/8] ARM: S5PV310: Add clock support for MFC v5.1
-> 
-> Jeongtae Park wrote:
-> >
-> > This patch adds clock support for MFC v5.1.
-> >
-> > Reviewed-by: Peter Oh <jaeryul.oh@samsung.com>
-> > Signed-off-by: Jeongtae Park <jtp.park@samsung.com>
-> > Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Cc: Kamil Debski <k.debski@samsung.com>
-> > ---
-> >  arch/arm/mach-s5pv310/clock.c                   |   68
-> > +++++++++++++++++++++++
-> >  arch/arm/mach-s5pv310/include/mach/regs-clock.h |    3 +
-> >  2 files changed, 71 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-s5pv310/clock.c
-b/arch/arm/mach-s5pv310/clock.c
-> > index fc7c2f8..88c7943 100644
-> > --- a/arch/arm/mach-s5pv310/clock.c
-> > +++ b/arch/arm/mach-s5pv310/clock.c
-> > @@ -86,6 +86,11 @@ static int s5pv310_clk_ip_cam_ctrl(struct clk *clk,
-int
-> > enable)
-> >  	return s5p_gatectrl(S5P_CLKGATE_IP_CAM, clk, enable);
-> >  }
-> >
-> > +static int s5pv310_clk_ip_mfc_ctrl(struct clk *clk, int enable)
-> > +{
-> > +	return s5p_gatectrl(S5P_CLKGATE_IP_MFC, clk, enable);
-> > +}
-> > +
-> >  static int s5pv310_clk_ip_image_ctrl(struct clk *clk, int enable)
-> >  {
-> >  	return s5p_gatectrl(S5P_CLKGATE_IP_IMAGE, clk, enable);
-> > @@ -417,6 +422,11 @@ static struct clk init_clocks_off[] = {
-> >  		.enable		= s5pv310_clk_ip_cam_ctrl,
-> >  		.ctrlbit	= (1 << 2),
-> >  	}, {
-> > +		.name		= "mfc",
-> > +		.id		= -1,
-> > +		.enable		= s5pv310_clk_ip_mfc_ctrl,
-> > +		.ctrlbit	= (1 << 0),
-> > +	}, {
-> >  		.name		= "fimc",
-> >  		.id		= 3,
-> >  		.enable		= s5pv310_clk_ip_cam_ctrl,
-> > @@ -643,6 +653,54 @@ static struct clksrc_sources clkset_group = {
-> >  	.nr_sources	= ARRAY_SIZE(clkset_group_list),
-> >  };
-> >
-> > +static struct clk *clkset_mout_mfc0_list[] = {
-> > +	[0] = &clk_mout_mpll.clk,
-> > +	[1] = &clk_sclk_apll.clk,
-> > +};
-> > +
-> > +static struct clksrc_sources clkset_mout_mfc0 = {
-> > +	.sources	= clkset_mout_mfc0_list,
-> > +	.nr_sources	= ARRAY_SIZE(clkset_mout_mfc0_list),
-> > +};
-> > +
-> > +static struct clksrc_clk clk_mout_mfc0 = {
-> > +	.clk	= {
-> > +		.name		= "mout_mfc0",
-> > +		.id		= -1,
-> > +	},
-> > +	.sources	= &clkset_mout_mfc0,
-> > +	.reg_src	= { .reg = S5P_CLKSRC_MFC, .shift = 0, .size = 1 },
-> > +};
-> > +
-> > +static struct clk *clkset_mout_mfc1_list[] = {
-> > +	[0] = &clk_mout_epll.clk,
-> > +	[1] = &clk_sclk_vpll.clk,
-> > +};
-> > +
-> > +static struct clksrc_sources clkset_mout_mfc1 = {
-> > +	.sources	= clkset_mout_mfc1_list,
-> > +	.nr_sources	= ARRAY_SIZE(clkset_mout_mfc1_list),
-> > +};
-> > +
-> > +static struct clksrc_clk clk_mout_mfc1 = {
-> > +	.clk	= {
-> > +		.name		= "mout_mfc1",
-> > +		.id		= -1,
-> > +	},
-> > +	.sources	= &clkset_mout_mfc1,
-> > +	.reg_src	= { .reg = S5P_CLKSRC_MFC, .shift = 4, .size = 1 },
-> > +};
-> > +
-> > +static struct clk *clkset_mout_mfc_list[] = {
-> > +	[0] = &clk_mout_mfc0.clk,
-> > +	[1] = &clk_mout_mfc1.clk,
-> > +};
-> > +
-> > +static struct clksrc_sources clkset_mout_mfc = {
-> > +	.sources	= clkset_mout_mfc_list,
-> > +	.nr_sources	= ARRAY_SIZE(clkset_mout_mfc_list),
-> > +};
-> > +
-> >  static struct clk *clkset_mout_g2d0_list[] = {
-> >  	[0] = &clk_mout_mpll.clk,
-> >  	[1] = &clk_sclk_apll.clk,
-> > @@ -814,6 +872,14 @@ static struct clksrc_clk clksrcs[] = {
-> >  		.reg_div = { .reg = S5P_CLKDIV_CAM, .shift = 28, .size = 4
-> },
-> >  	}, {
-> >  		.clk		= {
-> > +			.name		= "sclk_mfc",
-> > +			.id		= -1,
-> > +		},
-> > +		.sources = &clkset_mout_mfc,
-> > +		.reg_src = { .reg = S5P_CLKSRC_MFC, .shift = 8, .size = 1 },
-> > +		.reg_div = { .reg = S5P_CLKDIV_MFC, .shift = 0, .size = 4 },
-> > +	}, {
-> > +		.clk		= {
-> >  			.name		= "sclk_cam",
-> >  			.id		= 0,
-> >  			.enable		= s5pv310_clksrc_mask_cam_ctrl,
-> > @@ -1018,6 +1084,8 @@ static struct clksrc_clk *sysclks[] = {
-> >  	&clk_dout_mmc2,
-> >  	&clk_dout_mmc3,
-> >  	&clk_dout_mmc4,
-> > +	&clk_mout_mfc0,
-> > +	&clk_mout_mfc1,
-> >  };
-> >
-> >  static int xtal_rate;
-> > diff --git a/arch/arm/mach-s5pv310/include/mach/regs-clock.h
-> b/arch/arm/mach-
-> > s5pv310/include/mach/regs-clock.h
-> > index b5c4ada..27b02e8 100644
-> > --- a/arch/arm/mach-s5pv310/include/mach/regs-clock.h
-> > +++ b/arch/arm/mach-s5pv310/include/mach/regs-clock.h
-> > @@ -33,6 +33,7 @@
-> >  #define S5P_CLKSRC_TOP0			S5P_CLKREG(0x0C210)
-> >  #define S5P_CLKSRC_TOP1			S5P_CLKREG(0x0C214)
-> >  #define S5P_CLKSRC_CAM			S5P_CLKREG(0x0C220)
-> > +#define S5P_CLKSRC_MFC			S5P_CLKREG(0x0C228)
-> >  #define S5P_CLKSRC_IMAGE		S5P_CLKREG(0x0C230)
-> >  #define S5P_CLKSRC_LCD0			S5P_CLKREG(0x0C234)
-> >  #define S5P_CLKSRC_LCD1			S5P_CLKREG(0x0C238)
-> > @@ -42,6 +43,7 @@
-> >
-> >  #define S5P_CLKDIV_TOP			S5P_CLKREG(0x0C510)
-> >  #define S5P_CLKDIV_CAM			S5P_CLKREG(0x0C520)
-> > +#define S5P_CLKDIV_MFC			S5P_CLKREG(0x0C528)
-> >  #define S5P_CLKDIV_IMAGE		S5P_CLKREG(0x0C530)
-> >  #define S5P_CLKDIV_LCD0			S5P_CLKREG(0x0C534)
-> >  #define S5P_CLKDIV_LCD1			S5P_CLKREG(0x0C538)
-> > @@ -67,6 +69,7 @@
-> >  #define S5P_CLKDIV_STAT_TOP		S5P_CLKREG(0x0C610)
-> >
-> >  #define S5P_CLKGATE_IP_CAM		S5P_CLKREG(0x0C920)
-> > +#define S5P_CLKGATE_IP_MFC		S5P_CLKREG(0x0C928)
-> >  #define S5P_CLKGATE_IP_IMAGE		S5P_CLKREG(0x0C930)
-> >  #define S5P_CLKGATE_IP_LCD0		S5P_CLKREG(0x0C934)
-> >  #define S5P_CLKGATE_IP_LCD1		S5P_CLKREG(0x0C938)
-> > --
-> > 1.7.1
-> 
-> Hi Jeongtae,
-> 
-> Firstly, your 2nd, 3rd and 4th patches are ok to me, but need to re-work
-> based on latest.
-> Could you please do based on my for-next?
-> 
-> Kamil,
-> Your patch of regarding mfc platform device has same purpose but clock
-codes
-> are different.
-> As I said, mfc clock handling needs this approach so if you're ok, I'd
-like
-> to pick this up. How do you think?
-> 
-> Thanks.
-> 
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/mach-exynos4/gpiolib.c b/arch/arm/mach-exynos4/gpiolib.c
+index 1b4121c..d54ca6a 100644
+--- a/arch/arm/mach-exynos4/gpiolib.c
++++ b/arch/arm/mach-exynos4/gpiolib.c
+@@ -304,6 +304,7 @@ static __init int exynos4_gpiolib_init(void)
+ {
+ 	struct s3c_gpio_chip *chip;
+ 	int i;
++	int group = 0;
+ 	int nr_chips;
+ 
+ 	/* GPIO part 1 */
+@@ -312,8 +313,11 @@ static __init int exynos4_gpiolib_init(void)
+ 	nr_chips = ARRAY_SIZE(exynos4_gpio_part1_4bit);
+ 
+ 	for (i = 0; i < nr_chips; i++, chip++) {
+-		if (chip->config == NULL)
++		if (chip->config == NULL) {
+ 			chip->config = &gpio_cfg;
++			/* Assign the GPIO interrupt group */
++			chip->group = group++;
++		}
+ 		if (chip->base == NULL)
+ 			chip->base = S5P_VA_GPIO1 + (i) * 0x20;
+ 	}
+@@ -326,8 +330,11 @@ static __init int exynos4_gpiolib_init(void)
+ 	nr_chips = ARRAY_SIZE(exynos4_gpio_part2_4bit);
+ 
+ 	for (i = 0; i < nr_chips; i++, chip++) {
+-		if (chip->config == NULL)
++		if (chip->config == NULL) {
+ 			chip->config = &gpio_cfg;
++			/* Assign the GPIO interrupt group */
++			chip->group = group++;
++		}
+ 		if (chip->base == NULL)
+ 			chip->base = S5P_VA_GPIO2 + (i) * 0x20;
+ 	}
+@@ -340,13 +347,18 @@ static __init int exynos4_gpiolib_init(void)
+ 	nr_chips = ARRAY_SIZE(exynos4_gpio_part3_4bit);
+ 
+ 	for (i = 0; i < nr_chips; i++, chip++) {
+-		if (chip->config == NULL)
++		if (chip->config == NULL) {
+ 			chip->config = &gpio_cfg;
++			/* Assign the GPIO interrupt group */
++			chip->group = group++;
++		}
+ 		if (chip->base == NULL)
+ 			chip->base = S5P_VA_GPIO3 + (i) * 0x20;
+ 	}
+ 
+ 	samsung_gpiolib_add_4bit_chips(exynos4_gpio_part3_4bit, nr_chips);
++	s5p_register_gpioint_bank(IRQ_GPIO_XA, 0, IRQ_GPIO1_NR_GROUPS);
++	s5p_register_gpioint_bank(IRQ_GPIO_XB, IRQ_GPIO1_NR_GROUPS, IRQ_GPIO2_NR_GROUPS);
+ 
+ 	return 0;
+ }
+diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-exynos4/include/mach/irqs.h
+index 1db1de8..5d03730 100644
+--- a/arch/arm/mach-exynos4/include/mach/irqs.h
++++ b/arch/arm/mach-exynos4/include/mach/irqs.h
+@@ -85,6 +85,9 @@
+ #define IRQ_RTC_ALARM		COMBINER_IRQ(23, 0)
+ #define IRQ_RTC_TIC		COMBINER_IRQ(23, 1)
+ 
++#define IRQ_GPIO_XB		COMBINER_IRQ(24, 0)
++#define IRQ_GPIO_XA		COMBINER_IRQ(24, 1)
++
+ #define IRQ_UART0		COMBINER_IRQ(26, 0)
+ #define IRQ_UART1		COMBINER_IRQ(26, 1)
+ #define IRQ_UART2		COMBINER_IRQ(26, 2)
+@@ -145,8 +148,13 @@
+ #define S5P_EINT_BASE1		(S5P_IRQ_EINT_BASE + 0)
+ #define S5P_EINT_BASE2		(S5P_IRQ_EINT_BASE + 16)
+ 
+-/* Set the default NR_IRQS */
++/* optional GPIO interrupts */
++#define S5P_GPIOINT_BASE	(S5P_IRQ_EINT_BASE + 32)
++#define IRQ_GPIO1_NR_GROUPS	16
++#define IRQ_GPIO2_NR_GROUPS	9
++#define IRQ_GPIO_END		(S5P_GPIOINT_BASE + S5P_GPIOINT_COUNT)
+ 
+-#define NR_IRQS			(S5P_IRQ_EINT_BASE + 32)
++/* Set the default NR_IRQS */
++#define NR_IRQS			(IRQ_GPIO_END)
+ 
+ #endif /* __ASM_ARCH_IRQS_H */
+-- 
+1.7.1.569.g6f426
