@@ -1,73 +1,238 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 0/4] S5PC210/S5PV310/EXYNOS4 interrupts update
-Date: Mon, 14 Mar 2011 08:04:42 +0100
-Message-ID: <1300086286-9006-1-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 2/4] ARM: Samsung: cleanup S5P gpio interrupt code
+Date: Mon, 14 Mar 2011 08:04:44 +0100
+Message-ID: <1300086286-9006-3-git-send-email-m.szyprowski@samsung.com>
+References: <1300086286-9006-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout1.w1.samsung.com ([210.118.77.11]:9048 "EHLO
 	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752584Ab1CNHEu (ORCPT
+	with ESMTP id S1753755Ab1CNHEw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Mar 2011 03:04:50 -0400
+	Mon, 14 Mar 2011 03:04:52 -0400
 Received: from spt2.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
  by mailout1.w1.samsung.com
  (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LI100BSXD00K8@mailout1.w1.samsung.com> for
+ with ESMTP id <0LI10082BD00KM@mailout1.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Mon, 14 Mar 2011 07:04:48 +0000 (GMT)
 Received: from linux.samsung.com ([106.116.38.10])
  by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LI100ATUCZZMD@spt2.w1.samsung.com> for
+ 2004)) with ESMTPA id <0LI100B7JD00HJ@spt2.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Mon, 14 Mar 2011 07:04:48 +0000 (GMT)
+In-reply-to: <1300086286-9006-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com
 
-Hello,
+This patch performs a global cleanup in s5p gpio interrupt support code.
+The code is prepared for upcoming support for gpio interrupts on S5PC210
+platform, which has 2 gpio banks (regions) instead of one (like on
+S5PC110 and S5PC100).
 
-This patch series perform an update on interrupts support for
-S5PC210/S5PV310/EXYNOS4 platform. An optional support for GPIO
-interrupts handler has been added The patches have been prepared to
-maximise the code reuse, so common code for gpio interrupts for s5pc100,
-s5pc110 & s5pc210 have been prepared.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/plat-s5p/irq-gpioint.c |  106 +++++++++++++++++----------------------
+ 1 files changed, 46 insertions(+), 60 deletions(-)
 
-The patches have been prepared against
-git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-for-next branch (commit be7004f73d0).
-
-Patches that make use of these optional features for universal c210
-board will follow soon.
-
-Changes since v1:
-- rebased onto latest version of kgene/for-next kernel tree (with s5pv310
-  to exynos4 rename)
-- removed machine specific interrupt patch from this patch series
-
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
-
-
-
-Patch summary:
-
-Marek Szyprowski (4):
-  ARM: EXYNOS4: Add missing GPYx banks.
-  ARM: Samsung: cleanup S5P gpio interrupt code
-  ARM: Samsung: add function to register gpio interrupt bank data
-  ARM: EXYNOS4: add support for gpio interrupts
-
- arch/arm/mach-exynos4/gpiolib.c               |   67 ++++++++++-
- arch/arm/mach-exynos4/include/mach/gpio.h     |   23 ++++-
- arch/arm/mach-exynos4/include/mach/irqs.h     |   12 ++-
- arch/arm/mach-s5pc100/gpiolib.c               |    1 +
- arch/arm/mach-s5pv210/gpiolib.c               |    1 +
- arch/arm/plat-s5p/irq-gpioint.c               |  169 +++++++++++++++----------
- arch/arm/plat-samsung/include/plat/gpio-cfg.h |   16 +++
- 7 files changed, 216 insertions(+), 73 deletions(-)
-
+diff --git a/arch/arm/plat-s5p/irq-gpioint.c b/arch/arm/plat-s5p/irq-gpioint.c
+index 3b6bf89..b32d05a 100644
+--- a/arch/arm/plat-s5p/irq-gpioint.c
++++ b/arch/arm/plat-s5p/irq-gpioint.c
+@@ -22,77 +22,64 @@
+ #include <plat/gpio-core.h>
+ #include <plat/gpio-cfg.h>
+ 
+-#define S5P_GPIOREG(x)			(S5P_VA_GPIO + (x))
++#define GPIO_BASE(chip)		(((unsigned long)(chip)->base) & 0xFFFFF000u))
+ 
+-#define GPIOINT_CON_OFFSET		0x700
+-#define GPIOINT_MASK_OFFSET		0x900
+-#define GPIOINT_PEND_OFFSET		0xA00
++#define CON_OFFSET		0x700
++#define MASK_OFFSET		0x900
++#define PEND_OFFSET		0xA00
++#define REG_OFFSET(x)		((x) << 2)
+ 
+ static struct s3c_gpio_chip *irq_chips[S5P_GPIOINT_GROUP_MAXNR];
+ 
+-static int s5p_gpioint_get_group(struct irq_data *data)
+-{
+-	struct gpio_chip *chip = irq_data_get_irq_data(data);
+-	struct s3c_gpio_chip *s3c_chip = container_of(chip,
+-			struct s3c_gpio_chip, chip);
+-	int group;
+-
+-	for (group = 0; group < S5P_GPIOINT_GROUP_MAXNR; group++)
+-		if (s3c_chip == irq_chips[group])
+-			break;
+-
+-	return group;
+-}
+-
+ static int s5p_gpioint_get_offset(struct irq_data *data)
+ {
+-	struct gpio_chip *chip = irq_data_get_irq_data(data);
+-	struct s3c_gpio_chip *s3c_chip = container_of(chip,
+-			struct s3c_gpio_chip, chip);
+-
+-	return data->irq - s3c_chip->irq_base;
++	struct s3c_gpio_chip *chip = irq_data_get_irq_data(data);
++	return data->irq - chip->irq_base;
+ }
+ 
+ static void s5p_gpioint_ack(struct irq_data *data)
+ {
++	struct s3c_gpio_chip *chip = irq_data_get_irq_data(data);
+ 	int group, offset, pend_offset;
+ 	unsigned int value;
+ 
+-	group = s5p_gpioint_get_group(data);
++	group = chip->group;
+ 	offset = s5p_gpioint_get_offset(data);
+-	pend_offset = group << 2;
++	pend_offset = REG_OFFSET(group);
+ 
+-	value = __raw_readl(S5P_GPIOREG(GPIOINT_PEND_OFFSET) + pend_offset);
+-	value |= 1 << offset;
+-	__raw_writel(value, S5P_GPIOREG(GPIOINT_PEND_OFFSET) + pend_offset);
++	value = __raw_readl(GPIO_BASE(chip) + PEND_OFFSET + pend_offset);
++	value |= BIT(offset);
++	__raw_writel(value, GPIO_BASE(chip) + PEND_OFFSET + pend_offset);
+ }
+ 
+ static void s5p_gpioint_mask(struct irq_data *data)
+ {
++	struct s3c_gpio_chip *chip = irq_data_get_irq_data(data);
+ 	int group, offset, mask_offset;
+ 	unsigned int value;
+ 
+-	group = s5p_gpioint_get_group(data);
++	group = chip->group;
+ 	offset = s5p_gpioint_get_offset(data);
+-	mask_offset = group << 2;
++	mask_offset = REG_OFFSET(group);
+ 
+-	value = __raw_readl(S5P_GPIOREG(GPIOINT_MASK_OFFSET) + mask_offset);
+-	value |= 1 << offset;
+-	__raw_writel(value, S5P_GPIOREG(GPIOINT_MASK_OFFSET) + mask_offset);
++	value = __raw_readl(GPIO_BASE(chip) + MASK_OFFSET + mask_offset);
++	value |= BIT(offset);
++	__raw_writel(value, GPIO_BASE(chip) + MASK_OFFSET + mask_offset);
+ }
+ 
+ static void s5p_gpioint_unmask(struct irq_data *data)
+ {
++	struct s3c_gpio_chip *chip = irq_data_get_irq_data(data);
+ 	int group, offset, mask_offset;
+ 	unsigned int value;
+ 
+-	group = s5p_gpioint_get_group(data);
++	group = chip->group;
+ 	offset = s5p_gpioint_get_offset(data);
+-	mask_offset = group << 2;
++	mask_offset = REG_OFFSET(group);
+ 
+-	value = __raw_readl(S5P_GPIOREG(GPIOINT_MASK_OFFSET) + mask_offset);
+-	value &= ~(1 << offset);
+-	__raw_writel(value, S5P_GPIOREG(GPIOINT_MASK_OFFSET) + mask_offset);
++	value = __raw_readl(GPIO_BASE(chip) + MASK_OFFSET + mask_offset);
++	value &= ~BIT(offset);
++	__raw_writel(value, GPIO_BASE(chip) + MASK_OFFSET + mask_offset);
+ }
+ 
+ static void s5p_gpioint_mask_ack(struct irq_data *data)
+@@ -103,12 +90,13 @@ static void s5p_gpioint_mask_ack(struct irq_data *data)
+ 
+ static int s5p_gpioint_set_type(struct irq_data *data, unsigned int type)
+ {
++	struct s3c_gpio_chip *chip = irq_data_get_irq_data(data);
+ 	int group, offset, con_offset;
+ 	unsigned int value;
+ 
+-	group = s5p_gpioint_get_group(data);
++	group = chip->group;
+ 	offset = s5p_gpioint_get_offset(data);
+-	con_offset = group << 2;
++	con_offset = REG_OFFSET(group);
+ 
+ 	switch (type) {
+ 	case IRQ_TYPE_EDGE_RISING:
+@@ -132,15 +120,15 @@ static int s5p_gpioint_set_type(struct irq_data *data, unsigned int type)
+ 		return -EINVAL;
+ 	}
+ 
+-	value = __raw_readl(S5P_GPIOREG(GPIOINT_CON_OFFSET) + con_offset);
++	value = __raw_readl(GPIO_BASE(chip) + CON_OFFSET + con_offset);
+ 	value &= ~(0x7 << (offset * 0x4));
+ 	value |= (type << (offset * 0x4));
+-	__raw_writel(value, S5P_GPIOREG(GPIOINT_CON_OFFSET) + con_offset);
++	__raw_writel(value, GPIO_BASE(chip) + CON_OFFSET + con_offset);
+ 
+ 	return 0;
+ }
+ 
+-struct irq_chip s5p_gpioint = {
++static struct irq_chip s5p_gpioint = {
+ 	.name		= "s5p_gpioint",
+ 	.irq_ack	= s5p_gpioint_ack,
+ 	.irq_mask	= s5p_gpioint_mask,
+@@ -151,30 +139,28 @@ struct irq_chip s5p_gpioint = {
+ 
+ static void s5p_gpioint_handler(unsigned int irq, struct irq_desc *desc)
+ {
+-	int group, offset, pend_offset, mask_offset;
+-	int real_irq;
++	int group, pend_offset, mask_offset;
+ 	unsigned int pend, mask;
+ 
+ 	for (group = 0; group < S5P_GPIOINT_GROUP_MAXNR; group++) {
+-		pend_offset = group << 2;
+-		pend = __raw_readl(S5P_GPIOREG(GPIOINT_PEND_OFFSET) +
+-				pend_offset);
++		struct s3c_gpio_chip *chip = irq_chips[group];
++		if (!chip)
++			continue;
++
++		pend_offset = REG_OFFSET(group);
++		pend = __raw_readl(GPIO_BASE(chip) + PEND_OFFSET + pend_offset);
+ 		if (!pend)
+ 			continue;
+ 
+-		mask_offset = group << 2;
+-		mask = __raw_readl(S5P_GPIOREG(GPIOINT_MASK_OFFSET) +
+-				mask_offset);
++		mask_offset = REG_OFFSET(group);
++		mask = __raw_readl(GPIO_BASE(chip) + MASK_OFFSET + mask_offset);
+ 		pend &= ~mask;
+ 
+-		for (offset = 0; offset < 8; offset++) {
+-			if (pend & (1 << offset)) {
+-				struct s3c_gpio_chip *chip = irq_chips[group];
+-				if (chip) {
+-					real_irq = chip->irq_base + offset;
+-					generic_handle_irq(real_irq);
+-				}
+-			}
++		while (pend) {
++			int offset = fls(pend) - 1;
++			int real_irq = chip->irq_base + offset;
++			generic_handle_irq(real_irq);
++			pend &= ~BIT(offset);
+ 		}
+ 	}
+ }
+@@ -202,7 +188,7 @@ static __init int s5p_gpioint_add(struct s3c_gpio_chip *chip)
+ 	for (i = 0; i < chip->chip.ngpio; i++) {
+ 		irq = chip->irq_base + i;
+ 		set_irq_chip(irq, &s5p_gpioint);
+-		set_irq_data(irq, &chip->chip);
++		set_irq_data(irq, chip);
+ 		set_irq_handler(irq, handle_level_irq);
+ 		set_irq_flags(irq, IRQF_VALID);
+ 	}
 -- 
 1.7.1.569.g6f426
