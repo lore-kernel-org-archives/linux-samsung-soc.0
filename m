@@ -1,56 +1,124 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] ARM: EXYNOS4: add a placeholder for board specific
-	interrupts
-Date: Mon, 14 Mar 2011 08:06:45 +0100
-Message-ID: <1300086405-9895-1-git-send-email-m.szyprowski@samsung.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: [PATCH] ARM: Samsung: Add MFC 5.1 platform device to plat-s5p
+Date: Mon, 14 Mar 2011 09:22:27 +0100
+Message-ID: <1300090947-20382-1-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:22010 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752584Ab1CNHGt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Mar 2011 03:06:49 -0400
-Received: from spt2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LI1009CYD3BEZ@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 14 Mar 2011 07:06:47 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LI100AYVD3ADD@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 14 Mar 2011 07:06:47 +0000 (GMT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, k.debski@samsung.com, jaeryul.oh@samsung.com, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com
 
-This patch adds a placeholder for board specific interrupts on S5PC210
-platform.
+This patch adds platform support for Multi Format Codec 5.1.
+MFC 5.1 is capable of handling a range of video codecs and this driver
+provides V4L2 interface for video decoding.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kamil Debski <k.debski@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos4/include/mach/irqs.h |    6 +++++-
- 1 files changed, 5 insertions(+), 1 deletions(-)
+ arch/arm/plat-s5p/Kconfig                 |    5 +++
+ arch/arm/plat-s5p/Makefile                |    1 +
+ arch/arm/plat-s5p/dev-mfc.c               |   49 +++++++++++++++++++++++++++++
+ arch/arm/plat-samsung/include/plat/devs.h |    1 +
+ 4 files changed, 56 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/plat-s5p/dev-mfc.c
 
-diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-exynos4/include/mach/irqs.h
-index 5d03730..cc2186d 100644
---- a/arch/arm/mach-exynos4/include/mach/irqs.h
-+++ b/arch/arm/mach-exynos4/include/mach/irqs.h
-@@ -154,7 +154,11 @@
- #define IRQ_GPIO2_NR_GROUPS	9
- #define IRQ_GPIO_END		(S5P_GPIOINT_BASE + S5P_GPIOINT_COUNT)
+diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
+index 8492297..d851e24 100644
+--- a/arch/arm/plat-s5p/Kconfig
++++ b/arch/arm/plat-s5p/Kconfig
+@@ -70,6 +70,11 @@ config S5P_DEV_FIMC3
+ 	help
+ 	  Compile in platform device definitions for FIMC controller 3
  
-+/* optional board specific irqs */
-+#define IRQ_BOARD_START		IRQ_GPIO_END
-+#define IRQ_NR_BOARD		16
++config S5P_DEV_MFC
++	bool
++	help
++	  Compile in platform device definitions for MFC 
 +
- /* Set the default NR_IRQS */
--#define NR_IRQS			(IRQ_GPIO_END)
-+#define NR_IRQS			(IRQ_GPIO_END + IRQ_NR_BOARD)
+ config S5P_DEV_ONENAND
+ 	bool
+ 	help
+diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
+index 42afff7..5ceab24 100644
+--- a/arch/arm/plat-s5p/Makefile
++++ b/arch/arm/plat-s5p/Makefile
+@@ -30,6 +30,7 @@ obj-$(CONFIG_S5P_DEV_FIMC0)	+= dev-fimc0.o
+ obj-$(CONFIG_S5P_DEV_FIMC1)	+= dev-fimc1.o
+ obj-$(CONFIG_S5P_DEV_FIMC2)	+= dev-fimc2.o
+ obj-$(CONFIG_S5P_DEV_FIMC3)	+= dev-fimc3.o
++obj-$(CONFIG_S5P_DEV_MFC)	+= dev-mfc.o
+ obj-$(CONFIG_S5P_DEV_ONENAND)	+= dev-onenand.o
+ obj-$(CONFIG_S5P_DEV_CSIS0)	+= dev-csis0.o
+ obj-$(CONFIG_S5P_DEV_CSIS1)	+= dev-csis1.o
+diff --git a/arch/arm/plat-s5p/dev-mfc.c b/arch/arm/plat-s5p/dev-mfc.c
+new file mode 100644
+index 0000000..0dfcb1a
+--- /dev/null
++++ b/arch/arm/plat-s5p/dev-mfc.c
+@@ -0,0 +1,49 @@
++/* linux/arch/arm/plat-s5p/dev-mfc.c
++ *
++ * Copyright (c) 2010 Samsung Electronics
++ *
++ * Base S5P MFC 5.1 resource and device definitions
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++
++#include <linux/kernel.h>
++#include <linux/interrupt.h>
++#include <linux/platform_device.h>
++#include <linux/dma-mapping.h>
++#include <linux/ioport.h>
++
++#include <mach/map.h>
++#include <plat/devs.h>
++#include <plat/irqs.h>
++
++static struct resource s5p_mfc_resource[] = {
++	[0] = {
++		.start  = S5P_PA_MFC,
++		.end    = S5P_PA_MFC + SZ_64K - 1,
++		.flags  = IORESOURCE_MEM,
++	},
++	[1] = {
++		.start  = IRQ_MFC,
++		.end    = IRQ_MFC,
++		.flags  = IORESOURCE_IRQ,
++	}
++};
++
++static u64 s5p_mfc_dma_mask = DMA_BIT_MASK(32);
++
++struct platform_device s5p_device_mfc = {
++	.name          = "s5p-mfc",
++	.id            = -1,
++	.num_resources = ARRAY_SIZE(s5p_mfc_resource),
++	.resource      = s5p_mfc_resource,
++	.dev		= {
++		.dma_mask		= &s5p_mfc_dma_mask,
++		.coherent_dma_mask	= DMA_BIT_MASK(32),
++	},
++};
++
++EXPORT_SYMBOL(s5p_device_mfc);
+diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
+index 7231ccf..bc06c28 100644
+--- a/arch/arm/plat-samsung/include/plat/devs.h
++++ b/arch/arm/plat-samsung/include/plat/devs.h
+@@ -137,6 +137,7 @@ extern struct platform_device s5p_device_fimc0;
+ extern struct platform_device s5p_device_fimc1;
+ extern struct platform_device s5p_device_fimc2;
+ extern struct platform_device s5p_device_fimc3;
++extern struct platform_device s5p_device_mfc;
  
- #endif /* __ASM_ARCH_IRQS_H */
+ extern struct platform_device s5p_device_mipi_csis0;
+ extern struct platform_device s5p_device_mipi_csis1;
 -- 
 1.7.1.569.g6f426
