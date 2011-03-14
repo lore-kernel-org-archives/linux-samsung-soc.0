@@ -1,121 +1,84 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 0/2] ARM: EXYNOS4: Enhancement of System MMU
-Date: Mon, 14 Mar 2011 11:46:29 +0100
-Message-ID: <000e01cbe235$16812ea0$43838be0$%szyprowski@samsung.com>
-References: <1299460768-4077-1-git-send-email-pullip.cho@samsung.com>
- <000701cbdd9b$634c3840$29e4a8c0$%szyprowski@samsung.com>
- <AANLkTimT_DOX3OqOnGF3X8fFEJsoHDANsMZ3cj5R9mw_@mail.gmail.com>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: Re: [PATCH 3/7] ARM: Samsung: update/rewrite Samsung SYSMMU (IOMMU) driver
+Date: Mon, 14 Mar 2011 21:37:51 +0900
+Message-ID: <AANLkTimagS1vBXEYjXQDx=OGhTRm=n0yO4n+kHTAqBOz@mail.gmail.com>
+References: <1299229274-9753-4-git-send-email-m.szyprowski@samsung.com>
+	<201103111615.01829.arnd@arndb.de>
+	<000201cbe002$768d9de0$63a8d9a0$%szyprowski@samsung.com>
+	<201103111700.17373.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:37465 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751427Ab1CNL0v (ORCPT
+Received: from mail-iw0-f174.google.com ([209.85.214.174]:36908 "EHLO
+	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752031Ab1CNMhw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Mar 2011 07:26:51 -0400
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LI10088NN9UFZ40@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 14 Mar 2011 19:46:42 +0900 (KST)
-Received: from AMDC159 ([106.116.37.153])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LI100EV1N9IZ0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 14 Mar 2011 19:46:42 +0900 (KST)
-In-reply-to: <AANLkTimT_DOX3OqOnGF3X8fFEJsoHDANsMZ3cj5R9mw_@mail.gmail.com>
-Content-language: pl
+	Mon, 14 Mar 2011 08:37:52 -0400
+In-Reply-To: <201103111700.17373.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'KyongHo Cho' <pullip.cho@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, kgene.kim@samsung.com, =?ks_c_5601-1987?B?J7TrwM6x4ic=?= <inki.dae@samsung.com>, =?ks_c_5601-1987?B?J7Ctuc6x1Cc=?= <mk7.kang@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, k.debski@samsung.com, kgene.kim@samsung.com, kyungmin.park@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, =?EUC-KR?B?tOvAzrHi?= <inki.dae@samsung.com>, =?EUC-KR?B?sK25zrHU?= <mk7.kang@samsung.com>, linux-kernel@vger.kernel.org
 
-Hello,
+2011/3/12 Arnd Bergmann <arnd@arndb.de>:
+> On Friday 11 March 2011, Marek Szyprowski wrote:
+>> > > > does not support IOMMUs, but that could be changed by wrapping it
+>> > > > using the include/asm-generic/dma-mapping-common.h infrastructure.
+>> > >
+>> > > ARM dma-mapping framework also requires some additional research for better DMA
+>> > > support (there are still issues with multiple mappings to be resolved).
+>> >
+>> > You mean mapping the same memory into multiple devices, or a different problem?
+>>
+>> Mapping the same memory area multiple times with different cache settings is not
+>> legal on ARMv7+ systems. Currently the problems might caused by the low-memory
+>> kernel linear mapping and second mapping created for example by dma_alloc_coherent()
+>> function.
+>
+> Yes, I know this problem, but I don't think the case you describe is a serious
+> limitation (there are more interesting cases, though): dma_map_single() etc
+> will create additional *bus* addresses for a physical address, not additional
+> virtual addresses.
+>
+> dma_alloc_coherent should allocate memory that is not also mapped cached,
+> which is what I thought we do correctly.
 
-On Monday, March 14, 2011 10:54 AM KyongHo Cho wrote:
+I have also noticed that dma_map_single/page/sg() can map physical
+memory into an arbitrary device address region.
+But it is not enough solution for various kinds of IOMMUs.
+As Kukjin Kim addressed, we need to support larger page size than 4KB
+because we can reduce TLB miss when we have larger page size.
 
-> 2011/3/8 Marek Szyprowski <m.szyprowski@samsung.com>:
-> > Hello,
-> >
-> > On Monday, March 07, 2011 2:19 AM KyongHo Cho wrote:
-> >
-> >> This patch includes the following enhancements for System MMU:
-> >> - Enhanced readability
-> >> - Removal of unused data structures or their members
-> >> - Simplified function definitions
-> >> - Corrections of some logical errors
-> >> - Full compliance with Linux coding style
-> >> - Simpler way of registering callback functions of System MMU faults
-> >> - Add clock gating for System MMU
-> >
-> > Thanks for updating the driver, I have however some comments.
-> >
-> > EXYNOS4 platform has total of 16 sysmmu blocks. Each of them is exactly the
-> > same - each has a register region, an interrupt and clock. However your driver
-> > uses a single platform device for all 16 units and a large resource array (see
-> > arch/arm/mach-exynos4). This approach also complicates the clock management
-> > (you need to create custom names for sysmmu clocks, this will cause a lot of
-> > problems in the future update to clkdev!). This also heavily complicates the
-> > driver (you need the arrays of all the resources all over the driver) and is
-> > against the Linux driver model. In the proper model one should create a
-> > platform driver for a single module and instantiate it many times for each hw
-> > module found in the system. For a reference please take a look at the sysmmu
-> > Andrzej has developed in parallel to You:
-> > http://www.mail-archive.com/linux-media@vger.kernel.org/msg28871.html
-> >
-> > For a reference please also check the Samsung Power Domains driver
-> > (arch/arm/mach-exynos4/dev-pd.c and arch/arm/plat-s5p/pd.c).
-> >
-> I've also noticed that it is not enough.
-> Thanks for your advice.
-> 
-> > The second problem I've noticed is the s5p_sysmmu_set_tablebase_pgd() call.
-> > In my opinion it simplifies the sysmmu api too much. This function assumes
-> > that the sysmmu client (i.e. a multimedia device driver or videobuf2-allocator
-> > or vcmm) has a knowledge about the pgd/pte descriptors format. As you know the
-> > format of pgd/pte descriptors is hardware dependent (it may even change in the
-> > future version of SoCs), so constructing the pgd and pte tables is a low-level
-> > operation that should be performed by sysmmu driver. Keeping this call in the
-> > current form results in a requirement that each sysmmu client MUST know the
-> > hardware details of the sysmmu module. In my opinion SysMMU client should only
-> > manage the virtual space and have the ability to add or remove a mapping for
-> > particular range of pages/memory on particular sysmmu chip.
-> >
-> 
-> The user of the system MMU must not know the details of system MMU
-> such as specifications of page table, details control registers and so
-> on.
-> We need to consider some possibilities:
->  - To reduce TLB miss rate, we need to support larger page size for system MMUs
->  - To support multiple page sizes including 1MB, 64KB and 4KB, we need
-> a scatter-gather list of pages or contiguous physical chunks.
+Our IOMMU(system mmu) supports all page size of ARM architecture
+including 16MB, 1MB, 64KB and 4KB.
+Since the largest size supported by buddy system of 32-bit architecture is 4MB,
+our system support all page sizes except 16MB.
+We proved that larger page size is helpful for DMA performance
+significantly (more than 10%, approximately).
+Big page size is not a problem for peripheral devices
+because their address space is not suffer from external fragmentation.
 
-Right, definitely adding support for a larger page sizes is an important thing,
-however the first version of the iommu driver and its clients can operate correctly
-even without it. I agree that the drivers will not operate on highest possible
-speed in such case. 
+Thanks to Arnd, I never knew about include/linux/iommu.h
 
-IMHO we need to merge some simple driver first with the basic functionality without
-external dependences first (even without all possible functionalities) and then,
-once it gets in, gradually extend it with a new features and improve the speed.
+Similar to dma-mappings.h, however, It is not enough for our
+requirements even though it allows private data to be stored in
+iommu_domain for platform-specific requirements.
 
-I've noticed that mm subsystem is getting support for larger page sizes, so I expect
-that one day there will be interfaces for different page sizes available.
+I think we can consider another solution for the various requirements.
+I think one of the most possible solutions is VCMM.
+Or we can enhance include/linux/iommu.h with reference of VCMM.
 
-> There may be another construct to manage page tables because it is
-> very complex task.
-> VCMM may be one of the construct.
+You can find the most recent VCMM submitted at
+http://marc.info/?l=linux-kernel&m=129255948319341&w=2
 
-VCMM is still not yet merged. It might be the solution, but I would like to
-avoid the dependence on it in the first version of the iommu driver.
+It looks somewhat complex but includes most of required features for
+various IOMMUs
+which will not be easily solved by include/linux/iommu.h
 
-> Yet, I also agree with you about that the sysmmu driver must provide a
-> primary operation to deal with page tables
-> even though it is less efficient.
+You can find VCMM core in
+http://git.kernel.org/?p=linux/kernel/git/kki_ap/linux-2.6-samsung.git;a=blob;f=mm/vcm.c;h=9fff0106ec0078fad1488308305c8486adbed9c0;hb=refs/heads/2.6.36-samsung
 
-Thanks :)
+and platform specific implementation of VCMM in
+http://git.kernel.org/?p=linux/kernel/git/kki_ap/linux-2.6-samsung.git;a=blob;f=arch/arm/plat-s5p/s5p-vcm.c;h=7498c800aef8b01082e1b1c3ea0f66cefe3c85a1;hb=refs/heads/2.6.36-samsung
 
-Best regards
---
-Marek Szyprowski
-Samsung Poland R&D Center
+Cho KyongHo.
