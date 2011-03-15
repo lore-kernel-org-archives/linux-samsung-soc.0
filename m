@@ -1,84 +1,53 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 3/7] ARM: Samsung: update/rewrite Samsung SYSMMU (IOMMU)
-	driver
-Date: Tue, 15 Mar 2011 09:53:41 +0000
-Message-ID: <20110315095341.GD3921@n2100.arm.linux.org.uk>
-References: <1299229274-9753-4-git-send-email-m.szyprowski@samsung.com>
-	<201103111615.01829.arnd@arndb.de>
-	<000201cbe002$768d9de0$63a8d9a0$%szyprowski@samsung.com>
-	<201103111700.17373.arnd@arndb.de>
-	<AANLkTimagS1vBXEYjXQDx=OGhTRm=n0yO4n+kHTAqBOz@mail.gmail.com>
-	<20110314124652.GF26085@n2100.arm.linux.org.uk>
-	<AANLkTinzBvkcB111UZd2rJ9raaXkh2TqmTw5Y+4WFd48@mail.gmail.com>
-	<20110315083515.GA3921@n2100.arm.linux.org.uk>
-	<4D7F32B2.6020905@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH RE-SEND 0/4] ARM: EXYNOS4: Add keypad device to the SMDKV310
+Date: Tue, 15 Mar 2011 21:03:56 +0900
+Message-ID: <010d01cbe309$153a1550$3fae3ff0$%kim@samsung.com>
+References: <1299288317-13740-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <4D7F32B2.6020905@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: daeinki <inki.dae@samsung.com>
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, k.debski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, =?utf-8?B?6rCV66+86rec?= <mk7.kang@samsung.com>, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, InKi Dae <daeinki@gmail.com>, KyongHo Cho <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:40580 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757200Ab1COMEH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Mar 2011 08:04:07 -0400
+Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LI300M7ULIUHZB0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 15 Mar 2011 21:04:06 +0900 (KST)
+Received: from DOKGENEKIM02 ([12.23.103.104])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LI3004QFLIT7L@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 15 Mar 2011 21:04:06 +0900 (KST)
+In-reply-to: <1299288317-13740-1-git-send-email-ch.naveen@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Naveen Krishna Ch' <ch.naveen@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org
 
-T24gVHVlLCBNYXIgMTUsIDIwMTEgYXQgMDY6MzQ6NDJQTSArMDkwMCwgZGFlaW5raSB3cm90ZToK
-PiBSdXNzZWxsIEtpbmcgLSBBUk0gTGludXgg7JO0IOq4gDoKPj4gT24gVHVlLCBNYXIgMTUsIDIw
-MTEgYXQgMTA6NDU6NTBBTSArMDkwMCwgSW5LaSBEYWUgd3JvdGU6Cj4+PiAyMDExLzMvMTQgUnVz
-c2VsbCBLaW5nIC0gQVJNIExpbnV4IDxsaW51eEBhcm0ubGludXgub3JnLnVrPjoKPj4+PiBPbiBN
-b24sIE1hciAxNCwgMjAxMSBhdCAwOTozNzo1MVBNICswOTAwLCBLeW9uZ0hvIENobyB3cm90ZToK
-Pj4+Pj4gSSBoYXZlIGFsc28gbm90aWNlZCB0aGF0IGRtYV9tYXBfc2luZ2xlL3BhZ2Uvc2coKSBj
-YW4gbWFwIHBoeXNpY2FsCj4+Pj4+IG1lbW9yeSBpbnRvIGFuIGFyYml0cmFyeSBkZXZpY2UgYWRk
-cmVzcyByZWdpb24uCj4+Pj4+IEJ1dCBpdCBpcyBub3QgZW5vdWdoIHNvbHV0aW9uIGZvciB2YXJp
-b3VzIGtpbmRzIG9mIElPTU1Vcy4KPj4+Pj4gQXMgS3VramluIEtpbSBhZGRyZXNzZWQsIHdlIG5l
-ZWQgdG8gc3VwcG9ydCBsYXJnZXIgcGFnZSBzaXplIHRoYW4gNEtCCj4+Pj4+IGJlY2F1c2Ugd2Ug
-Y2FuIHJlZHVjZSBUTEIgbWlzcyB3aGVuIHdlIGhhdmUgbGFyZ2VyIHBhZ2Ugc2l6ZS4KPj4+Pj4K
-Pj4+Pj4gT3VyIElPTU1VKHN5c3RlbSBtbXUpIHN1cHBvcnRzIGFsbCBwYWdlIHNpemUgb2YgQVJN
-IGFyY2hpdGVjdHVyZQo+Pj4+PiBpbmNsdWRpbmcgMTZNQiwgMU1CLCA2NEtCIGFuZCA0S0IuCj4+
-Pj4+IFNpbmNlIHRoZSBsYXJnZXN0IHNpemUgc3VwcG9ydGVkIGJ5IGJ1ZGR5IHN5c3RlbSBvZiAz
-Mi1iaXQgYXJjaGl0ZWN0dXJlIGlzIDRNQiwKPj4+Pj4gb3VyIHN5c3RlbSBzdXBwb3J0IGFsbCBw
-YWdlIHNpemVzIGV4Y2VwdCAxNk1CLgo+Pj4+PiBXZSBwcm92ZWQgdGhhdCBsYXJnZXIgcGFnZSBz
-aXplIGlzIGhlbHBmdWwgZm9yIERNQSBwZXJmb3JtYW5jZQo+Pj4+PiBzaWduaWZpY2FudGx5ICht
-b3JlIHRoYW4gMTAlLCBhcHByb3hpbWF0ZWx5KS4KPj4+Pj4gQmlnIHBhZ2Ugc2l6ZSBpcyBub3Qg
-YSBwcm9ibGVtIGZvciBwZXJpcGhlcmFsIGRldmljZXMKPj4+Pj4gYmVjYXVzZSB0aGVpciBhZGRy
-ZXNzIHNwYWNlIGlzIG5vdCBzdWZmZXIgZnJvbSBleHRlcm5hbCBmcmFnbWVudGF0aW9uLgo+Pj4+
-IDEuIGRtYV9tYXBfc2luZ2xlKCkgZXQuYWwuIGlzIHVzZWQgZm9yIG1hcHBpbmcgKnN5c3RlbSog
-KlJBTSogZm9yIGRldmljZXMKPj4+PiAgIHVzaW5nIHdoYXRldmVyIGlzIG5lY2Vzc2FyeS4gIEl0
-IG11c3Qgbm90IGJlIHVzZWQgZm9yIHRyeWluZyB0byBzZXR1cAo+Pj4+ICAgYXJiaXRhcnkgb3Ro
-ZXIgbWFwcGluZ3MuCj4+Pj4KPj4+PiAyLiBJdCBkb2Vzbid0IG1hdHRlciB3aGVyZSB0aGUgbWVt
-b3J5IGZvciBkbWFfbWFwX3NpbmdsZSgpIGV0LmFsLiBjb21lcwo+Pj4+ICAgZnJvbSBwcm92aWRl
-ZCB0aGUgdmlydHVhbCBhZGRyZXNzIGlzIGEgdmFsaWQgc3lzdGVtIFJBTSBhZGRyZXNzIG9yCj4+
-Pj4gICB0aGUgc3RydWN0IHBhZ2UgKiBpcyBhIHZhbGlkIHN0cnVjdCBwYWdlIGluIHRoZSBtZW1v
-cnkgbWFwIChpb3csIHlvdQo+Pj4+ICAgY2FuJ3QgY3JlYXRlIHRoaXMgeW91cnNlbGYuKQo+Pj4g
-WW91IG1lYW4gdGhhdCB3ZSBjYW5ub3QgaGF2ZSBhcmJpdHJhcnkgdmlydHVhbCBhZGRyZXNzIG1h
-cHBpbmcgZm9yCj4+PiBpb21tdSBiYXNlZCBkZXZpY2U/Cj4+Cj4+IE5vLiAgSSBtZWFuIGV4YWN0
-bHkgd2hhdCBJIHNhaWQgLSBJJ20gdGFsa2luZyBhYm91dCB0aGUgRE1BIEFQSSBpbiB0aGUKPj4g
-YWJvdmUgdHdvIHBvaW50cy4gIFRoZSBpbXBsaWNhdGlvbiBpcyB0aGF0IHlvdSBjYW4gbm90IGNy
-ZWF0ZSBhcmJpdGFyeQo+PiBtYXBwaW5ncyBvZiBub24tc3lzdGVtIFJBTSB3aXRoIHRoZSBETUEg
-QVBJLgo+Pgo+IHNvcnJ5IGJ1dCBJIGNvdWxkbid0IHVuZGVyc3RhbmQgZXhhY3RseSB3aGF0IHlv
-dSBzYWlkLiBjb3VsZCB5b3UgZ2l2ZSBtZSAgCj4geW91ciBhbnN3ZXIgb25lIG1vcmUgdGltZT8K
-PiBkb2VzIG5vbi1zeXN0ZW0gUkFNIG1lYW4gcmVzZXJ2ZWQgbWVtb3J5IHJlZ2lvbnM/IGlmIG5v
-dCwgaXMgaXQgIAo+IGFyYml0cmFyeSB2aXJ0dWFsIGFkZHJlc3Mgc3BhY2UgdGhhdCBpc24ndCBr
-ZXJuZWwgb3IgdXNlciB2aXJ0dWFsICAKPiBhZGRyZXNzIHNwYWNlIGFuZCBpcyB0aGUgc3BhY2Ug
-Zm9yIGlvbW11IGJhc2VkIGRlaXZjZT8KCkZvciBkbWFfbWFwX3NpbmdsZShkZXYsIGFkZHIsIHNp
-emUsIGRpciksIGJhc2ljYWxseToKCglmb3IgKGEgPSBhZGRyOyBhIDwgYWRkciArIHNpemU7IGEg
-Kz0gUEFHRV9TSVpFKQoJCUJVR19PTighdmlydF9hZGRyX3ZhbGlkKGEpKTsKCkZvciBkbWFfbWFw
-X3BhZ2UoZGV2LCBwYWdlLCBvZmZzZXQsIHNpemUsIGRpciksICdwYWdlJyBtdXN0IGJlIHNvbWV0
-aGluZwpvYnRhaW5lZCBmcm9tIG9uZSBvZiB0aGUgcGFnZS1iYXNlZCBrZXJuZWwgYWxsb2NhdG9y
-cyAoc28gZWl0aGVyIHJlZmVyaW5nCnRvIGEgcGFnZSBpbiB0aGUgKmV4aXN0aW5nKiBsb3dtZW0g
-b3IgaGlnaG1lbSBtZW1vcnkpIF9hbmRfIHlvdSBtdXN0IG5vdAp1c2Ugb2Zmc2V0L3NpemUgdG8g
-dGhlbiBwb2ludCBhdCBzb21ldGhpbmcgb3V0c2lkZSB0aGF0LgoKU28sIGlmIHlvdSB0YWtlIHNv
-bWV0aGluZyBvdXQgb2YgdGhlIGtlcm5lbCdzIGtub3dsZWRnZSBvZiB3aGF0IGlzIG1lbW9yeSwK
-eW91IGNhbid0IHRoZW4gdXNlIHRoZSBETUEgQVBJIHdpdGggaXQuCgpfX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcg
-bGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmlu
-ZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+Naveen Krishna Ch wrote:
+> 
+> NOTE: Please kindly ignore previous my keypad patches.
+> This is right version, sorry for bothering :(
+> 
+> This patch adds support KEYPAD on Samsung SMDKV310 board.
+> 
+> [PATCH 1/4] ARM: EXYNOS4: Add keypad device helpers
+> [PATCH 2/4] ARM: EXYNOS4: Update keypad base address
+> [PATCH 3/4] ARM: EXYNOS4: Update clocks for keypad
+> [PATCH 4/4] ARM: EXYNOS4: Add keypad device to the SMDKV310
+> --
+Ok, applied.
+
+As a note, please don't forget to add me in Cc.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
