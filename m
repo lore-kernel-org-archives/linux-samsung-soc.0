@@ -1,40 +1,87 @@
-From: Jeongtae Park <jtp.park@samsung.com>
-Subject: [PATCH] ARM: EXYNOS4: Fix smsc9215 irq polarity configuration of SMDKV310
-Date: Tue, 15 Mar 2011 15:17:58 +0900
-Message-ID: <1300169878-4793-1-git-send-email-jtp.park@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 3/7] ARM: Samsung: update/rewrite Samsung SYSMMU
+	(IOMMU) driver
+Date: Tue, 15 Mar 2011 08:35:15 +0000
+Message-ID: <20110315083515.GA3921@n2100.arm.linux.org.uk>
+References: <1299229274-9753-4-git-send-email-m.szyprowski@samsung.com> <201103111615.01829.arnd@arndb.de> <000201cbe002$768d9de0$63a8d9a0$%szyprowski@samsung.com> <201103111700.17373.arnd@arndb.de> <AANLkTimagS1vBXEYjXQDx=OGhTRm=n0yO4n+kHTAqBOz@mail.gmail.com> <20110314124652.GF26085@n2100.arm.linux.org.uk> <AANLkTinzBvkcB111UZd2rJ9raaXkh2TqmTw5Y+4WFd48@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:47475 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750937Ab1COGp4 (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:34759 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754457Ab1COIfk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Mar 2011 02:45:56 -0400
+	Tue, 15 Mar 2011 04:35:40 -0400
+Content-Disposition: inline
+In-Reply-To: <AANLkTinzBvkcB111UZd2rJ9raaXkh2TqmTw5Y+4WFd48@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, Jeongtae Park <jtp.park@samsung.com>
+To: InKi Dae <daeinki@gmail.com>
+Cc: KyongHo Cho <pullip.cho@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, k.debski@samsung.com, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, =?utf-8?B?6rCV66+86rec?= <mk7.kang@samsung.com>, linux-kernel@vger.kernel.org, =?utf-8?B?64yA7J246riw?= <inki.dae@samsung.com>, kyungmin.park@samsung.com, kgene.kim@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-This patch fixes smsc9215 irq ploarity configuration of SMDKV310.
-We can change type of EINT(5) as HIGH, but it's better to change
-IRQ output of smsc9215 as an active low because smsc's IRQ line
-has been pull-up.
+On Tue, Mar 15, 2011 at 10:45:50AM +0900, InKi Dae wrote:
+> 2011/3/14 Russell King - ARM Linux <linux@arm.linux.org.uk>:
+> > On Mon, Mar 14, 2011 at 09:37:51PM +0900, KyongHo Cho wrote:
+> >> I have also noticed that dma_map_single/page/sg() can map physical
+> >> memory into an arbitrary device address region.
+> >> But it is not enough solution for various kinds of IOMMUs.
+> >> As Kukjin Kim addressed, we need to support larger page size than =
+4KB
+> >> because we can reduce TLB miss when we have larger page size.
+> >>
+> >> Our IOMMU(system mmu) supports all page size of ARM architecture
+> >> including 16MB, 1MB, 64KB and 4KB.
+> >> Since the largest size supported by buddy system of 32-bit archite=
+cture is 4MB,
+> >> our system support all page sizes except 16MB.
+> >> We proved that larger page size is helpful for DMA performance
+> >> significantly (more than 10%, approximately).
+> >> Big page size is not a problem for peripheral devices
+> >> because their address space is not suffer from external fragmentat=
+ion.
+> >
+> > 1. dma_map_single() et.al. is used for mapping *system* *RAM* for d=
+evices
+> > =A0 using whatever is necessary. =A0It must not be used for trying =
+to setup
+> > =A0 arbitary other mappings.
+> >
+> > 2. It doesn't matter where the memory for dma_map_single() et.al. c=
+omes
+> > =A0 from provided the virtual address is a valid system RAM address=
+ or
+> > =A0 the struct page * is a valid struct page in the memory map (iow=
+, you
+> > =A0 can't create this yourself.)
+>=20
+> You mean that we cannot have arbitrary virtual address mapping for
+> iommu based device?
 
-Signed-off-by: Jeongtae Park <jtp.park@samsung.com>
----
- arch/arm/mach-exynos4/mach-smdkv310.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+No.  I mean exactly what I said - I'm talking about the DMA API in the
+above two points.  The implication is that you can not create arbitary
+mappings of non-system RAM with the DMA API.
 
-diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
-index 07860a5..a422f88 100644
---- a/arch/arm/mach-exynos4/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos4/mach-smdkv310.c
-@@ -125,7 +125,7 @@ static struct resource smdkv310_smsc911x_resources[] = {
- };
- 
- static struct smsc911x_platform_config smsc9215_config = {
--	.irq_polarity	= SMSC911X_IRQ_POLARITY_ACTIVE_HIGH,
-+	.irq_polarity	= SMSC911X_IRQ_POLARITY_ACTIVE_LOW,
- 	.irq_type	= SMSC911X_IRQ_TYPE_PUSH_PULL,
- 	.flags		= SMSC911X_USE_16BIT | SMSC911X_FORCE_INTERNAL_PHY,
- 	.phy_interface	= PHY_INTERFACE_MODE_MII,
--- 
-1.7.1
+> actually, we have memory mapping to arbitrary device virtual address
+> space, not kernel virtual address space.
+>=20
+> >
+> > 3. In the case of an IOMMU, the DMA API does not limit you to only =
+using
+> > =A0 4K pages to setup the IOMMU mappings. =A0You can use whatever y=
+ou like
+> > =A0 provided the hardware can cope with it. =A0You can coalesce sev=
+eral
+> > =A0 existing entries together provided you track what you're doing =
+and can
+> > =A0 undo what's been done when the mapping is no longer required.
+> >
+> > So really there's no reason not to use 64K, 1M and 16M IOMMU entrie=
+s if
+> > that's the size of buffer which has been passed to the DMA API.
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> >
