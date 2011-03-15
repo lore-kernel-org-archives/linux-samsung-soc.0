@@ -1,102 +1,84 @@
-From: daeinki <inki.dae@samsung.com>
-Subject: Re: [PATCH 3/7] ARM: Samsung: update/rewrite Samsung SYSMMU	(IOMMU)
- driver
-Date: Tue, 15 Mar 2011 18:34:42 +0900
-Message-ID: <4D7F32B2.6020905@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 3/7] ARM: Samsung: update/rewrite Samsung SYSMMU (IOMMU)
+	driver
+Date: Tue, 15 Mar 2011 09:53:41 +0000
+Message-ID: <20110315095341.GD3921@n2100.arm.linux.org.uk>
 References: <1299229274-9753-4-git-send-email-m.szyprowski@samsung.com>
- <201103111615.01829.arnd@arndb.de>
- <000201cbe002$768d9de0$63a8d9a0$%szyprowski@samsung.com>
- <201103111700.17373.arnd@arndb.de>
- <AANLkTimagS1vBXEYjXQDx=OGhTRm=n0yO4n+kHTAqBOz@mail.gmail.com>
- <20110314124652.GF26085@n2100.arm.linux.org.uk>
- <AANLkTinzBvkcB111UZd2rJ9raaXkh2TqmTw5Y+4WFd48@mail.gmail.com>
- <20110315083515.GA3921@n2100.arm.linux.org.uk>
+	<201103111615.01829.arnd@arndb.de>
+	<000201cbe002$768d9de0$63a8d9a0$%szyprowski@samsung.com>
+	<201103111700.17373.arnd@arndb.de>
+	<AANLkTimagS1vBXEYjXQDx=OGhTRm=n0yO4n+kHTAqBOz@mail.gmail.com>
+	<20110314124652.GF26085@n2100.arm.linux.org.uk>
+	<AANLkTinzBvkcB111UZd2rJ9raaXkh2TqmTw5Y+4WFd48@mail.gmail.com>
+	<20110315083515.GA3921@n2100.arm.linux.org.uk>
+	<4D7F32B2.6020905@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:30064 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753233Ab1COJn3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Mar 2011 05:43:29 -0400
-In-reply-to: <20110315083515.GA3921@n2100.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <4D7F32B2.6020905@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: daeinki <inki.dae@samsung.com>
+Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, k.debski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, =?utf-8?B?6rCV66+86rec?= <mk7.kang@samsung.com>, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, InKi Dae <daeinki@gmail.com>, KyongHo Cho <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: InKi Dae <daeinki@gmail.com>, KyongHo Cho <pullip.cho@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, k.debski@samsung.com, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, =?UTF-8?B?6rCV66+86rec?= <mk7.kang@samsung.com>, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Russell King - ARM Linux =EC=93=B4 =EA=B8=80:
-> On Tue, Mar 15, 2011 at 10:45:50AM +0900, InKi Dae wrote:
->> 2011/3/14 Russell King - ARM Linux <linux@arm.linux.org.uk>:
->>> On Mon, Mar 14, 2011 at 09:37:51PM +0900, KyongHo Cho wrote:
->>>> I have also noticed that dma_map_single/page/sg() can map physical
->>>> memory into an arbitrary device address region.
->>>> But it is not enough solution for various kinds of IOMMUs.
->>>> As Kukjin Kim addressed, we need to support larger page size than =
-4KB
->>>> because we can reduce TLB miss when we have larger page size.
->>>>
->>>> Our IOMMU(system mmu) supports all page size of ARM architecture
->>>> including 16MB, 1MB, 64KB and 4KB.
->>>> Since the largest size supported by buddy system of 32-bit archite=
-cture is 4MB,
->>>> our system support all page sizes except 16MB.
->>>> We proved that larger page size is helpful for DMA performance
->>>> significantly (more than 10%, approximately).
->>>> Big page size is not a problem for peripheral devices
->>>> because their address space is not suffer from external fragmentat=
-ion.
->>> 1. dma_map_single() et.al. is used for mapping *system* *RAM* for d=
-evices
->>>   using whatever is necessary.  It must not be used for trying to s=
-etup
->>>   arbitary other mappings.
->>>
->>> 2. It doesn't matter where the memory for dma_map_single() et.al. c=
-omes
->>>   from provided the virtual address is a valid system RAM address o=
-r
->>>   the struct page * is a valid struct page in the memory map (iow, =
-you
->>>   can't create this yourself.)
->> You mean that we cannot have arbitrary virtual address mapping for
->> iommu based device?
->=20
-> No.  I mean exactly what I said - I'm talking about the DMA API in th=
-e
-> above two points.  The implication is that you can not create arbitar=
-y
-> mappings of non-system RAM with the DMA API.
->=20
-sorry but I couldn't understand exactly what you said. could you give m=
-e=20
-your answer one more time?
-does non-system RAM mean reserved memory regions? if not, is it=20
-arbitrary virtual address space that isn't kernel or user virtual=20
-address space and is the space for iommu based deivce?
-
-
->> actually, we have memory mapping to arbitrary device virtual address
->> space, not kernel virtual address space.
->>
->>> 3. In the case of an IOMMU, the DMA API does not limit you to only =
-using
->>>   4K pages to setup the IOMMU mappings.  You can use whatever you l=
-ike
->>>   provided the hardware can cope with it.  You can coalesce several
->>>   existing entries together provided you track what you're doing an=
-d can
->>>   undo what's been done when the mapping is no longer required.
->>>
->>> So really there's no reason not to use 64K, 1M and 16M IOMMU entrie=
-s if
->>> that's the size of buffer which has been passed to the DMA API.
->>>
->>> _______________________________________________
->>> linux-arm-kernel mailing list
->>> linux-arm-kernel@lists.infradead.org
->>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>>
->=20
+T24gVHVlLCBNYXIgMTUsIDIwMTEgYXQgMDY6MzQ6NDJQTSArMDkwMCwgZGFlaW5raSB3cm90ZToK
+PiBSdXNzZWxsIEtpbmcgLSBBUk0gTGludXgg7JO0IOq4gDoKPj4gT24gVHVlLCBNYXIgMTUsIDIw
+MTEgYXQgMTA6NDU6NTBBTSArMDkwMCwgSW5LaSBEYWUgd3JvdGU6Cj4+PiAyMDExLzMvMTQgUnVz
+c2VsbCBLaW5nIC0gQVJNIExpbnV4IDxsaW51eEBhcm0ubGludXgub3JnLnVrPjoKPj4+PiBPbiBN
+b24sIE1hciAxNCwgMjAxMSBhdCAwOTozNzo1MVBNICswOTAwLCBLeW9uZ0hvIENobyB3cm90ZToK
+Pj4+Pj4gSSBoYXZlIGFsc28gbm90aWNlZCB0aGF0IGRtYV9tYXBfc2luZ2xlL3BhZ2Uvc2coKSBj
+YW4gbWFwIHBoeXNpY2FsCj4+Pj4+IG1lbW9yeSBpbnRvIGFuIGFyYml0cmFyeSBkZXZpY2UgYWRk
+cmVzcyByZWdpb24uCj4+Pj4+IEJ1dCBpdCBpcyBub3QgZW5vdWdoIHNvbHV0aW9uIGZvciB2YXJp
+b3VzIGtpbmRzIG9mIElPTU1Vcy4KPj4+Pj4gQXMgS3VramluIEtpbSBhZGRyZXNzZWQsIHdlIG5l
+ZWQgdG8gc3VwcG9ydCBsYXJnZXIgcGFnZSBzaXplIHRoYW4gNEtCCj4+Pj4+IGJlY2F1c2Ugd2Ug
+Y2FuIHJlZHVjZSBUTEIgbWlzcyB3aGVuIHdlIGhhdmUgbGFyZ2VyIHBhZ2Ugc2l6ZS4KPj4+Pj4K
+Pj4+Pj4gT3VyIElPTU1VKHN5c3RlbSBtbXUpIHN1cHBvcnRzIGFsbCBwYWdlIHNpemUgb2YgQVJN
+IGFyY2hpdGVjdHVyZQo+Pj4+PiBpbmNsdWRpbmcgMTZNQiwgMU1CLCA2NEtCIGFuZCA0S0IuCj4+
+Pj4+IFNpbmNlIHRoZSBsYXJnZXN0IHNpemUgc3VwcG9ydGVkIGJ5IGJ1ZGR5IHN5c3RlbSBvZiAz
+Mi1iaXQgYXJjaGl0ZWN0dXJlIGlzIDRNQiwKPj4+Pj4gb3VyIHN5c3RlbSBzdXBwb3J0IGFsbCBw
+YWdlIHNpemVzIGV4Y2VwdCAxNk1CLgo+Pj4+PiBXZSBwcm92ZWQgdGhhdCBsYXJnZXIgcGFnZSBz
+aXplIGlzIGhlbHBmdWwgZm9yIERNQSBwZXJmb3JtYW5jZQo+Pj4+PiBzaWduaWZpY2FudGx5ICht
+b3JlIHRoYW4gMTAlLCBhcHByb3hpbWF0ZWx5KS4KPj4+Pj4gQmlnIHBhZ2Ugc2l6ZSBpcyBub3Qg
+YSBwcm9ibGVtIGZvciBwZXJpcGhlcmFsIGRldmljZXMKPj4+Pj4gYmVjYXVzZSB0aGVpciBhZGRy
+ZXNzIHNwYWNlIGlzIG5vdCBzdWZmZXIgZnJvbSBleHRlcm5hbCBmcmFnbWVudGF0aW9uLgo+Pj4+
+IDEuIGRtYV9tYXBfc2luZ2xlKCkgZXQuYWwuIGlzIHVzZWQgZm9yIG1hcHBpbmcgKnN5c3RlbSog
+KlJBTSogZm9yIGRldmljZXMKPj4+PiAgIHVzaW5nIHdoYXRldmVyIGlzIG5lY2Vzc2FyeS4gIEl0
+IG11c3Qgbm90IGJlIHVzZWQgZm9yIHRyeWluZyB0byBzZXR1cAo+Pj4+ICAgYXJiaXRhcnkgb3Ro
+ZXIgbWFwcGluZ3MuCj4+Pj4KPj4+PiAyLiBJdCBkb2Vzbid0IG1hdHRlciB3aGVyZSB0aGUgbWVt
+b3J5IGZvciBkbWFfbWFwX3NpbmdsZSgpIGV0LmFsLiBjb21lcwo+Pj4+ICAgZnJvbSBwcm92aWRl
+ZCB0aGUgdmlydHVhbCBhZGRyZXNzIGlzIGEgdmFsaWQgc3lzdGVtIFJBTSBhZGRyZXNzIG9yCj4+
+Pj4gICB0aGUgc3RydWN0IHBhZ2UgKiBpcyBhIHZhbGlkIHN0cnVjdCBwYWdlIGluIHRoZSBtZW1v
+cnkgbWFwIChpb3csIHlvdQo+Pj4+ICAgY2FuJ3QgY3JlYXRlIHRoaXMgeW91cnNlbGYuKQo+Pj4g
+WW91IG1lYW4gdGhhdCB3ZSBjYW5ub3QgaGF2ZSBhcmJpdHJhcnkgdmlydHVhbCBhZGRyZXNzIG1h
+cHBpbmcgZm9yCj4+PiBpb21tdSBiYXNlZCBkZXZpY2U/Cj4+Cj4+IE5vLiAgSSBtZWFuIGV4YWN0
+bHkgd2hhdCBJIHNhaWQgLSBJJ20gdGFsa2luZyBhYm91dCB0aGUgRE1BIEFQSSBpbiB0aGUKPj4g
+YWJvdmUgdHdvIHBvaW50cy4gIFRoZSBpbXBsaWNhdGlvbiBpcyB0aGF0IHlvdSBjYW4gbm90IGNy
+ZWF0ZSBhcmJpdGFyeQo+PiBtYXBwaW5ncyBvZiBub24tc3lzdGVtIFJBTSB3aXRoIHRoZSBETUEg
+QVBJLgo+Pgo+IHNvcnJ5IGJ1dCBJIGNvdWxkbid0IHVuZGVyc3RhbmQgZXhhY3RseSB3aGF0IHlv
+dSBzYWlkLiBjb3VsZCB5b3UgZ2l2ZSBtZSAgCj4geW91ciBhbnN3ZXIgb25lIG1vcmUgdGltZT8K
+PiBkb2VzIG5vbi1zeXN0ZW0gUkFNIG1lYW4gcmVzZXJ2ZWQgbWVtb3J5IHJlZ2lvbnM/IGlmIG5v
+dCwgaXMgaXQgIAo+IGFyYml0cmFyeSB2aXJ0dWFsIGFkZHJlc3Mgc3BhY2UgdGhhdCBpc24ndCBr
+ZXJuZWwgb3IgdXNlciB2aXJ0dWFsICAKPiBhZGRyZXNzIHNwYWNlIGFuZCBpcyB0aGUgc3BhY2Ug
+Zm9yIGlvbW11IGJhc2VkIGRlaXZjZT8KCkZvciBkbWFfbWFwX3NpbmdsZShkZXYsIGFkZHIsIHNp
+emUsIGRpciksIGJhc2ljYWxseToKCglmb3IgKGEgPSBhZGRyOyBhIDwgYWRkciArIHNpemU7IGEg
+Kz0gUEFHRV9TSVpFKQoJCUJVR19PTighdmlydF9hZGRyX3ZhbGlkKGEpKTsKCkZvciBkbWFfbWFw
+X3BhZ2UoZGV2LCBwYWdlLCBvZmZzZXQsIHNpemUsIGRpciksICdwYWdlJyBtdXN0IGJlIHNvbWV0
+aGluZwpvYnRhaW5lZCBmcm9tIG9uZSBvZiB0aGUgcGFnZS1iYXNlZCBrZXJuZWwgYWxsb2NhdG9y
+cyAoc28gZWl0aGVyIHJlZmVyaW5nCnRvIGEgcGFnZSBpbiB0aGUgKmV4aXN0aW5nKiBsb3dtZW0g
+b3IgaGlnaG1lbSBtZW1vcnkpIF9hbmRfIHlvdSBtdXN0IG5vdAp1c2Ugb2Zmc2V0L3NpemUgdG8g
+dGhlbiBwb2ludCBhdCBzb21ldGhpbmcgb3V0c2lkZSB0aGF0LgoKU28sIGlmIHlvdSB0YWtlIHNv
+bWV0aGluZyBvdXQgb2YgdGhlIGtlcm5lbCdzIGtub3dsZWRnZSBvZiB3aGF0IGlzIG1lbW9yeSwK
+eW91IGNhbid0IHRoZW4gdXNlIHRoZSBETUEgQVBJIHdpdGggaXQuCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcg
+bGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmlu
+ZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
