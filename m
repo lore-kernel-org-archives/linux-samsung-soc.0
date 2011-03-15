@@ -1,166 +1,41 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS4: CPUIDLE Support
-Date: Tue, 15 Mar 2011 22:57:03 +0900
-Message-ID: <011c01cbe318$df3d2e00$9db78a00$%kim@samsung.com>
-References: <1299635302-27759-1-git-send-email-jc.lee@samsung.com>
+Subject: [GIT PULL] Samsung S5P for 2.6.39 merge window
+Date: Tue, 15 Mar 2011 22:57:35 +0900
+Message-ID: <011d01cbe318$f28d2e10$d7a78a30$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:55346 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757404Ab1CON5c (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:50898 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757411Ab1CON5l (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Mar 2011 09:57:32 -0400
-Received: from epmmp2 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Tue, 15 Mar 2011 09:57:41 -0400
+Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LI300CCKQR7XD20@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 15 Mar 2011 22:57:07 +0900 (KST)
+ 2010)) with ESMTP id <0LI300EA7QS3J700@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 15 Mar 2011 22:57:40 +0900 (KST)
 Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LI300GOEQR7AW@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 15 Mar 2011 22:57:07 +0900 (KST)
-In-reply-to: <1299635302-27759-1-git-send-email-jc.lee@samsung.com>
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LI30043MQS37L@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 15 Mar 2011 22:57:39 +0900 (KST)
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jaecheol Lee' <jc.lee@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, =?ks_c_5601-1987?B?udqw5rnOL01vYmlsZSBTL1cgUGxhdGZvcm0gTGFiKERNQw==?= =?ks_c_5601-1987?B?v6wpL0U1KMOlwNMpL7vvvLrA/MDa?= <kyungmin.park@samsung.com>
+To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-Jaecheol Lee wrote:
-> 
-> This patch supports cpuidle framework for EXYNOS4210. Currently,
-> Only one idle state is possible to use, but more idle states can
-> be added following by this patch.
-> 
-> Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
-> ---
->  arch/arm/mach-exynos4/Makefile  |    1 +
->  arch/arm/mach-exynos4/cpuidle.c |   87
-> +++++++++++++++++++++++++++++++++++++++
->  2 files changed, 88 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-exynos4/cpuidle.c
-> 
-> diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-
-exynos4/Makefile
-> index 461ae57..bf206fa 100644
-> --- a/arch/arm/mach-exynos4/Makefile
-> +++ b/arch/arm/mach-exynos4/Makefile
-> @@ -16,6 +16,7 @@ obj-$(CONFIG_CPU_EXYNOS4210)	+= cpu.o init.o
-clock.o
-> irq-combiner.o
->  obj-$(CONFIG_CPU_EXYNOS4210)	+= cpu.o init.o clock.o irq-combiner.o
->  obj-$(CONFIG_CPU_EXYNOS4210)	+= setup-i2c0.o time.o gpiolib.o irq-eint.o
-> dma.o
->  obj-$(CONFIG_CPU_FREQ)		+= cpufreq.o
-> +obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
-> 
->  obj-$(CONFIG_SMP)		+= platsmp.o headsmp.o
->  obj-$(CONFIG_LOCAL_TIMERS)	+= localtimer.o
-> diff --git a/arch/arm/mach-exynos4/cpuidle.c b/arch/arm/mach-
-> exynos4/cpuidle.c
-> new file mode 100644
-> index 0000000..a543a18
-> --- /dev/null
-> +++ b/arch/arm/mach-exynos4/cpuidle.c
-> @@ -0,0 +1,87 @@
-> +/* linux/arch/arm/mach-exynos4/cpuidle.c
-> + *
-> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/init.h>
-> +#include <linux/cpuidle.h>
-> +#include <linux/io.h>
-> +
-> +#include <asm/proc-fns.h>
-> +
-> +static int exynos4_enter_idle(struct cpuidle_device *dev,
-> +			      struct cpuidle_state *state);
-> +
-> +static struct cpuidle_state exynos4_cpuidle_set[] = {
-> +	[0] = {
-> +		.enter			= exynos4_enter_idle,
-> +		.exit_latency		= 1,
-> +		.target_residency	= 100000,
-> +		.flags			= CPUIDLE_FLAG_TIME_VALID,
-> +		.name			= "IDLE",
-> +		.desc			= "ARM clock gating(WFI)",
-> +	},
-> +};
-> +
-> +static DEFINE_PER_CPU(struct cpuidle_device, exynos4_cpuidle_device);
-> +
-> +static struct cpuidle_driver exynos4_idle_driver = {
-> +	.name		= "exynos4_idle",
-> +	.owner		= THIS_MODULE,
-> +};
-> +
-> +static int exynos4_enter_idle(struct cpuidle_device *dev,
-> +			      struct cpuidle_state *state)
-> +{
-> +	struct timeval before, after;
-> +	int idle_time;
-> +
-> +	local_irq_disable();
-> +	do_gettimeofday(&before);
-> +
-> +	cpu_do_idle();
-> +
-> +	do_gettimeofday(&after);
-> +	local_irq_enable();
-> +	idle_time = (after.tv_sec - before.tv_sec) * USEC_PER_SEC +
-> +		    (after.tv_usec - before.tv_usec);
-> +
-> +	return idle_time;
-> +}
-> +
-> +static int __init exynos4_init_cpuidle(void)
-> +{
-> +	int i, max_cpuidle_state, cpu_id;
-> +	struct cpuidle_device *device;
-> +
-> +	cpuidle_register_driver(&exynos4_idle_driver);
-> +
-> +	for_each_cpu(cpu_id, cpu_online_mask) {
-> +		device = &per_cpu(exynos4_cpuidle_device, cpu_id);
-> +		device->cpu = cpu_id;
-> +
-> +		device->state_count = (sizeof(exynos4_cpuidle_set) /
-> +					       sizeof(struct
-cpuidle_state));
-> +
-> +		max_cpuidle_state = device->state_count;
-> +
-> +		for (i = 0; i < max_cpuidle_state; i++) {
-> +			memcpy(&device->states[i], &exynos4_cpuidle_set[i],
-> +					sizeof(struct cpuidle_state));
-> +		}
-> +
-> +		if (cpuidle_register_device(device)) {
-> +			printk(KERN_ERR "CPUidle register device
-failed\n,");
-> +			return -EIO;
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
-> +device_initcall(exynos4_init_cpuidle);
-> --
-> 1.7.1
+Hi Russell,
 
-Cc'ed Kyungmin Park.
+Please pull Samsung S5P updates from:
 
-Hmm...I'm thinking that we need more discussion on this CPUIDLE later,
-about method, IDLE states and so on.
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+for-rmk
+
+These things are for 2.6.39.
+
+If any problems, please let me know.
 
 Thanks.
 
@@ -169,3 +44,251 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+The following changes since commit a5abba989deceb731047425812d268daf7536575
+
+  Linux 2.6.38-rc8
+
+are available in the git repository at:
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+for-rmk
+
+ALIM AKHTAR (1):
+      ARM: EXYNOS4: Add ARMLEX4210 Board support file
+
+Abhilash Kesavan (1):
+      ARM: EXYNOS4: Add support for SATA on ARMLEX4210
+
+Banajit Goswami (6):
+      ARM: SAMSUNG: Move PWM device definition from plat-s3c24xx to
+plat-samsung
+      ARM: SAMSUNG: Add PWM backlight support on Samsung S3C6410
+      ARM: SAMSUNG: Add PWM backlight support on Samsung S5P6440
+      ARM: SAMSUNG: Add PWM backlight support on Samsung S5P6450
+      ARM: SAMSUNG: Add PWM backlight support on Samsung S5PC100
+      ARM: SAMSUNG: Add PWM backlight support on Samsung S5PV210
+
+Changhwan Youn (3):
+      ARM: EXYNOS4: Add SYSTIMER IO Address mapping for MCT
+      ARM: EXYNOS4: Add irq definition for kernel global timer
+      ARM: EXYNOS4: Implement kernel timers using MCT
+
+Donghwa Lee (1):
+      ARM: EXYNOS4: enabled lcd and backlight in NURI board
+
+Inderpal Singh (1):
+      ARM: EXYNOS4: Enable watchdog parent clock
+
+Jaecheol Lee (3):
+      ARM: EXYNOS4: Add PMU and CMU Registers for PM
+      ARM: EXYNOS4: Suspend to RAM Support
+      ARM: EXYNOS4: Update HRT for supporting PM
+
+Kukjin Kim (19):
+      ARM: S5PV210: Use REGULATOR_SUPPLY macro for regulator consumers
+      ARM: EXYNOS4: Add EXYNOS4 CPU initialization support
+      ARM: EXYNOS4: Update Clock part
+      ARM: EXYNOS4: Update IRQ part
+      ARM: EXYNOS4: Update Timer part
+      ARM: EXYNOS4: Update device support
+      ARM: EXYNOS4: Moved board support files
+      ARM: EXYNOS4: Update Kconfig and Makefile for the new ARCH_EXYNOS4
+      ARM: exynos4_defconfig: Add defconfig for EXYNOS4
+      mtd: OneNAND: Change dependency of ARCH_EXYNOS4
+      ASoC: Change dependency of ARCH_EXYNOS4
+      tty: Change dependency of ARCH_EXYNOS4
+      ARM: EXYNOS4: Fix wrong constants in the hotplug assembly code.
+      Merge branch 'next-exynos4' into for-next
+      Merge branch 'next-s5p' into for-next
+      Merge branch 'next-s3c2440-gta02' into for-next
+      Merge branch 'dev/pwm-backlight' into for-next
+      Merge branch 'next-exynos4' into next-exynos4-pm
+      Merge branch 'next-exynos4-pm' into for-next
+
+KyongHo Cho (2):
+      ARM: EXYNOS4: Enhancement of System MMU driver
+      ARM: EXYNOS4: Implement Clock gating for System MMU
+
+Kyungmin Park (1):
+      ARM: EXYNOS4: Remove meaningless REGULATOR config option
+
+Lars-Peter Clausen (6):
+      ARM: S3C2440: Register PCM device on GTA02
+      ARM: S3C2440: Add button support on GTA02
+      ARM: S3C2440: Fix regulator valid_modes_ops on GTA02
+      ARM: S3C2440: Call regulator_has_full_constraints on GTA02
+      ARM: S3C2440: Remove state_mem constraints for the pcf50633 regulators
+on GTA02
+      ARM: S3C2440: Add touchscreen support on GTA02
+
+Marek Szyprowski (7):
+      ARM: S5PV210: Disable unused power regulators on GONI board
+      ARM: S5PV210: Add power consumers for hsotg for GONI board
+      ARM: EXYNOS4: Add support for i2c PMICs on Universal_C210 board
+      ARM: EXYNOS4: Add missing GPYx banks
+      ARM: S5P: Cleanup S5P gpio interrupt code
+      ARM: S5P: Add function to register gpio interrupt bank data
+      ARM: EXYNOS4: Add support for gpio interrupts
+
+Mark Brown (1):
+      ARM: S3C64XX: Fix section mismatch from cpufreq init
+
+Minkyu Kang (1):
+      ARM: EXYNOS4: Adds Samsung NURI board support
+
+Naveen Krishna Ch (4):
+      ARM: EXYNOS4: Add keypad device helpers
+      ARM: EXYNOS4: Update keypad base address
+      ARM: EXYNOS4: Update clocks for keypad
+      ARM: EXYNOS4: Add keypad device to the SMDKV310
+
+Sangbeom Kim (3):
+      ARM: S5P: HRT support
+      ARM: S5P: Update machine of S5P64X0 and S5PV210 for HRT
+      ARM: S5P: Update defconfig for HRT support
+
+Seungwhan Youn (1):
+      ARM: EXYNOS4: Debug wrong S/PDIF register address
+
+Sylwester Nawrocki (8):
+      ARM: S5PV210: Enable I2C0 bus on GONI board
+      ARM: S5PV210: Add supplies for CIF camera on GONI board
+      ARM: S5PV210: Change framebuffer window 0 size on GONI
+      ARM: S5P: Add platform helpers for camera GPIO configuration
+      ARM: S5P: Rename MIPI-CSIS driver header and update Copyright
+      ARM: S5P: Extend MIPI-CSIS platform_data with the PHY control callback
+      ARM: S5P: Add support for common MIPI CSIS/DSIM D-PHY control
+      ARM: S5P: Add platform definitions for FIMC3
+
+ arch/arm/Kconfig                                   |   20 +-
+ arch/arm/Makefile                                  |    2 +-
+ arch/arm/configs/exynos4_defconfig                 |   70 +++
+ arch/arm/configs/s5p64x0_defconfig                 |    2 +
+ arch/arm/configs/s5pv210_defconfig                 |    2 +
+ arch/arm/mach-exynos4/Kconfig                      |  195 ++++++
+ arch/arm/mach-exynos4/Makefile                     |   56 ++
+ .../{mach-s5pv310 => mach-exynos4}/Makefile.boot   |    0
+ arch/arm/{mach-s5pv310 => mach-exynos4}/clock.c    |  286 ++++++---
+ arch/arm/{mach-s5pv310 => mach-exynos4}/cpu.c      |   99 ++--
+ arch/arm/{mach-s5pv310 => mach-exynos4}/cpufreq.c  |  110 ++--
+ arch/arm/mach-exynos4/dev-ahci.c                   |  263 ++++++++
+ .../arm/{mach-s5pv310 => mach-exynos4}/dev-audio.c |  143 +++---
+ arch/arm/{mach-s5pv310 => mach-exynos4}/dev-pd.c   |   40 +-
+ .../{mach-s5pv310 => mach-exynos4}/dev-sysmmu.c    |  121 +++--
+ arch/arm/{mach-s5pv310 => mach-exynos4}/dma.c      |   50 +-
+ arch/arm/mach-exynos4/gpiolib.c                    |  365 +++++++++++
+ arch/arm/{mach-s5pv310 => mach-exynos4}/headsmp.S  |    6 +-
+ arch/arm/{mach-s5pv310 => mach-exynos4}/hotplug.c  |   10 +-
+ .../include/mach/debug-macro.S                     |    6 +-
+ .../include/mach/dma.h                             |    0
+ .../include/mach/entry-macro.S                     |    4 +-
+ arch/arm/mach-exynos4/include/mach/gpio.h          |  156 +++++
+ .../include/mach/hardware.h                        |    8 +-
+ .../include/mach/io.h                              |    8 +-
+ .../include/mach/irqs.h                            |   26 +-
+ arch/arm/mach-exynos4/include/mach/map.h           |  162 +++++
+ .../include/mach/memory.h                          |    8 +-
+ arch/arm/mach-exynos4/include/mach/pm-core.h       |   49 ++
+ .../include/mach/pwm-clock.h                       |    8 +-
+ .../include/mach/regs-clock.h                      |   41 +-
+ arch/arm/mach-exynos4/include/mach/regs-gpio.h     |   42 ++
+ .../include/mach/regs-irq.h                        |    8 +-
+ arch/arm/mach-exynos4/include/mach/regs-mct.h      |   52 ++
+ .../include/mach/regs-mem.h                        |    6 +-
+ arch/arm/mach-exynos4/include/mach/regs-pmu.h      |  162 +++++
+ .../include/mach/regs-sysmmu.h                     |   10 +-
+ .../include/mach/smp.h                             |    2 +-
+ arch/arm/mach-exynos4/include/mach/sysmmu.h        |   46 ++
+ .../include/mach/system.h                          |    8 +-
+ .../include/mach/timex.h                           |    8 +-
+ .../include/mach/uncompress.h                      |    8 +-
+ .../include/mach/vmalloc.h                         |    8 +-
+ arch/arm/{mach-s5pv310 => mach-exynos4}/init.c     |   10 +-
+ .../{mach-s5pv310 => mach-exynos4}/irq-combiner.c  |    4 +-
+ arch/arm/{mach-s5pv310 => mach-exynos4}/irq-eint.c |   62 +-
+ .../{mach-s5pv310 => mach-exynos4}/localtimer.c    |    2 +-
+ arch/arm/mach-exynos4/mach-armlex4210.c            |  215 +++++++
+ arch/arm/mach-exynos4/mach-nuri.c                  |  305 +++++++++
+ .../{mach-s5pv310 => mach-exynos4}/mach-smdkc210.c |   48 +-
+ .../{mach-s5pv310 => mach-exynos4}/mach-smdkv310.c |   72 ++-
+ arch/arm/mach-exynos4/mach-universal_c210.c        |  650
+++++++++++++++++++++
+ arch/arm/mach-exynos4/mct.c                        |  421 +++++++++++++
+ arch/arm/{mach-s5pv310 => mach-exynos4}/platsmp.c  |   12 +-
+ arch/arm/mach-exynos4/pm.c                         |  420 +++++++++++++
+ arch/arm/mach-exynos4/setup-fimc.c                 |   44 ++
+ .../{mach-s5pv310 => mach-exynos4}/setup-i2c0.c    |    4 +-
+ .../{mach-s5pv310 => mach-exynos4}/setup-i2c1.c    |    4 +-
+ .../{mach-s5pv310 => mach-exynos4}/setup-i2c2.c    |    4 +-
+ .../{mach-s5pv310 => mach-exynos4}/setup-i2c3.c    |    4 +-
+ .../{mach-s5pv310 => mach-exynos4}/setup-i2c4.c    |    4 +-
+ .../{mach-s5pv310 => mach-exynos4}/setup-i2c5.c    |    4 +-
+ .../{mach-s5pv310 => mach-exynos4}/setup-i2c6.c    |    4 +-
+ .../{mach-s5pv310 => mach-exynos4}/setup-i2c7.c    |    4 +-
+ arch/arm/mach-exynos4/setup-keypad.c               |   35 +
+ .../setup-sdhci-gpio.c                             |   52 +-
+ .../{mach-s5pv310 => mach-exynos4}/setup-sdhci.c   |   12 +-
+ arch/arm/mach-exynos4/sleep.S                      |   76 +++
+ arch/arm/{mach-s5pv310 => mach-exynos4}/time.c     |   80 ++-
+ arch/arm/mach-s3c2440/mach-gta02.c                 |   71 ++-
+ arch/arm/mach-s3c64xx/Kconfig                      |    5 +-
+ arch/arm/mach-s3c64xx/cpufreq.c                    |    2 +-
+ arch/arm/mach-s3c64xx/mach-smdk6410.c              |   46 ++-
+ arch/arm/mach-s5p64x0/Kconfig                      |    4 +
+ arch/arm/mach-s5p64x0/mach-smdk6440.c              |   47 ++-
+ arch/arm/mach-s5p64x0/mach-smdk6450.c              |   47 ++-
+ arch/arm/mach-s5pc100/Kconfig                      |    1 +
+ arch/arm/mach-s5pc100/gpiolib.c                    |    1 +
+ arch/arm/mach-s5pc100/mach-smdkc100.c              |   48 ++-
+ arch/arm/mach-s5pv210/Kconfig                      |    7 +
+ arch/arm/mach-s5pv210/Makefile                     |    1 +
+ arch/arm/mach-s5pv210/gpiolib.c                    |    1 +
+ arch/arm/mach-s5pv210/include/mach/regs-clock.h    |    5 +-
+ arch/arm/mach-s5pv210/mach-aquila.c                |   56 +--
+ arch/arm/mach-s5pv210/mach-goni.c                  |  107 ++--
+ arch/arm/mach-s5pv210/mach-smdkc110.c              |    4 +-
+ arch/arm/mach-s5pv210/mach-smdkv210.c              |   47 ++-
+ arch/arm/mach-s5pv210/mach-torbreck.c              |    4 +-
+ arch/arm/mach-s5pv210/setup-fimc.c                 |   43 ++
+ arch/arm/mach-s5pv310/Kconfig                      |  151 -----
+ arch/arm/mach-s5pv310/Makefile                     |   43 --
+ arch/arm/mach-s5pv310/gpiolib.c                    |  304 ---------
+ arch/arm/mach-s5pv310/include/mach/gpio.h          |  135 ----
+ arch/arm/mach-s5pv310/include/mach/map.h           |  144 -----
+ arch/arm/mach-s5pv310/include/mach/regs-gpio.h     |   42 --
+ arch/arm/mach-s5pv310/include/mach/regs-pmu.h      |   30 -
+ arch/arm/mach-s5pv310/include/mach/sysmmu.h        |  122 ----
+ arch/arm/mach-s5pv310/mach-universal_c210.c        |  237 -------
+ arch/arm/mm/Kconfig                                |    2 +-
+ arch/arm/plat-s3c24xx/Kconfig                      |    7 -
+ arch/arm/plat-s5p/Kconfig                          |   23 +-
+ arch/arm/plat-s5p/Makefile                         |    3 +
+ arch/arm/plat-s5p/cpu.c                            |   25 +-
+ arch/arm/plat-s5p/dev-csis0.c                      |    2 +-
+ arch/arm/plat-s5p/dev-csis1.c                      |    2 +-
+ arch/arm/plat-s5p/dev-fimc3.c                      |   43 ++
+ arch/arm/plat-s5p/include/plat/camport.h           |   28 +
+ arch/arm/plat-s5p/include/plat/csis.h              |   28 -
+ arch/arm/plat-s5p/include/plat/exynos4.h           |   34 +
+ arch/arm/plat-s5p/include/plat/mipi_csis.h         |   43 ++
+ arch/arm/plat-s5p/include/plat/s5p-time.h          |   40 ++
+ arch/arm/plat-s5p/include/plat/s5pv310.h           |   34 -
+ arch/arm/plat-s5p/include/plat/sysmmu.h            |   95 +++
+ arch/arm/plat-s5p/irq-gpioint.c                    |  170 +++--
+ arch/arm/plat-s5p/s5p-time.c                       |  448 ++++++++++++++
+ arch/arm/plat-s5p/setup-mipiphy.c                  |   63 ++
+ arch/arm/plat-s5p/sysmmu.c                         |  370 ++++++------
+ arch/arm/plat-samsung/Kconfig                      |   13 +
+ arch/arm/plat-samsung/Makefile                     |    1 +
+ arch/arm/plat-samsung/dev-pwm.c                    |   53 ++
+ arch/arm/plat-samsung/include/plat/cpu.h           |    1 +
+ arch/arm/plat-samsung/include/plat/devs.h          |   25 +-
+ arch/arm/plat-samsung/include/plat/fimc-core.h     |    5 +
+ arch/arm/plat-samsung/include/plat/gpio-cfg.h      |   16 +
+ arch/arm/plat-samsung/include/plat/pd.h            |    4 +-
+ arch/arm/plat-samsung/include/plat/sdhci.h         |   63 +-
+ arch/arm/plat-samsung/pwm.c                        |   33 -
+ drivers/mtd/onenand/Kconfig                        |    2 +-
+ drivers/tty/serial/Kconfig                         |    4 +-
+ sound/soc/samsung/Kconfig                          |    2 +-
+ 130 files changed, 6308 insertions(+), 2357 deletions(-)
