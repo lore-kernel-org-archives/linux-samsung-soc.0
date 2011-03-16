@@ -1,218 +1,190 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS4: CPUIDLE Support
-Date: Wed, 16 Mar 2011 15:01:53 +0900
-Message-ID: <001901cbe39f$a9518bb0$fbf4a310$%kim@samsung.com>
-References: <1299635302-27759-1-git-send-email-jc.lee@samsung.com>
- <011c01cbe318$df3d2e00$9db78a00$%kim@samsung.com>
- <AANLkTik2nRq9LsKjZSSFkV_-x=tnG4s3k-S1d651YGvW@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: [PATCH] ARM: EXYNOS4: Add Atmel mXT touchscreen device to the NURI
+ board
+Date: Wed, 16 Mar 2011 15:59:11 +0900
+Message-ID: <1300258751-662-1-git-send-email-jy0922.shim@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:29199 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751446Ab1CPGCB convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:41777 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751656Ab1CPG75 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Mar 2011 02:02:01 -0400
-Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Wed, 16 Mar 2011 02:59:57 -0400
+Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LI4004EXZFBQEF0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 16 Mar 2011 15:01:59 +0900 (KST)
-Received: from DOKGENEKIM02 ([12.23.103.104])
+ 2010)) with ESMTP id <0LI5001A723VUJ30@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 16 Mar 2011 15:59:55 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LI400DQPZFA9T@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 16 Mar 2011 15:01:59 +0900 (KST)
-In-reply-to: <AANLkTik2nRq9LsKjZSSFkV_-x=tnG4s3k-S1d651YGvW@mail.gmail.com>
-Content-language: ko
+ with ESMTPA id <0LI500HQ523VQA@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 16 Mar 2011 15:59:55 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kyungmin Park' <kmpark@infradead.org>
-Cc: 'Jaecheol Lee' <jc.lee@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com
 
-Kyungmin Park wrote:
->=20
-> On Tue, Mar 15, 2011 at 10:57 PM, Kukjin Kim <kgene.kim@samsung.com>
-wrote:
-> > Jaecheol Lee wrote:
-> >>
-> >> This patch supports cpuidle framework for EXYNOS4210. Currently,
-> >> Only one idle state is possible to use, but more idle states can
-> >> be added following by this patch.
-> >>
-> >> Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
-> >> ---
-> >> =A0arch/arm/mach-exynos4/Makefile =A0| =A0 =A01 +
-> >> =A0arch/arm/mach-exynos4/cpuidle.c | =A0 87
-> >> +++++++++++++++++++++++++++++++++++++++
-> >> =A02 files changed, 88 insertions(+), 0 deletions(-)
-> >> =A0create mode 100644 arch/arm/mach-exynos4/cpuidle.c
-> >>
-> >> diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-
-> > exynos4/Makefile
-> >> index 461ae57..bf206fa 100644
-> >> --- a/arch/arm/mach-exynos4/Makefile
-> >> +++ b/arch/arm/mach-exynos4/Makefile
-> >> @@ -16,6 +16,7 @@ obj-$(CONFIG_CPU_EXYNOS4210) =A0 =A0 =A0 =A0+=3D=
- cpu.o init.o
-> > clock.o
-> >> irq-combiner.o
-> >> =A0obj-$(CONFIG_CPU_EXYNOS4210) +=3D cpu.o init.o clock.o irq-comb=
-iner.o
-> >> =A0obj-$(CONFIG_CPU_EXYNOS4210) +=3D setup-i2c0.o time.o gpiolib.o
-irq-eint.o
-> >> dma.o
-> >> =A0obj-$(CONFIG_CPU_FREQ) =A0 =A0 =A0 =A0 =A0 =A0 =A0 +=3D cpufreq=
-=2Eo
-> >> +obj-$(CONFIG_CPU_IDLE) =A0 =A0 =A0 =A0 =A0 =A0 =A0 +=3D cpuidle.o
-> >>
-> >> =A0obj-$(CONFIG_SMP) =A0 =A0 =A0 =A0 =A0 =A0+=3D platsmp.o headsmp=
-=2Eo
-> >> =A0obj-$(CONFIG_LOCAL_TIMERS) =A0 +=3D localtimer.o
-> >> diff --git a/arch/arm/mach-exynos4/cpuidle.c b/arch/arm/mach-
-> >> exynos4/cpuidle.c
-> >> new file mode 100644
-> >> index 0000000..a543a18
-> >> --- /dev/null
-> >> +++ b/arch/arm/mach-exynos4/cpuidle.c
-> >> @@ -0,0 +1,87 @@
-> >> +/* linux/arch/arm/mach-exynos4/cpuidle.c
-> >> + *
-> >> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-> >> + * =A0 =A0 =A0 =A0 =A0 http://www.samsung.com
-> >> + *
-> >> + * This program is free software; you can redistribute it and/or
-modify
-> >> + * it under the terms of the GNU General Public License version 2=
- as
-> >> + * published by the Free Software Foundation.
-> >> +*/
-> >> +
-> >> +#include <linux/kernel.h>
-> >> +#include <linux/init.h>
-> >> +#include <linux/cpuidle.h>
-> >> +#include <linux/io.h>
-> >> +
-> >> +#include <asm/proc-fns.h>
-> >> +
-> >> +static int exynos4_enter_idle(struct cpuidle_device *dev,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 struct cpuid=
-le_state *state);
-> >> +
-> >> +static struct cpuidle_state exynos4_cpuidle_set[] =3D {
-> >> + =A0 =A0 [0] =3D {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .enter =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-=3D exynos4_enter_idle,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .exit_latency =A0 =A0 =A0 =A0 =A0 =3D 1,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .target_residency =A0 =A0 =A0 =3D 100000=
-,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-=3D CPUIDLE_FLAG_TIME_VALID,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =3D "IDLE",
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .desc =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =3D "ARM clock gating(WFI)",
-> >> + =A0 =A0 },
-> >> +};
-> >> +
-> >> +static DEFINE_PER_CPU(struct cpuidle_device, exynos4_cpuidle_devi=
-ce);
-> >> +
-> >> +static struct cpuidle_driver exynos4_idle_driver =3D {
-> >> + =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "exynos4_idle",
-> >> + =A0 =A0 .owner =A0 =A0 =A0 =A0 =A0=3D THIS_MODULE,
-> >> +};
-> >> +
-> >> +static int exynos4_enter_idle(struct cpuidle_device *dev,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 struct cpuid=
-le_state *state)
-> >> +{
-> >> + =A0 =A0 struct timeval before, after;
-> >> + =A0 =A0 int idle_time;
-> >> +
-> >> + =A0 =A0 local_irq_disable();
-> >> + =A0 =A0 do_gettimeofday(&before);
-> >> +
-> >> + =A0 =A0 cpu_do_idle();
-> >> +
-> >> + =A0 =A0 do_gettimeofday(&after);
-> >> + =A0 =A0 local_irq_enable();
-> >> + =A0 =A0 idle_time =3D (after.tv_sec - before.tv_sec) * USEC_PER_=
-SEC +
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (after.tv_usec - before.tv_usec)=
-;
-> >> +
-> >> + =A0 =A0 return idle_time;
-> >> +}
-> >> +
-> >> +static int __init exynos4_init_cpuidle(void)
-> >> +{
-> >> + =A0 =A0 int i, max_cpuidle_state, cpu_id;
-> >> + =A0 =A0 struct cpuidle_device *device;
-> >> +
-> >> + =A0 =A0 cpuidle_register_driver(&exynos4_idle_driver);
-> >> +
-> >> + =A0 =A0 for_each_cpu(cpu_id, cpu_online_mask) {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 device =3D &per_cpu(exynos4_cpuidle_devi=
-ce, cpu_id);
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 device->cpu =3D cpu_id;
-> >> +
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 device->state_count =3D (sizeof(exynos4_=
-cpuidle_set) /
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0sizeof(struct
-> > cpuidle_state));
-> >> +
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 max_cpuidle_state =3D device->state_coun=
-t;
-> >> +
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 for (i =3D 0; i < max_cpuidle_state; i++=
-) {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 memcpy(&device->states[i=
-],
-&exynos4_cpuidle_set[i],
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 sizeof(struct cpuidle_state));
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 }
-> >> +
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 if (cpuidle_register_device(device)) {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 printk(KERN_ERR "CPUidle=
- register device
-> > failed\n,");
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EIO;
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 }
-> >> + =A0 =A0 }
-> >> + =A0 =A0 return 0;
-> >> +}
-> >> +
-> >> +device_initcall(exynos4_init_cpuidle);
-> >> --
-> >> 1.7.1
-> >
-> > Cc'ed Kyungmin Park.
-> >
-> > Hmm...I'm thinking that we need more discussion on this CPUIDLE lat=
-er,
-> > about method, IDLE states and so on.
->=20
-> It's not good decision. As cpufreq, support the basic cpuidle at
-> mainline kernel, and add it more states at later.
-> Except the state name "IDLE", I hope it will be changed to "C1" for
-> support cpuidle tool.
->=20
-> Mr. Lee will support the C states soon.
->=20
-> I'm okay with Mr. Lee patch.
+This patch is to support Atmel mXT touchscreen device to the NURI board.
 
-Yeah, if required, we can update it later.
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+Hi,
 
-Ok, his code looks ok to me.
-Will apply.
+This patch is created at the source tree merged next branch of
+git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git to next-exynos4 branch of
+git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
 
 Thanks.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+ arch/arm/mach-exynos4/Kconfig     |    2 +
+ arch/arm/mach-exynos4/mach-nuri.c |   89 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 91 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index 82195a9..74a5ff6 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -151,8 +151,10 @@ config MACH_NURI
+ 	select S3C_DEV_HSMMC2
+ 	select S3C_DEV_HSMMC3
+ 	select S3C_DEV_I2C1
++	select S3C_DEV_I2C3
+ 	select S3C_DEV_I2C5
+ 	select EXYNOS4_SETUP_I2C1
++	select EXYNOS4_SETUP_I2C3
+ 	select EXYNOS4_SETUP_I2C5
+ 	select EXYNOS4_SETUP_SDHCI
+ 	select SAMSUNG_DEV_PWM
+diff --git a/arch/arm/mach-exynos4/mach-nuri.c b/arch/arm/mach-exynos4/mach-nuri.c
+index b79ad01..cf354e2 100644
+--- a/arch/arm/mach-exynos4/mach-nuri.c
++++ b/arch/arm/mach-exynos4/mach-nuri.c
+@@ -12,6 +12,7 @@
+ #include <linux/serial_core.h>
+ #include <linux/input.h>
+ #include <linux/i2c.h>
++#include <linux/i2c/atmel_mxt_ts.h>
+ #include <linux/gpio_keys.h>
+ #include <linux/gpio.h>
+ #include <linux/regulator/machine.h>
+@@ -30,6 +31,8 @@
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+ #include <plat/sdhci.h>
++#include <plat/gpio-cfg.h>
++#include <plat/iic.h>
+ 
+ #include <mach/map.h>
+ 
+@@ -257,6 +260,88 @@ static struct i2c_board_info i2c1_devs[] __initdata = {
+ 	/* Gyro, To be updated */
+ };
+ 
++/* TSP */
++static u8 mxt_init_vals[] = {
++	/* MXT_GEN_COMMAND(6) */
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	/* MXT_GEN_POWER(7) */
++	0x20, 0xff, 0x32,
++	/* MXT_GEN_ACQUIRE(8) */
++	0x0a, 0x00, 0x05, 0x00, 0x00, 0x00, 0x09, 0x23,
++	/* MXT_TOUCH_MULTI(9) */
++	0x00, 0x00, 0x00, 0x13, 0x0b, 0x00, 0x00, 0x00, 0x02, 0x00,
++	0x00, 0x01, 0x01, 0x0e, 0x0a, 0x0a, 0x0a, 0x0a, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00,
++	/* MXT_TOUCH_KEYARRAY(15) */
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00,
++	0x00,
++	/* MXT_SPT_GPIOPWM(19) */
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	/* MXT_PROCI_GRIPFACE(20) */
++	0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x50, 0x28, 0x04,
++	0x0f, 0x0a,
++	/* MXT_PROCG_NOISE(22) */
++	0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x23, 0x00,
++	0x00, 0x05, 0x0f, 0x19, 0x23, 0x2d, 0x03,
++	/* MXT_TOUCH_PROXIMITY(23) */
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00,
++	/* MXT_PROCI_ONETOUCH(24) */
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	/* MXT_SPT_SELFTEST(25) */
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00,
++	/* MXT_PROCI_TWOTOUCH(27) */
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	/* MXT_SPT_CTECONFIG(28) */
++	0x00, 0x00, 0x02, 0x08, 0x10, 0x00,
++};
++
++static struct mxt_platform_data mxt_platform_data = {
++	.config			= mxt_init_vals,
++	.config_length		= ARRAY_SIZE(mxt_init_vals),
++
++	.x_line			= 18,
++	.y_line			= 11,
++	.x_size			= 1024,
++	.y_size			= 600,
++	.blen			= 0x1,
++	.threshold		= 0x28,
++	.voltage		= 2800000,              /* 2.8V */
++	.orient			= MXT_DIAGONAL_COUNTER,
++	.irqflags		= IRQF_TRIGGER_FALLING,
++};
++
++static struct s3c2410_platform_i2c i2c3_data __initdata = {
++	.flags		= 0,
++	.bus_num	= 3,
++	.slave_addr	= 0x10,
++	.frequency	= 400 * 1000,
++	.sda_delay	= 100,
++};
++
++static struct i2c_board_info i2c3_devs[] __initdata = {
++	{
++		I2C_BOARD_INFO("atmel_mxt_ts", 0x4a),
++		.platform_data	= &mxt_platform_data,
++		.irq		= IRQ_EINT(4),
++	},
++};
++
++static void __init nuri_tsp_init(void)
++{
++	int gpio;
++
++	/* TOUCH_INT: XEINT_4 */
++	gpio = EXYNOS4_GPX0(4);
++	gpio_request(gpio, "TOUCH_INT");
++	s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0xf));
++	s3c_gpio_setpull(gpio, S3C_GPIO_PULL_UP);
++}
++
+ /* GPIO I2C 5 (PMIC) */
+ static struct i2c_board_info i2c5_devs[] __initdata = {
+ 	/* max8997, To be updated */
+@@ -270,6 +355,7 @@ static struct platform_device *nuri_devices[] __initdata = {
+ 	&s3c_device_hsmmc3,
+ 	&s3c_device_wdt,
+ 	&s3c_device_timer[0],
++	&s3c_device_i2c3,
+ 
+ 	/* NURI Devices */
+ 	&nuri_gpio_keys,
+@@ -287,8 +373,11 @@ static void __init nuri_map_io(void)
+ static void __init nuri_machine_init(void)
+ {
+ 	nuri_sdhci_init();
++	nuri_tsp_init();
+ 
+ 	i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
++	s3c_i2c3_set_platdata(&i2c3_data);
++	i2c_register_board_info(3, i2c3_devs, ARRAY_SIZE(i2c3_devs));
+ 	i2c_register_board_info(5, i2c5_devs, ARRAY_SIZE(i2c5_devs));
+ 
+ 	/* Last */
+-- 
+1.7.0.4
