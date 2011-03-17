@@ -1,39 +1,89 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ARM: S3C64XX: Fix section mismatch from cpufreq init
-Date: Wed, 16 Mar 2011 10:53:47 +0000
-Message-ID: <20110316105346.GA14125@opensource.wolfsonmicro.com>
-References: <1299769093-14516-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <20110316083811.GG13316@pengutronix.de>
- <20110316094959.GB2688@opensource.wolfsonmicro.com>
- <20110316101259.GH13316@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: [PATCH] ARM: S3C24XX: H1940: RX1950: Change default LED triggers
+Date: Thu, 17 Mar 2011 20:04:57 +0200
+Message-ID: <1300385097-18283-1-git-send-email-anarsoul@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:37371 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751825Ab1CPKxt (ORCPT
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:40626 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754926Ab1CQSFv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Mar 2011 06:53:49 -0400
-Content-Disposition: inline
-In-Reply-To: <20110316101259.GH13316@pengutronix.de>
+	Thu, 17 Mar 2011 14:05:51 -0400
+Received: by wwa36 with SMTP id 36so3871799wwa.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Mar 2011 11:05:49 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, patches@opensource.wolfsonmicro.com, Ben Dooks <ben-linux@fluff.org>
+To: "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Vasily Khoruzhick <anarsoul@gmail.com>
 
-On Wed, Mar 16, 2011 at 11:13:00AM +0100, Uwe Kleine-K=F6nig wrote:
-> On Wed, Mar 16, 2011 at 09:49:59AM +0000, Mark Brown wrote:
+Change LED triggers to mimic WinMobile behavior:
+red blinking when battery is charging,
+orange solid when battery is charged.
 
-> > That's what I said above, pretty much.  Ideally we'd have a way of
-> > annotating the call sites so that the linker infrastructure rather =
-than
-> > having to faff about splitting the structures like this.
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+---
+ arch/arm/mach-s3c2410/mach-h1940.c  |    5 +++--
+ arch/arm/mach-s3c2440/mach-rx1950.c |   23 ++++++++++++-----------
+ 2 files changed, 15 insertions(+), 13 deletions(-)
 
-> You can mark the driver struct using __ref. But IMHO not saving a
-> reference to a function only used once is cleaner.
-
-It's pretty annoying to have to define two structs for the affected
-drivers (it's not like cpufreq is the only affected subsystem here) -
-there's good reasons why we use things like __devexit_p() rather than
-split structs for common cases like this.
+diff --git a/arch/arm/mach-s3c2410/mach-h1940.c b/arch/arm/mach-s3c2410/mach-h1940.c
+index 5531c4c..84a1422 100644
+--- a/arch/arm/mach-s3c2410/mach-h1940.c
++++ b/arch/arm/mach-s3c2410/mach-h1940.c
+@@ -437,13 +437,14 @@ EXPORT_SYMBOL(h1940_led_blink_set);
+ static struct gpio_led h1940_leds_desc[] = {
+ 	{
+ 		.name			= "Green",
+-		.default_trigger	= "main-battery-charging-or-full",
++		.default_trigger	= "main-battery-full",
+ 		.gpio			= H1940_LATCH_LED_GREEN,
+ 		.retain_state_suspended	= 1,
+ 	},
+ 	{
+ 		.name			= "Red",
+-		.default_trigger	= "main-battery-full",
++		.default_trigger
++			= "main-battery-charging-blink-full-solid",
+ 		.gpio			= H1940_LATCH_LED_RED,
+ 		.retain_state_suspended	= 1,
+ 	},
+diff --git a/arch/arm/mach-s3c2440/mach-rx1950.c b/arch/arm/mach-s3c2440/mach-rx1950.c
+index 2d2f4e4..20beee3 100644
+--- a/arch/arm/mach-s3c2440/mach-rx1950.c
++++ b/arch/arm/mach-s3c2440/mach-rx1950.c
+@@ -311,22 +311,23 @@ static int rx1950_led_blink_set(unsigned gpio, int state,
+ 
+ static struct gpio_led rx1950_leds_desc[] = {
+ 	{
+-		.name				= "Green",
+-		.default_trigger	= "main-battery-charging-or-full",
+-		.gpio				= S3C2410_GPA(6),
+-		.retain_state_suspended		= 1,
++		.name			= "Green",
++		.default_trigger	= "main-battery-full",
++		.gpio			= S3C2410_GPA(6),
++		.retain_state_suspended	= 1,
+ 	},
+ 	{
+-		.name				= "Red",
+-		.default_trigger	= "main-battery-full",
+-		.gpio				= S3C2410_GPA(7),
+-		.retain_state_suspended		= 1,
++		.name			= "Red",
++		.default_trigger
++			= "main-battery-charging-blink-full-solid",
++		.gpio			= S3C2410_GPA(7),
++		.retain_state_suspended	= 1,
+ 	},
+ 	{
+-		.name				= "Blue",
++		.name			= "Blue",
+ 		.default_trigger	= "rx1950-acx-mem",
+-		.gpio				= S3C2410_GPA(11),
+-		.retain_state_suspended		= 1,
++		.gpio			= S3C2410_GPA(11),
++		.retain_state_suspended	= 1,
+ 	},
+ };
+ 
+-- 
+1.7.4.1
