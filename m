@@ -1,89 +1,54 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH] ARM: S3C24XX: H1940: RX1950: Change default LED triggers
-Date: Thu, 17 Mar 2011 20:04:57 +0200
-Message-ID: <1300385097-18283-1-git-send-email-anarsoul@gmail.com>
+From: Thomas Abraham <thomas.ab@samsung.com>
+Subject: [PATCH 0/6] Prerequisite patches for device tree for Samsung's Exynos4
+ platform
+Date: Sat, 19 Mar 2011 13:20:13 +0530
+Message-ID: <1300521019-13612-1-git-send-email-thomas.ab@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:40626 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754926Ab1CQSFv (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:11474 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753395Ab1CSHwA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Mar 2011 14:05:51 -0400
-Received: by wwa36 with SMTP id 36so3871799wwa.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Mar 2011 11:05:49 -0700 (PDT)
+	Sat, 19 Mar 2011 03:52:00 -0400
+Received: from epmmp2 (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LIA002KDOIM1L60@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 19 Mar 2011 16:51:58 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LIA00APIOIIEL@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 19 Mar 2011 16:51:58 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Arnaud Patard (Rtp)" <arnaud.patard@rtp-net.org>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Vasily Khoruzhick <anarsoul@gmail.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org
 
-Change LED triggers to mimic WinMobile behavior:
-red blinking when battery is charging,
-orange solid when battery is charged.
+This patchset is a prerequisite for device tree patches for exynos4. It
+includes the following changes.
 
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
----
- arch/arm/mach-s3c2410/mach-h1940.c  |    5 +++--
- arch/arm/mach-s3c2440/mach-rx1950.c |   23 ++++++++++++-----------
- 2 files changed, 15 insertions(+), 13 deletions(-)
+1. Adds clkdev support for exynos4.
+2. Removes redundant console registration for exynos4 and s5pv210.
+3. Trival bug fixes.
 
-diff --git a/arch/arm/mach-s3c2410/mach-h1940.c b/arch/arm/mach-s3c2410/mach-h1940.c
-index 5531c4c..84a1422 100644
---- a/arch/arm/mach-s3c2410/mach-h1940.c
-+++ b/arch/arm/mach-s3c2410/mach-h1940.c
-@@ -437,13 +437,14 @@ EXPORT_SYMBOL(h1940_led_blink_set);
- static struct gpio_led h1940_leds_desc[] = {
- 	{
- 		.name			= "Green",
--		.default_trigger	= "main-battery-charging-or-full",
-+		.default_trigger	= "main-battery-full",
- 		.gpio			= H1940_LATCH_LED_GREEN,
- 		.retain_state_suspended	= 1,
- 	},
- 	{
- 		.name			= "Red",
--		.default_trigger	= "main-battery-full",
-+		.default_trigger
-+			= "main-battery-charging-blink-full-solid",
- 		.gpio			= H1940_LATCH_LED_RED,
- 		.retain_state_suspended	= 1,
- 	},
-diff --git a/arch/arm/mach-s3c2440/mach-rx1950.c b/arch/arm/mach-s3c2440/mach-rx1950.c
-index 2d2f4e4..20beee3 100644
---- a/arch/arm/mach-s3c2440/mach-rx1950.c
-+++ b/arch/arm/mach-s3c2440/mach-rx1950.c
-@@ -311,22 +311,23 @@ static int rx1950_led_blink_set(unsigned gpio, int state,
- 
- static struct gpio_led rx1950_leds_desc[] = {
- 	{
--		.name				= "Green",
--		.default_trigger	= "main-battery-charging-or-full",
--		.gpio				= S3C2410_GPA(6),
--		.retain_state_suspended		= 1,
-+		.name			= "Green",
-+		.default_trigger	= "main-battery-full",
-+		.gpio			= S3C2410_GPA(6),
-+		.retain_state_suspended	= 1,
- 	},
- 	{
--		.name				= "Red",
--		.default_trigger	= "main-battery-full",
--		.gpio				= S3C2410_GPA(7),
--		.retain_state_suspended		= 1,
-+		.name			= "Red",
-+		.default_trigger
-+			= "main-battery-charging-blink-full-solid",
-+		.gpio			= S3C2410_GPA(7),
-+		.retain_state_suspended	= 1,
- 	},
- 	{
--		.name				= "Blue",
-+		.name			= "Blue",
- 		.default_trigger	= "rx1950-acx-mem",
--		.gpio				= S3C2410_GPA(11),
--		.retain_state_suspended		= 1,
-+		.gpio			= S3C2410_GPA(11),
-+		.retain_state_suspended	= 1,
- 	},
- };
- 
--- 
-1.7.4.1
+Thomas Abraham (6):
+  ARM: EXYNOS4: Fix addruart macro
+  serial: samsung: Fix unintended usage of uart port 0 as console
+  serial: s5pv210: Remove redundant console_initcall
+  ARM: SAMSUNG: Add clkdev support
+  ARM: SAMSUNG: Add clkdev support for exynos4
+  ARM: Remove clkdev.o build in arch/arm/common/Makefile
+
+ arch/arm/common/Makefile                         |    1 -
+ arch/arm/mach-exynos4/Kconfig                    |    1 +
+ arch/arm/mach-exynos4/clock.c                    |   57 ++++++++++++++++++++++
+ arch/arm/mach-exynos4/include/mach/clkdev.h      |    7 +++
+ arch/arm/mach-exynos4/include/mach/debug-macro.S |    4 +-
+ arch/arm/mach-exynos4/time.c                     |    2 +
+ arch/arm/plat-samsung/clock.c                    |   18 +++++++
+ arch/arm/plat-samsung/include/plat/clock.h       |    5 ++
+ arch/arm/plat-samsung/pwm-clock.c                |   10 ++++
+ drivers/tty/serial/s5pv210.c                     |    7 ---
+ drivers/tty/serial/samsung.c                     |    9 ++--
+ 11 files changed, 106 insertions(+), 15 deletions(-)
+ create mode 100644 arch/arm/mach-exynos4/include/mach/clkdev.h
