@@ -1,20 +1,20 @@
 From: Thomas Abraham <thomas.ab@samsung.com>
-Subject: [PATCH 4/6] ARM: SAMSUNG: Add clkdev support
-Date: Sat, 19 Mar 2011 13:20:17 +0530
-Message-ID: <1300521019-13612-5-git-send-email-thomas.ab@samsung.com>
+Subject: [PATCH 5/6] ARM: SAMSUNG: Add clkdev support for exynos4
+Date: Sat, 19 Mar 2011 13:20:18 +0530
+Message-ID: <1300521019-13612-6-git-send-email-thomas.ab@samsung.com>
 References: <1300521019-13612-1-git-send-email-thomas.ab@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.samsung.com ([203.254.224.33]:11495 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753693Ab1CSHwC (ORCPT
+	with ESMTP id S1754071Ab1CSHwD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 19 Mar 2011 03:52:02 -0400
+	Sat, 19 Mar 2011 03:52:03 -0400
 Received: from epmmp2 (mailout3.samsung.com [203.254.224.33])
  by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LIA003Y6OIP6F50@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 19 Mar 2011 16:52:01 +0900 (KST)
+ 2010)) with ESMTP id <0LIA000N6OIQBJ60@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 19 Mar 2011 16:52:02 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.37])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0LIA00APIOIIEL@mmp2.samsung.com> for
@@ -25,103 +25,552 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: kgene.kim@samsung.com, ben-linux@fluff.org
 
-Add infrastructure for clkdev support on samsung platforms.
+Add clkdev support for Samsung's exynos4 platforms.
 
 Cc: Ben Dooks <ben-linux@fluff.org>
 Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 ---
- arch/arm/plat-samsung/clock.c              |   18 ++++++++++++++++++
- arch/arm/plat-samsung/include/plat/clock.h |    5 +++++
- 2 files changed, 23 insertions(+), 0 deletions(-)
+ arch/arm/mach-exynos4/Kconfig               |    1 +
+ arch/arm/mach-exynos4/clock.c               |   57 +++++++++++++++++++++++++++
+ arch/arm/mach-exynos4/include/mach/clkdev.h |    7 +++
+ arch/arm/mach-exynos4/time.c                |    2 +
+ arch/arm/plat-samsung/pwm-clock.c           |   10 +++++
+ 5 files changed, 77 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-exynos4/include/mach/clkdev.h
 
-diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
-index 7728928..b52f833 100644
---- a/arch/arm/plat-samsung/clock.c
-+++ b/arch/arm/plat-samsung/clock.c
-@@ -71,6 +71,12 @@ static int clk_null_enable(struct clk *clk, int enable)
- 	return 0;
- }
- 
-+/* 
-+ * When all Samsung platforms use clkdev, pdev->id based clock lookup
-+ * code can be removed.
-+ */
-+#ifndef CONFIG_CLKDEV_LOOKUP
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index a021b52..58451c3 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -110,6 +110,7 @@ config MACH_SMDKC210
+ config MACH_SMDKV310
+ 	bool "SMDKV310"
+ 	select CPU_EXYNOS4210
++	select CLKDEV_LOOKUP
+ 	select S3C_DEV_RTC
+ 	select S3C_DEV_WDT
+ 	select S3C_DEV_I2C1
+diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
+index 871f9d5..0b46326 100644
+--- a/arch/arm/mach-exynos4/clock.c
++++ b/arch/arm/mach-exynos4/clock.c
+@@ -404,41 +404,49 @@ static struct clk init_clocks_off[] = {
+ 		.ctrlbit	= (1<<24),
+ 	}, {
+ 		.name		= "csis",
++		.devname	= "s5p-mipi-csis.0",
+ 		.id		= 0,
+ 		.enable		= exynos4_clk_ip_cam_ctrl,
+ 		.ctrlbit	= (1 << 4),
+ 	}, {
+ 		.name		= "csis",
++		.devname	= "s5p-mipi-csis.1",
+ 		.id		= 1,
+ 		.enable		= exynos4_clk_ip_cam_ctrl,
+ 		.ctrlbit	= (1 << 5),
+ 	}, {
+ 		.name		= "fimc",
++		.devname	= "s5p-fimc.0",
+ 		.id		= 0,
+ 		.enable		= exynos4_clk_ip_cam_ctrl,
+ 		.ctrlbit	= (1 << 0),
+ 	}, {
+ 		.name		= "fimc",
++		.devname	= "s5p-fimc.1",
+ 		.id		= 1,
+ 		.enable		= exynos4_clk_ip_cam_ctrl,
+ 		.ctrlbit	= (1 << 1),
+ 	}, {
+ 		.name		= "fimc",
++		.devname	= "s5p-fimc.2",
+ 		.id		= 2,
+ 		.enable		= exynos4_clk_ip_cam_ctrl,
+ 		.ctrlbit	= (1 << 2),
+ 	}, {
+ 		.name		= "fimc",
++		.devname	= "s5p-fimc.3",
+ 		.id		= 3,
+ 		.enable		= exynos4_clk_ip_cam_ctrl,
+ 		.ctrlbit	= (1 << 3),
+ 	}, {
+ 		.name		= "fimd",
++		.devname	= "s5pv310-fb.0",
+ 		.id		= 0,
+ 		.enable		= exynos4_clk_ip_lcd0_ctrl,
+ 		.ctrlbit	= (1 << 0),
+ 	}, {
+ 		.name		= "fimd",
++		.devname	= "s5pv310-fb.1",
+ 		.id		= 1,
+ 		.enable		= exynos4_clk_ip_lcd1_ctrl,
+ 		.ctrlbit	= (1 << 0),
+@@ -450,30 +458,35 @@ static struct clk init_clocks_off[] = {
+ 		.ctrlbit	= (1 << 3),
+ 	}, {
+ 		.name		= "hsmmc",
++		.devname	= "s3c-sdhci.0",
+ 		.id		= 0,
+ 		.parent		= &clk_aclk_133.clk,
+ 		.enable		= exynos4_clk_ip_fsys_ctrl,
+ 		.ctrlbit	= (1 << 5),
+ 	}, {
+ 		.name		= "hsmmc",
++		.devname	= "s3c-sdhci.1",
+ 		.id		= 1,
+ 		.parent		= &clk_aclk_133.clk,
+ 		.enable		= exynos4_clk_ip_fsys_ctrl,
+ 		.ctrlbit	= (1 << 6),
+ 	}, {
+ 		.name		= "hsmmc",
++		.devname	= "s3c-sdhci.2",
+ 		.id		= 2,
+ 		.parent		= &clk_aclk_133.clk,
+ 		.enable		= exynos4_clk_ip_fsys_ctrl,
+ 		.ctrlbit	= (1 << 7),
+ 	}, {
+ 		.name		= "hsmmc",
++		.devname	= "s3c-sdhci.3",
+ 		.id		= 3,
+ 		.parent		= &clk_aclk_133.clk,
+ 		.enable		= exynos4_clk_ip_fsys_ctrl,
+ 		.ctrlbit	= (1 << 8),
+ 	}, {
+ 		.name		= "hsmmc",
++		.devname	= "s3c-sdhci.4",
+ 		.id		= 4,
+ 		.parent		= &clk_aclk_133.clk,
+ 		.enable		= exynos4_clk_ip_fsys_ctrl,
+@@ -486,11 +499,13 @@ static struct clk init_clocks_off[] = {
+ 		.ctrlbit	= (1 << 10),
+ 	}, {
+ 		.name		= "pdma",
++		.devname	= "s3c-pl330.0",
+ 		.id		= 0,
+ 		.enable		= exynos4_clk_ip_fsys_ctrl,
+ 		.ctrlbit	= (1 << 0),
+ 	}, {
+ 		.name		= "pdma",
++		.devname	= "s3c-pl330.1",
+ 		.id		= 1,
+ 		.enable		= exynos4_clk_ip_fsys_ctrl,
+ 		.ctrlbit	= (1 << 1),
+@@ -527,31 +542,37 @@ static struct clk init_clocks_off[] = {
+ 		.ctrlbit	= (1 << 13),
+ 	}, {
+ 		.name		= "spi",
++		.devname	= "s3c64xx-spi.0",
+ 		.id		= 0,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 16),
+ 	}, {
+ 		.name		= "spi",
++		.devname	= "s3c64xx-spi.1",
+ 		.id		= 1,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 17),
+ 	}, {
+ 		.name		= "spi",
++		.devname	= "s3c64xx-spi.2",
+ 		.id		= 2,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 18),
+ 	}, {
+ 		.name		= "iis",
++		.devname	= "samsung-i2s.0",
+ 		.id		= 0,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 19),
+ 	}, {
+ 		.name		= "iis",
++		.devname	= "samsung-i2s.1",
+ 		.id		= 1,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 20),
+ 	}, {
+ 		.name		= "iis",
++		.devname	= "samsung-i2s.2",
+ 		.id		= 2,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 21),
+@@ -567,48 +588,56 @@ static struct clk init_clocks_off[] = {
+ 		.ctrlbit	= (1 << 0),
+ 	}, {
+ 		.name		= "i2c",
++		.devname	= "s3c-i2c.0",
+ 		.id		= 0,
+ 		.parent		= &clk_aclk_100.clk,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 6),
+ 	}, {
+ 		.name		= "i2c",
++		.devname	= "s3c-i2c.1",
+ 		.id		= 1,
+ 		.parent		= &clk_aclk_100.clk,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 7),
+ 	}, {
+ 		.name		= "i2c",
++		.devname	= "s3c-i2c.2",
+ 		.id		= 2,
+ 		.parent		= &clk_aclk_100.clk,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 8),
+ 	}, {
+ 		.name		= "i2c",
++		.devname	= "s3c-i2c.3",
+ 		.id		= 3,
+ 		.parent		= &clk_aclk_100.clk,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 9),
+ 	}, {
+ 		.name		= "i2c",
++		.devname	= "s3c-i2c.4",
+ 		.id		= 4,
+ 		.parent		= &clk_aclk_100.clk,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 10),
+ 	}, {
+ 		.name		= "i2c",
++		.devname	= "s3c-i2c.5",
+ 		.id		= 5,
+ 		.parent		= &clk_aclk_100.clk,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 11),
+ 	}, {
+ 		.name		= "i2c",
++		.devname	= "s3c-i2c.6",
+ 		.id		= 6,
+ 		.parent		= &clk_aclk_100.clk,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 12),
+ 	}, {
+ 		.name		= "i2c",
++		.devname	= "s3c-i2c.7",
+ 		.id		= 7,
+ 		.parent		= &clk_aclk_100.clk,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+@@ -689,31 +718,37 @@ static struct clk init_clocks_off[] = {
+ static struct clk init_clocks[] = {
+ 	{
+ 		.name		= "uart",
++		.devname	= "s5pv210-uart.0",
+ 		.id		= 0,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 0),
+ 	}, {
+ 		.name		= "uart",
++		.devname	= "s5pv210-uart.1",
+ 		.id		= 1,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 1),
+ 	}, {
+ 		.name		= "uart",
++		.devname	= "s5pv210-uart.2",
+ 		.id		= 2,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 2),
+ 	}, {
+ 		.name		= "uart",
++		.devname	= "s5pv210-uart.3",
+ 		.id		= 3,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 3),
+ 	}, {
+ 		.name		= "uart",
++		.devname	= "s5pv210-uart.4",
+ 		.id		= 4,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 4),
+ 	}, {
+ 		.name		= "uart",
++		.devname	= "s5pv210-uart.5",
+ 		.id		= 5,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 5),
+@@ -839,6 +874,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	{
+ 		.clk	= {
+ 			.name		= "uclk1",
++			.devname	= "s5pv210-uart.0",
+ 			.id		= 0,
+ 			.enable		= exynos4_clksrc_mask_peril0_ctrl,
+ 			.ctrlbit	= (1 << 0),
+@@ -849,6 +885,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "uclk1",
++			.devname	= "s5pv210-uart.1",
+ 			.id		= 1,
+ 			.enable		= exynos4_clksrc_mask_peril0_ctrl,
+ 			.ctrlbit	= (1 << 4),
+@@ -859,6 +896,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "uclk1",
++			.devname	= "s5pv210-uart.2",
+ 			.id		= 2,
+ 			.enable		= exynos4_clksrc_mask_peril0_ctrl,
+ 			.ctrlbit	= (1 << 8),
+@@ -869,6 +907,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "uclk1",
++			.devname	= "s5pv210-uart.3",
+ 			.id		= 3,
+ 			.enable		= exynos4_clksrc_mask_peril0_ctrl,
+ 			.ctrlbit	= (1 << 12),
+@@ -889,6 +928,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_csis",
++			.devname	= "s5p-mipi-csis.0",
+ 			.id		= 0,
+ 			.enable		= exynos4_clksrc_mask_cam_ctrl,
+ 			.ctrlbit	= (1 << 24),
+@@ -899,6 +939,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_csis",
++			.devname	= "s5p-mipi-csis.1",
+ 			.id		= 1,
+ 			.enable		= exynos4_clksrc_mask_cam_ctrl,
+ 			.ctrlbit	= (1 << 28),
+@@ -909,6 +950,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_cam",
++			.devname	= "s5pv310-fimc.0",
+ 			.id		= 0,
+ 			.enable		= exynos4_clksrc_mask_cam_ctrl,
+ 			.ctrlbit	= (1 << 16),
+@@ -919,6 +961,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_cam",
++			.devname	= "s5pv310-fimc.1",
+ 			.id		= 1,
+ 			.enable		= exynos4_clksrc_mask_cam_ctrl,
+ 			.ctrlbit	= (1 << 20),
+@@ -929,6 +972,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_fimc",
++			.devname	= "s5pv310-fimc.0",
+ 			.id		= 0,
+ 			.enable		= exynos4_clksrc_mask_cam_ctrl,
+ 			.ctrlbit	= (1 << 0),
+@@ -939,6 +983,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_fimc",
++			.devname	= "s5pv310-fimc.1",
+ 			.id		= 1,
+ 			.enable		= exynos4_clksrc_mask_cam_ctrl,
+ 			.ctrlbit	= (1 << 4),
+@@ -949,6 +994,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_fimc",
++			.devname	= "s5pv310-fimc.2",
+ 			.id		= 2,
+ 			.enable		= exynos4_clksrc_mask_cam_ctrl,
+ 			.ctrlbit	= (1 << 8),
+@@ -959,6 +1005,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_fimc",
++			.devname	= "s5pv310-fimc.3",
+ 			.id		= 3,
+ 			.enable		= exynos4_clksrc_mask_cam_ctrl,
+ 			.ctrlbit	= (1 << 12),
+@@ -969,6 +1016,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_fimd",
++			.devname	= "s5pv310-fb.0",
+ 			.id		= 0,
+ 			.enable		= exynos4_clksrc_mask_lcd0_ctrl,
+ 			.ctrlbit	= (1 << 0),
+@@ -979,6 +1027,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_fimd",
++			.devname	= "s5pv310-fb.1",
+ 			.id		= 1,
+ 			.enable		= exynos4_clksrc_mask_lcd1_ctrl,
+ 			.ctrlbit	= (1 << 0),
+@@ -999,6 +1048,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_spi",
++			.devname	= "s3c64xx-spi.0",
+ 			.id		= 0,
+ 			.enable		= exynos4_clksrc_mask_peril1_ctrl,
+ 			.ctrlbit	= (1 << 16),
+@@ -1009,6 +1059,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_spi",
++			.devname	= "s3c64xx-spi.1",
+ 			.id		= 1,
+ 			.enable		= exynos4_clksrc_mask_peril1_ctrl,
+ 			.ctrlbit	= (1 << 20),
+@@ -1019,6 +1070,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_spi",
++			.devname	= "s3c64xx-spi.2",
+ 			.id		= 2,
+ 			.enable		= exynos4_clksrc_mask_peril1_ctrl,
+ 			.ctrlbit	= (1 << 24),
+@@ -1037,6 +1089,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_mmc",
++			.devname	= "s3c-sdhci.0",
+ 			.id		= 0,
+ 			.parent		= &clk_dout_mmc0.clk,
+ 			.enable		= exynos4_clksrc_mask_fsys_ctrl,
+@@ -1046,6 +1099,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_mmc",
++			.devname	= "s3c-sdhci.1",
+ 			.id		= 1,
+ 			.parent         = &clk_dout_mmc1.clk,
+ 			.enable		= exynos4_clksrc_mask_fsys_ctrl,
+@@ -1055,6 +1109,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_mmc",
++			.devname	= "s3c-sdhci.2",
+ 			.id		= 2,
+ 			.parent         = &clk_dout_mmc2.clk,
+ 			.enable		= exynos4_clksrc_mask_fsys_ctrl,
+@@ -1064,6 +1119,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_mmc",
++			.devname	= "s3c-sdhci.3",
+ 			.id		= 3,
+ 			.parent         = &clk_dout_mmc3.clk,
+ 			.enable		= exynos4_clksrc_mask_fsys_ctrl,
+@@ -1073,6 +1129,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_mmc",
++			.devname	= "s3c-sdhci.4",
+ 			.id		= 4,
+ 			.parent         = &clk_dout_mmc4.clk,
+ 			.enable		= exynos4_clksrc_mask_fsys_ctrl,
+diff --git a/arch/arm/mach-exynos4/include/mach/clkdev.h b/arch/arm/mach-exynos4/include/mach/clkdev.h
+new file mode 100644
+index 0000000..1247f5e
+--- /dev/null
++++ b/arch/arm/mach-exynos4/include/mach/clkdev.h
+@@ -0,0 +1,7 @@
++#ifndef __MACH_EXYNOS4_CLKDEV_H__
++#define __MACH_EXYNOS4_CLKDEV_H__
 +
- static int dev_is_s3c_uart(struct device *dev)
- {
- 	struct platform_device **pdev = s3c24xx_uart_devs;
-@@ -139,6 +145,8 @@ void clk_put(struct clk *clk)
- 	module_put(clk->owner);
- }
- 
-+#endif /* CONFIG_CLKDEV_LOOKUP */
++#define __clk_get(clk) ({ 1; })
++#define __clk_put(clk) do { } while (0)
 +
- int clk_enable(struct clk *clk)
- {
- 	if (IS_ERR(clk) || clk == NULL)
-@@ -241,8 +249,10 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
- 	return ret;
- }
- 
-+#ifndef CONFIG_CLKDEV_LOOKUP
- EXPORT_SYMBOL(clk_get);
- EXPORT_SYMBOL(clk_put);
 +#endif
- EXPORT_SYMBOL(clk_enable);
- EXPORT_SYMBOL(clk_disable);
- EXPORT_SYMBOL(clk_get_rate);
-@@ -346,6 +356,7 @@ int s3c24xx_register_clock(struct clk *clk)
- 	if (clk->enable == NULL)
- 		clk->enable = clk_null_enable;
+diff --git a/arch/arm/mach-exynos4/time.c b/arch/arm/mach-exynos4/time.c
+index 86b9fa0..cb63f97 100644
+--- a/arch/arm/mach-exynos4/time.c
++++ b/arch/arm/mach-exynos4/time.c
+@@ -262,6 +262,7 @@ static void __init exynos4_timer_resources(void)
+ 	clk_enable(timerclk);
  
-+#ifndef CONFIG_CLKDEV_LOOKUP
- 	/* add to the list of available clocks */
+ 	tmpdev.id = 2;
++	tmpdev.dev.init_name = "s3c24xx-pwm.2";
+ 	tin2 = clk_get(&tmpdev.dev, "pwm-tin");
+ 	if (IS_ERR(tin2))
+ 		panic("failed to get pwm-tin2 clock for system timer");
+@@ -272,6 +273,7 @@ static void __init exynos4_timer_resources(void)
+ 	clk_enable(tin2);
  
- 	/* Quick check to see if this clock has already been registered. */
-@@ -354,6 +365,13 @@ int s3c24xx_register_clock(struct clk *clk)
- 	spin_lock(&clocks_lock);
- 	list_add(&clk->list, &clocks);
- 	spin_unlock(&clocks_lock);
-+#else
-+	/* fill up the clk_lookup structure and register it*/
-+	clk->lookup.dev_id = clk->devname;
-+	clk->lookup.con_id = clk->name;
-+	clk->lookup.clk = clk;
-+	clkdev_add(&clk->lookup);
-+#endif
- 
- 	return 0;
- }
-diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-samsung/include/plat/clock.h
-index 9a82b88..6325044 100644
---- a/arch/arm/plat-samsung/include/plat/clock.h
-+++ b/arch/arm/plat-samsung/include/plat/clock.h
-@@ -10,6 +10,7 @@
- */
- 
- #include <linux/spinlock.h>
-+#include <linux/clkdev.h>
- 
- struct clk;
- 
-@@ -40,6 +41,7 @@ struct clk {
- 	struct module        *owner;
- 	struct clk           *parent;
- 	const char           *name;
-+	const char		*devname;
- 	int		      id;
- 	int		      usage;
- 	unsigned long         rate;
-@@ -47,6 +49,9 @@ struct clk {
- 
- 	struct clk_ops		*ops;
- 	int		    (*enable)(struct clk *, int enable);
-+#ifdef CONFIG_CLKDEV_LOOKUP
-+	struct clk_lookup	lookup; 
-+#endif
- #if defined(CONFIG_PM_DEBUG) && defined(CONFIG_DEBUG_FS)
- 	struct dentry		*dent;	/* For visible tree hierarchy */
- #endif
+ 	tmpdev.id = 4;
++	tmpdev.dev.init_name = "s3c24xx-pwm.4";
+ 	tin4 = clk_get(&tmpdev.dev, "pwm-tin");
+ 	if (IS_ERR(tin4))
+ 		panic("failed to get pwm-tin4 clock for system timer");
+diff --git a/arch/arm/plat-samsung/pwm-clock.c b/arch/arm/plat-samsung/pwm-clock.c
+index 46c9381..f1bba88 100644
+--- a/arch/arm/plat-samsung/pwm-clock.c
++++ b/arch/arm/plat-samsung/pwm-clock.c
+@@ -268,6 +268,7 @@ static struct pwm_tdiv_clk clk_timer_tdiv[] = {
+ 	[0]	= {
+ 		.clk	= {
+ 			.name	= "pwm-tdiv",
++			.devname	= "s3c24xx-pwm.0",
+ 			.ops	= &clk_tdiv_ops,
+ 			.parent	= &clk_timer_scaler[0],
+ 		},
+@@ -275,6 +276,7 @@ static struct pwm_tdiv_clk clk_timer_tdiv[] = {
+ 	[1]	= {
+ 		.clk	= {
+ 			.name	= "pwm-tdiv",
++			.devname	= "s3c24xx-pwm.1",
+ 			.ops	= &clk_tdiv_ops,
+ 			.parent	= &clk_timer_scaler[0],
+ 		}
+@@ -282,6 +284,7 @@ static struct pwm_tdiv_clk clk_timer_tdiv[] = {
+ 	[2]	= {
+ 		.clk	= {
+ 			.name	= "pwm-tdiv",
++			.devname	= "s3c24xx-pwm.2",
+ 			.ops	= &clk_tdiv_ops,
+ 			.parent	= &clk_timer_scaler[1],
+ 		},
+@@ -289,6 +292,7 @@ static struct pwm_tdiv_clk clk_timer_tdiv[] = {
+ 	[3]	= {
+ 		.clk	= {
+ 			.name	= "pwm-tdiv",
++			.devname	= "s3c24xx-pwm.3",
+ 			.ops	= &clk_tdiv_ops,
+ 			.parent	= &clk_timer_scaler[1],
+ 		},
+@@ -296,6 +300,7 @@ static struct pwm_tdiv_clk clk_timer_tdiv[] = {
+ 	[4]	= {
+ 		.clk	= {
+ 			.name	= "pwm-tdiv",
++			.devname	= "s3c24xx-pwm.4",
+ 			.ops	= &clk_tdiv_ops,
+ 			.parent	= &clk_timer_scaler[1],
+ 		},
+@@ -361,26 +366,31 @@ static struct clk_ops clk_tin_ops = {
+ static struct clk clk_tin[] = {
+ 	[0]	= {
+ 		.name	= "pwm-tin",
++		.devname	= "s3c24xx-pwm.0",
+ 		.id	= 0,
+ 		.ops	= &clk_tin_ops,
+ 	},
+ 	[1]	= {
+ 		.name	= "pwm-tin",
++		.devname	= "s3c24xx-pwm.1",
+ 		.id	= 1,
+ 		.ops	= &clk_tin_ops,
+ 	},
+ 	[2]	= {
+ 		.name	= "pwm-tin",
++		.devname	= "s3c24xx-pwm.2",
+ 		.id	= 2,
+ 		.ops	= &clk_tin_ops,
+ 	},
+ 	[3]	= {
+ 		.name	= "pwm-tin",
++		.devname	= "s3c24xx-pwm.3",
+ 		.id	= 3,
+ 		.ops	= &clk_tin_ops,
+ 	},
+ 	[4]	= {
+ 		.name	= "pwm-tin",
++		.devname	= "s3c24xx-pwm.4",
+ 		.id	= 4,
+ 		.ops	= &clk_tin_ops,
+ 	},
 -- 
 1.6.6.rc2
