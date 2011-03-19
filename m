@@ -1,72 +1,47 @@
 From: Thomas Abraham <thomas.ab@samsung.com>
-Subject: [PATCH 3/6] serial: s5pv210: Remove redundant console_initcall
-Date: Sat, 19 Mar 2011 13:20:16 +0530
-Message-ID: <1300521019-13612-4-git-send-email-thomas.ab@samsung.com>
+Subject: [PATCH 6/6] ARM: Remove clkdev.o build in arch/arm/common/Makefile
+Date: Sat, 19 Mar 2011 13:20:19 +0530
+Message-ID: <1300521019-13612-7-git-send-email-thomas.ab@samsung.com>
 References: <1300521019-13612-1-git-send-email-thomas.ab@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:42603 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753395Ab1CSHwD (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:11495 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754185Ab1CSHwE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 19 Mar 2011 03:52:03 -0400
-Received: from epmmp2 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Sat, 19 Mar 2011 03:52:04 -0400
+Received: from epmmp2 (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LIA00BPGOIO3D40@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 19 Mar 2011 16:52:00 +0900 (KST)
+ 2010)) with ESMTP id <0LIA001G9OIRMO60@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 19 Mar 2011 16:52:03 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.37])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0LIA00APIOIIEL@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 19 Mar 2011 16:52:01 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Sat, 19 Mar 2011 16:52:03 +0900 (KST)
 In-reply-to: <1300521019-13612-1-git-send-email-thomas.ab@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: kgene.kim@samsung.com, ben-linux@fluff.org
 
-Uart port is registered as a console during the driver's probe.
-So explict registration of console with console_initcall is
-removed.
+clkdev.c is moved to drivers/clk. So build for clkdev.o can
+be removed from arch/arm/common/Makefile.
 
-Cc: Ben Dooks <ben-linux@fluff.org>
-Signed-of-by: Thomas Abraham <thomas.ab@samsung.com>
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 ---
- drivers/tty/serial/s5pv210.c |    7 -------
- drivers/tty/serial/samsung.c |    3 ++-
- 2 files changed, 2 insertions(+), 8 deletions(-)
+ arch/arm/common/Makefile |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/tty/serial/s5pv210.c b/drivers/tty/serial/s5pv210.c
-index 6ebccd7..cdee626 100644
---- a/drivers/tty/serial/s5pv210.c
-+++ b/drivers/tty/serial/s5pv210.c
-@@ -136,13 +136,6 @@ static struct platform_driver s5p_serial_driver = {
- 	},
- };
- 
--static int __init s5pv210_serial_console_init(void)
--{
--	return s3c24xx_serial_initconsole(&s5p_serial_driver, s5p_uart_inf);
--}
--
--console_initcall(s5pv210_serial_console_init);
--
- static int __init s5p_serial_init(void)
- {
- 	return s3c24xx_serial_init(&s5p_serial_driver, *s5p_uart_inf);
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index 1586440..9d9d97c 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1450,7 +1450,8 @@ static struct console s3c24xx_serial_console = {
- 	.flags		= CON_PRINTBUFFER,
- 	.index		= -1,
- 	.write		= s3c24xx_serial_console_write,
--	.setup		= s3c24xx_serial_console_setup
-+	.setup		= s3c24xx_serial_console_setup,
-+	.data		= &s3c24xx_uart_drv,
- };
- 
- int s3c24xx_serial_initconsole(struct platform_driver *drv,
+diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
+index e7521bc..6ea9b6f 100644
+--- a/arch/arm/common/Makefile
++++ b/arch/arm/common/Makefile
+@@ -16,5 +16,4 @@ obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
+ obj-$(CONFIG_ARCH_IXP2000)	+= uengine.o
+ obj-$(CONFIG_ARCH_IXP23XX)	+= uengine.o
+ obj-$(CONFIG_PCI_HOST_ITE8152)  += it8152.o
+-obj-$(CONFIG_COMMON_CLKDEV)	+= clkdev.o
+ obj-$(CONFIG_ARM_TIMER_SP804)	+= timer-sp.o
 -- 
 1.6.6.rc2
