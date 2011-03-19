@@ -1,47 +1,79 @@
-From: Thomas Abraham <thomas.ab@samsung.com>
-Subject: [PATCH 6/6] ARM: Remove clkdev.o build in arch/arm/common/Makefile
-Date: Sat, 19 Mar 2011 13:20:19 +0530
-Message-ID: <1300521019-13612-7-git-send-email-thomas.ab@samsung.com>
+From: Seungwhan Youn <claude.youn@gmail.com>
+Subject: Re: [PATCH 5/6] ARM: SAMSUNG: Add clkdev support for exynos4
+Date: Sat, 19 Mar 2011 18:42:33 +0900
+Message-ID: <AANLkTindOcMNP+HzdsAjf9z80GLCJYKDM2t+mYAw4djD@mail.gmail.com>
 References: <1300521019-13612-1-git-send-email-thomas.ab@samsung.com>
-Content-Transfer-Encoding: 7BIT
+	<1300521019-13612-6-git-send-email-thomas.ab@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:11495 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754185Ab1CSHwE (ORCPT
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:35980 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755180Ab1CSJme convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 19 Mar 2011 03:52:04 -0400
-Received: from epmmp2 (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LIA001G9OIRMO60@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 19 Mar 2011 16:52:03 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LIA00APIOIIEL@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 19 Mar 2011 16:52:03 +0900 (KST)
-In-reply-to: <1300521019-13612-1-git-send-email-thomas.ab@samsung.com>
+	Sat, 19 Mar 2011 05:42:34 -0400
+Received: by wya21 with SMTP id 21so4526262wya.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 Mar 2011 02:42:33 -0700 (PDT)
+In-Reply-To: <1300521019-13612-6-git-send-email-thomas.ab@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org
+To: Thomas Abraham <thomas.ab@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org
 
-clkdev.c is moved to drivers/clk. So build for clkdev.o can
-be removed from arch/arm/common/Makefile.
+Hi,
 
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
----
- arch/arm/common/Makefile |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
+On Sat, Mar 19, 2011 at 4:50 PM, Thomas Abraham <thomas.ab@samsung.com>=
+ wrote:
+> Add clkdev support for Samsung's exynos4 platforms.
+>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> ---
+> =C2=A0arch/arm/mach-exynos4/Kconfig =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 | =C2=A0 =C2=A01 +
+> =C2=A0arch/arm/mach-exynos4/clock.c =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 | =C2=A0 57 +++++++++++++++++++++++++++
+> =C2=A0arch/arm/mach-exynos4/include/mach/clkdev.h | =C2=A0 =C2=A07 ++=
++
+> =C2=A0arch/arm/mach-exynos4/time.c =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0| =C2=A0 =C2=A02 +
+> =C2=A0arch/arm/plat-samsung/pwm-clock.c =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 | =C2=A0 10 +++++
+> =C2=A05 files changed, 77 insertions(+), 0 deletions(-)
+> =C2=A0create mode 100644 arch/arm/mach-exynos4/include/mach/clkdev.h
+>
+> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kc=
+onfig
+> index a021b52..58451c3 100644
+> --- a/arch/arm/mach-exynos4/Kconfig
+> +++ b/arch/arm/mach-exynos4/Kconfig
+> @@ -110,6 +110,7 @@ config MACH_SMDKC210
+> =C2=A0config MACH_SMDKV310
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0bool "SMDKV310"
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0select CPU_EXYNOS4210
+> + =C2=A0 =C2=A0 =C2=A0 select CLKDEV_LOOKUP
 
-diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
-index e7521bc..6ea9b6f 100644
---- a/arch/arm/common/Makefile
-+++ b/arch/arm/common/Makefile
-@@ -16,5 +16,4 @@ obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
- obj-$(CONFIG_ARCH_IXP2000)	+= uengine.o
- obj-$(CONFIG_ARCH_IXP23XX)	+= uengine.o
- obj-$(CONFIG_PCI_HOST_ITE8152)  += it8152.o
--obj-$(CONFIG_COMMON_CLKDEV)	+= clkdev.o
- obj-$(CONFIG_ARM_TIMER_SP804)	+= timer-sp.o
--- 
-1.6.6.rc2
+IMHO, 'clkdev' features, in this patch, seems to be applied to all
+EXYNOS4 architecture, not to only SMDKV310 machine. So, I think that
+this 'CLKDEV_LOOKUP' may be added into 'arch/arm/Kconfig', not this
+file('arch/arm/mach-exynos4/Kconfig').
+
+Something like belows...
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index eed07ea..1069dc1 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -768,6 +768,7 @@ config ARCH_EXYNOS4
+        select ARCH_SPARSEMEM_ENABLE
+        select GENERIC_GPIO
+        select HAVE_CLK
++       select CLKDEV_LOOKUP
+        select ARCH_HAS_CPUFREQ
+        select GENERIC_CLOCKEVENTS
+        select HAVE_S3C_RTC if RTC_CLASS
+
+
+Thanks,
+Claude
