@@ -1,180 +1,113 @@
-From: Sylwester Nawrocki <snjw23@gmail.com>
-Subject: Re: [PATCH 5/6] ARM: SAMSUNG: Add clkdev support for exynos4
-Date: Sat, 19 Mar 2011 13:02:23 +0100
-Message-ID: <4D849B4F.8020401@gmail.com>
-References: <1300521019-13612-1-git-send-email-thomas.ab@samsung.com> <1300521019-13612-6-git-send-email-thomas.ab@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH] ARM: EXYNOS4: Add PWM backlight support on Samsung SMDKC210
+Date: Mon, 21 Mar 2011 12:45:36 +0900
+Message-ID: <1300679136-16693-1-git-send-email-jg1.han@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:61833 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751465Ab1CSMC0 (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:51595 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750805Ab1CUEPm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 19 Mar 2011 08:02:26 -0400
-Received: by wwa36 with SMTP id 36so5803424wwa.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 Mar 2011 05:02:25 -0700 (PDT)
-In-Reply-To: <1300521019-13612-6-git-send-email-thomas.ab@samsung.com>
+	Mon, 21 Mar 2011 00:15:42 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org
+To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Jingoo Han <jg1.han@samsung.com>
 
-Hi Thomas,
+This patch adds support for LCD backlight control using PWM timer
+for Samsung's SMDKC210 board.
 
-On 03/19/2011 08:50 AM, Thomas Abraham wrote:
-> Add clkdev support for Samsung's exynos4 platforms.
->
-> Cc: Ben Dooks<ben-linux@fluff.org>
-> Signed-off-by: Thomas Abraham<thomas.ab@samsung.com>
-> ---
->   arch/arm/mach-exynos4/Kconfig               |    1 +
->   arch/arm/mach-exynos4/clock.c               |   57 +++++++++++++++++++++++++++
->   arch/arm/mach-exynos4/include/mach/clkdev.h |    7 +++
->   arch/arm/mach-exynos4/time.c                |    2 +
->   arch/arm/plat-samsung/pwm-clock.c           |   10 +++++
->   5 files changed, 77 insertions(+), 0 deletions(-)
->   create mode 100644 arch/arm/mach-exynos4/include/mach/clkdev.h
->
-> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-> index a021b52..58451c3 100644
-> --- a/arch/arm/mach-exynos4/Kconfig
-> +++ b/arch/arm/mach-exynos4/Kconfig
-> @@ -110,6 +110,7 @@ config MACH_SMDKC210
->   config MACH_SMDKV310
->   	bool "SMDKV310"
->   	select CPU_EXYNOS4210
-> +	select CLKDEV_LOOKUP
->   	select S3C_DEV_RTC
->   	select S3C_DEV_WDT
->   	select S3C_DEV_I2C1
-> diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
-> index 871f9d5..0b46326 100644
-> --- a/arch/arm/mach-exynos4/clock.c
-> +++ b/arch/arm/mach-exynos4/clock.c
-> @@ -404,41 +404,49 @@ static struct clk init_clocks_off[] = {
->   		.ctrlbit	= (1<<24),
-...
->   	}, {
->   		.name		= "fimc",
-> +		.devname	= "s5p-fimc.0",
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+---
+ arch/arm/mach-exynos4/Kconfig         |    1 +
+ arch/arm/mach-exynos4/mach-smdkc210.c |   43 +++++++++++++++++++++++++++++++++
+ 2 files changed, 44 insertions(+), 0 deletions(-)
 
-This clock belongs to s5p-fimc driver however for exynos4 the platform
-device name is "exynos4-fimc". So the above line needs to be:
-
-+		.devname	= "exynos4-fimc.0",
-
->   		.id		= 0,
->   		.enable		= exynos4_clk_ip_cam_ctrl,
->   		.ctrlbit	= (1<<  0),
->   	}, {
->   		.name		= "fimc",
-> +		.devname	= "s5p-fimc.1",
-
-Ditto.
-
->   		.id		= 1,
->   		.enable		= exynos4_clk_ip_cam_ctrl,
->   		.ctrlbit	= (1<<  1),
->   	}, {
->   		.name		= "fimc",
-> +		.devname	= "s5p-fimc.2",
-
-Ditto.
-
->   		.id		= 2,
->   		.enable		= exynos4_clk_ip_cam_ctrl,
->   		.ctrlbit	= (1<<  2),
->   	}, {
->   		.name		= "fimc",
-> +		.devname	= "s5p-fimc.3",
-
-Ditto.
-
->   		.id		= 3,
->   		.enable		= exynos4_clk_ip_cam_ctrl,
->   		.ctrlbit	= (1<<  3),
->   	}, {
-...
-> @@ -909,6 +950,7 @@ static struct clksrc_clk clksrcs[] = {
->   	}, {
->   		.clk		= {
->   			.name		= "sclk_cam",
-> +			.devname	= "s5pv310-fimc.0",
-
-As s5pv310 has been renamed to exynos4 the above line should be:
-
-+			.devname	= "exynos4-fimc.0",
-
-In fact "sclk_cam" clocks are not really tied to any FIMC instance,
-however IMHO keeping the current configuration is best thing to do
-at this stage. I intend to add a platform device for a media device
-driver which will integrate all FIMC entities and then assign both
-sclk_cam clocks to that platform device.
-
->   			.id		= 0,
->   			.enable		= exynos4_clksrc_mask_cam_ctrl,
->   			.ctrlbit	= (1<<  16),
-> @@ -919,6 +961,7 @@ static struct clksrc_clk clksrcs[] = {
->   	}, {
->   		.clk		= {
->   			.name		= "sclk_cam",
-> +			.devname	= "s5pv310-fimc.1",
-
-+			.devname	= "exynos4-fimc.1",
-
->   			.id		= 1,
->   			.enable		= exynos4_clksrc_mask_cam_ctrl,
->   			.ctrlbit	= (1<<  20),
-> @@ -929,6 +972,7 @@ static struct clksrc_clk clksrcs[] = {
->   	}, {
->   		.clk		= {
->   			.name		= "sclk_fimc",
-> +			.devname	= "s5pv310-fimc.0",
-
-+			.devname	= "exynos4-fimc.0",
-
-I'm going to fix the name in the driver during a coming rc period.
-This is were the driver name for exynos4 is being fixed up:
-http://tinyurl.com/638a9og
-
->   			.id		= 0,
->   			.enable		= exynos4_clksrc_mask_cam_ctrl,
->   			.ctrlbit	= (1<<  0),
-> @@ -939,6 +983,7 @@ static struct clksrc_clk clksrcs[] = {
->   	}, {
->   		.clk		= {
->   			.name		= "sclk_fimc",
-> +			.devname	= "s5pv310-fimc.1",
-
-Ditto.
-
->   			.id		= 1,
->   			.enable		= exynos4_clksrc_mask_cam_ctrl,
->   			.ctrlbit	= (1<<  4),
-> @@ -949,6 +994,7 @@ static struct clksrc_clk clksrcs[] = {
->   	}, {
->   		.clk		= {
->   			.name		= "sclk_fimc",
-> +			.devname	= "s5pv310-fimc.2",
-
-Ditto.
-
->   			.id		= 2,
->   			.enable		= exynos4_clksrc_mask_cam_ctrl,
->   			.ctrlbit	= (1<<  8),
-> @@ -959,6 +1005,7 @@ static struct clksrc_clk clksrcs[] = {
->   	}, {
->   		.clk		= {
->   			.name		= "sclk_fimc",
-> +			.devname	= "s5pv310-fimc.3",
-
-Ditto.
-
->   			.id		= 3,
->   			.enable		= exynos4_clksrc_mask_cam_ctrl,
->   			.ctrlbit	= (1<<  12),
-
---
-Thanks,
-Sylwester Nawrocki
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index a021b52..1b49b36 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -100,6 +100,7 @@ config MACH_SMDKC210
+ 	select S3C_DEV_HSMMC1
+ 	select S3C_DEV_HSMMC2
+ 	select S3C_DEV_HSMMC3
++	select SAMSUNG_DEV_PWM
+ 	select EXYNOS4_DEV_PD
+ 	select EXYNOS4_DEV_SYSMMU
+ 	select EXYNOS4_SETUP_I2C1
+diff --git a/arch/arm/mach-exynos4/mach-smdkc210.c b/arch/arm/mach-exynos4/mach-smdkc210.c
+index 25a2568..eac47dc 100644
+--- a/arch/arm/mach-exynos4/mach-smdkc210.c
++++ b/arch/arm/mach-exynos4/mach-smdkc210.c
+@@ -15,6 +15,7 @@
+ #include <linux/smsc911x.h>
+ #include <linux/io.h>
+ #include <linux/i2c.h>
++#include <linux/pwm_backlight.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach-types.h>
+@@ -27,6 +28,7 @@
+ #include <plat/sdhci.h>
+ #include <plat/iic.h>
+ #include <plat/pd.h>
++#include <plat/gpio-cfg.h>
+ 
+ #include <mach/map.h>
+ 
+@@ -146,6 +148,45 @@ static struct i2c_board_info i2c_devs1[] __initdata = {
+ 	{I2C_BOARD_INFO("wm8994", 0x1a),},
+ };
+ 
++static int smdkv310_backlight_init(struct device *dev)
++{
++	int ret;
++
++	ret = gpio_request(EXYNOS4_GPD0(1), "Backlight");
++	if (ret) {
++		printk(KERN_ERR "failed to request GPD for PWM-OUT 1\n");
++		return ret;
++	}
++
++	/* Configure GPIO pin with EXYNOS4_GPD_0_1_TOUT_1 */
++	s3c_gpio_cfgpin(EXYNOS4_GPD0(1), S3C_GPIO_SFN(2));
++
++	return 0;
++}
++
++static void smdkv310_backlight_exit(struct device *dev)
++{
++	s3c_gpio_cfgpin(EXYNOS4_GPD0(1), S3C_GPIO_OUTPUT);
++	gpio_free(EXYNOS4_GPD0(1));
++}
++
++static struct platform_pwm_backlight_data smdkv310_backlight_data = {
++	.pwm_id		= 1,
++	.max_brightness	= 255,
++	.dft_brightness	= 255,
++	.pwm_period_ns	= 78770,
++	.init		= smdkv310_backlight_init,
++	.exit		= smdkv310_backlight_exit,
++};
++
++static struct platform_device smdkv310_backlight_device = {
++	.name		= "pwm-backlight",
++	.dev		= {
++		.parent		= &s3c_device_timer[1].dev,
++		.platform_data	= &smdkv310_backlight_data,
++	},
++};
++
+ static struct platform_device *smdkc210_devices[] __initdata = {
+ 	&s3c_device_hsmmc0,
+ 	&s3c_device_hsmmc1,
+@@ -166,6 +207,8 @@ static struct platform_device *smdkc210_devices[] __initdata = {
+ 	&exynos4_device_sysmmu,
+ 	&samsung_asoc_dma,
+ 	&smdkc210_smsc911x,
++	&s3c_device_timer[1],
++	&smdkv310_backlight_device,
+ };
+ 
+ static void __init smdkc210_smsc911x_init(void)
+-- 
+1.7.1
