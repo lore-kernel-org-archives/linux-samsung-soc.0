@@ -1,35 +1,56 @@
-From: Ben Dooks <ben-i2c@fluff.org>
-Subject: Re: [PATCH] I2C:SAMSUNG:Select I2C_S3C2410 if HAVE_S3C2410_I2C
-Date: Thu, 24 Mar 2011 10:47:51 +0000
-Message-ID: <20110324104751.GS15795@trinity.fluff.org>
-References: <1300957573-2622-1-git-send-email-tushar.behera@linaro.org>
+From: Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: [PATCH] rtc: rtc-s3c: fix compile error due to missing s3c_rtc_setpie
+Date: Thu, 24 Mar 2011 22:09:33 +0200
+Message-ID: <1300997373-28910-1-git-send-email-anarsoul@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from trinity.fluff.org ([89.16.178.74]:59054 "EHLO trinity.fluff.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750864Ab1CXKr4 (ORCPT
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:55007 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932069Ab1CXUL7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Mar 2011 06:47:56 -0400
-Content-Disposition: inline
-In-Reply-To: <1300957573-2622-1-git-send-email-tushar.behera@linaro.org>
+	Thu, 24 Mar 2011 16:11:59 -0400
+Received: by bwz15 with SMTP id 15so391475bwz.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Mar 2011 13:11:58 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org
+To: John Stultz <john.stultz@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, ben-linux@fluff.org
+Cc: Vasily Khoruzhick <anarsoul@gmail.com>
 
-On Thu, Mar 24, 2011 at 02:36:13PM +0530, Tushar Behera wrote:
-> On Samsung Kconfig files, HAVE_S3C2410_I2C is selected if we want
-> to enable support for I2C. But the I2C controller is selected only
-> if I2C_S3C2410 is defined.
-> 
-> This patch selects I2C_S3C2410 when I2C and HAVE_S3C2410 are selected.
+s3c_rtc_setpie was removed, and it resulted in compiler error:
 
-No. Do not do this, just having the device on the board does not mean
-you want it forced into the kernel. A user may want to build it as a
-module or not build it at-all.
+drivers/rtc/rtc-s3c.c: In function =E2=80=98s3c_rtc_release=E2=80=99:
+drivers/rtc/rtc-s3c.c:339:2: error: implicit declaration of function
+=E2=80=98s3c_rtc_setpie=E2=80=99
 
--- 
-Ben Dooks, ben@fluff.org, http://www.fluff.org/ben/
+=46ix it by removing s3c_rtc_release calls.
 
-Large Hadron Colada: A large Pina Colada that makes the universe disappear.
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+---
+ drivers/rtc/rtc-s3c.c |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index 7149649..b3466c4 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -336,7 +336,6 @@ static void s3c_rtc_release(struct device *dev)
+=20
+ 	/* do not clear AIE here, it may be needed for wake */
+=20
+-	s3c_rtc_setpie(dev, 0);
+ 	free_irq(s3c_rtc_alarmno, rtc_dev);
+ 	free_irq(s3c_rtc_tickno, rtc_dev);
+ }
+@@ -408,7 +407,6 @@ static int __devexit s3c_rtc_remove(struct platform=
+_device *dev)
+ 	platform_set_drvdata(dev, NULL);
+ 	rtc_device_unregister(rtc);
+=20
+-	s3c_rtc_setpie(&dev->dev, 0);
+ 	s3c_rtc_setaie(&dev->dev, 0);
+=20
+ 	clk_disable(rtc_clk);
+--=20
+1.7.4.1
