@@ -1,47 +1,41 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS4: Fix smsc9215 irq polarity configuration of
- SMDKC210
+From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH] ARM: EXYNOS4: Fix addruart macro
 Date: Fri, 25 Mar 2011 17:35:30 +0900
-Message-ID: <000301cbeac7$9e5b82e0$db1288a0$%kim@samsung.com>
-References: <1300169668-3535-1-git-send-email-jtp.park@samsung.com>
+Message-ID: <000001cbeac7$9db70580$d9251080$%kim@samsung.com>
+References: <1300795169-7312-1-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:50142 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933773Ab1CYIfo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Mar 2011 04:35:44 -0400
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LIL004I2UJFEH00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 25 Mar 2011 17:35:39 +0900 (KST)
-Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LIL00C4QUJD6X@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 25 Mar 2011 17:35:39 +0900 (KST)
-In-reply-to: <1300169668-3535-1-git-send-email-jtp.park@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
+In-reply-to: <1300795169-7312-1-git-send-email-thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.linaro.org/mailman/options/linaro-dev>,
+	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linaro.org/pipermail/linaro-dev>
+List-Post: <mailto:linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
+List-Help: <mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.linaro.org/mailman/listinfo/linaro-dev>,
+	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=subscribe>
+Sender: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+Errors-To: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+To: 'Thomas Abraham' <thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jeongtae Park' <jtp.park@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-Jeongtae Park wrote:
+Thomas Abraham wrote:
 > 
-> This patch fixes smsc9215 irq ploarity configuration of SMDKC210.
-> We can change type of EINT(5) as HIGH, but it's better to change
-> IRQ output of smsc9215 as an active low because smsc's IRQ line
-> has been pull-up.
-> 
-> Signed-off-by: Jeongtae Park <jtp.park@samsung.com>
+> Fix incorrect conditional execution of ldr instructions in
+> addruart macro.
+>
+Oops :(
+Ok, will apply:)
 
-Ok, will apply.
+As a note, I found same patch with this in your previous patches.
+
 Thanks.
 
 Best regards,
 Kgene.
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
