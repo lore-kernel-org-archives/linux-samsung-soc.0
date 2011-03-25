@@ -1,78 +1,99 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v2] ARM: EXYNOS4: Fix build warning on regarding SATA_AHCI_PLATFORM
-Date: Fri, 25 Mar 2011 10:55:13 +0900
-Message-ID: <1301018113-27905-1-git-send-email-kgene.kim@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS4: IRQ flags for SMSC911X set as HIGH
+Date: Fri, 25 Mar 2011 08:07:09 +0530
+Message-ID: <AANLkTikkYn8Ocga_208HsxWVppUBH=YH-MVMMRV2kjvT@mail.gmail.com>
+References: <1300958437-23247-1-git-send-email-tushar.behera@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:60622 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754610Ab1CYC0f (ORCPT
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:53573 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934385Ab1CYChK convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Mar 2011 22:26:35 -0400
+	Thu, 24 Mar 2011 22:37:10 -0400
+Received: by vws1 with SMTP id 1so501673vws.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Mar 2011 19:37:10 -0700 (PDT)
+In-Reply-To: <1300958437-23247-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch fixes following build warnings.
+Hi,
 
-warning: (MACH_ARMLEX4210) selects SATA_AHCI_PLATFORM
-          which has unmet direct dependencies (ATA)
+I found that there are already some patches submitted for this purpose.
 
-And adds EXYNOX4_DEV_AHCI for building machines which are
-not suppoort for AHCI feature on board.
+http://www.spinics.net/lists/linux-samsung-soc/msg04371.html
+http://www.spinics.net/lists/linux-samsung-soc/msg04372.html
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
-Changes since v1:
-- Added EXYNOS4_DEV_AHCI
+Sorry for the trouble. Please ignore this patch.
 
- arch/arm/mach-exynos4/Kconfig  |    7 ++++++-
- arch/arm/mach-exynos4/Makefile |    2 +-
- 2 files changed, 7 insertions(+), 2 deletions(-)
+Regards,
+Tushar
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index a021b52..e849f67 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -20,6 +20,11 @@ config EXYNOS4_MCT
- 	help
- 	  Use MCT (Multi Core Timer) as kernel timers
- 
-+config EXYNOS4_DEV_AHCI
-+	bool
-+	help
-+	  Compile in platform device definitions for AHCI
-+
- config EXYNOS4_DEV_PD
- 	bool
- 	help
-@@ -134,9 +139,9 @@ config MACH_ARMLEX4210
- 	select S3C_DEV_HSMMC
- 	select S3C_DEV_HSMMC2
- 	select S3C_DEV_HSMMC3
-+	select EXYNOS4_DEV_AHCI
- 	select EXYNOS4_DEV_SYSMMU
- 	select EXYNOS4_SETUP_SDHCI
--	select SATA_AHCI_PLATFORM
- 	help
- 	  Machine support for Samsung ARMLEX4210 based on EXYNOS4210
- 
-diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
-index b8f0e7d..9be104f 100644
---- a/arch/arm/mach-exynos4/Makefile
-+++ b/arch/arm/mach-exynos4/Makefile
-@@ -39,6 +39,7 @@ obj-$(CONFIG_MACH_NURI)			+= mach-nuri.o
- # device support
- 
- obj-y					+= dev-audio.o
-+obj-$(CONFIG_EXYNOS4_DEV_AHCI)		+= dev-ahci.o
- obj-$(CONFIG_EXYNOS4_DEV_PD)		+= dev-pd.o
- obj-$(CONFIG_EXYNOS4_DEV_SYSMMU)	+= dev-sysmmu.o
- 
-@@ -53,4 +54,3 @@ obj-$(CONFIG_EXYNOS4_SETUP_I2C7)	+= setup-i2c7.o
- obj-$(CONFIG_EXYNOS4_SETUP_KEYPAD)	+= setup-keypad.o
- obj-$(CONFIG_EXYNOS4_SETUP_SDHCI)	+= setup-sdhci.o
- obj-$(CONFIG_EXYNOS4_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
--obj-$(CONFIG_SATA_AHCI_PLATFORM)	+= dev-ahci.o
--- 
-1.7.1
+On 24 March 2011 14:50, Tushar Behera <tushar.behera@linaro.org> wrote:
+>
+> There is a mismatch in IRQ flag and irq_polarity settings for
+> SMSC911X. This results in a kernel warning.
+>
+> IRQ flag is set to HIGH to match the irq_polarity.
+>
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+> ---
+> =C2=A0arch/arm/mach-exynos4/mach-smdkc210.c | =C2=A0 =C2=A02 +-
+> =C2=A0arch/arm/mach-exynos4/mach-smdkv310.c | =C2=A0 =C2=A02 +-
+> =C2=A02 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos4/mach-smdkc210.c b/arch/arm/mach-ex=
+ynos4/mach-smdkc210.c
+> index 25a2568..5ad5e13 100644
+> --- a/arch/arm/mach-exynos4/mach-smdkc210.c
+> +++ b/arch/arm/mach-exynos4/mach-smdkc210.c
+> @@ -120,7 +120,7 @@ static struct resource smdkc210_smsc911x_resource=
+s[] =3D {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0[1] =3D {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.start =C2=A0=3D=
+ IRQ_EINT(5),
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.end =C2=A0 =C2=
+=A0=3D IRQ_EINT(5),
+> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .flags =C2=A0=3D I=
+ORESOURCE_IRQ | IRQF_TRIGGER_LOW,
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .flags =C2=A0=3D I=
+ORESOURCE_IRQ | IRQF_TRIGGER_HIGH,
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0},
+> =C2=A0};
+>
+> diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-ex=
+ynos4/mach-smdkv310.c
+> index 88e0275..a44529d 100644
+> --- a/arch/arm/mach-exynos4/mach-smdkv310.c
+> +++ b/arch/arm/mach-exynos4/mach-smdkv310.c
+> @@ -122,7 +122,7 @@ static struct resource smdkv310_smsc911x_resource=
+s[] =3D {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0[1] =3D {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.start =C2=A0=3D=
+ IRQ_EINT(5),
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.end =C2=A0 =C2=
+=A0=3D IRQ_EINT(5),
+> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .flags =C2=A0=3D I=
+ORESOURCE_IRQ | IRQF_TRIGGER_LOW,
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .flags =C2=A0=3D I=
+ORESOURCE_IRQ | IRQF_TRIGGER_HIGH,
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0},
+> =C2=A0};
+>
+> --
+> 1.7.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.ht=
+ml
+
+
+
+--
+Tushar Behera
