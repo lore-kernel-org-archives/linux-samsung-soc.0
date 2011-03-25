@@ -1,210 +1,56 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS4: Add Atmel mXT touchscreen device to the NURI
- board
+Subject: RE: [PATCH 6/6] ARM: Remove clkdev.o build in arch/arm/common/Makefile
 Date: Fri, 25 Mar 2011 17:35:30 +0900
-Message-ID: <000601cbeac7$9e8d8f60$dba8ae20$%kim@samsung.com>
-References: <1300258751-662-1-git-send-email-jy0922.shim@samsung.com>
+Message-ID: <000101cbeac7$9df03df0$d9d0b9d0$%kim@samsung.com>
+References: <1300521019-13612-1-git-send-email-thomas.ab@samsung.com>
+	<1300521019-13612-7-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:50140 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933814Ab1CYIfp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Mar 2011 04:35:45 -0400
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LIL004I8UJFEH00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 25 Mar 2011 17:35:39 +0900 (KST)
-Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LIL00C4QUJD6X@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 25 Mar 2011 17:35:39 +0900 (KST)
-In-reply-to: <1300258751-662-1-git-send-email-jy0922.shim@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1300521019-13612-7-git-send-email-thomas.ab@samsung.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Thomas Abraham' <thomas.ab@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Joonyoung Shim' <jy0922.shim@samsung.com>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com
 
-Joonyoung Shim wrote:
+Thomas Abraham wrote:
 > 
-> This patch is to support Atmel mXT touchscreen device to the NURI board.
+> clkdev.c is moved to drivers/clk. So build for clkdev.o can
+> be removed from arch/arm/common/Makefile.
 > 
-> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 > ---
-> Hi,
+>  arch/arm/common/Makefile |    1 -
+>  1 files changed, 0 insertions(+), 1 deletions(-)
 > 
-> This patch is created at the source tree merged next branch of
-> git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git to next-exynos4
-branch
-> of
-> git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> 
-> Thanks.
-> 
->  arch/arm/mach-exynos4/Kconfig     |    2 +
->  arch/arm/mach-exynos4/mach-nuri.c |   89
-> +++++++++++++++++++++++++++++++++++++
->  2 files changed, 91 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-> index 82195a9..74a5ff6 100644
-> --- a/arch/arm/mach-exynos4/Kconfig
-> +++ b/arch/arm/mach-exynos4/Kconfig
-> @@ -151,8 +151,10 @@ config MACH_NURI
->  	select S3C_DEV_HSMMC2
->  	select S3C_DEV_HSMMC3
->  	select S3C_DEV_I2C1
-> +	select S3C_DEV_I2C3
->  	select S3C_DEV_I2C5
->  	select EXYNOS4_SETUP_I2C1
-> +	select EXYNOS4_SETUP_I2C3
->  	select EXYNOS4_SETUP_I2C5
->  	select EXYNOS4_SETUP_SDHCI
->  	select SAMSUNG_DEV_PWM
-> diff --git a/arch/arm/mach-exynos4/mach-nuri.c
-b/arch/arm/mach-exynos4/mach-
-> nuri.c
-> index b79ad01..cf354e2 100644
-> --- a/arch/arm/mach-exynos4/mach-nuri.c
-> +++ b/arch/arm/mach-exynos4/mach-nuri.c
-> @@ -12,6 +12,7 @@
->  #include <linux/serial_core.h>
->  #include <linux/input.h>
->  #include <linux/i2c.h>
-> +#include <linux/i2c/atmel_mxt_ts.h>
->  #include <linux/gpio_keys.h>
->  #include <linux/gpio.h>
->  #include <linux/regulator/machine.h>
-> @@ -30,6 +31,8 @@
->  #include <plat/cpu.h>
->  #include <plat/devs.h>
->  #include <plat/sdhci.h>
-> +#include <plat/gpio-cfg.h>
-> +#include <plat/iic.h>
-> 
->  #include <mach/map.h>
-> 
-> @@ -257,6 +260,88 @@ static struct i2c_board_info i2c1_devs[] __initdata =
-{
->  	/* Gyro, To be updated */
->  };
-> 
-> +/* TSP */
-> +static u8 mxt_init_vals[] = {
-> +	/* MXT_GEN_COMMAND(6) */
-> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +	/* MXT_GEN_POWER(7) */
-> +	0x20, 0xff, 0x32,
-> +	/* MXT_GEN_ACQUIRE(8) */
-> +	0x0a, 0x00, 0x05, 0x00, 0x00, 0x00, 0x09, 0x23,
-> +	/* MXT_TOUCH_MULTI(9) */
-> +	0x00, 0x00, 0x00, 0x13, 0x0b, 0x00, 0x00, 0x00, 0x02, 0x00,
-> +	0x00, 0x01, 0x01, 0x0e, 0x0a, 0x0a, 0x0a, 0x0a, 0x00, 0x00,
-> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +	0x00,
-> +	/* MXT_TOUCH_KEYARRAY(15) */
-> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00,
-> +	0x00,
-> +	/* MXT_SPT_GPIOPWM(19) */
-> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +	/* MXT_PROCI_GRIPFACE(20) */
-> +	0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x50, 0x28, 0x04,
-> +	0x0f, 0x0a,
-> +	/* MXT_PROCG_NOISE(22) */
-> +	0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x23, 0x00,
-> +	0x00, 0x05, 0x0f, 0x19, 0x23, 0x2d, 0x03,
-> +	/* MXT_TOUCH_PROXIMITY(23) */
-> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +	0x00, 0x00, 0x00, 0x00, 0x00,
-> +	/* MXT_PROCI_ONETOUCH(24) */
-> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +	/* MXT_SPT_SELFTEST(25) */
-> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +	0x00, 0x00, 0x00, 0x00,
-> +	/* MXT_PROCI_TWOTOUCH(27) */
-> +	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +	/* MXT_SPT_CTECONFIG(28) */
-> +	0x00, 0x00, 0x02, 0x08, 0x10, 0x00,
-> +};
-> +
-> +static struct mxt_platform_data mxt_platform_data = {
-> +	.config			= mxt_init_vals,
-> +	.config_length		= ARRAY_SIZE(mxt_init_vals),
-> +
-> +	.x_line			= 18,
-> +	.y_line			= 11,
-> +	.x_size			= 1024,
-> +	.y_size			= 600,
-> +	.blen			= 0x1,
-> +	.threshold		= 0x28,
-> +	.voltage		= 2800000,              /* 2.8V */
-> +	.orient			= MXT_DIAGONAL_COUNTER,
-> +	.irqflags		= IRQF_TRIGGER_FALLING,
-> +};
-> +
-> +static struct s3c2410_platform_i2c i2c3_data __initdata = {
-> +	.flags		= 0,
-> +	.bus_num	= 3,
-> +	.slave_addr	= 0x10,
-> +	.frequency	= 400 * 1000,
-> +	.sda_delay	= 100,
-> +};
-> +
-> +static struct i2c_board_info i2c3_devs[] __initdata = {
-> +	{
-> +		I2C_BOARD_INFO("atmel_mxt_ts", 0x4a),
-> +		.platform_data	= &mxt_platform_data,
-> +		.irq		= IRQ_EINT(4),
-> +	},
-> +};
-> +
-> +static void __init nuri_tsp_init(void)
-> +{
-> +	int gpio;
-> +
-> +	/* TOUCH_INT: XEINT_4 */
-> +	gpio = EXYNOS4_GPX0(4);
-> +	gpio_request(gpio, "TOUCH_INT");
-> +	s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0xf));
-> +	s3c_gpio_setpull(gpio, S3C_GPIO_PULL_UP);
-> +}
-> +
->  /* GPIO I2C 5 (PMIC) */
->  static struct i2c_board_info i2c5_devs[] __initdata = {
->  	/* max8997, To be updated */
-> @@ -270,6 +355,7 @@ static struct platform_device *nuri_devices[]
-__initdata
-> = {
->  	&s3c_device_hsmmc3,
->  	&s3c_device_wdt,
->  	&s3c_device_timer[0],
-> +	&s3c_device_i2c3,
-> 
->  	/* NURI Devices */
->  	&nuri_gpio_keys,
-> @@ -287,8 +373,11 @@ static void __init nuri_map_io(void)
->  static void __init nuri_machine_init(void)
->  {
->  	nuri_sdhci_init();
-> +	nuri_tsp_init();
-> 
->  	i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
-> +	s3c_i2c3_set_platdata(&i2c3_data);
-> +	i2c_register_board_info(3, i2c3_devs, ARRAY_SIZE(i2c3_devs));
->  	i2c_register_board_info(5, i2c5_devs, ARRAY_SIZE(i2c5_devs));
-> 
->  	/* Last */
+> diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
+> index e7521bc..6ea9b6f 100644
+> --- a/arch/arm/common/Makefile
+> +++ b/arch/arm/common/Makefile
+> @@ -16,5 +16,4 @@ obj-$(CONFIG_SHARP_SCOOP)	+= scoop.o
+>  obj-$(CONFIG_ARCH_IXP2000)	+= uengine.o
+>  obj-$(CONFIG_ARCH_IXP23XX)	+= uengine.o
+>  obj-$(CONFIG_PCI_HOST_ITE8152)  += it8152.o
+> -obj-$(CONFIG_COMMON_CLKDEV)	+= clkdev.o
+>  obj-$(CONFIG_ARM_TIMER_SP804)	+= timer-sp.o
 > --
-> 1.7.0.4
+> 1.6.6.rc2
 
-Ok, applied.
+Yeah, right.
+
+But, should be handled in Linux ARM kernel mailing list.
+Cc'ed Russell and LAKML :)
+
 Thanks.
 
 Best regards,
