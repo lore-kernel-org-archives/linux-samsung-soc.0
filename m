@@ -1,80 +1,57 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung fixes for 2.6.39-rc1
-Date: Mon, 28 Mar 2011 19:51:08 +0900
-Message-ID: <000001cbed36$0f0d0700$2d271500$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Thomas Abraham <thomas.ab@samsung.com>
+Subject: [PATCH v2 0/5] Prerequisite patches to support device tree on
+ Samsung's Exynos4 platform
+Date: Mon, 28 Mar 2011 16:37:35 +0530
+Message-ID: <1301310460-20974-1-git-send-email-thomas.ab@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:58205 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:64059 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752620Ab1C1KvQ (ORCPT
+	with ESMTP id S1751676Ab1C1LHh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Mar 2011 06:51:16 -0400
-Content-language: ko
+	Mon, 28 Mar 2011 07:07:37 -0400
+Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LIR00BXOLKMS5A0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 28 Mar 2011 20:07:34 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LIR00B5JLKIZA@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 28 Mar 2011 20:07:34 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Linus Torvalds' <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org
 
-Hi Linus,
+This patchset is a prerequisite for device tree patches on Exynos4. It
+includes the following changes.
 
-Please pull Samsung fixes from:
+1. Adds clkdev support for Exynos4
+2. Removes redundant console registration for Exynos4 and clkdev.
+3. Modifies samsung serial driver to keep a copy of platform data and use it.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-s5p-fixes-for-linus
+Changes since V1:
 
-These things are for small fixes on 2.6.39-rc1.
-If any problems, please let me know.
+1. Fixed incorrect devname for clocks.
+2. Moved CLKDEV_LOOKUP to arch/arm/Kconfig
 
-Thanks.
+Thomas Abraham (5):
+  serial: samsung: Fix unintended usage of uart port 0 as console
+  serial: s5pv210: Remove redundant console_initcall
+  ARM: SAMSUNG: Add clkdev support
+  ARM: SAMSUNG: Add clkdev support for exynos4
+  serial: samsung: Keep a copy a pdev->dev.platform_data and use it
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-The following changes since commit 18bcd0c8cb7d85a9063b88ec810dc1cdc0974518:
-
-  Merge branch 'for-linus' of
-git://git.kernel.org/pub/scm/linux/kernel/git/lrg/voltage-2.6 (2011-03-27
-20:37:50 -0700)
-
-are available in the git repository at:
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-s5p-fixes-for-linus
-
-Banajit Goswami (1):
-      ARM: S5P64X0: Fix iodesc array size for S5P6450
-
-Huang Weiyi (1):
-      ARM: S5PV210: Remove duplicated inclusion
-
-Jeongtae Park (2):
-      ARM: EXYNOS4: Fix smsc9215 irq polarity on SMDKV310
-      ARM: EXYNOS4: Fix smsc9215 irq polarity on SMDKC210
-
-Kukjin Kim (3):
-      ARM: EXYNOS4: Fix build warning on regarding SATA_AHCI_PLATFORM
-      ARM: SAMSUNG: Fix CPU idmask
-      ARM: Suspend: Fix dependency of ARCH_SUSPEND_POSSIBLE
-
-Thomas Abraham (1):
-      ARM: EXYNOS4: Fix addruart macro
-
-Vladimir Zapolskiy (1):
-      ARM: S5PV210: Fix security engine interrupt names
-
- arch/arm/Kconfig                                 |    1 +
- arch/arm/mach-exynos4/Kconfig                    |    7 ++++++-
- arch/arm/mach-exynos4/Makefile                   |    2 +-
- arch/arm/mach-exynos4/include/mach/debug-macro.S |    4 ++--
- arch/arm/mach-exynos4/mach-smdkc210.c            |    2 +-
- arch/arm/mach-exynos4/mach-smdkv310.c            |    2 +-
- arch/arm/mach-s5p64x0/cpu.c                      |    2 +-
- arch/arm/mach-s5pv210/include/mach/irqs.h        |    6 +++---
- arch/arm/mach-s5pv210/mach-smdkv210.c            |    1 -
- arch/arm/plat-s5p/cpu.c                          |    8 ++++----
- arch/arm/plat-samsung/init.c                     |    2 +-
- 11 files changed, 21 insertions(+), 16 deletions(-)
+ arch/arm/Kconfig                            |    1 +
+ arch/arm/mach-exynos4/clock.c               |   57 +++++++++++++++++++++++++++
+ arch/arm/mach-exynos4/include/mach/clkdev.h |    7 +++
+ arch/arm/mach-exynos4/time.c                |    2 +
+ arch/arm/plat-samsung/clock.c               |   18 ++++++++
+ arch/arm/plat-samsung/include/plat/clock.h  |    5 ++
+ arch/arm/plat-samsung/pwm-clock.c           |   10 +++++
+ drivers/tty/serial/s5pv210.c                |   19 +++++----
+ drivers/tty/serial/samsung.c                |   35 +++++++++++-----
+ drivers/tty/serial/samsung.h                |    3 +
+ 10 files changed, 137 insertions(+), 20 deletions(-)
+ create mode 100644 arch/arm/mach-exynos4/include/mach/clkdev.h
