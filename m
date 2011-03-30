@@ -1,172 +1,91 @@
-From: Thomas Abraham <thomas.ab@samsung.com>
-Subject: Re: [PATCH 4/5] ARM: SAMSUNG: Add clkdev support for exynos4
-Date: Tue, 29 Mar 2011 10:35:00 +0530
-Message-ID: <AANLkTi=uL6u_8UYgWD+yY=dKaB5c=KQRbCt-58e69Dxa@mail.gmail.com>
-References: <1301310460-20974-1-git-send-email-thomas.ab@samsung.com>
-	<1301310460-20974-5-git-send-email-thomas.ab@samsung.com>
-	<AANLkTimzhpEmWBsz-YzHGtY9xs8DungV1nRdp793nZzb@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [RFC/PATCH 0/2] FrameBuffer emulator for V4L2/VideoBuf2
+Date: Wed, 30 Mar 2011 09:00:46 +0200
+Message-ID: <1301468448-25524-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:42702 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751496Ab1C2FFB (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:26235 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751683Ab1C3HBF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Mar 2011 01:05:01 -0400
-Received: by iyb14 with SMTP id 14so3870060iyb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Mar 2011 22:05:00 -0700 (PDT)
-In-Reply-To: <AANLkTimzhpEmWBsz-YzHGtY9xs8DungV1nRdp793nZzb@mail.gmail.com>
+	Wed, 30 Mar 2011 03:01:05 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, =?UTF-8?B?7J2064+Z7ZmU?= <dh09.lee@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, t.stanislaws@samsung.com
 
-Hi Mr. Kyungmin Park,
+Hello,
 
-On Mon, Mar 28, 2011 at 6:41 PM, Kyungmin Park <kmpark@infradead.org> wrote:
-> Hi,
->
-> On Mon, Mar 28, 2011 at 8:07 PM, Thomas Abraham <thomas.ab@samsung.com> wrote:
->> Add clkdev support for Samsung's Exynos4 platforms.
->>
->> Cc: Ben Dooks <ben-linux@fluff.org>
->> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
->> ---
->>  arch/arm/Kconfig                            |    1 +
->>  arch/arm/mach-exynos4/clock.c               |   57 +++++++++++++++++++++++++++
->>  arch/arm/mach-exynos4/include/mach/clkdev.h |    7 +++
->>  arch/arm/mach-exynos4/time.c                |    2 +
->>  arch/arm/plat-samsung/pwm-clock.c           |   10 +++++
->>  5 files changed, 77 insertions(+), 0 deletions(-)
->>  create mode 100644 arch/arm/mach-exynos4/include/mach/clkdev.h
->>
->> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
->> index 93d595a..66f50f8 100644
->> --- a/arch/arm/Kconfig
->> +++ b/arch/arm/Kconfig
->> @@ -779,6 +779,7 @@ config ARCH_EXYNOS4
->>        select ARCH_SPARSEMEM_ENABLE
->>        select GENERIC_GPIO
->>        select HAVE_CLK
->> +       select CLKDEV_LOOKUP
->>        select ARCH_HAS_CPUFREQ
->>        select GENERIC_CLOCKEVENTS
->>        select HAVE_S3C_RTC if RTC_CLASS
->> diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
->> index 871f9d5..8e4dbf6 100644
->> --- a/arch/arm/mach-exynos4/clock.c
->> +++ b/arch/arm/mach-exynos4/clock.c
->> @@ -404,41 +404,49 @@ static struct clk init_clocks_off[] = {
->>                .ctrlbit        = (1<<24),
->>        }, {
->>                .name           = "csis",
->> +               .devname        = "s5p-mipi-csis.0",
->>                .id             = 0,
->>                .enable         = exynos4_clk_ip_cam_ctrl,
->>                .ctrlbit        = (1 << 4),
+On V4L2 brainstorming meeting in Warsaw we discussed the need of a
+framebuffer userspace interface for video output devices. Such
+framebuffer interface is aimed mainly for legacy applications and/or
+interoperatibility with Xfbdev.
 
-[...]
+I proposed to give the idea of generic fb-on-top-of-video-node a second
+try, now using the power of videobuf2.
 
->>        }, {
->>                .name           = "fimc",
->> +               .devname        = "exynos4-fimc.3",
->>                .id             = 3,
->>                .enable         = exynos4_clk_ip_cam_ctrl,
->>                .ctrlbit        = (1 << 3),
->>        }, {
->>                .name           = "fimd",
->> +               .devname        = "s5pv310-fb.0",
->
-> actually it doesn't yet determine which name is used at framebuffer,
-> fimd or lcd.
+This short patch series demonstrates that this approach is possible. We
+succesfully implemented a framebuffer emulator and tested it with
+s5p-hdmi driver on Samsung Exynos4 platform.
 
-The fb driver (drivers/video/s3c-fb.c) is using 'lcd' as the name of
-the clock. So the name of the clock above 'fimd' will have to be
-changed to 'lcd'. If a patch for that change is not already submitted,
-I will submit a separate patch for that.
+This initial version provides a basic non-accelerated framebuffer
+device. The emulation is started on the first open of the framebuffer
+device and stopped on last close. The framebuffer boots in 'blanked'
+mode, so one also needs to make a call to blank ioctl (with
+FB_BLANK_UNBLANK argument) to enable video output. 
 
->
->>                .id             = 0,
->>                .enable         = exynos4_clk_ip_lcd0_ctrl,
->>                .ctrlbit        = (1 << 0),
->>        }, {
+We successfully managed to get vanilla Xfbdev server working on top of
+it without ANY changes in X server sources. 
 
-[...]
+The framebuffer resolution and pixel format is autoconfigured from the
+parameters of the corresponding video output node. One can use v4l2-ctrl
+(or similar) tool to select pixel format, resolution, output, etc (and
+in the near future also the composition on the target video device).
 
->>                .name           = "hsmmc",
->> +               .devname        = "s3c-sdhci.4",
-> exynos4 has different host controller at channel 4. designeware
-> dw_mmc. so please check it.
+There a few requirements for the video output driver:
+1. support for single-buffering mode
+2. support for videoc_ioctl interface (this might change in the future)
+3. use memory allocator that allows coherent mappings (mmaped framebuffer
+   will be accessed by application while it is displayed by dma engine).
 
-Thanks for pointing this out. The clock name will change for this
-(need to still find a name). Since, this will be the only instance of
-clock (.id = -1), the devname can be avoided. In the next revision of
-this patch, I will remove the devname addition for this clock.
+The changes that are needed in the video output driver are really
+simple. Mainly one need to add just a call to vb2_fb_register(q, vfd)
+and vb2_fb_register(fb) functions.
 
->
->>                .id             = 4,
->>                .parent         = &clk_aclk_133.clk,
->>                .enable         = exynos4_clk_ip_fsys_ctrl,
->> @@ -486,11 +499,13 @@ static struct clk init_clocks_off[] = {
->>                .ctrlbit        = (1 << 10),
->>        }, {
->>                .name           = "pdma",
->> +               .devname        = "s3c-pl330.0",
->>                .id             = 0,
->>                .enable         = exynos4_clk_ip_fsys_ctrl,
->>                .ctrlbit        = (1 << 0),
+The future versions might aslo include the following features:
+- vsync event translation into WAIT_VSYNC framebuffer ioctl
+- support for frame buffer panning with upcoming S_COMPOSE ioctl
 
-[...]
+The patch series is based on the V2 of the s5p-hdmi driver. The complete
+kernel tree will be available on:
+git://git.infradead.org/users/kmpark/linux-2.6-samsung vb2-fb-tv branch.
 
->>        }, {
->>                .name           = "iis",
->> +               .devname        = "samsung-i2s.0",
-> does it still use the 'iis'?
+An updated s5p-hdmi/tv driver will be posted soon.
 
-The i2c driver uses the clock name as iis. So no change here.
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
 
->>                .id             = 0,
->>                .enable         = exynos4_clk_ip_peril_ctrl,
->>                .ctrlbit        = (1 << 19),
->>        }, {
->>                .name           = "iis",
 
-[...]
+Complete patch summary:
 
->> diff --git a/arch/arm/mach-exynos4/include/mach/clkdev.h b/arch/arm/mach-exynos4/include/mach/clkdev.h
->> new file mode 100644
->> index 0000000..1247f5e
->> --- /dev/null
->> +++ b/arch/arm/mach-exynos4/include/mach/clkdev.h
->> @@ -0,0 +1,7 @@
->> +#ifndef __MACH_EXYNOS4_CLKDEV_H__
->> +#define __MACH_EXYNOS4_CLKDEV_H__
->> +
->> +#define __clk_get(clk) ({ 1; })
->> +#define __clk_put(clk) do { } while (0)
->> +
->> +#endif
->> diff --git a/arch/arm/mach-exynos4/time.c b/arch/arm/mach-exynos4/time.c
->> index 86b9fa0..cb63f97 100644
->> --- a/arch/arm/mach-exynos4/time.c
->> +++ b/arch/arm/mach-exynos4/time.c
->> @@ -262,6 +262,7 @@ static void __init exynos4_timer_resources(void)
->>        clk_enable(timerclk);
->>
->>        tmpdev.id = 2;
->> +       tmpdev.dev.init_name = "s3c24xx-pwm.2";
->
-> what's this? why does it need at here?
+Marek Szyprowski (2):
+  media: vb2: add frame buffer emulator for video output devices
+  media: s5p-hdmi: add support for frame buffer emulator
 
-platform_device instances are not registered for PWM timer's that are
-used to generate the clock ticks. A un-registered version of
-platform_device (tmpdev above) is used to lookup the clocks in this
-case. Since this platform_device is unregistered and clk_get (when
-using clkdev lookup) requires a devname, a temporary device name can
-be assigned to the platform_device (refer to dev_name function in
-include/linux/device.h file).
+ drivers/media/video/Kconfig              |    7 +
+ drivers/media/video/Makefile             |    1 +
+ drivers/media/video/s5p-tv/Kconfig       |    1 +
+ drivers/media/video/s5p-tv/mixer.h       |    2 +
+ drivers/media/video/s5p-tv/mixer_video.c |   10 +
+ drivers/media/video/videobuf2-fb.c       |  565 ++++++++++++++++++++++++++++++
+ include/media/videobuf2-fb.h             |   22 ++
+ 7 files changed, 608 insertions(+), 0 deletions(-)
+ create mode 100644 drivers/media/video/videobuf2-fb.c
+ create mode 100644 include/media/videobuf2-fb.h
 
-Thanks for your comments.
-
-Regards,
-Thomas.
+-- 
+1.7.1.569.g6f426
