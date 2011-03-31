@@ -1,54 +1,48 @@
-From: "Michal Nazarewicz" <mina86@mina86.com>
+From: Dave Hansen <dave@linux.vnet.ibm.com>
 Subject: Re: [PATCH 04/12] mm: alloc_contig_freed_pages() added
-Date: Fri, 01 Apr 2011 00:18:10 +0200
-Message-ID: <op.vs8awkrx3l0zgt@mnazarewicz-glaptop>
+Date: Thu, 31 Mar 2011 15:26:51 -0700
+Message-ID: <1301610411.30870.29.camel@nimitz>
 References: <1301577368-16095-1-git-send-email-m.szyprowski@samsung.com>
- <1301577368-16095-5-git-send-email-m.szyprowski@samsung.com>
- <1301587083.31087.1032.camel@nimitz> <op.vs77qfx03l0zgt@mnazarewicz-glaptop>
- <1301606078.31087.1275.camel@nimitz>
+	 <1301577368-16095-5-git-send-email-m.szyprowski@samsung.com>
+	 <1301587083.31087.1032.camel@nimitz>
+	 <op.vs77qfx03l0zgt@mnazarewicz-glaptop>
+	 <1301606078.31087.1275.camel@nimitz>
+	 <op.vs8awkrx3l0zgt@mnazarewicz-glaptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed; delsp=yes
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:35425 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759375Ab1CaWSO (ORCPT
+Received: from e8.ny.us.ibm.com ([32.97.182.138]:56405 "EHLO e8.ny.us.ibm.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751664Ab1CaW1D (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Mar 2011 18:18:14 -0400
-In-Reply-To: <1301606078.31087.1275.camel@nimitz>
+	Thu, 31 Mar 2011 18:27:03 -0400
+In-Reply-To: <op.vs8awkrx3l0zgt@mnazarewicz-glaptop>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dave Hansen <dave@linux.vnet.ibm.com>
+To: Michal Nazarewicz <mina86@mina86.com>
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-mm@kvack.org, Kyungmin Park <kyungmin.park@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Ankita Garg <ankita@in.ibm.com>, Daniel Walker <dwalker@codeaurora.org>, Johan MOSSBERG <johan.xx.mossberg@stericsson.com>, Mel Gorman <mel@csn.ul.ie>, Pawel Osciak <pawel@osciak.com>
 
-> On Thu, 2011-03-31 at 15:16 +0200, Marek Szyprowski wrote:
->> +unsigned long alloc_contig_freed_pages(unsigned long start, unsigned
->> long end,
->> +                                      gfp_t flag)
->> +{
->> +       unsigned long pfn = start, count;
->> +       struct page *page;
->> +       struct zone *zone;
->> +       int order;
->> +
->> +       VM_BUG_ON(!pfn_valid(start));
+On Fri, 2011-04-01 at 00:18 +0200, Michal Nazarewicz wrote:
+> On Thu, 31 Mar 2011 23:14:38 +0200, Dave Hansen wrote:
+> > We BUG_ON() in bootmem.  Basically if we try to allocate an early-boot
+> > structure and fail, we're screwed.  We can't keep running without an
+> > inode hash, or a mem_map[].
+> >
+> > This looks like it's going to at least get partially used in drivers, at
+> > least from the examples.  Are these kinds of things that, if the driver
+> > fails to load, that the system is useless and hosed?  Or, is it
+> > something where we might limp along to figure out what went wrong before
+> > we reboot?
+> 
+> Bug in the above place does not mean that we could not allocate memory.  It
+> means caller is broken.
 
-On Thu, 31 Mar 2011 23:14:38 +0200, Dave Hansen wrote:
-> We BUG_ON() in bootmem.  Basically if we try to allocate an early-boot
-> structure and fail, we're screwed.  We can't keep running without an
-> inode hash, or a mem_map[].
->
-> This looks like it's going to at least get partially used in drivers, at
-> least from the examples.  Are these kinds of things that, if the driver
-> fails to load, that the system is useless and hosed?  Or, is it
-> something where we might limp along to figure out what went wrong before
-> we reboot?
+Could you explain that a bit?
 
-Bug in the above place does not mean that we could not allocate memory.  It
-means caller is broken.
+Is this a case where a device is mapped to a very *specific* range of
+physical memory and no where else?  What are the reasons for not marking
+it off limits at boot?  I also saw some bits of isolation and migration
+in those patches.  Can't the migration fail?  
 
--- 
-Best regards,                                         _     _
-.o. | Liege of Serenely Enlightened Majesty of      o' \,=./ `o
-..o | Computer Science,  Michal "mina86" Nazarewicz    (o o)
-ooo +-----<email/xmpp: mnazarewicz@google.com>-----ooO--(_)--Ooo--
+-- Dave
