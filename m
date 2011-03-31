@@ -1,336 +1,139 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [RFC/PATCH v7 3/5] MFC: Add MFC 5.1 V4L2 driver
-Date: Thu, 31 Mar 2011 11:10:35 +0200
-Message-ID: <001e01cbef83$81ff0840$85fd18c0$%debski@samsung.com>
-References: <1299237982-31687-1-git-send-email-k.debski@samsung.com>
- <1299237982-31687-4-git-send-email-k.debski@samsung.com>
- <007b01cbef3a$f6293b30$e27bb190$%oh@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 01/12] lib: bitmap: Added alignment offset for
+	bitmap_find_next_zero_area()
+Date: Thu, 31 Mar 2011 15:15:57 +0200
+Message-ID: <1301577368-16095-2-git-send-email-m.szyprowski@samsung.com>
+References: <1301577368-16095-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <007b01cbef3a$f6293b30$e27bb190$%oh@samsung.com>
-Content-language: en-gb
-Sender: linux-media-owner@vger.kernel.org
-To: jaeryul.oh@samsung.com, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com
+Return-path: <owner-linux-mm@kvack.org>
+In-reply-to: <1301577368-16095-1-git-send-email-m.szyprowski@samsung.com>
+Sender: owner-linux-mm@kvack.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-mm@kvack.org
+Cc: Michal Nazarewicz <mina86@mina86.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Ankita Garg <ankita@in.ibm.com>, Daniel Walker <dwalker@codeaurora.org>, Johan MOSSBERG <johan.xx.mossberg@stericsson.com>, Mel Gorman <mel@csn.ul.ie>, Pawel Osciak <pawel@osciak.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-> From: Jaeryul Oh [mailto:jaeryul.oh@samsung.com]
-> Hi, Kamil
+From: Michal Nazarewicz <m.nazarewicz@samsung.com>
 
-Hi Peter,
+This commit adds a bitmap_find_next_zero_area_off() function which
+works like bitmap_find_next_zero_area() function expect it allows an
+offset to be specified when alignment is checked.  This lets caller
+request a bit such that its number plus the offset is aligned
+according to the mask.
+
+Signed-off-by: Michal Nazarewicz <m.nazarewicz@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+CC: Michal Nazarewicz <mina86@mina86.com>
+---
+ include/linux/bitmap.h |   24 +++++++++++++++++++-----
+ lib/bitmap.c           |   22 ++++++++++++----------
+ 2 files changed, 31 insertions(+), 15 deletions(-)
+
+diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+index daf8c48..c0528d1 100644
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -45,6 +45,7 @@
+  * bitmap_set(dst, pos, nbits)			Set specified bit area
+  * bitmap_clear(dst, pos, nbits)		Clear specified bit area
+  * bitmap_find_next_zero_area(buf, len, pos, n, mask)	Find bit free area
++ * bitmap_find_next_zero_area_off(buf, len, pos, n, mask)	as above
+  * bitmap_shift_right(dst, src, n, nbits)	*dst = *src >> n
+  * bitmap_shift_left(dst, src, n, nbits)	*dst = *src << n
+  * bitmap_remap(dst, src, old, new, nbits)	*dst = map(old, new)(src)
+@@ -113,11 +114,24 @@ extern int __bitmap_weight(const unsigned long *bitmap, int bits);
  
-> I found some mal-functional points.
+ extern void bitmap_set(unsigned long *map, int i, int len);
+ extern void bitmap_clear(unsigned long *map, int start, int nr);
+-extern unsigned long bitmap_find_next_zero_area(unsigned long *map,
+-					 unsigned long size,
+-					 unsigned long start,
+-					 unsigned int nr,
+-					 unsigned long align_mask);
++
++extern unsigned long bitmap_find_next_zero_area_off(unsigned long *map,
++						    unsigned long size,
++						    unsigned long start,
++						    unsigned int nr,
++						    unsigned long align_mask,
++						    unsigned long align_offset);
++
++static inline unsigned long
++bitmap_find_next_zero_area(unsigned long *map,
++			   unsigned long size,
++			   unsigned long start,
++			   unsigned int nr,
++			   unsigned long align_mask)
++{
++	return bitmap_find_next_zero_area_off(map, size, start, nr,
++					      align_mask, 0);
++}
+ 
+ extern int bitmap_scnprintf(char *buf, unsigned int len,
+ 			const unsigned long *src, int nbits);
+diff --git a/lib/bitmap.c b/lib/bitmap.c
+index 741fae9..8e75a6f 100644
+--- a/lib/bitmap.c
++++ b/lib/bitmap.c
+@@ -315,30 +315,32 @@ void bitmap_clear(unsigned long *map, int start, int nr)
+ }
+ EXPORT_SYMBOL(bitmap_clear);
+ 
+-/*
++/**
+  * bitmap_find_next_zero_area - find a contiguous aligned zero area
+  * @map: The address to base the search on
+  * @size: The bitmap size in bits
+  * @start: The bitnumber to start searching at
+  * @nr: The number of zeroed bits we're looking for
+  * @align_mask: Alignment mask for zero area
++ * @align_offset: Alignment offset for zero area.
+  *
+  * The @align_mask should be one less than a power of 2; the effect is that
+- * the bit offset of all zero areas this function finds is multiples of that
+- * power of 2. A @align_mask of 0 means no alignment is required.
++ * the bit offset of all zero areas this function finds plus @align_offset
++ * is multiple of that power of 2.
+  */
+-unsigned long bitmap_find_next_zero_area(unsigned long *map,
+-					 unsigned long size,
+-					 unsigned long start,
+-					 unsigned int nr,
+-					 unsigned long align_mask)
++unsigned long bitmap_find_next_zero_area_off(unsigned long *map,
++					     unsigned long size,
++					     unsigned long start,
++					     unsigned int nr,
++					     unsigned long align_mask,
++					     unsigned long align_offset)
+ {
+ 	unsigned long index, end, i;
+ again:
+ 	index = find_next_zero_bit(map, size, start);
+ 
+ 	/* Align allocation */
+-	index = __ALIGN_MASK(index, align_mask);
++	index = __ALIGN_MASK(index + align_offset, align_mask) - align_offset;
+ 
+ 	end = index + nr;
+ 	if (end > size)
+@@ -350,7 +352,7 @@ again:
+ 	}
+ 	return index;
+ }
+-EXPORT_SYMBOL(bitmap_find_next_zero_area);
++EXPORT_SYMBOL(bitmap_find_next_zero_area_off);
+ 
+ /*
+  * Bitmap printing & parsing functions: first version by Bill Irwin,
+-- 
+1.7.1.569.g6f426
 
-I have commented below.
-
-> 
-> > -----Original Message-----
-> > From: linux-media-owner@vger.kernel.org [mailto:linux-media-
-> > owner@vger.kernel.org] On Behalf Of Kamil Debski
-> > Sent: Friday, March 04, 2011 8:26 PM
-> > To: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org
-> > Cc: m.szyprowski@samsung.com; kyungmin.park@samsung.com;
-> > k.debski@samsung.com; jaeryul.oh@samsung.com; kgene.kim@samsung.com
-> > Subject: [RFC/PATCH v7 3/5] MFC: Add MFC 5.1 V4L2 driver
-> >
-> > Multi Format Codec 5.1 is capable of handling a range of video codecs
-> > and this driver provides V4L2 interface for video decoding.
-> >
-> > Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> >  drivers/media/video/Kconfig                  |    8 +
-> >  drivers/media/video/Makefile                 |    1 +
-> >  drivers/media/video/s5p-mfc/Makefile         |    3 +
-> >  drivers/media/video/s5p-mfc/regs-mfc5.h      |  346 ++++
-> >  drivers/media/video/s5p-mfc/s5p_mfc.c        | 2253
-> > ++++++++++++++++++++++++++
-> >  drivers/media/video/s5p-mfc/s5p_mfc_common.h |  240 +++
-> >  drivers/media/video/s5p-mfc/s5p_mfc_ctrls.h  |  182 +++
-> >  drivers/media/video/s5p-mfc/s5p_mfc_debug.h  |   47 +
-> >  drivers/media/video/s5p-mfc/s5p_mfc_intr.c   |   92 ++
-> >  drivers/media/video/s5p-mfc/s5p_mfc_intr.h   |   26 +
-> >  drivers/media/video/s5p-mfc/s5p_mfc_memory.h |   43 +
-> >  drivers/media/video/s5p-mfc/s5p_mfc_opr.c    |  913 +++++++++++
-> >  drivers/media/video/s5p-mfc/s5p_mfc_opr.h    |  142 ++
-> >  13 files changed, 4296 insertions(+), 0 deletions(-)
-> >  create mode 100644 drivers/media/video/s5p-mfc/Makefile
-> >  create mode 100644 drivers/media/video/s5p-mfc/regs-mfc5.h
-> >  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc.c
-> >  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_common.h
-> >  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_ctrls.h
-> >  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_debug.h
-> >  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_intr.c
-> >  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_intr.h
-> >  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_memory.h
-> >  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_opr.c
-> >  create mode 100644 drivers/media/video/s5p-mfc/s5p_mfc_opr.h
-> >
-> > diff --git a/drivers/media/video/Kconfig b/drivers/media/video/Kconfig
-> > index 12fb325..0bdc64d 100644
-> > --- a/drivers/media/video/Kconfig
-> > +++ b/drivers/media/video/Kconfig
-> > @@ -1025,4 +1025,12 @@ config  VIDEO_SAMSUNG_S5P_FIMC
-> >  	  This is a v4l2 driver for the S5P camera interface
-> >  	  (video postprocessor)
-> >
-> > +config VIDEO_SAMSUNG_S5P_MFC
-> > +	tristate "Samsung S5P MFC 5.1 Video Codec"
-> > +	depends on VIDEO_V4L2
-> > +	select VIDEOBUF2_S5P_IOMMU
-> > +	default n
-> > +	help
-> > +	    MFC 5.1 driver for V4L2.
-> > +
-> >  endif # V4L_MEM2MEM_DRIVERS
-> > diff --git a/drivers/media/video/Makefile b/drivers/media/video/Makefile
-> > index fd9488d..4b09ddb 100644
-> > --- a/drivers/media/video/Makefile
-> > +++ b/drivers/media/video/Makefile
-> > @@ -164,6 +164,7 @@ obj-$(CONFIG_VIDEO_SH_MOBILE_CSI2)	+=
-> > sh_mobile_csi2.o
-> >  obj-$(CONFIG_VIDEO_SH_MOBILE_CEU)	+= sh_mobile_ceu_camera.o
-> >  obj-$(CONFIG_VIDEO_OMAP1)		+= omap1_camera.o
-> >  obj-$(CONFIG_VIDEO_SAMSUNG_S5P_FIMC) 	+= s5p-fimc/
-> > +obj-$(CONFIG_VIDEO_SAMSUNG_S5P_MFC)	+= s5p-mfc/
-> >
-> >  obj-$(CONFIG_ARCH_DAVINCI)		+= davinci/
-> >
-> > diff --git a/drivers/media/video/s5p-mfc/Makefile
-> > b/drivers/media/video/s5p-mfc/Makefile
-> > new file mode 100644
-> > index 0000000..69b6294
-> > --- /dev/null
-> > +++ b/drivers/media/video/s5p-mfc/Makefile
-> > @@ -0,0 +1,3 @@
-> > +obj-$(CONFIG_VIDEO_SAMSUNG_S5P_MFC) := s5p-mfc.o
-> > +s5p-mfc-y := s5p_mfc.o s5p_mfc_intr.o  s5p_mfc_opr.o
-> > +
-> > diff --git a/drivers/media/video/s5p-mfc/regs-mfc5.h
-> > b/drivers/media/video/s5p-mfc/regs-mfc5.h
-> > new file mode 100644
-> > index 0000000..eeb6e2e
-> > --- /dev/null
-> > +++ b/drivers/media/video/s5p-mfc/regs-mfc5.h
-> > @@ -0,0 +1,346 @@
-> 
-> snipping
-> 
-> > +}
-> > +
-> > +static inline void s5p_mfc_run_res_change(struct s5p_mfc_ctx *ctx)
-> > +{
-> > +	struct s5p_mfc_dev *dev = ctx->dev;
-> > +
-> > +	s5p_mfc_set_dec_stream_buffer(ctx, 0, 0, 0);
-> > +	dev->curr_ctx = ctx->num;
-> > +	s5p_mfc_clean_ctx_int_flags(ctx);
-> > +	s5p_mfc_decode_one_frame(ctx, MFC_DEC_RES_CHANGE);
-> > +}
-> > +
-> > +static inline void s5p_mfc_run_dec_last_frames(struct s5p_mfc_ctx *ctx)
-> > +{
-> > +	struct s5p_mfc_dev *dev = ctx->dev;
-> > +
-> > +	s5p_mfc_set_dec_stream_buffer(ctx, 0, 0, 0);
-> > +	dev->curr_ctx = ctx->num;
-> > +	s5p_mfc_clean_ctx_int_flags(ctx);
-> > +	s5p_mfc_decode_one_frame(ctx, MFC_DEC_LAST_FRAME);
-> > +}
-> > +
-> 
-> You used '0' as a second param.(= buf_addr) in
-> s5p_mfc_set_dec_stream_buffer(ctx, 0, 0, 0)
-> This must be a problem, 'cause OFFSETA(buf_addr) is calculated wrongly.
-> And I propose that
-> why don't you try to check addr condition(necessary cond. of MFC, it should
-> be located at
-> rear region from base_addr)
-
-This function is called after the last input buffer has been sent to be decoded.
-Its purpose is to get the output buffers that were kept in MFC as reference
-frames.
-At this time there is no useful data in the input buffer and if I understand
-correct
-it should not be used by MFC firmware, thus I don't see the reason to set its
-address. 
-
-Is there something I don't know? Is MFC using this buffer?
-When I used MFC with IOMMU I had no page faults at this point of time.
-
-> > +static inline int s5p_mfc_run_dec_frame(struct s5p_mfc_ctx *ctx)
-> > +{
-> > +	struct s5p_mfc_dev *dev = ctx->dev;
-> > +	struct s5p_mfc_buf *temp_vb;
-> > +	unsigned long flags;
-> > +	int dec_arg = MFC_DEC_FRAME;
-> > +
-> > +	spin_lock_irqsave(&dev->irqlock, flags);
-> > +
-> > +	/* Frames are being decoded */
-> > +	if (list_empty(&ctx->src_queue)) {
-> > +		mfc_debug("No src buffers.\n");
-> > +		spin_unlock_irqrestore(&dev->irqlock, flags);
-> > +		return -EAGAIN;
-> > +	}
-> > +	/* Get the next source buffer */
-> > +	temp_vb = list_entry(ctx->src_queue.next, struct s5p_mfc_buf, list);
-> > +	mfc_debug("Temp vb: %p\n", temp_vb);
-> > +	mfc_debug("Src Addr: %08x\n", s5p_mfc_plane_addr(temp_vb->b, 0));
-> > +	s5p_mfc_set_dec_stream_buffer(ctx, s5p_mfc_plane_addr(temp_vb->b,
-> > 0),
-> > +				ctx->consumed_stream, temp_vb->b-
-> > >v4l2_planes[0].bytesused);
-> > +	spin_unlock_irqrestore(&dev->irqlock, flags);
-> > +	dev->curr_ctx = ctx->num;
-> > +	s5p_mfc_clean_ctx_int_flags(ctx);
-> > +	if (temp_vb->b->v4l2_planes[0].bytesused == 0) {
-> > +	        mfc_debug("Setting ctx->state to FINISHING\n");
-> > +	        ctx->state = MFCINST_DEC_FINISHING;
-> > +		dec_arg = MFC_DEC_LAST_FRAME;
-> > +	}
-> > +	s5p_mfc_decode_one_frame(ctx,
-> > +				dec_arg);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static inline int s5p_mfc_run_get_inst_no(struct s5p_mfc_ctx *ctx)
-> > +{
-> > +	struct s5p_mfc_dev *dev = ctx->dev;
-> > +	int ret;
-> > +
-> > +	/* Preparing decoding - getting instance number */
-> > +	mfc_debug("Getting instance number\n");
-> > +	dev->curr_ctx = ctx->num;
-> > +	s5p_mfc_clean_ctx_int_flags(ctx);
-> > +	ret = s5p_mfc_open_inst(ctx);
-> > +	if (ret) {
-> > +		mfc_err("Failed to create a new instance.\n");
-> > +		ctx->state = MFCINST_DEC_ERROR;
-> > +	}
-> > +	return ret;
-> > +}
-> > +
-> > +static inline int s5p_mfc_run_return_inst(struct s5p_mfc_ctx *ctx)
-> > +{
-> > +	struct s5p_mfc_dev *dev = ctx->dev;
-> > +	int ret;
-> > +
-> > +	/* Closing decoding instance  */
-> > +	mfc_debug("Returning instance number\n");
-> > +	dev->curr_ctx = ctx->num;
-> > +	s5p_mfc_clean_ctx_int_flags(ctx);
-> > +	ret = s5p_mfc_return_inst_no(ctx);
-> > +	if (ret) {
-> > +		mfc_err("Failed to return an instance.\n");
-> > +		ctx->state = MFCINST_DEC_ERROR;
-> > +		return ret;
-> > +	}
-> > +	return ret;
-> > +}
-> > +
-> > +static inline void s5p_mfc_run_init_dec(struct s5p_mfc_ctx *ctx)
-> > +{
-> > +	struct s5p_mfc_dev *dev = ctx->dev;
-> > +	unsigned long flags;
-> > +	struct s5p_mfc_buf *temp_vb;
-> > +
-> > +	/* Initializing decoding - parsing header */
-> > +	spin_lock_irqsave(&dev->irqlock, flags);
-> > +	mfc_debug("Preparing to init decoding.\n");
-> > +	temp_vb = list_entry(ctx->src_queue.next, struct s5p_mfc_buf, list);
-> > +	s5p_mfc_set_dec_desc_buffer(ctx);
-> > +	mfc_debug("Header size: %d\n", temp_vb->b-
-> > >v4l2_planes[0].bytesused);
-> > +	s5p_mfc_set_dec_stream_buffer(ctx, s5p_mfc_plane_addr(temp_vb->b,
-> > 0),
-> > +				0, temp_vb->b->v4l2_planes[0].bytesused);
-> > +	spin_unlock_irqrestore(&dev->irqlock, flags);
-> > +	dev->curr_ctx = ctx->num;
-> > +	mfc_debug("paddr: %08x\n",
-> > +			(int)phys_to_virt(s5p_mfc_plane_addr(temp_vb->b,
-> 0)));
-> > +	s5p_mfc_clean_ctx_int_flags(ctx);
-> > +	s5p_mfc_init_decode(ctx);
-> > +}
-> > +
-> > +static inline int s5p_mfc_run_init_dec_buffers(struct s5p_mfc_ctx *ctx)
-> > +{
-> > +	struct s5p_mfc_dev *dev = ctx->dev;
-> > +	unsigned long flags;
-> > +	struct s5p_mfc_buf *temp_vb;
-> > +	int ret;
-> > +	/* Header was parsed now starting processing
-> > +	 * First set the output frame buffers
-> > +	 * s5p_mfc_alloc_dec_buffers(ctx); */
-> > +
-> > +	if (ctx->capture_state != QUEUE_BUFS_MMAPED) {
-> > +		mfc_err("It seems that not all destionation buffers were "
-> > +			"mmaped.\nMFC requires that all destination are
-> mmaped
-> > "
-> > +			"before starting processing.\n");
-> > +		return -EAGAIN;
-> > +	}
-> > +
-> > +	spin_lock_irqsave(&dev->irqlock, flags);
-> > +
-> > +	if (list_empty(&ctx->src_queue)) {
-> > +		mfc_err("Header has been deallocated in the middle of "
-> >
-> +							"initialization.\n")
-> ;
-> > +		spin_unlock_irqrestore(&dev->irqlock, flags);
-> > +		return -EIO;
-> > +	}
-> > +
-> > +	temp_vb = list_entry(ctx->src_queue.next, struct s5p_mfc_buf, list);
-> > +	mfc_debug("Header size: %d\n", temp_vb->b-
-> > >v4l2_planes[0].bytesused);
-> > +	s5p_mfc_set_dec_stream_buffer(ctx, s5p_mfc_plane_addr(temp_vb->b,
-> > 0),
-> > +				0, temp_vb->b->v4l2_planes[0].bytesused);
-> > +	spin_unlock_irqrestore(&dev->irqlock, flags);
-> > +	dev->curr_ctx = ctx->num;
-> > +	s5p_mfc_clean_ctx_int_flags(ctx);
-> > +	ret = s5p_mfc_set_dec_frame_buffer(ctx);
-> > +	if (ret) {
-> > +		mfc_err("Failed to alloc frame mem.\n");
-> > +		ctx->state = MFCINST_DEC_ERROR;
-> > +	}
-> > +	return ret;
-> > +}
-> 
-> snipping
-> 
-> > +/* Set registers for decoding stream buffer */
-> > +int s5p_mfc_set_dec_stream_buffer(struct s5p_mfc_ctx *ctx, int buf_addr,
-> > +		  unsigned int start_num_byte, unsigned int buf_size)
-> > +{
-> > +	struct s5p_mfc_dev *dev = ctx->dev;
-> > +
-> > +	mfc_debug_enter();
-> > +	mfc_debug("inst_no: %d, buf_addr: 0x%08x, buf_size: 0x"
-> > +		"%08x (%d)\n",  ctx->inst_no, buf_addr, buf_size, buf_size);
-> > +	WRITEL(OFFSETA(buf_addr), S5P_FIMV_SI_CH0_SB_ST_ADR);
-> > +	WRITEL(CPB_BUF_SIZE, S5P_FIMV_SI_CH0_CPB_SIZE);
-> > +	WRITEL(buf_size, S5P_FIMV_SI_CH0_SB_FRM_SIZE);
-> > +	mfc_debug("Shared_virt: %p (start offset: %d)\n",
-> > +					ctx->shared_virt, start_num_byte);
-> > +	s5p_mfc_set_start_num(ctx, start_num_byte);
-> > +	mfc_debug_leave();
-> > +	return 0;
-> > +}
-> > +
-> >
-> Snipping
-> 
-
-Best regards,
 --
-Kamil Debski
-Linux Platform Group
-Samsung Poland R&D Center
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
