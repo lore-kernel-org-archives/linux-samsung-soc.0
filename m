@@ -1,7 +1,7 @@
 From: Dave Hansen <dave@linux.vnet.ibm.com>
 Subject: Re: [PATCH 05/12] mm: alloc_contig_range() added
-Date: Thu, 31 Mar 2011 09:02:41 -0700
-Message-ID: <1301587361.31087.1040.camel@nimitz>
+Date: Thu, 31 Mar 2011 09:04:05 -0700
+Message-ID: <1301587445.31087.1042.camel@nimitz>
 References: <1301577368-16095-1-git-send-email-m.szyprowski@samsung.com>
 	 <1301577368-16095-6-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
@@ -15,20 +15,12 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sa
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On Thu, 2011-03-31 at 15:16 +0200, Marek Szyprowski wrote:
-> +       ret = 0;
-> +       while (!PageBuddy(pfn_to_page(start & (~0UL << ret))))
-> +               if (WARN_ON(++ret >= MAX_ORDER))
-> +                       return -EINVAL; 
+> +       _start = start & (~0UL << ret);
+> +       _end   = alloc_contig_freed_pages(_start, end, flag); 
 
-Holy cow, that's dense.  Is there really no more straightforward way to
-do that?
-
-In any case, please pull the ++ret bit out of the WARN_ON().  Some
-people like to do:
-
-#define WARN_ON(...) do{}while(0)
-
-to save space on some systems.  
+These names are a wee bit lacking.  Care to give them proper names that
+might let a reader figure out how the "_" makes the variable different
+from its nearly-identical twin?
 
 -- Dave
 
