@@ -1,111 +1,288 @@
-From: Jonghun Han <jonghun.han@samsung.com>
-Subject: RE: [RFC/PATCH 0/2] FrameBuffer emulator for V4L2/VideoBuf2
-Date: Fri, 01 Apr 2011 17:49:26 +0900
-Message-ID: <002a01cbf049$b824cf10$286e6d30$%han@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH 1/2] media: vb2: add frame buffer emulator for video output
+ devices
+Date: Fri, 01 Apr 2011 10:51:13 +0200
+Message-ID: <003601cbf049$f83c6ea0$e8b54be0$%szyprowski@samsung.com>
 References: <1301468448-25524-1-git-send-email-m.szyprowski@samsung.com>
+ <1301468448-25524-2-git-send-email-m.szyprowski@samsung.com>
+ <002801cbf047$cbd1a710$6374f530$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ks_c_5601-1987
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:15831 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752340Ab1DAIti (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:26230 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752135Ab1DAIva (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Apr 2011 04:49:38 -0400
-In-reply-to: <1301468448-25524-1-git-send-email-m.szyprowski@samsung.com>
-Content-language: ko
+	Fri, 1 Apr 2011 04:51:30 -0400
+In-reply-to: <002801cbf047$cbd1a710$6374f530$%han@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: kyungmin.park@samsung.com, t.stanislaws@samsung.com, =?ks_c_5601-1987?B?J7DtwOe47Sc=?= <jemings@samsung.com>, =?ks_c_5601-1987?B?J8DMwM/Ioyc=?= <ilho215.lee@samsung.com>
+To: 'Jonghun Han' <jonghun.han@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, Tomasz Stanislawski <t.stanislaws@samsung.com>, =?ks_c_5601-1987?B?J7DtwOe47Sc=?= <jemings@samsung.com>, =?ks_c_5601-1987?B?J8DMwM/Ioyc=?= <ilho215.lee@samsung.com>, pawel@osciak.com
 
+Hello,
 
-Hi Marek,
+On Friday, April 01, 2011 10:36 AM Jonghun Han wrote:
+ 
+> On Wednesday, March 30, 2011 4:01 PM Marek Szyprowski wrote:
+> >
+> > This patch adds generic frame buffer emulator for any video output device
+> > that uses videobuf2 framework. This emulator assumes that the driver is
+> > capable of working in single-buffering mode and use memory allocator that
+> > allows coherent memory mapping.
+> >
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
+> >  drivers/media/video/Kconfig        |    7 +
+> >  drivers/media/video/Makefile       |    1 +
+> >  drivers/media/video/videobuf2-fb.c |  565
+> > ++++++++++++++++++++++++++++++++++++
+> >  include/media/videobuf2-fb.h       |   22 ++
+> >  4 files changed, 595 insertions(+), 0 deletions(-)  create mode 100644
+> 
+> <snip>
+> 
+> > +static struct fmt_desc fmt_conv_table[] = {
+> > +	{
+> > +		.fourcc = V4L2_PIX_FMT_RGB565,
+> > +		.bits_per_pixel = 16,
+> > +		.red = {	.offset = 11,	.length = 5,	},
+> > +		.green = {	.offset = 5,	.length = 6,	},
+> > +		.blue = {	.offset = 0,	.length = 5,	},
+> > +	}, {
+> > +		.fourcc = V4L2_PIX_FMT_RGB555,
+> > +		.bits_per_pixel = 16,
+> > +		.red = {	.offset = 11,	.length = 5,	},
+> > +		.green = {	.offset = 5,	.length = 5,	},
+> > +		.blue = {	.offset = 0,	.length = 5,	},
+> > +	}, {
+> > +		.fourcc = V4L2_PIX_FMT_RGB444,
+> > +		.bits_per_pixel = 16,
+> > +		.red = {	.offset = 8,	.length = 4,	},
+> > +		.green = {	.offset = 4,	.length = 4,	},
+> > +		.blue = {	.offset = 0,	.length = 4,	},
+> > +		.transp = {	.offset = 12,	.length = 4,	},
+> > +	}, {
+> > +		.fourcc = V4L2_PIX_FMT_BGR32,
+> > +		.bits_per_pixel = 32,
+> > +		.red = {	.offset = 16,	.length = 4,	},
+> 
+> red.length should be 8 in case of BGR32.
 
-On Wednesday, March 30, 2011 4:01 PM Marek Szyprowski wrote:
-> Hello,
-> 
-> On V4L2 brainstorming meeting in Warsaw we discussed the need of a
-> framebuffer userspace interface for video output devices. Such
-> framebuffer interface is aimed mainly for legacy applications and/or
-> interoperatibility with Xfbdev.
-> 
-> I proposed to give the idea of generic fb-on-top-of-video-node a second
-> try, now using the power of videobuf2.
-> 
-> This short patch series demonstrates that this approach is possible. We
-> succesfully implemented a framebuffer emulator and tested it with
-> s5p-hdmi driver on Samsung Exynos4 platform.
-> 
-> This initial version provides a basic non-accelerated framebuffer
-> device. The emulation is started on the first open of the framebuffer
-> device and stopped on last close. The framebuffer boots in 'blanked'
-> mode, so one also needs to make a call to blank ioctl (with
-> FB_BLANK_UNBLANK argument) to enable video output.
-> 
-> We successfully managed to get vanilla Xfbdev server working on top of
-> it without ANY changes in X server sources.
-> 
-> The framebuffer resolution and pixel format is autoconfigured from the
-> parameters of the corresponding video output node. One can use v4l2-ctrl
-> (or similar) tool to select pixel format, resolution, output, etc (and
-> in the near future also the composition on the target video device).
-> 
-> There a few requirements for the video output driver:
-> 1. support for single-buffering mode
-> 2. support for videoc_ioctl interface (this might change in the future)
-> 3. use memory allocator that allows coherent mappings (mmaped framebuffer
->    will be accessed by application while it is displayed by dma engine).
-> 
-> The changes that are needed in the video output driver are really
-> simple. Mainly one need to add just a call to vb2_fb_register(q, vfd)
-> and vb2_fb_register(fb) functions.
-> 
-> The future versions might aslo include the following features:
-> - vsync event translation into WAIT_VSYNC framebuffer ioctl
-> - support for frame buffer panning with upcoming S_COMPOSE ioctl
-> 
+Right, stupid copy-paste fault.
 
-As I know, the panning is different from upcoming S_COMPOSE.
-The panning selects the frame buffer area which will be read by display
-controller to support virtual screen feature.
-But as I remember, the S_COMPOSE is related in positioning on the display
-device like HDMI.
-IMO, VIDIOC_S_EXTCROP makes sense for panning.
+> > +		.green = {	.offset = 8,	.length = 8,	},
+> > +		.blue = {	.offset = 0,	.length = 8,	},
+> > +		.transp = {	.offset = 24,	.length = 8,	},
+> > +	},
+> > +	/* TODO: add more format descriptors */ };
+> > +
+> > +/**
+> > + * vb2_drv_lock() - a shortcut to call driver specific lock()
+> > + * @q:		videobuf2 queue
+> > + */
+> > +static inline void vb2_drv_lock(struct vb2_queue *q) {
+> > +	q->ops->wait_finish(q);
+> > +}
+> > +
+> > +/**
+> > + * vb2_drv_unlock() - a shortcut to call driver specific unlock()
+> > + * @q:		videobuf2 queue
+> > + */
+> > +static inline void vb2_drv_unlock(struct vb2_queue *q) {
+> > +	q->ops->wait_prepare(q);
+> > +}
+> > +
+> > +/**
+> > + * vb2_fb_activate() - activate framebuffer emulator
+> > + * @info:	framebuffer vb2 emulator data
+> > + * This function activates framebuffer emulator. The pixel format
+> > + * is acquired from video node, memory is allocated and framebuffer
+> > + * structures are filled with valid data.
+> > + */
+> > +static int vb2_fb_activate(struct fb_info *info) {
+> > +	struct vb2_fb_data *data = info->par;
+> > +	struct vb2_queue *q = data->q;
+> > +	struct fb_var_screeninfo *var;
+> > +	struct v4l2_format fmt;
+> > +	struct fmt_desc *conv = NULL;
+> > +	int width, height, fourcc, bpl, size;
+> > +	int i, ret = 0;
+> > +	int (*g_fmt)(struct file *file, void *fh, struct v4l2_format *f);
+> > +
+> > +	/*
+> > +	 * Check if streaming api has not been already activated.
+> > +	 */
+> > +	if (q->streaming || q->num_buffers > 0)
+> > +		return -EBUSY;
+> > +
+> > +	dprintk(3, "setting up framebuffer\n");
+> > +
+> > +	/*
+> > +	 * Open video node.
+> > +	 */
+> > +	ret = data->vfd->fops->open(&data->fake_file);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	/*
+> > +	 * Get format from the video node.
+> > +	 */
+> > +	memset(&fmt, 0, sizeof(fmt));
+> > +	fmt.type = q->type;
+> > +	if (data->vfd->ioctl_ops->vidioc_g_fmt_vid_out) {
+> > +		g_fmt = data->vfd->ioctl_ops->vidioc_g_fmt_vid_out;
+> > +		ret = g_fmt(&data->fake_file, data->fake_file.private_data,
+> > &fmt);
+> > +		if (ret)
+> > +			goto err;
+> > +		width = fmt.fmt.pix.width;
+> > +		height = fmt.fmt.pix.height;
+> > +		fourcc = fmt.fmt.pix.pixelformat;
+> > +		bpl = fmt.fmt.pix.bytesperline;
+> > +		size = fmt.fmt.pix.sizeimage;
+> > +	} else if (data->vfd->ioctl_ops->vidioc_g_fmt_vid_out_mplane) {
+> > +		g_fmt = data->vfd->ioctl_ops->vidioc_g_fmt_vid_out_mplane;
+> > +		ret = g_fmt(&data->fake_file, data->fake_file.private_data,
+> > &fmt);
+> > +		if (ret)
+> > +			goto err;
+> > +		width = fmt.fmt.pix_mp.width;
+> > +		height = fmt.fmt.pix_mp.height;
+> > +		fourcc = fmt.fmt.pix_mp.pixelformat;
+> > +		bpl = fmt.fmt.pix_mp.plane_fmt[0].bytesperline;
+> > +		size = fmt.fmt.pix_mp.plane_fmt[0].sizeimage;
+> > +	} else {
+> > +		ret = -EINVAL;
+> > +		goto err;
+> > +	}
+> > +
+> > +	dprintk(3, "fb emu: width %d height %d fourcc %08x size %d bpl
+> %d\n",
+> > +		width, height, fourcc, size, bpl);
+> > +
+> > +	/*
+> > +	 * Find format mapping with fourcc returned by g_fmt().
+> > +	 */
+> > +	for (i = 0; i < ARRAY_SIZE(fmt_conv_table); i++) {
+> > +		if (fmt_conv_table[i].fourcc == fourcc) {
+> > +			conv = &fmt_conv_table[i];
+> > +			break;
+> > +		}
+> > +	}
+> > +
+> > +	if (conv == NULL) {
+> > +		ret = -EBUSY;
+> > +		goto err;
+> > +	}
+> > +
+> > +	/*
+> > +	 * Request buffers and use MMAP type to force driver
+> > +	 * to allocate buffers by itself.
+> > +	 */
+> > +	data->req.count = 1;
+> > +	data->req.memory = V4L2_MEMORY_MMAP;
+> > +	data->req.type = q->type;
+> > +	ret = vb2_reqbufs(q, &data->req);
+> > +	if (ret)
+> > +		goto err;
+> > +
+> > +	/*
+> > +	 * Check if plane_count is correct,
+> > +	 * multiplane buffers are not supported.
+> > +	 */
+> > +	if (q->bufs[0]->num_planes != 1) {
+> > +		data->req.count = 0;
+> > +		ret = -EBUSY;
+> > +		goto err;
+> > +	}
+> > +
+> > +	/*
+> > +	 * Get kernel address of the buffer.
+> > +	 */
+> > +	data->vaddr = vb2_plane_vaddr(q->bufs[0], 0);
+> > +	if (data->vaddr == NULL) {
+> > +		ret = -EINVAL;
+> > +		goto err;
+> > +	}
+> > +	data->size = size = vb2_plane_size(q->bufs[0], 0);
+> > +
+> > +	/*
+> > +	 * Clear the buffer
+> > +	 */
+> > +	memset(data->vaddr, 0, size);
+> > +
+> > +	/*
+> > +	 * Setup framebuffer parameters
+> > +	 */
+> > +	info->screen_base = data->vaddr;
+> > +	info->screen_size = size;
+> > +	info->fix.line_length = bpl;
+> > +	info->fix.smem_len = info->fix.mmio_len = size;
+> > +
+> 
+> fix.smem_start is missed.
+> Some window systems use it.
 
-> The patch series is based on the V2 of the s5p-hdmi driver. The complete
-> kernel tree will be available on:
-> git://git.infradead.org/users/kmpark/linux-2.6-samsung vb2-fb-tv branch.
+fix.smem_start has no meaning for non-contiguous memory allocators. Window system
+should call mmap() to get access to framebuffer memory instead of hacking a direct
+access with /dev/mem or so. Such mode will be not supported by this emulator.
+
+> > +	var = &info->var;
+> > +	var->xres = var->xres_virtual = var->width = width;
+> > +	var->yres = var->yres_virtual = var->height = height;
+> > +	var->bits_per_pixel = conv->bits_per_pixel;
+> > +	var->red = conv->red;
+> > +	var->green = conv->green;
+> > +	var->blue = conv->blue;
+> > +	var->transp = conv->transp;
+> > +
 > 
-> An updated s5p-hdmi/tv driver will be posted soon.
+> How about setting the fix.xpanstep and fix.ypanstep as 0 explicitly
+> if it doesn't support FBIOPAN_DISPLAY ?
+
+Currently fix.xpanstep as well as fix.ypanstep is left as 0. Support for 
+FBIOPAN_DISPLAY can be added on top of upcoming S_EXTCROP V4L2 ioctl.
+
+> > +	return 0;
+> > +
+> > +err:
+> > +	data->vfd->fops->release(&data->fake_file);
+> > +	return ret;
+> > +}
+> > +
 > 
-> Best regards
-> --
-> Marek Szyprowski
-> Samsung Poland R&D Center
+> <snip>
 > 
+> > +static struct fb_ops vb2_fb_ops = {
+> > +	.owner		= THIS_MODULE,
+> > +	.fb_open	= vb2_fb_open,
+> > +	.fb_release	= vb2_fb_release,
+> > +	.fb_mmap	= vb2_fb_mmap,
+> > +	.fb_blank	= vb2_fb_blank,
+> > +	.fb_fillrect	= cfb_fillrect,
+> > +	.fb_copyarea	= cfb_copyarea,
+> > +	.fb_imageblit	= cfb_imageblit,
+> > +};
+> > +
 > 
-> Complete patch summary:
-> 
-> Marek Szyprowski (2):
->   media: vb2: add frame buffer emulator for video output devices
->   media: s5p-hdmi: add support for frame buffer emulator
-> 
->  drivers/media/video/Kconfig              |    7 +
->  drivers/media/video/Makefile             |    1 +
->  drivers/media/video/s5p-tv/Kconfig       |    1 +
->  drivers/media/video/s5p-tv/mixer.h       |    2 +
->  drivers/media/video/s5p-tv/mixer_video.c |   10 +
->  drivers/media/video/videobuf2-fb.c       |  565
-++++++++++++++++++++++++++++++
->  include/media/videobuf2-fb.h             |   22 ++
->  7 files changed, 608 insertions(+), 0 deletions(-)
->  create mode 100644 drivers/media/video/videobuf2-fb.c
->  create mode 100644 include/media/videobuf2-fb.h
-> 
-> --
-> 1.7.1.569.g6f426
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> fb_ops.fb_check_var, fb_ops.fb_set_par might be added.
+
+Right, this can be added together with support for full display panning.
+
+> Will FBIO_WAITFORVSYNC be added with panning support ?
+
+This can also be added as a proxy to relevant v4l2 vsync event.
+
+In my first version (which is in fact just a proof-of-concept than a real
+patch ready for merging) I just wanted to show that it is possible to have
+fb interface built on top of v4l2 video node & vb2. The interface of course
+can be extended to support as much features as possible.
+
+Best regards
+--
+Marek Szyprowski
+Samsung Poland R&D Center
