@@ -1,77 +1,274 @@
-From: "Michal Nazarewicz" <mina86@mina86.com>
-Subject: Re: [PATCH 04/12] mm: alloc_contig_freed_pages() added
-Date: Fri, 01 Apr 2011 00:51:32 +0200
-Message-ID: <op.vs8cf5xd3l0zgt@mnazarewicz-glaptop>
-References: <1301577368-16095-1-git-send-email-m.szyprowski@samsung.com>
- <1301577368-16095-5-git-send-email-m.szyprowski@samsung.com>
- <1301587083.31087.1032.camel@nimitz> <op.vs77qfx03l0zgt@mnazarewicz-glaptop>
- <1301606078.31087.1275.camel@nimitz> <op.vs8awkrx3l0zgt@mnazarewicz-glaptop>
- <1301610411.30870.29.camel@nimitz>
+From: Jonghun Han <jonghun.han@samsung.com>
+Subject: RE: [PATCH 1/2] media: vb2: add frame buffer emulator for video output
+	devices
+Date: Fri, 01 Apr 2011 17:35:40 +0900
+Message-ID: <002801cbf047$cbd1a710$6374f530$%han@samsung.com>
+References: <1301468448-25524-1-git-send-email-m.szyprowski@samsung.com>
+ <1301468448-25524-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed; delsp=yes
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <1301610411.30870.29.camel@nimitz>
-Sender: owner-linux-mm@kvack.org
-To: Dave Hansen <dave@linux.vnet.ibm.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-mm@kvack.org, Kyungmin Park <kyungmin.park@samsung.com>, Andrew
- Morton <akpm@linux-foundation.org>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Ankita Garg <ankita@in.ibm.com>, Daniel
- Walker <dwalker@codeaurora.org>, Johan MOSSBERG <johan.xx.mossberg@stericsson.com>, Mel Gorman <mel@csn.ul.ie>, Pawel
- Osciak <pawel@osciak.com>
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:15123 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753614Ab1DAIft (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 1 Apr 2011 04:35:49 -0400
+In-reply-to: <1301468448-25524-2-git-send-email-m.szyprowski@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, t.stanislaws@samsung.com, =?ks_c_5601-1987?B?J7DtwOe47Sc=?= <jemings@samsung.com>, =?ks_c_5601-1987?B?J8DMwM/Ioyc=?= <ilho215.lee@samsung.com>
 
-On Fri, 01 Apr 2011 00:26:51 +0200, Dave Hansen <dave@linux.vnet.ibm.com>  
-wrote:
 
-> On Fri, 2011-04-01 at 00:18 +0200, Michal Nazarewicz wrote:
->> On Thu, 31 Mar 2011 23:14:38 +0200, Dave Hansen wrote:
->> > We BUG_ON() in bootmem.  Basically if we try to allocate an early-boot
->> > structure and fail, we're screwed.  We can't keep running without an
->> > inode hash, or a mem_map[].
->> >
->> > This looks like it's going to at least get partially used in drivers,  
->> at
->> > least from the examples.  Are these kinds of things that, if the  
->> driver
->> > fails to load, that the system is useless and hosed?  Or, is it
->> > something where we might limp along to figure out what went wrong  
->> before
->> > we reboot?
->>
->> Bug in the above place does not mean that we could not allocate  
->> memory.  It means caller is broken.
->
-> Could you explain that a bit?
->
-> Is this a case where a device is mapped to a very *specific* range of
-> physical memory and no where else?  What are the reasons for not marking
-> it off limits at boot?  I also saw some bits of isolation and migration
-> in those patches.  Can't the migration fail?
+Hi Marek,
 
-The function is called from alloc_contig_range() (see patch 05/12) which
-makes sure that the PFN is valid.  Situation where there is not enough
-space is caught earlier in alloc_contig_range().
+Here is my comments.
 
-alloc_contig_freed_pages() must be given a valid PFN range such that all
-the pages in that range are free (as in are within the region tracked by
-page allocator) and of MIGRATETYPE_ISOLATE so that page allocator won't
-touch them.
+On Wednesday, March 30, 2011 4:01 PM Marek Szyprowski wrote:
+> 
+> This patch adds generic frame buffer emulator for any video output device
+> that uses videobuf2 framework. This emulator assumes that the driver is
+> capable of working in single-buffering mode and use memory allocator that
+> allows coherent memory mapping.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  drivers/media/video/Kconfig        |    7 +
+>  drivers/media/video/Makefile       |    1 +
+>  drivers/media/video/videobuf2-fb.c |  565
+> ++++++++++++++++++++++++++++++++++++
+>  include/media/videobuf2-fb.h       |   22 ++
+>  4 files changed, 595 insertions(+), 0 deletions(-)  create mode 100644
 
-That's why invalid PFN is a bug in the caller and not an exception that
-has to be handled.
+<snip>
 
-Also, the function is not called during boot time.  It is called while
-system is already running.
+> +static struct fmt_desc fmt_conv_table[] = {
+> +	{
+> +		.fourcc = V4L2_PIX_FMT_RGB565,
+> +		.bits_per_pixel = 16,
+> +		.red = {	.offset = 11,	.length = 5,	},
+> +		.green = {	.offset = 5,	.length = 6,	},
+> +		.blue = {	.offset = 0,	.length = 5,	},
+> +	}, {
+> +		.fourcc = V4L2_PIX_FMT_RGB555,
+> +		.bits_per_pixel = 16,
+> +		.red = {	.offset = 11,	.length = 5,	},
+> +		.green = {	.offset = 5,	.length = 5,	},
+> +		.blue = {	.offset = 0,	.length = 5,	},
+> +	}, {
+> +		.fourcc = V4L2_PIX_FMT_RGB444,
+> +		.bits_per_pixel = 16,
+> +		.red = {	.offset = 8,	.length = 4,	},
+> +		.green = {	.offset = 4,	.length = 4,	},
+> +		.blue = {	.offset = 0,	.length = 4,	},
+> +		.transp = {	.offset = 12,	.length = 4,	},
+> +	}, {
+> +		.fourcc = V4L2_PIX_FMT_BGR32,
+> +		.bits_per_pixel = 32,
+> +		.red = {	.offset = 16,	.length = 4,	},
 
--- 
-Best regards,                                         _     _
-.o. | Liege of Serenely Enlightened Majesty of      o' \,=./ `o
-..o | Computer Science,  Michal "mina86" Nazarewicz    (o o)
-ooo +-----<email/xmpp: mnazarewicz@google.com>-----ooO--(_)--Ooo--
+red.length should be 8 in case of BGR32.
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+> +		.green = {	.offset = 8,	.length = 8,	},
+> +		.blue = {	.offset = 0,	.length = 8,	},
+> +		.transp = {	.offset = 24,	.length = 8,	},
+> +	},
+> +	/* TODO: add more format descriptors */ };
+> +
+> +/**
+> + * vb2_drv_lock() - a shortcut to call driver specific lock()
+> + * @q:		videobuf2 queue
+> + */
+> +static inline void vb2_drv_lock(struct vb2_queue *q) {
+> +	q->ops->wait_finish(q);
+> +}
+> +
+> +/**
+> + * vb2_drv_unlock() - a shortcut to call driver specific unlock()
+> + * @q:		videobuf2 queue
+> + */
+> +static inline void vb2_drv_unlock(struct vb2_queue *q) {
+> +	q->ops->wait_prepare(q);
+> +}
+> +
+> +/**
+> + * vb2_fb_activate() - activate framebuffer emulator
+> + * @info:	framebuffer vb2 emulator data
+> + * This function activates framebuffer emulator. The pixel format
+> + * is acquired from video node, memory is allocated and framebuffer
+> + * structures are filled with valid data.
+> + */
+> +static int vb2_fb_activate(struct fb_info *info) {
+> +	struct vb2_fb_data *data = info->par;
+> +	struct vb2_queue *q = data->q;
+> +	struct fb_var_screeninfo *var;
+> +	struct v4l2_format fmt;
+> +	struct fmt_desc *conv = NULL;
+> +	int width, height, fourcc, bpl, size;
+> +	int i, ret = 0;
+> +	int (*g_fmt)(struct file *file, void *fh, struct v4l2_format *f);
+> +
+> +	/*
+> +	 * Check if streaming api has not been already activated.
+> +	 */
+> +	if (q->streaming || q->num_buffers > 0)
+> +		return -EBUSY;
+> +
+> +	dprintk(3, "setting up framebuffer\n");
+> +
+> +	/*
+> +	 * Open video node.
+> +	 */
+> +	ret = data->vfd->fops->open(&data->fake_file);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Get format from the video node.
+> +	 */
+> +	memset(&fmt, 0, sizeof(fmt));
+> +	fmt.type = q->type;
+> +	if (data->vfd->ioctl_ops->vidioc_g_fmt_vid_out) {
+> +		g_fmt = data->vfd->ioctl_ops->vidioc_g_fmt_vid_out;
+> +		ret = g_fmt(&data->fake_file, data->fake_file.private_data,
+> &fmt);
+> +		if (ret)
+> +			goto err;
+> +		width = fmt.fmt.pix.width;
+> +		height = fmt.fmt.pix.height;
+> +		fourcc = fmt.fmt.pix.pixelformat;
+> +		bpl = fmt.fmt.pix.bytesperline;
+> +		size = fmt.fmt.pix.sizeimage;
+> +	} else if (data->vfd->ioctl_ops->vidioc_g_fmt_vid_out_mplane) {
+> +		g_fmt = data->vfd->ioctl_ops->vidioc_g_fmt_vid_out_mplane;
+> +		ret = g_fmt(&data->fake_file, data->fake_file.private_data,
+> &fmt);
+> +		if (ret)
+> +			goto err;
+> +		width = fmt.fmt.pix_mp.width;
+> +		height = fmt.fmt.pix_mp.height;
+> +		fourcc = fmt.fmt.pix_mp.pixelformat;
+> +		bpl = fmt.fmt.pix_mp.plane_fmt[0].bytesperline;
+> +		size = fmt.fmt.pix_mp.plane_fmt[0].sizeimage;
+> +	} else {
+> +		ret = -EINVAL;
+> +		goto err;
+> +	}
+> +
+> +	dprintk(3, "fb emu: width %d height %d fourcc %08x size %d bpl
+%d\n",
+> +		width, height, fourcc, size, bpl);
+> +
+> +	/*
+> +	 * Find format mapping with fourcc returned by g_fmt().
+> +	 */
+> +	for (i = 0; i < ARRAY_SIZE(fmt_conv_table); i++) {
+> +		if (fmt_conv_table[i].fourcc == fourcc) {
+> +			conv = &fmt_conv_table[i];
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (conv == NULL) {
+> +		ret = -EBUSY;
+> +		goto err;
+> +	}
+> +
+> +	/*
+> +	 * Request buffers and use MMAP type to force driver
+> +	 * to allocate buffers by itself.
+> +	 */
+> +	data->req.count = 1;
+> +	data->req.memory = V4L2_MEMORY_MMAP;
+> +	data->req.type = q->type;
+> +	ret = vb2_reqbufs(q, &data->req);
+> +	if (ret)
+> +		goto err;
+> +
+> +	/*
+> +	 * Check if plane_count is correct,
+> +	 * multiplane buffers are not supported.
+> +	 */
+> +	if (q->bufs[0]->num_planes != 1) {
+> +		data->req.count = 0;
+> +		ret = -EBUSY;
+> +		goto err;
+> +	}
+> +
+> +	/*
+> +	 * Get kernel address of the buffer.
+> +	 */
+> +	data->vaddr = vb2_plane_vaddr(q->bufs[0], 0);
+> +	if (data->vaddr == NULL) {
+> +		ret = -EINVAL;
+> +		goto err;
+> +	}
+> +	data->size = size = vb2_plane_size(q->bufs[0], 0);
+> +
+> +	/*
+> +	 * Clear the buffer
+> +	 */
+> +	memset(data->vaddr, 0, size);
+> +
+> +	/*
+> +	 * Setup framebuffer parameters
+> +	 */
+> +	info->screen_base = data->vaddr;
+> +	info->screen_size = size;
+> +	info->fix.line_length = bpl;
+> +	info->fix.smem_len = info->fix.mmio_len = size;
+> +
+
+fix.smem_start is missed.
+Some window systems use it.
+
+> +	var = &info->var;
+> +	var->xres = var->xres_virtual = var->width = width;
+> +	var->yres = var->yres_virtual = var->height = height;
+> +	var->bits_per_pixel = conv->bits_per_pixel;
+> +	var->red = conv->red;
+> +	var->green = conv->green;
+> +	var->blue = conv->blue;
+> +	var->transp = conv->transp;
+> +
+
+How about setting the fix.xpanstep and fix.ypanstep as 0 explicitly
+if it doesn't support FBIOPAN_DISPLAY ?
+
+> +	return 0;
+> +
+> +err:
+> +	data->vfd->fops->release(&data->fake_file);
+> +	return ret;
+> +}
+> +
+
+<snip>
+
+> +static struct fb_ops vb2_fb_ops = {
+> +	.owner		= THIS_MODULE,
+> +	.fb_open	= vb2_fb_open,
+> +	.fb_release	= vb2_fb_release,
+> +	.fb_mmap	= vb2_fb_mmap,
+> +	.fb_blank	= vb2_fb_blank,
+> +	.fb_fillrect	= cfb_fillrect,
+> +	.fb_copyarea	= cfb_copyarea,
+> +	.fb_imageblit	= cfb_imageblit,
+> +};
+> +
+
+fb_ops.fb_check_var, fb_ops.fb_set_par might be added.
+Will FBIO_WAITFORVSYNC be added with panning support ?
+
+<snip>
+
+> --
+> 1.7.1.569.g6f426
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+the
+> body of a message to majordomo@vger.kernel.org More majordomo info at
+> http://vger.kernel.org/majordomo-info.html
