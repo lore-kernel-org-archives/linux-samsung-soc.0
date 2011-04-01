@@ -1,79 +1,66 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [RFC/PATCH 0/2] FrameBuffer emulator for V4L2/VideoBuf2
-Date: Fri, 01 Apr 2011 11:05:34 +0200
-Message-ID: <004601cbf04b$f929a2e0$eb7ce8a0$%szyprowski@samsung.com>
-References: <1301468448-25524-1-git-send-email-m.szyprowski@samsung.com>
- <002a01cbf049$b824cf10$286e6d30$%han@samsung.com>
+From: Dave Hansen <dave@linux.vnet.ibm.com>
+Subject: Re: [PATCH 04/12] mm: alloc_contig_freed_pages() added
+Date: Fri, 01 Apr 2011 07:03:16 -0700
+Message-ID: <1301666596.30870.176.camel@nimitz>
+References: <1301577368-16095-1-git-send-email-m.szyprowski@samsung.com>
+	 <1301577368-16095-5-git-send-email-m.szyprowski@samsung.com>
+	 <1301587083.31087.1032.camel@nimitz>
+	 <op.vs77qfx03l0zgt@mnazarewicz-glaptop>
+	 <1301606078.31087.1275.camel@nimitz>
+	 <op.vs8awkrx3l0zgt@mnazarewicz-glaptop> <1301610411.30870.29.camel@nimitz>
+	 <op.vs8cf5xd3l0zgt@mnazarewicz-glaptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <002a01cbf049$b824cf10$286e6d30$%han@samsung.com>
-Content-language: pl
-Sender: linux-media-owner@vger.kernel.org
-To: 'Jonghun Han' <jonghun.han@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: kyungmin.park@samsung.com, Tomasz Stanislawski <t.stanislaws@samsung.com>, =?ks_c_5601-1987?B?J7DtwOe47Sc=?= <jemings@samsung.com>, =?ks_c_5601-1987?B?J8DMwM/Ioyc=?= <ilho215.lee@samsung.com>, pawel@osciak.com
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <owner-linux-mm@kvack.org>
+In-Reply-To: <op.vs8cf5xd3l0zgt@mnazarewicz-glaptop>
+Sender: owner-linux-mm@kvack.org
+To: Michal Nazarewicz <mina86@mina86.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-mm@kvack.org, Kyungmin Park <kyungmin.park@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Ankita Garg <ankita@in.ibm.com>, Daniel Walker <dwalker@codeaurora.org>, Johan MOSSBERG <johan.xx.mossberg@stericsson.com>, Mel Gorman <mel@csn.ul.ie>, Pawel Osciak <pawel@osciak.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
-
-On Friday, April 01, 2011 10:49 AM Jonghun Han wrote:
-
-> On Wednesday, March 30, 2011 4:01 PM Marek Szyprowski wrote:
-> > Hello,
+On Fri, 2011-04-01 at 00:51 +0200, Michal Nazarewicz wrote:
+> On Fri, 01 Apr 2011 00:26:51 +0200, Dave Hansen <dave@linux.vnet.ibm.com>  
+> wrote:
+> >> Bug in the above place does not mean that we could not allocate  
+> >> memory.  It means caller is broken.
 > >
-> > On V4L2 brainstorming meeting in Warsaw we discussed the need of a
-> > framebuffer userspace interface for video output devices. Such
-> > framebuffer interface is aimed mainly for legacy applications and/or
-> > interoperatibility with Xfbdev.
+> > Could you explain that a bit?
 > >
-> > I proposed to give the idea of generic fb-on-top-of-video-node a second
-> > try, now using the power of videobuf2.
-> >
-> > This short patch series demonstrates that this approach is possible. We
-> > succesfully implemented a framebuffer emulator and tested it with
-> > s5p-hdmi driver on Samsung Exynos4 platform.
-> >
-> > This initial version provides a basic non-accelerated framebuffer
-> > device. The emulation is started on the first open of the framebuffer
-> > device and stopped on last close. The framebuffer boots in 'blanked'
-> > mode, so one also needs to make a call to blank ioctl (with
-> > FB_BLANK_UNBLANK argument) to enable video output.
-> >
-> > We successfully managed to get vanilla Xfbdev server working on top of
-> > it without ANY changes in X server sources.
-> >
-> > The framebuffer resolution and pixel format is autoconfigured from the
-> > parameters of the corresponding video output node. One can use v4l2-ctrl
-> > (or similar) tool to select pixel format, resolution, output, etc (and
-> > in the near future also the composition on the target video device).
-> >
-> > There a few requirements for the video output driver:
-> > 1. support for single-buffering mode
-> > 2. support for videoc_ioctl interface (this might change in the future)
-> > 3. use memory allocator that allows coherent mappings (mmaped framebuffer
-> >    will be accessed by application while it is displayed by dma engine).
-> >
-> > The changes that are needed in the video output driver are really
-> > simple. Mainly one need to add just a call to vb2_fb_register(q, vfd)
-> > and vb2_fb_register(fb) functions.
-> >
-> > The future versions might aslo include the following features:
-> > - vsync event translation into WAIT_VSYNC framebuffer ioctl
-> > - support for frame buffer panning with upcoming S_COMPOSE ioctl
-> >
+> > Is this a case where a device is mapped to a very *specific* range of
+> > physical memory and no where else?  What are the reasons for not marking
+> > it off limits at boot?  I also saw some bits of isolation and migration
+> > in those patches.  Can't the migration fail?
 > 
-> As I know, the panning is different from upcoming S_COMPOSE.
-> The panning selects the frame buffer area which will be read by display
-> controller to support virtual screen feature.
-> But as I remember, the S_COMPOSE is related in positioning on the display
-> device like HDMI.
-> IMO, VIDIOC_S_EXTCROP makes sense for panning.
+> The function is called from alloc_contig_range() (see patch 05/12) which
+> makes sure that the PFN is valid.  Situation where there is not enough
+> space is caught earlier in alloc_contig_range().
+> 
+> alloc_contig_freed_pages() must be given a valid PFN range such that all
+> the pages in that range are free (as in are within the region tracked by
+> page allocator) and of MIGRATETYPE_ISOLATE so that page allocator won't
+> touch them.
 
-Right, I was thinking of S_EXTCROP but I wrote S_COMPOSE. I'm sorry for the
-confusion.
+OK, so it really is a low-level function only.  How about a comment that
+explicitly says this?  "Only called from $FOO with the area already
+isolated."  It probably also deserves an __ prefix.
 
-Best regards
+> That's why invalid PFN is a bug in the caller and not an exception that
+> has to be handled.
+> 
+> Also, the function is not called during boot time.  It is called while
+> system is already running.
+
+What kind of success have you had running this in practice?  I'd be
+worried that some silly task or a sticky dentry would end up in the
+range that you want to allocate in.  
+
+
+-- Dave
+
 --
-Marek Szyprowski
-Samsung Poland R&D Center
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
