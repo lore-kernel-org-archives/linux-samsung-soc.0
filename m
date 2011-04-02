@@ -1,55 +1,75 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: SAMSUNG: Fix build failure in PM CRC check code
-Date: Sat,  2 Apr 2011 10:46:36 +0900
-Message-ID: <1301708796-30069-1-git-send-email-kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: SAMSUNG: Fix warning 's3c_pm_show_resume_irqs'
+ defined	but not used
+Date: Sat, 02 Apr 2011 11:23:39 +0900
+Message-ID: <023601cbf0dd$00e7c8e0$02b75aa0$%kim@samsung.com>
+References: <4cabb531.cf7d0e0a.19d7.08b2@mx.google.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:34756 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752638Ab1DBCSV (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:51870 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752091Ab1DBCY2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Apr 2011 22:18:21 -0400
+	Fri, 1 Apr 2011 22:24:28 -0400
+Received: from epmmp2 (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LJ0009C66NQMI80@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 02 Apr 2011 11:23:50 +0900 (KST)
+Received: from DOKGENEKIM02 ([12.23.103.104])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LJ000B1J6NQEM@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 02 Apr 2011 11:23:50 +0900 (KST)
+In-reply-to: <4cabb531.cf7d0e0a.19d7.08b2@mx.google.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Abhilash Kesavan <a.kesavan@samsung.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>
+To: 'Maurus Cuelenaere' <mcuelenaere@gmail.com>, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, 'Abhilash Kesavan' <a.kesavan@samsung.com>
 
-From: Abhilash Kesavan <a.kesavan@samsung.com>
+Maurus Cuelenaere wrote:
+> 
+> s3c_pm_show_resume_irqs() is used by some s3c_pm_arch_show_resume_irqs()
+> implementations, which get included through mach/pm-core.h. Add
+> __maybe_unused
+> to silence warnings when it isn't used (e.g. on S3C64XX platforms).
+> 
+> Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
+> ---
+>  arch/arm/plat-samsung/pm.c |    5 +++--
+>  1 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
+> index 27cfca5..ad6dd63 100644
+> --- a/arch/arm/plat-samsung/pm.c
+> +++ b/arch/arm/plat-samsung/pm.c
+> @@ -214,8 +214,9 @@ void s3c_pm_do_restore_core(struct sleep_save *ptr,
+int
+> count)
+>   *
+>   * print any IRQs asserted at resume time (ie, we woke from)
+>  */
+> -static void s3c_pm_show_resume_irqs(int start, unsigned long which,
+> -				    unsigned long mask)
+> +static void __maybe_unused s3c_pm_show_resume_irqs(int start,
+> +						   unsigned long which,
+> +						   unsigned long mask)
+>  {
+>  	int i;
+> 
+> --
 
-This patch fixes build error that occurs on enabling the Samsung
-specific PM CRC check code. Missed removing this reference of
-s3c_sleep_save_phys during move to generic cpu suspend/resume
-support.
+Missed for a long time :(
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/plat-samsung/pm-check.c |    6 ------
- 1 files changed, 0 insertions(+), 6 deletions(-)
+Abhilash, thanks for your reminder.
 
-diff --git a/arch/arm/plat-samsung/pm-check.c b/arch/arm/plat-samsung/pm-check.c
-index e4baf76..6b733fa 100644
---- a/arch/arm/plat-samsung/pm-check.c
-+++ b/arch/arm/plat-samsung/pm-check.c
-@@ -164,7 +164,6 @@ static inline int in_region(void *ptr, int size, void *what, size_t whatsz)
-  */
- static u32 *s3c_pm_runcheck(struct resource *res, u32 *val)
- {
--	void *save_at = phys_to_virt(s3c_sleep_save_phys);
- 	unsigned long addr;
- 	unsigned long left;
- 	void *stkpage;
-@@ -192,11 +191,6 @@ static u32 *s3c_pm_runcheck(struct resource *res, u32 *val)
- 			goto skip_check;
- 		}
- 
--		if (in_region(ptr, left, save_at, 32*4 )) {
--			S3C_PMDBG("skipping %08lx, has save block in\n", addr);
--			goto skip_check;
--		}
--
- 		/* calculate and check the checksum */
- 
- 		calc = crc32_le(~0, ptr, left);
--- 
-1.7.1
+Ok, will apply.
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
