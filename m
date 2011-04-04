@@ -1,57 +1,75 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/2] ARM: Make consolidated PM sleep code depend on	PM_SLEEP
-Date: Mon, 04 Apr 2011 20:50:33 +0900
-Message-ID: <02c801cbf2be$843a9190$8cafb4b0$%kim@samsung.com>
-References: <20110402091904.GH8482@n2100.arm.linux.org.uk>
- <E1Q5x0g-0001Yw-Vb@rmk-PC.arm.linux.org.uk>
- <87ipuvr2xg.fsf@lebrac.rtp-net.org>
- <20110403122713.GD4213@n2100.arm.linux.org.uk>
+From: "Michal Nazarewicz" <mina86@mina86.com>
+Subject: Re: [PATCH 04/12] mm: alloc_contig_freed_pages() added
+Date: Mon, 04 Apr 2011 15:15:07 +0200
+Message-ID: <op.vte0fgez3l0zgt@mnazarewicz-glaptop>
+References: <1301577368-16095-1-git-send-email-m.szyprowski@samsung.com>
+ <1301577368-16095-5-git-send-email-m.szyprowski@samsung.com>
+ <1301587083.31087.1032.camel@nimitz> <op.vs77qfx03l0zgt@mnazarewicz-glaptop>
+ <1301606078.31087.1275.camel@nimitz> <op.vs8awkrx3l0zgt@mnazarewicz-glaptop>
+ <1301610411.30870.29.camel@nimitz> <op.vs8cf5xd3l0zgt@mnazarewicz-glaptop>
+ <1301666596.30870.176.camel@nimitz>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=utf-8; format=flowed; delsp=yes
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:42460 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752484Ab1DDLuk (ORCPT
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:40542 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751549Ab1DDNPM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Apr 2011 07:50:40 -0400
-Received: from epmmp1 (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LJ4003FQM8E2F80@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 04 Apr 2011 20:50:38 +0900 (KST)
-Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LJ400M85M8EMF@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 04 Apr 2011 20:50:38 +0900 (KST)
-In-reply-to: <20110403122713.GD4213@n2100.arm.linux.org.uk>
-Content-language: ko
+	Mon, 4 Apr 2011 09:15:12 -0400
+In-Reply-To: <1301666596.30870.176.camel@nimitz>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Arnaud Patard' <arnaud.patard@rtp-net.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: Dave Hansen <dave@linux.vnet.ibm.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-mm@kvack.org, Kyungmin Park <kyungmin.park@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, KAMEZAWA Hiroyuki <kamezawa.hiroyu@jp.fujitsu.com>, Ankita Garg <ankita@in.ibm.com>, Daniel Walker <dwalker@codeaurora.org>, Johan MOSSBERG <johan.xx.mossberg@stericsson.com>, Mel Gorman <mel@csn.ul.ie>, Pawel Osciak <pawel@osciak.com>
 
-Russell King - ARM Linux wrote:
-> 
-> On Sun, Apr 03, 2011 at 01:26:35PM +0200, Arnaud Patard wrote:
-> > I've build-tested on some failing platforms theses 2 patches and the
-> > build are now succeeding. The only PM related zImage build error I found
-> > was for s5pc100:
-> >
-> > arch/arm/plat-samsung/pm.c:32:26: fatal error: mach/pm-core.h: No such
-file
-> or directory
-> 
-> That probably existing from before the consolidation patch, so I won't
-> worry about it.
+> On Fri, 2011-04-01 at 00:51 +0200, Michal Nazarewicz wrote:
+>> The function is called from alloc_contig_range() (see patch 05/12) which
+>> makes sure that the PFN is valid.  Situation where there is not enough
+>> space is caught earlier in alloc_contig_range().
+>>
+>> alloc_contig_freed_pages() must be given a valid PFN range such that all
+>> the pages in that range are free (as in are within the region tracked by
+>> page allocator) and of MIGRATE_ISOLATE so that page allocator won't
+>> touch them.
 
-Yeah, Russell is right :)
+On Fri, 01 Apr 2011 16:03:16 +0200, Dave Hansen wrote:
+> OK, so it really is a low-level function only.  How about a comment that
+> explicitly says this?  "Only called from $FOO with the area already
+> isolated."  It probably also deserves an __ prefix.
 
-I will sort it out.
-Thanks for your pointing out.
+Yes, it's not really for general use.  Comment may indeed be useful here.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+>> That's why invalid PFN is a bug in the caller and not an exception that
+>> has to be handled.
+>>
+>> Also, the function is not called during boot time.  It is called while
+>> system is already running.
+
+> What kind of success have you had running this in practice?  I'd be
+> worried that some silly task or a sticky dentry would end up in the
+> range that you want to allocate in.
+
+I'm not sure what you are asking.
+
+The function requires the range to be marked as MIGRATE_ISOLATE and all
+pages being free, so nothing can be allocated there while the function
+is running.
+
+If you are asking about CMA in general, the range that CMA uses is marked
+as MIGRATE_CMA (a new migrate type) which means that only MIGRATE_MOVABLE
+pages can be allocated there.  This means, that in theory, if there is
+enough memory the pages can always be moved out of the region.  At leasts
+that's my understanding of the type.  If this is correct, the allocation
+should always succeed provided enough memory for the pages within the
+region to be moved to is available.
+
+As of practice, I have run some simple test to see if the code works and
+they succeeded.  Also, Marek has run some test with actual hardware and
+those worked well as well (but I'll let Marek talk about any details).
+
+-- 
+Best regards,                                         _     _
+.o. | Liege of Serenely Enlightened Majesty of      o' \,=./ `o
+..o | Computer Science,  Michal "mina86" Nazarewicz    (o o)
+ooo +-----<email/xmpp: mnazarewicz@google.com>-----ooO--(_)--Ooo--
