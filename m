@@ -1,44 +1,40 @@
-From: =?ks_c_5601-1987?B?x9HB+LG4?= <jg1.han@samsung.com>
-Subject: RE: [PATCH v3] ARM: EXYNOS4: Add PWM backlight support on Samsung
- SMDKC210
-Date: Tue, 05 Apr 2011 16:52:31 +0900
-Message-ID: <000601cbf366$6e1b5590$4a5200b0$%han@samsung.com>
-References: <1301552179-23735-1-git-send-email-jg1.han@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Bug: SMDKV310: System hang during reboot
+Date: Tue, 5 Apr 2011 15:10:09 +0530
+Message-ID: <BANLkTinNKKp1eP1iNDW1mQ0_EHuZJEvA6A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:10797 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752470Ab1DEHwv (ORCPT
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:40542 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751591Ab1DEJkL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Apr 2011 03:52:51 -0400
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LJ6004ZI5VPVEC0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 05 Apr 2011 16:52:37 +0900 (KST)
-Received: from DOJG1HAN01 ([12.23.103.214])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LJ600FNL5VOAF@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 05 Apr 2011 16:52:37 +0900 (KST)
-In-reply-to: <1301552179-23735-1-git-send-email-jg1.han@samsung.com>
-Content-language: ko
+	Tue, 5 Apr 2011 05:40:11 -0400
+Received: by bwz15 with SMTP id 15so164916bwz.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Apr 2011 02:40:10 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org
 
-Jingoo Han wrote:
-> +	.pwm_period_ns	= 1000,
+Hi,
 
-I will explain how I get the value of PWM period.
+While executing reboot call on SMDKV310, the system hangs during
+cpu_proc_fin() call.
 
-The SMDK boards use LT3591 as backlight LED driver of LTE480WV LCD
-According to the LT3591 datasheet, the switching frequency should
-be 1MHz. So, PWM period is calculated by following formula:
-	PWM period = 1/switching frequency
-                       = 1/1MHz
-                       = 1000 ns
+Commenting out this line of code, the reboot works properly.
 
-You can find LT3591 datasheet easily on the Internet. Please refer to it
-for more information.
+--- a/arch/arm/mm/proc-v7.S
++++ b/arch/arm/mm/proc-v7.S
+@@ -46,7 +46,6 @@ ENTRY(cpu_v7_proc_fin)
+        mrc     p15, 0, r0, c1, c0, 0           @ ctrl register
+        bic     r0, r0, #0x1000                 @ ...i............
+        bic     r0, r0, #0x0006                 @ .............ca.
+-       mcr     p15, 0, r0, c1, c0, 0           @ disable caches
+        mov     pc, lr
+ ENDPROC(cpu_v7_proc_fin)
+
+Are we missing something in the Exynos4 machine code or is it a
+CPU_V7 specific issue?
+
+Regards,
+Tushar
