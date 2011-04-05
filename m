@@ -1,7 +1,8 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/7] ARM: EXYNOS4: power domains: fixes and code cleanup
-Date: Tue, 05 Apr 2011 16:06:44 +0200
-Message-ID: <1302012410-17984-2-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 3/7] v4l: videobuf2: dma-sg: move some generic functions to
+	memops
+Date: Tue, 05 Apr 2011 16:06:46 +0200
+Message-ID: <1302012410-17984-4-git-send-email-m.szyprowski@samsung.com>
 References: <1302012410-17984-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -10,247 +11,208 @@ Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1302012410-17984-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Pietrasiwiecz <andrzej.p@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Pietrasiwiecz <andrzej.p@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>, Pawel Osciak <pawel@osciak.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 
-This patch extends power domain driver with support for enabling and
-disabling modules in S5P_CLKGATE_BLOCK register. It also performs a
-little code cleanup to avoid confusion between exynos4_device_pd array
-index and power domain id.
+This patch moves some generic code to videobuf2-memops. This code will
+be later used by the iommu allocator. This patch adds also vma locking
+in user pointer mode.
 
-Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+CC: Pawel Osciak <pawel@osciak.com>
 ---
- arch/arm/mach-exynos4/dev-pd.c                  |   93 +++++++++++++++++------
- arch/arm/mach-exynos4/include/mach/regs-clock.h |    7 ++
- arch/arm/plat-samsung/include/plat/pd.h         |    1 +
- 3 files changed, 79 insertions(+), 22 deletions(-)
+ drivers/media/video/videobuf2-dma-sg.c |   37 +++++----------
+ drivers/media/video/videobuf2-memops.c |   76 ++++++++++++++++++++++++++++++++
+ include/media/videobuf2-memops.h       |    5 ++
+ 3 files changed, 93 insertions(+), 25 deletions(-)
 
-diff --git a/arch/arm/mach-exynos4/dev-pd.c b/arch/arm/mach-exynos4/dev-pd.c
-index 3273f25..44c6597 100644
---- a/arch/arm/mach-exynos4/dev-pd.c
-+++ b/arch/arm/mach-exynos4/dev-pd.c
-@@ -16,13 +16,17 @@
- #include <linux/delay.h>
- 
- #include <mach/regs-pmu.h>
-+#include <mach/regs-clock.h>
- 
- #include <plat/pd.h>
- 
-+static DEFINE_SPINLOCK(gate_block_slock);
-+
- static int exynos4_pd_enable(struct device *dev)
- {
- 	struct samsung_pd_info *pdata =  dev->platform_data;
- 	u32 timeout;
-+	int ret = 0;
- 
- 	__raw_writel(S5P_INT_LOCAL_PWR_EN, pdata->base);
- 
-@@ -31,21 +35,39 @@ static int exynos4_pd_enable(struct device *dev)
- 	while ((__raw_readl(pdata->base + 0x4) & S5P_INT_LOCAL_PWR_EN)
- 		!= S5P_INT_LOCAL_PWR_EN) {
- 		if (timeout == 0) {
--			printk(KERN_ERR "Power domain %s enable failed.\n",
--				dev_name(dev));
--			return -ETIMEDOUT;
-+			dev_err(dev, "enable failed\n");
-+			ret = -ETIMEDOUT;
-+			goto done;
- 		}
- 		timeout--;
- 		udelay(100);
- 	}
- 
--	return 0;
-+	/* configure clk gate mask if it is present */
-+	if (pdata->gate_mask) {
-+		unsigned long flags;
-+		unsigned long value;
-+
-+		spin_lock_irqsave(&gate_block_slock, flags);
-+
-+		value  = __raw_readl(S5P_CLKGATE_BLOCK);
-+		value |= pdata->gate_mask;
-+		__raw_writel(value, S5P_CLKGATE_BLOCK);
-+
-+		spin_unlock_irqrestore(&gate_block_slock, flags);
-+	}
-+
-+done:
-+	dev_info(dev, "enable finished\n");
-+
-+	return ret;
- }
- 
- static int exynos4_pd_disable(struct device *dev)
- {
- 	struct samsung_pd_info *pdata =  dev->platform_data;
- 	u32 timeout;
-+	int ret = 0;
- 
- 	__raw_writel(0, pdata->base);
- 
-@@ -53,81 +75,108 @@ static int exynos4_pd_disable(struct device *dev)
- 	timeout = 10;
- 	while (__raw_readl(pdata->base + 0x4) & S5P_INT_LOCAL_PWR_EN) {
- 		if (timeout == 0) {
--			printk(KERN_ERR "Power domain %s disable failed.\n",
--				dev_name(dev));
--			return -ETIMEDOUT;
-+			dev_err(dev, "disable failed\n");
-+			ret = -ETIMEDOUT;
-+			goto done;
- 		}
- 		timeout--;
- 		udelay(100);
- 	}
- 
--	return 0;
-+	if (pdata->gate_mask) {
-+		unsigned long flags;
-+		unsigned long value;
-+
-+		spin_lock_irqsave(&gate_block_slock, flags);
-+
-+		value  = __raw_readl(S5P_CLKGATE_BLOCK);
-+		value &= ~pdata->gate_mask;
-+		__raw_writel(value, S5P_CLKGATE_BLOCK);
-+
-+		spin_unlock_irqrestore(&gate_block_slock, flags);
-+	}
-+done:
-+	dev_info(dev, "disable finished\n");
-+
-+	return ret;
- }
- 
- struct platform_device exynos4_device_pd[] = {
--	{
-+	[PD_MFC] = {
- 		.name		= "samsung-pd",
--		.id		= 0,
-+		.id		= PD_MFC,
- 		.dev = {
- 			.platform_data = &(struct samsung_pd_info) {
- 				.enable		= exynos4_pd_enable,
- 				.disable	= exynos4_pd_disable,
- 				.base		= S5P_PMU_MFC_CONF,
-+				.gate_mask	= S5P_CLKGATE_BLOCK_MFC,
- 			},
- 		},
--	}, {
-+	},
-+	[PD_G3D] = {
- 		.name		= "samsung-pd",
--		.id		= 1,
-+		.id		= PD_G3D,
- 		.dev = {
- 			.platform_data = &(struct samsung_pd_info) {
- 				.enable		= exynos4_pd_enable,
- 				.disable	= exynos4_pd_disable,
- 				.base		= S5P_PMU_G3D_CONF,
-+				.gate_mask	= S5P_CLKGATE_BLOCK_G3D,
- 			},
- 		},
--	}, {
-+	},
-+	[PD_LCD0] = {
- 		.name		= "samsung-pd",
--		.id		= 2,
-+		.id		= PD_LCD0,
- 		.dev = {
- 			.platform_data = &(struct samsung_pd_info) {
- 				.enable		= exynos4_pd_enable,
- 				.disable	= exynos4_pd_disable,
- 				.base		= S5P_PMU_LCD0_CONF,
-+				.gate_mask	= S5P_CLKGATE_BLOCK_LCD0,
- 			},
- 		},
--	}, {
-+	},
-+	[PD_LCD1] = {
- 		.name		= "samsung-pd",
--		.id		= 3,
-+		.id		= PD_LCD1,
- 		.dev = {
- 			.platform_data = &(struct samsung_pd_info) {
- 				.enable		= exynos4_pd_enable,
- 				.disable	= exynos4_pd_disable,
- 				.base		= S5P_PMU_LCD1_CONF,
-+				.gate_mask	= S5P_CLKGATE_BLOCK_LCD1,
- 			},
- 		},
--	}, {
-+	},
-+	[PD_TV] = {
- 		.name		= "samsung-pd",
--		.id		= 4,
-+		.id		= PD_TV,
- 		.dev = {
- 			.platform_data = &(struct samsung_pd_info) {
- 				.enable		= exynos4_pd_enable,
- 				.disable	= exynos4_pd_disable,
- 				.base		= S5P_PMU_TV_CONF,
-+				.gate_mask	= S5P_CLKGATE_BLOCK_TV,
- 			},
- 		},
--	}, {
-+	},
-+	[PD_CAM] = {
- 		.name		= "samsung-pd",
--		.id		= 5,
-+		.id		= PD_CAM,
- 		.dev = {
- 			.platform_data = &(struct samsung_pd_info) {
- 				.enable		= exynos4_pd_enable,
- 				.disable	= exynos4_pd_disable,
- 				.base		= S5P_PMU_CAM_CONF,
-+				.gate_mask	= S5P_CLKGATE_BLOCK_CAM,
- 			},
- 		},
--	}, {
-+	},
-+	[PD_GPS] = {
- 		.name		= "samsung-pd",
--		.id		= 6,
-+		.id		= PD_GPS,
- 		.dev = {
- 			.platform_data = &(struct samsung_pd_info) {
- 				.enable		= exynos4_pd_enable,
-diff --git a/arch/arm/mach-exynos4/include/mach/regs-clock.h b/arch/arm/mach-exynos4/include/mach/regs-clock.h
-index 6e311c1..2c1472b 100644
---- a/arch/arm/mach-exynos4/include/mach/regs-clock.h
-+++ b/arch/arm/mach-exynos4/include/mach/regs-clock.h
-@@ -171,6 +171,13 @@
- #define S5P_CLKDIV_BUS_GPLR_SHIFT	(4)
- #define S5P_CLKDIV_BUS_GPLR_MASK	(0x7 << S5P_CLKDIV_BUS_GPLR_SHIFT)
- 
-+#define S5P_CLKGATE_BLOCK_CAM		(1 << 0)
-+#define S5P_CLKGATE_BLOCK_TV		(1 << 1)
-+#define S5P_CLKGATE_BLOCK_MFC		(1 << 2)
-+#define S5P_CLKGATE_BLOCK_G3D		(1 << 3)
-+#define S5P_CLKGATE_BLOCK_LCD0		(1 << 4)
-+#define S5P_CLKGATE_BLOCK_LCD1		(1 << 5)
-+
- /* Compatibility defines and inclusion */
- 
- #include <mach/regs-pmu.h>
-diff --git a/arch/arm/plat-samsung/include/plat/pd.h b/arch/arm/plat-samsung/include/plat/pd.h
-index abb4bc3..ef545ed 100644
---- a/arch/arm/plat-samsung/include/plat/pd.h
-+++ b/arch/arm/plat-samsung/include/plat/pd.h
-@@ -15,6 +15,7 @@ struct samsung_pd_info {
- 	int (*enable)(struct device *dev);
- 	int (*disable)(struct device *dev);
- 	void __iomem *base;
-+	unsigned long gate_mask;
+diff --git a/drivers/media/video/videobuf2-dma-sg.c b/drivers/media/video/videobuf2-dma-sg.c
+index b2d9485..240abaa 100644
+--- a/drivers/media/video/videobuf2-dma-sg.c
++++ b/drivers/media/video/videobuf2-dma-sg.c
+@@ -29,6 +29,7 @@ struct vb2_dma_sg_buf {
+ 	struct vb2_dma_sg_desc		sg_desc;
+ 	atomic_t			refcount;
+ 	struct vb2_vmarea_handler	handler;
++	struct vm_area_struct		*vma;
  };
  
- enum exynos4_pd_block {
+ static void vb2_dma_sg_put(void *buf_priv);
+@@ -150,15 +151,9 @@ static void *vb2_dma_sg_get_userptr(void *alloc_ctx, unsigned long vaddr,
+ 	if (!buf->pages)
+ 		goto userptr_fail_pages_array_alloc;
+ 
+-	down_read(&current->mm->mmap_sem);
+-	num_pages_from_user = get_user_pages(current, current->mm,
+-					     vaddr & PAGE_MASK,
+-					     buf->sg_desc.num_pages,
+-					     write,
+-					     1, /* force */
+-					     buf->pages,
+-					     NULL);
+-	up_read(&current->mm->mmap_sem);
++	num_pages_from_user = vb2_get_user_pages(vaddr, buf->sg_desc.num_pages,
++					     buf->pages, write, &buf->vma);
++
+ 	if (num_pages_from_user != buf->sg_desc.num_pages)
+ 		goto userptr_fail_get_user_pages;
+ 
+@@ -177,6 +172,8 @@ userptr_fail_get_user_pages:
+ 	       num_pages_from_user, buf->sg_desc.num_pages);
+ 	while (--num_pages_from_user >= 0)
+ 		put_page(buf->pages[num_pages_from_user]);
++	if (buf->vma)
++		vb2_put_vma(buf->vma);
+ 	kfree(buf->pages);
+ 
+ userptr_fail_pages_array_alloc:
+@@ -200,6 +197,8 @@ static void vb2_dma_sg_put_userptr(void *buf_priv)
+ 	       __func__, buf->sg_desc.num_pages);
+ 	if (buf->vaddr)
+ 		vm_unmap_ram(buf->vaddr, buf->sg_desc.num_pages);
++	if (buf->vma)
++		vb2_put_vma(buf->vma);
+ 	while (--i >= 0) {
+ 		if (buf->write)
+ 			set_page_dirty_lock(buf->pages[i]);
+@@ -236,28 +235,16 @@ static unsigned int vb2_dma_sg_num_users(void *buf_priv)
+ static int vb2_dma_sg_mmap(void *buf_priv, struct vm_area_struct *vma)
+ {
+ 	struct vb2_dma_sg_buf *buf = buf_priv;
+-	unsigned long uaddr = vma->vm_start;
+-	unsigned long usize = vma->vm_end - vma->vm_start;
+-	int i = 0;
++	int ret;
+ 
+ 	if (!buf) {
+ 		printk(KERN_ERR "No memory to map\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	do {
+-		int ret;
+-
+-		ret = vm_insert_page(vma, uaddr, buf->pages[i++]);
+-		if (ret) {
+-			printk(KERN_ERR "Remapping memory, error: %d\n", ret);
+-			return ret;
+-		}
+-
+-		uaddr += PAGE_SIZE;
+-		usize -= PAGE_SIZE;
+-	} while (usize > 0);
+-
++	ret = vb2_insert_pages(vma, buf->pages);
++	if (ret)
++		return ret;
+ 
+ 	/*
+ 	 * Use common vm_area operations to track buffer refcount.
+diff --git a/drivers/media/video/videobuf2-memops.c b/drivers/media/video/videobuf2-memops.c
+index 5370a3a..9d44473 100644
+--- a/drivers/media/video/videobuf2-memops.c
++++ b/drivers/media/video/videobuf2-memops.c
+@@ -185,6 +185,82 @@ int vb2_mmap_pfn_range(struct vm_area_struct *vma, unsigned long paddr,
+ EXPORT_SYMBOL_GPL(vb2_mmap_pfn_range);
+ 
+ /**
++ * vb2_get_user_pages() - pin user pages
++ * @vaddr:	virtual address from which to start
++ * @num_pages:	number of pages to pin
++ * @pages:	table of pointers to struct pages to pin
++ * @write:	if 0, the pages must not be written to
++ * @vma:	output parameter, copy of the vma or NULL
++ *		if get_user_pages fails
++ *
++ * This function just forwards invocation to get_user_pages, but eases using
++ * the latter in videobuf2 allocators.
++ */
++int vb2_get_user_pages(unsigned long vaddr, unsigned int num_pages,
++		       struct page **pages, int write, struct vm_area_struct **vma)
++{
++	struct vm_area_struct *found_vma;
++	struct mm_struct *mm = current->mm;
++	int ret = -EFAULT;
++
++	down_read(&current->mm->mmap_sem);
++
++	found_vma = find_vma(mm, vaddr);
++	if (NULL == found_vma || found_vma->vm_end < (vaddr + num_pages * PAGE_SIZE))
++		goto done;
++
++	*vma = vb2_get_vma(found_vma);
++	if (NULL == *vma) {
++		ret = -ENOMEM;
++		goto done;
++	}
++
++	ret = get_user_pages(current, current->mm, vaddr & PAGE_MASK, num_pages,
++			     write, 1 /* force */, pages, NULL);
++
++	if (ret != num_pages) {
++		vb2_put_vma(*vma);
++		*vma = NULL;
++	}
++
++done:
++	up_read(&current->mm->mmap_sem);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(vb2_get_user_pages);
++
++/**
++ * vb2_insert_pages - insert pages into user vma
++ * @vma:	virtual memory region for the mapping
++ * @pages:	table of pointers to struct pages to be inserted
++ *
++ * This function for each page to be inserted performs vm_insert_page.
++ */
++int vb2_insert_pages(struct vm_area_struct *vma, struct page **pages)
++{
++	unsigned long uaddr = vma->vm_start;
++	unsigned long usize = vma->vm_end - vma->vm_start;
++	int i = 0;
++
++	do {
++		int ret;
++
++		ret = vm_insert_page(vma, uaddr, pages[i++]);
++		if (ret) {
++			printk(KERN_ERR "Remapping memory, error: %d\n", ret);
++			return ret;
++		}
++
++		uaddr += PAGE_SIZE;
++		usize -= PAGE_SIZE;
++	} while (usize > 0);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(vb2_insert_pages);
++
++/**
+  * vb2_common_vm_open() - increase refcount of the vma
+  * @vma:	virtual memory region for the mapping
+  *
+diff --git a/include/media/videobuf2-memops.h b/include/media/videobuf2-memops.h
+index 84e1f6c..f8a0886 100644
+--- a/include/media/videobuf2-memops.h
++++ b/include/media/videobuf2-memops.h
+@@ -41,5 +41,10 @@ int vb2_mmap_pfn_range(struct vm_area_struct *vma, unsigned long paddr,
+ struct vm_area_struct *vb2_get_vma(struct vm_area_struct *vma);
+ void vb2_put_vma(struct vm_area_struct *vma);
+ 
++int vb2_get_user_pages(unsigned long vaddr, unsigned int num_pages,
++		       struct page **pages, int write,
++		       struct vm_area_struct **vma);
++
++int vb2_insert_pages(struct vm_area_struct *vma, struct page **pages);
+ 
+ #endif
 -- 
 1.7.1.569.g6f426
