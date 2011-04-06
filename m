@@ -1,45 +1,60 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 5/7] v4l: s5p-fimc: add pm_runtime support
-Date: Wed, 06 Apr 2011 09:25:45 +0200
-Message-ID: <000001cbf42b$dbd9db90$938d92b0$%szyprowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 5/7] v4l: s5p-fimc: add pm_runtime support
+Date: Wed, 06 Apr 2011 10:14:53 +0200
+Message-ID: <4D9C20FD.2010608@samsung.com>
 References: <1302012410-17984-1-git-send-email-m.szyprowski@samsung.com>
-	<1302012410-17984-6-git-send-email-m.szyprowski@samsung.com>
-	<007c01cbf3f2$c6e7b420$54b71c60$%han@samsung.com>
+ <1302012410-17984-6-git-send-email-m.szyprowski@samsung.com>
+ <007c01cbf3f2$c6e7b420$54b71c60$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=EUC-KR
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:12237 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753912Ab1DFIO6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 6 Apr 2011 04:14:58 -0400
 In-reply-to: <007c01cbf3f2$c6e7b420$54b71c60$%han@samsung.com>
-Content-language: pl
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Jonghun Han' <jonghun.han@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Kyungmin Park' <kyungmin.park@samsung.com>, =?ks_c_5601-1987?B?J7DtwOe47Sc=?= <jemings@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jonghun Han <jonghun.han@samsung.com>
+Cc: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Andrzej Pietrasiwiecz' <andrzej.p@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Kukjin Kim' <kgene.kim@samsung.com>, =?EUC-KR?B?J7DtwOe47Sc=?= <jemings@samsung.com>
 
-Hello,
+Hi Jonghun,
 
-On Wednesday, April 06, 2011 2:37 AM Jonghun Han wrote:
-
+On 04/06/2011 02:37 AM, Jonghun Han wrote:
+...
+> 
+> Hi Marek,
+> 
 > runtime_pm is used to minimize current.
 > In my opinion, the followings will be better.
 > 1. Adds pm_runtime_get_sync before running of the first job.
 >    IMO, dma_run callback function is the best place for calling in case of
 > M2M.
+Yeah, sounds reasonable.
+
 > 2. And then in the ISR, call pm_runtime_put_sync in the ISR bottom-half if
 > there is no remained job.
 
-Right my pm_runtime implementation is very simple. I've just added it to test
-if other subsystems are working.
+So you are switching the clocks off in the interrupt context, I'm not sure
+whether this is a good idea. Perhaps we could just use pm_runtime_put()
+in this case?
 
-Best regards
---
-Marek Szyprowski
+> 
+> I had already implemented and tested.
+> But it remained code cleanup. I hope I can post it on the next week.
+
+The purpose of Marek's simple patch was to just enable the FIMC IP
+to illustrate the IOMMU driver's operation. I have prepared more complete
+patch for runtime PM and system suspend/resume in the mem-to-mem driver
+as well, but I want to consolidate this with the video capture driver before
+sending upstream.
+Anyway I'm looking forward to see your patch so we can work out some common
+version. Also I've got a few patches for this rc period which I intend to post
+this week.
+
+Regards,
+-- 
+Sylwester Nawrocki
 Samsung Poland R&D Center
