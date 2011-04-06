@@ -1,60 +1,61 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 5/7] v4l: s5p-fimc: add pm_runtime support
-Date: Wed, 06 Apr 2011 10:14:53 +0200
-Message-ID: <4D9C20FD.2010608@samsung.com>
-References: <1302012410-17984-1-git-send-email-m.szyprowski@samsung.com>
- <1302012410-17984-6-git-send-email-m.szyprowski@samsung.com>
- <007c01cbf3f2$c6e7b420$54b71c60$%han@samsung.com>
+From: Paul Larson <paul.larson@linaro.org>
+Subject: Re: Bug: SMDKV310: System hang during reboot
+Date: Wed, 6 Apr 2011 09:14:46 -0500
+Message-ID: <BANLkTinA0F8OfO2z51ote66ve4b1yEP+og@mail.gmail.com>
+References: <BANLkTinNKKp1eP1iNDW1mQ0_EHuZJEvA6A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=EUC-KR
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:12237 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753912Ab1DFIO6 (ORCPT
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:33840 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755986Ab1DFOPH convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Apr 2011 04:14:58 -0400
-In-reply-to: <007c01cbf3f2$c6e7b420$54b71c60$%han@samsung.com>
+	Wed, 6 Apr 2011 10:15:07 -0400
+Received: by wwa36 with SMTP id 36so1819965wwa.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Apr 2011 07:15:06 -0700 (PDT)
+In-Reply-To: <BANLkTinNKKp1eP1iNDW1mQ0_EHuZJEvA6A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jonghun Han <jonghun.han@samsung.com>
-Cc: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Andrzej Pietrasiwiecz' <andrzej.p@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Kukjin Kim' <kgene.kim@samsung.com>, =?EUC-KR?B?J7DtwOe47Sc=?= <jemings@samsung.com>
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org
 
-Hi Jonghun,
+Is there a bug for this in launchpad yet?  I see this hang on the
+board we have in the validation lab too, and it's especially annoying
+there since we don't have a good way to hard reset this board remotely
+yet.
 
-On 04/06/2011 02:37 AM, Jonghun Han wrote:
-...
-> 
-> Hi Marek,
-> 
-> runtime_pm is used to minimize current.
-> In my opinion, the followings will be better.
-> 1. Adds pm_runtime_get_sync before running of the first job.
->    IMO, dma_run callback function is the best place for calling in case of
-> M2M.
-Yeah, sounds reasonable.
-
-> 2. And then in the ISR, call pm_runtime_put_sync in the ISR bottom-half if
-> there is no remained job.
-
-So you are switching the clocks off in the interrupt context, I'm not sure
-whether this is a good idea. Perhaps we could just use pm_runtime_put()
-in this case?
-
-> 
-> I had already implemented and tested.
-> But it remained code cleanup. I hope I can post it on the next week.
-
-The purpose of Marek's simple patch was to just enable the FIMC IP
-to illustrate the IOMMU driver's operation. I have prepared more complete
-patch for runtime PM and system suspend/resume in the mem-to-mem driver
-as well, but I want to consolidate this with the video capture driver before
-sending upstream.
-Anyway I'm looking forward to see your patch so we can work out some common
-version. Also I've got a few patches for this rc period which I intend to post
-this week.
-
-Regards,
--- 
-Sylwester Nawrocki
-Samsung Poland R&D Center
+On Tue, Apr 5, 2011 at 4:40 AM, Tushar Behera <tushar.behera@linaro.org=
+> wrote:
+> Hi,
+>
+> While executing reboot call on SMDKV310, the system hangs during
+> cpu_proc_fin() call.
+>
+> Commenting out this line of code, the reboot works properly.
+>
+> --- a/arch/arm/mm/proc-v7.S
+> +++ b/arch/arm/mm/proc-v7.S
+> @@ -46,7 +46,6 @@ ENTRY(cpu_v7_proc_fin)
+> =A0 =A0 =A0 =A0mrc =A0 =A0 p15, 0, r0, c1, c0, 0 =A0 =A0 =A0 =A0 =A0 =
+@ ctrl register
+> =A0 =A0 =A0 =A0bic =A0 =A0 r0, r0, #0x1000 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 @ ...i............
+> =A0 =A0 =A0 =A0bic =A0 =A0 r0, r0, #0x0006 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 @ .............ca.
+> - =A0 =A0 =A0 mcr =A0 =A0 p15, 0, r0, c1, c0, 0 =A0 =A0 =A0 =A0 =A0 @=
+ disable caches
+> =A0 =A0 =A0 =A0mov =A0 =A0 pc, lr
+> =A0ENDPROC(cpu_v7_proc_fin)
+>
+> Are we missing something in the Exynos4 machine code or is it a
+> CPU_V7 specific issue?
+>
+> Regards,
+> Tushar
+>
+> _______________________________________________
+> linaro-dev mailing list
+> linaro-dev@lists.linaro.org
+> http://lists.linaro.org/mailman/listinfo/linaro-dev
+>
