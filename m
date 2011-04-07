@@ -1,65 +1,49 @@
-From: Sangbeom Kim <sbkim73@samsung.com>
-Subject: RE: [alsa-devel] [PATCH 3/3] SoC: SAMSUNG: Add WM8580 PCM Machine
- driver
-Date: Thu, 07 Apr 2011 13:44:37 +0900
-Message-ID: <041f01cbf4de$85702f30$90508d90$@com>
-References: <1302136270-28776-1-git-send-email-sbkim73@samsung.com>
- <1302136270-28776-4-git-send-email-sbkim73@samsung.com>
- <BANLkTinOadw2TkNMs2_Lvmskb=yU8XYUuw@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v2] Add v4l2 subdev driver for S5P MIPI-CSI receivers
+Date: Thu, 07 Apr 2011 18:47:32 +0200
+Message-ID: <1302194855-29205-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:10907 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751052Ab1DGEo6 (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:58780 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751294Ab1DGQrr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Apr 2011 00:44:58 -0400
-Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LJ9008Q3MINO300@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 07 Apr 2011 13:44:47 +0900 (KST)
-Received: from DOSBKIM7301 ([12.23.103.65])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LJ900FLXMIMO1@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 07 Apr 2011 13:44:47 +0900 (KST)
-In-reply-to: <BANLkTinOadw2TkNMs2_Lvmskb=yU8XYUuw@mail.gmail.com>
-Content-language: ko
+	Thu, 7 Apr 2011 12:47:47 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jassi Brar' <jassisinghbrar@gmail.com>
-Cc: alsa-devel@alsa-project.org, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, lrg@slimlogic.co.uk
+To: linux-media@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, kgene.kim@samsung.com, sungchun.kang@samsung.com, jonghun.han@samsung.com
 
-Hi! Jassi
+Hello,
 
-On Thursday, April 07, 2011 12:43 PM, Jassi Brar wrote:
-> > +static struct snd_soc_dai_link smdk_dai[] = {
-> > +       {
-> > +               .name = "WM8580 PAIF PCM RX",
-> > +               .stream_name = "Playback",
-> > +               .cpu_dai_name = "samsung-pcm.0",
-> > +               .codec_dai_name = "wm8580-hifi-playback",
-> > +               .platform_name = "samsung-audio",
-> > +               .codec_name = "wm8580-codec.0-001b",
-> > +               .ops = &smdk_wm8580_pcm_ops,
-> > +       }, {
-> > +               .name = "WM8580 PAIF PCM TX",
-> > +               .stream_name = "Capture",
-> > +               .cpu_dai_name = "samsung-pcm.0",
-> > +               .codec_dai_name = "wm8580-hifi-capture",
-> > +               .platform_name = "samsung-audio",
-> > +               .codec_name = "wm8580-codec.0-001b",
-> > +               .ops = &smdk_wm8580_pcm_ops,
-> > +       },
-> > +};
-> 
-> IIRC the PCM DAI is connected to Secondary i/f of WM8580
-> on some SMDKs. Isn't it smdk6410 ?
+the following is a v4l2 subdev driver for MIPI-CSI2 receivers
+available in S5PVx10 and EXYNOS4 SoCs. The MIPI-CSIS module 
+(MIPI CSI Slave) works closely with the FIMC IP, i.e. it is its 
+frontend for the MIPI CSI serial bus.
 
-Yes, Your remember is right. SMDK6410 has WM8580 PCM DAI.
-But, In this time, I couldn't test on SMDK6410.
-After testing on SMDK6410, I will submit related patch.
+Other than that the following patch set moves the s5p-fimc driver
+under Video Capture Devices in kconfig and adds a V4L2_MBUS_FMT_JPEG_1X8
+media bus format.
+To follow are patches converting s5p-fimc to the pad ops and
+adding a media device for precisely managing all available FIMC and
+MIPI CSIS entities and image sensors. However this still needs
+a bit of work.
 
-Thanks and regards,
-SB Kim
+As usual, review comments are welcome!
+
+Changes since v1:
+ - added runtime PM support
+ - conversion to the pad ops
+
+The patch series contains:
+
+ [PATCH 1/3] v4l: Add V4L2_MBUS_FMT_JPEG_1X8 media bus format
+ [PATCH 2/3] v4l: Move S5P FIMC driver into Video Capture Devices
+ [PATCH 3/3] v4l: Add v4l2 subdev driver for S5P/EXYNOS4 MIPI-CSI Receiver
+
+--
+Regards,
+Sylwester Nawrocki
+Samsung Poland R&D Center
