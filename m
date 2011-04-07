@@ -1,49 +1,65 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2] Add v4l2 subdev driver for S5P MIPI-CSI receivers
-Date: Thu, 07 Apr 2011 18:47:32 +0200
-Message-ID: <1302194855-29205-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 2/3] v4l: Move S5P FIMC driver into Video Capture Devices
+Date: Thu, 07 Apr 2011 18:47:34 +0200
+Message-ID: <1302194855-29205-3-git-send-email-s.nawrocki@samsung.com>
+References: <1302194855-29205-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.w1.samsung.com ([210.118.77.13]:58780 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751294Ab1DGQrr (ORCPT
+	with ESMTP id S1755234Ab1DGQrs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Apr 2011 12:47:47 -0400
+	Thu, 7 Apr 2011 12:47:48 -0400
+In-reply-to: <1302194855-29205-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, kgene.kim@samsung.com, sungchun.kang@samsung.com, jonghun.han@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, kgene.kim@samsung.com, sungchun.kang@samsung.com, jonghun.han@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hello,
+s5p-fimc now also implements a camera capture video node so move
+it under the "Video capture devices" Kconfig menu. Also update
+the entry to reflect the driver's coverage of EXYNOS4 SoCs.
 
-the following is a v4l2 subdev driver for MIPI-CSI2 receivers
-available in S5PVx10 and EXYNOS4 SoCs. The MIPI-CSIS module 
-(MIPI CSI Slave) works closely with the FIMC IP, i.e. it is its 
-frontend for the MIPI CSI serial bus.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/media/video/Kconfig |   17 ++++++++---------
+ 1 files changed, 8 insertions(+), 9 deletions(-)
 
-Other than that the following patch set moves the s5p-fimc driver
-under Video Capture Devices in kconfig and adds a V4L2_MBUS_FMT_JPEG_1X8
-media bus format.
-To follow are patches converting s5p-fimc to the pad ops and
-adding a media device for precisely managing all available FIMC and
-MIPI CSIS entities and image sensors. However this still needs
-a bit of work.
-
-As usual, review comments are welcome!
-
-Changes since v1:
- - added runtime PM support
- - conversion to the pad ops
-
-The patch series contains:
-
- [PATCH 1/3] v4l: Add V4L2_MBUS_FMT_JPEG_1X8 media bus format
- [PATCH 2/3] v4l: Move S5P FIMC driver into Video Capture Devices
- [PATCH 3/3] v4l: Add v4l2 subdev driver for S5P/EXYNOS4 MIPI-CSI Receiver
-
---
-Regards,
-Sylwester Nawrocki
-Samsung Poland R&D Center
+diff --git a/drivers/media/video/Kconfig b/drivers/media/video/Kconfig
+index 4498b94..492f2ef 100644
+--- a/drivers/media/video/Kconfig
++++ b/drivers/media/video/Kconfig
+@@ -927,6 +927,14 @@ config VIDEO_MX2
+ 	  This is a v4l2 driver for the i.MX27 and the i.MX25 Camera Sensor
+ 	  Interface
+ 
++config  VIDEO_SAMSUNG_S5P_FIMC
++	tristate "S5P and EXYNOS4 camera host interface driver"
++	depends on VIDEO_DEV && VIDEO_V4L2 && PLAT_S5P
++	select VIDEOBUF2_DMA_CONTIG
++	select V4L2_MEM2MEM_DEV
++	---help---
++	  This is a v4l2 driver for the S5P and EXYNOS4 camera host interface
++	  and video postprocessor.
+ 
+ #
+ # USB Multimedia device configuration
+@@ -1022,13 +1030,4 @@ config VIDEO_MEM2MEM_TESTDEV
+ 	  This is a virtual test device for the memory-to-memory driver
+ 	  framework.
+ 
+-config  VIDEO_SAMSUNG_S5P_FIMC
+-	tristate "Samsung S5P FIMC (video postprocessor) driver"
+-	depends on VIDEO_DEV && VIDEO_V4L2 && PLAT_S5P
+-	select VIDEOBUF2_DMA_CONTIG
+-	select V4L2_MEM2MEM_DEV
+-	help
+-	  This is a v4l2 driver for the S5P camera interface
+-	  (video postprocessor)
+-
+ endif # V4L_MEM2MEM_DRIVERS
+-- 
+1.7.4.3
