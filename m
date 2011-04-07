@@ -1,41 +1,65 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [alsa-devel][PATCH 3/3] SoC: SAMSUNG: Add WM8580 PCM Machine driver
-Date: Thu, 7 Apr 2011 09:13:06 +0530
-Message-ID: <BANLkTinOadw2TkNMs2_Lvmskb=yU8XYUuw@mail.gmail.com>
+From: Sangbeom Kim <sbkim73@samsung.com>
+Subject: RE: [alsa-devel] [PATCH 3/3] SoC: SAMSUNG: Add WM8580 PCM Machine
+ driver
+Date: Thu, 07 Apr 2011 13:44:37 +0900
+Message-ID: <041f01cbf4de$85702f30$90508d90$@com>
 References: <1302136270-28776-1-git-send-email-sbkim73@samsung.com>
-	<1302136270-28776-4-git-send-email-sbkim73@samsung.com>
+ <1302136270-28776-4-git-send-email-sbkim73@samsung.com>
+ <BANLkTinOadw2TkNMs2_Lvmskb=yU8XYUuw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:34342 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751297Ab1DGDnI (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:10907 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751052Ab1DGEo6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Apr 2011 23:43:08 -0400
-Received: by bwz15 with SMTP id 15so1679814bwz.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Apr 2011 20:43:07 -0700 (PDT)
-In-Reply-To: <1302136270-28776-4-git-send-email-sbkim73@samsung.com>
+	Thu, 7 Apr 2011 00:44:58 -0400
+Received: from epmmp1 (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LJ9008Q3MINO300@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 07 Apr 2011 13:44:47 +0900 (KST)
+Received: from DOSBKIM7301 ([12.23.103.65])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LJ900FLXMIMO1@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 07 Apr 2011 13:44:47 +0900 (KST)
+In-reply-to: <BANLkTinOadw2TkNMs2_Lvmskb=yU8XYUuw@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, ben-linux@fluff.org
+To: 'Jassi Brar' <jassisinghbrar@gmail.com>
+Cc: alsa-devel@alsa-project.org, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, lrg@slimlogic.co.uk
 
-PiArc3RhdGljIHN0cnVjdCBzbmRfc29jX2RhaV9saW5rIHNtZGtfZGFpW10gPSB7Cj4gKyDCoCDC
-oCDCoCB7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAubmFtZSA9ICJXTTg1ODAgUEFJRiBQQ00g
-UlgiLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLnN0cmVhbV9uYW1lID0gIlBsYXliYWNrIiwK
-PiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5jcHVfZGFpX25hbWUgPSAic2Ftc3VuZy1wY20uMCIs
-Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAuY29kZWNfZGFpX25hbWUgPSAid204NTgwLWhpZmkt
-cGxheWJhY2siLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLnBsYXRmb3JtX25hbWUgPSAic2Ft
-c3VuZy1hdWRpbyIsCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAuY29kZWNfbmFtZSA9ICJ3bTg1
-ODAtY29kZWMuMC0wMDFiIiwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5vcHMgPSAmc21ka193
-bTg1ODBfcGNtX29wcywKPiArIMKgIMKgIMKgIH0sIHsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IC5uYW1lID0gIldNODU4MCBQQUlGIFBDTSBUWCIsCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAu
-c3RyZWFtX25hbWUgPSAiQ2FwdHVyZSIsCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAuY3B1X2Rh
-aV9uYW1lID0gInNhbXN1bmctcGNtLjAiLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLmNvZGVj
-X2RhaV9uYW1lID0gIndtODU4MC1oaWZpLWNhcHR1cmUiLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgLnBsYXRmb3JtX25hbWUgPSAic2Ftc3VuZy1hdWRpbyIsCj4gKyDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCAuY29kZWNfbmFtZSA9ICJ3bTg1ODAtY29kZWMuMC0wMDFiIiwKPiArIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIC5vcHMgPSAmc21ka193bTg1ODBfcGNtX29wcywKPiArIMKgIMKgIMKgIH0sCj4g
-K307CgpJSVJDIHRoZSBQQ00gREFJIGlzIGNvbm5lY3RlZCB0byBTZWNvbmRhcnkgaS9mIG9mIFdN
-ODU4MApvbiBzb21lIFNNREtzLiBJc24ndCBpdCBzbWRrNjQxMCA/Cg==
+Hi! Jassi
+
+On Thursday, April 07, 2011 12:43 PM, Jassi Brar wrote:
+> > +static struct snd_soc_dai_link smdk_dai[] = {
+> > +       {
+> > +               .name = "WM8580 PAIF PCM RX",
+> > +               .stream_name = "Playback",
+> > +               .cpu_dai_name = "samsung-pcm.0",
+> > +               .codec_dai_name = "wm8580-hifi-playback",
+> > +               .platform_name = "samsung-audio",
+> > +               .codec_name = "wm8580-codec.0-001b",
+> > +               .ops = &smdk_wm8580_pcm_ops,
+> > +       }, {
+> > +               .name = "WM8580 PAIF PCM TX",
+> > +               .stream_name = "Capture",
+> > +               .cpu_dai_name = "samsung-pcm.0",
+> > +               .codec_dai_name = "wm8580-hifi-capture",
+> > +               .platform_name = "samsung-audio",
+> > +               .codec_name = "wm8580-codec.0-001b",
+> > +               .ops = &smdk_wm8580_pcm_ops,
+> > +       },
+> > +};
+> 
+> IIRC the PCM DAI is connected to Secondary i/f of WM8580
+> on some SMDKs. Isn't it smdk6410 ?
+
+Yes, Your remember is right. SMDK6410 has WM8580 PCM DAI.
+But, In this time, I couldn't test on SMDK6410.
+After testing on SMDK6410, I will submit related patch.
+
+Thanks and regards,
+SB Kim
