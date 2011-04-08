@@ -1,27 +1,23 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: [PATCH 4/4] USB: Add initial S5P EHCI driver
-Date: Fri, 08 Apr 2011 13:22:12 +0900
-Message-ID: <1302236532-27636-4-git-send-email-jy0922.shim@samsung.com>
-References: <1302236532-27636-1-git-send-email-jy0922.shim@samsung.com>
+From: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 4/4 RESEND] USB: Add initial S5P EHCI driver
+Date: Fri, 08 Apr 2011 14:08:50 +0900
+Message-ID: <1302239330-28669-1-git-send-email-jy0922.shim@samsung.com>
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:14918 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751143Ab1DHEXB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Apr 2011 00:23:01 -0400
-In-reply-to: <1302236532-27636-1-git-send-email-jy0922.shim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gregkh-l3A5Bk7waGM@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, gregkh@suse.de, kyungmin.park@samsung.com, jg1.han@samsung.com
 
 This patch adds host USB high speed driver for samsung S5P series. This
 is initial driver and we need additional implementation to support some
 functions like power management.
 
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Signed-off-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
+Add missing Signed-off-by.
+
  drivers/usb/Kconfig         |    1 +
  drivers/usb/host/Kconfig    |    6 ++
  drivers/usb/host/ehci-hcd.c |    5 +
@@ -84,8 +80,8 @@ index 0000000..0c18f28
 + * SAMSUNG S5P USB HOST EHCI Controller
 + *
 + * Copyright (C) 2011 Samsung Electronics Co.Ltd
-+ * Author: Jingoo Han <jg1.han@samsung.com>
-+ * Author: Joonyoung Shim <jy0922.shim@samsung.com>
++ * Author: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
++ * Author: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 + *
 + * This program is free software; you can redistribute  it and/or modify it
 + * under  the terms of  the GNU General  Public License as published by the
@@ -283,3 +279,8 @@ index 0000000..0c18f28
 +MODULE_ALIAS("platform:s5p-ehci");
 -- 
 1.7.0.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
