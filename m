@@ -1,389 +1,277 @@
 From: Sangbeom Kim <sbkim73@samsung.com>
-Subject: [PATCH 3/3] ARM: S5P64X0: Add PCM audio support for WM8580
-Date: Sat,  9 Apr 2011 10:58:01 +0900
-Message-ID: <1302314281-11466-4-git-send-email-sbkim73@samsung.com>
+Subject: [PATCH 3/3] ASoC: SAMSUNG: Add WM8580 PCM Machine driver
+Date: Sat,  9 Apr 2011 10:57:59 +0900
+Message-ID: <1302314281-11466-2-git-send-email-sbkim73@samsung.com>
 References: <1302314281-11466-1-git-send-email-sbkim73@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:34942 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:34960 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751553Ab1DIC35 (ORCPT
+	with ESMTP id S1752192Ab1DIC36 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Apr 2011 22:29:57 -0400
+	Fri, 8 Apr 2011 22:29:58 -0400
 In-Reply-To: <1302314281-11466-1-git-send-email-sbkim73@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
 Cc: jassisinghbrar@gmail.com, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, ben-linux@fluff.org, Sangbeom Kim <sbkim73@samsung.com>
 
-This patch add pcm audio configuration for SMDK6450 and SMDK6440.
-Platform device and pcm clock initialization code is added.
+This patch add WM8580 PCM machine driver to support PCM audio
+on SMDKC110, SMDKV210, SMDK6450, SMDK6440 boards.
+Playback and Capture supports 8kHz sampling rates.
+and It is tested on SMDKC110, SMDKV210, SMDK6450
 
 Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
 ---
- arch/arm/mach-s5p64x0/clock-s5p6440.c              |   63 +++++++++++---------
- arch/arm/mach-s5p64x0/clock-s5p6450.c              |   27 +++++++--
- arch/arm/mach-s5p64x0/clock.c                      |   11 ++++
- arch/arm/mach-s5p64x0/dev-audio.c                  |   56 ++++++++++++++++-
- arch/arm/mach-s5p64x0/include/mach/regs-clock.h    |    3 +
- arch/arm/mach-s5p64x0/include/mach/s5p64x0-clock.h |    4 +
- arch/arm/mach-s5p64x0/mach-smdk6440.c              |    7 ++
- arch/arm/mach-s5p64x0/mach-smdk6450.c              |    7 ++
- 8 files changed, 141 insertions(+), 37 deletions(-)
+ sound/soc/samsung/Kconfig          |    8 ++
+ sound/soc/samsung/Makefile         |    2 +
+ sound/soc/samsung/smdk_wm8580pcm.c |  206 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 216 insertions(+), 0 deletions(-)
+ create mode 100644 sound/soc/samsung/smdk_wm8580pcm.c
 
-diff --git a/arch/arm/mach-s5p64x0/clock-s5p6440.c b/arch/arm/mach-s5p64x0/clock-s5p6440.c
-index 9f12c2e..99405f4 100644
---- a/arch/arm/mach-s5p64x0/clock-s5p6440.c
-+++ b/arch/arm/mach-s5p64x0/clock-s5p6440.c
-@@ -372,14 +372,12 @@ static struct clk init_clocks[] = {
- 	},
- };
- 
--static struct clk clk_iis_cd_v40 = {
--	.name		= "iis_cdclk_v40",
--	.id		= -1,
--};
--
--static struct clk clk_pcm_cd = {
--	.name		= "pcm_cdclk",
--	.id		= -1,
-+static struct clksrc_clk clk_dout_epll = {
-+	.clk	= {
-+		.name	= "dout_epll",
-+		.id	= -1,
-+		.parent = &clk_mout_epll.clk,
-+	},
- };
- 
- static struct clk *clkset_group1_list[] = {
-@@ -403,17 +401,30 @@ static struct clksrc_sources clkset_uart = {
- 	.nr_sources	= ARRAY_SIZE(clkset_uart_list),
- };
- 
--static struct clk *clkset_audio_list[] = {
--	&clk_mout_epll.clk,
--	&clk_dout_mpll.clk,
--	&clk_fin_epll,
--	&clk_iis_cd_v40,
--	&clk_pcm_cd,
-+static struct clk *clkset_sclk_audio_list[] = {
-+	[0] = &clk_dout_epll.clk,
-+	[1] = &clk_dout_mpll.clk,
-+	[2] = &clk_ext,
-+	[3] = &clk_i2s_v40_cdclk,
-+	[4] = &clk_pcmcdclk0,
-+};
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index a3fdfb6..b8c7a2e 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -162,3 +162,11 @@ config SND_SOC_SAMSUNG_SMDK_SPDIF
+ 	select SND_SAMSUNG_SPDIF
+ 	help
+ 	  Say Y if you want to add support for SoC S/PDIF audio on the SMDK.
 +
-+static struct clksrc_sources clkset_sclk_audio = {
-+	.sources	= clkset_sclk_audio_list,
-+	.nr_sources	= ARRAY_SIZE(clkset_sclk_audio_list),
- };
++config SND_SOC_SMDK_WM8580_PCM
++	tristate "SoC PCM Audio support for WM8580 on SMDK"
++	depends on SND_SOC_SAMSUNG && (MACH_SMDK6450 || MACH_SMDKV210 || MACH_SMDKC110)
++	select SND_SOC_WM8580
++	select SND_SAMSUNG_PCM
++	help
++	  Say Y if you want to add support for SoC audio on the SMDK.
+diff --git a/sound/soc/samsung/Makefile b/sound/soc/samsung/Makefile
+index 294dec0..6c598fc 100644
+--- a/sound/soc/samsung/Makefile
++++ b/sound/soc/samsung/Makefile
+@@ -34,6 +34,7 @@ snd-soc-smdk-wm9713-objs := smdk_wm9713.o
+ snd-soc-s3c64xx-smartq-wm8987-objs := smartq_wm8987.o
+ snd-soc-goni-wm8994-objs := goni_wm8994.o
+ snd-soc-smdk-spdif-objs := smdk_spdif.o
++snd-soc-smdk-wm8580pcm-objs := smdk_wm8580pcm.o
  
--static struct clksrc_sources clkset_audio = {
--	.sources	= clkset_audio_list,
--	.nr_sources	= ARRAY_SIZE(clkset_audio_list),
-+struct clksrc_clk clk_sclk_audio = {
-+	.clk		= {
-+		.name		= "audio-bus",
-+		.id		= -1,
-+		.enable		= s5p64x0_sclk_ctrl,
-+		.ctrlbit	= (1 << 11),
-+		.parent		= &clk_ext_xtal_mux,
-+	},
-+	.sources	= &clkset_sclk_audio,
-+	.reg_src	= { .reg = S5P64X0_CLK_SRC1, .shift = 0, .size = 3 },
-+	.reg_div	= { .reg = S5P64X0_CLK_DIV2, .shift = 24, .size = 4 },
- };
- 
- static struct clksrc_clk clksrcs[] = {
-@@ -507,16 +518,6 @@ static struct clksrc_clk clksrcs[] = {
- 		.sources = &clkset_group1,
- 		.reg_src = { .reg = S5P64X0_CLK_SRC1, .shift = 8, .size = 2 },
- 		.reg_div = { .reg = S5P64X0_CLK_DIV3, .shift = 4, .size = 4 },
--	}, {
--		.clk	= {
--			.name		= "sclk_audio2",
--			.id		= -1,
--			.ctrlbit	= (1 << 11),
--			.enable		= s5p64x0_sclk_ctrl,
--		},
--		.sources = &clkset_audio,
--		.reg_src = { .reg = S5P64X0_CLK_SRC1, .shift = 0, .size = 3 },
--		.reg_div = { .reg = S5P64X0_CLK_DIV2, .shift = 24, .size = 4 },
- 	},
- };
- 
-@@ -526,11 +527,13 @@ static struct clksrc_clk *sysclks[] = {
- 	&clk_mout_epll,
- 	&clk_mout_mpll,
- 	&clk_dout_mpll,
-+	&clk_dout_epll,
- 	&clk_armclk,
- 	&clk_hclk,
- 	&clk_pclk,
- 	&clk_hclk_low,
- 	&clk_pclk_low,
-+	&clk_sclk_audio,
- };
- 
- void __init_or_cpufreq s5p6440_setup_clocks(void)
-@@ -590,14 +593,16 @@ void __init_or_cpufreq s5p6440_setup_clocks(void)
- 	clk_h.rate = hclk;
- 	clk_p.rate = pclk;
- 
-+	clk_set_parent(&clk_sclk_audio.clk, &clk_pcmcdclk0);
+ obj-$(CONFIG_SND_SOC_SAMSUNG_JIVE_WM8750) += snd-soc-jive-wm8750.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_NEO1973_WM8753) += snd-soc-neo1973-wm8753.o
+@@ -51,3 +52,4 @@ obj-$(CONFIG_SND_SOC_SAMSUNG_SMDK_WM9713) += snd-soc-smdk-wm9713.o
+ obj-$(CONFIG_SND_SOC_SMARTQ) += snd-soc-s3c64xx-smartq-wm8987.o
+ obj-$(CONFIG_SND_SOC_SAMSUNG_SMDK_SPDIF) += snd-soc-smdk-spdif.o
+ obj-$(CONFIG_SND_SOC_GONI_AQUILA_WM8994) += snd-soc-goni-wm8994.o
++obj-$(CONFIG_SND_SOC_SMDK_WM8580_PCM) += snd-soc-smdk-wm8580pcm.o
+diff --git a/sound/soc/samsung/smdk_wm8580pcm.c b/sound/soc/samsung/smdk_wm8580pcm.c
+new file mode 100644
+index 0000000..0d12092
+--- /dev/null
++++ b/sound/soc/samsung/smdk_wm8580pcm.c
+@@ -0,0 +1,206 @@
++/*
++ *  sound/soc/samsung/smdk_wm8580pcm.c
++ *
++ *  Copyright (c) 2011 Samsung Electronics Co. Ltd
++ *
++ *  This program is free software; you can redistribute  it and/or  modify it
++ *  under  the terms of  the GNU General  Public License as published by the
++ *  Free Software Foundation;  either version 2 of the  License, or (at your
++ *  option) any later version.
++ */
++#include <sound/soc.h>
++#include <sound/pcm_params.h>
++#include <sound/pcm.h>
 +
- 	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
- 		s3c_set_clksrc(&clksrcs[ptr], true);
- }
- 
- static struct clk *clks[] __initdata = {
- 	&clk_ext,
--	&clk_iis_cd_v40,
--	&clk_pcm_cd,
-+	&clk_i2s_v40_cdclk,
-+	&clk_pcmcdclk0,
- };
- 
- void __init s5p6440_register_clocks(void)
-diff --git a/arch/arm/mach-s5p64x0/clock-s5p6450.c b/arch/arm/mach-s5p64x0/clock-s5p6450.c
-index 4eec457..e4db264 100644
---- a/arch/arm/mach-s5p64x0/clock-s5p6450.c
-+++ b/arch/arm/mach-s5p64x0/clock-s5p6450.c
-@@ -290,7 +290,14 @@ static struct clk init_clocks_off[] = {
- 		.parent		= &clk_pclk.clk,
- 		.enable		= s5p64x0_pclk_ctrl,
- 		.ctrlbit	= (1 << 30),
--	}
-+	}, {
-+		.name		= "pcm",
-+		.id		= 0,
-+		.parent		= &clk_pclk_low.clk,
-+		.enable		= s5p64x0_pclk_ctrl,
-+		.ctrlbit	= S5P_CLKCON_PCLK_PCM0,
-+	},
++#include <asm/mach-types.h>
 +
- };
- 
- /*
-@@ -408,9 +415,9 @@ static struct clksrc_sources clkset_hsmmc44 = {
- static struct clk *clkset_sclk_audio0_list[] = {
- 	[0] = &clk_dout_epll.clk,
- 	[1] = &clk_dout_mpll.clk,
--	[2] = &clk_ext_xtal_mux,
--	[3] = NULL,
--	[4] = NULL,
-+	[2] = &clk_ext,
-+	[3] = &clk_i2s_v40_cdclk,
-+	[4] = &clk_pcmcdclk0,
- };
- 
- static struct clksrc_sources clkset_sclk_audio0 = {
-@@ -418,7 +425,7 @@ static struct clksrc_sources clkset_sclk_audio0 = {
- 	.nr_sources	= ARRAY_SIZE(clkset_sclk_audio0_list),
- };
- 
--static struct clksrc_clk clk_sclk_audio0 = {
-+struct clksrc_clk clk_sclk_audio0 = {
- 	.clk		= {
- 		.name		= "audio-bus",
- 		.id		= -1,
-@@ -647,12 +654,22 @@ void __init_or_cpufreq s5p6450_setup_clocks(void)
- 
- 	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
- 		s3c_set_clksrc(&clksrcs[ptr], true);
++#include "../codecs/wm8580.h"
++#include "dma.h"
++#include "pcm.h"
 +
-+	clk_set_parent(&clk_sclk_audio0.clk, &clk_pcmcdclk0);
- }
- 
-+static struct clk *clks[] __initdata = {
-+	&clk_ext,
-+	&clk_i2s_v40_cdclk,
-+	&clk_pcmcdclk0,
-+};
++/*
++ * Board Settings:
++ *  o '1' means 'ON'
++ *  o '0' means 'OFF'
++ *  o 'X' means 'Don't care'
++ *
++ * SMDK6410, SMDK6440, SMDK6450 Base B/D: CFG1-0000, CFG2-1111
++ * SMDKC110, SMDKV210: CFGB11-100100, CFGB12-0000
++ */
 +
- void __init s5p6450_register_clocks(void)
- {
- 	int ptr;
- 
-+	s3c24xx_register_clocks(clks, ARRAY_SIZE(clks));
++#define SMDK_WM8580_EXT_OSC 12000000
++#define SMDK_WM8580_EXT_MCLK 4096000
++#define SMDK_WM8580_EXT_VOICE 2048000
 +
- 	for (ptr = 0; ptr < ARRAY_SIZE(sysclks); ptr++)
- 		s3c_register_clksrc(sysclks[ptr], 1);
- 
-diff --git a/arch/arm/mach-s5p64x0/clock.c b/arch/arm/mach-s5p64x0/clock.c
-index b52c6e2..432bb06 100644
---- a/arch/arm/mach-s5p64x0/clock.c
-+++ b/arch/arm/mach-s5p64x0/clock.c
-@@ -233,3 +233,14 @@ int s5p64x0_clk48m_ctrl(struct clk *clk, int enable)
- 
- 	return 0;
- }
++static unsigned long mclk_freq;
++static unsigned long xtal_freq;
 +
-+struct clk clk_pcmcdclk0 = {
-+	.name		= "pcmcdclk",
-+	.id		= 0,
-+	.rate		= 4096000,
-+};
++/*
++ * If MCLK clock directly gets from XTAL, we don't have to use PLL
++ * to make MCLK, but if XTAL clock source connects with other codec
++ * pin (like XTI), we should have to set codec's PLL to make MCLK.
++ * Because Samsung SoC does not support pcmcdclk output like I2S.
++ */
 +
-+struct clk clk_i2s_v40_cdclk = {
-+	.name		= "i2s_v40_cdclk",
-+	.id		= 0,
-+};
-diff --git a/arch/arm/mach-s5p64x0/dev-audio.c b/arch/arm/mach-s5p64x0/dev-audio.c
-index 35f1f22..c0ef455 100644
---- a/arch/arm/mach-s5p64x0/dev-audio.c
-+++ b/arch/arm/mach-s5p64x0/dev-audio.c
-@@ -207,7 +207,7 @@ static struct s3c_audio_pdata s5p6440_pcm_pdata = {
- 	.cfg_gpio = s5p6440_pcm_cfg_gpio,
- };
- 
--static struct resource s5p6440_pcm0_resource[] = {
-+static struct resource s5p6440_pcm_resource[] = {
- 	[0] = {
- 		.start	= S5P64X0_PA_PCM,
- 		.end	= S5P64X0_PA_PCM + 0x100 - 1,
-@@ -228,9 +228,59 @@ static struct resource s5p6440_pcm0_resource[] = {
- struct platform_device s5p6440_device_pcm = {
- 	.name		= "samsung-pcm",
- 	.id		= 0,
--	.num_resources	= ARRAY_SIZE(s5p6440_pcm0_resource),
--	.resource	= s5p6440_pcm0_resource,
-+	.num_resources	= ARRAY_SIZE(s5p6440_pcm_resource),
-+	.resource	= s5p6440_pcm_resource,
- 	.dev = {
- 		.platform_data = &s5p6440_pcm_pdata,
- 	},
- };
-+
-+static int s5p6450_pcm_cfg_gpio(struct platform_device *pdev)
++static int smdk_wm8580_pcm_hw_params(struct snd_pcm_substream *substream,
++			      struct snd_pcm_hw_params *params)
 +{
-+	switch (pdev->id) {
-+	case 0:
-+		s3c_gpio_cfgpin(S5P6450_GPR(4), S3C_GPIO_SFN(2));
-+		s3c_gpio_cfgpin(S5P6450_GPR(7), S3C_GPIO_SFN(2));
-+		s3c_gpio_cfgpin(S5P6450_GPR(8), S3C_GPIO_SFN(2));
-+		s3c_gpio_cfgpin(S5P6450_GPR(13), S3C_GPIO_SFN(2));
-+		s3c_gpio_cfgpin(S5P6450_GPR(14), S3C_GPIO_SFN(2));
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++	struct snd_soc_dai *codec_dai = rtd->codec_dai;
++	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
++	int rfs, ret;
++
++	switch (params_rate(params)) {
++	case 8000:
 +		break;
 +	default:
-+		printk(KERN_DEBUG "Invalid PCM Controller number!");
++		printk(KERN_ERR "%s:%d Sampling Rate %u not supported!\n",
++		__func__, __LINE__, params_rate(params));
 +		return -EINVAL;
++	}
++
++	rfs = mclk_freq / params_rate(params) / 2;
++
++	/* Set the codec DAI configuration */
++	ret = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_DSP_B
++				| SND_SOC_DAIFMT_IB_NF
++				| SND_SOC_DAIFMT_CBS_CFS);
++	if (ret < 0)
++		return ret;
++
++	/* Set the cpu DAI configuration */
++	ret = snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_DSP_B
++				| SND_SOC_DAIFMT_IB_NF
++				| SND_SOC_DAIFMT_CBS_CFS);
++	if (ret < 0)
++		return ret;
++
++	if (mclk_freq == xtal_freq) {
++		ret = snd_soc_dai_set_sysclk(codec_dai, WM8580_CLKSRC_MCLK,
++						mclk_freq, SND_SOC_CLOCK_IN);
++		if (ret < 0)
++			return ret;
++
++		ret = snd_soc_dai_set_clkdiv(codec_dai, WM8580_MCLK,
++						WM8580_CLKSRC_MCLK);
++		if (ret < 0)
++			return ret;
++	} else {
++		ret = snd_soc_dai_set_sysclk(codec_dai, WM8580_CLKSRC_PLLA,
++						mclk_freq, SND_SOC_CLOCK_IN);
++		if (ret < 0)
++			return ret;
++
++		ret = snd_soc_dai_set_clkdiv(codec_dai, WM8580_MCLK,
++						WM8580_CLKSRC_PLLA);
++		if (ret < 0)
++			return ret;
++
++		ret = snd_soc_dai_set_pll(codec_dai, WM8580_PLLA, 0,
++						xtal_freq, mclk_freq);
++		if (ret < 0)
++			return ret;
++	}
++
++	/* Set PCM source clock on CPU */
++	ret = snd_soc_dai_set_sysclk(cpu_dai, S3C_PCM_CLKSRC_MUX,
++					mclk_freq, SND_SOC_CLOCK_IN);
++	if (ret < 0)
++		return ret;
++
++	/* Set SCLK_DIV for making bclk */
++	ret = snd_soc_dai_set_clkdiv(cpu_dai, S3C_PCM_SCLK_PER_FS, rfs);
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
++static struct snd_soc_ops smdk_wm8580_pcm_ops = {
++	.hw_params = smdk_wm8580_pcm_hw_params,
++};
++
++static struct snd_soc_dai_link smdk_dai[] = {
++	{
++		.name = "WM8580 PAIF PCM RX",
++		.stream_name = "Playback",
++		.cpu_dai_name = "samsung-pcm.0",
++		.codec_dai_name = "wm8580-hifi-playback",
++		.platform_name = "samsung-audio",
++		.codec_name = "wm8580-codec.0-001b",
++		.ops = &smdk_wm8580_pcm_ops,
++	}, {
++		.name = "WM8580 PAIF PCM TX",
++		.stream_name = "Capture",
++		.cpu_dai_name = "samsung-pcm.0",
++		.codec_dai_name = "wm8580-hifi-capture",
++		.platform_name = "samsung-audio",
++		.codec_name = "wm8580-codec.0-001b",
++		.ops = &smdk_wm8580_pcm_ops,
++	},
++};
++
++static struct snd_soc_card smdk_pcm = {
++	.name = "SMDK-PCM",
++	.dai_link = smdk_dai,
++	.num_links = 2,
++};
++
++/*
++ * After SMDKC110 Base Board's Rev is '0.1', 12MHz External OSC(X1)
++ * is absent (or not connected), so we connect EXT_VOICE_CLK(OSC4),
++ * 2.0484Mhz, directly with MCLK both Codec and SoC.
++ */
++static int __devinit snd_smdk_probe(struct platform_device *pdev)
++{
++	int ret = 0;
++
++	xtal_freq = SMDK_WM8580_EXT_OSC;
++	mclk_freq = SMDK_WM8580_EXT_MCLK;
++
++	if (machine_is_smdkc110() || machine_is_smdkv210())
++		xtal_freq = mclk_freq = SMDK_WM8580_EXT_VOICE;
++
++	smdk_pcm.dev = &pdev->dev;
++	ret = snd_soc_register_card(&smdk_pcm);
++	if (ret) {
++		dev_err(&pdev->dev, "snd_soc_register_card failed %d\n", ret);
++		return ret;
 +	}
 +
 +	return 0;
 +}
 +
-+static struct s3c_audio_pdata s3c_pcm_pdata = {
-+		.cfg_gpio = s5p6450_pcm_cfg_gpio,
++static int __devexit snd_smdk_remove(struct platform_device *pdev)
++{
++	snd_soc_unregister_card(&smdk_pcm);
++	platform_set_drvdata(pdev, NULL);
++	return 0;
++}
++
++static struct platform_driver snd_smdk_driver = {
++	.driver = {
++		.owner = THIS_MODULE,
++		.name = "samsung-smdk-pcm",
++	},
++	.probe = snd_smdk_probe,
++	.remove = __devexit_p(snd_smdk_remove),
 +};
 +
-+static struct resource s5p6450_pcm0_resource[] = {
-+		[0] = {
-+			.start = S5P64X0_PA_PCM,
-+			.end   = S5P64X0_PA_PCM + 0x100 - 1,
-+			.flags = IORESOURCE_MEM,
-+		},
-+		[1] = {
-+			.start = DMACH_PCM0_TX,
-+			.end   = DMACH_PCM0_TX,
-+			.flags = IORESOURCE_DMA,
-+		},
-+		[2] = {
-+			.start = DMACH_PCM0_RX,
-+			.end   = DMACH_PCM0_RX,
-+			.flags = IORESOURCE_DMA,
-+		},
-+};
++static int __init smdk_audio_init(void)
++{
++	return platform_driver_register(&snd_smdk_driver);
++}
 +
-+struct platform_device s5p6450_device_pcm0 = {
-+		.name		= "samsung-pcm",
-+		.id		= 0,
-+		.num_resources	= ARRAY_SIZE(s5p6450_pcm0_resource),
-+		.resource	= s5p6450_pcm0_resource,
-+		.dev = {
-+				.platform_data = &s3c_pcm_pdata,
-+		},
-+};
-diff --git a/arch/arm/mach-s5p64x0/include/mach/regs-clock.h b/arch/arm/mach-s5p64x0/include/mach/regs-clock.h
-index a133f22..323c97c 100644
---- a/arch/arm/mach-s5p64x0/include/mach/regs-clock.h
-+++ b/arch/arm/mach-s5p64x0/include/mach/regs-clock.h
-@@ -62,4 +62,7 @@
- 
- #define S5P_EPLL_CON			S5P64X0_EPLL_CON
- 
-+#define S5P_CLKCON_SCLK0_AUDIO0	(1<<8)
-+#define S5P_CLKCON_PCLK_PCM0		(1<<8)
++module_init(smdk_audio_init);
 +
- #endif /* __ASM_ARCH_REGS_CLOCK_H */
-diff --git a/arch/arm/mach-s5p64x0/include/mach/s5p64x0-clock.h b/arch/arm/mach-s5p64x0/include/mach/s5p64x0-clock.h
-index ff85b4b..88a8065 100644
---- a/arch/arm/mach-s5p64x0/include/mach/s5p64x0-clock.h
-+++ b/arch/arm/mach-s5p64x0/include/mach/s5p64x0-clock.h
-@@ -34,6 +34,10 @@ extern struct clksrc_clk clk_dout_mpll;
- extern struct clk *clkset_hclk_low_list[];
- extern struct clksrc_sources clkset_hclk_low;
- 
-+extern struct clksrc_clk clk_sclk_audio0;
-+extern struct clk clk_pcmcdclk0;
-+extern struct clk clk_i2s_v40_cdclk;
++static void __exit smdk_audio_exit(void)
++{
++	platform_driver_unregister(&snd_smdk_driver);
++}
 +
- extern int s5p64x0_pclk_ctrl(struct clk *clk, int enable);
- extern int s5p64x0_hclk0_ctrl(struct clk *clk, int enable);
- extern int s5p64x0_hclk1_ctrl(struct clk *clk, int enable);
-diff --git a/arch/arm/mach-s5p64x0/mach-smdk6440.c b/arch/arm/mach-s5p64x0/mach-smdk6440.c
-index 2d559f1..0fa500e 100644
---- a/arch/arm/mach-s5p64x0/mach-smdk6440.c
-+++ b/arch/arm/mach-s5p64x0/mach-smdk6440.c
-@@ -130,6 +130,11 @@ static struct platform_device smdk6440_backlight_device = {
- 	},
- };
- 
-+static struct platform_device smdk6440_pcm_device = {
-+	.name		= "samsung-smdk-pcm",
-+	.id		= -1,
-+};
++module_exit(smdk_audio_exit);
 +
- static struct platform_device *smdk6440_devices[] __initdata = {
- 	&s3c_device_adc,
- 	&s3c_device_rtc,
-@@ -139,8 +144,10 @@ static struct platform_device *smdk6440_devices[] __initdata = {
- 	&s3c_device_wdt,
- 	&samsung_asoc_dma,
- 	&s5p6440_device_iis,
-+	&s5p6440_device_pcm,
- 	&s3c_device_timer[1],
- 	&smdk6440_backlight_device,
-+	&smdk6440_pcm_device,
- };
- 
- static struct s3c2410_platform_i2c s5p6440_i2c0_data __initdata = {
-diff --git a/arch/arm/mach-s5p64x0/mach-smdk6450.c b/arch/arm/mach-s5p64x0/mach-smdk6450.c
-index d19c469..69de257 100644
---- a/arch/arm/mach-s5p64x0/mach-smdk6450.c
-+++ b/arch/arm/mach-s5p64x0/mach-smdk6450.c
-@@ -148,6 +148,11 @@ static struct platform_device smdk6450_backlight_device = {
- 	},
- };
- 
-+static struct platform_device smdk6450_pcm_device = {
-+	.name		= "samsung-smdk-pcm",
-+	.id		= -1,
-+};
-+
- static struct platform_device *smdk6450_devices[] __initdata = {
- 	&s3c_device_adc,
- 	&s3c_device_rtc,
-@@ -157,8 +162,10 @@ static struct platform_device *smdk6450_devices[] __initdata = {
- 	&s3c_device_wdt,
- 	&samsung_asoc_dma,
- 	&s5p6450_device_iis0,
-+	&s5p6450_device_pcm0,
- 	&s3c_device_timer[1],
- 	&smdk6450_backlight_device,
-+	&smdk6450_pcm_device,
- 	/* s5p6450_device_spi0 will be added */
- };
- 
++MODULE_AUTHOR("Sangbeom Kim, <sbkim73@samsung.com>");
++MODULE_DESCRIPTION("ALSA SoC SMDK WM8580 for PCM");
++MODULE_LICENSE("GPL");
 -- 
 1.7.1
