@@ -1,7 +1,7 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 1/4] s5p-fimc: Fix FIMC3 pixel limits on Exynos4
-Date: Mon, 11 Apr 2011 11:07:42 +0200
-Message-ID: <1302512865-20379-2-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 3/4] s5p-fimc: Fix bytesperline and plane payload setup
+Date: Mon, 11 Apr 2011 11:07:44 +0200
+Message-ID: <1302512865-20379-4-git-send-email-s.nawrocki@samsung.com>
 References: <1302512865-20379-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -13,100 +13,86 @@ To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Correct pixel limits for the fourth FIMC entity on Exynos4 SoCs.
-FIMC3 only supports the writeback input from the LCD mixer.
-Also rename s5pv310 variant to exynos4 which is needed after
-renaming s5pv310 series to Exynos4.
+Make sure the sizeimage for 3-planar color formats is
+width * height * 3/2 and the bytesperline is same for each
+plane in case of a multi-planar format.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-core.c |   30 +++++++++++++++++++-----------
- 1 files changed, 19 insertions(+), 11 deletions(-)
+ drivers/media/video/s5p-fimc/fimc-capture.c |    6 +++-
+ drivers/media/video/s5p-fimc/fimc-core.c    |   30 ++++++++++++++------------
+ 2 files changed, 20 insertions(+), 16 deletions(-)
 
+diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
+index 00c561c..d142b40 100644
+--- a/drivers/media/video/s5p-fimc/fimc-capture.c
++++ b/drivers/media/video/s5p-fimc/fimc-capture.c
+@@ -539,8 +539,10 @@ static int fimc_cap_s_fmt_mplane(struct file *file, void *priv,
+ 		return -EINVAL;
+ 	}
+ 
+-	for (i = 0; i < frame->fmt->colplanes; i++)
+-		frame->payload[i] = pix->plane_fmt[i].bytesperline * pix->height;
++	for (i = 0; i < frame->fmt->colplanes; i++) {
++		frame->payload[i] =
++			(pix->width * pix->height * frame->fmt->depth[i]) >> 3;
++	}
+ 
+ 	/* Output DMA frame pixel size and offsets. */
+ 	frame->f_width = pix->plane_fmt[0].bytesperline * 8
 diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index 6c919b3..d54e6d85 100644
+index 115a1e0..ef4e3f6 100644
 --- a/drivers/media/video/s5p-fimc/fimc-core.c
 +++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -1750,7 +1750,7 @@ static int __devexit fimc_remove(struct platform_device *pdev)
- }
+@@ -927,23 +927,23 @@ int fimc_vidioc_try_fmt_mplane(struct file *file, void *priv,
+ 	pix->num_planes = fmt->memplanes;
+ 	pix->colorspace	= V4L2_COLORSPACE_JPEG;
  
- /* Image pixel limits, similar across several FIMC HW revisions. */
--static struct fimc_pix_limit s5p_pix_limit[3] = {
-+static struct fimc_pix_limit s5p_pix_limit[4] = {
- 	[0] = {
- 		.scaler_en_w	= 3264,
- 		.scaler_dis_w	= 8192,
-@@ -1775,6 +1775,14 @@ static struct fimc_pix_limit s5p_pix_limit[3] = {
- 		.out_rot_en_w	= 1280,
- 		.out_rot_dis_w	= 1920,
- 	},
-+	[3] = {
-+		.scaler_en_w	= 1920,
-+		.scaler_dis_w	= 8192,
-+		.in_rot_en_h	= 1366,
-+		.in_rot_dis_w	= 8192,
-+		.out_rot_en_w	= 1366,
-+		.out_rot_dis_w	= 1920,
-+	},
- };
+-	for (i = 0; i < pix->num_planes; ++i) {
+-		int bpl = pix->plane_fmt[i].bytesperline;
  
- static struct samsung_fimc_variant fimc0_variant_s5p = {
-@@ -1827,7 +1835,7 @@ static struct samsung_fimc_variant fimc2_variant_s5pv210 = {
- 	.pix_limit	 = &s5p_pix_limit[2],
- };
+-		dbg("[%d] bpl: %d, depth: %d, w: %d, h: %d",
+-		    i, bpl, fmt->depth[i], pix->width, pix->height);
++	for (i = 0; i < pix->num_planes; ++i) {
++		u32 bpl = pix->plane_fmt[i].bytesperline;
++		u32 *sizeimage = &pix->plane_fmt[i].sizeimage;
  
--static struct samsung_fimc_variant fimc0_variant_s5pv310 = {
-+static struct samsung_fimc_variant fimc0_variant_exynos4 = {
- 	.pix_hoff	 = 1,
- 	.has_inp_rot	 = 1,
- 	.has_out_rot	 = 1,
-@@ -1840,7 +1848,7 @@ static struct samsung_fimc_variant fimc0_variant_s5pv310 = {
- 	.pix_limit	 = &s5p_pix_limit[1],
- };
+-		if (!bpl || (bpl * 8 / fmt->depth[i]) > pix->width)
+-			bpl = (pix->width * fmt->depth[0]) >> 3;
++		if (fmt->colplanes > 1 && (bpl == 0 || bpl < pix->width))
++			bpl = pix->width; /* Planar */
  
--static struct samsung_fimc_variant fimc2_variant_s5pv310 = {
-+static struct samsung_fimc_variant fimc2_variant_exynos4 = {
- 	.pix_hoff	 = 1,
- 	.has_cistatus2	 = 1,
- 	.has_mainscaler_ext = 1,
-@@ -1848,7 +1856,7 @@ static struct samsung_fimc_variant fimc2_variant_s5pv310 = {
- 	.min_out_pixsize = 16,
- 	.hor_offs_align	 = 1,
- 	.out_buf_count	 = 32,
--	.pix_limit	 = &s5p_pix_limit[2],
-+	.pix_limit	 = &s5p_pix_limit[3],
- };
+-		if (!pix->plane_fmt[i].sizeimage)
+-			pix->plane_fmt[i].sizeimage = pix->height * bpl;
++		if (fmt->colplanes == 1 && /* Packed */
++		    (bpl == 0 || ((bpl * 8) / fmt->depth[i]) < pix->width))
++			bpl = (pix->width * fmt->depth[0]) / 8;
  
- /* S5PC100 */
-@@ -1874,12 +1882,12 @@ static struct samsung_fimc_driverdata fimc_drvdata_s5pv210 = {
- };
+-		pix->plane_fmt[i].bytesperline = bpl;
++		if (i == 0) /* Same bytesperline for each plane. */
++			mod_x = bpl;
  
- /* S5PV310, S5PC210 */
--static struct samsung_fimc_driverdata fimc_drvdata_s5pv310 = {
-+static struct samsung_fimc_driverdata fimc_drvdata_exynos4 = {
- 	.variant = {
--		[0] = &fimc0_variant_s5pv310,
--		[1] = &fimc0_variant_s5pv310,
--		[2] = &fimc0_variant_s5pv310,
--		[3] = &fimc2_variant_s5pv310,
-+		[0] = &fimc0_variant_exynos4,
-+		[1] = &fimc0_variant_exynos4,
-+		[2] = &fimc0_variant_exynos4,
-+		[3] = &fimc2_variant_exynos4,
- 	},
- 	.num_entities = 4,
- 	.lclk_frequency = 166000000UL,
-@@ -1893,8 +1901,8 @@ static struct platform_device_id fimc_driver_ids[] = {
- 		.name		= "s5pv210-fimc",
- 		.driver_data	= (unsigned long)&fimc_drvdata_s5pv210,
- 	}, {
--		.name		= "s5pv310-fimc",
--		.driver_data	= (unsigned long)&fimc_drvdata_s5pv310,
-+		.name		= "exynos4-fimc",
-+		.driver_data	= (unsigned long)&fimc_drvdata_exynos4,
- 	},
- 	{},
- };
+-		dbg("[%d]: bpl: %d, sizeimage: %d",
+-		    i, pix->plane_fmt[i].bytesperline,
+-		    pix->plane_fmt[i].sizeimage);
++		pix->plane_fmt[i].bytesperline = mod_x;
++		*sizeimage = (pix->width * pix->height * fmt->depth[i]) / 8;
+ 	}
+ 
+ 	return 0;
+@@ -985,8 +985,10 @@ static int fimc_m2m_s_fmt_mplane(struct file *file, void *priv,
+ 	if (!frame->fmt)
+ 		return -EINVAL;
+ 
+-	for (i = 0; i < frame->fmt->colplanes; i++)
+-		frame->payload[i] = pix->plane_fmt[i].bytesperline * pix->height;
++	for (i = 0; i < frame->fmt->colplanes; i++) {
++		frame->payload[i] =
++			(pix->width * pix->height * frame->fmt->depth[i]) / 8;
++	}
+ 
+ 	frame->f_width	= pix->plane_fmt[0].bytesperline * 8 /
+ 		frame->fmt->depth[0];
 -- 
 1.7.4.3
