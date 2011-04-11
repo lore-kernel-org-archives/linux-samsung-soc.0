@@ -1,7 +1,8 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/4] s5p-fimc: Do not allow changing format after REQBUFS
-Date: Mon, 11 Apr 2011 11:07:43 +0200
-Message-ID: <1302512865-20379-3-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 4/4] s5p-fimc: Add support for the buffer timestamps and
+	sequence
+Date: Mon, 11 Apr 2011 11:07:45 +0200
+Message-ID: <1302512865-20379-5-git-send-email-s.nawrocki@samsung.com>
 References: <1302512865-20379-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -13,53 +14,39 @@ To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Protecting the color format with vb2_is_streaming() is not sufficient
-as this prevents changing the format only after VIDIOC_STREAMON.
-To prevent the color format reconfiguration as soon as buffers
-are allocated use vb2_is_busy() instead.
-Also make the videobuf queue ops structure static.
+Add support for buffer timestamps and the sequence number in
+the video capture driver.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-capture.c |    2 +-
- drivers/media/video/s5p-fimc/fimc-core.c    |    4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/video/s5p-fimc/fimc-core.c |   10 ++++++++++
+ 1 files changed, 10 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index 95f8b4e1..00c561c 100644
---- a/drivers/media/video/s5p-fimc/fimc-capture.c
-+++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -527,7 +527,7 @@ static int fimc_cap_s_fmt_mplane(struct file *file, void *priv,
- 	if (ret)
- 		return ret;
- 
--	if (vb2_is_streaming(&fimc->vid_cap.vbq) || fimc_capture_active(fimc))
-+	if (vb2_is_busy(&fimc->vid_cap.vbq) || fimc_capture_active(fimc))
- 		return -EBUSY;
- 
- 	frame = &ctx->d_frame;
 diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index d54e6d85..115a1e0 100644
+index ef4e3f6..dc91a85 100644
 --- a/drivers/media/video/s5p-fimc/fimc-core.c
 +++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -758,7 +758,7 @@ static void fimc_unlock(struct vb2_queue *vq)
- 	mutex_unlock(&ctx->fimc_dev->lock);
- }
+@@ -361,10 +361,20 @@ static void fimc_capture_irq_handler(struct fimc_dev *fimc)
+ {
+ 	struct fimc_vid_cap *cap = &fimc->vid_cap;
+ 	struct fimc_vid_buffer *v_buf;
++	struct timeval *tv;
++	struct timespec ts;
  
--struct vb2_ops fimc_qops = {
-+static struct vb2_ops fimc_qops = {
- 	.queue_setup	 = fimc_queue_setup,
- 	.buf_prepare	 = fimc_buf_prepare,
- 	.buf_queue	 = fimc_buf_queue,
-@@ -965,7 +965,7 @@ static int fimc_m2m_s_fmt_mplane(struct file *file, void *priv,
- 
- 	vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
- 
--	if (vb2_is_streaming(vq)) {
-+	if (vb2_is_busy(vq)) {
- 		v4l2_err(&fimc->m2m.v4l2_dev, "queue (%d) busy\n", f->type);
- 		return -EBUSY;
+ 	if (!list_empty(&cap->active_buf_q) &&
+ 	    test_bit(ST_CAPT_RUN, &fimc->state)) {
++		ktime_get_real_ts(&ts);
++
+ 		v_buf = active_queue_pop(cap);
++
++		tv = &v_buf->vb.v4l2_buf.timestamp;
++		tv->tv_sec = ts.tv_sec;
++		tv->tv_usec = ts.tv_nsec / NSEC_PER_USEC;
++		v_buf->vb.v4l2_buf.sequence = cap->frame_count++;
++
+ 		vb2_buffer_done(&v_buf->vb, VB2_BUF_STATE_DONE);
  	}
+ 
 -- 
 1.7.4.3
