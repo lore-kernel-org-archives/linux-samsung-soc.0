@@ -1,40 +1,65 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 0/4] s5p-fimc driver fixes for 2.6.39
-Date: Mon, 11 Apr 2011 11:07:41 +0200
-Message-ID: <1302512865-20379-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 2/4] s5p-fimc: Do not allow changing format after REQBUFS
+Date: Mon, 11 Apr 2011 11:07:43 +0200
+Message-ID: <1302512865-20379-3-git-send-email-s.nawrocki@samsung.com>
+References: <1302512865-20379-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:21318 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752912Ab1DKJHu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Apr 2011 05:07:50 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1302512865-20379-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
+Protecting the color format with vb2_is_streaming() is not sufficient
+as this prevents changing the format only after VIDIOC_STREAMON.
+To prevent the color format reconfiguration as soon as buffers
+are allocated use vb2_is_busy() instead.
+Also make the videobuf queue ops structure static.
 
-the following are a few bugfix patches for s5p-fimc driver. After recent rename
-of the s5pv310 SoC series to Exynos4 it is necessary to change the variant name
-in the driver, what the first patch does. The second patch corrects the S_FMT
-ioctl handler to forbid the format change as soon as buffers were allocated.
-The changset also correct the bytesperline and plane buffer size which were 
-incorrect in case of the multi-planar formats. Finally it adds buffer timestamp
-and the sequence support in the camera capture driver.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/media/video/s5p-fimc/fimc-capture.c |    2 +-
+ drivers/media/video/s5p-fimc/fimc-core.c    |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-The change set contains:
-
-[PATCH 1/4] s5p-fimc: Fix FIMC3 pixel limits on Exynos4
-[PATCH 2/4] s5p-fimc: Do not allow changing format after REQBUFS
-[PATCH 3/4] s5p-fimc: Fix bytesperline and plane payload setup
-[PATCH 4/4] s5p-fimc: Add support for the buffer timestamps and sequence
-
---
-Regards,
-
-Sylwester Nawrocki
-Samsung Poland R&D Center
+diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
+index 95f8b4e1..00c561c 100644
+--- a/drivers/media/video/s5p-fimc/fimc-capture.c
++++ b/drivers/media/video/s5p-fimc/fimc-capture.c
+@@ -527,7 +527,7 @@ static int fimc_cap_s_fmt_mplane(struct file *file, void *priv,
+ 	if (ret)
+ 		return ret;
+ 
+-	if (vb2_is_streaming(&fimc->vid_cap.vbq) || fimc_capture_active(fimc))
++	if (vb2_is_busy(&fimc->vid_cap.vbq) || fimc_capture_active(fimc))
+ 		return -EBUSY;
+ 
+ 	frame = &ctx->d_frame;
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
+index d54e6d85..115a1e0 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.c
++++ b/drivers/media/video/s5p-fimc/fimc-core.c
+@@ -758,7 +758,7 @@ static void fimc_unlock(struct vb2_queue *vq)
+ 	mutex_unlock(&ctx->fimc_dev->lock);
+ }
+ 
+-struct vb2_ops fimc_qops = {
++static struct vb2_ops fimc_qops = {
+ 	.queue_setup	 = fimc_queue_setup,
+ 	.buf_prepare	 = fimc_buf_prepare,
+ 	.buf_queue	 = fimc_buf_queue,
+@@ -965,7 +965,7 @@ static int fimc_m2m_s_fmt_mplane(struct file *file, void *priv,
+ 
+ 	vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
+ 
+-	if (vb2_is_streaming(vq)) {
++	if (vb2_is_busy(vq)) {
+ 		v4l2_err(&fimc->m2m.v4l2_dev, "queue (%d) busy\n", f->type);
+ 		return -EBUSY;
+ 	}
+-- 
+1.7.4.3
