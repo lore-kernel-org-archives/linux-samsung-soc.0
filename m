@@ -1,223 +1,880 @@
-From: Seungwhan Youn <claude.youn@gmail.com>
-Subject: Re: [PATCH 1/3] ARM: S5PV210: Add PCM audio support
-	for WM8580
-Date: Tue, 12 Apr 2011 17:38:25 +0900
-Message-ID: <BANLkTimzLTyS8vGrL3S5X+oYq9vi9h_5Uw@mail.gmail.com>
-References: <1302314281-11466-1-git-send-email-sbkim73@samsung.com>
-	<1302314281-11466-3-git-send-email-sbkim73@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v3] v4l: Add v4l2 subdev driver for S5P/EXYNOS4 MIPI-CSI
+	receivers
+Date: Tue, 12 Apr 2011 12:06:28 +0200
+Message-ID: <1302602788-18984-1-git-send-email-s.nawrocki@samsung.com>
+References: <1302194855-29205-4-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1302314281-11466-3-git-send-email-sbkim73@samsung.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Sangbeom Kim <sbkim73@samsung.com>
-Cc: alsa-devel@alsa-project.org, kgene.kim@samsung.com, jassisinghbrar@gmail.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, lrg@slimlogic.co.uk
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:49288 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756806Ab1DLKGh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 12 Apr 2011 06:06:37 -0400
+In-reply-to: <1302194855-29205-4-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, kgene.kim@samsung.com, sungchun.kang@samsung.com, jonghun.han@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-SGksCgpPbiBTYXQsIEFwciA5LCAyMDExIGF0IDEwOjU4IEFNLCBTYW5nYmVvbSBLaW0gPHNia2lt
-NzNAc2Ftc3VuZy5jb20+IHdyb3RlOgo+IFRoaXMgcGF0Y2ggYWRkIHBjbSBhdWRpbyBjb25maWd1
-cmF0aW9uIGZvciBTTURLVjIxMCBhbmQgU01ES0MxMTAuCj4gUGxhdGZvcm0gZGV2aWNlIGFuZCBw
-Y20gY2xvY2sgaW5pdGlhbGl6YXRpb24gY29kZSBpcyBhZGRlZC4KPgo+IFNpZ25lZC1vZmYtYnk6
-IFNhbmdiZW9tIEtpbSA8c2JraW03M0BzYW1zdW5nLmNvbT4KPiAtLS0KPiDCoGFyY2gvYXJtL21h
-Y2gtczVwdjIxMC9jbG9jay5jIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHwgwqAgOTAgKysr
-KysrKysrKysrKysrKysrKysrKy0KPiDCoGFyY2gvYXJtL21hY2gtczVwdjIxMC9jcHUuYyDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCB8IMKgIMKgNyArKy0KPiDCoGFyY2gvYXJtL21hY2gt
-czVwdjIxMC9pbmNsdWRlL21hY2gvbWFwLmggwqAgwqAgwqAgwqB8IMKgIMKgMiArCj4gwqBhcmNo
-L2FybS9tYWNoLXM1cHYyMTAvaW5jbHVkZS9tYWNoL3JlZ3MtYXVkc3MuaCB8IMKgIDQ1ICsrKysr
-KysrKysrCj4gwqBhcmNoL2FybS9tYWNoLXM1cHYyMTAvbWFjaC1zbWRrYzExMC5jIMKgIMKgIMKg
-IMKgIMKgIHwgwqAgwqA3ICsrCj4gwqBhcmNoL2FybS9tYWNoLXM1cHYyMTAvbWFjaC1zbWRrdjIx
-MC5jIMKgIMKgIMKgIMKgIMKgIHwgwqAgwqA3ICsrCj4gwqBhcmNoL2FybS9wbGF0LXM1cC9pbmNs
-dWRlL3BsYXQvbWFwLXM1cC5oIMKgIMKgIMKgIMKgfCDCoCDCoDEgKwo+IMKgNyBmaWxlcyBjaGFu
-Z2VkLCAxNTUgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkKPiDCoGNyZWF0ZSBtb2RlIDEw
-MDY0NCBhcmNoL2FybS9tYWNoLXM1cHYyMTAvaW5jbHVkZS9tYWNoL3JlZ3MtYXVkc3MuaAo+Cj4g
-ZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gtczVwdjIxMC9jbG9jay5jIGIvYXJjaC9hcm0vbWFj
-aC1zNXB2MjEwL2Nsb2NrLmMKPiBpbmRleCAyZDU5OTQ5Li5hOTY0ZTFjIDEwMDY0NAo+IC0tLSBh
-L2FyY2gvYXJtL21hY2gtczVwdjIxMC9jbG9jay5jCj4gKysrIGIvYXJjaC9hcm0vbWFjaC1zNXB2
-MjEwL2Nsb2NrLmMKPiBAQCAtMjEsNiArMjEsNyBAQAo+IMKgI2luY2x1ZGUgPGxpbnV4L2lvLmg+
-Cj4KPiDCoCNpbmNsdWRlIDxtYWNoL21hcC5oPgo+ICsjaW5jbHVkZSA8bWFjaC9yZWdzLWF1ZHNz
-Lmg+Cj4KPiDCoCNpbmNsdWRlIDxwbGF0L2NwdS1mcmVxLmg+Cj4gwqAjaW5jbHVkZSA8bWFjaC9y
-ZWdzLWNsb2NrLmg+Cj4gQEAgLTE4NSw2ICsxODYsMTEgQEAgc3RhdGljIGludCBzNXB2MjEwX2Ns
-a19tYXNrMV9jdHJsKHN0cnVjdCBjbGsgKmNsaywgaW50IGVuYWJsZSkKPiDCoCDCoCDCoCDCoHJl
-dHVybiBzNXBfZ2F0ZWN0cmwoUzVQX0NMS19TUkNfTUFTSzEsIGNsaywgZW5hYmxlKTsKPiDCoH0K
-Pgo+ICtzdGF0aWMgaW50IHM1cHYyMTBfY2xrX2F1ZHNzX2N0cmwoc3RydWN0IGNsayAqY2xrLCBp
-bnQgZW5hYmxlKQo+ICt7Cj4gKyDCoCDCoCDCoCByZXR1cm4gczVwX2dhdGVjdHJsKFM1UF9DTEtH
-QVRFX0FVRFNTLCBjbGssIGVuYWJsZSk7Cj4gK30KPiArCj4gwqBzdGF0aWMgc3RydWN0IGNsayBj
-bGtfc2Nsa19oZG1pMjdtID0gewo+IMKgIMKgIMKgIMKgLm5hbWUgwqAgwqAgwqAgwqAgwqAgPSAi
-c2Nsa19oZG1pMjdtIiwKPiDCoCDCoCDCoCDCoC5pZCDCoCDCoCDCoCDCoCDCoCDCoCA9IC0xLAo+
-IEBAIC0yMDgsMTcgKzIxNCwyOCBAQCBzdGF0aWMgc3RydWN0IGNsayBjbGtfc2Nsa191c2JwaHkx
-ID0gewo+Cj4gwqBzdGF0aWMgc3RydWN0IGNsayBjbGtfcGNtY2RjbGswID0gewo+IMKgIMKgIMKg
-IMKgLm5hbWUgwqAgwqAgwqAgwqAgwqAgPSAicGNtY2RjbGsiLAo+IC0gwqAgwqAgwqAgLmlkIMKg
-IMKgIMKgIMKgIMKgIMKgID0gLTEsCj4gKyDCoCDCoCDCoCAuaWQgwqAgwqAgwqAgwqAgwqAgwqAg
-PSAwLAo+ICsgwqAgwqAgwqAgLnJhdGUgwqAgwqAgwqAgwqAgwqAgPSAyMDQ4MDAwLAoKSSB0aGlu
-ayB0aGF0IHRoaXMgZml4ZWQgcmF0ZSBzZXR0aW5nIGlzIG5vdCBnb29kLCBiZWNhdXNlIHRoaXMg
-Y2xvY2suYwppcyBub3Qgb25seSBmb3IgU01ESyBib2FyZCwgYnV0IGZvciBhbGwgUzVQVjIxMCBi
-YXNlZCBtYWNoaW5lcy4KCj4gwqB9Owo+Cj4gwqBzdGF0aWMgc3RydWN0IGNsayBjbGtfcGNtY2Rj
-bGsxID0gewo+IMKgIMKgIMKgIMKgLm5hbWUgwqAgwqAgwqAgwqAgwqAgPSAicGNtY2RjbGsiLAo+
-IC0gwqAgwqAgwqAgLmlkIMKgIMKgIMKgIMKgIMKgIMKgID0gLTEsCj4gKyDCoCDCoCDCoCAuaWQg
-wqAgwqAgwqAgwqAgwqAgwqAgPSAxLAo+IMKgfTsKPgo+IMKgc3RhdGljIHN0cnVjdCBjbGsgY2xr
-X3BjbWNkY2xrMiA9IHsKPiDCoCDCoCDCoCDCoC5uYW1lIMKgIMKgIMKgIMKgIMKgID0gInBjbWNk
-Y2xrIiwKPiAtIMKgIMKgIMKgIC5pZCDCoCDCoCDCoCDCoCDCoCDCoCA9IC0xLAo+ICsgwqAgwqAg
-wqAgLmlkIMKgIMKgIMKgIMKgIMKgIMKgID0gMiwKPiArfTsKPiArCj4gK3N0YXRpYyBzdHJ1Y3Qg
-Y2xrIGNsa19pMnNjZGNsazAgPSB7Cj4gKyDCoCDCoCDCoCAubmFtZSDCoCDCoCDCoCDCoCDCoCA9
-ICJpMnNjZGNsayIsCj4gKyDCoCDCoCDCoCAuaWQgwqAgwqAgwqAgwqAgwqAgwqAgPSAwLAo+ICt9
-Owo+ICsKPiArc3RhdGljIHN0cnVjdCBjbGsgY2xrX2kyc2NkY2xrMSA9IHsKPiArIMKgIMKgIMKg
-IC5uYW1lIMKgIMKgIMKgIMKgIMKgID0gImkyc2NkY2xrIiwKPiArIMKgIMKgIMKgIC5pZCDCoCDC
-oCDCoCDCoCDCoCDCoCA9IDEsCj4gwqB9Owo+Cj4gwqBzdGF0aWMgc3RydWN0IGNsayAqY2xrc2V0
-X3ZwbGxzcmNfbGlzdFtdID0gewo+IEBAIC00OTAsNiArNTA3LDI0IEBAIHN0YXRpYyBzdHJ1Y3Qg
-Y2xrIGluaXRfY2xvY2tzX29mZltdID0gewo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgLnBhcmVu
-dCDCoCDCoCDCoCDCoCA9ICZjbGtfcCwKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoC5lbmFibGUg
-wqAgwqAgwqAgwqAgPSBzNXB2MjEwX2Nsa19pcDNfY3RybCwKPiDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoC5jdHJsYml0IMKgIMKgIMKgIMKgPSAoMSA8PCAwKSwKPiArIMKgIMKgIMKgIH0sIHsKPiAr
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5uYW1lIMKgIMKgIMKgIMKgIMKgID0gInBjbSIsCj4gKyDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCAuaWQgwqAgwqAgwqAgwqAgwqAgwqAgPSAwLAo+ICsgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgLnBhcmVudCDCoCDCoCDCoCDCoCA9ICZjbGtfcGNsa19wc3lzLmNsaywK
-PiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5lbmFibGUgwqAgwqAgwqAgwqAgPSBzNXB2MjEwX2Ns
-a19pcDNfY3RybCwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5jdHJsYml0IMKgIMKgIMKgIMKg
-PSAoMSA8PCAyOCksCj4gKyDCoCDCoCDCoCB9LCB7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAu
-bmFtZSDCoCDCoCDCoCDCoCDCoCA9ICJwY20iLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLmlk
-IMKgIMKgIMKgIMKgIMKgIMKgID0gMSwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5wYXJlbnQg
-wqAgwqAgwqAgwqAgPSAmY2xrX3BjbGtfcHN5cy5jbGssCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCAuZW5hYmxlIMKgIMKgIMKgIMKgID0gczVwdjIxMF9jbGtfaXAzX2N0cmwsCj4gKyDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCAuY3RybGJpdCDCoCDCoCDCoCDCoD0gKDEgPDwgMjkpLAo+ICsgwqAgwqAg
-wqAgfSwgewo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLm5hbWUgwqAgwqAgwqAgwqAgwqAgPSAi
-cGNtIiwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5pZCDCoCDCoCDCoCDCoCDCoCDCoCA9IDIs
-Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAucGFyZW50IMKgIMKgIMKgIMKgID0gJmNsa19wY2xr
-X3BzeXMuY2xrLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLmVuYWJsZSDCoCDCoCDCoCDCoCA9
-IHM1cHYyMTBfY2xrX2lwM19jdHJsLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLmN0cmxiaXQg
-wqAgwqAgwqAgwqA9ICgxIDw8IDMwKSwKPiDCoCDCoCDCoCDCoH0sCj4gwqB9Owo+Cj4gQEAgLTcx
-NCw2ICs3NDksNDggQEAgc3RhdGljIHN0cnVjdCBjbGtzcmNfY2xrIGNsa19zY2xrX2F1ZGlvMiA9
-IHsKPiDCoCDCoCDCoCDCoC5yZWdfZGl2ID0geyAucmVnID0gUzVQX0NMS19ESVY2LCAuc2hpZnQg
-PSA4LCAuc2l6ZSA9IDQgfSwKPiDCoH07Cj4KPiArc3RhdGljIHN0cnVjdCBjbGsgKmNsa3NldF9t
-b3V0X2F1ZHNzX2xpc3RbXSA9IHsKPiArIMKgIMKgIMKgIE5VTEwsCj4gKyDCoCDCoCDCoCAmY2xr
-X2ZvdXRfZXBsbCwKPiArfTsKPiArCj4gK3N0YXRpYyBzdHJ1Y3QgY2xrc3JjX3NvdXJjZXMgY2xr
-c2V0X21vdXRfYXVkc3MgPSB7Cj4gKyDCoCDCoCDCoCAuc291cmNlcyDCoCDCoCDCoCDCoD0gY2xr
-c2V0X21vdXRfYXVkc3NfbGlzdCwKPiArIMKgIMKgIMKgIC5ucl9zb3VyY2VzIMKgIMKgID0gQVJS
-QVlfU0laRShjbGtzZXRfbW91dF9hdWRzc19saXN0KSwKPiArfTsKPiArCj4gK3N0YXRpYyBzdHJ1
-Y3QgY2xrc3JjX2NsayBjbGtfbW91dF9hdWRzcyA9IHsKPiArIMKgIMKgIMKgIC5jbGsgwqAgwqA9
-IHsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5uYW1lIMKgIMKgIMKgIMKgIMKgID0gIm1vdXRf
-YXVkc3MiLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLmlkIMKgIMKgIMKgIMKgIMKgIMKgID0g
-LTEsCj4gKyDCoCDCoCDCoCB9LAo+ICsgwqAgwqAgwqAgLnNvdXJjZXMgwqAgwqAgwqAgwqA9ICZj
-bGtzZXRfbW91dF9hdWRzcywKPiArIMKgIMKgIMKgIC5yZWdfc3JjIMKgIMKgIMKgIMKgPSB7IC5y
-ZWcgPSBTNVBfQ0xLU1JDX0FVRFNTLCAuc2hpZnQgPSAwLCAuc2l6ZSA9IDEgfSwKPiArfTsKPiAr
-Cj4gK3N0YXRpYyBzdHJ1Y3QgY2xrICpjbGtzZXRfc2Nsa19hdWRzc19saXN0W10gPSB7Cj4gKyDC
-oCDCoCDCoCAmY2xrX21vdXRfYXVkc3MuY2xrLAo+ICsgwqAgwqAgwqAgJmNsa19pMnNjZGNsazAs
-Cj4gKyDCoCDCoCDCoCAmY2xrX3NjbGtfYXVkaW8wLmNsaywKPiArfTsKPiArCj4gK3N0YXRpYyBz
-dHJ1Y3QgY2xrc3JjX3NvdXJjZXMgY2xrc2V0X3NjbGtfYXVkc3MgPSB7Cj4gKyDCoCDCoCDCoCAu
-c291cmNlcyDCoCDCoCDCoCDCoD0gY2xrc2V0X3NjbGtfYXVkc3NfbGlzdCwKPiArIMKgIMKgIMKg
-IC5ucl9zb3VyY2VzIMKgIMKgID0gQVJSQVlfU0laRShjbGtzZXRfc2Nsa19hdWRzc19saXN0KSwK
-PiArfTsKPiArCj4gK3N0YXRpYyBzdHJ1Y3QgY2xrc3JjX2NsayBjbGtfc2Nsa19hdWRzcyA9IHsK
-PiArIMKgIMKgIMKgIC5jbGsgwqAgwqA9IHsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5uYW1l
-IMKgIMKgIMKgIMKgIMKgID0gImF1ZGlvLWJ1cyIsCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAu
-aWQgwqAgwqAgwqAgwqAgwqAgwqAgPSAtMSwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5lbmFi
-bGUgwqAgwqAgwqAgwqAgPSBzNXB2MjEwX2Nsa19hdWRzc19jdHJsLAo+ICsgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgLmN0cmxiaXQgwqAgwqAgwqAgwqA9ICgxIDw8IDYpLAo+ICsgwqAgwqAgwqAgfSwK
-PiArIMKgIMKgIMKgIC5zb3VyY2VzIMKgIMKgIMKgIMKgPSAmY2xrc2V0X3NjbGtfYXVkc3MsCj4g
-KyDCoCDCoCDCoCAucmVnX3NyYyDCoCDCoCDCoCDCoD0geyAucmVnID0gUzVQX0NMS1NSQ19BVURT
-UywgLnNoaWZ0ID0gMiwgLnNpemUgPSAyIH0sCj4gKyDCoCDCoCDCoCAucmVnX2RpdiDCoCDCoCDC
-oCDCoD0geyAucmVnID0gUzVQX0NMS0RJVl9BVURTUywgLnNoaWZ0ID0gNCwgLnNpemUgPSA0IH0s
-Cj4gK307Cj4gKwoKVGhlc2UgY2xvY2sgc291cmNlcyBhcmUgbm90IGp1c3QgZm9yIHBjbSBjbG9j
-aywgdGhlc2UgYXJlIGZvciBhdWRpbyBzdWJzeXN0ZW0uClNvIEkgdGhpbmsgdGhhdCBzaG91bGQg
-YmUgc2VwYXJhdGVkIHRvIGFub3RoZXIgcGF0Y2ggZm9yIGFkZCBhdWRpbwpzdWJzeXN0ZW0gb24g
-czVwdjIxMC4KCj4gwqBzdGF0aWMgc3RydWN0IGNsayAqY2xrc2V0X3NjbGtfc3BkaWZfbGlzdFtd
-ID0gewo+IMKgIMKgIMKgIMKgWzBdID0gJmNsa19zY2xrX2F1ZGlvMC5jbGssCj4gwqAgwqAgwqAg
-wqBbMV0gPSAmY2xrX3NjbGtfYXVkaW8xLmNsaywKPiBAQCAtMTA1OCw2ICsxMTM1LDggQEAgc3Rh
-dGljIHN0cnVjdCBjbGtzcmNfY2xrICpzeXNjbGtzW10gPSB7Cj4gwqAgwqAgwqAgwqAmY2xrX3Nj
-bGtfaGRtaSwKPiDCoCDCoCDCoCDCoCZjbGtfbW91dF9kbWMwLAo+IMKgIMKgIMKgIMKgJmNsa19z
-Y2xrX2RtYzAsCj4gKyDCoCDCoCDCoCAmY2xrX21vdXRfYXVkc3MsCj4gKyDCoCDCoCDCoCAmY2xr
-X3NjbGtfYXVkc3MsCgpkaXR0bwoKPiDCoCDCoCDCoCDCoCZjbGtfc2Nsa19hdWRpbzAsCj4gwqAg
-wqAgwqAgwqAmY2xrX3NjbGtfYXVkaW8xLAo+IMKgIMKgIMKgIMKgJmNsa19zY2xrX2F1ZGlvMiwK
-PiBAQCAtMTIxMiw2ICsxMjkxLDkgQEAgdm9pZCBfX2luaXRfb3JfY3B1ZnJlcSBzNXB2MjEwX3Nl
-dHVwX2Nsb2Nrcyh2b2lkKQo+Cj4gwqAgwqAgwqAgwqBmb3IgKHB0ciA9IDA7IHB0ciA8IEFSUkFZ
-X1NJWkUoY2xrc3Jjcyk7IHB0cisrKQo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgczNjX3NldF9j
-bGtzcmMoJmNsa3NyY3NbcHRyXSwgdHJ1ZSk7Cj4gKwo+ICsgwqAgwqAgwqAgY2xrX3NldF9wYXJl
-bnQoJmNsa19zY2xrX2F1ZGlvMC5jbGssICZjbGtfcGNtY2RjbGswKTsKPiArIMKgIMKgIMKgIGNs
-a19zZXRfcGFyZW50KCZjbGtfc2Nsa19hdWRzcy5jbGssICZjbGtfc2Nsa19hdWRpbzAuY2xrKTsK
-CmRpdHRvCgo+IMKgfQo+Cj4gwqBzdGF0aWMgc3RydWN0IGNsayAqY2xrc1tdIF9faW5pdGRhdGEg
-PSB7Cj4gQEAgLTEyMTksNiArMTMwMSw4IEBAIHN0YXRpYyBzdHJ1Y3QgY2xrICpjbGtzW10gX19p
-bml0ZGF0YSA9IHsKPiDCoCDCoCDCoCDCoCZjbGtfc2Nsa19oZG1pcGh5LAo+IMKgIMKgIMKgIMKg
-JmNsa19zY2xrX3VzYnBoeTAsCj4gwqAgwqAgwqAgwqAmY2xrX3NjbGtfdXNicGh5MSwKPiArIMKg
-IMKgIMKgICZjbGtfaTJzY2RjbGswLAo+ICsgwqAgwqAgwqAgJmNsa19pMnNjZGNsazEsCgpkaXR0
-bwoKPiDCoCDCoCDCoCDCoCZjbGtfcGNtY2RjbGswLAo+IMKgIMKgIMKgIMKgJmNsa19wY21jZGNs
-azEsCj4gwqAgwqAgwqAgwqAmY2xrX3BjbWNkY2xrMiwKPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0v
-bWFjaC1zNXB2MjEwL2NwdS5jIGIvYXJjaC9hcm0vbWFjaC1zNXB2MjEwL2NwdS5jCj4gaW5kZXgg
-NjFlNmMyNC4uNGFhOThhZCAxMDA2NDQKPiAtLS0gYS9hcmNoL2FybS9tYWNoLXM1cHYyMTAvY3B1
-LmMKPiArKysgYi9hcmNoL2FybS9tYWNoLXM1cHYyMTAvY3B1LmMKPiBAQCAtOTUsNyArOTUsMTIg
-QEAgc3RhdGljIHN0cnVjdCBtYXBfZGVzYyBzNXB2MjEwX2lvZGVzY1tdIF9faW5pdGRhdGEgPSB7
-Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAucGZuIMKgIMKgIMKgIMKgIMKgIMKgPV9fcGh5c190
-b19wZm4oUzVQVjIxMF9QQV9IU1BIWSksCj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAubGVuZ3Ro
-IMKgIMKgIMKgIMKgID0gU1pfNEssCj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAudHlwZSDCoCDC
-oCDCoCDCoCDCoCA9IE1UX0RFVklDRSwKPiAtIMKgIMKgIMKgIH0KPiArIMKgIMKgIMKgIH0sIHsK
-PiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC52aXJ0dWFsIMKgIMKgIMKgIMKgPSAodW5zaWduZWQg
-bG9uZylTNVBfVkFfQVVEU1MsCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAucGZuIMKgIMKgIMKg
-IMKgIMKgIMKgPSBfX3BoeXNfdG9fcGZuKFM1UFYyMTBfUEFfQVVEU1MpLAo+ICsgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgLmxlbmd0aCDCoCDCoCDCoCDCoCA9IFNaXzFLLAo+ICsgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgLnR5cGUgwqAgwqAgwqAgwqAgwqAgPSBNVF9ERVZJQ0UsCj4gKyDCoCDCoCDCoCB9
-LAoKZGl0dG8KCj4gwqB9Owo+Cj4gwqBzdGF0aWMgdm9pZCBzNXB2MjEwX2lkbGUodm9pZCkKPiBk
-aWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1zNXB2MjEwL2luY2x1ZGUvbWFjaC9tYXAuaCBiL2Fy
-Y2gvYXJtL21hY2gtczVwdjIxMC9pbmNsdWRlL21hY2gvbWFwLmgKPiBpbmRleCAxZGQ1ODgzLi4x
-OTU4NzRlIDEwMDY0NAo+IC0tLSBhL2FyY2gvYXJtL21hY2gtczVwdjIxMC9pbmNsdWRlL21hY2gv
-bWFwLmgKPiArKysgYi9hcmNoL2FybS9tYWNoLXM1cHYyMTAvaW5jbHVkZS9tYWNoL21hcC5oCj4g
-QEAgLTY0LDYgKzY0LDggQEAKPiDCoCNkZWZpbmUgUzVQVjIxMF9QQV9IU09URyDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCAweEVDMDAwMDAwCj4gwqAjZGVmaW5lIFM1UFYyMTBfUEFfSFNQSFkgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgMHhFQzEwMDAwMAo+Cj4gKyNkZWZpbmUgUzVQVjIxMF9QQV9BVURTUyDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCAweEVFRTEwMDAwCj4gKwoKZGl0dG8KCj4gwqAjZGVmaW5lIFM1
-UFYyMTBfUEFfSUlTMCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoDB4RUVFMzAw
-MDAKPiDCoCNkZWZpbmUgUzVQVjIxMF9QQV9JSVMxIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgMHhFMjEwMDAwMAo+IMKgI2RlZmluZSBTNVBWMjEwX1BBX0lJUzIgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAweEUyQTAwMDAwCj4gZGlmZiAtLWdpdCBhL2FyY2gv
-YXJtL21hY2gtczVwdjIxMC9pbmNsdWRlL21hY2gvcmVncy1hdWRzcy5oIGIvYXJjaC9hcm0vbWFj
-aC1zNXB2MjEwL2luY2x1ZGUvbWFjaC9yZWdzLWF1ZHNzLmgKPiBuZXcgZmlsZSBtb2RlIDEwMDY0
-NAo+IGluZGV4IDAwMDAwMDAuLjJmYTNjMjMKPiAtLS0gL2Rldi9udWxsCj4gKysrIGIvYXJjaC9h
-cm0vbWFjaC1zNXB2MjEwL2luY2x1ZGUvbWFjaC9yZWdzLWF1ZHNzLmgKCmRpdHRvCgo+IEBAIC0w
-LDAgKzEsNDUgQEAKPiArLyogYXJjaC9hcm0vbWFjaC1zNXB2MjEwL2luY2x1ZGUvbWFjaC9yZWdz
-LWNsb2NrLmgKPiArICoKPiArICogQ29weXJpZ2h0IChjKSAyMDExIFNhbXN1bmcgRWxlY3Ryb25p
-Y3MgQ28uLCBMdGQuCj4gKyAqIMKgIMKgIMKgIMKgIMKgIMKgIGh0dHA6Ly93d3cuc2Ftc3VuZy5j
-b20vCj4gKyAqCj4gKyAqIFM1UFYyMTAgLSBBdWRpbyBTdWJTeXN0ZW0gY2xvY2sgcmVnaXN0ZXIg
-ZGVmaW5pdGlvbnMKPiArICoKPiArICogVGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlv
-dSBjYW4gcmVkaXN0cmlidXRlIGl0IGFuZC9vciBtb2RpZnkKPiArICogaXQgdW5kZXIgdGhlIHRl
-cm1zIG9mIHRoZSBHTlUgR2VuZXJhbCBQdWJsaWMgTGljZW5zZSB2ZXJzaW9uIDIgYXMKPiArICog
-cHVibGlzaGVkIGJ5IHRoZSBGcmVlIFNvZnR3YXJlIEZvdW5kYXRpb24uCj4gKyovCj4gKwo+ICsj
-aWZuZGVmIF9fQVNNX0FSQ0hfUkVHU19BVURTU19ICj4gKyNkZWZpbmUgX19BU01fQVJDSF9SRUdT
-X0FVRFNTX0ggX19GSUxFX18KPiArCj4gKyNkZWZpbmUgUzVQX0FVRFNTUkVHKHgpIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgKFM1UF9WQV9BVURTUyArICh4KSkKPiArCj4gKyNk
-ZWZpbmUgUzVQX0NMS1NSQ19BVURTUyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBTNVBfQVVEU1NSRUco
-MHgwKQo+ICsjZGVmaW5lIFM1UF9DTEtESVZfQVVEU1MgwqAgwqAgwqAgwqAgwqAgwqAgwqAgUzVQ
-X0FVRFNTUkVHKDB4NCkKPiArI2RlZmluZSBTNVBfQ0xLR0FURV9BVURTUyDCoCDCoCDCoCDCoCDC
-oCDCoCDCoFM1UF9BVURTU1JFRygweDgpCj4gKwo+ICsvKiBDTEtTUkMwICovCj4gKyNkZWZpbmUg
-UzVQX0FVRFNTX0NMS1NSQ19NQUlOX01BU0sgwqAgwqAgKDB4MTw8MCkKPiArI2RlZmluZSBTNVBf
-QVVEU1NfQ0xLU1JDX01BSU5fU0hJRlQgwqAgwqAoMCkKPiArI2RlZmluZSBTNVBfQVVEU1NfQ0xL
-U1JDX0JVU0NMS19NQVNLIMKgICgweDE8PDEpCj4gKyNkZWZpbmUgUzVQX0FVRFNTX0NMS1NSQ19C
-VVNDTEtfU0hJRlQgwqAoMSkKPiArI2RlZmluZSBTNVBfQVVEU1NfQ0xLU1JDX0kyU0NMS19NQVNL
-IMKgICgweDM8PDIpCj4gKyNkZWZpbmUgUzVQX0FVRFNTX0NMS1NSQ19JMlNDTEtfU0hJRlQgwqAo
-MikKPiArCj4gKy8qIENMS0RJVjAgKi8KPiArI2RlZmluZSBTNVBfQVVEU1NfQ0xLRElWX0JVU0NM
-S19NQVNLIMKgICgweGY8PDApCj4gKyNkZWZpbmUgUzVQX0FVRFNTX0NMS0RJVl9CVVNDTEtfU0hJ
-RlQgwqAoMCkKPiArI2RlZmluZSBTNVBfQVVEU1NfQ0xLRElWX0kyU0NMS19NQVNLIMKgICgweGY8
-PDQpCj4gKyNkZWZpbmUgUzVQX0FVRFNTX0NMS0RJVl9JMlNDTEtfU0hJRlQgwqAoNCkKPiArCj4g
-Ky8qIElQIENsb2NrIEdhdGUgMCBSZWdpc3RlcnMgKi8KPiArI2RlZmluZSBTNVBfQVVEU1NfQ0xL
-R0FURV9IQ0xLUlAgwqAgwqAgwqAgKDE8PDApCj4gKyNkZWZpbmUgUzVQX0FVRFNTX0NMS0dBVEVf
-SENMS0JVRiDCoCDCoCDCoCgxPDwxKQo+ICsjZGVmaW5lIFM1UF9BVURTU19DTEtHQVRFX0hDTEtE
-TUEgwqAgwqAgwqAoMTw8MikKPiArI2RlZmluZSBTNVBfQVVEU1NfQ0xLR0FURV9IQ0xLSFdBIMKg
-IMKgIMKgKDE8PDMpCj4gKyNkZWZpbmUgUzVQX0FVRFNTX0NMS0dBVEVfSENMS1VBUlQgwqAgwqAg
-KDE8PDQpCj4gKyNkZWZpbmUgUzVQX0FVRFNTX0NMS0dBVEVfSENMS0kyUyDCoCDCoCDCoCgxPDw1
-KQo+ICsjZGVmaW5lIFM1UF9BVURTU19DTEtHQVRFX0NMS0kyUyDCoCDCoCDCoCAoMTw8NikKPiAr
-Cj4gKyNlbmRpZiAvKiBfX0FTTV9BUkNIX1JFR1NfQVVEU1NfSCAqLwoKLi4uKHNuaXApLi4uCgo+
-IGRpZmYgLS1naXQgYS9hcmNoL2FybS9wbGF0LXM1cC9pbmNsdWRlL3BsYXQvbWFwLXM1cC5oIGIv
-YXJjaC9hcm0vcGxhdC1zNXAvaW5jbHVkZS9wbGF0L21hcC1zNXAuaAo+IGluZGV4IGQ5NzNkMzku
-LmRhYTRhNDQgMTAwNjQ0Cj4gLS0tIGEvYXJjaC9hcm0vcGxhdC1zNXAvaW5jbHVkZS9wbGF0L21h
-cC1zNXAuaAo+ICsrKyBiL2FyY2gvYXJtL3BsYXQtczVwL2luY2x1ZGUvcGxhdC9tYXAtczVwLmgK
-PiBAQCAtNDAsNiArNDAsNyBAQAo+IMKgI2RlZmluZSBTNVBfVkFfR0lDX0RJU1QgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqBTNVBfVkFfQ09SRVBFUkkoMHgxMDAwKQo+Cj4gwqAjZGVmaW5lIFMzQ19W
-QV9VU0JfSFNQSFkgwqAgwqAgwqAgUzNDX0FERFIoMHgwMjkwMDAwMCkKPiArI2RlZmluZSBTNVBf
-VkFfQVVEU1MgwqAgwqAgwqAgwqAgwqAgUzNDX0FERFIoMHgwMkEwMDAwMCkKCmRpdHRvCgogICAg
-ICAgIGNsYXVkZQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpBbHNhLWRldmVsIG1haWxpbmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVjdC5vcmcKaHR0
-cDovL21haWxtYW4uYWxzYS1wcm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Fsc2EtZGV2ZWwK
+Add the subdev driver for the MIPI CSIS units available in
+S5P and Exynos4 SoC series. This driver supports both CSIS0
+and CSIS1 MIPI-CSI2 receivers. The driver requires Runtime PM
+to be enabled for proper operation.
+
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+
+---
+Hello,
+
+this is a third version of the subdev driver for MIPI-CSI2 receivers
+available in S5PVx10 and EXYNOS4 SoCs. The MIPI CSIS module is
+a MIPI-CSI bus frontend of the FIMC IP.
+
+Changes since v1:
+ - added runtime PM support
+ - conversion to the pad ops
+
+Changes since v2:
+ - added reference counting in s_stream op to allow the mipi-csi subdev
+   to be shared by multiple FIMC instances
+ - added support for TRY format in pad get_fmt op
+ - added pm_runtime* calls in s_stream op to avoid a need for explicit 
+   s_power(1) call
+ - corrected locking around the pad ops, minor bug fixes	
+
+
+Comments are welcome!
+
+
+Regards,
+Sylwester Nawrocki
+Samsung Poland R&D Center
+---
+ drivers/media/video/Kconfig              |    6 +
+ drivers/media/video/s5p-fimc/Makefile    |    2 +
+ drivers/media/video/s5p-fimc/mipi-csis.c |  756 ++++++++++++++++++++++++++++++
+ drivers/media/video/s5p-fimc/mipi-csis.h |   19 +
+ 4 files changed, 783 insertions(+), 0 deletions(-)
+ create mode 100644 drivers/media/video/s5p-fimc/mipi-csis.c
+ create mode 100644 drivers/media/video/s5p-fimc/mipi-csis.h
+
+diff --git a/drivers/media/video/Kconfig b/drivers/media/video/Kconfig
+index 55caa73..fd0bd68 100644
+--- a/drivers/media/video/Kconfig
++++ b/drivers/media/video/Kconfig
+@@ -955,6 +955,12 @@ config  VIDEO_SAMSUNG_S5P_FIMC
+ 	  This is a v4l2 driver for the S5P and EXYNOS4 camera host interface
+ 	  and video postprocessor.
+ 
++config VIDEO_S5P_MIPI_CSIS
++	tristate "S5P and EXYNOS4 MIPI CSI Receiver driver"
++	depends on VIDEO_V4L2 && VIDEO_SAMSUNG_S5P_FIMC && MEDIA_CONTROLLER
++	---help---
++	  This is a v4l2 driver for the S5P/EXYNOS4 MIPI-CSI Receiver.
++
+ #
+ # USB Multimedia device configuration
+ #
+diff --git a/drivers/media/video/s5p-fimc/Makefile b/drivers/media/video/s5p-fimc/Makefile
+index 7ea1b14..72207de 100644
+--- a/drivers/media/video/s5p-fimc/Makefile
++++ b/drivers/media/video/s5p-fimc/Makefile
+@@ -1,3 +1,5 @@
+ 
+ obj-$(CONFIG_VIDEO_SAMSUNG_S5P_FIMC) := s5p-fimc.o
+ s5p-fimc-y := fimc-core.o fimc-reg.o fimc-capture.o
++
++obj-$(CONFIG_VIDEO_S5P_MIPI_CSIS) += mipi-csis.o
+diff --git a/drivers/media/video/s5p-fimc/mipi-csis.c b/drivers/media/video/s5p-fimc/mipi-csis.c
+new file mode 100644
+index 0000000..10e083e
+--- /dev/null
++++ b/drivers/media/video/s5p-fimc/mipi-csis.c
+@@ -0,0 +1,756 @@
++/*
++ * Samsung S5P SoC series MIPI-CSI receiver driver
++ *
++ * Copyright (C) 2011 Samsung Electronics Co., Ltd.
++ * Contact: Sylwester Nawrocki, <s.nawrocki@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/device.h>
++#include <linux/errno.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/irq.h>
++#include <linux/kernel.h>
++#include <linux/memory.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/regulator/consumer.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++#include <linux/videodev2.h>
++#include <media/v4l2-subdev.h>
++#include <plat/mipi_csis.h>
++#include "mipi-csis.h"
++
++static int debug;
++module_param(debug, int, 0644);
++MODULE_PARM_DESC(debug, "Debug level (0-1)");
++
++/* Register map definition */
++
++/* CSIS global control */
++#define S5P_CSIS_CTRL			0x00
++#define S5P_CSIS_CTRL_DPDN_DEFAULT	(0 << 31)
++#define S5P_CSIS_CTRL_DPDN_SWAP		(1 << 31)
++#define S5P_CSIS_CTRL_ALIGN_32BIT	(1 << 20)
++#define S5P_CSIS_CTRL_UPDATE_SHADOW	(1 << 16)
++#define S5P_CSIS_CTRL_WCLK_EXTCLK	(1 << 8)
++#define S5P_CSIS_CTRL_RESET		(1 << 4)
++#define S5P_CSIS_CTRL_ENABLE		(1 << 0)
++
++/* D-PHY control */
++#define S5P_CSIS_DPHYCTRL		0x04
++#define S5P_CSIS_DPHYCTRL_HSS_MASK	(0x1f << 27)
++#define S5P_CSIS_DPHYCTRL_ENABLE	(0x1f << 0)
++
++#define S5P_CSIS_CONFIG			0x08
++#define S5P_CSIS_CFG_FMT_YCBCR422_8BIT	(0x1e << 2)
++#define S5P_CSIS_CFG_FMT_RAW8		(0x2a << 2)
++#define S5P_CSIS_CFG_FMT_RAW10		(0x2b << 2)
++#define S5P_CSIS_CFG_FMT_RAW12		(0x2c << 2)
++/* User defined formats, x = 1...4 */
++#define S5P_CSIS_CFG_FMT_USER(x)	((0x30 + x - 1) << 2)
++#define S5P_CSIS_CFG_FMT_MASK		(0x3f << 2)
++#define S5P_CSIS_CFG_NR_LANE_MASK	3
++
++/* Interrupt mask. */
++#define S5P_CSIS_INTMSK			0x10
++#define S5P_CSIS_INTMSK_EN_ALL		0xf000003f
++#define S5P_CSIS_INTSRC			0x14
++
++/* Pixel resolution */
++#define S5P_CSIS_RESOL			0x2c
++#define CSIS_MAX_PIX_WIDTH		0xffff
++#define CSIS_MAX_PIX_HEIGHT		0xffff
++
++enum {
++	CSIS_CLK_MUX,
++	CSIS_CLK_GATE,
++};
++
++static char *csi_clock_name[] = {
++	[CSIS_CLK_MUX]  = "sclk_csis",
++	[CSIS_CLK_GATE] = "csis",
++};
++#define NUM_CSIS_CLOCKS	ARRAY_SIZE(csi_clock_name)
++
++enum {
++	ST_POWERED	= 1,
++	ST_STREAMING	= 2,
++	ST_SUSPENDED	= 4,
++};
++
++enum {
++	CSIS_FMT_TRY,
++	CSIS_FMT_ACTIVE,
++	CSIS_NUM_FMTS
++};
++
++struct csis_state {
++	struct mutex lock;
++	struct media_pad pads[CSIS_PADS_NUM];
++	struct v4l2_subdev sd;
++	struct platform_device *pdev;
++	struct resource *regs_res;
++	void __iomem *regs;
++	struct clk *clock[NUM_CSIS_CLOCKS];
++	int irq;
++	struct regulator *supply;
++	u32 flags;
++	int use_count;
++	/* Common format for the source and sink pad. */
++	const struct csis_pix_format *csis_fmt;
++	struct v4l2_mbus_framefmt mf[CSIS_NUM_FMTS];
++};
++
++struct csis_pix_format {
++	enum v4l2_mbus_pixelcode code;
++	u32 fmt_reg;
++	u16 pix_hor_align;
++};
++
++static const struct csis_pix_format s5p_csis_formats[] = {
++	{
++		.code		= V4L2_MBUS_FMT_VYUY8_2X8,
++		.fmt_reg	= S5P_CSIS_CFG_FMT_YCBCR422_8BIT,
++		.pix_hor_align	= 1,
++	},
++	{
++		.code		= V4L2_MBUS_FMT_JPEG_1X8,
++		.fmt_reg	= S5P_CSIS_CFG_FMT_USER(1),
++		.pix_hor_align	= 1,
++	},
++};
++
++#define IS_CSIS_PAD_VALID(pad) (pad == CSIS_PAD_SOURCE || pad == CSIS_PAD_SINK)
++
++static struct csis_state *sd_to_csis_state(struct v4l2_subdev *sdev)
++{
++	return container_of(sdev, struct csis_state, sd);
++}
++
++static const struct csis_pix_format *
++find_csis_format(struct v4l2_mbus_framefmt *mf)
++{
++	int i = ARRAY_SIZE(s5p_csis_formats);
++
++	while (--i > 0) {
++		if (mf->code == s5p_csis_formats[i].code)
++			return &s5p_csis_formats[i];
++	}
++
++	return NULL;
++}
++
++static void s5p_csis_enable_interrupts(struct csis_state *state, bool on)
++{
++	u32 reg = readl(state->regs + S5P_CSIS_CTRL);
++
++	if (on)
++		reg |= S5P_CSIS_INTMSK_EN_ALL;
++	else
++		reg &= ~S5P_CSIS_INTMSK_EN_ALL;
++	writel(reg, state->regs + S5P_CSIS_INTMSK);
++}
++
++static void s5p_csis_reset(struct csis_state *state)
++{
++	u32 reg = readl(state->regs + S5P_CSIS_CTRL);
++
++	writel(reg | S5P_CSIS_CTRL_RESET, state->regs + S5P_CSIS_CTRL);
++	udelay(10);
++}
++
++static void s5p_csis_system_enable(struct csis_state *state, int on)
++{
++	u32 reg;
++
++	reg = readl(state->regs + S5P_CSIS_CTRL);
++	if (on)
++		reg |= S5P_CSIS_CTRL_ENABLE;
++	else
++		reg &= ~S5P_CSIS_CTRL_ENABLE;
++	writel(reg, state->regs + S5P_CSIS_CTRL);
++
++	reg = readl(state->regs + S5P_CSIS_DPHYCTRL);
++	if (on)
++		reg |= S5P_CSIS_DPHYCTRL_ENABLE;
++	else
++		reg &= ~S5P_CSIS_DPHYCTRL_ENABLE;
++	writel(reg, state->regs + S5P_CSIS_DPHYCTRL);
++}
++
++static int __s5p_csis_set_format(struct csis_state *state)
++{
++	struct v4l2_mbus_framefmt *mf = &state->mf[CSIS_FMT_ACTIVE];
++	u32 reg;
++
++	v4l2_dbg(1, debug, &state->sd, "fmt: %d, %d x %d\n",
++		 mf->code, mf->width, mf->height);
++
++	if (WARN_ON(state->csis_fmt == NULL))
++		return -EINVAL;
++
++	/* Color format */
++	reg = readl(state->regs + S5P_CSIS_CONFIG);
++	reg = (reg & ~S5P_CSIS_CFG_FMT_MASK) | state->csis_fmt->fmt_reg;
++	writel(reg, state->regs + S5P_CSIS_CONFIG);
++
++	/* Pixel resolution */
++	reg = (mf->width << 16) | mf->height;
++	writel(reg, state->regs + S5P_CSIS_RESOL);
++
++	return 0;
++}
++
++static void s5p_csis_set_hsync_settle(struct csis_state *state,
++				      int settle)
++{
++	u32 reg = readl(state->regs + S5P_CSIS_DPHYCTRL);
++
++	reg &= ~S5P_CSIS_DPHYCTRL_HSS_MASK;
++	reg |= (settle << 27);
++	writel(reg, state->regs + S5P_CSIS_DPHYCTRL);
++}
++
++static int s5p_csis_set_params(struct csis_state *state)
++{
++	struct s5p_platform_mipi_csis *pdata = state->pdev->dev.platform_data;
++	u32 reg, tmp;
++	int ret;
++
++	reg = readl(state->regs + S5P_CSIS_CONFIG);
++	reg &= ~S5P_CSIS_CFG_NR_LANE_MASK;
++	tmp = (pdata->lanes - 1) & 0x3;
++	writel(reg | tmp, state->regs + S5P_CSIS_CONFIG);
++
++	ret = __s5p_csis_set_format(state);
++	if (ret)
++		return ret;
++
++	s5p_csis_set_hsync_settle(state, pdata->hs_settle);
++
++	reg = readl(state->regs + S5P_CSIS_CTRL);
++
++	if (pdata->alignment == 32)
++		reg |= S5P_CSIS_CTRL_ALIGN_32BIT;
++	else /* 24-bits */
++		reg &= ~S5P_CSIS_CTRL_ALIGN_32BIT;
++
++	/* Not using external clock. */
++	reg &= ~S5P_CSIS_CTRL_WCLK_EXTCLK;
++
++	writel(reg, state->regs + S5P_CSIS_CTRL);
++
++	/* Update the shadow register. */
++	reg = readl(state->regs + S5P_CSIS_CTRL);
++	writel(reg | S5P_CSIS_CTRL_UPDATE_SHADOW,
++	       state->regs + S5P_CSIS_CTRL);
++
++	return 0;
++}
++
++static void s5p_csis_clk_put(struct csis_state *state)
++{
++	int i;
++
++	for (i = 0; i < NUM_CSIS_CLOCKS; i++) {
++		if (!IS_ERR(state->clock[i]))
++			clk_put(state->clock[i]);
++	}
++}
++
++static int s5p_csis_clk_get(struct csis_state *state)
++{
++	struct device *dev = &state->pdev->dev;
++	int i;
++
++	for (i = 0; i < NUM_CSIS_CLOCKS; i++) {
++		state->clock[i] = clk_get(dev, csi_clock_name[i]);
++
++		if (IS_ERR(state->clock[i])) {
++			s5p_csis_clk_put(state);
++			dev_err(dev, "failed to get clock: %s\n",
++				csi_clock_name[i]);
++			return -ENXIO;
++		}
++	}
++	return 0;
++}
++
++/* Called with the state.lock held. */
++static int __csis_set_power(struct csis_state *state, bool on)
++{
++	struct s5p_platform_mipi_csis *pdata = state->pdev->dev.platform_data;
++	int ret = 0;
++
++	if (on) {
++		if (state->supply)
++			ret = regulator_enable(state->supply);
++		if (!ret)
++			ret = pdata->phy_enable(state->pdev, true);
++		if (!ret)
++			state->flags |= ST_POWERED;
++		return ret;
++	}
++
++	ret = pdata->phy_enable(state->pdev, false);
++	if (!ret && state->supply)
++		ret = regulator_disable(state->supply);
++	if (!ret)
++		state->flags &= ~ST_POWERED;
++
++	return ret;
++}
++
++static int s5p_csis_s_power(struct v4l2_subdev *sd, int on)
++{
++	struct csis_state *state = sd_to_csis_state(sd);
++	struct device *dev = &state->pdev->dev;
++
++	v4l2_dbg(1, debug, sd, "%s: on: %d, flags: 0x%x\n",
++		 __func__, on, state->flags);
++
++	if (on)
++		return pm_runtime_get_sync(dev);
++
++	return pm_runtime_put_sync(dev);
++}
++
++static int s5p_csis_start_stream(struct csis_state *state)
++{
++	int ret;
++
++	s5p_csis_reset(state);
++	ret = s5p_csis_set_params(state);
++	if (ret)
++		return ret;
++
++	s5p_csis_system_enable(state, true);
++	s5p_csis_enable_interrupts(state, true);
++
++	return 0;
++}
++
++static void s5p_csis_stop_stream(struct csis_state *state)
++{
++	s5p_csis_enable_interrupts(state, false);
++	s5p_csis_system_enable(state, false);
++}
++
++static int s5p_csis_s_stream(struct v4l2_subdev *sd, int enable)
++{
++	struct csis_state *state = sd_to_csis_state(sd);
++	int ret = 0;
++
++	v4l2_dbg(1, debug, sd, "%s: %d, state: 0x%x\n",
++		 __func__, enable, state->flags);
++
++	if (enable) {
++		ret = pm_runtime_get_sync(&state->pdev->dev);
++		if (ret && ret != 1)
++			return ret;
++	}
++
++	mutex_lock(&state->lock);
++	if (state->flags & ST_SUSPENDED) {
++		ret = -EBUSY;
++		goto unlock;
++	}
++
++	if (enable && state->use_count++ == 0) {
++		ret = s5p_csis_start_stream(state);
++		if (!ret)
++			state->flags |= ST_STREAMING;
++	} else if (!enable) {
++		if (!(WARN(state->use_count == 0,
++			   "usage count is already 0\n"))) {
++			if (--(state->use_count) == 0) {
++				s5p_csis_stop_stream(state);
++				state->flags &= ~ST_STREAMING;
++			}
++		}
++	}
++unlock:
++	mutex_unlock(&state->lock);
++	if (!enable)
++		pm_runtime_put(&state->pdev->dev);
++	return ret;
++}
++
++static int s5p_csis_enum_mbus_code(struct v4l2_subdev *sd,
++				   struct v4l2_subdev_fh *fh,
++				   struct v4l2_subdev_mbus_code_enum *code)
++{
++	if (code->index >= ARRAY_SIZE(s5p_csis_formats))
++		return -EINVAL;
++
++	code->code = s5p_csis_formats[code->index].code;
++	return 0;
++}
++
++static void s5p_csis_try_format(struct v4l2_mbus_framefmt *mf)
++{
++	struct csis_pix_format const *csis_fmt;
++
++	csis_fmt = find_csis_format(mf);
++	if (csis_fmt == NULL)
++		csis_fmt = &s5p_csis_formats[0];
++
++	mf->code = csis_fmt->code;
++	v4l_bound_align_image(&mf->width, 1, CSIS_MAX_PIX_WIDTH,
++			      csis_fmt->pix_hor_align,
++			      &mf->height, 1, CSIS_MAX_PIX_HEIGHT, 1,
++			      0);
++}
++
++static int s5p_csis_set_fmt(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh,
++			    struct v4l2_subdev_format *fmt)
++{
++	struct csis_state *state = sd_to_csis_state(sd);
++	struct v4l2_mbus_framefmt *mf = &fmt->format;
++	struct csis_pix_format const *csis_fmt = find_csis_format(mf);
++
++	v4l2_dbg(1, debug, sd, "%s: %dx%d, code: %x, csis_fmt: %p\n",
++		 __func__, mf->width, mf->height, mf->code, csis_fmt);
++
++	if (fmt->which == V4L2_SUBDEV_FORMAT_TRY) {
++		s5p_csis_try_format(mf);
++		state->mf[CSIS_FMT_TRY] = *mf;
++		return 0;
++	}
++
++	/* Both source and sink pad have always same format. */
++	if (!IS_CSIS_PAD_VALID(fmt->pad) ||
++	    csis_fmt == NULL ||
++	    mf->width > CSIS_MAX_PIX_WIDTH  ||
++	    mf->height > CSIS_MAX_PIX_HEIGHT ||
++	    mf->width & (u32)(csis_fmt->pix_hor_align - 1))
++		return -EINVAL;
++
++	mutex_lock(&state->lock);
++	state->mf[CSIS_FMT_ACTIVE] = *mf;
++	state->csis_fmt = csis_fmt;
++	mutex_unlock(&state->lock);
++
++	return 0;
++}
++
++static int s5p_csis_get_fmt(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh,
++			    struct v4l2_subdev_format *fmt)
++{
++	struct csis_state *state = sd_to_csis_state(sd);
++	int index = fmt->which == V4L2_SUBDEV_FORMAT_TRY ?
++				CSIS_FMT_TRY : CSIS_FMT_ACTIVE;
++
++	if (!IS_CSIS_PAD_VALID(fmt->pad))
++		return -EINVAL;
++
++	mutex_lock(&state->lock);
++	fmt->format = state->mf[index];
++	mutex_unlock(&state->lock);
++
++	return 0;
++}
++
++static struct v4l2_subdev_core_ops s5p_csis_core_ops = {
++	.s_power = s5p_csis_s_power,
++};
++
++static struct v4l2_subdev_pad_ops s5p_csis_pad_ops = {
++	.enum_mbus_code = s5p_csis_enum_mbus_code,
++	.get_fmt = s5p_csis_get_fmt,
++	.set_fmt = s5p_csis_set_fmt,
++};
++
++static struct v4l2_subdev_video_ops s5p_csis_video_ops = {
++	.s_stream = s5p_csis_s_stream,
++};
++
++static struct v4l2_subdev_ops s5p_csis_subdev_ops = {
++	.core = &s5p_csis_core_ops,
++	.pad = &s5p_csis_pad_ops,
++	.video = &s5p_csis_video_ops,
++};
++
++static irqreturn_t s5p_csis_isr(int irq, void *dev_id)
++{
++	struct csis_state *state = dev_id;
++	u32 reg;
++
++	/* Just clear the interrupt pending bits. */
++	reg = readl(state->regs + S5P_CSIS_INTSRC);
++	writel(reg, state->regs + S5P_CSIS_INTSRC);
++
++	return IRQ_HANDLED;
++}
++
++static int s5p_csis_probe(struct platform_device *pdev)
++{
++	struct s5p_platform_mipi_csis *pdata;
++	struct resource *mem_res;
++	struct resource *regs_res;
++	struct csis_state *state;
++	struct media_entity *entity;
++	int ret = -ENODEV;
++
++	state = kzalloc(sizeof(*state), GFP_KERNEL);
++	if (!state)
++		return -ENOMEM;
++
++	mutex_init(&state->lock);
++	state->pdev = pdev;
++
++	pdata = pdev->dev.platform_data;
++	if (pdata == NULL || pdata->phy_enable == NULL) {
++		dev_err(&pdev->dev, "Platform data not fully specified\n");
++		goto e_free;
++	}
++
++	if ((pdev->id == 1 && pdata->lanes > CSIS1_MAX_LANES) ||
++	    pdata->lanes > CSIS0_MAX_LANES) {
++		dev_err(&pdev->dev, "Unsupported number of data lanes: %d\n",
++			pdata->lanes);
++		goto e_free;
++	}
++
++	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!mem_res) {
++		dev_err(&pdev->dev, "Failed to get io memory region\n");
++		goto e_free;
++	}
++
++	regs_res = request_mem_region(mem_res->start, resource_size(mem_res),
++				      pdev->name);
++	if (!regs_res) {
++		dev_err(&pdev->dev, "Failed to request io memory region\n");
++		goto e_free;
++	}
++	state->regs_res = regs_res;
++
++	state->regs = ioremap(mem_res->start, resource_size(mem_res));
++	if (!state->regs) {
++		dev_err(&pdev->dev, "Failed to remap io region\n");
++		goto e_reqmem;
++	}
++
++	if (s5p_csis_clk_get(state))
++		goto e_unmap;
++
++	clk_enable(state->clock[CSIS_CLK_MUX]);
++	if (pdata->clk_rate)
++		clk_set_rate(state->clock[CSIS_CLK_MUX], pdata->clk_rate);
++	else
++		dev_warn(&pdev->dev, "No clock frequency specified!\n");
++
++	state->irq = platform_get_irq(pdev, 0);
++	if (state->irq < 0) {
++		dev_err(&pdev->dev, "Failed to get irq\n");
++		goto e_clkput;
++	}
++
++	if (!pdata->fixed_phy_vdd) {
++		state->supply = regulator_get(&pdev->dev, "vdd");
++		if (IS_ERR(state->supply)) {
++			state->supply = NULL;
++			goto e_clkput;
++		}
++	}
++
++	ret = request_irq(state->irq, s5p_csis_isr, 0, CSIS_MODULE_NAME, state);
++	if (ret) {
++		dev_err(&pdev->dev, "request_irq failed\n");
++		goto e_regput;
++	}
++
++	v4l2_subdev_init(&state->sd, &s5p_csis_subdev_ops);
++	state->sd.owner = THIS_MODULE;
++	strlcpy(state->sd.name, CSIS_MODULE_NAME, sizeof(state->sd.name));
++	state->sd.grp_id = CSIS_GRP_ID;
++
++	entity = &state->sd.entity;
++	state->pads[CSIS_PAD_SINK].flags = MEDIA_PAD_FL_SINK;
++	state->pads[CSIS_PAD_SOURCE].flags = MEDIA_PAD_FL_SOURCE;
++	ret = media_entity_init(&state->sd.entity,
++				CSIS_PADS_NUM, state->pads, 0);
++	if (ret < 0)
++		goto e_irqfree;
++
++	/* This allows to retrieve the platform device id by the host driver */
++	v4l2_set_subdevdata(&state->sd, pdev);
++
++	/* .. and a pointer to the subdev. */
++	platform_set_drvdata(pdev, &state->sd);
++
++	pm_runtime_enable(&pdev->dev);
++
++	return 0;
++
++e_irqfree:
++	free_irq(state->irq, state);
++e_regput:
++	if (state->supply)
++		regulator_put(state->supply);
++e_clkput:
++	clk_disable(state->clock[CSIS_CLK_MUX]);
++	s5p_csis_clk_put(state);
++e_unmap:
++	iounmap(state->regs);
++e_reqmem:
++	release_mem_region(regs_res->start, resource_size(regs_res));
++e_free:
++	kfree(state);
++	return ret;
++}
++
++#ifdef CONFIG_SUSPEND
++static int s5p_csis_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct v4l2_subdev *sd = platform_get_drvdata(pdev);
++	struct csis_state *state = sd_to_csis_state(sd);
++
++	v4l2_dbg(1, debug, sd, "%s: flags: 0x%x\n",
++		 __func__, state->flags);
++
++	mutex_lock(&state->lock);
++	if (state->flags & ST_POWERED) {
++		s5p_csis_stop_stream(state);
++		clk_disable(state->clock[CSIS_CLK_GATE]);
++		__csis_set_power(state, 0);
++	}
++	state->flags |= ST_SUSPENDED;
++	mutex_unlock(&state->lock);
++
++	return 0;
++}
++
++static int s5p_csis_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct v4l2_subdev *sd = platform_get_drvdata(pdev);
++	struct csis_state *state = sd_to_csis_state(sd);
++
++	v4l2_dbg(1, debug, sd, "%s: flags: 0x%x\n",
++		 __func__, state->flags);
++
++	mutex_lock(&state->lock);
++	if (!(state->flags & ST_POWERED)) {
++		__csis_set_power(state, 1);
++		clk_enable(state->clock[CSIS_CLK_GATE]);
++	}
++
++	if (state->flags & ST_STREAMING)
++		s5p_csis_start_stream(state);
++
++	state->flags &= ~ST_SUSPENDED;
++	mutex_unlock(&state->lock);
++
++	return 0;
++}
++
++static int s5p_csis_pm_suspend(struct device *dev)
++{
++	return s5p_csis_suspend(dev);
++}
++
++static int s5p_csis_pm_resume(struct device *dev)
++{
++	int ret;
++
++	ret = s5p_csis_resume(dev);
++
++	if (!ret) {
++		pm_runtime_disable(dev);
++		ret = pm_runtime_set_active(dev);
++		pm_runtime_enable(dev);
++	}
++
++	return ret;
++}
++#else
++#define s5p_csis_pm_suspend NULL
++#define s5p_csis_pm_resume NULL
++#endif
++
++#ifdef CONFIG_PM_RUNTIME
++static int s5p_csis_runtime_suspend(struct device *dev)
++{
++	return s5p_csis_suspend(dev);
++}
++
++static int s5p_csis_runtime_resume(struct device *dev)
++{
++	return s5p_csis_resume(dev);
++}
++
++#else
++#define s5p_csis_runtime_suspend NULL
++#define s5p_csis_runtime_resume NULL
++#endif
++
++static int s5p_csis_remove(struct platform_device *pdev)
++{
++	struct v4l2_subdev *sd = platform_get_drvdata(pdev);
++	struct csis_state *state = sd_to_csis_state(sd);
++	struct resource *res = state->regs_res;
++
++	pm_runtime_disable(&pdev->dev);
++	s5p_csis_suspend(&pdev->dev);
++	clk_disable(state->clock[CSIS_CLK_MUX]);
++	pm_runtime_set_suspended(&pdev->dev);
++
++	s5p_csis_clk_put(state);
++	if (state->supply)
++		regulator_put(state->supply);
++
++	media_entity_cleanup(&state->sd.entity);
++	free_irq(state->irq, state);
++	iounmap(state->regs);
++	release_mem_region(res->start, resource_size(res));
++	kfree(state);
++
++	return 0;
++}
++
++static const struct dev_pm_ops s5p_csis_pm_ops = {
++	.runtime_suspend = s5p_csis_runtime_suspend,
++	.runtime_resume	 = s5p_csis_runtime_resume,
++	.suspend	 = s5p_csis_pm_suspend,
++	.resume		 = s5p_csis_pm_resume,
++};
++
++static struct platform_driver s5p_csis_driver = {
++	.probe		= s5p_csis_probe,
++	.remove		= s5p_csis_remove,
++	.driver		= {
++		.name	= CSIS_MODULE_NAME,
++		.owner	= THIS_MODULE,
++		.pm	= &s5p_csis_pm_ops,
++	},
++};
++
++static int __init s5p_csis_init(void)
++{
++	return platform_driver_probe(&s5p_csis_driver, s5p_csis_probe);
++}
++
++static void __exit s5p_csis_exit(void)
++{
++	platform_driver_unregister(&s5p_csis_driver);
++}
++
++module_init(s5p_csis_init);
++module_exit(s5p_csis_exit);
++
++MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
++MODULE_DESCRIPTION("S5P/EXYNOS4 MIPI CSI receiver driver");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/media/video/s5p-fimc/mipi-csis.h b/drivers/media/video/s5p-fimc/mipi-csis.h
+new file mode 100644
+index 0000000..95e9011
+--- /dev/null
++++ b/drivers/media/video/s5p-fimc/mipi-csis.h
+@@ -0,0 +1,19 @@
++/*
++ * Samsung S5P/EXYNOS4 SoC series MIPI-CSI receiver driver
++ *
++ * Copyright (C) 2011 Samsung Electronics Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#define CSIS_MODULE_NAME	"s5p-mipi-csis"
++#define CSIS_MAX_ENTITIES	2
++#define CSIS0_MAX_LANES		4
++#define CSIS1_MAX_LANES		2
++
++#define CSIS_GRP_ID		(1 << 8)
++#define CSIS_PAD_SINK		0
++#define CSIS_PAD_SOURCE	1
++#define CSIS_PADS_NUM		2
+-- 
+1.7.4.3
