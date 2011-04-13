@@ -1,48 +1,55 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH] ARM: EXYNOS4: Register HSMMC2 before HSMMC0 on SMDKV310 board
-Date: Wed, 13 Apr 2011 10:08:54 +0530
-Message-ID: <1302669534-28926-1-git-send-email-tushar.behera@linaro.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: [PATCH RESEND v3 3/4] USB: Gadget: Add Samsung S3C24XX USB
+ High-Speed controller driver
+Date: Wed, 13 Apr 2011 16:28:41 -0700
+Message-ID: <20110413232841.GA20142@kroah.com>
+References: <201103232235.49318.heiko@sntech.de>
+ <201103232239.28879.heiko@sntech.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:41309 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751071Ab1DMEjU (ORCPT
+Received: from kroah.org ([198.145.64.141]:57213 "EHLO coco.kroah.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757110Ab1DMXeS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Apr 2011 00:39:20 -0400
-Received: by pwi15 with SMTP id 15so121990pwi.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Apr 2011 21:39:19 -0700 (PDT)
+	Wed, 13 Apr 2011 19:34:18 -0400
+Content-Disposition: inline
+In-Reply-To: <201103232239.28879.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linaro-dev@lists.linaro.org, patches@linaro.org
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Ben Dooks <ben-linux@fluff.org>, Thomas Abraham <thomas.ab@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, dbrownell@users.sourceforge.net, Alexander Neumann <alexander@debian.org>
 
-On Exynos4210 SOC, of all the HSMMC controllers only HSMMC2 can
-be used as a boot media. Hence the default SD/MMC card should be
-connected to HSMMC2. The secondary card is connected to HSMMC0.
+On Wed, Mar 23, 2011 at 10:39:28PM +0100, Heiko St=FCbner wrote:
+> From: Thomas Abraham <thomas.ab@samsung.com>
+>=20
+> The Samsung's S3C2416, S3C2443 and S3C2450 includes a USB High-Speed
+> device controller module. This driver enables support for USB high-sp=
+eed
+> gadget functionality for the Samsung S3C24xx SoC's that include this
+> controller.
+>=20
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+> Changes since v1:
+> - Addressed comments from Ben Dooks
+>=20
+> Changes since v2:
+> - Update the driver to match the data structure changes introduced by
+>   commit b0fca50f5a94a268ed02cfddf44448051ed9343f.
+>   Alexander Neumann <alexander@debian.org>
+> - Move s3c_hsudc to 0x29 in usb_gadget_controller_number in gadget_ch=
+ips.h
+>   Heiko Stuebner <heiko@sntech.de>
 
-If HSMMC0 is registered before HSMMC2, the device node for default
-MMC card changes depending on whether secondary card is connected
-or not. It creates problem in mounting the file-system present in
-default SD/MMC card. Hence HSMMC2 should be registered before HSMMC0.
+The Renesas driver got number 0x29, so this patch no longer applies :(
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- arch/arm/mach-exynos4/mach-smdkv310.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Care to respin this whole series against the next linux-next tree and
+resend it to me so I can apply it?
 
-diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
-index f6b1c7e..4f34d43 100644
---- a/arch/arm/mach-exynos4/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos4/mach-smdkv310.c
-@@ -168,9 +168,9 @@ static struct i2c_board_info i2c_devs1[] __initdata = {
- };
- 
- static struct platform_device *smdkv310_devices[] __initdata = {
-+	&s3c_device_hsmmc2,
- 	&s3c_device_hsmmc0,
- 	&s3c_device_hsmmc1,
--	&s3c_device_hsmmc2,
- 	&s3c_device_hsmmc3,
- 	&s3c_device_i2c1,
- 	&s3c_device_rtc,
--- 
-1.7.1
+thanks,
+
+greg k-h
