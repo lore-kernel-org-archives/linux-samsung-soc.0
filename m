@@ -1,107 +1,49 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH 4/4] ARM: S3C2416: Add support for USB 2.0 High-Speed gadget controller
-Date: Thu, 14 Apr 2011 11:12:49 +0200
-Message-ID: <201104141112.55917.heiko@sntech.de>
-References: <201103232235.49318.heiko@sntech.de> <20110413232841.GA20142@kroah.com> <201104141106.59565.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Thomas Abraham <thomas.ab@samsung.com>
+Subject: [PATCH 0/5] ARM: SAMSUNG: Add clkdev support for Samsung platforms
+Date: Thu, 14 Apr 2011 14:53:38 +0530
+Message-ID: <1302773023-26524-1-git-send-email-thomas.ab@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:45406 "EHLO
-	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932181Ab1DNJNM (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:37480 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756942Ab1DNJTf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Apr 2011 05:13:12 -0400
-In-Reply-To: <201104141106.59565.heiko@sntech.de>
+	Thu, 14 Apr 2011 05:19:35 -0400
+Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LJM0029GXWMOF30@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 14 Apr 2011 18:19:34 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LJM00GH3XWGFX@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 14 Apr 2011 18:19:34 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, Thomas Abraham <thomas.ab@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, Alexander Neumann <alexander@debian.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org
 
-From: Thomas Abraham <thomas.ab@samsung.com>
+This patch series adds clkdev support for Samsung platforms and specifically
+enables clkdev support for Samsung's Exynos4 platforms. The first two
+patches in this series are prerequisite patches for enabling clkdev on all
+Samsung platforms. The third patch in this series is a simple fix for clock
+name and id for dw_mmc controller on Exynos4 platforms.
 
-Add support for USB 2.0 High-Speed gadget controller driver for Samsung's
-S3C2416 processor.
+Thomas Abraham (5):
+  serial: samsung: Fix unintended usage of uart port 0 as console
+  serial: s5pv210: Remove redundant console_initcall
+  ARM: EXYNOS4: Fix clock name and clock id for dw_mmc controller
+  ARM: SAMSUNG: Add clkdev infrastructure
+  ARM: EXYNOS4: Add clkdev support
 
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
----
- arch/arm/mach-s3c2416/mach-smdk2416.c |   27 +++++++++++++++++++++++++++
- 1 files changed, 27 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-s3c2416/mach-smdk2416.c b/arch/arm/mach-s3c2416/mach-smdk2416.c
-index 3f83177..ac27ebb 100644
---- a/arch/arm/mach-s3c2416/mach-smdk2416.c
-+++ b/arch/arm/mach-s3c2416/mach-smdk2416.c
-@@ -23,6 +23,7 @@
- #include <linux/mtd/partitions.h>
- #include <linux/gpio.h>
- #include <linux/fb.h>
-+#include <linux/delay.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
-@@ -35,6 +36,7 @@
- #include <plat/regs-serial.h>
- #include <mach/regs-gpio.h>
- #include <mach/regs-lcd.h>
-+#include <mach/regs-s3c2443-clock.h>
- 
- #include <mach/idle.h>
- #include <mach/leds-gpio.h>
-@@ -47,6 +49,7 @@
- #include <plat/cpu.h>
- #include <plat/nand.h>
- #include <plat/sdhci.h>
-+#include <plat/udc.h>
- 
- #include <plat/regs-fb-v4.h>
- #include <plat/fb.h>
-@@ -121,6 +124,27 @@ static struct s3c2410_uartcfg smdk2416_uartcfgs[] __initdata = {
- 	}
- };
- 
-+void smdk2416_hsudc_gpio_init(void)
-+{
-+	s3c_gpio_setpull(S3C2410_GPH(14), S3C_GPIO_PULL_UP);
-+	s3c_gpio_setpull(S3C2410_GPF(2), S3C_GPIO_PULL_NONE);
-+	s3c_gpio_cfgpin(S3C2410_GPH(14), S3C_GPIO_SFN(1));
-+	s3c2410_modify_misccr(S3C2416_MISCCR_SEL_SUSPND, 0);
-+}
-+
-+void smdk2416_hsudc_gpio_uninit(void)
-+{
-+	s3c2410_modify_misccr(S3C2416_MISCCR_SEL_SUSPND, 1);
-+	s3c_gpio_setpull(S3C2410_GPH(14), S3C_GPIO_PULL_NONE);
-+	s3c_gpio_cfgpin(S3C2410_GPH(14), S3C_GPIO_SFN(0));
-+}
-+
-+struct s3c24xx_hsudc_platdata smdk2416_hsudc_platdata = {
-+	.epnum = 9,
-+	.gpio_init = smdk2416_hsudc_gpio_init,
-+	.gpio_uninit = smdk2416_hsudc_gpio_uninit,
-+};
-+
- struct s3c_fb_pd_win smdk2416_fb_win[] = {
- 	[0] = {
- 		/* think this is the same as the smdk6410 */
-@@ -186,6 +210,7 @@ static struct platform_device *smdk2416_devices[] __initdata = {
- 	&s3c_device_i2c0,
- 	&s3c_device_hsmmc0,
- 	&s3c_device_hsmmc1,
-+	&s3c_device_usb_hsudc,
- };
- 
- static void __init smdk2416_map_io(void)
-@@ -203,6 +228,8 @@ static void __init smdk2416_machine_init(void)
- 	s3c_sdhci0_set_platdata(&smdk2416_hsmmc0_pdata);
- 	s3c_sdhci1_set_platdata(&smdk2416_hsmmc1_pdata);
- 
-+	s3c24xx_hsudc_set_platdata(&smdk2416_hsudc_platdata);
-+
- 	gpio_request(S3C2410_GPB(4), "USBHost Power");
- 	gpio_direction_output(S3C2410_GPB(4), 1);
- 
--- 
-1.7.1
+ arch/arm/Kconfig                            |    1 +
+ arch/arm/mach-exynos4/clock.c               |   63 +++++++++++++++++++++++++--
+ arch/arm/mach-exynos4/include/mach/clkdev.h |    7 +++
+ arch/arm/mach-exynos4/time.c                |    2 +
+ arch/arm/plat-samsung/clock.c               |   18 ++++++++
+ arch/arm/plat-samsung/include/plat/clock.h  |    7 +++
+ arch/arm/plat-samsung/pwm-clock.c           |   10 ++++
+ drivers/tty/serial/s5pv210.c                |    7 ---
+ drivers/tty/serial/samsung.c                |    9 ++--
+ 9 files changed, 108 insertions(+), 16 deletions(-)
+ create mode 100644 arch/arm/mach-exynos4/include/mach/clkdev.h
