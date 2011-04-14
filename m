@@ -1,42 +1,73 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 3/4] ARM: EXYNOS4: Add usb ehci device to the NURI board
-Date: Thu, 14 Apr 2011 13:40:25 +0900
-Message-ID: <4DA67AB9.2080107@samsung.com>
-References: <1302236532-27636-1-git-send-email-jy0922.shim@samsung.com>
- <1302236532-27636-3-git-send-email-jy0922.shim@samsung.com>
- <20110413235402.GA32159@kroah.com>
+From: Angus Ainslie <angus.ainslie@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS4: Register HSMMC2 before HSMMC0 on SMDKV310 board
+Date: Thu, 14 Apr 2011 01:49:40 -0600
+Message-ID: <BANLkTimUkDRrL=-JgGjJhgU_MJ=CVPQJMg@mail.gmail.com>
+References: <1302669534-28926-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:11881 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751637Ab1DNEke (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:61707 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752364Ab1DNHtk convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Apr 2011 00:40:34 -0400
-In-reply-to: <20110413235402.GA32159@kroah.com>
+	Thu, 14 Apr 2011 03:49:40 -0400
+Received: by iyb14 with SMTP id 14so1228287iyb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Apr 2011 00:49:40 -0700 (PDT)
+In-Reply-To: <1302669534-28926-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Greg KH <greg@kroah.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, gregkh@suse.de, kyungmin.park@samsung.com, jg1.han@samsung.com
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, linaro-dev@lists.linaro.org
 
-On 2011-04-14 =EC=98=A4=EC=A0=84 8:54, Greg KH wrote:
-> On Fri, Apr 08, 2011 at 01:22:11PM +0900, Joonyoung Shim wrote:
->> This patch is to support usb ehci device to the NURI board.
->>
->> Signed-off-by: Joonyoung Shim<jy0922.shim@samsung.com>
->> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+On Tue, Apr 12, 2011 at 10:38 PM, Tushar Behera
+<tushar.behera@linaro.org> wrote:
+> On Exynos4210 SOC, of all the HSMMC controllers only HSMMC2 can
+> be used as a boot media. Hence the default SD/MMC card should be
+> connected to HSMMC2. The secondary card is connected to HSMMC0.
 >
-> Note, I had to apply this one by hand, I don't know what tree you mad=
-e
-> it against.  Hopefully the merge issues will be simple to handle, as
-> they were pretty obvious to me.
+> If HSMMC0 is registered before HSMMC2, the device node for default
+> MMC card changes depending on whether secondary card is connected
+> or not. It creates problem in mounting the file-system present in
+> default SD/MMC card. Hence HSMMC2 should be registered before HSMMC0.
+>
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> ---
+> =A0arch/arm/mach-exynos4/mach-smdkv310.c | =A0 =A02 +-
+> =A01 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-ex=
+ynos4/mach-smdkv310.c
+> index f6b1c7e..4f34d43 100644
+> --- a/arch/arm/mach-exynos4/mach-smdkv310.c
+> +++ b/arch/arm/mach-exynos4/mach-smdkv310.c
+> @@ -168,9 +168,9 @@ static struct i2c_board_info i2c_devs1[] __initda=
+ta =3D {
+> =A0};
+>
+> =A0static struct platform_device *smdkv310_devices[] __initdata =3D {
+> + =A0 =A0 =A0 &s3c_device_hsmmc2,
+> =A0 =A0 =A0 =A0&s3c_device_hsmmc0,
+> =A0 =A0 =A0 =A0&s3c_device_hsmmc1,
+> - =A0 =A0 =A0 &s3c_device_hsmmc2,
+> =A0 =A0 =A0 =A0&s3c_device_hsmmc3,
+> =A0 =A0 =A0 =A0&s3c_device_i2c1,
+> =A0 =A0 =A0 =A0&s3c_device_rtc,
+> --
+> 1.7.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
 >
 
-This patch is based from for-next branch of linux-samsung tree
-(git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git)=
-,
-so will occur merge conflict at the your usb tree.
+If you use the UUID of the filesystem it doesn't matter which device
+node it gets registered as.
 
-Sorry for missing about tree.
+Angus
+
+--=20
+Angus Ainslie <angus.ainslie@linaro.org>
+Team Lead, Samsung Landing Team
