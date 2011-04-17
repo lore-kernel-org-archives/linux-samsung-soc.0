@@ -1,89 +1,57 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v4 3/4] USB: Gadget: Add Samsung S3C24XX USB High-Speed controller driver
-Date: Sat, 16 Apr 2011 20:47:50 +0200
-Message-ID: <201104162047.50861.heiko@sntech.de>
-References: <Pine.LNX.4.44L0.1104141313210.2487-100000@iolanthe.rowland.org> <201104161200.32042.heiko@sntech.de> <20110416145830.GA8811@kroah.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung fixes for 2.6.39-rc4
+Date: Mon, 18 Apr 2011 06:22:31 +0900
+Message-ID: <008701cbfd45$94dd8f70$be98ae50$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:40090 "EHLO
-	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752141Ab1DPSsJ convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 16 Apr 2011 14:48:09 -0400
-In-Reply-To: <20110416145830.GA8811@kroah.com>
+Received: from mailout1.samsung.com ([203.254.224.24]:14403 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751231Ab1DQVWm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 17 Apr 2011 17:22:42 -0400
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Greg KH <greg@kroah.com>, Alan Stern <stern@rowland.harvard.edu>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Thomas Abraham <thomas.ab@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, Alexander Neumann <alexander@debian.org>
+To: 'Linus Torvalds' <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-Am Samstag 16 April 2011, 16:58:30 schrieb Greg KH:
-> On Sat, Apr 16, 2011 at 12:00:31PM +0200, Heiko St=FCbner wrote:
-> > Am Donnerstag 14 April 2011, 19:15:23 schrieb Alan Stern:
-> > > On Thu, 14 Apr 2011, Greg KH wrote:
-> > > > On Thu, Apr 14, 2011 at 11:35:43AM -0400, Alan Stern wrote:
-> > > > > On Thu, 14 Apr 2011, Heiko [iso-8859-1] St?bner wrote:
-> > > > > > From: Thomas Abraham <thomas.ab@samsung.com>
-> > > > > >=20
-> > > > > > The Samsung's S3C2416, S3C2443 and S3C2450 includes a USB
-> > > > > > High-Speed device controller module. This driver enables su=
-pport
-> > > > > > for USB high-speed gadget functionality for the Samsung S3C=
-24xx
-> > > > > > SoC's that include this controller.
-> > > > > >=20
-> > > > > > Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> > > > > > Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
-> > > > > > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> > > > > > Signed-off-by: Alexander Neumann <alexander@bumpern.de>
-> > > > > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > > > >=20
-> > > > > ...
-> > > > >=20
-> > > > > > +static struct usb_ep_ops s3c_hsudc_ep_ops =3D {
-> > > > > > +	.enable =3D s3c_hsudc_ep_enable,
-> > > > > > +	.disable =3D s3c_hsudc_ep_disable,
-> > > > > > +	.alloc_request =3D s3c_hsudc_alloc_request,
-> > > > > > +	.free_request =3D s3c_hsudc_free_request,
-> > > > > > +	.queue =3D s3c_hsudc_queue,
-> > > > > > +	.dequeue =3D s3c_hsudc_dequeue,
-> > > > > > +	.set_halt =3D s3c_hsudc_set_halt,
-> > > > > > +};
-> > > > >=20
-> > > > > There's no .set_wedge method.  Why do people always leave thi=
-s out?
-> > > >=20
-> > > > Does the code spit out a nasty warning if this isn't set?  If n=
-ot, I
-> > > > would suggest adding it so that this doesn't keep happening.
-> > > >=20
-> > > > Or just refuse to be able to register the structure, that would=
- stop
-> > > > it right away :)
-> > >=20
-> > > In fact, set_wedge is optional.  But it's so easy to implement, t=
-here's
-> > > no good reason for leaving it out.
-> >=20
-> > It seems Thomas [original author of the driver] will be able to imp=
-lement
-> > said set_wedge function for it.
-> > As he will need a bit of time for this, two possible ways for going
-> > forward come to mind:
-> > (1) use current driver [as set_wedge is optional] and add it later =
-via
-> > patch (2) resubmit whole driver again when set_wedge is added to it
-> >=20
-> > Obviously I would prefer option 1 :-), but in the end it's your dec=
-ision.
->
-> It shouldn't take that much time to do this, what is the delay?
-from what I gathered, simply finding the necessary time slot for this.
+Hi Linus,
 
-> I'd prefer to get the correct version implemented and would not like =
-to
-> accept a patch that everyone knows is wrong.
-ok, I will resubmit the driver when set_wedge is included
+Please pull Samsung fixes from:
 
-Heiko
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+s5p-fixes-for-linus
+
+These things are small fixes for 2.6.39-rc4.
+If any problems, please let me know.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+The following changes since commit a6360dd37e1a144ed11e6548371bade559a1e4df:
+
+  Linux 2.6.39-rc3 (2011-04-11 17:21:51 -0700)
+
+are available in the git repository at:
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+s5p-fixes-for-linus
+
+Abhilash Kesavan (2):
+      ARM: S5P: Remove unused s3c_pm_check_resume_pin
+      ARM: SAMSUNG: Fix build failure in PM CRC check code
+
+Maurus Cuelenaere (1):
+      ARM: SAMSUNG: Fix warning 's3c_pm_show_resume_irqs' defined but not
+used
+
+ arch/arm/plat-s5p/pm.c           |   11 -----------
+ arch/arm/plat-samsung/pm-check.c |    6 ------
+ arch/arm/plat-samsung/pm.c       |    5 +++--
+ 3 files changed, 3 insertions(+), 19 deletions(-)
