@@ -1,85 +1,106 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [GIT PULL] Samsung fixes for 2.6.39-rc4
-Date: Mon, 18 Apr 2011 17:43:00 +0900
-Message-ID: <BANLkTik=-YbSD3D+9twqDm3uKR3tm+V+=g@mail.gmail.com>
-References: <008701cbfd45$94dd8f70$be98ae50$%kim@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 7/7] ARM: EXYNOS4: enable FIMC on Universal_C210
+Date: Mon, 18 Apr 2011 11:26:44 +0200
+Message-ID: <1303118804-5575-8-git-send-email-m.szyprowski@samsung.com>
+References: <1303118804-5575-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f46.google.com ([209.85.215.46]:33513 "EHLO
-	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752566Ab1DRInE convert rfc822-to-8bit (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:45192 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754137Ab1DRJ0y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Apr 2011 04:43:04 -0400
-In-Reply-To: <008701cbfd45$94dd8f70$be98ae50$%kim@samsung.com>
+	Mon, 18 Apr 2011 05:26:54 -0400
+In-reply-to: <1303118804-5575-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Pietrasiwiecz <andrzej.p@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi,
+This patch adds definitions to enable support for s5p-fimc driver
+together with required power domains and sysmmu controller on Universal
+C210 board.
 
-Can you check this patch also?
-http://lists.arm.linux.org.uk/lurker/message/20110329.064902.fb2f620c.e=
-n.html
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos4/Kconfig               |    6 ++++++
+ arch/arm/mach-exynos4/mach-universal_c210.c |   22 ++++++++++++++++++++++
+ 2 files changed, 28 insertions(+), 0 deletions(-)
 
-=46ix cpuinit section mismatch(es).
-
-WARNING: modpost: Found 2 section mismatch(es).
-To see full details build your kernel with:
-'make CONFIG_DEBUG_SECTION_MISMATCH=3Dy'
-
-Thank you,
-Kyungmin Park
-
-On Mon, Apr 18, 2011 at 6:22 AM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> Hi Linus,
->
-> Please pull Samsung fixes from:
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> s5p-fixes-for-linus
->
-> These things are small fixes for 2.6.39-rc4.
-> If any problems, please let me know.
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> The following changes since commit a6360dd37e1a144ed11e6548371bade559=
-a1e4df:
->
-> =A0Linux 2.6.39-rc3 (2011-04-11 17:21:51 -0700)
->
-> are available in the git repository at:
-> =A0 git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung=
-=2Egit
-> s5p-fixes-for-linus
->
-> Abhilash Kesavan (2):
-> =A0 =A0 =A0ARM: S5P: Remove unused s3c_pm_check_resume_pin
-> =A0 =A0 =A0ARM: SAMSUNG: Fix build failure in PM CRC check code
->
-> Maurus Cuelenaere (1):
-> =A0 =A0 =A0ARM: SAMSUNG: Fix warning 's3c_pm_show_resume_irqs' define=
-d but not
-> used
->
-> =A0arch/arm/plat-s5p/pm.c =A0 =A0 =A0 =A0 =A0 | =A0 11 -----------
-> =A0arch/arm/plat-samsung/pm-check.c | =A0 =A06 ------
-> =A0arch/arm/plat-samsung/pm.c =A0 =A0 =A0 | =A0 =A05 +++--
-> =A03 files changed, 3 insertions(+), 19 deletions(-)
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index e849f67..544a594 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -148,12 +148,18 @@ config MACH_ARMLEX4210
+ config MACH_UNIVERSAL_C210
+ 	bool "Mobile UNIVERSAL_C210 Board"
+ 	select CPU_EXYNOS4210
++	select S5P_DEV_FIMC0
++	select S5P_DEV_FIMC1
++	select S5P_DEV_FIMC2
++	select S5P_DEV_FIMC3
+ 	select S3C_DEV_HSMMC
+ 	select S3C_DEV_HSMMC2
+ 	select S3C_DEV_HSMMC3
+ 	select S3C_DEV_I2C1
+ 	select S3C_DEV_I2C5
+ 	select S5P_DEV_ONENAND
++	select EXYNOS4_DEV_PD
++	select EXYNOS4_DEV_SYSMMU
+ 	select EXYNOS4_SETUP_I2C1
+ 	select EXYNOS4_SETUP_I2C5
+ 	select EXYNOS4_SETUP_SDHCI
+diff --git a/arch/arm/mach-exynos4/mach-universal_c210.c b/arch/arm/mach-exynos4/mach-universal_c210.c
+index 97d329f..7ff2f5f 100644
+--- a/arch/arm/mach-exynos4/mach-universal_c210.c
++++ b/arch/arm/mach-exynos4/mach-universal_c210.c
+@@ -27,9 +27,12 @@
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+ #include <plat/iic.h>
++#include <plat/pd.h>
+ #include <plat/sdhci.h>
++#include <plat/sysmmu.h>
+ 
+ #include <mach/map.h>
++#include <mach/regs-clock.h>
+ 
+ /* Following are default values for UCON, ULCON and UFCON UART registers */
+ #define UNIVERSAL_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+@@ -613,6 +616,15 @@ static struct platform_device *universal_devices[] __initdata = {
+ 	&s3c_device_hsmmc2,
+ 	&s3c_device_hsmmc3,
+ 	&s3c_device_i2c5,
++	&s5p_device_fimc0,
++	&s5p_device_fimc1,
++	&s5p_device_fimc2,
++	&s5p_device_fimc3,
++	&exynos4_device_pd[PD_CAM],
++	&exynos4_device_sysmmu[S5P_SYSMMU_FIMC0],
++	&exynos4_device_sysmmu[S5P_SYSMMU_FIMC1],
++	&exynos4_device_sysmmu[S5P_SYSMMU_FIMC2],
++	&exynos4_device_sysmmu[S5P_SYSMMU_FIMC3],
+ 
+ 	/* Universal Devices */
+ 	&universal_gpio_keys,
+@@ -638,6 +650,16 @@ static void __init universal_machine_init(void)
+ 
+ 	/* Last */
+ 	platform_add_devices(universal_devices, ARRAY_SIZE(universal_devices));
++
++	s5p_device_fimc0.dev.parent = &exynos4_device_pd[PD_CAM].dev;
++	s5p_device_fimc1.dev.parent = &exynos4_device_pd[PD_CAM].dev;
++	s5p_device_fimc2.dev.parent = &exynos4_device_pd[PD_CAM].dev;
++	s5p_device_fimc3.dev.parent = &exynos4_device_pd[PD_CAM].dev;
++	exynos4_device_sysmmu[S5P_SYSMMU_FIMC0].dev.parent = &exynos4_device_pd[PD_CAM].dev;
++	exynos4_device_sysmmu[S5P_SYSMMU_FIMC1].dev.parent = &exynos4_device_pd[PD_CAM].dev;
++	exynos4_device_sysmmu[S5P_SYSMMU_FIMC2].dev.parent = &exynos4_device_pd[PD_CAM].dev;
++	exynos4_device_sysmmu[S5P_SYSMMU_FIMC3].dev.parent = &exynos4_device_pd[PD_CAM].dev;
++
+ }
+ 
+ MACHINE_START(UNIVERSAL_C210, "UNIVERSAL_C210")
+-- 
+1.7.1.569.g6f426
