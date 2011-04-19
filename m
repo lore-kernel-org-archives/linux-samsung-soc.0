@@ -1,54 +1,46 @@
-From: Thomas Abraham <thomas.ab@samsung.com>
-Subject: Re: Cleanup Samsung stuff
-Date: Tue, 19 Apr 2011 14:10:00 +0530
-Message-ID: <BANLkTim2VJBoO-otakfVQaYsXLTyM91jsA@mail.gmail.com>
-References: <012801cbfe33$a76fa490$f64eedb0$%kim@samsung.com>
-	<20110419080307.GA26650@sirena.org.uk>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH 4/7] v4l: videobuf2: add IOMMU based DMA memory allocator
+Date: Tue, 19 Apr 2011 11:02:34 +0200
+Message-ID: <00ea01cbfe70$860ca900$9225fb00$%szyprowski@samsung.com>
+References: <1303118804-5575-1-git-send-email-m.szyprowski@samsung.com>
+ <1303118804-5575-5-git-send-email-m.szyprowski@samsung.com>
+ <201104181615.49009.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-px0-f179.google.com ([209.85.212.179]:57539 "EHLO
-	mail-px0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752833Ab1DSIkB convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Apr 2011 04:40:01 -0400
-Received: by pxi2 with SMTP id 2so4293438pxi.10
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Apr 2011 01:40:00 -0700 (PDT)
-In-Reply-To: <20110419080307.GA26650@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <201104181615.49009.arnd@arndb.de>
+Content-language: pl
+Sender: linux-media-owner@vger.kernel.org
+To: 'Arnd Bergmann' <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, LAK <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>
 
-On Tue, Apr 19, 2011 at 1:33 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Tue, Apr 19, 2011 at 10:46:47AM +0900, Kukjin Kim wrote:
->
->> - Device tree (with Linaro)
->
-> What is going on with device tree? =A0I've asked a couple of times ab=
-out
-> this in the other thread but I'm still not clear where the code is or
-> what could usefully be done with it.
+Hello,
 
-The initial work on Samsung's s5pv310 is available at
-http://lists.ozlabs.org/pipermail/devicetree-discuss/2011-February/0043=
-50.html
+On Monday, April 18, 2011 4:16 PM Arnd Bergmann wrote:
 
-It is based on Grant's tree.
-git://git.secretlab.ca/git/linux-2.6 devicetree/test
+> On Monday 18 April 2011, Marek Szyprowski wrote:
+> > From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+> >
+> > This patch adds new videobuf2 memory allocator dedicated to devices that
+> > supports IOMMU DMA mappings. A device with IOMMU module and a driver
+> > with include/iommu.h compatible interface is required. This allocator
+> > aquires memory with standard alloc_page() call and doesn't suffer from
+> > memory fragmentation issues. The allocator support following page sizes:
+> > 4KiB, 64KiB, 1MiB and 16MiB to reduce iommu translation overhead.
+> 
+> My feeling is that this is not the right abstraction. Why can't you
+> just implement the regular dma-mapping.h interfaces for your IOMMU
+> so that the videobuf code can use the existing allocators?
 
-Currently I am working on supporting clkdev and Jeremy's common clock
-for all of Samsung's platforms and then continue with the device tree
-support for s5pv310.
+I'm not really sure which existing videobuf2 allocators might transparently
+support IOMMU interface yet
 
-Regards,
-Thomas.
+Do you think that all iommu operations can be hidden behind dma_map_single 
+and dma_unmap_single?
 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
