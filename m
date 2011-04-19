@@ -1,56 +1,69 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Cleanup Samsung stuff
-Date: Tue, 19 Apr 2011 10:46:47 +0900
-Message-ID: <012801cbfe33$a76fa490$f64eedb0$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+From: Changhwan Youn <chaos.youn@samsung.com>
+Subject: [PATCH 3/3] ARM: EXYNOS4: add entry and exit functions for external interrupt chained handler
+Date: Tue, 19 Apr 2011 10:45:26 +0900
+Message-ID: <1303177526-11744-4-git-send-email-chaos.youn@samsung.com>
+References: <1303177526-11744-1-git-send-email-chaos.youn@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:27344 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753010Ab1DSBqy (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:35718 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753913Ab1DSCRH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Apr 2011 21:46:54 -0400
-Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LJV004QWMA3OFC0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 19 Apr 2011 10:46:51 +0900 (KST)
-Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LJV00FH8MA30X@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 19 Apr 2011 10:46:51 +0900 (KST)
-Content-language: ko
+	Mon, 18 Apr 2011 22:17:07 -0400
+In-Reply-To: <1303177526-11744-1-git-send-email-chaos.youn@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'LAK' <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <rmk+kernel@arm.linux.org.uk>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, Changhwan Youn <chaos.youn@samsung.com>
 
-Hi all,
+This functions are added for properly controlling primary controller
+in exnternal interrupt chained handler.
 
-I think, you know about current situation of Linux ARM world.
+Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+---
+ arch/arm/mach-exynos4/irq-eint.c |   14 +++++++-------
+ 1 files changed, 7 insertions(+), 7 deletions(-)
 
-So...
-
-As Russell suggested, I also will focus on consolidations and bug fixes for
-Samsung stuff for a while so don't complain about missing new stuff. In my
-opinion, we can keep going it later...
-
-As a note, I'm doing(or preparing) following at the moment.
-
-- Removing some "mach-s5pxxxx"s
-- Removing useless header files in include/{mach,plat} of Samsung
-- Samsung GPIO stuff cleanup/consolidation
-- Samsung DMA stuff consolidation?
-- Device tree (with Linaro)
-- and so on...
-
-If required anything else, please let me know.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/arch/arm/mach-exynos4/irq-eint.c b/arch/arm/mach-exynos4/irq-eint.c
+index 4f7ad4a..f9d9b48 100644
+--- a/arch/arm/mach-exynos4/irq-eint.c
++++ b/arch/arm/mach-exynos4/irq-eint.c
+@@ -22,6 +22,7 @@
+ #include <plat/gpio-cfg.h>
+ 
+ #include <mach/regs-gpio.h>
++#include <asm/mach/irq.h>
+ 
+ static DEFINE_SPINLOCK(eint_lock);
+ 
+@@ -184,8 +185,12 @@ static inline void exynos4_irq_demux_eint(unsigned int start)
+ 
+ static void exynos4_irq_demux_eint16_31(unsigned int irq, struct irq_desc *desc)
+ {
++	struct irq_chip *chip = get_irq_chip(irq);
++
++	chained_irq_enter(chip, desc);
+ 	exynos4_irq_demux_eint(IRQ_EINT(16));
+ 	exynos4_irq_demux_eint(IRQ_EINT(24));
++	chained_irq_exit(chip, desc);
+ }
+ 
+ static void exynos4_irq_eint0_15(unsigned int irq, struct irq_desc *desc)
+@@ -193,14 +198,9 @@ static void exynos4_irq_eint0_15(unsigned int irq, struct irq_desc *desc)
+ 	u32 *irq_data = get_irq_data(irq);
+ 	struct irq_chip *chip = get_irq_chip(irq);
+ 
+-	chip->irq_mask(&desc->irq_data);
+-
+-	if (chip->irq_ack)
+-		chip->irq_ack(&desc->irq_data);
+-
++	chained_irq_enter(chip, desc);
+ 	generic_handle_irq(*irq_data);
+-
+-	chip->irq_unmask(&desc->irq_data);
++	chained_irq_exit(chip, desc);
+ }
+ 
+ int __init exynos4_init_irq_eint(void)
+-- 
+1.7.1
