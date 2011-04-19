@@ -1,83 +1,73 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/7] ARM: Samsung: update/rewrite Samsung SYSMMU (IOMMU) driver
-Date: Tue, 19 Apr 2011 16:29:49 +0200
-Message-ID: <201104191629.49676.arnd@arndb.de>
-References: <1303118804-5575-1-git-send-email-m.szyprowski@samsung.com> <201104191449.50824.arnd@arndb.de> <000001cbfe9a$8e64cae0$ab2e60a0$%szyprowski@samsung.com>
+From: David Anders <x0132446@ti.com>
+Subject: Re: Cleanup Samsung stuff
+Date: Tue, 19 Apr 2011 09:49:29 -0500
+Message-ID: <4DADA0F9.7010104@ti.com>
+References: <012801cbfe33$a76fa490$f64eedb0$%kim@samsung.com> <BANLkTimTuQ1YE8Xu04NyMZxF42KGDr_XBQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=EUC-KR
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:64065 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752607Ab1DSO3z (ORCPT
+Received: from devils.ext.ti.com ([198.47.26.153]:38124 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753144Ab1DSOuF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Apr 2011 10:29:55 -0400
-In-Reply-To: <000001cbfe9a$8e64cae0$ab2e60a0$%szyprowski@samsung.com>
+	Tue, 19 Apr 2011 10:50:05 -0400
+In-Reply-To: <BANLkTimTuQ1YE8Xu04NyMZxF42KGDr_XBQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: 'Joerg Roedel' <joerg.roedel@amd.com>, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Andrzej Pietrasiewicz' <andrzej.p@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+To: Kyungmin Park <kmpark@infradead.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, =?EUC-KR?B?tOvAzrHi?= <inki.dae@samsung.com>, =?EUC-KR?B?x9S47cHW?= <myungjoo.ham@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Russell King <rmk+kernel@arm.linux.org.uk>, LAK <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Tuesday 19 April 2011, Marek Szyprowski wrote:
+Greetings All,
 
-> > 
-> > 1. change the runtime_pm subsystem to allow it to ignore some devices
-> > in an easy way.
-> > 
-> > 2. change the device layout if the sysmmu. If the iommu device is
-> > a child of the device that it is responsible for, I guess you don't
-> > have this problem.
-> > 
-> > 3. Not represent the iommu as a device at all, just as a property
-> > of another device.
-> 
-> Ok, we will handle this issue somehow. I consider this a minor issue and I
-> would like to focus on the IOMMU/dma-mapping APIs first.
 
-Yes, agreed.
+i've been looking at a number of machine files for boards that are no
+longer in production(mainly the ones i maintain), thoughts on removing them?
 
-> > That is a limitation of the current implementation. We might want to
-> > change that anyway, e.g. to handle the mali IOMMU along with yours.
-> > I believe the reason for allowing only one IOMMU type so far has been
-> > that nobody required more than one. As I mentioned, the IOMMU API is
-> > rather new and has not been ported to much variety of hardware, unlike
-> > the dma-mapping API, which does support multiple different IOMMUs
-> > in a single system.
-> 
-> Ok. I understand. IOMMU API is quite nice abstraction of the IOMMU chip.
-> dma-mapping API is something much more complex that creates the actual
-> mapping for various sets of the devices. IMHO the right direction will
-> be to create dma-mapping implementation that will be just a client of
-> the IOMMU API. What's your opinion?
- 
-Sounds good. I think we should put it into a new drivers/iommu, along
-with your specific iommu implementation, and then we can convert the
-existing ones over to use that.
 
-Note that this also requires using dma-mapping-common.h, which we currently
-don't on ARM.
+Dave
 
-> > The domain really reflects the user, not the device here, which makes more
-> > sense if you think of virtual machines than of multimedia devices.
-> >
-> > I would suggest that you just use a single iommu_domain globally for
-> > all in-kernel users.
-> 
-> There are cases where having a separate mapping for each device makes sense.
-> It definitely increases the security and helps to find some bugs in
-> the drivers.
-> 
-> Getting back to our video codec - it has 2 IOMMU controllers. The codec
-> hardware is able to address only 256MiB of space. Do you have an idea how
-> this can be handled with dma-mapping API? The only idea that comes to my
-> mind is to provide a second, fake 'struct device' and use it for allocations
-> for the second IOMMU controller.
-
-Good question. 
-
-How do you even decide which controller to use from the driver?
-I would need to understand better what you are trying to do to
-give a good recommendation.
-
-	Arnd
+On 04/18/2011 09:23 PM, Kyungmin Park wrote:
+> On Tue, Apr 19, 2011 at 10:46 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>   
+>> Hi all,
+>>
+>> I think, you know about current situation of Linux ARM world.
+>>
+>> So...
+>>
+>> As Russell suggested, I also will focus on consolidations and bug fixes for
+>> Samsung stuff for a while so don't complain about missing new stuff. In my
+>> opinion, we can keep going it later...
+>>
+>> As a note, I'm doing(or preparing) following at the moment.
+>>
+>> - Removing some "mach-s5pxxxx"s
+>>     
+> Why not mach-s3c series? don't you think too much plat-{s3c, s5p,
+> samsung}? how about to use the plat-samsung only?
+>   
+>> - Removing useless header files in include/{mach,plat} of Samsung
+>> - Samsung GPIO stuff cleanup/consolidation
+>> - Samsung DMA stuff consolidation?
+>>     
+>    -> Move to dmaengine and use it.
+>   
+>> - Device tree (with Linaro)
+>> - and so on...
+>>     
+>    - Strange Samsung Clock and names consolidation.
+>    - IRQ stuff (some parts are done by tglx but need to use the
+> generic IRQ base instead of odd +32 magic)
+>    - generic IOMMU consolidation.
+>
+> BTW, who works on this at LSI?
+>
+> Thank you,
+> Kyungmin Park
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>   
