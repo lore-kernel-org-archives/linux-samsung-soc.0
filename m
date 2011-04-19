@@ -1,36 +1,56 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 4/7] v4l: videobuf2: add IOMMU based DMA memory allocator
-Date: Mon, 18 Apr 2011 16:15:48 +0200
-Message-ID: <201104181615.49009.arnd@arndb.de>
-References: <1303118804-5575-1-git-send-email-m.szyprowski@samsung.com> <1303118804-5575-5-git-send-email-m.szyprowski@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Cleanup Samsung stuff
+Date: Tue, 19 Apr 2011 10:46:47 +0900
+Message-ID: <012801cbfe33$a76fa490$f64eedb0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:64671 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754517Ab1DROPv (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:27344 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753010Ab1DSBqy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Apr 2011 10:15:51 -0400
-In-Reply-To: <1303118804-5575-5-git-send-email-m.szyprowski@samsung.com>
+	Mon, 18 Apr 2011 21:46:54 -0400
+Received: from epmmp1 (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LJV004QWMA3OFC0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 19 Apr 2011 10:46:51 +0900 (KST)
+Received: from DOKGENEKIM02 ([12.23.103.104])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LJV00FH8MA30X@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 19 Apr 2011 10:46:51 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Pietrasiwiecz <andrzej.p@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: 'LAK' <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org
+Cc: 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <rmk+kernel@arm.linux.org.uk>
 
-On Monday 18 April 2011, Marek Szyprowski wrote:
-> From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-> 
-> This patch adds new videobuf2 memory allocator dedicated to devices that
-> supports IOMMU DMA mappings. A device with IOMMU module and a driver
-> with include/iommu.h compatible interface is required. This allocator
-> aquires memory with standard alloc_page() call and doesn't suffer from
-> memory fragmentation issues. The allocator support following page sizes:
-> 4KiB, 64KiB, 1MiB and 16MiB to reduce iommu translation overhead.
+Hi all,
 
-My feeling is that this is not the right abstraction. Why can't you
-just implement the regular dma-mapping.h interfaces for your IOMMU
-so that the videobuf code can use the existing allocators?
+I think, you know about current situation of Linux ARM world.
 
-	Arnd
+So...
+
+As Russell suggested, I also will focus on consolidations and bug fixes for
+Samsung stuff for a while so don't complain about missing new stuff. In my
+opinion, we can keep going it later...
+
+As a note, I'm doing(or preparing) following at the moment.
+
+- Removing some "mach-s5pxxxx"s
+- Removing useless header files in include/{mach,plat} of Samsung
+- Samsung GPIO stuff cleanup/consolidation
+- Samsung DMA stuff consolidation?
+- Device tree (with Linaro)
+- and so on...
+
+If required anything else, please let me know.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
