@@ -1,34 +1,37 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/7] ARM: Samsung: update/rewrite Samsung SYSMMU (IOMMU) driver
-Date: Tue, 19 Apr 2011 17:37:30 +0200
-Message-ID: <201104191737.30916.arnd@arndb.de>
-References: <1303118804-5575-1-git-send-email-m.szyprowski@samsung.com> <000001cbfe9a$8e64cae0$ab2e60a0$%szyprowski@samsung.com> <20110419150018.GV2192@amd.com>
+From: Nick Pelling <nickpelling@nanodome.com>
+Subject: Re: Cleanup Samsung stuff
+Date: Wed, 20 Apr 2011 08:46:41 +0100
+Message-ID: <9fibsi$eg5ubh@out1.ip07ir2.opaltelecom.net>
+References: <012801cbfe33$a76fa490$f64eedb0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20110419150018.GV2192@amd.com>
-Sender: linux-media-owner@vger.kernel.org
-To: "Roedel, Joerg" <Joerg.Roedel@amd.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Andrzej Pietrasiewicz' <andrzej.p@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <012801cbfe33$a76fa490$f64eedb0$%kim@samsung.com>
+References: <012801cbfe33$a76fa490$f64eedb0$%kim@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>, 'LAK' <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday 19 April 2011, Roedel, Joerg wrote:
-> > Getting back to our video codec - it has 2 IOMMU controllers. The codec
-> > hardware is able to address only 256MiB of space. Do you have an idea how
-> > this can be handled with dma-mapping API? The only idea that comes to my
-> > mind is to provide a second, fake 'struct device' and use it for allocations
-> > for the second IOMMU controller.
-> 
-> The GPU IOMMUs can probably be handled in the GPU driver if they are
-> that different. Recent PCIe GPUs on x86 have their own IOMMUs too which
-> are very device specific and are handled in the device driver.
+Hi Kgene,
 
-I tend to disagree with this one, and would suggest that the GPUs should
-actually provide their own iommu_ops, even if they are the only users
-of these.
+At 10:46 19/04/2011 +0900, Kukjin Kim wrote:
+>As a note, I'm doing(or preparing) following at the moment.
+>- Removing some "mach-s5pxxxx"s
 
-However, this is a minor point that we don't need to worry about today.
+Are you planning to remove mach-s5pc100? If yes, is this with the 
+intention of reducing arch/arm code size (by merging, say, with the 
+s5pc110 tree), or because of some upcoming Samsung EOL event? :-(
 
-	Arnd
+(I'm building security cameras based on the s5pc100, working with 
+mach-s5pc100 issues every day).
+
+Best regards, ....Nick Pelling.... 
