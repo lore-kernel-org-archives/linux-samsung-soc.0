@@ -1,65 +1,103 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v4] Add v4l2 subdev driver for S5P MIPI-CSI receivers
-Date: Thu, 21 Apr 2011 17:21:01 +0200
-Message-ID: <1303399264-3849-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 1/3] v4l: Add V4L2_MBUS_FMT_JPEG_1X8 media bus format
+Date: Thu, 21 Apr 2011 17:21:02 +0200
+Message-ID: <1303399264-3849-2-git-send-email-s.nawrocki@samsung.com>
+References: <1303399264-3849-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:40828 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754445Ab1DUPVK (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:24150 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754455Ab1DUPVL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Apr 2011 11:21:10 -0400
+	Thu, 21 Apr 2011 11:21:11 -0400
+In-reply-to: <1303399264-3849-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, kgene.kim@samsung.com, sungchun.kang@samsung.com, jonghun.han@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, kgene.kim@samsung.com, sungchun.kang@samsung.com, jonghun.han@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hello,
+Add V4L2_MBUS_FMT_JPEG_1X8 format and the corresponding Docbook
+documentation.
 
-this is a fourth version of the subdev driver for MIPI-CSI2 receivers
-present on S5PVx10 and EXYNOS4 SoCs.
-This patch set also adds a V4L2_MBUS_FMT_JPEG_1X8 media bus format
-and moves the s5p-fimc driver to Video Capture Devices kconfig group.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ Documentation/DocBook/v4l/subdev-formats.xml |   46 ++++++++++++++++++++++++++
+ include/linux/v4l2-mediabus.h                |    3 ++
+ 2 files changed, 49 insertions(+), 0 deletions(-)
 
-I don't expect this driver to undergo any major changes and hope to have
-it added in kernel 2.6.40.
+diff --git a/Documentation/DocBook/v4l/subdev-formats.xml b/Documentation/DocBook/v4l/subdev-formats.xml
+index 7041127..df2d7d3 100644
+--- a/Documentation/DocBook/v4l/subdev-formats.xml
++++ b/Documentation/DocBook/v4l/subdev-formats.xml
+@@ -2463,5 +2463,51 @@
+ 	</tgroup>
+       </table>
+     </section>
++
++    <section>
++      <title>JPEG Compressed Formats</title>
++
++      <para>Those data formats consist of an ordered sequence of 8-bit bytes
++	obtained from JPEG compression process. Additionally to the
++	<constant>_JPEG</constant> prefix the format code is made of
++	the following information.
++	<itemizedlist>
++	  <listitem>The number of bus samples per entropy encoded byte.</listitem>
++	  <listitem>The bus width.</listitem>
++	</itemizedlist>
++
++	<para>For instance, for a JPEG baseline process and an 8-bit bus width
++	  the format will be named <constant>V4L2_MBUS_FMT_JPEG_1X8</constant>.
++	</para>
++      </para>
++
++      <para>The following table lists existing JPEG compressed formats.</para>
++
++      <table pgwide="0" frame="none" id="v4l2-mbus-pixelcode-jpeg">
++	<title>JPEG Formats</title>
++	<tgroup cols="3">
++	  <colspec colname="id" align="left" />
++	  <colspec colname="code" align="left"/>
++	  <colspec colname="remarks" align="left"/>
++	  <thead>
++	    <row>
++	      <entry>Identifier</entry>
++	      <entry>Code</entry>
++	      <entry>Remarks</entry>
++	    </row>
++	  </thead>
++	  <tbody valign="top">
++	    <row id="V4L2-MBUS-FMT-JPEG-1X8">
++	      <entry>V4L2_MBUS_FMT_JPEG_1X8</entry>
++	      <entry>0x4001</entry>
++	      <entry>Besides of its usage for the parallel bus this format is
++		recommended for transmission of JPEG data over MIPI CSI bus
++		using the User Defined 8-bit Data types.
++	      </entry>
++	    </row>
++	  </tbody>
++	</tgroup>
++      </table>
++    </section>
+   </section>
+ </section>
+diff --git a/include/linux/v4l2-mediabus.h b/include/linux/v4l2-mediabus.h
+index 7054a7a..15d6cda 100644
+--- a/include/linux/v4l2-mediabus.h
++++ b/include/linux/v4l2-mediabus.h
+@@ -86,6 +86,9 @@ enum v4l2_mbus_pixelcode {
+ 	V4L2_MBUS_FMT_SGBRG12_1X12 = 0x3010,
+ 	V4L2_MBUS_FMT_SGRBG12_1X12 = 0x3011,
+ 	V4L2_MBUS_FMT_SRGGB12_1X12 = 0x3012,
++
++	/* JPEG compressed formats - next is 0x4002 */
++	V4L2_MBUS_FMT_JPEG_1X8 = 0x4001,
+ };
  
-Any comments are welcome!
-
-Changes since v1:
- - added runtime PM support
- - conversion to the pad ops
-
-Changes since v2:
- - added reference counting in s_stream op to allow the mipi-csi subdev
-   to be shared by multiple FIMC instances
- - added support for TRY format in pad get_fmt op
- - added pm_runtime* calls in s_stream op to avoid a need for explicit
-   s_power(1) call
- - corrected locking around the pad ops, minor bug fixes
-
-Changes since v3:
- - slighty reworked the power management part
- - removed a reference counting in s_stream op as this should be handled
-   on a media device and the pipeline level
- - s5p_csis_ prefix renamed to s5pcsis_
- - updated the help text in Kconfig
-
- [PATCH 1/3] v4l: Add V4L2_MBUS_FMT_JPEG_1X8 media bus format
- [PATCH v4 2/3] v4l: Move S5P FIMC driver into Video Capture Devices
- [PATCH v4 3/3] v4l: Add v4l2 subdev driver for S5P/EXYNOS4 MIPI-CSI Receiver
-
- Documentation/DocBook/v4l/subdev-formats.xml |   46 ++
-  drivers/media/video/Kconfig                  |   28 +-
-  drivers/media/video/s5p-fimc/Makefile        |    6 +-
-  drivers/media/video/s5p-fimc/mipi-csis.c     |  745 ++++++++++++++++++++++++++
-  drivers/media/video/s5p-fimc/mipi-csis.h     |   22 +
-  include/linux/v4l2-mediabus.h                |    3 +
-  6 files changed, 840 insertions(+), 10 deletions(-)
-
---
-Regards,
-Sylwester Nawrocki
-Samsung Poland R&D Center
+ /**
+-- 
+1.7.4.5
