@@ -1,49 +1,65 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/7] ARM: Samsung: update/rewrite Samsung SYSMMU (IOMMU) driver
-Date: Thu, 21 Apr 2011 16:18:31 +0200
-Message-ID: <201104211618.31418.arnd@arndb.de>
-References: <1303118804-5575-1-git-send-email-m.szyprowski@samsung.com> <201104211400.13289.arnd@arndb.de> <003301cc002c$f67ba0c0$e372e240$%szyprowski@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v4] Add v4l2 subdev driver for S5P MIPI-CSI receivers
+Date: Thu, 21 Apr 2011 17:21:01 +0200
+Message-ID: <1303399264-3849-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:62915 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752859Ab1DUOSk (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:40828 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754445Ab1DUPVK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Apr 2011 10:18:40 -0400
-In-Reply-To: <003301cc002c$f67ba0c0$e372e240$%szyprowski@samsung.com>
+	Thu, 21 Apr 2011 11:21:10 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: 'Joerg Roedel' <joerg.roedel@amd.com>, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, kgene.kim@samsung.com, sungchun.kang@samsung.com, jonghun.han@samsung.com
 
-On Thursday 21 April 2011, Marek Szyprowski wrote:
-> > No, I think that would be much worse, it definitely destroys all kinds of
-> > assumptions that the core code makes about devices. However, I don't think
-> > it's much of a problem to just create two child devices and use them
-> > from the main driver, you don't really need to create a device_driver
-> > to bind to each of them.
-> 
-> I must have missed something. Video codec is a platform device and struct
-> device pointer is gathered from it (&pdev->dev). How can I define child
-> devices and attach them to the platform device?
+Hello,
 
-There are a number of ways:
+this is a fourth version of the subdev driver for MIPI-CSI2 receivers
+present on S5PVx10 and EXYNOS4 SoCs.
+This patch set also adds a V4L2_MBUS_FMT_JPEG_1X8 media bus format
+and moves the s5p-fimc driver to Video Capture Devices kconfig group.
 
-* Do device_create() with &pdev->dev as the parent, inside of the
-  codec driver, with a new class you create for this purpose
-* Do device_register() for a device, in the same way
-* Create the additional platform devices in the platform code,
-  with their parents pointing to the code device, then
-  look for them using device_for_each_child in the driver
-* Create two codec devices in parallel and bind to both with your
-  driver, ideally splitting up the resources between the two
-  devices in a meaningful way.
+I don't expect this driver to undergo any major changes and hope to have
+it added in kernel 2.6.40.
+ 
+Any comments are welcome!
 
-None of them are extremely nice, but it's not that hard either.
-You should probably prototype a few of these approaches to see
-which one is the least ugly one.
+Changes since v1:
+ - added runtime PM support
+ - conversion to the pad ops
 
-	Arnd
+Changes since v2:
+ - added reference counting in s_stream op to allow the mipi-csi subdev
+   to be shared by multiple FIMC instances
+ - added support for TRY format in pad get_fmt op
+ - added pm_runtime* calls in s_stream op to avoid a need for explicit
+   s_power(1) call
+ - corrected locking around the pad ops, minor bug fixes
+
+Changes since v3:
+ - slighty reworked the power management part
+ - removed a reference counting in s_stream op as this should be handled
+   on a media device and the pipeline level
+ - s5p_csis_ prefix renamed to s5pcsis_
+ - updated the help text in Kconfig
+
+ [PATCH 1/3] v4l: Add V4L2_MBUS_FMT_JPEG_1X8 media bus format
+ [PATCH v4 2/3] v4l: Move S5P FIMC driver into Video Capture Devices
+ [PATCH v4 3/3] v4l: Add v4l2 subdev driver for S5P/EXYNOS4 MIPI-CSI Receiver
+
+ Documentation/DocBook/v4l/subdev-formats.xml |   46 ++
+  drivers/media/video/Kconfig                  |   28 +-
+  drivers/media/video/s5p-fimc/Makefile        |    6 +-
+  drivers/media/video/s5p-fimc/mipi-csis.c     |  745 ++++++++++++++++++++++++++
+  drivers/media/video/s5p-fimc/mipi-csis.h     |   22 +
+  include/linux/v4l2-mediabus.h                |    3 +
+  6 files changed, 840 insertions(+), 10 deletions(-)
+
+--
+Regards,
+Sylwester Nawrocki
+Samsung Poland R&D Center
