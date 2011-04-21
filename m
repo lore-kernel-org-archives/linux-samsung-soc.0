@@ -1,7 +1,7 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 1/3] v4l: Add V4L2_MBUS_FMT_JPEG_1X8 media bus format
-Date: Thu, 21 Apr 2011 17:21:02 +0200
-Message-ID: <1303399264-3849-2-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v4 2/3] v4l: Move S5P FIMC driver into Video Capture Devices
+Date: Thu, 21 Apr 2011 17:21:03 +0200
+Message-ID: <1303399264-3849-3-git-send-email-s.nawrocki@samsung.com>
 References: <1303399264-3849-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -9,95 +9,60 @@ Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout4.w1.samsung.com ([210.118.77.14]:24150 "EHLO
 	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754455Ab1DUPVL (ORCPT
+	with ESMTP id S1754455Ab1DUPVN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Apr 2011 11:21:11 -0400
+	Thu, 21 Apr 2011 11:21:13 -0400
 In-reply-to: <1303399264-3849-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, kgene.kim@samsung.com, sungchun.kang@samsung.com, jonghun.han@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Add V4L2_MBUS_FMT_JPEG_1X8 format and the corresponding Docbook
-documentation.
+s5p-fimc now also implements a camera capture video node so move
+it under the "Video capture devices" Kconfig menu. Also update
+the entry to reflect the driver's coverage of EXYNOS4 SoCs.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- Documentation/DocBook/v4l/subdev-formats.xml |   46 ++++++++++++++++++++++++++
- include/linux/v4l2-mediabus.h                |    3 ++
- 2 files changed, 49 insertions(+), 0 deletions(-)
+ drivers/media/video/Kconfig |   19 +++++++++++--------
+ 1 files changed, 11 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/DocBook/v4l/subdev-formats.xml b/Documentation/DocBook/v4l/subdev-formats.xml
-index 7041127..df2d7d3 100644
---- a/Documentation/DocBook/v4l/subdev-formats.xml
-+++ b/Documentation/DocBook/v4l/subdev-formats.xml
-@@ -2463,5 +2463,51 @@
- 	</tgroup>
-       </table>
-     </section>
-+
-+    <section>
-+      <title>JPEG Compressed Formats</title>
-+
-+      <para>Those data formats consist of an ordered sequence of 8-bit bytes
-+	obtained from JPEG compression process. Additionally to the
-+	<constant>_JPEG</constant> prefix the format code is made of
-+	the following information.
-+	<itemizedlist>
-+	  <listitem>The number of bus samples per entropy encoded byte.</listitem>
-+	  <listitem>The bus width.</listitem>
-+	</itemizedlist>
-+
-+	<para>For instance, for a JPEG baseline process and an 8-bit bus width
-+	  the format will be named <constant>V4L2_MBUS_FMT_JPEG_1X8</constant>.
-+	</para>
-+      </para>
-+
-+      <para>The following table lists existing JPEG compressed formats.</para>
-+
-+      <table pgwide="0" frame="none" id="v4l2-mbus-pixelcode-jpeg">
-+	<title>JPEG Formats</title>
-+	<tgroup cols="3">
-+	  <colspec colname="id" align="left" />
-+	  <colspec colname="code" align="left"/>
-+	  <colspec colname="remarks" align="left"/>
-+	  <thead>
-+	    <row>
-+	      <entry>Identifier</entry>
-+	      <entry>Code</entry>
-+	      <entry>Remarks</entry>
-+	    </row>
-+	  </thead>
-+	  <tbody valign="top">
-+	    <row id="V4L2-MBUS-FMT-JPEG-1X8">
-+	      <entry>V4L2_MBUS_FMT_JPEG_1X8</entry>
-+	      <entry>0x4001</entry>
-+	      <entry>Besides of its usage for the parallel bus this format is
-+		recommended for transmission of JPEG data over MIPI CSI bus
-+		using the User Defined 8-bit Data types.
-+	      </entry>
-+	    </row>
-+	  </tbody>
-+	</tgroup>
-+      </table>
-+    </section>
-   </section>
- </section>
-diff --git a/include/linux/v4l2-mediabus.h b/include/linux/v4l2-mediabus.h
-index 7054a7a..15d6cda 100644
---- a/include/linux/v4l2-mediabus.h
-+++ b/include/linux/v4l2-mediabus.h
-@@ -86,6 +86,9 @@ enum v4l2_mbus_pixelcode {
- 	V4L2_MBUS_FMT_SGBRG12_1X12 = 0x3010,
- 	V4L2_MBUS_FMT_SGRBG12_1X12 = 0x3011,
- 	V4L2_MBUS_FMT_SRGGB12_1X12 = 0x3012,
-+
-+	/* JPEG compressed formats - next is 0x4002 */
-+	V4L2_MBUS_FMT_JPEG_1X8 = 0x4001,
- };
+diff --git a/drivers/media/video/Kconfig b/drivers/media/video/Kconfig
+index 4498b94..4f0ac2d 100644
+--- a/drivers/media/video/Kconfig
++++ b/drivers/media/video/Kconfig
+@@ -927,6 +927,17 @@ config VIDEO_MX2
+ 	  This is a v4l2 driver for the i.MX27 and the i.MX25 Camera Sensor
+ 	  Interface
  
- /**
++config  VIDEO_SAMSUNG_S5P_FIMC
++	tristate "S5P and EXYNOS4 camera host interface driver"
++	depends on VIDEO_DEV && VIDEO_V4L2 && PLAT_S5P
++	select VIDEOBUF2_DMA_CONTIG
++	select V4L2_MEM2MEM_DEV
++	help
++	  This is a v4l2 driver for the S5P and EXYNOS4 camera host interface
++	  and video postprocessor.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called s5p-fimc.
+ 
+ #
+ # USB Multimedia device configuration
+@@ -1022,13 +1033,5 @@ config VIDEO_MEM2MEM_TESTDEV
+ 	  This is a virtual test device for the memory-to-memory driver
+ 	  framework.
+ 
+-config  VIDEO_SAMSUNG_S5P_FIMC
+-	tristate "Samsung S5P FIMC (video postprocessor) driver"
+-	depends on VIDEO_DEV && VIDEO_V4L2 && PLAT_S5P
+-	select VIDEOBUF2_DMA_CONTIG
+-	select V4L2_MEM2MEM_DEV
+-	help
+-	  This is a v4l2 driver for the S5P camera interface
+-	  (video postprocessor)
+ 
+ endif # V4L_MEM2MEM_DRIVERS
 -- 
 1.7.4.5
