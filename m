@@ -1,49 +1,51 @@
-From: Liam Girdwood <lrg@slimlogic.co.uk>
-Subject: Re: [alsa-devel] (no subject)
-Date: Tue, 26 Apr 2011 09:26:30 +0100
-Message-ID: <1303806390.3332.16.camel@odin>
-References: <1303714472-2391-1-git-send-email-sbkim73@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/7] ARM: Samsung: update/rewrite Samsung SYSMMU (IOMMU) driver
+Date: Tue, 26 Apr 2011 16:10:15 +0200
+Message-ID: <201104261610.15481.arnd@arndb.de>
+References: <1303118804-5575-1-git-send-email-m.szyprowski@samsung.com> <201104211618.31418.arnd@arndb.de> <000001cc00bf$a3afc220$eb0f4660$%szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:53320 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751286Ab1DZI0h (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.171]:52026 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754361Ab1DZOKY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Apr 2011 04:26:37 -0400
-Received: by wya21 with SMTP id 21so250556wya.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Apr 2011 01:26:36 -0700 (PDT)
-In-Reply-To: <1303714472-2391-1-git-send-email-sbkim73@samsung.com>
+	Tue, 26 Apr 2011 10:10:24 -0400
+In-Reply-To: <000001cc00bf$a3afc220$eb0f4660$%szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, jassisinghbrar@gmail.com, broonie@opensource.wolfsonmicro.com
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: 'Joerg Roedel' <joerg.roedel@amd.com>, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-On Mon, 2011-04-25 at 15:54 +0900, Sangbeom Kim wrote:
-> [PATCH 0/2] Add WM8994 PCM Machine driver for Exynos4
+On Friday 22 April 2011, Marek Szyprowski wrote:
+> > * Create two codec devices in parallel and bind to both with your
+> >   driver, ideally splitting up the resources between the two
+> >   devices in a meaningful way.
 > 
-> Hi,
-> 
-> This is patchset for WM8994 pcm machine driver that supports
-> PCM audio on SMDKV310, SMDKC210 and test is done.
-> 
-> Based on these patches WM8994 pcm machine driver supports followings:
->  o Playback supports 8kHz sampling rates.
->  o Capture supports 8kHz sampling rates.
-> 
-> This patchset contains followings 
-> 
->  o To Kukjin Kim and Ben Dooks,
-> [PATCH 1/2] ARM: EXYNOS4: Add PCM audio support for WM8994
-> 
->  o To Jassi Brar, Mark Brown and Liam Girdwood,
-> [PATCH 2/2] ASoC: SAMSUNG: Add WM8580 PCM Machine driver 
-> 
-> Best Regards,
-> SB Kim (Sangbeom Kim)
-> 
+> Video codec has only standard 2 resources - ioregs and irq, so there
+> is not much left for such splitting.
 
-Both
+Ok, I see.
 
-Acked-by: Liam Girdwood <lrg@ti.com>
+> > None of them are extremely nice, but it's not that hard either.
+> > You should probably prototype a few of these approaches to see
+> > which one is the least ugly one.
+> 
+> Ok. Today while iterating over the hardware requirements I noticed
+> one more thing. Our codec hardware has one more, odd requirement for
+> video buffers. The DMA addresses need to be aligned to 8KiB or 16KiB
+> (depending on buffer type). Do you have any idea how this can be
+> handled in a generic way?
+
+I don't think you can force the mappings to be aligned to that size
+in the streaming mapping, but you should be able to just align inside
+of dma_map_single etc and map a larger region.
+
+For the allocation functions (dma_alloc_coherent, dma_alloc_noncoherent),
+using alloc_pages to allocate multiples of the size you need should
+always give you aligned buffers because of the way that the underlying
+buddy allocator works.
+
+	Arnd
