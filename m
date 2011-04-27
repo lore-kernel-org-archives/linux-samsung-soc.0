@@ -1,69 +1,137 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 2/7] ARM: Samsung: update/rewrite Samsung SYSMMU (IOMMU)
-	driver
-Date: Tue, 26 Apr 2011 16:23:45 +0200
-Message-ID: <003e01cc041d$8d3d76c0$a7b86440$%szyprowski@samsung.com>
-References: <1303118804-5575-1-git-send-email-m.szyprowski@samsung.com>
- <201104211618.31418.arnd@arndb.de>
- <000001cc00bf$a3afc220$eb0f4660$%szyprowski@samsung.com>
- <201104261610.15481.arnd@arndb.de>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: S3C64XX: Remove gpio-bank-X header files
+Date: Wed, 27 Apr 2011 10:27:57 +0900
+Message-ID: <052c01cc047a$5cb8d500$162a7f00$%kim@samsung.com>
+References: <1303465894-16870-1-git-send-email-jy0922.shim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:55683 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756433Ab1DZOXv (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:41339 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755630Ab1D0B2K (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Apr 2011 10:23:51 -0400
-In-reply-to: <201104261610.15481.arnd@arndb.de>
-Content-language: pl
+	Tue, 26 Apr 2011 21:28:10 -0400
+Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LKA00AAMEQVEQ20@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Apr 2011 10:28:08 +0900 (KST)
+Received: from DOKGENEKIM02 ([12.23.103.104])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LKA006J3EQV8S@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Apr 2011 10:28:08 +0900 (KST)
+In-reply-to: <1303465894-16870-1-git-send-email-jy0922.shim@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>
-Cc: 'Joerg Roedel' <joerg.roedel@amd.com>, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+To: 'Joonyoung Shim' <jy0922.shim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, kmpark@infradead.org
 
-Hello,
-
-On Tuesday, April 26, 2011 4:10 PM Arnd Bergmann wrote:
-
-> On Friday 22 April 2011, Marek Szyprowski wrote:
-> > > * Create two codec devices in parallel and bind to both with your
-> > >   driver, ideally splitting up the resources between the two
-> > >   devices in a meaningful way.
-> >
-> > Video codec has only standard 2 resources - ioregs and irq, so there
-> > is not much left for such splitting.
+Joonyoung Shim wrote:
 > 
-> Ok, I see.
+> The gpio-bank-X header files of S3C64XX have defines which can be
+> substituted by more common API, so they can be removed. This is compile
+> tested only.
 > 
-> > > None of them are extremely nice, but it's not that hard either.
-> > > You should probably prototype a few of these approaches to see
-> > > which one is the least ugly one.
-> >
-> > Ok. Today while iterating over the hardware requirements I noticed
-> > one more thing. Our codec hardware has one more, odd requirement for
-> > video buffers. The DMA addresses need to be aligned to 8KiB or 16KiB
-> > (depending on buffer type). Do you have any idea how this can be
-> > handled in a generic way?
+> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+> ---
+>  arch/arm/mach-s3c64xx/dev-spi.c                  |   20 ++----
+>  arch/arm/mach-s3c64xx/include/mach/gpio-bank-a.h |   48 --------------
+>  arch/arm/mach-s3c64xx/include/mach/gpio-bank-b.h |   60 -----------------
+>  arch/arm/mach-s3c64xx/include/mach/gpio-bank-c.h |   53 ---------------
+>  arch/arm/mach-s3c64xx/include/mach/gpio-bank-d.h |   49 --------------
+>  arch/arm/mach-s3c64xx/include/mach/gpio-bank-e.h |   44 -------------
+>  arch/arm/mach-s3c64xx/include/mach/gpio-bank-f.h |   71
+--------------------
+> -
+>  arch/arm/mach-s3c64xx/include/mach/gpio-bank-g.h |   42 ------------
+>  arch/arm/mach-s3c64xx/include/mach/gpio-bank-h.h |   74
+--------------------
+> --
+>  arch/arm/mach-s3c64xx/include/mach/gpio-bank-i.h |   40 ------------
+>  arch/arm/mach-s3c64xx/include/mach/gpio-bank-j.h |   36 -----------
+>  arch/arm/mach-s3c64xx/include/mach/gpio-bank-n.h |   54 ----------------
+>  arch/arm/mach-s3c64xx/include/mach/gpio-bank-o.h |   70
+--------------------
+>  arch/arm/mach-s3c64xx/include/mach/gpio-bank-p.h |   69
+--------------------
+>  arch/arm/mach-s3c64xx/include/mach/gpio-bank-q.h |   46 -------------
+>  arch/arm/mach-s3c64xx/mach-smdk6410.c            |    1 -
+>  arch/arm/mach-s3c64xx/pm.c                       |   35 +++++------
+>  arch/arm/mach-s3c64xx/setup-i2c0.c               |    7 +--
+>  arch/arm/mach-s3c64xx/setup-i2c1.c               |    7 +--
+>  arch/arm/mach-s3c64xx/sleep.S                    |    8 ++-
+>  20 files changed, 34 insertions(+), 800 deletions(-)
+>  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/gpio-bank-a.h
+>  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/gpio-bank-b.h
+>  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/gpio-bank-c.h
+>  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/gpio-bank-d.h
+>  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/gpio-bank-e.h
+>  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/gpio-bank-f.h
+>  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/gpio-bank-g.h
+>  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/gpio-bank-h.h
+>  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/gpio-bank-i.h
+>  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/gpio-bank-j.h
+>  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/gpio-bank-n.h
+>  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/gpio-bank-o.h
+>  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/gpio-bank-p.h
+>  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/gpio-bank-q.h
 > 
-> I don't think you can force the mappings to be aligned to that size
-> in the streaming mapping, but you should be able to just align inside
-> of dma_map_single etc and map a larger region.
-> 
-> For the allocation functions (dma_alloc_coherent, dma_alloc_noncoherent),
-> using alloc_pages to allocate multiples of the size you need should
-> always give you aligned buffers because of the way that the underlying
-> buddy allocator works.
 
-Well, I thought about the alignment of the IOVA mapping. I will probably
-handle it with some additional archdata stuff.
+Hi,
 
-I've started hacking ARM dma-mapping interface to get support for 
-dma-mapping-common.h and then to integrate with Samsung IOMMU driver.
-I hope to post the initial version before Linaro meeting in Budapest.
+Oh, great.
 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+I also tried to remove useless gpio header files :) and it is in my dev/gpio
+branch. But I think, this is better.
+Anyway there are small comments.
+
+(snip)
+
+>  void s3c_pm_debug_smdkled(u32 set, u32 clear)
+>  {
+> -	unsigned long flags;
+> -	u32 reg;
+> -
+> -	local_irq_save(flags);
+> -	reg = __raw_readl(S3C64XX_GPNCON);
+> -	reg &= ~(S3C64XX_GPN_CONMASK(12) | S3C64XX_GPN_CONMASK(13) |
+> -		 S3C64XX_GPN_CONMASK(14) | S3C64XX_GPN_CONMASK(15));
+> -	reg |= S3C64XX_GPN_OUTPUT(12) | S3C64XX_GPN_OUTPUT(13) |
+> -	       S3C64XX_GPN_OUTPUT(14) | S3C64XX_GPN_OUTPUT(15);
+> -	__raw_writel(reg, S3C64XX_GPNCON);
+> -
+> -	reg = __raw_readl(S3C64XX_GPNDAT);
+> -	reg &= ~(clear << 12);
+> -	reg |= set << 12;
+> -	__raw_writel(reg, S3C64XX_GPNDAT);
+> -
+> -	local_irq_restore(flags);
+> +	int i;
+> +
+> +	for (i = 0; i < 4; i++) {
+> +		if (clear & (1 << i))
+> +			gpio_direction_output(S3C64XX_GPN(12 + i), 0);
+> +		if (set & (1 << i))
+> +			gpio_direction_output(S3C64XX_GPN(12 + i), 1);
+> +	}
+
+Hmm...
+
+According to comments in gpio_direction_{input,output}, it isn't called more
+than once...but it can be called twice in your code. And need
+local_irq_{save,restore} around them.
+
+So how about keeping old codes here? In addtion, as you know, need to keep
+definitions of S3C64XX_GPNxxx now :(
+
+Others looks ok.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
