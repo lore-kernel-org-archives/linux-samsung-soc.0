@@ -1,76 +1,103 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: [PATCH 2/3] ARM: S5PV210: Enable MFC on Goni & Aquila
-Date: Wed, 27 Apr 2011 13:43:04 +0200
-Message-ID: <1303904585-11818-3-git-send-email-k.debski@samsung.com>
-References: <1303904585-11818-1-git-send-email-k.debski@samsung.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: [PATCH] ARM: SAMSUNG: Add support for pre-sleep/post-restore gpio control
+Date: Wed, 27 Apr 2011 18:34:14 +0100
+Message-ID: <1303925654-27715-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:65523 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753498Ab1D0Ln2 (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60468 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1759736Ab1D0ReK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Apr 2011 07:43:28 -0400
-Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LKB00NOR7833H00@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 27 Apr 2011 12:43:15 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LKB00KV6781SJ@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 27 Apr 2011 12:43:14 +0100 (BST)
-In-reply-to: <1303904585-11818-1-git-send-email-k.debski@samsung.com>
+	Wed, 27 Apr 2011 13:34:10 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, k.debski@samsung.com, jaeryul.oh@samsung.com, kgene.kim@samsung.com, jtp.park@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Enable MFC 5.1 device on the Goni & Aquila boards using the S5PV210 SoC.
+From: Ben Dooks <ben-linux@fluff.org>
 
-Signed-off-by: Kamil Debski <k.debski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Add a callback so that per-arch can do pre-sleep and post-resume
+gpio configuration so that for the S3C64XX, the GPIO configuration
+is restored before the sleep mode is cleared.
+
+For the S3C64XX case, it means that the GPIOs get set back to normal
+operation after the restore code puts the original configurations
+back in after the
+
+Signed-off-by: Ben Dooks <ben-linux@fluff.org>
+Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 ---
- arch/arm/mach-s5pv210/Kconfig       |    1 +
- arch/arm/mach-s5pv210/mach-aquila.c |    1 +
- arch/arm/mach-s5pv210/mach-goni.c   |    1 +
- 3 files changed, 3 insertions(+), 0 deletions(-)
+ arch/arm/mach-s3c2410/include/mach/pm-core.h |    3 +++
+ arch/arm/mach-s3c64xx/include/mach/pm-core.h |   17 +++++++++++++++++
+ arch/arm/mach-s5pv210/include/mach/pm-core.h |    3 +++
+ arch/arm/plat-samsung/pm.c                   |    2 ++
+ 4 files changed, 25 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index 37b5a97..a06acce 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -90,6 +90,7 @@ config MACH_GONI
- 	select S3C_DEV_HSMMC2
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_I2C2
-+	select S5P_DEV_MFC
- 	select S3C_DEV_USB_HSOTG
- 	select S5P_DEV_ONENAND
- 	select SAMSUNG_DEV_KEYPAD
-diff --git a/arch/arm/mach-s5pv210/mach-aquila.c b/arch/arm/mach-s5pv210/mach-aquila.c
-index de3c41f..e14446c 100644
---- a/arch/arm/mach-s5pv210/mach-aquila.c
-+++ b/arch/arm/mach-s5pv210/mach-aquila.c
-@@ -616,6 +616,7 @@ static struct platform_device *aquila_devices[] __initdata = {
- 	&s5p_device_fimc0,
- 	&s5p_device_fimc1,
- 	&s5p_device_fimc2,
-+	&s5p_device_mfc,
- 	&s5pv210_device_iis0,
- 	&wm8994_fixed_voltage0,
- 	&wm8994_fixed_voltage1,
-diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
-index 24f3f5c..6a68ddf 100644
---- a/arch/arm/mach-s5pv210/mach-goni.c
-+++ b/arch/arm/mach-s5pv210/mach-goni.c
-@@ -809,6 +809,7 @@ static struct platform_device *goni_devices[] __initdata = {
- 	&goni_i2c_gpio5,
- 	&mmc2_fixed_voltage,
- 	&goni_device_gpiokeys,
-+	&s5p_device_mfc,
- 	&s3c_device_i2c0,
- 	&s5p_device_fimc0,
- 	&s5p_device_fimc1,
+diff --git a/arch/arm/mach-s3c2410/include/mach/pm-core.h b/arch/arm/mach-s3c2410/include/mach/pm-core.h
+index 70a83b2..45eea52 100644
+--- a/arch/arm/mach-s3c2410/include/mach/pm-core.h
++++ b/arch/arm/mach-s3c2410/include/mach/pm-core.h
+@@ -62,3 +62,6 @@ static inline void s3c_pm_arch_update_uart(void __iomem *regs,
+ 					   struct pm_uart_save *save)
+ {
+ }
++
++static inline void s3c_pm_restored_gpios(void) { }
++static inline void s3c_pm_saved_gpios(void) { }
+diff --git a/arch/arm/mach-s3c64xx/include/mach/pm-core.h b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
+index 4ed0f58..38659be 100644
+--- a/arch/arm/mach-s3c64xx/include/mach/pm-core.h
++++ b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
+@@ -96,3 +96,20 @@ static inline void s3c_pm_arch_update_uart(void __iomem *regs,
+ 		save->ucon = new_ucon;
+ 	}
+ }
++
++static inline void s3c_pm_restored_gpios(void)
++{
++	/* ensure sleep mode has been cleared from the system */
++
++	__raw_writel(0, S3C64XX_SLPEN);
++}
++
++static inline void s3c_pm_saved_gpios(void)
++{
++	/* turn on the sleep mode and keep it there, as it seems that during
++	 * suspend the xCON registers get re-set and thus you can end up with
++	 * problems between going to sleep and resuming.
++	 */
++
++	__raw_writel(S3C64XX_SLPEN_USE_xSLP, S3C64XX_SLPEN);
++}
+diff --git a/arch/arm/mach-s5pv210/include/mach/pm-core.h b/arch/arm/mach-s5pv210/include/mach/pm-core.h
+index e8d394f..3e22109 100644
+--- a/arch/arm/mach-s5pv210/include/mach/pm-core.h
++++ b/arch/arm/mach-s5pv210/include/mach/pm-core.h
+@@ -41,3 +41,6 @@ static inline void s3c_pm_arch_update_uart(void __iomem *regs,
+ {
+ 	/* nothing here yet */
+ }
++
++static inline void s3c_pm_restored_gpios(void) { }
++static inline void s3c_pm_saved_gpios(void) { }
+diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
+index 5c0a440..4f9a951 100644
+--- a/arch/arm/plat-samsung/pm.c
++++ b/arch/arm/plat-samsung/pm.c
+@@ -268,6 +268,7 @@ static int s3c_pm_enter(suspend_state_t state)
+ 	/* save all necessary core registers not covered by the drivers */
+ 
+ 	s3c_pm_save_gpios();
++	s3c_pm_saved_gpios();
+ 	s3c_pm_save_uarts();
+ 	s3c_pm_save_core();
+ 
+@@ -309,6 +310,7 @@ static int s3c_pm_enter(suspend_state_t state)
+ 	s3c_pm_restore_core();
+ 	s3c_pm_restore_uarts();
+ 	s3c_pm_restore_gpios();
++	s3c_pm_restored_gpios();
+ 
+ 	s3c_pm_debug_init();
+ 
 -- 
-1.6.3.3
+1.7.4.1
