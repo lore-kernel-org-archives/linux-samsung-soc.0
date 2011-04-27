@@ -1,78 +1,57 @@
 From: Kamil Debski <k.debski@samsung.com>
-Subject: [PATCH 3/3] exynos4: Enable MFC on universal_c210
-Date: Wed, 27 Apr 2011 13:43:05 +0200
-Message-ID: <1303904585-11818-4-git-send-email-k.debski@samsung.com>
-References: <1303904585-11818-1-git-send-email-k.debski@samsung.com>
+Subject: [PATCH 0/3] ARM: S5P: Add support for MFC 5.1 device on S5PV210 and
+	EXYNOS4
+Date: Wed, 27 Apr 2011 13:43:02 +0200
+Message-ID: <1303904585-11818-1-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:47987 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753324Ab1D0LnQ (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:65523 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753324Ab1D0Ln2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Apr 2011 07:43:16 -0400
-Received: from spt2.w1.samsung.com ([210.118.77.13]) by mailout3.w1.samsung.com
+	Wed, 27 Apr 2011 07:43:28 -0400
+Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
  (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LKB008Y3783VB90@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 27 Apr 2011 12:43:15 +0100 (BST)
+ with ESMTP id <0LKB00II277YZH90@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Apr 2011 12:43:10 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LKB000VN7824X@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 27 Apr 2011 12:43:14 +0100 (BST)
-In-reply-to: <1303904585-11818-1-git-send-email-k.debski@samsung.com>
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LKB002VW77XQQ@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Apr 2011 12:43:09 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, k.debski@samsung.com, jaeryul.oh@samsung.com, kgene.kim@samsung.com, jtp.park@samsung.com
 
-Enable MFC 5.1 device on the universal_c210 boards using the EXYNOS4 SoC.
+Hello,
 
-Signed-off-by: Kamil Debski <k.debski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
+Multi Format Codec 5.1 is a device present in the S5PV210 and EXYNOS4 SoCs by Samsung.
+This patch set adds platform and mach data for MFC 5.1.
+
+Best regards,
+Kamil Debski
+
+Patch summary:
+
+Kamil Debski (3):
+  ARM: S5P: Add MFC 5.1 driver to plat-s5p, mach-s5pv210 and mach-exynos4
+  ARM: S5PV210: Enable MFC on Goni & Aquila
+  ARM: EXYNOS4: Enable MFC on universal_c210
+
  arch/arm/mach-exynos4/Kconfig               |    1 +
- arch/arm/mach-exynos4/mach-universal_c210.c |    8 ++++++++
- 2 files changed, 9 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index 544a594..6a05016 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -152,6 +152,7 @@ config MACH_UNIVERSAL_C210
- 	select S5P_DEV_FIMC1
- 	select S5P_DEV_FIMC2
- 	select S5P_DEV_FIMC3
-+	select S5P_DEV_MFC
- 	select S3C_DEV_HSMMC
- 	select S3C_DEV_HSMMC2
- 	select S3C_DEV_HSMMC3
-diff --git a/arch/arm/mach-exynos4/mach-universal_c210.c b/arch/arm/mach-exynos4/mach-universal_c210.c
-index 7ff2f5f..777d8f3 100644
---- a/arch/arm/mach-exynos4/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos4/mach-universal_c210.c
-@@ -620,7 +620,11 @@ static struct platform_device *universal_devices[] __initdata = {
- 	&s5p_device_fimc1,
- 	&s5p_device_fimc2,
- 	&s5p_device_fimc3,
-+	&s5p_device_mfc,
- 	&exynos4_device_pd[PD_CAM],
-+	&exynos4_device_pd[PD_MFC],
-+	&exynos4_device_sysmmu[S5P_SYSMMU_MFC_R],
-+	&exynos4_device_sysmmu[S5P_SYSMMU_MFC_L],
- 	&exynos4_device_sysmmu[S5P_SYSMMU_FIMC0],
- 	&exynos4_device_sysmmu[S5P_SYSMMU_FIMC1],
- 	&exynos4_device_sysmmu[S5P_SYSMMU_FIMC2],
-@@ -651,6 +655,10 @@ static void __init universal_machine_init(void)
- 	/* Last */
- 	platform_add_devices(universal_devices, ARRAY_SIZE(universal_devices));
- 
-+	s5p_device_mfc.dev.parent = &exynos4_device_pd[PD_MFC].dev;
-+	exynos4_device_sysmmu[S5P_SYSMMU_MFC_L].dev.parent = &exynos4_device_pd[PD_MFC].dev;
-+	exynos4_device_sysmmu[S5P_SYSMMU_MFC_R].dev.parent = &exynos4_device_pd[PD_MFC].dev;
-+
- 	s5p_device_fimc0.dev.parent = &exynos4_device_pd[PD_CAM].dev;
- 	s5p_device_fimc1.dev.parent = &exynos4_device_pd[PD_CAM].dev;
- 	s5p_device_fimc2.dev.parent = &exynos4_device_pd[PD_CAM].dev;
--- 
-1.6.3.3
+ arch/arm/mach-exynos4/clock.c               |   63 +++++++++++++++++++++++++++
+ arch/arm/mach-exynos4/include/mach/map.h    |    3 +
+ arch/arm/mach-exynos4/mach-universal_c210.c |    8 +++
+ arch/arm/mach-s5pv210/Kconfig               |    1 +
+ arch/arm/mach-s5pv210/clock.c               |    6 +++
+ arch/arm/mach-s5pv210/include/mach/map.h    |    3 +
+ arch/arm/mach-s5pv210/mach-aquila.c         |    1 +
+ arch/arm/mach-s5pv210/mach-goni.c           |    1 +
+ arch/arm/plat-s5p/Kconfig                   |    5 ++
+ arch/arm/plat-s5p/Makefile                  |    2 +-
+ arch/arm/plat-s5p/dev-mfc.c                 |   49 +++++++++++++++++++++
+ arch/arm/plat-samsung/include/plat/devs.h   |    1 +
+ 13 files changed, 143 insertions(+), 1 deletions(-)
+ create mode 100644 arch/arm/plat-s5p/dev-mfc.c
