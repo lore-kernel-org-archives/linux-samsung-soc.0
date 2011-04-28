@@ -1,103 +1,130 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH] ARM: SAMSUNG: Add support for pre-sleep/post-restore gpio control
-Date: Wed, 27 Apr 2011 18:34:14 +0100
-Message-ID: <1303925654-27715-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: Sangbeom Kim <sbkim73@samsung.com>
+Subject: [PATCH V2] ASoC: SAMSUNG: Add quirk to support Exynos4 PCM audio
+Date: Thu, 28 Apr 2011 10:23:09 +0900
+Message-ID: <1303953789-18445-1-git-send-email-sbkim73@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60468 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1759736Ab1D0ReK (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:38398 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750779Ab1D1B7M (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Apr 2011 13:34:10 -0400
+	Wed, 27 Apr 2011 21:59:12 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
+Cc: jassisinghbrar@gmail.com, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, ben-linux@fluff.org, Sangbeom Kim <sbkim73@samsung.com>
 
-From: Ben Dooks <ben-linux@fluff.org>
+Exynos4 pcm block is different from previous one.
+Unlike previous one, Exynos4 doesn't have SCLK divider in the pcm block.
+For this reason, This patch added quirk handling for Exynos4 pcm cpu driver.
 
-Add a callback so that per-arch can do pre-sleep and post-resume
-gpio configuration so that for the S3C64XX, the GPIO configuration
-is restored before the sleep mode is cleared.
-
-For the S3C64XX case, it means that the GPIOs get set back to normal
-operation after the restore code puts the original configurations
-back in after the
-
-Signed-off-by: Ben Dooks <ben-linux@fluff.org>
-Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
 ---
- arch/arm/mach-s3c2410/include/mach/pm-core.h |    3 +++
- arch/arm/mach-s3c64xx/include/mach/pm-core.h |   17 +++++++++++++++++
- arch/arm/mach-s5pv210/include/mach/pm-core.h |    3 +++
- arch/arm/plat-samsung/pm.c                   |    2 ++
- 4 files changed, 25 insertions(+), 0 deletions(-)
+ sound/soc/samsung/pcm.c |   46 +++++++++++++++++++++++++++++-----------------
+ 1 files changed, 29 insertions(+), 17 deletions(-)
 
-diff --git a/arch/arm/mach-s3c2410/include/mach/pm-core.h b/arch/arm/mach-s3c2410/include/mach/pm-core.h
-index 70a83b2..45eea52 100644
---- a/arch/arm/mach-s3c2410/include/mach/pm-core.h
-+++ b/arch/arm/mach-s3c2410/include/mach/pm-core.h
-@@ -62,3 +62,6 @@ static inline void s3c_pm_arch_update_uart(void __iomem *regs,
- 					   struct pm_uart_save *save)
- {
+diff --git a/sound/soc/samsung/pcm.c b/sound/soc/samsung/pcm.c
+index 9c7e8b4..adfb251 100644
+--- a/sound/soc/samsung/pcm.c
++++ b/sound/soc/samsung/pcm.c
+@@ -10,7 +10,6 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
+-
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ 
+@@ -128,6 +127,7 @@ struct s3c_pcm_info {
+ 
+ 	struct s3c_dma_params	*dma_playback;
+ 	struct s3c_dma_params	*dma_capture;
++	u32	quirks;
+ };
+ 
+ static struct s3c2410_dma_client s3c_pcm_dma_client_out = {
+@@ -278,7 +278,7 @@ static int s3c_pcm_hw_params(struct snd_pcm_substream *substream,
+ 	struct clk *clk;
+ 	int sclk_div, sync_div;
+ 	unsigned long flags;
+-	u32 clkctl;
++	u32 clkctl = 0;
+ 
+ 	dev_dbg(pcm->dev, "Entered %s\n", __func__);
+ 
+@@ -299,25 +299,34 @@ static int s3c_pcm_hw_params(struct snd_pcm_substream *substream,
+ 
+ 	spin_lock_irqsave(&pcm->lock, flags);
+ 
+-	/* Get hold of the PCMSOURCE_CLK */
+-	clkctl = readl(regs + S3C_PCM_CLKCTL);
+-	if (clkctl & S3C_PCM_CLKCTL_SERCLKSEL_PCLK)
+-		clk = pcm->pclk;
+-	else
++	if (pcm->quirks == QUIRK_NO_DIV) {
+ 		clk = pcm->cclk;
++		if (clk_get_rate(clk) != (pcm->sclk_per_fs*params_rate(params))) {
++			clk_set_rate(clk, pcm->sclk_per_fs*params_rate(params));
++		}
++		sync_div = clk_get_rate(clk)/(params_rate(params))-1;
++	}
++	else {
++		/* Get hold of the PCMSOURCE_CLK */
++		clkctl = readl(regs + S3C_PCM_CLKCTL);
++		if (clkctl & S3C_PCM_CLKCTL_SERCLKSEL_PCLK)
++			clk = pcm->pclk;
++		else
++			clk = pcm->cclk;
+ 
+-	/* Set the SCLK divider */
+-	sclk_div = clk_get_rate(clk) / pcm->sclk_per_fs /
+-					params_rate(params) / 2 - 1;
++		/* Set the SCLK divider */
++		sclk_div = clk_get_rate(clk) / pcm->sclk_per_fs /
++				params_rate(params) / 2 - 1;
+ 
+-	clkctl &= ~(S3C_PCM_CLKCTL_SCLKDIV_MASK
+-			<< S3C_PCM_CLKCTL_SCLKDIV_SHIFT);
+-	clkctl |= ((sclk_div & S3C_PCM_CLKCTL_SCLKDIV_MASK)
+-			<< S3C_PCM_CLKCTL_SCLKDIV_SHIFT);
++		clkctl &= ~(S3C_PCM_CLKCTL_SCLKDIV_MASK
++				<< S3C_PCM_CLKCTL_SCLKDIV_SHIFT);
++		clkctl |= ((sclk_div & S3C_PCM_CLKCTL_SCLKDIV_MASK)
++				<< S3C_PCM_CLKCTL_SCLKDIV_SHIFT);
+ 
+-	/* Set the SYNC divider */
+-	sync_div = pcm->sclk_per_fs - 1;
++		sync_div = pcm->sclk_per_fs - 1;
++	}
+ 
++	/* Set the SYNC divider */
+ 	clkctl &= ~(S3C_PCM_CLKCTL_SYNCDIV_MASK
+ 				<< S3C_PCM_CLKCTL_SYNCDIV_SHIFT);
+ 	clkctl |= ((sync_div & S3C_PCM_CLKCTL_SYNCDIV_MASK)
+@@ -330,7 +339,6 @@ static int s3c_pcm_hw_params(struct snd_pcm_substream *substream,
+ 	dev_dbg(pcm->dev, "PCMSOURCE_CLK-%lu SCLK=%ufs SCLK_DIV=%d SYNC_DIV=%d\n",
+ 				clk_get_rate(clk), pcm->sclk_per_fs,
+ 				sclk_div, sync_div);
+-
+ 	return 0;
  }
-+
-+static inline void s3c_pm_restored_gpios(void) { }
-+static inline void s3c_pm_saved_gpios(void) { }
-diff --git a/arch/arm/mach-s3c64xx/include/mach/pm-core.h b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
-index 4ed0f58..38659be 100644
---- a/arch/arm/mach-s3c64xx/include/mach/pm-core.h
-+++ b/arch/arm/mach-s3c64xx/include/mach/pm-core.h
-@@ -96,3 +96,20 @@ static inline void s3c_pm_arch_update_uart(void __iomem *regs,
- 		save->ucon = new_ucon;
- 	}
- }
-+
-+static inline void s3c_pm_restored_gpios(void)
-+{
-+	/* ensure sleep mode has been cleared from the system */
-+
-+	__raw_writel(0, S3C64XX_SLPEN);
-+}
-+
-+static inline void s3c_pm_saved_gpios(void)
-+{
-+	/* turn on the sleep mode and keep it there, as it seems that during
-+	 * suspend the xCON registers get re-set and thus you can end up with
-+	 * problems between going to sleep and resuming.
-+	 */
-+
-+	__raw_writel(S3C64XX_SLPEN_USE_xSLP, S3C64XX_SLPEN);
-+}
-diff --git a/arch/arm/mach-s5pv210/include/mach/pm-core.h b/arch/arm/mach-s5pv210/include/mach/pm-core.h
-index e8d394f..3e22109 100644
---- a/arch/arm/mach-s5pv210/include/mach/pm-core.h
-+++ b/arch/arm/mach-s5pv210/include/mach/pm-core.h
-@@ -41,3 +41,6 @@ static inline void s3c_pm_arch_update_uart(void __iomem *regs,
- {
- 	/* nothing here yet */
- }
-+
-+static inline void s3c_pm_restored_gpios(void) { }
-+static inline void s3c_pm_saved_gpios(void) { }
-diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
-index 5c0a440..4f9a951 100644
---- a/arch/arm/plat-samsung/pm.c
-+++ b/arch/arm/plat-samsung/pm.c
-@@ -268,6 +268,7 @@ static int s3c_pm_enter(suspend_state_t state)
- 	/* save all necessary core registers not covered by the drivers */
  
- 	s3c_pm_save_gpios();
-+	s3c_pm_saved_gpios();
- 	s3c_pm_save_uarts();
- 	s3c_pm_save_core();
+@@ -494,6 +502,7 @@ static __devinit int s3c_pcm_dev_probe(struct platform_device *pdev)
+ 	struct s3c_pcm_info *pcm;
+ 	struct resource *mem_res, *dmatx_res, *dmarx_res;
+ 	struct s3c_audio_pdata *pcm_pdata;
++	struct samsung_i2s *pcm_cfg;
+ 	int ret;
  
-@@ -309,6 +310,7 @@ static int s3c_pm_enter(suspend_state_t state)
- 	s3c_pm_restore_core();
- 	s3c_pm_restore_uarts();
- 	s3c_pm_restore_gpios();
-+	s3c_pm_restored_gpios();
+ 	/* Check for valid device index */
+@@ -531,6 +540,9 @@ static __devinit int s3c_pcm_dev_probe(struct platform_device *pdev)
+ 	pcm = &s3c_pcm[pdev->id];
+ 	pcm->dev = &pdev->dev;
  
- 	s3c_pm_debug_init();
++	pcm_cfg = &pcm_pdata->type.pcm;
++	pcm->quirks = pcm_cfg->quirks;
++
+ 	spin_lock_init(&pcm->lock);
  
+ 	/* Default is 128fs */
 -- 
-1.7.4.1
+1.7.1
