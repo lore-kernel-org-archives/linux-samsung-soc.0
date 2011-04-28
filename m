@@ -1,130 +1,38 @@
 From: Sangbeom Kim <sbkim73@samsung.com>
-Subject: [PATCH V2] ASoC: SAMSUNG: Add quirk to support Exynos4 PCM audio
-Date: Thu, 28 Apr 2011 10:23:09 +0900
-Message-ID: <1303953789-18445-1-git-send-email-sbkim73@samsung.com>
+Subject: [PATCH V2 0/2] Add WM8994 PCM Machine driver for Exynos4210
+Date: Thu, 28 Apr 2011 10:32:50 +0900
+Message-ID: <1303954372-18565-1-git-send-email-sbkim73@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:38398 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:39865 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750779Ab1D1B7M (ORCPT
+	with ESMTP id S1752688Ab1D1CJL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Apr 2011 21:59:12 -0400
+	Wed, 27 Apr 2011 22:09:11 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
-Cc: jassisinghbrar@gmail.com, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, ben-linux@fluff.org, Sangbeom Kim <sbkim73@samsung.com>
+Cc: jassisinghbrar@gmail.com, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, ben-linux@fluff.org
 
-Exynos4 pcm block is different from previous one.
-Unlike previous one, Exynos4 doesn't have SCLK divider in the pcm block.
-For this reason, This patch added quirk handling for Exynos4 pcm cpu driver.
+Hi,
 
-Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
----
- sound/soc/samsung/pcm.c |   46 +++++++++++++++++++++++++++++-----------------
- 1 files changed, 29 insertions(+), 17 deletions(-)
+This is 2nd patchset for WM8994 pcm machine driver that supports
+PCM audio on SMDKV310, SMDKC210 and test is done.
 
-diff --git a/sound/soc/samsung/pcm.c b/sound/soc/samsung/pcm.c
-index 9c7e8b4..adfb251 100644
---- a/sound/soc/samsung/pcm.c
-+++ b/sound/soc/samsung/pcm.c
-@@ -10,7 +10,6 @@
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
-  */
--
- #include <linux/clk.h>
- #include <linux/io.h>
- 
-@@ -128,6 +127,7 @@ struct s3c_pcm_info {
- 
- 	struct s3c_dma_params	*dma_playback;
- 	struct s3c_dma_params	*dma_capture;
-+	u32	quirks;
- };
- 
- static struct s3c2410_dma_client s3c_pcm_dma_client_out = {
-@@ -278,7 +278,7 @@ static int s3c_pcm_hw_params(struct snd_pcm_substream *substream,
- 	struct clk *clk;
- 	int sclk_div, sync_div;
- 	unsigned long flags;
--	u32 clkctl;
-+	u32 clkctl = 0;
- 
- 	dev_dbg(pcm->dev, "Entered %s\n", __func__);
- 
-@@ -299,25 +299,34 @@ static int s3c_pcm_hw_params(struct snd_pcm_substream *substream,
- 
- 	spin_lock_irqsave(&pcm->lock, flags);
- 
--	/* Get hold of the PCMSOURCE_CLK */
--	clkctl = readl(regs + S3C_PCM_CLKCTL);
--	if (clkctl & S3C_PCM_CLKCTL_SERCLKSEL_PCLK)
--		clk = pcm->pclk;
--	else
-+	if (pcm->quirks == QUIRK_NO_DIV) {
- 		clk = pcm->cclk;
-+		if (clk_get_rate(clk) != (pcm->sclk_per_fs*params_rate(params))) {
-+			clk_set_rate(clk, pcm->sclk_per_fs*params_rate(params));
-+		}
-+		sync_div = clk_get_rate(clk)/(params_rate(params))-1;
-+	}
-+	else {
-+		/* Get hold of the PCMSOURCE_CLK */
-+		clkctl = readl(regs + S3C_PCM_CLKCTL);
-+		if (clkctl & S3C_PCM_CLKCTL_SERCLKSEL_PCLK)
-+			clk = pcm->pclk;
-+		else
-+			clk = pcm->cclk;
- 
--	/* Set the SCLK divider */
--	sclk_div = clk_get_rate(clk) / pcm->sclk_per_fs /
--					params_rate(params) / 2 - 1;
-+		/* Set the SCLK divider */
-+		sclk_div = clk_get_rate(clk) / pcm->sclk_per_fs /
-+				params_rate(params) / 2 - 1;
- 
--	clkctl &= ~(S3C_PCM_CLKCTL_SCLKDIV_MASK
--			<< S3C_PCM_CLKCTL_SCLKDIV_SHIFT);
--	clkctl |= ((sclk_div & S3C_PCM_CLKCTL_SCLKDIV_MASK)
--			<< S3C_PCM_CLKCTL_SCLKDIV_SHIFT);
-+		clkctl &= ~(S3C_PCM_CLKCTL_SCLKDIV_MASK
-+				<< S3C_PCM_CLKCTL_SCLKDIV_SHIFT);
-+		clkctl |= ((sclk_div & S3C_PCM_CLKCTL_SCLKDIV_MASK)
-+				<< S3C_PCM_CLKCTL_SCLKDIV_SHIFT);
- 
--	/* Set the SYNC divider */
--	sync_div = pcm->sclk_per_fs - 1;
-+		sync_div = pcm->sclk_per_fs - 1;
-+	}
- 
-+	/* Set the SYNC divider */
- 	clkctl &= ~(S3C_PCM_CLKCTL_SYNCDIV_MASK
- 				<< S3C_PCM_CLKCTL_SYNCDIV_SHIFT);
- 	clkctl |= ((sync_div & S3C_PCM_CLKCTL_SYNCDIV_MASK)
-@@ -330,7 +339,6 @@ static int s3c_pcm_hw_params(struct snd_pcm_substream *substream,
- 	dev_dbg(pcm->dev, "PCMSOURCE_CLK-%lu SCLK=%ufs SCLK_DIV=%d SYNC_DIV=%d\n",
- 				clk_get_rate(clk), pcm->sclk_per_fs,
- 				sclk_div, sync_div);
--
- 	return 0;
- }
- 
-@@ -494,6 +502,7 @@ static __devinit int s3c_pcm_dev_probe(struct platform_device *pdev)
- 	struct s3c_pcm_info *pcm;
- 	struct resource *mem_res, *dmatx_res, *dmarx_res;
- 	struct s3c_audio_pdata *pcm_pdata;
-+	struct samsung_i2s *pcm_cfg;
- 	int ret;
- 
- 	/* Check for valid device index */
-@@ -531,6 +540,9 @@ static __devinit int s3c_pcm_dev_probe(struct platform_device *pdev)
- 	pcm = &s3c_pcm[pdev->id];
- 	pcm->dev = &pdev->dev;
- 
-+	pcm_cfg = &pcm_pdata->type.pcm;
-+	pcm->quirks = pcm_cfg->quirks;
-+
- 	spin_lock_init(&pcm->lock);
- 
- 	/* Default is 128fs */
--- 
-1.7.1
+This is minor change version.
+AS jassi comment, I added new pcm structure for quirk handling.
+And added Liam's acked.
+
+Based on these patches WM8994 pcm machine driver supports followings:
+ o Playback supports 8kHz sampling rates.
+ o Capture supports 8kHz sampling rates.
+
+This patchset contains followings 
+
+ o To Kukjin Kim and Ben Dooks,
+[PATCH 1/2] ARM: EXYNOS4: Add PCM audio support for WM8994
+
+ o To Jassi Brar, Mark Brown and Liam Girdwood,
+[PATCH 2/2] ASoC: SAMSUNG: Add WM8580 PCM Machine driver 
+
+Best Regards,
+SB Kim (Sangbeom Kim)
