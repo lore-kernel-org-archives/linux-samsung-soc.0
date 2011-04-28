@@ -1,46 +1,35 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] ARM: Suspend: Fix build error on ARCH_S5PC100
-Date: Thu, 28 Apr 2011 19:43:32 +0100
-Message-ID: <20110428184332.GK17290@n2100.arm.linux.org.uk>
-References: <1301710155-16373-1-git-send-email-kgene.kim@samsung.com> <20110402091904.GH8482@n2100.arm.linux.org.uk> <02c701cbf2be$0ebebb80$2c3c3280$%kim@samsung.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: S3C2416, S3C2443 HS-SPI driver?
+Date: Thu, 28 Apr 2011 22:05:32 +0200
+Message-ID: <201104282205.33100.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:52381 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755836Ab1D1Snv (ORCPT
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:51352 "EHLO
+	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757013Ab1D1UFr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Apr 2011 14:43:51 -0400
-Content-Disposition: inline
-In-Reply-To: <02c701cbf2be$0ebebb80$2c3c3280$%kim@samsung.com>
+	Thu, 28 Apr 2011 16:05:47 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: Jassi Brar <jassisinghbrar@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
-On Mon, Apr 04, 2011 at 08:47:17PM +0900, Kukjin Kim wrote:
-> Russell King - ARM Linux wrote:
-> > 
-> > On Sat, Apr 02, 2011 at 11:09:15AM +0900, Kukjin Kim wrote:
-> > > The current mainline codes of ARCH_S5PC100 can not support
-> > > suspend to ram. So needs this for preventing build error.
-> > >
-> > > Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-> > > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> > > ---
-> > > Oops, I missed this in my previous patch.
-> > >
-> > > As I know, firstly ARCH_S5P64X0 will support suspend to ram
-> > > then ARCH_S5PC100 will do it. But right now, we need this.
-> > 
-> > I'd much rather do this a different way - let me know if this means
-> > the SoC based dependencies can be dropped.  Patches to follow.
-> 
-> Yeah, I checked your patches. It's ok to me but this is also needed right
-> now for preventing build errors with s5pc100_defconfig...because there is no
-> regarding headers for supporting suspend to ram.
-> 
-> However as I mentioned, the suspend to ram will be supported soon on them
-> then we can drop its dependencies.
+Hi,
 
-Could I have an updated patch which applies to mainline please?
+does a driver for spi on s3c2416/s3c2443 SoCs exist somewhere? The one for the 
+other s3c24XX SoCs seems to be different.
+
+I did a comparison of the spi-parts of s3c2416 and s3c6400 manuals and they 
+seem very much alike in their registers and working descriptions.
+
+The only real differences I found are bit 6 of CH_CFG (High_speed_en) which 
+only exists on 2416/2443 and the max values of RxTrigger and TxTrigger are 
+greater on 2416 than on 6400 (63 vs 40).
+
+So question for the samsung experts, could the s3c64xx spi-driver be a valid 
+starting point for me?
+
+Thanks
+Heiko
