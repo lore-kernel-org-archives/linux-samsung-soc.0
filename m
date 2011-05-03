@@ -1,55 +1,81 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V2 0/2] Add WM8994 PCM Machine driver for Exynos4210
-Date: Mon, 02 May 2011 16:06:58 +0900
-Message-ID: <083701cc0897$9990f680$ccb2e380$%kim@samsung.com>
-References: <1303954372-18565-1-git-send-email-sbkim73@samsung.com>
- <20110428103824.GC14494@opensource.wolfsonmicro.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v4 2/3] v4l: Move S5P FIMC driver into Video Capture Devices
+Date: Tue, 3 May 2011 10:24:23 +0200
+Message-ID: <201105031024.23466.laurent.pinchart@ideasonboard.com>
+References: <1303399264-3849-1-git-send-email-s.nawrocki@samsung.com> <1303399264-3849-3-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:34645 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753900Ab1EBHHb (ORCPT
+Received: from perceval.ideasonboard.com ([95.142.166.194]:55589 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751074Ab1ECIXw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 May 2011 03:07:31 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LKK00CBQ3RSZM60@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 02 May 2011 16:07:29 +0900 (KST)
-Received: from DOKGENEKIM02 ([12.23.103.104])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LKK005RC3SGNX@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 02 May 2011 16:07:29 +0900 (KST)
-In-reply-to: <20110428103824.GC14494@opensource.wolfsonmicro.com>
-Content-language: ko
+	Tue, 3 May 2011 04:23:52 -0400
+In-Reply-To: <1303399264-3849-3-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Sangbeom Kim' <sbkim73@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, jassisinghbrar@gmail.com, lrg@slimlogic.co.uk, ben-linux@fluff.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, kgene.kim@samsung.com, sungchun.kang@samsung.com, jonghun.han@samsung.com
 
-Mark Brown wrote:
+Hi Sylwester,
+
+Thanks for the patch.
+
+On Thursday 21 April 2011 17:21:03 Sylwester Nawrocki wrote:
+> s5p-fimc now also implements a camera capture video node so move
+> it under the "Video capture devices" Kconfig menu. Also update
+> the entry to reflect the driver's coverage of EXYNOS4 SoCs.
 > 
-> On Thu, Apr 28, 2011 at 10:32:50AM +0900, Sangbeom Kim wrote:
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  drivers/media/video/Kconfig |   19 +++++++++++--------
+>  1 files changed, 11 insertions(+), 8 deletions(-)
 > 
-> > This is 2nd patchset for WM8994 pcm machine driver that supports
-> > PCM audio on SMDKV310, SMDKC210 and test is done.
+> diff --git a/drivers/media/video/Kconfig b/drivers/media/video/Kconfig
+> index 4498b94..4f0ac2d 100644
+> --- a/drivers/media/video/Kconfig
+> +++ b/drivers/media/video/Kconfig
+> @@ -927,6 +927,17 @@ config VIDEO_MX2
+>  	  This is a v4l2 driver for the i.MX27 and the i.MX25 Camera Sensor
+>  	  Interface
 > 
-> As with your first patch set I'm waiting for a response from Kukjin
-> here.  I'm expecting that the arch/arm parts won't be merged as they add
-> new features.
+> +config  VIDEO_SAMSUNG_S5P_FIMC
+> +	tristate "S5P and EXYNOS4 camera host interface driver"
 
-Hmm...yeah, need more time and some solutions for it...first of all, I'm
-thinking to keep some branch for new features is possible and if required,
-it can be adapted after arch/arm consolidation work. But as you know, the
-branch cannot be sent to upstream upcoming merge window.
+Should this read "Samsung S5P and EXYNOS4" ? Without the brand name kernel 
+config entries are a bit cryptic.
 
-If any updates, let you know :)
-Thanks.
+> +	depends on VIDEO_DEV && VIDEO_V4L2 && PLAT_S5P
+> +	select VIDEOBUF2_DMA_CONTIG
+> +	select V4L2_MEM2MEM_DEV
+> +	help
+> +	  This is a v4l2 driver for the S5P and EXYNOS4 camera host interface
+> +	  and video postprocessor.
+> +
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called s5p-fimc.
+> 
+>  #
+>  # USB Multimedia device configuration
+> @@ -1022,13 +1033,5 @@ config VIDEO_MEM2MEM_TESTDEV
+>  	  This is a virtual test device for the memory-to-memory driver
+>  	  framework.
+> 
+> -config  VIDEO_SAMSUNG_S5P_FIMC
+> -	tristate "Samsung S5P FIMC (video postprocessor) driver"
+> -	depends on VIDEO_DEV && VIDEO_V4L2 && PLAT_S5P
+> -	select VIDEOBUF2_DMA_CONTIG
+> -	select V4L2_MEM2MEM_DEV
+> -	help
+> -	  This is a v4l2 driver for the S5P camera interface
+> -	  (video postprocessor)
+> 
+>  endif # V4L_MEM2MEM_DRIVERS
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+-- 
+Regards,
+
+Laurent Pinchart
