@@ -1,62 +1,77 @@
-From: Sergei Shtylyov <sshtylyov@mvista.com>
-Subject: Re: [PATCH 2/4] ARM: S3C24XX: Add plaform device definition for USB
- High-Speed gadget controller.
-Date: Sun, 08 May 2011 15:17:52 +0400
-Message-ID: <4DC67BE0.9080905@ru.mvista.com>
-References: <Pine.LNX.4.44L0.1104141313210.2487-100000@iolanthe.rowland.org> <20110416145830.GA8811@kroah.com> <201105072223.44163.heiko@sntech.de> <201105072226.53556.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: [PATCH] ARM: EXYNOS4: Suspend to RAM fix
+Date: Tue, 10 May 2011 11:43:50 +0530
+Message-ID: <1305008030-31983-1-git-send-email-inderpal.s@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f46.google.com ([209.85.215.46]:51307 "EHLO
-	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753767Ab1EHLTg (ORCPT
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:43385 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752281Ab1EJGOg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 8 May 2011 07:19:36 -0400
-In-Reply-To: <201105072226.53556.heiko@sntech.de>
+	Tue, 10 May 2011 02:14:36 -0400
+Received: by pwi15 with SMTP id 15so2685441pwi.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 May 2011 23:14:35 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Greg KH <greg@kroah.com>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Thomas Abraham <thomas.ab@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, Alexander Neumann <alexander@debian.org>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, samsung@lists.linaro.org, patches@linaro.org, jc.lee@samsung.com, Inderpal Singh <inderpal.s@samsung.com>
 
-Hello.
+This patch caters to the case when there is no wake up source. The system should abort the suspend and resume properly.
 
-On 08-05-2011 0:26, Heiko St=FCbner wrote:
+1. It implements the pm_suspend function to save the core registers so  that they can be restored in pm_resume function.
+   Earlier these resgisters were getting saved in pm_prepare, but pm_prepare never gets invoked when there is no wake up
+   source enabled and restoration used to hang while resuming.
 
-> From: Thomas Abraham<thomas.ab@samsung.com>
+2. As per the L2 cache controller spec, the cache controller registers should not be modified if cache is already enabled.
+   Hence have made restoration of cache controller registers conditional based on whether it is already enabled or not.
 
-> S3C2416, S3C2443 and S3C2450 includes a USB High-Speed Gadget control=
-ler module.
-> This patch adds the following for supporting this controller.
+Signed-off-by: Inderpal Singh <inderpal.s@samsung.com>
+Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
+---
+ arch/arm/mach-exynos4/pm.c |   14 +++++++++++++-
+ 1 files changed, 13 insertions(+), 1 deletions(-)
 
-> 1. Definition for USB High-Speed controller base address.
-> 2. Platform device instantiation.
-> 3. Declaration for platform data structure.
-> 4. Functionality to setup platform data for the controller.
-
-> Signed-off-by: Thomas Abraham<thomas.ab@samsung.com>
-> Signed-off-by: Sangbeom Kim<sbkim73@samsung.com>
-[...]
-
-> diff --git a/arch/arm/plat-s3c24xx/devs.c b/arch/arm/plat-s3c24xx/dev=
-s.c
-> index 268f3ed..7366799 100644
-> --- a/arch/arm/plat-s3c24xx/devs.c
-> +++ b/arch/arm/plat-s3c24xx/devs.c
-[...]
-> @@ -233,6 +234,46 @@ void __init s3c24xx_udc_set_platdata(struct s3c2=
-410_udc_mach_info *pd)
-[...]
-> +void __init s3c24xx_hsudc_set_platdata(struct s3c24xx_hsudc_platdata=
- *pd)
-> +{
-> +	struct s3c24xx_hsudc_platdata *npd;
-> +
-> +	npd =3D kmalloc(sizeof(*npd), GFP_KERNEL);
-> +	if (npd) {
-> +		memcpy(npd, pd, sizeof(*npd));
-
-    You could use kmemdup() (from mm/util.c) instead...
-
-WBR, Sergei
+diff --git a/arch/arm/mach-exynos4/pm.c b/arch/arm/mach-exynos4/pm.c
+index 10d917d..af4794b 100644
+--- a/arch/arm/mach-exynos4/pm.c
++++ b/arch/arm/mach-exynos4/pm.c
+@@ -323,8 +323,9 @@ static void exynos4_pm_prepare(void)
+ {
+ 	u32 tmp;
+ 
+-	s3c_pm_do_save(exynos4_core_save, ARRAY_SIZE(exynos4_core_save));
++#ifdef CONFIG_CACHE_L2X0
+ 	s3c_pm_do_save(exynos4_l2cc_save, ARRAY_SIZE(exynos4_l2cc_save));
++#endif
+ 
+ 	tmp = __raw_readl(S5P_INFORM1);
+ 
+@@ -389,6 +390,10 @@ static int exynos4_pm_resume(struct sys_device *dev)
+ 	exynos4_scu_enable(S5P_VA_SCU);
+ 
+ #ifdef CONFIG_CACHE_L2X0
++	/* Restore the cache controller registers only if it is not enabled already*/
++	if((__raw_readl(S5P_VA_L2CC + L2X0_CTRL)&1))
++		return 0;
++
+ 	s3c_pm_do_restore_core(exynos4_l2cc_save, ARRAY_SIZE(exynos4_l2cc_save));
+ 	outer_inv_all();
+ 	/* enable L2X0*/
+@@ -398,9 +403,16 @@ static int exynos4_pm_resume(struct sys_device *dev)
+ 	return 0;
+ }
+ 
++static int exynos4_pm_suspend(struct sys_device *dev,pm_message_t state)
++{
++	s3c_pm_do_save(exynos4_core_save, ARRAY_SIZE(exynos4_core_save));
++	return 0;
++}
++
+ static struct sysdev_driver exynos4_pm_driver = {
+ 	.add		= exynos4_pm_add,
+ 	.resume		= exynos4_pm_resume,
++	.suspend	= exynos4_pm_suspend,
+ };
+ 
+ static __init int exynos4_pm_drvinit(void)
+-- 
+1.7.1
