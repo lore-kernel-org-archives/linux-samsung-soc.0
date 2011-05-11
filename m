@@ -1,72 +1,68 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v5] Add v4l2 subdev driver for Samsung S5P MIPI-CSI receivers
-Date: Wed, 11 May 2011 17:17:07 +0200
-Message-ID: <1305127030-30162-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 2/3 v5] v4l: Move s5p-fimc driver into Video capture devices
+Date: Wed, 11 May 2011 17:17:09 +0200
+Message-ID: <1305127030-30162-3-git-send-email-s.nawrocki@samsung.com>
+References: <1305127030-30162-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:11495 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754969Ab1EKPrl (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47550 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755142Ab1EKPrm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 May 2011 11:47:41 -0400
+	Wed, 11 May 2011 11:47:42 -0400
+In-reply-to: <1305127030-30162-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, kgene.kim@samsung.com, sungchun.kang@samsung.com, jonghun.han@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, kgene.kim@samsung.com, sungchun.kang@samsung.com, jonghun.han@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hello,
+s5p-fimc now also implements a camera capture video node so move
+it under the "Video capture devices" kernel config menu. Also
+update the entry to reflect the driver's coverage of EXYNOS4 SoCs.
 
-this is fifth version of the subdev driver for MIPI-CSI2 receivers
-available on S5PVx10 and EXYNOS4 SoCs. This version is mainly to address
-Laurent's review comments, the full thread can be found here:
-https://patchwork.kernel.org/patch/725081/
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/media/video/Kconfig |   19 +++++++++++--------
+ 1 files changed, 11 insertions(+), 8 deletions(-)
 
-This patch set also adds a V4L2_MBUS_FMT_JPEG_1X8 media bus format
-and moves the s5p-fimc driver to Video Capture Devices kconfig group.
-
-Changes since v4:
- - reworked set_fmt/get_fmt pad level ops
- - replaced readl/writel with s5pcsis_read/write macros
- - added initialization to default pixel format in s5pcsis_probe()
- - removed empty media pad ops
- - added missing __init attribute for s5pcsis_probe()
- - edited Kconfig descriptions for s5p-fimc and s5p-csis modules
-Patch 1/3 is unchanged since v4.
-
-Changes since v3:
- - slighty reworked the power management part
- - removed a reference counting in s_stream op as this should be handled
-   on a media device and the pipeline level
- - s5p_csis_ prefix renamed to s5pcsis_
- - updated the help text in Kconfig
-
-Changes since v2:
- - added reference counting in s_stream op to allow the mipi-csi subdev
-   to be shared by multiple FIMC instances
- - added support for TRY format in pad get_fmt op
- - added pm_runtime* calls in s_stream op to avoid a need for explicit
-   s_power(1) call
- - corrected locking around the pad ops, minor bug fixes
-
-Changes since v1:
- - added runtime PM support
- - conversion to the pad ops
-
-
-[PATCH 1/3] v4l: Add V4L2_MBUS_FMT_JPEG_1X8 media bus format
-[PATCH 2/3] v4l: Move s5p-fimc driver into Video capture devices
-[PATCH 3/3] v4l: Add v4l2 subdev driver for S5P/EXYNOS4 MIPI-CSI
-
- Documentation/DocBook/v4l/subdev-formats.xml |   46 ++
- drivers/media/video/Kconfig                  |   28 +-
- drivers/media/video/s5p-fimc/Makefile        |    6 +-
- drivers/media/video/s5p-fimc/mipi-csis.c     |  722 ++++++++++++++++++++++++++
- drivers/media/video/s5p-fimc/mipi-csis.h     |   22 +
- include/linux/v4l2-mediabus.h                |    3 +
- 6 files changed, 817 insertions(+), 10 deletions(-)
-
---
-Sylwester Nawrocki
-Samsung Poland R&D Center
+diff --git a/drivers/media/video/Kconfig b/drivers/media/video/Kconfig
+index d61414e..a705493 100644
+--- a/drivers/media/video/Kconfig
++++ b/drivers/media/video/Kconfig
+@@ -934,6 +934,17 @@ config VIDEO_MX2
+ 	  This is a v4l2 driver for the i.MX27 and the i.MX25 Camera Sensor
+ 	  Interface
+ 
++config  VIDEO_SAMSUNG_S5P_FIMC
++	tristate "Samsung S5P and EXYNOS4 camera host interface driver"
++	depends on VIDEO_DEV && VIDEO_V4L2 && PLAT_S5P
++	select VIDEOBUF2_DMA_CONTIG
++	select V4L2_MEM2MEM_DEV
++	---help---
++	  This is a v4l2 driver for Samsung S5P and EXYNOS4 camera
++	  host interface and video postprocessor.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called s5p-fimc.
+ 
+ #
+ # USB Multimedia device configuration
+@@ -1029,13 +1040,5 @@ config VIDEO_MEM2MEM_TESTDEV
+ 	  This is a virtual test device for the memory-to-memory driver
+ 	  framework.
+ 
+-config  VIDEO_SAMSUNG_S5P_FIMC
+-	tristate "Samsung S5P FIMC (video postprocessor) driver"
+-	depends on VIDEO_DEV && VIDEO_V4L2 && PLAT_S5P
+-	select VIDEOBUF2_DMA_CONTIG
+-	select V4L2_MEM2MEM_DEV
+-	help
+-	  This is a v4l2 driver for the S5P camera interface
+-	  (video postprocessor)
+ 
+ endif # V4L_MEM2MEM_DRIVERS
+-- 
+1.7.5
