@@ -1,98 +1,72 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 1/3 v5] v4l: Add V4L2_MBUS_FMT_JPEG_1X8 media bus format
-Date: Wed, 11 May 2011 17:17:08 +0200
-Message-ID: <1305127030-30162-2-git-send-email-s.nawrocki@samsung.com>
-References: <1305127030-30162-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v5] Add v4l2 subdev driver for Samsung S5P MIPI-CSI receivers
+Date: Wed, 11 May 2011 17:17:07 +0200
+Message-ID: <1305127030-30162-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1305127030-30162-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, kgene.kim@samsung.com, sungchun.kang@samsung.com, jonghun.han@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:11495 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754969Ab1EKPrl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 11 May 2011 11:47:41 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, kgene.kim@samsung.com, sungchun.kang@samsung.com, jonghun.han@samsung.com
 
-Add V4L2_MBUS_FMT_JPEG_1X8 format and the corresponding Docbook
-documentation.
+Hello,
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- Documentation/DocBook/v4l/subdev-formats.xml |   46 ++++++++++++++++++++++++++
- include/linux/v4l2-mediabus.h                |    3 ++
- 2 files changed, 49 insertions(+), 0 deletions(-)
+this is fifth version of the subdev driver for MIPI-CSI2 receivers
+available on S5PVx10 and EXYNOS4 SoCs. This version is mainly to address
+Laurent's review comments, the full thread can be found here:
+https://patchwork.kernel.org/patch/725081/
 
-diff --git a/Documentation/DocBook/v4l/subdev-formats.xml b/Documentation/DocBook/v4l/subdev-formats.xml
-index d7ccd25..a26b10c 100644
---- a/Documentation/DocBook/v4l/subdev-formats.xml
-+++ b/Documentation/DocBook/v4l/subdev-formats.xml
-@@ -2522,5 +2522,51 @@
- 	</tgroup>
-       </table>
-     </section>
-+
-+    <section>
-+      <title>JPEG Compressed Formats</title>
-+
-+      <para>Those data formats consist of an ordered sequence of 8-bit bytes
-+	obtained from JPEG compression process. Additionally to the
-+	<constant>_JPEG</constant> prefix the format code is made of
-+	the following information.
-+	<itemizedlist>
-+	  <listitem>The number of bus samples per entropy encoded byte.</listitem>
-+	  <listitem>The bus width.</listitem>
-+	</itemizedlist>
-+
-+	<para>For instance, for a JPEG baseline process and an 8-bit bus width
-+	  the format will be named <constant>V4L2_MBUS_FMT_JPEG_1X8</constant>.
-+	</para>
-+      </para>
-+
-+      <para>The following table lists existing JPEG compressed formats.</para>
-+
-+      <table pgwide="0" frame="none" id="v4l2-mbus-pixelcode-jpeg">
-+	<title>JPEG Formats</title>
-+	<tgroup cols="3">
-+	  <colspec colname="id" align="left" />
-+	  <colspec colname="code" align="left"/>
-+	  <colspec colname="remarks" align="left"/>
-+	  <thead>
-+	    <row>
-+	      <entry>Identifier</entry>
-+	      <entry>Code</entry>
-+	      <entry>Remarks</entry>
-+	    </row>
-+	  </thead>
-+	  <tbody valign="top">
-+	    <row id="V4L2-MBUS-FMT-JPEG-1X8">
-+	      <entry>V4L2_MBUS_FMT_JPEG_1X8</entry>
-+	      <entry>0x4001</entry>
-+	      <entry>Besides of its usage for the parallel bus this format is
-+		recommended for transmission of JPEG data over MIPI CSI bus
-+		using the User Defined 8-bit Data types.
-+	      </entry>
-+	    </row>
-+	  </tbody>
-+	</tgroup>
-+      </table>
-+    </section>
-   </section>
- </section>
-diff --git a/include/linux/v4l2-mediabus.h b/include/linux/v4l2-mediabus.h
-index de5c159..5ea7f75 100644
---- a/include/linux/v4l2-mediabus.h
-+++ b/include/linux/v4l2-mediabus.h
-@@ -89,6 +89,9 @@ enum v4l2_mbus_pixelcode {
- 	V4L2_MBUS_FMT_SGBRG12_1X12 = 0x3010,
- 	V4L2_MBUS_FMT_SGRBG12_1X12 = 0x3011,
- 	V4L2_MBUS_FMT_SRGGB12_1X12 = 0x3012,
-+
-+	/* JPEG compressed formats - next is 0x4002 */
-+	V4L2_MBUS_FMT_JPEG_1X8 = 0x4001,
- };
- 
- /**
--- 
-1.7.5
+This patch set also adds a V4L2_MBUS_FMT_JPEG_1X8 media bus format
+and moves the s5p-fimc driver to Video Capture Devices kconfig group.
+
+Changes since v4:
+ - reworked set_fmt/get_fmt pad level ops
+ - replaced readl/writel with s5pcsis_read/write macros
+ - added initialization to default pixel format in s5pcsis_probe()
+ - removed empty media pad ops
+ - added missing __init attribute for s5pcsis_probe()
+ - edited Kconfig descriptions for s5p-fimc and s5p-csis modules
+Patch 1/3 is unchanged since v4.
+
+Changes since v3:
+ - slighty reworked the power management part
+ - removed a reference counting in s_stream op as this should be handled
+   on a media device and the pipeline level
+ - s5p_csis_ prefix renamed to s5pcsis_
+ - updated the help text in Kconfig
+
+Changes since v2:
+ - added reference counting in s_stream op to allow the mipi-csi subdev
+   to be shared by multiple FIMC instances
+ - added support for TRY format in pad get_fmt op
+ - added pm_runtime* calls in s_stream op to avoid a need for explicit
+   s_power(1) call
+ - corrected locking around the pad ops, minor bug fixes
+
+Changes since v1:
+ - added runtime PM support
+ - conversion to the pad ops
+
+
+[PATCH 1/3] v4l: Add V4L2_MBUS_FMT_JPEG_1X8 media bus format
+[PATCH 2/3] v4l: Move s5p-fimc driver into Video capture devices
+[PATCH 3/3] v4l: Add v4l2 subdev driver for S5P/EXYNOS4 MIPI-CSI
+
+ Documentation/DocBook/v4l/subdev-formats.xml |   46 ++
+ drivers/media/video/Kconfig                  |   28 +-
+ drivers/media/video/s5p-fimc/Makefile        |    6 +-
+ drivers/media/video/s5p-fimc/mipi-csis.c     |  722 ++++++++++++++++++++++++++
+ drivers/media/video/s5p-fimc/mipi-csis.h     |   22 +
+ include/linux/v4l2-mediabus.h                |    3 +
+ 6 files changed, 817 insertions(+), 10 deletions(-)
+
+--
+Sylwester Nawrocki
+Samsung Poland R&D Center
