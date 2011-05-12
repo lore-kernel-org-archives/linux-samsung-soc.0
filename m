@@ -1,80 +1,132 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 6/7] video: s3c-fb: Remove to support fb for S5PC100
-Date: Thu, 12 May 2011 10:11:13 +0900
-Message-ID: <1305162674-25860-7-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 4/7] mtd: OneNAND: Remove to support onenand for S5PC100
+Date: Thu, 12 May 2011 10:11:11 +0900
+Message-ID: <1305162674-25860-5-git-send-email-kgene.kim@samsung.com>
 References: <1305162674-25860-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:44696 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:44685 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752673Ab1ELBRV (ORCPT
+	with ESMTP id S1751726Ab1ELBRT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 May 2011 21:17:21 -0400
+	Wed, 11 May 2011 21:17:19 -0400
 In-Reply-To: <1305162674-25860-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Woodhouse <dwmw2@infradead.org>
 
 According to removing ARCH_S5PC100, we don't need to support
-fb for S5PC100.
+onenand for S5PC100.
 
-Cc: Ben Dooks <ben-linux@fluff.org>
-Cc: Paul Mundt <lethal@linux-sh.org>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- drivers/video/s3c-fb.c |   33 ---------------------------------
- 1 files changed, 0 insertions(+), 33 deletions(-)
+ drivers/mtd/onenand/Kconfig   |    4 ++--
+ drivers/mtd/onenand/samsung.c |   25 +------------------------
+ 2 files changed, 3 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index 3b6cdca..9928c7e 100644
---- a/drivers/video/s3c-fb.c
-+++ b/drivers/video/s3c-fb.c
-@@ -1696,36 +1696,6 @@ static struct s3c_fb_driverdata s3c_fb_data_64xx = {
- 	.win[4]	= &s3c_fb_data_64xx_wins[4],
+diff --git a/drivers/mtd/onenand/Kconfig b/drivers/mtd/onenand/Kconfig
+index 4f42619..f32679f 100644
+--- a/drivers/mtd/onenand/Kconfig
++++ b/drivers/mtd/onenand/Kconfig
+@@ -32,10 +32,10 @@ config MTD_ONENAND_OMAP2
+ 
+ config MTD_ONENAND_SAMSUNG
+         tristate "OneNAND on Samsung SOC controller support"
+-        depends on ARCH_S3C64XX || ARCH_S5PC100 || ARCH_S5PV210 || ARCH_EXYNOS4
++        depends on ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS4
+         help
+           Support for a OneNAND flash device connected to an Samsung SOC.
+-          S3C64XX/S5PC100 use command mapping method.
++          S3C64XX use command mapping method.
+           S5PC110/S5PC210 use generic OneNAND method.
+ 
+ config MTD_ONENAND_OTP
+diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
+index a4c74a9..3117838 100644
+--- a/drivers/mtd/onenand/samsung.c
++++ b/drivers/mtd/onenand/samsung.c
+@@ -10,7 +10,7 @@
+  * published by the Free Software Foundation.
+  *
+  * Implementation:
+- *	S3C64XX and S5PC100: emulate the pseudo BufferRAM
++ *	S3C64XX: emulate the pseudo BufferRAM
+  *	S5PC110: use DMA
+  */
+ 
+@@ -32,7 +32,6 @@
+ enum soc_type {
+ 	TYPE_S3C6400,
+ 	TYPE_S3C6410,
+-	TYPE_S5PC100,
+ 	TYPE_S5PC110,
  };
  
--static struct s3c_fb_driverdata s3c_fb_data_s5pc100 = {
--	.variant = {
--		.nr_windows	= 5,
--		.vidtcon	= VIDTCON0,
--		.wincon		= WINCON(0),
--		.winmap		= WINxMAP(0),
--		.keycon		= WKEYCON,
--		.osd		= VIDOSD_BASE,
--		.osd_stride	= 16,
--		.buf_start	= VIDW_BUF_START(0),
--		.buf_size	= VIDW_BUF_SIZE(0),
--		.buf_end	= VIDW_BUF_END(0),
+@@ -59,7 +58,6 @@ enum soc_type {
+ #define MAP_11				(0x3)
+ 
+ #define S3C64XX_CMD_MAP_SHIFT		24
+-#define S5PC100_CMD_MAP_SHIFT		26
+ 
+ #define S3C6400_FBA_SHIFT		10
+ #define S3C6400_FPA_SHIFT		4
+@@ -69,10 +67,6 @@ enum soc_type {
+ #define S3C6410_FPA_SHIFT		6
+ #define S3C6410_FSA_SHIFT		4
+ 
+-#define S5PC100_FBA_SHIFT		13
+-#define S5PC100_FPA_SHIFT		7
+-#define S5PC100_FSA_SHIFT		5
 -
--		.palette = {
--			[0] = 0x2400,
--			[1] = 0x2800,
--			[2] = 0x2c00,
--			[3] = 0x3000,
--			[4] = 0x3400,
--		},
+ /* S5PC110 specific definitions */
+ #define S5PC110_DMA_SRC_ADDR		0x400
+ #define S5PC110_DMA_SRC_CFG		0x404
+@@ -202,11 +196,6 @@ static unsigned int s3c64xx_cmd_map(unsigned type, unsigned val)
+ 	return (type << S3C64XX_CMD_MAP_SHIFT) | val;
+ }
+ 
+-static unsigned int s5pc1xx_cmd_map(unsigned type, unsigned val)
+-{
+-	return (type << S5PC100_CMD_MAP_SHIFT) | val;
+-}
 -
--		.has_prtcon	= 1,
--	},
--	.win[0]	= &s3c_fb_data_64xx_wins[0],
--	.win[1]	= &s3c_fb_data_64xx_wins[1],
--	.win[2]	= &s3c_fb_data_64xx_wins[2],
--	.win[3]	= &s3c_fb_data_64xx_wins[3],
--	.win[4]	= &s3c_fb_data_64xx_wins[4],
--};
+ static unsigned int s3c6400_mem_addr(int fba, int fpa, int fsa)
+ {
+ 	return (fba << S3C6400_FBA_SHIFT) | (fpa << S3C6400_FPA_SHIFT) |
+@@ -219,12 +208,6 @@ static unsigned int s3c6410_mem_addr(int fba, int fpa, int fsa)
+ 		(fsa << S3C6410_FSA_SHIFT);
+ }
+ 
+-static unsigned int s5pc100_mem_addr(int fba, int fpa, int fsa)
+-{
+-	return (fba << S5PC100_FBA_SHIFT) | (fpa << S5PC100_FPA_SHIFT) |
+-		(fsa << S5PC100_FSA_SHIFT);
+-}
 -
- static struct s3c_fb_driverdata s3c_fb_data_s5pv210 = {
- 	.variant = {
- 		.nr_windows	= 5,
-@@ -1797,9 +1767,6 @@ static struct platform_device_id s3c_fb_driver_ids[] = {
- 		.name		= "s3c-fb",
- 		.driver_data	= (unsigned long)&s3c_fb_data_64xx,
+ static void s3c_onenand_reset(void)
+ {
+ 	unsigned long timeout = 0x10000;
+@@ -842,9 +825,6 @@ static void s3c_onenand_setup(struct mtd_info *mtd)
+ 	} else if (onenand->type == TYPE_S3C6410) {
+ 		onenand->mem_addr = s3c6410_mem_addr;
+ 		onenand->cmd_map = s3c64xx_cmd_map;
+-	} else if (onenand->type == TYPE_S5PC100) {
+-		onenand->mem_addr = s5pc100_mem_addr;
+-		onenand->cmd_map = s5pc1xx_cmd_map;
+ 	} else if (onenand->type == TYPE_S5PC110) {
+ 		/* Use generic onenand functions */
+ 		this->read_bufferram = s5pc110_read_bufferram;
+@@ -1127,9 +1107,6 @@ static struct platform_device_id s3c_onenand_driver_ids[] = {
+ 		.name		= "s3c6410-onenand",
+ 		.driver_data	= TYPE_S3C6410,
  	}, {
--		.name		= "s5pc100-fb",
--		.driver_data	= (unsigned long)&s3c_fb_data_s5pc100,
+-		.name		= "s5pc100-onenand",
+-		.driver_data	= TYPE_S5PC100,
 -	}, {
- 		.name		= "s5pv210-fb",
- 		.driver_data	= (unsigned long)&s3c_fb_data_s5pv210,
- 	}, {
+ 		.name		= "s5pc110-onenand",
+ 		.driver_data	= TYPE_S5PC110,
+ 	}, { },
 -- 
 1.7.1
