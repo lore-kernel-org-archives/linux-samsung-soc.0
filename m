@@ -1,132 +1,73 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 4/7] mtd: OneNAND: Remove to support onenand for S5PC100
-Date: Thu, 12 May 2011 10:11:11 +0900
-Message-ID: <1305162674-25860-5-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 7/7] libata: Remove to support pata for S5PC100
+Date: Thu, 12 May 2011 10:11:14 +0900
+Message-ID: <1305162674-25860-8-git-send-email-kgene.kim@samsung.com>
 References: <1305162674-25860-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:44685 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:44702 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751726Ab1ELBRT (ORCPT
+	with ESMTP id S1752207Ab1ELBRW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 May 2011 21:17:19 -0400
+	Wed, 11 May 2011 21:17:22 -0400
 In-Reply-To: <1305162674-25860-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Woodhouse <dwmw2@infradead.org>
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, Jeff Garzik <jgarzik@pobox.com>
 
 According to removing ARCH_S5PC100, we don't need to support
-onenand for S5PC100.
+pata for S5PC100.
 
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Jeff Garzik <jgarzik@pobox.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- drivers/mtd/onenand/Kconfig   |    4 ++--
- drivers/mtd/onenand/samsung.c |   25 +------------------------
- 2 files changed, 3 insertions(+), 26 deletions(-)
+ drivers/ata/pata_samsung_cf.c |   13 -------------
+ 1 files changed, 0 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/mtd/onenand/Kconfig b/drivers/mtd/onenand/Kconfig
-index 4f42619..f32679f 100644
---- a/drivers/mtd/onenand/Kconfig
-+++ b/drivers/mtd/onenand/Kconfig
-@@ -32,10 +32,10 @@ config MTD_ONENAND_OMAP2
+diff --git a/drivers/ata/pata_samsung_cf.c b/drivers/ata/pata_samsung_cf.c
+index c446ae6..5c35f21 100644
+--- a/drivers/ata/pata_samsung_cf.c
++++ b/drivers/ata/pata_samsung_cf.c
+@@ -31,7 +31,6 @@
  
- config MTD_ONENAND_SAMSUNG
-         tristate "OneNAND on Samsung SOC controller support"
--        depends on ARCH_S3C64XX || ARCH_S5PC100 || ARCH_S5PV210 || ARCH_EXYNOS4
-+        depends on ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS4
-         help
-           Support for a OneNAND flash device connected to an Samsung SOC.
--          S3C64XX/S5PC100 use command mapping method.
-+          S3C64XX use command mapping method.
-           S5PC110/S5PC210 use generic OneNAND method.
- 
- config MTD_ONENAND_OTP
-diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
-index a4c74a9..3117838 100644
---- a/drivers/mtd/onenand/samsung.c
-+++ b/drivers/mtd/onenand/samsung.c
-@@ -10,7 +10,7 @@
-  * published by the Free Software Foundation.
-  *
-  * Implementation:
-- *	S3C64XX and S5PC100: emulate the pseudo BufferRAM
-+ *	S3C64XX: emulate the pseudo BufferRAM
-  *	S5PC110: use DMA
-  */
- 
-@@ -32,7 +32,6 @@
- enum soc_type {
- 	TYPE_S3C6400,
- 	TYPE_S3C6410,
+ enum s3c_cpu_type {
+ 	TYPE_S3C64XX,
 -	TYPE_S5PC100,
- 	TYPE_S5PC110,
+ 	TYPE_S5PV210,
  };
  
-@@ -59,7 +58,6 @@ enum soc_type {
- #define MAP_11				(0x3)
+@@ -453,10 +452,6 @@ static void pata_s3c_hwinit(struct s3c_ide_info *info,
+ 		writel(0x1b, info->ide_addr + S3C_ATA_IRQ_MSK);
+ 		break;
  
- #define S3C64XX_CMD_MAP_SHIFT		24
--#define S5PC100_CMD_MAP_SHIFT		26
- 
- #define S3C6400_FBA_SHIFT		10
- #define S3C6400_FPA_SHIFT		4
-@@ -69,10 +67,6 @@ enum soc_type {
- #define S3C6410_FPA_SHIFT		6
- #define S3C6410_FSA_SHIFT		4
- 
--#define S5PC100_FBA_SHIFT		13
--#define S5PC100_FPA_SHIFT		7
--#define S5PC100_FSA_SHIFT		5
+-	case TYPE_S5PC100:
+-		pata_s3c_cfg_mode(info->sfr_addr);
+-		/* FALLTHROUGH */
 -
- /* S5PC110 specific definitions */
- #define S5PC110_DMA_SRC_ADDR		0x400
- #define S5PC110_DMA_SRC_CFG		0x404
-@@ -202,11 +196,6 @@ static unsigned int s3c64xx_cmd_map(unsigned type, unsigned val)
- 	return (type << S3C64XX_CMD_MAP_SHIFT) | val;
- }
- 
--static unsigned int s5pc1xx_cmd_map(unsigned type, unsigned val)
--{
--	return (type << S5PC100_CMD_MAP_SHIFT) | val;
--}
--
- static unsigned int s3c6400_mem_addr(int fba, int fpa, int fsa)
- {
- 	return (fba << S3C6400_FBA_SHIFT) | (fpa << S3C6400_FPA_SHIFT) |
-@@ -219,12 +208,6 @@ static unsigned int s3c6410_mem_addr(int fba, int fpa, int fsa)
- 		(fsa << S3C6410_FSA_SHIFT);
- }
- 
--static unsigned int s5pc100_mem_addr(int fba, int fpa, int fsa)
--{
--	return (fba << S5PC100_FBA_SHIFT) | (fpa << S5PC100_FPA_SHIFT) |
--		(fsa << S5PC100_FSA_SHIFT);
--}
--
- static void s3c_onenand_reset(void)
- {
- 	unsigned long timeout = 0x10000;
-@@ -842,9 +825,6 @@ static void s3c_onenand_setup(struct mtd_info *mtd)
- 	} else if (onenand->type == TYPE_S3C6410) {
- 		onenand->mem_addr = s3c6410_mem_addr;
- 		onenand->cmd_map = s3c64xx_cmd_map;
--	} else if (onenand->type == TYPE_S5PC100) {
--		onenand->mem_addr = s5pc100_mem_addr;
--		onenand->cmd_map = s5pc1xx_cmd_map;
- 	} else if (onenand->type == TYPE_S5PC110) {
- 		/* Use generic onenand functions */
- 		this->read_bufferram = s5pc110_read_bufferram;
-@@ -1127,9 +1107,6 @@ static struct platform_device_id s3c_onenand_driver_ids[] = {
- 		.name		= "s3c6410-onenand",
- 		.driver_data	= TYPE_S3C6410,
+ 	case TYPE_S5PV210:
+ 		/* Configure as little endian */
+ 		pata_s3c_set_endian(info->ide_addr, 0);
+@@ -538,11 +533,6 @@ static int __init pata_s3c_probe(struct platform_device *pdev)
+ 		info->sfr_addr = info->ide_addr + 0x1800;
+ 		info->ide_addr += 0x1900;
+ 		info->fifo_status_reg = 0x94;
+-	} else if (cpu_type == TYPE_S5PC100) {
+-		ap->ops = &pata_s5p_port_ops;
+-		info->sfr_addr = info->ide_addr + 0x1800;
+-		info->ide_addr += 0x1900;
+-		info->fifo_status_reg = 0x84;
+ 	} else {
+ 		ap->ops = &pata_s5p_port_ops;
+ 		info->fifo_status_reg = 0x84;
+@@ -640,9 +630,6 @@ static struct platform_device_id pata_s3c_driver_ids[] = {
+ 		.name		= "s3c64xx-pata",
+ 		.driver_data	= TYPE_S3C64XX,
  	}, {
--		.name		= "s5pc100-onenand",
+-		.name		= "s5pc100-pata",
 -		.driver_data	= TYPE_S5PC100,
 -	}, {
- 		.name		= "s5pc110-onenand",
- 		.driver_data	= TYPE_S5PC110,
- 	}, { },
+ 		.name		= "s5pv210-pata",
+ 		.driver_data	= TYPE_S5PV210,
+ 	},
 -- 
 1.7.1
