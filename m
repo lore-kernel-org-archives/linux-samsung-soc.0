@@ -1,83 +1,41 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 3/7] [media] s5p-fimc: Remove to support fimc for S5PC100
-Date: Thu, 12 May 2011 11:23:35 +0200
-Message-ID: <4DCBA717.3090307@samsung.com>
-References: <1305162674-25860-1-git-send-email-kgene.kim@samsung.com>
- <1305162674-25860-4-git-send-email-kgene.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: S5PV210: Fix possible null pointer dereference.
+Date: Fri, 13 May 2011 16:03:06 +0900
+Message-ID: <1305270186-7722-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:58483 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755768Ab1ELJXi (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:40436 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756660Ab1EMHH3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 May 2011 05:23:38 -0400
-Received: from spt2.w1.samsung.com ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LL2000PNSRCDK50@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 12 May 2011 10:23:36 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LL2006T6SRBXO@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 12 May 2011 10:23:35 +0100 (BST)
-In-reply-to: <1305162674-25860-4-git-send-email-kgene.kim@samsung.com>
+	Fri, 13 May 2011 03:07:29 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Kyungmin Park <kyungmin.park@samsung.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Nick Pelling <nickpelling@nanodome.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Jonghwan Choi <jhbird.choi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Kukjin,
+From: Jonghwan Choi <jhbird.choi@samsung.com>
 
-Shouldn't there be some deprecation period for whole s5pc100 support removal ?
-It looks a bit rude to me that suddenly whole support for the SoC is vanished.
-I know at least one active user of mainline FIMC driver @ s5pc100.
+Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s5pv210/cpufreq.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
-On 05/12/2011 03:11 AM, Kukjin Kim wrote:
-> According to removing ARCH_S5PC100, we don't need to support
-> fimc for S5PC100.
-> 
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Mauro Carvalho Chehab <mchehab@infradead.org>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
->  drivers/media/video/s5p-fimc/fimc-core.c |   14 --------------
->  1 files changed, 0 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-> index dc91a85..89d59d6 100644
-> --- a/drivers/media/video/s5p-fimc/fimc-core.c
-> +++ b/drivers/media/video/s5p-fimc/fimc-core.c
-> @@ -1871,17 +1871,6 @@ static struct samsung_fimc_variant fimc2_variant_exynos4 = {
->  	.pix_limit	 = &s5p_pix_limit[3],
->  };
->  
-> -/* S5PC100 */
-> -static struct samsung_fimc_driverdata fimc_drvdata_s5p = {
-> -	.variant = {
-> -		[0] = &fimc0_variant_s5p,
-> -		[1] = &fimc0_variant_s5p,
-> -		[2] = &fimc2_variant_s5p,
-> -	},
-> -	.num_entities = 3,
-> -	.lclk_frequency = 133000000UL,
-> -};
-> -
->  /* S5PV210, S5PC110 */
->  static struct samsung_fimc_driverdata fimc_drvdata_s5pv210 = {
->  	.variant = {
-> @@ -1907,9 +1896,6 @@ static struct samsung_fimc_driverdata fimc_drvdata_exynos4 = {
->  
->  static struct platform_device_id fimc_driver_ids[] = {
->  	{
-> -		.name		= "s5p-fimc",
-> -		.driver_data	= (unsigned long)&fimc_drvdata_s5p,
-> -	}, {
->  		.name		= "s5pv210-fimc",
->  		.driver_data	= (unsigned long)&fimc_drvdata_s5pv210,
->  	}, {
-
+diff --git a/arch/arm/mach-s5pv210/cpufreq.c b/arch/arm/mach-s5pv210/cpufreq.c
+index 22046e2..58340ee 100644
+--- a/arch/arm/mach-s5pv210/cpufreq.c
++++ b/arch/arm/mach-s5pv210/cpufreq.c
+@@ -105,8 +105,10 @@ static void s5pv210_set_refresh(enum s5pv210_dmc_port ch, unsigned long freq)
+ 		reg = (S5P_VA_DMC0 + 0x30);
+ 	else if (ch == DMC1)
+ 		reg = (S5P_VA_DMC1 + 0x30);
+-	else
++	else {
+ 		printk(KERN_ERR "Cannot find DMC port\n");
++		return;
++	}
+ 
+ 	/* Find current DRAM frequency */
+ 	tmp = s5pv210_dram_conf[ch].freq;
 -- 
-Sylwester Nawrocki
-Samsung Poland R&D Center
+1.7.1
