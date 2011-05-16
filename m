@@ -1,146 +1,103 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 3/3 v5] v4l: Add v4l2 subdev driver for S5P/EXYNOS4 MIPI-CSI receivers
-Date: Sun, 15 May 2011 23:10:06 +0200
-Message-ID: <201105152310.07178.laurent.pinchart@ideasonboard.com>
-References: <1305127030-30162-1-git-send-email-s.nawrocki@samsung.com> <201105141729.58363.laurent.pinchart@ideasonboard.com> <4DCF9DDA.4060600@gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: S5PV210: Fix possible null pointer dereference.
+Date: Mon, 16 May 2011 13:56:37 +0900
+Message-ID: <000c01cc1385$a60782f0$f21688d0$%kim@samsung.com>
+References: <1305270186-7722-1-git-send-email-kgene.kim@samsung.com>
+ <4DCD197A.9020900@ru.mvista.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:58509 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751166Ab1EOVJD (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:39426 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750912Ab1EPE4p (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 15 May 2011 17:09:03 -0400
-In-Reply-To: <4DCF9DDA.4060600@gmail.com>
+	Mon, 16 May 2011 00:56:45 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LL9003C9V2FXR50@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 16 May 2011 13:56:43 +0900 (KST)
+Received: from kgenekim ([12.23.103.96])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LL9007FXV2IDM@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 16 May 2011 13:56:43 +0900 (KST)
+In-reply-to: <4DCD197A.9020900@ru.mvista.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <snjw23@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, kgene.kim@samsung.com, sungchun.kang@samsung.com, jonghun.han@samsung.com, stern@rowland.harvard.edu, rjw@sisk.pl
+To: 'Sergei Shtylyov' <sshtylyov@mvista.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Jonghwan Choi' <jhbird.choi@samsung.com>, ben-linux@fluff.org
 
-Hi Sylwester,
-
-On Sunday 15 May 2011 11:33:14 Sylwester Nawrocki wrote:
-> On 05/14/2011 05:29 PM, Laurent Pinchart wrote:
-> > On Wednesday 11 May 2011 17:17:10 Sylwester Nawrocki wrote:
-
-[snip]
-
-> >> +static int s5pcsis_suspend(struct device *dev)
-> >> +{
-> >> +	struct s5p_platform_mipi_csis *pdata = dev->platform_data;
-> >> +	struct platform_device *pdev = to_platform_device(dev);
-> >> +	struct v4l2_subdev *sd = platform_get_drvdata(pdev);
-> >> +	struct csis_state *state = sd_to_csis_state(sd);
-> >> +	int ret;
-> >> +
-> >> +	v4l2_dbg(1, debug, sd, "%s: flags: 0x%x\n",
-> >> +		 __func__, state->flags);
-> >> +
-> >> +	mutex_lock(&state->lock);
-> >> +	if (state->flags&  ST_POWERED) {
-> >> +		s5pcsis_stop_stream(state);
-> >> +		ret = pdata->phy_enable(state->pdev, false);
-> >> +		if (ret)
-> >> +			goto unlock;
-> >> +
-> >> +		if (state->supply&&  regulator_disable(state->supply))
-> >> +			goto unlock;
-> >> +
-> >> +		clk_disable(state->clock[CSIS_CLK_GATE]);
-> >> +		state->flags&= ~ST_POWERED;
-> >> +	}
-> >> +	state->flags |= ST_SUSPENDED;
-> >> + unlock:
-> >> +	mutex_unlock(&state->lock);
-> >> +	return ret ? -EAGAIN : 0;
-> >> +}
-> >> +
-> >> +static int s5pcsis_resume(struct device *dev)
-> >> +{
-> >> +	struct s5p_platform_mipi_csis *pdata = dev->platform_data;
-> >> +	struct platform_device *pdev = to_platform_device(dev);
-> >> +	struct v4l2_subdev *sd = platform_get_drvdata(pdev);
-> >> +	struct csis_state *state = sd_to_csis_state(sd);
-> >> +	int ret = 0;
-> >> +
-> >> +	v4l2_dbg(1, debug, sd, "%s: flags: 0x%x\n",
-> >> +		 __func__, state->flags);
-> >> +
-> >> +	mutex_lock(&state->lock);
-> >> +	if (!(state->flags&  ST_SUSPENDED))
-> >> +		goto unlock;
-> >> +
-> >> +	if (!(state->flags&  ST_POWERED)) {
-> > 
-> > If the device wasn't powered before being suspended, it should stay
-> > powered off.
+Sergei Shtylyov wrote:
 > 
-> I'm not sure, shortly after system wide resume the device is powered off by
-> PM runtime core anyway.
-> There is no other means in this driver to enable power except using
-> pm_runtime_* calls. The device is being powered on or off only through
-> these runtime PM helpers, i.e. s5pcsis_resume/s5pcsis_suspend.
-> (full source can be found here: http://tinyurl.com/6fozx34)
+> Hello.
+> 
+Hi ;)
 
-OK, it should be fine then.
+> On 13-05-2011 11:03, Kukjin Kim wrote:
+> 
+> > From: Jonghwan Choi<jhbird.choi@samsung.com>
+> 
+> > Signed-off-by: Jonghwan Choi<jhbird.choi@samsung.com>
+> > Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
+> > ---
+> >   arch/arm/mach-s5pv210/cpufreq.c |    4 +++-
+> >   1 files changed, 3 insertions(+), 1 deletions(-)
+> 
+> > diff --git a/arch/arm/mach-s5pv210/cpufreq.c b/arch/arm/mach-
+> s5pv210/cpufreq.c
+> > index 22046e2..58340ee 100644
+> > --- a/arch/arm/mach-s5pv210/cpufreq.c
+> > +++ b/arch/arm/mach-s5pv210/cpufreq.c
+> > @@ -105,8 +105,10 @@ static void s5pv210_set_refresh(enum
+> s5pv210_dmc_port ch, unsigned long freq)
+> >   		reg = (S5P_VA_DMC0 + 0x30);
+> >   	else if (ch == DMC1)
+> >   		reg = (S5P_VA_DMC1 + 0x30);
+> > -	else
+> > +	else {
+> >   		printk(KERN_ERR "Cannot find DMC port\n");
+> > +		return;
+> > +	}
+> 
+>     According to CodingStyle, other branches should now have {} too.
+> 
+Yes, you're right.
 
-> The pm_runtime_resume helper is guaranteed by the PM core to be called only
-> on device in 'suspended' state.
-> 
-> From Documentation/power/runtime_pm.txt:
-> " ...
->  * Once the subsystem-level resume callback has completed successfully, the
-> PM core regards the device as fully operational, which means that the
-> device _must_ be able to complete I/O operations as needed.  The run-time
-> PM status of the device is then 'active'.
-> ..."
-> 
-> If s5pcsis_resume would return 0 without really enabling device clocks and
-> the external voltage regulator then the runtime PM core idea about the
-> device's state would be wrong.
-> 
-> I'm not a PM expert but documentation says that it's better to leave
-> device fully functional after system wide driver's resume() helper returns.
-> 
-> From Documentation/power/devices.txt:
-> 
-> "...
-> When resuming from standby or memory sleep, the phases are:
-> 		resume_noirq, resume, complete.
-> (...)
-> At the end of these phases, drivers should be as functional as they were
-> before suspending: I/O can be performed using DMA and IRQs, and the
-> relevant clocks are gated on.  Even if the device was in a low-power state
-> before the system sleep because of runtime power management, afterwards it
-> should be back in its full-power state. There are multiple reasons why
-> it's best to do this; they are discussed in more detail in
-> Documentation/power/runtime_pm.txt.
-> ..."
-> 
-> Unfortunately there seem to be no standard way to instruct the PM core to
-> enable power of a few (I2C/client platform) devices forming the video
-> pipeline in an arbitrary order. The parent devices of my platforms devices
-> are already the power domain devices.
-> 
-> So it might be a good idea to forbid enabling sub-device's power when
-> the host driver is not using it, to have full control of the pipeline
-> devices power enable sequence at any time.
-> 
-> I perhaps need to isolate functions out from of s5pcsis_resume/suspend and
-> then call that in s_power op and s5pcsis_resume/suspend. Don't really like
-> this idea though... It would virtually render pm_runtime_* calls unusable
-> in this sub-device driver, those would make sense only in the host driver..
+I updated its commit in my tree like following.
 
-I think using the pm_runtime_* calls make sense, they could replace the subdev 
-s_power operation in the long term. We'll need to evaluate that (I'm not sure 
-if runtime PM is available on all platforms targetted by V4L2 for instance).
+---
+diff --git a/arch/arm/mach-s5pv210/cpufreq.c
+b/arch/arm/mach-s5pv210/cpufreq.c
+index 22046e2..153af8b 100644
+--- a/arch/arm/mach-s5pv210/cpufreq.c
++++ b/arch/arm/mach-s5pv210/cpufreq.c
+@@ -101,12 +101,14 @@ static void s5pv210_set_refresh(enum s5pv210_dmc_port
+ch, unsigned long freq)
+        unsigned long tmp, tmp1;
+        void __iomem *reg = NULL;
 
-> I just wanted to put all what is needed to control device's power in the PM
-> helpers and then use pm_runtime_* calls where required.
+-       if (ch == DMC0)
++       if (ch == DMC0) {
+                reg = (S5P_VA_DMC0 + 0x30);
+-       else if (ch == DMC1)
++       } else if (ch == DMC1) {
+                reg = (S5P_VA_DMC1 + 0x30);
+-       else
++       } else {
+                printk(KERN_ERR "Cannot find DMC port\n");
++               return;
++       }
 
--- 
-Regards,
+        /* Find current DRAM frequency */
+        tmp = s5pv210_dram_conf[ch].freq;
+---
 
-Laurent Pinchart
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
