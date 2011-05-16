@@ -1,62 +1,57 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/7] ASoC: Remove to support sound for S5PC100
-Date: Mon, 16 May 2011 16:19:06 +0900
-Message-ID: <002201cc1399$8c39bd20$a4ad3760$%kim@samsung.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH 2/7] ASoC: Remove to support sound for S5PC100
+Date: Mon, 16 May 2011 12:58:20 +0530
+Message-ID: <BANLkTikhD6XhsjzfwDKkDtqjrZfSgq1y0A@mail.gmail.com>
 References: <1305162674-25860-1-git-send-email-kgene.kim@samsung.com>
- <1305162674-25860-3-git-send-email-kgene.kim@samsung.com>
- <BANLkTinqyFCwp3FCOyW=gVhotd1p8DnDyw@mail.gmail.com>
- <03fa01cc1079$c2583670$4708a350$%kim@samsung.com>
- <BANLkTimZnzfWuKB+J0z7YT-0ZT_B5_OvBQ@mail.gmail.com>
+	<1305162674-25860-3-git-send-email-kgene.kim@samsung.com>
+	<BANLkTinqyFCwp3FCOyW=gVhotd1p8DnDyw@mail.gmail.com>
+	<03fa01cc1079$c2583670$4708a350$%kim@samsung.com>
+	<BANLkTimZnzfWuKB+J0z7YT-0ZT_B5_OvBQ@mail.gmail.com>
+	<002201cc1399$8c39bd20$a4ad3760$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:55910 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752003Ab1EPHTa (ORCPT
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:46915 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751645Ab1EPH2W (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 May 2011 03:19:30 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LLA001C01NVRYD0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 16 May 2011 16:19:09 +0900 (KST)
-Received: from kgenekim ([12.23.103.96])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LLA00GTA1NXO3@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 16 May 2011 16:19:09 +0900 (KST)
-In-reply-to: <BANLkTimZnzfWuKB+J0z7YT-0ZT_B5_OvBQ@mail.gmail.com>
-Content-language: ko
+	Mon, 16 May 2011 03:28:22 -0400
+Received: by wwa36 with SMTP id 36so4796642wwa.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 May 2011 00:28:20 -0700 (PDT)
+In-Reply-To: <002201cc1399$8c39bd20$a4ad3760$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jassi Brar' <jassisinghbrar@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Jassi Brar wrote:
-> 
-> On Thu, May 12, 2011 at 1:23 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> 
-> >> You might also want to remove smdkc100 support from
-> >>  sound/soc/samsung/smdk_wm9713.c
-> >>  sound/soc/samsung/smdk_wm8580.c
-> >> And three other references to smdkc100 in sound/soc/samsung/Kconfig
-> >
-> > I found something for smdkc100 in smdk_wm8580.c but I'm not sure which
-> should be removed in smdk_wm9713.c.
-> >
-> 
-> Just the comment about jumper settings on smdkc100
-> otherwise it gives wrong impression that the board is supported.
+On Mon, May 16, 2011 at 12:49 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
 
-Ok, I agree.
+>> > I found something for smdkc100 in smdk_wm8580.c but I'm not sure which
+>> should be removed in smdk_wm9713.c.
+>> >
+>>
+>> Just the comment about jumper settings on smdkc100
+>> otherwise it gives wrong impression that the board is supported.
+>
+> Ok, I agree.
+>
+> But I'm not sure what is required for it.
+> Could you please let me know about it after discussion of removing C100?
 
-But I'm not sure what is required for it.
-Could you please let me know about it after discussion of removing C100?
+Simply doing this ....
+
+diff --git a/sound/soc/samsung/smdk_wm9713.c b/sound/soc/samsung/smdk_wm9713.c
+index ae5fed6..04ed8e4 100644
+--- a/sound/soc/samsung/smdk_wm9713.c
++++ b/sound/soc/samsung/smdk_wm9713.c
+@@ -24,7 +24,6 @@ static struct snd_soc_card smdk;
+  * Default CFG switch settings to use this driver:
+  *
+  *   SMDK6410: Set CFG1 1-3 On, CFG2 1-4 Off
+- *   SMDKC100: Set CFG6 1-3 On, CFG7 1   On
+  *   SMDKC110: Set CFGB10 1-2 Off, CFGB12 1-3 On
+  *   SMDKV210: Set CFGB10 1-2 Off, CFGB12 1-3 On
+  *   SMDKV310: Set CFG2 1-2 Off, CFG4 All On, CFG7 All Off, CFG8 1-On
+
 
 Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
