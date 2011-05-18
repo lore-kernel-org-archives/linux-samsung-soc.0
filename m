@@ -1,88 +1,77 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 3/7] [media] s5p-fimc: Remove to support fimc for S5PC100
-Date: Wed, 18 May 2011 17:57:48 +0900
-Message-ID: <001601cc1539$aaae2380$000a6a80$%kim@samsung.com>
+From: Yauhen Kharuzhy <jekhor@gmail.com>
+Subject: Re: [PATCH 0/7] ARM: Removing ARCH_S5PC100
+Date: Wed, 18 May 2011 12:36:58 +0300
+Message-ID: <20110518093658.GA2421@jeknote.loshitsa1.net>
 References: <1305162674-25860-1-git-send-email-kgene.kim@samsung.com>
- <1305162674-25860-4-git-send-email-kgene.kim@samsung.com>
- <4DCBA717.3090307@samsung.com>
- <002001cc1399$02964bb0$07c2e310$%kim@samsung.com>
- <4DD265C3.9040101@samsung.com>
+ <20110517121948.GE2737@game.jcrosoft.org>
+ <001201cc1537$bfb24e20$3f16ea60$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:61061 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755174Ab1ERI5w (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:59019 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932507Ab1ERJhD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 May 2011 04:57:52 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LLD00JFCVKCOCK0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 18 May 2011 17:57:51 +0900 (KST)
-Received: from kgenekim ([12.23.119.139])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LLD00H0BVKEJY@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 18 May 2011 17:57:50 +0900 (KST)
-In-reply-to: <4DD265C3.9040101@samsung.com>
-Content-language: ko
+	Wed, 18 May 2011 05:37:03 -0400
+Received: by fxm17 with SMTP id 17so1048978fxm.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 May 2011 02:37:02 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <001201cc1537$bfb24e20$3f16ea60$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Mauro Carvalho Chehab' <mchehab@infradead.org>, 'Nick Pelling' <nickpelling@nanodome.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Jean-Christophe PLAGNIOL-VILLARD' <plagnioj@jcrosoft.com>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-Sylwester Nawrocki wrote:
+On Wed, May 18, 2011 at 05:44:03PM +0900, Kukjin Kim wrote:
+> Jean-Christophe PLAGNIOL-VILLARD wrote:
+> > 
+> > HI,
+> > 
+> Hi,
 > 
-> On 05/16/2011 09:15 AM, Kukjin Kim wrote:
-> > Sylwester Nawrocki wrote:
-> >
-> >> Shouldn't there be some deprecation period for whole s5pc100 support
-> > removal ?
-> >
-> > This is that. But I know, there is no time...
-> >
-> >> It looks a bit rude to me that suddenly whole support for the SoC is
-> > vanished.
-> >
-> > Hmm...what did you think about my previous comments: 'removing some
-> > "mach-s5pxxxx"s'?
+> > 	why do you remove it?
+> > 
+> Thanks for your concerns :)
 > 
-> I would expect one kernel release period of so notice for such a change.
-> But it doesn't have to be true in this specific case.
-> 
-> >
-> >> I know at least one active user of mainline FIMC driver @ s5pc100.
-> >
-> > Do you _really_ want to keep it in later mainline?
-> 
-> I don't personally have interest in maintaining this driver for s5pc100.
-> It just adds unnecessary complexity to my work and in fact I have limited
-> possibilities now to test the driver on s5pc100.
-> But if there are users and it really doesn't cost much to keep the support
-> for s5pc100 why bother to remove it?  Just to get rid of one mach-*
-directory ?
-> 
-> >
-> > I was not sure we should keep continually 6442 and C100 in mainline when
-I
-> > decided to removing 'mach-s5pxxxx'.
-> 
-> I really don't care about 6442, but what's the problem with s5pc100 ?
-> Is it being discontinued ? Or there is little users of it ?
-> 
-> I would much more like to see attempts to consolidate the code rather than
-> simply removing it.
-> 
-Hi Sylwester,
+> I think it's rather premature to decide it at this time.
+> So this is dropped at this moment...but as a note, I will implement this
+> into other samsung stuff next time :)
 
-Thanks for your opinion :)
-Please refer to my reply on this thread.
+I think that we should implement SoC support with more unified way
+_before_ removing working code, not after.
 
-Thanks.
+> 
+> Thanks.
+> 
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+> 
+> > On 10:11 Thu 12 May     , Kukjin Kim wrote:
+> > > This patch remvoes mach-s5pc100 directory for ARCH_S5PC100 in arch/arm.
+> > >
+> > > If any problems, please let me know immediately.
+> > >
+> > > [PATCH 1/7] ARM: S5PC100: Removing ARCH_S5PC100
+> > > [PATCH 2/7] ASoC: Remove to support sound for S5PC100
+> > > [PATCH 3/7] [media] s5p-fimc: Remove to support fimc for S5PC100
+> > > [PATCH 4/7] mtd: OneNAND: Remove to support onenand for S5PC100
+> > > [PATCH 5/7] tty: Remove to support serial for S5PC100
+> > > [PATCH 6/7] video: s3c-fb: Remove to support fb for S5PC100
+> > > [PATCH 7/7] libata: Remove to support pata for S5PC100
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+-- 
+Yauhen Kharuzhy		jekhor _at_ gmail.com
+			JID: jek@jabber.ru
+			skype: jekhor
+
+A: No
+Q: Should I quote below my post?
