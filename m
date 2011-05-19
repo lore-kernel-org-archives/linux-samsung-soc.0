@@ -1,75 +1,102 @@
-From: Mauro Carvalho Chehab <mchehab@infradead.org>
-Subject: Re: [PATCH 3/7] [media] s5p-fimc: Remove to support fimc for S5PC100
-Date: Wed, 18 May 2011 08:04:43 -0300
-Message-ID: <4DD3A7CB.6030408@infradead.org>
-References: <1305162674-25860-1-git-send-email-kgene.kim@samsung.com> <1305162674-25860-4-git-send-email-kgene.kim@samsung.com>
+From: Thomas Abraham <thomas.ab@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS4: Fix card insert/removal event detection on
+ smdkv310 board
+Date: Fri, 20 May 2011 01:40:31 +0530
+Message-ID: <BANLkTimudnvSSiECQ6Ys80et_MzgGV5srA@mail.gmail.com>
+References: <1305554761-2954-1-git-send-email-thomas.ab@samsung.com>
+	<000a01cc13ea$4afb9b20$e0f2d160$%szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from casper.infradead.org ([85.118.1.10]:43274 "EHLO
-	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932619Ab1ERLEw (ORCPT
+Received: from mail-yi0-f46.google.com ([209.85.218.46]:39770 "EHLO
+	mail-yi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933926Ab1ESUKb convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 May 2011 07:04:52 -0400
-In-Reply-To: <1305162674-25860-4-git-send-email-kgene.kim@samsung.com>
+	Thu, 19 May 2011 16:10:31 -0400
+Received: by yia27 with SMTP id 27so1068851yia.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 May 2011 13:10:31 -0700 (PDT)
+In-Reply-To: <000a01cc13ea$4afb9b20$e0f2d160$%szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-Em 11-05-2011 22:11, Kukjin Kim escreveu:
-> According to removing ARCH_S5PC100, we don't need to support
-> fimc for S5PC100.
+Hi Marek,
 
-NACK
+On Mon, May 16, 2011 at 10:27 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Hello,
+>
+> On Monday, May 16, 2011 4:06 PM Thomas Abraham wrote:
+>
+>> On SMDKV310 board, a card detect gpio pin is available that is direc=
+tly
+>> connected to the io pad of the sdhci controller. Fix incorrect value
+>> of cd_type field in platform data for sdhci instance 0 and 2.
+>>
+>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>> ---
+>> =A0arch/arm/mach-exynos4/mach-smdkv310.c | =A0 =A04 ++--
+>> =A01 files changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-
+>> exynos4/mach-smdkv310.c
+>> index 1526764..f6b1c7e 100644
+>> --- a/arch/arm/mach-exynos4/mach-smdkv310.c
+>> +++ b/arch/arm/mach-exynos4/mach-smdkv310.c
+>> @@ -78,7 +78,7 @@ static struct s3c2410_uartcfg smdkv310_uartcfgs[]
+>> __initdata =3D {
+>> =A0};
+>>
+>> =A0static struct s3c_sdhci_platdata smdkv310_hsmmc0_pdata __initdata=
+ =3D {
+>> - =A0 =A0 .cd_type =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=3D S3C_SDHCI_CD_G=
+PIO,
+>> + =A0 =A0 .cd_type =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=3D S3C_SDHCI_CD_I=
+NTERNAL,
+>> =A0 =A0 =A0 .ext_cd_gpio =A0 =A0 =A0 =A0 =A0 =A0=3D EXYNOS4_GPK0(2),
+>> =A0 =A0 =A0 .ext_cd_gpio_invert =A0 =A0 =3D 1,
+>
+> When you are changing the card detection type from GPIO to INTERNAL y=
+ou should
+> also remove 'ext_cd_gpio' and 'ext_cd_gpio_invert' definitions.
 
-There's nothing mentioning the removal of ARCH_S5PC100 or the
-corresponding bits at feature-removal-schedule.txt:
+Thanks for your comments. I will fix this and submit another patch.
 
-$ grep -i s5pc100 Documentation/feature-removal-schedule.txt 
-$ 
+Thomas.
 
-Mauro.
-
-> 
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Mauro Carvalho Chehab <mchehab@infradead.org>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
->  drivers/media/video/s5p-fimc/fimc-core.c |   14 --------------
->  1 files changed, 0 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-> index dc91a85..89d59d6 100644
-> --- a/drivers/media/video/s5p-fimc/fimc-core.c
-> +++ b/drivers/media/video/s5p-fimc/fimc-core.c
-> @@ -1871,17 +1871,6 @@ static struct samsung_fimc_variant fimc2_variant_exynos4 = {
->  	.pix_limit	 = &s5p_pix_limit[3],
->  };
->  
-> -/* S5PC100 */
-> -static struct samsung_fimc_driverdata fimc_drvdata_s5p = {
-> -	.variant = {
-> -		[0] = &fimc0_variant_s5p,
-> -		[1] = &fimc0_variant_s5p,
-> -		[2] = &fimc2_variant_s5p,
-> -	},
-> -	.num_entities = 3,
-> -	.lclk_frequency = 133000000UL,
-> -};
-> -
->  /* S5PV210, S5PC110 */
->  static struct samsung_fimc_driverdata fimc_drvdata_s5pv210 = {
->  	.variant = {
-> @@ -1907,9 +1896,6 @@ static struct samsung_fimc_driverdata fimc_drvdata_exynos4 = {
->  
->  static struct platform_device_id fimc_driver_ids[] = {
->  	{
-> -		.name		= "s5p-fimc",
-> -		.driver_data	= (unsigned long)&fimc_drvdata_s5p,
-> -	}, {
->  		.name		= "s5pv210-fimc",
->  		.driver_data	= (unsigned long)&fimc_drvdata_s5pv210,
->  	}, {
+>
+>> =A0 =A0 =A0 .clk_type =A0 =A0 =A0 =A0 =A0 =A0 =A0 =3D S3C_SDHCI_CLK_=
+DIV_EXTERNAL,
+>> @@ -96,7 +96,7 @@ static struct s3c_sdhci_platdata smdkv310_hsmmc1_p=
+data
+>> __initdata =3D {
+>> =A0};
+>>
+>> =A0static struct s3c_sdhci_platdata smdkv310_hsmmc2_pdata __initdata=
+ =3D {
+>> - =A0 =A0 .cd_type =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=3D S3C_SDHCI_CD_G=
+PIO,
+>> + =A0 =A0 .cd_type =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=3D S3C_SDHCI_CD_I=
+NTERNAL,
+>> =A0 =A0 =A0 .ext_cd_gpio =A0 =A0 =A0 =A0 =A0 =A0=3D EXYNOS4_GPK2(2),
+>> =A0 =A0 =A0 .ext_cd_gpio_invert =A0 =A0 =3D 1,
+>
+> The same as with hsmmc0.
+>
+>> =A0 =A0 =A0 .clk_type =A0 =A0 =A0 =A0 =A0 =A0 =A0 =3D S3C_SDHCI_CLK_=
+DIV_EXTERNAL,
+>> --
+>
+> Best regards
+> --
+> Marek Szyprowski
+> Samsung Poland R&D Center
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
