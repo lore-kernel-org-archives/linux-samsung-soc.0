@@ -1,81 +1,139 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS4: Enable WM8994 MFD on I2S selection
-Date: Wed, 25 May 2011 10:54:34 -0700
-Message-ID: <4DDD425A.1070202@samsung.com>
-References: <1306298370-24997-1-git-send-email-angus.ainslie@linaro.org>
+From: Marc Zyngier <Marc.Zyngier@arm.com>
+Subject: Re: [PATCH] ARM: exynos4: fix secondary CPU boot
+Date: Wed, 25 May 2011 19:04:05 +0100
+Message-ID: <1306346645.27474.182.camel@e102391-lin.cambridge.arm.com>
+References: <1305899190-16732-1-git-send-email-marc.zyngier@arm.com>
+	 <4DDD3C57.6020705@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:64490 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751023Ab1EYRyk (ORCPT
+Received: from service87.mimecast.com ([94.185.240.25]:36749 "HELO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751023Ab1EYSDU convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 May 2011 13:54:40 -0400
-Received: by pzk9 with SMTP id 9so3493742pzk.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 May 2011 10:54:40 -0700 (PDT)
-In-Reply-To: <1306298370-24997-1-git-send-email-angus.ainslie@linaro.org>
+	Wed, 25 May 2011 14:03:20 -0400
+In-Reply-To: <4DDD3C57.6020705@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Angus Ainslie <angus.ainslie@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, Giridhar Maruthy <giridhar.maruthy@linaro.org>, samsung@lists.linaro.org, kgene.kim@samsung.com, patches@linaro.org, jassisinghbrar@gmail.com, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 05/24/11 21:39, Angus Ainslie wrote:
-> From: Giridhar Maruthy<giridhar.maruthy@linaro.org>
->
-> Whenever I2S is selected, select MFD for WM8994 and I2C
-> to avoid manual enabling of the codec and I2C.
->
-> Signed-off-by: Giridhar Maruthy<giridhar.maruthy@linaro.org>
-> Signed-off-by: Angus Ainslie<angus.ainslie@linaro.org>
-> ---
->   sound/soc/samsung/Kconfig |    3 +++
->   1 files changed, 3 insertions(+), 0 deletions(-)
->
+On Wed, 2011-05-25 at 10:28 -0700, Kukjin Kim wrote:
+> On 05/20/11 06:46, Marc Zyngier wrote:
+> > Patch 7d30e8b38 (ARM: EXYNOS4: Add EXYNOS4 CPU initialization support)
+> > renamed the s5pv310 to exynos4, and also changed the value of
+> > EXYNOS4_PA_SYSRAM, which is used to release the secondary CPU from
+> > spinning in BL0. As a result, CPU1 can't be brought up anymore.
+> >
+> > This patch simply reverts EXYNOS4_PA_SYSRAM to its original value,
+> > which results in a working CPU1.
+> >
+> > Tested on an SMDK-v310.
+> >
+> > Cc: Kukjin Kim<kgene.kim@samsung.com>
+> > Signed-off-by: Marc Zyngier<marc.zyngier@arm.com>
+> > ---
+> >   arch/arm/mach-exynos4/include/mach/map.h |    2 +-
+> >   1 files changed, 1 insertions(+), 1 deletions(-)
+> >
+> > diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
+> > index 6330b73..862967f 100644
+> > --- a/arch/arm/mach-exynos4/include/mach/map.h
+> > +++ b/arch/arm/mach-exynos4/include/mach/map.h
+> > @@ -23,7 +23,7 @@
+> >
+> >   #include<plat/map-s5p.h>
+> >
+> > -#define EXYNOS4_PA_SYSRAM		0x02020000
+> > +#define EXYNOS4_PA_SYSRAM		0x02025000
+> >
+> Hi Marc,
+> 
+> Hmm...the value, 0x02020000 is correct on Exynos4210 now.
+> 
+> So can't apply this but I know, you're right on old version of 
+> Exynos4210...let's think again about this.
 
-Hi Angus :)
+So that address has changed between two SoC revisions? That's
+unfortunate, to say the least. I'm most probably using an early revision
+of the hardware (EVT0?), as it doesn't even support MCT.
 
-Hmm...first of all, should add proper maintainers in Cc. In this case, 
-Jassi, Liam, and Mark should be added in Cc. (Cc'ed them)
+What about the following patch?
 
-> diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-> index a3fdfb6..a80eeb1 100644
-> --- a/sound/soc/samsung/Kconfig
-> +++ b/sound/soc/samsung/Kconfig
-> @@ -65,6 +65,9 @@ config SND_SOC_SAMSUNG_SMDK_WM8994
->   	tristate "SoC I2S Audio support for WM8994 on SMDK"
->   	depends on SND_SOC_SAMSUNG&&  (MACH_SMDKV310 || MACH_SMDKC210)
->   	select SND_SOC_WM8994
-> +	select MFD_SUPPORT
-> +	select I2C_S3C2410
-> +	select MFD_WM8994
+	M.
 
-I'm not sure about MFD configs, but if "select I2C_S3C2410" is required, 
-it should be moved into regarding Kconfig of arch/arm, because it is 
-related to dependency of ARCH. Maybe in this case, 
-arch/arm/mach-exynos4/Kconfig?
+>From c27e75b86e1ee181987a9364286a888421e76205 Mon Sep 17 00:00:00 2001
+From: Marc Zyngier <marc.zyngier@arm.com>
+Date: Fri, 20 May 2011 14:38:25 +0100
+Subject: [PATCH] ARM: exynos4: fix secondary CPU boot on early SoC revisions
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index e849f67..30b716e 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -12,6 +12,7 @@ if ARCH_EXYNOS4
-  config CPU_EXYNOS4210
-         bool
-         select S3C_PL330_DMA
-+       select I2C_S3C2410
-         help
-           Enable EXYNOS4210 CPU support
+It appears that the system-wide flags register that used to be at
+0x02025000 on the first revision of Exynos4 has moved to 0x02020000.
 
->   	select SND_SAMSUNG_I2S
->   	help
->   		Say Y if you want to add support for SoC audio on the SMDKs.
+The kernel has been updated accordingly, but this unfortunately leaves
+early boards without SMP support (the secondary CPU spins endlessly
+in BL0 waiting for an address to be written at that memory location).
+
+Try to solve the problem by poking both locations. This should be
+safe as this is done early enough in the kernel boot process, and nobody
+should be using the SRAM yet.
+
+Tested on a vintage SMDK-v310.
+
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+---
+ arch/arm/mach-exynos4/include/mach/map.h |    1 +
+ arch/arm/mach-exynos4/platsmp.c          |   14 ++++++++++++++
+ 2 files changed, 15 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
+index 0009e77..781e149 100644
+--- a/arch/arm/mach-exynos4/include/mach/map.h
++++ b/arch/arm/mach-exynos4/include/mach/map.h
+@@ -24,6 +24,7 @@
+ #include <plat/map-s5p.h>
+ 
+ #define EXYNOS4_PA_SYSRAM		0x02020000
++#define EXYNOS4_PA_SYSRAM_EVT0		0x02025000
+ 
+ #define EXYNOS4_PA_FIMC0		0x11800000
+ #define EXYNOS4_PA_FIMC1		0x11810000
+diff --git a/arch/arm/mach-exynos4/platsmp.c b/arch/arm/mach-exynos4/platsmp.c
+index c5e65a0..f261c34 100644
+--- a/arch/arm/mach-exynos4/platsmp.c
++++ b/arch/arm/mach-exynos4/platsmp.c
+@@ -155,6 +155,7 @@ void __init smp_init_cpus(void)
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ {
+ 	int i;
++	void __iomem *sysram_evt0;
+ 
+ 	/*
+ 	 * Initialise the present map, which describes the set of CPUs
+@@ -172,4 +173,17 @@ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ 	 * secondary CPU branches to this address.
+ 	 */
+ 	__raw_writel(BSYM(virt_to_phys(exynos4_secondary_startup)), S5P_VA_SYSRAM);
++
++	/*
++	 * EVT0 has the system-wide flags register at a different address.
++	 * Poke it as well, in case we're running on an old SoC revision.
++	 */
++	sysram_evt0 = ioremap(EXYNOS4_PA_SYSRAM_EVT0, SZ_4K);
++	if (!sysram_evt0) {
++		pr_err("Unable to remap EXYNOS4_PA_SYSRAM_EVT0\n");
++		return;
++	}
++
++	__raw_writel(BSYM(virt_to_phys(exynos4_secondary_startup)), sysram_evt0);
++	iounmap(sysram_evt0);
+ }
+-- 
+1.7.0.4
+
+
 
 -- 
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Reality is an implementation detail.
