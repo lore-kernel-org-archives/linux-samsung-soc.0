@@ -1,56 +1,121 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS4: Enable WM8994 MFD on I2S selection
-Date: Wed, 25 May 2011 11:48:19 -0700
-Message-ID: <4DDD4EF3.3000008@samsung.com>
-References: <1306298370-24997-1-git-send-email-angus.ainslie@linaro.org>	<4DDD425A.1070202@samsung.com> <BANLkTik5pqAgJGznPi2PLSyXucgOoLNR9w@mail.gmail.com>
+Subject: Re: [PATCH] ARM: exynos4: fix secondary CPU boot
+Date: Wed, 25 May 2011 12:06:02 -0700
+Message-ID: <4DDD531A.50604@samsung.com>
+References: <1305899190-16732-1-git-send-email-marc.zyngier@arm.com>	 <4DDD3C57.6020705@samsung.com> <1306346645.27474.182.camel@e102391-lin.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:52488 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751011Ab1EYSsX (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:39781 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754875Ab1EYTGF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 May 2011 14:48:23 -0400
-Received: by vws1 with SMTP id 1so6032887vws.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 May 2011 11:48:23 -0700 (PDT)
-In-Reply-To: <BANLkTik5pqAgJGznPi2PLSyXucgOoLNR9w@mail.gmail.com>
+	Wed, 25 May 2011 15:06:05 -0400
+Received: by iyb14 with SMTP id 14so11515iyb.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 May 2011 12:06:05 -0700 (PDT)
+In-Reply-To: <1306346645.27474.182.camel@e102391-lin.cambridge.arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Angus Ainslie <angus.ainslie@linaro.org>, linux-samsung-soc@vger.kernel.org, Giridhar Maruthy <giridhar.maruthy@linaro.org>, samsung@lists.linaro.org, patches@linaro.org, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com
+To: Marc Zyngier <Marc.Zyngier@arm.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 05/25/11 11:15, Jassi Brar wrote:
->>> diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
->>> index a3fdfb6..a80eeb1 100644
->>> --- a/sound/soc/samsung/Kconfig
->>> +++ b/sound/soc/samsung/Kconfig
->>> @@ -65,6 +65,9 @@ config SND_SOC_SAMSUNG_SMDK_WM8994
->>>         tristate "SoC I2S Audio support for WM8994 on SMDK"
->>>         depends on SND_SOC_SAMSUNG&&    (MACH_SMDKV310 || MACH_SMDKC210)
->>>         select SND_SOC_WM8994
->>> +       select MFD_SUPPORT
->>> +       select I2C_S3C2410
->>> +       select MFD_WM8994
->>
->> I'm not sure about MFD configs, but if "select I2C_S3C2410" is required, it
->> should be moved into regarding Kconfig of arch/arm, because it is related to
->> dependency of ARCH. Maybe in this case, arch/arm/mach-exynos4/Kconfig?
+On 05/25/11 11:04, Marc Zyngier wrote:
+> On Wed, 2011-05-25 at 10:28 -0700, Kukjin Kim wrote:
+>> On 05/20/11 06:46, Marc Zyngier wrote:
+
+(snip)
+
+> So that address has changed between two SoC revisions? That's
+> unfortunate, to say the least. I'm most probably using an early revision
+> of the hardware (EVT0?), as it doesn't even support MCT.
 >
-> I2C here is a SMDK specific requirement and even if most devices need I2C,
-> selecting I2C for every EXYNOS4210 based device is not ideal. IMO it'd better
-> be tied to some SMDK specific config option.
+I'm afraid :( and I agree secondary CPU should work on all of 
+Exynos4210. But I'm still think about the method...
+
+> What about the following patch?
 >
+Uhm...this is really hack but I'd like to use another normal way...?
 
-Hi Jassi :)
+> 	M.
+>
+>> From c27e75b86e1ee181987a9364286a888421e76205 Mon Sep 17 00:00:00 2001
+> From: Marc Zyngier<marc.zyngier@arm.com>
+> Date: Fri, 20 May 2011 14:38:25 +0100
+> Subject: [PATCH] ARM: exynos4: fix secondary CPU boot on early SoC revisions
+>
+> It appears that the system-wide flags register that used to be at
+> 0x02025000 on the first revision of Exynos4 has moved to 0x02020000.
+>
+> The kernel has been updated accordingly, but this unfortunately leaves
+> early boards without SMP support (the secondary CPU spins endlessly
+> in BL0 waiting for an address to be written at that memory location).
+>
+> Try to solve the problem by poking both locations. This should be
+> safe as this is done early enough in the kernel boot process, and nobody
+> should be using the SRAM yet.
+>
+> Tested on a vintage SMDK-v310.
 
-How are you?
+vintage ;)
 
-Hmm...need to think again because as you know, basically all of boards 
-can be compiled with one exynos4_defconfig.
+>
+> Cc: Kukjin Kim<kgene.kim@samsung.com>
+> Signed-off-by: Marc Zyngier<marc.zyngier@arm.com>
+> ---
+>   arch/arm/mach-exynos4/include/mach/map.h |    1 +
+>   arch/arm/mach-exynos4/platsmp.c          |   14 ++++++++++++++
+>   2 files changed, 15 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
+> index 0009e77..781e149 100644
+> --- a/arch/arm/mach-exynos4/include/mach/map.h
+> +++ b/arch/arm/mach-exynos4/include/mach/map.h
+> @@ -24,6 +24,7 @@
+>   #include<plat/map-s5p.h>
+>
+>   #define EXYNOS4_PA_SYSRAM		0x02020000
+> +#define EXYNOS4_PA_SYSRAM_EVT0		0x02025000
+>
+>   #define EXYNOS4_PA_FIMC0		0x11800000
+>   #define EXYNOS4_PA_FIMC1		0x11810000
+> diff --git a/arch/arm/mach-exynos4/platsmp.c b/arch/arm/mach-exynos4/platsmp.c
+> index c5e65a0..f261c34 100644
+> --- a/arch/arm/mach-exynos4/platsmp.c
+> +++ b/arch/arm/mach-exynos4/platsmp.c
+> @@ -155,6 +155,7 @@ void __init smp_init_cpus(void)
+>   void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+>   {
+>   	int i;
+> +	void __iomem *sysram_evt0;
+>
+>   	/*
+>   	 * Initialise the present map, which describes the set of CPUs
+> @@ -172,4 +173,17 @@ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+>   	 * secondary CPU branches to this address.
+>   	 */
+>   	__raw_writel(BSYM(virt_to_phys(exynos4_secondary_startup)), S5P_VA_SYSRAM);
+> +
+> +	/*
+> +	 * EVT0 has the system-wide flags register at a different address.
+> +	 * Poke it as well, in case we're running on an old SoC revision.
+> +	 */
+> +	sysram_evt0 = ioremap(EXYNOS4_PA_SYSRAM_EVT0, SZ_4K);
 
-Ok, so you agreed it should be moved into some Kconfig of arch/arm/ :)
-I will think again which one is more reasonable then let you know.
+Hmm...first of all, need to check whether can ioremap the area on newer 
+one but I'm out off office now so will check it after backing.
+
+> +	if (!sysram_evt0) {
+> +		pr_err("Unable to remap EXYNOS4_PA_SYSRAM_EVT0\n");
+
+Do we really need 'pr_err' here?...
+
+> +		return;
+> +	}
+> +
+> +	__raw_writel(BSYM(virt_to_phys(exynos4_secondary_startup)), sysram_evt0);
+> +	iounmap(sysram_evt0);
+>   }
 
 -- 
 Thanks.
