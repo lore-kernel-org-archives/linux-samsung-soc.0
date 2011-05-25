@@ -1,49 +1,51 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH] ARM: exynos4: fix secondary CPU boot
-Date: Fri, 20 May 2011 14:46:30 +0100
-Message-ID: <1305899190-16732-1-git-send-email-marc.zyngier@arm.com>
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: [PATCH] ARM: EXYNOS4: Enable SATA on SMDKV310
+Date: Wed, 25 May 2011 09:01:47 +0530
+Message-ID: <1306294307-17315-1-git-send-email-inderpal.s@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([94.185.240.25]:47658 "HELO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S934234Ab1ETNqB (ORCPT
+Received: from mail-px0-f173.google.com ([209.85.212.173]:43244 "EHLO
+	mail-px0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756090Ab1EYDdV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 May 2011 09:46:01 -0400
+	Tue, 24 May 2011 23:33:21 -0400
+Received: by pxi16 with SMTP id 16so4783428pxi.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 May 2011 20:33:20 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: samsung@lists.linaro.org, kgene.kim@samsung.com, patches@linaro.org, Inderpal Singh <inderpal.s@samsung.com>
 
-Patch 7d30e8b38 (ARM: EXYNOS4: Add EXYNOS4 CPU initialization support)
-renamed the s5pv310 to exynos4, and also changed the value of
-EXYNOS4_PA_SYSRAM, which is used to release the secondary CPU from
-spinning in BL0. As a result, CPU1 can't be brought up anymore.
+Adds device definition to enable SATA on SMDKV310
 
-This patch simply reverts EXYNOS4_PA_SYSRAM to its original value,
-which results in a working CPU1.
-
-Tested on an SMDK-v310.
-
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Inderpal Singh <inderpal.s@samsung.com>
 ---
- arch/arm/mach-exynos4/include/mach/map.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ arch/arm/mach-exynos4/Kconfig         |    1 +
+ arch/arm/mach-exynos4/mach-smdkv310.c |    1 +
+ 2 files changed, 2 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exyno=
-s4/include/mach/map.h
-index 6330b73..862967f 100644
---- a/arch/arm/mach-exynos4/include/mach/map.h
-+++ b/arch/arm/mach-exynos4/include/mach/map.h
-@@ -23,7 +23,7 @@
-=20
- #include <plat/map-s5p.h>
-=20
--#define EXYNOS4_PA_SYSRAM=09=090x02020000
-+#define EXYNOS4_PA_SYSRAM=09=090x02025000
-=20
- #define EXYNOS4_PA_FIMC0=09=090x11800000
- #define EXYNOS4_PA_FIMC1=09=090x11810000
---=20
-1.7.0.4
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index 11b57a4..9cbf9b8 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -122,6 +122,7 @@ config MACH_SMDKV310
+ 	select S3C_DEV_HSMMC1
+ 	select S3C_DEV_HSMMC2
+ 	select S3C_DEV_HSMMC3
++	select EXYNOS4_DEV_AHCI
+ 	select SAMSUNG_DEV_KEYPAD
+ 	select EXYNOS4_DEV_PD
+ 	select EXYNOS4_DEV_SYSMMU
+diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
+index 1526764..666ebe5 100644
+--- a/arch/arm/mach-exynos4/mach-smdkv310.c
++++ b/arch/arm/mach-exynos4/mach-smdkv310.c
+@@ -188,6 +188,7 @@ static struct platform_device *smdkv310_devices[] __initdata = {
+ 	&exynos4_device_sysmmu,
+ 	&samsung_asoc_dma,
+ 	&smdkv310_smsc911x,
++	&exynos4_device_ahci,
+ };
+ 
+ static void __init smdkv310_smsc911x_init(void)
+-- 
+1.7.1
