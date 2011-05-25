@@ -1,127 +1,99 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: exynos4: fix secondary CPU boot
-Date: Wed, 25 May 2011 12:06:02 -0700
-Message-ID: <4DDD531A.50604@samsung.com>
-References: <1305899190-16732-1-git-send-email-marc.zyngier@arm.com>	 <4DDD3C57.6020705@samsung.com> <1306346645.27474.182.camel@e102391-lin.cambridge.arm.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [GIT PULL] Samsung S5P for 2.6.40 merge window
+Date: Wed, 25 May 2011 21:50:05 +0100
+Message-ID: <20110525205005.GC24876@n2100.arm.linux.org.uk>
+References: <4DDD4659.5050602@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:39781 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754875Ab1EYTGF (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:52526 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754289Ab1EYUuT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 May 2011 15:06:05 -0400
-Received: by iyb14 with SMTP id 14so11515iyb.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 May 2011 12:06:05 -0700 (PDT)
-In-Reply-To: <1306346645.27474.182.camel@e102391-lin.cambridge.arm.com>
+	Wed, 25 May 2011 16:50:19 -0400
+Content-Disposition: inline
+In-Reply-To: <4DDD4659.5050602@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marc Zyngier <Marc.Zyngier@arm.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 05/25/11 11:04, Marc Zyngier wrote:
-> On Wed, 2011-05-25 at 10:28 -0700, Kukjin Kim wrote:
->> On 05/20/11 06:46, Marc Zyngier wrote:
+On Wed, May 25, 2011 at 11:11:37AM -0700, Kukjin Kim wrote:
+> These things are for 2.6.40 and it includes removing ARCH_S5P6442.  
+> Actually there is no user now and if required will merge it into other  
+> ARCH like ARCH_S5P64X0 later.
 
-(snip)
+I have a merge conflict with this, and resolved it as below.  Please check
+whether this is correct.
 
-> So that address has changed between two SoC revisions? That's
-> unfortunate, to say the least. I'm most probably using an early revision
-> of the hardware (EVT0?), as it doesn't even support MCT.
->
-I'm afraid :( and I agree secondary CPU should work on all of 
-Exynos4210. But I'm still think about the method...
-
-> What about the following patch?
->
-Uhm...this is really hack but I'd like to use another normal way...?
-
-> 	M.
->
->> From c27e75b86e1ee181987a9364286a888421e76205 Mon Sep 17 00:00:00 2001
-> From: Marc Zyngier<marc.zyngier@arm.com>
-> Date: Fri, 20 May 2011 14:38:25 +0100
-> Subject: [PATCH] ARM: exynos4: fix secondary CPU boot on early SoC revisions
->
-> It appears that the system-wide flags register that used to be at
-> 0x02025000 on the first revision of Exynos4 has moved to 0x02020000.
->
-> The kernel has been updated accordingly, but this unfortunately leaves
-> early boards without SMP support (the secondary CPU spins endlessly
-> in BL0 waiting for an address to be written at that memory location).
->
-> Try to solve the problem by poking both locations. This should be
-> safe as this is done early enough in the kernel boot process, and nobody
-> should be using the SRAM yet.
->
-> Tested on a vintage SMDK-v310.
-
-vintage ;)
-
->
-> Cc: Kukjin Kim<kgene.kim@samsung.com>
-> Signed-off-by: Marc Zyngier<marc.zyngier@arm.com>
-> ---
->   arch/arm/mach-exynos4/include/mach/map.h |    1 +
->   arch/arm/mach-exynos4/platsmp.c          |   14 ++++++++++++++
->   2 files changed, 15 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
-> index 0009e77..781e149 100644
-> --- a/arch/arm/mach-exynos4/include/mach/map.h
-> +++ b/arch/arm/mach-exynos4/include/mach/map.h
-> @@ -24,6 +24,7 @@
->   #include<plat/map-s5p.h>
->
->   #define EXYNOS4_PA_SYSRAM		0x02020000
-> +#define EXYNOS4_PA_SYSRAM_EVT0		0x02025000
->
->   #define EXYNOS4_PA_FIMC0		0x11800000
->   #define EXYNOS4_PA_FIMC1		0x11810000
-> diff --git a/arch/arm/mach-exynos4/platsmp.c b/arch/arm/mach-exynos4/platsmp.c
-> index c5e65a0..f261c34 100644
-> --- a/arch/arm/mach-exynos4/platsmp.c
-> +++ b/arch/arm/mach-exynos4/platsmp.c
-> @@ -155,6 +155,7 @@ void __init smp_init_cpus(void)
->   void __init platform_smp_prepare_cpus(unsigned int max_cpus)
->   {
->   	int i;
-> +	void __iomem *sysram_evt0;
->
->   	/*
->   	 * Initialise the present map, which describes the set of CPUs
-> @@ -172,4 +173,17 @@ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
->   	 * secondary CPU branches to this address.
->   	 */
->   	__raw_writel(BSYM(virt_to_phys(exynos4_secondary_startup)), S5P_VA_SYSRAM);
-> +
-> +	/*
-> +	 * EVT0 has the system-wide flags register at a different address.
-> +	 * Poke it as well, in case we're running on an old SoC revision.
-> +	 */
-> +	sysram_evt0 = ioremap(EXYNOS4_PA_SYSRAM_EVT0, SZ_4K);
-
-Hmm...first of all, need to check whether can ioremap the area on newer 
-one but I'm out off office now so will check it after backing.
-
-> +	if (!sysram_evt0) {
-> +		pr_err("Unable to remap EXYNOS4_PA_SYSRAM_EVT0\n");
-
-Do we really need 'pr_err' here?...
-
-> +		return;
-> +	}
-> +
-> +	__raw_writel(BSYM(virt_to_phys(exynos4_secondary_startup)), sysram_evt0);
-> +	iounmap(sysram_evt0);
->   }
-
--- 
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --cc arch/arm/Kconfig
+index 3bc1a58,e81c72c..f7cce8b
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@@ -2028,7 -1998,7 +2016,7 @@@ menu "Power management options
+  source "kernel/power/Kconfig"
+  
+  config ARCH_SUSPEND_POSSIBLE
+- 	depends on !ARCH_S5P64X0 && !ARCH_S5P6442 && !ARCH_S5PC100
+ -	depends on !ARCH_S5P64X0
+++	depends on !ARCH_S5P64X0 && !ARCH_S5PC100
+  	depends on CPU_ARM920T || CPU_ARM926T || CPU_SA1100 || \
+  		CPU_V6 || CPU_V6K || CPU_V7 || CPU_XSC3 || CPU_XSCALE
+  	def_bool y
+diff --cc arch/arm/mach-exynos4/Kconfig
+index 8051962,11b57a4..b92c1e5
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@@ -169,9 -169,10 +169,11 @@@ config MACH_NUR
+  	select S3C_DEV_HSMMC2
+  	select S3C_DEV_HSMMC3
+  	select S3C_DEV_I2C1
++ 	select S3C_DEV_I2C3
+  	select S3C_DEV_I2C5
+ +	select S5P_DEV_USB_EHCI
+  	select EXYNOS4_SETUP_I2C1
++ 	select EXYNOS4_SETUP_I2C3
+  	select EXYNOS4_SETUP_I2C5
+  	select EXYNOS4_SETUP_SDHCI
+  	select SAMSUNG_DEV_PWM
+diff --cc arch/arm/mach-exynos4/mach-nuri.c
+index bb5d12f,d13c5e8..642702b
+--- a/arch/arm/mach-exynos4/mach-nuri.c
++++ b/arch/arm/mach-exynos4/mach-nuri.c
+@@@ -30,8 -31,8 +31,10 @@@
+  #include <plat/cpu.h>
+  #include <plat/devs.h>
+  #include <plat/sdhci.h>
+ +#include <plat/ehci.h>
+ +#include <plat/clock.h>
++ #include <plat/gpio-cfg.h>
++ #include <plat/iic.h>
+  
+  #include <mach/map.h>
+  
+@@@ -282,7 -355,7 +367,8 @@@ static struct platform_device *nuri_dev
+  	&s3c_device_hsmmc3,
+  	&s3c_device_wdt,
+  	&s3c_device_timer[0],
+ +	&s5p_device_ehci,
++ 	&s3c_device_i2c3,
+  
+  	/* NURI Devices */
+  	&nuri_gpio_keys,
+@@@ -300,13 -373,13 +386,16 @@@ static void __init nuri_map_io(void
+  static void __init nuri_machine_init(void)
+  {
+  	nuri_sdhci_init();
++ 	nuri_tsp_init();
+  
+  	i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
++ 	s3c_i2c3_set_platdata(&i2c3_data);
++ 	i2c_register_board_info(3, i2c3_devs, ARRAY_SIZE(i2c3_devs));
+  	i2c_register_board_info(5, i2c5_devs, ARRAY_SIZE(i2c5_devs));
+  
+ +	nuri_ehci_init();
+ +	clk_xusbxti.rate = 24000000;
+ +
+  	/* Last */
+  	platform_add_devices(nuri_devices, ARRAY_SIZE(nuri_devices));
+  }
