@@ -1,95 +1,268 @@
 From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [PATCH v4 0/9] TV driver for Samsung S5P platform (platform-part)
-Date: Wed, 25 May 2011 14:29:15 +0200
-Message-ID: <1306326564-21858-1-git-send-email-t.stanislaws@samsung.com>
+Subject: [PATCH v4 1/9] arm: exynos4: pd: fixes block gating and code cleanup
+Date: Wed, 25 May 2011 14:29:16 +0200
+Message-ID: <1306326564-21858-2-git-send-email-t.stanislaws@samsung.com>
+References: <1306326564-21858-1-git-send-email-t.stanislaws@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout2.w1.samsung.com ([210.118.77.12]:9212 "EHLO
 	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756919Ab1EYMa1 (ORCPT
+	with ESMTP id S1756929Ab1EYMa3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 May 2011 08:30:27 -0400
+	Wed, 25 May 2011 08:30:29 -0400
 Received: from spt2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
  by mailout2.w1.samsung.com
  (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTP id <0LLR0064M415UK@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 25 May 2011 13:29:29 +0100 (BST)
+ linux-samsung-soc@vger.kernel.org; Wed, 25 May 2011 13:29:30 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
  by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LLR008WZ413FN@spt2.w1.samsung.com> for
+ 2004)) with ESMTPA id <0LLR008X0413FN@spt2.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Wed, 25 May 2011 13:29:28 +0100 (BST)
+In-reply-to: <1306326564-21858-1-git-send-email-t.stanislaws@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, t.stanislaws@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
 
-Hello Everyone,
-This patchset introduce TV devices to Samsung S5P platform. It includes Goni
-(S5PV210 machine) and Universal (Exynos4 machine) boards. The patchset is
-dedicated for 2.6.39 kernel. Moreover, the patchset adds following auxiliary
-entities and features:
-- I2C controllers for HDMI physical interface
-- power regulators
-- TV clocks, include ops for fout_vpll clock
-- fixes to power domain driver (only for Exynos4)
-- dependecies between TV and Power Domain devices (only for Exynos4)
+This patch extends power domain driver with support for enabling and
+disabling modules in S5P_CLKGATE_BLOCK register. It also performs a
+little code cleanup to avoid confusion between exynos4_device_pd array
+index and power domain id.
 
-Please refer to post 'TV driver for Samsung S5P platform (media part)' for
-sources of the TV driver.
-
-The most recent changes:
-- TV becomes S5P platform device
-- support for Universal-c210 and Goni boards
-- code cleanup after Kukjin Kim's review
-
-Tomasz Stanislawski (9):
-  arm: exynos4: pd: fixes block gating and code cleanup
-  i2c-s3c2410: fix I2C dedicated for hdmiphy
-  arm: exynos4: i2c: add controller 8 (HDMIPHY)
-  arm: s5pv210: i2c: add controller 3 (HDMIPHY)
-  arm: plat-s5p: add TV support
-  arm: exynos4: add TV support
-  arm: exynos4: universal_c210: add TV support
-  arm: s5pv210: add TV support
-  arm: s5pv210: goni: add TV support
-
- arch/arm/mach-exynos4/Kconfig                   |    3 +
- arch/arm/mach-exynos4/clock.c                   |  223 ++++++++++++++++++++++-
- arch/arm/mach-exynos4/cpu.c                     |    7 +
- arch/arm/mach-exynos4/dev-pd.c                  |   93 +++++++---
- arch/arm/mach-exynos4/include/mach/irqs.h       |    8 +
- arch/arm/mach-exynos4/include/mach/map.h        |   27 +++
- arch/arm/mach-exynos4/include/mach/regs-clock.h |    8 +
- arch/arm/mach-exynos4/include/mach/regs-pmu.h   |    6 +
- arch/arm/mach-exynos4/mach-universal_c210.c     |   80 ++++++++
- arch/arm/mach-s5pv210/Kconfig                   |    8 +
- arch/arm/mach-s5pv210/Makefile                  |    1 +
- arch/arm/mach-s5pv210/clock.c                   |  169 ++++++++++++++++--
- arch/arm/mach-s5pv210/cpu.c                     |    6 +
- arch/arm/mach-s5pv210/include/mach/irqs.h       |    2 +-
- arch/arm/mach-s5pv210/include/mach/map.h        |   19 ++
- arch/arm/mach-s5pv210/include/mach/regs-clock.h |    7 +-
- arch/arm/mach-s5pv210/mach-goni.c               |    9 +
- arch/arm/mach-s5pv210/setup-i2c3.c              |   27 +++
- arch/arm/plat-s5p/Kconfig                       |    5 +
- arch/arm/plat-s5p/Makefile                      |    1 +
- arch/arm/plat-s5p/dev-tv.c                      |  100 ++++++++++
- arch/arm/plat-samsung/Kconfig                   |    5 +
- arch/arm/plat-samsung/Makefile                  |    1 +
- arch/arm/plat-samsung/dev-i2c8.c                |   68 +++++++
- arch/arm/plat-samsung/include/plat/devs.h       |    6 +
- arch/arm/plat-samsung/include/plat/iic-core.h   |   14 ++
- arch/arm/plat-samsung/include/plat/iic.h        |    1 +
+Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/mach-exynos4/dev-pd.c                  |   93 +++++++++++++++++------
+ arch/arm/mach-exynos4/include/mach/regs-clock.h |    7 ++
  arch/arm/plat-samsung/include/plat/pd.h         |    1 +
- arch/arm/plat-samsung/include/plat/tv-core.h    |   45 +++++
- drivers/i2c/busses/i2c-s3c2410.c                |   36 ++++-
- 30 files changed, 947 insertions(+), 39 deletions(-)
- create mode 100644 arch/arm/mach-s5pv210/setup-i2c3.c
- create mode 100644 arch/arm/plat-s5p/dev-tv.c
- create mode 100644 arch/arm/plat-samsung/dev-i2c8.c
- create mode 100644 arch/arm/plat-samsung/include/plat/tv-core.h
+ 3 files changed, 79 insertions(+), 22 deletions(-)
 
+diff --git a/arch/arm/mach-exynos4/dev-pd.c b/arch/arm/mach-exynos4/dev-pd.c
+index 3273f25..44c6597 100644
+--- a/arch/arm/mach-exynos4/dev-pd.c
++++ b/arch/arm/mach-exynos4/dev-pd.c
+@@ -16,13 +16,17 @@
+ #include <linux/delay.h>
+ 
+ #include <mach/regs-pmu.h>
++#include <mach/regs-clock.h>
+ 
+ #include <plat/pd.h>
+ 
++static DEFINE_SPINLOCK(gate_block_slock);
++
+ static int exynos4_pd_enable(struct device *dev)
+ {
+ 	struct samsung_pd_info *pdata =  dev->platform_data;
+ 	u32 timeout;
++	int ret = 0;
+ 
+ 	__raw_writel(S5P_INT_LOCAL_PWR_EN, pdata->base);
+ 
+@@ -31,21 +35,39 @@ static int exynos4_pd_enable(struct device *dev)
+ 	while ((__raw_readl(pdata->base + 0x4) & S5P_INT_LOCAL_PWR_EN)
+ 		!= S5P_INT_LOCAL_PWR_EN) {
+ 		if (timeout == 0) {
+-			printk(KERN_ERR "Power domain %s enable failed.\n",
+-				dev_name(dev));
+-			return -ETIMEDOUT;
++			dev_err(dev, "enable failed\n");
++			ret = -ETIMEDOUT;
++			goto done;
+ 		}
+ 		timeout--;
+ 		udelay(100);
+ 	}
+ 
+-	return 0;
++	/* configure clk gate mask if it is present */
++	if (pdata->gate_mask) {
++		unsigned long flags;
++		unsigned long value;
++
++		spin_lock_irqsave(&gate_block_slock, flags);
++
++		value  = __raw_readl(S5P_CLKGATE_BLOCK);
++		value |= pdata->gate_mask;
++		__raw_writel(value, S5P_CLKGATE_BLOCK);
++
++		spin_unlock_irqrestore(&gate_block_slock, flags);
++	}
++
++done:
++	dev_info(dev, "enable finished\n");
++
++	return ret;
+ }
+ 
+ static int exynos4_pd_disable(struct device *dev)
+ {
+ 	struct samsung_pd_info *pdata =  dev->platform_data;
+ 	u32 timeout;
++	int ret = 0;
+ 
+ 	__raw_writel(0, pdata->base);
+ 
+@@ -53,81 +75,108 @@ static int exynos4_pd_disable(struct device *dev)
+ 	timeout = 10;
+ 	while (__raw_readl(pdata->base + 0x4) & S5P_INT_LOCAL_PWR_EN) {
+ 		if (timeout == 0) {
+-			printk(KERN_ERR "Power domain %s disable failed.\n",
+-				dev_name(dev));
+-			return -ETIMEDOUT;
++			dev_err(dev, "disable failed\n");
++			ret = -ETIMEDOUT;
++			goto done;
+ 		}
+ 		timeout--;
+ 		udelay(100);
+ 	}
+ 
+-	return 0;
++	if (pdata->gate_mask) {
++		unsigned long flags;
++		unsigned long value;
++
++		spin_lock_irqsave(&gate_block_slock, flags);
++
++		value  = __raw_readl(S5P_CLKGATE_BLOCK);
++		value &= ~pdata->gate_mask;
++		__raw_writel(value, S5P_CLKGATE_BLOCK);
++
++		spin_unlock_irqrestore(&gate_block_slock, flags);
++	}
++done:
++	dev_info(dev, "disable finished\n");
++
++	return ret;
+ }
+ 
+ struct platform_device exynos4_device_pd[] = {
+-	{
++	[PD_MFC] = {
+ 		.name		= "samsung-pd",
+-		.id		= 0,
++		.id		= PD_MFC,
+ 		.dev = {
+ 			.platform_data = &(struct samsung_pd_info) {
+ 				.enable		= exynos4_pd_enable,
+ 				.disable	= exynos4_pd_disable,
+ 				.base		= S5P_PMU_MFC_CONF,
++				.gate_mask	= S5P_CLKGATE_BLOCK_MFC,
+ 			},
+ 		},
+-	}, {
++	},
++	[PD_G3D] = {
+ 		.name		= "samsung-pd",
+-		.id		= 1,
++		.id		= PD_G3D,
+ 		.dev = {
+ 			.platform_data = &(struct samsung_pd_info) {
+ 				.enable		= exynos4_pd_enable,
+ 				.disable	= exynos4_pd_disable,
+ 				.base		= S5P_PMU_G3D_CONF,
++				.gate_mask	= S5P_CLKGATE_BLOCK_G3D,
+ 			},
+ 		},
+-	}, {
++	},
++	[PD_LCD0] = {
+ 		.name		= "samsung-pd",
+-		.id		= 2,
++		.id		= PD_LCD0,
+ 		.dev = {
+ 			.platform_data = &(struct samsung_pd_info) {
+ 				.enable		= exynos4_pd_enable,
+ 				.disable	= exynos4_pd_disable,
+ 				.base		= S5P_PMU_LCD0_CONF,
++				.gate_mask	= S5P_CLKGATE_BLOCK_LCD0,
+ 			},
+ 		},
+-	}, {
++	},
++	[PD_LCD1] = {
+ 		.name		= "samsung-pd",
+-		.id		= 3,
++		.id		= PD_LCD1,
+ 		.dev = {
+ 			.platform_data = &(struct samsung_pd_info) {
+ 				.enable		= exynos4_pd_enable,
+ 				.disable	= exynos4_pd_disable,
+ 				.base		= S5P_PMU_LCD1_CONF,
++				.gate_mask	= S5P_CLKGATE_BLOCK_LCD1,
+ 			},
+ 		},
+-	}, {
++	},
++	[PD_TV] = {
+ 		.name		= "samsung-pd",
+-		.id		= 4,
++		.id		= PD_TV,
+ 		.dev = {
+ 			.platform_data = &(struct samsung_pd_info) {
+ 				.enable		= exynos4_pd_enable,
+ 				.disable	= exynos4_pd_disable,
+ 				.base		= S5P_PMU_TV_CONF,
++				.gate_mask	= S5P_CLKGATE_BLOCK_TV,
+ 			},
+ 		},
+-	}, {
++	},
++	[PD_CAM] = {
+ 		.name		= "samsung-pd",
+-		.id		= 5,
++		.id		= PD_CAM,
+ 		.dev = {
+ 			.platform_data = &(struct samsung_pd_info) {
+ 				.enable		= exynos4_pd_enable,
+ 				.disable	= exynos4_pd_disable,
+ 				.base		= S5P_PMU_CAM_CONF,
++				.gate_mask	= S5P_CLKGATE_BLOCK_CAM,
+ 			},
+ 		},
+-	}, {
++	},
++	[PD_GPS] = {
+ 		.name		= "samsung-pd",
+-		.id		= 6,
++		.id		= PD_GPS,
+ 		.dev = {
+ 			.platform_data = &(struct samsung_pd_info) {
+ 				.enable		= exynos4_pd_enable,
+diff --git a/arch/arm/mach-exynos4/include/mach/regs-clock.h b/arch/arm/mach-exynos4/include/mach/regs-clock.h
+index 6e311c1..2c1472b 100644
+--- a/arch/arm/mach-exynos4/include/mach/regs-clock.h
++++ b/arch/arm/mach-exynos4/include/mach/regs-clock.h
+@@ -171,6 +171,13 @@
+ #define S5P_CLKDIV_BUS_GPLR_SHIFT	(4)
+ #define S5P_CLKDIV_BUS_GPLR_MASK	(0x7 << S5P_CLKDIV_BUS_GPLR_SHIFT)
+ 
++#define S5P_CLKGATE_BLOCK_CAM		(1 << 0)
++#define S5P_CLKGATE_BLOCK_TV		(1 << 1)
++#define S5P_CLKGATE_BLOCK_MFC		(1 << 2)
++#define S5P_CLKGATE_BLOCK_G3D		(1 << 3)
++#define S5P_CLKGATE_BLOCK_LCD0		(1 << 4)
++#define S5P_CLKGATE_BLOCK_LCD1		(1 << 5)
++
+ /* Compatibility defines and inclusion */
+ 
+ #include <mach/regs-pmu.h>
+diff --git a/arch/arm/plat-samsung/include/plat/pd.h b/arch/arm/plat-samsung/include/plat/pd.h
+index abb4bc3..ef545ed 100644
+--- a/arch/arm/plat-samsung/include/plat/pd.h
++++ b/arch/arm/plat-samsung/include/plat/pd.h
+@@ -15,6 +15,7 @@ struct samsung_pd_info {
+ 	int (*enable)(struct device *dev);
+ 	int (*disable)(struct device *dev);
+ 	void __iomem *base;
++	unsigned long gate_mask;
+ };
+ 
+ enum exynos4_pd_block {
 -- 
 1.7.5.1
