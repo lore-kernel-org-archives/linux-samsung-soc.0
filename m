@@ -1,139 +1,152 @@
-From: Marc Zyngier <Marc.Zyngier@arm.com>
-Subject: Re: [PATCH] ARM: exynos4: fix secondary CPU boot
-Date: Wed, 25 May 2011 19:04:05 +0100
-Message-ID: <1306346645.27474.182.camel@e102391-lin.cambridge.arm.com>
-References: <1305899190-16732-1-git-send-email-marc.zyngier@arm.com>
-	 <4DDD3C57.6020705@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung S5P for 2.6.40 merge window
+Date: Wed, 25 May 2011 11:11:37 -0700
+Message-ID: <4DDD4659.5050602@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([94.185.240.25]:36749 "HELO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751023Ab1EYSDU convert rfc822-to-8bit (ORCPT
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:52994 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751601Ab1EYSLm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 May 2011 14:03:20 -0400
-In-Reply-To: <4DDD3C57.6020705@samsung.com>
+	Wed, 25 May 2011 14:11:42 -0400
+Received: by wwa36 with SMTP id 36so8775262wwa.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 May 2011 11:11:41 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
+To: rmk+kernel@arm.linux.org.uk
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Wed, 2011-05-25 at 10:28 -0700, Kukjin Kim wrote:
-> On 05/20/11 06:46, Marc Zyngier wrote:
-> > Patch 7d30e8b38 (ARM: EXYNOS4: Add EXYNOS4 CPU initialization support)
-> > renamed the s5pv310 to exynos4, and also changed the value of
-> > EXYNOS4_PA_SYSRAM, which is used to release the secondary CPU from
-> > spinning in BL0. As a result, CPU1 can't be brought up anymore.
-> >
-> > This patch simply reverts EXYNOS4_PA_SYSRAM to its original value,
-> > which results in a working CPU1.
-> >
-> > Tested on an SMDK-v310.
-> >
-> > Cc: Kukjin Kim<kgene.kim@samsung.com>
-> > Signed-off-by: Marc Zyngier<marc.zyngier@arm.com>
-> > ---
-> >   arch/arm/mach-exynos4/include/mach/map.h |    2 +-
-> >   1 files changed, 1 insertions(+), 1 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
-> > index 6330b73..862967f 100644
-> > --- a/arch/arm/mach-exynos4/include/mach/map.h
-> > +++ b/arch/arm/mach-exynos4/include/mach/map.h
-> > @@ -23,7 +23,7 @@
-> >
-> >   #include<plat/map-s5p.h>
-> >
-> > -#define EXYNOS4_PA_SYSRAM		0x02020000
-> > +#define EXYNOS4_PA_SYSRAM		0x02025000
-> >
-> Hi Marc,
-> 
-> Hmm...the value, 0x02020000 is correct on Exynos4210 now.
-> 
-> So can't apply this but I know, you're right on old version of 
-> Exynos4210...let's think again about this.
 
-So that address has changed between two SoC revisions? That's
-unfortunate, to say the least. I'm most probably using an early revision
-of the hardware (EVT0?), as it doesn't even support MCT.
+Hi Russell,
 
-What about the following patch?
+Please pull Samsung S5P updates from:
 
-	M.
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+for-rmk
 
->From c27e75b86e1ee181987a9364286a888421e76205 Mon Sep 17 00:00:00 2001
-From: Marc Zyngier <marc.zyngier@arm.com>
-Date: Fri, 20 May 2011 14:38:25 +0100
-Subject: [PATCH] ARM: exynos4: fix secondary CPU boot on early SoC revisions
+These things are for 2.6.40 and it includes removing ARCH_S5P6442. 
+Actually there is no user now and if required will merge it into other 
+ARCH like ARCH_S5P64X0 later.
 
-It appears that the system-wide flags register that used to be at
-0x02025000 on the first revision of Exynos4 has moved to 0x02020000.
+As a note, I missed 'pull request' some fixes for s5p last -rc duration 
+and I don't have it in my laptop. I'm out of office now :( so will send 
+fixes after rc1.
 
-The kernel has been updated accordingly, but this unfortunately leaves
-early boards without SMP support (the secondary CPU spins endlessly
-in BL0 waiting for an address to be written at that memory location).
+If any problems, please let me know.
 
-Try to solve the problem by poking both locations. This should be
-safe as this is done early enough in the kernel boot process, and nobody
-should be using the SRAM yet.
+Thanks.
 
-Tested on a vintage SMDK-v310.
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
----
- arch/arm/mach-exynos4/include/mach/map.h |    1 +
- arch/arm/mach-exynos4/platsmp.c          |   14 ++++++++++++++
- 2 files changed, 15 insertions(+), 0 deletions(-)
+The following changes since commit 693d92a1bbc9e42681c42ed190bd42b636ca876f
 
-diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
-index 0009e77..781e149 100644
---- a/arch/arm/mach-exynos4/include/mach/map.h
-+++ b/arch/arm/mach-exynos4/include/mach/map.h
-@@ -24,6 +24,7 @@
- #include <plat/map-s5p.h>
- 
- #define EXYNOS4_PA_SYSRAM		0x02020000
-+#define EXYNOS4_PA_SYSRAM_EVT0		0x02025000
- 
- #define EXYNOS4_PA_FIMC0		0x11800000
- #define EXYNOS4_PA_FIMC1		0x11810000
-diff --git a/arch/arm/mach-exynos4/platsmp.c b/arch/arm/mach-exynos4/platsmp.c
-index c5e65a0..f261c34 100644
---- a/arch/arm/mach-exynos4/platsmp.c
-+++ b/arch/arm/mach-exynos4/platsmp.c
-@@ -155,6 +155,7 @@ void __init smp_init_cpus(void)
- void __init platform_smp_prepare_cpus(unsigned int max_cpus)
- {
- 	int i;
-+	void __iomem *sysram_evt0;
- 
- 	/*
- 	 * Initialise the present map, which describes the set of CPUs
-@@ -172,4 +173,17 @@ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
- 	 * secondary CPU branches to this address.
- 	 */
- 	__raw_writel(BSYM(virt_to_phys(exynos4_secondary_startup)), S5P_VA_SYSRAM);
-+
-+	/*
-+	 * EVT0 has the system-wide flags register at a different address.
-+	 * Poke it as well, in case we're running on an old SoC revision.
-+	 */
-+	sysram_evt0 = ioremap(EXYNOS4_PA_SYSRAM_EVT0, SZ_4K);
-+	if (!sysram_evt0) {
-+		pr_err("Unable to remap EXYNOS4_PA_SYSRAM_EVT0\n");
-+		return;
-+	}
-+
-+	__raw_writel(BSYM(virt_to_phys(exynos4_secondary_startup)), sysram_evt0);
-+	iounmap(sysram_evt0);
- }
+   Linux 2.6.39-rc7
+
+are available in the git repository at:
+    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+for-rmk
+
+Jaecheol Lee (1):
+       ARM: EXYNOS4: CPUIDLE Support
+
+Joonyoung Shim (2):
+       ARM: EXYNOS4: Add Atmel mXT touchscreen device to the NURI board
+       ARM: S3C64XX: Remove gpio-bank-X header files
+
+Kukjin Kim (4):
+       ARM: exynos4_defconfig: Update for adding machines
+       ARM: S5P6442: Removing ARCH_S5P6442
+       ASoC: Remove to support sound for S5P6442
+       Merge branch 'dev/removing-s5p6442' into for-next
+
+  Documentation/arm/Samsung/Overview.txt           |    2 -
+  arch/arm/Kconfig                                 |   16 +-
+  arch/arm/Makefile                                |    1 -
+  arch/arm/common/Kconfig                          |    2 +-
+  arch/arm/configs/exynos4_defconfig               |    2 +
+  arch/arm/configs/s5p6442_defconfig               |   65 ----
+  arch/arm/mach-exynos4/Kconfig                    |    2 +
+  arch/arm/mach-exynos4/Makefile                   |    1 +
+  arch/arm/mach-exynos4/cpuidle.c                  |   86 +++++
+  arch/arm/mach-exynos4/mach-nuri.c                |   89 +++++
+  arch/arm/mach-s3c64xx/dev-spi.c                  |   20 +-
+  arch/arm/mach-s3c64xx/include/mach/gpio-bank-a.h |   48 ---
+  arch/arm/mach-s3c64xx/include/mach/gpio-bank-b.h |   60 ---
+  arch/arm/mach-s3c64xx/include/mach/gpio-bank-c.h |   53 ---
+  arch/arm/mach-s3c64xx/include/mach/gpio-bank-d.h |   49 ---
+  arch/arm/mach-s3c64xx/include/mach/gpio-bank-e.h |   44 ---
+  arch/arm/mach-s3c64xx/include/mach/gpio-bank-f.h |   71 ----
+  arch/arm/mach-s3c64xx/include/mach/gpio-bank-g.h |   42 ---
+  arch/arm/mach-s3c64xx/include/mach/gpio-bank-h.h |   74 ----
+  arch/arm/mach-s3c64xx/include/mach/gpio-bank-i.h |   40 --
+  arch/arm/mach-s3c64xx/include/mach/gpio-bank-j.h |   36 --
+  arch/arm/mach-s3c64xx/include/mach/gpio-bank-n.h |   54 ---
+  arch/arm/mach-s3c64xx/include/mach/gpio-bank-o.h |   70 ----
+  arch/arm/mach-s3c64xx/include/mach/gpio-bank-p.h |   69 ----
+  arch/arm/mach-s3c64xx/include/mach/gpio-bank-q.h |   46 ---
+  arch/arm/mach-s3c64xx/mach-smdk6410.c            |    1 -
+  arch/arm/mach-s3c64xx/pm.c                       |   34 +-
+  arch/arm/mach-s3c64xx/setup-i2c0.c               |    7 +-
+  arch/arm/mach-s3c64xx/setup-i2c1.c               |    7 +-
+  arch/arm/mach-s3c64xx/sleep.S                    |    8 +-
+  arch/arm/mach-s5p6442/Kconfig                    |   25 --
+  arch/arm/mach-s5p6442/Makefile                   |   24 --
+  arch/arm/mach-s5p6442/Makefile.boot              |    2 -
+  arch/arm/mach-s5p6442/clock.c                    |  420 
+----------------------
+  arch/arm/mach-s5p6442/cpu.c                      |  143 --------
+  arch/arm/mach-s5p6442/dev-audio.c                |  217 -----------
+  arch/arm/mach-s5p6442/dev-spi.c                  |  121 -------
+  arch/arm/mach-s5p6442/clock.c                    |  420 
+----------------------
+  arch/arm/mach-s5p6442/cpu.c                      |  143 --------
+  arch/arm/mach-s5p6442/dev-audio.c                |  217 -----------
+  arch/arm/mach-s5p6442/dev-spi.c                  |  121 -------
+  arch/arm/mach-s5p6442/dma.c                      |  105 ------
+  arch/arm/mach-s5p6442/include/mach/debug-macro.S |   35 --
+  arch/arm/mach-s5p6442/include/mach/dma.h         |   26 --
+  arch/arm/mach-s5p6442/include/mach/entry-macro.S |   48 ---
+  arch/arm/mach-s5p6442/include/mach/gpio.h        |  123 -------
+  arch/arm/mach-s5p6442/include/mach/hardware.h    |   18 -
+  arch/arm/mach-s5p6442/include/mach/io.h          |   17 -
+  arch/arm/mach-s5p6442/include/mach/irqs.h        |   87 -----
+  arch/arm/mach-s5p6442/include/mach/map.h         |   76 ----
+  arch/arm/mach-s5p6442/include/mach/memory.h      |   19 -
+  arch/arm/mach-s5p6442/include/mach/pwm-clock.h   |   70 ----
+  arch/arm/mach-s5p6442/include/mach/regs-clock.h  |  104 ------
+  arch/arm/mach-s5p6442/include/mach/regs-irq.h    |   19 -
+  arch/arm/mach-s5p6442/include/mach/spi-clocks.h  |   17 -
+  arch/arm/mach-s5p6442/include/mach/system.h      |   23 --
+  arch/arm/mach-s5p6442/include/mach/tick.h        |   26 --
+  arch/arm/mach-s5p6442/include/mach/timex.h       |   24 --
+  arch/arm/mach-s5p6442/include/mach/uncompress.h  |   24 --
+  arch/arm/mach-s5p6442/include/mach/vmalloc.h     |   17 -
+  arch/arm/mach-s5p6442/init.c                     |   44 ---
+  arch/arm/mach-s5p6442/mach-smdk6442.c            |  102 ------
+  arch/arm/mach-s5p6442/setup-i2c0.c               |   28 --
+  arch/arm/plat-s5p/Kconfig                        |    2 +-
+  arch/arm/plat-s5p/cpu.c                          |   10 -
+  arch/arm/plat-s5p/include/plat/s5p6442.h         |   33 --
+  arch/arm/plat-samsung/include/plat/cpu.h         |    1 -
+  arch/arm/plat-samsung/include/plat/debug-macro.S |    2 +-
+  arch/arm/plat-samsung/include/plat/devs.h        |    6 -
+  arch/arm/plat-samsung/include/plat/regs-serial.h |    2 +-
+  arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |    1 -
+  sound/soc/samsung/Kconfig                        |    4 +-
+  sound/soc/samsung/smdk_wm8580.c                  |    2 +-
+  69 files changed, 226 insertions(+), 2940 deletions(-)
+
 -- 
-1.7.0.4
+Thanks.
 
-
-
--- 
-Reality is an implementation detail.
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
