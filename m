@@ -1,122 +1,49 @@
-From: Thomas Abraham <thomas.ab@samsung.com>
-Subject: Re: [RFC][PATCH 0/7] ARM: Add clkdev support for Samsung's platforms
-Date: Thu, 26 May 2011 08:41:59 +0530
-Message-ID: <BANLkTimdPYj-1_EoOfHST3xEJPwj0oRSTw@mail.gmail.com>
-References: <1305839906-1815-1-git-send-email-thomas.ab@samsung.com>
-	<4DDD7A32.80309@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH] arm: exynos4: address a section mismatch w/ suspend issue.
+Date: Thu, 26 May 2011 13:40:22 +0900
+Message-ID: <1306384822-17651-1-git-send-email-myungjoo.ham@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:35597 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755567Ab1EZDL7 convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:23079 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750947Ab1EZEk0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 May 2011 23:11:59 -0400
-Received: by ywe9 with SMTP id 9so152709ywe.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 May 2011 20:11:59 -0700 (PDT)
-In-Reply-To: <4DDD7A32.80309@samsung.com>
+	Thu, 26 May 2011 00:40:26 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LLS00IOTCZ2GNH0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 26 May 2011 13:40:24 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LLS00HAYCZC6U@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 26 May 2011 13:40:24 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, kyungmin.park@samsung.com, myungjoo.ham@gmail.com
 
-Hi Mr. Kukjin Kim,
+The section mismatch in headsmp.S made hotplug stop working after the
+first instance of suspend-to-RAM and its wakeup.
 
-On Thu, May 26, 2011 at 3:22 AM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> On 05/19/11 14:18, Thomas Abraham wrote:
->>
->> Thomas Abraham (7):
->> =A0 ARM: SAMSUNG: Add clkdev infrastructure
->> =A0 ARM: S3C24XX: Add clkdev support
->> =A0 ARM: S3C64XX: Add clkdev support
->> =A0 ARM: S5P64X0: Add clkdev support
->> =A0 ARM: S5PC100: Add clkdev support
->> =A0 ARM: S5PV210: Add clkdev support
->> =A0 ARM: Exynos4: Add clkdev support
->>
->> =A0arch/arm/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0| =A0 =A06 ++
->> =A0arch/arm/mach-exynos4/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 6=
-3 +++++++++++++++++++-
->> =A0arch/arm/mach-exynos4/include/mach/clkdev.h | =A0 =A07 ++
->> =A0arch/arm/mach-exynos4/time.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0=
- =A02 +
->> =A0arch/arm/mach-s3c2412/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =A0=
-3 +
->> =A0arch/arm/mach-s3c2416/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =A0=
-5 ++
->> =A0arch/arm/mach-s3c2443/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =A0=
-4 +
->> =A0arch/arm/mach-s3c64xx/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 2=
-5 ++++++++
->> =A0arch/arm/mach-s3c64xx/include/mach/clkdev.h | =A0 =A07 ++
->> =A0arch/arm/mach-s5p64x0/clock-s5p6440.c =A0 =A0 =A0 | =A0 20 ++++++=
-+
->> =A0arch/arm/mach-s5p64x0/clock-s5p6450.c =A0 =A0 =A0 | =A0 19 ++++++
->> =A0arch/arm/mach-s5p64x0/include/mach/clkdev.h | =A0 =A07 ++
->> =A0arch/arm/mach-s5pc100/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 4=
-2 +++++++++++++-
->> =A0arch/arm/mach-s5pc100/include/mach/clkdev.h | =A0 =A07 ++
->> =A0arch/arm/mach-s5pv210/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 4=
-2 +++++++++++++-
->> =A0arch/arm/mach-s5pv210/include/mach/clkdev.h | =A0 =A07 ++
->> =A0arch/arm/plat-s3c24xx/include/mach/clkdev.h | =A0 =A07 ++
->> =A0arch/arm/plat-s3c24xx/s3c2410-clock.c =A0 =A0 =A0 | =A0 =A03 +
->> =A0arch/arm/plat-s3c24xx/s3c2443-clock.c =A0 =A0 =A0 | =A0 =A04 +
->> =A0arch/arm/plat-s5p/s5p-time.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0=
- =A09 +++
->> =A0arch/arm/plat-samsung/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 8=
-3
->> ++-------------------------
->> =A0arch/arm/plat-samsung/include/plat/clock.h =A0| =A0 =A03 +
->> =A0arch/arm/plat-samsung/pwm-clock.c =A0 =A0 =A0 =A0 =A0 | =A0 10 ++=
-+
->> =A0arch/arm/plat-samsung/time.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0=
- =A02 +
->> =A024 files changed, 303 insertions(+), 84 deletions(-)
->> =A0create mode 100644 arch/arm/mach-exynos4/include/mach/clkdev.h
->> =A0create mode 100644 arch/arm/mach-s3c64xx/include/mach/clkdev.h
->> =A0create mode 100644 arch/arm/mach-s5p64x0/include/mach/clkdev.h
->> =A0create mode 100644 arch/arm/mach-s5pc100/include/mach/clkdev.h
->> =A0create mode 100644 arch/arm/mach-s5pv210/include/mach/clkdev.h
->> =A0create mode 100644 arch/arm/plat-s3c24xx/include/mach/clkdev.h
->>
-> Hi Thomas,
->
-> Thanks for this patches :)
->
-> There are some comments in each patches and I need to check again abo=
-ut the
-> devname like following.
->
-> s5p-fimc vs. s5pv210-fimc
-> sdhci-s3c vs. s3c-sdhci
-> and so on...
->
-> Since I'm out of office now, don't have all regarding materials. I wi=
-ll back
-> this soon.
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos4/headsmp.S |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Thanks for reviewing the patches. I will rework the patches as per
-your comments and submit again.
-
-Thanks,
-Thomas.
-
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+diff --git a/arch/arm/mach-exynos4/headsmp.S b/arch/arm/mach-exynos4/headsmp.S
+index 6c6cfc5..3cdeb36 100644
+--- a/arch/arm/mach-exynos4/headsmp.S
++++ b/arch/arm/mach-exynos4/headsmp.S
+@@ -13,7 +13,7 @@
+ #include <linux/linkage.h>
+ #include <linux/init.h>
+ 
+-	__INIT
++	__CPUINIT
+ 
+ /*
+  * exynos4 specific entry point for secondary CPUs.  This provides
+-- 
+1.7.4.1
