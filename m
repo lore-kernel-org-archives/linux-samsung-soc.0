@@ -1,107 +1,59 @@
-From: Thomas Abraham <thomas.ab@samsung.com>
-Subject: Re: [RFC][PATCH v2 0/7] Add clkdev support for Samsung platforms
-Date: Fri, 27 May 2011 20:56:51 +0530
-Message-ID: <BANLkTinJ4vzqLRoCc+Xw7Lt0HY_oF21syQ@mail.gmail.com>
-References: <1306509996-30280-1-git-send-email-thomas.ab@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: S5P: Fix bug on init of PWMTimers for HRTimer
+Date: Fri, 27 May 2011 14:57:41 -0700
+Message-ID: <1306533461-32208-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:50925 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752935Ab1E0P0v convert rfc822-to-8bit (ORCPT
+Received: from mail-pv0-f174.google.com ([74.125.83.174]:55406 "EHLO
+	mail-pv0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752499Ab1E0V5t (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 May 2011 11:26:51 -0400
-Received: by gxk21 with SMTP id 21so730212gxk.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 May 2011 08:26:51 -0700 (PDT)
-In-Reply-To: <1306509996-30280-1-git-send-email-thomas.ab@samsung.com>
+	Fri, 27 May 2011 17:57:49 -0400
+Received: by pvg12 with SMTP id 12so944279pvg.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 May 2011 14:57:49 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Fri, May 27, 2011 at 8:56 PM, Thomas Abraham <thomas.ab@samsung.com>=
- wrote:
-> This patch series adds clkdev support for all Samsung platforms. clkd=
-ev
-> support is a prerequisite for adding device tree and common clock
-> features on Samsung platforms.
+From: Sangbeom Kim <sbkim73@samsung.com>
 
-This patch series is based on the latest
-git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git master
+This patch fixes following.
 
-and has been tested on the following boards.
+<6>[    0.000000] sched_clock: 32 bits at 33MHz, ...
+<6>[  128.651309] Calibrating delay loop...
 
-SMDK2416, SMDK2440, SMDK2450, SMDK6410, SMDK6440, SMDK6450,
-SMDKC100, SMDKV210 and SMDKV310.
+There is a big jump. The reason is that PWM Timer which
+is for HRTimer was used before its initialization.
 
->
-> Changes since v1:
->
-> 1. Removed the clock id field from clock instances.
-> 2. Fixed incorrect naming of guards in mach/clkdev.h files.
->
-> Thomas Abraham (7):
-> =A0ARM: SAMSUNG: Add clkdev infrastructure
-> =A0ARM: S3C24XX: Add clkdev support
-> =A0ARM: S3C64XX: Add clkdev support
-> =A0ARM: S5P64X0: Add clkdev support
-> =A0ARM: S5PC100: Add clkdev support
-> =A0ARM: S5PV210: Add clkdev support
-> =A0ARM: Exynos4: Add clkdev support
->
-> =A0arch/arm/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0| =A0 =A06 +
-> =A0arch/arm/mach-exynos4/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0178=
- +++++++++------------------
-> =A0arch/arm/mach-exynos4/include/mach/clkdev.h | =A0 =A07 +
-> =A0arch/arm/mach-exynos4/time.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =
-=A02 +
-> =A0arch/arm/mach-s3c2412/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 36=
- +-----
-> =A0arch/arm/mach-s3c2416/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 10=
- +-
-> =A0arch/arm/mach-s3c2440/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =A0=
-3 -
-> =A0arch/arm/mach-s3c2443/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 16=
- +--
-> =A0arch/arm/mach-s3c64xx/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 86=
- ++++---------
-> =A0arch/arm/mach-s3c64xx/include/mach/clkdev.h | =A0 =A07 +
-> =A0arch/arm/mach-s5p64x0/clock-s5p6440.c =A0 =A0 =A0 | =A0 74 +++----=
-----
-> =A0arch/arm/mach-s5p64x0/clock-s5p6450.c =A0 =A0 =A0 | =A0 68 +++----=
-----
-> =A0arch/arm/mach-s5p64x0/include/mach/clkdev.h | =A0 =A07 +
-> =A0arch/arm/mach-s5pc100/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0163=
- ++++++------------------
-> =A0arch/arm/mach-s5pc100/include/mach/clkdev.h | =A0 =A07 +
-> =A0arch/arm/mach-s5pv210/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0130=
- ++++++--------------
-> =A0arch/arm/mach-s5pv210/include/mach/clkdev.h | =A0 =A07 +
-> =A0arch/arm/plat-s3c24xx/clock-dclk.c =A0 =A0 =A0 =A0 =A0| =A0 =A04 -
-> =A0arch/arm/plat-s3c24xx/include/mach/clkdev.h | =A0 =A07 +
-> =A0arch/arm/plat-s3c24xx/s3c2410-clock.c =A0 =A0 =A0 | =A0 21 +---
-> =A0arch/arm/plat-s3c24xx/s3c2443-clock.c =A0 =A0 =A0 | =A0 39 +-----
-> =A0arch/arm/plat-s5p/s5p-time.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =
-=A09 ++
-> =A0arch/arm/plat-samsung/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 98=
- +--------------
-> =A0arch/arm/plat-samsung/include/plat/clock.h =A0| =A0 =A03 +
-> =A0arch/arm/plat-samsung/pwm-clock.c =A0 =A0 =A0 =A0 =A0 | =A0 10 ++
-> =A0arch/arm/plat-samsung/time.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =
-=A02 +
-> =A026 files changed, 300 insertions(+), 700 deletions(-)
-> =A0create mode 100644 arch/arm/mach-exynos4/include/mach/clkdev.h
-> =A0create mode 100644 arch/arm/mach-s3c64xx/include/mach/clkdev.h
-> =A0create mode 100644 arch/arm/mach-s5p64x0/include/mach/clkdev.h
-> =A0create mode 100644 arch/arm/mach-s5pc100/include/mach/clkdev.h
-> =A0create mode 100644 arch/arm/mach-s5pv210/include/mach/clkdev.h
-> =A0create mode 100644 arch/arm/plat-s3c24xx/include/mach/clkdev.h
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+So this patch changes its order and following is kernel
+boot log message after this.
+
+<6>[    0.000000] sched_clock: 32 bits at 33MHz, ...
+<6>[    0.000088] Calibrating delay loop...
+
+Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/plat-s5p/s5p-time.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/plat-s5p/s5p-time.c b/arch/arm/plat-s5p/s5p-time.c
+index 899a8cc..612934c 100644
+--- a/arch/arm/plat-s5p/s5p-time.c
++++ b/arch/arm/plat-s5p/s5p-time.c
+@@ -370,11 +370,11 @@ static void __init s5p_clocksource_init(void)
+ 
+ 	clock_rate = clk_get_rate(tin_source);
+ 
+-	init_sched_clock(&cd, s5p_update_sched_clock, 32, clock_rate);
+-
+ 	s5p_time_setup(timer_source.source_id, TCNT_MAX);
+ 	s5p_time_start(timer_source.source_id, PERIODIC);
+ 
++	init_sched_clock(&cd, s5p_update_sched_clock, 32, clock_rate);
++
+ 	if (clocksource_register_hz(&time_clocksource, clock_rate))
+ 		panic("%s: can't register clocksource\n", time_clocksource.name);
+ }
+-- 
+1.7.4.4
