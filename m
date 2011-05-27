@@ -1,143 +1,76 @@
-From: Marc Zyngier <Marc.Zyngier@arm.com>
-Subject: Re: [PATCH] ARM: exynos4: fix secondary CPU boot
-Date: Thu, 26 May 2011 16:11:50 +0100
-Message-ID: <1306422710.27474.237.camel@e102391-lin.cambridge.arm.com>
-References: <1305899190-16732-1-git-send-email-marc.zyngier@arm.com>
-	 <4DDD3C57.6020705@samsung.com>
-	 <1306346645.27474.182.camel@e102391-lin.cambridge.arm.com>
-	 <4DDD531A.50604@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+From: Thomas Abraham <thomas.ab@samsung.com>
+Subject: [RFC][PATCH v2 0/7] Add clkdev support for Samsung platforms
+Date: Fri, 27 May 2011 20:56:29 +0530
+Message-ID: <1306509996-30280-1-git-send-email-thomas.ab@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([94.185.240.25]:42175 "HELO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754050Ab1EZPLH convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:11659 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752380Ab1E0PTU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 May 2011 11:11:07 -0400
-In-Reply-To: <4DDD531A.50604@samsung.com>
+	Fri, 27 May 2011 11:19:20 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LLV00AJ9180Y240@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 28 May 2011 00:19:18 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LLV00IAA17ZX8@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 28 May 2011 00:19:18 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org
 
-On Wed, 2011-05-25 at 12:06 -0700, Kukjin Kim wrote:
-> On 05/25/11 11:04, Marc Zyngier wrote:
-> > On Wed, 2011-05-25 at 10:28 -0700, Kukjin Kim wrote:
-> >> On 05/20/11 06:46, Marc Zyngier wrote:
-> 
-> (snip)
-> 
-> > So that address has changed between two SoC revisions? That's
-> > unfortunate, to say the least. I'm most probably using an early revision
-> > of the hardware (EVT0?), as it doesn't even support MCT.
-> >
-> I'm afraid :( and I agree secondary CPU should work on all of 
-> Exynos4210. But I'm still think about the method...
-> 
-> > What about the following patch?
-> >
-> Uhm...this is really hack but I'd like to use another normal way...?
+This patch series adds clkdev support for all Samsung platforms. clkdev
+support is a prerequisite for adding device tree and common clock
+features on Samsung platforms.
 
-Oh, no question about the hack status. The trouble is, unless there is a
-sure way to tell which SoC revision we're running on, there's little
-else we can do than poke both locations and pray.
+Changes since v1:
 
-Is there such a way to identify the SoC revision?
+1. Removed the clock id field from clock instances.
+2. Fixed incorrect naming of guards in mach/clkdev.h files.
 
-> >> From c27e75b86e1ee181987a9364286a888421e76205 Mon Sep 17 00:00:00 2001
-> > From: Marc Zyngier<marc.zyngier@arm.com>
-> > Date: Fri, 20 May 2011 14:38:25 +0100
-> > Subject: [PATCH] ARM: exynos4: fix secondary CPU boot on early SoC revisions
-> >
-> > It appears that the system-wide flags register that used to be at
-> > 0x02025000 on the first revision of Exynos4 has moved to 0x02020000.
-> >
-> > The kernel has been updated accordingly, but this unfortunately leaves
-> > early boards without SMP support (the secondary CPU spins endlessly
-> > in BL0 waiting for an address to be written at that memory location).
-> >
-> > Try to solve the problem by poking both locations. This should be
-> > safe as this is done early enough in the kernel boot process, and nobody
-> > should be using the SRAM yet.
-> >
-> > Tested on a vintage SMDK-v310.
-> 
-> vintage ;)
+Thomas Abraham (7):
+  ARM: SAMSUNG: Add clkdev infrastructure
+  ARM: S3C24XX: Add clkdev support
+  ARM: S3C64XX: Add clkdev support
+  ARM: S5P64X0: Add clkdev support
+  ARM: S5PC100: Add clkdev support
+  ARM: S5PV210: Add clkdev support
+  ARM: Exynos4: Add clkdev support
 
-Well, I thought I was the uber-cool guy in the office because of that
-shiny blue board on my desk, only to discover that it's sooo last
-year... ;-)
-
-> >
-> > Cc: Kukjin Kim<kgene.kim@samsung.com>
-> > Signed-off-by: Marc Zyngier<marc.zyngier@arm.com>
-> > ---
-> >   arch/arm/mach-exynos4/include/mach/map.h |    1 +
-> >   arch/arm/mach-exynos4/platsmp.c          |   14 ++++++++++++++
-> >   2 files changed, 15 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
-> > index 0009e77..781e149 100644
-> > --- a/arch/arm/mach-exynos4/include/mach/map.h
-> > +++ b/arch/arm/mach-exynos4/include/mach/map.h
-> > @@ -24,6 +24,7 @@
-> >   #include<plat/map-s5p.h>
-> >
-> >   #define EXYNOS4_PA_SYSRAM		0x02020000
-> > +#define EXYNOS4_PA_SYSRAM_EVT0		0x02025000
-> >
-> >   #define EXYNOS4_PA_FIMC0		0x11800000
-> >   #define EXYNOS4_PA_FIMC1		0x11810000
-> > diff --git a/arch/arm/mach-exynos4/platsmp.c b/arch/arm/mach-exynos4/platsmp.c
-> > index c5e65a0..f261c34 100644
-> > --- a/arch/arm/mach-exynos4/platsmp.c
-> > +++ b/arch/arm/mach-exynos4/platsmp.c
-> > @@ -155,6 +155,7 @@ void __init smp_init_cpus(void)
-> >   void __init platform_smp_prepare_cpus(unsigned int max_cpus)
-> >   {
-> >   	int i;
-> > +	void __iomem *sysram_evt0;
-> >
-> >   	/*
-> >   	 * Initialise the present map, which describes the set of CPUs
-> > @@ -172,4 +173,17 @@ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
-> >   	 * secondary CPU branches to this address.
-> >   	 */
-> >   	__raw_writel(BSYM(virt_to_phys(exynos4_secondary_startup)), S5P_VA_SYSRAM);
-> > +
-> > +	/*
-> > +	 * EVT0 has the system-wide flags register at a different address.
-> > +	 * Poke it as well, in case we're running on an old SoC revision.
-> > +	 */
-> > +	sysram_evt0 = ioremap(EXYNOS4_PA_SYSRAM_EVT0, SZ_4K);
-> 
-> Hmm...first of all, need to check whether can ioremap the area on newer 
-> one but I'm out off office now so will check it after backing.
-
-The only documentation I have access to refers to the iRAM (SRAM) being
-mapped between 0x02020000 and 0x02040000. Unless the HW guys have gone
-completely wild and changed this range as well, I think we're pretty
-safe.
-
-> > +	if (!sysram_evt0) {
-> > +		pr_err("Unable to remap EXYNOS4_PA_SYSRAM_EVT0\n");
-> 
-> Do we really need 'pr_err' here?...
-
-No. Anything will do. Though not being able to ioremap() that region may
-indicate further trouble down the road.
-
-> > +		return;
-> > +	}
-> > +
-> > +	__raw_writel(BSYM(virt_to_phys(exynos4_secondary_startup)), sysram_evt0);
-> > +	iounmap(sysram_evt0);
-> >   }
-> 
-
-Cheers,
-
-	M.
--- 
-Reality is an implementation detail.
+ arch/arm/Kconfig                            |    6 +
+ arch/arm/mach-exynos4/clock.c               |  178 +++++++++------------------
+ arch/arm/mach-exynos4/include/mach/clkdev.h |    7 +
+ arch/arm/mach-exynos4/time.c                |    2 +
+ arch/arm/mach-s3c2412/clock.c               |   36 +-----
+ arch/arm/mach-s3c2416/clock.c               |   10 +-
+ arch/arm/mach-s3c2440/clock.c               |    3 -
+ arch/arm/mach-s3c2443/clock.c               |   16 +--
+ arch/arm/mach-s3c64xx/clock.c               |   86 ++++---------
+ arch/arm/mach-s3c64xx/include/mach/clkdev.h |    7 +
+ arch/arm/mach-s5p64x0/clock-s5p6440.c       |   74 +++--------
+ arch/arm/mach-s5p64x0/clock-s5p6450.c       |   68 +++--------
+ arch/arm/mach-s5p64x0/include/mach/clkdev.h |    7 +
+ arch/arm/mach-s5pc100/clock.c               |  163 ++++++------------------
+ arch/arm/mach-s5pc100/include/mach/clkdev.h |    7 +
+ arch/arm/mach-s5pv210/clock.c               |  130 ++++++--------------
+ arch/arm/mach-s5pv210/include/mach/clkdev.h |    7 +
+ arch/arm/plat-s3c24xx/clock-dclk.c          |    4 -
+ arch/arm/plat-s3c24xx/include/mach/clkdev.h |    7 +
+ arch/arm/plat-s3c24xx/s3c2410-clock.c       |   21 +---
+ arch/arm/plat-s3c24xx/s3c2443-clock.c       |   39 +-----
+ arch/arm/plat-s5p/s5p-time.c                |    9 ++
+ arch/arm/plat-samsung/clock.c               |   98 +--------------
+ arch/arm/plat-samsung/include/plat/clock.h  |    3 +
+ arch/arm/plat-samsung/pwm-clock.c           |   10 ++
+ arch/arm/plat-samsung/time.c                |    2 +
+ 26 files changed, 300 insertions(+), 700 deletions(-)
+ create mode 100644 arch/arm/mach-exynos4/include/mach/clkdev.h
+ create mode 100644 arch/arm/mach-s3c64xx/include/mach/clkdev.h
+ create mode 100644 arch/arm/mach-s5p64x0/include/mach/clkdev.h
+ create mode 100644 arch/arm/mach-s5pc100/include/mach/clkdev.h
+ create mode 100644 arch/arm/mach-s5pv210/include/mach/clkdev.h
+ create mode 100644 arch/arm/plat-s3c24xx/include/mach/clkdev.h
