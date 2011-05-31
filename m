@@ -1,45 +1,54 @@
-From: Santosh Shilimkar <santosh.shilimkar@ti.com>
-Subject: Re: [PATCH] ARM: EXYNOS4: Fix secondary CPU boot after wake-up
-Date: Tue, 31 May 2011 10:30:52 +0530
-Message-ID: <4DE47604.6070405@ti.com>
-References: <1306746781-21511-1-git-send-email-inderpal.s@samsung.com> <4DE36589.4080709@ti.com> <20110530215404.GB21382@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Giridhar Maruthy <giridhar.maruthy@linaro.org>
+Subject: [PATCH] ARM: EXYNOS4: Enable WM8994 MFD on I2S selection
+Date: Tue, 31 May 2011 11:10:36 +0530
+Message-ID: <1306820436-16569-1-git-send-email-giridhar.maruthy@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from na3sys009aog102.obsmtp.com ([74.125.149.69]:50676 "EHLO
-	na3sys009aog102.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751102Ab1EaFBA (ORCPT
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:50110 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750907Ab1EaFkv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 May 2011 01:01:00 -0400
-Received: by yib18 with SMTP id 18so1679069yib.28
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 May 2011 22:00:59 -0700 (PDT)
-In-Reply-To: <20110530215404.GB21382@n2100.arm.linux.org.uk>
+	Tue, 31 May 2011 01:40:51 -0400
+Received: by pwi15 with SMTP id 15so1894344pwi.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 May 2011 22:40:51 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Inderpal Singh <inderpal.singh@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Inderpal Singh <inderpal.s@samsung.com>, kgene.kim@samsung.com, samsung@lists.linaro.org, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: angus.ainslie@linaro.org, kgene.kim@samsung.com, samsung@lists.linaro.org, jassisinghbrar@gmail.com, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com, Giridhar Maruthy <giridhar.maruthy@linaro.org>
 
-On 5/31/2011 3:24 AM, Russell King - ARM Linux wrote:
-> On Mon, May 30, 2011 at 03:08:17PM +0530, Santosh Shilimkar wrote:
->> When do you plan to fix the SGI usage as discussed
->> in above thread. I thought SGI1 usage was ok for OMAP,
->> realview/versatile and MSM.
->
-> I'd like the use of the arbitary SGI1 to fade away, to be replaced with
-> something a little saner (eg, SGI0 being the first SGI).  That just
-> means you'll end up with a warning about SGI0 instead.  Let's just
-> ignore them for the time being (but please change to SGI0 anyway.)
+Whenever I2S is selected, select MFD for WM8994 and I2C
+to avoid manual enabling of the codec and I2C.
 
-I mean SGIO. SGI1 was typo. Ignoring that warning isn't good idea.
-Platforms which do aggressive CPU offline/online, will keep
-getting this noise and hence need to be fixed.
+Signed-off-by: Giridhar Maruthy <giridhar.maruthy@linaro.org>
+Signed-off-by: Angus Ainslie <angus.ainslie@linaro.org>
+---
+ arch/arm/mach-exynos4/Kconfig |    1 +
+ sound/soc/samsung/Kconfig     |    2 ++
+ 2 files changed, 3 insertions(+), 0 deletions(-)
 
-How about my patch which was marking this as a wakeup
-IPI instead of unknown one. Ofcourse with wakeup SGI
-being used will be SGI0 instead of current SGI1.
-
-If you are ok with it I can send an RFC patch ?
-
-Regards
-Santosh
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index e849f67..da00863 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -12,6 +12,7 @@ if ARCH_EXYNOS4
+ config CPU_EXYNOS4210
+ 	bool
+ 	select S3C_PL330_DMA
++	select I2C_S3C2410 if MFD_WM8994
+ 	help
+ 	  Enable EXYNOS4210 CPU support
+ 
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index a3fdfb6..d8654c6 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -65,6 +65,8 @@ config SND_SOC_SAMSUNG_SMDK_WM8994
+ 	tristate "SoC I2S Audio support for WM8994 on SMDK"
+ 	depends on SND_SOC_SAMSUNG && (MACH_SMDKV310 || MACH_SMDKC210)
+ 	select SND_SOC_WM8994
++	select MFD_SUPPORT
++	select MFD_WM8994
+ 	select SND_SAMSUNG_I2S
+ 	help
+ 		Say Y if you want to add support for SoC audio on the SMDKs.
+-- 
+1.7.1
