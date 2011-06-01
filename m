@@ -1,122 +1,70 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 5/10] arch/arm/mach-s5pv210/cpufreq.c: add missing clk_put
-Date: Wed, 01 Jun 2011 14:26:20 -0700
-Message-ID: <4DE6AE7C.6040404@samsung.com>
-References: <1306948213-20767-5-git-send-email-julia@diku.dk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1306948213-20767-5-git-send-email-julia@diku.dk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Julia Lawall <julia@diku.dk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] ARM: S5P: Should be S3C_VA_USB_HSPHY instead of S5P_VA_XX
+Date: Wed,  1 Jun 2011 15:30:34 -0700
+Message-ID: <1306967434-13562-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-px0-f179.google.com ([209.85.212.179]:60037 "EHLO
+	mail-px0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753642Ab1FAWam (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 1 Jun 2011 18:30:42 -0400
+Received: by pxi2 with SMTP id 2so193903pxi.10
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Jun 2011 15:30:42 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Greg Kroah-Hartman <gregkh@suse.de>
 
-On 06/01/11 10:10, Julia Lawall wrote:
-> From: Julia Lawall<julia@diku.dk>
->
-> The successive calls to clk_get each call clk_put in the case of failure,
-> but this is not done for subsequent error handling code.  The calls to
-> clk_get are moved to the end of the function, and appropriate gotos are
-> added.
->
-> A simplified version of the semantic match that finds this problem is as
-> follows: (http://coccinelle.lip6.fr/)
->
-> //<smpl>
-> @r exists@
-> expression e1,e2;
-> statement S;
-> @@
->
-> e1 = clk_get@p1(...);
-> ... when != e1 = e2
->      when != clk_put(e1)
->      when any
-> if (...) { ... when != clk_put(e1)
->                 when != if (...) { ... clk_put(e1) ... }
-> * return@p3 ...;
->   } else S
-> //</smpl>
->
-> Signed-off-by: Julia Lawall<julia@diku.dk>
->
-> ---
->   arch/arm/mach-s5pv210/cpufreq.c |   25 +++++++++++++++++--------
->   1 file changed, 17 insertions(+), 8 deletions(-)
->
-> diff --git a/arch/arm/mach-s5pv210/cpufreq.c b/arch/arm/mach-s5pv210/cpufreq.c
-> index 22046e2..97a29e1 100644
-> --- a/arch/arm/mach-s5pv210/cpufreq.c
-> +++ b/arch/arm/mach-s5pv210/cpufreq.c
-> @@ -414,6 +414,7 @@ static int check_mem_type(void __iomem *dmc_reg)
->   static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
->   {
->   	unsigned long mem_type;
-> +	int ret;
->
->   	cpu_clk = clk_get(NULL, "armclk");
->   	if (IS_ERR(cpu_clk))
-> @@ -421,19 +422,20 @@ static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
->
->   	dmc0_clk = clk_get(NULL, "sclk_dmc0");
->   	if (IS_ERR(dmc0_clk)) {
-> -		clk_put(cpu_clk);
-> -		return PTR_ERR(dmc0_clk);
-> +		ret = PTR_ERR(dmc0_clk);
-> +		goto out_dmc0;
->   	}
->
->   	dmc1_clk = clk_get(NULL, "hclk_msys");
->   	if (IS_ERR(dmc1_clk)) {
-> -		clk_put(dmc0_clk);
-> -		clk_put(cpu_clk);
-> -		return PTR_ERR(dmc1_clk);
-> +		ret = PTR_ERR(dmc1_clk);
-> +		goto out_dmc1;
->   	}
->
-> -	if (policy->cpu != 0)
-> -		return -EINVAL;
-> +	if (policy->cpu != 0) {
-> +		ret = -EINVAL;
-> +		goto out_dmc1;
-> +	}
->
->   	/*
->   	 * check_mem_type : This driver only support LPDDR&  LPDDR2.
-> @@ -443,7 +445,8 @@ static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
->
->   	if ((mem_type != LPDDR)&&  (mem_type != LPDDR2)) {
->   		printk(KERN_ERR "CPUFreq doesn't support this memory type\n");
-> -		return -EINVAL;
-> +		ret = -EINVAL;
-> +		goto out_dmc1;
->   	}
->
->   	/* Find current refresh counter and frequency each DMC */
-> @@ -460,6 +463,12 @@ static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
->   	policy->cpuinfo.transition_latency = 40000;
->
->   	return cpufreq_frequency_table_cpuinfo(policy, s5pv210_freq_table);
-> +
-> +out_dmc1:
-> +	clk_put(dmc0_clk);
-> +out_dmc0:
-> +	clk_put(cpu_clk);
-> +	return ret;
->   }
->
->   static struct cpufreq_driver s5pv210_driver = {
->
->
+Basically, other S3C SoCs and S5PC100 use 'S3C_VA_USB_HSPHY'
+commonly. It should be changed to 'S3C_VA_USB_HSPHY' for common
+usage and others. Now happens build error on S5PC100.
 
-Yeah, OK to me, will apply.
-Thanks.
+Cc: Greg Kroah-Hartman <gregkh@suse.de>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-exynos4/cpu.c                       |    2 +-
+ arch/arm/mach-exynos4/include/mach/regs-usb-phy.h |    2 +-
+ arch/arm/plat-s5p/include/plat/map-s5p.h          |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
+index 08813a6..9babe447 100644
+--- a/arch/arm/mach-exynos4/cpu.c
++++ b/arch/arm/mach-exynos4/cpu.c
+@@ -98,7 +98,7 @@ static struct map_desc exynos4_iodesc[] __initdata = {
+ 		.length		= SZ_4K,
+ 		.type		= MT_DEVICE,
+ 	}, {
+-		.virtual	= (unsigned long)S5P_VA_USB_HSPHY,
++		.virtual	= (unsigned long)S3C_VA_USB_HSPHY,
+ 		.pfn		= __phys_to_pfn(EXYNOS4_PA_HSPHY),
+ 		.length		= SZ_4K,
+ 		.type		= MT_DEVICE,
+diff --git a/arch/arm/mach-exynos4/include/mach/regs-usb-phy.h b/arch/arm/mach-exynos4/include/mach/regs-usb-phy.h
+index 703118d..c337cf3 100644
+--- a/arch/arm/mach-exynos4/include/mach/regs-usb-phy.h
++++ b/arch/arm/mach-exynos4/include/mach/regs-usb-phy.h
+@@ -11,7 +11,7 @@
+ #ifndef __PLAT_S5P_REGS_USB_PHY_H
+ #define __PLAT_S5P_REGS_USB_PHY_H
+ 
+-#define EXYNOS4_HSOTG_PHYREG(x)		((x) + S5P_VA_USB_HSPHY)
++#define EXYNOS4_HSOTG_PHYREG(x)		((x) + S3C_VA_USB_HSPHY)
+ 
+ #define EXYNOS4_PHYPWR			EXYNOS4_HSOTG_PHYREG(0x00)
+ #define PHY1_HSIC_NORMAL_MASK		(0xf << 9)
+diff --git a/arch/arm/plat-s5p/include/plat/map-s5p.h b/arch/arm/plat-s5p/include/plat/map-s5p.h
+index a6c3d32..d973d39 100644
+--- a/arch/arm/plat-s5p/include/plat/map-s5p.h
++++ b/arch/arm/plat-s5p/include/plat/map-s5p.h
+@@ -39,7 +39,7 @@
+ #define S5P_VA_TWD		S5P_VA_COREPERI(0x600)
+ #define S5P_VA_GIC_DIST		S5P_VA_COREPERI(0x1000)
+ 
+-#define S5P_VA_USB_HSPHY	S3C_ADDR(0x02900000)
++#define S3C_VA_USB_HSPHY	S3C_ADDR(0x02900000)
+ 
+ #define VA_VIC(x)		(S3C_VA_IRQ + ((x) * 0x10000))
+ #define VA_VIC0			VA_VIC(0)
+-- 
+1.7.4.4
