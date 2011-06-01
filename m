@@ -1,36 +1,33 @@
-From: Sergei Shtylyov <sshtylyov@mvista.com>
-Subject: Re: [PATCH] Fix compile failures by syscore_ops change on s3c2416
-Date: Tue, 31 May 2011 15:41:44 +0400
-Message-ID: <4DE4D3F8.1030406@ru.mvista.com>
-References: <201105302234.35749.heiko@sntech.de>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH 0/3] Fixes for breakage resulting from syscore_ops patch on s3c24xx
+Date: Wed, 1 Jun 2011 13:48:43 +0200
+Message-ID: <201106011348.47145.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:37462 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752350Ab1EaLmu (ORCPT
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:44989 "EHLO
+	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1162163Ab1FALtJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 May 2011 07:42:50 -0400
-Received: by wya21 with SMTP id 21so3222798wya.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 31 May 2011 04:42:49 -0700 (PDT)
-In-Reply-To: <201105302234.35749.heiko@sntech.de>
+	Wed, 1 Jun 2011 07:49:09 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: Kukjin Kim <kgene.kim@samsung.com>, rjw@sisk.pl
+Cc: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hello.
+The syscore_ops patch from Rafael J. Wysocki introduced some small
+glitches for the S3C24XX cpus resulting in compile errors.
 
-On 31-05-2011 0:34, Heiko St=FCbner wrote:
+Heiko Stuebner (3):
+  Fix missing struct for s3c2410_dma_chan in s3c2410_dma_suspend_chan
+  Move s3c24xx_irq_syscore_ops to plat-s3c24xx/irq.c
+  remove the now empty mach-s3c2410/irq.c
 
-> s3c24xx_irq_syscore_ops is only defined in mach-s3c2410/irq.c which i=
-s
-> not used by s3c2416.
-> Also s3c2410_dma_chan needs a struct prefix
-
-    Saying "also" seems a good sign that you should do two patches inst=
-ead.
-
-WBR, Sergei
+ arch/arm/mach-s3c2410/Makefile |    1 -
+ arch/arm/mach-s3c2410/irq.c    |   34 ----------------------------------
+ arch/arm/plat-s3c24xx/dma.c    |    2 +-
+ arch/arm/plat-s3c24xx/irq.c    |    6 ++++++
+ 4 files changed, 7 insertions(+), 36 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c2410/irq.c
