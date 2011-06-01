@@ -1,35 +1,43 @@
 From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH v2 0/3] Fixes for breakage resulting from syscore_ops patch on s3c24xx
-Date: Wed, 1 Jun 2011 18:21:37 +0200
-Message-ID: <201106011821.38091.heiko@sntech.de>
+Subject: [PATCH v2 1/3] Fix missing struct for s3c2410_dma_chan in s3c2410_dma_suspend_chan
+Date: Wed, 1 Jun 2011 18:23:24 +0200
+Message-ID: <201106011823.25052.heiko@sntech.de>
+References: <201106011821.38091.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
-  charset="us-ascii"
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:40544 "EHLO
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:58752 "EHLO
 	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755786Ab1FAQVr (ORCPT
+	by vger.kernel.org with ESMTP id S1756000Ab1FAQXa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Jun 2011 12:21:47 -0400
+	Wed, 1 Jun 2011 12:23:30 -0400
+In-Reply-To: <201106011821.38091.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
 
-The syscore_ops patch from Rafael J. Wysocki introduced some small
-glitches for the S3C24XX cpus resulting in compile errors.
+s3c2410_dma_chan is not a type itself, so struct is required.
 
-Changes since v1: add missing Signed-off-by lines
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ arch/arm/plat-s3c24xx/dma.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Heiko Stuebner (3):
-  Fix missing struct for s3c2410_dma_chan in s3c2410_dma_suspend_chan
-  Move s3c24xx_irq_syscore_ops to plat-s3c24xx/irq.c
-  remove the now empty mach-s3c2410/irq.c
-
- arch/arm/mach-s3c2410/Makefile |    1 -
- arch/arm/mach-s3c2410/irq.c    |   34 ----------------------------------
- arch/arm/plat-s3c24xx/dma.c    |    2 +-
- arch/arm/plat-s3c24xx/irq.c    |    6 ++++++
- 4 files changed, 7 insertions(+), 36 deletions(-)
- delete mode 100644 arch/arm/mach-s3c2410/irq.c
+diff --git a/arch/arm/plat-s3c24xx/dma.c b/arch/arm/plat-s3c24xx/dma.c
+index c10d10c..2abf966 100644
+--- a/arch/arm/plat-s3c24xx/dma.c
++++ b/arch/arm/plat-s3c24xx/dma.c
+@@ -1199,7 +1199,7 @@ EXPORT_SYMBOL(s3c2410_dma_getposition);
+ 
+ #ifdef CONFIG_PM
+ 
+-static void s3c2410_dma_suspend_chan(s3c2410_dma_chan *cp)
++static void s3c2410_dma_suspend_chan(struct s3c2410_dma_chan *cp)
+ {
+        printk(KERN_DEBUG "suspending dma channel %d\n", cp->number);
+ 
+-- 
+1.7.1
