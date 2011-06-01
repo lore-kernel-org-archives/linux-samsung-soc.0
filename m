@@ -1,33 +1,49 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH] Fix compile failures by syscore_ops change on s3c2416
-Date: Wed, 1 Jun 2011 13:54:03 +0200
-Message-ID: <201106011354.06804.heiko@sntech.de>
-References: <201105302234.35749.heiko@sntech.de> <4DE4D3F8.1030406@ru.mvista.com>
+From: Abdoulaye Walsimou GAYE <awg@embtoolkit.org>
+Subject: Re: [PATCH 0/3] Fixes for breakage resulting from syscore_ops patch
+	on	s3c24xx
+Date: Wed, 01 Jun 2011 14:13:35 +0200
+Message-ID: <4DE62CEF.80507@embtoolkit.org>
+References: <201106011348.47145.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:54962 "EHLO
-	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1758827Ab1FALyU convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Jun 2011 07:54:20 -0400
-In-Reply-To: <4DE4D3F8.1030406@ru.mvista.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"; Format="flowed"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <201106011348.47145.heiko@sntech.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: rjw@sisk.pl, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sergei Shtylyov <sshtylyov@mvista.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
 
-Am Dienstag 31 Mai 2011 schrieb Sergei Shtylyov:
-> On 31-05-2011 0:34, Heiko St=FCbner wrote:
-> > s3c24xx_irq_syscore_ops is only defined in mach-s3c2410/irq.c which=
- is
-> > not used by s3c2416.
-> > Also s3c2410_dma_chan needs a struct prefix
->=20
->     Saying "also" seems a good sign that you should do two patches in=
-stead.
+Heiko St=FCbner wrote:
+> The syscore_ops patch from Rafael J. Wysocki introduced some small
+> glitches for the S3C24XX cpus resulting in compile errors.
+>
+> Heiko Stuebner (3):
+>    Fix missing struct for s3c2410_dma_chan in s3c2410_dma_suspend_chan
+>    Move s3c24xx_irq_syscore_ops to plat-s3c24xx/irq.c
+>    remove the now empty mach-s3c2410/irq.c
+>
+>   arch/arm/mach-s3c2410/Makefile |    1 -
+>   arch/arm/mach-s3c2410/irq.c    |   34 ----------------------------------
+>   arch/arm/plat-s3c24xx/dma.c    |    2 +-
+>   arch/arm/plat-s3c24xx/irq.c    |    6 ++++++
+>   4 files changed, 7 insertions(+), 36 deletions(-)
+>   delete mode 100644 arch/arm/mach-s3c2410/irq.c
+>    =
 
-you are right of course :-) ... I have redone them now
 
-Heiko
+I submitted same patches days ago [1], but without more explanations
+than "ARM: s3c24xx: fix build errors introduced by bb072c3cf21d1", so
+
+Acked-by : Abdoulaye Walsimou Gaye <awg@embtoolkit.org>
+
+[1] http://thread.gmane.org/gmane.linux.ports.arm.kernel/117812/focus=3D117=
+814
