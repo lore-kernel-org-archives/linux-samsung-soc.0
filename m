@@ -1,116 +1,140 @@
-From: Julia Lawall <julia@diku.dk>
-Subject: [PATCH 5/10] arch/arm/mach-s5pv210/cpufreq.c: add missing clk_put
-Date: Wed,  1 Jun 2011 19:10:08 +0200
-Message-ID: <1306948213-20767-5-git-send-email-julia@diku.dk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Russell King <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] Move ARM Samsung cpufreq drivers to drivers/cpufreq/
+Date: Wed,  1 Jun 2011 14:18:22 -0700
+Message-ID: <1306963102-12830-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <cpufreq-owner@vger.kernel.org>
+Sender: cpufreq-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Dave Jones <davej@redhat.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Julia Lawall <julia@diku.dk>
+According to discussion of the ARM arch subsystem migration,
+ARM cpufreq drivers move to drivers/cpufreq. So this patch
+adds Kconfig.arm for ARM like x86 and adds Samsung S5PV210
+and EXYNOS4210 cpufreq driver compile in there.
+As a note, otherw will be moved.
 
-The successive calls to clk_get each call clk_put in the case of failure,
-but this is not done for subsequent error handling code.  The calls to
-clk_get are moved to the end of the function, and appropriate gotos are
-added.
-
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@r exists@
-expression e1,e2;
-statement S;
-@@
-
-e1 = clk_get@p1(...);
-... when != e1 = e2
-    when != clk_put(e1)
-    when any
-if (...) { ... when != clk_put(e1)
-               when != if (...) { ... clk_put(e1) ... }
-* return@p3 ...;
- } else S
-// </smpl>
-
-Signed-off-by: Julia Lawall <julia@diku.dk>
-
+Cc: Dave Jones <davej@redhat.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv210/cpufreq.c |   25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ arch/arm/mach-exynos4/Makefile                     |    1 -
+ arch/arm/mach-s5pv210/Makefile                     |    1 -
+ drivers/cpufreq/Kconfig                            |    5 ++++
+ drivers/cpufreq/Kconfig.arm                        |   23 ++++++++++++++++++++
+ drivers/cpufreq/Makefile                           |    2 +
+ .../cpufreq/exynos4210-cpufreq.c                   |    3 +-
+ .../cpufreq.c => drivers/cpufreq/s5pv210-cpufreq.c |    3 +-
+ 7 files changed, 32 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/cpufreq/Kconfig.arm
+ rename arch/arm/mach-exynos4/cpufreq.c => drivers/cpufreq/exynos4210-cpufreq.c (99%)
+ rename arch/arm/mach-s5pv210/cpufreq.c => drivers/cpufreq/s5pv210-cpufreq.c (99%)
 
-diff --git a/arch/arm/mach-s5pv210/cpufreq.c b/arch/arm/mach-s5pv210/cpufreq.c
-index 22046e2..97a29e1 100644
---- a/arch/arm/mach-s5pv210/cpufreq.c
-+++ b/arch/arm/mach-s5pv210/cpufreq.c
-@@ -414,6 +414,7 @@ static int check_mem_type(void __iomem *dmc_reg)
- static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
- {
- 	unsigned long mem_type;
-+	int ret;
+diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
+index a9bb94f..0cebfa7 100644
+--- a/arch/arm/mach-exynos4/Makefile
++++ b/arch/arm/mach-exynos4/Makefile
+@@ -15,7 +15,6 @@ obj-				:=
+ obj-$(CONFIG_CPU_EXYNOS4210)	+= cpu.o init.o clock.o irq-combiner.o
+ obj-$(CONFIG_CPU_EXYNOS4210)	+= setup-i2c0.o irq-eint.o dma.o
+ obj-$(CONFIG_PM)		+= pm.o sleep.o
+-obj-$(CONFIG_CPU_FREQ)		+= cpufreq.o
+ obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
  
- 	cpu_clk = clk_get(NULL, "armclk");
- 	if (IS_ERR(cpu_clk))
-@@ -421,19 +422,20 @@ static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
+ obj-$(CONFIG_SMP)		+= platsmp.o headsmp.o
+diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
+index 50907ac..599a3c0 100644
+--- a/arch/arm/mach-s5pv210/Makefile
++++ b/arch/arm/mach-s5pv210/Makefile
+@@ -15,7 +15,6 @@ obj-				:=
+ obj-$(CONFIG_CPU_S5PV210)	+= cpu.o init.o clock.o dma.o
+ obj-$(CONFIG_CPU_S5PV210)	+= setup-i2c0.o
+ obj-$(CONFIG_S5PV210_PM)	+= pm.o sleep.o
+-obj-$(CONFIG_CPU_FREQ)		+= cpufreq.o
  
- 	dmc0_clk = clk_get(NULL, "sclk_dmc0");
- 	if (IS_ERR(dmc0_clk)) {
--		clk_put(cpu_clk);
--		return PTR_ERR(dmc0_clk);
-+		ret = PTR_ERR(dmc0_clk);
-+		goto out_dmc0;
- 	}
+ # machine support
  
- 	dmc1_clk = clk_get(NULL, "hclk_msys");
- 	if (IS_ERR(dmc1_clk)) {
--		clk_put(dmc0_clk);
--		clk_put(cpu_clk);
--		return PTR_ERR(dmc1_clk);
-+		ret = PTR_ERR(dmc1_clk);
-+		goto out_dmc1;
- 	}
+diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
+index 9fb8485..e898215 100644
+--- a/drivers/cpufreq/Kconfig
++++ b/drivers/cpufreq/Kconfig
+@@ -184,5 +184,10 @@ depends on X86
+ source "drivers/cpufreq/Kconfig.x86"
+ endmenu
  
--	if (policy->cpu != 0)
--		return -EINVAL;
-+	if (policy->cpu != 0) {
-+		ret = -EINVAL;
-+		goto out_dmc1;
-+	}
- 
- 	/*
- 	 * check_mem_type : This driver only support LPDDR & LPDDR2.
-@@ -443,7 +445,8 @@ static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
- 
- 	if ((mem_type != LPDDR) && (mem_type != LPDDR2)) {
- 		printk(KERN_ERR "CPUFreq doesn't support this memory type\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto out_dmc1;
- 	}
- 
- 	/* Find current refresh counter and frequency each DMC */
-@@ -460,6 +463,12 @@ static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
- 	policy->cpuinfo.transition_latency = 40000;
- 
- 	return cpufreq_frequency_table_cpuinfo(policy, s5pv210_freq_table);
++menu "ARM CPU frequency scaling drivers"
++depends on ARM
++source "drivers/cpufreq/Kconfig.arm"
++endmenu
 +
-+out_dmc1:
-+	clk_put(dmc0_clk);
-+out_dmc0:
-+	clk_put(cpu_clk);
-+	return ret;
- }
+ endif
+ endmenu
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+new file mode 100644
+index 0000000..fafdbb8
+--- /dev/null
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -0,0 +1,23 @@
++#
++# ARM CPU Frequency scaling drivers
++#
++
++config ARM_S5PV210_CPUFREQ
++	bool "Samsung S5PV210 and S5PC110"
++	depends on CPU_S5PV210
++	default y
++	help
++	  This adds the CPUFreq driver for Samsung S5PV210 and
++	  S5PC110 SoCs.
++
++	  If in doubt, say N.
++
++config ARM_EXYNOS4210_CPUFREQ
++	bool "Samsung EXYNOS4210"
++	depends on CPU_EXYNOS4210
++	default y
++	help
++	  This adds the CPUFreq driver for Samsung EXYNOS4210
++	  SoC (S5PV310 or S5PC210).
++
++	  If in doubt, say N.
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index e2fc2d2..864a27c 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -41,3 +41,5 @@ obj-$(CONFIG_X86_CPUFREQ_NFORCE2)	+= cpufreq-nforce2.o
  
- static struct cpufreq_driver s5pv210_driver = {
+ # ARM SoC drivers
+ obj-$(CONFIG_UX500_SOC_DB8500)		+= db8500-cpufreq.o
++obj-$(CONFIG_ARM_S5PV210_CPUFREQ)	+= s5pv210-cpufreq.o
++obj-$(CONFIG_ARM_EXYNOS4210_CPUFREQ)	+= exynos4210-cpufreq.o
+diff --git a/arch/arm/mach-exynos4/cpufreq.c b/drivers/cpufreq/exynos4210-cpufreq.c
+similarity index 99%
+rename from arch/arm/mach-exynos4/cpufreq.c
+rename to drivers/cpufreq/exynos4210-cpufreq.c
+index a1bd258..54025fc 100644
+--- a/arch/arm/mach-exynos4/cpufreq.c
++++ b/drivers/cpufreq/exynos4210-cpufreq.c
+@@ -1,5 +1,4 @@
+-/* linux/arch/arm/mach-exynos4/cpufreq.c
+- *
++/*
+  * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
+  *
+diff --git a/arch/arm/mach-s5pv210/cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+similarity index 99%
+rename from arch/arm/mach-s5pv210/cpufreq.c
+rename to drivers/cpufreq/s5pv210-cpufreq.c
+index 22046e2..c482fc8 100644
+--- a/arch/arm/mach-s5pv210/cpufreq.c
++++ b/drivers/cpufreq/s5pv210-cpufreq.c
+@@ -1,5 +1,4 @@
+-/* linux/arch/arm/mach-s5pv210/cpufreq.c
+- *
++/*
+  * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
+  *
+-- 
+1.7.4.4
+
