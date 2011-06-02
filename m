@@ -1,59 +1,35 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 4/7] s5p-fimc: Fix wrong buffer size in queue_setup
-Date: Thu, 02 Jun 2011 12:12:01 +0200
-Message-ID: <1307009524-1208-5-git-send-email-s.nawrocki@samsung.com>
-References: <1307009524-1208-1-git-send-email-s.nawrocki@samsung.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH v3 0/3] Fixes for breakage resulting from syscore_ops patch on s3c24xx
+Date: Thu, 2 Jun 2011 12:54:57 +0200
+Message-ID: <201106021254.57644.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1307009524-1208-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
+Content-Type: Text/Plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:42484 "EHLO
+	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932591Ab1FBKzF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 Jun 2011 06:55:05 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, rjw@sisk.pl, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Avoid dereferencing of NULL f->fmt. Correct size of the allocated
-buffer in case the crop rectangle is smaller than the bounds
-rectangle (configured with S_FMT). Also remove redundant check
-for *num_buffer == 0 as this case is handled in videobuf2.
+The syscore_ops patch from Rafael J. Wysocki introduced some small
+glitches for the S3C24XX cpus resulting in compile errors.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/media/video/s5p-fimc/fimc-core.c |   12 ++++--------
- 1 files changed, 4 insertions(+), 8 deletions(-)
+Changes since v1: add missing Signed-off-by lines
+Changes since v2: fix mangled tabs
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index c427edd..85b47a3 100644
---- a/drivers/media/video/s5p-fimc/fimc-core.c
-+++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -704,22 +704,18 @@ static int fimc_queue_setup(struct vb2_queue *vq, unsigned int *num_buffers,
- 	f = ctx_get_frame(ctx, vq->type);
- 	if (IS_ERR(f))
- 		return PTR_ERR(f);
--
- 	/*
- 	 * Return number of non-contigous planes (plane buffers)
- 	 * depending on the configured color format.
- 	 */
--	if (f->fmt)
--		*num_planes = f->fmt->memplanes;
-+	if (!f->fmt)
-+		return -EINVAL;
- 
-+	*num_planes = f->fmt->memplanes;
- 	for (i = 0; i < f->fmt->memplanes; i++) {
--		sizes[i] = (f->width * f->height * f->fmt->depth[i]) >> 3;
-+		sizes[i] = (f->f_width * f->f_height * f->fmt->depth[i]) / 8;
- 		allocators[i] = ctx->fimc_dev->alloc_ctx;
- 	}
--
--	if (*num_buffers == 0)
--		*num_buffers = 1;
--
- 	return 0;
- }
- 
--- 
-1.7.5.2
+Heiko Stuebner (3):
+  Fix missing struct for s3c2410_dma_chan in s3c2410_dma_suspend_chan
+  Move s3c24xx_irq_syscore_ops to plat-s3c24xx/irq.c
+  remove the now empty mach-s3c2410/irq.c
+
+ arch/arm/mach-s3c2410/Makefile |    1 -
+ arch/arm/mach-s3c2410/irq.c    |   34 ----------------------------------
+ arch/arm/plat-s3c24xx/dma.c    |    2 +-
+ arch/arm/plat-s3c24xx/irq.c    |    6 ++++++
+ 4 files changed, 7 insertions(+), 36 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c2410/irq.c
