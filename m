@@ -1,187 +1,184 @@
 From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH] Move ARM Samsung cpufreq drivers to drivers/cpufreq/
-Date: Thu, 2 Jun 2011 09:43:28 +0900
-Message-ID: <BANLkTikWhqOO2dcXpp+f=1i1JWOoaYEY5A@mail.gmail.com>
-References: <1306963102-12830-1-git-send-email-kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: exynos4: fix secondary CPU boot
+Date: Thu, 2 Jun 2011 16:01:09 +0900
+Message-ID: <BANLkTi=fjq5ki8BGDhQxHVD3u-s7W-C1rw@mail.gmail.com>
+References: <1305899190-16732-1-git-send-email-marc.zyngier@arm.com>
+	<4DDD3C57.6020705@samsung.com>
+	<1306346645.27474.182.camel@e102391-lin.cambridge.arm.com>
+	<4DDD531A.50604@samsung.com>
+	<1306422710.27474.237.camel@e102391-lin.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1306963102-12830-1-git-send-email-kgene.kim@samsung.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org, Dave Jones <davej@redhat.com>, =?UTF-8?B?6rmA64+Z6re8?= <dg77.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vx0-f174.google.com ([209.85.220.174]:56979 "EHLO
+	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751908Ab1FBHBL convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 Jun 2011 03:01:11 -0400
+Received: by vxi39 with SMTP id 39so427997vxi.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Jun 2011 00:01:10 -0700 (PDT)
+In-Reply-To: <1306422710.27474.237.camel@e102391-lin.cambridge.arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marc Zyngier <Marc.Zyngier@arm.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi,
+On Fri, May 27, 2011 at 12:11 AM, Marc Zyngier <Marc.Zyngier@arm.com> w=
+rote:
+> On Wed, 2011-05-25 at 12:06 -0700, Kukjin Kim wrote:
+>> On 05/25/11 11:04, Marc Zyngier wrote:
+>> > On Wed, 2011-05-25 at 10:28 -0700, Kukjin Kim wrote:
+>> >> On 05/20/11 06:46, Marc Zyngier wrote:
+>>
+>> (snip)
+>>
+>> > So that address has changed between two SoC revisions? That's
+>> > unfortunate, to say the least. I'm most probably using an early re=
+vision
+>> > of the hardware (EVT0?), as it doesn't even support MCT.
+>> >
+>> I'm afraid :( and I agree secondary CPU should work on all of
+>> Exynos4210. But I'm still think about the method...
+>>
+>> > What about the following patch?
+>> >
+>> Uhm...this is really hack but I'd like to use another normal way...?
+>
+> Oh, no question about the hack status. The trouble is, unless there i=
+s a
+> sure way to tell which SoC revision we're running on, there's little
+> else we can do than poke both locations and pray.
+>
+> Is there such a way to identify the SoC revision?
 
-I think you already saw the same patchs[1] at mailing list and even
-worse you commented it[2]
-One different is kconfig handling. and these can be handled easily as y=
-ou did.
+It's also required for OneNAND. as you know C210 EVT0 OneNAND DMA has
+bug and need to workaround.
 
-Please respect others works.
+platform codes should provide the these function. please see the OMAP
+codes. how to handle it.
 
 Thank you,
 Kyungmin Park
-
-1. http://www.gossamer-threads.com/lists/linux/kernel/1385739?page=3Dla=
-st
-2. http://www.spinics.net/lists/cpufreq/msg02262.html
-
-On Thu, Jun 2, 2011 at 6:18 AM, Kukjin Kim <kgene.kim@samsung.com> wrot=
-e:
-> According to discussion of the ARM arch subsystem migration,
-> ARM cpufreq drivers move to drivers/cpufreq. So this patch
-> adds Kconfig.arm for ARM like x86 and adds Samsung S5PV210
-> and EXYNOS4210 cpufreq driver compile in there.
-> As a note, otherw will be moved.
 >
-> Cc: Dave Jones <davej@redhat.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
-> =A0arch/arm/mach-exynos4/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 | =A0 =A01 -
-> =A0arch/arm/mach-s5pv210/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 | =A0 =A01 -
-> =A0drivers/cpufreq/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0| =A0 =A05 ++++
-> =A0drivers/cpufreq/Kconfig.arm =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0| =A0 23 ++++++++++++++++++++
-> =A0drivers/cpufreq/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 | =A0 =A02 +
-> =A0.../cpufreq/exynos4210-cpufreq.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- | =A0 =A03 +-
-> =A0.../cpufreq.c =3D> drivers/cpufreq/s5pv210-cpufreq.c | =A0 =A03 +-
-> =A07 files changed, 32 insertions(+), 6 deletions(-)
-> =A0create mode 100644 drivers/cpufreq/Kconfig.arm
-> =A0rename arch/arm/mach-exynos4/cpufreq.c =3D> drivers/cpufreq/exynos=
-4210-cpufreq.c (99%)
-> =A0rename arch/arm/mach-s5pv210/cpufreq.c =3D> drivers/cpufreq/s5pv21=
-0-cpufreq.c (99%)
+>> >> From c27e75b86e1ee181987a9364286a888421e76205 Mon Sep 17 00:00:00=
+ 2001
+>> > From: Marc Zyngier<marc.zyngier@arm.com>
+>> > Date: Fri, 20 May 2011 14:38:25 +0100
+>> > Subject: [PATCH] ARM: exynos4: fix secondary CPU boot on early SoC=
+ revisions
+>> >
+>> > It appears that the system-wide flags register that used to be at
+>> > 0x02025000 on the first revision of Exynos4 has moved to 0x0202000=
+0.
+>> >
+>> > The kernel has been updated accordingly, but this unfortunately le=
+aves
+>> > early boards without SMP support (the secondary CPU spins endlessl=
+y
+>> > in BL0 waiting for an address to be written at that memory locatio=
+n).
+>> >
+>> > Try to solve the problem by poking both locations. This should be
+>> > safe as this is done early enough in the kernel boot process, and =
+nobody
+>> > should be using the SRAM yet.
+>> >
+>> > Tested on a vintage SMDK-v310.
+>>
+>> vintage ;)
 >
-> diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/M=
-akefile
-> index a9bb94f..0cebfa7 100644
-> --- a/arch/arm/mach-exynos4/Makefile
-> +++ b/arch/arm/mach-exynos4/Makefile
-> @@ -15,7 +15,6 @@ obj- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0:=3D
-> =A0obj-$(CONFIG_CPU_EXYNOS4210) =A0 +=3D cpu.o init.o clock.o irq-com=
-biner.o
-> =A0obj-$(CONFIG_CPU_EXYNOS4210) =A0 +=3D setup-i2c0.o irq-eint.o dma.=
-o
-> =A0obj-$(CONFIG_PM) =A0 =A0 =A0 =A0 =A0 =A0 =A0 +=3D pm.o sleep.o
-> -obj-$(CONFIG_CPU_FREQ) =A0 =A0 =A0 =A0 +=3D cpufreq.o
-> =A0obj-$(CONFIG_CPU_IDLE) =A0 =A0 =A0 =A0 +=3D cpuidle.o
+> Well, I thought I was the uber-cool guy in the office because of that
+> shiny blue board on my desk, only to discover that it's sooo last
+> year... ;-)
 >
-> =A0obj-$(CONFIG_SMP) =A0 =A0 =A0 =A0 =A0 =A0 =A0+=3D platsmp.o headsm=
-p.o
-> diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/M=
-akefile
-> index 50907ac..599a3c0 100644
-> --- a/arch/arm/mach-s5pv210/Makefile
-> +++ b/arch/arm/mach-s5pv210/Makefile
-> @@ -15,7 +15,6 @@ obj- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0:=3D
-> =A0obj-$(CONFIG_CPU_S5PV210) =A0 =A0 =A0+=3D cpu.o init.o clock.o dma=
-=2Eo
-> =A0obj-$(CONFIG_CPU_S5PV210) =A0 =A0 =A0+=3D setup-i2c0.o
-> =A0obj-$(CONFIG_S5PV210_PM) =A0 =A0 =A0 +=3D pm.o sleep.o
-> -obj-$(CONFIG_CPU_FREQ) =A0 =A0 =A0 =A0 +=3D cpufreq.o
+>> >
+>> > Cc: Kukjin Kim<kgene.kim@samsung.com>
+>> > Signed-off-by: Marc Zyngier<marc.zyngier@arm.com>
+>> > ---
+>> > =A0 arch/arm/mach-exynos4/include/mach/map.h | =A0 =A01 +
+>> > =A0 arch/arm/mach-exynos4/platsmp.c =A0 =A0 =A0 =A0 =A0| =A0 14 ++=
+++++++++++++
+>> > =A0 2 files changed, 15 insertions(+), 0 deletions(-)
+>> >
+>> > diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/m=
+ach-exynos4/include/mach/map.h
+>> > index 0009e77..781e149 100644
+>> > --- a/arch/arm/mach-exynos4/include/mach/map.h
+>> > +++ b/arch/arm/mach-exynos4/include/mach/map.h
+>> > @@ -24,6 +24,7 @@
+>> > =A0 #include<plat/map-s5p.h>
+>> >
+>> > =A0 #define EXYNOS4_PA_SYSRAM =A0 =A0 =A0 =A0 0x02020000
+>> > +#define EXYNOS4_PA_SYSRAM_EVT0 =A0 =A0 =A0 =A0 =A0 =A0 0x02025000
+>> >
+>> > =A0 #define EXYNOS4_PA_FIMC0 =A0 =A0 =A0 =A0 =A00x11800000
+>> > =A0 #define EXYNOS4_PA_FIMC1 =A0 =A0 =A0 =A0 =A00x11810000
+>> > diff --git a/arch/arm/mach-exynos4/platsmp.c b/arch/arm/mach-exyno=
+s4/platsmp.c
+>> > index c5e65a0..f261c34 100644
+>> > --- a/arch/arm/mach-exynos4/platsmp.c
+>> > +++ b/arch/arm/mach-exynos4/platsmp.c
+>> > @@ -155,6 +155,7 @@ void __init smp_init_cpus(void)
+>> > =A0 void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+>> > =A0 {
+>> > =A0 =A0 int i;
+>> > + =A0 void __iomem *sysram_evt0;
+>> >
+>> > =A0 =A0 /*
+>> > =A0 =A0 =A0* Initialise the present map, which describes the set o=
+f CPUs
+>> > @@ -172,4 +173,17 @@ void __init platform_smp_prepare_cpus(unsigne=
+d int max_cpus)
+>> > =A0 =A0 =A0* secondary CPU branches to this address.
+>> > =A0 =A0 =A0*/
+>> > =A0 =A0 __raw_writel(BSYM(virt_to_phys(exynos4_secondary_startup))=
+, S5P_VA_SYSRAM);
+>> > +
+>> > + =A0 /*
+>> > + =A0 =A0* EVT0 has the system-wide flags register at a different =
+address.
+>> > + =A0 =A0* Poke it as well, in case we're running on an old SoC re=
+vision.
+>> > + =A0 =A0*/
+>> > + =A0 sysram_evt0 =3D ioremap(EXYNOS4_PA_SYSRAM_EVT0, SZ_4K);
+>>
+>> Hmm...first of all, need to check whether can ioremap the area on ne=
+wer
+>> one but I'm out off office now so will check it after backing.
 >
-> =A0# machine support
+> The only documentation I have access to refers to the iRAM (SRAM) bei=
+ng
+> mapped between 0x02020000 and 0x02040000. Unless the HW guys have gon=
+e
+> completely wild and changed this range as well, I think we're pretty
+> safe.
 >
-> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
-> index 9fb8485..e898215 100644
-> --- a/drivers/cpufreq/Kconfig
-> +++ b/drivers/cpufreq/Kconfig
-> @@ -184,5 +184,10 @@ depends on X86
-> =A0source "drivers/cpufreq/Kconfig.x86"
-> =A0endmenu
+>> > + =A0 if (!sysram_evt0) {
+>> > + =A0 =A0 =A0 =A0 =A0 pr_err("Unable to remap EXYNOS4_PA_SYSRAM_EV=
+T0\n");
+>>
+>> Do we really need 'pr_err' here?...
 >
-> +menu "ARM CPU frequency scaling drivers"
-> +depends on ARM
-> +source "drivers/cpufreq/Kconfig.arm"
-> +endmenu
-> +
-> =A0endif
-> =A0endmenu
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.ar=
-m
-> new file mode 100644
-> index 0000000..fafdbb8
-> --- /dev/null
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -0,0 +1,23 @@
-> +#
-> +# ARM CPU Frequency scaling drivers
-> +#
-> +
-> +config ARM_S5PV210_CPUFREQ
-> + =A0 =A0 =A0 bool "Samsung S5PV210 and S5PC110"
-> + =A0 =A0 =A0 depends on CPU_S5PV210
-> + =A0 =A0 =A0 default y
-> + =A0 =A0 =A0 help
-> + =A0 =A0 =A0 =A0 This adds the CPUFreq driver for Samsung S5PV210 an=
-d
-> + =A0 =A0 =A0 =A0 S5PC110 SoCs.
-> +
-> + =A0 =A0 =A0 =A0 If in doubt, say N.
-> +
-> +config ARM_EXYNOS4210_CPUFREQ
-> + =A0 =A0 =A0 bool "Samsung EXYNOS4210"
-> + =A0 =A0 =A0 depends on CPU_EXYNOS4210
-> + =A0 =A0 =A0 default y
-> + =A0 =A0 =A0 help
-> + =A0 =A0 =A0 =A0 This adds the CPUFreq driver for Samsung EXYNOS4210
-> + =A0 =A0 =A0 =A0 SoC (S5PV310 or S5PC210).
-> +
-> + =A0 =A0 =A0 =A0 If in doubt, say N.
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index e2fc2d2..864a27c 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -41,3 +41,5 @@ obj-$(CONFIG_X86_CPUFREQ_NFORCE2) =A0 =A0 +=3D cpuf=
-req-nforce2.o
+> No. Anything will do. Though not being able to ioremap() that region =
+may
+> indicate further trouble down the road.
 >
-> =A0# ARM SoC drivers
-> =A0obj-$(CONFIG_UX500_SOC_DB8500) =A0 =A0 =A0 =A0 +=3D db8500-cpufreq=
-=2Eo
-> +obj-$(CONFIG_ARM_S5PV210_CPUFREQ) =A0 =A0 =A0+=3D s5pv210-cpufreq.o
-> +obj-$(CONFIG_ARM_EXYNOS4210_CPUFREQ) =A0 +=3D exynos4210-cpufreq.o
-> diff --git a/arch/arm/mach-exynos4/cpufreq.c b/drivers/cpufreq/exynos=
-4210-cpufreq.c
-> similarity index 99%
-> rename from arch/arm/mach-exynos4/cpufreq.c
-> rename to drivers/cpufreq/exynos4210-cpufreq.c
-> index a1bd258..54025fc 100644
-> --- a/arch/arm/mach-exynos4/cpufreq.c
-> +++ b/drivers/cpufreq/exynos4210-cpufreq.c
-> @@ -1,5 +1,4 @@
-> -/* linux/arch/arm/mach-exynos4/cpufreq.c
-> - *
-> +/*
-> =A0* Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-> =A0* =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com
-> =A0*
-> diff --git a/arch/arm/mach-s5pv210/cpufreq.c b/drivers/cpufreq/s5pv21=
-0-cpufreq.c
-> similarity index 99%
-> rename from arch/arm/mach-s5pv210/cpufreq.c
-> rename to drivers/cpufreq/s5pv210-cpufreq.c
-> index 22046e2..c482fc8 100644
-> --- a/arch/arm/mach-s5pv210/cpufreq.c
-> +++ b/drivers/cpufreq/s5pv210-cpufreq.c
-> @@ -1,5 +1,4 @@
-> -/* linux/arch/arm/mach-s5pv210/cpufreq.c
-> - *
-> +/*
-> =A0* Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> =A0* =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com
-> =A0*
+>> > + =A0 =A0 =A0 =A0 =A0 return;
+>> > + =A0 }
+>> > +
+>> > + =A0 __raw_writel(BSYM(virt_to_phys(exynos4_secondary_startup)), =
+sysram_evt0);
+>> > + =A0 iounmap(sysram_evt0);
+>> > =A0 }
+>>
+>
+> Cheers,
+>
+> =A0 =A0 =A0 =A0M.
 > --
-> 1.7.4.4
+> Reality is an implementation detail.
+>
 >
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-samsu=
