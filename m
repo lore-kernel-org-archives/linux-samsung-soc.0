@@ -1,77 +1,39 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH v3 3/3] remove the now empty mach-s3c2410/irq.c
-Date: Thu, 2 Jun 2011 12:58:30 +0200
-Message-ID: <201106021258.30979.heiko@sntech.de>
-References: <201106021254.57644.heiko@sntech.de>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 1/7] s5p-fimc: Fix possible memory leak during capture devnode
+ registration
+Date: Thu, 02 Jun 2011 15:49:50 +0200
+Message-ID: <1307022590-982-1-git-send-email-s.nawrocki@samsung.com>
+References: <1307009524-1208-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:40308 "EHLO
-	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S933334Ab1FBK6f (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Jun 2011 06:58:35 -0400
-In-Reply-To: <201106021254.57644.heiko@sntech.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1307009524-1208-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.comi
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, rjw@sisk.pl, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Add missing kfree on the error path.
 
+Reported-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-s3c2410/Makefile |    1 -
- arch/arm/mach-s3c2410/irq.c    |   29 -----------------------------
- 2 files changed, 0 insertions(+), 30 deletions(-)
- delete mode 100644 arch/arm/mach-s3c2410/irq.c
+ drivers/media/video/s5p-fimc/fimc-capture.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-s3c2410/Makefile b/arch/arm/mach-s3c2410/Makefile
-index 0d468e9..8169535 100644
---- a/arch/arm/mach-s3c2410/Makefile
-+++ b/arch/arm/mach-s3c2410/Makefile
-@@ -10,7 +10,6 @@ obj-n				:=
- obj-				:=
- 
- obj-$(CONFIG_CPU_S3C2410)	+= s3c2410.o
--obj-$(CONFIG_CPU_S3C2410)	+= irq.o
- obj-$(CONFIG_CPU_S3C2410_DMA)	+= dma.o
- obj-$(CONFIG_CPU_S3C2410_DMA)	+= dma.o
- obj-$(CONFIG_S3C2410_PM)	+= pm.o sleep.o
-diff --git a/arch/arm/mach-s3c2410/irq.c b/arch/arm/mach-s3c2410/irq.c
-deleted file mode 100644
-index 4428695..0000000
---- a/arch/arm/mach-s3c2410/irq.c
-+++ /dev/null
-@@ -1,29 +0,0 @@
--/* linux/arch/arm/mach-s3c2410/irq.c
-- *
-- * Copyright (c) 2006 Simtec Electronics
-- *	Ben Dooks <ben@simtec.co.uk>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- *
--*/
--
--#include <linux/init.h>
--#include <linux/module.h>
--#include <linux/interrupt.h>
--#include <linux/ioport.h>
--#include <linux/syscore_ops.h>
--
--#include <plat/cpu.h>
--#include <plat/pm.h>
+diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
+index d142b40..7e66455 100644
+--- a/drivers/media/video/s5p-fimc/fimc-capture.c
++++ b/drivers/media/video/s5p-fimc/fimc-capture.c
+@@ -903,6 +903,7 @@ err_vd_reg:
+ err_v4l2_reg:
+ 	v4l2_device_unregister(v4l2_dev);
+ err_info:
++	kfree(ctx);
+ 	dev_err(&fimc->pdev->dev, "failed to install\n");
+ 	return ret;
+ }
 -- 
-1.7.1
+1.7.5.2
