@@ -1,98 +1,66 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
+From: JinGoo Han <jg1.han@samsung.com>
 Subject: Re: [PATCH V2] ARM: S5P: Fix compilation error for exynos4_defconfig
-Date: Fri, 03 Jun 2011 16:50:35 +0900
-Message-ID: <4DE8924B.5010003@samsung.com>
-References: <1307084654-22052-1-git-send-email-tushar.behera@linaro.org>
+Date: Fri, 03 Jun 2011 08:03:59 +0000 (GMT)
+Message-ID: <28659450.213731307088238645.JavaMail.weblogic@epv6ml02>
+Reply-To: jg1.han@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:38304 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752876Ab1FCHup (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:54787 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753332Ab1FCIED (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Jun 2011 03:50:45 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Fri, 3 Jun 2011 04:04:03 -0400
+Received: from epcpsbge5.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LM700MXXF4JW2R0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 03 Jun 2011 16:50:44 +0900 (KST)
-Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LM700EDKF4KT2@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 03 Jun 2011 16:50:44 +0900 (KST)
-In-reply-to: <1307084654-22052-1-git-send-email-tushar.behera@linaro.org>
+ 2010)) with ESMTP id <0LM7000M9FQMMI90@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 03 Jun 2011 17:04:00 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, kgene.kim@samsung.com, nicolas.pitre@linaro.org, patches@linaro.org, samsung@lists.linaro.org, m.szyprowski@samsung.com
+To: Tushar Behera <tushar.behera@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: "linaro-dev@lists.linaro.org" <linaro-dev@lists.linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "nicolas.pitre@linaro.org" <nicolas.pitre@linaro.org>, "patches@linaro.org" <patches@linaro.org>, Shim Joonyoung <jy0922.shim@samsung.com>, "samsung@lists.linaro.org" <samsung@lists.linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 2011-06-03 =EC=98=A4=ED=9B=84 4:04, Tushar Behera wrote:
-> Added Kconfig entry for setup-usb-phy.c on which EHCI support is
-> dependent on.
->
-> Following the naming convention of other setup files, we have followi=
-ng
-> renaming.
-> 	usb-phy.c =3D=3D>  setup-usb-phy.c
->
-> Signed-off-by: Tushar Behera<tushar.behera@linaro.org>
-> ---
->   arch/arm/mach-exynos4/Kconfig                      |    6 ++++++
->   arch/arm/mach-exynos4/Makefile                     |    2 +-
->   .../mach-exynos4/{usb-phy.c =3D>  setup-usb-phy.c}    |    0
->   3 files changed, 7 insertions(+), 1 deletions(-)
->   rename arch/arm/mach-exynos4/{usb-phy.c =3D>  setup-usb-phy.c} (100=
-%)
->
-
-There is one white space but
-
-Acked-by: Joonyoung Shim <jy0922.shim@samsung.com>
-
-> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kc=
-onfig
-> index b92c1e5..a45a022 100644
-> --- a/arch/arm/mach-exynos4/Kconfig
-> +++ b/arch/arm/mach-exynos4/Kconfig
-> @@ -91,6 +91,11 @@ config EXYNOS4_SETUP_FIMC
->   	help
->   	  Common setup code for the camera interfaces.
->
-> +config EXYNOS4_SETUP_USB_PHY
-> +	bool
-> +	help
-> +	  Common setup code for USB PHY controller=09
-
-White space.
-
-> +
->   # machine support
->
->   menu "EXYNOS4 Machines"
-> @@ -176,6 +181,7 @@ config MACH_NURI
->   	select EXYNOS4_SETUP_I2C3
->   	select EXYNOS4_SETUP_I2C5
->   	select EXYNOS4_SETUP_SDHCI
-> +	select EXYNOS4_SETUP_USB_PHY
->   	select SAMSUNG_DEV_PWM
->   	help
->   	  Machine support for Samsung Mobile NURI Board.
-> diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/M=
-akefile
-> index a9bb94f..60fe5ec 100644
-> --- a/arch/arm/mach-exynos4/Makefile
-> +++ b/arch/arm/mach-exynos4/Makefile
-> @@ -56,4 +56,4 @@ obj-$(CONFIG_EXYNOS4_SETUP_KEYPAD)	+=3D setup-keypa=
-d.o
->   obj-$(CONFIG_EXYNOS4_SETUP_SDHCI)	+=3D setup-sdhci.o
->   obj-$(CONFIG_EXYNOS4_SETUP_SDHCI_GPIO)	+=3D setup-sdhci-gpio.o
->
-> -obj-$(CONFIG_USB_SUPPORT)		+=3D usb-phy.o
-> +obj-$(CONFIG_EXYNOS4_SETUP_USB_PHY)	+=3D setup-usb-phy.o
-> diff --git a/arch/arm/mach-exynos4/usb-phy.c b/arch/arm/mach-exynos4/=
-setup-usb-phy.c
-> similarity index 100%
-> rename from arch/arm/mach-exynos4/usb-phy.c
-> rename to arch/arm/mach-exynos4/setup-usb-phy.c
+DQpBY2tlZC1ieTogIEppbmdvbyBIYW4gPGpnMS5oYW5Ac2Ftc3VuZy5jb20+DQoNCj4gLS0tLS0t
+LSBPcmlnaW5hbCBNZXNzYWdlIC0tLS0tLS0NCj4gU2VuZGVyIDogVHVzaGFyIEJlaGVyYTx0dXNo
+YXIuYmVoZXJhQGxpbmFyby5vcmc+IA0KPiBEYXRlICAgOiBKdW4gMDMsIDIwMTEgMTY6MDQgKEdN
+VCswOTowMCkNCj4gVGl0bGUgIDogW1BBVENIIFYyXSBBUk06IFM1UDogRml4IGNvbXBpbGF0aW9u
+IGVycm9yIGZvciBleHlub3M0X2RlZmNvbmZpZw0KPiANCj4gQWRkZWQgS2NvbmZpZyBlbnRyeSBm
+b3Igc2V0dXAtdXNiLXBoeS5jIG9uIHdoaWNoIEVIQ0kgc3VwcG9ydCBpcw0KPiBkZXBlbmRlbnQg
+b24uDQo+IA0KPiBGb2xsb3dpbmcgdGhlIG5hbWluZyBjb252ZW50aW9uIG9mIG90aGVyIHNldHVw
+IGZpbGVzLCB3ZSBoYXZlIGZvbGxvd2luZw0KPiByZW5hbWluZy4NCj4gCXVzYi1waHkuYyA9PT4g
+c2V0dXAtdXNiLXBoeS5jDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBUdXNoYXIgQmVoZXJhIDx0dXNo
+YXIuYmVoZXJhQGxpbmFyby5vcmc+DQo+IC0tLQ0KPiAgYXJjaC9hcm0vbWFjaC1leHlub3M0L0tj
+b25maWcgICAgICAgICAgICAgICAgICAgICAgfCAgICA2ICsrKysrKw0KPiAgYXJjaC9hcm0vbWFj
+aC1leHlub3M0L01ha2VmaWxlICAgICAgICAgICAgICAgICAgICAgfCAgICAyICstDQo+ICAuLi4v
+bWFjaC1leHlub3M0L3t1c2ItcGh5LmMgPT4gc2V0dXAtdXNiLXBoeS5jfSAgICB8ICAgIDANCj4g
+IDMgZmlsZXMgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9ucygtKQ0KPiAgcmVu
+YW1lIGFyY2gvYXJtL21hY2gtZXh5bm9zNC97dXNiLXBoeS5jID0+IHNldHVwLXVzYi1waHkuY30g
+KDEwMCUpDQo+IA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1leHlub3M0L0tjb25maWcg
+Yi9hcmNoL2FybS9tYWNoLWV4eW5vczQvS2NvbmZpZw0KPiBpbmRleCBiOTJjMWU1Li5hNDVhMDIy
+IDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FybS9tYWNoLWV4eW5vczQvS2NvbmZpZw0KPiArKysgYi9h
+cmNoL2FybS9tYWNoLWV4eW5vczQvS2NvbmZpZw0KPiBAQCAtOTEsNiArOTEsMTEgQEAgY29uZmln
+IEVYWU5PUzRfU0VUVVBfRklNQw0KPiAgCWhlbHANCj4gIAkgIENvbW1vbiBzZXR1cCBjb2RlIGZv
+ciB0aGUgY2FtZXJhIGludGVyZmFjZXMuDQo+IA0KPiArY29uZmlnIEVYWU5PUzRfU0VUVVBfVVNC
+X1BIWQ0KPiArCWJvb2wNCj4gKwloZWxwDQo+ICsJICBDb21tb24gc2V0dXAgY29kZSBmb3IgVVNC
+IFBIWSBjb250cm9sbGVyCQ0KPiArDQo+ICAjIG1hY2hpbmUgc3VwcG9ydA0KPiAgDQo+ICBtZW51
+ICJFWFlOT1M0IE1hY2hpbmVzIg0KPiBAQCAtMTc2LDYgKzE4MSw3IEBAIGNvbmZpZyBNQUNIX05V
+UkkNCj4gIAlzZWxlY3QgRVhZTk9TNF9TRVRVUF9JMkMzDQo+ICAJc2VsZWN0IEVYWU5PUzRfU0VU
+VVBfSTJDNQ0KPiAgCXNlbGVjdCBFWFlOT1M0X1NFVFVQX1NESENJDQo+ICsJc2VsZWN0IEVYWU5P
+UzRfU0VUVVBfVVNCX1BIWQ0KPiAgCXNlbGVjdCBTQU1TVU5HX0RFVl9QV00NCj4gIAloZWxwDQo+
+ICAJICBNYWNoaW5lIHN1cHBvcnQgZm9yIFNhbXN1bmcgTW9iaWxlIE5VUkkgQm9hcmQuDQo+IGRp
+ZmYgLS1naXQgYS9hcmNoL2FybS9tYWNoLWV4eW5vczQvTWFrZWZpbGUgYi9hcmNoL2FybS9tYWNo
+LWV4eW5vczQvTWFrZWZpbGUNCj4gaW5kZXggYTliYjk0Zi4uNjBmZTVlYyAxMDA2NDQNCj4gLS0t
+IGEvYXJjaC9hcm0vbWFjaC1leHlub3M0L01ha2VmaWxlDQo+ICsrKyBiL2FyY2gvYXJtL21hY2gt
+ZXh5bm9zNC9NYWtlZmlsZQ0KPiBAQCAtNTYsNCArNTYsNCBAQCBvYmotJChDT05GSUdfRVhZTk9T
+NF9TRVRVUF9LRVlQQUQpCSs9IHNldHVwLWtleXBhZC5vDQo+ICBvYmotJChDT05GSUdfRVhZTk9T
+NF9TRVRVUF9TREhDSSkJKz0gc2V0dXAtc2RoY2kubw0KPiAgb2JqLSQoQ09ORklHX0VYWU5PUzRf
+U0VUVVBfU0RIQ0lfR1BJTykJKz0gc2V0dXAtc2RoY2ktZ3Bpby5vDQo+ICANCj4gLW9iai0kKENP
+TkZJR19VU0JfU1VQUE9SVCkJCSs9IHVzYi1waHkubw0KPiArb2JqLSQoQ09ORklHX0VYWU5PUzRf
+U0VUVVBfVVNCX1BIWSkJKz0gc2V0dXAtdXNiLXBoeS5vDQo+IGRpZmYgLS1naXQgYS9hcmNoL2Fy
+bS9tYWNoLWV4eW5vczQvdXNiLXBoeS5jIGIvYXJjaC9hcm0vbWFjaC1leHlub3M0L3NldHVwLXVz
+Yi1waHkuYw0KPiBzaW1pbGFyaXR5IGluZGV4IDEwMCUNCj4gcmVuYW1lIGZyb20gYXJjaC9hcm0v
+bWFjaC1leHlub3M0L3VzYi1waHkuYw0KPiByZW5hbWUgdG8gYXJjaC9hcm0vbWFjaC1leHlub3M0
+L3NldHVwLXVzYi1waHkuYw0K
