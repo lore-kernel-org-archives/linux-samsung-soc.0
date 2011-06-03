@@ -1,47 +1,39 @@
-From: Sangbeom Kim <sbkim73@samsung.com>
-Subject: Can't compile with exynos4_defconfig
-Date: Fri, 03 Jun 2011 11:25:53 +0900
-Message-ID: <03ae01cc2195$8fee3ae0$afcab0a0$@com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH] ARM: S5P: Fix compilation error for exynos4_defconfig
+Date: Fri,  3 Jun 2011 10:37:19 +0530
+Message-ID: <1307077639-18604-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:62015 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751493Ab1FCCZz (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:63931 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750929Ab1FCFJY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Jun 2011 22:25:55 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LM7006WM010ZIC0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 03 Jun 2011 11:25:53 +0900 (KST)
-Received: from DOSBKIM7301 ([12.23.119.77])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LM700537035ND@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 03 Jun 2011 11:25:53 +0900 (KST)
-Content-language: ko
+	Fri, 3 Jun 2011 01:09:24 -0400
+Received: by pzk9 with SMTP id 9so705525pzk.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Jun 2011 22:09:23 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linaro-dev@linaro.org, kgene.kim@samsung.com, nicolas.pitre@linaro.org, patches@linaro.org, jy0922.shim@samsung.com
 
-Hi,
+EHCI requires that USB support be enabled in kernel config.
+Selecting USB_SUPPORT with S5P_DEV_USB_EHCI fixes the problem.
 
-By default exynos4_defconfig, 3.0-rc1 can't compile the code.
-It seem to have dependency on usb configuration.
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ arch/arm/plat-s5p/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-Error message:
-arch/arm/plat-s5p/built-in.o: In function `s5p_ehci_set_platdata':
-/home/cornus/tmp/linux-3.0-rc1/arch/arm/plat-s5p/dev-ehci.c:54: undefined
-reference to `s5p_usb_phy_init'
-/home/cornus/tmp/linux-3.0-rc1/arch/arm/plat-s5p/dev-ehci.c:54: undefined
-reference to `s5p_usb_phy_init'
-/home/cornus/tmp/linux-3.0-rc1/arch/arm/plat-s5p/dev-ehci.c:56: undefined
-reference to `s5p_usb_phy_exit'
-/home/cornus/tmp/linux-3.0-rc1/arch/arm/plat-s5p/dev-ehci.c:56: undefined
-reference to `s5p_usb_phy_exit'
-make: *** [.tmp_vmlinux1] Error 1 
-
-
-Regards,
-SB Kim
+diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
+index e98f5c5..c7e7419 100644
+--- a/arch/arm/plat-s5p/Kconfig
++++ b/arch/arm/plat-s5p/Kconfig
+@@ -87,6 +87,7 @@ config S5P_DEV_CSIS1
+ 
+ config S5P_DEV_USB_EHCI
+ 	bool
++	select USB_SUPPORT
+ 	help
+ 	  Compile in platform device definition for USB EHCI
+ 
+-- 
+1.7.1
