@@ -1,39 +1,47 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 1/7] s5p-fimc: Fix possible memory leak during capture devnode
- registration
-Date: Thu, 02 Jun 2011 15:49:50 +0200
-Message-ID: <1307022590-982-1-git-send-email-s.nawrocki@samsung.com>
-References: <1307009524-1208-1-git-send-email-s.nawrocki@samsung.com>
+From: Sangbeom Kim <sbkim73@samsung.com>
+Subject: Can't compile with exynos4_defconfig
+Date: Fri, 03 Jun 2011 11:25:53 +0900
+Message-ID: <03ae01cc2195$8fee3ae0$afcab0a0$@com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1307009524-1208-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.comi
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:62015 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751493Ab1FCCZz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 Jun 2011 22:25:55 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LM7006WM010ZIC0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 03 Jun 2011 11:25:53 +0900 (KST)
+Received: from DOSBKIM7301 ([12.23.119.77])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LM700537035ND@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 03 Jun 2011 11:25:53 +0900 (KST)
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-Add missing kfree on the error path.
+Hi,
 
-Reported-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/media/video/s5p-fimc/fimc-capture.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+By default exynos4_defconfig, 3.0-rc1 can't compile the code.
+It seem to have dependency on usb configuration.
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index d142b40..7e66455 100644
---- a/drivers/media/video/s5p-fimc/fimc-capture.c
-+++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -903,6 +903,7 @@ err_vd_reg:
- err_v4l2_reg:
- 	v4l2_device_unregister(v4l2_dev);
- err_info:
-+	kfree(ctx);
- 	dev_err(&fimc->pdev->dev, "failed to install\n");
- 	return ret;
- }
--- 
-1.7.5.2
+Error message:
+arch/arm/plat-s5p/built-in.o: In function `s5p_ehci_set_platdata':
+/home/cornus/tmp/linux-3.0-rc1/arch/arm/plat-s5p/dev-ehci.c:54: undefined
+reference to `s5p_usb_phy_init'
+/home/cornus/tmp/linux-3.0-rc1/arch/arm/plat-s5p/dev-ehci.c:54: undefined
+reference to `s5p_usb_phy_init'
+/home/cornus/tmp/linux-3.0-rc1/arch/arm/plat-s5p/dev-ehci.c:56: undefined
+reference to `s5p_usb_phy_exit'
+/home/cornus/tmp/linux-3.0-rc1/arch/arm/plat-s5p/dev-ehci.c:56: undefined
+reference to `s5p_usb_phy_exit'
+make: *** [.tmp_vmlinux1] Error 1 
+
+
+Regards,
+SB Kim
