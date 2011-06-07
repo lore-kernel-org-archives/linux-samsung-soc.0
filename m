@@ -1,54 +1,81 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v3 0/3] Fixes for breakage resulting from syscore_ops
- patch on s3c24xx
-Date: Fri, 03 Jun 2011 17:49:47 -0700
-Message-ID: <4DE9812B.6010005@samsung.com>
-References: <201106021254.57644.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [PATCH] [CPUFREQ] Move compile for S3C64XX cpufreq to /drivers/cpufreq
+Date: Mon,  6 Jun 2011 18:43:01 -0700
+Message-ID: <1307410981-20392-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:38411 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752800Ab1FDAtv (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:42906 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756721Ab1FGBnN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Jun 2011 20:49:51 -0400
-Received: by pwi15 with SMTP id 15so1225334pwi.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Jun 2011 17:49:50 -0700 (PDT)
-In-Reply-To: <201106021254.57644.heiko@sntech.de>
+	Mon, 6 Jun 2011 21:43:13 -0400
+Received: by pzk9 with SMTP id 9so2228911pzk.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Jun 2011 18:43:13 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, rjw@sisk.pl, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Dave Jones <davej@redhat.com>
 
-On 06/02/11 03:54, Heiko St=FCbner wrote:
-> The syscore_ops patch from Rafael J. Wysocki introduced some small
-> glitches for the S3C24XX cpus resulting in compile errors.
->
-> Changes since v1: add missing Signed-off-by lines
-> Changes since v2: fix mangled tabs
->
-> Heiko Stuebner (3):
->    Fix missing struct for s3c2410_dma_chan in s3c2410_dma_suspend_cha=
-n
->    Move s3c24xx_irq_syscore_ops to plat-s3c24xx/irq.c
->    remove the now empty mach-s3c2410/irq.c
->
->   arch/arm/mach-s3c2410/Makefile |    1 -
->   arch/arm/mach-s3c2410/irq.c    |   34 -----------------------------=
------
->   arch/arm/plat-s3c24xx/dma.c    |    2 +-
->   arch/arm/plat-s3c24xx/irq.c    |    6 ++++++
->   4 files changed, 7 insertions(+), 36 deletions(-)
->   delete mode 100644 arch/arm/mach-s3c2410/irq.c
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Dave Jones <davej@redhat.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/Kconfig                                 |    4 ----
+ drivers/cpufreq/Kconfig.arm                      |    9 +++++++++
+ drivers/cpufreq/Makefile                         |    2 +-
+ drivers/cpufreq/{s3c64xx.c => s3c64xx-cpufreq.c} |    0
+ 4 files changed, 10 insertions(+), 5 deletions(-)
+ rename drivers/cpufreq/{s3c64xx.c => s3c64xx-cpufreq.c} (100%)
 
-Looks OK, will apply.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 9adc278..31c2899 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1875,10 +1875,6 @@ config CPU_FREQ_PXA
+ 	default y
+ 	select CPU_FREQ_DEFAULT_GOV_USERSPACE
+ 
+-config CPU_FREQ_S3C64XX
+-	bool "CPUfreq support for Samsung S3C64XX CPUs"
+-	depends on CPU_FREQ && CPU_S3C6410
+-
+ config CPU_FREQ_S3C
+ 	bool
+ 	help
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index e5c56c7..500982f 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -2,6 +2,15 @@
+ # ARM CPU Frequency scaling drivers
+ #
+ 
++config ARM_S3C64XX_CPUFREQ
++	bool "Samsung S3C64XX"
++	depends on CPU_S3C6410
++	default y
++	help
++	  This adds the CPUFreq driver for Samsung S5C6410 SoC.
++
++	  If in doubt, say N.
++
+ config ARM_S5PV210_CPUFREQ
+ 	bool "Samsung S5PV210 and S5PC110"
+ 	depends on CPU_S5PV210
+diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+index 5419478..ab75e57 100644
+--- a/drivers/cpufreq/Makefile
++++ b/drivers/cpufreq/Makefile
+@@ -40,6 +40,6 @@ obj-$(CONFIG_X86_CPUFREQ_NFORCE2)	+= cpufreq-nforce2.o
+ ##################################################################################
+ # ARM SoC drivers
+ obj-$(CONFIG_UX500_SOC_DB8500)		+= db8500-cpufreq.o
+-obj-$(CONFIG_CPU_FREQ_S3C64XX)		+= s3c64xx.o
++obj-$(CONFIG_ARM_S3C64XX_CPUFREQ)	+= s3c64xx-cpufreq.o
+ obj-$(CONFIG_ARM_S5PV210_CPUFREQ)	+= s5pv210-cpufreq.o
+ obj-$(CONFIG_ARM_EXYNOS4210_CPUFREQ)	+= exynos4210-cpufreq.o
+diff --git a/drivers/cpufreq/s3c64xx.c b/drivers/cpufreq/s3c64xx-cpufreq.c
+similarity index 100%
+rename from drivers/cpufreq/s3c64xx.c
+rename to drivers/cpufreq/s3c64xx-cpufreq.c
+-- 
+1.7.4.4
