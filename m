@@ -1,38 +1,79 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] ARM:SAMSUNG: Move S3C DMA driver to drivers/dma
-Date: Tue, 7 Jun 2011 09:15:27 +0100
-Message-ID: <20110607081527.GB20929@n2100.arm.linux.org.uk>
-References: <1307432901-22781-1-git-send-email-alim.akhtar@samsung.com> <BANLkTintADbXSiV07VTMbFfmUV+4-q2-gw@mail.gmail.com> <BANLkTimjWNf3PxHXj3o5qubH5g7gMHjhFg@mail.gmail.com>
+From: Thomas Abraham <thomas.ab@samsung.com>
+Subject: [PATCH] ARM: EXYNOS4: Fix incorrect mapping of gpio pull-up macro to
+	register setting
+Date: Tue, 07 Jun 2011 14:04:49 +0530
+Message-ID: <1307435689-15954-1-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:50919 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751499Ab1FGIQK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Jun 2011 04:16:10 -0400
-Content-Disposition: inline
-In-Reply-To: <BANLkTimjWNf3PxHXj3o5qubH5g7gMHjhFg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: grant.likely@secretlab.ca, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kmpark@infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Kyungmin Park <kmpark@infradead.org>, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>, root <alim.akhtar@samsung.com>
 
-On Tue, Jun 07, 2011 at 01:39:43PM +0530, Jassi Brar wrote:
-> Unfortunately, no. There are some features of Samsung's DMA API that
-> the drivers have come to rely upon.
-> Besides, I am not particularly a fan of the generic API. And IIRC,
-> neither is Ben Dooks, the designer of the
-> Samsung's DMA API.
+The S3C_GPIO_PULL_UP macro value incorrectly maps to a reserved setting of GPIO
+pull up/down registers on Exynos4 platform. Fix this incorrect mapping by adding
+wrappers to the s3c_gpio_setpull_updown and s3c_gpio_getpull_updown functions.
 
-We are now at the point where this is non-optional.  If the generic API
-doesn't fit what Samsung needs, then that needs to be discussed and
-whatever problems there are need to be resolved.
+Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+---
+ drivers/gpio/gpio-exynos4.c |   29 +++++++++++++++++++++++++----
+ 1 files changed, 25 insertions(+), 4 deletions(-)
 
-Continuing the platform specific DMA APIs is not sustainable.
-
-I'm getting rather fed up with Samsung needing custom this and that, and
-refusing to use the generic infrastructure such as clkdev.  This attitude
-needs to change NOW.
-
-Fix your platform specific crap and start using the generic services.
+diff --git a/drivers/gpio/gpio-exynos4.c b/drivers/gpio/gpio-exynos4.c
+index d54ca6a..9029835 100644
+--- a/drivers/gpio/gpio-exynos4.c
++++ b/drivers/gpio/gpio-exynos4.c
+@@ -21,16 +21,37 @@
+ #include <plat/gpio-cfg.h>
+ #include <plat/gpio-cfg-helpers.h>
+ 
++int s3c_gpio_setpull_exynos4(struct s3c_gpio_chip *chip,
++				unsigned int off, s3c_gpio_pull_t pull)
++{
++	if (pull == S3C_GPIO_PULL_UP)
++		pull = 3;
++
++	return s3c_gpio_setpull_updown(chip, off, pull);
++}
++
++s3c_gpio_pull_t s3c_gpio_getpull_exynos4(struct s3c_gpio_chip *chip,
++						unsigned int off)
++{
++	s3c_gpio_pull_t pull;
++
++	pull = s3c_gpio_getpull_updown(chip, off);
++	if (pull == 3)
++		pull = S3C_GPIO_PULL_UP;
++
++	return pull;
++}
++
+ static struct s3c_gpio_cfg gpio_cfg = {
+ 	.set_config	= s3c_gpio_setcfg_s3c64xx_4bit,
+-	.set_pull	= s3c_gpio_setpull_updown,
+-	.get_pull	= s3c_gpio_getpull_updown,
++	.set_pull	= s3c_gpio_setpull_exynos4,
++	.get_pull	= s3c_gpio_getpull_exynos4,
+ };
+ 
+ static struct s3c_gpio_cfg gpio_cfg_noint = {
+ 	.set_config	= s3c_gpio_setcfg_s3c64xx_4bit,
+-	.set_pull	= s3c_gpio_setpull_updown,
+-	.get_pull	= s3c_gpio_getpull_updown,
++	.set_pull	= s3c_gpio_setpull_exynos4,
++	.get_pull	= s3c_gpio_getpull_exynos4,
+ };
+ 
+ /*
+-- 
+1.6.6.rc2
