@@ -1,119 +1,78 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH] ARM: EXYNOS4: Fix incorrect mapping of gpio pull-up
- macro to register setting
-Date: Tue, 7 Jun 2011 11:10:30 -0600
-Message-ID: <20110607171030.GE17754@ponder.secretlab.ca>
-References: <1307435689-15954-1-git-send-email-thomas.ab@samsung.com>
- <BANLkTi=YeOyK1WX61NtyprYdUyNmSo1sTw@mail.gmail.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] ARM:SAMSUNG: Move S3C DMA driver to drivers/dma
+Date: Tue, 7 Jun 2011 19:29:23 +0100
+Message-ID: <20110607182923.GA28451@n2100.arm.linux.org.uk>
+References: <1307432901-22781-1-git-send-email-alim.akhtar@samsung.com> <BANLkTintADbXSiV07VTMbFfmUV+4-q2-gw@mail.gmail.com> <BANLkTimjWNf3PxHXj3o5qubH5g7gMHjhFg@mail.gmail.com> <20110607081527.GB20929@n2100.arm.linux.org.uk> <BANLkTin66PhYGmVSOJcuZr8wDH_iNgjhZQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:50593 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753163Ab1FGRKd (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:59994 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755984Ab1FGS3u (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Jun 2011 13:10:33 -0400
-Received: by pwi15 with SMTP id 15so2833327pwi.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Jun 2011 10:10:32 -0700 (PDT)
+	Tue, 7 Jun 2011 14:29:50 -0400
 Content-Disposition: inline
-In-Reply-To: <BANLkTi=YeOyK1WX61NtyprYdUyNmSo1sTw@mail.gmail.com>
+In-Reply-To: <BANLkTin66PhYGmVSOJcuZr8wDH_iNgjhZQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>
-Cc: Thomas Abraham <thomas.ab@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Kyungmin Park <kmpark@infradead.org>, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassi.brar@samsung.com>, root <alim.akhtar@samsung.com>
 
-On Tue, Jun 07, 2011 at 05:42:47PM +0900, Kyungmin Park wrote:
-> On Tue, Jun 7, 2011 at 5:34 PM, Thomas Abraham <thomas.ab@samsung.com=
-> wrote:
-> > The S3C_GPIO_PULL_UP macro value incorrectly maps to a reserved set=
-ting of GPIO
-> > pull up/down registers on Exynos4 platform. Fix this incorrect mapp=
-ing by adding
-> > wrappers to the s3c_gpio_setpull_updown and s3c_gpio_getpull_updown=
- functions.
->=20
-> Personally I like to use the variable instead of function hooking.
-> set the correct variable at cpu dection and use it
-> then these thing make a single generic function and each gpio_cfg use
-> the same thing.
->=20
-> Anyway it's next step. current fix the bug first.
->=20
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+On Tue, Jun 07, 2011 at 03:45:18PM +0530, Jassi Brar wrote:
+> On Tue, Jun 7, 2011 at 1:45 PM, Russell King - ARM Linux
+> <linux@arm.linux.org.uk> wrote:
+> > On Tue, Jun 07, 2011 at 01:39:43PM +0530, Jassi Brar wrote:
+> >> Unfortunately, no. There are some features of Samsung's DMA API th=
+at
+> >> the drivers have come to rely upon.
+> >> Besides, I am not particularly a fan of the generic API. And IIRC,
+> >> neither is Ben Dooks, the designer of the
+> >> Samsung's DMA API.
+> >
+> > We are now at the point where this is non-optional. =A0If the gener=
+ic API
+> > doesn't fit what Samsung needs, then that needs to be discussed and
+> > whatever problems there are need to be resolved.
+> The discussion did take off a few months ago, but we didn't reach any=
+where.
+> Being able to queue request from the 'done' callback, the need of
+> circular buffer
+> API (possibly a free-running one too) and callbacks in irq-context, a=
+s
+> they happen,
+> were a few requirements for having fast peripherals with shallow fifo
+> work without underruns.
 
-Applied, thanks.
+I can see why you have these concerns; the problem is the slave DMA
+engine API was never properly documented.
 
-g.
+1. The slave API does permit the done callback to submit new requests
+   already (and any DMA engine driver which doesn't allow that is broke=
+n.)
 
->=20
-> >
-> > Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> > ---
-> > =A0drivers/gpio/gpio-exynos4.c | =A0 29 +++++++++++++++++++++++++--=
---
-> > =A01 files changed, 25 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpio-exynos4.c b/drivers/gpio/gpio-exynos=
-4.c
-> > index d54ca6a..9029835 100644
-> > --- a/drivers/gpio/gpio-exynos4.c
-> > +++ b/drivers/gpio/gpio-exynos4.c
-> > @@ -21,16 +21,37 @@
-> > =A0#include <plat/gpio-cfg.h>
-> > =A0#include <plat/gpio-cfg-helpers.h>
-> >
-> > +int s3c_gpio_setpull_exynos4(struct s3c_gpio_chip *chip,
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 unsig=
-ned int off, s3c_gpio_pull_t pull)
-> > +{
-> > + =A0 =A0 =A0 if (pull =3D=3D S3C_GPIO_PULL_UP)
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pull =3D 3;
-> > +
-> > + =A0 =A0 =A0 return s3c_gpio_setpull_updown(chip, off, pull);
-> > +}
-> static?
-> > +
-> > +s3c_gpio_pull_t s3c_gpio_getpull_exynos4(struct s3c_gpio_chip *chi=
-p,
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 unsigned int off)
-> > +{
-> > + =A0 =A0 =A0 s3c_gpio_pull_t pull;
-> > +
-> > + =A0 =A0 =A0 pull =3D s3c_gpio_getpull_updown(chip, off);
-> > + =A0 =A0 =A0 if (pull =3D=3D 3)
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pull =3D S3C_GPIO_PULL_UP;
-> > +
-> > + =A0 =A0 =A0 return pull;
-> > +}
-> ditto.
-> > +
-> > =A0static struct s3c_gpio_cfg gpio_cfg =3D {
-> > =A0 =A0 =A0 =A0.set_config =A0 =A0 =3D s3c_gpio_setcfg_s3c64xx_4bit=
-,
-> > - =A0 =A0 =A0 .set_pull =A0 =A0 =A0 =3D s3c_gpio_setpull_updown,
-> > - =A0 =A0 =A0 .get_pull =A0 =A0 =A0 =3D s3c_gpio_getpull_updown,
-> > + =A0 =A0 =A0 .set_pull =A0 =A0 =A0 =3D s3c_gpio_setpull_exynos4,
-> > + =A0 =A0 =A0 .get_pull =A0 =A0 =A0 =3D s3c_gpio_getpull_exynos4,
-> > =A0};
-> >
-> > =A0static struct s3c_gpio_cfg gpio_cfg_noint =3D {
-> > =A0 =A0 =A0 =A0.set_config =A0 =A0 =3D s3c_gpio_setcfg_s3c64xx_4bit=
-,
-> > - =A0 =A0 =A0 .set_pull =A0 =A0 =A0 =3D s3c_gpio_setpull_updown,
-> > - =A0 =A0 =A0 .get_pull =A0 =A0 =A0 =3D s3c_gpio_getpull_updown,
-> > + =A0 =A0 =A0 .set_pull =A0 =A0 =A0 =3D s3c_gpio_setpull_exynos4,
-> > + =A0 =A0 =A0 .get_pull =A0 =A0 =A0 =3D s3c_gpio_getpull_exynos4,
-> > =A0};
-> >
-> > =A0/*
-> > --
-> > 1.6.6.rc2
-> >
-> >
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> >
+Note that slave APIs _should_ permit several requests to be queued up
+and as each finish, the next one should be started.  In other words,
+once DMA has started it should continue until there is no more work for
+the DMA engine to perform.
+
+2. Circular buffer support has been added - see device_prep_dma_cyclic(=
+).
+
+However, 2 is not really a requirement for audio - you can queue severa=
+l
+single slave transfers (one per period) initially, and then you get
+callbacks as each transfer completes.  In the callback, you can submit
+an additional buffer, and continue doing so causing DMA to never end.
+
+I believe that this is a saner approach than the circular buffer suppor=
+t,
+and its what I tried to put together for the AMBA PL041 AACI DMA (but
+unfortunately, ARMs platforms are totally broken when it comes to DMA.)
+
+This also removes the need for the callback to be in IRQ context.
+
+So I don't see that anything you've mentioned is a problem with the API
+as it stands today - there may be issues with the way the DMA engine
+driver has been implemented which cause it not to conform to what I've
+said above, but those are driver bugs and not a fault of the API.
