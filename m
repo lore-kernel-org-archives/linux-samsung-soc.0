@@ -1,47 +1,49 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ARM:SAMSUNG: Move S3C DMA driver to drivers/dma
-Date: Wed, 8 Jun 2011 09:55:27 +0100
-Message-ID: <20110608085526.GA2828@opensource.wolfsonmicro.com>
-References: <1307432901-22781-1-git-send-email-alim.akhtar@samsung.com>
- <BANLkTintADbXSiV07VTMbFfmUV+4-q2-gw@mail.gmail.com>
- <BANLkTimjWNf3PxHXj3o5qubH5g7gMHjhFg@mail.gmail.com>
- <20110607081527.GB20929@n2100.arm.linux.org.uk>
- <BANLkTin66PhYGmVSOJcuZr8wDH_iNgjhZQ@mail.gmail.com>
- <20110607182923.GA28451@n2100.arm.linux.org.uk>
- <20110607184329.GA20849@sirena.org.uk>
- <BANLkTikXGpxpyF8kQORqswD5tqNEjtj3dA@mail.gmail.com>
- <20110607214151.GA7712@opensource.wolfsonmicro.com>
- <BANLkTimwAHdpJbLqqBwEXjqWwg75SciUVw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH] ARM: EXYNOS4: Fix missing S5P_VA_AUDSS definition
+Date: Wed, 08 Jun 2011 15:15:40 +0530
+Message-ID: <1307526340-19910-1-git-send-email-ch.naveen@samsung.com>
+References: <1303954372-18565-2-git-send-email-sbkim73@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:32945 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754523Ab1FHIz3 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:14301 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751289Ab1FHJtH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Jun 2011 04:55:29 -0400
-Content-Disposition: inline
-In-Reply-To: <BANLkTimwAHdpJbLqqBwEXjqWwg75SciUVw@mail.gmail.com>
+	Wed, 8 Jun 2011 05:49:07 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LMG002JUTXDIFP0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 08 Jun 2011 18:49:05 +0900 (KST)
+Received: from Hawshines.sisodomain.com (unknown [107.108.83.161])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTPA id <0LMG005TZTXOO600@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 08 Jun 2011 18:49:04 +0900 (KST)
+In-reply-to: <1303954372-18565-2-git-send-email-sbkim73@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kmpark@infradead.org>, Jassi Brar <jassi.brar@samsung.com>, kgene.kim@samsung.com, root <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com
 
-On Wed, Jun 08, 2011 at 08:21:08AM +0530, Jassi Brar wrote:
-> On Wed, Jun 8, 2011 at 3:11 AM, Mark Brown
+This patch fixes the 'S5P_VA_AUDSS' missing definition
+causing compilation break.
 
-> > That's fairly unusual, though - usually DMA controllers seem to support
-> > chaining requests before they support circular operation, at which point
-> > unless the hardware is badly misdone you can just chain another buffer,
-> > giving that buffer's worth of time for the CPU to respond.
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+---
+ arch/arm/plat-s5p/include/plat/map-s5p.h |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-> While writing PL330 driver, I wasn't able to figure out a way to implement LLI.
-> Please have a look at the PL330 trm and suggest if we can implement it in a
-> generic way without considering them special requests.
-> I know pl080 supports LLI and it's fine.
-
-I'm perfectly prepared to believe that there's poorly designed hardware
-out there (either due to just poor design or deploying a controller in
-an inappropriate application) that requires us to do things in software;
-it's just relatively unusual as users tend to run into issues which
-either can't be resolved or are excessively painful to resolve.
+diff --git a/arch/arm/plat-s5p/include/plat/map-s5p.h b/arch/arm/plat-s5p/include/plat/map-s5p.h
+index d973d39..daa4a44 100644
+--- a/arch/arm/plat-s5p/include/plat/map-s5p.h
++++ b/arch/arm/plat-s5p/include/plat/map-s5p.h
+@@ -40,6 +40,7 @@
+ #define S5P_VA_GIC_DIST		S5P_VA_COREPERI(0x1000)
+ 
+ #define S3C_VA_USB_HSPHY	S3C_ADDR(0x02900000)
++#define S5P_VA_AUDSS		S3C_ADDR(0x02A00000)
+ 
+ #define VA_VIC(x)		(S3C_VA_IRQ + ((x) * 0x10000))
+ #define VA_VIC0			VA_VIC(0)
+-- 
+1.7.2.3
