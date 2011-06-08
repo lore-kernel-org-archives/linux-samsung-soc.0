@@ -1,36 +1,33 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
+From: Kyungmin Park <kmpark@infradead.org>
 Subject: Re: [PATCH] ARM: S5PV210: Fix build breakage due to renaming of S3C_VA_USB_HSPHY
-Date: Wed, 8 Jun 2011 19:43:42 +0530
-Message-ID: <BANLkTimo82WFQsKbgsf9nWw2OWhzxDawOw@mail.gmail.com>
+Date: Wed, 8 Jun 2011 23:13:52 +0900
+Message-ID: <BANLkTi=c1p7yxswvymBWS1PQeqW=+weKbQ@mail.gmail.com>
 References: <1307532337-29348-1-git-send-email-thomas.ab@samsung.com>
 	<005501cc25e3$7df601e0$79e205a0$%szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:48877 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755024Ab1FHONn convert rfc822-to-8bit (ORCPT
+Received: from mail-vx0-f174.google.com ([209.85.220.174]:56106 "EHLO
+	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755024Ab1FHONx convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Jun 2011 10:13:43 -0400
-Received: by qwk3 with SMTP id 3so238995qwk.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jun 2011 07:13:43 -0700 (PDT)
+	Wed, 8 Jun 2011 10:13:53 -0400
+Received: by vxi39 with SMTP id 39so375507vxi.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Jun 2011 07:13:52 -0700 (PDT)
 In-Reply-To: <005501cc25e3$7df601e0$79e205a0$%szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, arm-linux <linux-arm-kernel@lists.infradead.org>
 Cc: Thomas Abraham <thomas.ab@samsung.com>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On 8 June 2011 19:23, Marek Szyprowski <m.szyprowski@samsung.com> wrote=
-:
+On Wed, Jun 8, 2011 at 10:53 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
 > Hello,
 >
 > There is already the patch that fixes this issue available on
 > kgene/s5p_fixes_for_linus branch. Please check commit 08115a139 from
 > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-
-Thanks Marek. I apologize for the noise.
-
 >
 > On Wednesday, June 08, 2011 1:26 PM Thomas Abraham wrote:
 >
@@ -38,6 +35,21 @@ Thanks Marek. I apologize for the noise.
 >> ("ARM: EXYNOS4: Add usb host phy control") renamed S3C_VA_USB_HSPHY
 >> to S5P_VA_USB_HSPHY in s5p-map.h file. Fix build for S5PV210 platfor=
 m.
+
+Hi Thomas & Marek,
+
+We lived for long time with mismatch prefix.
+So how about to clean up the mismatch prefix, S3C_* and S5P_* at this t=
+ime?
+
+One method is that it just passes the physical address and driver
+should ioremap at driver instead of static mapping.
+
+How do you think?
+
+Thank you,
+Kyungmin Park
+
 >>
 >> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 >> ---
