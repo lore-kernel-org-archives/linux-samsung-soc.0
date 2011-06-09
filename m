@@ -1,49 +1,52 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM:SAMSUNG: Move S3C DMA driver to drivers/dma
-Date: Thu, 09 Jun 2011 11:24:01 -0700
-Message-ID: <4DF10FC1.9030406@samsung.com>
-References: <1307432901-22781-1-git-send-email-alim.akhtar@samsung.com> <BANLkTintADbXSiV07VTMbFfmUV+4-q2-gw@mail.gmail.com> <BANLkTimjWNf3PxHXj3o5qubH5g7gMHjhFg@mail.gmail.com> <20110607081527.GB20929@n2100.arm.linux.org.uk> <BANLkTin66PhYGmVSOJcuZr8wDH_iNgjhZQ@mail.gmail.com> <20110607182923.GA28451@n2100.arm.linux.org.uk> <BANLkTikLFCyzU3UApjjwfX0Vjujo9WAFZA@mail.gmail.com> <20110607223614.GC28451@n2100.arm.linux.org.uk>
+Subject: Re: [PATCH 0/9] Add clkdev support for Samsung platforms
+Date: Thu, 09 Jun 2011 11:33:41 -0700
+Message-ID: <4DF11205.7040103@samsung.com>
+References: <1307594324-11053-1-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=EUC-KR
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:42038 "EHLO
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:62180 "EHLO
 	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751942Ab1FIS0Q (ORCPT
+	with ESMTP id S1752008Ab1FISf1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jun 2011 14:26:16 -0400
-Received: by gxk21 with SMTP id 21so944347gxk.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Jun 2011 11:26:15 -0700 (PDT)
-In-Reply-To: <20110607223614.GC28451@n2100.arm.linux.org.uk>
+	Thu, 9 Jun 2011 14:35:27 -0400
+Received: by gxk21 with SMTP id 21so948500gxk.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Jun 2011 11:35:26 -0700 (PDT)
+In-Reply-To: <1307594324-11053-1-git-send-email-thomas.ab@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, Kyungmin Park <kmpark@infradead.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, root <alim.akhtar@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
 
-On 06/07/11 15:36, Russell King - ARM Linux wrote:
-> I see no effort from the Samsung folk to even start considering moving
-> to common APIs - I see precisely the opposite.  They seem to have a
-> strong desire to invent their own new APIs all the time rather than
-> look at existing APIs and discuss how they can be used or adapted so
-> they work for Samsung.
+On 06/08/11 21:38, Thomas Abraham wrote:
+> This patch series adds clkdev support for all Samsung platforms. clkdev
+> support is a prerequisite for adding device tree on Samsung platforms
+> and possibly revive framebuffer driver patches for Exynos4 platforms.
 >
-> That is not sustainable, and if it continues, it will probably result
-> in Samsung stuff being chucked out of mainline.  We are most definitely
-> at the point where custom APIs are no longer permissible, especially
-> for any new SoCs.
+> The first of the two patches are for eliminating the explict
+> console_initcall from the serial drivers. This is required to prevent
+> the clk_get being invoked at time when device registrations have not
+> completed.
+>
+> This patch series is based on the latest
+> git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git for-next
+>
+> and the patch "[PATCH] Consolidate the clkdev header files".
+>
+> It has been tested on the following boards.
+>
+> SMDK2416, SMDK2440, SMDK2450, SMDK6410, SMDK6440, SMDK6450,
+> SMDKC100, SMDKV210 and SMDKV310.
+>
 
-Hi Russell and everyone,
+Thomas,
 
-Sorry for late participation on this :(
-I'm out of my office for biz. trip so it was hard to check my e-mail
-and will be back to my country this weekend.
+Basically, this is good to me. I will check again after backing to
+my office and will apply whole series :)
 
-Anyway, I and my colleagues know what we have to do for Linux world.
-And as I know, we are preparing some stuff for it so please don't
-expect the worst :)
-
-I should be back on this after discussing with my colleagues.
-
+If any problems, let you know.
 Thanks.
 
 Best regards,
