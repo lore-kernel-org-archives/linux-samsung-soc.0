@@ -1,1011 +1,729 @@
 From: Thomas Abraham <thomas.ab@samsung.com>
-Subject: [PATCH 4/9] ARM: S3C24XX: Add clkdev support
-Date: Thu, 09 Jun 2011 10:08:39 +0530
-Message-ID: <1307594324-11053-5-git-send-email-thomas.ab@samsung.com>
+Subject: [PATCH 8/9] ARM: S5PV210: Add clkdev support
+Date: Thu, 09 Jun 2011 10:08:43 +0530
+Message-ID: <1307594324-11053-9-git-send-email-thomas.ab@samsung.com>
 References: <1307594324-11053-1-git-send-email-thomas.ab@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:19730 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:19798 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750917Ab1FIEaM (ORCPT
+	with ESMTP id S1751088Ab1FIEaT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jun 2011 00:30:12 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+	Thu, 9 Jun 2011 00:30:19 -0400
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
  by mailout2.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LMI00HA69T5PQN0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 09 Jun 2011 13:30:11 +0900 (KST)
+ 2010)) with ESMTP id <0LMI00ABO9TV5S20@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 09 Jun 2011 13:30:17 +0900 (KST)
 Received: from localhost.localdomain (unknown [107.108.73.37])
  by mmp1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
  2010)) with ESMTPA id <0LMI006H19TUPU60@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 09 Jun 2011 13:30:11 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Thu, 09 Jun 2011 13:30:17 +0900 (KST)
 In-reply-to: <1307594324-11053-1-git-send-email-thomas.ab@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
 
-Add clkdev support for Samsung's s3c24xx platforms.
+Add clkdev support for Samsung's s5pv210 platform.
 
 Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 ---
- arch/arm/Kconfig                      |    1 +
- arch/arm/mach-s3c2412/clock.c         |   36 ++---------------------------
- arch/arm/mach-s3c2416/clock.c         |   10 ++++----
- arch/arm/mach-s3c2440/clock.c         |    3 --
- arch/arm/mach-s3c2443/clock.c         |   16 +++----------
- arch/arm/plat-s3c24xx/clock-dclk.c    |    4 ---
- arch/arm/plat-s3c24xx/s3c2410-clock.c |   21 ++---------------
- arch/arm/plat-s3c24xx/s3c2443-clock.c |   39 +++-----------------------------
- arch/arm/plat-samsung/clock.c         |   10 --------
- arch/arm/plat-samsung/pwm-clock.c     |   10 ++++++++
- arch/arm/plat-samsung/time.c          |    2 +
- 11 files changed, 32 insertions(+), 120 deletions(-)
+ arch/arm/Kconfig              |    1 +
+ arch/arm/mach-s5pv210/clock.c |  130 +++++++++++++----------------------------
+ 2 files changed, 41 insertions(+), 90 deletions(-)
 
 diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 2aa4563..11418d9 100644
+index f682107..4bcd672 100644
 --- a/arch/arm/Kconfig
 +++ b/arch/arm/Kconfig
-@@ -687,6 +687,7 @@ config ARCH_S3C2410
+@@ -760,6 +760,7 @@ config ARCH_S5PV210
+ 	select ARCH_SPARSEMEM_ENABLE
  	select GENERIC_GPIO
- 	select ARCH_HAS_CPUFREQ
  	select HAVE_CLK
 +	select CLKDEV_LOOKUP
- 	select ARCH_USES_GETTIMEOFFSET
- 	select HAVE_S3C2410_I2C if I2C
- 	help
-diff --git a/arch/arm/mach-s3c2412/clock.c b/arch/arm/mach-s3c2412/clock.c
-index 0c0505b..140711d 100644
---- a/arch/arm/mach-s3c2412/clock.c
-+++ b/arch/arm/mach-s3c2412/clock.c
-@@ -95,12 +95,10 @@ static int s3c2412_upll_enable(struct clk *clk, int enable)
- 
- static struct clk clk_erefclk = {
- 	.name		= "erefclk",
--	.id		= -1,
- };
- 
- static struct clk clk_urefclk = {
- 	.name		= "urefclk",
--	.id		= -1,
- };
- 
- static int s3c2412_setparent_usysclk(struct clk *clk, struct clk *parent)
-@@ -122,7 +120,6 @@ static int s3c2412_setparent_usysclk(struct clk *clk, struct clk *parent)
- 
- static struct clk clk_usysclk = {
- 	.name		= "usysclk",
--	.id		= -1,
- 	.parent		= &clk_xtal,
- 	.ops		= &(struct clk_ops) {
- 		.set_parent	= s3c2412_setparent_usysclk,
-@@ -132,13 +129,11 @@ static struct clk clk_usysclk = {
- static struct clk clk_mrefclk = {
- 	.name		= "mrefclk",
- 	.parent		= &clk_xtal,
--	.id		= -1,
- };
- 
- static struct clk clk_mdivclk = {
- 	.name		= "mdivclk",
- 	.parent		= &clk_xtal,
--	.id		= -1,
- };
- 
- static int s3c2412_setparent_usbsrc(struct clk *clk, struct clk *parent)
-@@ -200,7 +195,6 @@ static int s3c2412_setrate_usbsrc(struct clk *clk, unsigned long rate)
- 
- static struct clk clk_usbsrc = {
- 	.name		= "usbsrc",
--	.id		= -1,
- 	.ops		= &(struct clk_ops) {
- 		.get_rate	= s3c2412_getrate_usbsrc,
- 		.set_rate	= s3c2412_setrate_usbsrc,
-@@ -228,7 +222,6 @@ static int s3c2412_setparent_msysclk(struct clk *clk, struct clk *parent)
- 
- static struct clk clk_msysclk = {
- 	.name		= "msysclk",
--	.id		= -1,
- 	.ops		= &(struct clk_ops) {
- 		.set_parent	= s3c2412_setparent_msysclk,
+ 	select ARM_L1_CACHE_SHIFT_6
+ 	select ARCH_HAS_CPUFREQ
+ 	select GENERIC_CLOCKEVENTS
+diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
+index 2d59949..b5c95e6 100644
+--- a/arch/arm/mach-s5pv210/clock.c
++++ b/arch/arm/mach-s5pv210/clock.c
+@@ -36,7 +36,6 @@ static unsigned long xtal;
+ static struct clksrc_clk clk_mout_apll = {
+ 	.clk	= {
+ 		.name		= "mout_apll",
+-		.id		= -1,
  	},
-@@ -268,7 +261,6 @@ static int s3c2412_setparent_armclk(struct clk *clk, struct clk *parent)
- 
- static struct clk clk_armclk = {
- 	.name		= "armclk",
--	.id		= -1,
- 	.parent		= &clk_msysclk,
- 	.ops		= &(struct clk_ops) {
- 		.set_parent	= s3c2412_setparent_armclk,
-@@ -344,7 +336,6 @@ static int s3c2412_setrate_uart(struct clk *clk, unsigned long rate)
- 
- static struct clk clk_uart = {
- 	.name		= "uartclk",
--	.id		= -1,
- 	.ops		= &(struct clk_ops) {
- 		.get_rate	= s3c2412_getrate_uart,
- 		.set_rate	= s3c2412_setrate_uart,
-@@ -397,7 +388,6 @@ static int s3c2412_setrate_i2s(struct clk *clk, unsigned long rate)
- 
- static struct clk clk_i2s = {
- 	.name		= "i2sclk",
--	.id		= -1,
- 	.ops		= &(struct clk_ops) {
- 		.get_rate	= s3c2412_getrate_i2s,
- 		.set_rate	= s3c2412_setrate_i2s,
-@@ -449,7 +439,6 @@ static int s3c2412_setrate_cam(struct clk *clk, unsigned long rate)
- 
- static struct clk clk_cam = {
- 	.name		= "camif-upll",	/* same as 2440 name */
--	.id		= -1,
- 	.ops		= &(struct clk_ops) {
- 		.get_rate	= s3c2412_getrate_cam,
- 		.set_rate	= s3c2412_setrate_cam,
-@@ -463,37 +452,31 @@ static struct clk clk_cam = {
- static struct clk init_clocks_disable[] = {
- 	{
- 		.name		= "nand",
+ 	.sources	= &clk_src_apll,
+ 	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 0, .size = 1 },
+@@ -45,7 +44,6 @@ static struct clksrc_clk clk_mout_apll = {
+ static struct clksrc_clk clk_mout_epll = {
+ 	.clk	= {
+ 		.name		= "mout_epll",
 -		.id		= -1,
- 		.parent		= &clk_h,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_NAND,
- 	}, {
- 		.name		= "sdi",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_SDI,
- 	}, {
- 		.name		= "adc",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_ADC,
- 	}, {
- 		.name		= "i2c",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_IIC,
- 	}, {
- 		.name		= "iis",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_IIS,
- 	}, {
- 		.name		= "spi",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_SPI,
-@@ -503,96 +486,83 @@ static struct clk init_clocks_disable[] = {
- static struct clk init_clocks[] = {
- 	{
- 		.name		= "dma",
--		.id		= 0,
- 		.parent		= &clk_h,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_DMA0,
- 	}, {
- 		.name		= "dma",
--		.id		= 1,
- 		.parent		= &clk_h,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_DMA1,
- 	}, {
- 		.name		= "dma",
--		.id		= 2,
- 		.parent		= &clk_h,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_DMA2,
- 	}, {
- 		.name		= "dma",
--		.id		= 3,
- 		.parent		= &clk_h,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_DMA3,
- 	}, {
- 		.name		= "lcd",
--		.id		= -1,
- 		.parent		= &clk_h,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_LCDC,
- 	}, {
- 		.name		= "gpio",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_GPIO,
- 	}, {
- 		.name		= "usb-host",
--		.id		= -1,
- 		.parent		= &clk_h,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_USBH,
- 	}, {
- 		.name		= "usb-device",
--		.id		= -1,
- 		.parent		= &clk_h,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_USBD,
- 	}, {
- 		.name		= "timers",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_PWMT,
- 	}, {
- 		.name		= "uart",
--		.id		= 0,
-+		.devname	= "s3c2412-uart.0",
- 		.parent		= &clk_p,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_UART0,
- 	}, {
- 		.name		= "uart",
--		.id		= 1,
-+		.devname	= "s3c2412-uart.1",
- 		.parent		= &clk_p,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_UART1,
- 	}, {
- 		.name		= "uart",
--		.id		= 2,
-+		.devname	= "s3c2412-uart.2",
- 		.parent		= &clk_p,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_UART2,
- 	}, {
- 		.name		= "rtc",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_RTC,
- 	}, {
- 		.name		= "watchdog",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.ctrlbit	= 0,
- 	}, {
- 		.name		= "usb-bus-gadget",
--		.id		= -1,
- 		.parent		= &clk_usb_bus,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_USB_DEV48,
- 	}, {
- 		.name		= "usb-bus-host",
--		.id		= -1,
- 		.parent		= &clk_usb_bus,
- 		.enable		= s3c2412_clkcon_enable,
- 		.ctrlbit	= S3C2412_CLKCON_USB_HOST48,
-diff --git a/arch/arm/mach-s3c2416/clock.c b/arch/arm/mach-s3c2416/clock.c
-index 3b02d85..21a5e81 100644
---- a/arch/arm/mach-s3c2416/clock.c
-+++ b/arch/arm/mach-s3c2416/clock.c
-@@ -42,7 +42,7 @@ static struct clksrc_clk hsmmc_div[] = {
- 	[0] = {
- 		.clk = {
- 			.name	= "hsmmc-div",
--			.id	= 0,
-+			.devname	= "s3c-sdhci.0",
- 			.parent	= &clk_esysclk.clk,
- 		},
- 		.reg_div = { .reg = S3C2416_CLKDIV2, .size = 2, .shift = 6 },
-@@ -50,7 +50,7 @@ static struct clksrc_clk hsmmc_div[] = {
- 	[1] = {
- 		.clk = {
- 			.name	= "hsmmc-div",
--			.id	= 1,
-+			.devname	= "s3c-sdhci.1",
- 			.parent	= &clk_esysclk.clk,
- 		},
- 		.reg_div = { .reg = S3C2443_CLKDIV1, .size = 2, .shift = 6 },
-@@ -60,8 +60,8 @@ static struct clksrc_clk hsmmc_div[] = {
- static struct clksrc_clk hsmmc_mux[] = {
- 	[0] = {
- 		.clk	= {
--			.id	= 0,
- 			.name	= "hsmmc-if",
-+			.devname	= "s3c-sdhci.0",
- 			.ctrlbit = (1 << 6),
- 			.enable = s3c2443_clkcon_enable_s,
- 		},
-@@ -76,8 +76,8 @@ static struct clksrc_clk hsmmc_mux[] = {
  	},
- 	[1] = {
- 		.clk	= {
--			.id	= 1,
- 			.name	= "hsmmc-if",
-+			.devname	= "s3c-sdhci.1",
- 			.ctrlbit = (1 << 12),
- 			.enable = s3c2443_clkcon_enable_s,
- 		},
-@@ -94,7 +94,7 @@ static struct clksrc_clk hsmmc_mux[] = {
- 
- static struct clk hsmmc0_clk = {
- 	.name		= "hsmmc",
--	.id		= 0,
-+	.devname	= "s3c-sdhci.0",
- 	.parent		= &clk_h,
- 	.enable		= s3c2443_clkcon_enable_h,
- 	.ctrlbit	= S3C2416_HCLKCON_HSMMC0,
-diff --git a/arch/arm/mach-s3c2440/clock.c b/arch/arm/mach-s3c2440/clock.c
-index 3dc2426..554e0d3 100644
---- a/arch/arm/mach-s3c2440/clock.c
-+++ b/arch/arm/mach-s3c2440/clock.c
-@@ -90,14 +90,12 @@ static int s3c2440_camif_upll_setrate(struct clk *clk, unsigned long rate)
- 
- static struct clk s3c2440_clk_cam = {
- 	.name		= "camif",
--	.id		= -1,
- 	.enable		= s3c2410_clkcon_enable,
- 	.ctrlbit	= S3C2440_CLKCON_CAMERA,
- };
- 
- static struct clk s3c2440_clk_cam_upll = {
- 	.name		= "camif-upll",
--	.id		= -1,
- 	.ops		= &(struct clk_ops) {
- 		.set_rate	= s3c2440_camif_upll_setrate,
- 		.round_rate	= s3c2440_camif_upll_round,
-@@ -106,7 +104,6 @@ static struct clk s3c2440_clk_cam_upll = {
- 
- static struct clk s3c2440_clk_ac97 = {
- 	.name		= "ac97",
--	.id		= -1,
- 	.enable		= s3c2410_clkcon_enable,
- 	.ctrlbit	= S3C2440_CLKCON_CAMERA,
- };
-diff --git a/arch/arm/mach-s3c2443/clock.c b/arch/arm/mach-s3c2443/clock.c
-index f4ec6d5..a1a7176 100644
---- a/arch/arm/mach-s3c2443/clock.c
-+++ b/arch/arm/mach-s3c2443/clock.c
-@@ -59,7 +59,6 @@
- 
- static struct clk clk_i2s_ext = {
- 	.name		= "i2s-ext",
--	.id		= -1,
- };
- 
- /* armdiv
-@@ -139,7 +138,6 @@ static int s3c2443_armclk_setrate(struct clk *clk, unsigned long rate)
- 
- static struct clk clk_armdiv = {
- 	.name		= "armdiv",
--	.id		= -1,
- 	.parent		= &clk_msysclk.clk,
- 	.ops		= &(struct clk_ops) {
- 		.round_rate = s3c2443_armclk_roundrate,
-@@ -160,7 +158,6 @@ static struct clk *clk_arm_sources[] = {
- static struct clksrc_clk clk_arm = {
+ 	.sources	= &clk_src_epll,
+ 	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 8, .size = 1 },
+@@ -54,7 +52,6 @@ static struct clksrc_clk clk_mout_epll = {
+ static struct clksrc_clk clk_mout_mpll = {
+ 	.clk = {
+ 		.name		= "mout_mpll",
+-		.id		= -1,
+ 	},
+ 	.sources	= &clk_src_mpll,
+ 	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 4, .size = 1 },
+@@ -73,7 +70,6 @@ static struct clksrc_sources clkset_armclk = {
+ static struct clksrc_clk clk_armclk = {
  	.clk	= {
  		.name		= "armclk",
 -		.id		= -1,
  	},
- 	.sources = &(struct clksrc_sources) {
- 		.sources = clk_arm_sources,
-@@ -177,7 +174,6 @@ static struct clksrc_clk clk_arm = {
- static struct clksrc_clk clk_hsspi = {
+ 	.sources	= &clkset_armclk,
+ 	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 16, .size = 1 },
+@@ -83,7 +79,6 @@ static struct clksrc_clk clk_armclk = {
+ static struct clksrc_clk clk_hclk_msys = {
  	.clk	= {
- 		.name		= "hsspi",
+ 		.name		= "hclk_msys",
 -		.id		= -1,
- 		.parent		= &clk_esysclk.clk,
- 		.ctrlbit	= S3C2443_SCLKCON_HSSPICLK,
- 		.enable		= s3c2443_clkcon_enable_s,
-@@ -196,7 +192,7 @@ static struct clksrc_clk clk_hsspi = {
- static struct clksrc_clk clk_hsmmc_div = {
- 	.clk	= {
- 		.name		= "hsmmc-div",
--		.id		= 1,
-+		.devname	= "s3c-sdhci.1",
- 		.parent		= &clk_esysclk.clk,
+ 		.parent		= &clk_armclk.clk,
  	},
- 	.reg_div = { .reg = S3C2443_CLKDIV1, .size = 2, .shift = 6 },
-@@ -231,7 +227,7 @@ static int s3c2443_enable_hsmmc(struct clk *clk, int enable)
- 
- static struct clk clk_hsmmc = {
- 	.name		= "hsmmc-if",
--	.id		= 1,
-+	.devname	= "s3c-sdhci.1",
- 	.parent		= &clk_hsmmc_div.clk,
- 	.enable		= s3c2443_enable_hsmmc,
- 	.ops		= &(struct clk_ops) {
-@@ -248,7 +244,6 @@ static struct clk clk_hsmmc = {
- static struct clksrc_clk clk_i2s_eplldiv = {
+ 	.reg_div	= { .reg = S5P_CLK_DIV0, .shift = 8, .size = 3 },
+@@ -92,7 +87,6 @@ static struct clksrc_clk clk_hclk_msys = {
+ static struct clksrc_clk clk_pclk_msys = {
  	.clk	= {
- 		.name		= "i2s-eplldiv",
+ 		.name		= "pclk_msys",
 -		.id		= -1,
- 		.parent		= &clk_esysclk.clk,
+ 		.parent		= &clk_hclk_msys.clk,
  	},
- 	.reg_div = { .reg = S3C2443_CLKDIV1, .size = 4, .shift = 12, },
-@@ -271,7 +266,6 @@ struct clk *clk_i2s_srclist[] = {
- static struct clksrc_clk clk_i2s = {
+ 	.reg_div        = { .reg = S5P_CLK_DIV0, .shift = 12, .size = 3 },
+@@ -101,7 +95,6 @@ static struct clksrc_clk clk_pclk_msys = {
+ static struct clksrc_clk clk_sclk_a2m = {
  	.clk	= {
- 		.name		= "i2s-if",
+ 		.name		= "sclk_a2m",
 -		.id		= -1,
- 		.ctrlbit	= S3C2443_SCLKCON_I2SCLK,
- 		.enable		= s3c2443_clkcon_enable_s,
+ 		.parent		= &clk_mout_apll.clk,
+ 	},
+ 	.reg_div	= { .reg = S5P_CLK_DIV0, .shift = 4, .size = 3 },
+@@ -120,7 +113,6 @@ static struct clksrc_sources clkset_hclk_sys = {
+ static struct clksrc_clk clk_hclk_dsys = {
+ 	.clk	= {
+ 		.name	= "hclk_dsys",
+-		.id	= -1,
+ 	},
+ 	.sources	= &clkset_hclk_sys,
+ 	.reg_src        = { .reg = S5P_CLK_SRC0, .shift = 20, .size = 1 },
+@@ -130,7 +122,6 @@ static struct clksrc_clk clk_hclk_dsys = {
+ static struct clksrc_clk clk_pclk_dsys = {
+ 	.clk	= {
+ 		.name	= "pclk_dsys",
+-		.id	= -1,
+ 		.parent	= &clk_hclk_dsys.clk,
+ 	},
+ 	.reg_div = { .reg = S5P_CLK_DIV0, .shift = 20, .size = 3 },
+@@ -139,7 +130,6 @@ static struct clksrc_clk clk_pclk_dsys = {
+ static struct clksrc_clk clk_hclk_psys = {
+ 	.clk	= {
+ 		.name	= "hclk_psys",
+-		.id	= -1,
+ 	},
+ 	.sources	= &clkset_hclk_sys,
+ 	.reg_src        = { .reg = S5P_CLK_SRC0, .shift = 24, .size = 1 },
+@@ -149,7 +139,6 @@ static struct clksrc_clk clk_hclk_psys = {
+ static struct clksrc_clk clk_pclk_psys = {
+ 	.clk	= {
+ 		.name	= "pclk_psys",
+-		.id	= -1,
+ 		.parent	= &clk_hclk_psys.clk,
+ 	},
+ 	.reg_div        = { .reg = S5P_CLK_DIV0, .shift = 28, .size = 3 },
+@@ -187,38 +176,31 @@ static int s5pv210_clk_mask1_ctrl(struct clk *clk, int enable)
  
-@@ -288,25 +282,23 @@ static struct clksrc_clk clk_i2s = {
+ static struct clk clk_sclk_hdmi27m = {
+ 	.name		= "sclk_hdmi27m",
+-	.id		= -1,
+ 	.rate		= 27000000,
+ };
+ 
+ static struct clk clk_sclk_hdmiphy = {
+ 	.name		= "sclk_hdmiphy",
+-	.id		= -1,
+ };
+ 
+ static struct clk clk_sclk_usbphy0 = {
+ 	.name		= "sclk_usbphy0",
+-	.id		= -1,
+ };
+ 
+ static struct clk clk_sclk_usbphy1 = {
+ 	.name		= "sclk_usbphy1",
+-	.id		= -1,
+ };
+ 
+ static struct clk clk_pcmcdclk0 = {
+ 	.name		= "pcmcdclk",
+-	.id		= -1,
+ };
+ 
+ static struct clk clk_pcmcdclk1 = {
+ 	.name		= "pcmcdclk",
+-	.id		= -1,
+ };
+ 
+ static struct clk clk_pcmcdclk2 = {
+ 	.name		= "pcmcdclk",
+-	.id		= -1,
+ };
+ 
+ static struct clk *clkset_vpllsrc_list[] = {
+@@ -234,7 +216,6 @@ static struct clksrc_sources clkset_vpllsrc = {
+ static struct clksrc_clk clk_vpllsrc = {
+ 	.clk	= {
+ 		.name		= "vpll_src",
+-		.id		= -1,
+ 		.enable		= s5pv210_clk_mask0_ctrl,
+ 		.ctrlbit	= (1 << 7),
+ 	},
+@@ -255,7 +236,6 @@ static struct clksrc_sources clkset_sclk_vpll = {
+ static struct clksrc_clk clk_sclk_vpll = {
+ 	.clk	= {
+ 		.name		= "sclk_vpll",
+-		.id		= -1,
+ 	},
+ 	.sources	= &clkset_sclk_vpll,
+ 	.reg_src	= { .reg = S5P_CLK_SRC0, .shift = 12, .size = 1 },
+@@ -276,7 +256,6 @@ static struct clksrc_sources clkset_moutdmc0src = {
+ static struct clksrc_clk clk_mout_dmc0 = {
+ 	.clk	= {
+ 		.name		= "mout_dmc0",
+-		.id		= -1,
+ 	},
+ 	.sources	= &clkset_moutdmc0src,
+ 	.reg_src	= { .reg = S5P_CLK_SRC6, .shift = 24, .size = 2 },
+@@ -285,7 +264,6 @@ static struct clksrc_clk clk_mout_dmc0 = {
+ static struct clksrc_clk clk_sclk_dmc0 = {
+ 	.clk	= {
+ 		.name		= "sclk_dmc0",
+-		.id		= -1,
+ 		.parent		= &clk_mout_dmc0.clk,
+ 	},
+ 	.reg_div	= { .reg = S5P_CLK_DIV6, .shift = 28, .size = 4 },
+@@ -312,181 +290,169 @@ static struct clk_ops clk_fout_apll_ops = {
  static struct clk init_clocks_off[] = {
  	{
- 		.name		= "sdi",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2443_clkcon_enable_p,
- 		.ctrlbit	= S3C2443_PCLKCON_SDI,
- 	}, {
- 		.name		= "iis",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2443_clkcon_enable_p,
- 		.ctrlbit	= S3C2443_PCLKCON_IIS,
- 	}, {
- 		.name		= "spi",
+ 		.name		= "pdma",
 -		.id		= 0,
-+		.devname	= "s3c2410-spi.0",
- 		.parent		= &clk_p,
- 		.enable		= s3c2443_clkcon_enable_p,
- 		.ctrlbit	= S3C2443_PCLKCON_SPI0,
++		.devname	= "s3c-pl330.0",
+ 		.parent		= &clk_hclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip0_ctrl,
+ 		.ctrlbit	= (1 << 3),
  	}, {
- 		.name		= "spi",
+ 		.name		= "pdma",
 -		.id		= 1,
-+		.devname	= "s3c2410-spi.1",
- 		.parent		= &clk_p,
- 		.enable		= s3c2443_clkcon_enable_p,
- 		.ctrlbit	= S3C2443_PCLKCON_SPI1,
-diff --git a/arch/arm/plat-s3c24xx/clock-dclk.c b/arch/arm/plat-s3c24xx/clock-dclk.c
-index cf97caa..f95d326 100644
---- a/arch/arm/plat-s3c24xx/clock-dclk.c
-+++ b/arch/arm/plat-s3c24xx/clock-dclk.c
-@@ -169,7 +169,6 @@ static struct clk_ops dclk_ops = {
- 
- struct clk s3c24xx_dclk0 = {
- 	.name		= "dclk0",
--	.id		= -1,
- 	.ctrlbit	= S3C2410_DCLKCON_DCLK0EN,
- 	.enable	        = s3c24xx_dclk_enable,
- 	.ops		= &dclk_ops,
-@@ -177,7 +176,6 @@ struct clk s3c24xx_dclk0 = {
- 
- struct clk s3c24xx_dclk1 = {
- 	.name		= "dclk1",
--	.id		= -1,
- 	.ctrlbit	= S3C2410_DCLKCON_DCLK1EN,
- 	.enable		= s3c24xx_dclk_enable,
- 	.ops		= &dclk_ops,
-@@ -189,12 +187,10 @@ static struct clk_ops clkout_ops = {
- 
- struct clk s3c24xx_clkout0 = {
- 	.name		= "clkout0",
--	.id		= -1,
- 	.ops		= &clkout_ops,
- };
- 
- struct clk s3c24xx_clkout1 = {
- 	.name		= "clkout1",
--	.id		= -1,
- 	.ops		= &clkout_ops,
- };
-diff --git a/arch/arm/plat-s3c24xx/s3c2410-clock.c b/arch/arm/plat-s3c24xx/s3c2410-clock.c
-index 9ecc5d9..def76aa 100644
---- a/arch/arm/plat-s3c24xx/s3c2410-clock.c
-+++ b/arch/arm/plat-s3c24xx/s3c2410-clock.c
-@@ -90,37 +90,31 @@ static int s3c2410_upll_enable(struct clk *clk, int enable)
- static struct clk init_clocks_off[] = {
- 	{
- 		.name		= "nand",
--		.id		= -1,
- 		.parent		= &clk_h,
- 		.enable		= s3c2410_clkcon_enable,
- 		.ctrlbit	= S3C2410_CLKCON_NAND,
++		.devname	= "s3c-pl330.1",
+ 		.parent		= &clk_hclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip0_ctrl,
+ 		.ctrlbit	= (1 << 4),
  	}, {
- 		.name		= "sdi",
+ 		.name		= "rot",
 -		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2410_clkcon_enable,
- 		.ctrlbit	= S3C2410_CLKCON_SDI,
+ 		.parent		= &clk_hclk_dsys.clk,
+ 		.enable		= s5pv210_clk_ip0_ctrl,
+ 		.ctrlbit	= (1<<29),
  	}, {
- 		.name		= "adc",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2410_clkcon_enable,
- 		.ctrlbit	= S3C2410_CLKCON_ADC,
+ 		.name		= "fimc",
+-		.id		= 0,
++		.devname	= "s5pv210-fimc.0",
+ 		.parent		= &clk_hclk_dsys.clk,
+ 		.enable		= s5pv210_clk_ip0_ctrl,
+ 		.ctrlbit	= (1 << 24),
  	}, {
- 		.name		= "i2c",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2410_clkcon_enable,
- 		.ctrlbit	= S3C2410_CLKCON_IIC,
+ 		.name		= "fimc",
+-		.id		= 1,
++		.devname	= "s5pv210-fimc.1",
+ 		.parent		= &clk_hclk_dsys.clk,
+ 		.enable		= s5pv210_clk_ip0_ctrl,
+ 		.ctrlbit	= (1 << 25),
  	}, {
- 		.name		= "iis",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2410_clkcon_enable,
- 		.ctrlbit	= S3C2410_CLKCON_IIS,
+ 		.name		= "fimc",
+-		.id		= 2,
++		.devname	= "s5pv210-fimc.2",
+ 		.parent		= &clk_hclk_dsys.clk,
+ 		.enable		= s5pv210_clk_ip0_ctrl,
+ 		.ctrlbit	= (1 << 26),
  	}, {
- 		.name		= "spi",
+ 		.name		= "otg",
 -		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2410_clkcon_enable,
- 		.ctrlbit	= S3C2410_CLKCON_SPI,
-@@ -130,70 +124,61 @@ static struct clk init_clocks_off[] = {
- static struct clk init_clocks[] = {
- 	{
- 		.name		= "lcd",
--		.id		= -1,
- 		.parent		= &clk_h,
- 		.enable		= s3c2410_clkcon_enable,
- 		.ctrlbit	= S3C2410_CLKCON_LCDC,
- 	}, {
- 		.name		= "gpio",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2410_clkcon_enable,
- 		.ctrlbit	= S3C2410_CLKCON_GPIO,
+ 		.parent		= &clk_hclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip1_ctrl,
+ 		.ctrlbit	= (1<<16),
  	}, {
  		.name		= "usb-host",
 -		.id		= -1,
- 		.parent		= &clk_h,
- 		.enable		= s3c2410_clkcon_enable,
- 		.ctrlbit	= S3C2410_CLKCON_USBH,
+ 		.parent		= &clk_hclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip1_ctrl,
+ 		.ctrlbit	= (1<<17),
  	}, {
- 		.name		= "usb-device",
+ 		.name		= "lcd",
 -		.id		= -1,
- 		.parent		= &clk_h,
- 		.enable		= s3c2410_clkcon_enable,
- 		.ctrlbit	= S3C2410_CLKCON_USBD,
+ 		.parent		= &clk_hclk_dsys.clk,
+ 		.enable		= s5pv210_clk_ip1_ctrl,
+ 		.ctrlbit	= (1<<0),
  	}, {
- 		.name		= "timers",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2410_clkcon_enable,
- 		.ctrlbit	= S3C2410_CLKCON_PWMT,
- 	}, {
- 		.name		= "uart",
+ 		.name		= "cfcon",
 -		.id		= 0,
-+		.devname	= "s3c2410-uart.0",
- 		.parent		= &clk_p,
- 		.enable		= s3c2410_clkcon_enable,
- 		.ctrlbit	= S3C2410_CLKCON_UART0,
+ 		.parent		= &clk_hclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip1_ctrl,
+ 		.ctrlbit	= (1<<25),
  	}, {
- 		.name		= "uart",
--		.id		= 1,
-+		.devname	= "s3c2410-uart.1",
- 		.parent		= &clk_p,
- 		.enable		= s3c2410_clkcon_enable,
- 		.ctrlbit	= S3C2410_CLKCON_UART1,
- 	}, {
- 		.name		= "uart",
--		.id		= 2,
-+		.devname	= "s3c2410-uart.2",
- 		.parent		= &clk_p,
- 		.enable		= s3c2410_clkcon_enable,
- 		.ctrlbit	= S3C2410_CLKCON_UART2,
- 	}, {
- 		.name		= "rtc",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2410_clkcon_enable,
- 		.ctrlbit	= S3C2410_CLKCON_RTC,
- 	}, {
- 		.name		= "watchdog",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.ctrlbit	= 0,
- 	}, {
- 		.name		= "usb-bus-host",
--		.id		= -1,
- 		.parent		= &clk_usb_bus,
- 	}, {
- 		.name		= "usb-bus-gadget",
--		.id		= -1,
- 		.parent		= &clk_usb_bus,
- 	},
- };
-diff --git a/arch/arm/plat-s3c24xx/s3c2443-clock.c b/arch/arm/plat-s3c24xx/s3c2443-clock.c
-index 82f2d4a..59552c0 100644
---- a/arch/arm/plat-s3c24xx/s3c2443-clock.c
-+++ b/arch/arm/plat-s3c24xx/s3c2443-clock.c
-@@ -56,7 +56,6 @@ int s3c2443_clkcon_enable_s(struct clk *clk, int enable)
- struct clk clk_mpllref = {
- 	.name		= "mpllref",
- 	.parent		= &clk_xtal,
--	.id		= -1,
- };
- 
- static struct clk *clk_epllref_sources[] = {
-@@ -69,7 +68,6 @@ static struct clk *clk_epllref_sources[] = {
- struct clksrc_clk clk_epllref = {
- 	.clk	= {
- 		.name		= "epllref",
--		.id		= -1,
- 	},
- 	.sources = &(struct clksrc_sources) {
- 		.sources = clk_epllref_sources,
-@@ -92,7 +90,6 @@ struct clksrc_clk clk_esysclk = {
- 	.clk	= {
- 		.name		= "esysclk",
- 		.parent		= &clk_epll,
--		.id		= -1,
- 	},
- 	.sources = &(struct clksrc_sources) {
- 		.sources = clk_sysclk_sources,
-@@ -115,7 +112,6 @@ static unsigned long s3c2443_getrate_mdivclk(struct clk *clk)
- static struct clk clk_mdivclk = {
- 	.name		= "mdivclk",
- 	.parent		= &clk_mpllref,
--	.id		= -1,
- 	.ops		= &(struct clk_ops) {
- 		.get_rate	= s3c2443_getrate_mdivclk,
- 	},
-@@ -132,7 +128,6 @@ struct clksrc_clk clk_msysclk = {
- 	.clk	= {
- 		.name		= "msysclk",
- 		.parent		= &clk_xtal,
--		.id		= -1,
- 	},
- 	.sources = &(struct clksrc_sources) {
- 		.sources = clk_msysclk_sources,
-@@ -159,7 +154,6 @@ static unsigned long s3c2443_prediv_getrate(struct clk *clk)
- 
- static struct clk clk_prediv = {
- 	.name		= "prediv",
--	.id		= -1,
- 	.parent		= &clk_msysclk.clk,
- 	.ops		= &(struct clk_ops) {
- 		.get_rate	= s3c2443_prediv_getrate,
-@@ -174,7 +168,6 @@ static struct clk clk_prediv = {
- static struct clksrc_clk clk_usb_bus_host = {
- 	.clk	= {
- 		.name		= "usb-bus-host-parent",
--		.id		= -1,
- 		.parent		= &clk_esysclk.clk,
- 		.ctrlbit	= S3C2443_SCLKCON_USBHOST,
- 		.enable		= s3c2443_clkcon_enable_s,
-@@ -189,7 +182,6 @@ static struct clksrc_clk clksrc_clks[] = {
- 		/* ART baud-rate clock sourced from esysclk via a divisor */
- 		.clk	= {
- 			.name		= "uartclk",
--			.id		= -1,
- 			.parent		= &clk_esysclk.clk,
- 		},
- 		.reg_div = { .reg = S3C2443_CLKDIV1, .size = 4, .shift = 8 },
-@@ -197,7 +189,6 @@ static struct clksrc_clk clksrc_clks[] = {
- 		/* camera interface bus-clock, divided down from esysclk */
- 		.clk	= {
- 			.name		= "camif-upll",	/* same as 2440 name */
--			.id		= -1,
- 			.parent		= &clk_esysclk.clk,
- 			.ctrlbit	= S3C2443_SCLKCON_CAMCLK,
- 			.enable		= s3c2443_clkcon_enable_s,
-@@ -206,7 +197,6 @@ static struct clksrc_clk clksrc_clks[] = {
- 	}, {
- 		.clk	= {
- 			.name		= "display-if",
--			.id		= -1,
- 			.parent		= &clk_esysclk.clk,
- 			.ctrlbit	= S3C2443_SCLKCON_DISPCLK,
- 			.enable		= s3c2443_clkcon_enable_s,
-@@ -219,13 +209,11 @@ static struct clksrc_clk clksrc_clks[] = {
- static struct clk init_clocks_off[] = {
- 	{
- 		.name		= "adc",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2443_clkcon_enable_p,
- 		.ctrlbit	= S3C2443_PCLKCON_ADC,
- 	}, {
- 		.name		= "i2c",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2443_clkcon_enable_p,
- 		.ctrlbit	= S3C2443_PCLKCON_IIC,
-@@ -235,136 +223,117 @@ static struct clk init_clocks_off[] = {
- static struct clk init_clocks[] = {
- 	{
- 		.name		= "dma",
+ 		.name		= "hsmmc",
 -		.id		= 0,
- 		.parent		= &clk_h,
- 		.enable		= s3c2443_clkcon_enable_h,
- 		.ctrlbit	= S3C2443_HCLKCON_DMA0,
- 	}, {
- 		.name		= "dma",
--		.id		= 1,
- 		.parent		= &clk_h,
- 		.enable		= s3c2443_clkcon_enable_h,
- 		.ctrlbit	= S3C2443_HCLKCON_DMA1,
- 	}, {
- 		.name		= "dma",
--		.id		= 2,
- 		.parent		= &clk_h,
- 		.enable		= s3c2443_clkcon_enable_h,
- 		.ctrlbit	= S3C2443_HCLKCON_DMA2,
- 	}, {
- 		.name		= "dma",
--		.id		= 3,
- 		.parent		= &clk_h,
- 		.enable		= s3c2443_clkcon_enable_h,
- 		.ctrlbit	= S3C2443_HCLKCON_DMA3,
- 	}, {
- 		.name		= "dma",
--		.id		= 4,
- 		.parent		= &clk_h,
- 		.enable		= s3c2443_clkcon_enable_h,
- 		.ctrlbit	= S3C2443_HCLKCON_DMA4,
- 	}, {
- 		.name		= "dma",
--		.id		= 5,
- 		.parent		= &clk_h,
- 		.enable		= s3c2443_clkcon_enable_h,
- 		.ctrlbit	= S3C2443_HCLKCON_DMA5,
++		.devname	= "s3c-sdhci.0",
+ 		.parent		= &clk_hclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip2_ctrl,
+ 		.ctrlbit	= (1<<16),
  	}, {
  		.name		= "hsmmc",
 -		.id		= 1,
- 		.parent		= &clk_h,
- 		.enable		= s3c2443_clkcon_enable_h,
- 		.ctrlbit	= S3C2443_HCLKCON_HSMMC,
++		.devname	= "s3c-sdhci.1",
+ 		.parent		= &clk_hclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip2_ctrl,
+ 		.ctrlbit	= (1<<17),
  	}, {
- 		.name		= "gpio",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2443_clkcon_enable_p,
- 		.ctrlbit	= S3C2443_PCLKCON_GPIO,
- 	}, {
- 		.name		= "usb-host",
--		.id		= -1,
- 		.parent		= &clk_h,
- 		.enable		= s3c2443_clkcon_enable_h,
- 		.ctrlbit	= S3C2443_HCLKCON_USBH,
- 	}, {
- 		.name		= "usb-device",
--		.id		= -1,
- 		.parent		= &clk_h,
- 		.enable		= s3c2443_clkcon_enable_h,
- 		.ctrlbit	= S3C2443_HCLKCON_USBD,
- 	}, {
- 		.name		= "lcd",
--		.id		= -1,
- 		.parent		= &clk_h,
- 		.enable		= s3c2443_clkcon_enable_h,
- 		.ctrlbit	= S3C2443_HCLKCON_LCDC,
- 
- 	}, {
- 		.name		= "timers",
--		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2443_clkcon_enable_p,
- 		.ctrlbit	= S3C2443_PCLKCON_PWMT,
- 	}, {
- 		.name		= "cfc",
--		.id		= -1,
- 		.parent		= &clk_h,
- 		.enable		= s3c2443_clkcon_enable_h,
- 		.ctrlbit	= S3C2443_HCLKCON_CFC,
- 	}, {
- 		.name		= "ssmc",
--		.id		= -1,
- 		.parent		= &clk_h,
- 		.enable		= s3c2443_clkcon_enable_h,
- 		.ctrlbit	= S3C2443_HCLKCON_SSMC,
- 	}, {
- 		.name		= "uart",
--		.id		= 0,
-+		.devname	= "s3c2440-uart.0",
- 		.parent		= &clk_p,
- 		.enable		= s3c2443_clkcon_enable_p,
- 		.ctrlbit	= S3C2443_PCLKCON_UART0,
- 	}, {
- 		.name		= "uart",
--		.id		= 1,
-+		.devname	= "s3c2440-uart.1",
- 		.parent		= &clk_p,
- 		.enable		= s3c2443_clkcon_enable_p,
- 		.ctrlbit	= S3C2443_PCLKCON_UART1,
- 	}, {
- 		.name		= "uart",
+ 		.name		= "hsmmc",
 -		.id		= 2,
-+		.devname	= "s3c2440-uart.2",
- 		.parent		= &clk_p,
- 		.enable		= s3c2443_clkcon_enable_p,
- 		.ctrlbit	= S3C2443_PCLKCON_UART2,
++		.devname	= "s3c-sdhci.2",
+ 		.parent		= &clk_hclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip2_ctrl,
+ 		.ctrlbit	= (1<<18),
  	}, {
- 		.name		= "uart",
+ 		.name		= "hsmmc",
 -		.id		= 3,
-+		.devname	= "s3c2440-uart.3",
- 		.parent		= &clk_p,
- 		.enable		= s3c2443_clkcon_enable_p,
- 		.ctrlbit	= S3C2443_PCLKCON_UART3,
++		.devname	= "s3c-sdhci.3",
+ 		.parent		= &clk_hclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip2_ctrl,
+ 		.ctrlbit	= (1<<19),
  	}, {
- 		.name		= "rtc",
+ 		.name		= "systimer",
 -		.id		= -1,
- 		.parent		= &clk_p,
- 		.enable		= s3c2443_clkcon_enable_p,
- 		.ctrlbit	= S3C2443_PCLKCON_RTC,
+ 		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<16),
  	}, {
  		.name		= "watchdog",
 -		.id		= -1,
+ 		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<22),
+ 	}, {
+ 		.name		= "rtc",
+-		.id		= -1,
+ 		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<15),
+ 	}, {
+ 		.name		= "i2c",
+-		.id		= 0,
++		.devname	= "s3c2440-i2c.0",
+ 		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<7),
+ 	}, {
+ 		.name		= "i2c",
+-		.id		= 1,
++		.devname	= "s3c2440-i2c.1",
+ 		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1 << 10),
+ 	}, {
+ 		.name		= "i2c",
+-		.id		= 2,
++		.devname	= "s3c2440-i2c.2",
+ 		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<9),
+ 	}, {
+ 		.name		= "spi",
+-		.id		= 0,
++		.devname	= "s3c64xx-spi.0",
+ 		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<12),
+ 	}, {
+ 		.name		= "spi",
+-		.id		= 1,
++		.devname	= "s3c64xx-spi.1",
+ 		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<13),
+ 	}, {
+ 		.name		= "spi",
+-		.id		= 2,
++		.devname	= "s3c64xx-spi.2",
+ 		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<14),
+ 	}, {
+ 		.name		= "timers",
+-		.id		= -1,
+ 		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<23),
+ 	}, {
+ 		.name		= "adc",
+-		.id		= -1,
+ 		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<24),
+ 	}, {
+ 		.name		= "keypad",
+-		.id		= -1,
+ 		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<21),
+ 	}, {
+ 		.name		= "iis",
+-		.id		= 0,
++		.devname	= "samsung-i2s.0",
  		.parent		= &clk_p,
- 		.ctrlbit	= S3C2443_PCLKCON_WDT,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1<<4),
  	}, {
- 		.name		= "ac97",
+ 		.name		= "iis",
+-		.id		= 1,
++		.devname	= "samsung-i2s.1",
+ 		.parent		= &clk_p,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1 << 5),
+ 	}, {
+ 		.name		= "iis",
+-		.id		= 2,
++		.devname	= "samsung-i2s.2",
+ 		.parent		= &clk_p,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1 << 6),
+ 	}, {
+ 		.name		= "spdif",
 -		.id		= -1,
  		.parent		= &clk_p,
- 		.ctrlbit	= S3C2443_PCLKCON_AC97,
- 	}, {
- 		.name		= "nand",
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1 << 0),
+@@ -496,38 +462,36 @@ static struct clk init_clocks_off[] = {
+ static struct clk init_clocks[] = {
+ 	{
+ 		.name		= "hclk_imem",
 -		.id		= -1,
- 		.parent		= &clk_h,
+ 		.parent		= &clk_hclk_msys.clk,
+ 		.ctrlbit	= (1 << 5),
+ 		.enable		= s5pv210_clk_ip0_ctrl,
+ 		.ops		= &clk_hclk_imem_ops,
  	}, {
- 		.name		= "usb-bus-host",
+ 		.name		= "uart",
+-		.id		= 0,
++		.devname	= "s5pv210-uart.0",
+ 		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1 << 17),
+ 	}, {
+ 		.name		= "uart",
+-		.id		= 1,
++		.devname	= "s5pv210-uart.1",
+ 		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1 << 18),
+ 	}, {
+ 		.name		= "uart",
+-		.id		= 2,
++		.devname	= "s5pv210-uart.2",
+ 		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1 << 19),
+ 	}, {
+ 		.name		= "uart",
+-		.id		= 3,
++		.devname	= "s5pv210-uart.3",
+ 		.parent		= &clk_pclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip3_ctrl,
+ 		.ctrlbit	= (1 << 20),
+ 	}, {
+ 		.name		= "sromc",
 -		.id		= -1,
- 		.parent		= &clk_usb_bus_host.clk,
- 	}
- };
-diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
-index e30bd45..aecf9e9 100644
---- a/arch/arm/plat-samsung/clock.c
-+++ b/arch/arm/plat-samsung/clock.c
-@@ -195,7 +195,6 @@ struct clk_ops clk_ops_def_setrate = {
- 
- struct clk clk_xtal = {
- 	.name		= "xtal",
--	.id		= -1,
- 	.rate		= 0,
- 	.parent		= NULL,
- 	.ctrlbit	= 0,
-@@ -203,30 +202,25 @@ struct clk clk_xtal = {
- 
- struct clk clk_ext = {
- 	.name		= "ext",
--	.id		= -1,
- };
- 
- struct clk clk_epll = {
- 	.name		= "epll",
--	.id		= -1,
- };
- 
- struct clk clk_mpll = {
- 	.name		= "mpll",
--	.id		= -1,
- 	.ops		= &clk_ops_def_setrate,
- };
- 
- struct clk clk_upll = {
- 	.name		= "upll",
--	.id		= -1,
- 	.parent		= NULL,
- 	.ctrlbit	= 0,
- };
- 
- struct clk clk_f = {
- 	.name		= "fclk",
--	.id		= -1,
- 	.rate		= 0,
- 	.parent		= &clk_mpll,
- 	.ctrlbit	= 0,
-@@ -234,7 +228,6 @@ struct clk clk_f = {
- 
- struct clk clk_h = {
- 	.name		= "hclk",
--	.id		= -1,
- 	.rate		= 0,
- 	.parent		= NULL,
- 	.ctrlbit	= 0,
-@@ -243,7 +236,6 @@ struct clk clk_h = {
- 
- struct clk clk_p = {
- 	.name		= "pclk",
--	.id		= -1,
- 	.rate		= 0,
- 	.parent		= NULL,
- 	.ctrlbit	= 0,
-@@ -252,7 +244,6 @@ struct clk clk_p = {
- 
- struct clk clk_usb_bus = {
- 	.name		= "usb-bus",
--	.id		= -1,
- 	.rate		= 0,
- 	.parent		= &clk_upll,
- };
-@@ -260,7 +251,6 @@ struct clk clk_usb_bus = {
- 
- struct clk s3c24xx_uclk = {
- 	.name		= "uclk",
--	.id		= -1,
- };
- 
- /* initialise the clock system */
-diff --git a/arch/arm/plat-samsung/pwm-clock.c b/arch/arm/plat-samsung/pwm-clock.c
-index 46c9381..f1bba88 100644
---- a/arch/arm/plat-samsung/pwm-clock.c
-+++ b/arch/arm/plat-samsung/pwm-clock.c
-@@ -268,6 +268,7 @@ static struct pwm_tdiv_clk clk_timer_tdiv[] = {
- 	[0]	= {
+ 		.parent		= &clk_hclk_psys.clk,
+ 		.enable		= s5pv210_clk_ip1_ctrl,
+ 		.ctrlbit	= (1 << 26),
+@@ -579,7 +543,6 @@ static struct clksrc_sources clkset_sclk_dac = {
+ static struct clksrc_clk clk_sclk_dac = {
+ 	.clk		= {
+ 		.name		= "sclk_dac",
+-		.id		= -1,
+ 		.enable		= s5pv210_clk_mask0_ctrl,
+ 		.ctrlbit	= (1 << 2),
+ 	},
+@@ -590,7 +553,6 @@ static struct clksrc_clk clk_sclk_dac = {
+ static struct clksrc_clk clk_sclk_pixel = {
+ 	.clk		= {
+ 		.name		= "sclk_pixel",
+-		.id		= -1,
+ 		.parent		= &clk_sclk_vpll.clk,
+ 	},
+ 	.reg_div	= { .reg = S5P_CLK_DIV1, .shift = 0, .size = 4},
+@@ -609,7 +571,6 @@ static struct clksrc_sources clkset_sclk_hdmi = {
+ static struct clksrc_clk clk_sclk_hdmi = {
+ 	.clk		= {
+ 		.name		= "sclk_hdmi",
+-		.id		= -1,
+ 		.enable		= s5pv210_clk_mask0_ctrl,
+ 		.ctrlbit	= (1 << 0),
+ 	},
+@@ -647,7 +608,7 @@ static struct clksrc_sources clkset_sclk_audio0 = {
+ static struct clksrc_clk clk_sclk_audio0 = {
+ 	.clk		= {
+ 		.name		= "sclk_audio",
+-		.id		= 0,
++		.devname	= "soc-audio.0",
+ 		.enable		= s5pv210_clk_mask0_ctrl,
+ 		.ctrlbit	= (1 << 24),
+ 	},
+@@ -676,7 +637,7 @@ static struct clksrc_sources clkset_sclk_audio1 = {
+ static struct clksrc_clk clk_sclk_audio1 = {
+ 	.clk		= {
+ 		.name		= "sclk_audio",
+-		.id		= 1,
++		.devname	= "soc-audio.1",
+ 		.enable		= s5pv210_clk_mask0_ctrl,
+ 		.ctrlbit	= (1 << 25),
+ 	},
+@@ -705,7 +666,7 @@ static struct clksrc_sources clkset_sclk_audio2 = {
+ static struct clksrc_clk clk_sclk_audio2 = {
+ 	.clk		= {
+ 		.name		= "sclk_audio",
+-		.id		= 2,
++		.devname	= "soc-audio.2",
+ 		.enable		= s5pv210_clk_mask0_ctrl,
+ 		.ctrlbit	= (1 << 26),
+ 	},
+@@ -763,7 +724,6 @@ static struct clk_ops s5pv210_sclk_spdif_ops = {
+ static struct clksrc_clk clk_sclk_spdif = {
+ 	.clk		= {
+ 		.name		= "sclk_spdif",
+-		.id		= -1,
+ 		.enable		= s5pv210_clk_mask0_ctrl,
+ 		.ctrlbit	= (1 << 27),
+ 		.ops		= &s5pv210_sclk_spdif_ops,
+@@ -793,7 +753,6 @@ static struct clksrc_clk clksrcs[] = {
+ 	{
  		.clk	= {
- 			.name	= "pwm-tdiv",
-+			.devname	= "s3c24xx-pwm.0",
- 			.ops	= &clk_tdiv_ops,
- 			.parent	= &clk_timer_scaler[0],
+ 			.name		= "sclk_dmc",
+-			.id		= -1,
  		},
-@@ -275,6 +276,7 @@ static struct pwm_tdiv_clk clk_timer_tdiv[] = {
- 	[1]	= {
+ 		.sources = &clkset_group1,
+ 		.reg_src = { .reg = S5P_CLK_SRC6, .shift = 24, .size = 2 },
+@@ -801,7 +760,6 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
  		.clk	= {
- 			.name	= "pwm-tdiv",
-+			.devname	= "s3c24xx-pwm.1",
- 			.ops	= &clk_tdiv_ops,
- 			.parent	= &clk_timer_scaler[0],
- 		}
-@@ -282,6 +284,7 @@ static struct pwm_tdiv_clk clk_timer_tdiv[] = {
- 	[2]	= {
- 		.clk	= {
- 			.name	= "pwm-tdiv",
-+			.devname	= "s3c24xx-pwm.2",
- 			.ops	= &clk_tdiv_ops,
- 			.parent	= &clk_timer_scaler[1],
+ 			.name		= "sclk_onenand",
+-			.id		= -1,
  		},
-@@ -289,6 +292,7 @@ static struct pwm_tdiv_clk clk_timer_tdiv[] = {
- 	[3]	= {
+ 		.sources = &clkset_sclk_onenand,
+ 		.reg_src = { .reg = S5P_CLK_SRC0, .shift = 28, .size = 1 },
+@@ -809,7 +767,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
  		.clk	= {
- 			.name	= "pwm-tdiv",
-+			.devname	= "s3c24xx-pwm.3",
- 			.ops	= &clk_tdiv_ops,
- 			.parent	= &clk_timer_scaler[1],
+ 			.name		= "uclk1",
+-			.id		= 0,
++			.devname	= "s5pv210-uart.0",
+ 			.enable		= s5pv210_clk_mask0_ctrl,
+ 			.ctrlbit	= (1 << 12),
  		},
-@@ -296,6 +300,7 @@ static struct pwm_tdiv_clk clk_timer_tdiv[] = {
- 	[4]	= {
+@@ -819,7 +777,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "uclk1",
+-			.id		= 1,
++			.devname	= "s5pv210-uart.1",
+ 			.enable		= s5pv210_clk_mask0_ctrl,
+ 			.ctrlbit	= (1 << 13),
+ 		},
+@@ -829,7 +787,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "uclk1",
+-			.id		= 2,
++			.devname	= "s5pv210-uart.2",
+ 			.enable		= s5pv210_clk_mask0_ctrl,
+ 			.ctrlbit	= (1 << 14),
+ 		},
+@@ -839,7 +797,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "uclk1",
+-			.id		= 3,
++			.devname	= "s5pv210-uart.3",
+ 			.enable		= s5pv210_clk_mask0_ctrl,
+ 			.ctrlbit	= (1 << 15),
+ 		},
+@@ -849,7 +807,6 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
  		.clk	= {
- 			.name	= "pwm-tdiv",
-+			.devname	= "s3c24xx-pwm.4",
- 			.ops	= &clk_tdiv_ops,
- 			.parent	= &clk_timer_scaler[1],
+ 			.name		= "sclk_mixer",
+-			.id		= -1,
+ 			.enable		= s5pv210_clk_mask0_ctrl,
+ 			.ctrlbit	= (1 << 1),
  		},
-@@ -361,26 +366,31 @@ static struct clk_ops clk_tin_ops = {
- static struct clk clk_tin[] = {
- 	[0]	= {
- 		.name	= "pwm-tin",
-+		.devname	= "s3c24xx-pwm.0",
- 		.id	= 0,
- 		.ops	= &clk_tin_ops,
- 	},
- 	[1]	= {
- 		.name	= "pwm-tin",
-+		.devname	= "s3c24xx-pwm.1",
- 		.id	= 1,
- 		.ops	= &clk_tin_ops,
- 	},
- 	[2]	= {
- 		.name	= "pwm-tin",
-+		.devname	= "s3c24xx-pwm.2",
- 		.id	= 2,
- 		.ops	= &clk_tin_ops,
- 	},
- 	[3]	= {
- 		.name	= "pwm-tin",
-+		.devname	= "s3c24xx-pwm.3",
- 		.id	= 3,
- 		.ops	= &clk_tin_ops,
- 	},
- 	[4]	= {
- 		.name	= "pwm-tin",
-+		.devname	= "s3c24xx-pwm.4",
- 		.id	= 4,
- 		.ops	= &clk_tin_ops,
- 	},
-diff --git a/arch/arm/plat-samsung/time.c b/arch/arm/plat-samsung/time.c
-index 2231d80..e3bb806 100644
---- a/arch/arm/plat-samsung/time.c
-+++ b/arch/arm/plat-samsung/time.c
-@@ -259,6 +259,8 @@ static void __init s3c2410_timer_resources(void)
- 	clk_enable(timerclk);
- 
- 	if (!use_tclk1_12()) {
-+		tmpdev.id = 4;
-+		tmpdev.dev.init_name = "s3c24xx-pwm.4";
- 		tin = clk_get(&tmpdev.dev, "pwm-tin");
- 		if (IS_ERR(tin))
- 			panic("failed to get pwm-tin clock for system timer");
+@@ -858,7 +815,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk	= {
+ 			.name		= "sclk_fimc",
+-			.id		= 0,
++			.devname	= "s5pv210-fimc.0",
+ 			.enable		= s5pv210_clk_mask1_ctrl,
+ 			.ctrlbit	= (1 << 2),
+ 		},
+@@ -868,7 +825,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk	= {
+ 			.name		= "sclk_fimc",
+-			.id		= 1,
++			.devname	= "s5pv210-fimc.1",
+ 			.enable		= s5pv210_clk_mask1_ctrl,
+ 			.ctrlbit	= (1 << 3),
+ 		},
+@@ -878,7 +835,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk	= {
+ 			.name		= "sclk_fimc",
+-			.id		= 2,
++			.devname	= "s5pv210-fimc.2",
+ 			.enable		= s5pv210_clk_mask1_ctrl,
+ 			.ctrlbit	= (1 << 4),
+ 		},
+@@ -888,7 +845,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_cam",
+-			.id		= 0,
++			.devname	= "s5pv210-fimc.0",
+ 			.enable		= s5pv210_clk_mask0_ctrl,
+ 			.ctrlbit	= (1 << 3),
+ 		},
+@@ -898,7 +855,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_cam",
+-			.id		= 1,
++			.devname	= "s5pv210-fimc.1",
+ 			.enable		= s5pv210_clk_mask0_ctrl,
+ 			.ctrlbit	= (1 << 4),
+ 		},
+@@ -908,7 +865,6 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_fimd",
+-			.id		= -1,
+ 			.enable		= s5pv210_clk_mask0_ctrl,
+ 			.ctrlbit	= (1 << 5),
+ 		},
+@@ -918,7 +874,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_mmc",
+-			.id		= 0,
++			.devname	= "s3c-sdhci.0",
+ 			.enable		= s5pv210_clk_mask0_ctrl,
+ 			.ctrlbit	= (1 << 8),
+ 		},
+@@ -928,7 +884,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_mmc",
+-			.id		= 1,
++			.devname	= "s3c-sdhci.1",
+ 			.enable		= s5pv210_clk_mask0_ctrl,
+ 			.ctrlbit	= (1 << 9),
+ 		},
+@@ -938,7 +894,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_mmc",
+-			.id		= 2,
++			.devname	= "s3c-sdhci.2",
+ 			.enable		= s5pv210_clk_mask0_ctrl,
+ 			.ctrlbit	= (1 << 10),
+ 		},
+@@ -948,7 +904,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_mmc",
+-			.id		= 3,
++			.devname	= "s3c-sdhci.3",
+ 			.enable		= s5pv210_clk_mask0_ctrl,
+ 			.ctrlbit	= (1 << 11),
+ 		},
+@@ -958,7 +914,6 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_mfc",
+-			.id		= -1,
+ 			.enable		= s5pv210_clk_ip0_ctrl,
+ 			.ctrlbit	= (1 << 16),
+ 		},
+@@ -968,7 +923,6 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_g2d",
+-			.id		= -1,
+ 			.enable		= s5pv210_clk_ip0_ctrl,
+ 			.ctrlbit	= (1 << 12),
+ 		},
+@@ -978,7 +932,6 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_g3d",
+-			.id		= -1,
+ 			.enable		= s5pv210_clk_ip0_ctrl,
+ 			.ctrlbit	= (1 << 8),
+ 		},
+@@ -988,7 +941,6 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_csis",
+-			.id		= -1,
+ 			.enable		= s5pv210_clk_mask0_ctrl,
+ 			.ctrlbit	= (1 << 6),
+ 		},
+@@ -998,7 +950,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_spi",
+-			.id		= 0,
++			.devname	= "s3c64xx-spi.0",
+ 			.enable		= s5pv210_clk_mask0_ctrl,
+ 			.ctrlbit	= (1 << 16),
+ 		},
+@@ -1008,7 +960,7 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_spi",
+-			.id		= 1,
++			.devname	= "s3c64xx-spi.1",
+ 			.enable		= s5pv210_clk_mask0_ctrl,
+ 			.ctrlbit	= (1 << 17),
+ 		},
+@@ -1018,7 +970,6 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_pwi",
+-			.id		= -1,
+ 			.enable		= s5pv210_clk_mask0_ctrl,
+ 			.ctrlbit	= (1 << 29),
+ 		},
+@@ -1028,7 +979,6 @@ static struct clksrc_clk clksrcs[] = {
+ 	}, {
+ 		.clk		= {
+ 			.name		= "sclk_pwm",
+-			.id		= -1,
+ 			.enable		= s5pv210_clk_mask0_ctrl,
+ 			.ctrlbit	= (1 << 19),
+ 		},
 -- 
 1.6.6.rc2
