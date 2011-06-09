@@ -1,15 +1,16 @@
-From: Liam Girdwood <lrg@ti.com>
-Subject: Re: [PATCH 2/4] ASoC: SAMSUNG: Add I2S0 internal dma
- driver
-Date: Thu, 9 Jun 2011 10:50:58 +0100
-Message-ID: <4DF09782.1090901@ti.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 3/4] ASoC: SAMSUNG: Change platform driver
+	for SMDKs
+Date: Thu, 9 Jun 2011 11:46:48 +0100
+Message-ID: <20110609104648.GB12865@opensource.wolfsonmicro.com>
 References: <1307606950-8310-1-git-send-email-sbkim73@samsung.com>
-	<1307606950-8310-3-git-send-email-sbkim73@samsung.com>
+	<1307606950-8310-4-git-send-email-sbkim73@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1307606950-8310-3-git-send-email-sbkim73@samsung.com>
+Content-Disposition: inline
+In-Reply-To: <1307606950-8310-4-git-send-email-sbkim73@samsung.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
 	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
@@ -20,37 +21,14 @@ List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
 Sender: alsa-devel-bounces@alsa-project.org
 Errors-To: alsa-devel-bounces@alsa-project.org
 To: Sangbeom Kim <sbkim73@samsung.com>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "ben-linux@fluff.org" <ben-linux@fluff.org>, "broonie@opensource.wolfsonmicro.com" <broonie@opensource.wolfsonmicro.com>, "lrg@slimlogic.co.uk" <lrg@slimlogic.co.uk>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, jassisinghbrar@gmail.com, kgene.kim@samsung.com, ben-linux@fluff.org, lrg@slimlogic.co.uk
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 09/06/11 09:09, Sangbeom Kim wrote:
-> I2S in Exynos4 and S5PC110(S5PV210) has a internal dma.
-> It can be used low power audio mode and 2nd channel transfer.
-> 
-> Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
+On Thu, Jun 09, 2011 at 05:09:09PM +0900, Sangbeom Kim wrote:
+> Change platform driver to support internal dma
+> for smdk_wm8994 and smdk_wm8580
 
-Looks fine to me, but needs one fix before it can be applied.
-
-Acked-by: Liam Girdwood <lrg@ti.com>
-
-> ---
->  sound/soc/samsung/Makefile |    2 +
->  sound/soc/samsung/idma.c   |  492 ++++++++++++++++++++++++++++++++++++++++++++
->  sound/soc/samsung/idma.h   |   28 +++
->  3 files changed, 522 insertions(+), 0 deletions(-)
->  create mode 100644 sound/soc/samsung/idma.c
->  create mode 100644 sound/soc/samsung/idma.h
-> 
-
-snip
-
-> +
-> +static int idma_new(struct snd_card *card,
-> +       struct snd_soc_dai *dai, struct snd_pcm *pcm)
-> +{
-
-This call API has changed in -next.
-
-Thanks
-
-Liam
+When you resubmit for the API change update it'd be helpful to update
+the changelog to explain why the platforms are being changed to use only
+internal DMA - what is the advantage this offers over regular DMA?  This
+will help users understand how they should configure their own systems.
