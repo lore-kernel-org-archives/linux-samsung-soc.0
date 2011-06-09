@@ -1,53 +1,40 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 0/9] Add clkdev support for Samsung platforms
-Date: Thu, 09 Jun 2011 11:33:41 -0700
-Message-ID: <4DF11205.7040103@samsung.com>
-References: <1307594324-11053-1-git-send-email-thomas.ab@samsung.com>
+Subject: Re: [PATCH] ARM: SAMSUNG: Add support for pre-sleep/post-restore
+ gpio control
+Date: Thu, 09 Jun 2011 14:41:23 -0700
+Message-ID: <4DF13E03.50803@samsung.com>
+References: <1303925654-27715-1-git-send-email-broonie@opensource.wolfsonmicro.com> <00fc01cc0baa$d7d94cb0$878be610$%kim@samsung.com> <003b01cc24df$29b841b0$7d28c510$%szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:62180 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752008Ab1FISf1 (ORCPT
+Received: from mail-iw0-f174.google.com ([209.85.214.174]:56192 "EHLO
+	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756480Ab1FIVmx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jun 2011 14:35:27 -0400
-Received: by gxk21 with SMTP id 21so948500gxk.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Jun 2011 11:35:26 -0700 (PDT)
-In-Reply-To: <1307594324-11053-1-git-send-email-thomas.ab@samsung.com>
+	Thu, 9 Jun 2011 17:42:53 -0400
+Received: by iwn34 with SMTP id 34so1674982iwn.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Jun 2011 14:42:52 -0700 (PDT)
+In-Reply-To: <003b01cc24df$29b841b0$7d28c510$%szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Ben Dooks' <ben-linux@fluff.org>
 
-On 06/08/11 21:38, Thomas Abraham wrote:
-> This patch series adds clkdev support for all Samsung platforms. clkdev
-> support is a prerequisite for adding device tree on Samsung platforms
-> and possibly revive framebuffer driver patches for Exynos4 platforms.
+On 06/06/11 23:50, Marek Szyprowski wrote:
+> Hello,
 >
-> The first of the two patches are for eliminating the explict
-> console_initcall from the serial drivers. This is required to prevent
-> the clk_get being invoked at time when device registrations have not
-> completed.
->
-> This patch series is based on the latest
-> git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git for-next
->
-> and the patch "[PATCH] Consolidate the clkdev header files".
->
-> It has been tested on the following boards.
->
-> SMDK2416, SMDK2440, SMDK2450, SMDK6410, SMDK6440, SMDK6450,
-> SMDKC100, SMDKV210 and SMDKV310.
->
+Hi :)
 
-Thomas,
+(snip)
 
-Basically, this is good to me. I will check again after backing to
-my office and will apply whole series :)
+>
+> This patch lacks stubs for s5p64x0, s5pc100 and exynos4. I will send a quick fix
+> soon.
 
-If any problems, let you know.
-Thanks.
+Oops, I couldn't test it all on my laptop which is so slow :(
+
+OK, thanks.
 
 Best regards,
 Kgene.
