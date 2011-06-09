@@ -1,44 +1,52 @@
 From: Sangbeom Kim <sbkim73@samsung.com>
-Subject: RE: [alsa-devel] [PATCH 3/4] ASoC: SAMSUNG: Change platform driver	for
- SMDKs
-Date: Fri, 10 Jun 2011 08:36:06 +0900
-Message-ID: <04bd01cc26fe$0129d850$037d88f0$@com>
+Subject: RE: [alsa-devel] [PATCH 2/4] ASoC: SAMSUNG: Add I2S0 internal dma
+	driver
+Date: Fri, 10 Jun 2011 08:41:45 +0900
+Message-ID: <04be01cc26fe$cb08ec10$611ac430$@com>
 References: <1307606950-8310-1-git-send-email-sbkim73@samsung.com>
- <1307606950-8310-4-git-send-email-sbkim73@samsung.com>
- <20110609104648.GB12865@opensource.wolfsonmicro.com>
+ <1307606950-8310-3-git-send-email-sbkim73@samsung.com>
+ <BANLkTikUe7MV7EHc7CN4WECs0oLrQBAs4g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:33087 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755398Ab1FIXgJ (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:39540 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756037Ab1FIXlr convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Jun 2011 19:36:09 -0400
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Thu, 9 Jun 2011 19:41:47 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LMJ00C8NQW3RK20@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 08:36:07 +0900 (KST)
-Received: from DOSBKIM7301 ([12.23.119.77])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LMJ0005GQW7K4@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 08:36:07 +0900 (KST)
-In-reply-to: <20110609104648.GB12865@opensource.wolfsonmicro.com>
+ 2010)) with ESMTP id <0LMJ008TRR54KP10@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 08:41:46 +0900 (KST)
+Received: from DOSBKIM7301 (unknown [12.23.119.77])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LMJ007IPR5LD5C0@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 08:41:45 +0900 (KST)
+In-reply-to: <BANLkTikUe7MV7EHc7CN4WECs0oLrQBAs4g@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, jassisinghbrar@gmail.com, kgene.kim@samsung.com, ben-linux@fluff.org, lrg@slimlogic.co.uk
+To: 'Kyungmin Park' <kmpark@infradead.org>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, jassisinghbrar@gmail.com, kgene.kim@samsung.com, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, lrg@slimlogic.co.uk
 
-On Thu, Jun 09, 2011 at 07:47PM +0900, Mark Brown wrote:
-> 
-> When you resubmit for the API change update it'd be helpful to update
-> the changelog to explain why the platforms are being changed to use only
-> internal DMA - what is the advantage this offers over regular DMA?  This
-> will help users understand how they should configure their own systems.
+On Thu, Jun 9, 2011 at 9:33 PM, Kyungmin Park  wrote:
+> > +#ifndef __S3C_IDMA_H_
+> > +#define __S3C_IDMA_H_
+> > +
+> > +#ifdef CONFIG_ARCH_EXYNOS4
+> > +#define LP_TXBUFF_ADDR =A0 =A0(0x02020000)
+> > +#else
+> > +#define LP_TXBUFF_ADDR =A0 =A0(0xC0000000)
+> > +#endif
+>=20
+> Are there more fancy way to define the internal DMA address?
+> Are you sure new EXYNOS4 series will use the same address?
 
-OK, In the next vesion, I will add detail changelog for other users.
+I'm not sure that the new Exynos4 series will have a same address.
+I will try to find more fancy way to define idma address in the next
+version.
 
-Thanks 
-SB Kim
+Thanks
+SB Kim.
