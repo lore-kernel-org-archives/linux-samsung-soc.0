@@ -1,15 +1,16 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH/RFC 05/19] s5p-fimc: Limit number of available inputs to one
-Date: Fri, 10 Jun 2011 20:36:46 +0200
-Message-ID: <1307731020-7100-6-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH/RFC 03/19] s5p-fimc: Remove registration of video nodes from
+ probe()
+Date: Fri, 10 Jun 2011 20:36:44 +0200
+Message-ID: <1307731020-7100-4-git-send-email-s.nawrocki@samsung.com>
 References: <1307731020-7100-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:45482 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758011Ab1FJShH (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:58899 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758014Ab1FJShH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 10 Jun 2011 14:37:07 -0400
 In-reply-to: <1307731020-7100-1-git-send-email-s.nawrocki@samsung.com>
@@ -18,83 +19,76 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: hans.verkuil@cisco.com, laurent.pinchart@ideasonboard.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
 
-Camera sensors at FIMC input are no longer selected with S_INPUT ioctl.
-They will be attached to required FIMC entity through pipeline
-re-configuration at the media device level.
+Do not register video nodes during FIMC device probe. Also make
+fimc_register_m2m_device() public for use by the media device driver.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-capture.c |   43 ++++-----------------------
- 1 files changed, 6 insertions(+), 37 deletions(-)
+ drivers/media/video/s5p-fimc/fimc-core.c |   18 +-----------------
+ drivers/media/video/s5p-fimc/fimc-core.h |    1 +
+ 2 files changed, 2 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index 2748cca..19f27d4 100644
---- a/drivers/media/video/s5p-fimc/fimc-capture.c
-+++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -566,57 +566,26 @@ static int fimc_cap_s_fmt_mplane(struct file *file, void *priv,
- }
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
+index ad15d46..b464da5 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.c
++++ b/drivers/media/video/s5p-fimc/fimc-core.c
+@@ -1491,7 +1491,7 @@ static struct v4l2_m2m_ops m2m_ops = {
+ 	.job_abort	= fimc_job_abort,
+ };
  
- static int fimc_cap_enum_input(struct file *file, void *priv,
--				     struct v4l2_input *i)
-+			       struct v4l2_input *i)
+-static int fimc_register_m2m_device(struct fimc_dev *fimc)
++int fimc_register_m2m_device(struct fimc_dev *fimc)
  {
- 	struct fimc_ctx *ctx = priv;
--	struct s5p_platform_fimc *pldata = ctx->fimc_dev->pdata;
--	struct s5p_fimc_isp_info *isp_info;
+ 	struct video_device *vfd;
+ 	struct platform_device *pdev;
+@@ -1700,25 +1700,12 @@ static int fimc_probe(struct platform_device *pdev)
+ 		goto err_irq;
+ 	}
  
--	if (i->index >= pldata->num_clients)
-+	if (i->index != 0)
- 		return -EINVAL;
- 
--	isp_info = &pldata->isp_info[i->index];
- 
- 	i->type = V4L2_INPUT_TYPE_CAMERA;
--	strncpy(i->name, isp_info->board_info->type, 32);
- 	return 0;
- }
- 
--static int fimc_cap_s_input(struct file *file, void *priv,
--				  unsigned int i)
-+static int fimc_cap_s_input(struct file *file, void *priv, unsigned int i)
- {
--	struct fimc_ctx *ctx = priv;
--	struct fimc_dev *fimc = ctx->fimc_dev;
--	struct s5p_platform_fimc *pdata = fimc->pdata;
+-	ret = fimc_register_m2m_device(fimc);
+-	if (ret)
+-		goto err_irq;
 -
--	if (fimc_capture_active(ctx->fimc_dev))
--		return -EBUSY;
--
--	if (i >= pdata->num_clients)
--		return -EINVAL;
--
--
--	if (fimc->vid_cap.sd) {
--		int ret = v4l2_subdev_call(fimc->vid_cap.sd, core, s_power, 0);
+-	/* At least one camera sensor is required to register capture node */
+-	if (cap_input_index >= 0) {
+-		ret = fimc_register_capture_device(fimc);
 -		if (ret)
--			err("s_power failed: %d", ret);
--
--		clk_disable(fimc->clock[CLK_CAM]);
+-			goto err_m2m;
 -	}
 -
--	/* Release the attached sensor subdevice. */
--	fimc_subdev_unregister(fimc);
--
--	return fimc_isp_subdev_init(fimc, i);
-+	return i == 0 ? i : -EINVAL;
- }
+ 	dev_dbg(&pdev->dev, "%s(): fimc-%d registered successfully\n",
+ 		__func__, fimc->id);
  
--static int fimc_cap_g_input(struct file *file, void *priv,
--				       unsigned int *i)
-+static int fimc_cap_g_input(struct file *file, void *priv, unsigned int *i)
- {
--	struct fimc_ctx *ctx = priv;
--	struct fimc_vid_cap *cap = &ctx->fimc_dev->vid_cap;
--
--	*i = cap->input_index;
-+	*i = 0;
+ 	pm_runtime_put_sync(&fimc->pdev->dev);
  	return 0;
- }
  
+-err_m2m:
+-	fimc_unregister_m2m_device(fimc);
+ err_irq:
+ 	free_irq(fimc->irq, fimc);
+ err_clk:
+@@ -1805,9 +1792,6 @@ static int __devexit fimc_remove(struct platform_device *pdev)
+ 	fimc_suspend(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 
+-	fimc_unregister_m2m_device(fimc);
+-	fimc_unregister_capture_device(fimc);
+-
+ 	vb2_dma_contig_cleanup_ctx(fimc->alloc_ctx);
+ 
+ 	clk_disable(fimc->clock[CLK_BUS]);
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
+index 55c1410..c088dac 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.h
++++ b/drivers/media/video/s5p-fimc/fimc-core.h
+@@ -644,6 +644,7 @@ int fimc_set_scaler_info(struct fimc_ctx *ctx);
+ int fimc_prepare_config(struct fimc_ctx *ctx, u32 flags);
+ int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
+ 		      struct fimc_frame *frame, struct fimc_addr *paddr);
++int fimc_register_m2m_device(struct fimc_dev *fimc);
+ 
+ /* -----------------------------------------------------*/
+ /* fimc-capture.c					*/
 -- 
 1.7.5.4
