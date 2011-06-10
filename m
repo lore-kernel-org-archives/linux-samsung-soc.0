@@ -1,59 +1,40 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH] ARM: SAMSUNG: Add support for pre-sleep/post-restore	gpio
- control
-Date: Fri, 10 Jun 2011 08:09:09 +0200
-Message-ID: <001f01cc2734$e97e8f70$bc7bae50$%szyprowski@samsung.com>
-References: <1303925654-27715-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <00fc01cc0baa$d7d94cb0$878be610$%kim@samsung.com>
- <003b01cc24df$29b841b0$7d28c510$%szyprowski@samsung.com>
- <4DF13E03.50803@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH 0/5] ARM: Add SPDIF support for EXYNOS4
+Date: Fri, 10 Jun 2011 12:04:22 +0530
+Message-ID: <1307687667-9127-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:54486 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751681Ab1FJGJb (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:15797 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751803Ab1FJGiE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Jun 2011 02:09:31 -0400
-Received: from eu_spt1 (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LMK002VN93UCF@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 07:09:30 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LMK000Q793TSU@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 07:09:29 +0100 (BST)
-In-reply-to: <4DF13E03.50803@samsung.com>
-Content-language: pl
+	Fri, 10 Jun 2011 02:38:04 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LMK00EHSAF9XQI0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 15:38:02 +0900 (KST)
+Received: from Hawshines.sisodomain.com (unknown [107.108.83.161])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTPA id <0LMK005R8AF8Q510@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 15:38:02 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
+To: kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, jassisinghbrar@gmail.com, lrg@ti.com, sbkim73@samsung.com, sw.youn@samsung.com, linux-samsung-soc@vger.kernel.org, linux-ar
 
-Hello,
+EXYNOS4 supports S/PDIF transmitter simillar to the one in S5PV210.
 
-On Thursday, June 09, 2011 11:41 PM Kukjin Kim wrote:
+This patchset adds the clock support, fixes improper gpio configs
+and enables the device for SMDKV310.
 
-> On 06/06/11 23:50, Marek Szyprowski wrote:
-> > Hello,
-> >
-> Hi :)
-> 
-> (snip)
-> 
-> >
-> > This patch lacks stubs for s5p64x0, s5pc100 and exynos4. I will send a
-> quick fix
-> > soon.
-> 
-> Oops, I couldn't test it all on my laptop which is so slow :(
+ o To Kukjin Kim, Sangbeom Kim and Seungwhan Youn,
+[PATCH 1/5] ARM: EXYNOS4: Add EPLL clock operations
+[PATCH 2/5] ARM: EXYNOS4: Add sclk_spdif clocks
+[PATCH 3/5] ARM: EXYNOS4: fix improper gpio configuration
+[PATCH 4/5] ARM: EXYNOS4: Add SPDIF for SMDKV310
 
-In fact the problem was only on exynos4 platform, because both s5p64x0 and
-s5pc100 don't support pm at all. I've posted build fix patch for exynos4.
- 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+ o To Seungwhan Youn, Jassi Brar, Mark Brown and Liam Girdwood,
+[PATCH 5/5] ASoC: SMDKV310: Enable SPDIF device
+
+Best Regards,
+Naveen Krishna Chatradhi
