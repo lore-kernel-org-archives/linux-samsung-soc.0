@@ -1,40 +1,138 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 0/5] ARM: Add SPDIF support for EXYNOS4
-Date: Fri, 10 Jun 2011 12:04:22 +0530
-Message-ID: <1307687667-9127-1-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH 2/5] ARM: EXYNOS4: Add sclk_spdif clocks
+Date: Fri, 10 Jun 2011 12:04:24 +0530
+Message-ID: <1307687667-9127-3-git-send-email-ch.naveen@samsung.com>
+References: <1307687667-9127-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:15797 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:15836 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751803Ab1FJGiE (ORCPT
+	with ESMTP id S1751681Ab1FJGiG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Jun 2011 02:38:04 -0400
+	Fri, 10 Jun 2011 02:38:06 -0400
 Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
  2010)) with ESMTP id <0LMK00EHSAF9XQI0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 15:38:02 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 15:38:05 +0900 (KST)
 Received: from Hawshines.sisodomain.com (unknown [107.108.83.161])
  by mmp1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
  2010)) with ESMTPA id <0LMK005R8AF8Q510@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 15:38:02 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 15:38:05 +0900 (KST)
+In-reply-to: <1307687667-9127-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, jassisinghbrar@gmail.com, lrg@ti.com, sbkim73@samsung.com, sw.youn@samsung.com, linux-samsung-soc@vger.kernel.org, linux-ar
 
-EXYNOS4 supports S/PDIF transmitter simillar to the one in S5PV210.
+Add the sclk_spdif clock is of type 'struct clksrc_clk' clock.
+Also, add clk_spdifcdclk clocks of type 'struct clk' clock.
 
-This patchset adds the clock support, fixes improper gpio configs
-and enables the device for SMDKV310.
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+---
+ arch/arm/mach-exynos4/clock.c |   70 +++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 70 insertions(+), 0 deletions(-)
 
- o To Kukjin Kim, Sangbeom Kim and Seungwhan Youn,
-[PATCH 1/5] ARM: EXYNOS4: Add EPLL clock operations
-[PATCH 2/5] ARM: EXYNOS4: Add sclk_spdif clocks
-[PATCH 3/5] ARM: EXYNOS4: fix improper gpio configuration
-[PATCH 4/5] ARM: EXYNOS4: Add SPDIF for SMDKV310
-
- o To Seungwhan Youn, Jassi Brar, Mark Brown and Liam Girdwood,
-[PATCH 5/5] ASoC: SMDKV310: Enable SPDIF device
-
-Best Regards,
-Naveen Krishna Chatradhi
+diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
+index 7aa4aef..57ca356 100644
+--- a/arch/arm/mach-exynos4/clock.c
++++ b/arch/arm/mach-exynos4/clock.c
+@@ -73,6 +73,11 @@ static struct clk clk_audiocdclk2 = {
+ 	.id		= 2,
+ };
+ 
++static struct clk clk_spdifcdclk = {
++	.name		= "spdifcdclk",
++	.id		= -1,
++};
++
+ static int exynos4_clksrc_mask_top_ctrl(struct clk *clk, int enable)
+ {
+ 	return s5p_gatectrl(S5P_CLKSRC_MASK_TOP, clk, enable);
+@@ -592,6 +597,11 @@ static struct clk init_clocks_off[] = {
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 21),
+ 	}, {
++		.name		= "spdif",
++		.id		= -1,
++		.enable		= exynos4_clk_ip_peril_ctrl,
++		.ctrlbit	= (1 << 26),
++	}, {
+ 		.name		= "ac97",
+ 		.id		= -1,
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+@@ -858,6 +868,65 @@ static struct clk init_clocks[] = {
+ 	}
+ };
+ 
++static int exynos4_spdif_set_rate(struct clk *clk, unsigned long rate)
++{
++	struct clk *pclk;
++	int ret;
++
++	pclk = clk_get_parent(clk);
++	if (IS_ERR(pclk))
++		return -EINVAL;
++
++	ret = pclk->ops->set_rate(pclk, rate);
++	clk_put(pclk);
++
++	return ret;
++}
++
++static unsigned long exynos4_spdif_get_rate(struct clk *clk)
++{
++	struct clk *pclk;
++	int rate;
++
++	pclk = clk_get_parent(clk);
++	if (IS_ERR(pclk))
++		return -EINVAL;
++
++	rate = pclk->ops->get_rate(clk);
++	clk_put(pclk);
++
++	return rate;
++}
++
++static struct clk_ops exynos4_sclk_spdif_ops = {
++	.set_rate	= exynos4_spdif_set_rate,
++	.get_rate	= exynos4_spdif_get_rate,
++};
++
++static struct clk *clkset_sclk_spdif_list[] = {
++	[0] = &clk_sclk_audio0.clk,
++	[1] = &clk_sclk_audio1.clk,
++	[2] = &clk_sclk_audio2.clk,
++	[3] = &clk_spdifcdclk,
++};
++
++static struct clksrc_sources clkset_sclk_spdif = {
++	.sources	= clkset_sclk_spdif_list,
++	.nr_sources	= ARRAY_SIZE(clkset_sclk_spdif_list),
++};
++
++static struct clksrc_clk clk_sclk_spdif = {
++	.clk	= {
++		.name		= "sclk_spdif",
++		.id		= -1,
++		.enable		= exynos4_clksrc_mask_peril1_ctrl,
++		.ctrlbit	= (1 << 8),
++		.ops		= &exynos4_sclk_spdif_ops,
++	},
++		.sources = &clkset_sclk_spdif,
++		.reg_src = { .reg = S5P_CLKSRC_PERIL1, .shift = 8, .size = 2 },
++};
++
+ static struct clk *clkset_group_list[] = {
+ 	[0] = &clk_ext_xtal_mux,
+ 	[1] = &clk_xusbxti,
+@@ -1274,6 +1343,7 @@ static struct clksrc_clk *sysclks[] = {
+ 	&clk_sclk_audio0,
+ 	&clk_sclk_audio1,
+ 	&clk_sclk_audio2,
++	&clk_sclk_spdif,
+ };
+ 
+ static u32 epll_div[][6] = {
+-- 
+1.7.2.3
