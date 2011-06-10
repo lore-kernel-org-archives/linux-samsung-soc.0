@@ -1,89 +1,45 @@
 From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 2/4] ASoC: SAMSUNG: Add I2S0 internal dma
-	driver
-Date: Fri, 10 Jun 2011 15:38:11 +0530
-Message-ID: <BANLkTikND3dyqmi9xj93ZDPh2-NaXo_jTA@mail.gmail.com>
+Subject: Re: [alsa-devel] [PATCH 3/4] ASoC: SAMSUNG: Change platform driver
+ for SMDKs
+Date: Fri, 10 Jun 2011 15:42:27 +0530
+Message-ID: <BANLkTinCKbPC0gTO5FJXn96wLMEUdZ+R3Q@mail.gmail.com>
 References: <1307606950-8310-1-git-send-email-sbkim73@samsung.com>
-	<1307606950-8310-3-git-send-email-sbkim73@samsung.com>
+	<1307606950-8310-4-git-send-email-sbkim73@samsung.com>
+	<BANLkTinUk6CRdh8mYAk7fbd9Ga6iBRfcaA@mail.gmail.com>
+	<000a01cc273e$49dc4610$dd94d230$@com>
+	<BANLkTikswO-5LOreJq=OXutya_CzYUkh1g@mail.gmail.com>
+	<20110610094920.GC26436@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1307606950-8310-3-git-send-email-sbkim73@samsung.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Sangbeom Kim <sbkim73@samsung.com>
-Cc: alsa-devel@alsa-project.org, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, lrg@slimlogic.co.uk
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:37899 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753332Ab1FJKM3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 10 Jun 2011 06:12:29 -0400
+Received: by bwz15 with SMTP id 15so2053184bwz.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Jun 2011 03:12:28 -0700 (PDT)
+In-Reply-To: <20110610094920.GC26436@opensource.wolfsonmicro.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, alsa-devel@alsa-project.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, lrg@slimlogic.co.uk
 
-T24gVGh1LCBKdW4gOSwgMjAxMSBhdCAxOjM5IFBNLCBTYW5nYmVvbSBLaW0gPHNia2ltNzNAc2Ft
-c3VuZy5jb20+IHdyb3RlOgo+IEkyUyBpbiBFeHlub3M0IGFuZCBTNVBDMTEwKFM1UFYyMTApIGhh
-cyBhIGludGVybmFsIGRtYS4KPiBJdCBjYW4gYmUgdXNlZCBsb3cgcG93ZXIgYXVkaW8gbW9kZSBh
-bmQgMm5kIGNoYW5uZWwgdHJhbnNmZXIuCgpGb3IgbXkgY29udmVuaWVuY2UsIGNvdWxkIHlvdSBw
-bGVhc2UgdGVsbCBob3cgZG9lcyBpdCBkaWZmZXIgZnJvbSBteQpvcmlnaW5hbCBpbXBsZW1lbnRh
-dGlvbj8gIE1vc3QgdGhpbmdzIGxvb2sgc2FtZSwgZXhjZXB0IGZvciBhIGZldwp2YXJpYWJsZXMu
-CgoKPiBAQCAtMTYsNiArMTcsNyBAQCBvYmotJChDT05GSUdfU05EX1MzQ19JMlNWMl9TT0MpICs9
-IHNuZC1zb2MtczNjLWkycy12Mi5vCj4gwqBvYmotJChDT05GSUdfU05EX1NBTVNVTkdfU1BESUYp
-ICs9IHNuZC1zb2Mtc2Ftc3VuZy1zcGRpZi5vCj4gwqBvYmotJChDT05GSUdfU05EX1NBTVNVTkdf
-UENNKSArPSBzbmQtc29jLXBjbS5vCj4gwqBvYmotJChDT05GSUdfU05EX1NBTVNVTkdfSTJTKSAr
-PSBzbmQtc29jLWkycy5vCj4gK29iai0kKENPTkZJR19TTkRfU0FNU1VOR19JMlMpICs9IHNuZC1z
-b2MtaWRtYS5vCgpQbGVhc2UgY2hlY2sgdGhhdCBidWlsZGluZyBvbmx5IGZvciBzM2M2NHh4IGRv
-ZXNuJ3QgYnJlYWsgYnkgdGhpcy4KCgoKPiArCj4gK3N0YXRpYyBzdHJ1Y3QgaWRtYV9pbmZvIHsK
-PiArIMKgIMKgIMKgIHNwaW5sb2NrX3QgwqAgwqAgwqBsb2NrOwo+ICsgwqAgwqAgwqAgdm9pZCDC
-oCDCoCDCoCDCoCDCoCDCoCBfX2lvbWVtIMKgKnJlZ3M7Cj4gKyDCoCDCoCDCoCBpbnQgwqAgwqAg
-wqAgwqAgwqAgwqAgdHJpZ2dlcl9zdGF0OwpUaGUgcm9sZSBvZiB0cmlnZ2VyX3N0YXQgaXMgbm90
-IG5lY2Vzc2FyeS4KCj4gKwo+ICsgwqAgwqAgwqAgLyogU3RhcnQgYWRkcmVzczAgb2YgSTJTIGlu
-dGVybmFsIERNQSBvcGVyYXRpb24uICovCj4gKyDCoCDCoCDCoCB2YWwgPSByZWFkbChpZG1hLnJl
-Z3MgKyBJMlNTVFIwKTsKV2h5IHJlYWQgd2hlbiB5b3UgaW1tZWRpYXRlbHkgb3ZlcndyaXRlIGl0
-ID8KPiArIMKgIMKgIMKgIHZhbCA9IExQX1RYQlVGRl9BRERSOwo+ICsgwqAgwqAgwqAgd3JpdGVs
-KHZhbCwgaWRtYS5yZWdzICsgSTJTU1RSMCk7Cj4gKwoKCj4gK3N0YXRpYyBpbnQgaWRtYV9od19w
-YXJhbXMoc3RydWN0IHNuZF9wY21fc3Vic3RyZWFtICpzdWJzdHJlYW0sCj4gKyDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBzdHJ1Y3Qgc25kX3BjbV9od19wYXJh
-bXMgKnBhcmFtcykKPiArewo+ICsgwqAgwqAgwqAgc3RydWN0IHNuZF9wY21fcnVudGltZSAqcnVu
-dGltZSA9IHN1YnN0cmVhbS0+cnVudGltZTsKPiArIMKgIMKgIMKgIHN0cnVjdCBpZG1hX2N0cmwg
-KnBydGQgPSBzdWJzdHJlYW0tPnJ1bnRpbWUtPnByaXZhdGVfZGF0YTsKPiArCj4gKyDCoCDCoCDC
-oCBwcl9kZWJ1ZygiRW50ZXJlZCAlc1xuIiwgX19mdW5jX18pOwpjYW4gd2UgaGF2ZSBhbGwgdGhl
-IHByX2RlYnVnJ3MgY29udmVydGVkIHRvIGRldl9kZWJ1ZyA/CgoKPiArIMKgIMKgIMKgIHNuZF9w
-Y21fc2V0X3J1bnRpbWVfYnVmZmVyKHN1YnN0cmVhbSwgJnN1YnN0cmVhbS0+ZG1hX2J1ZmZlcik7
-Cj4gKyDCoCDCoCDCoCBydW50aW1lLT5kbWFfYnl0ZXMgPSBwYXJhbXNfYnVmZmVyX2J5dGVzKHBh
-cmFtcyk7Cj4gKyDCoCDCoCDCoCBtZW1zZXQocnVudGltZS0+ZG1hX2FyZWEsIDAsIHJ1bnRpbWUt
-PmRtYV9ieXRlcyk7CklzIGl0IHJlYWxseSBuZWVkZWQgPwoKPiArCj4gKyDCoCDCoCDCoCBpZiAo
-aWlzYWhiICYgQUhCX0xWTDBJTlQpCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCB2YWwgPSBBSEJf
-Q0xSTFZMMElOVDsKPiArIMKgIMKgIMKgIGVsc2UKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHZh
-bCA9IDA7CiAgdmFsID0gKGlpc2FoYiAmIEFIQl9MVkwwSU5UKSA/IEFIQl9DTFJMVkwwSU5UIDog
-MDsgICAgIGxvb2tzIGJldHRlcgoKPiArCj4gKyDCoCDCoCDCoCBpZiAodmFsKSB7Cj4gKyDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCBpaXNhaGIgfD0gdmFsOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-d3JpdGVsKGlpc2FoYiwgaWRtYS5yZWdzICsgSTJTQUhCKTsKPiArCj4gKyDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCBhZGRyID0gcmVhZGwoaWRtYS5yZWdzICsgSTJTTFZMMEFERFIpOwo+ICsgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgYWRkciArPSBwcnRkLT5wZXJpb2RzejsKPiArCj4gKyDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCBpZiAoYWRkciA+PSBwcnRkLT5lbmQpCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCBhZGRyID0gTFBfVFhCVUZGX0FERFI7ClRoaXMgd2lsbCBicmVhayBpZiBy
-aW5nIGJ1ZmZlciBpcyBub3QgYSBtdWx0aXBsZSBvZiBwZXJpb2Qgc2l6ZS4KRWl0aGVyIHNldCB0
-aGUgY29uc3RyYWludCBpbiBvcGVuIG9yIGRvIG1vZHVsbyBvcGVyYXRpb24gaGVyZS4KCj4gKwo+
-ICtzdGF0aWMgaW50IGlkbWFfY2xvc2Uoc3RydWN0IHNuZF9wY21fc3Vic3RyZWFtICpzdWJzdHJl
-YW0pCj4gK3sKPiArIMKgIMKgIMKgIHN0cnVjdCBzbmRfcGNtX3J1bnRpbWUgKnJ1bnRpbWUgPSBz
-dWJzdHJlYW0tPnJ1bnRpbWU7Cj4gKyDCoCDCoCDCoCBzdHJ1Y3QgaWRtYV9jdHJsICpwcnRkID0g
-cnVudGltZS0+cHJpdmF0ZV9kYXRhOwo+ICsKPiArIMKgIMKgIMKgIHByX2RlYnVnKCJFbnRlcmVk
-ICVzLCBwcnRkID0gJXBcbiIsIF9fZnVuY19fLCBwcnRkKTsKPiArCj4gKyDCoCDCoCDCoCBmcmVl
-X2lycShJUlFfSTJTMCwgcHJ0ZCk7Cj4gKwo+ICsgwqAgwqAgwqAgaWYgKCFwcnRkKQo+ICsgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgcHJfZXJyKCJpZG1hX2Nsb3NlIGNhbGxlZCB3aXRoIHBydGQgPT0g
-TlVMTFxuIik7Cj4gKwo+ICsgwqAgwqAgwqAga2ZyZWUocHJ0ZCk7CgpBbHNvICAgICAgIHJ1bnRp
-bWUtPnByaXZhdGVfZGF0YSA9IE5VTEw7Cgo+IGRpZmYgLS1naXQgYS9zb3VuZC9zb2Mvc2Ftc3Vu
-Zy9pZG1hLmggYi9zb3VuZC9zb2Mvc2Ftc3VuZy9pZG1hLmgKPiBuZXcgZmlsZSBtb2RlIDEwMDY0
-NAo+IGluZGV4IDAwMDAwMDAuLjJiMGFjMzcKPiAtLS0gL2Rldi9udWxsCj4gKysrIGIvc291bmQv
-c29jL3NhbXN1bmcvaWRtYS5oCj4gQEAgLTAsMCArMSwyOCBAQAo+ICsvKgo+ICsgKiBpZG1hLmgg
-wqAtLSDCoEkyUzAncyBJbnRlcm5hbCBEbWEgZHJpdmVyCj4gKyAqCj4gKyAqIENvcHlyaWdodCAo
-YykgMjAxMCBTYW1zdW5nIEVsZWN0cm9uaWNzIENvLiBMdGQKQ29weXJpZ2h0IDIwMTEgPwoKPiAr
-LyogaWRtYV9zdGF0ZSAqLwo+ICsjZGVmaW5lIExQQU1fRE1BX1NUT1AgwqAgwqAwCj4gKyNkZWZp
-bmUgTFBBTV9ETUFfU1RBUlQgwqAgMQpUaGVzZSBhcmUgaW50ZXJuYWwgdG8gaWRtYS5jLCBwbGVh
-c2UgbW92ZSB0aGVtIHRoZXJlLgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpBbHNhLWRldmVsIG1haWxpbmcgbGlzdApBbHNhLWRldmVsQGFsc2EtcHJvamVj
-dC5vcmcKaHR0cDovL21haWxtYW4uYWxzYS1wcm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Fs
-c2EtZGV2ZWwK
+On Fri, Jun 10, 2011 at 3:19 PM, Mark Brown
+<broonie@opensource.wolfsonmicro.com> wrote:
+> On Fri, Jun 10, 2011 at 12:56:45PM +0530, Jassi Brar wrote:
+>> On Fri, Jun 10, 2011 at 12:46 PM, Sangbeom Kim <sbkim73@samsung.com> wrote:
+>
+>> > I only focused on S5PV210 and S5PV310.
+>> > I didn't consider s3c and s5p series.
+>> > In the next version, I will delete it.
+>
+>> Though if then everything works fine with system and internal DMA,
+>> maybe it is better to assign platform_name string at runtime from some
+>> module parameter, and leaving the default to normal system DMA ?
+>
+> If iDMA is always a better choice on CPUs that support it then the
+> cpu_is_() macros might be a good way to make the selection?
+
+Actually I remembered just after I posted - iDMA wouldn't support capture.
+So iDMA is a bad choice after all.
