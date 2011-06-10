@@ -1,85 +1,58 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH] ARM: S5PC110: enable PWM timers for GONI board
-Date: Fri, 10 Jun 2011 07:42:49 +0200
-Message-ID: <001e01cc2731$3bcc5770$b3650650$%szyprowski@samsung.com>
-References: <1307429115-13402-1-git-send-email-m.szyprowski@samsung.com>
- <4DF14536.4030304@samsung.com>
+Subject: RE: [PATCH] ARM: SAMSUNG: Add support for pre-sleep/post-restore	gpio
+ control
+Date: Fri, 10 Jun 2011 08:09:09 +0200
+Message-ID: <001f01cc2734$e97e8f70$bc7bae50$%szyprowski@samsung.com>
+References: <1303925654-27715-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <00fc01cc0baa$d7d94cb0$878be610$%kim@samsung.com>
+ <003b01cc24df$29b841b0$7d28c510$%szyprowski@samsung.com>
+ <4DF13E03.50803@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:53196 "EHLO
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:54486 "EHLO
 	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751847Ab1FJFmx (ORCPT
+	with ESMTP id S1751681Ab1FJGJb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Jun 2011 01:42:53 -0400
-Received: from spt2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	Fri, 10 Jun 2011 02:09:31 -0400
+Received: from eu_spt1 (mailout2.w1.samsung.com [210.118.77.12])
  by mailout2.w1.samsung.com
  (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LMK00F2D7VG45@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 06:42:52 +0100 (BST)
+ with ESMTP id <0LMK002VN93UCF@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 07:09:30 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LMK00F7B7VEAA@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 06:42:50 +0100 (BST)
-In-reply-to: <4DF14536.4030304@samsung.com>
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LMK000Q793TSU@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 07:09:29 +0100 (BST)
+In-reply-to: <4DF13E03.50803@samsung.com>
 Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
 
 Hello,
 
-On Friday, June 10, 2011 12:12 AM Kukjin Kim wrote:
+On Thursday, June 09, 2011 11:41 PM Kukjin Kim wrote:
 
-> On 06/06/11 23:45, Marek Szyprowski wrote:
-> > s5p_timer requires PWM device to be compiled in. Add aproperiate Kconfig
-> > select directive for GONI machine, so compilation won't fail if GONI is
-> > the only machine compiled into the kernel.
+> On 06/06/11 23:50, Marek Szyprowski wrote:
+> > Hello,
 > >
-> > Signed-off-by: Marek Szyprowski<m.szyprowski@samsung.com>
-> > Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+> Hi :)
+> 
+> (snip)
+> 
 > >
-> > ---
-> >   arch/arm/mach-s5pv210/Kconfig |    1 +
-> >   1 files changed, 1 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-
-> s5pv210/Kconfig
-> > index 37b5a97..aceafb4 100644
-> > --- a/arch/arm/mach-s5pv210/Kconfig
-> > +++ b/arch/arm/mach-s5pv210/Kconfig
-> > @@ -92,6 +92,7 @@ config MACH_GONI
-> >   	select S3C_DEV_I2C2
-> >   	select S3C_DEV_USB_HSOTG
-> >   	select S5P_DEV_ONENAND
-> > +	select SAMSUNG_DEV_PWM
-> >   	select SAMSUNG_DEV_KEYPAD
-> >   	select S5PV210_SETUP_FB_24BPP
-> >   	select S5PV210_SETUP_I2C1
+> > This patch lacks stubs for s5p64x0, s5pc100 and exynos4. I will send a
+> quick fix
+> > soon.
 > 
-> Yeah, SAMSUNG_DEV_PWM is required to use s5p-time.c for HRT.
-> So I think following is better.
-> 
-> Marek, if you don't mind, I'd like to apply below...
-> 
-> diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-> index e98f5c5..7f9ff2a 100644
-> --- a/arch/arm/plat-s5p/Kconfig
-> +++ b/arch/arm/plat-s5p/Kconfig
-> @@ -39,6 +39,7 @@ config S5P_GPIO_INT
-> 
->   config S5P_HRT
->          bool
-> +       select SAMSUNG_DEV_PWM
->          help
->            Use the High Resolution timer support
-> 
-> Thanks.
+> Oops, I couldn't test it all on my laptop which is so slow :(
 
-Yes, this one looks better.
-
+In fact the problem was only on exynos4 platform, because both s5p64x0 and
+s5pc100 don't support pm at all. I've posted build fix patch for exynos4.
+ 
 Best regards
 -- 
 Marek Szyprowski
