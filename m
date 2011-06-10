@@ -1,135 +1,46 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 1/5] ARM: EXYNOS4: Add EPLL clock operations
-Date: Fri, 10 Jun 2011 12:04:23 +0530
-Message-ID: <1307687667-9127-2-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH 5/5] ASoC: SMDKV310: Enable SPDIF device
+Date: Fri, 10 Jun 2011 12:04:27 +0530
+Message-ID: <1307687667-9127-6-git-send-email-ch.naveen@samsung.com>
 References: <1307687667-9127-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:15797 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751027Ab1FJGiF (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:47161 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752608Ab1FJGiM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Jun 2011 02:38:05 -0400
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Fri, 10 Jun 2011 02:38:12 -0400
+Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LMK00EHSAF9XQI0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 15:38:04 +0900 (KST)
+ 2010)) with ESMTP id <0LMK00BLZAFEC700@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 15:38:10 +0900 (KST)
 Received: from Hawshines.sisodomain.com (unknown [107.108.83.161])
  by mmp1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
  2010)) with ESMTPA id <0LMK005R8AF8Q510@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 15:38:03 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 15:38:10 +0900 (KST)
 In-reply-to: <1307687667-9127-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, jassisinghbrar@gmail.com, lrg@ti.com, sbkim73@samsung.com, sw.youn@samsung.com, linux-samsung-soc@vger.kernel.org, linux-ar
 
-This patch adds EPLL specific clock get_rate/set_rate
-operations on EXYNOS4.
-
-Note: Initial code from S5PV210
-http://permalink.gmane.org/gmane.linux.alsa.devel/77519
-
 Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 ---
- arch/arm/mach-exynos4/clock.c |   78 +++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 78 insertions(+), 0 deletions(-)
+ sound/soc/samsung/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
-index b1b93b9..7aa4aef 100644
---- a/arch/arm/mach-exynos4/clock.c
-+++ b/arch/arm/mach-exynos4/clock.c
-@@ -1276,6 +1276,82 @@ static struct clksrc_clk *sysclks[] = {
- 	&clk_sclk_audio2,
- };
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index d155cbb..92236eb 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -158,7 +158,7 @@ config SND_SOC_GONI_AQUILA_WM8994
  
-+static u32 epll_div[][6] = {
-+	{  48000000, 0, 48, 3, 3, 0 },
-+	{  96000000, 0, 48, 3, 2, 0 },
-+	{ 144000000, 1, 72, 3, 2, 0 },
-+	{ 192000000, 0, 48, 3, 1, 0 },
-+	{ 288000000, 1, 72, 3, 1, 0 },
-+	{  32750000, 1, 65, 3, 4, 35127 },
-+	{  32768000, 1, 65, 3, 4, 35127 },
-+	{  45158400, 0, 45, 3, 3, 10355 },
-+	{  45000000, 0, 45, 3, 3, 10355 },
-+	{  45158000, 0, 45, 3, 3, 10355 },
-+	{  49125000, 0, 49, 3, 3, 9961 },
-+	{  49152000, 0, 49, 3, 3, 9961 },
-+	{  67737600, 1, 67, 3, 3, 48366 },
-+	{  67738000, 1, 67, 3, 3, 48366 },
-+	{  73800000, 1, 73, 3, 3, 47710 },
-+	{  73728000, 1, 73, 3, 3, 47710 },
-+	{  36000000, 1, 32, 3, 4, 0 },
-+	{  60000000, 1, 60, 3, 3, 0 },
-+	{  72000000, 1, 72, 3, 3, 0 },
-+	{  80000000, 1, 80, 3, 3, 0 },
-+	{  84000000, 0, 42, 3, 2, 0 },
-+	{  50000000, 0, 50, 3, 3, 0 },
-+};
-+
-+static int exynos4_epll_set_rate(struct clk *clk, unsigned long rate)
-+{
-+	unsigned int epll_con, epll_con_k;
-+	unsigned int i;
-+
-+	/* Return if nothing changed */
-+	if (clk->rate == rate)
-+		return 0;
-+
-+	epll_con = __raw_readl(S5P_EPLL_CON);
-+	epll_con_k = __raw_readl(S5P_EPLL_CON1);
-+
-+	epll_con_k &= ~PLL46XX_KDIV_MASK;
-+	epll_con &= ~(1 << 27 |
-+			PLL46XX_MDIV_MASK << PLL46XX_MDIV_SHIFT |
-+			PLL46XX_PDIV_MASK << PLL46XX_PDIV_SHIFT |
-+			PLL46XX_SDIV_MASK << PLL46XX_SDIV_SHIFT);
-+
-+	for (i = 0; i < ARRAY_SIZE(epll_div); i++) {
-+		if (epll_div[i][0] == rate) {
-+			epll_con_k |= epll_div[i][5] << 0;
-+			epll_con |= (epll_div[i][1] << 27 |
-+					epll_div[i][2] << PLL46XX_MDIV_SHIFT |
-+					epll_div[i][3] << PLL46XX_PDIV_SHIFT |
-+					epll_div[i][4] << PLL46XX_SDIV_SHIFT);
-+			break;
-+		}
-+	}
-+
-+	if (i == ARRAY_SIZE(epll_div)) {
-+		printk(KERN_ERR "%s: Invalid Clock EPLL Frequency\n",
-+				__func__);
-+		return -EINVAL;
-+	}
-+
-+	__raw_writel(epll_con, S5P_EPLL_CON);
-+	__raw_writel(epll_con_k, S5P_EPLL_CON1);
-+
-+	printk(KERN_WARNING "EPLL Rate changes from %lu to %lu\n",
-+			clk->rate, rate);
-+
-+	clk->rate = rate;
-+
-+	return 0;
-+}
-+
-+static struct clk_ops exynos4_epll_ops = {
-+	.set_rate = exynos4_epll_set_rate,
-+	.get_rate = s5p_epll_get_rate,
-+};
-+
- static int xtal_rate;
- 
- static unsigned long exynos4_fout_apll_get_rate(struct clk *clk)
-@@ -1354,6 +1430,8 @@ void __init_or_cpufreq exynos4_setup_clocks(void)
- 	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
- 		s3c_set_clksrc(&clksrcs[ptr], true);
- 
-+	clk_fout_epll.ops = &exynos4_epll_ops;
-+
- 	clk_audiocdclk0.rate = PCM_EXTCLK0;
- 	clk_set_parent(&clk_sclk_audio0.clk, &clk_audiocdclk0);
- }
+ config SND_SOC_SAMSUNG_SMDK_SPDIF
+ 	tristate "SoC S/PDIF Audio support for SMDK"
+-	depends on SND_SOC_SAMSUNG && (MACH_SMDKC100 || MACH_SMDKC110 || MACH_SMDKV210)
++	depends on SND_SOC_SAMSUNG && (MACH_SMDKC100 || MACH_SMDKC110 || MACH_SMDKV210 || MACH_SMDKV310)
+ 	select SND_SAMSUNG_SPDIF
+ 	help
+ 	  Say Y if you want to add support for SoC S/PDIF audio on the SMDK.
 -- 
 1.7.2.3
