@@ -1,52 +1,46 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 3/4] ASoC: SAMSUNG: Change platform driver
- for SMDKs
-Date: Fri, 10 Jun 2011 12:56:45 +0530
-Message-ID: <BANLkTikswO-5LOreJq=OXutya_CzYUkh1g@mail.gmail.com>
-References: <1307606950-8310-1-git-send-email-sbkim73@samsung.com>
-	<1307606950-8310-4-git-send-email-sbkim73@samsung.com>
-	<BANLkTinUk6CRdh8mYAk7fbd9Ga6iBRfcaA@mail.gmail.com>
-	<000a01cc273e$49dc4610$dd94d230$@com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <000a01cc273e$49dc4610$dd94d230$@com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Sangbeom Kim <sbkim73@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, ben-linux@fluff.org, lrg@slimlogic.co.uk
+From: Anand Kumar N <anand.kn@samsung.com>
+Subject: [PATCH 0/4] s3c-fb: Add support S5PV310 FIMD
+Date: Fri, 10 Jun 2011 13:45:19 +0530
+Message-ID: <1307693723-14971-1-git-send-email-anand.kn@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:56995 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754382Ab1FJIQS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 10 Jun 2011 04:16:18 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LMK003ZUEWY1CQ0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 17:16:14 +0900 (KST)
+Received: from anand-ubuntu.sisodomain.com (unknown [107.108.215.66])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTPA id <0LMK009OSEYVA360@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Jun 2011 17:16:14 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: lethal@linux-sh.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, jg1.han@samsung.com, jonghun.han@samsung.com, thomas.ab@samsung.com, anand.kn@samsung.com
 
-On Fri, Jun 10, 2011 at 12:46 PM, Sangbeom Kim <sbkim73@samsung.com> wrote:
-> On Thu, Jun 9, 2011 at 4:04 PM, Jassi Brar wrote:
->> NAK.
->> It will break the most common user - SMDK6410, as s3c6410 doesn't have any
->> I2S internal DMA.
->> Please try to test the changes before submitting. I know it's boring,
->> but it's even more important :)
->>
->> Thanks
->
-> I only focused on S5PV210 and S5PV310.
-> I didn't consider s3c and s5p series.
-> In the next version, I will delete it.
-Though if then everything works fine with system and internal DMA,
-maybe it is better to assign platform_name string at runtime from some
-module parameter, and leaving the default to normal system DMA ?
+This patch series is based on the latest
+git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git for-next
 
-> But I had found some problem and want to share.
-> Like this patch, If different platform driver is used for each channel,
-> 1st channel is overwritten by platform driver of 2nd channel.
-> Have you ever experienced before like this problem?
-IIRC, I successfully tested using system DMA with primary and iDMA
-with secondary channel. Only the sec chan would keep playing when
-the system went to suspend. Though tt was long time ago and I don't remember
-which Samsung kernel version.
+This was originally submitted by Jonghun Han <jonghun.han@samsung.com>
+http://www.spinics.net/lists/arm-kernel/msg101781.html
+This patchset has been not picked up in the mainline due to the unavailibility
+of cldev lookup. So it is being re-submitted rebased to 3.0.0-rc1 and tested 
+over the clkdev patches.
+
+This patch adds support FIMD(Fully Interactive Mobile Display) on S5PV310.
+The 3rd patch is update s3c-fb for it and others are for platform data.
+
+o To Kukjin Kim
+[RE-SEND][PATCH 1/4] ARM: S5PV310: Add FIMD resource definition
+[RE-SEND][PATCH 2/4] ARM: S5PV310: Add platform device and helper functions for FIMD
+[RE-SEND][PATCH 4/4] ARM: S5PV310: Add platform data for S5PV310 FIMD and LTE480WV platform-lcd
+
+o To Paul Mundt
+[RE-SEND][PATCH 3/4] s3c-fb: Add support S5PV310 FIMD
+
+Best Regards,
+Anand Kumar N
