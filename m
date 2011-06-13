@@ -1,79 +1,60 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung fixes for 3.0-rc3
-Date: Mon, 13 Jun 2011 16:46:32 +0900
-Message-ID: <000001cc299e$07194550$154bcff0$%kim@samsung.com>
+Subject: RE: [PATCH V2 1/2] ARM: EXYNOS4: Add PCM audio support for WM8994
+Date: Mon, 13 Jun 2011 16:48:22 +0900
+Message-ID: <000101cc299e$47d84870$d788d950$%kim@samsung.com>
+References: <1303954372-18565-1-git-send-email-sbkim73@samsung.com>
+ <1303954372-18565-2-git-send-email-sbkim73@samsung.com>
+ <003a01cc24dd$f5f2e390$e1d8aab0$%szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:18156 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753145Ab1FMHst (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 13 Jun 2011 03:48:49 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LMP00646XN2FKD0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 13 Jun 2011 16:48:28 +0900 (KST)
+Received: from kgenekim ([12.23.119.139])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LMP00FKOXOR0K@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 13 Jun 2011 16:48:27 +0900 (KST)
+In-reply-to: <003a01cc24dd$f5f2e390$e1d8aab0$%szyprowski@samsung.com>
 Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Linus Torvalds' <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Sangbeom Kim' <sbkim73@samsung.com>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
+Cc: jassisinghbrar@gmail.com, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com, ben-linux@fluff.org
 
-Hi Linus,
+Marek Szyprowski wrote:
+> 
+> Hello,
+> 
+Hi :)
 
-Please pull Samsung fixes from:
+> I've just noticed that there is a problem with this patch on
+> kgene/for-next branch. It causes compilation break:
+> 
+> arch/arm/mach-exynos4/cpu.c:106: error: 'S5P_VA_AUDSS' undeclared here
+(not in
+> a
+> function)
+> make[1]: *** [arch/arm/mach-exynos4/cpu.o] Error 1
+> make: *** [arch/arm/mach-exynos4] Error 2
+> make: *** Waiting for unfinished jobs....
+> 
+> It looks that some definitions are still missing there.
+> 
+Oops, Marek, thanks for your pointing out :)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-s5p-fixes-for-linus
-
-These things are for bug fix on 3.0-rc3.
-If any problems, please let me know.
-
-Thanks.
+I applied Naveen's patch for this.
 
 Best regards,
 Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-
-The following changes since commit 55922c9d1b84b89cb946c777fddccb3247e7df2c:
-
-  Linux 3.0-rc1 (2011-05-29 17:43:36 -0700)
-
-are available in the git repository at:
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-s5p-fixes-for-linus
-
-Heiko Stuebner (3):
-      ARM: S3C24xx: Fix missing struct for s3c2410_dma_chan
-      ARM: S3C24XX: Move s3c24xx_irq_syscore_ops to plat-s3c24xx/irq.c
-      ARM: S3C2410: remove the now empty mach-s3c2410/irq.c
-
-Jonghwan Choi (1):
-      ARM: S5PV210: Fix possible null pointer dereference
-
-Kukjin Kim (1):
-      ARM: S5P: Should be S3C_VA_USB_HSPHY instead of S5P_VA_XX
-
-Kyungmin Park (2):
-      ARM: EXYNOS4: Remove compiler warning on exynos4_pwm4_resume
-      ARM: SAMSUNG: Remove unused onenand plat functions
-
-Padmavathi Venna (1):
-      ARM: S5P64X0: Fix SPI platform device name
-
-Tushar Behera (1):
-      ARM: S5P: Fix compilation error for exynos4_defconfig
-
- arch/arm/mach-exynos4/Kconfig                      |    6 +++
- arch/arm/mach-exynos4/Makefile                     |    2 +-
- arch/arm/mach-exynos4/cpu.c                        |    2 +-
- arch/arm/mach-exynos4/include/mach/regs-usb-phy.h  |    2 +-
- .../mach-exynos4/{usb-phy.c => setup-usb-phy.c}    |    0
- arch/arm/mach-exynos4/time.c                       |    2 +
- arch/arm/mach-s3c2410/Makefile                     |    1 -
- arch/arm/mach-s3c2410/irq.c                        |   34
---------------------
- arch/arm/mach-s5pv210/cpufreq.c                    |    8 +++--
- arch/arm/plat-s3c24xx/dma.c                        |    2 +-
- arch/arm/plat-s3c24xx/irq.c                        |    6 +++
- arch/arm/plat-s5p/dev-onenand.c                    |   12 -------
- arch/arm/plat-s5p/include/plat/map-s5p.h           |    2 +-
- arch/arm/plat-samsung/dev-onenand.c                |   12 -------
- arch/arm/plat-samsung/include/plat/devs.h          |    6 +--
- 15 files changed, 26 insertions(+), 71 deletions(-)
