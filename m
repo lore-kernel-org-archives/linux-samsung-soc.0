@@ -1,57 +1,80 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [alsa-devel] [PATCH 2/4] ASoC: SAMSUNG: Add I2S0 internal dma driver
-Date: Mon, 13 Jun 2011 15:10:54 +0530
-Message-ID: <BANLkTi=mwc+xHupQEDfjrQ7XT8gn7fNveA@mail.gmail.com>
-References: <1307606950-8310-1-git-send-email-sbkim73@samsung.com>
-	<1307606950-8310-3-git-send-email-sbkim73@samsung.com>
-	<BANLkTikND3dyqmi9xj93ZDPh2-NaXo_jTA@mail.gmail.com>
-	<005001cc299f$5105b850$f31128f0$@com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH 0/4] s3c-fb: Add support S5PV310 FIMD
+Date: Tue, 14 Jun 2011 11:44:42 +0900
+Message-ID: <BANLkTikZKNivSigMgjVe=2=zZRrOhVPjCQ@mail.gmail.com>
+References: <1307693723-14971-1-git-send-email-anand.kn@samsung.com>
+	<4DF35D60.5090502@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:64844 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750826Ab1FMJkz convert rfc822-to-8bit (ORCPT
+Received: from mail-vx0-f174.google.com ([209.85.220.174]:50597 "EHLO
+	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751520Ab1FNCon convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Jun 2011 05:40:55 -0400
-Received: by bwz15 with SMTP id 15so3559740bwz.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Jun 2011 02:40:54 -0700 (PDT)
-In-Reply-To: <005001cc299f$5105b850$f31128f0$@com>
+	Mon, 13 Jun 2011 22:44:43 -0400
+Received: by vxi39 with SMTP id 39so4125109vxi.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Jun 2011 19:44:42 -0700 (PDT)
+In-Reply-To: <4DF35D60.5090502@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, ben-linux@fluff.org, lrg@slimlogic.co.uk
+To: Sylwester Nawrocki <snjw23@gmail.com>, Joonyoung Shim <jy0922.shim@samsung.com>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>
+Cc: Anand Kumar N <anand.kn@samsung.com>, lethal@linux-sh.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, jg1.han@samsung.com, jonghun.han@samsung.com, thomas.ab@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Mon, Jun 13, 2011 at 1:25 PM, Sangbeom Kim <sbkim73@samsung.com> wro=
-te:
-> On Thu, Jun 10, 2011 at 7:08 PM, Jassi Brar wrote:
->> For my convenience, could you please tell how does it differ from my
->> original implementation? =C2=A0Most things look same, except for a f=
-ew
->> variables.
-> Original code only can support specific buffer size and period count.
-> New idma driver can work with various buffer size and multiple period=
-=2E
-I believe using flexible buffer and period size with secondary i/f
-make sense only
-when _system_ dma and memory is used. iDMA provides no benefit over sys=
-tem DMA.
-Whereas for LPAM mode, you can _never_ get more power saving than using=
- full
-internal buffer with slightly smaller period size.
-So IMHO iDMA driver should use the original approach, while system dma =
-still
-allows the user to have flexible buffer and period size for low
-latency with sec i/f.
+CCed Display developers from other Samsung open source team
 
-> And Original code is implemented it based on wrapper arch.
-> But This patch can support driver arch.
-Well, there was extra wrapper driver. This driver is mostly unchanged.
-
-=46rankly, I don't see enough changes to justify overriding the MODULE_=
-AUTHOR.
-Of course, the copyright belongs to Samsung still.
-
-Thnx,
--j
+On Sat, Jun 11, 2011 at 9:19 PM, Sylwester Nawrocki <snjw23@gmail.com> =
+wrote:
+> Hi Anand,
+>
+> On 06/10/2011 10:15 AM, Anand Kumar N wrote:
+>> This patch series is based on the latest
+>> git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git for-=
+next
+>>
+>> This was originally submitted by Jonghun Han<jonghun.han@samsung.com=
+>
+>> http://www.spinics.net/lists/arm-kernel/msg101781.html
+>> This patchset has been not picked up in the mainline due to the unav=
+ailibility
+>> of cldev lookup. So it is being re-submitted rebased to 3.0.0-rc1 an=
+d tested
+>> over the clkdev patches.
+>
+> As far as I can see there is no functional changes in these patches c=
+omparing
+> to the original ones. AFAIR the idea with clkdev was to create clock =
+to device
+> mapping for each SoC variant and have driver using unified clock name=
+s across
+> SoC variants. There is nothing close to that in your following patche=
+s.
+>
+> Moreover looking at the S5PC110 datasheet only, the list of possible =
+sclk_fimd
+> parent clocks is specified as "All possible clock sources". It exactl=
+y means:
+> XXTI, XusbXTI, SCLK_HDMI_27M, SCLK_USBPHY_0, SCLK_USBPHY_1, SCLK_HDMI=
+PHY,
+> SCLK_M_PLL, SCLK_E_PLL, SCLK_V_PLL. So quite many, whereas you are tr=
+ying
+> to forcibly use in the driver SCLK_M_PLL only. As it has been pointed=
+ out
+> setting FIMD clock parent should be moved away to board code/DT/bootl=
+oader,
+> which allows to use the driver in unchanged form in various system
+> configurations. Let the board designer to make decisions about the cl=
+ock
+> configurations.
+>
+> --
+> Regards,
+> Sylwester
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
