@@ -1,110 +1,214 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: [PATCH 3/3 v2] ARM: EXYNOS4: Enable MFC on universal_c210
-Date: Tue, 14 Jun 2011 18:39:00 +0200
-Message-ID: <1308069540-24934-4-git-send-email-k.debski@samsung.com>
-References: <1308069540-24934-1-git-send-email-k.debski@samsung.com>
+From: Angus Ainslie <angus.ainslie@linaro.org>
+Subject: Re: [PATCH] ARM: exynos4: fix secondary CPU boot
+Date: Tue, 14 Jun 2011 16:26:34 -0600
+Message-ID: <BANLkTi=hEBKTpEq6daMyEdLo63aet52Gbg@mail.gmail.com>
+References: <1305899190-16732-1-git-send-email-marc.zyngier@arm.com>
+	<4DDD3C57.6020705@samsung.com>
+	<1306346645.27474.182.camel@e102391-lin.cambridge.arm.com>
+	<4DDD531A.50604@samsung.com>
+	<1306422710.27474.237.camel@e102391-lin.cambridge.arm.com>
+	<BANLkTi=fjq5ki8BGDhQxHVD3u-s7W-C1rw@mail.gmail.com>
+	<1307003689.31098.6.camel@e102391-lin.cambridge.arm.com>
+	<BANLkTi=mvCgi_6Y57aVjpwrMhL58zPcUHw@mail.gmail.com>
+	<1307004853.31098.12.camel@e102391-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:43868 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752058Ab1FNQjJ (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:32927 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753801Ab1FNW0g convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 Jun 2011 12:39:09 -0400
-Received: from eu_spt1 (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LMS00FB0GX9PT@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 14 Jun 2011 17:39:09 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LMS00FB1GX7C8@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 14 Jun 2011 17:39:08 +0100 (BST)
-In-reply-to: <1308069540-24934-1-git-send-email-k.debski@samsung.com>
+	Tue, 14 Jun 2011 18:26:36 -0400
+Received: by fxm17 with SMTP id 17so14969fxm.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Jun 2011 15:26:35 -0700 (PDT)
+In-Reply-To: <1307004853.31098.12.camel@e102391-lin.cambridge.arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, k.debski@samsung.com, jaeryul.oh@samsung.com, jtp.park@samsung.com, kgene.kim@samsung.com
+To: Marc Zyngier <Marc.Zyngier@arm.com>
+Cc: Kyungmin Park <kmpark@infradead.org>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-Enable MFC device on the universal_c210 boards using the EXYNOS4 SoC.
+On Thu, Jun 2, 2011 at 2:54 AM, Marc Zyngier <Marc.Zyngier@arm.com> wro=
+te:
+> On Thu, 2011-06-02 at 17:39 +0900, Kyungmin Park wrote:
+>> On Thu, Jun 2, 2011 at 5:34 PM, Marc Zyngier <Marc.Zyngier@arm.com> =
+wrote:
+>> > On Thu, 2011-06-02 at 16:01 +0900, Kyungmin Park wrote:
+>> >> On Fri, May 27, 2011 at 12:11 AM, Marc Zyngier <Marc.Zyngier@arm.=
+com> wrote:
+>> >> > On Wed, 2011-05-25 at 12:06 -0700, Kukjin Kim wrote:
+>> >> >> On 05/25/11 11:04, Marc Zyngier wrote:
+>> >> >> > On Wed, 2011-05-25 at 10:28 -0700, Kukjin Kim wrote:
+>> >> >> >> On 05/20/11 06:46, Marc Zyngier wrote:
+>> >> >>
+>> >> >> (snip)
+>> >> >>
+>> >> >> > So that address has changed between two SoC revisions? That'=
+s
+>> >> >> > unfortunate, to say the least. I'm most probably using an ea=
+rly revision
+>> >> >> > of the hardware (EVT0?), as it doesn't even support MCT.
+>> >> >> >
+>> >> >> I'm afraid :( and I agree secondary CPU should work on all of
+>> >> >> Exynos4210. But I'm still think about the method...
+>> >> >>
+>> >> >> > What about the following patch?
+>> >> >> >
+>> >> >> Uhm...this is really hack but I'd like to use another normal w=
+ay...?
+>> >> >
+>> >> > Oh, no question about the hack status. The trouble is, unless t=
+here is a
+>> >> > sure way to tell which SoC revision we're running on, there's l=
+ittle
+>> >> > else we can do than poke both locations and pray.
+>> >> >
+>> >> > Is there such a way to identify the SoC revision?
+>> >>
+>> >> It's also required for OneNAND. as you know C210 EVT0 OneNAND DMA=
+ has
+>> >> bug and need to workaround.
+>> >>
+>> >> platform codes should provide the these function. please see the =
+OMAP
+>> >> codes. how to handle it.
+>> >
+>> > So we know there's a need beyond the wish to see the second core u=
+p and
+>> > running on my board.
+>> >
+>> > Now what is the proper method to detect the revision of the SOC?
+>> > Handling it is no problem, once we have the information. Unfortuna=
+tely
+>> > the documentation I have is less than helpful on that subject.
+>>
+>> It can be distinguished by chip id. but there's no code to handle th=
+is one.
+>>
+>> 0x4320 0200 EVT0
+>> 0x4321 0210 EVT1
+>> 0x4321 0211 EVT2
+>
+> Apparently, the low 8 bits can be overloaded by the efuse. Which make=
+s
+> telling EVT1 from EVT2 unreliable.
+>
+> But at least this is a start. I'll see if I can come up with somethin=
+g
+> minimal enough to be merged as a fix.
+>
+> Thanks,
+>
+> =A0 =A0 =A0 =A0M.
+> --
+> Reality is an implementation detail.
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
 
-Signed-off-by: Kamil Debski <k.debski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Would something like this work instead ? It seems to work on EVT0 but
+I haven't had a chance to test on EVT1.
+
+
+=46rom a4c1b643596599df9d79776c9b94f2536661a4c9 Mon Sep 17 00:00:00 200=
+1
+=46rom: Angus Ainslie <angus.ainslie@linaro.org>
+Date: Tue, 14 Jun 2011 16:13:35 -0600
+Subject: [PATCH] ARM: exynos4: fix secondary CPU boot on early SoC revi=
+sions
+
+It appears that the system-wide flags register that used to be at
+0x02025000 on the first revision of Exynos4 has moved to 0x02020000.
+
+The kernel has been updated accordingly, but this unfortunately leaves
+early boards without SMP support (the secondary CPU spins endlessly
+in BL0 waiting for an address to be written at that memory location).
+
+Use the CPU id to decide whether we are running on EVT0 and use the
+old location in that case.
+
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Angus Ainslie <angus.ainslie@linaro.org>
 ---
- arch/arm/mach-exynos4/Kconfig               |    2 ++
- arch/arm/mach-exynos4/mach-universal_c210.c |   13 +++++++++++++
- 2 files changed, 15 insertions(+), 0 deletions(-)
+ arch/arm/mach-exynos4/include/mach/map.h |    1 +
+ arch/arm/mach-exynos4/platsmp.c          |   23 ++++++++++++++++++++++=
+-
+ 2 files changed, 23 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index 1435fc3..c7ecfc4 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -153,12 +153,14 @@ config MACH_ARMLEX4210
- config MACH_UNIVERSAL_C210
- 	bool "Mobile UNIVERSAL_C210 Board"
- 	select CPU_EXYNOS4210
-+	select S5P_DEV_MFC
- 	select S3C_DEV_HSMMC
- 	select S3C_DEV_HSMMC2
- 	select S3C_DEV_HSMMC3
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_I2C5
- 	select S5P_DEV_ONENAND
-+	select EXYNOS4_DEV_PD
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_I2C5
- 	select EXYNOS4_SETUP_SDHCI
-diff --git a/arch/arm/mach-exynos4/mach-universal_c210.c b/arch/arm/mach-exynos4/mach-universal_c210.c
-index 97d329f..cdb3c86 100644
---- a/arch/arm/mach-exynos4/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos4/mach-universal_c210.c
-@@ -27,7 +27,9 @@
- #include <plat/cpu.h>
- #include <plat/devs.h>
- #include <plat/iic.h>
-+#include <plat/mfc.h>
- #include <plat/sdhci.h>
-+#include <plat/pd.h>
- 
- #include <mach/map.h>
- 
-@@ -617,6 +619,10 @@ static struct platform_device *universal_devices[] __initdata = {
- 	/* Universal Devices */
- 	&universal_gpio_keys,
- 	&s5p_device_onenand,
-+	&s5p_device_mfc,
-+	&s5p_device_mfc_l,
-+	&s5p_device_mfc_r,
-+	&exynos4_device_pd[PD_MFC],
- };
- 
- static void __init universal_map_io(void)
-@@ -626,6 +632,11 @@ static void __init universal_map_io(void)
- 	s3c24xx_init_uarts(universal_uartcfgs, ARRAY_SIZE(universal_uartcfgs));
- }
- 
-+static void __init universal_reserve(void)
-+{
-+	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
-+}
-+
- static void __init universal_machine_init(void)
+diff --git a/arch/arm/mach-exynos4/include/mach/map.h
+b/arch/arm/mach-exynos4/include/mach/map.h
+index 0009e77..781e149 100644
+--- a/arch/arm/mach-exynos4/include/mach/map.h
++++ b/arch/arm/mach-exynos4/include/mach/map.h
+@@ -24,6 +24,7 @@
+ #include <plat/map-s5p.h>
+
+ #define EXYNOS4_PA_SYSRAM              0x02020000
++#define EXYNOS4_PA_SYSRAM_EVT0         0x02025000
+
+ #define EXYNOS4_PA_FIMC0               0x11800000
+ #define EXYNOS4_PA_FIMC1               0x11810000
+diff --git a/arch/arm/mach-exynos4/platsmp.c b/arch/arm/mach-exynos4/pl=
+atsmp.c
+index c5e65a0..5f70aec 100644
+--- a/arch/arm/mach-exynos4/platsmp.c
++++ b/arch/arm/mach-exynos4/platsmp.c
+@@ -155,6 +155,8 @@ void __init smp_init_cpus(void)
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
  {
- 	universal_sdhci_init();
-@@ -638,6 +649,7 @@ static void __init universal_machine_init(void)
- 
- 	/* Last */
- 	platform_add_devices(universal_devices, ARRAY_SIZE(universal_devices));
-+	s5p_device_mfc.dev.parent = &exynos4_device_pd[PD_MFC].dev;
+        int i;
++       unsigned long idcode;
++       void __iomem *sysram_evt0;
+
+        /*
+         * Initialise the present map, which describes the set of CPUs
+@@ -165,11 +167,30 @@ void __init platform_smp_prepare_cpus(unsigned
+int max_cpus)
+
+        scu_enable(scu_base_addr());
+
++       idcode =3D __raw_readl(S5P_VA_CHIPID);
++
+        /*
+         * Write the address of secondary startup into the
+         * system-wide flags register. The boot monitor waits
+         * until it receives a soft interrupt, and then the
+         * secondary CPU branches to this address.
+         */
+-       __raw_writel(BSYM(virt_to_phys(exynos4_secondary_startup)),
+S5P_VA_SYSRAM);
++       if ((idcode & 0xF0000) =3D=3D 0) {
++               /*
++                * EVT0 has the system-wide flags register at a
+different address.
++                * Poke it as well, in case we're running on an old
+SoC revision.
++                */
++               sysram_evt0 =3D ioremap(EXYNOS4_PA_SYSRAM_EVT0, SZ_4K);
++               if (!sysram_evt0) {
++                       pr_err("Unable to remap EXYNOS4_PA_SYSRAM_EVT0\=
+n");
++                       return;
++               }
++               __raw_writel(BSYM(virt_to_phys(exynos4_secondary_startu=
+p)),
++                            sysram_evt0);
++               iounmap(sysram_evt0);
++       } else {
++               __raw_writel(BSYM(virt_to_phys(exynos4_secondary_startu=
+p)),
++                            S5P_VA_SYSRAM);
++       }
++
  }
- 
- MACHINE_START(UNIVERSAL_C210, "UNIVERSAL_C210")
-@@ -647,4 +659,5 @@ MACHINE_START(UNIVERSAL_C210, "UNIVERSAL_C210")
- 	.map_io		= universal_map_io,
- 	.init_machine	= universal_machine_init,
- 	.timer		= &exynos4_timer,
-+	.reserve        = &universal_reserve,
- MACHINE_END
--- 
-1.6.3.3
+--=20
+1.7.4.1
+
+--=20
+Angus Ainslie <angus.ainslie@linaro.org>
+Team Lead, Samsung Landing Team
