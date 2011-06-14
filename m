@@ -1,71 +1,154 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/4] s3c-fb: Add support S5PV310 FIMD
-Date: Tue, 14 Jun 2011 14:10:31 +0900
-Message-ID: <005301cc2a51$675ff040$361fd0c0$%kim@samsung.com>
-References: <1307693723-14971-1-git-send-email-anand.kn@samsung.com>
+Subject: RE: [PATCH 1/5] ARM: EXYNOS4: Add EPLL clock operations
+Date: Tue, 14 Jun 2011 14:33:25 +0900
+Message-ID: <005601cc2a54$988a9460$c99fbd20$%kim@samsung.com>
+References: <1307687667-9127-1-git-send-email-ch.naveen@samsung.com>
+ <1307687667-9127-2-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:64625 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:18014 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750878Ab1FNFKm (ORCPT
+	with ESMTP id S1752195Ab1FNFdd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 14 Jun 2011 01:10:42 -0400
+	Tue, 14 Jun 2011 01:33:33 -0400
 Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LMR00LNIL0SOND0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 14 Jun 2011 14:10:40 +0900 (KST)
+ 2010)) with ESMTP id <0LMR00LNKM3SONE0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 14 Jun 2011 14:33:31 +0900 (KST)
 Received: from kgenekim ([12.23.119.139])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LMR006L5L1RSE@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 14 Jun 2011 14:10:40 +0900 (KST)
-In-reply-to: <1307693723-14971-1-git-send-email-anand.kn@samsung.com>
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LMR00JQXM3VUF@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 14 Jun 2011 14:33:31 +0900 (KST)
+In-reply-to: <1307687667-9127-2-git-send-email-ch.naveen@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Anand Kumar N' <anand.kn@samsung.com>, lethal@linux-sh.org, linux-samsung-soc@vger.kernel.org, jg1.han@samsung.com, jonghun.han@samsung.com, thomas.ab@samsung.com
+To: 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>, broonie@opensource.wolfsonmicro.com, jassisinghbrar@gmail.com, lrg@ti.com, sbkim73@samsung.com, sw.youn@samsung.com, linux-samsung-
 
-Anand Kumar N wrote:
+Naveen Krishna Chatradhi wrote:
 > 
-> This patch series is based on the latest
-> git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git for-next
+> This patch adds EPLL specific clock get_rate/set_rate
+> operations on EXYNOS4.
 > 
-> This was originally submitted by Jonghun Han <jonghun.han@samsung.com>
-> http://www.spinics.net/lists/arm-kernel/msg101781.html
-> This patchset has been not picked up in the mainline due to the
-unavailibility
-> of cldev lookup. So it is being re-submitted rebased to 3.0.0-rc1 and
-tested
-> over the clkdev patches.
+> Note: Initial code from S5PV210
+> http://permalink.gmane.org/gmane.linux.alsa.devel/77519
 > 
-> This patch adds support FIMD(Fully Interactive Mobile Display) on S5PV310.
-> The 3rd patch is update s3c-fb for it and others are for platform data.
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> ---
+>  arch/arm/mach-exynos4/clock.c |   78
+> +++++++++++++++++++++++++++++++++++++++++
+>  1 files changed, 78 insertions(+), 0 deletions(-)
 > 
-> o To Kukjin Kim
-> [RE-SEND][PATCH 1/4] ARM: S5PV310: Add FIMD resource definition
-> [RE-SEND][PATCH 2/4] ARM: S5PV310: Add platform device and helper
-functions
-> for FIMD
-> [RE-SEND][PATCH 4/4] ARM: S5PV310: Add platform data for S5PV310 FIMD and
-> LTE480WV platform-lcd
+> diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
+> index b1b93b9..7aa4aef 100644
+> --- a/arch/arm/mach-exynos4/clock.c
+> +++ b/arch/arm/mach-exynos4/clock.c
+> @@ -1276,6 +1276,82 @@ static struct clksrc_clk *sysclks[] = {
+>  	&clk_sclk_audio2,
+>  };
 > 
-> o To Paul Mundt
-> [RE-SEND][PATCH 3/4] s3c-fb: Add support S5PV310 FIMD
-> 
+> +static u32 epll_div[][6] = {
+> +	{  48000000, 0, 48, 3, 3, 0 },
+> +	{  96000000, 0, 48, 3, 2, 0 },
+> +	{ 144000000, 1, 72, 3, 2, 0 },
+> +	{ 192000000, 0, 48, 3, 1, 0 },
+> +	{ 288000000, 1, 72, 3, 1, 0 },
+> +	{  32750000, 1, 65, 3, 4, 35127 },
+> +	{  32768000, 1, 65, 3, 4, 35127 },
+> +	{  45158400, 0, 45, 3, 3, 10355 },
+> +	{  45000000, 0, 45, 3, 3, 10355 },
+> +	{  45158000, 0, 45, 3, 3, 10355 },
+> +	{  49125000, 0, 49, 3, 3, 9961 },
+> +	{  49152000, 0, 49, 3, 3, 9961 },
+> +	{  67737600, 1, 67, 3, 3, 48366 },
+> +	{  67738000, 1, 67, 3, 3, 48366 },
+> +	{  73800000, 1, 73, 3, 3, 47710 },
+> +	{  73728000, 1, 73, 3, 3, 47710 },
+> +	{  36000000, 1, 32, 3, 4, 0 },
+> +	{  60000000, 1, 60, 3, 3, 0 },
+> +	{  72000000, 1, 72, 3, 3, 0 },
+> +	{  80000000, 1, 80, 3, 3, 0 },
+> +	{  84000000, 0, 42, 3, 2, 0 },
+> +	{  50000000, 0, 50, 3, 3, 0 },
+> +};
+> +
+> +static int exynos4_epll_set_rate(struct clk *clk, unsigned long rate)
+> +{
+> +	unsigned int epll_con, epll_con_k;
+> +	unsigned int i;
+> +
+> +	/* Return if nothing changed */
+> +	if (clk->rate == rate)
+> +		return 0;
+> +
+> +	epll_con = __raw_readl(S5P_EPLL_CON);
+> +	epll_con_k = __raw_readl(S5P_EPLL_CON1);
+> +
+> +	epll_con_k &= ~PLL46XX_KDIV_MASK;
+> +	epll_con &= ~(1 << 27 |
+> +			PLL46XX_MDIV_MASK << PLL46XX_MDIV_SHIFT |
+> +			PLL46XX_PDIV_MASK << PLL46XX_PDIV_SHIFT |
+> +			PLL46XX_SDIV_MASK << PLL46XX_SDIV_SHIFT);
+> +
+> +	for (i = 0; i < ARRAY_SIZE(epll_div); i++) {
+> +		if (epll_div[i][0] == rate) {
+> +			epll_con_k |= epll_div[i][5] << 0;
+> +			epll_con |= (epll_div[i][1] << 27 |
+> +					epll_div[i][2] <<
+> PLL46XX_MDIV_SHIFT |
+> +					epll_div[i][3] <<
+> PLL46XX_PDIV_SHIFT |
+> +					epll_div[i][4] <<
+> PLL46XX_SDIV_SHIFT);
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (i == ARRAY_SIZE(epll_div)) {
+> +		printk(KERN_ERR "%s: Invalid Clock EPLL Frequency\n",
+> +				__func__);
+> +		return -EINVAL;
+> +	}
+> +
+> +	__raw_writel(epll_con, S5P_EPLL_CON);
+> +	__raw_writel(epll_con_k, S5P_EPLL_CON1);
+> +
+> +	printk(KERN_WARNING "EPLL Rate changes from %lu to %lu\n",
+> +			clk->rate, rate);
+> +
+> +	clk->rate = rate;
+> +
+> +	return 0;
+> +}
 
-Hi Anand,
+I think, this is same with S5PV210.
 
-Where is your "Signed-off-by"? It must be added...
+Would be better if this could be moved into plat-s5p/ with other set_pllXXX.
 
-In addition, what's the "Change-Id" in 3rd and 4th patches? I know what it
-is.
-I mean why did you add it here for mainline?...
+> +
+> +static struct clk_ops exynos4_epll_ops = {
+> +	.set_rate = exynos4_epll_set_rate,
+> +	.get_rate = s5p_epll_get_rate,
+> +};
+> +
+>  static int xtal_rate;
+> 
+>  static unsigned long exynos4_fout_apll_get_rate(struct clk *clk)
+> @@ -1354,6 +1430,8 @@ void __init_or_cpufreq exynos4_setup_clocks(void)
+>  	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
+>  		s3c_set_clksrc(&clksrcs[ptr], true);
+> 
+> +	clk_fout_epll.ops = &exynos4_epll_ops;
+> +
+>  	clk_audiocdclk0.rate = PCM_EXTCLK0;
+>  	clk_set_parent(&clk_sclk_audio0.clk, &clk_audiocdclk0);
+>  }
+> --
 
-Please make sure that your patch has no problem before submitting.
 
-Jingoo, Jonghun do you agree with this?
 
 Thanks.
 
