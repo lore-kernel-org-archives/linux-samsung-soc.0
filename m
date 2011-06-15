@@ -1,40 +1,48 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [RE-SEND] [PATCH 3/4] s3c-fb: Add support EXYNOS4 FIMD
-Date: Wed, 15 Jun 2011 09:06:51 +0100
-Message-ID: <20110615080651.GC28989@n2100.arm.linux.org.uk>
-References: <1307693723-14971-1-git-send-email-anand.kn@samsung.com> <1307693723-14971-4-git-send-email-anand.kn@samsung.com> <4DF39A92.5050609@gmail.com> <BANLkTinuAnaoo2hA6MLBDncXxXtL8NO2pg@mail.gmail.com> <4DF866D9.7090406@samsung.com>
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Subject: Re: [PATCH 0/9] Add clkdev support for Samsung platforms
+Date: Wed, 15 Jun 2011 10:35:21 +0200
+Message-ID: <20110615083521.GF3037@game.jcrosoft.org>
+References: <1307594324-11053-1-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:44709 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752201Ab1FOIHQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Jun 2011 04:07:16 -0400
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <4DF866D9.7090406@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1307594324-11053-1-git-send-email-thomas.ab@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thomas Abraham <thomas.ab@samsung.com>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <snjw23@gmail.com>, Anand Kumar N <anand.kn@samsung.com>, lethal@linux-sh.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, jg1.han@samsung.com, jonghun.han@samsung.com, thomas.ab@samsung.com
 
-On Wed, Jun 15, 2011 at 10:01:29AM +0200, Sylwester Nawrocki wrote:
-> With the above I2C example I was trying to illustrate the additional
-> level of indirection that is present in case of OMAP clock mappings,
-> comparing to your implementation.
-> As long as IP clock names are same among various SoC there is no issue
-> at all with your clk lookup approach.
-> But this is already not the case with LCD controller IP. 
-> On S3C series the IP bus clock name is "lcd" while on S5P series it's "fimd".
-> There is a common framebuffer driver for S3C and S5P SoCs.
-> It just does not look right to me to be adding in the driver switch/case
-> for the clock names. I thought clkdev is meant to resolve such differences.
+On 10:08 Thu 09 Jun     , Thomas Abraham wrote:
+> This patch series adds clkdev support for all Samsung platforms. clkdev
+> support is a prerequisite for adding device tree on Samsung platforms
+> and possibly revive framebuffer driver patches for Exynos4 platforms.
+> 
+> The first of the two patches are for eliminating the explict
+> console_initcall from the serial drivers. This is required to prevent
+> the clk_get being invoked at time when device registrations have not
+> completed.
+> 
+> This patch series is based on the latest
+> git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git for-next
+> 
+> and the patch "[PATCH] Consolidate the clkdev header files".
+> 
+> It has been tested on the following boards.
+> 
+> SMDK2416, SMDK2440, SMDK2450, SMDK6410, SMDK6440, SMDK6450,
+> SMDKC100, SMDKV210 and SMDKV310.
+looks good
+Acked-by: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
 
-You are not mistaken.  clk_get() takes the device and a connection id
-to identify the clock _on_ _that_ _device_ to separate individual clock
-inputs on the _same_ _device_.  It does not take a platform specific
-clock name.
-
-The clock API was created long ago to remove this kind of crud from
-drivers and keep it local to the platforms.  The problem is people seem
-to like this crud.
+Best Regards,
+J.
