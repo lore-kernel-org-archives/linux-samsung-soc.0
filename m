@@ -1,12 +1,12 @@
 From: Sangbeom Kim <sbkim73@samsung.com>
-Subject: [PATCH V2 3/4] ARM: SAMSUNG: Add platform device for idma
-Date: Wed, 15 Jun 2011 17:43:26 +0900
-Message-ID: <1308127407-22458-4-git-send-email-sbkim73@samsung.com>
+Subject: [PATCH V2 1/4] ASoC: SAMSUNG: Modify I2S driver to support idma
+Date: Wed, 15 Jun 2011 17:43:24 +0900
+Message-ID: <1308127407-22458-2-git-send-email-sbkim73@samsung.com>
 References: <1308127407-22458-1-git-send-email-sbkim73@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:34632 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:34642 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753408Ab1FOItx (ORCPT
+	with ESMTP id S1753483Ab1FOItx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 15 Jun 2011 04:49:53 -0400
 In-Reply-To: <1308127407-22458-1-git-send-email-sbkim73@samsung.com>
@@ -15,171 +15,334 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
 Cc: jassisinghbrar@gmail.com, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, Sangbeom Kim <sbkim73@samsung.com>
 
-Exynos4 and S5PC110(S5PV210) has Internal dma(idma) in AUDSS.
-To support idma, register idma platform device.
-and Exynos4 and S5PC110 has different IDMA address.
-TO handle different IDMA address, register idma platform data
+Previously, I2S driver only can support system dma.
+In this patch, i2s driver can support internal dma too.
 
 Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
 ---
- arch/arm/mach-exynos4/dev-audio.c               |    2 ++
- arch/arm/mach-exynos4/include/mach/regs-audss.h |   18 ++++++++++++++++++
- arch/arm/mach-exynos4/mach-smdkv310.c           |    1 +
- arch/arm/mach-s5pv210/dev-audio.c               |    1 +
- arch/arm/mach-s5pv210/include/mach/regs-audss.h |   18 ++++++++++++++++++
- arch/arm/mach-s5pv210/mach-smdkv210.c           |    1 +
- arch/arm/plat-samsung/dev-asocdma.c             |   10 ++++++++++
- arch/arm/plat-samsung/include/plat/audio.h      |    1 +
- arch/arm/plat-samsung/include/plat/devs.h       |    1 +
- 9 files changed, 53 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-exynos4/include/mach/regs-audss.h
- create mode 100644 arch/arm/mach-s5pv210/include/mach/regs-audss.h
+ sound/soc/samsung/i2s-regs.h |  141 ++++++++++++++++++++++++++++++++++++++++++
+ sound/soc/samsung/i2s.c      |  124 ++++++-------------------------------
+ 2 files changed, 160 insertions(+), 105 deletions(-)
+ create mode 100644 sound/soc/samsung/i2s-regs.h
 
-diff --git a/arch/arm/mach-exynos4/dev-audio.c b/arch/arm/mach-exynos4/dev-audio.c
-index 1eed5f9..215bfb5 100644
---- a/arch/arm/mach-exynos4/dev-audio.c
-+++ b/arch/arm/mach-exynos4/dev-audio.c
-@@ -21,6 +21,7 @@
- #include <mach/map.h>
- #include <mach/dma.h>
- #include <mach/irqs.h>
-+#include <mach/regs-audss.h>
- 
- static const char *rclksrc[] = {
- 	[0] = "busclk",
-@@ -55,6 +56,7 @@ static struct s3c_audio_pdata i2sv5_pdata = {
- 			.quirks = QUIRK_PRI_6CHAN | QUIRK_SEC_DAI
- 					 | QUIRK_NEED_RSTCLR,
- 			.src_clk = rclksrc,
-+			.idma_addr = EXYNOS4_AUDSS_INT_MEM,
- 		},
- 	},
- };
-diff --git a/arch/arm/mach-exynos4/include/mach/regs-audss.h b/arch/arm/mach-exynos4/include/mach/regs-audss.h
+diff --git a/sound/soc/samsung/i2s-regs.h b/sound/soc/samsung/i2s-regs.h
 new file mode 100644
-index 0000000..ca5a8b6
+index 0000000..aeb0590
 --- /dev/null
-+++ b/arch/arm/mach-exynos4/include/mach/regs-audss.h
-@@ -0,0 +1,18 @@
-+/* arch/arm/mach-exynos4/include/mach/regs-audss.h
++++ b/sound/soc/samsung/i2s-regs.h
+@@ -0,0 +1,141 @@
++/*
++ * linux/sound/soc/samsung/i2s-regs.h
 + *
-+ * Copyright (c) 2011 Samsung Electronics
++ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
 + *		http://www.samsung.com
 + *
-+ * Exynos4 Audio SubSystem clock register definitions
++ * Samsung I2S driver's register header
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ */
 +
-+#ifndef __PLAT_REGS_AUDSS_H
-+#define __PLAT_REGS_AUDSS_H __FILE__
++#ifndef __SND_SOC_SAMSUNG_I2S_REGS_H
++#define __SND_SOC_SAMSUNG_I2S_REGS_H
 +
-+#define EXYNOS4_AUDSS_INT_MEM	(0x03000000)
++#define I2SCON			0x0
++#define I2SMOD			0x4
++#define I2SFIC			0x8
++#define I2SPSR			0xc
++#define I2STXD			0x10
++#define I2SRXD			0x14
++#define I2SFICS			0x18
++#define I2STXDS			0x1c
++#define I2SAHB			0x20
++#define I2SSTR0			0x24
++#define I2SSIZE			0x28
++#define I2STRNCNT		0x2c
++#define I2SLVL0ADDR		0x30
++#define I2SLVL1ADDR		0x34
++#define I2SLVL2ADDR		0x38
++#define I2SLVL3ADDR		0x3c
 +
-+#endif /* _PLAT_REGS_AUDSS_H */
-diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
-index 1526764..7c538c0 100644
---- a/arch/arm/mach-exynos4/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos4/mach-smdkv310.c
-@@ -187,6 +187,7 @@ static struct platform_device *smdkv310_devices[] __initdata = {
- 	&exynos4_device_pd[PD_GPS],
- 	&exynos4_device_sysmmu,
- 	&samsung_asoc_dma,
-+	&samsung_asoc_idma,
- 	&smdkv310_smsc911x,
- };
++#define CON_RSTCLR		(1 << 31)
++#define CON_FRXOFSTATUS		(1 << 26)
++#define CON_FRXORINTEN		(1 << 25)
++#define CON_FTXSURSTAT		(1 << 24)
++#define CON_FTXSURINTEN		(1 << 23)
++#define CON_TXSDMA_PAUSE	(1 << 20)
++#define CON_TXSDMA_ACTIVE	(1 << 18)
++
++#define CON_FTXURSTATUS		(1 << 17)
++#define CON_FTXURINTEN		(1 << 16)
++#define CON_TXFIFO2_EMPTY	(1 << 15)
++#define CON_TXFIFO1_EMPTY	(1 << 14)
++#define CON_TXFIFO2_FULL	(1 << 13)
++#define CON_TXFIFO1_FULL	(1 << 12)
++
++#define CON_LRINDEX		(1 << 11)
++#define CON_TXFIFO_EMPTY	(1 << 10)
++#define CON_RXFIFO_EMPTY	(1 << 9)
++#define CON_TXFIFO_FULL		(1 << 8)
++#define CON_RXFIFO_FULL		(1 << 7)
++#define CON_TXDMA_PAUSE		(1 << 6)
++#define CON_RXDMA_PAUSE		(1 << 5)
++#define CON_TXCH_PAUSE		(1 << 4)
++#define CON_RXCH_PAUSE		(1 << 3)
++#define CON_TXDMA_ACTIVE	(1 << 2)
++#define CON_RXDMA_ACTIVE	(1 << 1)
++#define CON_ACTIVE		(1 << 0)
++
++#define MOD_OPCLK_CDCLK_OUT	(0 << 30)
++#define MOD_OPCLK_CDCLK_IN	(1 << 30)
++#define MOD_OPCLK_BCLK_OUT	(2 << 30)
++#define MOD_OPCLK_PCLK		(3 << 30)
++#define MOD_OPCLK_MASK		(3 << 30)
++#define MOD_TXS_IDMA		(1 << 28)
++
++#define MOD_BLCS_SHIFT		26
++#define MOD_BLCS_16BIT		(0 << MOD_BLCS_SHIFT)
++#define MOD_BLCS_8BIT		(1 << MOD_BLCS_SHIFT)
++#define MOD_BLCS_24BIT		(2 << MOD_BLCS_SHIFT)
++#define MOD_BLCS_MASK		(3 << MOD_BLCS_SHIFT)
++#define MOD_BLCP_SHIFT		24
++#define MOD_BLCP_16BIT		(0 << MOD_BLCP_SHIFT)
++#define MOD_BLCP_8BIT		(1 << MOD_BLCP_SHIFT)
++#define MOD_BLCP_24BIT		(2 << MOD_BLCP_SHIFT)
++#define MOD_BLCP_MASK		(3 << MOD_BLCP_SHIFT)
++
++#define MOD_C2DD_HHALF		(1 << 21) /* Discard Higher-half */
++#define MOD_C2DD_LHALF		(1 << 20) /* Discard Lower-half */
++#define MOD_C1DD_HHALF		(1 << 19)
++#define MOD_C1DD_LHALF		(1 << 18)
++#define MOD_DC2_EN		(1 << 17)
++#define MOD_DC1_EN		(1 << 16)
++#define MOD_BLC_16BIT		(0 << 13)
++#define MOD_BLC_8BIT		(1 << 13)
++#define MOD_BLC_24BIT		(2 << 13)
++#define MOD_BLC_MASK		(3 << 13)
++
++#define MOD_IMS_SYSMUX		(1 << 10)
++#define MOD_SLAVE		(1 << 11)
++#define MOD_TXONLY		(0 << 8)
++#define MOD_RXONLY		(1 << 8)
++#define MOD_TXRX		(2 << 8)
++#define MOD_MASK		(3 << 8)
++#define MOD_LR_LLOW		(0 << 7)
++#define MOD_LR_RLOW		(1 << 7)
++#define MOD_SDF_IIS		(0 << 5)
++#define MOD_SDF_MSB		(1 << 5)
++#define MOD_SDF_LSB		(2 << 5)
++#define MOD_SDF_MASK		(3 << 5)
++#define MOD_RCLK_256FS		(0 << 3)
++#define MOD_RCLK_512FS		(1 << 3)
++#define MOD_RCLK_384FS		(2 << 3)
++#define MOD_RCLK_768FS		(3 << 3)
++#define MOD_RCLK_MASK		(3 << 3)
++#define MOD_BCLK_32FS		(0 << 1)
++#define MOD_BCLK_48FS		(1 << 1)
++#define MOD_BCLK_16FS		(2 << 1)
++#define MOD_BCLK_24FS		(3 << 1)
++#define MOD_BCLK_MASK		(3 << 1)
++#define MOD_8BIT		(1 << 0)
++
++#define MOD_CDCLKCON		(1 << 12)
++
++#define PSR_PSREN		(1 << 15)
++
++#define FIC_TX2COUNT(x)		(((x) >>  24) & 0xf)
++#define FIC_TX1COUNT(x)		(((x) >>  16) & 0xf)
++
++#define FIC_TXFLUSH		(1 << 15)
++#define FIC_RXFLUSH		(1 << 7)
++
++#define FIC_TXCOUNT(x)		(((x) >>  8) & 0x7f)
++#define FIC_RXCOUNT(x)		(((x) >>  0) & 0x7f)
++#define FICS_TXCOUNT(x)		(((x) >>  8) & 0x7f)
++
++#define AHB_INTENLVL0		(1 << 24)
++#define AHB_LVL0INT		(1 << 20)
++#define AHB_CLRLVL0INT		(1 << 16)
++#define AHB_DMARLD		(1 << 5)
++#define AHB_INTMASK		(1 << 3)
++#define AHB_DMAEN		(1 << 0)
++#define AHB_LVLINTMASK		(0xf << 20)
++
++#define I2SSIZE_TRNMSK		(0xffff)
++#define I2SSIZE_SHIFT		(16)
++
++#endif /* __SND_SOC_SAMSUNG_I2S_REGS_H */
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 992a732..2fc2428 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -9,7 +9,7 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
+-
++#define DEBUG
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/clk.h>
+@@ -21,112 +21,14 @@
+ #include <plat/audio.h>
  
-diff --git a/arch/arm/mach-s5pv210/dev-audio.c b/arch/arm/mach-s5pv210/dev-audio.c
-index 8d58f19..0be95f1 100644
---- a/arch/arm/mach-s5pv210/dev-audio.c
-+++ b/arch/arm/mach-s5pv210/dev-audio.c
-@@ -52,6 +52,7 @@ static struct s3c_audio_pdata i2sv5_pdata = {
- 			.quirks = QUIRK_PRI_6CHAN | QUIRK_SEC_DAI
- 					 | QUIRK_NEED_RSTCLR,
- 			.src_clk = rclksrc,
-+			.idma_addr = S5PV210_AUDSS_INT_MEM,
- 		},
- 	},
- };
-diff --git a/arch/arm/mach-s5pv210/include/mach/regs-audss.h b/arch/arm/mach-s5pv210/include/mach/regs-audss.h
-new file mode 100644
-index 0000000..eacc1f7
---- /dev/null
-+++ b/arch/arm/mach-s5pv210/include/mach/regs-audss.h
-@@ -0,0 +1,18 @@
-+/* arch/arm/mach-s5pv210/include/mach/regs-audss.h
-+ *
-+ * Copyright (c) 2011 Samsung Electronics
-+ *		http://www.samsung.com
-+ *
-+ * S5PV210 Audio SubSystem clock register definitions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
+ #include "dma.h"
++#include "idma.h"
+ #include "i2s.h"
++#include "i2s-regs.h"
 +
-+#ifndef __PLAT_REGS_AUDSS_H
-+#define __PLAT_REGS_AUDSS_H __FILE__
-+
-+#define S5PV210_AUDSS_INT_MEM	(0xC0000000)
-+
-+#endif /* _PLAT_REGS_AUDSS_H */
-diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
-index c6a9e86..c6900f8 100644
---- a/arch/arm/mach-s5pv210/mach-smdkv210.c
-+++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
-@@ -267,6 +267,7 @@ static struct platform_device *smdkv210_devices[] __initdata = {
- 	&s5pv210_device_iis0,
- 	&s5pv210_device_spdif,
- 	&samsung_asoc_dma,
-+	&samsung_asoc_idma,
- 	&samsung_device_keypad,
- 	&smdkv210_dm9000,
- 	&smdkv210_lcd_lte480wv,
-diff --git a/arch/arm/plat-samsung/dev-asocdma.c b/arch/arm/plat-samsung/dev-asocdma.c
-index a068c4f..832fa83 100644
---- a/arch/arm/plat-samsung/dev-asocdma.c
-+++ b/arch/arm/plat-samsung/dev-asocdma.c
-@@ -23,3 +23,13 @@ struct platform_device samsung_asoc_dma = {
++#define msecs_to_loops(t)	(loops_per_jiffy / 1000 * HZ * t)
+ 
+-#define I2SCON		0x0
+-#define I2SMOD		0x4
+-#define I2SFIC		0x8
+-#define I2SPSR		0xc
+-#define I2STXD		0x10
+-#define I2SRXD		0x14
+-#define I2SFICS		0x18
+-#define I2STXDS		0x1c
+-
+-#define CON_RSTCLR		(1 << 31)
+-#define CON_FRXOFSTATUS		(1 << 26)
+-#define CON_FRXORINTEN		(1 << 25)
+-#define CON_FTXSURSTAT		(1 << 24)
+-#define CON_FTXSURINTEN		(1 << 23)
+-#define CON_TXSDMA_PAUSE	(1 << 20)
+-#define CON_TXSDMA_ACTIVE	(1 << 18)
+-
+-#define CON_FTXURSTATUS		(1 << 17)
+-#define CON_FTXURINTEN		(1 << 16)
+-#define CON_TXFIFO2_EMPTY	(1 << 15)
+-#define CON_TXFIFO1_EMPTY	(1 << 14)
+-#define CON_TXFIFO2_FULL	(1 << 13)
+-#define CON_TXFIFO1_FULL	(1 << 12)
+-
+-#define CON_LRINDEX		(1 << 11)
+-#define CON_TXFIFO_EMPTY	(1 << 10)
+-#define CON_RXFIFO_EMPTY	(1 << 9)
+-#define CON_TXFIFO_FULL		(1 << 8)
+-#define CON_RXFIFO_FULL		(1 << 7)
+-#define CON_TXDMA_PAUSE		(1 << 6)
+-#define CON_RXDMA_PAUSE		(1 << 5)
+-#define CON_TXCH_PAUSE		(1 << 4)
+-#define CON_RXCH_PAUSE		(1 << 3)
+-#define CON_TXDMA_ACTIVE	(1 << 2)
+-#define CON_RXDMA_ACTIVE	(1 << 1)
+-#define CON_ACTIVE		(1 << 0)
+-
+-#define MOD_OPCLK_CDCLK_OUT	(0 << 30)
+-#define MOD_OPCLK_CDCLK_IN	(1 << 30)
+-#define MOD_OPCLK_BCLK_OUT	(2 << 30)
+-#define MOD_OPCLK_PCLK		(3 << 30)
+-#define MOD_OPCLK_MASK		(3 << 30)
+-#define MOD_TXS_IDMA		(1 << 28) /* Sec_TXFIFO use I-DMA */
+-
+-#define MOD_BLCS_SHIFT	26
+-#define MOD_BLCS_16BIT	(0 << MOD_BLCS_SHIFT)
+-#define MOD_BLCS_8BIT	(1 << MOD_BLCS_SHIFT)
+-#define MOD_BLCS_24BIT	(2 << MOD_BLCS_SHIFT)
+-#define MOD_BLCS_MASK	(3 << MOD_BLCS_SHIFT)
+-#define MOD_BLCP_SHIFT	24
+-#define MOD_BLCP_16BIT	(0 << MOD_BLCP_SHIFT)
+-#define MOD_BLCP_8BIT	(1 << MOD_BLCP_SHIFT)
+-#define MOD_BLCP_24BIT	(2 << MOD_BLCP_SHIFT)
+-#define MOD_BLCP_MASK	(3 << MOD_BLCP_SHIFT)
+-
+-#define MOD_C2DD_HHALF		(1 << 21) /* Discard Higher-half */
+-#define MOD_C2DD_LHALF		(1 << 20) /* Discard Lower-half */
+-#define MOD_C1DD_HHALF		(1 << 19)
+-#define MOD_C1DD_LHALF		(1 << 18)
+-#define MOD_DC2_EN		(1 << 17)
+-#define MOD_DC1_EN		(1 << 16)
+-#define MOD_BLC_16BIT		(0 << 13)
+-#define MOD_BLC_8BIT		(1 << 13)
+-#define MOD_BLC_24BIT		(2 << 13)
+-#define MOD_BLC_MASK		(3 << 13)
+-
+-#define MOD_IMS_SYSMUX		(1 << 10)
+-#define MOD_SLAVE		(1 << 11)
+-#define MOD_TXONLY		(0 << 8)
+-#define MOD_RXONLY		(1 << 8)
+-#define MOD_TXRX		(2 << 8)
+-#define MOD_MASK		(3 << 8)
+-#define MOD_LR_LLOW		(0 << 7)
+-#define MOD_LR_RLOW		(1 << 7)
+-#define MOD_SDF_IIS		(0 << 5)
+-#define MOD_SDF_MSB		(1 << 5)
+-#define MOD_SDF_LSB		(2 << 5)
+-#define MOD_SDF_MASK		(3 << 5)
+-#define MOD_RCLK_256FS		(0 << 3)
+-#define MOD_RCLK_512FS		(1 << 3)
+-#define MOD_RCLK_384FS		(2 << 3)
+-#define MOD_RCLK_768FS		(3 << 3)
+-#define MOD_RCLK_MASK		(3 << 3)
+-#define MOD_BCLK_32FS		(0 << 1)
+-#define MOD_BCLK_48FS		(1 << 1)
+-#define MOD_BCLK_16FS		(2 << 1)
+-#define MOD_BCLK_24FS		(3 << 1)
+-#define MOD_BCLK_MASK		(3 << 1)
+-#define MOD_8BIT		(1 << 0)
+-
+-#define MOD_CDCLKCON		(1 << 12)
+-
+-#define PSR_PSREN		(1 << 15)
+-
+-#define FIC_TX2COUNT(x)		(((x) >>  24) & 0xf)
+-#define FIC_TX1COUNT(x)		(((x) >>  16) & 0xf)
+-
+-#define FIC_TXFLUSH		(1 << 15)
+-#define FIC_RXFLUSH		(1 << 7)
+-#define FIC_TXCOUNT(x)		(((x) >>  8) & 0xf)
+-#define FIC_RXCOUNT(x)		(((x) >>  0) & 0xf)
+-#define FICS_TXCOUNT(x)		(((x) >>  8) & 0x7f)
+-
+-#define msecs_to_loops(t) (loops_per_jiffy / 1000 * HZ * t)
++#define ST_RUNNING		(1<<0)
++#define ST_OPENED		(1<<1)
+ 
+ struct i2s_dai {
+ 	/* Platform device for this DAI */
+@@ -646,6 +548,7 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
+ {
+ 	struct i2s_dai *i2s = to_info(dai);
+ 	u32 mod = readl(i2s->addr + I2SMOD);
++	u32 ahb = readl(i2s->addr + I2SAHB);
+ 
+ 	if (!is_secondary(i2s))
+ 		mod &= ~(MOD_DC2_EN | MOD_DC1_EN);
+@@ -702,6 +605,13 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
+ 				params_format(params));
+ 		return -EINVAL;
  	}
- };
- EXPORT_SYMBOL(samsung_asoc_dma);
 +
-+struct platform_device samsung_asoc_idma = {
-+	.name		  = "samsung-idma",
-+	.id		  = -1,
-+	.dev              = {
-+		.dma_mask = &audio_dmamask,
-+		.coherent_dma_mask = DMA_BIT_MASK(32),
++	if (is_secondary(i2s)) {
++		ahb |= (AHB_DMARLD | AHB_INTMASK);
++		mod |= MOD_TXS_IDMA;
 +	}
-+};
-+EXPORT_SYMBOL(samsung_asoc_idma);
-diff --git a/arch/arm/plat-samsung/include/plat/audio.h b/arch/arm/plat-samsung/include/plat/audio.h
-index a0826ed..aa9875f 100644
---- a/arch/arm/plat-samsung/include/plat/audio.h
-+++ b/arch/arm/plat-samsung/include/plat/audio.h
-@@ -44,6 +44,7 @@ struct samsung_i2s {
- 	 * Also corresponds to clocks of I2SMOD[10]
- 	 */
- 	const char **src_clk;
-+	dma_addr_t idma_addr;
- };
++
++	writel(ahb, i2s->addr + I2SAHB);
+ 	writel(mod, i2s->addr + I2SMOD);
  
- /**
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index b61b8ee..54d4cd6 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -36,6 +36,7 @@ extern struct platform_device s3c64xx_device_spi0;
- extern struct platform_device s3c64xx_device_spi1;
+ 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+@@ -979,6 +889,9 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
+ 	if (i2s->quirks & QUIRK_NEED_RSTCLR)
+ 		writel(CON_RSTCLR, i2s->addr + I2SCON);
  
- extern struct platform_device samsung_asoc_dma;
-+extern struct platform_device samsung_asoc_idma;
- 
- extern struct platform_device s3c64xx_device_pcm0;
- extern struct platform_device s3c64xx_device_pcm1;
++	if (i2s->quirks & QUIRK_SEC_DAI)
++		idma_reg_init((void *)i2s->addr);
++
+ probe_exit:
+ 	/* Reset any constraint on RFS and BFS */
+ 	i2s->rfs = 0;
+@@ -1170,6 +1083,7 @@ static __devinit int samsung_i2s_probe(struct platform_device *pdev)
+ 			ret = -ENOMEM;
+ 			goto err2;
+ 		}
++		idma_addr_init(i2s_cfg->idma_addr);
+ 		sec_dai->dma_playback.dma_addr = regs_base + I2STXDS;
+ 		sec_dai->dma_playback.client =
+ 			(struct s3c2410_dma_client *)&sec_dai->dma_playback;
 -- 
 1.7.1
