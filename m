@@ -1,277 +1,261 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH v2 5/5] ARM: EXYNOS4: Add platform data for EXYNOS4 FIMD and LTE480WV platform-lcd
-Date: Fri, 17 Jun 2011 22:02:19 +0900
-Message-ID: <1308315739-15078-1-git-send-email-jg1.han@samsung.com>
+Subject: [PATCH v2 4/5] video: s3c-fb: Add support EXYNOS4 FIMD
+Date: Fri, 17 Jun 2011 22:02:13 +0900
+Message-ID: <1308315733-15048-1-git-send-email-jg1.han@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:50925 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:50919 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758921Ab1FQNKX (ORCPT
+	with ESMTP id S1758906Ab1FQNKX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 17 Jun 2011 09:10:23 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, linux-samsung-soc@vger.kernel.org
-Cc: Anand Kumar N <anand.kn@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Inki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Jonghun Han <jonghun.han@samsung.com>, Jingoo Han <jg1.han@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, linux-samsung-soc@vger.kernel.org, Jonghun Han <jonghun.han@samsung.com>
+Cc: Anand Kumar N <anand.kn@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Inki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Jingoo Han <jg1.han@samsung.com>
 
-From: Jonghun Han <jonghun.han@samsung.com>
+This patch adds struct s3c_fb_driverdata s3c_fb_data_exynos4 for EXYNOS4
+and adds lcd clock gating support.
 
-This patch adds support EXYNOS4 FIMD0 and LTE480WV LCD pannel.
+FIMD driver needs two clocks for FIMD IP and LCD pixel clock. Previously,
+both clocks are provided by using bus clock such as HCLK. However, EXYNOS4
+can not select HCLK for LCD pixel clock because the EXYNOS4 FIMD IP does not
+have the CLKSEL bit of VIDCON0. So, FIMD driver should provide the lcd clock
+using SCLK_FIMD as LCD pixel clock for EXYNOS4.
 
-Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
+The driver selects enabling lcd clock according to has_clksel which means
+the CLKSEL bit of VIDCON0. If there is has_clksel, the driver will not
+enable the lcd clock using SCLK_FIMD because bus clock using HCLK is used
+a LCD pixel clock.
+
 Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 ---
- arch/arm/mach-exynos4/mach-smdkc210.c |   74 +++++++++++++++++++++++++++++++++
- arch/arm/mach-exynos4/mach-smdkv310.c |   74 +++++++++++++++++++++++++++++++++
- 2 files changed, 148 insertions(+), 0 deletions(-)
+ drivers/video/Kconfig  |    2 +-
+ drivers/video/s3c-fb.c |   79 +++++++++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 76 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/mach-exynos4/mach-smdkc210.c b/arch/arm/mach-exynos4/mach-smdkc210.c
-index e645f7a..f3e4c65 100644
---- a/arch/arm/mach-exynos4/mach-smdkc210.c
-+++ b/arch/arm/mach-exynos4/mach-smdkc210.c
-@@ -9,7 +9,9 @@
- */
+diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
+index 549b960..963b8b7 100644
+--- a/drivers/video/Kconfig
++++ b/drivers/video/Kconfig
+@@ -2027,7 +2027,7 @@ config FB_TMIO_ACCELL
  
- #include <linux/serial_core.h>
-+#include <linux/delay.h>
- #include <linux/gpio.h>
-+#include <linux/lcd.h>
- #include <linux/mmc/host.h>
- #include <linux/platform_device.h>
- #include <linux/smsc911x.h>
-@@ -19,16 +21,20 @@
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
+ config FB_S3C
+ 	tristate "Samsung S3C framebuffer support"
+-	depends on FB && S3C_DEV_FB
++	depends on FB && (S3C_DEV_FB || S5P_DEV_FIMD0)
+ 	select FB_CFB_FILLRECT
+ 	select FB_CFB_COPYAREA
+ 	select FB_CFB_IMAGEBLIT
+diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+index 4aecf21..2baad7d 100644
+--- a/drivers/video/s3c-fb.c
++++ b/drivers/video/s3c-fb.c
+@@ -81,6 +81,7 @@ struct s3c_fb;
+  * @palette: Address of palette memory, or 0 if none.
+  * @has_prtcon: Set if has PRTCON register.
+  * @has_shadowcon: Set if has SHADOWCON register.
++ * @has_clksel: Set if VIDCON0 register has CLKSEL bit.
+  */
+ struct s3c_fb_variant {
+ 	unsigned int	is_2443:1;
+@@ -98,6 +99,7 @@ struct s3c_fb_variant {
  
-+#include <video/platform_lcd.h>
-+
- #include <plat/regs-serial.h>
- #include <plat/regs-srom.h>
- #include <plat/exynos4.h>
- #include <plat/cpu.h>
- #include <plat/devs.h>
-+#include <plat/fb.h>
- #include <plat/sdhci.h>
- #include <plat/iic.h>
- #include <plat/pd.h>
- 
- #include <mach/map.h>
-+#include <mach/regs-fb.h>
- 
- /* Following are default values for UCON, ULCON and UFCON UART registers */
- #define SMDKC210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-@@ -111,6 +117,70 @@ static struct s3c_sdhci_platdata smdkc210_hsmmc3_pdata __initdata = {
- 	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
+ 	unsigned int	has_prtcon:1;
+ 	unsigned int	has_shadowcon:1;
++	unsigned int	has_clksel:1;
  };
  
-+static void lcd_lte480wv_set_power(struct plat_lcd_data *pd,
-+				   unsigned int power)
-+{
-+	if (power) {
-+#if !defined(CONFIG_BACKLIGHT_PWM)
-+		gpio_request(EXYNOS4_GPD0(1), "GPD0");
-+		gpio_direction_output(EXYNOS4_GPD0(1), 1);
-+		gpio_free(EXYNOS4_GPD0(1));
-+#endif
-+		/* fire nRESET on power up */
-+		gpio_request(EXYNOS4_GPX0(6), "GPX0");
+ /**
+@@ -186,6 +188,7 @@ struct s3c_fb_vsync {
+  * @dev: The device that we bound to, for printing, etc.
+  * @regs_res: The resource we claimed for the IO registers.
+  * @bus_clk: The clk (hclk) feeding our interface and possibly pixclk.
++ * @lcd_clk: The clk (sclk) feeding pixclk.
+  * @regs: The mapped hardware registers.
+  * @variant: Variant information for this hardware.
+  * @enabled: A bitmask of enabled hardware windows.
+@@ -200,6 +203,7 @@ struct s3c_fb {
+ 	struct device		*dev;
+ 	struct resource		*regs_res;
+ 	struct clk		*bus_clk;
++	struct clk		*lcd_clk;
+ 	void __iomem		*regs;
+ 	struct s3c_fb_variant	 variant;
+ 
+@@ -336,10 +340,15 @@ static int s3c_fb_check_var(struct fb_var_screeninfo *var,
+  */
+ static int s3c_fb_calc_pixclk(struct s3c_fb *sfb, unsigned int pixclk)
+ {
+-	unsigned long clk = clk_get_rate(sfb->bus_clk);
++	unsigned long clk;
+ 	unsigned long long tmp;
+ 	unsigned int result;
+ 
++	if (sfb->variant.has_clksel)
++		clk = clk_get_rate(sfb->bus_clk);
++	else
++		clk = clk_get_rate(sfb->lcd_clk);
 +
-+		gpio_direction_output(EXYNOS4_GPX0(6), 1);
-+		mdelay(100);
-+
-+		gpio_set_value(EXYNOS4_GPX0(6), 0);
-+		mdelay(10);
-+
-+		gpio_set_value(EXYNOS4_GPX0(6), 1);
-+		mdelay(10);
-+
-+		gpio_free(EXYNOS4_GPX0(6));
-+	} else {
-+#if !defined(CONFIG_BACKLIGHT_PWM)
-+		gpio_request(EXYNOS4_GPD0(1), "GPD0");
-+		gpio_direction_output(EXYNOS4_GPD0(1), 0);
-+		gpio_free(EXYNOS4_GPD0(1));
-+#endif
+ 	tmp = (unsigned long long)clk;
+ 	tmp *= pixclk;
+ 
+@@ -1354,13 +1363,21 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
+ 
+ 	clk_enable(sfb->bus_clk);
+ 
++	if (!sfb->variant.has_clksel) {
++		ret = pd->enable_clk(pdev, &sfb->lcd_clk);
++		if (ret) {
++			dev_err(dev, "failed to enable lcd clock\n");
++			goto err_bus_clk;
++		}
 +	}
-+}
 +
-+static struct plat_lcd_data smdkc210_lcd_lte480wv_data = {
-+	.set_power      = lcd_lte480wv_set_power,
-+};
-+
-+static struct platform_device smdkc210_lcd_lte480wv = {
-+	.name                   = "platform-lcd",
-+	.dev.parent             = &s5p_device_fimd0.dev,
-+	.dev.platform_data      = &smdkc210_lcd_lte480wv_data,
-+};
-+
-+static struct s3c_fb_pd_win smdkc210_fb_win0 = {
-+	.win_mode = {
-+		.left_margin    = 13,
-+		.right_margin   = 8,
-+		.upper_margin   = 7,
-+		.lower_margin   = 5,
-+		.hsync_len      = 3,
-+		.vsync_len      = 1,
-+		.xres   = 800,
-+		.yres   = 480,
-+	},
-+	.max_bpp        = 32,
-+	.default_bpp    = 24,
-+};
-+
-+static struct s3c_fb_platdata smdkc210_lcd0_pdata __initdata = {
-+	.win[0]		= &smdkc210_fb_win0,
-+	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
-+	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
-+	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
-+	.enable_clk	= exynos4_fimd0_enable_clk,
-+};
-+
- static struct resource smdkc210_smsc911x_resources[] = {
- 	[0] = {
- 		.start	= EXYNOS4_PA_SROM_BANK(1),
-@@ -165,6 +235,8 @@ static struct platform_device *smdkc210_devices[] __initdata = {
- 	&exynos4_device_pd[PD_GPS],
- 	&exynos4_device_sysmmu,
- 	&samsung_asoc_dma,
-+	&s5p_device_fimd0,
-+	&smdkc210_lcd_lte480wv,
- 	&smdkc210_smsc911x,
- };
+ 	pm_runtime_enable(sfb->dev);
  
-@@ -210,6 +282,8 @@ static void __init smdkc210_machine_init(void)
- 	s3c_sdhci2_set_platdata(&smdkc210_hsmmc2_pdata);
- 	s3c_sdhci3_set_platdata(&smdkc210_hsmmc3_pdata);
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res) {
+ 		dev_err(dev, "failed to find registers\n");
+ 		ret = -ENOENT;
+-		goto err_clk;
++		goto err_lcd_clk;
+ 	}
  
-+	s5p_fimd0_set_platdata(&smdkc210_lcd0_pdata);
+ 	sfb->regs_res = request_mem_region(res->start, resource_size(res),
+@@ -1368,7 +1385,7 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
+ 	if (!sfb->regs_res) {
+ 		dev_err(dev, "failed to claim register region\n");
+ 		ret = -ENOENT;
+-		goto err_clk;
++		goto err_lcd_clk;
+ 	}
+ 
+ 	sfb->regs = ioremap(res->start, resource_size(res));
+@@ -1450,7 +1467,13 @@ err_ioremap:
+ err_req_region:
+ 	release_mem_region(sfb->regs_res->start, resource_size(sfb->regs_res));
+ 
+-err_clk:
++err_lcd_clk:
++	if (!sfb->variant.has_clksel) {
++		clk_disable(sfb->lcd_clk);
++		clk_put(sfb->lcd_clk);
++	}
 +
- 	platform_add_devices(smdkc210_devices, ARRAY_SIZE(smdkc210_devices));
++err_bus_clk:
+ 	clk_disable(sfb->bus_clk);
+ 	clk_put(sfb->bus_clk);
+ 
+@@ -1481,6 +1504,11 @@ static int __devexit s3c_fb_remove(struct platform_device *pdev)
+ 
+ 	iounmap(sfb->regs);
+ 
++	if (!sfb->variant.has_clksel) {
++		clk_disable(sfb->lcd_clk);
++		clk_put(sfb->lcd_clk);
++	}
++
+ 	clk_disable(sfb->bus_clk);
+ 	clk_put(sfb->bus_clk);
+ 
+@@ -1510,6 +1538,9 @@ static int s3c_fb_suspend(struct device *dev)
+ 		s3c_fb_blank(FB_BLANK_POWERDOWN, win->fbinfo);
+ 	}
+ 
++	if (!sfb->variant.has_clksel)
++		clk_disable(sfb->lcd_clk);
++
+ 	clk_disable(sfb->bus_clk);
+ 	return 0;
  }
+@@ -1524,6 +1555,9 @@ static int s3c_fb_resume(struct device *dev)
  
-diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
-index 1526764..5977fce 100644
---- a/arch/arm/mach-exynos4/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos4/mach-smdkv310.c
-@@ -9,7 +9,9 @@
- */
+ 	clk_enable(sfb->bus_clk);
  
- #include <linux/serial_core.h>
-+#include <linux/delay.h>
- #include <linux/gpio.h>
-+#include <linux/lcd.h>
- #include <linux/mmc/host.h>
- #include <linux/platform_device.h>
- #include <linux/smsc911x.h>
-@@ -20,17 +22,21 @@
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
- 
-+#include <video/platform_lcd.h>
++	if (!sfb->variant.has_clksel)
++		clk_enable(sfb->lcd_clk);
 +
- #include <plat/regs-serial.h>
- #include <plat/regs-srom.h>
- #include <plat/exynos4.h>
- #include <plat/cpu.h>
- #include <plat/devs.h>
-+#include <plat/fb.h>
- #include <plat/keypad.h>
- #include <plat/sdhci.h>
- #include <plat/iic.h>
- #include <plat/pd.h>
+ 	/* setup gpio and output polarity controls */
+ 	pd->setup_gpio();
+ 	writel(pd->vidcon1, sfb->regs + VIDCON1);
+@@ -1755,6 +1789,7 @@ static struct s3c_fb_driverdata s3c_fb_data_64xx = {
+ 		},
  
- #include <mach/map.h>
-+#include <mach/regs-fb.h>
+ 		.has_prtcon	= 1,
++		.has_clksel	= 1,
+ 	},
+ 	.win[0]	= &s3c_fb_data_64xx_wins[0],
+ 	.win[1]	= &s3c_fb_data_64xx_wins[1],
+@@ -1785,6 +1820,7 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pc100 = {
+ 		},
  
- /* Following are default values for UCON, ULCON and UFCON UART registers */
- #define SMDKV310_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-@@ -113,6 +119,70 @@ static struct s3c_sdhci_platdata smdkv310_hsmmc3_pdata __initdata = {
- 	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
+ 		.has_prtcon	= 1,
++		.has_clksel	= 1,
+ 	},
+ 	.win[0]	= &s3c_fb_data_s5p_wins[0],
+ 	.win[1]	= &s3c_fb_data_s5p_wins[1],
+@@ -1815,6 +1851,7 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pv210 = {
+ 		},
+ 
+ 		.has_shadowcon	= 1,
++		.has_clksel	= 1,
+ 	},
+ 	.win[0]	= &s3c_fb_data_s5p_wins[0],
+ 	.win[1]	= &s3c_fb_data_s5p_wins[1],
+@@ -1823,6 +1860,36 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pv210 = {
+ 	.win[4]	= &s3c_fb_data_s5p_wins[4],
  };
  
-+static void lcd_lte480wv_set_power(struct plat_lcd_data *pd,
-+				   unsigned int power)
-+{
-+	if (power) {
-+#if !defined(CONFIG_BACKLIGHT_PWM)
-+		gpio_request(EXYNOS4_GPD0(1), "GPD0");
-+		gpio_direction_output(EXYNOS4_GPD0(1), 1);
-+		gpio_free(EXYNOS4_GPD0(1));
-+#endif
-+		/* fire nRESET on power up */
-+		gpio_request(EXYNOS4_GPX0(6), "GPX0");
++static struct s3c_fb_driverdata s3c_fb_data_exynos4 = {
++	.variant = {
++		.nr_windows	= 5,
++		.vidtcon	= VIDTCON0,
++		.wincon		= WINCON(0),
++		.winmap		= WINxMAP(0),
++		.keycon		= WKEYCON,
++		.osd		= VIDOSD_BASE,
++		.osd_stride	= 16,
++		.buf_start	= VIDW_BUF_START(0),
++		.buf_size	= VIDW_BUF_SIZE(0),
++		.buf_end	= VIDW_BUF_END(0),
 +
-+		gpio_direction_output(EXYNOS4_GPX0(6), 1);
-+		mdelay(100);
++		.palette = {
++			[0] = 0x2400,
++			[1] = 0x2800,
++			[2] = 0x2c00,
++			[3] = 0x3000,
++			[4] = 0x3400,
++		},
 +
-+		gpio_set_value(EXYNOS4_GPX0(6), 0);
-+		mdelay(10);
-+
-+		gpio_set_value(EXYNOS4_GPX0(6), 1);
-+		mdelay(10);
-+
-+		gpio_free(EXYNOS4_GPX0(6));
-+	} else {
-+#if !defined(CONFIG_BACKLIGHT_PWM)
-+		gpio_request(EXYNOS4_GPD0(1), "GPD0");
-+		gpio_direction_output(EXYNOS4_GPD0(1), 0);
-+		gpio_free(EXYNOS4_GPD0(1));
-+#endif
-+	}
-+}
-+
-+static struct plat_lcd_data smdkv310_lcd_lte480wv_data = {
-+	.set_power      = lcd_lte480wv_set_power,
-+};
-+
-+static struct platform_device smdkv310_lcd_lte480wv = {
-+	.name                   = "platform-lcd",
-+	.dev.parent             = &s5p_device_fimd0.dev,
-+	.dev.platform_data      = &smdkv310_lcd_lte480wv_data,
-+};
-+
-+static struct s3c_fb_pd_win smdkv310_fb_win0 = {
-+	.win_mode = {
-+		.left_margin    = 13,
-+		.right_margin   = 8,
-+		.upper_margin   = 7,
-+		.lower_margin   = 5,
-+		.hsync_len      = 3,
-+		.vsync_len      = 1,
-+		.xres   = 800,
-+		.yres   = 480,
++		.has_shadowcon	= 1,
 +	},
-+	.max_bpp        = 32,
-+	.default_bpp    = 24,
++	.win[0] = &s3c_fb_data_s5p_wins[0],
++	.win[1] = &s3c_fb_data_s5p_wins[1],
++	.win[2] = &s3c_fb_data_s5p_wins[2],
++	.win[3] = &s3c_fb_data_s5p_wins[3],
++	.win[4] = &s3c_fb_data_s5p_wins[4],
 +};
 +
-+static struct s3c_fb_platdata smdkv310_lcd0_pdata __initdata = {
-+	.win[0]		= &smdkv310_fb_win0,
-+	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
-+	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
-+	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
-+	.enable_clk	= exynos4_fimd0_enable_clk,
-+};
-+
- static struct resource smdkv310_smsc911x_resources[] = {
- 	[0] = {
- 		.start	= EXYNOS4_PA_SROM_BANK(1),
-@@ -187,6 +257,8 @@ static struct platform_device *smdkv310_devices[] __initdata = {
- 	&exynos4_device_pd[PD_GPS],
- 	&exynos4_device_sysmmu,
- 	&samsung_asoc_dma,
-+	&s5p_device_fimd0,
-+	&smdkv310_lcd_lte480wv,
- 	&smdkv310_smsc911x,
- };
- 
-@@ -232,6 +304,8 @@ static void __init smdkv310_machine_init(void)
- 	s3c_sdhci2_set_platdata(&smdkv310_hsmmc2_pdata);
- 	s3c_sdhci3_set_platdata(&smdkv310_hsmmc3_pdata);
- 
-+	s5p_fimd0_set_platdata(&smdkv310_lcd0_pdata);
-+
- 	samsung_keypad_set_platdata(&smdkv310_keypad_data);
- 
- 	platform_add_devices(smdkv310_devices, ARRAY_SIZE(smdkv310_devices));
+ /* S3C2443/S3C2416 style hardware */
+ static struct s3c_fb_driverdata s3c_fb_data_s3c2443 = {
+ 	.variant = {
+@@ -1843,6 +1910,7 @@ static struct s3c_fb_driverdata s3c_fb_data_s3c2443 = {
+ 			[0] = 0x400,
+ 			[1] = 0x800,
+ 		},
++		.has_clksel	= 1,
+ 	},
+ 	.win[0] = &(struct s3c_fb_win_variant) {
+ 		.palette_sz	= 256,
+@@ -1870,6 +1938,9 @@ static struct platform_device_id s3c_fb_driver_ids[] = {
+ 		.name		= "s5pv210-fb",
+ 		.driver_data	= (unsigned long)&s3c_fb_data_s5pv210,
+ 	}, {
++		.name		= "exynos4-fb",
++		.driver_data	= (unsigned long)&s3c_fb_data_exynos4,
++	}, {
+ 		.name		= "s3c2443-fb",
+ 		.driver_data	= (unsigned long)&s3c_fb_data_s3c2443,
+ 	},
 -- 
 1.7.1
