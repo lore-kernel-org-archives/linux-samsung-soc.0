@@ -1,261 +1,444 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH v2 4/5] video: s3c-fb: Add support EXYNOS4 FIMD
-Date: Fri, 17 Jun 2011 22:02:13 +0900
-Message-ID: <1308315733-15048-1-git-send-email-jg1.han@samsung.com>
+Subject: [PATCH v2 3/5] ARM: EXYNOS4: Add platform device and helper functions for FIMD
+Date: Fri, 17 Jun 2011 22:02:06 +0900
+Message-ID: <1308315726-15018-1-git-send-email-jg1.han@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:50919 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:50913 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758906Ab1FQNKX (ORCPT
+	with ESMTP id S1758869Ab1FQNKW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Jun 2011 09:10:23 -0400
+	Fri, 17 Jun 2011 09:10:22 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, linux-samsung-soc@vger.kernel.org, Jonghun Han <jonghun.han@samsung.com>
-Cc: Anand Kumar N <anand.kn@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Inki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Jingoo Han <jg1.han@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, linux-samsung-soc@vger.kernel.org
+Cc: Anand Kumar N <anand.kn@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Inki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Jonghun Han <jonghun.han@samsung.com>, Jingoo Han <jg1.han@samsung.com>
 
-This patch adds struct s3c_fb_driverdata s3c_fb_data_exynos4 for EXYNOS4
-and adds lcd clock gating support.
+From: Jonghun Han <jonghun.han@samsung.com>
 
-FIMD driver needs two clocks for FIMD IP and LCD pixel clock. Previously,
-both clocks are provided by using bus clock such as HCLK. However, EXYNOS4
-can not select HCLK for LCD pixel clock because the EXYNOS4 FIMD IP does not
-have the CLKSEL bit of VIDCON0. So, FIMD driver should provide the lcd clock
-using SCLK_FIMD as LCD pixel clock for EXYNOS4.
+This patch adds platform device s5p_device_fimd0 for EXYNOS4 FIMD0.
+EXYNOS4 has two FIMDs(FIMD0, FIMD1). FIMD1 will be added later.
+Some definitions used to enable EXYNOS4 FIMD0 are added.
 
-The driver selects enabling lcd clock according to has_clksel which means
-the CLKSEL bit of VIDCON0. If there is has_clksel, the driver will not
-enable the lcd clock using SCLK_FIMD because bus clock using HCLK is used
-a LCD pixel clock.
-
+Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
 Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 ---
- drivers/video/Kconfig  |    2 +-
- drivers/video/s3c-fb.c |   79 +++++++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 76 insertions(+), 5 deletions(-)
+ arch/arm/mach-exynos4/Kconfig                |    9 +++
+ arch/arm/mach-exynos4/Makefile               |    1 +
+ arch/arm/mach-exynos4/cpu.c                  |    4 +-
+ arch/arm/mach-exynos4/include/mach/regs-fb.h |   21 ++++++
+ arch/arm/mach-exynos4/setup-fimd0-24bpp.c    |   88 ++++++++++++++++++++++++++
+ arch/arm/plat-s5p/Kconfig                    |    5 ++
+ arch/arm/plat-s5p/Makefile                   |    1 +
+ arch/arm/plat-s5p/dev-fimd0.c                |   67 +++++++++++++++++++
+ arch/arm/plat-samsung/include/plat/devs.h    |    1 +
+ arch/arm/plat-samsung/include/plat/fb-core.h |   15 +++++
+ arch/arm/plat-samsung/include/plat/fb.h      |   23 +++++++
+ 11 files changed, 234 insertions(+), 1 deletions(-)
+ create mode 100644 arch/arm/mach-exynos4/include/mach/regs-fb.h
+ create mode 100644 arch/arm/mach-exynos4/setup-fimd0-24bpp.c
+ create mode 100644 arch/arm/plat-s5p/dev-fimd0.c
 
-diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
-index 549b960..963b8b7 100644
---- a/drivers/video/Kconfig
-+++ b/drivers/video/Kconfig
-@@ -2027,7 +2027,7 @@ config FB_TMIO_ACCELL
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index 1435fc3..8428ac7 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -25,6 +25,11 @@ config EXYNOS4_DEV_AHCI
+ 	help
+ 	  Compile in platform device definitions for AHCI
  
- config FB_S3C
- 	tristate "Samsung S3C framebuffer support"
--	depends on FB && S3C_DEV_FB
-+	depends on FB && (S3C_DEV_FB || S5P_DEV_FIMD0)
- 	select FB_CFB_FILLRECT
- 	select FB_CFB_COPYAREA
- 	select FB_CFB_IMAGEBLIT
-diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index 4aecf21..2baad7d 100644
---- a/drivers/video/s3c-fb.c
-+++ b/drivers/video/s3c-fb.c
-@@ -81,6 +81,7 @@ struct s3c_fb;
-  * @palette: Address of palette memory, or 0 if none.
-  * @has_prtcon: Set if has PRTCON register.
-  * @has_shadowcon: Set if has SHADOWCON register.
-+ * @has_clksel: Set if VIDCON0 register has CLKSEL bit.
-  */
- struct s3c_fb_variant {
- 	unsigned int	is_2443:1;
-@@ -98,6 +99,7 @@ struct s3c_fb_variant {
- 
- 	unsigned int	has_prtcon:1;
- 	unsigned int	has_shadowcon:1;
-+	unsigned int	has_clksel:1;
- };
- 
- /**
-@@ -186,6 +188,7 @@ struct s3c_fb_vsync {
-  * @dev: The device that we bound to, for printing, etc.
-  * @regs_res: The resource we claimed for the IO registers.
-  * @bus_clk: The clk (hclk) feeding our interface and possibly pixclk.
-+ * @lcd_clk: The clk (sclk) feeding pixclk.
-  * @regs: The mapped hardware registers.
-  * @variant: Variant information for this hardware.
-  * @enabled: A bitmask of enabled hardware windows.
-@@ -200,6 +203,7 @@ struct s3c_fb {
- 	struct device		*dev;
- 	struct resource		*regs_res;
- 	struct clk		*bus_clk;
-+	struct clk		*lcd_clk;
- 	void __iomem		*regs;
- 	struct s3c_fb_variant	 variant;
- 
-@@ -336,10 +340,15 @@ static int s3c_fb_check_var(struct fb_var_screeninfo *var,
-  */
- static int s3c_fb_calc_pixclk(struct s3c_fb *sfb, unsigned int pixclk)
- {
--	unsigned long clk = clk_get_rate(sfb->bus_clk);
-+	unsigned long clk;
- 	unsigned long long tmp;
- 	unsigned int result;
- 
-+	if (sfb->variant.has_clksel)
-+		clk = clk_get_rate(sfb->bus_clk);
-+	else
-+		clk = clk_get_rate(sfb->lcd_clk);
++config EXYNOS4_SETUP_FIMD0_24BPP
++	bool
++	help
++	  Common setup code for FIMD0 with a 24bpp RGB display helper.
 +
- 	tmp = (unsigned long long)clk;
- 	tmp *= pixclk;
+ config EXYNOS4_DEV_PD
+ 	bool
+ 	help
+@@ -103,6 +108,7 @@ menu "EXYNOS4 Machines"
+ config MACH_SMDKC210
+ 	bool "SMDKC210"
+ 	select CPU_EXYNOS4210
++	select S5P_DEV_FIMD0
+ 	select S3C_DEV_RTC
+ 	select S3C_DEV_WDT
+ 	select S3C_DEV_I2C1
+@@ -112,6 +118,7 @@ config MACH_SMDKC210
+ 	select S3C_DEV_HSMMC3
+ 	select EXYNOS4_DEV_PD
+ 	select EXYNOS4_DEV_SYSMMU
++	select EXYNOS4_SETUP_FIMD0_24BPP
+ 	select EXYNOS4_SETUP_I2C1
+ 	select EXYNOS4_SETUP_SDHCI
+ 	help
+@@ -120,6 +127,7 @@ config MACH_SMDKC210
+ config MACH_SMDKV310
+ 	bool "SMDKV310"
+ 	select CPU_EXYNOS4210
++	select S5P_DEV_FIMD0
+ 	select S3C_DEV_RTC
+ 	select S3C_DEV_WDT
+ 	select S3C_DEV_I2C1
+@@ -130,6 +138,7 @@ config MACH_SMDKV310
+ 	select SAMSUNG_DEV_KEYPAD
+ 	select EXYNOS4_DEV_PD
+ 	select EXYNOS4_DEV_SYSMMU
++	select EXYNOS4_SETUP_FIMD0_24BPP
+ 	select EXYNOS4_SETUP_I2C1
+ 	select EXYNOS4_SETUP_KEYPAD
+ 	select EXYNOS4_SETUP_SDHCI
+diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
+index 60fe5ec..aa4d1f4 100644
+--- a/arch/arm/mach-exynos4/Makefile
++++ b/arch/arm/mach-exynos4/Makefile
+@@ -45,6 +45,7 @@ obj-$(CONFIG_EXYNOS4_DEV_PD)		+= dev-pd.o
+ obj-$(CONFIG_EXYNOS4_DEV_SYSMMU)	+= dev-sysmmu.o
  
-@@ -1354,13 +1363,21 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
+ obj-$(CONFIG_EXYNOS4_SETUP_FIMC)	+= setup-fimc.o
++obj-$(CONFIG_EXYNOS4_SETUP_FIMD0_24BPP)	+= setup-fimd0-24bpp.o
+ obj-$(CONFIG_EXYNOS4_SETUP_I2C1)	+= setup-i2c1.o
+ obj-$(CONFIG_EXYNOS4_SETUP_I2C2)	+= setup-i2c2.o
+ obj-$(CONFIG_EXYNOS4_SETUP_I2C3)	+= setup-i2c3.o
+diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
+index 9babe44..778a5b0 100644
+--- a/arch/arm/mach-exynos4/cpu.c
++++ b/arch/arm/mach-exynos4/cpu.c
+@@ -19,9 +19,10 @@
  
- 	clk_enable(sfb->bus_clk);
+ #include <plat/cpu.h>
+ #include <plat/clock.h>
++#include <plat/devs.h>
++#include <plat/fb-core.h>
+ #include <plat/exynos4.h>
+ #include <plat/sdhci.h>
+-#include <plat/devs.h>
+ #include <plat/fimc-core.h>
  
-+	if (!sfb->variant.has_clksel) {
-+		ret = pd->enable_clk(pdev, &sfb->lcd_clk);
-+		if (ret) {
-+			dev_err(dev, "failed to enable lcd clock\n");
-+			goto err_bus_clk;
-+		}
-+	}
-+
- 	pm_runtime_enable(sfb->dev);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res) {
- 		dev_err(dev, "failed to find registers\n");
- 		ret = -ENOENT;
--		goto err_clk;
-+		goto err_lcd_clk;
- 	}
- 
- 	sfb->regs_res = request_mem_region(res->start, resource_size(res),
-@@ -1368,7 +1385,7 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
- 	if (!sfb->regs_res) {
- 		dev_err(dev, "failed to claim register region\n");
- 		ret = -ENOENT;
--		goto err_clk;
-+		goto err_lcd_clk;
- 	}
- 
- 	sfb->regs = ioremap(res->start, resource_size(res));
-@@ -1450,7 +1467,13 @@ err_ioremap:
- err_req_region:
- 	release_mem_region(sfb->regs_res->start, resource_size(sfb->regs_res));
- 
--err_clk:
-+err_lcd_clk:
-+	if (!sfb->variant.has_clksel) {
-+		clk_disable(sfb->lcd_clk);
-+		clk_put(sfb->lcd_clk);
-+	}
-+
-+err_bus_clk:
- 	clk_disable(sfb->bus_clk);
- 	clk_put(sfb->bus_clk);
- 
-@@ -1481,6 +1504,11 @@ static int __devexit s3c_fb_remove(struct platform_device *pdev)
- 
- 	iounmap(sfb->regs);
- 
-+	if (!sfb->variant.has_clksel) {
-+		clk_disable(sfb->lcd_clk);
-+		clk_put(sfb->lcd_clk);
-+	}
-+
- 	clk_disable(sfb->bus_clk);
- 	clk_put(sfb->bus_clk);
- 
-@@ -1510,6 +1538,9 @@ static int s3c_fb_suspend(struct device *dev)
- 		s3c_fb_blank(FB_BLANK_POWERDOWN, win->fbinfo);
- 	}
- 
-+	if (!sfb->variant.has_clksel)
-+		clk_disable(sfb->lcd_clk);
-+
- 	clk_disable(sfb->bus_clk);
- 	return 0;
+ #include <mach/regs-irq.h>
+@@ -132,6 +133,7 @@ void __init exynos4_map_io(void)
+ 	s3c_fimc_setname(1, "exynos4-fimc");
+ 	s3c_fimc_setname(2, "exynos4-fimc");
+ 	s3c_fimc_setname(3, "exynos4-fimc");
++	s5p_fb_setname(0, "exynos4-fb");	/* FIMD0 */
  }
-@@ -1524,6 +1555,9 @@ static int s3c_fb_resume(struct device *dev)
  
- 	clk_enable(sfb->bus_clk);
- 
-+	if (!sfb->variant.has_clksel)
-+		clk_enable(sfb->lcd_clk);
+ void __init exynos4_init_clocks(int xtal)
+diff --git a/arch/arm/mach-exynos4/include/mach/regs-fb.h b/arch/arm/mach-exynos4/include/mach/regs-fb.h
+new file mode 100644
+index 0000000..f320105
+--- /dev/null
++++ b/arch/arm/mach-exynos4/include/mach/regs-fb.h
+@@ -0,0 +1,21 @@
++/*
++ * Copyright 2010 Ben Dooks <ben-linux@fluff.org>
++ *
++ * Dummy framebuffer to allow build for the moment.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
- 	/* setup gpio and output polarity controls */
- 	pd->setup_gpio();
- 	writel(pd->vidcon1, sfb->regs + VIDCON1);
-@@ -1755,6 +1789,7 @@ static struct s3c_fb_driverdata s3c_fb_data_64xx = {
- 		},
- 
- 		.has_prtcon	= 1,
-+		.has_clksel	= 1,
- 	},
- 	.win[0]	= &s3c_fb_data_64xx_wins[0],
- 	.win[1]	= &s3c_fb_data_64xx_wins[1],
-@@ -1785,6 +1820,7 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pc100 = {
- 		},
- 
- 		.has_prtcon	= 1,
-+		.has_clksel	= 1,
- 	},
- 	.win[0]	= &s3c_fb_data_s5p_wins[0],
- 	.win[1]	= &s3c_fb_data_s5p_wins[1],
-@@ -1815,6 +1851,7 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pv210 = {
- 		},
- 
- 		.has_shadowcon	= 1,
-+		.has_clksel	= 1,
- 	},
- 	.win[0]	= &s3c_fb_data_s5p_wins[0],
- 	.win[1]	= &s3c_fb_data_s5p_wins[1],
-@@ -1823,6 +1860,36 @@ static struct s3c_fb_driverdata s3c_fb_data_s5pv210 = {
- 	.win[4]	= &s3c_fb_data_s5p_wins[4],
- };
- 
-+static struct s3c_fb_driverdata s3c_fb_data_exynos4 = {
-+	.variant = {
-+		.nr_windows	= 5,
-+		.vidtcon	= VIDTCON0,
-+		.wincon		= WINCON(0),
-+		.winmap		= WINxMAP(0),
-+		.keycon		= WKEYCON,
-+		.osd		= VIDOSD_BASE,
-+		.osd_stride	= 16,
-+		.buf_start	= VIDW_BUF_START(0),
-+		.buf_size	= VIDW_BUF_SIZE(0),
-+		.buf_end	= VIDW_BUF_END(0),
++#ifndef __ASM_ARCH_MACH_REGS_FB_H
++#define __ASM_ARCH_MACH_REGS_FB_H __FILE__
 +
-+		.palette = {
-+			[0] = 0x2400,
-+			[1] = 0x2800,
-+			[2] = 0x2c00,
-+			[3] = 0x3000,
-+			[4] = 0x3400,
-+		},
++#include <plat/regs-fb-v4.h>
 +
-+		.has_shadowcon	= 1,
++static inline unsigned int s3c_fb_pal_reg(unsigned int window, int reg)
++{
++	return 0x2400 + (window * 256 * 4) + reg;
++}
++
++#endif /* __ASM_ARCH_MACH_REGS_FB_H */
+diff --git a/arch/arm/mach-exynos4/setup-fimd0-24bpp.c b/arch/arm/mach-exynos4/setup-fimd0-24bpp.c
+new file mode 100644
+index 0000000..fc3d4ca
+--- /dev/null
++++ b/arch/arm/mach-exynos4/setup-fimd0-24bpp.c
+@@ -0,0 +1,88 @@
++/* linux/arch/arm/mach-exynos4/setup-fimd0-24bpp.c
++ *
++ * Copyright (c) 2009-2011 Samsung Electronics Co., Ltd.
++ *             http://www.samsung.com
++ *
++ * Base Exynos4 setup information for 24bpp LCD framebuffer
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/kernel.h>
++#include <linux/types.h>
++#include <linux/fb.h>
++#include <linux/gpio.h>
++
++#include <plat/fb.h>
++#include <plat/gpio-cfg.h>
++
++#include <mach/regs-clock.h>
++#include <mach/regs-fb.h>
++#include <mach/map.h>
++
++void exynos4_fimd0_gpio_setup_24bpp(void)
++{
++	unsigned int reg = 0;
++
++	s3c_gpio_cfgrange_nopull(EXYNOS4_GPF0(0), 8, S3C_GPIO_SFN(2));
++	s3c_gpio_cfgrange_nopull(EXYNOS4_GPF1(0), 8, S3C_GPIO_SFN(2));
++	s3c_gpio_cfgrange_nopull(EXYNOS4_GPF2(0), 8, S3C_GPIO_SFN(2));
++	s3c_gpio_cfgrange_nopull(EXYNOS4_GPF3(0), 4, S3C_GPIO_SFN(2));
++
++	/*
++	 * Set DISPLAY_CONTROL register for Display path selection.
++	 *
++	 * DISPLAY_CONTROL[1:0]
++	 * ---------------------
++	 *  00 | MIE
++	 *  01 | MDINE
++	 *  10 | FIMD : selected
++	 *  11 | FIMD
++	 */
++	reg = __raw_readl(S3C_VA_SYS + 0x0210);
++	reg |= (1 << 1);
++	__raw_writel(reg, S3C_VA_SYS + 0x0210);
++}
++
++int exynos4_fimd0_enable_clk(struct platform_device *pdev, struct clk **s3cfb_clk)
++{
++	struct clk *sclk = NULL;
++	struct clk *mout_mpll = NULL;
++
++	u32 rate = 0;
++
++	sclk = clk_get(&pdev->dev, "sclk_fimd");
++	if (IS_ERR(sclk)) {
++		dev_err(&pdev->dev, "failed to get sclk for fimd\n");
++		goto err_clk2;
++	}
++
++	mout_mpll = clk_get(&pdev->dev, "mout_mpll");
++	if (IS_ERR(mout_mpll)) {
++		dev_err(&pdev->dev, "failed to get mout_mpll\n");
++		goto err_clk1;
++	}
++
++	clk_set_parent(sclk, mout_mpll);
++	if (!rate)
++		rate = 134000000;
++
++	clk_set_rate(sclk, rate);
++	dev_dbg(&pdev->dev, "set fimd sclk rate to %d\n", rate);
++	*s3cfb_clk = sclk;
++
++	clk_put(mout_mpll);
++
++	clk_enable(sclk);
++
++	return 0;
++
++err_clk1:
++	clk_put(mout_mpll);
++err_clk2:
++	clk_put(sclk);
++
++	return -EINVAL;
++}
+diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
+index e98f5c5..46de16e 100644
+--- a/arch/arm/plat-s5p/Kconfig
++++ b/arch/arm/plat-s5p/Kconfig
+@@ -70,6 +70,11 @@ config S5P_DEV_FIMC3
+ 	help
+ 	  Compile in platform device definitions for FIMC controller 3
+ 
++config S5P_DEV_FIMD0
++	bool
++	help
++	  Compile in platform device definitions for FIMD controller 0
++
+ config S5P_DEV_ONENAND
+ 	bool
+ 	help
+diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
+index e234cc4..eec7e24 100644
+--- a/arch/arm/plat-s5p/Makefile
++++ b/arch/arm/plat-s5p/Makefile
+@@ -30,6 +30,7 @@ obj-$(CONFIG_S5P_DEV_FIMC0)	+= dev-fimc0.o
+ obj-$(CONFIG_S5P_DEV_FIMC1)	+= dev-fimc1.o
+ obj-$(CONFIG_S5P_DEV_FIMC2)	+= dev-fimc2.o
+ obj-$(CONFIG_S5P_DEV_FIMC3)	+= dev-fimc3.o
++obj-$(CONFIG_S5P_DEV_FIMD0)	+= dev-fimd0.o
+ obj-$(CONFIG_S5P_DEV_ONENAND)	+= dev-onenand.o
+ obj-$(CONFIG_S5P_DEV_CSIS0)	+= dev-csis0.o
+ obj-$(CONFIG_S5P_DEV_CSIS1)	+= dev-csis1.o
+diff --git a/arch/arm/plat-s5p/dev-fimd0.c b/arch/arm/plat-s5p/dev-fimd0.c
+new file mode 100644
+index 0000000..9e7176c
+--- /dev/null
++++ b/arch/arm/plat-s5p/dev-fimd0.c
+@@ -0,0 +1,67 @@
++/* linux/arch/arm/plat-s5p/dev-fimd0.c
++ *
++ * Copyright (c) 2009-2011 Samsung Electronics Co., Ltd.
++ *             http://www.samsung.com
++ *
++ * Core file for Samsung Display Controller (FIMD) driver
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/kernel.h>
++#include <linux/string.h>
++#include <linux/platform_device.h>
++#include <linux/fb.h>
++#include <linux/gfp.h>
++#include <linux/dma-mapping.h>
++
++#include <mach/irqs.h>
++#include <mach/map.h>
++
++#include <plat/fb.h>
++#include <plat/devs.h>
++#include <plat/cpu.h>
++
++static struct resource s5p_fimd0_resource[] = {
++	[0] = {
++		.start  = S5P_PA_FIMD0,
++		.end    = S5P_PA_FIMD0 + SZ_32K - 1,
++		.flags  = IORESOURCE_MEM,
 +	},
-+	.win[0] = &s3c_fb_data_s5p_wins[0],
-+	.win[1] = &s3c_fb_data_s5p_wins[1],
-+	.win[2] = &s3c_fb_data_s5p_wins[2],
-+	.win[3] = &s3c_fb_data_s5p_wins[3],
-+	.win[4] = &s3c_fb_data_s5p_wins[4],
++	[1] = {
++		.start  = IRQ_FIMD0_VSYNC,
++		.end    = IRQ_FIMD0_VSYNC,
++		.flags  = IORESOURCE_IRQ,
++	},
++	[2] = {
++		.start  = IRQ_FIMD0_FIFO,
++		.end    = IRQ_FIMD0_FIFO,
++		.flags  = IORESOURCE_IRQ,
++	},
++	[3] = {
++		.start  = IRQ_FIMD0_SYSTEM,
++		.end    = IRQ_FIMD0_SYSTEM,
++		.flags  = IORESOURCE_IRQ,
++	},
 +};
 +
- /* S3C2443/S3C2416 style hardware */
- static struct s3c_fb_driverdata s3c_fb_data_s3c2443 = {
- 	.variant = {
-@@ -1843,6 +1910,7 @@ static struct s3c_fb_driverdata s3c_fb_data_s3c2443 = {
- 			[0] = 0x400,
- 			[1] = 0x800,
- 		},
-+		.has_clksel	= 1,
- 	},
- 	.win[0] = &(struct s3c_fb_win_variant) {
- 		.palette_sz	= 256,
-@@ -1870,6 +1938,9 @@ static struct platform_device_id s3c_fb_driver_ids[] = {
- 		.name		= "s5pv210-fb",
- 		.driver_data	= (unsigned long)&s3c_fb_data_s5pv210,
- 	}, {
-+		.name		= "exynos4-fb",
-+		.driver_data	= (unsigned long)&s3c_fb_data_exynos4,
-+	}, {
- 		.name		= "s3c2443-fb",
- 		.driver_data	= (unsigned long)&s3c_fb_data_s3c2443,
- 	},
++static u64 fimd0_dmamask = DMA_BIT_MASK(32);
++
++struct platform_device s5p_device_fimd0 = {
++	.name           = "s5p-fb",
++	.id             = 0,
++	.num_resources  = ARRAY_SIZE(s5p_fimd0_resource),
++	.resource       = s5p_fimd0_resource,
++	.dev            = {
++		.dma_mask               = &fimd0_dmamask,
++		.coherent_dma_mask      = DMA_BIT_MASK(32),
++	},
++};
++
++void __init s5p_fimd0_set_platdata(struct s3c_fb_platdata *pd)
++{
++	s3c_set_platdata(pd, sizeof(struct s3c_fb_platdata),
++			&s5p_device_fimd0);
++}
+diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
+index 4af108f..370bd2b 100644
+--- a/arch/arm/plat-samsung/include/plat/devs.h
++++ b/arch/arm/plat-samsung/include/plat/devs.h
+@@ -45,6 +45,7 @@ extern struct platform_device s3c64xx_device_ac97;
+ extern struct platform_device s3c_device_ts;
+ 
+ extern struct platform_device s3c_device_fb;
++extern struct platform_device s5p_device_fimd0;
+ extern struct platform_device s3c_device_ohci;
+ extern struct platform_device s3c_device_lcd;
+ extern struct platform_device s3c_device_wdt;
+diff --git a/arch/arm/plat-samsung/include/plat/fb-core.h b/arch/arm/plat-samsung/include/plat/fb-core.h
+index bca383e..6abcbf1 100644
+--- a/arch/arm/plat-samsung/include/plat/fb-core.h
++++ b/arch/arm/plat-samsung/include/plat/fb-core.h
+@@ -26,4 +26,19 @@ static inline void s3c_fb_setname(char *name)
+ #endif
+ }
+ 
++/* Re-define device name depending on support. */
++static inline void s5p_fb_setname(int id, char *name)
++{
++	switch (id) {
++#ifdef CONFIG_S5P_DEV_FIMD0
++	case 0:
++		s5p_device_fimd0.name = name;
++	break;
++#endif
++	default:
++		printk(KERN_ERR "%s: invalid device id(%d)\n", __func__, id);
++	break;
++	}
++}
++
+ #endif /* __ASM_PLAT_FB_CORE_H */
+diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/plat-samsung/include/plat/fb.h
+index cb3ca3a..3302274 100644
+--- a/arch/arm/plat-samsung/include/plat/fb.h
++++ b/arch/arm/plat-samsung/include/plat/fb.h
+@@ -22,6 +22,7 @@
+  */
+ #define S3C_FB_MAX_WIN	(5)
+ 
++#include <linux/clk.h>
+ /**
+  * struct s3c_fb_pd_win - per window setup data
+  * @win_mode: The display parameters to initialise (not for window 0)
+@@ -42,6 +43,7 @@ struct s3c_fb_pd_win {
+  * @setup_gpio: Setup the external GPIO pins to the right state to transfer
+  *		the data from the display system to the connected display
+  *		device.
++ * @enable_clk: Enable the LCD pixel clock.
+  * @default_win: default window layer number to be used for UI layer.
+  * @vidcon0: The base vidcon0 values to control the panel data format.
+  * @vidcon1: The base vidcon1 values to control the panel data output.
+@@ -56,6 +58,8 @@ struct s3c_fb_pd_win {
+  */
+ struct s3c_fb_platdata {
+ 	void	(*setup_gpio)(void);
++	int	(*enable_clk)(struct platform_device *pdev,
++			      struct clk **s3cfb_clk);
+ 
+ 	struct s3c_fb_pd_win	*win[S3C_FB_MAX_WIN];
+ 
+@@ -74,6 +78,14 @@ struct s3c_fb_platdata {
+ extern void s3c_fb_set_platdata(struct s3c_fb_platdata *pd);
+ 
+ /**
++ * s5p_fimd0_set_platdata() - Setup the FB device with platform data.
++ * @pd: The platform data to set. The data is copied from the passed structure
++ *      so the machine data can mark the data __initdata so that any unused
++ *      machines will end up dumping their data at runtime.
++ */
++extern void s5p_fimd0_set_platdata(struct s3c_fb_platdata *pd);
++
++/**
+  * s3c64xx_fb_gpio_setup_24bpp() - S3C64XX setup function for 24bpp LCD
+  *
+  * Initialise the GPIO for an 24bpp LCD display on the RGB interface.
+@@ -94,4 +106,15 @@ extern void s5pc100_fb_gpio_setup_24bpp(void);
+  */
+ extern void s5pv210_fb_gpio_setup_24bpp(void);
+ 
++/**
++ * exynos4_fimd0_gpio_setup_24bpp() - Exynos4 setup function for 24bpp LCD0
++ *
++ * Initialise the GPIO for an 24bpp LCD display on the RGB interface 0.
++ */
++extern void exynos4_fimd0_gpio_setup_24bpp(void);
++
++/**
++ * exynos4_fimd0_enable_clk() - Exynos4 setup function for enable clock
++ */
++extern int exynos4_fimd0_enable_clk(struct platform_device *pdev, struct clk **s3cfb_clk);
+ #endif /* __PLAT_S3C_FB_H */
 -- 
 1.7.1
