@@ -1,71 +1,78 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [RE-SEND] [PATCH 3/4] s3c-fb: Add support EXYNOS4 FIMD
-Date: Thu, 16 Jun 2011 17:44:01 +0200
-Message-ID: <4DFA24C1.70307@samsung.com>
-References: <1307693723-14971-1-git-send-email-anand.kn@samsung.com>
- <1307693723-14971-4-git-send-email-anand.kn@samsung.com>
- <4DF39A92.5050609@gmail.com>
- <BANLkTinuAnaoo2hA6MLBDncXxXtL8NO2pg@mail.gmail.com>
- <4DF866D9.7090406@samsung.com>
- <BANLkTi=K6SJ-Scnr6wBojFaWQMZQK6YT3w@mail.gmail.com>
- <20110615100814.GD28989@n2100.arm.linux.org.uk>
- <BANLkTin1-D3en-ZpOKw2jZB0TKYt5OLsPw@mail.gmail.com>
+From: JinGoo Han <jg1.han@samsung.com>
+Subject: Re: Re: [RE-SEND] [PATCH 3/4] s3c-fb: Add support EXYNOS4 FIMD
+Date: Fri, 17 Jun 2011 09:01:10 +0000 (GMT)
+Message-ID: <28999140.255641308301268336.JavaMail.weblogic@epml15>
+Reply-To: jg1.han@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:52099 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755547Ab1FPPoG (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:59036 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752449Ab1FQJBM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Jun 2011 11:44:06 -0400
-Received: from spt2.w1.samsung.com ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LMW0073J3PFIYA0@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 16 Jun 2011 16:44:03 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LMW00MF73PE77@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 16 Jun 2011 16:44:02 +0100 (BST)
-In-reply-to: <BANLkTin1-D3en-ZpOKw2jZB0TKYt5OLsPw@mail.gmail.com>
+	Fri, 17 Jun 2011 05:01:12 -0400
+Received: from epcpsbge7.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LMX00AG9FNPKXQ0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 17 Jun 2011 18:01:10 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Anand Kumar N <anand.kn@samsung.com>, lethal@linux-sh.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, jg1.han@samsung.com, jonghun.han@samsung.com, thomas.ab@samsung.com
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, ANAND KUMAR N <anand.kn@samsung.com>, "lethal@linux-sh.org" <lethal@linux-sh.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jong-Hun Han <jonghun.han@samsung.com>, THOMAS P ABRAHAM <thomas.ab@samsung.com>
 
-On 06/15/2011 12:22 PM, Thomas Abraham wrote:
-> On 15 June 2011 15:38, Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
->> On Wed, Jun 15, 2011 at 03:34:40PM +0530, Thomas Abraham wrote:
->>> Ok. Thanks for clarifying this point. In this case, maybe we could use
->>> the clk_add_alias API. With this API, we can have a instance of clock
->>> by name 'fimd' and then create a clkdev alias by name 'lcd' in the
->>> machine code. The driver can then continue to lookup with 'lcd' as the
->>> con_id.
->>
->> That's additional needless complexity.  If you don't embed the clk_lookup
->> structure in your struct clk but list out the dev/con/clk stuff separately
->> like OMAP does, you can easily assign the dev/con pairs to multiple
->> clks without hastle - and then it really doesn't matter what the clk
->> itself is called.
->>
-> 
-> Thanks for your suggestion Russell. The limitation in doing it the
-> OMAP way is, in all Samsung machine code, all the clock instances are
-> put into a array and then registered. So there is no separately named
-> instance for each clock to build a dev/con/clk omap-type table.
-
-I realize it might be quite a bit of work to convert the clock tables,
-perhaps some scripts/trickery could be of help here.
-I'm just wondering if this won't have to be done anyway when people
-make agreement about common struct clk on ARM.
-
-However there is a little problem that there are two clock arrays in
-each Samsung platform, for clock disabled and enabled by default.
-Not sure yet how to handle that cleanly.
-
-Cheers,
-Sylwester
-
--- 
-Sylwester Nawrocki
-Samsung Poland R&D Center
+SSBzZW5kIHlvdSB0aGUgc3VnZ2V0aW9uIGFzIGZvbGxvd3M6DQogICAxLiBjaGFuZ2UgY2xvY2sg
+bmFtZSBvZiBleHlub3M0IEZJTUQ6ICJmaW1kIiAtPiAibGNkIg0KICAgMi4gdXNlICdoYXNfY2xr
+c2VsJyB2YXJpYWJsZSBpbiBvcmRlciB0byBkaXN0aW5ndWlzaCBGSU1EIHZlcnNpb24uDQogICAz
+LiBhZGQgJ2xjZF9jbGsnIHRoYXQgY2FuIGJlIHVzZWQgZm9yIG9ubHkgbGNkIHBpeGVsIGNsb2Nr
+Lg0KICAgNC4gYWRkICdlbmFibGVfY2xrKCknIHVzZWQgZm9yIGVuYWJsaW5nIHBhcmVudCBjbG9j
+ayAnc2Nsa19maW1kJy4NCg0KVGhlIEZJTUQgZHJpdmVyIGRvZXNuJ3QgbmVlZCB0byB1c2UgdHdv
+IGNsb2NrIG5hbWVzIGZvciBGSU1ELg0KVjMxMCBkb2VzIG5vdCBzdXBwb3J0IHBpeGVsIGNsb2Nr
+IG11eC4gSW4gdGhpcyBjYXNlLCAnbGNkX2NsaycgIGlzIHVzZWQNCmluIG9yZGVyIHRvIGVuYWJs
+ZSB0aGUgJ3NjbGtfZmltZCcuIFRoZSAnZW5hYmxlX2NsaygpJyB3aWxsIGJlIGxvY2F0ZWQgdG8g
+bWFjaGluZQ0KZGlyZWN0b3J5Lg0KDQpIb3dldmVyLCAgd2hlbiA2NHh4LCBDMTAwLCBWMjEwIGFy
+ZSBzZWxlY3RlZCwgICdsY2RfY2xrJyBpcyBub3QgdXNlZCwNCmJlY2F1c2UgJ2J1c19jbGsnIGNh
+biBiZSB1c2VkIGZvciBib3RoIEZJTUQgSVAgYW5kIGxjZCBwaXhlbCBjbG9jay4NCg0KLS0tIGEv
+YXJjaC9hcm0vbWFjaC1leHlub3M0L2Nsb2NrLmMNCisrKyBiL2FyY2gvYXJtL21hY2gtZXh5bm9z
+NC9jbG9jay5jDQpAQCAtNDMzLDEyICs0MzMsMTIgQEAgc3RhdGljIHN0cnVjdCBjbGsgaW5pdF9j
+bG9ja3Nfb2ZmW10gPSB7DQogICAgICAgIH0sIHsNCi0gICAgICAgICAgICAgICAubmFtZSAgICAg
+ICAgICAgPSAiZmltZCIsDQorICAgICAgICAgICAgICAgLm5hbWUgICAgICAgICAgID0gImxjZCIs
+DQogICAgICAgICAgICAgICAgLmlkICAgICAgICAgICAgID0gMCwNCiAgICAgICAgICAgICAgICAu
+ZW5hYmxlICAgICAgICAgPSBleHlub3M0X2Nsa19pcF9sY2QwX2N0cmwsDQogICAgICAgICAgICAg
+ICAgLmN0cmxiaXQgICAgICAgID0gKDEgPDwgMCksDQogICAgICAgIH0sIHsNCi0gICAgICAgICAg
+ICAgICAubmFtZSAgICAgICAgICAgPSAiZmltZCIsDQorICAgICAgICAgICAgICAgLm5hbWUgICAg
+ICAgICAgID0gImxjZCIsDQogICAgICAgICAgICAgICAgLmlkICAgICAgICAgICAgID0gMSwNCg0K
+LS0tIGEvZHJpdmVycy92aWRlby9zM2MtZmIuYw0KKysrIGIvZHJpdmVycy92aWRlby9zM2MtZmIu
+Yw0KQEAgLTgxLDYgKzgxLDcgQEAgc3RydWN0IHMzY19mYjsNCiAgKiBAcGFsZXR0ZTogQWRkcmVz
+cyBvZiBwYWxldHRlIG1lbW9yeSwgb3IgMCBpZiBub25lLg0KICAqIEBoYXNfcHJ0Y29uOiBTZXQg
+aWYgaGFzIFBSVENPTiByZWdpc3Rlci4NCiAgKiBAaGFzX3NoYWRvd2NvbjogU2V0IGlmIGhhcyBT
+SEFET1dDT04gcmVnaXN0ZXIuDQorICogQGhhc19jbGtzZWw6IFNldCBpZiBWSURDT04wIHJlZ2lz
+dGVyIGhhcyBDTEtTRUwgYml0Lg0KICAqLw0KIHN0cnVjdCBzM2NfZmJfdmFyaWFudCB7DQogICAg
+ICAgIHVuc2lnbmVkIGludCAgICBpc18yNDQzOjE7DQpAQCAtOTgsNiArOTksNyBAQCBzdHJ1Y3Qg
+czNjX2ZiX3ZhcmlhbnQgew0KDQogICAgICAgIHVuc2lnbmVkIGludCAgICBoYXNfcHJ0Y29uOjE7
+DQogICAgICAgIHVuc2lnbmVkIGludCAgICBoYXNfc2hhZG93Y29uOjE7DQorICAgICAgIHVuc2ln
+bmVkIGludCAgICBoYXNfY2xrc2VsOjE7DQogfTsNCg0KIC8qKg0KQEAgLTE4Niw2ICsxODgsNyBA
+QCBzdHJ1Y3QgczNjX2ZiX3ZzeW5jIHsNCiAgKiBAYnVzX2NsazogVGhlIGNsayAoaGNsaykgZmVl
+ZGluZyBvdXIgaW50ZXJmYWNlIGFuZCBwb3NzaWJseSBwaXhjbGsuDQorICogQGxjZF9jbGs6IFRo
+ZSBjbGsgKHNjbGspIGZlZWRpbmcgcGl4Y2xrLg0KICAqIEByZWdzOiBUaGUgbWFwcGVkIGhhcmR3
+YXJlIHJlZ2lzdGVycy4NCkBAIC0yMDAsNiArMjAzLDcgQEAgc3RydWN0IHMzY19mYiB7DQogICAg
+ICAgIHN0cnVjdCBjbGsgICAgICAgICAgICAgICpidXNfY2xrOw0KKyAgICAgICBzdHJ1Y3QgY2xr
+ICAgICAgICAgICAgICAqbGNkX2NsazsNCiAgICAgICAgdm9pZCBfX2lvbWVtICAgICAgICAgICAg
+KnJlZ3M7DQoNCkBAIC0xMzUzLDYgKzEzNTcsMTEgQEAgc3RhdGljIGludCBfX2RldmluaXQgczNj
+X2ZiX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQogICAgICAgIH0NCg0KICAg
+ICAgICBjbGtfZW5hYmxlKHNmYi0+YnVzX2Nsayk7DQorICAgICAgIGlmICghc2ZiLT52YXJpYW50
+Lmhhc19jbGtzZWwpIHsNCisgICAgICAgICAgICAgICBjbGtfZW5hYmxlKHNmYi0+YnVzX2Nsayk7
+DQorICAgICAgICAgICAgICAgcGQtPmVuYWJsZV9jbGsocGRldiwgJnNmYi0+bGNkX2Nsayk7DQor
+DQorICAgICAgIH0NCg0KICAgICAgICBwbV9ydW50aW1lX2VuYWJsZShzZmItPmRldik7DQoNCkBA
+IC0xNzU1LDYgKzE3NjQsNyBAQCBzdGF0aWMgc3RydWN0IHMzY19mYl9kcml2ZXJkYXRhIHMzY19m
+Yl9kYXRhXzY0eHggPSB7DQogICAgICAgICAgICAgICAgfSwNCg0KICAgICAgICAgICAgICAgIC5o
+YXNfcHJ0Y29uICAgICA9IDEsDQorICAgICAgICAgICAgICAgLmhhc19jbGtzZWwgICAgID0gMSwN
+CiAgICAgICAgfSwNCkBAIC0xNzg1LDYgKzE3OTUsNyBAQCBzdGF0aWMgc3RydWN0IHMzY19mYl9k
+cml2ZXJkYXRhIHMzY19mYl9kYXRhX3M1cGMxMDAgPSB7DQogICAgICAgICAgICAgICAgfSwNCg0K
+ICAgICAgICAgICAgICAgIC5oYXNfcHJ0Y29uICAgICA9IDEsDQorICAgICAgICAgICAgICAgLmhh
+c19jbGtzZWwgICAgID0gMSwNCiAgICAgICAgfSwNCkBAIC0xODE1LDYgKzE4MjYsNyBAQCBzdGF0
+aWMgc3RydWN0IHMzY19mYl9kcml2ZXJkYXRhIHMzY19mYl9kYXRhX3M1cHYyMTAgPSB7DQogICAg
+ICAgICAgICAgICAgfSwNCg0KICAgICAgICAgICAgICAgIC5oYXNfc2hhZG93Y29uICA9IDEsDQor
+ICAgICAgICAgICAgICAgLmhhc19jbGtzZWwgICAgID0gMSwNCiAgICAgICAgfSwNCg==
