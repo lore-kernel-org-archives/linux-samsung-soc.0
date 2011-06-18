@@ -1,167 +1,353 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH V2 2/4] ASoC: SAMSUNG: Add I2S0 internal dma driver
-Date: Sat, 18 Jun 2011 14:28:38 +0530
-Message-ID: <BANLkTi=R=B6rmAg7nPQP3wBMkrQcrqGfyw@mail.gmail.com>
-References: <1308127407-22458-1-git-send-email-sbkim73@samsung.com>
-	<1308127407-22458-3-git-send-email-sbkim73@samsung.com>
+From: =?ISO-8859-1?Q?Thiago_A=2E_Corr=EAa?= <thiago.correa@gmail.com>
+Subject: LAN9221 with Samsumg S3C2416
+Date: Sat, 18 Jun 2011 11:53:43 -0300
+Message-ID: <BANLkTi=3y+hZXVDmOdefprmHX3BASmMEcg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:44279 "EHLO
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:54583 "EHLO
 	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751526Ab1FRI6k convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1752397Ab1FROxp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 18 Jun 2011 04:58:40 -0400
-Received: by bwz15 with SMTP id 15so1259365bwz.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 18 Jun 2011 01:58:39 -0700 (PDT)
-In-Reply-To: <1308127407-22458-3-git-send-email-sbkim73@samsung.com>
+	Sat, 18 Jun 2011 10:53:45 -0400
+Received: by bwz15 with SMTP id 15so1360698bwz.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 18 Jun 2011 07:53:44 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, lrg@slimlogic.co.uk, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com
+To: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 15, 2011 at 2:13 PM, Sangbeom Kim <sbkim73@samsung.com> wro=
-te:
+Hi,
+    Sorry for the crossposting if you also subscribe kernel-arm. I
+only found this list later, and I guess it would be a better place to
+ask. The following message was posted to kernel-arm, but unfortunally
+I'm still looking for help on this problem.
 
-> + =C2=A0 =C2=A0 =C2=A0 .channels_min =3D 2,
-> + =C2=A0 =C2=A0 =C2=A0 .channels_max =3D 2,
-> + =C2=A0 =C2=A0 =C2=A0 .buffer_bytes_max =3D MAX_IDMA_BUFFER,
-> + =C2=A0 =C2=A0 =C2=A0 .period_bytes_min =3D 128,
-> + =C2=A0 =C2=A0 =C2=A0 .period_bytes_max =3D MAX_IDMA_PERIOD,
-> + =C2=A0 =C2=A0 =C2=A0 .periods_min =3D 1,
-> + =C2=A0 =C2=A0 =C2=A0 .periods_max =3D 2,
-> +};
-The settings here don't ensure ring buffer is always MAX_IDMA_BUFFER.
-Whereas you assume that in 'iis_irq'.
+    I'm using the mini2416 [1] and it has a SMC LAN9221 chip
+connected to CS2 that I'm trying to use with mainline kernel. I'm
+patching the kernel, using their very old kernel as reference, but so
+far I haven't been able to get the kernel to detect the chip. It looks
+like it won't even probe for it. Could someone give me some advice?
+Please take a look at my patch below.
 
+[1] http://www.armdesigner.com/MINI2416.html
 
-> +
-> +void i2sdma_getpos(dma_addr_t *src, struct snd_pcm_substream *substr=
-eam)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 struct idma_ctrl *prtd =3D substream->runtime-=
->private_data;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 if (prtd && (prtd->state & ST_RUNNING))
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 *src =3D idma.lp_t=
-x_addr +
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 (readl(idma.regs + I2STRNCNT) & 0xffffff) * 4;
-> + =C2=A0 =C2=A0 =C2=A0 else
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 *src =3D idma.lp_t=
-x_addr;
-> +}
-Why do we need this function ?
+diff -Naur linux-2.6.38-orig//arch/arm/mach-s3c2416/mach-smdk2416.c
+linux-2.6.38/arch/arm/mach-s3c2416/mach-smdk2416.c
+--- linux-2.6.38-orig//arch/arm/mach-s3c2416/mach-smdk2416.c    2011-03-14
+22:20:32.000000000 -0300
++++ linux-2.6.38/arch/arm/mach-s3c2416/mach-smdk2416.c  2011-06-09
+18:32:10.000000000 -0300
+@@ -35,6 +35,7 @@
+ #include <plat/regs-serial.h>
+ #include <mach/regs-gpio.h>
+ #include <mach/regs-lcd.h>
++#include <mach/regs-mem.h>
 
+ #include <mach/idle.h>
+ #include <mach/leds-gpio.h>
+@@ -53,9 +54,11 @@
 
-> +
-> +static int idma_hw_params(struct snd_pcm_substream *substream,
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct snd_pcm_hw_params *params)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 struct snd_pcm_runtime *runtime =3D substream-=
->runtime;
-> + =C2=A0 =C2=A0 =C2=A0 struct idma_ctrl *prtd =3D substream->runtime-=
->private_data;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 dev_dbg(dev, "Entered %s\n", __func__);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 snd_pcm_set_runtime_buffer(substream, &substre=
-am->dma_buffer);
-> + =C2=A0 =C2=A0 =C2=A0 runtime->dma_bytes =3D params_buffer_bytes(par=
-ams);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 prtd->start =3D prtd->pos =3D runtime->dma_add=
-r;
-> + =C2=A0 =C2=A0 =C2=A0 prtd->period =3D params_periods(params);
-> + =C2=A0 =C2=A0 =C2=A0 prtd->periodsz =3D params_period_bytes(params)=
-;
-> + =C2=A0 =C2=A0 =C2=A0 prtd->end =3D idma.lp_tx_addr + runtime->dma_b=
-ytes;
-     prtd->end =3D runtime->dma_addr + runtime->dma_bytes;   makes bett=
-er sense
+ #include <plat/common-smdk.h>
 
++#define S3C_PA_SMC9115 (0x08000000)
++
+ static struct map_desc smdk2416_iodesc[] __initdata = {
+       /* ISA IO Space map (memory space selected by A24) */
+-
++/*
+       {
+               .virtual        = (u32)S3C24XX_VA_ISA_WORD,
+               .pfn            = __phys_to_pfn(S3C2410_CS2),
+@@ -76,7 +79,7 @@
+               .pfn            = __phys_to_pfn(S3C2410_CS2 + (1<<24)),
+               .length         = SZ_4M,
+               .type           = MT_DEVICE,
+-       }
++       } */
+ };
 
-> +static snd_pcm_uframes_t
-> + =C2=A0 =C2=A0 =C2=A0 idma_pointer(struct snd_pcm_substream *substre=
-am)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 struct snd_pcm_runtime *runtime =3D substream-=
->runtime;
-> + =C2=A0 =C2=A0 =C2=A0 struct idma_ctrl *prtd =3D runtime->private_da=
-ta;
-> + =C2=A0 =C2=A0 =C2=A0 dma_addr_t src;
-> + =C2=A0 =C2=A0 =C2=A0 unsigned long res;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 dev_dbg(dev, "Entered %s\n", __func__);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 spin_lock(&prtd->lock);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 idma_getpos(&src);
-> + =C2=A0 =C2=A0 =C2=A0 res =3D src - prtd->start;
-> +
-> + =C2=A0 =C2=A0 =C2=A0 spin_unlock(&prtd->lock);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 dev_dbg(dev, "Pointer %x \n", src);
-> +
-> + =C2=A0 =C2=A0 =C2=A0 if (res >=3D snd_pcm_lib_buffer_bytes(substrea=
-m)) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (res =3D=3D snd=
-_pcm_lib_buffer_bytes(substream))
-        This second check is redundant.
+ #define UCON (S3C2410_UCON_DEFAULT     | \
+@@ -179,6 +182,26 @@
+       .cd_type                = S3C_SDHCI_CD_NONE,
+ };
 
++static struct resource s3c_smc911x_resources[] = {
++       [0] = {
++               .start  = S3C_PA_SMC9115,
++               .end    = S3C_PA_SMC9115 + 0x1fffffff,
++               .flags  = IORESOURCE_MEM,
++       },
++       [1] = {
++               .start  = IRQ_EINT4,
++               .end    = IRQ_EINT4,
++               .flags  = IORESOURCE_IRQ,
++       },
++};
++
++static struct platform_device s3c_device_smc911x = {
++       .name           = "smc911x",
++       .id             = -1,
++       .num_resources  = ARRAY_SIZE(s3c_smc911x_resources),
++       .resource       = s3c_smc911x_resources,
++};
++
+ static struct platform_device *smdk2416_devices[] __initdata = {
+       &s3c_device_fb,
+       &s3c_device_wdt,
+@@ -186,6 +209,7 @@
+       &s3c_device_i2c0,
+       &s3c_device_hsmmc0,
+       &s3c_device_hsmmc1,
++       &s3c_device_smc911x,
+ };
 
-+static irqreturn_t iis_irq(int irqno, void *dev_id)
+ static void __init smdk2416_map_io(void)
+@@ -195,8 +219,58 @@
+       s3c24xx_init_uarts(smdk2416_uartcfgs, ARRAY_SIZE(smdk2416_uartcfgs));
+ }
+
++static void smdk2416_cx89x0_set(void)
 +{
-+       struct idma_ctrl *prtd =3D (struct idma_ctrl *)dev_id;
-+       u32 iiscon, iisahb, val, addr;
++       u32 val;
 +
-+       iisahb  =3D readl(idma.regs + I2SAHB);
-+       iiscon  =3D readl(idma.regs + I2SCON);
++       val = readl(S3C_BANK_CFG);
++       val &= ~(1<<8)|(1<<9)|(1<<10);
++       writel(val, S3C_BANK_CFG);
 +
-+       val =3D (iisahb & AHB_LVL0INT) ? AHB_CLRLVL0INT : 0;
++       /* Bank1 Idle cycle ctrl. */
++       writel(0xf, S3C_SSMC_SMBIDCYR1);
 +
-+       if (val) {
-+               iisahb |=3D val;
-+               writel(iisahb, idma.regs + I2SAHB);
++       /* Bank1 Read Wait State cont. = 14 clk          Tacc? */
++       writel(12, S3C_SSMC_SMBWSTRDR1);
 +
-+               addr =3D readl(idma.regs + I2SLVL0ADDR) - idma.lp_tx_ad=
-dr;
-+               addr +=3D prtd->period;
-+               addr %=3D MAX_IDMA_BUFFER;
-+               addr +=3D idma.lp_tx_addr;
++       /* Bank1 Write Wait State ctrl. */
++       writel(12, S3C_SSMC_SMBWSTWRR1);
 +
-+               writel(addr, idma.regs + I2SLVL0ADDR);
++       /* Bank1 Output Enable Assertion Delay ctrl.     Tcho? */
++       writel(2, S3C_SSMC_SMBWSTOENR1);
 +
-+               if (prtd->cb) {
-+                       if (iisahb & AHB_LVL0INT)
-   iisahb will always have the AHB_LVL0INT bit set at this point.
++       /* Bank1 Write Enable Assertion Delay ctrl. */
++       writel(2, S3C_SSMC_SMBWSTWENR1);
++
++       /* SMWAIT active High, Read Byte Lane Enabl      WS1? */
++       val = readl(S3C_SSMC_SMBCR1);
++
++       val |=  ((1<<15)|(1<<7));
++       writel(val, S3C_SSMC_SMBCR1);
++
++       val = readl(S3C_SSMC_SMBCR1);
++       val |=  ((1<<2)|(1<<0));
++       writel(val, S3C_SSMC_SMBCR1);
++
++       val = readl(S3C_SSMC_SMBCR1);
++       val &= ~((3<<20)|(3<<12));
++       writel(val, S3C_SSMC_SMBCR1);
++
++       val = readl(S3C_SSMC_SMBCR1);
++       val &= ~(3<<4);
++       writel(val, S3C_SSMC_SMBCR1);
++
++       val = readl(S3C_SSMC_SMBCR1);
++       val |= (1<<4);
++
++       writel(val, S3C_SSMC_SMBCR1);
++
++}
++
+ static void __init smdk2416_machine_init(void)
+ {
++       smdk2416_cx89x0_set();
++
+       s3c_i2c0_set_platdata(NULL);
+       s3c_fb_set_platdata(&smdk2416_fb_platdata);
+
+diff -Naur linux-2.6.38-orig//arch/arm/mach-s3c2416/s3c2416.c
+linux-2.6.38/arch/arm/mach-s3c2416/s3c2416.c
+--- linux-2.6.38-orig//arch/arm/mach-s3c2416/s3c2416.c  2011-03-14
+22:20:32.000000000 -0300
++++ linux-2.6.38/arch/arm/mach-s3c2416/s3c2416.c        2011-06-01
+21:59:50.000000000 -0300
+@@ -63,6 +63,8 @@
+       IODESC_ENT(WATCHDOG),
+       IODESC_ENT(CLKPWR),
+       IODESC_ENT(TIMER),
++       IODESC_ENT(EBI),
++       IODESC_ENT(SROMC),
+ };
+
+ struct sysdev_class s3c2416_sysclass = {
+diff -Naur linux-2.6.38-orig//arch/arm/plat-s3c24xx/devs.c
+linux-2.6.38/arch/arm/plat-s3c24xx/devs.c
+--- linux-2.6.38-orig//arch/arm/plat-s3c24xx/devs.c     2011-03-14
+22:20:32.000000000 -0300
++++ linux-2.6.38/arch/arm/plat-s3c24xx/devs.c   2011-05-26
+02:42:12.000000000 -0300
+@@ -509,3 +509,4 @@
+ EXPORT_SYMBOL(s3c2412_device_iis);
+
+ #endif // CONFIG_CPU_S32440
++
+diff -Naur linux-2.6.38-orig//arch/arm/plat-s3c24xx/include/plat/map.h
+linux-2.6.38/arch/arm/plat-s3c24xx/include/plat/map.h
+--- linux-2.6.38-orig//arch/arm/plat-s3c24xx/include/plat/map.h 2011-03-14
+22:20:32.000000000 -0300
++++ linux-2.6.38/arch/arm/plat-s3c24xx/include/plat/map.h       2011-05-27
+00:51:53.000000000 -0300
+@@ -81,6 +81,105 @@
+ #define S3C24XX_VA_ISA_WORD  S3C2410_ADDR(0x02000000)
+ #define S3C24XX_VA_ISA_BYTE  S3C2410_ADDR(0x03000000)
+
++/* EBI Registers */
++#if defined(CONFIG_CPU_S3C2416)
++#define S3C24XX_VA_EBI       S3C2410_ADDR(0x03c00000)
++#define S3C24XX_VA_SROMC     S3C2410_ADDR(0x03700000)
++
++#define S3C_EBIREG(x)  (S3C24XX_VA_EBI + (x))
++#define S3C_SSMCREG(x) (S3C24XX_VA_SROMC + (x))
++
++#define S3C_BANK_CFG                S3C_EBIREG(0x0008)
++
++/* Bank Idle Cycle Control Registers 0-5 */
++#define S3C_SSMC_SMBIDCYR0          S3C_SSMCREG(0x0000)
++#define S3C_SSMC_SMBIDCYR1          S3C_SSMCREG(0x0020)
++#define S3C_SSMC_SMBIDCYR2          S3C_SSMCREG(0x0040)
++#define S3C_SSMC_SMBIDCYR3          S3C_SSMCREG(0x0060)
++#define S3C_SSMC_SMBIDCYR4          S3C_SSMCREG(0x0080)
++#define S3C_SSMC_SMBIDCYR5          S3C_SSMCREG(0x00A0)
++#define S3C_SSMC_SMBIDCYR6          S3C_SSMCREG(0x00C0)
++#define S3C_SSMC_SMBIDCYR7          S3C_SSMCREG(0x00E0)
++
++/* Bank Read Wait State Contro, Registers 0-5 */
++#define S3C_SSMC_SMBWSTRDR0         S3C_SSMCREG(0x0004)
++#define S3C_SSMC_SMBWSTRDR1         S3C_SSMCREG(0x0024)
++#define S3C_SSMC_SMBWSTRDR2         S3C_SSMCREG(0x0044)
++#define S3C_SSMC_SMBWSTRDR3         S3C_SSMCREG(0x0064)
++#define S3C_SSMC_SMBWSTRDR4         S3C_SSMCREG(0x0084)
++#define S3C_SSMC_SMBWSTRDR5         S3C_SSMCREG(0x00A4)
++#define S3C_SSMC_SMBWSTRDR6         S3C_SSMCREG(0x00C4)
++#define S3C_SSMC_SMBWSTRDR7         S3C_SSMCREG(0x00E4)
++
++/* Bank Write Wait State Control, Registers 0-5 */
++#define S3C_SSMC_SMBWSTWRR0         S3C_SSMCREG(0x0008)
++#define S3C_SSMC_SMBWSTWRR1         S3C_SSMCREG(0x0028)
++#define S3C_SSMC_SMBWSTWRR2         S3C_SSMCREG(0x0048)
++#define S3C_SSMC_SMBWSTWRR3         S3C_SSMCREG(0x0068)
++#define S3C_SSMC_SMBWSTWRR4         S3C_SSMCREG(0x0088)
++#define S3C_SSMC_SMBWSTWRR5         S3C_SSMCREG(0x00A8)
++#define S3C_SSMC_SMBWSTWRR6         S3C_SSMCREG(0x00C8)
++#define S3C_SSMC_SMBWSTWRR7         S3C_SSMCREG(0x00E8)
++
++/* Bank OutPut enable Assertion Delay Control Registers 0-5 */
++#define S3C_SSMC_SMBWSTOENR0        S3C_SSMCREG(0x000C)
++#define S3C_SSMC_SMBWSTOENR1        S3C_SSMCREG(0x002C)
++#define S3C_SSMC_SMBWSTOENR2        S3C_SSMCREG(0x004C)
++#define S3C_SSMC_SMBWSTOENR3        S3C_SSMCREG(0x006C)
++#define S3C_SSMC_SMBWSTOENR4        S3C_SSMCREG(0x008C)
++#define S3C_SSMC_SMBWSTOENR5        S3C_SSMCREG(0x00AC)
++#define S3C_SSMC_SMBWSTOENR6        S3C_SSMCREG(0x00CC)
++#define S3C_SSMC_SMBWSTOENR7        S3C_SSMCREG(0x00EC)
++
++/* Bank Write enable Assertion Delay Control Registers 0-5 */
++#define S3C_SSMC_SMBWSTWENR0        S3C_SSMCREG(0x0010)
++#define S3C_SSMC_SMBWSTWENR1        S3C_SSMCREG(0x0030)
++#define S3C_SSMC_SMBWSTWENR2        S3C_SSMCREG(0x0050)
++#define S3C_SSMC_SMBWSTWENR3        S3C_SSMCREG(0x0070)
++#define S3C_SSMC_SMBWSTWENR4        S3C_SSMCREG(0x0090)
++#define S3C_SSMC_SMBWSTWENR5        S3C_SSMCREG(0x00B0)
++#define S3C_SSMC_SMBWSTWENR6        S3C_SSMCREG(0x00D0)
++#define S3C_SSMC_SMBWSTWENR7        S3C_SSMCREG(0x00F0)
++
++/* Bank Control Registers 0-5 */
++#define S3C_SSMC_SMBCR0     S3C_SSMCREG(0x0014)
++#define S3C_SSMC_SMBCR1     S3C_SSMCREG(0x0034)
++#define S3C_SSMC_SMBCR2     S3C_SSMCREG(0x0054)
++#define S3C_SSMC_SMBCR3     S3C_SSMCREG(0x0074)
++#define S3C_SSMC_SMBCR4     S3C_SSMCREG(0x0094)
++#define S3C_SSMC_SMBCR5     S3C_SSMCREG(0x00B4)
++#define S3C_SSMC_SMBCR6     S3C_SSMCREG(0x00D4)
++#define S3C_SSMC_SMBCR7     S3C_SSMCREG(0x00F4)
++
++/* Bank Status Registers 0-5 */
++#define S3C_SSMC_SMBSR0     S3C_SSMCREG(0x0018)
++#define S3C_SSMC_SMBSR1     S3C_SSMCREG(0x0038)
++#define S3C_SSMC_SMBSR2     S3C_SSMCREG(0x0058)
++#define S3C_SSMC_SMBSR3     S3C_SSMCREG(0x0078)
++#define S3C_SSMC_SMBSR4     S3C_SSMCREG(0x0098)
++#define S3C_SSMC_SMBSR5     S3C_SSMCREG(0x00B8)
++#define S3C_SSMC_SMBSR6     S3C_SSMCREG(0x00D8)
++#define S3C_SSMC_SMBSR7     S3C_SSMCREG(0x00F8)
++
++/* Bank Burst Read Wait delay Control Registers 0-5 */
++#define S3C_SSMC_SMBWSTBRDR0        S3C_SSMCREG(0x001C)
++#define S3C_SSMC_SMBWSTBRDR1        S3C_SSMCREG(0x003C)
++#define S3C_SSMC_SMBWSTBRDR2        S3C_SSMCREG(0x005C)
++#define S3C_SSMC_SMBWSTBRDR3        S3C_SSMCREG(0x007C)
++#define S3C_SSMC_SMBWSTBRDR4        S3C_SSMCREG(0x009C)
++#define S3C_SSMC_SMBWSTBRDR5        S3C_SSMCREG(0x00BC)
++#define S3C_SSMC_SMBWSTBRDR6        S3C_SSMCREG(0x00DC)
++#define S3C_SSMC_SMBWSTBRDR7        S3C_SSMCREG(0x00FC)
++
++/* SROMC status register  */
++#define S3C_SSMC_SSMCSR     S3C_SSMCREG(0x0200)
++/* SROMC control register  */
++#define S3C_SSMC_SSMCCR     S3C_SSMCREG(0x0204)
++/* bus priority decision */
++#define S3C_EBIPR           S3C_EBIREG(0x0000)
++
++#endif /* CONFIG_CPU_S3C2416 */
++
+ /* deal with the registers that move under the 2412/2413 */
+
+ #if defined(CONFIG_CPU_S3C2412) || defined(CONFIG_CPU_S3C2413)
+diff -Naur linux-2.6.38-orig//drivers/net/smc911x.c
+linux-2.6.38/drivers/net/smc911x.c
+--- linux-2.6.38-orig//drivers/net/smc911x.c    2011-03-14
+22:20:32.000000000 -0300
++++ linux-2.6.38/drivers/net/smc911x.c  2011-05-26 13:51:10.000000000 -0300
+@@ -35,8 +35,8 @@
+ #define ENABLE_SMC_DEBUG_TX            0
+ #define ENABLE_SMC_DEBUG_DMA           0
+ #define ENABLE_SMC_DEBUG_PKTS          0
+-#define ENABLE_SMC_DEBUG_MISC          0
+-#define ENABLE_SMC_DEBUG_FUNC          0
++#define ENABLE_SMC_DEBUG_MISC          1
++#define ENABLE_SMC_DEBUG_FUNC          1
+
+ #define SMC_DEBUG_RX           ((ENABLE_SMC_DEBUG_RX   ? 1 : 0) << 0)
+ #define SMC_DEBUG_TX           ((ENABLE_SMC_DEBUG_TX   ? 1 : 0) << 1)
+diff -Naur linux-2.6.38-orig//drivers/net/smc911x.h
+linux-2.6.38/drivers/net/smc911x.h
+--- linux-2.6.38-orig//drivers/net/smc911x.h    2011-03-14
+22:20:32.000000000 -0300
++++ linux-2.6.38/drivers/net/smc911x.h  2011-05-26 13:04:21.000000000 -0300
+@@ -52,6 +52,9 @@
+  #define SMC_USE_32BIT                1
+  #define SMC_IRQ_SENSE                IRQF_TRIGGER_LOW
+  #define SMC_MEM_RESERVED     1
++#elif defined(CONFIG_MARCH_SMDK2416)
++  #define SMC_USE_16BIT                0
++  #define SMC_USE_32BIT                1
+ #else
+ /*
+ * Default configuration
+@@ -687,6 +690,8 @@
+ #define CHIP_9215      0x115A
+ #define CHIP_9217      0x117A
+ #define CHIP_9218      0x118A
++#define CHIP_9220      0x9220
++#define CHIP_9221      0x9221
+
+ struct chip_id {
+       u16 id;
+@@ -702,6 +707,8 @@
+       { CHIP_9215, "LAN9215" },
+       { CHIP_9217, "LAN9217" },
+       { CHIP_9218, "LAN9218" },
++       { CHIP_9220, "LAN9220" },
++       { CHIP_9221, "LAN9221" },
+       { 0, NULL },
+ };
 
 
-> +void idma_reg_init(void *regs)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 spin_lock_init(&idma.lock);
-> + =C2=A0 =C2=A0 =C2=A0 idma.regs =3D regs;
-> +}
-> +
-Why initialize lock twice, here ...
-
-> +void idma_addr_init(dma_addr_t addr)
-> +{
-> + =C2=A0 =C2=A0 =C2=A0 spin_lock_init(&idma.lock);
-> + =C2=A0 =C2=A0 =C2=A0 idma.lp_tx_addr =3D addr;
-> +}
-=2E.. and here.
-And we might have races here - there is no mechanism to ensure these
-functions are called before idma.lp_tx_addr and idma.regs are used.
-Also, please try to merge them into one function.
-
-
-> +MODULE_DESCRIPTION("Samsung ASoC IDMA Driver");
-> +MODULE_LICENSE("GPL");
-The MODULE_AUTHOR field is missing here.
-
-
-Thnx,
--j
+Kind Regards,
+     Thiago A. Correa
