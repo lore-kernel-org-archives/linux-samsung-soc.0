@@ -1,21 +1,21 @@
 From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH V2 1/4] ASoC: SAMSUNG: Modify I2S driver to support idma
-Date: Sat, 18 Jun 2011 14:16:15 +0530
-Message-ID: <BANLkTimiJu_V8aGd9KvSVsTSEKzZp3M9SQ@mail.gmail.com>
+Subject: Re: [PATCH V2 2/4] ASoC: SAMSUNG: Add I2S0 internal dma driver
+Date: Sat, 18 Jun 2011 14:28:38 +0530
+Message-ID: <BANLkTi=R=B6rmAg7nPQP3wBMkrQcrqGfyw@mail.gmail.com>
 References: <1308127407-22458-1-git-send-email-sbkim73@samsung.com>
-	<1308127407-22458-2-git-send-email-sbkim73@samsung.com>
+	<1308127407-22458-3-git-send-email-sbkim73@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:37956 "EHLO
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:44279 "EHLO
 	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751196Ab1FRIqQ convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1751526Ab1FRI6k convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 18 Jun 2011 04:46:16 -0400
-Received: by bwz15 with SMTP id 15so1256259bwz.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 18 Jun 2011 01:46:15 -0700 (PDT)
-In-Reply-To: <1308127407-22458-2-git-send-email-sbkim73@samsung.com>
+	Sat, 18 Jun 2011 04:58:40 -0400
+Received: by bwz15 with SMTP id 15so1259365bwz.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 18 Jun 2011 01:58:39 -0700 (PDT)
+In-Reply-To: <1308127407-22458-3-git-send-email-sbkim73@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sangbeom Kim <sbkim73@samsung.com>
@@ -24,70 +24,144 @@ Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, lrg@slimlogi
 On Wed, Jun 15, 2011 at 2:13 PM, Sangbeom Kim <sbkim73@samsung.com> wro=
 te:
 
-> +#define AHB_INTENLVL0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(1 << 24)
-> +#define AHB_LVL0INT =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(1 << 2=
-0)
-> +#define AHB_CLRLVL0INT =C2=A0 =C2=A0 =C2=A0 =C2=A0 (1 << 16)
-> +#define AHB_DMARLD =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 (1 << 5=
-)
-> +#define AHB_INTMASK =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(1 << 3=
-)
-> +#define AHB_DMAEN =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(1=
- << 0)
-> +#define AHB_LVLINTMASK =C2=A0 =C2=A0 =C2=A0 =C2=A0 (0xf << 20)
+> + =C2=A0 =C2=A0 =C2=A0 .channels_min =3D 2,
+> + =C2=A0 =C2=A0 =C2=A0 .channels_max =3D 2,
+> + =C2=A0 =C2=A0 =C2=A0 .buffer_bytes_max =3D MAX_IDMA_BUFFER,
+> + =C2=A0 =C2=A0 =C2=A0 .period_bytes_min =3D 128,
+> + =C2=A0 =C2=A0 =C2=A0 .period_bytes_max =3D MAX_IDMA_PERIOD,
+> + =C2=A0 =C2=A0 =C2=A0 .periods_min =3D 1,
+> + =C2=A0 =C2=A0 =C2=A0 .periods_max =3D 2,
+> +};
+The settings here don't ensure ring buffer is always MAX_IDMA_BUFFER.
+Whereas you assume that in 'iis_irq'.
+
+
 > +
-> +#define I2SSIZE_TRNMSK =C2=A0 =C2=A0 =C2=A0 =C2=A0 (0xffff)
-> +#define I2SSIZE_SHIFT =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(16)
-Not serious but ....
-a) Let us please get over our infatuation with such parentheses :)
-b) Ideally these _new_ definitions should have been added separate to
-this moving.
+> +void i2sdma_getpos(dma_addr_t *src, struct snd_pcm_substream *substr=
+eam)
+> +{
+> + =C2=A0 =C2=A0 =C2=A0 struct idma_ctrl *prtd =3D substream->runtime-=
+>private_data;
+> +
+> + =C2=A0 =C2=A0 =C2=A0 if (prtd && (prtd->state & ST_RUNNING))
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 *src =3D idma.lp_t=
+x_addr +
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 (readl(idma.regs + I2STRNCNT) & 0xffffff) * 4;
+> + =C2=A0 =C2=A0 =C2=A0 else
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 *src =3D idma.lp_t=
+x_addr;
+> +}
+Why do we need this function ?
 
 
-> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-> index 992a732..2fc2428 100644
-> --- a/sound/soc/samsung/i2s.c
-> +++ b/sound/soc/samsung/i2s.c
-> @@ -9,7 +9,7 @@
-> =C2=A0* it under the terms of the GNU General Public License version =
-2 as
-> =C2=A0* published by the Free Software Foundation.
-> =C2=A0*/
-> -
-> +#define DEBUG
-Usually we don't do it by default.
-
-
-> +#define ST_RUNNING =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 (1<<0)
-> +#define ST_OPENED =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(1=
-<<1)
-why do we need these two defines ?
-
-
- @@ -646,6 +548,7 @@ static int i2s_hw_params(struct snd_pcm_substream
-*substream,
-> =C2=A0{
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0struct i2s_dai *i2s =3D to_info(dai);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0u32 mod =3D readl(i2s->addr + I2SMOD);
-> + =C2=A0 =C2=A0 =C2=A0 u32 ahb =3D readl(i2s->addr + I2SAHB);
-Please realize that this function is common for even s3c24xx, for
-which this is invalid AHB read
-and all other subsequent ops.
-
-> @@ -702,6 +605,13 @@ static int i2s_hw_params(struct snd_pcm_substrea=
-m *substream,
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0params_format(params));
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -EINVAL=
+> +
+> +static int idma_hw_params(struct snd_pcm_substream *substream,
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct snd_pcm_hw_params *params)
+> +{
+> + =C2=A0 =C2=A0 =C2=A0 struct snd_pcm_runtime *runtime =3D substream-=
+>runtime;
+> + =C2=A0 =C2=A0 =C2=A0 struct idma_ctrl *prtd =3D substream->runtime-=
+>private_data;
+> +
+> + =C2=A0 =C2=A0 =C2=A0 dev_dbg(dev, "Entered %s\n", __func__);
+> +
+> + =C2=A0 =C2=A0 =C2=A0 snd_pcm_set_runtime_buffer(substream, &substre=
+am->dma_buffer);
+> + =C2=A0 =C2=A0 =C2=A0 runtime->dma_bytes =3D params_buffer_bytes(par=
+ams);
+> +
+> + =C2=A0 =C2=A0 =C2=A0 prtd->start =3D prtd->pos =3D runtime->dma_add=
+r;
+> + =C2=A0 =C2=A0 =C2=A0 prtd->period =3D params_periods(params);
+> + =C2=A0 =C2=A0 =C2=A0 prtd->periodsz =3D params_period_bytes(params)=
 ;
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0}
+> + =C2=A0 =C2=A0 =C2=A0 prtd->end =3D idma.lp_tx_addr + runtime->dma_b=
+ytes;
+     prtd->end =3D runtime->dma_addr + runtime->dma_bytes;   makes bett=
+er sense
+
+
+> +static snd_pcm_uframes_t
+> + =C2=A0 =C2=A0 =C2=A0 idma_pointer(struct snd_pcm_substream *substre=
+am)
+> +{
+> + =C2=A0 =C2=A0 =C2=A0 struct snd_pcm_runtime *runtime =3D substream-=
+>runtime;
+> + =C2=A0 =C2=A0 =C2=A0 struct idma_ctrl *prtd =3D runtime->private_da=
+ta;
+> + =C2=A0 =C2=A0 =C2=A0 dma_addr_t src;
+> + =C2=A0 =C2=A0 =C2=A0 unsigned long res;
 > +
-> + =C2=A0 =C2=A0 =C2=A0 if (is_secondary(i2s)) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ahb |=3D (AHB_DMAR=
-LD | AHB_INTMASK);
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 mod |=3D MOD_TXS_I=
-DMA;
-> + =C2=A0 =C2=A0 =C2=A0 }
+> + =C2=A0 =C2=A0 =C2=A0 dev_dbg(dev, "Entered %s\n", __func__);
 > +
-> + =C2=A0 =C2=A0 =C2=A0 writel(ahb, i2s->addr + I2SAHB);
-=2E.. this too.
+> + =C2=A0 =C2=A0 =C2=A0 spin_lock(&prtd->lock);
+> +
+> + =C2=A0 =C2=A0 =C2=A0 idma_getpos(&src);
+> + =C2=A0 =C2=A0 =C2=A0 res =3D src - prtd->start;
+> +
+> + =C2=A0 =C2=A0 =C2=A0 spin_unlock(&prtd->lock);
+> +
+> + =C2=A0 =C2=A0 =C2=A0 dev_dbg(dev, "Pointer %x \n", src);
+> +
+> + =C2=A0 =C2=A0 =C2=A0 if (res >=3D snd_pcm_lib_buffer_bytes(substrea=
+m)) {
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (res =3D=3D snd=
+_pcm_lib_buffer_bytes(substream))
+        This second check is redundant.
+
+
++static irqreturn_t iis_irq(int irqno, void *dev_id)
++{
++       struct idma_ctrl *prtd =3D (struct idma_ctrl *)dev_id;
++       u32 iiscon, iisahb, val, addr;
++
++       iisahb  =3D readl(idma.regs + I2SAHB);
++       iiscon  =3D readl(idma.regs + I2SCON);
++
++       val =3D (iisahb & AHB_LVL0INT) ? AHB_CLRLVL0INT : 0;
++
++       if (val) {
++               iisahb |=3D val;
++               writel(iisahb, idma.regs + I2SAHB);
++
++               addr =3D readl(idma.regs + I2SLVL0ADDR) - idma.lp_tx_ad=
+dr;
++               addr +=3D prtd->period;
++               addr %=3D MAX_IDMA_BUFFER;
++               addr +=3D idma.lp_tx_addr;
++
++               writel(addr, idma.regs + I2SLVL0ADDR);
++
++               if (prtd->cb) {
++                       if (iisahb & AHB_LVL0INT)
+   iisahb will always have the AHB_LVL0INT bit set at this point.
+
+
+> +void idma_reg_init(void *regs)
+> +{
+> + =C2=A0 =C2=A0 =C2=A0 spin_lock_init(&idma.lock);
+> + =C2=A0 =C2=A0 =C2=A0 idma.regs =3D regs;
+> +}
+> +
+Why initialize lock twice, here ...
+
+> +void idma_addr_init(dma_addr_t addr)
+> +{
+> + =C2=A0 =C2=A0 =C2=A0 spin_lock_init(&idma.lock);
+> + =C2=A0 =C2=A0 =C2=A0 idma.lp_tx_addr =3D addr;
+> +}
+=2E.. and here.
+And we might have races here - there is no mechanism to ensure these
+functions are called before idma.lp_tx_addr and idma.regs are used.
+Also, please try to merge them into one function.
+
+
+> +MODULE_DESCRIPTION("Samsung ASoC IDMA Driver");
+> +MODULE_LICENSE("GPL");
+The MODULE_AUTHOR field is missing here.
+
+
+Thnx,
+-j
