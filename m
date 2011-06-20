@@ -1,25 +1,23 @@
 From: Rajeshwari Shinde <rajeshwari.s@samsung.com>
-Subject: [PATCH 1/3] ARM: S5P64X0: Add HSMMC setup for host Controller
-Date: Mon, 20 Jun 2011 17:27:27 +0530
-Message-ID: <1308571049-4412-2-git-send-email-rajeshwari.s@samsung.com>
-References: <1308571049-4412-1-git-send-email-rajeshwari.s@samsung.com>
+Subject: [PATCH 0/3] ARM: Add SDMMC support for S5P64X0
+Date: Mon, 20 Jun 2011 17:27:26 +0530
+Message-ID: <1308571049-4412-1-git-send-email-rajeshwari.s@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:37993 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753406Ab1FTLwN (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:57802 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751139Ab1FTLwM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Jun 2011 07:52:13 -0400
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Mon, 20 Jun 2011 07:52:12 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LN300D047MZ4Z40@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 20 Jun 2011 20:52:11 +0900 (KST)
+ 2010)) with ESMTP id <0LN3006M17MO5020@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 20 Jun 2011 20:52:10 +0900 (KST)
 Received: from rajeshwari-linux.sisodomain.com ([107.108.215.115])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0LN300LZR7MS0B@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 20 Jun 2011 20:52:11 +0900 (KST)
-In-reply-to: <1308571049-4412-1-git-send-email-rajeshwari.s@samsung.com>
+ linux-samsung-soc@vger.kernel.org; Mon, 20 Jun 2011 20:52:10 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, sbkim73@samsung.com
@@ -27,283 +25,13 @@ Cc: "rajeshwari.s" <rajeshwari.s@samsung.com>
 
 From: rajeshwari.s <rajeshwari.s@samsung.com>
 
-Adds support for HSMMC for S5P64X0 platform, performs
-setup for host controller and related GPIO.
+S5P64X0 supports 3 Channel MMC/SDHC/SDIO.
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-Signed-off-by: Rajeshwari.S <rajeshwari.s@samsung.com>
+This patchset adds the setup files, gpio configs and enables the HSMMC device 
+for S5P64X0.
+
+ o To Kukjin Kim and Sangbeom Kim 
+[PATCH 1/3] ARM: S5P64X0: Add HSMMC setup for host Controller
+[PATCH 2/3] ARM: S5P64X0: Initialize default SDHCI devices and platform data
+[PATCH 3/3] ARM: S5P64X0: Enable SDHCI support
 ---
- arch/arm/mach-s5p64x0/Kconfig            |   31 ++++++++
- arch/arm/mach-s5p64x0/Makefile           |    2 +
- arch/arm/mach-s5p64x0/setup-sdhci-gpio.c |  121 ++++++++++++++++++++++++++++++
- arch/arm/mach-s5p64x0/setup-sdhci.c      |   54 +++++++++++++
- 4 files changed, 208 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s5p64x0/setup-sdhci-gpio.c
- create mode 100644 arch/arm/mach-s5p64x0/setup-sdhci.c
-
-diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
-index 017af4c..ed823b0 100644
---- a/arch/arm/mach-s5p64x0/Kconfig
-+++ b/arch/arm/mach-s5p64x0/Kconfig
-@@ -26,6 +26,17 @@ config S5P64X0_SETUP_I2C1
- 	help
- 	  Common setup code for i2c bus 1.
- 
-+config S5P64X0_SETUP_SDHCI
-+	bool
-+	select S5P64X0_SETUP_SDHCI_GPIO
-+	help
-+	  Internal helper functions for S5P64X0 based SDHCI systems
-+
-+config S5P64X0_SETUP_SDHCI_GPIO
-+	bool
-+	help
-+	  Common setup code for SDHCI gpio.
-+
- # machine support
- 
- config MACH_SMDK6440
-@@ -34,11 +45,15 @@ config MACH_SMDK6440
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_RTC
- 	select S3C_DEV_WDT
-+	select S3C_DEV_HSMMC
-+	select S3C_DEV_HSMMC1
-+	select S3C_DEV_HSMMC2
- 	select S3C64XX_DEV_SPI
- 	select SAMSUNG_DEV_ADC
- 	select SAMSUNG_DEV_PWM
- 	select SAMSUNG_DEV_TS
- 	select S5P64X0_SETUP_I2C1
-+	select S5P64X0_SETUP_SDHCI
- 	help
- 	  Machine support for the Samsung SMDK6440
- 
-@@ -48,12 +63,28 @@ config MACH_SMDK6450
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_RTC
- 	select S3C_DEV_WDT
-+	select S3C_DEV_HSMMC
-+	select S3C_DEV_HSMMC1
-+	select S3C_DEV_HSMMC2
- 	select S3C64XX_DEV_SPI
- 	select SAMSUNG_DEV_ADC
- 	select SAMSUNG_DEV_PWM
- 	select SAMSUNG_DEV_TS
- 	select S5P64X0_SETUP_I2C1
-+	select S5P64X0_SETUP_SDHCI
- 	help
- 	  Machine support for the Samsung SMDK6450
- 
-+menu "Use 8-bit SDHCI bus width"
-+
-+config S5P64X0_SD_CH1_8BIT
-+	bool "SDHCI Channel 1 (Slot 1)"
-+	depends on MACH_SMDK6450 || MACH_SMDK6440
-+	default n
-+	help
-+	  Support SDHCI Channel 1 8-bit bus.
-+	  If selected, Channel 2 is disabled.
-+
-+endmenu
-+
- endif
-diff --git a/arch/arm/mach-s5p64x0/Makefile b/arch/arm/mach-s5p64x0/Makefile
-index ae6bf6f..60ff9b4 100644
---- a/arch/arm/mach-s5p64x0/Makefile
-+++ b/arch/arm/mach-s5p64x0/Makefile
-@@ -28,3 +28,5 @@ obj-y				+= dev-audio.o
- obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
- 
- obj-$(CONFIG_S5P64X0_SETUP_I2C1)	+= setup-i2c1.o
-+obj-$(CONFIG_S5P64X0_SETUP_SDHCI)	+= setup-sdhci.o
-+obj-$(CONFIG_S5P64X0_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
-diff --git a/arch/arm/mach-s5p64x0/setup-sdhci-gpio.c b/arch/arm/mach-s5p64x0/setup-sdhci-gpio.c
-new file mode 100644
-index 0000000..31541b3
---- /dev/null
-+++ b/arch/arm/mach-s5p64x0/setup-sdhci-gpio.c
-@@ -0,0 +1,121 @@
-+/* linux/arch/arm/mach-s5p64x0/setup-sdhci-gpio.c
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * S5P64X0 - Helper functions for setting up SDHCI device(s) GPIO (HSMMC)
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/platform_device.h>
-+#include <linux/io.h>
-+
-+#include <mach/gpio.h>
-+#include <mach/regs-gpio.h>
-+
-+#include <plat/gpio-cfg.h>
-+#include <plat/sdhci.h>
-+
-+
-+void s5p6440_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
-+{
-+	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
-+
-+	/* Set all the necessary GPG pins to special-function 2 */
-+	s3c_gpio_cfgrange_nopull(S5P6440_GPG(0), 2 + width, S3C_GPIO_SFN(2));
-+
-+	/* Set GPG[6] pin to special-function 2 - MMC0 CDn */
-+	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
-+		s3c_gpio_setpull(S5P6440_GPG(6), S3C_GPIO_PULL_UP);
-+		s3c_gpio_cfgpin(S5P6440_GPG(6), S3C_GPIO_SFN(2));
-+	}
-+}
-+
-+void s5p6440_setup_sdhci1_cfg_gpio(struct platform_device *dev, int width)
-+{
-+	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
-+
-+	/* Set GPH[0:1] pins to special-function 2 - CLK and CMD */
-+	s3c_gpio_cfgrange_nopull(S5P6440_GPH(0), 2 , S3C_GPIO_SFN(2));
-+
-+	switch (width) {
-+	case 8:
-+		/* Set data pins GPH[6:9] special-function 2 */
-+		s3c_gpio_cfgrange_nopull(S5P6440_GPH(6), 4, S3C_GPIO_SFN(2));
-+	case 4:
-+		/* set data pins GPH[2:5] special-function 2 */
-+		s3c_gpio_cfgrange_nopull(S5P6440_GPH(2), 4, S3C_GPIO_SFN(2));
-+	default:
-+		break;
-+	}
-+
-+	/* Set GPG[6] pin to special-funtion 3 : MMC1 CDn */
-+	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
-+		s3c_gpio_setpull(S5P6440_GPG(6), S3C_GPIO_PULL_UP);
-+		s3c_gpio_cfgpin(S5P6440_GPG(6), S3C_GPIO_SFN(3));
-+	}
-+}
-+
-+void s5p6440_setup_sdhci2_cfg_gpio(struct platform_device *dev, int width)
-+{
-+	/* Set GPC[4:5] pins to special-function 3 - CLK and CMD */
-+	s3c_gpio_cfgrange_nopull(S5P6440_GPC(4), 2, S3C_GPIO_SFN(3));
-+
-+	/* Set data pins GPH[6:9] pins to special-function 3 */
-+	s3c_gpio_cfgrange_nopull(S5P6440_GPH(6), 4, S3C_GPIO_SFN(3));
-+
-+	/* No MMC2 CDn available */
-+}
-+
-+
-+/* S5P6450 SDHCI GPIO Settings */
-+void s5p6450_setup_sdhci0_cfg_gpio(struct platform_device *dev, int width)
-+{
-+	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
-+
-+	/* Set all the necessary GPG pins to special-function 2 */
-+	s3c_gpio_cfgrange_nopull(S5P6450_GPG(0), 2 + width, S3C_GPIO_SFN(2));
-+
-+	/* Set GPG[6] to special-function 2 : MMC0 CDn */
-+	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
-+		s3c_gpio_setpull(S5P6450_GPG(6), S3C_GPIO_PULL_UP);
-+		s3c_gpio_cfgpin(S5P6450_GPG(6), S3C_GPIO_SFN(2));
-+	}
-+}
-+
-+void s5p6450_setup_sdhci1_cfg_gpio(struct platform_device *dev, int width)
-+{
-+	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
-+
-+	/* Set GPH[0:1] pins to special-function 2 - CLK and CMD */
-+	s3c_gpio_cfgrange_nopull(S5P6450_GPH(0), 2, S3C_GPIO_SFN(2));
-+
-+	switch (width) {
-+	case 8:
-+		/* Set data pins GPH[6:9] to special-function 2 */
-+		s3c_gpio_cfgrange_nopull(S5P6450_GPH(6), 4, S3C_GPIO_SFN(2));
-+	case 4:
-+		/* Set data pins GPH[2:5] to special-function 2 */
-+		s3c_gpio_cfgrange_nopull(S5P6450_GPH(2), 4, S3C_GPIO_SFN(2));
-+	default:
-+		break;
-+	}
-+
-+	/* Set GPG[6] pin to special-funtion 3 : MMC1 CDn */
-+	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
-+		s3c_gpio_setpull(S5P6450_GPG(6), S3C_GPIO_PULL_UP);
-+		s3c_gpio_cfgpin(S5P6450_GPG(6), S3C_GPIO_SFN(3));
-+	}
-+}
-+
-+void s5p6450_setup_sdhci2_cfg_gpio(struct platform_device *dev, int width)
-+{
-+
-+	/* Set all the necessary GPG pins to special-function 3 */
-+	s3c_gpio_cfgrange_nopull(S5P6450_GPG(7), 2 + width, S3C_GPIO_SFN(3));
-+
-+	/* No MMC2 CDn available */
-+}
-diff --git a/arch/arm/mach-s5p64x0/setup-sdhci.c b/arch/arm/mach-s5p64x0/setup-sdhci.c
-new file mode 100644
-index 0000000..729b824
---- /dev/null
-+++ b/arch/arm/mach-s5p64x0/setup-sdhci.c
-@@ -0,0 +1,54 @@
-+/* linux/arch/arm/mach-s5p64x0/setup-sdhci.c
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * S5P64X0 - Helper functions for settign up SDHCI device(s) (HSMMC)
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/types.h>
-+#include <linux/interrupt.h>
-+#include <linux/platform_device.h>
-+#include <linux/io.h>
-+
-+#include <linux/mmc/card.h>
-+#include <linux/mmc/host.h>
-+
-+#include <plat/regs-sdhci.h>
-+#include <plat/sdhci.h>
-+
-+/* clock sources for the mmc bus clock, order as for the ctrl2[5..4] */
-+
-+char *s5p64x0_hsmmc_clksrcs[4] = {
-+	[0] = NULL,
-+	[1] = NULL,
-+	[2] = "sclk_mmc",	/* mmc_bus */
-+	[3] = NULL,
-+};
-+
-+void s5p64x0_setup_sdhci_cfg_card(struct platform_device *dev,
-+				    void __iomem *r,
-+				    struct mmc_ios *ios,
-+				    struct mmc_card *card)
-+{
-+	u32 ctrl2 = 0, ctrl3 = 0;
-+
-+	/* don't need to alter anything acording to card-type */
-+	__raw_writel(S3C64XX_SDHCI_CONTROL4_DRIVE_9mA,
-+			r + S3C64XX_SDHCI_CONTROL4);
-+
-+	ctrl2 = __raw_readl(r + S3C_SDHCI_CONTROL2);
-+	ctrl2 &= S3C_SDHCI_CTRL2_SELBASECLK_MASK;
-+	ctrl2 |= (S3C64XX_SDHCI_CTRL2_ENSTAASYNCCLR |
-+		  S3C64XX_SDHCI_CTRL2_ENCMDCNFMSK |
-+		  S3C_SDHCI_CTRL2_DFCNT_NONE |
-+		  S3C_SDHCI_CTRL2_ENCLKOUTHOLD);
-+
-+	__raw_writel(ctrl2, r + S3C_SDHCI_CONTROL2);
-+	__raw_writel(ctrl3, r + S3C_SDHCI_CONTROL3);
-+}
--- 
-1.7.0.4
