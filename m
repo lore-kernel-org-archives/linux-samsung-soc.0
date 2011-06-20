@@ -1,63 +1,66 @@
 From: Changhwan Youn <chaos.youn@samsung.com>
-Subject: [PATCH 7/7] ARM: EXYNOS4: Add chained enrty/exit function to uart interrupt handler
-Date: Mon, 20 Jun 2011 16:34:18 +0900
-Message-ID: <1308555258-4322-8-git-send-email-chaos.youn@samsung.com>
+Subject: [PATCH 4/7] ARM: GIC: move gic_chip_data structure declaration to header
+Date: Mon, 20 Jun 2011 16:34:15 +0900
+Message-ID: <1308555258-4322-5-git-send-email-chaos.youn@samsung.com>
 References: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:58661 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:58668 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753353Ab1FTHlZ (ORCPT
+	with ESMTP id S1753369Ab1FTHlZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Mon, 20 Jun 2011 03:41:25 -0400
 In-Reply-To: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com, Changhwan Youn <chaos.youn@samsung.com>
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, Changhwan Youn <chaos.youn@samsung.com>, Russell King <rmk+kernel@arm.linux.org.uk>
 
-This patch adds chained IRQ enter/exit functions to uart
-interrupt handler in order to function correctly on primary
-controllers with different methods of flow control.
+Since Samsung EXYNOS4210 cannot support register banking in GIC,
+so needs to update CPU interface base address.
+The 'gic_chip_data' is used for it, this patch moves gic_chip_data
+structure declaraton to arch/arm/include/asm/hardware/gic.h to use
+it.
 
+Cc: Russell King <rmk+kernel@arm.linux.org.uk>
 Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
 ---
- arch/arm/plat-samsung/irq-uart.c |    7 +++++++
- 1 files changed, 7 insertions(+), 0 deletions(-)
+ arch/arm/common/gic.c               |    6 ------
+ arch/arm/include/asm/hardware/gic.h |    6 ++++++
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/irq-uart.c b/arch/arm/plat-samsung/irq-uart.c
-index 32582c0..8960eaf 100644
---- a/arch/arm/plat-samsung/irq-uart.c
-+++ b/arch/arm/plat-samsung/irq-uart.c
-@@ -19,6 +19,8 @@
- #include <linux/irq.h>
- #include <linux/io.h>
+diff --git a/arch/arm/common/gic.c b/arch/arm/common/gic.c
+index 4ddd0a6..23564ed 100644
+--- a/arch/arm/common/gic.c
++++ b/arch/arm/common/gic.c
+@@ -38,12 +38,6 @@ static DEFINE_SPINLOCK(irq_controller_lock);
+ /* Address of GIC 0 CPU interface */
+ void __iomem *gic_cpu_base_addr __read_mostly;
  
-+#include <asm/mach/irq.h>
+-struct gic_chip_data {
+-	unsigned int irq_offset;
+-	void __iomem *dist_base;
+-	void __iomem *cpu_base;
+-};
+-
+ /*
+  * Supported arch specific GIC irq extension.
+  * Default make them NULL.
+diff --git a/arch/arm/include/asm/hardware/gic.h b/arch/arm/include/asm/hardware/gic.h
+index 0691f9d..435d3f8 100644
+--- a/arch/arm/include/asm/hardware/gic.h
++++ b/arch/arm/include/asm/hardware/gic.h
+@@ -41,6 +41,12 @@ void gic_secondary_init(unsigned int);
+ void gic_cascade_irq(unsigned int gic_nr, unsigned int irq);
+ void gic_raise_softirq(const struct cpumask *mask, unsigned int irq);
+ void gic_enable_ppi(unsigned int);
 +
- #include <mach/map.h>
- #include <plat/irq-uart.h>
- #include <plat/regs-serial.h>
-@@ -30,9 +32,12 @@
- static void s3c_irq_demux_uart(unsigned int irq, struct irq_desc *desc)
- {
- 	struct s3c_uart_irq *uirq = desc->irq_data.handler_data;
-+	struct irq_chip *chip = irq_get_chip(irq);
- 	u32 pend = __raw_readl(uirq->regs + S3C64XX_UINTP);
- 	int base = uirq->base_irq;
++struct gic_chip_data {
++	unsigned int irq_offset;
++	void __iomem *dist_base;
++	void __iomem *cpu_base;
++};
+ #endif
  
-+	chained_irq_enter(chip, desc);
-+
- 	if (pend & (1 << 0))
- 		generic_handle_irq(base);
- 	if (pend & (1 << 1))
-@@ -41,6 +46,8 @@ static void s3c_irq_demux_uart(unsigned int irq, struct irq_desc *desc)
- 		generic_handle_irq(base + 2);
- 	if (pend & (1 << 3))
- 		generic_handle_irq(base + 3);
-+
-+	chained_irq_exit(chip, desc);
- }
- 
- static void __init s3c_init_uart_irq(struct s3c_uart_irq *uirq)
+ #endif
 -- 
 1.7.1
