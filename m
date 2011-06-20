@@ -1,96 +1,74 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH 3/6] watchdog: s3c2410: Add support for device tree based probe
-Date: Mon, 20 Jun 2011 10:50:42 -0600
-Message-ID: <BANLkTikkxpOC6M1R0g=dGvDXvCkG6EOJhQ@mail.gmail.com>
-References: <1308567752-13451-1-git-send-email-thomas.abraham@linaro.org> <1308567752-13451-4-git-send-email-thomas.abraham@linaro.org>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH 4/6] mmc: sdhci-s3c: Add support for device tree based
+	probe
+Date: Mon, 20 Jun 2011 10:51:24 -0600
+Message-ID: <BANLkTi=peHYN4NjgYfO+X=pFVqWQHF21mA@mail.gmail.com>
+References: <1308567752-13451-1-git-send-email-thomas.abraham@linaro.org>
+	<1308567752-13451-5-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:59167 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752612Ab1FTQvC convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Jun 2011 12:51:02 -0400
-In-Reply-To: <1308567752-13451-4-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1308567752-13451-5-git-send-email-thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, Wim Van Sebroeck <wim@iguana.be>, linux-watchdog@vger.kernel.org
 
 On Mon, Jun 20, 2011 at 5:02 AM, Thomas Abraham
-<thomas.abraham@linaro.org> wrote:
-> This patch adds the of_match_table to enable s3c2410-wdt driver
-> to be probed when watchdog device node is found in the device tree.
+<thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> Add of_match_table to enable sdhci-s3c driver to be probed when a compati=
+ble
+> sdhci device node is found in device tree.
 >
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> ---
+> This is temporary patch. sdhci-s3c driver has to be moved to sdhci-pltfm
+> based driver.
 
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
-
-You need to send this to Wim and the linux-watchdog mailing lists.  As
-far as I'm concerned, it can be merged immediately.
+... and the binding needs to be documented.  :-)
 
 g.
 
-> ---
-> =A0.../devicetree/bindings/watchdog/samsung-wdt.txt =A0 | =A0 12 ++++=
-++++++++
-> =A0drivers/watchdog/s3c2410_wdt.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 | =A0 10 ++++++++++
-> =A02 files changed, 22 insertions(+), 0 deletions(-)
-> =A0create mode 100644 Documentation/devicetree/bindings/watchdog/sams=
-ung-wdt.txt
 >
-> diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.t=
-xt b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-> new file mode 100644
-> index 0000000..f2617e8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-> @@ -0,0 +1,12 @@
-> +* Samsung's Watchdog Timer Controller
-> +
-> +The Samsung's Watchdog controller is used for resuming system operat=
-ion
-> +after a preset amount of time during which the WDT reset event has n=
-ot
-> +occured.
-> +
-> +Required properties:
-> +- compatible : should be "samsung,s3c2410-wdt"
-> +- reg : base physical address of the controller and length of memory=
- mapped
-> + =A0 =A0 =A0 region.
-> +- interrupts : interrupt number to the cpu.
-> +
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c241=
-0_wdt.c
-> index f7f5aa0..30da88f 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -589,6 +589,15 @@ static int s3c2410wdt_resume(struct platform_dev=
-ice *dev)
-> =A0#define s3c2410wdt_resume =A0NULL
-> =A0#endif /* CONFIG_PM */
+> =A0drivers/mmc/host/sdhci-s3c.c | =A0 11 +++++++++++
+> =A01 files changed, 11 insertions(+), 0 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> index 69e3ee3..5ccbee0 100644
+> --- a/drivers/mmc/host/sdhci-s3c.c
+> +++ b/drivers/mmc/host/sdhci-s3c.c
+> @@ -629,6 +629,16 @@ static int sdhci_s3c_resume(struct platform_device *=
+dev)
+> =A0#define sdhci_s3c_resume NULL
+> =A0#endif
 >
 > +#ifdef CONFIG_OF
-> +static const struct of_device_id s3c2410_wdt_match[] =3D {
-> + =A0 =A0 =A0 { .compatible =3D "samsung,s3c2410-wdt" },
+> +static const struct of_device_id s3c_sdhci_match[] =3D {
+> + =A0 =A0 =A0 { .compatible =3D "samsung,s3c-sdhci" },
 > + =A0 =A0 =A0 {},
 > +};
-> +MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
+> +MODULE_DEVICE_TABLE(of, s3c_sdhci_match);
 > +#else
-> +#define s3c2410_wdt_match NULL
+> +#define s3c_sdhci_match NULL
 > +#endif
->
-> =A0static struct platform_driver s3c2410wdt_driver =3D {
-> =A0 =A0 =A0 =A0.probe =A0 =A0 =A0 =A0 =A0=3D s3c2410wdt_probe,
-> @@ -599,6 +608,7 @@ static struct platform_driver s3c2410wdt_driver =3D=
- {
+> +
+> =A0static struct platform_driver sdhci_s3c_driver =3D {
+> =A0 =A0 =A0 =A0.probe =A0 =A0 =A0 =A0 =A0=3D sdhci_s3c_probe,
+> =A0 =A0 =A0 =A0.remove =A0 =A0 =A0 =A0 =3D __devexit_p(sdhci_s3c_remove),
+> @@ -637,6 +647,7 @@ static struct platform_driver sdhci_s3c_driver =3D {
 > =A0 =A0 =A0 =A0.driver =A0 =A0 =A0 =A0 =3D {
 > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.owner =A0=3D THIS_MODULE,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "s3c2410-wdt",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .of_match_table =3D s3c2410_wdt_match,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "s3c-sdhci",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .of_match_table =3D s3c_sdhci_match,
 > =A0 =A0 =A0 =A0},
 > =A0};
 >
@@ -100,12 +78,13 @@ ice *dev)
 >
 > _______________________________________________
 > linaro-dev mailing list
-> linaro-dev@lists.linaro.org
+> linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
 > http://lists.linaro.org/mailman/listinfo/linaro-dev
 >
 
 
 
---=20
+-- =
+
 Grant Likely, B.Sc., P.Eng.
 Secret Lab Technologies Ltd.
