@@ -1,12 +1,12 @@
 From: Changhwan Youn <chaos.youn@samsung.com>
-Subject: [PATCH 1/7] ARM: EXYNOS4: Add external GIC io memory mapping
-Date: Mon, 20 Jun 2011 16:34:12 +0900
-Message-ID: <1308555258-4322-2-git-send-email-chaos.youn@samsung.com>
+Subject: [PATCH 5/7] ARM: EXYNOS4: Add support external GIC
+Date: Mon, 20 Jun 2011 16:34:16 +0900
+Message-ID: <1308555258-4322-6-git-send-email-chaos.youn@samsung.com>
 References: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:58667 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:58682 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753358Ab1FTHlZ (ORCPT
+	with ESMTP id S1753399Ab1FTHlZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Mon, 20 Jun 2011 03:41:25 -0400
 In-Reply-To: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
@@ -15,71 +15,133 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: ben-linux@fluff.org, kgene.kim@samsung.com, Changhwan Youn <chaos.youn@samsung.com>
 
-This patch adds external GIC io memory mapping
-to support external GIC on EXYNOS4.
+For full support of power modes, this patch adds implementation
+external GIC on EXYNOS4.
+
+External GIC of Exynos4 cannot support register banking so
+several interrupt related code for CPU1 should be different
+from that of CPU0.
 
 Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
 ---
- arch/arm/mach-exynos4/cpu.c              |   10 ++++++++++
- arch/arm/mach-exynos4/include/mach/map.h |    5 +++--
- arch/arm/plat-s5p/include/plat/map-s5p.h |    5 +++--
- 3 files changed, 16 insertions(+), 4 deletions(-)
+ arch/arm/mach-exynos4/cpu.c                      |   10 ++++++++
+ arch/arm/mach-exynos4/include/mach/entry-macro.S |    5 ++++
+ arch/arm/mach-exynos4/include/mach/map.h         |    1 +
+ arch/arm/mach-exynos4/platsmp.c                  |   27 +++++++++++++++++++++-
+ 4 files changed, 42 insertions(+), 1 deletions(-)
 
 diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
-index 1196f39..6a1ed74 100644
+index fa33294..40a866c 100644
 --- a/arch/arm/mach-exynos4/cpu.c
 +++ b/arch/arm/mach-exynos4/cpu.c
-@@ -107,6 +107,16 @@ static struct map_desc exynos4_iodesc[] __initdata = {
- 		.pfn		= __phys_to_pfn(EXYNOS4_PA_AUDSS),
- 		.length		= SZ_1K,
- 		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S5P_VA_GIC_CPU,
-+		.pfn		= __phys_to_pfn(EXYNOS4_PA_GIC_CPU),
-+		.length		= SZ_64K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S5P_VA_GIC_DIST,
-+		.pfn		= __phys_to_pfn(EXYNOS4_PA_GIC_DIST),
-+		.length		= SZ_64K,
-+		.type		= MT_DEVICE,
- 	},
- };
+@@ -16,6 +16,7 @@
  
+ #include <asm/proc-fns.h>
+ #include <asm/hardware/cache-l2x0.h>
++#include <asm/hardware/gic.h>
+ 
+ #include <plat/cpu.h>
+ #include <plat/clock.h>
+@@ -159,11 +160,20 @@ void __init exynos4_init_clocks(int xtal)
+ 	exynos4_setup_clocks();
+ }
+ 
++static void exynos4_gic_irq_eoi(struct irq_data *d)
++{
++	struct gic_chip_data *gic_data = irq_data_get_irq_chip_data(d);
++
++	gic_data->cpu_base = S5P_VA_GIC_CPU +
++			    (EXYNOS4_GIC_BANK_OFFSET * smp_processor_id());
++}
++
+ void __init exynos4_init_irq(void)
+ {
+ 	int irq;
+ 
+ 	gic_init(0, IRQ_LOCALTIMER, S5P_VA_GIC_DIST, S5P_VA_GIC_CPU);
++	gic_arch_extn.irq_eoi = exynos4_gic_irq_eoi;
+ 
+ 	for (irq = 0; irq < MAX_COMBINER_NR; irq++) {
+ 
+diff --git a/arch/arm/mach-exynos4/include/mach/entry-macro.S b/arch/arm/mach-exynos4/include/mach/entry-macro.S
+index d8f38c2..4fad076 100644
+--- a/arch/arm/mach-exynos4/include/mach/entry-macro.S
++++ b/arch/arm/mach-exynos4/include/mach/entry-macro.S
+@@ -10,6 +10,7 @@
+ */
+ 
+ #include <mach/hardware.h>
++#include <mach/map.h>
+ #include <asm/hardware/gic.h>
+ 
+ 		.macro	disable_fiq
+@@ -18,6 +19,10 @@
+ 		.macro  get_irqnr_preamble, base, tmp
+ 		ldr	\base, =gic_cpu_base_addr
+ 		ldr	\base, [\base]
++		mrc     p15, 0, \tmp, c0, c0, 5
++		and     \tmp, \tmp, #3
++		cmp     \tmp, #1
++		addeq   \base, \base, #EXYNOS4_GIC_BANK_OFFSET
+ 		.endm
+ 
+ 		.macro  arch_ret_to_user, tmp1, tmp2
 diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
-index 57d8074..9d5d797 100644
+index 9d5d797..2339a70 100644
 --- a/arch/arm/mach-exynos4/include/mach/map.h
 +++ b/arch/arm/mach-exynos4/include/mach/map.h
-@@ -61,10 +61,11 @@
+@@ -63,6 +63,7 @@
  
- #define EXYNOS4_PA_COMBINER		0x10448000
+ #define EXYNOS4_PA_GIC_CPU		0x10480000
+ #define EXYNOS4_PA_GIC_DIST		0x10490000
++#define EXYNOS4_GIC_BANK_OFFSET		0x8000
  
-+#define EXYNOS4_PA_GIC_CPU		0x10480000
-+#define EXYNOS4_PA_GIC_DIST		0x10490000
-+
  #define EXYNOS4_PA_COREPERI		0x10500000
--#define EXYNOS4_PA_GIC_CPU		0x10500100
  #define EXYNOS4_PA_TWD			0x10500600
--#define EXYNOS4_PA_GIC_DIST		0x10501000
- #define EXYNOS4_PA_L2CC			0x10502000
+diff --git a/arch/arm/mach-exynos4/platsmp.c b/arch/arm/mach-exynos4/platsmp.c
+index c5e65a0..decf528 100644
+--- a/arch/arm/mach-exynos4/platsmp.c
++++ b/arch/arm/mach-exynos4/platsmp.c
+@@ -58,6 +58,31 @@ static void __iomem *scu_base_addr(void)
  
- #define EXYNOS4_PA_MDMA			0x10810000
-diff --git a/arch/arm/plat-s5p/include/plat/map-s5p.h b/arch/arm/plat-s5p/include/plat/map-s5p.h
-index daa4a44..264df2d 100644
---- a/arch/arm/plat-s5p/include/plat/map-s5p.h
-+++ b/arch/arm/plat-s5p/include/plat/map-s5p.h
-@@ -35,9 +35,10 @@
- #define S5P_VA_COREPERI_BASE	S3C_ADDR(0x02800000)
- #define S5P_VA_COREPERI(x)	(S5P_VA_COREPERI_BASE + (x))
- #define S5P_VA_SCU		S5P_VA_COREPERI(0x0)
--#define S5P_VA_GIC_CPU		S5P_VA_COREPERI(0x100)
- #define S5P_VA_TWD		S5P_VA_COREPERI(0x600)
--#define S5P_VA_GIC_DIST		S5P_VA_COREPERI(0x1000)
+ static DEFINE_SPINLOCK(boot_lock);
+ 
++static void __cpuinit exynos4_gic_secondary_init(void)
++{
++	void __iomem *dist_base = S5P_VA_GIC_DIST +
++				 (EXYNOS4_GIC_BANK_OFFSET * smp_processor_id());
++	void __iomem *cpu_base = S5P_VA_GIC_CPU +
++				(EXYNOS4_GIC_BANK_OFFSET * smp_processor_id());
++	int i;
 +
-+#define S5P_VA_GIC_CPU		S3C_ADDR(0x02810000)
-+#define S5P_VA_GIC_DIST		S3C_ADDR(0x02820000)
++	/*
++	 * Deal with the banked PPI and SGI interrupts - disable all
++	 * PPI interrupts, ensure all SGI interrupts are enabled.
++	 */
++	__raw_writel(0xffff0000, dist_base + GIC_DIST_ENABLE_CLEAR);
++	__raw_writel(0x0000ffff, dist_base + GIC_DIST_ENABLE_SET);
++
++	/*
++	 * Set priority on PPI and SGI interrupts
++	 */
++	for (i = 0; i < 32; i += 4)
++		__raw_writel(0xa0a0a0a0, dist_base + GIC_DIST_PRI + i * 4 / 4);
++
++	__raw_writel(0xf0, cpu_base + GIC_CPU_PRIMASK);
++	__raw_writel(1, cpu_base + GIC_CPU_CTRL);
++}
++
+ void __cpuinit platform_secondary_init(unsigned int cpu)
+ {
+ 	/*
+@@ -65,7 +90,7 @@ void __cpuinit platform_secondary_init(unsigned int cpu)
+ 	 * core (e.g. timer irq), then they will not have been enabled
+ 	 * for us: do so
+ 	 */
+-	gic_secondary_init(0);
++	exynos4_gic_secondary_init();
  
- #define S3C_VA_USB_HSPHY	S3C_ADDR(0x02900000)
- #define S5P_VA_AUDSS		S3C_ADDR(0x02A00000)
+ 	/*
+ 	 * let the primary processor know we're out of the
 -- 
 1.7.1
