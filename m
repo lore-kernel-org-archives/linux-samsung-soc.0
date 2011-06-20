@@ -1,188 +1,161 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 6/6] arm: exynos4: Add a new Exynos4 device tree enabled machine
-Date: Mon, 20 Jun 2011 16:32:32 +0530
-Message-ID: <1308567752-13451-7-git-send-email-thomas.abraham@linaro.org>
-References: <1308567752-13451-1-git-send-email-thomas.abraham@linaro.org>
+From: Rajeshwari Shinde <rajeshwari.s@samsung.com>
+Subject: [PATCH 3/3] ARM: S5P64X0: Enable SDHCI support
+Date: Mon, 20 Jun 2011 17:27:29 +0530
+Message-ID: <1308571049-4412-4-git-send-email-rajeshwari.s@samsung.com>
+References: <1308571049-4412-1-git-send-email-rajeshwari.s@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:19249 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752126Ab1FTKxR (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:38032 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751139Ab1FTLwQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Jun 2011 06:53:17 -0400
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Mon, 20 Jun 2011 07:52:16 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LN3002UK4WH3MC0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 20 Jun 2011 19:53:16 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
+ 2010)) with ESMTP id <0LN300D047MZ4Z40@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 20 Jun 2011 20:52:15 +0900 (KST)
+Received: from rajeshwari-linux.sisodomain.com ([107.108.215.115])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LN300JSM4W4PB@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 20 Jun 2011 19:53:16 +0900 (KST)
-In-reply-to: <1308567752-13451-1-git-send-email-thomas.abraham@linaro.org>
+ with ESMTPA id <0LN300LZR7MS0B@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 20 Jun 2011 20:52:15 +0900 (KST)
+In-reply-to: <1308571049-4412-1-git-send-email-rajeshwari.s@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree-discuss@lists.ozlabs.org
-Cc: linaro-dev@lists.linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, sbkim73@samsung.com
+Cc: "rajeshwari.s" <rajeshwari.s@samsung.com>
 
-Basic Exynos4 machine with device tree support that can boot on a Exynos4
-based smdkv310 board and bring up the console.
+From: rajeshwari.s <rajeshwari.s@samsung.com>
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+Enables SDHCI supports for S5P6440 and S5P6450.
+
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Signed-off-by: Rajeshwari.S <rajeshwari.s@samsung.com>
 ---
- Documentation/devicetree/bindings/arm/samsung.txt |    3 +-
- arch/arm/mach-exynos4/Kconfig                     |   11 +++
- arch/arm/mach-exynos4/Makefile                    |    1 +
- arch/arm/mach-exynos4/mach-exynos4-dt.c           |   94 +++++++++++++++++++++
- 4 files changed, 108 insertions(+), 1 deletions(-)
- create mode 100644 arch/arm/mach-exynos4/mach-exynos4-dt.c
+ arch/arm/mach-s5p64x0/mach-smdk6440.c |   27 +++++++++++++++++++++++++++
+ arch/arm/mach-s5p64x0/mach-smdk6450.c |   27 +++++++++++++++++++++++++++
+ 2 files changed, 54 insertions(+), 0 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung.txt b/Documentation/devicetree/bindings/arm/samsung.txt
-index 594cb97..80d29bb 100644
---- a/Documentation/devicetree/bindings/arm/samsung.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung.txt
-@@ -4,6 +4,7 @@ Samsung Exynos4 S5PV310 SoC based SMDKV310 eval board
-     Samsung's Exynos4 family of application processors.
+diff --git a/arch/arm/mach-s5p64x0/mach-smdk6440.c b/arch/arm/mach-s5p64x0/mach-smdk6440.c
+index 2d559f1..78c744f 100644
+--- a/arch/arm/mach-s5p64x0/mach-smdk6440.c
++++ b/arch/arm/mach-s5p64x0/mach-smdk6440.c
+@@ -23,6 +23,7 @@
+ #include <linux/clk.h>
+ #include <linux/gpio.h>
+ #include <linux/pwm_backlight.h>
++#include <linux/mmc/host.h>
  
- Required root node properties:
--    - compatible = "samsung,smdkv310","samsung,s5pv310"
-+    - compatible = "samsung,smdkv310","samsung,s5pv310", "samsung,exynos4210'.
-         (a) "samsung,smdkv310" - for Samsung's SMDKV310 eval board.
-         (b) "samsung,s5pv310"  - for boards based on S5PV310 SoC.
-+	(c) "samsung,exynos4210" - for boards based on Exynos4210 processor.
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index 1435fc3..412e0c5 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -186,6 +186,17 @@ config MACH_NURI
- 	help
- 	  Machine support for Samsung Mobile NURI Board.
- 
-+config MACH_EXYNOS4_DT
-+	bool "Samsung's Exynos4 Machine with DT support"
-+	select CPU_EXYNOS4210
-+	select USE_OF
-+	select S3C_DEV_WDT
-+	select S3C_DEV_HSMMC
-+	select S3C_DEV_HSMMC2
-+	select EXYNOS4_SETUP_SDHCI
-+	help
-+	  Machine support for Samsung Exynos4 machine with device tree enabled.
-+
- endmenu
- 
- comment "Configuration for HSMMC bus width"
-diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
-index 60fe5ec..6491e5b 100644
---- a/arch/arm/mach-exynos4/Makefile
-+++ b/arch/arm/mach-exynos4/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_MACH_SMDKV310)		+= mach-smdkv310.o
- obj-$(CONFIG_MACH_ARMLEX4210)		+= mach-armlex4210.o
- obj-$(CONFIG_MACH_UNIVERSAL_C210)	+= mach-universal_c210.o
- obj-$(CONFIG_MACH_NURI)			+= mach-nuri.o
-+obj-$(CONFIG_MACH_EXYNOS4_DT)		+= mach-exynos4-dt.o
- 
- # device support
- 
-diff --git a/arch/arm/mach-exynos4/mach-exynos4-dt.c b/arch/arm/mach-exynos4/mach-exynos4-dt.c
-new file mode 100644
-index 0000000..34267d8
---- /dev/null
-+++ b/arch/arm/mach-exynos4/mach-exynos4-dt.c
-@@ -0,0 +1,94 @@
-+/*
-+ * Samsung's Exynos4210 device tree enabled machine.
-+ *
-+ * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ * Copyright (c) 2010-2011 Linaro Ltd.
-+ * 		www.linaro.org
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/serial_core.h>
-+#include <linux/platform_device.h>
-+#include <linux/io.h>
-+#include <linux/of_platform.h>
-+#include <linux/irq.h>
-+
-+#include <asm/mach/arch.h>
-+#include <asm/mach-types.h>
-+
-+#include <plat/regs-serial.h>
-+#include <plat/exynos4.h>
-+#include <plat/cpu.h>
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+@@ -46,6 +47,7 @@
+ #include <plat/adc.h>
+ #include <plat/ts.h>
+ #include <plat/s5p-time.h>
 +#include <plat/sdhci.h>
+ 
+ #define SMDK6440_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+ 				S3C2410_UCON_RXILEVEL |		\
+@@ -141,6 +143,28 @@ static struct platform_device *smdk6440_devices[] __initdata = {
+ 	&s5p6440_device_iis,
+ 	&s3c_device_timer[1],
+ 	&smdk6440_backlight_device,
++	&s3c_device_hsmmc0,
++	&s3c_device_hsmmc1,
++	&s3c_device_hsmmc2,
++};
 +
-+#include <mach/map.h>
++static struct s3c_sdhci_platdata smdk6440_hsmmc0_pdata __initdata = {
++	.cd_type	= S3C_SDHCI_CD_NONE,
++	.clk_type	= S3C_SDHCI_CLK_DIV_EXTERNAL,
++};
 +
-+static struct s3c_sdhci_platdata smdkv310_hsmmc0_pdata __initdata = {
-+	.cd_type		= S3C_SDHCI_CD_INTERNAL,
-+	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
-+#ifdef CONFIG_EXYNOS4_SDHCI_CH0_8BIT
-+	.max_width		= 8,
-+	.host_caps		= MMC_CAP_8_BIT_DATA,
++static struct s3c_sdhci_platdata smdk6440_hsmmc1_pdata __initdata = {
++	.cd_type	= S3C_SDHCI_CD_INTERNAL,
++#if defined(CONFIG_S5P64X0_SD_CH1_8BIT)
++	.max_width	= 8,
++	.host_caps	= MMC_CAP_8_BIT_DATA,
 +#endif
++	.clk_type	= S3C_SDHCI_CLK_DIV_EXTERNAL,
 +};
 +
-+static struct s3c_sdhci_platdata smdkv310_hsmmc2_pdata __initdata = {
-+	.cd_type		= S3C_SDHCI_CD_INTERNAL,
-+	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
-+#ifdef CONFIG_EXYNOS4_SDHCI_CH2_8BIT
-+	.max_width		= 8,
-+	.host_caps		= MMC_CAP_8_BIT_DATA,
++static struct s3c_sdhci_platdata smdk6440_hsmmc2_pdata __initdata = {
++	.cd_type	= S3C_SDHCI_CD_NONE,
++	.clk_type	= S3C_SDHCI_CLK_DIV_EXTERNAL,
+ };
+ 
+ static struct s3c2410_platform_i2c s5p6440_i2c0_data __initdata = {
+@@ -194,6 +218,9 @@ static void __init smdk6440_machine_init(void)
+ 	i2c_register_board_info(1, smdk6440_i2c_devs1,
+ 			ARRAY_SIZE(smdk6440_i2c_devs1));
+ 
++	s3c_sdhci0_set_platdata(&smdk6440_hsmmc0_pdata);
++	s3c_sdhci1_set_platdata(&smdk6440_hsmmc1_pdata);
++	s3c_sdhci2_set_platdata(&smdk6440_hsmmc2_pdata);
+ 	platform_add_devices(smdk6440_devices, ARRAY_SIZE(smdk6440_devices));
+ }
+ 
+diff --git a/arch/arm/mach-s5p64x0/mach-smdk6450.c b/arch/arm/mach-s5p64x0/mach-smdk6450.c
+index d19c469..099ca20 100644
+--- a/arch/arm/mach-s5p64x0/mach-smdk6450.c
++++ b/arch/arm/mach-s5p64x0/mach-smdk6450.c
+@@ -23,6 +23,7 @@
+ #include <linux/clk.h>
+ #include <linux/gpio.h>
+ #include <linux/pwm_backlight.h>
++#include <linux/mmc/host.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+@@ -46,6 +47,7 @@
+ #include <plat/adc.h>
+ #include <plat/ts.h>
+ #include <plat/s5p-time.h>
++#include <plat/sdhci.h>
+ 
+ #define SMDK6450_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+ 				S3C2410_UCON_RXILEVEL |		\
+@@ -159,9 +161,31 @@ static struct platform_device *smdk6450_devices[] __initdata = {
+ 	&s5p6450_device_iis0,
+ 	&s3c_device_timer[1],
+ 	&smdk6450_backlight_device,
++	&s3c_device_hsmmc0,
++	&s3c_device_hsmmc1,
++	&s3c_device_hsmmc2,
+ 	/* s5p6450_device_spi0 will be added */
+ };
+ 
++static struct s3c_sdhci_platdata smdk6450_hsmmc0_pdata __initdata = {
++	.cd_type	= S3C_SDHCI_CD_NONE,
++	.clk_type	= S3C_SDHCI_CLK_DIV_EXTERNAL,
++};
++
++static struct s3c_sdhci_platdata smdk6450_hsmmc1_pdata __initdata = {
++	.cd_type	= S3C_SDHCI_CD_NONE,
++#if defined(CONFIG_S5P64X0_SD_CH1_8BIT)
++	.max_width	= 8,
++	.host_caps	= MMC_CAP_8_BIT_DATA,
 +#endif
++	.clk_type	= S3C_SDHCI_CLK_DIV_EXTERNAL,
 +};
 +
-+static const struct of_dev_auxdata exynos4_auxdata_lookup[] __initconst = {
-+	OF_DEV_AUXDATA("samsung,s3c-sdhci", EXYNOS4_PA_HSMMC(2),
-+				"s3c-sdhci.2", &s3c_hsmmc2_def_platdata),
-+	OF_DEV_AUXDATA("samsung,s3c-sdhci", EXYNOS4_PA_HSMMC(0),
-+				"s3c-sdhci.0", &s3c_hsmmc0_def_platdata),
-+	OF_DEV_AUXDATA("samsung,s5pv210-uart", S5P_PA_UART0,
-+				"s5pv210-uart.0", NULL),
-+	OF_DEV_AUXDATA("samsung,s5pv210-uart", S5P_PA_UART1,
-+				"s5pv210-uart.1", NULL),
-+	{},
++static struct s3c_sdhci_platdata smdk6450_hsmmc2_pdata __initdata = {
++	.cd_type	= S3C_SDHCI_CD_NONE,
++	.clk_type	= S3C_SDHCI_CLK_DIV_EXTERNAL,
 +};
 +
-+static void __init exynos4_dt_map_io(void)
-+{
-+	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
-+	s3c24xx_init_clocks(24000000);
-+}
-+
-+static const struct of_device_id intc_of_match[] __initconst = {
-+	{ .compatible = "samsung,exynos4-gic", },
-+	{}
-+};
-+
-+static void __init exynos4_dt_machine_init(void)
-+{
-+	s3c_sdhci0_set_platdata(&smdkv310_hsmmc0_pdata);
-+	s3c_sdhci2_set_platdata(&smdkv310_hsmmc2_pdata);
-+
-+	irq_domain_generate_simple(intc_of_match, EXYNOS4_PA_GIC_DIST, 0);
-+	of_platform_populate(NULL, of_default_bus_match_table,
-+				exynos4_auxdata_lookup, NULL);
-+}
-+
-+static char const *exynos4_dt_compat[] __initdata = {
-+	"samsung,exynos4210",
-+	NULL
-+};
-+
-+DT_MACHINE_START(SMDKV310, "Samsung Exynos4 DT")
-+	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
-+	.boot_params	= S5P_PA_SDRAM + 0x100,
-+	.init_irq	= exynos4_init_irq,
-+	.map_io		= exynos4_dt_map_io,
-+	.init_machine	= exynos4_dt_machine_init,
-+	.timer		= &exynos4_timer,
-+	.dt_compat	= exynos4_dt_compat,
-+MACHINE_END
+ static struct s3c2410_platform_i2c s5p6450_i2c0_data __initdata = {
+ 	.flags		= 0,
+ 	.slave_addr	= 0x10,
+@@ -213,6 +237,9 @@ static void __init smdk6450_machine_init(void)
+ 	i2c_register_board_info(1, smdk6450_i2c_devs1,
+ 			ARRAY_SIZE(smdk6450_i2c_devs1));
+ 
++	s3c_sdhci0_set_platdata(&smdk6450_hsmmc0_pdata);
++	s3c_sdhci1_set_platdata(&smdk6450_hsmmc1_pdata);
++	s3c_sdhci2_set_platdata(&smdk6450_hsmmc2_pdata);
+ 	platform_add_devices(smdk6450_devices, ARRAY_SIZE(smdk6450_devices));
+ }
+ 
 -- 
-1.6.6.rc2
+1.7.0.4
