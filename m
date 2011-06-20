@@ -1,116 +1,63 @@
-From: JinGoo Han <jg1.han@samsung.com>
-Subject: Re: Re: [PATCH v2 1/5] ARM: EXYNOS4: Change clock name for FIMD
-Date: Mon, 20 Jun 2011 07:14:47 +0000 (GMT)
-Message-ID: <15716730.35471308554086138.JavaMail.weblogic@epv6ml04>
-Reply-To: jg1.han@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
+From: Changhwan Youn <chaos.youn@samsung.com>
+Subject: [PATCH 7/7] ARM: EXYNOS4: Add chained enrty/exit function to uart interrupt handler
+Date: Mon, 20 Jun 2011 16:34:18 +0900
+Message-ID: <1308555258-4322-8-git-send-email-chaos.youn@samsung.com>
+References: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:62517 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753144Ab1FTHPZ (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:58661 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753353Ab1FTHlZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Jun 2011 03:15:25 -0400
-Received: from epcpsbge1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LN200EHKURKAF90@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 20 Jun 2011 16:14:47 +0900 (KST)
-MIME-version: 1.0
+	Mon, 20 Jun 2011 03:41:25 -0400
+In-Reply-To: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <snjw23@gmail.com>, JinGoo Han <jg1.han@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jong-Hun Han <jonghun.han@samsung.com>, ANAND KUMAR N <anand.kn@samsung.com>, THOMAS P ABRAHAM <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, In-Ki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, Changhwan Youn <chaos.youn@samsung.com>
 
-SGksIFN5bHdlc3RlciBOYXdyb2NraS4NCkkgYXBwcmVjaWF0ZSB5b3VyIHJldmlldyBhbmQgc3Vn
-Z2VzdGlvbi4NCg0KUGxlYXNlLCByZWZlciB0byB0aGUgTENEIGNvbnRvbGxlciBjbG9jayB0YWJs
-ZSBhcyBmb2xsb3dzOg0KIC0gczNjMjQ0MCB1c2VzICdzM2MyNDEwZmIuYycsIG5vdCAnczNjLWZi
-LmMnIHNpbmNlICBMQ0QgY29udHJvbGxlciBJUCBpcyBkaWZmZXJlbnQuDQogICBIb3dldmVyLCBz
-M2MyNDQzIHVzZXMgJ3MzYy1mYi5jJy4gU28gSSBhZGQgczNjMjQ0MyB0byB0YWJsZSBpbnN0ZWFk
-IG9mIHMzYzI0NDAuDQogLSBzM2M2NDEwIGhhcyBTQ0xLX0xDRCwgYnV0LCBjbG9jayBuYW1lIGlz
-IG5vdCBkZWZpbmVkLg0KIC0gRXh5bm9zNCBkb2VzIG5vdCB1c2UgbmFtZSAiSENMSyIuDQoNCiAg
-ICAgICAgICB8IExDRCBjb250cm9sbGVyICAgIHwgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-fA0KICAgICAgICAgIHwgKElQIGNvcmUpIGNsb2NrICAgfCBMQ0QgcGl4ZWwgY2xvY2sgICAgICAg
-ICAgICB8DQotLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLSsNCnMzYzI0NDMgICB8ICBIQ0xLIChsY2QpICAgICAgIHwgeCAgfCAgRElTUENM
-SyAoZGlzcGxheS1pZikgfA0KLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0rDQpzM2M2NDEwICAgfCAgSENMSyAobGNkKSAgICAgICB8IHgg
-IHwgIFNDTEtfTENEICAoTi9BKSAgICAgIHwNCi0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKw0KczVwYzEwMCAgIHwgIEhDTEsgKGxjZCkg
-ICAgICAgfCB4ICB8ICBTQ0xLX0xDRCAgKHNjbGtfbGNkKSB8DQotLS0tLS0tLS0tKy0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsNCnM1cHYyMTAgICB8ICBI
-Q0xLX0RTWVMgKGxjZCkgIHwgeCAgfCAgU0NMS19GSU1EIChzY2xrX2ZpbWQpfA0KLS0tLS0tLS0t
-LSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rDQpleHlu
-b3M0ICAgfCAgQUNMS18xNjAgKGZpbWQpICB8IE8gIHwgIFNDTEtfRklNRCAoc2Nsa19maW1kKXwN
-Ci0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tKw0KDQpzM2MyNDQzLCBzM2M2NDEwLCBzNXBjMTAwIGFuZCBzNXB2MjEwIGRvbid0IHVzZSAn
-c2Nsa19sY2QnIG9yICdzY2xrX2ZpbWQnLg0KJ2xjZCcgY2xvY2sgaXMgYWxzbyB1c2VkIHRvIGdl
-bmVyYXRlIHRoZSBMQ0QgcGl4ZWwgY2xvY2suDQoNCk15IHBvaW50IGlzIHRoYXQgTENEIGNvbnRv
-cm9sbGVyIGNsb2NrIHNob3VsZCBiZSBuYW1lZCAibGNkIiBmb3IgY29uc2lzdGVuY2UuDQpJZiB0
-aGVyZSBpcyBub3QgbXV4IGZvciBsY2QgcGl4ZWwgY2xvY2sgaW4gY2FzZSBvZiBleHlub3M0LCAi
-c2Nsa19maW1kIiB3aWxsIGJlIHNldA0KaW4gbWFjaGluZSBkaXJlY3RvcnkuDQoNCkFzIHlvdSBt
-ZW50aW9uZWQsIEkgYWxzbyB0aGluayB0aGF0IHdlIG5lZWQgdG8gY3JlYXRlIHR3byBjbG9jayBj
-b25uZWN0aW9uIGlkcw0Kc3VjaCBhcyAgImJ1c19jayIsICJwaXhfY2siIGluIG9yZGVyIHRvIHVz
-ZSBTQ0xLX0xDRCBvciBTQ0xLX0ZJTUQuDQpNb3Jlb3ZlciwgJ2xjZCcgaW4gczVwdjIxMCBzaG91
-bGQgYmUgY2hhbmdlZCB0byAnZmltZCcgYWNjb3JkaW5nIHRvIHM1cHYyMTAgZGF0YXNoZWV0Lg0K
-SG93ZXZlciwgaXQgcmVxdXJlcyBtYW55IHdvcmtzIHRvIGNvbnZlcnQuDQoNClNvLCBJIHRoaW5r
-IHRoYXQgJ3R3byBjbG9jayBjb25uZWN0aW9uIGlkcycgcGF0Y2ggd291bGQgYmUgc3VibWl0dGVk
-IGxhdGVyLA0KYWZ0ZXIgY29tbWl0dGluZyB0aGUgcGF0Y2hlcyB0aGF0IEkgc3VibWl0dGVkIG9u
-IGxhc3QgRnJpZGF5Lg0KDQoNCk9uIDA2LzE5LzIwMTEgMjM6MzkgQU0sIFN5bHdlc3RlciBOYXdy
-b2NraSB3cm90ZToNCj4gSGkgSmluZ29vLA0KPiANCj4gT24gMDYvMTcvMjAxMSAwMzowMSBQTSwg
-SmluZ29vIEhhbiB3cm90ZToNCj4gPiBUaGlzIHBhdGNoIGNoYW5nZXMgY2xvY2sgbmFtZSBmb3Ig
-RklNRCBmcm9tICJmaW1kIiB0byAibGNkIi4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEppbmdv
-byBIYW48amcxLmhhbkBzYW1zdW5nLmNvbT4NCj4gPiAtLS0NCj4gPiAgIGFyY2gvYXJtL21hY2gt
-ZXh5bm9zNC9jbG9jay5jIHwgICAgNCArKy0tDQo+ID4gICAxIGZpbGVzIGNoYW5nZWQsIDIgaW5z
-ZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL2Fy
-bS9tYWNoLWV4eW5vczQvY2xvY2suYw0KPiA+IGIvYXJjaC9hcm0vbWFjaC1leHlub3M0L2Nsb2Nr
-LmMgaW5kZXggODcxZjlkNS4uMTJlNjg1MyAxMDA2NDQNCj4gPiAtLS0gYS9hcmNoL2FybS9tYWNo
-LWV4eW5vczQvY2xvY2suYw0KPiA+ICsrKyBiL2FyY2gvYXJtL21hY2gtZXh5bm9zNC9jbG9jay5j
-DQo+ID4gQEAgLTQzMywxMiArNDMzLDEyIEBAIHN0YXRpYyBzdHJ1Y3QgY2xrIGluaXRfY2xvY2tz
-X29mZltdID0gew0KPiA+ICAgICAuZW5hYmxlICA9IGV4eW5vczRfY2xrX2lwX2NhbV9jdHJsLA0K
-PiA+ICAgICAuY3RybGJpdCA9ICgxPDwgIDMpLA0KPiA+ICAgIH0sIHsNCj4gPiAtICAubmFtZSAg
-PSAiZmltZCIsDQo+ID4gKyAgLm5hbWUgID0gImxjZCIsDQo+ID4gICAgIC5pZCAgPSAwLA0KPiA+
-ICAgICAuZW5hYmxlICA9IGV4eW5vczRfY2xrX2lwX2xjZDBfY3RybCwNCj4gDQo+IEkgdGhpbmsg
-d2UncmUgaW5ldml0YWJseSBoZWFkaW5nIHRvIGRpc2FzdGVyIHdpdGggdGhpcyBraW5kIG9mIGlt
-cGxpY2l0DQo+IGNsb2NrcyBtYXBwaW5nIGFjcm9zcyB2YXJpb3VzIFNvQ3MuIEl0IGlzIGdldHRp
-bmcgaGFyZGVyIHRvIGZpZ3VyZSBvdXQNCj4gd2hhdCdzIGdvaW5nIG9uIHdpdGggZXZlcnkgbmV3
-IFNvQyBzdXBwb3J0IGFkZGVkLg0KPiBUaGUgImZpbWQiIGNsb2NrIGluIHRoaXMgY2FzZSAoZXh5
-bm9zNCkgaXMgbm90IHJlYWxseSBhIEhDTEsgY2xvY2ssIGxpa2UsDQo+IGZvciBpbnN0YW5jZSwg
-aW4gY2FzZSBvZiBzNXB2MjEwLiBCdXQgYWZ0ZXIgdGhpcyBwYXRjaCB0aGV5IHdvdWxkIGJvdGgg
-YmUNCj4gbmFtZWQgImxjZCIuIFlvdSBjYW5ub3Qgc2V0IGZyZXF1ZW5jeSBvbiAiZmltZCIgY2xv
-Y2ssIGl0IGlzIG9ubHkgZm9yDQo+IGdhdGluZyB0aGUgYnVzIGNsb2NrIHRvIHRoZSBMQ0QgY29u
-dHJvbGxlciwgcmlnaHQgPyBXaGVyZWFzICJsY2QiDQo+IGluZGljYXRlcyBIQ0xLIG9uIHM1cHYy
-MTAgYW5kIGNhbiBhbHNvIGJlIHVzZWQgdG8gZ2VuZXJhdGUgdGhlIExDRCBwaXhlbA0KPiBjbG9j
-ay4NCj4gSSBrbm93IHlvdSBhcmUgbm90IGdvaW5nIHRvIHVzZSAibGNkIiBjbG9jayBpbiB0aGUg
-ZHJpdmVyIGZvciBzZXR0aW5nIHVwDQo+IHRoZSBwaXhlbCBjbG9jayBmcmVxdWVuY3kgb24gZXh5
-bm9zNCBidXQgaXQncyBhbGwgY29uZnVzaW5nIHRoaXMgd2F5Lg0KPiANCj4gSSBkdWcgaW4gdGhl
-IGRhdGFzaGVldHMgYW5kIGl0IGxvb2tzIGxpa2UgdGhlIExDRCBjb250cm9sbGVyJ3MgSVAgbWFp
-bg0KPiAoYnVzKSBjbG9jayBpcyBuYW1lZCBIQ0xLIHRoZXJlIGFuZCAibGNkIiB0aHJvdWdob3V0
-IHRoZSBjb2RlLg0KPiANCj4gICAgICAgICAgIHwgTENEIGNvbnRyb2xsZXIgICAgfCAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICB8DQo+ICAgICAgICAgICB8IChJUCBjb3JlKSBjbG9jayAgIHwg
-TENEIHBpeGVsIGNsb2NrICAgICAgICAgICAgfA0KPiAtLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsNCj4gczNjMjQ0MCAgIHwgIEhDTEsg
-KGxjZCkgICAgICAgfCB4ICB8ICBOL0EgPyAgICAgICAgICAgICAgICB8DQo+IC0tLS0tLS0tLS0r
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKw0KPiBzM2M2
-NDEwICAgfCAgSENMSyAobGNkKSAgICAgICB8IHggIHwgIExDRCAgICAgICAgICAgICAgICAgIHwN
-Cj4gLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0rDQo+IHM1cGMxMDAgICB8ICBIQ0xLIChsY2QpICAgICAgIHwgeCAgfCAgU0NMS19MQ0Qg
-IChzY2xrX2xjZCkgfA0KPiAtLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLSsNCj4gczVwdjIxMCAgIHwgIEhDTEsoX0RTWVMpIChsY2QpfCB4
-ICB8ICBTQ0xLX0ZJTUQgKHNjbGtfZmltZCl8DQo+IC0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0rDQo+IGV4eW5vczQgICB8ICA/ICAgICAg
-ICAgICAgICAgIHwgLSAgfCAgU0NMS19GSU1EPyhzY2xrX2ZpbWQpfA0KPiAtLS0tLS0tLS0tKy0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsNCj4gDQo+IEkg
-dGhpbmsgd2UgY291bGQgdHJ5IHRvIGNyZWF0ZSB0d28gY2xvY2sgY29ubmVjdGlvbiBpZHMgdG8g
-dGhlIGZyYW1lYnVmZmVyDQo+IGRldmljZSBpbiB0aGUgZmlyc3QgcGxhY2UsIGUuZy4gImJ1c19j
-ayIsICJwaXhfY2siLg0KPiBBbmQgdGhlbiB0aGluayBhYm91dCBob3cgaGFuZGxlIHRoYXQgaW4g
-dGhlIGRyaXZlci4NCj4gDQo+IEJ1dCB0aGlzIHJlcXVpcmVzIGNvbnZlcnNpb24gdG8gdGhlIG9t
-YXAtc3R5bGUgY2xvY2sgcmVnaXN0cmF0aW9uIG1ldGhvZCwNCj4gc29tZXRoaW5nIGxpa2UgaW4g
-dGhlIGF0dGFjaGVkIHBhdGNoLiBUaGUgcGF0Y2ggaXMgb25seSBmb3IgczVwdjIxMCBhbmQNCj4g
-YW5kIGNvbXBpbGUgdGVzdGVkIG9ubHkgYXMgSSBkaWRuJ3QgaGF2ZSBhbnkgYm9hcmQgdG8gdGVz
-dCBpdCBoZXJlLg0KPiBJdCdzIGJhc2VkIG9uIGZvci1uZXh0IGJyYW5jaCBhdCBodHRwOi8vdGlu
-eXVybC5jb20vNnl6cmF2eSBJIHRoaW5rIHRoZXJlDQo+IG1pZ2h0IGJlIG1vcmUgaXNzdWVzIHRv
-IGNvbnZlcnQgdGhlIG9sZCBzM2MyNHh4IHBsYXRmb3JtcywgbmV2ZXJ0aGVsZXNzDQo+IHRoZSBh
-dHRhY2hlZCBwYXRjaCBzaG91bGQgbm90IGFmZmVjdCB0aGVtLg0KPiANCj4gLS0NCj4gUmVnYXJk
-cywNCj4gU3lsd2VzdGVy
+This patch adds chained IRQ enter/exit functions to uart
+interrupt handler in order to function correctly on primary
+controllers with different methods of flow control.
+
+Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+---
+ arch/arm/plat-samsung/irq-uart.c |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/plat-samsung/irq-uart.c b/arch/arm/plat-samsung/irq-uart.c
+index 32582c0..8960eaf 100644
+--- a/arch/arm/plat-samsung/irq-uart.c
++++ b/arch/arm/plat-samsung/irq-uart.c
+@@ -19,6 +19,8 @@
+ #include <linux/irq.h>
+ #include <linux/io.h>
+ 
++#include <asm/mach/irq.h>
++
+ #include <mach/map.h>
+ #include <plat/irq-uart.h>
+ #include <plat/regs-serial.h>
+@@ -30,9 +32,12 @@
+ static void s3c_irq_demux_uart(unsigned int irq, struct irq_desc *desc)
+ {
+ 	struct s3c_uart_irq *uirq = desc->irq_data.handler_data;
++	struct irq_chip *chip = irq_get_chip(irq);
+ 	u32 pend = __raw_readl(uirq->regs + S3C64XX_UINTP);
+ 	int base = uirq->base_irq;
+ 
++	chained_irq_enter(chip, desc);
++
+ 	if (pend & (1 << 0))
+ 		generic_handle_irq(base);
+ 	if (pend & (1 << 1))
+@@ -41,6 +46,8 @@ static void s3c_irq_demux_uart(unsigned int irq, struct irq_desc *desc)
+ 		generic_handle_irq(base + 2);
+ 	if (pend & (1 << 3))
+ 		generic_handle_irq(base + 3);
++
++	chained_irq_exit(chip, desc);
+ }
+ 
+ static void __init s3c_init_uart_irq(struct s3c_uart_irq *uirq)
+-- 
+1.7.1
