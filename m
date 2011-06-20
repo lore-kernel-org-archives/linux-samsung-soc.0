@@ -1,12 +1,12 @@
 From: Changhwan Youn <chaos.youn@samsung.com>
-Subject: [PATCH 5/7] ARM: EXYNOS4: Add support external GIC
-Date: Mon, 20 Jun 2011 16:34:16 +0900
-Message-ID: <1308555258-4322-6-git-send-email-chaos.youn@samsung.com>
+Subject: [PATCH 2/7] ARM: EXYNOS4: modify interrupt mappings for external GIC
+Date: Mon, 20 Jun 2011 16:34:13 +0900
+Message-ID: <1308555258-4322-3-git-send-email-chaos.youn@samsung.com>
 References: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:58682 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:58678 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753399Ab1FTHlZ (ORCPT
+	with ESMTP id S1753395Ab1FTHlZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Mon, 20 Jun 2011 03:41:25 -0400
 In-Reply-To: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
@@ -15,133 +15,242 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: ben-linux@fluff.org, kgene.kim@samsung.com, Changhwan Youn <chaos.youn@samsung.com>
 
-For full support of power modes, this patch adds implementation
-external GIC on EXYNOS4.
-
-External GIC of Exynos4 cannot support register banking so
-several interrupt related code for CPU1 should be different
-from that of CPU0.
+To support external GIC needs to update mapping of interrupt number.
+This patch modifies it for external GIC and accordingly removes
+the unused code.
 
 Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
 ---
- arch/arm/mach-exynos4/cpu.c                      |   10 ++++++++
- arch/arm/mach-exynos4/include/mach/entry-macro.S |    5 ++++
- arch/arm/mach-exynos4/include/mach/map.h         |    1 +
- arch/arm/mach-exynos4/platsmp.c                  |   27 +++++++++++++++++++++-
- 4 files changed, 42 insertions(+), 1 deletions(-)
+ arch/arm/mach-exynos4/cpu.c               |    8 --
+ arch/arm/mach-exynos4/include/mach/irqs.h |  188 ++++++++++++++---------------
+ 2 files changed, 93 insertions(+), 103 deletions(-)
 
 diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
-index fa33294..40a866c 100644
+index 6a1ed74..fa33294 100644
 --- a/arch/arm/mach-exynos4/cpu.c
 +++ b/arch/arm/mach-exynos4/cpu.c
-@@ -16,6 +16,7 @@
- 
- #include <asm/proc-fns.h>
- #include <asm/hardware/cache-l2x0.h>
-+#include <asm/hardware/gic.h>
- 
- #include <plat/cpu.h>
- #include <plat/clock.h>
-@@ -159,11 +160,20 @@ void __init exynos4_init_clocks(int xtal)
- 	exynos4_setup_clocks();
- }
- 
-+static void exynos4_gic_irq_eoi(struct irq_data *d)
-+{
-+	struct gic_chip_data *gic_data = irq_data_get_irq_chip_data(d);
-+
-+	gic_data->cpu_base = S5P_VA_GIC_CPU +
-+			    (EXYNOS4_GIC_BANK_OFFSET * smp_processor_id());
-+}
-+
- void __init exynos4_init_irq(void)
- {
- 	int irq;
- 
- 	gic_init(0, IRQ_LOCALTIMER, S5P_VA_GIC_DIST, S5P_VA_GIC_CPU);
-+	gic_arch_extn.irq_eoi = exynos4_gic_irq_eoi;
+@@ -167,14 +167,6 @@ void __init exynos4_init_irq(void)
  
  	for (irq = 0; irq < MAX_COMBINER_NR; irq++) {
  
-diff --git a/arch/arm/mach-exynos4/include/mach/entry-macro.S b/arch/arm/mach-exynos4/include/mach/entry-macro.S
-index d8f38c2..4fad076 100644
---- a/arch/arm/mach-exynos4/include/mach/entry-macro.S
-+++ b/arch/arm/mach-exynos4/include/mach/entry-macro.S
-@@ -10,6 +10,7 @@
- */
+-		/*
+-		 * From SPI(0) to SPI(39) and SPI(51), SPI(53) are
+-		 * connected to the interrupt combiner. These irqs
+-		 * should be initialized to support cascade interrupt.
+-		 */
+-		if ((irq >= 40) && !(irq == 51) && !(irq == 53))
+-			continue;
+-
+ 		combiner_init(irq, (void __iomem *)S5P_VA_COMBINER(irq),
+ 				COMBINER_IRQ(irq, 0));
+ 		combiner_cascade_irq(irq, IRQ_SPI(irq));
+diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-exynos4/include/mach/irqs.h
+index 5d03730..e497ea2 100644
+--- a/arch/arm/mach-exynos4/include/mach/irqs.h
++++ b/arch/arm/mach-exynos4/include/mach/irqs.h
+@@ -25,34 +25,100 @@
  
- #include <mach/hardware.h>
-+#include <mach/map.h>
- #include <asm/hardware/gic.h>
+ #define IRQ_SPI(x)		S5P_IRQ(x+32)
  
- 		.macro	disable_fiq
-@@ -18,6 +19,10 @@
- 		.macro  get_irqnr_preamble, base, tmp
- 		ldr	\base, =gic_cpu_base_addr
- 		ldr	\base, [\base]
-+		mrc     p15, 0, \tmp, c0, c0, 5
-+		and     \tmp, \tmp, #3
-+		cmp     \tmp, #1
-+		addeq   \base, \base, #EXYNOS4_GIC_BANK_OFFSET
- 		.endm
- 
- 		.macro  arch_ret_to_user, tmp1, tmp2
-diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
-index 9d5d797..2339a70 100644
---- a/arch/arm/mach-exynos4/include/mach/map.h
-+++ b/arch/arm/mach-exynos4/include/mach/map.h
-@@ -63,6 +63,7 @@
- 
- #define EXYNOS4_PA_GIC_CPU		0x10480000
- #define EXYNOS4_PA_GIC_DIST		0x10490000
-+#define EXYNOS4_GIC_BANK_OFFSET		0x8000
- 
- #define EXYNOS4_PA_COREPERI		0x10500000
- #define EXYNOS4_PA_TWD			0x10500600
-diff --git a/arch/arm/mach-exynos4/platsmp.c b/arch/arm/mach-exynos4/platsmp.c
-index c5e65a0..decf528 100644
---- a/arch/arm/mach-exynos4/platsmp.c
-+++ b/arch/arm/mach-exynos4/platsmp.c
-@@ -58,6 +58,31 @@ static void __iomem *scu_base_addr(void)
- 
- static DEFINE_SPINLOCK(boot_lock);
- 
-+static void __cpuinit exynos4_gic_secondary_init(void)
-+{
-+	void __iomem *dist_base = S5P_VA_GIC_DIST +
-+				 (EXYNOS4_GIC_BANK_OFFSET * smp_processor_id());
-+	void __iomem *cpu_base = S5P_VA_GIC_CPU +
-+				(EXYNOS4_GIC_BANK_OFFSET * smp_processor_id());
-+	int i;
+-#define IRQ_MCT1		IRQ_SPI(35)
+-
+-#define IRQ_EINT0		IRQ_SPI(40)
+-#define IRQ_EINT1		IRQ_SPI(41)
+-#define IRQ_EINT2		IRQ_SPI(42)
+-#define IRQ_EINT3		IRQ_SPI(43)
+-#define IRQ_USB_HSOTG		IRQ_SPI(44)
+-#define IRQ_USB_HOST		IRQ_SPI(45)
+-#define IRQ_MODEM_IF		IRQ_SPI(46)
+-#define IRQ_ROTATOR		IRQ_SPI(47)
+-#define IRQ_JPEG		IRQ_SPI(48)
+-#define IRQ_2D			IRQ_SPI(49)
+-#define IRQ_PCIE		IRQ_SPI(50)
+-#define IRQ_MCT0		IRQ_SPI(51)
+-#define IRQ_MFC			IRQ_SPI(52)
+-#define IRQ_AUDIO_SS		IRQ_SPI(54)
+-#define IRQ_AC97		IRQ_SPI(55)
+-#define IRQ_SPDIF		IRQ_SPI(56)
+-#define IRQ_KEYPAD		IRQ_SPI(57)
+-#define IRQ_INTFEEDCTRL_SSS	IRQ_SPI(58)
+-#define IRQ_SLIMBUS		IRQ_SPI(59)
+-#define IRQ_PMU			IRQ_SPI(60)
+-#define IRQ_TSI			IRQ_SPI(61)
+-#define IRQ_SATA		IRQ_SPI(62)
+-#define IRQ_GPS			IRQ_SPI(63)
++#define IRQ_EINT0		IRQ_SPI(16)
++#define IRQ_EINT1		IRQ_SPI(17)
++#define IRQ_EINT2		IRQ_SPI(18)
++#define IRQ_EINT3		IRQ_SPI(19)
++#define IRQ_EINT4		IRQ_SPI(20)
++#define IRQ_EINT5		IRQ_SPI(21)
++#define IRQ_EINT6		IRQ_SPI(22)
++#define IRQ_EINT7		IRQ_SPI(23)
++#define IRQ_EINT8		IRQ_SPI(24)
++#define IRQ_EINT9		IRQ_SPI(25)
++#define IRQ_EINT10		IRQ_SPI(26)
++#define IRQ_EINT11		IRQ_SPI(27)
++#define IRQ_EINT12		IRQ_SPI(28)
++#define IRQ_EINT13		IRQ_SPI(29)
++#define IRQ_EINT14		IRQ_SPI(30)
++#define IRQ_EINT15		IRQ_SPI(31)
++#define IRQ_EINT16_31		IRQ_SPI(32)
 +
-+	/*
-+	 * Deal with the banked PPI and SGI interrupts - disable all
-+	 * PPI interrupts, ensure all SGI interrupts are enabled.
-+	 */
-+	__raw_writel(0xffff0000, dist_base + GIC_DIST_ENABLE_CLEAR);
-+	__raw_writel(0x0000ffff, dist_base + GIC_DIST_ENABLE_SET);
++#define IRQ_PDMA0		IRQ_SPI(35)
++#define IRQ_PDMA1		IRQ_SPI(36)
++#define IRQ_TIMER0_VIC		IRQ_SPI(37)
++#define IRQ_TIMER1_VIC		IRQ_SPI(38)
++#define IRQ_TIMER2_VIC		IRQ_SPI(39)
++#define IRQ_TIMER3_VIC		IRQ_SPI(40)
++#define IRQ_TIMER4_VIC		IRQ_SPI(41)
++#define IRQ_MCT_L0		IRQ_SPI(42)
++#define IRQ_WDT			IRQ_SPI(43)
++#define IRQ_RTC_ALARM		IRQ_SPI(44)
++#define IRQ_RTC_TIC		IRQ_SPI(45)
++#define IRQ_GPIO_XB		IRQ_SPI(46)
++#define IRQ_GPIO_XA		IRQ_SPI(47)
++#define IRQ_MCT_L1		IRQ_SPI(48)
 +
-+	/*
-+	 * Set priority on PPI and SGI interrupts
-+	 */
-+	for (i = 0; i < 32; i += 4)
-+		__raw_writel(0xa0a0a0a0, dist_base + GIC_DIST_PRI + i * 4 / 4);
++#define IRQ_UART0		IRQ_SPI(52)
++#define IRQ_UART1		IRQ_SPI(53)
++#define IRQ_UART2		IRQ_SPI(54)
++#define IRQ_UART3		IRQ_SPI(55)
++#define IRQ_UART4		IRQ_SPI(56)
++#define IRQ_MCT_G0		IRQ_SPI(57)
++#define IRQ_IIC			IRQ_SPI(58)
++#define IRQ_IIC1		IRQ_SPI(59)
++#define IRQ_IIC2		IRQ_SPI(60)
++#define IRQ_IIC3		IRQ_SPI(61)
++#define IRQ_IIC4		IRQ_SPI(62)
++#define IRQ_IIC5		IRQ_SPI(63)
++#define IRQ_IIC6		IRQ_SPI(64)
++#define IRQ_IIC7		IRQ_SPI(65)
 +
-+	__raw_writel(0xf0, cpu_base + GIC_CPU_PRIMASK);
-+	__raw_writel(1, cpu_base + GIC_CPU_CTRL);
-+}
++#define IRQ_USB_HOST		IRQ_SPI(70)
++#define IRQ_USB_HSOTG		IRQ_SPI(71)
++#define IRQ_MODEM_IF		IRQ_SPI(72)
++#define IRQ_HSMMC0		IRQ_SPI(73)
++#define IRQ_HSMMC1		IRQ_SPI(74)
++#define IRQ_HSMMC2		IRQ_SPI(75)
++#define IRQ_HSMMC3		IRQ_SPI(76)
 +
- void __cpuinit platform_secondary_init(unsigned int cpu)
- {
- 	/*
-@@ -65,7 +90,7 @@ void __cpuinit platform_secondary_init(unsigned int cpu)
- 	 * core (e.g. timer irq), then they will not have been enabled
- 	 * for us: do so
- 	 */
--	gic_secondary_init(0);
-+	exynos4_gic_secondary_init();
++#define IRQ_MIPICSI0		IRQ_SPI(78)
++
++#define IRQ_MIPICSI1		IRQ_SPI(80)
++
++#define IRQ_ONENAND_AUDI	IRQ_SPI(82)
++#define IRQ_ROTATOR		IRQ_SPI(83)
++#define IRQ_FIMC0		IRQ_SPI(84)
++#define IRQ_FIMC1		IRQ_SPI(85)
++#define IRQ_FIMC2		IRQ_SPI(86)
++#define IRQ_FIMC3		IRQ_SPI(87)
++#define IRQ_JPEG		IRQ_SPI(88)
++#define IRQ_2D			IRQ_SPI(89)
++#define IRQ_PCIE		IRQ_SPI(90)
++
++#define IRQ_MFC			IRQ_SPI(94)
++
++#define IRQ_AUDIO_SS		IRQ_SPI(96)
++#define IRQ_I2S0		IRQ_SPI(97)
++#define IRQ_I2S1		IRQ_SPI(98)
++#define IRQ_I2S2		IRQ_SPI(99)
++#define IRQ_AC97		IRQ_SPI(100)
++
++#define IRQ_SPDIF		IRQ_SPI(104)
++#define IRQ_ADC0		IRQ_SPI(105)
++#define IRQ_PEN0		IRQ_SPI(106)
++#define IRQ_ADC1		IRQ_SPI(107)
++#define IRQ_PEN1		IRQ_SPI(108)
++#define IRQ_KEYPAD		IRQ_SPI(109)
++#define IRQ_PMU			IRQ_SPI(110)
++#define IRQ_GPS			IRQ_SPI(111)
++#define IRQ_INTFEEDCTRL_SSS	IRQ_SPI(112)
++#define IRQ_SLIMBUS		IRQ_SPI(113)
++
++#define IRQ_TSI			IRQ_SPI(115)
++#define IRQ_SATA		IRQ_SPI(116)
  
- 	/*
- 	 * let the primary processor know we're out of the
+ #define MAX_IRQ_IN_COMBINER	8
+-#define COMBINER_GROUP(x)	((x) * MAX_IRQ_IN_COMBINER + IRQ_SPI(64))
++#define COMBINER_GROUP(x)	((x) * MAX_IRQ_IN_COMBINER + IRQ_SPI(128))
+ #define COMBINER_IRQ(x, y)	(COMBINER_GROUP(x) + y)
+ 
+ #define IRQ_SYSMMU_MDMA0_0	COMBINER_IRQ(4, 0)
+@@ -73,75 +139,7 @@
+ #define IRQ_SYSMMU_MFC_M1_0	COMBINER_IRQ(5, 6)
+ #define IRQ_SYSMMU_PCIE_0	COMBINER_IRQ(5, 7)
+ 
+-#define IRQ_PDMA0		COMBINER_IRQ(21, 0)
+-#define IRQ_PDMA1		COMBINER_IRQ(21, 1)
+-
+-#define IRQ_TIMER0_VIC		COMBINER_IRQ(22, 0)
+-#define IRQ_TIMER1_VIC		COMBINER_IRQ(22, 1)
+-#define IRQ_TIMER2_VIC		COMBINER_IRQ(22, 2)
+-#define IRQ_TIMER3_VIC		COMBINER_IRQ(22, 3)
+-#define IRQ_TIMER4_VIC		COMBINER_IRQ(22, 4)
+-
+-#define IRQ_RTC_ALARM		COMBINER_IRQ(23, 0)
+-#define IRQ_RTC_TIC		COMBINER_IRQ(23, 1)
+-
+-#define IRQ_GPIO_XB		COMBINER_IRQ(24, 0)
+-#define IRQ_GPIO_XA		COMBINER_IRQ(24, 1)
+-
+-#define IRQ_UART0		COMBINER_IRQ(26, 0)
+-#define IRQ_UART1		COMBINER_IRQ(26, 1)
+-#define IRQ_UART2		COMBINER_IRQ(26, 2)
+-#define IRQ_UART3		COMBINER_IRQ(26, 3)
+-#define IRQ_UART4		COMBINER_IRQ(26, 4)
+-
+-#define IRQ_IIC			COMBINER_IRQ(27, 0)
+-#define IRQ_IIC1		COMBINER_IRQ(27, 1)
+-#define IRQ_IIC2		COMBINER_IRQ(27, 2)
+-#define IRQ_IIC3		COMBINER_IRQ(27, 3)
+-#define IRQ_IIC4		COMBINER_IRQ(27, 4)
+-#define IRQ_IIC5		COMBINER_IRQ(27, 5)
+-#define IRQ_IIC6		COMBINER_IRQ(27, 6)
+-#define IRQ_IIC7		COMBINER_IRQ(27, 7)
+-
+-#define IRQ_HSMMC0		COMBINER_IRQ(29, 0)
+-#define IRQ_HSMMC1		COMBINER_IRQ(29, 1)
+-#define IRQ_HSMMC2		COMBINER_IRQ(29, 2)
+-#define IRQ_HSMMC3		COMBINER_IRQ(29, 3)
+-
+-#define IRQ_MIPI_CSIS0		COMBINER_IRQ(30, 0)
+-#define IRQ_MIPI_CSIS1		COMBINER_IRQ(30, 1)
+-
+-#define IRQ_FIMC0		COMBINER_IRQ(32, 0)
+-#define IRQ_FIMC1		COMBINER_IRQ(32, 1)
+-#define IRQ_FIMC2		COMBINER_IRQ(33, 0)
+-#define IRQ_FIMC3		COMBINER_IRQ(33, 1)
+-
+-#define IRQ_ONENAND_AUDI	COMBINER_IRQ(34, 0)
+-
+-#define IRQ_MCT_L1		COMBINER_IRQ(35, 3)
+-
+-#define IRQ_EINT4		COMBINER_IRQ(37, 0)
+-#define IRQ_EINT5		COMBINER_IRQ(37, 1)
+-#define IRQ_EINT6		COMBINER_IRQ(37, 2)
+-#define IRQ_EINT7		COMBINER_IRQ(37, 3)
+-#define IRQ_EINT8		COMBINER_IRQ(38, 0)
+-
+-#define IRQ_EINT9		COMBINER_IRQ(38, 1)
+-#define IRQ_EINT10		COMBINER_IRQ(38, 2)
+-#define IRQ_EINT11		COMBINER_IRQ(38, 3)
+-#define IRQ_EINT12		COMBINER_IRQ(38, 4)
+-#define IRQ_EINT13		COMBINER_IRQ(38, 5)
+-#define IRQ_EINT14		COMBINER_IRQ(38, 6)
+-#define IRQ_EINT15		COMBINER_IRQ(38, 7)
+-
+-#define IRQ_EINT16_31		COMBINER_IRQ(39, 0)
+-
+-#define IRQ_MCT_L0		COMBINER_IRQ(51, 0)
+-
+-#define IRQ_WDT			COMBINER_IRQ(53, 0)
+-#define IRQ_MCT_G0		COMBINER_IRQ(53, 4)
+-
+-#define MAX_COMBINER_NR		54
++#define MAX_COMBINER_NR		16
+ 
+ #define S5P_IRQ_EINT_BASE	COMBINER_IRQ(MAX_COMBINER_NR, 0)
+ 
 -- 
 1.7.1
