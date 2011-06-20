@@ -1,33 +1,28 @@
 From: Will Newton <will.newton@gmail.com>
-Subject: Re: [PATCH] mmc: dw_mmc: protect a sequence of request and request-done.
-Date: Mon, 20 Jun 2011 10:15:03 +0100
-Message-ID: <BANLkTin1p20oOAft+cfKYcxUVE6Fh065UA@mail.gmail.com>
-References: <1308558256-20824-1-git-send-email-tgih.jun@samsung.com>
+Subject: Re: [PATCH] mmc: dw_mmc: set the card_width bit per card.
+Date: Mon, 20 Jun 2011 10:15:29 +0100
+Message-ID: <BANLkTimUSAFF+P=ykHfG=GzbAjjaaxe_fA@mail.gmail.com>
+References: <1308558233-20545-1-git-send-email-tgih.jun@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:48676 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751204Ab1FTJPE (ORCPT
+Received: from mail-pv0-f174.google.com ([74.125.83.174]:50636 "EHLO
+	mail-pv0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751633Ab1FTJP3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Jun 2011 05:15:04 -0400
-In-Reply-To: <1308558256-20824-1-git-send-email-tgih.jun@samsung.com>
+	Mon, 20 Jun 2011 05:15:29 -0400
+In-Reply-To: <1308558233-20545-1-git-send-email-tgih.jun@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Seungwon Jeon <tgih.jun@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, akpm@linux-foundation.org, cjb@laptop.org, kgene.kim@samsung.com
 
-On Mon, Jun 20, 2011 at 9:24 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
-> Response timeout(RTO), Response crc error(RCRC) and Response error(RE)
-> signals come with command done(CD) and can be raised preceding command
-> done(CD). That is these error interrupts and CD can be handled in
-> separate dw_mci_interrupt(). If mmc_request_done() is called because of
-> response timeout before command done is occured, next request can be
-> sent, but CD of current request is not finished. This can bring about
-> a broken sequence of request and request-done.
+On Mon, Jun 20, 2011 at 9:23 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> This patch sets the card_width bit of CTYPE for the corresponding card.
 >
-> And Data error interrupt(DRTO, DCRC, SBE, EBE) and data transfer
-> over(DTO) are same reanson.
+> CTYPE[31] and CTYPE[16] correspond respectively to card[15] and card[0]
+> for 8-bit mode. And CTYPE[15] and CTYPE[0] correspond respectively to
+> card[15] and CTYPE[0] for 1-bit or 4-bit mode.
 >
 > Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
 
