@@ -1,74 +1,177 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 0/6] Add basic device tree support for Samsung's Exynos4
- platform
-Date: Mon, 20 Jun 2011 16:32:26 +0530
-Message-ID: <1308567752-13451-1-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH 1/6] serial: samsung: Keep a copy of platform data in driver's
+ private data
+Date: Mon, 20 Jun 2011 16:32:27 +0530
+Message-ID: <1308567752-13451-2-git-send-email-thomas.abraham@linaro.org>
+References: <1308567752-13451-1-git-send-email-thomas.abraham@linaro.org>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.samsung.com ([203.254.224.33]:48394 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751736Ab1FTKxH (ORCPT
+	with ESMTP id S1752126Ab1FTKxI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Jun 2011 06:53:07 -0400
+	Mon, 20 Jun 2011 06:53:08 -0400
 Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
  by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
  2010)) with ESMTP id <0LN300JC04WB33H0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 20 Jun 2011 19:53:05 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Mon, 20 Jun 2011 19:53:07 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.37])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0LN300JSM4W4PB@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 20 Jun 2011 19:53:05 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Mon, 20 Jun 2011 19:53:07 +0900 (KST)
+In-reply-to: <1308567752-13451-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: devicetree-discuss@lists.ozlabs.org
 Cc: linaro-dev@lists.linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, patches@linaro.org
 
-This patch series adds a basic device tree based boot for Samsung's Exynos4
-platforms and specifically for smdkv310 board. Device tree based driver
-probe is added for uart, sdhci and watchdog drivers. These patches
-enable booting to console on smdkv310 board with some of the devices
-initialized with data from the device tree.
+The driver depends on pdev->dev.platform_data to retrive information
+about the platform data even after the initialization. To add device
+tree support, this has to be changed in way that the platform data
+is avialable from driver's private data. This patch adds support
+for keeping a copy of the plaform data in s3c24xx_uart_info and using
+it when needed after the initialization.
 
-This patch series is based on
-git.secretlab.ca/git/linux-2.6.git devicetree/test
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ drivers/tty/serial/s5pv210.c |   12 ++++++++++--
+ drivers/tty/serial/samsung.c |   24 ++++++++++++++++++++----
+ drivers/tty/serial/samsung.h |    4 +++-
+ 3 files changed, 33 insertions(+), 7 deletions(-)
 
-and depends on the following patches which are not yet available in
-the devicetree/test branch.
-
-1. [PATCH] ARM: EXYNOS4: Fix card detection for sdhci 0 and 2
-[http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg04704.html]
-
-2. [PATCH] ARM: EXYNOS4: Fix missing S5P_VA_AUDSS definition
-[http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg04866.html]
-
-3. [PATCH 0/9] Add clkdev support for Samsung platforms
-[http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg04874.html]
-
-4. Consolidate the clkdev header files
-[http://patchwork.ozlabs.org/patch/97862/]
-
-Thomas Abraham (6):
-  serial: samsung: Keep a copy of platform data in driver's private data
-  serial: samsung: Add device tree support for s5pv210 uart driver
-  watchdog: s3c2410: Add support for device tree based probe
-  mmc: sdhci-s3c: Add support for device tree based probe
-  arm: dts: Add nodes in smdkv310 device tree source file
-  arm: exynos4: Add a new Exynos4 device tree enabled machine
-
- Documentation/devicetree/bindings/arm/samsung.txt  |    3 +-
- .../bindings/tty/serial/samsung_uart.txt           |   50 +++++++
- .../devicetree/bindings/watchdog/samsung-wdt.txt   |   12 ++
- arch/arm/boot/dts/exynos4-smdkv310.dts             |  135 +++++++++++++++++++-
- arch/arm/mach-exynos4/Kconfig                      |   11 ++
- arch/arm/mach-exynos4/Makefile                     |    1 +
- arch/arm/mach-exynos4/mach-exynos4-dt.c            |   94 ++++++++++++++
- drivers/mmc/host/sdhci-s3c.c                       |   11 ++
- drivers/tty/serial/s5pv210.c                       |   39 +++++-
- drivers/tty/serial/samsung.c                       |  114 ++++++++++++++++-
- drivers/tty/serial/samsung.h                       |    4 +-
- drivers/watchdog/s3c2410_wdt.c                     |   10 ++
- 12 files changed, 473 insertions(+), 11 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/tty/serial/samsung_uart.txt
- create mode 100644 Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
- create mode 100644 arch/arm/mach-exynos4/mach-exynos4-dt.c
+diff --git a/drivers/tty/serial/s5pv210.c b/drivers/tty/serial/s5pv210.c
+index d6b2423..3b2021a 100644
+--- a/drivers/tty/serial/s5pv210.c
++++ b/drivers/tty/serial/s5pv210.c
+@@ -27,9 +27,13 @@
+ static int s5pv210_serial_setsource(struct uart_port *port,
+ 					struct s3c24xx_uart_clksrc *clk)
+ {
+-	struct s3c2410_uartcfg *cfg = port->dev->platform_data;
++	struct s3c24xx_uart_port *ourport;
++	struct s3c2410_uartcfg *cfg;
+ 	unsigned long ucon = rd_regl(port, S3C2410_UCON);
+ 
++	ourport = container_of(port, struct s3c24xx_uart_port, port);
++	cfg = &ourport->info->cfg;
++
+ 	if ((cfg->clocks_size) == 1)
+ 		return 0;
+ 
+@@ -50,9 +54,13 @@ static int s5pv210_serial_setsource(struct uart_port *port,
+ static int s5pv210_serial_getsource(struct uart_port *port,
+ 					struct s3c24xx_uart_clksrc *clk)
+ {
+-	struct s3c2410_uartcfg *cfg = port->dev->platform_data;
++	struct s3c24xx_uart_port *ourport;
++	struct s3c2410_uartcfg *cfg;
+ 	u32 ucon = rd_regl(port, S3C2410_UCON);
+ 
++	ourport = container_of(port, struct s3c24xx_uart_port, port);
++	cfg = &ourport->info->cfg;
++
+ 	clk->divisor = 1;
+ 
+ 	if ((cfg->clocks_size) == 1)
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index 7ead421..77d900f 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -42,6 +42,7 @@
+ #include <linux/delay.h>
+ #include <linux/clk.h>
+ #include <linux/cpufreq.h>
++#include <linux/slab.h>
+ 
+ #include <asm/irq.h>
+ 
+@@ -169,10 +170,13 @@ static inline struct s3c24xx_uart_info *s3c24xx_port_to_info(struct uart_port *p
+ 
+ static inline struct s3c2410_uartcfg *s3c24xx_port_to_cfg(struct uart_port *port)
+ {
++	struct s3c24xx_uart_port *ourport;
++
+ 	if (port->dev == NULL)
+ 		return NULL;
+ 
+-	return (struct s3c2410_uartcfg *)port->dev->platform_data;
++	ourport = container_of(port, struct s3c24xx_uart_port, port);
++	return &ourport->info->cfg;
+ }
+ 
+ static int s3c24xx_serial_rx_fifocnt(struct s3c24xx_uart_port *ourport,
+@@ -1053,7 +1057,7 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
+ 				    struct platform_device *platdev)
+ {
+ 	struct uart_port *port = &ourport->port;
+-	struct s3c2410_uartcfg *cfg;
++	struct s3c2410_uartcfg *cfg = platdev->dev.platform_data;
+ 	struct resource *res;
+ 	int ret;
+ 
+@@ -1062,14 +1066,24 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
+ 	if (platdev == NULL)
+ 		return -ENODEV;
+ 
+-	cfg = s3c24xx_dev_to_cfg(&platdev->dev);
+-
+ 	if (port->mapbase != 0)
+ 		return 0;
+ 
++	if (cfg) {
++		memcpy((void *)&info->cfg, cfg, sizeof(struct s3c2410_uartcfg));
++		info->cfg.clocks = kzalloc(sizeof(struct s3c24xx_uart_clksrc) *
++					cfg->clocks_size, GFP_KERNEL);
++		if (!info->cfg.clocks)
++			return -ENOMEM;
++		memcpy(info->cfg.clocks, cfg->clocks,
++			sizeof(struct s3c24xx_uart_clksrc) * cfg->clocks_size);
++	}
++
++	cfg = &info->cfg;
+ 	if (cfg->hwport > CONFIG_SERIAL_SAMSUNG_UARTS) {
+ 		printk(KERN_ERR "%s: port %d bigger than %d\n", __func__,
+ 		       cfg->hwport, CONFIG_SERIAL_SAMSUNG_UARTS);
++		kfree(info->cfg.clocks);
+ 		return -ERANGE;
+ 	}
+ 
+@@ -1181,11 +1195,13 @@ EXPORT_SYMBOL_GPL(s3c24xx_serial_probe);
+ int __devexit s3c24xx_serial_remove(struct platform_device *dev)
+ {
+ 	struct uart_port *port = s3c24xx_dev_to_port(&dev->dev);
++	struct s3c24xx_uart_info *info = s3c24xx_port_to_info(port);
+ 
+ 	if (port) {
+ 		s3c24xx_serial_cpufreq_deregister(to_ourport(port));
+ 		device_remove_file(&dev->dev, &dev_attr_clock_source);
+ 		uart_remove_one_port(&s3c24xx_uart_drv, port);
++		kfree(info->cfg.clocks);
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/tty/serial/samsung.h b/drivers/tty/serial/samsung.h
+index a69d9a5..4f2f6f5 100644
+--- a/drivers/tty/serial/samsung.h
++++ b/drivers/tty/serial/samsung.h
+@@ -24,6 +24,9 @@ struct s3c24xx_uart_info {
+ 
+ 	unsigned int		has_divslot:1;
+ 
++	/* copy of platform data */
++	struct s3c2410_uartcfg	cfg;
++
+ 	/* clock source control */
+ 
+ 	int (*get_clksrc)(struct uart_port *, struct s3c24xx_uart_clksrc *clk);
+@@ -56,7 +59,6 @@ struct s3c24xx_uart_port {
+ /* conversion functions */
+ 
+ #define s3c24xx_dev_to_port(__dev) (struct uart_port *)dev_get_drvdata(__dev)
+-#define s3c24xx_dev_to_cfg(__dev) (struct s3c2410_uartcfg *)((__dev)->platform_data)
+ 
+ /* register access controls */
+ 
+-- 
+1.6.6.rc2
