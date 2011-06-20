@@ -1,43 +1,52 @@
-From: Changhwan Youn <chaos.youn@samsung.com>
-Subject: [PATCH 3/7] ARM: EXYNOS4: set the affinity of mct1 interrupt using IRQ_MCT_L1
-Date: Mon, 20 Jun 2011 16:34:14 +0900
-Message-ID: <1308555258-4322-4-git-send-email-chaos.youn@samsung.com>
-References: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:58688 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753409Ab1FTHlZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Jun 2011 03:41:25 -0400
-In-Reply-To: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: [PATCH] mmc: dw_mmc: protect a sequence of request and request-done.
+Date: Mon, 20 Jun 2011 17:24:16 +0900
+Message-ID: <1308558256-20824-1-git-send-email-tgih.jun@samsung.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
+Cc: akpm@linux-foundation.org, cjb@laptop.org, kgene.kim@samsung.com, Seungwon Jeon <tgih.jun@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com, Changhwan Youn <chaos.youn@samsung.com>
 
-IRQ_MCT_L1 is connected directly to GIC in external GIC mapping,
-while in internal GIC mapping, it is connected to GIC through
-interrupt combiner. Therfore the affinity for mct1 event timer
-interrupt should be changed through IRQ_MCT_L1.
+Response timeout(RTO), Response crc error(RCRC) and Response error(RE)
+signals come with command done(CD) and can be raised preceding command
+done(CD). That is these error interrupts and CD can be handled in
+separate dw_mci_interrupt(). If mmc_request_done() is called because of
+response timeout before command done is occured, next request can be
+sent, but CD of current request is not finished. This can bring about
+a broken sequence of request and request-done.
 
-Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+And Data error interrupt(DRTO, DCRC, SBE, EBE) and data transfer
+over(DTO) are same reanson.
+
+Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
 ---
- arch/arm/mach-exynos4/mct.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/mmc/host/dw_mmc.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-exynos4/mct.c b/arch/arm/mach-exynos4/mct.c
-index 14ac10b..1ae059b 100644
---- a/arch/arm/mach-exynos4/mct.c
-+++ b/arch/arm/mach-exynos4/mct.c
-@@ -383,8 +383,8 @@ static void exynos4_mct_tick_init(struct clock_event_device *evt)
- 		setup_irq(IRQ_MCT_L0, &mct_tick0_event_irq);
- 	} else {
- 		mct_tick1_event_irq.dev_id = &mct_tick[cpu];
--		irq_set_affinity(IRQ_MCT1, cpumask_of(1));
- 		setup_irq(IRQ_MCT_L1, &mct_tick1_event_irq);
-+		irq_set_affinity(IRQ_MCT_L1, cpumask_of(1));
- 	}
- }
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 1ca830c..22be372 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -1202,7 +1202,6 @@ static irqreturn_t dw_mci_interrupt(int irq, void *dev_id)
+ 			host->cmd_status = status;
+ 			smp_wmb();
+ 			set_bit(EVENT_CMD_COMPLETE, &host->pending_events);
+-			tasklet_schedule(&host->tasklet);
+ 		}
  
+ 		if (pending & DW_MCI_DATA_ERROR_FLAGS) {
+@@ -1211,7 +1210,9 @@ static irqreturn_t dw_mci_interrupt(int irq, void *dev_id)
+ 			host->data_status = status;
+ 			smp_wmb();
+ 			set_bit(EVENT_DATA_ERROR, &host->pending_events);
+-			tasklet_schedule(&host->tasklet);
++			if (!(pending & (SDMMC_INT_DTO | SDMMC_INT_DCRC |
++					 SDMMC_INT_SBE | SDMMC_INT_EBE)))
++				tasklet_schedule(&host->tasklet);
+ 		}
+ 
+ 		if (pending & SDMMC_INT_DATA_OVER) {
 -- 
 1.7.1
+
