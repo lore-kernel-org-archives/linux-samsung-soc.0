@@ -1,168 +1,693 @@
 From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH v2 1/5] Samsung SoC ADC: use regulator (VDD for ADC).
-Date: Tue, 21 Jun 2011 10:58:43 +0900
-Message-ID: <1308621527-2457-2-git-send-email-myungjoo.ham@samsung.com>
-References: <20110620101737.GA31864@opensource.wolfsonmicro.com>
-	<1308621527-2457-1-git-send-email-myungjoo.ham@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1308621527-2457-1-git-send-email-myungjoo.ham@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, dg77.kim@samsung.com, myungjoo.ham@gmail.com, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 1/4] Exynos4 NURI: configure regulators and PMIC
+Date: Tue, 21 Jun 2011 11:07:10 +0900
+Message-ID: <1308622033-2521-2-git-send-email-myungjoo.ham@samsung.com>
+References: <20110620103124.GD31864@opensource.wolfsonmicro.com>
+ <1308622033-2521-1-git-send-email-myungjoo.ham@samsung.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:18663 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755188Ab1FUCHQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 20 Jun 2011 22:07:16 -0400
+In-reply-to: <1308622033-2521-1-git-send-email-myungjoo.ham@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-This patch allows the Samsung ADC driver to enable VDD regulator at
-probe and resume and to disable at exit and suspend.
-In a platform where ADC's VDD regulator is not "always-on", this control
-is required although this patch does not provide fine-grained power
-control (turning on the regulator only when being accessed).
-
-However, if VDD regulator ("vdd" for the adc device) is not provided,
-the regulator control will not be activated because there are platforms
-that do not provide regulator for ADC device.
-
-arch_initcall has been modified to module_init in order to allow
-regulators to be available at probe.
+To: linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, myungjoo.ham@gmail.com, dg77.kim@samsung.com
 
 Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 
 --
-changes from v1
-- Removed macro defining the name of regulator.
-- Handle error from regulator_enable.
-- Do not allow not to have the regulator if CONFIG_REGULATOR.
-- Seperate a patch dealing with "arch_initcall->module_init"
+Changes from v1. Thanks so much for your valuable comments, Mark.
+- Removed unnecessary initialization data
+- Add __initdata where necessary
+- Corrected a regulator name for ADC
 ---
- arch/arm/plat-samsung/adc.c |   31 ++++++++++++++++++++++++++-----
- 1 files changed, 26 insertions(+), 5 deletions(-)
+ arch/arm/mach-exynos4/mach-nuri.c |  622 ++++++++++++++++++++++++++++++++++++-
+ 1 files changed, 621 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
-index e8f2be2..938f6e9 100644
---- a/arch/arm/plat-samsung/adc.c
-+++ b/arch/arm/plat-samsung/adc.c
-@@ -21,6 +21,7 @@
- #include <linux/clk.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
-+#include <linux/regulator/consumer.h>
+diff --git a/arch/arm/mach-exynos4/mach-nuri.c b/arch/arm/mach-exynos4/mach-nuri.c
+index 642702b..13b881f 100644
+--- a/arch/arm/mach-exynos4/mach-nuri.c
++++ b/arch/arm/mach-exynos4/mach-nuri.c
+@@ -17,6 +17,7 @@
+ #include <linux/gpio.h>
+ #include <linux/regulator/machine.h>
+ #include <linux/regulator/fixed.h>
++#include <linux/mfd/max8997.h>
+ #include <linux/mmc/host.h>
+ #include <linux/fb.h>
+ #include <linux/pwm_backlight.h>
+@@ -344,9 +345,624 @@ static void __init nuri_tsp_init(void)
+ 	s3c_gpio_setpull(gpio, S3C_GPIO_PULL_UP);
+ }
  
- #include <plat/regs-adc.h>
- #include <plat/adc.h>
-@@ -71,6 +72,7 @@ struct adc_device {
- 	unsigned int		 prescale;
- 
- 	int			 irq;
-+	struct regulator	*vdd;
++static struct regulator_consumer_supply nuri_max8997_ldo1_consumer[] = {
++	REGULATOR_SUPPLY("vdd", "s5p-adc"), /* Used by CPU's ADC drv */
++};
++static struct regulator_consumer_supply nuri_max8997_ldo3_consumer[] = {
++	REGULATOR_SUPPLY("vdd11", "s5p-mipi-csis.0"), /* MIPI */
++};
++static struct regulator_consumer_supply nuri_max8997_ldo4_consumer[] = {
++	REGULATOR_SUPPLY("vdd18", "s5p-mipi-csis.0"), /* MIPI */
++};
++static struct regulator_consumer_supply nuri_max8997_ldo5_consumer[] = {
++	REGULATOR_SUPPLY("vhsic", "modemctl"), /* MODEM */
++};
++static struct regulator_consumer_supply nuri_max8997_ldo7_consumer[] = {
++	REGULATOR_SUPPLY("dig_18", "0-001f"), /* HCD803 */
++};
++static struct regulator_consumer_supply nuri_max8997_ldo8_consumer[] = {
++	REGULATOR_SUPPLY("vusb_d", NULL), /* Used by CPU */
++	REGULATOR_SUPPLY("vdac", NULL), /* Used by CPU */
++};
++static struct regulator_consumer_supply nuri_max8997_ldo11_consumer[] = {
++	REGULATOR_SUPPLY("vcc", "platform-lcd"), /* U804 LVDS */
++};
++static struct regulator_consumer_supply nuri_max8997_ldo12_consumer[] = {
++	REGULATOR_SUPPLY("vddio", "6-003c"), /* HDC802 */
++};
++static struct regulator_consumer_supply nuri_max8997_ldo13_consumer[] = {
++	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.2"), /* TFLASH */
++};
++static struct regulator_consumer_supply nuri_max8997_ldo14_consumer[] = {
++	REGULATOR_SUPPLY("inmotor", "max8997-haptic"),
++};
++static struct regulator_consumer_supply nuri_max8997_ldo15_consumer[] = {
++	REGULATOR_SUPPLY("avdd", "3-004a"), /* Touch Screen */
++};
++static struct regulator_consumer_supply nuri_max8997_ldo16_consumer[] = {
++	REGULATOR_SUPPLY("d_sensor", "0-001f"), /* HDC803 */
++};
++static struct regulator_consumer_supply nuri_max8997_ldo18_consumer[] = {
++	REGULATOR_SUPPLY("vdd", "3-004a"), /* Touch Screen */
++};
++static struct regulator_consumer_supply nuri_max8997_buck1_consumer[] = {
++	REGULATOR_SUPPLY("vdd_arm", NULL), /* CPUFREQ */
++};
++static struct regulator_consumer_supply nuri_max8997_buck2_consumer[] = {
++	REGULATOR_SUPPLY("vdd_int", NULL), /* CPUFREQ */
++};
++static struct regulator_consumer_supply nuri_max8997_buck3_consumer[] = {
++	REGULATOR_SUPPLY("vdd", "mali_dev.0"), /* G3D of Exynos 4 */
++};
++static struct regulator_consumer_supply nuri_max8997_buck4_consumer[] = {
++	REGULATOR_SUPPLY("core", "0-001f"), /* HDC803 */
++};
++static struct regulator_consumer_supply nuri_max8997_buck6_consumer[] = {
++	REGULATOR_SUPPLY("dig_28", "0-001f"), /* pin "7" of HDC803 */
++};
++static struct regulator_consumer_supply nuri_max8997_esafeout1_consumer[] = {
++	REGULATOR_SUPPLY("usb_vbus", NULL), /* CPU's USB OTG */
++};
++static struct regulator_consumer_supply nuri_max8997_esafeout2_consumer[] = {
++	REGULATOR_SUPPLY("usb_vbus", "modemctl"), /* VBUS of Modem */
++};
++
++static struct regulator_consumer_supply nuri_max8997_charger_consumer[] = {
++	REGULATOR_SUPPLY("vinchg1", "charger-manager.0"),
++};
++static struct regulator_consumer_supply nuri_max8997_chg_toff_consumer[] = {
++	REGULATOR_SUPPLY("vinchg_stop", NULL), /* for jack interrupt handlers */
++};
++
++static struct regulator_consumer_supply nuri_max8997_32khz_ap_consumer[] = {
++	REGULATOR_SUPPLY("gps_clk", "bcm4751"),
++	REGULATOR_SUPPLY("bt_clk", "bcm4330-b1"),
++	REGULATOR_SUPPLY("wifi_clk", "bcm433-b1"),
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo1_data = {
++	.constraints	= {
++		.name		= "VADC_3.3V_C210",
++		.min_uV		= 3300000,
++		.max_uV		= 3300000,
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.apply_uV	= 1,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(nuri_max8997_ldo1_consumer),
++	.consumer_supplies	= nuri_max8997_ldo1_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo2_data = {
++	.constraints	= {
++		.name		= "VALIVE_1.1V_C210",
++		.min_uV		= 1100000,
++		.max_uV		= 1100000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.state_mem	= {
++			.enabled	= 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo3_data = {
++	.constraints	= {
++		.name		= "VUSB_1.1V_C210",
++		.min_uV		= 1100000,
++		.max_uV		= 1100000,
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.apply_uV	= 1,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(nuri_max8997_ldo3_consumer),
++	.consumer_supplies	= nuri_max8997_ldo3_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo4_data = {
++	.constraints	= {
++		.name		= "VMIPI_1.8V",
++		.min_uV		= 1800000,
++		.max_uV		= 1800000,
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.apply_uV	= 1,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(nuri_max8997_ldo4_consumer),
++	.consumer_supplies	= nuri_max8997_ldo4_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo5_data = {
++	.constraints	= {
++		.name		= "VHSIC_1.2V_C210",
++		.min_uV		= 1200000,
++		.max_uV		= 1200000,
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.apply_uV	= 1,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(nuri_max8997_ldo5_consumer),
++	.consumer_supplies	= nuri_max8997_ldo5_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo6_data = {
++	.constraints	= {
++		.name		= "VCC_1.8V_PDA",
++		.min_uV		= 1800000,
++		.max_uV		= 1800000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.state_mem	= {
++			.enabled	= 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo7_data = {
++	.constraints	= {
++		.name		= "CAM_ISP_1.8V",
++		.min_uV		= 1800000,
++		.max_uV		= 1800000,
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.apply_uV	= 1,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(nuri_max8997_ldo7_consumer),
++	.consumer_supplies	= nuri_max8997_ldo7_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo8_data = {
++	.constraints	= {
++		.name		= "VUSB/VDAC_3.3V_C210",
++		.min_uV		= 3300000,
++		.max_uV		= 3300000,
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.apply_uV	= 1,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(nuri_max8997_ldo8_consumer),
++	.consumer_supplies	= nuri_max8997_ldo8_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo9_data = {
++	.constraints	= {
++		.name		= "VCC_2.8V_PDA",
++		.min_uV		= 2800000,
++		.max_uV		= 2800000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.state_mem	= {
++			.enabled	= 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo10_data = {
++	.constraints	= {
++		.name		= "VPLL_1.1V_C210",
++		.min_uV		= 1100000,
++		.max_uV		= 1100000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo11_data = {
++	.constraints	= {
++		.name		= "LVDS_VDD3.3V",
++		.min_uV		= 3300000,
++		.max_uV		= 3300000,
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.apply_uV	= 1,
++		.boot_on	= 1,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(nuri_max8997_ldo11_consumer),
++	.consumer_supplies	= nuri_max8997_ldo11_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo12_data = {
++	.constraints	= {
++		.name		= "VT_CAM_1.8V",
++		.min_uV		= 1800000,
++		.max_uV		= 1800000,
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.apply_uV	= 1,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(nuri_max8997_ldo12_consumer),
++	.consumer_supplies	= nuri_max8997_ldo12_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo13_data = {
++	.constraints	= {
++		.name		= "VTF_2.8V",
++		.min_uV		= 2800000,
++		.max_uV		= 2800000,
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.apply_uV	= 1,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(nuri_max8997_ldo13_consumer),
++	.consumer_supplies	= nuri_max8997_ldo13_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo14_data = {
++	.constraints	= {
++		.name		= "VCC_3.0V_MOTOR",
++		.min_uV		= 3000000,
++		.max_uV		= 3000000,
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.apply_uV	= 1,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(nuri_max8997_ldo14_consumer),
++	.consumer_supplies	= nuri_max8997_ldo14_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo15_data = {
++	.constraints	= {
++		.name		= "VTOUCH_ADVV2.8V",
++		.min_uV		= 2800000,
++		.max_uV		= 2800000,
++		.apply_uV	= 1,
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(nuri_max8997_ldo15_consumer),
++	.consumer_supplies	= nuri_max8997_ldo15_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo16_data = {
++	.constraints	= {
++		.name		= "CAM_SENSOR_IO_1.8V",
++		.min_uV		= 1800000,
++		.max_uV		= 1800000,
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.apply_uV	= 1,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(nuri_max8997_ldo16_consumer),
++	.consumer_supplies	= nuri_max8997_ldo16_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo18_data = {
++	.constraints	= {
++		.name		= "VTOUCH_VDD2.8V",
++		.min_uV		= 2800000,
++		.max_uV		= 2800000,
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.apply_uV	= 1,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(nuri_max8997_ldo18_consumer),
++	.consumer_supplies	= nuri_max8997_ldo18_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_ldo21_data = {
++	.constraints	= {
++		.name		= "VDDQ_M1M2_1.2V",
++		.min_uV		= 1200000,
++		.max_uV		= 1200000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata nuri_max8997_buck1_data = {
++	.constraints	= {
++		.name		= "VARM_1.2V_C210",
++		.min_uV		= 900000,
++		.max_uV		= 1350000,
++		.valid_ops_mask	= REGULATOR_CHANGE_VOLTAGE,
++		.always_on	= 1,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(nuri_max8997_buck1_consumer),
++	.consumer_supplies = nuri_max8997_buck1_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_buck2_data = {
++	.constraints	= {
++		.name		= "VINT_1.1V_C210",
++		.min_uV		= 900000,
++		.max_uV		= 1100000,
++		.valid_ops_mask	= REGULATOR_CHANGE_VOLTAGE,
++		.always_on	= 1,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(nuri_max8997_buck2_consumer),
++	.consumer_supplies = nuri_max8997_buck2_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_buck3_data = {
++	.constraints	= {
++		.name		= "VG3D_1.1V_C210",
++		.min_uV		= 900000,
++		.max_uV		= 1100000,
++		.valid_ops_mask	= REGULATOR_CHANGE_VOLTAGE |
++				  REGULATOR_CHANGE_STATUS,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(nuri_max8997_buck3_consumer),
++	.consumer_supplies = nuri_max8997_buck3_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_buck4_data = {
++	.constraints	= {
++		.name		= "CAM_ISP_CORE_1.2V",
++		.min_uV		= 1200000,
++		.max_uV		= 1200000,
++		.apply_uV	= 1,
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(nuri_max8997_buck4_consumer),
++	.consumer_supplies = nuri_max8997_buck4_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_buck5_data = {
++	.constraints	= {
++		.name		= "VMEM_1.2V_C210",
++		.min_uV		= 1200000,
++		.max_uV		= 1200000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.state_mem	= {
++			.enabled	= 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata nuri_max8997_buck6_data = {
++	.constraints	= {
++		.name		= "CAM_AF_2.8V",
++		.min_uV		= 2800000,
++		.max_uV		= 2800000,
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(nuri_max8997_buck6_consumer),
++	.consumer_supplies = nuri_max8997_buck6_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_buck7_data = {
++	.constraints	= {
++		.name		= "VCC_SUB_2.0V",
++		.min_uV		= 2000000,
++		.max_uV		= 2000000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.state_mem	= {
++			.enabled	= 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata nuri_max8997_32khz_ap_data = {
++	.constraints	= {
++		.name		= "32KHz AP",
++		.always_on	= 1,
++		.state_mem	= {
++			.enabled	= 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(nuri_max8997_32khz_ap_consumer),
++	.consumer_supplies = nuri_max8997_32khz_ap_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_32khz_cp_data = {
++	.constraints	= {
++		.name		= "32KHz CP",
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata nuri_max8997_vichg_data = {
++	.constraints	= {
++		.name		= "VICHG",
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata nuri_max8997_esafeout1_data = {
++	.constraints	= {
++		.name		= "SAFEOUT1",
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(nuri_max8997_esafeout1_consumer),
++	.consumer_supplies	= nuri_max8997_esafeout1_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_esafeout2_data = {
++	.constraints	= {
++		.name		= "SAFEOUT2",
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.state_mem	= {
++			.disabled	= 1,
++		},
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(nuri_max8997_esafeout2_consumer),
++	.consumer_supplies	= nuri_max8997_esafeout2_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_charger_cv_data = {
++	.constraints	= {
++		.name		= "CHARGER_CV",
++		.min_uV		= 4200000,
++		.max_uV		= 4200000,
++		.apply_uV	= 1,
++	},
++};
++
++static struct regulator_init_data __initdata nuri_max8997_charger_data = {
++	.constraints	= {
++		.name		= "CHARGER",
++		.min_uA		= 200000,
++		.max_uA		= 950000,
++		.boot_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS |
++				REGULATOR_CHANGE_CURRENT,
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(nuri_max8997_charger_consumer),
++	.consumer_supplies	= nuri_max8997_charger_consumer,
++};
++
++static struct regulator_init_data __initdata nuri_max8997_charger_topoff_data = {
++	.constraints	= {
++		.name		= "CHARGER TOPOFF",
++		.min_uA		= 50000,
++		.max_uA		= 200000,
++		.valid_ops_mask = REGULATOR_CHANGE_CURRENT,
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(nuri_max8997_chg_toff_consumer),
++	.consumer_supplies	= nuri_max8997_chg_toff_consumer,
++};
++
++static struct max8997_regulator_data __initdata nuri_max8997_regulators[] = {
++	{ MAX8997_LDO1, &nuri_max8997_ldo1_data },
++	{ MAX8997_LDO2, &nuri_max8997_ldo2_data },
++	{ MAX8997_LDO3, &nuri_max8997_ldo3_data },
++	{ MAX8997_LDO4, &nuri_max8997_ldo4_data },
++	{ MAX8997_LDO5, &nuri_max8997_ldo5_data },
++	{ MAX8997_LDO6, &nuri_max8997_ldo6_data },
++	{ MAX8997_LDO7, &nuri_max8997_ldo7_data },
++	{ MAX8997_LDO8, &nuri_max8997_ldo8_data },
++	{ MAX8997_LDO9, &nuri_max8997_ldo9_data },
++	{ MAX8997_LDO10, &nuri_max8997_ldo10_data },
++	{ MAX8997_LDO11, &nuri_max8997_ldo11_data },
++	{ MAX8997_LDO12, &nuri_max8997_ldo12_data },
++	{ MAX8997_LDO13, &nuri_max8997_ldo13_data },
++	{ MAX8997_LDO14, &nuri_max8997_ldo14_data },
++	{ MAX8997_LDO15, &nuri_max8997_ldo15_data },
++	{ MAX8997_LDO16, &nuri_max8997_ldo16_data },
++
++	{ MAX8997_LDO18, &nuri_max8997_ldo18_data },
++	{ MAX8997_LDO21, &nuri_max8997_ldo21_data },
++
++	{ MAX8997_BUCK1, &nuri_max8997_buck1_data },
++	{ MAX8997_BUCK2, &nuri_max8997_buck2_data },
++	{ MAX8997_BUCK3, &nuri_max8997_buck3_data },
++	{ MAX8997_BUCK4, &nuri_max8997_buck4_data },
++	{ MAX8997_BUCK5, &nuri_max8997_buck5_data },
++	{ MAX8997_BUCK6, &nuri_max8997_buck6_data },
++	{ MAX8997_BUCK7, &nuri_max8997_buck7_data },
++
++	{ MAX8997_EN32KHZ_AP, &nuri_max8997_32khz_ap_data },
++	{ MAX8997_EN32KHZ_CP, &nuri_max8997_32khz_cp_data },
++
++	{ MAX8997_ENVICHG, &nuri_max8997_vichg_data },
++	{ MAX8997_ESAFEOUT1, &nuri_max8997_esafeout1_data },
++	{ MAX8997_ESAFEOUT2, &nuri_max8997_esafeout2_data },
++	{ MAX8997_CHARGER_CV, &nuri_max8997_charger_cv_data },
++	{ MAX8997_CHARGER, &nuri_max8997_charger_data },
++	{ MAX8997_CHARGER_TOPOFF, &nuri_max8997_charger_topoff_data },
++};
++
++static struct max8997_platform_data __initdata nuri_max8997_pdata = {
++	.wakeup			= 1,
++
++	.num_regulators		= ARRAY_SIZE(nuri_max8997_regulators),
++	.regulators		= nuri_max8997_regulators,
++
++	.buck125_gpios = { EXYNOS4_GPX0(5), EXYNOS4_GPX0(6), EXYNOS4_GPL0(0) },
++	.buck2_gpiodvs = true,
++
++	.buck1_voltage[0] = 1350000, /* 1.35V */
++	.buck1_voltage[1] = 1300000, /* 1.3V */
++	.buck1_voltage[2] = 1250000, /* 1.25V */
++	.buck1_voltage[3] = 1200000, /* 1.2V */
++	.buck1_voltage[4] = 1150000, /* 1.15V */
++	.buck1_voltage[5] = 1100000, /* 1.1V */
++	.buck1_voltage[6] = 1000000, /* 1.0V */
++	.buck1_voltage[7] = 950000, /* 0.95V */
++
++	.buck2_voltage[0] = 1100000, /* 1.1V */
++	.buck2_voltage[1] = 1000000, /* 1.0V */
++	.buck2_voltage[2] = 950000, /* 0.95V */
++	.buck2_voltage[3] = 900000, /* 0.9V */
++	.buck2_voltage[4] = 1100000, /* 1.1V */
++	.buck2_voltage[5] = 1000000, /* 1.0V */
++	.buck2_voltage[6] = 950000, /* 0.95V */
++	.buck2_voltage[7] = 900000, /* 0.9V */
++
++	.buck5_voltage[0] = 1200000, /* 1.2V */
++	.buck5_voltage[1] = 1200000, /* 1.2V */
++	.buck5_voltage[2] = 1200000, /* 1.2V */
++	.buck5_voltage[3] = 1200000, /* 1.2V */
++	.buck5_voltage[4] = 1200000, /* 1.2V */
++	.buck5_voltage[5] = 1200000, /* 1.2V */
++	.buck5_voltage[6] = 1200000, /* 1.2V */
++	.buck5_voltage[7] = 1200000, /* 1.2V */
++};
++
++static void __init nuri_pmic_init(void)
++{
++	int gpio;
++
++	nuri_max8997_pdata.irq_base = irq_get_next_irq(IRQ_GPIO_END);
++	gpio = EXYNOS4_GPX0(7);
++	gpio_request(gpio, "AP_PMIC_IRQ");
++	s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0xf));
++	s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
++}
++
+ /* GPIO I2C 5 (PMIC) */
++enum { I2C5_MAX8997 };
+ static struct i2c_board_info i2c5_devs[] __initdata = {
+-	/* max8997, To be updated */
++	[I2C5_MAX8997] = {
++		I2C_BOARD_INFO("max8997", 0xCC >> 1),
++		.platform_data	= &nuri_max8997_pdata,
++	},
  };
  
- static struct adc_device *adc_dev;
-@@ -338,17 +340,24 @@ static int s3c_adc_probe(struct platform_device *pdev)
- 	adc->pdev = pdev;
- 	adc->prescale = S3C2410_ADCCON_PRSCVL(49);
+ /* USB EHCI */
+@@ -369,6 +985,7 @@ static struct platform_device *nuri_devices[] __initdata = {
+ 	&s3c_device_timer[0],
+ 	&s5p_device_ehci,
+ 	&s3c_device_i2c3,
++	&s3c_device_i2c5,
  
-+	adc->vdd = regulator_get(dev, "vdd");
-+	if (IS_ERR(adc->vdd)) {
-+		dev_err(dev, "operating without regulator \"vdd\" .\n");
-+		ret = PTR_ERR(adc->vdd);
-+		goto err_alloc;
-+	}
-+
- 	adc->irq = platform_get_irq(pdev, 1);
- 	if (adc->irq <= 0) {
- 		dev_err(dev, "failed to get adc irq\n");
- 		ret = -ENOENT;
--		goto err_alloc;
-+		goto err_reg;
- 	}
- 
- 	ret = request_irq(adc->irq, s3c_adc_irq, 0, dev_name(dev), adc);
- 	if (ret < 0) {
- 		dev_err(dev, "failed to attach adc irq\n");
--		goto err_alloc;
-+		goto err_reg;
- 	}
- 
- 	adc->clk = clk_get(dev, "adc");
-@@ -372,6 +381,10 @@ static int s3c_adc_probe(struct platform_device *pdev)
- 		goto err_clk;
- 	}
- 
-+	ret = regulator_enable(adc->vdd);
-+	if (!ret)
-+		goto err_ioremap;
-+
- 	clk_enable(adc->clk);
- 
- 	tmp = adc->prescale | S3C2410_ADCCON_PRSCEN;
-@@ -388,12 +401,15 @@ static int s3c_adc_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
-+ err_ioremap:
-+	iounmap(adc->regs);
-  err_clk:
- 	clk_put(adc->clk);
- 
-  err_irq:
- 	free_irq(adc->irq, adc);
--
-+ err_reg:
-+	regulator_put(adc->vdd);
-  err_alloc:
- 	kfree(adc);
- 	return ret;
-@@ -406,6 +422,8 @@ static int __devexit s3c_adc_remove(struct platform_device *pdev)
- 	iounmap(adc->regs);
- 	free_irq(adc->irq, adc);
- 	clk_disable(adc->clk);
-+	regulator_disable(adc->vdd);
-+	regulator_put(adc->vdd);
- 	clk_put(adc->clk);
- 	kfree(adc);
- 
-@@ -428,6 +446,7 @@ static int s3c_adc_suspend(struct platform_device *pdev, pm_message_t state)
- 	disable_irq(adc->irq);
- 	spin_unlock_irqrestore(&adc->lock, flags);
- 	clk_disable(adc->clk);
-+	regulator_disable(adc->vdd);
- 
- 	return 0;
- }
-@@ -435,14 +454,16 @@ static int s3c_adc_suspend(struct platform_device *pdev, pm_message_t state)
- static int s3c_adc_resume(struct platform_device *pdev)
+ 	/* NURI Devices */
+ 	&nuri_gpio_keys,
+@@ -387,10 +1004,13 @@ static void __init nuri_machine_init(void)
  {
- 	struct adc_device *adc = platform_get_drvdata(pdev);
-+	int ret;
+ 	nuri_sdhci_init();
+ 	nuri_tsp_init();
++	nuri_pmic_init();
  
-+	ret = regulator_enable(adc->vdd);
- 	clk_enable(adc->clk);
- 	enable_irq(adc->irq);
+ 	i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
+ 	s3c_i2c3_set_platdata(&i2c3_data);
+ 	i2c_register_board_info(3, i2c3_devs, ARRAY_SIZE(i2c3_devs));
++	s3c_i2c5_set_platdata(NULL);
++	i2c5_devs[I2C5_MAX8997].irq = gpio_to_irq(EXYNOS4_GPX0(7));
+ 	i2c_register_board_info(5, i2c5_devs, ARRAY_SIZE(i2c5_devs));
  
- 	writel(adc->prescale | S3C2410_ADCCON_PRSCEN,
- 	       adc->regs + S3C2410_ADCCON);
- 
--	return 0;
-+	return ret;
- }
- 
- #else
-@@ -485,4 +506,4 @@ static int __init adc_init(void)
- 	return ret;
- }
- 
--arch_initcall(adc_init);
-+module_init(adc_init);
+ 	nuri_ehci_init();
 -- 
 1.7.4.1
