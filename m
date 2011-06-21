@@ -1,61 +1,45 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: [PATCH] ARM: EXYNOS4: Fix secondary CPU boot after wake-up
-Date: Tue, 21 Jun 2011 11:03:05 +0530
-Message-ID: <1308634385-8544-1-git-send-email-inderpal.singh@linaro.org>
+From: JinGoo Han <jg1.han@samsung.com>
+Subject: [PATCH v3 0/5] ARM: EXYNOS4: Change clock name for FIMD
+Date: Tue, 21 Jun 2011 06:11:13 +0000 (GMT)
+Message-ID: <14862342.74321308636673209.JavaMail.weblogic@epml09>
+Reply-To: jg1.han@samsung.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:45265 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751072Ab1FUFd6 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:8929 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750974Ab1FUGLQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Jun 2011 01:33:58 -0400
-Received: by vws1 with SMTP id 1so1461999vws.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jun 2011 22:33:57 -0700 (PDT)
+	Tue, 21 Jun 2011 02:11:16 -0400
+Received: from epcpsbge7.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LN4006MCMIJDF30@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 21 Jun 2011 15:11:14 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, inderpal.s@samsung.com, samsung@lists.linaro.org, Inderpal Singh <inderpal.singh@linaro.org>
+To: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jong-Hun Han <jonghun.han@samsung.com>
+Cc: ANAND KUMAR N <anand.kn@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, THOMAS P ABRAHAM <thomas.ab@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, In-Ki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>
 
-1. After wake-up, the system-wide flags register loses its value.
-   Hence, write the address of secondary startup function to
-   successfully boot the secondary CPU.
-
-2. Changes SGI1 to SGI0 for secondary CPU boot up
-
-Signed-off-by: Inderpal Singh <inderpal.s@samsung.com>
----
-1. The below patch is mandatory to boot secondary CPU after wake-up from sleep
-http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/4850
-
-2. The change SGI1 to SGI0 for secondary CPU boot up is done as discussed 
-at following link
-http://comments.gmane.org/gmane.linux.kernel.samsung-soc/4877
-
- arch/arm/mach-exynos4/platsmp.c |    9 ++++++++-
- 1 files changed, 8 insertions(+), 1 deletions(-)
-
-diff --git a/arch/arm/mach-exynos4/platsmp.c b/arch/arm/mach-exynos4/platsmp.c
-index c5e65a0..061260c 100644
---- a/arch/arm/mach-exynos4/platsmp.c
-+++ b/arch/arm/mach-exynos4/platsmp.c
-@@ -101,11 +101,18 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
- 	write_pen_release(cpu);
- 
- 	/*
-+	* After wake-up, the system-wide flags register loses its value.
-+	* Hence, write the address of secondary startup function again.
-+	*/ 
-+	__raw_writel(BSYM(virt_to_phys(exynos4_secondary_startup)), S5P_VA_SYSRAM);
-+
-+
-+	/*
- 	 * Send the secondary CPU a soft interrupt, thereby causing
- 	 * the boot monitor to read the system wide flags register,
- 	 * and branch to the address found there.
- 	 */
--	gic_raise_softirq(cpumask_of(cpu), 1);
-+	gic_raise_softirq(cpumask_of(cpu), 0);
- 
- 	timeout = jiffies + (1 * HZ);
- 	while (time_before(jiffies, timeout)) {
--- 
-1.7.1
+VGhpcyBwYXRjaCBzZXJpZXMgaXMgYmFzZWQgb24gdGhlIGxhdGVzdA0KZ2l0Lmtlcm5lbC5vcmcv
+cHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LTIuNi5naXQNCg0KVGhpcyB3
+YXMgb3JpZ2luYWxseSBzdWJtaXR0ZWQgYnkgSm9uZ2h1biBIYW4gPGpvbmdodW4uaGFuQHNhbXN1
+bmcuY29tPg0KaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9hcm0ta2VybmVsL21zZzEwMTc4
+MS5odG1sDQoNClRoaXMgcGF0Y2ggYWRkcyBzdXBwb3J0IEZJTUQoRnVsbHkgSW50ZXJhY3RpdmUg
+TW9iaWxlIERpc3BsYXkpIG9uIEV4eW5vczQuDQpUaGUgNHRoIHBhdGNoIGlzIHVwZGF0ZSBmb3Ig
+czNjLWZiIGFuZCBvdGhlcnMgYXJlIGZvciBwbGF0Zm9ybSBkYXRhLg0KDQp2MjogY2hhbmdlIGNs
+b2NrIG5hbWUgb2YgZXh5bm9zNCBGSU1EOiAiZmltZCIgLT4gImxjZCINCiAgICAgdXNlICdoYXNf
+Y2xrc2VsJyB2YXJpYWJsZSBpbiBvcmRlciB0byBkaXN0aW5ndWlzaCBGSU1EIHZlcnNpb24NCiAg
+ICAgYWRkICdsY2RfY2xrJyB0aGF0IGNhbiBiZSB1c2VkIGZvciBvbmx5IGxjZCBwaXhlbCBjbG9j
+aw0KICAgICBhZGQgY2FsbGJhY2sgJ2VuYWJsZV9jbGsoKScgdG8gZW5hYmxlIHBhcmVudCBjbG9j
+ayAnc2Nsa19maW1kJy4NCnYzOiByZW1vdmUgdGhlIGNhbGxiYWNrIGZyb20gdGhlIHBsYXRmb3Jt
+IGRhdGEgc3RydWN0dXJlDQoNCm8gVG8gS3VramluIEtpbQ0KW1BBVENIIHYzIDEvNV0gQVJNOiBF
+WFlOT1M0OiBDaGFuZ2UgY2xvY2sgbmFtZSBmb3IgRklNRA0KW1BBVENIIHYzIDIvNV0gQVJNOiBF
+WFlOT1M0OiBBZGQgRklNRCByZXNvdXJjZSBkZWZpbml0aW9uDQpbUEFUQ0ggdjMgMy81XSBBUk06
+IEVYWU5PUzQ6IEFkZCBwbGF0Zm9ybSBkZXZpY2UgYW5kIGhlbHBlciBmdW5jdGlvbnMgZm9yIEZJ
+TUQNCltQQVRDSCB2MyA1LzVdIEFSTTogRVhZTk9TNDogQWRkIHBsYXRmb3JtIGRhdGEgZm9yIEVY
+WU5PUzQgRklNRCBhbmQgTFRFNDgwV1YgcGxhdGZvcm0tbGNkDQoNCm8gVG8gUGF1bCBNdW5kdA0K
+W1BBVENIIHYzIDQvNV0gdmlkZW86IHMzYy1mYjogQWRkIHN1cHBvcnQgRVhZTk9TNCBGSU1EDQoN
+Cg==
