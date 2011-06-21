@@ -1,56 +1,49 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [RFC][PATCH 0/5] USB: DWC OTG: Add dwc_otg driver for S5P6440
- samsung	SoC.
-Date: Tue, 21 Jun 2011 11:45:28 +0200
-Message-ID: <001701cc2ff7$f468d3c0$dd3a7b40$%szyprowski@samsung.com>
-References: <1308639827-2121-1-git-send-email-p.paneri@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v2 1/5] Samsung SoC ADC: use regulator (VDD for ADC).
+Date: Tue, 21 Jun 2011 11:43:57 +0100
+Message-ID: <20110621104357.GE22177@opensource.wolfsonmicro.com>
+References: <20110620101737.GA31864@opensource.wolfsonmicro.com>
+ <1308621527-2457-1-git-send-email-myungjoo.ham@samsung.com>
+ <1308621527-2457-2-git-send-email-myungjoo.ham@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:20278 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756257Ab1FUJpj (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:38436 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751401Ab1FUKoA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Jun 2011 05:45:39 -0400
-In-reply-to: <1308639827-2121-1-git-send-email-p.paneri@samsung.com>
-Content-language: pl
+	Tue, 21 Jun 2011 06:44:00 -0400
+Content-Disposition: inline
+In-Reply-To: <1308621527-2457-2-git-send-email-myungjoo.ham@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: p.paneri@samsung.com, linux-usb@vger.kernel.org
-Cc: kgene.kim@samsung.com, tmarri@apm.com, balbi@ti.com, naushad@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, a.kesavan@samsung.com, linux-arm-kernel@lists.infradead.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kyungmin Park <kyungmin.park@samsung.com>, dg77.kim@samsung.com, myungjoo.ham@gmail.com
 
-Hello,
+On Tue, Jun 21, 2011 at 10:58:43AM +0900, MyungJoo Ham wrote:
 
-On Tuesday, June 21, 2011 9:04 AM p.paneri@samsung.com wrote:
+> +	ret = regulator_enable(adc->vdd);
+> +	if (!ret)
+> +		goto err_ioremap;
+> +
 
-> From: Praveen Paneri <p.paneri@samsung.com>
-> 
-> These patches modify DWC OTG driver for ARM and add it for ARM based SoCs.
-> Currently it has been tested for Samsung's S5P6440. The development is
-> still
-> under process so these are not the best set of patches. They are just for
-> review
-> and not for merge. Intent of these patches is to show required
-> modifications
-> to make dwc_otg patches work on ARM.
+This test looks the wrong way round?  regulator_enable() should return 0
+on success but this will treat that as an error.
 
-What are the differences between DWC OTG hardware and OTG hardware found
-in s3c64xx/s5pc100/s5pv210 and Exynos4 SoCs series? I've did a brief look
-at register definitions and most of them looks same. Can this driver be
-merged with s3c-hsotg.c driver?
+>  static int s3c_adc_resume(struct platform_device *pdev)
+>  {
+>  	struct adc_device *adc = platform_get_drvdata(pdev);
+> +	int ret;
+>  
+> +	ret = regulator_enable(adc->vdd);
+>  	clk_enable(adc->clk);
+>  	enable_irq(adc->irq);
+>  
+>  	writel(adc->prescale | S3C2410_ADCCON_PRSCEN,
+>  	       adc->regs + S3C2410_ADCCON);
+>  
+> -	return 0;
+> +	return ret;
 
-> Following features are tested for basic functions on SMDK6440
-> board after modifications:
-> OTG HOST: HID and mass-storage
-> OTG DEVICE: mass-storage and adb
-
-Does it mean that HID or mass-storage (both host or gadget drivers) needs
-modifications to get them working with this DWC OTG driver?
-
-(snipped)
-
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+Seems better to return as soon as we notice the error, no point in
+starting anything else up if we don't have power.
