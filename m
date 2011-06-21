@@ -1,55 +1,168 @@
 From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH v2 5/5] Samsung SoC: header file revised to prevent declaring
- duplicated.
-Date: Tue, 21 Jun 2011 10:58:47 +0900
-Message-ID: <1308621527-2457-6-git-send-email-myungjoo.ham@samsung.com>
+Subject: [PATCH v2 1/5] Samsung SoC ADC: use regulator (VDD for ADC).
+Date: Tue, 21 Jun 2011 10:58:43 +0900
+Message-ID: <1308621527-2457-2-git-send-email-myungjoo.ham@samsung.com>
 References: <20110620101737.GA31864@opensource.wolfsonmicro.com>
- <1308621527-2457-1-git-send-email-myungjoo.ham@samsung.com>
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:15927 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932186Ab1FUB6x (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Jun 2011 21:58:53 -0400
+	<1308621527-2457-1-git-send-email-myungjoo.ham@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1308621527-2457-1-git-send-email-myungjoo.ham@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, dg77.kim@samsung.com, myungjoo.ham@gmail.com
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Mark Brown <broonie@opensource.wolfsonmicro.com>, dg77.kim@samsung.com, myungjoo.ham@gmail.com, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-There has been no #ifndef - #define - #endif protection for this header
-file.
+This patch allows the Samsung ADC driver to enable VDD regulator at
+probe and resume and to disable at exit and suspend.
+In a platform where ADC's VDD regulator is not "always-on", this control
+is required although this patch does not provide fine-grained power
+control (turning on the regulator only when being accessed).
 
-To compile EXYNOS4 with adc support without compiler errors, this patch is essential.
+However, if VDD regulator ("vdd" for the adc device) is not provided,
+the regulator control will not be activated because there are platforms
+that do not provide regulator for ADC device.
+
+arch_initcall has been modified to module_init in order to allow
+regulators to be available at probe.
 
 Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
---
-v2: No changes from v1. Resubmitted as a series of patches
----
- arch/arm/plat-samsung/include/plat/devs.h |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index 4af108f..3c87779 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -12,6 +12,9 @@
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
- */
-+#ifndef __PLAT_DEVS_H
-+#define __PLAT_DEVS_H __FILE__
-+
- #include <linux/platform_device.h>
+--
+changes from v1
+- Removed macro defining the name of regulator.
+- Handle error from regulator_enable.
+- Do not allow not to have the regulator if CONFIG_REGULATOR.
+- Seperate a patch dealing with "arch_initcall->module_init"
+---
+ arch/arm/plat-samsung/adc.c |   31 ++++++++++++++++++++++++++-----
+ 1 files changed, 26 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
+index e8f2be2..938f6e9 100644
+--- a/arch/arm/plat-samsung/adc.c
++++ b/arch/arm/plat-samsung/adc.c
+@@ -21,6 +21,7 @@
+ #include <linux/clk.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
++#include <linux/regulator/consumer.h>
  
- struct s3c24xx_uart_resources {
-@@ -159,3 +162,5 @@ extern struct platform_device s3c_device_ac97;
-  */
- extern void *s3c_set_platdata(void *pd, size_t pdsize,
- 			      struct platform_device *pdev);
+ #include <plat/regs-adc.h>
+ #include <plat/adc.h>
+@@ -71,6 +72,7 @@ struct adc_device {
+ 	unsigned int		 prescale;
+ 
+ 	int			 irq;
++	struct regulator	*vdd;
+ };
+ 
+ static struct adc_device *adc_dev;
+@@ -338,17 +340,24 @@ static int s3c_adc_probe(struct platform_device *pdev)
+ 	adc->pdev = pdev;
+ 	adc->prescale = S3C2410_ADCCON_PRSCVL(49);
+ 
++	adc->vdd = regulator_get(dev, "vdd");
++	if (IS_ERR(adc->vdd)) {
++		dev_err(dev, "operating without regulator \"vdd\" .\n");
++		ret = PTR_ERR(adc->vdd);
++		goto err_alloc;
++	}
 +
-+#endif /* __PLAT_DEVS_H */
+ 	adc->irq = platform_get_irq(pdev, 1);
+ 	if (adc->irq <= 0) {
+ 		dev_err(dev, "failed to get adc irq\n");
+ 		ret = -ENOENT;
+-		goto err_alloc;
++		goto err_reg;
+ 	}
+ 
+ 	ret = request_irq(adc->irq, s3c_adc_irq, 0, dev_name(dev), adc);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to attach adc irq\n");
+-		goto err_alloc;
++		goto err_reg;
+ 	}
+ 
+ 	adc->clk = clk_get(dev, "adc");
+@@ -372,6 +381,10 @@ static int s3c_adc_probe(struct platform_device *pdev)
+ 		goto err_clk;
+ 	}
+ 
++	ret = regulator_enable(adc->vdd);
++	if (!ret)
++		goto err_ioremap;
++
+ 	clk_enable(adc->clk);
+ 
+ 	tmp = adc->prescale | S3C2410_ADCCON_PRSCEN;
+@@ -388,12 +401,15 @@ static int s3c_adc_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
++ err_ioremap:
++	iounmap(adc->regs);
+  err_clk:
+ 	clk_put(adc->clk);
+ 
+  err_irq:
+ 	free_irq(adc->irq, adc);
+-
++ err_reg:
++	regulator_put(adc->vdd);
+  err_alloc:
+ 	kfree(adc);
+ 	return ret;
+@@ -406,6 +422,8 @@ static int __devexit s3c_adc_remove(struct platform_device *pdev)
+ 	iounmap(adc->regs);
+ 	free_irq(adc->irq, adc);
+ 	clk_disable(adc->clk);
++	regulator_disable(adc->vdd);
++	regulator_put(adc->vdd);
+ 	clk_put(adc->clk);
+ 	kfree(adc);
+ 
+@@ -428,6 +446,7 @@ static int s3c_adc_suspend(struct platform_device *pdev, pm_message_t state)
+ 	disable_irq(adc->irq);
+ 	spin_unlock_irqrestore(&adc->lock, flags);
+ 	clk_disable(adc->clk);
++	regulator_disable(adc->vdd);
+ 
+ 	return 0;
+ }
+@@ -435,14 +454,16 @@ static int s3c_adc_suspend(struct platform_device *pdev, pm_message_t state)
+ static int s3c_adc_resume(struct platform_device *pdev)
+ {
+ 	struct adc_device *adc = platform_get_drvdata(pdev);
++	int ret;
+ 
++	ret = regulator_enable(adc->vdd);
+ 	clk_enable(adc->clk);
+ 	enable_irq(adc->irq);
+ 
+ 	writel(adc->prescale | S3C2410_ADCCON_PRSCEN,
+ 	       adc->regs + S3C2410_ADCCON);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ #else
+@@ -485,4 +506,4 @@ static int __init adc_init(void)
+ 	return ret;
+ }
+ 
+-arch_initcall(adc_init);
++module_init(adc_init);
 -- 
 1.7.4.1
