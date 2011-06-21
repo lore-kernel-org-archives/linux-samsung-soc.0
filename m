@@ -1,298 +1,53 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH v2 5/5] ARM: EXYNOS4: Add platform data for EXYNOS4 FIMD
- and LTE480WV platform-lcd
-Date: Tue, 21 Jun 2011 09:16:38 +0530
-Message-ID: <4E00141E.2070608@linaro.org>
-References: <1308315739-15078-1-git-send-email-jg1.han@samsung.com>
+From: JinGoo Han <jg1.han@samsung.com>
+Subject: Re: Re: [PATCH v2 5/5] ARM: EXYNOS4: Add platform data for EXYNOS4
+ FIMD and LTE480WV platform-lcd
+Date: Tue, 21 Jun 2011 04:08:32 +0000 (GMT)
+Message-ID: <6930554.67931308629310902.JavaMail.weblogic@epml09>
+Reply-To: jg1.han@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:61673 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752840Ab1FUDqr (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:14529 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751072Ab1FUEIe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Jun 2011 23:46:47 -0400
-Received: by vws1 with SMTP id 1so1426768vws.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jun 2011 20:46:46 -0700 (PDT)
-In-Reply-To: <1308315739-15078-1-git-send-email-jg1.han@samsung.com>
+	Tue, 21 Jun 2011 00:08:34 -0400
+Received: from epcpsbge5.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LN40077IGTR5CF0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 21 Jun 2011 13:08:33 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, linux-samsung-soc@vger.kernel.org, Jonghun Han <jonghun.han@samsung.com>, Anand Kumar N <anand.kn@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Inki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>
+To: Tushar Behera <tushar.behera@linaro.org>, JinGoo Han <jg1.han@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jong-Hun Han <jonghun.han@samsung.com>, ANAND KUMAR N <anand.kn@samsung.com>, THOMAS P ABRAHAM <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, In-Ki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>
 
-Hi,
-
-On Friday 17 June 2011 06:32 PM, Jingoo Han wrote:
-> From: Jonghun Han<jonghun.han@samsung.com>
->
-> This patch adds support EXYNOS4 FIMD0 and LTE480WV LCD pannel.
->
-> Signed-off-by: Jonghun Han<jonghun.han@samsung.com>
-> Signed-off-by: Jingoo Han<jg1.han@samsung.com>
-> ---
->   arch/arm/mach-exynos4/mach-smdkc210.c |   74 +++++++++++++++++++++++++++++++++
->   arch/arm/mach-exynos4/mach-smdkv310.c |   74 +++++++++++++++++++++++++++++++++
->   2 files changed, 148 insertions(+), 0 deletions(-)
->
-
-There are variants of SMDKV310 boards that don't use LTE480WV LCD panel. 
-Won't it be better to provide an option of selecting the LCD panel 
-through config file and adding the panel code accordingly?
-
-Also, the panel code can be consolidated at a single location and used 
-in appropriate machine files.
-
-> diff --git a/arch/arm/mach-exynos4/mach-smdkc210.c b/arch/arm/mach-exynos4/mach-smdkc210.c
-> index e645f7a..f3e4c65 100644
-> --- a/arch/arm/mach-exynos4/mach-smdkc210.c
-> +++ b/arch/arm/mach-exynos4/mach-smdkc210.c
-> @@ -9,7 +9,9 @@
->   */
->
->   #include<linux/serial_core.h>
-> +#include<linux/delay.h>
->   #include<linux/gpio.h>
-> +#include<linux/lcd.h>
->   #include<linux/mmc/host.h>
->   #include<linux/platform_device.h>
->   #include<linux/smsc911x.h>
-> @@ -19,16 +21,20 @@
->   #include<asm/mach/arch.h>
->   #include<asm/mach-types.h>
->
-> +#include<video/platform_lcd.h>
-> +
->   #include<plat/regs-serial.h>
->   #include<plat/regs-srom.h>
->   #include<plat/exynos4.h>
->   #include<plat/cpu.h>
->   #include<plat/devs.h>
-> +#include<plat/fb.h>
->   #include<plat/sdhci.h>
->   #include<plat/iic.h>
->   #include<plat/pd.h>
->
->   #include<mach/map.h>
-> +#include<mach/regs-fb.h>
->
->   /* Following are default values for UCON, ULCON and UFCON UART registers */
->   #define SMDKC210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-> @@ -111,6 +117,70 @@ static struct s3c_sdhci_platdata smdkc210_hsmmc3_pdata __initdata = {
->   	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
->   };
->
-> +static void lcd_lte480wv_set_power(struct plat_lcd_data *pd,
-> +				   unsigned int power)
-> +{
-> +	if (power) {
-> +#if !defined(CONFIG_BACKLIGHT_PWM)
-> +		gpio_request(EXYNOS4_GPD0(1), "GPD0");
-> +		gpio_direction_output(EXYNOS4_GPD0(1), 1);
-> +		gpio_free(EXYNOS4_GPD0(1));
-> +#endif
-> +		/* fire nRESET on power up */
-> +		gpio_request(EXYNOS4_GPX0(6), "GPX0");
-> +
-> +		gpio_direction_output(EXYNOS4_GPX0(6), 1);
-> +		mdelay(100);
-> +
-> +		gpio_set_value(EXYNOS4_GPX0(6), 0);
-> +		mdelay(10);
-> +
-> +		gpio_set_value(EXYNOS4_GPX0(6), 1);
-> +		mdelay(10);
-> +
-> +		gpio_free(EXYNOS4_GPX0(6));
-> +	} else {
-> +#if !defined(CONFIG_BACKLIGHT_PWM)
-> +		gpio_request(EXYNOS4_GPD0(1), "GPD0");
-> +		gpio_direction_output(EXYNOS4_GPD0(1), 0);
-> +		gpio_free(EXYNOS4_GPD0(1));
-> +#endif
-> +	}
-> +}
-> +
-> +static struct plat_lcd_data smdkc210_lcd_lte480wv_data = {
-> +	.set_power      = lcd_lte480wv_set_power,
-> +};
-> +
-> +static struct platform_device smdkc210_lcd_lte480wv = {
-> +	.name                   = "platform-lcd",
-> +	.dev.parent             =&s5p_device_fimd0.dev,
-> +	.dev.platform_data      =&smdkc210_lcd_lte480wv_data,
-> +};
-> +
-> +static struct s3c_fb_pd_win smdkc210_fb_win0 = {
-> +	.win_mode = {
-> +		.left_margin    = 13,
-> +		.right_margin   = 8,
-> +		.upper_margin   = 7,
-> +		.lower_margin   = 5,
-> +		.hsync_len      = 3,
-> +		.vsync_len      = 1,
-> +		.xres   = 800,
-> +		.yres   = 480,
-> +	},
-> +	.max_bpp        = 32,
-> +	.default_bpp    = 24,
-> +};
-> +
-> +static struct s3c_fb_platdata smdkc210_lcd0_pdata __initdata = {
-> +	.win[0]		=&smdkc210_fb_win0,
-> +	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
-> +	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
-> +	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
-> +	.enable_clk	= exynos4_fimd0_enable_clk,
-> +};
-> +
->   static struct resource smdkc210_smsc911x_resources[] = {
->   	[0] = {
->   		.start	= EXYNOS4_PA_SROM_BANK(1),
-> @@ -165,6 +235,8 @@ static struct platform_device *smdkc210_devices[] __initdata = {
->   	&exynos4_device_pd[PD_GPS],
->   	&exynos4_device_sysmmu,
->   	&samsung_asoc_dma,
-> +	&s5p_device_fimd0,
-> +	&smdkc210_lcd_lte480wv,
->   	&smdkc210_smsc911x,
->   };
->
-> @@ -210,6 +282,8 @@ static void __init smdkc210_machine_init(void)
->   	s3c_sdhci2_set_platdata(&smdkc210_hsmmc2_pdata);
->   	s3c_sdhci3_set_platdata(&smdkc210_hsmmc3_pdata);
->
-> +	s5p_fimd0_set_platdata(&smdkc210_lcd0_pdata);
-> +
->   	platform_add_devices(smdkc210_devices, ARRAY_SIZE(smdkc210_devices));
->   }
->
-> diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
-> index 1526764..5977fce 100644
-> --- a/arch/arm/mach-exynos4/mach-smdkv310.c
-> +++ b/arch/arm/mach-exynos4/mach-smdkv310.c
-> @@ -9,7 +9,9 @@
->   */
->
->   #include<linux/serial_core.h>
-> +#include<linux/delay.h>
->   #include<linux/gpio.h>
-> +#include<linux/lcd.h>
->   #include<linux/mmc/host.h>
->   #include<linux/platform_device.h>
->   #include<linux/smsc911x.h>
-> @@ -20,17 +22,21 @@
->   #include<asm/mach/arch.h>
->   #include<asm/mach-types.h>
->
-> +#include<video/platform_lcd.h>
-> +
->   #include<plat/regs-serial.h>
->   #include<plat/regs-srom.h>
->   #include<plat/exynos4.h>
->   #include<plat/cpu.h>
->   #include<plat/devs.h>
-> +#include<plat/fb.h>
->   #include<plat/keypad.h>
->   #include<plat/sdhci.h>
->   #include<plat/iic.h>
->   #include<plat/pd.h>
->
->   #include<mach/map.h>
-> +#include<mach/regs-fb.h>
->
->   /* Following are default values for UCON, ULCON and UFCON UART registers */
->   #define SMDKV310_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-> @@ -113,6 +119,70 @@ static struct s3c_sdhci_platdata smdkv310_hsmmc3_pdata __initdata = {
->   	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
->   };
->
-> +static void lcd_lte480wv_set_power(struct plat_lcd_data *pd,
-> +				   unsigned int power)
-> +{
-> +	if (power) {
-> +#if !defined(CONFIG_BACKLIGHT_PWM)
-> +		gpio_request(EXYNOS4_GPD0(1), "GPD0");
-> +		gpio_direction_output(EXYNOS4_GPD0(1), 1);
-> +		gpio_free(EXYNOS4_GPD0(1));
-> +#endif
-> +		/* fire nRESET on power up */
-> +		gpio_request(EXYNOS4_GPX0(6), "GPX0");
-> +
-> +		gpio_direction_output(EXYNOS4_GPX0(6), 1);
-> +		mdelay(100);
-> +
-> +		gpio_set_value(EXYNOS4_GPX0(6), 0);
-> +		mdelay(10);
-> +
-> +		gpio_set_value(EXYNOS4_GPX0(6), 1);
-> +		mdelay(10);
-> +
-> +		gpio_free(EXYNOS4_GPX0(6));
-> +	} else {
-> +#if !defined(CONFIG_BACKLIGHT_PWM)
-> +		gpio_request(EXYNOS4_GPD0(1), "GPD0");
-> +		gpio_direction_output(EXYNOS4_GPD0(1), 0);
-> +		gpio_free(EXYNOS4_GPD0(1));
-> +#endif
-> +	}
-> +}
-> +
-> +static struct plat_lcd_data smdkv310_lcd_lte480wv_data = {
-> +	.set_power      = lcd_lte480wv_set_power,
-> +};
-> +
-> +static struct platform_device smdkv310_lcd_lte480wv = {
-> +	.name                   = "platform-lcd",
-> +	.dev.parent             =&s5p_device_fimd0.dev,
-> +	.dev.platform_data      =&smdkv310_lcd_lte480wv_data,
-> +};
-> +
-> +static struct s3c_fb_pd_win smdkv310_fb_win0 = {
-> +	.win_mode = {
-> +		.left_margin    = 13,
-> +		.right_margin   = 8,
-> +		.upper_margin   = 7,
-> +		.lower_margin   = 5,
-> +		.hsync_len      = 3,
-> +		.vsync_len      = 1,
-> +		.xres   = 800,
-> +		.yres   = 480,
-> +	},
-> +	.max_bpp        = 32,
-> +	.default_bpp    = 24,
-> +};
-> +
-> +static struct s3c_fb_platdata smdkv310_lcd0_pdata __initdata = {
-> +	.win[0]		=&smdkv310_fb_win0,
-> +	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
-> +	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
-> +	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
-> +	.enable_clk	= exynos4_fimd0_enable_clk,
-> +};
-> +
->   static struct resource smdkv310_smsc911x_resources[] = {
->   	[0] = {
->   		.start	= EXYNOS4_PA_SROM_BANK(1),
-> @@ -187,6 +257,8 @@ static struct platform_device *smdkv310_devices[] __initdata = {
->   	&exynos4_device_pd[PD_GPS],
->   	&exynos4_device_sysmmu,
->   	&samsung_asoc_dma,
-> +	&s5p_device_fimd0,
-> +	&smdkv310_lcd_lte480wv,
->   	&smdkv310_smsc911x,
->   };
->
-> @@ -232,6 +304,8 @@ static void __init smdkv310_machine_init(void)
->   	s3c_sdhci2_set_platdata(&smdkv310_hsmmc2_pdata);
->   	s3c_sdhci3_set_platdata(&smdkv310_hsmmc3_pdata);
->
-> +	s5p_fimd0_set_platdata(&smdkv310_lcd0_pdata);
-> +
->   	samsung_keypad_set_platdata(&smdkv310_keypad_data);
->
->   	platform_add_devices(smdkv310_devices, ARRAY_SIZE(smdkv310_devices));
-
-
--- 
-Tushar Behera
+SGksIFR1c2hhciBCZWhlcmEuDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJv
+bTogbGludXgtc2Ftc3VuZy1zb2Mtb3duZXJAdmdlci5rZXJuZWwub3JnIFttYWlsdG86bGludXgt
+c2Ftc3VuZy1zb2MtDQo+IG93bmVyQHZnZXIua2VybmVsLm9yZ10gT24gQmVoYWxmIE9mIFR1c2hh
+ciBCZWhlcmENCj4gU2VudDogVHVlc2RheSwgSnVuZSAyMSwgMjAxMSAxMjo0NyBQTQ0KPiBUbzog
+SmluZ29vIEhhbg0KPiBDYzogS3VramluIEtpbTsgUGF1bCBNdW5kdDsgbGludXgtc2Ftc3VuZy1z
+b2NAdmdlci5rZXJuZWwub3JnOyBKb25naHVuIEhhbjsNCj4gQW5hbmQgS3VtYXIgTjsgVGhvbWFz
+IEFicmFoYW07IFN5bHdlc3RlciBOYXdyb2NraTsgTWFyZWsgU3p5cHJvd3NraTsNCj4gS3l1bmdt
+aW4gUGFyazsgSW5raSBEYWU7IEFSTSBMaW51eDsgQmVuIERvb2tzDQo+IFN1YmplY3Q6IFJlOiBb
+UEFUQ0ggdjIgNS81XSBBUk06IEVYWU5PUzQ6IEFkZCBwbGF0Zm9ybSBkYXRhIGZvciBFWFlOT1M0
+DQo+IEZJTUQgYW5kIExURTQ4MFdWIHBsYXRmb3JtLWxjZA0KPiANCj4gSGksDQo+IA0KPiBPbiBG
+cmlkYXkgMTcgSnVuZSAyMDExIDA2OjMyIFBNLCBKaW5nb28gSGFuIHdyb3RlOg0KPiA+IEZyb206
+IEpvbmdodW4gSGFuPGpvbmdodW4uaGFuQHNhbXN1bmcuY29tPg0KPiA+DQo+ID4gVGhpcyBwYXRj
+aCBhZGRzIHN1cHBvcnQgRVhZTk9TNCBGSU1EMCBhbmQgTFRFNDgwV1YgTENEIHBhbm5lbC4NCj4g
+Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IEpvbmdodW4gSGFuPGpvbmdodW4uaGFuQHNhbXN1bmcuY29t
+Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IEppbmdvbyBIYW48amcxLmhhbkBzYW1zdW5nLmNvbT4NCj4g
+PiAtLS0NCj4gPiAgIGFyY2gvYXJtL21hY2gtZXh5bm9zNC9tYWNoLXNtZGtjMjEwLmMgfCAgIDc0
+DQo+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICAgYXJjaC9hcm0vbWFj
+aC1leHlub3M0L21hY2gtc21ka3YzMTAuYyB8ICAgNzQNCj4gKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrDQo+ID4gICAyIGZpbGVzIGNoYW5nZWQsIDE0OCBpbnNlcnRpb25zKCspLCAw
+IGRlbGV0aW9ucygtKQ0KPiA+DQo+IA0KPiBUaGVyZSBhcmUgdmFyaWFudHMgb2YgU01ES1YzMTAg
+Ym9hcmRzIHRoYXQgZG9uJ3QgdXNlIExURTQ4MFdWIExDRCBwYW5lbC4NCj4gV29uJ3QgaXQgYmUg
+YmV0dGVyIHRvIHByb3ZpZGUgYW4gb3B0aW9uIG9mIHNlbGVjdGluZyB0aGUgTENEIHBhbmVsDQo+
+IHRocm91Z2ggY29uZmlnIGZpbGUgYW5kIGFkZGluZyB0aGUgcGFuZWwgY29kZSBhY2NvcmRpbmds
+eT8NCj4NCj4gQWxzbywgdGhlIHBhbmVsIGNvZGUgY2FuIGJlIGNvbnNvbGlkYXRlZCBhdCBhIHNp
+bmdsZSBsb2NhdGlvbiBhbmQgdXNlZA0KPiBpbiBhcHByb3ByaWF0ZSBtYWNoaW5lIGZpbGVzLg0K
+PiANCkRvIHlvdSBoYXZlIGEgcGF0Y2ggYWJvdXQgdGhhdD8NCklmIHlvdSBtYWtlIGEgcGF0Y2gg
+YWJvdXQgeW91ciBzdWdnZXN0aW9uLCBwbGVhc2Ugc3VibWl0IGl0Lg0K
