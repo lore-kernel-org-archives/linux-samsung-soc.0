@@ -1,42 +1,81 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH v2 1/4] Exynos4 NURI: configure regulators and PMIC
-Date: Tue, 21 Jun 2011 11:03:12 +0530
-Message-ID: <4E002D18.2080401@linaro.org>
-References: <20110620103124.GD31864@opensource.wolfsonmicro.com> <1308622033-2521-1-git-send-email-myungjoo.ham@samsung.com> <1308622033-2521-2-git-send-email-myungjoo.ham@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: [PATCH] ARM: EXYNOS4: Suspend to RAM fix
+Date: Tue, 21 Jun 2011 11:02:31 +0530
+Message-ID: <1308634351-8511-1-git-send-email-inderpal.singh@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:50058 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751035Ab1FUFdU (ORCPT
+Received: from mail-vx0-f174.google.com ([209.85.220.174]:61673 "EHLO
+	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752110Ab1FUFdb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Jun 2011 01:33:20 -0400
-In-Reply-To: <1308622033-2521-2-git-send-email-myungjoo.ham@samsung.com>
+	Tue, 21 Jun 2011 01:33:31 -0400
+Received: by vxb39 with SMTP id 39so1470674vxb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Jun 2011 22:33:30 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, myungjoo.ham@gmail.com, dg77.kim@samsung.com
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, inderpal.s@samsung.com, samsung@lists.linaro.org
 
-On Tuesday 21 June 2011 07:37 AM, MyungJoo Ham wrote:
-> Signed-off-by: MyungJoo Ham<myungjoo.ham@samsung.com>
-> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
->
-> --
-> Changes from v1. Thanks so much for your valuable comments, Mark.
-> - Removed unnecessary initialization data
-> - Add __initdata where necessary
-> - Corrected a regulator name for ADC
-> ---
->   arch/arm/mach-exynos4/mach-nuri.c |  622 ++++++++++++++++++++++++++++++++++++-
->   1 files changed, 621 insertions(+), 1 deletions(-)
->
-Will it be possible to move PMIC specific defines to a common file and 
-make appropriate calls in the board-specific file?
+From: Inderpal Singh <inderpal.s@samsung.com>
 
-In that way, we can re-use this PMIC code on some other boards (e.g. 
-Insignal low-cost board Origen featuring Exynos4210 also features MAX8997).
+This patch caters to the case when there is no wake up source. The system should abort the suspend and resume properly.
 
+1. It implements the pm_suspend function to save the core registers so  that they can be restored in pm_resume function.
+Earlier these resgisters were getting saved in pm_prepare, but pm_prepare never gets invoked when there is no wake up
+source enabled and restoration used to hang while resuming.
 
+2. As per the L2 cache controller spec, the cache controller registers should not be modified if cache is already enabled.
+Hence have made restoration of cache controller registers conditional based on whether it is already enabled or not.
+
+Signed-off-by: Inderpal Singh <inderpal.s@samsung.com>
+---
+ arch/arm/mach-exynos4/pm.c |   22 +++++++++++++++++-----
+ 1 files changed, 17 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/mach-exynos4/pm.c b/arch/arm/mach-exynos4/pm.c
+index 8755ca8..f483dae 100644
+--- a/arch/arm/mach-exynos4/pm.c
++++ b/arch/arm/mach-exynos4/pm.c
+@@ -324,8 +324,9 @@ static void exynos4_pm_prepare(void)
+ {
+ 	u32 tmp;
+ 
+-	s3c_pm_do_save(exynos4_core_save, ARRAY_SIZE(exynos4_core_save));
++#ifdef CONFIG_CACHE_L2X0
+ 	s3c_pm_do_save(exynos4_l2cc_save, ARRAY_SIZE(exynos4_l2cc_save));
++#endif
+ 
+ 	tmp = __raw_readl(S5P_INFORM1);
+ 
+@@ -410,15 +411,26 @@ static void exynos4_pm_resume(void)
+ 	exynos4_scu_enable(S5P_VA_SCU);
+ 
+ #ifdef CONFIG_CACHE_L2X0
+-	s3c_pm_do_restore_core(exynos4_l2cc_save, ARRAY_SIZE(exynos4_l2cc_save));
+-	outer_inv_all();
+-	/* enable L2X0*/
+-	writel_relaxed(1, S5P_VA_L2CC + L2X0_CTRL);
++	/* Restore the cache controller registers only if it is not enabled already*/
++	if (!(__raw_readl(S5P_VA_L2CC + L2X0_CTRL)&1)) {
++
++		s3c_pm_do_restore_core(exynos4_l2cc_save, ARRAY_SIZE(exynos4_l2cc_save));
++		outer_inv_all();
++		/* enable L2X0*/
++		writel_relaxed(1, S5P_VA_L2CC + L2X0_CTRL);
++	}
+ #endif
+ }
+ 
++static int exynos4_pm_suspend(void)
++{
++	s3c_pm_do_save(exynos4_core_save, ARRAY_SIZE(exynos4_core_save));
++	return 0;
++}
++
+ static struct syscore_ops exynos4_pm_syscore_ops = {
+ 	.resume		= exynos4_pm_resume,
++	.suspend	= exynos4_pm_suspend,
+ };
+ 
+ static __init int exynos4_pm_syscore_init(void)
 -- 
-Tushar Behera
+1.7.1
