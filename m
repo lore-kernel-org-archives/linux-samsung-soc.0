@@ -1,29 +1,56 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [RFC][PATCH 4/5] ARM: S5P64x0: Adding OTG PHY control code
-Date: Tue, 21 Jun 2011 10:36:40 +0100
-Message-ID: <20110621093640.GB23234@n2100.arm.linux.org.uk>
-References: <1308639827-2121-1-git-send-email-p.paneri@samsung.com> <1308639827-2121-5-git-send-email-p.paneri@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [RFC][PATCH 0/5] USB: DWC OTG: Add dwc_otg driver for S5P6440
+ samsung	SoC.
+Date: Tue, 21 Jun 2011 11:45:28 +0200
+Message-ID: <001701cc2ff7$f468d3c0$dd3a7b40$%szyprowski@samsung.com>
+References: <1308639827-2121-1-git-send-email-p.paneri@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1308639827-2121-5-git-send-email-p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tmarri-qTEPVZfXA3Y@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, naushad-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:20278 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756257Ab1FUJpj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 21 Jun 2011 05:45:39 -0400
+In-reply-to: <1308639827-2121-1-git-send-email-p.paneri@samsung.com>
+Content-language: pl
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: p.paneri@samsung.com, linux-usb@vger.kernel.org
+Cc: kgene.kim@samsung.com, tmarri@apm.com, balbi@ti.com, naushad@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, a.kesavan@samsung.com, linux-arm-kernel@lists.infradead.org
 
-On Tue, Jun 21, 2011 at 12:33:46PM +0530, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org wrote:
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/platform_device.h>
-> +#include <mach/regs-clock.h>
-> +#include <mach/gpio.h>
+Hello,
 
-linux/gpio.h please.
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Tuesday, June 21, 2011 9:04 AM p.paneri@samsung.com wrote:
+
+> From: Praveen Paneri <p.paneri@samsung.com>
+> 
+> These patches modify DWC OTG driver for ARM and add it for ARM based SoCs.
+> Currently it has been tested for Samsung's S5P6440. The development is
+> still
+> under process so these are not the best set of patches. They are just for
+> review
+> and not for merge. Intent of these patches is to show required
+> modifications
+> to make dwc_otg patches work on ARM.
+
+What are the differences between DWC OTG hardware and OTG hardware found
+in s3c64xx/s5pc100/s5pv210 and Exynos4 SoCs series? I've did a brief look
+at register definitions and most of them looks same. Can this driver be
+merged with s3c-hsotg.c driver?
+
+> Following features are tested for basic functions on SMDK6440
+> board after modifications:
+> OTG HOST: HID and mass-storage
+> OTG DEVICE: mass-storage and adb
+
+Does it mean that HID or mass-storage (both host or gadget drivers) needs
+modifications to get them working with this DWC OTG driver?
+
+(snipped)
+
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
