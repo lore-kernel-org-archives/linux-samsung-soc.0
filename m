@@ -1,108 +1,45 @@
-From: p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Subject: [RFC][PATCH 2/5] ARM: SAMSUNG: Changing the build condition of OTG
- platform device for samsung.
-Date: Tue, 21 Jun 2011 12:33:44 +0530
-Message-ID: <1308639827-2121-3-git-send-email-p.paneri@samsung.com>
+From: p.paneri@samsung.com
+Subject: [RFC][PATCH 3/5] ARM: SAMSUNG: Adding IO mapping for OTG PHY.
+Date: Tue, 21 Jun 2011 12:33:45 +0530
+Message-ID: <1308639827-2121-4-git-send-email-p.paneri@samsung.com>
 References: <1308639827-2121-1-git-send-email-p.paneri@samsung.com>
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1308639827-2121-1-git-send-email-p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, tmarri-qTEPVZfXA3Y@public.gmane.org, naushad-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:14157 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752763Ab1FUG73 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 21 Jun 2011 02:59:29 -0400
+In-reply-to: <1308639827-2121-1-git-send-email-p.paneri@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, balbi@ti.com, tmarri@apm.com, naushad@samsung.com, thomas.ab@samsung.com, a.kesavan@samsung.com
 
-From: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Praveen Paneri <p.paneri@samsung.com>
 
-Adding dwc driver name in existing platform device
-to probe DWC OTG driver.
-Introduced otg_set_platdata function to pass platform data
-Added selectable config option to add DWC OTG driver for different
-machines.
+Adding virtual addresses for OTG PHY.
 
-Signed-off-by: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Praveen Paneri <p.paneri@samsung.com>
 ---
- arch/arm/plat-samsung/Kconfig         |    6 ++++++
- arch/arm/plat-samsung/Makefile        |    1 +
- arch/arm/plat-samsung/dev-usb-hsotg.c |   20 ++++++++++++++++++++
- 3 files changed, 27 insertions(+), 0 deletions(-)
+ arch/arm/mach-s5p64x0/cpu.c |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 4d79519..58ed8b1 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -227,6 +227,12 @@ config S3C_DEV_USB_HSOTG
- 	help
- 	  Compile in platform device definition for USB high-speed OtG
- 
-+config S3C_DEV_DWC_OTG
-+	bool
-+	help
-+	  Compile in platform device definition for DWC OTG. This
-+	  will make it selectable for different machines.
-+
- config S3C_DEV_WDT
- 	bool
- 	default y if ARCH_S3C2410
-diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-index 53eb15b..785ca79 100644
---- a/arch/arm/plat-samsung/Makefile
-+++ b/arch/arm/plat-samsung/Makefile
-@@ -49,6 +49,7 @@ obj-$(CONFIG_S3C_DEV_FB)	+= dev-fb.o
- obj-y				+= dev-uart.o
- obj-$(CONFIG_S3C_DEV_USB_HOST)	+= dev-usb.o
- obj-$(CONFIG_S3C_DEV_USB_HSOTG)	+= dev-usb-hsotg.o
-+obj-$(CONFIG_S3C_DEV_DWC_OTG)	+= dev-usb-hsotg.o
- obj-$(CONFIG_S3C_DEV_WDT)	+= dev-wdt.o
- obj-$(CONFIG_S3C_DEV_NAND)	+= dev-nand.o
- obj-$(CONFIG_S3C_DEV_ONENAND)	+= dev-onenand.o
-diff --git a/arch/arm/plat-samsung/dev-usb-hsotg.c b/arch/arm/plat-samsung/dev-usb-hsotg.c
-index 33a844a..7e6228b 100644
---- a/arch/arm/plat-samsung/dev-usb-hsotg.c
-+++ b/arch/arm/plat-samsung/dev-usb-hsotg.c
-@@ -20,6 +20,8 @@
- #include <mach/map.h>
- 
- #include <plat/devs.h>
-+#include <plat/otg.h>
-+#include <plat/usb-phy.h>
- 
- static struct resource s3c_usb_hsotg_resources[] = {
- 	[0] = {
-@@ -37,7 +39,12 @@ static struct resource s3c_usb_hsotg_resources[] = {
- static u64 s3c_hsotg_dmamask = DMA_BIT_MASK(32);
- 
- struct platform_device s3c_device_usb_hsotg = {
-+#ifdef CONFIG_S3C_DEV_USB_HSOTG
- 	.name		= "s3c-hsotg",
-+#endif
-+#ifdef CONFIG_S3C_DEV_DWC_OTG
-+	.name		= "dwc_otg",
-+#endif
- 	.id		= -1,
- 	.num_resources	= ARRAY_SIZE(s3c_usb_hsotg_resources),
- 	.resource	= s3c_usb_hsotg_resources,
-@@ -46,3 +53,16 @@ struct platform_device s3c_device_usb_hsotg = {
- 		.coherent_dma_mask	= DMA_BIT_MASK(32),
+diff --git a/arch/arm/mach-s5p64x0/cpu.c b/arch/arm/mach-s5p64x0/cpu.c
+index a5c0095..8dc6f20 100644
+--- a/arch/arm/mach-s5p64x0/cpu.c
++++ b/arch/arm/mach-s5p64x0/cpu.c
+@@ -57,6 +57,11 @@ static struct map_desc s5p64x0_iodesc[] __initdata = {
+ 		.pfn		= __phys_to_pfn(S5P64X0_PA_VIC1),
+ 		.length		= SZ_16K,
+ 		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S3C_VA_USB_HSPHY,
++		.pfn		= __phys_to_pfn(S5P64X0_PA_USB_HSPHY),
++		.length		= SZ_1M,
++		.type		= MT_DEVICE,
  	},
  };
-+
-+void __init s5p_otg_set_platdata(struct s5p_otg_platdata *pd)
-+{
-+	struct s5p_otg_platdata *npd;
-+
-+	npd = s3c_set_platdata(pd, sizeof(struct s5p_otg_platdata),
-+			&s3c_device_usb_hsotg);
-+
-+	if (!npd->phy_init)
-+		npd->phy_init = s5p_usb_phy_init;
-+	if (!npd->phy_exit)
-+		npd->phy_exit = s5p_usb_phy_exit;
-+}
+ 
 -- 
 1.7.0.4
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
