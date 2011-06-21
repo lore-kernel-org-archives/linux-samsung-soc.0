@@ -1,108 +1,42 @@
-From: JinGoo Han <jg1.han@samsung.com>
-Subject: Re: Re: [PATCH v2 1/5] ARM: EXYNOS4: Change clock name for FIMD
-Date: Tue, 21 Jun 2011 04:18:01 +0000 (GMT)
-Message-ID: <22737339.68511308629879847.JavaMail.weblogic@epml09>
-Reply-To: jg1.han@samsung.com
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH v2 1/4] Exynos4 NURI: configure regulators and PMIC
+Date: Tue, 21 Jun 2011 11:03:12 +0530
+Message-ID: <4E002D18.2080401@linaro.org>
+References: <20110620103124.GD31864@opensource.wolfsonmicro.com> <1308622033-2521-1-git-send-email-myungjoo.ham@samsung.com> <1308622033-2521-2-git-send-email-myungjoo.ham@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:18798 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750901Ab1FUESE (ORCPT
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:50058 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751035Ab1FUFdU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Jun 2011 00:18:04 -0400
-Received: from epcpsbge6.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LN40011YH9FQOG0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 21 Jun 2011 13:18:03 +0900 (KST)
-MIME-version: 1.0
+	Tue, 21 Jun 2011 01:33:20 -0400
+In-Reply-To: <1308622033-2521-2-git-send-email-myungjoo.ham@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, JinGoo Han <jg1.han@samsung.com>
-Cc: Sylwester Nawrocki <snjw23@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jong-Hun Han <jonghun.han@samsung.com>, ANAND KUMAR N <anand.kn@samsung.com>, THOMAS P ABRAHAM <thomas.ab@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, In-Ki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, myungjoo.ham@gmail.com, dg77.kim@samsung.com
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTeWx3ZXN0ZXIgTmF3cm9ja2kg
-W21haWx0bzpzLm5hd3JvY2tpQHNhbXN1bmcuY29tXQ0KPiBTZW50OiBNb25kYXksIEp1bmUgMjAs
-IDIwMTEgNjo0OCBQTQ0KPiBUbzogamcxLmhhbkBzYW1zdW5nLmNvbQ0KPiBDYzogU3lsd2VzdGVy
-IE5hd3JvY2tpOyBLdWtqaW4gS2ltOyBQYXVsIE11bmR0OyBsaW51eC1zYW1zdW5nLQ0KPiBzb2NA
-dmdlci5rZXJuZWwub3JnOyBKb25nLUh1biBIYW47IEFOQU5EIEtVTUFSIE47IFRIT01BUyBQIEFC
-UkFIQU07IE1hcmVrDQo+IFN6eXByb3dza2k7IEt5dW5nbWluIFBhcms7IEluLUtpIERhZTsgQVJN
-IExpbnV4OyBCZW4gRG9va3MNCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiAxLzVdIEFSTTogRVhZ
-Tk9TNDogQ2hhbmdlIGNsb2NrIG5hbWUgZm9yIEZJTUQNCj4gDQo+IEhpIEppbkdvbywNCj4gDQo+
-IE9uIDA2LzIwLzIwMTEgMDk6MTQgQU0sIEppbkdvbyBIYW4gd3JvdGU6DQo+ID4gSGksIFN5bHdl
-c3RlciBOYXdyb2NraS4NCj4gPiBJIGFwcHJlY2lhdGUgeW91ciByZXZpZXcgYW5kIHN1Z2dlc3Rp
-b24uDQo+ID4NCj4gPiBQbGVhc2UsIHJlZmVyIHRvIHRoZSBMQ0QgY29udG9sbGVyIGNsb2NrIHRh
-YmxlIGFzIGZvbGxvd3M6DQo+IA0KPiBvaywgdGhhbmtzIGZvciB0aGUgdXBkYXRlLg0KPiANCj4g
-PiAgLSBzM2MyNDQwIHVzZXMgJ3MzYzI0MTBmYi5jJywgbm90ICdzM2MtZmIuYycgc2luY2UgIExD
-RCBjb250cm9sbGVyIElQIGlzDQo+IGRpZmZlcmVudC4NCj4gPiAgICBIb3dldmVyLCBzM2MyNDQz
-IHVzZXMgJ3MzYy1mYi5jJy4gU28gSSBhZGQgczNjMjQ0MyB0byB0YWJsZSBpbnN0ZWFkIG9mDQo+
-IHMzYzI0NDAuDQo+IA0KPiBZZXMsIEkgd2FzIGF3YXJlIG9mIHRoYXQuIE15IGJhZCB0byBwdXQg
-czNjMjQ0MCBpbiB0aGUgdGFibGUuDQo+IA0KPiA+ICAtIHMzYzY0MTAgaGFzIFNDTEtfTENELCBi
-dXQsIGNsb2NrIG5hbWUgaXMgbm90IGRlZmluZWQuDQo+ID4gIC0gRXh5bm9zNCBkb2VzIG5vdCB1
-c2UgbmFtZSAiSENMSyIuDQo+ID4NCj4gPiAgICAgICAgICAgfCBMQ0QgY29udHJvbGxlciAgICB8
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwNCj4gPiAgICAgICAgICAgfCAoSVAgY29yZSkg
-Y2xvY2sgICB8IExDRCBwaXhlbCBjbG9jayAgICAgICAgICAgIHwNCj4gPiAtLS0tLS0tLS0tKy0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsNCj4gPiBzM2My
-NDQzICAgfCAgSENMSyAobGNkKSAgICAgICB8IHggIHwgIERJU1BDTEsgKGRpc3BsYXktaWYpIHwN
-Cj4gPiAtLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLSsNCj4gPiBzM2M2NDEwICAgfCAgSENMSyAobGNkKSAgICAgICB8IHggIHwgIFNDTEtf
-TENEICAoTi9BKSAgICAgIHwNCj4gPiAtLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsNCj4gPiBzNXBjMTAwICAgfCAgSENMSyAobGNkKSAg
-ICAgICB8IHggIHwgIFNDTEtfTENEICAoc2Nsa19sY2QpIHwNCj4gPiAtLS0tLS0tLS0tKy0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsNCj4gPiBzNXB2MjEw
-ICAgfCAgSENMS19EU1lTIChsY2QpICB8IHggIHwgIFNDTEtfRklNRCAoc2Nsa19maW1kKXwNCj4g
-PiAtLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLSsNCj4gPiBleHlub3M0ICAgfCAgQUNMS18xNjAgKGZpbWQpICB8IE8gIHwgIFNDTEtfRklN
-RCAoc2Nsa19maW1kKXwNCj4gPiAtLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSst
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLSsNCj4gICAgICAgICAgICAgIF5eXl5eXl5eXl5eXl5eXl5e
-Xl4NCj4gSW4gbWFjaC1leHlub3M0L2Nsb2NrLmMgdGhpcyBjbG9jayBpcyBkZXNjcmliZWQgYXMg
-QUNMS18xMzMgKGxjZCkNCkkgY2Fubm90IGZpbmQgaXQuDQpMZXQgbWUga25vdyB3aGVyZSAnZmlt
-ZCcgaXMgZGVzY3JpYmVkIGFzIEFDTEtfMTMzLg0KQW55d2F5LCBhY2NvcmRpbmcgdG8gZGF0YXNo
-ZWV0LCB0aGlzIGNsb2NrIGlzIGRlc2NyaWJlZCBhcyBBQ0xLXzE2MC4NCj4gDQo+ID4NCj4gPiBz
-M2MyNDQzLCBzM2M2NDEwLCBzNXBjMTAwIGFuZCBzNXB2MjEwIGRvbid0IHVzZSAnc2Nsa19sY2Qn
-IG9yDQo+ICdzY2xrX2ZpbWQnLg0KPiA+ICdsY2QnIGNsb2NrIGlzIGFsc28gdXNlZCB0byBnZW5l
-cmF0ZSB0aGUgTENEIHBpeGVsIGNsb2NrLg0KPiA+DQo+ID4gTXkgcG9pbnQgaXMgdGhhdCBMQ0Qg
-Y29udHJvbGxlciBjbG9jayBzaG91bGQgYmUgbmFtZWQgImxjZCIgZm9yDQo+IGNvbnNpc3RlbmNl
-Lg0KPiANCj4gWWVzLCBJIGFncmVlLiBBZnRlciB0aGlua2luZyBhYm91dCBpdCBhIGJpdCBtb3Jl
-IEkgd2FzIGdvaW5nIHRvIHByb3Bvc2UNCj4gdGhhdCB0b28uDQo+IA0KPiA+IElmIHRoZXJlIGlz
-IG5vdCBtdXggZm9yIGxjZCBwaXhlbCBjbG9jayBpbiBjYXNlIG9mIGV4eW5vczQsICJzY2xrX2Zp
-bWQiDQo+IHdpbGwgYmUgc2V0DQo+ID4gaW4gbWFjaGluZSBkaXJlY3RvcnkuDQo+IA0KPiBPSywg
-eW91IHBhdGNoIGZvciBzM2MtZmIgZHJpdmVyIGxvb2tzIGxpa2UgYSBzaWduaWZpY2FudCBpbXBy
-b3ZlbWVudA0KPiBjb21wYXJpbmcNCj4gdG8gdGhlIG9yaWdpbmFsIG9uZS4gQnV0IEkgdGhpbmsg
-d2Ugc2hvdWxkIHJlbW92ZSB0aGUgY2FsbGJhY2sgaW50bw0KPiBtYWNoaW5lDQo+IGNvZGUuDQo+
-IFRoZSBkcml2ZXIgY291bGQganVzdCBkaXJlY3RseSBiZSBkb2luZyBjbGtfZ2V0KGRldiwgInNj
-bGtfZmltZCIpOyBJZiB0aGlzDQo+IHN1Y2NlZWRzIGFuZCBjbGtzZWwgb3B0aW9uIGlzIG5vdCBz
-ZXQgaW4gdGhlIElQIHZhcmlhbnQgdGhlbiB0aGUgZHJpdmVyDQo+IHNob3VsZA0KPiB0cmVhdCAi
-c2Nsa19maW1kIiBhcyBwaXhlbCBjbG9jaywgaS5lLiBpdCB3aWxsIHNldCBpdHMgZnJlcXVlbmN5
-IGFuZA0KPiBlbmFibGUgaXQuDQo+IEl0IHNob3VsZCBub3QgY2FyZSBhYm91dCBzZXR0aW5nIHRo
-ZSBwYXJlbnQgZm9yICJzY2xrX2ZpbWQiLCB0aGlzIHNob3VsZA0KPiBiZSBkb25lIGJlZm9yZSBz
-M2MtZmIgcHJvYmUgaXMgY2FsbGVkLg0KPiANCj4gVGhlIHByb2JsZW0gaXMgdGhhdCBJIGRvbid0
-IGtub3cgd2hhdCB0byBkbyBpdCB0aGUgYm9vdGxvYWRlciBkb2VzIG5vdCBzZXQNCj4gYSBwYXJl
-bnQgY2xvY2sgZm9yIHNjbGtfZmltZC4uDQo+IFRoZSBib2FyZCBjb2RlIGNvdWxkIGp1c3QgZ2V0
-IHNjbGtfZmltZCBhbmQgc2V0IG1vdXRfbXBsbCBhcyBpdHMgcGFyZW50LA0KPiBsaWtlDQo+IGl0
-J3MgZG9uZSBpbiB5b3VyIHBhdGNoOg0KPiBbUEFUQ0ggdjIgMy81XSBBUk06IEVYWU5PUzQ6IEFk
-ZCBwbGF0Zm9ybSBkZXZpY2UgYW5kIGhlbHBlciBmdW5jdGlvbnMgZm9yDQo+IEZJTUQNCj4gKGV4
-Y2VwdCBwYXNzaW5nIGEgcG9pbnRlciB0byB0aGUgZHJpdmVyKS4NCj4gDQo+IEhvd2V2ZXIgdGhl
-cmUgaGF2ZSBiZWVuIG9iamVjdGlvbnMgdG8gcHV0IHN1Y2ggdGhpbmdzIGluIHRoZSBib2FyZCBj
-b2RlIGluDQo+IHRoZSBwYXN0Lg0KPiBJbiBjYXNlIG9mIGNhbWVyYSBjbG9ja3Mgd2UgdXNlZCB0
-byBoYXZlIGludGVybmFsbHkgYSBmdW5jdGlvbiBpbiB0aGUNCj4gbWFjaGluZQ0KPiBmaWxlIHNl
-dHRpbmcgdGhlIHBhcmVudCBjbG9ja3MsIHVudGlsIGJvb3Rsb2FkZXIgd2FzIG1vZGlmaWVkIHRv
-IGNvbmZpZ3VyZQ0KPiB0aGVtLg0KPiANCj4gPg0KPiA+IEFzIHlvdSBtZW50aW9uZWQsIEkgYWxz
-byB0aGluayB0aGF0IHdlIG5lZWQgdG8gY3JlYXRlIHR3byBjbG9jaw0KPiBjb25uZWN0aW9uIGlk
-cw0KPiA+IHN1Y2ggYXMgICJidXNfY2siLCAicGl4X2NrIiBpbiBvcmRlciB0byB1c2UgU0NMS19M
-Q0Qgb3IgU0NMS19GSU1ELg0KPiA+IE1vcmVvdmVyLCAnbGNkJyBpbiBzNXB2MjEwIHNob3VsZCBi
-ZSBjaGFuZ2VkIHRvICdmaW1kJyBhY2NvcmRpbmcgdG8NCj4gczVwdjIxMCBkYXRhc2hlZXQuDQo+
-IA0KPiBZZWFoLCB0aGF0IG1ha2VzIHNlbnNlLg0KPiANCj4gPiBIb3dldmVyLCBpdCByZXF1aXJl
-cyBtYW55IHdvcmtzIHRvIGNvbnZlcnQuDQo+IA0KPiBJdCdzIGEgYml0IGxhYm9yaW91cy4gQnV0
-IGl0J3MgZG9hYmxlLg0KPiANCj4gPg0KPiA+IFNvLCBJIHRoaW5rIHRoYXQgJ3R3byBjbG9jayBj
-b25uZWN0aW9uIGlkcycgcGF0Y2ggd291bGQgYmUgc3VibWl0dGVkDQo+IGxhdGVyLA0KPiA+IGFm
-dGVyIGNvbW1pdHRpbmcgdGhlIHBhdGNoZXMgdGhhdCBJIHN1Ym1pdHRlZCBvbiBsYXN0IEZyaWRh
-eS4NCj4gDQo+IEkgYWdyZWUgd2l0aCB0aGF0LCBnaXZlbiB0aGF0IHRoZSBjYWxsYmFjayBpcyBy
-ZW1vdmVkIGZyb20gdGhlIHBsYXRmb3JtDQo+IGRhdGENCj4gc3RydWN0dXJlLg0KT0suIFRoZSBj
-YWxsYmFjayB3aWxsIGJlIHJlbW92ZWQgZnJvbSB0aGUgcGxhdGZvcm0gZGF0YSBzdHJ1Y3R1cmUu
-DQo+IFdlIG5lZWQgdG8gZ2V0IG91cnNlbHZlcyBvbnRvIHBhdGggb2YgbWlncmF0aW9uIHRvIHRo
-ZSBkZXZpY2UgdHJlZSBhbmQNCj4gSU1ITw0KPiBhZGRpbmcgbW9yZSBjYWxsYmFja3MgdG8gYm9h
-cmQgY29kZSBpcyBhIHN0ZXAgaW4gb3Bwb3NpdGUgZGlyZWN0aW9uLg0KPiANCj4gDQo+IFRoYW5r
-cywNCj4gUy4NCg==
+On Tuesday 21 June 2011 07:37 AM, MyungJoo Ham wrote:
+> Signed-off-by: MyungJoo Ham<myungjoo.ham@samsung.com>
+> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+>
+> --
+> Changes from v1. Thanks so much for your valuable comments, Mark.
+> - Removed unnecessary initialization data
+> - Add __initdata where necessary
+> - Corrected a regulator name for ADC
+> ---
+>   arch/arm/mach-exynos4/mach-nuri.c |  622 ++++++++++++++++++++++++++++++++++++-
+>   1 files changed, 621 insertions(+), 1 deletions(-)
+>
+Will it be possible to move PMIC specific defines to a common file and 
+make appropriate calls in the board-specific file?
+
+In that way, we can re-use this PMIC code on some other boards (e.g. 
+Insignal low-cost board Origen featuring Exynos4210 also features MAX8997).
+
+
+-- 
+Tushar Behera
