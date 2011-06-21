@@ -1,35 +1,69 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2 1/4] Exynos4 NURI: configure regulators and PMIC
-Date: Tue, 21 Jun 2011 12:10:10 +0100
-Message-ID: <20110621111010.GH22177@opensource.wolfsonmicro.com>
-References: <20110620103124.GD31864@opensource.wolfsonmicro.com>
- <1308622033-2521-1-git-send-email-myungjoo.ham@samsung.com>
- <1308622033-2521-2-git-send-email-myungjoo.ham@samsung.com>
- <4E002D18.2080401@linaro.org>
+From: Banajit Goswami <banajit.goswami-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC][PATCH 3/5] ARM: SAMSUNG: Adding IO mapping for OTG PHY.
+Date: Tue, 21 Jun 2011 16:48:38 +0530
+Message-ID: <BANLkTintiDOi1mtc0M_qKbxYm+YmDU_Ttw@mail.gmail.com>
+References: <1308639827-2121-1-git-send-email-p.paneri@samsung.com>
+	<1308639827-2121-4-git-send-email-p.paneri@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:48842 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1756014Ab1FULKM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Jun 2011 07:10:12 -0400
-Content-Disposition: inline
-In-Reply-To: <4E002D18.2080401@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1308639827-2121-4-git-send-email-p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tmarri-qTEPVZfXA3Y@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, naushad-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, myungjoo.ham@gmail.com, dg77.kim@samsung.com
 
-On Tue, Jun 21, 2011 at 11:03:12AM +0530, Tushar Behera wrote:
+Hi Praveen,
 
-> Will it be possible to move PMIC specific defines to a common file
-> and make appropriate calls in the board-specific file?
+On Tue, Jun 21, 2011 at 12:33 PM, <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>
+> From: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>
+> Adding virtual addresses for OTG PHY.
+>
+> Signed-off-by: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+> =C2=A0arch/arm/mach-s5p64x0/cpu.c | =C2=A0 =C2=A05 +++++
+> =C2=A01 files changed, 5 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/mach-s5p64x0/cpu.c b/arch/arm/mach-s5p64x0/cpu.=
+c
+> index a5c0095..8dc6f20 100644
+> --- a/arch/arm/mach-s5p64x0/cpu.c
+> +++ b/arch/arm/mach-s5p64x0/cpu.c
+> @@ -57,6 +57,11 @@ static struct map_desc s5p64x0_iodesc[] __initdata=
+ =3D {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.pfn =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D __phys_to_pfn(S5P64X0_PA_VIC1),
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.length =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =3D SZ_16K,
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0.type =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =3D MT_DEVICE,
+> + =C2=A0 =C2=A0 =C2=A0 }, {
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .virtual =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0=3D (unsigned long)S3C_VA_USB_HSPHY,
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .pfn =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D __phys_to_pfn(S5P64X0_PA_USB_HSPHY),
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .length =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =3D SZ_1M,
 
-> In that way, we can re-use this PMIC code on some other boards (e.g.
-> Insignal low-cost board Origen featuring Exynos4210 also features
-> MAX8997).
+Do we really need 1M for this??
 
-If the board is similar enough in design to be sharing the PMIC code
-that sounds like it should be sharing a lot more of the board setup
-code.
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 .type =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =3D MT_DEVICE,
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0},
+> =C2=A0};
+>
+> --
+> 1.7.0.4
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
