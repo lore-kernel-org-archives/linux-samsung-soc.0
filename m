@@ -1,101 +1,60 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [RFC][PATCH 4/5] ARM: S5P64x0: Adding OTG PHY control code
-Date: Wed, 22 Jun 2011 12:49:24 +0300
-Message-ID: <20110622094923.GA23598@legolas.emea.dhcp.ti.com>
-References: <0LN400HTOZEQDIL0@mailout1.samsung.com>
- <BANLkTikDDBQjE2RCeeBB50vokSTcnCO46A@mail.gmail.com>
-Reply-To: balbi-l0cyMroinI0@public.gmane.org
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v2 4/4] Exynos4 NURI: support for NTC thermistor
+Date: Wed, 22 Jun 2011 12:08:49 +0100
+Message-ID: <20110622110848.GA18726@opensource.wolfsonmicro.com>
+References: <20110620103124.GD31864@opensource.wolfsonmicro.com>
+ <1308622033-2521-1-git-send-email-myungjoo.ham@samsung.com>
+ <1308622033-2521-5-git-send-email-myungjoo.ham@samsung.com>
+ <20110621105033.GF22177@opensource.wolfsonmicro.com>
+ <BANLkTi=eBAGCADe1MTdtQ4XnBVpHK+uUNA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <BANLkTikDDBQjE2RCeeBB50vokSTcnCO46A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: balbi-l0cyMroinI0@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tmarri-qTEPVZfXA3Y@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+In-Reply-To: <BANLkTi=eBAGCADe1MTdtQ4XnBVpHK+uUNA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: myungjoo.ham@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, dg77.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Wed, Jun 22, 2011 at 02:00:37PM +0900, MyungJoo Ham wrote:
+> On Tue, Jun 21, 2011 at 7:50 PM, Mark Brown
 
---VbJkn9YxBvnuCH5J
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> >> +#include <linux/platform_data/ntc_thermistor.h>
 
-Hi,
+> > This doesn't appear to be in mainline.
 
-On Wed, Jun 22, 2011 at 01:56:25PM +0530, Praveen Paneri wrote:
-> > > diff --git a/arch/arm/mach-s5p64x0/Makefile b/arch/arm/mach-s5p64x0/M=
-akefile
-> > > index ae6bf6f..611fb3a 100644
-> > > --- a/arch/arm/mach-s5p64x0/Makefile
-> > > +++ b/arch/arm/mach-s5p64x0/Makefile
-> > > @@ -28,3 +28,4 @@ obj-y +=3D dev-audio.o
-> > >=A0=A0obj-$(CONFIG_S3C64XX_DEV_SPI) +=3D dev-spi.o
-> > >
-> > >=A0=A0obj-$(CONFIG_S5P64X0_SETUP_I2C1) +=3D setup-i2c1.o
-> > > +obj-$(CONFIG_S3C_DEV_DWC_OTG) +=3D setup-otg-phy.o
-> > > diff --git a/arch/arm/mach-s5p64x0/include/mach/map.h b/arch/arm/mach=
--s5p64x0/include/mach/map.h
-> > > index 95c9125..717c279 100644
-> > > --- a/arch/arm/mach-s5p64x0/include/mach/map.h
-> > > +++ b/arch/arm/mach-s5p64x0/include/mach/map.h
-> > > @@ -44,6 +44,8 @@
-> > >=A0=A0#define S5P64X0_PA_SPI1 0xEC500000
-> > >
-> > >=A0=A0#define S5P64X0_PA_HSOTG 0xED100000
-> > > +#define S5P64X0_PA_USB_HSPHY 0xED200000
-> > > +#define S5P64X0_VA_USB_HSPHY S3C_ADDR_CPU(0x00100000)
-> > >
-> > >=A0=A0#define S5P64X0_PA_HSMMC(x) (0xED800000 + ((x) * 0x100000))
-> > >
-> > > @@ -71,6 +73,8 @@
-> > >=A0=A0#define S5P_PA_TIMER S5P64X0_PA_TIMER
-> > >
-> > >=A0=A0#define SAMSUNG_PA_ADC S5P64X0_PA_ADC
-> > > +#define S3C_PA_USB_HSOTG S5P64X0_PA_HSOTG
-> > > +#define S3C_VA_USB_HSPHY=A0=A0=A0=A0=A0=A0=A0=A0S5P64X0_VA_USB_HSPHY
-> > >
-> > >=A0=A0/* UART */
-> > >
-> > > diff --git a/arch/arm/mach-s5p64x0/setup-otg-phy.c b/arch/arm/mach-s5=
-p64x0/setup-otg-phy.c
-> >
-> > drivers should not live in arch/arm/*, why don't you move this to
-> > drivers/usb/otg where the PHYs are staying right now ?
-> PHY init/exit code can vary across SoCs. Wouldn't it be better to have it=
- in the
-> SoC specific location?
+> Right, not just yet. I should've added comment about the patch just
+> being applied to "next".
 
-It will vary how ? If it's only regarding e.g. a different GPIO pin or a
-different IRQ number, you handle that by passing data down to driver
-(via platform_data or struct resource), now if it varies because a
-different board uses a different PHY, then another driver should be
-written (well, as long as it's really different from the one you have
-now, otherwise you should see if it's worth making the existing driver
-more flexible).
+I was actually looking at -next rather than Linus' tree there...
 
---=20
-balbi
+> Should I surround them with "#ifdef CONFIG_NTC_THERMISTOR"?
 
---VbJkn9YxBvnuCH5J
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+I guess, or just wait until it gets merged.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+> > Why not do this in an initcall or in the device registration? =A0Th=
+is
+> > looks like working around a limitation of the ntc_thermistor driver
+> > which should be fixed as part of a mainline merge for that.
 
-iQEcBAEBAgAGBQJOAbqjAAoJEAv8Txj19kN16z0H/2dPC4mttrWM1JP/yr+Tiyuo
-/lX+Y9LKhcRHi0Sd19ussICm0BLDVfnMid9ycQ94qYbFBRU7lQRr7fgagEtTwQvB
-aqA9FnDobmlGcikR+7OlCHEAGLF13t14PuKWviR3xx7j/2rUw0d22ljLL+Oy0Yj8
-jXLTD9kG0OpxTkI7qg//MoV2Yq6ROAxWNCw7Cs/zgoUFE/OT1vkSZnnV3GD84+7B
-ngSG3EydQ5GE/InTsgwMoz75RrSFiAL+BzH1tfE+QB11N/Xut6PNAdCYiYcgt3w5
-oGhih0AfYTDP6pZi55w3XcTJbzGDEvcNeVI+ZiCuBn4MVk9FATEa6yan3OFZI5k=
-=0W5Y
------END PGP SIGNATURE-----
+> Um... I think I can put this away to a common plat-samsung/dev-ntc.c
+> as I've seen many S5PC110/S5PV210/Exynos4 devices using NTC attached
+> to the CPU's ADC ports.
 
---VbJkn9YxBvnuCH5J--
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yes, but it's not just the location of the code - I was mostly noticing
+the fact that it was doing something that's clearly supposed to be a
+probe() method in the main read function.  It'd be better if there were
+an explicit probe() and corresponding remove() interface.
+
+I also note that this callback based stuff won't work terribly well wit=
+h
+device tree.
+
+> However, I won't be able to put that part into the NTC driver because
+> using S3C-ADC is plat-samsung specific method and NTC thermistor
+> itself is a general thermistor device not specific to S3C. Maybe, I
+> can do so after we've got a common ADC framework.
+
+Yes, we really need to get that ADC stuff sorted soon :(
