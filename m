@@ -1,34 +1,34 @@
-From: Sylwester Nawrocki <snjw23@gmail.com>
-Subject: Re: [PATCH V5 5/5] ARM: EXYNOS4: Add platform data for EXYNOS4 FIMD
- and LTE480WV platform-lcd
-Date: Wed, 22 Jun 2011 22:33:24 +0200
-Message-ID: <4E025194.5040603@gmail.com>
-References: <1308724904-31521-1-git-send-email-jg1.han@samsung.com>	<002901cc30c1$5ac6ef70$1054ce50$%szyprowski@samsung.com>	<BANLkTimPjo+WefApQLe=HKbYLCwmo_gGRw@mail.gmail.com> <BANLkTi=iS3H8xYhouvZZwP5_daxoGSBwLA@mail.gmail.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 00/25 v2] Re-jig cpu_suspend for a saner calling
+	convention
+Date: Wed, 22 Jun 2011 22:01:47 +0100
+Message-ID: <20110622210147.GC9449@n2100.arm.linux.org.uk>
+References: <20110622150816.GT23234@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:54466 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758077Ab1FVUdc (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:38403 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758081Ab1FVVB5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jun 2011 16:33:32 -0400
-In-Reply-To: <BANLkTi=iS3H8xYhouvZZwP5_daxoGSBwLA@mail.gmail.com>
+	Wed, 22 Jun 2011 17:01:57 -0400
+Content-Disposition: inline
+In-Reply-To: <20110622150816.GT23234@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Anand Kumar N <anand.kn@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, Jonghun Han <jonghun.han@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Inki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
 
-On 06/22/2011 03:25 PM, Anand Kumar N wrote:
-> Instead of hardcoding the parent clock in platform/bootloader code ,is
-> it not possible to select/set the
-> parent clock based on the pixel clk(plat data) having the least delta
-> with the 9 src clks.with this change I have checked it for WA101S.
+On Wed, Jun 22, 2011 at 04:08:16PM +0100, Russell King - ARM Linux wrote:
+> Tested on Assabet (SA1100) and 3430LDP only.
 
-While at first sight this may look as an awesome idea I don't really 
-believe it is. There might be other criteria that need to be considered,
-like continuous clock availability or frequency stability. 
-That said we could possibly have the driver setting sclk_fimd frequency
-based on display planes' properties (this was my initial suggestion) 
-but sclk_fimd parent should be fixed either by bootloader or board
-initialization code.
+Correction - because suspend only goes into retention mode, these
+changes have not been tested on the 3430.  Someone who knows what
+they're doing with the mega-complicated OMAPs (and so knows how to
+trigger the required modes to test these code paths) needs to test
+this.
+
+It will currently fail when trying to call cpu_resume() because we're
+trying the virtual address for that function, whereas it needs to be
+the physical address.  That's left as an exercise to solve (easiest
+way is probably to pass virt_to_phys(cpu_resume) into _omap_sram_idle
+and get it to save that away in SRAM.)
