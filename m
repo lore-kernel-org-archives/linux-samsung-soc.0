@@ -1,102 +1,113 @@
-From: JinGoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS4: Add PWM backlight support on Samsung SMDKV310
-Date: Wed, 22 Jun 2011 06:56:00 +0000 (GMT)
-Message-ID: <22693111.118621308725759945.JavaMail.weblogic@epv6ml03>
-Reply-To: jg1.han@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH RESEND] ARM: EXYNOS4: Add PWM backlight support on Samsung SMDKC210
+Date: Wed, 22 Jun 2011 16:10:26 +0900
+Message-ID: <1308726626-19635-1-git-send-email-jg1.han@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:21569 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751513Ab1FVG4C (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:41657 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751056Ab1FVHVs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jun 2011 02:56:02 -0400
-Received: from epcpsbge1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LN600E0KJ8KZNO0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 22 Jun 2011 15:56:00 +0900 (KST)
-MIME-version: 1.0
+	Wed, 22 Jun 2011 03:21:48 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: BANAJIT GOSWAMI <banajit.g@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "ben-linux@fluff.org" <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, Banajit Goswami <banajit.g@samsung.com>, Jingoo Han <jg1.han@samsung.com>
 
-SGksIEJhbmFqaXQuDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IGxpbnV4
-LXNhbXN1bmctc29jLW93bmVyQHZnZXIua2VybmVsLm9yZyBbbWFpbHRvOmxpbnV4LXNhbXN1bmct
-c29jLQ0KPiBvd25lckB2Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBCYW5haml0IEdvc3dh
-bWkNCj4gU2VudDogV2VkbmVzZGF5LCBKdW5lIDIyLCAyMDExIDM6NDEgUE0NCj4gVG86IGxpbnV4
-LXNhbXN1bmctc29jQHZnZXIua2VybmVsLm9yZw0KPiBDYzoga2dlbmUua2ltQHNhbXN1bmcuY29t
-OyBiZW4tbGludXhAZmx1ZmYub3JnOyBsaW51eC1hcm0tDQo+IGtlcm5lbEBsaXN0cy5pbmZyYWRl
-YWQub3JnOyBCYW5haml0IEdvc3dhbWkNCj4gU3ViamVjdDogW1BBVENIXSBBUk06IEVYWU5PUzQ6
-IEFkZCBQV00gYmFja2xpZ2h0IHN1cHBvcnQgb24gU2Ftc3VuZw0KPiBTTURLVjMxMA0KPiANCj4g
-VGhpcyBwYXRjaCBhZGRzIHN1cHBvcnQgZm9yIExDRCBiYWNrbGlnaHQgdXNpbmcgUFdNIHRpbWVy
-IGZvcg0KPiBTYW1zdW5nIFNNREtWMzEwIGJvYXJkLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQmFu
-YWppdCBHb3N3YW1pIDxiYW5haml0LmdAc2Ftc3VuZy5jb20+DQo+IC0tLQ0KPiAgYXJjaC9hcm0v
-bWFjaC1leHlub3M0L0tjb25maWcgICAgICAgICB8ICAgIDEgKw0KPiAgYXJjaC9hcm0vbWFjaC1l
-eHlub3M0L21hY2gtc21ka3YzMTAuYyB8ICAgNDMNCj4gKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDQ0IGluc2VydGlvbnMoKyksIDAgZGVsZXRp
-b25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1leHlub3M0L0tjb25maWcg
-Yi9hcmNoL2FybS9tYWNoLWV4eW5vczQvS2NvbmZpZw0KPiBpbmRleCAxNDM1ZmMzLi45YWI1M2Jj
-IDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FybS9tYWNoLWV4eW5vczQvS2NvbmZpZw0KPiArKysgYi9h
-cmNoL2FybS9tYWNoLWV4eW5vczQvS2NvbmZpZw0KPiBAQCAtMTI4LDYgKzEyOCw3IEBAIGNvbmZp
-ZyBNQUNIX1NNREtWMzEwDQo+ICAJc2VsZWN0IFMzQ19ERVZfSFNNTUMyDQo+ICAJc2VsZWN0IFMz
-Q19ERVZfSFNNTUMzDQo+ICAJc2VsZWN0IFNBTVNVTkdfREVWX0tFWVBBRA0KPiArCXNlbGVjdCBT
-QU1TVU5HX0RFVl9QV00NCj4gIAlzZWxlY3QgRVhZTk9TNF9ERVZfUEQNCj4gIAlzZWxlY3QgRVhZ
-Tk9TNF9ERVZfU1lTTU1VDQo+ICAJc2VsZWN0IEVYWU5PUzRfU0VUVVBfSTJDMQ0KPiBkaWZmIC0t
-Z2l0IGEvYXJjaC9hcm0vbWFjaC1leHlub3M0L21hY2gtc21ka3YzMTAuYyBiL2FyY2gvYXJtL21h
-Y2gtDQo+IGV4eW5vczQvbWFjaC1zbWRrdjMxMC5jDQo+IGluZGV4IDdlM2VlNmMuLmIwOTdlZjYg
-MTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJtL21hY2gtZXh5bm9zNC9tYWNoLXNtZGt2MzEwLmMNCj4g
-KysrIGIvYXJjaC9hcm0vbWFjaC1leHlub3M0L21hY2gtc21ka3YzMTAuYw0KPiBAQCAtMTYsNiAr
-MTYsNyBAQA0KPiAgI2luY2x1ZGUgPGxpbnV4L2lvLmg+DQo+ICAjaW5jbHVkZSA8bGludXgvaTJj
-Lmg+DQo+ICAjaW5jbHVkZSA8bGludXgvaW5wdXQuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9wd21f
-YmFja2xpZ2h0Lmg+DQo+IA0KPiAgI2luY2x1ZGUgPGFzbS9tYWNoL2FyY2guaD4NCj4gICNpbmNs
-dWRlIDxhc20vbWFjaC10eXBlcy5oPg0KPiBAQCAtMjksNiArMzAsNyBAQA0KPiAgI2luY2x1ZGUg
-PHBsYXQvc2RoY2kuaD4NCj4gICNpbmNsdWRlIDxwbGF0L2lpYy5oPg0KPiAgI2luY2x1ZGUgPHBs
-YXQvcGQuaD4NCj4gKyNpbmNsdWRlIDxwbGF0L2dwaW8tY2ZnLmg+DQo+IA0KPiAgI2luY2x1ZGUg
-PG1hY2gvbWFwLmg+DQo+IA0KPiBAQCAtMTcyLDYgKzE3NCw0NSBAQCBzdGF0aWMgc3RydWN0IGky
-Y19ib2FyZF9pbmZvIGkyY19kZXZzMVtdIF9faW5pdGRhdGEgPQ0KPiB7DQo+ICAJe0kyQ19CT0FS
-RF9JTkZPKCJ3bTg5OTQiLCAweDFhKSx9LA0KPiAgfTsNCj4gDQo+ICtzdGF0aWMgaW50IHNtZGt2
-MzEwX2JhY2tsaWdodF9pbml0KHN0cnVjdCBkZXZpY2UgKmRldikNCj4gK3sNCj4gKwlpbnQgcmV0
-ID0gMDsNCj4gKw0KPiArCXJldCA9IGdwaW9fcmVxdWVzdChFWFlOT1M0X0dQRDAoMSksICJCYWNr
-bGlnaHQiKTsNCj4gKwlpZiAocmV0KSB7DQo+ICsJCXByaW50ayhLRVJOX0VSUiAiZmFpbGVkIHRv
-IHJlcXVlc3QgR1BEIGZvciBQV00tT1VUMFxuIik7DQo+ICsJCXJldHVybiByZXQ7DQo+ICsJfQ0K
-PiArDQo+ICsJLyogQ29uZmlndXJlIEdQSU8gcGluIHdpdGggRVhZTk9TNF9HUERfMF8xX1RPVVRf
-MCAqLw0KPiArCXMzY19ncGlvX2NmZ3BpbihFWFlOT1M0X0dQRDAoMSksIFMzQ19HUElPX1NGTigy
-KSk7DQo+ICsNCj4gKwlyZXR1cm4gMDsNCj4gK30NCj4gKw0KPiArc3RhdGljIHZvaWQgc21ka3Yz
-MTBfYmFja2xpZ2h0X2V4aXQoc3RydWN0IGRldmljZSAqZGV2KQ0KPiArew0KPiArCXMzY19ncGlv
-X2NmZ3BpbihFWFlOT1M0X0dQRDAoMSksIFMzQ19HUElPX09VVFBVVCk7DQo+ICsJZ3Bpb19mcmVl
-KEVYWU5PUzRfR1BEMCgxKSk7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1f
-cHdtX2JhY2tsaWdodF9kYXRhIHNtZGt2MzEwX2JhY2tsaWdodF9kYXRhID0gew0KPiArCS5wd21f
-aWQJCT0gMSwNCj4gKwkubWF4X2JyaWdodG5lc3MJPSAyNTUsDQo+ICsJLmRmdF9icmlnaHRuZXNz
-CT0gMjU1LA0KPiArCS5wd21fcGVyaW9kX25zCT0gNzg3NzAsDQpQbGVhc2UgdXNlIDEwMDAgYXMg
-cHdtX3BlcmlvZF9ucyBpbnN0ZWFkIG9mIDc4NzcwIGFzIGZvbGxvd3M6DQotCS5wd21fcGVyaW9k
-X25zCT0gNzg3NzAsDQorCS5wd21fcGVyaW9kX25zICA9IDEwMDAsDQoNClRoZSB2YWx1ZSAnNzg3
-NzAnIG1ha2VzIG5vaXNlIHJlbGF0ZWQgdG8gcmVzb25hbmNlIGF0IExDRCBib2FyZC4NCg0KSSB3
-aWxsIGV4cGxhaW4gaG93IEkgZ2V0IHRoZSB2YWx1ZSBvZiBQV00gcGVyaW9kLg0KDQpUaGUgU01E
-SyBib2FyZHMgdXNlIExUMzU5MSBhcyBiYWNrbGlnaHQgTEVEIGRyaXZlciBvZiBMVEU0ODBXViBM
-Q0QNCkFjY29yZGluZyB0byB0aGUgTFQzNTkxIGRhdGFzaGVldCwgdGhlIHN3aXRjaGluZyBmcmVx
-dWVuY3kgc2hvdWxkDQpiZSAxTUh6LiBTbywgUFdNIHBlcmlvZCBpcyBjYWxjdWxhdGVkIGJ5IGZv
-bGxvd2luZyBmb3JtdWxhOg0KICAgICAgICBQV00gcGVyaW9kID0gMS9zd2l0Y2hpbmcgZnJlcXVl
-bmN5DQogICAgICAgICAgICAgICAgICAgICAgID0gMS8xTUh6DQogICAgICAgICAgICAgICAgICAg
-ICAgID0gMTAwMCBucw0KDQpZb3UgY2FuIGZpbmQgTFQzNTkxIGRhdGFzaGVldCBlYXNpbHkgb24g
-dGhlIEludGVybmV0LiBQbGVhc2UgcmVmZXIgdG8gaXQNCmZvciBtb3JlIGluZm9ybWF0aW9uLg0K
-R29vZCBsdWNrLg0KPiArCS5pbml0CQk9IHNtZGt2MzEwX2JhY2tsaWdodF9pbml0LA0KPiArCS5l
-eGl0CQk9IHNtZGt2MzEwX2JhY2tsaWdodF9leGl0LA0KPiArfTsNCj4gKw0KPiArc3RhdGljIHN0
-cnVjdCBwbGF0Zm9ybV9kZXZpY2Ugc21ka3YzMTBfYmFja2xpZ2h0X2RldmljZSA9IHsNCj4gKwku
-bmFtZQkJPSAicHdtLWJhY2tsaWdodCIsDQo+ICsJLmRldgkJPSB7DQo+ICsJCS5wYXJlbnQJCT0g
-JnMzY19kZXZpY2VfdGltZXJbMV0uZGV2LA0KPiArCQkucGxhdGZvcm1fZGF0YQk9ICZzbWRrdjMx
-MF9iYWNrbGlnaHRfZGF0YSwNCj4gKwl9LA0KPiArfTsNCj4gKw0KPiAgc3RhdGljIHN0cnVjdCBw
-bGF0Zm9ybV9kZXZpY2UgKnNtZGt2MzEwX2RldmljZXNbXSBfX2luaXRkYXRhID0gew0KPiAgCSZz
-M2NfZGV2aWNlX2hzbW1jMCwNCj4gIAkmczNjX2RldmljZV9oc21tYzEsDQo+IEBAIC0xOTUsNiAr
-MjM2LDggQEAgc3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnNtZGt2MzEwX2RldmljZXNb
-XQ0KPiBfX2luaXRkYXRhID0gew0KPiAgCSZzYW1zdW5nX2Fzb2NfZG1hLA0KPiAgCSZzbWRrdjMx
-MF9zbXNjOTExeCwNCj4gIAkmc21ka3YzMTBfcGNtX2RldmljZSwNCj4gKwkmczNjX2RldmljZV90
-aW1lclsxXSwNCj4gKwkmc21ka3YzMTBfYmFja2xpZ2h0X2RldmljZSwNCj4gIH07DQo+IA0KPiAg
-c3RhdGljIHZvaWQgX19pbml0IHNtZGt2MzEwX3Ntc2M5MTF4X2luaXQodm9pZCkNCj4gLS0NCj4g
-MS42LjUuMg0KPiANCj4gLS0NCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQg
-dGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctDQo+IHNvYyIgaW4NCj4gdGhlIGJv
-ZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcNCj4gTW9yZSBtYWpv
-cmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
-DQo=
+This patch adds support for LCD backlight control using PWM timer
+for Samsung's SMDKC210 board.
+
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+---
+ arch/arm/mach-exynos4/Kconfig         |    1 +
+ arch/arm/mach-exynos4/mach-smdkc210.c |   43 +++++++++++++++++++++++++++++++++
+ 2 files changed, 44 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index 1435fc3..a66896c 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -110,6 +110,7 @@ config MACH_SMDKC210
+ 	select S3C_DEV_HSMMC1
+ 	select S3C_DEV_HSMMC2
+ 	select S3C_DEV_HSMMC3
++	select SAMSUNG_DEV_PWM
+ 	select EXYNOS4_DEV_PD
+ 	select EXYNOS4_DEV_SYSMMU
+ 	select EXYNOS4_SETUP_I2C1
+diff --git a/arch/arm/mach-exynos4/mach-smdkc210.c b/arch/arm/mach-exynos4/mach-smdkc210.c
+index e645f7a..bcd368c 100644
+--- a/arch/arm/mach-exynos4/mach-smdkc210.c
++++ b/arch/arm/mach-exynos4/mach-smdkc210.c
+@@ -15,6 +15,7 @@
+ #include <linux/smsc911x.h>
+ #include <linux/io.h>
+ #include <linux/i2c.h>
++#include <linux/pwm_backlight.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach-types.h>
+@@ -27,6 +28,7 @@
+ #include <plat/sdhci.h>
+ #include <plat/iic.h>
+ #include <plat/pd.h>
++#include <plat/gpio-cfg.h>
+ 
+ #include <mach/map.h>
+ 
+@@ -146,6 +148,45 @@ static struct i2c_board_info i2c_devs1[] __initdata = {
+ 	{I2C_BOARD_INFO("wm8994", 0x1a),},
+ };
+ 
++static int smdkc210_backlight_init(struct device *dev)
++{
++	int ret;
++
++	ret = gpio_request(EXYNOS4_GPD0(1), "Backlight");
++	if (ret) {
++		printk(KERN_ERR "failed to request GPD for PWM-OUT 1\n");
++		return ret;
++	}
++
++	/* Configure GPIO pin with EXYNOS4_GPD_0_1_TOUT_1 */
++	s3c_gpio_cfgpin(EXYNOS4_GPD0(1), S3C_GPIO_SFN(2));
++
++	return 0;
++}
++
++static void smdkc210_backlight_exit(struct device *dev)
++{
++	s3c_gpio_cfgpin(EXYNOS4_GPD0(1), S3C_GPIO_OUTPUT);
++	gpio_free(EXYNOS4_GPD0(1));
++}
++
++static struct platform_pwm_backlight_data smdkc210_backlight_data = {
++	.pwm_id		= 1,
++	.max_brightness	= 255,
++	.dft_brightness	= 255,
++	.pwm_period_ns	= 1000,
++	.init		= smdkc210_backlight_init,
++	.exit		= smdkc210_backlight_exit,
++};
++
++static struct platform_device smdkc210_backlight_device = {
++	.name		= "pwm-backlight",
++	.dev		= {
++		.parent		= &s3c_device_timer[1].dev,
++		.platform_data	= &smdkc210_backlight_data,
++	},
++};
++
+ static struct platform_device *smdkc210_devices[] __initdata = {
+ 	&s3c_device_hsmmc0,
+ 	&s3c_device_hsmmc1,
+@@ -166,6 +207,8 @@ static struct platform_device *smdkc210_devices[] __initdata = {
+ 	&exynos4_device_sysmmu,
+ 	&samsung_asoc_dma,
+ 	&smdkc210_smsc911x,
++	&s3c_device_timer[1],
++	&smdkc210_backlight_device,
+ };
+ 
+ static void __init smdkc210_smsc911x_init(void)
+-- 
+1.7.1
