@@ -1,54 +1,77 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] tty: s5pv210: Add delay loop on fifo reset function for UART
-Date: Wed, 22 Jun 2011 17:50:25 +0900
-Message-ID: <1308732625-19847-1-git-send-email-kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 1/4] Exynos4 NURI: configure regulators and PMIC
+Date: Wed, 22 Jun 2011 18:17:18 +0900
+Message-ID: <00bf01cc30bd$350b7fc0$9f227f40$%kim@samsung.com>
+References: <20110620103124.GD31864@opensource.wolfsonmicro.com>
+ <1308622033-2521-1-git-send-email-myungjoo.ham@samsung.com>
+ <1308622033-2521-2-git-send-email-myungjoo.ham@samsung.com>
+ <4E002D18.2080401@linaro.org>
+ <BANLkTi=pv=y+1XC5bYEHgL1sy48JPztiOg@mail.gmail.com>
+ <4E0164E8.8060708@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:53916 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751963Ab1FVJBr (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:19326 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751398Ab1FVJRn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jun 2011 05:01:47 -0400
+	Wed, 22 Jun 2011 05:17:43 -0400
+In-reply-to: <4E0164E8.8060708@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Jaecheol Lee <jc.lee@samsung.com>, Greg Kroah-Hartman <gregkh@suse.de>, Kukjin Kim <kgene.kim@samsung.com>
+To: 'Tushar Behera' <tushar.behera@linaro.org>, myungjoo.ham@gmail.com
+Cc: 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Russell King' <linux@arm.linux.org.uk>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, dg77.kim@samsung.com
 
-From: Jongpill Lee <boyko.lee@samsung.com>
+Tushar Behera wrote:
+> 
+> On Wednesday 22 June 2011 08:01 AM, MyungJoo Ham wrote:
+> > On Tue, Jun 21, 2011 at 2:33 PM, Tushar Behera<tushar.behera@linaro.org>
+> wrote:
+> >> On Tuesday 21 June 2011 07:37 AM, MyungJoo Ham wrote:
+> >>>
+> >>> Signed-off-by: MyungJoo Ham<myungjoo.ham@samsung.com>
+> >>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+> >>>
+> >>> --
+> >>> Changes from v1. Thanks so much for your valuable comments, Mark.
+> >>> - Removed unnecessary initialization data
+> >>> - Add __initdata where necessary
+> >>> - Corrected a regulator name for ADC
+> >>> ---
+> >>>   arch/arm/mach-exynos4/mach-nuri.c |  622
+> >>> ++++++++++++++++++++++++++++++++++++-
+> >>>   1 files changed, 621 insertions(+), 1 deletions(-)
+> >>>
+> >> Will it be possible to move PMIC specific defines to a common file and make
+> >> appropriate calls in the board-specific file?
+> >>
+> >> In that way, we can re-use this PMIC code on some other boards (e.g.
+> >> Insignal low-cost board Origen featuring Exynos4210 also features MAX8997).
+> >>
+> >
+> > Yes, we have tried creating PMIC defines at a seperated file in our
+> > local repositories (still doing so in those repositories).
+> > However, that ended up creating multiple PMIC defines (one PMIC define
+> > file for each board); the connections between LDO# and devices are
+> > different.
+> >
+> In that case, we can first post the Origen board support and PMIC code
+> on the ML, then we would see if we can consolidate.
+> 
+> That looks more logical as per Mark's suggestion also.
+> >>
 
-This patch addes delay loop on fifo reset function for UART.
-On high speed freq, it needs delay function when fifo reset.
-If not, system will hang by this uart reset problem when resuming
-from suspend mode.
+Hi Tushar,
 
-Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
-Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
-Cc: Greg Kroah-Hartman <gregkh@suse.de>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- drivers/tty/serial/s5pv210.c |    4 ++++
- 1 files changed, 4 insertions(+), 0 deletions(-)
+When you need to add similar or same functionality on your board, you can/should move it in common part.
+Maybe 'should'...basically, nobody will apply same function into both place...
 
-diff --git a/drivers/tty/serial/s5pv210.c b/drivers/tty/serial/s5pv210.c
-index fb2619f..dce6cb3 100644
---- a/drivers/tty/serial/s5pv210.c
-+++ b/drivers/tty/serial/s5pv210.c
-@@ -18,6 +18,7 @@
- #include <linux/init.h>
- #include <linux/serial_core.h>
- #include <linux/serial.h>
-+#include <linux/delay.h>
- 
- #include <asm/irq.h>
- #include <mach/hardware.h>
-@@ -83,6 +84,9 @@ static int s5pv210_serial_resetport(struct uart_port *port,
- 	wr_regl(port, S3C2410_UFCON, cfg->ufcon | S3C2410_UFCON_RESETBOTH);
- 	wr_regl(port, S3C2410_UFCON, cfg->ufcon);
- 
-+	/* It is need to delay When reset FIFO register */
-+	udelay(1);
-+
- 	return 0;
- }
- 
--- 
-1.7.1
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
