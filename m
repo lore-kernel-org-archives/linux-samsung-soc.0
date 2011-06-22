@@ -1,169 +1,97 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 11/18] s5p-fimc: Add PM helper function for streaming control
-Date: Wed, 22 Jun 2011 20:01:17 +0200
-Message-ID: <1308765684-10677-12-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v2 03/18] s5p-fimc: Remove sclk_cam clock handling
+Date: Wed, 22 Jun 2011 20:01:09 +0200
+Message-ID: <1308765684-10677-4-git-send-email-s.nawrocki@samsung.com>
 References: <1308765684-10677-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:22315 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932181Ab1FVSBl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Jun 2011 14:01:41 -0400
 In-reply-to: <1308765684-10677-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Create a helper function for (re)starting streaming in PM resume calls.
+The external sclk_cam clocks will be handled at the media device
+driver level.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-capture.c |   80 ++++++++++++++++-----------
- drivers/media/video/s5p-fimc/fimc-core.c    |    4 +-
- drivers/media/video/s5p-fimc/fimc-core.h    |    3 +
- 3 files changed, 52 insertions(+), 35 deletions(-)
+ drivers/media/video/s5p-fimc/fimc-core.c |   12 ++----------
+ drivers/media/video/s5p-fimc/fimc-core.h |    3 +--
+ 2 files changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index f9beee8..a7d579d 100644
---- a/drivers/media/video/s5p-fimc/fimc-capture.c
-+++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -31,6 +31,48 @@
- #include "fimc-mdevice.h"
- #include "fimc-core.h"
- 
-+/**
-+ * fimc_start_capture - initialize the H/W for camera capture operation
-+ *
-+ * Initialize the camera capture datapath so when this function successfuly
-+ * completes all what is needed to start the capture pipeline is asserting
-+ * the global capture bit ImgCptEn.
-+ */
-+static int fimc_start_capture(struct fimc_dev *fimc)
-+{
-+	struct fimc_ctx *ctx = fimc->vid_cap.ctx;
-+	struct fimc_sensor_info *sensor;
-+	unsigned long flags;
-+	int ret = 0;
-+
-+	if (fimc->pipeline.sensor == NULL || ctx == NULL)
-+		return -EIO;
-+	sensor = v4l2_get_subdev_hostdata(fimc->pipeline.sensor);
-+
-+	spin_lock_irqsave(&fimc->slock, flags);
-+	fimc_prepare_dma_offset(ctx, &ctx->d_frame);
-+	fimc_set_yuv_order(ctx);
-+
-+	fimc_hw_set_camera_polarity(fimc, sensor->pdata);
-+	fimc_hw_set_camera_type(fimc, sensor->pdata);
-+	fimc_hw_set_camera_source(fimc, sensor->pdata);
-+	fimc_hw_set_camera_offset(fimc, &ctx->s_frame);
-+
-+	ret = fimc_set_scaler_info(ctx);
-+	if (!ret) {
-+		fimc_hw_set_input_path(ctx);
-+		fimc_hw_set_prescaler(ctx);
-+		fimc_hw_set_mainscaler(ctx);
-+		fimc_hw_set_target_format(ctx);
-+		fimc_hw_set_rotation(ctx);
-+		fimc_hw_set_effect(ctx);
-+		fimc_hw_set_output_path(ctx);
-+		fimc_hw_set_out_dma(ctx);
-+	}
-+	spin_unlock_irqrestore(&fimc->slock, flags);
-+	return ret;
-+}
-+
- static int fimc_stop_capture(struct fimc_dev *fimc)
- {
- 	unsigned long flags;
-@@ -92,47 +134,19 @@ static int start_streaming(struct vb2_queue *q)
- {
- 	struct fimc_ctx *ctx = q->drv_priv;
- 	struct fimc_dev *fimc = ctx->fimc_dev;
--	struct s5p_fimc_isp_info *isp_info;
-+	struct fimc_vid_cap *vid_cap = &fimc->vid_cap;
- 	int ret;
- 
- 	fimc_hw_reset(fimc);
- 
--	ret = v4l2_subdev_call(fimc->vid_cap.sd, video, s_stream, 1);
--	if (ret && ret != -ENOIOCTLCMD)
--		return ret;
-+	vid_cap->active_buf_cnt = 0;
-+	vid_cap->frame_count = 0;
-+	vid_cap->buf_index = 0;
- 
--	ret = fimc_prepare_config(ctx, ctx->state);
-+	ret = fimc_start_capture(fimc);
- 	if (ret)
- 		return ret;
- 
--	isp_info = &fimc->pdata->isp_info[fimc->vid_cap.input_index];
--	fimc_hw_set_camera_type(fimc, isp_info);
--	fimc_hw_set_camera_source(fimc, isp_info);
--	fimc_hw_set_camera_offset(fimc, &ctx->s_frame);
--
--	if (ctx->state & FIMC_PARAMS) {
--		ret = fimc_set_scaler_info(ctx);
--		if (ret) {
--			err("Scaler setup error");
--			return ret;
--		}
--		fimc_hw_set_input_path(ctx);
--		fimc_hw_set_prescaler(ctx);
--		fimc_hw_set_mainscaler(ctx);
--		fimc_hw_set_target_format(ctx);
--		fimc_hw_set_rotation(ctx);
--		fimc_hw_set_effect(ctx);
--	}
--
--	fimc_hw_set_output_path(ctx);
--	fimc_hw_set_out_dma(ctx);
--
--	INIT_LIST_HEAD(&fimc->vid_cap.pending_buf_q);
--	INIT_LIST_HEAD(&fimc->vid_cap.active_buf_q);
--	fimc->vid_cap.active_buf_cnt = 0;
--	fimc->vid_cap.frame_count = 0;
--	fimc->vid_cap.buf_index = 0;
--
- 	set_bit(ST_CAPT_PEND, &fimc->state);
- 	return 0;
- }
 diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index 2aa4612..437d664 100644
+index 22e848a..960c5f0 100644
 --- a/drivers/media/video/s5p-fimc/fimc-core.c
 +++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -468,7 +468,7 @@ int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
- }
+@@ -31,7 +31,7 @@
+ #include "fimc-core.h"
  
- /* Set order for 1 and 2 plane YCBCR 4:2:2 formats. */
--static void fimc_set_yuv_order(struct fimc_ctx *ctx)
-+void fimc_set_yuv_order(struct fimc_ctx *ctx)
- {
- 	/* The one only mode supported in SoC. */
- 	ctx->in_order_2p = S5P_FIMC_LSB_CRCB;
-@@ -510,7 +510,7 @@ static void fimc_set_yuv_order(struct fimc_ctx *ctx)
- 	dbg("ctx->out_order_1p= %d", ctx->out_order_1p);
- }
+ static char *fimc_clocks[MAX_FIMC_CLOCKS] = {
+-	"sclk_fimc", "fimc", "sclk_cam"
++	"sclk_fimc", "fimc"
+ };
  
--static void fimc_prepare_dma_offset(struct fimc_ctx *ctx, struct fimc_frame *f)
-+void fimc_prepare_dma_offset(struct fimc_ctx *ctx, struct fimc_frame *f)
- {
- 	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
- 	u32 i, depth = 0;
+ static struct fimc_fmt fimc_formats[] = {
+@@ -1608,7 +1608,6 @@ static int fimc_probe(struct platform_device *pdev)
+ 	struct samsung_fimc_driverdata *drv_data;
+ 	struct s5p_platform_fimc *pdata;
+ 	int ret = 0;
+-	int cap_input_index = -1;
+ 
+ 	dev_dbg(&pdev->dev, "%s():\n", __func__);
+ 
+@@ -1661,14 +1660,6 @@ static int fimc_probe(struct platform_device *pdev)
+ 		goto err_req_region;
+ 	}
+ 
+-	fimc->num_clocks = MAX_FIMC_CLOCKS - 1;
+-
+-	/* Check if a video capture node needs to be registered. */
+-	if (pdata && pdata->num_clients > 0) {
+-		cap_input_index = 0;
+-		fimc->num_clocks++;
+-	}
+-
+ 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	if (!res) {
+ 		dev_err(&pdev->dev, "failed to get IRQ resource\n");
+@@ -1677,6 +1668,7 @@ static int fimc_probe(struct platform_device *pdev)
+ 	}
+ 	fimc->irq = res->start;
+ 
++	fimc->num_clocks = MAX_FIMC_CLOCKS;
+ 	ret = fimc_clk_get(fimc);
+ 	if (ret)
+ 		goto err_regs_unmap;
 diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-index d264f3f..d1d4e32 100644
+index c088dac..f059216 100644
 --- a/drivers/media/video/s5p-fimc/fimc-core.h
 +++ b/drivers/media/video/s5p-fimc/fimc-core.h
-@@ -659,6 +659,9 @@ int fimc_set_scaler_info(struct fimc_ctx *ctx);
- int fimc_prepare_config(struct fimc_ctx *ctx, u32 flags);
- int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
- 		      struct fimc_frame *frame, struct fimc_addr *paddr);
-+void fimc_prepare_dma_offset(struct fimc_ctx *ctx, struct fimc_frame *f);
-+void fimc_set_yuv_order(struct fimc_ctx *ctx);
-+
- int fimc_register_m2m_device(struct fimc_dev *fimc,
- 			     struct v4l2_device *v4l2_dev);
- void fimc_unregister_m2m_device(struct fimc_dev *fimc);
+@@ -34,7 +34,7 @@
+ 
+ /* Time to wait for next frame VSYNC interrupt while stopping operation. */
+ #define FIMC_SHUTDOWN_TIMEOUT	((100*HZ)/1000)
+-#define MAX_FIMC_CLOCKS		3
++#define MAX_FIMC_CLOCKS		2
+ #define MODULE_NAME		"s5p-fimc"
+ #define FIMC_MAX_DEVS		4
+ #define FIMC_MAX_OUT_BUFS	4
+@@ -46,7 +46,6 @@
+ enum {
+ 	CLK_BUS,
+ 	CLK_GATE,
+-	CLK_CAM,
+ };
+ 
+ enum fimc_dev_flags {
 -- 
 1.7.5.4
