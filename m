@@ -1,140 +1,175 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 4/7] ARM: EXYNOS4: Support early wakeup while entering sleep mode
-Date: Wed, 22 Jun 2011 17:46:42 +0900
-Message-ID: <1308732405-16664-5-git-send-email-kgene.kim@samsung.com>
-References: <1308732405-16664-1-git-send-email-kgene.kim@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH V5 5/5] ARM: EXYNOS4: Add platform data for EXYNOS4 FIMD
+ and LTE480WV platform-lcd
+Date: Wed, 22 Jun 2011 10:56:41 +0200
+Message-ID: <4E01AE49.60009@samsung.com>
+References: <1308724904-31521-1-git-send-email-jg1.han@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:59745 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754242Ab1FVI4x (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:39066 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751398Ab1FVI5m (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jun 2011 04:56:53 -0400
-In-Reply-To: <1308732405-16664-1-git-send-email-kgene.kim@samsung.com>
+	Wed, 22 Jun 2011 04:57:42 -0400
+In-reply-to: <1308724904-31521-1-git-send-email-jg1.han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Jaecheol Lee <jc.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, Jonghun Han <jonghun.han@samsung.com>, Anand Kumar N <anand.kn@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Inki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>
 
-From: Jaecheol Lee <jc.lee@samsung.com>
+Hello,
 
-We don't need to masking GIC with external GIC and changed in handling
-early wakeup interrupt situation. In case of early wakeup situation,
-PMU dosen't enter sleep mode by WFI wihch will be ignored.
-This patch can handle this abnormal situation by early wakeup interrupt.
+On 06/22/2011 08:41 AM, Jingoo Han wrote:
+> From: Jonghun Han <jonghun.han@samsung.com>
+> 
+> This patch adds support EXYNOS4 FIMD0 and LTE480WV LCD pannel.
+> 
+> Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> ---
+>  arch/arm/mach-exynos4/mach-smdkc210.c |  114 +++++++++++++++++++++++++++++++++
+>  arch/arm/mach-exynos4/mach-smdkv310.c |  114 +++++++++++++++++++++++++++++++++
+>  2 files changed, 228 insertions(+), 0 deletions(-)
+...
+> +static int __init smdkc210_fimd0_setup_clock(void)
+> +{
+> +	struct clk *sclk = NULL;
+> +	struct clk *mout_mpll = NULL;
 
-Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-exynos4/pm.c    |   43 ++++++++++++++++++----------------------
- arch/arm/mach-exynos4/sleep.S |   15 +++++++++++--
- 2 files changed, 31 insertions(+), 27 deletions(-)
+You don't need initialize to NULL here.
 
-diff --git a/arch/arm/mach-exynos4/pm.c b/arch/arm/mach-exynos4/pm.c
-index bf53588..f4d52b5 100644
---- a/arch/arm/mach-exynos4/pm.c
-+++ b/arch/arm/mach-exynos4/pm.c
-@@ -241,7 +241,6 @@ static struct sleep_save exynos4_l2cc_save[] = {
- void exynos4_cpu_suspend(void)
- {
- 	unsigned long tmp;
--	unsigned long mask = 0xFFFFFFFF;
- 
- 	/* Setting Central Sequence Register for power down mode */
- 
-@@ -249,33 +248,10 @@ void exynos4_cpu_suspend(void)
- 	tmp &= ~(S5P_CENTRAL_LOWPWR_CFG);
- 	__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
- 
--	/* Setting Central Sequence option Register */
--
--	tmp = __raw_readl(S5P_CENTRAL_SEQ_OPTION);
--	tmp &= ~(S5P_USE_MASK);
--	tmp |= S5P_USE_STANDBY_WFI0;
--	__raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
--
--	/* Clear all interrupt pending to avoid early wakeup */
--
--	__raw_writel(mask, (S5P_VA_GIC_DIST + 0x280));
--	__raw_writel(mask, (S5P_VA_GIC_DIST + 0x284));
--	__raw_writel(mask, (S5P_VA_GIC_DIST + 0x288));
--
--	/* Disable all interrupt */
--
--	__raw_writel(0x0, (S5P_VA_GIC_CPU + 0x000));
--	__raw_writel(0x0, (S5P_VA_GIC_DIST + 0x000));
--	__raw_writel(mask, (S5P_VA_GIC_DIST + 0x184));
--	__raw_writel(mask, (S5P_VA_GIC_DIST + 0x188));
--
- 	outer_flush_all();
- 
- 	/* issue the standby signal into the pm unit. */
- 	cpu_do_idle();
--
--	/* we should never get past here */
--	panic("sleep resumed to originator?");
- }
- 
- static void exynos4_pm_prepare(void)
-@@ -353,6 +329,22 @@ arch_initcall(exynos4_pm_drvinit);
- 
- static void exynos4_pm_resume(void)
- {
-+	unsigned long tmp;
-+
-+	/*
-+	 * If PMU failed while entering sleep mode, WFI will be
-+	 * ignored by PMU and then exiting cpu_do_idle().
-+	 * S5P_CENTRAL_LOWPWR_CFG bit will not be set automatically
-+	 * in this situation.
-+	 */
-+	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
-+	if (!(tmp & S5P_CENTRAL_LOWPWR_CFG)) {
-+		tmp |= S5P_CENTRAL_LOWPWR_CFG;
-+		__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
-+		/* No need to perform below restore code */
-+		goto early_wakeup;
-+	}
-+
- 	/* For release retention */
- 
- 	__raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
-@@ -373,6 +365,9 @@ static void exynos4_pm_resume(void)
- 	/* enable L2X0*/
- 	writel_relaxed(1, S5P_VA_L2CC + L2X0_CTRL);
- #endif
-+
-+early_wakeup:
-+	return;
- }
- 
- static struct syscore_ops exynos4_pm_syscore_ops = {
-diff --git a/arch/arm/mach-exynos4/sleep.S b/arch/arm/mach-exynos4/sleep.S
-index 6b62425..d55d38c 100644
---- a/arch/arm/mach-exynos4/sleep.S
-+++ b/arch/arm/mach-exynos4/sleep.S
-@@ -45,11 +45,20 @@ ENTRY(s3c_cpu_save)
- 	ldr	r3, =resume_with_mmu
- 	bl	cpu_suspend
- 
--	ldr	r0, =pm_cpu_sleep
--	ldr	r0, [ r0 ]
--	mov	pc, r0
-+	bl	exynos4_cpu_suspend
-+
-+	/* Restore original sp */
-+	mov	r0, sp
-+	add	r0, r0, #4
-+	ldr	sp, [r0]
-+
-+	mov	r0, #0
-+	b	early_wakeup
- 
- resume_with_mmu:
-+	mov	r0, #1
-+
-+early_wakeup:
- 	ldmfd	sp!, { r3 - r12, pc }
- 
- 	.ltorg
+> +
+> +	u32 rate = 0;
+
+Other than this variable is not really needed I would make it unsigned long.
+
+> +
+> +	sclk = clk_get(&s5p_device_fimd0.dev, "sclk_fimd");
+> +	if (IS_ERR(sclk)) {
+> +		printk(KERN_ERR "failed to get sclk for fimd\n");
+> +		goto err_clk2;
+
+You could just do:
+		return PTR_ERR(sclk);
+
+> +	}
+> +
+> +	mout_mpll = clk_get(NULL, "mout_mpll");
+> +	if (IS_ERR(mout_mpll)) {
+> +		printk(KERN_ERR "failed to get mout_mpll\n");
+> +		goto err_clk1;
+> +	}
+> +
+> +	clk_set_parent(sclk, mout_mpll);
+> +	if (!rate)
+> +		rate = 134000000;
+
+ 134000000UL
+
+> +
+> +	clk_set_rate(sclk, rate);
+> +
+> +	clk_put(sclk);
+> +	clk_put(mout_mpll);
+> +
+> +	return 0;
+> +
+> +err_clk1:
+> +	clk_put(mout_mpll);
+
+clk_put is supposed to be used only for clocks that were successfully acquired.
+
+> +err_clk2:
+> +	clk_put(sclk);
+
+Ditto.
+
+> +
+> +	return -EINVAL;
+> +}
+
+...
+
+> +static int __init smdkv310_fimd0_setup_clock(void)
+> +{
+> +	struct clk *sclk = NULL;
+> +	struct clk *mout_mpll = NULL;
+> +
+> +	u32 rate = 0;
+> +
+> +	sclk = clk_get(&s5p_device_fimd0.dev, "sclk_fimd");
+> +	if (IS_ERR(sclk)) {
+> +		printk(KERN_ERR "failed to get sclk for fimd\n");
+> +		goto err_clk2;
+> +	}
+> +
+> +	mout_mpll = clk_get(NULL, "mout_mpll");
+> +	if (IS_ERR(mout_mpll)) {
+> +		printk(KERN_ERR "failed to get mout_mpll\n");
+> +		goto err_clk1;
+> +	}
+> +
+> +	clk_set_parent(sclk, mout_mpll);
+> +	if (!rate)
+> +		rate = 134000000;
+> +
+> +	clk_set_rate(sclk, rate);
+> +
+> +	clk_put(sclk);
+> +	clk_put(mout_mpll);
+> +
+> +	return 0;
+> +
+> +err_clk1:
+> +	clk_put(mout_mpll);
+> +err_clk2:
+> +	clk_put(sclk);
+> +
+> +	return -EINVAL;
+> +}
+
+We have multiple copies of same function and I suspect other boards will try
+to repeat this pattern which is not that good.
+
+It would be worth to create common function for all boards if we really
+must have that, e.g.
+
+int __init exynos4_fimd_setup_clock(struct device *dev, const char *parent,
+                                    unsigned long clk_rate);
+{
+	struct clk *clk_parent;
+	struct clk *sclk;
+
+	sclk = clk_get(dev, "sclk_fimd");
+	if (IS_ERR(sclk))
+		return PTR_ERR(sclk);
+
+	clk_parent = clk_get(NULL, parent);
+	if (IS_ERR(parent_clk)) {
+		clk_put(sclk);
+		return PTR_ERR(clk_parent);
+	}
+
+	clk_set_parent(sclk, clk_parent);
+	if (!rate)
+		rate = 134000000UL;
+	clk_set_rate(sclk, rate);
+	clk_put(sclk);
+	clk_put(clk_parent);
+
+	return 0;
+}
+
+But I have no idea where to put that...
+Perhaps we should create common mach-exynos4/setup-fimd.c file for FIMD0, FIMD1.
+But then it would contain ugly #ifdef for unused FIMD1 setup functions
+("#ifdef CONFIG_DEV_FIMD0 ..") if only FIMD0 is used. Maybe someone else has
+better idea.
+
+
+Regards,
 -- 
-1.7.1
+Sylwester Nawrocki
+Samsung Poland R&D Center
