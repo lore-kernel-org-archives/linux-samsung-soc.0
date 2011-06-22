@@ -1,71 +1,102 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/3] Fixes for breakage resulting from syscore_ops patch on
-	s3c24xx
-Date: Wed, 22 Jun 2011 15:54:39 +0900
-Message-ID: <009e01cc30a9$4538fa30$cfaaee90$%kim@samsung.com>
-References: <201106011348.47145.heiko@sntech.de>
-	<4DE62CEF.80507@embtoolkit.org>
+From: JinGoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS4: Add PWM backlight support on Samsung SMDKV310
+Date: Wed, 22 Jun 2011 06:56:00 +0000 (GMT)
+Message-ID: <22693111.118621308725759945.JavaMail.weblogic@epv6ml03>
+Reply-To: jg1.han@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <4DE62CEF.80507@embtoolkit.org>
-Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Abdoulaye Walsimou GAYE' <awg@embtoolkit.org>, =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>
-Cc: rjw@sisk.pl, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:21569 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751513Ab1FVG4C (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Jun 2011 02:56:02 -0400
+Received: from epcpsbge1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LN600E0KJ8KZNO0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 22 Jun 2011 15:56:00 +0900 (KST)
+MIME-version: 1.0
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: BANAJIT GOSWAMI <banajit.g@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "ben-linux@fluff.org" <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Abdoulaye Walsimou GAYE wrote:
-> =
-
-> Heiko St=FCbner wrote:
-> > The syscore_ops patch from Rafael J. Wysocki introduced some small
-> > glitches for the S3C24XX cpus resulting in compile errors.
-> >
-> > Heiko Stuebner (3):
-> >    Fix missing struct for s3c2410_dma_chan in s3c2410_dma_suspend_chan
-> >    Move s3c24xx_irq_syscore_ops to plat-s3c24xx/irq.c
-> >    remove the now empty mach-s3c2410/irq.c
-> >
-> >   arch/arm/mach-s3c2410/Makefile |    1 -
-> >   arch/arm/mach-s3c2410/irq.c    |   34
-----------------------------------
-> >   arch/arm/plat-s3c24xx/dma.c    |    2 +-
-> >   arch/arm/plat-s3c24xx/irq.c    |    6 ++++++
-> >   4 files changed, 7 insertions(+), 36 deletions(-)
-> >   delete mode 100644 arch/arm/mach-s3c2410/irq.c
-> >
-> =
-
-> I submitted same patches days ago [1], but without more explanations
-> than "ARM: s3c24xx: fix build errors introduced by bb072c3cf21d1", so
-> =
-
-> Acked-by : Abdoulaye Walsimou Gaye <awg@embtoolkit.org>
-> =
-
-> [1]
-http://thread.gmane.org/gmane.linux.ports.arm.kernel/117812/focus=3D117814
-
-Hello Abdoulaye Walsimou Gaye,
-
-Oops, sorry that I missed your patch at that time :(
-I found your patch just now...
-
-As you know, I can't add your ack on this...
-Anyway thanks for your effort and time.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+SGksIEJhbmFqaXQuDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IGxpbnV4
+LXNhbXN1bmctc29jLW93bmVyQHZnZXIua2VybmVsLm9yZyBbbWFpbHRvOmxpbnV4LXNhbXN1bmct
+c29jLQ0KPiBvd25lckB2Z2VyLmtlcm5lbC5vcmddIE9uIEJlaGFsZiBPZiBCYW5haml0IEdvc3dh
+bWkNCj4gU2VudDogV2VkbmVzZGF5LCBKdW5lIDIyLCAyMDExIDM6NDEgUE0NCj4gVG86IGxpbnV4
+LXNhbXN1bmctc29jQHZnZXIua2VybmVsLm9yZw0KPiBDYzoga2dlbmUua2ltQHNhbXN1bmcuY29t
+OyBiZW4tbGludXhAZmx1ZmYub3JnOyBsaW51eC1hcm0tDQo+IGtlcm5lbEBsaXN0cy5pbmZyYWRl
+YWQub3JnOyBCYW5haml0IEdvc3dhbWkNCj4gU3ViamVjdDogW1BBVENIXSBBUk06IEVYWU5PUzQ6
+IEFkZCBQV00gYmFja2xpZ2h0IHN1cHBvcnQgb24gU2Ftc3VuZw0KPiBTTURLVjMxMA0KPiANCj4g
+VGhpcyBwYXRjaCBhZGRzIHN1cHBvcnQgZm9yIExDRCBiYWNrbGlnaHQgdXNpbmcgUFdNIHRpbWVy
+IGZvcg0KPiBTYW1zdW5nIFNNREtWMzEwIGJvYXJkLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQmFu
+YWppdCBHb3N3YW1pIDxiYW5haml0LmdAc2Ftc3VuZy5jb20+DQo+IC0tLQ0KPiAgYXJjaC9hcm0v
+bWFjaC1leHlub3M0L0tjb25maWcgICAgICAgICB8ICAgIDEgKw0KPiAgYXJjaC9hcm0vbWFjaC1l
+eHlub3M0L21hY2gtc21ka3YzMTAuYyB8ICAgNDMNCj4gKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDQ0IGluc2VydGlvbnMoKyksIDAgZGVsZXRp
+b25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1leHlub3M0L0tjb25maWcg
+Yi9hcmNoL2FybS9tYWNoLWV4eW5vczQvS2NvbmZpZw0KPiBpbmRleCAxNDM1ZmMzLi45YWI1M2Jj
+IDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FybS9tYWNoLWV4eW5vczQvS2NvbmZpZw0KPiArKysgYi9h
+cmNoL2FybS9tYWNoLWV4eW5vczQvS2NvbmZpZw0KPiBAQCAtMTI4LDYgKzEyOCw3IEBAIGNvbmZp
+ZyBNQUNIX1NNREtWMzEwDQo+ICAJc2VsZWN0IFMzQ19ERVZfSFNNTUMyDQo+ICAJc2VsZWN0IFMz
+Q19ERVZfSFNNTUMzDQo+ICAJc2VsZWN0IFNBTVNVTkdfREVWX0tFWVBBRA0KPiArCXNlbGVjdCBT
+QU1TVU5HX0RFVl9QV00NCj4gIAlzZWxlY3QgRVhZTk9TNF9ERVZfUEQNCj4gIAlzZWxlY3QgRVhZ
+Tk9TNF9ERVZfU1lTTU1VDQo+ICAJc2VsZWN0IEVYWU5PUzRfU0VUVVBfSTJDMQ0KPiBkaWZmIC0t
+Z2l0IGEvYXJjaC9hcm0vbWFjaC1leHlub3M0L21hY2gtc21ka3YzMTAuYyBiL2FyY2gvYXJtL21h
+Y2gtDQo+IGV4eW5vczQvbWFjaC1zbWRrdjMxMC5jDQo+IGluZGV4IDdlM2VlNmMuLmIwOTdlZjYg
+MTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJtL21hY2gtZXh5bm9zNC9tYWNoLXNtZGt2MzEwLmMNCj4g
+KysrIGIvYXJjaC9hcm0vbWFjaC1leHlub3M0L21hY2gtc21ka3YzMTAuYw0KPiBAQCAtMTYsNiAr
+MTYsNyBAQA0KPiAgI2luY2x1ZGUgPGxpbnV4L2lvLmg+DQo+ICAjaW5jbHVkZSA8bGludXgvaTJj
+Lmg+DQo+ICAjaW5jbHVkZSA8bGludXgvaW5wdXQuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9wd21f
+YmFja2xpZ2h0Lmg+DQo+IA0KPiAgI2luY2x1ZGUgPGFzbS9tYWNoL2FyY2guaD4NCj4gICNpbmNs
+dWRlIDxhc20vbWFjaC10eXBlcy5oPg0KPiBAQCAtMjksNiArMzAsNyBAQA0KPiAgI2luY2x1ZGUg
+PHBsYXQvc2RoY2kuaD4NCj4gICNpbmNsdWRlIDxwbGF0L2lpYy5oPg0KPiAgI2luY2x1ZGUgPHBs
+YXQvcGQuaD4NCj4gKyNpbmNsdWRlIDxwbGF0L2dwaW8tY2ZnLmg+DQo+IA0KPiAgI2luY2x1ZGUg
+PG1hY2gvbWFwLmg+DQo+IA0KPiBAQCAtMTcyLDYgKzE3NCw0NSBAQCBzdGF0aWMgc3RydWN0IGky
+Y19ib2FyZF9pbmZvIGkyY19kZXZzMVtdIF9faW5pdGRhdGEgPQ0KPiB7DQo+ICAJe0kyQ19CT0FS
+RF9JTkZPKCJ3bTg5OTQiLCAweDFhKSx9LA0KPiAgfTsNCj4gDQo+ICtzdGF0aWMgaW50IHNtZGt2
+MzEwX2JhY2tsaWdodF9pbml0KHN0cnVjdCBkZXZpY2UgKmRldikNCj4gK3sNCj4gKwlpbnQgcmV0
+ID0gMDsNCj4gKw0KPiArCXJldCA9IGdwaW9fcmVxdWVzdChFWFlOT1M0X0dQRDAoMSksICJCYWNr
+bGlnaHQiKTsNCj4gKwlpZiAocmV0KSB7DQo+ICsJCXByaW50ayhLRVJOX0VSUiAiZmFpbGVkIHRv
+IHJlcXVlc3QgR1BEIGZvciBQV00tT1VUMFxuIik7DQo+ICsJCXJldHVybiByZXQ7DQo+ICsJfQ0K
+PiArDQo+ICsJLyogQ29uZmlndXJlIEdQSU8gcGluIHdpdGggRVhZTk9TNF9HUERfMF8xX1RPVVRf
+MCAqLw0KPiArCXMzY19ncGlvX2NmZ3BpbihFWFlOT1M0X0dQRDAoMSksIFMzQ19HUElPX1NGTigy
+KSk7DQo+ICsNCj4gKwlyZXR1cm4gMDsNCj4gK30NCj4gKw0KPiArc3RhdGljIHZvaWQgc21ka3Yz
+MTBfYmFja2xpZ2h0X2V4aXQoc3RydWN0IGRldmljZSAqZGV2KQ0KPiArew0KPiArCXMzY19ncGlv
+X2NmZ3BpbihFWFlOT1M0X0dQRDAoMSksIFMzQ19HUElPX09VVFBVVCk7DQo+ICsJZ3Bpb19mcmVl
+KEVYWU5PUzRfR1BEMCgxKSk7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1f
+cHdtX2JhY2tsaWdodF9kYXRhIHNtZGt2MzEwX2JhY2tsaWdodF9kYXRhID0gew0KPiArCS5wd21f
+aWQJCT0gMSwNCj4gKwkubWF4X2JyaWdodG5lc3MJPSAyNTUsDQo+ICsJLmRmdF9icmlnaHRuZXNz
+CT0gMjU1LA0KPiArCS5wd21fcGVyaW9kX25zCT0gNzg3NzAsDQpQbGVhc2UgdXNlIDEwMDAgYXMg
+cHdtX3BlcmlvZF9ucyBpbnN0ZWFkIG9mIDc4NzcwIGFzIGZvbGxvd3M6DQotCS5wd21fcGVyaW9k
+X25zCT0gNzg3NzAsDQorCS5wd21fcGVyaW9kX25zICA9IDEwMDAsDQoNClRoZSB2YWx1ZSAnNzg3
+NzAnIG1ha2VzIG5vaXNlIHJlbGF0ZWQgdG8gcmVzb25hbmNlIGF0IExDRCBib2FyZC4NCg0KSSB3
+aWxsIGV4cGxhaW4gaG93IEkgZ2V0IHRoZSB2YWx1ZSBvZiBQV00gcGVyaW9kLg0KDQpUaGUgU01E
+SyBib2FyZHMgdXNlIExUMzU5MSBhcyBiYWNrbGlnaHQgTEVEIGRyaXZlciBvZiBMVEU0ODBXViBM
+Q0QNCkFjY29yZGluZyB0byB0aGUgTFQzNTkxIGRhdGFzaGVldCwgdGhlIHN3aXRjaGluZyBmcmVx
+dWVuY3kgc2hvdWxkDQpiZSAxTUh6LiBTbywgUFdNIHBlcmlvZCBpcyBjYWxjdWxhdGVkIGJ5IGZv
+bGxvd2luZyBmb3JtdWxhOg0KICAgICAgICBQV00gcGVyaW9kID0gMS9zd2l0Y2hpbmcgZnJlcXVl
+bmN5DQogICAgICAgICAgICAgICAgICAgICAgID0gMS8xTUh6DQogICAgICAgICAgICAgICAgICAg
+ICAgID0gMTAwMCBucw0KDQpZb3UgY2FuIGZpbmQgTFQzNTkxIGRhdGFzaGVldCBlYXNpbHkgb24g
+dGhlIEludGVybmV0LiBQbGVhc2UgcmVmZXIgdG8gaXQNCmZvciBtb3JlIGluZm9ybWF0aW9uLg0K
+R29vZCBsdWNrLg0KPiArCS5pbml0CQk9IHNtZGt2MzEwX2JhY2tsaWdodF9pbml0LA0KPiArCS5l
+eGl0CQk9IHNtZGt2MzEwX2JhY2tsaWdodF9leGl0LA0KPiArfTsNCj4gKw0KPiArc3RhdGljIHN0
+cnVjdCBwbGF0Zm9ybV9kZXZpY2Ugc21ka3YzMTBfYmFja2xpZ2h0X2RldmljZSA9IHsNCj4gKwku
+bmFtZQkJPSAicHdtLWJhY2tsaWdodCIsDQo+ICsJLmRldgkJPSB7DQo+ICsJCS5wYXJlbnQJCT0g
+JnMzY19kZXZpY2VfdGltZXJbMV0uZGV2LA0KPiArCQkucGxhdGZvcm1fZGF0YQk9ICZzbWRrdjMx
+MF9iYWNrbGlnaHRfZGF0YSwNCj4gKwl9LA0KPiArfTsNCj4gKw0KPiAgc3RhdGljIHN0cnVjdCBw
+bGF0Zm9ybV9kZXZpY2UgKnNtZGt2MzEwX2RldmljZXNbXSBfX2luaXRkYXRhID0gew0KPiAgCSZz
+M2NfZGV2aWNlX2hzbW1jMCwNCj4gIAkmczNjX2RldmljZV9oc21tYzEsDQo+IEBAIC0xOTUsNiAr
+MjM2LDggQEAgc3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnNtZGt2MzEwX2RldmljZXNb
+XQ0KPiBfX2luaXRkYXRhID0gew0KPiAgCSZzYW1zdW5nX2Fzb2NfZG1hLA0KPiAgCSZzbWRrdjMx
+MF9zbXNjOTExeCwNCj4gIAkmc21ka3YzMTBfcGNtX2RldmljZSwNCj4gKwkmczNjX2RldmljZV90
+aW1lclsxXSwNCj4gKwkmc21ka3YzMTBfYmFja2xpZ2h0X2RldmljZSwNCj4gIH07DQo+IA0KPiAg
+c3RhdGljIHZvaWQgX19pbml0IHNtZGt2MzEwX3Ntc2M5MTF4X2luaXQodm9pZCkNCj4gLS0NCj4g
+MS42LjUuMg0KPiANCj4gLS0NCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQg
+dGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctDQo+IHNvYyIgaW4NCj4gdGhlIGJv
+ZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcNCj4gTW9yZSBtYWpv
+cmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
+DQo=
