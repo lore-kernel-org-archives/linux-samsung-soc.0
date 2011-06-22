@@ -1,77 +1,24 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 6/7] ARM: EXYNOS4: Add save/restore for more ARM registers
-Date: Wed, 22 Jun 2011 17:46:44 +0900
-Message-ID: <1308732405-16664-7-git-send-email-kgene.kim@samsung.com>
-References: <1308732405-16664-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 0/7] ARM: EXYNOS4: Update PM
+Date: Wed, 22 Jun 2011 17:46:38 +0900
+Message-ID: <1308732405-16664-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:59737 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:59718 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753484Ab1FVI4v (ORCPT
+	with ESMTP id S1751398Ab1FVI4u (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jun 2011 04:56:51 -0400
-In-Reply-To: <1308732405-16664-1-git-send-email-kgene.kim@samsung.com>
+	Wed, 22 Jun 2011 04:56:50 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Jaecheol Lee <jc.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org
 
-From: Jaecheol Lee <jc.lee@samsung.com>
+Note: This depends on external GIC of EXYNOS4.
 
-This patch adds save/restore for Power Control Register and
-Diagnostic Register.
-
-Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-exynos4/sleep.S |   22 ++++++++++++++++++++++
- 1 files changed, 22 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-exynos4/sleep.S b/arch/arm/mach-exynos4/sleep.S
-index d55d38c..4fe13fc 100644
---- a/arch/arm/mach-exynos4/sleep.S
-+++ b/arch/arm/mach-exynos4/sleep.S
-@@ -42,6 +42,15 @@
- ENTRY(s3c_cpu_save)
- 
- 	stmfd	sp!, { r3 - r12, lr }
-+
-+	adr	r0, sleep_save_misc
-+
-+	mrc	p15, 0, r2, c15, c0, 0	@ read power control register
-+	str	r2, [r0], #4
-+
-+	mrc	p15, 0, r2, c15, c0, 1	@ read diagnostic register
-+	str	r2, [r0], #4
-+
- 	ldr	r3, =resume_with_mmu
- 	bl	cpu_suspend
- 
-@@ -56,6 +65,14 @@ ENTRY(s3c_cpu_save)
- 	b	early_wakeup
- 
- resume_with_mmu:
-+	adr	r0, sleep_save_misc
-+
-+	ldr	r1, [r0], #4
-+	mcr	p15, 0, r1, c15, c0, 0	@ write power control register
-+
-+	ldr	r1, [r0], #4
-+	mcr	p15, 0, r1, c15, c0, 1	@ write diagnostic register
-+
- 	mov	r0, #1
- 
- early_wakeup:
-@@ -71,6 +88,11 @@ early_wakeup:
- 
- 	.word	0x2bedf00d
- 
-+	 /* To save more cpu register */
-+sleep_save_misc:
-+	.long	0
-+	.long	0
-+
- 	/*
- 	 * s3c_cpu_resume
- 	 *
--- 
-1.7.1
+[PATCH 1/7] ARM: EXYNOS4: Support system level power down configuration
+[PATCH 2/7] ARM: EXYNOS4: Remove PMU configuration for S2RAM
+[PATCH 3/7] ARM: EXYNOS4: Add support PM with external GIC
+[PATCH 4/7] ARM: EXYNOS4: Support early wakeup while entering sleep mode
+[PATCH 5/7] ARM: EXYNOS4: Add save/restore function for PLL
+[PATCH 6/7] ARM: EXYNOS4: Add save/restore for more ARM registers
+[PATCH 7/7] ARM: EXYNOS4: Move S5P_CENTRAL_SEQ_CONFIGURATION setting for PM
