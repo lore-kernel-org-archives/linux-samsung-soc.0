@@ -1,100 +1,34 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 04/18] s5p-fimc: Limit number of available inputs to one
-Date: Wed, 22 Jun 2011 20:01:10 +0200
-Message-ID: <1308765684-10677-5-git-send-email-s.nawrocki@samsung.com>
-References: <1308765684-10677-1-git-send-email-s.nawrocki@samsung.com>
+From: Sylwester Nawrocki <snjw23@gmail.com>
+Subject: Re: [PATCH V5 5/5] ARM: EXYNOS4: Add platform data for EXYNOS4 FIMD
+ and LTE480WV platform-lcd
+Date: Wed, 22 Jun 2011 22:33:24 +0200
+Message-ID: <4E025194.5040603@gmail.com>
+References: <1308724904-31521-1-git-send-email-jg1.han@samsung.com>	<002901cc30c1$5ac6ef70$1054ce50$%szyprowski@samsung.com>	<BANLkTimPjo+WefApQLe=HKbYLCwmo_gGRw@mail.gmail.com> <BANLkTi=iS3H8xYhouvZZwP5_daxoGSBwLA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:21081 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758531Ab1FVSBk (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:54466 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758077Ab1FVUdc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jun 2011 14:01:40 -0400
-In-reply-to: <1308765684-10677-1-git-send-email-s.nawrocki@samsung.com>
+	Wed, 22 Jun 2011 16:33:32 -0400
+In-Reply-To: <BANLkTi=iS3H8xYhouvZZwP5_daxoGSBwLA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
+To: Anand Kumar N <anand.kn@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, Jonghun Han <jonghun.han@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Inki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>
 
-Camera sensors at FIMC input are no longer selected with S_INPUT ioctl.
-They will be attached to required FIMC entity through pipeline
-re-configuration at the media device level.
+On 06/22/2011 03:25 PM, Anand Kumar N wrote:
+> Instead of hardcoding the parent clock in platform/bootloader code ,is
+> it not possible to select/set the
+> parent clock based on the pixel clk(plat data) having the least delta
+> with the 9 src clks.with this change I have checked it for WA101S.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/media/video/s5p-fimc/fimc-capture.c |   43 ++++-----------------------
- 1 files changed, 6 insertions(+), 37 deletions(-)
-
-diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index c7bb6f6..f42cda3 100644
---- a/drivers/media/video/s5p-fimc/fimc-capture.c
-+++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -566,57 +566,26 @@ static int fimc_cap_s_fmt_mplane(struct file *file, void *priv,
- }
- 
- static int fimc_cap_enum_input(struct file *file, void *priv,
--				     struct v4l2_input *i)
-+			       struct v4l2_input *i)
- {
- 	struct fimc_ctx *ctx = priv;
--	struct s5p_platform_fimc *pldata = ctx->fimc_dev->pdata;
--	struct s5p_fimc_isp_info *isp_info;
- 
--	if (i->index >= pldata->num_clients)
-+	if (i->index != 0)
- 		return -EINVAL;
- 
--	isp_info = &pldata->isp_info[i->index];
- 
- 	i->type = V4L2_INPUT_TYPE_CAMERA;
--	strncpy(i->name, isp_info->board_info->type, 32);
- 	return 0;
- }
- 
--static int fimc_cap_s_input(struct file *file, void *priv,
--				  unsigned int i)
-+static int fimc_cap_s_input(struct file *file, void *priv, unsigned int i)
- {
--	struct fimc_ctx *ctx = priv;
--	struct fimc_dev *fimc = ctx->fimc_dev;
--	struct s5p_platform_fimc *pdata = fimc->pdata;
--
--	if (fimc_capture_active(ctx->fimc_dev))
--		return -EBUSY;
--
--	if (i >= pdata->num_clients)
--		return -EINVAL;
--
--
--	if (fimc->vid_cap.sd) {
--		int ret = v4l2_subdev_call(fimc->vid_cap.sd, core, s_power, 0);
--		if (ret)
--			err("s_power failed: %d", ret);
--
--		clk_disable(fimc->clock[CLK_CAM]);
--	}
--
--	/* Release the attached sensor subdevice. */
--	fimc_subdev_unregister(fimc);
--
--	return fimc_isp_subdev_init(fimc, i);
-+	return i == 0 ? i : -EINVAL;
- }
- 
--static int fimc_cap_g_input(struct file *file, void *priv,
--				       unsigned int *i)
-+static int fimc_cap_g_input(struct file *file, void *priv, unsigned int *i)
- {
--	struct fimc_ctx *ctx = priv;
--	struct fimc_vid_cap *cap = &ctx->fimc_dev->vid_cap;
--
--	*i = cap->input_index;
-+	*i = 0;
- 	return 0;
- }
- 
--- 
-1.7.5.4
+While at first sight this may look as an awesome idea I don't really 
+believe it is. There might be other criteria that need to be considered,
+like continuous clock availability or frequency stability. 
+That said we could possibly have the driver setting sclk_fimd frequency
+based on display planes' properties (this was my initial suggestion) 
+but sclk_fimd parent should be fixed either by bootloader or board
+initialization code.
