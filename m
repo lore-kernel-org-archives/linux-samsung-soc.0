@@ -1,60 +1,49 @@
-From: Sergei Shtylyov <sshtylyov@mvista.com>
-Subject: Re: [PATCH 7/7] ARM: EXYNOS4: Move S5P_CENTRAL_SEQ_CONFIGURATION
- setting	for PM
-Date: Wed, 22 Jun 2011 16:10:45 +0400
-Message-ID: <4E01DBC5.7000006@ru.mvista.com>
-References: <1308732405-16664-1-git-send-email-kgene.kim@samsung.com> <1308732405-16664-8-git-send-email-kgene.kim@samsung.com>
+From: JinGoo Han <jg1.han@samsung.com>
+Subject: [PATCH V6 0/5] ARM: EXYNOS4: Add support EXYNOS4 FIMD
+Date: Wed, 22 Jun 2011 12:21:40 +0000 (GMT)
+Message-ID: <27061283.131341308745300255.JavaMail.weblogic@epv6ml03>
+Reply-To: jg1.han@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:59323 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752552Ab1FVMMF (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:60295 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757561Ab1FVMVm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jun 2011 08:12:05 -0400
-Received: by wwe5 with SMTP id 5so775914wwe.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Jun 2011 05:12:03 -0700 (PDT)
-In-Reply-To: <1308732405-16664-8-git-send-email-kgene.kim@samsung.com>
+	Wed, 22 Jun 2011 08:21:42 -0400
+Received: from epcpsbge6.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LN6009CDYC4TKN0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 22 Jun 2011 21:21:40 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Jaecheol Lee <jc.lee@samsung.com>, ben-linux@fluff.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-f>
+Cc: ANAND KUMAR N <anand.kn@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, THOMAS P ABRAHAM <thomas.ab@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, In-Ki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, JinGoo Han <jg1.han@samsung.com>
 
-Hello.
-
-On 22-06-2011 12:46, Kukjin Kim wrote:
-
-> From: Jaecheol Lee<jc.lee@samsung.com>
-
-> We need to balance between set and check S5P_CENTRAL_SEQ_CONFIGURATION
-> register in syscore_ops suspend/resume function when failure in enter
-> suspend mode. Moved this register setting for PM for the purpose of balancing.
-
-> Signed-off-by: Jaecheol Lee<jc.lee@samsung.com>
-> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
-> ---
->   arch/arm/mach-exynos4/pm.c |   22 ++++++++++++++--------
->   1 files changed, 14 insertions(+), 8 deletions(-)
-
-> diff --git a/arch/arm/mach-exynos4/pm.c b/arch/arm/mach-exynos4/pm.c
-> index b037fba..a103c13 100644
-> --- a/arch/arm/mach-exynos4/pm.c
-> +++ b/arch/arm/mach-exynos4/pm.c
-[...]
-> @@ -413,6 +405,19 @@ static __init int exynos4_pm_drvinit(void)
->   }
->   arch_initcall(exynos4_pm_drvinit);
->
-> +static int exynos4_pm_suspend(void)
-> +{
-> +	unsigned long tmp;
-> +
-> +	/* Setting Central Sequence Register for power down mode */
-> +
-> +	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
-> +	tmp &= ~(S5P_CENTRAL_LOWPWR_CFG);
-
-    Could drop useless parens, while at it.
-
-WBR, Sergei
+VGhpcyBwYXRjaCBzZXJpZXMgaXMgYmFzZWQgb24gdGhlIGxhdGVzdA0KZ2l0Lmtlcm5lbC5vcmcv
+cHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LTIuNi5naXQNCg0KVGhpcyB3
+YXMgb3JpZ2luYWxseSBzdWJtaXR0ZWQgYnkgSm9uZ2h1biBIYW4gPGpvbmdodW4uaGFuQHNhbXN1
+bmcuY29tPg0KaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9hcm0ta2VybmVsL21zZzEwMTc4
+MS5odG1sDQoNClRoaXMgcGF0Y2ggYWRkcyBzdXBwb3J0IEZJTUQoRnVsbHkgSW50ZXJhY3RpdmUg
+TW9iaWxlIERpc3BsYXkpIG9uIEV4eW5vczQuDQpUaGUgNHRoIHBhdGNoIGlzIHVwZGF0ZSBmb3Ig
+czNjLWZiIGFuZCBvdGhlcnMgYXJlIGZvciBwbGF0Zm9ybSBkYXRhLg0KDQp2MjogY2hhbmdlIGNs
+b2NrIG5hbWUgb2YgZXh5bm9zNCBGSU1EOiAiZmltZCIgLT4gImxjZCINCiAgICAgdXNlICdoYXNf
+Y2xrc2VsJyB2YXJpYWJsZSBpbiBvcmRlciB0byBkaXN0aW5ndWlzaCBGSU1EIHZlcnNpb24NCiAg
+ICAgYWRkICdsY2RfY2xrJyB0aGF0IGNhbiBiZSB1c2VkIGZvciBvbmx5IGxjZCBwaXhlbCBjbG9j
+aw0KICAgICBhZGQgY2FsbGJhY2sgJ2VuYWJsZV9jbGsoKScgdG8gZW5hYmxlIHBhcmVudCBjbG9j
+ayAnc2Nsa19maW1kJy4NCnYzOiByZW1vdmUgdGhlIGNhbGxiYWNrIGZyb20gdGhlIHBsYXRmb3Jt
+IGRhdGEgc3RydWN0dXJlDQp2NDogbW92ZSBjbGtfZW5hYmxlKHNmYi0+bGNkX2NsaykgdW5kZXIg
+dGhlIGlmIHN0YXRlbWVudA0KdjU6IGFkZCBjbGtfZW5hYmxlL2Rpc2FibGUoc2ZiLT5sY2RfY2xr
+KSB0byBzM2NfZmJfcnVudGltZV9zdXNwZW5kL3Jlc3VtZSgpLg0KdjY6IHJlbmFtZSBkZXYtZmlt
+ZC0yNGJwcC5jIHRvIGRldi1maW1kMC5jDQogICAgIGFkZCAnZXh5bm9zNF9maW1kMF9zZXR1cF9j
+bG9jaygpJyB0byBkZXYtZmltZDAuYyB0byBzZXR1cCBwYXJlbnQgY2xvY2suDQoNCm8gVG8gS3Vr
+amluIEtpbQ0KW1BBVENIIFY2IDEvNV0gQVJNOiBFWFlOT1M0OiBDaGFuZ2UgY2xvY2sgbmFtZSBm
+b3IgRklNRA0KW1BBVENIIFY2IDIvNV0gQVJNOiBFWFlOT1M0OiBBZGQgRklNRCByZXNvdXJjZSBk
+ZWZpbml0aW9uDQpbUEFUQ0ggVjYgMy81XSBBUk06IEVYWU5PUzQ6IEFkZCBwbGF0Zm9ybSBkZXZp
+Y2UgYW5kIGhlbHBlciBmdW5jdGlvbnMgZm9yIEZJTUQNCltQQVRDSCBWNiA1LzVdIEFSTTogRVhZ
+Tk9TNDogQWRkIHBsYXRmb3JtIGRhdGEgZm9yIEVYWU5PUzQgRklNRCBhbmQgTFRFNDgwV1YgcGxh
+dGZvcm0tbGNkDQoNCm8gVG8gUGF1bCBNdW5kdA0KW1BBVENIIFY2IDQvNV0gdmlkZW86IHMzYy1m
+YjogQWRkIHN1cHBvcnQgRVhZTk9TNCBGSU1E
