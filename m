@@ -1,24 +1,78 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 0/7] ARM: EXYNOS4: Update PM
-Date: Wed, 22 Jun 2011 17:46:38 +0900
-Message-ID: <1308732405-16664-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 7/7] ARM: EXYNOS4: Move S5P_CENTRAL_SEQ_CONFIGURATION setting for PM
+Date: Wed, 22 Jun 2011 17:46:45 +0900
+Message-ID: <1308732405-16664-8-git-send-email-kgene.kim@samsung.com>
+References: <1308732405-16664-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:59718 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:59721 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751398Ab1FVI4u (ORCPT
+	with ESMTP id S1752287Ab1FVI4u (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 22 Jun 2011 04:56:50 -0400
+In-Reply-To: <1308732405-16664-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org
+Cc: ben-linux@fluff.org, Jaecheol Lee <jc.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Note: This depends on external GIC of EXYNOS4.
+From: Jaecheol Lee <jc.lee@samsung.com>
 
-[PATCH 1/7] ARM: EXYNOS4: Support system level power down configuration
-[PATCH 2/7] ARM: EXYNOS4: Remove PMU configuration for S2RAM
-[PATCH 3/7] ARM: EXYNOS4: Add support PM with external GIC
-[PATCH 4/7] ARM: EXYNOS4: Support early wakeup while entering sleep mode
-[PATCH 5/7] ARM: EXYNOS4: Add save/restore function for PLL
-[PATCH 6/7] ARM: EXYNOS4: Add save/restore for more ARM registers
-[PATCH 7/7] ARM: EXYNOS4: Move S5P_CENTRAL_SEQ_CONFIGURATION setting for PM
+We need to balance between set and check S5P_CENTRAL_SEQ_CONFIGURATION
+register in syscore_ops suspend/resume function when failure in enter
+suspend mode. Moved this register setting for PM for the purpose of balancing.
+
+Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-exynos4/pm.c |   22 ++++++++++++++--------
+ 1 files changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/arch/arm/mach-exynos4/pm.c b/arch/arm/mach-exynos4/pm.c
+index b037fba..a103c13 100644
+--- a/arch/arm/mach-exynos4/pm.c
++++ b/arch/arm/mach-exynos4/pm.c
+@@ -249,14 +249,6 @@ static struct sleep_save exynos4_l2cc_save[] = {
+ 
+ void exynos4_cpu_suspend(void)
+ {
+-	unsigned long tmp;
+-
+-	/* Setting Central Sequence Register for power down mode */
+-
+-	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
+-	tmp &= ~(S5P_CENTRAL_LOWPWR_CFG);
+-	__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
+-
+ 	outer_flush_all();
+ 
+ 	/* issue the standby signal into the pm unit. */
+@@ -413,6 +405,19 @@ static __init int exynos4_pm_drvinit(void)
+ }
+ arch_initcall(exynos4_pm_drvinit);
+ 
++static int exynos4_pm_suspend(void)
++{
++	unsigned long tmp;
++
++	/* Setting Central Sequence Register for power down mode */
++
++	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
++	tmp &= ~(S5P_CENTRAL_LOWPWR_CFG);
++	__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
++
++	return 0;
++}
++
+ static void exynos4_pm_resume(void)
+ {
+ 	unsigned long tmp;
+@@ -459,6 +464,7 @@ early_wakeup:
+ }
+ 
+ static struct syscore_ops exynos4_pm_syscore_ops = {
++	.suspend	= exynos4_pm_suspend,
+ 	.resume		= exynos4_pm_resume,
+ };
+ 
+-- 
+1.7.1
