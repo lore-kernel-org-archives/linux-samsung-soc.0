@@ -1,197 +1,218 @@
-From: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [RFC][PATCH 4/5] ARM: S5P64x0: Adding OTG PHY control code
-Date: Wed, 22 Jun 2011 13:56:25 +0530
-Message-ID: <BANLkTikDDBQjE2RCeeBB50vokSTcnCO46A@mail.gmail.com>
-References: <0LN400HTOZEQDIL0@mailout1.samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <0LN400HTOZEQDIL0-cPDsiUgaCBdqW5MlFJXMulaTQe2KTcn/@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: balbi-l0cyMroinI0@public.gmane.org
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tmarri-qTEPVZfXA3Y@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH 5/7] ARM: EXYNOS4: Add save/restore function for PLL
+Date: Wed, 22 Jun 2011 17:46:43 +0900
+Message-ID: <1308732405-16664-6-git-send-email-kgene.kim@samsung.com>
+References: <1308732405-16664-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:59725 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751398Ab1FVI4v (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Jun 2011 04:56:51 -0400
+In-Reply-To: <1308732405-16664-1-git-send-email-kgene.kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Jaecheol Lee <jc.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi,
+From: Jaecheol Lee <jc.lee@samsung.com>
 
-On Tue, Jun 21, 2011 at 4:19 PM, PRAVEEN PANERI <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> =
-wrote:
->
->
->
-> Hi,
->
-> On Tue, Jun 21, 2011 at 12:33:46PM +0530, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org wrote:
-> > From: Praveen Paneri
-> >
-> > A generic method to initialize and exit OTG PHY which can be
-> > used for all the samsung SoCs.
-> > OTG platdata structure added in platform to pass required
-> > platform specific functions and data to the driver.
-> >
-> > Signed-off-by: Praveen Paneri
-> > ---
-> >=A0=A0arch/arm/mach-s5p64x0/Makefile=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=
-=A0=A0=A0=A01 +
-> >=A0=A0arch/arm/mach-s5p64x0/include/mach/map.h |=A0=A0=A0=A04 +
-> >=A0=A0arch/arm/mach-s5p64x0/setup-otg-phy.c=A0=A0=A0=A0|=A0=A0 89 ++=
-++++++++++++++++++++++++++++
-> >=A0=A0arch/arm/plat-s5p/include/plat/otg.h=A0=A0=A0=A0 |=A0=A0 29 ++=
-++++++++
-> >=A0=A04 files changed, 123 insertions(+), 0 deletions(-)
-> >=A0=A0create mode 100644 arch/arm/mach-s5p64x0/setup-otg-phy.c
-> >=A0=A0create mode 100644 arch/arm/plat-s5p/include/plat/otg.h
-> >
-> > diff --git a/arch/arm/mach-s5p64x0/Makefile b/arch/arm/mach-s5p64x0=
-/Makefile
-> > index ae6bf6f..611fb3a 100644
-> > --- a/arch/arm/mach-s5p64x0/Makefile
-> > +++ b/arch/arm/mach-s5p64x0/Makefile
-> > @@ -28,3 +28,4 @@ obj-y +=3D dev-audio.o
-> >=A0=A0obj-$(CONFIG_S3C64XX_DEV_SPI) +=3D dev-spi.o
-> >
-> >=A0=A0obj-$(CONFIG_S5P64X0_SETUP_I2C1) +=3D setup-i2c1.o
-> > +obj-$(CONFIG_S3C_DEV_DWC_OTG) +=3D setup-otg-phy.o
-> > diff --git a/arch/arm/mach-s5p64x0/include/mach/map.h b/arch/arm/ma=
-ch-s5p64x0/include/mach/map.h
-> > index 95c9125..717c279 100644
-> > --- a/arch/arm/mach-s5p64x0/include/mach/map.h
-> > +++ b/arch/arm/mach-s5p64x0/include/mach/map.h
-> > @@ -44,6 +44,8 @@
-> >=A0=A0#define S5P64X0_PA_SPI1 0xEC500000
-> >
-> >=A0=A0#define S5P64X0_PA_HSOTG 0xED100000
-> > +#define S5P64X0_PA_USB_HSPHY 0xED200000
-> > +#define S5P64X0_VA_USB_HSPHY S3C_ADDR_CPU(0x00100000)
-> >
-> >=A0=A0#define S5P64X0_PA_HSMMC(x) (0xED800000 + ((x) * 0x100000))
-> >
-> > @@ -71,6 +73,8 @@
-> >=A0=A0#define S5P_PA_TIMER S5P64X0_PA_TIMER
-> >
-> >=A0=A0#define SAMSUNG_PA_ADC S5P64X0_PA_ADC
-> > +#define S3C_PA_USB_HSOTG S5P64X0_PA_HSOTG
-> > +#define S3C_VA_USB_HSPHY=A0=A0=A0=A0=A0=A0=A0=A0S5P64X0_VA_USB_HSP=
-HY
-> >
-> >=A0=A0/* UART */
-> >
-> > diff --git a/arch/arm/mach-s5p64x0/setup-otg-phy.c b/arch/arm/mach-=
-s5p64x0/setup-otg-phy.c
->
-> drivers should not live in arch/arm/*, why don't you move this to
-> drivers/usb/otg where the PHYs are staying right now ?
-PHY init/exit code can vary across SoCs. Wouldn't it be better to have =
-it in the
-SoC specific location?
->
-> > new file mode 100644
-> > index 0000000..c351554
-> > --- /dev/null
-> > +++ b/arch/arm/mach-s5p64x0/setup-otg-phy.c
-> > @@ -0,0 +1,89 @@
-> > +/*
-> > + * Copyright (C) 2011 Samsung Electronics Co.Ltd
-> > + * Author: Praveen Paneri
-> > + * based on arch/arm/mach-exynos4/setup-usb-phy.c
-> > + * written by Joonyoung Shim
-> > + *
-> > + *=A0=A0This program is free software; you can redistribute=A0=A0i=
-t and/or modify it
-> > + *=A0=A0under=A0=A0the terms of=A0=A0the GNU General=A0=A0Public L=
-icense as published by the
-> > + *=A0=A0Free Software Foundation;=A0=A0either version 2 of the=A0=A0=
-License, or (at your
-> > + *=A0=A0option) any later version.
-> > + *
-> > + */
-> > +
-> > +#include
-> > +#include
-> > +#include
-> > +#include
-> > +#include
-> > +#include
-> > +#include
-> > +#include
-> > +#include
-> > +
-> > +struct clk *otg_clk;
-> > +static int s5p64x0_otg_phy_init(struct platform_device *pdev)
-> > +{
-> > + int err;
-> > +
-> > + otg_clk =3D clk_get(&pdev->dev, "otg");
-> > + if (IS_ERR(otg_clk)) {
-> > + dev_err(&pdev->dev, "Failed to get otg clock\n");
-> > + return PTR_ERR(otg_clk);
-> > + }
-> > +
-> > + err =3D clk_enable(otg_clk);
-> > + if (err) {
-> > + clk_put(otg_clk);
-> > + return err;
-> > + }
-> > +
-> > + if (gpio_is_valid(S5P6440_GPN(1))) {
-> > + err =3D gpio_request(S5P6440_GPN(1), "GPN");
-> > + if (err)
-> > + printk(KERN_ERR "failed to request GPN1\n");
-> > + gpio_direction_output(S5P6440_GPN(1), 1);
-> > + }
-> > +
-> > + writel(readl(S5P64X0_OTHERS)&~S5P64X0_OTHERS_USB_SIG_MASK,
-> > + S5P64X0_OTHERS);
-> > + writel(0x0, S3C_PHYPWR);=A0=A0=A0=A0=A0=A0=A0=A0 /* Power up */
-> > + writel(S3C_PHYCLK_CLKSEL_12M, S3C_PHYCLK);
-> > + writel(S3C_RSTCON_PHY, S3C_RSTCON);
-> > +
-> > + udelay(50);
-> > + writel(0x0, S3C_RSTCON);
-> > + udelay(50);
-> > +
-> > + return 0;
-> > +}
-> > +
-> > +static int s5p64x0_otg_phy_exit(struct platform_device *pdev)
-> > +{
-> > + writel(readl(S3C_PHYPWR)|(0x1F<<1), S3C_PHYPWR);
-> > + writel(readl(S5P64X0_OTHERS)&~S5P64X0_OTHERS_USB_SIG_MASK,
-> > + S5P64X0_OTHERS);
-> > +
-> > + gpio_free(S5P6440_GPN(1));
-> > +
-> > + clk_disable(otg_clk);
-> > + clk_put(otg_clk);
-> > +
-> > + return 0;
-> > +}
-> > +
-> > +int s5p_usb_phy_init(struct platform_device *pdev, int type)
-> > +{
-> > + if (type =3D=3D S5P_USB_PHY_DEVICE)
-> > + return s5p64x0_otg_phy_init(pdev);
-> > +
-> > + return -EINVAL;
-> > +}
-> > +
-> > +int s5p_usb_phy_exit(struct platform_device *pdev, int type)
-> > +{
-> > + if (type =3D=3D S5P_USB_PHY_DEVICE)
-> > + return s5p64x0_otg_phy_exit(pdev);
-> > +
-> > + return -EINVAL;
-> > +}
->
-> no way to make this a real driver instead of set a exported functions=
- ??
->
-> --
-> balbi
->
-paneri
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The PLL restore routine supports waiting pll locking. If PLL is
+enabled in restoring sequence, it should wait until PLL is locked.
+
+Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-exynos4/include/mach/regs-clock.h |    9 ++
+ arch/arm/mach-exynos4/pm.c                      |   96 ++++++++++++++++++++++-
+ 2 files changed, 101 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/mach-exynos4/include/mach/regs-clock.h b/arch/arm/mach-exynos4/include/mach/regs-clock.h
+index 6e311c1..64bdd24 100644
+--- a/arch/arm/mach-exynos4/include/mach/regs-clock.h
++++ b/arch/arm/mach-exynos4/include/mach/regs-clock.h
+@@ -25,6 +25,9 @@
+ #define S5P_CLKDIV_STAT_RIGHTBUS	S5P_CLKREG(0x08600)
+ #define S5P_CLKGATE_IP_RIGHTBUS		S5P_CLKREG(0x08800)
+ 
++#define S5P_EPLL_LOCK			S5P_CLKREG(0x0C010)
++#define S5P_VPLL_LOCK			S5P_CLKREG(0x0C020)
++
+ #define S5P_EPLL_CON0			S5P_CLKREG(0x0C110)
+ #define S5P_EPLL_CON1			S5P_CLKREG(0x0C114)
+ #define S5P_VPLL_CON0			S5P_CLKREG(0x0C120)
+@@ -120,6 +123,12 @@
+ #define S5P_APLL_VAL_1000		((250 << 16) | (6 << 8) | 1)
+ #define S5P_APLL_VAL_800		((200 << 16) | (6 << 8) | 1)
+ 
++#define S5P_EPLLCON0_ENABLE_SHIFT	(31)
++#define S5P_EPLLCON0_LOCKED_SHIFT	(29)
++
++#define S5P_VPLLCON0_ENABLE_SHIFT	(31)
++#define S5P_VPLLCON0_LOCKED_SHIFT	(29)
++
+ #define S5P_CLKSRC_CPU_MUXCORE_SHIFT	(16)
+ #define S5P_CLKMUX_STATCPU_MUXCORE_MASK	(0x7 << S5P_CLKSRC_CPU_MUXCORE_SHIFT)
+ 
+diff --git a/arch/arm/mach-exynos4/pm.c b/arch/arm/mach-exynos4/pm.c
+index f4d52b5..b037fba 100644
+--- a/arch/arm/mach-exynos4/pm.c
++++ b/arch/arm/mach-exynos4/pm.c
+@@ -18,12 +18,15 @@
+ #include <linux/suspend.h>
+ #include <linux/syscore_ops.h>
+ #include <linux/io.h>
++#include <linux/err.h>
++#include <linux/clk.h>
+ 
+ #include <asm/cacheflush.h>
+ #include <asm/hardware/cache-l2x0.h>
+ 
+ #include <plat/cpu.h>
+ #include <plat/pm.h>
++#include <plat/pll.h>
+ 
+ #include <mach/regs-irq.h>
+ #include <mach/regs-gpio.h>
+@@ -45,16 +48,22 @@ static struct sleep_save exynos4_set_clksrc[] = {
+ 	{ .reg = S5P_CLKSRC_MASK_DMC			, .val = 0x00010000, },
+ };
+ 
++static struct sleep_save exynos4_epll_save[] = {
++	SAVE_ITEM(S5P_EPLL_CON0),
++	SAVE_ITEM(S5P_EPLL_CON1),
++};
++
++static struct sleep_save exynos4_vpll_save[] = {
++	SAVE_ITEM(S5P_VPLL_CON0),
++	SAVE_ITEM(S5P_VPLL_CON1),
++};
++
+ static struct sleep_save exynos4_core_save[] = {
+ 	/* CMU side */
+ 	SAVE_ITEM(S5P_CLKDIV_LEFTBUS),
+ 	SAVE_ITEM(S5P_CLKGATE_IP_LEFTBUS),
+ 	SAVE_ITEM(S5P_CLKDIV_RIGHTBUS),
+ 	SAVE_ITEM(S5P_CLKGATE_IP_RIGHTBUS),
+-	SAVE_ITEM(S5P_EPLL_CON0),
+-	SAVE_ITEM(S5P_EPLL_CON1),
+-	SAVE_ITEM(S5P_VPLL_CON0),
+-	SAVE_ITEM(S5P_VPLL_CON1),
+ 	SAVE_ITEM(S5P_CLKSRC_TOP0),
+ 	SAVE_ITEM(S5P_CLKSRC_TOP1),
+ 	SAVE_ITEM(S5P_CLKSRC_CAM),
+@@ -260,6 +269,8 @@ static void exynos4_pm_prepare(void)
+ 
+ 	s3c_pm_do_save(exynos4_core_save, ARRAY_SIZE(exynos4_core_save));
+ 	s3c_pm_do_save(exynos4_l2cc_save, ARRAY_SIZE(exynos4_l2cc_save));
++	s3c_pm_do_save(exynos4_epll_save, ARRAY_SIZE(exynos4_epll_save));
++	s3c_pm_do_save(exynos4_vpll_save, ARRAY_SIZE(exynos4_vpll_save));
+ 
+ 	tmp = __raw_readl(S5P_INFORM1);
+ 
+@@ -307,12 +318,80 @@ void exynos4_scu_enable(void __iomem *scu_base)
+ 	flush_cache_all();
+ }
+ 
++static unsigned long pll_base_rate;
++
++static void exynos4_restore_pll(void)
++{
++	unsigned long pll_con, locktime, lockcnt;
++	unsigned long pll_in_rate;
++	unsigned int p_div, epll_wait = 0, vpll_wait = 0;
++
++	if (pll_base_rate == 0)
++		return;
++
++	pll_in_rate = pll_base_rate;
++
++	/* EPLL */
++	pll_con = exynos4_epll_save[0].val;
++
++	if (pll_con & (1 << 31)) {
++		pll_con &= (PLL46XX_PDIV_MASK << PLL46XX_PDIV_SHIFT);
++		p_div = (pll_con >> PLL46XX_PDIV_SHIFT);
++
++		pll_in_rate /= 1000000;
++
++		locktime = (3000 / pll_in_rate) * p_div;
++		lockcnt = locktime * 10000 / (10000 / pll_in_rate);
++
++		__raw_writel(lockcnt, S5P_EPLL_LOCK);
++
++		s3c_pm_do_restore_core(exynos4_epll_save,
++					ARRAY_SIZE(exynos4_epll_save));
++		epll_wait = 1;
++	}
++
++	pll_in_rate = pll_base_rate;
++
++	/* VPLL */
++	pll_con = exynos4_vpll_save[0].val;
++
++	if (pll_con & (1 << 31)) {
++		pll_in_rate /= 1000000;
++		/* 750us */
++		locktime = 750;
++		lockcnt = locktime * 10000 / (10000 / pll_in_rate);
++
++		__raw_writel(lockcnt, S5P_VPLL_LOCK);
++
++		s3c_pm_do_restore_core(exynos4_vpll_save,
++					ARRAY_SIZE(exynos4_vpll_save));
++		vpll_wait = 1;
++	}
++
++	/* Wait PLL locking */
++
++	do {
++		if (epll_wait) {
++			pll_con = __raw_readl(S5P_EPLL_CON0);
++			if (pll_con & (1 << S5P_EPLLCON0_LOCKED_SHIFT))
++				epll_wait = 0;
++		}
++
++		if (vpll_wait) {
++			pll_con = __raw_readl(S5P_VPLL_CON0);
++			if (pll_con & (1 << S5P_VPLLCON0_LOCKED_SHIFT))
++				vpll_wait = 0;
++		}
++	} while (epll_wait || vpll_wait);
++}
++
+ static struct sysdev_driver exynos4_pm_driver = {
+ 	.add		= exynos4_pm_add,
+ };
+ 
+ static __init int exynos4_pm_drvinit(void)
+ {
++	struct clk *pll_base;
+ 	unsigned int tmp;
+ 
+ 	s3c_pm_init();
+@@ -323,6 +402,13 @@ static __init int exynos4_pm_drvinit(void)
+ 	tmp |= ((0xFF << 8) | (0x1F << 1));
+ 	__raw_writel(tmp, S5P_WAKEUP_MASK);
+ 
++	pll_base = clk_get(NULL, "xtal");
++
++	if (!IS_ERR(pll_base)) {
++		pll_base_rate = clk_get_rate(pll_base);
++		clk_put(pll_base);
++	}
++
+ 	return sysdev_driver_register(&exynos4_sysclass, &exynos4_pm_driver);
+ }
+ arch_initcall(exynos4_pm_drvinit);
+@@ -357,6 +443,8 @@ static void exynos4_pm_resume(void)
+ 
+ 	s3c_pm_do_restore_core(exynos4_core_save, ARRAY_SIZE(exynos4_core_save));
+ 
++	exynos4_restore_pll();
++
+ 	exynos4_scu_enable(S5P_VA_SCU);
+ 
+ #ifdef CONFIG_CACHE_L2X0
+-- 
+1.7.1
