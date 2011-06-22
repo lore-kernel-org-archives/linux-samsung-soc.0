@@ -1,100 +1,68 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [RFC][PATCH 0/5] USB: DWC OTG: Add dwc_otg driver for S5P6440
- samsung SoC.
-Date: Tue, 21 Jun 2011 14:50:50 +0200
-Message-ID: <004301cc3011$d92e28c0$8b8a7a40$%szyprowski@samsung.com>
-References: <0LN400GHXZI488M0@mailout1.samsung.com>
- <BANLkTi=P-kwd-sd2-91mNUkSbVs==bxrqw@mail.gmail.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCH v2 1/4] Exynos4 NURI: configure regulators and PMIC
+Date: Wed, 22 Jun 2011 11:31:35 +0900
+Message-ID: <BANLkTi=pv=y+1XC5bYEHgL1sy48JPztiOg@mail.gmail.com>
+References: <20110620103124.GD31864@opensource.wolfsonmicro.com>
+	<1308622033-2521-1-git-send-email-myungjoo.ham@samsung.com>
+	<1308622033-2521-2-git-send-email-myungjoo.ham@samsung.com>
+	<4E002D18.2080401@linaro.org>
+Reply-To: myungjoo.ham@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <BANLkTi=P-kwd-sd2-91mNUkSbVs==bxrqw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-language: pl
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Praveen Paneri' <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tmarri-qTEPVZfXA3Y@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:41881 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757845Ab1FVCbh convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 21 Jun 2011 22:31:37 -0400
+In-Reply-To: <4E002D18.2080401@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, dg77.kim@samsung.com
 
-Hello,
-
-On Tuesday, June 21, 2011 2:36 PM Praveen Paneri wrote:
-
-> On Tue, Jun 21, 2011 at 4:21 PM, PRAVEEN PANERI <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> wrote:
-> Hi,
-> >
-> > Hello,
-> >
-> > On Tuesday, June 21, 2011 9:04 AM p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org wrote:
-> >
-> > > From: Praveen Paneri
-> > >
-> > > These patches modify DWC OTG driver for ARM and add it for ARM based
-> SoCs.
-> > > Currently it has been tested for Samsung's S5P6440. The development is
-> > > still
-> > > under process so these are not the best set of patches. They are just
-> for
-> > > review
-> > > and not for merge. Intent of these patches is to show required
-> > > modifications
-> > > to make dwc_otg patches work on ARM.
-> >
-> > What are the differences between DWC OTG hardware and OTG hardware found
-> > in s3c64xx/s5pc100/s5pv210 and Exynos4 SoCs series? I've did a brief look
-> > at register definitions and most of them looks same. Can this driver be
-> > merged with s3c-hsotg.c driver?
-> Yes they are same because they all use the same OTG IP. This driver
-> provides
-> functionalities of both host and gadget while s3c-hsotg.c is only a
-> gadget driver.
-
-I'm perfectly aware that s3c-hsotg is just for UDC functionality. I 
-just wanted to ask if this driver can replace s3c-hsotg.c driver 
-completely?
-
-> If you think this can be merged in s3c-hsotg to make that work in
-> smiler fashion
-> then go ahead but will that work on platforms other than ARM?
-
-You can always create so called variants of the driver that exports 
-different functionality depending on the platform data the driver has
-been bound to. Usually it is used to distinguish different models of 
-the hardware that has a lot in common. For example please refer to 
-driver/media/video/s5p-fimc/fimc-core.c and fimc_driver_ids array in
-the bottom of the code.
-
-> >
-> > > Following features are tested for basic functions on SMDK6440
-> > > board after modifications:
-> > > OTG HOST: HID and mass-storage
-> > > OTG DEVICE: mass-storage and adb
-> >
-> > Does it mean that HID or mass-storage (both host or gadget drivers) needs
-> > modifications to get them working with this DWC OTG driver?
+On Tue, Jun 21, 2011 at 2:33 PM, Tushar Behera <tushar.behera@linaro.or=
+g> wrote:
+> On Tuesday 21 June 2011 07:37 AM, MyungJoo Ham wrote:
+>>
+>> Signed-off-by: MyungJoo Ham<myungjoo.ham@samsung.com>
+>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+>>
+>> --
+>> Changes from v1. Thanks so much for your valuable comments, Mark.
+>> - Removed unnecessary initialization data
+>> - Add __initdata where necessary
+>> - Corrected a regulator name for ADC
+>> ---
+>> =C2=A0arch/arm/mach-exynos4/mach-nuri.c | =C2=A0622
+>> ++++++++++++++++++++++++++++++++++++-
+>> =C2=A01 files changed, 621 insertions(+), 1 deletions(-)
+>>
+> Will it be possible to move PMIC specific defines to a common file an=
+d make
+> appropriate calls in the board-specific file?
 >
-> Why would we need any other driver if DWC OTG driver is working both
-> as host and gadget?
+> In that way, we can re-use this PMIC code on some other boards (e.g.
+> Insignal low-cost board Origen featuring Exynos4210 also features MAX=
+8997).
+>
 
-You got me wrong. I wanted to ask if one needs to tweak in mass storage
-driver to get it working with DWC OTG driver? I'm asking because I've
-already seen a lot of scary code on some public Android trees, where mass
-storage was hacked to workaround bugs (or flaws) in the OTG driver.
+Yes, we have tried creating PMIC defines at a seperated file in our
+local repositories (still doing so in those repositories).
+However, that ended up creating multiple PMIC defines (one PMIC define
+file for each board); the connections between LDO# and devices are
+different.
 
-Have you tried your DWC OTG driver with some more demanding gadget
-drivers? One of such is g_multi which exports 3 usb functions (RNDIS,
-ACM serial and Mass Storage) in a composite device.
-
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
-
+>
+> --
+> Tushar Behera
+>
 
 
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=20
+MyungJoo Ham (=ED=95=A8=EB=AA=85=EC=A3=BC), Ph.D.
+Mobile Software Platform Lab,
+Digital Media and Communications (DMC) Business
+Samsung Electronics
+cell: 82-10-6714-2858
