@@ -1,12 +1,12 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 3/7] ARM: EXYNOS4: Add support PM with external GIC
-Date: Wed, 22 Jun 2011 17:46:41 +0900
-Message-ID: <1308732405-16664-4-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 6/7] ARM: EXYNOS4: Add save/restore for more ARM registers
+Date: Wed, 22 Jun 2011 17:46:44 +0900
+Message-ID: <1308732405-16664-7-git-send-email-kgene.kim@samsung.com>
 References: <1308732405-16664-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:59729 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:59737 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753849Ab1FVI4v (ORCPT
+	with ESMTP id S1753484Ab1FVI4v (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 22 Jun 2011 04:56:51 -0400
 In-Reply-To: <1308732405-16664-1-git-send-email-kgene.kim@samsung.com>
@@ -17,84 +17,61 @@ Cc: ben-linux@fluff.org, Jaecheol Lee <jc.lee@samsung.com>, Kukjin Kim <kgene.ki
 
 From: Jaecheol Lee <jc.lee@samsung.com>
 
+This patch adds save/restore for Power Control Register and
+Diagnostic Register.
+
 Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-exynos4/pm.c |   43 +++++++++++++++++++++++++++++++++++++------
- 1 files changed, 37 insertions(+), 6 deletions(-)
+ arch/arm/mach-exynos4/sleep.S |   22 ++++++++++++++++++++++
+ 1 files changed, 22 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-exynos4/pm.c b/arch/arm/mach-exynos4/pm.c
-index a073a01..bf53588 100644
---- a/arch/arm/mach-exynos4/pm.c
-+++ b/arch/arm/mach-exynos4/pm.c
-@@ -154,6 +154,22 @@ static struct sleep_save exynos4_core_save[] = {
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0x454),
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0x458),
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0x45C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x460),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x464),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x468),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x46C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x470),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x474),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x478),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x47C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x480),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x484),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x488),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x48C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x490),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x494),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x498),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x49C),
+diff --git a/arch/arm/mach-exynos4/sleep.S b/arch/arm/mach-exynos4/sleep.S
+index d55d38c..4fe13fc 100644
+--- a/arch/arm/mach-exynos4/sleep.S
++++ b/arch/arm/mach-exynos4/sleep.S
+@@ -42,6 +42,15 @@
+ ENTRY(s3c_cpu_save)
  
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0x800),
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0x804),
-@@ -179,6 +195,22 @@ static struct sleep_save exynos4_core_save[] = {
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0x854),
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0x858),
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0x85C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x860),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x864),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x868),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x86C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x870),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x874),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x878),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x87C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x880),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x884),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x888),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x88C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x890),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x894),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x898),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x89C),
- 
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC00),
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC04),
-@@ -186,17 +218,16 @@ static struct sleep_save exynos4_core_save[] = {
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC0C),
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC10),
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC14),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC18),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC1C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC20),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC24),
+ 	stmfd	sp!, { r3 - r12, lr }
 +
++	adr	r0, sleep_save_misc
++
++	mrc	p15, 0, r2, c15, c0, 0	@ read power control register
++	str	r2, [r0], #4
++
++	mrc	p15, 0, r2, c15, c0, 1	@ read diagnostic register
++	str	r2, [r0], #4
++
+ 	ldr	r3, =resume_with_mmu
+ 	bl	cpu_suspend
  
- 	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x000),
- 	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x010),
- 	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x020),
- 	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x030),
--	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x040),
--	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x050),
--	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x060),
--	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x070),
--	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x080),
--	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x090),
- };
+@@ -56,6 +65,14 @@ ENTRY(s3c_cpu_save)
+ 	b	early_wakeup
  
- static struct sleep_save exynos4_l2cc_save[] = {
+ resume_with_mmu:
++	adr	r0, sleep_save_misc
++
++	ldr	r1, [r0], #4
++	mcr	p15, 0, r1, c15, c0, 0	@ write power control register
++
++	ldr	r1, [r0], #4
++	mcr	p15, 0, r1, c15, c0, 1	@ write diagnostic register
++
+ 	mov	r0, #1
+ 
+ early_wakeup:
+@@ -71,6 +88,11 @@ early_wakeup:
+ 
+ 	.word	0x2bedf00d
+ 
++	 /* To save more cpu register */
++sleep_save_misc:
++	.long	0
++	.long	0
++
+ 	/*
+ 	 * s3c_cpu_resume
+ 	 *
 -- 
 1.7.1
