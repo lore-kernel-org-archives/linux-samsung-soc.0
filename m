@@ -1,39 +1,64 @@
-From: JinGoo Han <jg1.han@samsung.com>
-Subject: [PATCH V4 1/5] ARM: EXYNOS4: Change clock name for FIMD
-Date: Wed, 22 Jun 2011 03:42:17 +0000 (GMT)
-Message-ID: <16187978.109931308714136278.JavaMail.weblogic@epml08>
-Reply-To: jg1.han@samsung.com
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH v2 1/4] Exynos4 NURI: configure regulators and PMIC
+Date: Wed, 22 Jun 2011 09:13:36 +0530
+Message-ID: <4E0164E8.8060708@linaro.org>
+References: <20110620103124.GD31864@opensource.wolfsonmicro.com>	<1308622033-2521-1-git-send-email-myungjoo.ham@samsung.com>	<1308622033-2521-2-git-send-email-myungjoo.ham@samsung.com>	<4E002D18.2080401@linaro.org> <BANLkTi=pv=y+1XC5bYEHgL1sy48JPztiOg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:64593 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756750Ab1FVDmS (ORCPT
+Received: from mail-qy0-f181.google.com ([209.85.216.181]:54125 "EHLO
+	mail-qy0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757493Ab1FVDno (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Jun 2011 23:42:18 -0400
-Received: from epcpsbge4.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LN600AV9AA6IXH0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 22 Jun 2011 12:42:17 +0900 (KST)
-MIME-version: 1.0
+	Tue, 21 Jun 2011 23:43:44 -0400
+In-Reply-To: <BANLkTi=pv=y+1XC5bYEHgL1sy48JPztiOg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-f>
-Cc: ANAND KUMAR N <anand.kn@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, THOMAS P ABRAHAM <thomas.ab@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, In-Ki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, JinGoo Han <jg1.han@samsung.com>
+To: myungjoo.ham@gmail.com
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, dg77.kim@samsung.com
 
-VGhpcyBwYXRjaCBjaGFuZ2VzIGNsb2NrIG5hbWUgZm9yIEZJTUQgZnJvbSAiZmltZCIgdG8gImxj
-ZCIuDQoNClNpZ25lZC1vZmYtYnk6IEppbmdvbyBIYW4gPGpnMS5oYW5Ac2Ftc3VuZy5jb20+DQot
-LS0NCiBhcmNoL2FybS9tYWNoLWV4eW5vczQvY2xvY2suYyB8ICAgIDQgKystLQ0KIDEgZmlsZXMg
-Y2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEv
-YXJjaC9hcm0vbWFjaC1leHlub3M0L2Nsb2NrLmMgYi9hcmNoL2FybS9tYWNoLWV4eW5vczQvY2xv
-Y2suYw0KaW5kZXggODcxZjlkNS4uMTJlNjg1MyAxMDA2NDQNCi0tLSBhL2FyY2gvYXJtL21hY2gt
-ZXh5bm9zNC9jbG9jay5jDQorKysgYi9hcmNoL2FybS9tYWNoLWV4eW5vczQvY2xvY2suYw0KQEAg
-LTQzMywxMiArNDMzLDEyIEBAIHN0YXRpYyBzdHJ1Y3QgY2xrIGluaXRfY2xvY2tzX29mZltdID0g
-ew0KIAkJLmVuYWJsZQkJPSBleHlub3M0X2Nsa19pcF9jYW1fY3RybCwNCiAJCS5jdHJsYml0CT0g
-KDEgPDwgMyksDQogCX0sIHsNCi0JCS5uYW1lCQk9ICJmaW1kIiwNCisJCS5uYW1lCQk9ICJsY2Qi
-LA0KIAkJLmlkCQk9IDAsDQogCQkuZW5hYmxlCQk9IGV4eW5vczRfY2xrX2lwX2xjZDBfY3RybCwN
-CiAJCS5jdHJsYml0CT0gKDEgPDwgMCksDQogCX0sIHsNCi0JCS5uYW1lCQk9ICJmaW1kIiwNCisJ
-CS5uYW1lCQk9ICJsY2QiLA0KIAkJLmlkCQk9IDEsDQogCQkuZW5hYmxlCQk9IGV4eW5vczRfY2xr
-X2lwX2xjZDFfY3RybCwNCiAJCS5jdHJsYml0CT0gKDEgPDwgMCksDQotLSANCjEuNy4xDQoNCg==
+On Wednesday 22 June 2011 08:01 AM, MyungJoo Ham wrote:
+> On Tue, Jun 21, 2011 at 2:33 PM, Tushar Behera<tushar.behera@linaro.org>  wrote:
+>> On Tuesday 21 June 2011 07:37 AM, MyungJoo Ham wrote:
+>>>
+>>> Signed-off-by: MyungJoo Ham<myungjoo.ham@samsung.com>
+>>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+>>>
+>>> --
+>>> Changes from v1. Thanks so much for your valuable comments, Mark.
+>>> - Removed unnecessary initialization data
+>>> - Add __initdata where necessary
+>>> - Corrected a regulator name for ADC
+>>> ---
+>>>   arch/arm/mach-exynos4/mach-nuri.c |  622
+>>> ++++++++++++++++++++++++++++++++++++-
+>>>   1 files changed, 621 insertions(+), 1 deletions(-)
+>>>
+>> Will it be possible to move PMIC specific defines to a common file and make
+>> appropriate calls in the board-specific file?
+>>
+>> In that way, we can re-use this PMIC code on some other boards (e.g.
+>> Insignal low-cost board Origen featuring Exynos4210 also features MAX8997).
+>>
+>
+> Yes, we have tried creating PMIC defines at a seperated file in our
+> local repositories (still doing so in those repositories).
+> However, that ended up creating multiple PMIC defines (one PMIC define
+> file for each board); the connections between LDO# and devices are
+> different.
+>
+In that case, we can first post the Origen board support and PMIC code 
+on the ML, then we would see if we can consolidate.
+
+That looks more logical as per Mark's suggestion also.
+>>
+>> --
+>> Tushar Behera
+>>
+>
+>
+
+
+-- 
+Tushar Behera
