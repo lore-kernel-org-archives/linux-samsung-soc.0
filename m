@@ -1,175 +1,54 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH V5 5/5] ARM: EXYNOS4: Add platform data for EXYNOS4 FIMD
- and LTE480WV platform-lcd
-Date: Wed, 22 Jun 2011 10:56:41 +0200
-Message-ID: <4E01AE49.60009@samsung.com>
-References: <1308724904-31521-1-git-send-email-jg1.han@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] tty: s5pv210: Add delay loop on fifo reset function for UART
+Date: Wed, 22 Jun 2011 17:50:25 +0900
+Message-ID: <1308732625-19847-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:39066 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751398Ab1FVI5m (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:53916 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751963Ab1FVJBr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jun 2011 04:57:42 -0400
-In-reply-to: <1308724904-31521-1-git-send-email-jg1.han@samsung.com>
+	Wed, 22 Jun 2011 05:01:47 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, Jonghun Han <jonghun.han@samsung.com>, Anand Kumar N <anand.kn@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Inki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Jongpill Lee <boyko.lee@samsung.com>, Jaecheol Lee <jc.lee@samsung.com>, Greg Kroah-Hartman <gregkh@suse.de>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hello,
+From: Jongpill Lee <boyko.lee@samsung.com>
 
-On 06/22/2011 08:41 AM, Jingoo Han wrote:
-> From: Jonghun Han <jonghun.han@samsung.com>
-> 
-> This patch adds support EXYNOS4 FIMD0 and LTE480WV LCD pannel.
-> 
-> Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> ---
->  arch/arm/mach-exynos4/mach-smdkc210.c |  114 +++++++++++++++++++++++++++++++++
->  arch/arm/mach-exynos4/mach-smdkv310.c |  114 +++++++++++++++++++++++++++++++++
->  2 files changed, 228 insertions(+), 0 deletions(-)
-...
-> +static int __init smdkc210_fimd0_setup_clock(void)
-> +{
-> +	struct clk *sclk = NULL;
-> +	struct clk *mout_mpll = NULL;
+This patch addes delay loop on fifo reset function for UART.
+On high speed freq, it needs delay function when fifo reset.
+If not, system will hang by this uart reset problem when resuming
+from suspend mode.
 
-You don't need initialize to NULL here.
+Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
+Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ drivers/tty/serial/s5pv210.c |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
-> +
-> +	u32 rate = 0;
-
-Other than this variable is not really needed I would make it unsigned long.
-
-> +
-> +	sclk = clk_get(&s5p_device_fimd0.dev, "sclk_fimd");
-> +	if (IS_ERR(sclk)) {
-> +		printk(KERN_ERR "failed to get sclk for fimd\n");
-> +		goto err_clk2;
-
-You could just do:
-		return PTR_ERR(sclk);
-
-> +	}
-> +
-> +	mout_mpll = clk_get(NULL, "mout_mpll");
-> +	if (IS_ERR(mout_mpll)) {
-> +		printk(KERN_ERR "failed to get mout_mpll\n");
-> +		goto err_clk1;
-> +	}
-> +
-> +	clk_set_parent(sclk, mout_mpll);
-> +	if (!rate)
-> +		rate = 134000000;
-
- 134000000UL
-
-> +
-> +	clk_set_rate(sclk, rate);
-> +
-> +	clk_put(sclk);
-> +	clk_put(mout_mpll);
-> +
-> +	return 0;
-> +
-> +err_clk1:
-> +	clk_put(mout_mpll);
-
-clk_put is supposed to be used only for clocks that were successfully acquired.
-
-> +err_clk2:
-> +	clk_put(sclk);
-
-Ditto.
-
-> +
-> +	return -EINVAL;
-> +}
-
-...
-
-> +static int __init smdkv310_fimd0_setup_clock(void)
-> +{
-> +	struct clk *sclk = NULL;
-> +	struct clk *mout_mpll = NULL;
-> +
-> +	u32 rate = 0;
-> +
-> +	sclk = clk_get(&s5p_device_fimd0.dev, "sclk_fimd");
-> +	if (IS_ERR(sclk)) {
-> +		printk(KERN_ERR "failed to get sclk for fimd\n");
-> +		goto err_clk2;
-> +	}
-> +
-> +	mout_mpll = clk_get(NULL, "mout_mpll");
-> +	if (IS_ERR(mout_mpll)) {
-> +		printk(KERN_ERR "failed to get mout_mpll\n");
-> +		goto err_clk1;
-> +	}
-> +
-> +	clk_set_parent(sclk, mout_mpll);
-> +	if (!rate)
-> +		rate = 134000000;
-> +
-> +	clk_set_rate(sclk, rate);
-> +
-> +	clk_put(sclk);
-> +	clk_put(mout_mpll);
-> +
-> +	return 0;
-> +
-> +err_clk1:
-> +	clk_put(mout_mpll);
-> +err_clk2:
-> +	clk_put(sclk);
-> +
-> +	return -EINVAL;
-> +}
-
-We have multiple copies of same function and I suspect other boards will try
-to repeat this pattern which is not that good.
-
-It would be worth to create common function for all boards if we really
-must have that, e.g.
-
-int __init exynos4_fimd_setup_clock(struct device *dev, const char *parent,
-                                    unsigned long clk_rate);
-{
-	struct clk *clk_parent;
-	struct clk *sclk;
-
-	sclk = clk_get(dev, "sclk_fimd");
-	if (IS_ERR(sclk))
-		return PTR_ERR(sclk);
-
-	clk_parent = clk_get(NULL, parent);
-	if (IS_ERR(parent_clk)) {
-		clk_put(sclk);
-		return PTR_ERR(clk_parent);
-	}
-
-	clk_set_parent(sclk, clk_parent);
-	if (!rate)
-		rate = 134000000UL;
-	clk_set_rate(sclk, rate);
-	clk_put(sclk);
-	clk_put(clk_parent);
-
-	return 0;
-}
-
-But I have no idea where to put that...
-Perhaps we should create common mach-exynos4/setup-fimd.c file for FIMD0, FIMD1.
-But then it would contain ugly #ifdef for unused FIMD1 setup functions
-("#ifdef CONFIG_DEV_FIMD0 ..") if only FIMD0 is used. Maybe someone else has
-better idea.
-
-
-Regards,
+diff --git a/drivers/tty/serial/s5pv210.c b/drivers/tty/serial/s5pv210.c
+index fb2619f..dce6cb3 100644
+--- a/drivers/tty/serial/s5pv210.c
++++ b/drivers/tty/serial/s5pv210.c
+@@ -18,6 +18,7 @@
+ #include <linux/init.h>
+ #include <linux/serial_core.h>
+ #include <linux/serial.h>
++#include <linux/delay.h>
+ 
+ #include <asm/irq.h>
+ #include <mach/hardware.h>
+@@ -83,6 +84,9 @@ static int s5pv210_serial_resetport(struct uart_port *port,
+ 	wr_regl(port, S3C2410_UFCON, cfg->ufcon | S3C2410_UFCON_RESETBOTH);
+ 	wr_regl(port, S3C2410_UFCON, cfg->ufcon);
+ 
++	/* It is need to delay When reset FIFO register */
++	udelay(1);
++
+ 	return 0;
+ }
+ 
 -- 
-Sylwester Nawrocki
-Samsung Poland R&D Center
+1.7.1
