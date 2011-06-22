@@ -1,492 +1,102 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 06/18] s5p-fimc: Remove v4l2_device from video capture and
- m2m driver
-Date: Wed, 22 Jun 2011 20:01:12 +0200
-Message-ID: <1308765684-10677-7-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v2 10/18] s5p-fimc: Add media operations in the capture entity
+ driver
+Date: Wed, 22 Jun 2011 20:01:16 +0200
+Message-ID: <1308765684-10677-11-git-send-email-s.nawrocki@samsung.com>
 References: <1308765684-10677-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:31204 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758537Ab1FVSBl (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:24183 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758536Ab1FVSBk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jun 2011 14:01:41 -0400
+	Wed, 22 Jun 2011 14:01:40 -0400
 In-reply-to: <1308765684-10677-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
 
-Currently there is a v4l2_device instance being registered per each
-(capture and memory-to-memory) video node created per FIMC H/W instance.
-This patch is a prerequisite for using the top level v4l2_device
-instantiated by the media device driver.
-To retain current debug trace semantic (so it's possible to distinguish
-between the capture and m2m FIMC) the video_device is used in place
-of v4l2_device where appropriate.
+Add the link_setup handler for the camera capture video node.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-capture.c |   43 ++++++----------
- drivers/media/video/s5p-fimc/fimc-core.c    |   70 ++++++++++----------------
- drivers/media/video/s5p-fimc/fimc-core.h    |   15 +++---
- drivers/media/video/s5p-fimc/fimc-reg.c     |    7 ++-
- 4 files changed, 55 insertions(+), 80 deletions(-)
+ drivers/media/video/s5p-fimc/fimc-capture.c |   32 +++++++++++++++++++++++++++
+ drivers/media/video/s5p-fimc/fimc-core.h    |    2 +
+ 2 files changed, 34 insertions(+), 0 deletions(-)
 
 diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index cef8879..22a7bf6b 100644
+index 887a3fc..f9beee8 100644
 --- a/drivers/media/video/s5p-fimc/fimc-capture.c
 +++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -133,7 +133,6 @@ static int start_streaming(struct vb2_queue *q)
- 	fimc->vid_cap.buf_index = 0;
- 
- 	set_bit(ST_CAPT_PEND, &fimc->state);
--
- 	return 0;
- }
- 
-@@ -180,7 +179,6 @@ static int buffer_prepare(struct vb2_buffer *vb)
- {
- 	struct vb2_queue *vq = vb->vb2_queue;
- 	struct fimc_ctx *ctx = vq->drv_priv;
--	struct v4l2_device *v4l2_dev = &ctx->fimc_dev->m2m.v4l2_dev;
- 	int i;
- 
- 	if (!ctx->d_frame.fmt || vq->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
-@@ -190,7 +188,8 @@ static int buffer_prepare(struct vb2_buffer *vb)
- 		unsigned long size = get_plane_size(&ctx->d_frame, i);
- 
- 		if (vb2_plane_size(vb, i) < size) {
--			v4l2_err(v4l2_dev, "User buffer too small (%ld < %ld)\n",
-+			v4l2_err(ctx->fimc_dev->vid_cap.vfd,
-+				 "User buffer too small (%ld < %ld)\n",
- 				 vb2_plane_size(vb, i), size);
- 			return -EINVAL;
- 		}
-@@ -402,7 +401,8 @@ static int fimc_cap_s_fmt_mplane(struct file *file, void *priv,
- 	pix = &f->fmt.pix_mp;
- 	frame->fmt = find_format(f, FMT_FLAGS_M2M | FMT_FLAGS_CAM);
- 	if (!frame->fmt) {
--		err("fimc target format not found\n");
-+		v4l2_err(fimc->vid_cap.vfd,
-+			 "Not supported capture (FIMC target) color format\n");
- 		return -EINVAL;
- 	}
- 
-@@ -462,7 +462,7 @@ static int fimc_cap_streamon(struct file *file, void *priv,
- 		return -EBUSY;
- 
- 	if (!(ctx->state & FIMC_DST_FMT)) {
--		v4l2_err(&fimc->vid_cap.v4l2_dev, "Format is not set\n");
-+		v4l2_err(fimc->vid_cap.vfd, "Format is not set\n");
- 		return -EINVAL;
- 	}
- 
-@@ -592,9 +592,8 @@ static int fimc_cap_s_crop(struct file *file, void *fh,
- 		return ret;
- 
- 	if (!(ctx->state & FIMC_DST_FMT)) {
--		v4l2_err(&fimc->vid_cap.v4l2_dev,
--			 "Capture color format not set\n");
--		return -EINVAL; /* TODO: make sure this is the right value */
-+		v4l2_err(fimc->vid_cap.vfd, "Capture format is not set\n");
-+		return -EINVAL;
- 	}
- 
- 	f = &ctx->s_frame;
-@@ -603,7 +602,7 @@ static int fimc_cap_s_crop(struct file *file, void *fh,
- 				      ctx->d_frame.width, ctx->d_frame.height,
- 				      ctx->rotation);
- 	if (ret) {
--		v4l2_err(&fimc->vid_cap.v4l2_dev, "Out of the scaler range\n");
-+		v4l2_err(fimc->vid_cap.vfd, "Out of the scaler range\n");
- 		return ret;
- 	}
- 
-@@ -647,16 +646,16 @@ static const struct v4l2_ioctl_ops fimc_capture_ioctl_ops = {
+@@ -654,6 +654,37 @@ static const struct v4l2_ioctl_ops fimc_capture_ioctl_ops = {
+ 	.vidioc_g_input			= fimc_cap_g_input,
  };
  
++/* Media operations */
++static int fimc_link_setup(struct media_entity *entity,
++			   const struct media_pad *local,
++			   const struct media_pad *remote, u32 flags)
++{
++	struct video_device *vd = media_entity_to_video_device(entity);
++	struct v4l2_subdev *sd = media_entity_to_v4l2_subdev(remote->entity);
++	struct fimc_dev *fimc = video_get_drvdata(vd);
++
++	if (WARN_ON(fimc == NULL))
++		return 0;
++
++	dbg("%s --> %s, flags: 0x%x. input: 0x%x",
++	    local->entity->name, remote->entity->name, flags,
++	    fimc->vid_cap.input);
++
++	if (flags & MEDIA_LNK_FL_ENABLED) {
++		if (fimc->vid_cap.input != 0)
++			return -EBUSY;
++		fimc->vid_cap.input = sd->grp_id;
++		return 0;
++	}
++
++	fimc->vid_cap.input = 0;
++	return 0;
++}
++
++static const struct media_entity_operations fimc_media_ops = {
++	.link_setup = fimc_link_setup,
++};
++
  /* fimc->lock must be already initialized */
--int fimc_register_capture_device(struct fimc_dev *fimc)
-+int fimc_register_capture_device(struct fimc_dev *fimc,
-+				 struct v4l2_device *v4l2_dev)
- {
--	struct v4l2_device *v4l2_dev = &fimc->vid_cap.v4l2_dev;
- 	struct video_device *vfd;
- 	struct fimc_vid_cap *vid_cap;
- 	struct fimc_ctx *ctx;
- 	struct v4l2_format f;
- 	struct fimc_frame *fr;
- 	struct vb2_queue *q;
--	int ret;
-+	int ret = -ENOMEM;
- 
- 	ctx = kzalloc(sizeof *ctx, GFP_KERNEL);
- 	if (!ctx)
-@@ -674,20 +673,14 @@ int fimc_register_capture_device(struct fimc_dev *fimc)
- 	fr->width = fr->f_width = fr->o_width = 640;
- 	fr->height = fr->f_height = fr->o_height = 480;
- 
--	snprintf(v4l2_dev->name, sizeof(v4l2_dev->name),
--		 "%s.capture", dev_name(&fimc->pdev->dev));
--
--	ret = v4l2_device_register(NULL, v4l2_dev);
--	if (ret)
--		goto err_info;
--
- 	vfd = video_device_alloc();
- 	if (!vfd) {
- 		v4l2_err(v4l2_dev, "Failed to allocate video device\n");
--		goto err_v4l2_reg;
-+		goto err_vd_alloc;
- 	}
- 
--	strlcpy(vfd->name, v4l2_dev->name, sizeof(vfd->name));
-+	snprintf(vfd->name, sizeof(vfd->name), "%s.capture",
-+		 dev_name(&fimc->pdev->dev));
- 
- 	vfd->fops	= &fimc_capture_fops;
- 	vfd->ioctl_ops	= &fimc_capture_ioctl_ops;
-@@ -732,8 +725,7 @@ int fimc_register_capture_device(struct fimc_dev *fimc)
- 		goto err_vd_reg;
- 	}
- 
--	v4l2_info(v4l2_dev,
--		  "FIMC capture driver registered as /dev/video%d\n",
-+	v4l2_info(vfd, "FIMC capture driver registered as /dev/video%d\n",
- 		  vfd->num);
- 	return 0;
- 
-@@ -741,11 +733,8 @@ err_vd_reg:
- 	media_entity_cleanup(&vfd->entity);
- err_ent:
- 	video_device_release(vfd);
--err_v4l2_reg:
--	v4l2_device_unregister(v4l2_dev);
--err_info:
-+err_vd_alloc:
- 	kfree(ctx);
--	dev_err(&fimc->pdev->dev, "failed to install\n");
- 	return ret;
- }
- 
-diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index 960c5f0..abc6269 100644
---- a/drivers/media/video/s5p-fimc/fimc-core.c
-+++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -237,10 +237,11 @@ static int fimc_get_scaler_factor(u32 src, u32 tar, u32 *ratio, u32 *shift)
- 
- int fimc_set_scaler_info(struct fimc_ctx *ctx)
- {
-+	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
-+	struct device *dev = &ctx->fimc_dev->pdev->dev;
- 	struct fimc_scaler *sc = &ctx->scaler;
- 	struct fimc_frame *s_frame = &ctx->s_frame;
- 	struct fimc_frame *d_frame = &ctx->d_frame;
--	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
- 	int tx, ty, sx, sy;
- 	int ret;
- 
-@@ -252,15 +253,14 @@ int fimc_set_scaler_info(struct fimc_ctx *ctx)
- 		ty = d_frame->height;
- 	}
- 	if (tx <= 0 || ty <= 0) {
--		v4l2_err(&ctx->fimc_dev->m2m.v4l2_dev,
--			"invalid target size: %d x %d", tx, ty);
-+		dev_err(dev, "Invalid target size: %dx%d", tx, ty);
- 		return -EINVAL;
- 	}
- 
- 	sx = s_frame->width;
- 	sy = s_frame->height;
- 	if (sx <= 0 || sy <= 0) {
--		err("invalid source size: %d x %d", sx, sy);
-+		dev_err(dev, "Invalid source size: %dx%d", sx, sy);
- 		return -EINVAL;
- 	}
- 	sc->real_width = sx;
-@@ -895,7 +895,7 @@ int fimc_vidioc_try_fmt_mplane(struct file *file, void *priv,
- 	mask = is_output ? FMT_FLAGS_M2M : FMT_FLAGS_M2M | FMT_FLAGS_CAM;
- 	fmt = find_format(f, mask);
- 	if (!fmt) {
--		v4l2_err(&fimc->m2m.v4l2_dev, "Fourcc format (0x%X) invalid.\n",
-+		v4l2_err(fimc->v4l2_dev, "Fourcc format (0x%X) invalid.\n",
- 			 pix->pixelformat);
- 		return -EINVAL;
- 	}
-@@ -970,7 +970,7 @@ static int fimc_m2m_s_fmt_mplane(struct file *file, void *priv,
- 	vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
- 
- 	if (vb2_is_busy(vq)) {
--		v4l2_err(&fimc->m2m.v4l2_dev, "queue (%d) busy\n", f->type);
-+		v4l2_err(fimc->m2m.vfd, "queue (%d) busy\n", f->type);
- 		return -EBUSY;
- 	}
- 
-@@ -979,7 +979,7 @@ static int fimc_m2m_s_fmt_mplane(struct file *file, void *priv,
- 	} else if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
- 		frame = &ctx->d_frame;
- 	} else {
--		v4l2_err(&fimc->m2m.v4l2_dev,
-+		v4l2_err(fimc->m2m.vfd,
- 			 "Wrong buffer/video queue type (%d)\n", f->type);
- 		return -EINVAL;
- 	}
-@@ -1107,7 +1107,7 @@ int fimc_vidioc_g_ctrl(struct file *file, void *priv,
- 			return v4l2_subdev_call(fimc->vid_cap.sd, core,
- 						g_ctrl, ctrl);
- 		} else {
--			v4l2_err(&fimc->m2m.v4l2_dev, "Invalid control\n");
-+			v4l2_err(fimc->m2m.vfd, "Invalid control\n");
- 			return -EINVAL;
- 		}
- 	}
-@@ -1125,8 +1125,7 @@ int check_ctrl_val(struct fimc_ctx *ctx,  struct v4l2_control *ctrl)
- 
- 	if (ctrl->value < c->minimum || ctrl->value > c->maximum
- 		|| (c->step != 0 && ctrl->value % c->step != 0)) {
--		v4l2_err(&ctx->fimc_dev->m2m.v4l2_dev,
--		"Invalid control value\n");
-+		v4l2_err(ctx->fimc_dev->m2m.vfd, "Invalid control value\n");
- 		return -ERANGE;
- 	}
- 
-@@ -1162,7 +1161,7 @@ int fimc_s_ctrl(struct fimc_ctx *ctx, struct v4l2_control *ctrl)
- 		}
- 
- 		if (ret) {
--			v4l2_err(&fimc->m2m.v4l2_dev, "Out of scaler range\n");
-+			v4l2_err(fimc->m2m.vfd, "Out of scaler range\n");
- 			return -EINVAL;
- 		}
- 
-@@ -1174,7 +1173,7 @@ int fimc_s_ctrl(struct fimc_ctx *ctx, struct v4l2_control *ctrl)
- 		break;
- 
- 	default:
--		v4l2_err(&fimc->m2m.v4l2_dev, "Invalid control\n");
-+		v4l2_err(fimc->v4l2_dev, "Invalid control\n");
- 		return -EINVAL;
- 	}
- 
-@@ -1242,7 +1241,7 @@ int fimc_try_crop(struct fimc_ctx *ctx, struct v4l2_crop *cr)
- 	int i;
- 
- 	if (cr->c.top < 0 || cr->c.left < 0) {
--		v4l2_err(&fimc->m2m.v4l2_dev,
-+		v4l2_err(fimc->m2m.vfd,
- 			"doesn't support negative values for top & left\n");
- 		return -EINVAL;
- 	}
-@@ -1323,7 +1322,7 @@ static int fimc_m2m_s_crop(struct file *file, void *fh, struct v4l2_crop *cr)
- 						      ctx->rotation);
- 		}
- 		if (ret) {
--			v4l2_err(&fimc->m2m.v4l2_dev, "Out of scaler range\n");
-+			v4l2_err(fimc->m2m.vfd, "Out of scaler range\n");
- 			return -EINVAL;
- 		}
- 	}
-@@ -1491,30 +1490,23 @@ static struct v4l2_m2m_ops m2m_ops = {
- 	.job_abort	= fimc_job_abort,
- };
- 
--int fimc_register_m2m_device(struct fimc_dev *fimc)
-+int fimc_register_m2m_device(struct fimc_dev *fimc,
-+			     struct v4l2_device *v4l2_dev)
- {
- 	struct video_device *vfd;
- 	struct platform_device *pdev;
--	struct v4l2_device *v4l2_dev;
- 	int ret = 0;
- 
- 	if (!fimc)
- 		return -ENODEV;
- 
- 	pdev = fimc->pdev;
--	v4l2_dev = &fimc->m2m.v4l2_dev;
--
--	snprintf(v4l2_dev->name, sizeof(v4l2_dev->name),
--		 "%s.m2m", dev_name(&pdev->dev));
--
--	ret = v4l2_device_register(&pdev->dev, v4l2_dev);
--	if (ret)
--		goto err_m2m_r1;
-+	fimc->v4l2_dev = v4l2_dev;
- 
- 	vfd = video_device_alloc();
- 	if (!vfd) {
- 		v4l2_err(v4l2_dev, "Failed to allocate video device\n");
--		goto err_m2m_r1;
-+		return -ENOMEM;
- 	}
- 
- 	vfd->fops	= &fimc_m2m_fops;
-@@ -1524,42 +1516,35 @@ int fimc_register_m2m_device(struct fimc_dev *fimc)
- 	vfd->release	= video_device_release;
- 	vfd->lock	= &fimc->lock;
- 
--	snprintf(vfd->name, sizeof(vfd->name), "%s:m2m", dev_name(&pdev->dev));
--
-+	snprintf(vfd->name, sizeof(vfd->name), "%s.m2m", dev_name(&pdev->dev));
- 	video_set_drvdata(vfd, fimc);
--	platform_set_drvdata(pdev, fimc);
- 
- 	fimc->m2m.vfd = vfd;
- 	fimc->m2m.m2m_dev = v4l2_m2m_init(&m2m_ops);
- 	if (IS_ERR(fimc->m2m.m2m_dev)) {
- 		v4l2_err(v4l2_dev, "failed to initialize v4l2-m2m device\n");
- 		ret = PTR_ERR(fimc->m2m.m2m_dev);
--		goto err_m2m_r2;
-+		goto err_init;
- 	}
- 
- 	ret = media_entity_init(&vfd->entity, 0, NULL, 0);
+ int fimc_register_capture_device(struct fimc_dev *fimc,
+ 				 struct v4l2_device *v4l2_dev)
+@@ -728,6 +759,7 @@ int fimc_register_capture_device(struct fimc_dev *fimc,
  	if (ret)
--		goto err_m2m_r3;
-+		goto err_me;
+ 		goto err_ent;
  
++	vfd->entity.ops = &fimc_media_ops;
+ 	vfd->ctrl_handler = &ctx->ctrl_handler;
  	ret = video_register_device(vfd, VFL_TYPE_GRABBER, -1);
  	if (ret) {
--		v4l2_err(v4l2_dev,
--			 "%s(): failed to register video device\n", __func__);
--		goto err_m2m_r4;
-+		v4l2_err(vfd, "Failed to register video device\n");
-+		goto err_vd;
- 	}
--	v4l2_info(v4l2_dev,
--		  "FIMC m2m driver registered as /dev/video%d\n", vfd->num);
--
-+	v4l2_info(vfd, "FIMC m2m driver registered as /dev/video%d\n", vfd->num);
- 	return 0;
--err_m2m_r4:
-+
-+err_vd:
- 	media_entity_cleanup(&vfd->entity);
--err_m2m_r3:
-+err_me:
- 	v4l2_m2m_release(fimc->m2m.m2m_dev);
--err_m2m_r2:
-+err_init:
- 	video_device_release(fimc->m2m.vfd);
--err_m2m_r1:
--	v4l2_device_unregister(v4l2_dev);
--
- 	return ret;
- }
- 
-@@ -1570,7 +1555,6 @@ void fimc_unregister_m2m_device(struct fimc_dev *fimc)
- 
- 	if (fimc->m2m.m2m_dev)
- 		v4l2_m2m_release(fimc->m2m.m2m_dev);
--	v4l2_device_unregister(&fimc->m2m.v4l2_dev);
- 	if (fimc->m2m.vfd) {
- 		media_entity_cleanup(&fimc->m2m.vfd->entity);
- 		video_unregister_device(fimc->m2m.vfd);
 diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-index 210301e..fe82bf7 100644
+index 6ccd446..d264f3f 100644
 --- a/drivers/media/video/s5p-fimc/fimc-core.h
 +++ b/drivers/media/video/s5p-fimc/fimc-core.h
-@@ -281,14 +281,12 @@ struct fimc_frame {
- /**
-  * struct fimc_m2m_device - v4l2 memory-to-memory device data
-  * @vfd: the video device node for v4l2 m2m mode
-- * @v4l2_dev: v4l2 device for m2m mode
-  * @m2m_dev: v4l2 memory-to-memory device data
-  * @ctx: hardware context data
-  * @refcnt: the reference counter
+@@ -305,6 +305,7 @@ struct fimc_m2m_device {
+  * @reqbufs_count: the number of buffers requested in REQBUFS ioctl
+  * @input_index: input (camera sensor) index
+  * @refcnt: driver's private reference counter
++ * @input: capture input type, grp_id of attached subdev
   */
- struct fimc_m2m_device {
- 	struct video_device	*vfd;
--	struct v4l2_device	v4l2_dev;
- 	struct v4l2_m2m_dev	*m2m_dev;
- 	struct fimc_ctx		*ctx;
- 	int			refcnt;
-@@ -298,7 +296,6 @@ struct fimc_m2m_device {
-  * struct fimc_vid_cap - camera capture device information
-  * @ctx: hardware context data
-  * @vfd: video device node for camera capture mode
-- * @v4l2_dev: v4l2_device struct to manage subdevs
-  * @sd: pointer to camera sensor subdevice currently in use
-  * @vd_pad: fimc video capture node pad
-  * @fmt: Media Bus format configured at selected image sensor
-@@ -316,7 +313,6 @@ struct fimc_vid_cap {
+ struct fimc_vid_cap {
  	struct fimc_ctx			*ctx;
- 	struct vb2_alloc_ctx		*alloc_ctx;
- 	struct video_device		*vfd;
--	struct v4l2_device		v4l2_dev;
- 	struct v4l2_subdev		*sd;;
- 	struct media_pad		vd_pad;
- 	struct v4l2_mbus_framefmt	fmt;
-@@ -407,6 +403,7 @@ struct fimc_ctx;
-  * @regs_res:	the resource claimed for IO registers
-  * @irq:	FIMC interrupt number
-  * @irq_queue:	interrupt handler waitqueue
-+ * @v4l2_dev:	root v4l2_device
-  * @m2m:	memory-to-memory V4L2 device information
-  * @vid_cap:	camera capture device information
-  * @state:	flags used to synchronize m2m and capture mode operation
-@@ -425,6 +422,7 @@ struct fimc_dev {
- 	struct resource			*regs_res;
- 	int				irq;
- 	wait_queue_head_t		irq_queue;
-+	struct v4l2_device		*v4l2_dev;
- 	struct fimc_m2m_device		m2m;
- 	struct fimc_vid_cap		vid_cap;
- 	unsigned long			state;
-@@ -569,7 +567,7 @@ static inline struct fimc_frame *ctx_get_frame(struct fimc_ctx *ctx,
- 	} else if (V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE == type) {
- 		frame = &ctx->d_frame;
- 	} else {
--		v4l2_err(&ctx->fimc_dev->m2m.v4l2_dev,
-+		v4l2_err(ctx->fimc_dev->v4l2_dev,
- 			"Wrong buffer/video queue type (%d)\n", type);
- 		return ERR_PTR(-EINVAL);
- 	}
-@@ -644,11 +642,14 @@ int fimc_set_scaler_info(struct fimc_ctx *ctx);
- int fimc_prepare_config(struct fimc_ctx *ctx, u32 flags);
- int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
- 		      struct fimc_frame *frame, struct fimc_addr *paddr);
--int fimc_register_m2m_device(struct fimc_dev *fimc);
-+int fimc_register_m2m_device(struct fimc_dev *fimc,
-+			     struct v4l2_device *v4l2_dev);
-+void fimc_unregister_m2m_device(struct fimc_dev *fimc);
+@@ -322,6 +323,7 @@ struct fimc_vid_cap {
+ 	unsigned int			reqbufs_count;
+ 	int				input_index;
+ 	int				refcnt;
++	u32				input;
+ };
  
- /* -----------------------------------------------------*/
- /* fimc-capture.c					*/
--int fimc_register_capture_device(struct fimc_dev *fimc);
-+int fimc_register_capture_device(struct fimc_dev *fimc,
-+				 struct v4l2_device *v4l2_dev);
- void fimc_unregister_capture_device(struct fimc_dev *fimc);
- int fimc_vid_cap_buf_queue(struct fimc_dev *fimc,
- 			     struct fimc_vid_buffer *fimc_vb);
-diff --git a/drivers/media/video/s5p-fimc/fimc-reg.c b/drivers/media/video/s5p-fimc/fimc-reg.c
-index 938dadf..c688263 100644
---- a/drivers/media/video/s5p-fimc/fimc-reg.c
-+++ b/drivers/media/video/s5p-fimc/fimc-reg.c
-@@ -596,7 +596,7 @@ int fimc_hw_set_camera_source(struct fimc_dev *fimc,
- 		}
- 
- 		if (i == ARRAY_SIZE(pix_desc)) {
--			v4l2_err(&fimc->vid_cap.v4l2_dev,
-+			v4l2_err(fimc->vid_cap.vfd,
- 				 "Camera color format not supported: %d\n",
- 				 fimc->vid_cap.fmt.code);
- 			return -EINVAL;
-@@ -661,8 +661,9 @@ int fimc_hw_set_camera_type(struct fimc_dev *fimc,
- 		if (vid_cap->fmt.code == V4L2_MBUS_FMT_VYUY8_2X8) {
- 			tmp = S5P_CSIIMGFMT_YCBCR422_8BIT;
- 		} else {
--			err("camera image format not supported: %d",
--			    vid_cap->fmt.code);
-+			v4l2_err(fimc->vid_cap.vfd,
-+				 "Not supported camera pixel format: %d",
-+				 vid_cap->fmt.code);
- 			return -EINVAL;
- 		}
- 		tmp |= (cam->csi_data_align == 32) << 8;
+ /**
 -- 
 1.7.5.4
