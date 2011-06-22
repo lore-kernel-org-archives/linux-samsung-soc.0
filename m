@@ -1,110 +1,123 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH v2 4/4] Exynos4 NURI: support for NTC thermistor
-Date: Wed, 22 Jun 2011 14:00:37 +0900
-Message-ID: <BANLkTi=eBAGCADe1MTdtQ4XnBVpHK+uUNA@mail.gmail.com>
-References: <20110620103124.GD31864@opensource.wolfsonmicro.com>
-	<1308622033-2521-1-git-send-email-myungjoo.ham@samsung.com>
-	<1308622033-2521-5-git-send-email-myungjoo.ham@samsung.com>
-	<20110621105033.GF22177@opensource.wolfsonmicro.com>
-Reply-To: myungjoo.ham@gmail.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Banajit Goswami <banajit.g@samsung.com>
+Subject: [PATCH] ARM: EXYNOS4: Add PWM backlight support on Samsung SMDKV310
+Date: Wed, 22 Jun 2011 12:11:15 +0530
+Message-ID: <1308724875-32724-1-git-send-email-banajit.g@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:40435 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751024Ab1FVFAj convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:37370 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752123Ab1FVGlX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jun 2011 01:00:39 -0400
-In-Reply-To: <20110621105033.GF22177@opensource.wolfsonmicro.com>
+	Wed, 22 Jun 2011 02:41:23 -0400
+Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LN6008FCIK7VHA0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 22 Jun 2011 15:41:21 +0900 (KST)
+Received: from banajit.sisodomain.com ([107.108.83.226])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LN600A9IIKPF1@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 22 Jun 2011 15:41:21 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, dg77.kim@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, Banajit Goswami <banajit.g@samsung.com>
 
-On Tue, Jun 21, 2011 at 7:50 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Tue, Jun 21, 2011 at 11:07:13AM +0900, MyungJoo Ham wrote:
->
->> +#include <linux/platform_data/ntc_thermistor.h>
->
-> This doesn't appear to be in mainline.
+This patch adds support for LCD backlight using PWM timer for
+Samsung SMDKV310 board.
 
-Right, not just yet. I should've added comment about the patch just
-being applied to "next".
+Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
+---
+ arch/arm/mach-exynos4/Kconfig         |    1 +
+ arch/arm/mach-exynos4/mach-smdkv310.c |   43 +++++++++++++++++++++++++++++++++
+ 2 files changed, 44 insertions(+), 0 deletions(-)
 
-I've added it as it was told to be applied to "next" in lm-sensors by
-Guenter Roeck yesterday.
-http://comments.gmane.org/gmane.linux.drivers.sensors/26475
-
-Should I surround them with "#ifdef CONFIG_NTC_THERMISTOR"?
-
->
->> +/* NTC Thermistor */
->> +static struct platform_device nuri_ncp15wb473_thermistor;
->> +static int read_thermistor_uV(void)
->
-> Blank line between these two.
->
-
-got it.
-
->> +{
->> + =C2=A0 =C2=A0 static struct s3c_adc_client *adc;
->> + =C2=A0 =C2=A0 int val;
->> + =C2=A0 =C2=A0 s64 converted;
->> +
->> + =C2=A0 =C2=A0 if (!adc) {
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 adc =3D s3c_adc_register=
-(&nuri_ncp15wb473_thermistor,
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 NULL, NULL, 0);
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (IS_ERR_OR_NULL(adc))=
- {
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 pr_err("%s: Cannot get adc.\n", __func__);
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 return adc ? PTR_ERR(adc) : -ENODEV;
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }
->> + =C2=A0 =C2=A0 }
->
-> Why not do this in an initcall or in the device registration? =C2=A0T=
-his
-> looks like working around a limitation of the ntc_thermistor driver
-> which should be fixed as part of a mainline merge for that.
-
-Um... I think I can put this away to a common plat-samsung/dev-ntc.c
-as I've seen many S5PC110/S5PV210/Exynos4 devices using NTC attached
-to the CPU's ADC ports.
-
-However, I won't be able to put that part into the NTC driver because
-using S3C-ADC is plat-samsung specific method and NTC thermistor
-itself is a general thermistor device not specific to S3C. Maybe, I
-can do so after we've got a common ADC framework.
-
->
->> +
->> + =C2=A0 =C2=A0 if (IS_ERR_OR_NULL(adc))
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return adc ? PTR_ERR(adc=
-) : -ENODEV;
->> +
->> + =C2=A0 =C2=A0 val =3D s3c_adc_read(adc, 6);
->> +
->> + =C2=A0 =C2=A0 converted =3D 3300000LL * (s64) val;
->> + =C2=A0 =C2=A0 converted >>=3D 12;
->> +
->> + =C2=A0 =C2=A0 pr_emerg("%s: %d -> %llduV\n", __func__, val, conver=
-ted);
->
-> This looks like debug that was left in by mistake.
->
-
-Oh.. yes.. thanks. I need to remove that.
-
-
---=20
-MyungJoo Ham (=ED=95=A8=EB=AA=85=EC=A3=BC), Ph.D.
-Mobile Software Platform Lab,
-Digital Media and Communications (DMC) Business
-Samsung Electronics
-cell: 82-10-6714-2858
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index 1435fc3..9ab53bc 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -128,6 +128,7 @@ config MACH_SMDKV310
+ 	select S3C_DEV_HSMMC2
+ 	select S3C_DEV_HSMMC3
+ 	select SAMSUNG_DEV_KEYPAD
++	select SAMSUNG_DEV_PWM
+ 	select EXYNOS4_DEV_PD
+ 	select EXYNOS4_DEV_SYSMMU
+ 	select EXYNOS4_SETUP_I2C1
+diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
+index 7e3ee6c..b097ef6 100644
+--- a/arch/arm/mach-exynos4/mach-smdkv310.c
++++ b/arch/arm/mach-exynos4/mach-smdkv310.c
+@@ -16,6 +16,7 @@
+ #include <linux/io.h>
+ #include <linux/i2c.h>
+ #include <linux/input.h>
++#include <linux/pwm_backlight.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach-types.h>
+@@ -29,6 +30,7 @@
+ #include <plat/sdhci.h>
+ #include <plat/iic.h>
+ #include <plat/pd.h>
++#include <plat/gpio-cfg.h>
+ 
+ #include <mach/map.h>
+ 
+@@ -172,6 +174,45 @@ static struct i2c_board_info i2c_devs1[] __initdata = {
+ 	{I2C_BOARD_INFO("wm8994", 0x1a),},
+ };
+ 
++static int smdkv310_backlight_init(struct device *dev)
++{
++	int ret = 0;
++
++	ret = gpio_request(EXYNOS4_GPD0(1), "Backlight");
++	if (ret) {
++		printk(KERN_ERR "failed to request GPD for PWM-OUT0\n");
++		return ret;
++	}
++
++	/* Configure GPIO pin with EXYNOS4_GPD_0_1_TOUT_0 */
++	s3c_gpio_cfgpin(EXYNOS4_GPD0(1), S3C_GPIO_SFN(2));
++
++	return 0;
++}
++
++static void smdkv310_backlight_exit(struct device *dev)
++{
++	s3c_gpio_cfgpin(EXYNOS4_GPD0(1), S3C_GPIO_OUTPUT);
++	gpio_free(EXYNOS4_GPD0(1));
++}
++
++static struct platform_pwm_backlight_data smdkv310_backlight_data = {
++	.pwm_id		= 1,
++	.max_brightness	= 255,
++	.dft_brightness	= 255,
++	.pwm_period_ns	= 78770,
++	.init		= smdkv310_backlight_init,
++	.exit		= smdkv310_backlight_exit,
++};
++
++static struct platform_device smdkv310_backlight_device = {
++	.name		= "pwm-backlight",
++	.dev		= {
++		.parent		= &s3c_device_timer[1].dev,
++		.platform_data	= &smdkv310_backlight_data,
++	},
++};
++
+ static struct platform_device *smdkv310_devices[] __initdata = {
+ 	&s3c_device_hsmmc0,
+ 	&s3c_device_hsmmc1,
+@@ -195,6 +236,8 @@ static struct platform_device *smdkv310_devices[] __initdata = {
+ 	&samsung_asoc_dma,
+ 	&smdkv310_smsc911x,
+ 	&smdkv310_pcm_device,
++	&s3c_device_timer[1],
++	&smdkv310_backlight_device,
+ };
+ 
+ static void __init smdkv310_smsc911x_init(void)
+-- 
+1.6.5.2
