@@ -1,77 +1,39 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 1/4] Exynos4 NURI: configure regulators and PMIC
-Date: Wed, 22 Jun 2011 18:17:18 +0900
-Message-ID: <00bf01cc30bd$350b7fc0$9f227f40$%kim@samsung.com>
-References: <20110620103124.GD31864@opensource.wolfsonmicro.com>
- <1308622033-2521-1-git-send-email-myungjoo.ham@samsung.com>
- <1308622033-2521-2-git-send-email-myungjoo.ham@samsung.com>
- <4E002D18.2080401@linaro.org>
- <BANLkTi=pv=y+1XC5bYEHgL1sy48JPztiOg@mail.gmail.com>
- <4E0164E8.8060708@linaro.org>
+From: Wim Van Sebroeck <wim@iguana.be>
+Subject: Re: [PATCH 3/6] watchdog: s3c2410: Add support for device tree
+	based probe
+Date: Wed, 22 Jun 2011 11:05:20 +0200
+Message-ID: <20110622090520.GT23305@infomag.iguana.be>
+References: <1308567752-13451-1-git-send-email-thomas.abraham@linaro.org> <1308567752-13451-4-git-send-email-thomas.abraham@linaro.org> <BANLkTikkxpOC6M1R0g=dGvDXvCkG6EOJhQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:19326 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751398Ab1FVJRn (ORCPT
+Received: from mailrelay003.isp.belgacom.be ([195.238.6.53]:16708 "EHLO
+	mailrelay003.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754242Ab1FVJ3e (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jun 2011 05:17:43 -0400
-In-reply-to: <4E0164E8.8060708@linaro.org>
-Content-language: ko
+	Wed, 22 Jun 2011 05:29:34 -0400
+Content-Disposition: inline
+In-Reply-To: <BANLkTikkxpOC6M1R0g=dGvDXvCkG6EOJhQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>, myungjoo.ham@gmail.com
-Cc: 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Russell King' <linux@arm.linux.org.uk>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, dg77.kim@samsung.com
+To: Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@secretlab.ca>
+Cc: devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-watchdog@vger.kernel.org
 
-Tushar Behera wrote:
-> 
-> On Wednesday 22 June 2011 08:01 AM, MyungJoo Ham wrote:
-> > On Tue, Jun 21, 2011 at 2:33 PM, Tushar Behera<tushar.behera@linaro.org>
-> wrote:
-> >> On Tuesday 21 June 2011 07:37 AM, MyungJoo Ham wrote:
-> >>>
-> >>> Signed-off-by: MyungJoo Ham<myungjoo.ham@samsung.com>
-> >>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
-> >>>
-> >>> --
-> >>> Changes from v1. Thanks so much for your valuable comments, Mark.
-> >>> - Removed unnecessary initialization data
-> >>> - Add __initdata where necessary
-> >>> - Corrected a regulator name for ADC
-> >>> ---
-> >>>   arch/arm/mach-exynos4/mach-nuri.c |  622
-> >>> ++++++++++++++++++++++++++++++++++++-
-> >>>   1 files changed, 621 insertions(+), 1 deletions(-)
-> >>>
-> >> Will it be possible to move PMIC specific defines to a common file and make
-> >> appropriate calls in the board-specific file?
-> >>
-> >> In that way, we can re-use this PMIC code on some other boards (e.g.
-> >> Insignal low-cost board Origen featuring Exynos4210 also features MAX8997).
-> >>
+Hi Thomas, Grant,
+
+> On Mon, Jun 20, 2011 at 5:02 AM, Thomas Abraham
+> <thomas.abraham@linaro.org> wrote:
+> > This patch adds the of_match_table to enable s3c2410-wdt driver
+> > to be probed when watchdog device node is found in the device tree.
 > >
-> > Yes, we have tried creating PMIC defines at a seperated file in our
-> > local repositories (still doing so in those repositories).
-> > However, that ended up creating multiple PMIC defines (one PMIC define
-> > file for each board); the connections between LDO# and devices are
-> > different.
-> >
-> In that case, we can first post the Origen board support and PMIC code
-> on the ML, then we would see if we can consolidate.
+> > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 > 
-> That looks more logical as per Mark's suggestion also.
-> >>
+> Acked-by: Grant Likely <grant.likely@secretlab.ca>
+> 
+> You need to send this to Wim and the linux-watchdog mailing lists.  As
+> far as I'm concerned, it can be merged immediately.
 
-Hi Tushar,
+Yep, it looks OK. Please sent the patch so that it can be included.
 
-When you need to add similar or same functionality on your board, you can/should move it in common part.
-Maybe 'should'...basically, nobody will apply same function into both place...
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Kind regards,
+Wim.
