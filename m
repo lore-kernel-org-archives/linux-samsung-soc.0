@@ -1,79 +1,54 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 6/6] S5PV210: Add reboot notifier to prevent system hang
-Date: Wed, 22 Jun 2011 17:07:45 +0900
-Message-ID: <1308730065-24737-7-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 5/6] [CPUFREQ] S5PV210: Adjust udelay prior to voltage scaling down
+Date: Wed, 22 Jun 2011 17:07:44 +0900
+Message-ID: <1308730065-24737-6-git-send-email-kgene.kim@samsung.com>
 References: <1308730065-24737-1-git-send-email-kgene.kim@samsung.com>
-Return-path: <cpufreq-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:51248 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752688Ab1FVIQt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Jun 2011 04:16:49 -0400
 In-Reply-To: <1308730065-24737-1-git-send-email-kgene.kim@samsung.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: davej@redhat.com, Huisung Kang <hs1218.kang@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: davej@redhat.com, Todd Poynor <toddpoynor@google.com>, Jonghwan Choi <jhbird.choi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Huisung Kang <hs1218.kang@samsung.com>
+From: Todd Poynor <toddpoynor@google.com>
 
-When system reboot, the CPUFREQ level should be 800MHz to prevent
-system lockup.
+Voltage scaling accesses the MAX8998 regulators over bit-banged I2C
+with lots of udelays.  In the case of decreasing CPU speed, the
+number of loops per us for udelay needs to be adjusted prior to
+decreasing voltage to avoid delaying for up to 10X too long.
 
-Signed-off-by: Huisung Kang <hs1218.kang@samsung.com>
+Signed-off-by: Todd Poynor <toddpoynor@google.com>
 Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- drivers/cpufreq/s5pv210-cpufreq.c |   20 ++++++++++++++++++++
- 1 files changed, 20 insertions(+), 0 deletions(-)
+ drivers/cpufreq/s5pv210-cpufreq.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
 diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index 78c88a0..082d044 100644
+index e9b9b7f..78c88a0 100644
 --- a/drivers/cpufreq/s5pv210-cpufreq.c
 +++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -16,6 +16,7 @@
- #include <linux/clk.h>
- #include <linux/io.h>
- #include <linux/cpufreq.h>
-+#include <linux/reboot.h>
- #include <linux/regulator/consumer.h>
- #include <linux/suspend.h>
- 
-@@ -599,6 +600,19 @@ static int s5pv210_cpufreq_notifier_event(struct notifier_block *this,
- 	return NOTIFY_DONE;
- }
- 
-+static int s5pv210_cpufreq_reboot_notifier_event(struct notifier_block *this,
-+						 unsigned long event, void *ptr)
-+{
-+	int ret;
-+
-+	ret = cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ,
-+			DISABLE_FURTHER_CPUFREQ);
-+	if (ret < 0)
-+		return NOTIFY_BAD;
-+
-+	return NOTIFY_DONE;
-+}
-+
- static struct cpufreq_driver s5pv210_driver = {
- 	.flags		= CPUFREQ_STICKY,
- 	.verify		= s5pv210_verify_speed,
-@@ -616,6 +630,11 @@ static struct notifier_block s5pv210_cpufreq_notifier = {
- 	.notifier_call = s5pv210_cpufreq_notifier_event,
- };
- 
-+static struct notifier_block s5pv210_cpufreq_reboot_notifier = {
-+	.notifier_call = s5pv210_cpufreq_reboot_notifier_event,
-+};
-+
-+
- static int __init s5pv210_cpufreq_init(void)
- {
- 	arm_regulator = regulator_get(NULL, "vddarm");
-@@ -632,6 +651,7 @@ static int __init s5pv210_cpufreq_init(void)
+@@ -471,6 +471,8 @@ static int s5pv210_target(struct cpufreq_policy *policy,
+ 		}
  	}
  
- 	register_pm_notifier(&s5pv210_cpufreq_notifier);
-+	register_reboot_notifier(&s5pv210_cpufreq_reboot_notifier);
++	cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
++
+ 	if (freqs.new < freqs.old) {
+ 		/* Voltage down: will be implemented */
+ 		if (!IS_ERR(arm_regulator) &&
+@@ -483,7 +485,6 @@ static int s5pv210_target(struct cpufreq_policy *policy,
+ 		}
+ 	}
  
- 	return cpufreq_register_driver(&s5pv210_driver);
- }
+-	cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
+ 
+ 	printk(KERN_DEBUG "Perf changed[L%d]\n", index);
+ 
 -- 
 1.7.1
-
