@@ -1,118 +1,169 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 0/19] s5p-fimc driver conversion to media controller and
- control framework
-Date: Wed, 22 Jun 2011 20:01:06 +0200
-Message-ID: <1308765684-10677-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v2 11/18] s5p-fimc: Add PM helper function for streaming control
+Date: Wed, 22 Jun 2011 20:01:17 +0200
+Message-ID: <1308765684-10677-12-git-send-email-s.nawrocki@samsung.com>
+References: <1308765684-10677-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:22315 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758528Ab1FVSBj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jun 2011 14:01:39 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1308765684-10677-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
+Create a helper function for (re)starting streaming in PM resume calls.
 
-following is an updated patchset for s5p-fimc driver conversion to the media
-controller API and control framework.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/media/video/s5p-fimc/fimc-capture.c |   80 ++++++++++++++++-----------
+ drivers/media/video/s5p-fimc/fimc-core.c    |    4 +-
+ drivers/media/video/s5p-fimc/fimc-core.h    |    3 +
+ 3 files changed, 52 insertions(+), 35 deletions(-)
 
-In this version the ioctl handlers for format setting at the video node and
-the FIMC subdev has been reworked so they use common functions for capture
-data format adjustment to the hardware capabilities. This prevent trouble
-from any differences in handling ioctls at the subdev and the video node
-when those are used simultaneously.
-
-Except that I have killed a few bugs that jumped out when the driver was tried
-to be used as a kernel module. 
-
-Additionally to allow the driver to be used in V4L2 video node compatibility
-mode (when sensor subdev is configured by the host driver rather that directly
-by the applications through /dev/v4l-subdev*) a sysfs entry is added.
-All that needs to be done to disable sensors configuration from /dev/video*
-node level, in order to use sub-device user space API, is to write correct
-string to s5p-fimc-md platform device "subdev_conf_mode" sysfs entry, e.g.
-
-echo sub-dev > /sys/devices/platform/s5p-fimc-md/subdev_conf_mode
-or to revert:
-echo vid-dev > /sys/devices/platform/s5p-fimc-md/subdev_conf_mode
-
-The following procedure is adopted for format and crop/composition
-configuration at the FIMC.{n} (capture) subdevs:
-
-1) set format at sink pad (this will reset sink crop rectangle)
-2) set crop rectangle at sink pad (optional)
-3) set rotate control
-4) set crop (composition) at source pad (optional). Here scaling constraints
-   are checked according to whether sink pad crop has been set or not and
-   whether 90/270 deg rotation is set.
-5) set format at source pad
-6) set format at corresponding video node
-
-Rotation can also be changed while streaming, in this case when 90/270 deg
-rotation is attempted to be set and scaling bounds are exceeded 
-(max. 64x downscaling) s_ctrl returns EINVAL.
-
-I have tried this driver with v4l-compliance and it returned only 1 fail
-on S/G_PRIORITY.
-								
-This patch set depends on my previous s5p-fimc bugfixes, available at: 
-http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/s5p-fimc
-
-as well as the control framework updates from Hans Verkuil:
-http://www.spinics.net/lists/linux-media/msg33552.html
-(patch 1...6, 8, 11).
-
-Full source tree can be found at:
- http://git.infradead.org/users/kmpark/linux-2.6-samsung
- branch: s5p-fimc-next
-
-I have skipped patch one patch in this series comparing to first version:
-s5p-fimc: Add support for runtime PM in the mem-to-mem driver
-This patch is available in the above git repository. 
-I need to work a bit more on that one.
-
-As usual, all comments and suggestions are welcome!
-
-Sylwester Nawrocki (18):
-  s5p-fimc: Add media entity initialization
-  s5p-fimc: Remove registration of video nodes from probe()
-  s5p-fimc: Remove sclk_cam clock handling
-  s5p-fimc: Limit number of available inputs to one
-  s5p-fimc: Remove sensor management code from FIMC capture driver
-  s5p-fimc: Remove v4l2_device from video capture and m2m driver
-  s5p-fimc: Add the media device driver
-  s5p-fimc: Conversion to use struct v4l2_fh
-  s5p-fimc: Conversion to the control framework
-  s5p-fimc: Add media operations in the capture entity driver
-  s5p-fimc: Add PM helper function for streaming control
-  s5p-fimc: Correct color format enumeration
-  s5p-fimc: Convert to use media pipeline operations
-  s5p-fimc: Add subdev for the FIMC processing block
-  s5p-fimc: Add support for camera capture in JPEG format
-  s5p-fimc: Add v4l2_device notification support for single frame capture
-  s5p-fimc: Use consistent names for the buffer list functions
-  s5p-fimc: Add runtime PM support in the camera capture driver
-
- drivers/media/video/Kconfig                 |    2 +-
- drivers/media/video/s5p-fimc/Makefile       |    2 +-
- drivers/media/video/s5p-fimc/fimc-capture.c | 1387 ++++++++++++++++++---------
- drivers/media/video/s5p-fimc/fimc-core.c    |  864 ++++++++---------
- drivers/media/video/s5p-fimc/fimc-core.h    |  204 +++--
- drivers/media/video/s5p-fimc/fimc-mdevice.c |  822 ++++++++++++++++
- drivers/media/video/s5p-fimc/fimc-mdevice.h |  118 +++
- drivers/media/video/s5p-fimc/fimc-reg.c     |   74 +-
- drivers/media/video/s5p-fimc/regs-fimc.h    |    8 +-
- include/media/s5p_fimc.h                    |   11 +
- 10 files changed, 2490 insertions(+), 1002 deletions(-)
- create mode 100644 drivers/media/video/s5p-fimc/fimc-mdevice.c
- create mode 100644 drivers/media/video/s5p-fimc/fimc-mdevice.h
-
---
-Thanks,
-Sylwester
+diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
+index f9beee8..a7d579d 100644
+--- a/drivers/media/video/s5p-fimc/fimc-capture.c
++++ b/drivers/media/video/s5p-fimc/fimc-capture.c
+@@ -31,6 +31,48 @@
+ #include "fimc-mdevice.h"
+ #include "fimc-core.h"
+ 
++/**
++ * fimc_start_capture - initialize the H/W for camera capture operation
++ *
++ * Initialize the camera capture datapath so when this function successfuly
++ * completes all what is needed to start the capture pipeline is asserting
++ * the global capture bit ImgCptEn.
++ */
++static int fimc_start_capture(struct fimc_dev *fimc)
++{
++	struct fimc_ctx *ctx = fimc->vid_cap.ctx;
++	struct fimc_sensor_info *sensor;
++	unsigned long flags;
++	int ret = 0;
++
++	if (fimc->pipeline.sensor == NULL || ctx == NULL)
++		return -EIO;
++	sensor = v4l2_get_subdev_hostdata(fimc->pipeline.sensor);
++
++	spin_lock_irqsave(&fimc->slock, flags);
++	fimc_prepare_dma_offset(ctx, &ctx->d_frame);
++	fimc_set_yuv_order(ctx);
++
++	fimc_hw_set_camera_polarity(fimc, sensor->pdata);
++	fimc_hw_set_camera_type(fimc, sensor->pdata);
++	fimc_hw_set_camera_source(fimc, sensor->pdata);
++	fimc_hw_set_camera_offset(fimc, &ctx->s_frame);
++
++	ret = fimc_set_scaler_info(ctx);
++	if (!ret) {
++		fimc_hw_set_input_path(ctx);
++		fimc_hw_set_prescaler(ctx);
++		fimc_hw_set_mainscaler(ctx);
++		fimc_hw_set_target_format(ctx);
++		fimc_hw_set_rotation(ctx);
++		fimc_hw_set_effect(ctx);
++		fimc_hw_set_output_path(ctx);
++		fimc_hw_set_out_dma(ctx);
++	}
++	spin_unlock_irqrestore(&fimc->slock, flags);
++	return ret;
++}
++
+ static int fimc_stop_capture(struct fimc_dev *fimc)
+ {
+ 	unsigned long flags;
+@@ -92,47 +134,19 @@ static int start_streaming(struct vb2_queue *q)
+ {
+ 	struct fimc_ctx *ctx = q->drv_priv;
+ 	struct fimc_dev *fimc = ctx->fimc_dev;
+-	struct s5p_fimc_isp_info *isp_info;
++	struct fimc_vid_cap *vid_cap = &fimc->vid_cap;
+ 	int ret;
+ 
+ 	fimc_hw_reset(fimc);
+ 
+-	ret = v4l2_subdev_call(fimc->vid_cap.sd, video, s_stream, 1);
+-	if (ret && ret != -ENOIOCTLCMD)
+-		return ret;
++	vid_cap->active_buf_cnt = 0;
++	vid_cap->frame_count = 0;
++	vid_cap->buf_index = 0;
+ 
+-	ret = fimc_prepare_config(ctx, ctx->state);
++	ret = fimc_start_capture(fimc);
+ 	if (ret)
+ 		return ret;
+ 
+-	isp_info = &fimc->pdata->isp_info[fimc->vid_cap.input_index];
+-	fimc_hw_set_camera_type(fimc, isp_info);
+-	fimc_hw_set_camera_source(fimc, isp_info);
+-	fimc_hw_set_camera_offset(fimc, &ctx->s_frame);
+-
+-	if (ctx->state & FIMC_PARAMS) {
+-		ret = fimc_set_scaler_info(ctx);
+-		if (ret) {
+-			err("Scaler setup error");
+-			return ret;
+-		}
+-		fimc_hw_set_input_path(ctx);
+-		fimc_hw_set_prescaler(ctx);
+-		fimc_hw_set_mainscaler(ctx);
+-		fimc_hw_set_target_format(ctx);
+-		fimc_hw_set_rotation(ctx);
+-		fimc_hw_set_effect(ctx);
+-	}
+-
+-	fimc_hw_set_output_path(ctx);
+-	fimc_hw_set_out_dma(ctx);
+-
+-	INIT_LIST_HEAD(&fimc->vid_cap.pending_buf_q);
+-	INIT_LIST_HEAD(&fimc->vid_cap.active_buf_q);
+-	fimc->vid_cap.active_buf_cnt = 0;
+-	fimc->vid_cap.frame_count = 0;
+-	fimc->vid_cap.buf_index = 0;
+-
+ 	set_bit(ST_CAPT_PEND, &fimc->state);
+ 	return 0;
+ }
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
+index 2aa4612..437d664 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.c
++++ b/drivers/media/video/s5p-fimc/fimc-core.c
+@@ -468,7 +468,7 @@ int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
+ }
+ 
+ /* Set order for 1 and 2 plane YCBCR 4:2:2 formats. */
+-static void fimc_set_yuv_order(struct fimc_ctx *ctx)
++void fimc_set_yuv_order(struct fimc_ctx *ctx)
+ {
+ 	/* The one only mode supported in SoC. */
+ 	ctx->in_order_2p = S5P_FIMC_LSB_CRCB;
+@@ -510,7 +510,7 @@ static void fimc_set_yuv_order(struct fimc_ctx *ctx)
+ 	dbg("ctx->out_order_1p= %d", ctx->out_order_1p);
+ }
+ 
+-static void fimc_prepare_dma_offset(struct fimc_ctx *ctx, struct fimc_frame *f)
++void fimc_prepare_dma_offset(struct fimc_ctx *ctx, struct fimc_frame *f)
+ {
+ 	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
+ 	u32 i, depth = 0;
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
+index d264f3f..d1d4e32 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.h
++++ b/drivers/media/video/s5p-fimc/fimc-core.h
+@@ -659,6 +659,9 @@ int fimc_set_scaler_info(struct fimc_ctx *ctx);
+ int fimc_prepare_config(struct fimc_ctx *ctx, u32 flags);
+ int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
+ 		      struct fimc_frame *frame, struct fimc_addr *paddr);
++void fimc_prepare_dma_offset(struct fimc_ctx *ctx, struct fimc_frame *f);
++void fimc_set_yuv_order(struct fimc_ctx *ctx);
++
+ int fimc_register_m2m_device(struct fimc_dev *fimc,
+ 			     struct v4l2_device *v4l2_dev);
+ void fimc_unregister_m2m_device(struct fimc_dev *fimc);
+-- 
+1.7.5.4
