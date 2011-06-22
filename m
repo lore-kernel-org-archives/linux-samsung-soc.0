@@ -1,213 +1,101 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH V5 5/5] ARM: EXYNOS4: Add platform data for EXYNOS4 FIMD
- and LTE480WV platform-lcd
-Date: Wed, 22 Jun 2011 11:47:09 +0200
-Message-ID: <002901cc30c1$5ac6ef70$1054ce50$%szyprowski@samsung.com>
-References: <1308724904-31521-1-git-send-email-jg1.han@samsung.com>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [RFC][PATCH 4/5] ARM: S5P64x0: Adding OTG PHY control code
+Date: Wed, 22 Jun 2011 12:49:24 +0300
+Message-ID: <20110622094923.GA23598@legolas.emea.dhcp.ti.com>
+References: <0LN400HTOZEQDIL0@mailout1.samsung.com>
+ <BANLkTikDDBQjE2RCeeBB50vokSTcnCO46A@mail.gmail.com>
+Reply-To: balbi-l0cyMroinI0@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:44023 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751746Ab1FVJsU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jun 2011 05:48:20 -0400
-In-reply-to: <1308724904-31521-1-git-send-email-jg1.han@samsung.com>
-Content-language: pl
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <BANLkTikDDBQjE2RCeeBB50vokSTcnCO46A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: balbi-l0cyMroinI0@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tmarri-qTEPVZfXA3Y@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jingoo Han' <jg1.han@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Paul Mundt' <lethal@linux-sh.org>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc: 'Anand Kumar N' <anand.kn@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 'Kyungmin Park' <kmpark@infradead.org>, 'Inki Dae' <inki.dae@samsung.com>, 'ARM Linux' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>, 'Jonghun Han' <jonghun.han@samsung.com>
 
-Hello,
 
-On Wednesday, June 22, 2011 8:42 AM Jingoo Han wrote:
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From: Jonghun Han <jonghun.han@samsung.com>
-> 
-> This patch adds support EXYNOS4 FIMD0 and LTE480WV LCD pannel.
-> 
-> Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> ---
->  arch/arm/mach-exynos4/mach-smdkc210.c |  114
-> +++++++++++++++++++++++++++++++++
->  arch/arm/mach-exynos4/mach-smdkv310.c |  114
-> +++++++++++++++++++++++++++++++++
->  2 files changed, 228 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos4/mach-smdkc210.c b/arch/arm/mach-
-> exynos4/mach-smdkc210.c
-> index e645f7a..360a50a 100644
-> --- a/arch/arm/mach-exynos4/mach-smdkc210.c
-> +++ b/arch/arm/mach-exynos4/mach-smdkc210.c
-> @@ -9,26 +9,33 @@
->  */
-> 
->  #include <linux/serial_core.h>
-> +#include <linux/delay.h>
->  #include <linux/gpio.h>
-> +#include <linux/lcd.h>
->  #include <linux/mmc/host.h>
->  #include <linux/platform_device.h>
->  #include <linux/smsc911x.h>
->  #include <linux/io.h>
->  #include <linux/i2c.h>
-> +#include <linux/clk.h>
-> 
->  #include <asm/mach/arch.h>
->  #include <asm/mach-types.h>
-> 
-> +#include <video/platform_lcd.h>
-> +
->  #include <plat/regs-serial.h>
->  #include <plat/regs-srom.h>
->  #include <plat/exynos4.h>
->  #include <plat/cpu.h>
->  #include <plat/devs.h>
-> +#include <plat/fb.h>
->  #include <plat/sdhci.h>
->  #include <plat/iic.h>
->  #include <plat/pd.h>
-> 
->  #include <mach/map.h>
-> +#include <mach/regs-fb.h>
-> 
->  /* Following are default values for UCON, ULCON and UFCON UART registers
-> */
->  #define SMDKC210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-> @@ -111,6 +118,69 @@ static struct s3c_sdhci_platdata smdkc210_hsmmc3_pdata
-> __initdata = {
->  	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
->  };
-> 
-> +static void lcd_lte480wv_set_power(struct plat_lcd_data *pd,
-> +				   unsigned int power)
-> +{
-> +	if (power) {
-> +#if !defined(CONFIG_BACKLIGHT_PWM)
-> +		gpio_request(EXYNOS4_GPD0(1), "GPD0");
-> +		gpio_direction_output(EXYNOS4_GPD0(1), 1);
-> +		gpio_free(EXYNOS4_GPD0(1));
-> +#endif
-> +		/* fire nRESET on power up */
-> +		gpio_request(EXYNOS4_GPX0(6), "GPX0");
-> +
-> +		gpio_direction_output(EXYNOS4_GPX0(6), 1);
-> +		mdelay(100);
-> +
-> +		gpio_set_value(EXYNOS4_GPX0(6), 0);
-> +		mdelay(10);
-> +
-> +		gpio_set_value(EXYNOS4_GPX0(6), 1);
-> +		mdelay(10);
-> +
-> +		gpio_free(EXYNOS4_GPX0(6));
-> +	} else {
-> +#if !defined(CONFIG_BACKLIGHT_PWM)
-> +		gpio_request(EXYNOS4_GPD0(1), "GPD0");
-> +		gpio_direction_output(EXYNOS4_GPD0(1), 0);
-> +		gpio_free(EXYNOS4_GPD0(1));
-> +#endif
-> +	}
-> +}
-> +
-> +static struct plat_lcd_data smdkc210_lcd_lte480wv_data = {
-> +	.set_power      = lcd_lte480wv_set_power,
-> +};
-> +
-> +static struct platform_device smdkc210_lcd_lte480wv = {
-> +	.name                   = "platform-lcd",
-> +	.dev.parent             = &s5p_device_fimd0.dev,
-> +	.dev.platform_data      = &smdkc210_lcd_lte480wv_data,
-> +};
-> +
-> +static struct s3c_fb_pd_win smdkc210_fb_win0 = {
-> +	.win_mode = {
-> +		.left_margin    = 13,
-> +		.right_margin   = 8,
-> +		.upper_margin   = 7,
-> +		.lower_margin   = 5,
-> +		.hsync_len      = 3,
-> +		.vsync_len      = 1,
-> +		.xres   = 800,
-> +		.yres   = 480,
-> +	},
-> +	.max_bpp        = 32,
-> +	.default_bpp    = 24,
-> +};
-> +
-> +static struct s3c_fb_platdata smdkc210_lcd0_pdata __initdata = {
-> +	.win[0]		= &smdkc210_fb_win0,
-> +	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
-> +	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
-> +	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
-> +};
-> +
->  static struct resource smdkc210_smsc911x_resources[] = {
->  	[0] = {
->  		.start	= EXYNOS4_PA_SROM_BANK(1),
-> @@ -165,6 +235,8 @@ static struct platform_device *smdkc210_devices[]
-> __initdata = {
->  	&exynos4_device_pd[PD_GPS],
->  	&exynos4_device_sysmmu,
->  	&samsung_asoc_dma,
-> +	&s5p_device_fimd0,
-> +	&smdkc210_lcd_lte480wv,
->  	&smdkc210_smsc911x,
->  };
-> 
-> @@ -191,6 +263,44 @@ static void __init smdkc210_smsc911x_init(void)
->  		     (0x1 << S5P_SROM_BCX__TACS__SHIFT), S5P_SROM_BC1);
->  }
-> 
-> +static int __init smdkc210_fimd0_setup_clock(void)
-> +{
-> +	struct clk *sclk = NULL;
-> +	struct clk *mout_mpll = NULL;
-> +
-> +	u32 rate = 0;
-> +
-> +	sclk = clk_get(&s5p_device_fimd0.dev, "sclk_fimd");
-> +	if (IS_ERR(sclk)) {
-> +		printk(KERN_ERR "failed to get sclk for fimd\n");
-> +		goto err_clk2;
-> +	}
-> +
-> +	mout_mpll = clk_get(NULL, "mout_mpll");
-> +	if (IS_ERR(mout_mpll)) {
-> +		printk(KERN_ERR "failed to get mout_mpll\n");
-> +		goto err_clk1;
-> +	}
-> +
-> +	clk_set_parent(sclk, mout_mpll);
-> +	if (!rate)
-> +		rate = 134000000;
-> +
-> +	clk_set_rate(sclk, rate);
-> +
-> +	clk_put(sclk);
-> +	clk_put(mout_mpll);
-> +
-> +	return 0;
-> +
-> +err_clk1:
-> +	clk_put(mout_mpll);
-> +err_clk2:
-> +	clk_put(sclk);
-> +
-> +	return -EINVAL;
-> +}
-> +
+Hi,
 
-I'm not sure if mach-smdk*.c is the right place for the above code.
-IMHO all the code that configures very low level, board specific parameters
-(like clocks and their relations) should be performed in boot loarder.
+On Wed, Jun 22, 2011 at 01:56:25PM +0530, Praveen Paneri wrote:
+> > > diff --git a/arch/arm/mach-s5p64x0/Makefile b/arch/arm/mach-s5p64x0/M=
+akefile
+> > > index ae6bf6f..611fb3a 100644
+> > > --- a/arch/arm/mach-s5p64x0/Makefile
+> > > +++ b/arch/arm/mach-s5p64x0/Makefile
+> > > @@ -28,3 +28,4 @@ obj-y +=3D dev-audio.o
+> > >=A0=A0obj-$(CONFIG_S3C64XX_DEV_SPI) +=3D dev-spi.o
+> > >
+> > >=A0=A0obj-$(CONFIG_S5P64X0_SETUP_I2C1) +=3D setup-i2c1.o
+> > > +obj-$(CONFIG_S3C_DEV_DWC_OTG) +=3D setup-otg-phy.o
+> > > diff --git a/arch/arm/mach-s5p64x0/include/mach/map.h b/arch/arm/mach=
+-s5p64x0/include/mach/map.h
+> > > index 95c9125..717c279 100644
+> > > --- a/arch/arm/mach-s5p64x0/include/mach/map.h
+> > > +++ b/arch/arm/mach-s5p64x0/include/mach/map.h
+> > > @@ -44,6 +44,8 @@
+> > >=A0=A0#define S5P64X0_PA_SPI1 0xEC500000
+> > >
+> > >=A0=A0#define S5P64X0_PA_HSOTG 0xED100000
+> > > +#define S5P64X0_PA_USB_HSPHY 0xED200000
+> > > +#define S5P64X0_VA_USB_HSPHY S3C_ADDR_CPU(0x00100000)
+> > >
+> > >=A0=A0#define S5P64X0_PA_HSMMC(x) (0xED800000 + ((x) * 0x100000))
+> > >
+> > > @@ -71,6 +73,8 @@
+> > >=A0=A0#define S5P_PA_TIMER S5P64X0_PA_TIMER
+> > >
+> > >=A0=A0#define SAMSUNG_PA_ADC S5P64X0_PA_ADC
+> > > +#define S3C_PA_USB_HSOTG S5P64X0_PA_HSOTG
+> > > +#define S3C_VA_USB_HSPHY=A0=A0=A0=A0=A0=A0=A0=A0S5P64X0_VA_USB_HSPHY
+> > >
+> > >=A0=A0/* UART */
+> > >
+> > > diff --git a/arch/arm/mach-s5p64x0/setup-otg-phy.c b/arch/arm/mach-s5=
+p64x0/setup-otg-phy.c
+> >
+> > drivers should not live in arch/arm/*, why don't you move this to
+> > drivers/usb/otg where the PHYs are staying right now ?
+> PHY init/exit code can vary across SoCs. Wouldn't it be better to have it=
+ in the
+> SoC specific location?
 
-(snipped)
+It will vary how ? If it's only regarding e.g. a different GPIO pin or a
+different IRQ number, you handle that by passing data down to driver
+(via platform_data or struct resource), now if it varies because a
+different board uses a different PHY, then another driver should be
+written (well, as long as it's really different from the one you have
+now, otherwise you should see if it's worth making the existing driver
+more flexible).
 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+--=20
+balbi
+
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOAbqjAAoJEAv8Txj19kN16z0H/2dPC4mttrWM1JP/yr+Tiyuo
+/lX+Y9LKhcRHi0Sd19ussICm0BLDVfnMid9ycQ94qYbFBRU7lQRr7fgagEtTwQvB
+aqA9FnDobmlGcikR+7OlCHEAGLF13t14PuKWviR3xx7j/2rUw0d22ljLL+Oy0Yj8
+jXLTD9kG0OpxTkI7qg//MoV2Yq6ROAxWNCw7Cs/zgoUFE/OT1vkSZnnV3GD84+7B
+ngSG3EydQ5GE/InTsgwMoz75RrSFiAL+BzH1tfE+QB11N/Xut6PNAdCYiYcgt3w5
+oGhih0AfYTDP6pZi55w3XcTJbzGDEvcNeVI+ZiCuBn4MVk9FATEa6yan3OFZI5k=
+=0W5Y
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
