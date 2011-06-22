@@ -1,196 +1,234 @@
-From: JinGoo Han <jg1.han@samsung.com>
-Subject: [PATCH V4 5/5] ARM: EXYNOS4: Add platform data for EXYNOS4 FIMD and
- LTE480WV platform-lcd
-Date: Wed, 22 Jun 2011 03:48:25 +0000 (GMT)
-Message-ID: <11291403.110251308714504687.JavaMail.weblogic@epml08>
-Reply-To: jg1.han@samsung.com
+From: Kyungmin Park <kmpark-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: [RFC][PATCH 4/5] ARM: S5P64x0: Adding OTG PHY control code
+Date: Wed, 22 Jun 2011 13:18:49 +0900
+Message-ID: <BANLkTinTo7hhfbXFd4oxiSsjbWSqA-9ugg@mail.gmail.com>
+References: <1308639827-2121-1-git-send-email-p.paneri@samsung.com>
+	<1308639827-2121-5-git-send-email-p.paneri@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:9773 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757752Ab1FVDs0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Jun 2011 23:48:26 -0400
-Received: from epcpsbge2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LN600A0WAH7IXI0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 22 Jun 2011 12:48:25 +0900 (KST)
-MIME-version: 1.0
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1308639827-2121-5-git-send-email-p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, tmarri-qTEPVZfXA3Y@public.gmane.org, naushad-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-f>
-Cc: ANAND KUMAR N <anand.kn@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, THOMAS P ABRAHAM <thomas.ab@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, In-Ki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, JinGoo Han <jg1.han@samsung.com>
 
-RnJvbTogSm9uZ2h1biBIYW4gPGpvbmdodW4uaGFuQHNhbXN1bmcuY29tPg0KDQpUaGlzIHBhdGNo
-IGFkZHMgc3VwcG9ydCBFWFlOT1M0IEZJTUQwIGFuZCBMVEU0ODBXViBMQ0QgcGFubmVsLg0KDQpT
-aWduZWQtb2ZmLWJ5OiBKb25naHVuIEhhbiA8am9uZ2h1bi5oYW5Ac2Ftc3VuZy5jb20+DQpTaWdu
-ZWQtb2ZmLWJ5OiBKaW5nb28gSGFuIDxqZzEuaGFuQHNhbXN1bmcuY29tPg0KLS0tDQogYXJjaC9h
-cm0vbWFjaC1leHlub3M0L21hY2gtc21ka2MyMTAuYyB8ICAxMTQgKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrDQogYXJjaC9hcm0vbWFjaC1leHlub3M0L21hY2gtc21ka3YzMTAuYyB8
-ICAxMTQgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQogMiBmaWxlcyBjaGFuZ2Vk
-LCAyMjggaW5zZXJ0aW9ucygrKSwgMCBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2FyY2gv
-YXJtL21hY2gtZXh5bm9zNC9tYWNoLXNtZGtjMjEwLmMgYi9hcmNoL2FybS9tYWNoLWV4eW5vczQv
-bWFjaC1zbWRrYzIxMC5jDQppbmRleCBlNjQ1ZjdhLi4zNjBhNTBhIDEwMDY0NA0KLS0tIGEvYXJj
-aC9hcm0vbWFjaC1leHlub3M0L21hY2gtc21ka2MyMTAuYw0KKysrIGIvYXJjaC9hcm0vbWFjaC1l
-eHlub3M0L21hY2gtc21ka2MyMTAuYw0KQEAgLTksMjYgKzksMzMgQEANCiAqLw0KIA0KICNpbmNs
-dWRlIDxsaW51eC9zZXJpYWxfY29yZS5oPg0KKyNpbmNsdWRlIDxsaW51eC9kZWxheS5oPg0KICNp
-bmNsdWRlIDxsaW51eC9ncGlvLmg+DQorI2luY2x1ZGUgPGxpbnV4L2xjZC5oPg0KICNpbmNsdWRl
-IDxsaW51eC9tbWMvaG9zdC5oPg0KICNpbmNsdWRlIDxsaW51eC9wbGF0Zm9ybV9kZXZpY2UuaD4N
-CiAjaW5jbHVkZSA8bGludXgvc21zYzkxMXguaD4NCiAjaW5jbHVkZSA8bGludXgvaW8uaD4NCiAj
-aW5jbHVkZSA8bGludXgvaTJjLmg+DQorI2luY2x1ZGUgPGxpbnV4L2Nsay5oPg0KIA0KICNpbmNs
-dWRlIDxhc20vbWFjaC9hcmNoLmg+DQogI2luY2x1ZGUgPGFzbS9tYWNoLXR5cGVzLmg+DQogDQor
-I2luY2x1ZGUgPHZpZGVvL3BsYXRmb3JtX2xjZC5oPg0KKw0KICNpbmNsdWRlIDxwbGF0L3JlZ3Mt
-c2VyaWFsLmg+DQogI2luY2x1ZGUgPHBsYXQvcmVncy1zcm9tLmg+DQogI2luY2x1ZGUgPHBsYXQv
-ZXh5bm9zNC5oPg0KICNpbmNsdWRlIDxwbGF0L2NwdS5oPg0KICNpbmNsdWRlIDxwbGF0L2RldnMu
-aD4NCisjaW5jbHVkZSA8cGxhdC9mYi5oPg0KICNpbmNsdWRlIDxwbGF0L3NkaGNpLmg+DQogI2lu
-Y2x1ZGUgPHBsYXQvaWljLmg+DQogI2luY2x1ZGUgPHBsYXQvcGQuaD4NCiANCiAjaW5jbHVkZSA8
-bWFjaC9tYXAuaD4NCisjaW5jbHVkZSA8bWFjaC9yZWdzLWZiLmg+DQogDQogLyogRm9sbG93aW5n
-IGFyZSBkZWZhdWx0IHZhbHVlcyBmb3IgVUNPTiwgVUxDT04gYW5kIFVGQ09OIFVBUlQgcmVnaXN0
-ZXJzICovDQogI2RlZmluZSBTTURLQzIxMF9VQ09OX0RFRkFVTFQJKFMzQzI0MTBfVUNPTl9UWElM
-RVZFTCB8CVwNCkBAIC0xMTEsNiArMTE4LDY5IEBAIHN0YXRpYyBzdHJ1Y3QgczNjX3NkaGNpX3Bs
-YXRkYXRhIHNtZGtjMjEwX2hzbW1jM19wZGF0YSBfX2luaXRkYXRhID0gew0KIAkuY2xrX3R5cGUJ
-CT0gUzNDX1NESENJX0NMS19ESVZfRVhURVJOQUwsDQogfTsNCiANCitzdGF0aWMgdm9pZCBsY2Rf
-bHRlNDgwd3Zfc2V0X3Bvd2VyKHN0cnVjdCBwbGF0X2xjZF9kYXRhICpwZCwNCisJCQkJICAgdW5z
-aWduZWQgaW50IHBvd2VyKQ0KK3sNCisJaWYgKHBvd2VyKSB7DQorI2lmICFkZWZpbmVkKENPTkZJ
-R19CQUNLTElHSFRfUFdNKQ0KKwkJZ3Bpb19yZXF1ZXN0KEVYWU5PUzRfR1BEMCgxKSwgIkdQRDAi
-KTsNCisJCWdwaW9fZGlyZWN0aW9uX291dHB1dChFWFlOT1M0X0dQRDAoMSksIDEpOw0KKwkJZ3Bp
-b19mcmVlKEVYWU5PUzRfR1BEMCgxKSk7DQorI2VuZGlmDQorCQkvKiBmaXJlIG5SRVNFVCBvbiBw
-b3dlciB1cCAqLw0KKwkJZ3Bpb19yZXF1ZXN0KEVYWU5PUzRfR1BYMCg2KSwgIkdQWDAiKTsNCisN
-CisJCWdwaW9fZGlyZWN0aW9uX291dHB1dChFWFlOT1M0X0dQWDAoNiksIDEpOw0KKwkJbWRlbGF5
-KDEwMCk7DQorDQorCQlncGlvX3NldF92YWx1ZShFWFlOT1M0X0dQWDAoNiksIDApOw0KKwkJbWRl
-bGF5KDEwKTsNCisNCisJCWdwaW9fc2V0X3ZhbHVlKEVYWU5PUzRfR1BYMCg2KSwgMSk7DQorCQlt
-ZGVsYXkoMTApOw0KKw0KKwkJZ3Bpb19mcmVlKEVYWU5PUzRfR1BYMCg2KSk7DQorCX0gZWxzZSB7
-DQorI2lmICFkZWZpbmVkKENPTkZJR19CQUNLTElHSFRfUFdNKQ0KKwkJZ3Bpb19yZXF1ZXN0KEVY
-WU5PUzRfR1BEMCgxKSwgIkdQRDAiKTsNCisJCWdwaW9fZGlyZWN0aW9uX291dHB1dChFWFlOT1M0
-X0dQRDAoMSksIDApOw0KKwkJZ3Bpb19mcmVlKEVYWU5PUzRfR1BEMCgxKSk7DQorI2VuZGlmDQor
-CX0NCit9DQorDQorc3RhdGljIHN0cnVjdCBwbGF0X2xjZF9kYXRhIHNtZGtjMjEwX2xjZF9sdGU0
-ODB3dl9kYXRhID0gew0KKwkuc2V0X3Bvd2VyICAgICAgPSBsY2RfbHRlNDgwd3Zfc2V0X3Bvd2Vy
-LA0KK307DQorDQorc3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2Ugc21ka2MyMTBfbGNkX2x0
-ZTQ4MHd2ID0gew0KKwkubmFtZSAgICAgICAgICAgICAgICAgICA9ICJwbGF0Zm9ybS1sY2QiLA0K
-KwkuZGV2LnBhcmVudCAgICAgICAgICAgICA9ICZzNXBfZGV2aWNlX2ZpbWQwLmRldiwNCisJLmRl
-di5wbGF0Zm9ybV9kYXRhICAgICAgPSAmc21ka2MyMTBfbGNkX2x0ZTQ4MHd2X2RhdGEsDQorfTsN
-CisNCitzdGF0aWMgc3RydWN0IHMzY19mYl9wZF93aW4gc21ka2MyMTBfZmJfd2luMCA9IHsNCisJ
-Lndpbl9tb2RlID0gew0KKwkJLmxlZnRfbWFyZ2luICAgID0gMTMsDQorCQkucmlnaHRfbWFyZ2lu
-ICAgPSA4LA0KKwkJLnVwcGVyX21hcmdpbiAgID0gNywNCisJCS5sb3dlcl9tYXJnaW4gICA9IDUs
-DQorCQkuaHN5bmNfbGVuICAgICAgPSAzLA0KKwkJLnZzeW5jX2xlbiAgICAgID0gMSwNCisJCS54
-cmVzICAgPSA4MDAsDQorCQkueXJlcyAgID0gNDgwLA0KKwl9LA0KKwkubWF4X2JwcCAgICAgICAg
-PSAzMiwNCisJLmRlZmF1bHRfYnBwICAgID0gMjQsDQorfTsNCisNCitzdGF0aWMgc3RydWN0IHMz
-Y19mYl9wbGF0ZGF0YSBzbWRrYzIxMF9sY2QwX3BkYXRhIF9faW5pdGRhdGEgPSB7DQorCS53aW5b
-MF0JCT0gJnNtZGtjMjEwX2ZiX3dpbjAsDQorCS52aWRjb24wCT0gVklEQ09OMF9WSURPVVRfUkdC
-IHwgVklEQ09OMF9QTlJNT0RFX1JHQiwNCisJLnZpZGNvbjEJPSBWSURDT04xX0lOVl9IU1lOQyB8
-IFZJRENPTjFfSU5WX1ZTWU5DLA0KKwkuc2V0dXBfZ3Bpbwk9IGV4eW5vczRfZmltZDBfZ3Bpb19z
-ZXR1cF8yNGJwcCwNCit9Ow0KKw0KIHN0YXRpYyBzdHJ1Y3QgcmVzb3VyY2Ugc21ka2MyMTBfc21z
-YzkxMXhfcmVzb3VyY2VzW10gPSB7DQogCVswXSA9IHsNCiAJCS5zdGFydAk9IEVYWU5PUzRfUEFf
-U1JPTV9CQU5LKDEpLA0KQEAgLTE2NSw2ICsyMzUsOCBAQCBzdGF0aWMgc3RydWN0IHBsYXRmb3Jt
-X2RldmljZSAqc21ka2MyMTBfZGV2aWNlc1tdIF9faW5pdGRhdGEgPSB7DQogCSZleHlub3M0X2Rl
-dmljZV9wZFtQRF9HUFNdLA0KIAkmZXh5bm9zNF9kZXZpY2Vfc3lzbW11LA0KIAkmc2Ftc3VuZ19h
-c29jX2RtYSwNCisJJnM1cF9kZXZpY2VfZmltZDAsDQorCSZzbWRrYzIxMF9sY2RfbHRlNDgwd3Ys
-DQogCSZzbWRrYzIxMF9zbXNjOTExeCwNCiB9Ow0KIA0KQEAgLTE5MSw2ICsyNjMsNDQgQEAgc3Rh
-dGljIHZvaWQgX19pbml0IHNtZGtjMjEwX3Ntc2M5MTF4X2luaXQodm9pZCkNCiAJCSAgICAgKDB4
-MSA8PCBTNVBfU1JPTV9CQ1hfX1RBQ1NfX1NISUZUKSwgUzVQX1NST01fQkMxKTsNCiB9DQogDQor
-c3RhdGljIGludCBfX2luaXQgc21ka2MyMTBfZmltZDBfc2V0dXBfY2xvY2sodm9pZCkNCit7DQor
-CXN0cnVjdCBjbGsgKnNjbGsgPSBOVUxMOw0KKwlzdHJ1Y3QgY2xrICptb3V0X21wbGwgPSBOVUxM
-Ow0KKw0KKwl1MzIgcmF0ZSA9IDA7DQorDQorCXNjbGsgPSBjbGtfZ2V0KCZzNXBfZGV2aWNlX2Zp
-bWQwLmRldiwgInNjbGtfZmltZCIpOw0KKwlpZiAoSVNfRVJSKHNjbGspKSB7DQorCQlwcmludGso
-S0VSTl9FUlIgImZhaWxlZCB0byBnZXQgc2NsayBmb3IgZmltZFxuIik7DQorCQlnb3RvIGVycl9j
-bGsyOw0KKwl9DQorDQorCW1vdXRfbXBsbCA9IGNsa19nZXQoTlVMTCwgIm1vdXRfbXBsbCIpOw0K
-KwlpZiAoSVNfRVJSKG1vdXRfbXBsbCkpIHsNCisJCXByaW50ayhLRVJOX0VSUiAiZmFpbGVkIHRv
-IGdldCBtb3V0X21wbGxcbiIpOw0KKwkJZ290byBlcnJfY2xrMTsNCisJfQ0KKw0KKwljbGtfc2V0
-X3BhcmVudChzY2xrLCBtb3V0X21wbGwpOw0KKwlpZiAoIXJhdGUpDQorCQlyYXRlID0gMTM0MDAw
-MDAwOw0KKw0KKwljbGtfc2V0X3JhdGUoc2NsaywgcmF0ZSk7DQorDQorCWNsa19wdXQoc2Nsayk7
-DQorCWNsa19wdXQobW91dF9tcGxsKTsNCisNCisJcmV0dXJuIDA7DQorDQorZXJyX2NsazE6DQor
-CWNsa19wdXQobW91dF9tcGxsKTsNCitlcnJfY2xrMjoNCisJY2xrX3B1dChzY2xrKTsNCisNCisJ
-cmV0dXJuIC1FSU5WQUw7DQorfQ0KKw0KIHN0YXRpYyB2b2lkIF9faW5pdCBzbWRrYzIxMF9tYXBf
-aW8odm9pZCkNCiB7DQogCXM1cF9pbml0X2lvKE5VTEwsIDAsIFM1UF9WQV9DSElQSUQpOw0KQEAg
-LTIxMCw3ICszMjAsMTEgQEAgc3RhdGljIHZvaWQgX19pbml0IHNtZGtjMjEwX21hY2hpbmVfaW5p
-dCh2b2lkKQ0KIAlzM2Nfc2RoY2kyX3NldF9wbGF0ZGF0YSgmc21ka2MyMTBfaHNtbWMyX3BkYXRh
-KTsNCiAJczNjX3NkaGNpM19zZXRfcGxhdGRhdGEoJnNtZGtjMjEwX2hzbW1jM19wZGF0YSk7DQog
-DQorCXM1cF9maW1kMF9zZXRfcGxhdGRhdGEoJnNtZGtjMjEwX2xjZDBfcGRhdGEpOw0KKw0KIAlw
-bGF0Zm9ybV9hZGRfZGV2aWNlcyhzbWRrYzIxMF9kZXZpY2VzLCBBUlJBWV9TSVpFKHNtZGtjMjEw
-X2RldmljZXMpKTsNCisNCisJc21ka2MyMTBfZmltZDBfc2V0dXBfY2xvY2soKTsNCiB9DQogDQog
-TUFDSElORV9TVEFSVChTTURLQzIxMCwgIlNNREtDMjEwIikNCmRpZmYgLS1naXQgYS9hcmNoL2Fy
-bS9tYWNoLWV4eW5vczQvbWFjaC1zbWRrdjMxMC5jIGIvYXJjaC9hcm0vbWFjaC1leHlub3M0L21h
-Y2gtc21ka3YzMTAuYw0KaW5kZXggMTUyNjc2NC4uN2JjMTJiNSAxMDA2NDQNCi0tLSBhL2FyY2gv
-YXJtL21hY2gtZXh5bm9zNC9tYWNoLXNtZGt2MzEwLmMNCisrKyBiL2FyY2gvYXJtL21hY2gtZXh5
-bm9zNC9tYWNoLXNtZGt2MzEwLmMNCkBAIC05LDI4ICs5LDM1IEBADQogKi8NCiANCiAjaW5jbHVk
-ZSA8bGludXgvc2VyaWFsX2NvcmUuaD4NCisjaW5jbHVkZSA8bGludXgvZGVsYXkuaD4NCiAjaW5j
-bHVkZSA8bGludXgvZ3Bpby5oPg0KKyNpbmNsdWRlIDxsaW51eC9sY2QuaD4NCiAjaW5jbHVkZSA8
-bGludXgvbW1jL2hvc3QuaD4NCiAjaW5jbHVkZSA8bGludXgvcGxhdGZvcm1fZGV2aWNlLmg+DQog
-I2luY2x1ZGUgPGxpbnV4L3Ntc2M5MTF4Lmg+DQogI2luY2x1ZGUgPGxpbnV4L2lvLmg+DQogI2lu
-Y2x1ZGUgPGxpbnV4L2kyYy5oPg0KICNpbmNsdWRlIDxsaW51eC9pbnB1dC5oPg0KKyNpbmNsdWRl
-IDxsaW51eC9jbGsuaD4NCiANCiAjaW5jbHVkZSA8YXNtL21hY2gvYXJjaC5oPg0KICNpbmNsdWRl
-IDxhc20vbWFjaC10eXBlcy5oPg0KIA0KKyNpbmNsdWRlIDx2aWRlby9wbGF0Zm9ybV9sY2QuaD4N
-CisNCiAjaW5jbHVkZSA8cGxhdC9yZWdzLXNlcmlhbC5oPg0KICNpbmNsdWRlIDxwbGF0L3JlZ3Mt
-c3JvbS5oPg0KICNpbmNsdWRlIDxwbGF0L2V4eW5vczQuaD4NCiAjaW5jbHVkZSA8cGxhdC9jcHUu
-aD4NCiAjaW5jbHVkZSA8cGxhdC9kZXZzLmg+DQorI2luY2x1ZGUgPHBsYXQvZmIuaD4NCiAjaW5j
-bHVkZSA8cGxhdC9rZXlwYWQuaD4NCiAjaW5jbHVkZSA8cGxhdC9zZGhjaS5oPg0KICNpbmNsdWRl
-IDxwbGF0L2lpYy5oPg0KICNpbmNsdWRlIDxwbGF0L3BkLmg+DQogDQogI2luY2x1ZGUgPG1hY2gv
-bWFwLmg+DQorI2luY2x1ZGUgPG1hY2gvcmVncy1mYi5oPg0KIA0KIC8qIEZvbGxvd2luZyBhcmUg
-ZGVmYXVsdCB2YWx1ZXMgZm9yIFVDT04sIFVMQ09OIGFuZCBVRkNPTiBVQVJUIHJlZ2lzdGVycyAq
-Lw0KICNkZWZpbmUgU01ES1YzMTBfVUNPTl9ERUZBVUxUCShTM0MyNDEwX1VDT05fVFhJTEVWRUwg
-fAlcDQpAQCAtMTEzLDYgKzEyMCw2OSBAQCBzdGF0aWMgc3RydWN0IHMzY19zZGhjaV9wbGF0ZGF0
-YSBzbWRrdjMxMF9oc21tYzNfcGRhdGEgX19pbml0ZGF0YSA9IHsNCiAJLmNsa190eXBlCQk9IFMz
-Q19TREhDSV9DTEtfRElWX0VYVEVSTkFMLA0KIH07DQogDQorc3RhdGljIHZvaWQgbGNkX2x0ZTQ4
-MHd2X3NldF9wb3dlcihzdHJ1Y3QgcGxhdF9sY2RfZGF0YSAqcGQsDQorCQkJCSAgIHVuc2lnbmVk
-IGludCBwb3dlcikNCit7DQorCWlmIChwb3dlcikgew0KKyNpZiAhZGVmaW5lZChDT05GSUdfQkFD
-S0xJR0hUX1BXTSkNCisJCWdwaW9fcmVxdWVzdChFWFlOT1M0X0dQRDAoMSksICJHUEQwIik7DQor
-CQlncGlvX2RpcmVjdGlvbl9vdXRwdXQoRVhZTk9TNF9HUEQwKDEpLCAxKTsNCisJCWdwaW9fZnJl
-ZShFWFlOT1M0X0dQRDAoMSkpOw0KKyNlbmRpZg0KKwkJLyogZmlyZSBuUkVTRVQgb24gcG93ZXIg
-dXAgKi8NCisJCWdwaW9fcmVxdWVzdChFWFlOT1M0X0dQWDAoNiksICJHUFgwIik7DQorDQorCQln
-cGlvX2RpcmVjdGlvbl9vdXRwdXQoRVhZTk9TNF9HUFgwKDYpLCAxKTsNCisJCW1kZWxheSgxMDAp
-Ow0KKw0KKwkJZ3Bpb19zZXRfdmFsdWUoRVhZTk9TNF9HUFgwKDYpLCAwKTsNCisJCW1kZWxheSgx
-MCk7DQorDQorCQlncGlvX3NldF92YWx1ZShFWFlOT1M0X0dQWDAoNiksIDEpOw0KKwkJbWRlbGF5
-KDEwKTsNCisNCisJCWdwaW9fZnJlZShFWFlOT1M0X0dQWDAoNikpOw0KKwl9IGVsc2Ugew0KKyNp
-ZiAhZGVmaW5lZChDT05GSUdfQkFDS0xJR0hUX1BXTSkNCisJCWdwaW9fcmVxdWVzdChFWFlOT1M0
-X0dQRDAoMSksICJHUEQwIik7DQorCQlncGlvX2RpcmVjdGlvbl9vdXRwdXQoRVhZTk9TNF9HUEQw
-KDEpLCAwKTsNCisJCWdwaW9fZnJlZShFWFlOT1M0X0dQRDAoMSkpOw0KKyNlbmRpZg0KKwl9DQor
-fQ0KKw0KK3N0YXRpYyBzdHJ1Y3QgcGxhdF9sY2RfZGF0YSBzbWRrdjMxMF9sY2RfbHRlNDgwd3Zf
-ZGF0YSA9IHsNCisJLnNldF9wb3dlciAgICAgID0gbGNkX2x0ZTQ4MHd2X3NldF9wb3dlciwNCit9
-Ow0KKw0KK3N0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlIHNtZGt2MzEwX2xjZF9sdGU0ODB3
-diA9IHsNCisJLm5hbWUgICAgICAgICAgICAgICAgICAgPSAicGxhdGZvcm0tbGNkIiwNCisJLmRl
-di5wYXJlbnQgICAgICAgICAgICAgPSAmczVwX2RldmljZV9maW1kMC5kZXYsDQorCS5kZXYucGxh
-dGZvcm1fZGF0YSAgICAgID0gJnNtZGt2MzEwX2xjZF9sdGU0ODB3dl9kYXRhLA0KK307DQorDQor
-c3RhdGljIHN0cnVjdCBzM2NfZmJfcGRfd2luIHNtZGt2MzEwX2ZiX3dpbjAgPSB7DQorCS53aW5f
-bW9kZSA9IHsNCisJCS5sZWZ0X21hcmdpbiAgICA9IDEzLA0KKwkJLnJpZ2h0X21hcmdpbiAgID0g
-OCwNCisJCS51cHBlcl9tYXJnaW4gICA9IDcsDQorCQkubG93ZXJfbWFyZ2luICAgPSA1LA0KKwkJ
-LmhzeW5jX2xlbiAgICAgID0gMywNCisJCS52c3luY19sZW4gICAgICA9IDEsDQorCQkueHJlcyAg
-ID0gODAwLA0KKwkJLnlyZXMgICA9IDQ4MCwNCisJfSwNCisJLm1heF9icHAgICAgICAgID0gMzIs
-DQorCS5kZWZhdWx0X2JwcCAgICA9IDI0LA0KK307DQorDQorc3RhdGljIHN0cnVjdCBzM2NfZmJf
-cGxhdGRhdGEgc21ka3YzMTBfbGNkMF9wZGF0YSBfX2luaXRkYXRhID0gew0KKwkud2luWzBdCQk9
-ICZzbWRrdjMxMF9mYl93aW4wLA0KKwkudmlkY29uMAk9IFZJRENPTjBfVklET1VUX1JHQiB8IFZJ
-RENPTjBfUE5STU9ERV9SR0IsDQorCS52aWRjb24xCT0gVklEQ09OMV9JTlZfSFNZTkMgfCBWSURD
-T04xX0lOVl9WU1lOQywNCisJLnNldHVwX2dwaW8JPSBleHlub3M0X2ZpbWQwX2dwaW9fc2V0dXBf
-MjRicHAsDQorfTsNCisNCiBzdGF0aWMgc3RydWN0IHJlc291cmNlIHNtZGt2MzEwX3Ntc2M5MTF4
-X3Jlc291cmNlc1tdID0gew0KIAlbMF0gPSB7DQogCQkuc3RhcnQJPSBFWFlOT1M0X1BBX1NST01f
-QkFOSygxKSwNCkBAIC0xODcsNiArMjU3LDggQEAgc3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kZXZp
-Y2UgKnNtZGt2MzEwX2RldmljZXNbXSBfX2luaXRkYXRhID0gew0KIAkmZXh5bm9zNF9kZXZpY2Vf
-cGRbUERfR1BTXSwNCiAJJmV4eW5vczRfZGV2aWNlX3N5c21tdSwNCiAJJnNhbXN1bmdfYXNvY19k
-bWEsDQorCSZzNXBfZGV2aWNlX2ZpbWQwLA0KKwkmc21ka3YzMTBfbGNkX2x0ZTQ4MHd2LA0KIAkm
-c21ka3YzMTBfc21zYzkxMXgsDQogfTsNCiANCkBAIC0yMTMsNiArMjg1LDQ0IEBAIHN0YXRpYyB2
-b2lkIF9faW5pdCBzbWRrdjMxMF9zbXNjOTExeF9pbml0KHZvaWQpDQogCQkgICAgICgweDEgPDwg
-UzVQX1NST01fQkNYX19UQUNTX19TSElGVCksIFM1UF9TUk9NX0JDMSk7DQogfQ0KIA0KK3N0YXRp
-YyBpbnQgX19pbml0IHNtZGt2MzEwX2ZpbWQwX3NldHVwX2Nsb2NrKHZvaWQpDQorew0KKwlzdHJ1
-Y3QgY2xrICpzY2xrID0gTlVMTDsNCisJc3RydWN0IGNsayAqbW91dF9tcGxsID0gTlVMTDsNCisN
-CisJdTMyIHJhdGUgPSAwOw0KKw0KKwlzY2xrID0gY2xrX2dldCgmczVwX2RldmljZV9maW1kMC5k
-ZXYsICJzY2xrX2ZpbWQiKTsNCisJaWYgKElTX0VSUihzY2xrKSkgew0KKwkJcHJpbnRrKEtFUk5f
-RVJSICJmYWlsZWQgdG8gZ2V0IHNjbGsgZm9yIGZpbWRcbiIpOw0KKwkJZ290byBlcnJfY2xrMjsN
-CisJfQ0KKw0KKwltb3V0X21wbGwgPSBjbGtfZ2V0KE5VTEwsICJtb3V0X21wbGwiKTsNCisJaWYg
-KElTX0VSUihtb3V0X21wbGwpKSB7DQorCQlwcmludGsoS0VSTl9FUlIgImZhaWxlZCB0byBnZXQg
-bW91dF9tcGxsXG4iKTsNCisJCWdvdG8gZXJyX2NsazE7DQorCX0NCisNCisJY2xrX3NldF9wYXJl
-bnQoc2NsaywgbW91dF9tcGxsKTsNCisJaWYgKCFyYXRlKQ0KKwkJcmF0ZSA9IDEzNDAwMDAwMDsN
-CisNCisJY2xrX3NldF9yYXRlKHNjbGssIHJhdGUpOw0KKw0KKwljbGtfcHV0KHNjbGspOw0KKwlj
-bGtfcHV0KG1vdXRfbXBsbCk7DQorDQorCXJldHVybiAwOw0KKw0KK2Vycl9jbGsxOg0KKwljbGtf
-cHV0KG1vdXRfbXBsbCk7DQorZXJyX2NsazI6DQorCWNsa19wdXQoc2Nsayk7DQorDQorCXJldHVy
-biAtRUlOVkFMOw0KK30NCisNCiBzdGF0aWMgdm9pZCBfX2luaXQgc21ka3YzMTBfbWFwX2lvKHZv
-aWQpDQogew0KIAlzNXBfaW5pdF9pbyhOVUxMLCAwLCBTNVBfVkFfQ0hJUElEKTsNCkBAIC0yMzIs
-OSArMzQyLDEzIEBAIHN0YXRpYyB2b2lkIF9faW5pdCBzbWRrdjMxMF9tYWNoaW5lX2luaXQodm9p
-ZCkNCiAJczNjX3NkaGNpMl9zZXRfcGxhdGRhdGEoJnNtZGt2MzEwX2hzbW1jMl9wZGF0YSk7DQog
-CXMzY19zZGhjaTNfc2V0X3BsYXRkYXRhKCZzbWRrdjMxMF9oc21tYzNfcGRhdGEpOw0KIA0KKwlz
-NXBfZmltZDBfc2V0X3BsYXRkYXRhKCZzbWRrdjMxMF9sY2QwX3BkYXRhKTsNCisNCiAJc2Ftc3Vu
-Z19rZXlwYWRfc2V0X3BsYXRkYXRhKCZzbWRrdjMxMF9rZXlwYWRfZGF0YSk7DQogDQogCXBsYXRm
-b3JtX2FkZF9kZXZpY2VzKHNtZGt2MzEwX2RldmljZXMsIEFSUkFZX1NJWkUoc21ka3YzMTBfZGV2
-aWNlcykpOw0KKw0KKwlzbWRrdjMxMF9maW1kMF9zZXR1cF9jbG9jaygpOw0KIH0NCiANCiBNQUNI
-SU5FX1NUQVJUKFNNREtWMzEwLCAiU01ES1YzMTAiKQ0KLS0gDQoxLjcuMQ0KDQo=
+On Tue, Jun 21, 2011 at 4:03 PM,  <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> From: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>
+> A generic method to initialize and exit OTG PHY which can be
+> used for all the samsung SoCs.
+> OTG platdata structure added in platform to pass required
+> platform specific functions and data to the driver.
+>
+> Signed-off-by: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+> =A0arch/arm/mach-s5p64x0/Makefile =A0 =A0 =A0 =A0 =A0 | =A0 =A01 +
+> =A0arch/arm/mach-s5p64x0/include/mach/map.h | =A0 =A04 +
+> =A0arch/arm/mach-s5p64x0/setup-otg-phy.c =A0 =A0| =A0 89 ++++++++++++=
+++++++++++++++++++
+> =A0arch/arm/plat-s5p/include/plat/otg.h =A0 =A0 | =A0 29 ++++++++++
+> =A04 files changed, 123 insertions(+), 0 deletions(-)
+> =A0create mode 100644 arch/arm/mach-s5p64x0/setup-otg-phy.c
+> =A0create mode 100644 arch/arm/plat-s5p/include/plat/otg.h
+>
+> diff --git a/arch/arm/mach-s5p64x0/Makefile b/arch/arm/mach-s5p64x0/M=
+akefile
+> index ae6bf6f..611fb3a 100644
+> --- a/arch/arm/mach-s5p64x0/Makefile
+> +++ b/arch/arm/mach-s5p64x0/Makefile
+> @@ -28,3 +28,4 @@ obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ +=3D dev-audio.o
+> =A0obj-$(CONFIG_S3C64XX_DEV_SPI) =A0+=3D dev-spi.o
+>
+> =A0obj-$(CONFIG_S5P64X0_SETUP_I2C1) =A0 =A0 =A0 +=3D setup-i2c1.o
+> +obj-$(CONFIG_S3C_DEV_DWC_OTG) =A0+=3D setup-otg-phy.o
+> diff --git a/arch/arm/mach-s5p64x0/include/mach/map.h b/arch/arm/mach=
+-s5p64x0/include/mach/map.h
+> index 95c9125..717c279 100644
+> --- a/arch/arm/mach-s5p64x0/include/mach/map.h
+> +++ b/arch/arm/mach-s5p64x0/include/mach/map.h
+> @@ -44,6 +44,8 @@
+> =A0#define S5P64X0_PA_SPI1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A00xEC500000
+>
+> =A0#define S5P64X0_PA_HSOTG =A0 =A0 =A0 0xED100000
+> +#define S5P64X0_PA_USB_HSPHY =A0 0xED200000
+> +#define S5P64X0_VA_USB_HSPHY =A0 S3C_ADDR_CPU(0x00100000)
+>
+> =A0#define S5P64X0_PA_HSMMC(x) =A0 =A0(0xED800000 + ((x) * 0x100000))
+>
+> @@ -71,6 +73,8 @@
+> =A0#define S5P_PA_TIMER =A0 =A0 =A0 =A0 =A0 S5P64X0_PA_TIMER
+>
+> =A0#define SAMSUNG_PA_ADC =A0 =A0 =A0 =A0 S5P64X0_PA_ADC
+> +#define S3C_PA_USB_HSOTG =A0 =A0 =A0 S5P64X0_PA_HSOTG
+> +#define S3C_VA_USB_HSPHY =A0 =A0 =A0 =A0S5P64X0_VA_USB_HSPHY
+>
+> =A0/* UART */
+>
+> diff --git a/arch/arm/mach-s5p64x0/setup-otg-phy.c b/arch/arm/mach-s5=
+p64x0/setup-otg-phy.c
+> new file mode 100644
+> index 0000000..c351554
+> --- /dev/null
+> +++ b/arch/arm/mach-s5p64x0/setup-otg-phy.c
+> @@ -0,0 +1,89 @@
+> +/*
+> + * Copyright (C) 2011 Samsung Electronics Co.Ltd
+> + * Author: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> + * based on arch/arm/mach-exynos4/setup-usb-phy.c
+> + * written by Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> + *
+> + * =A0This program is free software; you can redistribute =A0it and/=
+or modify it
+> + * =A0under =A0the terms of =A0the GNU General =A0Public License as =
+published by the
+> + * =A0Free Software Foundation; =A0either version 2 of the =A0Licens=
+e, or (at your
+> + * =A0option) any later version.
+> + *
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/platform_device.h>
+> +#include <mach/regs-clock.h>
+> +#include <mach/gpio.h>
+> +#include <plat/regs-usb-hsotg-phy.h>
+> +#include <plat/usb-phy.h>
+> +
+> +struct clk *otg_clk;
+> +static int s5p64x0_otg_phy_init(struct platform_device *pdev)
+> +{
+> + =A0 =A0 =A0 int err;
+> +
+> + =A0 =A0 =A0 otg_clk =3D clk_get(&pdev->dev, "otg");
+> + =A0 =A0 =A0 if (IS_ERR(otg_clk)) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev, "Failed to get otg =
+clock\n");
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return PTR_ERR(otg_clk);
+> + =A0 =A0 =A0 }
+> +
+> + =A0 =A0 =A0 err =3D clk_enable(otg_clk);
+> + =A0 =A0 =A0 if (err) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clk_put(otg_clk);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return err;
+> + =A0 =A0 =A0 }
+> +
+> + =A0 =A0 =A0 if (gpio_is_valid(S5P6440_GPN(1))) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D gpio_request(S5P6440_GPN(1), "G=
+PN");
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (err)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 printk(KERN_ERR "failed=
+ to request GPN1\n");
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_direction_output(S5P6440_GPN(1), 1=
+);
+> + =A0 =A0 =A0 }
+
+What's the GPN(1)? I think it's board specific pins. so please replace
+it at board file.
+> +
+> + =A0 =A0 =A0 writel(readl(S5P64X0_OTHERS)&~S5P64X0_OTHERS_USB_SIG_MA=
+SK,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5P64X0_OTHERS);
+> + =A0 =A0 =A0 writel(0x0, S3C_PHYPWR); =A0 =A0 =A0 =A0 /* Power up */
+> + =A0 =A0 =A0 writel(S3C_PHYCLK_CLKSEL_12M, S3C_PHYCLK);
+> + =A0 =A0 =A0 writel(S3C_RSTCON_PHY, S3C_RSTCON);
+> +
+> + =A0 =A0 =A0 udelay(50);
+> + =A0 =A0 =A0 writel(0x0, S3C_RSTCON);
+> + =A0 =A0 =A0 udelay(50);
+> +
+> + =A0 =A0 =A0 return 0;
+> +}
+> +
+> +static int s5p64x0_otg_phy_exit(struct platform_device *pdev)
+> +{
+> + =A0 =A0 =A0 writel(readl(S3C_PHYPWR)|(0x1F<<1), S3C_PHYPWR);
+> + =A0 =A0 =A0 writel(readl(S5P64X0_OTHERS)&~S5P64X0_OTHERS_USB_SIG_MA=
+SK,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5P64X0_OTHERS);
+> +
+> + =A0 =A0 =A0 gpio_free(S5P6440_GPN(1));
+ditto
+> +
+> + =A0 =A0 =A0 clk_disable(otg_clk);
+> + =A0 =A0 =A0 clk_put(otg_clk);
+> +
+> + =A0 =A0 =A0 return 0;
+> +}
+> +
+> +int s5p_usb_phy_init(struct platform_device *pdev, int type)
+> +{
+> + =A0 =A0 =A0 if (type =3D=3D S5P_USB_PHY_DEVICE)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return s5p64x0_otg_phy_init(pdev);
+> +
+> + =A0 =A0 =A0 return -EINVAL;
+> +}
+> +
+> +int s5p_usb_phy_exit(struct platform_device *pdev, int type)
+> +{
+> + =A0 =A0 =A0 if (type =3D=3D S5P_USB_PHY_DEVICE)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return s5p64x0_otg_phy_exit(pdev);
+> +
+> + =A0 =A0 =A0 return -EINVAL;
+> +}
+> diff --git a/arch/arm/plat-s5p/include/plat/otg.h b/arch/arm/plat-s5p=
+/include/plat/otg.h
+> new file mode 100644
+> index 0000000..3111dcc
+> --- /dev/null
+> +++ b/arch/arm/plat-s5p/include/plat/otg.h
+> @@ -0,0 +1,29 @@
+> +/*
+> + * Copyright (C) 2011 Samsung Electronics Co.Ltd
+> + * Author: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> + * based on arch/arm/plat-s5p/include/plat/usb-phy.h
+> + * written by Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> + *
+> + * This program is free software; you can redistribute =A0it and/or =
+modify it
+> + * under =A0the terms of =A0the GNU General =A0Public License as pub=
+lished by the
+> + * Free Software Foundation; =A0either version 2 of the =A0License, =
+or (at your
+> + * option) any later version.
+> + */
+> +
+> +#ifndef __PLAT_S5P_OTG_H
+> +#define __PLAT_S5P_OTG_H
+> +
+> +struct s5p_otg_platdata {
+> + =A0 =A0 =A0 int (*phy_init)(struct platform_device *pdev, int type)=
+;
+> + =A0 =A0 =A0 int (*phy_exit)(struct platform_device *pdev, int type)=
+;
+> + =A0 =A0 =A0 u32 dev_rx_fifo_size;
+> + =A0 =A0 =A0 u32 dev_nptx_fifo_size;
+> + =A0 =A0 =A0 u32 host_rx_fifo_size;
+> + =A0 =A0 =A0 u32 host_nptx_fifo_size;
+> + =A0 =A0 =A0 u32 host_ch_num;
+> +
+> +};
+> +
+> +extern void s5p_otg_set_platdata(struct s5p_otg_platdata *pd);
+> +
+> +#endif /* __PLAT_S5P_OTG_H */
+> --
+> 1.7.0.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
