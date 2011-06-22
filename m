@@ -1,123 +1,47 @@
-From: Banajit Goswami <banajit.g@samsung.com>
-Subject: [PATCH] ARM: EXYNOS4: Add PWM backlight support on Samsung SMDKV310
-Date: Wed, 22 Jun 2011 12:11:15 +0530
-Message-ID: <1308724875-32724-1-git-send-email-banajit.g@samsung.com>
-Content-Transfer-Encoding: 7BIT
+From: JinGoo Han <jg1.han@samsung.com>
+Subject: [PATCH V5 0/5] ARM: EXYNOS4: Add support EXYNOS4 FIMD
+Date: Wed, 22 Jun 2011 06:45:39 +0000 (GMT)
+Message-ID: <24871231.117911308725138731.JavaMail.weblogic@epv6ml03>
+Reply-To: jg1.han@samsung.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:37370 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752123Ab1FVGlX (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:50000 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752545Ab1FVGpk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Jun 2011 02:41:23 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Wed, 22 Jun 2011 02:45:40 -0400
+Received: from epcpsbge2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LN6008FCIK7VHA0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 22 Jun 2011 15:41:21 +0900 (KST)
-Received: from banajit.sisodomain.com ([107.108.83.226])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LN600A9IIKPF1@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 22 Jun 2011 15:41:21 +0900 (KST)
+ 2010)) with ESMTP id <0LN600820ILC7E80@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 22 Jun 2011 15:45:39 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, Banajit Goswami <banajit.g@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-f>
+Cc: ANAND KUMAR N <anand.kn@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, THOMAS P ABRAHAM <thomas.ab@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, In-Ki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, JinGoo Han <jg1.han@samsung.com>
 
-This patch adds support for LCD backlight using PWM timer for
-Samsung SMDKV310 board.
-
-Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
----
- arch/arm/mach-exynos4/Kconfig         |    1 +
- arch/arm/mach-exynos4/mach-smdkv310.c |   43 +++++++++++++++++++++++++++++++++
- 2 files changed, 44 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index 1435fc3..9ab53bc 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -128,6 +128,7 @@ config MACH_SMDKV310
- 	select S3C_DEV_HSMMC2
- 	select S3C_DEV_HSMMC3
- 	select SAMSUNG_DEV_KEYPAD
-+	select SAMSUNG_DEV_PWM
- 	select EXYNOS4_DEV_PD
- 	select EXYNOS4_DEV_SYSMMU
- 	select EXYNOS4_SETUP_I2C1
-diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
-index 7e3ee6c..b097ef6 100644
---- a/arch/arm/mach-exynos4/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos4/mach-smdkv310.c
-@@ -16,6 +16,7 @@
- #include <linux/io.h>
- #include <linux/i2c.h>
- #include <linux/input.h>
-+#include <linux/pwm_backlight.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
-@@ -29,6 +30,7 @@
- #include <plat/sdhci.h>
- #include <plat/iic.h>
- #include <plat/pd.h>
-+#include <plat/gpio-cfg.h>
- 
- #include <mach/map.h>
- 
-@@ -172,6 +174,45 @@ static struct i2c_board_info i2c_devs1[] __initdata = {
- 	{I2C_BOARD_INFO("wm8994", 0x1a),},
- };
- 
-+static int smdkv310_backlight_init(struct device *dev)
-+{
-+	int ret = 0;
-+
-+	ret = gpio_request(EXYNOS4_GPD0(1), "Backlight");
-+	if (ret) {
-+		printk(KERN_ERR "failed to request GPD for PWM-OUT0\n");
-+		return ret;
-+	}
-+
-+	/* Configure GPIO pin with EXYNOS4_GPD_0_1_TOUT_0 */
-+	s3c_gpio_cfgpin(EXYNOS4_GPD0(1), S3C_GPIO_SFN(2));
-+
-+	return 0;
-+}
-+
-+static void smdkv310_backlight_exit(struct device *dev)
-+{
-+	s3c_gpio_cfgpin(EXYNOS4_GPD0(1), S3C_GPIO_OUTPUT);
-+	gpio_free(EXYNOS4_GPD0(1));
-+}
-+
-+static struct platform_pwm_backlight_data smdkv310_backlight_data = {
-+	.pwm_id		= 1,
-+	.max_brightness	= 255,
-+	.dft_brightness	= 255,
-+	.pwm_period_ns	= 78770,
-+	.init		= smdkv310_backlight_init,
-+	.exit		= smdkv310_backlight_exit,
-+};
-+
-+static struct platform_device smdkv310_backlight_device = {
-+	.name		= "pwm-backlight",
-+	.dev		= {
-+		.parent		= &s3c_device_timer[1].dev,
-+		.platform_data	= &smdkv310_backlight_data,
-+	},
-+};
-+
- static struct platform_device *smdkv310_devices[] __initdata = {
- 	&s3c_device_hsmmc0,
- 	&s3c_device_hsmmc1,
-@@ -195,6 +236,8 @@ static struct platform_device *smdkv310_devices[] __initdata = {
- 	&samsung_asoc_dma,
- 	&smdkv310_smsc911x,
- 	&smdkv310_pcm_device,
-+	&s3c_device_timer[1],
-+	&smdkv310_backlight_device,
- };
- 
- static void __init smdkv310_smsc911x_init(void)
--- 
-1.6.5.2
+VGhpcyBwYXRjaCBzZXJpZXMgaXMgYmFzZWQgb24gdGhlIGxhdGVzdA0KZ2l0Lmtlcm5lbC5vcmcv
+cHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LTIuNi5naXQNCg0KVGhpcyB3
+YXMgb3JpZ2luYWxseSBzdWJtaXR0ZWQgYnkgSm9uZ2h1biBIYW4gPGpvbmdodW4uaGFuQHNhbXN1
+bmcuY29tPg0KaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9hcm0ta2VybmVsL21zZzEwMTc4
+MS5odG1sDQoNClRoaXMgcGF0Y2ggYWRkcyBzdXBwb3J0IEZJTUQoRnVsbHkgSW50ZXJhY3RpdmUg
+TW9iaWxlIERpc3BsYXkpIG9uIEV4eW5vczQuDQpUaGUgNHRoIHBhdGNoIGlzIHVwZGF0ZSBmb3Ig
+czNjLWZiIGFuZCBvdGhlcnMgYXJlIGZvciBwbGF0Zm9ybSBkYXRhLg0KDQp2MjogY2hhbmdlIGNs
+b2NrIG5hbWUgb2YgZXh5bm9zNCBGSU1EOiAiZmltZCIgLT4gImxjZCINCiAgICAgdXNlICdoYXNf
+Y2xrc2VsJyB2YXJpYWJsZSBpbiBvcmRlciB0byBkaXN0aW5ndWlzaCBGSU1EIHZlcnNpb24NCiAg
+ICAgYWRkICdsY2RfY2xrJyB0aGF0IGNhbiBiZSB1c2VkIGZvciBvbmx5IGxjZCBwaXhlbCBjbG9j
+aw0KICAgICBhZGQgY2FsbGJhY2sgJ2VuYWJsZV9jbGsoKScgdG8gZW5hYmxlIHBhcmVudCBjbG9j
+ayAnc2Nsa19maW1kJy4NCnYzOiByZW1vdmUgdGhlIGNhbGxiYWNrIGZyb20gdGhlIHBsYXRmb3Jt
+IGRhdGEgc3RydWN0dXJlDQp2NDogbW92ZSBjbGtfZW5hYmxlKHNmYi0+bGNkX2NsaykgdW5kZXIg
+dGhlIGlmIHN0YXRlbWVudA0KdjU6IGFkZCBjbGtfZW5hYmxlL2Rpc2FibGUoc2ZiLT5sY2RfY2xr
+KSB0byBzM2NfZmJfcnVudGltZV9zdXNwZW5kL3Jlc3VtZSgpLg0KDQpvIFRvIEt1a2ppbiBLaW0N
+CltQQVRDSCBWNSAxLzVdIEFSTTogRVhZTk9TNDogQ2hhbmdlIGNsb2NrIG5hbWUgZm9yIEZJTUQN
+CltQQVRDSCBWNSAyLzVdIEFSTTogRVhZTk9TNDogQWRkIEZJTUQgcmVzb3VyY2UgZGVmaW5pdGlv
+bg0KW1BBVENIIFY1IDMvNV0gQVJNOiBFWFlOT1M0OiBBZGQgcGxhdGZvcm0gZGV2aWNlIGFuZCBo
+ZWxwZXIgZnVuY3Rpb25zIGZvciBGSU1EDQpbUEFUQ0ggVjUgNS81XSBBUk06IEVYWU5PUzQ6IEFk
+ZCBwbGF0Zm9ybSBkYXRhIGZvciBFWFlOT1M0IEZJTUQgYW5kIExURTQ4MFdWIHBsYXRmb3JtLWxj
+ZA0KDQpvIFRvIFBhdWwgTXVuZHQNCltQQVRDSCBWNSA0LzVdIHZpZGVvOiBzM2MtZmI6IEFkZCBz
+dXBwb3J0IEVYWU5PUzQgRklNRA==
