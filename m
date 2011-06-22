@@ -1,75 +1,103 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 1/6] S5PV210: Add additional symantics for "relation" in cpufreq with pm
-Date: Wed, 22 Jun 2011 17:07:40 +0900
-Message-ID: <1308730065-24737-2-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 3/6] [CPUFREQ] S5PV210: Add pm_notifier to prevent system unstable
+Date: Wed, 22 Jun 2011 17:07:42 +0900
+Message-ID: <1308730065-24737-4-git-send-email-kgene.kim@samsung.com>
 References: <1308730065-24737-1-git-send-email-kgene.kim@samsung.com>
-Return-path: <cpufreq-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:51258 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752828Ab1FVIQt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Jun 2011 04:16:49 -0400
 In-Reply-To: <1308730065-24737-1-git-send-email-kgene.kim@samsung.com>
-Sender: cpufreq-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: davej@redhat.com, Huisung Kang <hs1218.kang@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Huisung Kang <hs1218.kang@samsung.com>
 
-Relation has an additional symantics other than standard.
-s5pv310_target funtion have below additional relation.
-- DISABLE_FURTHER_CPUFREQ : disable further access to target
-- ENABLE_FURTHER_CPUFRER : enable access to target
+Minimum 800MHz is needed to enter/exit suspend mode due to voltage mismatch.
 
 Signed-off-by: Huisung Kang <hs1218.kang@samsung.com>
 Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- drivers/cpufreq/s5pv210-cpufreq.c |   28 ++++++++++++++++++++++++++++
- 1 files changed, 28 insertions(+), 0 deletions(-)
+ drivers/cpufreq/s5pv210-cpufreq.c |   34 ++++++++++++++++++++++++++++++++++
+ 1 files changed, 34 insertions(+), 0 deletions(-)
 
 diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index a7cb338..48a4a90 100644
+index d2b3d25..ba7f2dc 100644
 --- a/drivers/cpufreq/s5pv210-cpufreq.c
 +++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -30,6 +30,18 @@ static struct cpufreq_freqs freqs;
+@@ -17,6 +17,7 @@
+ #include <linux/io.h>
+ #include <linux/cpufreq.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/suspend.h>
+ 
+ #include <mach/map.h>
+ #include <mach/regs-clock.h>
+@@ -30,6 +31,9 @@ static struct cpufreq_freqs freqs;
+ #define APLL_VAL_1000	((1 << 31) | (125 << 16) | (3 << 8) | 1)
  #define APLL_VAL_800	((1 << 31) | (100 << 16) | (3 << 8) | 1)
  
++/* Use 800MHz when entering sleep mode */
++#define SLEEP_FREQ	(800 * 1000)
++
  /*
-+ * relation has an additional symantics other than the standard of cpufreq
-+ * DISALBE_FURTHER_CPUFREQ: disable further access to target
-+ * ENABLE_FURTUER_CPUFREQ: enable access to target
-+ */
-+enum cpufreq_access {
-+	DISABLE_FURTHER_CPUFREQ = 0x10,
-+	ENABLE_FURTHER_CPUFREQ = 0x20,
-+};
-+
-+static bool no_cpufreq_access;
-+
-+/*
-  * DRAM configurations to calculate refresh counter for changing
-  * frequency of memory.
-  */
-@@ -146,6 +158,22 @@ static int s5pv210_target(struct cpufreq_policy *policy,
- 	unsigned int pll_changing = 0;
- 	unsigned int bus_speed_changing = 0;
+  * relation has an additional symantics other than the standard of cpufreq
+  * DISALBE_FURTHER_CPUFREQ: disable further access to target
+@@ -560,6 +564,30 @@ out_dmc0:
+ 	return ret;
+ }
  
-+	if (relation & ENABLE_FURTHER_CPUFREQ)
-+		no_cpufreq_access = false;
++static int s5pv210_cpufreq_notifier_event(struct notifier_block *this,
++					  unsigned long event, void *ptr)
++{
++	int ret;
 +
-+	if (no_cpufreq_access) {
-+#ifdef CONFIG_PM_VERBOSE
-+		pr_err("%s:%d denied access to %s as it is disabled"
-+				"temporarily\n", __FILE__, __LINE__, __func__);
-+#endif
-+		return -EINVAL;
++	switch (event) {
++	case PM_SUSPEND_PREPARE:
++		ret = cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ,
++					    DISABLE_FURTHER_CPUFREQ);
++		if (ret < 0)
++			return NOTIFY_BAD;
++
++		return NOTIFY_OK;
++	case PM_POST_RESTORE:
++	case PM_POST_SUSPEND:
++		cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ,
++				      ENABLE_FURTHER_CPUFREQ);
++
++		return NOTIFY_OK;
 +	}
 +
-+	if (relation & DISABLE_FURTHER_CPUFREQ)
-+		no_cpufreq_access = true;
++	return NOTIFY_DONE;
++}
 +
-+	relation &= ~(ENABLE_FURTHER_CPUFREQ | DISABLE_FURTHER_CPUFREQ);
-+
- 	freqs.old = s5pv210_getspeed(0);
+ static struct cpufreq_driver s5pv210_driver = {
+ 	.flags		= CPUFREQ_STICKY,
+ 	.verify		= s5pv210_verify_speed,
+@@ -573,6 +601,10 @@ static struct cpufreq_driver s5pv210_driver = {
+ #endif
+ };
  
- 	if (cpufreq_frequency_table_target(policy, s5pv210_freq_table,
++static struct notifier_block s5pv210_cpufreq_notifier = {
++	.notifier_call = s5pv210_cpufreq_notifier_event,
++};
++
+ static int __init s5pv210_cpufreq_init(void)
+ {
+ 	arm_regulator = regulator_get(NULL, "vddarm");
+@@ -588,6 +620,8 @@ static int __init s5pv210_cpufreq_init(void)
+ 		return PTR_ERR(int_regulator);
+ 	}
+ 
++	register_pm_notifier(&s5pv210_cpufreq_notifier);
++
+ 	return cpufreq_register_driver(&s5pv210_driver);
+ }
+ 
 -- 
 1.7.1
-
