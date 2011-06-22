@@ -1,64 +1,62 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH v2 1/4] Exynos4 NURI: configure regulators and PMIC
-Date: Wed, 22 Jun 2011 09:13:36 +0530
-Message-ID: <4E0164E8.8060708@linaro.org>
-References: <20110620103124.GD31864@opensource.wolfsonmicro.com>	<1308622033-2521-1-git-send-email-myungjoo.ham@samsung.com>	<1308622033-2521-2-git-send-email-myungjoo.ham@samsung.com>	<4E002D18.2080401@linaro.org> <BANLkTi=pv=y+1XC5bYEHgL1sy48JPztiOg@mail.gmail.com>
+From: JinGoo Han <jg1.han@samsung.com>
+Subject: [PATCH V4 2/5] ARM: EXYNOS4: Add FIMD resource definition
+Date: Wed, 22 Jun 2011 03:44:08 +0000 (GMT)
+Message-ID: <15943202.110001308714247936.JavaMail.weblogic@epml08>
+Reply-To: jg1.han@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qy0-f181.google.com ([209.85.216.181]:54125 "EHLO
-	mail-qy0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757493Ab1FVDno (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:22171 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757761Ab1FVDoK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Jun 2011 23:43:44 -0400
-In-Reply-To: <BANLkTi=pv=y+1XC5bYEHgL1sy48JPztiOg@mail.gmail.com>
+	Tue, 21 Jun 2011 23:44:10 -0400
+Received: from epcpsbge7.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LN6007Y3A9T6BL0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 22 Jun 2011 12:44:08 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: myungjoo.ham@gmail.com
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, dg77.kim@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-f>
+Cc: ANAND KUMAR N <anand.kn@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, THOMAS P ABRAHAM <thomas.ab@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, In-Ki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, JinGoo Han <jg1.han@samsung.com>
 
-On Wednesday 22 June 2011 08:01 AM, MyungJoo Ham wrote:
-> On Tue, Jun 21, 2011 at 2:33 PM, Tushar Behera<tushar.behera@linaro.org>  wrote:
->> On Tuesday 21 June 2011 07:37 AM, MyungJoo Ham wrote:
->>>
->>> Signed-off-by: MyungJoo Ham<myungjoo.ham@samsung.com>
->>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
->>>
->>> --
->>> Changes from v1. Thanks so much for your valuable comments, Mark.
->>> - Removed unnecessary initialization data
->>> - Add __initdata where necessary
->>> - Corrected a regulator name for ADC
->>> ---
->>>   arch/arm/mach-exynos4/mach-nuri.c |  622
->>> ++++++++++++++++++++++++++++++++++++-
->>>   1 files changed, 621 insertions(+), 1 deletions(-)
->>>
->> Will it be possible to move PMIC specific defines to a common file and make
->> appropriate calls in the board-specific file?
->>
->> In that way, we can re-use this PMIC code on some other boards (e.g.
->> Insignal low-cost board Origen featuring Exynos4210 also features MAX8997).
->>
->
-> Yes, we have tried creating PMIC defines at a seperated file in our
-> local repositories (still doing so in those repositories).
-> However, that ended up creating multiple PMIC defines (one PMIC define
-> file for each board); the connections between LDO# and devices are
-> different.
->
-In that case, we can first post the Origen board support and PMIC code 
-on the ML, then we would see if we can consolidate.
-
-That looks more logical as per Mark's suggestion also.
->>
->> --
->> Tushar Behera
->>
->
->
-
-
--- 
-Tushar Behera
+RnJvbTogSm9uZ2h1biBIYW4gPGpvbmdodW4uaGFuQHNhbXN1bmcuY29tPg0KDQpUaGlzIHBhdGNo
+IGFkZHMgcmVzb3VyY2UgZGVmaW5pdGlvbnMgZm9yIEVYWU5PUzQgRklNRC4NCklSUSBhbmQgU0ZS
+IGRlZmluaXRpb25zIGFyZSBhZGRlZC4NCg0KU2lnbmVkLW9mZi1ieTogSm9uZ2h1biBIYW4gPGpv
+bmdodW4uaGFuQHNhbXN1bmcuY29tPg0KU2lnbmVkLW9mZi1ieTogSmluZ29vIEhhbiA8amcxLmhh
+bkBzYW1zdW5nLmNvbT4NCi0tLQ0KIGFyY2gvYXJtL21hY2gtZXh5bm9zNC9pbmNsdWRlL21hY2gv
+aXJxcy5oIHwgICAgOCArKysrKysrKw0KIGFyY2gvYXJtL21hY2gtZXh5bm9zNC9pbmNsdWRlL21h
+Y2gvbWFwLmggIHwgICAgNSArKysrKw0KIDIgZmlsZXMgY2hhbmdlZCwgMTMgaW5zZXJ0aW9ucygr
+KSwgMCBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gtZXh5bm9zNC9p
+bmNsdWRlL21hY2gvaXJxcy5oIGIvYXJjaC9hcm0vbWFjaC1leHlub3M0L2luY2x1ZGUvbWFjaC9p
+cnFzLmgNCmluZGV4IDVkMDM3MzAuLjJjZDIwOTAgMTAwNjQ0DQotLS0gYS9hcmNoL2FybS9tYWNo
+LWV4eW5vczQvaW5jbHVkZS9tYWNoL2lycXMuaA0KKysrIGIvYXJjaC9hcm0vbWFjaC1leHlub3M0
+L2luY2x1ZGUvbWFjaC9pcnFzLmgNCkBAIC03Myw2ICs3MywxNCBAQA0KICNkZWZpbmUgSVJRX1NZ
+U01NVV9NRkNfTTFfMAlDT01CSU5FUl9JUlEoNSwgNikNCiAjZGVmaW5lIElSUV9TWVNNTVVfUENJ
+RV8wCUNPTUJJTkVSX0lSUSg1LCA3KQ0KIA0KKyNkZWZpbmUgSVJRX0ZJTUQwX0ZJRk8JCUNPTUJJ
+TkVSX0lSUSgxMSwgMCkNCisjZGVmaW5lIElSUV9GSU1EMF9WU1lOQwkJQ09NQklORVJfSVJRKDEx
+LCAxKQ0KKyNkZWZpbmUgSVJRX0ZJTUQwX1NZU1RFTQlDT01CSU5FUl9JUlEoMTEsIDIpDQorDQor
+I2RlZmluZSBJUlFfRklNRDFfRklGTwkJQ09NQklORVJfSVJRKDEyLCAwKQ0KKyNkZWZpbmUgSVJR
+X0ZJTUQxX1ZTWU5DCQlDT01CSU5FUl9JUlEoMTIsIDEpDQorI2RlZmluZSBJUlFfRklNRDFfU1lT
+VEVNCUNPTUJJTkVSX0lSUSgxMiwgMikNCisNCiAjZGVmaW5lIElSUV9QRE1BMAkJQ09NQklORVJf
+SVJRKDIxLCAwKQ0KICNkZWZpbmUgSVJRX1BETUExCQlDT01CSU5FUl9JUlEoMjEsIDEpDQogDQpk
+aWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1leHlub3M0L2luY2x1ZGUvbWFjaC9tYXAuaCBiL2Fy
+Y2gvYXJtL21hY2gtZXh5bm9zNC9pbmNsdWRlL21hY2gvbWFwLmgNCmluZGV4IDAwMDllNzcuLjk0
+MDA2ZjcgMTAwNjQ0DQotLS0gYS9hcmNoL2FybS9tYWNoLWV4eW5vczQvaW5jbHVkZS9tYWNoL21h
+cC5oDQorKysgYi9hcmNoL2FybS9tYWNoLWV4eW5vczQvaW5jbHVkZS9tYWNoL21hcC5oDQpAQCAt
+OTMsNiArOTMsOSBAQA0KICNkZWZpbmUgRVhZTk9TNF9QQV9NSVBJX0NTSVMwCQkweDExODgwMDAw
+DQogI2RlZmluZSBFWFlOT1M0X1BBX01JUElfQ1NJUzEJCTB4MTE4OTAwMDANCiANCisjZGVmaW5l
+IEVYWU5PUzRfUEFfRklNRDAJCTB4MTFDMDAwMDANCisjZGVmaW5lIEVYWU5PUzRfUEFfRklNRDEJ
+CTB4MTIwMDAwMDANCisNCiAjZGVmaW5lIEVYWU5PUzRfUEFfSFNNTUMoeCkJCSgweDEyNTEwMDAw
+ICsgKCh4KSAqIDB4MTAwMDApKQ0KIA0KICNkZWZpbmUgRVhZTk9TNF9QQV9TQVRBCQkJMHgxMjU2
+MDAwMA0KQEAgLTE0MCw2ICsxNDMsOCBAQA0KICNkZWZpbmUgUzVQX1BBX0ZJTUMzCQkJRVhZTk9T
+NF9QQV9GSU1DMw0KICNkZWZpbmUgUzVQX1BBX01JUElfQ1NJUzAJCUVYWU5PUzRfUEFfTUlQSV9D
+U0lTMA0KICNkZWZpbmUgUzVQX1BBX01JUElfQ1NJUzEJCUVYWU5PUzRfUEFfTUlQSV9DU0lTMQ0K
+KyNkZWZpbmUgUzVQX1BBX0ZJTUQwCQkJRVhZTk9TNF9QQV9GSU1EMA0KKyNkZWZpbmUgUzVQX1BB
+X0ZJTUQxCQkJRVhZTk9TNF9QQV9GSU1EMQ0KICNkZWZpbmUgUzVQX1BBX09ORU5BTkQJCQlFWFlO
+T1M0X1BBX09ORU5BTkQNCiAjZGVmaW5lIFM1UF9QQV9PTkVOQU5EX0RNQQkJRVhZTk9TNF9QQV9P
+TkVOQU5EX0RNQQ0KICNkZWZpbmUgUzVQX1BBX1NEUkFNCQkJRVhZTk9TNF9QQV9TRFJBTQ0KLS0g
+DQoxLjcuMQ0KDQo=
