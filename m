@@ -1,60 +1,60 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2 4/4] Exynos4 NURI: support for NTC thermistor
-Date: Wed, 22 Jun 2011 12:08:49 +0100
-Message-ID: <20110622110848.GA18726@opensource.wolfsonmicro.com>
-References: <20110620103124.GD31864@opensource.wolfsonmicro.com>
- <1308622033-2521-1-git-send-email-myungjoo.ham@samsung.com>
- <1308622033-2521-5-git-send-email-myungjoo.ham@samsung.com>
- <20110621105033.GF22177@opensource.wolfsonmicro.com>
- <BANLkTi=eBAGCADe1MTdtQ4XnBVpHK+uUNA@mail.gmail.com>
+From: Sergei Shtylyov <sshtylyov@mvista.com>
+Subject: Re: [PATCH 7/7] ARM: EXYNOS4: Move S5P_CENTRAL_SEQ_CONFIGURATION
+ setting	for PM
+Date: Wed, 22 Jun 2011 16:10:45 +0400
+Message-ID: <4E01DBC5.7000006@ru.mvista.com>
+References: <1308732405-16664-1-git-send-email-kgene.kim@samsung.com> <1308732405-16664-8-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <BANLkTi=eBAGCADe1MTdtQ4XnBVpHK+uUNA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: myungjoo.ham@gmail.com
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, dg77.kim@samsung.com
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:59323 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752552Ab1FVMMF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Jun 2011 08:12:05 -0400
+Received: by wwe5 with SMTP id 5so775914wwe.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Jun 2011 05:12:03 -0700 (PDT)
+In-Reply-To: <1308732405-16664-8-git-send-email-kgene.kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Jaecheol Lee <jc.lee@samsung.com>, ben-linux@fluff.org
 
-On Wed, Jun 22, 2011 at 02:00:37PM +0900, MyungJoo Ham wrote:
-> On Tue, Jun 21, 2011 at 7:50 PM, Mark Brown
+Hello.
 
-> >> +#include <linux/platform_data/ntc_thermistor.h>
+On 22-06-2011 12:46, Kukjin Kim wrote:
 
-> > This doesn't appear to be in mainline.
+> From: Jaecheol Lee<jc.lee@samsung.com>
 
-> Right, not just yet. I should've added comment about the patch just
-> being applied to "next".
+> We need to balance between set and check S5P_CENTRAL_SEQ_CONFIGURATION
+> register in syscore_ops suspend/resume function when failure in enter
+> suspend mode. Moved this register setting for PM for the purpose of balancing.
 
-I was actually looking at -next rather than Linus' tree there...
+> Signed-off-by: Jaecheol Lee<jc.lee@samsung.com>
+> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
+> ---
+>   arch/arm/mach-exynos4/pm.c |   22 ++++++++++++++--------
+>   1 files changed, 14 insertions(+), 8 deletions(-)
 
-> Should I surround them with "#ifdef CONFIG_NTC_THERMISTOR"?
+> diff --git a/arch/arm/mach-exynos4/pm.c b/arch/arm/mach-exynos4/pm.c
+> index b037fba..a103c13 100644
+> --- a/arch/arm/mach-exynos4/pm.c
+> +++ b/arch/arm/mach-exynos4/pm.c
+[...]
+> @@ -413,6 +405,19 @@ static __init int exynos4_pm_drvinit(void)
+>   }
+>   arch_initcall(exynos4_pm_drvinit);
+>
+> +static int exynos4_pm_suspend(void)
+> +{
+> +	unsigned long tmp;
+> +
+> +	/* Setting Central Sequence Register for power down mode */
+> +
+> +	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
+> +	tmp &= ~(S5P_CENTRAL_LOWPWR_CFG);
 
-I guess, or just wait until it gets merged.
+    Could drop useless parens, while at it.
 
-> > Why not do this in an initcall or in the device registration? =A0Th=
-is
-> > looks like working around a limitation of the ntc_thermistor driver
-> > which should be fixed as part of a mainline merge for that.
-
-> Um... I think I can put this away to a common plat-samsung/dev-ntc.c
-> as I've seen many S5PC110/S5PV210/Exynos4 devices using NTC attached
-> to the CPU's ADC ports.
-
-Yes, but it's not just the location of the code - I was mostly noticing
-the fact that it was doing something that's clearly supposed to be a
-probe() method in the main read function.  It'd be better if there were
-an explicit probe() and corresponding remove() interface.
-
-I also note that this callback based stuff won't work terribly well wit=
-h
-device tree.
-
-> However, I won't be able to put that part into the NTC driver because
-> using S3C-ADC is plat-samsung specific method and NTC thermistor
-> itself is a general thermistor device not specific to S3C. Maybe, I
-> can do so after we've got a common ADC framework.
-
-Yes, we really need to get that ADC stuff sorted soon :(
+WBR, Sergei
