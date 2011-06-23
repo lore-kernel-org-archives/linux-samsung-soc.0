@@ -1,16 +1,16 @@
 From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: [PATCH 16/25] ARM: pm: mach-exynos4: cleanup s3c_cpu_save
-Date: Thu, 23 Jun 2011 20:14:26 +0100
-Message-ID: <E1QZpMA-0005mv-LA@rmk-PC.arm.linux.org.uk>
+Subject: [PATCH 17/25] ARM: pm: mach-s3c64xx: cleanup s3c_cpu_save
+Date: Thu, 23 Jun 2011 20:14:47 +0100
+Message-ID: <E1QZpMV-0005n5-2Q@rmk-PC.arm.linux.org.uk>
 References: <20110623190900.GH9449@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:46026 "EHLO
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:46030 "EHLO
 	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932893Ab1FWTOe (ORCPT
+	with ESMTP id S932893Ab1FWTO4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jun 2011 15:14:34 -0400
+	Thu, 23 Jun 2011 15:14:56 -0400
 In-Reply-To: <20110623190900.GH9449@n2100.arm.linux.org.uk>
 Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -20,27 +20,27 @@ To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, lin
 s3c_cpu_save does not need to save any registers with the new
 cpu_suspend calling convention.  Remove these redundant instructions.
 
+Acked-by: Frank Hofmann <frank.hofmann@tomtom.com>
 Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 ---
- arch/arm/mach-exynos4/sleep.S |    5 +----
- 1 files changed, 1 insertions(+), 4 deletions(-)
+ arch/arm/mach-s3c64xx/sleep.S |    4 +---
+ 1 files changed, 1 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-exynos4/sleep.S b/arch/arm/mach-exynos4/sleep.S
-index d9a2287..b56a491 100644
---- a/arch/arm/mach-exynos4/sleep.S
-+++ b/arch/arm/mach-exynos4/sleep.S
-@@ -40,11 +40,8 @@
- 	 */
+diff --git a/arch/arm/mach-s3c64xx/sleep.S b/arch/arm/mach-s3c64xx/sleep.S
+index dc4f582..2fd3433 100644
+--- a/arch/arm/mach-s3c64xx/sleep.S
++++ b/arch/arm/mach-s3c64xx/sleep.S
+@@ -35,10 +35,8 @@
+ 	*/
  
  ENTRY(s3c_cpu_save)
--
--	stmfd	sp!, { r3 - r12, lr }
- 	adr	r3, BSYM(exynos4_finish_suspend)
+-	stmfd	sp!, { r4 - r12, lr }
+ 	adr	r3, BSYM(s3c64xx_finish_suspend)
 -	bl	cpu_suspend
--	ldmfd	sp!, { r3 - r12, pc }
+-	ldmfd	sp!, { r4 - r12, pc }
 +	b	cpu_suspend
  
- exynos4_finish_suspend:
- 	ldr	r0, =pm_cpu_sleep
+ s3c64xx_finish_suspend:
+ 	@@ call final suspend code
 -- 
 1.7.4.4
