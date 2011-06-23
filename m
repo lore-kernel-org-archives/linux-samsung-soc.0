@@ -1,117 +1,36 @@
-From: "K, Mythri P" <mythripk@ti.com>
-Subject: Re: [PATCH V4 5/5] ARM: EXYNOS4: Add platform data for EXYNOS4 FIMD
- and LTE480WV platform-lcd
-Date: Thu, 23 Jun 2011 14:33:43 +0530
-Message-ID: <BANLkTin7J=fBbp+4Ti_a2D6bgU15sVZHzg@mail.gmail.com>
-References: <11291403.110251308714504687.JavaMail.weblogic@epml08>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 25/25] ARM: pm: omap34xx: convert to generic
+	suspend/resume support
+Date: Thu, 23 Jun 2011 11:06:10 +0100
+Message-ID: <20110623100610.GD9449@n2100.arm.linux.org.uk>
+References: <20110622150816.GT23234@n2100.arm.linux.org.uk> <E1QZPAo-0002XO-9G@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from na3sys009aog110.obsmtp.com ([74.125.149.203]:38131 "EHLO
-	na3sys009aog110.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1758774Ab1FWJEE convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jun 2011 05:04:04 -0400
-In-Reply-To: <11291403.110251308714504687.JavaMail.weblogic@epml08>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:36379 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758245Ab1FWKGW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Jun 2011 06:06:22 -0400
+Content-Disposition: inline
+In-Reply-To: <E1QZPAo-0002XO-9G@rmk-PC.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jg1.han@samsung.com
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Jong-Hun Han <jonghun.han@samsung.com>, ANAND KUMAR N <anand.kn@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, THOMAS P ABRAHAM <thomas.ab@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, In-Ki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
 
-2011/6/22 JinGoo Han <jg1.han@samsung.com>:
-> From: Jonghun Han <jonghun.han@samsung.com>
->
-> This patch adds support EXYNOS4 FIMD0 and LTE480WV LCD pannel.
->
-> Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> ---
-> =A0arch/arm/mach-exynos4/mach-smdkc210.c | =A0114 +++++++++++++++++++=
-++++++++++++++
-> =A0arch/arm/mach-exynos4/mach-smdkv310.c | =A0114 +++++++++++++++++++=
-++++++++++++++
-> =A02 files changed, 228 insertions(+), 0 deletions(-)
->
-<<snip>>
-> +static void lcd_lte480wv_set_power(struct plat_lcd_data *pd,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-unsigned int power)
-> +{
-> + =A0 =A0 =A0 if (power) {
-> +#if !defined(CONFIG_BACKLIGHT_PWM)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_request(EXYNOS4_GPD0(1), "GPD0");
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_direction_output(EXYNOS4_GPD0(1), =
-1);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_free(EXYNOS4_GPD0(1));
-> +#endif
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* fire nRESET on power up */
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_request(EXYNOS4_GPX0(6), "GPX0");
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_direction_output(EXYNOS4_GPX0(6), =
-1);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mdelay(100);
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_set_value(EXYNOS4_GPX0(6), 0);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mdelay(10);
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_set_value(EXYNOS4_GPX0(6), 1);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mdelay(10);
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_free(EXYNOS4_GPX0(6));
-> + =A0 =A0 =A0 } else {
-> +#if !defined(CONFIG_BACKLIGHT_PWM)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_request(EXYNOS4_GPD0(1), "GPD0");
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_direction_output(EXYNOS4_GPD0(1), =
-0);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_free(EXYNOS4_GPD0(1));
-> +#endif
-> + =A0 =A0 =A0 }
-> +}
-> +
+On Wed, Jun 22, 2011 at 04:16:58PM +0100, Russell King - ARM Linux wrote:
+> +	/* Now branch to the common CPU resume function */
+> +	ldr	r0, =cpu_resume
+> +	bx	r0
+>  
+> +	.ltorg
 
-have you considered using gpio_request_one instead ? It simplifies the
-three step API.
+A slight correction - firstly this code does not run from SRAM.
+Secondly, this will try to branch to the virtual address of cpu_resume
+which is not a good idea.
 
-<<snip>>
+Replace this with:
+	b	cpu_resume
 
-> + =A0 =A0 =A0 if (power) {
-> +#if !defined(CONFIG_BACKLIGHT_PWM)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_request(EXYNOS4_GPD0(1), "GPD0");
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_direction_output(EXYNOS4_GPD0(1), =
-1);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_free(EXYNOS4_GPD0(1));
-> +#endif
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* fire nRESET on power up */
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_request(EXYNOS4_GPX0(6), "GPX0");
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_direction_output(EXYNOS4_GPX0(6), =
-1);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mdelay(100);
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_set_value(EXYNOS4_GPX0(6), 0);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mdelay(10);
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_set_value(EXYNOS4_GPX0(6), 1);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mdelay(10);
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_free(EXYNOS4_GPX0(6));
-> + =A0 =A0 =A0 } else {
-> +#if !defined(CONFIG_BACKLIGHT_PWM)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_request(EXYNOS4_GPD0(1), "GPD0");
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_direction_output(EXYNOS4_GPD0(1), =
-0);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_free(EXYNOS4_GPD0(1));
-> +#endif
-> + =A0 =A0 =A0 }
-> +}
-
-same comment as above.
-
-<<snip>>
-
-
-
---=20
-Thanks and regards,
-Mythri.
+and comment out the auxillary control register write in proc-v7.S, and
+it should work on OMAP3.
