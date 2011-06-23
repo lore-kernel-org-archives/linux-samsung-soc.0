@@ -1,37 +1,49 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] i2c-s3c2410: Remove useless break code
-Date: Thu, 23 Jun 2011 21:37:20 +0900
-Message-ID: <1308832640-8311-1-git-send-email-kgene.kim@samsung.com>
+From: Banajit Goswami <banajit.goswami@gmail.com>
+Subject: Re: [PATCH] ARM: EXYNOS4: Add PWM backlight support on Samsung SMDKV310
+Date: Thu, 23 Jun 2011 19:23:07 +0530
+Message-ID: <BANLkTin3XUaSYALWCQqdaPWY7Ys=wE1R2A@mail.gmail.com>
+References: <22693111.118621308725759945.JavaMail.weblogic@epv6ml03>
+	<BANLkTi=SqB7NHQ7vStegFgQjihoQRmzVCw@mail.gmail.com>
+	<BANLkTikb33PCQtiVmcVm38-ptZPMXMk60g@mail.gmail.com>
+	<017201cc319a$f2571660$d7054320$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:54759 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758959Ab1FWMrF (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:48973 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758934Ab1FWNxJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jun 2011 08:47:05 -0400
+	Thu, 23 Jun 2011 09:53:09 -0400
+Received: by fxm17 with SMTP id 17so1283683fxm.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jun 2011 06:53:08 -0700 (PDT)
+In-Reply-To: <017201cc319a$f2571660$d7054320$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
-Cc: ben-linux@fluff.org, Jonghwan Choi <jhbird.choi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: jg1.han@samsung.com, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
 
-From: Jonghwan Choi <jhbird.choi@samsung.com>
+On Thu, Jun 23, 2011 at 5:14 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Banajit Goswami wrote:
+>>
+>> > From: JinGoo Han <jg1.han@samsung.com>
+>> >
+>> > Hi, Banajit.
+>> Hi Jingoo,
+>>
+> Hi all,
+Hello,
 
-Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- drivers/i2c/busses/i2c-s3c2410.c |    1 -
- 1 files changed, 0 insertions(+), 1 deletions(-)
+> Hmm...
+> If the same code is required into each boards, please don't add them on both.
+>
+> I think, we can avoid duplication...
+Yes, I have already started working on it.
+I can send it by tomorrow.
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 6c00c10..553b9cc 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -264,7 +264,6 @@ static int i2s_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
- 	case STATE_IDLE:
- 		dev_err(i2c->dev, "%s: called in STATE_IDLE\n", __func__);
- 		goto out;
--		break;
- 
- 	case STATE_STOP:
- 		dev_err(i2c->dev, "%s: called in STATE_STOP\n", __func__);
--- 
-1.7.1
+> Thanks.
+>
+> Best regards,
+> Kgene.
+
+Thanks,
+Banajit
