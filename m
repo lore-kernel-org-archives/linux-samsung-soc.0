@@ -1,82 +1,117 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 7/7] ARM: EXYNOS4: Move S5P_CENTRAL_SEQ_CONFIGURATION
- setting	for PM
-Date: Thu, 23 Jun 2011 17:05:39 +0900
-Message-ID: <016101cc317c$5a69f160$0f3dd420$%kim@samsung.com>
-References: <1308732405-16664-1-git-send-email-kgene.kim@samsung.com>
- <1308732405-16664-8-git-send-email-kgene.kim@samsung.com>
- <4E01DBC5.7000006@ru.mvista.com>
+From: "K, Mythri P" <mythripk@ti.com>
+Subject: Re: [PATCH V4 5/5] ARM: EXYNOS4: Add platform data for EXYNOS4 FIMD
+ and LTE480WV platform-lcd
+Date: Thu, 23 Jun 2011 14:33:43 +0530
+Message-ID: <BANLkTin7J=fBbp+4Ti_a2D6bgU15sVZHzg@mail.gmail.com>
+References: <11291403.110251308714504687.JavaMail.weblogic@epml08>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:63547 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750913Ab1FWIGF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jun 2011 04:06:05 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LN800D86H5DW2N0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 23 Jun 2011 17:05:45 +0900 (KST)
-Received: from kgenekim ([12.23.119.139])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LN80052NH5LFG@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 23 Jun 2011 17:05:45 +0900 (KST)
-In-reply-to: <4E01DBC5.7000006@ru.mvista.com>
-Content-language: ko
+Received: from na3sys009aog110.obsmtp.com ([74.125.149.203]:38131 "EHLO
+	na3sys009aog110.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1758774Ab1FWJEE convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Jun 2011 05:04:04 -0400
+In-Reply-To: <11291403.110251308714504687.JavaMail.weblogic@epml08>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sergei Shtylyov' <sshtylyov@mvista.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Jaecheol Lee' <jc.lee@samsung.com>, ben-linux@fluff.org
+To: jg1.han@samsung.com
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Jong-Hun Han <jonghun.han@samsung.com>, ANAND KUMAR N <anand.kn@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, THOMAS P ABRAHAM <thomas.ab@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, In-Ki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>
 
-Sergei Shtylyov wrote:
-> 
-> Hello.
-> 
-Hi :)
+2011/6/22 JinGoo Han <jg1.han@samsung.com>:
+> From: Jonghun Han <jonghun.han@samsung.com>
+>
+> This patch adds support EXYNOS4 FIMD0 and LTE480WV LCD pannel.
+>
+> Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> ---
+> =A0arch/arm/mach-exynos4/mach-smdkc210.c | =A0114 +++++++++++++++++++=
+++++++++++++++
+> =A0arch/arm/mach-exynos4/mach-smdkv310.c | =A0114 +++++++++++++++++++=
+++++++++++++++
+> =A02 files changed, 228 insertions(+), 0 deletions(-)
+>
+<<snip>>
+> +static void lcd_lte480wv_set_power(struct plat_lcd_data *pd,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+unsigned int power)
+> +{
+> + =A0 =A0 =A0 if (power) {
+> +#if !defined(CONFIG_BACKLIGHT_PWM)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_request(EXYNOS4_GPD0(1), "GPD0");
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_direction_output(EXYNOS4_GPD0(1), =
+1);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_free(EXYNOS4_GPD0(1));
+> +#endif
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* fire nRESET on power up */
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_request(EXYNOS4_GPX0(6), "GPX0");
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_direction_output(EXYNOS4_GPX0(6), =
+1);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mdelay(100);
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_set_value(EXYNOS4_GPX0(6), 0);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mdelay(10);
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_set_value(EXYNOS4_GPX0(6), 1);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mdelay(10);
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_free(EXYNOS4_GPX0(6));
+> + =A0 =A0 =A0 } else {
+> +#if !defined(CONFIG_BACKLIGHT_PWM)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_request(EXYNOS4_GPD0(1), "GPD0");
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_direction_output(EXYNOS4_GPD0(1), =
+0);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_free(EXYNOS4_GPD0(1));
+> +#endif
+> + =A0 =A0 =A0 }
+> +}
+> +
 
-> On 22-06-2011 12:46, Kukjin Kim wrote:
-> 
-> > From: Jaecheol Lee<jc.lee@samsung.com>
-> 
-> > We need to balance between set and check
-> S5P_CENTRAL_SEQ_CONFIGURATION
-> > register in syscore_ops suspend/resume function when failure in enter
-> > suspend mode. Moved this register setting for PM for the purpose of
-balancing.
-> 
-> > Signed-off-by: Jaecheol Lee<jc.lee@samsung.com>
-> > Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
-> > ---
-> >   arch/arm/mach-exynos4/pm.c |   22 ++++++++++++++--------
-> >   1 files changed, 14 insertions(+), 8 deletions(-)
-> 
-> > diff --git a/arch/arm/mach-exynos4/pm.c b/arch/arm/mach-exynos4/pm.c
-> > index b037fba..a103c13 100644
-> > --- a/arch/arm/mach-exynos4/pm.c
-> > +++ b/arch/arm/mach-exynos4/pm.c
-> [...]
-> > @@ -413,6 +405,19 @@ static __init int exynos4_pm_drvinit(void)
-> >   }
-> >   arch_initcall(exynos4_pm_drvinit);
-> >
-> > +static int exynos4_pm_suspend(void)
-> > +{
-> > +	unsigned long tmp;
-> > +
-> > +	/* Setting Central Sequence Register for power down mode */
-> > +
-> > +	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
-> > +	tmp &= ~(S5P_CENTRAL_LOWPWR_CFG);
-> 
->     Could drop useless parens, while at it.
-> 
-Sergei, thanks ;)
+have you considered using gpio_request_one instead ? It simplifies the
+three step API.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+<<snip>>
+
+> + =A0 =A0 =A0 if (power) {
+> +#if !defined(CONFIG_BACKLIGHT_PWM)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_request(EXYNOS4_GPD0(1), "GPD0");
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_direction_output(EXYNOS4_GPD0(1), =
+1);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_free(EXYNOS4_GPD0(1));
+> +#endif
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* fire nRESET on power up */
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_request(EXYNOS4_GPX0(6), "GPX0");
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_direction_output(EXYNOS4_GPX0(6), =
+1);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mdelay(100);
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_set_value(EXYNOS4_GPX0(6), 0);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mdelay(10);
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_set_value(EXYNOS4_GPX0(6), 1);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mdelay(10);
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_free(EXYNOS4_GPX0(6));
+> + =A0 =A0 =A0 } else {
+> +#if !defined(CONFIG_BACKLIGHT_PWM)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_request(EXYNOS4_GPD0(1), "GPD0");
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_direction_output(EXYNOS4_GPD0(1), =
+0);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 gpio_free(EXYNOS4_GPD0(1));
+> +#endif
+> + =A0 =A0 =A0 }
+> +}
+
+same comment as above.
+
+<<snip>>
+
+
+
+--=20
+Thanks and regards,
+Mythri.
