@@ -1,49 +1,36 @@
-From: Banajit Goswami <banajit.goswami@gmail.com>
-Subject: Re: [PATCH] ARM: EXYNOS4: Add PWM backlight support on Samsung SMDKV310
-Date: Thu, 23 Jun 2011 19:23:07 +0530
-Message-ID: <BANLkTin3XUaSYALWCQqdaPWY7Ys=wE1R2A@mail.gmail.com>
-References: <22693111.118621308725759945.JavaMail.weblogic@epv6ml03>
-	<BANLkTi=SqB7NHQ7vStegFgQjihoQRmzVCw@mail.gmail.com>
-	<BANLkTikb33PCQtiVmcVm38-ptZPMXMk60g@mail.gmail.com>
-	<017201cc319a$f2571660$d7054320$%kim@samsung.com>
+From: Kevin Hilman <khilman@ti.com>
+Subject: Re: [PATCH 25/25] ARM: pm: omap34xx: convert to generic suspend/resume support
+Date: Thu, 23 Jun 2011 12:05:28 -0700
+Message-ID: <874o3g9xmv.fsf@ti.com>
+References: <20110622150816.GT23234@n2100.arm.linux.org.uk>
+	<E1QZPAo-0002XO-9G@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:48973 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758934Ab1FWNxJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jun 2011 09:53:09 -0400
-Received: by fxm17 with SMTP id 17so1283683fxm.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jun 2011 06:53:08 -0700 (PDT)
-In-Reply-To: <017201cc319a$f2571660$d7054320$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <E1QZPAo-0002XO-9G@rmk-PC.arm.linux.org.uk> (Russell King's
+	message of "Wed, 22 Jun 2011 16:16:58 +0100")
+Sender: linux-omap-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: jg1.han@samsung.com, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
 
-On Thu, Jun 23, 2011 at 5:14 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Banajit Goswami wrote:
->>
->> > From: JinGoo Han <jg1.han@samsung.com>
->> >
->> > Hi, Banajit.
->> Hi Jingoo,
->>
-> Hi all,
-Hello,
+Hi Russell,
 
-> Hmm...
-> If the same code is required into each boards, please don't add them on both.
+Russell King - ARM Linux <linux@arm.linux.org.uk> writes:
+
+> Convert sa11x0 to use the generic CPU suspend/resume support, rather
+> than implementing its own version.  Tested on 3430 LDP.
 >
-> I think, we can avoid duplication...
-Yes, I have already started working on it.
-I can send it by tomorrow.
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 
-> Thanks.
->
-> Best regards,
-> Kgene.
+I tested this on 3430/n900 and 3530/Overo and it worked fine for
+retention, but not for off.
 
-Thanks,
-Banajit
+Testing with off-mode, I found the MULTI_CPU path to be broken in
+cpu_suspend (jumping to zero.)  Rebuilding for only OMAP3, it worked
+fine for full-chip retention in suspend and idle as well as full-chip
+off in suspend and idle.
+
+I'm digging into the MULTI_CPU path now.
+
+Kevin
