@@ -1,93 +1,53 @@
-From: JinGoo Han <jg1.han@samsung.com>
-Subject: Re: Re: [PATCH V4 5/5] ARM: EXYNOS4: Add platform data for EXYNOS4
- FIMD and LTE480WV platform-lcd
-Date: Thu, 23 Jun 2011 11:08:57 +0000 (GMT)
-Message-ID: <3561939.168581308827336693.JavaMail.weblogic@epml08>
-Reply-To: jg1.han@samsung.com
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: EXYNOS4: Add PWM backlight support on Samsung SMDKV310
+Date: Thu, 23 Jun 2011 20:44:37 +0900
+Message-ID: <017201cc319a$f2571660$d7054320$%kim@samsung.com>
+References: <22693111.118621308725759945.JavaMail.weblogic@epv6ml03>
+ <BANLkTi=SqB7NHQ7vStegFgQjihoQRmzVCw@mail.gmail.com>
+ <BANLkTikb33PCQtiVmcVm38-ptZPMXMk60g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:29886 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:36912 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754214Ab1FWLI7 (ORCPT
+	with ESMTP id S1759289Ab1FWLoq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jun 2011 07:08:59 -0400
-Received: from epcpsbge4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	Thu, 23 Jun 2011 07:44:46 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
  by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LN800BCSPM6HW50@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 23 Jun 2011 20:08:58 +0900 (KST)
-MIME-version: 1.0
+ 2010)) with ESMTP id <0LN800BVZRAJHP50@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 23 Jun 2011 20:44:45 +0900 (KST)
+Received: from kgenekim ([12.23.119.139])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LN8007HERAKO8@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 23 Jun 2011 20:44:45 +0900 (KST)
+In-reply-to: <BANLkTikb33PCQtiVmcVm38-ptZPMXMk60g@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "K, Mythri P" <mythripk@ti.com>
-Cc: JinGoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Jong-Hun Han <jonghun.han@samsung.com>, ANAND KUMAR N <anand.kn@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, THOMAS P ABRAHAM <thomas.ab@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kmpark@infradead.org>, In-Ki Dae <inki.dae@samsung.com>, ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>
+To: 'Banajit Goswami' <banajit.goswami@gmail.com>, jg1.han@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
 
-DQpIaSwgTXl0aHJpLg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51
-eC1mYmRldi1vd25lckB2Z2VyLmtlcm5lbC5vcmcgW21haWx0bzpsaW51eC1mYmRldi0NCj4gb3du
-ZXJAdmdlci5rZXJuZWwub3JnXSBPbiBCZWhhbGYgT2YgSywgTXl0aHJpIFANCj4gU2VudDogVGh1
-cnNkYXksIEp1bmUgMjMsIDIwMTEgNjowNCBQTQ0KPiBUbzogamcxLmhhbkBzYW1zdW5nLmNvbQ0K
-PiBDYzogS3VramluIEtpbTsgUGF1bCBNdW5kdDsgbGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJu
-ZWwub3JnOyBsaW51eC0NCj4gZmJkZXZAdmdlci5rZXJuZWwub3JnOyBKb25nLUh1biBIYW47IEFO
-QU5EIEtVTUFSIE47IFN5bHdlc3RlciBOYXdyb2NraTsNCj4gVEhPTUFTIFAgQUJSQUhBTTsgTWFy
-ZWsgU3p5cHJvd3NraTsgS3l1bmdtaW4gUGFyazsgSW4tS2kgRGFlOyBBUk0gTGludXg7DQo+IEJl
-biBEb29rcw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIFY0IDUvNV0gQVJNOiBFWFlOT1M0OiBBZGQg
-cGxhdGZvcm0gZGF0YSBmb3IgRVhZTk9TNA0KPiBGSU1EIGFuZCBMVEU0ODBXViBwbGF0Zm9ybS1s
-Y2QNCj4gDQo+IDIwMTEvNi8yMiBKaW5Hb28gSGFuIDxqZzEuaGFuQHNhbXN1bmcuY29tPjoNCj4g
-PiBGcm9tOiBKb25naHVuIEhhbiA8am9uZ2h1bi5oYW5Ac2Ftc3VuZy5jb20+DQo+ID4NCj4gPiBU
-aGlzIHBhdGNoIGFkZHMgc3VwcG9ydCBFWFlOT1M0IEZJTUQwIGFuZCBMVEU0ODBXViBMQ0QgcGFu
-bmVsLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogSm9uZ2h1biBIYW4gPGpvbmdodW4uaGFuQHNh
-bXN1bmcuY29tPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEppbmdvbyBIYW4gPGpnMS5oYW5Ac2Ftc3Vu
-Zy5jb20+DQo+ID4gLS0tDQo+ID4gIGFyY2gvYXJtL21hY2gtZXh5bm9zNC9tYWNoLXNtZGtjMjEw
-LmMgfCAgMTE0DQo+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICBhcmNo
-L2FybS9tYWNoLWV4eW5vczQvbWFjaC1zbWRrdjMxMC5jIHwgIDExNA0KPiArKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysNCj4gPiAgMiBmaWxlcyBjaGFuZ2VkLCAyMjggaW5zZXJ0aW9u
-cygrKSwgMCBkZWxldGlvbnMoLSkNCj4gPg0KPiA8PHNuaXA+Pg0KPiA+ICtzdGF0aWMgdm9pZCBs
-Y2RfbHRlNDgwd3Zfc2V0X3Bvd2VyKHN0cnVjdCBwbGF0X2xjZF9kYXRhICpwZCwNCj4gPiArICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGludCBwb3dlcikNCj4gPiAr
-ew0KPiA+ICsgICAgICAgaWYgKHBvd2VyKSB7DQo+ID4gKyNpZiAhZGVmaW5lZChDT05GSUdfQkFD
-S0xJR0hUX1BXTSkNCj4gPiArICAgICAgICAgICAgICAgZ3Bpb19yZXF1ZXN0KEVYWU5PUzRfR1BE
-MCgxKSwgIkdQRDAiKTsNCj4gPiArICAgICAgICAgICAgICAgZ3Bpb19kaXJlY3Rpb25fb3V0cHV0
-KEVYWU5PUzRfR1BEMCgxKSwgMSk7DQo+ID4gKyAgICAgICAgICAgICAgIGdwaW9fZnJlZShFWFlO
-T1M0X0dQRDAoMSkpOw0KPiA+ICsjZW5kaWYNCj4gPiArICAgICAgICAgICAgICAgLyogZmlyZSBu
-UkVTRVQgb24gcG93ZXIgdXAgKi8NCj4gPiArICAgICAgICAgICAgICAgZ3Bpb19yZXF1ZXN0KEVY
-WU5PUzRfR1BYMCg2KSwgIkdQWDAiKTsNCj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgIGdwaW9f
-ZGlyZWN0aW9uX291dHB1dChFWFlOT1M0X0dQWDAoNiksIDEpOw0KPiA+ICsgICAgICAgICAgICAg
-ICBtZGVsYXkoMTAwKTsNCj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgIGdwaW9fc2V0X3ZhbHVl
-KEVYWU5PUzRfR1BYMCg2KSwgMCk7DQo+ID4gKyAgICAgICAgICAgICAgIG1kZWxheSgxMCk7DQo+
-ID4gKw0KPiA+ICsgICAgICAgICAgICAgICBncGlvX3NldF92YWx1ZShFWFlOT1M0X0dQWDAoNiks
-IDEpOw0KPiA+ICsgICAgICAgICAgICAgICBtZGVsYXkoMTApOw0KPiA+ICsNCj4gPiArICAgICAg
-ICAgICAgICAgZ3Bpb19mcmVlKEVYWU5PUzRfR1BYMCg2KSk7DQo+ID4gKyAgICAgICB9IGVsc2Ug
-ew0KPiA+ICsjaWYgIWRlZmluZWQoQ09ORklHX0JBQ0tMSUdIVF9QV00pDQo+ID4gKyAgICAgICAg
-ICAgICAgIGdwaW9fcmVxdWVzdChFWFlOT1M0X0dQRDAoMSksICJHUEQwIik7DQo+ID4gKyAgICAg
-ICAgICAgICAgIGdwaW9fZGlyZWN0aW9uX291dHB1dChFWFlOT1M0X0dQRDAoMSksIDApOw0KPiA+
-ICsgICAgICAgICAgICAgICBncGlvX2ZyZWUoRVhZTk9TNF9HUEQwKDEpKTsNCj4gPiArI2VuZGlm
-DQo+ID4gKyAgICAgICB9DQo+ID4gK30NCj4gPiArDQo+IA0KPiBoYXZlIHlvdSBjb25zaWRlcmVk
-IHVzaW5nIGdwaW9fcmVxdWVzdF9vbmUgaW5zdGVhZCA/IEl0IHNpbXBsaWZpZXMgdGhlDQo+IHRo
-cmVlIHN0ZXAgQVBJLg0KWW91J3JlIHJpZ2h0LiBJdCBzZWVtcyB0byBiZSB2ZXJ5IGhlbHBmdWwu
-DQpJIHdpbGwgYXBwbHkgaXQgYW5kIHNlbmQgVjcgcGF0Y2hlcywgc29vbi4NClRoYW5rIHlvdSBm
-b3IgeW91ciByZXBseS4NCj4gDQo+IDw8c25pcD4+DQo+IA0KPiA+ICsgICAgICAgaWYgKHBvd2Vy
-KSB7DQo+ID4gKyNpZiAhZGVmaW5lZChDT05GSUdfQkFDS0xJR0hUX1BXTSkNCj4gPiArICAgICAg
-ICAgICAgICAgZ3Bpb19yZXF1ZXN0KEVYWU5PUzRfR1BEMCgxKSwgIkdQRDAiKTsNCj4gPiArICAg
-ICAgICAgICAgICAgZ3Bpb19kaXJlY3Rpb25fb3V0cHV0KEVYWU5PUzRfR1BEMCgxKSwgMSk7DQo+
-ID4gKyAgICAgICAgICAgICAgIGdwaW9fZnJlZShFWFlOT1M0X0dQRDAoMSkpOw0KPiA+ICsjZW5k
-aWYNCj4gPiArICAgICAgICAgICAgICAgLyogZmlyZSBuUkVTRVQgb24gcG93ZXIgdXAgKi8NCj4g
-PiArICAgICAgICAgICAgICAgZ3Bpb19yZXF1ZXN0KEVYWU5PUzRfR1BYMCg2KSwgIkdQWDAiKTsN
-Cj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgIGdwaW9fZGlyZWN0aW9uX291dHB1dChFWFlOT1M0
-X0dQWDAoNiksIDEpOw0KPiA+ICsgICAgICAgICAgICAgICBtZGVsYXkoMTAwKTsNCj4gPiArDQo+
-ID4gKyAgICAgICAgICAgICAgIGdwaW9fc2V0X3ZhbHVlKEVYWU5PUzRfR1BYMCg2KSwgMCk7DQo+
-ID4gKyAgICAgICAgICAgICAgIG1kZWxheSgxMCk7DQo+ID4gKw0KPiA+ICsgICAgICAgICAgICAg
-ICBncGlvX3NldF92YWx1ZShFWFlOT1M0X0dQWDAoNiksIDEpOw0KPiA+ICsgICAgICAgICAgICAg
-ICBtZGVsYXkoMTApOw0KPiA+ICsNCj4gPiArICAgICAgICAgICAgICAgZ3Bpb19mcmVlKEVYWU5P
-UzRfR1BYMCg2KSk7DQo+ID4gKyAgICAgICB9IGVsc2Ugew0KPiA+ICsjaWYgIWRlZmluZWQoQ09O
-RklHX0JBQ0tMSUdIVF9QV00pDQo+ID4gKyAgICAgICAgICAgICAgIGdwaW9fcmVxdWVzdChFWFlO
-T1M0X0dQRDAoMSksICJHUEQwIik7DQo+ID4gKyAgICAgICAgICAgICAgIGdwaW9fZGlyZWN0aW9u
-X291dHB1dChFWFlOT1M0X0dQRDAoMSksIDApOw0KPiA+ICsgICAgICAgICAgICAgICBncGlvX2Zy
-ZWUoRVhZTk9TNF9HUEQwKDEpKTsNCj4gPiArI2VuZGlmDQo+ID4gKyAgICAgICB9DQo+ID4gK30N
-Cj4gDQo+IHNhbWUgY29tbWVudCBhcyBhYm92ZS4NCj4gDQo+IDw8c25pcD4+DQo+IA0KPiANCj4g
-DQo+IC0tDQo+IFRoYW5rcyBhbmQgcmVnYXJkcywNCj4gTXl0aHJpLg0KPiAtLQ0KPiBUbyB1bnN1
-YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgt
-ZmJkZXYiIGluDQo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJu
-ZWwub3JnDQo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcv
-bWFqb3Jkb21vLWluZm8uaHRtbA0K
+Banajit Goswami wrote:
+> 
+> > From: JinGoo Han <jg1.han@samsung.com>
+> >
+> > Hi, Banajit.
+> Hi Jingoo,
+> 
+Hi all,
+
+Hmm...
+If the same code is required into each boards, please don't add them on both.
+
+I think, we can avoid duplication...
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
