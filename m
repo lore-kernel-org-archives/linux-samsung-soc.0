@@ -1,36 +1,71 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 25/25] ARM: pm: omap34xx: convert to generic
-	suspend/resume support
-Date: Thu, 23 Jun 2011 11:06:10 +0100
-Message-ID: <20110623100610.GD9449@n2100.arm.linux.org.uk>
-References: <20110622150816.GT23234@n2100.arm.linux.org.uk> <E1QZPAo-0002XO-9G@rmk-PC.arm.linux.org.uk>
+From: Banajit Goswami <banajit.goswami@gmail.com>
+Subject: Re: [PATCH] ARM: EXYNOS4: Add PWM backlight support on Samsung SMDKV310
+Date: Thu, 23 Jun 2011 15:42:09 +0530
+Message-ID: <BANLkTikb33PCQtiVmcVm38-ptZPMXMk60g@mail.gmail.com>
+References: <22693111.118621308725759945.JavaMail.weblogic@epv6ml03>
+	<BANLkTi=SqB7NHQ7vStegFgQjihoQRmzVCw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:36379 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758245Ab1FWKGW (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:53565 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759069Ab1FWKMK convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Jun 2011 06:06:22 -0400
-Content-Disposition: inline
-In-Reply-To: <E1QZPAo-0002XO-9G@rmk-PC.arm.linux.org.uk>
+	Thu, 23 Jun 2011 06:12:10 -0400
+Received: by fxm17 with SMTP id 17so1175731fxm.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Jun 2011 03:12:09 -0700 (PDT)
+In-Reply-To: <BANLkTi=SqB7NHQ7vStegFgQjihoQRmzVCw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
+To: jg1.han@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com
 
-On Wed, Jun 22, 2011 at 04:16:58PM +0100, Russell King - ARM Linux wrote:
-> +	/* Now branch to the common CPU resume function */
-> +	ldr	r0, =cpu_resume
-> +	bx	r0
->  
-> +	.ltorg
+> From: JinGoo Han <jg1.han@samsung.com>
+>
+> Hi, Banajit.
+Hi Jingoo,
 
-A slight correction - firstly this code does not run from SRAM.
-Secondly, this will try to branch to the virtual address of cpu_resume
-which is not a good idea.
+>>
+>> Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
+>> ---
+=2E..
+<snip>
+=2E..
+>> + =C2=A0 =C2=A0 .pwm_period_ns =C2=A0=3D 78770,
+> Please use 1000 as pwm_period_ns instead of 78770 as follows:
+> - =C2=A0 =C2=A0 =C2=A0 .pwm_period_ns =C2=A0=3D 78770,
+> + =C2=A0 =C2=A0 =C2=A0 .pwm_period_ns =C2=A0=3D 1000,
+>
+Yes, I will modify the period value and send updated patch
 
-Replace this with:
-	b	cpu_resume
+> The value '78770' makes noise related to resonance at LCD board.
+>
+> I will explain how I get the value of PWM period.
+>
+> The SMDK boards use LT3591 as backlight LED driver of LTE480WV LCD
+> According to the LT3591 datasheet, the switching frequency should
+> be 1MHz. So, PWM period is calculated by following formula:
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0PWM period =3D 1/switching frequency
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =3D 1/1MHz
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =3D 1000 ns
+>
+Thanks for the explanation.
 
-and comment out the auxillary control register write in proc-v7.S, and
-it should work on OMAP3.
+> You can find LT3591 datasheet easily on the Internet. Please refer to=
+ it
+> for more information.
+> Good luck.
+Thanks you.
+
+>> + =C2=A0 =C2=A0 .init =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D smdkv31=
+0_backlight_init,
+=2E..
+<snip>
+=2E..
+>
+
+Regards,
+Banajit
