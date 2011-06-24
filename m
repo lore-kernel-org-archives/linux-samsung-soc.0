@@ -1,7 +1,7 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V2 6/6] S5PV210: Add reboot notifier to prevent system hang
-Date: Fri, 24 Jun 2011 16:04:18 +0900
-Message-ID: <1308899058-24318-7-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH V2 3/6] S5PV210: Add pm_notifier to prevent system unstable
+Date: Fri, 24 Jun 2011 16:04:15 +0900
+Message-ID: <1308899058-24318-4-git-send-email-kgene.kim@samsung.com>
 References: <1308899058-24318-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <cpufreq-owner@vger.kernel.org>
 In-Reply-To: <1308899058-24318-1-git-send-email-kgene.kim@samsung.com>
@@ -12,41 +12,61 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Huisung Kang <hs1218.kang@samsung.com>
 
-When system reboot, the CPUFREQ level should be 800MHz to prevent
-system lockup.
+Minimum 800MHz is needed to enter/exit suspend mode due to voltage mismatch.
 
 Signed-off-by: Huisung Kang <hs1218.kang@samsung.com>
 Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- drivers/cpufreq/s5pv210-cpufreq.c |   19 +++++++++++++++++++
- 1 files changed, 19 insertions(+), 0 deletions(-)
+ drivers/cpufreq/s5pv210-cpufreq.c |   34 ++++++++++++++++++++++++++++++++++
+ 1 files changed, 34 insertions(+), 0 deletions(-)
 
 diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index 155242c..7c4bb07 100644
+index 9a5b284..79b1b4e 100644
 --- a/drivers/cpufreq/s5pv210-cpufreq.c
 +++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -16,6 +16,7 @@
- #include <linux/clk.h>
+@@ -17,6 +17,7 @@
  #include <linux/io.h>
  #include <linux/cpufreq.h>
-+#include <linux/reboot.h>
  #include <linux/regulator/consumer.h>
- #include <linux/suspend.h>
++#include <linux/suspend.h>
  
-@@ -590,6 +591,19 @@ static int s5pv210_cpufreq_notifier_event(struct notifier_block *this,
- 	return NOTIFY_DONE;
+ #include <mach/map.h>
+ #include <mach/regs-clock.h>
+@@ -30,6 +31,9 @@ static struct cpufreq_freqs freqs;
+ #define APLL_VAL_1000	((1 << 31) | (125 << 16) | (3 << 8) | 1)
+ #define APLL_VAL_800	((1 << 31) | (100 << 16) | (3 << 8) | 1)
+ 
++/* Use 800MHz when entering sleep mode */
++#define SLEEP_FREQ	(800 * 1000)
++
+ /*
+  * relation has an additional symantics other than the standard of cpufreq
+  * DISALBE_FURTHER_CPUFREQ: disable further access to target
+@@ -552,6 +556,30 @@ out_dmc0:
+ 	return ret;
  }
  
-+static int s5pv210_cpufreq_reboot_notifier_event(struct notifier_block *this,
-+						 unsigned long event, void *ptr)
++static int s5pv210_cpufreq_notifier_event(struct notifier_block *this,
++					  unsigned long event, void *ptr)
 +{
 +	int ret;
 +
-+	ret = cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ,
-+				    DISABLE_FURTHER_CPUFREQ);
-+	if (ret < 0)
-+		return NOTIFY_BAD;
++	switch (event) {
++	case PM_SUSPEND_PREPARE:
++		ret = cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ,
++					    DISABLE_FURTHER_CPUFREQ);
++		if (ret < 0)
++			return NOTIFY_BAD;
++
++		return NOTIFY_OK;
++	case PM_POST_RESTORE:
++	case PM_POST_SUSPEND:
++		cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ,
++				      ENABLE_FURTHER_CPUFREQ);
++
++		return NOTIFY_OK;
++	}
 +
 +	return NOTIFY_DONE;
 +}
@@ -54,25 +74,26 @@ index 155242c..7c4bb07 100644
  static struct cpufreq_driver s5pv210_driver = {
  	.flags		= CPUFREQ_STICKY,
  	.verify		= s5pv210_verify_speed,
-@@ -607,6 +621,10 @@ static struct notifier_block s5pv210_cpufreq_notifier = {
- 	.notifier_call = s5pv210_cpufreq_notifier_event,
+@@ -565,6 +593,10 @@ static struct cpufreq_driver s5pv210_driver = {
+ #endif
  };
  
-+static struct notifier_block s5pv210_cpufreq_reboot_notifier = {
-+	.notifier_call = s5pv210_cpufreq_reboot_notifier_event,
++static struct notifier_block s5pv210_cpufreq_notifier = {
++	.notifier_call = s5pv210_cpufreq_notifier_event,
 +};
 +
  static int __init s5pv210_cpufreq_init(void)
  {
  	arm_regulator = regulator_get(NULL, "vddarm");
-@@ -623,6 +641,7 @@ static int __init s5pv210_cpufreq_init(void)
+@@ -580,6 +612,8 @@ static int __init s5pv210_cpufreq_init(void)
+ 		return PTR_ERR(int_regulator);
  	}
  
- 	register_pm_notifier(&s5pv210_cpufreq_notifier);
-+	register_reboot_notifier(&s5pv210_cpufreq_reboot_notifier);
- 
++	register_pm_notifier(&s5pv210_cpufreq_notifier);
++
  	return cpufreq_register_driver(&s5pv210_driver);
  }
+ 
 -- 
 1.7.1
 
