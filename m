@@ -1,55 +1,78 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V2 5/6] [CPUFREQ] S5PV210: Adjust udelay prior to voltage scaling down
-Date: Fri, 24 Jun 2011 16:04:17 +0900
-Message-ID: <1308899058-24318-6-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH V2 6/6] S5PV210: Add reboot notifier to prevent system hang
+Date: Fri, 24 Jun 2011 16:04:18 +0900
+Message-ID: <1308899058-24318-7-git-send-email-kgene.kim@samsung.com>
 References: <1308899058-24318-1-git-send-email-kgene.kim@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:33322 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753028Ab1FXHMP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Jun 2011 03:12:15 -0400
+Return-path: <cpufreq-owner@vger.kernel.org>
 In-Reply-To: <1308899058-24318-1-git-send-email-kgene.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: cpufreq-owner@vger.kernel.org
 To: cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: davej@redhat.com, Todd Poynor <toddpoynor@google.com>, Jonghwan Choi <jhbird.choi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: davej@redhat.com, Huisung Kang <hs1218.kang@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Todd Poynor <toddpoynor@google.com>
+From: Huisung Kang <hs1218.kang@samsung.com>
 
-Voltage scaling accesses the MAX8998 regulators over bit-banged I2C
-with lots of udelays.  In the case of decreasing CPU speed, the
-number of loops per us for udelay needs to be adjusted prior to
-decreasing voltage to avoid delaying for up to 10X too long.
+When system reboot, the CPUFREQ level should be 800MHz to prevent
+system lockup.
 
-Signed-off-by: Todd Poynor <toddpoynor@google.com>
+Signed-off-by: Huisung Kang <hs1218.kang@samsung.com>
 Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- drivers/cpufreq/s5pv210-cpufreq.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/cpufreq/s5pv210-cpufreq.c |   19 +++++++++++++++++++
+ 1 files changed, 19 insertions(+), 0 deletions(-)
 
 diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index 7fba356..155242c 100644
+index 155242c..7c4bb07 100644
 --- a/drivers/cpufreq/s5pv210-cpufreq.c
 +++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -467,6 +467,8 @@ static int s5pv210_target(struct cpufreq_policy *policy,
- 		}
- 	}
+@@ -16,6 +16,7 @@
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ #include <linux/cpufreq.h>
++#include <linux/reboot.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/suspend.h>
  
-+	cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
+@@ -590,6 +591,19 @@ static int s5pv210_cpufreq_notifier_event(struct notifier_block *this,
+ 	return NOTIFY_DONE;
+ }
+ 
++static int s5pv210_cpufreq_reboot_notifier_event(struct notifier_block *this,
++						 unsigned long event, void *ptr)
++{
++	int ret;
 +
- 	if (freqs.new < freqs.old) {
- 		regulator_set_voltage(int_regulator,
- 				int_volt, int_volt_max);
-@@ -475,8 +477,6 @@ static int s5pv210_target(struct cpufreq_policy *policy,
- 				arm_volt, arm_volt_max);
++	ret = cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ,
++				    DISABLE_FURTHER_CPUFREQ);
++	if (ret < 0)
++		return NOTIFY_BAD;
++
++	return NOTIFY_DONE;
++}
++
+ static struct cpufreq_driver s5pv210_driver = {
+ 	.flags		= CPUFREQ_STICKY,
+ 	.verify		= s5pv210_verify_speed,
+@@ -607,6 +621,10 @@ static struct notifier_block s5pv210_cpufreq_notifier = {
+ 	.notifier_call = s5pv210_cpufreq_notifier_event,
+ };
+ 
++static struct notifier_block s5pv210_cpufreq_reboot_notifier = {
++	.notifier_call = s5pv210_cpufreq_reboot_notifier_event,
++};
++
+ static int __init s5pv210_cpufreq_init(void)
+ {
+ 	arm_regulator = regulator_get(NULL, "vddarm");
+@@ -623,6 +641,7 @@ static int __init s5pv210_cpufreq_init(void)
  	}
  
--	cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
--
- 	printk(KERN_DEBUG "Perf changed[L%d]\n", index);
+ 	register_pm_notifier(&s5pv210_cpufreq_notifier);
++	register_reboot_notifier(&s5pv210_cpufreq_reboot_notifier);
  
- exit:
+ 	return cpufreq_register_driver(&s5pv210_driver);
+ }
 -- 
 1.7.1
+
