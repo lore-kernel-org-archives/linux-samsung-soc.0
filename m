@@ -1,95 +1,140 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V2 3/6] S5PV210: Add pm_notifier to prevent system unstable
-Date: Fri, 24 Jun 2011 16:04:15 +0900
-Message-ID: <1308899058-24318-4-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH V2 2/6] S5PV210: Add arm/int voltage control support
+Date: Fri, 24 Jun 2011 16:04:14 +0900
+Message-ID: <1308899058-24318-3-git-send-email-kgene.kim@samsung.com>
 References: <1308899058-24318-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <cpufreq-owner@vger.kernel.org>
 In-Reply-To: <1308899058-24318-1-git-send-email-kgene.kim@samsung.com>
 Sender: cpufreq-owner@vger.kernel.org
 To: cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: davej@redhat.com, Huisung Kang <hs1218.kang@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: davej@redhat.com, Jonghwan Choi <jhbird.choi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Huisung Kang <hs1218.kang@samsung.com>
+From: Jonghwan Choi <jhbird.choi@samsung.com>
 
-Minimum 800MHz is needed to enter/exit suspend mode due to voltage mismatch.
-
-Signed-off-by: Huisung Kang <hs1218.kang@samsung.com>
 Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- drivers/cpufreq/s5pv210-cpufreq.c |   34 ++++++++++++++++++++++++++++++++++
- 1 files changed, 34 insertions(+), 0 deletions(-)
+ drivers/cpufreq/s5pv210-cpufreq.c |   71 +++++++++++++++++++++++++++++++++++--
+ 1 files changed, 68 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index 9a5b284..79b1b4e 100644
+index 48a4a90..9a5b284 100644
 --- a/drivers/cpufreq/s5pv210-cpufreq.c
 +++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -17,6 +17,7 @@
+@@ -16,6 +16,7 @@
+ #include <linux/clk.h>
  #include <linux/io.h>
  #include <linux/cpufreq.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/suspend.h>
++#include <linux/regulator/consumer.h>
  
  #include <mach/map.h>
  #include <mach/regs-clock.h>
-@@ -30,6 +31,9 @@ static struct cpufreq_freqs freqs;
- #define APLL_VAL_1000	((1 << 31) | (125 << 16) | (3 << 8) | 1)
- #define APLL_VAL_800	((1 << 31) | (100 << 16) | (3 << 8) | 1)
- 
-+/* Use 800MHz when entering sleep mode */
-+#define SLEEP_FREQ	(800 * 1000)
-+
- /*
-  * relation has an additional symantics other than the standard of cpufreq
-  * DISALBE_FURTHER_CPUFREQ: disable further access to target
-@@ -552,6 +556,30 @@ out_dmc0:
- 	return ret;
- }
- 
-+static int s5pv210_cpufreq_notifier_event(struct notifier_block *this,
-+					  unsigned long event, void *ptr)
-+{
-+	int ret;
-+
-+	switch (event) {
-+	case PM_SUSPEND_PREPARE:
-+		ret = cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ,
-+					    DISABLE_FURTHER_CPUFREQ);
-+		if (ret < 0)
-+			return NOTIFY_BAD;
-+
-+		return NOTIFY_OK;
-+	case PM_POST_RESTORE:
-+	case PM_POST_SUSPEND:
-+		cpufreq_driver_target(cpufreq_cpu_get(0), SLEEP_FREQ,
-+				      ENABLE_FURTHER_CPUFREQ);
-+
-+		return NOTIFY_OK;
-+	}
-+
-+	return NOTIFY_DONE;
-+}
-+
- static struct cpufreq_driver s5pv210_driver = {
- 	.flags		= CPUFREQ_STICKY,
- 	.verify		= s5pv210_verify_speed,
-@@ -565,6 +593,10 @@ static struct cpufreq_driver s5pv210_driver = {
- #endif
+@@ -77,6 +78,40 @@ static struct cpufreq_frequency_table s5pv210_freq_table[] = {
+ 	{0, CPUFREQ_TABLE_END},
  };
  
-+static struct notifier_block s5pv210_cpufreq_notifier = {
-+	.notifier_call = s5pv210_cpufreq_notifier_event,
++static struct regulator *arm_regulator;
++static struct regulator *int_regulator;
++
++struct s5pv210_dvs_conf {
++	int arm_volt;	/* uV */
++	int int_volt;	/* uV */
 +};
 +
- static int __init s5pv210_cpufreq_init(void)
- {
- 	arm_regulator = regulator_get(NULL, "vddarm");
-@@ -580,6 +612,8 @@ static int __init s5pv210_cpufreq_init(void)
- 		return PTR_ERR(int_regulator);
++static const int arm_volt_max = 1350000;
++static const int int_volt_max = 1250000;
++
++static struct s5pv210_dvs_conf dvs_conf[] = {
++	[L0] = {
++		.arm_volt	= 1250000,
++		.int_volt	= 1100000,
++	},
++	[L1] = {
++		.arm_volt	= 1200000,
++		.int_volt	= 1100000,
++	},
++	[L2] = {
++		.arm_volt	= 1050000,
++		.int_volt	= 1100000,
++	},
++	[L3] = {
++		.arm_volt	= 950000,
++		.int_volt	= 1100000,
++	},
++	[L4] = {
++		.arm_volt	= 950000,
++		.int_volt	= 1000000,
++	},
++};
++
+ static u32 clkdiv_val[5][11] = {
+ 	/*
+ 	 * Clock divider value for following
+@@ -157,6 +192,8 @@ static int s5pv210_target(struct cpufreq_policy *policy,
+ 	unsigned int index, priv_index;
+ 	unsigned int pll_changing = 0;
+ 	unsigned int bus_speed_changing = 0;
++	int arm_volt, int_volt;
++	int ret = 0;
+ 
+ 	if (relation & ENABLE_FURTHER_CPUFREQ)
+ 		no_cpufreq_access = false;
+@@ -191,12 +228,23 @@ static int s5pv210_target(struct cpufreq_policy *policy,
+ 					   freqs.old, relation, &priv_index))
+ 		return -EINVAL;
+ 
+-	cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
++	arm_volt = dvs_conf[index].arm_volt;
++	int_volt = dvs_conf[index].int_volt;
+ 
+ 	if (freqs.new > freqs.old) {
+-		/* Voltage up: will be implemented */
++		ret = regulator_set_voltage(arm_regulator,
++				arm_volt, arm_volt_max);
++		if (ret)
++			return ret;
++
++		ret = regulator_set_voltage(int_regulator,
++				int_volt, int_volt_max);
++		if (ret)
++			return ret;
  	}
  
-+	register_pm_notifier(&s5pv210_cpufreq_notifier);
++	cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
++
+ 	/* Check if there need to change PLL */
+ 	if ((index == L0) || (priv_index == L0))
+ 		pll_changing = 1;
+@@ -408,7 +456,11 @@ static int s5pv210_target(struct cpufreq_policy *policy,
+ 	}
+ 
+ 	if (freqs.new < freqs.old) {
+-		/* Voltage down: will be implemented */
++		regulator_set_voltage(int_regulator,
++				int_volt, int_volt_max);
++
++		regulator_set_voltage(arm_regulator,
++				arm_volt, arm_volt_max);
+ 	}
+ 
+ 	cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
+@@ -515,6 +567,19 @@ static struct cpufreq_driver s5pv210_driver = {
+ 
+ static int __init s5pv210_cpufreq_init(void)
+ {
++	arm_regulator = regulator_get(NULL, "vddarm");
++	if (IS_ERR(arm_regulator)) {
++		pr_err("failed to get regulator vddarm");
++		return PTR_ERR(arm_regulator);
++	}
++
++	int_regulator = regulator_get(NULL, "vddint");
++	if (IS_ERR(int_regulator)) {
++		pr_err("failed to get regulator vddint");
++		regulator_put(arm_regulator);
++		return PTR_ERR(int_regulator);
++	}
 +
  	return cpufreq_register_driver(&s5pv210_driver);
  }
