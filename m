@@ -1,144 +1,79 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V2 2/6] S5PV210: Add arm/int voltage control support
-Date: Fri, 24 Jun 2011 16:04:14 +0900
-Message-ID: <1308899058-24318-3-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH V2 1/6] [CPUFREQ] S5PV210: Add additional symantics for "relation" in cpufreq with pm
+Date: Fri, 24 Jun 2011 16:04:13 +0900
+Message-ID: <1308899058-24318-2-git-send-email-kgene.kim@samsung.com>
 References: <1308899058-24318-1-git-send-email-kgene.kim@samsung.com>
-Return-path: <cpufreq-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:33332 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753014Ab1FXHMP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 24 Jun 2011 03:12:15 -0400
 In-Reply-To: <1308899058-24318-1-git-send-email-kgene.kim@samsung.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: davej@redhat.com, Jonghwan Choi <jhbird.choi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: davej@redhat.com, Huisung Kang <hs1218.kang@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Jonghwan Choi <jhbird.choi@samsung.com>
+From: Huisung Kang <hs1218.kang@samsung.com>
 
+Relation has an additional symantics other than standard.
+s5pv310_target funtion have below additional relation.
+- DISABLE_FURTHER_CPUFREQ : disable further access to target
+- ENABLE_FURTHER_CPUFRER : enable access to target
+
+Signed-off-by: Huisung Kang <hs1218.kang@samsung.com>
 Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- drivers/cpufreq/s5pv210-cpufreq.c |   71 +++++++++++++++++++++++++++++++++++--
- 1 files changed, 68 insertions(+), 3 deletions(-)
+ drivers/cpufreq/s5pv210-cpufreq.c |   28 ++++++++++++++++++++++++++++
+ 1 files changed, 28 insertions(+), 0 deletions(-)
 
 diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index 48a4a90..9a5b284 100644
+index a7cb338..48a4a90 100644
 --- a/drivers/cpufreq/s5pv210-cpufreq.c
 +++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -16,6 +16,7 @@
- #include <linux/clk.h>
- #include <linux/io.h>
- #include <linux/cpufreq.h>
-+#include <linux/regulator/consumer.h>
+@@ -30,6 +30,18 @@ static struct cpufreq_freqs freqs;
+ #define APLL_VAL_800	((1 << 31) | (100 << 16) | (3 << 8) | 1)
  
- #include <mach/map.h>
- #include <mach/regs-clock.h>
-@@ -77,6 +78,40 @@ static struct cpufreq_frequency_table s5pv210_freq_table[] = {
- 	{0, CPUFREQ_TABLE_END},
- };
- 
-+static struct regulator *arm_regulator;
-+static struct regulator *int_regulator;
-+
-+struct s5pv210_dvs_conf {
-+	int arm_volt;	/* uV */
-+	int int_volt;	/* uV */
+ /*
++ * relation has an additional symantics other than the standard of cpufreq
++ * DISALBE_FURTHER_CPUFREQ: disable further access to target
++ * ENABLE_FURTUER_CPUFREQ: enable access to target
++ */
++enum cpufreq_access {
++	DISABLE_FURTHER_CPUFREQ = 0x10,
++	ENABLE_FURTHER_CPUFREQ = 0x20,
 +};
 +
-+static const int arm_volt_max = 1350000;
-+static const int int_volt_max = 1250000;
++static bool no_cpufreq_access;
 +
-+static struct s5pv210_dvs_conf dvs_conf[] = {
-+	[L0] = {
-+		.arm_volt	= 1250000,
-+		.int_volt	= 1100000,
-+	},
-+	[L1] = {
-+		.arm_volt	= 1200000,
-+		.int_volt	= 1100000,
-+	},
-+	[L2] = {
-+		.arm_volt	= 1050000,
-+		.int_volt	= 1100000,
-+	},
-+	[L3] = {
-+		.arm_volt	= 950000,
-+		.int_volt	= 1100000,
-+	},
-+	[L4] = {
-+		.arm_volt	= 950000,
-+		.int_volt	= 1000000,
-+	},
-+};
-+
- static u32 clkdiv_val[5][11] = {
- 	/*
- 	 * Clock divider value for following
-@@ -157,6 +192,8 @@ static int s5pv210_target(struct cpufreq_policy *policy,
- 	unsigned int index, priv_index;
++/*
+  * DRAM configurations to calculate refresh counter for changing
+  * frequency of memory.
+  */
+@@ -146,6 +158,22 @@ static int s5pv210_target(struct cpufreq_policy *policy,
  	unsigned int pll_changing = 0;
  	unsigned int bus_speed_changing = 0;
-+	int arm_volt, int_volt;
-+	int ret = 0;
  
- 	if (relation & ENABLE_FURTHER_CPUFREQ)
- 		no_cpufreq_access = false;
-@@ -191,12 +228,23 @@ static int s5pv210_target(struct cpufreq_policy *policy,
- 					   freqs.old, relation, &priv_index))
- 		return -EINVAL;
- 
--	cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
-+	arm_volt = dvs_conf[index].arm_volt;
-+	int_volt = dvs_conf[index].int_volt;
- 
- 	if (freqs.new > freqs.old) {
--		/* Voltage up: will be implemented */
-+		ret = regulator_set_voltage(arm_regulator,
-+				arm_volt, arm_volt_max);
-+		if (ret)
-+			return ret;
++	if (relation & ENABLE_FURTHER_CPUFREQ)
++		no_cpufreq_access = false;
 +
-+		ret = regulator_set_voltage(int_regulator,
-+				int_volt, int_volt_max);
-+		if (ret)
-+			return ret;
- 	}
- 
-+	cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
-+
- 	/* Check if there need to change PLL */
- 	if ((index == L0) || (priv_index == L0))
- 		pll_changing = 1;
-@@ -408,7 +456,11 @@ static int s5pv210_target(struct cpufreq_policy *policy,
- 	}
- 
- 	if (freqs.new < freqs.old) {
--		/* Voltage down: will be implemented */
-+		regulator_set_voltage(int_regulator,
-+				int_volt, int_volt_max);
-+
-+		regulator_set_voltage(arm_regulator,
-+				arm_volt, arm_volt_max);
- 	}
- 
- 	cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
-@@ -515,6 +567,19 @@ static struct cpufreq_driver s5pv210_driver = {
- 
- static int __init s5pv210_cpufreq_init(void)
- {
-+	arm_regulator = regulator_get(NULL, "vddarm");
-+	if (IS_ERR(arm_regulator)) {
-+		pr_err("failed to get regulator vddarm");
-+		return PTR_ERR(arm_regulator);
++	if (no_cpufreq_access) {
++#ifdef CONFIG_PM_VERBOSE
++		pr_err("%s:%d denied access to %s as it is disabled"
++				"temporarily\n", __FILE__, __LINE__, __func__);
++#endif
++		return -EINVAL;
 +	}
 +
-+	int_regulator = regulator_get(NULL, "vddint");
-+	if (IS_ERR(int_regulator)) {
-+		pr_err("failed to get regulator vddint");
-+		regulator_put(arm_regulator);
-+		return PTR_ERR(int_regulator);
-+	}
++	if (relation & DISABLE_FURTHER_CPUFREQ)
++		no_cpufreq_access = true;
 +
- 	return cpufreq_register_driver(&s5pv210_driver);
- }
++	relation &= ~(ENABLE_FURTHER_CPUFREQ | DISABLE_FURTHER_CPUFREQ);
++
+ 	freqs.old = s5pv210_getspeed(0);
  
+ 	if (cpufreq_frequency_table_target(policy, s5pv210_freq_table,
 -- 
 1.7.1
-
