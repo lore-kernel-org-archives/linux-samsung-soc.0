@@ -1,137 +1,282 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH 2/6] serial: samsung: Add device tree support for s5pv210
-	uart driver
-Date: Sun, 26 Jun 2011 17:27:13 -0600
-Message-ID: <BANLkTi=7zYkrLmSEiZZ69gACaG+8k4oa_Q@mail.gmail.com>
-References: <1308567752-13451-1-git-send-email-thomas.abraham@linaro.org>
-	<1308567752-13451-3-git-send-email-thomas.abraham@linaro.org>
-	<BANLkTi=+FKz-uPtSv572y5ORorMeGR8Anw@mail.gmail.com>
-	<BANLkTi=RxEpBrALEQbBD_z6ZiEW24-wsng@mail.gmail.com>
-	<BANLkTi=EVA6LckzWSFMQ07okD4gw-z5Zag@mail.gmail.com>
-	<BANLkTimyEQfRjfbOj9ULnTcmQ3GLJnWxrw@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS4: Support for generic I/O power domains on
+	EXYNOS4210
+Date: Mon, 27 Jun 2011 09:47:34 +0900
+Message-ID: <4E07D326.9000407@samsung.com>
+References: <4E0461BE.5030304@samsung.com> <4E076CC5.3000908@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <BANLkTimyEQfRjfbOj9ULnTcmQ3GLJnWxrw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <4E076CC5.3000908@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sylwester Nawrocki <snjw23@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, linux-pm@lists.linux-foundation.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jun 24, 2011 at 6:27 AM, Thomas Abraham
-<thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> Hi Grant,
->
-> On 24 June 2011 01:38, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org> wrote:
->> Despite the fact that this is exactly what I asked you to write, this
->> ends up being rather ugly. =A0(I originally put in the '*4' to match the
->> behaviour of the existing of_read_number(), but that was a mistake.
->> tglx also pointed it out). =A0How about this instead:
->
-> Your draft implementation below is suggesting that the offset should
-> be in bytes and not cells and so maybe you are suggesting the new
-> approach to support multi-format property values. I have changed the
-> implementation as per your code below.
+Hello,
 
-I've been going back and forth on this.  The offset is most flexible
-if it is in bytes, but most DT data is organized into cells, so a byte
-offset is a little intuitive.  For string properties, it really
-doesn't make sense to have the offset in bytes because the offset
-generally either cannot be known until after reading earlier values in
-the property, or is meaningless without the earlier data in the case
-of mixed value properties.  However, I think I've gotten caught up
-into a case of feature creep on these functions and I've tried to make
-them as flexible as possible.  The reality is that it will almost
-never be useful to obtain only the 2nd or 3rd cell in a property.  In
-those cases, the driver probably needs to parse all the data in the
-property, and therefore it is better to obtain a pointer to the entire
-data block for parsing instead of searching for the property over and
-over again (which is what of_getprop_u32() will do).
+Sylwester Nawrocki wrote:
+> Hello,
+> 
+> On 06/24/2011 12:06 PM, Chanwoo Choi wrote:
+>> Use the generic power domains support to implement support
+>> for power domain on EXYNOS4210.
+>>
+>> This patch is based on your "pm-domains" branch.(v7)
+>>
+>> Signed-off-by: Chanwoo Choi<cw00.choi@samsung.com>
+>> Signed-off-by: Myungjoo Ham<myungjoo.ham@samsung.com>
+>> Signed-off-by: Kyungmin.park<kyungmin.park@samsung.com>
+>> ---
+>>   arch/arm/mach-exynos4/Kconfig                      |    1 +
+>>   arch/arm/mach-exynos4/Makefile                     |    1 +
+>>   arch/arm/mach-exynos4/include/mach/pm-exynos4210.h |   78 ++++++++++++
+>>   arch/arm/mach-exynos4/mach-nuri.c                  |   20 +++
+>>   arch/arm/mach-exynos4/pm-exynos4210.c              |  131 ++++++++++++++++++++
+>>   5 files changed, 231 insertions(+), 0 deletions(-)
+>>   create mode 100644 arch/arm/mach-exynos4/include/mach/pm-exynos4210.h
+>>   create mode 100644 arch/arm/mach-exynos4/pm-exynos4210.c
+>>
+> ...
+> 
+>> diff --git a/arch/arm/mach-exynos4/include/mach/pm-exynos4210.h b/arch/arm/mach-exynos4/include/mach/pm-exynos4210.h
+>> new file mode 100644
+>> index 0000000..fa1c7a0
+>> --- /dev/null
+>> +++ b/arch/arm/mach-exynos4/include/mach/pm-exynos4210.h
+>> @@ -0,0 +1,78 @@
+>> +/* linux/arch/arm/mach-exynos4/include/mach/pm-exynos4.h
+>> + *
+>> + * Exynos4 Power management support
+>> + *
+>> + * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+>> + *		http://www.samsung.com
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +#ifndef __PM_EXYNOS4210_H__
+>> +#define __PM_EXYNOS4210_H__
+>> +
+>> +#include<linux/pm_domain.h>
+>> +
+>> +struct platform_device;
+>> +
+>> +struct exynos4210_pm_domain {
+>> +	struct generic_pm_domain genpd;
+>> +
+>> +	const char *name;
+>> +	void __iomem *base;
+>> +	int boot_on;
+>> +};
+>> +
+>> +static inline struct exynos4210_pm_domain *to_exynos4210_pd(
+>> +		struct generic_pm_domain *pd)
+>> +{
+>> +	return container_of(pd, struct exynos4210_pm_domain, genpd);
+>> +}
+>> +
+>> +#ifdef CONFIG_PM
+>> +enum exynos4210_pd_data {
+>> +	EXYNOS4210_PD_MFC,
+>> +	EXYNOS4210_PD_G3D,
+>> +	EXYNOS4210_PD_LCD0,
+>> +	EXYNOS4210_PD_LCD1,
+>> +	EXYNOS4210_PD_TV,
+>> +	EXYNOS4210_PD_CAM,
+>> +	EXYNOS4210_PD_GPS,
+>> +	EXYNOS4210_PD_MAX_NUM
+>> +};
+>> +
+>> +extern struct exynos4210_pm_domain exynos4210_pd_list[EXYNOS4210_PD_MAX_NUM];
+> 
+> Could this array be made static in ../pm-exynos4210.c ?
+> It looks like all functions using it are there. Plus you have already
+> enum exynos4210_pd_data to identify each power domain.
 
-So, I'm changing the design (for the last time, I promise!).  Rather
-than trying to solve some future theoretical use case, the functions
-should focus on what is actually needed immediately.  Let's drop the
-u64 version, and only implement of_getprop_u32() and
-of_getprop_string().  u64 can always be added at a later date if we
-need it.  Also, we'll drop the offset parameter because I don't
-foresee any situation where it is the right thing to do.  Something
-like this (modifying your latest code):
+It is poosible to define static arrary in ../pm-exynos4210.c,
+but it could be defined as non-static to keep the same form 
+with the patch using generic I/O power domain support :
+http://git.kernel.org/?p=linux/kernel/git/rafael/suspend-2.6.git;a=commit;h=9b3c17cd4555612ff852b7c1ce9583d48d9b0c31
 
-/**
- * of_property_read_u32 - Find a property in a device node and read a
-32-bit value
- * @np: =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0device node from which the property =
-value is to be read.
- * @propname: =A0 name of the property to be searched.
- * @out_value: returned value.
- *
- * Search for a property in a device node and read a 32-bit value from a
- * property. Returns -EINVAL, if the property does not exist, -ENODATA, if
- * property does not have a value, -EOVERFLOW, if the property data isn't l=
-arge
- * enough, and 0 on success.
- *
- * The out_value is only modified if a valid u32 can be decoded.
- */
-int of_property_read_u32(struct device_node *np, char *propname, u32 *out_v=
-alue)
-{
- =A0 =A0 =A0 struct property *prop =3D of_find_property(np, propname, NULL),
- =A0 =A0 =A0 if (!prop)
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
- =A0 =A0 =A0 if (!prop->value)
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -ENODATA;
- =A0 =A0 =A0 if (sizeof(*out_value) > prop->length)
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EOVERFLOW;
- =A0 =A0 =A0 *out_value =3D be32_to_cpup(prop->value);
- =A0 =A0 =A0 return 0;
-}
-EXPORT_SYMBOL_GPL(of_property_read_u32);
+And I will modify that use previous definition of enum exynos4210_pd_data
+to identify each power domain.
 
-/**
- * of_property_read_u32 - Find a property in a device node and read a
-32-bit value
- * @np: =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0device node from which the property =
-value is to be read.
- * @propname: =A0 name of the property to be searched.
- * @out_string: =A0 =A0pointer to a null terminated string, valid only if t=
-he return
- * =A0 =A0 =A0 =A0 =A0 =A0 value is 0.
- *
- * Returns a pointer to a null terminated property string value.
-Returns -EINVAL,
- * if the property does not exist, -ENODATA, if property does not have a va=
-lue,
- * -EILSEQ, if the string is not null-terminated within the length of
-the property.
- *
- * The out_string value is only modified if a valid string can be decoded.
- */
-int of_property_read_u32(struct device_node *np, char *propname, char
-**out_string)
-{
- =A0 =A0 =A0 struct property *prop =3D of_find_property(np, propname, NULL),
- =A0 =A0 =A0 if (!prop)
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
- =A0 =A0 =A0 if (!prop->value)
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -ENODATA;
- =A0 =A0 =A0 if (strnlen(prop->value, prop->length) =3D=3D prop->length)
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EILSEQ;
- =A0 =A0 =A0 *out_string =3D prop->value;
- =A0 =A0 =A0 return 0;
-}
-EXPORT_SYMBOL_GPL(of_property_read_u32);
+> 
+>> +#define EXYNOS4210_MFC		(&exynos4210_pd_list[EXYNOS4210_PD_MFC])
+>> +#define EXYNOS4210_G3D		(&exynos4210_pd_list[EXYNOS4210_PD_G3D])
+>> +#define EXYNOS4210_LCD0		(&exynos4210_pd_list[EXYNOS4210_PD_LCD0])
+>> +#define EXYNOS4210_LCD1		(&exynos4210_pd_list[EXYNOS4210_PD_LCD1])
+>> +#define EXYNOS4210_TV		(&exynos4210_pd_list[EXYNOS4210_PD_TV])
+>> +#define EXYNOS4210_CAM		(&exynos4210_pd_list[EXYNOS4210_PD_CAM])
+>> +#define EXYNOS4210_GPS		(&exynos4210_pd_list[EXYNOS4210_PD_GPS])
+>> +
+>> +extern int exynos4210_pd_init(struct exynos4210_pm_domain *domain);
+>> +extern int exynos4210_add_device_to_domain(struct exynos4210_pm_domain *domain,
+>> +				struct platform_device *pdev);
+> 
+> Is there any advantage of having these functions marked as "extern" ?
+> 
+I will remove "extern" keyword.
 
-I think overall this will be the most useful, and it can always be
-expanded at a later date if more use cases show up.
+>> +#else
+>> +#define EXYNOS4210_MFC		NULL
+>> +#define EXYNOS4210_G3D		NULL
+>> +#define EXYNOS4210_LCD0		NULL
+>> +#define EXYNOS4210_LCD1		NULL
+>> +#define EXYNOS4210_TV		NULL
+>> +#define EXYNOS4210_CAM		NULL
+>> +#define EXYNOS4210_GPS		NULL
+>> +
+>> +extern int exynos4210_pd_init(struct exynos4210_pm_domain *domain)
+> 
+> Shouldn't it be "static inline" instead ?
 
-g.
+My mistake. I will fix it.
+
+>> +{
+>> +	return 0;
+>> +}
+>> +extern int exynos4_add_device_to_domain(struct exynos4210_pm_domain *domain,
+>> +				struct platform_device *pdev)
+> 
+> Ditto.
+> 
+I will fix it.
+> ...
+>> diff --git a/arch/arm/mach-exynos4/mach-nuri.c b/arch/arm/mach-exynos4/mach-nuri.c
+>> index 642702b..3e5c42c 100644
+>> --- a/arch/arm/mach-exynos4/mach-nuri.c
+>> +++ b/arch/arm/mach-exynos4/mach-nuri.c
+>> @@ -37,6 +37,7 @@
+>>   #include<plat/iic.h>
+>>
+>>   #include<mach/map.h>
+>> +#include<mach/pm-exynos4210.h>
+>>
+>>   /* Following are default values for UCON, ULCON and UFCON UART registers */
+>>   #define NURI_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+>> @@ -376,6 +377,23 @@ static struct platform_device *nuri_devices[] __initdata = {
+>>   	&nuri_backlight_device,
+>>   };
+>>
+>> +static void __init nuri_power_domain_init(void)
+>> +{
+>> +	int i;
+>> +
+>> +	for (i = 0 ; i<  EXYNOS4210_PD_MAX_NUM ; i++)
+>> +		exynos4210_pd_init(&exynos4210_pd_list[i]);
+>> +
+>> +	/* Add device to power-domain */
+>> +	exynos4210_add_device_to_domain(EXYNOS4210_MFC, NULL);
+>> +	exynos4210_add_device_to_domain(EXYNOS4210_G3D, NULL);
+>> +	exynos4210_add_device_to_domain(EXYNOS4210_LCD0,&nuri_lcd_device);
+>> +	exynos4210_add_device_to_domain(EXYNOS4210_LCD1, NULL);
+>> +	exynos4210_add_device_to_domain(EXYNOS4210_TV, NULL);
+>> +	exynos4210_add_device_to_domain(EXYNOS4210_CAM, NULL);
+>> +	exynos4210_add_device_to_domain(EXYNOS4210_GPS, NULL);
+>> +}
+>> +
+>>   static void __init nuri_map_io(void)
+>>   {
+>>   	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
+>> @@ -398,6 +416,8 @@ static void __init nuri_machine_init(void)
+>>
+>>   	/* Last */
+>>   	platform_add_devices(nuri_devices, ARRAY_SIZE(nuri_devices));
+>> +
+>> +	nuri_power_domain_init();
+>>   }
+>>
+>>   MACHINE_START(NURI, "NURI")
+>> diff --git a/arch/arm/mach-exynos4/pm-exynos4210.c b/arch/arm/mach-exynos4/pm-exynos4210.c
+>> new file mode 100644
+>> index 0000000..8e95d49
+>> --- /dev/null
+>> +++ b/arch/arm/mach-exynos4/pm-exynos4210.c
+>> @@ -0,0 +1,131 @@
+>> +/* linux/arch/arm/mach-exynos4/pm-exynos4210.c
+>> + *
+> ...
+>> +
+>> +struct exynos4210_pm_domain exynos4210_pd_list[] = {
+>> +	{
+>> +		.name		= "PD_MFC",
+>> +		.base		= S5P_PMU_MFC_CONF,
+>> +		.boot_on	= 0,
+>> +	}, {
+>> +		.name		= "PD_G3D",
+>> +		.base		= S5P_PMU_G3D_CONF,
+>> +		.boot_on	= 0,
+>> +	}, {
+> ...
+>> +
+>> +int exynos4210_pd_init(struct exynos4210_pm_domain *domain)
+>> +{
+>> +	struct generic_pm_domain *genpd =&domain->genpd;
+>> +
+>> +	pm_genpd_init(genpd, NULL, false);
+>> +
+>> +	genpd->stop_device = pm_runtime_clk_suspend;
+>> +	genpd->start_device = pm_runtime_clk_resume;
+> 
+> Have you considered handling the S5P_CLKGATE_BLOCK register to make
+> sure the clock domains are enabled ? AFAICS it is not properly handled
+> by current clock API on mach-exynos4. Thus if bootloader clears
+> S5P_CLKGATE_BLOCK register clocks remain globally masked.
+> 
+> This issue have been attempted to be resolved in this patch:
+> http://git.infradead.org/users/kmpark/linux-2.6-samsung/commit/39a81876d034dcbdc2a4c4c4b847b3b49e38870c
+> 
+> While at here, it might be good to resolve this either on power domains
+> or the clock API level.
+> 
+
+I know this issue about your commnt. This patch didn't consider the clock domain
+because refer to the previous function which enable/disable only the power state
+of power domain. As your comment, I will adapt that handling S5P_CLKGATE_BLOCK to 
+control the clock domains.
+
+>> +	genpd->power_off = pd_power_down;
+>> +	genpd->power_on = pd_power_up;
+>> +
+>> +	if (domain->boot_on)
+>> +		pd_power_up(genpd);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +int exynos4210_add_device_to_domain(struct exynos4210_pm_domain *domain,
+>> +				struct platform_device *pdev)
+>> +{
+>> +	struct device *dev =&pdev->dev;
+>> +	struct generic_pm_domain *genpd =&domain->genpd;
+>> +
+>> +	if (pdev != NULL)
+>> +		return pm_genpd_add_device(genpd, dev);
+>> +	else
+>> +		return -EINVAL;
+> 
+> You could do instead:
+> 
+> +	if (pdev)
+> +		return pm_genpd_add_device(genpd, dev);
+> +
+> +	return -EINVAL;
+> 
+Ok, I will modify it.
+Thanks for your comment.
+
+Regards,
+Chanwoo Choi
