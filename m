@@ -1,82 +1,140 @@
 From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH 1/3] rtc: rtc-s3c: Correct debug messages.
-Date: Mon, 27 Jun 2011 20:43:24 +0900
-Message-ID: <1309175006-9218-2-git-send-email-myungjoo.ham@samsung.com>
+Subject: [PATCH 3/3] rtc: rtc-s3c: allow multiple open / allow no-ioctl-open'ed
+ rtc to have irq.
+Date: Mon, 27 Jun 2011 20:43:26 +0900
+Message-ID: <1309175006-9218-4-git-send-email-myungjoo.ham@samsung.com>
 References: <1309175006-9218-1-git-send-email-myungjoo.ham@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:41410 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757817Ab1F0Lna (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Jun 2011 07:43:30 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LNG001FX5WFV460@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 27 Jun 2011 20:43:27 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LNG0069V5WFYQ@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 27 Jun 2011 20:43:27 +0900 (KST)
 In-reply-to: <1309175006-9218-1-git-send-email-myungjoo.ham@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com
-Cc: a.zummo@towertech.it, Kukjin Kim <kgene.kim@samsung.com>, dg77.kim@samsung.com, kyungmin.park@samsung.com, myungjoo.ham@gmail.com, ben-linux@fluff.org, Changhwan Youn <chaos.youn@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Changhwan Youn <chaos.youn@samsung.com>, ben-linux@fluff.org, a.zummo@towertech.it, kyungmin.park@samsung.com, dg77.kim@samsung.com, myungjoo.ham@gmail.com
 
-RTC-S3C used to print out debug messages incorrectly. This patch
-corrects incorrect outputs. (undecoded bcd numbers, incorrectly decoded
-register values) This patch affects the pr-debug messages only.
+The previous rtc-s3c had two issues related with its IRQ.
+1. Users cannot open rtc multiple times because an open operation calls
+request_irq on the same IRQ. (e.g., two user processes wants to open and
+read RTC time from rtc-s3c at the same time)
+2. If alarm is set and no one has the rtc opened with filesystem
+(either the alarm is set by kernel/boot-loader or user set an alarm
+and closed rtc dev file), the pending bit is not cleared and no further
+interrupt is invoked. When the alarm is used by the system itself such
+as a resume from suspend-to-RAM or other Low-power modes/idle, this is a
+critical issue.
+
+This patch mitigates these issue by calling request_irq at probe and
+free_irq at remove.
 
 Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/rtc/rtc-s3c.c |   13 +++++++------
- 1 files changed, 7 insertions(+), 6 deletions(-)
+ drivers/rtc/rtc-s3c.c |   63 ++++++++++++++----------------------------------
+ 1 files changed, 19 insertions(+), 44 deletions(-)
 
 diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-index 53c99b1..3c8dfa7 100644
+index be85ea5..8d2807f 100644
 --- a/drivers/rtc/rtc-s3c.c
 +++ b/drivers/rtc/rtc-s3c.c
-@@ -152,10 +152,6 @@ static int s3c_rtc_gettime(struct device *dev, struct rtc_time *rtc_tm)
- 		goto retry_get_time;
- 	}
- 
--	pr_debug("read time %04d.%02d.%02d %02d:%02d:%02d\n",
--		 1900 + rtc_tm->tm_year, rtc_tm->tm_mon, rtc_tm->tm_mday,
--		 rtc_tm->tm_hour, rtc_tm->tm_min, rtc_tm->tm_sec);
--
- 	rtc_tm->tm_sec = bcd2bin(rtc_tm->tm_sec);
- 	rtc_tm->tm_min = bcd2bin(rtc_tm->tm_min);
- 	rtc_tm->tm_hour = bcd2bin(rtc_tm->tm_hour);
-@@ -164,6 +160,11 @@ static int s3c_rtc_gettime(struct device *dev, struct rtc_time *rtc_tm)
- 	rtc_tm->tm_year = bcd2bin(rtc_tm->tm_year);
- 
- 	rtc_tm->tm_year += 100;
-+
-+	pr_debug("read time %04d.%02d.%02d %02d:%02d:%02d\n",
-+		 1900 + rtc_tm->tm_year, rtc_tm->tm_mon, rtc_tm->tm_mday,
-+		 rtc_tm->tm_hour, rtc_tm->tm_min, rtc_tm->tm_sec);
-+
- 	rtc_tm->tm_mon -= 1;
- 
- 	clk_disable(rtc_clk);
-@@ -269,10 +270,9 @@ static int s3c_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
- 	clk_enable(rtc_clk);
- 	pr_debug("s3c_rtc_setalarm: %d, %04d.%02d.%02d %02d:%02d:%02d\n",
- 		 alrm->enabled,
--		 1900 + tm->tm_year, tm->tm_mon, tm->tm_mday,
-+		 1900 + tm->tm_year, tm->tm_mon + 1, tm->tm_mday,
- 		 tm->tm_hour, tm->tm_min, tm->tm_sec);
- 
--
- 	alrm_en = readb(base + S3C2410_RTCALM) & S3C2410_RTCALM_ALMEN;
- 	writeb(0x00, base + S3C2410_RTCALM);
- 
-@@ -359,6 +359,7 @@ static void s3c_rtc_release(struct device *dev)
- 	free_irq(s3c_rtc_tickno, rtc_dev);
+@@ -320,50 +320,7 @@ static int s3c_rtc_proc(struct device *dev, struct seq_file *seq)
+ 	return 0;
  }
  
-+
+-static int s3c_rtc_open(struct device *dev)
+-{
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct rtc_device *rtc_dev = platform_get_drvdata(pdev);
+-	int ret;
+-
+-	ret = request_irq(s3c_rtc_alarmno, s3c_rtc_alarmirq,
+-			  IRQF_DISABLED,  "s3c2410-rtc alarm", rtc_dev);
+-
+-	if (ret) {
+-		dev_err(dev, "IRQ%d error %d\n", s3c_rtc_alarmno, ret);
+-		return ret;
+-	}
+-
+-	ret = request_irq(s3c_rtc_tickno, s3c_rtc_tickirq,
+-			  IRQF_DISABLED,  "s3c2410-rtc tick", rtc_dev);
+-
+-	if (ret) {
+-		dev_err(dev, "IRQ%d error %d\n", s3c_rtc_tickno, ret);
+-		goto tick_err;
+-	}
+-
+-	return ret;
+-
+- tick_err:
+-	free_irq(s3c_rtc_alarmno, rtc_dev);
+-	return ret;
+-}
+-
+-static void s3c_rtc_release(struct device *dev)
+-{
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct rtc_device *rtc_dev = platform_get_drvdata(pdev);
+-
+-	/* do not clear AIE here, it may be needed for wake */
+-
+-	free_irq(s3c_rtc_alarmno, rtc_dev);
+-	free_irq(s3c_rtc_tickno, rtc_dev);
+-}
+-
+-
  static const struct rtc_class_ops s3c_rtcops = {
- 	.open		= s3c_rtc_open,
- 	.release	= s3c_rtc_release,
+-	.open		= s3c_rtc_open,
+-	.release	= s3c_rtc_release,
+ 	.read_time	= s3c_rtc_gettime,
+ 	.set_time	= s3c_rtc_settime,
+ 	.read_alarm	= s3c_rtc_getalarm,
+@@ -427,6 +384,9 @@ static int __devexit s3c_rtc_remove(struct platform_device *dev)
+ {
+ 	struct rtc_device *rtc = platform_get_drvdata(dev);
+ 
++	free_irq(s3c_rtc_alarmno, rtc);
++	free_irq(s3c_rtc_tickno, rtc);
++
+ 	platform_set_drvdata(dev, NULL);
+ 	rtc_device_unregister(rtc);
+ 
+@@ -553,8 +513,23 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
+ 
+ 	clk_disable(rtc_clk);
+ 
+-	return 0;
++	ret = request_irq(s3c_rtc_alarmno, s3c_rtc_alarmirq,
++			  IRQF_DISABLED,  "s3c2410-rtc alarm", rtc);
+ 
++	if (ret) {
++		dev_err(&pdev->dev, "IRQ%d error %d\n", s3c_rtc_alarmno, ret);
++		return ret;
++	}
++
++	ret = request_irq(s3c_rtc_tickno, s3c_rtc_tickirq,
++			  IRQF_DISABLED,  "s3c2410-rtc tick", rtc);
++
++	if (ret) {
++		dev_err(&pdev->dev, "IRQ%d error %d\n", s3c_rtc_tickno, ret);
++		free_irq(s3c_rtc_alarmno, rtc);
++	}
++
++	return ret;
+  err_nortc:
+ 	s3c_rtc_enable(pdev, 0);
+ 	clk_disable(rtc_clk);
 -- 
 1.7.4.1
