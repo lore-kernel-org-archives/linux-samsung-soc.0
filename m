@@ -1,222 +1,83 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: S3C24XX: remove unused gpio codes
-Date: Mon, 27 Jun 2011 20:08:56 +0900
-Message-ID: <1309172936-10729-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 2/3] gpio/s3c64xx: move gpio driver into drivers/gpio/
+Date: Mon, 27 Jun 2011 20:15:39 +0900
+Message-ID: <1309173340-12369-3-git-send-email-kgene.kim@samsung.com>
+References: <1309173340-12369-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:36438 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:45197 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759408Ab1F0LR5 (ORCPT
+	with ESMTP id S1758178Ab1F0LW5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Jun 2011 07:17:57 -0400
+	Mon, 27 Jun 2011 07:22:57 -0400
+In-Reply-To: <1309173340-12369-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Grant Likely <grant.likely@secretlab.ca>
 
 Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Grant Likely <grant.likely@secretlab.ca>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s3c2400/gpio.c |   42 ------------------------
- arch/arm/mach-s3c2410/gpio.c |   72 ------------------------------------------
- arch/arm/mach-s3c2412/gpio.c |   62 ------------------------------------
- 3 files changed, 0 insertions(+), 176 deletions(-)
- delete mode 100644 arch/arm/mach-s3c2400/gpio.c
- delete mode 100644 arch/arm/mach-s3c2410/gpio.c
- delete mode 100644 arch/arm/mach-s3c2412/gpio.c
+ arch/arm/mach-s3c64xx/Makefile                     |    1 -
+ drivers/gpio/Kconfig                               |    4 ++++
+ drivers/gpio/Makefile                              |    1 +
+ .../gpiolib.c => drivers/gpio/gpio-s3c64xx.c       |    3 +--
+ 4 files changed, 6 insertions(+), 3 deletions(-)
+ rename arch/arm/mach-s3c64xx/gpiolib.c => drivers/gpio/gpio-s3c64xx.c (99%)
 
-diff --git a/arch/arm/mach-s3c2400/gpio.c b/arch/arm/mach-s3c2400/gpio.c
-deleted file mode 100644
-index 6c68e78..0000000
---- a/arch/arm/mach-s3c2400/gpio.c
-+++ /dev/null
-@@ -1,42 +0,0 @@
--/* linux/arch/arm/mach-s3c2400/gpio.c
+diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
+index 4657363..736b7bb 100644
+--- a/arch/arm/mach-s3c64xx/Makefile
++++ b/arch/arm/mach-s3c64xx/Makefile
+@@ -13,7 +13,6 @@ obj-				:=
+ # Core files
+ obj-y				+= cpu.o
+ obj-y				+= clock.o
+-obj-y				+= gpiolib.o
+ 
+ # Core support for S3C6400 system
+ 
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 8bd43d6..d5538ef 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -113,6 +113,10 @@ config GPIO_S3C24XX
+ 	def_bool y
+ 	depends on PLAT_S3C24XX
+ 
++config GPIO_S3C64XX
++	def_bool y
++	depends on ARCH_S3C64XX
++
+ config GPIO_S5PC100
+ 	def_bool y
+ 	depends on CPU_S5PC100
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 86bdf69..b5e2f09 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -37,6 +37,7 @@ obj-$(CONFIG_GPIO_RDC321X)	+= gpio-rdc321x.o
+ 
+ obj-$(CONFIG_GPIO_PLAT_SAMSUNG)	+= gpio-plat-samsung.o
+ obj-$(CONFIG_GPIO_S3C24XX)	+= gpio-s3c24xx.o
++obj-$(CONFIG_GPIO_S3C64XX)	+= gpio-s3c64xx.o
+ obj-$(CONFIG_GPIO_S5PC100)	+= gpio-s5pc100.o
+ obj-$(CONFIG_GPIO_S5PV210)	+= gpio-s5pv210.o
+ 
+diff --git a/arch/arm/mach-s3c64xx/gpiolib.c b/drivers/gpio/gpio-s3c64xx.c
+similarity index 99%
+rename from arch/arm/mach-s3c64xx/gpiolib.c
+rename to drivers/gpio/gpio-s3c64xx.c
+index 92b0908..b4f1c82 100644
+--- a/arch/arm/mach-s3c64xx/gpiolib.c
++++ b/drivers/gpio/gpio-s3c64xx.c
+@@ -1,5 +1,4 @@
+-/* arch/arm/plat-s3c64xx/gpiolib.c
 - *
-- * Copyright (c) 2006 Lucas Correia Villa Real <lucasvr@gobolinux.org>
-- *
-- * S3C2400 GPIO support
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
--*/
--
--#include <linux/kernel.h>
--#include <linux/init.h>
--#include <linux/module.h>
--#include <linux/interrupt.h>
--#include <linux/ioport.h>
--#include <linux/io.h>
--
--#include <mach/hardware.h>
--#include <asm/irq.h>
--
--#include <mach/regs-gpio.h>
--
--int s3c2400_gpio_getirq(unsigned int pin)
--{
--	if (pin < S3C2410_GPE(0) || pin > S3C2400_GPE(7))
--		return -EINVAL;  /* not valid interrupts */
--
--	return (pin - S3C2410_GPE(0)) + IRQ_EINT0;
--}
--
--EXPORT_SYMBOL(s3c2400_gpio_getirq);
-diff --git a/arch/arm/mach-s3c2410/gpio.c b/arch/arm/mach-s3c2410/gpio.c
-deleted file mode 100644
-index 9664e01..0000000
---- a/arch/arm/mach-s3c2410/gpio.c
-+++ /dev/null
-@@ -1,72 +0,0 @@
--/* linux/arch/arm/mach-s3c2410/gpio.c
-- *
-- * Copyright (c) 2004-2006 Simtec Electronics
-- *	Ben Dooks <ben@simtec.co.uk>
-- *
-- * S3C2410 GPIO support
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- */
--
--#include <linux/kernel.h>
--#include <linux/init.h>
--#include <linux/module.h>
--#include <linux/interrupt.h>
--#include <linux/ioport.h>
--#include <linux/io.h>
--
--#include <mach/hardware.h>
--#include <mach/gpio-fns.h>
--#include <asm/irq.h>
--
--#include <mach/regs-gpio.h>
--
--int s3c2410_gpio_irqfilter(unsigned int pin, unsigned int on,
--			   unsigned int config)
--{
--	void __iomem *reg = S3C24XX_EINFLT0;
--	unsigned long flags;
--	unsigned long val;
--
--	if (pin < S3C2410_GPG(8) || pin > S3C2410_GPG(15))
--		return -EINVAL;
--
--	config &= 0xff;
--
--	pin -= S3C2410_GPG(8);
--	reg += pin & ~3;
--
--	local_irq_save(flags);
--
--	/* update filter width and clock source */
--
--	val = __raw_readl(reg);
--	val &= ~(0xff << ((pin & 3) * 8));
--	val |= config << ((pin & 3) * 8);
--	__raw_writel(val, reg);
--
--	/* update filter enable */
--
--	val = __raw_readl(S3C24XX_EXTINT2);
--	val &= ~(1 << ((pin * 4) + 3));
--	val |= on << ((pin * 4) + 3);
--	__raw_writel(val, S3C24XX_EXTINT2);
--
--	local_irq_restore(flags);
--
--	return 0;
--}
--
--EXPORT_SYMBOL(s3c2410_gpio_irqfilter);
-diff --git a/arch/arm/mach-s3c2412/gpio.c b/arch/arm/mach-s3c2412/gpio.c
-deleted file mode 100644
-index 3404a87..0000000
---- a/arch/arm/mach-s3c2412/gpio.c
-+++ /dev/null
-@@ -1,62 +0,0 @@
--/* linux/arch/arm/mach-s3c2412/gpio.c
-- *
-- * Copyright (c) 2007 Simtec Electronics
-- *	Ben Dooks <ben@simtec.co.uk>
-- *
-- * http://armlinux.simtec.co.uk/.
-- *
-- * S3C2412/S3C2413 specific GPIO support
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#include <linux/kernel.h>
--#include <linux/types.h>
--#include <linux/module.h>
--#include <linux/interrupt.h>
--#include <linux/gpio.h>
--
--#include <asm/mach/arch.h>
--#include <asm/mach/map.h>
--
--#include <mach/regs-gpio.h>
--#include <mach/hardware.h>
--
--#include <plat/gpio-core.h>
--
--int s3c2412_gpio_set_sleepcfg(unsigned int pin, unsigned int state)
--{
--	struct s3c_gpio_chip *chip = s3c_gpiolib_getchip(pin);
--	unsigned long offs = pin - chip->chip.base;
--	unsigned long flags;
--	unsigned long slpcon;
--
--	offs *= 2;
--
--	if (pin < S3C2410_GPB(0))
--		return -EINVAL;
--
--	if (pin >= S3C2410_GPF(0) &&
--	    pin <= S3C2410_GPG(16))
--		return -EINVAL;
--
--	if (pin > S3C2410_GPH(16))
--		return -EINVAL;
--
--	local_irq_save(flags);
--
--	slpcon = __raw_readl(chip->base + 0x0C);
--
--	slpcon &= ~(3 << offs);
--	slpcon |= state << offs;
--
--	__raw_writel(slpcon, chip->base + 0x0C);
--
--	local_irq_restore(flags);
--
--	return 0;
--}
--
--EXPORT_SYMBOL(s3c2412_gpio_set_sleepcfg);
++/*
+  * Copyright 2008 Openmoko, Inc.
+  * Copyright 2008 Simtec Electronics
+  *      Ben Dooks <ben@simtec.co.uk>
 -- 
 1.7.1
