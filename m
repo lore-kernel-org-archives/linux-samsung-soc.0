@@ -1,69 +1,218 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ARM: EXYNOS4: Set appropriate I2C device variant
-Date: Wed, 29 Jun 2011 16:26:13 +0200
-Message-ID: <1309357573-13632-1-git-send-email-s.nawrocki@samsung.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH] arm: platsmp: Allow secondary cpu hotplug with maxcpus=1
+Date: Wed, 29 Jun 2011 11:31:39 -0700
+Message-ID: <1309372300-28911-1-git-send-email-sboyd@codeaurora.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:50024 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756174Ab1F2O0S (ORCPT
+Received: from wolverine01.qualcomm.com ([199.106.114.254]:10970 "EHLO
+	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752734Ab1F2Sbp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Jun 2011 10:26:18 -0400
-Received: from spt2.w1.samsung.com ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LNK00IZR2RT6MA0@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Jun 2011 15:26:17 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LNK00F1P2RRNU@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Jun 2011 15:26:15 +0100 (BST)
+	Wed, 29 Jun 2011 14:31:45 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Russell King <linux@arm.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, David Brown <davidb@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Linus Walleij <linus.walleij@stericsson.com>
 
-Set up a correct I2C bus controller variant name for Exynos4.
-Without this change the I2C bus driver fails to acquire its
-clocks.
+If an ARM system has multiple cpus in the same socket and the
+kernel is booted with maxcpus=1, secondary cpus are possible but
+not present due to how platform_smp_prepare_cpus() is called.
+Fix this by always calling platform_smp_prepare_cpus() as long as
+max_cpus is non-zero (0 means no SMP) to allow platform code to
+decide if any non-boot cpus are present in the system. Since
+all current platform code doesn't support physical hotplug we
+have a situation where possible == present and thus we can
+simply copy the possible map to the present map.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+With this patch it's possible to boot an ARM system with
+maxcpus=1 on the command line and then hotplug in secondary cpus
+via sysfs. This is more in line with how x86 works with maxcpus=1
+on the command line.
+
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 ---
 
-This change is required to enable the I2C bus controller driver
-operation on exynos4 with the clkdev patches applied.
+This patch was tested along with an MSM patch:
 
-Regards,
-Sylwester
----
- arch/arm/mach-exynos4/cpu.c |    6 ++++++
- 1 files changed, 6 insertions(+), 0 deletions(-)
+  https://lkml.org/lkml/2011/4/7/354
 
-diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
-index 1196f39..67918c0 100644
---- a/arch/arm/mach-exynos4/cpu.c
-+++ b/arch/arm/mach-exynos4/cpu.c
-@@ -23,6 +23,7 @@
- #include <plat/sdhci.h>
- #include <plat/devs.h>
- #include <plat/fimc-core.h>
-+#include <plat/iic-core.h>
+I don't have any non-MSM hardware to test on so Acks and
+tested-bys are welcome.
+
+ arch/arm/kernel/smp.c             |    3 +--
+ arch/arm/mach-exynos4/platsmp.c   |    5 +----
+ arch/arm/mach-msm/platsmp.c       |    5 +----
+ arch/arm/mach-omap2/omap-smp.c    |    5 +----
+ arch/arm/mach-realview/platsmp.c  |    5 +----
+ arch/arm/mach-shmobile/platsmp.c  |    5 +----
+ arch/arm/mach-tegra/platsmp.c     |    5 +----
+ arch/arm/mach-ux500/platsmp.c     |    5 +----
+ arch/arm/mach-vexpress/ct-ca9x4.c |    5 +----
+ 9 files changed, 9 insertions(+), 34 deletions(-)
+
+diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+index e7f92a4..fbaa24a 100644
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -365,8 +365,7 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
+ 	 */
+ 	if (max_cpus > ncores)
+ 		max_cpus = ncores;
+-
+-	if (max_cpus > 1) {
++	if (ncores > 1 && max_cpus) {
+ 		/*
+ 		 * Enable the local timer or broadcast device for the
+ 		 * boot CPU, but only if we have more than one CPU.
+diff --git a/arch/arm/mach-exynos4/platsmp.c b/arch/arm/mach-exynos4/platsmp.c
+index c5e65a0..3f870d2 100644
+--- a/arch/arm/mach-exynos4/platsmp.c
++++ b/arch/arm/mach-exynos4/platsmp.c
+@@ -154,14 +154,11 @@ void __init smp_init_cpus(void)
  
- #include <mach/regs-irq.h>
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ {
+-	int i;
+-
+ 	/*
+ 	 * Initialise the present map, which describes the set of CPUs
+ 	 * actually populated at the present time.
+ 	 */
+-	for (i = 0; i < max_cpus; i++)
+-		set_cpu_present(i, true);
++	init_cpu_present(&cpu_possible_map);
  
-@@ -137,6 +138,11 @@ void __init exynos4_map_io(void)
- 	s3c_fimc_setname(1, "exynos4-fimc");
- 	s3c_fimc_setname(2, "exynos4-fimc");
- 	s3c_fimc_setname(3, "exynos4-fimc");
-+
-+	/* The I2C bus controllers are directly compatible with s3c2440 */
-+	s3c_i2c0_setname("s3c2440-i2c");
-+	s3c_i2c1_setname("s3c2440-i2c");
-+	s3c_i2c2_setname("s3c2440-i2c");
+ 	scu_enable(scu_base_addr());
+ 
+diff --git a/arch/arm/mach-msm/platsmp.c b/arch/arm/mach-msm/platsmp.c
+index 2034098..84e293f 100644
+--- a/arch/arm/mach-msm/platsmp.c
++++ b/arch/arm/mach-msm/platsmp.c
+@@ -157,12 +157,9 @@ void __init smp_init_cpus(void)
+ 
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ {
+-	int i;
+-
+ 	/*
+ 	 * Initialise the present map, which describes the set of CPUs
+ 	 * actually populated at the present time.
+ 	 */
+-	for (i = 0; i < max_cpus; i++)
+-		set_cpu_present(i, true);
++	init_cpu_present(&cpu_possible_map);
  }
+diff --git a/arch/arm/mach-omap2/omap-smp.c b/arch/arm/mach-omap2/omap-smp.c
+index ecfe93c..5895d19 100644
+--- a/arch/arm/mach-omap2/omap-smp.c
++++ b/arch/arm/mach-omap2/omap-smp.c
+@@ -125,14 +125,11 @@ void __init smp_init_cpus(void)
  
- void __init exynos4_init_clocks(int xtal)
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ {
+-	int i;
+-
+ 	/*
+ 	 * Initialise the present map, which describes the set of CPUs
+ 	 * actually populated at the present time.
+ 	 */
+-	for (i = 0; i < max_cpus; i++)
+-		set_cpu_present(i, true);
++	init_cpu_present(&cpu_possible_map);
+ 
+ 	/*
+ 	 * Initialise the SCU and wake up the secondary core using
+diff --git a/arch/arm/mach-realview/platsmp.c b/arch/arm/mach-realview/platsmp.c
+index 963bf0d..00666be 100644
+--- a/arch/arm/mach-realview/platsmp.c
++++ b/arch/arm/mach-realview/platsmp.c
+@@ -68,14 +68,11 @@ void __init smp_init_cpus(void)
+ 
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ {
+-	int i;
+-
+ 	/*
+ 	 * Initialise the present map, which describes the set of CPUs
+ 	 * actually populated at the present time.
+ 	 */
+-	for (i = 0; i < max_cpus; i++)
+-		set_cpu_present(i, true);
++	init_cpu_present(&cpu_possible_map);
+ 
+ 	scu_enable(scu_base_addr());
+ 
+diff --git a/arch/arm/mach-shmobile/platsmp.c b/arch/arm/mach-shmobile/platsmp.c
+index f3888fe..ca5b523 100644
+--- a/arch/arm/mach-shmobile/platsmp.c
++++ b/arch/arm/mach-shmobile/platsmp.c
+@@ -64,10 +64,7 @@ void __init smp_init_cpus(void)
+ 
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ {
+-	int i;
+-
+-	for (i = 0; i < max_cpus; i++)
+-		set_cpu_present(i, true);
++	init_cpu_present(&cpu_possible_map);
+ 
+ 	shmobile_smp_prepare_cpus();
+ }
+diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+index b8ae3c9..f11426a 100644
+--- a/arch/arm/mach-tegra/platsmp.c
++++ b/arch/arm/mach-tegra/platsmp.c
+@@ -129,14 +129,11 @@ void __init smp_init_cpus(void)
+ 
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ {
+-	int i;
+-
+ 	/*
+ 	 * Initialise the present map, which describes the set of CPUs
+ 	 * actually populated at the present time.
+ 	 */
+-	for (i = 0; i < max_cpus; i++)
+-		set_cpu_present(i, true);
++	init_cpu_present(&cpu_possible_map);
+ 
+ 	scu_enable(scu_base);
+ }
+diff --git a/arch/arm/mach-ux500/platsmp.c b/arch/arm/mach-ux500/platsmp.c
+index 0c527fe..4509b7d 100644
+--- a/arch/arm/mach-ux500/platsmp.c
++++ b/arch/arm/mach-ux500/platsmp.c
+@@ -172,14 +172,11 @@ void __init smp_init_cpus(void)
+ 
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ {
+-	int i;
+-
+ 	/*
+ 	 * Initialise the present map, which describes the set of CPUs
+ 	 * actually populated at the present time.
+ 	 */
+-	for (i = 0; i < max_cpus; i++)
+-		set_cpu_present(i, true);
++	init_cpu_present(&cpu_possible_map);
+ 
+ 	scu_enable(scu_base_addr());
+ 	wakeup_secondary();
+diff --git a/arch/arm/mach-vexpress/ct-ca9x4.c b/arch/arm/mach-vexpress/ct-ca9x4.c
+index 765a71f..c7cd438 100644
+--- a/arch/arm/mach-vexpress/ct-ca9x4.c
++++ b/arch/arm/mach-vexpress/ct-ca9x4.c
+@@ -229,10 +229,7 @@ static void ct_ca9x4_init_cpu_map(void)
+ 
+ static void ct_ca9x4_smp_enable(unsigned int max_cpus)
+ {
+-	int i;
+-	for (i = 0; i < max_cpus; i++)
+-		set_cpu_present(i, true);
+-
++	init_cpu_present(&cpu_possible_map);
+ 	scu_enable(MMIO_P2V(A9_MPCORE_SCU));
+ }
+ #endif
 -- 
-1.7.2.5
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
