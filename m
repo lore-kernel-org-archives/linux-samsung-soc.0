@@ -1,46 +1,69 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V7 5/5] ARM: EXYNOS4: Add platform data for EXYNOS4 FIMD
- and LTE480WV platform-lcd
-Date: Wed, 29 Jun 2011 22:58:33 +0900
-Message-ID: <004c01cc3664$a640dd00$f2c29700$%kim@samsung.com>
-References: <1309171858-30397-1-git-send-email-jg1.han@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] ARM: EXYNOS4: Set appropriate I2C device variant
+Date: Wed, 29 Jun 2011 16:26:13 +0200
+Message-ID: <1309357573-13632-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:53868 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755160Ab1F2N6l (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:50024 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756174Ab1F2O0S (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Jun 2011 09:58:41 -0400
-In-reply-to: <1309171858-30397-1-git-send-email-jg1.han@samsung.com>
-Content-language: ko
+	Wed, 29 Jun 2011 10:26:18 -0400
+Received: from spt2.w1.samsung.com ([210.118.77.14]) by mailout4.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0LNK00IZR2RT6MA0@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 29 Jun 2011 15:26:17 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LNK00F1P2RRNU@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 29 Jun 2011 15:26:15 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jingoo Han' <jg1.han@samsung.com>, 'Paul Mundt' <lethal@linux-sh.org>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc: 'Anand Kumar N' <anand.kn@samsung.com>, 'Thomas Abraham' <thomas.ab@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Kyungmin Park' <kmpark@infradead.org>, 'Inki Dae' <inki.dae@samsung.com>, 'ARM Linux' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>, 'Jonghun Han' <jonghun.han@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Jingoo Han wrote:
-> 
-> From: Jonghun Han <jonghun.han@samsung.com>
-> 
-> This patch adds support EXYNOS4 FIMD0 and LTE480WV LCD pannel.
-> 
-> Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> ---
->  arch/arm/mach-exynos4/mach-smdkc210.c |   71
-> +++++++++++++++++++++++++++++++++
->  arch/arm/mach-exynos4/mach-smdkv310.c |   71
-> +++++++++++++++++++++++++++++++++
->  2 files changed, 142 insertions(+), 0 deletions(-)
-> 
-As I said, don't push same codes into both.
+Set up a correct I2C bus controller variant name for Exynos4.
+Without this change the I2C bus driver fails to acquire its
+clocks.
 
-Thanks.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+This change is required to enable the I2C bus controller driver
+operation on exynos4 with the clkdev patches applied.
+
+Regards,
+Sylwester
+---
+ arch/arm/mach-exynos4/cpu.c |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
+index 1196f39..67918c0 100644
+--- a/arch/arm/mach-exynos4/cpu.c
++++ b/arch/arm/mach-exynos4/cpu.c
+@@ -23,6 +23,7 @@
+ #include <plat/sdhci.h>
+ #include <plat/devs.h>
+ #include <plat/fimc-core.h>
++#include <plat/iic-core.h>
+ 
+ #include <mach/regs-irq.h>
+ 
+@@ -137,6 +138,11 @@ void __init exynos4_map_io(void)
+ 	s3c_fimc_setname(1, "exynos4-fimc");
+ 	s3c_fimc_setname(2, "exynos4-fimc");
+ 	s3c_fimc_setname(3, "exynos4-fimc");
++
++	/* The I2C bus controllers are directly compatible with s3c2440 */
++	s3c_i2c0_setname("s3c2440-i2c");
++	s3c_i2c1_setname("s3c2440-i2c");
++	s3c_i2c2_setname("s3c2440-i2c");
+ }
+ 
+ void __init exynos4_init_clocks(int xtal)
+-- 
+1.7.2.5
