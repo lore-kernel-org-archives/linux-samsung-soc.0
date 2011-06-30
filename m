@@ -1,54 +1,108 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH V2 0/3] ARM: Add SPDIF support for EXYNOS4
-Date: Thu, 30 Jun 2011 11:24:36 +0530
-Message-ID: <BANLkTi=oR58NvZxNSB5Y=dyYEz3ZBswZvw@mail.gmail.com>
-References: <1308655463-8787-1-git-send-email-ch.naveen@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [PATCH 0/7] ARM: SAMSUNG: Cleanup SPI platform specific code
+Date: Thu, 30 Jun 2011 08:25:16 -0400
+Message-ID: <1309436723-662-1-git-send-email-padma.v@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:43133 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751579Ab1F3Fy4 convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:62759 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751184Ab1F3GiT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jun 2011 01:54:56 -0400
-Received: by iwn6 with SMTP id 6so1628984iwn.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2011 22:54:56 -0700 (PDT)
-In-Reply-To: <1308655463-8787-1-git-send-email-ch.naveen@samsung.com>
+	Thu, 30 Jun 2011 02:38:19 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LNL00KL8BRNPAC0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 30 Jun 2011 15:38:14 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.106])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LNL0026NBR6C8@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 30 Jun 2011 15:38:14 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: jassisinghbrar@gmail.com, sbkim73@samsung.com, sw.youn@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, My self <ch.naveen@samsung.com>
+To: kgene.kim@samsung.com, jassisinghbrar@gmail.com, sbkim73@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Everyone,
+This patchset does the following:
 
-I would like to know if there are
-any comments or modifications required in the following patchset.
+1. Move duplicated code to common place
+[PATCH 1/7] ARM: SAMSUNG: Move SPI device definitions to plat-samsung
+SPI platform devices are defined in respective machine folder of
+Samsung S3C64XX and S5P series SoCs.This is duplicated for every SoC.
+So all SPI platform devices are moved to a common place.
 
-On 21 June 2011 16:54, Naveen Krishna Chatradhi <ch.naveen@samsung.com>=
- wrote:
-> =A0o To Kukjin Kim, Sangbeom Kim, Jassi Brar and Seungwhan Youn
->
-> [PATCH v2 1/3] ARM: Samsung: Move duplicate code
-> =A0o This is a prerequisite for 2/3 and 3/3 patches thus mentioned as=
- "v2".
-> [PATCH v2 2/3] ARM: EXYNOS4: Add sclk_spdif clocks.
-> =A0o v1 patch is https://patchwork.kernel.org/patch/867882/
-> [PATCH v2 3/3] ARM: EXYNOS4: Add EPLL clock operations
-> =A0o v1 patch is https://patchwork.kernel.org/patch/867872/
->
-> Best Regards,
-> Naveen Krishna Chatradhi
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+[PATCH 2/7] ARM: SAMSUNG: Define common macro for SPI physical address
 
+[PATCH 3/7] ARM: SAMSUNG: Add SPI clock definitions for SAMSUNG SoCs
+Each SoC has it's own set of clock sources for SPI.So they are defined in
+respective machine folder.
 
+[PATCH 4/7] ARM: SAMSUNG: Create SPI device setup files in
+respective machine folder
 
---=20
-Shine bright,
-(: Nav :)
+[PATCH 5/7] ARM: SAMSUNG: Add SPI platform specific code
+As SPI platform devices are moved to common place some platform specific
+code need to be initialized in the respective machine file.
+
+[PATCH 6/7] SPI: S5PC100: Enable the SPI driver for S5PC100
+
+[PATCH 7/7] SPI: S5PV210: Enable the SPI driver for S5PV210
+
+ arch/arm/mach-s3c64xx/Kconfig                    |   14 ++
+ arch/arm/mach-s3c64xx/Makefile                   |    3 +-
+ arch/arm/mach-s3c64xx/dev-spi.c                  |  177 -----------------
+ arch/arm/mach-s3c64xx/include/mach/map.h         |    2 +
+ arch/arm/mach-s3c64xx/include/mach/spi-clocks.h  |    6 +
+ arch/arm/mach-s3c64xx/mach-smdk6410.c            |   11 +
+ arch/arm/mach-s3c64xx/setup-spi0.c               |   21 ++
+ arch/arm/mach-s3c64xx/setup-spi1.c               |   21 ++
+ arch/arm/mach-s5p64x0/Kconfig                    |   20 ++-
+ arch/arm/mach-s5p64x0/Makefile                   |    3 +-
+ arch/arm/mach-s5p64x0/dev-spi.c                  |  222 ---------------------
+ arch/arm/mach-s5p64x0/include/mach/map.h         |    2 +
+ arch/arm/mach-s5p64x0/include/mach/spi-clocks.h  |    5 +
+ arch/arm/mach-s5p64x0/mach-smdk6440.c            |   11 +
+ arch/arm/mach-s5p64x0/mach-smdk6450.c            |   11 +
+ arch/arm/mach-s5p64x0/setup-spi0.c               |   31 +++
+ arch/arm/mach-s5p64x0/setup-spi1.c               |   31 +++
+ arch/arm/mach-s5pc100/Kconfig                    |   21 ++
+ arch/arm/mach-s5pc100/Makefile                   |    4 +-
+ arch/arm/mach-s5pc100/dev-spi.c                  |  223 ----------------------
+ arch/arm/mach-s5pc100/include/mach/map.h         |    3 +
+ arch/arm/mach-s5pc100/include/mach/spi-clocks.h  |    6 +
+ arch/arm/mach-s5pc100/mach-smdkc100.c            |   19 ++
+ arch/arm/mach-s5pc100/setup-spi0.c               |   21 ++
+ arch/arm/mach-s5pc100/setup-spi1.c               |   21 ++
+ arch/arm/mach-s5pc100/setup-spi2.c               |   23 +++
+ arch/arm/mach-s5pv210/Kconfig                    |   14 ++
+ arch/arm/mach-s5pv210/Makefile                   |    3 +-
+ arch/arm/mach-s5pv210/dev-spi.c                  |  173 -----------------
+ arch/arm/mach-s5pv210/include/mach/map.h         |    2 +
+ arch/arm/mach-s5pv210/include/mach/spi-clocks.h  |    5 +
+ arch/arm/mach-s5pv210/mach-smdkv210.c            |   12 ++
+ arch/arm/mach-s5pv210/setup-spi0.c               |   23 +++
+ arch/arm/mach-s5pv210/setup-spi1.c               |   23 +++
+ arch/arm/plat-samsung/Kconfig                    |   15 ++-
+ arch/arm/plat-samsung/Makefile                   |    3 +
+ arch/arm/plat-samsung/dev-spi0.c                 |   87 +++++++++
+ arch/arm/plat-samsung/dev-spi1.c                 |   87 +++++++++
+ arch/arm/plat-samsung/dev-spi2.c                 |   87 +++++++++
+ arch/arm/plat-samsung/include/plat/devs.h        |   12 +-
+ arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |   18 ++-
+ drivers/spi/Kconfig                              |    3 +-
+ 42 files changed, 677 insertions(+), 822 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c64xx/dev-spi.c
+ create mode 100644 arch/arm/mach-s3c64xx/setup-spi0.c
+ create mode 100644 arch/arm/mach-s3c64xx/setup-spi1.c
+ delete mode 100644 arch/arm/mach-s5p64x0/dev-spi.c
+ create mode 100644 arch/arm/mach-s5p64x0/setup-spi0.c
+ create mode 100644 arch/arm/mach-s5p64x0/setup-spi1.c
+ delete mode 100644 arch/arm/mach-s5pc100/dev-spi.c
+ create mode 100644 arch/arm/mach-s5pc100/setup-spi0.c
+ create mode 100644 arch/arm/mach-s5pc100/setup-spi1.c
+ create mode 100644 arch/arm/mach-s5pc100/setup-spi2.c
+ delete mode 100644 arch/arm/mach-s5pv210/dev-spi.c
+ create mode 100644 arch/arm/mach-s5pv210/setup-spi0.c
+ create mode 100644 arch/arm/mach-s5pv210/setup-spi1.c
+ create mode 100644 arch/arm/plat-samsung/dev-spi0.c
+ create mode 100644 arch/arm/plat-samsung/dev-spi1.c
+ create mode 100644 arch/arm/plat-samsung/dev-spi2.c
