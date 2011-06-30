@@ -1,53 +1,54 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH 1/2] Samsung SoC: Allow to enable wakeup with IRQs.
-Date: Thu, 30 Jun 2011 10:52:29 +0900
-Message-ID: <1309398750-25859-1-git-send-email-myungjoo.ham@samsung.com>
-Content-Transfer-Encoding: 7BIT
+From: MyungJoo Ham <myungjoo.ham@gmail.com>
+Subject: Re: [PATCH 1/7] ARM: EXYNOS4: Add external GIC io memory mapping
+Date: Thu, 30 Jun 2011 14:14:28 +0900
+Message-ID: <BANLkTi=nQEe_JaoBvi6iPSDpR7F4QMsi9g@mail.gmail.com>
+References: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
+	<1308555258-4322-2-git-send-email-chaos.youn@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:24468 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757529Ab1F3Bwd (ORCPT
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:36380 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750958Ab1F3FOa convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Jun 2011 21:52:33 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LNK00F9ZYJAUV30@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 30 Jun 2011 10:52:31 +0900 (KST)
-Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LNK007J3YJJDY@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 30 Jun 2011 10:52:31 +0900 (KST)
+	Thu, 30 Jun 2011 01:14:30 -0400
+Received: by bwd5 with SMTP id 5so1536037bwd.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2011 22:14:28 -0700 (PDT)
+In-Reply-To: <1308555258-4322-2-git-send-email-chaos.youn@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Kyungmin Park <kyungmin.park@samsung.com>, myungjoo.ham@gmail.com
+To: Changhwan Youn <chaos.youn@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org
 
-s3c_irq_wake is required by some external .c files to setup WAKEUP-MASK
-bits based on IRQ numbers.
+On Mon, Jun 20, 2011 at 4:34 PM, Changhwan Youn <chaos.youn@samsung.com=
+> wrote:
+> This patch adds external GIC io memory mapping
+> to support external GIC on EXYNOS4.
+>
+> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+> ---
+> =A0arch/arm/mach-exynos4/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 10 ++=
+++++++++
+> =A0arch/arm/mach-exynos4/include/mach/map.h | =A0 =A05 +++--
+> =A0arch/arm/plat-s5p/include/plat/map-s5p.h | =A0 =A05 +++--
+> =A03 files changed, 16 insertions(+), 4 deletions(-)
+>
 
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/plat-samsung/include/plat/pm.h |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+Hello,
 
-diff --git a/arch/arm/plat-samsung/include/plat/pm.h b/arch/arm/plat-samsung/include/plat/pm.h
-index 7fb6f6b..1279bc7 100644
---- a/arch/arm/plat-samsung/include/plat/pm.h
-+++ b/arch/arm/plat-samsung/include/plat/pm.h
-@@ -105,10 +105,12 @@ extern void s3c_pm_do_restore_core(struct sleep_save *ptr, int count);
- extern int s3c_irqext_wake(struct irq_data *data, unsigned int state);
- extern int s3c24xx_irq_suspend(void);
- extern void s3c24xx_irq_resume(void);
-+extern int s3c_irq_wake(struct irq_data *data, unsigned int state);
- #else
- #define s3c_irqext_wake NULL
- #define s3c24xx_irq_suspend NULL
- #define s3c24xx_irq_resume  NULL
-+#define s3c_irq_wake NULL
- #endif
- 
- extern struct syscore_ops s3c24xx_irq_syscore_ops;
--- 
-1.7.4.1
+It appears that something is missing in the patch series.
+A patch related with "AUDSS" is required before applying this patch.
+I get patch fail errors at cpu.c and map-s5p.h.
+
+
+Cheers!
+
+- MyungJoo
+
+--=20
+MyungJoo Ham, Ph.D.
+Mobile Software Platform Lab,
+Digital Media and Communications (DMC) Business
+Samsung Electronics
+cell: 82-10-6714-2858
