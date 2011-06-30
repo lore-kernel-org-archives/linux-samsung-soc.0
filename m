@@ -1,576 +1,92 @@
 From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH 4/7] ARM: SAMSUNG: Create SPI device setup files in respective
- machine folder
-Date: Thu, 30 Jun 2011 08:25:20 -0400
-Message-ID: <1309436723-662-5-git-send-email-padma.v@samsung.com>
+Subject: [PATCH 2/7] ARM: SAMSUNG: Define common macro for SPI physical address
+Date: Thu, 30 Jun 2011 08:25:18 -0400
+Message-ID: <1309436723-662-3-git-send-email-padma.v@samsung.com>
 References: <1309436723-662-1-git-send-email-padma.v@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout1.samsung.com ([203.254.224.24]:62759 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753826Ab1F3GiX (ORCPT
+	with ESMTP id S1753826Ab1F3GiV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jun 2011 02:38:23 -0400
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+	Thu, 30 Jun 2011 02:38:21 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LNL00KL8BRNPAC0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 30 Jun 2011 15:38:20 +0900 (KST)
+ 2010)) with ESMTP id <0LNL00KLCBRPPAC0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 30 Jun 2011 15:38:17 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.106])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0LNL0026NBR6C8@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 30 Jun 2011 15:38:20 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Thu, 30 Jun 2011 15:38:17 +0900 (KST)
 In-reply-to: <1309436723-662-1-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com, jassisinghbrar@gmail.com, sbkim73@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-SPI device specific setup files are created for S3C64XX,S5P64X0,S5PC100
-and S5PV210 to configure the GPIO pins corresponding to specific SoC.
+A common macro has been defined for SPI physical address as
+SPI has been made common across all the S3C64xx and S5P series.
 
 Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 ---
- arch/arm/mach-s3c64xx/Kconfig      |   14 ++++++++++++++
- arch/arm/mach-s3c64xx/Makefile     |    3 ++-
- arch/arm/mach-s3c64xx/setup-spi0.c |   21 +++++++++++++++++++++
- arch/arm/mach-s3c64xx/setup-spi1.c |   21 +++++++++++++++++++++
- arch/arm/mach-s5p64x0/Kconfig      |   20 ++++++++++++++++++--
- arch/arm/mach-s5p64x0/Makefile     |    3 ++-
- arch/arm/mach-s5p64x0/setup-spi0.c |   31 +++++++++++++++++++++++++++++++
- arch/arm/mach-s5p64x0/setup-spi1.c |   31 +++++++++++++++++++++++++++++++
- arch/arm/mach-s5pc100/Kconfig      |   21 +++++++++++++++++++++
- arch/arm/mach-s5pc100/Makefile     |    4 +++-
- arch/arm/mach-s5pc100/setup-spi0.c |   21 +++++++++++++++++++++
- arch/arm/mach-s5pc100/setup-spi1.c |   21 +++++++++++++++++++++
- arch/arm/mach-s5pc100/setup-spi2.c |   23 +++++++++++++++++++++++
- arch/arm/mach-s5pv210/Kconfig      |   14 ++++++++++++++
- arch/arm/mach-s5pv210/Makefile     |    3 ++-
- arch/arm/mach-s5pv210/setup-spi0.c |   23 +++++++++++++++++++++++
- arch/arm/mach-s5pv210/setup-spi1.c |   23 +++++++++++++++++++++++
- 17 files changed, 291 insertions(+), 6 deletions(-)
- create mode 100644 arch/arm/mach-s3c64xx/setup-spi0.c
- create mode 100644 arch/arm/mach-s3c64xx/setup-spi1.c
- create mode 100644 arch/arm/mach-s5p64x0/setup-spi0.c
- create mode 100644 arch/arm/mach-s5p64x0/setup-spi1.c
- create mode 100644 arch/arm/mach-s5pc100/setup-spi0.c
- create mode 100644 arch/arm/mach-s5pc100/setup-spi1.c
- create mode 100644 arch/arm/mach-s5pc100/setup-spi2.c
- create mode 100644 arch/arm/mach-s5pv210/setup-spi0.c
- create mode 100644 arch/arm/mach-s5pv210/setup-spi1.c
+ arch/arm/mach-s3c64xx/include/mach/map.h |    2 ++
+ arch/arm/mach-s5p64x0/include/mach/map.h |    2 ++
+ arch/arm/mach-s5pc100/include/mach/map.h |    3 +++
+ arch/arm/mach-s5pv210/include/mach/map.h |    2 ++
+ 4 files changed, 9 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-index 4e2c371..d2acce0 100644
---- a/arch/arm/mach-s3c64xx/Kconfig
-+++ b/arch/arm/mach-s3c64xx/Kconfig
-@@ -77,6 +77,16 @@ config S3C64XX_SETUP_SDHCI_GPIO
- 	help
- 	  Common setup code for S3C64XX SDHCI GPIO configurations
+diff --git a/arch/arm/mach-s3c64xx/include/mach/map.h b/arch/arm/mach-s3c64xx/include/mach/map.h
+index a1f13f0..1082e2e 100644
+--- a/arch/arm/mach-s3c64xx/include/mach/map.h
++++ b/arch/arm/mach-s3c64xx/include/mach/map.h
+@@ -122,6 +122,8 @@
+ #define S3C_VA_USB_HSPHY	S3C64XX_VA_USB_HSPHY
+ #define S3C_PA_RTC		S3C64XX_PA_RTC
+ #define S3C_PA_WDT		S3C64XX_PA_WATCHDOG
++#define S3C_PA_SPI0		S3C64XX_PA_SPI0
++#define S3C_PA_SPI1		S3C64XX_PA_SPI1
  
-+config S3C64XX_SETUP_SPI0
-+	bool
-+	help
-+	  Common setup code for SPI channel 0
-+
-+config S3C64XX_SETUP_SPI1
-+	bool
-+	help
-+	  Common setup code for SPI channel 1
-+
- # S36400 Macchine support
+ #define SAMSUNG_PA_ADC		S3C64XX_PA_ADC
+ #define SAMSUNG_PA_CFCON	S3C64XX_PA_CFCON
+diff --git a/arch/arm/mach-s5p64x0/include/mach/map.h b/arch/arm/mach-s5p64x0/include/mach/map.h
+index 95c9125..13f453c 100644
+--- a/arch/arm/mach-s5p64x0/include/mach/map.h
++++ b/arch/arm/mach-s5p64x0/include/mach/map.h
+@@ -64,6 +64,8 @@
+ #define S3C_PA_IIC1		S5P6440_PA_IIC1
+ #define S3C_PA_RTC		S5P64X0_PA_RTC
+ #define S3C_PA_WDT		S5P64X0_PA_WDT
++#define S3C_PA_SPI0		S5P64X0_PA_SPI0
++#define S3C_PA_SPI1		S5P64X0_PA_SPI1
  
- config MACH_SMDK6400
-@@ -142,6 +152,8 @@ config MACH_SMDK6410
- 	select S3C_DEV_USB_HOST
- 	select S3C_DEV_USB_HSOTG
- 	select S3C_DEV_WDT
-+	select SAMSUNG_DEV_SPI0
-+	select SAMSUNG_DEV_SPI1
- 	select SAMSUNG_DEV_KEYPAD
- 	select SAMSUNG_DEV_PWM
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-@@ -150,6 +162,8 @@ config MACH_SMDK6410
- 	select S3C64XX_SETUP_IDE
- 	select S3C64XX_SETUP_FB_24BPP
- 	select S3C64XX_SETUP_KEYPAD
-+	select S3C64XX_SETUP_SPI0
-+	select S3C64XX_SETUP_SPI1
- 	help
- 	  Machine support for the Samsung SMDK6410
+ #define S5P_PA_CHIPID		S5P64X0_PA_CHIPID
+ #define S5P_PA_SROMC		S5P64X0_PA_SROMC
+diff --git a/arch/arm/mach-s5pc100/include/mach/map.h b/arch/arm/mach-s5pc100/include/mach/map.h
+index ccbe6b7..54bc4f8 100644
+--- a/arch/arm/mach-s5pc100/include/mach/map.h
++++ b/arch/arm/mach-s5pc100/include/mach/map.h
+@@ -100,6 +100,9 @@
+ #define S3C_PA_USB_HSOTG		S5PC100_PA_USB_HSOTG
+ #define S3C_PA_USB_HSPHY		S5PC100_PA_USB_HSPHY
+ #define S3C_PA_WDT			S5PC100_PA_WATCHDOG
++#define S3C_PA_SPI0			S5PC100_PA_SPI0
++#define S3C_PA_SPI1			S5PC100_PA_SPI1
++#define S3C_PA_SPI2			S5PC100_PA_SPI2
  
-diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
-index 88d7fd2..f3d2f81 100644
---- a/arch/arm/mach-s3c64xx/Makefile
-+++ b/arch/arm/mach-s3c64xx/Makefile
-@@ -40,6 +40,8 @@ obj-$(CONFIG_S3C64XX_SETUP_KEYPAD) += setup-keypad.o
- obj-$(CONFIG_S3C64XX_SETUP_SDHCI) += setup-sdhci.o
- obj-$(CONFIG_S3C64XX_SETUP_FB_24BPP) += setup-fb-24bpp.o
- obj-$(CONFIG_S3C64XX_SETUP_SDHCI_GPIO) += setup-sdhci-gpio.o
-+obj-$(CONFIG_S3C64XX_SETUP_SPI0) += setup-spi0.o
-+obj-$(CONFIG_S3C64XX_SETUP_SPI1) += setup-spi1.o
+ #define S5P_PA_CHIPID			S5PC100_PA_CHIPID
+ #define S5P_PA_FIMC0			S5PC100_PA_FIMC0
+diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
+index 1dd5883..3fdacfa 100644
+--- a/arch/arm/mach-s5pv210/include/mach/map.h
++++ b/arch/arm/mach-s5pv210/include/mach/map.h
+@@ -101,6 +101,8 @@
+ #define S3C_PA_RTC			S5PV210_PA_RTC
+ #define S3C_PA_USB_HSOTG		S5PV210_PA_HSOTG
+ #define S3C_PA_WDT			S5PV210_PA_WATCHDOG
++#define S3C_PA_SPI0			S5PV210_PA_SPI0
++#define S3C_PA_SPI1			S5PV210_PA_SPI1
  
- # PM
- 
-@@ -65,6 +67,5 @@ obj-$(CONFIG_MACH_WLF_CRAGG_6410) += mach-crag6410.o
- 
- obj-y				+= dev-uart.o
- obj-y				+= dev-audio.o
--obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
- obj-$(CONFIG_S3C64XX_DEV_TS)	+= dev-ts.o
- obj-$(CONFIG_S3C64XX_DEV_ONENAND1)	+= dev-onenand1.o
-diff --git a/arch/arm/mach-s3c64xx/setup-spi0.c b/arch/arm/mach-s3c64xx/setup-spi0.c
-new file mode 100644
-index 0000000..bdf881d
---- /dev/null
-+++ b/arch/arm/mach-s3c64xx/setup-spi0.c
-@@ -0,0 +1,21 @@
-+/* linux/arch/arm/mach-s3c64xx/setup-spi0.c
-+ *
-+ * Copyright (C) 2011 Samsung Electronics Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/gpio.h>
-+#include <linux/platform_device.h>
-+
-+#include <plat/gpio-cfg.h>
-+
-+int s3c_spi0_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgall_range(S3C64XX_GPC(0), 3,
-+				S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
-+	return 0;
-+}
-diff --git a/arch/arm/mach-s3c64xx/setup-spi1.c b/arch/arm/mach-s3c64xx/setup-spi1.c
-new file mode 100644
-index 0000000..3d8acad
---- /dev/null
-+++ b/arch/arm/mach-s3c64xx/setup-spi1.c
-@@ -0,0 +1,21 @@
-+/* linux/arch/arm/mach-s3c64xx/setup-spi1.c
-+ *
-+ * Copyright (C) 2011 Samsung Electronics Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/gpio.h>
-+#include <linux/platform_device.h>
-+
-+#include <plat/gpio-cfg.h>
-+
-+int s3c_spi1_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgall_range(S3C64XX_GPC(4), 3,
-+				S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
-+	return 0;
-+}
-diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
-index 017af4c..6f3ac6f 100644
---- a/arch/arm/mach-s5p64x0/Kconfig
-+++ b/arch/arm/mach-s5p64x0/Kconfig
-@@ -26,6 +26,16 @@ config S5P64X0_SETUP_I2C1
- 	help
- 	  Common setup code for i2c bus 1.
- 
-+config S5P64X0_SETUP_SPI0
-+	bool
-+	help
-+	  Common setup code for SPI channel 0
-+
-+config S5P64X0_SETUP_SPI1
-+	bool
-+	help
-+	  Common setup code for SPI channel 1
-+
- # machine support
- 
- config MACH_SMDK6440
-@@ -34,11 +44,14 @@ config MACH_SMDK6440
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_RTC
- 	select S3C_DEV_WDT
--	select S3C64XX_DEV_SPI
-+	select SAMSUNG_DEV_SPI0
-+	select SAMSUNG_DEV_SPI1
- 	select SAMSUNG_DEV_ADC
- 	select SAMSUNG_DEV_PWM
- 	select SAMSUNG_DEV_TS
- 	select S5P64X0_SETUP_I2C1
-+	select S5P64X0_SETUP_SPI0
-+	select S5P64X0_SETUP_SPI1
- 	help
- 	  Machine support for the Samsung SMDK6440
- 
-@@ -48,11 +61,14 @@ config MACH_SMDK6450
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_RTC
- 	select S3C_DEV_WDT
--	select S3C64XX_DEV_SPI
-+	select SAMSUNG_DEV_SPI0
-+	select SAMSUNG_DEV_SPI1
- 	select SAMSUNG_DEV_ADC
- 	select SAMSUNG_DEV_PWM
- 	select SAMSUNG_DEV_TS
- 	select S5P64X0_SETUP_I2C1
-+	select S5P64X0_SETUP_SPI0
-+	select S5P64X0_SETUP_SPI1
- 	help
- 	  Machine support for the Samsung SMDK6450
- 
-diff --git a/arch/arm/mach-s5p64x0/Makefile b/arch/arm/mach-s5p64x0/Makefile
-index ae6bf6f..4af3b11 100644
---- a/arch/arm/mach-s5p64x0/Makefile
-+++ b/arch/arm/mach-s5p64x0/Makefile
-@@ -25,6 +25,7 @@ obj-$(CONFIG_MACH_SMDK6450)	+= mach-smdk6450.o
- # device support
- 
- obj-y				+= dev-audio.o
--obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
- 
- obj-$(CONFIG_S5P64X0_SETUP_I2C1)	+= setup-i2c1.o
-+obj-$(CONFIG_S5P64X0_SETUP_SPI0)	+= setup-spi0.o
-+obj-$(CONFIG_S5P64X0_SETUP_SPI1)	+= setup-spi1.o
-diff --git a/arch/arm/mach-s5p64x0/setup-spi0.c b/arch/arm/mach-s5p64x0/setup-spi0.c
-new file mode 100644
-index 0000000..aa8db6a
---- /dev/null
-+++ b/arch/arm/mach-s5p64x0/setup-spi0.c
-@@ -0,0 +1,31 @@
-+/* linux/arch/arm/mach-s5p64x0/setup-spi0.c
-+ *
-+ * Copyright (C) 2011 Samsung Electronics Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/gpio.h>
-+#include <linux/platform_device.h>
-+#include <linux/io.h>
-+
-+#include <plat/gpio-cfg.h>
-+
-+#include <mach/regs-clock.h>
-+
-+int s3c_spi0_cfg_gpio(struct platform_device *dev)
-+{
-+	unsigned int id;
-+	id = __raw_readl(S5P64X0_SYS_ID) & 0xFF000;
-+
-+	if (id == 0x50000)
-+		s3c_gpio_cfgall_range(S5P6450_GPC(0), 3,
-+					S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
-+	else
-+		s3c_gpio_cfgall_range(S5P6440_GPC(0), 3,
-+					S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
-+	return 0;
-+}
-diff --git a/arch/arm/mach-s5p64x0/setup-spi1.c b/arch/arm/mach-s5p64x0/setup-spi1.c
-new file mode 100644
-index 0000000..44cef48
---- /dev/null
-+++ b/arch/arm/mach-s5p64x0/setup-spi1.c
-@@ -0,0 +1,31 @@
-+/* linux/arch/arm/mach-s5p64x0/setup-spi1.c
-+ *
-+ * Copyright (C) 2011 Samsung Electronics Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/gpio.h>
-+#include <linux/io.h>
-+#include <linux/platform_device.h>
-+
-+#include <plat/gpio-cfg.h>
-+
-+#include <mach/regs-clock.h>
-+
-+int s3c_spi1_cfg_gpio(struct platform_device *dev)
-+{
-+	unsigned int id;
-+	id = __raw_readl(S5P64X0_SYS_ID) & 0xFF000;
-+
-+	if (id == 0x50000)
-+		s3c_gpio_cfgall_range(S5P6450_GPC(4), 3,
-+					S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
-+	else
-+		s3c_gpio_cfgall_range(S5P6440_GPC(4), 3,
-+					S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
-+	return 0;
-+}
-diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
-index 608722f..eac5dc9 100644
---- a/arch/arm/mach-s5pc100/Kconfig
-+++ b/arch/arm/mach-s5pc100/Kconfig
-@@ -45,6 +45,21 @@ config S5PC100_SETUP_SDHCI_GPIO
- 	help
- 	  Common setup code for SDHCI gpio.
- 
-+config S5PC100_SETUP_SPI0
-+	bool
-+	help
-+	  Common setup code for SPI channel 0
-+
-+config S5PC100_SETUP_SPI1
-+	bool
-+	help
-+	  Common setup code for SPI channel 1
-+
-+config S5PC100_SETUP_SPI2
-+	bool
-+	help
-+	  Common setup code for SPI channel 2
-+
- config MACH_SMDKC100
- 	bool "SMDKC100"
- 	select CPU_S5PC100
-@@ -55,6 +70,9 @@ config MACH_SMDKC100
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_RTC
- 	select S3C_DEV_WDT
-+	select SAMSUNG_DEV_SPI0
-+	select SAMSUNG_DEV_SPI1
-+	select SAMSUNG_DEV_SPI2
- 	select SAMSUNG_DEV_ADC
- 	select SAMSUNG_DEV_IDE
- 	select SAMSUNG_DEV_KEYPAD
-@@ -65,6 +83,9 @@ config MACH_SMDKC100
- 	select S5PC100_SETUP_IDE
- 	select S5PC100_SETUP_KEYPAD
- 	select S5PC100_SETUP_SDHCI
-+	select S5PC100_SETUP_SPI0
-+	select S5PC100_SETUP_SPI1
-+	select S5PC100_SETUP_SPI2
- 	select S5P_DEV_FIMC0
- 	select S5P_DEV_FIMC1
- 	select S5P_DEV_FIMC2
-diff --git a/arch/arm/mach-s5pc100/Makefile b/arch/arm/mach-s5pc100/Makefile
-index a5e6e60..76052ca 100644
---- a/arch/arm/mach-s5pc100/Makefile
-+++ b/arch/arm/mach-s5pc100/Makefile
-@@ -23,10 +23,12 @@ obj-$(CONFIG_S5PC100_SETUP_IDE)		+= setup-ide.o
- obj-$(CONFIG_S5PC100_SETUP_KEYPAD)	+= setup-keypad.o
- obj-$(CONFIG_S5PC100_SETUP_SDHCI)	+= setup-sdhci.o
- obj-$(CONFIG_S5PC100_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
-+obj-$(CONFIG_S5PC100_SETUP_SPI0)	+= setup-spi0.o
-+obj-$(CONFIG_S5PC100_SETUP_SPI1)	+= setup-spi1.o
-+obj-$(CONFIG_S5PC100_SETUP_SPI2)	+= setup-spi2.o
- 
- # device support
- obj-y				+= dev-audio.o
--obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
- 
- # machine support
- 
-diff --git a/arch/arm/mach-s5pc100/setup-spi0.c b/arch/arm/mach-s5pc100/setup-spi0.c
-new file mode 100644
-index 0000000..05882e9
---- /dev/null
-+++ b/arch/arm/mach-s5pc100/setup-spi0.c
-@@ -0,0 +1,21 @@
-+/* linux/arch/arm/mach-s5pc100/setup-spi0.c
-+ *
-+ * Copyright (C) 2011 Samsung Electronics Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/gpio.h>
-+#include <linux/platform_device.h>
-+
-+#include <plat/gpio-cfg.h>
-+
-+int s3c_spi0_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgall_range(S5PC100_GPB(0), 3,
-+				S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
-+	return 0;
-+}
-diff --git a/arch/arm/mach-s5pc100/setup-spi1.c b/arch/arm/mach-s5pc100/setup-spi1.c
-new file mode 100644
-index 0000000..b567f34
---- /dev/null
-+++ b/arch/arm/mach-s5pc100/setup-spi1.c
-@@ -0,0 +1,21 @@
-+/* linux/arch/arm/mach-s5pc100/setup-spi1.c
-+ *
-+ * Copyright (C) 2011 Samsung Electronics Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/gpio.h>
-+#include <linux/platform_device.h>
-+
-+#include <plat/gpio-cfg.h>
-+
-+int s3c_spi1_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgall_range(S5PC100_GPB(4), 3,
-+				S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
-+	return 0;
-+}
-diff --git a/arch/arm/mach-s5pc100/setup-spi2.c b/arch/arm/mach-s5pc100/setup-spi2.c
-new file mode 100644
-index 0000000..54c29e3
---- /dev/null
-+++ b/arch/arm/mach-s5pc100/setup-spi2.c
-@@ -0,0 +1,23 @@
-+/* linux/arch/arm/mach-s5pc100/setup-spi2.c
-+ *
-+ * Copyright (C) 2011 Samsung Electronics Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/gpio.h>
-+#include <linux/platform_device.h>
-+
-+#include <plat/gpio-cfg.h>
-+
-+int s3c_spi2_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgpin(S5PC100_GPG3(0), S3C_GPIO_SFN(3));
-+	s3c_gpio_setpull(S5PC100_GPG3(0), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgall_range(S5PC100_GPB(2), 2,
-+				S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
-+	return 0;
-+}
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index 37b5a97..59879ee 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -59,6 +59,16 @@ config S5PV210_SETUP_FIMC
- 	help
- 	  Common setup code for the camera interfaces.
- 
-+config S5PV210_SETUP_SPI0
-+	bool
-+	help
-+	  Common setup code for SPI channel 0
-+
-+config S5PV210_SETUP_SPI1
-+	bool
-+	help
-+	  Common setup code for SPI channel 1
-+
- menu "S5PC110 Machines"
- 
- config MACH_AQUILA
-@@ -138,12 +148,16 @@ config MACH_SMDKV210
- 	select SAMSUNG_DEV_KEYPAD
- 	select SAMSUNG_DEV_PWM
- 	select SAMSUNG_DEV_TS
-+	select SAMSUNG_DEV_SPI0
-+	select SAMSUNG_DEV_SPI1
- 	select S5PV210_SETUP_FB_24BPP
- 	select S5PV210_SETUP_I2C1
- 	select S5PV210_SETUP_I2C2
- 	select S5PV210_SETUP_IDE
- 	select S5PV210_SETUP_KEYPAD
- 	select S5PV210_SETUP_SDHCI
-+	select S5PV210_SETUP_SPI0
-+	select S5PV210_SETUP_SPI1
- 	help
- 	  Machine support for Samsung SMDKV210
- 
-diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
-index 50907ac..283b04b 100644
---- a/arch/arm/mach-s5pv210/Makefile
-+++ b/arch/arm/mach-s5pv210/Makefile
-@@ -28,7 +28,6 @@ obj-$(CONFIG_MACH_TORBRECK)	+= mach-torbreck.o
- # device support
- 
- obj-y				+= dev-audio.o
--obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
- 
- obj-$(CONFIG_S5PV210_SETUP_FB_24BPP)	+= setup-fb-24bpp.o
- obj-$(CONFIG_S5PV210_SETUP_FIMC)	+= setup-fimc.o
-@@ -38,3 +37,5 @@ obj-$(CONFIG_S5PV210_SETUP_IDE)		+= setup-ide.o
- obj-$(CONFIG_S5PV210_SETUP_KEYPAD)	+= setup-keypad.o
- obj-$(CONFIG_S5PV210_SETUP_SDHCI)       += setup-sdhci.o
- obj-$(CONFIG_S5PV210_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
-+obj-$(CONFIG_S5PV210_SETUP_SPI0)	+= setup-spi0.o
-+obj-$(CONFIG_S5PV210_SETUP_SPI1)	+= setup-spi1.o
-diff --git a/arch/arm/mach-s5pv210/setup-spi0.c b/arch/arm/mach-s5pv210/setup-spi0.c
-new file mode 100644
-index 0000000..7c3256b
---- /dev/null
-+++ b/arch/arm/mach-s5pv210/setup-spi0.c
-@@ -0,0 +1,23 @@
-+/* linux/arch/arm/mach-s5pv210/setup-spi0.c
-+ *
-+ * Copyright (C) 2011 Samsung Electronics Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/gpio.h>
-+#include <linux/platform_device.h>
-+
-+#include <plat/gpio-cfg.h>
-+
-+int s3c_spi0_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgpin(S5PV210_GPB(0), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(S5PV210_GPB(0), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgall_range(S5PV210_GPB(2), 2,
-+				S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
-+	return 0;
-+}
-diff --git a/arch/arm/mach-s5pv210/setup-spi1.c b/arch/arm/mach-s5pv210/setup-spi1.c
-new file mode 100644
-index 0000000..b22e56e
---- /dev/null
-+++ b/arch/arm/mach-s5pv210/setup-spi1.c
-@@ -0,0 +1,23 @@
-+/* linux/arch/arm/mach-s5pv210/setup-spi1.c
-+ *
-+ * Copyright (C) 2011 Samsung Electronics Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/gpio.h>
-+#include <linux/platform_device.h>
-+
-+#include <plat/gpio-cfg.h>
-+
-+int s3c_spi1_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgpin(S5PV210_GPB(4), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(S5PV210_GPB(4), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgall_range(S5PV210_GPB(6), 2,
-+				S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
-+	return 0;
-+}
+ #define S5P_PA_CHIPID			S5PV210_PA_CHIPID
+ #define S5P_PA_FIMC0			S5PV210_PA_FIMC0
 -- 
 1.7.0.4
