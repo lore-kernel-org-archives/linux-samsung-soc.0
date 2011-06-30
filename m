@@ -1,69 +1,101 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 0/7] ARM: SAMSUNG: Cleanup SPI platform specific code
-Date: Thu, 30 Jun 2011 15:44:08 +0530
-Message-ID: <BANLkTi=P=-eJFV8vQbcLKoFe3hto7tNGRw@mail.gmail.com>
-References: <1309436723-662-1-git-send-email-padma.v@samsung.com>
-	<BANLkTin2MAsTn3UhJDOLVvsams=xRR=REQ@mail.gmail.com>
-	<BANLkTimaMiFgKa95Zm4AtQVFdbSqukBfwg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Sangwook Lee <sangwook.lee@linaro.org>
+Subject: [PATCH] ARM:SAMSUNG: DMA Cleanup as per sparse
+Date: Thu, 30 Jun 2011 11:16:20 +0100
+Message-ID: <1309428980-20176-1-git-send-email-sangwook.lee@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:34922 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751405Ab1F3KOK (ORCPT
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:41676 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753439Ab1F3KS2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jun 2011 06:14:10 -0400
-Received: by bwd5 with SMTP id 5so1691781bwd.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2011 03:14:09 -0700 (PDT)
-In-Reply-To: <BANLkTimaMiFgKa95Zm4AtQVFdbSqukBfwg@mail.gmail.com>
+	Thu, 30 Jun 2011 06:18:28 -0400
+Received: by wyg8 with SMTP id 8so1434005wyg.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2011 03:18:27 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: padma venkat <padma.kvr@gmail.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, kgene.kim@samsung.com, sbkim73@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
+Cc: Sangwook Lee <sangwook.lee@linaro.org>
 
-On Thu, Jun 30, 2011 at 2:57 PM, padma venkat <padma.kvr@gmail.com> wrote:
-> Hi,
->
-> On Thu, Jun 30, 2011 at 1:01 PM, Jassi Brar <jassisinghbrar@gmail.com> wrote:
->> On Thu, Jun 30, 2011 at 5:55 PM, Padmavathi Venna <padma.v@samsung.com> wrote:
->>> This patchset does the following:
->>>
->>> 1. Move duplicated code to common place
->>> [PATCH 1/7] ARM: SAMSUNG: Move SPI device definitions to plat-samsung
->>> SPI platform devices are defined in respective machine folder of
->>> Samsung S3C64XX and S5P series SoCs.This is duplicated for every SoC.
->>> So all SPI platform devices are moved to a common place.
->>
->> The machine specific code is put in machine specific location for some reason.
->> And the code is not duplicated, it's mostly data structures
->> initialized with machine
->> specific values.
->>
->> Have you considered if it would still be possible to build kernel
->> image supporting
->> more than 1 soc after your changes ?
-> I didn't consider the single image scenario. Because as far as I know,
-> the existing Samsung code doesn't have support for building a single kernel
-> image for multiple SoCs.
+Function declaration differs between file:s3c-pl330.c and file:dma.h
+and SPARSE (Documentation/sparse.txt) gives error messages
 
-Samsung did use to support during 24xx days. Unfortunately not much with
-new generation SoCs.
-This patch-set only takes us further away from having multiple SoCs
-supported in a single kernel image some day.
+Signed-off-by: Sangwook Lee <sangwook.lee@linaro.org>
+---
+ arch/arm/plat-samsung/include/plat/dma.h |   16 ++++++++--------
+ 1 files changed, 8 insertions(+), 8 deletions(-)
 
->
-> The intention behind my changes were
-> 1) To reuse the dev-spi files for all the SoCs, as this reduces the code size.
-I already decided in favor of being able to support multiple SoCs in
-single image.
-
-> Also future SoCs with SPI can use the same file.
-Only if they have _exactly_ same SPI block. Then most probably they'll have most
-other blocks identical too (not sure if I can name such examples in public) and
-can be supported under the same SoC name.
-Otherwise different SoCs spanning last 5yrs are already supported by
-the same SPI
-driver. We must provide SoC specific bits to the driver either via one
-place or the other.
-
--j
+diff --git a/arch/arm/plat-samsung/include/plat/dma.h b/arch/arm/plat-samsung/include/plat/dma.h
+index 2e8f8c6..7365f46 100644
+--- a/arch/arm/plat-samsung/include/plat/dma.h
++++ b/arch/arm/plat-samsung/include/plat/dma.h
+@@ -62,7 +62,7 @@ typedef int  (*s3c2410_dma_opfn_t)(struct s3c2410_dma_chan *,
+  * request a dma channel exclusivley
+ */
+ 
+-extern int s3c2410_dma_request(unsigned int channel,
++extern int s3c2410_dma_request(enum dma_ch id,
+ 			       struct s3c2410_dma_client *, void *dev);
+ 
+ 
+@@ -71,14 +71,14 @@ extern int s3c2410_dma_request(unsigned int channel,
+  * change the state of the dma channel
+ */
+ 
+-extern int s3c2410_dma_ctrl(unsigned int channel, enum s3c2410_chan_op op);
++extern int s3c2410_dma_ctrl(enum dma_ch id, enum s3c2410_chan_op op);
+ 
+ /* s3c2410_dma_setflags
+  *
+  * set the channel's flags to a given state
+ */
+ 
+-extern int s3c2410_dma_setflags(unsigned int channel,
++extern int s3c2410_dma_setflags(enum dma_ch id,
+ 				unsigned int flags);
+ 
+ /* s3c2410_dma_free
+@@ -86,7 +86,7 @@ extern int s3c2410_dma_setflags(unsigned int channel,
+  * free the dma channel (will also abort any outstanding operations)
+ */
+ 
+-extern int s3c2410_dma_free(unsigned int channel, struct s3c2410_dma_client *);
++extern int s3c2410_dma_free(enum dma_ch id, struct s3c2410_dma_client *);
+ 
+ /* s3c2410_dma_enqueue
+  *
+@@ -95,7 +95,7 @@ extern int s3c2410_dma_free(unsigned int channel, struct s3c2410_dma_client *);
+  * drained before the buffer is given to the DMA system.
+ */
+ 
+-extern int s3c2410_dma_enqueue(unsigned int channel, void *id,
++extern int s3c2410_dma_enqueue(enum dma_ch idx, void *id,
+ 			       dma_addr_t data, int size);
+ 
+ /* s3c2410_dma_config
+@@ -103,14 +103,14 @@ extern int s3c2410_dma_enqueue(unsigned int channel, void *id,
+  * configure the dma channel
+ */
+ 
+-extern int s3c2410_dma_config(unsigned int channel, int xferunit);
++extern int s3c2410_dma_config(enum dma_ch id, int xferunit);
+ 
+ /* s3c2410_dma_devconfig
+  *
+  * configure the device we're talking to
+ */
+ 
+-extern int s3c2410_dma_devconfig(unsigned int channel,
++extern int s3c2410_dma_devconfig(enum dma_ch id,
+ 		enum s3c2410_dmasrc source, unsigned long devaddr);
+ 
+ /* s3c2410_dma_getposition
+@@ -118,7 +118,7 @@ extern int s3c2410_dma_devconfig(unsigned int channel,
+  * get the position that the dma transfer is currently at
+ */
+ 
+-extern int s3c2410_dma_getposition(unsigned int channel,
++extern int s3c2410_dma_getposition(enum dma_ch id,
+ 				   dma_addr_t *src, dma_addr_t *dest);
+ 
+ extern int s3c2410_dma_set_opfn(unsigned int, s3c2410_dma_opfn_t rtn);
+-- 
+1.7.4.1
