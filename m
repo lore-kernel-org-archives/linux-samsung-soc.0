@@ -1,131 +1,105 @@
 From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH v3 2/6] Samsung SoC ADC: Channel selection for S5PV210,
- S5PC110, and Exynos4
-Date: Thu, 30 Jun 2011 16:49:31 +0900
-Message-ID: <1309420175-10301-3-git-send-email-myungjoo.ham@samsung.com>
+Subject: [PATCH v3 4/6] ARM: EXYNOS4: Support ADC
+Date: Thu, 30 Jun 2011 16:49:33 +0900
+Message-ID: <1309420175-10301-5-git-send-email-myungjoo.ham@samsung.com>
 References: <1309420175-10301-1-git-send-email-myungjoo.ham@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.samsung.com ([203.254.224.33]:40951 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751897Ab1F3Hth (ORCPT
+	with ESMTP id S1753072Ab1F3Hti (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jun 2011 03:49:37 -0400
+	Thu, 30 Jun 2011 03:49:38 -0400
 In-reply-to: <1309420175-10301-1-git-send-email-myungjoo.ham@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kyungmin Park <kyungmin.park@samsung.com>, Changhwan Youn <chaos.youn@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jassi Brar <jassi.brar@samsung.com>, Seungwhan Youn <sw.youn@samsung.com>, linux-kernel@vger.kernel.org, myungjoo.ham@gmail.com
 
-In S5PV210/S5PC110/Exynos4, ADCMUX channel selection uses ADCMUX
-register, not ADCCON register. This patch corrects the behavior of
-Samsung-ADC for such cpus.
-
 Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 --
-updates from v2
-- Renamed internal device names.
+Updates from v2
+- Based on EXT_GIC patches from Changhwan Youn (ARM: EXYNOS4: Adds
+  External GIC)
 ---
- arch/arm/plat-samsung/adc.c                   |   29 ++++++++++++++++--------
- arch/arm/plat-samsung/include/plat/regs-adc.h |    1 +
- 2 files changed, 20 insertions(+), 10 deletions(-)
+ arch/arm/mach-exynos4/Kconfig             |    1 +
+ arch/arm/mach-exynos4/cpu.c               |    4 ++++
+ arch/arm/mach-exynos4/include/mach/irqs.h |    3 +++
+ arch/arm/mach-exynos4/include/mach/map.h  |    5 +++++
+ 4 files changed, 13 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
-index 2224128..45cc7e6 100644
---- a/arch/arm/plat-samsung/adc.c
-+++ b/arch/arm/plat-samsung/adc.c
-@@ -40,8 +40,9 @@
-  */
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index 0aca083..80f4fbe 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -184,6 +184,7 @@ config MACH_NURI
+ 	select EXYNOS4_SETUP_SDHCI
+ 	select EXYNOS4_SETUP_USB_PHY
+ 	select SAMSUNG_DEV_PWM
++	select SAMSUNG_DEV_ADC
+ 	help
+ 	  Machine support for Samsung Mobile NURI Board.
  
- enum s3c_cpu_type {
--	TYPE_S3C24XX,
--	TYPE_S3C64XX
-+	TYPE_ADCV1, /* S3C24XX */
-+	TYPE_ADCV2, /* S3C64XX, S5P64X0, S5PC100 */
-+	TYPE_ADCV3, /* S5PV210, S5PC110, EXYNOS4210 */
- };
+diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
+index 5423ed8..7ffa81d 100644
+--- a/arch/arm/mach-exynos4/cpu.c
++++ b/arch/arm/mach-exynos4/cpu.c
+@@ -21,7 +21,9 @@
  
- struct s3c_adc_client {
-@@ -93,6 +94,7 @@ static inline void s3c_adc_select(struct adc_device *adc,
- 				  struct s3c_adc_client *client)
- {
- 	unsigned con = readl(adc->regs + S3C2410_ADCCON);
-+	enum s3c_cpu_type cpu = platform_get_device_id(adc->pdev)->driver_data;
+ #include <plat/cpu.h>
+ #include <plat/clock.h>
++#include <plat/devs.h>
+ #include <plat/exynos4.h>
++#include <plat/adc-core.h>
+ #include <plat/sdhci.h>
+ #include <plat/devs.h>
+ #include <plat/fimc-core.h>
+@@ -141,6 +143,8 @@ void __init exynos4_map_io(void)
+ 	exynos4_default_sdhci2();
+ 	exynos4_default_sdhci3();
  
- 	client->select_cb(client, 1);
++	s3c_adc_setname("samsung-adc-v3");
++
+ 	s3c_fimc_setname(0, "exynos4-fimc");
+ 	s3c_fimc_setname(1, "exynos4-fimc");
+ 	s3c_fimc_setname(2, "exynos4-fimc");
+diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-exynos4/include/mach/irqs.h
+index 250427f..31f6bed 100644
+--- a/arch/arm/mach-exynos4/include/mach/irqs.h
++++ b/arch/arm/mach-exynos4/include/mach/irqs.h
+@@ -139,6 +139,9 @@
  
-@@ -100,8 +102,12 @@ static inline void s3c_adc_select(struct adc_device *adc,
- 	con &= ~S3C2410_ADCCON_STDBM;
- 	con &= ~S3C2410_ADCCON_STARTMASK;
+ #define MAX_COMBINER_NR		16
  
--	if (!client->is_ts)
--		con |= S3C2410_ADCCON_SELMUX(client->channel);
-+	if (!client->is_ts) {
-+		if (cpu == TYPE_ADCV3)
-+			writel(client->channel & 0xf, adc->regs + S5P_ADCMUX);
-+		else
-+			con |= S3C2410_ADCCON_SELMUX(client->channel);
-+	}
++#define IRQ_ADC			IRQ_ADC0
++#define IRQ_TC			IRQ_PEN0
++
+ #define S5P_IRQ_EINT_BASE	COMBINER_IRQ(MAX_COMBINER_NR, 0)
  
- 	writel(con, adc->regs + S3C2410_ADCCON);
- }
-@@ -287,8 +293,8 @@ static irqreturn_t s3c_adc_irq(int irq, void *pw)
+ #define S5P_EINT_BASE1		(S5P_IRQ_EINT_BASE + 0)
+diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
+index e4b5c79..e03e820 100644
+--- a/arch/arm/mach-exynos4/include/mach/map.h
++++ b/arch/arm/mach-exynos4/include/mach/map.h
+@@ -110,6 +110,9 @@
  
- 	client->nr_samples--;
+ #define EXYNOS4_PA_IIC(x)		(0x13860000 + ((x) * 0x10000))
  
--	if (cpu == TYPE_S3C64XX) {
--		/* S3C64XX ADC resolution is 12-bit */
-+	if (cpu != TYPE_ADCV1) {
-+		/* S3C64XX/S5P ADC resolution is 12-bit */
- 		data0 &= 0xfff;
- 		data1 &= 0xfff;
- 	} else {
-@@ -314,7 +320,7 @@ static irqreturn_t s3c_adc_irq(int irq, void *pw)
- 	}
++#define EXYNOS4_PA_ADC			0x13910000
++#define EXYNOS4_PA_ADC1			0x13911000
++
+ #define EXYNOS4_PA_AC97			0x139A0000
  
- exit:
--	if (cpu == TYPE_S3C64XX) {
-+	if (cpu != TYPE_ADCV1) {
- 		/* Clear ADC interrupt */
- 		writel(0, adc->regs + S3C64XX_ADCCLRINT);
- 	}
-@@ -388,7 +394,7 @@ static int s3c_adc_probe(struct platform_device *pdev)
- 	clk_enable(adc->clk);
- 
- 	tmp = adc->prescale | S3C2410_ADCCON_PRSCEN;
--	if (platform_get_device_id(pdev)->driver_data == TYPE_S3C64XX) {
-+	if (platform_get_device_id(pdev)->driver_data != TYPE_ADCV1) {
- 		/* Enable 12-bit ADC resolution */
- 		tmp |= S3C64XX_ADCCON_RESSEL;
- 	}
-@@ -476,10 +482,13 @@ static int s3c_adc_resume(struct platform_device *pdev)
- static struct platform_device_id s3c_adc_driver_ids[] = {
- 	{
- 		.name           = "s3c24xx-adc",
--		.driver_data    = TYPE_S3C24XX,
-+		.driver_data    = TYPE_ADCV1,
- 	}, {
- 		.name           = "s3c64xx-adc",
--		.driver_data    = TYPE_S3C64XX,
-+		.driver_data    = TYPE_ADCV2,
-+	}, {
-+		.name		= "samsung-adc-v3",
-+		.driver_data	= TYPE_ADCV3,
- 	},
- 	{ }
- };
-diff --git a/arch/arm/plat-samsung/include/plat/regs-adc.h b/arch/arm/plat-samsung/include/plat/regs-adc.h
-index 7554c4f..035e8c3 100644
---- a/arch/arm/plat-samsung/include/plat/regs-adc.h
-+++ b/arch/arm/plat-samsung/include/plat/regs-adc.h
-@@ -21,6 +21,7 @@
- #define S3C2410_ADCDAT1	   S3C2410_ADCREG(0x10)
- #define S3C64XX_ADCUPDN		S3C2410_ADCREG(0x14)
- #define S3C64XX_ADCCLRINT	S3C2410_ADCREG(0x18)
-+#define S5P_ADCMUX		S3C2410_ADCREG(0x1C)
- #define S3C64XX_ADCCLRINTPNDNUP	S3C2410_ADCREG(0x20)
- 
+ #define EXYNOS4_PA_SPDIF		0x139B0000
+@@ -132,6 +135,8 @@
+ #define S3C_PA_IIC5			EXYNOS4_PA_IIC(5)
+ #define S3C_PA_IIC6			EXYNOS4_PA_IIC(6)
+ #define S3C_PA_IIC7			EXYNOS4_PA_IIC(7)
++#define SAMSUNG_PA_ADC			EXYNOS4_PA_ADC
++#define SAMSUNG_PA_ADC1			EXYNOS4_PA_ADC1
+ #define S3C_PA_RTC			EXYNOS4_PA_RTC
+ #define S3C_PA_WDT			EXYNOS4_PA_WATCHDOG
  
 -- 
 1.7.4.1
