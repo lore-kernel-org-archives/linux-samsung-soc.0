@@ -1,49 +1,73 @@
 From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH v3 6/6] Samsung SoC: header file revised to prevent declaring
- duplicated.
-Date: Thu, 30 Jun 2011 16:49:35 +0900
-Message-ID: <1309420175-10301-7-git-send-email-myungjoo.ham@samsung.com>
-References: <1309420175-10301-1-git-send-email-myungjoo.ham@samsung.com>
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:40951 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758558Ab1F3Htl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jun 2011 03:49:41 -0400
-In-reply-to: <1309420175-10301-1-git-send-email-myungjoo.ham@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] Samsung SoC ADC: Channel selection for S5PV210,
+ S5PC110, and Exynos4
+Date: Thu, 30 Jun 2011 16:50:48 +0900
+Message-ID: <BANLkTik-k+9=8coWpZO_zToYCm8iHfO3CQ@mail.gmail.com>
+References: <20110620101737.GA31864@opensource.wolfsonmicro.com>
+	<1308621527-2457-1-git-send-email-myungjoo.ham@samsung.com>
+	<1308621527-2457-3-git-send-email-myungjoo.ham@samsung.com>
+	<004a01cc3662$65751a90$305f4fb0$%kim@samsung.com>
+Reply-To: myungjoo.ham@gmail.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <004a01cc3662$65751a90$305f4fb0$%kim@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kyungmin Park <kyungmin.park@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, dg77.kim@samsung.com, =?UTF-8?B?7ZWo66qF7KO8?= <myungjoo.ham@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kyungmin Park <kyungmin.park@samsung.com>, Changhwan Youn <chaos.youn@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@suse.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jassi Brar <jassi.brar@samsung.com>, Seungwhan Youn <sw.youn@samsung.com>, linux-kernel@vger.kernel.org, myungjoo.ham@gmail.com
 
-There has been no #ifndef - #define - #endif protection for this header
-file. The patch adds it for Exynos4-ADC support
+On Wed, Jun 29, 2011 at 10:42 PM, Kukjin Kim <kgene.kim@samsung.com> wr=
+ote:
+> MyungJoo Ham wrote:
+>>
+>> In S5PV210/S5PC110/Exynos4, ADCMUX channel selection uses ADCMUX
+>> register, not ADCCON register. This patch corrects the behavior of
+>> Samsung-ADC for such cpus.
+>>
+>> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> --
+>> v2: No changes from v1. Resubmitted as a series of patches
+>> ---
+[]
+>>
+>> =C2=A0enum s3c_cpu_type {
+>> =C2=A0 =C2=A0 =C2=A0 TYPE_S3C24XX,
+>> - =C2=A0 =C2=A0 TYPE_S3C64XX
+>> + =C2=A0 =C2=A0 TYPE_S3C64XX,
+>> + =C2=A0 =C2=A0 TYPE_S5P,
+>> =C2=A0};
+>
+> How about S5PC100? Following is better for next if we cannot distingu=
+ish it
+> by CPU.
+>
+> -enum s3c_cpu_type {
+> - =C2=A0 =C2=A0 =C2=A0 TYPE_S3C24XX,
+> - =C2=A0 =C2=A0 =C2=A0 TYPE_S3C64XX
+> +enum samsung_adc_type {
+> + =C2=A0 =C2=A0 =C2=A0 TYPE_ADC24, =C2=A0 =C2=A0 =C2=A0/* S3C24XX */
+> + =C2=A0 =C2=A0 =C2=A0 TYPE_ADC64, =C2=A0 =C2=A0 =C2=A0/* S3C64XX, S5=
+P64X0, S5PC100 */
+> + =C2=A0 =C2=A0 =C2=A0 TYPE_ADCV3 =C2=A0 =C2=A0 =C2=A0/* S5PV210, EXY=
+NOS4210 */
+> =C2=A0};
+> ...
+>
+> TYPE_ADCV1 and V2?...
+> Of course, the name can be changed...
 
-Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
----
- arch/arm/plat-samsung/include/plat/devs.h |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
+I don't mind about these names as they are just internal values of adc.=
+c.
+Anyway, I prefer the last suggestion and I'll use TYPE_ADCV1/V2/V3.
 
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index 4af108f..3c87779 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -12,6 +12,9 @@
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
- */
-+#ifndef __PLAT_DEVS_H
-+#define __PLAT_DEVS_H __FILE__
-+
- #include <linux/platform_device.h>
- 
- struct s3c24xx_uart_resources {
-@@ -159,3 +162,5 @@ extern struct platform_device s3c_device_ac97;
-  */
- extern void *s3c_set_platdata(void *pd, size_t pdsize,
- 			      struct platform_device *pdev);
-+
-+#endif /* __PLAT_DEVS_H */
--- 
-1.7.4.1
+Thanks.
+
+--=20
+MyungJoo Ham (=ED=95=A8=EB=AA=85=EC=A3=BC), Ph.D.
+Mobile Software Platform Lab,
+Digital Media and Communications (DMC) Business
+Samsung Electronics
+cell: 82-10-6714-2858
