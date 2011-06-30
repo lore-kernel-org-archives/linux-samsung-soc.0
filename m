@@ -1,54 +1,34 @@
-From: MyungJoo Ham <myungjoo.ham@gmail.com>
-Subject: Re: [PATCH 1/7] ARM: EXYNOS4: Add external GIC io memory mapping
-Date: Thu, 30 Jun 2011 14:14:28 +0900
-Message-ID: <BANLkTi=nQEe_JaoBvi6iPSDpR7F4QMsi9g@mail.gmail.com>
-References: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
-	<1308555258-4322-2-git-send-email-chaos.youn@samsung.com>
+From: Paul Mundt <lethal@linux-sh.org>
+Subject: Re: [PATCH] arm: platsmp: Allow secondary cpu hotplug with maxcpus=1
+Date: Thu, 30 Jun 2011 14:38:52 +0900
+Message-ID: <20110630053851.GC22023@linux-sh.org>
+References: <1309372300-28911-1-git-send-email-sboyd@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:36380 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750958Ab1F3FOa convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jun 2011 01:14:30 -0400
-Received: by bwd5 with SMTP id 5so1536037bwd.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2011 22:14:28 -0700 (PDT)
-In-Reply-To: <1308555258-4322-2-git-send-email-chaos.youn@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1309372300-28911-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-sh-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, David Brown <davidb@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Linus Walleij <linus.walleij@stericsson.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Changhwan Youn <chaos.youn@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org
 
-On Mon, Jun 20, 2011 at 4:34 PM, Changhwan Youn <chaos.youn@samsung.com=
-> wrote:
-> This patch adds external GIC io memory mapping
-> to support external GIC on EXYNOS4.
->
-> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
-> ---
-> =A0arch/arm/mach-exynos4/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 10 ++=
-++++++++
-> =A0arch/arm/mach-exynos4/include/mach/map.h | =A0 =A05 +++--
-> =A0arch/arm/plat-s5p/include/plat/map-s5p.h | =A0 =A05 +++--
-> =A03 files changed, 16 insertions(+), 4 deletions(-)
->
+On Wed, Jun 29, 2011 at 11:31:39AM -0700, Stephen Boyd wrote:
+> If an ARM system has multiple cpus in the same socket and the
+> kernel is booted with maxcpus=1, secondary cpus are possible but
+> not present due to how platform_smp_prepare_cpus() is called.
+> Fix this by always calling platform_smp_prepare_cpus() as long as
+> max_cpus is non-zero (0 means no SMP) to allow platform code to
+> decide if any non-boot cpus are present in the system. Since
+> all current platform code doesn't support physical hotplug we
+> have a situation where possible == present and thus we can
+> simply copy the possible map to the present map.
+> 
+> With this patch it's possible to boot an ARM system with
+> maxcpus=1 on the command line and then hotplug in secondary cpus
+> via sysfs. This is more in line with how x86 works with maxcpus=1
+> on the command line.
+> 
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
-Hello,
-
-It appears that something is missing in the patch series.
-A patch related with "AUDSS" is required before applying this patch.
-I get patch fail errors at cpu.c and map-s5p.h.
-
-
-Cheers!
-
-- MyungJoo
-
---=20
-MyungJoo Ham, Ph.D.
-Mobile Software Platform Lab,
-Digital Media and Communications (DMC) Business
-Samsung Electronics
-cell: 82-10-6714-2858
+Acked-by: Paul Mundt <lethal@linux-sh.org>
