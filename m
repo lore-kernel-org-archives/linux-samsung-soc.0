@@ -1,99 +1,69 @@
 From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 2/2] SPI: SAMSUNG: Bug fix for SPI with different FIFO level
-Date: Thu, 30 Jun 2011 15:22:20 +0530
-Message-ID: <BANLkTi=9c5asfr=Jg6xwjQZW_a369UO64Q@mail.gmail.com>
-References: <1309437536-9315-1-git-send-email-padma.v@samsung.com>
-	<1309437536-9315-2-git-send-email-padma.v@samsung.com>
-	<BANLkTi=L7QeN75ebWFXdp_V5Pw1zEc-ZtA@mail.gmail.com>
-	<BANLkTimeWUbD2Ej16KKmuzwSCFz8HOhyKQ@mail.gmail.com>
+Subject: Re: [PATCH 0/7] ARM: SAMSUNG: Cleanup SPI platform specific code
+Date: Thu, 30 Jun 2011 15:44:08 +0530
+Message-ID: <BANLkTi=P=-eJFV8vQbcLKoFe3hto7tNGRw@mail.gmail.com>
+References: <1309436723-662-1-git-send-email-padma.v@samsung.com>
+	<BANLkTin2MAsTn3UhJDOLVvsams=xRR=REQ@mail.gmail.com>
+	<BANLkTimaMiFgKa95Zm4AtQVFdbSqukBfwg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:59032 "EHLO
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:34922 "EHLO
 	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755276Ab1F3JwV convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1751405Ab1F3KOK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jun 2011 05:52:21 -0400
-Received: by bwd5 with SMTP id 5so1680316bwd.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2011 02:52:20 -0700 (PDT)
-In-Reply-To: <BANLkTimeWUbD2Ej16KKmuzwSCFz8HOhyKQ@mail.gmail.com>
+	Thu, 30 Jun 2011 06:14:10 -0400
+Received: by bwd5 with SMTP id 5so1691781bwd.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2011 03:14:09 -0700 (PDT)
+In-Reply-To: <BANLkTimaMiFgKa95Zm4AtQVFdbSqukBfwg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: padma venkat <padma.kvr@gmail.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, kgene.kim@samsung.com, sbkim73@samsung.com, grant.likely@secretlab.ca, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Padmavathi Venna <padma.v@samsung.com>, kgene.kim@samsung.com, sbkim73@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Thu, Jun 30, 2011 at 2:35 PM, padma venkat <padma.kvr@gmail.com> wro=
-te:
+On Thu, Jun 30, 2011 at 2:57 PM, padma venkat <padma.kvr@gmail.com> wrote:
 > Hi,
 >
-> On Thu, Jun 30, 2011 at 12:38 PM, Jassi Brar <jassisinghbrar@gmail.co=
-m> wrote:
->> On Thu, Jun 30, 2011 at 6:08 PM, Padmavathi Venna <padma.v@samsung.c=
-om> wrote:
->>> Fixed the bug in transmission status check for 64 bytes FIFO
->>> level.
+> On Thu, Jun 30, 2011 at 1:01 PM, Jassi Brar <jassisinghbrar@gmail.com> wrote:
+>> On Thu, Jun 30, 2011 at 5:55 PM, Padmavathi Venna <padma.v@samsung.com> wrote:
+>>> This patchset does the following:
 >>>
->>> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
->>> ---
->>> =C2=A0drivers/spi/spi_s3c64xx.c | =C2=A0 =C2=A04 +---
->>> =C2=A01 files changed, 1 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/spi/spi_s3c64xx.c b/drivers/spi/spi_s3c64xx.hc
->>> index 795828b..8945e20 100644
->>> --- a/drivers/spi/spi_s3c64xx.c
->>> +++ b/drivers/spi/spi_s3c64xx.c
->>> @@ -116,9 +116,7 @@
->>> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(=
-((i)->fifo_lvl_mask + 1))) \
->>> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0?=
- 1 : 0)
->>>
->>> -#define S3C64XX_SPI_ST_TX_DONE(v, i) ((((v) >> (i)->rx_lvl_offset)=
- & \
->>> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 (((i=
-)->fifo_lvl_mask + 1) << 1)) \
->>> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ? 1 =
-: 0)
->>> +#define S3C64XX_SPI_ST_TX_DONE(v, i) (((v) & (1 << (i)->tx_st_done=
-)) ? 1 : 0)
+>>> 1. Move duplicated code to common place
+>>> [PATCH 1/7] ARM: SAMSUNG: Move SPI device definitions to plat-samsung
+>>> SPI platform devices are defined in respective machine folder of
+>>> Samsung S3C64XX and S5P series SoCs.This is duplicated for every SoC.
+>>> So all SPI platform devices are moved to a common place.
 >>
->> IIRC the macro is already designed to deduct tx-done levels from oth=
-er fields.
->> Could you please _explain_ with one example where it fails ? It is
->> difficult to see without
->> numbers.
-> The existing macro fails for following scenarios.
-> 1) S5P64X0 channel 1
-> 2) S5PV210 channel 1
-> 3) S5PV310 channel 1 and channel 2
->
-> The FIFO data level supported in the above SoCs either 64 or 256
-> bytes depending on the channel. Because of this the TX_DONE
-> is the 25 bit in the status register.
->
-> The existing macro works for the following scenarios
-> 1) S3C6410 all channels
-> 2) S5PC100 all channels
->
-> The FIFO data level supported in the above SoCs 64 bytes
-> on all the channels. Because of this the TX_DONE is the 21 bit
-> in the status register.
->
-> So when we use the existing macro for the non-working SoCs
-> it is not anding with the TX_DONE bit but it is only anding the bits
-> earlier to TX_DONE bit.
->
+>> The machine specific code is put in machine specific location for some reason.
+>> And the code is not duplicated, it's mostly data structures
+>> initialized with machine
+>> specific values.
+>>
+>> Have you considered if it would still be possible to build kernel
+>> image supporting
+>> more than 1 soc after your changes ?
+> I didn't consider the single image scenario. Because as far as I know,
+> the existing Samsung code doesn't have support for building a single kernel
+> image for multiple SoCs.
 
-I see.
-I don't have access to post s3c64xx datasheets. Please confirm if TX_DO=
-NE
-bit at same offset for all channels of an SoC. If so, I am OK with
-these 2 patches.
+Samsung did use to support during 24xx days. Unfortunately not much with
+new generation SoCs.
+This patch-set only takes us further away from having multiple SoCs
+supported in a single kernel image some day.
 
-Thanks,
-Jassi
+>
+> The intention behind my changes were
+> 1) To reuse the dev-spi files for all the SoCs, as this reduces the code size.
+I already decided in favor of being able to support multiple SoCs in
+single image.
+
+> Also future SoCs with SPI can use the same file.
+Only if they have _exactly_ same SPI block. Then most probably they'll have most
+other blocks identical too (not sure if I can name such examples in public) and
+can be supported under the same SoC name.
+Otherwise different SoCs spanning last 5yrs are already supported by
+the same SPI
+driver. We must provide SoC specific bits to the driver either via one
+place or the other.
+
+-j
