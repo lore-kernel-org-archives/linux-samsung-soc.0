@@ -1,91 +1,92 @@
-From: MyungJoo Ham <myungjoo.ham@gmail.com>
-Subject: Re: [PATCH v3 1/6] Samsung SoC ADC: use regulator (VDD for ADC).
-Date: Thu, 30 Jun 2011 18:03:06 +0900
-Message-ID: <BANLkTimwqF3APEbJnTGcO5mh+AnS=N787g@mail.gmail.com>
-References: <1309420175-10301-1-git-send-email-myungjoo.ham@samsung.com>
-	<1309420175-10301-2-git-send-email-myungjoo.ham@samsung.com>
-	<201106301122.50800.anarsoul@gmail.com>
+From: padma venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH 2/2] SPI: SAMSUNG: Bug fix for SPI with different FIFO level
+Date: Thu, 30 Jun 2011 14:35:35 +0530
+Message-ID: <BANLkTimeWUbD2Ej16KKmuzwSCFz8HOhyKQ@mail.gmail.com>
+References: <1309437536-9315-1-git-send-email-padma.v@samsung.com>
+	<1309437536-9315-2-git-send-email-padma.v@samsung.com>
+	<BANLkTi=L7QeN75ebWFXdp_V5Pw1zEc-ZtA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:47720 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754648Ab1F3JDI convert rfc822-to-8bit (ORCPT
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:57017 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751431Ab1F3JFg convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jun 2011 05:03:08 -0400
-In-Reply-To: <201106301122.50800.anarsoul@gmail.com>
+	Thu, 30 Jun 2011 05:05:36 -0400
+Received: by wyg8 with SMTP id 8so1394853wyg.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2011 02:05:35 -0700 (PDT)
+In-Reply-To: <BANLkTi=L7QeN75ebWFXdp_V5Pw1zEc-ZtA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Jassi Brar <jassi.brar@samsung.com>, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Seungwhan Youn <sw.youn@samsung.com>, Changhwan Youn <chaos.youn@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, kgene.kim@samsung.com, sbkim73@samsung.com, grant.likely@secretlab.ca, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Thu, Jun 30, 2011 at 5:22 PM, Vasily Khoruzhick <anarsoul@gmail.com>=
+Hi,
+
+On Thu, Jun 30, 2011 at 12:38 PM, Jassi Brar <jassisinghbrar@gmail.com>=
  wrote:
-> On Thursday 30 June 2011 10:49:30 MyungJoo Ham wrote:
->> This patch allows the Samsung ADC driver to enable VDD regulator at
->> probe and resume and to disable at exit and suspend.
->> In a platform where ADC's VDD regulator is not "always-on", this con=
-trol
->> is required although this patch does not provide fine-grained power
->> control (turning on the regulator only when being accessed).
+> On Thu, Jun 30, 2011 at 6:08 PM, Padmavathi Venna <padma.v@samsung.co=
+m> wrote:
+>> Fixed the bug in transmission status check for 64 bytes FIFO
+>> level.
 >>
->> However, if VDD regulator ("vdd" for the adc device) is not provided=
-,
->> the regulator control will not be activated because there are platfo=
-rms
->> that do not provide regulator for ADC device.
+>> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+>> ---
+>> =A0drivers/spi/spi_s3c64xx.c | =A0 =A04 +---
+>> =A01 files changed, 1 insertions(+), 3 deletions(-)
 >>
->> arch_initcall has been modified to module_init in order to allow
->> regulators to be available at probe.
+>> diff --git a/drivers/spi/spi_s3c64xx.c b/drivers/spi/spi_s3c64xx.hc
+>> index 795828b..8945e20 100644
+>> --- a/drivers/spi/spi_s3c64xx.c
+>> +++ b/drivers/spi/spi_s3c64xx.c
+>> @@ -116,9 +116,7 @@
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0(((i)->fifo_lvl_mask + 1))) \
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0? 1 : 0)
 >>
->> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
->> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-[]
->> + =A0 =A0 adc->vdd =3D regulator_get(dev, "vdd");
->> + =A0 =A0 if (IS_ERR(adc->vdd)) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 dev_err(dev, "operating without regulator =
-\"vdd\" .\n");
->> + =A0 =A0 =A0 =A0 =A0 =A0 ret =3D PTR_ERR(adc->vdd);
->> + =A0 =A0 =A0 =A0 =A0 =A0 goto err_alloc;
->> + =A0 =A0 }
->> +
+>> -#define S3C64XX_SPI_ST_TX_DONE(v, i) ((((v) >> (i)->rx_lvl_offset) =
+& \
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 (((i)->fifo_lvl_mask + 1) << 1)) \
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 ? 1 : 0)
+>> +#define S3C64XX_SPI_ST_TX_DONE(v, i) (((v) & (1 << (i)->tx_st_done)=
+) ? 1 : 0)
 >
-> NACK. Make it optional, otherwise it breaks s3c24xx.
+> IIRC the macro is already designed to deduct tx-done levels from othe=
+r fields.
+> Could you please _explain_ with one example where it fails ? It is
+> difficult to see without
+> numbers.
+The existing macro fails for following scenarios.
+1) S5P64X0 channel 1
+2) S5PV210 channel 1
+3) S5PV310 channel 1 and channel 2
+
+The FIFO data level supported in the above SoCs either 64 or 256
+bytes depending on the channel. Because of this the TX_DONE
+is the 25 bit in the status register.
+
+The existing macro works for the following scenarios
+1) S3C6410 all channels
+2) S5PC100 all channels
+
+The FIFO data level supported in the above SoCs 64 bytes
+on all the channels. Because of this the TX_DONE is the 21 bit
+in the status register.
+
+So when we use the existing macro for the non-working SoCs
+it is not anding with the TX_DONE bit but it is only anding the bits
+earlier to TX_DONE bit.
+
 >
-
-Ok. Now, I've got the issue I've worried in the previous patch revision=
-=2E
-
-Anyway, Mark once stated:
---- quote starts ---
-On Sun, Jun 19, 2011 at 12:06 AM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
->> +     if (IS_ERR_OR_NULL(adc->vdd)) {
->> +             dev_dbg(dev, "operating without regulator %s.\n", S3C_=
-ADC_REGULATOR_NAME);
->> +             adc->vdd =3D NULL; /* Do not control regulator */
->> +     }
->> +
+> Thanks,
+> -Jassi
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
 >
-> No, don't do this.  Just unconditionally assume the regulator is pres=
-ent
-> if power is essential for use of the device.  The regulator API will
-> stub out correctly if it's not in use to allow things to proceed and =
-if
-> vdd is genuinely not hooked up then the driver can't function.
---- quote ends ---
-
-Then, how about unconditionally using ADC VDD for TYPE_ADCV3
-(S5PC110/S5PV210/Exynos4210) and forget VDD for older ADC types?
-
-
-Thanks.
-
-- MyungJoo
---=20
-MyungJoo Ham, Ph.D.
-Mobile Software Platform Lab,
-Digital Media and Communications (DMC) Business
-Samsung Electronics
-cell: 82-10-6714-2858
