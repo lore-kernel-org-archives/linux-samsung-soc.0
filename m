@@ -1,88 +1,64 @@
-From: MyungJoo Ham <myungjoo.ham@gmail.com>
-Subject: Re: [PATCH 1/7] ARM: EXYNOS4: Add external GIC io memory mapping
-Date: Thu, 30 Jun 2011 15:54:37 +0900
-Message-ID: <BANLkTikYvCVVZP+z06466x1maEi3CDcq5w@mail.gmail.com>
-References: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
-	<1308555258-4322-2-git-send-email-chaos.youn@samsung.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH 2/2] SPI: SAMSUNG: Bug fix for SPI with different FIFO level
+Date: Thu, 30 Jun 2011 12:38:18 +0530
+Message-ID: <BANLkTi=L7QeN75ebWFXdp_V5Pw1zEc-ZtA@mail.gmail.com>
+References: <1309437536-9315-1-git-send-email-padma.v@samsung.com>
+	<1309437536-9315-2-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:62172 "EHLO
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:52254 "EHLO
 	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754227Ab1F3Gyi convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1753730Ab1F3HIU convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jun 2011 02:54:38 -0400
-Received: by bwd5 with SMTP id 5so1581354bwd.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Jun 2011 23:54:37 -0700 (PDT)
-In-Reply-To: <1308555258-4322-2-git-send-email-chaos.youn@samsung.com>
+	Thu, 30 Jun 2011 03:08:20 -0400
+Received: by bwd5 with SMTP id 5so1588293bwd.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2011 00:08:18 -0700 (PDT)
+In-Reply-To: <1309437536-9315-2-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Changhwan Youn <chaos.youn@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: kgene.kim@samsung.com, sbkim73@samsung.com, grant.likely@secretlab.ca, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Mon, Jun 20, 2011 at 4:34 PM, Changhwan Youn <chaos.youn@samsung.com=
-> wrote:
-> This patch adds external GIC io memory mapping
-> to support external GIC on EXYNOS4.
+On Thu, Jun 30, 2011 at 6:08 PM, Padmavathi Venna <padma.v@samsung.com>=
+ wrote:
+> Fixed the bug in transmission status check for 64 bytes FIFO
+> level.
 >
-> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 > ---
-> =A0arch/arm/mach-exynos4/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 10 ++=
-++++++++
-> =A0arch/arm/mach-exynos4/include/mach/map.h | =A0 =A05 +++--
-> =A0arch/arm/plat-s5p/include/plat/map-s5p.h | =A0 =A05 +++--
-> =A03 files changed, 16 insertions(+), 4 deletions(-)
+> =C2=A0drivers/spi/spi_s3c64xx.c | =C2=A0 =C2=A04 +---
+> =C2=A01 files changed, 1 insertions(+), 3 deletions(-)
 >
-> diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.=
-c
-> index 1196f39..6a1ed74 100644
-> --- a/arch/arm/mach-exynos4/cpu.c
-> +++ b/arch/arm/mach-exynos4/cpu.c
-> @@ -107,6 +107,16 @@ static struct map_desc exynos4_iodesc[] __initda=
-ta =3D {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys=
-_to_pfn(EXYNOS4_PA_AUDSS),
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.length =A0 =A0 =A0 =A0 =3D SZ_1K,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVIC=
-E,
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .virtual =A0 =A0 =A0 =A0=3D (unsigned l=
-ong)S5P_VA_GIC_CPU,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_=
-to_pfn(EXYNOS4_PA_GIC_CPU),
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_64K,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVICE=
-,
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .virtual =A0 =A0 =A0 =A0=3D (unsigned l=
-ong)S5P_VA_GIC_DIST,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_=
-to_pfn(EXYNOS4_PA_GIC_DIST),
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_64K,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVICE=
-,
-> =A0 =A0 =A0 =A0},
-> =A0};
+> diff --git a/drivers/spi/spi_s3c64xx.c b/drivers/spi/spi_s3c64xx.c
+> index 795828b..8945e20 100644
+> --- a/drivers/spi/spi_s3c64xx.c
+> +++ b/drivers/spi/spi_s3c64xx.c
+> @@ -116,9 +116,7 @@
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0(=
+((i)->fifo_lvl_mask + 1))) \
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0?=
+ 1 : 0)
 >
-> diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach=
--exynos4/include/mach/map.h
-> index 57d8074..9d5d797 100644
-> --- a/arch/arm/mach-exynos4/include/mach/map.h
-> +++ b/arch/arm/mach-exynos4/include/mach/map.h
-> @@ -61,10 +61,11 @@
->
-> =A0#define EXYNOS4_PA_COMBINER =A0 =A0 =A0 =A0 =A0 =A00x10448000
+> -#define S3C64XX_SPI_ST_TX_DONE(v, i) ((((v) >> (i)->rx_lvl_offset) &=
+ \
+> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 (((i)->=
+fifo_lvl_mask + 1) << 1)) \
+> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ? 1 : 0=
+)
+> +#define S3C64XX_SPI_ST_TX_DONE(v, i) (((v) & (1 << (i)->tx_st_done))=
+ ? 1 : 0)
 
-Isn't this 0x10440000 if we are going to use External GIC?
+IIRC the macro is already designed to deduct tx-done levels from other =
+fields.
+Could you please _explain_ with one example where it fails ? It is
+difficult to see without
+numbers.
 
-The user manual says it's 0x10440000 for Ext-GIC and 0x10448000 for
-Internal-GIC.
-
-
---=20
-MyungJoo Ham, Ph.D.
-Mobile Software Platform Lab,
-Digital Media and Communications (DMC) Business
-Samsung Electronics
-cell: 82-10-6714-2858
+Thanks,
+-Jassi
