@@ -1,92 +1,74 @@
-From: padma venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH 2/2] SPI: SAMSUNG: Bug fix for SPI with different FIFO level
-Date: Thu, 30 Jun 2011 14:35:35 +0530
-Message-ID: <BANLkTimeWUbD2Ej16KKmuzwSCFz8HOhyKQ@mail.gmail.com>
-References: <1309437536-9315-1-git-send-email-padma.v@samsung.com>
-	<1309437536-9315-2-git-send-email-padma.v@samsung.com>
-	<BANLkTi=L7QeN75ebWFXdp_V5Pw1zEc-ZtA@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH 0/7] ARM: SAMSUNG: Cleanup SPI platform specific code
+Date: Thu, 30 Jun 2011 11:25:34 +0200
+Message-ID: <005701cc3707$aa914e50$ffb3eaf0$%szyprowski@samsung.com>
+References: <1309436723-662-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:57017 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751431Ab1F3JFg convert rfc822-to-8bit (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:33723 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754954Ab1F3JZm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jun 2011 05:05:36 -0400
-Received: by wyg8 with SMTP id 8so1394853wyg.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2011 02:05:35 -0700 (PDT)
-In-Reply-To: <BANLkTi=L7QeN75ebWFXdp_V5Pw1zEc-ZtA@mail.gmail.com>
+	Thu, 30 Jun 2011 05:25:42 -0400
+Received: from spt2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0LNL00D4VJITMW@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 30 Jun 2011 10:25:41 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LNL00FITJIR6E@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 30 Jun 2011 10:25:39 +0100 (BST)
+In-reply-to: <1309436723-662-1-git-send-email-padma.v@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, kgene.kim@samsung.com, sbkim73@samsung.com, grant.likely@secretlab.ca, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Padmavathi Venna' <padma.v@samsung.com>, kgene.kim@samsung.com, jassisinghbrar@gmail.com, sbkim73@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi,
+Hello,
 
-On Thu, Jun 30, 2011 at 12:38 PM, Jassi Brar <jassisinghbrar@gmail.com>=
- wrote:
-> On Thu, Jun 30, 2011 at 6:08 PM, Padmavathi Venna <padma.v@samsung.co=
-m> wrote:
->> Fixed the bug in transmission status check for 64 bytes FIFO
->> level.
->>
->> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
->> ---
->> =A0drivers/spi/spi_s3c64xx.c | =A0 =A04 +---
->> =A01 files changed, 1 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/spi/spi_s3c64xx.c b/drivers/spi/spi_s3c64xx.hc
->> index 795828b..8945e20 100644
->> --- a/drivers/spi/spi_s3c64xx.c
->> +++ b/drivers/spi/spi_s3c64xx.c
->> @@ -116,9 +116,7 @@
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0(((i)->fifo_lvl_mask + 1))) \
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0? 1 : 0)
->>
->> -#define S3C64XX_SPI_ST_TX_DONE(v, i) ((((v) >> (i)->rx_lvl_offset) =
-& \
->> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 (((i)->fifo_lvl_mask + 1) << 1)) \
->> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 ? 1 : 0)
->> +#define S3C64XX_SPI_ST_TX_DONE(v, i) (((v) & (1 << (i)->tx_st_done)=
-) ? 1 : 0)
->
-> IIRC the macro is already designed to deduct tx-done levels from othe=
-r fields.
-> Could you please _explain_ with one example where it fails ? It is
-> difficult to see without
-> numbers.
-The existing macro fails for following scenarios.
-1) S5P64X0 channel 1
-2) S5PV210 channel 1
-3) S5PV310 channel 1 and channel 2
+On Thursday, June 30, 2011 2:25 PM Padmavathi Venna wrote:
 
-The FIFO data level supported in the above SoCs either 64 or 256
-bytes depending on the channel. Because of this the TX_DONE
-is the 25 bit in the status register.
+> This patchset does the following:
+> 
+> 1. Move duplicated code to common place
+> [PATCH 1/7] ARM: SAMSUNG: Move SPI device definitions to plat-samsung
+> SPI platform devices are defined in respective machine folder of
+> Samsung S3C64XX and S5P series SoCs.This is duplicated for every SoC.
+> So all SPI platform devices are moved to a common place.
+> 
+> [PATCH 2/7] ARM: SAMSUNG: Define common macro for SPI physical address
+> 
+> [PATCH 3/7] ARM: SAMSUNG: Add SPI clock definitions for SAMSUNG SoCs
+> Each SoC has it's own set of clock sources for SPI.So they are defined in
+> respective machine folder.
+> 
+> [PATCH 4/7] ARM: SAMSUNG: Create SPI device setup files in
+> respective machine folder
+> 
+> [PATCH 5/7] ARM: SAMSUNG: Add SPI platform specific code
+> As SPI platform devices are moved to common place some platform specific
+> code need to be initialized in the respective machine file.
+> 
+> [PATCH 6/7] SPI: S5PC100: Enable the SPI driver for S5PC100
+> 
+> [PATCH 7/7] SPI: S5PV210: Enable the SPI driver for S5PV210
 
-The existing macro works for the following scenarios
-1) S3C6410 all channels
-2) S5PC100 all channels
+These patch set improves a bit platform part of SPI driver, but I really
+wonder if we really need to pass so many SoC version specific data 
+with platform data. Are all these data (clock list, fifo parameters)
+specific to SoC version or particular board configuration/implementation?
 
-The FIFO data level supported in the above SoCs 64 bytes
-on all the channels. Because of this the TX_DONE is the 21 bit
-in the status register.
+Maybe it will be much easier to convert the SPI driver to use driver id 
+feature and use different platform id's for each SoC version? (please 
+refer to drivers/video/s3c-fb.c and plat-samsung/include/plat/fb-core.h
+for more information). This will remove the need for SoC specific
+parameters in platform data and will group all version dependent 
+information in the driver.
 
-So when we use the existing macro for the non-working SoCs
-it is not anding with the TX_DONE bit but it is only anding the bits
-earlier to TX_DONE bit.
-
->
-> Thanks,
-> -Jassi
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
