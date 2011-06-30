@@ -1,218 +1,142 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: [PATCH] arm: platsmp: Allow secondary cpu hotplug with maxcpus=1
-Date: Wed, 29 Jun 2011 11:31:39 -0700
-Message-ID: <1309372300-28911-1-git-send-email-sboyd@codeaurora.org>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH 1/2] ARM: EXYNOS4: Add more register addresses of CMU and PMU.
+Date: Thu, 30 Jun 2011 09:51:24 +0900
+Message-ID: <1309395085-22084-1-git-send-email-myungjoo.ham@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from wolverine01.qualcomm.com ([199.106.114.254]:10970 "EHLO
-	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752734Ab1F2Sbp (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:17697 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754704Ab1F3Av2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Jun 2011 14:31:45 -0400
+	Wed, 29 Jun 2011 20:51:28 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, David Brown <davidb@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Linus Walleij <linus.walleij@stericsson.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Jaecheol Lee <jc.lee@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Greg Kroah-Hartman <gregkh@suse.de>, myungjoo.ham@gmail.com
 
-If an ARM system has multiple cpus in the same socket and the
-kernel is booted with maxcpus=1, secondary cpus are possible but
-not present due to how platform_smp_prepare_cpus() is called.
-Fix this by always calling platform_smp_prepare_cpus() as long as
-max_cpus is non-zero (0 means no SMP) to allow platform code to
-decide if any non-boot cpus are present in the system. Since
-all current platform code doesn't support physical hotplug we
-have a situation where possible == present and thus we can
-simply copy the possible map to the present map.
-
-With this patch it's possible to boot an ARM system with
-maxcpus=1 on the command line and then hotplug in secondary cpus
-via sysfs. This is more in line with how x86 works with maxcpus=1
-on the command line.
-
-Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
+ arch/arm/mach-exynos4/include/mach/regs-clock.h |   13 +++++++++++++
+ arch/arm/mach-exynos4/include/mach/regs-pmu.h   |   16 ++++++++++++++++
+ 2 files changed, 29 insertions(+), 0 deletions(-)
 
-This patch was tested along with an MSM patch:
-
-  https://lkml.org/lkml/2011/4/7/354
-
-I don't have any non-MSM hardware to test on so Acks and
-tested-bys are welcome.
-
- arch/arm/kernel/smp.c             |    3 +--
- arch/arm/mach-exynos4/platsmp.c   |    5 +----
- arch/arm/mach-msm/platsmp.c       |    5 +----
- arch/arm/mach-omap2/omap-smp.c    |    5 +----
- arch/arm/mach-realview/platsmp.c  |    5 +----
- arch/arm/mach-shmobile/platsmp.c  |    5 +----
- arch/arm/mach-tegra/platsmp.c     |    5 +----
- arch/arm/mach-ux500/platsmp.c     |    5 +----
- arch/arm/mach-vexpress/ct-ca9x4.c |    5 +----
- 9 files changed, 9 insertions(+), 34 deletions(-)
-
-diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
-index e7f92a4..fbaa24a 100644
---- a/arch/arm/kernel/smp.c
-+++ b/arch/arm/kernel/smp.c
-@@ -365,8 +365,7 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
- 	 */
- 	if (max_cpus > ncores)
- 		max_cpus = ncores;
--
--	if (max_cpus > 1) {
-+	if (ncores > 1 && max_cpus) {
- 		/*
- 		 * Enable the local timer or broadcast device for the
- 		 * boot CPU, but only if we have more than one CPU.
-diff --git a/arch/arm/mach-exynos4/platsmp.c b/arch/arm/mach-exynos4/platsmp.c
-index c5e65a0..3f870d2 100644
---- a/arch/arm/mach-exynos4/platsmp.c
-+++ b/arch/arm/mach-exynos4/platsmp.c
-@@ -154,14 +154,11 @@ void __init smp_init_cpus(void)
+diff --git a/arch/arm/mach-exynos4/include/mach/regs-clock.h b/arch/arm/mach-exynos4/include/mach/regs-clock.h
+index 64bdd24..f723e62 100644
+--- a/arch/arm/mach-exynos4/include/mach/regs-clock.h
++++ b/arch/arm/mach-exynos4/include/mach/regs-clock.h
+@@ -17,13 +17,17 @@
  
- void __init platform_smp_prepare_cpus(unsigned int max_cpus)
- {
--	int i;
--
- 	/*
- 	 * Initialise the present map, which describes the set of CPUs
- 	 * actually populated at the present time.
- 	 */
--	for (i = 0; i < max_cpus; i++)
--		set_cpu_present(i, true);
-+	init_cpu_present(&cpu_possible_map);
+ #define S5P_CLKREG(x)			(S5P_VA_CMU + (x))
  
- 	scu_enable(scu_base_addr());
++#define S5P_CLKSRC_LEFTBUS              S5P_CLKREG(0x04200)
+ #define S5P_CLKDIV_LEFTBUS		S5P_CLKREG(0x04500)
+ #define S5P_CLKDIV_STAT_LEFTBUS		S5P_CLKREG(0x04600)
+ #define S5P_CLKGATE_IP_LEFTBUS		S5P_CLKREG(0x04800)
++#define S5P_CLKOUT_CMU_LEFTBUS		S5P_CLKREG(0x04A00)
  
-diff --git a/arch/arm/mach-msm/platsmp.c b/arch/arm/mach-msm/platsmp.c
-index 2034098..84e293f 100644
---- a/arch/arm/mach-msm/platsmp.c
-+++ b/arch/arm/mach-msm/platsmp.c
-@@ -157,12 +157,9 @@ void __init smp_init_cpus(void)
++#define S5P_CLKSRC_RIGHTBUS             S5P_CLKREG(0x08200)
+ #define S5P_CLKDIV_RIGHTBUS		S5P_CLKREG(0x08500)
+ #define S5P_CLKDIV_STAT_RIGHTBUS	S5P_CLKREG(0x08600)
+ #define S5P_CLKGATE_IP_RIGHTBUS		S5P_CLKREG(0x08800)
++#define S5P_CLKOUT_CMU_RIGHTBUS		S5P_CLKREG(0x08A00)
  
- void __init platform_smp_prepare_cpus(unsigned int max_cpus)
- {
--	int i;
--
- 	/*
- 	 * Initialise the present map, which describes the set of CPUs
- 	 * actually populated at the present time.
- 	 */
--	for (i = 0; i < max_cpus; i++)
--		set_cpu_present(i, true);
-+	init_cpu_present(&cpu_possible_map);
- }
-diff --git a/arch/arm/mach-omap2/omap-smp.c b/arch/arm/mach-omap2/omap-smp.c
-index ecfe93c..5895d19 100644
---- a/arch/arm/mach-omap2/omap-smp.c
-+++ b/arch/arm/mach-omap2/omap-smp.c
-@@ -125,14 +125,11 @@ void __init smp_init_cpus(void)
+ #define S5P_EPLL_LOCK			S5P_CLKREG(0x0C010)
+ #define S5P_VPLL_LOCK			S5P_CLKREG(0x0C020)
+@@ -36,7 +40,9 @@
+ #define S5P_CLKSRC_TOP0			S5P_CLKREG(0x0C210)
+ #define S5P_CLKSRC_TOP1			S5P_CLKREG(0x0C214)
+ #define S5P_CLKSRC_CAM			S5P_CLKREG(0x0C220)
++#define S5P_CLKSRC_TV			S5P_CLKREG(0x0C224)
+ #define S5P_CLKSRC_MFC			S5P_CLKREG(0x0C228)
++#define S5P_CLKSRC_G3D			S5P_CLKREG(0x0C22C)
+ #define S5P_CLKSRC_IMAGE		S5P_CLKREG(0x0C230)
+ #define S5P_CLKSRC_LCD0			S5P_CLKREG(0x0C234)
+ #define S5P_CLKSRC_LCD1			S5P_CLKREG(0x0C238)
+@@ -64,6 +70,7 @@
+ #define S5P_CLKDIV_PERIL3		S5P_CLKREG(0x0C55C)
+ #define S5P_CLKDIV_PERIL4		S5P_CLKREG(0x0C560)
+ #define S5P_CLKDIV_PERIL5		S5P_CLKREG(0x0C564)
++#define S5P_CLKDIV2_RATIO		S5P_CLKREG(0x0C580)
  
- void __init platform_smp_prepare_cpus(unsigned int max_cpus)
- {
--	int i;
--
- 	/*
- 	 * Initialise the present map, which describes the set of CPUs
- 	 * actually populated at the present time.
- 	 */
--	for (i = 0; i < max_cpus; i++)
--		set_cpu_present(i, true);
-+	init_cpu_present(&cpu_possible_map);
+ #define S5P_CLKSRC_MASK_TOP		S5P_CLKREG(0x0C310)
+ #define S5P_CLKSRC_MASK_CAM		S5P_CLKREG(0x0C320)
+@@ -91,6 +98,8 @@
+ #define S5P_CLKGATE_IP_PERIR		S5P_CLKREG(0x0C960)
+ #define S5P_CLKGATE_BLOCK		S5P_CLKREG(0x0C970)
  
- 	/*
- 	 * Initialise the SCU and wake up the secondary core using
-diff --git a/arch/arm/mach-realview/platsmp.c b/arch/arm/mach-realview/platsmp.c
-index 963bf0d..00666be 100644
---- a/arch/arm/mach-realview/platsmp.c
-+++ b/arch/arm/mach-realview/platsmp.c
-@@ -68,14 +68,11 @@ void __init smp_init_cpus(void)
++#define S5P_CLKOUT_CMU_TOP		S5P_CLKREG(0x0CA00)
++
+ #define S5P_CLKSRC_MASK_DMC		S5P_CLKREG(0x10300)
+ #define S5P_CLKSRC_DMC			S5P_CLKREG(0x10200)
+ #define S5P_CLKDIV_DMC0			S5P_CLKREG(0x10500)
+@@ -98,6 +107,8 @@
+ #define S5P_CLKDIV_STAT_DMC0		S5P_CLKREG(0x10600)
+ #define S5P_CLKGATE_IP_DMC		S5P_CLKREG(0x10900)
  
- void __init platform_smp_prepare_cpus(unsigned int max_cpus)
- {
--	int i;
--
- 	/*
- 	 * Initialise the present map, which describes the set of CPUs
- 	 * actually populated at the present time.
- 	 */
--	for (i = 0; i < max_cpus; i++)
--		set_cpu_present(i, true);
-+	init_cpu_present(&cpu_possible_map);
++#define S5P_CLKOUT_CMU_DMC		S5P_CLKREG(0x10A00)
++
+ #define S5P_APLL_LOCK			S5P_CLKREG(0x14000)
+ #define S5P_MPLL_LOCK			S5P_CLKREG(0x14004)
+ #define S5P_APLL_CON0			S5P_CLKREG(0x14100)
+@@ -116,6 +127,8 @@
+ #define S5P_CLKGATE_SCLKCPU		S5P_CLKREG(0x14800)
+ #define S5P_CLKGATE_IP_CPU		S5P_CLKREG(0x14900)
  
- 	scu_enable(scu_base_addr());
++#define S5P_CLKOUT_CMU_CPU		S5P_CLKREG(0x14A00)
++
+ #define S5P_APLL_LOCKTIME		(0x1C20)	/* 300us */
  
-diff --git a/arch/arm/mach-shmobile/platsmp.c b/arch/arm/mach-shmobile/platsmp.c
-index f3888fe..ca5b523 100644
---- a/arch/arm/mach-shmobile/platsmp.c
-+++ b/arch/arm/mach-shmobile/platsmp.c
-@@ -64,10 +64,7 @@ void __init smp_init_cpus(void)
+ #define S5P_APLLCON0_ENABLE_SHIFT	(31)
+diff --git a/arch/arm/mach-exynos4/include/mach/regs-pmu.h b/arch/arm/mach-exynos4/include/mach/regs-pmu.h
+index a964337..8c4596f 100644
+--- a/arch/arm/mach-exynos4/include/mach/regs-pmu.h
++++ b/arch/arm/mach-exynos4/include/mach/regs-pmu.h
+@@ -33,8 +33,16 @@
+ #define S5P_EINT_WAKEUP_MASK			S5P_PMUREG(0x0604)
+ #define S5P_WAKEUP_MASK				S5P_PMUREG(0x0608)
  
- void __init platform_smp_prepare_cpus(unsigned int max_cpus)
- {
--	int i;
--
--	for (i = 0; i < max_cpus; i++)
--		set_cpu_present(i, true);
-+	init_cpu_present(&cpu_possible_map);
++#define S5P_HDMI_PHY_CONTROL			S5P_PMUREG(0x0700)
++#define S5P_USBOTG_PHY_CONTROL			S5P_PMUREG(0x0704)
+ #define S5P_USBHOST_PHY_CONTROL			S5P_PMUREG(0x0708)
+ #define S5P_USBHOST_PHY_ENABLE			(1 << 0)
++#define S5P_DAC_CONTROL				S5P_PMUREG(0x070C)
++#define S5P_MIPI_CONTROL0			S5P_PMUREG(0x0710)
++#define S5P_MIPI_CONTROL1			S5P_PMUREG(0x0714)
++#define S5P_ADC_CONTROL				S5P_PMUREG(0x0718)
++#define S5P_PCIE_CONTROL			S5P_PMUREG(0x071C)
++#define S5P_SATA_CONTROL			S5P_PMUREG(0x0720)
  
- 	shmobile_smp_prepare_cpus();
- }
-diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
-index b8ae3c9..f11426a 100644
---- a/arch/arm/mach-tegra/platsmp.c
-+++ b/arch/arm/mach-tegra/platsmp.c
-@@ -129,14 +129,11 @@ void __init smp_init_cpus(void)
+ #define S5P_MIPI_DPHY_CONTROL(n)		S5P_PMUREG(0x0710 + (n) * 4)
+ #define S5P_MIPI_DPHY_ENABLE			(1 << 0)
+@@ -51,6 +59,8 @@
+ #define S5P_INFORM6				S5P_PMUREG(0x0818)
+ #define S5P_INFORM7				S5P_PMUREG(0x081C)
  
- void __init platform_smp_prepare_cpus(unsigned int max_cpus)
- {
--	int i;
--
- 	/*
- 	 * Initialise the present map, which describes the set of CPUs
- 	 * actually populated at the present time.
- 	 */
--	for (i = 0; i < max_cpus; i++)
--		set_cpu_present(i, true);
-+	init_cpu_present(&cpu_possible_map);
++#define S5P_PMU_DEBUG				S5P_PMUREG(0x0A00)
++
+ #define S5P_ARM_CORE0_LOWPWR			S5P_PMUREG(0x1000)
+ #define S5P_DIS_IRQ_CORE0			S5P_PMUREG(0x1004)
+ #define S5P_DIS_IRQ_CENTRAL0			S5P_PMUREG(0x1008)
+@@ -130,6 +140,8 @@
+ #define S5P_ARM_CORE1_OPTION			S5P_PMUREG(0x2088)
  
- 	scu_enable(scu_base);
- }
-diff --git a/arch/arm/mach-ux500/platsmp.c b/arch/arm/mach-ux500/platsmp.c
-index 0c527fe..4509b7d 100644
---- a/arch/arm/mach-ux500/platsmp.c
-+++ b/arch/arm/mach-ux500/platsmp.c
-@@ -172,14 +172,11 @@ void __init smp_init_cpus(void)
+ #define S5P_ARM_COMMON_OPTION			S5P_PMUREG(0x2408)
++#define S5P_ARM_CPU_L2_0_CONFIGURATION		S5P_PMUREG(0x2600)
++#define S5P_ARM_CPU_L2_1_CONFIGURATION		S5P_PMUREG(0x2620)
+ #define S5P_TOP_PWR_OPTION			S5P_PMUREG(0x2C48)
+ #define S5P_CAM_OPTION				S5P_PMUREG(0x3C08)
+ #define S5P_TV_OPTION				S5P_PMUREG(0x3C28)
+@@ -149,6 +161,10 @@
+ #define S5P_PAD_RET_EBIA_OPTION			S5P_PMUREG(0x3188)
+ #define S5P_PAD_RET_EBIB_OPTION			S5P_PMUREG(0x31A8)
  
- void __init platform_smp_prepare_cpus(unsigned int max_cpus)
- {
--	int i;
--
- 	/*
- 	 * Initialise the present map, which describes the set of CPUs
- 	 * actually populated at the present time.
- 	 */
--	for (i = 0; i < max_cpus; i++)
--		set_cpu_present(i, true);
-+	init_cpu_present(&cpu_possible_map);
- 
- 	scu_enable(scu_base_addr());
- 	wakeup_secondary();
-diff --git a/arch/arm/mach-vexpress/ct-ca9x4.c b/arch/arm/mach-vexpress/ct-ca9x4.c
-index 765a71f..c7cd438 100644
---- a/arch/arm/mach-vexpress/ct-ca9x4.c
-+++ b/arch/arm/mach-vexpress/ct-ca9x4.c
-@@ -229,10 +229,7 @@ static void ct_ca9x4_init_cpu_map(void)
- 
- static void ct_ca9x4_smp_enable(unsigned int max_cpus)
- {
--	int i;
--	for (i = 0; i < max_cpus; i++)
--		set_cpu_present(i, true);
--
-+	init_cpu_present(&cpu_possible_map);
- 	scu_enable(MMIO_P2V(A9_MPCORE_SCU));
- }
- #endif
++#define S5P_XUSBXTI_CONFIGURATION		S5P_PMUREG(0x3400)
++#define S5P_XXTI_CONFIGURATION			S5P_PMUREG(0x3420)
++#define S5P_MAUDIO_CONFIGURATION		S5P_PMUREG(0x3CC0)
++
+ #define S5P_PMU_CAM_CONF			S5P_PMUREG(0x3C00)
+ #define S5P_PMU_TV_CONF				S5P_PMUREG(0x3C20)
+ #define S5P_PMU_MFC_CONF			S5P_PMUREG(0x3C40)
 -- 
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+1.7.4.1
