@@ -1,21 +1,20 @@
 From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: [PATCH v3 1/6] ARM: EXYNOS4: Increase NR_IRQS for devices with more
- IRQs
-Date: Thu, 30 Jun 2011 17:15:24 +0900
-Message-ID: <1309421729-11172-2-git-send-email-myungjoo.ham@samsung.com>
+Subject: [PATCH v3 4/6] Exynos4 NURI: configure ADC.
+Date: Thu, 30 Jun 2011 17:15:27 +0900
+Message-ID: <1309421729-11172-5-git-send-email-myungjoo.ham@samsung.com>
 References: <1309421729-11172-1-git-send-email-myungjoo.ham@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.samsung.com ([203.254.224.33]:54785 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758640Ab1F3IPd (ORCPT
+	with ESMTP id S1758645Ab1F3IPf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jun 2011 04:15:33 -0400
+	Thu, 30 Jun 2011 04:15:35 -0400
 Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
  by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
  2010)) with ESMTP id <0LNL00FDGG8OUVK0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 30 Jun 2011 17:15:29 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Thu, 30 Jun 2011 17:15:30 +0900 (KST)
 Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0LNL00H32G9TNU@mmp1.samsung.com> for
@@ -26,27 +25,31 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Changhwan Youn <chaos.youn@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, myungjoo.ham@gmail.com, tushar.behera@linaro.org
 
-MAX8997/17042, which are used by Exynos4-NURI, use additional IRQ
-numbers after GPIO's IRQs. The patch creates some room for those
-devices.
-
 Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos4/include/mach/irqs.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ arch/arm/mach-exynos4/mach-nuri.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-exynos4/include/mach/irqs.h
-index 31f6bed..51b5db5 100644
---- a/arch/arm/mach-exynos4/include/mach/irqs.h
-+++ b/arch/arm/mach-exynos4/include/mach/irqs.h
-@@ -154,6 +154,6 @@
- #define IRQ_GPIO_END		(S5P_GPIOINT_BASE + S5P_GPIOINT_COUNT)
+diff --git a/arch/arm/mach-exynos4/mach-nuri.c b/arch/arm/mach-exynos4/mach-nuri.c
+index 2467a2a..e81e8ca 100644
+--- a/arch/arm/mach-exynos4/mach-nuri.c
++++ b/arch/arm/mach-exynos4/mach-nuri.c
+@@ -29,6 +29,7 @@
+ #include <asm/mach/arch.h>
+ #include <asm/mach-types.h>
  
- /* Set the default NR_IRQS */
--#define NR_IRQS			(IRQ_GPIO_END)
-+#define NR_IRQS			(IRQ_GPIO_END + 64)
++#include <plat/adc.h>
+ #include <plat/regs-serial.h>
+ #include <plat/exynos4.h>
+ #include <plat/cpu.h>
+@@ -1020,6 +1021,7 @@ static struct platform_device *nuri_devices[] __initdata = {
+ 	&s5p_device_ehci,
+ 	&s3c_device_i2c3,
+ 	&i2c9_gpio,
++	&s3c_device_adc,
  
- #endif /* __ASM_ARCH_IRQS_H */
+ 	/* NURI Devices */
+ 	&nuri_gpio_keys,
 -- 
 1.7.4.1
