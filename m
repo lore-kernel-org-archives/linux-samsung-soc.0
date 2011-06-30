@@ -1,43 +1,42 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v3 1/6] Samsung SoC ADC: use regulator (VDD for ADC).
-Date: Thu, 30 Jun 2011 09:05:02 -0700
-Message-ID: <20110630160501.GG3249@opensource.wolfsonmicro.com>
-References: <1309420175-10301-1-git-send-email-myungjoo.ham@samsung.com>
- <1309420175-10301-2-git-send-email-myungjoo.ham@samsung.com>
- <201106301122.50800.anarsoul@gmail.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH] arm: platsmp: Allow secondary cpu hotplug with	maxcpus=1
+Date: Thu, 30 Jun 2011 09:36:20 -0700
+Message-ID: <4E0CA604.5080802@codeaurora.org>
+References: <1309372300-28911-1-git-send-email-sboyd@codeaurora.org> <20110630131154.GJ23312@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:57587 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751252Ab1F3QFF (ORCPT
+Received: from wolverine01.qualcomm.com ([199.106.114.254]:54343 "EHLO
+	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752933Ab1F3Qgb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jun 2011 12:05:05 -0400
-Content-Disposition: inline
-In-Reply-To: <201106301122.50800.anarsoul@gmail.com>
+	Thu, 30 Jun 2011 12:36:31 -0400
+In-Reply-To: <20110630131154.GJ23312@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, MyungJoo Ham <myungjoo.ham@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Jassi Brar <jassi.brar@samsung.com>, Greg Kroah-Hartman <gregkh@suse.de>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, myungjoo.ham@gmail.com, Ben Dooks <ben-linux@fluff.org>, Seungwhan Youn <sw.youn@samsung.com>, Changhwan Youn <chaos.youn@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, David Brown <davidb@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Linus Walleij <linus.walleij@stericsson.com>
 
-On Thu, Jun 30, 2011 at 11:22:50AM +0300, Vasily Khoruzhick wrote:
-> On Thursday 30 June 2011 10:49:30 MyungJoo Ham wrote:
+On 6/30/2011 6:11 AM, Russell King - ARM Linux wrote:
+> On Wed, Jun 29, 2011 at 11:31:39AM -0700, Stephen Boyd wrote:
+>>  void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+>>  {
+>> -	int i;
+>> -
+>>  	/*
+>>  	 * Initialise the present map, which describes the set of CPUs
+>>  	 * actually populated at the present time.
+>>  	 */
+>> -	for (i = 0; i < max_cpus; i++)
+>> -		set_cpu_present(i, true);
+>> +	init_cpu_present(&cpu_possible_map);
+> Ok, if we're now doing this in every platform, it might as well go into
+> arch/arm/kernel/smp.c - platforms can re-initialize the present map
+> in this callback if they need to do something different.
 
-> > +	adc->vdd = regulator_get(dev, "vdd");
-> > +	if (IS_ERR(adc->vdd)) {
-> > +		dev_err(dev, "operating without regulator \"vdd\" .\n");
-> > +		ret = PTR_ERR(adc->vdd);
-> > +		goto err_alloc;
-> > +	}
-> > +
+That sounds better. V2 coming soon.
 
-> NACK. Make it optional, otherwise it breaks s3c24xx.
-
-No, the above code is how the regulator API should be used.  The API
-will stub itself out if not in use so unless the s3c24xx platforms are
-using regulators and there's a couple of options in the regulator API
-for handling partially defined hookups of regulators on the board.
-
-If there isn't a separate supply for the regulators on S3C24xx devices
-then I guess the best option is to provide that supply as a dummy
-regulator in the s3c24xx core code.
+-- 
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
