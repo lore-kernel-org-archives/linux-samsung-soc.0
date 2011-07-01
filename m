@@ -1,14 +1,14 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V2 4/8] ARM: SAMSUNG: Add support for failure of sleep mode
-Date: Fri,  1 Jul 2011 10:57:33 +0900
-Message-ID: <1309485457-13305-5-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH V2 5/8] ARM: EXYNOS4: Support early wakeup entering sleep mode
+Date: Fri,  1 Jul 2011 10:57:34 +0900
+Message-ID: <1309485457-13305-6-git-send-email-kgene.kim@samsung.com>
 References: <1309485457-13305-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:53324 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:53338 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754237Ab1GACIq (ORCPT
+	with ESMTP id S1754283Ab1GACIr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jun 2011 22:08:46 -0400
+	Thu, 30 Jun 2011 22:08:47 -0400
 In-Reply-To: <1309485457-13305-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -17,36 +17,96 @@ Cc: ben-linux@fluff.org, Jaecheol Lee <jc.lee@samsung.com>, Kukjin Kim <kgene.ki
 
 From: Jaecheol Lee <jc.lee@samsung.com>
 
+Since early wakeup can be handled in pm so we don't need masking
+interrupts of external GIC. When the early wakeup interrupt happens,
+PMU(Power Management Unit) ignores WFI instruction. This means that
+PC(Program Counter) passed without any changes. This patch can handle
+that case by early wakeup interrupt.
+
 Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/plat-samsung/pm.c |    7 ++++++-
- 1 files changed, 6 insertions(+), 1 deletions(-)
+ arch/arm/mach-exynos4/pm.c |   43 +++++++++++++++++++------------------------
+ 1 files changed, 19 insertions(+), 24 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
-index 69d6b04..df12645 100644
---- a/arch/arm/plat-samsung/pm.c
-+++ b/arch/arm/plat-samsung/pm.c
-@@ -299,7 +299,10 @@ static int s3c_pm_enter(suspend_state_t state)
- 	 * we resume as it saves its own register state and restores it
- 	 * during the resume.  */
+diff --git a/arch/arm/mach-exynos4/pm.c b/arch/arm/mach-exynos4/pm.c
+index 9b5f3a5..17d43c2 100644
+--- a/arch/arm/mach-exynos4/pm.c
++++ b/arch/arm/mach-exynos4/pm.c
+@@ -241,7 +241,6 @@ static struct sleep_save exynos4_l2cc_save[] = {
+ void exynos4_cpu_suspend(unsigned long arg)
+ {
+ 	unsigned long tmp;
+-	unsigned long mask = 0xFFFFFFFF;
  
--	cpu_suspend(0, pm_cpu_sleep);
-+	/* If entering sleep mode is failed, non-zero value is returned */
-+
-+	if (cpu_suspend(0, pm_cpu_sleep));
-+		goto exit;
+ 	/* Setting Central Sequence Register for power down mode */
  
- 	/* restore the system state */
+@@ -249,33 +248,10 @@ void exynos4_cpu_suspend(unsigned long arg)
+ 	tmp &= ~(S5P_CENTRAL_LOWPWR_CFG);
+ 	__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
  
-@@ -323,6 +326,8 @@ static int s3c_pm_enter(suspend_state_t state)
- 	/* ok, let's return from sleep */
+-	/* Setting Central Sequence option Register */
+-
+-	tmp = __raw_readl(S5P_CENTRAL_SEQ_OPTION);
+-	tmp &= ~(S5P_USE_MASK);
+-	tmp |= S5P_USE_STANDBY_WFI0;
+-	__raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
+-
+-	/* Clear all interrupt pending to avoid early wakeup */
+-
+-	__raw_writel(mask, (S5P_VA_GIC_DIST + 0x280));
+-	__raw_writel(mask, (S5P_VA_GIC_DIST + 0x284));
+-	__raw_writel(mask, (S5P_VA_GIC_DIST + 0x288));
+-
+-	/* Disable all interrupt */
+-
+-	__raw_writel(0x0, (S5P_VA_GIC_CPU + 0x000));
+-	__raw_writel(0x0, (S5P_VA_GIC_DIST + 0x000));
+-	__raw_writel(mask, (S5P_VA_GIC_DIST + 0x184));
+-	__raw_writel(mask, (S5P_VA_GIC_DIST + 0x188));
+-
+ 	outer_flush_all();
  
- 	S3C_PMDBG("S3C PM Resume (post-restore)\n");
-+
-+exit:
- 	return 0;
+ 	/* issue the standby signal into the pm unit. */
+ 	cpu_do_idle();
+-
+-	/* we should never get past here */
+-	panic("sleep resumed to originator?");
  }
  
+ static void exynos4_pm_prepare(void)
+@@ -353,6 +329,22 @@ arch_initcall(exynos4_pm_drvinit);
+ 
+ static void exynos4_pm_resume(void)
+ {
++	unsigned long tmp;
++
++	/*
++	 * If PMU failed while entering sleep mode, WFI will be
++	 * ignored by PMU and then exiting cpu_do_idle().
++	 * S5P_CENTRAL_LOWPWR_CFG bit will not be set automatically
++	 * in this situation.
++	 */
++	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
++	if (!(tmp & S5P_CENTRAL_LOWPWR_CFG)) {
++		tmp |= S5P_CENTRAL_LOWPWR_CFG;
++		__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
++		/* No need to perform below restore code */
++		goto early_wakeup;
++	}
++
+ 	/* For release retention */
+ 
+ 	__raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
+@@ -373,6 +365,9 @@ static void exynos4_pm_resume(void)
+ 	/* enable L2X0*/
+ 	writel_relaxed(1, S5P_VA_L2CC + L2X0_CTRL);
+ #endif
++
++early_wakeup:
++	return;
+ }
+ 
+ static struct syscore_ops exynos4_pm_syscore_ops = {
 -- 
 1.7.1
