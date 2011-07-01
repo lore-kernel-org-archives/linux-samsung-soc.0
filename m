@@ -1,96 +1,136 @@
-From: padma venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH 0/7] ARM: SAMSUNG: Cleanup SPI platform specific code
-Date: Fri, 1 Jul 2011 09:05:41 +0530
-Message-ID: <BANLkTi=awBjrOugA6tp+Z47Y8A=eMhOrjw@mail.gmail.com>
-References: <1309436723-662-1-git-send-email-padma.v@samsung.com>
-	<005701cc3707$aa914e50$ffb3eaf0$%szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: JungHi Min <junghi.min@samsung.com>
+Subject: [PATCH] ARM: EXYNOS4: Add support Core1 Power On/Off with hotplug in/out
+Date: Fri,  1 Jul 2011 13:29:15 +0900
+Message-ID: <1309494555-3001-1-git-send-email-junghi.min@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:39288 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750725Ab1GADfn convert rfc822-to-8bit (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:45910 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750835Ab1GAEiq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jun 2011 23:35:43 -0400
-Received: by wyg8 with SMTP id 8so1934369wyg.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2011 20:35:41 -0700 (PDT)
-In-Reply-To: <005701cc3707$aa914e50$ffb3eaf0$%szyprowski@samsung.com>
+	Fri, 1 Jul 2011 00:38:46 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, kgene.kim@samsung.com, jassisinghbrar@gmail.com, sbkim73@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, JungHi Min <junghi.min@samsung.com>
 
-Hi Marek,
+To insert the code for power on/off with pmu control to support hotplug in/out core1
+As for hotplug.c, the codes for core1 to be hotplug in/out is inserted.
+As for regs-pmu.h, S5P_CORE_LOCAL_PWR_EN is defined.
+As for platsmp.c, the codes for core1 to be powered on is inserted.
 
-On Thu, Jun 30, 2011 at 2:55 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Hello,
->
-> On Thursday, June 30, 2011 2:25 PM Padmavathi Venna wrote:
->
->> This patchset does the following:
->>
->> 1. Move duplicated code to common place
->> [PATCH 1/7] ARM: SAMSUNG: Move SPI device definitions to plat-samsun=
-g
->> SPI platform devices are defined in respective machine folder of
->> Samsung S3C64XX and S5P series SoCs.This is duplicated for every SoC=
-=2E
->> So all SPI platform devices are moved to a common place.
->>
->> [PATCH 2/7] ARM: SAMSUNG: Define common macro for SPI physical addre=
-ss
->>
->> [PATCH 3/7] ARM: SAMSUNG: Add SPI clock definitions for SAMSUNG SoCs
->> Each SoC has it's own set of clock sources for SPI.So they are defin=
-ed in
->> respective machine folder.
->>
->> [PATCH 4/7] ARM: SAMSUNG: Create SPI device setup files in
->> respective machine folder
->>
->> [PATCH 5/7] ARM: SAMSUNG: Add SPI platform specific code
->> As SPI platform devices are moved to common place some platform spec=
-ific
->> code need to be initialized in the respective machine file.
->>
->> [PATCH 6/7] SPI: S5PC100: Enable the SPI driver for S5PC100
->>
->> [PATCH 7/7] SPI: S5PV210: Enable the SPI driver for S5PV210
->
-> These patch set improves a bit platform part of SPI driver, but I rea=
-lly
-> wonder if we really need to pass so many SoC version specific data
-> with platform data. Are all these data (clock list, fifo parameters)
-> specific to SoC version or particular board configuration/implementat=
-ion?
->
-> Maybe it will be much easier to convert the SPI driver to use driver =
-id
-> feature and use different platform id's for each SoC version? (please
-> refer to drivers/video/s3c-fb.c and plat-samsung/include/plat/fb-core=
-=2Eh
-> for more information). This will remove the need for SoC specific
-> parameters in platform data and will group all version dependent
-> information in the driver.
+Signed-off-by: JungHi Min <junghi.min@samsung.com>
+---
+ arch/arm/mach-exynos4/hotplug.c               |   13 ++++++----
+ arch/arm/mach-exynos4/include/mach/regs-pmu.h |    1 +
+ arch/arm/mach-exynos4/platsmp.c               |   33 +++++++++++++++++++++++-
+ 3 files changed, 40 insertions(+), 7 deletions(-)
 
-Thanks for your suggestion. I will consider your comments for the
-next patch set based on clkdev code.
+diff --git a/arch/arm/mach-exynos4/hotplug.c b/arch/arm/mach-exynos4/hotplug.c
+index 2b5909e..7490789 100644
+--- a/arch/arm/mach-exynos4/hotplug.c
++++ b/arch/arm/mach-exynos4/hotplug.c
+@@ -13,9 +13,12 @@
+ #include <linux/kernel.h>
+ #include <linux/errno.h>
+ #include <linux/smp.h>
++#include <linux/io.h>
+ 
+ #include <asm/cacheflush.h>
+ 
++#include <mach/regs-pmu.h>
++
+ extern volatile int pen_release;
+ 
+ static inline void cpu_enter_lowpower(void)
+@@ -58,12 +61,12 @@ static inline void cpu_leave_lowpower(void)
+ 
+ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
+ {
+-	/*
+-	 * there is no power-control hardware on this platform, so all
+-	 * we can do is put the core into WFI; this is safe as the calling
+-	 * code will have already disabled interrupts
+-	 */
+ 	for (;;) {
++
++		/* make cpu1 to be turned off at next WFI command */
++		if (cpu == 1)
++			__raw_writel(0, S5P_ARM_CORE1_CONFIGURATION);
++
+ 		/*
+ 		 * here's the WFI
+ 		 */
+diff --git a/arch/arm/mach-exynos4/include/mach/regs-pmu.h b/arch/arm/mach-exynos4/include/mach/regs-pmu.h
+index a964337..96de0e7 100644
+--- a/arch/arm/mach-exynos4/include/mach/regs-pmu.h
++++ b/arch/arm/mach-exynos4/include/mach/regs-pmu.h
+@@ -158,6 +158,7 @@
+ #define S5P_PMU_GPS_CONF			S5P_PMUREG(0x3CE0)
+ 
+ #define S5P_PMU_SATA_PHY_CONTROL_EN		0x1
++#define S5P_CORE_LOCAL_PWR_EN			0x3
+ #define S5P_INT_LOCAL_PWR_EN			0x7
 
-Thanks&Regards
-Padma
->
-> Best regards
-> --
-> Marek Szyprowski
-> Samsung Poland R&D Center
->
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+ define S5P_CHECK_SLEEP				0x00000BAD
+diff --git a/arch/arm/mach-exynos4/platsmp.c b/arch/arm/mach-exynos4/platsmp.c
+index c5e65a0..15aa2c0 100644
+--- a/arch/arm/mach-exynos4/platsmp.c
++++ b/arch/arm/mach-exynos4/platsmp.c
+@@ -28,9 +28,12 @@
+ 
+ #include <mach/hardware.h>
+ #include <mach/regs-clock.h>
++#include <mach/regs-pmu.h>
+ 
+ extern void exynos4_secondary_startup(void);
+ 
++#define CPU1_BOOT_REG S5P_VA_SYSRAM
++
+ /*
+  * control for which core is the next to come out of the secondary
+  * boot "holding pen"
+@@ -100,16 +103,41 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 	 */
+ 	write_pen_release(cpu);
+ 
++	if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN)) {
++		__raw_writel(S5P_CORE_LOCAL_PWR_EN,
++			     S5P_ARM_CORE1_CONFIGURATION);
++
++		timeout = 10;
++
++		/* wait max 10 ms until cpu1 is on */
++		while ((__raw_readl(S5P_ARM_CORE1_STATUS)
++			& S5P_CORE_LOCAL_PWR_EN) != S5P_CORE_LOCAL_PWR_EN) {
++			if (timeout-- == 0)
++				break;
++
++			mdelay(1);
++		}
++
++		if (timeout == 0) {
++			printk(KERN_ERR "cpu1 power enable failed");
++			spin_unlock(&boot_lock);
++			return -ETIMEDOUT;
++		}
++	}
+ 	/*
+ 	 * Send the secondary CPU a soft interrupt, thereby causing
+ 	 * the boot monitor to read the system wide flags register,
+ 	 * and branch to the address found there.
+ 	 */
+-	gic_raise_softirq(cpumask_of(cpu), 1);
+ 
+ 	timeout = jiffies + (1 * HZ);
+ 	while (time_before(jiffies, timeout)) {
+ 		smp_rmb();
++
++		__raw_writel(BSYM(virt_to_phys(exynos4_secondary_startup)),
++			CPU1_BOOT_REG);
++		gic_raise_softirq(cpumask_of(cpu), 1);
++
+ 		if (pen_release == -1)
+ 			break;
+ 
+-- 
+1.7.1
