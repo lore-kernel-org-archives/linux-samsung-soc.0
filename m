@@ -1,55 +1,93 @@
 From: padma venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH 3/7] ARM: SAMSUNG: Add SPI clock definitions for SAMSUNG SoCs
-Date: Fri, 1 Jul 2011 09:01:24 +0530
-Message-ID: <BANLkTikv=1c+TmjPOAy8RhGeV3h+CAP=bw@mail.gmail.com>
+Subject: Re: [PATCH 0/7] ARM: SAMSUNG: Cleanup SPI platform specific code
+Date: Fri, 1 Jul 2011 09:05:41 +0530
+Message-ID: <BANLkTi=awBjrOugA6tp+Z47Y8A=eMhOrjw@mail.gmail.com>
 References: <1309436723-662-1-git-send-email-padma.v@samsung.com>
-	<1309436723-662-4-git-send-email-padma.v@samsung.com>
-	<20110630093024.GT21898@n2100.arm.linux.org.uk>
-	<BANLkTi=u7hrqZwo2kCp-iNgnwWUcw_uBog@mail.gmail.com>
+	<005701cc3707$aa914e50$ffb3eaf0$%szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:42394 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750725Ab1GADbZ convert rfc822-to-8bit (ORCPT
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:39288 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750725Ab1GADfn convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jun 2011 23:31:25 -0400
-Received: by wwe5 with SMTP id 5so2830650wwe.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2011 20:31:24 -0700 (PDT)
-In-Reply-To: <BANLkTi=u7hrqZwo2kCp-iNgnwWUcw_uBog@mail.gmail.com>
+	Thu, 30 Jun 2011 23:35:43 -0400
+Received: by wyg8 with SMTP id 8so1934369wyg.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2011 20:35:41 -0700 (PDT)
+In-Reply-To: <005701cc3707$aa914e50$ffb3eaf0$%szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Padmavathi Venna <padma.v@samsung.com>, kgene.kim@samsung.com, sbkim73@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, kgene.kim@samsung.com, jassisinghbrar@gmail.com, sbkim73@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hi Russell,Jassi
+Hi Marek,
 
-On Thu, Jun 30, 2011 at 3:13 PM, Jassi Brar <jassisinghbrar@gmail.com> =
-wrote:
-> On Thu, Jun 30, 2011 at 3:00 PM, Russell King - ARM Linux
-> <linux@arm.linux.org.uk> wrote:
->> On Thu, Jun 30, 2011 at 08:25:19AM -0400, Padmavathi Venna wrote:
->>> SPI Clocks were defined in dev-spi.c of machine specific folder.
->>> To make SPI devices common across all SoCs,dev-spi.c is moved
->>> from machine specific folder to plat-samsung. So SPI clock
->>> definitions has been moved from dev-spi.c to SoC specific machine
->>> folder for S3C64XX,S5P64X0,S5PC100 and S5PV210
+On Thu, Jun 30, 2011 at 2:55 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Hello,
+>
+> On Thursday, June 30, 2011 2:25 PM Padmavathi Venna wrote:
+>
+>> This patchset does the following:
 >>
->> This just shows how sick the Samsung code is by abusing the clk API.
->> If it stopped that abuse and switched over to clkdev none of this wo=
-uld
->> be necessary.
-> I am anyways not for the patch set.
-> Though this 'sickness' predates clkdev, and I agree it should be chan=
-ged now.
+>> 1. Move duplicated code to common place
+>> [PATCH 1/7] ARM: SAMSUNG: Move SPI device definitions to plat-samsun=
+g
+>> SPI platform devices are defined in respective machine folder of
+>> Samsung S3C64XX and S5P series SoCs.This is duplicated for every SoC=
+=2E
+>> So all SPI platform devices are moved to a common place.
+>>
+>> [PATCH 2/7] ARM: SAMSUNG: Define common macro for SPI physical addre=
+ss
+>>
+>> [PATCH 3/7] ARM: SAMSUNG: Add SPI clock definitions for SAMSUNG SoCs
+>> Each SoC has it's own set of clock sources for SPI.So they are defin=
+ed in
+>> respective machine folder.
+>>
+>> [PATCH 4/7] ARM: SAMSUNG: Create SPI device setup files in
+>> respective machine folder
+>>
+>> [PATCH 5/7] ARM: SAMSUNG: Add SPI platform specific code
+>> As SPI platform devices are moved to common place some platform spec=
+ific
+>> code need to be initialized in the respective machine file.
+>>
+>> [PATCH 6/7] SPI: S5PC100: Enable the SPI driver for S5PC100
+>>
+>> [PATCH 7/7] SPI: S5PV210: Enable the SPI driver for S5PV210
+>
+> These patch set improves a bit platform part of SPI driver, but I rea=
+lly
+> wonder if we really need to pass so many SoC version specific data
+> with platform data. Are all these data (clock list, fifo parameters)
+> specific to SoC version or particular board configuration/implementat=
+ion?
+>
+> Maybe it will be much easier to convert the SPI driver to use driver =
+id
+> feature and use different platform id's for each SoC version? (please
+> refer to drivers/video/s3c-fb.c and plat-samsung/include/plat/fb-core=
+=2Eh
+> for more information). This will remove the need for SoC specific
+> parameters in platform data and will group all version dependent
+> information in the driver.
 
-I will prepare new set of patches based on clkdev code and send for rev=
-iew.
+Thanks for your suggestion. I will consider your comments for the
+next patch set based on clkdev code.
 
 Thanks&Regards
 Padma
-
+>
+> Best regards
+> --
+> Marek Szyprowski
+> Samsung Poland R&D Center
+>
+>
+>
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-samsu=
 ng-soc" in
