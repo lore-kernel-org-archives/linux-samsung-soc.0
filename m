@@ -1,33 +1,202 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 4/7] ARM: EXYNOS4: Support early wakeup while entering
-	sleep mode
-Date: Fri, 1 Jul 2011 08:44:14 +0100
-Message-ID: <20110701074414.GD21898@n2100.arm.linux.org.uk>
-References: <1308732405-16664-1-git-send-email-kgene.kim@samsung.com> <1308732405-16664-5-git-send-email-kgene.kim@samsung.com> <20110622145715.GS23234@n2100.arm.linux.org.uk> <007401cc3242$48947160$d9bd5420$%kim@samsung.com> <20110624093750.GD23234@n2100.arm.linux.org.uk> <20110624102246.GF23234@n2100.arm.linux.org.uk> <017d01cc378a$c017edf0$4047c9d0$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH 1/2] ARM: Samsung: Use generic set_plat_data function
+Date: Fri, 01 Jul 2011 17:03:11 +0530
+Message-ID: <1309519992-3026-2-git-send-email-ch.naveen@samsung.com>
+References: <1309519992-3026-1-git-send-email-ch.naveen@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:47879 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755294Ab1GAHo2 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:11116 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755265Ab1GALi6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Jul 2011 03:44:28 -0400
-Content-Disposition: inline
-In-Reply-To: <017d01cc378a$c017edf0$4047c9d0$%kim@samsung.com>
+	Fri, 1 Jul 2011 07:38:58 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LNN00LUMKCW4I40@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 01 Jul 2011 20:38:57 +0900 (KST)
+Received: from Hawshines.sisodomain.com ([107.108.83.161])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LNN00375KCRUH@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 01 Jul 2011 20:38:57 +0900 (KST)
+In-reply-to: <1309519992-3026-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Jaecheol Lee' <jc.lee@samsung.com>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+To: kgene.kim@samsung.com, sbkim73@samsung.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Fri, Jul 01, 2011 at 10:03:48AM +0900, Kukjin Kim wrote:
-> Russell thanks.
-> 
-> How do you think to add following for handling failure of cpu_suspend?
-> 
-> +	mov	r0, #-1
+Calls the generic s3c_set_platdata function instead..
 
-No.  -1 is not an error code, and I refuse to create functions which
-use an explicit -1 as a return code to indicate failure.
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+---
+ arch/arm/plat-samsung/dev-i2c0.c |   10 ++++------
+ arch/arm/plat-samsung/dev-i2c1.c |   10 ++++------
+ arch/arm/plat-samsung/dev-i2c2.c |   10 ++++------
+ arch/arm/plat-samsung/dev-i2c3.c |   10 ++++------
+ arch/arm/plat-samsung/dev-i2c4.c |   10 ++++------
+ arch/arm/plat-samsung/dev-i2c5.c |   10 ++++------
+ arch/arm/plat-samsung/dev-i2c6.c |   10 ++++------
+ arch/arm/plat-samsung/dev-i2c7.c |   10 ++++------
+ 8 files changed, 32 insertions(+), 48 deletions(-)
 
-The code is designed so that the called finisher function can return
-a valid errno value.
+diff --git a/arch/arm/plat-samsung/dev-i2c0.c b/arch/arm/plat-samsung/dev-i2c0.c
+index 3a601c1..b3c7435 100644
+--- a/arch/arm/plat-samsung/dev-i2c0.c
++++ b/arch/arm/plat-samsung/dev-i2c0.c
+@@ -62,11 +62,9 @@ void __init s3c_i2c0_set_platdata(struct s3c2410_platform_i2c *pd)
+ 	if (!pd)
+ 		pd = &default_i2c_data0;
+ 
+-	npd = kmemdup(pd, sizeof(struct s3c2410_platform_i2c), GFP_KERNEL);
+-	if (!npd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-	else if (!npd->cfg_gpio)
+-		npd->cfg_gpio = s3c_i2c0_cfg_gpio;
++	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
++			&s3c_device_i2c0);
+ 
+-	s3c_device_i2c0.dev.platform_data = npd;
++	if (!npd->cfg_gpio)
++		npd->cfg_gpio = s3c_i2c0_cfg_gpio;
+ }
+diff --git a/arch/arm/plat-samsung/dev-i2c1.c b/arch/arm/plat-samsung/dev-i2c1.c
+index 858ee2a..93dbb97 100644
+--- a/arch/arm/plat-samsung/dev-i2c1.c
++++ b/arch/arm/plat-samsung/dev-i2c1.c
+@@ -59,11 +59,9 @@ void __init s3c_i2c1_set_platdata(struct s3c2410_platform_i2c *pd)
+ 	if (!pd)
+ 		pd = &default_i2c_data1;
+ 
+-	npd = kmemdup(pd, sizeof(struct s3c2410_platform_i2c), GFP_KERNEL);
+-	if (!npd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-	else if (!npd->cfg_gpio)
+-		npd->cfg_gpio = s3c_i2c1_cfg_gpio;
++	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
++			&s3c_device_i2c1);
+ 
+-	s3c_device_i2c1.dev.platform_data = npd;
++	if (!npd->cfg_gpio)
++		npd->cfg_gpio = s3c_i2c1_cfg_gpio;
+ }
+diff --git a/arch/arm/plat-samsung/dev-i2c2.c b/arch/arm/plat-samsung/dev-i2c2.c
+index ff4ba69..fce3b95 100644
+--- a/arch/arm/plat-samsung/dev-i2c2.c
++++ b/arch/arm/plat-samsung/dev-i2c2.c
+@@ -60,11 +60,9 @@ void __init s3c_i2c2_set_platdata(struct s3c2410_platform_i2c *pd)
+ 	if (!pd)
+ 		pd = &default_i2c_data2;
+ 
+-	npd = kmemdup(pd, sizeof(struct s3c2410_platform_i2c), GFP_KERNEL);
+-	if (!npd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-	else if (!npd->cfg_gpio)
+-		npd->cfg_gpio = s3c_i2c2_cfg_gpio;
++	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
++			&s3c_device_i2c2);
+ 
+-	s3c_device_i2c2.dev.platform_data = npd;
++	if (!npd->cfg_gpio)
++		npd->cfg_gpio = s3c_i2c2_cfg_gpio;
+ }
+diff --git a/arch/arm/plat-samsung/dev-i2c3.c b/arch/arm/plat-samsung/dev-i2c3.c
+index 8586a10..46f87ad 100644
+--- a/arch/arm/plat-samsung/dev-i2c3.c
++++ b/arch/arm/plat-samsung/dev-i2c3.c
+@@ -58,11 +58,9 @@ void __init s3c_i2c3_set_platdata(struct s3c2410_platform_i2c *pd)
+ 	if (!pd)
+ 		pd = &default_i2c_data3;
+ 
+-	npd = kmemdup(pd, sizeof(struct s3c2410_platform_i2c), GFP_KERNEL);
+-	if (!npd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-	else if (!npd->cfg_gpio)
+-		npd->cfg_gpio = s3c_i2c3_cfg_gpio;
++	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
++			&s3c_device_i2c3);
+ 
+-	s3c_device_i2c3.dev.platform_data = npd;
++	if (!npd->cfg_gpio)
++		npd->cfg_gpio = s3c_i2c3_cfg_gpio;
+ }
+diff --git a/arch/arm/plat-samsung/dev-i2c4.c b/arch/arm/plat-samsung/dev-i2c4.c
+index df2159e..02be589 100644
+--- a/arch/arm/plat-samsung/dev-i2c4.c
++++ b/arch/arm/plat-samsung/dev-i2c4.c
+@@ -58,11 +58,9 @@ void __init s3c_i2c4_set_platdata(struct s3c2410_platform_i2c *pd)
+ 	if (!pd)
+ 		pd = &default_i2c_data4;
+ 
+-	npd = kmemdup(pd, sizeof(struct s3c2410_platform_i2c), GFP_KERNEL);
+-	if (!npd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-	else if (!npd->cfg_gpio)
+-		npd->cfg_gpio = s3c_i2c4_cfg_gpio;
++	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
++			&s3c_device_i2c4);
+ 
+-	s3c_device_i2c4.dev.platform_data = npd;
++	if (!npd->cfg_gpio)
++		npd->cfg_gpio = s3c_i2c4_cfg_gpio;
+ }
+diff --git a/arch/arm/plat-samsung/dev-i2c5.c b/arch/arm/plat-samsung/dev-i2c5.c
+index 0499c2c..3b84bed 100644
+--- a/arch/arm/plat-samsung/dev-i2c5.c
++++ b/arch/arm/plat-samsung/dev-i2c5.c
+@@ -58,11 +58,9 @@ void __init s3c_i2c5_set_platdata(struct s3c2410_platform_i2c *pd)
+ 	if (!pd)
+ 		pd = &default_i2c_data5;
+ 
+-	npd = kmemdup(pd, sizeof(struct s3c2410_platform_i2c), GFP_KERNEL);
+-	if (!npd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-	else if (!npd->cfg_gpio)
+-		npd->cfg_gpio = s3c_i2c5_cfg_gpio;
++	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
++			&s3c_device_i2c5);
+ 
+-	s3c_device_i2c5.dev.platform_data = npd;
++	if (!npd->cfg_gpio)
++		npd->cfg_gpio = s3c_i2c5_cfg_gpio;
+ }
+diff --git a/arch/arm/plat-samsung/dev-i2c6.c b/arch/arm/plat-samsung/dev-i2c6.c
+index 4083108..c57c195 100644
+--- a/arch/arm/plat-samsung/dev-i2c6.c
++++ b/arch/arm/plat-samsung/dev-i2c6.c
+@@ -58,11 +58,9 @@ void __init s3c_i2c6_set_platdata(struct s3c2410_platform_i2c *pd)
+ 	if (!pd)
+ 		pd = &default_i2c_data6;
+ 
+-	npd = kmemdup(pd, sizeof(struct s3c2410_platform_i2c), GFP_KERNEL);
+-	if (!npd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-	else if (!npd->cfg_gpio)
+-		npd->cfg_gpio = s3c_i2c6_cfg_gpio;
++	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
++			&s3c_device_i2c6);
+ 
+-	s3c_device_i2c6.dev.platform_data = npd;
++	if (!npd->cfg_gpio)
++		npd->cfg_gpio = s3c_i2c6_cfg_gpio;
+ }
+diff --git a/arch/arm/plat-samsung/dev-i2c7.c b/arch/arm/plat-samsung/dev-i2c7.c
+index 1182451..2cb9682 100644
+--- a/arch/arm/plat-samsung/dev-i2c7.c
++++ b/arch/arm/plat-samsung/dev-i2c7.c
+@@ -58,11 +58,9 @@ void __init s3c_i2c7_set_platdata(struct s3c2410_platform_i2c *pd)
+ 	if (!pd)
+ 		pd = &default_i2c_data7;
+ 
+-	npd = kmemdup(pd, sizeof(struct s3c2410_platform_i2c), GFP_KERNEL);
+-	if (!npd)
+-		printk(KERN_ERR "%s: no memory for platform data\n", __func__);
+-	else if (!npd->cfg_gpio)
+-		npd->cfg_gpio = s3c_i2c7_cfg_gpio;
++	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
++			&s3c_device_i2c7);
+ 
+-	s3c_device_i2c7.dev.platform_data = npd;
++	if (!npd->cfg_gpio)
++		npd->cfg_gpio = s3c_i2c7_cfg_gpio;
+ }
+-- 
+1.7.2.3
