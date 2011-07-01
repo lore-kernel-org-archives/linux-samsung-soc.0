@@ -1,45 +1,45 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 0/2] ARM: Samsung: I2C code cleanup
-Date: Fri, 01 Jul 2011 17:03:10 +0530
-Message-ID: <1309519992-3026-1-git-send-email-ch.naveen@samsung.com>
-Content-Transfer-Encoding: 7BIT
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/3] Samsung SoC: ready to use NTC value inside kernel
+Date: Fri, 1 Jul 2011 17:15:05 +0200
+Message-ID: <BANLkTin3bu4Xf0cS0EkASvYXG0AdW+eprQ@mail.gmail.com>
+References: <1309422387-11546-1-git-send-email-myungjoo.ham@samsung.com>
+	<1309422387-11546-3-git-send-email-myungjoo.ham@samsung.com>
+	<20110630090013.GP21898@n2100.arm.linux.org.uk>
+	<BANLkTikC2zUPamzactXLdLb8Szgs2o9V7w@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:11116 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755104Ab1GALi6 (ORCPT
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:53686 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751643Ab1GAPPG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Jul 2011 07:38:58 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LNN00LUMKCW4I40@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 01 Jul 2011 20:38:56 +0900 (KST)
-Received: from Hawshines.sisodomain.com ([107.108.83.161])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LNN00375KCRUH@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 01 Jul 2011 20:38:56 +0900 (KST)
+	Fri, 1 Jul 2011 11:15:06 -0400
+Received: by qwk3 with SMTP id 3so1642090qwk.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 01 Jul 2011 08:15:06 -0700 (PDT)
+In-Reply-To: <BANLkTikC2zUPamzactXLdLb8Szgs2o9V7w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, sbkim73@samsung.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: myungjoo.ham@gmail.com
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, dg77.kim@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Changhwan Youn <chaos.youn@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Does the same job, while saving few lines of code.
+On Fri, Jul 1, 2011 at 2:28 AM, MyungJoo Ham <myungjoo.ham@samsung.com> wrote:
 
- o To Kukjin Kim, Sangbeom Kim and Ben Dooks
+> Or if the values are only exported through sysfs (HWMON), is the only
+> clean way to read such values (w/o extending HWMON itself) to seperate
+> the HWMON device driver into two pieces: a platform driver that
+> provide values to somewhere sharable in kernel and a HWMON driver that
+> reads the values and exports them to sysfs?
 
-Naveen Krishna Chatradhi (2):
-  ARM: Samsung: Use generic set_plat_data function
-  ARM: Samsung: Cleanup I2C code in plat-samsung
+Sounds like you could very well separate out the ADC part and have
+functions for reading values off them? Compare
+drivers/mfd/ab8500-gpadc.c for example, this will be used by a
+yet to be submitted HWMON driver for doing ADC.
 
- arch/arm/plat-samsung/dev-i2c0.c         |   14 ++++++--------
- arch/arm/plat-samsung/dev-i2c1.c         |   24 ++++++++----------------
- arch/arm/plat-samsung/dev-i2c2.c         |   24 ++++++++----------------
- arch/arm/plat-samsung/dev-i2c3.c         |   24 ++++++++----------------
- arch/arm/plat-samsung/dev-i2c4.c         |   24 ++++++++----------------
- arch/arm/plat-samsung/dev-i2c5.c         |   24 ++++++++----------------
- arch/arm/plat-samsung/dev-i2c6.c         |   24 ++++++++----------------
- arch/arm/plat-samsung/dev-i2c7.c         |   24 ++++++++----------------
- arch/arm/plat-samsung/include/plat/iic.h |    2 ++
- 9 files changed, 64 insertions(+), 120 deletions(-)
+There is no clean nice ADC subsystem though, and *that* feels
+like a big problem to drivers like this (and no I don't like the AB8500
+GPADC living in MFD either) so if you'd like to create a ADC
+subsystem just go ahead, there is something in drivers/staging/iio/adc
+but that had another problem last time I looked: it was only intended
+for userspace control, not in-kernel use.
 
--- 
-1.7.2.3
+Linus Walleij
