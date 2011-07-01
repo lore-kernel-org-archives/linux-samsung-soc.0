@@ -1,12 +1,12 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V2 7/8] ARM: EXYNOS4: Add save/restore for other ARM registers
-Date: Fri,  1 Jul 2011 10:57:36 +0900
-Message-ID: <1309485457-13305-8-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH V2 6/8] ARM: EXYNOS4: Move S5P_CENTRAL_SEQ_CONFIGURATION setting for PM
+Date: Fri,  1 Jul 2011 10:57:35 +0900
+Message-ID: <1309485457-13305-7-git-send-email-kgene.kim@samsung.com>
 References: <1309485457-13305-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:53332 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:53348 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754088Ab1GACIr (ORCPT
+	with ESMTP id S1754306Ab1GACIr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Thu, 30 Jun 2011 22:08:47 -0400
 In-Reply-To: <1309485457-13305-1-git-send-email-kgene.kim@samsung.com>
@@ -17,63 +17,62 @@ Cc: ben-linux@fluff.org, Jaecheol Lee <jc.lee@samsung.com>, Kukjin Kim <kgene.ki
 
 From: Jaecheol Lee <jc.lee@samsung.com>
 
-This patch adds save/restore values for Power Control Register and
-Diagnostic Register for PM.
+We need to balance between set and check S5P_CENTRAL_SEQ_CONFIGURATION
+register in syscore_ops suspend/resume function when failure in enter
+suspend mode. Moved this register setting for PM for the purpose of balancing.
 
 Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-exynos4/pm.c |   24 ++++++++++++++++++++++++
- 1 files changed, 24 insertions(+), 0 deletions(-)
+ arch/arm/mach-exynos4/pm.c |   22 ++++++++++++++--------
+ 1 files changed, 14 insertions(+), 8 deletions(-)
 
 diff --git a/arch/arm/mach-exynos4/pm.c b/arch/arm/mach-exynos4/pm.c
-index a658318..4130e5a 100644
+index 17d43c2..a658318 100644
 --- a/arch/arm/mach-exynos4/pm.c
 +++ b/arch/arm/mach-exynos4/pm.c
-@@ -238,6 +238,9 @@ static struct sleep_save exynos4_l2cc_save[] = {
- 	SAVE_ITEM(S5P_VA_L2CC + L2X0_AUX_CTRL),
- };
+@@ -240,14 +240,6 @@ static struct sleep_save exynos4_l2cc_save[] = {
  
-+/* For Cortex-A9 Diagnostic and Power control register */
-+static unsigned int save_arm_register[2];
-+
  void exynos4_cpu_suspend(unsigned long arg)
  {
+-	unsigned long tmp;
+-
+-	/* Setting Central Sequence Register for power down mode */
+-
+-	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
+-	tmp &= ~(S5P_CENTRAL_LOWPWR_CFG);
+-	__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
+-
  	outer_flush_all();
-@@ -329,6 +332,16 @@ static int exynos4_pm_suspend(void)
- 	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
- 	__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
  
-+	/* Save Power control register */
-+	asm ("mrc p15, 0, %0, c15, c0, 0"
-+	     : "=r" (tmp) : : "cc");
-+	save_arm_register[0] = tmp;
+ 	/* issue the standby signal into the pm unit. */
+@@ -327,6 +319,19 @@ static __init int exynos4_pm_drvinit(void)
+ }
+ arch_initcall(exynos4_pm_drvinit);
+ 
++static int exynos4_pm_suspend(void)
++{
++	unsigned long tmp;
 +
-+	/* Save Diagnostic register */
-+	asm ("mrc p15, 0, %0, c15, c0, 1"
-+	     : "=r" (tmp) : : "cc");
-+	save_arm_register[1] = tmp;
++	/* Setting Central Sequence Register for power down mode */
 +
- 	return 0;
++	tmp = __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
++	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
++	__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
++
++	return 0;
++}
++
+ static void exynos4_pm_resume(void)
+ {
+ 	unsigned long tmp;
+@@ -371,6 +376,7 @@ early_wakeup:
  }
  
-@@ -349,6 +362,17 @@ static void exynos4_pm_resume(void)
- 		/* No need to perform below restore code */
- 		goto early_wakeup;
- 	}
-+	/* Restore Power control register */
-+	tmp = save_arm_register[0];
-+	asm volatile ("mcr p15, 0, %0, c15, c0, 0"
-+		      : : "r" (tmp)
-+		      : "cc");
-+
-+	/* Restore Diagnostic register */
-+	tmp = save_arm_register[1];
-+	asm volatile ("mcr p15, 0, %0, c15, c0, 1"
-+		      : : "r" (tmp)
-+		      : "cc");
- 
- 	/* For release retention */
+ static struct syscore_ops exynos4_pm_syscore_ops = {
++	.suspend	= exynos4_pm_suspend,
+ 	.resume		= exynos4_pm_resume,
+ };
  
 -- 
 1.7.1
