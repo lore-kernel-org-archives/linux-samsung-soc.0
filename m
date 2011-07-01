@@ -1,87 +1,33 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 2/2] SPI: SAMSUNG: Bug fix for SPI with different FIFO level
-Date: Fri, 1 Jul 2011 11:43:08 +0530
-Message-ID: <BANLkTinf6ec1yXeaFkZjHMnqZp7yymDq-w@mail.gmail.com>
-References: <1309437536-9315-1-git-send-email-padma.v@samsung.com>
-	<1309437536-9315-2-git-send-email-padma.v@samsung.com>
-	<BANLkTi=L7QeN75ebWFXdp_V5Pw1zEc-ZtA@mail.gmail.com>
-	<BANLkTimeWUbD2Ej16KKmuzwSCFz8HOhyKQ@mail.gmail.com>
-	<BANLkTi=9c5asfr=Jg6xwjQZW_a369UO64Q@mail.gmail.com>
-	<BANLkTinFnFwBGi693JTD_iDykA2VkV+HOw@mail.gmail.com>
-	<BANLkTik0LERxBHmJc5ZnRotnD4CSveR-UQ@mail.gmail.com>
-	<BANLkTim9wdrqDgXVUjxzMv9cdWViLww=Bg@mail.gmail.com>
-	<BANLkTim40x4X_--K0z7gdodDjor0MUam5Q@mail.gmail.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 4/7] ARM: EXYNOS4: Support early wakeup while entering
+	sleep mode
+Date: Fri, 1 Jul 2011 08:44:14 +0100
+Message-ID: <20110701074414.GD21898@n2100.arm.linux.org.uk>
+References: <1308732405-16664-1-git-send-email-kgene.kim@samsung.com> <1308732405-16664-5-git-send-email-kgene.kim@samsung.com> <20110622145715.GS23234@n2100.arm.linux.org.uk> <007401cc3242$48947160$d9bd5420$%kim@samsung.com> <20110624093750.GD23234@n2100.arm.linux.org.uk> <20110624102246.GF23234@n2100.arm.linux.org.uk> <017d01cc378a$c017edf0$4047c9d0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:41334 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754792Ab1GAGNJ convert rfc822-to-8bit (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:47879 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755294Ab1GAHo2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Jul 2011 02:13:09 -0400
-Received: by bwd5 with SMTP id 5so2373599bwd.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2011 23:13:08 -0700 (PDT)
-In-Reply-To: <BANLkTim40x4X_--K0z7gdodDjor0MUam5Q@mail.gmail.com>
+	Fri, 1 Jul 2011 03:44:28 -0400
+Content-Disposition: inline
+In-Reply-To: <017d01cc378a$c017edf0$4047c9d0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: padma venkat <padma.kvr@gmail.com>
-Cc: Tony Nadackal <tonykn@gmail.com>, Padmavathi Venna <padma.v@samsung.com>, kgene.kim@samsung.com, sbkim73@samsung.com, grant.likely@secretlab.ca, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tony.kn@samsung.com, naushad@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Jaecheol Lee' <jc.lee@samsung.com>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-On Fri, Jul 1, 2011 at 11:29 AM, padma venkat <padma.kvr@gmail.com> wro=
-te:
-> Hi Jassi,
->
-> On Fri, Jul 1, 2011 at 11:22 AM, Jassi Brar <jassisinghbrar@gmail.com=
-> wrote:
->> On Fri, Jul 1, 2011 at 11:16 AM, padma venkat <padma.kvr@gmail.com> =
-wrote:
->>> Hi Tony,
->>>
->>> On Thu, Jun 30, 2011 at 4:30 PM, Tony Nadackal <tonykn@gmail.com> w=
-rote:
->>>> Hi Padma,
->>>> With regards to your patch, even though one can check the tx done =
-status
->>>> using the TX_DONE bit, the present macro itself would work perfect=
-ly fine if
->>>> the 'fifo_lvl_mask' is set properly.
->>>> For example in 6450 channel 1, the fifo_lvl_mask should be 0x1ff (=
-for 9bits,
->>>> 15:23), while even in your patch, it is wrongly set as 0x7f(only 7=
-bits).
->>>>
->>>> Thus, if this fifo_lvl_mask was defined correctly, the existing ma=
-cro would
->>>> itself have worked.
->>> Thanks for your comment.
->>> I considered changing to the fifo_lvl_mask to 1ff as you mentioned.
->>> But I =C2=A0think that the fifo_lvl_mask reflects the actual FIFO c=
-apacity
->>> in the SPI driver.
->>> For the failing channels the FIFO trigger level is 64 bytes and so =
-i
->>> retained that value.
->>> In the driver it polls till the FIFO capacity level otherwise it go=
-es
->>> for DMA.So if we keep
->>> the FIFO level as 1ff when the actual capacity is 7f then it fails.
->>>
->>> Jassi what do you think about this?
->>>
->>
->> 'fifo_lvl_mask' is h/w specific and can't be set for convenience.
->>
->> I don't have access to post-s3c64xx datasheets.
->> Please check and reply if TX_DONE bit is at same offset for all
->> channels of an SoC, because
->> I suspect it's otherwise.
->>
-> Yes. The TX_DONE bit is at the same offset for all the channels of an=
- SoC.
-> in S5P64X0,S5PV210 and S5PV310 it is at offset 25.
->
+On Fri, Jul 01, 2011 at 10:03:48AM +0900, Kukjin Kim wrote:
+> Russell thanks.
+> 
+> How do you think to add following for handling failure of cpu_suspend?
+> 
+> +	mov	r0, #-1
 
-Then, Patches-1,2
+No.  -1 is not an error code, and I refuse to create functions which
+use an explicit -1 as a return code to indicate failure.
 
-Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
+The code is designed so that the called finisher function can return
+a valid errno value.
