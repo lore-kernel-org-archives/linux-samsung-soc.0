@@ -1,100 +1,58 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V2 3/8] ARM: EXYNOS4: Add support PM with external GIC
-Date: Fri,  1 Jul 2011 10:57:32 +0900
-Message-ID: <1309485457-13305-4-git-send-email-kgene.kim@samsung.com>
-References: <1309485457-13305-1-git-send-email-kgene.kim@samsung.com>
+From: padma venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH 3/7] ARM: SAMSUNG: Add SPI clock definitions for SAMSUNG SoCs
+Date: Fri, 1 Jul 2011 09:01:24 +0530
+Message-ID: <BANLkTikv=1c+TmjPOAy8RhGeV3h+CAP=bw@mail.gmail.com>
+References: <1309436723-662-1-git-send-email-padma.v@samsung.com>
+	<1309436723-662-4-git-send-email-padma.v@samsung.com>
+	<20110630093024.GT21898@n2100.arm.linux.org.uk>
+	<BANLkTi=u7hrqZwo2kCp-iNgnwWUcw_uBog@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:53339 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754292Ab1GACIr (ORCPT
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:42394 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750725Ab1GADbZ convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Jun 2011 22:08:47 -0400
-In-Reply-To: <1309485457-13305-1-git-send-email-kgene.kim@samsung.com>
+	Thu, 30 Jun 2011 23:31:25 -0400
+Received: by wwe5 with SMTP id 5so2830650wwe.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Jun 2011 20:31:24 -0700 (PDT)
+In-Reply-To: <BANLkTi=u7hrqZwo2kCp-iNgnwWUcw_uBog@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Jaecheol Lee <jc.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Padmavathi Venna <padma.v@samsung.com>, kgene.kim@samsung.com, sbkim73@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-From: Jaecheol Lee <jc.lee@samsung.com>
+Hi Russell,Jassi
 
-Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-exynos4/pm.c |   43 +++++++++++++++++++++++++++++++++++++------
- 1 files changed, 37 insertions(+), 6 deletions(-)
+On Thu, Jun 30, 2011 at 3:13 PM, Jassi Brar <jassisinghbrar@gmail.com> =
+wrote:
+> On Thu, Jun 30, 2011 at 3:00 PM, Russell King - ARM Linux
+> <linux@arm.linux.org.uk> wrote:
+>> On Thu, Jun 30, 2011 at 08:25:19AM -0400, Padmavathi Venna wrote:
+>>> SPI Clocks were defined in dev-spi.c of machine specific folder.
+>>> To make SPI devices common across all SoCs,dev-spi.c is moved
+>>> from machine specific folder to plat-samsung. So SPI clock
+>>> definitions has been moved from dev-spi.c to SoC specific machine
+>>> folder for S3C64XX,S5P64X0,S5PC100 and S5PV210
+>>
+>> This just shows how sick the Samsung code is by abusing the clk API.
+>> If it stopped that abuse and switched over to clkdev none of this wo=
+uld
+>> be necessary.
+> I am anyways not for the patch set.
+> Though this 'sickness' predates clkdev, and I agree it should be chan=
+ged now.
 
-diff --git a/arch/arm/mach-exynos4/pm.c b/arch/arm/mach-exynos4/pm.c
-index 4d9ee97..9b5f3a5 100644
---- a/arch/arm/mach-exynos4/pm.c
-+++ b/arch/arm/mach-exynos4/pm.c
-@@ -154,6 +154,22 @@ static struct sleep_save exynos4_core_save[] = {
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0x454),
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0x458),
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0x45C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x460),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x464),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x468),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x46C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x470),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x474),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x478),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x47C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x480),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x484),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x488),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x48C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x490),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x494),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x498),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x49C),
- 
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0x800),
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0x804),
-@@ -179,6 +195,22 @@ static struct sleep_save exynos4_core_save[] = {
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0x854),
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0x858),
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0x85C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x860),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x864),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x868),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x86C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x870),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x874),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x878),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x87C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x880),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x884),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x888),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x88C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x890),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x894),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x898),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0x89C),
- 
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC00),
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC04),
-@@ -186,17 +218,16 @@ static struct sleep_save exynos4_core_save[] = {
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC0C),
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC10),
- 	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC14),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC18),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC1C),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC20),
-+	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC24),
-+
- 
- 	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x000),
- 	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x010),
- 	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x020),
- 	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x030),
--	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x040),
--	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x050),
--	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x060),
--	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x070),
--	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x080),
--	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x090),
- };
- 
- static struct sleep_save exynos4_l2cc_save[] = {
--- 
-1.7.1
+I will prepare new set of patches based on clkdev code and send for rev=
+iew.
+
+Thanks&Regards
+Padma
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
