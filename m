@@ -1,69 +1,163 @@
 From: Changhwan Youn <chaos.youn@samsung.com>
-Subject: RE: [rtc-linux] [PATCH 2/3] rtc: rtc-s3c: Disable alarm entries that
- are not chosen.
-Date: Mon, 04 Jul 2011 11:39:31 +0900
-Message-ID: <013101cc39f3$9b44b830$d1ce2890$%youn@samsung.com>
+Subject: RE: [PATCH 3/3] rtc: rtc-s3c: allow multiple open / allow
+ no-ioctl-open'ed rtc to have irq.
+Date: Mon, 04 Jul 2011 12:40:44 +0900
+Message-ID: <014001cc39fc$27cb52c0$7761f840$%youn@samsung.com>
 References: <1309175006-9218-1-git-send-email-myungjoo.ham@samsung.com>
- <1309175006-9218-3-git-send-email-myungjoo.ham@samsung.com>
+ <1309175006-9218-4-git-send-email-myungjoo.ham@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=Windows-1252
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:26708 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752143Ab1GDCjo (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:23911 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753172Ab1GDDks (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 Jul 2011 22:39:44 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Sun, 3 Jul 2011 23:40:48 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LNS003YSFDTJ380@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 04 Jul 2011 11:39:33 +0900 (KST)
+ 2010)) with ESMTP id <0LNS008EQI7RA160@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 04 Jul 2011 12:40:45 +0900 (KST)
 Received: from DOCHAOSYOUN01 (12-23-121-151.csky.net [12.23.121.151])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LNS006LEFDXMH@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 04 Jul 2011 11:39:33 +0900 (KST)
-In-reply-to: <1309175006-9218-3-git-send-email-myungjoo.ham@samsung.com>
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LNS00M6PI7WJY@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 04 Jul 2011 12:40:45 +0900 (KST)
+In-reply-to: <1309175006-9218-4-git-send-email-myungjoo.ham@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: rtc-linux@googlegroups.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, ben-linux@fluff.org, a.zummo@towertech.it, kyungmin.park@samsung.com, dg77.kim@samsung.com, myungjoo.ham@gmail.com
 
+AbwBwAGUAbgAgAC8AIAB
+	hAGwAbABvAHcAIABuAG8ALQBpAG8AYwB0AGwALQBvAHAAZQBuACcAZQBkACAAcgB0AGMAIAB0AG8AIABoAGEAdgBlACAAaQByAHEALgA=
+x-cr-puzzleid: {71A23705-5400-4E21-9C23-2B1E96E33A68}
+
 MyungJoo Ham wrote:
-> When rtc_setalarm is called, the entries that are not chosen (entries
-> without valid time values) should be disabled. However, in the previous
-> rtc-s3c driver, they are not explicitly disabled (did not changed). This
-> patch allows to disable such entries even if they were previously used.
-
-This has already been implemented by current code.
-The original code you modified only leaves alarm enable bit.
-You may misunderstand the code.
-
-Regards,
-Changhwan
+> The previous rtc-s3c had two issues related with its IRQ.
+> 1. Users cannot open rtc multiple times because an open operation calls
+> request_irq on the same IRQ. (e.g., two user processes wants to open and
+> read RTC time from rtc-s3c at the same time)
+> 2. If alarm is set and no one has the rtc opened with filesystem
+> (either the alarm is set by kernel/boot-loader or user set an alarm
+> and closed rtc dev file), the pending bit is not cleared and no further
+> interrupt is invoked. When the alarm is used by the system itself such
+> as a resume from suspend-to-RAM or other Low-power modes/idle, this is a
+> critical issue.
+> 
+> This patch mitigates these issue by calling request_irq at probe and
+> free_irq at remove.
 > 
 > Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  drivers/rtc/rtc-s3c.c |    3 ++-
->  1 files changed, 2 insertions(+), 1 deletions(-)
+>  drivers/rtc/rtc-s3c.c |   63
+++++++++++++++-------------------------------
+> ---
+>  1 files changed, 19 insertions(+), 44 deletions(-)
 > 
 > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-> index 3c8dfa7..be85ea5 100644
+> index be85ea5..8d2807f 100644
 > --- a/drivers/rtc/rtc-s3c.c
 > +++ b/drivers/rtc/rtc-s3c.c
-> @@ -273,7 +273,8 @@ static int s3c_rtc_setalarm(struct device *dev, struct
-> rtc_wkalrm *alrm)
->  		 1900 + tm->tm_year, tm->tm_mon + 1, tm->tm_mday,
->  		 tm->tm_hour, tm->tm_min, tm->tm_sec);
+> @@ -320,50 +320,7 @@ static int s3c_rtc_proc(struct device *dev, struct
+> seq_file *seq)
+>  	return 0;
+>  }
 > 
-> -	alrm_en = readb(base + S3C2410_RTCALM) & S3C2410_RTCALM_ALMEN;
-> +	/* Disable entires that are not chosen by alrm */
-> +	alrm_en = S3C2410_RTCALM_ALMEN;
->  	writeb(0x00, base + S3C2410_RTCALM);
+> -static int s3c_rtc_open(struct device *dev)
+> -{
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct rtc_device *rtc_dev = platform_get_drvdata(pdev);
+> -	int ret;
+> -
+> -	ret = request_irq(s3c_rtc_alarmno, s3c_rtc_alarmirq,
+> -			  IRQF_DISABLED,  "s3c2410-rtc alarm", rtc_dev);
+> -
+> -	if (ret) {
+> -		dev_err(dev, "IRQ%d error %d\n", s3c_rtc_alarmno, ret);
+> -		return ret;
+> -	}
+> -
+> -	ret = request_irq(s3c_rtc_tickno, s3c_rtc_tickirq,
+> -			  IRQF_DISABLED,  "s3c2410-rtc tick", rtc_dev);
+> -
+> -	if (ret) {
+> -		dev_err(dev, "IRQ%d error %d\n", s3c_rtc_tickno, ret);
+> -		goto tick_err;
+> -	}
+> -
+> -	return ret;
+> -
+> - tick_err:
+> -	free_irq(s3c_rtc_alarmno, rtc_dev);
+> -	return ret;
+> -}
+> -
+> -static void s3c_rtc_release(struct device *dev)
+> -{
+> -	struct platform_device *pdev = to_platform_device(dev);
+> -	struct rtc_device *rtc_dev = platform_get_drvdata(pdev);
+> -
+> -	/* do not clear AIE here, it may be needed for wake */
+> -
+> -	free_irq(s3c_rtc_alarmno, rtc_dev);
+> -	free_irq(s3c_rtc_tickno, rtc_dev);
+> -}
+> -
+> -
+>  static const struct rtc_class_ops s3c_rtcops = {
+> -	.open		= s3c_rtc_open,
+> -	.release	= s3c_rtc_release,
+>  	.read_time	= s3c_rtc_gettime,
+>  	.set_time	= s3c_rtc_settime,
+>  	.read_alarm	= s3c_rtc_getalarm,
+> @@ -427,6 +384,9 @@ static int __devexit s3c_rtc_remove(struct
+> platform_device *dev)
+>  {
+>  	struct rtc_device *rtc = platform_get_drvdata(dev);
 > 
->  	if (tm->tm_sec < 60 && tm->tm_sec >= 0) {
+> +	free_irq(s3c_rtc_alarmno, rtc);
+> +	free_irq(s3c_rtc_tickno, rtc);
+> +
+>  	platform_set_drvdata(dev, NULL);
+>  	rtc_device_unregister(rtc);
+> 
+> @@ -553,8 +513,23 @@ static int __devinit s3c_rtc_probe(struct
+> platform_device *pdev)
+> 
+>  	clk_disable(rtc_clk);
+> 
+> -	return 0;
+> +	ret = request_irq(s3c_rtc_alarmno, s3c_rtc_alarmirq,
+> +			  IRQF_DISABLED,  "s3c2410-rtc alarm", rtc);
+> 
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "IRQ%d error %d\n", s3c_rtc_alarmno,
+> ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = request_irq(s3c_rtc_tickno, s3c_rtc_tickirq,
+> +			  IRQF_DISABLED,  "s3c2410-rtc tick", rtc);
+> +
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "IRQ%d error %d\n", s3c_rtc_tickno,
+ret);
+> +		free_irq(s3c_rtc_alarmno, rtc);
+> +	}
+> +
+> +	return ret;
+
+You need proper error handlings.
+
+Regards,
+Changhwan
+
+>   err_nortc:
+>  	s3c_rtc_enable(pdev, 0);
+>  	clk_disable(rtc_clk);
 > --
 > 1.7.4.1
 > 
