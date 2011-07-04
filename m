@@ -1,50 +1,126 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH 2/2] SPI: S5PV210: Enable the SPI driver for S5PV210
-Date: Mon, 04 Jul 2011 13:44:36 -0400
-Message-ID: <1309801476-29678-2-git-send-email-padma.v@samsung.com>
-References: <1309801476-29678-1-git-send-email-padma.v@samsung.com>
-Content-Transfer-Encoding: 7BIT
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH 1/7] DMA: PL330: Add support runtime PM for PL330 DMAC
+Date: Mon,  4 Jul 2011 21:18:29 +0900
+Message-ID: <1309781915-31549-2-git-send-email-kgene.kim@samsung.com>
+References: <1309781915-31549-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:55973 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751340Ab1GDL45 (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:45685 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754911Ab1GDM3d (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Jul 2011 07:56:57 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LNT004GF56W3MU0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 04 Jul 2011 20:56:57 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LNT00JO856PYI@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 04 Jul 2011 20:56:57 +0900 (KST)
-In-reply-to: <1309801476-29678-1-git-send-email-padma.v@samsung.com>
+	Mon, 4 Jul 2011 08:29:33 -0400
+In-Reply-To: <1309781915-31549-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Grant Likely <grant.likely@secretlab.ca>, Jassi Brar <jassisinghbrar@gmail.com>, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Boojin Kim <boojin.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-The SPI module on S5PV210 is similar to the earlier Samsung SoCs like
-S3C64XX. Enable the existing SPI driver for use on S5PV210.
+From: Boojin Kim <boojin.kim@samsung.com>
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+Cc: Vinod Koul <vinod.koul@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- drivers/spi/Kconfig |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+ drivers/dma/pl330.c |   61 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 61 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 91d607b..ed1ebea 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -340,7 +340,8 @@ config SPI_S3C24XX_GPIO
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index 6abe1ec..7bd72e9 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -17,6 +17,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/amba/bus.h>
+ #include <linux/amba/pl330.h>
++#include <linux/pm_runtime.h>
  
- config SPI_S3C64XX
- 	tristate "Samsung S3C64XX series type SPI"
--	depends on (ARCH_S3C64XX || ARCH_S5P64X0 || ARCH_S5PC100)
-+	depends on (ARCH_S3C64XX || ARCH_S5P64X0 || ARCH_S5PC100 \
-+			|| ARCH_S5PV210)
- 	select S3C64XX_DMA if ARCH_S3C64XX
- 	help
- 	  SPI driver for Samsung S3C64XX and newer SoCs.
+ #define NR_DEFAULT_DESC	16
+ 
+@@ -666,6 +667,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 	struct dma_device *pd;
+ 	struct resource *res;
+ 	int i, ret, irq;
++	struct clk* clk;
+ 
+ 	pdat = adev->dev.platform_data;
+ 
+@@ -696,6 +698,28 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 		goto probe_err1;
+ 	}
+ 
++#ifdef CONFIG_PM_RUNTIME
++	/* to use the runtime PM helper functions */
++	pm_runtime_enable(&adev->dev);
++
++	/* enable the power domain */
++	if (pm_runtime_get_sync(&adev->dev)) {
++		dev_err(&adev->dev, "failed to get runtime pm\n");
++		ret = -ENODEV;
++		goto probe_err1;
++	}
++#else
++	/* enable dma clk */
++	clk = clk_get(&adev->dev, "dma");
++
++	if (IS_ERR(clk)) {
++		dev_err(&adev->dev, "Cannot get operation clock.\n");
++		ret = -EINVAL;
++		goto probe_err1;
++	}
++	clk_enable(clk);
++#endif
++
+ 	irq = adev->irq[0];
+ 	ret = request_irq(irq, pl330_irq_handler, 0,
+ 			dev_name(&adev->dev), pi);
+@@ -838,10 +862,47 @@ static struct amba_id pl330_ids[] = {
+ 	{ 0, 0 },
+ };
+ 
++#ifdef CONFIG_PM_RUNTIME
++static int pl330_runtime_suspend(struct device *dev)
++{
++	struct clk *dmaclk = clk_get(dev, "dma");
++
++	if (dmaclk == NULL) {
++		dev_err(dev, "failed to find dma clock source\n");
++		return -ENODEV;
++	}
++
++	clk_disable(dmaclk);
++	return 0;
++}
++
++static int pl330_runtime_resume(struct device *dev)
++{
++	struct clk *dmaclk = clk_get(dev, "dma");
++
++	if (dmaclk == NULL) {
++		dev_err(dev, "failed to find dma clock source\n");
++		return -ENODEV;
++	}
++
++	clk_enable(dmaclk);
++	return 0;
++}
++#else
++#define pl330_runtime_suspend	NULL
++#define pl330_runtime_resume	NULL
++#endif /* CONFIG_PM_RUNTIME */
++
++static const struct dev_pm_ops pl330_pm_ops = {
++	.runtime_suspend = pl330_runtime_suspend,
++	.runtime_resume = pl330_runtime_resume,
++};
++
+ static struct amba_driver pl330_driver = {
+ 	.drv = {
+ 		.owner = THIS_MODULE,
+ 		.name = "dma-pl330",
++		.pm = &pl330_pm_ops,
+ 	},
+ 	.id_table = pl330_ids,
+ 	.probe = pl330_probe,
 -- 
-1.7.0.4
+1.7.1
