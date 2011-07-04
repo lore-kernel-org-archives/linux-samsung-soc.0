@@ -1,97 +1,112 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 04/19] s5p-fimc: Remove sclk_cam clock handling
-Date: Mon, 04 Jul 2011 19:54:55 +0200
-Message-ID: <1309802110-16682-5-git-send-email-s.nawrocki@samsung.com>
-References: <1309802110-16682-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v3 0/19] s5p-fimc driver conversion to media controller and
+ control framework
+Date: Mon, 04 Jul 2011 19:54:51 +0200
+Message-ID: <1309802110-16682-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.w1.samsung.com ([210.118.77.13]:43518 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758153Ab1GDRzm (ORCPT
+	with ESMTP id S1758359Ab1GDRzn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Jul 2011 13:55:42 -0400
-In-reply-to: <1309802110-16682-1-git-send-email-s.nawrocki@samsung.com>
+	Mon, 4 Jul 2011 13:55:43 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
 
-The external sclk_cam clocks will be handled at the media device
-driver level.
+Hello,
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/media/video/s5p-fimc/fimc-core.c |   12 ++----------
- drivers/media/video/s5p-fimc/fimc-core.h |    3 +--
- 2 files changed, 3 insertions(+), 12 deletions(-)
+following is a third version of a patchset converting s5p-fimc driver 
+to the media controller API and control framework.
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index 36a8d63..fd6a308 100644
---- a/drivers/media/video/s5p-fimc/fimc-core.c
-+++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -30,7 +30,7 @@
- #include "fimc-core.h"
- 
- static char *fimc_clocks[MAX_FIMC_CLOCKS] = {
--	"sclk_fimc", "fimc", "sclk_cam"
-+	"sclk_fimc", "fimc"
- };
- 
- static struct fimc_fmt fimc_formats[] = {
-@@ -1648,7 +1648,6 @@ static int fimc_probe(struct platform_device *pdev)
- 	struct samsung_fimc_driverdata *drv_data;
- 	struct s5p_platform_fimc *pdata;
- 	int ret = 0;
--	int cap_input_index = -1;
- 
- 	dev_dbg(&pdev->dev, "%s():\n", __func__);
- 
-@@ -1701,14 +1700,6 @@ static int fimc_probe(struct platform_device *pdev)
- 		goto err_req_region;
- 	}
- 
--	fimc->num_clocks = MAX_FIMC_CLOCKS - 1;
--
--	/* Check if a video capture node needs to be registered. */
--	if (pdata && pdata->num_clients > 0) {
--		cap_input_index = 0;
--		fimc->num_clocks++;
--	}
--
- 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 	if (!res) {
- 		dev_err(&pdev->dev, "failed to get IRQ resource\n");
-@@ -1717,6 +1708,7 @@ static int fimc_probe(struct platform_device *pdev)
- 	}
- 	fimc->irq = res->start;
- 
-+	fimc->num_clocks = MAX_FIMC_CLOCKS;
- 	ret = fimc_clk_get(fimc);
- 	if (ret)
- 		goto err_regs_unmap;
-diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-index c088dac..f059216 100644
---- a/drivers/media/video/s5p-fimc/fimc-core.h
-+++ b/drivers/media/video/s5p-fimc/fimc-core.h
-@@ -34,7 +34,7 @@
- 
- /* Time to wait for next frame VSYNC interrupt while stopping operation. */
- #define FIMC_SHUTDOWN_TIMEOUT	((100*HZ)/1000)
--#define MAX_FIMC_CLOCKS		3
-+#define MAX_FIMC_CLOCKS		2
- #define MODULE_NAME		"s5p-fimc"
- #define FIMC_MAX_DEVS		4
- #define FIMC_MAX_OUT_BUFS	4
-@@ -46,7 +46,6 @@
- enum {
- 	CLK_BUS,
- 	CLK_GATE,
--	CLK_CAM,
- };
- 
- enum fimc_dev_flags {
--- 
-1.7.5.4
+Except fixing minor bugs in the sensor registration code, the first patch
+adding power management support has been significantly reworked. 
+There is no yet support for a per frame power gating, I'd like to add
+it in 3.2 as it seem to require modfications of v4l-mem2mem framework.
+
+I'd like to get this patchset in v3.1, unless there are any issues pointed out. 
+
+The changeset can be pulled from (within a few hours from now, after the
+repository synchronisation cron job runs):
+
+http://git.infradead.org/users/kmpark/linux-2.6-samsung
+branch: s5p-fimc-next
+
+Changes since v2:
+- reworked (runtime) power management;
+- added pm_runtime_get_sync/pm_runtime_put around sensor registration
+  code so the clock for sensors is enabled during host driver's probe();
+- reworked try_crop operation handler to support multiple of the prescaler
+  ratio relationship constraint for format at the sink pad;
+- corrected fimc_md_unregister_entities() function
+
+
+Below is an original cover letter of v2.
+
+-----------------------------------------------------------------------------
+In this version the ioctl handlers for format setting at the video node and
+the FIMC subdev has been reworked so they use common functions for capture
+data format adjustment to the hardware capabilities. This prevent trouble
+from any differences in handling ioctls at the subdev and the video node
+when those are used simultaneously.
+
+Except that I have killed a few bugs that jumped out when the driver was tried
+to be used as a kernel module. 
+
+Additionally to allow the driver to be used in V4L2 video node compatibility
+mode (when sensor subdev is configured by the host driver rather that directly
+by the applications through /dev/v4l-subdev*) a sysfs entry is added.
+All that needs to be done to disable sensors configuration from /dev/video*
+node level, in order to use sub-device user space API, is to write correct
+string to s5p-fimc-md platform device "subdev_conf_mode" sysfs entry, e.g.
+
+echo sub-dev > /sys/devices/platform/s5p-fimc-md/subdev_conf_mode
+or to revert:
+echo vid-dev > /sys/devices/platform/s5p-fimc-md/subdev_conf_mode
+
+The following procedure is adopted for format and crop/composition
+configuration at the FIMC.{n} (capture) subdevs:
+
+1) set format at sink pad (this will reset sink crop rectangle)
+2) set crop rectangle at sink pad (optional)
+3) set rotate control (optional)
+4) set crop (composition) at source pad (optional). Here scaling constraints
+   are checked according to whether sink pad crop has been set or not and
+   whether 90/270 deg rotation is set.
+5) set format at source pad
+6) set format at corresponding video node
+
+Rotation can also be changed while streaming, in this case when 90/270 deg
+rotation is attempted to be set and scaling bounds are exceeded 
+(max. 64x downscaling) s_ctrl returns EINVAL.
+
+I have tried this driver with v4l-compliance and it returned only 1 fail
+on S/G_PRIORITY.
+								
+This patch set depends on my previous s5p-fimc bugfixes, available at: 
+http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/s5p-fimc
+
+as well as the control framework updates from Hans Verkuil:
+http://www.spinics.net/lists/linux-media/msg33552.html
+(patch 1...6, 8, 11).
+
+Full source tree can be found at:
+ http://git.infradead.org/users/kmpark/linux-2.6-samsung
+ branch: s5p-fimc-next
+
+I have skipped patch one patch in this series comparing to first version:
+s5p-fimc: Add support for runtime PM in the mem-to-mem driver
+This patch is available in the above git repository. 
+I need to work a bit more on that one.
+
+Comments and suggestions are welcome!
+------------------------------------------------------------------------------
+
+
+Thanks,
+--
+Sylwester Nawrocki
+Samsung Poland R&D Center
