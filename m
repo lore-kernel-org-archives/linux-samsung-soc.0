@@ -1,82 +1,101 @@
 From: MyungJoo Ham <myungjoo.ham@gmail.com>
-Subject: Re: [rtc-linux] [PATCH 2/3] rtc: rtc-s3c: Disable alarm entries that
- are not chosen.
-Date: Mon, 4 Jul 2011 13:56:21 +0900
-Message-ID: <CAJ0PZbRf-Q3r9D9EbhSG+VuzLWWbWqXKJ4A1byLUGn5On=ArVg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] rtc: rtc-s3c: allow multiple open / allow
+ no-ioctl-open'ed rtc to have irq.
+Date: Mon, 4 Jul 2011 13:58:51 +0900
+Message-ID: <CAJ0PZbTqHr8-A-sm5YVVxicygDiTi6NCx2B8ycmpS9ARHMFMZA@mail.gmail.com>
 References: <1309175006-9218-1-git-send-email-myungjoo.ham@samsung.com>
-	<1309175006-9218-3-git-send-email-myungjoo.ham@samsung.com>
-	<013101cc39f3$9b44b830$d1ce2890$%youn@samsung.com>
+	<1309175006-9218-4-git-send-email-myungjoo.ham@samsung.com>
+	<014001cc39fc$27cb52c0$7761f840$%youn@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:43199 "EHLO
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:46825 "EHLO
 	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750860Ab1GDE4W convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1751286Ab1GDE6x convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Jul 2011 00:56:22 -0400
-Received: by bwd5 with SMTP id 5so3794335bwd.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Jul 2011 21:56:21 -0700 (PDT)
-In-Reply-To: <013101cc39f3$9b44b830$d1ce2890$%youn@samsung.com>
+	Mon, 4 Jul 2011 00:58:53 -0400
+Received: by bwd5 with SMTP id 5so3795256bwd.19
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Jul 2011 21:58:51 -0700 (PDT)
+In-Reply-To: <014001cc39fc$27cb52c0$7761f840$%youn@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Changhwan Youn <chaos.youn@samsung.com>
 Cc: rtc-linux@googlegroups.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, a.zummo@towertech.it, kyungmin.park@samsung.com, dg77.kim@samsung.com
 
-On Mon, Jul 4, 2011 at 11:39 AM, Changhwan Youn <chaos.youn@samsung.com=
+On Mon, Jul 4, 2011 at 12:40 PM, Changhwan Youn <chaos.youn@samsung.com=
 > wrote:
+> AbwBwAGUAbgAgAC8AIAB
+> =A0 =A0 =A0 =A0hAGwAbABvAHcAIABuAG8ALQBpAG8AYwB0AGwALQBvAHAAZQBuACcAZ=
+QBkACAAcgB0AGMAIAB0AG8AIABoAGEAdgBlACAAaQByAHEALgA=3D
+> x-cr-puzzleid: {71A23705-5400-4E21-9C23-2B1E96E33A68}
+>
 > MyungJoo Ham wrote:
->> When rtc_setalarm is called, the entries that are not chosen (entrie=
-s
->> without valid time values) should be disabled. However, in the previ=
-ous
->> rtc-s3c driver, they are not explicitly disabled (did not changed). =
-This
->> patch allows to disable such entries even if they were previously us=
-ed.
->
-> This has already been implemented by current code.
-> The original code you modified only leaves alarm enable bit.
-> You may misunderstand the code.
-
-Ah.. sorry. I misunderstood when I was writing the commit message.
-
-It is not about the enable bits of each time entry. It is about the ena=
-ble bit.
-
-However, as rtc->ops->set_alarm is not called when alarm->enabled is
-false, the patch becomes meaningless.
-
-Please never mind this patch.
-
->
-> Regards,
-> Changhwan
+>> The previous rtc-s3c had two issues related with its IRQ.
+>> 1. Users cannot open rtc multiple times because an open operation ca=
+lls
+>> request_irq on the same IRQ. (e.g., two user processes wants to open=
+ and
+>> read RTC time from rtc-s3c at the same time)
+>> 2. If alarm is set and no one has the rtc opened with filesystem
+>> (either the alarm is set by kernel/boot-loader or user set an alarm
+>> and closed rtc dev file), the pending bit is not cleared and no furt=
+her
+>> interrupt is invoked. When the alarm is used by the system itself su=
+ch
+>> as a resume from suspend-to-RAM or other Low-power modes/idle, this =
+is a
+>> critical issue.
+>>
+>> This patch mitigates these issue by calling request_irq at probe and
+>> free_irq at remove.
 >>
 >> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->> =A0drivers/rtc/rtc-s3c.c | =A0 =A03 ++-
->> =A01 files changed, 2 insertions(+), 1 deletions(-)
+[]
 >>
->> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
->> index 3c8dfa7..be85ea5 100644
->> --- a/drivers/rtc/rtc-s3c.c
->> +++ b/drivers/rtc/rtc-s3c.c
->> @@ -273,7 +273,8 @@ static int s3c_rtc_setalarm(struct device *dev, =
-struct
->> rtc_wkalrm *alrm)
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A01900 + tm->tm_year, tm->tm_mon + 1, t=
-m->tm_mday,
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0tm->tm_hour, tm->tm_min, tm->tm_sec);
+>> - =A0 =A0 return 0;
+>> + =A0 =A0 ret =3D request_irq(s3c_rtc_alarmno, s3c_rtc_alarmirq,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 IRQF_DISABLED, =A0"s3c=
+2410-rtc alarm", rtc);
 >>
->> - =A0 =A0 alrm_en =3D readb(base + S3C2410_RTCALM) & S3C2410_RTCALM_=
-ALMEN;
->> + =A0 =A0 /* Disable entires that are not chosen by alrm */
->> + =A0 =A0 alrm_en =3D S3C2410_RTCALM_ALMEN;
->> =A0 =A0 =A0 writeb(0x00, base + S3C2410_RTCALM);
->>
->> =A0 =A0 =A0 if (tm->tm_sec < 60 && tm->tm_sec >=3D 0) {
+>> + =A0 =A0 if (ret) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev, "IRQ%d error %d\n", s3=
+c_rtc_alarmno,
+>> ret);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 return ret;
+>> + =A0 =A0 }
+>> +
+>> + =A0 =A0 ret =3D request_irq(s3c_rtc_tickno, s3c_rtc_tickirq,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 IRQF_DISABLED, =A0"s3c=
+2410-rtc tick", rtc);
+>> +
+>> + =A0 =A0 if (ret) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev, "IRQ%d error %d\n", s3=
+c_rtc_tickno,
+> ret);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 free_irq(s3c_rtc_alarmno, rtc);
+>> + =A0 =A0 }
+>> +
+>> + =A0 =A0 return ret;
+>
+> You need proper error handlings.
+>
+> Regards,
+> Changhwan
+
+Ah.. ok, I'll let them go through the error handling code like other er=
+rors do.
+
+Thanks.
+
+
+- MyungJoo
+
+>
+>> =A0 err_nortc:
+>> =A0 =A0 =A0 s3c_rtc_enable(pdev, 0);
+>> =A0 =A0 =A0 clk_disable(rtc_clk);
 >> --
 >> 1.7.4.1
 >>
