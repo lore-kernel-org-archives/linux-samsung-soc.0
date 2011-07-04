@@ -1,100 +1,116 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 05/19] s5p-fimc: Limit number of available inputs to one
-Date: Mon, 04 Jul 2011 19:54:56 +0200
-Message-ID: <1309802110-16682-6-git-send-email-s.nawrocki@samsung.com>
-References: <1309802110-16682-1-git-send-email-s.nawrocki@samsung.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 6/7] spi/s3c64xx: Add support DMA engine API
+Date: Mon, 4 Jul 2011 21:51:43 +0200
+Message-ID: <201107042151.44075.heiko@sntech.de>
+References: <1309781915-31549-1-git-send-email-kgene.kim@samsung.com> <201107041859.11548.heiko@sntech.de> <20110704170217.GH28042@ponder.secretlab.ca>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:43518 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758463Ab1GDRzo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Jul 2011 13:55:44 -0400
-In-reply-to: <1309802110-16682-1-git-send-email-s.nawrocki@samsung.com>
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:47508 "EHLO
+	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751585Ab1GDTvu convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 4 Jul 2011 15:51:50 -0400
+In-Reply-To: <20110704170217.GH28042@ponder.secretlab.ca>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Boojin Kim <boojin.kim@samsung.com>
 
-Camera sensors at FIMC input are no longer selected with S_INPUT ioctl.
-They will be attached to required FIMC entity through pipeline
-re-configuration at the media device level.
+Am Montag 04 Juli 2011, 19:02:17 schrieb Grant Likely:
+> On Mon, Jul 04, 2011 at 06:59:11PM +0200, Heiko St=FCbner wrote:
+> > Am Montag 04 Juli 2011, 18:42:51 schrieb Grant Likely:
+> > > On Mon, Jul 04, 2011 at 09:18:34PM +0900, Kukjin Kim wrote:
+> > > > +#if defined(CONFIG_DMADEV_PL330)
+> > > > +			memset(&slave_config, 0, sizeof(slave_config));
+> > > > +			slave_config.direction =3D DMA_TO_DEVICE;
+> > > > +			slave_config.src_addr =3D xfer->tx_dma;
+> > > > +			slave_config.dst_addr =3D
+> > > > +				sdd->sfr_start + S3C64XX_SPI_TX_DATA;
+> > > > +			slave_config.dst_addr_width =3D sdd->cur_bpw / 8;
+> > > > +			dmaengine_slave_config(sdd->tx_chan, &slave_config);
+> > > > +
+> > > > +			sg_init_table(&tx_sg, 1);
+> > > > +			sg_set_page(&tx_sg, pfn_to_page(PFN_DOWN(xfer-
+>tx_dma)),
+> > > > +				xfer->len, offset_in_page(xfer->tx_dma));
+> > > > +			sg_dma_len(&tx_sg) =3D  xfer->len;
+> > > > +			sg_dma_address(&tx_sg) =3D xfer->tx_dma;
+> > > > +			sdd->tx_desc =3D
+> > > > +				sdd->tx_chan->device->device_prep_slave_sg(
+> > > > +				sdd->tx_chan, &tx_sg, 1, DMA_TO_DEVICE,
+> > > > +				DMA_PREP_INTERRUPT);
+> > > > +			sdd->tx_desc->callback =3D s3c64xx_spi_dma_txcb;
+> > > > +			sdd->tx_desc->callback_param =3D sdd;
+> > > > +			dmaengine_submit(sdd->tx_desc);
+> > > > +			dma_async_issue_pending(sdd->tx_chan);
+> > > > +#else
+> > > >=20
+> > > >  			s3c2410_dma_config(sdd->tx_dmach, sdd->cur_bpw / 8);
+> > > >  			s3c2410_dma_enqueue(sdd->tx_dmach, (void *)sdd,
+> > > >  		=09
+> > > >  						xfer->tx_dma, xfer->len);
+> > > >  		=09
+> > > >  			s3c2410_dma_ctrl(sdd->tx_dmach, S3C2410_DMAOP_START);
+> > > >=20
+> > > > +#endif
+> > >=20
+> > > Hmmm, this is not pretty.  The driver behaviour is entirely diffe=
+rent
+> > > depending on if CONFIG_DMADEV_PL330 is enabled?  When we get to
+> > > multiplatform kernels, is this going to break on some hardware?
+> > >=20
+> > > > @@ -802,8 +951,13 @@ static void s3c64xx_spi_work(struct work_s=
+truct
+> > > > *work)
+> > > >=20
+> > > >  	spin_unlock_irqrestore(&sdd->lock, flags);
+> > > >  =09
+> > > >  	/* Free DMA channels */
+> > > >=20
+> > > > +#if defined(CONFIG_DMADEV_PL330)
+> > > > +	dma_release_channel(sdd->tx_chan);
+> > > > +	dma_release_channel(sdd->rx_chan);
+> > > > +#else
+> > > >=20
+> > > >  	s3c2410_dma_free(sdd->tx_dmach, &s3c64xx_spi_dma_client);
+> > > >  	s3c2410_dma_free(sdd->rx_dmach, &s3c64xx_spi_dma_client);
+> > > >=20
+> > > > +#endif
+> > >=20
+> > > Wow.  A lot of #ifdefs here.  It does not look multiplatform frie=
+ndly
+> > > at all.  Are the s3c2410_dma functions obsolete when DMADEV_PL330=
+ is
+> > > selected?  If so, can they be removed entirely, or are they requi=
+red
+> > > to support certain hardware?
+> >=20
+> > The spi_s3c64xx driver can also support the SPI controller of the
+> > S3C2416/S3C2443 line of SoCs.
+> > As I'm currently working on a S3C2416 based project, my small wish =
+from
+> > the sidelines would be to not break this support with whatever solu=
+tion
+> > you will decide on :-) .
+>=20
+> I will not merge a patch that either breaks a platform, or requires
+> a compile time either/or choice of device support (enabling support
+> for one device should not break support for another).
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/media/video/s5p-fimc/fimc-capture.c |   43 ++++-----------------------
- 1 files changed, 6 insertions(+), 37 deletions(-)
+The patch above seems to contain the support for both SoCs (i.e. s3c241=
+0_dma_*=20
+for S3C2416 etc), so it wouldn't break the support.
+But this form will definitly break future multiplatform kernels when th=
+e 2416=20
+and some variant using the DMADEV_PL330 are selected at the same time.
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index a806e48..5b08b69 100644
---- a/drivers/media/video/s5p-fimc/fimc-capture.c
-+++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -562,57 +562,26 @@ static int fimc_cap_s_fmt_mplane(struct file *file, void *priv,
- }
- 
- static int fimc_cap_enum_input(struct file *file, void *priv,
--				     struct v4l2_input *i)
-+			       struct v4l2_input *i)
- {
- 	struct fimc_ctx *ctx = priv;
--	struct s5p_platform_fimc *pldata = ctx->fimc_dev->pdata;
--	struct s5p_fimc_isp_info *isp_info;
- 
--	if (i->index >= pldata->num_clients)
-+	if (i->index != 0)
- 		return -EINVAL;
- 
--	isp_info = &pldata->isp_info[i->index];
- 
- 	i->type = V4L2_INPUT_TYPE_CAMERA;
--	strncpy(i->name, isp_info->board_info->type, 32);
- 	return 0;
- }
- 
--static int fimc_cap_s_input(struct file *file, void *priv,
--				  unsigned int i)
-+static int fimc_cap_s_input(struct file *file, void *priv, unsigned int i)
- {
--	struct fimc_ctx *ctx = priv;
--	struct fimc_dev *fimc = ctx->fimc_dev;
--	struct s5p_platform_fimc *pdata = fimc->pdata;
--
--	if (fimc_capture_active(ctx->fimc_dev))
--		return -EBUSY;
--
--	if (i >= pdata->num_clients)
--		return -EINVAL;
--
--
--	if (fimc->vid_cap.sd) {
--		int ret = v4l2_subdev_call(fimc->vid_cap.sd, core, s_power, 0);
--		if (ret)
--			err("s_power failed: %d", ret);
--
--		clk_disable(fimc->clock[CLK_CAM]);
--	}
--
--	/* Release the attached sensor subdevice. */
--	fimc_subdev_unregister(fimc);
--
--	return fimc_isp_subdev_init(fimc, i);
-+	return i == 0 ? i : -EINVAL;
- }
- 
--static int fimc_cap_g_input(struct file *file, void *priv,
--				       unsigned int *i)
-+static int fimc_cap_g_input(struct file *file, void *priv, unsigned int *i)
- {
--	struct fimc_ctx *ctx = priv;
--	struct fimc_vid_cap *cap = &ctx->fimc_dev->vid_cap;
--
--	*i = cap->input_index;
-+	*i = 0;
- 	return 0;
- }
- 
--- 
-1.7.5.4
+The 2416/2443 seem to be the first Samsung-SoCs to have a SPI-controlle=
+r of=20
+this type. Implementing the DMA engine stuff for these SoCs would obvio=
+usly=20
+solve the ifdef-problem but I don't know if this is possible to do.
+
+
+Heiko
