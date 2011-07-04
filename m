@@ -1,99 +1,98 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 0/6+1] ARM: EXYNOS4: SYSMMU: Improvements on SYSMMU driver
-Date: Mon, 04 Jul 2011 08:47:53 +0200
-Message-ID: <000001cc3a16$4cec0710$e6c41530$%szyprowski@samsung.com>
-References: <1309743708-1505-1-git-send-email-pullip.cho@samsung.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH 2/2] SPI: SAMSUNG: Bug fix for SPI with different FIFO
+ level
+Date: Mon, 4 Jul 2011 00:55:01 -0600
+Message-ID: <20110704065501.GP15152@ponder.secretlab.ca>
+References: <1309437536-9315-1-git-send-email-padma.v@samsung.com>
+ <1309437536-9315-2-git-send-email-padma.v@samsung.com>
+ <BANLkTi=L7QeN75ebWFXdp_V5Pw1zEc-ZtA@mail.gmail.com>
+ <BANLkTimeWUbD2Ej16KKmuzwSCFz8HOhyKQ@mail.gmail.com>
+ <BANLkTi=9c5asfr=Jg6xwjQZW_a369UO64Q@mail.gmail.com>
+ <BANLkTinFnFwBGi693JTD_iDykA2VkV+HOw@mail.gmail.com>
+ <BANLkTik0LERxBHmJc5ZnRotnD4CSveR-UQ@mail.gmail.com>
+ <BANLkTim9wdrqDgXVUjxzMv9cdWViLww=Bg@mail.gmail.com>
+ <BANLkTim40x4X_--K0z7gdodDjor0MUam5Q@mail.gmail.com>
+ <BANLkTinf6ec1yXeaFkZjHMnqZp7yymDq-w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:19352 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751081Ab1GDGsL (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:35358 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751380Ab1GDGzE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Jul 2011 02:48:11 -0400
-In-reply-to: <1309743708-1505-1-git-send-email-pullip.cho@samsung.com>
-Content-language: pl
+	Mon, 4 Jul 2011 02:55:04 -0400
+Received: by pzk9 with SMTP id 9so1430628pzk.19
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 03 Jul 2011 23:55:04 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <BANLkTinf6ec1yXeaFkZjHMnqZp7yymDq-w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'KyongHo Cho' <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Cc: 'Joerg Roedel' <joro@8bytes.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, 'Ilho Lee' <ilho215.lee@samsung.com>, 'Kwanghyun La' <nala.la@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: padma venkat <padma.kvr@gmail.com>, Tony Nadackal <tonykn@gmail.com>, Padmavathi Venna <padma.v@samsung.com>, kgene.kim@samsung.com, sbkim73@samsung.com, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tony.kn@samsung.com, naushad@samsung.com
 
-Hello,
+On Fri, Jul 01, 2011 at 11:43:08AM +0530, Jassi Brar wrote:
+> On Fri, Jul 1, 2011 at 11:29 AM, padma venkat <padma.kvr@gmail.com> w=
+rote:
+> > Hi Jassi,
+> >
+> > On Fri, Jul 1, 2011 at 11:22 AM, Jassi Brar <jassisinghbrar@gmail.c=
+om> wrote:
+> >> On Fri, Jul 1, 2011 at 11:16 AM, padma venkat <padma.kvr@gmail.com=
+> wrote:
+> >>> Hi Tony,
+> >>>
+> >>> On Thu, Jun 30, 2011 at 4:30 PM, Tony Nadackal <tonykn@gmail.com>=
+ wrote:
+> >>>> Hi Padma,
+> >>>> With regards to your patch, even though one can check the tx don=
+e status
+> >>>> using the TX_DONE bit, the present macro itself would work perfe=
+ctly fine if
+> >>>> the 'fifo_lvl_mask' is set properly.
+> >>>> For example in 6450 channel 1, the fifo_lvl_mask should be 0x1ff=
+ (for 9bits,
+> >>>> 15:23), while even in your patch, it is wrongly set as 0x7f(only=
+ 7bits).
+> >>>>
+> >>>> Thus, if this fifo_lvl_mask was defined correctly, the existing =
+macro would
+> >>>> itself have worked.
+> >>> Thanks for your comment.
+> >>> I considered changing to the fifo_lvl_mask to 1ff as you mentione=
+d.
+> >>> But I =A0think that the fifo_lvl_mask reflects the actual FIFO ca=
+pacity
+> >>> in the SPI driver.
+> >>> For the failing channels the FIFO trigger level is 64 bytes and s=
+o i
+> >>> retained that value.
+> >>> In the driver it polls till the FIFO capacity level otherwise it =
+goes
+> >>> for DMA.So if we keep
+> >>> the FIFO level as 1ff when the actual capacity is 7f then it fail=
+s.
+> >>>
+> >>> Jassi what do you think about this?
+> >>>
+> >>
+> >> 'fifo_lvl_mask' is h/w specific and can't be set for convenience.
+> >>
+> >> I don't have access to post-s3c64xx datasheets.
+> >> Please check and reply if TX_DONE bit is at same offset for all
+> >> channels of an SoC, because
+> >> I suspect it's otherwise.
+> >>
+> > Yes. The TX_DONE bit is at the same offset for all the channels of =
+an SoC.
+> > in S5P64X0,S5PV210 and S5PV310 it is at offset 25.
+> >
+>=20
+> Then, Patches-1,2
+>=20
+> Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
 
-On Monday, July 04, 2011 3:42 AM KyongHo Cho wrote:
+Are these bug fixes that should be in v3.0, or do I queue them up for v=
+3.1?
 
-> This patch set includes the following patches:
-> 
-> - [PATCH 1/6] ARM: EXYNOS4: SYSMMU: Remove SYSMMU_MDMA2
->   The previous driver defines System MMUs for 2 MDMAs each.
->   Since one of the MDMAs is not used any more, it is removed.
->   SYSMMU_MDMA2 is renamed to SYSMMU_MDMA and it now represents number 10.
-> 
-> - [PATCH 2/6] ARM: EXYNOS4: SYSMMU: Enable clock gating for System MMUof
-> SSS
->   System MMU of SSS was not complete to use because previous driver did not
->   prepare anything for its clock gating feature. This patch enables clock
->   gating for System MMU of SSS.
-> 
-> - [PATCH 3/6] ARM: EXYNOS4: SYSMMU: Enhancement on device definition
->   As the suggestion of Marek Szyprowski with his patch set, this patch
->   separates the single definition of platform device of System MMU into
->   15 different platform devices as well as structured resource management.
-> 
-> - [PATCH 4/6] ARM: EXYNOS4: SYSMMU: add devname in SYSMMU clock to support
-> clkdev.
->   This patch adds 'devname' fields into the clokc definitions of System MMU.
->   The pointer to clk structure for System MMU can be found with kobj name
->   dynamically.
-> 
-> - [PATCH 5/6] ARM: EXYNOS4: SYSMMU: Add SYSMMU_NONE
->   This patch adds another System MMU ID(ips), "SYSMMU_NONE" which means
->   invalid system MMU ID.
-> 
-> - [PATCH 6/6] ARM: EXYNOS4: SYSMMU: Move clock gating functions to SYSMMU
-> device driver.
->   The previous driver implements clock gating functions in the mach
->   directory because it is mach dependent. It is now removed and
->   clock gating functions are moved to System MMU driver because clkdev is
->   supported.
-> 
-> - [PATCH] ARM: EXYNOS4: iommu: Add IOMMU API and moved to drivers/iommu
->   This patch moves the existing System MMU driver to drivers/iommu
->   directory that is in Joerg Roedel's git.
->   git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git
->   This patch also adds implementation of IOMMU API for Exynos4's System MMU.
-> 
-> The above patches must be applied in the order of their presence.
-> 
-> The last patch is not applicable to any kernel version except Joerg
-> Roedel's git tree.
-> 
-> This patch set does not improve System MMU driver completely.
-> The rest of enhancements will be submitted soon.
-
-I really don't get why do You persist in creating one monster platform
-device with resources for ALL SYSMMU/IOMMU controllers that are available
-on Exynos4 CPU. We (SPRC, see Andrzej's SYSMMU patches) already proposed
-a clean solution for making the SYSMMU controllers independent of each
-other as well as making the main SYSMMU driver simpler and more
-independent of the particular Exynos4 platform definition. In Linux
-device model if the device/controller exist in the system in more than
-one instance, there should by one generic driver for it and a set of
-platform definitions for each instance. 
-
-Here is the link to our SYSMMU updated driver (implementing common 
-iommu API):
-http://www.spinics.net/lists/linux-samsung-soc/msg04508.html
-The driver still needs some cleanup, but this has been delayed until
-the dma-mapping framework update is finished.
-
-I also don't get why do you want to keep the completely custom sysmmu 
-driver and implement iommu API on top of it. Is it really required for
-anything? Mainline kernel is not a place for custom APIs if there is
-already a common, generic one.
-
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+g.
