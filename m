@@ -1,8 +1,8 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 18/19] s5p-fimc: Use consistent names for the buffer list
- functions
-Date: Mon, 04 Jul 2011 19:55:09 +0200
-Message-ID: <1309802110-16682-19-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v3 03/19] s5p-fimc: Remove registration of video nodes from
+ probe()
+Date: Mon, 04 Jul 2011 19:54:54 +0200
+Message-ID: <1309802110-16682-4-git-send-email-s.nawrocki@samsung.com>
 References: <1309802110-16682-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -14,140 +14,116 @@ To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Also correct and improve *_queue_add/pop functions description.
+Do not register video nodes during FIMC device probe. Also make
+fimc_register_m2m_device() public for use by the media device driver.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-capture.c |    6 ++--
- drivers/media/video/s5p-fimc/fimc-core.c    |    6 ++--
- drivers/media/video/s5p-fimc/fimc-core.h    |   38 +++++++++++++++++---------
- 3 files changed, 31 insertions(+), 19 deletions(-)
+ drivers/media/video/s5p-fimc/fimc-capture.c |    1 +
+ drivers/media/video/s5p-fimc/fimc-core.c    |   30 +++++++-------------------
+ drivers/media/video/s5p-fimc/fimc-core.h    |    1 +
+ 3 files changed, 10 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index c9420db..3b64788 100644
+index c9be15c..a806e48 100644
 --- a/drivers/media/video/s5p-fimc/fimc-capture.c
 +++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -100,12 +100,12 @@ static int fimc_stop_capture(struct fimc_dev *fimc)
- 
- 	/* Release buffers that were enqueued in the driver by videobuf2. */
- 	while (!list_empty(&cap->pending_buf_q)) {
--		buf = pending_queue_pop(cap);
-+		buf = fimc_pending_queue_pop(cap);
- 		vb2_buffer_done(&buf->vb, VB2_BUF_STATE_ERROR);
+@@ -922,4 +922,5 @@ void fimc_unregister_capture_device(struct fimc_dev *fimc)
+ 		video_unregister_device(vfd);
  	}
- 
- 	while (!list_empty(&cap->active_buf_q)) {
--		buf = active_queue_pop(cap);
-+		buf = fimc_active_queue_pop(cap);
- 		vb2_buffer_done(&buf->vb, VB2_BUF_STATE_ERROR);
- 	}
- 
-@@ -256,7 +256,7 @@ static void buffer_queue(struct vb2_buffer *vb)
- 
- 		fimc_hw_set_output_addr(fimc, &buf->paddr, buf_id);
- 		buf->index = vid_cap->buf_index;
--		active_queue_add(vid_cap, buf);
-+		fimc_active_queue_add(vid_cap, buf);
- 
- 		if (++vid_cap->buf_index >= FIMC_MAX_OUT_BUFS)
- 			vid_cap->buf_index = 0;
+ 	kfree(fimc->vid_cap.ctx);
++	fimc->vid_cap.ctx = NULL;
+ }
 diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index 9538ab7..66d1af5 100644
+index c97494d..36a8d63 100644
 --- a/drivers/media/video/s5p-fimc/fimc-core.c
 +++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -338,7 +338,7 @@ void fimc_capture_irq_handler(struct fimc_dev *fimc, bool rel_buf)
- 	    test_bit(ST_CAPT_RUN, &fimc->state) && rel_buf) {
- 		ktime_get_real_ts(&ts);
+@@ -1494,7 +1494,7 @@ static struct v4l2_m2m_ops m2m_ops = {
+ 	.job_abort	= fimc_job_abort,
+ };
  
--		v_buf = active_queue_pop(cap);
-+		v_buf = fimc_active_queue_pop(cap);
+-static int fimc_register_m2m_device(struct fimc_dev *fimc)
++int fimc_register_m2m_device(struct fimc_dev *fimc)
+ {
+ 	struct video_device *vfd;
+ 	struct platform_device *pdev;
+@@ -1568,13 +1568,16 @@ err_m2m_r1:
  
- 		tv = &v_buf->vb.v4l2_buf.timestamp;
- 		tv->tv_sec = ts.tv_sec;
-@@ -355,12 +355,12 @@ void fimc_capture_irq_handler(struct fimc_dev *fimc, bool rel_buf)
+ void fimc_unregister_m2m_device(struct fimc_dev *fimc)
+ {
+-	if (fimc == NULL)
++	if (!fimc)
+ 		return;
  
- 	if (!list_empty(&cap->pending_buf_q)) {
+-	v4l2_m2m_release(fimc->m2m.m2m_dev);
++	if (fimc->m2m.m2m_dev)
++		v4l2_m2m_release(fimc->m2m.m2m_dev);
+ 	v4l2_device_unregister(&fimc->m2m.v4l2_dev);
+-	media_entity_cleanup(&fimc->m2m.vfd->entity);
+-	video_unregister_device(fimc->m2m.vfd);
++	if (fimc->m2m.vfd) {
++		media_entity_cleanup(&fimc->m2m.vfd->entity);
++		video_unregister_device(fimc->m2m.vfd);
++	}
+ }
  
--		v_buf = pending_queue_pop(cap);
-+		v_buf = fimc_pending_queue_pop(cap);
- 		fimc_hw_set_output_addr(fimc, &v_buf->paddr, cap->buf_index);
- 		v_buf->index = cap->buf_index;
+ static void fimc_clk_put(struct fimc_dev *fimc)
+@@ -1739,25 +1742,12 @@ static int fimc_probe(struct platform_device *pdev)
+ 		goto err_irq;
+ 	}
  
- 		/* Move the buffer to the capture active queue */
--		active_queue_add(cap, v_buf);
-+		fimc_active_queue_add(cap, v_buf);
+-	ret = fimc_register_m2m_device(fimc);
+-	if (ret)
+-		goto err_irq;
+-
+-	/* At least one camera sensor is required to register capture node */
+-	if (cap_input_index >= 0) {
+-		ret = fimc_register_capture_device(fimc);
+-		if (ret)
+-			goto err_m2m;
+-	}
+-
+ 	dev_dbg(&pdev->dev, "%s(): fimc-%d registered successfully\n",
+ 		__func__, fimc->id);
  
- 		dbg("next frame: %d, done frame: %d",
- 		    fimc_hw_get_frame_index(fimc), v_buf->index);
+ 	pm_runtime_put(&fimc->pdev->dev);
+ 	return 0;
+ 
+-err_m2m:
+-	fimc_unregister_m2m_device(fimc);
+ err_irq:
+ 	free_irq(fimc->irq, fimc);
+ err_clk:
+@@ -1769,7 +1759,6 @@ err_req_region:
+ 	kfree(fimc->regs_res);
+ err_info:
+ 	kfree(fimc);
+-
+ 	return ret;
+ }
+ 
+@@ -1858,9 +1847,6 @@ static int __devexit fimc_remove(struct platform_device *pdev)
+ 	fimc_runtime_suspend(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 
+-	fimc_unregister_m2m_device(fimc);
+-	fimc_unregister_capture_device(fimc);
+-
+ 	vb2_dma_contig_cleanup_ctx(fimc->alloc_ctx);
+ 
+ 	clk_disable(fimc->clock[CLK_BUS]);
 diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-index 3759250..879d5dd 100644
+index 55c1410..c088dac 100644
 --- a/drivers/media/video/s5p-fimc/fimc-core.h
 +++ b/drivers/media/video/s5p-fimc/fimc-core.h
-@@ -746,22 +746,27 @@ static inline void fimc_deactivate_capture(struct fimc_dev *fimc)
- }
+@@ -644,6 +644,7 @@ int fimc_set_scaler_info(struct fimc_ctx *ctx);
+ int fimc_prepare_config(struct fimc_ctx *ctx, u32 flags);
+ int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
+ 		      struct fimc_frame *frame, struct fimc_addr *paddr);
++int fimc_register_m2m_device(struct fimc_dev *fimc);
  
- /*
-- * Add buf to the capture active buffers queue.
-- * Locking: Need to be called with fimc_dev::slock held.
-+ * Buffer list manipulation functions. Must be called with fimc.slock held.
-  */
--static inline void active_queue_add(struct fimc_vid_cap *vid_cap,
--				    struct fimc_vid_buffer *buf)
-+
-+/**
-+ * fimc_active_queue_add - add buffer to the capture active buffers queue
-+ * @buf: buffer to add to the active buffers list
-+ */
-+static inline void fimc_active_queue_add(struct fimc_vid_cap *vid_cap,
-+					 struct fimc_vid_buffer *buf)
- {
- 	list_add_tail(&buf->list, &vid_cap->active_buf_q);
- 	vid_cap->active_buf_cnt++;
- }
- 
--/*
-- * Pop a video buffer from the capture active buffers queue
-- * Locking: Need to be called with fimc_dev::slock held.
-+/**
-+ * fimc_active_queue_pop - pop buffer from the capture active buffers queue
-+ *
-+ * The caller must assure the active_buf_q list is not empty.
-  */
--static inline struct fimc_vid_buffer *
--active_queue_pop(struct fimc_vid_cap *vid_cap)
-+static inline struct fimc_vid_buffer *fimc_active_queue_pop(
-+				    struct fimc_vid_cap *vid_cap)
- {
- 	struct fimc_vid_buffer *buf;
- 	buf = list_entry(vid_cap->active_buf_q.next,
-@@ -771,16 +776,23 @@ active_queue_pop(struct fimc_vid_cap *vid_cap)
- 	return buf;
- }
- 
--/* Add video buffer to the capture pending buffers queue */
-+/**
-+ * fimc_pending_queue_add - add buffer to the capture pending buffers queue
-+ * @buf: buffer to add to the pending buffers list
-+ */
- static inline void fimc_pending_queue_add(struct fimc_vid_cap *vid_cap,
- 					  struct fimc_vid_buffer *buf)
- {
- 	list_add_tail(&buf->list, &vid_cap->pending_buf_q);
- }
- 
--/* Add video buffer to the capture pending buffers queue */
--static inline struct fimc_vid_buffer *
--pending_queue_pop(struct fimc_vid_cap *vid_cap)
-+/**
-+ * fimc_pending_queue_pop - pop buffer from the capture pending buffers queue
-+ *
-+ * The caller must assure the pending_buf_q list is not empty.
-+ */
-+static inline struct fimc_vid_buffer *fimc_pending_queue_pop(
-+				     struct fimc_vid_cap *vid_cap)
- {
- 	struct fimc_vid_buffer *buf;
- 	buf = list_entry(vid_cap->pending_buf_q.next,
+ /* -----------------------------------------------------*/
+ /* fimc-capture.c					*/
 -- 
 1.7.5.4
