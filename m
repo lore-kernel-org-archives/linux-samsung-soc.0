@@ -1,58 +1,97 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 7/7] ASoC: Samsung: Update DMA interface
-Date: Mon, 4 Jul 2011 10:03:03 -0700
-Message-ID: <20110704170259.GC28726@opensource.wolfsonmicro.com>
-References: <1309781915-31549-1-git-send-email-kgene.kim@samsung.com>
- <1309781915-31549-8-git-send-email-kgene.kim@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v3 04/19] s5p-fimc: Remove sclk_cam clock handling
+Date: Mon, 04 Jul 2011 19:54:55 +0200
+Message-ID: <1309802110-16682-5-git-send-email-s.nawrocki@samsung.com>
+References: <1309802110-16682-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:51122 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753816Ab1GDRDX (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:43518 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758153Ab1GDRzm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Jul 2011 13:03:23 -0400
-Content-Disposition: inline
-In-Reply-To: <1309781915-31549-8-git-send-email-kgene.kim@samsung.com>
+	Mon, 4 Jul 2011 13:55:42 -0400
+In-reply-to: <1309802110-16682-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Grant Likely <grant.likely@secretlab.ca>, Jassi Brar <jassisinghbrar@gmail.com>, Liam Girdwood <lrg@ti.com>, Boojin Kim <boojin.kim@samsung.com>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
 
-On Mon, Jul 04, 2011 at 09:18:35PM +0900, Kukjin Kim wrote:
+The external sclk_cam clocks will be handled at the media device
+driver level.
 
-> +static void audio_buffdone(void *data)
-> +{
-> +	struct snd_pcm_substream *substream = data;
-> +	struct runtime_data *prtd;
-> +	struct dma_chan *chan;
-> +
-> +	prtd = substream->runtime->private_data;
-> +
-> +	chan = prtd->params->chan;
-> +	prtd->params->desc =
-> +		chan->device->device_prep_dma_cyclic(
-> +		chan, prtd->dma_pos, prtd->dma_period, prtd->dma_period,
-> +		substream->stream == SNDRV_PCM_STREAM_PLAYBACK ?
-> +		DMA_TO_DEVICE : DMA_FROM_DEVICE);
-> +	if (!prtd->params->desc)
-> +		dev_err(&chan->dev->device, "cannot prepare cyclic dma\n");
-> +
-> +	prtd->params->desc->callback = audio_buffdone;
-> +	prtd->params->desc->callback_param = substream;
-> +	dmaengine_submit(prtd->params->desc);
-> +
-> +	prtd->dma_pos += prtd->dma_period;
-> +	if (prtd->dma_pos >= prtd->dma_end)
-> +		prtd->dma_pos = prtd->dma_start;
-> +
-> +	if (substream)
-> +		snd_pcm_period_elapsed(substream);
-> +}
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/media/video/s5p-fimc/fimc-core.c |   12 ++----------
+ drivers/media/video/s5p-fimc/fimc-core.h |    3 +--
+ 2 files changed, 3 insertions(+), 12 deletions(-)
 
-Two questions here:
-
-- It looks like a lot of this code can be shared between all the drivers
-  using the dmaengine API.  Is there any reason not to factor it out?
-- Should this not be adding a new driver for dmaengine based Samsung
-  CPUs?  The ifdefs are very big.
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
+index 36a8d63..fd6a308 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.c
++++ b/drivers/media/video/s5p-fimc/fimc-core.c
+@@ -30,7 +30,7 @@
+ #include "fimc-core.h"
+ 
+ static char *fimc_clocks[MAX_FIMC_CLOCKS] = {
+-	"sclk_fimc", "fimc", "sclk_cam"
++	"sclk_fimc", "fimc"
+ };
+ 
+ static struct fimc_fmt fimc_formats[] = {
+@@ -1648,7 +1648,6 @@ static int fimc_probe(struct platform_device *pdev)
+ 	struct samsung_fimc_driverdata *drv_data;
+ 	struct s5p_platform_fimc *pdata;
+ 	int ret = 0;
+-	int cap_input_index = -1;
+ 
+ 	dev_dbg(&pdev->dev, "%s():\n", __func__);
+ 
+@@ -1701,14 +1700,6 @@ static int fimc_probe(struct platform_device *pdev)
+ 		goto err_req_region;
+ 	}
+ 
+-	fimc->num_clocks = MAX_FIMC_CLOCKS - 1;
+-
+-	/* Check if a video capture node needs to be registered. */
+-	if (pdata && pdata->num_clients > 0) {
+-		cap_input_index = 0;
+-		fimc->num_clocks++;
+-	}
+-
+ 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	if (!res) {
+ 		dev_err(&pdev->dev, "failed to get IRQ resource\n");
+@@ -1717,6 +1708,7 @@ static int fimc_probe(struct platform_device *pdev)
+ 	}
+ 	fimc->irq = res->start;
+ 
++	fimc->num_clocks = MAX_FIMC_CLOCKS;
+ 	ret = fimc_clk_get(fimc);
+ 	if (ret)
+ 		goto err_regs_unmap;
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
+index c088dac..f059216 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.h
++++ b/drivers/media/video/s5p-fimc/fimc-core.h
+@@ -34,7 +34,7 @@
+ 
+ /* Time to wait for next frame VSYNC interrupt while stopping operation. */
+ #define FIMC_SHUTDOWN_TIMEOUT	((100*HZ)/1000)
+-#define MAX_FIMC_CLOCKS		3
++#define MAX_FIMC_CLOCKS		2
+ #define MODULE_NAME		"s5p-fimc"
+ #define FIMC_MAX_DEVS		4
+ #define FIMC_MAX_OUT_BUFS	4
+@@ -46,7 +46,6 @@
+ enum {
+ 	CLK_BUS,
+ 	CLK_GATE,
+-	CLK_CAM,
+ };
+ 
+ enum fimc_dev_flags {
+-- 
+1.7.5.4
