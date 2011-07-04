@@ -1,7 +1,8 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 12/19] s5p-fimc: Add PM helper function for streaming control
-Date: Mon, 04 Jul 2011 19:55:03 +0200
-Message-ID: <1309802110-16682-13-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v3 18/19] s5p-fimc: Use consistent names for the buffer list
+ functions
+Date: Mon, 04 Jul 2011 19:55:09 +0200
+Message-ID: <1309802110-16682-19-git-send-email-s.nawrocki@samsung.com>
 References: <1309802110-16682-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -13,157 +14,140 @@ To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Create a helper function for (re)starting streaming in PM resume calls.
+Also correct and improve *_queue_add/pop functions description.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-capture.c |   80 ++++++++++++++++-----------
- drivers/media/video/s5p-fimc/fimc-core.c    |    4 +-
- drivers/media/video/s5p-fimc/fimc-core.h    |    3 +
- 3 files changed, 52 insertions(+), 35 deletions(-)
+ drivers/media/video/s5p-fimc/fimc-capture.c |    6 ++--
+ drivers/media/video/s5p-fimc/fimc-core.c    |    6 ++--
+ drivers/media/video/s5p-fimc/fimc-core.h    |   38 +++++++++++++++++---------
+ 3 files changed, 31 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index 7c6c420..7af4ac5 100644
+index c9420db..3b64788 100644
 --- a/drivers/media/video/s5p-fimc/fimc-capture.c
 +++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -30,6 +30,48 @@
- #include "fimc-mdevice.h"
- #include "fimc-core.h"
+@@ -100,12 +100,12 @@ static int fimc_stop_capture(struct fimc_dev *fimc)
  
-+/**
-+ * fimc_start_capture - initialize the H/W for camera capture operation
-+ *
-+ * Initialize the camera capture datapath so when this function successfuly
-+ * completes all what is needed to start the capture pipeline is asserting
-+ * the global capture bit ImgCptEn.
-+ */
-+static int fimc_start_capture(struct fimc_dev *fimc)
-+{
-+	struct fimc_ctx *ctx = fimc->vid_cap.ctx;
-+	struct fimc_sensor_info *sensor;
-+	unsigned long flags;
-+	int ret = 0;
-+
-+	if (fimc->pipeline.sensor == NULL || ctx == NULL)
-+		return -EIO;
-+	sensor = v4l2_get_subdev_hostdata(fimc->pipeline.sensor);
-+
-+	spin_lock_irqsave(&fimc->slock, flags);
-+	fimc_prepare_dma_offset(ctx, &ctx->d_frame);
-+	fimc_set_yuv_order(ctx);
-+
-+	fimc_hw_set_camera_polarity(fimc, sensor->pdata);
-+	fimc_hw_set_camera_type(fimc, sensor->pdata);
-+	fimc_hw_set_camera_source(fimc, sensor->pdata);
-+	fimc_hw_set_camera_offset(fimc, &ctx->s_frame);
-+
-+	ret = fimc_set_scaler_info(ctx);
-+	if (!ret) {
-+		fimc_hw_set_input_path(ctx);
-+		fimc_hw_set_prescaler(ctx);
-+		fimc_hw_set_mainscaler(ctx);
-+		fimc_hw_set_target_format(ctx);
-+		fimc_hw_set_rotation(ctx);
-+		fimc_hw_set_effect(ctx);
-+		fimc_hw_set_output_path(ctx);
-+		fimc_hw_set_out_dma(ctx);
-+	}
-+	spin_unlock_irqrestore(&fimc->slock, flags);
-+	return ret;
-+}
-+
- static int fimc_stop_capture(struct fimc_dev *fimc)
- {
- 	unsigned long flags;
-@@ -89,47 +131,19 @@ static int start_streaming(struct vb2_queue *q)
- {
- 	struct fimc_ctx *ctx = q->drv_priv;
- 	struct fimc_dev *fimc = ctx->fimc_dev;
--	struct s5p_fimc_isp_info *isp_info;
-+	struct fimc_vid_cap *vid_cap = &fimc->vid_cap;
- 	int ret;
+ 	/* Release buffers that were enqueued in the driver by videobuf2. */
+ 	while (!list_empty(&cap->pending_buf_q)) {
+-		buf = pending_queue_pop(cap);
++		buf = fimc_pending_queue_pop(cap);
+ 		vb2_buffer_done(&buf->vb, VB2_BUF_STATE_ERROR);
+ 	}
  
- 	fimc_hw_reset(fimc);
+ 	while (!list_empty(&cap->active_buf_q)) {
+-		buf = active_queue_pop(cap);
++		buf = fimc_active_queue_pop(cap);
+ 		vb2_buffer_done(&buf->vb, VB2_BUF_STATE_ERROR);
+ 	}
  
--	ret = v4l2_subdev_call(fimc->vid_cap.sd, video, s_stream, 1);
--	if (ret && ret != -ENOIOCTLCMD)
--		return ret;
-+	vid_cap->active_buf_cnt = 0;
-+	vid_cap->frame_count = 0;
-+	vid_cap->buf_index = 0;
+@@ -256,7 +256,7 @@ static void buffer_queue(struct vb2_buffer *vb)
  
--	ret = fimc_prepare_config(ctx, ctx->state);
-+	ret = fimc_start_capture(fimc);
- 	if (ret)
- 		return ret;
+ 		fimc_hw_set_output_addr(fimc, &buf->paddr, buf_id);
+ 		buf->index = vid_cap->buf_index;
+-		active_queue_add(vid_cap, buf);
++		fimc_active_queue_add(vid_cap, buf);
  
--	isp_info = &fimc->pdata->isp_info[fimc->vid_cap.input_index];
--	fimc_hw_set_camera_type(fimc, isp_info);
--	fimc_hw_set_camera_source(fimc, isp_info);
--	fimc_hw_set_camera_offset(fimc, &ctx->s_frame);
--
--	if (ctx->state & FIMC_PARAMS) {
--		ret = fimc_set_scaler_info(ctx);
--		if (ret) {
--			err("Scaler setup error");
--			return ret;
--		}
--		fimc_hw_set_input_path(ctx);
--		fimc_hw_set_prescaler(ctx);
--		fimc_hw_set_mainscaler(ctx);
--		fimc_hw_set_target_format(ctx);
--		fimc_hw_set_rotation(ctx);
--		fimc_hw_set_effect(ctx);
--	}
--
--	fimc_hw_set_output_path(ctx);
--	fimc_hw_set_out_dma(ctx);
--
--	INIT_LIST_HEAD(&fimc->vid_cap.pending_buf_q);
--	INIT_LIST_HEAD(&fimc->vid_cap.active_buf_q);
--	fimc->vid_cap.active_buf_cnt = 0;
--	fimc->vid_cap.frame_count = 0;
--	fimc->vid_cap.buf_index = 0;
--
- 	set_bit(ST_CAPT_PEND, &fimc->state);
- 	return 0;
- }
+ 		if (++vid_cap->buf_index >= FIMC_MAX_OUT_BUFS)
+ 			vid_cap->buf_index = 0;
 diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index cb89146..a3edaf8 100644
+index 9538ab7..66d1af5 100644
 --- a/drivers/media/video/s5p-fimc/fimc-core.c
 +++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -476,7 +476,7 @@ int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
- }
+@@ -338,7 +338,7 @@ void fimc_capture_irq_handler(struct fimc_dev *fimc, bool rel_buf)
+ 	    test_bit(ST_CAPT_RUN, &fimc->state) && rel_buf) {
+ 		ktime_get_real_ts(&ts);
  
- /* Set order for 1 and 2 plane YCBCR 4:2:2 formats. */
--static void fimc_set_yuv_order(struct fimc_ctx *ctx)
-+void fimc_set_yuv_order(struct fimc_ctx *ctx)
- {
- 	/* The one only mode supported in SoC. */
- 	ctx->in_order_2p = S5P_FIMC_LSB_CRCB;
-@@ -518,7 +518,7 @@ static void fimc_set_yuv_order(struct fimc_ctx *ctx)
- 	dbg("ctx->out_order_1p= %d", ctx->out_order_1p);
- }
+-		v_buf = active_queue_pop(cap);
++		v_buf = fimc_active_queue_pop(cap);
  
--static void fimc_prepare_dma_offset(struct fimc_ctx *ctx, struct fimc_frame *f)
-+void fimc_prepare_dma_offset(struct fimc_ctx *ctx, struct fimc_frame *f)
- {
- 	struct samsung_fimc_variant *variant = ctx->fimc_dev->variant;
- 	u32 i, depth = 0;
+ 		tv = &v_buf->vb.v4l2_buf.timestamp;
+ 		tv->tv_sec = ts.tv_sec;
+@@ -355,12 +355,12 @@ void fimc_capture_irq_handler(struct fimc_dev *fimc, bool rel_buf)
+ 
+ 	if (!list_empty(&cap->pending_buf_q)) {
+ 
+-		v_buf = pending_queue_pop(cap);
++		v_buf = fimc_pending_queue_pop(cap);
+ 		fimc_hw_set_output_addr(fimc, &v_buf->paddr, cap->buf_index);
+ 		v_buf->index = cap->buf_index;
+ 
+ 		/* Move the buffer to the capture active queue */
+-		active_queue_add(cap, v_buf);
++		fimc_active_queue_add(cap, v_buf);
+ 
+ 		dbg("next frame: %d, done frame: %d",
+ 		    fimc_hw_get_frame_index(fimc), v_buf->index);
 diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-index 86288c8..ab911be 100644
+index 3759250..879d5dd 100644
 --- a/drivers/media/video/s5p-fimc/fimc-core.h
 +++ b/drivers/media/video/s5p-fimc/fimc-core.h
-@@ -663,6 +663,9 @@ int fimc_set_scaler_info(struct fimc_ctx *ctx);
- int fimc_prepare_config(struct fimc_ctx *ctx, u32 flags);
- int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
- 		      struct fimc_frame *frame, struct fimc_addr *paddr);
-+void fimc_prepare_dma_offset(struct fimc_ctx *ctx, struct fimc_frame *f);
-+void fimc_set_yuv_order(struct fimc_ctx *ctx);
+@@ -746,22 +746,27 @@ static inline void fimc_deactivate_capture(struct fimc_dev *fimc)
+ }
+ 
+ /*
+- * Add buf to the capture active buffers queue.
+- * Locking: Need to be called with fimc_dev::slock held.
++ * Buffer list manipulation functions. Must be called with fimc.slock held.
+  */
+-static inline void active_queue_add(struct fimc_vid_cap *vid_cap,
+-				    struct fimc_vid_buffer *buf)
 +
- int fimc_register_m2m_device(struct fimc_dev *fimc,
- 			     struct v4l2_device *v4l2_dev);
- void fimc_unregister_m2m_device(struct fimc_dev *fimc);
++/**
++ * fimc_active_queue_add - add buffer to the capture active buffers queue
++ * @buf: buffer to add to the active buffers list
++ */
++static inline void fimc_active_queue_add(struct fimc_vid_cap *vid_cap,
++					 struct fimc_vid_buffer *buf)
+ {
+ 	list_add_tail(&buf->list, &vid_cap->active_buf_q);
+ 	vid_cap->active_buf_cnt++;
+ }
+ 
+-/*
+- * Pop a video buffer from the capture active buffers queue
+- * Locking: Need to be called with fimc_dev::slock held.
++/**
++ * fimc_active_queue_pop - pop buffer from the capture active buffers queue
++ *
++ * The caller must assure the active_buf_q list is not empty.
+  */
+-static inline struct fimc_vid_buffer *
+-active_queue_pop(struct fimc_vid_cap *vid_cap)
++static inline struct fimc_vid_buffer *fimc_active_queue_pop(
++				    struct fimc_vid_cap *vid_cap)
+ {
+ 	struct fimc_vid_buffer *buf;
+ 	buf = list_entry(vid_cap->active_buf_q.next,
+@@ -771,16 +776,23 @@ active_queue_pop(struct fimc_vid_cap *vid_cap)
+ 	return buf;
+ }
+ 
+-/* Add video buffer to the capture pending buffers queue */
++/**
++ * fimc_pending_queue_add - add buffer to the capture pending buffers queue
++ * @buf: buffer to add to the pending buffers list
++ */
+ static inline void fimc_pending_queue_add(struct fimc_vid_cap *vid_cap,
+ 					  struct fimc_vid_buffer *buf)
+ {
+ 	list_add_tail(&buf->list, &vid_cap->pending_buf_q);
+ }
+ 
+-/* Add video buffer to the capture pending buffers queue */
+-static inline struct fimc_vid_buffer *
+-pending_queue_pop(struct fimc_vid_cap *vid_cap)
++/**
++ * fimc_pending_queue_pop - pop buffer from the capture pending buffers queue
++ *
++ * The caller must assure the pending_buf_q list is not empty.
++ */
++static inline struct fimc_vid_buffer *fimc_pending_queue_pop(
++				     struct fimc_vid_cap *vid_cap)
+ {
+ 	struct fimc_vid_buffer *buf;
+ 	buf = list_entry(vid_cap->pending_buf_q.next,
 -- 
 1.7.5.4
