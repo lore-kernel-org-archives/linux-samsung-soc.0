@@ -1,69 +1,48 @@
 From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH 2/2] SPI: SAMSUNG: Bug fix for SPI with different FIFO level
-Date: Mon, 04 Jul 2011 13:39:31 -0400
-Message-ID: <1309801171-19818-2-git-send-email-padma.v@samsung.com>
-References: <1309801171-19818-1-git-send-email-padma.v@samsung.com>
+Subject: [PATCH] ARM: S5PC100: Fix for compilation error
+Date: Mon, 04 Jul 2011 13:41:52 -0400
+Message-ID: <1309801312-27377-1-git-send-email-padma.v@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:54945 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752239Ab1GDLvz (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:39247 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751340Ab1GDLyM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Jul 2011 07:51:55 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Mon, 4 Jul 2011 07:54:12 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LNT002EP4YGB9V0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 04 Jul 2011 20:51:53 +0900 (KST)
+ 2010)) with ESMTP id <0LNT00BB3526YAX0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 04 Jul 2011 20:54:10 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.106])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LNT00J1T4Y8XQ@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 04 Jul 2011 20:51:54 +0900 (KST)
-In-reply-to: <1309801171-19818-1-git-send-email-padma.v@samsung.com>
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LNT00428525ES@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 04 Jul 2011 20:54:10 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, jassisinghbrar@gmail.com, sbkim73@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, grant.likely@secretlab.ca
+To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: padmavathi venna <padma.v@samsung.com>
 
-The existing macro fails for following scenarios.
-1) S5P64X0 channel 1
-2) S5PV210 channel 1
+From: padmavathi venna <padma.v@samsung.com>
 
-The FIFO data level supported in the above SoCs either 64 or 256
-bytes depending on the channel. Because of this the TX_DONE
-is the 25 bit in the status register.
+S5PC100 Compilation fails without this patch
 
-The existing macro works for the following scenarios
-1) S3C6410 all channels
-2) S5PC100 all channels
-
-The FIFO data level supported in the above SoCs 64 bytes
-on all the channels. Because of this the TX_DONE is the 21 bit
-in the status register.
-
-So when we use the existing macro for the non-working SoCs
- it is not anding with the TX_DONE bit for transmission status check.
-
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
+Signed-off-by: padmavathi venna <padma.v@samsung.com>
 ---
- drivers/spi/spi_s3c64xx.c |    4 +---
- 1 files changed, 1 insertions(+), 3 deletions(-)
+ arch/arm/mach-s5pc100/dev-spi.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/spi/spi_s3c64xx.c b/drivers/spi/spi_s3c64xx.c
-index 795828b..8945e20 100644
---- a/drivers/spi/spi_s3c64xx.c
-+++ b/drivers/spi/spi_s3c64xx.c
-@@ -116,9 +116,7 @@
- 					(((i)->fifo_lvl_mask + 1))) \
- 					? 1 : 0)
+diff --git a/arch/arm/mach-s5pc100/dev-spi.c b/arch/arm/mach-s5pc100/dev-spi.c
+index 2b58c9a..e5d6c4d 100644
+--- a/arch/arm/mach-s5pc100/dev-spi.c
++++ b/arch/arm/mach-s5pc100/dev-spi.c
+@@ -15,6 +15,7 @@
+ #include <mach/dma.h>
+ #include <mach/map.h>
+ #include <mach/spi-clocks.h>
++#include <mach/irqs.h>
  
--#define S3C64XX_SPI_ST_TX_DONE(v, i) ((((v) >> (i)->rx_lvl_offset) & \
--					(((i)->fifo_lvl_mask + 1) << 1)) \
--					? 1 : 0)
-+#define S3C64XX_SPI_ST_TX_DONE(v, i) (((v) & (1 << (i)->tx_st_done)) ? 1 : 0)
- #define TX_FIFO_LVL(v, i) (((v) >> 6) & (i)->fifo_lvl_mask)
- #define RX_FIFO_LVL(v, i) (((v) >> (i)->rx_lvl_offset) & (i)->fifo_lvl_mask)
- 
+ #include <plat/s3c64xx-spi.h>
+ #include <plat/gpio-cfg.h>
 -- 
 1.7.0.4
