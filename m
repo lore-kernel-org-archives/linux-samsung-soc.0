@@ -1,27 +1,38 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 1/2] SPI: S5PC100: Enable the SPI driver for S5PC100
-Date: Tue, 5 Jul 2011 11:05:06 +0100
-Message-ID: <20110705100506.GT8286@n2100.arm.linux.org.uk>
-References: <1309801476-29678-1-git-send-email-padma.v@samsung.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 6/7] spi/s3c64xx: Add support DMA engine API
+Date: Tue, 5 Jul 2011 12:51:41 +0200
+Message-ID: <201107051251.41653.heiko@sntech.de>
+References: <1309781915-31549-1-git-send-email-kgene.kim@samsung.com>
+	<20110704232758.GB12824@ponder.secretlab.ca>
+	<00bd01cc3ae1$f1dbfac0$d593f040$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:58232 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753395Ab1GEKFR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Jul 2011 06:05:17 -0400
-Content-Disposition: inline
-In-Reply-To: <1309801476-29678-1-git-send-email-padma.v@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <00bd01cc3ae1$f1dbfac0$d593f040$%kim@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, 'Boojin Kim' <boojin.kim@samsung.com>, 'Vinod Koul' <vinod.koul@intel.com>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Dan Williams' <dan.j.williams@intel.com>, 'Liam Girdwood' <lrg@ti.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Mon, Jul 04, 2011 at 01:44:35PM -0400, Padmavathi Venna wrote:
->  config SPI_S3C64XX
->  	tristate "Samsung S3C64XX series type SPI"
-> -	depends on (ARCH_S3C64XX || ARCH_S5P64X0)
-> +	depends on (ARCH_S3C64XX || ARCH_S5P64X0 || ARCH_S5PC100)
+Am Dienstag, 5. Juli 2011, 09:05:32 schrieb Kukjin Kim:
+[...]
+> As a note, S3C24XX and S3C64XX include PL080 DMAC not PL330.
+Are you sure the S3C24xx also uses a PL080?
 
-Just get rid of the unnecessary parens here.
+At least for the 2416, the manual does not tell the type of DMA controller 
+used. Also according to it it's a 6 channel controller where the pl080 has 8 
+channels according to amba-pl08x.c .
+
+So, to my untrained eye it looks like another type of controller - but I may 
+be wrong.
+
+Heiko
