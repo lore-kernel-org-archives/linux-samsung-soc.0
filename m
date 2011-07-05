@@ -1,55 +1,46 @@
-From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: Re: [PATCH 0/6+1] ARM: EXYNOS4: SYSMMU: Improvements on SYSMMU driver
-Date: Tue, 5 Jul 2011 08:38:17 +0900
-Message-ID: <CAHQjnOPMCMh3fO7RXP7pbD8_nuDEG9ksLhtCcAy=2Z2bTarT9A@mail.gmail.com>
-References: <1309743708-1505-1-git-send-email-pullip.cho@samsung.com>
-	<000001cc3a16$4cec0710$e6c41530$%szyprowski@samsung.com>
+From: Chanho Park <chanho61.park@samsung.com>
+Subject: Re: [PATCH 5/7] ARM: EXYNOS4: Use generic DMA PL330 driver
+Date: Tue, 5 Jul 2011 02:36:38 +0000 (UTC)
+Message-ID: <loom.20110705T042344-883@post.gmane.org>
+References: <1309781915-31549-1-git-send-email-kgene.kim@samsung.com> <1309781915-31549-6-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:57721 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752560Ab1GDXiT (ORCPT
+Received: from lo.gmane.org ([80.91.229.12]:51606 "EHLO lo.gmane.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752423Ab1GECpH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Jul 2011 19:38:19 -0400
-In-Reply-To: <000001cc3a16$4cec0710$e6c41530$%szyprowski@samsung.com>
+	Mon, 4 Jul 2011 22:45:07 -0400
+Received: from list by lo.gmane.org with local (Exim 4.69)
+	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
+	id 1QdvdK-00046P-Lo
+	for linux-samsung-soc@vger.kernel.org; Tue, 05 Jul 2011 04:45:06 +0200
+Received: from 210.94.41.89 ([210.94.41.89])
+        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Jul 2011 04:45:06 +0200
+Received: from chanho61.park by 210.94.41.89 with local (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Jul 2011 04:45:06 +0200
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene.kim@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, Ilho Lee <ilho215.lee@samsung.com>, Kwanghyun La <nala.la@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
 
-Hi.
-On Mon, Jul 4, 2011 at 3:47 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Hello,
->
-> I really don't get why do You persist in creating one monster platform
-> device with resources for ALL SYSMMU/IOMMU controllers that are available
-> on Exynos4 CPU. We (SPRC, see Andrzej's SYSMMU patches) already proposed
-> a clean solution for making the SYSMMU controllers independent of each
-> other as well as making the main SYSMMU driver simpler and more
-> independent of the particular Exynos4 platform definition. In Linux
-> device model if the device/controller exist in the system in more than
-> one instance, there should by one generic driver for it and a set of
-> platform definitions for each instance.
->
-Did you find this patch? "[PATCH 3/6] ARM: EXYNOS4: SYSMMU"
-I Cced you because it includes your suggestion.
+Kukjin Kim <kgene.kim <at> samsung.com> writes:
 
-> Here is the link to our SYSMMU updated driver (implementing common
-> iommu API):
-> http://www.spinics.net/lists/linux-samsung-soc/msg04508.html
-> The driver still needs some cleanup, but this has been delayed until
-> the dma-mapping framework update is finished.
->
-> I also don't get why do you want to keep the completely custom sysmmu
-> driver and implement iommu API on top of it. Is it really required for
-> anything? Mainline kernel is not a place for custom APIs if there is
-> already a common, generic one.
+> +struct dma_pl330_platdata exynos4_pdma0_pdata = {
+> +	.nr_valid_peri = 32,
+> +	.peri = pdma0_peri,
+>  };
 
-I did not exposed any custom API.
-The global function in the last patch is just for IOMMU API implemenation.
-The header file in the last patch is not for the device drivers but
-for the IOMMU API implementation.
-Actually, they can be merged into one single file.
-But I just wanted to change the kernel code stepwise.
+(snip)
+
+> +struct dma_pl330_platdata exynos4_pdma1_pdata = {
+> +	.nr_valid_peri = 32,
+> +	.peri = pdma1_peri,
+>  };
+> 
+
+I think you'd better use ARRAY_SIZE(peri) instead 32 for nr_valid_peri
+because dma channels can be sparse.
