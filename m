@@ -1,57 +1,71 @@
-From: Chanho Park <chanho61.park@samsung.com>
-Subject: Re: [PATCH 3/7] DMA: PL330: Add DMA capabilities
-Date: Tue, 5 Jul 2011 04:50:41 +0000 (UTC)
-Message-ID: <loom.20110705T062807-134@post.gmane.org>
-References: <1309781915-31549-1-git-send-email-kgene.kim@samsung.com> <1309781915-31549-4-git-send-email-kgene.kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 2/2] SPI: SAMSUNG: Bug fix for SPI with different FIFO level
+Date: Tue, 05 Jul 2011 14:51:08 +0900
+Message-ID: <009f01cc3ad7$8e350200$aa9f0600$%kim@samsung.com>
+References: <BANLkTi=9c5asfr=Jg6xwjQZW_a369UO64Q@mail.gmail.com>
+ <BANLkTinFnFwBGi693JTD_iDykA2VkV+HOw@mail.gmail.com>
+ <BANLkTik0LERxBHmJc5ZnRotnD4CSveR-UQ@mail.gmail.com>
+ <BANLkTim9wdrqDgXVUjxzMv9cdWViLww=Bg@mail.gmail.com>
+ <BANLkTim40x4X_--K0z7gdodDjor0MUam5Q@mail.gmail.com>
+ <BANLkTinf6ec1yXeaFkZjHMnqZp7yymDq-w@mail.gmail.com>
+ <20110704065501.GP15152@ponder.secretlab.ca>
+ <CACxGe6urrZ9=1OgcaYF6EtvJokAyFTbFCnHPWsCY+sETVze8-w@mail.gmail.com>
+ <005501cc3a30$6c916190$45b424b0$%kim@samsung.com>
+ <005601cc3a32$64bd5fd0$2e381f70$%kim@samsung.com>
+ <20110704150607.GA29977@ponder.secretlab.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lo.gmane.org ([80.91.229.12]:60447 "EHLO lo.gmane.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752449Ab1GEEux (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:52221 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753398Ab1GEFvS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Jul 2011 00:50:53 -0400
-Received: from list by lo.gmane.org with local (Exim 4.69)
-	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
-	id 1Qdxb2-0001OX-9U
-	for linux-samsung-soc@vger.kernel.org; Tue, 05 Jul 2011 06:50:52 +0200
-Received: from 210.94.41.89 ([210.94.41.89])
-        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Jul 2011 06:50:52 +0200
-Received: from chanho61.park by 210.94.41.89 with local (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Jul 2011 06:50:52 +0200
+	Tue, 5 Jul 2011 01:51:18 -0400
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LNU001ZTIX6MKM0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 05 Jul 2011 14:51:16 +0900 (KST)
+Received: from kgenekim ([12.23.119.139])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LNU001JOIXGOA@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 05 Jul 2011 14:51:16 +0900 (KST)
+In-reply-to: <20110704150607.GA29977@ponder.secretlab.ca>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: 'Grant Likely' <grant.likely@secretlab.ca>
+Cc: 'Jassi Brar' <jassisinghbrar@gmail.com>, 'padma venkat' <padma.kvr@gmail.com>, 'Tony Nadackal' <tonykn@gmail.com>, 'Padmavathi Venna' <padma.v@samsung.com>, sbkim73@samsung.com, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tony.kn@samsung.com, naushad@samsung.com
 
-Kukjin Kim <kgene.kim <at> samsung.com> writes:
+Grant Likely wrote:
+> 
+> On Mon, Jul 04, 2011 at 07:08:55PM +0900, Kukjin Kim wrote:
+> > Kukjin Kim wrote:
+> > >
+> > > Thanks Grant, Jassi and all,
+> > >
+> > > I will apply these 1 and 2 in my -fix tree for 3.0 with your acks.
+> > >
+> > Oops, this needs previous 'cleanup spi platform specific code' so can't
+> > apply -fix tree now.
+> 
+> There may also be conflicts with the heavy rework in the spi tree.
+> Kgene, when you pick up this series, can you put it into a separate
+> topic branch and merge that into your main tree?  That way if there
+> are difficult conflicts, then I can also merge that same topic branch
+> into spi/next to resolve them.
+> 
+Hi Grant,
 
-(snip)
+Sure, no problem. I'm waiting for Padmavathi's new patch which is based on
+old code not new SPI code. When I merge topic branch for this into my tree,
+let you know immediately. Then if any problems, let's talk again :)
 
-> +		if (slave_config->direction == DMA_TO_DEVICE) {
-> +			if (slave_config->dst_addr)
-> +				peri->fifo_addr = slave_config->dst_addr;
-> +			if (slave_config->dst_addr_width) {
-> +				i = 0;
-> +				while (slave_config->dst_addr_width != (1 << 
-i))
-> +					i++;
-> +				peri->burst_sz = i;
-> +			}
-> +		} else if (slave_config->direction == DMA_FROM_DEVICE) {
-> +			if (slave_config->src_addr)
-> +				peri->fifo_addr = slave_config->src_addr;
-> +			if (slave_config->src_addr_width) {
-> +				i = 0;
-> +				while (slave_config->src_addr_width != (1 << 
-i))
-> +					i++;
-> +				peri->burst_sz = i;
+Thanks.
 
-pl330 dmac only supports 1/2/4/8/16 bytes burst size.
-If some bad D/D doesn't use powers of 2 width,
-dmaengine is going to infinite loop.
-You'd better check it instead of running loop.
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
