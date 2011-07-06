@@ -1,180 +1,79 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM:SAMSUNG: DMA Cleanup as per sparse
-Date: Wed, 06 Jul 2011 15:08:54 +0900
-Message-ID: <00c001cc3ba3$34558670$9d009350$%kim@samsung.com>
-References: <1309428980-20176-1-git-send-email-sangwook.lee@linaro.org>
+Subject: RE: [PATCH 2/2] SPI: SAMSUNG: Bug fix for SPI with different FIFO level
+Date: Wed, 06 Jul 2011 15:22:08 +0900
+Message-ID: <00c101cc3ba5$0b573910$2205ab30$%kim@samsung.com>
+References: <BANLkTi=9c5asfr=Jg6xwjQZW_a369UO64Q@mail.gmail.com>
+ <BANLkTinFnFwBGi693JTD_iDykA2VkV+HOw@mail.gmail.com>
+ <BANLkTik0LERxBHmJc5ZnRotnD4CSveR-UQ@mail.gmail.com>
+ <BANLkTim9wdrqDgXVUjxzMv9cdWViLww=Bg@mail.gmail.com>
+ <BANLkTim40x4X_--K0z7gdodDjor0MUam5Q@mail.gmail.com>
+ <BANLkTinf6ec1yXeaFkZjHMnqZp7yymDq-w@mail.gmail.com>
+ <20110704065501.GP15152@ponder.secretlab.ca>
+ <CACxGe6urrZ9=1OgcaYF6EtvJokAyFTbFCnHPWsCY+sETVze8-w@mail.gmail.com>
+ <005501cc3a30$6c916190$45b424b0$%kim@samsung.com>
+ <005601cc3a32$64bd5fd0$2e381f70$%kim@samsung.com>
+ <20110704150607.GA29977@ponder.secretlab.ca>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:8793 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754259Ab1GFGJF (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:53042 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752444Ab1GFGWP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Jul 2011 02:09:05 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Wed, 6 Jul 2011 02:22:15 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LNW00LPXEF2EWI0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 06 Jul 2011 15:09:03 +0900 (KST)
+ 2010)) with ESMTP id <0LNW0054QF0F1JG0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 06 Jul 2011 15:22:13 +0900 (KST)
 Received: from kgenekim ([12.23.119.139])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LNW00FSNEF39Q@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 06 Jul 2011 15:09:03 +0900 (KST)
+ with ESMTPA id <0LNW00JJ2F11TN@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 06 Jul 2011 15:22:13 +0900 (KST)
 In-reply-to: 
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sangwook Lee' <sangwook.lee@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Grant Likely' <grant.likely@secretlab.ca>
+Cc: 'Jassi Brar' <jassisinghbrar@gmail.com>, 'padma venkat' <padma.kvr@gmail.com>, 'Tony Nadackal' <tonykn@gmail.com>, 'Padmavathi Venna' <padma.v@samsung.com>, sbkim73@samsung.com, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tony.kn@samsung.com, naushad@samsung.com
 
 Kukjin Kim wrote:
 > 
-> Sangwook Lee wrote:
+> Grant Likely wrote:
 > >
-> > Function declaration differs between file:s3c-pl330.c and file:dma.h
-> > and SPARSE (Documentation/sparse.txt) gives error messages
+> > On Mon, Jul 04, 2011 at 07:08:55PM +0900, Kukjin Kim wrote:
+> > > Kukjin Kim wrote:
+> > > >
+> > > > Thanks Grant, Jassi and all,
+> > > >
+> > > > I will apply these 1 and 2 in my -fix tree for 3.0 with your acks.
+> > > >
+> > > Oops, this needs previous 'cleanup spi platform specific code' so
+can't
+> > > apply -fix tree now.
 > >
-> > Signed-off-by: Sangwook Lee <sangwook.lee@linaro.org>
-> > ---
-> >  arch/arm/plat-samsung/include/plat/dma.h |   16 ++++++++--------
-> >  1 files changed, 8 insertions(+), 8 deletions(-)
+> > There may also be conflicts with the heavy rework in the spi tree.
+> > Kgene, when you pick up this series, can you put it into a separate
+> > topic branch and merge that into your main tree?  That way if there
+> > are difficult conflicts, then I can also merge that same topic branch
+> > into spi/next to resolve them.
 > >
-> > diff --git a/arch/arm/plat-samsung/include/plat/dma.h b/arch/arm/plat-
-> > samsung/include/plat/dma.h
-> > index 2e8f8c6..7365f46 100644
-> > --- a/arch/arm/plat-samsung/include/plat/dma.h
-> > +++ b/arch/arm/plat-samsung/include/plat/dma.h
-> > @@ -62,7 +62,7 @@ typedef int  (*s3c2410_dma_opfn_t)(struct
-> > s3c2410_dma_chan *,
-> >   * request a dma channel exclusivley
-> >  */
-> >
-> > -extern int s3c2410_dma_request(unsigned int channel,
-> > +extern int s3c2410_dma_request(enum dma_ch id,
-> >  			       struct s3c2410_dma_client *, void *dev);
-> >
-> >
-> > @@ -71,14 +71,14 @@ extern int s3c2410_dma_request(unsigned int channel,
-> >   * change the state of the dma channel
-> >  */
-> >
-> > -extern int s3c2410_dma_ctrl(unsigned int channel, enum s3c2410_chan_op
-op);
-> > +extern int s3c2410_dma_ctrl(enum dma_ch id, enum s3c2410_chan_op op);
-> >
-> >  /* s3c2410_dma_setflags
-> >   *
-> >   * set the channel's flags to a given state
-> >  */
-> >
-> > -extern int s3c2410_dma_setflags(unsigned int channel,
-> > +extern int s3c2410_dma_setflags(enum dma_ch id,
-> >  				unsigned int flags);
-> >
-> >  /* s3c2410_dma_free
-> > @@ -86,7 +86,7 @@ extern int s3c2410_dma_setflags(unsigned int channel,
-> >   * free the dma channel (will also abort any outstanding operations)
-> >  */
-> >
-> > -extern int s3c2410_dma_free(unsigned int channel, struct
-s3c2410_dma_client *);
-> > +extern int s3c2410_dma_free(enum dma_ch id, struct s3c2410_dma_client
-*);
-> >
-> >  /* s3c2410_dma_enqueue
-> >   *
-> > @@ -95,7 +95,7 @@ extern int s3c2410_dma_free(unsigned int channel,
-struct
-> > s3c2410_dma_client *);
-> >   * drained before the buffer is given to the DMA system.
-> >  */
-> >
-> > -extern int s3c2410_dma_enqueue(unsigned int channel, void *id,
-> > +extern int s3c2410_dma_enqueue(enum dma_ch idx, void *id,
-> >  			       dma_addr_t data, int size);
-> >
-> >  /* s3c2410_dma_config
-> > @@ -103,14 +103,14 @@ extern int s3c2410_dma_enqueue(unsigned int
-channel,
-> > void *id,
-> >   * configure the dma channel
-> >  */
-> >
-> > -extern int s3c2410_dma_config(unsigned int channel, int xferunit);
-> > +extern int s3c2410_dma_config(enum dma_ch id, int xferunit);
-> >
-> >  /* s3c2410_dma_devconfig
-> >   *
-> >   * configure the device we're talking to
-> >  */
-> >
-> > -extern int s3c2410_dma_devconfig(unsigned int channel,
-> > +extern int s3c2410_dma_devconfig(enum dma_ch id,
-> >  		enum s3c2410_dmasrc source, unsigned long devaddr);
-> >
-> >  /* s3c2410_dma_getposition
-> > @@ -118,7 +118,7 @@ extern int s3c2410_dma_devconfig(unsigned int
-channel,
-> >   * get the position that the dma transfer is currently at
-> >  */
-> >
-> > -extern int s3c2410_dma_getposition(unsigned int channel,
-> > +extern int s3c2410_dma_getposition(enum dma_ch id,
-> >  				   dma_addr_t *src, dma_addr_t *dest);
-> >
-> >  extern int s3c2410_dma_set_opfn(unsigned int, s3c2410_dma_opfn_t rtn);
-> > --
+> Hi Grant,
+> 
+> Sure, no problem. I'm waiting for Padmavathi's new patch which is based on
+old
+> code not new SPI code. When I merge topic branch for this into my tree,
+let you
+> know immediately. Then if any problems, let's talk again :)
 
-Hi Sangwook Lee,
+Hi,
 
-I reverted this in my -fix tree just now because this makes following error
-with s3c2410_defconfig.
+I made topic branch for this based on 3.0-rc6.
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+#for-spi
 
-arch/arm/plat-samsung/include/plat/dma.h:66: warning: 'enum dma_ch' declared
-inside parameter list
-arch/arm/plat-samsung/include/plat/dma.h:66: warning: its scope is only this
-definition or declaration, which is probably not what you want
-arch/arm/plat-samsung/include/plat/dma.h:74: warning: 'enum dma_ch' declared
-inside parameter list
-arch/arm/plat-samsung/include/plat/dma.h:82: warning: 'enum dma_ch' declared
-inside parameter list
-arch/arm/plat-samsung/include/plat/dma.h:89: warning: 'enum dma_ch' declared
-inside parameter list
-arch/arm/plat-samsung/include/plat/dma.h:99: warning: 'enum dma_ch' declared
-inside parameter list
-arch/arm/plat-samsung/include/plat/dma.h:106: warning: 'enum dma_ch'
-declared inside parameter list
-arch/arm/plat-samsung/include/plat/dma.h:114: warning: 'enum dma_ch'
-declared inside parameter list
-arch/arm/plat-samsung/include/plat/dma.h:122: warning: 'enum dma_ch'
-declared inside parameter list
-drivers/mmc/host/s3cmci.c: In function 'finalize_request':
-drivers/mmc/host/s3cmci.c:889: error: type of formal parameter 1 is
-incomplete
-drivers/mmc/host/s3cmci.c: In function 's3cmci_dma_setup':
-drivers/mmc/host/s3cmci.c:927: error: type of formal parameter 1 is
-incomplete
-drivers/mmc/host/s3cmci.c:930: error: type of formal parameter 1 is
-incomplete
-drivers/mmc/host/s3cmci.c:933: error: type of formal parameter 1 is
-incomplete
-drivers/mmc/host/s3cmci.c: In function 's3cmci_prepare_dma':
-drivers/mmc/host/s3cmci.c:1091: error: type of formal parameter 1 is
-incomplete
-drivers/mmc/host/s3cmci.c:1111: error: type of formal parameter 1 is
-incomplete
-drivers/mmc/host/s3cmci.c:1114: error: type of formal parameter 1 is
-incomplete
-drivers/mmc/host/s3cmci.c:1119: error: type of formal parameter 1 is
-incomplete
-drivers/mmc/host/s3cmci.c: In function 's3cmci_probe':
-drivers/mmc/host/s3cmci.c:1692: error: type of formal parameter 1 is
-incomplete
-drivers/mmc/host/s3cmci.c:1778: error: type of formal parameter 1 is
-incomplete
-drivers/mmc/host/s3cmci.c: In function 's3cmci_remove':
-drivers/mmc/host/s3cmci.c:1840: error: type of formal parameter 1 is
-incomplete
+If any problems, please let me know :)
 
 Thanks.
 
