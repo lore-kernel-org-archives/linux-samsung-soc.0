@@ -1,112 +1,185 @@
-From: Praveen Paneri <p.paneri@samsung.com>
-Subject: Re: [RFC][PATCH 4/5] ARM: S5P64x0: Adding OTG PHY control code
-Date: Wed, 6 Jul 2011 11:03:10 +0530
-Message-ID: <CAD6zSYOYUPpnovsxGWxiazKr3QnHhG78dfkctp3huvuNzdT4aw@mail.gmail.com>
-References: <0LN400HTOZEQDIL0@mailout1.samsung.com>
-	<BANLkTikDDBQjE2RCeeBB50vokSTcnCO46A@mail.gmail.com>
-	<20110622094923.GA23598@legolas.emea.dhcp.ti.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM:SAMSUNG: DMA Cleanup as per sparse
+Date: Wed, 06 Jul 2011 15:08:54 +0900
+Message-ID: <00c001cc3ba3$34558670$9d009350$%kim@samsung.com>
+References: <1309428980-20176-1-git-send-email-sangwook.lee@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:37863 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751673Ab1GFFdM convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:8793 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754259Ab1GFGJF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Jul 2011 01:33:12 -0400
-In-Reply-To: <20110622094923.GA23598@legolas.emea.dhcp.ti.com>
+	Wed, 6 Jul 2011 02:09:05 -0400
+Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LNW00LPXEF2EWI0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 06 Jul 2011 15:09:03 +0900 (KST)
+Received: from kgenekim ([12.23.119.139])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LNW00FSNEF39Q@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 06 Jul 2011 15:09:03 +0900 (KST)
+In-reply-to: 
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: balbi@ti.com
-Cc: linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tmarri@apm.com, thomas.ab@samsung.com, a.kesavan@samsung.com
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sangwook Lee' <sangwook.lee@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
 
-Hi Felipe,
+Kukjin Kim wrote:
+> 
+> Sangwook Lee wrote:
+> >
+> > Function declaration differs between file:s3c-pl330.c and file:dma.h
+> > and SPARSE (Documentation/sparse.txt) gives error messages
+> >
+> > Signed-off-by: Sangwook Lee <sangwook.lee@linaro.org>
+> > ---
+> >  arch/arm/plat-samsung/include/plat/dma.h |   16 ++++++++--------
+> >  1 files changed, 8 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/arch/arm/plat-samsung/include/plat/dma.h b/arch/arm/plat-
+> > samsung/include/plat/dma.h
+> > index 2e8f8c6..7365f46 100644
+> > --- a/arch/arm/plat-samsung/include/plat/dma.h
+> > +++ b/arch/arm/plat-samsung/include/plat/dma.h
+> > @@ -62,7 +62,7 @@ typedef int  (*s3c2410_dma_opfn_t)(struct
+> > s3c2410_dma_chan *,
+> >   * request a dma channel exclusivley
+> >  */
+> >
+> > -extern int s3c2410_dma_request(unsigned int channel,
+> > +extern int s3c2410_dma_request(enum dma_ch id,
+> >  			       struct s3c2410_dma_client *, void *dev);
+> >
+> >
+> > @@ -71,14 +71,14 @@ extern int s3c2410_dma_request(unsigned int channel,
+> >   * change the state of the dma channel
+> >  */
+> >
+> > -extern int s3c2410_dma_ctrl(unsigned int channel, enum s3c2410_chan_op
+op);
+> > +extern int s3c2410_dma_ctrl(enum dma_ch id, enum s3c2410_chan_op op);
+> >
+> >  /* s3c2410_dma_setflags
+> >   *
+> >   * set the channel's flags to a given state
+> >  */
+> >
+> > -extern int s3c2410_dma_setflags(unsigned int channel,
+> > +extern int s3c2410_dma_setflags(enum dma_ch id,
+> >  				unsigned int flags);
+> >
+> >  /* s3c2410_dma_free
+> > @@ -86,7 +86,7 @@ extern int s3c2410_dma_setflags(unsigned int channel,
+> >   * free the dma channel (will also abort any outstanding operations)
+> >  */
+> >
+> > -extern int s3c2410_dma_free(unsigned int channel, struct
+s3c2410_dma_client *);
+> > +extern int s3c2410_dma_free(enum dma_ch id, struct s3c2410_dma_client
+*);
+> >
+> >  /* s3c2410_dma_enqueue
+> >   *
+> > @@ -95,7 +95,7 @@ extern int s3c2410_dma_free(unsigned int channel,
+struct
+> > s3c2410_dma_client *);
+> >   * drained before the buffer is given to the DMA system.
+> >  */
+> >
+> > -extern int s3c2410_dma_enqueue(unsigned int channel, void *id,
+> > +extern int s3c2410_dma_enqueue(enum dma_ch idx, void *id,
+> >  			       dma_addr_t data, int size);
+> >
+> >  /* s3c2410_dma_config
+> > @@ -103,14 +103,14 @@ extern int s3c2410_dma_enqueue(unsigned int
+channel,
+> > void *id,
+> >   * configure the dma channel
+> >  */
+> >
+> > -extern int s3c2410_dma_config(unsigned int channel, int xferunit);
+> > +extern int s3c2410_dma_config(enum dma_ch id, int xferunit);
+> >
+> >  /* s3c2410_dma_devconfig
+> >   *
+> >   * configure the device we're talking to
+> >  */
+> >
+> > -extern int s3c2410_dma_devconfig(unsigned int channel,
+> > +extern int s3c2410_dma_devconfig(enum dma_ch id,
+> >  		enum s3c2410_dmasrc source, unsigned long devaddr);
+> >
+> >  /* s3c2410_dma_getposition
+> > @@ -118,7 +118,7 @@ extern int s3c2410_dma_devconfig(unsigned int
+channel,
+> >   * get the position that the dma transfer is currently at
+> >  */
+> >
+> > -extern int s3c2410_dma_getposition(unsigned int channel,
+> > +extern int s3c2410_dma_getposition(enum dma_ch id,
+> >  				   dma_addr_t *src, dma_addr_t *dest);
+> >
+> >  extern int s3c2410_dma_set_opfn(unsigned int, s3c2410_dma_opfn_t rtn);
+> > --
 
-Sorry for a delayed response to your comment. I have been addressing
-all the comment given
-by you, following two points remain where I need your suggestion.
+Hi Sangwook Lee,
 
-On Wed, Jun 22, 2011 at 3:19 PM, Felipe Balbi <balbi@ti.com> wrote:
-> Hi,
->
-> On Wed, Jun 22, 2011 at 01:56:25PM +0530, Praveen Paneri wrote:
->> > > diff --git a/arch/arm/mach-s5p64x0/Makefile b/arch/arm/mach-s5p6=
-4x0/Makefile
->> > > index ae6bf6f..611fb3a 100644
->> > > --- a/arch/arm/mach-s5p64x0/Makefile
->> > > +++ b/arch/arm/mach-s5p64x0/Makefile
->> > > @@ -28,3 +28,4 @@ obj-y +=3D dev-audio.o
->> > >=A0=A0obj-$(CONFIG_S3C64XX_DEV_SPI) +=3D dev-spi.o
->> > >
->> > >=A0=A0obj-$(CONFIG_S5P64X0_SETUP_I2C1) +=3D setup-i2c1.o
->> > > +obj-$(CONFIG_S3C_DEV_DWC_OTG) +=3D setup-otg-phy.o
->> > > diff --git a/arch/arm/mach-s5p64x0/include/mach/map.h b/arch/arm=
-/mach-s5p64x0/include/mach/map.h
->> > > index 95c9125..717c279 100644
->> > > --- a/arch/arm/mach-s5p64x0/include/mach/map.h
->> > > +++ b/arch/arm/mach-s5p64x0/include/mach/map.h
->> > > @@ -44,6 +44,8 @@
->> > >=A0=A0#define S5P64X0_PA_SPI1 0xEC500000
->> > >
->> > >=A0=A0#define S5P64X0_PA_HSOTG 0xED100000
->> > > +#define S5P64X0_PA_USB_HSPHY 0xED200000
->> > > +#define S5P64X0_VA_USB_HSPHY S3C_ADDR_CPU(0x00100000)
->> > >
->> > >=A0=A0#define S5P64X0_PA_HSMMC(x) (0xED800000 + ((x) * 0x100000))
->> > >
->> > > @@ -71,6 +73,8 @@
->> > >=A0=A0#define S5P_PA_TIMER S5P64X0_PA_TIMER
->> > >
->> > >=A0=A0#define SAMSUNG_PA_ADC S5P64X0_PA_ADC
->> > > +#define S3C_PA_USB_HSOTG S5P64X0_PA_HSOTG
->> > > +#define S3C_VA_USB_HSPHY=A0=A0=A0=A0=A0=A0=A0=A0S5P64X0_VA_USB_=
-HSPHY
->> > >
->> > >=A0=A0/* UART */
->> > >
->> > > diff --git a/arch/arm/mach-s5p64x0/setup-otg-phy.c b/arch/arm/ma=
-ch-s5p64x0/setup-otg-phy.c
->> >
->> > drivers should not live in arch/arm/*, why don't you move this to
->> > drivers/usb/otg where the PHYs are staying right now ?
->> PHY init/exit code can vary across SoCs. Wouldn't it be better to ha=
-ve it in the
->> SoC specific location?
->
-> It will vary how ? If it's only regarding e.g. a different GPIO pin o=
-r a
-> different IRQ number, you handle that by passing data down to driver
-> (via platform_data or struct resource), now if it varies because a
-> different board uses a different PHY, then another driver should be
-> written (well, as long as it's really different from the one you have
-> now, otherwise you should see if it's worth making the existing drive=
-r
-> more flexible).
-We have only 4 registers which are used for phy control. The bit struct=
-ure
-of these registers vary across the SoCs.
-1) PHY power control
-2) PHY clock control
-3) OTG reset control
-4) PHY tune
+I reverted this in my -fix tree just now because this makes following error
+with s3c2410_defconfig.
 
-To init/de-init the phy we just need to set the above 4 registers appro=
-priately.
-Do you still think there is a necessity for a separate driver ?
+arch/arm/plat-samsung/include/plat/dma.h:66: warning: 'enum dma_ch' declared
+inside parameter list
+arch/arm/plat-samsung/include/plat/dma.h:66: warning: its scope is only this
+definition or declaration, which is probably not what you want
+arch/arm/plat-samsung/include/plat/dma.h:74: warning: 'enum dma_ch' declared
+inside parameter list
+arch/arm/plat-samsung/include/plat/dma.h:82: warning: 'enum dma_ch' declared
+inside parameter list
+arch/arm/plat-samsung/include/plat/dma.h:89: warning: 'enum dma_ch' declared
+inside parameter list
+arch/arm/plat-samsung/include/plat/dma.h:99: warning: 'enum dma_ch' declared
+inside parameter list
+arch/arm/plat-samsung/include/plat/dma.h:106: warning: 'enum dma_ch'
+declared inside parameter list
+arch/arm/plat-samsung/include/plat/dma.h:114: warning: 'enum dma_ch'
+declared inside parameter list
+arch/arm/plat-samsung/include/plat/dma.h:122: warning: 'enum dma_ch'
+declared inside parameter list
+drivers/mmc/host/s3cmci.c: In function 'finalize_request':
+drivers/mmc/host/s3cmci.c:889: error: type of formal parameter 1 is
+incomplete
+drivers/mmc/host/s3cmci.c: In function 's3cmci_dma_setup':
+drivers/mmc/host/s3cmci.c:927: error: type of formal parameter 1 is
+incomplete
+drivers/mmc/host/s3cmci.c:930: error: type of formal parameter 1 is
+incomplete
+drivers/mmc/host/s3cmci.c:933: error: type of formal parameter 1 is
+incomplete
+drivers/mmc/host/s3cmci.c: In function 's3cmci_prepare_dma':
+drivers/mmc/host/s3cmci.c:1091: error: type of formal parameter 1 is
+incomplete
+drivers/mmc/host/s3cmci.c:1111: error: type of formal parameter 1 is
+incomplete
+drivers/mmc/host/s3cmci.c:1114: error: type of formal parameter 1 is
+incomplete
+drivers/mmc/host/s3cmci.c:1119: error: type of formal parameter 1 is
+incomplete
+drivers/mmc/host/s3cmci.c: In function 's3cmci_probe':
+drivers/mmc/host/s3cmci.c:1692: error: type of formal parameter 1 is
+incomplete
+drivers/mmc/host/s3cmci.c:1778: error: type of formal parameter 1 is
+incomplete
+drivers/mmc/host/s3cmci.c: In function 's3cmci_remove':
+drivers/mmc/host/s3cmci.c:1840: error: type of formal parameter 1 is
+incomplete
 
-I have gone through the reference drivers suggested by you.
-=46unctionality of this PHY
-control remains very less relative to those drivers.
+Thanks.
 
-I have removed a lot of ifdefery from the initial patches. The only
-problem I am facing is
-in implementing a generic register I/O method which can work for both
-ARM and PPC.
-Existing code for PPC was using following funtions
-in_le32, in_be32, out_le32, out_be32
-while in ARM readl and writel functions are used.
-kindly suggest a way out of it.
->
-> --
-> balbi
->
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
