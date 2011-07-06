@@ -1,97 +1,99 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/2] SPI: SAMSUNG: Bug fix for SPI with different FIFO level
-Date: Wed, 06 Jul 2011 16:17:05 +0900
-Message-ID: <00cf01cc3bac$b81fd790$285f86b0$%kim@samsung.com>
-References: <BANLkTik0LERxBHmJc5ZnRotnD4CSveR-UQ@mail.gmail.com>
- <BANLkTim9wdrqDgXVUjxzMv9cdWViLww=Bg@mail.gmail.com>
- <BANLkTim40x4X_--K0z7gdodDjor0MUam5Q@mail.gmail.com>
- <BANLkTinf6ec1yXeaFkZjHMnqZp7yymDq-w@mail.gmail.com>
- <20110704065501.GP15152@ponder.secretlab.ca>
- <CACxGe6urrZ9=1OgcaYF6EtvJokAyFTbFCnHPWsCY+sETVze8-w@mail.gmail.com>
- <005501cc3a30$6c916190$45b424b0$%kim@samsung.com>
- <005601cc3a32$64bd5fd0$2e381f70$%kim@samsung.com>
- <20110704150607.GA29977@ponder.secretlab.ca>
- <00c101cc3ba5$0b573910$2205ab30$%kim@samsung.com>
- <20110706063027.GK9978@ponder.secretlab.ca>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [RFC][PATCH 4/5] ARM: S5P64x0: Adding OTG PHY control code
+Date: Wed, 6 Jul 2011 10:18:36 +0300
+Message-ID: <20110706071834.GB10729@legolas.emea.dhcp.ti.com>
+References: <0LN400HTOZEQDIL0@mailout1.samsung.com>
+ <BANLkTikDDBQjE2RCeeBB50vokSTcnCO46A@mail.gmail.com>
+ <20110622094923.GA23598@legolas.emea.dhcp.ti.com>
+ <CAD6zSYOYUPpnovsxGWxiazKr3QnHhG78dfkctp3huvuNzdT4aw@mail.gmail.com>
+Reply-To: balbi@ti.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="2B/JsCI69OhZNC5r"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:55281 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753129Ab1GFHRL (ORCPT
+Received: from na3sys009aog111.obsmtp.com ([74.125.149.205]:58656 "EHLO
+	na3sys009aog111.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753129Ab1GFHSm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Jul 2011 03:17:11 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LNW009HAHKLZ7K0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 06 Jul 2011 16:17:10 +0900 (KST)
-Received: from kgenekim ([12.23.119.139])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LNW00AQIHKM3S@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 06 Jul 2011 16:17:10 +0900 (KST)
-In-reply-to: <20110706063027.GK9978@ponder.secretlab.ca>
-Content-language: ko
+	Wed, 6 Jul 2011 03:18:42 -0400
+Content-Disposition: inline
+In-Reply-To: <CAD6zSYOYUPpnovsxGWxiazKr3QnHhG78dfkctp3huvuNzdT4aw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Grant Likely' <grant.likely@secretlab.ca>
-Cc: 'Jassi Brar' <jassisinghbrar@gmail.com>, 'padma venkat' <padma.kvr@gmail.com>, 'Tony Nadackal' <tonykn@gmail.com>, 'Padmavathi Venna' <padma.v@samsung.com>, sbkim73@samsung.com, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tony.kn@samsung.com, naushad@samsung.com
+To: Praveen Paneri <p.paneri@samsung.com>
+Cc: balbi@ti.com, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tmarri@apm.com, thomas.ab@samsung.com, a.kesavan@samsung.com
 
-Grant Likely wrote:
-> 
-> On Wed, Jul 06, 2011 at 03:22:08PM +0900, Kukjin Kim wrote:
-> > Kukjin Kim wrote:
-> > >
-> > > Grant Likely wrote:
-> > > >
-> > > > On Mon, Jul 04, 2011 at 07:08:55PM +0900, Kukjin Kim wrote:
-> > > > > Kukjin Kim wrote:
-> > > > > >
-> > > > > > Thanks Grant, Jassi and all,
-> > > > > >
-> > > > > > I will apply these 1 and 2 in my -fix tree for 3.0 with your
-acks.
-> > > > > >
-> > > > > Oops, this needs previous 'cleanup spi platform specific code' so
-> > can't
-> > > > > apply -fix tree now.
-> > > >
-> > > > There may also be conflicts with the heavy rework in the spi tree.
-> > > > Kgene, when you pick up this series, can you put it into a separate
-> > > > topic branch and merge that into your main tree?  That way if there
-> > > > are difficult conflicts, then I can also merge that same topic
-branch
-> > > > into spi/next to resolve them.
-> > > >
-> > > Hi Grant,
-> > >
-> > > Sure, no problem. I'm waiting for Padmavathi's new patch which is
-based on
-> > old
-> > > code not new SPI code. When I merge topic branch for this into my
-tree,
-> > let you
-> > > know immediately. Then if any problems, let's talk again :)
+
+--2B/JsCI69OhZNC5r
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Wed, Jul 06, 2011 at 11:03:10AM +0530, Praveen Paneri wrote:
+> >> > drivers should not live in arch/arm/*, why don't you move this to
+> >> > drivers/usb/otg where the PHYs are staying right now ?
+> >> PHY init/exit code can vary across SoCs. Wouldn't it be better to have=
+ it in the
+> >> SoC specific location?
 > >
-> > Hi,
-> >
-> > I made topic branch for this based on 3.0-rc6.
-> > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > #for-spi
-> 
-> Okay.  If there are problems, then I'll merge it.  Thanks.
-> 
+> > It will vary how ? If it's only regarding e.g. a different GPIO pin or a
+> > different IRQ number, you handle that by passing data down to driver
+> > (via platform_data or struct resource), now if it varies because a
+> > different board uses a different PHY, then another driver should be
+> > written (well, as long as it's really different from the one you have
+> > now, otherwise you should see if it's worth making the existing driver
+> > more flexible).
+> We have only 4 registers which are used for phy control. The bit structure
+> of these registers vary across the SoCs.
+> 1) PHY power control
+> 2) PHY clock control
+> 3) OTG reset control
+> 4) PHY tune
+>=20
+> To init/de-init the phy we just need to set the above 4 registers appropr=
+iately.
+> Do you still think there is a necessity for a separate driver ?
 
-Maybe 'If there are not problems'?
+well, we do have the otg utilities on drivers/usb/otg/ ;-)
 
-Anyway, where do you want to merge this -next or -fix? I think, this is
-required for 3.0.
+> I have gone through the reference drivers suggested by you.
+> Functionality of this PHY
+> control remains very less relative to those drivers.
 
-Thanks.
+on OMAP4 we have one "PHY" which actually only handle VBUS and ID pin
+detection :-p
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> I have removed a lot of ifdefery from the initial patches. The only
+> problem I am facing is
+> in implementing a generic register I/O method which can work for both
+> ARM and PPC.
+> Existing code for PPC was using following funtions
+> in_le32, in_be32, out_le32, out_be32
+> while in ARM readl and writel functions are used.
+> kindly suggest a way out of it.
+
+Can you use the versions on include/asm-generic/io.h ?
+ioread8(addr), ioread16(addr), ioread32(addr)
+
+--=20
+balbi
+
+--2B/JsCI69OhZNC5r
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOFAxKAAoJEAv8Txj19kN1HFEIAJolCvBY+uSu3OEEnpTgJvke
+HXz5v2w5es2O5Nw/LZaAskKnjFCI7PRWzSlJXaYYER5qOzNyRvf/AcS8uKirs/nD
+QbZCUp9+m37b9OpJoZg2gMci+tMreEhYxup5eHgCu0T/Sfwurra2T3Cv5z8CyTa1
+m1v9t43RHOytwdInvccoGczjC9JAcDgJm4EMT4HYNY9mnAUQufLTl2qvkbapbZ7m
+fNiOCanl855oHSRc3XHbC4AUpBF/h80RmgQOUqvFk6WjJFI0ctgq2hg68CoKW5X7
+ZIOYYDrod/Z1C1Qnz9cg8JXCw1z+HEHoEon1Q4wkjwOttoY1/WT+J/D84wLWhAM=
+=O7WO
+-----END PGP SIGNATURE-----
+
+--2B/JsCI69OhZNC5r--
