@@ -1,209 +1,87 @@
-From: Sangwook Lee <sangwook.lee@linaro.org>
-Subject: Re: [PATCH] ARM:SAMSUNG: DMA Cleanup as per sparse
-Date: Wed, 6 Jul 2011 09:31:46 +0100
-Message-ID: <CADPsn1bM191O44B2ffohQU+qD859yDcNHAZqF2=D824oQYD8sg@mail.gmail.com>
-References: <1309428980-20176-1-git-send-email-sangwook.lee@linaro.org>
-	<00c001cc3ba3$34558670$9d009350$%kim@samsung.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH 2/2] SPI: SAMSUNG: Bug fix for SPI with different FIFO
+ level
+Date: Wed, 6 Jul 2011 11:30:44 -0600
+Message-ID: <20110706173044.GK5805@ponder.secretlab.ca>
+References: <BANLkTim40x4X_--K0z7gdodDjor0MUam5Q@mail.gmail.com>
+ <BANLkTinf6ec1yXeaFkZjHMnqZp7yymDq-w@mail.gmail.com>
+ <20110704065501.GP15152@ponder.secretlab.ca>
+ <CACxGe6urrZ9=1OgcaYF6EtvJokAyFTbFCnHPWsCY+sETVze8-w@mail.gmail.com>
+ <005501cc3a30$6c916190$45b424b0$%kim@samsung.com>
+ <005601cc3a32$64bd5fd0$2e381f70$%kim@samsung.com>
+ <20110704150607.GA29977@ponder.secretlab.ca>
+ <00c101cc3ba5$0b573910$2205ab30$%kim@samsung.com>
+ <20110706063027.GK9978@ponder.secretlab.ca>
+ <00cf01cc3bac$b81fd790$285f86b0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pv0-f174.google.com ([74.125.83.174]:55980 "EHLO
-	mail-pv0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753263Ab1GFIbq convert rfc822-to-8bit (ORCPT
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:65046 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752031Ab1GFRas (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Jul 2011 04:31:46 -0400
-Received: by pvg12 with SMTP id 12so5835197pvg.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Jul 2011 01:31:46 -0700 (PDT)
-In-Reply-To: <00c001cc3ba3$34558670$9d009350$%kim@samsung.com>
+	Wed, 6 Jul 2011 13:30:48 -0400
+Received: by pwj7 with SMTP id 7so45331pwj.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Jul 2011 10:30:47 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <00cf01cc3bac$b81fd790$285f86b0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
+Cc: 'Jassi Brar' <jassisinghbrar@gmail.com>, 'padma venkat' <padma.kvr@gmail.com>, 'Tony Nadackal' <tonykn@gmail.com>, 'Padmavathi Venna' <padma.v@samsung.com>, sbkim73@samsung.com, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tony.kn@samsung.com, naushad@samsung.com
 
-I can reproduce this errors and let me see how to fix those.
+On Wed, Jul 06, 2011 at 04:17:05PM +0900, Kukjin Kim wrote:
+> Grant Likely wrote:
+> > 
+> > On Wed, Jul 06, 2011 at 03:22:08PM +0900, Kukjin Kim wrote:
+> > > Kukjin Kim wrote:
+> > > >
+> > > > Grant Likely wrote:
+> > > > >
+> > > > > On Mon, Jul 04, 2011 at 07:08:55PM +0900, Kukjin Kim wrote:
+> > > > > > Kukjin Kim wrote:
+> > > > > > >
+> > > > > > > Thanks Grant, Jassi and all,
+> > > > > > >
+> > > > > > > I will apply these 1 and 2 in my -fix tree for 3.0 with your
+> acks.
+> > > > > > >
+> > > > > > Oops, this needs previous 'cleanup spi platform specific code' so
+> > > can't
+> > > > > > apply -fix tree now.
+> > > > >
+> > > > > There may also be conflicts with the heavy rework in the spi tree.
+> > > > > Kgene, when you pick up this series, can you put it into a separate
+> > > > > topic branch and merge that into your main tree?  That way if there
+> > > > > are difficult conflicts, then I can also merge that same topic
+> branch
+> > > > > into spi/next to resolve them.
+> > > > >
+> > > > Hi Grant,
+> > > >
+> > > > Sure, no problem. I'm waiting for Padmavathi's new patch which is
+> based on
+> > > old
+> > > > code not new SPI code. When I merge topic branch for this into my
+> tree,
+> > > let you
+> > > > know immediately. Then if any problems, let's talk again :)
+> > >
+> > > Hi,
+> > >
+> > > I made topic branch for this based on 3.0-rc6.
+> > > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> > > #for-spi
+> > 
+> > Okay.  If there are problems, then I'll merge it.  Thanks.
+> > 
+> 
+> Maybe 'If there are not problems'?
 
+If there are no problems, then I don't need to merge the topic branch.
+It is only if merge conflicts show up in linux-next that I'll need to
+merge the topic branch.  (regardless, I'm expecting you to merge the
+topic branch into one of your trees to actually get it into mainline
+or linux-next).
 
-On 6 July 2011 07:08, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Kukjin Kim wrote:
->>
->> Sangwook Lee wrote:
->> >
->> > Function declaration differs between file:s3c-pl330.c and file:dma=
-=2Eh
->> > and SPARSE (Documentation/sparse.txt) gives error messages
->> >
->> > Signed-off-by: Sangwook Lee <sangwook.lee@linaro.org>
->> > ---
->> > =A0arch/arm/plat-samsung/include/plat/dma.h | =A0 16 ++++++++-----=
----
->> > =A01 files changed, 8 insertions(+), 8 deletions(-)
->> >
->> > diff --git a/arch/arm/plat-samsung/include/plat/dma.h b/arch/arm/p=
-lat-
->> > samsung/include/plat/dma.h
->> > index 2e8f8c6..7365f46 100644
->> > --- a/arch/arm/plat-samsung/include/plat/dma.h
->> > +++ b/arch/arm/plat-samsung/include/plat/dma.h
->> > @@ -62,7 +62,7 @@ typedef int =A0(*s3c2410_dma_opfn_t)(struct
->> > s3c2410_dma_chan *,
->> > =A0 * request a dma channel exclusivley
->> > =A0*/
->> >
->> > -extern int s3c2410_dma_request(unsigned int channel,
->> > +extern int s3c2410_dma_request(enum dma_ch id,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0struct s3c2=
-410_dma_client *, void *dev);
->> >
->> >
->> > @@ -71,14 +71,14 @@ extern int s3c2410_dma_request(unsigned int ch=
-annel,
->> > =A0 * change the state of the dma channel
->> > =A0*/
->> >
->> > -extern int s3c2410_dma_ctrl(unsigned int channel, enum s3c2410_ch=
-an_op
-> op);
->> > +extern int s3c2410_dma_ctrl(enum dma_ch id, enum s3c2410_chan_op =
-op);
->> >
->> > =A0/* s3c2410_dma_setflags
->> > =A0 *
->> > =A0 * set the channel's flags to a given state
->> > =A0*/
->> >
->> > -extern int s3c2410_dma_setflags(unsigned int channel,
->> > +extern int s3c2410_dma_setflags(enum dma_ch id,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 unsigned i=
-nt flags);
->> >
->> > =A0/* s3c2410_dma_free
->> > @@ -86,7 +86,7 @@ extern int s3c2410_dma_setflags(unsigned int cha=
-nnel,
->> > =A0 * free the dma channel (will also abort any outstanding operat=
-ions)
->> > =A0*/
->> >
->> > -extern int s3c2410_dma_free(unsigned int channel, struct
-> s3c2410_dma_client *);
->> > +extern int s3c2410_dma_free(enum dma_ch id, struct s3c2410_dma_cl=
-ient
-> *);
->> >
->> > =A0/* s3c2410_dma_enqueue
->> > =A0 *
->> > @@ -95,7 +95,7 @@ extern int s3c2410_dma_free(unsigned int channel=
-,
-> struct
->> > s3c2410_dma_client *);
->> > =A0 * drained before the buffer is given to the DMA system.
->> > =A0*/
->> >
->> > -extern int s3c2410_dma_enqueue(unsigned int channel, void *id,
->> > +extern int s3c2410_dma_enqueue(enum dma_ch idx, void *id,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0dma_addr_t =
-data, int size);
->> >
->> > =A0/* s3c2410_dma_config
->> > @@ -103,14 +103,14 @@ extern int s3c2410_dma_enqueue(unsigned int
-> channel,
->> > void *id,
->> > =A0 * configure the dma channel
->> > =A0*/
->> >
->> > -extern int s3c2410_dma_config(unsigned int channel, int xferunit)=
-;
->> > +extern int s3c2410_dma_config(enum dma_ch id, int xferunit);
->> >
->> > =A0/* s3c2410_dma_devconfig
->> > =A0 *
->> > =A0 * configure the device we're talking to
->> > =A0*/
->> >
->> > -extern int s3c2410_dma_devconfig(unsigned int channel,
->> > +extern int s3c2410_dma_devconfig(enum dma_ch id,
->> > =A0 =A0 =A0 =A0 =A0 =A0 enum s3c2410_dmasrc source, unsigned long =
-devaddr);
->> >
->> > =A0/* s3c2410_dma_getposition
->> > @@ -118,7 +118,7 @@ extern int s3c2410_dma_devconfig(unsigned int
-> channel,
->> > =A0 * get the position that the dma transfer is currently at
->> > =A0*/
->> >
->> > -extern int s3c2410_dma_getposition(unsigned int channel,
->> > +extern int s3c2410_dma_getposition(enum dma_ch id,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0dma=
-_addr_t *src, dma_addr_t *dest);
->> >
->> > =A0extern int s3c2410_dma_set_opfn(unsigned int, s3c2410_dma_opfn_=
-t rtn);
->> > --
->
-> Hi Sangwook Lee,
->
-> I reverted this in my -fix tree just now because this makes following=
- error
-> with s3c2410_defconfig.
->
-> arch/arm/plat-samsung/include/plat/dma.h:66: warning: 'enum dma_ch' d=
-eclared
-> inside parameter list
-> arch/arm/plat-samsung/include/plat/dma.h:66: warning: its scope is on=
-ly this
-> definition or declaration, which is probably not what you want
-> arch/arm/plat-samsung/include/plat/dma.h:74: warning: 'enum dma_ch' d=
-eclared
-> inside parameter list
-> arch/arm/plat-samsung/include/plat/dma.h:82: warning: 'enum dma_ch' d=
-eclared
-> inside parameter list
-> arch/arm/plat-samsung/include/plat/dma.h:89: warning: 'enum dma_ch' d=
-eclared
-> inside parameter list
-> arch/arm/plat-samsung/include/plat/dma.h:99: warning: 'enum dma_ch' d=
-eclared
-> inside parameter list
-> arch/arm/plat-samsung/include/plat/dma.h:106: warning: 'enum dma_ch'
-> declared inside parameter list
-> arch/arm/plat-samsung/include/plat/dma.h:114: warning: 'enum dma_ch'
-> declared inside parameter list
-> arch/arm/plat-samsung/include/plat/dma.h:122: warning: 'enum dma_ch'
-> declared inside parameter list
-> drivers/mmc/host/s3cmci.c: In function 'finalize_request':
-> drivers/mmc/host/s3cmci.c:889: error: type of formal parameter 1 is
-> incomplete
-> drivers/mmc/host/s3cmci.c: In function 's3cmci_dma_setup':
-> drivers/mmc/host/s3cmci.c:927: error: type of formal parameter 1 is
-> incomplete
-> drivers/mmc/host/s3cmci.c:930: error: type of formal parameter 1 is
-> incomplete
-> drivers/mmc/host/s3cmci.c:933: error: type of formal parameter 1 is
-> incomplete
-> drivers/mmc/host/s3cmci.c: In function 's3cmci_prepare_dma':
-> drivers/mmc/host/s3cmci.c:1091: error: type of formal parameter 1 is
-> incomplete
-> drivers/mmc/host/s3cmci.c:1111: error: type of formal parameter 1 is
-> incomplete
-> drivers/mmc/host/s3cmci.c:1114: error: type of formal parameter 1 is
-> incomplete
-> drivers/mmc/host/s3cmci.c:1119: error: type of formal parameter 1 is
-> incomplete
-> drivers/mmc/host/s3cmci.c: In function 's3cmci_probe':
-> drivers/mmc/host/s3cmci.c:1692: error: type of formal parameter 1 is
-> incomplete
-> drivers/mmc/host/s3cmci.c:1778: error: type of formal parameter 1 is
-> incomplete
-> drivers/mmc/host/s3cmci.c: In function 's3cmci_remove':
-> drivers/mmc/host/s3cmci.c:1840: error: type of formal parameter 1 is
-> incomplete
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
->
+g.
