@@ -1,25 +1,53 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 4/4] EXYNOS4210: Add Support for DVS Lock
-Date: Sat, 9 Jul 2011 04:48:13 +0100
-Message-ID: <20110709034812.GG26900@sirena.org.uk>
-References: <1309853179-19438-1-git-send-email-kgene.kim@samsung.com> <1309853179-19438-5-git-send-email-kgene.kim@samsung.com>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH] mmc: sdhci-s3c: Fix return value in sdhci_s3c_suspend/resume()
+Date: Sat, 09 Jul 2011 16:50:09 -0400
+Message-ID: <m2vcvbkwla.fsf@bob.laptop.org>
+References: <1309315118-16133-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <cpufreq-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1309853179-19438-5-git-send-email-kgene.kim@samsung.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org, davej@redhat.com, Jongpill Lee <boyko.lee@samsung.com>, SangWook Ju <sw.ju@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from void.printf.net ([89.145.121.20]:51050 "EHLO void.printf.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754459Ab1GIUua (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 9 Jul 2011 16:50:30 -0400
+In-Reply-To: <1309315118-16133-1-git-send-email-kgene.kim@samsung.com> (Kukjin
+	Kim's message of "Wed, 29 Jun 2011 11:38:38 +0900")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, Wonil Choi <wonil22.choi@samsung.com>, Minho Ban <mhban@samsung.com>, Ben Dooks <ben-linux@fluff.org>
 
-On Tue, Jul 05, 2011 at 05:06:19PM +0900, Kukjin Kim wrote:
+Hi Kukjin,
 
-> +int exynos4_cpufreq_lock(unsigned int nId,
-> +			enum cpufreq_level_request cpufreq_level);
-> +void exynos4_cpufreq_lock_free(unsigned int nId);
+On Tue, Jun 28 2011, Kukjin Kim wrote:
+> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> index 69e3ee3..460ffaf 100644
+> --- a/drivers/mmc/host/sdhci-s3c.c
+> +++ b/drivers/mmc/host/sdhci-s3c.c
+> @@ -612,16 +612,14 @@ static int sdhci_s3c_suspend(struct platform_device *dev, pm_message_t pm)
+>  {
+>  	struct sdhci_host *host = platform_get_drvdata(dev);
+>  
+> -	sdhci_suspend_host(host, pm);
+> -	return 0;
+> +	return sdhci_suspend_host(host, pm);
+>  }
+>  
+>  static int sdhci_s3c_resume(struct platform_device *dev)
+>  {
+>  	struct sdhci_host *host = platform_get_drvdata(dev);
+>  
+> -	sdhci_resume_host(host);
+> -	return 0;
+> +	return sdhci_resume_host(host);
+>  }
+>  
+>  #else
 
-This feels like something cpufreq should support to at least some extent
-in the core, especially the thing with forcing a particular mode on
-suspend.  Not that I have any particularly bright ideas for how
-immediately.
+Thanks, pushed to mmc-next for 3.1.
+
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
