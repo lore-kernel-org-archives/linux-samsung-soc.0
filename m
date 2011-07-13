@@ -1,174 +1,243 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH V2 03/12] DMA: PL330: Add DMA capabilities
-Date: Wed, 13 Jul 2011 10:14:03 +0100
-Message-ID: <20110713091403.GI23270@n2100.arm.linux.org.uk>
-References: <1310546857-6304-1-git-send-email-kgene.kim@samsung.com> <1310546857-6304-4-git-send-email-kgene.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH V2 11/12] spi/s3c64xx: Add support DMA engine API
+Date: Wed, 13 Jul 2011 17:47:36 +0900
+Message-ID: <1310546857-6304-12-git-send-email-kgene.kim@samsung.com>
+References: <1310546857-6304-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:35357 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965124Ab1GMJOV (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:35440 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965199Ab1GMJgc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Jul 2011 05:14:21 -0400
-Content-Disposition: inline
-In-Reply-To: <1310546857-6304-4-git-send-email-kgene.kim@samsung.com>
+	Wed, 13 Jul 2011 05:36:32 -0400
+In-Reply-To: <1310546857-6304-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Boojin Kim <boojin.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Jassi Brar <jassisinghbrar@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Dan Williams <dan.j.williams@intel.com>, Liam Girdwood <lrg@ti.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, Boojin Kim <boojin.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Wed, Jul 13, 2011 at 05:47:28PM +0900, Kukjin Kim wrote:
-> +static void pl330_tasklet_cyclic(unsigned long data)
-> +{
-> +	struct dma_pl330_chan *pch = (struct dma_pl330_chan *)data;
-> +	struct dma_pl330_desc *desc, *_dt;
-> +	unsigned long flags;
-> +	LIST_HEAD(list);
-> +
-> +	spin_lock_irqsave(&pch->lock, flags);
-> +
-> +	/* Pick up ripe tomatoes */
-> +	list_for_each_entry_safe(desc, _dt, &pch->work_list, node)
-> +		if ((desc->status == DONE) && desc->cyclic) {
-> +			dma_async_tx_callback callback;
-> +
-> +			list_move_tail(&desc->node, &pch->work_list);
-> +			pch->completed = desc->txd.cookie;
-> +
-> +			desc->status = PREP;
-> +
-> +			/* Try to submit a req imm.
-> +			next to the last completed cookie */
-> +			fill_queue(pch);
-> +
-> +			/* Make sure the PL330 Channel thread is active */
-> +			pl330_chan_ctrl(pch->pl330_chid, PL330_OP_START);
-> +
-> +			callback = desc->txd.callback;
-> +			if (callback)
-> +				callback(desc->txd.callback_param);
+From: Boojin Kim <boojin.kim@samsung.com>
 
-How does this work when callbacks are allowed to queue new requests?
-Aren't you going to deadlock on the spinlock?
+This patch adds to support DMA generic API to transfer raw
+SPI data. Basiclly the spi driver uses DMA generic API if
+architecture supports it. Otherwise, uses Samsung specific
+S3C-PL330 APIs.
 
-I don't see 'list' being used in this function either.
+Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ drivers/spi/spi_s3c64xx.c |  141 ++++++++++++++++++++++-----------------------
+ 1 files changed, 69 insertions(+), 72 deletions(-)
 
-> +
-> +		}
-> +
-> +	spin_unlock_irqrestore(&pch->lock, flags);
-> +}
-> +
-> +static void pl330_cyclic_free(struct dma_pl330_chan *pch)
-> +{
-> +	struct dma_pl330_dmac *pdmac = pch->dmac;
-> +	struct dma_pl330_desc *desc, *_dt;
-> +	unsigned long flags;
-> +	LIST_HEAD(list);
-> +
-> +	spin_lock_irqsave(&pdmac->pool_lock, flags);
-> +
-> +	list_for_each_entry_safe(desc, _dt, &pch->work_list, node)
-> +	if (desc->cyclic)
-> +		list_move_tail(&desc->node, &list);
-> +
-> +	list_splice_tail_init(&list, &pdmac->desc_pool);
-
-As you're not using 'list' after this point, would 'list_splice_tail'
-do here?
-
-> +
-> +	spin_unlock_irqrestore(&pdmac->pool_lock, flags);
-> +	pch->cyclic_task = NULL;
-> +}
-> +
->  static void pl330_tasklet(unsigned long data)
->  {
->  	struct dma_pl330_chan *pch = (struct dma_pl330_chan *)data;
-> @@ -227,6 +285,9 @@ static void dma_pl330_rqcb(void *token, enum pl330_op_err err)
->  
->  	spin_unlock_irqrestore(&pch->lock, flags);
->  
-> +	if (pch->cyclic_task)
-> +		tasklet_schedule(pch->cyclic_task);
-> +	else
->  	tasklet_schedule(&pch->task);
-
-This 'tasklet_schedule' wants to be indented.
-
->  }
->  
-> @@ -256,25 +317,58 @@ static int pl330_alloc_chan_resources(struct dma_chan *chan)
->  static int pl330_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd, unsigned long arg)
->  {
->  	struct dma_pl330_chan *pch = to_pchan(chan);
-> -	struct dma_pl330_desc *desc;
-> +	struct dma_pl330_desc *desc, *_dt;
->  	unsigned long flags;
-> +	struct dma_pl330_dmac *pdmac = pch->dmac;
-> +	struct dma_slave_config *slave_config;
-> +	struct dma_pl330_peri *peri;
-> +	int i;
-> +	LIST_HEAD(list);
->  
-> -	/* Only supports DMA_TERMINATE_ALL */
-> -	if (cmd != DMA_TERMINATE_ALL)
-> -		return -ENXIO;
-> -
-> -	spin_lock_irqsave(&pch->lock, flags);
-> -
-> -	/* FLUSH the PL330 Channel thread */
-> -	pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
-> +	switch (cmd) {
-> +	case DMA_TERMINATE_ALL:
-> +		spin_lock_irqsave(&pch->lock, flags);
->  
-> -	/* Mark all desc done */
-> -	list_for_each_entry(desc, &pch->work_list, node)
-> -		desc->status = DONE;
-> +		/* FLUSH the PL330 Channel thread */
-> +		pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
->  
-> -	spin_unlock_irqrestore(&pch->lock, flags);
-> +		/* Mark all desc done */
-> +		list_for_each_entry_safe(desc, _dt, &pch->work_list , node) {
-> +			desc->status = DONE;
-> +			pch->completed = desc->txd.cookie;
-> +			list_move_tail(&desc->node, &list);
-> +		}
->  
-> -	pl330_tasklet((unsigned long) pch);
-> +		list_splice_tail_init(&list, &pdmac->desc_pool);
-
-Again, would list_splice_tail() do here?
-
-> +		spin_unlock_irqrestore(&pch->lock, flags);
-> +		break;
-> +	case DMA_SLAVE_CONFIG:
-> +		slave_config = (struct dma_slave_config *)arg;
-> +		peri = pch->chan.private;
-> +
-> +		if (slave_config->direction == DMA_TO_DEVICE) {
-> +			if (slave_config->dst_addr)
-> +				peri->fifo_addr = slave_config->dst_addr;
-> +			if (slave_config->dst_addr_width) {
-> +				i = 0;
-> +				while (slave_config->dst_addr_width != (1 << i))
-> +					i++;
-> +				peri->burst_sz = i;
-> +			}
-> +		} else if (slave_config->direction == DMA_FROM_DEVICE) {
-> +			if (slave_config->src_addr)
-> +				peri->fifo_addr = slave_config->src_addr;
-> +			if (slave_config->src_addr_width) {
-> +				i = 0;
-> +				while (slave_config->src_addr_width != (1 << i))
-> +					i++;
-> +				peri->burst_sz = i;
-> +			}
-> +		}
-
-It would make more sense to store the M2P and P2M address/width/burst size
-separately, so you don't have to make DMA_SLAVE_CONFIG calls before every
-transfer.
+diff --git a/drivers/spi/spi_s3c64xx.c b/drivers/spi/spi_s3c64xx.c
+index 8945e20..a4cf76a 100644
+--- a/drivers/spi/spi_s3c64xx.c
++++ b/drivers/spi/spi_s3c64xx.c
+@@ -172,6 +172,9 @@ struct s3c64xx_spi_driver_data {
+ 	unsigned                        state;
+ 	unsigned                        cur_mode, cur_bpw;
+ 	unsigned                        cur_speed;
++	unsigned			rx_ch;
++	unsigned			tx_ch;
++	struct samsung_dma_ops		*ops;
+ };
+ 
+ static struct s3c2410_dma_client s3c64xx_spi_dma_client = {
+@@ -227,6 +230,38 @@ static void flush_fifo(struct s3c64xx_spi_driver_data *sdd)
+ 	writel(val, regs + S3C64XX_SPI_CH_CFG);
+ }
+ 
++static void s3c64xx_spi_dma_rxcb(void *data)
++{
++	struct s3c64xx_spi_driver_data *sdd
++		= (struct s3c64xx_spi_driver_data *)data;
++	unsigned long flags;
++
++	spin_lock_irqsave(&sdd->lock, flags);
++
++	sdd->state &= ~RXBUSY;
++	/* If the other done */
++	if (!(sdd->state & TXBUSY))
++		complete(&sdd->xfer_completion);
++
++	spin_unlock_irqrestore(&sdd->lock, flags);
++}
++
++static void s3c64xx_spi_dma_txcb(void *data)
++{
++	struct s3c64xx_spi_driver_data *sdd
++		= (struct s3c64xx_spi_driver_data *)data;
++	unsigned long flags;
++
++	spin_lock_irqsave(&sdd->lock, flags);
++
++	sdd->state &= ~TXBUSY;
++	/* If the other done */
++	if (!(sdd->state & RXBUSY))
++		complete(&sdd->xfer_completion);
++
++	spin_unlock_irqrestore(&sdd->lock, flags);
++}
++
+ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
+ 				struct spi_device *spi,
+ 				struct spi_transfer *xfer, int dma_mode)
+@@ -234,6 +269,7 @@ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
+ 	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
+ 	void __iomem *regs = sdd->regs;
+ 	u32 modecfg, chcfg;
++	struct samsung_dma_prep_info info;
+ 
+ 	modecfg = readl(regs + S3C64XX_SPI_MODE_CFG);
+ 	modecfg &= ~(S3C64XX_SPI_MODE_TXDMA_ON | S3C64XX_SPI_MODE_RXDMA_ON);
+@@ -259,10 +295,14 @@ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
+ 		chcfg |= S3C64XX_SPI_CH_TXCH_ON;
+ 		if (dma_mode) {
+ 			modecfg |= S3C64XX_SPI_MODE_TXDMA_ON;
+-			s3c2410_dma_config(sdd->tx_dmach, sdd->cur_bpw / 8);
+-			s3c2410_dma_enqueue(sdd->tx_dmach, (void *)sdd,
+-						xfer->tx_dma, xfer->len);
+-			s3c2410_dma_ctrl(sdd->tx_dmach, S3C2410_DMAOP_START);
++			info.cap = DMA_SLAVE;
++			info.direction = DMA_TO_DEVICE;
++			info.buf = xfer->tx_dma;
++			info.len = xfer->len;
++			info.fp = s3c64xx_spi_dma_txcb;
++			info.fp_param = sdd;
++			sdd->ops->prepare(sdd->tx_ch, &info);
++			sdd->ops->trigger(sdd->tx_ch);
+ 		} else {
+ 			switch (sdd->cur_bpw) {
+ 			case 32:
+@@ -294,10 +334,14 @@ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
+ 			writel(((xfer->len * 8 / sdd->cur_bpw) & 0xffff)
+ 					| S3C64XX_SPI_PACKET_CNT_EN,
+ 					regs + S3C64XX_SPI_PACKET_CNT);
+-			s3c2410_dma_config(sdd->rx_dmach, sdd->cur_bpw / 8);
+-			s3c2410_dma_enqueue(sdd->rx_dmach, (void *)sdd,
+-						xfer->rx_dma, xfer->len);
+-			s3c2410_dma_ctrl(sdd->rx_dmach, S3C2410_DMAOP_START);
++			info.cap = DMA_SLAVE;
++			info.direction = DMA_FROM_DEVICE;
++			info.buf = xfer->rx_dma;
++			info.len = xfer->len;
++			info.fp = s3c64xx_spi_dma_rxcb;
++			info.fp_param = sdd;
++			sdd->ops->prepare(sdd->rx_ch, &info);
++			sdd->ops->trigger(sdd->rx_ch);
+ 		}
+ 	}
+ 
+@@ -483,46 +527,6 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
+ 	}
+ }
+ 
+-static void s3c64xx_spi_dma_rxcb(struct s3c2410_dma_chan *chan, void *buf_id,
+-				 int size, enum s3c2410_dma_buffresult res)
+-{
+-	struct s3c64xx_spi_driver_data *sdd = buf_id;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&sdd->lock, flags);
+-
+-	if (res == S3C2410_RES_OK)
+-		sdd->state &= ~RXBUSY;
+-	else
+-		dev_err(&sdd->pdev->dev, "DmaAbrtRx-%d\n", size);
+-
+-	/* If the other done */
+-	if (!(sdd->state & TXBUSY))
+-		complete(&sdd->xfer_completion);
+-
+-	spin_unlock_irqrestore(&sdd->lock, flags);
+-}
+-
+-static void s3c64xx_spi_dma_txcb(struct s3c2410_dma_chan *chan, void *buf_id,
+-				 int size, enum s3c2410_dma_buffresult res)
+-{
+-	struct s3c64xx_spi_driver_data *sdd = buf_id;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&sdd->lock, flags);
+-
+-	if (res == S3C2410_RES_OK)
+-		sdd->state &= ~TXBUSY;
+-	else
+-		dev_err(&sdd->pdev->dev, "DmaAbrtTx-%d \n", size);
+-
+-	/* If the other done */
+-	if (!(sdd->state & RXBUSY))
+-		complete(&sdd->xfer_completion);
+-
+-	spin_unlock_irqrestore(&sdd->lock, flags);
+-}
+-
+ #define XFER_DMAADDR_INVALID DMA_BIT_MASK(32)
+ 
+ static int s3c64xx_spi_map_mssg(struct s3c64xx_spi_driver_data *sdd,
+@@ -697,12 +701,10 @@ static void handle_msg(struct s3c64xx_spi_driver_data *sdd,
+ 			if (use_dma) {
+ 				if (xfer->tx_buf != NULL
+ 						&& (sdd->state & TXBUSY))
+-					s3c2410_dma_ctrl(sdd->tx_dmach,
+-							S3C2410_DMAOP_FLUSH);
++					sdd->ops->stop(sdd->tx_ch);
+ 				if (xfer->rx_buf != NULL
+ 						&& (sdd->state & RXBUSY))
+-					s3c2410_dma_ctrl(sdd->rx_dmach,
+-							S3C2410_DMAOP_FLUSH);
++					sdd->ops->stop(sdd->rx_ch);
+ 			}
+ 
+ 			goto out;
+@@ -742,24 +744,19 @@ out:
+ 
+ static int acquire_dma(struct s3c64xx_spi_driver_data *sdd)
+ {
+-	if (s3c2410_dma_request(sdd->rx_dmach,
+-					&s3c64xx_spi_dma_client, NULL) < 0) {
+-		dev_err(&sdd->pdev->dev, "cannot get RxDMA\n");
+-		return 0;
+-	}
+-	s3c2410_dma_set_buffdone_fn(sdd->rx_dmach, s3c64xx_spi_dma_rxcb);
+-	s3c2410_dma_devconfig(sdd->rx_dmach, S3C2410_DMASRC_HW,
+-					sdd->sfr_start + S3C64XX_SPI_RX_DATA);
+-
+-	if (s3c2410_dma_request(sdd->tx_dmach,
+-					&s3c64xx_spi_dma_client, NULL) < 0) {
+-		dev_err(&sdd->pdev->dev, "cannot get TxDMA\n");
+-		s3c2410_dma_free(sdd->rx_dmach, &s3c64xx_spi_dma_client);
+-		return 0;
+-	}
+-	s3c2410_dma_set_buffdone_fn(sdd->tx_dmach, s3c64xx_spi_dma_txcb);
+-	s3c2410_dma_devconfig(sdd->tx_dmach, S3C2410_DMASRC_MEM,
+-					sdd->sfr_start + S3C64XX_SPI_TX_DATA);
++
++	struct samsung_dma_info info;
++	sdd->ops = samsung_dma_get_ops();
++
++	info.cap = DMA_SLAVE;
++	info.client = &s3c64xx_spi_dma_client;
++	info.direction = DMA_FROM_DEVICE;
++	info.fifo = sdd->sfr_start + S3C64XX_SPI_RX_DATA;
++	info.width = sdd->cur_bpw / 8;
++	sdd->rx_ch = sdd->ops->request(sdd->rx_dmach, &info);
++	info.direction = DMA_TO_DEVICE;
++	info.fifo = sdd->sfr_start + S3C64XX_SPI_TX_DATA;
++	sdd->tx_ch = sdd->ops->request(sdd->tx_dmach, &info);
+ 
+ 	return 1;
+ }
+@@ -800,8 +797,8 @@ static void s3c64xx_spi_work(struct work_struct *work)
+ 	spin_unlock_irqrestore(&sdd->lock, flags);
+ 
+ 	/* Free DMA channels */
+-	s3c2410_dma_free(sdd->tx_dmach, &s3c64xx_spi_dma_client);
+-	s3c2410_dma_free(sdd->rx_dmach, &s3c64xx_spi_dma_client);
++	sdd->ops->release(sdd->rx_ch, &s3c64xx_spi_dma_client);
++	sdd->ops->release(sdd->tx_ch, &s3c64xx_spi_dma_client);
+ }
+ 
+ static int s3c64xx_spi_transfer(struct spi_device *spi,
+-- 
+1.7.1
