@@ -1,394 +1,219 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V2 12/12] ASoC: Samsung: Update DMA interface
-Date: Wed, 13 Jul 2011 17:47:37 +0900
-Message-ID: <1310546857-6304-13-git-send-email-kgene.kim@samsung.com>
+From: boojin <boojin.kim@samsung.com>
+Subject: RE: [PATCH V2 03/12] DMA: PL330: Add DMA capabilities
+Date: Wed, 13 Jul 2011 20:04:17 +0900
+Message-ID: <007701cc414c$9befb680$d3cf2380$%kim@samsung.com>
 References: <1310546857-6304-1-git-send-email-kgene.kim@samsung.com>
+ <1310546857-6304-4-git-send-email-kgene.kim@samsung.com>
+ <20110713091403.GI23270@n2100.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:35458 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965200Ab1GMJgc (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:38874 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965021Ab1GMLET (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Jul 2011 05:36:32 -0400
-In-Reply-To: <1310546857-6304-1-git-send-email-kgene.kim@samsung.com>
+	Wed, 13 Jul 2011 07:04:19 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LO900IT1QR52750@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 13 Jul 2011 20:04:18 +0900 (KST)
+Received: from DOBOOJINKIM03 (12-23-120-72.csky.net [12.23.120.72])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LO900AYSQR5P7@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 13 Jul 2011 20:04:18 +0900 (KST)
+In-reply-to: <20110713091403.GI23270@n2100.arm.linux.org.uk>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, Boojin Kim <boojin.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Kukjin Kim' <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Vinod Koul' <vinod.koul@intel.com>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Dan Williams' <dan.j.williams@intel.com>, 'Liam Girdwood' <lrg@ti.com>
 
-From: Boojin Kim <boojin.kim@samsung.com>
+This patch adds DMA cyclic capability and Slave configuration.
+DMA cyclic capability is only used for audio circular buffer.
 
-This patch adds to support the DMA PL330 driver that uses
-DMA generic API. Samsung sound driver uses DMA generic API
-if architecture supports it. Otherwise, use samsung specific
-S3C-PL330 API driver to transfer PCM data.
+Russell king wrote:
+> On Wed, Jul 13, 2011 at 05:47:28PM +0900, Kukjin Kim wrote:
+> > +static void pl330_tasklet_cyclic(unsigned long data)
+> > +{
+> > +	struct dma_pl330_chan *pch = (struct dma_pl330_chan *)data;
+> > +	struct dma_pl330_desc *desc, *_dt;
+> > +	unsigned long flags;
+> > +	LIST_HEAD(list);
+> > +
+> > +	spin_lock_irqsave(&pch->lock, flags);
+> > +
+> > +	/* Pick up ripe tomatoes */
+> > +	list_for_each_entry_safe(desc, _dt, &pch->work_list, node)
+> > +		if ((desc->status == DONE) && desc->cyclic) {
+> > +			dma_async_tx_callback callback;
+> > +
+> > +			list_move_tail(&desc->node, &pch->work_list);
+> > +			pch->completed = desc->txd.cookie;
+> > +
+> > +			desc->status = PREP;
+> > +
+> > +			/* Try to submit a req imm.
+> > +			next to the last completed cookie */
+> > +			fill_queue(pch);
+> > +
+> > +			/* Make sure the PL330 Channel thread is active */
+> > +			pl330_chan_ctrl(pch->pl330_chid, PL330_OP_START);
+> > +
+> > +			callback = desc->txd.callback;
+> > +			if (callback)
+> > +				callback(desc->txd.callback_param);
+> 
+> How does this work when callbacks are allowed to queue new requests?
+> Aren't you going to deadlock on the spinlock?
+> 
+> I don't see 'list' being used in this function either.
+> 
+>
+Cyclic capability re-uses the requests that were submitted through
+tx_submit().
+It's possible because Cyclic capability uses same DMA configuration.
+This pl330_tasklet_cyclic() makes the status of the done request into
+'PREP'. 
+And, re-submit it to PL330.
+There are no deadlock because callback function just gathers transmit
+position.
+And Cyclic capability doesn't use 'list' for queue new requests.
 
-Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Liam Girdwood <lrg@ti.com>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s3c2410/include/mach/dma.h       |    2 +-
- arch/arm/mach-s3c64xx/include/mach/dma.h       |    2 +-
- arch/arm/plat-samsung/include/plat/dma-pl330.h |    2 +-
- sound/soc/samsung/ac97.c                       |    8 +-
- sound/soc/samsung/dma.c                        |  158 ++++++++++--------------
- sound/soc/samsung/dma.h                        |    4 +-
- 6 files changed, 79 insertions(+), 97 deletions(-)
+> > +
+> > +		}
+> > +
+> > +	spin_unlock_irqrestore(&pch->lock, flags);
+> > +}
+> > +
+> > +static void pl330_cyclic_free(struct dma_pl330_chan *pch)
+> > +{
+> > +	struct dma_pl330_dmac *pdmac = pch->dmac;
+> > +	struct dma_pl330_desc *desc, *_dt;
+> > +	unsigned long flags;
+> > +	LIST_HEAD(list);
+> > +
+> > +	spin_lock_irqsave(&pdmac->pool_lock, flags);
+> > +
+> > +	list_for_each_entry_safe(desc, _dt, &pch->work_list, node)
+> > +	if (desc->cyclic)
+> > +		list_move_tail(&desc->node, &list);
+> > +
+> > +	list_splice_tail_init(&list, &pdmac->desc_pool);
+> 
+> As you're not using 'list' after this point, would 'list_splice_tail'
+> do here?
+Yes, You're right. the 'list' isn't used after device_free_chan_resources().
+So, I release it to desc_pool by using 'list_splice_tail'
 
-diff --git a/arch/arm/mach-s3c2410/include/mach/dma.h b/arch/arm/mach-s3c2410/include/mach/dma.h
-index 71a662d..c69d60a 100644
---- a/arch/arm/mach-s3c2410/include/mach/dma.h
-+++ b/arch/arm/mach-s3c2410/include/mach/dma.h
-@@ -197,7 +197,7 @@ struct s3c2410_dma_chan {
- 
- typedef unsigned long dma_device_t;
- 
--static inline bool s3c_dma_has_circular(void)
-+static inline bool dma_has_circular(void)
- {
- 	return false;
- }
-diff --git a/arch/arm/mach-s3c64xx/include/mach/dma.h b/arch/arm/mach-s3c64xx/include/mach/dma.h
-index 0a5d926..d752e27 100644
---- a/arch/arm/mach-s3c64xx/include/mach/dma.h
-+++ b/arch/arm/mach-s3c64xx/include/mach/dma.h
-@@ -58,7 +58,7 @@ enum dma_ch {
- 	DMACH_MAX		/* the end */
- };
- 
--static __inline__ bool s3c_dma_has_circular(void)
-+static inline bool dma_has_circular(void)
- {
- 	return true;
- }
-diff --git a/arch/arm/plat-samsung/include/plat/dma-pl330.h b/arch/arm/plat-samsung/include/plat/dma-pl330.h
-index dbc1288..4bd0e49 100644
---- a/arch/arm/plat-samsung/include/plat/dma-pl330.h
-+++ b/arch/arm/plat-samsung/include/plat/dma-pl330.h
-@@ -100,7 +100,7 @@ struct s3c2410_dma_client {
- 	char	*name;
- };
- 
--static inline bool s3c_dma_has_circular(void)
-+static inline bool dma_has_circular(void)
- {
- 	return true;
- }
-diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
-index f97110e..e09cb9d 100644
---- a/sound/soc/samsung/ac97.c
-+++ b/sound/soc/samsung/ac97.c
-@@ -271,7 +271,9 @@ static int s3c_ac97_trigger(struct snd_pcm_substream *substream, int cmd,
- 
- 	writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GLBCTRL);
- 
--	s3c2410_dma_ctrl(dma_data->channel, S3C2410_DMAOP_STARTED);
-+	if (!dma_data->ops)
-+		dma_data->ops = samsung_dma_get_ops();
-+	dma_data->ops->started(dma_data->channel);
- 
- 	return 0;
- }
-@@ -317,7 +319,9 @@ static int s3c_ac97_mic_trigger(struct snd_pcm_substream *substream,
- 
- 	writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GLBCTRL);
- 
--	s3c2410_dma_ctrl(dma_data->channel, S3C2410_DMAOP_STARTED);
-+	if (!dma_data->ops)
-+		dma_data->ops = samsung_dma_get_ops();
-+	dma_data->ops->started(dma_data->channel);
- 
- 	return 0;
- }
-diff --git a/sound/soc/samsung/dma.c b/sound/soc/samsung/dma.c
-index 5cb3b88..b5f5f6b 100644
---- a/sound/soc/samsung/dma.c
-+++ b/sound/soc/samsung/dma.c
-@@ -17,6 +17,9 @@
- #include <linux/slab.h>
- #include <linux/dma-mapping.h>
- 
-+#include <linux/dmaengine.h>
-+#include <linux/amba/pl330.h>
-+
- #include <sound/soc.h>
- #include <sound/pcm_params.h>
- 
-@@ -62,77 +65,80 @@ struct runtime_data {
- 	struct s3c_dma_params *params;
- };
- 
-+static void audio_buffdone(void *data);
-+
- /* dma_enqueue
-  *
-  * place a dma buffer onto the queue for the dma system
-  * to handle.
--*/
-+ */
- static void dma_enqueue(struct snd_pcm_substream *substream)
- {
- 	struct runtime_data *prtd = substream->runtime->private_data;
- 	dma_addr_t pos = prtd->dma_pos;
- 	unsigned int limit;
--	int ret;
-+	struct samsung_dma_prep_info dma_info;
- 
- 	pr_debug("Entered %s\n", __func__);
- 
--	if (s3c_dma_has_circular())
--		limit = (prtd->dma_end - prtd->dma_start) / prtd->dma_period;
-+	limit = (prtd->dma_end - prtd->dma_start) / prtd->dma_period;
-+
-+	if (dma_has_circular())
-+		dma_info.cap = DMA_CYCLIC;
- 	else
--		limit = prtd->dma_limit;
-+		dma_info.cap = DMA_SLAVE;
- 
--	pr_debug("%s: loaded %d, limit %d\n",
--				__func__, prtd->dma_loaded, limit);
-+	dma_info.direction =
-+		(substream->stream == SNDRV_PCM_STREAM_PLAYBACK
-+		? DMA_TO_DEVICE : DMA_FROM_DEVICE);
-+	dma_info.fp = audio_buffdone;
-+	dma_info.fp_param = substream;
-+	dma_info.period = prtd->dma_period;
-+	dma_info.len = prtd->dma_period*limit;
- 
- 	while (prtd->dma_loaded < limit) {
--		unsigned long len = prtd->dma_period;
--
- 		pr_debug("dma_loaded: %d\n", prtd->dma_loaded);
- 
--		if ((pos + len) > prtd->dma_end) {
--			len  = prtd->dma_end - pos;
--			pr_debug("%s: corrected dma len %ld\n", __func__, len);
-+		if ((pos + dma_info.period) > prtd->dma_end) {
-+			dma_info.period  = prtd->dma_end - pos;
-+			pr_debug("%s: corrected dma len %ld\n",
-+					__func__, dma_info.period);
- 		}
- 
--		ret = s3c2410_dma_enqueue(prtd->params->channel,
--			substream, pos, len);
-+		dma_info.buf = pos;
-+		prtd->params->ops->prepare(prtd->params->ch, &dma_info);
- 
--		if (ret == 0) {
--			prtd->dma_loaded++;
--			pos += prtd->dma_period;
--			if (pos >= prtd->dma_end)
--				pos = prtd->dma_start;
--		} else
--			break;
-+		prtd->dma_loaded++;
-+		pos += prtd->dma_period;
-+		if (pos >= prtd->dma_end)
-+			pos = prtd->dma_start;
- 	}
- 
- 	prtd->dma_pos = pos;
- }
- 
--static void audio_buffdone(struct s3c2410_dma_chan *channel,
--				void *dev_id, int size,
--				enum s3c2410_dma_buffresult result)
-+static void audio_buffdone(void *data)
- {
--	struct snd_pcm_substream *substream = dev_id;
--	struct runtime_data *prtd;
-+	struct snd_pcm_substream *substream = data;
-+	struct runtime_data *prtd = substream->runtime->private_data;
- 
- 	pr_debug("Entered %s\n", __func__);
- 
--	if (result == S3C2410_RES_ABORT || result == S3C2410_RES_ERR)
--		return;
-+	if (prtd->state & ST_RUNNING) {
-+		prtd->dma_pos += prtd->dma_period;
-+		if (prtd->dma_pos >= prtd->dma_end)
-+			prtd->dma_pos = prtd->dma_start;
- 
--	prtd = substream->runtime->private_data;
-+		if (substream)
-+			snd_pcm_period_elapsed(substream);
- 
--	if (substream)
--		snd_pcm_period_elapsed(substream);
--
--	spin_lock(&prtd->lock);
--	if (prtd->state & ST_RUNNING && !s3c_dma_has_circular()) {
--		prtd->dma_loaded--;
--		dma_enqueue(substream);
-+		spin_lock(&prtd->lock);
-+		if (!dma_has_circular()) {
-+			prtd->dma_loaded--;
-+			dma_enqueue(substream);
-+		}
-+		spin_unlock(&prtd->lock);
- 	}
--
--	spin_unlock(&prtd->lock);
- }
- 
- static int dma_hw_params(struct snd_pcm_substream *substream,
-@@ -144,8 +150,7 @@ static int dma_hw_params(struct snd_pcm_substream *substream,
- 	unsigned long totbytes = params_buffer_bytes(params);
- 	struct s3c_dma_params *dma =
- 		snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
--	int ret = 0;
--
-+	struct samsung_dma_info dma_info;
- 
- 	pr_debug("Entered %s\n", __func__);
- 
-@@ -154,32 +159,26 @@ static int dma_hw_params(struct snd_pcm_substream *substream,
- 	if (!dma)
- 		return 0;
- 
--	/* this may get called several times by oss emulation
--	 * with different params -HW */
- 	if (prtd->params == NULL) {
--		/* prepare DMA */
- 		prtd->params = dma;
- 
--		pr_debug("params %p, client %p, channel %d\n", prtd->params,
--			prtd->params->client, prtd->params->channel);
--
--		ret = s3c2410_dma_request(prtd->params->channel,
--					  prtd->params->client, NULL);
--
--		if (ret < 0) {
--			printk(KERN_ERR "failed to get dma channel\n");
--			return ret;
--		}
--
--		/* use the circular buffering if we have it available. */
--		if (s3c_dma_has_circular())
--			s3c2410_dma_setflags(prtd->params->channel,
--					     S3C2410_DMAF_CIRCULAR);
-+		prtd->params->ops = samsung_dma_get_ops();
-+
-+		/* request channel */
-+		if (dma_has_circular())
-+			dma_info.cap = DMA_CYCLIC;
-+		else
-+			dma_info.cap = DMA_SLAVE;
-+		dma_info.client = prtd->params->client;
-+		dma_info.direction =
-+			(substream->stream == SNDRV_PCM_STREAM_PLAYBACK
-+			? DMA_TO_DEVICE : DMA_FROM_DEVICE);
-+		dma_info.width = prtd->params->dma_size;
-+		dma_info.fifo = prtd->params->dma_addr;
-+		prtd->params->ch = prtd->params->ops->request(
-+				prtd->params->channel, &dma_info);
- 	}
- 
--	s3c2410_dma_set_buffdone_fn(prtd->params->channel,
--				    audio_buffdone);
--
- 	snd_pcm_set_runtime_buffer(substream, &substream->dma_buffer);
- 
- 	runtime->dma_bytes = totbytes;
-@@ -206,7 +205,8 @@ static int dma_hw_free(struct snd_pcm_substream *substream)
- 	snd_pcm_set_runtime_buffer(substream, NULL);
- 
- 	if (prtd->params) {
--		s3c2410_dma_free(prtd->params->channel, prtd->params->client);
-+		prtd->params->ops->release(prtd->params->ch,
-+					prtd->params->client);
- 		prtd->params = NULL;
- 	}
- 
-@@ -225,23 +225,8 @@ static int dma_prepare(struct snd_pcm_substream *substream)
- 	if (!prtd->params)
- 		return 0;
- 
--	/* channel needs configuring for mem=>device, increment memory addr,
--	 * sync to pclk, half-word transfers to the IIS-FIFO. */
--	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
--		s3c2410_dma_devconfig(prtd->params->channel,
--				      S3C2410_DMASRC_MEM,
--				      prtd->params->dma_addr);
--	} else {
--		s3c2410_dma_devconfig(prtd->params->channel,
--				      S3C2410_DMASRC_HW,
--				      prtd->params->dma_addr);
--	}
-+	prtd->params->ops->flush(prtd->params->ch);
- 
--	s3c2410_dma_config(prtd->params->channel,
--			   prtd->params->dma_size);
--
--	/* flush the DMA channel */
--	s3c2410_dma_ctrl(prtd->params->channel, S3C2410_DMAOP_FLUSH);
- 	prtd->dma_loaded = 0;
- 	prtd->dma_pos = prtd->dma_start;
- 
-@@ -265,14 +250,14 @@ static int dma_trigger(struct snd_pcm_substream *substream, int cmd)
- 	case SNDRV_PCM_TRIGGER_RESUME:
- 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
- 		prtd->state |= ST_RUNNING;
--		s3c2410_dma_ctrl(prtd->params->channel, S3C2410_DMAOP_START);
-+		prtd->params->ops->trigger(prtd->params->ch);
- 		break;
- 
- 	case SNDRV_PCM_TRIGGER_STOP:
- 	case SNDRV_PCM_TRIGGER_SUSPEND:
- 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
- 		prtd->state &= ~ST_RUNNING;
--		s3c2410_dma_ctrl(prtd->params->channel, S3C2410_DMAOP_STOP);
-+		prtd->params->ops->stop(prtd->params->ch);
- 		break;
- 
- 	default:
-@@ -291,21 +276,12 @@ dma_pointer(struct snd_pcm_substream *substream)
- 	struct snd_pcm_runtime *runtime = substream->runtime;
- 	struct runtime_data *prtd = runtime->private_data;
- 	unsigned long res;
--	dma_addr_t src, dst;
- 
- 	pr_debug("Entered %s\n", __func__);
- 
--	spin_lock(&prtd->lock);
--	s3c2410_dma_getposition(prtd->params->channel, &src, &dst);
--
--	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE)
--		res = dst - prtd->dma_start;
--	else
--		res = src - prtd->dma_start;
--
--	spin_unlock(&prtd->lock);
-+	res = prtd->dma_pos - prtd->dma_start;
- 
--	pr_debug("Pointer %x %x\n", src, dst);
-+	pr_debug("Pointer offset: %lu\n", res);
- 
- 	/* we seem to be getting the odd error from the pcm library due
- 	 * to out-of-bounds pointers. this is maybe due to the dma engine
-diff --git a/sound/soc/samsung/dma.h b/sound/soc/samsung/dma.h
-index c506592..7d1ead7 100644
---- a/sound/soc/samsung/dma.h
-+++ b/sound/soc/samsung/dma.h
-@@ -6,7 +6,7 @@
-  *  Free Software Foundation;  either version 2 of the  License, or (at your
-  *  option) any later version.
-  *
-- *  ALSA PCM interface for the Samsung S3C24xx CPU
-+ *  ALSA PCM interface for the Samsung SoC
-  */
- 
- #ifndef _S3C_AUDIO_H
-@@ -17,6 +17,8 @@ struct s3c_dma_params {
- 	int channel;				/* Channel ID */
- 	dma_addr_t dma_addr;
- 	int dma_size;			/* Size of the DMA transfer */
-+	unsigned ch;
-+	struct samsung_dma_ops *ops;
- };
- 
- #endif
--- 
-1.7.1
+> 
+> > +
+> > +	spin_unlock_irqrestore(&pdmac->pool_lock, flags);
+> > +	pch->cyclic_task = NULL;
+> > +}
+> > +
+> >  static void pl330_tasklet(unsigned long data)
+> >  {
+> >  	struct dma_pl330_chan *pch = (struct dma_pl330_chan *)data;
+> > @@ -227,6 +285,9 @@ static void dma_pl330_rqcb(void *token, enum
+> pl330_op_err err)
+> >
+> >  	spin_unlock_irqrestore(&pch->lock, flags);
+> >
+> > +	if (pch->cyclic_task)
+> > +		tasklet_schedule(pch->cyclic_task);
+> > +	else
+> >  	tasklet_schedule(&pch->task);
+> 
+> This 'tasklet_schedule' wants to be indented.
+I will address your guide. Thanks
+
+> 
+> >  }
+> >
+> > @@ -256,25 +317,58 @@ static int pl330_alloc_chan_resources(struct
+> dma_chan *chan)
+> >  static int pl330_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd,
+> unsigned long arg)
+> >  {
+> >  	struct dma_pl330_chan *pch = to_pchan(chan);
+> > -	struct dma_pl330_desc *desc;
+> > +	struct dma_pl330_desc *desc, *_dt;
+> >  	unsigned long flags;
+> > +	struct dma_pl330_dmac *pdmac = pch->dmac;
+> > +	struct dma_slave_config *slave_config;
+> > +	struct dma_pl330_peri *peri;
+> > +	int i;
+> > +	LIST_HEAD(list);
+> >
+> > -	/* Only supports DMA_TERMINATE_ALL */
+> > -	if (cmd != DMA_TERMINATE_ALL)
+> > -		return -ENXIO;
+> > -
+> > -	spin_lock_irqsave(&pch->lock, flags);
+> > -
+> > -	/* FLUSH the PL330 Channel thread */
+> > -	pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
+> > +	switch (cmd) {
+> > +	case DMA_TERMINATE_ALL:
+> > +		spin_lock_irqsave(&pch->lock, flags);
+> >
+> > -	/* Mark all desc done */
+> > -	list_for_each_entry(desc, &pch->work_list, node)
+> > -		desc->status = DONE;
+> > +		/* FLUSH the PL330 Channel thread */
+> > +		pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
+> >
+> > -	spin_unlock_irqrestore(&pch->lock, flags);
+> > +		/* Mark all desc done */
+> > +		list_for_each_entry_safe(desc, _dt, &pch->work_list , node)
+> {
+> > +			desc->status = DONE;
+> > +			pch->completed = desc->txd.cookie;
+> > +			list_move_tail(&desc->node, &list);
+> > +		}
+> >
+> > -	pl330_tasklet((unsigned long) pch);
+> > +		list_splice_tail_init(&list, &pdmac->desc_pool);
+> 
+> Again, would list_splice_tail() do here?
+This code is for 'flush' operation that releases all of the pre-loaded
+requests.
+I uses 'list_splice_tail_init' for it instead of 'pl330_tasklet' that also
+calls 'list_splice_tail_init'.
+
+> 
+> > +		spin_unlock_irqrestore(&pch->lock, flags);
+> > +		break;
+> > +	case DMA_SLAVE_CONFIG:
+> > +		slave_config = (struct dma_slave_config *)arg;
+> > +		peri = pch->chan.private;
+> > +
+> > +		if (slave_config->direction == DMA_TO_DEVICE) {
+> > +			if (slave_config->dst_addr)
+> > +				peri->fifo_addr = slave_config->dst_addr;
+> > +			if (slave_config->dst_addr_width) {
+> > +				i = 0;
+> > +				while (slave_config->dst_addr_width != (1 <<
+i))
+> > +					i++;
+> > +				peri->burst_sz = i;
+> > +			}
+> > +		} else if (slave_config->direction == DMA_FROM_DEVICE) {
+> > +			if (slave_config->src_addr)
+> > +				peri->fifo_addr = slave_config->src_addr;
+> > +			if (slave_config->src_addr_width) {
+> > +				i = 0;
+> > +				while (slave_config->src_addr_width != (1 <<
+i))
+> > +					i++;
+> > +				peri->burst_sz = i;
+> > +			}
+> > +		}
+> 
+> It would make more sense to store the M2P and P2M address/width/burst size
+> separately, so you don't have to make DMA_SLAVE_CONFIG calls before every
+> transfer.
+DMA_SLAVE_CONFIG is called the first time that DMA client driver requests
+DMA channel.
