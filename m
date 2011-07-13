@@ -1,219 +1,51 @@
-From: boojin <boojin.kim@samsung.com>
-Subject: RE: [PATCH V2 03/12] DMA: PL330: Add DMA capabilities
-Date: Wed, 13 Jul 2011 20:04:17 +0900
-Message-ID: <007701cc414c$9befb680$d3cf2380$%kim@samsung.com>
-References: <1310546857-6304-1-git-send-email-kgene.kim@samsung.com>
- <1310546857-6304-4-git-send-email-kgene.kim@samsung.com>
- <20110713091403.GI23270@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+From: Giridhar Maruthy <giridhar.maruthy@linaro.org>
+Subject: [PATCH] ASoC: SAMSUNG: 24-bit audio playback on Exynos4210
+Date: Wed, 13 Jul 2011 16:52:06 +0530
+Message-ID: <1310556126-13784-1-git-send-email-giridhar.maruthy@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:38874 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965021Ab1GMLET (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:52759 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964915Ab1GMLWx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Jul 2011 07:04:19 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LO900IT1QR52750@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 13 Jul 2011 20:04:18 +0900 (KST)
-Received: from DOBOOJINKIM03 (12-23-120-72.csky.net [12.23.120.72])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LO900AYSQR5P7@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 13 Jul 2011 20:04:18 +0900 (KST)
-In-reply-to: <20110713091403.GI23270@n2100.arm.linux.org.uk>
-Content-language: ko
+	Wed, 13 Jul 2011 07:22:53 -0400
+Received: by pzk9 with SMTP id 9so4708062pzk.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Jul 2011 04:22:53 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Vinod Koul' <vinod.koul@intel.com>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Dan Williams' <dan.j.williams@intel.com>, 'Liam Girdwood' <lrg@ti.com>
+To: naveenkrishna.ch@gmail.com, jassisinghbrar@gmail.com, linux-samsung-soc@vger.kernel.org, dp@opensource.wolfsonmicro.com, Kyung-Kwee.Ryu@wolfsonmicro.com, broonie@opensource.wolfsonmicro.com
+Cc: Giridhar Maruthy <giridhar.maruthy@linaro.org>
 
-This patch adds DMA cyclic capability and Slave configuration.
-DMA cyclic capability is only used for audio circular buffer.
+Using 256fs or 512fs will result in distortion of 24-bit
+audio samples. This is because the lrclk generated is not
+proper. Using 384 fs generates proper output.
 
-Russell king wrote:
-> On Wed, Jul 13, 2011 at 05:47:28PM +0900, Kukjin Kim wrote:
-> > +static void pl330_tasklet_cyclic(unsigned long data)
-> > +{
-> > +	struct dma_pl330_chan *pch = (struct dma_pl330_chan *)data;
-> > +	struct dma_pl330_desc *desc, *_dt;
-> > +	unsigned long flags;
-> > +	LIST_HEAD(list);
-> > +
-> > +	spin_lock_irqsave(&pch->lock, flags);
-> > +
-> > +	/* Pick up ripe tomatoes */
-> > +	list_for_each_entry_safe(desc, _dt, &pch->work_list, node)
-> > +		if ((desc->status == DONE) && desc->cyclic) {
-> > +			dma_async_tx_callback callback;
-> > +
-> > +			list_move_tail(&desc->node, &pch->work_list);
-> > +			pch->completed = desc->txd.cookie;
-> > +
-> > +			desc->status = PREP;
-> > +
-> > +			/* Try to submit a req imm.
-> > +			next to the last completed cookie */
-> > +			fill_queue(pch);
-> > +
-> > +			/* Make sure the PL330 Channel thread is active */
-> > +			pl330_chan_ctrl(pch->pl330_chid, PL330_OP_START);
-> > +
-> > +			callback = desc->txd.callback;
-> > +			if (callback)
-> > +				callback(desc->txd.callback_param);
-> 
-> How does this work when callbacks are allowed to queue new requests?
-> Aren't you going to deadlock on the spinlock?
-> 
-> I don't see 'list' being used in this function either.
-> 
->
-Cyclic capability re-uses the requests that were submitted through
-tx_submit().
-It's possible because Cyclic capability uses same DMA configuration.
-This pl330_tasklet_cyclic() makes the status of the done request into
-'PREP'. 
-And, re-submit it to PL330.
-There are no deadlock because callback function just gathers transmit
-position.
-And Cyclic capability doesn't use 'list' for queue new requests.
+Signed-off-by: Giridhar Maruthy <giridhar.maruthy@linaro.org>
+---
+ sound/soc/samsung/smdk_wm8994.c |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
 
-> > +
-> > +		}
-> > +
-> > +	spin_unlock_irqrestore(&pch->lock, flags);
-> > +}
-> > +
-> > +static void pl330_cyclic_free(struct dma_pl330_chan *pch)
-> > +{
-> > +	struct dma_pl330_dmac *pdmac = pch->dmac;
-> > +	struct dma_pl330_desc *desc, *_dt;
-> > +	unsigned long flags;
-> > +	LIST_HEAD(list);
-> > +
-> > +	spin_lock_irqsave(&pdmac->pool_lock, flags);
-> > +
-> > +	list_for_each_entry_safe(desc, _dt, &pch->work_list, node)
-> > +	if (desc->cyclic)
-> > +		list_move_tail(&desc->node, &list);
-> > +
-> > +	list_splice_tail_init(&list, &pdmac->desc_pool);
-> 
-> As you're not using 'list' after this point, would 'list_splice_tail'
-> do here?
-Yes, You're right. the 'list' isn't used after device_free_chan_resources().
-So, I release it to desc_pool by using 'list_splice_tail'
-
-> 
-> > +
-> > +	spin_unlock_irqrestore(&pdmac->pool_lock, flags);
-> > +	pch->cyclic_task = NULL;
-> > +}
-> > +
-> >  static void pl330_tasklet(unsigned long data)
-> >  {
-> >  	struct dma_pl330_chan *pch = (struct dma_pl330_chan *)data;
-> > @@ -227,6 +285,9 @@ static void dma_pl330_rqcb(void *token, enum
-> pl330_op_err err)
-> >
-> >  	spin_unlock_irqrestore(&pch->lock, flags);
-> >
-> > +	if (pch->cyclic_task)
-> > +		tasklet_schedule(pch->cyclic_task);
-> > +	else
-> >  	tasklet_schedule(&pch->task);
-> 
-> This 'tasklet_schedule' wants to be indented.
-I will address your guide. Thanks
-
-> 
-> >  }
-> >
-> > @@ -256,25 +317,58 @@ static int pl330_alloc_chan_resources(struct
-> dma_chan *chan)
-> >  static int pl330_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd,
-> unsigned long arg)
-> >  {
-> >  	struct dma_pl330_chan *pch = to_pchan(chan);
-> > -	struct dma_pl330_desc *desc;
-> > +	struct dma_pl330_desc *desc, *_dt;
-> >  	unsigned long flags;
-> > +	struct dma_pl330_dmac *pdmac = pch->dmac;
-> > +	struct dma_slave_config *slave_config;
-> > +	struct dma_pl330_peri *peri;
-> > +	int i;
-> > +	LIST_HEAD(list);
-> >
-> > -	/* Only supports DMA_TERMINATE_ALL */
-> > -	if (cmd != DMA_TERMINATE_ALL)
-> > -		return -ENXIO;
-> > -
-> > -	spin_lock_irqsave(&pch->lock, flags);
-> > -
-> > -	/* FLUSH the PL330 Channel thread */
-> > -	pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
-> > +	switch (cmd) {
-> > +	case DMA_TERMINATE_ALL:
-> > +		spin_lock_irqsave(&pch->lock, flags);
-> >
-> > -	/* Mark all desc done */
-> > -	list_for_each_entry(desc, &pch->work_list, node)
-> > -		desc->status = DONE;
-> > +		/* FLUSH the PL330 Channel thread */
-> > +		pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
-> >
-> > -	spin_unlock_irqrestore(&pch->lock, flags);
-> > +		/* Mark all desc done */
-> > +		list_for_each_entry_safe(desc, _dt, &pch->work_list , node)
-> {
-> > +			desc->status = DONE;
-> > +			pch->completed = desc->txd.cookie;
-> > +			list_move_tail(&desc->node, &list);
-> > +		}
-> >
-> > -	pl330_tasklet((unsigned long) pch);
-> > +		list_splice_tail_init(&list, &pdmac->desc_pool);
-> 
-> Again, would list_splice_tail() do here?
-This code is for 'flush' operation that releases all of the pre-loaded
-requests.
-I uses 'list_splice_tail_init' for it instead of 'pl330_tasklet' that also
-calls 'list_splice_tail_init'.
-
-> 
-> > +		spin_unlock_irqrestore(&pch->lock, flags);
-> > +		break;
-> > +	case DMA_SLAVE_CONFIG:
-> > +		slave_config = (struct dma_slave_config *)arg;
-> > +		peri = pch->chan.private;
-> > +
-> > +		if (slave_config->direction == DMA_TO_DEVICE) {
-> > +			if (slave_config->dst_addr)
-> > +				peri->fifo_addr = slave_config->dst_addr;
-> > +			if (slave_config->dst_addr_width) {
-> > +				i = 0;
-> > +				while (slave_config->dst_addr_width != (1 <<
-i))
-> > +					i++;
-> > +				peri->burst_sz = i;
-> > +			}
-> > +		} else if (slave_config->direction == DMA_FROM_DEVICE) {
-> > +			if (slave_config->src_addr)
-> > +				peri->fifo_addr = slave_config->src_addr;
-> > +			if (slave_config->src_addr_width) {
-> > +				i = 0;
-> > +				while (slave_config->src_addr_width != (1 <<
-i))
-> > +					i++;
-> > +				peri->burst_sz = i;
-> > +			}
-> > +		}
-> 
-> It would make more sense to store the M2P and P2M address/width/burst size
-> separately, so you don't have to make DMA_SLAVE_CONFIG calls before every
-> transfer.
-DMA_SLAVE_CONFIG is called the first time that DMA client driver requests
-DMA channel.
+diff --git a/sound/soc/samsung/smdk_wm8994.c b/sound/soc/samsung/smdk_wm8994.c
+index e7c1009..45fbe2b 100644
+--- a/sound/soc/samsung/smdk_wm8994.c
++++ b/sound/soc/samsung/smdk_wm8994.c
+@@ -8,6 +8,7 @@
+  */
+ 
+ #include "../codecs/wm8994.h"
++#include <sound/pcm_params.h>
+ 
+  /*
+   * Default CFG switch settings to use this driver:
+@@ -44,7 +45,9 @@ static int smdk_hw_params(struct snd_pcm_substream *substream,
+ 	int ret;
+ 
+ 	/* AIF1CLK should be >=3MHz for optimal performance */
+-	if (params_rate(params) == 8000 || params_rate(params) == 11025)
++	if (params_format(params) == SNDRV_PCM_FORMAT_S24_LE)
++		pll_out = params_rate(params) * 384;
++	else if (params_rate(params) == 8000 || params_rate(params) == 11025)
+ 		pll_out = params_rate(params) * 512;
+ 	else
+ 		pll_out = params_rate(params) * 256;
+-- 
+1.7.4.1
