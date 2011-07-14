@@ -1,203 +1,122 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: [PATCH v2] ARM: EXYNOS4: Add platform device for dwmci driver.
-Date: Thu, 14 Jul 2011 18:53:46 +0900
-Message-ID: <1310637226-19478-1-git-send-email-tgih.jun@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH 2/6] ARM: S5P64X0: Add register base and IRQ for Framebuffer
+Date: Thu, 14 Jul 2011 13:17:51 +0200
+Message-ID: <000001cc4217$abe319d0$03a94d70$%szyprowski@samsung.com>
+References: <1310650036-28836-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1310650036-28836-3-git-send-email-ajaykumar.rs@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:56022 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753483Ab1GNJ4m (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:51965 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754429Ab1GNLR6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Jul 2011 05:56:42 -0400
+	Thu, 14 Jul 2011 07:17:58 -0400
+Received: from spt2.w1.samsung.com ([210.118.77.14]) by mailout4.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0LOB004CXM1W5B90@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 14 Jul 2011 12:17:56 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LOB00K9TM1VVW@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 14 Jul 2011 12:17:55 +0100 (BST)
+In-reply-to: <1310650036-28836-3-git-send-email-ajaykumar.rs@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, ByungJae Lee <bjlee@samsung.com>, SeungKwon Ko <skwon.ko@samsung.com>, JaeHun Jung <jh0801.jung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>
+To: 'Ajay Kumar' <ajaykumar.rs@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lethal@linux-sh.org, jg1.han@samsung.com, 'Kyu
 
-This patch add platform devices for Synopsys DesignWare Multimedia Card
-Interface driver.
+Hello,
 
-Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
----
- arch/arm/mach-exynos4/Kconfig             |   12 ++++
- arch/arm/mach-exynos4/Makefile            |    1 +
- arch/arm/mach-exynos4/dev-dwmci.c         |   88 +++++++++++++++++++++++++++++
- arch/arm/mach-exynos4/include/mach/irqs.h |    1 +
- arch/arm/mach-exynos4/include/mach/map.h  |    1 +
- arch/arm/plat-samsung/include/plat/devs.h |    1 +
- 6 files changed, 104 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-exynos4/dev-dwmci.c
+On Thursday, July 14, 2011 3:27 PM Ajay Kumar wrote:
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index 5115b90..2ec5b96 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -35,6 +35,11 @@ config EXYNOS4_DEV_SYSMMU
- 	help
- 	  Common setup code for SYSTEM MMU in EXYNOS4
- 
-+config EXYNOS4_DEV_DWMCI
-+	bool
-+	help
-+	  Compile in platform device definitions for DWMCI
-+
- config EXYNOS4_SETUP_I2C1
- 	bool
- 	help
-@@ -200,6 +205,13 @@ comment "Configuration for HSMMC bus width"
- 
- menu "Use 8-bit bus width"
- 
-+config EXYNOS4_DWMCI_8BIT
-+	bool "DWMCI with 8-bit bus"
-+	depends on EXYNOS4_DEV_DWMCI
-+	help
-+	  Support DWMCI 8-bit bus.
-+	  If selected, Channel 1 is disabled.
-+
- config EXYNOS4_SDHCI_CH0_8BIT
- 	bool "Channel 0 with 8-bit bus"
- 	help
-diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
-index 60fe5ec..eeeaada 100644
---- a/arch/arm/mach-exynos4/Makefile
-+++ b/arch/arm/mach-exynos4/Makefile
-@@ -43,6 +43,7 @@ obj-y					+= dev-audio.o
- obj-$(CONFIG_EXYNOS4_DEV_AHCI)		+= dev-ahci.o
- obj-$(CONFIG_EXYNOS4_DEV_PD)		+= dev-pd.o
- obj-$(CONFIG_EXYNOS4_DEV_SYSMMU)	+= dev-sysmmu.o
-+obj-$(CONFIG_EXYNOS4_DEV_DWMCI)	+= dev-dwmci.o
- 
- obj-$(CONFIG_EXYNOS4_SETUP_FIMC)	+= setup-fimc.o
- obj-$(CONFIG_EXYNOS4_SETUP_I2C1)	+= setup-i2c1.o
-diff --git a/arch/arm/mach-exynos4/dev-dwmci.c b/arch/arm/mach-exynos4/dev-dwmci.c
-new file mode 100644
-index 0000000..a0defa4
---- /dev/null
-+++ b/arch/arm/mach-exynos4/dev-dwmci.c
-@@ -0,0 +1,88 @@
-+/*
-+ * linuxarch/arm/mach-exynos4/dev-dwmci.c
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * Platform device for Synopsys DesignWare Mobile Storage IP
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/platform_device.h>
-+#include <linux/interrupt.h>
-+#include <linux/mmc/dw_mmc.h>
-+#include <linux/mmc/host.h>
-+#include <linux/io.h>
-+#include <linux/gpio.h>
-+
-+#include <plat/devs.h>
-+#include <plat/cpu.h>
-+#include <plat/gpio-cfg.h>
-+
-+#include <mach/map.h>
-+
-+#ifdef EXYNOS4_DWMCI_8BIT
-+#define BUS_WIDTH 8
-+#else
-+#define BUS_WIDTH 4
-+#endif
-+
-+static int exynos4_dwmci_get_ocr(u32 slot_id)
-+{
-+	return MMC_VDD_32_33 | MMC_VDD_33_34;
-+}
-+
-+static int exynos4_dwmci_get_bus_wd(u32 slot_id)
-+{
-+	return BUS_WIDTH;
-+}
-+
-+static int exynos4_dwmci_init(u32 slot_id, irq_handler_t handler, void *data)
-+{
-+	return 0;
-+}
-+
-+static struct resource exynos4_dwmci_resource[] = {
-+	[0] = {
-+		.start = EXYNOS4_PA_DWMCI,
-+		.end   = EXYNOS4_PA_DWMCI + SZ_4K - 1,
-+		.flags = IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start = IRQ_DWMCI,
-+		.end   = IRQ_DWMCI,
-+		.flags = IORESOURCE_IRQ,
-+	}
-+};
-+
-+static struct dw_mci_board exynos4_dwci_pdata = {
-+	.num_slots			= 1,
-+	.quirks				= DW_MCI_QUIRK_BROKEN_CARD_DETECTION,
-+	.bus_hz				= 80*1000*1000,
-+	.detect_delay_ms	= 200,
-+	.init				= exynos4_dwmci_init,
-+	.get_ocr			= exynos4_dwmci_get_ocr,
-+	.get_bus_wd			= exynos4_dwmci_get_bus_wd,
-+	.select_slot		= NULL,
-+};
-+
-+static u64 exynos4_dwmci_dmamask = DMA_BIT_MASK(32);
-+
-+struct platform_device exynos4_device_dwmci = {
-+	.name		= "dw_mmc",
-+	.id		= -1,
-+	.num_resources	= ARRAY_SIZE(exynos4_dwmci_resource),
-+	.resource	= exynos4_dwmci_resource,
-+	.dev		= {
-+		.dma_mask		= &exynos4_dwmci_dmamask,
-+		.coherent_dma_mask	= DMA_BIT_MASK(32),
-+		.platform_data	= &exynos4_dwci_pdata,
-+	},
-+};
-+
-diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-exynos4/include/mach/irqs.h
-index 5d03730..b720246 100644
---- a/arch/arm/mach-exynos4/include/mach/irqs.h
-+++ b/arch/arm/mach-exynos4/include/mach/irqs.h
-@@ -107,6 +107,7 @@
- #define IRQ_HSMMC1		COMBINER_IRQ(29, 1)
- #define IRQ_HSMMC2		COMBINER_IRQ(29, 2)
- #define IRQ_HSMMC3		COMBINER_IRQ(29, 3)
-+#define IRQ_DWMCI		COMBINER_IRQ(29, 4)
- 
- #define IRQ_MIPI_CSIS0		COMBINER_IRQ(30, 0)
- #define IRQ_MIPI_CSIS1		COMBINER_IRQ(30, 1)
-diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
-index 0009e77..352e500 100644
---- a/arch/arm/mach-exynos4/include/mach/map.h
-+++ b/arch/arm/mach-exynos4/include/mach/map.h
-@@ -94,6 +94,7 @@
- #define EXYNOS4_PA_MIPI_CSIS1		0x11890000
- 
- #define EXYNOS4_PA_HSMMC(x)		(0x12510000 + ((x) * 0x10000))
-+#define EXYNOS4_PA_DWMCI		0x12550000
- 
- #define EXYNOS4_PA_SATA			0x12560000
- #define EXYNOS4_PA_SATAPHY		0x125D0000
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index e3b31c2..29fa1cf 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -112,6 +112,7 @@ extern struct platform_device exynos4_device_i2s2;
- extern struct platform_device exynos4_device_spdif;
- extern struct platform_device exynos4_device_pd[];
- extern struct platform_device exynos4_device_ahci;
-+extern struct platform_device exynos4_device_dwmci;
- 
- extern struct platform_device s5p6440_device_pcm;
- extern struct platform_device s5p6440_device_iis;
+> This patch adds:
+> o Framebuffer related register mappings and bit fields.
+> o IRQ number being used.
+> 
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+>  arch/arm/mach-s5p64x0/include/mach/irqs.h    |    4 ++++
+>  arch/arm/mach-s5p64x0/include/mach/map.h     |    3 +++
+>  arch/arm/mach-s5p64x0/include/mach/regs-fb.h |   19 +++++++++++++++++++
+>  3 files changed, 26 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm/mach-s5p64x0/include/mach/regs-fb.h
+> 
+> diff --git a/arch/arm/mach-s5p64x0/include/mach/irqs.h b/arch/arm/mach-
+> s5p64x0/include/mach/irqs.h
+> index 513abff..09995b8 100644
+> --- a/arch/arm/mach-s5p64x0/include/mach/irqs.h
+> +++ b/arch/arm/mach-s5p64x0/include/mach/irqs.h
+> @@ -85,6 +85,10 @@
+>  #define IRQ_S3CUART_RX4		IRQ_S5P_UART_RX4
+>  #define IRQ_S3CUART_RX5		IRQ_S5P_UART_RX5
+> 
+> +#define IRQ_LCD_FIFO		IRQ_DISPCON0
+> +#define IRQ_LCD_VSYNC		IRQ_DISPCON1
+> +#define IRQ_LCD_SYSTEM		IRQ_DISPCON2
+> +
+>  /* S5P6450 EINT feature will be added */
+> 
+>  /*
+> diff --git a/arch/arm/mach-s5p64x0/include/mach/map.h b/arch/arm/mach-
+> s5p64x0/include/mach/map.h
+> index 95c9125..c5ef50c 100644
+> --- a/arch/arm/mach-s5p64x0/include/mach/map.h
+> +++ b/arch/arm/mach-s5p64x0/include/mach/map.h
+> @@ -47,6 +47,8 @@
+> 
+>  #define S5P64X0_PA_HSMMC(x)	(0xED800000 + ((x) * 0x100000))
+> 
+> +#define S5P64X0_PA_FB		0xEE000000
+> +
+>  #define S5P64X0_PA_I2S		0xF2000000
+>  #define S5P6450_PA_I2S1		0xF2800000
+>  #define S5P6450_PA_I2S2		0xF2900000
+> @@ -64,6 +66,7 @@
+>  #define S3C_PA_IIC1		S5P6440_PA_IIC1
+>  #define S3C_PA_RTC		S5P64X0_PA_RTC
+>  #define S3C_PA_WDT		S5P64X0_PA_WDT
+> +#define S3C_PA_FB		S5P64X0_PA_FB
+> 
+>  #define S5P_PA_CHIPID		S5P64X0_PA_CHIPID
+>  #define S5P_PA_SROMC		S5P64X0_PA_SROMC
+> diff --git a/arch/arm/mach-s5p64x0/include/mach/regs-fb.h b/arch/arm/mach-
+> s5p64x0/include/mach/regs-fb.h
+> new file mode 100644
+> index 0000000..cbb8d8c
+> --- /dev/null
+> +++ b/arch/arm/mach-s5p64x0/include/mach/regs-fb.h
+> @@ -0,0 +1,19 @@
+> +/*
+> + * linux/arch/arm/mach-s5p64x0/include/mach/regs-fb.h
+> + *
+> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com/
+> + *
+> + * Framebuffer register definitions for Samsung S5P64X0.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#ifndef __ASM_ARCH_MACH_REGS_FB_H
+> +#define __ASM_ARCH_MACH_REGS_FB_H __FILE__
+> +
+> +#include <plat/regs-fb.h>
+> +
+> +#endif /* __ASM_ARCH_MACH_REGS_FB_H */
+
+This patch reminds me, that the arch/arm/mach-*/include/mach/regs-fb.h files
+should be
+completely removed. Most of them simply includes the other header from
+plat-samsung,
+which can be included directly by the driver.
+plat-s5pc100/include/mach/regs-fb.h contains
+some definitions that are not used at all afair, so it can be dropped as well.
+
+Best regards
 -- 
-1.7.2.3
+Marek Szyprowski
+Samsung Poland R&D Center
