@@ -1,122 +1,185 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 2/6] ARM: S5P64X0: Add register base and IRQ for Framebuffer
-Date: Thu, 14 Jul 2011 13:17:51 +0200
-Message-ID: <000001cc4217$abe319d0$03a94d70$%szyprowski@samsung.com>
-References: <1310650036-28836-1-git-send-email-ajaykumar.rs@samsung.com>
- <1310650036-28836-3-git-send-email-ajaykumar.rs@samsung.com>
+From: Marco Sinigaglia <marco.sinigaglia@csr.com>
+Subject: AC97 on S3C6410
+Date: Thu, 14 Jul 2011 16:04:54 +0000 (UTC)
+Message-ID: <loom.20110714T180046-429@post.gmane.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:51965 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754429Ab1GNLR6 (ORCPT
+Received: from lo.gmane.org ([80.91.229.12]:33414 "EHLO lo.gmane.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755350Ab1GNQUN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Jul 2011 07:17:58 -0400
-Received: from spt2.w1.samsung.com ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LOB004CXM1W5B90@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 14 Jul 2011 12:17:56 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LOB00K9TM1VVW@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 14 Jul 2011 12:17:55 +0100 (BST)
-In-reply-to: <1310650036-28836-3-git-send-email-ajaykumar.rs@samsung.com>
-Content-language: pl
+	Thu, 14 Jul 2011 12:20:13 -0400
+Received: from list by lo.gmane.org with local (Exim 4.69)
+	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
+	id 1QhOe0-00074d-Jf
+	for linux-samsung-soc@vger.kernel.org; Thu, 14 Jul 2011 18:20:08 +0200
+Received: from 193.128.72.68 ([193.128.72.68])
+        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jul 2011 18:20:08 +0200
+Received: from marco.sinigaglia by 193.128.72.68 with local (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jul 2011 18:20:08 +0200
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Ajay Kumar' <ajaykumar.rs@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lethal@linux-sh.org, jg1.han@samsung.com, 'Kyu
+To: linux-samsung-soc@vger.kernel.org
 
-Hello,
+Hi,
 
-On Thursday, July 14, 2011 3:27 PM Ajay Kumar wrote:
+I am rying to implement the AC97, on S3C6410, using the WM9714.
+I have done some big step forward but I am now hitting another issue.
 
-> This patch adds:
-> o Framebuffer related register mappings and bit fields.
-> o IRQ number being used.
-> 
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> ---
->  arch/arm/mach-s5p64x0/include/mach/irqs.h    |    4 ++++
->  arch/arm/mach-s5p64x0/include/mach/map.h     |    3 +++
->  arch/arm/mach-s5p64x0/include/mach/regs-fb.h |   19 +++++++++++++++++++
->  3 files changed, 26 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-s5p64x0/include/mach/regs-fb.h
-> 
-> diff --git a/arch/arm/mach-s5p64x0/include/mach/irqs.h b/arch/arm/mach-
-> s5p64x0/include/mach/irqs.h
-> index 513abff..09995b8 100644
-> --- a/arch/arm/mach-s5p64x0/include/mach/irqs.h
-> +++ b/arch/arm/mach-s5p64x0/include/mach/irqs.h
-> @@ -85,6 +85,10 @@
->  #define IRQ_S3CUART_RX4		IRQ_S5P_UART_RX4
->  #define IRQ_S3CUART_RX5		IRQ_S5P_UART_RX5
-> 
-> +#define IRQ_LCD_FIFO		IRQ_DISPCON0
-> +#define IRQ_LCD_VSYNC		IRQ_DISPCON1
-> +#define IRQ_LCD_SYSTEM		IRQ_DISPCON2
-> +
->  /* S5P6450 EINT feature will be added */
-> 
->  /*
-> diff --git a/arch/arm/mach-s5p64x0/include/mach/map.h b/arch/arm/mach-
-> s5p64x0/include/mach/map.h
-> index 95c9125..c5ef50c 100644
-> --- a/arch/arm/mach-s5p64x0/include/mach/map.h
-> +++ b/arch/arm/mach-s5p64x0/include/mach/map.h
-> @@ -47,6 +47,8 @@
-> 
->  #define S5P64X0_PA_HSMMC(x)	(0xED800000 + ((x) * 0x100000))
-> 
-> +#define S5P64X0_PA_FB		0xEE000000
-> +
->  #define S5P64X0_PA_I2S		0xF2000000
->  #define S5P6450_PA_I2S1		0xF2800000
->  #define S5P6450_PA_I2S2		0xF2900000
-> @@ -64,6 +66,7 @@
->  #define S3C_PA_IIC1		S5P6440_PA_IIC1
->  #define S3C_PA_RTC		S5P64X0_PA_RTC
->  #define S3C_PA_WDT		S5P64X0_PA_WDT
-> +#define S3C_PA_FB		S5P64X0_PA_FB
-> 
->  #define S5P_PA_CHIPID		S5P64X0_PA_CHIPID
->  #define S5P_PA_SROMC		S5P64X0_PA_SROMC
-> diff --git a/arch/arm/mach-s5p64x0/include/mach/regs-fb.h b/arch/arm/mach-
-> s5p64x0/include/mach/regs-fb.h
-> new file mode 100644
-> index 0000000..cbb8d8c
-> --- /dev/null
-> +++ b/arch/arm/mach-s5p64x0/include/mach/regs-fb.h
-> @@ -0,0 +1,19 @@
-> +/*
-> + * linux/arch/arm/mach-s5p64x0/include/mach/regs-fb.h
-> + *
-> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * Framebuffer register definitions for Samsung S5P64X0.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#ifndef __ASM_ARCH_MACH_REGS_FB_H
-> +#define __ASM_ARCH_MACH_REGS_FB_H __FILE__
-> +
-> +#include <plat/regs-fb.h>
-> +
-> +#endif /* __ASM_ARCH_MACH_REGS_FB_H */
+The kernel can see the WM9714:
+<6>ALSA device list:
+<6>  #0: SMDK (WM9713)
 
-This patch reminds me, that the arch/arm/mach-*/include/mach/regs-fb.h files
-should be
-completely removed. Most of them simply includes the other header from
-plat-samsung,
-which can be included directly by the driver.
-plat-s5pc100/include/mach/regs-fb.h contains
-some definitions that are not used at all afair, so it can be dropped as well.
+Anyway, after that, i cannot see anymore activity on the AC97 bus.
+I got, indeed, these errors:
 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+<3>s3c-ac97: req addr = 12, rep addr = 00
+[...]
+<3>s3c-ac97: req addr = 12, rep addr = 00
+
+When I try to play something, i got this :
+
+
+<7>Entered s3c_dma_open
+<7>asoc: AC97 HiFi <-> s3c-ac97 info:
+<7>asoc: rate mask 0xd6
+<7>asoc: min ch 2 max ch 2
+<7>asoc: min rate 8000 max rate 48000
+<7>Entered s3c_dma_hw_params
+<7>params c0665190, client c0665278, channel 22
+<7>dma22: s3c2410_request_dma: client=AC97 PCMOut, dev=(null)
+<7>MS10 channel number 22 
+<7>DMA8: 00000000->00000000 L 00000000 C 00000000,00000000 S 00000000
+<7>s3c2410_dma_request: channel initialised, c06779c8
+<7>Entered s3c_dma_prepare
+<7>s3c2410_dma_devconfig: channel 22, source 1, dev 7f001018, chan c06779c8
+<7>s3c2410_dma_devconfig: peripheral 6
+<7>s3c2410_dma_devconfig: config 0000c980
+<7>DMA8: 00000000->00000000 L 00000000 C 00000000,00000000 S 0000c980
+<7>s3c64xx_dma_flush: flushing channel
+<7>Entered s3c_dma_enqueue
+<7>s3c_dma_enqueue: loaded 0, limit 11
+<7>dma_loaded: 0
+<7>dma enqueue channel num 22, reg cf00c100
+<7>s3c2410_dma_enqueue: buff c6e4f4e0, dp 5e740000 lli (ffcd6000, 56ea3000) 8192
+<7>enquing onto empty channel num 22
+<7>s3c64xx_lli_to_regs: LLI ffcd6000 => regs
+<7>LLI[ffcd6000] 5e740000->7f001018, NL 00000000 C 96480000,00000800
+<7>LLI[ffcd6000] 5e740000->7f001018, NL 00000000 C 96480000,00000800
+<7>DMA8: 5e740000->7f001018 L 00000000 C 96480000,00000000 S 0000c980
+<7>DMA8: buffs next c6e4f4e0, curr c6e4f4e0, end c6e4f4e0
+<7>dma_loaded: 1
+<7>dma enqueue channel num 22, reg cf00c100
+<7>s3c2410_dma_enqueue: buff c6e4f540, dp 5e742000 lli (ffcd6020, 56ea3020) 8192
+<7>enquing onto channel num 22
+<7>LLI[ffcd6000] 5e740000->7f001018, NL 56ea3020 C 96480000,00000800
+<7>LLI[ffcd6020] 5e742000->7f001018, NL 56ea3000 C 96480000,00000800
+<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
+<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f540
+<7>dma_loaded: 2
+<7>dma enqueue channel num 22, reg cf00c100
+<7>s3c2410_dma_enqueue: buff c6e4f560, dp 5e744000 lli (ffcd6040, 56ea3040) 8192
+<7>enquing onto channel num 22
+<7>LLI[ffcd6020] 5e742000->7f001018, NL 56ea3040 C 96480000,00000800
+<7>LLI[ffcd6040] 5e744000->7f001018, NL 56ea3000 C 96480000,00000800
+<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
+<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f560
+<7>dma_loaded: 3
+<7>dma enqueue channel num 22, reg cf00c100
+<7>s3c2410_dma_enqueue: buff c6e4f580, dp 5e746000 lli (ffcd6060, 56ea3060) 8192
+<7>enquing onto channel num 22
+<7>LLI[ffcd6040] 5e744000->7f001018, NL 56ea3060 C 96480000,00000800
+<7>LLI[ffcd6060] 5e746000->7f001018, NL 56ea3000 C 96480000,00000800
+<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
+<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f580
+<7>dma_loaded: 4
+<7>dma enqueue channel num 22, reg cf00c100
+<7>s3c2410_dma_enqueue: buff c6e4f5a0, dp 5e748000 lli (ffcd6080, 56ea3080) 8192
+<7>enquing onto channel num 22
+<7>LLI[ffcd6060] 5e746000->7f001018, NL 56ea3080 C 96480000,00000800
+<7>LLI[ffcd6080] 5e748000->7f001018, NL 56ea3000 C 96480000,00000800
+<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
+<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f5a0
+<7>dma_loaded: 5
+<7>dma enqueue channel num 22, reg cf00c100
+<7>s3c2410_dma_enqueue: buff c6e4f5c0, dp 5e74a000 lli (ffcd60a0, 56ea30a0) 8192
+<7>enquing onto channel num 22
+<7>LLI[ffcd6080] 5e748000->7f001018, NL 56ea30a0 C 96480000,00000800
+<7>LLI[ffcd60a0] 5e74a000->7f001018, NL 56ea3000 C 96480000,00000800
+<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
+<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f5c0
+<7>dma_loaded: 6
+<7>dma enqueue channel num 22, reg cf00c100
+<7>s3c2410_dma_enqueue: buff c6e4f5e0, dp 5e74c000 lli (ffcd60c0, 56ea30c0) 8192
+<7>enquing onto channel num 22
+<7>LLI[ffcd60a0] 5e74a000->7f001018, NL 56ea30c0 C 96480000,00000800
+<7>LLI[ffcd60c0] 5e74c000->7f001018, NL 56ea3000 C 96480000,00000800
+<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
+<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f5e0
+<7>dma_loaded: 7
+<7>dma enqueue channel num 22, reg cf00c100
+<7>s3c2410_dma_enqueue: buff c6e4f600, dp 5e74e000 lli (ffcd60e0, 56ea30e0) 8192
+<7>enquing onto channel num 22
+<7>LLI[ffcd60c0] 5e74c000->7f001018, NL 56ea30e0 C 96480000,00000800
+<7>LLI[ffcd60e0] 5e74e000->7f001018, NL 56ea3000 C 96480000,00000800
+<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
+<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f600
+<7>dma_loaded: 8
+<7>dma enqueue channel num 22, reg cf00c100
+<7>s3c2410_dma_enqueue: buff c6e4f620, dp 5e750000 lli (ffcd6100, 56ea3100) 8192
+<7>enquing onto channel num 22
+<7>LLI[ffcd60e0] 5e74e000->7f001018, NL 56ea3100 C 96480000,00000800
+<7>LLI[ffcd6100] 5e750000->7f001018, NL 56ea3000 C 96480000,00000800
+<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
+<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f620
+<7>dma_loaded: 9
+<7>dma enqueue channel num 22, reg cf00c100
+<7>s3c2410_dma_enqueue: buff c6e4f640, dp 5e752000 lli (ffcd6120, 56ea3120) 8192
+<7>enquing onto channel num 22
+<7>LLI[ffcd6100] 5e750000->7f001018, NL 56ea3120 C 96480000,00000800
+<7>LLI[ffcd6120] 5e752000->7f001018, NL 56ea3000 C 96480000,00000800
+<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
+<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f640
+<7>dma_loaded: 10
+<7>dma enqueue channel num 22, reg cf00c100
+<7>s3c2410_dma_enqueue: buff c6e4f660, dp 5e754000 lli (ffcd6140, 56ea3140) 8192
+<7>enquing onto channel num 22
+<7>LLI[ffcd6120] 5e752000->7f001018, NL 56ea3140 C 96480000,00000800
+<7>LLI[ffcd6140] 5e754000->7f001018, NL 56ea3000 C 96480000,00000800
+<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
+<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f660
+<7>Entered s3c_dma_trigger
+<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
+<7>s3c64xx_dma_start: clearing interrupts, chan number 8, reg cf00c100 
+<7>s3c64xx_dma_start: starting channel
+<7>s3c64xx_dma_start: writing config 0000c981
+<7>Entered s3c_dma_pointer
+<7>Pointer 5e740010 7f001018
+<7>Entered s3c_dma_pointer
+<7>Pointer 5e740010 7f001018
+<7>ALSA sound/core/pcm_lib.c:1755: playback write error (DMA or IRQ trouble?)
+<7>Entered s3c_dma_pointer
+<7>Pointer 5e740010 7f001018
+<7>ALSA sound/core/pcm_lib.c:1755: playback write error (DMA or IRQ trouble?)
+<7>Entered s3c_dma_trigger
+<7>s3c64xx_dma_stop: stopping channel
+<7>DMA8: 5e740010->7f001018 L 56ea3020 C 96480000,00000800 S 0002c981
+
+
+
+I have the feeling that, for some reasons, the DMA is not doing its job.
+I have added the following line on the init of dma.c but it does not fix the 
+error:
+s3c64xx_dma_init1(8, DMACH_AC97_PCMOUT, IRQ_DMA1, 0x75100000);
+
+Can someone, please, give me some feedback?
+
+I am using kernel 2.6.35 and the head of Android.
+
+Cheers
+Marco 
