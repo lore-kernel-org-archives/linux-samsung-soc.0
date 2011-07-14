@@ -1,86 +1,203 @@
-From: boojin <boojin.kim@samsung.com>
-Subject: RE: [PATCH 3/7] DMA: PL330: Add DMA capabilities
-Date: Thu, 14 Jul 2011 18:04:26 +0900
-Message-ID: <002801cc4205$08c91f90$1a5b5eb0$%kim@samsung.com>
-References: <1309781915-31549-1-git-send-email-kgene.kim@samsung.com>
- <1309781915-31549-4-git-send-email-kgene.kim@samsung.com>
- <CAPTzV15Y7JFDKsec8x-M0C1AFLOMp39QvHpRCsO=E001P_tH9A@mail.gmail.com>
- <CABb+yY0M659Ob0u+wOBW5i6v_VfpayRkY29-TUNpsp1oVLn-SQ@mail.gmail.com>
- <002201cc41c0$fdf79810$f9e6c830$%kim@samsung.com>
- <CABb+yY198iVKYV765C_dokzciL9en3kkRyZgcgYpp5WphPNZmw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7BIT
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: [PATCH v2] ARM: EXYNOS4: Add platform device for dwmci driver.
+Date: Thu, 14 Jul 2011 18:53:46 +0900
+Message-ID: <1310637226-19478-1-git-send-email-tgih.jun@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:39888 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753311Ab1GNJE3 (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:56022 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753483Ab1GNJ4m (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Jul 2011 05:04:29 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOB00FH7FUX4M10@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 14 Jul 2011 18:04:28 +0900 (KST)
-Received: from DOBOOJINKIM03 (12-23-120-72.csky.net [12.23.120.72])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LOB00JQVFVFIC@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 14 Jul 2011 18:04:27 +0900 (KST)
-In-reply-to: <CABb+yY198iVKYV765C_dokzciL9en3kkRyZgcgYpp5WphPNZmw@mail.gmail.com>
-Content-language: ko
+	Thu, 14 Jul 2011 05:56:42 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jassi Brar' <jassisinghbrar@gmail.com>
-Cc: 'Chanho Park' <parkch98@gmail.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Vinod Koul' <vinod.koul@intel.com>, 'Dan Williams' <dan.j.williams@intel.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Liam Girdwood' <lrg@ti.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, ByungJae Lee <bjlee@samsung.com>, SeungKwon Ko <skwon.ko@samsung.com>, JaeHun Jung <jh0801.jung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>
 
-Jassi Brar Wrote:
-> On Thu, Jul 14, 2011 at 6:27 AM, boojin <boojin.kim@samsung.com> wrote:
-> > Jassi Brar wrote:
-> >
-> >> On Tue, Jul 5, 2011 at 12:03 PM, Chanho Park <parkch98@gmail.com> wrote:
-> >> > Kukjin Kim <kgene.kim <at> samsung.com> writes:
-> >> >
-> >> > (snip)
-> >> >
-> >> >> +             if (slave_config->direction == DMA_TO_DEVICE) {
-> >> >> +                     if (slave_config->dst_addr)
-> >> >> +                             peri->fifo_addr = slave_config->dst_addr;
-> >> >> +                     if (slave_config->dst_addr_width) {
-> >> >> +                             i = 0;
-> >> >> +                             while (slave_config->dst_addr_width != (1
-> <<
-> >> > i))
-> >> >> +                                     i++;
-> >> >> +                             peri->burst_sz = i;
-> >> >> +                     }
-> >> >> +             } else if (slave_config->direction == DMA_FROM_DEVICE)
-> {
-> >> >> +                     if (slave_config->src_addr)
-> >> >> +                             peri->fifo_addr = slave_config->src_addr;
-> >> >> +                     if (slave_config->src_addr_width) {
-> >> >> +                             i = 0;
-> >> >> +                             while (slave_config->src_addr_width != (1
-> <<
-> >> > i))
-> >> >> +                                     i++;
-> >> >> +                             peri->burst_sz = i;
-> >> >
-> >> > Re-send including cc and mailing lists
-> >> > --
-> >> > pl330 dmac only supports 1/2/4/8/16 bytes burst size.
-> >> > If some bad D/D doesn't use powers of 2 width,
-> >> > dmaengine is going to infinite loop.
-> >> > You'd better check it instead of running loop.
-> >> >
-> >> It might be even better to start with max possible width and
-> >> keep decreasing 'i' in the loop.
-> > I will addressed your comment on next release.
-> 
-> Actually, best would be to simply do
->     peri->burst_sz =  __ffs(slave_config->src_addr_width);
-> 
-> And sorry I haven't yet reviewed the patches because I have been
-> very busy lately. Will be more active in a few days.
+This patch add platform devices for Synopsys DesignWare Multimedia Card
+Interface driver.
 
-Thanks for good information. Please give me your feedback.
-I will release next version after gathering and reflecting all comments.
+Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+---
+ arch/arm/mach-exynos4/Kconfig             |   12 ++++
+ arch/arm/mach-exynos4/Makefile            |    1 +
+ arch/arm/mach-exynos4/dev-dwmci.c         |   88 +++++++++++++++++++++++++++++
+ arch/arm/mach-exynos4/include/mach/irqs.h |    1 +
+ arch/arm/mach-exynos4/include/mach/map.h  |    1 +
+ arch/arm/plat-samsung/include/plat/devs.h |    1 +
+ 6 files changed, 104 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-exynos4/dev-dwmci.c
+
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index 5115b90..2ec5b96 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -35,6 +35,11 @@ config EXYNOS4_DEV_SYSMMU
+ 	help
+ 	  Common setup code for SYSTEM MMU in EXYNOS4
+ 
++config EXYNOS4_DEV_DWMCI
++	bool
++	help
++	  Compile in platform device definitions for DWMCI
++
+ config EXYNOS4_SETUP_I2C1
+ 	bool
+ 	help
+@@ -200,6 +205,13 @@ comment "Configuration for HSMMC bus width"
+ 
+ menu "Use 8-bit bus width"
+ 
++config EXYNOS4_DWMCI_8BIT
++	bool "DWMCI with 8-bit bus"
++	depends on EXYNOS4_DEV_DWMCI
++	help
++	  Support DWMCI 8-bit bus.
++	  If selected, Channel 1 is disabled.
++
+ config EXYNOS4_SDHCI_CH0_8BIT
+ 	bool "Channel 0 with 8-bit bus"
+ 	help
+diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
+index 60fe5ec..eeeaada 100644
+--- a/arch/arm/mach-exynos4/Makefile
++++ b/arch/arm/mach-exynos4/Makefile
+@@ -43,6 +43,7 @@ obj-y					+= dev-audio.o
+ obj-$(CONFIG_EXYNOS4_DEV_AHCI)		+= dev-ahci.o
+ obj-$(CONFIG_EXYNOS4_DEV_PD)		+= dev-pd.o
+ obj-$(CONFIG_EXYNOS4_DEV_SYSMMU)	+= dev-sysmmu.o
++obj-$(CONFIG_EXYNOS4_DEV_DWMCI)	+= dev-dwmci.o
+ 
+ obj-$(CONFIG_EXYNOS4_SETUP_FIMC)	+= setup-fimc.o
+ obj-$(CONFIG_EXYNOS4_SETUP_I2C1)	+= setup-i2c1.o
+diff --git a/arch/arm/mach-exynos4/dev-dwmci.c b/arch/arm/mach-exynos4/dev-dwmci.c
+new file mode 100644
+index 0000000..a0defa4
+--- /dev/null
++++ b/arch/arm/mach-exynos4/dev-dwmci.c
+@@ -0,0 +1,88 @@
++/*
++ * linuxarch/arm/mach-exynos4/dev-dwmci.c
++ *
++ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Platform device for Synopsys DesignWare Mobile Storage IP
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#include <linux/kernel.h>
++#include <linux/dma-mapping.h>
++#include <linux/platform_device.h>
++#include <linux/interrupt.h>
++#include <linux/mmc/dw_mmc.h>
++#include <linux/mmc/host.h>
++#include <linux/io.h>
++#include <linux/gpio.h>
++
++#include <plat/devs.h>
++#include <plat/cpu.h>
++#include <plat/gpio-cfg.h>
++
++#include <mach/map.h>
++
++#ifdef EXYNOS4_DWMCI_8BIT
++#define BUS_WIDTH 8
++#else
++#define BUS_WIDTH 4
++#endif
++
++static int exynos4_dwmci_get_ocr(u32 slot_id)
++{
++	return MMC_VDD_32_33 | MMC_VDD_33_34;
++}
++
++static int exynos4_dwmci_get_bus_wd(u32 slot_id)
++{
++	return BUS_WIDTH;
++}
++
++static int exynos4_dwmci_init(u32 slot_id, irq_handler_t handler, void *data)
++{
++	return 0;
++}
++
++static struct resource exynos4_dwmci_resource[] = {
++	[0] = {
++		.start = EXYNOS4_PA_DWMCI,
++		.end   = EXYNOS4_PA_DWMCI + SZ_4K - 1,
++		.flags = IORESOURCE_MEM,
++	},
++	[1] = {
++		.start = IRQ_DWMCI,
++		.end   = IRQ_DWMCI,
++		.flags = IORESOURCE_IRQ,
++	}
++};
++
++static struct dw_mci_board exynos4_dwci_pdata = {
++	.num_slots			= 1,
++	.quirks				= DW_MCI_QUIRK_BROKEN_CARD_DETECTION,
++	.bus_hz				= 80*1000*1000,
++	.detect_delay_ms	= 200,
++	.init				= exynos4_dwmci_init,
++	.get_ocr			= exynos4_dwmci_get_ocr,
++	.get_bus_wd			= exynos4_dwmci_get_bus_wd,
++	.select_slot		= NULL,
++};
++
++static u64 exynos4_dwmci_dmamask = DMA_BIT_MASK(32);
++
++struct platform_device exynos4_device_dwmci = {
++	.name		= "dw_mmc",
++	.id		= -1,
++	.num_resources	= ARRAY_SIZE(exynos4_dwmci_resource),
++	.resource	= exynos4_dwmci_resource,
++	.dev		= {
++		.dma_mask		= &exynos4_dwmci_dmamask,
++		.coherent_dma_mask	= DMA_BIT_MASK(32),
++		.platform_data	= &exynos4_dwci_pdata,
++	},
++};
++
+diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-exynos4/include/mach/irqs.h
+index 5d03730..b720246 100644
+--- a/arch/arm/mach-exynos4/include/mach/irqs.h
++++ b/arch/arm/mach-exynos4/include/mach/irqs.h
+@@ -107,6 +107,7 @@
+ #define IRQ_HSMMC1		COMBINER_IRQ(29, 1)
+ #define IRQ_HSMMC2		COMBINER_IRQ(29, 2)
+ #define IRQ_HSMMC3		COMBINER_IRQ(29, 3)
++#define IRQ_DWMCI		COMBINER_IRQ(29, 4)
+ 
+ #define IRQ_MIPI_CSIS0		COMBINER_IRQ(30, 0)
+ #define IRQ_MIPI_CSIS1		COMBINER_IRQ(30, 1)
+diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
+index 0009e77..352e500 100644
+--- a/arch/arm/mach-exynos4/include/mach/map.h
++++ b/arch/arm/mach-exynos4/include/mach/map.h
+@@ -94,6 +94,7 @@
+ #define EXYNOS4_PA_MIPI_CSIS1		0x11890000
+ 
+ #define EXYNOS4_PA_HSMMC(x)		(0x12510000 + ((x) * 0x10000))
++#define EXYNOS4_PA_DWMCI		0x12550000
+ 
+ #define EXYNOS4_PA_SATA			0x12560000
+ #define EXYNOS4_PA_SATAPHY		0x125D0000
+diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
+index e3b31c2..29fa1cf 100644
+--- a/arch/arm/plat-samsung/include/plat/devs.h
++++ b/arch/arm/plat-samsung/include/plat/devs.h
+@@ -112,6 +112,7 @@ extern struct platform_device exynos4_device_i2s2;
+ extern struct platform_device exynos4_device_spdif;
+ extern struct platform_device exynos4_device_pd[];
+ extern struct platform_device exynos4_device_ahci;
++extern struct platform_device exynos4_device_dwmci;
+ 
+ extern struct platform_device s5p6440_device_pcm;
+ extern struct platform_device s5p6440_device_iis;
+-- 
+1.7.2.3
