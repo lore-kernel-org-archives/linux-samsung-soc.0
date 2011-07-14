@@ -1,64 +1,80 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 3/7] DMA: PL330: Add DMA capabilities
-Date: Thu, 14 Jul 2011 09:23:17 +0530
-Message-ID: <CABb+yY198iVKYV765C_dokzciL9en3kkRyZgcgYpp5WphPNZmw@mail.gmail.com>
-References: <1309781915-31549-1-git-send-email-kgene.kim@samsung.com>
-	<1309781915-31549-4-git-send-email-kgene.kim@samsung.com>
-	<CAPTzV15Y7JFDKsec8x-M0C1AFLOMp39QvHpRCsO=E001P_tH9A@mail.gmail.com>
-	<CABb+yY0M659Ob0u+wOBW5i6v_VfpayRkY29-TUNpsp1oVLn-SQ@mail.gmail.com>
-	<002201cc41c0$fdf79810$f9e6c830$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH 0/6] ARM: S5P64X0: Add Framebuffer support
+Date: Thu, 14 Jul 2011 09:27:10 -0400
+Message-ID: <1310650036-28836-1-git-send-email-ajaykumar.rs@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f52.google.com ([209.85.161.52]:62441 "EHLO
-	mail-fx0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753815Ab1GNDxT (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:51324 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753712Ab1GNHhu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Jul 2011 23:53:19 -0400
-Received: by fxd18 with SMTP id 18so370515fxd.11
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Jul 2011 20:53:17 -0700 (PDT)
-In-Reply-To: <002201cc41c0$fdf79810$f9e6c830$%kim@samsung.com>
+	Thu, 14 Jul 2011 03:37:50 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LOB00B5FBTPUHR0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 14 Jul 2011 16:37:48 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.106])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LOB00FOKBUT2D@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 14 Jul 2011 16:37:48 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: boojin <boojin.kim@samsung.com>
-Cc: Chanho Park <parkch98@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Grant Likely <grant.likely@secretlab.ca>, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lethal@linux-sh.org, jg1.han@samsung.com
 
-T24gVGh1LCBKdWwgMTQsIDIwMTEgYXQgNjoyNyBBTSwgYm9vamluIDxib29qaW4ua2ltQHNhbXN1
-bmcuY29tPiB3cm90ZToKPiBKYXNzaSBCcmFyIHdyb3RlOgo+Cj4+IE9uIFR1ZSwgSnVsIDUsIDIw
-MTEgYXQgMTI6MDMgUE0sIENoYW5obyBQYXJrIDxwYXJrY2g5OEBnbWFpbC5jb20+IHdyb3RlOgo+
-PiA+IEt1a2ppbiBLaW0gPGtnZW5lLmtpbSA8YXQ+IHNhbXN1bmcuY29tPiB3cml0ZXM6Cj4+ID4K
-Pj4gPiAoc25pcCkKPj4gPgo+PiA+PiArIMKgIMKgIMKgIMKgIMKgIMKgIGlmIChzbGF2ZV9jb25m
-aWctPmRpcmVjdGlvbiA9PSBETUFfVE9fREVWSUNFKSB7Cj4+ID4+ICsgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgaWYgKHNsYXZlX2NvbmZpZy0+ZHN0X2FkZHIpCj4+ID4+ICsgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgcGVyaS0+Zmlmb19hZGRyID0gc2xh
-dmVfY29uZmlnLT5kc3RfYWRkcjsKPj4gPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCBpZiAoc2xhdmVfY29uZmlnLT5kc3RfYWRkcl93aWR0aCkgewo+PiA+PiArIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGkgPSAwOwo+PiA+PiArIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHdoaWxlIChzbGF2ZV9jb25maWctPmRzdF9h
-ZGRyX3dpZHRoICE9ICgxIDw8Cj4+ID4gaSkpCj4+ID4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgaSsrOwo+PiA+PiArIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHBlcmktPmJ1cnN0X3N6ID0gaTsKPj4gPj4g
-KyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCB9Cj4+ID4+ICsgwqAgwqAgwqAgwqAgwqAg
-wqAgfSBlbHNlIGlmIChzbGF2ZV9jb25maWctPmRpcmVjdGlvbiA9PSBETUFfRlJPTV9ERVZJQ0Up
-IHsKPj4gPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBpZiAoc2xhdmVfY29uZmln
-LT5zcmNfYWRkcikKPj4gPj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCBwZXJpLT5maWZvX2FkZHIgPSBzbGF2ZV9jb25maWctPnNyY19hZGRyOwo+PiA+PiArIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGlmIChzbGF2ZV9jb25maWctPnNyY19hZGRyX3dp
-ZHRoKSB7Cj4+ID4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-aSA9IDA7Cj4+ID4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-d2hpbGUgKHNsYXZlX2NvbmZpZy0+c3JjX2FkZHJfd2lkdGggIT0gKDEgPDwKPj4gPiBpKSkKPj4g
-Pj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCBpKys7Cj4+ID4+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-cGVyaS0+YnVyc3Rfc3ogPSBpOwo+PiA+Cj4+ID4gUmUtc2VuZCBpbmNsdWRpbmcgY2MgYW5kIG1h
-aWxpbmcgbGlzdHMKPj4gPiAtLQo+PiA+IHBsMzMwIGRtYWMgb25seSBzdXBwb3J0cyAxLzIvNC84
-LzE2IGJ5dGVzIGJ1cnN0IHNpemUuCj4+ID4gSWYgc29tZSBiYWQgRC9EIGRvZXNuJ3QgdXNlIHBv
-d2VycyBvZiAyIHdpZHRoLAo+PiA+IGRtYWVuZ2luZSBpcyBnb2luZyB0byBpbmZpbml0ZSBsb29w
-Lgo+PiA+IFlvdSdkIGJldHRlciBjaGVjayBpdCBpbnN0ZWFkIG9mIHJ1bm5pbmcgbG9vcC4KPj4g
-Pgo+PiBJdCBtaWdodCBiZSBldmVuIGJldHRlciB0byBzdGFydCB3aXRoIG1heCBwb3NzaWJsZSB3
-aWR0aCBhbmQKPj4ga2VlcCBkZWNyZWFzaW5nICdpJyBpbiB0aGUgbG9vcC4KPiBJIHdpbGwgYWRk
-cmVzc2VkIHlvdXIgY29tbWVudCBvbiBuZXh0IHJlbGVhc2UuCgpBY3R1YWxseSwgYmVzdCB3b3Vs
-ZCBiZSB0byBzaW1wbHkgZG8KICAgIHBlcmktPmJ1cnN0X3N6ID0gIF9fZmZzKHNsYXZlX2NvbmZp
-Zy0+c3JjX2FkZHJfd2lkdGgpOwoKQW5kIHNvcnJ5IEkgaGF2ZW4ndCB5ZXQgcmV2aWV3ZWQgdGhl
-IHBhdGNoZXMgYmVjYXVzZSBJIGhhdmUgYmVlbgp2ZXJ5IGJ1c3kgbGF0ZWx5LiBXaWxsIGJlIG1v
-cmUgYWN0aXZlIGluIGEgZmV3IGRheXMuCg==
+	The patches are created against "for-next" branch of Kukjin Kim's tree at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+
+	Patch [1/6]
+	-- add "s5p64x0-fb" type driver_data(s3c_fb_driverdata).
+	-- Display controller in S5P64X0 supports 3 windows.
+
+	Patch [2/6]
+	-- Resource definitions(_MEM, _IRQ).
+
+	Patch [3/6]
+	-- Set s3c_device_fb name as "s5p64x0-fb"
+	   for S5P6440 and S5P6450.
+
+	Patch [4/6]
+	-- GPIO settings for LCD in S5P6440 and S5P6450.
+	-- Select LCD interface type (RGB/i80)
+
+	Patch [5/6]
+	-- Add support for LCD-LTE480 platform device in SMDK6440.
+	-- Platform data for FB and a basic window definition.
+	-- Enables FB support and platform-lcd support.
+	-- Add support for window 0 with 24 BPP.
+
+	Patch [6/6]
+	-- Add support for LCD-LTE480 platform device in SMDK6450.
+	-- Platform data for FB and a basic window definition.
+	-- Enables FB support and platform-lcd support.
+	-- Add support for window 0 with 24 BPP.
+
+ o To Paul Mundt, Jingoo Han
+   [Patch 1/6] video: s3c-fb: Add S5P64X0 specific s3c_fb_driverdata
+
+ o To Kukjin Kim
+   [Patch 2/6] ARM: S5P64X0: Add register base and IRQ for Framebuffer
+   [Patch 3/6] ARM: S5P64X0: Set s3c_device_fb name
+   [Patch 4/6] ARM: S5P64X0: Add GPIO and SPCON settings for LCD
+   [Patch 5/6] ARM: S5P6440: Add LCD-LTE480 and enable Framebuffer support
+   [Patch 6/6] ARM: S5P6450: Add LCD-LTE480 and enable Framebuffer support
+
+
+ arch/arm/mach-s5p64x0/Kconfig                  |   10 ++++
+ arch/arm/mach-s5p64x0/Makefile                 |    1 +
+ arch/arm/mach-s5p64x0/cpu.c                    |    3 +
+ arch/arm/mach-s5p64x0/include/mach/irqs.h      |    4 ++
+ arch/arm/mach-s5p64x0/include/mach/map.h       |    3 +
+ arch/arm/mach-s5p64x0/include/mach/regs-fb.h   |   19 +++++++
+ arch/arm/mach-s5p64x0/include/mach/regs-gpio.h |    4 ++
+ arch/arm/mach-s5p64x0/mach-smdk6440.c          |   63 +++++++++++++++++++++++
+ arch/arm/mach-s5p64x0/mach-smdk6450.c          |   63 +++++++++++++++++++++++
+ arch/arm/mach-s5p64x0/setup-fb.c               |   48 ++++++++++++++++++
+ arch/arm/plat-samsung/include/plat/fb.h        |   14 +++++
+ drivers/video/s3c-fb.c                         |   64 ++++++++++++++++++++++++
+ 12 files changed, 296 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5p64x0/include/mach/regs-fb.h
+ create mode 100644 arch/arm/mach-s5p64x0/setup-fb.c
