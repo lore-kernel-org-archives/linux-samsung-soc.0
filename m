@@ -1,158 +1,168 @@
 From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH 4/6] ARM: S5P64X0: Add GPIO and SPCON settings for LCD
-Date: Thu, 14 Jul 2011 09:27:14 -0400
-Message-ID: <1310650036-28836-5-git-send-email-ajaykumar.rs@samsung.com>
+Subject: [PATCH 5/6] ARM: S5P6440: Add LCD-LTE480 and enable Framebuffer support
+Date: Thu, 14 Jul 2011 09:27:15 -0400
+Message-ID: <1310650036-28836-6-git-send-email-ajaykumar.rs@samsung.com>
 References: <1310650036-28836-1-git-send-email-ajaykumar.rs@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout4.samsung.com ([203.254.224.34]:51377 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753747Ab1GNHhz (ORCPT
+	with ESMTP id S1753910Ab1GNHhz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Thu, 14 Jul 2011 03:37:55 -0400
 Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
  by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
  2010)) with ESMTP id <0LOB00B5FBTPUHR0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 14 Jul 2011 16:37:53 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Thu, 14 Jul 2011 16:37:55 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.106])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0LOB00FOKBUT2D@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 14 Jul 2011 16:37:53 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Thu, 14 Jul 2011 16:37:55 +0900 (KST)
 In-reply-to: <1310650036-28836-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lethal@linux-sh.org, jg1.han@samsung.com
 
-This patch adds:
-o GPIO lines settings(HSYNC, VSYNC, VCLK and VD) for LCD.
-o Function to select type of LCD interface (RGB/i80)
+This patch:
+o Adds platform device support for LCD-LTE480.
+o Adds platform data for FB with win_mode and default_bpp.
+o Enables FB device support and platform-lcd support.
 
 Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 ---
- arch/arm/mach-s5p64x0/Kconfig                  |    6 +++
- arch/arm/mach-s5p64x0/Makefile                 |    1 +
- arch/arm/mach-s5p64x0/include/mach/regs-gpio.h |    4 ++
- arch/arm/mach-s5p64x0/setup-fb.c               |   48 ++++++++++++++++++++++++
- arch/arm/plat-samsung/include/plat/fb.h        |   14 +++++++
- 5 files changed, 73 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s5p64x0/setup-fb.c
+ arch/arm/mach-s5p64x0/Kconfig         |    2 +
+ arch/arm/mach-s5p64x0/mach-smdk6440.c |   63 +++++++++++++++++++++++++++++++++
+ 2 files changed, 65 insertions(+), 0 deletions(-)
 
 diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
-index 017af4c..2ca5ac0 100644
+index 2ca5ac0..c69a32d 100644
 --- a/arch/arm/mach-s5p64x0/Kconfig
 +++ b/arch/arm/mach-s5p64x0/Kconfig
-@@ -21,6 +21,12 @@ config CPU_S5P6450
+@@ -37,6 +37,7 @@ config S5P64X0_SETUP_I2C1
+ config MACH_SMDK6440
+ 	bool "SMDK6440"
+ 	select CPU_S5P6440
++	select S3C_DEV_FB
+ 	select S3C_DEV_I2C1
+ 	select S3C_DEV_RTC
+ 	select S3C_DEV_WDT
+@@ -44,6 +45,7 @@ config MACH_SMDK6440
+ 	select SAMSUNG_DEV_ADC
+ 	select SAMSUNG_DEV_PWM
+ 	select SAMSUNG_DEV_TS
++	select S5P64X0_SETUP_FB
+ 	select S5P64X0_SETUP_I2C1
  	help
- 	  Enable S5P6450 CPU support
- 
-+config S5P64X0_SETUP_FB
-+	bool
-+	help
-+	  Common setup code for S5P64X0 based boards with a LCD display
-+	  through RGB interface.
-+
- config S5P64X0_SETUP_I2C1
- 	bool
- 	help
-diff --git a/arch/arm/mach-s5p64x0/Makefile b/arch/arm/mach-s5p64x0/Makefile
-index ae6bf6f..43698c6 100644
---- a/arch/arm/mach-s5p64x0/Makefile
-+++ b/arch/arm/mach-s5p64x0/Makefile
-@@ -28,3 +28,4 @@ obj-y				+= dev-audio.o
- obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
- 
- obj-$(CONFIG_S5P64X0_SETUP_I2C1)	+= setup-i2c1.o
-+obj-$(CONFIG_S5P64X0_SETUP_FB)		+= setup-fb.o
-diff --git a/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h b/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
-index 0953ef6..2f07cbd 100644
---- a/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
-+++ b/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
-@@ -34,4 +34,8 @@
- #define S5P6450_GPQ_BASE		(S5P_VA_GPIO + 0x0180)
- #define S5P6450_GPS_BASE		(S5P_VA_GPIO + 0x0300)
- 
-+#define S5P64X0_SPCON0			(S5P_VA_GPIO + 0x1A0)
-+#define S5P64X0_SPCON0_LCD_SEL_MASK	(0x3 << 0)
-+#define S5P64X0_SPCON0_LCD_SEL_RGB	(0x1 << 0)
-+
- #endif /* __ASM_ARCH_REGS_GPIO_H */
-diff --git a/arch/arm/mach-s5p64x0/setup-fb.c b/arch/arm/mach-s5p64x0/setup-fb.c
-new file mode 100644
-index 0000000..3e8ffad
---- /dev/null
-+++ b/arch/arm/mach-s5p64x0/setup-fb.c
-@@ -0,0 +1,48 @@
-+/* linux/arch/arm/mach-s5p64x0/setup-fb.c
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ * 		http://www.samsung.com/
-+ *
-+ * Base S5P64X0 GPIO setup information for LCD framebuffer
-+ *
-+ * GPIO settings for LCD on any other board based on s5p64x0
-+ * should go in this file.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
+ 	  Machine support for the Samsung SMDK6440
+diff --git a/arch/arm/mach-s5p64x0/mach-smdk6440.c b/arch/arm/mach-s5p64x0/mach-smdk6440.c
+index 2d559f1..a1f6f1e 100644
+--- a/arch/arm/mach-s5p64x0/mach-smdk6440.c
++++ b/arch/arm/mach-s5p64x0/mach-smdk6440.c
+@@ -23,6 +23,7 @@
+ #include <linux/clk.h>
+ #include <linux/gpio.h>
+ #include <linux/pwm_backlight.h>
 +#include <linux/fb.h>
-+#include <linux/gpio.h>
-+
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+@@ -34,6 +35,7 @@
+ #include <mach/regs-clock.h>
+ #include <mach/i2c.h>
+ #include <mach/regs-gpio.h>
++#include <mach/regs-fb.h>
+ 
+ #include <plat/regs-serial.h>
+ #include <plat/gpio-cfg.h>
+@@ -46,6 +48,9 @@
+ #include <plat/adc.h>
+ #include <plat/ts.h>
+ #include <plat/s5p-time.h>
 +#include <plat/fb.h>
-+#include <plat/gpio-cfg.h>
 +
-+#include <mach/regs-clock.h>
-+#include <mach/regs-gpio.h>
++#include <video/platform_lcd.h>
+ 
+ #define SMDK6440_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+ 				S3C2410_UCON_RXILEVEL |		\
+@@ -130,6 +135,60 @@ static struct platform_device smdk6440_backlight_device = {
+ 	},
+ };
+ 
++/* Frame Buffer */
++static struct s3c_fb_pd_win s5p6440_fb_win0 = {
++/* this is to ensure we use win0 */
++	.win_mode	= {
++		.left_margin	= 8,
++		.right_margin	= 13,
++		.upper_margin	= 7,
++		.lower_margin	= 5,
++		.hsync_len	= 3,
++		.vsync_len	= 1,
++		.xres		= 800,
++		.yres		= 480,
++		.refresh	= 80,
++	},
++	.max_bpp	= 24,
++	.default_bpp	= 24,
++};
 +
-+void s5p64x0_fb_init(int lcd_interface_type)
++static struct s3c_fb_platdata s5p6440_lcd_pdata __initdata = {
++	.win[0]		= &s5p6440_fb_win0,
++	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
++	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
++	.setup_gpio	= s5p64x0_fb_gpio_setup_24bpp,
++};
++
++/* LCD power controller */
++static void s5p6440_lte480_reset_power(struct plat_lcd_data *pd,
++					unsigned int power)
 +{
-+	unsigned int cfg;
++	int err;
 +
-+	/* select TFT LCD type (RGB I/F) */
-+	cfg = readl(S5P64X0_SPCON0);
-+	cfg &= ~S5P64X0_SPCON0_LCD_SEL_MASK;
-+	cfg |= lcd_interface_type;
-+	writel(cfg, S5P64X0_SPCON0);
-+}
++	if (power) {
++		err = gpio_request(S5P6440_GPN(5), "GPN");
++		if (err)
++			printk(KERN_ERR "failed to request GPN for lcd reset\n");
 +
-+void s5p64x0_fb_gpio_setup_24bpp(void)
-+{
-+	unsigned int cfg;
-+
-+	cfg = readl(S5P64X0_SYS_ID) & 0xf0000;
-+	if (cfg == 0x40000) {
-+		s3c_gpio_cfgrange_nopull(S5P6440_GPI(0), 16, S3C_GPIO_SFN(2));
-+		s3c_gpio_cfgrange_nopull(S5P6440_GPJ(0), 12, S3C_GPIO_SFN(2));
-+	} else if (cfg == 0x50000) {
-+		s3c_gpio_cfgrange_nopull(S5P6450_GPI(0), 16, S3C_GPIO_SFN(2));
-+		s3c_gpio_cfgrange_nopull(S5P6450_GPJ(0), 12, S3C_GPIO_SFN(2));
++		gpio_direction_output(S5P6440_GPN(5), 1);
++		gpio_set_value(S5P6440_GPN(5), 0);
++		gpio_set_value(S5P6440_GPN(5), 1);
++		gpio_free(S5P6440_GPN(5));
 +	}
 +}
-diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/plat-samsung/include/plat/fb.h
-index cb3ca3a..8147c59 100644
---- a/arch/arm/plat-samsung/include/plat/fb.h
-+++ b/arch/arm/plat-samsung/include/plat/fb.h
-@@ -94,4 +94,18 @@ extern void s5pc100_fb_gpio_setup_24bpp(void);
-  */
- extern void s5pv210_fb_gpio_setup_24bpp(void);
++
++static struct plat_lcd_data s5p6440_lcd_power_data = {
++	.set_power	= s5p6440_lte480_reset_power,
++};
++
++static struct platform_device smdk6440_lcd_lte480wv = {
++	.name			= "platform-lcd",
++	.dev.parent		= &s3c_device_fb.dev,
++	.dev.platform_data	= &s5p6440_lcd_power_data,
++};
++
++
+ static struct platform_device *smdk6440_devices[] __initdata = {
+ 	&s3c_device_adc,
+ 	&s3c_device_rtc,
+@@ -141,6 +200,8 @@ static struct platform_device *smdk6440_devices[] __initdata = {
+ 	&s5p6440_device_iis,
+ 	&s3c_device_timer[1],
+ 	&smdk6440_backlight_device,
++	&s3c_device_fb,
++	&smdk6440_lcd_lte480wv,
+ };
  
-+/**
-+ * s5p64x0_fb_init() - Common setup function for LCD
-+ *
-+ * Select LCD I/F configuration-RGB style or i80 style
-+ */
-+extern void s5p64x0_fb_init(int lcd_interface_type);
-+
-+/**
-+ * s5p64x0_fb_gpio_setup_24bpp() - Common GPIO setup function for LCD
-+ *
-+ * Initialise the GPIO for a LCD display on the RGB interface.
-+ */
-+extern void s5p64x0_fb_gpio_setup_24bpp(void);
-+
- #endif /* __PLAT_S3C_FB_H */
+ static struct s3c2410_platform_i2c s5p6440_i2c0_data __initdata = {
+@@ -193,6 +254,8 @@ static void __init smdk6440_machine_init(void)
+ 			ARRAY_SIZE(smdk6440_i2c_devs0));
+ 	i2c_register_board_info(1, smdk6440_i2c_devs1,
+ 			ARRAY_SIZE(smdk6440_i2c_devs1));
++	s3c_fb_set_platdata(&s5p6440_lcd_pdata);
++	s5p64x0_fb_init(S5P64X0_SPCON0_LCD_SEL_RGB);
+ 
+ 	platform_add_devices(smdk6440_devices, ARRAY_SIZE(smdk6440_devices));
+ }
 -- 
 1.7.1
