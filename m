@@ -1,252 +1,537 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH v2] ARM: EXYNOS4: Add platform device for dwmci driver.
-Date: Fri, 15 Jul 2011 11:31:49 +0900
-Message-ID: <CAH9JG2Vy9OJcrATeKV60X7SjdAR7Z+LDMzgMaps5NKu+M2zxAA@mail.gmail.com>
-References: <1310637226-19478-1-git-send-email-tgih.jun@samsung.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH V2 05/12] ARM: SAMSUNG: Add common DMA operations
+Date: Thu, 14 Jul 2011 20:53:47 -0600
+Message-ID: <20110715025347.GU2927@ponder.secretlab.ca>
+References: <1310546857-6304-1-git-send-email-kgene.kim@samsung.com>
+ <1310546857-6304-6-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:37281 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754945Ab1GOCbu convert rfc822-to-8bit (ORCPT
+Received: from mail-pv0-f174.google.com ([74.125.83.174]:60883 "EHLO
+	mail-pv0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964799Ab1GOCxu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Jul 2011 22:31:50 -0400
-Received: by vws1 with SMTP id 1so616971vws.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jul 2011 19:31:50 -0700 (PDT)
-In-Reply-To: <1310637226-19478-1-git-send-email-tgih.jun@samsung.com>
+	Thu, 14 Jul 2011 22:53:50 -0400
+Received: by mail-pv0-f174.google.com with SMTP id 12so711443pvg.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jul 2011 19:53:50 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1310546857-6304-6-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ByungJae Lee <bjlee@samsung.com>, SeungKwon Ko <skwon.ko@samsung.com>, JaeHun Jung <jh0801.jung@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Linus Walleij <linus.walleij@linaro.org>, Boojin Kim <boojin.kim@samsung.com>
 
-On Thu, Jul 14, 2011 at 6:53 PM, Seungwon Jeon <tgih.jun@samsung.com> w=
-rote:
-> This patch add platform devices for Synopsys DesignWare Multimedia Ca=
-rd
-> Interface driver.
->
-> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+On Wed, Jul 13, 2011 at 05:47:30PM +0900, Kukjin Kim wrote:
+> From: Boojin Kim <boojin.kim@samsung.com>
+> 
+> This patch adds common DMA operations which are used for Samsung DMA
+> drivers. Currently there are two types of DMA driver for Samsung SoCs.
+> The one is S3C-DMA for S3C SoCs and the other is PL330-DMA for S5P SoCs.
+> This patch provides funcion pointers for common DMA operations to DMA
+> client driver like SPI and Audio. It makes DMA client drivers support
+> multi-platform.
+> In addition, this common DMA operations implement the shared actions
+> that are needed for DMA client driver. For example shared actions are
+> filter() function for dma_request_channel() and parameter passing for
+> device_prep_slave_sg().
+> 
+> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > ---
-> =A0arch/arm/mach-exynos4/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 | =A0 12 +++=
-+
-> =A0arch/arm/mach-exynos4/Makefile =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A01 +
-> =A0arch/arm/mach-exynos4/dev-dwmci.c =A0 =A0 =A0 =A0 | =A0 88 +++++++=
-++++++++++++++++++++++
-> =A0arch/arm/mach-exynos4/include/mach/irqs.h | =A0 =A01 +
-> =A0arch/arm/mach-exynos4/include/mach/map.h =A0| =A0 =A01 +
-> =A0arch/arm/plat-samsung/include/plat/devs.h | =A0 =A01 +
-> =A06 files changed, 104 insertions(+), 0 deletions(-)
-> =A0create mode 100644 arch/arm/mach-exynos4/dev-dwmci.c
->
-> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kc=
-onfig
-> index 5115b90..2ec5b96 100644
-> --- a/arch/arm/mach-exynos4/Kconfig
-> +++ b/arch/arm/mach-exynos4/Kconfig
-> @@ -35,6 +35,11 @@ config EXYNOS4_DEV_SYSMMU
-> =A0 =A0 =A0 =A0help
-> =A0 =A0 =A0 =A0 =A0Common setup code for SYSTEM MMU in EXYNOS4
->
-> +config EXYNOS4_DEV_DWMCI
-> + =A0 =A0 =A0 bool
-> + =A0 =A0 =A0 help
-> + =A0 =A0 =A0 =A0 Compile in platform device definitions for DWMCI
+>  arch/arm/mach-s3c2410/include/mach/dma.h       |    3 +-
+>  arch/arm/plat-samsung/Makefile                 |    6 +-
+>  arch/arm/plat-samsung/dma-ops.c                |  131 +++++++++++++++++++++++
+>  arch/arm/plat-samsung/include/plat/dma-ops.h   |   47 +++++++++
+>  arch/arm/plat-samsung/include/plat/dma-pl330.h |    3 +
+>  arch/arm/plat-samsung/include/plat/dma.h       |    2 +-
+>  arch/arm/plat-samsung/s3c-dma-ops.c            |  132 ++++++++++++++++++++++++
+>  7 files changed, 320 insertions(+), 4 deletions(-)
+>  create mode 100644 arch/arm/plat-samsung/dma-ops.c
+>  create mode 100644 arch/arm/plat-samsung/include/plat/dma-ops.h
+>  create mode 100644 arch/arm/plat-samsung/s3c-dma-ops.c
+> 
+> diff --git a/arch/arm/mach-s3c2410/include/mach/dma.h b/arch/arm/mach-s3c2410/include/mach/dma.h
+> index b2b2a5b..71a662d 100644
+> --- a/arch/arm/mach-s3c2410/include/mach/dma.h
+> +++ b/arch/arm/mach-s3c2410/include/mach/dma.h
+> @@ -13,7 +13,6 @@
+>  #ifndef __ASM_ARCH_DMA_H
+>  #define __ASM_ARCH_DMA_H __FILE__
+>  
+> -#include <plat/dma.h>
+>  #include <linux/sysdev.h>
+>  
+>  #define MAX_DMA_TRANSFER_SIZE   0x100000 /* Data Unit is half word  */
+> @@ -51,6 +50,8 @@ enum dma_ch {
+>  	DMACH_MAX,		/* the end entry */
+>  };
+>  
+> +#include <plat/dma.h>
 > +
-> =A0config EXYNOS4_SETUP_I2C1
-> =A0 =A0 =A0 =A0bool
-> =A0 =A0 =A0 =A0help
-> @@ -200,6 +205,13 @@ comment "Configuration for HSMMC bus width"
->
-> =A0menu "Use 8-bit bus width"
->
-> +config EXYNOS4_DWMCI_8BIT
-> + =A0 =A0 =A0 bool "DWMCI with 8-bit bus"
-> + =A0 =A0 =A0 depends on EXYNOS4_DEV_DWMCI
-> + =A0 =A0 =A0 help
-> + =A0 =A0 =A0 =A0 Support DWMCI 8-bit bus.
-> + =A0 =A0 =A0 =A0 If selected, Channel 1 is disabled.
-
-No it should be determined at runtime instead of compile time.
-
+>  #define DMACH_LOW_LEVEL	(1<<28)	/* use this to specifiy hardware ch no */
+>  
+>  /* we have 4 dma channels */
+> diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+> index 53eb15b..9ecf2aa 100644
+> --- a/arch/arm/plat-samsung/Makefile
+> +++ b/arch/arm/plat-samsung/Makefile
+> @@ -62,9 +62,11 @@ obj-$(CONFIG_SAMSUNG_DEV_PWM)	+= dev-pwm.o
+>  
+>  # DMA support
+>  
+> -obj-$(CONFIG_S3C_DMA)		+= dma.o
+> +obj-$(CONFIG_S3C_DMA)		+= dma.o s3c-dma-ops.o
+>  
+> -obj-$(CONFIG_S3C_PL330_DMA)	+= s3c-pl330.o
+> +obj-$(CONFIG_DMADEV_PL330)	+= dma-ops.o
 > +
-> =A0config EXYNOS4_SDHCI_CH0_8BIT
-> =A0 =A0 =A0 =A0bool "Channel 0 with 8-bit bus"
-> =A0 =A0 =A0 =A0help
-> diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/M=
-akefile
-> index 60fe5ec..eeeaada 100644
-> --- a/arch/arm/mach-exynos4/Makefile
-> +++ b/arch/arm/mach-exynos4/Makefile
-> @@ -43,6 +43,7 @@ obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 +=3D dev-audio.o
-> =A0obj-$(CONFIG_EXYNOS4_DEV_AHCI) =A0 =A0 =A0 =A0 +=3D dev-ahci.o
-> =A0obj-$(CONFIG_EXYNOS4_DEV_PD) =A0 =A0 =A0 =A0 =A0 +=3D dev-pd.o
-> =A0obj-$(CONFIG_EXYNOS4_DEV_SYSMMU) =A0 =A0 =A0 +=3D dev-sysmmu.o
-> +obj-$(CONFIG_EXYNOS4_DEV_DWMCI) =A0 =A0 =A0 =A0+=3D dev-dwmci.o
->
-> =A0obj-$(CONFIG_EXYNOS4_SETUP_FIMC) =A0 =A0 =A0 +=3D setup-fimc.o
-> =A0obj-$(CONFIG_EXYNOS4_SETUP_I2C1) =A0 =A0 =A0 +=3D setup-i2c1.o
-> diff --git a/arch/arm/mach-exynos4/dev-dwmci.c b/arch/arm/mach-exynos=
-4/dev-dwmci.c
+> +obj-$(CONFIG_S3C_PL330_DMA)	+= s3c-pl330.o s3c-dma-ops.o
+>  
+>  # PM support
+>  
+> diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung/dma-ops.c
 > new file mode 100644
-> index 0000000..a0defa4
+> index 0000000..94a9d33
 > --- /dev/null
-> +++ b/arch/arm/mach-exynos4/dev-dwmci.c
-> @@ -0,0 +1,88 @@
-> +/*
-> + * linuxarch/arm/mach-exynos4/dev-dwmci.c
+> +++ b/arch/arm/plat-samsung/dma-ops.c
+> @@ -0,0 +1,131 @@
+> +/* linux/arch/arm/plat-samsung/dma-ops.c
 > + *
 > + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-> + * =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com
+> + *		http://www.samsung.com
 > + *
-> + * Platform device for Synopsys DesignWare Mobile Storage IP
+> + * Samsung DMA Operations
 > + *
-> + * This program is free software; you can redistribute it and/or mod=
-ify
-> + * it under the terms of the GNU General Public License as published=
- by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + */
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
 > +
 > +#include <linux/kernel.h>
-> +#include <linux/dma-mapping.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/mmc/dw_mmc.h>
-> +#include <linux/mmc/host.h>
-> +#include <linux/io.h>
-> +#include <linux/gpio.h>
+> +#include <linux/errno.h>
+> +#include <linux/dmaengine.h>
+> +#include <linux/amba/pl330.h>
 > +
-> +#include <plat/devs.h>
-> +#include <plat/cpu.h>
-> +#include <plat/gpio-cfg.h>
+> +#include <mach/dma.h>
 > +
-> +#include <mach/map.h>
-> +
-> +#ifdef EXYNOS4_DWMCI_8BIT
-> +#define BUS_WIDTH 8
-> +#else
-> +#define BUS_WIDTH 4
-> +#endif
+> +static bool filter(struct dma_chan *chan, void *param)
+> +{
+> +	struct dma_pl330_peri *peri = (struct dma_pl330_peri *)chan->private;
 
-Right, each board can modify the bus width. so it needs the helper
-function to setup.
+Is this code pl330 specific?  If so, 'pl330' should probably be
+referenced in the function name.
+
+> +	unsigned dma_ch = (unsigned)param;
 > +
-> +static int exynos4_dwmci_get_ocr(u32 slot_id)
-> +{
-> + =A0 =A0 =A0 return MMC_VDD_32_33 | MMC_VDD_33_34;
+> +	if (peri->peri_id != dma_ch)
+> +		return false;
+> +
+> +	return true;
 > +}
 > +
-> +static int exynos4_dwmci_get_bus_wd(u32 slot_id)
+> +static unsigned dma_request(enum dma_ch dma_ch, struct samsung_dma_info *info)
 > +{
-> + =A0 =A0 =A0 return BUS_WIDTH;
+> +	struct dma_chan *chan;
+> +	dma_cap_mask_t mask;
+> +	struct dma_slave_config slave_config;
+> +
+> +	dma_cap_zero(mask);
+> +	dma_cap_set(info->cap, mask);
+> +
+> +	chan = dma_request_channel(mask, filter, (void *)dma_ch);
+> +
+> +	if (info->direction == DMA_FROM_DEVICE) {
+> +		memset(&slave_config, 0, sizeof(struct dma_slave_config));
+> +		slave_config.direction = info->direction;
+> +		slave_config.src_addr = info->fifo;
+> +		slave_config.src_addr_width = info->width;
+> +		dmaengine_slave_config(chan, &slave_config);
+> +	} else if (info->direction == DMA_TO_DEVICE) {
+> +		memset(&slave_config, 0, sizeof(struct dma_slave_config));
+> +		slave_config.direction = info->direction;
+> +		slave_config.dst_addr = info->fifo;
+> +		slave_config.dst_addr_width = info->width;
+> +		dmaengine_slave_config(chan, &slave_config);
+> +	}
+> +
+> +	return (unsigned)chan;
 > +}
 > +
-> +static int exynos4_dwmci_init(u32 slot_id, irq_handler_t handler, vo=
-id *data)
+> +static int dma_release(unsigned ch, struct s3c2410_dma_client *client)
 > +{
-> + =A0 =A0 =A0 return 0;
+> +	dma_release_channel((struct dma_chan *)ch);
+> +
+> +	return 0;
 > +}
 > +
-> +static struct resource exynos4_dwmci_resource[] =3D {
-> + =A0 =A0 =A0 [0] =3D {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =3D EXYNOS4_PA_DWMCI,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =3D EXYNOS4_PA_DWMCI + SZ_4K -=
- 1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =3D IORESOURCE_MEM,
-> + =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [1] =3D {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =3D IRQ_DWMCI,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =3D IRQ_DWMCI,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =3D IORESOURCE_IRQ,
-> + =A0 =A0 =A0 }
+> +static int dma_prepare(unsigned ch, struct samsung_dma_prep_info *info)
+> +{
+> +	struct scatterlist sg;
+> +	struct dma_chan *chan = (struct dma_chan *)ch;
+> +	struct dma_async_tx_descriptor *desc;
+> +
+> +	switch (info->cap) {
+> +	case DMA_SLAVE:
+> +		sg_init_table(&sg, 1);
+> +		sg_dma_len(&sg) = info->len;
+> +		sg_set_page(&sg, pfn_to_page(PFN_DOWN(info->buf)),
+> +			    info->len, offset_in_page(info->buf));
+> +		sg_dma_address(&sg) = info->buf;
+> +
+> +		desc = chan->device->device_prep_slave_sg(chan,
+> +			&sg, 1, info->direction, DMA_PREP_INTERRUPT);
+> +		break;
+> +	case DMA_CYCLIC:
+> +		desc = chan->device->device_prep_dma_cyclic(chan,
+> +			info->buf, info->len, info->period, info->direction);
+> +		break;
+> +	default:
+> +		dev_err(&chan->dev->device, "unsupported format\n");
+> +		return -EFAULT;
+> +	}
+> +
+> +	if (!desc) {
+> +		dev_err(&chan->dev->device, "cannot prepare cyclic dma\n");
+> +		return -EFAULT;
+> +	}
+> +
+> +	desc->callback = info->fp;
+> +	desc->callback_param = info->fp_param;
+> +
+> +	dmaengine_submit((struct dma_async_tx_descriptor *)desc);
+> +
+> +	return 0;
+> +}
+> +
+> +static inline int dma_trigger(unsigned ch)
+> +{
+> +	dma_async_issue_pending((struct dma_chan *)ch);
+> +
+> +	return 0;
+> +}
+> +
+> +static inline int dma_flush(unsigned ch)
+> +{
+> +	return dmaengine_terminate_all((struct dma_chan *)ch);
+> +}
+> +
+> +static struct samsung_dma_ops dmaeng_ops = {
+> +	.request	= dma_request,
+> +	.release	= dma_release,
+> +	.prepare	= dma_prepare,
+> +	.trigger	= dma_trigger,
+> +	.started	= NULL,
+> +	.flush		= dma_flush,
+> +	.stop		= dma_flush,
+> +};
+
+Even though these function are all local statics, you should use a
+samsung prefix to avoid namespace collisions.  So, they should be
+named something like: samsung_dmaeng_ops, samsung_dmaeng_request(),
+samsung_dmaeng_release(), etc.  The ops structure and the functions
+should have the same prefix.
+
+> +
+> +void *samsung_dma_get_ops(void)
+> +{
+> +	return (void *)&dmaeng_ops;
+> +}
+> +EXPORT_SYMBOL(samsung_dma_get_ops);
+
+If all that is needed is a reference to the dma ops, then you could
+simply export samsung_dmaeng_ops() without a separate function.
+
+> diff --git a/arch/arm/plat-samsung/include/plat/dma-ops.h b/arch/arm/plat-samsung/include/plat/dma-ops.h
+> new file mode 100644
+> index 0000000..eea4130
+> --- /dev/null
+> +++ b/arch/arm/plat-samsung/include/plat/dma-ops.h
+> @@ -0,0 +1,47 @@
+> +/* arch/arm/plat-samsung/include/plat/dma-ops.h
+> + *
+> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * Samsung DMA support
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#include <linux/dmaengine.h>
+> +
+> +struct samsung_dma_prep_info {
+> +	enum dma_transaction_type cap;
+> +	enum dma_data_direction direction;
+> +	unsigned buf;
+> +	unsigned long period;
+> +	unsigned long len;
+> +	void (*fp)(void *data);
+> +	void *fp_param;
 > +};
 > +
-> +static struct dw_mci_board exynos4_dwci_pdata =3D {
-> + =A0 =A0 =A0 .num_slots =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=3D=
- 1,
-> + =A0 =A0 =A0 .quirks =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =3D DW_MCI_QUIRK_BROKEN_CARD_DETECTION,
-> + =A0 =A0 =A0 .bus_hz =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =3D 80*1000*1000,
-> + =A0 =A0 =A0 .detect_delay_ms =A0 =A0 =A0 =A0=3D 200,
-> + =A0 =A0 =A0 .init =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =3D exynos4_dwmci_init,
-> + =A0 =A0 =A0 .get_ocr =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-=3D exynos4_dwmci_get_ocr,
-> + =A0 =A0 =A0 .get_bus_wd =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =3D=
- exynos4_dwmci_get_bus_wd,
-> + =A0 =A0 =A0 .select_slot =A0 =A0 =A0 =A0 =A0 =A0=3D NULL,
+> +struct samsung_dma_info {
+> +	enum dma_transaction_type cap;
+> +	enum dma_data_direction direction;
+> +	enum dma_slave_buswidth width;
+> +	unsigned fifo;
+> +	struct s3c2410_dma_client *client;
 > +};
 > +
-> +static u64 exynos4_dwmci_dmamask =3D DMA_BIT_MASK(32);
-> +
-> +struct platform_device exynos4_device_dwmci =3D {
-> + =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "dw_mmc",
-> + =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
-> + =A0 =A0 =A0 .num_resources =A0=3D ARRAY_SIZE(exynos4_dwmci_resource=
-),
-> + =A0 =A0 =A0 .resource =A0 =A0 =A0 =3D exynos4_dwmci_resource,
-> + =A0 =A0 =A0 .dev =A0 =A0 =A0 =A0 =A0 =A0=3D {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .dma_mask =A0 =A0 =A0 =A0 =A0 =A0 =A0 =3D=
- &exynos4_dwmci_dmamask,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .coherent_dma_mask =A0 =A0 =A0=3D DMA_B=
-IT_MASK(32),
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .platform_data =A0=3D &exynos4_dwci_pda=
-ta,
-> + =A0 =A0 =A0 },
+> +struct samsung_dma_ops {
+> +	unsigned (*request)(enum dma_ch ch, struct samsung_dma_info *info);
+> +	int (*release)(unsigned ch, struct s3c2410_dma_client *client);
+> +	int (*prepare)(unsigned ch, struct samsung_dma_prep_info *info);
+> +	int (*trigger)(unsigned ch);
+> +	int (*started)(unsigned ch);
+> +	int (*flush)(unsigned ch);
+> +	int (*stop)(unsigned ch);
 > +};
 > +
-> diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mac=
-h-exynos4/include/mach/irqs.h
-> index 5d03730..b720246 100644
-> --- a/arch/arm/mach-exynos4/include/mach/irqs.h
-> +++ b/arch/arm/mach-exynos4/include/mach/irqs.h
-> @@ -107,6 +107,7 @@
-> =A0#define IRQ_HSMMC1 =A0 =A0 =A0 =A0 =A0 =A0 COMBINER_IRQ(29, 1)
-> =A0#define IRQ_HSMMC2 =A0 =A0 =A0 =A0 =A0 =A0 COMBINER_IRQ(29, 2)
-> =A0#define IRQ_HSMMC3 =A0 =A0 =A0 =A0 =A0 =A0 COMBINER_IRQ(29, 3)
-> +#define IRQ_DWMCI =A0 =A0 =A0 =A0 =A0 =A0 =A0COMBINER_IRQ(29, 4)
->
-> =A0#define IRQ_MIPI_CSIS0 =A0 =A0 =A0 =A0 COMBINER_IRQ(30, 0)
-> =A0#define IRQ_MIPI_CSIS1 =A0 =A0 =A0 =A0 COMBINER_IRQ(30, 1)
-> diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach=
--exynos4/include/mach/map.h
-> index 0009e77..352e500 100644
-> --- a/arch/arm/mach-exynos4/include/mach/map.h
-> +++ b/arch/arm/mach-exynos4/include/mach/map.h
-> @@ -94,6 +94,7 @@
-> =A0#define EXYNOS4_PA_MIPI_CSIS1 =A0 =A0 =A0 =A0 =A00x11890000
->
-> =A0#define EXYNOS4_PA_HSMMC(x) =A0 =A0 =A0 =A0 =A0 =A0(0x12510000 + (=
-(x) * 0x10000))
-> +#define EXYNOS4_PA_DWMCI =A0 =A0 =A0 =A0 =A0 =A0 =A0 0x12550000
->
-> =A0#define EXYNOS4_PA_SATA =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A00x12560000
-> =A0#define EXYNOS4_PA_SATAPHY =A0 =A0 =A0 =A0 =A0 =A0 0x125D0000
-> diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/pla=
-t-samsung/include/plat/devs.h
-> index e3b31c2..29fa1cf 100644
-> --- a/arch/arm/plat-samsung/include/plat/devs.h
-> +++ b/arch/arm/plat-samsung/include/plat/devs.h
-> @@ -112,6 +112,7 @@ extern struct platform_device exynos4_device_i2s2=
-;
-> =A0extern struct platform_device exynos4_device_spdif;
-> =A0extern struct platform_device exynos4_device_pd[];
-> =A0extern struct platform_device exynos4_device_ahci;
-> +extern struct platform_device exynos4_device_dwmci;
->
-> =A0extern struct platform_device s5p6440_device_pcm;
-> =A0extern struct platform_device s5p6440_device_iis;
-> --
-> 1.7.2.3
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+> +/*
+> + * samsung_dma_get_ops
+> + * get the set of dma operations
+> + */
+> +extern void *samsung_dma_get_ops(void);
+> diff --git a/arch/arm/plat-samsung/include/plat/dma-pl330.h b/arch/arm/plat-samsung/include/plat/dma-pl330.h
+> index c402719..be84bec 100644
+> --- a/arch/arm/plat-samsung/include/plat/dma-pl330.h
+> +++ b/arch/arm/plat-samsung/include/plat/dma-pl330.h
+> @@ -1,4 +1,7 @@
+>  /*
+> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+>   * Copyright (C) 2010 Samsung Electronics Co. Ltd.
+>   *	Jaswinder Singh <jassi.brar@samsung.com>
+>   *
+
+
+Heh, this patch doesn't make any changes to this file, and samsung
+already has a copyright notice on it anyway.  You should probably drop
+this hunk.
+
+> diff --git a/arch/arm/plat-samsung/include/plat/dma.h b/arch/arm/plat-samsung/include/plat/dma.h
+> index 2e8f8c6..90da162 100644
+> --- a/arch/arm/plat-samsung/include/plat/dma.h
+> +++ b/arch/arm/plat-samsung/include/plat/dma.h
+> @@ -124,4 +124,4 @@ extern int s3c2410_dma_getposition(unsigned int channel,
+>  extern int s3c2410_dma_set_opfn(unsigned int, s3c2410_dma_opfn_t rtn);
+>  extern int s3c2410_dma_set_buffdone_fn(unsigned int, s3c2410_dma_cbfn_t rtn);
+>  
+> -
+
+nitpick: Unrelated whitespace change.  One blank line of whitespace is
+sufficient anyway.
+
+> +#include <plat/dma-ops.h>
+> diff --git a/arch/arm/plat-samsung/s3c-dma-ops.c b/arch/arm/plat-samsung/s3c-dma-ops.c
+> new file mode 100644
+> index 0000000..17b1be0
+> --- /dev/null
+> +++ b/arch/arm/plat-samsung/s3c-dma-ops.c
+> @@ -0,0 +1,132 @@
+> +/* linux/arch/arm/plat-samsung/s3c-dma-ops.c
+> + *
+> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * Samsung S3C-DMA Operations
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/errno.h>
+> +#include <linux/slab.h>
+> +#include <linux/types.h>
+> +
+> +#include <mach/dma.h>
+> +
+> +struct cb_data {
+
+struct s3c2410_cb_data {
+
+> +	void (*fp) (void *);
+> +	void *fp_param;
+> +	unsigned ch;
+> +	struct list_head node;
+> +};
+> +
+> +static LIST_HEAD(dma_list);
+> +
+> +static void dma_cb(struct s3c2410_dma_chan *channel,
+> +		   void *param, int size, enum s3c2410_dma_buffresult res)
+> +{
+> +	struct cb_data *data = (struct cb_data *)param;
+
+param is a void*.  The (struct cb_data*) cast is not needed.
+
+> +
+> +	data->fp(data->fp_param);
+> +}
+> +
+> +static unsigned dma_request(enum dma_ch dma_ch, struct samsung_dma_info *info)
+
+These functions should *definitely* be named differently from the
+dma_* ops in the other file so that you can differentiate between
+them, and to make them grep-friendly.  This goes for *all* file-scope
+symbols.
+
+> +{
+> +	struct cb_data *data;
+> +
+> +	if (s3c2410_dma_request(dma_ch, info->client, NULL) < 0) {
+> +		s3c2410_dma_free(dma_ch, info->client);
+> +		return 0;
+> +	}
+> +
+> +	data = kmalloc(sizeof(struct cb_data), GFP_KERNEL);
+
+kzalloc()
+
+> +	data->fp = NULL;
+
+Drop this line after converting to kzalloc()
+
+> +	data->ch = (unsigned)dma_ch;
+
+Is the cast necessary?
+
+> +	list_add_tail(&data->node, &dma_list);
+> +
+> +	if (info->direction == DMA_FROM_DEVICE)
+> +		s3c2410_dma_devconfig(dma_ch, S3C2410_DMASRC_HW, info->fifo);
+> +	else
+> +		s3c2410_dma_devconfig(dma_ch, S3C2410_DMASRC_MEM, info->fifo);
+
+>From arch/arm/plat-samsung/include/plat/dma.h:
+	enum s3c2410_dmasrc {
+		S3C2410_DMASRC_HW,	/* source is memory */
+		S3C2410_DMASRC_MEM	/* source is hardware */
+	};
+
+from dma-mapping.h:
+	enum dma_data_direction {
+		DMA_BIDIRECTIONAL = 0,
+		DMA_TO_DEVICE = 1,
+		DMA_FROM_DEVICE = 2,
+		DMA_NONE = 3,
+	};
+
+/me thinks it would all look nicer if s3c2410 dma just replaced
+s3c2410_dmasrc to dma_data_direction, and from what I can tell it
+would just be a simple search and replace.  :-)
+
+> +
+> +	if (info->cap == DMA_CYCLIC)
+> +		s3c2410_dma_setflags(dma_ch, S3C2410_DMAF_CIRCULAR);
+> +
+> +	s3c2410_dma_config(dma_ch, info->width);
+> +
+> +	return (unsigned)dma_ch;
+> +}
+> +
+> +static int dma_release(unsigned ch, struct s3c2410_dma_client *client)
+
+unsigned int
+
+> +{
+> +	struct cb_data *data;
+> +
+> +	list_for_each_entry(data, &dma_list, node)
+> +	    if (data->ch == ch)
+> +		break;
+
+nit: incorrect indentation.  Use tab characters instead of spaces.
+I've got "set list" and "set listchars=tab:\|-,trail:-" in my ~/.vimrc
+so I can see the difference between tabs and spaces.
+
+> +	list_del(&data->node);
+
+What happens if the channel isn't found in the list?  Can that
+situation happen?
+
+What happens if two drivers call dma_release simultaneously?  It
+looks like a mutex is needed to protext the dma_list.
+
+> +
+> +	s3c2410_dma_free((enum dma_ch)ch, client);
+
+All the casting in this patch makes me nervous.  When a lot of casting
+is required, I wonder if the API needs to be changed.
+
+> +	kfree(data);
+> +
+> +	return 0;
+> +}
+> +
+> +static int dma_prepare(unsigned ch, struct samsung_dma_prep_info *info)
+> +{
+> +	struct cb_data *data;
+> +
+> +	list_for_each_entry(data, &dma_list, node)
+> +	    if (data->ch == ch)
+> +		break;
+> +
+> +	if (!data->fp) {
+> +		s3c2410_dma_set_buffdone_fn((enum dma_ch)ch, dma_cb);
+> +		data->fp = info->fp;
+> +		data->fp_param = info->fp_param;
+> +	}
+> +	s3c2410_dma_enqueue((enum dma_ch)ch, (void *)data, info->buf,
+> +			    info->period);
+> +
+> +	return 0;
+> +}
+> +
+> +static inline int dma_trigger(unsigned ch)
+> +{
+> +	return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_START);
+> +}
+> +
+> +static inline int dma_started(unsigned ch)
+> +{
+> +	return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_STARTED);
+> +}
+> +
+> +static inline int dma_flush(unsigned ch)
+> +{
+> +	return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_FLUSH);
+> +}
+> +
+> +static inline int dma_stop(unsigned ch)
+> +{
+> +	return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_STOP);
+> +}
+> +
+> +static struct samsung_dma_ops s3c_dma_ops = {
+> +	.request	= dma_request,
+> +	.release	= dma_release,
+> +	.prepare	= dma_prepare,
+> +	.trigger	= dma_trigger,
+> +	.started	= dma_started,
+> +	.flush		= dma_flush,
+> +	.stop		= dma_stop,
+> +};
+> +
+> +void *samsung_dma_get_ops(void)
+> +{
+> +	return (void *)&s3c_dma_ops;
+> +}
+> +EXPORT_SYMBOL(samsung_dma_get_ops);
+
+This is a problem.  This patch adds two implementations of
+samsung_dma_get_ops(). New code needs to be multiplatform friendly.
+That means that the code nees to handle both dma-ops.c and
+s3c-dma-ops.c compiled into the kernel at the same time and select the
+correct one at runtime.
+
+g.
+
+> -- 
+> 1.7.1
+> 
