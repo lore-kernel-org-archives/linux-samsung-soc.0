@@ -1,255 +1,218 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH] ARM: S5P64X0: External Interrupt Support
-Date: Fri, 15 Jul 2011 12:11:34 +0530
-Message-ID: <1310712094-19831-1-git-send-email-padma.v@samsung.com>
-Content-Transfer-Encoding: 7BIT
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH 6/6] ARM: S5P6450: Add LCD-LTE480 and enable Framebuffer support
+Date: Fri, 15 Jul 2011 12:25:33 +0530
+Message-ID: <CAEC9eQMuUxHxmVkViRv2Vit6HtQmoOSmLRhN6-ngMsgV=VPD2g@mail.gmail.com>
+References: <18967554.25641310709947612.JavaMail.weblogic@epv6ml06>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:36650 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964894Ab1GOGds (ORCPT
+Received: from mail-fx0-f52.google.com ([209.85.161.52]:53897 "EHLO
+	mail-fx0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755276Ab1GOGzf convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Jul 2011 02:33:48 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOD0093X3JRPE00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 15 Jul 2011 15:33:46 +0900 (KST)
-Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LOD002FE3K1GG@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 15 Jul 2011 15:33:46 +0900 (KST)
+	Fri, 15 Jul 2011 02:55:35 -0400
+Received: by fxd18 with SMTP id 18so2332996fxd.11
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jul 2011 23:55:34 -0700 (PDT)
+In-Reply-To: <18967554.25641310709947612.JavaMail.weblogic@epv6ml06>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: padma.v@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: jg1.han@samsung.com
+Cc: AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "lethal@linux-sh.org" <lethal@linux-sh.org>
 
-Add external interrupt support for S5P64X0. The external interrupts
-supported are 0 to 15.
+Hi Jingoo,
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
- arch/arm/mach-s5p64x0/Makefile                 |    1 +
- arch/arm/mach-s5p64x0/include/mach/regs-gpio.h |    6 +
- arch/arm/mach-s5p64x0/irq-eint.c               |  185 ++++++++++++++++++++++++
- 3 files changed, 192 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s5p64x0/irq-eint.c
+2011/7/15 JinGoo Han <jg1.han@samsung.com>:
+> Hi, Ajay Kumar.
+> Please read my comments.
+>> -----Original Message-----
+>> From: Ajay Kumar [mailto:ajaykumar.rs@samsung.com]
+>> Sent: Thursday, July 14, 2011 10:27 PM
+>> To: kgene.kim@samsung.com; linux-samsung-soc@vger.kernel.org; linux-=
+arm-
+>> kernel@lists.infradead.org; lethal@linux-sh.org; jg1.han@samsung.com
+>> Subject: [PATCH 6/6] ARM: S5P6450: Add LCD-LTE480 and enable Framebu=
+ffer
+>> support
+>>
+>> This patch:
+>> o Adds platform device support for LCD-LTE480.
+>> o Adds platform data for FB with win_mode and default_bpp.
+>> o Enables FB device support and platform-lcd support.
+>>
+>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>> ---
+>> =A0arch/arm/mach-s5p64x0/Kconfig =A0 =A0 =A0 =A0 | =A0 =A02 +
+>> =A0arch/arm/mach-s5p64x0/mach-smdk6450.c | =A0 63
+>> +++++++++++++++++++++++++++++++++
+>> =A02 files changed, 65 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/K=
+config
+>> index c69a32d..b9f3aca 100644
+>> --- a/arch/arm/mach-s5p64x0/Kconfig
+>> +++ b/arch/arm/mach-s5p64x0/Kconfig
+>> @@ -53,6 +53,7 @@ config MACH_SMDK6440
+>> =A0config MACH_SMDK6450
+>> =A0 =A0 =A0 bool "SMDK6450"
+>> =A0 =A0 =A0 select CPU_S5P6450
+>> + =A0 =A0 select S3C_DEV_FB
+>> =A0 =A0 =A0 select S3C_DEV_I2C1
+>> =A0 =A0 =A0 select S3C_DEV_RTC
+>> =A0 =A0 =A0 select S3C_DEV_WDT
+>> @@ -60,6 +61,7 @@ config MACH_SMDK6450
+>> =A0 =A0 =A0 select SAMSUNG_DEV_ADC
+>> =A0 =A0 =A0 select SAMSUNG_DEV_PWM
+>> =A0 =A0 =A0 select SAMSUNG_DEV_TS
+>> + =A0 =A0 select S5P64X0_SETUP_FB
+>> =A0 =A0 =A0 select S5P64X0_SETUP_I2C1
+>> =A0 =A0 =A0 help
+>> =A0 =A0 =A0 =A0 Machine support for the Samsung SMDK6450
+>> diff --git a/arch/arm/mach-s5p64x0/mach-smdk6450.c b/arch/arm/mach-
+>> s5p64x0/mach-smdk6450.c
+>> index d19c469..7568f38 100644
+>> --- a/arch/arm/mach-s5p64x0/mach-smdk6450.c
+>> +++ b/arch/arm/mach-s5p64x0/mach-smdk6450.c
+>> @@ -23,6 +23,7 @@
+>> =A0#include <linux/clk.h>
+>> =A0#include <linux/gpio.h>
+>> =A0#include <linux/pwm_backlight.h>
+>> +#include <linux/fb.h>
+>>
+>> =A0#include <asm/mach/arch.h>
+>> =A0#include <asm/mach/map.h>
+>> @@ -34,6 +35,7 @@
+>> =A0#include <mach/regs-clock.h>
+>> =A0#include <mach/i2c.h>
+>> =A0#include <mach/regs-gpio.h>
+>> +#include <mach/regs-fb.h>
+>>
+>> =A0#include <plat/regs-serial.h>
+>> =A0#include <plat/gpio-cfg.h>
+>> @@ -46,6 +48,9 @@
+>> =A0#include <plat/adc.h>
+>> =A0#include <plat/ts.h>
+>> =A0#include <plat/s5p-time.h>
+>> +#include <plat/fb.h>
+>> +
+>> +#include <video/platform_lcd.h>
+>>
+>> =A0#define SMDK6450_UCON_DEFAULT =A0 =A0 =A0 =A0(S3C2410_UCON_TXILEV=
+EL | =A0 =A0 =A0 =A0\
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S3C2410_=
+UCON_RXILEVEL | =A0 =A0 =A0 =A0 \
+>> @@ -148,6 +153,59 @@ static struct platform_device
+>> smdk6450_backlight_device =3D {
+>> =A0 =A0 =A0 },
+>> =A0};
+>>
+>> +/* Frame Buffer */
+>> +static struct s3c_fb_pd_win s5p6450_fb_win0 =3D {
+> This information also depends on LCD panel on the board.
+> So, s5p6450_fb_win0 should be changed to smdk6450_fb_win0.
+>> +/* this is to ensure we use win0 */
+>> + =A0 =A0 .win_mode =A0 =A0 =A0 =3D {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .left_margin =A0 =A0=3D 8,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .right_margin =A0 =3D 13,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .upper_margin =A0 =3D 7,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .lower_margin =A0 =3D 5,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .hsync_len =A0 =A0 =A0=3D 3,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .vsync_len =A0 =A0 =A0=3D 1,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .xres =A0 =A0 =A0 =A0 =A0 =3D 800,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .yres =A0 =A0 =A0 =A0 =A0 =3D 480,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .refresh =A0 =A0 =A0 =A0=3D 80,
+> Why do you use 80Hz as frame rate?
+> Please don't add this, if there is no problem when using 60Hz.
+>> + =A0 =A0 },
+>> + =A0 =A0 .max_bpp =A0 =A0 =A0 =A0=3D 24,
+> max_bpp can be 32bpp. FIMD of S5P6440 and S5P6450 can support ARGB 88=
+88.
+> Please use 32 as max_bpp.
+> + =A0 =A0 =A0 .max_bpp =A0 =A0 =A0 =A0=3D 32,
+>> + =A0 =A0 .default_bpp =A0 =A0=3D 24,
+>> + =A0 =A0 };
+> Don't useless tab space.
+> It should be as follows.
+> +};
+>> +
+>> +static struct s3c_fb_platdata s5p6450_lcd_pdata __initdata =3D {
+>> + =A0 =A0 .win[0] =A0 =A0 =A0 =A0 =3D &s5p6450_fb_win0,
+> s5p6450_fb_win0 should be changed to smdk6450_fb_win0.
+>> + =A0 =A0 .vidcon0 =A0 =A0 =A0 =A0=3D VIDCON0_VIDOUT_RGB | VIDCON0_P=
+NRMODE_RGB,
+>> + =A0 =A0 .vidcon1 =A0 =A0 =A0 =A0=3D VIDCON1_INV_HSYNC | VIDCON1_IN=
+V_VSYNC,
+>> + =A0 =A0 .setup_gpio =A0 =A0 =3D s5p64x0_fb_gpio_setup_24bpp,
+>> +};
+>> +
+>> +/* LCD power controller */
+>> +static void s5p6450_lte480_reset_power(struct plat_lcd_data *pd,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 unsigned int power)
+>> +{
+>> + =A0 =A0 int err;
+>> +
+>> + =A0 =A0 if (power) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 err =3D gpio_request(S5P6450_GPN(5), "GPN"=
+);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 if (err)
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 printk(KERN_ERR "failed to=
+ request GPN for lcd
+>> reset\n");
+>> +
+>> + =A0 =A0 =A0 =A0 =A0 =A0 gpio_direction_output(S5P6450_GPN(5), 1);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 gpio_set_value(S5P6450_GPN(5), 0);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 gpio_set_value(S5P6450_GPN(5), 1);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 gpio_free(S5P6450_GPN(5));
+>> + =A0 =A0 }
+>> +}
+>> +
+>> +static struct plat_lcd_data s5p6450_lcd_power_data =3D {
+>> + =A0 =A0 .set_power =A0 =A0 =A0=3D s5p6450_lte480_reset_power,
+>> +};
+>> +
+>> +static struct platform_device smdk6450_lcd_lte480wv =3D {
+>> + =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =3D "platform-lc=
+d",
+>> + =A0 =A0 .dev.parent =A0 =A0 =A0 =A0 =A0 =A0 =3D &s3c_device_fb.dev=
+,
+>> + =A0 =A0 .dev.platform_data =A0 =A0 =A0=3D &s5p6450_lcd_power_data,
+>> +};
+>> +
+> Please change s5p6450_ lte480 to smdk6450_ lte480.
+> LCD reset GPIO pin can be changed according to the board.
+>> =A0static struct platform_device *smdk6450_devices[] __initdata =3D =
+{
+>> =A0 =A0 =A0 &s3c_device_adc,
+>> =A0 =A0 =A0 &s3c_device_rtc,
+>> @@ -159,6 +217,9 @@ static struct platform_device *smdk6450_devices[=
+]
+>> __initdata =3D {
+>> =A0 =A0 =A0 &s5p6450_device_iis0,
+>> =A0 =A0 =A0 &s3c_device_timer[1],
+>> =A0 =A0 =A0 &smdk6450_backlight_device,
+>> + =A0 =A0 &s3c_device_fb,
+>> + =A0 =A0 &smdk6450_lcd_lte480wv,
+>> +
+>> =A0 =A0 =A0 /* s5p6450_device_spi0 will be added */
+>> =A0};
+>>
+>> @@ -212,6 +273,8 @@ static void __init smdk6450_machine_init(void)
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ARRAY_SIZE(smdk6450_i2c_=
+devs0));
+>> =A0 =A0 =A0 i2c_register_board_info(1, smdk6450_i2c_devs1,
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ARRAY_SIZE(smdk6450_i2c_=
+devs1));
+>> + =A0 =A0 s3c_fb_set_platdata(&s5p6450_lcd_pdata);
+>> + =A0 =A0 s5p64x0_fb_init(S5P64X0_SPCON0_LCD_SEL_RGB);
+>>
+>> =A0 =A0 =A0 platform_add_devices(smdk6450_devices,
+>> ARRAY_SIZE(smdk6450_devices));
+>> =A0}
+>> --
+>> 1.7.1
+>
 
-diff --git a/arch/arm/mach-s5p64x0/Makefile b/arch/arm/mach-s5p64x0/Makefile
-index ae6bf6f..30f34f0 100644
---- a/arch/arm/mach-s5p64x0/Makefile
-+++ b/arch/arm/mach-s5p64x0/Makefile
-@@ -16,6 +16,7 @@ obj-$(CONFIG_ARCH_S5P64X0)	+= cpu.o init.o clock.o dma.o gpiolib.o
- obj-$(CONFIG_ARCH_S5P64X0)	+= setup-i2c0.o
- obj-$(CONFIG_CPU_S5P6440)	+= clock-s5p6440.o
- obj-$(CONFIG_CPU_S5P6450)	+= clock-s5p6450.o
-+obj-y				+= irq-eint.o
- 
- # machine support
- 
-diff --git a/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h b/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
-index 0953ef6..de005ac 100644
---- a/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
-+++ b/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
-@@ -34,4 +34,10 @@
- #define S5P6450_GPQ_BASE		(S5P_VA_GPIO + 0x0180)
- #define S5P6450_GPS_BASE		(S5P_VA_GPIO + 0x0300)
- 
-+/* External interrupt control registers for group0 */
-+
-+#define S5P64X0_EINT0CON0		(S5P_VA_GPIO + 0x900)
-+#define S5P64X0_EINT0MASK		(S5P_VA_GPIO + 0x920)
-+#define S5P64X0_EINT0PEND		(S5P_VA_GPIO + 0x924)
-+
- #endif /* __ASM_ARCH_REGS_GPIO_H */
-diff --git a/arch/arm/mach-s5p64x0/irq-eint.c b/arch/arm/mach-s5p64x0/irq-eint.c
-new file mode 100644
-index 0000000..cfaf599
---- /dev/null
-+++ b/arch/arm/mach-s5p64x0/irq-eint.c
-@@ -0,0 +1,185 @@
-+/* arch/arm/mach-s5p64x0/irq-eint.c
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd
-+ *		http://www.samsung.com/
-+ *
-+ * Based on linux/arch/arm/mach-s3c64xx/irq-eint.c
-+ *
-+ * S5P64X0 - Interrupt handling for External Interrupts.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/gpio.h>
-+#include <linux/irq.h>
-+#include <linux/io.h>
-+
-+#include <plat/regs-irqtype.h>
-+#include <plat/gpio-cfg.h>
-+
-+#include <mach/regs-gpio.h>
-+#include <mach/regs-clock.h>
-+
-+#define eint_offset(irq)	((irq) - IRQ_EINT(0))
-+#define eint_irq_to_bit(irq)	((u32)(1 << eint_offset(irq)))
-+
-+static inline void s5p64x0_irq_eint_mask(struct irq_data *data)
-+{
-+	u32 mask;
-+
-+	mask = __raw_readl(S5P64X0_EINT0MASK);
-+	mask |= (u32)data->chip_data;
-+	__raw_writel(mask, S5P64X0_EINT0MASK);
-+}
-+
-+static void s5p64x0_irq_eint_unmask(struct irq_data *data)
-+{
-+	u32 mask;
-+
-+	mask = __raw_readl(S5P64X0_EINT0MASK);
-+	mask &= ~((u32)data->chip_data);
-+	__raw_writel(mask, S5P64X0_EINT0MASK);
-+}
-+
-+static inline void s5p64x0_irq_eint_ack(struct irq_data *data)
-+{
-+	__raw_writel((u32)data->chip_data, S5P64X0_EINT0PEND);
-+}
-+
-+static void s5p64x0_irq_eint_maskack(struct irq_data *data)
-+{
-+	/* compiler should in-line these */
-+	s5p64x0_irq_eint_mask(data);
-+	s5p64x0_irq_eint_ack(data);
-+}
-+
-+static int s5p64x0_irq_eint_set_type(struct irq_data *data, unsigned int type)
-+{
-+	int offs = eint_offset(data->irq);
-+	int shift;
-+	u32 ctrl, mask;
-+	u32 newvalue = 0;
-+	unsigned int id;
-+
-+	if (offs > 15)
-+		return -EINVAL;
-+
-+	switch (type) {
-+	case IRQ_TYPE_NONE:
-+		printk(KERN_WARNING "No edge setting!\n");
-+		break;
-+
-+	case IRQ_TYPE_EDGE_RISING:
-+		newvalue = S3C2410_EXTINT_RISEEDGE;
-+		break;
-+
-+	case IRQ_TYPE_EDGE_FALLING:
-+		newvalue = S3C2410_EXTINT_FALLEDGE;
-+		break;
-+
-+	case IRQ_TYPE_EDGE_BOTH:
-+		newvalue = S3C2410_EXTINT_BOTHEDGE;
-+		break;
-+
-+	case IRQ_TYPE_LEVEL_LOW:
-+		newvalue = S3C2410_EXTINT_LOWLEV;
-+		break;
-+
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		newvalue = S3C2410_EXTINT_HILEV;
-+		break;
-+
-+	default:
-+		printk(KERN_ERR "No such irq type %d", type);
-+		return -1;
-+	}
-+
-+	shift = (offs / 2) * 4;
-+	mask = 0x7 << shift;
-+
-+	ctrl = __raw_readl(S5P64X0_EINT0CON0) & ~mask;
-+	ctrl |= newvalue << shift;
-+	__raw_writel(ctrl, S5P64X0_EINT0CON0);
-+
-+	id = __raw_readl(S5P64X0_SYS_ID) & 0xFF000;
-+
-+	if (id == 0x50000)
-+		s3c_gpio_cfgpin(S5P6450_GPN(offs), S3C_GPIO_SFN(2));
-+	else
-+		s3c_gpio_cfgpin(S5P6440_GPN(offs), S3C_GPIO_SFN(2));
-+
-+	return 0;
-+}
-+
-+static struct irq_chip s5p64x0_irq_eint = {
-+	.name		= "s5p64x0-eint",
-+	.irq_mask	= s5p64x0_irq_eint_mask,
-+	.irq_unmask	= s5p64x0_irq_eint_unmask,
-+	.irq_mask_ack	= s5p64x0_irq_eint_maskack,
-+	.irq_ack	= s5p64x0_irq_eint_ack,
-+	.irq_set_type	= s5p64x0_irq_eint_set_type,
-+};
-+
-+/*
-+ * s5p64x0_irq_demux_eint
-+ *
-+ * This function demuxes the IRQ from the group0 external interrupts,
-+ * from IRQ_EINT(0) to IRQ_EINT(15). It is designed to be inlined into
-+ * the specific handlers s5p64x0_irq_demux_eintX_Y.
-+ */
-+static inline void s5p64x0_irq_demux_eint(unsigned int start, unsigned int end)
-+{
-+	u32 status = __raw_readl(S5P64X0_EINT0PEND);
-+	u32 mask = __raw_readl(S5P64X0_EINT0MASK);
-+	unsigned int irq;
-+
-+	status &= ~mask;
-+	status >>= start;
-+	status &= (1 << (end - start + 1)) - 1;
-+
-+	for (irq = IRQ_EINT(start); irq <= IRQ_EINT(end); irq++) {
-+		if (status & 1)
-+			generic_handle_irq(irq);
-+
-+		status >>= 1;
-+	}
-+}
-+
-+static void s5p64x0_irq_demux_eint0_3(unsigned int irq, struct irq_desc *desc)
-+{
-+	s5p64x0_irq_demux_eint(0, 3);
-+}
-+
-+static void s5p64x0_irq_demux_eint4_11(unsigned int irq, struct irq_desc *desc)
-+{
-+	s5p64x0_irq_demux_eint(4, 11);
-+}
-+
-+static void s5p64x0_irq_demux_eint12_15(unsigned int irq,
-+					struct irq_desc *desc)
-+{
-+	s5p64x0_irq_demux_eint(12, 15);
-+}
-+
-+static int __init s5p64x0_init_irq_eint(void)
-+{
-+	int irq;
-+
-+	for (irq = IRQ_EINT(0); irq <= IRQ_EINT(15); irq++) {
-+		irq_set_chip_and_handler(irq, &s5p64x0_irq_eint,
-+					 handle_level_irq);
-+		irq_set_chip_data(irq, (void *)eint_irq_to_bit(irq));
-+		set_irq_flags(irq, IRQF_VALID);
-+	}
-+
-+	irq_set_chained_handler(IRQ_EINT0_3, s5p64x0_irq_demux_eint0_3);
-+	irq_set_chained_handler(IRQ_EINT4_11, s5p64x0_irq_demux_eint4_11);
-+	irq_set_chained_handler(IRQ_EINT12_15, s5p64x0_irq_demux_eint12_15);
-+
-+	return 0;
-+}
-+
-+arch_initcall(s5p64x0_init_irq_eint);
--- 
-1.7.4.4
+Thanks for your comments.
+Right now I am looking forward for more comments.
+I will fix the same and send a V2 patch-set next week.
