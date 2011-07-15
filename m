@@ -1,87 +1,86 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] ARM: S5P64X0: External Interrupt Support
-Date: Fri, 15 Jul 2011 13:34:29 +0100
-Message-ID: <20110715123429.GP23270@n2100.arm.linux.org.uk>
-References: <1310712094-19831-1-git-send-email-padma.v@samsung.com> <20110715090011.GN23270@n2100.arm.linux.org.uk> <CAAgF-Bcke26iFsgf0DA3LB5CLv=TkS6UG0y+SBLR=F6TzGYU+A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Banajit Goswami <banajit.g@samsung.com>
+Subject: [PATCH 0/8] ARM: SAMSUNG: Add common PWM Backlight support
+Date: Fri, 15 Jul 2011 20:12:40 +0530
+Message-ID: <1310740968-26722-1-git-send-email-banajit.g@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:60083 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750822Ab1GOMey (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:26816 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752498Ab1GOOmV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Jul 2011 08:34:54 -0400
-Content-Disposition: inline
-In-Reply-To: <CAAgF-Bcke26iFsgf0DA3LB5CLv=TkS6UG0y+SBLR=F6TzGYU+A@mail.gmail.com>
+	Fri, 15 Jul 2011 10:42:21 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LOD00GRWQ6IZSB0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 15 Jul 2011 23:42:20 +0900 (KST)
+Received: from banajit.sisodomain.com ([107.108.83.226])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LOD00F3JQ6EZC@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 15 Jul 2011 23:42:19 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: padma venkat <padma.kvr@gmail.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, jg1.han@samsung.com
 
-On Fri, Jul 15, 2011 at 05:23:33PM +0530, padma venkat wrote:
-> Hi Russell,
->=20
-> On Fri, Jul 15, 2011 at 2:30 PM, Russell King - ARM Linux
-> <linux@arm.linux.org.uk> wrote:
-> > On Fri, Jul 15, 2011 at 12:11:34PM +0530, Padmavathi Venna wrote:
-> >> +#define eint_offset(irq) =A0 =A0 ((irq) - IRQ_EINT(0))
-> >> +#define eint_irq_to_bit(irq) ((u32)(1 << eint_offset(irq)))
-> >> +
-> >> +static inline void s5p64x0_irq_eint_mask(struct irq_data *data)
-> >> +{
-> >> + =A0 =A0 u32 mask;
-> >> +
-> >> + =A0 =A0 mask =3D __raw_readl(S5P64X0_EINT0MASK);
-> >> + =A0 =A0 mask |=3D (u32)data->chip_data;
-> >> + =A0 =A0 __raw_writel(mask, S5P64X0_EINT0MASK);
-> >> +}
-> >> +
-> >> +static void s5p64x0_irq_eint_unmask(struct irq_data *data)
-> >> +{
-> >> + =A0 =A0 u32 mask;
-> >> +
-> >> + =A0 =A0 mask =3D __raw_readl(S5P64X0_EINT0MASK);
-> >> + =A0 =A0 mask &=3D ~((u32)data->chip_data);
-> >> + =A0 =A0 __raw_writel(mask, S5P64X0_EINT0MASK);
-> >> +}
-> >> +
-> >> +static inline void s5p64x0_irq_eint_ack(struct irq_data *data)
-> >> +{
-> >> + =A0 =A0 __raw_writel((u32)data->chip_data, S5P64X0_EINT0PEND);
-> >> +}
-> >> +
-> >> +static void s5p64x0_irq_eint_maskack(struct irq_data *data)
-> >> +{
-> >> + =A0 =A0 /* compiler should in-line these */
-> >> + =A0 =A0 s5p64x0_irq_eint_mask(data);
-> >> + =A0 =A0 s5p64x0_irq_eint_ack(data);
-> >> +}
-> >
-> > Won't genirqchip support deal with all of the above for you?
-> As per my understanding, to deal with low level interrupt hardware ac=
-cess
-> we need to use the accessor functions. Please suggest me if there is
-> any better way of doing this.
+ The patches are created against "for-next" branch of Kukjin Kim's tree at:
+ git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
 
-I'm not saying don't have these.  I'm saying use the _generic_ irqchip
-support which has the code implemented to set and clear bits in registe=
-rs.
-Something like this:
+ Patch [1/8]
+  -- add a common infrastructure to support PWM backlight for various 
+     Samsung boards.
 
-	struct irq_chip_generic *gc;
+ Patch [2/8]
+  -- Add support for PWM backlight for SMDKV310 board.
 
-	gc =3D irq_alloc_generic_chip(name, 1, first_irq, base_of_controller,
-			handler);
+ Patch [3/8]
+  -- Add support for PWM backlight for SMDKC210 board.
 
-	gc->chip_types->chip.irq_ack =3D irq_gc_ack;
-	gc->chip_types->chip.irq_mask =3D irq_gc_mask_set_bit;
-	gc->chip_types->chip.irq_unmask =3D irq_gc_mask_clr_bit;
+ Patch [4/8]
+  -- Add support for PWM backlight for SMDKV210 board.
 
-	/* replace the two below with the _real_ offset, rather than these cal=
-culations */
-	gc->chip_types->reg.ack =3D S5P64X0_EINT0PEND - base_of_controller;
-	gc->chip_types->reg.mask =3D S5P64X0_EINT0MASK - base_of_controller;
+ Patch [5/8]
+  -- Add support for PWM backlight for SMDKC100 board.
 
-	irq_setup_generic_chip(gc, mask_of_irqs_to_setup,
-		IRQ_GC_INIT_MASK_CACHE, flags_to_clear, flags_to_set);
+ Patch [6/8]
+  -- Add support for PWM backlight for SMDK6440 board.
+
+Patch [7/8]
+  -- Add support for PWM backlight for SMDK6450 board.
+
+ Patch [8/8]
+  -- Add support for PWM backlight for SMDK6410 board.
+
+ Patch 3 with PWM Backlight support for SMDKC210 is only compile tested.
+
+   [Patch 1/8] ARM: SAMSUNG: Create a common infrastructure for PWM backlight support
+   [Patch 2/8] ARM: EXYNOS4: Add PWM backlight support on Samsung SMDKV310 board
+   [Patch 3/8] ARM: EXYNOS4: Add PWM backlight support on Samsung SMDKC210 board
+   [Patch 4/8] ARM: S5PV210: Add PWM backlight support on Samsung SMDKV210 board
+   [Patch 5/8] ARM: S5PC100: Add PWM backlight support on Samsung SMDKC100 board
+   [Patch 6/8] ARM: S5P64X0: Add PWM backlight support on Samsung SMDK6440 board
+   [Patch 7/8] ARM: S5P64X0: Add PWM backlight support on Samsung SMDK6450 board
+   [Patch 8/8] ARM: S3C64XX: Add PWM backlight support on Samsung SMDK6410 board
+
+ arch/arm/mach-exynos4/Kconfig                  |    4 +
+ arch/arm/mach-exynos4/mach-smdkc210.c          |   16 +++
+ arch/arm/mach-exynos4/mach-smdkv310.c          |   16 +++
+ arch/arm/mach-s3c64xx/Kconfig                  |    1 +
+ arch/arm/mach-s3c64xx/mach-smdk6410.c          |   15 ++-
+ arch/arm/mach-s5p64x0/Kconfig                  |    2 +
+ arch/arm/mach-s5p64x0/mach-smdk6440.c          |   54 ++-------
+ arch/arm/mach-s5p64x0/mach-smdk6450.c          |   54 ++-------
+ arch/arm/mach-s5pc100/Kconfig                  |    1 +
+ arch/arm/mach-s5pc100/mach-smdkc100.c          |   55 ++-------
+ arch/arm/mach-s5pv210/Kconfig                  |    1 +
+ arch/arm/mach-s5pv210/mach-smdkv210.c          |   54 ++-------
+ arch/arm/plat-samsung/Kconfig                  |    6 +
+ arch/arm/plat-samsung/Makefile                 |    1 +
+ arch/arm/plat-samsung/dev-backlight.c          |  151 ++++++++++++++++++++++++
+ arch/arm/plat-samsung/include/plat/backlight.h |   26 ++++
+ 16 files changed, 291 insertions(+), 166 deletions(-)
+ create mode 100644 arch/arm/plat-samsung/dev-backlight.c
+ create mode 100644 arch/arm/plat-samsung/include/plat/backlight.h
+
+-- 
+1.7.2.3
