@@ -1,295 +1,484 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH v2] ARM: EXYNOS4: Add platform device for dwmci driver.
-Date: Fri, 15 Jul 2011 16:04:48 +0900
-Message-ID: <CAH9JG2XZ_JLtHGKR-6we1vov+1O8Y7S2hC6f9bMUmz3aTUpvBw@mail.gmail.com>
-References: <1310637226-19478-1-git-send-email-tgih.jun@samsung.com>
-	<CAH9JG2Vy9OJcrATeKV60X7SjdAR7Z+LDMzgMaps5NKu+M2zxAA@mail.gmail.com>
-	<003201cc42bc$a43e4150$ecbac3f0$%jun@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: [PATCH] ARM: S5P: Remove sysmmu driver from arch tree
+Date: Fri, 15 Jul 2011 17:54:26 +0900
+Message-ID: <1310720066-19207-1-git-send-email-pullip.cho@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:46836 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964776Ab1GOHEt convert rfc822-to-8bit (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:56153 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964782Ab1GOI45 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Jul 2011 03:04:49 -0400
-Received: by vws1 with SMTP id 1so699879vws.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Jul 2011 00:04:48 -0700 (PDT)
-In-Reply-To: <003201cc42bc$a43e4150$ecbac3f0$%jun@samsung.com>
+	Fri, 15 Jul 2011 04:56:57 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ByungJae Lee <bjlee@samsung.com>, SeungKwon Ko <skwon.ko@samsung.com>, JaeHun Jung <jh0801.jung@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Cc: Joerg Roedel <joro@8bytes.org>, Sanghyun Lee <sanghyun75.lee@samsung.com>, Kwanghyun La <nala.la@samsung.com>, Ilho Lee <ilho215.lee@samsung.com>, KyongHo Cho <pullip.cho@samsung.com>
 
-On Fri, Jul 15, 2011 at 3:58 PM, Seungwon Jeon <tgih.jun@samsung.com> w=
-rote:
-> Hi,
->
-> Kyungmin Park wrote:
->> On Thu, Jul 14, 2011 at 6:53 PM, Seungwon Jeon <tgih.jun@samsung.com=
->
->> wrote:
->> > This patch add platform devices for Synopsys DesignWare Multimedia=
- Card
->> > Interface driver.
->> >
->> > Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
->> > ---
->> > =A0arch/arm/mach-exynos4/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 | =A0 12 =
-++++
->> > =A0arch/arm/mach-exynos4/Makefile =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A0=
-1 +
->> > =A0arch/arm/mach-exynos4/dev-dwmci.c =A0 =A0 =A0 =A0 | =A0 88
->> +++++++++++++++++++++++++++++
->> > =A0arch/arm/mach-exynos4/include/mach/irqs.h | =A0 =A01 +
->> > =A0arch/arm/mach-exynos4/include/mach/map.h =A0| =A0 =A01 +
->> > =A0arch/arm/plat-samsung/include/plat/devs.h | =A0 =A01 +
->> > =A06 files changed, 104 insertions(+), 0 deletions(-)
->> > =A0create mode 100644 arch/arm/mach-exynos4/dev-dwmci.c
->> >
->> > diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-
->> exynos4/Kconfig
->> > index 5115b90..2ec5b96 100644
->> > --- a/arch/arm/mach-exynos4/Kconfig
->> > +++ b/arch/arm/mach-exynos4/Kconfig
->> > @@ -35,6 +35,11 @@ config EXYNOS4_DEV_SYSMMU
->> > =A0 =A0 =A0 =A0help
->> > =A0 =A0 =A0 =A0 =A0Common setup code for SYSTEM MMU in EXYNOS4
->> >
->> > +config EXYNOS4_DEV_DWMCI
->> > + =A0 =A0 =A0 bool
->> > + =A0 =A0 =A0 help
->> > + =A0 =A0 =A0 =A0 Compile in platform device definitions for DWMCI
->> > +
->> > =A0config EXYNOS4_SETUP_I2C1
->> > =A0 =A0 =A0 =A0bool
->> > =A0 =A0 =A0 =A0help
->> > @@ -200,6 +205,13 @@ comment "Configuration for HSMMC bus width"
->> >
->> > =A0menu "Use 8-bit bus width"
->> >
->> > +config EXYNOS4_DWMCI_8BIT
->> > + =A0 =A0 =A0 bool "DWMCI with 8-bit bus"
->> > + =A0 =A0 =A0 depends on EXYNOS4_DEV_DWMCI
->> > + =A0 =A0 =A0 help
->> > + =A0 =A0 =A0 =A0 Support DWMCI 8-bit bus.
->> > + =A0 =A0 =A0 =A0 If selected, Channel 1 is disabled.
->>
->> No it should be determined at runtime instead of compile time.
->
-> Sorry for that I don't understand your meaning.
-> Perhaps, you want to decide the width according to the board type at =
-runtime?
-> I expect the reason and description about your comment.
-> Bus width is board-specific information related with capability
-> which is not determined in runtime.
-> So we should decide and choice bus width considering the board target
-> before compiling.
-It prohibit to make a single kernel as other platform does.
-As you know, now we can select multiple board support at exynos4.
-some board want to use 4-bit, other board want to use 8-bit. then how
-to select proper bus width?
+This patch remove the System MMU driver from arch/arm/plat-s5p
+because it will be merged with IOMMU API implementation and moved to
+drivers/iommu directory.
+Since the System MMU driver defines custom API and thus is not referred
+by any device drivers in the mainline kernel, this patch will not
+cause any problem.
 
+Signed-off-by: KyongHo Cho <pullip.cho@samsung.com>
+---
+ arch/arm/plat-s5p/Kconfig               |    8 -
+ arch/arm/plat-s5p/Makefile              |    1 -
+ arch/arm/plat-s5p/include/plat/sysmmu.h |   95 ----------
+ arch/arm/plat-s5p/sysmmu.c              |  312 -------------------------------
+ 4 files changed, 0 insertions(+), 416 deletions(-)
+ delete mode 100644 arch/arm/plat-s5p/include/plat/sysmmu.h
+ delete mode 100644 arch/arm/plat-s5p/sysmmu.c
 
->
-> Best regards,
-> Seungwon Jeon.
->
->>
->> > +
->> > =A0config EXYNOS4_SDHCI_CH0_8BIT
->> > =A0 =A0 =A0 =A0bool "Channel 0 with 8-bit bus"
->> > =A0 =A0 =A0 =A0help
->> > diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-
->> exynos4/Makefile
->> > index 60fe5ec..eeeaada 100644
->> > --- a/arch/arm/mach-exynos4/Makefile
->> > +++ b/arch/arm/mach-exynos4/Makefile
->> > @@ -43,6 +43,7 @@ obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 +=3D dev-audio.o
->> > =A0obj-$(CONFIG_EXYNOS4_DEV_AHCI) =A0 =A0 =A0 =A0 +=3D dev-ahci.o
->> > =A0obj-$(CONFIG_EXYNOS4_DEV_PD) =A0 =A0 =A0 =A0 =A0 +=3D dev-pd.o
->> > =A0obj-$(CONFIG_EXYNOS4_DEV_SYSMMU) =A0 =A0 =A0 +=3D dev-sysmmu.o
->> > +obj-$(CONFIG_EXYNOS4_DEV_DWMCI) =A0 =A0 =A0 =A0+=3D dev-dwmci.o
->> >
->> > =A0obj-$(CONFIG_EXYNOS4_SETUP_FIMC) =A0 =A0 =A0 +=3D setup-fimc.o
->> > =A0obj-$(CONFIG_EXYNOS4_SETUP_I2C1) =A0 =A0 =A0 +=3D setup-i2c1.o
->> > diff --git a/arch/arm/mach-exynos4/dev-dwmci.c b/arch/arm/mach-
->> exynos4/dev-dwmci.c
->> > new file mode 100644
->> > index 0000000..a0defa4
->> > --- /dev/null
->> > +++ b/arch/arm/mach-exynos4/dev-dwmci.c
->> > @@ -0,0 +1,88 @@
->> > +/*
->> > + * linuxarch/arm/mach-exynos4/dev-dwmci.c
->> > + *
->> > + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
->> > + * =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com
->> > + *
->> > + * Platform device for Synopsys DesignWare Mobile Storage IP
->> > + *
->> > + * This program is free software; you can redistribute it and/or =
-modify
->> > + * it under the terms of the GNU General Public License as publis=
-hed by
->> > + * the Free Software Foundation; either version 2 of the License,=
- or
->> > + * (at your option) any later version.
->> > + */
->> > +
->> > +#include <linux/kernel.h>
->> > +#include <linux/dma-mapping.h>
->> > +#include <linux/platform_device.h>
->> > +#include <linux/interrupt.h>
->> > +#include <linux/mmc/dw_mmc.h>
->> > +#include <linux/mmc/host.h>
->> > +#include <linux/io.h>
->> > +#include <linux/gpio.h>
->> > +
->> > +#include <plat/devs.h>
->> > +#include <plat/cpu.h>
->> > +#include <plat/gpio-cfg.h>
->> > +
->> > +#include <mach/map.h>
->> > +
->> > +#ifdef EXYNOS4_DWMCI_8BIT
->> > +#define BUS_WIDTH 8
->> > +#else
->> > +#define BUS_WIDTH 4
->> > +#endif
->>
->> Right, each board can modify the bus width. so it needs the helper
->> function to setup.
->> > +
->> > +static int exynos4_dwmci_get_ocr(u32 slot_id)
->> > +{
->> > + =A0 =A0 =A0 return MMC_VDD_32_33 | MMC_VDD_33_34;
->> > +}
->> > +
->> > +static int exynos4_dwmci_get_bus_wd(u32 slot_id)
->> > +{
->> > + =A0 =A0 =A0 return BUS_WIDTH;
->> > +}
->> > +
->> > +static int exynos4_dwmci_init(u32 slot_id, irq_handler_t handler,=
- void
->> *data)
->> > +{
->> > + =A0 =A0 =A0 return 0;
->> > +}
->> > +
->> > +static struct resource exynos4_dwmci_resource[] =3D {
->> > + =A0 =A0 =A0 [0] =3D {
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =3D EXYNOS4_PA_DWMCI,
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =3D EXYNOS4_PA_DWMCI + SZ_4=
-K - 1,
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =3D IORESOURCE_MEM,
->> > + =A0 =A0 =A0 },
->> > + =A0 =A0 =A0 [1] =3D {
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =3D IRQ_DWMCI,
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =3D IRQ_DWMCI,
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =3D IORESOURCE_IRQ,
->> > + =A0 =A0 =A0 }
->> > +};
->> > +
->> > +static struct dw_mci_board exynos4_dwci_pdata =3D {
->> > + =A0 =A0 =A0 .num_slots =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-=3D 1,
->> > + =A0 =A0 =A0 .quirks =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =3D DW_MCI_QUIRK_BROKEN_CARD_DETECTION,
->> > + =A0 =A0 =A0 .bus_hz =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =3D 80*1000*1000,
->> > + =A0 =A0 =A0 .detect_delay_ms =A0 =A0 =A0 =A0=3D 200,
->> > + =A0 =A0 =A0 .init =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =3D exynos4_dwmci_init,
->> > + =A0 =A0 =A0 .get_ocr =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0=3D exynos4_dwmci_get_ocr,
->> > + =A0 =A0 =A0 .get_bus_wd =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=3D exynos4_dwmci_get_bus_wd,
->> > + =A0 =A0 =A0 .select_slot =A0 =A0 =A0 =A0 =A0 =A0=3D NULL,
->> > +};
->> > +
->> > +static u64 exynos4_dwmci_dmamask =3D DMA_BIT_MASK(32);
->> > +
->> > +struct platform_device exynos4_device_dwmci =3D {
->> > + =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "dw_mmc",
->> > + =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
->> > + =A0 =A0 =A0 .num_resources =A0=3D ARRAY_SIZE(exynos4_dwmci_resou=
-rce),
->> > + =A0 =A0 =A0 .resource =A0 =A0 =A0 =3D exynos4_dwmci_resource,
->> > + =A0 =A0 =A0 .dev =A0 =A0 =A0 =A0 =A0 =A0=3D {
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .dma_mask =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =3D &exynos4_dwmci_dmamask,
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .coherent_dma_mask =A0 =A0 =A0=3D DM=
-A_BIT_MASK(32),
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .platform_data =A0=3D &exynos4_dwci_=
-pdata,
->> > + =A0 =A0 =A0 },
->> > +};
->> > +
->> > diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/=
-mach-
->> exynos4/include/mach/irqs.h
->> > index 5d03730..b720246 100644
->> > --- a/arch/arm/mach-exynos4/include/mach/irqs.h
->> > +++ b/arch/arm/mach-exynos4/include/mach/irqs.h
->> > @@ -107,6 +107,7 @@
->> > =A0#define IRQ_HSMMC1 =A0 =A0 =A0 =A0 =A0 =A0 COMBINER_IRQ(29, 1)
->> > =A0#define IRQ_HSMMC2 =A0 =A0 =A0 =A0 =A0 =A0 COMBINER_IRQ(29, 2)
->> > =A0#define IRQ_HSMMC3 =A0 =A0 =A0 =A0 =A0 =A0 COMBINER_IRQ(29, 3)
->> > +#define IRQ_DWMCI =A0 =A0 =A0 =A0 =A0 =A0 =A0COMBINER_IRQ(29, 4)
->> >
->> > =A0#define IRQ_MIPI_CSIS0 =A0 =A0 =A0 =A0 COMBINER_IRQ(30, 0)
->> > =A0#define IRQ_MIPI_CSIS1 =A0 =A0 =A0 =A0 COMBINER_IRQ(30, 1)
->> > diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/m=
-ach-
->> exynos4/include/mach/map.h
->> > index 0009e77..352e500 100644
->> > --- a/arch/arm/mach-exynos4/include/mach/map.h
->> > +++ b/arch/arm/mach-exynos4/include/mach/map.h
->> > @@ -94,6 +94,7 @@
->> > =A0#define EXYNOS4_PA_MIPI_CSIS1 =A0 =A0 =A0 =A0 =A00x11890000
->> >
->> > =A0#define EXYNOS4_PA_HSMMC(x) =A0 =A0 =A0 =A0 =A0 =A0(0x12510000 =
-+ ((x) * 0x10000))
->> > +#define EXYNOS4_PA_DWMCI =A0 =A0 =A0 =A0 =A0 =A0 =A0 0x12550000
->> >
->> > =A0#define EXYNOS4_PA_SATA =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A00x12560000
->> > =A0#define EXYNOS4_PA_SATAPHY =A0 =A0 =A0 =A0 =A0 =A0 0x125D0000
->> > diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/=
-plat-
->> samsung/include/plat/devs.h
->> > index e3b31c2..29fa1cf 100644
->> > --- a/arch/arm/plat-samsung/include/plat/devs.h
->> > +++ b/arch/arm/plat-samsung/include/plat/devs.h
->> > @@ -112,6 +112,7 @@ extern struct platform_device exynos4_device_i=
-2s2;
->> > =A0extern struct platform_device exynos4_device_spdif;
->> > =A0extern struct platform_device exynos4_device_pd[];
->> > =A0extern struct platform_device exynos4_device_ahci;
->> > +extern struct platform_device exynos4_device_dwmci;
->> >
->> > =A0extern struct platform_device s5p6440_device_pcm;
->> > =A0extern struct platform_device s5p6440_device_iis;
->> > --
->> > 1.7.2.3
->> >
->> > --
->> > To unsubscribe from this list: send the line "unsubscribe linux-sa=
-msung-
->> soc" in
->> > the body of a message to majordomo@vger.kernel.org
->> > More majordomo info at =A0http://vger.kernel.org/majordomo-info.ht=
-ml
->> >
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-sams=
-ung-
->> soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
->
+diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
+index 7f9ff2a..8ad962d 100644
+--- a/arch/arm/plat-s5p/Kconfig
++++ b/arch/arm/plat-s5p/Kconfig
+@@ -43,14 +43,6 @@ config S5P_HRT
+ 	help
+ 	  Use the High Resolution timer support
+ 
+-comment "System MMU"
+-
+-config S5P_SYSTEM_MMU
+-	bool "S5P SYSTEM MMU"
+-	depends on ARCH_EXYNOS4
+-	help
+-	  Say Y here if you want to enable System MMU
+-
+ config S5P_DEV_FIMC0
+ 	bool
+ 	help
+diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
+index e234cc4..f43d8e7 100644
+--- a/arch/arm/plat-s5p/Makefile
++++ b/arch/arm/plat-s5p/Makefile
+@@ -19,7 +19,6 @@ obj-y				+= clock.o
+ obj-y				+= irq.o
+ obj-$(CONFIG_S5P_EXT_INT)	+= irq-eint.o
+ obj-$(CONFIG_S5P_GPIO_INT)	+= irq-gpioint.o
+-obj-$(CONFIG_S5P_SYSTEM_MMU)	+= sysmmu.o
+ obj-$(CONFIG_PM)		+= pm.o
+ obj-$(CONFIG_PM)		+= irq-pm.o
+ obj-$(CONFIG_S5P_HRT) 		+= s5p-time.o
+diff --git a/arch/arm/plat-s5p/include/plat/sysmmu.h b/arch/arm/plat-s5p/include/plat/sysmmu.h
+deleted file mode 100644
+index bf5283c..0000000
+--- a/arch/arm/plat-s5p/include/plat/sysmmu.h
++++ /dev/null
+@@ -1,95 +0,0 @@
+-/* linux/arch/arm/plat-s5p/include/plat/sysmmu.h
+- *
+- * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- *
+- * Samsung System MMU driver for S5P platform
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#ifndef __ASM__PLAT_SYSMMU_H
+-#define __ASM__PLAT_SYSMMU_H __FILE__
+-
+-enum S5P_SYSMMU_INTERRUPT_TYPE {
+-	SYSMMU_PAGEFAULT,
+-	SYSMMU_AR_MULTIHIT,
+-	SYSMMU_AW_MULTIHIT,
+-	SYSMMU_BUSERROR,
+-	SYSMMU_AR_SECURITY,
+-	SYSMMU_AR_ACCESS,
+-	SYSMMU_AW_SECURITY,
+-	SYSMMU_AW_PROTECTION, /* 7 */
+-	SYSMMU_FAULTS_NUM
+-};
+-
+-#ifdef CONFIG_S5P_SYSTEM_MMU
+-
+-#include <mach/sysmmu.h>
+-
+-/**
+- * s5p_sysmmu_enable() - enable system mmu of ip
+- * @ips: The ip connected system mmu.
+- * #pgd: Base physical address of the 1st level page table
+- *
+- * This function enable system mmu to transfer address
+- * from virtual address to physical address
+- */
+-void s5p_sysmmu_enable(sysmmu_ips ips, unsigned long pgd);
+-
+-/**
+- * s5p_sysmmu_disable() - disable sysmmu mmu of ip
+- * @ips: The ip connected system mmu.
+- *
+- * This function disable system mmu to transfer address
+- * from virtual address to physical address
+- */
+-void s5p_sysmmu_disable(sysmmu_ips ips);
+-
+-/**
+- * s5p_sysmmu_set_tablebase_pgd() - set page table base address to refer page table
+- * @ips: The ip connected system mmu.
+- * @pgd: The page table base address.
+- *
+- * This function set page table base address
+- * When system mmu transfer address from virtaul address to physical address,
+- * system mmu refer address information from page table
+- */
+-void s5p_sysmmu_set_tablebase_pgd(sysmmu_ips ips, unsigned long pgd);
+-
+-/**
+- * s5p_sysmmu_tlb_invalidate() - flush all TLB entry in system mmu
+- * @ips: The ip connected system mmu.
+- *
+- * This function flush all TLB entry in system mmu
+- */
+-void s5p_sysmmu_tlb_invalidate(sysmmu_ips ips);
+-
+-/** s5p_sysmmu_set_fault_handler() - Fault handler for System MMUs
+- * @itype: type of fault.
+- * @pgtable_base: the physical address of page table base. This is 0 if @ips is
+- *               SYSMMU_BUSERROR.
+- * @fault_addr: the device (virtual) address that the System MMU tried to
+- *             translated. This is 0 if @ips is SYSMMU_BUSERROR.
+- * Called when interrupt occurred by the System MMUs
+- * The device drivers of peripheral devices that has a System MMU can implement
+- * a fault handler to resolve address translation fault by System MMU.
+- * The meanings of return value and parameters are described below.
+-
+- * return value: non-zero if the fault is correctly resolved.
+- *         zero if the fault is not handled.
+- */
+-void s5p_sysmmu_set_fault_handler(sysmmu_ips ips,
+-			int (*handler)(enum S5P_SYSMMU_INTERRUPT_TYPE itype,
+-					unsigned long pgtable_base,
+-					unsigned long fault_addr));
+-#else
+-#define s5p_sysmmu_enable(ips, pgd) do { } while (0)
+-#define s5p_sysmmu_disable(ips) do { } while (0)
+-#define s5p_sysmmu_set_tablebase_pgd(ips, pgd) do { } while (0)
+-#define s5p_sysmmu_tlb_invalidate(ips) do { } while (0)
+-#define s5p_sysmmu_set_fault_handler(ips, handler) do { } while (0)
+-#endif
+-#endif /* __ASM_PLAT_SYSMMU_H */
+diff --git a/arch/arm/plat-s5p/sysmmu.c b/arch/arm/plat-s5p/sysmmu.c
+deleted file mode 100644
+index 54f5edd..0000000
+--- a/arch/arm/plat-s5p/sysmmu.c
++++ /dev/null
+@@ -1,312 +0,0 @@
+-/* linux/arch/arm/plat-s5p/sysmmu.c
+- *
+- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-
+-#include <linux/io.h>
+-#include <linux/interrupt.h>
+-#include <linux/platform_device.h>
+-
+-#include <asm/pgtable.h>
+-
+-#include <mach/map.h>
+-#include <mach/regs-sysmmu.h>
+-#include <plat/sysmmu.h>
+-
+-#define CTRL_ENABLE	0x5
+-#define CTRL_BLOCK	0x7
+-#define CTRL_DISABLE	0x0
+-
+-static struct device *dev;
+-
+-static unsigned short fault_reg_offset[SYSMMU_FAULTS_NUM] = {
+-	S5P_PAGE_FAULT_ADDR,
+-	S5P_AR_FAULT_ADDR,
+-	S5P_AW_FAULT_ADDR,
+-	S5P_DEFAULT_SLAVE_ADDR,
+-	S5P_AR_FAULT_ADDR,
+-	S5P_AR_FAULT_ADDR,
+-	S5P_AW_FAULT_ADDR,
+-	S5P_AW_FAULT_ADDR
+-};
+-
+-static char *sysmmu_fault_name[SYSMMU_FAULTS_NUM] = {
+-	"PAGE FAULT",
+-	"AR MULTI-HIT FAULT",
+-	"AW MULTI-HIT FAULT",
+-	"BUS ERROR",
+-	"AR SECURITY PROTECTION FAULT",
+-	"AR ACCESS PROTECTION FAULT",
+-	"AW SECURITY PROTECTION FAULT",
+-	"AW ACCESS PROTECTION FAULT"
+-};
+-
+-static int (*fault_handlers[S5P_SYSMMU_TOTAL_IPNUM])(
+-		enum S5P_SYSMMU_INTERRUPT_TYPE itype,
+-		unsigned long pgtable_base,
+-		unsigned long fault_addr);
+-
+-/*
+- * If adjacent 2 bits are true, the system MMU is enabled.
+- * The system MMU is disabled, otherwise.
+- */
+-static unsigned long sysmmu_states;
+-
+-static inline void set_sysmmu_active(sysmmu_ips ips)
+-{
+-	sysmmu_states |= 3 << (ips * 2);
+-}
+-
+-static inline void set_sysmmu_inactive(sysmmu_ips ips)
+-{
+-	sysmmu_states &= ~(3 << (ips * 2));
+-}
+-
+-static inline int is_sysmmu_active(sysmmu_ips ips)
+-{
+-	return sysmmu_states & (3 << (ips * 2));
+-}
+-
+-static void __iomem *sysmmusfrs[S5P_SYSMMU_TOTAL_IPNUM];
+-
+-static inline void sysmmu_block(sysmmu_ips ips)
+-{
+-	__raw_writel(CTRL_BLOCK, sysmmusfrs[ips] + S5P_MMU_CTRL);
+-	dev_dbg(dev, "%s is blocked.\n", sysmmu_ips_name[ips]);
+-}
+-
+-static inline void sysmmu_unblock(sysmmu_ips ips)
+-{
+-	__raw_writel(CTRL_ENABLE, sysmmusfrs[ips] + S5P_MMU_CTRL);
+-	dev_dbg(dev, "%s is unblocked.\n", sysmmu_ips_name[ips]);
+-}
+-
+-static inline void __sysmmu_tlb_invalidate(sysmmu_ips ips)
+-{
+-	__raw_writel(0x1, sysmmusfrs[ips] + S5P_MMU_FLUSH);
+-	dev_dbg(dev, "TLB of %s is invalidated.\n", sysmmu_ips_name[ips]);
+-}
+-
+-static inline void __sysmmu_set_ptbase(sysmmu_ips ips, unsigned long pgd)
+-{
+-	if (unlikely(pgd == 0)) {
+-		pgd = (unsigned long)ZERO_PAGE(0);
+-		__raw_writel(0x20, sysmmusfrs[ips] + S5P_MMU_CFG); /* 4KB LV1 */
+-	} else {
+-		__raw_writel(0x0, sysmmusfrs[ips] + S5P_MMU_CFG); /* 16KB LV1 */
+-	}
+-
+-	__raw_writel(pgd, sysmmusfrs[ips] + S5P_PT_BASE_ADDR);
+-
+-	dev_dbg(dev, "Page table base of %s is initialized with 0x%08lX.\n",
+-						sysmmu_ips_name[ips], pgd);
+-	__sysmmu_tlb_invalidate(ips);
+-}
+-
+-void sysmmu_set_fault_handler(sysmmu_ips ips,
+-			int (*handler)(enum S5P_SYSMMU_INTERRUPT_TYPE itype,
+-					unsigned long pgtable_base,
+-					unsigned long fault_addr))
+-{
+-	BUG_ON(!((ips >= SYSMMU_MDMA) && (ips < S5P_SYSMMU_TOTAL_IPNUM)));
+-	fault_handlers[ips] = handler;
+-}
+-
+-static irqreturn_t s5p_sysmmu_irq(int irq, void *dev_id)
+-{
+-	/* SYSMMU is in blocked when interrupt occurred. */
+-	unsigned long base = 0;
+-	sysmmu_ips ips = (sysmmu_ips)dev_id;
+-	enum S5P_SYSMMU_INTERRUPT_TYPE itype;
+-
+-	itype = (enum S5P_SYSMMU_INTERRUPT_TYPE)
+-		__ffs(__raw_readl(sysmmusfrs[ips] + S5P_INT_STATUS));
+-
+-	BUG_ON(!((itype >= 0) && (itype < 8)));
+-
+-	dev_alert(dev, "%s occurred by %s.\n", sysmmu_fault_name[itype],
+-							sysmmu_ips_name[ips]);
+-
+-	if (fault_handlers[ips]) {
+-		unsigned long addr;
+-
+-		base = __raw_readl(sysmmusfrs[ips] + S5P_PT_BASE_ADDR);
+-		addr = __raw_readl(sysmmusfrs[ips] + fault_reg_offset[itype]);
+-
+-		if (fault_handlers[ips](itype, base, addr)) {
+-			__raw_writel(1 << itype,
+-					sysmmusfrs[ips] + S5P_INT_CLEAR);
+-			dev_notice(dev, "%s from %s is resolved."
+-					" Retrying translation.\n",
+-				sysmmu_fault_name[itype], sysmmu_ips_name[ips]);
+-		} else {
+-			base = 0;
+-		}
+-	}
+-
+-	sysmmu_unblock(ips);
+-
+-	if (!base)
+-		dev_notice(dev, "%s from %s is not handled.\n",
+-			sysmmu_fault_name[itype], sysmmu_ips_name[ips]);
+-
+-	return IRQ_HANDLED;
+-}
+-
+-void s5p_sysmmu_set_tablebase_pgd(sysmmu_ips ips, unsigned long pgd)
+-{
+-	if (is_sysmmu_active(ips)) {
+-		sysmmu_block(ips);
+-		__sysmmu_set_ptbase(ips, pgd);
+-		sysmmu_unblock(ips);
+-	} else {
+-		dev_dbg(dev, "%s is disabled. "
+-			"Skipping initializing page table base.\n",
+-						sysmmu_ips_name[ips]);
+-	}
+-}
+-
+-void s5p_sysmmu_enable(sysmmu_ips ips, unsigned long pgd)
+-{
+-	if (!is_sysmmu_active(ips)) {
+-		sysmmu_clk_enable(ips);
+-
+-		__sysmmu_set_ptbase(ips, pgd);
+-
+-		__raw_writel(CTRL_ENABLE, sysmmusfrs[ips] + S5P_MMU_CTRL);
+-
+-		set_sysmmu_active(ips);
+-		dev_dbg(dev, "%s is enabled.\n", sysmmu_ips_name[ips]);
+-	} else {
+-		dev_dbg(dev, "%s is already enabled.\n", sysmmu_ips_name[ips]);
+-	}
+-}
+-
+-void s5p_sysmmu_disable(sysmmu_ips ips)
+-{
+-	if (is_sysmmu_active(ips)) {
+-		__raw_writel(CTRL_DISABLE, sysmmusfrs[ips] + S5P_MMU_CTRL);
+-		set_sysmmu_inactive(ips);
+-		sysmmu_clk_disable(ips);
+-		dev_dbg(dev, "%s is disabled.\n", sysmmu_ips_name[ips]);
+-	} else {
+-		dev_dbg(dev, "%s is already disabled.\n", sysmmu_ips_name[ips]);
+-	}
+-}
+-
+-void s5p_sysmmu_tlb_invalidate(sysmmu_ips ips)
+-{
+-	if (is_sysmmu_active(ips)) {
+-		sysmmu_block(ips);
+-		__sysmmu_tlb_invalidate(ips);
+-		sysmmu_unblock(ips);
+-	} else {
+-		dev_dbg(dev, "%s is disabled. "
+-			"Skipping invalidating TLB.\n", sysmmu_ips_name[ips]);
+-	}
+-}
+-
+-static int s5p_sysmmu_probe(struct platform_device *pdev)
+-{
+-	int i, ret;
+-	struct resource *res, *mem;
+-
+-	dev = &pdev->dev;
+-
+-	for (i = 0; i < S5P_SYSMMU_TOTAL_IPNUM; i++) {
+-		int irq;
+-
+-		sysmmu_clk_init(dev, i);
+-		sysmmu_clk_disable(i);
+-
+-		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+-		if (!res) {
+-			dev_err(dev, "Failed to get the resource of %s.\n",
+-							sysmmu_ips_name[i]);
+-			ret = -ENODEV;
+-			goto err_res;
+-		}
+-
+-		mem = request_mem_region(res->start,
+-				((res->end) - (res->start)) + 1, pdev->name);
+-		if (!mem) {
+-			dev_err(dev, "Failed to request the memory region of %s.\n",
+-							sysmmu_ips_name[i]);
+-			ret = -EBUSY;
+-			goto err_res;
+-		}
+-
+-		sysmmusfrs[i] = ioremap(res->start, res->end - res->start + 1);
+-		if (!sysmmusfrs[i]) {
+-			dev_err(dev, "Failed to ioremap() for %s.\n",
+-							sysmmu_ips_name[i]);
+-			ret = -ENXIO;
+-			goto err_reg;
+-		}
+-
+-		irq = platform_get_irq(pdev, i);
+-		if (irq <= 0) {
+-			dev_err(dev, "Failed to get the IRQ resource of %s.\n",
+-							sysmmu_ips_name[i]);
+-			ret = -ENOENT;
+-			goto err_map;
+-		}
+-
+-		if (request_irq(irq, s5p_sysmmu_irq, IRQF_DISABLED,
+-						pdev->name, (void *)i)) {
+-			dev_err(dev, "Failed to request IRQ for %s.\n",
+-							sysmmu_ips_name[i]);
+-			ret = -ENOENT;
+-			goto err_map;
+-		}
+-	}
+-
+-	return 0;
+-
+-err_map:
+-	iounmap(sysmmusfrs[i]);
+-err_reg:
+-	release_mem_region(mem->start, resource_size(mem));
+-err_res:
+-	return ret;
+-}
+-
+-static int s5p_sysmmu_remove(struct platform_device *pdev)
+-{
+-	return 0;
+-}
+-int s5p_sysmmu_runtime_suspend(struct device *dev)
+-{
+-	return 0;
+-}
+-
+-int s5p_sysmmu_runtime_resume(struct device *dev)
+-{
+-	return 0;
+-}
+-
+-const struct dev_pm_ops s5p_sysmmu_pm_ops = {
+-	.runtime_suspend	= s5p_sysmmu_runtime_suspend,
+-	.runtime_resume		= s5p_sysmmu_runtime_resume,
+-};
+-
+-static struct platform_driver s5p_sysmmu_driver = {
+-	.probe		= s5p_sysmmu_probe,
+-	.remove		= s5p_sysmmu_remove,
+-	.driver		= {
+-		.owner		= THIS_MODULE,
+-		.name		= "s5p-sysmmu",
+-		.pm		= &s5p_sysmmu_pm_ops,
+-	}
+-};
+-
+-static int __init s5p_sysmmu_init(void)
+-{
+-	return platform_driver_register(&s5p_sysmmu_driver);
+-}
+-arch_initcall(s5p_sysmmu_init);
+-- 
+1.7.1
