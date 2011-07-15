@@ -1,147 +1,119 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH 2/6] ARM: S5P64X0: Add register base and IRQ for Framebuffer
-Date: Fri, 15 Jul 2011 11:26:46 +0530
-Message-ID: <CAEC9eQMkdT2NdDhSTyDiT7yEVXrk3ELELnTg2u6w7dwqTyWAZA@mail.gmail.com>
-References: <1310650036-28836-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1310650036-28836-3-git-send-email-ajaykumar.rs@samsung.com>
-	<000001cc4217$abe319d0$03a94d70$%szyprowski@samsung.com>
+From: JinGoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH 6/6] ARM: S5P6450: Add LCD-LTE480 and enable Framebuffer
+ support
+Date: Fri, 15 Jul 2011 06:05:47 +0000 (GMT)
+Message-ID: <18967554.25641310709947612.JavaMail.weblogic@epv6ml06>
+Reply-To: jg1.han@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f52.google.com ([209.85.161.52]:43145 "EHLO
-	mail-fx0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932460Ab1GOF4s convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:21443 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964790Ab1GOGFt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Jul 2011 01:56:48 -0400
-Received: by fxd18 with SMTP id 18so2252041fxd.11
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jul 2011 22:56:47 -0700 (PDT)
-In-Reply-To: <000001cc4217$abe319d0$03a94d70$%szyprowski@samsung.com>
+	Fri, 15 Jul 2011 02:05:49 -0400
+Received: from epcpsbge8.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LOD008CB29CNE10@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 15 Jul 2011 15:05:47 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lethal@linux-sh.org, jg1.han@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>
+To: AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm
 
-Hi Marek,
-
-On Thu, Jul 14, 2011 at 4:47 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
->
-> Hello,
->
-> On Thursday, July 14, 2011 3:27 PM Ajay Kumar wrote:
->
-> > This patch adds:
-> > o Framebuffer related register mappings and bit fields.
-> > o IRQ number being used.
-> >
-> > Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> > ---
-> > =A0arch/arm/mach-s5p64x0/include/mach/irqs.h =A0 =A0| =A0 =A04 ++++
-> > =A0arch/arm/mach-s5p64x0/include/mach/map.h =A0 =A0 | =A0 =A03 +++
-> > =A0arch/arm/mach-s5p64x0/include/mach/regs-fb.h | =A0 19 ++++++++++=
-+++++++++
-> > =A03 files changed, 26 insertions(+), 0 deletions(-)
-> > =A0create mode 100644 arch/arm/mach-s5p64x0/include/mach/regs-fb.h
-> >
-> > diff --git a/arch/arm/mach-s5p64x0/include/mach/irqs.h b/arch/arm/m=
-ach-
-> > s5p64x0/include/mach/irqs.h
-> > index 513abff..09995b8 100644
-> > --- a/arch/arm/mach-s5p64x0/include/mach/irqs.h
-> > +++ b/arch/arm/mach-s5p64x0/include/mach/irqs.h
-> > @@ -85,6 +85,10 @@
-> > =A0#define IRQ_S3CUART_RX4 =A0 =A0 =A0 =A0 =A0 =A0 =A0IRQ_S5P_UART_=
-RX4
-> > =A0#define IRQ_S3CUART_RX5 =A0 =A0 =A0 =A0 =A0 =A0 =A0IRQ_S5P_UART_=
-RX5
-> >
-> > +#define IRQ_LCD_FIFO =A0 =A0 =A0 =A0 IRQ_DISPCON0
-> > +#define IRQ_LCD_VSYNC =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0IRQ_DISPCON1
-> > +#define IRQ_LCD_SYSTEM =A0 =A0 =A0 =A0 =A0 =A0 =A0 IRQ_DISPCON2
-> > +
-> > =A0/* S5P6450 EINT feature will be added */
-> >
-> > =A0/*
-> > diff --git a/arch/arm/mach-s5p64x0/include/mach/map.h b/arch/arm/ma=
-ch-
-> > s5p64x0/include/mach/map.h
-> > index 95c9125..c5ef50c 100644
-> > --- a/arch/arm/mach-s5p64x0/include/mach/map.h
-> > +++ b/arch/arm/mach-s5p64x0/include/mach/map.h
-> > @@ -47,6 +47,8 @@
-> >
-> > =A0#define S5P64X0_PA_HSMMC(x) =A0(0xED800000 + ((x) * 0x100000))
-> >
-> > +#define S5P64X0_PA_FB =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A00xEE000000
-> > +
-> > =A0#define S5P64X0_PA_I2S =A0 =A0 =A0 =A0 =A0 =A0 =A0 0xF2000000
-> > =A0#define S5P6450_PA_I2S1 =A0 =A0 =A0 =A0 =A0 =A0 =A00xF2800000
-> > =A0#define S5P6450_PA_I2S2 =A0 =A0 =A0 =A0 =A0 =A0 =A00xF2900000
-> > @@ -64,6 +66,7 @@
-> > =A0#define S3C_PA_IIC1 =A0 =A0 =A0 =A0 =A0S5P6440_PA_IIC1
-> > =A0#define S3C_PA_RTC =A0 =A0 =A0 =A0 =A0 S5P64X0_PA_RTC
-> > =A0#define S3C_PA_WDT =A0 =A0 =A0 =A0 =A0 S5P64X0_PA_WDT
-> > +#define S3C_PA_FB =A0 =A0 =A0 =A0 =A0 =A0S5P64X0_PA_FB
-> >
-> > =A0#define S5P_PA_CHIPID =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0S5P64X0_PA_=
-CHIPID
-> > =A0#define S5P_PA_SROMC =A0 =A0 =A0 =A0 S5P64X0_PA_SROMC
-> > diff --git a/arch/arm/mach-s5p64x0/include/mach/regs-fb.h b/arch/ar=
-m/mach-
-> > s5p64x0/include/mach/regs-fb.h
-> > new file mode 100644
-> > index 0000000..cbb8d8c
-> > --- /dev/null
-> > +++ b/arch/arm/mach-s5p64x0/include/mach/regs-fb.h
-> > @@ -0,0 +1,19 @@
-> > +/*
-> > + * linux/arch/arm/mach-s5p64x0/include/mach/regs-fb.h
-> > + *
-> > + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-> > + * =A0 =A0 =A0 =A0 =A0 http://www.samsung.com/
-> > + *
-> > + * Framebuffer register definitions for Samsung S5P64X0.
-> > + *
-> > + * This program is free software; you can redistribute it and/or m=
-odify
-> > + * it under the terms of the GNU General Public License version 2 =
-as
-> > + * published by the Free Software Foundation.
-> > +*/
-> > +
-> > +#ifndef __ASM_ARCH_MACH_REGS_FB_H
-> > +#define __ASM_ARCH_MACH_REGS_FB_H __FILE__
-> > +
-> > +#include <plat/regs-fb.h>
-> > +
-> > +#endif /* __ASM_ARCH_MACH_REGS_FB_H */
->
-> This patch reminds me, that the arch/arm/mach-*/include/mach/regs-fb.=
-h files
-> should be
-> completely removed. Most of them simply includes the other header fro=
-m
-> plat-samsung,
-> which can be included directly by the driver.
-> plat-s5pc100/include/mach/regs-fb.h contains
-> some definitions that are not used at all afair, so it can be dropped=
- as well.
-
-I consider your point.
-Soon I will send a consolidating patch for all the boards.
-Note: Consolidation patch set is based on S5P64X0 patch-set
-
->
-> Best regards
-> --
-> Marek Szyprowski
-> Samsung Poland R&D Center
->
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+SGksIEFqYXkgS3VtYXIuDQpQbGVhc2UgcmVhZCBteSBjb21tZW50cy4NCj4gLS0tLS1PcmlnaW5h
+bCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQWpheSBLdW1hciBbbWFpbHRvOmFqYXlrdW1hci5yc0Bz
+YW1zdW5nLmNvbV0NCj4gU2VudDogVGh1cnNkYXksIEp1bHkgMTQsIDIwMTEgMTA6MjcgUE0NCj4g
+VG86IGtnZW5lLmtpbUBzYW1zdW5nLmNvbTsgbGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJuZWwu
+b3JnOyBsaW51eC1hcm0tDQo+IGtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsZXRoYWxAbGlu
+dXgtc2gub3JnOyBqZzEuaGFuQHNhbXN1bmcuY29tDQo+IFN1YmplY3Q6IFtQQVRDSCA2LzZdIEFS
+TTogUzVQNjQ1MDogQWRkIExDRC1MVEU0ODAgYW5kIGVuYWJsZSBGcmFtZWJ1ZmZlcg0KPiBzdXBw
+b3J0DQo+IA0KPiBUaGlzIHBhdGNoOg0KPiBvIEFkZHMgcGxhdGZvcm0gZGV2aWNlIHN1cHBvcnQg
+Zm9yIExDRC1MVEU0ODAuDQo+IG8gQWRkcyBwbGF0Zm9ybSBkYXRhIGZvciBGQiB3aXRoIHdpbl9t
+b2RlIGFuZCBkZWZhdWx0X2JwcC4NCj4gbyBFbmFibGVzIEZCIGRldmljZSBzdXBwb3J0IGFuZCBw
+bGF0Zm9ybS1sY2Qgc3VwcG9ydC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEFqYXkgS3VtYXIgPGFq
+YXlrdW1hci5yc0BzYW1zdW5nLmNvbT4NCj4gLS0tDQo+ICBhcmNoL2FybS9tYWNoLXM1cDY0eDAv
+S2NvbmZpZyAgICAgICAgIHwgICAgMiArDQo+ICBhcmNoL2FybS9tYWNoLXM1cDY0eDAvbWFjaC1z
+bWRrNjQ1MC5jIHwgICA2Mw0KPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4g
+IDIgZmlsZXMgY2hhbmdlZCwgNjUgaW5zZXJ0aW9ucygrKSwgMCBkZWxldGlvbnMoLSkNCj4gDQo+
+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9tYWNoLXM1cDY0eDAvS2NvbmZpZyBiL2FyY2gvYXJtL21h
+Y2gtczVwNjR4MC9LY29uZmlnDQo+IGluZGV4IGM2OWEzMmQuLmI5ZjNhY2EgMTAwNjQ0DQo+IC0t
+LSBhL2FyY2gvYXJtL21hY2gtczVwNjR4MC9LY29uZmlnDQo+ICsrKyBiL2FyY2gvYXJtL21hY2gt
+czVwNjR4MC9LY29uZmlnDQo+IEBAIC01Myw2ICs1Myw3IEBAIGNvbmZpZyBNQUNIX1NNREs2NDQw
+DQo+ICBjb25maWcgTUFDSF9TTURLNjQ1MA0KPiAgCWJvb2wgIlNNREs2NDUwIg0KPiAgCXNlbGVj
+dCBDUFVfUzVQNjQ1MA0KPiArCXNlbGVjdCBTM0NfREVWX0ZCDQo+ICAJc2VsZWN0IFMzQ19ERVZf
+STJDMQ0KPiAgCXNlbGVjdCBTM0NfREVWX1JUQw0KPiAgCXNlbGVjdCBTM0NfREVWX1dEVA0KPiBA
+QCAtNjAsNiArNjEsNyBAQCBjb25maWcgTUFDSF9TTURLNjQ1MA0KPiAgCXNlbGVjdCBTQU1TVU5H
+X0RFVl9BREMNCj4gIAlzZWxlY3QgU0FNU1VOR19ERVZfUFdNDQo+ICAJc2VsZWN0IFNBTVNVTkdf
+REVWX1RTDQo+ICsJc2VsZWN0IFM1UDY0WDBfU0VUVVBfRkINCj4gIAlzZWxlY3QgUzVQNjRYMF9T
+RVRVUF9JMkMxDQo+ICAJaGVscA0KPiAgCSAgTWFjaGluZSBzdXBwb3J0IGZvciB0aGUgU2Ftc3Vu
+ZyBTTURLNjQ1MA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1zNXA2NHgwL21hY2gtc21k
+azY0NTAuYyBiL2FyY2gvYXJtL21hY2gtDQo+IHM1cDY0eDAvbWFjaC1zbWRrNjQ1MC5jDQo+IGlu
+ZGV4IGQxOWM0NjkuLjc1NjhmMzggMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJtL21hY2gtczVwNjR4
+MC9tYWNoLXNtZGs2NDUwLmMNCj4gKysrIGIvYXJjaC9hcm0vbWFjaC1zNXA2NHgwL21hY2gtc21k
+azY0NTAuYw0KPiBAQCAtMjMsNiArMjMsNyBAQA0KPiAgI2luY2x1ZGUgPGxpbnV4L2Nsay5oPg0K
+PiAgI2luY2x1ZGUgPGxpbnV4L2dwaW8uaD4NCj4gICNpbmNsdWRlIDxsaW51eC9wd21fYmFja2xp
+Z2h0Lmg+DQo+ICsjaW5jbHVkZSA8bGludXgvZmIuaD4NCj4gDQo+ICAjaW5jbHVkZSA8YXNtL21h
+Y2gvYXJjaC5oPg0KPiAgI2luY2x1ZGUgPGFzbS9tYWNoL21hcC5oPg0KPiBAQCAtMzQsNiArMzUs
+NyBAQA0KPiAgI2luY2x1ZGUgPG1hY2gvcmVncy1jbG9jay5oPg0KPiAgI2luY2x1ZGUgPG1hY2gv
+aTJjLmg+DQo+ICAjaW5jbHVkZSA8bWFjaC9yZWdzLWdwaW8uaD4NCj4gKyNpbmNsdWRlIDxtYWNo
+L3JlZ3MtZmIuaD4NCj4gDQo+ICAjaW5jbHVkZSA8cGxhdC9yZWdzLXNlcmlhbC5oPg0KPiAgI2lu
+Y2x1ZGUgPHBsYXQvZ3Bpby1jZmcuaD4NCj4gQEAgLTQ2LDYgKzQ4LDkgQEANCj4gICNpbmNsdWRl
+IDxwbGF0L2FkYy5oPg0KPiAgI2luY2x1ZGUgPHBsYXQvdHMuaD4NCj4gICNpbmNsdWRlIDxwbGF0
+L3M1cC10aW1lLmg+DQo+ICsjaW5jbHVkZSA8cGxhdC9mYi5oPg0KPiArDQo+ICsjaW5jbHVkZSA8
+dmlkZW8vcGxhdGZvcm1fbGNkLmg+DQo+IA0KPiAgI2RlZmluZSBTTURLNjQ1MF9VQ09OX0RFRkFV
+TFQJKFMzQzI0MTBfVUNPTl9UWElMRVZFTCB8CVwNCj4gIAkJCQlTM0MyNDEwX1VDT05fUlhJTEVW
+RUwgfAkJXA0KPiBAQCAtMTQ4LDYgKzE1Myw1OSBAQCBzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2Rl
+dmljZQ0KPiBzbWRrNjQ1MF9iYWNrbGlnaHRfZGV2aWNlID0gew0KPiAgCX0sDQo+ICB9Ow0KPiAN
+Cj4gKy8qIEZyYW1lIEJ1ZmZlciAqLw0KPiArc3RhdGljIHN0cnVjdCBzM2NfZmJfcGRfd2luIHM1
+cDY0NTBfZmJfd2luMCA9IHsNClRoaXMgaW5mb3JtYXRpb24gYWxzbyBkZXBlbmRzIG9uIExDRCBw
+YW5lbCBvbiB0aGUgYm9hcmQuDQpTbywgczVwNjQ1MF9mYl93aW4wIHNob3VsZCBiZSBjaGFuZ2Vk
+IHRvIHNtZGs2NDUwX2ZiX3dpbjAuDQo+ICsvKiB0aGlzIGlzIHRvIGVuc3VyZSB3ZSB1c2Ugd2lu
+MCAqLw0KPiArCS53aW5fbW9kZQk9IHsNCj4gKwkJLmxlZnRfbWFyZ2luCT0gOCwNCj4gKwkJLnJp
+Z2h0X21hcmdpbgk9IDEzLA0KPiArCQkudXBwZXJfbWFyZ2luCT0gNywNCj4gKwkJLmxvd2VyX21h
+cmdpbgk9IDUsDQo+ICsJCS5oc3luY19sZW4JPSAzLA0KPiArCQkudnN5bmNfbGVuCT0gMSwNCj4g
+KwkJLnhyZXMJCT0gODAwLA0KPiArCQkueXJlcwkJPSA0ODAsDQo+ICsJCS5yZWZyZXNoCT0gODAs
+DQpXaHkgZG8geW91IHVzZSA4MEh6IGFzIGZyYW1lIHJhdGU/DQpQbGVhc2UgZG9uJ3QgYWRkIHRo
+aXMsIGlmIHRoZXJlIGlzIG5vIHByb2JsZW0gd2hlbiB1c2luZyA2MEh6Lg0KPiArCX0sDQo+ICsJ
+Lm1heF9icHAJPSAyNCwNCm1heF9icHAgY2FuIGJlIDMyYnBwLiBGSU1EIG9mIFM1UDY0NDAgYW5k
+IFM1UDY0NTAgY2FuIHN1cHBvcnQgQVJHQiA4ODg4Lg0KUGxlYXNlIHVzZSAzMiBhcyBtYXhfYnBw
+Lg0KKwkubWF4X2JwcAk9IDMyLA0KPiArCS5kZWZhdWx0X2JwcAk9IDI0LA0KPiArCX07DQpEb24n
+dCB1c2VsZXNzIHRhYiBzcGFjZS4NCkl0IHNob3VsZCBiZSBhcyBmb2xsb3dzLg0KK307DQo+ICsN
+Cj4gK3N0YXRpYyBzdHJ1Y3QgczNjX2ZiX3BsYXRkYXRhIHM1cDY0NTBfbGNkX3BkYXRhIF9faW5p
+dGRhdGEgPSB7DQo+ICsJLndpblswXQkJPSAmczVwNjQ1MF9mYl93aW4wLA0KczVwNjQ1MF9mYl93
+aW4wIHNob3VsZCBiZSBjaGFuZ2VkIHRvIHNtZGs2NDUwX2ZiX3dpbjAuDQo+ICsJLnZpZGNvbjAJ
+PSBWSURDT04wX1ZJRE9VVF9SR0IgfCBWSURDT04wX1BOUk1PREVfUkdCLA0KPiArCS52aWRjb24x
+CT0gVklEQ09OMV9JTlZfSFNZTkMgfCBWSURDT04xX0lOVl9WU1lOQywNCj4gKwkuc2V0dXBfZ3Bp
+bwk9IHM1cDY0eDBfZmJfZ3Bpb19zZXR1cF8yNGJwcCwNCj4gK307DQo+ICsNCj4gKy8qIExDRCBw
+b3dlciBjb250cm9sbGVyICovDQo+ICtzdGF0aWMgdm9pZCBzNXA2NDUwX2x0ZTQ4MF9yZXNldF9w
+b3dlcihzdHJ1Y3QgcGxhdF9sY2RfZGF0YSAqcGQsDQo+ICsJCQkJCXVuc2lnbmVkIGludCBwb3dl
+cikNCj4gK3sNCj4gKwlpbnQgZXJyOw0KPiArDQo+ICsJaWYgKHBvd2VyKSB7DQo+ICsJCWVyciA9
+IGdwaW9fcmVxdWVzdChTNVA2NDUwX0dQTig1KSwgIkdQTiIpOw0KPiArCQlpZiAoZXJyKQ0KPiAr
+CQkJcHJpbnRrKEtFUk5fRVJSICJmYWlsZWQgdG8gcmVxdWVzdCBHUE4gZm9yIGxjZA0KPiByZXNl
+dFxuIik7DQo+ICsNCj4gKwkJZ3Bpb19kaXJlY3Rpb25fb3V0cHV0KFM1UDY0NTBfR1BOKDUpLCAx
+KTsNCj4gKwkJZ3Bpb19zZXRfdmFsdWUoUzVQNjQ1MF9HUE4oNSksIDApOw0KPiArCQlncGlvX3Nl
+dF92YWx1ZShTNVA2NDUwX0dQTig1KSwgMSk7DQo+ICsJCWdwaW9fZnJlZShTNVA2NDUwX0dQTig1
+KSk7DQo+ICsJfQ0KPiArfQ0KPiArDQo+ICtzdGF0aWMgc3RydWN0IHBsYXRfbGNkX2RhdGEgczVw
+NjQ1MF9sY2RfcG93ZXJfZGF0YSA9IHsNCj4gKwkuc2V0X3Bvd2VyCT0gczVwNjQ1MF9sdGU0ODBf
+cmVzZXRfcG93ZXIsDQo+ICt9Ow0KPiArDQo+ICtzdGF0aWMgc3RydWN0IHBsYXRmb3JtX2Rldmlj
+ZSBzbWRrNjQ1MF9sY2RfbHRlNDgwd3YgPSB7DQo+ICsJLm5hbWUJCQk9ICJwbGF0Zm9ybS1sY2Qi
+LA0KPiArCS5kZXYucGFyZW50CQk9ICZzM2NfZGV2aWNlX2ZiLmRldiwNCj4gKwkuZGV2LnBsYXRm
+b3JtX2RhdGEJPSAmczVwNjQ1MF9sY2RfcG93ZXJfZGF0YSwNCj4gK307DQo+ICsNClBsZWFzZSBj
+aGFuZ2UgczVwNjQ1MF8gbHRlNDgwIHRvIHNtZGs2NDUwXyBsdGU0ODAuDQpMQ0QgcmVzZXQgR1BJ
+TyBwaW4gY2FuIGJlIGNoYW5nZWQgYWNjb3JkaW5nIHRvIHRoZSBib2FyZC4NCj4gIHN0YXRpYyBz
+dHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpzbWRrNjQ1MF9kZXZpY2VzW10gX19pbml0ZGF0YSA9IHsN
+Cj4gIAkmczNjX2RldmljZV9hZGMsDQo+ICAJJnMzY19kZXZpY2VfcnRjLA0KPiBAQCAtMTU5LDYg
+KzIxNyw5IEBAIHN0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpzbWRrNjQ1MF9kZXZpY2Vz
+W10NCj4gX19pbml0ZGF0YSA9IHsNCj4gIAkmczVwNjQ1MF9kZXZpY2VfaWlzMCwNCj4gIAkmczNj
+X2RldmljZV90aW1lclsxXSwNCj4gIAkmc21kazY0NTBfYmFja2xpZ2h0X2RldmljZSwNCj4gKwkm
+czNjX2RldmljZV9mYiwNCj4gKwkmc21kazY0NTBfbGNkX2x0ZTQ4MHd2LA0KPiArDQo+ICAJLyog
+czVwNjQ1MF9kZXZpY2Vfc3BpMCB3aWxsIGJlIGFkZGVkICovDQo+ICB9Ow0KPiANCj4gQEAgLTIx
+Miw2ICsyNzMsOCBAQCBzdGF0aWMgdm9pZCBfX2luaXQgc21kazY0NTBfbWFjaGluZV9pbml0KHZv
+aWQpDQo+ICAJCQlBUlJBWV9TSVpFKHNtZGs2NDUwX2kyY19kZXZzMCkpOw0KPiAgCWkyY19yZWdp
+c3Rlcl9ib2FyZF9pbmZvKDEsIHNtZGs2NDUwX2kyY19kZXZzMSwNCj4gIAkJCUFSUkFZX1NJWkUo
+c21kazY0NTBfaTJjX2RldnMxKSk7DQo+ICsJczNjX2ZiX3NldF9wbGF0ZGF0YSgmczVwNjQ1MF9s
+Y2RfcGRhdGEpOw0KPiArCXM1cDY0eDBfZmJfaW5pdChTNVA2NFgwX1NQQ09OMF9MQ0RfU0VMX1JH
+Qik7DQo+IA0KPiAgCXBsYXRmb3JtX2FkZF9kZXZpY2VzKHNtZGs2NDUwX2RldmljZXMsDQo+IEFS
+UkFZX1NJWkUoc21kazY0NTBfZGV2aWNlcykpOw0KPiAgfQ0KPiAtLQ0KPiAxLjcuMQ0K
