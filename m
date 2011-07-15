@@ -1,128 +1,122 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 0/6] ARM: S5P64X0: Add Framebuffer support
-Date: Fri, 15 Jul 2011 15:35:49 +0530
-Message-ID: <4E2010FD.2020409@linaro.org>
-References: <1310650036-28836-1-git-send-email-ajaykumar.rs@samsung.com>	<4E1FDA4E.9010800@linaro.org> <CAEC9eQMonzbcTOfb+2=UBCDpOrk-Qh+snQjTDLetz=jftb3AeQ@mail.gmail.com>
+From: padma venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH] ARM: S5P64X0: External Interrupt Support
+Date: Fri, 15 Jul 2011 17:23:33 +0530
+Message-ID: <CAAgF-Bcke26iFsgf0DA3LB5CLv=TkS6UG0y+SBLR=F6TzGYU+A@mail.gmail.com>
+References: <1310712094-19831-1-git-send-email-padma.v@samsung.com>
+	<20110715090011.GN23270@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f52.google.com ([209.85.161.52]:64245 "EHLO
-	mail-fx0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965286Ab1GOKF5 (ORCPT
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:56284 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750767Ab1GOLzl convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Jul 2011 06:05:57 -0400
-Received: by fxd18 with SMTP id 18so2616926fxd.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Jul 2011 03:05:56 -0700 (PDT)
-In-Reply-To: <CAEC9eQMonzbcTOfb+2=UBCDpOrk-Qh+snQjTDLetz=jftb3AeQ@mail.gmail.com>
+	Fri, 15 Jul 2011 07:55:41 -0400
+Received: by wyg8 with SMTP id 8so751783wyg.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Jul 2011 04:55:40 -0700 (PDT)
+In-Reply-To: <20110715090011.GN23270@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lethal@linux-sh.org, jg1.han@samsung.com
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Padmavathi Venna <padma.v@samsung.com>, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Friday 15 July 2011 11:57 AM, Ajay kumar wrote:
-> Hi Tushar,
+Hi Russell,
+
+On Fri, Jul 15, 2011 at 2:30 PM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> On Fri, Jul 15, 2011 at 12:11:34PM +0530, Padmavathi Venna wrote:
+>> +#define eint_offset(irq) =A0 =A0 ((irq) - IRQ_EINT(0))
+>> +#define eint_irq_to_bit(irq) ((u32)(1 << eint_offset(irq)))
+>> +
+>> +static inline void s5p64x0_irq_eint_mask(struct irq_data *data)
+>> +{
+>> + =A0 =A0 u32 mask;
+>> +
+>> + =A0 =A0 mask =3D __raw_readl(S5P64X0_EINT0MASK);
+>> + =A0 =A0 mask |=3D (u32)data->chip_data;
+>> + =A0 =A0 __raw_writel(mask, S5P64X0_EINT0MASK);
+>> +}
+>> +
+>> +static void s5p64x0_irq_eint_unmask(struct irq_data *data)
+>> +{
+>> + =A0 =A0 u32 mask;
+>> +
+>> + =A0 =A0 mask =3D __raw_readl(S5P64X0_EINT0MASK);
+>> + =A0 =A0 mask &=3D ~((u32)data->chip_data);
+>> + =A0 =A0 __raw_writel(mask, S5P64X0_EINT0MASK);
+>> +}
+>> +
+>> +static inline void s5p64x0_irq_eint_ack(struct irq_data *data)
+>> +{
+>> + =A0 =A0 __raw_writel((u32)data->chip_data, S5P64X0_EINT0PEND);
+>> +}
+>> +
+>> +static void s5p64x0_irq_eint_maskack(struct irq_data *data)
+>> +{
+>> + =A0 =A0 /* compiler should in-line these */
+>> + =A0 =A0 s5p64x0_irq_eint_mask(data);
+>> + =A0 =A0 s5p64x0_irq_eint_ack(data);
+>> +}
 >
-> On Fri, Jul 15, 2011 at 11:42 AM, Tushar Behera
-> <tushar.behera@linaro.org>  wrote:
->> On Thursday 14 July 2011 06:57 PM, Ajay Kumar wrote:
->>>
->>>         The patches are created against "for-next" branch of Kukjin Kim's
->>> tree at:
->>>
->>>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
->>>
->>>         Patch [1/6]
->>>         -- add "s5p64x0-fb" type driver_data(s3c_fb_driverdata).
->>>         -- Display controller in S5P64X0 supports 3 windows.
->>>
->>>         Patch [2/6]
->>>         -- Resource definitions(_MEM, _IRQ).
->>>
->>>         Patch [3/6]
->>>         -- Set s3c_device_fb name as "s5p64x0-fb"
->>>            for S5P6440 and S5P6450.
->>>
->>>         Patch [4/6]
->>>         -- GPIO settings for LCD in S5P6440 and S5P6450.
->>>         -- Select LCD interface type (RGB/i80)
->>>
->>>         Patch [5/6]
->>>         -- Add support for LCD-LTE480 platform device in SMDK6440.
->>>         -- Platform data for FB and a basic window definition.
->>>         -- Enables FB support and platform-lcd support.
->>>         -- Add support for window 0 with 24 BPP.
->>>
->>>         Patch [6/6]
->>>         -- Add support for LCD-LTE480 platform device in SMDK6450.
->>>         -- Platform data for FB and a basic window definition.
->>>         -- Enables FB support and platform-lcd support.
->>>         -- Add support for window 0 with 24 BPP.
->>>
->> Some of the patches have got some coding syntax (DOS LINE ending etc.).
->> Consider running scripts/checkpatch.pl on the patches before sending the
->> next version.
->>
->> scripts/cleanpatch can help you in fixing many of the style problems.
->>
+> Won't genirqchip support deal with all of the above for you?
+As per my understanding, to deal with low level interrupt hardware acce=
+ss
+we need to use the accessor functions. Please suggest me if there is
+any better way of doing this.
 >
-> I have tried running checkpatch.pl on patches 1 to 6,
-> and I did not encounter any error like DOS_LINE as you have mentioned.
-> Can you please tell me which patch is showing that error when run with
-> checkpatch.pl?
+>> +
+>> +static int s5p64x0_irq_eint_set_type(struct irq_data *data, unsigne=
+d int type)
+>> +{
+>> + =A0 =A0 int offs =3D eint_offset(data->irq);
+>> + =A0 =A0 int shift;
+>> + =A0 =A0 u32 ctrl, mask;
+>> + =A0 =A0 u32 newvalue =3D 0;
+>> + =A0 =A0 unsigned int id;
+>> +
+>> + =A0 =A0 if (offs > 15)
+>> + =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
+>> +
+>> + =A0 =A0 switch (type) {
+>> + =A0 =A0 case IRQ_TYPE_NONE:
+>> + =A0 =A0 =A0 =A0 =A0 =A0 printk(KERN_WARNING "No edge setting!\n");
+>> + =A0 =A0 =A0 =A0 =A0 =A0 break;
+>> +
+>> + =A0 =A0 case IRQ_TYPE_EDGE_RISING:
+>> + =A0 =A0 =A0 =A0 =A0 =A0 newvalue =3D S3C2410_EXTINT_RISEEDGE;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 break;
+>> +
+>> + =A0 =A0 case IRQ_TYPE_EDGE_FALLING:
+>> + =A0 =A0 =A0 =A0 =A0 =A0 newvalue =3D S3C2410_EXTINT_FALLEDGE;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 break;
+>> +
+>> + =A0 =A0 case IRQ_TYPE_EDGE_BOTH:
+>> + =A0 =A0 =A0 =A0 =A0 =A0 newvalue =3D S3C2410_EXTINT_BOTHEDGE;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 break;
+>> +
+>> + =A0 =A0 case IRQ_TYPE_LEVEL_LOW:
+>> + =A0 =A0 =A0 =A0 =A0 =A0 newvalue =3D S3C2410_EXTINT_LOWLEV;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 break;
+>> +
+>> + =A0 =A0 case IRQ_TYPE_LEVEL_HIGH:
+>> + =A0 =A0 =A0 =A0 =A0 =A0 newvalue =3D S3C2410_EXTINT_HILEV;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 break;
+>> +
+>> + =A0 =A0 default:
+>> + =A0 =A0 =A0 =A0 =A0 =A0 printk(KERN_ERR "No such irq type %d", typ=
+e);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 return -1;
 >
-
-Yes you are right.
-
-I used Thunderbird mail client to download the patches and some thing is 
-wrong with its settings.
-
->>>   o To Paul Mundt, Jingoo Han
->>>     [Patch 1/6] video: s3c-fb: Add S5P64X0 specific s3c_fb_driverdata
->>>
->>>   o To Kukjin Kim
->>>     [Patch 2/6] ARM: S5P64X0: Add register base and IRQ for Framebuffer
->>>     [Patch 3/6] ARM: S5P64X0: Set s3c_device_fb name
->>>     [Patch 4/6] ARM: S5P64X0: Add GPIO and SPCON settings for LCD
->>>     [Patch 5/6] ARM: S5P6440: Add LCD-LTE480 and enable Framebuffer support
->>>     [Patch 6/6] ARM: S5P6450: Add LCD-LTE480 and enable Framebuffer support
->>>
->>>
->>>   arch/arm/mach-s5p64x0/Kconfig                  |   10 ++++
->>>   arch/arm/mach-s5p64x0/Makefile                 |    1 +
->>>   arch/arm/mach-s5p64x0/cpu.c                    |    3 +
->>>   arch/arm/mach-s5p64x0/include/mach/irqs.h      |    4 ++
->>>   arch/arm/mach-s5p64x0/include/mach/map.h       |    3 +
->>>   arch/arm/mach-s5p64x0/include/mach/regs-fb.h   |   19 +++++++
->>>   arch/arm/mach-s5p64x0/include/mach/regs-gpio.h |    4 ++
->>>   arch/arm/mach-s5p64x0/mach-smdk6440.c          |   63
->>> +++++++++++++++++++++++
->>>   arch/arm/mach-s5p64x0/mach-smdk6450.c          |   63
->>> +++++++++++++++++++++++
->>>   arch/arm/mach-s5p64x0/setup-fb.c               |   48 ++++++++++++++++++
->>>   arch/arm/plat-samsung/include/plat/fb.h        |   14 +++++
->>>   drivers/video/s3c-fb.c                         |   64
->>> ++++++++++++++++++++++++
->>>   12 files changed, 296 insertions(+), 0 deletions(-)
->>>   create mode 100644 arch/arm/mach-s5p64x0/include/mach/regs-fb.h
->>>   create mode 100644 arch/arm/mach-s5p64x0/setup-fb.c
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe
->>> linux-samsung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->>
->> --
->> Tushar Behera
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
->> in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
-
-
--- 
-Tushar Behera
+> NO! =A0Stop this right now and never do it again. =A0Please _always_ =
+look
+> up the right error code and use it.
+>
+> 'return -1' is almost never valid.
+I will correct this.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
