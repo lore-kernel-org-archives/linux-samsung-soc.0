@@ -1,185 +1,252 @@
-From: Marco Sinigaglia <marco.sinigaglia@csr.com>
-Subject: AC97 on S3C6410
-Date: Thu, 14 Jul 2011 16:04:54 +0000 (UTC)
-Message-ID: <loom.20110714T180046-429@post.gmane.org>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH v2] ARM: EXYNOS4: Add platform device for dwmci driver.
+Date: Fri, 15 Jul 2011 11:31:49 +0900
+Message-ID: <CAH9JG2Vy9OJcrATeKV60X7SjdAR7Z+LDMzgMaps5NKu+M2zxAA@mail.gmail.com>
+References: <1310637226-19478-1-git-send-email-tgih.jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lo.gmane.org ([80.91.229.12]:33414 "EHLO lo.gmane.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755350Ab1GNQUN (ORCPT
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:37281 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754945Ab1GOCbu convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Jul 2011 12:20:13 -0400
-Received: from list by lo.gmane.org with local (Exim 4.69)
-	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
-	id 1QhOe0-00074d-Jf
-	for linux-samsung-soc@vger.kernel.org; Thu, 14 Jul 2011 18:20:08 +0200
-Received: from 193.128.72.68 ([193.128.72.68])
-        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jul 2011 18:20:08 +0200
-Received: from marco.sinigaglia by 193.128.72.68 with local (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jul 2011 18:20:08 +0200
+	Thu, 14 Jul 2011 22:31:50 -0400
+Received: by vws1 with SMTP id 1so616971vws.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jul 2011 19:31:50 -0700 (PDT)
+In-Reply-To: <1310637226-19478-1-git-send-email-tgih.jun@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ByungJae Lee <bjlee@samsung.com>, SeungKwon Ko <skwon.ko@samsung.com>, JaeHun Jung <jh0801.jung@samsung.com>
 
-Hi,
+On Thu, Jul 14, 2011 at 6:53 PM, Seungwon Jeon <tgih.jun@samsung.com> w=
+rote:
+> This patch add platform devices for Synopsys DesignWare Multimedia Ca=
+rd
+> Interface driver.
+>
+> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+> ---
+> =A0arch/arm/mach-exynos4/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 | =A0 12 +++=
++
+> =A0arch/arm/mach-exynos4/Makefile =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A01 +
+> =A0arch/arm/mach-exynos4/dev-dwmci.c =A0 =A0 =A0 =A0 | =A0 88 +++++++=
+++++++++++++++++++++++
+> =A0arch/arm/mach-exynos4/include/mach/irqs.h | =A0 =A01 +
+> =A0arch/arm/mach-exynos4/include/mach/map.h =A0| =A0 =A01 +
+> =A0arch/arm/plat-samsung/include/plat/devs.h | =A0 =A01 +
+> =A06 files changed, 104 insertions(+), 0 deletions(-)
+> =A0create mode 100644 arch/arm/mach-exynos4/dev-dwmci.c
+>
+> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kc=
+onfig
+> index 5115b90..2ec5b96 100644
+> --- a/arch/arm/mach-exynos4/Kconfig
+> +++ b/arch/arm/mach-exynos4/Kconfig
+> @@ -35,6 +35,11 @@ config EXYNOS4_DEV_SYSMMU
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Common setup code for SYSTEM MMU in EXYNOS4
+>
+> +config EXYNOS4_DEV_DWMCI
+> + =A0 =A0 =A0 bool
+> + =A0 =A0 =A0 help
+> + =A0 =A0 =A0 =A0 Compile in platform device definitions for DWMCI
+> +
+> =A0config EXYNOS4_SETUP_I2C1
+> =A0 =A0 =A0 =A0bool
+> =A0 =A0 =A0 =A0help
+> @@ -200,6 +205,13 @@ comment "Configuration for HSMMC bus width"
+>
+> =A0menu "Use 8-bit bus width"
+>
+> +config EXYNOS4_DWMCI_8BIT
+> + =A0 =A0 =A0 bool "DWMCI with 8-bit bus"
+> + =A0 =A0 =A0 depends on EXYNOS4_DEV_DWMCI
+> + =A0 =A0 =A0 help
+> + =A0 =A0 =A0 =A0 Support DWMCI 8-bit bus.
+> + =A0 =A0 =A0 =A0 If selected, Channel 1 is disabled.
 
-I am rying to implement the AC97, on S3C6410, using the WM9714.
-I have done some big step forward but I am now hitting another issue.
+No it should be determined at runtime instead of compile time.
 
-The kernel can see the WM9714:
-<6>ALSA device list:
-<6>  #0: SMDK (WM9713)
+> +
+> =A0config EXYNOS4_SDHCI_CH0_8BIT
+> =A0 =A0 =A0 =A0bool "Channel 0 with 8-bit bus"
+> =A0 =A0 =A0 =A0help
+> diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/M=
+akefile
+> index 60fe5ec..eeeaada 100644
+> --- a/arch/arm/mach-exynos4/Makefile
+> +++ b/arch/arm/mach-exynos4/Makefile
+> @@ -43,6 +43,7 @@ obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 +=3D dev-audio.o
+> =A0obj-$(CONFIG_EXYNOS4_DEV_AHCI) =A0 =A0 =A0 =A0 +=3D dev-ahci.o
+> =A0obj-$(CONFIG_EXYNOS4_DEV_PD) =A0 =A0 =A0 =A0 =A0 +=3D dev-pd.o
+> =A0obj-$(CONFIG_EXYNOS4_DEV_SYSMMU) =A0 =A0 =A0 +=3D dev-sysmmu.o
+> +obj-$(CONFIG_EXYNOS4_DEV_DWMCI) =A0 =A0 =A0 =A0+=3D dev-dwmci.o
+>
+> =A0obj-$(CONFIG_EXYNOS4_SETUP_FIMC) =A0 =A0 =A0 +=3D setup-fimc.o
+> =A0obj-$(CONFIG_EXYNOS4_SETUP_I2C1) =A0 =A0 =A0 +=3D setup-i2c1.o
+> diff --git a/arch/arm/mach-exynos4/dev-dwmci.c b/arch/arm/mach-exynos=
+4/dev-dwmci.c
+> new file mode 100644
+> index 0000000..a0defa4
+> --- /dev/null
+> +++ b/arch/arm/mach-exynos4/dev-dwmci.c
+> @@ -0,0 +1,88 @@
+> +/*
+> + * linuxarch/arm/mach-exynos4/dev-dwmci.c
+> + *
+> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+> + * =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com
+> + *
+> + * Platform device for Synopsys DesignWare Mobile Storage IP
+> + *
+> + * This program is free software; you can redistribute it and/or mod=
+ify
+> + * it under the terms of the GNU General Public License as published=
+ by
+> + * the Free Software Foundation; either version 2 of the License, or
+> + * (at your option) any later version.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/mmc/dw_mmc.h>
+> +#include <linux/mmc/host.h>
+> +#include <linux/io.h>
+> +#include <linux/gpio.h>
+> +
+> +#include <plat/devs.h>
+> +#include <plat/cpu.h>
+> +#include <plat/gpio-cfg.h>
+> +
+> +#include <mach/map.h>
+> +
+> +#ifdef EXYNOS4_DWMCI_8BIT
+> +#define BUS_WIDTH 8
+> +#else
+> +#define BUS_WIDTH 4
+> +#endif
 
-Anyway, after that, i cannot see anymore activity on the AC97 bus.
-I got, indeed, these errors:
-
-<3>s3c-ac97: req addr = 12, rep addr = 00
-[...]
-<3>s3c-ac97: req addr = 12, rep addr = 00
-
-When I try to play something, i got this :
-
-
-<7>Entered s3c_dma_open
-<7>asoc: AC97 HiFi <-> s3c-ac97 info:
-<7>asoc: rate mask 0xd6
-<7>asoc: min ch 2 max ch 2
-<7>asoc: min rate 8000 max rate 48000
-<7>Entered s3c_dma_hw_params
-<7>params c0665190, client c0665278, channel 22
-<7>dma22: s3c2410_request_dma: client=AC97 PCMOut, dev=(null)
-<7>MS10 channel number 22 
-<7>DMA8: 00000000->00000000 L 00000000 C 00000000,00000000 S 00000000
-<7>s3c2410_dma_request: channel initialised, c06779c8
-<7>Entered s3c_dma_prepare
-<7>s3c2410_dma_devconfig: channel 22, source 1, dev 7f001018, chan c06779c8
-<7>s3c2410_dma_devconfig: peripheral 6
-<7>s3c2410_dma_devconfig: config 0000c980
-<7>DMA8: 00000000->00000000 L 00000000 C 00000000,00000000 S 0000c980
-<7>s3c64xx_dma_flush: flushing channel
-<7>Entered s3c_dma_enqueue
-<7>s3c_dma_enqueue: loaded 0, limit 11
-<7>dma_loaded: 0
-<7>dma enqueue channel num 22, reg cf00c100
-<7>s3c2410_dma_enqueue: buff c6e4f4e0, dp 5e740000 lli (ffcd6000, 56ea3000) 8192
-<7>enquing onto empty channel num 22
-<7>s3c64xx_lli_to_regs: LLI ffcd6000 => regs
-<7>LLI[ffcd6000] 5e740000->7f001018, NL 00000000 C 96480000,00000800
-<7>LLI[ffcd6000] 5e740000->7f001018, NL 00000000 C 96480000,00000800
-<7>DMA8: 5e740000->7f001018 L 00000000 C 96480000,00000000 S 0000c980
-<7>DMA8: buffs next c6e4f4e0, curr c6e4f4e0, end c6e4f4e0
-<7>dma_loaded: 1
-<7>dma enqueue channel num 22, reg cf00c100
-<7>s3c2410_dma_enqueue: buff c6e4f540, dp 5e742000 lli (ffcd6020, 56ea3020) 8192
-<7>enquing onto channel num 22
-<7>LLI[ffcd6000] 5e740000->7f001018, NL 56ea3020 C 96480000,00000800
-<7>LLI[ffcd6020] 5e742000->7f001018, NL 56ea3000 C 96480000,00000800
-<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
-<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f540
-<7>dma_loaded: 2
-<7>dma enqueue channel num 22, reg cf00c100
-<7>s3c2410_dma_enqueue: buff c6e4f560, dp 5e744000 lli (ffcd6040, 56ea3040) 8192
-<7>enquing onto channel num 22
-<7>LLI[ffcd6020] 5e742000->7f001018, NL 56ea3040 C 96480000,00000800
-<7>LLI[ffcd6040] 5e744000->7f001018, NL 56ea3000 C 96480000,00000800
-<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
-<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f560
-<7>dma_loaded: 3
-<7>dma enqueue channel num 22, reg cf00c100
-<7>s3c2410_dma_enqueue: buff c6e4f580, dp 5e746000 lli (ffcd6060, 56ea3060) 8192
-<7>enquing onto channel num 22
-<7>LLI[ffcd6040] 5e744000->7f001018, NL 56ea3060 C 96480000,00000800
-<7>LLI[ffcd6060] 5e746000->7f001018, NL 56ea3000 C 96480000,00000800
-<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
-<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f580
-<7>dma_loaded: 4
-<7>dma enqueue channel num 22, reg cf00c100
-<7>s3c2410_dma_enqueue: buff c6e4f5a0, dp 5e748000 lli (ffcd6080, 56ea3080) 8192
-<7>enquing onto channel num 22
-<7>LLI[ffcd6060] 5e746000->7f001018, NL 56ea3080 C 96480000,00000800
-<7>LLI[ffcd6080] 5e748000->7f001018, NL 56ea3000 C 96480000,00000800
-<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
-<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f5a0
-<7>dma_loaded: 5
-<7>dma enqueue channel num 22, reg cf00c100
-<7>s3c2410_dma_enqueue: buff c6e4f5c0, dp 5e74a000 lli (ffcd60a0, 56ea30a0) 8192
-<7>enquing onto channel num 22
-<7>LLI[ffcd6080] 5e748000->7f001018, NL 56ea30a0 C 96480000,00000800
-<7>LLI[ffcd60a0] 5e74a000->7f001018, NL 56ea3000 C 96480000,00000800
-<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
-<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f5c0
-<7>dma_loaded: 6
-<7>dma enqueue channel num 22, reg cf00c100
-<7>s3c2410_dma_enqueue: buff c6e4f5e0, dp 5e74c000 lli (ffcd60c0, 56ea30c0) 8192
-<7>enquing onto channel num 22
-<7>LLI[ffcd60a0] 5e74a000->7f001018, NL 56ea30c0 C 96480000,00000800
-<7>LLI[ffcd60c0] 5e74c000->7f001018, NL 56ea3000 C 96480000,00000800
-<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
-<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f5e0
-<7>dma_loaded: 7
-<7>dma enqueue channel num 22, reg cf00c100
-<7>s3c2410_dma_enqueue: buff c6e4f600, dp 5e74e000 lli (ffcd60e0, 56ea30e0) 8192
-<7>enquing onto channel num 22
-<7>LLI[ffcd60c0] 5e74c000->7f001018, NL 56ea30e0 C 96480000,00000800
-<7>LLI[ffcd60e0] 5e74e000->7f001018, NL 56ea3000 C 96480000,00000800
-<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
-<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f600
-<7>dma_loaded: 8
-<7>dma enqueue channel num 22, reg cf00c100
-<7>s3c2410_dma_enqueue: buff c6e4f620, dp 5e750000 lli (ffcd6100, 56ea3100) 8192
-<7>enquing onto channel num 22
-<7>LLI[ffcd60e0] 5e74e000->7f001018, NL 56ea3100 C 96480000,00000800
-<7>LLI[ffcd6100] 5e750000->7f001018, NL 56ea3000 C 96480000,00000800
-<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
-<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f620
-<7>dma_loaded: 9
-<7>dma enqueue channel num 22, reg cf00c100
-<7>s3c2410_dma_enqueue: buff c6e4f640, dp 5e752000 lli (ffcd6120, 56ea3120) 8192
-<7>enquing onto channel num 22
-<7>LLI[ffcd6100] 5e750000->7f001018, NL 56ea3120 C 96480000,00000800
-<7>LLI[ffcd6120] 5e752000->7f001018, NL 56ea3000 C 96480000,00000800
-<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
-<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f640
-<7>dma_loaded: 10
-<7>dma enqueue channel num 22, reg cf00c100
-<7>s3c2410_dma_enqueue: buff c6e4f660, dp 5e754000 lli (ffcd6140, 56ea3140) 8192
-<7>enquing onto channel num 22
-<7>LLI[ffcd6120] 5e752000->7f001018, NL 56ea3140 C 96480000,00000800
-<7>LLI[ffcd6140] 5e754000->7f001018, NL 56ea3000 C 96480000,00000800
-<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
-<7>DMA8: buffs next c6e4f540, curr c6e4f4e0, end c6e4f660
-<7>Entered s3c_dma_trigger
-<7>DMA8: 5e740000->7f001018 L 56ea3020 C 96480000,00000000 S 0000c980
-<7>s3c64xx_dma_start: clearing interrupts, chan number 8, reg cf00c100 
-<7>s3c64xx_dma_start: starting channel
-<7>s3c64xx_dma_start: writing config 0000c981
-<7>Entered s3c_dma_pointer
-<7>Pointer 5e740010 7f001018
-<7>Entered s3c_dma_pointer
-<7>Pointer 5e740010 7f001018
-<7>ALSA sound/core/pcm_lib.c:1755: playback write error (DMA or IRQ trouble?)
-<7>Entered s3c_dma_pointer
-<7>Pointer 5e740010 7f001018
-<7>ALSA sound/core/pcm_lib.c:1755: playback write error (DMA or IRQ trouble?)
-<7>Entered s3c_dma_trigger
-<7>s3c64xx_dma_stop: stopping channel
-<7>DMA8: 5e740010->7f001018 L 56ea3020 C 96480000,00000800 S 0002c981
-
-
-
-I have the feeling that, for some reasons, the DMA is not doing its job.
-I have added the following line on the init of dma.c but it does not fix the 
-error:
-s3c64xx_dma_init1(8, DMACH_AC97_PCMOUT, IRQ_DMA1, 0x75100000);
-
-Can someone, please, give me some feedback?
-
-I am using kernel 2.6.35 and the head of Android.
-
-Cheers
-Marco 
+Right, each board can modify the bus width. so it needs the helper
+function to setup.
+> +
+> +static int exynos4_dwmci_get_ocr(u32 slot_id)
+> +{
+> + =A0 =A0 =A0 return MMC_VDD_32_33 | MMC_VDD_33_34;
+> +}
+> +
+> +static int exynos4_dwmci_get_bus_wd(u32 slot_id)
+> +{
+> + =A0 =A0 =A0 return BUS_WIDTH;
+> +}
+> +
+> +static int exynos4_dwmci_init(u32 slot_id, irq_handler_t handler, vo=
+id *data)
+> +{
+> + =A0 =A0 =A0 return 0;
+> +}
+> +
+> +static struct resource exynos4_dwmci_resource[] =3D {
+> + =A0 =A0 =A0 [0] =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =3D EXYNOS4_PA_DWMCI,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =3D EXYNOS4_PA_DWMCI + SZ_4K -=
+ 1,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =3D IORESOURCE_MEM,
+> + =A0 =A0 =A0 },
+> + =A0 =A0 =A0 [1] =3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =3D IRQ_DWMCI,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =3D IRQ_DWMCI,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =3D IORESOURCE_IRQ,
+> + =A0 =A0 =A0 }
+> +};
+> +
+> +static struct dw_mci_board exynos4_dwci_pdata =3D {
+> + =A0 =A0 =A0 .num_slots =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=3D=
+ 1,
+> + =A0 =A0 =A0 .quirks =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =3D DW_MCI_QUIRK_BROKEN_CARD_DETECTION,
+> + =A0 =A0 =A0 .bus_hz =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =3D 80*1000*1000,
+> + =A0 =A0 =A0 .detect_delay_ms =A0 =A0 =A0 =A0=3D 200,
+> + =A0 =A0 =A0 .init =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =3D exynos4_dwmci_init,
+> + =A0 =A0 =A0 .get_ocr =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+=3D exynos4_dwmci_get_ocr,
+> + =A0 =A0 =A0 .get_bus_wd =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =3D=
+ exynos4_dwmci_get_bus_wd,
+> + =A0 =A0 =A0 .select_slot =A0 =A0 =A0 =A0 =A0 =A0=3D NULL,
+> +};
+> +
+> +static u64 exynos4_dwmci_dmamask =3D DMA_BIT_MASK(32);
+> +
+> +struct platform_device exynos4_device_dwmci =3D {
+> + =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "dw_mmc",
+> + =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+> + =A0 =A0 =A0 .num_resources =A0=3D ARRAY_SIZE(exynos4_dwmci_resource=
+),
+> + =A0 =A0 =A0 .resource =A0 =A0 =A0 =3D exynos4_dwmci_resource,
+> + =A0 =A0 =A0 .dev =A0 =A0 =A0 =A0 =A0 =A0=3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .dma_mask =A0 =A0 =A0 =A0 =A0 =A0 =A0 =3D=
+ &exynos4_dwmci_dmamask,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .coherent_dma_mask =A0 =A0 =A0=3D DMA_B=
+IT_MASK(32),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .platform_data =A0=3D &exynos4_dwci_pda=
+ta,
+> + =A0 =A0 =A0 },
+> +};
+> +
+> diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mac=
+h-exynos4/include/mach/irqs.h
+> index 5d03730..b720246 100644
+> --- a/arch/arm/mach-exynos4/include/mach/irqs.h
+> +++ b/arch/arm/mach-exynos4/include/mach/irqs.h
+> @@ -107,6 +107,7 @@
+> =A0#define IRQ_HSMMC1 =A0 =A0 =A0 =A0 =A0 =A0 COMBINER_IRQ(29, 1)
+> =A0#define IRQ_HSMMC2 =A0 =A0 =A0 =A0 =A0 =A0 COMBINER_IRQ(29, 2)
+> =A0#define IRQ_HSMMC3 =A0 =A0 =A0 =A0 =A0 =A0 COMBINER_IRQ(29, 3)
+> +#define IRQ_DWMCI =A0 =A0 =A0 =A0 =A0 =A0 =A0COMBINER_IRQ(29, 4)
+>
+> =A0#define IRQ_MIPI_CSIS0 =A0 =A0 =A0 =A0 COMBINER_IRQ(30, 0)
+> =A0#define IRQ_MIPI_CSIS1 =A0 =A0 =A0 =A0 COMBINER_IRQ(30, 1)
+> diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach=
+-exynos4/include/mach/map.h
+> index 0009e77..352e500 100644
+> --- a/arch/arm/mach-exynos4/include/mach/map.h
+> +++ b/arch/arm/mach-exynos4/include/mach/map.h
+> @@ -94,6 +94,7 @@
+> =A0#define EXYNOS4_PA_MIPI_CSIS1 =A0 =A0 =A0 =A0 =A00x11890000
+>
+> =A0#define EXYNOS4_PA_HSMMC(x) =A0 =A0 =A0 =A0 =A0 =A0(0x12510000 + (=
+(x) * 0x10000))
+> +#define EXYNOS4_PA_DWMCI =A0 =A0 =A0 =A0 =A0 =A0 =A0 0x12550000
+>
+> =A0#define EXYNOS4_PA_SATA =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A00x12560000
+> =A0#define EXYNOS4_PA_SATAPHY =A0 =A0 =A0 =A0 =A0 =A0 0x125D0000
+> diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/pla=
+t-samsung/include/plat/devs.h
+> index e3b31c2..29fa1cf 100644
+> --- a/arch/arm/plat-samsung/include/plat/devs.h
+> +++ b/arch/arm/plat-samsung/include/plat/devs.h
+> @@ -112,6 +112,7 @@ extern struct platform_device exynos4_device_i2s2=
+;
+> =A0extern struct platform_device exynos4_device_spdif;
+> =A0extern struct platform_device exynos4_device_pd[];
+> =A0extern struct platform_device exynos4_device_ahci;
+> +extern struct platform_device exynos4_device_dwmci;
+>
+> =A0extern struct platform_device s5p6440_device_pcm;
+> =A0extern struct platform_device s5p6440_device_iis;
+> --
+> 1.7.2.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
