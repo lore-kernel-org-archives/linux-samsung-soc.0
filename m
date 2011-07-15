@@ -1,537 +1,61 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH V2 05/12] ARM: SAMSUNG: Add common DMA operations
-Date: Thu, 14 Jul 2011 20:53:47 -0600
-Message-ID: <20110715025347.GU2927@ponder.secretlab.ca>
-References: <1310546857-6304-1-git-send-email-kgene.kim@samsung.com>
- <1310546857-6304-6-git-send-email-kgene.kim@samsung.com>
+From: JinGoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH 1/6] video: s3c-fb: Add S5P64X0 specific s3c_fb_driverdata
+Date: Fri, 15 Jul 2011 03:16:05 +0000 (GMT)
+Message-ID: <20899653.16631310699765372.JavaMail.weblogic@epml15>
+Reply-To: jg1.han@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pv0-f174.google.com ([74.125.83.174]:60883 "EHLO
-	mail-pv0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964799Ab1GOCxu (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:64308 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932217Ab1GODQH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Jul 2011 22:53:50 -0400
-Received: by mail-pv0-f174.google.com with SMTP id 12so711443pvg.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Jul 2011 19:53:50 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1310546857-6304-6-git-send-email-kgene.kim@samsung.com>
+	Thu, 14 Jul 2011 23:16:07 -0400
+Received: from epcpsbge6.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LOC00MQYUEIMXK0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 15 Jul 2011 12:16:05 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Linus Walleij <linus.walleij@linaro.org>, Boojin Kim <boojin.kim@samsung.com>
+To: AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm
 
-On Wed, Jul 13, 2011 at 05:47:30PM +0900, Kukjin Kim wrote:
-> From: Boojin Kim <boojin.kim@samsung.com>
-> 
-> This patch adds common DMA operations which are used for Samsung DMA
-> drivers. Currently there are two types of DMA driver for Samsung SoCs.
-> The one is S3C-DMA for S3C SoCs and the other is PL330-DMA for S5P SoCs.
-> This patch provides funcion pointers for common DMA operations to DMA
-> client driver like SPI and Audio. It makes DMA client drivers support
-> multi-platform.
-> In addition, this common DMA operations implement the shared actions
-> that are needed for DMA client driver. For example shared actions are
-> filter() function for dma_request_channel() and parameter passing for
-> device_prep_slave_sg().
-> 
-> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
->  arch/arm/mach-s3c2410/include/mach/dma.h       |    3 +-
->  arch/arm/plat-samsung/Makefile                 |    6 +-
->  arch/arm/plat-samsung/dma-ops.c                |  131 +++++++++++++++++++++++
->  arch/arm/plat-samsung/include/plat/dma-ops.h   |   47 +++++++++
->  arch/arm/plat-samsung/include/plat/dma-pl330.h |    3 +
->  arch/arm/plat-samsung/include/plat/dma.h       |    2 +-
->  arch/arm/plat-samsung/s3c-dma-ops.c            |  132 ++++++++++++++++++++++++
->  7 files changed, 320 insertions(+), 4 deletions(-)
->  create mode 100644 arch/arm/plat-samsung/dma-ops.c
->  create mode 100644 arch/arm/plat-samsung/include/plat/dma-ops.h
->  create mode 100644 arch/arm/plat-samsung/s3c-dma-ops.c
-> 
-> diff --git a/arch/arm/mach-s3c2410/include/mach/dma.h b/arch/arm/mach-s3c2410/include/mach/dma.h
-> index b2b2a5b..71a662d 100644
-> --- a/arch/arm/mach-s3c2410/include/mach/dma.h
-> +++ b/arch/arm/mach-s3c2410/include/mach/dma.h
-> @@ -13,7 +13,6 @@
->  #ifndef __ASM_ARCH_DMA_H
->  #define __ASM_ARCH_DMA_H __FILE__
->  
-> -#include <plat/dma.h>
->  #include <linux/sysdev.h>
->  
->  #define MAX_DMA_TRANSFER_SIZE   0x100000 /* Data Unit is half word  */
-> @@ -51,6 +50,8 @@ enum dma_ch {
->  	DMACH_MAX,		/* the end entry */
->  };
->  
-> +#include <plat/dma.h>
-> +
->  #define DMACH_LOW_LEVEL	(1<<28)	/* use this to specifiy hardware ch no */
->  
->  /* we have 4 dma channels */
-> diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-> index 53eb15b..9ecf2aa 100644
-> --- a/arch/arm/plat-samsung/Makefile
-> +++ b/arch/arm/plat-samsung/Makefile
-> @@ -62,9 +62,11 @@ obj-$(CONFIG_SAMSUNG_DEV_PWM)	+= dev-pwm.o
->  
->  # DMA support
->  
-> -obj-$(CONFIG_S3C_DMA)		+= dma.o
-> +obj-$(CONFIG_S3C_DMA)		+= dma.o s3c-dma-ops.o
->  
-> -obj-$(CONFIG_S3C_PL330_DMA)	+= s3c-pl330.o
-> +obj-$(CONFIG_DMADEV_PL330)	+= dma-ops.o
-> +
-> +obj-$(CONFIG_S3C_PL330_DMA)	+= s3c-pl330.o s3c-dma-ops.o
->  
->  # PM support
->  
-> diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung/dma-ops.c
-> new file mode 100644
-> index 0000000..94a9d33
-> --- /dev/null
-> +++ b/arch/arm/plat-samsung/dma-ops.c
-> @@ -0,0 +1,131 @@
-> +/* linux/arch/arm/plat-samsung/dma-ops.c
-> + *
-> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * Samsung DMA Operations
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/errno.h>
-> +#include <linux/dmaengine.h>
-> +#include <linux/amba/pl330.h>
-> +
-> +#include <mach/dma.h>
-> +
-> +static bool filter(struct dma_chan *chan, void *param)
-> +{
-> +	struct dma_pl330_peri *peri = (struct dma_pl330_peri *)chan->private;
-
-Is this code pl330 specific?  If so, 'pl330' should probably be
-referenced in the function name.
-
-> +	unsigned dma_ch = (unsigned)param;
-> +
-> +	if (peri->peri_id != dma_ch)
-> +		return false;
-> +
-> +	return true;
-> +}
-> +
-> +static unsigned dma_request(enum dma_ch dma_ch, struct samsung_dma_info *info)
-> +{
-> +	struct dma_chan *chan;
-> +	dma_cap_mask_t mask;
-> +	struct dma_slave_config slave_config;
-> +
-> +	dma_cap_zero(mask);
-> +	dma_cap_set(info->cap, mask);
-> +
-> +	chan = dma_request_channel(mask, filter, (void *)dma_ch);
-> +
-> +	if (info->direction == DMA_FROM_DEVICE) {
-> +		memset(&slave_config, 0, sizeof(struct dma_slave_config));
-> +		slave_config.direction = info->direction;
-> +		slave_config.src_addr = info->fifo;
-> +		slave_config.src_addr_width = info->width;
-> +		dmaengine_slave_config(chan, &slave_config);
-> +	} else if (info->direction == DMA_TO_DEVICE) {
-> +		memset(&slave_config, 0, sizeof(struct dma_slave_config));
-> +		slave_config.direction = info->direction;
-> +		slave_config.dst_addr = info->fifo;
-> +		slave_config.dst_addr_width = info->width;
-> +		dmaengine_slave_config(chan, &slave_config);
-> +	}
-> +
-> +	return (unsigned)chan;
-> +}
-> +
-> +static int dma_release(unsigned ch, struct s3c2410_dma_client *client)
-> +{
-> +	dma_release_channel((struct dma_chan *)ch);
-> +
-> +	return 0;
-> +}
-> +
-> +static int dma_prepare(unsigned ch, struct samsung_dma_prep_info *info)
-> +{
-> +	struct scatterlist sg;
-> +	struct dma_chan *chan = (struct dma_chan *)ch;
-> +	struct dma_async_tx_descriptor *desc;
-> +
-> +	switch (info->cap) {
-> +	case DMA_SLAVE:
-> +		sg_init_table(&sg, 1);
-> +		sg_dma_len(&sg) = info->len;
-> +		sg_set_page(&sg, pfn_to_page(PFN_DOWN(info->buf)),
-> +			    info->len, offset_in_page(info->buf));
-> +		sg_dma_address(&sg) = info->buf;
-> +
-> +		desc = chan->device->device_prep_slave_sg(chan,
-> +			&sg, 1, info->direction, DMA_PREP_INTERRUPT);
-> +		break;
-> +	case DMA_CYCLIC:
-> +		desc = chan->device->device_prep_dma_cyclic(chan,
-> +			info->buf, info->len, info->period, info->direction);
-> +		break;
-> +	default:
-> +		dev_err(&chan->dev->device, "unsupported format\n");
-> +		return -EFAULT;
-> +	}
-> +
-> +	if (!desc) {
-> +		dev_err(&chan->dev->device, "cannot prepare cyclic dma\n");
-> +		return -EFAULT;
-> +	}
-> +
-> +	desc->callback = info->fp;
-> +	desc->callback_param = info->fp_param;
-> +
-> +	dmaengine_submit((struct dma_async_tx_descriptor *)desc);
-> +
-> +	return 0;
-> +}
-> +
-> +static inline int dma_trigger(unsigned ch)
-> +{
-> +	dma_async_issue_pending((struct dma_chan *)ch);
-> +
-> +	return 0;
-> +}
-> +
-> +static inline int dma_flush(unsigned ch)
-> +{
-> +	return dmaengine_terminate_all((struct dma_chan *)ch);
-> +}
-> +
-> +static struct samsung_dma_ops dmaeng_ops = {
-> +	.request	= dma_request,
-> +	.release	= dma_release,
-> +	.prepare	= dma_prepare,
-> +	.trigger	= dma_trigger,
-> +	.started	= NULL,
-> +	.flush		= dma_flush,
-> +	.stop		= dma_flush,
-> +};
-
-Even though these function are all local statics, you should use a
-samsung prefix to avoid namespace collisions.  So, they should be
-named something like: samsung_dmaeng_ops, samsung_dmaeng_request(),
-samsung_dmaeng_release(), etc.  The ops structure and the functions
-should have the same prefix.
-
-> +
-> +void *samsung_dma_get_ops(void)
-> +{
-> +	return (void *)&dmaeng_ops;
-> +}
-> +EXPORT_SYMBOL(samsung_dma_get_ops);
-
-If all that is needed is a reference to the dma ops, then you could
-simply export samsung_dmaeng_ops() without a separate function.
-
-> diff --git a/arch/arm/plat-samsung/include/plat/dma-ops.h b/arch/arm/plat-samsung/include/plat/dma-ops.h
-> new file mode 100644
-> index 0000000..eea4130
-> --- /dev/null
-> +++ b/arch/arm/plat-samsung/include/plat/dma-ops.h
-> @@ -0,0 +1,47 @@
-> +/* arch/arm/plat-samsung/include/plat/dma-ops.h
-> + *
-> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * Samsung DMA support
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#include <linux/dmaengine.h>
-> +
-> +struct samsung_dma_prep_info {
-> +	enum dma_transaction_type cap;
-> +	enum dma_data_direction direction;
-> +	unsigned buf;
-> +	unsigned long period;
-> +	unsigned long len;
-> +	void (*fp)(void *data);
-> +	void *fp_param;
-> +};
-> +
-> +struct samsung_dma_info {
-> +	enum dma_transaction_type cap;
-> +	enum dma_data_direction direction;
-> +	enum dma_slave_buswidth width;
-> +	unsigned fifo;
-> +	struct s3c2410_dma_client *client;
-> +};
-> +
-> +struct samsung_dma_ops {
-> +	unsigned (*request)(enum dma_ch ch, struct samsung_dma_info *info);
-> +	int (*release)(unsigned ch, struct s3c2410_dma_client *client);
-> +	int (*prepare)(unsigned ch, struct samsung_dma_prep_info *info);
-> +	int (*trigger)(unsigned ch);
-> +	int (*started)(unsigned ch);
-> +	int (*flush)(unsigned ch);
-> +	int (*stop)(unsigned ch);
-> +};
-> +
-> +/*
-> + * samsung_dma_get_ops
-> + * get the set of dma operations
-> + */
-> +extern void *samsung_dma_get_ops(void);
-> diff --git a/arch/arm/plat-samsung/include/plat/dma-pl330.h b/arch/arm/plat-samsung/include/plat/dma-pl330.h
-> index c402719..be84bec 100644
-> --- a/arch/arm/plat-samsung/include/plat/dma-pl330.h
-> +++ b/arch/arm/plat-samsung/include/plat/dma-pl330.h
-> @@ -1,4 +1,7 @@
->  /*
-> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
->   * Copyright (C) 2010 Samsung Electronics Co. Ltd.
->   *	Jaswinder Singh <jassi.brar@samsung.com>
->   *
-
-
-Heh, this patch doesn't make any changes to this file, and samsung
-already has a copyright notice on it anyway.  You should probably drop
-this hunk.
-
-> diff --git a/arch/arm/plat-samsung/include/plat/dma.h b/arch/arm/plat-samsung/include/plat/dma.h
-> index 2e8f8c6..90da162 100644
-> --- a/arch/arm/plat-samsung/include/plat/dma.h
-> +++ b/arch/arm/plat-samsung/include/plat/dma.h
-> @@ -124,4 +124,4 @@ extern int s3c2410_dma_getposition(unsigned int channel,
->  extern int s3c2410_dma_set_opfn(unsigned int, s3c2410_dma_opfn_t rtn);
->  extern int s3c2410_dma_set_buffdone_fn(unsigned int, s3c2410_dma_cbfn_t rtn);
->  
-> -
-
-nitpick: Unrelated whitespace change.  One blank line of whitespace is
-sufficient anyway.
-
-> +#include <plat/dma-ops.h>
-> diff --git a/arch/arm/plat-samsung/s3c-dma-ops.c b/arch/arm/plat-samsung/s3c-dma-ops.c
-> new file mode 100644
-> index 0000000..17b1be0
-> --- /dev/null
-> +++ b/arch/arm/plat-samsung/s3c-dma-ops.c
-> @@ -0,0 +1,132 @@
-> +/* linux/arch/arm/plat-samsung/s3c-dma-ops.c
-> + *
-> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * Samsung S3C-DMA Operations
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/errno.h>
-> +#include <linux/slab.h>
-> +#include <linux/types.h>
-> +
-> +#include <mach/dma.h>
-> +
-> +struct cb_data {
-
-struct s3c2410_cb_data {
-
-> +	void (*fp) (void *);
-> +	void *fp_param;
-> +	unsigned ch;
-> +	struct list_head node;
-> +};
-> +
-> +static LIST_HEAD(dma_list);
-> +
-> +static void dma_cb(struct s3c2410_dma_chan *channel,
-> +		   void *param, int size, enum s3c2410_dma_buffresult res)
-> +{
-> +	struct cb_data *data = (struct cb_data *)param;
-
-param is a void*.  The (struct cb_data*) cast is not needed.
-
-> +
-> +	data->fp(data->fp_param);
-> +}
-> +
-> +static unsigned dma_request(enum dma_ch dma_ch, struct samsung_dma_info *info)
-
-These functions should *definitely* be named differently from the
-dma_* ops in the other file so that you can differentiate between
-them, and to make them grep-friendly.  This goes for *all* file-scope
-symbols.
-
-> +{
-> +	struct cb_data *data;
-> +
-> +	if (s3c2410_dma_request(dma_ch, info->client, NULL) < 0) {
-> +		s3c2410_dma_free(dma_ch, info->client);
-> +		return 0;
-> +	}
-> +
-> +	data = kmalloc(sizeof(struct cb_data), GFP_KERNEL);
-
-kzalloc()
-
-> +	data->fp = NULL;
-
-Drop this line after converting to kzalloc()
-
-> +	data->ch = (unsigned)dma_ch;
-
-Is the cast necessary?
-
-> +	list_add_tail(&data->node, &dma_list);
-> +
-> +	if (info->direction == DMA_FROM_DEVICE)
-> +		s3c2410_dma_devconfig(dma_ch, S3C2410_DMASRC_HW, info->fifo);
-> +	else
-> +		s3c2410_dma_devconfig(dma_ch, S3C2410_DMASRC_MEM, info->fifo);
-
->From arch/arm/plat-samsung/include/plat/dma.h:
-	enum s3c2410_dmasrc {
-		S3C2410_DMASRC_HW,	/* source is memory */
-		S3C2410_DMASRC_MEM	/* source is hardware */
-	};
-
-from dma-mapping.h:
-	enum dma_data_direction {
-		DMA_BIDIRECTIONAL = 0,
-		DMA_TO_DEVICE = 1,
-		DMA_FROM_DEVICE = 2,
-		DMA_NONE = 3,
-	};
-
-/me thinks it would all look nicer if s3c2410 dma just replaced
-s3c2410_dmasrc to dma_data_direction, and from what I can tell it
-would just be a simple search and replace.  :-)
-
-> +
-> +	if (info->cap == DMA_CYCLIC)
-> +		s3c2410_dma_setflags(dma_ch, S3C2410_DMAF_CIRCULAR);
-> +
-> +	s3c2410_dma_config(dma_ch, info->width);
-> +
-> +	return (unsigned)dma_ch;
-> +}
-> +
-> +static int dma_release(unsigned ch, struct s3c2410_dma_client *client)
-
-unsigned int
-
-> +{
-> +	struct cb_data *data;
-> +
-> +	list_for_each_entry(data, &dma_list, node)
-> +	    if (data->ch == ch)
-> +		break;
-
-nit: incorrect indentation.  Use tab characters instead of spaces.
-I've got "set list" and "set listchars=tab:\|-,trail:-" in my ~/.vimrc
-so I can see the difference between tabs and spaces.
-
-> +	list_del(&data->node);
-
-What happens if the channel isn't found in the list?  Can that
-situation happen?
-
-What happens if two drivers call dma_release simultaneously?  It
-looks like a mutex is needed to protext the dma_list.
-
-> +
-> +	s3c2410_dma_free((enum dma_ch)ch, client);
-
-All the casting in this patch makes me nervous.  When a lot of casting
-is required, I wonder if the API needs to be changed.
-
-> +	kfree(data);
-> +
-> +	return 0;
-> +}
-> +
-> +static int dma_prepare(unsigned ch, struct samsung_dma_prep_info *info)
-> +{
-> +	struct cb_data *data;
-> +
-> +	list_for_each_entry(data, &dma_list, node)
-> +	    if (data->ch == ch)
-> +		break;
-> +
-> +	if (!data->fp) {
-> +		s3c2410_dma_set_buffdone_fn((enum dma_ch)ch, dma_cb);
-> +		data->fp = info->fp;
-> +		data->fp_param = info->fp_param;
-> +	}
-> +	s3c2410_dma_enqueue((enum dma_ch)ch, (void *)data, info->buf,
-> +			    info->period);
-> +
-> +	return 0;
-> +}
-> +
-> +static inline int dma_trigger(unsigned ch)
-> +{
-> +	return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_START);
-> +}
-> +
-> +static inline int dma_started(unsigned ch)
-> +{
-> +	return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_STARTED);
-> +}
-> +
-> +static inline int dma_flush(unsigned ch)
-> +{
-> +	return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_FLUSH);
-> +}
-> +
-> +static inline int dma_stop(unsigned ch)
-> +{
-> +	return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_STOP);
-> +}
-> +
-> +static struct samsung_dma_ops s3c_dma_ops = {
-> +	.request	= dma_request,
-> +	.release	= dma_release,
-> +	.prepare	= dma_prepare,
-> +	.trigger	= dma_trigger,
-> +	.started	= dma_started,
-> +	.flush		= dma_flush,
-> +	.stop		= dma_stop,
-> +};
-> +
-> +void *samsung_dma_get_ops(void)
-> +{
-> +	return (void *)&s3c_dma_ops;
-> +}
-> +EXPORT_SYMBOL(samsung_dma_get_ops);
-
-This is a problem.  This patch adds two implementations of
-samsung_dma_get_ops(). New code needs to be multiplatform friendly.
-That means that the code nees to handle both dma-ops.c and
-s3c-dma-ops.c compiled into the kernel at the same time and select the
-correct one at runtime.
-
-g.
-
-> -- 
-> 1.7.1
-> 
+QWNrZWQtYnk6IEppbmdvbyBIYW4gPGpnMS5oYW5Ac2Ftc3VuZy5jb20+DQoNCj4gLS0tLS1Pcmln
+aW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQWpheSBLdW1hciBbbWFpbHRvOmFqYXlrdW1hci5y
+c0BzYW1zdW5nLmNvbV0NCj4gU2VudDogVGh1cnNkYXksIEp1bHkgMTQsIDIwMTEgMTA6MjcgUE0N
+Cj4gVG86IGtnZW5lLmtpbUBzYW1zdW5nLmNvbTsgbGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJu
+ZWwub3JnOyBsaW51eC1hcm0tDQo+IGtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsZXRoYWxA
+bGludXgtc2gub3JnOyBqZzEuaGFuQHNhbXN1bmcuY29tDQo+IFN1YmplY3Q6IFtQQVRDSCAxLzZd
+IHZpZGVvOiBzM2MtZmI6IEFkZCBTNVA2NFgwIHNwZWNpZmljIHMzY19mYl9kcml2ZXJkYXRhDQo+
+IA0KPiBUaGlzIHBhdGNoOg0KPiBBZGRzIHMzY19mYl9kcml2ZXJkYXRhIGZvciBTNVA2NFgwLCB3
+aGljaCBzdXBwb3J0cyAzIHdpbmRvd3MuDQo+IEFsc28sIHJlZ2lzdGVyICJzNXA2NHgwLWZiIiB0
+eXBlIGRyaXZlcl9kYXRhLg0KPiANCj4gTm90ZTogRXhpc3RpbmcgczNjX2ZiX2RyaXZlcmRhdGEg
+ZGVmaW5pdGlvbnMgaW4gczNjLWZiLmMNCj4gICAgICAgc3VwcG9ydHMgNSBvciAyIHdpbmRvd3Mu
+DQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBBamF5IEt1bWFyIDxhamF5a3VtYXIucnNAc2Ftc3VuZy5j
+b20+DQo+IC0tLQ0KPiAgZHJpdmVycy92aWRlby9zM2MtZmIuYyB8ICAgMjcgKysrKysrKysrKysr
+KysrKysrKysrKysrKysrDQo+ICAxIGZpbGVzIGNoYW5nZWQsIDI3IGluc2VydGlvbnMoKyksIDAg
+ZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy92aWRlby9zM2MtZmIuYyBi
+L2RyaXZlcnMvdmlkZW8vczNjLWZiLmMNCj4gaW5kZXggNGFlY2YyMS4uMGZkYTI1MiAxMDA2NDQN
+Cj4gLS0tIGEvZHJpdmVycy92aWRlby9zM2MtZmIuYw0KPiArKysgYi9kcml2ZXJzL3ZpZGVvL3Mz
+Yy1mYi5jDQo+IEBAIC0xODU5LDYgKzE4NTksMzAgQEAgc3RhdGljIHN0cnVjdCBzM2NfZmJfZHJp
+dmVyZGF0YSBzM2NfZmJfZGF0YV9zM2MyNDQzDQo+ID0gew0KPiAgCX0sDQo+ICB9Ow0KPiANCj4g
+K3N0YXRpYyBzdHJ1Y3QgczNjX2ZiX2RyaXZlcmRhdGEgczNjX2ZiX2RhdGFfczVwNjR4MCA9IHsN
+Cj4gKwkudmFyaWFudCA9IHsNCj4gKwkJLm5yX3dpbmRvd3MJPSAzLA0KPiArCQkudmlkdGNvbgk9
+IFZJRFRDT04wLA0KPiArCQkud2luY29uCQk9IFdJTkNPTigwKSwNCj4gKwkJLndpbm1hcAkJPSBX
+SU54TUFQKDApLA0KPiArCQkua2V5Y29uCQk9IFdLRVlDT04sDQo+ICsJCS5vc2QJCT0gVklET1NE
+X0JBU0UsDQo+ICsJCS5vc2Rfc3RyaWRlCT0gMTYsDQo+ICsJCS5idWZfc3RhcnQJPSBWSURXX0JV
+Rl9TVEFSVCgwKSwNCj4gKwkJLmJ1Zl9zaXplCT0gVklEV19CVUZfU0laRSgwKSwNCj4gKwkJLmJ1
+Zl9lbmQJPSBWSURXX0JVRl9FTkQoMCksDQo+ICsNCj4gKwkJLnBhbGV0dGUgPSB7DQo+ICsJCQlb
+MF0gPSAweDI0MDAsDQo+ICsJCQlbMV0gPSAweDI4MDAsDQo+ICsJCQlbMl0gPSAweDJjMDAsDQo+
+ICsJCX0sDQo+ICsJfSwNCj4gKwkud2luWzBdID0gJnMzY19mYl9kYXRhX3M1cF93aW5zWzBdLA0K
+PiArCS53aW5bMV0gPSAmczNjX2ZiX2RhdGFfczVwX3dpbnNbMV0sDQo+ICsJLndpblsyXSA9ICZz
+M2NfZmJfZGF0YV9zNXBfd2luc1syXSwNCj4gK307DQo+ICsNCj4gIHN0YXRpYyBzdHJ1Y3QgcGxh
+dGZvcm1fZGV2aWNlX2lkIHMzY19mYl9kcml2ZXJfaWRzW10gPSB7DQo+ICAJew0KPiAgCQkubmFt
+ZQkJPSAiczNjLWZiIiwNCj4gQEAgLTE4NzIsNiArMTg5Niw5IEBAIHN0YXRpYyBzdHJ1Y3QgcGxh
+dGZvcm1fZGV2aWNlX2lkIHMzY19mYl9kcml2ZXJfaWRzW10NCj4gPSB7DQo+ICAJfSwgew0KPiAg
+CQkubmFtZQkJPSAiczNjMjQ0My1mYiIsDQo+ICAJCS5kcml2ZXJfZGF0YQk9ICh1bnNpZ25lZCBs
+b25nKSZzM2NfZmJfZGF0YV9zM2MyNDQzLA0KPiArCX0sIHsNCj4gKwkJLm5hbWUJCT0gInM1cDY0
+eDAtZmIiLA0KPiArCQkuZHJpdmVyX2RhdGEJPSAodW5zaWduZWQgbG9uZykmczNjX2ZiX2RhdGFf
+czVwNjR4MCwNCj4gIAl9LA0KPiAgCXt9LA0KPiAgfTsNCj4gLS0NCj4gMS43LjENCg0K
