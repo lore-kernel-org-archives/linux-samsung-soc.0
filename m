@@ -1,12 +1,12 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V3 13/13] ARM: SAMSUNG: Remove Samsung specific enum type for dma direction
-Date: Sat, 16 Jul 2011 15:44:26 +0900
-Message-ID: <1310798666-7659-14-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH V3 12/13] ASoC: Samsung: Update DMA interface
+Date: Sat, 16 Jul 2011 15:44:25 +0900
+Message-ID: <1310798666-7659-13-git-send-email-kgene.kim@samsung.com>
 References: <1310798666-7659-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:33262 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:33272 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751161Ab1GPHhL (ORCPT
+	with ESMTP id S1751117Ab1GPHhL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Sat, 16 Jul 2011 03:37:11 -0400
 In-Reply-To: <1310798666-7659-1-git-send-email-kgene.kim@samsung.com>
@@ -17,237 +17,370 @@ Cc: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
 
 From: Boojin Kim <boojin.kim@samsung.com>
 
-This patch removes the samsung specific enum type 's3c2410_dmasrc'
-and uses 'dma_data_direction' instead.
+This patch adds to support the DMA PL330 driver that uses
+DMA generic API. Samsung sound driver uses DMA generic API
+if architecture supports it. Otherwise, use samsung specific
+S3C-PL330 API driver to transfer PCM data.
 
 Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Liam Girdwood <lrg@ti.com>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s3c2410/include/mach/dma.h         |    2 +-
- arch/arm/mach-s3c2412/dma.c                      |    4 ++--
- arch/arm/mach-s3c64xx/dma.c                      |   10 +++++-----
- arch/arm/mach-s3c64xx/include/mach/dma.h         |    2 +-
- arch/arm/plat-s3c24xx/dma.c                      |   10 +++++-----
- arch/arm/plat-samsung/include/plat/dma-s3c24xx.h |    2 +-
- arch/arm/plat-samsung/include/plat/dma.h         |    9 +++------
- arch/arm/plat-samsung/s3c-dma-ops.c              |    5 +----
- drivers/mmc/host/s3cmci.c                        |    6 +++---
- 9 files changed, 22 insertions(+), 28 deletions(-)
+ arch/arm/mach-s3c2410/include/mach/dma.h       |   10 +-
+ arch/arm/mach-s3c64xx/include/mach/dma.h       |    2 +-
+ arch/arm/plat-samsung/include/plat/dma-pl330.h |    2 +-
+ sound/soc/samsung/ac97.c                       |   10 ++-
+ sound/soc/samsung/dma.c                        |  144 ++++++++++--------------
+ sound/soc/samsung/dma.h                        |    4 +-
+ 6 files changed, 78 insertions(+), 94 deletions(-)
 
 diff --git a/arch/arm/mach-s3c2410/include/mach/dma.h b/arch/arm/mach-s3c2410/include/mach/dma.h
-index 4e485ba..ae8e482 100644
+index e61a91f..4e485ba 100644
 --- a/arch/arm/mach-s3c2410/include/mach/dma.h
 +++ b/arch/arm/mach-s3c2410/include/mach/dma.h
-@@ -174,7 +174,7 @@ struct s3c2410_dma_chan {
- 	struct s3c2410_dma_client *client;
+@@ -50,6 +50,11 @@ enum dma_ch {
+ 	DMACH_MAX,		/* the end entry */
+ };
  
- 	/* channel configuration */
--	enum s3c2410_dmasrc	 source;
-+	enum dma_data_direction	 source;
- 	enum dma_ch		 req_ch;
- 	unsigned long		 dev_addr;
- 	unsigned long		 load_timeout;
-diff --git a/arch/arm/mach-s3c2412/dma.c b/arch/arm/mach-s3c2412/dma.c
-index 7abecfc..1c42972 100644
---- a/arch/arm/mach-s3c2412/dma.c
-+++ b/arch/arm/mach-s3c2412/dma.c
-@@ -148,11 +148,11 @@ static struct s3c24xx_dma_map __initdata s3c2412_dma_mappings[] = {
- 
- static void s3c2412_dma_direction(struct s3c2410_dma_chan *chan,
- 				  struct s3c24xx_dma_map *map,
--				  enum s3c2410_dmasrc dir)
-+				  enum dma_data_direction dir)
++static inline bool samsung_dma_has_circular(void)
++{
++	return false;
++}
++
+ static inline bool samsung_dma_is_dmadev(void)
  {
- 	unsigned long chsel;
+ 	return false;
+@@ -202,9 +207,4 @@ struct s3c2410_dma_chan {
  
--	if (dir == S3C2410_DMASRC_HW)
-+	if (dir == DMA_FROM_DEVICE)
- 		chsel = map->channels_rx[0];
- 	else
- 		chsel = map->channels[0];
-diff --git a/arch/arm/mach-s3c64xx/dma.c b/arch/arm/mach-s3c64xx/dma.c
-index b197171..d96ed4c 100644
---- a/arch/arm/mach-s3c64xx/dma.c
-+++ b/arch/arm/mach-s3c64xx/dma.c
-@@ -147,14 +147,14 @@ static void s3c64xx_dma_fill_lli(struct s3c2410_dma_chan *chan,
- 	u32 control0, control1;
+ typedef unsigned long dma_device_t;
  
- 	switch (chan->source) {
--	case S3C2410_DMASRC_HW:
-+	case DMA_FROM_DEVICE:
- 		src = chan->dev_addr;
- 		dst = data;
- 		control0 = PL080_CONTROL_SRC_AHB2;
- 		control0 |= PL080_CONTROL_DST_INCR;
- 		break;
- 
--	case S3C2410_DMASRC_MEM:
-+	case DMA_TO_DEVICE:
- 		src = data;
- 		dst = chan->dev_addr;
- 		control0 = PL080_CONTROL_DST_AHB2;
-@@ -416,7 +416,7 @@ EXPORT_SYMBOL(s3c2410_dma_enqueue);
- 
- 
- int s3c2410_dma_devconfig(unsigned int channel,
--			  enum s3c2410_dmasrc source,
-+			  enum dma_data_direction source,
- 			  unsigned long devaddr)
- {
- 	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
-@@ -437,11 +437,11 @@ int s3c2410_dma_devconfig(unsigned int channel,
- 	pr_debug("%s: peripheral %d\n", __func__, peripheral);
- 
- 	switch (source) {
--	case S3C2410_DMASRC_HW:
-+	case DMA_FROM_DEVICE:
- 		config = 2 << PL080_CONFIG_FLOW_CONTROL_SHIFT;
- 		config |= peripheral << PL080_CONFIG_SRC_SEL_SHIFT;
- 		break;
--	case S3C2410_DMASRC_MEM:
-+	case DMA_TO_DEVICE:
- 		config = 1 << PL080_CONFIG_FLOW_CONTROL_SHIFT;
- 		config |= peripheral << PL080_CONFIG_DST_SEL_SHIFT;
- 		break;
+-static inline bool s3c_dma_has_circular(void)
+-{
+-	return false;
+-}
+-
+ #endif /* __ASM_ARCH_DMA_H */
 diff --git a/arch/arm/mach-s3c64xx/include/mach/dma.h b/arch/arm/mach-s3c64xx/include/mach/dma.h
-index 74fdf25..fe1a98c 100644
+index 49c3a53..74fdf25 100644
 --- a/arch/arm/mach-s3c64xx/include/mach/dma.h
 +++ b/arch/arm/mach-s3c64xx/include/mach/dma.h
-@@ -99,7 +99,7 @@ struct s3c2410_dma_chan {
- 	unsigned char		 peripheral;
+@@ -58,7 +58,7 @@ enum dma_ch {
+ 	DMACH_MAX		/* the end */
+ };
  
- 	unsigned int		 flags;
--	enum s3c2410_dmasrc	 source;
-+	enum dma_data_direction	 source;
- 
- 
- 	dma_addr_t		dev_addr;
-diff --git a/arch/arm/plat-s3c24xx/dma.c b/arch/arm/plat-s3c24xx/dma.c
-index a79a8cc..036ff81 100644
---- a/arch/arm/plat-s3c24xx/dma.c
-+++ b/arch/arm/plat-s3c24xx/dma.c
-@@ -1094,14 +1094,14 @@ EXPORT_SYMBOL(s3c2410_dma_config);
-  *
-  * configure the dma source/destination hardware type and address
-  *
-- * source:    S3C2410_DMASRC_HW: source is hardware
-- *            S3C2410_DMASRC_MEM: source is memory
-+ * source:    DMA_FROM_DEVICE: source is hardware
-+ *            DMA_TO_DEVICE: source is memory
-  *
-  * devaddr:   physical address of the source
- */
- 
- int s3c2410_dma_devconfig(unsigned int channel,
--			  enum s3c2410_dmasrc source,
-+			  enum dma_data_direction source,
- 			  unsigned long devaddr)
+-static __inline__ bool s3c_dma_has_circular(void)
++static inline bool samsung_dma_has_circular(void)
  {
- 	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
-@@ -1131,7 +1131,7 @@ int s3c2410_dma_devconfig(unsigned int channel,
- 	 hwcfg |= S3C2410_DISRCC_INC;
- 
- 	switch (source) {
--	case S3C2410_DMASRC_HW:
-+	case DMA_FROME_DEVICE:
- 		/* source is hardware */
- 		pr_debug("%s: hw source, devaddr=%08lx, hwcfg=%d\n",
- 			 __func__, devaddr, hwcfg);
-@@ -1142,7 +1142,7 @@ int s3c2410_dma_devconfig(unsigned int channel,
- 		chan->addr_reg = dma_regaddr(chan, S3C2410_DMA_DIDST);
- 		break;
- 
--	case S3C2410_DMASRC_MEM:
-+	case DMA_TO_DEVICE:
- 		/* source is memory */
- 		pr_debug("%s: mem source, devaddr=%08lx, hwcfg=%d\n",
- 			 __func__, devaddr, hwcfg);
-diff --git a/arch/arm/plat-samsung/include/plat/dma-s3c24xx.h b/arch/arm/plat-samsung/include/plat/dma-s3c24xx.h
-index 336d5ac..1982829 100644
---- a/arch/arm/plat-samsung/include/plat/dma-s3c24xx.h
-+++ b/arch/arm/plat-samsung/include/plat/dma-s3c24xx.h
-@@ -47,7 +47,7 @@ struct s3c24xx_dma_selection {
- 
- 	void	(*direction)(struct s3c2410_dma_chan *chan,
- 			     struct s3c24xx_dma_map *map,
--			     enum s3c2410_dmasrc dir);
-+			     enum dma_data_direction dir);
+ 	return true;
+ }
+diff --git a/arch/arm/plat-samsung/include/plat/dma-pl330.h b/arch/arm/plat-samsung/include/plat/dma-pl330.h
+index e7565c0..4b8b81d 100644
+--- a/arch/arm/plat-samsung/include/plat/dma-pl330.h
++++ b/arch/arm/plat-samsung/include/plat/dma-pl330.h
+@@ -100,7 +100,7 @@ struct s3c2410_dma_client {
+ 	char	*name;
  };
  
- extern int s3c24xx_dma_init_map(struct s3c24xx_dma_selection *sel);
-diff --git a/arch/arm/plat-samsung/include/plat/dma.h b/arch/arm/plat-samsung/include/plat/dma.h
-index e87c6be..b395398 100644
---- a/arch/arm/plat-samsung/include/plat/dma.h
-+++ b/arch/arm/plat-samsung/include/plat/dma.h
-@@ -10,17 +10,14 @@
-  * published by the Free Software Foundation.
- */
+-static inline bool s3c_dma_has_circular(void)
++static inline bool samsung_dma_has_circular(void)
+ {
+ 	return true;
+ }
+diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
+index f97110e..b4f9b00 100644
+--- a/sound/soc/samsung/ac97.c
++++ b/sound/soc/samsung/ac97.c
+@@ -271,7 +271,10 @@ static int s3c_ac97_trigger(struct snd_pcm_substream *substream, int cmd,
  
-+#include <linux/dma-mapping.h>
+ 	writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GLBCTRL);
+ 
+-	s3c2410_dma_ctrl(dma_data->channel, S3C2410_DMAOP_STARTED);
++	if (!dma_data->ops)
++		dma_data->ops = samsung_dma_get_ops();
 +
- enum s3c2410_dma_buffresult {
- 	S3C2410_RES_OK,
- 	S3C2410_RES_ERR,
- 	S3C2410_RES_ABORT
++	dma_data->ops->started(dma_data->channel);
+ 
+ 	return 0;
+ }
+@@ -317,7 +320,10 @@ static int s3c_ac97_mic_trigger(struct snd_pcm_substream *substream,
+ 
+ 	writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GLBCTRL);
+ 
+-	s3c2410_dma_ctrl(dma_data->channel, S3C2410_DMAOP_STARTED);
++	if (!dma_data->ops)
++		dma_data->ops = samsung_dma_get_ops();
++
++	dma_data->ops->started(dma_data->channel);
+ 
+ 	return 0;
+ }
+diff --git a/sound/soc/samsung/dma.c b/sound/soc/samsung/dma.c
+index 5cb3b88..ceca331 100644
+--- a/sound/soc/samsung/dma.c
++++ b/sound/soc/samsung/dma.c
+@@ -62,77 +62,79 @@ struct runtime_data {
+ 	struct s3c_dma_params *params;
  };
  
--enum s3c2410_dmasrc {
--	S3C2410_DMASRC_HW,		/* source is memory */
--	S3C2410_DMASRC_MEM		/* source is hardware */
--};
--
- /* enum s3c2410_chan_op
++static void audio_buffdone(void *data);
++
+ /* dma_enqueue
   *
-  * operation codes passed to the DMA code by the user, and also used
-@@ -111,7 +108,7 @@ extern int s3c2410_dma_config(unsigned int channel, int xferunit);
- */
+  * place a dma buffer onto the queue for the dma system
+  * to handle.
+-*/
++ */
+ static void dma_enqueue(struct snd_pcm_substream *substream)
+ {
+ 	struct runtime_data *prtd = substream->runtime->private_data;
+ 	dma_addr_t pos = prtd->dma_pos;
+ 	unsigned int limit;
+-	int ret;
++	struct samsung_dma_prep_info dma_info;
  
- extern int s3c2410_dma_devconfig(unsigned int channel,
--		enum s3c2410_dmasrc source, unsigned long devaddr);
-+		enum dma_data_direction source, unsigned long devaddr);
+ 	pr_debug("Entered %s\n", __func__);
  
- /* s3c2410_dma_getposition
-  *
-diff --git a/arch/arm/plat-samsung/s3c-dma-ops.c b/arch/arm/plat-samsung/s3c-dma-ops.c
-index b534663..76fe202 100644
---- a/arch/arm/plat-samsung/s3c-dma-ops.c
-+++ b/arch/arm/plat-samsung/s3c-dma-ops.c
-@@ -47,10 +47,7 @@ static unsigned s3c_dma_request(enum dma_ch dma_ch, struct samsung_dma_info *inf
- 	data->ch = dma_ch;
- 	list_add_tail(&data->node, &dma_list);
- 
--	if (info->direction == DMA_FROM_DEVICE)
--		s3c2410_dma_devconfig(dma_ch, S3C2410_DMASRC_HW, info->fifo);
+-	if (s3c_dma_has_circular())
+-		limit = (prtd->dma_end - prtd->dma_start) / prtd->dma_period;
 -	else
--		s3c2410_dma_devconfig(dma_ch, S3C2410_DMASRC_MEM, info->fifo);
-+	s3c2410_dma_devconfig(dma_ch, info->direction, info->fifo);
+-		limit = prtd->dma_limit;
++	limit = (prtd->dma_end - prtd->dma_start) / prtd->dma_period;
  
- 	if (info->cap == DMA_CYCLIC)
- 		s3c2410_dma_setflags(dma_ch, S3C2410_DMAF_CIRCULAR);
-diff --git a/drivers/mmc/host/s3cmci.c b/drivers/mmc/host/s3cmci.c
-index a04f87d..03cfdab 100644
---- a/drivers/mmc/host/s3cmci.c
-+++ b/drivers/mmc/host/s3cmci.c
-@@ -913,9 +913,9 @@ request_done:
+ 	pr_debug("%s: loaded %d, limit %d\n",
+ 				__func__, prtd->dma_loaded, limit);
+ 
+-	while (prtd->dma_loaded < limit) {
+-		unsigned long len = prtd->dma_period;
++	dma_info.cap = (samsung_dma_has_circular() ? DMA_CYCLIC : DMA_SLAVE);
++	dma_info.direction =
++		(substream->stream == SNDRV_PCM_STREAM_PLAYBACK
++		? DMA_TO_DEVICE : DMA_FROM_DEVICE);
++	dma_info.fp = audio_buffdone;
++	dma_info.fp_param = substream;
++	dma_info.period = prtd->dma_period;
++	dma_info.len = prtd->dma_period*limit;
+ 
++	while (prtd->dma_loaded < limit) {
+ 		pr_debug("dma_loaded: %d\n", prtd->dma_loaded);
+ 
+-		if ((pos + len) > prtd->dma_end) {
+-			len  = prtd->dma_end - pos;
+-			pr_debug("%s: corrected dma len %ld\n", __func__, len);
++		if ((pos + dma_info.period) > prtd->dma_end) {
++			dma_info.period  = prtd->dma_end - pos;
++			pr_debug("%s: corrected dma len %ld\n",
++					__func__, dma_info.period);
+ 		}
+ 
+-		ret = s3c2410_dma_enqueue(prtd->params->channel,
+-			substream, pos, len);
++		dma_info.buf = pos;
++		prtd->params->ops->prepare(prtd->params->ch, &dma_info);
+ 
+-		if (ret == 0) {
+-			prtd->dma_loaded++;
+-			pos += prtd->dma_period;
+-			if (pos >= prtd->dma_end)
+-				pos = prtd->dma_start;
+-		} else
+-			break;
++		prtd->dma_loaded++;
++		pos += prtd->dma_period;
++		if (pos >= prtd->dma_end)
++			pos = prtd->dma_start;
+ 	}
+ 
+ 	prtd->dma_pos = pos;
  }
  
- static void s3cmci_dma_setup(struct s3cmci_host *host,
--			     enum s3c2410_dmasrc source)
-+			     enum dma_data_direction source)
+-static void audio_buffdone(struct s3c2410_dma_chan *channel,
+-				void *dev_id, int size,
+-				enum s3c2410_dma_buffresult result)
++static void audio_buffdone(void *data)
  {
--	static enum s3c2410_dmasrc last_source = -1;
-+	static enum dma_data_direction last_source = -1;
- 	static int setup_ok;
+-	struct snd_pcm_substream *substream = dev_id;
+-	struct runtime_data *prtd;
++	struct snd_pcm_substream *substream = data;
++	struct runtime_data *prtd = substream->runtime->private_data;
  
- 	if (last_source == source)
-@@ -1087,7 +1087,7 @@ static int s3cmci_prepare_dma(struct s3cmci_host *host, struct mmc_data *data)
+ 	pr_debug("Entered %s\n", __func__);
  
- 	BUG_ON((data->flags & BOTH_DIR) == BOTH_DIR);
+-	if (result == S3C2410_RES_ABORT || result == S3C2410_RES_ERR)
+-		return;
+-
+-	prtd = substream->runtime->private_data;
++	if (prtd->state & ST_RUNNING) {
++		prtd->dma_pos += prtd->dma_period;
++		if (prtd->dma_pos >= prtd->dma_end)
++			prtd->dma_pos = prtd->dma_start;
  
--	s3cmci_dma_setup(host, rw ? S3C2410_DMASRC_MEM : S3C2410_DMASRC_HW);
-+	s3cmci_dma_setup(host, rw ? DMA_TO_DEVICE : DMA_FROM_DEVICE);
- 	s3c2410_dma_ctrl(host->dma, S3C2410_DMAOP_FLUSH);
+-	if (substream)
+-		snd_pcm_period_elapsed(substream);
++		if (substream)
++			snd_pcm_period_elapsed(substream);
  
- 	dma_len = dma_map_sg(mmc_dev(host->mmc), data->sg, data->sg_len,
+-	spin_lock(&prtd->lock);
+-	if (prtd->state & ST_RUNNING && !s3c_dma_has_circular()) {
+-		prtd->dma_loaded--;
+-		dma_enqueue(substream);
++		spin_lock(&prtd->lock);
++		if (!samsung_dma_has_circular()) {
++			prtd->dma_loaded--;
++			dma_enqueue(substream);
++		}
++		spin_unlock(&prtd->lock);
+ 	}
+-
+-	spin_unlock(&prtd->lock);
+ }
+ 
+ static int dma_hw_params(struct snd_pcm_substream *substream,
+@@ -144,8 +146,7 @@ static int dma_hw_params(struct snd_pcm_substream *substream,
+ 	unsigned long totbytes = params_buffer_bytes(params);
+ 	struct s3c_dma_params *dma =
+ 		snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
+-	int ret = 0;
+-
++	struct samsung_dma_info dma_info;
+ 
+ 	pr_debug("Entered %s\n", __func__);
+ 
+@@ -163,23 +164,20 @@ static int dma_hw_params(struct snd_pcm_substream *substream,
+ 		pr_debug("params %p, client %p, channel %d\n", prtd->params,
+ 			prtd->params->client, prtd->params->channel);
+ 
+-		ret = s3c2410_dma_request(prtd->params->channel,
+-					  prtd->params->client, NULL);
+-
+-		if (ret < 0) {
+-			printk(KERN_ERR "failed to get dma channel\n");
+-			return ret;
+-		}
+-
+-		/* use the circular buffering if we have it available. */
+-		if (s3c_dma_has_circular())
+-			s3c2410_dma_setflags(prtd->params->channel,
+-					     S3C2410_DMAF_CIRCULAR);
++		prtd->params->ops = samsung_dma_get_ops();
++
++		dma_info.cap = (samsung_dma_has_circular() ?
++			DMA_CYCLIC : DMA_SLAVE);
++		dma_info.client = prtd->params->client;
++		dma_info.direction =
++			(substream->stream == SNDRV_PCM_STREAM_PLAYBACK
++			? DMA_TO_DEVICE : DMA_FROM_DEVICE);
++		dma_info.width = prtd->params->dma_size;
++		dma_info.fifo = prtd->params->dma_addr;
++		prtd->params->ch = prtd->params->ops->request(
++				prtd->params->channel, &dma_info);
+ 	}
+ 
+-	s3c2410_dma_set_buffdone_fn(prtd->params->channel,
+-				    audio_buffdone);
+-
+ 	snd_pcm_set_runtime_buffer(substream, &substream->dma_buffer);
+ 
+ 	runtime->dma_bytes = totbytes;
+@@ -206,7 +204,8 @@ static int dma_hw_free(struct snd_pcm_substream *substream)
+ 	snd_pcm_set_runtime_buffer(substream, NULL);
+ 
+ 	if (prtd->params) {
+-		s3c2410_dma_free(prtd->params->channel, prtd->params->client);
++		prtd->params->ops->release(prtd->params->ch,
++					prtd->params->client);
+ 		prtd->params = NULL;
+ 	}
+ 
+@@ -225,23 +224,9 @@ static int dma_prepare(struct snd_pcm_substream *substream)
+ 	if (!prtd->params)
+ 		return 0;
+ 
+-	/* channel needs configuring for mem=>device, increment memory addr,
+-	 * sync to pclk, half-word transfers to the IIS-FIFO. */
+-	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-		s3c2410_dma_devconfig(prtd->params->channel,
+-				      S3C2410_DMASRC_MEM,
+-				      prtd->params->dma_addr);
+-	} else {
+-		s3c2410_dma_devconfig(prtd->params->channel,
+-				      S3C2410_DMASRC_HW,
+-				      prtd->params->dma_addr);
+-	}
+-
+-	s3c2410_dma_config(prtd->params->channel,
+-			   prtd->params->dma_size);
+-
+ 	/* flush the DMA channel */
+-	s3c2410_dma_ctrl(prtd->params->channel, S3C2410_DMAOP_FLUSH);
++	prtd->params->ops->flush(prtd->params->ch);
++
+ 	prtd->dma_loaded = 0;
+ 	prtd->dma_pos = prtd->dma_start;
+ 
+@@ -265,14 +250,14 @@ static int dma_trigger(struct snd_pcm_substream *substream, int cmd)
+ 	case SNDRV_PCM_TRIGGER_RESUME:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
+ 		prtd->state |= ST_RUNNING;
+-		s3c2410_dma_ctrl(prtd->params->channel, S3C2410_DMAOP_START);
++		prtd->params->ops->trigger(prtd->params->ch);
+ 		break;
+ 
+ 	case SNDRV_PCM_TRIGGER_STOP:
+ 	case SNDRV_PCM_TRIGGER_SUSPEND:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
+ 		prtd->state &= ~ST_RUNNING;
+-		s3c2410_dma_ctrl(prtd->params->channel, S3C2410_DMAOP_STOP);
++		prtd->params->ops->stop(prtd->params->ch);
+ 		break;
+ 
+ 	default:
+@@ -291,21 +276,12 @@ dma_pointer(struct snd_pcm_substream *substream)
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	struct runtime_data *prtd = runtime->private_data;
+ 	unsigned long res;
+-	dma_addr_t src, dst;
+ 
+ 	pr_debug("Entered %s\n", __func__);
+ 
+-	spin_lock(&prtd->lock);
+-	s3c2410_dma_getposition(prtd->params->channel, &src, &dst);
+-
+-	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE)
+-		res = dst - prtd->dma_start;
+-	else
+-		res = src - prtd->dma_start;
+-
+-	spin_unlock(&prtd->lock);
++	res = prtd->dma_pos - prtd->dma_start;
+ 
+-	pr_debug("Pointer %x %x\n", src, dst);
++	pr_debug("Pointer offset: %lu\n", res);
+ 
+ 	/* we seem to be getting the odd error from the pcm library due
+ 	 * to out-of-bounds pointers. this is maybe due to the dma engine
+diff --git a/sound/soc/samsung/dma.h b/sound/soc/samsung/dma.h
+index c506592..7d1ead7 100644
+--- a/sound/soc/samsung/dma.h
++++ b/sound/soc/samsung/dma.h
+@@ -6,7 +6,7 @@
+  *  Free Software Foundation;  either version 2 of the  License, or (at your
+  *  option) any later version.
+  *
+- *  ALSA PCM interface for the Samsung S3C24xx CPU
++ *  ALSA PCM interface for the Samsung SoC
+  */
+ 
+ #ifndef _S3C_AUDIO_H
+@@ -17,6 +17,8 @@ struct s3c_dma_params {
+ 	int channel;				/* Channel ID */
+ 	dma_addr_t dma_addr;
+ 	int dma_size;			/* Size of the DMA transfer */
++	unsigned ch;
++	struct samsung_dma_ops *ops;
+ };
+ 
+ #endif
 -- 
 1.7.1
