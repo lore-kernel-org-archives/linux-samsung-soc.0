@@ -1,99 +1,61 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv3] ARM: EXYNOS4: Support for generic I/O power domains on
- EXYNOS4210
-Date: Sat, 16 Jul 2011 12:58:25 +0900
-Message-ID: <4E210C61.6060006@samsung.com>
-References: <4E165C64.8090808@samsung.com>
- <000e01cc3d2f$eca5d530$c5f17f90$%kim@samsung.com>
- <4E16A171.7040509@samsung.com>
- <035201cc4367$2b165c80$81431580$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 0/2] ARM: Samsung: I2C code cleanup
+Date: Sat, 16 Jul 2011 13:40:18 +0900
+Message-ID: <037101cc4372$7b875060$7295f120$%kim@samsung.com>
+References: <1309519992-3026-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:36011 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751883Ab1GPD6C (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:25119 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751117Ab1GPEk2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Jul 2011 23:58:02 -0400
-In-reply-to: <035201cc4367$2b165c80$81431580$%kim@samsung.com>
+	Sat, 16 Jul 2011 00:40:28 -0400
+Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LOE00H21SZE4D10@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 16 Jul 2011 13:40:26 +0900 (KST)
+Received: from kgenekim ([12.23.119.139])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LOE00FSBSZEA6@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 16 Jul 2011 13:40:26 +0900 (KST)
+In-reply-to: <1309519992-3026-1-git-send-email-ch.naveen@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'MyungJoo Ham' <myungjoo.ham@samsung.com>, 'Sylwester Nawrocki' <snjw23@gmail.com>, linux-pm@lists.linux-foundation.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'linux-kernel' <linux-kernel@vger.kernel.org>
+To: 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>, sbkim73@samsung.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Kukjin Kim wrote:
-> Chanwoo Choi wrote:
->> Kukjin Kim wrote:
+Naveen Krishna Chatradhi wrote:
 > 
-> (snip)
+> Does the same job, while saving few lines of code.
 > 
->>>> @@ -183,6 +183,7 @@ config MACH_NURI
->>>>  	select EXYNOS4_SETUP_SDHCI
->>>>  	select EXYNOS4_SETUP_USB_PHY
->>>>  	select SAMSUNG_DEV_PWM
->>>> +	select PM_GENERIC_DOMAINS if PM
->>> Do you _really_ think this should be under MACH_NURI?
->>>
->> This patch apply the generic power-domain to NURI board.
+>  o To Kukjin Kim, Sangbeom Kim and Ben Dooks
 > 
-> I mean, the PM_GENERIC_DOMAINS feature depends on CPU not board even though this is for only NURI board.
+> Naveen Krishna Chatradhi (2):
+>   ARM: Samsung: Use generic set_plat_data function
+>   ARM: Samsung: Cleanup I2C code in plat-samsung
 > 
-OK, I will move it from CONFIG_MACH_NURI to CONFIG_CPU_EXYNOS4210 in arch/arm/mach-exynos4/Kconfig.
+>  arch/arm/plat-samsung/dev-i2c0.c         |   14 ++++++--------
+>  arch/arm/plat-samsung/dev-i2c1.c         |   24 ++++++++----------------
+>  arch/arm/plat-samsung/dev-i2c2.c         |   24 ++++++++----------------
+>  arch/arm/plat-samsung/dev-i2c3.c         |   24 ++++++++----------------
+>  arch/arm/plat-samsung/dev-i2c4.c         |   24 ++++++++----------------
+>  arch/arm/plat-samsung/dev-i2c5.c         |   24 ++++++++----------------
+>  arch/arm/plat-samsung/dev-i2c6.c         |   24 ++++++++----------------
+>  arch/arm/plat-samsung/dev-i2c7.c         |   24 ++++++++----------------
+>  arch/arm/plat-samsung/include/plat/iic.h |    2 ++
+>  9 files changed, 64 insertions(+), 120 deletions(-)
+> 
+> --
+> 1.7.2.3
 
-> (snip)
-> 
->>>> diff --git a/arch/arm/mach-exynos4/include/mach/pm-exynos4210.h
->>>> b/arch/arm/mach-exynos4/include/mach/pm-exynos4210.h
->>>> new file mode 100644
->>>> index 0000000..ab09034
->>>> --- /dev/null
->>>> +++ b/arch/arm/mach-exynos4/include/mach/pm-exynos4210.h
->>>> @@ -0,0 +1,53 @@
->>>> +/* linux/arch/arm/mach-exynos4/include/mach/pm-exynos4.h
->>> According to your file name, should be linux/arch/arm/mach-
->> exynos4/include/mach/pm-exynos4210.h ?
->>
-> I said just typo...
-> 
-> +/* linux/arch/arm/mach-exynos4/include/mach/pm-exynos4210.h
-> 
->> This patch support only power-domain of EXYNOS4210, so I named "pm-
->> exynos4210.h"
->> If EXYNOS4 series board will be released, I will modify include file name
->> from "pm-exynos4210.h" to "pm-exynos4.h" to support all EXYNOS4 series.
-> 
-> No need it, it's different.
+Looks good to me, applied.
+Thanks.
 
-My mistake. I will fix it.
-> 
-> (snip)
-> 
->>> Would be better if you could add some common function for pd_power_up and
->> _down...
->>
->> What do you mean about common function?
->>
-> I thought, pd_power_up and _down can be implemented in one function.
-> 
-
-OK, If you want to combine two function(pd_power_up and pd_power_down),
-I will modify it.
-
-> (snip)
-> 
->>> I wonder why we need to add this for handling power domain not update current
->> pd.
->>
-> See arch/arm/mach-exynos4/dev-pd.c
-> 
-> I mean, we _really_ need to keep duplication files for handling power domain?...
-
-Now, you're right. 
-But, If Generic Power-domain Framework will be applied to the mainline,
-I think it necessary that we should apply Generic Power-domain Framework to all of 
-the board using EXYNOS4210(arch/arm/mach-exynos4) and delete old power-domain
-(arch/arm/mach-exynos4/dev-pd.c) to remove duplication file.
-
-Thanks & Regards,
-Chanwoo Choi
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
