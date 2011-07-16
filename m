@@ -1,483 +1,108 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V3 07/13] ARM: S5PV210: Use generic DMA PL330 driver
-Date: Sat, 16 Jul 2011 15:44:20 +0900
-Message-ID: <1310798666-7659-8-git-send-email-kgene.kim@samsung.com>
-References: <1310798666-7659-1-git-send-email-kgene.kim@samsung.com>
+Subject: RE: [PATCH 0/3 v2] ARM: S5P: Add support for MFC device on S5PV210 and
+ EXYNOS4
+Date: Sat, 16 Jul 2011 16:06:04 +0900
+Message-ID: <037701cc4386$d65ba270$8312e750$%kim@samsung.com>
+References: <1308069540-24934-1-git-send-email-k.debski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:52110 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751328Ab1GPG5N (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:8826 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750821Ab1GPHGK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 16 Jul 2011 02:57:13 -0400
-In-Reply-To: <1310798666-7659-1-git-send-email-kgene.kim@samsung.com>
+	Sat, 16 Jul 2011 03:06:10 -0400
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LOE00784ZQ8TC30@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 16 Jul 2011 16:06:09 +0900 (KST)
+Received: from kgenekim ([12.23.119.139])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LOE00K6FZQ9ES@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 16 Jul 2011 16:06:09 +0900 (KST)
+In-reply-to: <1308069540-24934-1-git-send-email-k.debski@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Grant Likely <grant.likely@secretlab.ca>, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Linus Walleij <linus.walleij@stericsson.com>, Jassi Brar <jassisinghbrar@gmail.com>, Boojin Kim <boojin.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: 'Kamil Debski' <k.debski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, jaeryul.oh@samsung.com, jtp.park@samsung.com
 
-From: Boojin Kim <boojin.kim@samsung.com>
+Kamil Debski wrote:
+> 
+> Hello,
+> 
+> Multi Format Codec is a device present in the S5PV210 and EXYNOS4 SoCs by
+> Samsung.
+> This patch set adds platform and mach data for MFC. The new version
+contains
+> memory initialization code for MFC and support for DMA contig allocator.
+> 
+> The patches have been applied to this branch, it should become available
+in a
+> couple of hours:
+>
+http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/
+mfc-
+> for-kgene
+> 
+> The MFC driver can be found on this branch (it should also sync in a
+couple of
+> hours):
+>
+http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/
+mfc-
+> for-mauro
+> The driver has been sent today to the linux-media list.
+> 
+> Best regards,
+> Kamil Debski
+> 
+> Change log:
+> 
+> =================
+>  Changes since v1
+> =================
+> - support for DMA conitg allocator
+> - reserving memory for MFC
+> 
+> Patch summary:
+> 
+> Kamil Debski (3):
+>   ARM: Add support for MFC device to plat-s5p, mach-s5pv210 and
+>     mach-exynos4
+>   ARM: S5PV210: Enable MFC on Goni
+>   ARM: EXYNOS4: Enable MFC on universal_c210
+> 
+>  arch/arm/Kconfig                            |    2 +
+>  arch/arm/mach-exynos4/Kconfig               |    2 +
+>  arch/arm/mach-exynos4/clock.c               |   63 ++++++++++++++
+>  arch/arm/mach-exynos4/include/mach/map.h    |    2 +
+>  arch/arm/mach-exynos4/mach-universal_c210.c |   13 +++
+>  arch/arm/mach-s5pv210/Kconfig               |    1 +
+>  arch/arm/mach-s5pv210/clock.c               |    6 ++
+>  arch/arm/mach-s5pv210/include/mach/map.h    |    3 +
+>  arch/arm/mach-s5pv210/mach-goni.c           |   10 ++
+>  arch/arm/plat-s5p/Kconfig                   |    5 +
+>  arch/arm/plat-s5p/Makefile                  |    2 +-
+>  arch/arm/plat-s5p/dev-mfc.c                 |  125
+> +++++++++++++++++++++++++++
+>  arch/arm/plat-s5p/include/plat/mfc.h        |   28 ++++++
+>  arch/arm/plat-samsung/include/plat/devs.h   |    3 +
+>  14 files changed, 264 insertions(+), 1 deletions(-)
+>  create mode 100644 arch/arm/plat-s5p/dev-mfc.c
+>  create mode 100644 arch/arm/plat-s5p/include/plat/mfc.h
 
-This patch makes Samsung S5PV210 to use DMA PL330 driver
-on DMADEVICE. The S5PV210 uses DMA generic APIs instead of
-SAMSUNG specific S3C-PL330 APIs.
+Hi Kamil,
 
-Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s5pv210/Kconfig |    2 +-
- arch/arm/mach-s5pv210/clock.c |   16 +-
- arch/arm/mach-s5pv210/dma.c   |  346 +++++++++++++++++++++++++++--------------
- 3 files changed, 241 insertions(+), 123 deletions(-)
+Could you please re-work/re-submit based on current my for-next?
+Now, it is needed to update about clkdev and external gic...
 
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index 37b5a97..fb11e38 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -11,7 +11,7 @@ if ARCH_S5PV210
- 
- config CPU_S5PV210
- 	bool
--	select S3C_PL330_DMA
-+	select DMADEV_PL330
- 	select S5P_EXT_INT
- 	select S5P_HRT
- 	select S5PV210_PM if PM
-diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-index 2d59949..dbe7285 100644
---- a/arch/arm/mach-s5pv210/clock.c
-+++ b/arch/arm/mach-s5pv210/clock.c
-@@ -221,6 +221,11 @@ static struct clk clk_pcmcdclk2 = {
- 	.id		= -1,
- };
- 
-+static struct clk dummy_apb_pclk = {
-+	.name		= "apb_pclk",
-+	.id		= -1,
-+};
-+
- static struct clk *clkset_vpllsrc_list[] = {
- 	[0] = &clk_fin_vpll,
- 	[1] = &clk_sclk_hdmi27m,
-@@ -311,18 +316,12 @@ static struct clk_ops clk_fout_apll_ops = {
- 
- static struct clk init_clocks_off[] = {
- 	{
--		.name		= "pdma",
--		.id		= 0,
-+		.name		= "dma",
-+		.id		= -1,
- 		.parent		= &clk_hclk_psys.clk,
- 		.enable		= s5pv210_clk_ip0_ctrl,
- 		.ctrlbit	= (1 << 3),
- 	}, {
--		.name		= "pdma",
--		.id		= 1,
--		.parent		= &clk_hclk_psys.clk,
--		.enable		= s5pv210_clk_ip0_ctrl,
--		.ctrlbit	= (1 << 4),
--	}, {
- 		.name		= "rot",
- 		.id		= -1,
- 		.parent		= &clk_hclk_dsys.clk,
-@@ -1239,5 +1238,6 @@ void __init s5pv210_register_clocks(void)
- 	s3c_register_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
- 	s3c_disable_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
- 
-+	s3c24xx_register_clock(&dummy_apb_pclk);
- 	s3c_pwmclk_init();
- }
-diff --git a/arch/arm/mach-s5pv210/dma.c b/arch/arm/mach-s5pv210/dma.c
-index 497d343..910f5a7 100644
---- a/arch/arm/mach-s5pv210/dma.c
-+++ b/arch/arm/mach-s5pv210/dma.c
-@@ -1,4 +1,8 @@
--/*
-+/* linux/arch/arm/mach-s5pv210/dma.c
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-  * Copyright (C) 2010 Samsung Electronics Co. Ltd.
-  *	Jaswinder Singh <jassi.brar@samsung.com>
-  *
-@@ -17,151 +21,265 @@
-  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-  */
- 
--#include <linux/platform_device.h>
- #include <linux/dma-mapping.h>
-+#include <linux/amba/bus.h>
-+#include <linux/amba/pl330.h>
- 
-+#include <asm/irq.h>
- #include <plat/devs.h>
- #include <plat/irqs.h>
- 
- #include <mach/map.h>
- #include <mach/irqs.h>
--
--#include <plat/s3c-pl330-pdata.h>
-+#include <mach/dma.h>
- 
- static u64 dma_dmamask = DMA_BIT_MASK(32);
- 
--static struct resource s5pv210_pdma0_resource[] = {
--	[0] = {
--		.start  = S5PV210_PA_PDMA0,
--		.end    = S5PV210_PA_PDMA0 + SZ_4K,
--		.flags = IORESOURCE_MEM,
--	},
--	[1] = {
--		.start	= IRQ_PDMA0,
--		.end	= IRQ_PDMA0,
--		.flags	= IORESOURCE_IRQ,
-+struct dma_pl330_peri pdma0_peri[32] = {
-+	{
-+		.peri_id = (u8)DMACH_UART0_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_UART0_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_UART1_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_UART1_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_UART2_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_UART2_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_UART3_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_UART3_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S0_RX,
-+		.rqtype = DEVTOMEM,
-+		.burst_sz = 4,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S0_TX,
-+		.rqtype = MEMTODEV,
-+		.burst_sz = 4,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S0S_TX,
-+		.rqtype = MEMTODEV,
-+		.burst_sz = 4,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S1_RX,
-+		.rqtype = DEVTOMEM,
-+		.burst_sz = 4,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S1_TX,
-+		.rqtype = MEMTODEV,
-+		.burst_sz = 4,
-+	}, {
-+		.peri_id = (u8)DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_SPI0_RX,
-+		.rqtype = DEVTOMEM,
-+		.burst_sz = 1,
-+	}, {
-+		.peri_id = (u8)DMACH_SPI0_TX,
-+		.rqtype = MEMTODEV,
-+		.burst_sz = 1,
-+	}, {
-+		.peri_id = (u8)DMACH_SPI1_RX,
-+		.rqtype = DEVTOMEM,
-+		.burst_sz = 1,
-+	}, {
-+		.peri_id = (u8)DMACH_SPI1_TX,
-+		.rqtype = MEMTODEV,
-+		.burst_sz = 1,
-+	}, {
-+		.peri_id = (u8)DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_AC97_MICIN,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_AC97_PCMIN,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_AC97_PCMOUT,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_PWM,
-+	}, {
-+		.peri_id = (u8)DMACH_SPDIF,
-+		.rqtype = MEMTODEV,
- 	},
- };
- 
--static struct s3c_pl330_platdata s5pv210_pdma0_pdata = {
--	.peri = {
--		[0] = DMACH_UART0_RX,
--		[1] = DMACH_UART0_TX,
--		[2] = DMACH_UART1_RX,
--		[3] = DMACH_UART1_TX,
--		[4] = DMACH_UART2_RX,
--		[5] = DMACH_UART2_TX,
--		[6] = DMACH_UART3_RX,
--		[7] = DMACH_UART3_TX,
--		[8] = DMACH_MAX,
--		[9] = DMACH_I2S0_RX,
--		[10] = DMACH_I2S0_TX,
--		[11] = DMACH_I2S0S_TX,
--		[12] = DMACH_I2S1_RX,
--		[13] = DMACH_I2S1_TX,
--		[14] = DMACH_MAX,
--		[15] = DMACH_MAX,
--		[16] = DMACH_SPI0_RX,
--		[17] = DMACH_SPI0_TX,
--		[18] = DMACH_SPI1_RX,
--		[19] = DMACH_SPI1_TX,
--		[20] = DMACH_MAX,
--		[21] = DMACH_MAX,
--		[22] = DMACH_AC97_MICIN,
--		[23] = DMACH_AC97_PCMIN,
--		[24] = DMACH_AC97_PCMOUT,
--		[25] = DMACH_MAX,
--		[26] = DMACH_PWM,
--		[27] = DMACH_SPDIF,
--		[28] = DMACH_MAX,
--		[29] = DMACH_MAX,
--		[30] = DMACH_MAX,
--		[31] = DMACH_MAX,
--	},
-+struct dma_pl330_platdata s5pv210_pdma0_pdata = {
-+	.nr_valid_peri = 32,
-+	.peri = pdma0_peri,
- };
- 
--static struct platform_device s5pv210_device_pdma0 = {
--	.name		= "s3c-pl330",
--	.id		= 0,
--	.num_resources	= ARRAY_SIZE(s5pv210_pdma0_resource),
--	.resource	= s5pv210_pdma0_resource,
--	.dev		= {
-+struct amba_device s5pv210_device_pdma0 = {
-+	.dev = {
-+		.init_name = "dma-pl330.0",
- 		.dma_mask = &dma_dmamask,
- 		.coherent_dma_mask = DMA_BIT_MASK(32),
- 		.platform_data = &s5pv210_pdma0_pdata,
--	},
-+		},
-+	.res = {
-+		.start = S5PV210_PA_PDMA0,
-+		.end = S5PV210_PA_PDMA0 + SZ_4K,
-+		.flags = IORESOURCE_MEM,
-+		},
-+	.irq = {IRQ_PDMA0, NO_IRQ},
-+	.periphid = 0x00041330,
- };
- 
--static struct resource s5pv210_pdma1_resource[] = {
--	[0] = {
--		.start  = S5PV210_PA_PDMA1,
--		.end    = S5PV210_PA_PDMA1 + SZ_4K,
--		.flags = IORESOURCE_MEM,
--	},
--	[1] = {
--		.start	= IRQ_PDMA1,
--		.end	= IRQ_PDMA1,
--		.flags	= IORESOURCE_IRQ,
-+struct dma_pl330_peri pdma1_peri[32] = {
-+	{
-+		.peri_id = (u8)DMACH_UART0_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_UART0_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_UART1_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_UART1_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_UART2_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_UART2_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_UART3_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_UART3_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S0_RX,
-+		.rqtype = DEVTOMEM,
-+		.burst_sz = 4,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S0_TX,
-+		.rqtype = MEMTODEV,
-+		.burst_sz = 4,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S0S_TX,
-+		.rqtype = MEMTODEV,
-+		.burst_sz = 4,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S1_RX,
-+		.rqtype = DEVTOMEM,
-+		.burst_sz = 4,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S1_TX,
-+		.rqtype = MEMTODEV,
-+		.burst_sz = 4,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S2_RX,
-+		.rqtype = DEVTOMEM,
-+		.burst_sz = 4,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S2_TX,
-+		.rqtype = MEMTODEV,
-+		.burst_sz = 4,
-+	}, {
-+		.peri_id = (u8)DMACH_SPI0_RX,
-+		.rqtype = DEVTOMEM,
-+		.burst_sz = 1,
-+	}, {
-+		.peri_id = (u8)DMACH_SPI0_TX,
-+		.rqtype = MEMTODEV,
-+		.burst_sz = 1,
-+	}, {
-+		.peri_id = (u8)DMACH_SPI1_RX,
-+		.rqtype = DEVTOMEM,
-+		.burst_sz = 1,
-+	}, {
-+		.peri_id = (u8)DMACH_SPI1_TX,
-+		.rqtype = MEMTODEV,
-+		.burst_sz = 1,
-+	}, {
-+		.peri_id = (u8)DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_PCM0_RX,
-+		.rqtype = DEVTOMEM,
-+		.burst_sz = 4,
-+	}, {
-+		.peri_id = (u8)DMACH_PCM0_TX,
-+		.rqtype = MEMTODEV,
-+		.burst_sz = 4,
-+	}, {
-+		.peri_id = (u8)DMACH_PCM1_RX,
-+		.rqtype = DEVTOMEM,
-+		.burst_sz = 4,
-+	}, {
-+		.peri_id = (u8)DMACH_PCM1_TX,
-+		.rqtype = MEMTODEV,
-+		.burst_sz = 4,
-+	}, {
-+		.peri_id = (u8)DMACH_MSM_REQ0,
-+	}, {
-+		.peri_id = (u8)DMACH_MSM_REQ1,
-+	}, {
-+		.peri_id = (u8)DMACH_MSM_REQ2,
-+	}, {
-+		.peri_id = (u8)DMACH_MSM_REQ3,
-+	}, {
-+		.peri_id = (u8)DMACH_PCM2_RX,
-+		.rqtype = DEVTOMEM,
-+		.burst_sz = 4,
-+	}, {
-+		.peri_id = (u8)DMACH_PCM2_TX,
-+		.rqtype = MEMTODEV,
-+		.burst_sz = 4,
- 	},
- };
- 
--static struct s3c_pl330_platdata s5pv210_pdma1_pdata = {
--	.peri = {
--		[0] = DMACH_UART0_RX,
--		[1] = DMACH_UART0_TX,
--		[2] = DMACH_UART1_RX,
--		[3] = DMACH_UART1_TX,
--		[4] = DMACH_UART2_RX,
--		[5] = DMACH_UART2_TX,
--		[6] = DMACH_UART3_RX,
--		[7] = DMACH_UART3_TX,
--		[8] = DMACH_MAX,
--		[9] = DMACH_I2S0_RX,
--		[10] = DMACH_I2S0_TX,
--		[11] = DMACH_I2S0S_TX,
--		[12] = DMACH_I2S1_RX,
--		[13] = DMACH_I2S1_TX,
--		[14] = DMACH_I2S2_RX,
--		[15] = DMACH_I2S2_TX,
--		[16] = DMACH_SPI0_RX,
--		[17] = DMACH_SPI0_TX,
--		[18] = DMACH_SPI1_RX,
--		[19] = DMACH_SPI1_TX,
--		[20] = DMACH_MAX,
--		[21] = DMACH_MAX,
--		[22] = DMACH_PCM0_RX,
--		[23] = DMACH_PCM0_TX,
--		[24] = DMACH_PCM1_RX,
--		[25] = DMACH_PCM1_TX,
--		[26] = DMACH_MSM_REQ0,
--		[27] = DMACH_MSM_REQ1,
--		[28] = DMACH_MSM_REQ2,
--		[29] = DMACH_MSM_REQ3,
--		[30] = DMACH_PCM2_RX,
--		[31] = DMACH_PCM2_TX,
--	},
-+struct dma_pl330_platdata s5pv210_pdma1_pdata = {
-+	.nr_valid_peri = 32,
-+	.peri = pdma1_peri,
- };
- 
--static struct platform_device s5pv210_device_pdma1 = {
--	.name		= "s3c-pl330",
--	.id		= 1,
--	.num_resources	= ARRAY_SIZE(s5pv210_pdma1_resource),
--	.resource	= s5pv210_pdma1_resource,
--	.dev		= {
-+struct amba_device s5pv210_device_pdma1 = {
-+	.dev = {
-+		.init_name = "dma-pl330.1",
- 		.dma_mask = &dma_dmamask,
- 		.coherent_dma_mask = DMA_BIT_MASK(32),
- 		.platform_data = &s5pv210_pdma1_pdata,
--	},
--};
--
--static struct platform_device *s5pv210_dmacs[] __initdata = {
--	&s5pv210_device_pdma0,
--	&s5pv210_device_pdma1,
-+		},
-+	.res = {
-+		.start = S5PV210_PA_PDMA1,
-+		.end = S5PV210_PA_PDMA1 + SZ_4K,
-+		.flags = IORESOURCE_MEM,
-+		},
-+	.irq = {IRQ_PDMA1, NO_IRQ},
-+	.periphid = 0x00041330,
- };
- 
- static int __init s5pv210_dma_init(void)
- {
--	platform_add_devices(s5pv210_dmacs, ARRAY_SIZE(s5pv210_dmacs));
-+	amba_device_register(&s5pv210_device_pdma0, &iomem_resource);
- 
- 	return 0;
- }
--- 
-1.7.1
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
