@@ -1,144 +1,57 @@
-From: Banajit Goswami <banajit.g@samsung.com>
-Subject: [PATCH 7/8] ARM: S5P64X0: Add PWM backlight support on Samsung
- SMDK6450 board
-Date: Fri, 15 Jul 2011 20:12:47 +0530
-Message-ID: <1310740968-26722-8-git-send-email-banajit.g@samsung.com>
-References: <1310740968-26722-1-git-send-email-banajit.g@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH V2 12/12] ASoC: Samsung: Update DMA interface
+Date: Sat, 16 Jul 2011 09:01:40 +0900
+Message-ID: <034301cc434b$8f0eecf0$ad2cc6d0$%kim@samsung.com>
+References: <1310546857-6304-1-git-send-email-kgene.kim@samsung.com>
+ <1310546857-6304-13-git-send-email-kgene.kim@samsung.com>
+ <20110713235709.GE9770@opensource.wolfsonmicro.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:26831 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752557Ab1GOOm2 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:59836 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750934Ab1GPABu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Jul 2011 10:42:28 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Fri, 15 Jul 2011 20:01:50 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOD00GRWQ6IZSB0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 15 Jul 2011 23:42:27 +0900 (KST)
-Received: from banajit.sisodomain.com ([107.108.83.226])
+ 2010)) with ESMTP id <0LOE00D22G306920@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 16 Jul 2011 09:01:49 +0900 (KST)
+Received: from kgenekim ([12.23.119.139])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LOD00F3JQ6EZC@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 15 Jul 2011 23:42:27 +0900 (KST)
-In-reply-to: <1310740968-26722-1-git-send-email-banajit.g@samsung.com>
+ with ESMTPA id <0LOE001EYG301A@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 16 Jul 2011 09:01:49 +0900 (KST)
+In-reply-to: <20110713235709.GE9770@opensource.wolfsonmicro.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, jg1.han@samsung.com
+To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Vinod Koul' <vinod.koul@intel.com>, 'Dan Williams' <dan.j.williams@intel.com>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Liam Girdwood' <lrg@ti.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Boojin Kim' <boojin.kim@samsung.com>
 
-This patch adds support for LCD backlight using PWM timer for
-Samsung SMDK6450 board.
+Mark Brown wrote:
+> 
+> On Wed, Jul 13, 2011 at 05:47:37PM +0900, Kukjin Kim wrote:
+> 
+> > -static inline bool s3c_dma_has_circular(void)
+> > +static inline bool dma_has_circular(void)
+> >  {
+> >  	return false;
+> >  }
+> 
+> The namespacing here doesn't look great, this is still a Samsung
+> specific internal API.
+> 
 
-Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
----
- arch/arm/mach-s5p64x0/Kconfig         |    1 +
- arch/arm/mach-s5p64x0/mach-smdk6450.c |   54 ++++++++-------------------------
- 2 files changed, 14 insertions(+), 41 deletions(-)
+OK, will keep it.
 
-diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
-index 34e2877..65c7518 100644
---- a/arch/arm/mach-s5p64x0/Kconfig
-+++ b/arch/arm/mach-s5p64x0/Kconfig
-@@ -51,6 +51,7 @@ config MACH_SMDK6450
- 	select S3C_DEV_WDT
- 	select S3C64XX_DEV_SPI
- 	select SAMSUNG_DEV_ADC
-+	select SAMSUNG_DEV_BACKLIGHT
- 	select SAMSUNG_DEV_PWM
- 	select SAMSUNG_DEV_TS
- 	select S5P64X0_SETUP_I2C1
-diff --git a/arch/arm/mach-s5p64x0/mach-smdk6450.c b/arch/arm/mach-s5p64x0/mach-smdk6450.c
-index d19c469..33f2adf 100644
---- a/arch/arm/mach-s5p64x0/mach-smdk6450.c
-+++ b/arch/arm/mach-s5p64x0/mach-smdk6450.c
-@@ -46,6 +46,7 @@
- #include <plat/adc.h>
- #include <plat/ts.h>
- #include <plat/s5p-time.h>
-+#include <plat/backlight.h>
- 
- #define SMDK6450_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
- 				S3C2410_UCON_RXILEVEL |		\
-@@ -109,45 +110,6 @@ static struct s3c2410_uartcfg smdk6450_uartcfgs[] __initdata = {
- #endif
- };
- 
--static int smdk6450_backlight_init(struct device *dev)
--{
--	int ret;
--
--	ret = gpio_request(S5P6450_GPF(15), "Backlight");
--	if (ret) {
--		printk(KERN_ERR "failed to request GPF for PWM-OUT1\n");
--		return ret;
--	}
--
--	/* Configure GPIO pin with S5P6450_GPF15_PWM_TOUT1 */
--	s3c_gpio_cfgpin(S5P6450_GPF(15), S3C_GPIO_SFN(2));
--
--	return 0;
--}
--
--static void smdk6450_backlight_exit(struct device *dev)
--{
--	s3c_gpio_cfgpin(S5P6450_GPF(15), S3C_GPIO_OUTPUT);
--	gpio_free(S5P6450_GPF(15));
--}
--
--static struct platform_pwm_backlight_data smdk6450_backlight_data = {
--	.pwm_id		= 1,
--	.max_brightness	= 255,
--	.dft_brightness	= 255,
--	.pwm_period_ns	= 78770,
--	.init		= smdk6450_backlight_init,
--	.exit		= smdk6450_backlight_exit,
--};
--
--static struct platform_device smdk6450_backlight_device = {
--	.name		= "pwm-backlight",
--	.dev		= {
--		.parent		= &s3c_device_timer[1].dev,
--		.platform_data	= &smdk6450_backlight_data,
--	},
--};
--
- static struct platform_device *smdk6450_devices[] __initdata = {
- 	&s3c_device_adc,
- 	&s3c_device_rtc,
-@@ -157,8 +119,6 @@ static struct platform_device *smdk6450_devices[] __initdata = {
- 	&s3c_device_wdt,
- 	&samsung_asoc_dma,
- 	&s5p6450_device_iis0,
--	&s3c_device_timer[1],
--	&smdk6450_backlight_device,
- 	/* s5p6450_device_spi0 will be added */
- };
- 
-@@ -194,6 +154,16 @@ static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
- 	.oversampling_shift	= 2,
- };
- 
-+/* LCD Backlight data */
-+static struct samsung_bl_gpio_info smdk6450_bl_gpio_info = {
-+	.no = S5P6450_GPF(15),
-+	.func = S3C_GPIO_SFN(2),
-+};
-+
-+static struct platform_pwm_backlight_data smdk6450_bl_data = {
-+	.pwm_id = 1,
-+};
-+
- static void __init smdk6450_map_io(void)
- {
- 	s5p_init_io(NULL, 0, S5P64X0_SYS_ID);
-@@ -213,6 +183,8 @@ static void __init smdk6450_machine_init(void)
- 	i2c_register_board_info(1, smdk6450_i2c_devs1,
- 			ARRAY_SIZE(smdk6450_i2c_devs1));
- 
-+	samsung_bl_set(&smdk6450_bl_gpio_info, &smdk6450_bl_data);
-+
- 	platform_add_devices(smdk6450_devices, ARRAY_SIZE(smdk6450_devices));
- }
- 
--- 
-1.7.2.3
+> Otherwise this looks good.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
