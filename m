@@ -1,104 +1,326 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/3 v2] ARM: S5P: Add support for MFC device on S5PV210 and
- EXYNOS4
-Date: Sat, 16 Jul 2011 16:06:04 +0900
-Message-ID: <037701cc4386$d65ba270$8312e750$%kim@samsung.com>
-References: <1308069540-24934-1-git-send-email-k.debski@samsung.com>
+Subject: RE: [PATCH] ARM:SAMSUNG: DMA Cleanup as per sparse [re-submit]
+Date: Sat, 16 Jul 2011 16:06:11 +0900
+Message-ID: <037801cc4386$da9d43c0$8fd7cb40$%kim@samsung.com>
+References: <1310401398-21104-1-git-send-email-sangwook.lee@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:8826 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750821Ab1GPHGK (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:50554 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750821Ab1GPHGR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 16 Jul 2011 03:06:10 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Sat, 16 Jul 2011 03:06:17 -0400
+Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOE00784ZQ8TC30@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 16 Jul 2011 16:06:09 +0900 (KST)
+ 2010)) with ESMTP id <0LOE00J94ZQGRJ30@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 16 Jul 2011 16:06:16 +0900 (KST)
 Received: from kgenekim ([12.23.119.139])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LOE00K6FZQ9ES@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 16 Jul 2011 16:06:09 +0900 (KST)
-In-reply-to: <1308069540-24934-1-git-send-email-k.debski@samsung.com>
+ with ESMTPA id <0LOE00LOGZQGCQ@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 16 Jul 2011 16:06:16 +0900 (KST)
+In-reply-to: <1310401398-21104-1-git-send-email-sangwook.lee@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kamil Debski' <k.debski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, jaeryul.oh@samsung.com, jtp.park@samsung.com
+To: 'Sangwook Lee' <sangwook.lee@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: jassisinghbrar@gmail.com, ben-linux@fluff.org
 
-Kamil Debski wrote:
+Sangwook Lee wrote:
 > 
-> Hello,
+> Function declaration differs between file: dma.c and file:dma.h
+> and SPARSE (Documentation/sparse.txt) gives error messages
 > 
-> Multi Format Codec is a device present in the S5PV210 and EXYNOS4 SoCs by
-> Samsung.
-> This patch set adds platform and mach data for MFC. The new version
-contains
-> memory initialization code for MFC and support for DMA contig allocator.
+> All dma channels are members of 'enum dma_ch' and not 'unsigned int'
+> Please have a look at channel definitions in:
+> arch/arm/mach-s3c64xx/include/mach/dma.h
+> arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h
+> arch/arm/mach-s3c2410/include/mach/dma.h
+> So all arguments should be of type 'enum dma_ch'
 > 
-> The patches have been applied to this branch, it should become available
-in a
-> couple of hours:
->
-http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/
-mfc-
-> for-kgene
+> Signed-off-by: Sangwook Lee <sangwook.lee@linaro.org>
+> ---
+>  arch/arm/mach-s3c64xx/dma.c              |   14 +++++++-------
+>  arch/arm/plat-s3c24xx/dma.c              |   12 ++++++------
+>  arch/arm/plat-samsung/dma.c              |    6 +++---
+>  arch/arm/plat-samsung/include/plat/dma.h |   21 +++++++++++----------
+>  4 files changed, 27 insertions(+), 26 deletions(-)
 > 
-> The MFC driver can be found on this branch (it should also sync in a
-couple of
-> hours):
->
-http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/
-mfc-
-> for-mauro
-> The driver has been sent today to the linux-media list.
+> diff --git a/arch/arm/mach-s3c64xx/dma.c b/arch/arm/mach-s3c64xx/dma.c
+> index b197171..204bfaf 100644
+> --- a/arch/arm/mach-s3c64xx/dma.c
+> +++ b/arch/arm/mach-s3c64xx/dma.c
+> @@ -113,7 +113,7 @@ found:
+>  	return chan;
+>  }
 > 
-> Best regards,
-> Kamil Debski
+> -int s3c2410_dma_config(unsigned int channel, int xferunit)
+> +int s3c2410_dma_config(enum dma_ch channel, int xferunit)
+>  {
+>  	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
 > 
-> Change log:
+> @@ -297,7 +297,7 @@ static int s3c64xx_dma_flush(struct s3c2410_dma_chan
+> *chan)
+>  	return 0;
+>  }
 > 
-> =================
->  Changes since v1
-> =================
-> - support for DMA conitg allocator
-> - reserving memory for MFC
+> -int s3c2410_dma_ctrl(unsigned int channel, enum s3c2410_chan_op op)
+> +int s3c2410_dma_ctrl(enum dma_ch channel, enum s3c2410_chan_op op)
+>  {
+>  	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
 > 
-> Patch summary:
+> @@ -331,7 +331,7 @@ EXPORT_SYMBOL(s3c2410_dma_ctrl);
+>   *
+>   */
 > 
-> Kamil Debski (3):
->   ARM: Add support for MFC device to plat-s5p, mach-s5pv210 and
->     mach-exynos4
->   ARM: S5PV210: Enable MFC on Goni
->   ARM: EXYNOS4: Enable MFC on universal_c210
+> -int s3c2410_dma_enqueue(unsigned int channel, void *id,
+> +int s3c2410_dma_enqueue(enum dma_ch channel, void *id,
+>  			dma_addr_t data, int size)
+>  {
+>  	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
+> @@ -415,7 +415,7 @@ err_buff:
+>  EXPORT_SYMBOL(s3c2410_dma_enqueue);
 > 
->  arch/arm/Kconfig                            |    2 +
->  arch/arm/mach-exynos4/Kconfig               |    2 +
->  arch/arm/mach-exynos4/clock.c               |   63 ++++++++++++++
->  arch/arm/mach-exynos4/include/mach/map.h    |    2 +
->  arch/arm/mach-exynos4/mach-universal_c210.c |   13 +++
->  arch/arm/mach-s5pv210/Kconfig               |    1 +
->  arch/arm/mach-s5pv210/clock.c               |    6 ++
->  arch/arm/mach-s5pv210/include/mach/map.h    |    3 +
->  arch/arm/mach-s5pv210/mach-goni.c           |   10 ++
->  arch/arm/plat-s5p/Kconfig                   |    5 +
->  arch/arm/plat-s5p/Makefile                  |    2 +-
->  arch/arm/plat-s5p/dev-mfc.c                 |  125
-> +++++++++++++++++++++++++++
->  arch/arm/plat-s5p/include/plat/mfc.h        |   28 ++++++
->  arch/arm/plat-samsung/include/plat/devs.h   |    3 +
->  14 files changed, 264 insertions(+), 1 deletions(-)
->  create mode 100644 arch/arm/plat-s5p/dev-mfc.c
->  create mode 100644 arch/arm/plat-s5p/include/plat/mfc.h
+> 
+> -int s3c2410_dma_devconfig(unsigned int channel,
+> +int s3c2410_dma_devconfig(enum dma_ch channel,
+>  			  enum s3c2410_dmasrc source,
+>  			  unsigned long devaddr)
+>  {
+> @@ -463,7 +463,7 @@ int s3c2410_dma_devconfig(unsigned int channel,
+>  EXPORT_SYMBOL(s3c2410_dma_devconfig);
+> 
+> 
+> -int s3c2410_dma_getposition(unsigned int channel,
+> +int s3c2410_dma_getposition(enum dma_ch channel,
+>  			    dma_addr_t *src, dma_addr_t *dst)
+>  {
+>  	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
+> @@ -487,7 +487,7 @@ EXPORT_SYMBOL(s3c2410_dma_getposition);
+>   * get control of an dma channel
+>  */
+> 
+> -int s3c2410_dma_request(unsigned int channel,
+> +int s3c2410_dma_request(enum dma_ch channel,
+>  			struct s3c2410_dma_client *client,
+>  			void *dev)
+>  {
+> @@ -533,7 +533,7 @@ EXPORT_SYMBOL(s3c2410_dma_request);
+>   * allowed to go through.
+>  */
+> 
+> -int s3c2410_dma_free(unsigned int channel, struct s3c2410_dma_client
+*client)
+> +int s3c2410_dma_free(enum dma_ch channel, struct s3c2410_dma_client
+*client)
+>  {
+>  	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
+>  	unsigned long flags;
+> diff --git a/arch/arm/plat-s3c24xx/dma.c b/arch/arm/plat-s3c24xx/dma.c
+> index 2abf966..623fba5 100644
+> --- a/arch/arm/plat-s3c24xx/dma.c
+> +++ b/arch/arm/plat-s3c24xx/dma.c
+> @@ -712,7 +712,7 @@ static struct s3c2410_dma_chan
+> *s3c2410_dma_map_channel(int channel);
+>   * get control of an dma channel
+>  */
+> 
+> -int s3c2410_dma_request(unsigned int channel,
+> +int s3c2410_dma_request(enum dma_ch channel,
+>  			struct s3c2410_dma_client *client,
+>  			void *dev)
+>  {
+> @@ -783,7 +783,7 @@ EXPORT_SYMBOL(s3c2410_dma_request);
+>   * allowed to go through.
+>  */
+> 
+> -int s3c2410_dma_free(unsigned int channel, struct s3c2410_dma_client
+*client)
+> +int s3c2410_dma_free(enum dma_ch channel, struct s3c2410_dma_client
+*client)
+>  {
+>  	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
+>  	unsigned long flags;
+> @@ -974,7 +974,7 @@ static int s3c2410_dma_started(struct s3c2410_dma_chan
+> *chan)
+>  }
+> 
+>  int
+> -s3c2410_dma_ctrl(unsigned int channel, enum s3c2410_chan_op op)
+> +s3c2410_dma_ctrl(enum dma_ch channel, enum s3c2410_chan_op op)
+>  {
+>  	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
+> 
+> @@ -1021,7 +1021,7 @@ EXPORT_SYMBOL(s3c2410_dma_ctrl);
+>   * xfersize:     size of unit in bytes (1,2,4)
+>  */
+> 
+> -int s3c2410_dma_config(unsigned int channel,
+> +int s3c2410_dma_config(enum dma_ch channel,
+>  		       int xferunit)
+>  {
+>  	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
+> @@ -1104,7 +1104,7 @@ EXPORT_SYMBOL(s3c2410_dma_config);
+>   * devaddr:   physical address of the source
+>  */
+> 
+> -int s3c2410_dma_devconfig(unsigned int channel,
+> +int s3c2410_dma_devconfig(enum dma_ch channel,
+>  			  enum s3c2410_dmasrc source,
+>  			  unsigned long devaddr)
+>  {
+> @@ -1177,7 +1177,7 @@ EXPORT_SYMBOL(s3c2410_dma_devconfig);
+>   * returns the current transfer points for the dma source and destination
+>  */
+> 
+> -int s3c2410_dma_getposition(unsigned int channel, dma_addr_t *src,
+dma_addr_t
+> *dst)
+> +int s3c2410_dma_getposition(enum dma_ch channel, dma_addr_t *src,
+> dma_addr_t *dst)
+>  {
+>  	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
+> 
+> diff --git a/arch/arm/plat-samsung/dma.c b/arch/arm/plat-samsung/dma.c
+> index cb459dd..6143aa1 100644
+> --- a/arch/arm/plat-samsung/dma.c
+> +++ b/arch/arm/plat-samsung/dma.c
+> @@ -41,7 +41,7 @@ struct s3c2410_dma_chan
+> *s3c_dma_lookup_channel(unsigned int channel)
+>   * irq?
+>  */
+> 
+> -int s3c2410_dma_set_opfn(unsigned int channel, s3c2410_dma_opfn_t rtn)
+> +int s3c2410_dma_set_opfn(enum dma_ch channel, s3c2410_dma_opfn_t rtn)
+>  {
+>  	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
+> 
+> @@ -56,7 +56,7 @@ int s3c2410_dma_set_opfn(unsigned int channel,
+> s3c2410_dma_opfn_t rtn)
+>  }
+>  EXPORT_SYMBOL(s3c2410_dma_set_opfn);
+> 
+> -int s3c2410_dma_set_buffdone_fn(unsigned int channel, s3c2410_dma_cbfn_t
+rtn)
+> +int s3c2410_dma_set_buffdone_fn(enum dma_ch channel, s3c2410_dma_cbfn_t
+> rtn)
+>  {
+>  	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
+> 
+> @@ -71,7 +71,7 @@ int s3c2410_dma_set_buffdone_fn(unsigned int channel,
+> s3c2410_dma_cbfn_t rtn)
+>  }
+>  EXPORT_SYMBOL(s3c2410_dma_set_buffdone_fn);
+> 
+> -int s3c2410_dma_setflags(unsigned int channel, unsigned int flags)
+> +int s3c2410_dma_setflags(enum dma_ch channel, unsigned int flags)
+>  {
+>  	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
+> 
+> diff --git a/arch/arm/plat-samsung/include/plat/dma.h b/arch/arm/plat-
+> samsung/include/plat/dma.h
+> index 2e8f8c6..8c273b7 100644
+> --- a/arch/arm/plat-samsung/include/plat/dma.h
+> +++ b/arch/arm/plat-samsung/include/plat/dma.h
+> @@ -42,6 +42,7 @@ struct s3c2410_dma_client {
+>  };
+> 
+>  struct s3c2410_dma_chan;
+> +enum dma_ch;
+> 
+>  /* s3c2410_dma_cbfn_t
+>   *
+> @@ -62,7 +63,7 @@ typedef int  (*s3c2410_dma_opfn_t)(struct
+> s3c2410_dma_chan *,
+>   * request a dma channel exclusivley
+>  */
+> 
+> -extern int s3c2410_dma_request(unsigned int channel,
+> +extern int s3c2410_dma_request(enum dma_ch channel,
+>  			       struct s3c2410_dma_client *, void *dev);
+> 
+> 
+> @@ -71,14 +72,14 @@ extern int s3c2410_dma_request(unsigned int channel,
+>   * change the state of the dma channel
+>  */
+> 
+> -extern int s3c2410_dma_ctrl(unsigned int channel, enum s3c2410_chan_op
+op);
+> +extern int s3c2410_dma_ctrl(enum dma_ch channel, enum s3c2410_chan_op
+op);
+> 
+>  /* s3c2410_dma_setflags
+>   *
+>   * set the channel's flags to a given state
+>  */
+> 
+> -extern int s3c2410_dma_setflags(unsigned int channel,
+> +extern int s3c2410_dma_setflags(enum dma_ch channel,
+>  				unsigned int flags);
+> 
+>  /* s3c2410_dma_free
+> @@ -86,7 +87,7 @@ extern int s3c2410_dma_setflags(unsigned int channel,
+>   * free the dma channel (will also abort any outstanding operations)
+>  */
+> 
+> -extern int s3c2410_dma_free(unsigned int channel, struct
+s3c2410_dma_client *);
+> +extern int s3c2410_dma_free(enum dma_ch channel, struct
+s3c2410_dma_client *);
+> 
+>  /* s3c2410_dma_enqueue
+>   *
+> @@ -95,7 +96,7 @@ extern int s3c2410_dma_free(unsigned int channel, struct
+> s3c2410_dma_client *);
+>   * drained before the buffer is given to the DMA system.
+>  */
+> 
+> -extern int s3c2410_dma_enqueue(unsigned int channel, void *id,
+> +extern int s3c2410_dma_enqueue(enum dma_ch channel, void *id,
+>  			       dma_addr_t data, int size);
+> 
+>  /* s3c2410_dma_config
+> @@ -103,14 +104,14 @@ extern int s3c2410_dma_enqueue(unsigned int channel,
+> void *id,
+>   * configure the dma channel
+>  */
+> 
+> -extern int s3c2410_dma_config(unsigned int channel, int xferunit);
+> +extern int s3c2410_dma_config(enum dma_ch channel, int xferunit);
+> 
+>  /* s3c2410_dma_devconfig
+>   *
+>   * configure the device we're talking to
+>  */
+> 
+> -extern int s3c2410_dma_devconfig(unsigned int channel,
+> +extern int s3c2410_dma_devconfig(enum dma_ch channel,
+>  		enum s3c2410_dmasrc source, unsigned long devaddr);
+> 
+>  /* s3c2410_dma_getposition
+> @@ -118,10 +119,10 @@ extern int s3c2410_dma_devconfig(unsigned int
+channel,
+>   * get the position that the dma transfer is currently at
+>  */
+> 
+> -extern int s3c2410_dma_getposition(unsigned int channel,
+> +extern int s3c2410_dma_getposition(enum dma_ch channel,
+>  				   dma_addr_t *src, dma_addr_t *dest);
+> 
+> -extern int s3c2410_dma_set_opfn(unsigned int, s3c2410_dma_opfn_t rtn);
+> -extern int s3c2410_dma_set_buffdone_fn(unsigned int, s3c2410_dma_cbfn_t
+rtn);
+> +extern int s3c2410_dma_set_opfn(enum dma_ch, s3c2410_dma_opfn_t rtn);
+> +extern int s3c2410_dma_set_buffdone_fn(enum dma_ch, s3c2410_dma_cbfn_t
+> rtn);
+> 
+> 
+> --
+> 1.7.4.1
 
-Hi Kamil,
-
-Could you please re-work/re-submit based on current my for-next?
-Now, it is needed to update about clkdev and external gic...
-
+OK, applied.
 Thanks.
 
 Best regards,
