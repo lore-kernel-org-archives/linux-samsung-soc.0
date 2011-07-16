@@ -1,117 +1,67 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v4 0/9] TV driver for Samsung S5P platform (platform-part)
-Date: Sat, 16 Jul 2011 16:11:16 +0900
-Message-ID: <037a01cc4387$904504b0$b0cf0e10$%kim@samsung.com>
-References: <1306326564-21858-1-git-send-email-t.stanislaws@samsung.com>
+Subject: RE: [PATCH v3 0/6] ARM: EXYNOS4: NURI Board Configuration Update
+Date: Sat, 16 Jul 2011 16:15:16 +0900
+Message-ID: <037b01cc4388$1f1b7c50$5d5274f0$%kim@samsung.com>
+References: <1309421729-11172-1-git-send-email-myungjoo.ham@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:51368 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751230Ab1GPHLW (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:10076 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751230Ab1GPHPV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 16 Jul 2011 03:11:22 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Sat, 16 Jul 2011 03:15:21 -0400
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOE00JBVZYVRJ30@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 16 Jul 2011 16:11:20 +0900 (KST)
+ 2010)) with ESMTP id <0LOF008EW05E5M30@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 16 Jul 2011 16:15:20 +0900 (KST)
 Received: from kgenekim ([12.23.119.139])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LOE00666ZYW9G@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 16 Jul 2011 16:11:21 +0900 (KST)
-In-reply-to: <1306326564-21858-1-git-send-email-t.stanislaws@samsung.com>
+ with ESMTPA id <0LOF0069105K9G@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 16 Jul 2011 16:15:20 +0900 (KST)
+In-reply-to: <1309421729-11172-1-git-send-email-myungjoo.ham@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Stanislawski' <t.stanislaws@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org
+To: 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Changhwan Youn' <chaos.youn@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, myungjoo.ham@gmail.com, tushar.behera@linaro.org
 
-Tomasz Stanislawski wrote:
+MyungJoo Ham wrote:
 > 
-> Hello Everyone,
-> This patchset introduce TV devices to Samsung S5P platform. It includes
-Goni
-> (S5PV210 machine) and Universal (Exynos4 machine) boards. The patchset is
-> dedicated for 2.6.39 kernel. Moreover, the patchset adds following
-auxiliary
-> entities and features:
-> - I2C controllers for HDMI physical interface
-> - power regulators
-> - TV clocks, include ops for fout_vpll clock
-> - fixes to power domain driver (only for Exynos4)
-> - dependecies between TV and Power Domain devices (only for Exynos4)
+> 1/6: Increase NR_IRQS for MAX8997
+> 2/6: Add MAX8997 PMIC
+> 3/6: Add MAX17042 Fuel Gauge
+> 4/6: Add ADC
+> 5/6: Add MAX8903 Secondary Charger
+> 6/6: Add RTC-S3C
 > 
-> Please refer to post 'TV driver for Samsung S5P platform (media part)' for
-> sources of the TV driver.
+> ps. Tushar, I didn't seperated MAX8997 support code out of mach-nuri.c,
+yet
+> because I still have no idea about how similar the Origen board is with
+NURI board.
 > 
-> The most recent changes:
-> - TV becomes S5P platform device
-> - support for Universal-c210 and Goni boards
-> - code cleanup after Kukjin Kim's review
+> MyungJoo Ham (6):
+>   ARM: EXYNOS4: Increase NR_IRQS for devices with more IRQs
+>   Exynos4 NURI: configure regulators and PMIC (MAX8997)
+>   Exynos4 NURI: configure MAX17042 fuel gauge
+>   Exynos4 NURI: configure ADC.
+>   Exynos4 NURI: configure MAX8903 secondary charger
+>   Exynos4 NURI: configure rtc-s3c.
 > 
-> Tomasz Stanislawski (9):
->   arm: exynos4: pd: fixes block gating and code cleanup
->   i2c-s3c2410: fix I2C dedicated for hdmiphy
->   arm: exynos4: i2c: add controller 8 (HDMIPHY)
->   arm: s5pv210: i2c: add controller 3 (HDMIPHY)
->   arm: plat-s5p: add TV support
->   arm: exynos4: add TV support
->   arm: exynos4: universal_c210: add TV support
->   arm: s5pv210: add TV support
->   arm: s5pv210: goni: add TV support
-> 
->  arch/arm/mach-exynos4/Kconfig                   |    3 +
->  arch/arm/mach-exynos4/clock.c                   |  223
-> ++++++++++++++++++++++-
->  arch/arm/mach-exynos4/cpu.c                     |    7 +
->  arch/arm/mach-exynos4/dev-pd.c                  |   93 +++++++---
->  arch/arm/mach-exynos4/include/mach/irqs.h       |    8 +
->  arch/arm/mach-exynos4/include/mach/map.h        |   27 +++
->  arch/arm/mach-exynos4/include/mach/regs-clock.h |    8 +
->  arch/arm/mach-exynos4/include/mach/regs-pmu.h   |    6 +
->  arch/arm/mach-exynos4/mach-universal_c210.c     |   80 ++++++++
->  arch/arm/mach-s5pv210/Kconfig                   |    8 +
->  arch/arm/mach-s5pv210/Makefile                  |    1 +
->  arch/arm/mach-s5pv210/clock.c                   |  169
-> ++++++++++++++++--
->  arch/arm/mach-s5pv210/cpu.c                     |    6 +
->  arch/arm/mach-s5pv210/include/mach/irqs.h       |    2 +-
->  arch/arm/mach-s5pv210/include/mach/map.h        |   19 ++
->  arch/arm/mach-s5pv210/include/mach/regs-clock.h |    7 +-
->  arch/arm/mach-s5pv210/mach-goni.c               |    9 +
->  arch/arm/mach-s5pv210/setup-i2c3.c              |   27 +++
->  arch/arm/plat-s5p/Kconfig                       |    5 +
->  arch/arm/plat-s5p/Makefile                      |    1 +
->  arch/arm/plat-s5p/dev-tv.c                      |  100 ++++++++++
->  arch/arm/plat-samsung/Kconfig                   |    5 +
->  arch/arm/plat-samsung/Makefile                  |    1 +
->  arch/arm/plat-samsung/dev-i2c8.c                |   68 +++++++
->  arch/arm/plat-samsung/include/plat/devs.h       |    6 +
->  arch/arm/plat-samsung/include/plat/iic-core.h   |   14 ++
->  arch/arm/plat-samsung/include/plat/iic.h        |    1 +
->  arch/arm/plat-samsung/include/plat/pd.h         |    1 +
->  arch/arm/plat-samsung/include/plat/tv-core.h    |   45 +++++
->  drivers/i2c/busses/i2c-s3c2410.c                |   36 ++++-
->  30 files changed, 947 insertions(+), 39 deletions(-)
->  create mode 100644 arch/arm/mach-s5pv210/setup-i2c3.c
->  create mode 100644 arch/arm/plat-s5p/dev-tv.c
->  create mode 100644 arch/arm/plat-samsung/dev-i2c8.c
->  create mode 100644 arch/arm/plat-samsung/include/plat/tv-core.h
+>  arch/arm/mach-exynos4/include/mach/irqs.h |    2 +-
+>  arch/arm/mach-exynos4/mach-nuri.c         |  739
+> ++++++++++++++++++++++++++++-
+>  2 files changed, 739 insertions(+), 2 deletions(-)
 > 
 > --
-> 1.7.5.1
+> 1.7.4.1
 
-Hi,
+Hi MyungJoo Ham,
 
-As I said on your previous patch, dev-i2c8 should not be used for HDMIPHY on
-EXYNOS4.
-It can be used for general i2c not specific HDMI.
-
-This is needed to update based on current my for-next because to update
-clkdev is required.
-
+Sorry for late response.
+I will be back on this next Monday.
 
 Thanks.
 
