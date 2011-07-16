@@ -1,60 +1,134 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/7] ARM: EXYNOS4: Adds External GIC
-Date: Sat, 16 Jul 2011 15:55:34 +0900
-Message-ID: <037601cc4385$604ca990$20e5fcb0$%kim@samsung.com>
-References: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Subject: [PATCH V3 02/13] DMA: PL330: Update PL330 DMA API driver
+Date: Sat, 16 Jul 2011 15:44:15 +0900
+Message-ID: <1310798666-7659-3-git-send-email-kgene.kim@samsung.com>
+References: <1310798666-7659-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:14693 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750821Ab1GPGzm (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:52084 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750821Ab1GPG5M (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 16 Jul 2011 02:55:42 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOE00FPWZ8TWM80@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 16 Jul 2011 15:55:41 +0900 (KST)
-Received: from kgenekim ([12.23.119.139])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LOE00LDYZ8TP8@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 16 Jul 2011 15:55:41 +0900 (KST)
-In-reply-to: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
-Content-language: ko
+	Sat, 16 Jul 2011 02:57:12 -0400
+In-Reply-To: <1310798666-7659-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Changhwan Youn' <chaos.youn@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Grant Likely <grant.likely@secretlab.ca>, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Linus Walleij <linus.walleij@stericsson.com>, Jassi Brar <jassisinghbrar@gmail.com>, Boojin Kim <boojin.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Changhwan Youn wrote:
-> 
-> This patch adds implementation External GIC on EXYNOS4 SoC.
-> 
-> Note: need to update timer codes for supporting old type of
-> EXYNOS4 SoCs.
-> 
-> [PATCH 1/7] ARM: EXYNOS4: Add external GIC io memory mapping
-> [PATCH 2/7] ARM: EXYNOS4: modify interrupt mappings for external GIC
-> [PATCH 3/7] ARM: EXYNOS4: set the affinity of mct1 interrupt using
-IRQ_MCT_L1
-> [PATCH 4/7] ARM: GIC: move gic_chip_data structure declaration to header
-> [PATCH 5/7] ARM: EXYNOS4: Add support external GIC
-> [PATCH 6/7] ARM: EXYNOS4: Remove clock event timers using ARM private
-timers
-> [PATCH 7/7] ARM: EXYNOS4: Add chained enrty/exit function to uart
-interrupt
-> handler
+From: Boojin Kim <boojin.kim@samsung.com>
 
-OK, applied.
-Thanks.
+This patch updates following 3 items.
+1. Removes unneccessary code.
+2. Add AMBA, PL330 configuration
+3. Change the meaning of 'peri_id' variable
+   from PL330 event number to specific dma id by user.
 
-As a note, this is needed for to support upcoming other EXYNOS4 SoCs with
-current exynos4 mainline.
+Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+Cc: Vinod Koul <vinod.koul@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ drivers/dma/Kconfig        |    3 ++-
+ drivers/dma/pl330.c        |   31 ++++++++++++++++---------------
+ include/linux/amba/pl330.h |    2 +-
+ 3 files changed, 19 insertions(+), 17 deletions(-)
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+index 25cf327..569cb14 100644
+--- a/drivers/dma/Kconfig
++++ b/drivers/dma/Kconfig
+@@ -193,7 +193,8 @@ config ARCH_HAS_ASYNC_TX_FIND_CHANNEL
+ config PL330_DMA
+ 	tristate "DMA API Driver for PL330"
+ 	select DMA_ENGINE
+-	depends on PL330
++	depends on ARM_AMBA
++	select PL330
+ 	help
+ 	  Select if your platform has one or more PL330 DMACs.
+ 	  You need to provide platform specific settings via
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index 39e9ffd..9bdda7b 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -455,7 +455,7 @@ static struct dma_pl330_desc *pl330_get_desc(struct dma_pl330_chan *pch)
+ 	async_tx_ack(&desc->txd);
+ 
+ 	desc->req.rqtype = peri->rqtype;
+-	desc->req.peri = peri->peri_id;
++	desc->req.peri = pch->chan.chan_id;
+ 
+ 	dma_async_tx_descriptor_init(&desc->txd, &pch->chan);
+ 
+@@ -577,7 +577,7 @@ pl330_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+ 	struct dma_pl330_peri *peri = chan->private;
+ 	struct scatterlist *sg;
+ 	unsigned long flags;
+-	int i, burst_size;
++	int i;
+ 	dma_addr_t addr;
+ 
+ 	if (unlikely(!pch || !sgl || !sg_len))
+@@ -594,7 +594,6 @@ pl330_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+ 	}
+ 
+ 	addr = peri->fifo_addr;
+-	burst_size = peri->burst_sz;
+ 
+ 	first = NULL;
+ 
+@@ -642,7 +641,7 @@ pl330_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+ 				sg_dma_address(sg), addr, sg_dma_len(sg));
+ 		}
+ 
+-		desc->rqcfg.brst_size = burst_size;
++		desc->rqcfg.brst_size = peri->burst_sz;
+ 		desc->rqcfg.brst_len = 1;
+ 	}
+ 
+@@ -749,17 +748,19 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 		struct dma_pl330_peri *peri = &pdat->peri[i];
+ 		pch = &pdmac->peripherals[i];
+ 
+-		switch (peri->rqtype) {
+-		case MEMTOMEM:
+-			dma_cap_set(DMA_MEMCPY, pd->cap_mask);
+-			break;
+-		case MEMTODEV:
+-		case DEVTOMEM:
+-			dma_cap_set(DMA_SLAVE, pd->cap_mask);
+-			break;
+-		default:
+-			dev_err(&adev->dev, "DEVTODEV Not Supported\n");
+-			continue;
++		if (peri) {
++			switch (peri->rqtype) {
++			case MEMTOMEM:
++				dma_cap_set(DMA_MEMCPY, pd->cap_mask);
++				break;
++			case MEMTODEV:
++			case DEVTOMEM:
++				dma_cap_set(DMA_SLAVE, pd->cap_mask);
++				break;
++			default:
++				dev_err(&adev->dev, "DEVTODEV Not Supported\n");
++				continue;
++			}
+ 		}
+ 
+ 		INIT_LIST_HEAD(&pch->work_list);
+diff --git a/include/linux/amba/pl330.h b/include/linux/amba/pl330.h
+index cbee7de..17b0ada 100644
+--- a/include/linux/amba/pl330.h
++++ b/include/linux/amba/pl330.h
+@@ -19,7 +19,7 @@ struct dma_pl330_peri {
+ 	 * Peri_Req i/f of the DMAC that is
+ 	 * peripheral could be reached from.
+ 	 */
+-	u8 peri_id; /* {0, 31} */
++	u8 peri_id; /* specific dma id */
+ 	enum pl330_reqtype rqtype;
+ 
+ 	/* For M->D and D->M Channels */
+-- 
+1.7.1
