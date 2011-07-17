@@ -1,64 +1,111 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v2 0/2] Add basic device tree support for Samsung's Exynos4210
- platform
-Date: Sun, 17 Jul 2011 10:28:18 +0530
-Message-ID: <1310878700-1507-1-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v2 1/2] arm: dts: Add nodes in smdkv310 device tree source file
+Date: Sun, 17 Jul 2011 10:28:19 +0530
+Message-ID: <1310878700-1507-2-git-send-email-thomas.abraham@linaro.org>
+References: <1310878700-1507-1-git-send-email-thomas.abraham@linaro.org>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout1.samsung.com ([203.254.224.24]:28201 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750942Ab1GQEqe (ORCPT
+	with ESMTP id S1751076Ab1GQEqf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 17 Jul 2011 00:46:34 -0400
+	Sun, 17 Jul 2011 00:46:35 -0400
 Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
  2010)) with ESMTP id <0LOG00DU9NXL5P10@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sun, 17 Jul 2011 13:46:33 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Sun, 17 Jul 2011 13:46:34 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.37])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0LOG00J0INXHII@mmp1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Sun, 17 Jul 2011 13:46:34 +0900 (KST)
+In-reply-to: <1310878700-1507-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: devicetree-discuss@lists.ozlabs.org
 Cc: linux-samsung-soc@vger.kernel.org
 
-This patch series adds a basic device tree based boot for Samsung's Exynos4
-platforms and specifically for smdkv310 board. Device tree based driver
-probe is added for sdhci and watchdog drivers.
+Include device tree nodes for watchdog timer and sdhci instance 0 and 1.
 
-This patch series is based on
-git.secretlab.ca/git/linux-2.6.git devicetree/test
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ arch/arm/boot/dts/exynos4-smdkv310.dts |   61 ++++++++++++++++++++++++++++++-
+ 1 files changed, 59 insertions(+), 2 deletions(-)
 
-and depends on the following patches which are not yet available in
-the devicetree/test branch.
-
-1. [PATCH] ARM: EXYNOS4: Fix card detection for sdhci 0 and 2
-[http://www.mail-archive.com/linux-samsung-soc <at> vger.kernel.org/msg04704.html]
-
-2. [PATCH] ARM: EXYNOS4: Fix missing S5P_VA_AUDSS definition
-[http://www.mail-archive.com/linux-samsung-soc <at> vger.kernel.org/msg04866.html]
-
-3. [PATCH 0/9] Add clkdev support for Samsung platforms
-[http://www.mail-archive.com/linux-samsung-soc <at> vger.kernel.org/msg04874.html]
-
-4. Consolidate the clkdev header files
-[http://patchwork.ozlabs.org/patch/97862/]
-
-Changes since v1:
-* Addressed all comments from Grant Likely
-  - Moved sdhci platform data as properties in dts file
-  - Add relevant comments in the machine file.
-
-Thomas Abraham (2):
-  arm: dts: Add nodes in smdkv310 device tree source file
-  arm: exynos4: Add a new Exynos4 device tree enabled machine
-
- Documentation/devicetree/bindings/arm/samsung.txt |   11 +-
- arch/arm/boot/dts/exynos4-smdkv310.dts            |   61 +++++++++++-
- arch/arm/mach-exynos4/Kconfig                     |   10 ++
- arch/arm/mach-exynos4/Makefile                    |    1 +
- arch/arm/mach-exynos4/mach-exynos4-dt.c           |  112 +++++++++++++++++++++
- 5 files changed, 187 insertions(+), 8 deletions(-)
- create mode 100644 arch/arm/mach-exynos4/mach-exynos4-dt.c
+diff --git a/arch/arm/boot/dts/exynos4-smdkv310.dts b/arch/arm/boot/dts/exynos4-smdkv310.dts
+index dd6c80a..155f836 100644
+--- a/arch/arm/boot/dts/exynos4-smdkv310.dts
++++ b/arch/arm/boot/dts/exynos4-smdkv310.dts
+@@ -1,11 +1,68 @@
++/*
++ * Samsung's Exynos4 based smdkv310 board device tree source.
++ *
++ * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ * Copyright (c) 2010-2011 Linaro Ltd.
++ *		www.linaro.org
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
+ /dts-v1/;
+ /include/ "skeleton.dtsi"
+ 
+ / {
+ 	model = "Samsung Exynos4 SMDKV310 eval board";
+-	compatible = "samsung,smdkv310", "samsung,s5pv310";
++	compatible = "samsung,smdkv310", "samsung,exynos4210";
+ 
+ 	memory {
+-		reg = <0x40000000 0x08000000>;
++		reg = <0x40000000 0x80000000>;
++	};
++
++	chosen {
++		bootargs = "root=/dev/mmcblk0p1 rootfstype=ext3 rootwait console=ttySAC1,115200";
++	};
++
++	soc {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		interrupt-parent = <&intc>;
++		compatible = "simple-bus";
++		ranges;
++
++		intc:interrupt-controller@10501000 {
++			compatible = "samsung,exynos4-gic","arm,cortex-a9-gic";
++			#interrupt-cells = <1>;
++			interrupt-controller;
++			reg = <0x10501000 0x1000>, <0x10500100 0x100>;
++			irq-start = <61>;
++		};
++
++		watchdog@10060000 {
++			compatible = "samsung,s3c2410-wdt";
++			reg = <0x10060000 0x400>;
++			interrupts = <552>;
++		};
++
++		sdhci@12530000 {
++			compatible = "samsung,s3c6410-sdhci";
++			reg = <0x12530000 0x1000>;
++			interrupts = <362>;
++			samsung,sdhci-bus-width = <4>;
++			samsung,sdhci-cd-type = <0>;
++			samsung,sdhci-clkdiv-external;
++		};
++
++		sdhci@12510000 {
++			compatible = "samsung,s3c6410-sdhci";
++			reg = <0x12510000 0x1000>;
++			interrupts = <360>;
++			samsung,sdhci-bus-width = <4>;
++			samsung,sdhci-cd-type = <0>;
++			samsung,sdhci-clkdiv-external;
++		};
+ 	};
+ };
+-- 
+1.7.1
