@@ -1,361 +1,312 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/3] ARM: S5P64X0: Add HSMMC setup for host Controller
-Date: Mon, 18 Jul 2011 11:13:36 +0900
-Message-ID: <047801cc44f0$4fb16f50$ef144df0$%kim@samsung.com>
-References: <1308571049-4412-1-git-send-email-rajeshwari.s@samsung.com>
- <1308571049-4412-2-git-send-email-rajeshwari.s@samsung.com>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH 1/2] i2c: s3c24xx: Add device tree support
+Date: Sun, 17 Jul 2011 22:28:59 -0600
+Message-ID: <20110718042859.GA15023@ponder.secretlab.ca>
+References: <1310950241-13602-1-git-send-email-thomas.abraham@linaro.org>
+ <1310950241-13602-2-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:55359 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755949Ab1GRCNn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 17 Jul 2011 22:13:43 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOI00J7VBIG2A90@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 18 Jul 2011 11:13:40 +0900 (KST)
-Received: from kgenekim ([12.23.119.139])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LOI00FSDBIS17@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 18 Jul 2011 11:13:40 +0900 (KST)
-In-reply-to: <1308571049-4412-2-git-send-email-rajeshwari.s@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1310950241-13602-2-git-send-email-thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Rajeshwari Shinde' <rajeshwari.s@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, sbkim73@samsung.com
 
-Rajeshwari Shinde wrote:
+On Mon, Jul 18, 2011 at 06:20:40AM +0530, Thomas Abraham wrote:
+> Add device tree support for Samsung's s3c24xx i2c driver. It adds
+> support for parsing platform data from device tree and initialize
+> all the slave devices specified as child nodes.
 > 
-> From: rajeshwari.s <rajeshwari.s@samsung.com>
-> 
-Maybe ' Rajeshwari Shinde' instead of rajeshwari.s?
-
-> Adds support for HSMMC for S5P64X0 platform, performs
-> setup for host controller and related GPIO.
-> 
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> Signed-off-by: Rajeshwari.S <rajeshwari.s@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 > ---
->  arch/arm/mach-s5p64x0/Kconfig            |   31 ++++++++
->  arch/arm/mach-s5p64x0/Makefile           |    2 +
->  arch/arm/mach-s5p64x0/setup-sdhci-gpio.c |  121
-> ++++++++++++++++++++++++++++++
->  arch/arm/mach-s5p64x0/setup-sdhci.c      |   54 +++++++++++++
->  4 files changed, 208 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-s5p64x0/setup-sdhci-gpio.c
->  create mode 100644 arch/arm/mach-s5p64x0/setup-sdhci.c
+>  .../devicetree/bindings/i2c/samsung-i2c.txt        |   43 ++++++++++
+>  drivers/i2c/busses/i2c-s3c2410.c                   |   87 ++++++++++++++++----
+>  2 files changed, 115 insertions(+), 15 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/i2c/samsung-i2c.txt
 > 
-> diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
-> index 017af4c..ed823b0 100644
-> --- a/arch/arm/mach-s5p64x0/Kconfig
-> +++ b/arch/arm/mach-s5p64x0/Kconfig
-> @@ -26,6 +26,17 @@ config S5P64X0_SETUP_I2C1
->  	help
->  	  Common setup code for i2c bus 1.
-> 
-> +config S5P64X0_SETUP_SDHCI
-> +	bool
-> +	select S5P64X0_SETUP_SDHCI_GPIO
-> +	help
-> +	  Internal helper functions for S5P64X0 based SDHCI systems
-> +
-> +config S5P64X0_SETUP_SDHCI_GPIO
-> +	bool
-> +	help
-> +	  Common setup code for SDHCI gpio.
-> +
->  # machine support
-> 
->  config MACH_SMDK6440
-> @@ -34,11 +45,15 @@ config MACH_SMDK6440
->  	select S3C_DEV_I2C1
->  	select S3C_DEV_RTC
->  	select S3C_DEV_WDT
-> +	select S3C_DEV_HSMMC
-> +	select S3C_DEV_HSMMC1
-> +	select S3C_DEV_HSMMC2
->  	select S3C64XX_DEV_SPI
->  	select SAMSUNG_DEV_ADC
->  	select SAMSUNG_DEV_PWM
->  	select SAMSUNG_DEV_TS
->  	select S5P64X0_SETUP_I2C1
-> +	select S5P64X0_SETUP_SDHCI
->  	help
->  	  Machine support for the Samsung SMDK6440
-> 
-> @@ -48,12 +63,28 @@ config MACH_SMDK6450
->  	select S3C_DEV_I2C1
->  	select S3C_DEV_RTC
->  	select S3C_DEV_WDT
-> +	select S3C_DEV_HSMMC
-> +	select S3C_DEV_HSMMC1
-> +	select S3C_DEV_HSMMC2
->  	select S3C64XX_DEV_SPI
->  	select SAMSUNG_DEV_ADC
->  	select SAMSUNG_DEV_PWM
->  	select SAMSUNG_DEV_TS
->  	select S5P64X0_SETUP_I2C1
-> +	select S5P64X0_SETUP_SDHCI
->  	help
->  	  Machine support for the Samsung SMDK6450
-> 
-> +menu "Use 8-bit SDHCI bus width"
-> +
-> +config S5P64X0_SD_CH1_8BIT
-> +	bool "SDHCI Channel 1 (Slot 1)"
-> +	depends on MACH_SMDK6450 || MACH_SMDK6440
-
-Is this available on only SMDK6440 and SMDK6450?
-
-> +	default n
-
-no need.
-
-> +	help
-> +	  Support SDHCI Channel 1 8-bit bus.
-> +	  If selected, Channel 2 is disabled.
-> +
-> +endmenu
-> +
->  endif
-> diff --git a/arch/arm/mach-s5p64x0/Makefile
-b/arch/arm/mach-s5p64x0/Makefile
-> index ae6bf6f..60ff9b4 100644
-> --- a/arch/arm/mach-s5p64x0/Makefile
-> +++ b/arch/arm/mach-s5p64x0/Makefile
-> @@ -28,3 +28,5 @@ obj-y				+= dev-audio.o
->  obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
-> 
->  obj-$(CONFIG_S5P64X0_SETUP_I2C1)	+= setup-i2c1.o
-> +obj-$(CONFIG_S5P64X0_SETUP_SDHCI)	+= setup-sdhci.o
-> +obj-$(CONFIG_S5P64X0_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
-> diff --git a/arch/arm/mach-s5p64x0/setup-sdhci-gpio.c b/arch/arm/mach-
-> s5p64x0/setup-sdhci-gpio.c
+> diff --git a/Documentation/devicetree/bindings/i2c/samsung-i2c.txt b/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
 > new file mode 100644
-> index 0000000..31541b3
+> index 0000000..73191c3
 > --- /dev/null
-> +++ b/arch/arm/mach-s5p64x0/setup-sdhci-gpio.c
-> @@ -0,0 +1,121 @@
-> +/* linux/arch/arm/mach-s5p64x0/setup-sdhci-gpio.c
-> + *
-> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * S5P64X0 - Helper functions for setting up SDHCI device(s) GPIO (HSMMC)
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
+> +++ b/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
+> @@ -0,0 +1,43 @@
+> +* Samsung's I2C controller
 > +
-> +#include <linux/platform_device.h>
-> +#include <linux/io.h>
+> +The Samsung's I2C controller is used to interface with I2C devices.
 > +
-> +#include <mach/gpio.h>
-> +#include <mach/regs-gpio.h>
+> +Required properties:
+> +  - compatible: value should be either of the following.
+> +      (a) "samsung, s3c2410-i2c", for i2c compatible with s3c2410 i2c.
+> +      (b) "samsung, s3c2440-i2c", for i2c compatible with s3c2440 i2c.
 > +
-> +#include <plat/gpio-cfg.h>
-> +#include <plat/sdhci.h>
+> +  - reg: physical base address of the controller and length of memory mapped
+> +    region.
 > +
+> +  - interrupts : interrupt number to the cpu.
 > +
+> +  - samsung,i2c-bus-number: Specifies the i2c bus number.
 
-one empty line is enough.
-
-> +void s5p6440_setup_sdhci0_cfg_gpio(struct platform_device *dev, int
-width)
-> +{
-> +	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
-> +
-> +	/* Set all the necessary GPG pins to special-function 2 */
-> +	s3c_gpio_cfgrange_nopull(S5P6440_GPG(0), 2 + width,
-> S3C_GPIO_SFN(2));
-> +
-> +	/* Set GPG[6] pin to special-function 2 - MMC0 CDn */
-> +	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
-> +		s3c_gpio_setpull(S5P6440_GPG(6), S3C_GPIO_PULL_UP);
-> +		s3c_gpio_cfgpin(S5P6440_GPG(6), S3C_GPIO_SFN(2));
-> +	}
-> +}
-> +
-> +void s5p6440_setup_sdhci1_cfg_gpio(struct platform_device *dev, int
-width)
-> +{
-> +	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
-> +
-> +	/* Set GPH[0:1] pins to special-function 2 - CLK and CMD */
-> +	s3c_gpio_cfgrange_nopull(S5P6440_GPH(0), 2 , S3C_GPIO_SFN(2));
-> +
-> +	switch (width) {
-> +	case 8:
-> +		/* Set data pins GPH[6:9] special-function 2 */
-> +		s3c_gpio_cfgrange_nopull(S5P6440_GPH(6), 4,
-> S3C_GPIO_SFN(2));
-> +	case 4:
-> +		/* set data pins GPH[2:5] special-function 2 */
-> +		s3c_gpio_cfgrange_nopull(S5P6440_GPH(2), 4,
-> S3C_GPIO_SFN(2));
-> +	default:
-> +		break;
-> +	}
-> +
-> +	/* Set GPG[6] pin to special-funtion 3 : MMC1 CDn */
-> +	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
-> +		s3c_gpio_setpull(S5P6440_GPG(6), S3C_GPIO_PULL_UP);
-> +		s3c_gpio_cfgpin(S5P6440_GPG(6), S3C_GPIO_SFN(3));
-> +	}
-> +}
-
-The setup of sdhci0 and sdhci1 are similar/same on s5p64440 and s5p6450
-except gpio pin.
-Isn't there any way to handle it in each same function?
+Drop this property.  i2c bus numbers are dynamically assigned when
+using the DT.
 
 > +
-> +void s5p6440_setup_sdhci2_cfg_gpio(struct platform_device *dev, int
-width)
-> +{
-> +	/* Set GPC[4:5] pins to special-function 3 - CLK and CMD */
-> +	s3c_gpio_cfgrange_nopull(S5P6440_GPC(4), 2, S3C_GPIO_SFN(3));
+> +  - samsung,i2c-sda-delay: Delay (in ns) applied to data line (SDA) edges.
 > +
-> +	/* Set data pins GPH[6:9] pins to special-function 3 */
-> +	s3c_gpio_cfgrange_nopull(S5P6440_GPH(6), 4, S3C_GPIO_SFN(3));
+> +Optional properties:
+> +  - samsung,i2c-slave-addr: Slave address in multi-master enviroment. If not
+> +    specified, default value is 0x10.
 > +
-> +	/* No MMC2 CDn available */
-> +}
+> +  - samsung,i2c-max-bus-freq: Desired frequency in Hz of the bus. If not
+> +    specified, the default value in Hz is 100000.
 > +
+> +Example:
 > +
-
-Same, one empty line is enough.
-
-> +/* S5P6450 SDHCI GPIO Settings */
-> +void s5p6450_setup_sdhci0_cfg_gpio(struct platform_device *dev, int
-width)
-> +{
-> +	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
+> +	i2c@13870000 {
+> +		compatible = "samsung,s3c2440-i2c";
+> +		reg = <0x13870000 0x100>;
+> +		interrupts = <345>;
+> +		samsung,i2c-bus-number = <1>;
+> +		samsung,i2c-slave-addr = <16>;
+> +		samsung,i2c-sda-delay = <100>;
+> +		samsung,i2c-max-bus-freq = <100000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
 > +
-> +	/* Set all the necessary GPG pins to special-function 2 */
-> +	s3c_gpio_cfgrange_nopull(S5P6450_GPG(0), 2 + width,
-> S3C_GPIO_SFN(2));
-> +
-> +	/* Set GPG[6] to special-function 2 : MMC0 CDn */
-> +	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
-> +		s3c_gpio_setpull(S5P6450_GPG(6), S3C_GPIO_PULL_UP);
-> +		s3c_gpio_cfgpin(S5P6450_GPG(6), S3C_GPIO_SFN(2));
-> +	}
-> +}
-> +
-> +void s5p6450_setup_sdhci1_cfg_gpio(struct platform_device *dev, int
-width)
-> +{
-> +	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
-> +
-> +	/* Set GPH[0:1] pins to special-function 2 - CLK and CMD */
-> +	s3c_gpio_cfgrange_nopull(S5P6450_GPH(0), 2, S3C_GPIO_SFN(2));
-> +
-> +	switch (width) {
-> +	case 8:
-> +		/* Set data pins GPH[6:9] to special-function 2 */
-> +		s3c_gpio_cfgrange_nopull(S5P6450_GPH(6), 4,
-> S3C_GPIO_SFN(2));
-> +	case 4:
-> +		/* Set data pins GPH[2:5] to special-function 2 */
-> +		s3c_gpio_cfgrange_nopull(S5P6450_GPH(2), 4,
-> S3C_GPIO_SFN(2));
-> +	default:
-> +		break;
-> +	}
-> +
-> +	/* Set GPG[6] pin to special-funtion 3 : MMC1 CDn */
-> +	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
-> +		s3c_gpio_setpull(S5P6450_GPG(6), S3C_GPIO_PULL_UP);
-> +		s3c_gpio_cfgpin(S5P6450_GPG(6), S3C_GPIO_SFN(3));
-> +	}
-> +}
-> +
-> +void s5p6450_setup_sdhci2_cfg_gpio(struct platform_device *dev, int
-width)
-> +{
-> +
-> +	/* Set all the necessary GPG pins to special-function 3 */
-> +	s3c_gpio_cfgrange_nopull(S5P6450_GPG(7), 2 + width,
-> S3C_GPIO_SFN(3));
-> +
-> +	/* No MMC2 CDn available */
-> +}
-> diff --git a/arch/arm/mach-s5p64x0/setup-sdhci.c
-b/arch/arm/mach-s5p64x0/setup-
-> sdhci.c
-> new file mode 100644
-> index 0000000..729b824
-> --- /dev/null
-> +++ b/arch/arm/mach-s5p64x0/setup-sdhci.c
-> @@ -0,0 +1,54 @@
-> +/* linux/arch/arm/mach-s5p64x0/setup-sdhci.c
-> + *
-> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * S5P64X0 - Helper functions for settign up SDHCI device(s) (HSMMC)
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/types.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/io.h>
-> +
-> +#include <linux/mmc/card.h>
-> +#include <linux/mmc/host.h>
-> +
-> +#include <plat/regs-sdhci.h>
-> +#include <plat/sdhci.h>
-> +
-> +/* clock sources for the mmc bus clock, order as for the ctrl2[5..4] */
-> +
-> +char *s5p64x0_hsmmc_clksrcs[4] = {
-> +	[0] = NULL,
-> +	[1] = NULL,
-> +	[2] = "sclk_mmc",	/* mmc_bus */
-> +	[3] = NULL,
+> +		wm8994@1a {
+> +			compatible = "wlf,wm8994";
+> +			reg = <0x1a>;
+> +		};
+> +	};
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+> index 6c00c10..5a84a0b 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -35,6 +35,9 @@
+>  #include <linux/cpufreq.h>
+>  #include <linux/slab.h>
+>  #include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/of_i2c.h>
+> +#include <linux/of_device.h>
+>  
+>  #include <asm/irq.h>
+>  
+> @@ -83,6 +86,33 @@ struct s3c24xx_i2c {
+>  #endif
+>  };
+>  
+> +#ifdef CONFIG_OF
+> +static enum s3c24xx_i2c_type samsung_i2c_types[] = {
+> +	TYPE_S3C2410,
+> +	TYPE_S3C2440
 > +};
 > +
-> +void s5p64x0_setup_sdhci_cfg_card(struct platform_device *dev,
-> +				    void __iomem *r,
-> +				    struct mmc_ios *ios,
-> +				    struct mmc_card *card)
+> +static const struct of_device_id s3c24xx_i2c_match[] = {
+> +	{ .compatible = "samsung,s3c2410-i2c", .data = &samsung_i2c_types[0], },
+> +	{ .compatible = "samsung,s3c2440-i2c", .data = &samsung_i2c_types[1], },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
+
+The samsung_i2c_types[] array is unnecessary.  You can simply do:
+
+static const struct of_device_id s3c24xx_i2c_match[] = {
+	{ .compatible = "samsung,s3c2410-i2c", .data = (void*)TYPE_S3C2410, },
+	{ .compatible = "samsung,s3c2440-i2c", .data = (void*)TYPE_S3C2440, },
+	{},
+};
+MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
+
+Or, drop the .data field entirely and call of_device_is_compatible()
+directly in s3c24xx_i2c_is2440().
+
+> +
+> +static const struct
+> +of_device_id *s3c24xx_i2c_get_of_device_id(struct platform_device *pdev)
 > +{
-> +	u32 ctrl2 = 0, ctrl3 = 0;
-> +
-> +	/* don't need to alter anything acording to card-type */
-> +	__raw_writel(S3C64XX_SDHCI_CONTROL4_DRIVE_9mA,
-> +			r + S3C64XX_SDHCI_CONTROL4);
-> +
-> +	ctrl2 = __raw_readl(r + S3C_SDHCI_CONTROL2);
-> +	ctrl2 &= S3C_SDHCI_CTRL2_SELBASECLK_MASK;
-> +	ctrl2 |= (S3C64XX_SDHCI_CTRL2_ENSTAASYNCCLR |
-> +		  S3C64XX_SDHCI_CTRL2_ENCMDCNFMSK |
-> +		  S3C_SDHCI_CTRL2_DFCNT_NONE |
-> +		  S3C_SDHCI_CTRL2_ENCLKOUTHOLD);
-> +
-> +	__raw_writel(ctrl2, r + S3C_SDHCI_CONTROL2);
-> +	__raw_writel(ctrl3, r + S3C_SDHCI_CONTROL3);
+> +	return of_match_device(s3c24xx_i2c_match, &pdev->dev);
 > +}
-> --
-> 1.7.0.4
+> +#else
+> +#define s3c24xx_i2c_match NULL
+> +static const struct
+> +of_device_id *s3c24xx_i2c_get_of_device_id(struct platform_device *pdev)
+> +{
+> +	return NULL;
+> +}
+> +#endif
+> +
+>  /* default platform data removed, dev should always carry data. */
+>  
+>  /* s3c24xx_i2c_is2440()
+> @@ -93,9 +123,15 @@ struct s3c24xx_i2c {
+>  static inline int s3c24xx_i2c_is2440(struct s3c24xx_i2c *i2c)
+>  {
+>  	struct platform_device *pdev = to_platform_device(i2c->dev);
+> +	const struct of_device_id *i2c_of_id;
+>  	enum s3c24xx_i2c_type type;
+>  
+> -	type = platform_get_device_id(pdev)->driver_data;
+> +	i2c_of_id = s3c24xx_i2c_get_of_device_id(pdev);
+> +	if (platform_get_device_id(pdev))
+> +		type = platform_get_device_id(pdev)->driver_data;
+> +	else
+> +		type = *(enum s3c24xx_i2c_type *)i2c_of_id->data;
+> +
+>  	return type == TYPE_S3C2440;
 
+In fact, most of these line changes go away by putting the folowing
+lines above the platform_get_device_id() line:
 
+>  }
+>  
+> @@ -630,16 +666,21 @@ static int s3c24xx_i2c_clockrate(struct s3c24xx_i2c *i2c, unsigned int *got)
+>  	unsigned long clkin = clk_get_rate(i2c->clk);
+>  	unsigned int divs, div1;
+>  	unsigned long target_frequency;
+> +	unsigned int max_freq = 0;
+>  	u32 iiccon;
+>  	int freq;
+>  
+>  	i2c->clkrate = clkin;
+>  	clkin /= 1000;		/* clkin now in KHz */
+>  
+> -	dev_dbg(i2c->dev, "pdata desired frequency %lu\n", pdata->frequency);
+> -
+> -	target_frequency = pdata->frequency ? pdata->frequency : 100000;
+> +	if (i2c->dev->of_node)
+> +		of_property_read_u32(i2c->dev->of_node,
+> +				"samsung,i2c-max-bus-freq", &max_freq);
 
-Thanks.
+No need to test for i2c->dev->of_node.  of_property_read_u32() will
+fail gracefully and not modify max_freq if of_node is NULL.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> +	else
+> +		max_freq = pdata->frequency;
+
+When using the DT, the driver needs to make sure pdata is valid before
+dereferencing it.
+
+> +	dev_dbg(i2c->dev, "desired frequency %u\n", max_freq);
+>  
+> +	target_frequency = max_freq ? max_freq : 100000;
+>  	target_frequency /= 1000; /* Target frequency now in KHz */
+>  
+>  	freq = s3c24xx_i2c_calcdivisor(clkin, target_frequency, &div1, &divs);
+> @@ -663,19 +704,24 @@ static int s3c24xx_i2c_clockrate(struct s3c24xx_i2c *i2c, unsigned int *got)
+>  	writel(iiccon, i2c->regs + S3C2410_IICCON);
+>  
+>  	if (s3c24xx_i2c_is2440(i2c)) {
+> -		unsigned long sda_delay;
+> +		unsigned int sda_delay = 0;
+
+Are you sure that a 32bit integer will be able to hold the sda_delay
+value?  Was there a reason it was an unsigned long in the first place?
+
+>  
+> -		if (pdata->sda_delay) {
+> -			sda_delay = clkin * pdata->sda_delay;
+> +		if (i2c->dev->of_node)
+> +			of_property_read_u32(i2c->dev->of_node,
+> +				"samsung,i2c-sda-delay", &sda_delay);
+
+sda_delay must be a u32, not an unsigned int.
+
+> +		else
+> +			sda_delay = pdata->sda_delay;
+> +
+> +		if (sda_delay) {
+> +			sda_delay *= clkin;
+>  			sda_delay = DIV_ROUND_UP(sda_delay, 1000000);
+>  			sda_delay = DIV_ROUND_UP(sda_delay, 5);
+>  			if (sda_delay > 3)
+>  				sda_delay = 3;
+>  			sda_delay |= S3C2410_IICLC_FILTER_ON;
+> -		} else
+> -			sda_delay = 0;
+> +		}
+>  
+> -		dev_dbg(i2c->dev, "IICLC=%08lx\n", sda_delay);
+> +		dev_dbg(i2c->dev, "IICLC=%08x\n", sda_delay);
+>  		writel(sda_delay, i2c->regs + S3C2440_IICLC);
+>  	}
+>  
+> @@ -751,7 +797,7 @@ static int s3c24xx_i2c_init(struct s3c24xx_i2c *i2c)
+>  {
+>  	unsigned long iicon = S3C2410_IICCON_IRQEN | S3C2410_IICCON_ACKEN;
+>  	struct s3c2410_platform_i2c *pdata;
+> -	unsigned int freq;
+> +	unsigned int freq, slave_addr = 0x10;
+>  
+>  	/* get the plafrom data */
+>  
+> @@ -763,10 +809,14 @@ static int s3c24xx_i2c_init(struct s3c24xx_i2c *i2c)
+>  		pdata->cfg_gpio(to_platform_device(i2c->dev));
+>  
+>  	/* write slave address */
+> +	if (i2c->dev->of_node)
+> +		of_property_read_u32(i2c->dev->of_node,
+> +				"samsung,i2c-slave-addr", &slave_addr);
+> +	else
+> +		slave_addr = pdata->slave_addr;
+> +	writeb(slave_addr, i2c->regs + S3C2410_IICADD);
+>  
+> -	writeb(pdata->slave_addr, i2c->regs + S3C2410_IICADD);
+> -
+> -	dev_info(i2c->dev, "slave address 0x%02x\n", pdata->slave_addr);
+> +	dev_info(i2c->dev, "slave address 0x%02x\n", slave_addr);
+>  
+>  	writel(iicon, i2c->regs + S3C2410_IICCON);
+>  
+> @@ -904,7 +954,12 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>  	 * being bus 0.
+>  	 */
+>  
+> -	i2c->adap.nr = pdata->bus_num;
+> +	if (i2c->dev->of_node)
+> +		of_property_read_u32(i2c->dev->of_node,
+> +				"samsung,i2c-bus-number", &i2c->adap.nr);
+> +	else
+> +		i2c->adap.nr = pdata->bus_num;
+
+Overall, this patch ends up being quite invasive.  You should refactor
+to a separate function just for decoding device tree data, and
+using it to populate a platform_data structure.  Then the patch
+doesn't need to touch most of the existing platform_data code, and in
+fact makes use of it.
+
+One warning though, be careful to *not* modify the existing
+pdev->dev.platform_data pointer.  If the driver needs to access
+platform_data after probe() returns, then it will need to keep a copy
+of it in the driver private data structure.
+
+g.
+
+> +	i2c->adap.dev.of_node = pdev->dev.of_node;
+>  
+>  	ret = i2c_add_numbered_adapter(&i2c->adap);
+>  	if (ret < 0) {
+> @@ -912,6 +967,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>  		goto err_cpufreq;
+>  	}
+>  
+> +	of_i2c_register_devices(&i2c->adap);
+>  	platform_set_drvdata(pdev, i2c);
+>  
+>  	dev_info(&pdev->dev, "%s: S3C I2C adapter\n", dev_name(&i2c->adap.dev));
+> @@ -1021,6 +1077,7 @@ static struct platform_driver s3c24xx_i2c_driver = {
+>  		.owner	= THIS_MODULE,
+>  		.name	= "s3c-i2c",
+>  		.pm	= S3C24XX_DEV_PM_OPS,
+> +		.of_match_table	= s3c24xx_i2c_match,
+>  	},
+>  };
+>  
+> -- 
+> 1.7.1
+> 
+> _______________________________________________
+> devicetree-discuss mailing list
+> devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+> https://lists.ozlabs.org/listinfo/devicetree-discuss
