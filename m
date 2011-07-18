@@ -1,259 +1,127 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH V3 11/13] spi/s3c64xx: Add support DMA engine API
-Date: Sun, 17 Jul 2011 22:43:20 -0600
-Message-ID: <20110718044320.GE15023@ponder.secretlab.ca>
-References: <1310798666-7659-1-git-send-email-kgene.kim@samsung.com>
- <1310798666-7659-12-git-send-email-kgene.kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 2/3] ARM: EXYNOS4: Add sclk_spdif clocks.
+Date: Mon, 18 Jul 2011 14:33:19 +0900
+Message-ID: <048301cc450c$37dc4b90$a794e2b0$%kim@samsung.com>
+References: <1308655463-8787-1-git-send-email-ch.naveen@samsung.com>
+ <1308655463-8787-3-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pv0-f174.google.com ([74.125.83.174]:48617 "EHLO
-	mail-pv0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750855Ab1GREn2 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:40737 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750990Ab1GRFd2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Jul 2011 00:43:28 -0400
-Received: by pvg12 with SMTP id 12so2675518pvg.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 17 Jul 2011 21:43:28 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1310798666-7659-12-git-send-email-kgene.kim@samsung.com>
+	Mon, 18 Jul 2011 01:33:28 -0400
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LOI00ILEKRIJSH0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 18 Jul 2011 14:33:26 +0900 (KST)
+Received: from kgenekim ([12.23.119.139])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LOI003OQKRQ3H@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 18 Jul 2011 14:33:27 +0900 (KST)
+In-reply-to: <1308655463-8787-3-git-send-email-ch.naveen@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>, Linus Walleij <linus.walleij@stericsson.com>, Boojin Kim <boojin.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Dan Williams <dan.j.williams@intel.com>, Liam Girdwood <lrg@ti.com>
+To: 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>, jassisinghbrar@gmail.com, sbkim73@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: 'Seungwhan Youn' <sw.youn@samsung.com>
 
-On Sat, Jul 16, 2011 at 03:44:24PM +0900, Kukjin Kim wrote:
-> From: Boojin Kim <boojin.kim@samsung.com>
+Naveen Krishna Chatradhi wrote:
 > 
-> This patch adds to support DMA generic API to transfer raw
-> SPI data. Basiclly the spi driver uses DMA generic API if
-> architecture supports it. Otherwise, uses Samsung specific
-> S3C-PL330 APIs.
+> Add the sclk_spdif clock is of type 'struct clksrc_clk' clock.
+> Also, add clk_spdifextclk clocks of type 'struct clk' clock.
 > 
-> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-> Cc: Grant Likely <grant.likely@secretlab.ca>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
-
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 > ---
->  drivers/spi/spi_s3c64xx.c |  141 ++++++++++++++++++++++-----------------------
->  1 files changed, 69 insertions(+), 72 deletions(-)
+>  arch/arm/mach-exynos4/clock.c |   35
+> +++++++++++++++++++++++++++++++++++
+>  1 files changed, 35 insertions(+), 0 deletions(-)
 > 
-> diff --git a/drivers/spi/spi_s3c64xx.c b/drivers/spi/spi_s3c64xx.c
-> index 8945e20..a4cf76a 100644
-> --- a/drivers/spi/spi_s3c64xx.c
-> +++ b/drivers/spi/spi_s3c64xx.c
-> @@ -172,6 +172,9 @@ struct s3c64xx_spi_driver_data {
->  	unsigned                        state;
->  	unsigned                        cur_mode, cur_bpw;
->  	unsigned                        cur_speed;
-> +	unsigned			rx_ch;
-> +	unsigned			tx_ch;
-> +	struct samsung_dma_ops		*ops;
+> diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
+> index 937335a..feeb27e 100644
+> --- a/arch/arm/mach-exynos4/clock.c
+> +++ b/arch/arm/mach-exynos4/clock.c
+> @@ -64,6 +64,11 @@ static struct clk clk_audiocdclk2 = {
+>  	.name		= "audiocdclk",
 >  };
->  
->  static struct s3c2410_dma_client s3c64xx_spi_dma_client = {
-> @@ -227,6 +230,38 @@ static void flush_fifo(struct s3c64xx_spi_driver_data *sdd)
->  	writel(val, regs + S3C64XX_SPI_CH_CFG);
->  }
->  
-> +static void s3c64xx_spi_dma_rxcb(void *data)
-> +{
-> +	struct s3c64xx_spi_driver_data *sdd
-> +		= (struct s3c64xx_spi_driver_data *)data;
-> +	unsigned long flags;
+> 
+> +static struct clk clk_spdifextclk = {
+> +	.name		= "spdif_extclk",
+> +	.id		= -1,
+> +};
 > +
-> +	spin_lock_irqsave(&sdd->lock, flags);
-> +
-> +	sdd->state &= ~RXBUSY;
-> +	/* If the other done */
-> +	if (!(sdd->state & TXBUSY))
-> +		complete(&sdd->xfer_completion);
-> +
-> +	spin_unlock_irqrestore(&sdd->lock, flags);
-> +}
-> +
-> +static void s3c64xx_spi_dma_txcb(void *data)
-> +{
-> +	struct s3c64xx_spi_driver_data *sdd
-> +		= (struct s3c64xx_spi_driver_data *)data;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&sdd->lock, flags);
-> +
-> +	sdd->state &= ~TXBUSY;
-> +	/* If the other done */
-> +	if (!(sdd->state & RXBUSY))
-> +		complete(&sdd->xfer_completion);
-> +
-> +	spin_unlock_irqrestore(&sdd->lock, flags);
-> +}
-> +
->  static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
->  				struct spi_device *spi,
->  				struct spi_transfer *xfer, int dma_mode)
-> @@ -234,6 +269,7 @@ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
->  	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
->  	void __iomem *regs = sdd->regs;
->  	u32 modecfg, chcfg;
-> +	struct samsung_dma_prep_info info;
->  
->  	modecfg = readl(regs + S3C64XX_SPI_MODE_CFG);
->  	modecfg &= ~(S3C64XX_SPI_MODE_TXDMA_ON | S3C64XX_SPI_MODE_RXDMA_ON);
-> @@ -259,10 +295,14 @@ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
->  		chcfg |= S3C64XX_SPI_CH_TXCH_ON;
->  		if (dma_mode) {
->  			modecfg |= S3C64XX_SPI_MODE_TXDMA_ON;
-> -			s3c2410_dma_config(sdd->tx_dmach, sdd->cur_bpw / 8);
-> -			s3c2410_dma_enqueue(sdd->tx_dmach, (void *)sdd,
-> -						xfer->tx_dma, xfer->len);
-> -			s3c2410_dma_ctrl(sdd->tx_dmach, S3C2410_DMAOP_START);
-> +			info.cap = DMA_SLAVE;
-> +			info.direction = DMA_TO_DEVICE;
-> +			info.buf = xfer->tx_dma;
-> +			info.len = xfer->len;
-> +			info.fp = s3c64xx_spi_dma_txcb;
-> +			info.fp_param = sdd;
-> +			sdd->ops->prepare(sdd->tx_ch, &info);
-> +			sdd->ops->trigger(sdd->tx_ch);
->  		} else {
->  			switch (sdd->cur_bpw) {
->  			case 32:
-> @@ -294,10 +334,14 @@ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
->  			writel(((xfer->len * 8 / sdd->cur_bpw) & 0xffff)
->  					| S3C64XX_SPI_PACKET_CNT_EN,
->  					regs + S3C64XX_SPI_PACKET_CNT);
-> -			s3c2410_dma_config(sdd->rx_dmach, sdd->cur_bpw / 8);
-> -			s3c2410_dma_enqueue(sdd->rx_dmach, (void *)sdd,
-> -						xfer->rx_dma, xfer->len);
-> -			s3c2410_dma_ctrl(sdd->rx_dmach, S3C2410_DMAOP_START);
-> +			info.cap = DMA_SLAVE;
-> +			info.direction = DMA_FROM_DEVICE;
-> +			info.buf = xfer->rx_dma;
-> +			info.len = xfer->len;
-> +			info.fp = s3c64xx_spi_dma_rxcb;
-> +			info.fp_param = sdd;
-> +			sdd->ops->prepare(sdd->rx_ch, &info);
-> +			sdd->ops->trigger(sdd->rx_ch);
->  		}
->  	}
->  
-> @@ -483,46 +527,6 @@ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
->  	}
->  }
->  
-> -static void s3c64xx_spi_dma_rxcb(struct s3c2410_dma_chan *chan, void *buf_id,
-> -				 int size, enum s3c2410_dma_buffresult res)
-> -{
-> -	struct s3c64xx_spi_driver_data *sdd = buf_id;
-> -	unsigned long flags;
-> -
-> -	spin_lock_irqsave(&sdd->lock, flags);
-> -
-> -	if (res == S3C2410_RES_OK)
-> -		sdd->state &= ~RXBUSY;
-> -	else
-> -		dev_err(&sdd->pdev->dev, "DmaAbrtRx-%d\n", size);
-> -
-> -	/* If the other done */
-> -	if (!(sdd->state & TXBUSY))
-> -		complete(&sdd->xfer_completion);
-> -
-> -	spin_unlock_irqrestore(&sdd->lock, flags);
-> -}
-> -
-> -static void s3c64xx_spi_dma_txcb(struct s3c2410_dma_chan *chan, void *buf_id,
-> -				 int size, enum s3c2410_dma_buffresult res)
-> -{
-> -	struct s3c64xx_spi_driver_data *sdd = buf_id;
-> -	unsigned long flags;
-> -
-> -	spin_lock_irqsave(&sdd->lock, flags);
-> -
-> -	if (res == S3C2410_RES_OK)
-> -		sdd->state &= ~TXBUSY;
-> -	else
-> -		dev_err(&sdd->pdev->dev, "DmaAbrtTx-%d \n", size);
-> -
-> -	/* If the other done */
-> -	if (!(sdd->state & RXBUSY))
-> -		complete(&sdd->xfer_completion);
-> -
-> -	spin_unlock_irqrestore(&sdd->lock, flags);
-> -}
-> -
->  #define XFER_DMAADDR_INVALID DMA_BIT_MASK(32)
->  
->  static int s3c64xx_spi_map_mssg(struct s3c64xx_spi_driver_data *sdd,
-> @@ -697,12 +701,10 @@ static void handle_msg(struct s3c64xx_spi_driver_data *sdd,
->  			if (use_dma) {
->  				if (xfer->tx_buf != NULL
->  						&& (sdd->state & TXBUSY))
-> -					s3c2410_dma_ctrl(sdd->tx_dmach,
-> -							S3C2410_DMAOP_FLUSH);
-> +					sdd->ops->stop(sdd->tx_ch);
->  				if (xfer->rx_buf != NULL
->  						&& (sdd->state & RXBUSY))
-> -					s3c2410_dma_ctrl(sdd->rx_dmach,
-> -							S3C2410_DMAOP_FLUSH);
-> +					sdd->ops->stop(sdd->rx_ch);
->  			}
->  
->  			goto out;
-> @@ -742,24 +744,19 @@ out:
->  
->  static int acquire_dma(struct s3c64xx_spi_driver_data *sdd)
+>  static int exynos4_clksrc_mask_top_ctrl(struct clk *clk, int enable)
 >  {
-> -	if (s3c2410_dma_request(sdd->rx_dmach,
-> -					&s3c64xx_spi_dma_client, NULL) < 0) {
-> -		dev_err(&sdd->pdev->dev, "cannot get RxDMA\n");
-> -		return 0;
-> -	}
-> -	s3c2410_dma_set_buffdone_fn(sdd->rx_dmach, s3c64xx_spi_dma_rxcb);
-> -	s3c2410_dma_devconfig(sdd->rx_dmach, S3C2410_DMASRC_HW,
-> -					sdd->sfr_start + S3C64XX_SPI_RX_DATA);
-> -
-> -	if (s3c2410_dma_request(sdd->tx_dmach,
-> -					&s3c64xx_spi_dma_client, NULL) < 0) {
-> -		dev_err(&sdd->pdev->dev, "cannot get TxDMA\n");
-> -		s3c2410_dma_free(sdd->rx_dmach, &s3c64xx_spi_dma_client);
-> -		return 0;
-> -	}
-> -	s3c2410_dma_set_buffdone_fn(sdd->tx_dmach, s3c64xx_spi_dma_txcb);
-> -	s3c2410_dma_devconfig(sdd->tx_dmach, S3C2410_DMASRC_MEM,
-> -					sdd->sfr_start + S3C64XX_SPI_TX_DATA);
-> +
-> +	struct samsung_dma_info info;
-> +	sdd->ops = samsung_dma_get_ops();
-> +
-> +	info.cap = DMA_SLAVE;
-> +	info.client = &s3c64xx_spi_dma_client;
-> +	info.direction = DMA_FROM_DEVICE;
-> +	info.fifo = sdd->sfr_start + S3C64XX_SPI_RX_DATA;
-> +	info.width = sdd->cur_bpw / 8;
-> +	sdd->rx_ch = sdd->ops->request(sdd->rx_dmach, &info);
-> +	info.direction = DMA_TO_DEVICE;
-> +	info.fifo = sdd->sfr_start + S3C64XX_SPI_TX_DATA;
-> +	sdd->tx_ch = sdd->ops->request(sdd->tx_dmach, &info);
->  
->  	return 1;
->  }
-> @@ -800,8 +797,8 @@ static void s3c64xx_spi_work(struct work_struct *work)
->  	spin_unlock_irqrestore(&sdd->lock, flags);
->  
->  	/* Free DMA channels */
-> -	s3c2410_dma_free(sdd->tx_dmach, &s3c64xx_spi_dma_client);
-> -	s3c2410_dma_free(sdd->rx_dmach, &s3c64xx_spi_dma_client);
-> +	sdd->ops->release(sdd->rx_ch, &s3c64xx_spi_dma_client);
-> +	sdd->ops->release(sdd->tx_ch, &s3c64xx_spi_dma_client);
->  }
->  
->  static int s3c64xx_spi_transfer(struct spi_device *spi,
-> -- 
-> 1.7.1
+>  	return s5p_gatectrl(S5P_CLKSRC_MASK_TOP, clk, enable);
+> @@ -550,6 +555,11 @@ static struct clk init_clocks_off[] = {
+>  		.enable		= exynos4_clk_ip_peril_ctrl,
+>  		.ctrlbit	= (1 << 21),
+>  	}, {
+> +		.name		= "spdif",
+> +		.id		= -1,
+> +		.enable		= exynos4_clk_ip_peril_ctrl,
+> +		.ctrlbit	= (1 << 26),
+> +	}, {
+
+Need to re-work based on clkdev :)
+
+>  		.name		= "ac97",
+>  		.id		= -1,
+>  		.enable		= exynos4_clk_ip_peril_ctrl,
+> @@ -801,6 +811,30 @@ static struct clk init_clocks[] = {
+>  	}
+>  };
 > 
+> +static struct clk *clkset_sclk_spdif_list[] = {
+> +	[0] = &clk_sclk_audio0.clk,
+> +	[1] = &clk_sclk_audio1.clk,
+> +	[2] = &clk_sclk_audio2.clk,
+> +	[3] = &clk_spdifextclk,
+> +};
+> +
+> +static struct clksrc_sources clkset_sclk_spdif = {
+> +	.sources	= clkset_sclk_spdif_list,
+> +	.nr_sources	= ARRAY_SIZE(clkset_sclk_spdif_list),
+> +};
+> +
+> +static struct clksrc_clk clk_sclk_spdif = {
+> +	.clk	= {
+> +		.name		= "sclk_spdif",
+> +		.id		= -1,
+> +		.enable		= exynos4_clksrc_mask_peril1_ctrl,
+> +		.ctrlbit	= (1 << 8),
+> +		.ops		= &s5p_sclk_spdif_ops,
+> +	},
+> +		.sources = &clkset_sclk_spdif,
+> +		.reg_src = { .reg = S5P_CLKSRC_PERIL1, .shift = 8, .size = 2
+},
+> +};
+
+Hmm...is it possible to move this into struct clksrc_clk clksrcs[] ?
+
+> +
+>  static struct clk *clkset_group_list[] = {
+>  	[0] = &clk_ext_xtal_mux,
+>  	[1] = &clk_xusbxti,
+> @@ -1206,6 +1240,7 @@ static struct clksrc_clk *sysclks[] = {
+>  	&clk_sclk_audio0,
+>  	&clk_sclk_audio1,
+>  	&clk_sclk_audio2,
+> +	&clk_sclk_spdif,
+>  };
 > 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>  static int xtal_rate;
+> --
+> 1.7.2.3
+
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
