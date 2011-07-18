@@ -1,94 +1,71 @@
-From: "G, Manjunath Kondaiah" <manjugk@linaro.org>
-Subject: Re: [PATCH 2/2] arm: dt: Add device tree support for i2c instance 1
- on exynos4 dt machine
-Date: Mon, 18 Jul 2011 17:23:30 +0530
-Message-ID: <CAP6yH7dUnqhvSA8AYx2R9ZZ1mBL=YMz6oMiJVpphA1FhgLHOvw@mail.gmail.com>
-References: <1310950241-13602-1-git-send-email-thomas.abraham@linaro.org>
-	<1310950241-13602-3-git-send-email-thomas.abraham@linaro.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 0/4] Updated s5p-mfc platform definitions
+Date: Mon, 18 Jul 2011 15:30:36 +0200
+Message-ID: <1310995840-20660-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:60414 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756399Ab1GRLxc convert rfc822-to-8bit (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:56060 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753405Ab1GRNbL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Jul 2011 07:53:32 -0400
-In-Reply-To: <1310950241-13602-3-git-send-email-thomas.abraham@linaro.org>
+	Mon, 18 Jul 2011 09:31:11 -0400
+Received: from eu_spt1 (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0LOJ0041D6VXAN@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 18 Jul 2011 14:31:09 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LOJ00HIH6VWTK@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 18 Jul 2011 14:31:08 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, ben-linux@fluff.org, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Abraham,
-=46ew comments on i2c child devices handling:
+Hello,
 
-On 18 July 2011 06:20, Thomas Abraham <thomas.abraham@linaro.org> wrote=
-:
-> Add device node for i2c instance 1 and list all its connected slave
-> devices.
->
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
-> =A0arch/arm/boot/dts/exynos4-smdkv310.dts =A0| =A0 19 +++++++++++++++=
-+++-
-> =A0arch/arm/mach-exynos4/Kconfig =A0 =A0 =A0 =A0 =A0 | =A0 =A01 +
-> =A0arch/arm/mach-exynos4/mach-exynos4-dt.c | =A0 =A09 +++++++++
-> =A03 files changed, 28 insertions(+), 1 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos4-smdkv310.dts b/arch/arm/boot/d=
-ts/exynos4-smdkv310.dts
-> index d65c18c..29c40ed 100644
-> --- a/arch/arm/boot/dts/exynos4-smdkv310.dts
-> +++ b/arch/arm/boot/dts/exynos4-smdkv310.dts
-> @@ -23,7 +23,7 @@
-> =A0 =A0 =A0 =A0};
->
-> =A0 =A0 =A0 =A0chosen {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 bootargs =3D "root=3D/dev/mmcblk0p1 roo=
-tfstype=3Dext3 rootwait console=3DttySAC1,115200";
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 bootargs =3D "root=3D/dev/mmcblk0p1 roo=
-tfstype=3Dext3 rootwait console=3DttySAC1,115200 init=3D/linuxrc";
-> =A0 =A0 =A0 =A0};
->
-> =A0 =A0 =A0 =A0soc {
-> @@ -64,5 +64,22 @@
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0samsung,sdhci-cd-type =
-=3D <0>;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0samsung,sdhci-clkdiv-e=
-xternal;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0};
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 i2c@13870000 {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 compatible =3D "samsung=
-,s3c2440-i2c";
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 reg =3D <0x13870000 0x1=
-00>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 interrupts =3D <345>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 samsung,i2c-bus-number =
-=3D <1>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 samsung,i2c-slave-addr =
-=3D <16>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 samsung,i2c-sda-delay =3D=
- <100>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 samsung,i2c-max-bus-fre=
-q =3D <100000>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 #address-cells =3D <1>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 #size-cells =3D <0>;
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 wm8994@1a {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 compati=
-ble =3D "wlf,wm8994";
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 reg =3D=
- <0x1a>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 };
+This patch series contains platform definitions for s5p-mfc driver
+rebased onto latest for-next branch (including generic GIC and clockdev
+changes).
 
-The i2c child devices are board specific.
-=46or ex: few boards such as smdkxxx based on exynos4 has wm8994 with
-i2c1 controller
-where as other boards based on exynos4 does not have any i2c1 devices.
-Hence these child entries should go to board specific .dts file right?
-There should be soc specific .dts file and board specific dts file
-should include soc dts file.
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
 
--M
+
+Patch summary:
+
+Kamil Debski (3):
+  ARM: Add support for MFC device to plat-s5p, mach-s5pv210 and
+    mach-exynos4
+  ARM: S5PV210: Enable MFC on Goni
+  ARM: EXYNOS4: Enable MFC on universal_c210
+
+Marek Szyprowski (1):
+  ARM: EXYNOS4: Enable MFC on Samsung NURI
+
+ arch/arm/Kconfig                            |    2 +
+ arch/arm/mach-exynos4/Kconfig               |    4 +
+ arch/arm/mach-exynos4/clock.c               |   61 +++++++++++++
+ arch/arm/mach-exynos4/include/mach/map.h    |    2 +
+ arch/arm/mach-exynos4/mach-nuri.c           |   13 +++
+ arch/arm/mach-exynos4/mach-universal_c210.c |   13 +++
+ arch/arm/mach-s5pv210/Kconfig               |    1 +
+ arch/arm/mach-s5pv210/clock.c               |    7 ++
+ arch/arm/mach-s5pv210/include/mach/map.h    |    3 +
+ arch/arm/mach-s5pv210/mach-goni.c           |   10 ++
+ arch/arm/plat-s5p/Kconfig                   |    5 +
+ arch/arm/plat-s5p/Makefile                  |    2 +-
+ arch/arm/plat-s5p/dev-mfc.c                 |  125 +++++++++++++++++++++++++++
+ arch/arm/plat-s5p/include/plat/mfc.h        |   28 ++++++
+ arch/arm/plat-samsung/include/plat/devs.h   |    3 +
+ 15 files changed, 278 insertions(+), 1 deletions(-)
+ create mode 100644 arch/arm/plat-s5p/dev-mfc.c
+ create mode 100644 arch/arm/plat-s5p/include/plat/mfc.h
+
+-- 
+1.7.1.569.g6f426
