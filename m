@@ -1,188 +1,304 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V7 3/5] ARM: EXYNOS4: Add platform device and helper
- functions for FIMD
-Date: Mon, 18 Jul 2011 10:59:33 +0900
-Message-ID: <047501cc44ee$59c80e10$0d582a30$%kim@samsung.com>
-References: <1309171845-30331-1-git-send-email-jg1.han@samsung.com>
+Subject: RE: [PATCH 1/3] ARM: S5P64X0: Add HSMMC setup for host Controller
+Date: Mon, 18 Jul 2011 11:13:36 +0900
+Message-ID: <047801cc44f0$4fb16f50$ef144df0$%kim@samsung.com>
+References: <1308571049-4412-1-git-send-email-rajeshwari.s@samsung.com>
+ <1308571049-4412-2-git-send-email-rajeshwari.s@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:47809 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755949Ab1GRB7l (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:55359 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755949Ab1GRCNn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 17 Jul 2011 21:59:41 -0400
-In-reply-to: <1309171845-30331-1-git-send-email-jg1.han@samsung.com>
+	Sun, 17 Jul 2011 22:13:43 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LOI00J7VBIG2A90@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 18 Jul 2011 11:13:40 +0900 (KST)
+Received: from kgenekim ([12.23.119.139])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LOI00FSDBIS17@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 18 Jul 2011 11:13:40 +0900 (KST)
+In-reply-to: <1308571049-4412-2-git-send-email-rajeshwari.s@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jingoo Han' <jg1.han@samsung.com>, 'Paul Mundt' <lethal@linux-sh.org>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, 'Jonghun Han' <jonghun.han@samsung.com>
+To: 'Rajeshwari Shinde' <rajeshwari.s@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, sbkim73@samsung.com
 
-Jingoo Han wrote:
+Rajeshwari Shinde wrote:
 > 
-> From: Jonghun Han <jonghun.han@samsung.com>
+> From: rajeshwari.s <rajeshwari.s@samsung.com>
 > 
-> This patch adds platform device s5p_device_fimd0 for EXYNOS4 FIMD0.
-> EXYNOS4 has two FIMDs(FIMD0, FIMD1). FIMD1 will be added later.
-> Some definitions used to enable EXYNOS4 FIMD0 are added.
+Maybe ' Rajeshwari Shinde' instead of rajeshwari.s?
+
+> Adds support for HSMMC for S5P64X0 platform, performs
+> setup for host controller and related GPIO.
 > 
-> Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Signed-off-by: Rajeshwari.S <rajeshwari.s@samsung.com>
 > ---
->  arch/arm/mach-exynos4/Kconfig                |    9 ++++
->  arch/arm/mach-exynos4/Makefile               |    1 +
->  arch/arm/mach-exynos4/cpu.c                  |    4 +-
->  arch/arm/mach-exynos4/include/mach/regs-fb.h |   21 ++++++++
->  arch/arm/mach-exynos4/setup-fimd0.c          |   48 ++++++++++++++++++
->  arch/arm/plat-s5p/Kconfig                    |    5 ++
->  arch/arm/plat-s5p/Makefile                   |    1 +
->  arch/arm/plat-s5p/dev-fimd0.c                |   67
-> ++++++++++++++++++++++++++
->  arch/arm/plat-samsung/include/plat/devs.h    |    1 +
->  arch/arm/plat-samsung/include/plat/fb-core.h |   15 ++++++
->  arch/arm/plat-samsung/include/plat/fb.h      |   15 ++++++
->  11 files changed, 186 insertions(+), 1 deletions(-)
->  create mode 100644 arch/arm/mach-exynos4/include/mach/regs-fb.h
->  create mode 100644 arch/arm/mach-exynos4/setup-fimd0.c
->  create mode 100644 arch/arm/plat-s5p/dev-fimd0.c
+>  arch/arm/mach-s5p64x0/Kconfig            |   31 ++++++++
+>  arch/arm/mach-s5p64x0/Makefile           |    2 +
+>  arch/arm/mach-s5p64x0/setup-sdhci-gpio.c |  121
+> ++++++++++++++++++++++++++++++
+>  arch/arm/mach-s5p64x0/setup-sdhci.c      |   54 +++++++++++++
+>  4 files changed, 208 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm/mach-s5p64x0/setup-sdhci-gpio.c
+>  create mode 100644 arch/arm/mach-s5p64x0/setup-sdhci.c
 > 
-> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-> index 1435fc3..2024f50 100644
-> --- a/arch/arm/mach-exynos4/Kconfig
-> +++ b/arch/arm/mach-exynos4/Kconfig
-> @@ -25,6 +25,11 @@ config EXYNOS4_DEV_AHCI
+> diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
+> index 017af4c..ed823b0 100644
+> --- a/arch/arm/mach-s5p64x0/Kconfig
+> +++ b/arch/arm/mach-s5p64x0/Kconfig
+> @@ -26,6 +26,17 @@ config S5P64X0_SETUP_I2C1
 >  	help
->  	  Compile in platform device definitions for AHCI
+>  	  Common setup code for i2c bus 1.
 > 
-> +config EXYNOS4_SETUP_FIMD0
+> +config S5P64X0_SETUP_SDHCI
+> +	bool
+> +	select S5P64X0_SETUP_SDHCI_GPIO
+> +	help
+> +	  Internal helper functions for S5P64X0 based SDHCI systems
+> +
+> +config S5P64X0_SETUP_SDHCI_GPIO
 > +	bool
 > +	help
-> +	  Common setup code for FIMD0.
+> +	  Common setup code for SDHCI gpio.
 > +
->  config EXYNOS4_DEV_PD
->  	bool
->  	help
-> @@ -103,6 +108,7 @@ menu "EXYNOS4 Machines"
->  config MACH_SMDKC210
->  	bool "SMDKC210"
->  	select CPU_EXYNOS4210
-> +	select S5P_DEV_FIMD0
+>  # machine support
+> 
+>  config MACH_SMDK6440
+> @@ -34,11 +45,15 @@ config MACH_SMDK6440
+>  	select S3C_DEV_I2C1
 >  	select S3C_DEV_RTC
 >  	select S3C_DEV_WDT
->  	select S3C_DEV_I2C1
-> @@ -112,6 +118,7 @@ config MACH_SMDKC210
->  	select S3C_DEV_HSMMC3
->  	select EXYNOS4_DEV_PD
->  	select EXYNOS4_DEV_SYSMMU
-> +	select EXYNOS4_SETUP_FIMD0
->  	select EXYNOS4_SETUP_I2C1
->  	select EXYNOS4_SETUP_SDHCI
+> +	select S3C_DEV_HSMMC
+> +	select S3C_DEV_HSMMC1
+> +	select S3C_DEV_HSMMC2
+>  	select S3C64XX_DEV_SPI
+>  	select SAMSUNG_DEV_ADC
+>  	select SAMSUNG_DEV_PWM
+>  	select SAMSUNG_DEV_TS
+>  	select S5P64X0_SETUP_I2C1
+> +	select S5P64X0_SETUP_SDHCI
 >  	help
-> @@ -120,6 +127,7 @@ config MACH_SMDKC210
->  config MACH_SMDKV310
->  	bool "SMDKV310"
->  	select CPU_EXYNOS4210
-> +	select S5P_DEV_FIMD0
+>  	  Machine support for the Samsung SMDK6440
+> 
+> @@ -48,12 +63,28 @@ config MACH_SMDK6450
+>  	select S3C_DEV_I2C1
 >  	select S3C_DEV_RTC
 >  	select S3C_DEV_WDT
->  	select S3C_DEV_I2C1
-> @@ -130,6 +138,7 @@ config MACH_SMDKV310
->  	select SAMSUNG_DEV_KEYPAD
->  	select EXYNOS4_DEV_PD
->  	select EXYNOS4_DEV_SYSMMU
-> +	select EXYNOS4_SETUP_FIMD0
->  	select EXYNOS4_SETUP_I2C1
->  	select EXYNOS4_SETUP_KEYPAD
->  	select EXYNOS4_SETUP_SDHCI
-> diff --git a/arch/arm/mach-exynos4/Makefile
-b/arch/arm/mach-exynos4/Makefile
-> index 60fe5ec..96472f1 100644
-> --- a/arch/arm/mach-exynos4/Makefile
-> +++ b/arch/arm/mach-exynos4/Makefile
-> @@ -45,6 +45,7 @@ obj-$(CONFIG_EXYNOS4_DEV_PD)		+= dev-
-> pd.o
->  obj-$(CONFIG_EXYNOS4_DEV_SYSMMU)	+= dev-sysmmu.o
+> +	select S3C_DEV_HSMMC
+> +	select S3C_DEV_HSMMC1
+> +	select S3C_DEV_HSMMC2
+>  	select S3C64XX_DEV_SPI
+>  	select SAMSUNG_DEV_ADC
+>  	select SAMSUNG_DEV_PWM
+>  	select SAMSUNG_DEV_TS
+>  	select S5P64X0_SETUP_I2C1
+> +	select S5P64X0_SETUP_SDHCI
+>  	help
+>  	  Machine support for the Samsung SMDK6450
 > 
->  obj-$(CONFIG_EXYNOS4_SETUP_FIMC)	+= setup-fimc.o
-> +obj-$(CONFIG_EXYNOS4_SETUP_FIMD0)	+= setup-fimd0.o
->  obj-$(CONFIG_EXYNOS4_SETUP_I2C1)	+= setup-i2c1.o
->  obj-$(CONFIG_EXYNOS4_SETUP_I2C2)	+= setup-i2c2.o
->  obj-$(CONFIG_EXYNOS4_SETUP_I2C3)	+= setup-i2c3.o
-> diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
-> index 9babe44..778a5b0 100644
-> --- a/arch/arm/mach-exynos4/cpu.c
-> +++ b/arch/arm/mach-exynos4/cpu.c
-> @@ -19,9 +19,10 @@
+> +menu "Use 8-bit SDHCI bus width"
+> +
+> +config S5P64X0_SD_CH1_8BIT
+> +	bool "SDHCI Channel 1 (Slot 1)"
+> +	depends on MACH_SMDK6450 || MACH_SMDK6440
+
+Is this available on only SMDK6440 and SMDK6450?
+
+> +	default n
+
+no need.
+
+> +	help
+> +	  Support SDHCI Channel 1 8-bit bus.
+> +	  If selected, Channel 2 is disabled.
+> +
+> +endmenu
+> +
+>  endif
+> diff --git a/arch/arm/mach-s5p64x0/Makefile
+b/arch/arm/mach-s5p64x0/Makefile
+> index ae6bf6f..60ff9b4 100644
+> --- a/arch/arm/mach-s5p64x0/Makefile
+> +++ b/arch/arm/mach-s5p64x0/Makefile
+> @@ -28,3 +28,5 @@ obj-y				+= dev-audio.o
+>  obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
 > 
->  #include <plat/cpu.h>
->  #include <plat/clock.h>
-> +#include <plat/devs.h>
-
-Is there any reason moving <plat/devs.h> from below?
-
-> +#include <plat/fb-core.h>
->  #include <plat/exynos4.h>
->  #include <plat/sdhci.h>
-> -#include <plat/devs.h>
->  #include <plat/fimc-core.h>
-> 
->  #include <mach/regs-irq.h>
-> @@ -132,6 +133,7 @@ void __init exynos4_map_io(void)
->  	s3c_fimc_setname(1, "exynos4-fimc");
->  	s3c_fimc_setname(2, "exynos4-fimc");
->  	s3c_fimc_setname(3, "exynos4-fimc");
-> +	s5p_fb_setname(0, "exynos4-fb");	/* FIMD0 */
-
-FB or FIMD?
-
-sometimes used fb, sometimes fimd...
-
->  }
-> 
->  void __init exynos4_init_clocks(int xtal)
-> diff --git a/arch/arm/mach-exynos4/include/mach/regs-fb.h b/arch/arm/mach-
-> exynos4/include/mach/regs-fb.h
+>  obj-$(CONFIG_S5P64X0_SETUP_I2C1)	+= setup-i2c1.o
+> +obj-$(CONFIG_S5P64X0_SETUP_SDHCI)	+= setup-sdhci.o
+> +obj-$(CONFIG_S5P64X0_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
+> diff --git a/arch/arm/mach-s5p64x0/setup-sdhci-gpio.c b/arch/arm/mach-
+> s5p64x0/setup-sdhci-gpio.c
 > new file mode 100644
-> index 0000000..f320105
+> index 0000000..31541b3
 > --- /dev/null
-> +++ b/arch/arm/mach-exynos4/include/mach/regs-fb.h
-> @@ -0,0 +1,21 @@
-> +/*
-> + * Copyright 2010 Ben Dooks <ben-linux@fluff.org>
+> +++ b/arch/arm/mach-s5p64x0/setup-sdhci-gpio.c
+> @@ -0,0 +1,121 @@
+> +/* linux/arch/arm/mach-s5p64x0/setup-sdhci-gpio.c
 > + *
-> + * Dummy framebuffer to allow build for the moment.
+> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com/
+> + *
+> + * S5P64X0 - Helper functions for setting up SDHCI device(s) GPIO (HSMMC)
 > + *
 > + * This program is free software; you can redistribute it and/or modify
 > + * it under the terms of the GNU General Public License version 2 as
 > + * published by the Free Software Foundation.
 > +*/
 > +
-> +#ifndef __ASM_ARCH_MACH_REGS_FB_H
-> +#define __ASM_ARCH_MACH_REGS_FB_H __FILE__
+> +#include <linux/platform_device.h>
+> +#include <linux/io.h>
 > +
-> +#include <plat/regs-fb-v4.h>
+> +#include <mach/gpio.h>
+> +#include <mach/regs-gpio.h>
 > +
-> +static inline unsigned int s3c_fb_pal_reg(unsigned int window, int reg)
+> +#include <plat/gpio-cfg.h>
+> +#include <plat/sdhci.h>
+> +
+> +
+
+one empty line is enough.
+
+> +void s5p6440_setup_sdhci0_cfg_gpio(struct platform_device *dev, int
+width)
 > +{
-> +	return 0x2400 + (window * 256 * 4) + reg;
+> +	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
+> +
+> +	/* Set all the necessary GPG pins to special-function 2 */
+> +	s3c_gpio_cfgrange_nopull(S5P6440_GPG(0), 2 + width,
+> S3C_GPIO_SFN(2));
+> +
+> +	/* Set GPG[6] pin to special-function 2 - MMC0 CDn */
+> +	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
+> +		s3c_gpio_setpull(S5P6440_GPG(6), S3C_GPIO_PULL_UP);
+> +		s3c_gpio_cfgpin(S5P6440_GPG(6), S3C_GPIO_SFN(2));
+> +	}
 > +}
 > +
-> +#endif /* __ASM_ARCH_MACH_REGS_FB_H */
-> diff --git a/arch/arm/mach-exynos4/setup-fimd0.c
-b/arch/arm/mach-exynos4/setup-
-> fimd0.c
+> +void s5p6440_setup_sdhci1_cfg_gpio(struct platform_device *dev, int
+width)
+> +{
+> +	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
+> +
+> +	/* Set GPH[0:1] pins to special-function 2 - CLK and CMD */
+> +	s3c_gpio_cfgrange_nopull(S5P6440_GPH(0), 2 , S3C_GPIO_SFN(2));
+> +
+> +	switch (width) {
+> +	case 8:
+> +		/* Set data pins GPH[6:9] special-function 2 */
+> +		s3c_gpio_cfgrange_nopull(S5P6440_GPH(6), 4,
+> S3C_GPIO_SFN(2));
+> +	case 4:
+> +		/* set data pins GPH[2:5] special-function 2 */
+> +		s3c_gpio_cfgrange_nopull(S5P6440_GPH(2), 4,
+> S3C_GPIO_SFN(2));
+> +	default:
+> +		break;
+> +	}
+> +
+> +	/* Set GPG[6] pin to special-funtion 3 : MMC1 CDn */
+> +	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
+> +		s3c_gpio_setpull(S5P6440_GPG(6), S3C_GPIO_PULL_UP);
+> +		s3c_gpio_cfgpin(S5P6440_GPG(6), S3C_GPIO_SFN(3));
+> +	}
+> +}
+
+The setup of sdhci0 and sdhci1 are similar/same on s5p64440 and s5p6450
+except gpio pin.
+Isn't there any way to handle it in each same function?
+
+> +
+> +void s5p6440_setup_sdhci2_cfg_gpio(struct platform_device *dev, int
+width)
+> +{
+> +	/* Set GPC[4:5] pins to special-function 3 - CLK and CMD */
+> +	s3c_gpio_cfgrange_nopull(S5P6440_GPC(4), 2, S3C_GPIO_SFN(3));
+> +
+> +	/* Set data pins GPH[6:9] pins to special-function 3 */
+> +	s3c_gpio_cfgrange_nopull(S5P6440_GPH(6), 4, S3C_GPIO_SFN(3));
+> +
+> +	/* No MMC2 CDn available */
+> +}
+> +
+> +
+
+Same, one empty line is enough.
+
+> +/* S5P6450 SDHCI GPIO Settings */
+> +void s5p6450_setup_sdhci0_cfg_gpio(struct platform_device *dev, int
+width)
+> +{
+> +	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
+> +
+> +	/* Set all the necessary GPG pins to special-function 2 */
+> +	s3c_gpio_cfgrange_nopull(S5P6450_GPG(0), 2 + width,
+> S3C_GPIO_SFN(2));
+> +
+> +	/* Set GPG[6] to special-function 2 : MMC0 CDn */
+> +	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
+> +		s3c_gpio_setpull(S5P6450_GPG(6), S3C_GPIO_PULL_UP);
+> +		s3c_gpio_cfgpin(S5P6450_GPG(6), S3C_GPIO_SFN(2));
+> +	}
+> +}
+> +
+> +void s5p6450_setup_sdhci1_cfg_gpio(struct platform_device *dev, int
+width)
+> +{
+> +	struct s3c_sdhci_platdata *pdata = dev->dev.platform_data;
+> +
+> +	/* Set GPH[0:1] pins to special-function 2 - CLK and CMD */
+> +	s3c_gpio_cfgrange_nopull(S5P6450_GPH(0), 2, S3C_GPIO_SFN(2));
+> +
+> +	switch (width) {
+> +	case 8:
+> +		/* Set data pins GPH[6:9] to special-function 2 */
+> +		s3c_gpio_cfgrange_nopull(S5P6450_GPH(6), 4,
+> S3C_GPIO_SFN(2));
+> +	case 4:
+> +		/* Set data pins GPH[2:5] to special-function 2 */
+> +		s3c_gpio_cfgrange_nopull(S5P6450_GPH(2), 4,
+> S3C_GPIO_SFN(2));
+> +	default:
+> +		break;
+> +	}
+> +
+> +	/* Set GPG[6] pin to special-funtion 3 : MMC1 CDn */
+> +	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
+> +		s3c_gpio_setpull(S5P6450_GPG(6), S3C_GPIO_PULL_UP);
+> +		s3c_gpio_cfgpin(S5P6450_GPG(6), S3C_GPIO_SFN(3));
+> +	}
+> +}
+> +
+> +void s5p6450_setup_sdhci2_cfg_gpio(struct platform_device *dev, int
+width)
+> +{
+> +
+> +	/* Set all the necessary GPG pins to special-function 3 */
+> +	s3c_gpio_cfgrange_nopull(S5P6450_GPG(7), 2 + width,
+> S3C_GPIO_SFN(3));
+> +
+> +	/* No MMC2 CDn available */
+> +}
+> diff --git a/arch/arm/mach-s5p64x0/setup-sdhci.c
+b/arch/arm/mach-s5p64x0/setup-
+> sdhci.c
 > new file mode 100644
-> index 0000000..be58294
+> index 0000000..729b824
 > --- /dev/null
-> +++ b/arch/arm/mach-exynos4/setup-fimd0.c
-> @@ -0,0 +1,48 @@
-> +/* linux/arch/arm/mach-exynos4/setup-fimd0.c
+> +++ b/arch/arm/mach-s5p64x0/setup-sdhci.c
+> @@ -0,0 +1,54 @@
+> +/* linux/arch/arm/mach-s5p64x0/setup-sdhci.c
 > + *
-> + * Copyright (c) 2009-2011 Samsung Electronics Co., Ltd.
-> + *             http://www.samsung.com
+> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com/
 > + *
-> + * Base Exynos4 FIMD 0 configuration
+> + * S5P64X0 - Helper functions for settign up SDHCI device(s) (HSMMC)
 > + *
 > + * This program is free software; you can redistribute it and/or modify
 > + * it under the terms of the GNU General Public License version 2 as
@@ -191,241 +307,50 @@ b/arch/arm/mach-exynos4/setup-
 > +
 > +#include <linux/kernel.h>
 > +#include <linux/types.h>
-> +#include <linux/fb.h>
-> +#include <linux/gpio.h>
-> +#include <linux/clk.h>
-> +
-> +#include <plat/fb.h>
-> +#include <plat/gpio-cfg.h>
-> +
-> +#include <mach/regs-clock.h>
-> +#include <mach/regs-fb.h>
-> +#include <mach/map.h>
-> +
-> +void exynos4_fimd0_gpio_setup_24bpp(void)
-> +{
-> +	unsigned int reg = 0;
-
-+	unsigned int reg;
-
-> +
-> +	s3c_gpio_cfgrange_nopull(EXYNOS4_GPF0(0), 8, S3C_GPIO_SFN(2));
-> +	s3c_gpio_cfgrange_nopull(EXYNOS4_GPF1(0), 8, S3C_GPIO_SFN(2));
-> +	s3c_gpio_cfgrange_nopull(EXYNOS4_GPF2(0), 8, S3C_GPIO_SFN(2));
-> +	s3c_gpio_cfgrange_nopull(EXYNOS4_GPF3(0), 4, S3C_GPIO_SFN(2));
-> +
-> +	/*
-> +	 * Set DISPLAY_CONTROL register for Display path selection.
-> +	 *
-> +	 * DISPLAY_CONTROL[1:0]
-> +	 * ---------------------
-> +	 *  00 | MIE
-> +	 *  01 | MDINE
-> +	 *  10 | FIMD : selected
-> +	 *  11 | FIMD
-> +	 */
-> +	reg = __raw_readl(S3C_VA_SYS + 0x0210);
-> +	reg |= (1 << 1);
-> +	__raw_writel(reg, S3C_VA_SYS + 0x0210);
-> +}
-> diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-> index e98f5c5..46de16e 100644
-> --- a/arch/arm/plat-s5p/Kconfig
-> +++ b/arch/arm/plat-s5p/Kconfig
-> @@ -70,6 +70,11 @@ config S5P_DEV_FIMC3
->  	help
->  	  Compile in platform device definitions for FIMC controller 3
-> 
-> +config S5P_DEV_FIMD0
-> +	bool
-> +	help
-> +	  Compile in platform device definitions for FIMD controller 0
-> +
->  config S5P_DEV_ONENAND
->  	bool
->  	help
-> diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-> index e234cc4..eec7e24 100644
-> --- a/arch/arm/plat-s5p/Makefile
-> +++ b/arch/arm/plat-s5p/Makefile
-> @@ -30,6 +30,7 @@ obj-$(CONFIG_S5P_DEV_FIMC0)	+= dev-fimc0.o
->  obj-$(CONFIG_S5P_DEV_FIMC1)	+= dev-fimc1.o
->  obj-$(CONFIG_S5P_DEV_FIMC2)	+= dev-fimc2.o
->  obj-$(CONFIG_S5P_DEV_FIMC3)	+= dev-fimc3.o
-> +obj-$(CONFIG_S5P_DEV_FIMD0)	+= dev-fimd0.o
->  obj-$(CONFIG_S5P_DEV_ONENAND)	+= dev-onenand.o
->  obj-$(CONFIG_S5P_DEV_CSIS0)	+= dev-csis0.o
->  obj-$(CONFIG_S5P_DEV_CSIS1)	+= dev-csis1.o
-> diff --git a/arch/arm/plat-s5p/dev-fimd0.c b/arch/arm/plat-s5p/dev-fimd0.c
-> new file mode 100644
-> index 0000000..9e7176c
-> --- /dev/null
-> +++ b/arch/arm/plat-s5p/dev-fimd0.c
-> @@ -0,0 +1,67 @@
-> +/* linux/arch/arm/plat-s5p/dev-fimd0.c
-> + *
-> + * Copyright (c) 2009-2011 Samsung Electronics Co., Ltd.
-> + *             http://www.samsung.com
-> + *
-> + * Core file for Samsung Display Controller (FIMD) driver
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/string.h>
+> +#include <linux/interrupt.h>
 > +#include <linux/platform_device.h>
-> +#include <linux/fb.h>
-> +#include <linux/gfp.h>
-> +#include <linux/dma-mapping.h>
+> +#include <linux/io.h>
 > +
-> +#include <mach/irqs.h>
-> +#include <mach/map.h>
+> +#include <linux/mmc/card.h>
+> +#include <linux/mmc/host.h>
 > +
-> +#include <plat/fb.h>
-> +#include <plat/devs.h>
-> +#include <plat/cpu.h>
+> +#include <plat/regs-sdhci.h>
+> +#include <plat/sdhci.h>
 > +
-> +static struct resource s5p_fimd0_resource[] = {
-> +	[0] = {
-> +		.start  = S5P_PA_FIMD0,
-                      ^^
-> +		.end    = S5P_PA_FIMD0 + SZ_32K - 1,
-                    ^^^^
-> +		.flags  = IORESOURCE_MEM,
-                      ^^
-> +	},
-> +	[1] = {
-> +		.start  = IRQ_FIMD0_VSYNC,
-                      ^^
-> +		.end    = IRQ_FIMD0_VSYNC,
-                    ^^^^
-> +		.flags  = IORESOURCE_IRQ,
-                      ^^
-> +	},
-> +	[2] = {
-> +		.start  = IRQ_FIMD0_FIFO,
-                      ^^
-> +		.end    = IRQ_FIMD0_FIFO,
-                    ^^^^
-> +		.flags  = IORESOURCE_IRQ,
-                      ^^
-> +	},
-> +	[3] = {
-> +		.start  = IRQ_FIMD0_SYSTEM,
-                      ^^
-> +		.end    = IRQ_FIMD0_SYSTEM,
-                    ^^^^
-> +		.flags  = IORESOURCE_IRQ,
-                      ^^
-> +	},
+> +/* clock sources for the mmc bus clock, order as for the ctrl2[5..4] */
+> +
+> +char *s5p64x0_hsmmc_clksrcs[4] = {
+> +	[0] = NULL,
+> +	[1] = NULL,
+> +	[2] = "sclk_mmc",	/* mmc_bus */
+> +	[3] = NULL,
 > +};
 > +
-> +static u64 fimd0_dmamask = DMA_BIT_MASK(32);
-> +
-> +struct platform_device s5p_device_fimd0 = {
-> +	.name           = "s5p-fb",
-             ^^^^^^^^^^^
-> +	.id             = 0,
-           ^^^^^^^^^^^^^
-> +	.num_resources  = ARRAY_SIZE(s5p_fimd0_resource),
-                      ^^
-> +	.resource       = s5p_fimd0_resource,
-                 ^^^^^^^
-> +	.dev            = {
-            ^^^^^^^^^^^^
-> +		.dma_mask               = &fimd0_dmamask,
-                         ^^^^^^^^^^^^^^^
-> +		.coherent_dma_mask      = DMA_BIT_MASK(32),
-                                  ^^^^^^
-I think, tab in above '^' mark?
-
-> +	},
-> +};
-> +
-> +void __init s5p_fimd0_set_platdata(struct s3c_fb_platdata *pd)
+> +void s5p64x0_setup_sdhci_cfg_card(struct platform_device *dev,
+> +				    void __iomem *r,
+> +				    struct mmc_ios *ios,
+> +				    struct mmc_card *card)
 > +{
-> +	s3c_set_platdata(pd, sizeof(struct s3c_fb_platdata),
-> +			&s5p_device_fimd0);
+> +	u32 ctrl2 = 0, ctrl3 = 0;
+> +
+> +	/* don't need to alter anything acording to card-type */
+> +	__raw_writel(S3C64XX_SDHCI_CONTROL4_DRIVE_9mA,
+> +			r + S3C64XX_SDHCI_CONTROL4);
+> +
+> +	ctrl2 = __raw_readl(r + S3C_SDHCI_CONTROL2);
+> +	ctrl2 &= S3C_SDHCI_CTRL2_SELBASECLK_MASK;
+> +	ctrl2 |= (S3C64XX_SDHCI_CTRL2_ENSTAASYNCCLR |
+> +		  S3C64XX_SDHCI_CTRL2_ENCMDCNFMSK |
+> +		  S3C_SDHCI_CTRL2_DFCNT_NONE |
+> +		  S3C_SDHCI_CTRL2_ENCLKOUTHOLD);
+> +
+> +	__raw_writel(ctrl2, r + S3C_SDHCI_CONTROL2);
+> +	__raw_writel(ctrl3, r + S3C_SDHCI_CONTROL3);
 > +}
-> diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-
-> samsung/include/plat/devs.h
-> index 4af108f..370bd2b 100644
-> --- a/arch/arm/plat-samsung/include/plat/devs.h
-> +++ b/arch/arm/plat-samsung/include/plat/devs.h
-> @@ -45,6 +45,7 @@ extern struct platform_device s3c64xx_device_ac97;
->  extern struct platform_device s3c_device_ts;
-> 
->  extern struct platform_device s3c_device_fb;
-> +extern struct platform_device s5p_device_fimd0;
->  extern struct platform_device s3c_device_ohci;
->  extern struct platform_device s3c_device_lcd;
->  extern struct platform_device s3c_device_wdt;
-> diff --git a/arch/arm/plat-samsung/include/plat/fb-core.h b/arch/arm/plat-
-> samsung/include/plat/fb-core.h
-> index bca383e..6abcbf1 100644
-> --- a/arch/arm/plat-samsung/include/plat/fb-core.h
-> +++ b/arch/arm/plat-samsung/include/plat/fb-core.h
-> @@ -26,4 +26,19 @@ static inline void s3c_fb_setname(char *name)
->  #endif
->  }
-> 
-> +/* Re-define device name depending on support. */
-> +static inline void s5p_fb_setname(int id, char *name)
-> +{
-> +	switch (id) {
-> +#ifdef CONFIG_S5P_DEV_FIMD0
-> +	case 0:
-> +		s5p_device_fimd0.name = name;
-> +	break;
-> +#endif
-> +	default:
-> +		printk(KERN_ERR "%s: invalid device id(%d)\n", __func__,
-id);
-> +	break;
-> +	}
-> +}
-> +
->  #endif /* __ASM_PLAT_FB_CORE_H */
-> diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/plat-
-> samsung/include/plat/fb.h
-> index cb3ca3a..01f10e4 100644
-> --- a/arch/arm/plat-samsung/include/plat/fb.h
-> +++ b/arch/arm/plat-samsung/include/plat/fb.h
-> @@ -74,6 +74,14 @@ struct s3c_fb_platdata {
->  extern void s3c_fb_set_platdata(struct s3c_fb_platdata *pd);
-> 
->  /**
-> + * s5p_fimd0_set_platdata() - Setup the FB device with platform data.
-> + * @pd: The platform data to set. The data is copied from the passed
-structure
-> + *      so the machine data can mark the data __initdata so that any
-unused
-> + *      machines will end up dumping their data at runtime.
-> + */
-> +extern void s5p_fimd0_set_platdata(struct s3c_fb_platdata *pd);
-> +
-> +/**
->   * s3c64xx_fb_gpio_setup_24bpp() - S3C64XX setup function for 24bpp LCD
->   *
->   * Initialise the GPIO for an 24bpp LCD display on the RGB interface.
-> @@ -94,4 +102,11 @@ extern void s5pc100_fb_gpio_setup_24bpp(void);
->   */
->  extern void s5pv210_fb_gpio_setup_24bpp(void);
-> 
-> +/**
-> + * exynos4_fimd0_gpio_setup_24bpp() - Exynos4 setup function for 24bpp
-LCD0
-> + *
-> + * Initialise the GPIO for an 24bpp LCD display on the RGB interface 0.
-> + */
-> +extern void exynos4_fimd0_gpio_setup_24bpp(void);
-> +
->  #endif /* __PLAT_S3C_FB_H */
 > --
-> 1.7.1
+> 1.7.0.4
+
+
 
 Thanks.
 
