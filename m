@@ -1,175 +1,163 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/2] ARM: EXYNOS4: Add more registers to be saved and
- restored for PM
-Date: Mon, 18 Jul 2011 17:00:50 +0900
-Message-ID: <04a601cc4520$d2d97b40$788c71c0$%kim@samsung.com>
-References: <1309395085-22084-1-git-send-email-myungjoo.ham@samsung.com>
- <1309395085-22084-2-git-send-email-myungjoo.ham@samsung.com>
+From: Kyungmin Park <kyungmin.park@samsung.com>
+Subject: Re: [PATCH v4 0/9] TV driver for Samsung S5P platform (platform-part)
+Date: Mon, 18 Jul 2011 18:04:40 +0900
+Message-ID: <CAH9JG2UDTpZVLOcnPuV7YkX_XPh3r4Km0F+VjmvRq0dzEO668w@mail.gmail.com>
+References: <1306326564-21858-1-git-send-email-t.stanislaws@samsung.com>
+	<037a01cc4387$904504b0$b0cf0e10$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:8953 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751407Ab1GRIA7 (ORCPT
+Received: from mail-vx0-f174.google.com ([209.85.220.174]:55299 "EHLO
+	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753720Ab1GRJEl convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Jul 2011 04:00:59 -0400
-In-reply-to: <1309395085-22084-2-git-send-email-myungjoo.ham@samsung.com>
-Content-language: ko
+	Mon, 18 Jul 2011 05:04:41 -0400
+Received: by vxh35 with SMTP id 35so1469924vxh.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Jul 2011 02:04:40 -0700 (PDT)
+In-Reply-To: <037a01cc4387$904504b0$b0cf0e10$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Jaecheol Lee' <jc.lee@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Greg Kroah-Hartman' <gregkh@suse.de>, myungjoo.ham@gmail.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, ben-linux@fluff.org
 
-MyungJoo Ham wrote:
-> 
-> We need more registers to be saved and restored for PM of Exynos4210.
-> Otherwise, with additional drivers running, suspend-to-RAM fails to wake
-> up properly. This patch adds registers omitted in the initial PM
-> patches.
-> 
-> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/mach-exynos4/pm.c |   77
-> +++++++++++++++++++++++++++++++++++++++++++-
->  1 files changed, 76 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos4/pm.c b/arch/arm/mach-exynos4/pm.c
-> index a103c13..24c9265 100644
-> --- a/arch/arm/mach-exynos4/pm.c
-> +++ b/arch/arm/mach-exynos4/pm.c
-> @@ -27,6 +27,8 @@
->  #include <plat/cpu.h>
->  #include <plat/pm.h>
->  #include <plat/pll.h>
-> +#include <plat/regs-srom.h>
-> +#include <plat/regs-timer.h>
-> 
->  #include <mach/regs-irq.h>
->  #include <mach/regs-gpio.h>
-> @@ -60,14 +62,20 @@ static struct sleep_save exynos4_vpll_save[] = {
-> 
->  static struct sleep_save exynos4_core_save[] = {
->  	/* CMU side */
-> +	SAVE_ITEM(S5P_CLKSRC_LEFTBUS),
+On Sat, Jul 16, 2011 at 4:11 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> Tomasz Stanislawski wrote:
+>>
+>> Hello Everyone,
+>> This patchset introduce TV devices to Samsung S5P platform. It inclu=
+des
+> Goni
+>> (S5PV210 machine) and Universal (Exynos4 machine) boards. The patchs=
+et is
+>> dedicated for 2.6.39 kernel. Moreover, the patchset adds following
+> auxiliary
+>> entities and features:
+>> - I2C controllers for HDMI physical interface
+>> - power regulators
+>> - TV clocks, include ops for fout_vpll clock
+>> - fixes to power domain driver (only for Exynos4)
+>> - dependecies between TV and Power Domain devices (only for Exynos4)
+>>
+>> Please refer to post 'TV driver for Samsung S5P platform (media part=
+)' for
+>> sources of the TV driver.
+>>
+>> The most recent changes:
+>> - TV becomes S5P platform device
+>> - support for Universal-c210 and Goni boards
+>> - code cleanup after Kukjin Kim's review
+>>
+>> Tomasz Stanislawski (9):
+>> =A0 arm: exynos4: pd: fixes block gating and code cleanup
+>> =A0 i2c-s3c2410: fix I2C dedicated for hdmiphy
+>> =A0 arm: exynos4: i2c: add controller 8 (HDMIPHY)
+>> =A0 arm: s5pv210: i2c: add controller 3 (HDMIPHY)
+>> =A0 arm: plat-s5p: add TV support
+>> =A0 arm: exynos4: add TV support
+>> =A0 arm: exynos4: universal_c210: add TV support
+>> =A0 arm: s5pv210: add TV support
+>> =A0 arm: s5pv210: goni: add TV support
+>>
+>> =A0arch/arm/mach-exynos4/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ | =A0 =A03 +
+>> =A0arch/arm/mach-exynos4/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ | =A0223
+>> ++++++++++++++++++++++-
+>> =A0arch/arm/mach-exynos4/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ | =A0 =A07 +
+>> =A0arch/arm/mach-exynos4/dev-pd.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+| =A0 93 +++++++---
+>> =A0arch/arm/mach-exynos4/include/mach/irqs.h =A0 =A0 =A0 | =A0 =A08 =
++
+>> =A0arch/arm/mach-exynos4/include/mach/map.h =A0 =A0 =A0 =A0| =A0 27 =
++++
+>> =A0arch/arm/mach-exynos4/include/mach/regs-clock.h | =A0 =A08 +
+>> =A0arch/arm/mach-exynos4/include/mach/regs-pmu.h =A0 | =A0 =A06 +
+>> =A0arch/arm/mach-exynos4/mach-universal_c210.c =A0 =A0 | =A0 80 ++++=
+++++
+>> =A0arch/arm/mach-s5pv210/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ | =A0 =A08 +
+>> =A0arch/arm/mach-s5pv210/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+| =A0 =A01 +
+>> =A0arch/arm/mach-s5pv210/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ | =A0169
+>> ++++++++++++++++--
+>> =A0arch/arm/mach-s5pv210/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ | =A0 =A06 +
+>> =A0arch/arm/mach-s5pv210/include/mach/irqs.h =A0 =A0 =A0 | =A0 =A02 =
++-
+>> =A0arch/arm/mach-s5pv210/include/mach/map.h =A0 =A0 =A0 =A0| =A0 19 =
+++
+>> =A0arch/arm/mach-s5pv210/include/mach/regs-clock.h | =A0 =A07 +-
+>> =A0arch/arm/mach-s5pv210/mach-goni.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0=
+ =A09 +
+>> =A0arch/arm/mach-s5pv210/setup-i2c3.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0=
+ 27 +++
+>> =A0arch/arm/plat-s5p/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 | =A0 =A05 +
+>> =A0arch/arm/plat-s5p/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0| =A0 =A01 +
+>> =A0arch/arm/plat-s5p/dev-tv.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0| =A0100 ++++++++++
+>> =A0arch/arm/plat-samsung/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ | =A0 =A05 +
+>> =A0arch/arm/plat-samsung/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+| =A0 =A01 +
+>> =A0arch/arm/plat-samsung/dev-i2c8.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0|=
+ =A0 68 +++++++
+>> =A0arch/arm/plat-samsung/include/plat/devs.h =A0 =A0 =A0 | =A0 =A06 =
++
+>> =A0arch/arm/plat-samsung/include/plat/iic-core.h =A0 | =A0 14 ++
+>> =A0arch/arm/plat-samsung/include/plat/iic.h =A0 =A0 =A0 =A0| =A0 =A0=
+1 +
+>> =A0arch/arm/plat-samsung/include/plat/pd.h =A0 =A0 =A0 =A0 | =A0 =A0=
+1 +
+>> =A0arch/arm/plat-samsung/include/plat/tv-core.h =A0 =A0| =A0 45 ++++=
++
+>> =A0drivers/i2c/busses/i2c-s3c2410.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0|=
+ =A0 36 ++++-
+>> =A030 files changed, 947 insertions(+), 39 deletions(-)
+>> =A0create mode 100644 arch/arm/mach-s5pv210/setup-i2c3.c
+>> =A0create mode 100644 arch/arm/plat-s5p/dev-tv.c
+>> =A0create mode 100644 arch/arm/plat-samsung/dev-i2c8.c
+>> =A0create mode 100644 arch/arm/plat-samsung/include/plat/tv-core.h
+>>
+>> --
+>> 1.7.5.1
+>
+> Hi,
+>
+> As I said on your previous patch, dev-i2c8 should not be used for HDM=
+IPHY on
+> EXYNOS4.
+> It can be used for general i2c not specific HDMI.
+Okay create the arch/arm/plat-samsung/dev-i2c-hdmi.c. since it's
+dedicated i2c for hdmi. no need to stick on i2c8 anymore.
+>
+> This is needed to update based on current my for-next because to upda=
+te
+> clkdev is required.
 
-I think, the reset/default value(0x0, SCLKMPLL) has no problem.
+As s5p-tv codes are merged for v3.1. it's time to merge the system part=
+ also.
 
-> +	SAVE_ITEM(S5P_CLKOUT_CMU_LEFTBUS),
-
-This is for debugging? So I think no need this.
-
-> +	SAVE_ITEM(S5P_CLKSRC_RIGHTBUS),
-
-Same as 'CLKSRC_LEFTBUS'
-
-> +	SAVE_ITEM(S5P_CLKOUT_CMU_RIGHTBUS),
-
-Same as 'CMU_LEFTBUS'
-
-> +	SAVE_ITEM(S5P_CLKOUT_CMU_TOP),
-
-For debugging...
-
-> +	SAVE_ITEM(S5P_CLKOUT_CMU_DMC),
-
-Same as above.
-
-(snip)
-
-> +	SAVE_ITEM(S5P_APLL_LOCK),
-> +	SAVE_ITEM(S5P_MPLL_LOCK),
-> +	SAVE_ITEM(S5P_APLL_CON0),
-> +	SAVE_ITEM(S5P_APLL_CON1),
-> +	SAVE_ITEM(S5P_MPLL_CON0),
-> +	SAVE_ITEM(S5P_MPLL_CON1),
-
-Basically, these value should be set in boot-loader after wake up.
-
-(snip)
-
-> +	/* PMU */
-> +	SAVE_ITEM(S5P_HDMI_PHY_CONTROL),
-> +	SAVE_ITEM(S5P_USBOTG_PHY_CONTROL),
-> +	SAVE_ITEM(S5P_USBHOST_PHY_CONTROL),
-> +	SAVE_ITEM(S5P_DAC_CONTROL),
-> +	SAVE_ITEM(S5P_MIPI_CONTROL0),
-> +	SAVE_ITEM(S5P_MIPI_CONTROL1),
-> +	SAVE_ITEM(S5P_ADC_CONTROL),
-> +	SAVE_ITEM(S5P_PCIE_CONTROL),
-> +	SAVE_ITEM(S5P_SATA_CONTROL),
-> +	SAVE_ITEM(S5P_PMU_DEBUG),
-> +	SAVE_ITEM(S5P_ARM_CORE0_CONFIGURATION),
-> +	SAVE_ITEM(S5P_ARM_CORE1_CONFIGURATION),
-> +	SAVE_ITEM(S5P_ARM_CPU_L2_0_CONFIGURATION),
-> +	SAVE_ITEM(S5P_ARM_CPU_L2_1_CONFIGURATION),
-> +	SAVE_ITEM(S5P_XUSBXTI_CONFIGURATION),
-> +	SAVE_ITEM(S5P_XXTI_CONFIGURATION),
-> +	SAVE_ITEM(S5P_PMU_CAM_CONF),
-> +	SAVE_ITEM(S5P_PMU_TV_CONF),
-> +	SAVE_ITEM(S5P_PMU_MFC_CONF),
-> +	SAVE_ITEM(S5P_PMU_G3D_CONF),
-> +	SAVE_ITEM(S5P_PMU_LCD0_CONF),
-> +	SAVE_ITEM(S5P_PMU_LCD1_CONF),
-> +	SAVE_ITEM(S5P_MAUDIO_CONFIGURATION),
-> +	SAVE_ITEM(S5P_PMU_GPS_CONF),
-
-Since PMU part is alive block, so no need.
-
-> +
-> +	/* System Controller side */
-> +	SAVE_ITEM(S3C_VA_SYS + 0x0210),
-> +	SAVE_ITEM(S3C_VA_SYS + 0x0214),
-> +	SAVE_ITEM(S3C_VA_SYS + 0x0218),
-> +	SAVE_ITEM(S3C_VA_SYS + 0x0220),
-> +	SAVE_ITEM(S3C_VA_SYS + 0x0230),
-
-Hmm..really need this?
-
-> +
->  	/* GIC side */
->  	SAVE_ITEM(S5P_VA_GIC_CPU + 0x000),
->  	SAVE_ITEM(S5P_VA_GIC_CPU + 0x004),
-> @@ -232,11 +286,32 @@ static struct sleep_save exynos4_core_save[] = {
->  	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC20),
->  	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC24),
-> 
-> -
->  	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x000),
->  	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x010),
->  	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x020),
->  	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x030),
-> +	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x040),
-> +	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x050),
-> +	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x060),
-> +	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x070),
-> +	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x080),
-> +	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x090),
-
-No need to save/restore external GIC part...
-
-(snip)
-
-> +	/* PWM Register */
-> +	SAVE_ITEM(S3C2410_TCFG0),
-> +	SAVE_ITEM(S3C2410_TCFG1),
-> +	SAVE_ITEM(S3C64XX_TINT_CSTAT),
-> +	SAVE_ITEM(S3C2410_TCON),
-> +	SAVE_ITEM(S3C2410_TCNTB(0)),
-> +	SAVE_ITEM(S3C2410_TCMPB(0)),
-> +	SAVE_ITEM(S3C2410_TCNTO(0)),
-
-PWM? I'm not sure why this is needed here.
-
-(snip)
-
-Others, ok.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Thank you,
+Kyungmin Park
+>
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
