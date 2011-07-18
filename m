@@ -1,65 +1,42 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 4/5] ARM: EXYNOS4: Add SPDIF for SMDKV310
-Date: Mon, 18 Jul 2011 15:23:39 +0900
-Message-ID: <048701cc4513$3e4d72e0$bae858a0$%kim@samsung.com>
-References: <1307687667-9127-1-git-send-email-ch.naveen@samsung.com>
- <1307687667-9127-5-git-send-email-ch.naveen@samsung.com>
- <BANLkTi=NPaw37BPadkA79uwsZkjjASFMrA@mail.gmail.com>
+Subject: RE: [PATCH 4/4] [CPUFREQ] EXYNOS4210: Add Support for DVS Lock
+Date: Mon, 18 Jul 2011 16:08:53 +0900
+Message-ID: <04a101cc4519$912ce800$b386b800$%kim@samsung.com>
+References: <1309853179-19438-1-git-send-email-kgene.kim@samsung.com>
+ <1309853179-19438-5-git-send-email-kgene.kim@samsung.com>
+ <20110709034812.GG26900@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:43802 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750710Ab1GRGXp (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:30152 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751082Ab1GRHJB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Jul 2011 02:23:45 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOI004BPN30FGJ0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 18 Jul 2011 15:23:44 +0900 (KST)
-Received: from kgenekim ([12.23.119.139])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LOI008DGN3J7P@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 18 Jul 2011 15:23:44 +0900 (KST)
-In-reply-to: <BANLkTi=NPaw37BPadkA79uwsZkjjASFMrA@mail.gmail.com>
+	Mon, 18 Jul 2011 03:09:01 -0400
+In-reply-to: <20110709034812.GG26900@sirena.org.uk>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>
-Cc: broonie@opensource.wolfsonmicro.com, lrg@ti.com, sbkim73@samsung.com, sw.youn@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org, davej@redhat.com, 'Jongpill Lee' <boyko.lee@samsung.com>, 'SangWook Ju' <sw.ju@samsung.com>, 'Jonghwan Choi' <jhbird.choi@samsung.com>
 
-Jassi Brar wrote:
+Mark Brown wrote:
 > 
-> On Fri, Jun 10, 2011 at 12:04 PM, Naveen Krishna Chatradhi
-> <ch.naveen@samsung.com> wrote:
-> > This patch adds spdif to the machine supported device list for
-> > SMDKV310.
-> >
-> > Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> > ---
-> >  arch/arm/mach-exynos4/mach-smdkv310.c |    1 +
-> >  1 files changed, 1 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-
-> exynos4/mach-smdkv310.c
-> > index 7e3ee6c..966c6f2 100644
-> > --- a/arch/arm/mach-exynos4/mach-smdkv310.c
-> > +++ b/arch/arm/mach-exynos4/mach-smdkv310.c
-> > @@ -190,6 +190,7 @@ static struct platform_device *smdkv310_devices[]
-> __initdata = {
-> >        &exynos4_device_pd[PD_CAM],
-> >        &exynos4_device_pd[PD_TV],
-> >        &exynos4_device_pd[PD_GPS],
-> > +       &exynos4_device_spdif,
-> >        &exynos4_device_sysmmu,
-> >        &exynos4_device_pcm0,
-> >        &samsung_asoc_dma,
+> On Tue, Jul 05, 2011 at 05:06:19PM +0900, Kukjin Kim wrote:
 > 
-> Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
+> > +int exynos4_cpufreq_lock(unsigned int nId,
+> > +			enum cpufreq_level_request cpufreq_level);
+> > +void exynos4_cpufreq_lock_free(unsigned int nId);
+> 
+> This feels like something cpufreq should support to at least some extent
+> in the core, especially the thing with forcing a particular mode on
+> suspend.  Not that I have any particularly bright ideas for how
+> immediately.
 
-Applied.
+Basically, I agreed, but I also have no idea yet :(
+How about to use this for now then let us think the way?
+
 Thanks.
 
 Best regards,
