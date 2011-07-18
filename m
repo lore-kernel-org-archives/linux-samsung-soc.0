@@ -1,163 +1,133 @@
-From: Kyungmin Park <kyungmin.park@samsung.com>
-Subject: Re: [PATCH v4 0/9] TV driver for Samsung S5P platform (platform-part)
-Date: Mon, 18 Jul 2011 18:04:40 +0900
-Message-ID: <CAH9JG2UDTpZVLOcnPuV7YkX_XPh3r4Km0F+VjmvRq0dzEO668w@mail.gmail.com>
-References: <1306326564-21858-1-git-send-email-t.stanislaws@samsung.com>
-	<037a01cc4387$904504b0$b0cf0e10$%kim@samsung.com>
+From: Ben Dooks <ben-i2c@fluff.org>
+Subject: Re: [PATCH 2/2] arm: dt: Add device tree support for i2c instance
+	1 on exynos4 dt machine
+Date: Mon, 18 Jul 2011 10:45:34 +0100
+Message-ID: <20110718094534.GN15795@trinity.fluff.org>
+References: <1310950241-13602-1-git-send-email-thomas.abraham@linaro.org> <1310950241-13602-3-git-send-email-thomas.abraham@linaro.org> <20110718043059.GB15023@ponder.secretlab.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vx0-f174.google.com ([209.85.220.174]:55299 "EHLO
-	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753720Ab1GRJEl convert rfc822-to-8bit (ORCPT
+Received: from trinity.fluff.org ([89.16.178.74]:57784 "EHLO trinity.fluff.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755182Ab1GRJpi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Jul 2011 05:04:41 -0400
-Received: by vxh35 with SMTP id 35so1469924vxh.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Jul 2011 02:04:40 -0700 (PDT)
-In-Reply-To: <037a01cc4387$904504b0$b0cf0e10$%kim@samsung.com>
+	Mon, 18 Jul 2011 05:45:38 -0400
+Content-Disposition: inline
+In-Reply-To: <20110718043059.GB15023@ponder.secretlab.ca>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, ben-linux@fluff.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, ben-linux@fluff.org, patches@linaro.org
 
-On Sat, Jul 16, 2011 at 4:11 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> Tomasz Stanislawski wrote:
->>
->> Hello Everyone,
->> This patchset introduce TV devices to Samsung S5P platform. It inclu=
-des
-> Goni
->> (S5PV210 machine) and Universal (Exynos4 machine) boards. The patchs=
-et is
->> dedicated for 2.6.39 kernel. Moreover, the patchset adds following
-> auxiliary
->> entities and features:
->> - I2C controllers for HDMI physical interface
->> - power regulators
->> - TV clocks, include ops for fout_vpll clock
->> - fixes to power domain driver (only for Exynos4)
->> - dependecies between TV and Power Domain devices (only for Exynos4)
->>
->> Please refer to post 'TV driver for Samsung S5P platform (media part=
-)' for
->> sources of the TV driver.
->>
->> The most recent changes:
->> - TV becomes S5P platform device
->> - support for Universal-c210 and Goni boards
->> - code cleanup after Kukjin Kim's review
->>
->> Tomasz Stanislawski (9):
->> =A0 arm: exynos4: pd: fixes block gating and code cleanup
->> =A0 i2c-s3c2410: fix I2C dedicated for hdmiphy
->> =A0 arm: exynos4: i2c: add controller 8 (HDMIPHY)
->> =A0 arm: s5pv210: i2c: add controller 3 (HDMIPHY)
->> =A0 arm: plat-s5p: add TV support
->> =A0 arm: exynos4: add TV support
->> =A0 arm: exynos4: universal_c210: add TV support
->> =A0 arm: s5pv210: add TV support
->> =A0 arm: s5pv210: goni: add TV support
->>
->> =A0arch/arm/mach-exynos4/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- | =A0 =A03 +
->> =A0arch/arm/mach-exynos4/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- | =A0223
->> ++++++++++++++++++++++-
->> =A0arch/arm/mach-exynos4/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- | =A0 =A07 +
->> =A0arch/arm/mach-exynos4/dev-pd.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-| =A0 93 +++++++---
->> =A0arch/arm/mach-exynos4/include/mach/irqs.h =A0 =A0 =A0 | =A0 =A08 =
-+
->> =A0arch/arm/mach-exynos4/include/mach/map.h =A0 =A0 =A0 =A0| =A0 27 =
-+++
->> =A0arch/arm/mach-exynos4/include/mach/regs-clock.h | =A0 =A08 +
->> =A0arch/arm/mach-exynos4/include/mach/regs-pmu.h =A0 | =A0 =A06 +
->> =A0arch/arm/mach-exynos4/mach-universal_c210.c =A0 =A0 | =A0 80 ++++=
-++++
->> =A0arch/arm/mach-s5pv210/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- | =A0 =A08 +
->> =A0arch/arm/mach-s5pv210/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-| =A0 =A01 +
->> =A0arch/arm/mach-s5pv210/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- | =A0169
->> ++++++++++++++++--
->> =A0arch/arm/mach-s5pv210/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- | =A0 =A06 +
->> =A0arch/arm/mach-s5pv210/include/mach/irqs.h =A0 =A0 =A0 | =A0 =A02 =
-+-
->> =A0arch/arm/mach-s5pv210/include/mach/map.h =A0 =A0 =A0 =A0| =A0 19 =
-++
->> =A0arch/arm/mach-s5pv210/include/mach/regs-clock.h | =A0 =A07 +-
->> =A0arch/arm/mach-s5pv210/mach-goni.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0=
- =A09 +
->> =A0arch/arm/mach-s5pv210/setup-i2c3.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0=
- 27 +++
->> =A0arch/arm/plat-s5p/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 | =A0 =A05 +
->> =A0arch/arm/plat-s5p/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0| =A0 =A01 +
->> =A0arch/arm/plat-s5p/dev-tv.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0| =A0100 ++++++++++
->> =A0arch/arm/plat-samsung/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- | =A0 =A05 +
->> =A0arch/arm/plat-samsung/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-| =A0 =A01 +
->> =A0arch/arm/plat-samsung/dev-i2c8.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0|=
- =A0 68 +++++++
->> =A0arch/arm/plat-samsung/include/plat/devs.h =A0 =A0 =A0 | =A0 =A06 =
-+
->> =A0arch/arm/plat-samsung/include/plat/iic-core.h =A0 | =A0 14 ++
->> =A0arch/arm/plat-samsung/include/plat/iic.h =A0 =A0 =A0 =A0| =A0 =A0=
-1 +
->> =A0arch/arm/plat-samsung/include/plat/pd.h =A0 =A0 =A0 =A0 | =A0 =A0=
-1 +
->> =A0arch/arm/plat-samsung/include/plat/tv-core.h =A0 =A0| =A0 45 ++++=
-+
->> =A0drivers/i2c/busses/i2c-s3c2410.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0|=
- =A0 36 ++++-
->> =A030 files changed, 947 insertions(+), 39 deletions(-)
->> =A0create mode 100644 arch/arm/mach-s5pv210/setup-i2c3.c
->> =A0create mode 100644 arch/arm/plat-s5p/dev-tv.c
->> =A0create mode 100644 arch/arm/plat-samsung/dev-i2c8.c
->> =A0create mode 100644 arch/arm/plat-samsung/include/plat/tv-core.h
->>
->> --
->> 1.7.5.1
->
-> Hi,
->
-> As I said on your previous patch, dev-i2c8 should not be used for HDM=
-IPHY on
-> EXYNOS4.
-> It can be used for general i2c not specific HDMI.
-Okay create the arch/arm/plat-samsung/dev-i2c-hdmi.c. since it's
-dedicated i2c for hdmi. no need to stick on i2c8 anymore.
->
-> This is needed to update based on current my for-next because to upda=
-te
-> clkdev is required.
+On Sun, Jul 17, 2011 at 10:30:59PM -0600, Grant Likely wrote:
+> On Mon, Jul 18, 2011 at 06:20:41AM +0530, Thomas Abraham wrote:
+> > Add device node for i2c instance 1 and list all its connected slave
+> > devices.
+> > 
+> > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> > ---
+> >  arch/arm/boot/dts/exynos4-smdkv310.dts  |   19 ++++++++++++++++++-
+> >  arch/arm/mach-exynos4/Kconfig           |    1 +
+> >  arch/arm/mach-exynos4/mach-exynos4-dt.c |    9 +++++++++
+> >  3 files changed, 28 insertions(+), 1 deletions(-)
+> > 
+> > diff --git a/arch/arm/boot/dts/exynos4-smdkv310.dts b/arch/arm/boot/dts/exynos4-smdkv310.dts
+> > index d65c18c..29c40ed 100644
+> > --- a/arch/arm/boot/dts/exynos4-smdkv310.dts
+> > +++ b/arch/arm/boot/dts/exynos4-smdkv310.dts
+> > @@ -23,7 +23,7 @@
+> >  	};
+> >  
+> >  	chosen {
+> > -		bootargs = "root=/dev/mmcblk0p1 rootfstype=ext3 rootwait console=ttySAC1,115200";
+> > +		bootargs = "root=/dev/mmcblk0p1 rootfstype=ext3 rootwait console=ttySAC1,115200 init=/linuxrc";
+> >  	};
+> >  
+> >  	soc {
+> > @@ -64,5 +64,22 @@
+> >  			samsung,sdhci-cd-type = <0>;
+> >  			samsung,sdhci-clkdiv-external;
+> >  		};
+> > +
+> > +		i2c@13870000 {
+> > +			compatible = "samsung,s3c2440-i2c";
+> > +			reg = <0x13870000 0x100>;
+> > +			interrupts = <345>;
+> > +			samsung,i2c-bus-number = <1>;
+> > +			samsung,i2c-slave-addr = <16>;
+> > +			samsung,i2c-sda-delay = <100>;
+> > +			samsung,i2c-max-bus-freq = <100000>;
+> > +			#address-cells = <1>;
+> > +			#size-cells = <0>;
+> > +
+> > +			wm8994@1a {
+> > +				compatible = "wlf,wm8994";
+> > +				reg = <0x1a>;
+> > +			};
+> > +		};
+> >  	};
+> >  };
+> > diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+> > index bb97b7e..c7fce3e 100644
+> > --- a/arch/arm/mach-exynos4/Kconfig
+> > +++ b/arch/arm/mach-exynos4/Kconfig
+> > @@ -193,6 +193,7 @@ config MACH_EXYNOS4_DT
+> >  	select S3C_DEV_HSMMC
+> >  	select S3C_DEV_HSMMC2
+> >  	select EXYNOS4_SETUP_SDHCI
+> > +	select EXYNOS4_SETUP_I2C1
+> >  	help
+> >  	  Machine support for Samsung Exynos4 machine with device tree enabled.
+> >  
+> > diff --git a/arch/arm/mach-exynos4/mach-exynos4-dt.c b/arch/arm/mach-exynos4/mach-exynos4-dt.c
+> > index 120665a..ef6b4cb 100644
+> > --- a/arch/arm/mach-exynos4/mach-exynos4-dt.c
+> > +++ b/arch/arm/mach-exynos4/mach-exynos4-dt.c
+> > @@ -23,7 +23,10 @@
+> >  #include <plat/regs-serial.h>
+> >  #include <plat/exynos4.h>
+> >  #include <plat/cpu.h>
+> > +#include <plat/devs.h>
+> >  #include <plat/sdhci.h>
+> > +#include <plat/iic.h>
+> > +#include <plat/iic-core.h>
+> >  
+> >  #include <mach/map.h>
+> >  
+> > @@ -62,6 +65,10 @@ static struct s3c2410_uartcfg smdkv310_uartcfgs[] __initdata = {
+> >  	},
+> >  };
+> >  
+> > +static struct s3c2410_platform_i2c exynos4_dt_i2c_data1 __initdata = {
+> > +	.cfg_gpio	= s3c_i2c1_cfg_gpio,
+> > +};
+> > +
+> >  /*
+> >   * The following lookup table is used to override device names when devices
+> >   * are registered from device tree. Optionally, the platform data can also
+> > @@ -75,6 +82,8 @@ static const struct of_dev_auxdata exynos4_auxdata_lookup[] __initconst = {
+> >  				"s3c-sdhci.2", &s3c_hsmmc2_def_platdata),
+> >  	OF_DEV_AUXDATA("samsung,s3c6410-sdhci", EXYNOS4_PA_HSMMC(0),
+> >  				"s3c-sdhci.0", &s3c_hsmmc0_def_platdata),
+> > +	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(1),
+> > +				"s3c2440-i2c.1", &exynos4_dt_i2c_data1),
+> 
+> Should not need the platform_data here.  Add DT support to the GPIO
+> driver and decode the data from there (which should be easy).
 
-As s5p-tv codes are merged for v3.1. it's time to merge the system part=
- also.
+Hmm, do we have any sane way of passing which configuration settings
+should be applied to the gpio pins (given that there can be up to 13
+non-IO settings for some of these pins).
 
-Thank you,
-Kyungmin Park
->
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+Also, since this data is really part of the SoC, I don't really want
+to see n different .dts files hanging around with the same information
+in it.
+
+Maybe it is time for a standardised callback to allow devices to connect
+themselves to the pins they need, and have dt capability of over-riding
+the information if it needs it.
+
+-- 
+Ben Dooks, ben@fluff.org, http://www.fluff.org/ben/
+
+Large Hadron Colada: A large Pina Colada that makes the universe disappear.
