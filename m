@@ -1,38 +1,113 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v3 1/6] Samsung SoC ADC: use regulator (VDD for ADC).
-Date: Tue, 19 Jul 2011 16:40:03 +0100
-Message-ID: <20110719154003.GK9652@opensource.wolfsonmicro.com>
-References: <1309420175-10301-1-git-send-email-myungjoo.ham@samsung.com>
- <1309420175-10301-2-git-send-email-myungjoo.ham@samsung.com>
- <201106301122.50800.anarsoul@gmail.com>
- <20110630160501.GG3249@opensource.wolfsonmicro.com>
- <037301cc4376$3d7f5a20$b87e0e60$%kim@samsung.com>
+From: "G, Manjunath Kondaiah" <manjugk@ti.com>
+Subject: Re: [PATCH 2/2] arm: dt: Add device tree support for i2c instance 1
+ on exynos4 dt machine
+Date: Tue, 19 Jul 2011 22:35:01 +0530
+Message-ID: <CAC63_iQcia64iBq653S+3_Yj8mgfbGSfHdGXevFe8urj9RpF-w@mail.gmail.com>
+References: <1310950241-13602-1-git-send-email-thomas.abraham@linaro.org>
+	<1310950241-13602-3-git-send-email-thomas.abraham@linaro.org>
+	<CAP6yH7dUnqhvSA8AYx2R9ZZ1mBL=YMz6oMiJVpphA1FhgLHOvw@mail.gmail.com>
+	<CACxGe6v+-H+W4H-5-gvEP+8j91NsGpVZkS595zSt8Lju74taWw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60900 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751475Ab1GSPkF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Jul 2011 11:40:05 -0400
-Content-Disposition: inline
-In-Reply-To: <037301cc4376$3d7f5a20$b87e0e60$%kim@samsung.com>
+Received: from na3sys009aog118.obsmtp.com ([74.125.149.244]:47999 "EHLO
+	na3sys009aog118.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751289Ab1GSRFD convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 19 Jul 2011 13:05:03 -0400
+In-Reply-To: <CACxGe6v+-H+W4H-5-gvEP+8j91NsGpVZkS595zSt8Lju74taWw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Vasily Khoruzhick' <anarsoul@gmail.com>, linux-arm-kernel@lists.infradead.org, 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, 'Jassi Brar' <jassi.brar@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, myungjoo.ham@gmail.com, 'Ben Dooks' <ben-linux@fluff.org>, 'Seungwhan Youn' <sw.youn@samsung.com>, 'Changhwan Youn' <chaos.youn@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: "G, Manjunath Kondaiah" <manjugk@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, ben-linux@fluff.org, patches@linaro.org
 
-On Sat, Jul 16, 2011 at 02:07:13PM +0900, Kukjin Kim wrote:
-> Mark Brown wrote:
+On Tue, Jul 19, 2011 at 2:00 AM, Grant Likely <grant.likely@secretlab.c=
+a> wrote:
+> On Mon, Jul 18, 2011 at 5:53 AM, G, Manjunath Kondaiah
+> <manjugk@linaro.org> wrote:
+>> Abraham,
+>> Few comments on i2c child devices handling:
+>>
+>> On 18 July 2011 06:20, Thomas Abraham <thomas.abraham@linaro.org> wr=
+ote:
+>>> Add device node for i2c instance 1 and list all its connected slave
+>>> devices.
+>>>
+>>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>>> ---
+>>> =A0arch/arm/boot/dts/exynos4-smdkv310.dts =A0| =A0 19 +++++++++++++=
++++++-
+>>> =A0arch/arm/mach-exynos4/Kconfig =A0 =A0 =A0 =A0 =A0 | =A0 =A01 +
+>>> =A0arch/arm/mach-exynos4/mach-exynos4-dt.c | =A0 =A09 +++++++++
+>>> =A03 files changed, 28 insertions(+), 1 deletions(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos4-smdkv310.dts b/arch/arm/boot=
+/dts/exynos4-smdkv310.dts
+>>> index d65c18c..29c40ed 100644
+>>> --- a/arch/arm/boot/dts/exynos4-smdkv310.dts
+>>> +++ b/arch/arm/boot/dts/exynos4-smdkv310.dts
+>>> @@ -23,7 +23,7 @@
+>>> =A0 =A0 =A0 =A0};
+>>>
+>>> =A0 =A0 =A0 =A0chosen {
+>>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 bootargs =3D "root=3D/dev/mmcblk0p1 r=
+ootfstype=3Dext3 rootwait console=3DttySAC1,115200";
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 bootargs =3D "root=3D/dev/mmcblk0p1 r=
+ootfstype=3Dext3 rootwait console=3DttySAC1,115200 init=3D/linuxrc";
+>>> =A0 =A0 =A0 =A0};
+>>>
+>>> =A0 =A0 =A0 =A0soc {
+>>> @@ -64,5 +64,22 @@
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0samsung,sdhci-cd-typ=
+e =3D <0>;
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0samsung,sdhci-clkdiv=
+-external;
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0};
+>>> +
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 i2c@13870000 {
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 compatible =3D "samsu=
+ng,s3c2440-i2c";
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 reg =3D <0x13870000 0=
+x100>;
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 interrupts =3D <345>;
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 samsung,i2c-bus-numbe=
+r =3D <1>;
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 samsung,i2c-slave-add=
+r =3D <16>;
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 samsung,i2c-sda-delay=
+ =3D <100>;
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 samsung,i2c-max-bus-f=
+req =3D <100000>;
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 #address-cells =3D <1=
+>;
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 #size-cells =3D <0>;
+>>> +
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 wm8994@1a {
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 compa=
+tible =3D "wlf,wm8994";
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 reg =3D=
+ <0x1a>;
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 };
+>>
+>> The i2c child devices are board specific.
+>> For ex: few boards such as smdkxxx based on exynos4 has wm8994 with
+>> i2c1 controller
+>> where as other boards based on exynos4 does not have any i2c1 device=
+s.
+>> Hence these child entries should go to board specific .dts file righ=
+t?
+>
+> No, the i2c bus node should still appear in the SoC .dtsi file. =A0If=
+ a
+> board doesn't use a particular i2c bus, then the board.dts file can
+> add a status =3D "disabled"; property to the i2c bus node to disable =
+it.
 
-> > If there isn't a separate supply for the regulators on S3C24xx devices
-> > then I guess the best option is to provide that supply as a dummy
-> > regulator in the s3c24xx core code.
+that's right. I am referring to I2C slave devices. For a given SoC,
+two different
+boards can have different i2c slave devices with different slave
+address. In that case,
+it is better to have i2c child/slave nodes in board .dts file.
 
-> OK, but it means I can't apply this until adding a dummy regulator for
-> S3C24XX?
-
-That could always come later as a bug fix :)  The regulator API does
-have a couple of methods of substituting in a dummy regulator itself,
-though it does complain a bit, so it should mostly be a simple config
-change to work around on affected systems.
+-M
