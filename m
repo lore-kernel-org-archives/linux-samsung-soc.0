@@ -1,24 +1,25 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 8/8] ARM: S5PV210: enable TV support on GONI board
-Date: Tue, 19 Jul 2011 10:44:27 +0200
-Message-ID: <1311065067-20324-9-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 2/8] ARM: Exynos4: add support for i2c8 controller (for HDMIPHY)
+Date: Tue, 19 Jul 2011 10:44:21 +0200
+Message-ID: <1311065067-20324-3-git-send-email-m.szyprowski@samsung.com>
 References: <1311065067-20324-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:27914 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752486Ab1GSIoh (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:46451 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752611Ab1GSIoh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Tue, 19 Jul 2011 04:44:37 -0400
-Received: from eu_spt1 ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LOK00L3QOA9G220@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 19 Jul 2011 09:44:33 +0100 (BST)
+Received: from eu_spt1 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0LOK003U8OA8LS@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 19 Jul 2011 09:44:32 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
  by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LOK00L0UOA809@spt1.w1.samsung.com> for
+ 2004)) with ESMTPA id <0LOK00DBFOA7TD@spt1.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Tue, 19 Jul 2011 09:44:32 +0100 (BST)
 In-reply-to: <1311065067-20324-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -28,78 +29,74 @@ Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@sa
 
 From: Tomasz Stanislawski <t.stanislaws@samsung.com>
 
-This patch adds platform devices and regulators for TV devices on
-Samsung Goni board.
+This patch adds platform definitions for i2c8 controller for Samsung
+Exynos4 platform (as HDMIPHY dedicated bus).
 
 Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/mach-s5pv210/Kconfig     |    3 +++
- arch/arm/mach-s5pv210/mach-goni.c |    9 +++++++++
- 2 files changed, 12 insertions(+), 0 deletions(-)
+ arch/arm/mach-exynos4/clock.c             |    6 ++++++
+ arch/arm/mach-exynos4/cpu.c               |    2 ++
+ arch/arm/mach-exynos4/include/mach/irqs.h |    3 +++
+ arch/arm/mach-exynos4/include/mach/map.h  |    1 +
+ 4 files changed, 12 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index 26b1f8f..a4b7579 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -95,13 +95,16 @@ config MACH_GONI
- 	select S3C_DEV_HSMMC2
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_I2C2
-+	select S3C_DEV_I2C3
- 	select S5P_DEV_MFC
- 	select S3C_DEV_USB_HSOTG
- 	select S5P_DEV_ONENAND
- 	select SAMSUNG_DEV_KEYPAD
-+	select S5P_DEV_TV
- 	select S5PV210_SETUP_FB_24BPP
- 	select S5PV210_SETUP_I2C1
- 	select S5PV210_SETUP_I2C2
-+	select S5PV210_SETUP_I2C3
- 	select S5PV210_SETUP_KEYPAD
- 	select S5PV210_SETUP_SDHCI
- 	help
-diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
-index 50f2cc7..b0d2894 100644
---- a/arch/arm/mach-s5pv210/mach-goni.c
-+++ b/arch/arm/mach-s5pv210/mach-goni.c
-@@ -285,6 +285,7 @@ static struct regulator_consumer_supply goni_ldo5_consumers[] = {
+diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
+index 629ea1d..b5e6d9d 100644
+--- a/arch/arm/mach-exynos4/clock.c
++++ b/arch/arm/mach-exynos4/clock.c
+@@ -581,6 +581,12 @@ static struct clk init_clocks_off[] = {
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 13),
+ 	}, {
++		.name		= "i2c",
++		.devname	= "s3c2440-hdmiphy-i2c.8",
++		.parent		= &clk_aclk_100.clk,
++		.enable		= exynos4_clk_ip_peril_ctrl,
++		.ctrlbit	= (1 << 14),
++	}, {
+ 		.name		= "SYSMMU_MDMA",
+ 		.enable		= exynos4_clk_ip_image_ctrl,
+ 		.ctrlbit	= (1 << 5),
+diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
+index 910ade6..3df6739 100644
+--- a/arch/arm/mach-exynos4/cpu.c
++++ b/arch/arm/mach-exynos4/cpu.c
+@@ -140,6 +140,8 @@ void __init exynos4_map_io(void)
+ 	exynos4_default_sdhci2();
+ 	exynos4_default_sdhci3();
  
- static struct regulator_consumer_supply goni_ldo8_consumers[] = {
- 	REGULATOR_SUPPLY("vusb_d", "s3c-hsotg"),
-+	REGULATOR_SUPPLY("vdd33a_dac", "s5p-sdo"),
- };
- 
- static struct regulator_consumer_supply goni_ldo11_consumers[] = {
-@@ -475,6 +476,10 @@ static struct regulator_consumer_supply buck1_consumer =
- static struct regulator_consumer_supply buck2_consumer =
- 	REGULATOR_SUPPLY("vddint", NULL);
- 
-+static struct regulator_consumer_supply buck3_consumer =
-+	REGULATOR_SUPPLY("vdet", "s5p-sdo");
++	s3c_i2c8_setname("s3c2440-hdmiphy-i2c");
 +
-+
- static struct regulator_init_data goni_buck1_data = {
- 	.constraints	= {
- 		.name		= "VARM_1.2V",
-@@ -511,6 +516,8 @@ static struct regulator_init_data goni_buck3_data = {
- 			.enabled = 1,
- 		},
- 	},
-+	.num_consumer_supplies	= 1,
-+	.consumer_supplies	= &buck3_consumer,
- };
+ 	s3c_fimc_setname(0, "exynos4-fimc");
+ 	s3c_fimc_setname(1, "exynos4-fimc");
+ 	s3c_fimc_setname(2, "exynos4-fimc");
+diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-exynos4/include/mach/irqs.h
+index 250427f..c342ba1 100644
+--- a/arch/arm/mach-exynos4/include/mach/irqs.h
++++ b/arch/arm/mach-exynos4/include/mach/irqs.h
+@@ -93,6 +93,9 @@
+ #define IRQ_2D			IRQ_SPI(89)
+ #define IRQ_PCIE		IRQ_SPI(90)
  
- static struct regulator_init_data goni_buck4_data = {
-@@ -812,6 +819,8 @@ static struct platform_device *goni_devices[] __initdata = {
- 	&s5p_device_mfc,
- 	&s5p_device_mfc_l,
- 	&s5p_device_mfc_r,
-+	&s5p_device_mixer,
-+	&s5p_device_sdo,
- 	&s3c_device_i2c0,
- 	&s5p_device_fimc0,
- 	&s5p_device_fimc1,
++#define IRQ_HDMI_I2C		IRQ_SPI(93)
++#define IRQ_IIC8		IRQ_HDMI_I2C
++
+ #define IRQ_MFC			IRQ_SPI(94)
+ 
+ #define IRQ_AUDIO_SS		IRQ_SPI(96)
+diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
+index 610fddb..1fd986b 100644
+--- a/arch/arm/mach-exynos4/include/mach/map.h
++++ b/arch/arm/mach-exynos4/include/mach/map.h
+@@ -133,6 +133,7 @@
+ #define S3C_PA_IIC5			EXYNOS4_PA_IIC(5)
+ #define S3C_PA_IIC6			EXYNOS4_PA_IIC(6)
+ #define S3C_PA_IIC7			EXYNOS4_PA_IIC(7)
++#define S3C_PA_IIC8			EXYNOS4_PA_IIC(8)
+ #define S3C_PA_RTC			EXYNOS4_PA_RTC
+ #define S3C_PA_WDT			EXYNOS4_PA_WATCHDOG
+ 
 -- 
 1.7.1.569.g6f426
