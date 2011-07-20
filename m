@@ -1,216 +1,152 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH v2 2/3] ARM: EXYNOS4: Add sclk_spdif clocks.
-Date: Wed, 20 Jul 2011 15:22:05 +0530
-Message-ID: <CAHfPSqAWxasV--nXtC7JBsV3yKQLY1MVGp=HMAdy-gnB8c-urA@mail.gmail.com>
-References: <1308655463-8787-1-git-send-email-ch.naveen@samsung.com>
- <1308655463-8787-3-git-send-email-ch.naveen@samsung.com> <048301cc450c$37dc4b90$a794e2b0$%kim@samsung.com>
- <CAHfPSqAAmu+DMTuiT89TpQ7He-HVqBcA+HHpziG0CyviGrtd_g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Boojin Kim <boojin.kim@samsung.com>
+Subject: [PATCH V4 01/13] DMA: PL330: Add support runtime PM for PL330 DMAC
+Date: Wed, 20 Jul 2011 19:46:10 +0900
+Message-ID: <1311158773-30314-2-git-send-email-boojin.kim@samsung.com>
+References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iw0-f174.google.com ([209.85.214.174]:44215 "EHLO
-	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750745Ab1GTJw0 convert rfc822-to-8bit (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:48554 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751327Ab1GTKxE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jul 2011 05:52:26 -0400
-Received: by iwn6 with SMTP id 6so43731iwn.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Jul 2011 02:52:25 -0700 (PDT)
-In-Reply-To: <CAHfPSqAAmu+DMTuiT89TpQ7He-HVqBcA+HHpziG0CyviGrtd_g@mail.gmail.com>
+	Wed, 20 Jul 2011 06:53:04 -0400
+In-Reply-To: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, jassisinghbrar@gmail.com, sbkim73@samsung.com, sw.youn@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Boojin Kim <boojin.kim@samsung.com>
 
-Hi Everyone,
+Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+Cc: Vinod Koul <vinod.koul@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ drivers/dma/pl330.c |   75 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 files changed, 73 insertions(+), 2 deletions(-)
 
-Any suggestions regarding this below problem.
-
-On 18 July 2011 16:55, Naveen Krishna Ch <naveenkrishna.ch@gmail.com> w=
-rote:
-> Hi Every one,
->
-> On 18 July 2011 11:03, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> Naveen Krishna Chatradhi wrote:
->>>
->>> Add the sclk_spdif clock is of type 'struct clksrc_clk' clock.
->>> Also, add clk_spdifextclk clocks of type 'struct clk' clock.
->>>
->>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->>> ---
->>> =A0arch/arm/mach-exynos4/clock.c | =A0 35
->>> +++++++++++++++++++++++++++++++++++
->>> =A01 files changed, 35 insertions(+), 0 deletions(-)
->>>
->>> diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/=
-clock.c
->>> index 937335a..feeb27e 100644
->>> --- a/arch/arm/mach-exynos4/clock.c
->>> +++ b/arch/arm/mach-exynos4/clock.c
->>> @@ -64,6 +64,11 @@ static struct clk clk_audiocdclk2 =3D {
->>> =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "audiocdclk",
->>> =A0};
->>>
->>> +static struct clk clk_spdifextclk =3D {
->>> + =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "spdif_extclk",
->>> + =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
->>> +};
->>> +
->>> =A0static int exynos4_clksrc_mask_top_ctrl(struct clk *clk, int ena=
-ble)
->>> =A0{
->>> =A0 =A0 =A0 return s5p_gatectrl(S5P_CLKSRC_MASK_TOP, clk, enable);
->>> @@ -550,6 +555,11 @@ static struct clk init_clocks_off[] =3D {
->>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clk=
-_ip_peril_ctrl,
->>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 21),
->>> =A0 =A0 =A0 }, {
->>> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "spdif",
->>> + =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
->>> + =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clk_i=
-p_peril_ctrl,
->>> + =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 26),
->>> + =A0 =A0 }, {
->>
->> Need to re-work based on clkdev :)
-> Sure, will rebase on updated for-next branch.
->>
->>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "ac97",
->>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
->>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clk=
-_ip_peril_ctrl,
->>> @@ -801,6 +811,30 @@ static struct clk init_clocks[] =3D {
->>> =A0 =A0 =A0 }
->>> =A0};
->>>
->>> +static struct clk *clkset_sclk_spdif_list[] =3D {
->>> + =A0 =A0 [0] =3D &clk_sclk_audio0.clk,
->>> + =A0 =A0 [1] =3D &clk_sclk_audio1.clk,
->>> + =A0 =A0 [2] =3D &clk_sclk_audio2.clk,
->>> + =A0 =A0 [3] =3D &clk_spdifextclk,
->>> +};
->>> +
->>> +static struct clksrc_sources clkset_sclk_spdif =3D {
->>> + =A0 =A0 .sources =A0 =A0 =A0 =A0=3D clkset_sclk_spdif_list,
->>> + =A0 =A0 .nr_sources =A0 =A0 =3D ARRAY_SIZE(clkset_sclk_spdif_list=
-),
->>> +};
->>> +
->>> +static struct clksrc_clk clk_sclk_spdif =3D {
->>> + =A0 =A0 .clk =A0 =A0=3D {
->>> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "sclk_spdif=
-",
->>> + =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
->>> + =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clksr=
-c_mask_peril1_ctrl,
->>> + =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 8),
->>> + =A0 =A0 =A0 =A0 =A0 =A0 .ops =A0 =A0 =A0 =A0 =A0 =A0=3D &s5p_sclk=
-_spdif_ops,
->>> + =A0 =A0 },
->>> + =A0 =A0 =A0 =A0 =A0 =A0 .sources =3D &clkset_sclk_spdif,
->>> + =A0 =A0 =A0 =A0 =A0 =A0 .reg_src =3D { .reg =3D S5P_CLKSRC_PERIL1=
-, .shift =3D 8, .size =3D 2
->> },
->>> +};
->>
->> Hmm...is it possible to move this into struct clksrc_clk clksrcs[] ?
-> When i try to move it under struct clksrc_clk clksrcs[], I encountere=
-d
-> a problem with .ops field
-> The sample code as follows (I'm not sure if i can copy paste the code=
- for RFC)
->
-> +static struct clk *clkset_sclk_spdif_list[] =3D {
-> + =A0 =A0 =A0 [0] =3D &clk_sclk_audio0.clk,
-> + =A0 =A0 =A0 [1] =3D &clk_sclk_audio1.clk,
-> + =A0 =A0 =A0 [2] =3D &clk_sclk_audio2.clk,
-> + =A0 =A0 =A0 [3] =3D &clk_spdifextclk,
-> +};
-> +
-> +static struct clksrc_sources clkset_sclk_spdif =3D {
-> + =A0 =A0 =A0 .sources =A0 =A0 =A0 =A0=3D clkset_sclk_spdif_list,
-> + =A0 =A0 =A0 .nr_sources =A0 =A0 =3D ARRAY_SIZE(clkset_sclk_spdif_li=
-st),
-> +};
-> +
-> =A0static struct clk *clkset_group_list[] =3D {
-> =A0 =A0 =A0 =A0[0] =3D &clk_ext_xtal_mux,
-> =A0 =A0 =A0 =A0[1] =3D &clk_xusbxti,
-> @@ -1175,6 +1197,17 @@ static struct clksrc_clk clksrcs[] =3D {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.parent =A0 =A0 =A0 =A0=
- =3D &clk_sclk_audio2.clk,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0},
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.reg_div =3D { .reg =3D S5P_CLKDIV_PER=
-IL4, .shift =3D 20, .size =3D 8 },
-> + =A0 =A0 =A0 }, {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .clk =A0 =A0=3D {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0=
- =3D "sclk_spdif",
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0=
- =A0 =3D 0,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0=
- =3D &clk_sclk_audio0.clk,
-> + =A0 =A0 =A0 // =A0 =A0 =A0 =A0 =A0 =A0 =A0.ops =A0 =A0 =A0 =A0 =A0 =
-=A0=3D &s5p_sclk_spdif_ops,
-> "When i keep this .ops, The system hangs during boot up.
-> If i don't define the .ops, The WARN_ON would print a stack of call
-> trace for undefined set_rate function"
-> I did not find any set_ops kind off utility functions.
->
-> Kindly, point me towards any better way of doing the same.
->
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0=
- =3D exynos4_clksrc_mask_peril1_ctrl,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=
-=3D (1 << 8),
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .sources =3D &clkset_sclk_spdif,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .reg_src =3D { .reg =3D S5P_CLKSRC_PERI=
-L1, .shift =3D 8, .size =3D 2 },
-> =A0 =A0 =A0 =A0},
-> =A0};
->
->>
->>> +
->>> =A0static struct clk *clkset_group_list[] =3D {
->>> =A0 =A0 =A0 [0] =3D &clk_ext_xtal_mux,
->>> =A0 =A0 =A0 [1] =3D &clk_xusbxti,
->>> @@ -1206,6 +1240,7 @@ static struct clksrc_clk *sysclks[] =3D {
->>> =A0 =A0 =A0 &clk_sclk_audio0,
->>> =A0 =A0 =A0 &clk_sclk_audio1,
->>> =A0 =A0 =A0 &clk_sclk_audio2,
->>> + =A0 =A0 &clk_sclk_spdif,
->>> =A0};
->>>
->>> =A0static int xtal_rate;
->>> --
->>> 1.7.2.3
->>
->>
->> Thanks.
->>
->> Best regards,
->> Kgene.
->> --
->> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
->> SW Solution Development Team, Samsung Electronics Co., Ltd.
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-sams=
-ung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->>
->
->
->
-> --
-> Shine bright,
-> (: Nav :)
->
-
-
-
---=20
-Shine bright,
-(: Nav :)
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index 6abe1ec..b7ecf47 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -17,6 +17,7 @@
+ #include <linux/interrupt.h>
+ #include <linux/amba/bus.h>
+ #include <linux/amba/pl330.h>
++#include <linux/pm_runtime.h>
+ 
+ #define NR_DEFAULT_DESC	16
+ 
+@@ -83,6 +84,8 @@ struct dma_pl330_dmac {
+ 
+ 	/* Peripheral channels connected to this DMAC */
+ 	struct dma_pl330_chan peripherals[0]; /* keep at end */
++
++	struct clk *clk;
+ };
+ 
+ struct dma_pl330_desc {
+@@ -696,6 +699,30 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 		goto probe_err1;
+ 	}
+ 
++	pdmac->clk = clk_get(&adev->dev, "dma");
++	if (IS_ERR(pdmac->clk)) {
++		dev_err(&adev->dev, "Cannot get operation clock.\n");
++		ret = -EINVAL;
++		goto probe_err1;
++	}
++
++	amba_set_drvdata(adev, pdmac);
++
++#ifdef CONFIG_PM_RUNTIME
++	/* to use the runtime PM helper functions */
++	pm_runtime_enable(&adev->dev);
++
++	/* enable the power domain */
++	if (pm_runtime_get_sync(&adev->dev)) {
++		dev_err(&adev->dev, "failed to get runtime pm\n");
++		ret = -ENODEV;
++		goto probe_err1;
++	}
++#else
++	/* enable dma clk */
++	clk_enable(pdmac->clk);
++#endif
++
+ 	irq = adev->irq[0];
+ 	ret = request_irq(irq, pl330_irq_handler, 0,
+ 			dev_name(&adev->dev), pi);
+@@ -763,8 +790,6 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 		goto probe_err4;
+ 	}
+ 
+-	amba_set_drvdata(adev, pdmac);
+-
+ 	dev_info(&adev->dev,
+ 		"Loaded driver for PL330 DMAC-%d\n", adev->periphid);
+ 	dev_info(&adev->dev,
+@@ -825,6 +850,13 @@ static int __devexit pl330_remove(struct amba_device *adev)
+ 	res = &adev->res;
+ 	release_mem_region(res->start, resource_size(res));
+ 
++#ifdef CONFIG_PM_RUNTIME
++	pm_runtime_put(&adev->dev);
++	pm_runtime_disable(&adev->dev);
++#else
++	clk_disable(pdmac->clk);
++#endif
++
+ 	kfree(pdmac);
+ 
+ 	return 0;
+@@ -838,10 +870,49 @@ static struct amba_id pl330_ids[] = {
+ 	{ 0, 0 },
+ };
+ 
++#ifdef CONFIG_PM_RUNTIME
++static int pl330_runtime_suspend(struct device *dev)
++{
++	struct dma_pl330_dmac *pdmac = dev_get_drvdata(dev);
++
++	if (!pdmac) {
++		dev_err(dev, "failed to get dmac\n");
++		return -ENODEV;
++	}
++
++	clk_disable(pdmac->clk);
++
++	return 0;
++}
++
++static int pl330_runtime_resume(struct device *dev)
++{
++	struct dma_pl330_dmac *pdmac = dev_get_drvdata(dev);
++
++	if (!pdmac) {
++		dev_err(dev, "failed to get dmac\n");
++		return -ENODEV;
++	}
++
++	clk_enable(pdmac->clk);
++
++	return 0;
++}
++#else
++#define pl330_runtime_suspend	NULL
++#define pl330_runtime_resume	NULL
++#endif /* CONFIG_PM_RUNTIME */
++
++static const struct dev_pm_ops pl330_pm_ops = {
++	.runtime_suspend = pl330_runtime_suspend,
++	.runtime_resume = pl330_runtime_resume,
++};
++
+ static struct amba_driver pl330_driver = {
+ 	.drv = {
+ 		.owner = THIS_MODULE,
+ 		.name = "dma-pl330",
++		.pm = &pl330_pm_ops,
+ 	},
+ 	.id_table = pl330_ids,
+ 	.probe = pl330_probe,
+-- 
+1.7.1
