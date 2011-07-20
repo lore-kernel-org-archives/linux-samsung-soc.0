@@ -1,211 +1,141 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: [PATCH v3] ARM: EXYNOS4: Add platform device for dwmci driver.
-Date: Wed, 20 Jul 2011 10:22:13 +0900
-Message-ID: <1311124933-8133-1-git-send-email-tgih.jun@samsung.com>
+From: Boojin Kim <boojin.kim@samsung.com>
+Subject: RE: [PATCH V3 00/13] To use DMA generic APIs for Samsung DMA
+Date: Wed, 20 Jul 2011 15:21:11 +0900
+Message-ID: <002201cc46a5$397d1a70$ac774f50$%kim@samsung.com>
+References: <058801cc466d$349ebe60$9ddc3b20$%kim@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:52793 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752395Ab1GTB16 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:48025 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751326Ab1GTGVP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Jul 2011 21:27:58 -0400
+	Wed, 20 Jul 2011 02:21:15 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LOM00MCCCB1CL20@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 20 Jul 2011 15:21:14 +0900 (KST)
+Received: from DOBOOJINKIM03 (12-23-120-72.csky.net [12.23.120.72])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LOM00G9LCBD0H@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 20 Jul 2011 15:21:14 +0900 (KST)
+In-reply-to: <058801cc466d$349ebe60$9ddc3b20$%kim@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, ByungJae Lee <bjlee@samsung.com>, SeungKwon Ko <skwon.ko@samsung.com>, JaeHun Jung <jh0801.jung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>
+To: 'Jassi Brar' <jassisinghbrar@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Vinod Koul' <vinod.koul@intel.com>, 'Dan Williams' <dan.j.williams@intel.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Liam Girdwood' <lrg@ti.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-This patch adds platform device for Synopsys DesignWare Multimedia Card
-Interface driver.
+Jassi Brar wrote:
+> Sent: Monday, July 18, 2011 8:36 PM
+> To: Kukjin Kim
+> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
+> Vinod Koul; Dan Williams; Grant Likely; Liam Girdwood; Mark Brown; Linus
+> Walleij
+> Subject: Re: [PATCH V3 00/13] To use DMA generic APIs for Samsung DMA
+>
+> On Sat, Jul 16, 2011 at 12:14 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > Following is diagram of this changes
+> >
+> > +---------------------------------------------------------------------+
+> > | Each drivers which uses DMA                                         |
+> > +---------------------------------------------------------------------+
+> > | S3C DMA API (such as s3c2410_dma_xxxx)                              |
+> > +-------------------------------+-------------------------------------+
+> > | DMA driver for S3C24XX        | S3C PL330 DMA API driver            |
+> > | PL080 DMA driver for S3C64XX  | (arch/arm/plat-samsung/s3c-pl330.c) |
+> > |                               +-------------------------------------+
+> > | (arch/arm/plat-s3c24xx/dma.c) | Common DMA core driver              |
+> > | (arch/arm/mach-s3c64xx/dma.c) | (arch/arm/common/pl330.c)           |
+> > +-------------------------------+-------------------------------------+
+> >                               ||
+> >               (removing S3C DMA API for PL330)
+> >                               ||
+> >                               \/
+> > +---------------------------------------------------------------------+
+> > | Each drivers which uses DMA                                         |
+> > +-------------------------------+-------------------------------------+
+> > | S3C DMA API(s3c2410_dma_xxx)  | DMA generic API for PL330           |
+> > +-------------------------------+-------------------------------------+
+> > | DMA driver for S3C24XX        | PL330 DMA API driver                |
+> > | PL080 DMA driver for S3C64XX  | (drivers/dma/pl330.c)               |
+> > |                               +-------------------------------------+
+> > | (arch/arm/plat-s3c24xx/dma.c) | Common DMA core driver              |
+> > | (arch/arm/mach-s3c64xx/dma.c) | (arch/arm/common/pl330.c)           |
+> > +-------------------------------+-------------------------------------+
+> >
+>
+> Please share what drivers and use-cases have been tested with the patchset.
+>
+> > [PATCH V3 02/13] DMA: PL330: Update PL330 DMA API driver
+> > This patch updates following 3 items.
+> >    1. Removes unneccessary code.
+> >    2. Add AMBA, PL330 configuration
+> >    3. Change the meaning of 'peri_id' variable
+> >       from PL330 event number to specific dma id by user.
+> Please separate this patch in to at least 2 parts and explain _why_
+> you do what you do.
+>
+> Ex, the following two snippets looks obviously wrong to me.
+> Though I doubt any better changelog can justify that, but atleast that
+> will help me take it seriously. This is also why I ask for test-report.
+I tested it through "SPI test application" and "aplay". It works well on both.
 
-Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
----
- arch/arm/mach-exynos4/Kconfig              |    5 ++
- arch/arm/mach-exynos4/Makefile             |    1 +
- arch/arm/mach-exynos4/dev-dwmci.c          |   82 ++++++++++++++++++++++++++++
- arch/arm/mach-exynos4/include/mach/dwmci.h |   20 +++++++
- arch/arm/mach-exynos4/include/mach/irqs.h  |    1 +
- arch/arm/mach-exynos4/include/mach/map.h   |    1 +
- arch/arm/plat-samsung/include/plat/devs.h  |    1 +
- 7 files changed, 111 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-exynos4/dev-dwmci.c
- create mode 100644 arch/arm/mach-exynos4/include/mach/dwmci.h
+>
+> @@ -19,7 +19,7 @@ struct dma_pl330_peri {
+>          * Peri_Req i/f of the DMAC that is
+>          * peripheral could be reached from.
+>          */
+> -       u8 peri_id; /* {0, 31} */
+> +       u8 peri_id; /* specific dma id */
+>
+> @@ -455,7 +455,7 @@ static struct dma_pl330_desc
+> *pl330_get_desc(struct dma_pl330_chan *pch)
+>         async_tx_ack(&desc->txd);
+>
+>         desc->req.rqtype = peri->rqtype;
+> -       desc->req.peri = peri->peri_id;
+> +       desc->req.peri = pch->chan.chan_id;
+>
+> Please don't only add to changelogs, but also re-think about the above
+> two changes. Hint: Read the structure definitions header file and how they
+> are used in the pl330 core driver.
+>
+> Since the other patches would be affected by what you do here, I am not
+> reviewing them until I have either justification or revert of these.
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index a4fb109..31f798c 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -36,6 +36,11 @@ config EXYNOS4_DEV_SYSMMU
- 	help
- 	  Common setup code for SYSTEM MMU in EXYNOS4
 
-+config EXYNOS4_DEV_DWMCI
-+	bool
-+	help
-+	  Compile in platform device definitions for DWMCI
-+
- config EXYNOS4_SETUP_I2C1
- 	bool
- 	help
-diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
-index c3c70ab..4c4ea6b 100644
---- a/arch/arm/mach-exynos4/Makefile
-+++ b/arch/arm/mach-exynos4/Makefile
-@@ -38,6 +38,7 @@ obj-y					+= dev-audio.o
- obj-$(CONFIG_EXYNOS4_DEV_AHCI)		+= dev-ahci.o
- obj-$(CONFIG_EXYNOS4_DEV_PD)		+= dev-pd.o
- obj-$(CONFIG_EXYNOS4_DEV_SYSMMU)	+= dev-sysmmu.o
-+obj-$(CONFIG_EXYNOS4_DEV_DWMCI)	+= dev-dwmci.o
+There are two reason why I change it.
 
- obj-$(CONFIG_EXYNOS4_SETUP_FIMC)	+= setup-fimc.o
- obj-$(CONFIG_EXYNOS4_SETUP_I2C1)	+= setup-i2c1.o
-diff --git a/arch/arm/mach-exynos4/dev-dwmci.c b/arch/arm/mach-exynos4/dev-dwmci.c
-new file mode 100644
-index 0000000..b025db4
---- /dev/null
-+++ b/arch/arm/mach-exynos4/dev-dwmci.c
-@@ -0,0 +1,82 @@
-+/*
-+ * linux/arch/arm/mach-exynos4/dev-dwmci.c
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * Platform device for Synopsys DesignWare Mobile Storage IP
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/platform_device.h>
-+#include <linux/interrupt.h>
-+#include <linux/mmc/dw_mmc.h>
-+
-+#include <plat/devs.h>
-+
-+#include <mach/map.h>
-+
-+static int exynos4_dwmci_get_bus_wd(u32 slot_id)
-+{
-+	return 4;
-+}
-+
-+static int exynos4_dwmci_init(u32 slot_id, irq_handler_t handler, void *data)
-+{
-+	return 0;
-+}
-+
-+static struct resource exynos4_dwmci_resource[] = {
-+	[0] = {
-+		.start	= EXYNOS4_PA_DWMCI,
-+		.end	= EXYNOS4_PA_DWMCI + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start	= IRQ_DWMCI,
-+		.end	= IRQ_DWMCI,
-+		.flags	= IORESOURCE_IRQ,
-+	}
-+};
-+
-+static struct dw_mci_board exynos4_dwci_pdata = {
-+	.num_slots			= 1,
-+	.quirks				= DW_MCI_QUIRK_BROKEN_CARD_DETECTION,
-+	.bus_hz				= 80 * 1000 * 1000,
-+	.detect_delay_ms	= 200,
-+	.init				= exynos4_dwmci_init,
-+	.get_bus_wd			= exynos4_dwmci_get_bus_wd,
-+};
-+
-+static u64 exynos4_dwmci_dmamask = DMA_BIT_MASK(32);
-+
-+struct platform_device exynos4_device_dwmci = {
-+	.name		= "dw_mmc",
-+	.id		= -1,
-+	.num_resources	= ARRAY_SIZE(exynos4_dwmci_resource),
-+	.resource	= exynos4_dwmci_resource,
-+	.dev		= {
-+		.dma_mask		= &exynos4_dwmci_dmamask,
-+		.coherent_dma_mask	= DMA_BIT_MASK(32),
-+		.platform_data	= &exynos4_dwci_pdata,
-+	},
-+};
-+
-+void __init exynos4_dwmci_set_platdata(struct dw_mci_board *pd)
-+{
-+	struct dw_mci_board *npd;
-+
-+	npd = s3c_set_platdata(pd, sizeof(struct dw_mci_board),
-+			&exynos4_device_dwmci);
-+
-+	if (!npd->init)
-+		npd->init = exynos4_dwmci_init;
-+	if (!npd->get_bus_wd)
-+		npd->get_bus_wd = exynos4_dwmci_get_bus_wd;
-+}
-diff --git a/arch/arm/mach-exynos4/include/mach/dwmci.h b/arch/arm/mach-exynos4/include/mach/dwmci.h
-new file mode 100644
-index 0000000..7ce6574
---- /dev/null
-+++ b/arch/arm/mach-exynos4/include/mach/dwmci.h
-@@ -0,0 +1,20 @@
-+/* linux/arch/arm/mach-exynos4/include/mach/dwmci.h
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * Synopsys DesignWare Mobile Storage for EXYNOS4210
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef __ASM_ARM_ARCH_DWMCI_H
-+#define __ASM_ARM_ARCH_DWMCI_H __FILE__
-+
-+#include <linux/mmc/dw_mmc.h>
-+
-+extern void exynos4_dwmci_set_platdata(struct dw_mci_board *pd);
-+
-+#endif /* __ASM_ARM_ARCH_DWMCI_H */
-diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-exynos4/include/mach/irqs.h
-index 250427f..47ff87f 100644
---- a/arch/arm/mach-exynos4/include/mach/irqs.h
-+++ b/arch/arm/mach-exynos4/include/mach/irqs.h
-@@ -78,6 +78,7 @@
- #define IRQ_HSMMC1		IRQ_SPI(74)
- #define IRQ_HSMMC2		IRQ_SPI(75)
- #define IRQ_HSMMC3		IRQ_SPI(76)
-+#define IRQ_DWMCI		IRQ_SPI(77)
+First, Original DMA machine code made a "peri_id" variable to contain 
+"event(interrupt) number (0~31)" information.
+But, I think "event(interrupt) number (0~31)" information can be retained in 
+"pch->chan.chan_id" instead of "peri_id" if DMA machine code passes the peri 
+information in order of "event (interrupt) number".
 
- #define IRQ_MIPICSI0		IRQ_SPI(78)
+I mean to say that new variable(-->'peri_id') is not need to contain "event 
+(interrupt) number" information. "pch->chan.chan_id" can take place of it. And 
+this makes the meaning of "pch->chan.chan_id" more informative because .
 
-diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
-index 3677356..49356d2 100644
---- a/arch/arm/mach-exynos4/include/mach/map.h
-+++ b/arch/arm/mach-exynos4/include/mach/map.h
-@@ -96,6 +96,7 @@
- #define EXYNOS4_PA_MIPI_CSIS1		0x11890000
+Second, A magic value is required to find the DMA channel desired by DMA 
+client on multi-platform.
+This value is used on "dma_filter_fn filter()" function to find the channel.
+I changed that the meaning of "peri_id" to use for it from "event(interrupt) 
+number (0~31)" to "a magic value".
+If you can accept this change about meaning of 'peri_id', I will create new 
+value on " struct dma_pl330_peri" to contain a magic value.
 
- #define EXYNOS4_PA_HSMMC(x)		(0x12510000 + ((x) * 0x10000))
-+#define EXYNOS4_PA_DWMCI		0x12550000
+I think this patch is good because no need to new value for "a magic value" 
+and make "pch->chan.chan_id" more infomative.
+Do you still want to change this patch?
 
- #define EXYNOS4_PA_SATA			0x12560000
- #define EXYNOS4_PA_SATAPHY		0x125D0000
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index e3b31c2..29fa1cf 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -112,6 +112,7 @@ extern struct platform_device exynos4_device_i2s2;
- extern struct platform_device exynos4_device_spdif;
- extern struct platform_device exynos4_device_pd[];
- extern struct platform_device exynos4_device_ahci;
-+extern struct platform_device exynos4_device_dwmci;
+> > [PATCH V3 03/13] DMA: PL330: Add DMA capabilities
+> Please don't be conservative with number of patches - segregate independent
+> changes in independent patches or you make my life miserable :(
 
- extern struct platform_device s5p6440_device_pcm;
- extern struct platform_device s5p6440_device_iis;
---
-1.7.2.3
+Do you want to separate this patch more finely?
+If yes, I will divide it into two patches. First patch will be for 
+dma_slave_config. Second patch will be for cyclic capability.
+
+> Thnx
+> -jassi
