@@ -1,94 +1,89 @@
-From: Boojin Kim <boojin.kim@samsung.com>
-Subject: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
-Date: Wed, 20 Jul 2011 19:46:11 +0900
-Message-ID: <1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
-References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v3 0/6] Update Samsung-SoC ADC to support recent CPUs
+Date: Wed, 20 Jul 2011 21:22:18 +0900
+Message-ID: <069401cc46d7$d33dfdf0$79b9f9d0$%kim@samsung.com>
+References: <1309420175-10301-1-git-send-email-myungjoo.ham@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:48572 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750980Ab1GTKxI (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:56386 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750936Ab1GTMX1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jul 2011 06:53:08 -0400
-In-Reply-To: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
+	Wed, 20 Jul 2011 08:23:27 -0400
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LOM00L2LT30W260@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 20 Jul 2011 21:23:26 +0900 (KST)
+Received: from kgenekim ([12.23.119.139])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LOM00618T32LH@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 20 Jul 2011 21:23:26 +0900 (KST)
+In-reply-to: <1309420175-10301-1-git-send-email-myungjoo.ham@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Boojin Kim <boojin.kim@samsung.com>
+To: 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Ben Dooks' <ben-linux@fluff.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, myungjoo.ham@gmail.com
 
-Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- drivers/dma/pl330.c |   53 +++++++++++++++++++++++++++++++++++++-------------
- 1 files changed, 39 insertions(+), 14 deletions(-)
+MyungJoo Ham wrote:
+> 
+> Patch 1/6: Add regulator support in ADC driver.
+> 	If CONFIG_REGULATOR is enabled, "vdd" regulator for the ADC driver
+> 	(e.g., "s5p-adc") should exist for the adc driver.
+> 
+> Patch 2/6: Channel selection method for S5PC110 and Exynos4
+> 	Recent Samsung SoCs have different register addresses for
+> 	channel selection. Use "s5p-adc" to support such chips.
+> 
+> Patch 3/6: Bugfix for suspend/resume of ADC driver.
+> 
+> Patch 4/6: Support ADC at Exynos4
+> 	Define register addresses and device name for Exynos4
+> 
+> Patch 5/6: Support ADC at S5PC110/S5PV210
+> 	Correct ADC device name for S5PC110/S5PV210
+> 
+> Patch 6/6: Header file correction (plat/devs.h)
+> 	The long-overdue bugfix for compiler errors. ADC for Exynos4 fails
+to
+> 	be compiled without this patch.
+> 
+> 
+> MyungJoo Ham (6):
+>   Samsung SoC ADC: use regulator (VDD for ADC).
+>   Samsung SoC ADC: Channel selection for S5PV210, S5PC110, and Exynos4
+>   Samsung SoC ADC: Revise PM for 12-bit ADC operations
+>   ARM: EXYNOS4: Support ADC
+>   ARM: S5PC110/S5PV210: Support ADC
+>   Samsung SoC: header file revised to prevent declaring duplicated.
+> 
+>  arch/arm/mach-exynos4/Kconfig                 |    1 +
+>  arch/arm/mach-exynos4/cpu.c                   |    4 +
+>  arch/arm/mach-exynos4/include/mach/irqs.h     |    3 +
+>  arch/arm/mach-exynos4/include/mach/map.h      |    5 ++
+>  arch/arm/mach-s5pv210/cpu.c                   |    2 +-
+>  arch/arm/plat-samsung/adc.c                   |   84
+> +++++++++++++++++++------
+>  arch/arm/plat-samsung/include/plat/devs.h     |    5 ++
+>  arch/arm/plat-samsung/include/plat/regs-adc.h |    1 +
+>  8 files changed, 84 insertions(+), 21 deletions(-)
+> 
+> --
+> 1.7.4.1
 
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index 586ab39..880f010 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -256,25 +256,50 @@ static int pl330_alloc_chan_resources(struct dma_chan *chan)
- static int pl330_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd, unsigned long arg)
- {
- 	struct dma_pl330_chan *pch = to_pchan(chan);
--	struct dma_pl330_desc *desc;
-+	struct dma_pl330_desc *desc, *_dt;
- 	unsigned long flags;
-+	struct dma_pl330_dmac *pdmac = pch->dmac;
-+	struct dma_slave_config *slave_config;
-+	struct dma_pl330_peri *peri;
-+	LIST_HEAD(list);
- 
--	/* Only supports DMA_TERMINATE_ALL */
--	if (cmd != DMA_TERMINATE_ALL)
--		return -ENXIO;
--
--	spin_lock_irqsave(&pch->lock, flags);
--
--	/* FLUSH the PL330 Channel thread */
--	pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
-+	switch (cmd) {
-+	case DMA_TERMINATE_ALL:
-+		spin_lock_irqsave(&pch->lock, flags);
- 
--	/* Mark all desc done */
--	list_for_each_entry(desc, &pch->work_list, node)
--		desc->status = DONE;
-+		/* FLUSH the PL330 Channel thread */
-+		pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
- 
--	spin_unlock_irqrestore(&pch->lock, flags);
-+		/* Mark all desc done */
-+		list_for_each_entry_safe(desc, _dt, &pch->work_list , node) {
-+			desc->status = DONE;
-+			pch->completed = desc->txd.cookie;
-+			list_move_tail(&desc->node, &list);
-+		}
- 
--	pl330_tasklet((unsigned long) pch);
-+		list_splice_tail_init(&list, &pdmac->desc_pool);
-+		spin_unlock_irqrestore(&pch->lock, flags);
-+		break;
-+	case DMA_SLAVE_CONFIG:
-+		slave_config = (struct dma_slave_config *)arg;
-+		peri = pch->chan.private;
-+
-+		if (slave_config->direction == DMA_TO_DEVICE) {
-+			if (slave_config->dst_addr)
-+				peri->fifo_addr = slave_config->dst_addr;
-+			if (slave_config->dst_addr_width)
-+				peri->burst_sz = __ffs(slave_config->dst_addr_width);
-+		} else if (slave_config->direction == DMA_FROM_DEVICE) {
-+			if (slave_config->src_addr)
-+				peri->fifo_addr = slave_config->src_addr;
-+			if (slave_config->src_addr_width)
-+				peri->burst_sz = __ffs(slave_config->src_addr_width);
-+		}
-+		break;
-+	default:
-+		dev_err(pch->dmac->pif.dev, "Not supported command.\n");
-+		return -ENXIO;
-+	}
- 
- 	return 0;
- }
--- 
-1.7.1
+OK, applied but some comments.
+
+- If you want to add just 'note', please add it under '---' not '--'.
+- I don't think we need many developers in Cc like your Cc list.
+- We should fix S3C SoCs' breaks during 3.1-rc.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
