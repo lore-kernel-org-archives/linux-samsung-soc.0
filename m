@@ -1,11 +1,14 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH V8 1/5] ARM: EXYNOS4: Change clock name for FIMD
-Date: Thu, 21 Jul 2011 07:54:04 +0900
-Message-ID: <1311202444-18137-1-git-send-email-jg1.han@samsung.com>
+Subject: [PATCH V8 0/5] ARM: EXYNOS4: Add support EXYNOS4 FIMD
+Date: Thu, 21 Jul 2011 07:53:58 +0900
+Message-ID: <1311202438-18105-1-git-send-email-jg1.han@samsung.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:50998 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:50984 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751603Ab1GTXDM (ORCPT
+	with ESMTP id S1751531Ab1GTXDM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 20 Jul 2011 19:03:12 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -13,53 +16,41 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org
 Cc: Jonghun Han <jonghun.han@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Jingoo Han <jg1.han@samsung.com>
 
-This patch changes clock for FIMD from 'fimd' to 'lcd'.
-Also, devname for FIMD is changed from 's5pv310-fb' to 'exynos4-fb'.
+The patches are created against "for-next" branch of Kukjin Kim's tree =
+at:
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
- arch/arm/mach-exynos4/clock.c |   12 ++++++------
- 1 files changed, 6 insertions(+), 6 deletions(-)
+This was originally submitted by Jonghun Han <jonghun.han@samsung.com>
+http://www.spinics.net/lists/arm-kernel/msg101781.html
 
-diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
-index 98b5cc4..778a202 100644
---- a/arch/arm/mach-exynos4/clock.c
-+++ b/arch/arm/mach-exynos4/clock.c
-@@ -405,13 +405,13 @@ static struct clk init_clocks_off[] = {
- 		.enable		= exynos4_clk_ip_cam_ctrl,
- 		.ctrlbit	= (1 << 3),
- 	}, {
--		.name		= "fimd",
--		.devname	= "s5pv310-fb.0",
-+		.name		= "lcd",
-+		.devname	= "exynos4-fb.0",
- 		.enable		= exynos4_clk_ip_lcd0_ctrl,
- 		.ctrlbit	= (1 << 0),
- 	}, {
--		.name		= "fimd",
--		.devname	= "s5pv310-fb.1",
-+		.name		= "lcd",
-+		.devname	= "exynos4-fb.1",
- 		.enable		= exynos4_clk_ip_lcd1_ctrl,
- 		.ctrlbit	= (1 << 0),
- 	}, {
-@@ -909,7 +909,7 @@ static struct clksrc_clk clksrcs[] = {
- 	}, {
- 		.clk		= {
- 			.name		= "sclk_fimd",
--			.devname	= "s5pv310-fb.0",
-+			.devname	= "exynos4-fb.0",
- 			.enable		= exynos4_clksrc_mask_lcd0_ctrl,
- 			.ctrlbit	= (1 << 0),
- 		},
-@@ -919,7 +919,7 @@ static struct clksrc_clk clksrcs[] = {
- 	}, {
- 		.clk		= {
- 			.name		= "sclk_fimd",
--			.devname	= "s5pv310-fb.1",
-+			.devname	= "exynos4-fb.1",
- 			.enable		= exynos4_clksrc_mask_lcd1_ctrl,
- 			.ctrlbit	= (1 << 0),
- 		},
--- 
-1.7.1
+This patch adds support FIMD(Fully Interactive Mobile Display) on Exyno=
+s4.
+The 4th patch is update for s3c-fb and others are for platform data
+
+NOTE: The common part for SMDKV310 will be updated later.
+
+v2: change clock name of exynos4 FIMD: "fimd" -> "lcd"
+     use 'has_clksel' variable in order to distinguish FIMD version
+     add 'lcd_clk' that can be used for only lcd pixel clock
+     add callback 'enable_clk()' to enable parent clock 'sclk_fimd'.
+v3: remove the callback from the platform data structure
+v4: move clk_enable(sfb->lcd_clk) under the if statement
+v5: add clk_enable/disable(sfb->lcd_clk) to s3c_fb_runtime_suspend/resu=
+me().
+v6: rename dev-fimd-24bpp.c to dev-fimd0.c
+     add 'exynos4_fimd0_setup_clock()' to dev-fimd0.c to setup parent c=
+lock.
+v7: remove parent clock setting from machine directory
+     use =A1=AEgpio_request_one()=A1=AF to simply the gpio setting step
+v8: updated minor fixes
+
+o To Kukjin Kim
+[PATCH V8 1/5] ARM: EXYNOS4: Change clock name for FIMD
+[PATCH V8 2/5] ARM: EXYNOS4: Add resource definition for FIMD
+[PATCH V8 3/5] ARM: EXYNOS4: Add platform device and helper functions f=
+or FIMD
+[PATCH V8 5/5] ARM: EXYNOS4: Add platform data for EXYNOS4 FIMD and LTE=
+480WV  platform-lcd on SMDKC210
+
+o To Paul Mundt
+[PATCH V8 4/5] video: s3c-fb: Add support EXYNOS4
