@@ -1,24 +1,24 @@
 From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH 3/3] ARM: S3C64XX: Cleanup mach/regs-fb.h from mach-s3c64xx
-Date: Wed, 20 Jul 2011 19:02:31 +0530
-Message-ID: <1311168751-30336-4-git-send-email-ajaykumar.rs@samsung.com>
+Subject: [PATCH 1/3] ARM: S5PC100: Cleanup mach/regs-fb.h from mach-s5pc100
+Date: Wed, 20 Jul 2011 19:02:29 +0530
+Message-ID: <1311168751-30336-2-git-send-email-ajaykumar.rs@samsung.com>
 References: <1311168751-30336-1-git-send-email-ajaykumar.rs@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:13897 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750979Ab1GTNhU (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:35141 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750979Ab1GTNhT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jul 2011 09:37:20 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Wed, 20 Jul 2011 09:37:19 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOM00LB6WHUW270@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 20 Jul 2011 22:37:19 +0900 (KST)
+ 2010)) with ESMTP id <0LOM00MRYWHWNU80@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 20 Jul 2011 22:37:17 +0900 (KST)
 Received: from Hawshines.sisodomain.com ([107.108.83.161])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0LOM00AJWWHWME@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 20 Jul 2011 22:37:20 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Wed, 20 Jul 2011 22:37:17 +0900 (KST)
 In-reply-to: <1311168751-30336-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -28,238 +28,154 @@ Use plat/regs-fb-v4.h in machine files instead of mach/regs-fb.h.
 
 Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 ---
- arch/arm/mach-s3c64xx/include/mach/regs-fb.h |   21 ---------------------
- arch/arm/mach-s3c64xx/mach-anw6410.c         |    2 +-
- arch/arm/mach-s3c64xx/mach-crag6410.c        |    2 +-
- arch/arm/mach-s3c64xx/mach-hmt.c             |    2 +-
- arch/arm/mach-s3c64xx/mach-mini6410.c        |    2 +-
- arch/arm/mach-s3c64xx/mach-ncp.c             |    2 +-
- arch/arm/mach-s3c64xx/mach-real6410.c        |    2 +-
- arch/arm/mach-s3c64xx/mach-smartq5.c         |    2 +-
- arch/arm/mach-s3c64xx/mach-smartq7.c         |    2 +-
- arch/arm/mach-s3c64xx/mach-smdk6410.c        |    2 +-
- arch/arm/mach-s3c64xx/setup-fb-24bpp.c       |    1 -
- 11 files changed, 9 insertions(+), 31 deletions(-)
- delete mode 100644 arch/arm/mach-s3c64xx/include/mach/regs-fb.h
+ arch/arm/mach-s5pc100/include/mach/regs-fb.h |  105 --------------------------
+ arch/arm/mach-s5pc100/mach-smdkc100.c        |    2 +-
+ arch/arm/mach-s5pc100/setup-fb-24bpp.c       |    1 -
+ 3 files changed, 1 insertions(+), 107 deletions(-)
+ delete mode 100644 arch/arm/mach-s5pc100/include/mach/regs-fb.h
 
-diff --git a/arch/arm/mach-s3c64xx/include/mach/regs-fb.h b/arch/arm/mach-s3c64xx/include/mach/regs-fb.h
+diff --git a/arch/arm/mach-s5pc100/include/mach/regs-fb.h b/arch/arm/mach-s5pc100/include/mach/regs-fb.h
 deleted file mode 100644
-index a06ee0a..0000000
---- a/arch/arm/mach-s3c64xx/include/mach/regs-fb.h
+index 07aa4d6..0000000
+--- a/arch/arm/mach-s5pc100/include/mach/regs-fb.h
 +++ /dev/null
-@@ -1,21 +0,0 @@
--/*
-- * Copyright 2008 Openmoko, Inc.
-- * Copyright 2008 Simtec Electronics
+@@ -1,105 +0,0 @@
+-/* arch/arm/mach-s5pc100/include/mach/regs-fb.h
+- *
 - * Copyright 2009 Samsung Electronics Co.
+- *   Pawel Osciak <p.osciak@samsung.com>
 - *
-- * Pawel Osciak <p.osciak@samsung.com>
-- * Based on plat-s3c/include/plat/regs-fb.h by Ben Dooks <ben@simtec.co.uk>
-- *
-- * Framebuffer register definitions for Samsung S3C64xx.
+- * Framebuffer register definitions for Samsung S5PC100.
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
 -*/
 -
--#ifndef __ASM_ARCH_MACH_REGS_FB_H
--#define __ASM_ARCH_MACH_REGS_FB_H __FILE__
+-#ifndef __ASM_ARCH_REGS_FB_H
+-#define __ASM_ARCH_REGS_FB_H __FILE__
 -
 -#include <plat/regs-fb-v4.h>
 -
--#endif /* __ASM_ARCH_MACH_REGS_FB_H */
-diff --git a/arch/arm/mach-s3c64xx/mach-anw6410.c b/arch/arm/mach-s3c64xx/mach-anw6410.c
-index a53cf14..cb88643 100644
---- a/arch/arm/mach-s3c64xx/mach-anw6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-anw6410.c
-@@ -35,7 +35,6 @@
- #include <asm/mach/irq.h>
- 
- #include <mach/hardware.h>
--#include <mach/regs-fb.h>
- #include <mach/map.h>
- 
- #include <asm/irq.h>
-@@ -44,6 +43,7 @@
- #include <plat/regs-serial.h>
- #include <plat/iic.h>
- #include <plat/fb.h>
-+#include <plat/regs-fb-v4.h>
- 
- #include <mach/s3c6410.h>
- #include <plat/clock.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-index ae51b17..c8d7b5d 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-@@ -44,7 +44,6 @@
- #include <mach/map.h>
- 
- #include <mach/s3c6410.h>
--#include <mach/regs-fb.h>
- #include <mach/regs-sys.h>
- #include <mach/regs-gpio.h>
- #include <mach/regs-modem.h>
-@@ -64,6 +63,7 @@
- #include <plat/adc.h>
- #include <plat/iic.h>
- #include <plat/pm.h>
-+#include <plat/regs-fb-v4.h>
- 
- #include <sound/wm8915.h>
- #include <sound/wm8962.h>
-diff --git a/arch/arm/mach-s3c64xx/mach-hmt.c b/arch/arm/mach-s3c64xx/mach-hmt.c
-index b263958..b3d93cc 100644
---- a/arch/arm/mach-s3c64xx/mach-hmt.c
-+++ b/arch/arm/mach-s3c64xx/mach-hmt.c
-@@ -27,7 +27,6 @@
- #include <asm/mach/irq.h>
- 
- #include <mach/hardware.h>
--#include <mach/regs-fb.h>
- #include <mach/map.h>
- 
- #include <asm/irq.h>
-@@ -42,6 +41,7 @@
- #include <plat/clock.h>
- #include <plat/devs.h>
- #include <plat/cpu.h>
-+#include <plat/regs-fb-v4.h>
- 
- #define UCON S3C2410_UCON_DEFAULT
- #define ULCON (S3C2410_LCON_CS8 | S3C2410_LCON_PNONE)
-diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
-index 89f35e0..527f49b 100644
---- a/arch/arm/mach-s3c64xx/mach-mini6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
+-/* VP1 interface timing control */
+-#define VP1CON0						(0x118)
+-#define VP1_RATECON_EN					(1 << 31)
+-#define VP1_CLKRATE_MASK				(0xff)
+-
+-#define VP1CON1						(0x11c)
+-#define VP1_VTREGCON_EN					(1 << 31)
+-#define VP1_VBPD_MASK					(0xfff)
+-#define VP1_VBPD_SHIFT					(16)
+-
+-
+-#define WPALCON_H					(0x19c)
+-#define WPALCON_L					(0x1a0)
+-
+-/* Palette control for WPAL0 and WPAL1 is the same as in S3C64xx, but
+- * different for WPAL2-4
+- */
+-/* In WPALCON_L (aka WPALCON) */
+-#define WPALCON_W1PAL_32BPP_A888			(0x7 << 3)
+-#define WPALCON_W0PAL_32BPP_A888			(0x7 << 0)
+-
+-/* To set W2PAL-W4PAL consist of one bit from WPALCON_L and two from WPALCON_H,
+- * e.g. W2PAL[2..0] is made of (WPALCON_H[10..9], WPALCON_L[6]).
+- */
+-#define WPALCON_L_WxPAL_L_MASK				(0x1)
+-#define WPALCON_L_W2PAL_L_SHIFT				(6)
+-#define WPALCON_L_W3PAL_L_SHIFT				(7)
+-#define WPALCON_L_W4PAL_L_SHIFT				(8)
+-
+-#define WPALCON_L_WxPAL_H_MASK				(0x3)
+-#define WPALCON_H_W2PAL_H_SHIFT				(9)
+-#define WPALCON_H_W3PAL_H_SHIFT				(13)
+-#define WPALCON_H_W4PAL_H_SHIFT				(17)
+-
+-/* Per-window alpha value registers */
+-/* For window 0 8-bit alpha values are in VIDW0ALPHAx,
+- * for windows 1-4 alpha values consist of two parts, the 4 low bits are
+- * taken from VIDWxALPHAx and 4 high bits are from VIDOSDxC,
+- * e.g. WIN1_ALPHA0_B[7..0] = (VIDOSD1C[3..0], VIDW1ALPHA0[3..0])
+- */
+-#define VIDWxALPHA0(_win)				(0x200 + (_win * 8))
+-#define VIDWxALPHA1(_win)				(0x204 + (_win * 8))
+-
+-/* Only for window 0 in VIDW0ALPHAx. */
+-#define VIDW0ALPHAx_R(_x)				((_x) << 16)
+-#define VIDW0ALPHAx_R_MASK				(0xff << 16)
+-#define VIDW0ALPHAx_R_SHIFT				(16)
+-#define VIDW0ALPHAx_G(_x)				((_x) << 8)
+-#define VIDW0ALPHAx_G_MASK				(0xff << 8)
+-#define VIDW0ALPHAx_G_SHIFT				(8)
+-#define VIDW0ALPHAx_B(_x)				((_x) << 0)
+-#define VIDW0ALPHAx_B_MASK				(0xff << 0)
+-#define VIDW0ALPHAx_B_SHIFT				(0)
+-
+-/* Low 4 bits of alpha0-1 for windows 1-4 */
+-#define VIDW14ALPHAx_R_L(_x)				((_x) << 16)
+-#define VIDW14ALPHAx_R_L_MASK				(0xf << 16)
+-#define VIDW14ALPHAx_R_L_SHIFT				(16)
+-#define VIDW14ALPHAx_G_L(_x)				((_x) << 8)
+-#define VIDW14ALPHAx_G_L_MASK				(0xf << 8)
+-#define VIDW14ALPHAx_G_L_SHIFT				(8)
+-#define VIDW14ALPHAx_B_L(_x)				((_x) << 0)
+-#define VIDW14ALPHAx_B_L_MASK				(0xf << 0)
+-#define VIDW14ALPHAx_B_L_SHIFT				(0)
+-
+-
+-/* Per-window blending equation control registers */
+-#define BLENDEQx(_win)					(0x244 + ((_win) * 4))
+-#define BLENDEQ1					(0x244)
+-#define BLENDEQ2					(0x248)
+-#define BLENDEQ3					(0x24c)
+-#define BLENDEQ4					(0x250)
+-
+-#define BLENDEQx_Q_FUNC(_x)				((_x) << 18)
+-#define BLENDEQx_Q_FUNC_MASK				(0xf << 18)
+-#define BLENDEQx_P_FUNC(_x)				((_x) << 12)
+-#define BLENDEQx_P_FUNC_MASK				(0xf << 12)
+-#define BLENDEQx_B_FUNC(_x)				((_x) << 6)
+-#define BLENDEQx_B_FUNC_MASK				(0xf << 6)
+-#define BLENDEQx_A_FUNC(_x)				((_x) << 0)
+-#define BLENDEQx_A_FUNC_MASK				(0xf << 0)
+-
+-#define BLENDCON					(0x260)
+-#define BLENDCON_8BIT_ALPHA				(1 << 0)
+-
+-
+-#endif /* __ASM_ARCH_REGS_FB_H */
+-
+diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-s5pc100/mach-smdkc100.c
+index 0525cb3..38789f7 100644
+--- a/arch/arm/mach-s5pc100/mach-smdkc100.c
++++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
 @@ -29,7 +29,6 @@
  #include <asm/mach/map.h>
  
  #include <mach/map.h>
 -#include <mach/regs-fb.h>
  #include <mach/regs-gpio.h>
- #include <mach/regs-modem.h>
- #include <mach/regs-srom.h>
-@@ -42,6 +41,7 @@
- #include <plat/nand.h>
- #include <plat/regs-serial.h>
- #include <plat/ts.h>
-+#include <plat/regs-fb-v4.h>
  
  #include <video/platform_lcd.h>
- 
-diff --git a/arch/arm/mach-s3c64xx/mach-ncp.c b/arch/arm/mach-s3c64xx/mach-ncp.c
-index c498649..01c6857 100644
---- a/arch/arm/mach-s3c64xx/mach-ncp.c
-+++ b/arch/arm/mach-s3c64xx/mach-ncp.c
-@@ -30,7 +30,6 @@
- #include <asm/mach/irq.h>
- 
- #include <mach/hardware.h>
--#include <mach/regs-fb.h>
- #include <mach/map.h>
- 
- #include <asm/irq.h>
-@@ -44,6 +43,7 @@
- #include <plat/clock.h>
- #include <plat/devs.h>
- #include <plat/cpu.h>
-+#include <plat/regs-fb-v4.h>
- 
- #define UCON S3C2410_UCON_DEFAULT
- #define ULCON S3C2410_LCON_CS8 | S3C2410_LCON_PNONE
-diff --git a/arch/arm/mach-s3c64xx/mach-real6410.c b/arch/arm/mach-s3c64xx/mach-real6410.c
-index 4957ab0..95b04b1 100644
---- a/arch/arm/mach-s3c64xx/mach-real6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-real6410.c
-@@ -30,7 +30,6 @@
- #include <asm/mach/map.h>
- 
- #include <mach/map.h>
--#include <mach/regs-fb.h>
- #include <mach/regs-gpio.h>
- #include <mach/regs-modem.h>
- #include <mach/regs-srom.h>
-@@ -43,6 +42,7 @@
- #include <plat/nand.h>
- #include <plat/regs-serial.h>
- #include <plat/ts.h>
-+#include <plat/regs-fb-v4.h>
- 
- #include <video/platform_lcd.h>
- 
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq5.c b/arch/arm/mach-s3c64xx/mach-smartq5.c
-index 3a3e5ac..342e8df 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq5.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq5.c
-@@ -21,7 +21,6 @@
- #include <asm/mach/arch.h>
- 
- #include <mach/map.h>
--#include <mach/regs-fb.h>
- #include <mach/regs-gpio.h>
- #include <mach/s3c6410.h>
- 
-@@ -29,6 +28,7 @@
- #include <plat/devs.h>
- #include <plat/fb.h>
- #include <plat/gpio-cfg.h>
-+#include <plat/regs-fb-v4.h>
- 
- #include "mach-smartq.h"
- 
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq7.c b/arch/arm/mach-s3c64xx/mach-smartq7.c
-index e653758..5796397 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq7.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq7.c
-@@ -21,7 +21,6 @@
- #include <asm/mach/arch.h>
- 
- #include <mach/map.h>
--#include <mach/regs-fb.h>
- #include <mach/regs-gpio.h>
- #include <mach/s3c6410.h>
- 
-@@ -29,6 +28,7 @@
- #include <plat/devs.h>
- #include <plat/fb.h>
- #include <plat/gpio-cfg.h>
-+#include <plat/regs-fb-v4.h>
- 
- #include "mach-smartq.h"
- 
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-index e0521e0..209c9b5 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-@@ -48,7 +48,6 @@
- #include <asm/mach/irq.h>
- 
- #include <mach/hardware.h>
--#include <mach/regs-fb.h>
- #include <mach/map.h>
- 
- #include <asm/irq.h>
-@@ -71,6 +70,7 @@
- #include <plat/adc.h>
- #include <plat/ts.h>
+@@ -51,6 +50,7 @@
  #include <plat/keypad.h>
+ #include <plat/ts.h>
+ #include <plat/audio.h>
 +#include <plat/regs-fb-v4.h>
  
- #define UCON S3C2410_UCON_DEFAULT | S3C2410_UCON_UCLK
- #define ULCON S3C2410_LCON_CS8 | S3C2410_LCON_PNONE | S3C2410_LCON_STOPB
-diff --git a/arch/arm/mach-s3c64xx/setup-fb-24bpp.c b/arch/arm/mach-s3c64xx/setup-fb-24bpp.c
-index 8f30911..83d2afb 100644
---- a/arch/arm/mach-s3c64xx/setup-fb-24bpp.c
-+++ b/arch/arm/mach-s3c64xx/setup-fb-24bpp.c
-@@ -17,7 +17,6 @@
+ /* Following are default values for UCON, ULCON and UFCON UART registers */
+ #define SMDKC100_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+diff --git a/arch/arm/mach-s5pc100/setup-fb-24bpp.c b/arch/arm/mach-s5pc100/setup-fb-24bpp.c
+index d31c0f3..8978e4c 100644
+--- a/arch/arm/mach-s5pc100/setup-fb-24bpp.c
++++ b/arch/arm/mach-s5pc100/setup-fb-24bpp.c
+@@ -15,7 +15,6 @@
  #include <linux/fb.h>
  #include <linux/gpio.h>
  
 -#include <mach/regs-fb.h>
+ #include <mach/map.h>
  #include <plat/fb.h>
  #include <plat/gpio-cfg.h>
- 
 -- 
 1.7.0.4
