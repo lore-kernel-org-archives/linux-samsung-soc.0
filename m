@@ -1,244 +1,120 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3] ARM: EXYNOS4: Add platform device for dwmci driver.
-Date: Thu, 21 Jul 2011 00:44:27 +0900
-Message-ID: <06c101cc46f3$eb5a4260$c20ec720$%kim@samsung.com>
-References: <1311124933-8133-1-git-send-email-tgih.jun@samsung.com>
+Subject: RE: [PATCH V4 00/13] To use DMA generic APIs for Samsung DMA
+Date: Thu, 21 Jul 2011 01:04:01 +0900
+Message-ID: <06c201cc46f6$a887e840$f997b8c0$%kim@samsung.com>
+References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:54677 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:56869 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751712Ab1GTPod (ORCPT
+	with ESMTP id S1752252Ab1GTQEK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jul 2011 11:44:33 -0400
+	Wed, 20 Jul 2011 12:04:10 -0400
 Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LON00MKX2D5NQA0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 00:44:32 +0900 (KST)
+ 2010)) with ESMTP id <0LON00ME53AWNRB0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 01:04:09 +0900 (KST)
 Received: from kgenekim ([12.23.119.139])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LON003SJ2E8IX@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 00:44:32 +0900 (KST)
-In-reply-to: <1311124933-8133-1-git-send-email-tgih.jun@samsung.com>
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LON00E3O3AW3J@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 01:04:09 +0900 (KST)
+In-reply-to: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Seungwon Jeon' <tgih.jun@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, 'ByungJae Lee' <bjlee@samsung.com>, 'SeungKwon Ko' <skwon.ko@samsung.com>, 'JaeHun Jung' <jh0801.jung@samsung.com>
+To: 'Boojin Kim' <boojin.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Vinod Koul' <vinod.koul@intel.com>, 'Dan Williams' <dan.j.williams@intel.com>, 'Jassi Brar' <jassisinghbrar@gmail.com>
 
-Seungwon Jeon wrote:
+Boojin Kim wrote:
 > 
-> This patch adds platform device for Synopsys DesignWare Multimedia Card
-> Interface driver.
+> This patchset adds support DMA generic APIs for Samsung DMA.
+> V4 doesn't has whole patch series and only has the patches differed from
+V3.
 > 
-> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
-> ---
->  arch/arm/mach-exynos4/Kconfig              |    5 ++
->  arch/arm/mach-exynos4/Makefile             |    1 +
->  arch/arm/mach-exynos4/dev-dwmci.c          |   82
-> ++++++++++++++++++++++++++++
->  arch/arm/mach-exynos4/include/mach/dwmci.h |   20 +++++++
->  arch/arm/mach-exynos4/include/mach/irqs.h  |    1 +
->  arch/arm/mach-exynos4/include/mach/map.h   |    1 +
->  arch/arm/plat-samsung/include/plat/devs.h  |    1 +
->  7 files changed, 111 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-exynos4/dev-dwmci.c
->  create mode 100644 arch/arm/mach-exynos4/include/mach/dwmci.h
+> Changes from V3:
+> - Divided 03-patch into two patchs.
+> 	- First is 03-1-patch for DMA_SLAVE_CONFIG command.
+> 	- Another is 03-2-patch for DMA_CYCLIC capability.
+> - Code clean-up
+> 	- Remove unnecessary variable referance.
+> 	- Remove redunancy code
 > 
-> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-> index a4fb109..31f798c 100644
-> --- a/arch/arm/mach-exynos4/Kconfig
-> +++ b/arch/arm/mach-exynos4/Kconfig
-> @@ -36,6 +36,11 @@ config EXYNOS4_DEV_SYSMMU
->  	help
->  	  Common setup code for SYSTEM MMU in EXYNOS4
-> 
-> +config EXYNOS4_DEV_DWMCI
-> +	bool
-> +	help
-> +	  Compile in platform device definitions for DWMCI
-> +
->  config EXYNOS4_SETUP_I2C1
->  	bool
->  	help
-> diff --git a/arch/arm/mach-exynos4/Makefile
-b/arch/arm/mach-exynos4/Makefile
-> index c3c70ab..4c4ea6b 100644
-> --- a/arch/arm/mach-exynos4/Makefile
-> +++ b/arch/arm/mach-exynos4/Makefile
-> @@ -38,6 +38,7 @@ obj-y					+= dev-
-> audio.o
->  obj-$(CONFIG_EXYNOS4_DEV_AHCI)		+= dev-ahci.o
->  obj-$(CONFIG_EXYNOS4_DEV_PD)		+= dev-pd.o
->  obj-$(CONFIG_EXYNOS4_DEV_SYSMMU)	+= dev-sysmmu.o
-> +obj-$(CONFIG_EXYNOS4_DEV_DWMCI)	+= dev-dwmci.o
-> 
->  obj-$(CONFIG_EXYNOS4_SETUP_FIMC)	+= setup-fimc.o
->  obj-$(CONFIG_EXYNOS4_SETUP_I2C1)	+= setup-i2c1.o
-> diff --git a/arch/arm/mach-exynos4/dev-dwmci.c
-b/arch/arm/mach-exynos4/dev-
-> dwmci.c
-> new file mode 100644
-> index 0000000..b025db4
-> --- /dev/null
-> +++ b/arch/arm/mach-exynos4/dev-dwmci.c
-> @@ -0,0 +1,82 @@
-> +/*
-> + * linux/arch/arm/mach-exynos4/dev-dwmci.c
-> + *
-> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * Platform device for Synopsys DesignWare Mobile Storage IP
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/dma-mapping.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/mmc/dw_mmc.h>
-> +
-> +#include <plat/devs.h>
-> +
-> +#include <mach/map.h>
-> +
-> +static int exynos4_dwmci_get_bus_wd(u32 slot_id)
-> +{
-> +	return 4;
-> +}
-> +
-> +static int exynos4_dwmci_init(u32 slot_id, irq_handler_t handler, void
-*data)
-> +{
-> +	return 0;
-> +}
-> +
-> +static struct resource exynos4_dwmci_resource[] = {
-> +	[0] = {
-> +		.start	= EXYNOS4_PA_DWMCI,
-> +		.end	= EXYNOS4_PA_DWMCI + SZ_4K - 1,
-> +		.flags	= IORESOURCE_MEM,
-> +	},
-> +	[1] = {
-> +		.start	= IRQ_DWMCI,
-> +		.end	= IRQ_DWMCI,
-> +		.flags	= IORESOURCE_IRQ,
-> +	}
-> +};
-> +
-> +static struct dw_mci_board exynos4_dwci_pdata = {
-> +	.num_slots			= 1,
-> +	.quirks				=
-> DW_MCI_QUIRK_BROKEN_CARD_DETECTION,
-> +	.bus_hz				= 80 * 1000 * 1000,
-> +	.detect_delay_ms	= 200,
-> +	.init				= exynos4_dwmci_init,
-> +	.get_bus_wd			= exynos4_dwmci_get_bus_wd,
-> +};
-> +
-> +static u64 exynos4_dwmci_dmamask = DMA_BIT_MASK(32);
-> +
-> +struct platform_device exynos4_device_dwmci = {
-> +	.name		= "dw_mmc",
-> +	.id		= -1,
-> +	.num_resources	= ARRAY_SIZE(exynos4_dwmci_resource),
-> +	.resource	= exynos4_dwmci_resource,
-> +	.dev		= {
-> +		.dma_mask		= &exynos4_dwmci_dmamask,
-> +		.coherent_dma_mask	= DMA_BIT_MASK(32),
-> +		.platform_data	= &exynos4_dwci_pdata,
-> +	},
-> +};
-> +
-> +void __init exynos4_dwmci_set_platdata(struct dw_mci_board *pd)
-> +{
-> +	struct dw_mci_board *npd;
-> +
-> +	npd = s3c_set_platdata(pd, sizeof(struct dw_mci_board),
-> +			&exynos4_device_dwmci);
-> +
-> +	if (!npd->init)
-> +		npd->init = exynos4_dwmci_init;
-> +	if (!npd->get_bus_wd)
-> +		npd->get_bus_wd = exynos4_dwmci_get_bus_wd;
-> +}
-> diff --git a/arch/arm/mach-exynos4/include/mach/dwmci.h b/arch/arm/mach-
-> exynos4/include/mach/dwmci.h
-> new file mode 100644
-> index 0000000..7ce6574
-> --- /dev/null
-> +++ b/arch/arm/mach-exynos4/include/mach/dwmci.h
-> @@ -0,0 +1,20 @@
-> +/* linux/arch/arm/mach-exynos4/include/mach/dwmci.h
-> + *
-> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * Synopsys DesignWare Mobile Storage for EXYNOS4210
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#ifndef __ASM_ARM_ARCH_DWMCI_H
-> +#define __ASM_ARM_ARCH_DWMCI_H __FILE__
-> +
-> +#include <linux/mmc/dw_mmc.h>
-> +
-> +extern void exynos4_dwmci_set_platdata(struct dw_mci_board *pd);
-> +
-> +#endif /* __ASM_ARM_ARCH_DWMCI_H */
-> diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-
-> exynos4/include/mach/irqs.h
-> index 250427f..47ff87f 100644
-> --- a/arch/arm/mach-exynos4/include/mach/irqs.h
-> +++ b/arch/arm/mach-exynos4/include/mach/irqs.h
-> @@ -78,6 +78,7 @@
->  #define IRQ_HSMMC1		IRQ_SPI(74)
->  #define IRQ_HSMMC2		IRQ_SPI(75)
->  #define IRQ_HSMMC3		IRQ_SPI(76)
-> +#define IRQ_DWMCI		IRQ_SPI(77)
-> 
->  #define IRQ_MIPICSI0		IRQ_SPI(78)
-> 
-> diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-
-> exynos4/include/mach/map.h
-> index 3677356..49356d2 100644
-> --- a/arch/arm/mach-exynos4/include/mach/map.h
-> +++ b/arch/arm/mach-exynos4/include/mach/map.h
-> @@ -96,6 +96,7 @@
->  #define EXYNOS4_PA_MIPI_CSIS1		0x11890000
-> 
->  #define EXYNOS4_PA_HSMMC(x)		(0x12510000 + ((x) * 0x10000))
-> +#define EXYNOS4_PA_DWMCI		0x12550000
-> 
->  #define EXYNOS4_PA_SATA			0x12560000
->  #define EXYNOS4_PA_SATAPHY		0x125D0000
-> diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-
-> samsung/include/plat/devs.h
-> index e3b31c2..29fa1cf 100644
-> --- a/arch/arm/plat-samsung/include/plat/devs.h
-> +++ b/arch/arm/plat-samsung/include/plat/devs.h
-> @@ -112,6 +112,7 @@ extern struct platform_device exynos4_device_i2s2;
->  extern struct platform_device exynos4_device_spdif;
->  extern struct platform_device exynos4_device_pd[];
->  extern struct platform_device exynos4_device_ahci;
-> +extern struct platform_device exynos4_device_dwmci;
-> 
->  extern struct platform_device s5p6440_device_pcm;
->  extern struct platform_device s5p6440_device_iis;
-> --
-> 1.7.2.3
+> [PATCH V4 01/13] DMA: PL330: Add support runtime PM for PL330 DMAC
+> [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
+> [PATCH V4 03-2/13] DMA: PL330: Add DMA_CYCLIC capability
+> [PATCH V4 05/13] ARM: SAMSUNG: Add common DMA operations
 
-Applied.
+Dear all,
+
+Is there any comments on this?
+
+
+As a note, this whole series are available in the git repository at:
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+next-samsung-dma
+
+Boojin Kim (14):
+      DMA: PL330: Add support runtime PM for PL330 DMAC
+      DMA: PL330: Update PL330 DMA API driver
+      DMA: PL330: Support DMA_SLAVE_CONFIG command
+      DMA: PL330: Add DMA_CYCLIC capability
+      ARM: SAMSUNG: Update to use PL330-DMA driver
+      ARM: SAMSUNG: Add common DMA operations
+      ARM: EXYNOS4: Use generic DMA PL330 driver
+      ARM: S5PV210: Use generic DMA PL330 driver
+      ARM: S5PC100: Use generic DMA PL330 driver
+      ARM: S5P64X0: Use generic DMA PL330 driver
+      ARM: SAMSUNG: Remove S3C-PL330-DMA driver
+      spi/s3c64xx: Add support DMA engine API
+      ASoC: Samsung: Update DMA interface
+      ARM: SAMSUNG: Remove Samsung specific enum type for dma direction
+
+ arch/arm/mach-exynos4/Kconfig                      |    2 +-
+ arch/arm/mach-exynos4/clock.c                      |   16 +-
+ arch/arm/mach-exynos4/dma.c                        |  323 ++++--
+ arch/arm/mach-exynos4/include/mach/dma.h           |    4 +-
+ arch/arm/mach-s3c2410/include/mach/dma.h           |   20 +-
+ arch/arm/mach-s3c2412/dma.c                        |    4 +-
+ arch/arm/mach-s3c64xx/dma.c                        |   10 +-
+ arch/arm/mach-s3c64xx/include/mach/dma.h           |    8 +-
+ arch/arm/mach-s5p64x0/Kconfig                      |    4 +-
+ arch/arm/mach-s5p64x0/clock-s5p6440.c              |    9 +-
+ arch/arm/mach-s5p64x0/clock-s5p6450.c              |    9 +-
+ arch/arm/mach-s5p64x0/dma.c                        |  317 ++++--
+ arch/arm/mach-s5p64x0/include/mach/dma.h           |    2 +-
+ arch/arm/mach-s5pc100/Kconfig                      |    2 +-
+ arch/arm/mach-s5pc100/clock.c                      |   23 +-
+ arch/arm/mach-s5pc100/dma.c                        |  357 ++++--
+ arch/arm/mach-s5pc100/include/mach/dma.h           |    2 +-
+ arch/arm/mach-s5pv210/Kconfig                      |    2 +-
+ arch/arm/mach-s5pv210/clock.c                      |   16 +-
+ arch/arm/mach-s5pv210/dma.c                        |  346 ++++--
+ arch/arm/mach-s5pv210/include/mach/dma.h           |    2 +-
+ arch/arm/plat-s3c24xx/dma.c                        |   10 +-
+ arch/arm/plat-samsung/Kconfig                      |    8 +-
+ arch/arm/plat-samsung/Makefile                     |    4 +-
+ arch/arm/plat-samsung/dma-ops.c                    |  133 +++
+ arch/arm/plat-samsung/include/plat/dma-ops.h       |   64 +
+ .../include/plat/{s3c-dma-pl330.h => dma-pl330.h}  |   32 +-
+ arch/arm/plat-samsung/include/plat/dma-s3c24xx.h   |    2 +-
+ arch/arm/plat-samsung/include/plat/dma.h           |   10 +-
+ .../plat-samsung/include/plat/s3c-pl330-pdata.h    |   32 -
+ arch/arm/plat-samsung/s3c-dma-ops.c                |  130 ++
+ arch/arm/plat-samsung/s3c-pl330.c                  | 1244
+--------------------
+ drivers/dma/Kconfig                                |    3 +-
+ drivers/dma/pl330.c                                |  270 ++++-
+ drivers/mmc/host/s3cmci.c                          |    6 +-
+ drivers/spi/spi_s3c64xx.c                          |  141 ++--
+ include/linux/amba/pl330.h                         |    2 +-
+ sound/soc/samsung/ac97.c                           |   10 +-
+ sound/soc/samsung/dma.c                            |  144 +--
+ sound/soc/samsung/dma.h                            |    4 +-
+ 40 files changed, 1740 insertions(+), 1987 deletions(-)
+
 Thanks.
 
 Best regards,
