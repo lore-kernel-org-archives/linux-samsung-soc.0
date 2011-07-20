@@ -1,113 +1,211 @@
-From: "G, Manjunath Kondaiah" <manjugk@ti.com>
-Subject: Re: [PATCH 2/2] arm: dt: Add device tree support for i2c instance 1
- on exynos4 dt machine
-Date: Tue, 19 Jul 2011 22:35:01 +0530
-Message-ID: <CAC63_iQcia64iBq653S+3_Yj8mgfbGSfHdGXevFe8urj9RpF-w@mail.gmail.com>
-References: <1310950241-13602-1-git-send-email-thomas.abraham@linaro.org>
-	<1310950241-13602-3-git-send-email-thomas.abraham@linaro.org>
-	<CAP6yH7dUnqhvSA8AYx2R9ZZ1mBL=YMz6oMiJVpphA1FhgLHOvw@mail.gmail.com>
-	<CACxGe6v+-H+W4H-5-gvEP+8j91NsGpVZkS595zSt8Lju74taWw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: [PATCH v3] ARM: EXYNOS4: Add platform device for dwmci driver.
+Date: Wed, 20 Jul 2011 10:22:13 +0900
+Message-ID: <1311124933-8133-1-git-send-email-tgih.jun@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from na3sys009aog118.obsmtp.com ([74.125.149.244]:47999 "EHLO
-	na3sys009aog118.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751289Ab1GSRFD convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Jul 2011 13:05:03 -0400
-In-Reply-To: <CACxGe6v+-H+W4H-5-gvEP+8j91NsGpVZkS595zSt8Lju74taWw@mail.gmail.com>
+Received: from ganesha.gnumonks.org ([213.95.27.120]:52793 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752395Ab1GTB16 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 19 Jul 2011 21:27:58 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: "G, Manjunath Kondaiah" <manjugk@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, ben-linux@fluff.org, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, ByungJae Lee <bjlee@samsung.com>, SeungKwon Ko <skwon.ko@samsung.com>, JaeHun Jung <jh0801.jung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>
 
-On Tue, Jul 19, 2011 at 2:00 AM, Grant Likely <grant.likely@secretlab.c=
-a> wrote:
-> On Mon, Jul 18, 2011 at 5:53 AM, G, Manjunath Kondaiah
-> <manjugk@linaro.org> wrote:
->> Abraham,
->> Few comments on i2c child devices handling:
->>
->> On 18 July 2011 06:20, Thomas Abraham <thomas.abraham@linaro.org> wr=
-ote:
->>> Add device node for i2c instance 1 and list all its connected slave
->>> devices.
->>>
->>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->>> ---
->>> =A0arch/arm/boot/dts/exynos4-smdkv310.dts =A0| =A0 19 +++++++++++++=
-+++++-
->>> =A0arch/arm/mach-exynos4/Kconfig =A0 =A0 =A0 =A0 =A0 | =A0 =A01 +
->>> =A0arch/arm/mach-exynos4/mach-exynos4-dt.c | =A0 =A09 +++++++++
->>> =A03 files changed, 28 insertions(+), 1 deletions(-)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos4-smdkv310.dts b/arch/arm/boot=
-/dts/exynos4-smdkv310.dts
->>> index d65c18c..29c40ed 100644
->>> --- a/arch/arm/boot/dts/exynos4-smdkv310.dts
->>> +++ b/arch/arm/boot/dts/exynos4-smdkv310.dts
->>> @@ -23,7 +23,7 @@
->>> =A0 =A0 =A0 =A0};
->>>
->>> =A0 =A0 =A0 =A0chosen {
->>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 bootargs =3D "root=3D/dev/mmcblk0p1 r=
-ootfstype=3Dext3 rootwait console=3DttySAC1,115200";
->>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 bootargs =3D "root=3D/dev/mmcblk0p1 r=
-ootfstype=3Dext3 rootwait console=3DttySAC1,115200 init=3D/linuxrc";
->>> =A0 =A0 =A0 =A0};
->>>
->>> =A0 =A0 =A0 =A0soc {
->>> @@ -64,5 +64,22 @@
->>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0samsung,sdhci-cd-typ=
-e =3D <0>;
->>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0samsung,sdhci-clkdiv=
--external;
->>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0};
->>> +
->>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 i2c@13870000 {
->>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 compatible =3D "samsu=
-ng,s3c2440-i2c";
->>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 reg =3D <0x13870000 0=
-x100>;
->>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 interrupts =3D <345>;
->>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 samsung,i2c-bus-numbe=
-r =3D <1>;
->>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 samsung,i2c-slave-add=
-r =3D <16>;
->>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 samsung,i2c-sda-delay=
- =3D <100>;
->>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 samsung,i2c-max-bus-f=
-req =3D <100000>;
->>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 #address-cells =3D <1=
->;
->>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 #size-cells =3D <0>;
->>> +
->>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 wm8994@1a {
->>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 compa=
-tible =3D "wlf,wm8994";
->>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 reg =3D=
- <0x1a>;
->>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 };
->>
->> The i2c child devices are board specific.
->> For ex: few boards such as smdkxxx based on exynos4 has wm8994 with
->> i2c1 controller
->> where as other boards based on exynos4 does not have any i2c1 device=
-s.
->> Hence these child entries should go to board specific .dts file righ=
-t?
->
-> No, the i2c bus node should still appear in the SoC .dtsi file. =A0If=
- a
-> board doesn't use a particular i2c bus, then the board.dts file can
-> add a status =3D "disabled"; property to the i2c bus node to disable =
-it.
+This patch adds platform device for Synopsys DesignWare Multimedia Card
+Interface driver.
 
-that's right. I am referring to I2C slave devices. For a given SoC,
-two different
-boards can have different i2c slave devices with different slave
-address. In that case,
-it is better to have i2c child/slave nodes in board .dts file.
+Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+---
+ arch/arm/mach-exynos4/Kconfig              |    5 ++
+ arch/arm/mach-exynos4/Makefile             |    1 +
+ arch/arm/mach-exynos4/dev-dwmci.c          |   82 ++++++++++++++++++++++++++++
+ arch/arm/mach-exynos4/include/mach/dwmci.h |   20 +++++++
+ arch/arm/mach-exynos4/include/mach/irqs.h  |    1 +
+ arch/arm/mach-exynos4/include/mach/map.h   |    1 +
+ arch/arm/plat-samsung/include/plat/devs.h  |    1 +
+ 7 files changed, 111 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-exynos4/dev-dwmci.c
+ create mode 100644 arch/arm/mach-exynos4/include/mach/dwmci.h
 
--M
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index a4fb109..31f798c 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -36,6 +36,11 @@ config EXYNOS4_DEV_SYSMMU
+ 	help
+ 	  Common setup code for SYSTEM MMU in EXYNOS4
+
++config EXYNOS4_DEV_DWMCI
++	bool
++	help
++	  Compile in platform device definitions for DWMCI
++
+ config EXYNOS4_SETUP_I2C1
+ 	bool
+ 	help
+diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
+index c3c70ab..4c4ea6b 100644
+--- a/arch/arm/mach-exynos4/Makefile
++++ b/arch/arm/mach-exynos4/Makefile
+@@ -38,6 +38,7 @@ obj-y					+= dev-audio.o
+ obj-$(CONFIG_EXYNOS4_DEV_AHCI)		+= dev-ahci.o
+ obj-$(CONFIG_EXYNOS4_DEV_PD)		+= dev-pd.o
+ obj-$(CONFIG_EXYNOS4_DEV_SYSMMU)	+= dev-sysmmu.o
++obj-$(CONFIG_EXYNOS4_DEV_DWMCI)	+= dev-dwmci.o
+
+ obj-$(CONFIG_EXYNOS4_SETUP_FIMC)	+= setup-fimc.o
+ obj-$(CONFIG_EXYNOS4_SETUP_I2C1)	+= setup-i2c1.o
+diff --git a/arch/arm/mach-exynos4/dev-dwmci.c b/arch/arm/mach-exynos4/dev-dwmci.c
+new file mode 100644
+index 0000000..b025db4
+--- /dev/null
++++ b/arch/arm/mach-exynos4/dev-dwmci.c
+@@ -0,0 +1,82 @@
++/*
++ * linux/arch/arm/mach-exynos4/dev-dwmci.c
++ *
++ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Platform device for Synopsys DesignWare Mobile Storage IP
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ */
++
++#include <linux/kernel.h>
++#include <linux/dma-mapping.h>
++#include <linux/platform_device.h>
++#include <linux/interrupt.h>
++#include <linux/mmc/dw_mmc.h>
++
++#include <plat/devs.h>
++
++#include <mach/map.h>
++
++static int exynos4_dwmci_get_bus_wd(u32 slot_id)
++{
++	return 4;
++}
++
++static int exynos4_dwmci_init(u32 slot_id, irq_handler_t handler, void *data)
++{
++	return 0;
++}
++
++static struct resource exynos4_dwmci_resource[] = {
++	[0] = {
++		.start	= EXYNOS4_PA_DWMCI,
++		.end	= EXYNOS4_PA_DWMCI + SZ_4K - 1,
++		.flags	= IORESOURCE_MEM,
++	},
++	[1] = {
++		.start	= IRQ_DWMCI,
++		.end	= IRQ_DWMCI,
++		.flags	= IORESOURCE_IRQ,
++	}
++};
++
++static struct dw_mci_board exynos4_dwci_pdata = {
++	.num_slots			= 1,
++	.quirks				= DW_MCI_QUIRK_BROKEN_CARD_DETECTION,
++	.bus_hz				= 80 * 1000 * 1000,
++	.detect_delay_ms	= 200,
++	.init				= exynos4_dwmci_init,
++	.get_bus_wd			= exynos4_dwmci_get_bus_wd,
++};
++
++static u64 exynos4_dwmci_dmamask = DMA_BIT_MASK(32);
++
++struct platform_device exynos4_device_dwmci = {
++	.name		= "dw_mmc",
++	.id		= -1,
++	.num_resources	= ARRAY_SIZE(exynos4_dwmci_resource),
++	.resource	= exynos4_dwmci_resource,
++	.dev		= {
++		.dma_mask		= &exynos4_dwmci_dmamask,
++		.coherent_dma_mask	= DMA_BIT_MASK(32),
++		.platform_data	= &exynos4_dwci_pdata,
++	},
++};
++
++void __init exynos4_dwmci_set_platdata(struct dw_mci_board *pd)
++{
++	struct dw_mci_board *npd;
++
++	npd = s3c_set_platdata(pd, sizeof(struct dw_mci_board),
++			&exynos4_device_dwmci);
++
++	if (!npd->init)
++		npd->init = exynos4_dwmci_init;
++	if (!npd->get_bus_wd)
++		npd->get_bus_wd = exynos4_dwmci_get_bus_wd;
++}
+diff --git a/arch/arm/mach-exynos4/include/mach/dwmci.h b/arch/arm/mach-exynos4/include/mach/dwmci.h
+new file mode 100644
+index 0000000..7ce6574
+--- /dev/null
++++ b/arch/arm/mach-exynos4/include/mach/dwmci.h
+@@ -0,0 +1,20 @@
++/* linux/arch/arm/mach-exynos4/include/mach/dwmci.h
++ *
++ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * Synopsys DesignWare Mobile Storage for EXYNOS4210
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef __ASM_ARM_ARCH_DWMCI_H
++#define __ASM_ARM_ARCH_DWMCI_H __FILE__
++
++#include <linux/mmc/dw_mmc.h>
++
++extern void exynos4_dwmci_set_platdata(struct dw_mci_board *pd);
++
++#endif /* __ASM_ARM_ARCH_DWMCI_H */
+diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-exynos4/include/mach/irqs.h
+index 250427f..47ff87f 100644
+--- a/arch/arm/mach-exynos4/include/mach/irqs.h
++++ b/arch/arm/mach-exynos4/include/mach/irqs.h
+@@ -78,6 +78,7 @@
+ #define IRQ_HSMMC1		IRQ_SPI(74)
+ #define IRQ_HSMMC2		IRQ_SPI(75)
+ #define IRQ_HSMMC3		IRQ_SPI(76)
++#define IRQ_DWMCI		IRQ_SPI(77)
+
+ #define IRQ_MIPICSI0		IRQ_SPI(78)
+
+diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
+index 3677356..49356d2 100644
+--- a/arch/arm/mach-exynos4/include/mach/map.h
++++ b/arch/arm/mach-exynos4/include/mach/map.h
+@@ -96,6 +96,7 @@
+ #define EXYNOS4_PA_MIPI_CSIS1		0x11890000
+
+ #define EXYNOS4_PA_HSMMC(x)		(0x12510000 + ((x) * 0x10000))
++#define EXYNOS4_PA_DWMCI		0x12550000
+
+ #define EXYNOS4_PA_SATA			0x12560000
+ #define EXYNOS4_PA_SATAPHY		0x125D0000
+diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
+index e3b31c2..29fa1cf 100644
+--- a/arch/arm/plat-samsung/include/plat/devs.h
++++ b/arch/arm/plat-samsung/include/plat/devs.h
+@@ -112,6 +112,7 @@ extern struct platform_device exynos4_device_i2s2;
+ extern struct platform_device exynos4_device_spdif;
+ extern struct platform_device exynos4_device_pd[];
+ extern struct platform_device exynos4_device_ahci;
++extern struct platform_device exynos4_device_dwmci;
+
+ extern struct platform_device s5p6440_device_pcm;
+ extern struct platform_device s5p6440_device_iis;
+--
+1.7.2.3
