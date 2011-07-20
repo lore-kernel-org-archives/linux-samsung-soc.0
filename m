@@ -1,141 +1,216 @@
-From: Boojin Kim <boojin.kim@samsung.com>
-Subject: RE: [PATCH V3 00/13] To use DMA generic APIs for Samsung DMA
-Date: Wed, 20 Jul 2011 15:21:11 +0900
-Message-ID: <002201cc46a5$397d1a70$ac774f50$%kim@samsung.com>
-References: <058801cc466d$349ebe60$9ddc3b20$%kim@samsung.com>
-Content-Transfer-Encoding: 7BIT
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: Re: [PATCH v2 2/3] ARM: EXYNOS4: Add sclk_spdif clocks.
+Date: Wed, 20 Jul 2011 15:22:05 +0530
+Message-ID: <CAHfPSqAWxasV--nXtC7JBsV3yKQLY1MVGp=HMAdy-gnB8c-urA@mail.gmail.com>
+References: <1308655463-8787-1-git-send-email-ch.naveen@samsung.com>
+ <1308655463-8787-3-git-send-email-ch.naveen@samsung.com> <048301cc450c$37dc4b90$a794e2b0$%kim@samsung.com>
+ <CAHfPSqAAmu+DMTuiT89TpQ7He-HVqBcA+HHpziG0CyviGrtd_g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:48025 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751326Ab1GTGVP (ORCPT
+Received: from mail-iw0-f174.google.com ([209.85.214.174]:44215 "EHLO
+	mail-iw0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750745Ab1GTJw0 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jul 2011 02:21:15 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOM00MCCCB1CL20@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 20 Jul 2011 15:21:14 +0900 (KST)
-Received: from DOBOOJINKIM03 (12-23-120-72.csky.net [12.23.120.72])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LOM00G9LCBD0H@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 20 Jul 2011 15:21:14 +0900 (KST)
-In-reply-to: <058801cc466d$349ebe60$9ddc3b20$%kim@samsung.com>
-Content-language: ko
+	Wed, 20 Jul 2011 05:52:26 -0400
+Received: by iwn6 with SMTP id 6so43731iwn.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Jul 2011 02:52:25 -0700 (PDT)
+In-Reply-To: <CAHfPSqAAmu+DMTuiT89TpQ7He-HVqBcA+HHpziG0CyviGrtd_g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jassi Brar' <jassisinghbrar@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Vinod Koul' <vinod.koul@intel.com>, 'Dan Williams' <dan.j.williams@intel.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Liam Girdwood' <lrg@ti.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, jassisinghbrar@gmail.com, sbkim73@samsung.com, sw.youn@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Jassi Brar wrote:
-> Sent: Monday, July 18, 2011 8:36 PM
-> To: Kukjin Kim
-> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
-> Vinod Koul; Dan Williams; Grant Likely; Liam Girdwood; Mark Brown; Linus
-> Walleij
-> Subject: Re: [PATCH V3 00/13] To use DMA generic APIs for Samsung DMA
+Hi Everyone,
+
+Any suggestions regarding this below problem.
+
+On 18 July 2011 16:55, Naveen Krishna Ch <naveenkrishna.ch@gmail.com> w=
+rote:
+> Hi Every one,
 >
-> On Sat, Jul 16, 2011 at 12:14 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > Following is diagram of this changes
-> >
-> > +---------------------------------------------------------------------+
-> > | Each drivers which uses DMA                                         |
-> > +---------------------------------------------------------------------+
-> > | S3C DMA API (such as s3c2410_dma_xxxx)                              |
-> > +-------------------------------+-------------------------------------+
-> > | DMA driver for S3C24XX        | S3C PL330 DMA API driver            |
-> > | PL080 DMA driver for S3C64XX  | (arch/arm/plat-samsung/s3c-pl330.c) |
-> > |                               +-------------------------------------+
-> > | (arch/arm/plat-s3c24xx/dma.c) | Common DMA core driver              |
-> > | (arch/arm/mach-s3c64xx/dma.c) | (arch/arm/common/pl330.c)           |
-> > +-------------------------------+-------------------------------------+
-> >                               ||
-> >               (removing S3C DMA API for PL330)
-> >                               ||
-> >                               \/
-> > +---------------------------------------------------------------------+
-> > | Each drivers which uses DMA                                         |
-> > +-------------------------------+-------------------------------------+
-> > | S3C DMA API(s3c2410_dma_xxx)  | DMA generic API for PL330           |
-> > +-------------------------------+-------------------------------------+
-> > | DMA driver for S3C24XX        | PL330 DMA API driver                |
-> > | PL080 DMA driver for S3C64XX  | (drivers/dma/pl330.c)               |
-> > |                               +-------------------------------------+
-> > | (arch/arm/plat-s3c24xx/dma.c) | Common DMA core driver              |
-> > | (arch/arm/mach-s3c64xx/dma.c) | (arch/arm/common/pl330.c)           |
-> > +-------------------------------+-------------------------------------+
-> >
+> On 18 July 2011 11:03, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>> Naveen Krishna Chatradhi wrote:
+>>>
+>>> Add the sclk_spdif clock is of type 'struct clksrc_clk' clock.
+>>> Also, add clk_spdifextclk clocks of type 'struct clk' clock.
+>>>
+>>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+>>> ---
+>>> =A0arch/arm/mach-exynos4/clock.c | =A0 35
+>>> +++++++++++++++++++++++++++++++++++
+>>> =A01 files changed, 35 insertions(+), 0 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/=
+clock.c
+>>> index 937335a..feeb27e 100644
+>>> --- a/arch/arm/mach-exynos4/clock.c
+>>> +++ b/arch/arm/mach-exynos4/clock.c
+>>> @@ -64,6 +64,11 @@ static struct clk clk_audiocdclk2 =3D {
+>>> =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "audiocdclk",
+>>> =A0};
+>>>
+>>> +static struct clk clk_spdifextclk =3D {
+>>> + =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "spdif_extclk",
+>>> + =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+>>> +};
+>>> +
+>>> =A0static int exynos4_clksrc_mask_top_ctrl(struct clk *clk, int ena=
+ble)
+>>> =A0{
+>>> =A0 =A0 =A0 return s5p_gatectrl(S5P_CLKSRC_MASK_TOP, clk, enable);
+>>> @@ -550,6 +555,11 @@ static struct clk init_clocks_off[] =3D {
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clk=
+_ip_peril_ctrl,
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 21),
+>>> =A0 =A0 =A0 }, {
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "spdif",
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clk_i=
+p_peril_ctrl,
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 26),
+>>> + =A0 =A0 }, {
+>>
+>> Need to re-work based on clkdev :)
+> Sure, will rebase on updated for-next branch.
+>>
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "ac97",
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clk=
+_ip_peril_ctrl,
+>>> @@ -801,6 +811,30 @@ static struct clk init_clocks[] =3D {
+>>> =A0 =A0 =A0 }
+>>> =A0};
+>>>
+>>> +static struct clk *clkset_sclk_spdif_list[] =3D {
+>>> + =A0 =A0 [0] =3D &clk_sclk_audio0.clk,
+>>> + =A0 =A0 [1] =3D &clk_sclk_audio1.clk,
+>>> + =A0 =A0 [2] =3D &clk_sclk_audio2.clk,
+>>> + =A0 =A0 [3] =3D &clk_spdifextclk,
+>>> +};
+>>> +
+>>> +static struct clksrc_sources clkset_sclk_spdif =3D {
+>>> + =A0 =A0 .sources =A0 =A0 =A0 =A0=3D clkset_sclk_spdif_list,
+>>> + =A0 =A0 .nr_sources =A0 =A0 =3D ARRAY_SIZE(clkset_sclk_spdif_list=
+),
+>>> +};
+>>> +
+>>> +static struct clksrc_clk clk_sclk_spdif =3D {
+>>> + =A0 =A0 .clk =A0 =A0=3D {
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "sclk_spdif=
+",
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D -1,
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clksr=
+c_mask_peril1_ctrl,
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 8),
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 .ops =A0 =A0 =A0 =A0 =A0 =A0=3D &s5p_sclk=
+_spdif_ops,
+>>> + =A0 =A0 },
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 .sources =3D &clkset_sclk_spdif,
+>>> + =A0 =A0 =A0 =A0 =A0 =A0 .reg_src =3D { .reg =3D S5P_CLKSRC_PERIL1=
+, .shift =3D 8, .size =3D 2
+>> },
+>>> +};
+>>
+>> Hmm...is it possible to move this into struct clksrc_clk clksrcs[] ?
+> When i try to move it under struct clksrc_clk clksrcs[], I encountere=
+d
+> a problem with .ops field
+> The sample code as follows (I'm not sure if i can copy paste the code=
+ for RFC)
 >
-> Please share what drivers and use-cases have been tested with the patchset.
+> +static struct clk *clkset_sclk_spdif_list[] =3D {
+> + =A0 =A0 =A0 [0] =3D &clk_sclk_audio0.clk,
+> + =A0 =A0 =A0 [1] =3D &clk_sclk_audio1.clk,
+> + =A0 =A0 =A0 [2] =3D &clk_sclk_audio2.clk,
+> + =A0 =A0 =A0 [3] =3D &clk_spdifextclk,
+> +};
+> +
+> +static struct clksrc_sources clkset_sclk_spdif =3D {
+> + =A0 =A0 =A0 .sources =A0 =A0 =A0 =A0=3D clkset_sclk_spdif_list,
+> + =A0 =A0 =A0 .nr_sources =A0 =A0 =3D ARRAY_SIZE(clkset_sclk_spdif_li=
+st),
+> +};
+> +
+> =A0static struct clk *clkset_group_list[] =3D {
+> =A0 =A0 =A0 =A0[0] =3D &clk_ext_xtal_mux,
+> =A0 =A0 =A0 =A0[1] =3D &clk_xusbxti,
+> @@ -1175,6 +1197,17 @@ static struct clksrc_clk clksrcs[] =3D {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.parent =A0 =A0 =A0 =A0=
+ =3D &clk_sclk_audio2.clk,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0},
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.reg_div =3D { .reg =3D S5P_CLKDIV_PER=
+IL4, .shift =3D 20, .size =3D 8 },
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .clk =A0 =A0=3D {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0=
+ =3D "sclk_spdif",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =A0 =A0 =A0=
+ =A0 =3D 0,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0=
+ =3D &clk_sclk_audio0.clk,
+> + =A0 =A0 =A0 // =A0 =A0 =A0 =A0 =A0 =A0 =A0.ops =A0 =A0 =A0 =A0 =A0 =
+=A0=3D &s5p_sclk_spdif_ops,
+> "When i keep this .ops, The system hangs during boot up.
+> If i don't define the .ops, The WARN_ON would print a stack of call
+> trace for undefined set_rate function"
+> I did not find any set_ops kind off utility functions.
 >
-> > [PATCH V3 02/13] DMA: PL330: Update PL330 DMA API driver
-> > This patch updates following 3 items.
-> >    1. Removes unneccessary code.
-> >    2. Add AMBA, PL330 configuration
-> >    3. Change the meaning of 'peri_id' variable
-> >       from PL330 event number to specific dma id by user.
-> Please separate this patch in to at least 2 parts and explain _why_
-> you do what you do.
+> Kindly, point me towards any better way of doing the same.
 >
-> Ex, the following two snippets looks obviously wrong to me.
-> Though I doubt any better changelog can justify that, but atleast that
-> will help me take it seriously. This is also why I ask for test-report.
-I tested it through "SPI test application" and "aplay". It works well on both.
-
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0=
+ =3D exynos4_clksrc_mask_peril1_ctrl,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=
+=3D (1 << 8),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .sources =3D &clkset_sclk_spdif,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .reg_src =3D { .reg =3D S5P_CLKSRC_PERI=
+L1, .shift =3D 8, .size =3D 2 },
+> =A0 =A0 =A0 =A0},
+> =A0};
 >
-> @@ -19,7 +19,7 @@ struct dma_pl330_peri {
->          * Peri_Req i/f of the DMAC that is
->          * peripheral could be reached from.
->          */
-> -       u8 peri_id; /* {0, 31} */
-> +       u8 peri_id; /* specific dma id */
+>>
+>>> +
+>>> =A0static struct clk *clkset_group_list[] =3D {
+>>> =A0 =A0 =A0 [0] =3D &clk_ext_xtal_mux,
+>>> =A0 =A0 =A0 [1] =3D &clk_xusbxti,
+>>> @@ -1206,6 +1240,7 @@ static struct clksrc_clk *sysclks[] =3D {
+>>> =A0 =A0 =A0 &clk_sclk_audio0,
+>>> =A0 =A0 =A0 &clk_sclk_audio1,
+>>> =A0 =A0 =A0 &clk_sclk_audio2,
+>>> + =A0 =A0 &clk_sclk_spdif,
+>>> =A0};
+>>>
+>>> =A0static int xtal_rate;
+>>> --
+>>> 1.7.2.3
+>>
+>>
+>> Thanks.
+>>
+>> Best regards,
+>> Kgene.
+>> --
+>> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+>> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-sams=
+ung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>>
 >
-> @@ -455,7 +455,7 @@ static struct dma_pl330_desc
-> *pl330_get_desc(struct dma_pl330_chan *pch)
->         async_tx_ack(&desc->txd);
 >
->         desc->req.rqtype = peri->rqtype;
-> -       desc->req.peri = peri->peri_id;
-> +       desc->req.peri = pch->chan.chan_id;
 >
-> Please don't only add to changelogs, but also re-think about the above
-> two changes. Hint: Read the structure definitions header file and how they
-> are used in the pl330 core driver.
+> --
+> Shine bright,
+> (: Nav :)
 >
-> Since the other patches would be affected by what you do here, I am not
-> reviewing them until I have either justification or revert of these.
 
 
-There are two reason why I change it.
 
-First, Original DMA machine code made a "peri_id" variable to contain 
-"event(interrupt) number (0~31)" information.
-But, I think "event(interrupt) number (0~31)" information can be retained in 
-"pch->chan.chan_id" instead of "peri_id" if DMA machine code passes the peri 
-information in order of "event (interrupt) number".
-
-I mean to say that new variable(-->'peri_id') is not need to contain "event 
-(interrupt) number" information. "pch->chan.chan_id" can take place of it. And 
-this makes the meaning of "pch->chan.chan_id" more informative because .
-
-Second, A magic value is required to find the DMA channel desired by DMA 
-client on multi-platform.
-This value is used on "dma_filter_fn filter()" function to find the channel.
-I changed that the meaning of "peri_id" to use for it from "event(interrupt) 
-number (0~31)" to "a magic value".
-If you can accept this change about meaning of 'peri_id', I will create new 
-value on " struct dma_pl330_peri" to contain a magic value.
-
-I think this patch is good because no need to new value for "a magic value" 
-and make "pch->chan.chan_id" more infomative.
-Do you still want to change this patch?
-
-> > [PATCH V3 03/13] DMA: PL330: Add DMA capabilities
-> Please don't be conservative with number of patches - segregate independent
-> changes in independent patches or you make my life miserable :(
-
-Do you want to separate this patch more finely?
-If yes, I will divide it into two patches. First patch will be for 
-dma_slave_config. Second patch will be for cyclic capability.
-
-> Thnx
-> -jassi
+--=20
+Shine bright,
+(: Nav :)
