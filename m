@@ -1,11 +1,11 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH V8 3/5] ARM: EXYNOS4: Add platform device and helper functions for FIMD
-Date: Thu, 21 Jul 2011 07:54:16 +0900
-Message-ID: <1311202456-18203-1-git-send-email-jg1.han@samsung.com>
+Subject: [PATCH V8 2/5] ARM: EXYNOS4: Add resource definition for FIMD
+Date: Thu, 21 Jul 2011 07:54:09 +0900
+Message-ID: <1311202449-18169-1-git-send-email-jg1.han@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:50985 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:50991 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751545Ab1GTXDM (ORCPT
+	with ESMTP id S1752118Ab1GTXDM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 20 Jul 2011 19:03:12 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
@@ -15,324 +15,51 @@ Cc: Jonghun Han <jonghun.han@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Jing
 
 From: Jonghun Han <jonghun.han@samsung.com>
 
-This patch adds platform device s5p_device_fimd0 for EXYNOS4 FIMD0.
-EXYNOS4 has two FIMDs(FIMD0, FIMD1). FIMD1 will be added later.
-Some definitions used to enable EXYNOS4 FIMD0 are added.
+This patch adds resource definitions for EXYNOS4 FIMD.
+IRQ and SFR definitions are added.
 
 Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
 Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 ---
- arch/arm/mach-exynos4/Kconfig                |    9 ++++
- arch/arm/mach-exynos4/Makefile               |    1 +
- arch/arm/mach-exynos4/cpu.c                  |    3 +
- arch/arm/mach-exynos4/setup-fimd0.c          |   43 ++++++++++++++++
- arch/arm/plat-s5p/Kconfig                    |    5 ++
- arch/arm/plat-s5p/Makefile                   |    1 +
- arch/arm/plat-s5p/dev-fimd0.c                |   67 ++++++++++++++++++++++++++
- arch/arm/plat-samsung/include/plat/devs.h    |    1 +
- arch/arm/plat-samsung/include/plat/fb-core.h |   15 ++++++
- arch/arm/plat-samsung/include/plat/fb.h      |   15 ++++++
- 10 files changed, 160 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-exynos4/setup-fimd0.c
- create mode 100644 arch/arm/plat-s5p/dev-fimd0.c
+ arch/arm/mach-exynos4/include/mach/irqs.h |    4 ++++
+ arch/arm/mach-exynos4/include/mach/map.h  |    3 +++
+ 2 files changed, 7 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index a4fb109..83518b5 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -26,6 +26,11 @@ config EXYNOS4_DEV_AHCI
- 	help
- 	  Compile in platform device definitions for AHCI
+diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-exynos4/include/mach/irqs.h
+index 250427f..0d315a9 100644
+--- a/arch/arm/mach-exynos4/include/mach/irqs.h
++++ b/arch/arm/mach-exynos4/include/mach/irqs.h
+@@ -137,6 +137,10 @@
+ #define IRQ_SYSMMU_MFC_M1_0	COMBINER_IRQ(5, 6)
+ #define IRQ_SYSMMU_PCIE_0	COMBINER_IRQ(5, 7)
  
-+config EXYNOS4_SETUP_FIMD0
-+	bool
-+	help
-+	  Common setup code for FIMD0.
++#define IRQ_FIMD0_FIFO		COMBINER_IRQ(11, 0)
++#define IRQ_FIMD0_VSYNC		COMBINER_IRQ(11, 1)
++#define IRQ_FIMD0_SYSTEM	COMBINER_IRQ(11, 2)
 +
- config EXYNOS4_DEV_PD
- 	bool
- 	help
-@@ -104,6 +109,7 @@ menu "EXYNOS4 Machines"
- config MACH_SMDKC210
- 	bool "SMDKC210"
- 	select CPU_EXYNOS4210
-+	select S5P_DEV_FIMD0
- 	select S3C_DEV_RTC
- 	select S3C_DEV_WDT
- 	select S3C_DEV_I2C1
-@@ -113,6 +119,7 @@ config MACH_SMDKC210
- 	select S3C_DEV_HSMMC3
- 	select EXYNOS4_DEV_PD
- 	select EXYNOS4_DEV_SYSMMU
-+	select EXYNOS4_SETUP_FIMD0
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_SDHCI
- 	help
-@@ -121,6 +128,7 @@ config MACH_SMDKC210
- config MACH_SMDKV310
- 	bool "SMDKV310"
- 	select CPU_EXYNOS4210
-+	select S5P_DEV_FIMD0
- 	select S3C_DEV_RTC
- 	select S3C_DEV_WDT
- 	select S3C_DEV_I2C1
-@@ -132,6 +140,7 @@ config MACH_SMDKV310
- 	select SAMSUNG_DEV_KEYPAD
- 	select EXYNOS4_DEV_PD
- 	select EXYNOS4_DEV_SYSMMU
-+	select EXYNOS4_SETUP_FIMD0
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_KEYPAD
- 	select EXYNOS4_SETUP_SDHCI
-diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
-index c3c70ab..b1077f4 100644
---- a/arch/arm/mach-exynos4/Makefile
-+++ b/arch/arm/mach-exynos4/Makefile
-@@ -40,6 +40,7 @@ obj-$(CONFIG_EXYNOS4_DEV_PD)		+= dev-pd.o
- obj-$(CONFIG_EXYNOS4_DEV_SYSMMU)	+= dev-sysmmu.o
+ #define MAX_COMBINER_NR		16
  
- obj-$(CONFIG_EXYNOS4_SETUP_FIMC)	+= setup-fimc.o
-+obj-$(CONFIG_EXYNOS4_SETUP_FIMD0)	+= setup-fimd0.o
- obj-$(CONFIG_EXYNOS4_SETUP_I2C1)	+= setup-i2c1.o
- obj-$(CONFIG_EXYNOS4_SETUP_I2C2)	+= setup-i2c2.o
- obj-$(CONFIG_EXYNOS4_SETUP_I2C3)	+= setup-i2c3.o
-diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
-index 910ade6..85a0b96 100644
---- a/arch/arm/mach-exynos4/cpu.c
-+++ b/arch/arm/mach-exynos4/cpu.c
-@@ -23,6 +23,7 @@
- #include <plat/exynos4.h>
- #include <plat/sdhci.h>
- #include <plat/devs.h>
-+#include <plat/fb-core.h>
- #include <plat/fimc-core.h>
- #include <plat/iic-core.h>
+ #define S5P_IRQ_EINT_BASE	COMBINER_IRQ(MAX_COMBINER_NR, 0)
+diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
+index 3677356..2a5a6f6 100644
+--- a/arch/arm/mach-exynos4/include/mach/map.h
++++ b/arch/arm/mach-exynos4/include/mach/map.h
+@@ -95,6 +95,8 @@
+ #define EXYNOS4_PA_MIPI_CSIS0		0x11880000
+ #define EXYNOS4_PA_MIPI_CSIS1		0x11890000
  
-@@ -149,6 +150,8 @@ void __init exynos4_map_io(void)
- 	s3c_i2c0_setname("s3c2440-i2c");
- 	s3c_i2c1_setname("s3c2440-i2c");
- 	s3c_i2c2_setname("s3c2440-i2c");
++#define EXYNOS4_PA_FIMD0		0x11C00000
 +
-+	s5p_fb_setname(0, "exynos4-fb");
- }
+ #define EXYNOS4_PA_HSMMC(x)		(0x12510000 + ((x) * 0x10000))
  
- void __init exynos4_init_clocks(int xtal)
-diff --git a/arch/arm/mach-exynos4/setup-fimd0.c b/arch/arm/mach-exynos4/setup-fimd0.c
-new file mode 100644
-index 0000000..ca7ae71
---- /dev/null
-+++ b/arch/arm/mach-exynos4/setup-fimd0.c
-@@ -0,0 +1,43 @@
-+/* linux/arch/arm/mach-exynos4/setup-fimd0.c
-+ *
-+ * Copyright (c) 2009-2011 Samsung Electronics Co., Ltd.
-+ *             http://www.samsung.com
-+ *
-+ * Base Exynos4 FIMD 0 configuration
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/fb.h>
-+#include <linux/gpio.h>
-+
-+#include <plat/gpio-cfg.h>
-+#include <plat/regs-fb-v4.h>
-+
-+#include <mach/map.h>
-+
-+void exynos4_fimd0_gpio_setup_24bpp(void)
-+{
-+	unsigned int reg;
-+
-+	s3c_gpio_cfgrange_nopull(EXYNOS4_GPF0(0), 8, S3C_GPIO_SFN(2));
-+	s3c_gpio_cfgrange_nopull(EXYNOS4_GPF1(0), 8, S3C_GPIO_SFN(2));
-+	s3c_gpio_cfgrange_nopull(EXYNOS4_GPF2(0), 8, S3C_GPIO_SFN(2));
-+	s3c_gpio_cfgrange_nopull(EXYNOS4_GPF3(0), 4, S3C_GPIO_SFN(2));
-+
-+	/*
-+	 * Set DISPLAY_CONTROL register for Display path selection.
-+	 *
-+	 * DISPLAY_CONTROL[1:0]
-+	 * ---------------------
-+	 *  00 | MIE
-+	 *  01 | MDINE
-+	 *  10 | FIMD : selected
-+	 *  11 | FIMD
-+	 */
-+	reg = __raw_readl(S3C_VA_SYS + 0x0210);
-+	reg |= (1 << 1);
-+	__raw_writel(reg, S3C_VA_SYS + 0x0210);
-+}
-diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-index 7f9ff2a..7537ad5 100644
---- a/arch/arm/plat-s5p/Kconfig
-+++ b/arch/arm/plat-s5p/Kconfig
-@@ -71,6 +71,11 @@ config S5P_DEV_FIMC3
- 	help
- 	  Compile in platform device definitions for FIMC controller 3
- 
-+config S5P_DEV_FIMD0
-+	bool
-+	help
-+	  Compile in platform device definitions for FIMD controller 0
-+
- config S5P_DEV_ONENAND
- 	bool
- 	help
-diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-index e234cc4..eec7e24 100644
---- a/arch/arm/plat-s5p/Makefile
-+++ b/arch/arm/plat-s5p/Makefile
-@@ -30,6 +30,7 @@ obj-$(CONFIG_S5P_DEV_FIMC0)	+= dev-fimc0.o
- obj-$(CONFIG_S5P_DEV_FIMC1)	+= dev-fimc1.o
- obj-$(CONFIG_S5P_DEV_FIMC2)	+= dev-fimc2.o
- obj-$(CONFIG_S5P_DEV_FIMC3)	+= dev-fimc3.o
-+obj-$(CONFIG_S5P_DEV_FIMD0)	+= dev-fimd0.o
- obj-$(CONFIG_S5P_DEV_ONENAND)	+= dev-onenand.o
- obj-$(CONFIG_S5P_DEV_CSIS0)	+= dev-csis0.o
- obj-$(CONFIG_S5P_DEV_CSIS1)	+= dev-csis1.o
-diff --git a/arch/arm/plat-s5p/dev-fimd0.c b/arch/arm/plat-s5p/dev-fimd0.c
-new file mode 100644
-index 0000000..f728bb5
---- /dev/null
-+++ b/arch/arm/plat-s5p/dev-fimd0.c
-@@ -0,0 +1,67 @@
-+/* linux/arch/arm/plat-s5p/dev-fimd0.c
-+ *
-+ * Copyright (c) 2009-2011 Samsung Electronics Co., Ltd.
-+ *             http://www.samsung.com
-+ *
-+ * Core file for Samsung Display Controller (FIMD) driver
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/kernel.h>
-+#include <linux/string.h>
-+#include <linux/platform_device.h>
-+#include <linux/fb.h>
-+#include <linux/gfp.h>
-+#include <linux/dma-mapping.h>
-+
-+#include <mach/irqs.h>
-+#include <mach/map.h>
-+
-+#include <plat/fb.h>
-+#include <plat/devs.h>
-+#include <plat/cpu.h>
-+
-+static struct resource s5p_fimd0_resource[] = {
-+	[0] = {
-+		.start	= S5P_PA_FIMD0,
-+		.end	= S5P_PA_FIMD0 + SZ_32K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start	= IRQ_FIMD0_VSYNC,
-+		.end	= IRQ_FIMD0_VSYNC,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	[2] = {
-+		.start	= IRQ_FIMD0_FIFO,
-+		.end	= IRQ_FIMD0_FIFO,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	[3] = {
-+		.start	= IRQ_FIMD0_SYSTEM,
-+		.end	= IRQ_FIMD0_SYSTEM,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+};
-+
-+static u64 fimd0_dmamask = DMA_BIT_MASK(32);
-+
-+struct platform_device s5p_device_fimd0 = {
-+	.name		= "s5p-fb",
-+	.id		= 0,
-+	.num_resources	= ARRAY_SIZE(s5p_fimd0_resource),
-+	.resource	= s5p_fimd0_resource,
-+	.dev		= {
-+		.dma_mask		= &fimd0_dmamask,
-+		.coherent_dma_mask	= DMA_BIT_MASK(32),
-+	},
-+};
-+
-+void __init s5p_fimd0_set_platdata(struct s3c_fb_platdata *pd)
-+{
-+	s3c_set_platdata(pd, sizeof(struct s3c_fb_platdata),
-+			&s5p_device_fimd0);
-+}
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index e3b31c2..81143b7 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -49,6 +49,7 @@ extern struct platform_device s3c64xx_device_ac97;
- extern struct platform_device s3c_device_ts;
- 
- extern struct platform_device s3c_device_fb;
-+extern struct platform_device s5p_device_fimd0;
- extern struct platform_device s3c_device_ohci;
- extern struct platform_device s3c_device_lcd;
- extern struct platform_device s3c_device_wdt;
-diff --git a/arch/arm/plat-samsung/include/plat/fb-core.h b/arch/arm/plat-samsung/include/plat/fb-core.h
-index bca383e..6abcbf1 100644
---- a/arch/arm/plat-samsung/include/plat/fb-core.h
-+++ b/arch/arm/plat-samsung/include/plat/fb-core.h
-@@ -26,4 +26,19 @@ static inline void s3c_fb_setname(char *name)
- #endif
- }
- 
-+/* Re-define device name depending on support. */
-+static inline void s5p_fb_setname(int id, char *name)
-+{
-+	switch (id) {
-+#ifdef CONFIG_S5P_DEV_FIMD0
-+	case 0:
-+		s5p_device_fimd0.name = name;
-+	break;
-+#endif
-+	default:
-+		printk(KERN_ERR "%s: invalid device id(%d)\n", __func__, id);
-+	break;
-+	}
-+}
-+
- #endif /* __ASM_PLAT_FB_CORE_H */
-diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/plat-samsung/include/plat/fb.h
-index cb3ca3a..01f10e4 100644
---- a/arch/arm/plat-samsung/include/plat/fb.h
-+++ b/arch/arm/plat-samsung/include/plat/fb.h
-@@ -74,6 +74,14 @@ struct s3c_fb_platdata {
- extern void s3c_fb_set_platdata(struct s3c_fb_platdata *pd);
- 
- /**
-+ * s5p_fimd0_set_platdata() - Setup the FB device with platform data.
-+ * @pd: The platform data to set. The data is copied from the passed structure
-+ *      so the machine data can mark the data __initdata so that any unused
-+ *      machines will end up dumping their data at runtime.
-+ */
-+extern void s5p_fimd0_set_platdata(struct s3c_fb_platdata *pd);
-+
-+/**
-  * s3c64xx_fb_gpio_setup_24bpp() - S3C64XX setup function for 24bpp LCD
-  *
-  * Initialise the GPIO for an 24bpp LCD display on the RGB interface.
-@@ -94,4 +102,11 @@ extern void s5pc100_fb_gpio_setup_24bpp(void);
-  */
- extern void s5pv210_fb_gpio_setup_24bpp(void);
- 
-+/**
-+ * exynos4_fimd0_gpio_setup_24bpp() - Exynos4 setup function for 24bpp LCD0
-+ *
-+ * Initialise the GPIO for an 24bpp LCD display on the RGB interface 0.
-+ */
-+extern void exynos4_fimd0_gpio_setup_24bpp(void);
-+
- #endif /* __PLAT_S3C_FB_H */
+ #define EXYNOS4_PA_SATA			0x12560000
+@@ -142,6 +144,7 @@
+ #define S5P_PA_FIMC3			EXYNOS4_PA_FIMC3
+ #define S5P_PA_MIPI_CSIS0		EXYNOS4_PA_MIPI_CSIS0
+ #define S5P_PA_MIPI_CSIS1		EXYNOS4_PA_MIPI_CSIS1
++#define S5P_PA_FIMD0			EXYNOS4_PA_FIMD0
+ #define S5P_PA_ONENAND			EXYNOS4_PA_ONENAND
+ #define S5P_PA_ONENAND_DMA		EXYNOS4_PA_ONENAND_DMA
+ #define S5P_PA_SDRAM			EXYNOS4_PA_SDRAM
 -- 
 1.7.1
