@@ -1,86 +1,58 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3 0/6] Update Samsung-SoC ADC to support recent CPUs
-Date: Wed, 20 Jul 2011 21:22:18 +0900
-Message-ID: <069401cc46d7$d33dfdf0$79b9f9d0$%kim@samsung.com>
+Subject: RE: [PATCH v3 1/6] Samsung SoC ADC: use regulator (VDD for ADC).
+Date: Wed, 20 Jul 2011 21:23:26 +0900
+Message-ID: <069501cc46d7$d355f2c0$7a01d840$%kim@samsung.com>
 References: <1309420175-10301-1-git-send-email-myungjoo.ham@samsung.com>
+ <1309420175-10301-2-git-send-email-myungjoo.ham@samsung.com>
+ <201106301122.50800.anarsoul@gmail.com>
+ <20110630160501.GG3249@opensource.wolfsonmicro.com>
+ <037301cc4376$3d7f5a20$b87e0e60$%kim@samsung.com>
+ <20110719154003.GK9652@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:56386 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750936Ab1GTMX1 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:19268 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751006Ab1GTMX1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 20 Jul 2011 08:23:27 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOM00L2LT30W260@mailout2.samsung.com> for
+ 2010)) with ESMTP id <0LOM00M36T32NR80@mailout1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Wed, 20 Jul 2011 21:23:26 +0900 (KST)
 Received: from kgenekim ([12.23.119.139])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0LOM00618T32LH@mmp1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Wed, 20 Jul 2011 21:23:26 +0900 (KST)
-In-reply-to: <1309420175-10301-1-git-send-email-myungjoo.ham@samsung.com>
+In-reply-to: <20110719154003.GK9652@opensource.wolfsonmicro.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, myungjoo.ham@gmail.com
+To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: 'Vasily Khoruzhick' <anarsoul@gmail.com>, linux-arm-kernel@lists.infradead.org, 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, myungjoo.ham@gmail.com, 'Ben Dooks' <ben-linux@fluff.org>
 
-MyungJoo Ham wrote:
+Mark Brown wrote:
 > 
-> Patch 1/6: Add regulator support in ADC driver.
-> 	If CONFIG_REGULATOR is enabled, "vdd" regulator for the ADC driver
-> 	(e.g., "s5p-adc") should exist for the adc driver.
+> On Sat, Jul 16, 2011 at 02:07:13PM +0900, Kukjin Kim wrote:
+> > Mark Brown wrote:
 > 
-> Patch 2/6: Channel selection method for S5PC110 and Exynos4
-> 	Recent Samsung SoCs have different register addresses for
-> 	channel selection. Use "s5p-adc" to support such chips.
+> > > If there isn't a separate supply for the regulators on S3C24xx devices
+> > > then I guess the best option is to provide that supply as a dummy
+> > > regulator in the s3c24xx core code.
 > 
-> Patch 3/6: Bugfix for suspend/resume of ADC driver.
+> > OK, but it means I can't apply this until adding a dummy regulator for
+> > S3C24XX?
 > 
-> Patch 4/6: Support ADC at Exynos4
-> 	Define register addresses and device name for Exynos4
-> 
-> Patch 5/6: Support ADC at S5PC110/S5PV210
-> 	Correct ADC device name for S5PC110/S5PV210
-> 
-> Patch 6/6: Header file correction (plat/devs.h)
-> 	The long-overdue bugfix for compiler errors. ADC for Exynos4 fails
-to
-> 	be compiled without this patch.
-> 
-> 
-> MyungJoo Ham (6):
->   Samsung SoC ADC: use regulator (VDD for ADC).
->   Samsung SoC ADC: Channel selection for S5PV210, S5PC110, and Exynos4
->   Samsung SoC ADC: Revise PM for 12-bit ADC operations
->   ARM: EXYNOS4: Support ADC
->   ARM: S5PC110/S5PV210: Support ADC
->   Samsung SoC: header file revised to prevent declaring duplicated.
-> 
->  arch/arm/mach-exynos4/Kconfig                 |    1 +
->  arch/arm/mach-exynos4/cpu.c                   |    4 +
->  arch/arm/mach-exynos4/include/mach/irqs.h     |    3 +
->  arch/arm/mach-exynos4/include/mach/map.h      |    5 ++
->  arch/arm/mach-s5pv210/cpu.c                   |    2 +-
->  arch/arm/plat-samsung/adc.c                   |   84
-> +++++++++++++++++++------
->  arch/arm/plat-samsung/include/plat/devs.h     |    5 ++
->  arch/arm/plat-samsung/include/plat/regs-adc.h |    1 +
->  8 files changed, 84 insertions(+), 21 deletions(-)
-> 
-> --
-> 1.7.4.1
+> That could always come later as a bug fix :)  The regulator API does
+> have a couple of methods of substituting in a dummy regulator itself,
+> though it does complain a bit, so it should mostly be a simple config
+> change to work around on affected systems.
 
-OK, applied but some comments.
+OK, I agree with your opinions.
 
-- If you want to add just 'note', please add it under '---' not '--'.
-- I don't think we need many developers in Cc like your Cc list.
-- We should fix S3C SoCs' breaks during 3.1-rc.
-
-Thanks.
+Thanks :)
 
 Best regards,
 Kgene.
