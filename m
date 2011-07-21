@@ -1,67 +1,107 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
-Date: Thu, 21 Jul 2011 14:44:28 +0530
-Message-ID: <CABb+yY2obv5JMBiRSXS-4tSCYX+7nVVaA0Q7gurA+NndrGVuvA@mail.gmail.com>
-References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
-	<1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
-	<CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
-	<20110721081138.GL26574@n2100.arm.linux.org.uk>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 3/4] ARM: EXYNOS4: Enable MFC on universal_c210
+Date: Thu, 21 Jul 2011 08:31:18 +0200
+Message-ID: <1311229879-14818-4-git-send-email-m.szyprowski@samsung.com>
+References: <1311229879-14818-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20110721081138.GL26574@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:22578 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751274Ab1GUGb1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 Jul 2011 02:31:27 -0400
+Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0LOO0007I7GDLE80@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 07:31:26 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LOO00E8K7GDPV@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 07:31:25 +0100 (BST)
+In-reply-to: <1311229879-14818-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-T24gVGh1LCBKdWwgMjEsIDIwMTEgYXQgMTo0MSBQTSwgUnVzc2VsbCBLaW5nIC0gQVJNIExpbnV4
-CjxsaW51eEBhcm0ubGludXgub3JnLnVrPiB3cm90ZToKPiBPbiBUaHUsIEp1bCAyMSwgMjAxMSBh
-dCAxMjo0Nzo0OUFNICswNTMwLCBKYXNzaSBCcmFyIHdyb3RlOgo+PiBPbiBXZWQsIEp1bCAyMCwg
-MjAxMSBhdCA0OjE2IFBNLCBCb29qaW4gS2ltIDxib29qaW4ua2ltQHNhbXN1bmcuY29tPiB3cm90
-ZToKPj4gPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGlmIChzbGF2ZV9jb25maWctPmRpcmVjdGlv
-biA9PSBETUFfVE9fREVWSUNFKSB7Cj4+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCBpZiAoc2xhdmVfY29uZmlnLT5kc3RfYWRkcikKPj4gPiArIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHBlcmktPmZpZm9fYWRkciA9IHNsYXZlX2NvbmZp
-Zy0+ZHN0X2FkZHI7Cj4+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBpZiAo
-c2xhdmVfY29uZmlnLT5kc3RfYWRkcl93aWR0aCkKPj4gPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHBlcmktPmJ1cnN0X3N6ID0gX19mZnMoc2xhdmVfY29u
-ZmlnLT5kc3RfYWRkcl93aWR0aCk7Cj4+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCB9IGVsc2Ug
-aWYgKHNsYXZlX2NvbmZpZy0+ZGlyZWN0aW9uID09IERNQV9GUk9NX0RFVklDRSkgewo+PiA+ICsg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgaWYgKHNsYXZlX2NvbmZpZy0+c3JjX2Fk
-ZHIpCj4+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBw
-ZXJpLT5maWZvX2FkZHIgPSBzbGF2ZV9jb25maWctPnNyY19hZGRyOwo+PiA+ICsgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgaWYgKHNsYXZlX2NvbmZpZy0+c3JjX2FkZHJfd2lkdGgp
-Cj4+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBwZXJp
-LT5idXJzdF9zeiA9IF9fZmZzKHNsYXZlX2NvbmZpZy0+c3JjX2FkZHJfd2lkdGgpOwo+PiA+ICsg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgfQo+PiBQTDMzMCBoYXMgZml4ZWQgY2hhbm5lbHMgdG8gcGVy
-aXBoZXJhbHMuCj4+IFNvIEZJRk8gYWRkcmVzc2VzKGJ1cnN0X3N6IHRvbz8pIHNob3VsZCBhbHJl
-YWR5IGJlIHNldCB2aWEgcGxhdGZvcm0gZGF0YS4KPj4gQ2xpZW50IGRyaXZlcnMgc2hvdWxkbid0
-IGJvdGhlci4KPgo+IFRoYXQncyB1dHRlciBjcmFwLCBhbmQgaXNuJ3Qgd2hhdCB0aGUgRE1BIGVu
-Z2luZSBBUEkgaXMgYWJvdXQuCj4KPiBUaGUgYWJvdmUgbG9va3MgY29ycmVjdGx5IGltcGxlbWVu
-dGVkLiDCoFNsYXZlIERNQSBlbmdpbmUgdXNlcnMgYXJlCj4gc3VwcG9zZWQgdG8gc3VwcGx5IHRo
-ZSBkZXZpY2UgRE1BIHJlZ2lzdGVyIGFkZHJlc3MgdmlhIHRoaXMKPiBETUFfU0xBVkVfQ09ORklH
-IGNhbGwuIMKgRG9pbmcgdGhpcyB2aWEgcGxhdGZvcm0gZGF0YSBmb3IgdGhlIERNQQo+IGRldmlj
-ZSBpcyBicmFpbmRlYWQuCgpSYXRoZXIgdGhhbiBoYXZlIDMyIGNsaWVudCBkcml2ZXJzIGV4cGVj
-dCBmaWZvX2FkZHJlc3MgZnJvbSB0aGUKcGxhdGZvcm0gYW5kIHRoZW4KcHJvdmlkZSB0byB0aGUg
-RE1BQywgSU1ITyBpdCBpcyBiZXR0ZXIgZm9yIGEgc2luZ2xlIGRyaXZlcihETUFDKSB0bwpnZXQg
-MzIgYWRkcmVzc2VzCmZyb20gdGhlIHBsYXRmb3JtLgpFc3Agd2hlbiB0aGUgRE1BQyBkcml2ZXIg
-YWxyZWFkeSBleHBlY3Qgc2ltaWxhciBoL3cgcGFyYW1ldGVyIC0tICpkaXJlY3Rpb24qLgoKSSBk
-b24ndCB1bmRlcnN0YW5kIHdoeSBpcyAnZmlmb19hZGRyZXNzJyBhIHByb3BlcnR5IG11Y2ggZGlm
-ZmVyZW50CnRoYW4gJ2RpcmVjdGlvbicgb2YgdGhlCmNoYW5uZWwgPwpJZiBhIGNoYW5uZWwgaXMg
-ZmxleGlibGUgZW5vdWdoIHRvIGNoYW5nZSBpdCdzICdmaWZvX2FkZHJlc3MnLCBtb3N0IHByb2Jh
-Ymx5IGl0CmNvdWxkIGFsc28gY2hhbmdlIGRpcmVjdGlvbiBvZiB0cmFuc2ZlcnMuCiBTbywgd2h5
-IGRvIHdlIHdhbnQgdG8gdGFrZSBzZXJpb3VzbHkgJ2ZpZm9fYWRkcmVzcycgcHJvdmlkZWQgYnkg
-dGhlCmNsaWVudCBkcml2ZXJzCmFuZCBub3QgdGhlICdkaXJlY3Rpb24nID8KCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFp
-bGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlz
-dHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+From: Kamil Debski <k.debski@samsung.com>
+
+Enable MFC device on the universal_c210 boards using the EXYNOS4 SoC.
+
+Signed-off-by: Kamil Debski <k.debski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/mach-exynos4/Kconfig               |    2 ++
+ arch/arm/mach-exynos4/mach-universal_c210.c |   13 +++++++++++++
+ 2 files changed, 15 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index 52fc172..3cc0077 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -175,7 +175,9 @@ config MACH_UNIVERSAL_C210
+ 	select S3C_DEV_I2C1
+ 	select S3C_DEV_I2C3
+ 	select S3C_DEV_I2C5
++	select S5P_DEV_MFC
+ 	select S5P_DEV_ONENAND
++	select EXYNOS4_DEV_PD
+ 	select EXYNOS4_SETUP_I2C1
+ 	select EXYNOS4_SETUP_I2C3
+ 	select EXYNOS4_SETUP_I2C5
+diff --git a/arch/arm/mach-exynos4/mach-universal_c210.c b/arch/arm/mach-exynos4/mach-universal_c210.c
+index 5d8b097..0e280d1 100644
+--- a/arch/arm/mach-exynos4/mach-universal_c210.c
++++ b/arch/arm/mach-exynos4/mach-universal_c210.c
+@@ -31,7 +31,9 @@
+ #include <plat/devs.h>
+ #include <plat/iic.h>
+ #include <plat/gpio-cfg.h>
++#include <plat/mfc.h>
+ #include <plat/sdhci.h>
++#include <plat/pd.h>
+ 
+ #include <mach/map.h>
+ 
+@@ -717,6 +719,10 @@ static struct platform_device *universal_devices[] __initdata = {
+ 	&i2c_gpio12,
+ 	&universal_gpio_keys,
+ 	&s5p_device_onenand,
++	&s5p_device_mfc,
++	&s5p_device_mfc_l,
++	&s5p_device_mfc_r,
++	&exynos4_device_pd[PD_MFC],
+ };
+ 
+ static void __init universal_map_io(void)
+@@ -726,6 +732,11 @@ static void __init universal_map_io(void)
+ 	s3c24xx_init_uarts(universal_uartcfgs, ARRAY_SIZE(universal_uartcfgs));
+ }
+ 
++static void __init universal_reserve(void)
++{
++	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
++}
++
+ static void __init universal_machine_init(void)
+ {
+ 	universal_sdhci_init();
+@@ -746,6 +757,7 @@ static void __init universal_machine_init(void)
+ 
+ 	/* Last */
+ 	platform_add_devices(universal_devices, ARRAY_SIZE(universal_devices));
++	s5p_device_mfc.dev.parent = &exynos4_device_pd[PD_MFC].dev;
+ }
+ 
+ MACHINE_START(UNIVERSAL_C210, "UNIVERSAL_C210")
+@@ -755,4 +767,5 @@ MACHINE_START(UNIVERSAL_C210, "UNIVERSAL_C210")
+ 	.map_io		= universal_map_io,
+ 	.init_machine	= universal_machine_init,
+ 	.timer		= &exynos4_timer,
++	.reserve        = &universal_reserve,
+ MACHINE_END
+-- 
+1.7.1.569.g6f426
