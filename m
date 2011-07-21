@@ -1,142 +1,121 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH V8 5/5] ARM: EXYNOS4: Add platform data for EXYNOS4 FIMD and LTE480WV platform-lcd on SMDKC210
-Date: Thu, 21 Jul 2011 07:54:26 +0900
-Message-ID: <1311202466-18267-1-git-send-email-jg1.han@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 2/6] ARM: S5P64X0: Add register base and IRQ for Framebuffer
+Date: Thu, 21 Jul 2011 10:07:36 +0900
+Message-ID: <003301cc4742$98c51c10$ca4f5430$%kim@samsung.com>
+References: <1310650036-28836-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1310650036-28836-3-git-send-email-ajaykumar.rs@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:37611 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751531Ab1GTXII (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:63765 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751924Ab1GUBHp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jul 2011 19:08:08 -0400
+	Wed, 20 Jul 2011 21:07:45 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LON00F35SGTNP00@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 10:07:44 +0900 (KST)
+Received: from kgenekim ([12.23.119.139])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LON003XYSGWXA@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 10:07:44 +0900 (KST)
+In-reply-to: <1310650036-28836-3-git-send-email-ajaykumar.rs@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Paul Mundt <lethal@linux-sh.org>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org
-Cc: Jonghun Han <jonghun.han@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Jingoo Han <jg1.han@samsung.com>
+To: 'Ajay Kumar' <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lethal@linux-sh.org, jg1.han@samsung.com
 
-This patch adds support EXYNOS4 FIMD0 and LTE480WV LCD pannel
-on SMDKC210 board.
+Ajay Kumar wrote:
+> 
+> This patch adds:
+> o Framebuffer related register mappings and bit fields.
+> o IRQ number being used.
+> 
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+>  arch/arm/mach-s5p64x0/include/mach/irqs.h    |    4 ++++
+>  arch/arm/mach-s5p64x0/include/mach/map.h     |    3 +++
+>  arch/arm/mach-s5p64x0/include/mach/regs-fb.h |   19 +++++++++++++++++++
+>  3 files changed, 26 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm/mach-s5p64x0/include/mach/regs-fb.h
+> 
+> diff --git a/arch/arm/mach-s5p64x0/include/mach/irqs.h b/arch/arm/mach-
+> s5p64x0/include/mach/irqs.h
+> index 513abff..09995b8 100644
+> --- a/arch/arm/mach-s5p64x0/include/mach/irqs.h
+> +++ b/arch/arm/mach-s5p64x0/include/mach/irqs.h
+> @@ -85,6 +85,10 @@
+>  #define IRQ_S3CUART_RX4		IRQ_S5P_UART_RX4
+>  #define IRQ_S3CUART_RX5		IRQ_S5P_UART_RX5
+> 
+> +#define IRQ_LCD_FIFO		IRQ_DISPCON0
+> +#define IRQ_LCD_VSYNC		IRQ_DISPCON1
+> +#define IRQ_LCD_SYSTEM		IRQ_DISPCON2
+> +
+>  /* S5P6450 EINT feature will be added */
+> 
+>  /*
+> diff --git a/arch/arm/mach-s5p64x0/include/mach/map.h b/arch/arm/mach-
+> s5p64x0/include/mach/map.h
+> index 95c9125..c5ef50c 100644
+> --- a/arch/arm/mach-s5p64x0/include/mach/map.h
+> +++ b/arch/arm/mach-s5p64x0/include/mach/map.h
+> @@ -47,6 +47,8 @@
+> 
+>  #define S5P64X0_PA_HSMMC(x)	(0xED800000 + ((x) * 0x100000))
+> 
+> +#define S5P64X0_PA_FB		0xEE000000
+> +
+>  #define S5P64X0_PA_I2S		0xF2000000
+>  #define S5P6450_PA_I2S1		0xF2800000
+>  #define S5P6450_PA_I2S2		0xF2900000
+> @@ -64,6 +66,7 @@
+>  #define S3C_PA_IIC1		S5P6440_PA_IIC1
+>  #define S3C_PA_RTC		S5P64X0_PA_RTC
+>  #define S3C_PA_WDT		S5P64X0_PA_WDT
+> +#define S3C_PA_FB		S5P64X0_PA_FB
+> 
+>  #define S5P_PA_CHIPID		S5P64X0_PA_CHIPID
+>  #define S5P_PA_SROMC		S5P64X0_PA_SROMC
+> diff --git a/arch/arm/mach-s5p64x0/include/mach/regs-fb.h b/arch/arm/mach-
+> s5p64x0/include/mach/regs-fb.h
+> new file mode 100644
+> index 0000000..cbb8d8c
+> --- /dev/null
+> +++ b/arch/arm/mach-s5p64x0/include/mach/regs-fb.h
+> @@ -0,0 +1,19 @@
+> +/*
+> + * linux/arch/arm/mach-s5p64x0/include/mach/regs-fb.h
+> + *
+> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com/
+> + *
+> + * Framebuffer register definitions for Samsung S5P64X0.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#ifndef __ASM_ARCH_MACH_REGS_FB_H
+> +#define __ASM_ARCH_MACH_REGS_FB_H __FILE__
+> +
+> +#include <plat/regs-fb.h>
+> +
+> +#endif /* __ASM_ARCH_MACH_REGS_FB_H */
+> --
+> 1.7.1
 
-Signed-off-by: Jonghun Han <jonghun.han@samsung.com>
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
- arch/arm/mach-exynos4/mach-smdkc210.c |   71 +++++++++++++++++++++++++++++++++
- 1 files changed, 71 insertions(+), 0 deletions(-)
+Since I applied your cleanup mach/regs-fb.h, you have to update this to
+avoid conflicts.
 
-diff --git a/arch/arm/mach-exynos4/mach-smdkc210.c b/arch/arm/mach-exynos4/mach-smdkc210.c
-index e645f7a..31cfcd6 100644
---- a/arch/arm/mach-exynos4/mach-smdkc210.c
-+++ b/arch/arm/mach-exynos4/mach-smdkc210.c
-@@ -9,7 +9,9 @@
- */
- 
- #include <linux/serial_core.h>
-+#include <linux/delay.h>
- #include <linux/gpio.h>
-+#include <linux/lcd.h>
- #include <linux/mmc/host.h>
- #include <linux/platform_device.h>
- #include <linux/smsc911x.h>
-@@ -19,11 +21,15 @@
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
- 
-+#include <video/platform_lcd.h>
-+
- #include <plat/regs-serial.h>
- #include <plat/regs-srom.h>
-+#include <plat/regs-fb-v4.h>
- #include <plat/exynos4.h>
- #include <plat/cpu.h>
- #include <plat/devs.h>
-+#include <plat/fb.h>
- #include <plat/sdhci.h>
- #include <plat/iic.h>
- #include <plat/pd.h>
-@@ -111,6 +117,67 @@ static struct s3c_sdhci_platdata smdkc210_hsmmc3_pdata __initdata = {
- 	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
- };
- 
-+static void lcd_lte480wv_set_power(struct plat_lcd_data *pd,
-+				   unsigned int power)
-+{
-+	if (power) {
-+#if !defined(CONFIG_BACKLIGHT_PWM)
-+		gpio_request_one(EXYNOS4_GPD0(1), GPIOF_OUT_INIT_HIGH, "GPD0");
-+		gpio_free(EXYNOS4_GPD0(1));
-+#endif
-+		/* fire nRESET on power up */
-+		gpio_request(EXYNOS4_GPX0(6), "GPX0");
-+
-+		gpio_direction_output(EXYNOS4_GPX0(6), 1);
-+		mdelay(100);
-+
-+		gpio_set_value(EXYNOS4_GPX0(6), 0);
-+		mdelay(10);
-+
-+		gpio_set_value(EXYNOS4_GPX0(6), 1);
-+		mdelay(10);
-+
-+		gpio_free(EXYNOS4_GPX0(6));
-+	} else {
-+#if !defined(CONFIG_BACKLIGHT_PWM)
-+		gpio_request_one(EXYNOS4_GPD0(1), GPIOF_OUT_INIT_LOW, "GPD0");
-+		gpio_free(EXYNOS4_GPD0(1));
-+#endif
-+	}
-+}
-+
-+static struct plat_lcd_data smdkc210_lcd_lte480wv_data = {
-+	.set_power		= lcd_lte480wv_set_power,
-+};
-+
-+static struct platform_device smdkc210_lcd_lte480wv = {
-+	.name			= "platform-lcd",
-+	.dev.parent		= &s5p_device_fimd0.dev,
-+	.dev.platform_data	= &smdkc210_lcd_lte480wv_data,
-+};
-+
-+static struct s3c_fb_pd_win smdkc210_fb_win0 = {
-+	.win_mode = {
-+		.left_margin	= 13,
-+		.right_margin	= 8,
-+		.upper_margin	= 7,
-+		.lower_margin	= 5,
-+		.hsync_len	= 3,
-+		.vsync_len	= 1,
-+		.xres		= 800,
-+		.yres		= 480,
-+	},
-+	.max_bpp		= 32,
-+	.default_bpp		= 24,
-+};
-+
-+static struct s3c_fb_platdata smdkc210_lcd0_pdata __initdata = {
-+	.win[0]		= &smdkc210_fb_win0,
-+	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
-+	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
-+	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
-+};
-+
- static struct resource smdkc210_smsc911x_resources[] = {
- 	[0] = {
- 		.start	= EXYNOS4_PA_SROM_BANK(1),
-@@ -165,6 +232,8 @@ static struct platform_device *smdkc210_devices[] __initdata = {
- 	&exynos4_device_pd[PD_GPS],
- 	&exynos4_device_sysmmu,
- 	&samsung_asoc_dma,
-+	&s5p_device_fimd0,
-+	&smdkc210_lcd_lte480wv,
- 	&smdkc210_smsc911x,
- };
- 
-@@ -210,6 +279,8 @@ static void __init smdkc210_machine_init(void)
- 	s3c_sdhci2_set_platdata(&smdkc210_hsmmc2_pdata);
- 	s3c_sdhci3_set_platdata(&smdkc210_hsmmc3_pdata);
- 
-+	s5p_fimd0_set_platdata(&smdkc210_lcd0_pdata);
-+
- 	platform_add_devices(smdkc210_devices, ARRAY_SIZE(smdkc210_devices));
- }
- 
--- 
-1.7.1
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
