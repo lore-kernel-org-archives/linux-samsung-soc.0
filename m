@@ -1,114 +1,158 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
-Date: Thu, 21 Jul 2011 12:23:23 +0200
-Message-ID: <CACRpkdaP5D=URqAXAytm9s2e9HRVMB-MzsKZeLJ9v6ktkJUCRA@mail.gmail.com>
-References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
-	<1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
-	<CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
-	<20110721081138.GL26574@n2100.arm.linux.org.uk>
-	<CABb+yY2obv5JMBiRSXS-4tSCYX+7nVVaA0Q7gurA+NndrGVuvA@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH V8 1/5] ARM: EXYNOS4: Change clock name for FIMD
+Date: Thu, 21 Jul 2011 16:16:49 +0900
+Message-ID: <006501cc4776$2ee2a4a0$8ca7ede0$%kim@samsung.com>
+References: <1311202444-18137-1-git-send-email-jg1.han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qy0-f181.google.com ([209.85.216.181]:64924 "EHLO
-	mail-qy0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751408Ab1GUKXY convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:18627 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751099Ab1GUHRG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jul 2011 06:23:24 -0400
-Received: by qyk9 with SMTP id 9so632761qyk.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jul 2011 03:23:23 -0700 (PDT)
-In-Reply-To: <CABb+yY2obv5JMBiRSXS-4tSCYX+7nVVaA0Q7gurA+NndrGVuvA@mail.gmail.com>
+	Thu, 21 Jul 2011 03:17:06 -0400
+In-reply-to: <1311202444-18137-1-git-send-email-jg1.han@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+To: 'Jingoo Han' <jg1.han@samsung.com>, 'Paul Mundt' <lethal@linux-sh.org>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org
+Cc: 'Jonghun Han' <jonghun.han@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>
 
-On Thu, Jul 21, 2011 at 11:14 AM, Jassi Brar <jassisinghbrar@gmail.com>=
- wrote:
-> On Thu, Jul 21, 2011 at 1:41 PM, Russell King - ARM Linux
-> <linux@arm.linux.org.uk> wrote:
->> On Thu, Jul 21, 2011 at 12:47:49AM +0530, Jassi Brar wrote:
->>> PL330 has fixed channels to peripherals.
->>> So FIFO addresses(burst_sz too?) should already be set via platform=
- data.
->>> Client drivers shouldn't bother.
->>
->> That's utter crap, and isn't what the DMA engine API is about.
->>
->> The above looks correctly implemented. =A0Slave DMA engine users are
->> supposed to supply the device DMA register address via this
->> DMA_SLAVE_CONFIG call. =A0Doing this via platform data for the DMA
->> device is braindead.
->
-> Rather than have 32 client drivers expect fifo_address from the
-> platform and then
-> provide to the DMAC, IMHO it is better for a single driver(DMAC) to
-> get 32 addresses
-> from the platform.
+Jingoo Han wrote:
+> 
+> This patch changes clock for FIMD from 'fimd' to 'lcd'.
+> Also, devname for FIMD is changed from 's5pv310-fb' to 'exynos4-fb'.
+> 
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> ---
+>  arch/arm/mach-exynos4/clock.c |   12 ++++++------
+>  1 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
+> index 98b5cc4..778a202 100644
+> --- a/arch/arm/mach-exynos4/clock.c
+> +++ b/arch/arm/mach-exynos4/clock.c
+> @@ -405,13 +405,13 @@ static struct clk init_clocks_off[] = {
+>  		.enable		= exynos4_clk_ip_cam_ctrl,
+>  		.ctrlbit	= (1 << 3),
+>  	}, {
+> -		.name		= "fimd",
+> -		.devname	= "s5pv310-fb.0",
+> +		.name		= "lcd",
+> +		.devname	= "exynos4-fb.0",
+>  		.enable		= exynos4_clk_ip_lcd0_ctrl,
+>  		.ctrlbit	= (1 << 0),
+>  	}, {
+> -		.name		= "fimd",
+> -		.devname	= "s5pv310-fb.1",
+> +		.name		= "lcd",
 
-My idea (when I implemented it) is that the device driver knows the
-physical and virtual base and thus the address where DMA data is
-destined. It knows all other registers, it remaps them, noone else shou=
-ld
-be bothered with containing the knowledge of adress ranges for the
-specific hardware block.
+As I remember, some guys discussed about the clock name before.
 
-Passing this through platform data requires the machine to keep track
-not only of the base adress of the peripheral (as is generally containe=
-d
-in the machine or device tree) but also the offset of specific register=
-s
-in that memory region, which is too much.
+Please refer to the following diagram. Before EXYNOS4210 clk 'lcd' was used
+for FIMD IP core clock and source of the LCD pixel clock. But the mux used
+to select source of LCD pixel clock is removed. So 'lcd' clock is only used
+for core clock of FIMD IP. It isn't used for LCD pixel clock.
 
-Usually this means the offsets are defined in files like <mach/perfoo.h=
->
-which means they can't be pushed down into drivers/foo/foo.c and
-creates unnecessary bindings and de-encapsulation of the driver.
-We want to get rid of such stuff. (I think?)
+As a result clock name was changed from lcd to fimd in the EXYNOS4210
+datasheet.
 
-Therefore I introduced this to confine the different registers into
-the driver itself and ask the DMA engine to transfer to a specific
-address.
+Before EXYNOS4
+           ------------------------------------
+                      dsys bus
+           ----------------+-------------------
+                           |
+                           |1.clk 'lcd'
+                           |
+                           | FIMD block
+                       +---+-----------+
+4.mout_mpll |\         |   |           |
+    --------|m|        | +-+-+ +----+  |
+            |u|-+      | |   +-+core|  |
+            |x| |      | |     +----+  |
+            |/  |      | | |\          |
+                |      | +-|m|  +---+  |
+                |      |   |u|--+div|  |
+                +------+---|x|  +---+  |
+           2.SCLK_FIMD |   |/     |    |
+                       |          |    |
+                       +----------+----+
+                                  |
+           inside of SoC          |
+           -----------------------+--------------------------
+           outside of SoC         |
+                                  | 3.LCD pixel clock
+                                  |
+                          +--------------+
+                          | LCD module   |
+                          +--------------+
 
-> Esp when the DMAC driver already expect similar h/w
-> parameter -- *direction*.
->
-> I don't understand why is 'fifo_address' a property much different
-> than 'direction' of the
-> channel ?
 
-struct dma_slave_config {
-        enum dma_data_direction direction;
-        dma_addr_t src_addr;
-        dma_addr_t dst_addr;
-        enum dma_slave_buswidth src_addr_width;
-        enum dma_slave_buswidth dst_addr_width;
-        u32 src_maxburst;
-        u32 dst_maxburst;
-};
+EXYNOS4210
+           ------------------------------------
+                      dsys bus
+           ----------------+-------------------
+                           |
+                           |1.clk 'fimd'
+                           |
+                           | FIMD block
+                       +---+-----------+
+4.mout_mpll |\         |   |           |
+    --------|m|        |   |   +----+  |
+            |u|-+      |   +---+core|  |
+            |x| |      |       +----+  |
+            |/  |      |               |
+                |      |        +---+  |
+                |      |     +--+div|  |
+                +------+-----+  +---+  |
+           2.SCLK_FIMD |          |    |
+                       |          |    |
+                       +----------+----+
+                                  |
+           inside of SoC          |
+           -----------------------+--------------------------
+           outside of SoC         |
+                                  | 3.LCD pixel clock
+                                  |
+                          +--------------+
+                          | LCD module   |
+                          +--------------+
 
-We do support changing direction as well as src and dst address
-(i.e. FIFO endpoint) at runtime.
+To change devname is ok to me. So will apply only it.
 
-Check drivers/mmc/host/mmci.c for an example of how we switch
-a single channel from TX to RX in runtime using this one property.
+If any problems, please let me know :)
 
-However it has been noted by Russell that the direction member
-is unnecessary since the device_prep_slave_sg() function in the
-dmaengine vtable already takes a direction argument like this:
+Thanks.
 
-        struct dma_async_tx_descriptor *(*device_prep_slave_sg)(
-                struct dma_chan *chan, struct scatterlist *sgl,
-                unsigned int sg_len, enum dma_data_direction direction,
-                unsigned long flags);
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-Therefore the direction setting needs to go from either the config
-struct or the device_prep_slave_sg() call, as right now the channel
-is being told about the direction twice which is not elegant and
-confusing.
 
-So you even have two ways of changing direction at runtime...
-
-Yours,
-Linus Walleij
+> +		.devname	= "exynos4-fb.1",
+>  		.enable		= exynos4_clk_ip_lcd1_ctrl,
+>  		.ctrlbit	= (1 << 0),
+>  	}, {
+> @@ -909,7 +909,7 @@ static struct clksrc_clk clksrcs[] = {
+>  	}, {
+>  		.clk		= {
+>  			.name		= "sclk_fimd",
+> -			.devname	= "s5pv310-fb.0",
+> +			.devname	= "exynos4-fb.0",
+>  			.enable		= exynos4_clksrc_mask_lcd0_ctrl,
+>  			.ctrlbit	= (1 << 0),
+>  		},
+> @@ -919,7 +919,7 @@ static struct clksrc_clk clksrcs[] = {
+>  	}, {
+>  		.clk		= {
+>  			.name		= "sclk_fimd",
+> -			.devname	= "s5pv310-fb.1",
+> +			.devname	= "exynos4-fb.1",
+>  			.enable		= exynos4_clksrc_mask_lcd1_ctrl,
+>  			.ctrlbit	= (1 << 0),
+>  		},
+> --
+> 1.7.1
