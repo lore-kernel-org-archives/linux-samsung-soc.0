@@ -1,227 +1,105 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH] ARM: S5P64X0: External Interrupt Support
-Date: Thu, 21 Jul 2011 06:00:17 -0400
-Message-ID: <1311242417-30843-1-git-send-email-padma.v@samsung.com>
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:36664 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750704Ab1GUEJk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jul 2011 00:09:40 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOO009QL0VZJGA0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 13:09:38 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LOO008CN0VSSP@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 13:09:38 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
+Date: Thu, 21 Jul 2011 13:01:46 +0530
+Message-ID: <CABb+yY1dJbkP9Qb38tHYW=SZXB=TEQ_NGXpWE2jz7Bb0Z-A7Rw@mail.gmail.com>
+References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
+	<1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
+	<CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
+	<000101cc475c$9b5bcdb0$d2136910$%kim@samsung.com>
+	<CABb+yY05U0Q58F93TEZ8xt727e6YAxwxZT2HbeTTV6nVcg5DQw@mail.gmail.com>
+	<000c01cc4770$3a391330$aeab3990$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <000c01cc4770$3a391330$aeab3990$%kim@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Boojin Kim <boojin.kim@samsung.com>
+Cc: Vinod Koul <vinod.koul@intel.com>, linux-samsung-soc@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: padma.v@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Add external interrupt support for S5P64X0.The external interrupt
-group 0(0 to 15) is used for wake-up source in stop and sleep mode.
-Add generic irq chip support
-
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
- arch/arm/mach-s5p64x0/Makefile                 |    2 +-
- arch/arm/mach-s5p64x0/include/mach/regs-gpio.h |   10 ++
- arch/arm/mach-s5p64x0/irq-eint.c               |  151 ++++++++++++++++++++++++
- 3 files changed, 162 insertions(+), 1 deletions(-)
- create mode 100644 arch/arm/mach-s5p64x0/irq-eint.c
-
-diff --git a/arch/arm/mach-s5p64x0/Makefile b/arch/arm/mach-s5p64x0/Makefile
-index ae6bf6f..5f6afdf 100644
---- a/arch/arm/mach-s5p64x0/Makefile
-+++ b/arch/arm/mach-s5p64x0/Makefile
-@@ -13,7 +13,7 @@ obj-				:=
- # Core support for S5P64X0 system
- 
- obj-$(CONFIG_ARCH_S5P64X0)	+= cpu.o init.o clock.o dma.o gpiolib.o
--obj-$(CONFIG_ARCH_S5P64X0)	+= setup-i2c0.o
-+obj-$(CONFIG_ARCH_S5P64X0)	+= setup-i2c0.o irq-eint.o
- obj-$(CONFIG_CPU_S5P6440)	+= clock-s5p6440.o
- obj-$(CONFIG_CPU_S5P6450)	+= clock-s5p6450.o
- 
-diff --git a/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h b/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
-index 0953ef6..6ce2547 100644
---- a/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
-+++ b/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
-@@ -34,4 +34,14 @@
- #define S5P6450_GPQ_BASE		(S5P_VA_GPIO + 0x0180)
- #define S5P6450_GPS_BASE		(S5P_VA_GPIO + 0x0300)
- 
-+/* External interrupt control registers for group0 */
-+
-+#define EINT0CON0_OFFSET		(0x900)
-+#define EINT0MASK_OFFSET		(0x920)
-+#define EINT0PEND_OFFSET		(0x924)
-+
-+#define S5P64X0_EINT0CON0		(S5P_VA_GPIO + EINT0CON0_OFFSET)
-+#define S5P64X0_EINT0MASK		(S5P_VA_GPIO + EINT0MASK_OFFSET)
-+#define S5P64X0_EINT0PEND		(S5P_VA_GPIO + EINT0PEND_OFFSET)
-+
- #endif /* __ASM_ARCH_REGS_GPIO_H */
-diff --git a/arch/arm/mach-s5p64x0/irq-eint.c b/arch/arm/mach-s5p64x0/irq-eint.c
-new file mode 100644
-index 0000000..eeb56f0
---- /dev/null
-+++ b/arch/arm/mach-s5p64x0/irq-eint.c
-@@ -0,0 +1,151 @@
-+/* arch/arm/mach-s5p64x0/irq-eint.c
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd
-+ *		http://www.samsung.com/
-+ *
-+ * Based on linux/arch/arm/mach-s3c64xx/irq-eint.c
-+ *
-+ * S5P64X0 - Interrupt handling for External Interrupts.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/gpio.h>
-+#include <linux/irq.h>
-+#include <linux/io.h>
-+
-+#include <plat/regs-irqtype.h>
-+#include <plat/gpio-cfg.h>
-+
-+#include <mach/regs-gpio.h>
-+#include <mach/regs-clock.h>
-+
-+#define eint_offset(irq)	((irq) - IRQ_EINT(0))
-+
-+static int s5p64x0_irq_eint_set_type(struct irq_data *data, unsigned int type)
-+{
-+	int offs = eint_offset(data->irq);
-+	int shift;
-+	u32 ctrl, mask;
-+	u32 newvalue = 0;
-+
-+	if (offs > 15)
-+		return -EINVAL;
-+
-+	switch (type) {
-+	case IRQ_TYPE_NONE:
-+		printk(KERN_WARNING "No edge setting!\n");
-+		break;
-+	case IRQ_TYPE_EDGE_RISING:
-+		newvalue = S3C2410_EXTINT_RISEEDGE;
-+		break;
-+	case IRQ_TYPE_EDGE_FALLING:
-+		newvalue = S3C2410_EXTINT_FALLEDGE;
-+		break;
-+	case IRQ_TYPE_EDGE_BOTH:
-+		newvalue = S3C2410_EXTINT_BOTHEDGE;
-+		break;
-+	case IRQ_TYPE_LEVEL_LOW:
-+		newvalue = S3C2410_EXTINT_LOWLEV;
-+		break;
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		newvalue = S3C2410_EXTINT_HILEV;
-+		break;
-+	default:
-+		printk(KERN_ERR "No such irq type %d", type);
-+		return -EINVAL;
-+	}
-+
-+	shift = (offs / 2) * 4;
-+	mask = 0x7 << shift;
-+
-+	ctrl = __raw_readl(S5P64X0_EINT0CON0) & ~mask;
-+	ctrl |= newvalue << shift;
-+	__raw_writel(ctrl, S5P64X0_EINT0CON0);
-+
-+	/* Configure the GPIO pin for 6450 or 6440 based on CPU ID */
-+	if (0x50000 == (__raw_readl(S5P64X0_SYS_ID) & 0xFF000))
-+		s3c_gpio_cfgpin(S5P6450_GPN(offs), S3C_GPIO_SFN(2));
-+	else
-+		s3c_gpio_cfgpin(S5P6440_GPN(offs), S3C_GPIO_SFN(2));
-+
-+	return 0;
-+}
-+
-+/*
-+ * s5p64x0_irq_demux_eint
-+ *
-+ * This function demuxes the IRQ from the group0 external interrupts,
-+ * from IRQ_EINT(0) to IRQ_EINT(15). It is designed to be inlined into
-+ * the specific handlers s5p64x0_irq_demux_eintX_Y.
-+ */
-+static inline void s5p64x0_irq_demux_eint(unsigned int start, unsigned int end)
-+{
-+	u32 status = __raw_readl(S5P64X0_EINT0PEND);
-+	u32 mask = __raw_readl(S5P64X0_EINT0MASK);
-+	unsigned int irq;
-+
-+	status &= ~mask;
-+	status >>= start;
-+	status &= (1 << (end - start + 1)) - 1;
-+
-+	for (irq = IRQ_EINT(start); irq <= IRQ_EINT(end); irq++) {
-+		if (status & 1)
-+			generic_handle_irq(irq);
-+		status >>= 1;
-+	}
-+}
-+
-+static void s5p64x0_irq_demux_eint0_3(unsigned int irq, struct irq_desc *desc)
-+{
-+	s5p64x0_irq_demux_eint(0, 3);
-+}
-+
-+static void s5p64x0_irq_demux_eint4_11(unsigned int irq, struct irq_desc *desc)
-+{
-+	s5p64x0_irq_demux_eint(4, 11);
-+}
-+
-+static void s5p64x0_irq_demux_eint12_15(unsigned int irq,
-+					struct irq_desc *desc)
-+{
-+	s5p64x0_irq_demux_eint(12, 15);
-+}
-+
-+static void s5p64x0_alloc_gc(void)
-+{
-+	struct irq_chip_generic *gc;
-+	struct irq_chip_type *ct;
-+
-+	gc = irq_alloc_generic_chip("s5p64x0-eint", 1, S5P_IRQ_EINT_BASE,
-+				    S5P_VA_GPIO, handle_level_irq);
-+	if (!gc) {
-+		printk(KERN_ERR "%s: irq_alloc_generic_chip for group 0"
-+			"external interrupts failed\n", __func__);
-+		return;
-+	}
-+
-+	ct = gc->chip_types;
-+	ct->chip.irq_ack = irq_gc_ack;
-+	ct->chip.irq_mask = irq_gc_mask_set_bit;
-+	ct->chip.irq_unmask = irq_gc_mask_clr_bit;
-+	ct->chip.irq_set_type = s5p64x0_irq_eint_set_type;
-+	ct->regs.ack = EINT0PEND_OFFSET;
-+	ct->regs.mask = EINT0MASK_OFFSET;
-+	irq_setup_generic_chip(gc, IRQ_MSK(16), IRQ_GC_INIT_MASK_CACHE,
-+			       IRQ_NOREQUEST | IRQ_NOPROBE, 0);
-+}
-+
-+static int __init s5p64x0_init_irq_eint(void)
-+{
-+	s5p64x0_alloc_gc();
-+	irq_set_chained_handler(IRQ_EINT0_3, s5p64x0_irq_demux_eint0_3);
-+	irq_set_chained_handler(IRQ_EINT4_11, s5p64x0_irq_demux_eint4_11);
-+	irq_set_chained_handler(IRQ_EINT12_15, s5p64x0_irq_demux_eint12_15);
-+
-+	return 0;
-+}
-+arch_initcall(s5p64x0_init_irq_eint);
--- 
-1.7.0.4
+T24gVGh1LCBKdWwgMjEsIDIwMTEgYXQgMTI6MDQgUE0sIEJvb2ppbiBLaW0gPGJvb2ppbi5raW1A
+c2Ftc3VuZy5jb20+IHdyb3RlOgo+IEphc3NpIEJyYXIgd3JvdGU6Cj4+IFNlbnQ6IFRodXJzZGF5
+LCBKdWx5IDIxLCAyMDExIDI6MDAgUE0KPj4gVG86IEJvb2ppbiBLaW0KPj4gQ2M6IGxpbnV4LWFy
+bS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJu
+ZWwub3JnOwo+PiBWaW5vZCBLb3VsOyBEYW4gV2lsbGlhbXM7IEt1a2ppbiBLaW0KPj4gU3ViamVj
+dDogUmU6IFtQQVRDSCBWNCAwMy0xLzEzXSBETUE6IFBMMzMwOiBTdXBwb3J0IERNQV9TTEFWRV9D
+T05GSUcgY29tbWFuZAo+Pgo+PiBPbiBUaHUsIEp1bCAyMSwgMjAxMSBhdCA5OjQzIEFNLCBCb29q
+aW4gS2ltIDxib29qaW4ua2ltQHNhbXN1bmcuY29tPiB3cm90ZToKPj4KPj4gPj4gPiAtIMKgIMKg
+IMKgIHBsMzMwX3Rhc2tsZXQoKHVuc2lnbmVkIGxvbmcpIHBjaCk7Cj4+ID4+ID4gKyDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCBsaXN0X3NwbGljZV90YWlsX2luaXQoJmxpc3QsICZwZG1hYy0+ZGVzY19w
+b29sKTsKPj4gPj4gPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHNwaW5fdW5sb2NrX2lycXJlc3Rv
+cmUoJnBjaC0+bG9jaywgZmxhZ3MpOwo+PiA+PiA+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgYnJl
+YWs7Cj4+ID4+ID4gKyDCoCDCoCDCoCBjYXNlIERNQV9TTEFWRV9DT05GSUc6Cj4+ID4+IFBsZWFz
+ZSBwcm90ZWN0IHRoaXMgc2VjdGlvbiB0b28gdXNpbmcgc3Bpbl9sb2NrLgo+PiA+IFdoeSBpcyBz
+cGluX2xvY2sgbmVlZCBoZXJlPwo+PiA+IFRoaXMgY29kZSBqdXN0IHNldHMgY29uZmlndXJhdGlv
+biBkYXRhIGludG8gb3duIGNoYW5uZWwgc3RydWN0dXJlLgo+PiBJdCBkb2VzIHNlZW0gdW5uY2Vz
+c2FyeSwgYnV0IHRoZSBjb25maWd1cmF0aW9uIHRoYXQgaXMgc2V0IGhlcmUgaXMgcmVhZAo+PiBp
+biBvdGhlciBwYXJ0cyBvZiB0aGUgZHJpdmVyLiBIb3dldmVyIHVubGlrZWx5IGJ1dCB0aGVyZSBp
+cyB0aGVvcmV0aWNhbAo+PiBwb3NzaWJpbGl0eSBvZiByYWNlIGhlcmUgLSBvbmUgc2hvdWxkbid0
+IGNvdW50IHVwb24gZ29vZG5lc3Mgb2YgY2xpZW50Cj4+IGRyaXZlcnMuCj4gWWVzLCBDbGllbnQg
+ZHJpdmVyIGRvZXNuJ3QgYWZmbGljdCB0aGUgY29uZmlndXJhdGlvbiBkYXRhIGFnYWluLgo+IFNv
+LCBJIHRoaW5rIHNwaW5fbG9jayBpc24ndCByZXF1aXJlZCBoZXJlLgo+Cj4+Cj4+ID4+Cj4+ID4+
+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBpZiAoc2xhdmVfY29uZmlnLT5kaXJlY3Rpb24gPT0g
+RE1BX1RPX0RFVklDRSkgewo+PiA+PiA+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgaWYgKHNsYXZlX2NvbmZpZy0+ZHN0X2FkZHIpCj4+ID4+ID4gKyDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBwZXJpLT5maWZvX2FkZHIgPQo+PiA+PiA+IHNs
+YXZlX2NvbmZpZy0+ZHN0X2FkZHI7Cj4+ID4+ID4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCBpZiAoc2xhdmVfY29uZmlnLT5kc3RfYWRkcl93aWR0aCkKPj4gPj4gPiArIMKgIMKg
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHBlcmktPmJ1cnN0X3N6ID0g
+X19mZnMoc2xhdmVfY29uZmlnLQo+PiA+PiA+ZHN0X2FkZHJfd2lkdGgpOwo+PiA+PiA+ICsgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgfSBlbHNlIGlmIChzbGF2ZV9jb25maWctPmRpcmVjdGlvbiA9PSBE
+TUFfRlJPTV9ERVZJQ0UpCj4+ID4+ID4gewo+PiA+PiA+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+wqAgwqAgwqAgwqAgaWYgKHNsYXZlX2NvbmZpZy0+c3JjX2FkZHIpCj4+ID4+ID4gKyDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBwZXJpLT5maWZvX2FkZHIgPQo+
+PiA+PiA+IHNsYXZlX2NvbmZpZy0+c3JjX2FkZHI7Cj4+ID4+ID4gKyDCoCDCoCDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCBpZiAoc2xhdmVfY29uZmlnLT5zcmNfYWRkcl93aWR0aCkKPj4gPj4g
+PiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHBlcmktPmJ1
+cnN0X3N6ID0gX19mZnMoc2xhdmVfY29uZmlnLQo+PiA+PiA+c3JjX2FkZHJfd2lkdGgpOwo+PiA+
+PiA+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgfQo+PiA+PiBQTDMzMCBoYXMgZml4ZWQgY2hhbm5l
+bHMgdG8gcGVyaXBoZXJhbHMuCj4+ID4+IFNvIEZJRk8gYWRkcmVzc2VzKGJ1cnN0X3N6IHRvbz8p
+IHNob3VsZCBhbHJlYWR5IGJlIHNldCB2aWEgcGxhdGZvcm0gZGF0YS4KPj4gPj4gQ2xpZW50IGRy
+aXZlcnMgc2hvdWxkbid0IGJvdGhlci4KPj4gPgo+PiA+IEZpcnN0LCBETUEgbWFjaGluZSBjb2Rl
+IHNob3VsZCBrbm93IHRoZSBGSUZPIGFkZHJlc3Mgb2YgYWxsIGNsaWVudCBkcml2ZXJzCj4+IHRv
+Cj4+ID4gc2V0IHZpYSBwbGF0Zm9ybSBkYXRhLgo+PiA+IEluIHRoaXMgY2FzZSwgUHJvYmxlbSBp
+cyB0aGF0IHRoZSBkZWZpbml0aW9uIG9mIEZJRk8gYWRkcmVzcyBpcyBhbG1vc3QKPj4gPiBkZWNs
+YXJlZCB0byB0aGUgaGVhZGVyIGZpbGUgb2YgY2xpZW50IGRyaXZlci4KPj4gPiBGb3IgZXhhbXBs
+ZSwgc291bmRcc29jXHNhbXN1bmdccmVncy1pMnMtdjIuaCBvbmx5IGhhcyB0aGUgZGVmaW5pdGlv
+biBvZgo+PiBmaWZvCj4+ID4gYWRkcmVzcyBhcyBmb2xsb3dpbmcuCj4+ID4KPj4gPiAjZGVmaW5l
+IFMzQzI0MTJfSUlTVFhEIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgKDB4MTApCj4+ID4gI2Rl
+ZmluZSBTM0MyNDEyX0lJU1JYRCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCgweDE0KQo+PiA+
+Cj4+ID4gVGhlc2UgZGVmaW5pdGlvbnMgc2hvdWxkIGJlIHJlZmVycmVkIHRvIERNQSBtYWNoaW5l
+IGNvZGUgdG8gc2V0IGZpZm8KPj4gYWRkcmVzcwo+PiA+IHRocm91Z2ggcGxhdGZvcm0gZGF0YS4K
+Pj4gPiBJIHRoaW5rIGl0J3Mgbm90IGdvb2QgbWV0aG9kLgo+PiBDcmFwIQo+PiBDbGllbnQgZHJp
+dmVycyBkb24ndCBjb25qdXJlIHVwIHRoZSBmaWZvIGFkZHJlc3MgLSBpZiBub3QgaGFyZGNvZGVk
+IHRoZXkKPj4gYXJlIGdvdHRlbiB2aWEgcGxhdGZvcm1fZGF0YSBhbHJlYWR5Lgo+Cj4gRm9yIGl0
+LCBETUEgbWFjaGluZSBjb2RlIHNob3VsZCBpbmNsdWRlIGFsbCBoZWFkZXIgZmlsZXMgb2YgY2xp
+ZW50IGRyaXZlciB0aGF0Cj4gaGFzIGRlZmluaXRpb24gb2YgRklGTyBhZGRyZXNzLgo+IFRoZSBu
+dW1iZXIgb2YgaGVhZGVyIGZpbGUgd291bGQgYmUgbW9yZSB0aGFuIDEwLiBBbmQgSSB0aGluayBp
+dCBtYWtlIHRoZSBjb2RlCj4gYSBsaXR0bGUgY29tcGxpY2F0ZWQuCj4KPj4KPj4gPiBBbmQsIFNM
+QVZFX0NPTkZJRyBjb21tYW5kIGV4aXN0IHRvIHBhc3Mgc2xhdmUgY29uZmlndXJhdGlvbiBkYXRh
+IGZyb20KPj4gY2xpZW50Cj4+ID4gZHJpdmVyIHRvIERNQSBkcml2ZXIuCj4+ID4gU28sIEkgdGhp
+bmsgdGhhdCBpdCdzIHByb3BlciB0byBwYXNzIGZpZm8gYWRkcmVzcyB0aHJvdWdoIFNMQVZFX0NP
+TkZJRwo+PiA+IGNvbW1hbmQuCj4+IElmIGl0J3Mgc3RpbGwgbm90IGNsZWFyLCByZWFkIHRoZSBw
+YXJhIGFib3ZlIGRlZmluaXRpb24gb2YgJ3N0cnVjdAo+PiBkbWFfc2xhdmVfY29uZmlnJwo+PiBp
+biBpbmNsdWRlL2xpbnV4L2RtYWVuZ2luZS5oCj4KPiBPdGhlciBETUEgY2xpZW50IGRyaXZlcnMg
+aW4gbWFpbmxpbmUgY29kZSBhbHJlYWR5IHVzZSBTTEFWRV9DT05GSUcgY29tbWFuZCB0bwo+IHBh
+c3MgZmlmbyBhZGRyZXNzIGFzIGZvbGxvd2luZy4KPiBQbGVhc2UgcmVmZXIgdG8gU291bmQvc29j
+L2lteC9pbXgtcGNtLWRtYS9teDIuYywgRHJpdmVyL21tYy9ob3N0L21tY2kuYywKPiBEcml2ZXJz
+L21tYy9ob3N0L214Y21tYy5jIGFuZCBzbyBvbi4KPgo+IEFuZCwgT3RoZXIgRE1BIGRyaXZlcnMg
+YWxzbyBzdXBwb3J0IHRvIFNMQVZFX0NPTkZJRyBjb21tYW5kIGZvciBpdC4KPiBQbGVhc2UgcmVm
+ZXIgdG8gYW1iYS1wbDA4eC5jLCBjb2g5MDEzMTguYywgc3RlX2RtYTQwLmMgYW5kIHNvIG9uIGlu
+Cj4gJ2RyaXZlci9kbWEnIGRpcmVjdG9yeS4KPiBTbywgSW4gbXkgb3BpbmlvbiwgdGhpcyBpcyBw
+cm9wZXIgbWV0aG9kIHRvIGhhbmRsZSB0aGUgY2xpZW50J3MgZmlmbyBhZGRyZXNzLgo+CgpOQUsu
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1h
+cm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5v
+cmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0t
+a2VybmVsCg==
