@@ -1,222 +1,66 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 3/4] ARM: Exynos4: enable TV support on Universal_C210 board
-Date: Thu, 21 Jul 2011 10:08:41 +0200
-Message-ID: <1311235722-29893-4-git-send-email-m.szyprowski@samsung.com>
-References: <1311235722-29893-1-git-send-email-m.szyprowski@samsung.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
+Date: Thu, 21 Jul 2011 21:26:22 +0530
+Message-ID: <CABb+yY193Tg1XfnkK3GYYaYWmZYRgeqnGnS_dNC4H1TFTGO_pA@mail.gmail.com>
+References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
+	<1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
+	<CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
+	<20110721081138.GL26574@n2100.arm.linux.org.uk>
+	<CABb+yY2obv5JMBiRSXS-4tSCYX+7nVVaA0Q7gurA+NndrGVuvA@mail.gmail.com>
+	<20110721112920.GM26574@n2100.arm.linux.org.uk>
+	<CABb+yY2p8VNSvhv+LjoYnunrYS8+3+841bKM-4aUsg5vNx=Mig@mail.gmail.com>
+	<20110721152342.GE28942@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:46643 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752646Ab1GUIIt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jul 2011 04:08:49 -0400
-Received: from spt2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LOO00LO7BYNAT@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 09:08:47 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LOO00LT4BYM7Q@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 09:08:46 +0100 (BST)
-In-reply-to: <1311235722-29893-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20110721152342.GE28942@n2100.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-
-This patch adds platform devices and regulators for TV devices on
-Samsung Universal C210 board.
-
-Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/mach-exynos4/Kconfig               |    2 +
- arch/arm/mach-exynos4/mach-universal_c210.c |   74 +++++++++++++++++++++++++++
- 2 files changed, 76 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index fc38532..b7b2ea5 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -175,9 +175,11 @@ config MACH_UNIVERSAL_C210
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_I2C3
- 	select S3C_DEV_I2C5
-+	select S5P_DEV_I2C_HDMIPHY
- 	select S5P_DEV_MFC
- 	select S5P_DEV_ONENAND
- 	select EXYNOS4_DEV_PD
-+	select S5P_DEV_TV
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_I2C3
- 	select EXYNOS4_SETUP_I2C5
-diff --git a/arch/arm/mach-exynos4/mach-universal_c210.c b/arch/arm/mach-exynos4/mach-universal_c210.c
-index 0e280d1..e9dbe79 100644
---- a/arch/arm/mach-exynos4/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos4/mach-universal_c210.c
-@@ -110,6 +110,9 @@ static struct regulator_consumer_supply lp3974_buck1_consumer =
- static struct regulator_consumer_supply lp3974_buck2_consumer =
- 	REGULATOR_SUPPLY("vddg3d", NULL);
- 
-+static struct regulator_consumer_supply lp3974_buck3_consumer =
-+	REGULATOR_SUPPLY("vdet", "s5p-sdo");
-+
- static struct regulator_init_data lp3974_buck1_data = {
- 	.constraints	= {
- 		.name		= "VINT_1.1V",
-@@ -153,6 +156,8 @@ static struct regulator_init_data lp3974_buck3_data = {
- 			.enabled	= 1,
- 		},
- 	},
-+	.num_consumer_supplies = 1,
-+	.consumer_supplies = &lp3974_buck3_consumer,
- };
- 
- static struct regulator_init_data lp3974_buck4_data = {
-@@ -181,6 +186,11 @@ static struct regulator_init_data lp3974_ldo2_data = {
- 	},
- };
- 
-+static struct regulator_consumer_supply lp3974_ldo3_consumer[] = {
-+	REGULATOR_SUPPLY("vdd", "exynos4-hdmi"),
-+	REGULATOR_SUPPLY("vdd_pll", "exynos4-hdmi"),
-+};
-+
- static struct regulator_init_data lp3974_ldo3_data = {
- 	.constraints	= {
- 		.name		= "VUSB+MIPI_1.1V",
-@@ -192,6 +202,12 @@ static struct regulator_init_data lp3974_ldo3_data = {
- 			.disabled	= 1,
- 		},
- 	},
-+	.num_consumer_supplies = ARRAY_SIZE(lp3974_ldo3_consumer),
-+	.consumer_supplies = lp3974_ldo3_consumer,
-+};
-+
-+static struct regulator_consumer_supply lp3974_ldo4_consumer[] = {
-+	REGULATOR_SUPPLY("vdd_osc", "exynos4-hdmi"),
- };
- 
- static struct regulator_init_data lp3974_ldo4_data = {
-@@ -205,6 +221,8 @@ static struct regulator_init_data lp3974_ldo4_data = {
- 			.disabled	= 1,
- 		},
- 	},
-+	.num_consumer_supplies = ARRAY_SIZE(lp3974_ldo4_consumer),
-+	.consumer_supplies = lp3974_ldo4_consumer,
- };
- 
- static struct regulator_init_data lp3974_ldo5_data = {
-@@ -246,6 +264,10 @@ static struct regulator_init_data lp3974_ldo7_data = {
- 	},
- };
- 
-+static struct regulator_consumer_supply lp3974_ldo8_consumer[] = {
-+	REGULATOR_SUPPLY("vdd33a_dac", "s5p-sdo"),
-+};
-+
- static struct regulator_init_data lp3974_ldo8_data = {
- 	.constraints	= {
- 		.name		= "VUSB+VDAC_3.3V",
-@@ -257,6 +279,8 @@ static struct regulator_init_data lp3974_ldo8_data = {
- 			.disabled	= 1,
- 		},
- 	},
-+	.num_consumer_supplies = ARRAY_SIZE(lp3974_ldo8_consumer),
-+	.consumer_supplies = lp3974_ldo8_consumer,
- };
- 
- static struct regulator_init_data lp3974_ldo9_data = {
-@@ -472,6 +496,34 @@ static struct max8998_platform_data universal_lp3974_pdata = {
- 	.wakeup			= true,
- };
- 
-+static struct regulator_consumer_supply hdmi_fixed_consumer =
-+	REGULATOR_SUPPLY("hdmi-en", "exynos4-hdmi");
-+
-+static struct regulator_init_data hdmi_fixed_voltage_init_data = {
-+	.constraints		= {
-+		.name		= "HDMI_5V",
-+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
-+	},
-+	.num_consumer_supplies	= 1,
-+	.consumer_supplies	= &hdmi_fixed_consumer,
-+};
-+
-+static struct fixed_voltage_config hdmi_fixed_voltage_config = {
-+	.supply_name		= "HDMI_EN1",
-+	.microvolts		= 5000000,
-+	.gpio			= EXYNOS4_GPE0(1),
-+	.enable_high		= true,
-+	.init_data		= &hdmi_fixed_voltage_init_data,
-+};
-+
-+static struct platform_device hdmi_fixed_voltage = {
-+	.name			= "reg-fixed-voltage",
-+	.id			= 6,
-+	.dev			= {
-+		.platform_data	= &hdmi_fixed_voltage_config,
-+	},
-+};
-+
- /* GPIO I2C 5 (PMIC) */
- static struct i2c_board_info i2c5_devs[] __initdata = {
- 	{
-@@ -714,6 +766,12 @@ static struct platform_device *universal_devices[] __initdata = {
- 	&s3c_device_hsmmc3,
- 	&s3c_device_i2c3,
- 	&s3c_device_i2c5,
-+	&s5p_device_i2c_hdmiphy,
-+	&hdmi_fixed_voltage,
-+	&exynos4_device_pd[PD_TV],
-+	&s5p_device_hdmi,
-+	&s5p_device_sdo,
-+	&s5p_device_mixer,
- 
- 	/* Universal Devices */
- 	&i2c_gpio12,
-@@ -732,6 +790,20 @@ static void __init universal_map_io(void)
- 	s3c24xx_init_uarts(universal_uartcfgs, ARRAY_SIZE(universal_uartcfgs));
- }
- 
-+void s5p_tv_setup(void)
-+{
-+	/* direct HPD to HDMI chip */
-+	gpio_request(EXYNOS4_GPX3(7), "hpd-plug");
-+
-+	gpio_direction_input(EXYNOS4_GPX3(7));
-+	s3c_gpio_cfgpin(EXYNOS4_GPX3(7), S3C_GPIO_SFN(0x3));
-+	s3c_gpio_setpull(EXYNOS4_GPX3(7), S3C_GPIO_PULL_NONE);
-+
-+	/* setup dependencies between TV devices */
-+	s5p_device_hdmi.dev.parent = &exynos4_device_pd[PD_TV].dev;
-+	s5p_device_mixer.dev.parent = &exynos4_device_pd[PD_TV].dev;
-+}
-+
- static void __init universal_reserve(void)
- {
- 	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
-@@ -740,6 +812,7 @@ static void __init universal_reserve(void)
- static void __init universal_machine_init(void)
- {
- 	universal_sdhci_init();
-+	s5p_tv_setup();
- 
- 	i2c_register_board_info(0, i2c0_devs, ARRAY_SIZE(i2c0_devs));
- 	i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
-@@ -749,6 +822,7 @@ static void __init universal_machine_init(void)
- 	i2c_register_board_info(3, i2c3_devs, ARRAY_SIZE(i2c3_devs));
- 
- 	s3c_i2c5_set_platdata(NULL);
-+	s5p_i2c_hdmiphy_set_platdata(NULL);
- 	i2c_register_board_info(5, i2c5_devs, ARRAY_SIZE(i2c5_devs));
- 
- 	universal_touchkey_init();
--- 
-1.7.1.569.g6f426
+T24gVGh1LCBKdWwgMjEsIDIwMTEgYXQgODo1MyBQTSwgUnVzc2VsbCBLaW5nIC0gQVJNIExpbnV4
+CjxsaW51eEBhcm0ubGludXgub3JnLnVrPiB3cm90ZToKPiBPbiBUaHUsIEp1bCAyMSwgMjAxMSBh
+dCAwODo0Mjo0MFBNICswNTMwLCBKYXNzaSBCcmFyIHdyb3RlOgo+PiBPbiBUaHUsIEp1bCAyMSwg
+MjAxMSBhdCA0OjU5IFBNLCBSdXNzZWxsIEtpbmcgLSBBUk0gTGludXgKPj4gPGxpbnV4QGFybS5s
+aW51eC5vcmcudWs+IHdyb3RlOgo+PiA+IERvZXMgeW91ciBoYXJkd2FyZSBoYXZlIGEgaGFyZHdh
+cmUgYmxvY2sgZnJvbSB0aGUgZGV2aWNlIGl0c2VsZiBjb250YWluaW5nCj4+ID4gYWxsIHRoZSBz
+eXN0ZW1zIEZJRk9zID8KPj4gSSBhbSBub3Qgc3VyZSB3aGF0IHlvdSBhc2ssIGJ1dCBsZXQgbWUg
+c2F5IHdoYXQgSSBrbm93Lgo+PiBJbiB0aGlzIGNhc2UgYXRsZWFzdCwgYWxsIFBMMzMwIERNQSBj
+aGFubmVscyBoYXZlIGZpeGVkIHNvdXJjZS9kZXN0aW5hdGlvbgo+PiBhZGRyZXNzIG9uIHRoZSBk
+ZXZpY2Ugc2lkZS4gU28gaXQncyBub3QgbGlrZSBkZXZlbG9wZXIgZG9lc24ndCBrbm93Cj4+IGZp
+Zm9fYWRkciBoZXJlLgo+Cj4gRXZlbiBzbywgeW91ciBhcHByb2FjaCBpcyBfY29uY2VwdHVhbGx5
+XyB3cm9uZy4gwqBUaGluayBhYm91dCBpdC4KPgo+IFlvdSBkZWNsYXJlIHlvdXIgZGV2aWNlcyBn
+aXZpbmcgdGhlIGJ1cyBhZGRyZXNzIHdoZXJlIHRoZXkncmUgbG9jYXRlZC4KPiBTbywgbGV0cyBz
+YXkgZm9yIGFyZ3VtZW50IHRoYXQgeW91ciBVQVJUIGlzIGxvY2F0ZWQgYXQgMHgxMDAwMTAwMC4K
+Pgo+IFlvdXIgVUFSVCBkcml2ZXIga25vd3MgdGhhdCB0aGUgRklGTyByZWdpc3RlciBpcyBhdCBv
+ZmZzZXQgMHgyMCBmcm9tCj4gdGhlIGJhc2UgYWRkcmVzcy4gwqBZb3VyIHBsYXRmb3JtIGRhdGEg
+cHJvdmlkZXMgdGhlIFVBUlQgZHJpdmVyIHdpdGggYQo+IERNQSBtYXRjaCBmdW5jdGlvbiBhbmQg
+ZGF0YSBzcGVjaWZpYyBmb3IgdGhhdCBtYXRjaCBmdW5jdGlvbi4gwqBUaGlzCj4gZGF0YSBlbmNv
+ZGVzIHRoZSBzcGVjaWZpYyBETUEgY2hhbm5lbC4KPgo+IE5vdywgd2h5IHNob3VsZCB5b3UgaGF2
+ZSB0byBlbmNvZGUgaW50byB0aGUgRE1BIGRyaXZlcnMgcGxhdGZvcm0gZGF0YQo+IHRoYXQgRE1B
+IGNoYW5uZWwgWCBoYXMgaXRzIEZJRk8gYXQgMHgxMDAwMTAyMD8gwqBOb3Qgb25seSBkbyB5b3Ug
+aGF2ZQo+IHRvIGRlY2xhcmUgdGhlIGJhc2UgYWRkcmVzcyBvZiB0aGUgVUFSVCBidXQgYWxzbyB5
+b3UgaGF2ZSB0byBrbm93IHRoZQo+IG9mZnNldCBpbnRvIHRoZSBVQVJULgo+Cj4gV2h5IG5vdCBq
+dXN0IGxldCB0aGUgVUFSVCBkcml2ZXIgLSB3aGljaCBrbm93cyB0aGF0IHRoZSBiYXNlIGFkZHJl
+c3MKPiBpcyAweDEwMDAxMDAwLCBhbmQgdGhlIEZJRk8gaXMgYXQgb2Zmc2V0IDB4MjAgYWJvdmUg
+dGhhdCAtIHRlbGwgdGhlCj4gRE1BIGRyaXZlciB0aGF0J3Mgd2hlcmUgdGhlIEZJRk8gaXMgbG9j
+YXRlZD8KWWVzIEkgdW5kZXJzdGFuZCwgdGhlIGlkZWEgd2FzIHRvIGF2b2lkIG9wdGlvbmFsIERN
+QV9TTEFWRV9DT05GSUcgY2FsbC4KQXBwYXJlbnRseSB3ZSBnaXZlIGRpZmZlcmVudCB3ZWlnaHRh
+Z2UgdG8gdGhlIHByb3MgYW5kIGNvbnMuCgpBbnl3YXlzLCBJIGFjY2VwdCB5b3VyIG9waW5pb24u
+CgpUaG91Z2ggeW91IG1pZ2h0IHdhbnQgdG8gY29uc2lkZXIgY2hhbmdpbmcgdGhlIERNQV9TTEFW
+RV9DT05GSUcgQVBJIGZyb20Kb3B0aW9uYWwgdG8gbWFuZGF0b3J5IGZvciBTbGF2ZSBjYXBhYmxl
+IERNQUNzLiBPdGhlcndpc2UgSSBkb24ndCBzZWUgY29tbW9uCmNsaWVudCBkcml2ZXJzIHdvcmtp
+bmcgb3ZlciBkaWZmZXJlbnQgRE1BQ3MuCgpUaGFua3MuCgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdAps
+aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVh
+ZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
