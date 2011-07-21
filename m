@@ -1,133 +1,56 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [RFC][PATCH] gpio: Add device tree support for exynos4
-Date: Thu, 21 Jul 2011 22:40:50 +0530
-Message-ID: <1311268250-3100-1-git-send-email-thomas.abraham@linaro.org>
-Content-Transfer-Encoding: 7BIT
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
+Date: Thu, 21 Jul 2011 09:11:38 +0100
+Message-ID: <20110721081138.GL26574@n2100.arm.linux.org.uk>
+References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com> <1311158773-30314-3-git-send-email-boojin.kim@samsung.com> <CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:24905 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751333Ab1GUQ56 (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:54696 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752503Ab1GUIO5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jul 2011 12:57:58 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOP00A5C0GD3440@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 22 Jul 2011 01:57:57 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LOP00EE20GGWV@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 22 Jul 2011 01:57:57 +0900 (KST)
+	Thu, 21 Jul 2011 04:14:57 -0400
+Content-Disposition: inline
+In-Reply-To: <CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree-discuss@lists.ozlabs.org
-Cc: grant.likely@secretlab.ca, linux-samsung-soc@vger.kernel.org
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Boojin Kim <boojin.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Exynos4 GPIO helper functions registers each bank of GPIO as a gpio chip.
-For each gpio chip being registered, this patch finds a matching node
-in device tree and attaches the node pointer to the gpio chip. The match
-is based on the compatible property of the node.
+On Thu, Jul 21, 2011 at 12:47:49AM +0530, Jassi Brar wrote:
+> On Wed, Jul 20, 2011 at 4:16 PM, Boojin Kim <boojin.kim@samsung.com> =
+wrote:
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (slave_config->direction =3D=3D DM=
+A_TO_DEVICE) {
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (slave_config->dst=
+_addr)
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 peri-=
+>fifo_addr =3D slave_config->dst_addr;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (slave_config->dst=
+_addr_width)
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 peri-=
+>burst_sz =3D __ffs(slave_config->dst_addr_width);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 } else if (slave_config->direction =3D=
+=3D DMA_FROM_DEVICE) {
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (slave_config->src=
+_addr)
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 peri-=
+>fifo_addr =3D slave_config->src_addr;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (slave_config->src=
+_addr_width)
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 peri-=
+>burst_sz =3D __ffs(slave_config->src_addr_width);
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
+> PL330 has fixed channels to peripherals.
+> So FIFO addresses(burst_sz too?) should already be set via platform d=
+ata.
+> Client drivers shouldn't bother.
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
+That's utter crap, and isn't what the DMA engine API is about.
 
-Each gpio controller is listed as below in the dts file.
-
-	gpa0: gpio-controller@11400000 {
-		compatible = "samsung,exynos4-gpio-gpa0","samsung,exynos4-gpio";
-		#gpio-cells = <2>;
-		gpio-controller;
-	};
-
-	gpa1: gpio-controller@11400020 {
-		compatible = "samsung,exynos4-gpio-gpa1","samsung,exynos4-gpio";
-		#gpio-cells = <2>;
-		gpio-controller;
-	};
-		
-	gpb: gpio-controller@11400040 {
-		compatible = "samsung,exynos4-gpio-gpb","samsung,exynos4-gpio";
-		#gpio-cells = <2>;
-		gpio-controller;
-	};
-
-	and many more (gpc, gpd, ...., gpx)
-
-For each linux domain gpio chip registered by the exynos4 gpio helpers,
-a matching device node is found from the device tree by matching the
-compatible property.
-
- drivers/gpio/gpio-exynos4.c |   30 ++++++++++++++++++++++++++++++
- 1 files changed, 30 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/gpio/gpio-exynos4.c b/drivers/gpio/gpio-exynos4.c
-index 9029835..c727bf1 100644
---- a/drivers/gpio/gpio-exynos4.c
-+++ b/drivers/gpio/gpio-exynos4.c
-@@ -14,6 +14,10 @@
- #include <linux/irq.h>
- #include <linux/io.h>
- #include <linux/gpio.h>
-+#ifdef CONFIG_OF
-+#include <linux/of.h>
-+#include <linux/slab.h>
-+#endif
- 
- #include <mach/map.h>
- 
-@@ -321,6 +325,29 @@ static struct s3c_gpio_chip exynos4_gpio_part3_4bit[] = {
- 	},
- };
- 
-+#ifdef CONFIG_OF
-+static __init void exynos4_gpiolib_attach_ofnode(struct gpio_chip *gc)
-+{
-+	const char exynos4_gpio_compat_base[] = "samsung,exynos4-gpio-";
-+	char *exynos4_gpio_compat;
-+
-+	exynos4_gpio_compat = kzalloc(strlen(exynos4_gpio_compat_base) +
-+				strlen(gc->label), GFP_KERNEL);
-+	if (!exynos4_gpio_compat)
-+		return;
-+
-+	strcpy(exynos4_gpio_compat, exynos4_gpio_compat_base);
-+	strcat(exynos4_gpio_compat, gc->label);
-+	gc->of_node = of_find_compatible_node(NULL, NULL, exynos4_gpio_compat);
-+	kfree(exynos4_gpio_compat);
-+}
-+#else
-+static __init void exynos4_gpiolib_attach_ofnode(struct gpio_chip *chip)
-+{
-+	return;
-+}
-+#endif
-+
- static __init int exynos4_gpiolib_init(void)
- {
- 	struct s3c_gpio_chip *chip;
-@@ -341,6 +368,7 @@ static __init int exynos4_gpiolib_init(void)
- 		}
- 		if (chip->base == NULL)
- 			chip->base = S5P_VA_GPIO1 + (i) * 0x20;
-+		exynos4_gpiolib_attach_ofnode(&chip->chip);
- 	}
- 
- 	samsung_gpiolib_add_4bit_chips(exynos4_gpio_part1_4bit, nr_chips);
-@@ -358,6 +386,7 @@ static __init int exynos4_gpiolib_init(void)
- 		}
- 		if (chip->base == NULL)
- 			chip->base = S5P_VA_GPIO2 + (i) * 0x20;
-+		exynos4_gpiolib_attach_ofnode(&chip->chip);
- 	}
- 
- 	samsung_gpiolib_add_4bit_chips(exynos4_gpio_part2_4bit, nr_chips);
-@@ -375,6 +404,7 @@ static __init int exynos4_gpiolib_init(void)
- 		}
- 		if (chip->base == NULL)
- 			chip->base = S5P_VA_GPIO3 + (i) * 0x20;
-+		exynos4_gpiolib_attach_ofnode(&chip->chip);
- 	}
- 
- 	samsung_gpiolib_add_4bit_chips(exynos4_gpio_part3_4bit, nr_chips);
--- 
-1.6.6.rc2
+The above looks correctly implemented.  Slave DMA engine users are
+supposed to supply the device DMA register address via this
+DMA_SLAVE_CONFIG call.  Doing this via platform data for the DMA
+device is braindead.
