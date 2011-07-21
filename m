@@ -1,130 +1,227 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCHv2 0/4] Updated s5p-tv platform definitions
-Date: Thu, 21 Jul 2011 12:23:30 +0200
-Message-ID: <001001cc4790$3d3c3380$b7b49a80$%szyprowski@samsung.com>
-References: <1311235722-29893-1-git-send-email-m.szyprowski@samsung.com>
- <001001cc478b$cb3bc560$61b35020$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [PATCH] ARM: S5P64X0: External Interrupt Support
+Date: Thu, 21 Jul 2011 06:00:17 -0400
+Message-ID: <1311242417-30843-1-git-send-email-padma.v@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:59236 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751408Ab1GUKY1 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:36664 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750704Ab1GUEJk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jul 2011 06:24:27 -0400
-Received: from spt2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LOO00M9PI8Q8J@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 11:24:26 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LOO001Z3I8O8J@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 11:24:25 +0100 (BST)
-In-reply-to: <001001cc478b$cb3bc560$61b35020$%kim@samsung.com>
-Content-language: pl
+	Thu, 21 Jul 2011 00:09:40 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LOO009QL0VZJGA0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 13:09:38 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.106])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LOO008CN0VSSP@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 13:09:38 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: padma.v@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hello,
+Add external interrupt support for S5P64X0.The external interrupt
+group 0(0 to 15) is used for wake-up source in stop and sleep mode.
+Add generic irq chip support
 
-On Thursday, July 21, 2011 11:52 AM Kukjin Kim wrote:
+Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+---
+ arch/arm/mach-s5p64x0/Makefile                 |    2 +-
+ arch/arm/mach-s5p64x0/include/mach/regs-gpio.h |   10 ++
+ arch/arm/mach-s5p64x0/irq-eint.c               |  151 ++++++++++++++++++++++++
+ 3 files changed, 162 insertions(+), 1 deletions(-)
+ create mode 100644 arch/arm/mach-s5p64x0/irq-eint.c
 
-> > This patch series contains platform definitions for s5p-tv driver
-> > rebased onto latest for-next branch (including generic GIC and clockdev
-> > changes).
-> >
-> > Changes since v1:
-> > - renamed i2c8 to common i2c-hdmiphy
-> > - moved common vpll code to plat-s5p/clocks.c
-> > - added check for pll locking
-> > - various minor coding style fixes here and there
-> >
-> > Best regards
-> > --
-> > Marek Szyprowski
-> > Samsung Poland R&D Center
-> >
-> >
-> > Patch summary:
-> >
-> > Tomasz Stanislawski (4):
-> >   ARM: Samsung: add i2c hdmiphy controller definitions
-> >   ARM: S5P: add support for tv device
-> >   ARM: Exynos4: enable TV support on Universal_C210 board
-> >   ARM: S5PV210: enable TV support on GONI board
-> >
-> >  arch/arm/mach-exynos4/Kconfig                    |    2 +
-> >  arch/arm/mach-exynos4/clock.c                    |  140
-> > +++++++++++++++++++++-
-> >  arch/arm/mach-exynos4/cpu.c                      |    4 +
-> >  arch/arm/mach-exynos4/include/mach/iic-hdmiphy.h |   16 +++
-> >  arch/arm/mach-exynos4/include/mach/irqs.h        |    4 +
-> >  arch/arm/mach-exynos4/include/mach/map.h         |   12 ++
-> >  arch/arm/mach-exynos4/include/mach/regs-pmu.h    |    6 +
-> >  arch/arm/mach-exynos4/mach-universal_c210.c      |   74 ++++++++++++
-> >  arch/arm/mach-s5pv210/Kconfig                    |    1 +
-> >  arch/arm/mach-s5pv210/clock.c                    |   87 ++++++++++++--
-> >  arch/arm/mach-s5pv210/cpu.c                      |    4 +
-> >  arch/arm/mach-s5pv210/include/mach/iic-hdmiphy.h |   16 +++
-> >  arch/arm/mach-s5pv210/include/mach/irqs.h        |    4 +-
-> >  arch/arm/mach-s5pv210/include/mach/map.h         |   13 ++
-> >  arch/arm/mach-s5pv210/include/mach/regs-clock.h  |    9 +-
-> >  arch/arm/mach-s5pv210/mach-goni.c                |    9 ++
-> >  arch/arm/plat-s5p/Kconfig                        |   10 ++
-> >  arch/arm/plat-s5p/Makefile                       |    2 +
-> >  arch/arm/plat-s5p/clock.c                        |   73 +++++++++++
-> >  arch/arm/plat-s5p/dev-i2c-hdmiphy.c              |   59 +++++++++
-> >  arch/arm/plat-s5p/dev-tv.c                       |  100 +++++++++++++++
-> >  arch/arm/plat-s5p/include/plat/s5p-clock.h       |    4 +
-> >  arch/arm/plat-samsung/include/plat/devs.h        |    6 +
-> >  arch/arm/plat-samsung/include/plat/iic.h         |    1 +
-> >  arch/arm/plat-samsung/include/plat/tv-core.h     |   44 +++++++
-> >  25 files changed, 684 insertions(+), 16 deletions(-)
-> >  create mode 100644 arch/arm/mach-exynos4/include/mach/iic-hdmiphy.h
-> >  create mode 100644 arch/arm/mach-s5pv210/include/mach/iic-hdmiphy.h
-> >  create mode 100644 arch/arm/plat-s5p/dev-i2c-hdmiphy.c
-> >  create mode 100644 arch/arm/plat-s5p/dev-tv.c
-> >  create mode 100644 arch/arm/plat-samsung/include/plat/tv-core.h
-> >
-> > --
-> > 1.7.1.569.g6f426
-> 
-> Hi Marek,
-> 
-> Looks good but happens following build failure with
-> s5pc100_defconfig/s5p64x0_defconfig.
-> Because they have no VPLL :(
-> 
-> arch/arm/kernel/return_address.c:62: warning: #warning "TODO: return_address
-> should use unwind tables"
-> arch/arm/plat-s5p/clock.c: In function 's5p_vpll_set_rate':
-> arch/arm/plat-s5p/clock.c:237: error: 'S5P_VPLL_CON0' undeclared (first use
-> in this function)
-> arch/arm/plat-s5p/clock.c:237: error: (Each undeclared identifier is
-> reported only once
-> arch/arm/plat-s5p/clock.c:237: error: for each function it appears in.)
-> arch/arm/plat-s5p/clock.c:243: error: 'S5P_VPLL_CON1' undeclared (first use
-> in this function)
-> arch/arm/plat-s5p/clock.c:272: error: 'S5P_VPLLCON0_LOCKED_SHIFT' undeclared
-> (first use in this function)
-> make[1]: *** [arch/arm/plat-s5p/clock.o] Error 1
-
-Huh... Right, I forgot about other platforms. What do you think about making 
-this vpll code compiled conditionally only for EXYNOS4 and S5PV210? The other
-solution is to move it into a separate file.
-
-> First of all, I will send 'pull request' without this series...
-> 
-> I'm not sure can have a chance to send 'pull request' again for this merge
-> window.
-
-Ok, I understand.
-
-Best regards
+diff --git a/arch/arm/mach-s5p64x0/Makefile b/arch/arm/mach-s5p64x0/Makefile
+index ae6bf6f..5f6afdf 100644
+--- a/arch/arm/mach-s5p64x0/Makefile
++++ b/arch/arm/mach-s5p64x0/Makefile
+@@ -13,7 +13,7 @@ obj-				:=
+ # Core support for S5P64X0 system
+ 
+ obj-$(CONFIG_ARCH_S5P64X0)	+= cpu.o init.o clock.o dma.o gpiolib.o
+-obj-$(CONFIG_ARCH_S5P64X0)	+= setup-i2c0.o
++obj-$(CONFIG_ARCH_S5P64X0)	+= setup-i2c0.o irq-eint.o
+ obj-$(CONFIG_CPU_S5P6440)	+= clock-s5p6440.o
+ obj-$(CONFIG_CPU_S5P6450)	+= clock-s5p6450.o
+ 
+diff --git a/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h b/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
+index 0953ef6..6ce2547 100644
+--- a/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
++++ b/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
+@@ -34,4 +34,14 @@
+ #define S5P6450_GPQ_BASE		(S5P_VA_GPIO + 0x0180)
+ #define S5P6450_GPS_BASE		(S5P_VA_GPIO + 0x0300)
+ 
++/* External interrupt control registers for group0 */
++
++#define EINT0CON0_OFFSET		(0x900)
++#define EINT0MASK_OFFSET		(0x920)
++#define EINT0PEND_OFFSET		(0x924)
++
++#define S5P64X0_EINT0CON0		(S5P_VA_GPIO + EINT0CON0_OFFSET)
++#define S5P64X0_EINT0MASK		(S5P_VA_GPIO + EINT0MASK_OFFSET)
++#define S5P64X0_EINT0PEND		(S5P_VA_GPIO + EINT0PEND_OFFSET)
++
+ #endif /* __ASM_ARCH_REGS_GPIO_H */
+diff --git a/arch/arm/mach-s5p64x0/irq-eint.c b/arch/arm/mach-s5p64x0/irq-eint.c
+new file mode 100644
+index 0000000..eeb56f0
+--- /dev/null
++++ b/arch/arm/mach-s5p64x0/irq-eint.c
+@@ -0,0 +1,151 @@
++/* arch/arm/mach-s5p64x0/irq-eint.c
++ *
++ * Copyright (c) 2011 Samsung Electronics Co., Ltd
++ *		http://www.samsung.com/
++ *
++ * Based on linux/arch/arm/mach-s3c64xx/irq-eint.c
++ *
++ * S5P64X0 - Interrupt handling for External Interrupts.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/kernel.h>
++#include <linux/gpio.h>
++#include <linux/irq.h>
++#include <linux/io.h>
++
++#include <plat/regs-irqtype.h>
++#include <plat/gpio-cfg.h>
++
++#include <mach/regs-gpio.h>
++#include <mach/regs-clock.h>
++
++#define eint_offset(irq)	((irq) - IRQ_EINT(0))
++
++static int s5p64x0_irq_eint_set_type(struct irq_data *data, unsigned int type)
++{
++	int offs = eint_offset(data->irq);
++	int shift;
++	u32 ctrl, mask;
++	u32 newvalue = 0;
++
++	if (offs > 15)
++		return -EINVAL;
++
++	switch (type) {
++	case IRQ_TYPE_NONE:
++		printk(KERN_WARNING "No edge setting!\n");
++		break;
++	case IRQ_TYPE_EDGE_RISING:
++		newvalue = S3C2410_EXTINT_RISEEDGE;
++		break;
++	case IRQ_TYPE_EDGE_FALLING:
++		newvalue = S3C2410_EXTINT_FALLEDGE;
++		break;
++	case IRQ_TYPE_EDGE_BOTH:
++		newvalue = S3C2410_EXTINT_BOTHEDGE;
++		break;
++	case IRQ_TYPE_LEVEL_LOW:
++		newvalue = S3C2410_EXTINT_LOWLEV;
++		break;
++	case IRQ_TYPE_LEVEL_HIGH:
++		newvalue = S3C2410_EXTINT_HILEV;
++		break;
++	default:
++		printk(KERN_ERR "No such irq type %d", type);
++		return -EINVAL;
++	}
++
++	shift = (offs / 2) * 4;
++	mask = 0x7 << shift;
++
++	ctrl = __raw_readl(S5P64X0_EINT0CON0) & ~mask;
++	ctrl |= newvalue << shift;
++	__raw_writel(ctrl, S5P64X0_EINT0CON0);
++
++	/* Configure the GPIO pin for 6450 or 6440 based on CPU ID */
++	if (0x50000 == (__raw_readl(S5P64X0_SYS_ID) & 0xFF000))
++		s3c_gpio_cfgpin(S5P6450_GPN(offs), S3C_GPIO_SFN(2));
++	else
++		s3c_gpio_cfgpin(S5P6440_GPN(offs), S3C_GPIO_SFN(2));
++
++	return 0;
++}
++
++/*
++ * s5p64x0_irq_demux_eint
++ *
++ * This function demuxes the IRQ from the group0 external interrupts,
++ * from IRQ_EINT(0) to IRQ_EINT(15). It is designed to be inlined into
++ * the specific handlers s5p64x0_irq_demux_eintX_Y.
++ */
++static inline void s5p64x0_irq_demux_eint(unsigned int start, unsigned int end)
++{
++	u32 status = __raw_readl(S5P64X0_EINT0PEND);
++	u32 mask = __raw_readl(S5P64X0_EINT0MASK);
++	unsigned int irq;
++
++	status &= ~mask;
++	status >>= start;
++	status &= (1 << (end - start + 1)) - 1;
++
++	for (irq = IRQ_EINT(start); irq <= IRQ_EINT(end); irq++) {
++		if (status & 1)
++			generic_handle_irq(irq);
++		status >>= 1;
++	}
++}
++
++static void s5p64x0_irq_demux_eint0_3(unsigned int irq, struct irq_desc *desc)
++{
++	s5p64x0_irq_demux_eint(0, 3);
++}
++
++static void s5p64x0_irq_demux_eint4_11(unsigned int irq, struct irq_desc *desc)
++{
++	s5p64x0_irq_demux_eint(4, 11);
++}
++
++static void s5p64x0_irq_demux_eint12_15(unsigned int irq,
++					struct irq_desc *desc)
++{
++	s5p64x0_irq_demux_eint(12, 15);
++}
++
++static void s5p64x0_alloc_gc(void)
++{
++	struct irq_chip_generic *gc;
++	struct irq_chip_type *ct;
++
++	gc = irq_alloc_generic_chip("s5p64x0-eint", 1, S5P_IRQ_EINT_BASE,
++				    S5P_VA_GPIO, handle_level_irq);
++	if (!gc) {
++		printk(KERN_ERR "%s: irq_alloc_generic_chip for group 0"
++			"external interrupts failed\n", __func__);
++		return;
++	}
++
++	ct = gc->chip_types;
++	ct->chip.irq_ack = irq_gc_ack;
++	ct->chip.irq_mask = irq_gc_mask_set_bit;
++	ct->chip.irq_unmask = irq_gc_mask_clr_bit;
++	ct->chip.irq_set_type = s5p64x0_irq_eint_set_type;
++	ct->regs.ack = EINT0PEND_OFFSET;
++	ct->regs.mask = EINT0MASK_OFFSET;
++	irq_setup_generic_chip(gc, IRQ_MSK(16), IRQ_GC_INIT_MASK_CACHE,
++			       IRQ_NOREQUEST | IRQ_NOPROBE, 0);
++}
++
++static int __init s5p64x0_init_irq_eint(void)
++{
++	s5p64x0_alloc_gc();
++	irq_set_chained_handler(IRQ_EINT0_3, s5p64x0_irq_demux_eint0_3);
++	irq_set_chained_handler(IRQ_EINT4_11, s5p64x0_irq_demux_eint4_11);
++	irq_set_chained_handler(IRQ_EINT12_15, s5p64x0_irq_demux_eint12_15);
++
++	return 0;
++}
++arch_initcall(s5p64x0_init_irq_eint);
 -- 
-Marek Szyprowski
-Samsung Poland R&D Center
+1.7.0.4
