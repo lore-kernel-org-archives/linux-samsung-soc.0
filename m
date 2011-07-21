@@ -1,62 +1,222 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH v3 1/6] ARM: EXYNOS4: Increase NR_IRQS for devices with
-	more IRQs
-Date: Thu, 21 Jul 2011 11:18:29 +0900
-Message-ID: <CAJ0PZbRuCCbbTz-qhcY0OsaXF+zgAu3_OZBj+LRz=OczyTrcGg@mail.gmail.com>
-References: <1309421729-11172-1-git-send-email-myungjoo.ham@samsung.com>
-	<1309421729-11172-2-git-send-email-myungjoo.ham@samsung.com>
-	<06c801cc46ff$29855330$7c8ff990$%kim@samsung.com>
-Reply-To: myungjoo.ham@gmail.com
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 3/4] ARM: Exynos4: enable TV support on Universal_C210 board
+Date: Thu, 21 Jul 2011 10:08:41 +0200
+Message-ID: <1311235722-29893-4-git-send-email-m.szyprowski@samsung.com>
+References: <1311235722-29893-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <06c801cc46ff$29855330$7c8ff990$%kim@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Changhwan Youn <chaos.youn@samsung.com>, linux-arm-kernel@lists.infradead.org, tushar.behera@linaro.org
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:46643 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752646Ab1GUIIt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 Jul 2011 04:08:49 -0400
+Received: from spt2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0LOO00LO7BYNAT@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 09:08:47 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LOO00LT4BYM7Q@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 09:08:46 +0100 (BST)
+In-reply-to: <1311235722-29893-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-T24gVGh1LCBKdWwgMjEsIDIwMTEgYXQgMjowNCBBTSwgS3VramluIEtpbSA8a2dlbmUua2ltQHNh
-bXN1bmcuY29tPiB3cm90ZToKPiBNeXVuZ0pvbyBIYW0gd3JvdGU6Cj4+Cj4+IE1BWDg5OTcvMTcw
-NDIsIHdoaWNoIGFyZSB1c2VkIGJ5IEV4eW5vczQtTlVSSSwgdXNlIGFkZGl0aW9uYWwgSVJRCj4+
-IG51bWJlcnMgYWZ0ZXIgR1BJTydzIElSUXMuIFRoZSBwYXRjaCBjcmVhdGVzIHNvbWUgcm9vbSBm
-b3IgdGhvc2UKPj4gZGV2aWNlcy4KPj4KPj4gU2lnbmVkLW9mZi1ieTogTXl1bmdKb28gSGFtIDxt
-eXVuZ2pvby5oYW1Ac2Ftc3VuZy5jb20+Cj4+IFNpZ25lZC1vZmYtYnk6IEt5dW5nbWluIFBhcmsg
-PGt5dW5nbWluLnBhcmtAc2Ftc3VuZy5jb20+Cj4+IC0tLQo+PiDCoGFyY2gvYXJtL21hY2gtZXh5
-bm9zNC9pbmNsdWRlL21hY2gvaXJxcy5oIHwgwqAgwqAyICstCj4+IMKgMSBmaWxlcyBjaGFuZ2Vk
-LCAxIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9hcmNo
-L2FybS9tYWNoLWV4eW5vczQvaW5jbHVkZS9tYWNoL2lycXMuaCBiL2FyY2gvYXJtL21hY2gtCj4+
-IGV4eW5vczQvaW5jbHVkZS9tYWNoL2lycXMuaAo+PiBpbmRleCAzMWY2YmVkLi41MWI1ZGI1IDEw
-MDY0NAo+PiAtLS0gYS9hcmNoL2FybS9tYWNoLWV4eW5vczQvaW5jbHVkZS9tYWNoL2lycXMuaAo+
-PiArKysgYi9hcmNoL2FybS9tYWNoLWV4eW5vczQvaW5jbHVkZS9tYWNoL2lycXMuaAo+PiBAQCAt
-MTU0LDYgKzE1NCw2IEBACj4+IMKgI2RlZmluZSBJUlFfR1BJT19FTkQgwqAgwqAgwqAgwqAgKFM1
-UF9HUElPSU5UX0JBU0UgKyBTNVBfR1BJT0lOVF9DT1VOVCkKPj4KPj4gwqAvKiBTZXQgdGhlIGRl
-ZmF1bHQgTlJfSVJRUyAqLwo+PiAtI2RlZmluZSBOUl9JUlFTIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgKElSUV9HUElPX0VORCkKPj4gKyNkZWZpbmUgTlJfSVJRUyDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoChJUlFfR1BJT19FTkQgKyA2NCkKPgo+IEkgYXBwbGllZCBi
-dXQgYmFzaWNhbGx5LCB3ZSBoYXZlIHRvIGF2b2lkIHVzaW5nIGhhcmQgY29kZWQgdmFsdWUgbGlr
-ZSA2NCBvbgo+IHRoaXMuIFRoZSBOUl9JUlFTIGRlcGVuZHMgb24gQ1BVIG5vdCBib2FyZCBidXQg
-dGhpcyBjaGFuZ2UgaXMgbmVlZGVkIGZvcgo+IHN1cHBvcnRpbmcgc29tZSBzcGVjaWZpYyBib2Fy
-ZCBhbmQgaWYgeW91IG5lZWQgbW9yZSBpbnRlcnJ1cHQgbnVtYmVycywgd2lsbAo+IHlvdSBpbmNy
-ZWFzZSBpdD8gSXQgaXMgbm90IGdvb2Qgd2F5Lgo+Cj4gV2UgbmVlZCB0byBmaXggdGhpcyB1cCBu
-ZXh0IHRpbWUuCj4KPiBUaGFua3MuCj4KPiBCZXN0IHJlZ2FyZHMsCj4gS2dlbmUuCgpBbHJpZ2h0
-LiBJJ2xsIHRyeSB0byBsZXQgaXQgYXNzaWduIG9yIGNoYW5nZSBOUl9JUlFTIGFkYXB0aXZlbHkg
-ZWl0aGVyCmluIHJ1bi10aW1lLCBib290LXRpbWUsIG9yIGNvbXBpbGUtdGltZSBsYXRlciBhcyBh
-IHNlcGVyYXRlZCBwYXRjaC4KCgpUaGFuayB5b3UuCgotIE15dW5nSm9vCgo+IC0tCj4gS3Vramlu
-IEtpbSA8a2dlbmUua2ltQHNhbXN1bmcuY29tPiwgU2VuaW9yIEVuZ2luZWVyLAo+IFNXIFNvbHV0
-aW9uIERldmVsb3BtZW50IFRlYW0sIFNhbXN1bmcgRWxlY3Ryb25pY3MgQ28uLCBMdGQuCj4KPgoK
-CgotLSAKTXl1bmdKb28gSGFtICjtlajrqoXso7wpLCBQaC5ELgpNb2JpbGUgU29mdHdhcmUgUGxh
-dGZvcm0gTGFiLApEaWdpdGFsIE1lZGlhIGFuZCBDb21tdW5pY2F0aW9ucyAoRE1DKSBCdXNpbmVz
-cwpTYW1zdW5nIEVsZWN0cm9uaWNzCmNlbGw6IDgyLTEwLTY3MTQtMjg1OAoKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWls
-aW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0
-cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
+From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+
+This patch adds platform devices and regulators for TV devices on
+Samsung Universal C210 board.
+
+Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/mach-exynos4/Kconfig               |    2 +
+ arch/arm/mach-exynos4/mach-universal_c210.c |   74 +++++++++++++++++++++++++++
+ 2 files changed, 76 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index fc38532..b7b2ea5 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -175,9 +175,11 @@ config MACH_UNIVERSAL_C210
+ 	select S3C_DEV_I2C1
+ 	select S3C_DEV_I2C3
+ 	select S3C_DEV_I2C5
++	select S5P_DEV_I2C_HDMIPHY
+ 	select S5P_DEV_MFC
+ 	select S5P_DEV_ONENAND
+ 	select EXYNOS4_DEV_PD
++	select S5P_DEV_TV
+ 	select EXYNOS4_SETUP_I2C1
+ 	select EXYNOS4_SETUP_I2C3
+ 	select EXYNOS4_SETUP_I2C5
+diff --git a/arch/arm/mach-exynos4/mach-universal_c210.c b/arch/arm/mach-exynos4/mach-universal_c210.c
+index 0e280d1..e9dbe79 100644
+--- a/arch/arm/mach-exynos4/mach-universal_c210.c
++++ b/arch/arm/mach-exynos4/mach-universal_c210.c
+@@ -110,6 +110,9 @@ static struct regulator_consumer_supply lp3974_buck1_consumer =
+ static struct regulator_consumer_supply lp3974_buck2_consumer =
+ 	REGULATOR_SUPPLY("vddg3d", NULL);
+ 
++static struct regulator_consumer_supply lp3974_buck3_consumer =
++	REGULATOR_SUPPLY("vdet", "s5p-sdo");
++
+ static struct regulator_init_data lp3974_buck1_data = {
+ 	.constraints	= {
+ 		.name		= "VINT_1.1V",
+@@ -153,6 +156,8 @@ static struct regulator_init_data lp3974_buck3_data = {
+ 			.enabled	= 1,
+ 		},
+ 	},
++	.num_consumer_supplies = 1,
++	.consumer_supplies = &lp3974_buck3_consumer,
+ };
+ 
+ static struct regulator_init_data lp3974_buck4_data = {
+@@ -181,6 +186,11 @@ static struct regulator_init_data lp3974_ldo2_data = {
+ 	},
+ };
+ 
++static struct regulator_consumer_supply lp3974_ldo3_consumer[] = {
++	REGULATOR_SUPPLY("vdd", "exynos4-hdmi"),
++	REGULATOR_SUPPLY("vdd_pll", "exynos4-hdmi"),
++};
++
+ static struct regulator_init_data lp3974_ldo3_data = {
+ 	.constraints	= {
+ 		.name		= "VUSB+MIPI_1.1V",
+@@ -192,6 +202,12 @@ static struct regulator_init_data lp3974_ldo3_data = {
+ 			.disabled	= 1,
+ 		},
+ 	},
++	.num_consumer_supplies = ARRAY_SIZE(lp3974_ldo3_consumer),
++	.consumer_supplies = lp3974_ldo3_consumer,
++};
++
++static struct regulator_consumer_supply lp3974_ldo4_consumer[] = {
++	REGULATOR_SUPPLY("vdd_osc", "exynos4-hdmi"),
+ };
+ 
+ static struct regulator_init_data lp3974_ldo4_data = {
+@@ -205,6 +221,8 @@ static struct regulator_init_data lp3974_ldo4_data = {
+ 			.disabled	= 1,
+ 		},
+ 	},
++	.num_consumer_supplies = ARRAY_SIZE(lp3974_ldo4_consumer),
++	.consumer_supplies = lp3974_ldo4_consumer,
+ };
+ 
+ static struct regulator_init_data lp3974_ldo5_data = {
+@@ -246,6 +264,10 @@ static struct regulator_init_data lp3974_ldo7_data = {
+ 	},
+ };
+ 
++static struct regulator_consumer_supply lp3974_ldo8_consumer[] = {
++	REGULATOR_SUPPLY("vdd33a_dac", "s5p-sdo"),
++};
++
+ static struct regulator_init_data lp3974_ldo8_data = {
+ 	.constraints	= {
+ 		.name		= "VUSB+VDAC_3.3V",
+@@ -257,6 +279,8 @@ static struct regulator_init_data lp3974_ldo8_data = {
+ 			.disabled	= 1,
+ 		},
+ 	},
++	.num_consumer_supplies = ARRAY_SIZE(lp3974_ldo8_consumer),
++	.consumer_supplies = lp3974_ldo8_consumer,
+ };
+ 
+ static struct regulator_init_data lp3974_ldo9_data = {
+@@ -472,6 +496,34 @@ static struct max8998_platform_data universal_lp3974_pdata = {
+ 	.wakeup			= true,
+ };
+ 
++static struct regulator_consumer_supply hdmi_fixed_consumer =
++	REGULATOR_SUPPLY("hdmi-en", "exynos4-hdmi");
++
++static struct regulator_init_data hdmi_fixed_voltage_init_data = {
++	.constraints		= {
++		.name		= "HDMI_5V",
++		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++	},
++	.num_consumer_supplies	= 1,
++	.consumer_supplies	= &hdmi_fixed_consumer,
++};
++
++static struct fixed_voltage_config hdmi_fixed_voltage_config = {
++	.supply_name		= "HDMI_EN1",
++	.microvolts		= 5000000,
++	.gpio			= EXYNOS4_GPE0(1),
++	.enable_high		= true,
++	.init_data		= &hdmi_fixed_voltage_init_data,
++};
++
++static struct platform_device hdmi_fixed_voltage = {
++	.name			= "reg-fixed-voltage",
++	.id			= 6,
++	.dev			= {
++		.platform_data	= &hdmi_fixed_voltage_config,
++	},
++};
++
+ /* GPIO I2C 5 (PMIC) */
+ static struct i2c_board_info i2c5_devs[] __initdata = {
+ 	{
+@@ -714,6 +766,12 @@ static struct platform_device *universal_devices[] __initdata = {
+ 	&s3c_device_hsmmc3,
+ 	&s3c_device_i2c3,
+ 	&s3c_device_i2c5,
++	&s5p_device_i2c_hdmiphy,
++	&hdmi_fixed_voltage,
++	&exynos4_device_pd[PD_TV],
++	&s5p_device_hdmi,
++	&s5p_device_sdo,
++	&s5p_device_mixer,
+ 
+ 	/* Universal Devices */
+ 	&i2c_gpio12,
+@@ -732,6 +790,20 @@ static void __init universal_map_io(void)
+ 	s3c24xx_init_uarts(universal_uartcfgs, ARRAY_SIZE(universal_uartcfgs));
+ }
+ 
++void s5p_tv_setup(void)
++{
++	/* direct HPD to HDMI chip */
++	gpio_request(EXYNOS4_GPX3(7), "hpd-plug");
++
++	gpio_direction_input(EXYNOS4_GPX3(7));
++	s3c_gpio_cfgpin(EXYNOS4_GPX3(7), S3C_GPIO_SFN(0x3));
++	s3c_gpio_setpull(EXYNOS4_GPX3(7), S3C_GPIO_PULL_NONE);
++
++	/* setup dependencies between TV devices */
++	s5p_device_hdmi.dev.parent = &exynos4_device_pd[PD_TV].dev;
++	s5p_device_mixer.dev.parent = &exynos4_device_pd[PD_TV].dev;
++}
++
+ static void __init universal_reserve(void)
+ {
+ 	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
+@@ -740,6 +812,7 @@ static void __init universal_reserve(void)
+ static void __init universal_machine_init(void)
+ {
+ 	universal_sdhci_init();
++	s5p_tv_setup();
+ 
+ 	i2c_register_board_info(0, i2c0_devs, ARRAY_SIZE(i2c0_devs));
+ 	i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
+@@ -749,6 +822,7 @@ static void __init universal_machine_init(void)
+ 	i2c_register_board_info(3, i2c3_devs, ARRAY_SIZE(i2c3_devs));
+ 
+ 	s3c_i2c5_set_platdata(NULL);
++	s5p_i2c_hdmiphy_set_platdata(NULL);
+ 	i2c_register_board_info(5, i2c5_devs, ARRAY_SIZE(i2c5_devs));
+ 
+ 	universal_touchkey_init();
+-- 
+1.7.1.569.g6f426
