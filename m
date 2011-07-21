@@ -1,18 +1,14 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
-Date: Thu, 21 Jul 2011 19:58:03 +0530
-Message-ID: <CABb+yY2wTj5i-koQhD+dqNWaL4TvUYk1XP3YT0jE3oDZT57U4g@mail.gmail.com>
-References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
-	<1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
-	<CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
-	<20110721081138.GL26574@n2100.arm.linux.org.uk>
-	<CABb+yY2obv5JMBiRSXS-4tSCYX+7nVVaA0Q7gurA+NndrGVuvA@mail.gmail.com>
-	<CACRpkdaP5D=URqAXAytm9s2e9HRVMB-MzsKZeLJ9v6ktkJUCRA@mail.gmail.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re:
+Date: Thu, 21 Jul 2011 11:54:46 +0530
+Message-ID: <4E27C62E.8010005@linaro.org>
+References: <1311246765-4161-1-git-send-email-padma.v@samsung.com>	<4E27B914.3050809@linaro.org>
+	<CAAgF-BcTUTN5B59NO+yo7o=r=AtzvEHHOPwLBUgL15ifyYfFWA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdaP5D=URqAXAytm9s2e9HRVMB-MzsKZeLJ9v6ktkJUCRA@mail.gmail.com>
+In-Reply-To: <CAAgF-BcTUTN5B59NO+yo7o=r=AtzvEHHOPwLBUgL15ifyYfFWA@mail.gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
 	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,89 +18,40 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: linux-arm-kernel-bounces@lists.infradead.org
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Boojin Kim <boojin.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, linux-samsung-soc@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+To: padma venkat <padma.kvr@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, Padmavathi Venna <padma.v@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVGh1LCBKdWwgMjEsIDIwMTEgYXQgMzo1MyBQTSwgTGludXMgV2FsbGVpaiA8bGludXMud2Fs
-bGVpakBsaW5hcm8ub3JnPiB3cm90ZToKPiBPbiBUaHUsIEp1bCAyMSwgMjAxMSBhdCAxMToxNCBB
-TSwgSmFzc2kgQnJhciA8amFzc2lzaW5naGJyYXJAZ21haWwuY29tPiB3cm90ZToKPj4gT24gVGh1
-LCBKdWwgMjEsIDIwMTEgYXQgMTo0MSBQTSwgUnVzc2VsbCBLaW5nIC0gQVJNIExpbnV4Cj4+IDxs
-aW51eEBhcm0ubGludXgub3JnLnVrPiB3cm90ZToKPj4+IE9uIFRodSwgSnVsIDIxLCAyMDExIGF0
-IDEyOjQ3OjQ5QU0gKzA1MzAsIEphc3NpIEJyYXIgd3JvdGU6Cj4+Pj4gUEwzMzAgaGFzIGZpeGVk
-IGNoYW5uZWxzIHRvIHBlcmlwaGVyYWxzLgo+Pj4+IFNvIEZJRk8gYWRkcmVzc2VzKGJ1cnN0X3N6
-IHRvbz8pIHNob3VsZCBhbHJlYWR5IGJlIHNldCB2aWEgcGxhdGZvcm0gZGF0YS4KPj4+PiBDbGll
-bnQgZHJpdmVycyBzaG91bGRuJ3QgYm90aGVyLgo+Pj4KPj4+IFRoYXQncyB1dHRlciBjcmFwLCBh
-bmQgaXNuJ3Qgd2hhdCB0aGUgRE1BIGVuZ2luZSBBUEkgaXMgYWJvdXQuCj4+Pgo+Pj4gVGhlIGFi
-b3ZlIGxvb2tzIGNvcnJlY3RseSBpbXBsZW1lbnRlZC4gwqBTbGF2ZSBETUEgZW5naW5lIHVzZXJz
-IGFyZQo+Pj4gc3VwcG9zZWQgdG8gc3VwcGx5IHRoZSBkZXZpY2UgRE1BIHJlZ2lzdGVyIGFkZHJl
-c3MgdmlhIHRoaXMKPj4+IERNQV9TTEFWRV9DT05GSUcgY2FsbC4gwqBEb2luZyB0aGlzIHZpYSBw
-bGF0Zm9ybSBkYXRhIGZvciB0aGUgRE1BCj4+PiBkZXZpY2UgaXMgYnJhaW5kZWFkLgo+Pgo+PiBS
-YXRoZXIgdGhhbiBoYXZlIDMyIGNsaWVudCBkcml2ZXJzIGV4cGVjdCBmaWZvX2FkZHJlc3MgZnJv
-bSB0aGUKPj4gcGxhdGZvcm0gYW5kIHRoZW4KPj4gcHJvdmlkZSB0byB0aGUgRE1BQywgSU1ITyBp
-dCBpcyBiZXR0ZXIgZm9yIGEgc2luZ2xlIGRyaXZlcihETUFDKSB0bwo+PiBnZXQgMzIgYWRkcmVz
-c2VzCj4+IGZyb20gdGhlIHBsYXRmb3JtLgo+Cj4gTXkgaWRlYSAod2hlbiBJIGltcGxlbWVudGVk
-IGl0KSBpcyB0aGF0IHRoZSBkZXZpY2UgZHJpdmVyIGtub3dzIHRoZQo+IHBoeXNpY2FsIGFuZCB2
-aXJ0dWFsIGJhc2UgYW5kIHRodXMgdGhlIGFkZHJlc3Mgd2hlcmUgRE1BIGRhdGEgaXMKPiBkZXN0
-aW5lZC4gSXQga25vd3MgYWxsIG90aGVyIHJlZ2lzdGVycywgaXQgcmVtYXBzIHRoZW0sIG5vb25l
-IGVsc2Ugc2hvdWxkCj4gYmUgYm90aGVyZWQgd2l0aCBjb250YWluaW5nIHRoZSBrbm93bGVkZ2Ug
-b2YgYWRyZXNzIHJhbmdlcyBmb3IgdGhlCj4gc3BlY2lmaWMgaGFyZHdhcmUgYmxvY2suCj4KPiBQ
-YXNzaW5nIHRoaXMgdGhyb3VnaCBwbGF0Zm9ybSBkYXRhIHJlcXVpcmVzIHRoZSBtYWNoaW5lIHRv
-IGtlZXAgdHJhY2sKPiBub3Qgb25seSBvZiB0aGUgYmFzZSBhZHJlc3Mgb2YgdGhlIHBlcmlwaGVy
-YWwgKGFzIGlzIGdlbmVyYWxseSBjb250YWluZWQKPiBpbiB0aGUgbWFjaGluZSBvciBkZXZpY2Ug
-dHJlZSkgYnV0IGFsc28gdGhlIG9mZnNldCBvZiBzcGVjaWZpYyByZWdpc3RlcnMKPiBpbiB0aGF0
-IG1lbW9yeSByZWdpb24sIHdoaWNoIGlzIHRvbyBtdWNoLgo+Cj4gVXN1YWxseSB0aGlzIG1lYW5z
-IHRoZSBvZmZzZXRzIGFyZSBkZWZpbmVkIGluIGZpbGVzIGxpa2UgPG1hY2gvcGVyZm9vLmg+Cj4g
-d2hpY2ggbWVhbnMgdGhleSBjYW4ndCBiZSBwdXNoZWQgZG93biBpbnRvIGRyaXZlcnMvZm9vL2Zv
-by5jIGFuZAo+IGNyZWF0ZXMgdW5uZWNlc3NhcnkgYmluZGluZ3MgYW5kIGRlLWVuY2Fwc3VsYXRp
-b24gb2YgdGhlIGRyaXZlci4KPiBXZSB3YW50IHRvIGdldCByaWQgb2Ygc3VjaCBzdHVmZi4gKEkg
-dGhpbms/KQo+Cj4gVGhlcmVmb3JlIEkgaW50cm9kdWNlZCB0aGlzIHRvIGNvbmZpbmUgdGhlIGRp
-ZmZlcmVudCByZWdpc3RlcnMgaW50bwo+IHRoZSBkcml2ZXIgaXRzZWxmIGFuZCBhc2sgdGhlIERN
-QSBlbmdpbmUgdG8gdHJhbnNmZXIgdG8gYSBzcGVjaWZpYwo+IGFkZHJlc3MuCldoaWxlIHRoYXQg
-ZG9lcyBtYWtlIHNlbnNlLCBpdCBtYWtlcyBtYW5kYXRvcnkgdGhlIHJpdHVhbCBvZiBjYWxsaW5n
-CkRNQV9TTEFWRV9DT05GSUcgbWFuZGF0b3J5IGZvciBtb3N0IG9mIHRoZSBjYXNlcy4KQW5kIEkg
-dGhpbmsgdGhlIGVmZm9ydCB0byBzZXQgZmlmb19hZGRyIGZvciBwZXJpcGhlcmFscyBpcyBvdmVy
-cmF0ZWQuCgo+Cj4+IEVzcCB3aGVuIHRoZSBETUFDIGRyaXZlciBhbHJlYWR5IGV4cGVjdCBzaW1p
-bGFyIGgvdwo+PiBwYXJhbWV0ZXIgLS0gKmRpcmVjdGlvbiouCj4+Cj4+IEkgZG9uJ3QgdW5kZXJz
-dGFuZCB3aHkgaXMgJ2ZpZm9fYWRkcmVzcycgYSBwcm9wZXJ0eSBtdWNoIGRpZmZlcmVudAo+PiB0
-aGFuICdkaXJlY3Rpb24nIG9mIHRoZQo+PiBjaGFubmVsID8KPgo+IHN0cnVjdCBkbWFfc2xhdmVf
-Y29uZmlnIHsKPiDCoCDCoCDCoCDCoGVudW0gZG1hX2RhdGFfZGlyZWN0aW9uIGRpcmVjdGlvbjsK
-PiDCoCDCoCDCoCDCoGRtYV9hZGRyX3Qgc3JjX2FkZHI7Cj4gwqAgwqAgwqAgwqBkbWFfYWRkcl90
-IGRzdF9hZGRyOwo+IMKgIMKgIMKgIMKgZW51bSBkbWFfc2xhdmVfYnVzd2lkdGggc3JjX2FkZHJf
-d2lkdGg7Cj4gwqAgwqAgwqAgwqBlbnVtIGRtYV9zbGF2ZV9idXN3aWR0aCBkc3RfYWRkcl93aWR0
-aDsKPiDCoCDCoCDCoCDCoHUzMiBzcmNfbWF4YnVyc3Q7Cj4gwqAgwqAgwqAgwqB1MzIgZHN0X21h
-eGJ1cnN0Owo+IH07Cj4KPiBXZSBkbyBzdXBwb3J0IGNoYW5naW5nIGRpcmVjdGlvbiBhcyB3ZWxs
-IGFzIHNyYyBhbmQgZHN0IGFkZHJlc3MKPiAoaS5lLiBGSUZPIGVuZHBvaW50KSBhdCBydW50aW1l
-Lgo+Cj4gQ2hlY2sgZHJpdmVycy9tbWMvaG9zdC9tbWNpLmMgZm9yIGFuIGV4YW1wbGUgb2YgaG93
-IHdlIHN3aXRjaAo+IGEgc2luZ2xlIGNoYW5uZWwgZnJvbSBUWCB0byBSWCBpbiBydW50aW1lIHVz
-aW5nIHRoaXMgb25lIHByb3BlcnR5Lgo+Cj4gSG93ZXZlciBpdCBoYXMgYmVlbiBub3RlZCBieSBS
-dXNzZWxsIHRoYXQgdGhlIGRpcmVjdGlvbiBtZW1iZXIKPiBpcyB1bm5lY2Vzc2FyeSBzaW5jZSB0
-aGUgZGV2aWNlX3ByZXBfc2xhdmVfc2coKSBmdW5jdGlvbiBpbiB0aGUKPiBkbWFlbmdpbmUgdnRh
-YmxlIGFscmVhZHkgdGFrZXMgYSBkaXJlY3Rpb24gYXJndW1lbnQgbGlrZSB0aGlzOgo+Cj4gwqAg
-wqAgwqAgwqBzdHJ1Y3QgZG1hX2FzeW5jX3R4X2Rlc2NyaXB0b3IgKigqZGV2aWNlX3ByZXBfc2xh
-dmVfc2cpKAo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgc3RydWN0IGRtYV9jaGFuICpjaGFuLCBz
-dHJ1Y3Qgc2NhdHRlcmxpc3QgKnNnbCwKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHVuc2lnbmVk
-IGludCBzZ19sZW4sIGVudW0gZG1hX2RhdGFfZGlyZWN0aW9uIGRpcmVjdGlvbiwKPiDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoHVuc2lnbmVkIGxvbmcgZmxhZ3MpOwo+Cj4gVGhlcmVmb3JlIHRoZSBk
-aXJlY3Rpb24gc2V0dGluZyBuZWVkcyB0byBnbyBmcm9tIGVpdGhlciB0aGUgY29uZmlnCj4gc3Ry
-dWN0IG9yIHRoZSBkZXZpY2VfcHJlcF9zbGF2ZV9zZygpIGNhbGwsIGFzIHJpZ2h0IG5vdyB0aGUg
-Y2hhbm5lbAo+IGlzIGJlaW5nIHRvbGQgYWJvdXQgdGhlIGRpcmVjdGlvbiB0d2ljZSB3aGljaCBp
-cyBub3QgZWxlZ2FudCBhbmQKPiBjb25mdXNpbmcuCj4KPiBTbyB5b3UgZXZlbiBoYXZlIHR3byB3
-YXlzIG9mIGNoYW5naW5nIGRpcmVjdGlvbiBhdCBydW50aW1lLi4uCk9mIGNvdXJzZSB0aGVyZSBh
-cmUgd2F5cyB0byBzZXQgdGhlIGRpcmVjdGlvbi4uLiBidXQgd2hhdGV2ZXIgd2UgZG8KaXQgY2Fu
-J3QgcmVhbGx5IGJlIGNoYW5nZWQgZnJvbSB3aGF0IGgvdyBjYW4gb25seSBkby4KQW5kIHRoYXQg
-aXMgbXkgcG9pbnQuICBMZXQgY2xpZW50cyBub3QgYm90aGVyIHRyeWluZyB0byAnY29uZmlndXJl
-JyB3aGF0IGlzCnRoZSBvbmx5IHN1cHBvcnRlZCBvcHRpb24gYnkgaC93LgoKQW5kIEkgZG9uJ3Qg
-c3VnZ2VzdCBkcm9wcGluZyB0aGUgRE1BX1NMQVZFX0NPTkZJRyBjYWxsYmFjayAtIGp1c3QKa2Vl
-cCBpdCBmb3IgcmFyZXIgc2l0dWF0aW9ucyB3aGVuIHdlIGhhdmUgY29uZmlndXJhYmxlIGNoYW5u
-ZWxzLgoKQW5kIEkgYXNzdW1lZCB0aGF0IHdhcyB5b3VyIG9yaWdpbmFsIGlkZWEgdG9vLgotLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLQoqIEBETUFfU0xBVkVfQ09ORklHOiB0aGlzIGNvbW1hbmQgaXMg
-b25seSBpbXBsZW1lbnRlZCBieSBETUEgY29udHJvbGxlcnMKICogdGhhdCBuZWVkIHRvIHJ1bnRp
-bWUgcmVjb25maWd1cmUgdGhlIHNsYXZlIGNoYW5uZWxzIChhcyBvcHBvc2VkIHRvIHBhc3NpbmcK
-ICogY29uZmlndXJhdGlvbiBkYXRhIGluIHN0YXRpY2FsbHkgZnJvbSB0aGUgcGxhdGZvcm0pLiBB
-biBhZGRpdGlvbmFsCiAqIGFyZ3VtZW50IG9mIHN0cnVjdCBkbWFfc2xhdmVfY29uZmlnIG11c3Qg
-YmUgcGFzc2VkIGluIHdpdGggdGhpcwogKiBjb21tYW5kLgotLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LQoKUmVnYXJkcywKLWoKCj4KPiBZb3VycywKPiBMaW51cyBXYWxsZWlqCj4KCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFp
-bGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlz
-dHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+On Thursday 21 July 2011 11:13 AM, padma venkat wrote:
+> Hi Tushar,
+>
+> On Thu, Jul 21, 2011 at 10:58 AM, Tushar Behera
+> <tushar.behera@linaro.org>  wrote:
+>> On Thursday 21 July 2011 04:42 PM, Padmavathi Venna wrote:
+>>>
+
+[snip]
+
+>>> +       gc = irq_alloc_generic_chip("s5p64x0-eint", 1, S5P_IRQ_EINT_BASE,
+>>> +                                   S5P_VA_GPIO, handle_level_irq);
+>>
+>>                                ^^^^
+> Added spaces purposefully to make the parameters aligned properly in
+> the next line
+
+But spaces should never be used for indentation.
+
+Quoting from http://www.kernel.org/doc/Documentation/CodingStyle
+
+"Outside of comments, documentation and except in Kconfig, spaces are 
+never used for indentation"
+
+>> nitpick: Should be TABS
+>
+> Thanks&Regards
+> Padma
+
+[snip]
+
+-- 
+Tushar Behera
