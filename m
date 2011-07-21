@@ -1,87 +1,145 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCHv2 0/4] Updated s5p-mfc platform definitions
-Date: Thu, 21 Jul 2011 16:37:07 +0900
-Message-ID: <006601cc4779$026bb5d0$07432170$%kim@samsung.com>
-References: <1311229879-14818-1-git-send-email-m.szyprowski@samsung.com>
+From: Boojin Kim <boojin.kim@samsung.com>
+Subject: RE: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
+Date: Thu, 21 Jul 2011 13:13:54 +0900
+Message-ID: <000101cc475c$9b5bcdb0$d2136910$%kim@samsung.com>
+References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
+	<1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
+	<CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:39579 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752554Ab1GUHhQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jul 2011 03:37:16 -0400
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOO00D6PAGYD4N0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 16:37:14 +0900 (KST)
-Received: from kgenekim ([12.23.119.139])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LOO009ZZAI2OR@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 16:37:15 +0900 (KST)
-In-reply-to: <1311229879-14818-1-git-send-email-m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Jassi Brar' <jassisinghbrar@gmail.com>
+Cc: 'Vinod Koul' <vinod.koul@intel.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Dan Williams' <dan.j.williams@intel.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: 'Kamil Debski' <k.debski@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-Marek Szyprowski wrote:
-> 
-> Hello,
-> 
-> This patch series contains platform definitions for s5p-mfc driver
-> rebased onto latest for-next branch (including generic GIC and clockdev
-> changes). Errors reported by check patch have been fixed.
-> 
-OK, applied.
-Thanks.
+Jassi Brar wrote:
+> Sent: Thursday, July 21, 2011 4:18 AM
+> To: Boojin Kim
+> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
+> Vinod Koul; Dan Williams; Kukjin Kim
+> Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
+>
+> On Wed, Jul 20, 2011 at 4:16 PM, Boojin Kim <boojin.kim@samsung.com> wrote:
+> > Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > ---
+> >  drivers/dma/pl330.c |   53 
+> > +++++++++++++++++++++++++++++++++++++----------
+> ---
+> >  1 files changed, 39 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+> > index 586ab39..880f010 100644
+> > --- a/drivers/dma/pl330.c
+> > +++ b/drivers/dma/pl330.c
+> > @@ -256,25 +256,50 @@ static int pl330_alloc_chan_resources(struct 
+> > dma_chan
+> *chan)
+> >  static int pl330_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd,
+> unsigned long arg)
+> >  {
+> >        struct dma_pl330_chan *pch = to_pchan(chan);
+> > -       struct dma_pl330_desc *desc;
+> > +       struct dma_pl330_desc *desc, *_dt;
+> >        unsigned long flags;
+> > +       struct dma_pl330_dmac *pdmac = pch->dmac;
+> > +       struct dma_slave_config *slave_config;
+> > +       struct dma_pl330_peri *peri;
+> > +       LIST_HEAD(list);
+> >
+> > -       /* Only supports DMA_TERMINATE_ALL */
+> > -       if (cmd != DMA_TERMINATE_ALL)
+> > -               return -ENXIO;
+> > -
+> > -       spin_lock_irqsave(&pch->lock, flags);
+> > -
+> > -       /* FLUSH the PL330 Channel thread */
+> > -       pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
+> > +       switch (cmd) {
+> > +       case DMA_TERMINATE_ALL:
+> > +               spin_lock_irqsave(&pch->lock, flags);
+> >
+> > -       /* Mark all desc done */
+> > -       list_for_each_entry(desc, &pch->work_list, node)
+> > -               desc->status = DONE;
+> > +               /* FLUSH the PL330 Channel thread */
+> > +               pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
+> >
+> > -       spin_unlock_irqrestore(&pch->lock, flags);
+> > +               /* Mark all desc done */
+> > +               list_for_each_entry_safe(desc, _dt, &pch->work_list , 
+> > node)
+> {
+> > +                       desc->status = DONE;
+> > +                       pch->completed = desc->txd.cookie;
+> > +                       list_move_tail(&desc->node, &list);
+> > +               }
+> >
+> > -       pl330_tasklet((unsigned long) pch);
+> > +               list_splice_tail_init(&list, &pdmac->desc_pool);
+> > +               spin_unlock_irqrestore(&pch->lock, flags);
+> > +               break;
+> > +       case DMA_SLAVE_CONFIG:
+> Please protect this section too using spin_lock.
+Why is spin_lock need here?
+This code just sets configuration data into own channel structure.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+>
+> > +               if (slave_config->direction == DMA_TO_DEVICE) {
+> > +                       if (slave_config->dst_addr)
+> > +                               peri->fifo_addr = slave_config->dst_addr;
+> > +                       if (slave_config->dst_addr_width)
+> > +                               peri->burst_sz = __ffs(slave_config-
+> >dst_addr_width);
+> > +               } else if (slave_config->direction == DMA_FROM_DEVICE) {
+> > +                       if (slave_config->src_addr)
+> > +                               peri->fifo_addr = slave_config->src_addr;
+> > +                       if (slave_config->src_addr_width)
+> > +                               peri->burst_sz = __ffs(slave_config-
+> >src_addr_width);
+> > +               }
+> PL330 has fixed channels to peripherals.
+> So FIFO addresses(burst_sz too?) should already be set via platform data.
+> Client drivers shouldn't bother.
 
+First, DMA machine code should know the FIFO address of all client drivers to 
+set via platform data.
+In this case, Problem is that the definition of FIFO address is almost 
+declared to the header file of client driver.
+For example, sound\soc\samsung\regs-i2s-v2.h only has the definition of fifo 
+address as following.
 
-> Best regards
-> --
-> Marek Szyprowski
-> Samsung Poland R&D Center
-> 
-> 
-> Patch summary:
-> 
-> Kamil Debski (3):
->   ARM: S5P: Add support for MFC device to plat-s5p, mach-s5pv210 and
->     mach-exynos4
->   ARM: S5PV210: Enable MFC on Goni
->   ARM: EXYNOS4: Enable MFC on universal_c210
-> 
-> Marek Szyprowski (1):
->   ARM: EXYNOS4: Enable MFC on Samsung NURI
-> 
->  arch/arm/Kconfig                            |    2 +
->  arch/arm/mach-exynos4/Kconfig               |    4 +
->  arch/arm/mach-exynos4/clock.c               |   61 +++++++++++++
->  arch/arm/mach-exynos4/include/mach/map.h    |    2 +
->  arch/arm/mach-exynos4/mach-nuri.c           |   13 +++
->  arch/arm/mach-exynos4/mach-universal_c210.c |   13 +++
->  arch/arm/mach-s5pv210/Kconfig               |    1 +
->  arch/arm/mach-s5pv210/clock.c               |    7 ++
->  arch/arm/mach-s5pv210/include/mach/map.h    |    3 +
->  arch/arm/mach-s5pv210/mach-goni.c           |   10 ++
->  arch/arm/plat-s5p/Kconfig                   |    5 +
->  arch/arm/plat-s5p/Makefile                  |    2 +-
->  arch/arm/plat-s5p/dev-mfc.c                 |  123
-> +++++++++++++++++++++++++++
->  arch/arm/plat-s5p/include/plat/mfc.h        |   27 ++++++
->  arch/arm/plat-samsung/include/plat/devs.h   |    3 +
->  15 files changed, 275 insertions(+), 1 deletions(-)
->  create mode 100644 arch/arm/plat-s5p/dev-mfc.c
->  create mode 100644 arch/arm/plat-s5p/include/plat/mfc.h
-> 
-> --
-> 1.7.1.569.g6f426
+#define S3C2412_IISTXD			(0x10)
+#define S3C2412_IISRXD			(0x14)
+
+These definitions should be referred to DMA machine code to set fifo address 
+through platform data.
+I think it's not good method.
+And, SLAVE_CONFIG command exist to pass slave configuration data from client 
+driver to DMA driver.
+So, I think that it's proper to pass fifo address through SLAVE_CONFIG 
+command.
+
+Second, 'burst_sz' isn't fixed value. Namely, Client driver changes 'burst_sz' 
+according to its usecase.
+For example, I2S driver sets 'burst_sz' to 4 in case of stereo 
+playback/recording. But in case of mono playback/recording, It changes 
+'burst_sz' to 2.
+So, Client driver should use SLAVE_CONFIG command to set 'burst_sz' because 
+it's not fixed value.
+
+>
+> <will review remaining patches soon, gotta go now>
