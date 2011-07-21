@@ -1,145 +1,261 @@
-From: Boojin Kim <boojin.kim@samsung.com>
-Subject: RE: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
-Date: Thu, 21 Jul 2011 13:13:54 +0900
-Message-ID: <000101cc475c$9b5bcdb0$d2136910$%kim@samsung.com>
-References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
-	<1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
-	<CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH][RESEND] ARM: S5P64X0: External Interrupt Support
+Date: Thu, 21 Jul 2011 17:06:45 +0900
+Message-ID: <006a01cc477d$24673750$6d35a5f0$%kim@samsung.com>
+References: <1311247385-10854-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:55426 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751425Ab1GUIGv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 Jul 2011 04:06:51 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LOO00DINBRYD4O0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 17:06:49 +0900 (KST)
+Received: from kgenekim ([12.23.119.139])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LOO001E3BVDOR@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 17:06:49 +0900 (KST)
+In-reply-to: <1311247385-10854-1-git-send-email-padma.v@samsung.com>
 Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Jassi Brar' <jassisinghbrar@gmail.com>
-Cc: 'Vinod Koul' <vinod.koul@intel.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Dan Williams' <dan.j.williams@intel.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Padmavathi Venna' <padma.v@samsung.com>, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Jassi Brar wrote:
-> Sent: Thursday, July 21, 2011 4:18 AM
-> To: Boojin Kim
-> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
-> Vinod Koul; Dan Williams; Kukjin Kim
-> Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
->
-> On Wed, Jul 20, 2011 at 4:16 PM, Boojin Kim <boojin.kim@samsung.com> wrote:
-> > Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> > ---
-> >  drivers/dma/pl330.c |   53 
-> > +++++++++++++++++++++++++++++++++++++----------
+Padmavathi Venna wrote:
+> 
+> Add external interrupt support for S5P64X0.The external interrupt
+> group 0(0 to 15) is used for wake-up source in stop and sleep mode.
+> Add generic irq chip support
+> 
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 > ---
-> >  1 files changed, 39 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> > index 586ab39..880f010 100644
-> > --- a/drivers/dma/pl330.c
-> > +++ b/drivers/dma/pl330.c
-> > @@ -256,25 +256,50 @@ static int pl330_alloc_chan_resources(struct 
-> > dma_chan
-> *chan)
-> >  static int pl330_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd,
-> unsigned long arg)
-> >  {
-> >        struct dma_pl330_chan *pch = to_pchan(chan);
-> > -       struct dma_pl330_desc *desc;
-> > +       struct dma_pl330_desc *desc, *_dt;
-> >        unsigned long flags;
-> > +       struct dma_pl330_dmac *pdmac = pch->dmac;
-> > +       struct dma_slave_config *slave_config;
-> > +       struct dma_pl330_peri *peri;
-> > +       LIST_HEAD(list);
-> >
-> > -       /* Only supports DMA_TERMINATE_ALL */
-> > -       if (cmd != DMA_TERMINATE_ALL)
-> > -               return -ENXIO;
-> > -
-> > -       spin_lock_irqsave(&pch->lock, flags);
-> > -
-> > -       /* FLUSH the PL330 Channel thread */
-> > -       pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
-> > +       switch (cmd) {
-> > +       case DMA_TERMINATE_ALL:
-> > +               spin_lock_irqsave(&pch->lock, flags);
-> >
-> > -       /* Mark all desc done */
-> > -       list_for_each_entry(desc, &pch->work_list, node)
-> > -               desc->status = DONE;
-> > +               /* FLUSH the PL330 Channel thread */
-> > +               pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
-> >
-> > -       spin_unlock_irqrestore(&pch->lock, flags);
-> > +               /* Mark all desc done */
-> > +               list_for_each_entry_safe(desc, _dt, &pch->work_list , 
-> > node)
-> {
-> > +                       desc->status = DONE;
-> > +                       pch->completed = desc->txd.cookie;
-> > +                       list_move_tail(&desc->node, &list);
-> > +               }
-> >
-> > -       pl330_tasklet((unsigned long) pch);
-> > +               list_splice_tail_init(&list, &pdmac->desc_pool);
-> > +               spin_unlock_irqrestore(&pch->lock, flags);
-> > +               break;
-> > +       case DMA_SLAVE_CONFIG:
-> Please protect this section too using spin_lock.
-Why is spin_lock need here?
-This code just sets configuration data into own channel structure.
+> 
+> Please ignore my previous patch due to wrong return value.
+> 
+>  arch/arm/mach-s5p64x0/Makefile                 |    2 +-
+>  arch/arm/mach-s5p64x0/include/mach/regs-gpio.h |   10 ++
+>  arch/arm/mach-s5p64x0/irq-eint.c               |  152
+> ++++++++++++++++++++++++
+>  3 files changed, 163 insertions(+), 1 deletions(-)
+>  create mode 100644 arch/arm/mach-s5p64x0/irq-eint.c
+> 
+> diff --git a/arch/arm/mach-s5p64x0/Makefile
+b/arch/arm/mach-s5p64x0/Makefile
+> index ae6bf6f..5f6afdf 100644
+> --- a/arch/arm/mach-s5p64x0/Makefile
+> +++ b/arch/arm/mach-s5p64x0/Makefile
+> @@ -13,7 +13,7 @@ obj-				:=
+>  # Core support for S5P64X0 system
+> 
+>  obj-$(CONFIG_ARCH_S5P64X0)	+= cpu.o init.o clock.o dma.o gpiolib.o
+> -obj-$(CONFIG_ARCH_S5P64X0)	+= setup-i2c0.o
+> +obj-$(CONFIG_ARCH_S5P64X0)	+= setup-i2c0.o irq-eint.o
+>  obj-$(CONFIG_CPU_S5P6440)	+= clock-s5p6440.o
+>  obj-$(CONFIG_CPU_S5P6450)	+= clock-s5p6450.o
+> 
+> diff --git a/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
+b/arch/arm/mach-
+> s5p64x0/include/mach/regs-gpio.h
+> index 0953ef6..6ce2547 100644
+> --- a/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
+> +++ b/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
+> @@ -34,4 +34,14 @@
+>  #define S5P6450_GPQ_BASE		(S5P_VA_GPIO + 0x0180)
+>  #define S5P6450_GPS_BASE		(S5P_VA_GPIO + 0x0300)
+> 
+> +/* External interrupt control registers for group0 */
+> +
+> +#define EINT0CON0_OFFSET		(0x900)
+> +#define EINT0MASK_OFFSET		(0x920)
+> +#define EINT0PEND_OFFSET		(0x924)
+> +
+> +#define S5P64X0_EINT0CON0		(S5P_VA_GPIO +
+> EINT0CON0_OFFSET)
+> +#define S5P64X0_EINT0MASK		(S5P_VA_GPIO +
+> EINT0MASK_OFFSET)
+> +#define S5P64X0_EINT0PEND		(S5P_VA_GPIO +
+> EINT0PEND_OFFSET)
+> +
+>  #endif /* __ASM_ARCH_REGS_GPIO_H */
+> diff --git a/arch/arm/mach-s5p64x0/irq-eint.c
+b/arch/arm/mach-s5p64x0/irq-eint.c
+> new file mode 100644
+> index 0000000..69ed454
+> --- /dev/null
+> +++ b/arch/arm/mach-s5p64x0/irq-eint.c
+> @@ -0,0 +1,152 @@
+> +/* arch/arm/mach-s5p64x0/irq-eint.c
+> + *
+> + * Copyright (c) 2011 Samsung Electronics Co., Ltd
+> + *		http://www.samsung.com/
+> + *
+> + * Based on linux/arch/arm/mach-s3c64xx/irq-eint.c
+> + *
+> + * S5P64X0 - Interrupt handling for External Interrupts.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/gpio.h>
+> +#include <linux/irq.h>
+> +#include <linux/io.h>
+> +
+> +#include <plat/regs-irqtype.h>
+> +#include <plat/gpio-cfg.h>
+> +
+> +#include <mach/regs-gpio.h>
+> +#include <mach/regs-clock.h>
+> +
+> +#define eint_offset(irq)	((irq) - IRQ_EINT(0))
+> +
+> +static int s5p64x0_irq_eint_set_type(struct irq_data *data, unsigned int
+type)
+> +{
+> +	int offs = eint_offset(data->irq);
+> +	int shift;
+> +	u32 ctrl, mask;
+> +	u32 newvalue = 0;
+> +
+> +	if (offs > 15)
+> +		return -EINVAL;
+> +
+> +	switch (type) {
+> +	case IRQ_TYPE_NONE:
+> +		printk(KERN_WARNING "No edge setting!\n");
+> +		break;
+> +	case IRQ_TYPE_EDGE_RISING:
+> +		newvalue = S3C2410_EXTINT_RISEEDGE;
+> +		break;
+> +	case IRQ_TYPE_EDGE_FALLING:
+> +		newvalue = S3C2410_EXTINT_FALLEDGE;
+> +		break;
+> +	case IRQ_TYPE_EDGE_BOTH:
+> +		newvalue = S3C2410_EXTINT_BOTHEDGE;
+> +		break;
+> +	case IRQ_TYPE_LEVEL_LOW:
+> +		newvalue = S3C2410_EXTINT_LOWLEV;
+> +		break;
+> +	case IRQ_TYPE_LEVEL_HIGH:
+> +		newvalue = S3C2410_EXTINT_HILEV;
+> +		break;
+> +	default:
+> +		printk(KERN_ERR "No such irq type %d", type);
+> +		return -EINVAL;
+> +	}
+> +
+> +	shift = (offs / 2) * 4;
+> +	mask = 0x7 << shift;
+> +
+> +	ctrl = __raw_readl(S5P64X0_EINT0CON0) & ~mask;
+> +	ctrl |= newvalue << shift;
+> +	__raw_writel(ctrl, S5P64X0_EINT0CON0);
+> +
+> +	/* Configure the GPIO pin for 6450 or 6440 based on CPU ID */
+> +	if (0x50000 == (__raw_readl(S5P64X0_SYS_ID) & 0xFF000))
+> +		s3c_gpio_cfgpin(S5P6450_GPN(offs), S3C_GPIO_SFN(2));
+> +	else
+> +		s3c_gpio_cfgpin(S5P6440_GPN(offs), S3C_GPIO_SFN(2));
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * s5p64x0_irq_demux_eint
+> + *
+> + * This function demuxes the IRQ from the group0 external interrupts,
+> + * from IRQ_EINT(0) to IRQ_EINT(15). It is designed to be inlined into
+> + * the specific handlers s5p64x0_irq_demux_eintX_Y.
+> + */
+> +static inline void s5p64x0_irq_demux_eint(unsigned int start, unsigned
+int end)
+> +{
+> +	u32 status = __raw_readl(S5P64X0_EINT0PEND);
+> +	u32 mask = __raw_readl(S5P64X0_EINT0MASK);
+> +	unsigned int irq;
+> +
+> +	status &= ~mask;
+> +	status >>= start;
+> +	status &= (1 << (end - start + 1)) - 1;
+> +
+> +	for (irq = IRQ_EINT(start); irq <= IRQ_EINT(end); irq++) {
+> +		if (status & 1)
+> +			generic_handle_irq(irq);
+> +		status >>= 1;
+> +	}
+> +}
+> +
+> +static void s5p64x0_irq_demux_eint0_3(unsigned int irq, struct irq_desc
+*desc)
+> +{
+> +	s5p64x0_irq_demux_eint(0, 3);
+> +}
+> +
+> +static void s5p64x0_irq_demux_eint4_11(unsigned int irq, struct irq_desc
+*desc)
+> +{
+> +	s5p64x0_irq_demux_eint(4, 11);
+> +}
+> +
+> +static void s5p64x0_irq_demux_eint12_15(unsigned int irq,
+> +					struct irq_desc *desc)
+> +{
+> +	s5p64x0_irq_demux_eint(12, 15);
+> +}
+> +
+> +static int s5p64x0_alloc_gc(void)
+> +{
+> +	struct irq_chip_generic *gc;
+> +	struct irq_chip_type *ct;
+> +
+> +	gc = irq_alloc_generic_chip("s5p64x0-eint", 1, S5P_IRQ_EINT_BASE,
+> +				    S5P_VA_GPIO, handle_level_irq);
+> +	if (!gc) {
+> +		printk(KERN_ERR "%s: irq_alloc_generic_chip for group 0"
+> +			"external interrupts failed\n", __func__);
+> +		return -EINVAL;
+> +	}
+> +
+> +	ct = gc->chip_types;
+> +	ct->chip.irq_ack = irq_gc_ack;
+> +	ct->chip.irq_mask = irq_gc_mask_set_bit;
+> +	ct->chip.irq_unmask = irq_gc_mask_clr_bit;
+> +	ct->chip.irq_set_type = s5p64x0_irq_eint_set_type;
+> +	ct->regs.ack = EINT0PEND_OFFSET;
+> +	ct->regs.mask = EINT0MASK_OFFSET;
+> +	irq_setup_generic_chip(gc, IRQ_MSK(16), IRQ_GC_INIT_MASK_CACHE,
+> +			       IRQ_NOREQUEST | IRQ_NOPROBE, 0);
+> +	return 0;
+> +}
+> +
+> +static int __init s5p64x0_init_irq_eint(void)
+> +{
+> +	int ret = s5p64x0_alloc_gc();
+> +	irq_set_chained_handler(IRQ_EINT0_3, s5p64x0_irq_demux_eint0_3);
+> +	irq_set_chained_handler(IRQ_EINT4_11, s5p64x0_irq_demux_eint4_11);
+> +	irq_set_chained_handler(IRQ_EINT12_15, s5p64x0_irq_demux_eint12_15);
+> +
+> +	return ret;
+> +}
+> +arch_initcall(s5p64x0_init_irq_eint);
+> --
+> 1.7.0.4
 
->
->
-> > +               if (slave_config->direction == DMA_TO_DEVICE) {
-> > +                       if (slave_config->dst_addr)
-> > +                               peri->fifo_addr = slave_config->dst_addr;
-> > +                       if (slave_config->dst_addr_width)
-> > +                               peri->burst_sz = __ffs(slave_config-
-> >dst_addr_width);
-> > +               } else if (slave_config->direction == DMA_FROM_DEVICE) {
-> > +                       if (slave_config->src_addr)
-> > +                               peri->fifo_addr = slave_config->src_addr;
-> > +                       if (slave_config->src_addr_width)
-> > +                               peri->burst_sz = __ffs(slave_config-
-> >src_addr_width);
-> > +               }
-> PL330 has fixed channels to peripherals.
-> So FIFO addresses(burst_sz too?) should already be set via platform data.
-> Client drivers shouldn't bother.
+Maybe this is my last guest :)
 
-First, DMA machine code should know the FIFO address of all client drivers to 
-set via platform data.
-In this case, Problem is that the definition of FIFO address is almost 
-declared to the header file of client driver.
-For example, sound\soc\samsung\regs-i2s-v2.h only has the definition of fifo 
-address as following.
+Ok, applied.
+Thanks.
 
-#define S3C2412_IISTXD			(0x10)
-#define S3C2412_IISRXD			(0x14)
-
-These definitions should be referred to DMA machine code to set fifo address 
-through platform data.
-I think it's not good method.
-And, SLAVE_CONFIG command exist to pass slave configuration data from client 
-driver to DMA driver.
-So, I think that it's proper to pass fifo address through SLAVE_CONFIG 
-command.
-
-Second, 'burst_sz' isn't fixed value. Namely, Client driver changes 'burst_sz' 
-according to its usecase.
-For example, I2S driver sets 'burst_sz' to 4 in case of stereo 
-playback/recording. But in case of mono playback/recording, It changes 
-'burst_sz' to 2.
-So, Client driver should use SLAVE_CONFIG command to set 'burst_sz' because 
-it's not fixed value.
-
->
-> <will review remaining patches soon, gotta go now>
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
