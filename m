@@ -1,107 +1,62 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 3/4] ARM: EXYNOS4: Enable MFC on universal_c210
-Date: Thu, 21 Jul 2011 08:31:18 +0200
-Message-ID: <1311229879-14818-4-git-send-email-m.szyprowski@samsung.com>
-References: <1311229879-14818-1-git-send-email-m.szyprowski@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCH v3 1/6] ARM: EXYNOS4: Increase NR_IRQS for devices with
+	more IRQs
+Date: Thu, 21 Jul 2011 11:18:29 +0900
+Message-ID: <CAJ0PZbRuCCbbTz-qhcY0OsaXF+zgAu3_OZBj+LRz=OczyTrcGg@mail.gmail.com>
+References: <1309421729-11172-1-git-send-email-myungjoo.ham@samsung.com>
+	<1309421729-11172-2-git-send-email-myungjoo.ham@samsung.com>
+	<06c801cc46ff$29855330$7c8ff990$%kim@samsung.com>
+Reply-To: myungjoo.ham@gmail.com
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:22578 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751274Ab1GUGb1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jul 2011 02:31:27 -0400
-Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LOO0007I7GDLE80@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 07:31:26 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LOO00E8K7GDPV@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 07:31:25 +0100 (BST)
-In-reply-to: <1311229879-14818-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <06c801cc46ff$29855330$7c8ff990$%kim@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Changhwan Youn <chaos.youn@samsung.com>, linux-arm-kernel@lists.infradead.org, tushar.behera@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: Kamil Debski <k.debski@samsung.com>
-
-Enable MFC device on the universal_c210 boards using the EXYNOS4 SoC.
-
-Signed-off-by: Kamil Debski <k.debski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/mach-exynos4/Kconfig               |    2 ++
- arch/arm/mach-exynos4/mach-universal_c210.c |   13 +++++++++++++
- 2 files changed, 15 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index 52fc172..3cc0077 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -175,7 +175,9 @@ config MACH_UNIVERSAL_C210
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_I2C3
- 	select S3C_DEV_I2C5
-+	select S5P_DEV_MFC
- 	select S5P_DEV_ONENAND
-+	select EXYNOS4_DEV_PD
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_I2C3
- 	select EXYNOS4_SETUP_I2C5
-diff --git a/arch/arm/mach-exynos4/mach-universal_c210.c b/arch/arm/mach-exynos4/mach-universal_c210.c
-index 5d8b097..0e280d1 100644
---- a/arch/arm/mach-exynos4/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos4/mach-universal_c210.c
-@@ -31,7 +31,9 @@
- #include <plat/devs.h>
- #include <plat/iic.h>
- #include <plat/gpio-cfg.h>
-+#include <plat/mfc.h>
- #include <plat/sdhci.h>
-+#include <plat/pd.h>
- 
- #include <mach/map.h>
- 
-@@ -717,6 +719,10 @@ static struct platform_device *universal_devices[] __initdata = {
- 	&i2c_gpio12,
- 	&universal_gpio_keys,
- 	&s5p_device_onenand,
-+	&s5p_device_mfc,
-+	&s5p_device_mfc_l,
-+	&s5p_device_mfc_r,
-+	&exynos4_device_pd[PD_MFC],
- };
- 
- static void __init universal_map_io(void)
-@@ -726,6 +732,11 @@ static void __init universal_map_io(void)
- 	s3c24xx_init_uarts(universal_uartcfgs, ARRAY_SIZE(universal_uartcfgs));
- }
- 
-+static void __init universal_reserve(void)
-+{
-+	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
-+}
-+
- static void __init universal_machine_init(void)
- {
- 	universal_sdhci_init();
-@@ -746,6 +757,7 @@ static void __init universal_machine_init(void)
- 
- 	/* Last */
- 	platform_add_devices(universal_devices, ARRAY_SIZE(universal_devices));
-+	s5p_device_mfc.dev.parent = &exynos4_device_pd[PD_MFC].dev;
- }
- 
- MACHINE_START(UNIVERSAL_C210, "UNIVERSAL_C210")
-@@ -755,4 +767,5 @@ MACHINE_START(UNIVERSAL_C210, "UNIVERSAL_C210")
- 	.map_io		= universal_map_io,
- 	.init_machine	= universal_machine_init,
- 	.timer		= &exynos4_timer,
-+	.reserve        = &universal_reserve,
- MACHINE_END
--- 
-1.7.1.569.g6f426
+T24gVGh1LCBKdWwgMjEsIDIwMTEgYXQgMjowNCBBTSwgS3VramluIEtpbSA8a2dlbmUua2ltQHNh
+bXN1bmcuY29tPiB3cm90ZToKPiBNeXVuZ0pvbyBIYW0gd3JvdGU6Cj4+Cj4+IE1BWDg5OTcvMTcw
+NDIsIHdoaWNoIGFyZSB1c2VkIGJ5IEV4eW5vczQtTlVSSSwgdXNlIGFkZGl0aW9uYWwgSVJRCj4+
+IG51bWJlcnMgYWZ0ZXIgR1BJTydzIElSUXMuIFRoZSBwYXRjaCBjcmVhdGVzIHNvbWUgcm9vbSBm
+b3IgdGhvc2UKPj4gZGV2aWNlcy4KPj4KPj4gU2lnbmVkLW9mZi1ieTogTXl1bmdKb28gSGFtIDxt
+eXVuZ2pvby5oYW1Ac2Ftc3VuZy5jb20+Cj4+IFNpZ25lZC1vZmYtYnk6IEt5dW5nbWluIFBhcmsg
+PGt5dW5nbWluLnBhcmtAc2Ftc3VuZy5jb20+Cj4+IC0tLQo+PiDCoGFyY2gvYXJtL21hY2gtZXh5
+bm9zNC9pbmNsdWRlL21hY2gvaXJxcy5oIHwgwqAgwqAyICstCj4+IMKgMSBmaWxlcyBjaGFuZ2Vk
+LCAxIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9hcmNo
+L2FybS9tYWNoLWV4eW5vczQvaW5jbHVkZS9tYWNoL2lycXMuaCBiL2FyY2gvYXJtL21hY2gtCj4+
+IGV4eW5vczQvaW5jbHVkZS9tYWNoL2lycXMuaAo+PiBpbmRleCAzMWY2YmVkLi41MWI1ZGI1IDEw
+MDY0NAo+PiAtLS0gYS9hcmNoL2FybS9tYWNoLWV4eW5vczQvaW5jbHVkZS9tYWNoL2lycXMuaAo+
+PiArKysgYi9hcmNoL2FybS9tYWNoLWV4eW5vczQvaW5jbHVkZS9tYWNoL2lycXMuaAo+PiBAQCAt
+MTU0LDYgKzE1NCw2IEBACj4+IMKgI2RlZmluZSBJUlFfR1BJT19FTkQgwqAgwqAgwqAgwqAgKFM1
+UF9HUElPSU5UX0JBU0UgKyBTNVBfR1BJT0lOVF9DT1VOVCkKPj4KPj4gwqAvKiBTZXQgdGhlIGRl
+ZmF1bHQgTlJfSVJRUyAqLwo+PiAtI2RlZmluZSBOUl9JUlFTIMKgIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIMKgIMKgIMKgKElSUV9HUElPX0VORCkKPj4gKyNkZWZpbmUgTlJfSVJRUyDCoCDCoCDCoCDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCDCoChJUlFfR1BJT19FTkQgKyA2NCkKPgo+IEkgYXBwbGllZCBi
+dXQgYmFzaWNhbGx5LCB3ZSBoYXZlIHRvIGF2b2lkIHVzaW5nIGhhcmQgY29kZWQgdmFsdWUgbGlr
+ZSA2NCBvbgo+IHRoaXMuIFRoZSBOUl9JUlFTIGRlcGVuZHMgb24gQ1BVIG5vdCBib2FyZCBidXQg
+dGhpcyBjaGFuZ2UgaXMgbmVlZGVkIGZvcgo+IHN1cHBvcnRpbmcgc29tZSBzcGVjaWZpYyBib2Fy
+ZCBhbmQgaWYgeW91IG5lZWQgbW9yZSBpbnRlcnJ1cHQgbnVtYmVycywgd2lsbAo+IHlvdSBpbmNy
+ZWFzZSBpdD8gSXQgaXMgbm90IGdvb2Qgd2F5Lgo+Cj4gV2UgbmVlZCB0byBmaXggdGhpcyB1cCBu
+ZXh0IHRpbWUuCj4KPiBUaGFua3MuCj4KPiBCZXN0IHJlZ2FyZHMsCj4gS2dlbmUuCgpBbHJpZ2h0
+LiBJJ2xsIHRyeSB0byBsZXQgaXQgYXNzaWduIG9yIGNoYW5nZSBOUl9JUlFTIGFkYXB0aXZlbHkg
+ZWl0aGVyCmluIHJ1bi10aW1lLCBib290LXRpbWUsIG9yIGNvbXBpbGUtdGltZSBsYXRlciBhcyBh
+IHNlcGVyYXRlZCBwYXRjaC4KCgpUaGFuayB5b3UuCgotIE15dW5nSm9vCgo+IC0tCj4gS3Vramlu
+IEtpbSA8a2dlbmUua2ltQHNhbXN1bmcuY29tPiwgU2VuaW9yIEVuZ2luZWVyLAo+IFNXIFNvbHV0
+aW9uIERldmVsb3BtZW50IFRlYW0sIFNhbXN1bmcgRWxlY3Ryb25pY3MgQ28uLCBMdGQuCj4KPgoK
+CgotLSAKTXl1bmdKb28gSGFtICjtlajrqoXso7wpLCBQaC5ELgpNb2JpbGUgU29mdHdhcmUgUGxh
+dGZvcm0gTGFiLApEaWdpdGFsIE1lZGlhIGFuZCBDb21tdW5pY2F0aW9ucyAoRE1DKSBCdXNpbmVz
+cwpTYW1zdW5nIEVsZWN0cm9uaWNzCmNlbGw6IDgyLTEwLTY3MTQtMjg1OAoKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWls
+aW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0
+cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
