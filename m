@@ -1,87 +1,78 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCHv2 0/4] Updated s5p-tv platform definitions
-Date: Thu, 21 Jul 2011 10:08:38 +0200
-Message-ID: <1311235722-29893-1-git-send-email-m.szyprowski@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
+Date: Thu, 21 Jul 2011 16:23:42 +0100
+Message-ID: <20110721152342.GE28942@n2100.arm.linux.org.uk>
+References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
+	<1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
+	<CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
+	<20110721081138.GL26574@n2100.arm.linux.org.uk>
+	<CABb+yY2obv5JMBiRSXS-4tSCYX+7nVVaA0Q7gurA+NndrGVuvA@mail.gmail.com>
+	<20110721112920.GM26574@n2100.arm.linux.org.uk>
+	<CABb+yY2p8VNSvhv+LjoYnunrYS8+3+841bKM-4aUsg5vNx=Mig@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:37049 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751425Ab1GUIIr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jul 2011 04:08:47 -0400
-Received: from eu_spt1 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LOO004WNBYLHY@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 09:08:45 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LOO00EIKBYLPV@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 09:08:45 +0100 (BST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <CABb+yY2p8VNSvhv+LjoYnunrYS8+3+841bKM-4aUsg5vNx=Mig@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hello,
+On Thu, Jul 21, 2011 at 08:42:40PM +0530, Jassi Brar wrote:
+> On Thu, Jul 21, 2011 at 4:59 PM, Russell King - ARM Linux
+> <linux@arm.linux.org.uk> wrote:
+> > Does your hardware have a hardware block from the device itself containing
+> > all the systems FIFOs ?
+> I am not sure what you ask, but let me say what I know.
+> In this case atleast, all PL330 DMA channels have fixed source/destination
+> address on the device side. So it's not like developer doesn't know
+> fifo_addr here.
 
-This patch series contains platform definitions for s5p-tv driver
-rebased onto latest for-next branch (including generic GIC and clockdev
-changes).
+Even so, your approach is _conceptually_ wrong.  Think about it.
 
-Changes since v1:
-- renamed i2c8 to common i2c-hdmiphy
-- moved common vpll code to plat-s5p/clocks.c
-- added check for pll locking
-- various minor coding style fixes here and there
+You declare your devices giving the bus address where they're located.
+So, lets say for argument that your UART is located at 0x10001000.
 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+Your UART driver knows that the FIFO register is at offset 0x20 from
+the base address.  Your platform data provides the UART driver with a
+DMA match function and data specific for that match function.  This
+data encodes the specific DMA channel.
 
+Now, why should you have to encode into the DMA drivers platform data
+that DMA channel X has its FIFO at 0x10001020?  Not only do you have
+to declare the base address of the UART but also you have to know the
+offset into the UART.
 
-Patch summary:
+Why not just let the UART driver - which knows that the base address
+is 0x10001000, and the FIFO is at offset 0x20 above that - tell the
+DMA driver that's where the FIFO is located?
 
-Tomasz Stanislawski (4):
-  ARM: Samsung: add i2c hdmiphy controller definitions
-  ARM: S5P: add support for tv device
-  ARM: Exynos4: enable TV support on Universal_C210 board
-  ARM: S5PV210: enable TV support on GONI board
+Finally, your specific SoC may have a PL330, which may have FIFOs tied
+to specific DMA request signals.  That's an _implementation_ _detail_.
+That doesn't mean that's always going to be the case.
 
- arch/arm/mach-exynos4/Kconfig                    |    2 +
- arch/arm/mach-exynos4/clock.c                    |  140 +++++++++++++++++++++-
- arch/arm/mach-exynos4/cpu.c                      |    4 +
- arch/arm/mach-exynos4/include/mach/iic-hdmiphy.h |   16 +++
- arch/arm/mach-exynos4/include/mach/irqs.h        |    4 +
- arch/arm/mach-exynos4/include/mach/map.h         |   12 ++
- arch/arm/mach-exynos4/include/mach/regs-pmu.h    |    6 +
- arch/arm/mach-exynos4/mach-universal_c210.c      |   74 ++++++++++++
- arch/arm/mach-s5pv210/Kconfig                    |    1 +
- arch/arm/mach-s5pv210/clock.c                    |   87 ++++++++++++--
- arch/arm/mach-s5pv210/cpu.c                      |    4 +
- arch/arm/mach-s5pv210/include/mach/iic-hdmiphy.h |   16 +++
- arch/arm/mach-s5pv210/include/mach/irqs.h        |    4 +-
- arch/arm/mach-s5pv210/include/mach/map.h         |   13 ++
- arch/arm/mach-s5pv210/include/mach/regs-clock.h  |    9 +-
- arch/arm/mach-s5pv210/mach-goni.c                |    9 ++
- arch/arm/plat-s5p/Kconfig                        |   10 ++
- arch/arm/plat-s5p/Makefile                       |    2 +
- arch/arm/plat-s5p/clock.c                        |   73 +++++++++++
- arch/arm/plat-s5p/dev-i2c-hdmiphy.c              |   59 +++++++++
- arch/arm/plat-s5p/dev-tv.c                       |  100 +++++++++++++++
- arch/arm/plat-s5p/include/plat/s5p-clock.h       |    4 +
- arch/arm/plat-samsung/include/plat/devs.h        |    6 +
- arch/arm/plat-samsung/include/plat/iic.h         |    1 +
- arch/arm/plat-samsung/include/plat/tv-core.h     |   44 +++++++
- 25 files changed, 684 insertions(+), 16 deletions(-)
- create mode 100644 arch/arm/mach-exynos4/include/mach/iic-hdmiphy.h
- create mode 100644 arch/arm/mach-s5pv210/include/mach/iic-hdmiphy.h
- create mode 100644 arch/arm/plat-s5p/dev-i2c-hdmiphy.c
- create mode 100644 arch/arm/plat-s5p/dev-tv.c
- create mode 100644 arch/arm/plat-samsung/include/plat/tv-core.h
+I've heard that ARM Ltd may start using the PL330 on their evaluation
+boards.  They have a habbit of muxing several DMA request signals to
+several different peripherals.  Will I need to rewrite all the Samsung
+users of PL330 when that happens because they've decided they don't
+like the DMA engine API and have gone off and done their own thing
+instead?
 
--- 
-1.7.1.569.g6f426
+So no, encoding the FIFO addresses into platform data for the DMA
+controller is brain dead and totally the wrong thing to do.  And when
+you come to moving stuff over to DT, you'll see that's even more true
+there.
+
+So don't make the mistake now.  Do things sensibly and follow the DMA
+engine API.  Arrange for all your drivers to call DMA_SLAVE_CONFIG
+with the address of the FIFO.
