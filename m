@@ -1,55 +1,69 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH V2 0/4] Add Samsung internal dma driver
-	support
-Date: Thu, 21 Jul 2011 16:53:26 +0900
-Message-ID: <006701cc477b$490e5f90$db2b1eb0$%kim@samsung.com>
-References: <1308127407-22458-1-git-send-email-sbkim73@samsung.com>
+Subject: RE: [PATCH] ARM: EXYNOS4: Add more register addresses of CMU.
+Date: Thu, 21 Jul 2011 11:37:54 +0900
+Message-ID: <003901cc474f$377625a0$a66270e0$%kim@samsung.com>
+References: <000501cc470b$34a32060$9de96120$%kim@samsung.com>
+	<1311214291-32151-1-git-send-email-myungjoo.ham@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-reply-to: <1308127407-22458-1-git-send-email-sbkim73@samsung.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1311214291-32151-1-git-send-email-myungjoo.ham@samsung.com>
 Content-language: ko
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: 'Sangbeom Kim' <sbkim73@samsung.com>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
-Cc: jassisinghbrar@gmail.com, broonie@opensource.wolfsonmicro.com, lrg@slimlogic.co.uk
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, myungjoo.ham@gmail.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Sangbeom Kim wrote:
+MyungJoo Ham wrote:
 > 
-> I2S in samsung audio subsytem has a small internal dma(idma).
-> IDMA can be used in low power audio mode and I2S0 secondary fifo
-> data tranfer.
-> In this patchsets, idma driver is added.
-> Original code is made by jassi brar on SMDKV210
-> After idma driver merge, I will submit low power audio support
-> with idma driver and samsung dsp driver.
+> These registers are crucial for PM to work properly.
 > 
-> Changes since v1:
-> 1. Change idma_new by new pcm_new api
-> 2. Add handling different idma address
-> 3. As jassi comments, Modify the idma driver
+> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos4/include/mach/regs-clock.h |    3 +++
+>  1 files changed, 3 insertions(+), 0 deletions(-)
 > 
-> This patchset contains followings
+> diff --git a/arch/arm/mach-exynos4/include/mach/regs-clock.h
+b/arch/arm/mach-
+> exynos4/include/mach/regs-clock.h
+> index 64bdd24..d493fdb 100644
+> --- a/arch/arm/mach-exynos4/include/mach/regs-clock.h
+> +++ b/arch/arm/mach-exynos4/include/mach/regs-clock.h
+> @@ -36,7 +36,9 @@
+>  #define S5P_CLKSRC_TOP0			S5P_CLKREG(0x0C210)
+>  #define S5P_CLKSRC_TOP1			S5P_CLKREG(0x0C214)
+>  #define S5P_CLKSRC_CAM			S5P_CLKREG(0x0C220)
+> +#define S5P_CLKSRC_TV			S5P_CLKREG(0x0C224)
+>  #define S5P_CLKSRC_MFC			S5P_CLKREG(0x0C228)
+> +#define S5P_CLKSRC_G3D			S5P_CLKREG(0x0C22C)
+>  #define S5P_CLKSRC_IMAGE		S5P_CLKREG(0x0C230)
+>  #define S5P_CLKSRC_LCD0			S5P_CLKREG(0x0C234)
+>  #define S5P_CLKSRC_LCD1			S5P_CLKREG(0x0C238)
+> @@ -64,6 +66,7 @@
+>  #define S5P_CLKDIV_PERIL3		S5P_CLKREG(0x0C55C)
+>  #define S5P_CLKDIV_PERIL4		S5P_CLKREG(0x0C560)
+>  #define S5P_CLKDIV_PERIL5		S5P_CLKREG(0x0C564)
+> +#define S5P_CLKDIV2_RATIO		S5P_CLKREG(0x0C580)
 > 
->  o To Jassi Brar, Mark Brown and Liam Girdwood,
-> [PATCH V2 1/4] ASoC: SAMSUNG: Modify I2S driver to support idma
-> [PATCH V2 2/4] ASoC: SAMSUNG: Add I2S0 internal dma driver
-> 
->  o To Kukjin Kim
-> [PATCH V2 3/4] ARM: SAMSUNG: Add platform device for idma
-> [PATCH V2 4/4] ARM: SAMSUNG: Add IRQ_I2S0 definition
-> 
-OK, applied 3rd and 4th.
-Thanks.
+>  #define S5P_CLKSRC_MASK_TOP		S5P_CLKREG(0x0C310)
+>  #define S5P_CLKSRC_MASK_CAM		S5P_CLKREG(0x0C320)
+> --
+> 1.7.4.1
+
+Thanks for your updating.
+
+Applied with your 'ARM: EXYNOS4: Add more registers to be saved and restored
+for PM'.
 
 Best regards,
 Kgene.
