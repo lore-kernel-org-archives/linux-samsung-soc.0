@@ -1,128 +1,114 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCHv2 0/4] Updated s5p-tv platform definitions
-Date: Thu, 21 Jul 2011 18:51:34 +0900
-Message-ID: <001001cc478b$cb3bc560$61b35020$%kim@samsung.com>
-References: <1311235722-29893-1-git-send-email-m.szyprowski@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
+Date: Thu, 21 Jul 2011 12:23:23 +0200
+Message-ID: <CACRpkdaP5D=URqAXAytm9s2e9HRVMB-MzsKZeLJ9v6ktkJUCRA@mail.gmail.com>
+References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
+	<1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
+	<CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
+	<20110721081138.GL26574@n2100.arm.linux.org.uk>
+	<CABb+yY2obv5JMBiRSXS-4tSCYX+7nVVaA0Q7gurA+NndrGVuvA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:16392 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751318Ab1GUJvn (ORCPT
+Received: from mail-qy0-f181.google.com ([209.85.216.181]:64924 "EHLO
+	mail-qy0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751408Ab1GUKXY convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jul 2011 05:51:43 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOO009XBGPV6WR0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 18:51:42 +0900 (KST)
-Received: from kgenekim ([12.23.119.139])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LOO006RBGQ6PG@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jul 2011 18:51:42 +0900 (KST)
-In-reply-to: <1311235722-29893-1-git-send-email-m.szyprowski@samsung.com>
-Content-language: ko
+	Thu, 21 Jul 2011 06:23:24 -0400
+Received: by qyk9 with SMTP id 9so632761qyk.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jul 2011 03:23:23 -0700 (PDT)
+In-Reply-To: <CABb+yY2obv5JMBiRSXS-4tSCYX+7nVVaA0Q7gurA+NndrGVuvA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: 'Tomasz Stanislawski' <t.stanislaws@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 
-Marek Szyprowski wrote:
-> 
-> Hello,
-> 
-Hi,
+On Thu, Jul 21, 2011 at 11:14 AM, Jassi Brar <jassisinghbrar@gmail.com>=
+ wrote:
+> On Thu, Jul 21, 2011 at 1:41 PM, Russell King - ARM Linux
+> <linux@arm.linux.org.uk> wrote:
+>> On Thu, Jul 21, 2011 at 12:47:49AM +0530, Jassi Brar wrote:
+>>> PL330 has fixed channels to peripherals.
+>>> So FIFO addresses(burst_sz too?) should already be set via platform=
+ data.
+>>> Client drivers shouldn't bother.
+>>
+>> That's utter crap, and isn't what the DMA engine API is about.
+>>
+>> The above looks correctly implemented. =A0Slave DMA engine users are
+>> supposed to supply the device DMA register address via this
+>> DMA_SLAVE_CONFIG call. =A0Doing this via platform data for the DMA
+>> device is braindead.
+>
+> Rather than have 32 client drivers expect fifo_address from the
+> platform and then
+> provide to the DMAC, IMHO it is better for a single driver(DMAC) to
+> get 32 addresses
+> from the platform.
 
-> This patch series contains platform definitions for s5p-tv driver
-> rebased onto latest for-next branch (including generic GIC and clockdev
-> changes).
-> 
-> Changes since v1:
-> - renamed i2c8 to common i2c-hdmiphy
-> - moved common vpll code to plat-s5p/clocks.c
-> - added check for pll locking
-> - various minor coding style fixes here and there
-> 
-> Best regards
-> --
-> Marek Szyprowski
-> Samsung Poland R&D Center
-> 
-> 
-> Patch summary:
-> 
-> Tomasz Stanislawski (4):
->   ARM: Samsung: add i2c hdmiphy controller definitions
->   ARM: S5P: add support for tv device
->   ARM: Exynos4: enable TV support on Universal_C210 board
->   ARM: S5PV210: enable TV support on GONI board
-> 
->  arch/arm/mach-exynos4/Kconfig                    |    2 +
->  arch/arm/mach-exynos4/clock.c                    |  140
-> +++++++++++++++++++++-
->  arch/arm/mach-exynos4/cpu.c                      |    4 +
->  arch/arm/mach-exynos4/include/mach/iic-hdmiphy.h |   16 +++
->  arch/arm/mach-exynos4/include/mach/irqs.h        |    4 +
->  arch/arm/mach-exynos4/include/mach/map.h         |   12 ++
->  arch/arm/mach-exynos4/include/mach/regs-pmu.h    |    6 +
->  arch/arm/mach-exynos4/mach-universal_c210.c      |   74 ++++++++++++
->  arch/arm/mach-s5pv210/Kconfig                    |    1 +
->  arch/arm/mach-s5pv210/clock.c                    |   87 ++++++++++++--
->  arch/arm/mach-s5pv210/cpu.c                      |    4 +
->  arch/arm/mach-s5pv210/include/mach/iic-hdmiphy.h |   16 +++
->  arch/arm/mach-s5pv210/include/mach/irqs.h        |    4 +-
->  arch/arm/mach-s5pv210/include/mach/map.h         |   13 ++
->  arch/arm/mach-s5pv210/include/mach/regs-clock.h  |    9 +-
->  arch/arm/mach-s5pv210/mach-goni.c                |    9 ++
->  arch/arm/plat-s5p/Kconfig                        |   10 ++
->  arch/arm/plat-s5p/Makefile                       |    2 +
->  arch/arm/plat-s5p/clock.c                        |   73 +++++++++++
->  arch/arm/plat-s5p/dev-i2c-hdmiphy.c              |   59 +++++++++
->  arch/arm/plat-s5p/dev-tv.c                       |  100 +++++++++++++++
->  arch/arm/plat-s5p/include/plat/s5p-clock.h       |    4 +
->  arch/arm/plat-samsung/include/plat/devs.h        |    6 +
->  arch/arm/plat-samsung/include/plat/iic.h         |    1 +
->  arch/arm/plat-samsung/include/plat/tv-core.h     |   44 +++++++
->  25 files changed, 684 insertions(+), 16 deletions(-)
->  create mode 100644 arch/arm/mach-exynos4/include/mach/iic-hdmiphy.h
->  create mode 100644 arch/arm/mach-s5pv210/include/mach/iic-hdmiphy.h
->  create mode 100644 arch/arm/plat-s5p/dev-i2c-hdmiphy.c
->  create mode 100644 arch/arm/plat-s5p/dev-tv.c
->  create mode 100644 arch/arm/plat-samsung/include/plat/tv-core.h
-> 
-> --
-> 1.7.1.569.g6f426
+My idea (when I implemented it) is that the device driver knows the
+physical and virtual base and thus the address where DMA data is
+destined. It knows all other registers, it remaps them, noone else shou=
+ld
+be bothered with containing the knowledge of adress ranges for the
+specific hardware block.
 
-Hi Marek,
+Passing this through platform data requires the machine to keep track
+not only of the base adress of the peripheral (as is generally containe=
+d
+in the machine or device tree) but also the offset of specific register=
+s
+in that memory region, which is too much.
 
-Looks good but happens following build failure with
-s5pc100_defconfig/s5p64x0_defconfig.
-Because they have no VPLL :(
+Usually this means the offsets are defined in files like <mach/perfoo.h=
+>
+which means they can't be pushed down into drivers/foo/foo.c and
+creates unnecessary bindings and de-encapsulation of the driver.
+We want to get rid of such stuff. (I think?)
 
-arch/arm/kernel/return_address.c:62: warning: #warning "TODO: return_address
-should use unwind tables"
-arch/arm/plat-s5p/clock.c: In function 's5p_vpll_set_rate':
-arch/arm/plat-s5p/clock.c:237: error: 'S5P_VPLL_CON0' undeclared (first use
-in this function)
-arch/arm/plat-s5p/clock.c:237: error: (Each undeclared identifier is
-reported only once
-arch/arm/plat-s5p/clock.c:237: error: for each function it appears in.)
-arch/arm/plat-s5p/clock.c:243: error: 'S5P_VPLL_CON1' undeclared (first use
-in this function)
-arch/arm/plat-s5p/clock.c:272: error: 'S5P_VPLLCON0_LOCKED_SHIFT' undeclared
-(first use in this function)
-make[1]: *** [arch/arm/plat-s5p/clock.o] Error 1
+Therefore I introduced this to confine the different registers into
+the driver itself and ask the DMA engine to transfer to a specific
+address.
 
-First of all, I will send 'pull request' without this series...
+> Esp when the DMAC driver already expect similar h/w
+> parameter -- *direction*.
+>
+> I don't understand why is 'fifo_address' a property much different
+> than 'direction' of the
+> channel ?
 
-I'm not sure can have a chance to send 'pull request' again for this merge
-window.
+struct dma_slave_config {
+        enum dma_data_direction direction;
+        dma_addr_t src_addr;
+        dma_addr_t dst_addr;
+        enum dma_slave_buswidth src_addr_width;
+        enum dma_slave_buswidth dst_addr_width;
+        u32 src_maxburst;
+        u32 dst_maxburst;
+};
 
-Thanks.
+We do support changing direction as well as src and dst address
+(i.e. FIFO endpoint) at runtime.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Check drivers/mmc/host/mmci.c for an example of how we switch
+a single channel from TX to RX in runtime using this one property.
+
+However it has been noted by Russell that the direction member
+is unnecessary since the device_prep_slave_sg() function in the
+dmaengine vtable already takes a direction argument like this:
+
+        struct dma_async_tx_descriptor *(*device_prep_slave_sg)(
+                struct dma_chan *chan, struct scatterlist *sgl,
+                unsigned int sg_len, enum dma_data_direction direction,
+                unsigned long flags);
+
+Therefore the direction setting needs to go from either the config
+struct or the device_prep_slave_sg() call, as right now the channel
+is being told about the direction twice which is not elegant and
+confusing.
+
+So you even have two ways of changing direction at runtime...
+
+Yours,
+Linus Walleij
