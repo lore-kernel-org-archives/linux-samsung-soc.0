@@ -1,56 +1,133 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
-Date: Thu, 21 Jul 2011 09:11:38 +0100
-Message-ID: <20110721081138.GL26574@n2100.arm.linux.org.uk>
-References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com> <1311158773-30314-3-git-send-email-boojin.kim@samsung.com> <CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
+From: Boojin Kim <boojin.kim@samsung.com>
+Subject: RE: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
+Date: Thu, 21 Jul 2011 15:34:22 +0900
+Message-ID: <000c01cc4770$3a391330$aeab3990$%kim@samsung.com>
+References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
+	<1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
+	<CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
+	<000101cc475c$9b5bcdb0$d2136910$%kim@samsung.com>
+	<CABb+yY05U0Q58F93TEZ8xt727e6YAxwxZT2HbeTTV6nVcg5DQw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:54696 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752503Ab1GUIO5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jul 2011 04:14:57 -0400
-Content-Disposition: inline
-In-Reply-To: <CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <CABb+yY05U0Q58F93TEZ8xt727e6YAxwxZT2HbeTTV6nVcg5DQw@mail.gmail.com>
+Content-language: ko
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Jassi Brar' <jassisinghbrar@gmail.com>
+Cc: 'Vinod Koul' <vinod.koul@intel.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Dan Williams' <dan.j.williams@intel.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Boojin Kim <boojin.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Thu, Jul 21, 2011 at 12:47:49AM +0530, Jassi Brar wrote:
-> On Wed, Jul 20, 2011 at 4:16 PM, Boojin Kim <boojin.kim@samsung.com> =
-wrote:
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (slave_config->direction =3D=3D DM=
-A_TO_DEVICE) {
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (slave_config->dst=
-_addr)
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 peri-=
->fifo_addr =3D slave_config->dst_addr;
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (slave_config->dst=
-_addr_width)
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 peri-=
->burst_sz =3D __ffs(slave_config->dst_addr_width);
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 } else if (slave_config->direction =3D=
-=3D DMA_FROM_DEVICE) {
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (slave_config->src=
-_addr)
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 peri-=
->fifo_addr =3D slave_config->src_addr;
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (slave_config->src=
-_addr_width)
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 peri-=
->burst_sz =3D __ffs(slave_config->src_addr_width);
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
-> PL330 has fixed channels to peripherals.
-> So FIFO addresses(burst_sz too?) should already be set via platform d=
-ata.
-> Client drivers shouldn't bother.
+Jassi Brar wrote:
+> Sent: Thursday, July 21, 2011 2:00 PM
+> To: Boojin Kim
+> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
+> Vinod Koul; Dan Williams; Kukjin Kim
+> Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
+>
+> On Thu, Jul 21, 2011 at 9:43 AM, Boojin Kim <boojin.kim@samsung.com> wrote:
+>
+> >> > -       pl330_tasklet((unsigned long) pch);
+> >> > +               list_splice_tail_init(&list, &pdmac->desc_pool);
+> >> > +               spin_unlock_irqrestore(&pch->lock, flags);
+> >> > +               break;
+> >> > +       case DMA_SLAVE_CONFIG:
+> >> Please protect this section too using spin_lock.
+> > Why is spin_lock need here?
+> > This code just sets configuration data into own channel structure.
+> It does seem unncessary, but the configuration that is set here is read
+> in other parts of the driver. However unlikely but there is theoretical
+> possibility of race here - one shouldn't count upon goodness of client
+> drivers.
+Yes, Client driver doesn't afflict the configuration data again.
+So, I think spin_lock isn't required here.
 
-That's utter crap, and isn't what the DMA engine API is about.
+>
+> >>
+> >> > +               if (slave_config->direction == DMA_TO_DEVICE) {
+> >> > +                       if (slave_config->dst_addr)
+> >> > +                               peri->fifo_addr = 
+> >> > slave_config->dst_addr;
+> >> > +                       if (slave_config->dst_addr_width)
+> >> > +                               peri->burst_sz = __ffs(slave_config-
+> >> >dst_addr_width);
+> >> > +               } else if (slave_config->direction == DMA_FROM_DEVICE) 
+> >> > {
+> >> > +                       if (slave_config->src_addr)
+> >> > +                               peri->fifo_addr = 
+> >> > slave_config->src_addr;
+> >> > +                       if (slave_config->src_addr_width)
+> >> > +                               peri->burst_sz = __ffs(slave_config-
+> >> >src_addr_width);
+> >> > +               }
+> >> PL330 has fixed channels to peripherals.
+> >> So FIFO addresses(burst_sz too?) should already be set via platform data.
+> >> Client drivers shouldn't bother.
+> >
+> > First, DMA machine code should know the FIFO address of all client drivers
+> to
+> > set via platform data.
+> > In this case, Problem is that the definition of FIFO address is almost
+> > declared to the header file of client driver.
+> > For example, sound\soc\samsung\regs-i2s-v2.h only has the definition of
+> fifo
+> > address as following.
+> >
+> > #define S3C2412_IISTXD                  (0x10)
+> > #define S3C2412_IISRXD                  (0x14)
+> >
+> > These definitions should be referred to DMA machine code to set fifo
+> address
+> > through platform data.
+> > I think it's not good method.
+> Crap!
+> Client drivers don't conjure up the fifo address - if not hardcoded they
+> are gotten via platform_data already.
 
-The above looks correctly implemented.  Slave DMA engine users are
-supposed to supply the device DMA register address via this
-DMA_SLAVE_CONFIG call.  Doing this via platform data for the DMA
-device is braindead.
+For it, DMA machine code should include all header files of client driver that 
+has definition of FIFO address.
+The number of header file would be more than 10. And I think it make the code 
+a little complicated.
+
+>
+> > And, SLAVE_CONFIG command exist to pass slave configuration data from
+> client
+> > driver to DMA driver.
+> > So, I think that it's proper to pass fifo address through SLAVE_CONFIG
+> > command.
+> If it's still not clear, read the para above definition of 'struct
+> dma_slave_config'
+> in include/linux/dmaengine.h
+
+Other DMA client drivers in mainline code already use SLAVE_CONFIG command to 
+pass fifo address as following.
+Please refer to Sound/soc/imx/imx-pcm-dma/mx2.c, Driver/mmc/host/mmci.c, 
+Drivers/mmc/host/mxcmmc.c and so on.
+
+And, Other DMA drivers also support to SLAVE_CONFIG command for it.
+Please refer to amba-pl08x.c, coh901318.c, ste_dma40.c and so on in 
+'driver/dma' directory.
+So, In my opinion, this is proper method to handle the client's fifo address.
+
+>
+> >
+> > Second, 'burst_sz' isn't fixed value. Namely, Client driver changes
+> 'burst_sz'
+> > according to its usecase.
+> > For example, I2S driver sets 'burst_sz' to 4 in case of stereo
+> > playback/recording. But in case of mono playback/recording, It changes
+> > 'burst_sz' to 2.
+> > So, Client driver should use SLAVE_CONFIG command to set 'burst_sz' 
+> > because
+> > it's not fixed value.
+> >
+> Yeah yeah, ok, that's why I put that with a ? in bracket.
+> I just don't remember testing with fixed burst_sz with pl330.
