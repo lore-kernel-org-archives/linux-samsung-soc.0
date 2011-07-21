@@ -1,78 +1,187 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
-Date: Thu, 21 Jul 2011 16:23:42 +0100
-Message-ID: <20110721152342.GE28942@n2100.arm.linux.org.uk>
-References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
-	<1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
-	<CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
-	<20110721081138.GL26574@n2100.arm.linux.org.uk>
-	<CABb+yY2obv5JMBiRSXS-4tSCYX+7nVVaA0Q7gurA+NndrGVuvA@mail.gmail.com>
-	<20110721112920.GM26574@n2100.arm.linux.org.uk>
-	<CABb+yY2p8VNSvhv+LjoYnunrYS8+3+841bKM-4aUsg5vNx=Mig@mail.gmail.com>
+From: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH V2] ARM: EXYNOS4: Add support for ORIGEN board
+Date: Thu, 21 Jul 2011 09:27:50 +0530
+Message-ID: <1311220670-20395-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <CABb+yY2p8VNSvhv+LjoYnunrYS8+3+841bKM-4aUsg5vNx=Mig@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
+List-Unsubscribe: <http://lists.linaro.org/mailman/options/linaro-dev>,
+	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linaro.org/pipermail/linaro-dev>
+List-Post: <mailto:linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
+List-Help: <mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.linaro.org/mailman/listinfo/linaro-dev>,
+	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=subscribe>
+Sender: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+Errors-To: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, snow.jhkim-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jhkim-l017aS1Txqb0CLH3JO92LQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jul 21, 2011 at 08:42:40PM +0530, Jassi Brar wrote:
-> On Thu, Jul 21, 2011 at 4:59 PM, Russell King - ARM Linux
-> <linux@arm.linux.org.uk> wrote:
-> > Does your hardware have a hardware block from the device itself containing
-> > all the systems FIFOs ?
-> I am not sure what you ask, but let me say what I know.
-> In this case atleast, all PL330 DMA channels have fixed source/destination
-> address on the device side. So it's not like developer doesn't know
-> fifo_addr here.
+From: JeongHyeon Kim <jhkim-l017aS1Txqb0CLH3JO92LQ@public.gmane.org>
 
-Even so, your approach is _conceptually_ wrong.  Think about it.
+Insignal's ORIGEN board is based Samsung EXYNOS4210 SoC.
 
-You declare your devices giving the bus address where they're located.
-So, lets say for argument that your UART is located at 0x10001000.
+Signed-off-by: JeongHyeon Kim <jhkim-l017aS1Txqb0CLH3JO92LQ@public.gmane.org>
+Signed-off-by: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+---
 
-Your UART driver knows that the FIFO register is at offset 0x20 from
-the base address.  Your platform data provides the UART driver with a
-DMA match function and data specific for that match function.  This
-data encodes the specific DMA channel.
+Changes for V2:
+ - Reworked based on Kukjin's comments and rebased to kgene/for-next
 
-Now, why should you have to encode into the DMA drivers platform data
-that DMA channel X has its FIFO at 0x10001020?  Not only do you have
-to declare the base address of the UART but also you have to know the
-offset into the UART.
+ arch/arm/mach-exynos4/Kconfig       |   10 +++
+ arch/arm/mach-exynos4/Makefile      |    1 +
+ arch/arm/mach-exynos4/mach-origen.c |  108 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 119 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-exynos4/mach-origen.c
 
-Why not just let the UART driver - which knows that the base address
-is 0x10001000, and the FIFO is at offset 0x20 above that - tell the
-DMA driver that's where the FIFO is located?
-
-Finally, your specific SoC may have a PL330, which may have FIFOs tied
-to specific DMA request signals.  That's an _implementation_ _detail_.
-That doesn't mean that's always going to be the case.
-
-I've heard that ARM Ltd may start using the PL330 on their evaluation
-boards.  They have a habbit of muxing several DMA request signals to
-several different peripherals.  Will I need to rewrite all the Samsung
-users of PL330 when that happens because they've decided they don't
-like the DMA engine API and have gone off and done their own thing
-instead?
-
-So no, encoding the FIFO addresses into platform data for the DMA
-controller is brain dead and totally the wrong thing to do.  And when
-you come to moving stuff over to DT, you'll see that's even more true
-there.
-
-So don't make the mistake now.  Do things sensibly and follow the DMA
-engine API.  Arrange for all your drivers to call DMA_SLAVE_CONFIG
-with the address of the FIFO.
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index 52fc172..012c034 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -205,6 +205,16 @@ config MACH_NURI
+ 	help
+ 	  Machine support for Samsung Mobile NURI Board.
+ 
++config MACH_ORIGEN
++	bool "ORIGEN"
++	select CPU_EXYNOS4210
++	select S3C_DEV_RTC
++	select S3C_DEV_WDT
++	select S3C_DEV_HSMMC2
++	select EXYNOS4_SETUP_SDHCI
++	help
++	  Machine support for ORIGEN based on Samsung S5PV310
++
+ endmenu
+ 
+ comment "Configuration for HSMMC bus width"
+diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
+index 2a0b682..ebec49c 100644
+--- a/arch/arm/mach-exynos4/Makefile
++++ b/arch/arm/mach-exynos4/Makefile
+@@ -31,6 +31,7 @@ obj-$(CONFIG_MACH_SMDKV310)		+= mach-smdkv310.o
+ obj-$(CONFIG_MACH_ARMLEX4210)		+= mach-armlex4210.o
+ obj-$(CONFIG_MACH_UNIVERSAL_C210)	+= mach-universal_c210.o
+ obj-$(CONFIG_MACH_NURI)			+= mach-nuri.o
++obj-$(CONFIG_MACH_ORIGEN)		+= mach-origen.o
+ 
+ # device support
+ 
+diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
+new file mode 100644
+index 0000000..ed59f86
+--- /dev/null
++++ b/arch/arm/mach-exynos4/mach-origen.c
+@@ -0,0 +1,108 @@
++/* linux/arch/arm/mach-exynos4/mach-origen.c
++ *
++ * Copyright (c) 2011 Insignal Co., Ltd.
++ *		http://www.insignal.co.kr/
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/serial_core.h>
++#include <linux/gpio.h>
++#include <linux/mmc/host.h>
++#include <linux/platform_device.h>
++#include <linux/io.h>
++#include <linux/input.h>
++
++#include <asm/mach/arch.h>
++#include <asm/mach-types.h>
++
++#include <plat/regs-serial.h>
++#include <plat/exynos4.h>
++#include <plat/cpu.h>
++#include <plat/devs.h>
++#include <plat/sdhci.h>
++#include <plat/iic.h>
++
++#include <mach/map.h>
++
++/* Following are default values for UCON, ULCON and UFCON UART registers */
++#define ORIGEN_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
++				 S3C2410_UCON_RXILEVEL |	\
++				 S3C2410_UCON_TXIRQMODE |	\
++				 S3C2410_UCON_RXIRQMODE |	\
++				 S3C2410_UCON_RXFIFO_TOI |	\
++				 S3C2443_UCON_RXERR_IRQEN)
++
++#define ORIGEN_ULCON_DEFAULT	S3C2410_LCON_CS8
++
++#define ORIGEN_UFCON_DEFAULT	(S3C2410_UFCON_FIFOMODE |	\
++				 S5PV210_UFCON_TXTRIG4 |	\
++				 S5PV210_UFCON_RXTRIG4)
++
++static struct s3c2410_uartcfg origen_uartcfgs[] __initdata = {
++	[0] = {
++		.hwport		= 0,
++		.flags		= 0,
++		.ucon		= ORIGEN_UCON_DEFAULT,
++		.ulcon		= ORIGEN_ULCON_DEFAULT,
++		.ufcon		= ORIGEN_UFCON_DEFAULT,
++	},
++	[1] = {
++		.hwport		= 1,
++		.flags		= 0,
++		.ucon		= ORIGEN_UCON_DEFAULT,
++		.ulcon		= ORIGEN_ULCON_DEFAULT,
++		.ufcon		= ORIGEN_UFCON_DEFAULT,
++	},
++	[2] = {
++		.hwport		= 2,
++		.flags		= 0,
++		.ucon		= ORIGEN_UCON_DEFAULT,
++		.ulcon		= ORIGEN_ULCON_DEFAULT,
++		.ufcon		= ORIGEN_UFCON_DEFAULT,
++	},
++	[3] = {
++		.hwport		= 3,
++		.flags		= 0,
++		.ucon		= ORIGEN_UCON_DEFAULT,
++		.ulcon		= ORIGEN_ULCON_DEFAULT,
++		.ufcon		= ORIGEN_UFCON_DEFAULT,
++	},
++};
++
++static struct s3c_sdhci_platdata origen_hsmmc2_pdata __initdata = {
++	.cd_type		= S3C_SDHCI_CD_GPIO,
++	.ext_cd_gpio		= EXYNOS4_GPK2(2),
++	.ext_cd_gpio_invert	= 1,
++	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
++};
++
++static struct platform_device *origen_devices[] __initdata = {
++	&s3c_device_hsmmc2,
++	&s3c_device_rtc,
++	&s3c_device_wdt,
++};
++
++static void __init origen_map_io(void)
++{
++	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
++	s3c24xx_init_clocks(24000000);
++	s3c24xx_init_uarts(origen_uartcfgs, ARRAY_SIZE(origen_uartcfgs));
++}
++
++static void __init origen_machine_init(void)
++{
++	s3c_sdhci2_set_platdata(&origen_hsmmc2_pdata);
++	platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
++}
++
++MACHINE_START(ORIGEN, "ORIGEN")
++	/* Maintainer: JeongHyeon Kim <jhkim-l017aS1Txqb0CLH3JO92LQ@public.gmane.org> */
++	.boot_params	= S5P_PA_SDRAM + 0x100,
++	.init_irq	= exynos4_init_irq,
++	.map_io		= origen_map_io,
++	.init_machine	= origen_machine_init,
++	.timer		= &exynos4_timer,
++MACHINE_END
+-- 
+1.7.4.1
