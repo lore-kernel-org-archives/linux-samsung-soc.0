@@ -1,38 +1,78 @@
-From: jhbird.choi@samsung.com
-Subject: [PATCH] ARM: EXYNOS4: Add missing S3C_VA_UARTx
-Date: Thu, 21 Jul 2011 15:21:37 +0900
-Message-ID: <1311229297-4423-1-git-send-email-jhbird.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:35293 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751003Ab1GUG2N (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jul 2011 02:28:13 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
+Date: Thu, 21 Jul 2011 20:42:40 +0530
+Message-ID: <CABb+yY2p8VNSvhv+LjoYnunrYS8+3+841bKM-4aUsg5vNx=Mig@mail.gmail.com>
+References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
+	<1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
+	<CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
+	<20110721081138.GL26574@n2100.arm.linux.org.uk>
+	<CABb+yY2obv5JMBiRSXS-4tSCYX+7nVVaA0Q7gurA+NndrGVuvA@mail.gmail.com>
+	<20110721112920.GM26574@n2100.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20110721112920.GM26574@n2100.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>
 
-From: Jonghwan Choi <jhbird.choi@samsung.com>
-
-Fix compile error with CONFIG_SAMSUNG_PM_DEBUG
-
-Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
----
- arch/arm/mach-exynos4/include/mach/map.h |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
-index 0009e77..5ddbfe3 100644
---- a/arch/arm/mach-exynos4/include/mach/map.h
-+++ b/arch/arm/mach-exynos4/include/mach/map.h
-@@ -151,6 +151,7 @@
- #define SAMSUNG_PA_KEYPAD		EXYNOS4_PA_KEYPAD
- 
- /* UART */
-+#define S3C_VA_UARTx(x)			(S3C_VA_UART + ((x) * S3C_UART_OFFSET))
- 
- #define S3C_PA_UART			EXYNOS4_PA_UART
- 
--- 
-1.7.0
+T24gVGh1LCBKdWwgMjEsIDIwMTEgYXQgNDo1OSBQTSwgUnVzc2VsbCBLaW5nIC0gQVJNIExpbnV4
+CjxsaW51eEBhcm0ubGludXgub3JnLnVrPiB3cm90ZToKPj4gPj4gUEwzMzAgaGFzIGZpeGVkIGNo
+YW5uZWxzIHRvIHBlcmlwaGVyYWxzLgo+PiA+PiBTbyBGSUZPIGFkZHJlc3NlcyhidXJzdF9zeiB0
+b28/KSBzaG91bGQgYWxyZWFkeSBiZSBzZXQgdmlhIHBsYXRmb3JtIGRhdGEuCj4+ID4+IENsaWVu
+dCBkcml2ZXJzIHNob3VsZG4ndCBib3RoZXIuCj4+ID4KPj4gPiBUaGF0J3MgdXR0ZXIgY3JhcCwg
+YW5kIGlzbid0IHdoYXQgdGhlIERNQSBlbmdpbmUgQVBJIGlzIGFib3V0Lgo+PiA+Cj4+ID4gVGhl
+IGFib3ZlIGxvb2tzIGNvcnJlY3RseSBpbXBsZW1lbnRlZC4gwqBTbGF2ZSBETUEgZW5naW5lIHVz
+ZXJzIGFyZQo+PiA+IHN1cHBvc2VkIHRvIHN1cHBseSB0aGUgZGV2aWNlIERNQSByZWdpc3RlciBh
+ZGRyZXNzIHZpYSB0aGlzCj4+ID4gRE1BX1NMQVZFX0NPTkZJRyBjYWxsLiDCoERvaW5nIHRoaXMg
+dmlhIHBsYXRmb3JtIGRhdGEgZm9yIHRoZSBETUEKPj4gPiBkZXZpY2UgaXMgYnJhaW5kZWFkLgo+
+Pgo+PiBSYXRoZXIgdGhhbiBoYXZlIDMyIGNsaWVudCBkcml2ZXJzIGV4cGVjdCBmaWZvX2FkZHJl
+c3MgZnJvbSB0aGUKPj4gcGxhdGZvcm0gYW5kIHRoZW4KPj4gcHJvdmlkZSB0byB0aGUgRE1BQywg
+SU1ITyBpdCBpcyBiZXR0ZXIgZm9yIGEgc2luZ2xlIGRyaXZlcihETUFDKSB0bwo+PiBnZXQgMzIg
+YWRkcmVzc2VzCj4+IGZyb20gdGhlIHBsYXRmb3JtLgo+PiBFc3Agd2hlbiB0aGUgRE1BQyBkcml2
+ZXIgYWxyZWFkeSBleHBlY3Qgc2ltaWxhciBoL3cgcGFyYW1ldGVyIC0tICpkaXJlY3Rpb24qLgo+
+Cj4gQ29udmVyc2VseSwgd2hlbiBhIHBsYXRmb3JtIGRvZXNuJ3Qga25vdyB3aGVyZSB0aGUgRklG
+T3MgYXJlIGJlY2F1c2UKPiB0aGV5J3JlIGxvY2F0ZWQgaW5zaWRlIHRoZSBhY3R1YWwgZGV2aWNl
+cywgYW5kIHRoZSBkZXZpY2UgZHJpdmVyIGRvZXMsCj4gdGhlbiBpdCBtYWtlcyBtdWNoIG1vcmUg
+c2Vuc2UgZm9yIHRoZSBkZXZpY2UgZHJpdmVyIHRvIHByb3ZpZGUgdGhlCj4gRE1BIGVuZ2luZSB3
+aXRoIHRoZSBidXMgYWRkcmVzcyBvZiB0aGF0LgpZZXMsIHRoYXQgaXMgYSBjYXNlIHRvIGNvbnNp
+ZGVyLgpQZXJoYXBzIHdlIGFscmVhZHkgZG8gc29tZXRoaW5nIGxpa2UgdGhhdCB3aGlsZSBzZXR0
+aW5nIGkyYyBhZGRyZXNzZXMKb2YgYXR0YWNoZWQgZGV2aWNlcyBpbiBib2FyZCBmaWxlcy4uLiBh
+bmQgc2ltaWxhcmx5IGl0IG1pZ2h0IGJlIHBvc3NpYmxlIGZvciB0aGUKZGV2ZWxvcGVyIHRvIGtu
+b3cgd2hhdCB0aGUgZmlmbyBhZGRyZXNzIGlzIGdvaW5nIHRvIGJlIGFmdGVyIHRoZSBkZXZpY2UK
+aXMgdXAgYW5kIHJ1bm5pbmcgZXNwIHdoZW4gaXQgaXMgaW50ZXJmYWNlZCB3aXRoIGFuIGludGVy
+bmFsIGNvbXBvbmVudApsaWtlIERNQS4KCj4KPiBEb2VzIHlvdXIgaGFyZHdhcmUgaGF2ZSBhIGhh
+cmR3YXJlIGJsb2NrIGZyb20gdGhlIGRldmljZSBpdHNlbGYgY29udGFpbmluZwo+IGFsbCB0aGUg
+c3lzdGVtcyBGSUZPcyA/CkkgYW0gbm90IHN1cmUgd2hhdCB5b3UgYXNrLCBidXQgbGV0IG1lIHNh
+eSB3aGF0IEkga25vdy4KSW4gdGhpcyBjYXNlIGF0bGVhc3QsIGFsbCBQTDMzMCBETUEgY2hhbm5l
+bHMgaGF2ZSBmaXhlZCBzb3VyY2UvZGVzdGluYXRpb24KYWRkcmVzcyBvbiB0aGUgZGV2aWNlIHNp
+ZGUuIFNvIGl0J3Mgbm90IGxpa2UgZGV2ZWxvcGVyIGRvZXNuJ3Qga25vdwpmaWZvX2FkZHIgaGVy
+ZS4KCgo+PiBJIGRvbid0IHVuZGVyc3RhbmQgd2h5IGlzICdmaWZvX2FkZHJlc3MnIGEgcHJvcGVy
+dHkgbXVjaCBkaWZmZXJlbnQKPj4gdGhhbiAnZGlyZWN0aW9uJyBvZiB0aGUgY2hhbm5lbCA/Cj4K
+PiBTb21lIGNoYW5uZWxzIGNhbiBkbyBtZW1vcnktdG8tcGVyaXBoZXJhbCBhbmQgcGVyaXBoZXJh
+bC10by1tZW1vcnkKPiB0cmFuc2ZlcnMuIMKgU29tZSBwZXJpcGhlcmFscyBwcm92aWRlIGEgc2lu
+Z2xlIHNldCBvZiBETUEgcmVxdWVzdC9hY2sKPiBsaW5lcyB0byBwZXJmb3JtIHRoaXMgZnVuY3Rp
+b24uIMKgU29tZSBwZXJpcGhlcmFscyBoYXZlIGRpZmZlcmVudAo+IGFkZHJlc3NlcyBmb3IgdGhl
+IFRYIGFuZCBSWCBGSUZPcyB3aXRoaW4gdGhlIGRldmljZS4KTGlrZXdpc2Ugd2UgaGFkIHNvbWV0
+aGluZyBsaWtlIHRoYXQgZm9yIEkyUyBJUCBvZiBTM0MyNDQwKG9yIEEwID8pCmEgc2luZ2xlIGZp
+Zm8gYWRkcmVzcyBzaGFyZWQgYnkgVFggYW5kIFJYIGNoYW5uZWwuCkRlcGVuZGluZyBpZiBpdCdz
+IGZ1bGwvaGFsZiBkdXBsZXggY2FwYWJsZSB3ZSBjYW4gaGF2ZSBib3RoIG9yIG9uZQondmlydHVh
+bCcgY2hhbm5lbCBhY3RpdmUgYXQgYSB0aW1lLgoKPgo+PiBJZiBhIGNoYW5uZWwgaXMgZmxleGli
+bGUgZW5vdWdoIHRvIGNoYW5nZSBpdCdzICdmaWZvX2FkZHJlc3MnLCBtb3N0Cj4+IHByb2JhYmx5
+IGl0IGNvdWxkIGFsc28gY2hhbmdlIGRpcmVjdGlvbiBvZiB0cmFuc2ZlcnMuCj4KPiBUaGVyZSBh
+cmUgRE1BIGVuZ2luZXMgYW5kIHNldHVwcyB3aGVyZSB0aGF0J3MgdHJ1ZS4KT2YgY291cnNlLCBh
+bmQgSSB0aGluayB0aGlzICdydW50aW1lJyBjb25maWd1cmF0aW9uIHNob3VsZCBiZSBkb25lCm9u
+bHkgZm9yIHN1Y2ggY2FzZXMuCgp0aG54CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0t
+a2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
