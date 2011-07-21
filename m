@@ -1,187 +1,125 @@
-From: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH V2] ARM: EXYNOS4: Add support for ORIGEN board
-Date: Thu, 21 Jul 2011 09:27:50 +0530
-Message-ID: <1311220670-20395-1-git-send-email-tushar.behera@linaro.org>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
+Date: Thu, 21 Jul 2011 10:30:11 +0530
+Message-ID: <CABb+yY05U0Q58F93TEZ8xt727e6YAxwxZT2HbeTTV6nVcg5DQw@mail.gmail.com>
+References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
+	<1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
+	<CABb+yY2_XKyCr2mEzqd0bCYJk3U7+sg8Xz4b4ma2KB1BconYOw@mail.gmail.com>
+	<000101cc475c$9b5bcdb0$d2136910$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
-List-Unsubscribe: <http://lists.linaro.org/mailman/options/linaro-dev>,
-	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/linaro-dev>
-List-Post: <mailto:linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
-List-Help: <mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.linaro.org/mailman/listinfo/linaro-dev>,
-	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=subscribe>
-Sender: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-Errors-To: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, snow.jhkim-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jhkim-l017aS1Txqb0CLH3JO92LQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-fx0-f52.google.com ([209.85.161.52]:48919 "EHLO
+	mail-fx0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750704Ab1GUFAN convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 Jul 2011 01:00:13 -0400
+Received: by fxd18 with SMTP id 18so2885706fxd.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Jul 2011 22:00:12 -0700 (PDT)
+In-Reply-To: <000101cc475c$9b5bcdb0$d2136910$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Boojin Kim <boojin.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-From: JeongHyeon Kim <jhkim-l017aS1Txqb0CLH3JO92LQ@public.gmane.org>
+On Thu, Jul 21, 2011 at 9:43 AM, Boojin Kim <boojin.kim@samsung.com> wr=
+ote:
 
-Insignal's ORIGEN board is based Samsung EXYNOS4210 SoC.
+>> > - =C2=A0 =C2=A0 =C2=A0 pl330_tasklet((unsigned long) pch);
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 list_splice_tai=
+l_init(&list, &pdmac->desc_pool);
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 spin_unlock_irq=
+restore(&pch->lock, flags);
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break;
+>> > + =C2=A0 =C2=A0 =C2=A0 case DMA_SLAVE_CONFIG:
+>> Please protect this section too using spin_lock.
+> Why is spin_lock need here?
+> This code just sets configuration data into own channel structure.
+It does seem unncessary, but the configuration that is set here is read
+in other parts of the driver. However unlikely but there is theoretical
+possibility of race here - one shouldn't count upon goodness of client =
+drivers.
 
-Signed-off-by: JeongHyeon Kim <jhkim-l017aS1Txqb0CLH3JO92LQ@public.gmane.org>
-Signed-off-by: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
+>>
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (slave_confi=
+g->direction =3D=3D DMA_TO_DEVICE) {
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 if (slave_config->dst_addr)
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 peri->fifo_addr =3D slave_config=
+->dst_addr;
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 if (slave_config->dst_addr_width)
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 peri->burst_sz =3D __ffs(slave_c=
+onfig-
+>> >dst_addr_width);
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 } else if (slav=
+e_config->direction =3D=3D DMA_FROM_DEVICE) {
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 if (slave_config->src_addr)
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 peri->fifo_addr =3D slave_config=
+->src_addr;
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 if (slave_config->src_addr_width)
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 peri->burst_sz =3D __ffs(slave_c=
+onfig-
+>> >src_addr_width);
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }
+>> PL330 has fixed channels to peripherals.
+>> So FIFO addresses(burst_sz too?) should already be set via platform =
+data.
+>> Client drivers shouldn't bother.
+>
+> First, DMA machine code should know the FIFO address of all client dr=
+ivers to
+> set via platform data.
+> In this case, Problem is that the definition of FIFO address is almos=
+t
+> declared to the header file of client driver.
+> For example, sound\soc\samsung\regs-i2s-v2.h only has the definition =
+of fifo
+> address as following.
+>
+> #define S3C2412_IISTXD =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0(0x10)
+> #define S3C2412_IISRXD =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0(0x14)
+>
+> These definitions should be referred to DMA machine code to set fifo =
+address
+> through platform data.
+> I think it's not good method.
+Crap!
+Client drivers don't conjure up the fifo address - if not hardcoded the=
+y
+are gotten via platform_data already.
 
-Changes for V2:
- - Reworked based on Kukjin's comments and rebased to kgene/for-next
 
- arch/arm/mach-exynos4/Kconfig       |   10 +++
- arch/arm/mach-exynos4/Makefile      |    1 +
- arch/arm/mach-exynos4/mach-origen.c |  108 +++++++++++++++++++++++++++++++++++
- 3 files changed, 119 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-exynos4/mach-origen.c
+> And, SLAVE_CONFIG command exist to pass slave configuration data from=
+ client
+> driver to DMA driver.
+> So, I think that it's proper to pass fifo address through SLAVE_CONFI=
+G
+> command.
+If it's still not clear, read the para above definition of 'struct
+dma_slave_config'
+in include/linux/dmaengine.h
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index 52fc172..012c034 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -205,6 +205,16 @@ config MACH_NURI
- 	help
- 	  Machine support for Samsung Mobile NURI Board.
- 
-+config MACH_ORIGEN
-+	bool "ORIGEN"
-+	select CPU_EXYNOS4210
-+	select S3C_DEV_RTC
-+	select S3C_DEV_WDT
-+	select S3C_DEV_HSMMC2
-+	select EXYNOS4_SETUP_SDHCI
-+	help
-+	  Machine support for ORIGEN based on Samsung S5PV310
-+
- endmenu
- 
- comment "Configuration for HSMMC bus width"
-diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
-index 2a0b682..ebec49c 100644
---- a/arch/arm/mach-exynos4/Makefile
-+++ b/arch/arm/mach-exynos4/Makefile
-@@ -31,6 +31,7 @@ obj-$(CONFIG_MACH_SMDKV310)		+= mach-smdkv310.o
- obj-$(CONFIG_MACH_ARMLEX4210)		+= mach-armlex4210.o
- obj-$(CONFIG_MACH_UNIVERSAL_C210)	+= mach-universal_c210.o
- obj-$(CONFIG_MACH_NURI)			+= mach-nuri.o
-+obj-$(CONFIG_MACH_ORIGEN)		+= mach-origen.o
- 
- # device support
- 
-diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
-new file mode 100644
-index 0000000..ed59f86
---- /dev/null
-+++ b/arch/arm/mach-exynos4/mach-origen.c
-@@ -0,0 +1,108 @@
-+/* linux/arch/arm/mach-exynos4/mach-origen.c
-+ *
-+ * Copyright (c) 2011 Insignal Co., Ltd.
-+ *		http://www.insignal.co.kr/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/serial_core.h>
-+#include <linux/gpio.h>
-+#include <linux/mmc/host.h>
-+#include <linux/platform_device.h>
-+#include <linux/io.h>
-+#include <linux/input.h>
-+
-+#include <asm/mach/arch.h>
-+#include <asm/mach-types.h>
-+
-+#include <plat/regs-serial.h>
-+#include <plat/exynos4.h>
-+#include <plat/cpu.h>
-+#include <plat/devs.h>
-+#include <plat/sdhci.h>
-+#include <plat/iic.h>
-+
-+#include <mach/map.h>
-+
-+/* Following are default values for UCON, ULCON and UFCON UART registers */
-+#define ORIGEN_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-+				 S3C2410_UCON_RXILEVEL |	\
-+				 S3C2410_UCON_TXIRQMODE |	\
-+				 S3C2410_UCON_RXIRQMODE |	\
-+				 S3C2410_UCON_RXFIFO_TOI |	\
-+				 S3C2443_UCON_RXERR_IRQEN)
-+
-+#define ORIGEN_ULCON_DEFAULT	S3C2410_LCON_CS8
-+
-+#define ORIGEN_UFCON_DEFAULT	(S3C2410_UFCON_FIFOMODE |	\
-+				 S5PV210_UFCON_TXTRIG4 |	\
-+				 S5PV210_UFCON_RXTRIG4)
-+
-+static struct s3c2410_uartcfg origen_uartcfgs[] __initdata = {
-+	[0] = {
-+		.hwport		= 0,
-+		.flags		= 0,
-+		.ucon		= ORIGEN_UCON_DEFAULT,
-+		.ulcon		= ORIGEN_ULCON_DEFAULT,
-+		.ufcon		= ORIGEN_UFCON_DEFAULT,
-+	},
-+	[1] = {
-+		.hwport		= 1,
-+		.flags		= 0,
-+		.ucon		= ORIGEN_UCON_DEFAULT,
-+		.ulcon		= ORIGEN_ULCON_DEFAULT,
-+		.ufcon		= ORIGEN_UFCON_DEFAULT,
-+	},
-+	[2] = {
-+		.hwport		= 2,
-+		.flags		= 0,
-+		.ucon		= ORIGEN_UCON_DEFAULT,
-+		.ulcon		= ORIGEN_ULCON_DEFAULT,
-+		.ufcon		= ORIGEN_UFCON_DEFAULT,
-+	},
-+	[3] = {
-+		.hwport		= 3,
-+		.flags		= 0,
-+		.ucon		= ORIGEN_UCON_DEFAULT,
-+		.ulcon		= ORIGEN_ULCON_DEFAULT,
-+		.ufcon		= ORIGEN_UFCON_DEFAULT,
-+	},
-+};
-+
-+static struct s3c_sdhci_platdata origen_hsmmc2_pdata __initdata = {
-+	.cd_type		= S3C_SDHCI_CD_GPIO,
-+	.ext_cd_gpio		= EXYNOS4_GPK2(2),
-+	.ext_cd_gpio_invert	= 1,
-+	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
-+};
-+
-+static struct platform_device *origen_devices[] __initdata = {
-+	&s3c_device_hsmmc2,
-+	&s3c_device_rtc,
-+	&s3c_device_wdt,
-+};
-+
-+static void __init origen_map_io(void)
-+{
-+	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
-+	s3c24xx_init_clocks(24000000);
-+	s3c24xx_init_uarts(origen_uartcfgs, ARRAY_SIZE(origen_uartcfgs));
-+}
-+
-+static void __init origen_machine_init(void)
-+{
-+	s3c_sdhci2_set_platdata(&origen_hsmmc2_pdata);
-+	platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
-+}
-+
-+MACHINE_START(ORIGEN, "ORIGEN")
-+	/* Maintainer: JeongHyeon Kim <jhkim-l017aS1Txqb0CLH3JO92LQ@public.gmane.org> */
-+	.boot_params	= S5P_PA_SDRAM + 0x100,
-+	.init_irq	= exynos4_init_irq,
-+	.map_io		= origen_map_io,
-+	.init_machine	= origen_machine_init,
-+	.timer		= &exynos4_timer,
-+MACHINE_END
--- 
-1.7.4.1
+>
+> Second, 'burst_sz' isn't fixed value. Namely, Client driver changes '=
+burst_sz'
+> according to its usecase.
+> For example, I2S driver sets 'burst_sz' to 4 in case of stereo
+> playback/recording. But in case of mono playback/recording, It change=
+s
+> 'burst_sz' to 2.
+> So, Client driver should use SLAVE_CONFIG command to set 'burst_sz' b=
+ecause
+> it's not fixed value.
+>
+Yeah yeah, ok, that's why I put that with a ? in bracket.
+I just don't remember testing with fixed burst_sz with pl330.
