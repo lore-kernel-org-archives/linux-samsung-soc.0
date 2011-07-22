@@ -1,132 +1,93 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
-Date: Fri, 22 Jul 2011 11:12:10 +0530
-Message-ID: <CABb+yY058yBZnmYcqbqFCfsBUcxU=JbTZmopLApZaaKim+MMfg@mail.gmail.com>
-References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
-	<1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
+From: Subash Patel <subashrp@gmail.com>
+Subject: Re: [PATCH v3 08/19] s5p-fimc: Add the media device driver
+Date: Fri, 22 Jul 2011 11:56:08 +0530
+Message-ID: <4E291800.7060402@gmail.com>
+References: <1309802110-16682-1-git-send-email-s.nawrocki@samsung.com> <1309802110-16682-9-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f52.google.com ([209.85.161.52]:56986 "EHLO
-	mail-fx0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752398Ab1GVFmL convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Jul 2011 01:42:11 -0400
-Received: by fxd18 with SMTP id 18so4667964fxd.11
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jul 2011 22:42:10 -0700 (PDT)
-In-Reply-To: <1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1309802110-16682-9-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Boojin Kim <boojin.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Wed, Jul 20, 2011 at 4:16 PM, Boojin Kim <boojin.kim@samsung.com> wr=
-ote:
-> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Hi Sylwester,
+
+On 07/04/2011 11:24 PM, Sylwester Nawrocki wrote:
+> The fimc media device driver is hooked onto "s5p-fimc-md" platform device.
+> Such a platform device need to be added in a board initialization code
+> and then camera sensors need to be specified as it's platform data.
+> The "s5p-fimc-md" device is a top level entity for all FIMC, mipi-csis
+> and sensor devices.
+>
+> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
+> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
 > ---
-> =C2=A0drivers/dma/pl330.c | =C2=A0 53 +++++++++++++++++++++++++++++++=
-++++++-------------
-> =C2=A01 files changed, 39 insertions(+), 14 deletions(-)
+>   drivers/media/video/Kconfig                 |    2 +-
+>   drivers/media/video/s5p-fimc/Makefile       |    2 +-
+...
 >
-> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> index 586ab39..880f010 100644
-> --- a/drivers/dma/pl330.c
-> +++ b/drivers/dma/pl330.c
-> @@ -256,25 +256,50 @@ static int pl330_alloc_chan_resources(struct dm=
-a_chan *chan)
-> =C2=A0static int pl330_control(struct dma_chan *chan, enum dma_ctrl_c=
-md cmd, unsigned long arg)
-> =C2=A0{
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0struct dma_pl330_chan *pch =3D to_pchan(ch=
-an);
-> - =C2=A0 =C2=A0 =C2=A0 struct dma_pl330_desc *desc;
-> + =C2=A0 =C2=A0 =C2=A0 struct dma_pl330_desc *desc, *_dt;
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0unsigned long flags;
-> + =C2=A0 =C2=A0 =C2=A0 struct dma_pl330_dmac *pdmac =3D pch->dmac;
-> + =C2=A0 =C2=A0 =C2=A0 struct dma_slave_config *slave_config;
-> + =C2=A0 =C2=A0 =C2=A0 struct dma_pl330_peri *peri;
-> + =C2=A0 =C2=A0 =C2=A0 LIST_HEAD(list);
->
-> - =C2=A0 =C2=A0 =C2=A0 /* Only supports DMA_TERMINATE_ALL */
-> - =C2=A0 =C2=A0 =C2=A0 if (cmd !=3D DMA_TERMINATE_ALL)
-> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return -ENXIO;
-> -
-> - =C2=A0 =C2=A0 =C2=A0 spin_lock_irqsave(&pch->lock, flags);
-> -
-> - =C2=A0 =C2=A0 =C2=A0 /* FLUSH the PL330 Channel thread */
-> - =C2=A0 =C2=A0 =C2=A0 pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUS=
-H);
-> + =C2=A0 =C2=A0 =C2=A0 switch (cmd) {
-> + =C2=A0 =C2=A0 =C2=A0 case DMA_TERMINATE_ALL:
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 spin_lock_irqsave(=
-&pch->lock, flags);
->
-> - =C2=A0 =C2=A0 =C2=A0 /* Mark all desc done */
-> - =C2=A0 =C2=A0 =C2=A0 list_for_each_entry(desc, &pch->work_list, nod=
-e)
-> - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 desc->status =3D D=
-ONE;
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* FLUSH the PL330=
- Channel thread */
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pl330_chan_ctrl(pc=
-h->pl330_chid, PL330_OP_FLUSH);
->
-> - =C2=A0 =C2=A0 =C2=A0 spin_unlock_irqrestore(&pch->lock, flags);
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* Mark all desc d=
-one */
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 list_for_each_entr=
-y_safe(desc, _dt, &pch->work_list , node) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 desc->status =3D DONE;
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 pch->completed =3D desc->txd.cookie;
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 list_move_tail(&desc->node, &list);
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }
->
-> - =C2=A0 =C2=A0 =C2=A0 pl330_tasklet((unsigned long) pch);
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 list_splice_tail_i=
-nit(&list, &pdmac->desc_pool);
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 spin_unlock_irqres=
-tore(&pch->lock, flags);
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break;
-> + =C2=A0 =C2=A0 =C2=A0 case DMA_SLAVE_CONFIG:
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 slave_config =3D (=
-struct dma_slave_config *)arg;
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 peri =3D pch->chan=
-=2Eprivate;
+>   /* -----------------------------------------------------*/
+>   /* fimc-capture.c					*/
+> diff --git a/drivers/media/video/s5p-fimc/fimc-mdevice.c b/drivers/media/video/s5p-fimc/fimc-mdevice.c
+> new file mode 100644
+> index 0000000..10c8d5d
+> --- /dev/null
+> +++ b/drivers/media/video/s5p-fimc/fimc-mdevice.c
+> @@ -0,0 +1,804 @@
+...
 > +
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (slave_config->=
-direction =3D=3D DMA_TO_DEVICE) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 if (slave_config->dst_addr)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 peri->fifo_addr =3D slave_config->d=
-st_addr;
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 if (slave_config->dst_addr_width)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 peri->burst_sz =3D __ffs(slave_conf=
-ig->dst_addr_width);
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 } else if (slave_c=
-onfig->direction =3D=3D DMA_FROM_DEVICE) {
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 if (slave_config->src_addr)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 peri->fifo_addr =3D slave_config->s=
-rc_addr;
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 if (slave_config->src_addr_width)
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 peri->burst_sz =3D __ffs(slave_conf=
-ig->src_addr_width);
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 }
-> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break;
-   As discussed yesterday, DMA_SLAVE_CONFIG is assumed to be madatory,
-so please dismantle the 'struct dma_pl330_peri', move fifo_addr,
-burst_sz and rqtype
-to 'struct dma_pl330_chan' and poison them - that will force clients
-to do DMA_SLAVE_CONFIG. Move 'peri_id' to 'struct dma_pl330_platdata'
-  And protect the changes to channel parameters with lock.
+> +static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
+> +{
+> +	struct s5p_platform_fimc *pdata = fmd->pdev->dev.platform_data;
+> +	struct fimc_dev *fd = NULL;
+> +	int num_clients, ret, i;
+> +
+> +	/*
+> +	 * Runtime resume one of the FIMC entities to make sure
+> +	 * the sclk_cam clocks are not globally disabled.
+> +	 */
+> +	for (i = 0; !fd&&  i<  ARRAY_SIZE(fmd->fimc); i++)
+> +		if (fmd->fimc[i])
+> +			fd = fmd->fimc[i];
+> +	if (!fd)
+> +		return -ENXIO;
+> +	ret = pm_runtime_get_sync(&fd->pdev->dev);
+> +	if (ret<  0)
+> +		return ret;
+> +
+> +	WARN_ON(pdata->num_clients>  ARRAY_SIZE(fmd->sensor));
+> +	num_clients = min_t(u32, pdata->num_clients, ARRAY_SIZE(fmd->sensor));
+> +
+> +	fmd->num_sensors = num_clients;
+> +	for (i = 0; i<  num_clients; i++) {
+> +		fmd->sensor[i].pdata =&pdata->isp_info[i];
+> +		ret = __fimc_md_set_camclk(fmd,&fmd->sensor[i], true);
+> +		if (ret)
+> +			break;
+> +		fmd->sensor[i].subdev =
+> +			fimc_md_register_sensor(fmd,&fmd->sensor[i]);
+
+There is an issue here. Function fimc_md_register_sensor(), can return 
+subdev, as also error codes when i2c_get_adapter() or NULL when 
+v4l2_i2c_new_subdev_board() fail. But we do not invalidate, and assume 
+the return value is valid subdev. It will cause kernel NULL pointer 
+exception later in fimc_md_create_links().
+
+> +		ret = __fimc_md_set_camclk(fmd,&fmd->sensor[i], false);
+> +		if (ret)
+> +			break;
+> +	}
+> +	pm_runtime_put(&fd->pdev->dev);
+> +	return ret;
+> +}
+> +
+> +/*
+> + * MIPI CSIS and FIMC platform devices registration.
+> + */
+
+Regards,
+Subash
+SISO-SLG
