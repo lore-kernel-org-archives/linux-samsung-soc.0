@@ -1,73 +1,42 @@
-From: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH v2 1/3] i2c: s3c2410: Keep a copy of platform data and use it.
-Date: Fri, 22 Jul 2011 15:48:36 +0530
-Message-ID: <1311329918-8105-2-git-send-email-thomas.abraham@linaro.org>
-References: <1311329918-8105-1-git-send-email-thomas.abraham@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-reply-to: <1311329918-8105-1-git-send-email-thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH v2 0/3] Add device tree support for Samsung's I2C driver
+Date: Fri, 22 Jul 2011 15:48:35 +0530
+Message-ID: <1311329918-8105-1-git-send-email-thomas.abraham@linaro.org>
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:44471 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753771Ab1GVKGB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 22 Jul 2011 06:06:01 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: devicetree-discuss@lists.ozlabs.org
+Cc: linux-i2c@vger.kernel.org, grant.likely@secretlab.ca, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
 
-The platform data is copied into driver's private data and the copy is
-used for all access to the platform data. This simpifies the addition
-of device tree support for the i2c-s3c2410 driver.
+This patchset adds device tree support for Samsung's I2C driver. The
+Exynos4 DT enabled machine is updated to support device tree based probe
+for I2C instance 0 and 1.
 
-Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
- drivers/i2c/busses/i2c-s3c2410.c |    7 +++++--
- 1 files changed, 5 insertions(+), 2 deletions(-)
+Changes since v1:
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 6c00c10..e132168 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -78,6 +78,7 @@ struct s3c24xx_i2c {
- 	struct resource		*ioarea;
- 	struct i2c_adapter	adap;
- 
-+	struct s3c2410_platform_i2c	pdata;
- #ifdef CONFIG_CPU_FREQ
- 	struct notifier_block	freq_transition;
- #endif
-@@ -626,7 +627,7 @@ static int s3c24xx_i2c_calcdivisor(unsigned long clkin, unsigned int wanted,
- 
- static int s3c24xx_i2c_clockrate(struct s3c24xx_i2c *i2c, unsigned int *got)
- {
--	struct s3c2410_platform_i2c *pdata = i2c->dev->platform_data;
-+	struct s3c2410_platform_i2c *pdata = &i2c->pdata;
- 	unsigned long clkin = clk_get_rate(i2c->clk);
- 	unsigned int divs, div1;
- 	unsigned long target_frequency;
-@@ -755,7 +756,7 @@ static int s3c24xx_i2c_init(struct s3c24xx_i2c *i2c)
- 
- 	/* get the plafrom data */
- 
--	pdata = i2c->dev->platform_data;
-+	pdata = &i2c->pdata;
- 
- 	/* inititalise the gpio */
- 
-@@ -810,6 +811,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
-+	memcpy(&i2c->pdata, pdata, sizeof(*pdata));
-+
- 	strlcpy(i2c->adap.name, "s3c2410-i2c", sizeof(i2c->adap.name));
- 	i2c->adap.owner   = THIS_MODULE;
- 	i2c->adap.algo    = &s3c24xx_i2c_algorithm;
--- 
-1.6.6.rc2
+- Addressed all comments from Grant Likely
+    - s3c24xx_i2c_is2440 function is simpler now.
+    - Consolidated all the scatterd dt support code into a single function.
+    - but the dependency on i2c pinmux handler function passed from the
+      platform data is retained. It would be removed eventually when the
+      new pinmux api is finalized and the i2c driver is modified to
+      support the pinmux settings using the pinmux api.
+
+Thomas Abraham (3):
+  i2c: s3c2410: Keep a copy of platform data and use it.
+  i2c: s3c2410: Add device tree support
+  arm: dt: Add device tree support for i2c instance 0 and 1 on exynos4 dt machine
+
+ .../devicetree/bindings/i2c/samsung-i2c.txt        |   44 +++++++++++++++
+ arch/arm/boot/dts/exynos4-smdkv310.dts             |   45 +++++++++++++++
+ arch/arm/mach-exynos4/Kconfig                      |    2 +
+ arch/arm/mach-exynos4/mach-exynos4-dt.c            |   23 ++++++++
+ drivers/i2c/busses/i2c-s3c2410.c                   |   58 +++++++++++++++++++-
+ 5 files changed, 169 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/i2c/samsung-i2c.txt
