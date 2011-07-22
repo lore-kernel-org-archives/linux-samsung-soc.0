@@ -1,62 +1,111 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 2/2] arm: dt: Add device tree support for i2c instance
- 1 on exynos4 dt machine
-Date: Fri, 22 Jul 2011 00:12:49 -0700
-Message-ID: <20110722071249.GK5783@atomide.com>
-References: <1310950241-13602-1-git-send-email-thomas.abraham@linaro.org>
- <1310950241-13602-3-git-send-email-thomas.abraham@linaro.org>
- <CAP6yH7dUnqhvSA8AYx2R9ZZ1mBL=YMz6oMiJVpphA1FhgLHOvw@mail.gmail.com>
- <CACxGe6v+-H+W4H-5-gvEP+8j91NsGpVZkS595zSt8Lju74taWw@mail.gmail.com>
- <CAC63_iQcia64iBq653S+3_Yj8mgfbGSfHdGXevFe8urj9RpF-w@mail.gmail.com>
+From: Sylwester Nawrocki <snjw23@gmail.com>
+Subject: Re: [PATCH v3 08/19] s5p-fimc: Add the media device driver
+Date: Fri, 22 Jul 2011 10:59:02 +0200
+Message-ID: <4E293BD6.2030502@gmail.com>
+References: <1309802110-16682-1-git-send-email-s.nawrocki@samsung.com> <1309802110-16682-9-git-send-email-s.nawrocki@samsung.com> <4E291800.7060402@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mho-03-ewr.mailhop.org ([204.13.248.66]:16110 "EHLO
-	mho-01-ewr.mailhop.org" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751418Ab1GVHM5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Jul 2011 03:12:57 -0400
-Content-Disposition: inline
-In-Reply-To: <CAC63_iQcia64iBq653S+3_Yj8mgfbGSfHdGXevFe8urj9RpF-w@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <4E291800.7060402@gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Subash Patel <subashrp@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "G, Manjunath Kondaiah" <manjugk@ti.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, "G, Manjunath Kondaiah" <manjugk@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, ben-linux@fluff.org, patches@linaro.org
 
-* G, Manjunath Kondaiah <manjugk@ti.com> [110719 09:59]:
-> On Tue, Jul 19, 2011 at 2:00 AM, Grant Likely <grant.likely@secretlab=
-=2Eca> wrote:
-> >
-> > No, the i2c bus node should still appear in the SoC .dtsi file. =C2=
-=A0If a
-> > board doesn't use a particular i2c bus, then the board.dts file can
-> > add a status =3D "disabled"; property to the i2c bus node to disabl=
-e it.
->=20
-> that's right. I am referring to I2C slave devices. For a given SoC,
-> two different
-> boards can have different i2c slave devices with different slave
-> address. In that case,
-> it is better to have i2c child/slave nodes in board .dts file.
+Hi Subash,
 
-This is OK for now, but from bus/hwmod point of view we need to reset a=
-ll
-the unused devices as otherwise PM will never work properly.
+On 07/22/2011 08:26 AM, Subash Patel wrote:
+> Hi Sylwester,
+> 
+> On 07/04/2011 11:24 PM, Sylwester Nawrocki wrote:
+>> The fimc media device driver is hooked onto "s5p-fimc-md" platform device.
+>> Such a platform device need to be added in a board initialization code
+>> and then camera sensors need to be specified as it's platform data.
+>> The "s5p-fimc-md" device is a top level entity for all FIMC, mipi-csis
+>> and sensor devices.
+>>
+>> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
+>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+>> ---
+>> drivers/media/video/Kconfig | 2 +-
+>> drivers/media/video/s5p-fimc/Makefile | 2 +-
+> ...
+>>
+>> /* -----------------------------------------------------*/
+>> /* fimc-capture.c */
+>> diff --git a/drivers/media/video/s5p-fimc/fimc-mdevice.c b/drivers/media/video/s5p-fimc/fimc-mdevice.c
+>> new file mode 100644
+>> index 0000000..10c8d5d
+>> --- /dev/null
+>> +++ b/drivers/media/video/s5p-fimc/fimc-mdevice.c
+>> @@ -0,0 +1,804 @@
+> ...
+>> +
+>> +static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
+>> +{
+>> + struct s5p_platform_fimc *pdata = fmd->pdev->dev.platform_data;
+>> + struct fimc_dev *fd = NULL;
+>> + int num_clients, ret, i;
+>> +
+>> + /*
+>> + * Runtime resume one of the FIMC entities to make sure
+>> + * the sclk_cam clocks are not globally disabled.
+>> + */
+>> + for (i = 0; !fd&& i< ARRAY_SIZE(fmd->fimc); i++)
+>> + if (fmd->fimc[i])
+>> + fd = fmd->fimc[i];
+>> + if (!fd)
+>> + return -ENXIO;
+>> + ret = pm_runtime_get_sync(&fd->pdev->dev);
+>> + if (ret< 0)
+>> + return ret;
+>> +
+>> + WARN_ON(pdata->num_clients> ARRAY_SIZE(fmd->sensor));
+>> + num_clients = min_t(u32, pdata->num_clients, ARRAY_SIZE(fmd->sensor));
+>> +
+>> + fmd->num_sensors = num_clients;
+>> + for (i = 0; i< num_clients; i++) {
+>> + fmd->sensor[i].pdata =&pdata->isp_info[i];
+>> + ret = __fimc_md_set_camclk(fmd,&fmd->sensor[i], true);
+>> + if (ret)
+>> + break;
+>> + fmd->sensor[i].subdev =
+>> + fimc_md_register_sensor(fmd,&fmd->sensor[i]);
+> 
+> There is an issue here. Function fimc_md_register_sensor(),
+> can return subdev, as also error codes when i2c_get_adapter()
+> or NULL when v4l2_i2c_new_subdev_board() fail. But we do not
+> invalidate, and assume the return value is valid subdev. It
+> will cause kernel NULL pointer exception later in fimc_md_create_links().
 
-Disabling each device in the board .dts file will never be done correct=
-ly
-for most boards.. And on each board, probably 2/3 of the devices are un=
-used
-because of the pin limitations :)
+Thanks for letting know.
+I remember fixing this issue in v2 of the patch set by making 
+fimc_md_register_sensor() return NULL on any error, also when
+i2c_get_adapter() fails, rather than ERR_PTR value.
 
-So the disabling of unused devices should be done with a late_initcall =
-and
-controlled by kernel cmdline. We were thinking hwmod.disable=3D[0|1].
+Do you really mean that there is a NULL or _invalid_ pointer
+dereference in fimc_md_create_links() ?
+An oops on a NULL subdev pointer in fmd->sensor[] array seems
+impossible as there is a check at the beginning of the loop:
 
-The late_initcall to disable unused device tree devices could also be
-added later on to device tree core code.
++static int fimc_md_create_links(struct fimc_md *fmd)
++{
++	struct v4l2_subdev *sensor, *csis;
++	struct s5p_fimc_isp_info *pdata;
++	struct fimc_sensor_info *s_info;
++	struct media_entity *source;
++	int fimc_id = 0;
++	int i, pad;
++	int rc = 0;
++
++	for (i = 0; i < fmd->num_sensors; i++) {
++		if (fmd->sensor[i].subdev == NULL)
++			continue;
+...
 
-Regards,
+Sorry, I'll be able to only make more test of this on Monday.
 
-Tony
+--
+Thanks,
+Sylwester
