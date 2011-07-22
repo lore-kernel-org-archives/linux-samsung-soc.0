@@ -1,190 +1,98 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v2 2/3] i2c: s3c2410: Add device tree support
-Date: Fri, 22 Jul 2011 15:48:37 +0530
-Message-ID: <1311329918-8105-3-git-send-email-thomas.abraham@linaro.org>
-References: <1311329918-8105-1-git-send-email-thomas.abraham@linaro.org>
- <1311329918-8105-2-git-send-email-thomas.abraham@linaro.org>
-Content-Transfer-Encoding: 7BIT
+From: Sylwester Nawrocki <snjw23@gmail.com>
+Subject: Re: [PATCH v3 08/19] s5p-fimc: Add the media device driver
+Date: Fri, 22 Jul 2011 12:14:57 +0200
+Message-ID: <4E294DA1.7090106@gmail.com>
+References: <1309802110-16682-1-git-send-email-s.nawrocki@samsung.com> <1309802110-16682-9-git-send-email-s.nawrocki@samsung.com> <4E291800.7060402@gmail.com> <4E293BD6.2030502@gmail.com> <4E294255.1050407@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:44471 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753771Ab1GVKGD (ORCPT
+Received: from mail-fx0-f52.google.com ([209.85.161.52]:40334 "EHLO
+	mail-fx0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753826Ab1GVKPU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Jul 2011 06:06:03 -0400
-In-reply-to: <1311329918-8105-2-git-send-email-thomas.abraham@linaro.org>
+	Fri, 22 Jul 2011 06:15:20 -0400
+In-Reply-To: <4E294255.1050407@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree-discuss@lists.ozlabs.org
-Cc: linux-i2c@vger.kernel.org, grant.likely@secretlab.ca, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
+To: Subash Patel <subashrp@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
 
-Add device tree probe support for Samsung's s3c2410 i2c driver.
+On 07/22/2011 11:26 AM, Subash Patel wrote:
+>>> ...
+>>>> +
+>>>> +static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
+>>>> +{
+>>>> + struct s5p_platform_fimc *pdata = fmd->pdev->dev.platform_data;
+>>>> + struct fimc_dev *fd = NULL;
+>>>> + int num_clients, ret, i;
+>>>> +
+>>>> + /*
+>>>> + * Runtime resume one of the FIMC entities to make sure
+>>>> + * the sclk_cam clocks are not globally disabled.
+>>>> + */
+>>>> + for (i = 0; !fd&& i< ARRAY_SIZE(fmd->fimc); i++)
+>>>> + if (fmd->fimc[i])
+>>>> + fd = fmd->fimc[i];
+>>>> + if (!fd)
+>>>> + return -ENXIO;
+>>>> + ret = pm_runtime_get_sync(&fd->pdev->dev);
+>>>> + if (ret< 0)
+>>>> + return ret;
+>>>> +
+>>>> + WARN_ON(pdata->num_clients> ARRAY_SIZE(fmd->sensor));
+>>>> + num_clients = min_t(u32, pdata->num_clients, ARRAY_SIZE(fmd->sensor));
+>>>> +
+>>>> + fmd->num_sensors = num_clients;
+>>>> + for (i = 0; i< num_clients; i++) {
+>>>> + fmd->sensor[i].pdata =&pdata->isp_info[i];
+>>>> + ret = __fimc_md_set_camclk(fmd,&fmd->sensor[i], true);
+>>>> + if (ret)
+>>>> + break;
+>>>> + fmd->sensor[i].subdev =
+>>>> + fimc_md_register_sensor(fmd,&fmd->sensor[i]);
+>>>
+>>> There is an issue here. Function fimc_md_register_sensor(),
+>>> can return subdev, as also error codes when i2c_get_adapter()
+>>> or NULL when v4l2_i2c_new_subdev_board() fail. But we do not
+>>> invalidate, and assume the return value is valid subdev. It
+>>> will cause kernel NULL pointer exception later in fimc_md_create_links().
+>>
+>> Thanks for letting know.
+>> I remember fixing this issue in v2 of the patch set by making
+>> fimc_md_register_sensor() return NULL on any error, also when
+>> i2c_get_adapter() fails, rather than ERR_PTR value.
+>>
+>> Do you really mean that there is a NULL or _invalid_ pointer
+>> dereference in fimc_md_create_links() ?
+>> An oops on a NULL subdev pointer in fmd->sensor[] array seems
+>> impossible as there is a check at the beginning of the loop:
+> 
+> If you return NULL, then this check will block a crash. In my case,
+> I failed to get the i2c_adapter, and ENODEV was returned, which is
+> not NULL. Hence I pass through this check, and will crash in
+> 
+> s_info = v4l2_get_subdev_hostdata(sensor);
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- .../devicetree/bindings/i2c/samsung-i2c.txt        |   44 +++++++++++++++++
- drivers/i2c/busses/i2c-s3c2410.c                   |   51 +++++++++++++++++++-
- 2 files changed, 94 insertions(+), 1 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/i2c/samsung-i2c.txt
+I see, I have also gone through this during the tests and this problem
+should be fixed already in v3 of the patch-set you've originally replied to.
 
-diff --git a/Documentation/devicetree/bindings/i2c/samsung-i2c.txt b/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
-new file mode 100644
-index 0000000..4e1a2ef
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
-@@ -0,0 +1,44 @@
-+* Samsung's I2C controller
-+
-+The Samsung's I2C controller is used to interface with I2C devices.
-+
-+Required properties:
-+  - compatible: value should be either of the following.
-+      (a) "samsung, s3c2410-i2c", for i2c compatible with s3c2410 i2c.
-+      (b) "samsung, s3c2440-i2c", for i2c compatible with s3c2440 i2c.
-+
-+  - reg: physical base address of the controller and length of memory mapped
-+    region.
-+
-+  - interrupts: interrupt number to the cpu.
-+
-+  - samsung,i2c-sda-delay: Delay (in ns) applied to data line (SDA) edges.
-+
-+  - gpios: The order of the gpios should be in the following order.
-+       <SDA, SCL>
-+
-+Optional properties:
-+  - samsung,i2c-slave-addr: Slave address in multi-master enviroment. If not
-+    specified, default value is 0.
-+
-+  - samsung,i2c-max-bus-freq: Desired frequency in Hz of the bus. If not
-+    specified, the default value in Hz is 100000.
-+
-+Example:
-+
-+	i2c@13870000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x13870000 0x100>;
-+		interrupts = <345>;
-+		samsung,i2c-sda-delay = <100>;
-+		samsung,i2c-max-bus-freq = <100000>;
-+		gpios = <&gpd1 2 0 /* SDA */
-+			 &gpd1 3 0 /* SCL */>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		wm8994@1a {
-+			compatible = "wlf,wm8994";
-+			reg = <0x1a>;
-+		};
-+	};
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index e132168..40264b0 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -35,6 +35,7 @@
- #include <linux/cpufreq.h>
- #include <linux/slab.h>
- #include <linux/io.h>
-+#include <linux/of_i2c.h>
- 
- #include <asm/irq.h>
- 
-@@ -96,6 +97,10 @@ static inline int s3c24xx_i2c_is2440(struct s3c24xx_i2c *i2c)
- 	struct platform_device *pdev = to_platform_device(i2c->dev);
- 	enum s3c24xx_i2c_type type;
- 
-+	if (i2c->dev->of_node)
-+		return of_device_is_compatible(i2c->dev->of_node,
-+						"samsung,s3c2440-i2c");
-+
- 	type = platform_get_device_id(pdev)->driver_data;
- 	return type == TYPE_S3C2440;
- }
-@@ -787,6 +792,34 @@ static int s3c24xx_i2c_init(struct s3c24xx_i2c *i2c)
- 	return 0;
- }
- 
-+#ifdef CONFIG_OF
-+
-+/* s3c24xx_i2c_parse_dt
-+ *
-+ * Parse the device tree node and retreive the platform data.
-+*/
-+
-+static void
-+s3c24xx_i2c_parse_dt(struct device_node *np, struct s3c24xx_i2c *i2c)
-+{
-+	struct s3c2410_platform_i2c *pdata = &i2c->pdata;
-+
-+	if (!np)
-+		return;
-+
-+	of_property_read_u32(np, "samsung,i2c-sda-delay", &pdata->sda_delay);
-+	of_property_read_u32(np, "samsung,i2c-slave-addr", &pdata->slave_addr);
-+	of_property_read_u32(np, "samsung,i2c-max-bus-freq",
-+				(u32 *)&pdata->frequency);
-+}
-+#else
-+static void
-+s3c24xx_i2c_parse_dt(struct device_node *np, struct s3c24xx_i2c *i2c)
-+{
-+	return;
-+}
-+#endif
-+
- /* s3c24xx_i2c_probe
-  *
-  * called by the bus driver when a suitable device is found
-@@ -812,6 +845,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	}
- 
- 	memcpy(&i2c->pdata, pdata, sizeof(*pdata));
-+	s3c24xx_i2c_parse_dt(pdev->dev.of_node, i2c);
- 
- 	strlcpy(i2c->adap.name, "s3c2410-i2c", sizeof(i2c->adap.name));
- 	i2c->adap.owner   = THIS_MODULE;
-@@ -908,13 +942,16 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	 */
- 
- 	i2c->adap.nr = pdata->bus_num;
-+	i2c->adap.dev.of_node = pdev->dev.of_node;
- 
--	ret = i2c_add_numbered_adapter(&i2c->adap);
-+	ret = (pdev->dev.of_node) ? i2c_add_adapter(&i2c->adap) :
-+					i2c_add_numbered_adapter(&i2c->adap);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to add bus to i2c core\n");
- 		goto err_cpufreq;
- 	}
- 
-+	of_i2c_register_devices(&i2c->adap);
- 	platform_set_drvdata(pdev, i2c);
- 
- 	dev_info(&pdev->dev, "%s: S3C I2C adapter\n", dev_name(&i2c->adap.dev));
-@@ -1016,6 +1053,17 @@ static struct platform_device_id s3c24xx_driver_ids[] = {
- };
- MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
- 
-+#ifdef CONFIG_OF
-+static const struct of_device_id s3c24xx_i2c_match[] = {
-+	{ .compatible = "samsung,s3c2410-i2c" },
-+	{ .compatible = "samsung,s3c2440-i2c" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
-+#else
-+#define s3c24xx_i2c_match NULL
-+#endif
-+
- static struct platform_driver s3c24xx_i2c_driver = {
- 	.probe		= s3c24xx_i2c_probe,
- 	.remove		= s3c24xx_i2c_remove,
-@@ -1024,6 +1072,7 @@ static struct platform_driver s3c24xx_i2c_driver = {
- 		.owner	= THIS_MODULE,
- 		.name	= "s3c-i2c",
- 		.pm	= S3C24XX_DEV_PM_OPS,
-+		.of_match_table	= s3c24xx_i2c_match,
- 	},
- };
- 
--- 
-1.6.6.rc2
+> 
+> I dont have access to your new patch-set. But if you have returned
+> NULL, then thats should fix this.
+
+To make sure you use the most up to date version you could pull from:
+
+ git://git.infradead.org/users/kmpark/linux-2.6-samsung s5p-fimc-next
+
+Or here is a gitweb link:
+http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/s5p-fimc-next
+
+I intend to keep using the "s5p-fimc-next" branch name for any new
+patches for next kernel version. So in case you get any crashes
+it might be a good idea to also give the sources there a try.
+
+
+--
+Regards,
+Sylwester
