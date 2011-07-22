@@ -1,175 +1,254 @@
-From: JinGoo Han <jg1.han@samsung.com>
-Subject: RE: [PATCH V8 4/5] video: s3c-fb: Add support EXYNOS4 FIMD
-Date: Fri, 22 Jul 2011 01:06:05 +0000 (GMT)
-Message-ID: <29194164.10701311296764425.JavaMail.weblogic@epml20>
-Reply-To: jg1.han@samsung.com
+From: amit kachhap <amit.kachhap@gmail.com>
+Subject: Re: [PATCH] I2C: Samsung: Add support for PM_runtime in the I2C driver.
+Date: Fri, 22 Jul 2011 08:45:10 +0530
+Message-ID: <CADGdYn6qQRpMm+xVOBS7bcepxY5sSHjz5C-akU=w7AncKK=qdw@mail.gmail.com>
+References: <1301257963-17196-1-git-send-email-amit.kachhap@linaro.org>
+	<20110327231135.GG9995@trinity.fluff.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:54696 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752687Ab1GVBGH (ORCPT
+Received: from mail-pz0-f42.google.com ([209.85.210.42]:41383 "EHLO
+	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752399Ab1GVDPM convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jul 2011 21:06:07 -0400
-Received: from epcpsbge2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOP00GNSN1GRCB0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 22 Jul 2011 10:06:05 +0900 (KST)
-MIME-version: 1.0
+	Thu, 21 Jul 2011 23:15:12 -0400
+In-Reply-To: <20110327231135.GG9995@trinity.fluff.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paul Mundt <lethal@linux-sh.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Jong-Hun Han <jonghun.han@samsung.com>, Ben Dooks <ben-linux@fluff.org>, JinGoo Han <jg1.han@samsung.com>
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, patches@linaro.org
 
-SGkgIFBhdWwsDQoNCk90aGVyIHBhdGNoZXMgd2VyZSBjb21taXRlZCB0byAnbGludXgtYXJtLXNv
-Yy5naXQnLg0KUGxlYXNlLCBjb21taXQgdGhpcyBwYXRjaCAnW1BBVENIIFY4IDQvNV0gdmlkZW86
-IHMzYy1mYjogQWRkIHN1cHBvcnQgRVhZTk9TNCBGSU1EJyB0byAnZmJkZXYtMi42Jy4NCg0KVGhh
-bmtzLA0KSmluZ29vIEhhbg0KDQpKaW5nb28gSGFuIHdyb3RlOg0KPiAtLS0tLU9yaWdpbmFsIE1l
-c3NhZ2UtLS0tLQ0KPiBTdWJqZWN0OiBbUEFUQ0ggVjggNC81XSB2aWRlbzogczNjLWZiOiBBZGQg
-c3VwcG9ydCBFWFlOT1M0IEZJTUQNCj4gDQo+IFRoaXMgcGF0Y2ggYWRkcyBzdHJ1Y3QgczNjX2Zi
-X2RyaXZlcmRhdGEgczNjX2ZiX2RhdGFfZXh5bm9zNCBmb3IgRVhZTk9TNA0KPiBhbmQgYWRkcyBs
-Y2QgY2xvY2sgZ2F0aW5nIHN1cHBvcnQuDQo+IA0KPiBGSU1EIGRyaXZlciBuZWVkcyB0d28gY2xv
-Y2tzIGZvciBGSU1EIElQIGFuZCBMQ0QgcGl4ZWwgY2xvY2suIFByZXZpb3VzbHksDQo+IGJvdGgg
-Y2xvY2tzIGFyZSBwcm92aWRlZCBieSB1c2luZyBidXMgY2xvY2sgc3VjaCBhcyBIQ0xLLiBIb3dl
-dmVyLCBFWFlOT1M0DQo+IGNhbiBub3Qgc2VsZWN0IEhDTEsgZm9yIExDRCBwaXhlbCBjbG9jayBi
-ZWNhdXNlIHRoZSBFWFlOT1M0IEZJTUQgSVAgZG9lcw0KPiBub3QNCj4gaGF2ZSB0aGUgQ0xLU0VM
-IGJpdCBvZiBWSURDT04wLiBTbywgRklNRCBkcml2ZXIgc2hvdWxkIHByb3ZpZGUgdGhlIGxjZA0K
-PiBjbG9jaw0KPiB1c2luZyBTQ0xLX0ZJTUQgYXMgTENEIHBpeGVsIGNsb2NrIGZvciBFWFlOT1M0
-Lg0KPiANCj4gVGhlIGRyaXZlciBzZWxlY3RzIGVuYWJsaW5nIGxjZCBjbG9jayBhY2NvcmRpbmcg
-dG8gaGFzX2Nsa3NlbCB3aGljaCBtZWFucw0KPiB0aGUgQ0xLU0VMIGJpdCBvZiBWSURDT04wLiBJ
-ZiB0aGVyZSBpcyBoYXNfY2xrc2VsLCB0aGUgZHJpdmVyIHdpbGwgbm90DQo+IGVuYWJsZSB0aGUg
-bGNkIGNsb2NrIHVzaW5nIFNDTEtfRklNRCBiZWNhdXNlIGJ1cyBjbG9jayB1c2luZyBIQ0xLIGlz
-IHVzZWQNCj4gYSBMQ0QgcGl4ZWwgY2xvY2suDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBKaW5nb28g
-SGFuIDxqZzEuaGFuQHNhbXN1bmcuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvdmlkZW8vS2NvbmZp
-ZyAgfCAgICAyICstDQo+ICBkcml2ZXJzL3ZpZGVvL3MzYy1mYi5jIHwgICA4OA0KPiArKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLQ0KPiAgMiBmaWxlcyBjaGFu
-Z2VkLCA4NSBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvdmlkZW8vS2NvbmZpZyBiL2RyaXZlcnMvdmlkZW8vS2NvbmZpZw0KPiBpbmRleCA1
-NDliOTYwLi45NjNiOGI3IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL3ZpZGVvL0tjb25maWcNCj4g
-KysrIGIvZHJpdmVycy92aWRlby9LY29uZmlnDQo+IEBAIC0yMDI3LDcgKzIwMjcsNyBAQCBjb25m
-aWcgRkJfVE1JT19BQ0NFTEwNCj4gDQo+ICBjb25maWcgRkJfUzNDDQo+ICAJdHJpc3RhdGUgIlNh
-bXN1bmcgUzNDIGZyYW1lYnVmZmVyIHN1cHBvcnQiDQo+IC0JZGVwZW5kcyBvbiBGQiAmJiBTM0Nf
-REVWX0ZCDQo+ICsJZGVwZW5kcyBvbiBGQiAmJiAoUzNDX0RFVl9GQiB8fCBTNVBfREVWX0ZJTUQw
-KQ0KPiAgCXNlbGVjdCBGQl9DRkJfRklMTFJFQ1QNCj4gIAlzZWxlY3QgRkJfQ0ZCX0NPUFlBUkVB
-DQo+ICAJc2VsZWN0IEZCX0NGQl9JTUFHRUJMSVQNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdmlk
-ZW8vczNjLWZiLmMgYi9kcml2ZXJzL3ZpZGVvL3MzYy1mYi5jDQo+IGluZGV4IDRhZWNmMjEuLmNi
-MGQzZWEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvdmlkZW8vczNjLWZiLmMNCj4gKysrIGIvZHJp
-dmVycy92aWRlby9zM2MtZmIuYw0KPiBAQCAtODEsNiArODEsNyBAQCBzdHJ1Y3QgczNjX2ZiOw0K
-PiAgICogQHBhbGV0dGU6IEFkZHJlc3Mgb2YgcGFsZXR0ZSBtZW1vcnksIG9yIDAgaWYgbm9uZS4N
-Cj4gICAqIEBoYXNfcHJ0Y29uOiBTZXQgaWYgaGFzIFBSVENPTiByZWdpc3Rlci4NCj4gICAqIEBo
-YXNfc2hhZG93Y29uOiBTZXQgaWYgaGFzIFNIQURPV0NPTiByZWdpc3Rlci4NCj4gKyAqIEBoYXNf
-Y2xrc2VsOiBTZXQgaWYgVklEQ09OMCByZWdpc3RlciBoYXMgQ0xLU0VMIGJpdC4NCj4gICAqLw0K
-PiAgc3RydWN0IHMzY19mYl92YXJpYW50IHsNCj4gIAl1bnNpZ25lZCBpbnQJaXNfMjQ0MzoxOw0K
-PiBAQCAtOTgsNiArOTksNyBAQCBzdHJ1Y3QgczNjX2ZiX3ZhcmlhbnQgew0KPiANCj4gIAl1bnNp
-Z25lZCBpbnQJaGFzX3BydGNvbjoxOw0KPiAgCXVuc2lnbmVkIGludAloYXNfc2hhZG93Y29uOjE7
-DQo+ICsJdW5zaWduZWQgaW50CWhhc19jbGtzZWw6MTsNCj4gIH07DQo+IA0KPiAgLyoqDQo+IEBA
-IC0xODYsNiArMTg4LDcgQEAgc3RydWN0IHMzY19mYl92c3luYyB7DQo+ICAgKiBAZGV2OiBUaGUg
-ZGV2aWNlIHRoYXQgd2UgYm91bmQgdG8sIGZvciBwcmludGluZywgZXRjLg0KPiAgICogQHJlZ3Nf
-cmVzOiBUaGUgcmVzb3VyY2Ugd2UgY2xhaW1lZCBmb3IgdGhlIElPIHJlZ2lzdGVycy4NCj4gICAq
-IEBidXNfY2xrOiBUaGUgY2xrIChoY2xrKSBmZWVkaW5nIG91ciBpbnRlcmZhY2UgYW5kIHBvc3Np
-Ymx5IHBpeGNsay4NCj4gKyAqIEBsY2RfY2xrOiBUaGUgY2xrIChzY2xrKSBmZWVkaW5nIHBpeGNs
-ay4NCj4gICAqIEByZWdzOiBUaGUgbWFwcGVkIGhhcmR3YXJlIHJlZ2lzdGVycy4NCj4gICAqIEB2
-YXJpYW50OiBWYXJpYW50IGluZm9ybWF0aW9uIGZvciB0aGlzIGhhcmR3YXJlLg0KPiAgICogQGVu
-YWJsZWQ6IEEgYml0bWFzayBvZiBlbmFibGVkIGhhcmR3YXJlIHdpbmRvd3MuDQo+IEBAIC0yMDAs
-NiArMjAzLDcgQEAgc3RydWN0IHMzY19mYiB7DQo+ICAJc3RydWN0IGRldmljZQkJKmRldjsNCj4g
-IAlzdHJ1Y3QgcmVzb3VyY2UJCSpyZWdzX3JlczsNCj4gIAlzdHJ1Y3QgY2xrCQkqYnVzX2NsazsN
-Cj4gKwlzdHJ1Y3QgY2xrCQkqbGNkX2NsazsNCj4gIAl2b2lkIF9faW9tZW0JCSpyZWdzOw0KPiAg
-CXN0cnVjdCBzM2NfZmJfdmFyaWFudAkgdmFyaWFudDsNCj4gDQo+IEBAIC0zMzYsMTAgKzM0MCwx
-NSBAQCBzdGF0aWMgaW50IHMzY19mYl9jaGVja192YXIoc3RydWN0IGZiX3Zhcl9zY3JlZW5pbmZv
-DQo+ICp2YXIsDQo+ICAgKi8NCj4gIHN0YXRpYyBpbnQgczNjX2ZiX2NhbGNfcGl4Y2xrKHN0cnVj
-dCBzM2NfZmIgKnNmYiwgdW5zaWduZWQgaW50IHBpeGNsaykNCj4gIHsNCj4gLQl1bnNpZ25lZCBs
-b25nIGNsayA9IGNsa19nZXRfcmF0ZShzZmItPmJ1c19jbGspOw0KPiArCXVuc2lnbmVkIGxvbmcg
-Y2xrOw0KPiAgCXVuc2lnbmVkIGxvbmcgbG9uZyB0bXA7DQo+ICAJdW5zaWduZWQgaW50IHJlc3Vs
-dDsNCj4gDQo+ICsJaWYgKHNmYi0+dmFyaWFudC5oYXNfY2xrc2VsKQ0KPiArCQljbGsgPSBjbGtf
-Z2V0X3JhdGUoc2ZiLT5idXNfY2xrKTsNCj4gKwllbHNlDQo+ICsJCWNsayA9IGNsa19nZXRfcmF0
-ZShzZmItPmxjZF9jbGspOw0KPiArDQo+ICAJdG1wID0gKHVuc2lnbmVkIGxvbmcgbG9uZyljbGs7
-DQo+ICAJdG1wICo9IHBpeGNsazsNCj4gDQo+IEBAIC0xMzU0LDEzICsxMzYzLDI0IEBAIHN0YXRp
-YyBpbnQgX19kZXZpbml0IHMzY19mYl9wcm9iZShzdHJ1Y3QNCj4gcGxhdGZvcm1fZGV2aWNlICpw
-ZGV2KQ0KPiANCj4gIAljbGtfZW5hYmxlKHNmYi0+YnVzX2Nsayk7DQo+IA0KPiArCWlmICghc2Zi
-LT52YXJpYW50Lmhhc19jbGtzZWwpIHsNCj4gKwkJc2ZiLT5sY2RfY2xrID0gY2xrX2dldChkZXYs
-ICJzY2xrX2ZpbWQiKTsNCj4gKwkJaWYgKElTX0VSUihzZmItPmxjZF9jbGspKSB7DQo+ICsJCQlk
-ZXZfZXJyKGRldiwgImZhaWxlZCB0byBnZXQgbGNkIGNsb2NrXG4iKTsNCj4gKwkJCXJldCA9IFBU
-Ul9FUlIoc2ZiLT5sY2RfY2xrKTsNCj4gKwkJCWdvdG8gZXJyX2J1c19jbGs7DQo+ICsJCX0NCj4g
-Kw0KPiArCQljbGtfZW5hYmxlKHNmYi0+bGNkX2Nsayk7DQo+ICsJfQ0KPiArDQo+ICAJcG1fcnVu
-dGltZV9lbmFibGUoc2ZiLT5kZXYpOw0KPiANCj4gIAlyZXMgPSBwbGF0Zm9ybV9nZXRfcmVzb3Vy
-Y2UocGRldiwgSU9SRVNPVVJDRV9NRU0sIDApOw0KPiAgCWlmICghcmVzKSB7DQo+ICAJCWRldl9l
-cnIoZGV2LCAiZmFpbGVkIHRvIGZpbmQgcmVnaXN0ZXJzXG4iKTsNCj4gIAkJcmV0ID0gLUVOT0VO
-VDsNCj4gLQkJZ290byBlcnJfY2xrOw0KPiArCQlnb3RvIGVycl9sY2RfY2xrOw0KPiAgCX0NCj4g
-DQo+ICAJc2ZiLT5yZWdzX3JlcyA9IHJlcXVlc3RfbWVtX3JlZ2lvbihyZXMtPnN0YXJ0LCByZXNv
-dXJjZV9zaXplKHJlcyksDQo+IEBAIC0xMzY4LDcgKzEzODgsNyBAQCBzdGF0aWMgaW50IF9fZGV2
-aW5pdCBzM2NfZmJfcHJvYmUoc3RydWN0DQo+IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gIAlp
-ZiAoIXNmYi0+cmVnc19yZXMpIHsNCj4gIAkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8gY2xhaW0g
-cmVnaXN0ZXIgcmVnaW9uXG4iKTsNCj4gIAkJcmV0ID0gLUVOT0VOVDsNCj4gLQkJZ290byBlcnJf
-Y2xrOw0KPiArCQlnb3RvIGVycl9sY2RfY2xrOw0KPiAgCX0NCj4gDQo+ICAJc2ZiLT5yZWdzID0g
-aW9yZW1hcChyZXMtPnN0YXJ0LCByZXNvdXJjZV9zaXplKHJlcykpOw0KPiBAQCAtMTQ1MCw3ICsx
-NDcwLDEzIEBAIGVycl9pb3JlbWFwOg0KPiAgZXJyX3JlcV9yZWdpb246DQo+ICAJcmVsZWFzZV9t
-ZW1fcmVnaW9uKHNmYi0+cmVnc19yZXMtPnN0YXJ0LCByZXNvdXJjZV9zaXplKHNmYi0NCj4gPnJl
-Z3NfcmVzKSk7DQo+IA0KPiAtZXJyX2NsazoNCj4gK2Vycl9sY2RfY2xrOg0KPiArCWlmICghc2Zi
-LT52YXJpYW50Lmhhc19jbGtzZWwpIHsNCj4gKwkJY2xrX2Rpc2FibGUoc2ZiLT5sY2RfY2xrKTsN
-Cj4gKwkJY2xrX3B1dChzZmItPmxjZF9jbGspOw0KPiArCX0NCj4gKw0KPiArZXJyX2J1c19jbGs6
-DQo+ICAJY2xrX2Rpc2FibGUoc2ZiLT5idXNfY2xrKTsNCj4gIAljbGtfcHV0KHNmYi0+YnVzX2Ns
-ayk7DQo+IA0KPiBAQCAtMTQ4MSw2ICsxNTA3LDExIEBAIHN0YXRpYyBpbnQgX19kZXZleGl0IHMz
-Y19mYl9yZW1vdmUoc3RydWN0DQo+IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gDQo+ICAJaW91
-bm1hcChzZmItPnJlZ3MpOw0KPiANCj4gKwlpZiAoIXNmYi0+dmFyaWFudC5oYXNfY2xrc2VsKSB7
-DQo+ICsJCWNsa19kaXNhYmxlKHNmYi0+bGNkX2Nsayk7DQo+ICsJCWNsa19wdXQoc2ZiLT5sY2Rf
-Y2xrKTsNCj4gKwl9DQo+ICsNCj4gIAljbGtfZGlzYWJsZShzZmItPmJ1c19jbGspOw0KPiAgCWNs
-a19wdXQoc2ZiLT5idXNfY2xrKTsNCj4gDQo+IEBAIC0xNTEwLDYgKzE1NDEsOSBAQCBzdGF0aWMg
-aW50IHMzY19mYl9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikNCj4gIAkJczNjX2ZiX2JsYW5r
-KEZCX0JMQU5LX1BPV0VSRE9XTiwgd2luLT5mYmluZm8pOw0KPiAgCX0NCj4gDQo+ICsJaWYgKCFz
-ZmItPnZhcmlhbnQuaGFzX2Nsa3NlbCkNCj4gKwkJY2xrX2Rpc2FibGUoc2ZiLT5sY2RfY2xrKTsN
-Cj4gKw0KPiAgCWNsa19kaXNhYmxlKHNmYi0+YnVzX2Nsayk7DQo+ICAJcmV0dXJuIDA7DQo+ICB9
-DQo+IEBAIC0xNTI0LDYgKzE1NTgsOSBAQCBzdGF0aWMgaW50IHMzY19mYl9yZXN1bWUoc3RydWN0
-IGRldmljZSAqZGV2KQ0KPiANCj4gIAljbGtfZW5hYmxlKHNmYi0+YnVzX2Nsayk7DQo+IA0KPiAr
-CWlmICghc2ZiLT52YXJpYW50Lmhhc19jbGtzZWwpDQo+ICsJCWNsa19lbmFibGUoc2ZiLT5sY2Rf
-Y2xrKTsNCj4gKw0KPiAgCS8qIHNldHVwIGdwaW8gYW5kIG91dHB1dCBwb2xhcml0eSBjb250cm9s
-cyAqLw0KPiAgCXBkLT5zZXR1cF9ncGlvKCk7DQo+ICAJd3JpdGVsKHBkLT52aWRjb24xLCBzZmIt
-PnJlZ3MgKyBWSURDT04xKTsNCj4gQEAgLTE1NjksNiArMTYwNiw5IEBAIHN0YXRpYyBpbnQgczNj
-X2ZiX3J1bnRpbWVfc3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpDQo+ICAJCXMzY19mYl9ibGFu
-ayhGQl9CTEFOS19QT1dFUkRPV04sIHdpbi0+ZmJpbmZvKTsNCj4gIAl9DQo+IA0KPiArCWlmICgh
-c2ZiLT52YXJpYW50Lmhhc19jbGtzZWwpDQo+ICsJCWNsa19kaXNhYmxlKHNmYi0+bGNkX2Nsayk7
-DQo+ICsNCj4gIAljbGtfZGlzYWJsZShzZmItPmJ1c19jbGspOw0KPiAgCXJldHVybiAwOw0KPiAg
-fQ0KPiBAQCAtMTU4Myw2ICsxNjIzLDkgQEAgc3RhdGljIGludCBzM2NfZmJfcnVudGltZV9yZXN1
-bWUoc3RydWN0IGRldmljZSAqZGV2KQ0KPiANCj4gIAljbGtfZW5hYmxlKHNmYi0+YnVzX2Nsayk7
-DQo+IA0KPiArCWlmICghc2ZiLT52YXJpYW50Lmhhc19jbGtzZWwpDQo+ICsJCWNsa19lbmFibGUo
-c2ZiLT5sY2RfY2xrKTsNCj4gKw0KPiAgCS8qIHNldHVwIGdwaW8gYW5kIG91dHB1dCBwb2xhcml0
-eSBjb250cm9scyAqLw0KPiAgCXBkLT5zZXR1cF9ncGlvKCk7DQo+ICAJd3JpdGVsKHBkLT52aWRj
-b24xLCBzZmItPnJlZ3MgKyBWSURDT04xKTsNCj4gQEAgLTE3NTUsNiArMTc5OCw3IEBAIHN0YXRp
-YyBzdHJ1Y3QgczNjX2ZiX2RyaXZlcmRhdGEgczNjX2ZiX2RhdGFfNjR4eCA9IHsNCj4gIAkJfSwN
-Cj4gDQo+ICAJCS5oYXNfcHJ0Y29uCT0gMSwNCj4gKwkJLmhhc19jbGtzZWwJPSAxLA0KPiAgCX0s
-DQo+ICAJLndpblswXQk9ICZzM2NfZmJfZGF0YV82NHh4X3dpbnNbMF0sDQo+ICAJLndpblsxXQk9
-ICZzM2NfZmJfZGF0YV82NHh4X3dpbnNbMV0sDQo+IEBAIC0xNzg1LDYgKzE4MjksNyBAQCBzdGF0
-aWMgc3RydWN0IHMzY19mYl9kcml2ZXJkYXRhIHMzY19mYl9kYXRhX3M1cGMxMDANCj4gPSB7DQo+
-ICAJCX0sDQo+IA0KPiAgCQkuaGFzX3BydGNvbgk9IDEsDQo+ICsJCS5oYXNfY2xrc2VsCT0gMSwN
-Cj4gIAl9LA0KPiAgCS53aW5bMF0JPSAmczNjX2ZiX2RhdGFfczVwX3dpbnNbMF0sDQo+ICAJLndp
-blsxXQk9ICZzM2NfZmJfZGF0YV9zNXBfd2luc1sxXSwNCj4gQEAgLTE4MTUsNiArMTg2MCwzNyBA
-QCBzdGF0aWMgc3RydWN0IHMzY19mYl9kcml2ZXJkYXRhIHMzY19mYl9kYXRhX3M1cHYyMTANCj4g
-PSB7DQo+ICAJCX0sDQo+IA0KPiAgCQkuaGFzX3NoYWRvd2Nvbgk9IDEsDQo+ICsJCS5oYXNfY2xr
-c2VsCT0gMSwNCj4gKwl9LA0KPiArCS53aW5bMF0JPSAmczNjX2ZiX2RhdGFfczVwX3dpbnNbMF0s
-DQo+ICsJLndpblsxXQk9ICZzM2NfZmJfZGF0YV9zNXBfd2luc1sxXSwNCj4gKwkud2luWzJdCT0g
-JnMzY19mYl9kYXRhX3M1cF93aW5zWzJdLA0KPiArCS53aW5bM10JPSAmczNjX2ZiX2RhdGFfczVw
-X3dpbnNbM10sDQo+ICsJLndpbls0XQk9ICZzM2NfZmJfZGF0YV9zNXBfd2luc1s0XSwNCj4gK307
-DQo+ICsNCj4gK3N0YXRpYyBzdHJ1Y3QgczNjX2ZiX2RyaXZlcmRhdGEgczNjX2ZiX2RhdGFfZXh5
-bm9zNCA9IHsNCj4gKwkudmFyaWFudCA9IHsNCj4gKwkJLm5yX3dpbmRvd3MJPSA1LA0KPiArCQku
-dmlkdGNvbgk9IFZJRFRDT04wLA0KPiArCQkud2luY29uCQk9IFdJTkNPTigwKSwNCj4gKwkJLndp
-bm1hcAkJPSBXSU54TUFQKDApLA0KPiArCQkua2V5Y29uCQk9IFdLRVlDT04sDQo+ICsJCS5vc2QJ
-CT0gVklET1NEX0JBU0UsDQo+ICsJCS5vc2Rfc3RyaWRlCT0gMTYsDQo+ICsJCS5idWZfc3RhcnQJ
-PSBWSURXX0JVRl9TVEFSVCgwKSwNCj4gKwkJLmJ1Zl9zaXplCT0gVklEV19CVUZfU0laRSgwKSwN
-Cj4gKwkJLmJ1Zl9lbmQJPSBWSURXX0JVRl9FTkQoMCksDQo+ICsNCj4gKwkJLnBhbGV0dGUgPSB7
-DQo+ICsJCQlbMF0gPSAweDI0MDAsDQo+ICsJCQlbMV0gPSAweDI4MDAsDQo+ICsJCQlbMl0gPSAw
-eDJjMDAsDQo+ICsJCQlbM10gPSAweDMwMDAsDQo+ICsJCQlbNF0gPSAweDM0MDAsDQo+ICsJCX0s
-DQo+ICsNCj4gKwkJLmhhc19zaGFkb3djb24JPSAxLA0KPiAgCX0sDQo+ICAJLndpblswXQk9ICZz
-M2NfZmJfZGF0YV9zNXBfd2luc1swXSwNCj4gIAkud2luWzFdCT0gJnMzY19mYl9kYXRhX3M1cF93
-aW5zWzFdLA0KPiBAQCAtMTg0Myw2ICsxOTE5LDcgQEAgc3RhdGljIHN0cnVjdCBzM2NfZmJfZHJp
-dmVyZGF0YSBzM2NfZmJfZGF0YV9zM2MyNDQzDQo+ID0gew0KPiAgCQkJWzBdID0gMHg0MDAsDQo+
-ICAJCQlbMV0gPSAweDgwMCwNCj4gIAkJfSwNCj4gKwkJLmhhc19jbGtzZWwJPSAxLA0KPiAgCX0s
-DQo+ICAJLndpblswXSA9ICYoc3RydWN0IHMzY19mYl93aW5fdmFyaWFudCkgew0KPiAgCQkucGFs
-ZXR0ZV9zegk9IDI1NiwNCj4gQEAgLTE4NzAsNiArMTk0Nyw5IEBAIHN0YXRpYyBzdHJ1Y3QgcGxh
-dGZvcm1fZGV2aWNlX2lkIHMzY19mYl9kcml2ZXJfaWRzW10NCj4gPSB7DQo+ICAJCS5uYW1lCQk9
-ICJzNXB2MjEwLWZiIiwNCj4gIAkJLmRyaXZlcl9kYXRhCT0gKHVuc2lnbmVkIGxvbmcpJnMzY19m
-Yl9kYXRhX3M1cHYyMTAsDQo+ICAJfSwgew0KPiArCQkubmFtZQkJPSAiZXh5bm9zNC1mYiIsDQo+
-ICsJCS5kcml2ZXJfZGF0YQk9ICh1bnNpZ25lZCBsb25nKSZzM2NfZmJfZGF0YV9leHlub3M0LA0K
-PiArCX0sIHsNCj4gIAkJLm5hbWUJCT0gInMzYzI0NDMtZmIiLA0KPiAgCQkuZHJpdmVyX2RhdGEJ
-PSAodW5zaWduZWQgbG9uZykmczNjX2ZiX2RhdGFfczNjMjQ0MywNCj4gIAl9LA0KPiAtLQ0KPiAx
-LjcuMQ0KDQoNCg==
+On Mon, Mar 28, 2011 at 4:41 AM, Ben Dooks <ben-linux@fluff.org> wrote:
+> On Sun, Mar 27, 2011 at 04:32:43PM -0400, Amit Daniel Kachhap wrote:
+>> This patch adds PM runtime management support in the I2C driver.
+>> The functionality of the driver is not modified much but some extra =
+I2C
+>> states are added for PM runtime. The runtime suspend keeps the inter=
+rupt
+>> for the I2C interface disabled.
+>
+> ok, whilst this looks ok, it's too late for the current merge window,
+> so will go into the -next for the next kernel
+>
+
+Hi Ben,
+
+I do not see this patch in your i2c-next branch. Could you please
+merge this patch in the next merge window.
+
+Thanks,
+Amit Daniel
+
+>> Signed-off-by: =A0Amit Daniel Kachhap <amit.kachhap@linaro.org>
+>> ---
+>> =A0drivers/i2c/busses/i2c-s3c2410.c | =A0 61 +++++++++++++++++++++++=
+++++++++++-----
+>> =A01 files changed, 53 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i=
+2c-s3c2410.c
+>> index 6c00c10..8ebe621 100644
+>> --- a/drivers/i2c/busses/i2c-s3c2410.c
+>> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+>> @@ -35,6 +35,7 @@
+>> =A0#include <linux/cpufreq.h>
+>> =A0#include <linux/slab.h>
+>> =A0#include <linux/io.h>
+>> +#include <linux/pm_runtime.h>
+>>
+>> =A0#include <asm/irq.h>
+>>
+>> @@ -48,7 +49,9 @@ enum s3c24xx_i2c_state {
+>> =A0 =A0 =A0 STATE_START,
+>> =A0 =A0 =A0 STATE_READ,
+>> =A0 =A0 =A0 STATE_WRITE,
+>> - =A0 =A0 STATE_STOP
+>> + =A0 =A0 STATE_STOP,
+>> + =A0 =A0 STATE_STANDBY,
+>> + =A0 =A0 STATE_SUSPEND
+>> =A0};
+>>
+>> =A0enum s3c24xx_i2c_type {
+>> @@ -59,7 +62,6 @@ enum s3c24xx_i2c_type {
+>> =A0struct s3c24xx_i2c {
+>> =A0 =A0 =A0 spinlock_t =A0 =A0 =A0 =A0 =A0 =A0 =A0lock;
+>> =A0 =A0 =A0 wait_queue_head_t =A0 =A0 =A0 wait;
+>> - =A0 =A0 unsigned int =A0 =A0 =A0 =A0 =A0 =A0suspended:1;
+>>
+>> =A0 =A0 =A0 struct i2c_msg =A0 =A0 =A0 =A0 =A0*msg;
+>> =A0 =A0 =A0 unsigned int =A0 =A0 =A0 =A0 =A0 =A0msg_num;
+>> @@ -400,8 +402,13 @@ static int i2s_s3c_irq_nextbyte(struct s3c24xx_=
+i2c *i2c, unsigned long iicstat)
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 i2c->msg=
+++;
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
+>> + =A0 =A0 =A0 =A0 =A0 =A0 break;
+>>
+>> + =A0 =A0 default:
+>> + =A0 =A0 =A0 =A0 =A0 =A0 dev_err(i2c->dev, "%s: called with invalid=
+ state\n", __func__);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 goto out;
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+>> +
+>> =A0 =A0 =A0 }
+>>
+>> =A0 =A0 =A0 /* acknowlegde the IRQ and get back on with the work */
+>> @@ -485,7 +492,7 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c=
+ *i2c,
+>> =A0 =A0 =A0 int spins =3D 20;
+>> =A0 =A0 =A0 int ret;
+>>
+>> - =A0 =A0 if (i2c->suspended)
+>> + =A0 =A0 if (i2c->state =3D=3D STATE_SUSPEND)
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EIO;
+>>
+>> =A0 =A0 =A0 ret =3D s3c24xx_i2c_set_master(i2c);
+>> @@ -555,12 +562,14 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter=
+ *adap,
+>> =A0 =A0 =A0 int ret;
+>>
+>> =A0 =A0 =A0 clk_enable(i2c->clk);
+>> + =A0 =A0 pm_runtime_get_sync(i2c->dev);
+>>
+>> =A0 =A0 =A0 for (retry =3D 0; retry < adap->retries; retry++) {
+>>
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D s3c24xx_i2c_doxfer(i2c, msgs, nu=
+m);
+>>
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (ret !=3D -EAGAIN) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pm_runtime_put_sync(i2c->d=
+ev);
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 clk_disable(i2c->clk);
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return ret;
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
+>> @@ -570,6 +579,7 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *=
+adap,
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 udelay(100);
+>> =A0 =A0 =A0 }
+>>
+>> + =A0 =A0 pm_runtime_put_sync(i2c->dev);
+>> =A0 =A0 =A0 clk_disable(i2c->clk);
+>> =A0 =A0 =A0 return -EREMOTEIO;
+>> =A0}
+>> @@ -912,10 +922,14 @@ static int s3c24xx_i2c_probe(struct platform_d=
+evice *pdev)
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err_cpufreq;
+>> =A0 =A0 =A0 }
+>>
+>> + =A0 =A0 /*Set Initial I2C state*/
+>> + =A0 =A0 i2c->state =3D STATE_STANDBY;
+>> +
+>> =A0 =A0 =A0 platform_set_drvdata(pdev, i2c);
+>>
+>> =A0 =A0 =A0 dev_info(&pdev->dev, "%s: S3C I2C adapter\n", dev_name(&=
+i2c->adap.dev));
+>> =A0 =A0 =A0 clk_disable(i2c->clk);
+>> + =A0 =A0 pm_runtime_enable(&pdev->dev);
+>> =A0 =A0 =A0 return 0;
+>>
+>> =A0 err_cpufreq:
+>> @@ -956,6 +970,7 @@ static int s3c24xx_i2c_remove(struct platform_de=
+vice *pdev)
+>>
+>> =A0 =A0 =A0 clk_disable(i2c->clk);
+>> =A0 =A0 =A0 clk_put(i2c->clk);
+>> + =A0 =A0 pm_runtime_disable(&pdev->dev);
+>>
+>> =A0 =A0 =A0 iounmap(i2c->regs);
+>>
+>> @@ -972,9 +987,9 @@ static int s3c24xx_i2c_suspend_noirq(struct devi=
+ce *dev)
+>> =A0 =A0 =A0 struct platform_device *pdev =3D to_platform_device(dev)=
+;
+>> =A0 =A0 =A0 struct s3c24xx_i2c *i2c =3D platform_get_drvdata(pdev);
+>>
+>> - =A0 =A0 i2c->suspended =3D 1;
+>> -
+>> + =A0 =A0 i2c->state =3D STATE_SUSPEND;
+>> =A0 =A0 =A0 return 0;
+>> +
+>> =A0}
+>>
+>> =A0static int s3c24xx_i2c_resume(struct device *dev)
+>> @@ -982,17 +997,47 @@ static int s3c24xx_i2c_resume(struct device *d=
+ev)
+>> =A0 =A0 =A0 struct platform_device *pdev =3D to_platform_device(dev)=
+;
+>> =A0 =A0 =A0 struct s3c24xx_i2c *i2c =3D platform_get_drvdata(pdev);
+>>
+>> - =A0 =A0 i2c->suspended =3D 0;
+>> =A0 =A0 =A0 clk_enable(i2c->clk);
+>> =A0 =A0 =A0 s3c24xx_i2c_init(i2c);
+>> + =A0 =A0 i2c->state =3D STATE_STANDBY;
+>> =A0 =A0 =A0 clk_disable(i2c->clk);
+>>
+>> =A0 =A0 =A0 return 0;
+>> =A0}
+>>
+>> +static int s3c_i2c_runtime_suspend(struct device *dev)
+>> +{
+>> + =A0 =A0 struct platform_device *pdev =3D to_platform_device(dev);
+>> + =A0 =A0 struct s3c24xx_i2c *i2c =3D platform_get_drvdata(pdev);
+>> +
+>> + =A0 =A0 i2c->state =3D STATE_STANDBY;
+>> + =A0 =A0 s3c24xx_i2c_disable_irq(i2c);
+>> + =A0 =A0 s3c24xx_i2c_disable_ack(i2c);
+>> +
+>> + =A0 =A0 return 0;
+>> +}
+>> +
+>> +static int s3c_i2c_runtime_resume(struct device *dev)
+>> +{
+>> + =A0 =A0 struct platform_device *pdev =3D to_platform_device(dev);
+>> + =A0 =A0 struct s3c24xx_i2c *i2c =3D platform_get_drvdata(pdev);
+>> +
+>> + =A0 =A0 if (i2c->state !=3D STATE_STANDBY)
+>> + =A0 =A0 =A0 =A0 =A0 =A0 return 0;
+>> +
+>> + =A0 =A0 /*No major activity in runtime resume because all the regi=
+sters are
+>> + =A0 =A0 re-initialised for each i2c transfer, so just changing the=
+ state*/
+>> + =A0 =A0 i2c->state =3D STATE_IDLE;
+>> +
+>> + =A0 =A0 return 0;
+>> +}
+>> +
+>> +
+>> =A0static const struct dev_pm_ops s3c24xx_i2c_dev_pm_ops =3D {
+>> - =A0 =A0 .suspend_noirq =3D s3c24xx_i2c_suspend_noirq,
+>> - =A0 =A0 .resume =3D s3c24xx_i2c_resume,
+>> + =A0 =A0 .suspend_noirq =A0 =A0 =A0 =A0 =A0=3D s3c24xx_i2c_suspend_=
+noirq,
+>> + =A0 =A0 .resume =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =3D s3c24xx_i2c_re=
+sume,
+>> + =A0 =A0 .runtime_suspend =A0 =A0 =A0 =A0=3D s3c_i2c_runtime_suspen=
+d,
+>> + =A0 =A0 .runtime_resume =A0 =A0 =A0 =A0 =3D s3c_i2c_runtime_resume=
+,
+>> =A0};
+>>
+>> =A0#define S3C24XX_DEV_PM_OPS (&s3c24xx_i2c_dev_pm_ops)
+>> --
+>> 1.7.1
+>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+> --
+> Ben Dooks, ben@fluff.org, http://www.fluff.org/ben/
+>
+> Large Hadron Colada: A large Pina Colada that makes the universe disa=
+ppear.
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
