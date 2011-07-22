@@ -1,98 +1,42 @@
-From: Sylwester Nawrocki <snjw23@gmail.com>
-Subject: Re: [PATCH v3 08/19] s5p-fimc: Add the media device driver
-Date: Fri, 22 Jul 2011 12:14:57 +0200
-Message-ID: <4E294DA1.7090106@gmail.com>
-References: <1309802110-16682-1-git-send-email-s.nawrocki@samsung.com> <1309802110-16682-9-git-send-email-s.nawrocki@samsung.com> <4E291800.7060402@gmail.com> <4E293BD6.2030502@gmail.com> <4E294255.1050407@gmail.com>
+From: "Koul, Vinod" <vinod.koul@intel.com>
+Subject: RE: [PATCH V4 00/13] To use DMA generic APIs for Samsung DMA
+Date: Fri, 22 Jul 2011 17:37:20 +0530
+Message-ID: <438BB0150E931F4B9CE701519A4463010871DC9B13@bgsmsx502.gar.corp.intel.com>
+References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f52.google.com ([209.85.161.52]:40334 "EHLO
-	mail-fx0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753826Ab1GVKPU (ORCPT
+Received: from mga11.intel.com ([192.55.52.93]:24499 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753954Ab1GVMHu convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Jul 2011 06:15:20 -0400
-In-Reply-To: <4E294255.1050407@gmail.com>
+	Fri, 22 Jul 2011 08:07:50 -0400
+In-Reply-To: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
+Content-Language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Subash Patel <subashrp@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
-
-On 07/22/2011 11:26 AM, Subash Patel wrote:
->>> ...
->>>> +
->>>> +static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
->>>> +{
->>>> + struct s5p_platform_fimc *pdata = fmd->pdev->dev.platform_data;
->>>> + struct fimc_dev *fd = NULL;
->>>> + int num_clients, ret, i;
->>>> +
->>>> + /*
->>>> + * Runtime resume one of the FIMC entities to make sure
->>>> + * the sclk_cam clocks are not globally disabled.
->>>> + */
->>>> + for (i = 0; !fd&& i< ARRAY_SIZE(fmd->fimc); i++)
->>>> + if (fmd->fimc[i])
->>>> + fd = fmd->fimc[i];
->>>> + if (!fd)
->>>> + return -ENXIO;
->>>> + ret = pm_runtime_get_sync(&fd->pdev->dev);
->>>> + if (ret< 0)
->>>> + return ret;
->>>> +
->>>> + WARN_ON(pdata->num_clients> ARRAY_SIZE(fmd->sensor));
->>>> + num_clients = min_t(u32, pdata->num_clients, ARRAY_SIZE(fmd->sensor));
->>>> +
->>>> + fmd->num_sensors = num_clients;
->>>> + for (i = 0; i< num_clients; i++) {
->>>> + fmd->sensor[i].pdata =&pdata->isp_info[i];
->>>> + ret = __fimc_md_set_camclk(fmd,&fmd->sensor[i], true);
->>>> + if (ret)
->>>> + break;
->>>> + fmd->sensor[i].subdev =
->>>> + fimc_md_register_sensor(fmd,&fmd->sensor[i]);
->>>
->>> There is an issue here. Function fimc_md_register_sensor(),
->>> can return subdev, as also error codes when i2c_get_adapter()
->>> or NULL when v4l2_i2c_new_subdev_board() fail. But we do not
->>> invalidate, and assume the return value is valid subdev. It
->>> will cause kernel NULL pointer exception later in fimc_md_create_links().
->>
->> Thanks for letting know.
->> I remember fixing this issue in v2 of the patch set by making
->> fimc_md_register_sensor() return NULL on any error, also when
->> i2c_get_adapter() fails, rather than ERR_PTR value.
->>
->> Do you really mean that there is a NULL or _invalid_ pointer
->> dereference in fimc_md_create_links() ?
->> An oops on a NULL subdev pointer in fmd->sensor[] array seems
->> impossible as there is a check at the beginning of the loop:
-> 
-> If you return NULL, then this check will block a crash. In my case,
-> I failed to get the i2c_adapter, and ENODEV was returned, which is
-> not NULL. Hence I pass through this check, and will crash in
-> 
-> s_info = v4l2_get_subdev_hostdata(sensor);
-
-I see, I have also gone through this during the tests and this problem
-should be fixed already in v3 of the patch-set you've originally replied to.
+To: Boojin Kim <boojin.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: "Williams, Dan J" <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
 
 > 
-> I dont have access to your new patch-set. But if you have returned
-> NULL, then thats should fix this.
+> This patchset adds support DMA generic APIs for Samsung DMA.
+> V4 doesn't has whole patch series and only has the patches differed from V3.
+> 
+> Changes from V3:
+> - Divided 03-patch into two patchs.
+> 	- First is 03-1-patch for DMA_SLAVE_CONFIG command.
+> 	- Another is 03-2-patch for DMA_CYCLIC capability.
+> - Code clean-up
+> 	- Remove unnecessary variable referance.
+> 	- Remove redunancy code
+> 
+> [PATCH V4 01/13] DMA: PL330: Add support runtime PM for PL330 DMAC
+> [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
+> [PATCH V4 03-2/13] DMA: PL330: Add DMA_CYCLIC capability
+> [PATCH V4 05/13] ARM: SAMSUNG: Add common DMA operations
 
-To make sure you use the most up to date version you could pull from:
+Can you pls send entire patchset again,
+it makes things difficult to review patches
 
- git://git.infradead.org/users/kmpark/linux-2.6-samsung s5p-fimc-next
-
-Or here is a gitweb link:
-http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/heads/s5p-fimc-next
-
-I intend to keep using the "s5p-fimc-next" branch name for any new
-patches for next kernel version. So in case you get any crashes
-it might be a good idea to also give the sources there a try.
-
-
---
-Regards,
-Sylwester
+~Vinod
