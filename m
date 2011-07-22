@@ -1,156 +1,189 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v2 3/3] arm: dt: Add device tree support for i2c instance 0 and
- 1 on exynos4 dt machine
-Date: Fri, 22 Jul 2011 15:48:38 +0530
-Message-ID: <1311329918-8105-4-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v2 2/3] i2c: s3c2410: Add device tree support
+Date: Fri, 22 Jul 2011 15:48:37 +0530
+Message-ID: <1311329918-8105-3-git-send-email-thomas.abraham@linaro.org>
 References: <1311329918-8105-1-git-send-email-thomas.abraham@linaro.org>
  <1311329918-8105-2-git-send-email-thomas.abraham@linaro.org>
- <1311329918-8105-3-git-send-email-thomas.abraham@linaro.org>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.samsung.com ([203.254.224.33]:44471 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753806Ab1GVKGE (ORCPT
+	with ESMTP id S1753771Ab1GVKGD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Jul 2011 06:06:04 -0400
-In-reply-to: <1311329918-8105-3-git-send-email-thomas.abraham@linaro.org>
+	Fri, 22 Jul 2011 06:06:03 -0400
+In-reply-to: <1311329918-8105-2-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: devicetree-discuss@lists.ozlabs.org
 Cc: linux-i2c@vger.kernel.org, grant.likely@secretlab.ca, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
 
-Add device node for i2c instance 0 and 1 and list all its connected slave
-devices.
+Add device tree probe support for Samsung's s3c2410 i2c driver.
 
-Signed-off-by: Thomas Abraham <thomas.abraham at linaro.org>
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- arch/arm/boot/dts/exynos4-smdkv310.dts  |   45 +++++++++++++++++++++++++++++++
- arch/arm/mach-exynos4/Kconfig           |    2 +
- arch/arm/mach-exynos4/mach-exynos4-dt.c |   23 ++++++++++++++++
- 3 files changed, 70 insertions(+), 0 deletions(-)
+ .../devicetree/bindings/i2c/samsung-i2c.txt        |   44 +++++++++++++++++
+ drivers/i2c/busses/i2c-s3c2410.c                   |   51 +++++++++++++++++++-
+ 2 files changed, 94 insertions(+), 1 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/i2c/samsung-i2c.txt
 
-diff --git a/arch/arm/boot/dts/exynos4-smdkv310.dts b/arch/arm/boot/dts/exynos4-smdkv310.dts
-index d65c18c..6fd2032 100644
---- a/arch/arm/boot/dts/exynos4-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4-smdkv310.dts
-@@ -41,6 +41,12 @@
- 			irq-start = <61>;
- 		};
+diff --git a/Documentation/devicetree/bindings/i2c/samsung-i2c.txt b/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
+new file mode 100644
+index 0000000..4e1a2ef
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
+@@ -0,0 +1,44 @@
++* Samsung's I2C controller
++
++The Samsung's I2C controller is used to interface with I2C devices.
++
++Required properties:
++  - compatible: value should be either of the following.
++      (a) "samsung, s3c2410-i2c", for i2c compatible with s3c2410 i2c.
++      (b) "samsung, s3c2440-i2c", for i2c compatible with s3c2440 i2c.
++
++  - reg: physical base address of the controller and length of memory mapped
++    region.
++
++  - interrupts: interrupt number to the cpu.
++
++  - samsung,i2c-sda-delay: Delay (in ns) applied to data line (SDA) edges.
++
++  - gpios: The order of the gpios should be in the following order.
++       <SDA, SCL>
++
++Optional properties:
++  - samsung,i2c-slave-addr: Slave address in multi-master enviroment. If not
++    specified, default value is 0.
++
++  - samsung,i2c-max-bus-freq: Desired frequency in Hz of the bus. If not
++    specified, the default value in Hz is 100000.
++
++Example:
++
++	i2c@13870000 {
++		compatible = "samsung,s3c2440-i2c";
++		reg = <0x13870000 0x100>;
++		interrupts = <345>;
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <100000>;
++		gpios = <&gpd1 2 0 /* SDA */
++			 &gpd1 3 0 /* SCL */>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		wm8994@1a {
++			compatible = "wlf,wm8994";
++			reg = <0x1a>;
++		};
++	};
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index e132168..40264b0 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -35,6 +35,7 @@
+ #include <linux/cpufreq.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
++#include <linux/of_i2c.h>
  
-+		gpd1: gpio-controller@114000C0 {
-+			compatible = "samsung,exynos4-gpio-gpd1","samsung,exynos4-gpio";
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+		};
+ #include <asm/irq.h>
+ 
+@@ -96,6 +97,10 @@ static inline int s3c24xx_i2c_is2440(struct s3c24xx_i2c *i2c)
+ 	struct platform_device *pdev = to_platform_device(i2c->dev);
+ 	enum s3c24xx_i2c_type type;
+ 
++	if (i2c->dev->of_node)
++		return of_device_is_compatible(i2c->dev->of_node,
++						"samsung,s3c2440-i2c");
 +
- 		watchdog@10060000 {
- 			compatible = "samsung,s3c2410-wdt";
- 			reg = <0x10060000 0x400>;
-@@ -64,5 +70,44 @@
- 			samsung,sdhci-cd-type = <0>;
- 			samsung,sdhci-clkdiv-external;
- 		};
+ 	type = platform_get_device_id(pdev)->driver_data;
+ 	return type == TYPE_S3C2440;
+ }
+@@ -787,6 +792,34 @@ static int s3c24xx_i2c_init(struct s3c24xx_i2c *i2c)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_OF
 +
-+		i2c@13860000 {
-+			compatible = "samsung,s3c2440-i2c";
-+			reg = <0x13860000 0x100>;
-+			interrupts = <344>;
-+			samsung,i2c-sda-delay = <100>;
-+			samsung,i2c-max-bus-freq = <20000>;
-+			gpios = <&gpd1 0 0 /* SDA */
-+				 &gpd1 1 0 /* SCL */>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
++/* s3c24xx_i2c_parse_dt
++ *
++ * Parse the device tree node and retreive the platform data.
++*/
 +
-+			eeprom@50 {
-+				compatible = "samsung,24ad0xd1";
-+				reg = <0x50>;
-+			};
++static void
++s3c24xx_i2c_parse_dt(struct device_node *np, struct s3c24xx_i2c *i2c)
++{
++	struct s3c2410_platform_i2c *pdata = &i2c->pdata;
 +
-+			eeprom@52 {
-+				compatible = "samsung,24ad0xd1";
-+				reg = <0x51>;
-+			};
-+		};
++	if (!np)
++		return;
 +
-+		i2c@13870000 {
-+			compatible = "samsung,s3c2440-i2c";
-+			reg = <0x13870000 0x100>;
-+			interrupts = <345>;
-+			samsung,i2c-sda-delay = <100>;
-+			samsung,i2c-max-bus-freq = <100000>;
-+			gpios = <&gpd1 2 0 /* SDA */
-+				 &gpd1 3 0 /* SCL */>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
++	of_property_read_u32(np, "samsung,i2c-sda-delay", &pdata->sda_delay);
++	of_property_read_u32(np, "samsung,i2c-slave-addr", &pdata->slave_addr);
++	of_property_read_u32(np, "samsung,i2c-max-bus-freq",
++				(u32 *)&pdata->frequency);
++}
++#else
++static void
++s3c24xx_i2c_parse_dt(struct device_node *np, struct s3c24xx_i2c *i2c)
++{
++	return;
++}
++#endif
 +
-+			wm8994@1a {
-+				compatible = "wlf,wm8994";
-+				reg = <0x1a>;
-+			};
-+		};
- 	};
+ /* s3c24xx_i2c_probe
+  *
+  * called by the bus driver when a suitable device is found
+@@ -812,6 +845,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	memcpy(&i2c->pdata, pdata, sizeof(*pdata));
++	s3c24xx_i2c_parse_dt(pdev->dev.of_node, i2c);
+ 
+ 	strlcpy(i2c->adap.name, "s3c2410-i2c", sizeof(i2c->adap.name));
+ 	i2c->adap.owner   = THIS_MODULE;
+@@ -908,13 +942,16 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	 */
+ 
+ 	i2c->adap.nr = pdata->bus_num;
++	i2c->adap.dev.of_node = pdev->dev.of_node;
+ 
+-	ret = i2c_add_numbered_adapter(&i2c->adap);
++	ret = (pdev->dev.of_node) ? i2c_add_adapter(&i2c->adap) :
++					i2c_add_numbered_adapter(&i2c->adap);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to add bus to i2c core\n");
+ 		goto err_cpufreq;
+ 	}
+ 
++	of_i2c_register_devices(&i2c->adap);
+ 	platform_set_drvdata(pdev, i2c);
+ 
+ 	dev_info(&pdev->dev, "%s: S3C I2C adapter\n", dev_name(&i2c->adap.dev));
+@@ -1016,6 +1053,17 @@ static struct platform_device_id s3c24xx_driver_ids[] = {
  };
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index bb97b7e..06b43ca 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -193,6 +193,8 @@ config MACH_EXYNOS4_DT
- 	select S3C_DEV_HSMMC
- 	select S3C_DEV_HSMMC2
- 	select EXYNOS4_SETUP_SDHCI
-+	select EXYNOS4_SETUP_I2C0
-+	select EXYNOS4_SETUP_I2C1
- 	help
- 	  Machine support for Samsung Exynos4 machine with device tree enabled.
+ MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
  
-diff --git a/arch/arm/mach-exynos4/mach-exynos4-dt.c b/arch/arm/mach-exynos4/mach-exynos4-dt.c
-index 120665a..8b0cf8f 100644
---- a/arch/arm/mach-exynos4/mach-exynos4-dt.c
-+++ b/arch/arm/mach-exynos4/mach-exynos4-dt.c
-@@ -23,7 +23,10 @@
- #include <plat/regs-serial.h>
- #include <plat/exynos4.h>
- #include <plat/cpu.h>
-+#include <plat/devs.h>
- #include <plat/sdhci.h>
-+#include <plat/iic.h>
-+#include <plat/iic-core.h>
- 
- #include <mach/map.h>
- 
-@@ -63,6 +66,22 @@ static struct s3c2410_uartcfg smdkv310_uartcfgs[] __initdata = {
- };
- 
- /*
-+ * The i2c driver does not handle the pinmux settings. Instead, the
-+ * platform specific callback function is passed through the platform
-+ * data that can handle the pinmux settings for the i2c module.
-+ * Eventually, when the new pinmux api is merged, the i2c driver can
-+ * be modified to handle the pinmux settings. This is temporary for
-+ * now.
-+ */
-+static struct s3c2410_platform_i2c exynos4_dt_i2c_data0 __initdata = {
-+	.cfg_gpio	= s3c_i2c0_cfg_gpio,
++#ifdef CONFIG_OF
++static const struct of_device_id s3c24xx_i2c_match[] = {
++	{ .compatible = "samsung,s3c2410-i2c" },
++	{ .compatible = "samsung,s3c2440-i2c" },
++	{},
 +};
++MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
++#else
++#define s3c24xx_i2c_match NULL
++#endif
 +
-+static struct s3c2410_platform_i2c exynos4_dt_i2c_data1 __initdata = {
-+	.cfg_gpio	= s3c_i2c1_cfg_gpio,
-+};
-+
-+/*
-  * The following lookup table is used to override device names when devices
-  * are registered from device tree. Optionally, the platform data can also
-  * to supplied. The sdhci driver requires the device name to be overridden
-@@ -75,6 +94,10 @@ static const struct of_dev_auxdata exynos4_auxdata_lookup[] __initconst = {
- 				"s3c-sdhci.2", &s3c_hsmmc2_def_platdata),
- 	OF_DEV_AUXDATA("samsung,s3c6410-sdhci", EXYNOS4_PA_HSMMC(0),
- 				"s3c-sdhci.0", &s3c_hsmmc0_def_platdata),
-+	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(0),
-+				"s3c2440-i2c.0", &exynos4_dt_i2c_data0),
-+	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(1),
-+				"s3c2440-i2c.1", &exynos4_dt_i2c_data1),
- 	{},
+ static struct platform_driver s3c24xx_i2c_driver = {
+ 	.probe		= s3c24xx_i2c_probe,
+ 	.remove		= s3c24xx_i2c_remove,
+@@ -1024,6 +1072,7 @@ static struct platform_driver s3c24xx_i2c_driver = {
+ 		.owner	= THIS_MODULE,
+ 		.name	= "s3c-i2c",
+ 		.pm	= S3C24XX_DEV_PM_OPS,
++		.of_match_table	= s3c24xx_i2c_match,
+ 	},
  };
  
 -- 
