@@ -1,88 +1,42 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V2 6/7] ARM: S5P6440: Enable LCD-LTE480 and Framebuffer support
-Date: Mon, 25 Jul 2011 16:00:24 -0400
-Message-ID: <1311624025-2643-7-git-send-email-ajaykumar.rs@samsung.com>
-References: <1311624025-2643-1-git-send-email-ajaykumar.rs@samsung.com>
-Content-Transfer-Encoding: 7BIT
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH V4 14/14] ARM: SAMSUNG: Remove Samsung specific enum type
+ for dma direction
+Date: Mon, 25 Jul 2011 15:15:32 -0600
+Message-ID: <20110725211532.GF26735@ponder.secretlab.ca>
+References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com>
+ <1311557312-26107-15-git-send-email-boojin.kim@samsung.com>
+ <CABb+yY3dwshghgXPuMyLzm=ArYdELBOqVf4AcxN77MV1jV8Ang@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:20892 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751950Ab1GYOJC (ORCPT
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:33774 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751568Ab1GYVPg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Jul 2011 10:09:02 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOW000A67B0RIF0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 25 Jul 2011 23:09:01 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LOW00ITF7ANNI@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 25 Jul 2011 23:09:00 +0900 (KST)
-In-reply-to: <1311624025-2643-1-git-send-email-ajaykumar.rs@samsung.com>
+	Mon, 25 Jul 2011 17:15:36 -0400
+Received: by gyh3 with SMTP id 3so2504031gyh.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Jul 2011 14:15:36 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CABb+yY3dwshghgXPuMyLzm=ArYdELBOqVf4AcxN77MV1jV8Ang@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jg1.han@samsung.com, m.szyprowski@samsung.com
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Boojin Kim <boojin.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-This patch enables s3c-fb support and platform-lcd support for SMDK6440.
+On Mon, Jul 25, 2011 at 05:38:37PM +0530, Jassi Brar wrote:
+> On Mon, Jul 25, 2011 at 6:58 AM, Boojin Kim <boojin.kim@samsung.com> wrote:
+> > This patch removes the samsung specific enum type 's3c2410_dmasrc'
+> > and uses 'dma_data_direction' instead.
+> >
+> > Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> 
+> Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
+> 
+> If this patch was first in the patchset, probably it could have been
+> already merged.
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
----
- arch/arm/mach-s5p64x0/Kconfig         |    3 +++
- arch/arm/mach-s5p64x0/mach-smdk6440.c |    5 +++++
- 2 files changed, 8 insertions(+), 0 deletions(-)
+Indeed.  If you move this to the front when you post the next version
+then it can be merged right away.
 
-diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
-index ed87151..0596673 100644
---- a/arch/arm/mach-s5p64x0/Kconfig
-+++ b/arch/arm/mach-s5p64x0/Kconfig
-@@ -42,6 +42,7 @@ config COMMON_FB
- config MACH_SMDK6440
- 	bool "SMDK6440"
- 	select CPU_S5P6440
-+	select S3C_DEV_FB
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_RTC
- 	select S3C_DEV_WDT
-@@ -50,7 +51,9 @@ config MACH_SMDK6440
- 	select SAMSUNG_DEV_BACKLIGHT
- 	select SAMSUNG_DEV_PWM
- 	select SAMSUNG_DEV_TS
-+	select S5P64X0_SETUP_FB
- 	select S5P64X0_SETUP_I2C1
-+	select COMMON_FB
- 	help
- 	  Machine support for the Samsung SMDK6440
- 
-diff --git a/arch/arm/mach-s5p64x0/mach-smdk6440.c b/arch/arm/mach-s5p64x0/mach-smdk6440.c
-index 346f8df..6d86e74 100644
---- a/arch/arm/mach-s5p64x0/mach-smdk6440.c
-+++ b/arch/arm/mach-s5p64x0/mach-smdk6440.c
-@@ -34,6 +34,7 @@
- #include <mach/regs-clock.h>
- #include <mach/i2c.h>
- #include <mach/regs-gpio.h>
-+#include <mach/common-fb.h>
- 
- #include <plat/regs-serial.h>
- #include <plat/gpio-cfg.h>
-@@ -101,6 +102,8 @@ static struct platform_device *smdk6440_devices[] __initdata = {
- 	&s3c_device_wdt,
- 	&samsung_asoc_dma,
- 	&s5p6440_device_iis,
-+	&s3c_device_fb,
-+	&smdk64x0_lcd_lte480wv,
- };
- 
- static struct s3c2410_platform_i2c s5p6440_i2c0_data __initdata = {
-@@ -165,6 +168,8 @@ static void __init smdk6440_machine_init(void)
- 			ARRAY_SIZE(smdk6440_i2c_devs1));
- 
- 	samsung_bl_set(&smdk6440_bl_gpio_info, &smdk6440_bl_data);
-+	s3c_fb_set_platdata(&smdk64x0_lcd_pdata);
-+	s5p64x0_fb_init(S5P64X0_SPCON0_LCD_SEL_RGB);
- 
- 	platform_add_devices(smdk6440_devices, ARRAY_SIZE(smdk6440_devices));
- }
--- 
-1.7.0.4
+Acked-by: Grant Likely <grant.likely@secretlab.ca>
