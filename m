@@ -1,104 +1,84 @@
 From: Vinod Koul <vkoul@infradead.org>
-Subject: Re: [PATCH V4 03/14] DMA: PL330: Support DMA_SLAVE_CONFIG command
-Date: Mon, 25 Jul 2011 15:56:57 +0530
-Message-ID: <1311589617.27357.3.camel@vkoul-mobl4>
+Subject: Re: [PATCH V4 04/14] DMA: PL330: Add DMA_CYCLIC capability
+Date: Mon, 25 Jul 2011 16:18:04 +0530
+Message-ID: <1311590884.29703.2.camel@vkoul-mobl4>
 References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com>
-	 <1311557312-26107-4-git-send-email-boojin.kim@samsung.com>
+	<1311557312-26107-5-git-send-email-boojin.kim@samsung.com>
+	<20110725092749.GB9653@n2100.arm.linux.org.uk>
+	<002001cc4ab6$0d7cd590$287680b0$%kim@samsung.com>
+	<20110725103629.GF9653@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from merlin.infradead.org ([205.233.59.134]:36285 "EHLO
-	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751673Ab1GYKoK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Jul 2011 06:44:10 -0400
-In-Reply-To: <1311557312-26107-4-git-send-email-boojin.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20110725103629.GF9653@n2100.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, vinod.koul@intel.com, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Dan Williams' <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Boojin Kim <boojin.kim@samsung.com>
-Cc: vinod.koul@intel.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Jassi Brar <jassisinghbrar@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Dan Williams <dan.j.williams@intel.com>
 
-On Mon, 2011-07-25 at 10:28 +0900, Boojin Kim wrote:
-> This patch adds support DMA_SLAVE_CONFIG command.
+On Mon, 2011-07-25 at 11:36 +0100, Russell King - ARM Linux wrote:
+> On Mon, Jul 25, 2011 at 07:31:45PM +0900, Boojin Kim wrote:
+> > > On Mon, Jul 25, 2011 at 10:28:22AM +0900, Boojin Kim wrote:
+> > > > +static void pl330_tasklet_cyclic(unsigned long data)
+> > > > +{
+> > > > +	struct dma_pl330_chan *pch = (struct dma_pl330_chan *)data;
+> > > > +	struct dma_pl330_desc *desc, *_dt;
+> > > > +	unsigned long flags;
+> > > > +	LIST_HEAD(list);
+> > > > +
+> > > > +	spin_lock_irqsave(&pch->lock, flags);
+> > > ...
+> > > > +			callback = desc->txd.callback;
+> > > > +			if (callback)
+> > > > +				callback(desc->txd.callback_param);
+> > >
+> > > On this again - what if the callback wants to terminate the DMA activity
+> > > because there's no more audio data to be sent/received from the device?
+> > 
+> > Do you mean what is happened if the callback() is called after channel is
+> > terminated ?
+> > Or What is happened if Callback() calls 'dma_release_channel()' to terminate
+> > DMA?
 > 
-> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-> ---
->  drivers/dma/pl330.c |   53 +++++++++++++++++++++++++++++++++++++-------------
->  1 files changed, 39 insertions(+), 14 deletions(-)
+> No.  I mean what if the callback wants to call dmaengine_terminate_all().
+you are supposed to drop the lock here, that way callback can call any
+DMA API, otherwise it will result in deadlock.
+This make me wonder you haven't read the documentation at all, please
+ensure you have read Documentation/dmaengine.txt before next posting
 > 
-> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> index 586ab39..880f010 100644
-> --- a/drivers/dma/pl330.c
-> +++ b/drivers/dma/pl330.c
-> @@ -256,25 +256,50 @@ static int pl330_alloc_chan_resources(struct dma_chan *chan)
->  static int pl330_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd, unsigned long arg)
->  {
->  	struct dma_pl330_chan *pch = to_pchan(chan);
-> -	struct dma_pl330_desc *desc;
-> +	struct dma_pl330_desc *desc, *_dt;
->  	unsigned long flags;
-> +	struct dma_pl330_dmac *pdmac = pch->dmac;
-> +	struct dma_slave_config *slave_config;
-> +	struct dma_pl330_peri *peri;
-> +	LIST_HEAD(list);
->  
-> -	/* Only supports DMA_TERMINATE_ALL */
-> -	if (cmd != DMA_TERMINATE_ALL)
-> -		return -ENXIO;
-> -
-> -	spin_lock_irqsave(&pch->lock, flags);
-> -
-> -	/* FLUSH the PL330 Channel thread */
-> -	pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
-> +	switch (cmd) {
-> +	case DMA_TERMINATE_ALL:
-> +		spin_lock_irqsave(&pch->lock, flags);
->  
-> -	/* Mark all desc done */
-> -	list_for_each_entry(desc, &pch->work_list, node)
-> -		desc->status = DONE;
-> +		/* FLUSH the PL330 Channel thread */
-> +		pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
->  
-> -	spin_unlock_irqrestore(&pch->lock, flags);
-> +		/* Mark all desc done */
-> +		list_for_each_entry_safe(desc, _dt, &pch->work_list , node) {
-> +			desc->status = DONE;
-> +			pch->completed = desc->txd.cookie;
-> +			list_move_tail(&desc->node, &list);
-> +		}
->  
-> -	pl330_tasklet((unsigned long) pch);
-> +		list_splice_tail_init(&list, &pdmac->desc_pool);
-> +		spin_unlock_irqrestore(&pch->lock, flags);
-> +		break;
-> +	case DMA_SLAVE_CONFIG:
-> +		slave_config = (struct dma_slave_config *)arg;
-> +		peri = pch->chan.private;
-> +
-> +		if (slave_config->direction == DMA_TO_DEVICE) {
-> +			if (slave_config->dst_addr)
-> +				peri->fifo_addr = slave_config->dst_addr;
-> +			if (slave_config->dst_addr_width)
-> +				peri->burst_sz = __ffs(slave_config->dst_addr_width);
-This doesn't sound right, why can't you use xxx_maxburst field instead?
+> > > > +	if (!pch->cyclic_task) {
+> > > > +		pch->cyclic_task =
+> > > > +			kmalloc(sizeof(struct tasklet_struct), GFP_KERNEL);
+> > > > +		tasklet_init(pch->cyclic_task,
+> > > > +			pl330_tasklet_cyclic, (unsigned int)pch);
+> > >
+> > > Here you allocate memory for the cyclic task.  Above you set this pointer
+> > > to NULL.  That sounds like a memory leak to me.  Why are you kmallocing
+> > > this memory - why can't it be part of the dma_pl330_chan structure?  It's
+> > > only 28 bytes.
+> > 
+> > It's my mistake. I should have been free of the memory.
+> > 
+> > And the reason why I use kmalloc for 'cyclic_task' is following.
+> > This memory size for 'cyclic_tasklet' is the 896 bytes ( = the number of
+> > channel * sizeof(struct tasklet_struct)= 32*28) for each DMAC. And This
+> > memory size is increased according to the number of DMAC.
+> > And Samsung has the DMAC that is dedicated for Mem-to-Mem operation. If I
+> > make 'cyclic_task' be part of dma_pl330_chan, this DMAC that is dedicated
+> > for Mem-to-Mem operation should hold unused data.
+> > So, I think it's loss that all dma channels hold own 'cyclic_task'.
+> 
+> Could you re-use the tasklet that already exists?
 
-> +		} else if (slave_config->direction == DMA_FROM_DEVICE) {
-> +			if (slave_config->src_addr)
-> +				peri->fifo_addr = slave_config->src_addr;
-> +			if (slave_config->src_addr_width)
-> +				peri->burst_sz = __ffs(slave_config->src_addr_width);
-ditto...
-> +		}
-> +		break;
-> +	default:
-> +		dev_err(pch->dmac->pif.dev, "Not supported command.\n");
-> +		return -ENXIO;
-> +	}
->  
->  	return 0;
->  }
 
 -- 
 ~Vinod Koul
