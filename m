@@ -1,128 +1,91 @@
-From: Boojin Kim <boojin.kim@samsung.com>
-Subject: RE: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
-Date: Mon, 25 Jul 2011 11:10:57 +0900
-Message-ID: <001701cc4a70$17de50e0$479af2a0$%kim@samsung.com>
-References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
- <1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
- <CABb+yY058yBZnmYcqbqFCfsBUcxU=JbTZmopLApZaaKim+MMfg@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCHv3 0/4] Updated s5p-tv platform definitions
+Date: Mon, 25 Jul 2011 09:55:43 +0200
+Message-ID: <1311580547-9468-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:53199 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752086Ab1GYCLA (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:60230 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751392Ab1GYHzx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 24 Jul 2011 22:11:00 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOV005JQ9ZN6LF0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 25 Jul 2011 11:10:58 +0900 (KST)
-Received: from DOBOOJINKIM03 (12-23-120-72.csky.net [12.23.120.72])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LOV00EWHA2AGO@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 25 Jul 2011 11:10:58 +0900 (KST)
-In-reply-to: <CABb+yY058yBZnmYcqbqFCfsBUcxU=JbTZmopLApZaaKim+MMfg@mail.gmail.com>
-Content-language: ko
+	Mon, 25 Jul 2011 03:55:53 -0400
+Received: from spt2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0LOV005V5Q14GQ@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 25 Jul 2011 08:55:52 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LOV00LJJQ1270@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 25 Jul 2011 08:55:51 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jassi Brar' <jassisinghbrar@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Vinod Koul' <vinod.koul@intel.com>, 'Dan Williams' <dan.j.williams@intel.com>, 'Kukjin Kim' <kgene.kim@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Jassi Brar wrote:
-> Sent: Friday, July 22, 2011 2:42 PM
-> To: Boojin Kim
-> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
-> Vinod Koul; Dan Williams; Kukjin Kim
-> Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
->
-> On Wed, Jul 20, 2011 at 4:16 PM, Boojin Kim <boojin.kim@samsung.com> wrote:
-> > Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> > ---
-> >  drivers/dma/pl330.c |   53 
-> > +++++++++++++++++++++++++++++++++++++----------
-> ---
-> >  1 files changed, 39 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> > index 586ab39..880f010 100644
-> > --- a/drivers/dma/pl330.c
-> > +++ b/drivers/dma/pl330.c
-> > @@ -256,25 +256,50 @@ static int pl330_alloc_chan_resources(struct 
-> > dma_chan
-> *chan)
-> >  static int pl330_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd,
-> unsigned long arg)
-> >  {
-> >        struct dma_pl330_chan *pch = to_pchan(chan);
-> > -       struct dma_pl330_desc *desc;
-> > +       struct dma_pl330_desc *desc, *_dt;
-> >        unsigned long flags;
-> > +       struct dma_pl330_dmac *pdmac = pch->dmac;
-> > +       struct dma_slave_config *slave_config;
-> > +       struct dma_pl330_peri *peri;
-> > +       LIST_HEAD(list);
-> >
-> > -       /* Only supports DMA_TERMINATE_ALL */
-> > -       if (cmd != DMA_TERMINATE_ALL)
-> > -               return -ENXIO;
-> > -
-> > -       spin_lock_irqsave(&pch->lock, flags);
-> > -
-> > -       /* FLUSH the PL330 Channel thread */
-> > -       pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
-> > +       switch (cmd) {
-> > +       case DMA_TERMINATE_ALL:
-> > +               spin_lock_irqsave(&pch->lock, flags);
-> >
-> > -       /* Mark all desc done */
-> > -       list_for_each_entry(desc, &pch->work_list, node)
-> > -               desc->status = DONE;
-> > +               /* FLUSH the PL330 Channel thread */
-> > +               pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
-> >
-> > -       spin_unlock_irqrestore(&pch->lock, flags);
-> > +               /* Mark all desc done */
-> > +               list_for_each_entry_safe(desc, _dt, &pch->work_list , 
-> > node)
-> {
-> > +                       desc->status = DONE;
-> > +                       pch->completed = desc->txd.cookie;
-> > +                       list_move_tail(&desc->node, &list);
-> > +               }
-> >
-> > -       pl330_tasklet((unsigned long) pch);
-> > +               list_splice_tail_init(&list, &pdmac->desc_pool);
-> > +               spin_unlock_irqrestore(&pch->lock, flags);
-> > +               break;
-> > +       case DMA_SLAVE_CONFIG:
-> > +               slave_config = (struct dma_slave_config *)arg;
-> > +               peri = pch->chan.private;
-> > +
-> > +               if (slave_config->direction == DMA_TO_DEVICE) {
-> > +                       if (slave_config->dst_addr)
-> > +                               peri->fifo_addr = slave_config->dst_addr;
-> > +                       if (slave_config->dst_addr_width)
-> > +                               peri->burst_sz = __ffs(slave_config-
-> >dst_addr_width);
-> > +               } else if (slave_config->direction == DMA_FROM_DEVICE) {
-> > +                       if (slave_config->src_addr)
-> > +                               peri->fifo_addr = slave_config->src_addr;
-> > +                       if (slave_config->src_addr_width)
-> > +                               peri->burst_sz = __ffs(slave_config-
-> >src_addr_width);
-> > +               }
-> > +               break;
->    As discussed yesterday, DMA_SLAVE_CONFIG is assumed to be madatory,
-> so please dismantle the 'struct dma_pl330_peri', move fifo_addr,
-> burst_sz and rqtype
-> to 'struct dma_pl330_chan' and poison them - that will force clients
-> to do DMA_SLAVE_CONFIG. Move 'peri_id' to 'struct dma_pl330_platdata'
->   And protect the changes to channel parameters with lock.
+Hello,
 
-It's fine that you understand my implementation.
-I'm agree to remove unnecessary structure.
-But, this item should bring the change of all DMA machine code and doesn't has 
-deeply relationship with the purpose of this patch series (samsung dma usage).
-So, I'd like to make it to another patch and submit it.
-How about my opinion ?
+This patch series contains platform definitions for s5p-tv driver
+rebased onto latest for-next branch (including generic GIC and clockdev
+changes).
+
+Changes since v2:
+- moved vpll code to plat-s5p/clock-vpll.c
+
+Changes since v1:
+- renamed i2c8 to common i2c-hdmiphy
+- moved common vpll code to plat-s5p/clock.c
+- added check for pll locking
+- various minor coding style fixes here and there
+
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
+
+
+Patch summary:
+
+Tomasz Stanislawski (4):
+  ARM: Samsung: add i2c hdmiphy controller definitions
+  ARM: S5P: add support for tv device
+  ARM: Exynos4: enable TV support on Universal_C210 board
+  ARM: S5PV210: enable TV support on GONI board
+
+ arch/arm/mach-exynos4/Kconfig                    |    3 +
+ arch/arm/mach-exynos4/clock.c                    |  140 +++++++++++++++++++++-
+ arch/arm/mach-exynos4/cpu.c                      |    2 +
+ arch/arm/mach-exynos4/include/mach/iic-hdmiphy.h |   16 +++
+ arch/arm/mach-exynos4/include/mach/irqs.h        |    4 +
+ arch/arm/mach-exynos4/include/mach/map.h         |   12 ++
+ arch/arm/mach-exynos4/include/mach/regs-pmu.h    |    6 +
+ arch/arm/mach-exynos4/mach-universal_c210.c      |   74 ++++++++++++
+ arch/arm/mach-s5pv210/Kconfig                    |    2 +
+ arch/arm/mach-s5pv210/clock.c                    |   87 ++++++++++++--
+ arch/arm/mach-s5pv210/cpu.c                      |    4 +
+ arch/arm/mach-s5pv210/include/mach/iic-hdmiphy.h |   16 +++
+ arch/arm/mach-s5pv210/include/mach/irqs.h        |    4 +-
+ arch/arm/mach-s5pv210/include/mach/map.h         |   13 ++
+ arch/arm/mach-s5pv210/include/mach/regs-clock.h  |    9 +-
+ arch/arm/mach-s5pv210/mach-goni.c                |    9 ++
+ arch/arm/plat-s5p/Kconfig                        |   15 +++
+ arch/arm/plat-s5p/Makefile                       |    3 +
+ arch/arm/plat-s5p/clock-vpll.c                   |   93 ++++++++++++++
+ arch/arm/plat-s5p/dev-i2c-hdmiphy.c              |   59 +++++++++
+ arch/arm/plat-s5p/dev-tv.c                       |  100 +++++++++++++++
+ arch/arm/plat-s5p/include/plat/s5p-clock.h       |    4 +
+ arch/arm/plat-samsung/include/plat/devs.h        |    6 +
+ arch/arm/plat-samsung/include/plat/iic.h         |    1 +
+ arch/arm/plat-samsung/include/plat/tv-core.h     |   44 +++++++
+ 25 files changed, 710 insertions(+), 16 deletions(-)
+ create mode 100644 arch/arm/mach-exynos4/include/mach/iic-hdmiphy.h
+ create mode 100644 arch/arm/mach-s5pv210/include/mach/iic-hdmiphy.h
+ create mode 100644 arch/arm/plat-s5p/clock-vpll.c
+ create mode 100644 arch/arm/plat-s5p/dev-i2c-hdmiphy.c
+ create mode 100644 arch/arm/plat-s5p/dev-tv.c
+ create mode 100644 arch/arm/plat-samsung/include/plat/tv-core.h
+
+-- 
+1.7.1.569.g6f426
