@@ -1,68 +1,56 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH V4 04/14] DMA: PL330: Add DMA_CYCLIC capability
-Date: Mon, 25 Jul 2011 11:36:29 +0100
-Message-ID: <20110725103629.GF9653@n2100.arm.linux.org.uk>
-References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com> <1311557312-26107-5-git-send-email-boojin.kim@samsung.com> <20110725092749.GB9653@n2100.arm.linux.org.uk> <002001cc4ab6$0d7cd590$287680b0$%kim@samsung.com>
+From: Vinod Koul <vkoul@infradead.org>
+Subject: Re: [RESEND] [PATCH V4 0/14] To use DMA generic APIs for Samsung
+ DMA
+Date: Mon, 25 Jul 2011 15:47:00 +0530
+Message-ID: <1311589020.27357.1.camel@vkoul-mobl4>
+References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:40976 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751974Ab1GYKgp (ORCPT
+Received: from merlin.infradead.org ([205.233.59.134]:35804 "EHLO
+	merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751673Ab1GYKoA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Jul 2011 06:36:45 -0400
-Content-Disposition: inline
-In-Reply-To: <002001cc4ab6$0d7cd590$287680b0$%kim@samsung.com>
+	Mon, 25 Jul 2011 06:44:00 -0400
+In-Reply-To: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Boojin Kim <boojin.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Vinod Koul' <vinod.koul@intel.com>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Dan Williams' <dan.j.williams@intel.com>
+Cc: vinod.koul@intel.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Jassi Brar <jassisinghbrar@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Dan Williams <dan.j.williams@intel.com>
 
-On Mon, Jul 25, 2011 at 07:31:45PM +0900, Boojin Kim wrote:
-> > On Mon, Jul 25, 2011 at 10:28:22AM +0900, Boojin Kim wrote:
-> > > +static void pl330_tasklet_cyclic(unsigned long data)
-> > > +{
-> > > +	struct dma_pl330_chan *pch = (struct dma_pl330_chan *)data;
-> > > +	struct dma_pl330_desc *desc, *_dt;
-> > > +	unsigned long flags;
-> > > +	LIST_HEAD(list);
-> > > +
-> > > +	spin_lock_irqsave(&pch->lock, flags);
-> > ...
-> > > +			callback = desc->txd.callback;
-> > > +			if (callback)
-> > > +				callback(desc->txd.callback_param);
-> >
-> > On this again - what if the callback wants to terminate the DMA activity
-> > because there's no more audio data to be sent/received from the device?
+On Mon, 2011-07-25 at 10:28 +0900, Boojin Kim wrote:
+> This patchset adds support DMA generic APIs for Samsung DMA
+> and is re-sent by the request of DMA maintainer, Vinod Koul.
 > 
-> Do you mean what is happened if the callback() is called after channel is
-> terminated ?
-> Or What is happened if Callback() calls 'dma_release_channel()' to terminate
-> DMA?
-
-No.  I mean what if the callback wants to call dmaengine_terminate_all().
-
-> > > +	if (!pch->cyclic_task) {
-> > > +		pch->cyclic_task =
-> > > +			kmalloc(sizeof(struct tasklet_struct), GFP_KERNEL);
-> > > +		tasklet_init(pch->cyclic_task,
-> > > +			pl330_tasklet_cyclic, (unsigned int)pch);
-> >
-> > Here you allocate memory for the cyclic task.  Above you set this pointer
-> > to NULL.  That sounds like a memory leak to me.  Why are you kmallocing
-> > this memory - why can't it be part of the dma_pl330_chan structure?  It's
-> > only 28 bytes.
+> V4 has the changes about 3 patches from V3.
+> Changes from V3:
+> - Divided '[03/13 patch] DMA: PL330: Add DMA capabilites' on V3 patchset
+>   into two patches.
+> 	- One is '03/14 patch' for supporting DMA_SLAVE_CONFIG command.
+> 	- Another is '04/14 patch' for supporting DMA_CYCLIC capability.
+> - Code clean-up
+> 	- Remove unnecessary vairable referance on '01/14 patch'.
+> 	- Remove redunancy code on '06/14 patch'
 > 
-> It's my mistake. I should have been free of the memory.
+> [PATCH V4 01/14] DMA: PL330: Add support runtime PM for PL330 DMAC
+> [PATCH V4 02/14] DMA: PL330: Update PL330 DMA API driver
+> [PATCH V4 03/14] DMA: PL330: Support DMA_SLAVE_CONFIG command
+> [PATCH V4 04/14] DMA: PL330: Add DMA_CYCLIC capability
+> [PATCH V4 05/14] ARM: SAMSUNG: Update to use PL330-DMA driver
+> [PATCH V4 06/14] ARM: SAMSUNG: Add common DMA operations
+> [PATCH V4 07/14] ARM: EXYNOS4: Use generic DMA PL330 driver
+> [PATCH V4 08/14] ARM: S5PV210: Use generic DMA PL330 driver
+> [PATCH V4 09/14] ARM: S5PC100: Use generic DMA PL330 driver
+> [PATCH V4 10/14] ARM: S5P64X0: Use generic DMA PL330 driver
+> [PATCH V4 11/14] ARM: SAMSUNG: Remove S3C-PL330-DMA driver
+> [PATCH V4 12/14] spi/s3c64xx: Add support DMA engine API
+> [PATCH V4 13/14] ASoC: Samsung: Update DMA interface
+> [PATCH V4 14/14] ARM: SAMSUNG: Remove Samsung specific enum type for dma direction
 > 
-> And the reason why I use kmalloc for 'cyclic_task' is following.
-> This memory size for 'cyclic_tasklet' is the 896 bytes ( = the number of
-> channel * sizeof(struct tasklet_struct)= 32*28) for each DMAC. And This
-> memory size is increased according to the number of DMAC.
-> And Samsung has the DMAC that is dedicated for Mem-to-Mem operation. If I
-> make 'cyclic_task' be part of dma_pl330_chan, this DMAC that is dedicated
-> for Mem-to-Mem operation should hold unused data.
-> So, I think it's loss that all dma channels hold own 'cyclic_task'.
+Thanks for resending I will review them now, You should use git
+--cover-letter to generate this
 
-Could you re-use the tasklet that already exists?
+-- 
+~Vinod Koul
+Intel Corp.
