@@ -1,283 +1,93 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH V4 04/14] DMA: PL330: Add DMA_CYCLIC capability
-Date: Mon, 25 Jul 2011 12:39:26 +0100
-Message-ID: <20110725113926.GH9653@n2100.arm.linux.org.uk>
-References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com> <1311557312-26107-5-git-send-email-boojin.kim@samsung.com> <20110725092749.GB9653@n2100.arm.linux.org.uk> <002001cc4ab6$0d7cd590$287680b0$%kim@samsung.com> <20110725103629.GF9653@n2100.arm.linux.org.uk> <1311590884.29703.2.camel@vkoul-mobl4> <20110725105754.GG9653@n2100.arm.linux.org.uk> <1311591717.29703.7.camel@vkoul-mobl4>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH V4 06/14] ARM: SAMSUNG: Add common DMA operations
+Date: Mon, 25 Jul 2011 17:21:44 +0530
+Message-ID: <CABb+yY0nWLpdVGqTJPO2YwkGWiDw5tRjC2xn7Le0bO0ZNFHC_g@mail.gmail.com>
+References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com>
+	<1311557312-26107-7-git-send-email-boojin.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:48358 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751719Ab1GYLjw (ORCPT
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:55562 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750890Ab1GYLvp convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Jul 2011 07:39:52 -0400
-Content-Disposition: inline
-In-Reply-To: <1311591717.29703.7.camel@vkoul-mobl4>
+	Mon, 25 Jul 2011 07:51:45 -0400
+Received: by ewy4 with SMTP id 4so2373984ewy.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Jul 2011 04:51:44 -0700 (PDT)
+In-Reply-To: <1311557312-26107-7-git-send-email-boojin.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vinod Koul <vkoul@infradead.org>
-Cc: vinod.koul@intel.com, Boojin Kim <boojin.kim@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Dan Williams' <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+To: Boojin Kim <boojin.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On Mon, Jul 25, 2011 at 04:31:57PM +0530, Vinod Koul wrote:
-> > I know that very well thank you.  Please look at my previous post in the
-> > previous round of patches, and the response from Boojin Kim to see why
-> > I used this as an *EXAMPLE* to get this fixed.
-> Russell,
-> Sorry that was not intended for you but for the author of patch Boojin
-> Kim... Agree on your EXAMPLE, just wanted to ensure authors have read it
-> as going thru this patch made it clear that they haven't.
+On Mon, Jul 25, 2011 at 6:58 AM, Boojin Kim <boojin.kim@samsung.com> wr=
+ote:
 
-That wasn't obvious because of the To: and the use of 'you' in your reply.
+> +
+> +static bool pl330_filter(struct dma_chan *chan, void *param)
+> +{
+> + =C2=A0 =C2=A0 =C2=A0 struct dma_pl330_peri *peri =3D (struct dma_pl=
+330_peri *)chan->private;
+> + =C2=A0 =C2=A0 =C2=A0 unsigned dma_ch =3D (unsigned)param;
+> +
+> + =C2=A0 =C2=A0 =C2=A0 if (peri->peri_id !=3D dma_ch)
+> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return false;
+> +
+> + =C2=A0 =C2=A0 =C2=A0 return true;
+> +}
+This is what I meant... if we keep chan_id for paltform assigned IDs,
+these filter functions could simply become
 
-In any case, let's fix up the documentation to be a little more complete
-and expansive about these conditions, and improve its formatting so it's
-easier to read.
+static bool pl330_filter(struct dma_chan *chan, void *param)
+{
+        return chan->chan_id =3D=3D param
+}
 
-A few points:
+And ideally in the long run, we could just drop the filter callback
+and add expected channel ID to the request_channel call.
 
-1. This really should describe the dma_slave_config structure in detail
-   (or refer to the documentation in dmaengine.h) especially describing
-   what is mandatory there.
 
-2. Note the filter function thing - I think this should be mandatory
-   for slave and cyclic channels.  These typically have a DMA request
-   signal associated with each channel, and so 'any random channel' isn't
-   really acceptable like it is for the async_tx APIs.
 
-3. I think this should specify that dmaengine_slave_config() should be
-   specified as mandatory after obtaining the DMA engine channel.
+> +
+> +static inline int s3c_dma_trigger(unsigned ch)
+> +{
+> + =C2=A0 =C2=A0 =C2=A0 return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_STAR=
+T);
+> +}
+> +
+> +static inline int s3c_dma_started(unsigned ch)
+> +{
+> + =C2=A0 =C2=A0 =C2=A0 return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_STAR=
+TED);
+> +}
+> +
+> +static inline int s3c_dma_flush(unsigned ch)
+> +{
+> + =C2=A0 =C2=A0 =C2=A0 return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_FLUS=
+H);
+> +}
+> +
+> +static inline int s3c_dma_stop(unsigned ch)
+> +{
+> + =C2=A0 =C2=A0 =C2=A0 return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_STOP=
+);
+> +}
+> +
+> +static struct samsung_dma_ops s3c_dma_ops =3D {
+> + =C2=A0 =C2=A0 =C2=A0 .request =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s3c_dm=
+a_request,
+> + =C2=A0 =C2=A0 =C2=A0 .release =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s3c_dm=
+a_release,
+> + =C2=A0 =C2=A0 =C2=A0 .prepare =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s3c_dm=
+a_prepare,
+> + =C2=A0 =C2=A0 =C2=A0 .trigger =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s3c_dm=
+a_trigger,
+> + =C2=A0 =C2=A0 =C2=A0 .started =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s3c_dm=
+a_started,
+> + =C2=A0 =C2=A0 =C2=A0 .flush =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s=
+3c_dma_flush,
+> + =C2=A0 =C2=A0 =C2=A0 .stop =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D s=
+3c_dma_stop,
 
-Any comments on this before I prepare this as a proper patch?
-
-diff --git a/Documentation/dmaengine.txt b/Documentation/dmaengine.txt
-index 5a0cb1e..8ba8d3c 100644
---- a/Documentation/dmaengine.txt
-+++ b/Documentation/dmaengine.txt
-@@ -10,87 +10,163 @@
- Below is a guide to device driver writers on how to use the Slave-DMA API of the
- DMA Engine. This is applicable only for slave DMA usage only.
- 
--The slave DMA usage consists of following steps
-+The slave DMA usage consists of following steps:
- 1. Allocate a DMA slave channel
- 2. Set slave and controller specific parameters
- 3. Get a descriptor for transaction
- 4. Submit the transaction and wait for callback notification
-+5. Issue pending requests
- 
- 1. Allocate a DMA slave channel
--Channel allocation is slightly different in the slave DMA context, client
--drivers typically need a channel from a particular DMA controller only and even
--in some cases a specific channel is desired. To request a channel
--dma_request_channel() API is used.
--
--Interface:
--struct dma_chan *dma_request_channel(dma_cap_mask_t mask,
--		dma_filter_fn filter_fn,
--		void *filter_param);
--where dma_filter_fn is defined as:
--typedef bool (*dma_filter_fn)(struct dma_chan *chan, void *filter_param);
--
--When the optional 'filter_fn' parameter is set to NULL dma_request_channel
--simply returns the first channel that satisfies the capability mask.  Otherwise,
--when the mask parameter is insufficient for specifying the necessary channel,
--the filter_fn routine can be used to disposition the available channels in the
--system. The filter_fn routine is called once for each free channel in the
--system.  Upon seeing a suitable channel filter_fn returns DMA_ACK which flags
--that channel to be the return value from dma_request_channel.  A channel
--allocated via this interface is exclusive to the caller, until
--dma_release_channel() is called.
-+
-+   Channel allocation is slightly different in the slave DMA context,
-+   client drivers typically need a channel from a particular DMA
-+   controller only and even in some cases a specific channel is desired.
-+   To request a channel dma_request_channel() API is used.
-+
-+   Interface:
-+	struct dma_chan *dma_request_channel(dma_cap_mask_t mask,
-+			dma_filter_fn filter_fn,
-+			void *filter_param);
-+   where dma_filter_fn is defined as:
-+	typedef bool (*dma_filter_fn)(struct dma_chan *chan, void *filter_param);
-+
-+   The 'filter_fn' parameter is optional, but highly recommended for
-+   slave and cyclic channels as they typically need to obtain a specific
-+   DMA channel.
-+
-+   When the optional 'filter_fn' parameter is NULL, dma_request_channel()
-+   simply returns the first channel that satisfies the capability mask.
-+
-+   Otherwise, the 'filter_fn' routine will be called once for each free
-+   channel which has a capability in 'mask'.  'filter_fn' is expected to
-+   return 'true' when the desired DMA channel is found.
-+
-+   A channel allocated via this interface is exclusive to the caller,
-+   until dma_release_channel() is called.
- 
- 2. Set slave and controller specific parameters
--Next step is always to pass some specific information to the DMA driver. Most of
--the generic information which a slave DMA can use is in struct dma_slave_config.
--It allows the clients to specify DMA direction, DMA addresses, bus widths, DMA
--burst lengths etc. If some DMA controllers have more parameters to be sent then
--they should try to embed struct dma_slave_config in their controller specific
--structure. That gives flexibility to client to pass more parameters, if
--required.
--
--Interface:
--int dmaengine_slave_config(struct dma_chan *chan,
--					  struct dma_slave_config *config)
-+
-+   Next step is always to pass some specific information to the DMA
-+   driver.  Most of the generic information which a slave DMA can use
-+   is in struct dma_slave_config.  This allows the clients to specify
-+   DMA direction, DMA addresses, bus widths, DMA burst lengths etc
-+   for the peripheral.
-+
-+   If some DMA controllers have more parameters to be sent then they
-+   should try to embed struct dma_slave_config in their controller
-+   specific structure. That gives flexibility to client to pass more
-+   parameters, if required.
-+
-+   Interface:
-+	int dmaengine_slave_config(struct dma_chan *chan,
-+				  struct dma_slave_config *config)
- 
- 3. Get a descriptor for transaction
--For slave usage the various modes of slave transfers supported by the
--DMA-engine are:
--slave_sg	- DMA a list of scatter gather buffers from/to a peripheral
--dma_cyclic	- Perform a cyclic DMA operation from/to a peripheral till the
-+
-+   For slave usage the various modes of slave transfers supported by the
-+   DMA-engine are:
-+
-+   slave_sg	- DMA a list of scatter gather buffers from/to a peripheral
-+   dma_cyclic	- Perform a cyclic DMA operation from/to a peripheral till the
- 		  operation is explicitly stopped.
--The non NULL return of this transfer API represents a "descriptor" for the given
--transaction.
- 
--Interface:
--struct dma_async_tx_descriptor *(*chan->device->device_prep_dma_sg)(
-+   A non-NULL return of this transfer API represents a "descriptor" for
-+   the given transaction.
-+
-+   Interface:
-+	struct dma_async_tx_descriptor *(*chan->device->device_prep_dma_sg)(
- 		struct dma_chan *chan,
- 		struct scatterlist *dst_sg, unsigned int dst_nents,
- 		struct scatterlist *src_sg, unsigned int src_nents,
- 		unsigned long flags);
--struct dma_async_tx_descriptor *(*chan->device->device_prep_dma_cyclic)(
-+
-+	struct dma_async_tx_descriptor *(*chan->device->device_prep_dma_cyclic)(
- 		struct dma_chan *chan, dma_addr_t buf_addr, size_t buf_len,
- 		size_t period_len, enum dma_data_direction direction);
- 
-+   Once a descriptor has been obtained, the callback information can be
-+   added and must then be submitted.  Some DMA engine drivers may hold a
-+   spinlock between a successful preparation and submission so it is
-+   important that these two operations are closely paired.
-+
-+   Note:
-+	Although the async_tx API specifies that completion callback
-+	routines cannot submit any new operations, this is not the
-+	case for slave/cyclic DMA.
-+
-+	For slave DMA, the subsequent transaction may not be available
-+	for submission prior to callback function being invoked, so
-+	slave DMA callbacks are permitted to prepare and submit a new
-+	transaction.
-+
-+	For cyclic DMA, a callback function may wish to terminate the
-+	DMA via dmaengine_terminate_all().
-+
-+	Therefore, it is important that DMA engine drivers drop any
-+	locks before calling the callback function which may cause a
-+	deadlock.
-+
-+	Note that callbacks will always be invoked from the DMA
-+	engines tasklet, never from interrupt context.
-+
- 4. Submit the transaction and wait for callback notification
--To schedule the transaction to be scheduled by dma device, the "descriptor"
--returned in above (3) needs to be submitted.
--To tell the dma driver that a transaction is ready to be serviced, the
--descriptor->submit() callback needs to be invoked. This chains the descriptor to
--the pending queue.
--The transactions in the pending queue can be activated by calling the
--issue_pending API. If channel is idle then the first transaction in queue is
--started and subsequent ones queued up.
--On completion of the DMA operation the next in queue is submitted and a tasklet
--triggered. The tasklet would then call the client driver completion callback
--routine for notification, if set.
--Interface:
--void dma_async_issue_pending(struct dma_chan *chan);
--
--==============================================================================
--
--Additional usage notes for dma driver writers
--1/ Although DMA engine specifies that completion callback routines cannot submit
--any new operations, but typically for slave DMA subsequent transaction may not
--be available for submit prior to callback routine being called. This requirement
--is not a requirement for DMA-slave devices. But they should take care to drop
--the spin-lock they might be holding before calling the callback routine
-+
-+   Once the descriptor has been prepared and the callback information
-+   added, it must be placed on the DMA engine drivers pending queue.
-+
-+   Interface:
-+	dma_cookie_t dmaengine_submit(struct dma_async_tx_descriptor *desc)
-+
-+   This returns a cookie can be used to check the progress of DMA engine
-+   activity via other DMA engine calls not covered in this document.
-+
-+   dmaengine_submit() will not start the DMA operation, it merely adds
-+   it to the pending queue.  For this, see step 5, dma_async_issue_pending.
-+
-+5. Issue pending DMA requests
-+
-+   The transactions in the pending queue can be activated by calling the
-+   issue_pending API. If channel is idle then the first transaction in
-+   queue is started and subsequent ones queued up.
-+
-+   On completion of each DMA operation, the next in queue is started and
-+   a tasklet triggered. The tasklet will then call the client driver
-+   completion callback routine for notification, if set.
-+
-+   Interface:
-+	void dma_async_issue_pending(struct dma_chan *chan);
-+
-+Further APIs:
-+
-+1. int dmaengine_terminate_all(struct dma_chan *chan)
-+
-+   This causes all activity for the DMA channel to be stopped, and may
-+   discard data in the DMA FIFO which hasn't been fully transferred.
-+   No callback functions will be called for any incomplete transfers.
-+
-+2. int dmaengine_pause(struct dma_chan *chan)
-+
-+   This pauses activity on the DMA channel without data loss.
-+
-+3. int dmaengine_resume(struct dma_chan *chan)
-+
-+   Resume a previously paused DMA channel.  It is invalid to resume a
-+   channel which is not currently paused.
-+
-+4. enum dma_status dma_async_is_tx_complete(struct dma_chan *chan,
-+        dma_cookie_t cookie, dma_cookie_t *last, dma_cookie_t *used)
-+
-+   This can be used to check the status of the channel.  Please see
-+   the documentation in include/linux/dmaengine.h for a more complete
-+   description of this API.
-+
-+   This can be used in conjunction with dma_async_is_complete() and
-+   the cookie returned from 'descriptor->submit()' to check for
-+   completion of a specific DMA transaction.
-+
-+   Note:
-+	Not all DMA engine drivers can return reliable information for
-+	a running DMA channel.  It is recommended that DMA engine users
-+	pause or stop (via dmaengine_terminate_all) the channel before
-+	using this API.
+These last 4 should be gnereallized into one callback with OP argument.
