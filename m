@@ -1,206 +1,88 @@
 From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V2 5/7] ARM: S5P64X0: Add file to hold common Framebuffer and
- LCD code
-Date: Mon, 25 Jul 2011 16:00:23 -0400
-Message-ID: <1311624025-2643-6-git-send-email-ajaykumar.rs@samsung.com>
+Subject: [PATCH V2 7/7] ARM: S5P6450: Enable LCD-LTE480 and Framebuffer support
+Date: Mon, 25 Jul 2011 16:00:25 -0400
+Message-ID: <1311624025-2643-8-git-send-email-ajaykumar.rs@samsung.com>
 References: <1311624025-2643-1-git-send-email-ajaykumar.rs@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:62268 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751950Ab1GYOJA (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:20892 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752048Ab1GYOJD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Jul 2011 10:09:00 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Mon, 25 Jul 2011 10:09:03 -0400
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOW00A2D7ATSQK0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 25 Jul 2011 23:08:59 +0900 (KST)
+ 2010)) with ESMTP id <0LOW000A67B0RIF0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 25 Jul 2011 23:09:02 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.106])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0LOW00ITF7ANNI@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 25 Jul 2011 23:08:59 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Mon, 25 Jul 2011 23:09:02 +0900 (KST)
 In-reply-to: <1311624025-2643-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jg1.han@samsung.com, m.szyprowski@samsung.com
 
-This patch creates a file which holds the framebuffer and
-LCD code which is common for SMDK6440 and SMDK6450.
-It mainly includes:
-	-- Basic FB window definition.
-	-- platform data for FB and LCD.
-	-- platform_device support for LCD.
+This patch enables s3c-fb support and platform-lcd support for SMDK6450.
 
 Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 ---
- arch/arm/mach-s5p64x0/Kconfig                  |    5 ++
- arch/arm/mach-s5p64x0/Makefile                 |    3 +
- arch/arm/mach-s5p64x0/common-fb.c              |   92 ++++++++++++++++++++++++
- arch/arm/mach-s5p64x0/include/mach/common-fb.h |   26 +++++++
- 4 files changed, 126 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s5p64x0/common-fb.c
- create mode 100644 arch/arm/mach-s5p64x0/include/mach/common-fb.h
+ arch/arm/mach-s5p64x0/Kconfig         |    3 +++
+ arch/arm/mach-s5p64x0/mach-smdk6450.c |    5 +++++
+ 2 files changed, 8 insertions(+), 0 deletions(-)
 
 diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
-index 4fee745..ed87151 100644
+index 0596673..620e6af 100644
 --- a/arch/arm/mach-s5p64x0/Kconfig
 +++ b/arch/arm/mach-s5p64x0/Kconfig
-@@ -32,6 +32,11 @@ config S5P64X0_SETUP_I2C1
+@@ -60,6 +60,7 @@ config MACH_SMDK6440
+ config MACH_SMDK6450
+ 	bool "SMDK6450"
+ 	select CPU_S5P6450
++	select S3C_DEV_FB
+ 	select S3C_DEV_I2C1
+ 	select S3C_DEV_RTC
+ 	select S3C_DEV_WDT
+@@ -68,7 +69,9 @@ config MACH_SMDK6450
+ 	select SAMSUNG_DEV_BACKLIGHT
+ 	select SAMSUNG_DEV_PWM
+ 	select SAMSUNG_DEV_TS
++	select S5P64X0_SETUP_FB
+ 	select S5P64X0_SETUP_I2C1
++	select COMMON_FB
  	help
- 	  Common setup code for i2c bus 1.
+ 	  Machine support for the Samsung SMDK6450
  
-+config COMMON_FB
-+	bool
-+	help
-+	Common framebuffer and LCD code which can be shared across SMDKs.
-+
- # machine support
- 
- config MACH_SMDK6440
-diff --git a/arch/arm/mach-s5p64x0/Makefile b/arch/arm/mach-s5p64x0/Makefile
-index 487d179..e5e90f9 100644
---- a/arch/arm/mach-s5p64x0/Makefile
-+++ b/arch/arm/mach-s5p64x0/Makefile
-@@ -22,6 +22,9 @@ obj-$(CONFIG_CPU_S5P6450)	+= clock-s5p6450.o
- obj-$(CONFIG_MACH_SMDK6440)	+= mach-smdk6440.o
- obj-$(CONFIG_MACH_SMDK6450)	+= mach-smdk6450.o
- 
-+#common code
-+obj-$(CONFIG_COMMON_FB)   += common-fb.o
-+
- # device support
- 
- obj-y				+= dev-audio.o
-diff --git a/arch/arm/mach-s5p64x0/common-fb.c b/arch/arm/mach-s5p64x0/common-fb.c
-new file mode 100644
-index 0000000..a5531ef
---- /dev/null
-+++ b/arch/arm/mach-s5p64x0/common-fb.c
-@@ -0,0 +1,92 @@
-+/* linux/arch/arm/mach-s5p64x0/common-fb.c
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ *         http://www.samsung.com/
-+ *
-+ * Includes definitions for variables and functions
-+ * needed in order to support framebuffer.
-+ * Note that this code is common across SMDK6440 and SMDK6450.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/gpio.h>
-+
-+#include <mach/regs-clock.h>
+diff --git a/arch/arm/mach-s5p64x0/mach-smdk6450.c b/arch/arm/mach-s5p64x0/mach-smdk6450.c
+index 33f2adf..8108963 100644
+--- a/arch/arm/mach-s5p64x0/mach-smdk6450.c
++++ b/arch/arm/mach-s5p64x0/mach-smdk6450.c
+@@ -34,6 +34,7 @@
+ #include <mach/regs-clock.h>
+ #include <mach/i2c.h>
+ #include <mach/regs-gpio.h>
 +#include <mach/common-fb.h>
-+
-+#include <plat/devs.h>
-+#include <plat/regs-fb.h>
-+
-+/* Frame Buffer */
-+struct s3c_fb_pd_win smdk64x0_fb_win0 = {
-+	.win_mode	= {
-+		.left_margin	= 8,
-+		.right_margin	= 13,
-+		.upper_margin	= 7,
-+		.lower_margin	= 5,
-+		.hsync_len	= 3,
-+		.vsync_len	= 1,
-+		.xres		= 800,
-+		.yres		= 480,
-+		.refresh	= 60,
-+	},
-+	.max_bpp	= 32,
-+	.default_bpp	= 24,
-+};
-+
-+struct s3c_fb_platdata smdk64x0_lcd_pdata __initdata = {
-+	.win[0]		= &smdk64x0_fb_win0,
-+	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
-+	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
-+	.setup_gpio	= s5p64x0_fb_gpio_setup_24bpp,
-+};
-+
-+/* LCD power controller */
-+void smdk64x0_lte480_reset_power(struct plat_lcd_data *pd,
-+					unsigned int power)
-+{
-+	unsigned int cfg;
-+	int err;
-+
-+	if (power) {
-+		cfg = readl(S5P64X0_SYS_ID) & 0xf0000;
-+		if (cfg == 0x40000) {
-+			err = gpio_request(S5P6440_GPN(5), "GPN");
-+			if (err) {
-+				printk(KERN_ERR "failed to request GPN for lcd reset\n");
-+				return;
-+			}
-+
-+			gpio_direction_output(S5P6440_GPN(5), 1);
-+			gpio_set_value(S5P6440_GPN(5), 0);
-+			gpio_set_value(S5P6440_GPN(5), 1);
-+			gpio_free(S5P6440_GPN(5));
-+		} else if (cfg == 0x50000) {
-+			err = gpio_request(S5P6450_GPN(5), "GPN");
-+			if (err) {
-+				printk(KERN_ERR "failed to request GPN for lcd reset\n");
-+				return;
-+			}
-+
-+			gpio_direction_output(S5P6450_GPN(5), 1);
-+			gpio_set_value(S5P6450_GPN(5), 0);
-+			gpio_set_value(S5P6450_GPN(5), 1);
-+			gpio_free(S5P6450_GPN(5));
-+		}
-+	}
-+}
-+
-+struct plat_lcd_data smdk64x0_lcd_power_data = {
-+	.set_power	= smdk64x0_lte480_reset_power,
-+};
-+
-+struct platform_device smdk64x0_lcd_lte480wv = {
-+	.name	= "platform-lcd",
-+	.dev	= {
-+		.parent		= &s3c_device_fb.dev,
-+		.platform_data	= &smdk64x0_lcd_power_data,
-+	}
-+};
-diff --git a/arch/arm/mach-s5p64x0/include/mach/common-fb.h b/arch/arm/mach-s5p64x0/include/mach/common-fb.h
-new file mode 100644
-index 0000000..c239623
---- /dev/null
-+++ b/arch/arm/mach-s5p64x0/include/mach/common-fb.h
-@@ -0,0 +1,26 @@
-+/* linux/arch/arm/mach-s5p64x0/include/mach/common-fb.h
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ *         http://www.samsung.com/
-+ *
-+ * Includes declarations for variables and functions
-+ * needed in order to support framebuffer.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#include <linux/fb.h>
-+#include <linux/platform_device.h>
-+
-+#include <video/platform_lcd.h>
-+
-+#include <plat/fb.h>
-+
-+extern struct	s3c_fb_pd_win		smdk64x0_fb_win0;
-+extern struct	s3c_fb_platdata		smdk64x0_lcd_pdata;
-+extern struct	plat_lcd_data		smdk64x0_lcd_power_data;
-+extern struct	platform_device		smdk64x0_lcd_lte480wv;
-+extern void	smdk64x0_lte480_reset_power(struct plat_lcd_data *pd,
-+					    unsigned int power);
+ 
+ #include <plat/regs-serial.h>
+ #include <plat/gpio-cfg.h>
+@@ -119,6 +120,8 @@ static struct platform_device *smdk6450_devices[] __initdata = {
+ 	&s3c_device_wdt,
+ 	&samsung_asoc_dma,
+ 	&s5p6450_device_iis0,
++	&s3c_device_fb,
++	&smdk64x0_lcd_lte480wv,
+ 	/* s5p6450_device_spi0 will be added */
+ };
+ 
+@@ -184,6 +187,8 @@ static void __init smdk6450_machine_init(void)
+ 			ARRAY_SIZE(smdk6450_i2c_devs1));
+ 
+ 	samsung_bl_set(&smdk6450_bl_gpio_info, &smdk6450_bl_data);
++	s3c_fb_set_platdata(&smdk64x0_lcd_pdata);
++	s5p64x0_fb_init(S5P64X0_SPCON0_LCD_SEL_RGB);
+ 
+ 	platform_add_devices(smdk6450_devices, ARRAY_SIZE(smdk6450_devices));
+ }
 -- 
 1.7.0.4
