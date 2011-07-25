@@ -1,149 +1,308 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH V4 07/14] ARM: EXYNOS4: Use generic DMA PL330 driver
-Date: Mon, 25 Jul 2011 17:29:38 +0530
-Message-ID: <CABb+yY3yEDuWv3n=fJK5TfeXi0=P96NpL3=EXHmXAqmpaium8A@mail.gmail.com>
+From: Vinod Koul <vkoul@infradead.org>
+Subject: Re: [PATCH V4 04/14] DMA: PL330: Add DMA_CYCLIC capability
+Date: Mon, 25 Jul 2011 17:31:43 +0530
+Message-ID: <1311595303.29703.31.camel@vkoul-mobl4>
 References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com>
-	<1311557312-26107-8-git-send-email-boojin.kim@samsung.com>
+	<1311557312-26107-5-git-send-email-boojin.kim@samsung.com>
+	<20110725092749.GB9653@n2100.arm.linux.org.uk>
+	<002001cc4ab6$0d7cd590$287680b0$%kim@samsung.com>
+	<20110725103629.GF9653@n2100.arm.linux.org.uk>
+	<1311590884.29703.2.camel@vkoul-mobl4>
+	<20110725105754.GG9653@n2100.arm.linux.org.uk>
+	<1311591717.29703.7.camel@vkoul-mobl4>
+	<20110725113926.GH9653@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f52.google.com ([209.85.161.52]:34667 "EHLO
-	mail-fx0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750864Ab1GYL7k (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Jul 2011 07:59:40 -0400
-Received: by fxd18 with SMTP id 18so8978621fxd.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Jul 2011 04:59:38 -0700 (PDT)
-In-Reply-To: <1311557312-26107-8-git-send-email-boojin.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20110725113926.GH9653@n2100.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, vinod.koul@intel.com, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Dan Williams' <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Boojin Kim <boojin.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-T24gTW9uLCBKdWwgMjUsIDIwMTEgYXQgNjo1OCBBTSwgQm9vamluIEtpbSA8Ym9vamluLmtpbUBz
-YW1zdW5nLmNvbT4gd3JvdGU6Cgo+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9tYWNoLWV4eW5vczQv
-ZG1hLmMgYi9hcmNoL2FybS9tYWNoLWV4eW5vczQvZG1hLmMKPiBpbmRleCA1NjRiYjUzLi5lMWMw
-MGNmIDEwMDY0NAo+IC0tLSBhL2FyY2gvYXJtL21hY2gtZXh5bm9zNC9kbWEuYwo+ICsrKyBiL2Fy
-Y2gvYXJtL21hY2gtZXh5bm9zNC9kbWEuYwo+IEBAIC0yMSwxNTEgKzIxLDI1MCBAQAo+IMKgKiBG
-b3VuZGF0aW9uLCBJbmMuLCA2NzUgTWFzcyBBdmUsIENhbWJyaWRnZSwgTUEgMDIxMzksIFVTQS4K
-PiDCoCovCj4KPiAtI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPgo+IMKgI2luY2x1
-ZGUgPGxpbnV4L2RtYS1tYXBwaW5nLmg+Cj4gKyNpbmNsdWRlIDxsaW51eC9hbWJhL2J1cy5oPgo+
-ICsjaW5jbHVkZSA8bGludXgvYW1iYS9wbDMzMC5oPgo+Cj4gKyNpbmNsdWRlIDxhc20vaXJxLmg+
-Cj4gwqAjaW5jbHVkZSA8cGxhdC9kZXZzLmg+Cj4gwqAjaW5jbHVkZSA8cGxhdC9pcnFzLmg+Cj4K
-PiDCoCNpbmNsdWRlIDxtYWNoL21hcC5oPgo+IMKgI2luY2x1ZGUgPG1hY2gvaXJxcy5oPgo+IC0K
-PiAtI2luY2x1ZGUgPHBsYXQvczNjLXBsMzMwLXBkYXRhLmg+Cj4gKyNpbmNsdWRlIDxtYWNoL2Rt
-YS5oPgo+Cj4gwqBzdGF0aWMgdTY0IGRtYV9kbWFtYXNrID0gRE1BX0JJVF9NQVNLKDMyKTsKPgo+
-IC1zdGF0aWMgc3RydWN0IHJlc291cmNlIGV4eW5vczRfcGRtYTBfcmVzb3VyY2VbXSA9IHsKPiAt
-IMKgIMKgIMKgIFswXSA9IHsKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5zdGFydCDCoD0gRVhZ
-Tk9TNF9QQV9QRE1BMCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5lbmQgwqAgwqA9IEVYWU5P
-UzRfUEFfUERNQTAgKyBTWl80SywKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5mbGFncyDCoD0g
-SU9SRVNPVVJDRV9NRU0sCj4gLSDCoCDCoCDCoCB9LAo+IC0gwqAgwqAgwqAgWzFdID0gewo+IC0g
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgLnN0YXJ0IMKgPSBJUlFfUERNQTAsCj4gLSDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCAuZW5kIMKgIMKgPSBJUlFfUERNQTAsCj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCAuZmxhZ3MgwqA9IElPUkVTT1VSQ0VfSVJRLAo+ICtzdHJ1Y3QgZG1hX3BsMzMwX3BlcmkgcGRt
-YTBfcGVyaVszMl0gPSB7ClBsZWFzZSByZW1vdmUgMzIgZnJvbSB0aGUgbGlzdCAoaXQgc2VlbXMg
-eW91IGRvbid0IGFsd2F5cyBwYXNzIDMyIGVsZW1lbnRzKQpBbHNvIGZvciBjb21wbGV0ZW5lc3Ms
-IHBsZWFzZSBleHBsaWNpdGx5IHdyaXRlIGVsZW1lbnQgaW5kaWNlcyBiZWxvdyBiZWNhdXNlCml0
-J3Mgbm90IHNvbWUgYXJyYXkgb2YgcmFuZG9tbHkgcGxhY2VkIGVsZW1lbnRzLgpTYW1lIGZvciBl
-dmVyeSBvdGhlciBzdWNoIG9jY3VyYW5jZS4KCj4gKyDCoCDCoCDCoCB7Cj4gKyDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCAucGVyaV9pZCA9ICh1OClETUFDSF9QQ00wX1JYLAo+ICsgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgLnJxdHlwZSA9IERFVlRPTUVNLAo+ICsgwqAgwqAgwqAgfSwgewo+ICsgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgLnBlcmlfaWQgPSAodTgpRE1BQ0hfUENNMF9UWCwKPiArIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIC5ycXR5cGUgPSBNRU1UT0RFViwKPiArIMKgIMKgIMKgIH0sIHsKPiArIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIC5wZXJpX2lkID0gKHU4KURNQUNIX1BDTTJfUlgsCj4gKyDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCAucnF0eXBlID0gREVWVE9NRU0sCj4gKyDCoCDCoCDCoCB9LCB7Cj4g
-KyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAucGVyaV9pZCA9ICh1OClETUFDSF9QQ00yX1RYLAo+ICsg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgLnJxdHlwZSA9IE1FTVRPREVWLAo+ICsgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgLmJ1cnN0X3N6ID0gNCwKPiArIMKgIMKgIMKgIH0sIHsKPiArIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIC5wZXJpX2lkID0gKHU4KURNQUNIX01TTV9SRVEwLAo+ICsgwqAgwqAgwqAgfSwg
-ewo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLnBlcmlfaWQgPSAodTgpRE1BQ0hfTVNNX1JFUTIs
-Cj4gKyDCoCDCoCDCoCB9LCB7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAucGVyaV9pZCA9ICh1
-OClETUFDSF9TUEkwX1JYLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLnJxdHlwZSA9IERFVlRP
-TUVNLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLmJ1cnN0X3N6ID0gMSwKPiArIMKgIMKgIMKg
-IH0sIHsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5wZXJpX2lkID0gKHU4KURNQUNIX1NQSTBf
-VFgsCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAucnF0eXBlID0gTUVNVE9ERVYsCj4gKyDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCAuYnVyc3Rfc3ogPSAxLAo+ICsgwqAgwqAgwqAgfSwgewo+ICsgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgLnBlcmlfaWQgPSAodTgpRE1BQ0hfU1BJMl9SWCwKPiArIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIC5ycXR5cGUgPSBERVZUT01FTSwKPiArIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIC5idXJzdF9zeiA9IDEsCj4gKyDCoCDCoCDCoCB9LCB7Cj4gKyDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCAucGVyaV9pZCA9ICh1OClETUFDSF9TUEkyX1RYLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgLnJxdHlwZSA9IE1FTVRPREVWLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLmJ1cnN0X3N6
-ID0gMSwKPiArIMKgIMKgIMKgIH0sIHsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5wZXJpX2lk
-ID0gKHU4KURNQUNIX0kyUzBTX1RYLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLnJxdHlwZSA9
-IE1FTVRPREVWLAo+ICsgwqAgwqAgwqAgfSwgewo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLnBl
-cmlfaWQgPSAodTgpRE1BQ0hfSTJTMF9SWCwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5ycXR5
-cGUgPSBERVZUT01FTSwKPiArIMKgIMKgIMKgIH0sIHsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IC5wZXJpX2lkID0gKHU4KURNQUNIX0kyUzBfVFgsCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAu
-cnF0eXBlID0gTUVNVE9ERVYsCj4gKyDCoCDCoCDCoCB9LCB7Cj4gKyDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCAucGVyaV9pZCA9ICh1OClETUFDSF9VQVJUMF9SWCwKPiArIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIC5ycXR5cGUgPSBERVZUT01FTSwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5idXJzdF9z
-eiA9IDQsCj4gKyDCoCDCoCDCoCB9LCB7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAucGVyaV9p
-ZCA9ICh1OClETUFDSF9VQVJUMF9UWCwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5ycXR5cGUg
-PSBNRU1UT0RFViwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5idXJzdF9zeiA9IDQsCj4gKyDC
-oCDCoCDCoCB9LCB7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAucGVyaV9pZCA9ICh1OClETUFD
-SF9VQVJUMl9SWCwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5ycXR5cGUgPSBERVZUT01FTSwK
-PiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5idXJzdF9zeiA9IDQsCj4gKyDCoCDCoCDCoCB9LCB7
-Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAucGVyaV9pZCA9ICh1OClETUFDSF9VQVJUMl9UWCwK
-PiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5ycXR5cGUgPSBNRU1UT0RFViwKPiArIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIC5idXJzdF9zeiA9IDQsCj4gKyDCoCDCoCDCoCB9LCB7Cj4gKyDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCAucGVyaV9pZCA9ICh1OClETUFDSF9VQVJUNF9SWCwKPiArIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIC5ycXR5cGUgPSBERVZUT01FTSwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IC5idXJzdF9zeiA9IDQsCj4gKyDCoCDCoCDCoCB9LCB7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCAucGVyaV9pZCA9ICh1OClETUFDSF9VQVJUNF9UWCwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IC5ycXR5cGUgPSBNRU1UT0RFViwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5idXJzdF9zeiA9
-IDQsCj4gKyDCoCDCoCDCoCB9LCB7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAucGVyaV9pZCA9
-ICh1OClETUFDSF9TTElNQlVTMF9SWCwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5ycXR5cGUg
-PSBERVZUT01FTSwKPiArIMKgIMKgIMKgIH0sIHsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5w
-ZXJpX2lkID0gKHU4KURNQUNIX1NMSU1CVVMwX1RYLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-LnJxdHlwZSA9IE1FTVRPREVWLAo+ICsgwqAgwqAgwqAgfSwgewo+ICsgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgLnBlcmlfaWQgPSAodTgpRE1BQ0hfU0xJTUJVUzJfUlgsCj4gKyDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCAucnF0eXBlID0gREVWVE9NRU0sCj4gKyDCoCDCoCDCoCB9LCB7Cj4gKyDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCAucGVyaV9pZCA9ICh1OClETUFDSF9TTElNQlVTMl9UWCwKPiArIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIC5ycXR5cGUgPSBNRU1UT0RFViwKPiArIMKgIMKgIMKgIH0sIHsKPiAr
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5wZXJpX2lkID0gKHU4KURNQUNIX1NMSU1CVVM0X1JYLAo+
-ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLnJxdHlwZSA9IERFVlRPTUVNLAo+ICsgwqAgwqAgwqAg
-fSwgewo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLnBlcmlfaWQgPSAodTgpRE1BQ0hfU0xJTUJV
-UzRfVFgsCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAucnF0eXBlID0gTUVNVE9ERVYsCj4gKyDC
-oCDCoCDCoCB9LCB7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAucGVyaV9pZCA9ICh1OClETUFD
-SF9BQzk3X01JQ0lOLAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLnJxdHlwZSA9IERFVlRPTUVN
-LAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgLmJ1cnN0X3N6ID0gNCwKPiArIMKgIMKgIMKgIH0s
-IHsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIC5wZXJpX2lkID0gKHU4KURNQUNIX0FDOTdfUENN
-SU4sCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAucnF0eXBlID0gREVWVE9NRU0sCj4gKyDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCAuYnVyc3Rfc3ogPSA0LAo+ICsgwqAgwqAgwqAgfSwgewo+ICsgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgLnBlcmlfaWQgPSAodTgpRE1BQ0hfQUM5N19QQ01PVVQsCj4gKyDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCAucnF0eXBlID0gTUVNVE9ERVYsCj4gKyDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCAuYnVyc3Rfc3ogPSA0LAo+IMKgIMKgIMKgIMKgfSwKPiDCoH07CgoKPgo+IC1zdGF0
-aWMgc3RydWN0IHMzY19wbDMzMF9wbGF0ZGF0YSBleHlub3M0X3BkbWEwX3BkYXRhID0gewo+IC0g
-wqAgwqAgwqAgLnBlcmkgPSB7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCBbMF0gPSBETUFDSF9Q
-Q00wX1JYLAo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgWzFdID0gRE1BQ0hfUENNMF9UWCwKPiAt
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIFsyXSA9IERNQUNIX1BDTTJfUlgsCj4gLSDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCBbM10gPSBETUFDSF9QQ00yX1RYLAo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-WzRdID0gRE1BQ0hfTVNNX1JFUTAsCj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCBbNV0gPSBETUFD
-SF9NU01fUkVRMiwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFs2XSA9IERNQUNIX1NQSTBfUlgs
-Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCBbN10gPSBETUFDSF9TUEkwX1RYLAo+IC0gwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgWzhdID0gRE1BQ0hfU1BJMl9SWCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIFs5XSA9IERNQUNIX1NQSTJfVFgsCj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCBbMTBdID0g
-RE1BQ0hfSTJTMFNfVFgsCj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCBbMTFdID0gRE1BQ0hfSTJT
-MF9SWCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFsxMl0gPSBETUFDSF9JMlMwX1RYLAo+IC0g
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgWzEzXSA9IERNQUNIX0kyUzJfUlgsCj4gLSDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCBbMTRdID0gRE1BQ0hfSTJTMl9UWCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IFsxNV0gPSBETUFDSF9VQVJUMF9SWCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFsxNl0gPSBE
-TUFDSF9VQVJUMF9UWCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFsxN10gPSBETUFDSF9VQVJU
-Ml9SWCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFsxOF0gPSBETUFDSF9VQVJUMl9UWCwKPiAt
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIFsxOV0gPSBETUFDSF9VQVJUNF9SWCwKPiAtIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIFsyMF0gPSBETUFDSF9VQVJUNF9UWCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIFsyMV0gPSBETUFDSF9TTElNQlVTMF9SWCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFsy
-Ml0gPSBETUFDSF9TTElNQlVTMF9UWCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFsyM10gPSBE
-TUFDSF9TTElNQlVTMl9SWCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFsyNF0gPSBETUFDSF9T
-TElNQlVTMl9UWCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFsyNV0gPSBETUFDSF9TTElNQlVT
-NF9SWCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFsyNl0gPSBETUFDSF9TTElNQlVTNF9UWCwK
-PiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFsyN10gPSBETUFDSF9BQzk3X01JQ0lOLAo+IC0gwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgWzI4XSA9IERNQUNIX0FDOTdfUENNSU4sCj4gLSDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCBbMjldID0gRE1BQ0hfQUM5N19QQ01PVVQsCj4gLSDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCBbMzBdID0gRE1BQ0hfTUFYLAo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgWzMxXSA9IERN
-QUNIX01BWCwKPiAtIMKgIMKgIMKgIH0sCj4gK3N0cnVjdCBkbWFfcGwzMzBfcGxhdGRhdGEgZXh5
-bm9zNF9wZG1hMF9wZGF0YSA9IHsKPiArIMKgIMKgIMKgIC5ucl92YWxpZF9wZXJpID0gMzIsClBl
-cmhhcHMsIHRoaXMgaXMgd2h5IHlvdSBoYWQgdG8gYWRkIHRoZSBOVUxMIHBlcmkgY2hlY2suClBs
-ZWFzZSB1c2UgQVJSQVlfU0laRSBoZXJlLgpTYW1lIGZvciBldmVyeSBvdGhlciBzdWNoIG9jY3Vy
-YW5jZS4K
+On Mon, 2011-07-25 at 12:39 +0100, Russell King - ARM Linux wrote:
+> On Mon, Jul 25, 2011 at 04:31:57PM +0530, Vinod Koul wrote:
+> > > I know that very well thank you.  Please look at my previous post in the
+> > > previous round of patches, and the response from Boojin Kim to see why
+> > > I used this as an *EXAMPLE* to get this fixed.
+> > Russell,
+> > Sorry that was not intended for you but for the author of patch Boojin
+> > Kim... Agree on your EXAMPLE, just wanted to ensure authors have read it
+> > as going thru this patch made it clear that they haven't.
+> 
+> That wasn't obvious because of the To: and the use of 'you' in your reply.
+Laziness on a rainy monday evening caused me to miss that
+
+> 
+> In any case, let's fix up the documentation to be a little more complete
+> and expansive about these conditions, and improve its formatting so it's
+> easier to read.
+> 
+> A few points:
+> 
+> 1. This really should describe the dma_slave_config structure in detail
+>    (or refer to the documentation in dmaengine.h) especially describing
+>    what is mandatory there.
+I think you missed mandatory fields here, Pls note I am dropping the
+direction field in this, as we have discussed it makes no sense
+
+> 
+> 2. Note the filter function thing - I think this should be mandatory
+>    for slave and cyclic channels.  These typically have a DMA request
+>    signal associated with each channel, and so 'any random channel' isn't
+>    really acceptable like it is for the async_tx APIs.
+> 
+> 3. I think this should specify that dmaengine_slave_config() should be
+>    specified as mandatory after obtaining the DMA engine channel.
+> 
+> Any comments on this before I prepare this as a proper patch?
+> 
+> diff --git a/Documentation/dmaengine.txt b/Documentation/dmaengine.txt
+> index 5a0cb1e..8ba8d3c 100644
+> --- a/Documentation/dmaengine.txt
+> +++ b/Documentation/dmaengine.txt
+> @@ -10,87 +10,163 @@
+>  Below is a guide to device driver writers on how to use the Slave-DMA API of the
+>  DMA Engine. This is applicable only for slave DMA usage only.
+>  
+> -The slave DMA usage consists of following steps
+> +The slave DMA usage consists of following steps:
+>  1. Allocate a DMA slave channel
+>  2. Set slave and controller specific parameters
+>  3. Get a descriptor for transaction
+>  4. Submit the transaction and wait for callback notification
+> +5. Issue pending requests
+>  
+>  1. Allocate a DMA slave channel
+> -Channel allocation is slightly different in the slave DMA context, client
+> -drivers typically need a channel from a particular DMA controller only and even
+> -in some cases a specific channel is desired. To request a channel
+> -dma_request_channel() API is used.
+> -
+> -Interface:
+> -struct dma_chan *dma_request_channel(dma_cap_mask_t mask,
+> -		dma_filter_fn filter_fn,
+> -		void *filter_param);
+> -where dma_filter_fn is defined as:
+> -typedef bool (*dma_filter_fn)(struct dma_chan *chan, void *filter_param);
+> -
+> -When the optional 'filter_fn' parameter is set to NULL dma_request_channel
+> -simply returns the first channel that satisfies the capability mask.  Otherwise,
+> -when the mask parameter is insufficient for specifying the necessary channel,
+> -the filter_fn routine can be used to disposition the available channels in the
+> -system. The filter_fn routine is called once for each free channel in the
+> -system.  Upon seeing a suitable channel filter_fn returns DMA_ACK which flags
+> -that channel to be the return value from dma_request_channel.  A channel
+> -allocated via this interface is exclusive to the caller, until
+> -dma_release_channel() is called.
+> +
+> +   Channel allocation is slightly different in the slave DMA context,
+> +   client drivers typically need a channel from a particular DMA
+> +   controller only and even in some cases a specific channel is desired.
+> +   To request a channel dma_request_channel() API is used.
+> +
+> +   Interface:
+> +	struct dma_chan *dma_request_channel(dma_cap_mask_t mask,
+> +			dma_filter_fn filter_fn,
+> +			void *filter_param);
+> +   where dma_filter_fn is defined as:
+> +	typedef bool (*dma_filter_fn)(struct dma_chan *chan, void *filter_param);
+> +
+> +   The 'filter_fn' parameter is optional, but highly recommended for
+> +   slave and cyclic channels as they typically need to obtain a specific
+> +   DMA channel.
+> +
+> +   When the optional 'filter_fn' parameter is NULL, dma_request_channel()
+> +   simply returns the first channel that satisfies the capability mask.
+> +
+> +   Otherwise, the 'filter_fn' routine will be called once for each free
+> +   channel which has a capability in 'mask'.  'filter_fn' is expected to
+> +   return 'true' when the desired DMA channel is found.
+> +
+> +   A channel allocated via this interface is exclusive to the caller,
+> +   until dma_release_channel() is called.
+>  
+>  2. Set slave and controller specific parameters
+> -Next step is always to pass some specific information to the DMA driver. Most of
+> -the generic information which a slave DMA can use is in struct dma_slave_config.
+> -It allows the clients to specify DMA direction, DMA addresses, bus widths, DMA
+> -burst lengths etc. If some DMA controllers have more parameters to be sent then
+> -they should try to embed struct dma_slave_config in their controller specific
+> -structure. That gives flexibility to client to pass more parameters, if
+> -required.
+> -
+> -Interface:
+> -int dmaengine_slave_config(struct dma_chan *chan,
+> -					  struct dma_slave_config *config)
+> +
+> +   Next step is always to pass some specific information to the DMA
+> +   driver.  Most of the generic information which a slave DMA can use
+> +   is in struct dma_slave_config.  This allows the clients to specify
+> +   DMA direction, DMA addresses, bus widths, DMA burst lengths etc
+> +   for the peripheral.
+> +
+> +   If some DMA controllers have more parameters to be sent then they
+> +   should try to embed struct dma_slave_config in their controller
+> +   specific structure. That gives flexibility to client to pass more
+> +   parameters, if required.
+> +
+> +   Interface:
+> +	int dmaengine_slave_config(struct dma_chan *chan,
+> +				  struct dma_slave_config *config)
+>  
+>  3. Get a descriptor for transaction
+> -For slave usage the various modes of slave transfers supported by the
+> -DMA-engine are:
+> -slave_sg	- DMA a list of scatter gather buffers from/to a peripheral
+> -dma_cyclic	- Perform a cyclic DMA operation from/to a peripheral till the
+> +
+> +   For slave usage the various modes of slave transfers supported by the
+> +   DMA-engine are:
+> +
+> +   slave_sg	- DMA a list of scatter gather buffers from/to a peripheral
+> +   dma_cyclic	- Perform a cyclic DMA operation from/to a peripheral till the
+>  		  operation is explicitly stopped.
+> -The non NULL return of this transfer API represents a "descriptor" for the given
+> -transaction.
+>  
+> -Interface:
+> -struct dma_async_tx_descriptor *(*chan->device->device_prep_dma_sg)(
+> +   A non-NULL return of this transfer API represents a "descriptor" for
+> +   the given transaction.
+> +
+> +   Interface:
+> +	struct dma_async_tx_descriptor *(*chan->device->device_prep_dma_sg)(
+>  		struct dma_chan *chan,
+>  		struct scatterlist *dst_sg, unsigned int dst_nents,
+>  		struct scatterlist *src_sg, unsigned int src_nents,
+>  		unsigned long flags);
+> -struct dma_async_tx_descriptor *(*chan->device->device_prep_dma_cyclic)(
+> +
+> +	struct dma_async_tx_descriptor *(*chan->device->device_prep_dma_cyclic)(
+>  		struct dma_chan *chan, dma_addr_t buf_addr, size_t buf_len,
+>  		size_t period_len, enum dma_data_direction direction);
+>  
+> +   Once a descriptor has been obtained, the callback information can be
+> +   added and must then be submitted.  Some DMA engine drivers may hold a
+> +   spinlock between a successful preparation and submission so it is
+> +   important that these two operations are closely paired.
+> +
+> +   Note:
+> +	Although the async_tx API specifies that completion callback
+> +	routines cannot submit any new operations, this is not the
+> +	case for slave/cyclic DMA.
+> +
+> +	For slave DMA, the subsequent transaction may not be available
+> +	for submission prior to callback function being invoked, so
+> +	slave DMA callbacks are permitted to prepare and submit a new
+> +	transaction.
+> +
+> +	For cyclic DMA, a callback function may wish to terminate the
+> +	DMA via dmaengine_terminate_all().
+> +
+> +	Therefore, it is important that DMA engine drivers drop any
+> +	locks before calling the callback function which may cause a
+> +	deadlock.
+> +
+> +	Note that callbacks will always be invoked from the DMA
+> +	engines tasklet, never from interrupt context.
+> +
+>  4. Submit the transaction and wait for callback notification
+As you are adding 5 for issue pending then this needs change
+
+> -To schedule the transaction to be scheduled by dma device, the "descriptor"
+> -returned in above (3) needs to be submitted.
+> -To tell the dma driver that a transaction is ready to be serviced, the
+> -descriptor->submit() callback needs to be invoked. This chains the descriptor to
+> -the pending queue.
+> -The transactions in the pending queue can be activated by calling the
+> -issue_pending API. If channel is idle then the first transaction in queue is
+> -started and subsequent ones queued up.
+> -On completion of the DMA operation the next in queue is submitted and a tasklet
+> -triggered. The tasklet would then call the client driver completion callback
+> -routine for notification, if set.
+> -Interface:
+> -void dma_async_issue_pending(struct dma_chan *chan);
+> -
+> -==============================================================================
+> -
+> -Additional usage notes for dma driver writers
+> -1/ Although DMA engine specifies that completion callback routines cannot submit
+> -any new operations, but typically for slave DMA subsequent transaction may not
+> -be available for submit prior to callback routine being called. This requirement
+> -is not a requirement for DMA-slave devices. But they should take care to drop
+> -the spin-lock they might be holding before calling the callback routine
+> +
+> +   Once the descriptor has been prepared and the callback information
+> +   added, it must be placed on the DMA engine drivers pending queue.
+> +
+> +   Interface:
+> +	dma_cookie_t dmaengine_submit(struct dma_async_tx_descriptor *desc)
+> +
+> +   This returns a cookie can be used to check the progress of DMA engine
+> +   activity via other DMA engine calls not covered in this document.
+> +
+> +   dmaengine_submit() will not start the DMA operation, it merely adds
+> +   it to the pending queue.  For this, see step 5, dma_async_issue_pending.
+> +
+> +5. Issue pending DMA requests
+and getting callback notification
+> +
+> +   The transactions in the pending queue can be activated by calling the
+> +   issue_pending API. If channel is idle then the first transaction in
+> +   queue is started and subsequent ones queued up.
+> +
+> +   On completion of each DMA operation, the next in queue is started and
+> +   a tasklet triggered. The tasklet will then call the client driver
+> +   completion callback routine for notification, if set.
+> +
+> +   Interface:
+> +	void dma_async_issue_pending(struct dma_chan *chan);
+> +
+> +Further APIs:
+> +
+> +1. int dmaengine_terminate_all(struct dma_chan *chan)
+> +
+> +   This causes all activity for the DMA channel to be stopped, and may
+> +   discard data in the DMA FIFO which hasn't been fully transferred.
+> +   No callback functions will be called for any incomplete transfers.
+> +
+> +2. int dmaengine_pause(struct dma_chan *chan)
+> +
+> +   This pauses activity on the DMA channel without data loss.
+> +
+> +3. int dmaengine_resume(struct dma_chan *chan)
+> +
+> +   Resume a previously paused DMA channel.  It is invalid to resume a
+> +   channel which is not currently paused.
+> +
+> +4. enum dma_status dma_async_is_tx_complete(struct dma_chan *chan,
+> +        dma_cookie_t cookie, dma_cookie_t *last, dma_cookie_t *used)
+> +
+> +   This can be used to check the status of the channel.  Please see
+> +   the documentation in include/linux/dmaengine.h for a more complete
+> +   description of this API.
+> +
+> +   This can be used in conjunction with dma_async_is_complete() and
+> +   the cookie returned from 'descriptor->submit()' to check for
+> +   completion of a specific DMA transaction.
+> +
+> +   Note:
+> +	Not all DMA engine drivers can return reliable information for
+> +	a running DMA channel.  It is recommended that DMA engine users
+> +	pause or stop (via dmaengine_terminate_all) the channel before
+> +	using this API.
+> 
+
+-- 
+~Vinod Koul
+Intel Corp.
