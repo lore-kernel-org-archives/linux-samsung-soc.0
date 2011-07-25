@@ -1,251 +1,128 @@
 From: Boojin Kim <boojin.kim@samsung.com>
-Subject: [PATCH V4 14/14] ARM: SAMSUNG: Remove Samsung specific enum type for dma direction
-Date: Mon, 25 Jul 2011 10:28:32 +0900
-Message-ID: <1311557312-26107-15-git-send-email-boojin.kim@samsung.com>
-References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com>
+Subject: RE: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
+Date: Mon, 25 Jul 2011 11:10:57 +0900
+Message-ID: <001701cc4a70$17de50e0$479af2a0$%kim@samsung.com>
+References: <1311158773-30314-1-git-send-email-boojin.kim@samsung.com>
+ <1311158773-30314-3-git-send-email-boojin.kim@samsung.com>
+ <CABb+yY058yBZnmYcqbqFCfsBUcxU=JbTZmopLApZaaKim+MMfg@mail.gmail.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:39698 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752822Ab1GYBjH (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:53199 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752086Ab1GYCLA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 24 Jul 2011 21:39:07 -0400
-In-Reply-To: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com>
+	Sun, 24 Jul 2011 22:11:00 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LOV005JQ9ZN6LF0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 25 Jul 2011 11:10:58 +0900 (KST)
+Received: from DOBOOJINKIM03 (12-23-120-72.csky.net [12.23.120.72])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LOV00EWHA2AGO@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 25 Jul 2011 11:10:58 +0900 (KST)
+In-reply-to: <CABb+yY058yBZnmYcqbqFCfsBUcxU=JbTZmopLApZaaKim+MMfg@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Boojin Kim <boojin.kim@samsung.com>
+To: 'Jassi Brar' <jassisinghbrar@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Vinod Koul' <vinod.koul@intel.com>, 'Dan Williams' <dan.j.williams@intel.com>, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-This patch removes the samsung specific enum type 's3c2410_dmasrc'
-and uses 'dma_data_direction' instead.
+Jassi Brar wrote:
+> Sent: Friday, July 22, 2011 2:42 PM
+> To: Boojin Kim
+> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
+> Vinod Koul; Dan Williams; Kukjin Kim
+> Subject: Re: [PATCH V4 03-1/13] DMA: PL330: Support DMA_SLAVE_CONFIG command
+>
+> On Wed, Jul 20, 2011 at 4:16 PM, Boojin Kim <boojin.kim@samsung.com> wrote:
+> > Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > ---
+> >  drivers/dma/pl330.c |   53 
+> > +++++++++++++++++++++++++++++++++++++----------
+> ---
+> >  1 files changed, 39 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+> > index 586ab39..880f010 100644
+> > --- a/drivers/dma/pl330.c
+> > +++ b/drivers/dma/pl330.c
+> > @@ -256,25 +256,50 @@ static int pl330_alloc_chan_resources(struct 
+> > dma_chan
+> *chan)
+> >  static int pl330_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd,
+> unsigned long arg)
+> >  {
+> >        struct dma_pl330_chan *pch = to_pchan(chan);
+> > -       struct dma_pl330_desc *desc;
+> > +       struct dma_pl330_desc *desc, *_dt;
+> >        unsigned long flags;
+> > +       struct dma_pl330_dmac *pdmac = pch->dmac;
+> > +       struct dma_slave_config *slave_config;
+> > +       struct dma_pl330_peri *peri;
+> > +       LIST_HEAD(list);
+> >
+> > -       /* Only supports DMA_TERMINATE_ALL */
+> > -       if (cmd != DMA_TERMINATE_ALL)
+> > -               return -ENXIO;
+> > -
+> > -       spin_lock_irqsave(&pch->lock, flags);
+> > -
+> > -       /* FLUSH the PL330 Channel thread */
+> > -       pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
+> > +       switch (cmd) {
+> > +       case DMA_TERMINATE_ALL:
+> > +               spin_lock_irqsave(&pch->lock, flags);
+> >
+> > -       /* Mark all desc done */
+> > -       list_for_each_entry(desc, &pch->work_list, node)
+> > -               desc->status = DONE;
+> > +               /* FLUSH the PL330 Channel thread */
+> > +               pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
+> >
+> > -       spin_unlock_irqrestore(&pch->lock, flags);
+> > +               /* Mark all desc done */
+> > +               list_for_each_entry_safe(desc, _dt, &pch->work_list , 
+> > node)
+> {
+> > +                       desc->status = DONE;
+> > +                       pch->completed = desc->txd.cookie;
+> > +                       list_move_tail(&desc->node, &list);
+> > +               }
+> >
+> > -       pl330_tasklet((unsigned long) pch);
+> > +               list_splice_tail_init(&list, &pdmac->desc_pool);
+> > +               spin_unlock_irqrestore(&pch->lock, flags);
+> > +               break;
+> > +       case DMA_SLAVE_CONFIG:
+> > +               slave_config = (struct dma_slave_config *)arg;
+> > +               peri = pch->chan.private;
+> > +
+> > +               if (slave_config->direction == DMA_TO_DEVICE) {
+> > +                       if (slave_config->dst_addr)
+> > +                               peri->fifo_addr = slave_config->dst_addr;
+> > +                       if (slave_config->dst_addr_width)
+> > +                               peri->burst_sz = __ffs(slave_config-
+> >dst_addr_width);
+> > +               } else if (slave_config->direction == DMA_FROM_DEVICE) {
+> > +                       if (slave_config->src_addr)
+> > +                               peri->fifo_addr = slave_config->src_addr;
+> > +                       if (slave_config->src_addr_width)
+> > +                               peri->burst_sz = __ffs(slave_config-
+> >src_addr_width);
+> > +               }
+> > +               break;
+>    As discussed yesterday, DMA_SLAVE_CONFIG is assumed to be madatory,
+> so please dismantle the 'struct dma_pl330_peri', move fifo_addr,
+> burst_sz and rqtype
+> to 'struct dma_pl330_chan' and poison them - that will force clients
+> to do DMA_SLAVE_CONFIG. Move 'peri_id' to 'struct dma_pl330_platdata'
+>   And protect the changes to channel parameters with lock.
 
-Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s3c2410/include/mach/dma.h         |    2 +-
- arch/arm/mach-s3c2412/dma.c                      |    4 ++--
- arch/arm/mach-s3c64xx/dma.c                      |   10 +++++-----
- arch/arm/mach-s3c64xx/include/mach/dma.h         |    2 +-
- arch/arm/plat-s3c24xx/dma.c                      |   10 +++++-----
- arch/arm/plat-samsung/include/plat/dma-s3c24xx.h |    2 +-
- arch/arm/plat-samsung/include/plat/dma.h         |    9 +++------
- arch/arm/plat-samsung/s3c-dma-ops.c              |    5 +----
- drivers/mmc/host/s3cmci.c                        |    6 +++---
- 9 files changed, 22 insertions(+), 28 deletions(-)
-
-diff --git a/arch/arm/mach-s3c2410/include/mach/dma.h b/arch/arm/mach-s3c2410/include/mach/dma.h
-index 4e485ba..ae8e482 100644
---- a/arch/arm/mach-s3c2410/include/mach/dma.h
-+++ b/arch/arm/mach-s3c2410/include/mach/dma.h
-@@ -174,7 +174,7 @@ struct s3c2410_dma_chan {
- 	struct s3c2410_dma_client *client;
- 
- 	/* channel configuration */
--	enum s3c2410_dmasrc	 source;
-+	enum dma_data_direction	 source;
- 	enum dma_ch		 req_ch;
- 	unsigned long		 dev_addr;
- 	unsigned long		 load_timeout;
-diff --git a/arch/arm/mach-s3c2412/dma.c b/arch/arm/mach-s3c2412/dma.c
-index 7abecfc..b4fc3ba 100644
---- a/arch/arm/mach-s3c2412/dma.c
-+++ b/arch/arm/mach-s3c2412/dma.c
-@@ -148,11 +148,11 @@ static struct s3c24xx_dma_map __initdata s3c2412_dma_mappings[] = {
- 
- static void s3c2412_dma_direction(struct s3c2410_dma_chan *chan,
- 				  struct s3c24xx_dma_map *map,
--				  enum s3c2410_dmasrc dir)
-+				  enum dma_data_direction dir)
- {
- 	unsigned long chsel;
- 
--	if (dir == S3C2410_DMASRC_HW)
-+	if (dir == DMA_FROM_DEVICE)
- 		chsel = map->channels_rx[0];
- 	else
- 		chsel = map->channels[0];
-diff --git a/arch/arm/mach-s3c64xx/dma.c b/arch/arm/mach-s3c64xx/dma.c
-index b197171..d96ed4c 100644
---- a/arch/arm/mach-s3c64xx/dma.c
-+++ b/arch/arm/mach-s3c64xx/dma.c
-@@ -147,14 +147,14 @@ static void s3c64xx_dma_fill_lli(struct s3c2410_dma_chan *chan,
- 	u32 control0, control1;
- 
- 	switch (chan->source) {
--	case S3C2410_DMASRC_HW:
-+	case DMA_FROM_DEVICE:
- 		src = chan->dev_addr;
- 		dst = data;
- 		control0 = PL080_CONTROL_SRC_AHB2;
- 		control0 |= PL080_CONTROL_DST_INCR;
- 		break;
- 
--	case S3C2410_DMASRC_MEM:
-+	case DMA_TO_DEVICE:
- 		src = data;
- 		dst = chan->dev_addr;
- 		control0 = PL080_CONTROL_DST_AHB2;
-@@ -416,7 +416,7 @@ EXPORT_SYMBOL(s3c2410_dma_enqueue);
- 
- 
- int s3c2410_dma_devconfig(unsigned int channel,
--			  enum s3c2410_dmasrc source,
-+			  enum dma_data_direction source,
- 			  unsigned long devaddr)
- {
- 	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
-@@ -437,11 +437,11 @@ int s3c2410_dma_devconfig(unsigned int channel,
- 	pr_debug("%s: peripheral %d\n", __func__, peripheral);
- 
- 	switch (source) {
--	case S3C2410_DMASRC_HW:
-+	case DMA_FROM_DEVICE:
- 		config = 2 << PL080_CONFIG_FLOW_CONTROL_SHIFT;
- 		config |= peripheral << PL080_CONFIG_SRC_SEL_SHIFT;
- 		break;
--	case S3C2410_DMASRC_MEM:
-+	case DMA_TO_DEVICE:
- 		config = 1 << PL080_CONFIG_FLOW_CONTROL_SHIFT;
- 		config |= peripheral << PL080_CONFIG_DST_SEL_SHIFT;
- 		break;
-diff --git a/arch/arm/mach-s3c64xx/include/mach/dma.h b/arch/arm/mach-s3c64xx/include/mach/dma.h
-index 74fdf25..fe1a98c 100644
---- a/arch/arm/mach-s3c64xx/include/mach/dma.h
-+++ b/arch/arm/mach-s3c64xx/include/mach/dma.h
-@@ -99,7 +99,7 @@ struct s3c2410_dma_chan {
- 	unsigned char		 peripheral;
- 
- 	unsigned int		 flags;
--	enum s3c2410_dmasrc	 source;
-+	enum dma_data_direction	 source;
- 
- 
- 	dma_addr_t		dev_addr;
-diff --git a/arch/arm/plat-s3c24xx/dma.c b/arch/arm/plat-s3c24xx/dma.c
-index a79a8cc..036ff81 100644
---- a/arch/arm/plat-s3c24xx/dma.c
-+++ b/arch/arm/plat-s3c24xx/dma.c
-@@ -1094,14 +1094,14 @@ EXPORT_SYMBOL(s3c2410_dma_config);
-  *
-  * configure the dma source/destination hardware type and address
-  *
-- * source:    S3C2410_DMASRC_HW: source is hardware
-- *            S3C2410_DMASRC_MEM: source is memory
-+ * source:    DMA_FROM_DEVICE: source is hardware
-+ *            DMA_TO_DEVICE: source is memory
-  *
-  * devaddr:   physical address of the source
- */
- 
- int s3c2410_dma_devconfig(unsigned int channel,
--			  enum s3c2410_dmasrc source,
-+			  enum dma_data_direction source,
- 			  unsigned long devaddr)
- {
- 	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
-@@ -1131,7 +1131,7 @@ int s3c2410_dma_devconfig(unsigned int channel,
- 	 hwcfg |= S3C2410_DISRCC_INC;
- 
- 	switch (source) {
--	case S3C2410_DMASRC_HW:
-+	case DMA_FROME_DEVICE:
- 		/* source is hardware */
- 		pr_debug("%s: hw source, devaddr=%08lx, hwcfg=%d\n",
- 			 __func__, devaddr, hwcfg);
-@@ -1142,7 +1142,7 @@ int s3c2410_dma_devconfig(unsigned int channel,
- 		chan->addr_reg = dma_regaddr(chan, S3C2410_DMA_DIDST);
- 		break;
- 
--	case S3C2410_DMASRC_MEM:
-+	case DMA_TO_DEVICE:
- 		/* source is memory */
- 		pr_debug("%s: mem source, devaddr=%08lx, hwcfg=%d\n",
- 			 __func__, devaddr, hwcfg);
-diff --git a/arch/arm/plat-samsung/include/plat/dma-s3c24xx.h b/arch/arm/plat-samsung/include/plat/dma-s3c24xx.h
-index 336d5ac..1982829 100644
---- a/arch/arm/plat-samsung/include/plat/dma-s3c24xx.h
-+++ b/arch/arm/plat-samsung/include/plat/dma-s3c24xx.h
-@@ -47,7 +47,7 @@ struct s3c24xx_dma_selection {
- 
- 	void	(*direction)(struct s3c2410_dma_chan *chan,
- 			     struct s3c24xx_dma_map *map,
--			     enum s3c2410_dmasrc dir);
-+			     enum dma_data_direction dir);
- };
- 
- extern int s3c24xx_dma_init_map(struct s3c24xx_dma_selection *sel);
-diff --git a/arch/arm/plat-samsung/include/plat/dma.h b/arch/arm/plat-samsung/include/plat/dma.h
-index e87c6be..b395398 100644
---- a/arch/arm/plat-samsung/include/plat/dma.h
-+++ b/arch/arm/plat-samsung/include/plat/dma.h
-@@ -10,17 +10,14 @@
-  * published by the Free Software Foundation.
- */
- 
-+#include <linux/dma-mapping.h>
-+
- enum s3c2410_dma_buffresult {
- 	S3C2410_RES_OK,
- 	S3C2410_RES_ERR,
- 	S3C2410_RES_ABORT
- };
- 
--enum s3c2410_dmasrc {
--	S3C2410_DMASRC_HW,		/* source is memory */
--	S3C2410_DMASRC_MEM		/* source is hardware */
--};
--
- /* enum s3c2410_chan_op
-  *
-  * operation codes passed to the DMA code by the user, and also used
-@@ -111,7 +108,7 @@ extern int s3c2410_dma_config(unsigned int channel, int xferunit);
- */
- 
- extern int s3c2410_dma_devconfig(unsigned int channel,
--		enum s3c2410_dmasrc source, unsigned long devaddr);
-+		enum dma_data_direction source, unsigned long devaddr);
- 
- /* s3c2410_dma_getposition
-  *
-diff --git a/arch/arm/plat-samsung/s3c-dma-ops.c b/arch/arm/plat-samsung/s3c-dma-ops.c
-index 33ab324..582333c 100644
---- a/arch/arm/plat-samsung/s3c-dma-ops.c
-+++ b/arch/arm/plat-samsung/s3c-dma-ops.c
-@@ -48,10 +48,7 @@ static unsigned s3c_dma_request(enum dma_ch dma_ch,
- 	data->ch = dma_ch;
- 	list_add_tail(&data->node, &dma_list);
- 
--	if (info->direction == DMA_FROM_DEVICE)
--		s3c2410_dma_devconfig(dma_ch, S3C2410_DMASRC_HW, info->fifo);
--	else
--		s3c2410_dma_devconfig(dma_ch, S3C2410_DMASRC_MEM, info->fifo);
-+	s3c2410_dma_devconfig(dma_ch, info->direction, info->fifo);
- 
- 	if (info->cap == DMA_CYCLIC)
- 		s3c2410_dma_setflags(dma_ch, S3C2410_DMAF_CIRCULAR);
-diff --git a/drivers/mmc/host/s3cmci.c b/drivers/mmc/host/s3cmci.c
-index a04f87d..03cfdab 100644
---- a/drivers/mmc/host/s3cmci.c
-+++ b/drivers/mmc/host/s3cmci.c
-@@ -913,9 +913,9 @@ request_done:
- }
- 
- static void s3cmci_dma_setup(struct s3cmci_host *host,
--			     enum s3c2410_dmasrc source)
-+			     enum dma_data_direction source)
- {
--	static enum s3c2410_dmasrc last_source = -1;
-+	static enum dma_data_direction last_source = -1;
- 	static int setup_ok;
- 
- 	if (last_source == source)
-@@ -1087,7 +1087,7 @@ static int s3cmci_prepare_dma(struct s3cmci_host *host, struct mmc_data *data)
- 
- 	BUG_ON((data->flags & BOTH_DIR) == BOTH_DIR);
- 
--	s3cmci_dma_setup(host, rw ? S3C2410_DMASRC_MEM : S3C2410_DMASRC_HW);
-+	s3cmci_dma_setup(host, rw ? DMA_TO_DEVICE : DMA_FROM_DEVICE);
- 	s3c2410_dma_ctrl(host->dma, S3C2410_DMAOP_FLUSH);
- 
- 	dma_len = dma_map_sg(mmc_dev(host->mmc), data->sg, data->sg_len,
--- 
-1.7.1
+It's fine that you understand my implementation.
+I'm agree to remove unnecessary structure.
+But, this item should bring the change of all DMA machine code and doesn't has 
+deeply relationship with the purpose of this patch series (samsung dma usage).
+So, I'd like to make it to another patch and submit it.
+How about my opinion ?
