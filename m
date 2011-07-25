@@ -1,65 +1,140 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH V4 02/14] DMA: PL330: Update PL330 DMA API driver
-Date: Mon, 25 Jul 2011 14:27:59 +0530
-Message-ID: <CABb+yY2YdFLua8gNEJOwCyJPz3kyLwhKLXXoc8_V59t9yLMt1g@mail.gmail.com>
-References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com>
-	<1311557312-26107-3-git-send-email-boojin.kim@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH V4 04/14] DMA: PL330: Add DMA_CYCLIC capability
+Date: Mon, 25 Jul 2011 10:27:49 +0100
+Message-ID: <20110725092749.GB9653@n2100.arm.linux.org.uk>
+References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com> <1311557312-26107-5-git-send-email-boojin.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f52.google.com ([209.85.161.52]:43394 "EHLO
-	mail-fx0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750886Ab1GYI6A (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:37581 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751716Ab1GYJ2J (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Jul 2011 04:58:00 -0400
-Received: by mail-fx0-f52.google.com with SMTP id 18so8737534fxd.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Jul 2011 01:57:59 -0700 (PDT)
-In-Reply-To: <1311557312-26107-3-git-send-email-boojin.kim@samsung.com>
+	Mon, 25 Jul 2011 05:28:09 -0400
+Content-Disposition: inline
+In-Reply-To: <1311557312-26107-5-git-send-email-boojin.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Boojin Kim <boojin.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Dan Williams <dan.j.williams@intel.com>
 
-T24gTW9uLCBKdWwgMjUsIDIwMTEgYXQgNjo1OCBBTSwgQm9vamluIEtpbSA8Ym9vamluLmtpbUBz
-YW1zdW5nLmNvbT4gd3JvdGU6Cgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2RtYS9wbDMzMC5jIGIv
-ZHJpdmVycy9kbWEvcGwzMzAuYwo+IGluZGV4IGI3ZWNmNDcuLjU4NmFiMzkgMTAwNjQ0Cj4gLS0t
-IGEvZHJpdmVycy9kbWEvcGwzMzAuYwo+ICsrKyBiL2RyaXZlcnMvZG1hL3BsMzMwLmMKPiBAQCAt
-NDU1LDcgKzQ1NSw3IEBAIHN0YXRpYyBzdHJ1Y3QgZG1hX3BsMzMwX2Rlc2MgKnBsMzMwX2dldF9k
-ZXNjKHN0cnVjdCBkbWFfcGwzMzBfY2hhbiAqcGNoKQo+IMKgIMKgIMKgIMKgYXN5bmNfdHhfYWNr
-KCZkZXNjLT50eGQpOwo+Cj4gwqAgwqAgwqAgwqBkZXNjLT5yZXEucnF0eXBlID0gcGVyaS0+cnF0
-eXBlOwo+IC0gwqAgwqAgwqAgZGVzYy0+cmVxLnBlcmkgPSBwZXJpLT5wZXJpX2lkOwo+ICsgwqAg
-wqAgwqAgZGVzYy0+cmVxLnBlcmkgPSBwY2gtPmNoYW4uY2hhbl9pZDsKQnR3LCBJIHBsYW4gdG8g
-cmV2ZXJ0IHRoaXMgaWYgbXkgcGF0Y2ggaXMgYWNjZXB0ZWQgdGhhdCBwcm9wb3Nlcwp0byBmcmVl
-IGNoYW5faWQgc29sZWx5IGZvciB1c2UgYnkgRE1BQyBkcml2ZXJzKHdoaWNoIHdlIHNob3VsZApl
-bXBsb3kgdG8gcGFzcyBwYWx0Zm9ybSBhc3NpZ25lZCBjaGFubmVsIElEIHRvIGNsaWVudCBkcml2
-ZXJzKQoKPiBAQCAtNzQ4LDE3ICs3NDcsMTkgQEAgcGwzMzBfcHJvYmUoc3RydWN0IGFtYmFfZGV2
-aWNlICphZGV2LCBjb25zdCBzdHJ1Y3QgYW1iYV9pZCAqaWQpCj4gwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqBzdHJ1Y3QgZG1hX3BsMzMwX3BlcmkgKnBlcmkgPSAmcGRhdC0+cGVyaVtpXTsKPiDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoHBjaCA9ICZwZG1hYy0+cGVyaXBoZXJhbHNbaV07Cj4KPiAtIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIHN3aXRjaCAocGVyaS0+cnF0eXBlKSB7Cj4gLSDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCBjYXNlIE1FTVRPTUVNOgo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgZG1hX2NhcF9zZXQoRE1BX01FTUNQWSwgcGQtPmNhcF9tYXNrKTsKPiAtIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGJyZWFrOwo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-Y2FzZSBNRU1UT0RFVjoKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGNhc2UgREVWVE9NRU06Cj4g
-LSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBkbWFfY2FwX3NldChETUFfU0xBVkUs
-IHBkLT5jYXBfbWFzayk7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBicmVh
-azsKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGRlZmF1bHQ6Cj4gLSDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCBkZXZfZXJyKCZhZGV2LT5kZXYsICJERVZUT0RFViBOb3QgU3VwcG9y
-dGVkXG4iKTsKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGNvbnRpbnVlOwo+
-ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgaWYgKHBlcmkpIHsKPiArIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIHN3aXRjaCAocGVyaS0+cnF0eXBlKSB7Cj4gKyDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCBjYXNlIE1FTVRPTUVNOgo+ICsgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgZG1hX2NhcF9zZXQoRE1BX01FTUNQWSwgcGQtPmNh
-cF9tYXNrKTsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IGJyZWFrOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgY2FzZSBNRU1UT0RF
-VjoKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGNhc2UgREVWVE9NRU06Cj4g
-KyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBkbWFfY2FwX3Nl
-dChETUFfU0xBVkUsIHBkLT5jYXBfbWFzayk7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCBicmVhazsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIGRlZmF1bHQ6Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCBkZXZfZXJyKCZhZGV2LT5kZXYsICJERVZUT0RFViBOb3QgU3VwcG9ydGVkXG4iKTsK
-PiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGNvbnRpbnVl
-Owo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgfQo+IMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgfQpJZiB5b3UgcGFzcyBwbGF0Zm9ybSBkYXRhIGNvcnJlY3RseSwgeW91IGRvbid0
-IG5lZWQgdG8gY2hlY2sgYWdhaW5zdCBOVUxMIHBlcmkuCg==
+On Mon, Jul 25, 2011 at 10:28:22AM +0900, Boojin Kim wrote:
+> +static void pl330_tasklet_cyclic(unsigned long data)
+> +{
+> +	struct dma_pl330_chan *pch = (struct dma_pl330_chan *)data;
+> +	struct dma_pl330_desc *desc, *_dt;
+> +	unsigned long flags;
+> +	LIST_HEAD(list);
+> +
+> +	spin_lock_irqsave(&pch->lock, flags);
+...
+> +			callback = desc->txd.callback;
+> +			if (callback)
+> +				callback(desc->txd.callback_param);
+
+On this again - what if the callback wants to terminate the DMA activity
+because there's no more audio data to be sent/received from the device?
+
+> +
+
+Useless blank line.
+
+> +		}
+> +
+> +	spin_unlock_irqrestore(&pch->lock, flags);
+> +}
+> +
+>  static void pl330_tasklet(unsigned long data)
+>  {
+>  	struct dma_pl330_chan *pch = (struct dma_pl330_chan *)data;
+> @@ -227,6 +267,9 @@ static void dma_pl330_rqcb(void *token, enum pl330_op_err err)
+>  
+>  	spin_unlock_irqrestore(&pch->lock, flags);
+>  
+> +	if (pch->cyclic_task)
+> +		tasklet_schedule(pch->cyclic_task);
+> +	else
+>  	tasklet_schedule(&pch->task);
+
+Indentation error.
+
+>  }
+>  
+> @@ -316,6 +359,15 @@ static void pl330_free_chan_resources(struct dma_chan *chan)
+>  	pl330_release_channel(pch->pl330_chid);
+>  	pch->pl330_chid = NULL;
+>  
+> +	if (pch->cyclic) {
+> +		pch->cyclic = false;
+> +		list_splice_tail_init(&pch->work_list, &pch->dmac->desc_pool);
+> +		if (pch->cyclic_task) {
+> +			tasklet_kill(pch->cyclic_task);
+> +			pch->cyclic_task = NULL;
+> +		}
+> +	}
+> +
+>  	spin_unlock_irqrestore(&pch->lock, flags);
+>  }
+>  
+> @@ -547,6 +599,63 @@ static inline int get_burst_len(struct dma_pl330_desc *desc, size_t len)
+>  	return burst_len;
+>  }
+>  
+> +static struct dma_async_tx_descriptor *pl330_prep_dma_cyclic(
+> +		struct dma_chan *chan, dma_addr_t dma_addr, size_t len,
+> +		size_t period_len, enum dma_data_direction direction)
+> +{
+> +	struct dma_pl330_desc *desc;
+> +	struct dma_pl330_chan *pch = to_pchan(chan);
+> +	struct dma_pl330_peri *peri = chan->private;
+> +	dma_addr_t dst;
+> +	dma_addr_t src;
+> +
+> +	pch = to_pchan(chan);
+> +	if (!pch)
+> +		return NULL;
+
+You've already done the to_pchan() thing when declaring pch.  You've
+already dereferenced 'chan', so there's no way that pch could be NULL
+here.
+
+> +
+> +	desc = pl330_get_desc(pch);
+> +	if (!desc) {
+> +		dev_err(pch->dmac->pif.dev, "%s:%d Unable to fetch desc\n",
+> +			__func__, __LINE__);
+> +		return NULL;
+> +	}
+> +
+> +	switch (direction) {
+> +	case DMA_TO_DEVICE:
+> +		desc->rqcfg.src_inc = 1;
+> +		desc->rqcfg.dst_inc = 0;
+> +		src = dma_addr;
+> +		dst = peri->fifo_addr;
+> +		break;
+> +	case DMA_FROM_DEVICE:
+> +		desc->rqcfg.src_inc = 0;
+> +		desc->rqcfg.dst_inc = 1;
+> +		src = peri->fifo_addr;
+> +		dst = dma_addr;
+> +		break;
+> +	default:
+> +		dev_err(pch->dmac->pif.dev, "%s:%d Invalid dma direction\n",
+> +		__func__, __LINE__);
+> +		return NULL;
+> +	}
+> +
+> +	desc->rqcfg.brst_size = peri->burst_sz;
+> +	desc->rqcfg.brst_len = 1;
+> +
+> +	if (!pch->cyclic_task) {
+> +		pch->cyclic_task =
+> +			kmalloc(sizeof(struct tasklet_struct), GFP_KERNEL);
+> +		tasklet_init(pch->cyclic_task,
+> +			pl330_tasklet_cyclic, (unsigned int)pch);
+
+Here you allocate memory for the cyclic task.  Above you set this pointer
+to NULL.  That sounds like a memory leak to me.  Why are you kmallocing
+this memory - why can't it be part of the dma_pl330_chan structure?  It's
+only 28 bytes.
