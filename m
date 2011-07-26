@@ -1,46 +1,123 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] Improve slave/cyclic DMA engine documentation (was:
-	[PATCH V4 04/14] DMA: PL330: Add DMA_CYCLIC capability)
-Date: Tue, 26 Jul 2011 18:20:27 +0100
-Message-ID: <20110726172027.GD1655@n2100.arm.linux.org.uk>
-References: <002001cc4ab6$0d7cd590$287680b0$%kim@samsung.com> <20110725103629.GF9653@n2100.arm.linux.org.uk> <1311590884.29703.2.camel@vkoul-mobl4> <20110725105754.GG9653@n2100.arm.linux.org.uk> <1311591717.29703.7.camel@vkoul-mobl4> <20110725113926.GH9653@n2100.arm.linux.org.uk> <1311595303.29703.31.camel@vkoul-mobl4> <20110726075720.GL9653@n2100.arm.linux.org.uk> <1311672933.24316.1.camel@vkoul-mobl4> <CABb+yY1P21hbMD2mG_cCvW3N5WqWzc2ZVt-HTOrC1J3dc5RbhA@mail.gmail.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH V4 06/14] ARM: SAMSUNG: Add common DMA operations
+Date: Tue, 26 Jul 2011 23:13:35 +0530
+Message-ID: <CABb+yY2rQXxHGJuvhtJGgrCsoFZgsACHWUEV0L-kpqaDaCFAQA@mail.gmail.com>
+References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com>
+	<1311557312-26107-7-git-send-email-boojin.kim@samsung.com>
+	<CABb+yY0nWLpdVGqTJPO2YwkGWiDw5tRjC2xn7Le0bO0ZNFHC_g@mail.gmail.com>
+	<20110726080233.GN9653@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:59769 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751337Ab1GZRUq (ORCPT
+Received: from mail-ey0-f171.google.com ([209.85.215.171]:49145 "EHLO
+	mail-ey0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751202Ab1GZRnh convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jul 2011 13:20:46 -0400
-Content-Disposition: inline
-In-Reply-To: <CABb+yY1P21hbMD2mG_cCvW3N5WqWzc2ZVt-HTOrC1J3dc5RbhA@mail.gmail.com>
+	Tue, 26 Jul 2011 13:43:37 -0400
+Received: by eye22 with SMTP id 22so936377eye.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Jul 2011 10:43:36 -0700 (PDT)
+In-Reply-To: <20110726080233.GN9653@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Vinod Koul <vkoul@infradead.org>, vinod.koul@intel.com, linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Boojin Kim <boojin.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 
-On Tue, Jul 26, 2011 at 08:07:44PM +0530, Jassi Brar wrote:
-> Dear Vinod,
-> 
->  Since it came from the RMK, most probably it'll be the best.
-> 
-> But applying patches upon personal timeout seems very dangerous.
+On Tue, Jul 26, 2011 at 1:32 PM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> On Mon, Jul 25, 2011 at 05:21:44PM +0530, Jassi Brar wrote:
+>> On Mon, Jul 25, 2011 at 6:58 AM, Boojin Kim <boojin.kim@samsung.com>=
+ wrote:
+>>
+>> > +
+>> > +static bool pl330_filter(struct dma_chan *chan, void *param)
+>> > +{
+>> > + =C2=A0 =C2=A0 =C2=A0 struct dma_pl330_peri *peri =3D (struct dma=
+_pl330_peri *)chan->private;
+>> > + =C2=A0 =C2=A0 =C2=A0 unsigned dma_ch =3D (unsigned)param;
+>> > +
+>> > + =C2=A0 =C2=A0 =C2=A0 if (peri->peri_id !=3D dma_ch)
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return false;
+>> > +
+>> > + =C2=A0 =C2=A0 =C2=A0 return true;
+>> > +}
+>> This is what I meant... if we keep chan_id for paltform assigned IDs=
+,
+>> these filter functions could simply become
+>>
+>> static bool pl330_filter(struct dma_chan *chan, void *param)
+>> {
+>> =C2=A0 =C2=A0 =C2=A0 =C2=A0 return chan->chan_id =3D=3D param
+>> }
+>>
+>> And ideally in the long run, we could just drop the filter callback
+>> and add expected channel ID to the request_channel call.
+>
+> So what if you have a PL080 and PL330 drivers registered with the DMA
+> engine code, and you need to match a specific PL330 channel?
+>
 
-Ehh what?  Is there any contention over this documentation patch?
+Before we start, let me be clear that I don't say it's all possible
+today as such.
+We will need changes to the API and modifications to the damc/client
+drivers (which are already misusing the API as it turns out).
 
-It's not adding anything new, it's just documenting the facts as they
-stand today about the API and its use.
+I hope we agree, clients (esp 'generic' ones of the future)
+should not ask for channels from a particular dmac.
+They should simply tell DMA API, what capabilities they expect
+from the allocated channel - of whatever index on whichever dmac.
+And the platform should have specified capabilities of a channel
+while introducing it to the DMA API.   Yes, imho, DMA API should
+only work with a pool of channels and not dmacs - it shouldn't
+matter from which dmac a channel comes.
 
-> People not responding doesn't mean only either people agree completely
-> or they don't care. Some might be interested but too busy with current tasks
-> that they need time to check... please make some policy for such cases.
-> 
-> It already happened with the patch from Rob, which you probably have to
-> revert.
-> 
-> IMHO, if nobody replied, maybe you could first ack the patch and wait
-> for, say a week, before applying?
-> That way people will know they have to hurry if they care otherwise
-> the patch is going upstream as such.
+So when a client asks for a channel, the dmaengine would return
+the first free channel that has just as much the requested capability.
 
-A week is far too long.  That's how patches get lost and missed.
+That is, the generic filter function would look equivalent of :-
+
+      return is_free(chan) && (cap_requested =3D=3D cap_of(chan) & cap_=
+requested)
+
+
+Now it all boils down to defining the set of _practically_ possible cap=
+abilities
+and a method to exchange them between the API, Client and DMAC drivers.
+
+The above is the overall approach.
+
+The following is my idea of implementing it as of now, I am open to sug=
+gestions.
+
+Assuming :-
+***********
+There are no more than 256 types of DMA'able devices
+ (MMC, USB, SPI etc) --  [8bits]
+
+A type of device never has more than 16 instances in a platform
+ (MMC-0, MMC-1, MMC-2 etc) --  [4bits]
+
+Mem->Mem, Mem->Dev, Dev->Mem, Dev->Dev capability in [4bits]
+
+Max_Burst_Len for any channel is less than 64KB, in power of two [4bits=
+]
+Support programmable Max_Burst_Len(tunable in geometric steps of 2)  [1=
+bit]
+
+Max_RW_width/fifo_width is less than 128, in power of two -- [3bits]
+Support programmable Max_RW_Width(tunable in geometric steps of 2)  [1b=
+it]
+
+=46inally, No platform has more than 128 channels with identicial
+capabilities [7bits]
+
+
+=46or a channel, when specific values of these fields are appended toge=
+ther,
+we get a unqiue 32-bits value called 'chan_id'
+
+Though we can use 64-bits to store the capabilities if we think number
+or size of these fields need to be increased.
+
+Thanks,
+Jassi
