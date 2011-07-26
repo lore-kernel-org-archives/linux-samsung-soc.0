@@ -1,85 +1,172 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 2/2] ARM: Exynos4: use s5p-timer for UniversalC210 board
-Date: Tue, 26 Jul 2011 07:50:56 +0200
-Message-ID: <1311659456-6659-3-git-send-email-m.szyprowski@samsung.com>
-References: <1311659456-6659-1-git-send-email-m.szyprowski@samsung.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCH V4 01/14] DMA: PL330: Add support runtime PM for PL330 DMAC
+Date: Tue, 26 Jul 2011 15:03:27 +0900
+Message-ID: <4E2E58AF.4000409@gmail.com>
+References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com>
+ <1311557312-26107-2-git-send-email-boojin.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:46620 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751337Ab1GZFvF (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:31799 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751208Ab1GZGC6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jul 2011 01:51:05 -0400
-Received: from spt2.w1.samsung.com ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LOX00IMCEX2RM90@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 26 Jul 2011 06:51:02 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LOX00C6REX11A@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 26 Jul 2011 06:51:01 +0100 (BST)
-In-reply-to: <1311659456-6659-1-git-send-email-m.szyprowski@samsung.com>
+	Tue, 26 Jul 2011 02:02:58 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LOX00B8VFGMMKI0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 26 Jul 2011 15:02:56 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LOX008RKFGWLH@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 26 Jul 2011 15:02:56 +0900 (KST)
+In-reply-to: <1311557312-26107-2-git-send-email-boojin.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Angus Ainslie <angus.ainslie@linaro.org>
+To: Boojin Kim <boojin.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Dan Williams <dan.j.williams@intel.com>
 
-Commit 069d4e743 removed support for local timers and forced to use MCT as
-event source. However MCT is not operating properly on early revision (EVT0)
-of Exynos4 SoCs. All UniversalC210 boards are based on Exynos4 EVT0, so that
-commit broke support for it. This patch provides a workaround that enables
-UniversalC210 boards to boot again. s5p-timer is used as an event source.
+Boojin Kim wrote:
+> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+> ---
+>  drivers/dma/pl330.c |   75 +++++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 files changed, 73 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+> index 6abe1ec..b7ecf47 100644
+> --- a/drivers/dma/pl330.c
+> +++ b/drivers/dma/pl330.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/amba/bus.h>
+>  #include <linux/amba/pl330.h>
+> +#include <linux/pm_runtime.h>
+>  
+>  #define NR_DEFAULT_DESC	16
+>  
+> @@ -83,6 +84,8 @@ struct dma_pl330_dmac {
+>  
+>  	/* Peripheral channels connected to this DMAC */
+>  	struct dma_pl330_chan peripherals[0]; /* keep at end */
+> +
+> +	struct clk *clk;
+>  };
+>  
+>  struct dma_pl330_desc {
+> @@ -696,6 +699,30 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>  		goto probe_err1;
+>  	}
+>  
+> +	pdmac->clk = clk_get(&adev->dev, "dma");
+> +	if (IS_ERR(pdmac->clk)) {
+> +		dev_err(&adev->dev, "Cannot get operation clock.\n");
+> +		ret = -EINVAL;
+> +		goto probe_err1;
+> +	}
+> +
+> +	amba_set_drvdata(adev, pdmac);
+> +
+> +#ifdef CONFIG_PM_RUNTIME
+> +	/* to use the runtime PM helper functions */
+> +	pm_runtime_enable(&adev->dev);
+> +
+> +	/* enable the power domain */
+> +	if (pm_runtime_get_sync(&adev->dev)) {
+> +		dev_err(&adev->dev, "failed to get runtime pm\n");
+> +		ret = -ENODEV;
+> +		goto probe_err1;
+> +	}
+> +#else
+> +	/* enable dma clk */
+> +	clk_enable(pdmac->clk);
+> +#endif
+> +
+>  	irq = adev->irq[0];
+>  	ret = request_irq(irq, pl330_irq_handler, 0,
+>  			dev_name(&adev->dev), pi);
+> @@ -763,8 +790,6 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>  		goto probe_err4;
+>  	}
+>  
+> -	amba_set_drvdata(adev, pdmac);
+> -
+>  	dev_info(&adev->dev,
+>  		"Loaded driver for PL330 DMAC-%d\n", adev->periphid);
+>  	dev_info(&adev->dev,
+> @@ -825,6 +850,13 @@ static int __devexit pl330_remove(struct amba_device *adev)
+>  	res = &adev->res;
+>  	release_mem_region(res->start, resource_size(res));
+>  
+> +#ifdef CONFIG_PM_RUNTIME
+> +	pm_runtime_put(&adev->dev);
+> +	pm_runtime_disable(&adev->dev);
+> +#else
+> +	clk_disable(pdmac->clk);
+> +#endif
+> +
+>  	kfree(pdmac);
+>  
+>  	return 0;
+> @@ -838,10 +870,49 @@ static struct amba_id pl330_ids[] = {
+>  	{ 0, 0 },
+>  };
+>  
+> +#ifdef CONFIG_PM_RUNTIME
+> +static int pl330_runtime_suspend(struct device *dev)
+> +{
+> +	struct dma_pl330_dmac *pdmac = dev_get_drvdata(dev);
+> +
+> +	if (!pdmac) {
+> +		dev_err(dev, "failed to get dmac\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	clk_disable(pdmac->clk);
+> +
+> +	return 0;
+> +}
+> +
+> +static int pl330_runtime_resume(struct device *dev)
+> +{
+> +	struct dma_pl330_dmac *pdmac = dev_get_drvdata(dev);
+> +
+> +	if (!pdmac) {
+> +		dev_err(dev, "failed to get dmac\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	clk_enable(pdmac->clk);
+> +
+> +	return 0;
+> +}
+> +#else
+> +#define pl330_runtime_suspend	NULL
+> +#define pl330_runtime_resume	NULL
+> +#endif /* CONFIG_PM_RUNTIME */
+> +
+> +static const struct dev_pm_ops pl330_pm_ops = {
+> +	.runtime_suspend = pl330_runtime_suspend,
+> +	.runtime_resume = pl330_runtime_resume,
+> +};
+> +
+>  static struct amba_driver pl330_driver = {
+>  	.drv = {
+>  		.owner = THIS_MODULE,
+>  		.name = "dma-pl330",
+> +		.pm = &pl330_pm_ops,
+>  	},
+>  	.id_table = pl330_ids,
+>  	.probe = pl330_probe,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos4/Kconfig               |    3 +++
- arch/arm/mach-exynos4/mach-universal_c210.c |    4 +++-
- 2 files changed, 6 insertions(+), 1 deletions(-)
+I have a question for runtime PM of PL330 DMAC
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index 9d62e13..2aad73f 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -173,6 +173,9 @@ config MACH_ARMLEX4210
- config MACH_UNIVERSAL_C210
- 	bool "Mobile UNIVERSAL_C210 Board"
- 	select CPU_EXYNOS4210
-+	select S5P_HRT
-+	select CLKSRC_MMIO
-+	select HAVE_SCHED_CLOCK
- 	select S5P_GPIO_INT
- 	select S5P_DEV_FIMC0
- 	select S5P_DEV_FIMC1
-diff --git a/arch/arm/mach-exynos4/mach-universal_c210.c b/arch/arm/mach-exynos4/mach-universal_c210.c
-index 0e280d1..ca9e7b7 100644
---- a/arch/arm/mach-exynos4/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos4/mach-universal_c210.c
-@@ -34,6 +34,7 @@
- #include <plat/mfc.h>
- #include <plat/sdhci.h>
- #include <plat/pd.h>
-+#include <plat/s5p-time.h>
- 
- #include <mach/map.h>
- 
-@@ -730,6 +731,7 @@ static void __init universal_map_io(void)
- 	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
- 	s3c24xx_init_clocks(24000000);
- 	s3c24xx_init_uarts(universal_uartcfgs, ARRAY_SIZE(universal_uartcfgs));
-+	s5p_set_timer_source(S5P_PWM2, S5P_PWM4);
- }
- 
- static void __init universal_reserve(void)
-@@ -766,6 +768,6 @@ MACHINE_START(UNIVERSAL_C210, "UNIVERSAL_C210")
- 	.init_irq	= exynos4_init_irq,
- 	.map_io		= universal_map_io,
- 	.init_machine	= universal_machine_init,
--	.timer		= &exynos4_timer,
-+	.timer		= &s5p_timer,
- 	.reserve        = &universal_reserve,
- MACHINE_END
--- 
-1.7.1.569.g6f426
+This patch support runtime PM for PL330 DMAC, but the clock of "dma" is always on.
+If the clock of "dma" is always on, additional power(10mA) is consumed. I tested it.
+
+I think that the PL330 DMAC only turn on the clock of "dma" when using DMA.
+
+
+Thanks,
+Chanwoo Choi
