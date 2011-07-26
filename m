@@ -1,42 +1,148 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH V4 14/14] ARM: SAMSUNG: Remove Samsung specific enum type
- for dma direction
-Date: Mon, 25 Jul 2011 15:15:32 -0600
-Message-ID: <20110725211532.GF26735@ponder.secretlab.ca>
-References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com>
- <1311557312-26107-15-git-send-email-boojin.kim@samsung.com>
- <CABb+yY3dwshghgXPuMyLzm=ArYdELBOqVf4AcxN77MV1jV8Ang@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [RFC][PATCH] spi: s3c64xx: Use clkdev for bus clock lookup
+Date: Tue, 26 Jul 2011 07:00:12 -0400
+Message-ID: <1311678012-21473-1-git-send-email-padma.v@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:33774 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751568Ab1GYVPg (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:43354 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750731Ab1GZFIm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Jul 2011 17:15:36 -0400
-Received: by gyh3 with SMTP id 3so2504031gyh.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Jul 2011 14:15:36 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CABb+yY3dwshghgXPuMyLzm=ArYdELBOqVf4AcxN77MV1jV8Ang@mail.gmail.com>
+	Tue, 26 Jul 2011 01:08:42 -0400
+Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LOX00JUJCY6QMI0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 26 Jul 2011 14:08:40 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.106])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LOX006V9CY3ME@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 26 Jul 2011 14:08:40 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Boojin Kim <boojin.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: padma.v@samsung.com, spi-devel-general@lists.sourceforge.net, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca
 
-On Mon, Jul 25, 2011 at 05:38:37PM +0530, Jassi Brar wrote:
-> On Mon, Jul 25, 2011 at 6:58 AM, Boojin Kim <boojin.kim@samsung.com> wrote:
-> > This patch removes the samsung specific enum type 's3c2410_dmasrc'
-> > and uses 'dma_data_direction' instead.
-> >
-> > Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> 
-> Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
-> 
-> If this patch was first in the patchset, probably it could have been
-> already merged.
+Create a clkdev alias for spi bus clock and modify the spi
+driver to lookup the clock using the alias name instead of
+passing clock name from platform data.
 
-Indeed.  If you move this to the front when you post the next version
-then it can be merged right away.
+Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+---
+This patch is tested for S5PV210 platform and similar
+changes can be adopted for rest of the Samsung's s3c
+and s5p platforms, if this approach is accepted.
 
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
+ arch/arm/mach-s5pv210/dev-spi.c                  |   16 ++++++++++++++--
+ arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |    2 --
+ drivers/spi/spi_s3c64xx.c                        |   13 +++----------
+ 3 files changed, 17 insertions(+), 14 deletions(-)
+
+diff --git a/arch/arm/mach-s5pv210/dev-spi.c b/arch/arm/mach-s5pv210/dev-spi.c
+index eaf9a7b..44480d1 100644
+--- a/arch/arm/mach-s5pv210/dev-spi.c
++++ b/arch/arm/mach-s5pv210/dev-spi.c
+@@ -11,6 +11,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/gpio.h>
++#include <linux/clk.h>
+ 
+ #include <mach/dma.h>
+ #include <mach/map.h>
+@@ -148,6 +149,9 @@ struct platform_device s5pv210_device_spi1 = {
+ void __init s5pv210_spi_set_info(int cntrlr, int src_clk_nr, int num_cs)
+ {
+ 	struct s3c64xx_spi_info *pd;
++	struct device *dev;
++	char devname[16];
++	int ret;
+ 
+ 	/* Reject invalid configuration */
+ 	if (!num_cs || src_clk_nr < 0
+@@ -159,17 +163,25 @@ void __init s5pv210_spi_set_info(int cntrlr, int src_clk_nr, int num_cs)
+ 	switch (cntrlr) {
+ 	case 0:
+ 		pd = &s5pv210_spi0_pdata;
++		dev = (src_clk_nr) ? &s5pv210_device_spi0.dev : NULL;
+ 		break;
+ 	case 1:
+ 		pd = &s5pv210_spi1_pdata;
++		dev = (src_clk_nr) ? &s5pv210_device_spi1.dev : NULL;
+ 		break;
+ 	default:
+ 		printk(KERN_ERR "%s: Invalid SPI controller(%d)\n",
+ 							__func__, cntrlr);
+ 		return;
+ 	}
+-
++	sprintf(devname, "s3c64xx-spi.%d", cntrlr);
++	ret = clk_add_alias("clk_spi_bus", devname,
++				spi_src_clks[src_clk_nr], dev);
++	if (0 != ret) {
++		printk(KERN_ERR "failed to create alias for SPI%d clock",
++			cntrlr);
++		return;
++	}
+ 	pd->num_cs = num_cs;
+ 	pd->src_clk_nr = src_clk_nr;
+-	pd->src_clk_name = spi_src_clks[src_clk_nr];
+ }
+diff --git a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
+index 4c16fa3..c3d82a5 100644
+--- a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
++++ b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
+@@ -31,7 +31,6 @@ struct s3c64xx_spi_csinfo {
+ /**
+  * struct s3c64xx_spi_info - SPI Controller defining structure
+  * @src_clk_nr: Clock source index for the CLK_CFG[SPI_CLKSEL] field.
+- * @src_clk_name: Platform name of the corresponding clock.
+  * @clk_from_cmu: If the SPI clock/prescalar control block is present
+  *     by the platform's clock-management-unit and not in SPI controller.
+  * @num_cs: Number of CS this controller emulates.
+@@ -43,7 +42,6 @@ struct s3c64xx_spi_csinfo {
+  */
+ struct s3c64xx_spi_info {
+ 	int src_clk_nr;
+-	char *src_clk_name;
+ 	bool clk_from_cmu;
+ 
+ 	int num_cs;
+diff --git a/drivers/spi/spi_s3c64xx.c b/drivers/spi/spi_s3c64xx.c
+index 8945e20..e5431bd 100644
+--- a/drivers/spi/spi_s3c64xx.c
++++ b/drivers/spi/spi_s3c64xx.c
+@@ -978,11 +978,6 @@ static int __init s3c64xx_spi_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	sci = pdev->dev.platform_data;
+-	if (!sci->src_clk_name) {
+-		dev_err(&pdev->dev,
+-			"Board init must call s3c64xx_spi_set_info()\n");
+-		return -EINVAL;
+-	}
+ 
+ 	/* Check for availability of necessary resource */
+ 
+@@ -1065,17 +1060,15 @@ static int __init s3c64xx_spi_probe(struct platform_device *pdev)
+ 		goto err4;
+ 	}
+ 
+-	sdd->src_clk = clk_get(&pdev->dev, sci->src_clk_name);
++	sdd->src_clk = clk_get(&pdev->dev, "clk_spi_bus");
+ 	if (IS_ERR(sdd->src_clk)) {
+-		dev_err(&pdev->dev,
+-			"Unable to acquire clock '%s'\n", sci->src_clk_name);
++		dev_err(&pdev->dev, "Unable to acquire clock 'clk_spi_bus'\n");
+ 		ret = PTR_ERR(sdd->src_clk);
+ 		goto err5;
+ 	}
+ 
+ 	if (clk_enable(sdd->src_clk)) {
+-		dev_err(&pdev->dev, "Couldn't enable clock '%s'\n",
+-							sci->src_clk_name);
++		dev_err(&pdev->dev, "Couldn't enable clock 'clk_spi_bus'\n");
+ 		ret = -EBUSY;
+ 		goto err6;
+ 	}
+-- 
+1.7.0.4
