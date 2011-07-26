@@ -1,142 +1,275 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] ARM: Exynos4: enable frame buffer on Nuri board
-Date: Tue, 26 Jul 2011 09:46:51 +0200
-Message-ID: <1311666411-24234-1-git-send-email-m.szyprowski@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] Improve slave/cyclic DMA engine documentation (was:
+	[PATCH V4 04/14] DMA: PL330: Add DMA_CYCLIC capability)
+Date: Tue, 26 Jul 2011 08:57:20 +0100
+Message-ID: <20110726075720.GL9653@n2100.arm.linux.org.uk>
+References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com> <1311557312-26107-5-git-send-email-boojin.kim@samsung.com> <20110725092749.GB9653@n2100.arm.linux.org.uk> <002001cc4ab6$0d7cd590$287680b0$%kim@samsung.com> <20110725103629.GF9653@n2100.arm.linux.org.uk> <1311590884.29703.2.camel@vkoul-mobl4> <20110725105754.GG9653@n2100.arm.linux.org.uk> <1311591717.29703.7.camel@vkoul-mobl4> <20110725113926.GH9653@n2100.arm.linux.org.uk> <1311595303.29703.31.camel@vkoul-mobl4>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:37275 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751246Ab1GZHqz (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:35295 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752603Ab1GZH5x (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jul 2011 03:46:55 -0400
-Received: from eu_spt1 (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LOX0073PKA7MC@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 26 Jul 2011 08:46:55 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LOX0002NKA52Y@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 26 Jul 2011 08:46:54 +0100 (BST)
+	Tue, 26 Jul 2011 03:57:53 -0400
+Content-Disposition: inline
+In-Reply-To: <1311595303.29703.31.camel@vkoul-mobl4>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Vinod Koul <vkoul@infradead.org>
+Cc: vinod.koul@intel.com, Boojin Kim <boojin.kim@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Dan Williams' <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 
-This patch adds platform definitions to enable s3c-fb driver.
-Framebuffer window with 1280x800x16bpp mode has been defined.
+Here's an updated patch.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+8<----------
+From: Russell King <rmk+kernel@arm.linux.org.uk>
+DMAEngine: Improve slave/cyclic documentation
+
+Improve the documentation for the slave and cyclic DMA engine support
+reformatting it for easier reading, adding further APIs, splitting it
+into five steps, and including references to the documentation in
+dmaengine.h.
+
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 ---
- arch/arm/mach-exynos4/Kconfig     |    2 ++
- arch/arm/mach-exynos4/mach-nuri.c |   34 ++++++++++++++++++++++++++++++++++
- 2 files changed, 36 insertions(+), 0 deletions(-)
+ Documentation/dmaengine.txt |  211 ++++++++++++++++++++++++++++++-------------
+ 1 files changed, 146 insertions(+), 65 deletions(-)
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index 5b01605..c7219c1 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -201,6 +201,7 @@ config MACH_NURI
- 	bool "Mobile NURI Board"
- 	select CPU_EXYNOS4210
- 	select S3C_DEV_WDT
-+	select S5P_DEV_FIMD0
- 	select S3C_DEV_HSMMC
- 	select S3C_DEV_HSMMC2
- 	select S3C_DEV_HSMMC3
-@@ -210,6 +211,7 @@ config MACH_NURI
- 	select S5P_DEV_MFC
- 	select S5P_DEV_USB_EHCI
- 	select EXYNOS4_DEV_PD
-+	select EXYNOS4_SETUP_FIMD0
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_I2C3
- 	select EXYNOS4_SETUP_I2C5
-diff --git a/arch/arm/mach-exynos4/mach-nuri.c b/arch/arm/mach-exynos4/mach-nuri.c
-index 43be71b..bbd13f4 100644
---- a/arch/arm/mach-exynos4/mach-nuri.c
-+++ b/arch/arm/mach-exynos4/mach-nuri.c
-@@ -32,10 +32,12 @@
- #include <asm/mach-types.h>
+diff --git a/Documentation/dmaengine.txt b/Documentation/dmaengine.txt
+index 5a0cb1e..8c2e888 100644
+--- a/Documentation/dmaengine.txt
++++ b/Documentation/dmaengine.txt
+@@ -10,87 +10,168 @@
+ Below is a guide to device driver writers on how to use the Slave-DMA API of the
+ DMA Engine. This is applicable only for slave DMA usage only.
  
- #include <plat/adc.h>
-+#include <plat/regs-fb-v4.h>
- #include <plat/regs-serial.h>
- #include <plat/exynos4.h>
- #include <plat/cpu.h>
- #include <plat/devs.h>
-+#include <plat/fb.h>
- #include <plat/sdhci.h>
- #include <plat/ehci.h>
- #include <plat/clock.h>
-@@ -199,6 +201,33 @@ static struct platform_device nuri_gpio_keys = {
- 	},
- };
+-The slave DMA usage consists of following steps
++The slave DMA usage consists of following steps:
+ 1. Allocate a DMA slave channel
+ 2. Set slave and controller specific parameters
+ 3. Get a descriptor for transaction
+ 4. Submit the transaction and wait for callback notification
++5. Issue pending requests
  
-+/* Frame Buffer */
-+static struct s3c_fb_pd_win nuri_fb_win0 = {
-+	.win_mode = {
-+		.left_margin	= 64,
-+		.right_margin	= 16,
-+		.upper_margin	= 64,
-+		.lower_margin	= 1,
-+		.hsync_len	= 48,
-+		.vsync_len	= 3,
-+		.xres		= 1280,
-+		.yres		= 800,
-+		.refresh	= 60,
-+	},
-+	.max_bpp	= 24,
-+	.default_bpp	= 16,
-+	.virtual_x	= 1280,
-+	.virtual_y	= 800,
-+};
+ 1. Allocate a DMA slave channel
+-Channel allocation is slightly different in the slave DMA context, client
+-drivers typically need a channel from a particular DMA controller only and even
+-in some cases a specific channel is desired. To request a channel
+-dma_request_channel() API is used.
+-
+-Interface:
+-struct dma_chan *dma_request_channel(dma_cap_mask_t mask,
+-		dma_filter_fn filter_fn,
+-		void *filter_param);
+-where dma_filter_fn is defined as:
+-typedef bool (*dma_filter_fn)(struct dma_chan *chan, void *filter_param);
+-
+-When the optional 'filter_fn' parameter is set to NULL dma_request_channel
+-simply returns the first channel that satisfies the capability mask.  Otherwise,
+-when the mask parameter is insufficient for specifying the necessary channel,
+-the filter_fn routine can be used to disposition the available channels in the
+-system. The filter_fn routine is called once for each free channel in the
+-system.  Upon seeing a suitable channel filter_fn returns DMA_ACK which flags
+-that channel to be the return value from dma_request_channel.  A channel
+-allocated via this interface is exclusive to the caller, until
+-dma_release_channel() is called.
 +
-+static struct s3c_fb_platdata nuri_fb_pdata __initdata = {
-+	.win[0]		= &nuri_fb_win0,
-+	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB |
-+			  VIDCON0_CLKSEL_LCD,
-+	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
-+	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
-+};
++   Channel allocation is slightly different in the slave DMA context,
++   client drivers typically need a channel from a particular DMA
++   controller only and even in some cases a specific channel is desired.
++   To request a channel dma_request_channel() API is used.
 +
- static void nuri_lcd_power_on(struct plat_lcd_data *pd, unsigned int power)
- {
- 	int gpio = EXYNOS4_GPE1(5);
-@@ -1092,6 +1121,7 @@ static struct platform_device *nuri_devices[] __initdata = {
- 	/* Samsung Platform Devices */
- 	&s3c_device_i2c5, /* PMIC should initialize first */
- 	&emmc_fixed_voltage,
-+	&s5p_device_fimd0,
- 	&s3c_device_hsmmc0,
- 	&s3c_device_hsmmc2,
- 	&s3c_device_hsmmc3,
-@@ -1106,6 +1136,7 @@ static struct platform_device *nuri_devices[] __initdata = {
- 	&s5p_device_mfc_l,
- 	&s5p_device_mfc_r,
- 	&exynos4_device_pd[PD_MFC],
-+	&exynos4_device_pd[PD_LCD0],
- 
- 	/* NURI Devices */
- 	&nuri_gpio_keys,
-@@ -1142,12 +1173,15 @@ static void __init nuri_machine_init(void)
- 	i2c9_devs[I2C9_MAX17042].irq = gpio_to_irq(EXYNOS4_GPX2(3));
- 	i2c_register_board_info(9, i2c9_devs, ARRAY_SIZE(i2c9_devs));
- 
-+	s5p_fimd0_set_platdata(&nuri_fb_pdata);
++   Interface:
++	struct dma_chan *dma_request_channel(dma_cap_mask_t mask,
++			dma_filter_fn filter_fn,
++			void *filter_param);
++   where dma_filter_fn is defined as:
++	typedef bool (*dma_filter_fn)(struct dma_chan *chan, void *filter_param);
 +
- 	nuri_ehci_init();
- 	clk_xusbxti.rate = 24000000;
++   The 'filter_fn' parameter is optional, but highly recommended for
++   slave and cyclic channels as they typically need to obtain a specific
++   DMA channel.
++
++   When the optional 'filter_fn' parameter is NULL, dma_request_channel()
++   simply returns the first channel that satisfies the capability mask.
++
++   Otherwise, the 'filter_fn' routine will be called once for each free
++   channel which has a capability in 'mask'.  'filter_fn' is expected to
++   return 'true' when the desired DMA channel is found.
++
++   A channel allocated via this interface is exclusive to the caller,
++   until dma_release_channel() is called.
  
- 	/* Last */
- 	platform_add_devices(nuri_devices, ARRAY_SIZE(nuri_devices));
- 	s5p_device_mfc.dev.parent = &exynos4_device_pd[PD_MFC].dev;
-+	s5p_device_fimd0.dev.parent = &exynos4_device_pd[PD_LCD0].dev;
- }
+ 2. Set slave and controller specific parameters
+-Next step is always to pass some specific information to the DMA driver. Most of
+-the generic information which a slave DMA can use is in struct dma_slave_config.
+-It allows the clients to specify DMA direction, DMA addresses, bus widths, DMA
+-burst lengths etc. If some DMA controllers have more parameters to be sent then
+-they should try to embed struct dma_slave_config in their controller specific
+-structure. That gives flexibility to client to pass more parameters, if
+-required.
+-
+-Interface:
+-int dmaengine_slave_config(struct dma_chan *chan,
+-					  struct dma_slave_config *config)
++
++   Next step is always to pass some specific information to the DMA
++   driver.  Most of the generic information which a slave DMA can use
++   is in struct dma_slave_config.  This allows the clients to specify
++   DMA direction, DMA addresses, bus widths, DMA burst lengths etc
++   for the peripheral.
++
++   If some DMA controllers have more parameters to be sent then they
++   should try to embed struct dma_slave_config in their controller
++   specific structure. That gives flexibility to client to pass more
++   parameters, if required.
++
++   Interface:
++	int dmaengine_slave_config(struct dma_chan *chan,
++				  struct dma_slave_config *config)
++
++   Please see the dma_slave_config structure definition in dmaengine.h
++   for a detailed explaination of the struct members.  Please note
++   that the 'direction' member will be going away as it duplicates the
++   direction given in the prepare call.
  
- MACHINE_START(NURI, "NURI")
--- 
-1.7.1.569.g6f426
+ 3. Get a descriptor for transaction
+-For slave usage the various modes of slave transfers supported by the
+-DMA-engine are:
+-slave_sg	- DMA a list of scatter gather buffers from/to a peripheral
+-dma_cyclic	- Perform a cyclic DMA operation from/to a peripheral till the
++
++   For slave usage the various modes of slave transfers supported by the
++   DMA-engine are:
++
++   slave_sg	- DMA a list of scatter gather buffers from/to a peripheral
++   dma_cyclic	- Perform a cyclic DMA operation from/to a peripheral till the
+ 		  operation is explicitly stopped.
+-The non NULL return of this transfer API represents a "descriptor" for the given
+-transaction.
+ 
+-Interface:
+-struct dma_async_tx_descriptor *(*chan->device->device_prep_dma_sg)(
++   A non-NULL return of this transfer API represents a "descriptor" for
++   the given transaction.
++
++   Interface:
++	struct dma_async_tx_descriptor *(*chan->device->device_prep_dma_sg)(
+ 		struct dma_chan *chan,
+ 		struct scatterlist *dst_sg, unsigned int dst_nents,
+ 		struct scatterlist *src_sg, unsigned int src_nents,
+ 		unsigned long flags);
+-struct dma_async_tx_descriptor *(*chan->device->device_prep_dma_cyclic)(
++
++	struct dma_async_tx_descriptor *(*chan->device->device_prep_dma_cyclic)(
+ 		struct dma_chan *chan, dma_addr_t buf_addr, size_t buf_len,
+ 		size_t period_len, enum dma_data_direction direction);
+ 
+-4. Submit the transaction and wait for callback notification
+-To schedule the transaction to be scheduled by dma device, the "descriptor"
+-returned in above (3) needs to be submitted.
+-To tell the dma driver that a transaction is ready to be serviced, the
+-descriptor->submit() callback needs to be invoked. This chains the descriptor to
+-the pending queue.
+-The transactions in the pending queue can be activated by calling the
+-issue_pending API. If channel is idle then the first transaction in queue is
+-started and subsequent ones queued up.
+-On completion of the DMA operation the next in queue is submitted and a tasklet
+-triggered. The tasklet would then call the client driver completion callback
+-routine for notification, if set.
+-Interface:
+-void dma_async_issue_pending(struct dma_chan *chan);
+-
+-==============================================================================
+-
+-Additional usage notes for dma driver writers
+-1/ Although DMA engine specifies that completion callback routines cannot submit
+-any new operations, but typically for slave DMA subsequent transaction may not
+-be available for submit prior to callback routine being called. This requirement
+-is not a requirement for DMA-slave devices. But they should take care to drop
+-the spin-lock they might be holding before calling the callback routine
++   Once a descriptor has been obtained, the callback information can be
++   added and must then be submitted.  Some DMA engine drivers may hold a
++   spinlock between a successful preparation and submission so it is
++   important that these two operations are closely paired.
++
++   Note:
++	Although the async_tx API specifies that completion callback
++	routines cannot submit any new operations, this is not the
++	case for slave/cyclic DMA.
++
++	For slave DMA, the subsequent transaction may not be available
++	for submission prior to callback function being invoked, so
++	slave DMA callbacks are permitted to prepare and submit a new
++	transaction.
++
++	For cyclic DMA, a callback function may wish to terminate the
++	DMA via dmaengine_terminate_all().
++
++	Therefore, it is important that DMA engine drivers drop any
++	locks before calling the callback function which may cause a
++	deadlock.
++
++	Note that callbacks will always be invoked from the DMA
++	engines tasklet, never from interrupt context.
++
++4. Submit the transaction
++
++   Once the descriptor has been prepared and the callback information
++   added, it must be placed on the DMA engine drivers pending queue.
++
++   Interface:
++	dma_cookie_t dmaengine_submit(struct dma_async_tx_descriptor *desc)
++
++   This returns a cookie can be used to check the progress of DMA engine
++   activity via other DMA engine calls not covered in this document.
++
++   dmaengine_submit() will not start the DMA operation, it merely adds
++   it to the pending queue.  For this, see step 5, dma_async_issue_pending.
++
++5. Issue pending DMA requests and wait for callback notification
++
++   The transactions in the pending queue can be activated by calling the
++   issue_pending API. If channel is idle then the first transaction in
++   queue is started and subsequent ones queued up.
++
++   On completion of each DMA operation, the next in queue is started and
++   a tasklet triggered. The tasklet will then call the client driver
++   completion callback routine for notification, if set.
++
++   Interface:
++	void dma_async_issue_pending(struct dma_chan *chan);
++
++Further APIs:
++
++1. int dmaengine_terminate_all(struct dma_chan *chan)
++
++   This causes all activity for the DMA channel to be stopped, and may
++   discard data in the DMA FIFO which hasn't been fully transferred.
++   No callback functions will be called for any incomplete transfers.
++
++2. int dmaengine_pause(struct dma_chan *chan)
++
++   This pauses activity on the DMA channel without data loss.
++
++3. int dmaengine_resume(struct dma_chan *chan)
++
++   Resume a previously paused DMA channel.  It is invalid to resume a
++   channel which is not currently paused.
++
++4. enum dma_status dma_async_is_tx_complete(struct dma_chan *chan,
++        dma_cookie_t cookie, dma_cookie_t *last, dma_cookie_t *used)
++
++   This can be used to check the status of the channel.  Please see
++   the documentation in include/linux/dmaengine.h for a more complete
++   description of this API.
++
++   This can be used in conjunction with dma_async_is_complete() and
++   the cookie returned from 'descriptor->submit()' to check for
++   completion of a specific DMA transaction.
++
++   Note:
++	Not all DMA engine drivers can return reliable information for
++	a running DMA channel.  It is recommended that DMA engine users
++	pause or stop (via dmaengine_terminate_all) the channel before
++	using this API.
