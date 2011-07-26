@@ -1,126 +1,47 @@
 From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH V4 06/14] ARM: SAMSUNG: Add common DMA operations
-Date: Tue, 26 Jul 2011 19:14:41 +0100
-Message-ID: <20110726181441.GE1655@n2100.arm.linux.org.uk>
-References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com> <1311557312-26107-7-git-send-email-boojin.kim@samsung.com> <CABb+yY0nWLpdVGqTJPO2YwkGWiDw5tRjC2xn7Le0bO0ZNFHC_g@mail.gmail.com> <20110726080233.GN9653@n2100.arm.linux.org.uk> <CABb+yY2rQXxHGJuvhtJGgrCsoFZgsACHWUEV0L-kpqaDaCFAQA@mail.gmail.com>
+Subject: Re: [PATCH] Improve slave/cyclic DMA engine documentation (was:
+	[PATCH V4 04/14] DMA: PL330: Add DMA_CYCLIC capability)
+Date: Tue, 26 Jul 2011 19:16:40 +0100
+Message-ID: <20110726181640.GF1655@n2100.arm.linux.org.uk>
+References: <1311590884.29703.2.camel@vkoul-mobl4> <20110725105754.GG9653@n2100.arm.linux.org.uk> <1311591717.29703.7.camel@vkoul-mobl4> <20110725113926.GH9653@n2100.arm.linux.org.uk> <1311595303.29703.31.camel@vkoul-mobl4> <20110726075720.GL9653@n2100.arm.linux.org.uk> <1311672933.24316.1.camel@vkoul-mobl4> <CABb+yY1P21hbMD2mG_cCvW3N5WqWzc2ZVt-HTOrC1J3dc5RbhA@mail.gmail.com> <20110726172027.GD1655@n2100.arm.linux.org.uk> <CABb+yY31N6ubWcjQnMqze5hH66eoSxPQCaRVqf7=jZ3L_h+P6Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:54300 "EHLO
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:54307 "EHLO
 	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751631Ab1GZSPD (ORCPT
+	with ESMTP id S1751306Ab1GZSQy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jul 2011 14:15:03 -0400
+	Tue, 26 Jul 2011 14:16:54 -0400
 Content-Disposition: inline
-In-Reply-To: <CABb+yY2rQXxHGJuvhtJGgrCsoFZgsACHWUEV0L-kpqaDaCFAQA@mail.gmail.com>
+In-Reply-To: <CABb+yY31N6ubWcjQnMqze5hH66eoSxPQCaRVqf7=jZ3L_h+P6Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Boojin Kim <boojin.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+Cc: Vinod Koul <vkoul@infradead.org>, vinod.koul@intel.com, linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 
-On Tue, Jul 26, 2011 at 11:13:35PM +0530, Jassi Brar wrote:
-> Before we start, let me be clear that I don't say it's all possible
-> today as such.
+On Tue, Jul 26, 2011 at 11:25:13PM +0530, Jassi Brar wrote:
+> On Tue, Jul 26, 2011 at 10:50 PM, Russell King - ARM Linux
+> <linux@arm.linux.org.uk> wrote:
+> > On Tue, Jul 26, 2011 at 08:07:44PM +0530, Jassi Brar wrote:
+> >> Dear Vinod,
+> >>
+> >> =A0Since it came from the RMK, most probably it'll be the best.
+> >>
+> >> But applying patches upon personal timeout seems very dangerous.
+> >
+> > Ehh what? =A0Is there any contention over this documentation patch?
+> I haven't yet read it... even after reading I would object only if I =
+found
+> your patch disturbing enough to disrupt my bowel movements. Which
+> I don't think would be the case.
+>=20
+> I just observed it is second time that Vinod applied a patch without =
+any
+> ack or prior alert.
 
-It _is_ possible today.
-
-1. Arrange for individual DMA engine drivers to provide a filter
-   function - eg, pl08x_filter_id() for pl08x channels.
-
-2. Have the filter function check chan->device->dev->driver == its
-   own struct driver as the very first thing, and reject on failure.
-
-3. Have its own matching algorithm using whatever data is appropriate
-   for the DMA engine driver.
-
-4. Platforms (or SoC code) provide the match function plus match data
-   via platform data to each driver.
-
-That is essentially (except for (2)) how we deal with differing DMA
-engine drivers with AMBA peripherals, and it seems to work remarkably
-well.
-
-> I hope we agree, clients (esp 'generic' ones of the future)
-> should not ask for channels from a particular dmac.
-> They should simply tell DMA API, what capabilities they expect
-> from the allocated channel - of whatever index on whichever dmac.
-> And the platform should have specified capabilities of a channel
-> while introducing it to the DMA API.   Yes, imho, DMA API should
-> only work with a pool of channels and not dmacs - it shouldn't
-> matter from which dmac a channel comes.
-
-You're quite clearly confused.  "DMA API" has not very much to do with
-the subject we're discussing.  The "DMA API" is the API for mapping and
-unmapping buffers for DMA.  It has not much to do with the DMA engine
-API.  So I'm not going to bother trying to decode what you said above
-until you start using the right terminology.  I'm a stickler for that,
-get used to it.
-
-No point talking about how round bananas are when you're actually
-discussing orange fruit.
-
-> So when a client asks for a channel, the dmaengine would return
-> the first free channel that has just as much the requested capability.
-
-No.  For slave DMA, peripheral drivers normally need a specific
-channel on the DMA controller.  Peripheral drivers normally do not
-know which channel they need, or even which DMA controller they
-require.  That information is specific to the platform and SoC.
-
-So, returning the "first free channel that matches the capability"
-is senseless - insane - for slave DMA.
-
-> That is, the generic filter function would look equivalent of :-
-> 
->       return is_free(chan) && (cap_requested == cap_of(chan) & cap_requested)
-> 
-> 
-> Now it all boils down to defining the set of _practically_ possible capabilities
-> and a method to exchange them between the API, Client and DMAC drivers.
-
-What are these capabilities?
-
-> The above is the overall approach.
-> 
-> The following is my idea of implementing it as of now, I am open to suggestions.
-> 
-> Assuming :-
-> ***********
-> There are no more than 256 types of DMA'able devices
->  (MMC, USB, SPI etc) --  [8bits]
-> 
-> A type of device never has more than 16 instances in a platform
->  (MMC-0, MMC-1, MMC-2 etc) --  [4bits]
-> 
-> Mem->Mem, Mem->Dev, Dev->Mem, Dev->Dev capability in [4bits]
-
-No.  You're being far too specific to your own DMA controller.  Many
-DMA controllers (eg, PL08x) have a number of physical channels, all of
-which can be programmed for M2M, M2P, P2M and P2P.  There is nothing
-in the design which restricts what a channel can do.
-
-So to put that as the basis for a generic match algorithm is absolutely
-senseless.
-
-> Max_Burst_Len for any channel is less than 64KB, in power of two [4bits]
-> Support programmable Max_Burst_Len(tunable in geometric steps of 2)  [1bit]
-> 
-> Max_RW_width/fifo_width is less than 128, in power of two -- [3bits]
-> Support programmable Max_RW_Width(tunable in geometric steps of 2)  [1bit]
-> 
-> Finally, No platform has more than 128 channels with identicial
-> capabilities [7bits]
-
-There is absolutely no way that this will work in reality - are you on
-a different planet?  As has already been described to you, MMCI can
-use one DMA channel, and programs it according to the DMA direction,
-and has in the past adjusted the burst size according to what's going
-on with the driver.
-
-With your model, it would have to claim N channels from the DMA
-engine for all possible different configurations.
-
-That's utterly unworkable and unrealistic.
-
-So no, I don't think your idea of 'capabilities' is any solution.  It
-just creates yet more problems - more than it solves.
+That's what happens - no one says "I'm going to apply this patch" befor=
+e
+they apply it.  They just apply it to their tree and move on.  Vinod,
+being the nominated maintainer for the slave DMA engine support has the
+authority to do that for that area of code.
