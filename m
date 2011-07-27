@@ -1,126 +1,85 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH V4 06/14] ARM: SAMSUNG: Add common DMA operations
-Date: Wed, 27 Jul 2011 07:03:36 +0530
-Message-ID: <CABb+yY3shX+myCgO++rUQrFuT81cdhhf18398Wa-S=88UK3rkg@mail.gmail.com>
-References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com>
-	<1311557312-26107-7-git-send-email-boojin.kim@samsung.com>
-	<CABb+yY0nWLpdVGqTJPO2YwkGWiDw5tRjC2xn7Le0bO0ZNFHC_g@mail.gmail.com>
-	<003801cc4b77$51e9f3e0$f5bddba0$%kim@samsung.com>
+From: Vinod Koul <vkoul@infradead.org>
+Subject: Re: [PATCH] Improve slave/cyclic DMA engine documentation (was:
+	[PATCH V4 04/14] DMA: PL330: Add DMA_CYCLIC capability)
+Date: Wed, 27 Jul 2011 08:08:20 +0530
+Message-ID: <1311734300.1536.35.camel@vkoul-udesk3>
+References: <002001cc4ab6$0d7cd590$287680b0$%kim@samsung.com>
+	<20110725103629.GF9653@n2100.arm.linux.org.uk>
+	<1311590884.29703.2.camel@vkoul-mobl4>
+	<20110725105754.GG9653@n2100.arm.linux.org.uk>
+	<1311591717.29703.7.camel@vkoul-mobl4>
+	<20110725113926.GH9653@n2100.arm.linux.org.uk>
+	<1311595303.29703.31.camel@vkoul-mobl4>
+	<20110726075720.GL9653@n2100.arm.linux.org.uk>
+	<1311672933.24316.1.camel@vkoul-mobl4>
+	<CABb+yY1P21hbMD2mG_cCvW3N5WqWzc2ZVt-HTOrC1J3dc5RbhA@mail.gmail.com>
+	<20110726172027.GD1655@n2100.arm.linux.org.uk>
+	<CABb+yY31N6ubWcjQnMqze5hH66eoSxPQCaRVqf7=jZ3L_h+P6Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ew0-f46.google.com ([209.85.215.46]:60287 "EHLO
-	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752014Ab1G0Bdh convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jul 2011 21:33:37 -0400
-Received: by ewy4 with SMTP id 4so936268ewy.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Jul 2011 18:33:36 -0700 (PDT)
-In-Reply-To: <003801cc4b77$51e9f3e0$f5bddba0$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CABb+yY31N6ubWcjQnMqze5hH66eoSxPQCaRVqf7=jZ3L_h+P6Q@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Boojin Kim <boojin.kim@samsung.com>, vinod.koul@intel.com, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Boojin Kim <boojin.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On Tue, Jul 26, 2011 at 3:05 PM, Boojin Kim <boojin.kim@samsung.com> wr=
-ote:
-> Jassi Brar Wrote:
->> Sent: Monday, July 25, 2011 8:52 PM
->> To: Boojin Kim
->> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
->> soc@vger.kernel.org; Vinod Koul; Dan Williams; Kukjin Kim; Grant
->> Likely; Mark Brown
->> Subject: Re: [PATCH V4 06/14] ARM: SAMSUNG: Add common DMA operation=
-s
->>
->> On Mon, Jul 25, 2011 at 6:58 AM, Boojin Kim <boojin.kim@samsung.com>
->> wrote:
->>
->> > +
->> > +static bool pl330_filter(struct dma_chan *chan, void *param)
->> > +{
->> > + =C2=A0 =C2=A0 =C2=A0 struct dma_pl330_peri *peri =3D (struct dma=
-_pl330_peri *)chan-
->> >private;
->> > + =C2=A0 =C2=A0 =C2=A0 unsigned dma_ch =3D (unsigned)param;
->> > +
->> > + =C2=A0 =C2=A0 =C2=A0 if (peri->peri_id !=3D dma_ch)
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return false;
->> > +
->> > + =C2=A0 =C2=A0 =C2=A0 return true;
->> > +}
->> This is what I meant... if we keep chan_id for paltform assigned IDs=
-,
->> these filter functions could simply become
->>
->> static bool pl330_filter(struct dma_chan *chan, void *param)
->> {
->> =C2=A0 =C2=A0 =C2=A0 =C2=A0 return chan->chan_id =3D=3D param
->> }
->>
->> And ideally in the long run, we could just drop the filter callback
->> and add expected channel ID to the request_channel call.
-> The chan_id is set by dmaengine. So, We don't use it to hold the user=
- specific
-> Id.
-Not for long.
-See  https://lkml.org/lkml/2011/7/26/245
+On Tue, 2011-07-26 at 23:25 +0530, Jassi Brar wrote:
+> On Tue, Jul 26, 2011 at 10:50 PM, Russell King - ARM Linux
+> <linux@arm.linux.org.uk> wrote:
+> > On Tue, Jul 26, 2011 at 08:07:44PM +0530, Jassi Brar wrote:
+> >> Dear Vinod,
+> >>
+> >>  Since it came from the RMK, most probably it'll be the best.
+> >>
+> >> But applying patches upon personal timeout seems very dangerous.
+> >
+> > Ehh what?  Is there any contention over this documentation patch?
+> I haven't yet read it... even after reading I would object only if I found
+> your patch disturbing enough to disrupt my bowel movements. Which
+> I don't think would be the case.
+Jassi,
+Since this was a doc patch, I applied it soon enough, doesn't sound
+dangerous to me !
+If you have any updates you would like, pls feel free to send a patch.
 
-
->> > +
->> > +static inline int s3c_dma_trigger(unsigned ch)
->> > +{
->> > + =C2=A0 =C2=A0 =C2=A0 return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_S=
-TART);
->> > +}
->> > +
->> > +static inline int s3c_dma_started(unsigned ch)
->> > +{
->> > + =C2=A0 =C2=A0 =C2=A0 return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_S=
-TARTED);
->> > +}
->> > +
->> > +static inline int s3c_dma_flush(unsigned ch)
->> > +{
->> > + =C2=A0 =C2=A0 =C2=A0 return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_F=
-LUSH);
->> > +}
->> > +
->> > +static inline int s3c_dma_stop(unsigned ch)
->> > +{
->> > + =C2=A0 =C2=A0 =C2=A0 return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_S=
-TOP);
->> > +}
->> > +
->> > +static struct samsung_dma_ops s3c_dma_ops =3D {
->> > + =C2=A0 =C2=A0 =C2=A0 .request =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s3c=
-_dma_request,
->> > + =C2=A0 =C2=A0 =C2=A0 .release =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s3c=
-_dma_release,
->> > + =C2=A0 =C2=A0 =C2=A0 .prepare =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s3c=
-_dma_prepare,
->> > + =C2=A0 =C2=A0 =C2=A0 .trigger =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s3c=
-_dma_trigger,
->> > + =C2=A0 =C2=A0 =C2=A0 .started =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s3c=
-_dma_started,
->> > + =C2=A0 =C2=A0 =C2=A0 .flush =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D=
- s3c_dma_flush,
->> > + =C2=A0 =C2=A0 =C2=A0 .stop =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D=
- s3c_dma_stop,
->>
->> These last 4 should be gnereallized into one callback with OP argume=
-nt.
-> I don't have any idea about it. Can you explain it in more detail?
-
-static int s3c_dma_control(unsigned ch, enum s3c2410_chan_op/*or simila=
-r*/ op)
- {
-        return s3c2410_dma_ctrl(ch, op);
- }
-
-static struct samsung_dma_ops s3c_dma_ops =3D {
-        .request        =3D s3c_dma_request,
-        .release        =3D s3c_dma_release,
-        .prepare        =3D s3c_dma_prepare,
-        .control        =3D s3c_dma_control,
+> 
+> I just observed it is second time that Vinod applied a patch without any
+> ack or prior alert.
+And you can't ignore the fact that you had almost _two_ weeks to ack the
+patch from Rob, but....
+You will get ample time to ack a patch, if you don't you can always
+point out and I will do the right thing, which in this case was to
+revert.
+> 
+> >
+> >> People not responding doesn't mean only either people agree completely
+> >> or they don't care. Some might be interested but too busy with current tasks
+> >> that they need time to check... please make some policy for such cases.
+> >>
+> >> It already happened with the patch from Rob, which you probably have to
+> >> revert.
+> >>
+> >> IMHO, if nobody replied, maybe you could first ack the patch and wait
+> >> for, say a week, before applying?
+> >> That way people will know they have to hurry if they care otherwise
+> >> the patch is going upstream as such.
+> >
+> > A week is far too long.  That's how patches get lost and missed.
+> >
+> He may decide to wait shorter, but imho a week after the first ack
+> isn't that long.
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
