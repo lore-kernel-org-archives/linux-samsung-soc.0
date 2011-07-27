@@ -1,62 +1,66 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] Improve slave/cyclic DMA engine documentation (was:
-	[PATCH V4 04/14] DMA: PL330: Add DMA_CYCLIC capability)
-Date: Wed, 27 Jul 2011 10:01:07 +0100
-Message-ID: <20110727090107.GC21584@n2100.arm.linux.org.uk>
-References: <20110725092749.GB9653@n2100.arm.linux.org.uk> <002001cc4ab6$0d7cd590$287680b0$%kim@samsung.com> <20110725103629.GF9653@n2100.arm.linux.org.uk> <1311590884.29703.2.camel@vkoul-mobl4> <20110725105754.GG9653@n2100.arm.linux.org.uk> <1311591717.29703.7.camel@vkoul-mobl4> <20110725113926.GH9653@n2100.arm.linux.org.uk> <1311595303.29703.31.camel@vkoul-mobl4> <20110726075720.GL9653@n2100.arm.linux.org.uk> <1311672933.24316.1.camel@vkoul-mobl4>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [RFC PATCH] DMA: PL330: Update PL330 DMAC to support runtime PM
+Date: Wed, 27 Jul 2011 18:43:46 +0900
+Message-ID: <4E2FDDD2.3070106@samsung.com>
+References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
+ <1311744697-10264-2-git-send-email-boojin.kim@samsung.com>
+ <4E2FACC3.2010109@samsung.com> <20110727085348.GB21584@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:50163 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752484Ab1G0JBV (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:59999 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752628Ab1G0JnR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Jul 2011 05:01:21 -0400
-Content-Disposition: inline
-In-Reply-To: <1311672933.24316.1.camel@vkoul-mobl4>
+	Wed, 27 Jul 2011 05:43:17 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LOZ00LEGKBWEJN0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Jul 2011 18:43:15 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LOZ00BFNKC3WF@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Jul 2011 18:43:15 +0900 (KST)
+In-reply-to: <20110727085348.GB21584@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vinod Koul <vkoul@infradead.org>
-Cc: vinod.koul@intel.com, linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Dan Williams' <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Boojin Kim <boojin.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Dan Williams <dan.j.williams@intel.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Tue, Jul 26, 2011 at 03:05:33PM +0530, Vinod Koul wrote:
-> On Tue, 2011-07-26 at 08:57 +0100, Russell King - ARM Linux wrote:
-> > Here's an updated patch.
-> > 
-> > 8<----------
-> > From: Russell King <rmk+kernel@arm.linux.org.uk>
-> > DMAEngine: Improve slave/cyclic documentation
-> > 
-> > Improve the documentation for the slave and cyclic DMA engine support
-> > reformatting it for easier reading, adding further APIs, splitting it
-> > into five steps, and including references to the documentation in
-> > dmaengine.h.
-> > 
-> > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> > ---
-> >  Documentation/dmaengine.txt |  211 ++++++++++++++++++++++++++++++-------------
-> >  1 files changed, 146 insertions(+), 65 deletions(-)
-> > 
-> > diff --git a/Documentation/dmaengine.txt b/Documentation/dmaengine.txt
-> > index 5a0cb1e..8c2e888 100644
-> > --- a/Documentation/dmaengine.txt
-> > +++ b/Documentation/dmaengine.txt
-> > @@ -10,87 +10,168 @@
-> >  Below is a guide to device driver writers on how to use the Slave-DMA API of the
-> >  DMA Engine. This is applicable only for slave DMA usage only.
-> >  
-> > -The slave DMA usage consists of following steps
-> > +The slave DMA usage consists of following steps:
-> >  1. Allocate a DMA slave channel
-> >  2. Set slave and controller specific parameters
-> >  3. Get a descriptor for transaction
-> >  4. Submit the transaction and wait for callback notification
-> > +5. Issue pending requests
-> Thanks Russell,
+Russell King - ARM Linux wrote:
+> On Wed, Jul 27, 2011 at 03:14:27PM +0900, Chanwoo Choi wrote:
+>> +#ifdef CONFIG_PM_RUNTIME
+>> +	struct dma_pl330_chan *pch;
+>> +	struct dma_pl330_dmac *pdmac;
+>> +#endif
+>>  
+>>  	dma_cap_zero(mask);
+>>  	dma_cap_set(info->cap, mask);
+>>  
+>>  	chan = dma_request_channel(mask, pl330_filter, (void *)dma_ch);
+>>  
+>> +#ifdef CONFIG_PM_RUNTIME
+>> +	pch = container_of(chan, struct dma_pl330_chan, chan);
+>> +	pdmac = pch->dmac;
+>> +
+>> +	pm_runtime_get_sync(pdmac->pif.dev);
+>> +#endif
 > 
-> Applied with change to 4 above. Moved "and wait for callback
-> notification" to 5.
+> This is not the right way to do this.  The pm runtime stuff should be
+> internal to the PL330 driver.  Take a moment to think about this:
+> 
+> You need to wake it up just before a transfer starts.  You need to
+> put it back to sleep just after the last transfer has finished.
+> That gives you a hint where the calls need to be.
+> 
+> That can only be done from within the PL330 driver.
+> 
 
-BTW, did you apply this one or the later one with the improved
-documentation for dma mapping and fixed interface for slave
-transfers etc. ?
+Thanks for your comment&hint.
+
+I will repost the patch which support runtime pm of PL330 in internal to the PL330 driver.
+
+Regards,
+Chanwoo Choi
