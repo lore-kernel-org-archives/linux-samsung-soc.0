@@ -1,88 +1,42 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V3 7/7] ARM: S5P6450: Enable LCD-LTE480 and Framebuffer support
-Date: Wed, 27 Jul 2011 13:31:18 -0400
-Message-ID: <1311787878-16193-8-git-send-email-ajaykumar.rs@samsung.com>
-References: <1311787878-16193-1-git-send-email-ajaykumar.rs@samsung.com>
-Content-Transfer-Encoding: 7BIT
+From: Sangwook Lee <sangwook.lee@linaro.org>
+Subject: [PATCH] ARM:EXYNOS4:Fix Samsung Power Domain
+Date: Wed, 27 Jul 2011 13:25:03 +0100
+Message-ID: <1311769503-4232-1-git-send-email-sangwook.lee@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:38569 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752435Ab1G0Lji (ORCPT
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:60916 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750937Ab1G0M1K (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Jul 2011 07:39:38 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOZ00LYMPPNEJQ0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 27 Jul 2011 20:39:37 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LOZ0092EPPJ2V@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 27 Jul 2011 20:39:37 +0900 (KST)
-In-reply-to: <1311787878-16193-1-git-send-email-ajaykumar.rs@samsung.com>
+	Wed, 27 Jul 2011 08:27:10 -0400
+Received: by wwe5 with SMTP id 5so1355307wwe.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Jul 2011 05:27:09 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jg1.han@samsung.com, m.szyprowski@samsung.com
+To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: Sangwook Lee <sangwook.lee@linaro.org>
 
-This patch enables s3c-fb support and platform-lcd support for SMDK6450.
+Func:samsung_pd_init should be postponed utill end of drivers
+registeration because this activates runtime_suspend in advance.
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+For example,
+If PD's runtime_suspend is called, it will power down LCD0_CONF0.
+Since this happens before s3cfb driver registers itself,
+it makes s3cfb_probe hang up with both Origen and SMDK
+
+Signed-off-by: Sangwook Lee <sangwook.lee@linaro.org>
 ---
- arch/arm/mach-s5p64x0/Kconfig         |    3 +++
- arch/arm/mach-s5p64x0/mach-smdk6450.c |    5 +++++
- 2 files changed, 8 insertions(+), 0 deletions(-)
+ arch/arm/plat-samsung/pd.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
-index 41a751f..43493f1 100644
---- a/arch/arm/mach-s5p64x0/Kconfig
-+++ b/arch/arm/mach-s5p64x0/Kconfig
-@@ -60,6 +60,7 @@ config MACH_SMDK6440
- config MACH_SMDK6450
- 	bool "SMDK6450"
- 	select CPU_S5P6450
-+	select S3C_DEV_FB
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_RTC
- 	select S3C_DEV_WDT
-@@ -68,7 +69,9 @@ config MACH_SMDK6450
- 	select SAMSUNG_DEV_BACKLIGHT
- 	select SAMSUNG_DEV_PWM
- 	select SAMSUNG_DEV_TS
-+	select S5P64X0_SETUP_FB
- 	select S5P64X0_SETUP_I2C1
-+	select SMDK64X0_COMMON_FB
- 	help
- 	  Machine support for the Samsung SMDK6450
+diff --git a/arch/arm/plat-samsung/pd.c b/arch/arm/plat-samsung/pd.c
+index efe1d56..5ffc737 100644
+--- a/arch/arm/plat-samsung/pd.c
++++ b/arch/arm/plat-samsung/pd.c
+@@ -92,4 +92,4 @@ static int __init samsung_pd_init(void)
  
-diff --git a/arch/arm/mach-s5p64x0/mach-smdk6450.c b/arch/arm/mach-s5p64x0/mach-smdk6450.c
-index 33f2adf..880421c 100644
---- a/arch/arm/mach-s5p64x0/mach-smdk6450.c
-+++ b/arch/arm/mach-s5p64x0/mach-smdk6450.c
-@@ -34,6 +34,7 @@
- #include <mach/regs-clock.h>
- #include <mach/i2c.h>
- #include <mach/regs-gpio.h>
-+#include <mach/smdk64x0-common-fb.h>
- 
- #include <plat/regs-serial.h>
- #include <plat/gpio-cfg.h>
-@@ -119,6 +120,8 @@ static struct platform_device *smdk6450_devices[] __initdata = {
- 	&s3c_device_wdt,
- 	&samsung_asoc_dma,
- 	&s5p6450_device_iis0,
-+	&s3c_device_fb,
-+	&smdk64x0_lcd_lte480wv,
- 	/* s5p6450_device_spi0 will be added */
- };
- 
-@@ -184,6 +187,8 @@ static void __init smdk6450_machine_init(void)
- 			ARRAY_SIZE(smdk6450_i2c_devs1));
- 
- 	samsung_bl_set(&smdk6450_bl_gpio_info, &smdk6450_bl_data);
-+	s3c_fb_set_platdata(&smdk64x0_lcd_pdata);
-+	s5p64x0_fb_init(S5P64X0_SPCON0_LCD_SEL_RGB);
- 
- 	platform_add_devices(smdk6450_devices, ARRAY_SIZE(smdk6450_devices));
+ 	return ret;
  }
+-arch_initcall(samsung_pd_init);
++late_initcall_sync(samsung_pd_init);
 -- 
-1.7.0.4
+1.7.4.1
