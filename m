@@ -1,467 +1,384 @@
 From: Boojin Kim <boojin.kim@samsung.com>
-Subject: [PATCH 08/15] ARM: S5PV210: Use generic DMA PL330 driver
-Date: Wed, 27 Jul 2011 14:31:30 +0900
-Message-ID: <1311744697-10264-9-git-send-email-boojin.kim@samsung.com>
+Subject: [PATCH 14/15] ASoC: Samsung: Update DMA interface
+Date: Wed, 27 Jul 2011 14:31:36 +0900
+Message-ID: <1311744697-10264-15-git-send-email-boojin.kim@samsung.com>
 References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:57807 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:57818 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752314Ab1G0Fjk (ORCPT
+	with ESMTP id S1752863Ab1G0Fjl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Jul 2011 01:39:40 -0400
+	Wed, 27 Jul 2011 01:39:41 -0400
 In-Reply-To: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>, Boojin Kim <boojin.kim@samsung.com>
+Cc: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>, Boojin Kim <boojin.kim@samsung.com>, Liam Girdwood <lrg@ti.com>
 
-This patch makes Samsung S5PV210 to use DMA PL330 driver
-on DMADEVICE. The S5PV210 uses DMA generic APIs instead of
-SAMSUNG specific S3C-PL330 APIs.
+This patch adds to support the DMA PL330 driver that uses
+DMA generic API. Samsung sound driver uses DMA generic API
+if architecture supports it. Otherwise, use samsung specific
+S3C-PL330 API driver to transfer PCM data.
 
 Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Liam Girdwood <lrg@ti.com>
+Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv210/Kconfig            |    2 +-
- arch/arm/mach-s5pv210/clock.c            |   16 +-
- arch/arm/mach-s5pv210/dma.c              |  316 +++++++++++++++++++-----------
- arch/arm/mach-s5pv210/include/mach/dma.h |    2 +-
- 4 files changed, 214 insertions(+), 122 deletions(-)
+ arch/arm/mach-s3c2410/include/mach/dma.h       |   10 +-
+ arch/arm/mach-s3c64xx/include/mach/dma.h       |    2 +-
+ arch/arm/plat-samsung/include/plat/dma-pl330.h |    2 +-
+ sound/soc/samsung/ac97.c                       |   10 ++-
+ sound/soc/samsung/dma.c                        |  144 ++++++++++--------------
+ sound/soc/samsung/dma.h                        |    4 +-
+ 6 files changed, 78 insertions(+), 94 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index 37b5a97..855d4b4 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -11,7 +11,7 @@ if ARCH_S5PV210
- 
- config CPU_S5PV210
- 	bool
--	select S3C_PL330_DMA
-+	select SAMSUNG_DMA_PL330
- 	select S5P_EXT_INT
- 	select S5P_HRT
- 	select S5PV210_PM if PM
-diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-index 2d59949..dbe7285 100644
---- a/arch/arm/mach-s5pv210/clock.c
-+++ b/arch/arm/mach-s5pv210/clock.c
-@@ -221,6 +221,11 @@ static struct clk clk_pcmcdclk2 = {
- 	.id		= -1,
+diff --git a/arch/arm/mach-s3c2410/include/mach/dma.h b/arch/arm/mach-s3c2410/include/mach/dma.h
+index e61a91f..4e485ba 100644
+--- a/arch/arm/mach-s3c2410/include/mach/dma.h
++++ b/arch/arm/mach-s3c2410/include/mach/dma.h
+@@ -50,6 +50,11 @@ enum dma_ch {
+ 	DMACH_MAX,		/* the end entry */
  };
  
-+static struct clk dummy_apb_pclk = {
-+	.name		= "apb_pclk",
-+	.id		= -1,
-+};
++static inline bool samsung_dma_has_circular(void)
++{
++	return false;
++}
 +
- static struct clk *clkset_vpllsrc_list[] = {
- 	[0] = &clk_fin_vpll,
- 	[1] = &clk_sclk_hdmi27m,
-@@ -311,18 +316,12 @@ static struct clk_ops clk_fout_apll_ops = {
- 
- static struct clk init_clocks_off[] = {
- 	{
--		.name		= "pdma",
--		.id		= 0,
-+		.name		= "dma",
-+		.id		= -1,
- 		.parent		= &clk_hclk_psys.clk,
- 		.enable		= s5pv210_clk_ip0_ctrl,
- 		.ctrlbit	= (1 << 3),
- 	}, {
--		.name		= "pdma",
--		.id		= 1,
--		.parent		= &clk_hclk_psys.clk,
--		.enable		= s5pv210_clk_ip0_ctrl,
--		.ctrlbit	= (1 << 4),
--	}, {
- 		.name		= "rot",
- 		.id		= -1,
- 		.parent		= &clk_hclk_dsys.clk,
-@@ -1239,5 +1238,6 @@ void __init s5pv210_register_clocks(void)
- 	s3c_register_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
- 	s3c_disable_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
- 
-+	s3c24xx_register_clock(&dummy_apb_pclk);
- 	s3c_pwmclk_init();
- }
-diff --git a/arch/arm/mach-s5pv210/dma.c b/arch/arm/mach-s5pv210/dma.c
-index 497d343..f79d0b0 100644
---- a/arch/arm/mach-s5pv210/dma.c
-+++ b/arch/arm/mach-s5pv210/dma.c
-@@ -1,4 +1,8 @@
--/*
-+/* linux/arch/arm/mach-s5pv210/dma.c
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-  * Copyright (C) 2010 Samsung Electronics Co. Ltd.
-  *	Jaswinder Singh <jassi.brar@samsung.com>
-  *
-@@ -17,151 +21,239 @@
-  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-  */
- 
--#include <linux/platform_device.h>
- #include <linux/dma-mapping.h>
-+#include <linux/amba/bus.h>
-+#include <linux/amba/pl330.h>
- 
-+#include <asm/irq.h>
- #include <plat/devs.h>
- #include <plat/irqs.h>
- 
- #include <mach/map.h>
- #include <mach/irqs.h>
--
--#include <plat/s3c-pl330-pdata.h>
-+#include <mach/dma.h>
- 
- static u64 dma_dmamask = DMA_BIT_MASK(32);
- 
--static struct resource s5pv210_pdma0_resource[] = {
--	[0] = {
--		.start  = S5PV210_PA_PDMA0,
--		.end    = S5PV210_PA_PDMA0 + SZ_4K,
--		.flags = IORESOURCE_MEM,
--	},
--	[1] = {
--		.start	= IRQ_PDMA0,
--		.end	= IRQ_PDMA0,
--		.flags	= IORESOURCE_IRQ,
-+struct dma_pl330_peri pdma0_peri[28] = {
-+	{
-+		.peri_id = (u8)DMACH_UART0_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_UART0_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_UART1_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_UART1_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_UART2_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_UART2_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_UART3_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_UART3_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S0_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S0_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S0S_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S1_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S1_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_SPI0_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_SPI0_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_SPI1_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_SPI1_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_AC97_MICIN,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_AC97_PCMIN,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_AC97_PCMOUT,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_PWM,
-+	}, {
-+		.peri_id = (u8)DMACH_SPDIF,
-+		.rqtype = MEMTODEV,
- 	},
- };
- 
--static struct s3c_pl330_platdata s5pv210_pdma0_pdata = {
--	.peri = {
--		[0] = DMACH_UART0_RX,
--		[1] = DMACH_UART0_TX,
--		[2] = DMACH_UART1_RX,
--		[3] = DMACH_UART1_TX,
--		[4] = DMACH_UART2_RX,
--		[5] = DMACH_UART2_TX,
--		[6] = DMACH_UART3_RX,
--		[7] = DMACH_UART3_TX,
--		[8] = DMACH_MAX,
--		[9] = DMACH_I2S0_RX,
--		[10] = DMACH_I2S0_TX,
--		[11] = DMACH_I2S0S_TX,
--		[12] = DMACH_I2S1_RX,
--		[13] = DMACH_I2S1_TX,
--		[14] = DMACH_MAX,
--		[15] = DMACH_MAX,
--		[16] = DMACH_SPI0_RX,
--		[17] = DMACH_SPI0_TX,
--		[18] = DMACH_SPI1_RX,
--		[19] = DMACH_SPI1_TX,
--		[20] = DMACH_MAX,
--		[21] = DMACH_MAX,
--		[22] = DMACH_AC97_MICIN,
--		[23] = DMACH_AC97_PCMIN,
--		[24] = DMACH_AC97_PCMOUT,
--		[25] = DMACH_MAX,
--		[26] = DMACH_PWM,
--		[27] = DMACH_SPDIF,
--		[28] = DMACH_MAX,
--		[29] = DMACH_MAX,
--		[30] = DMACH_MAX,
--		[31] = DMACH_MAX,
--	},
-+struct dma_pl330_platdata s5pv210_pdma0_pdata = {
-+	.nr_valid_peri = ARRAY_SIZE(pdma0_peri),
-+	.peri = pdma0_peri,
- };
- 
--static struct platform_device s5pv210_device_pdma0 = {
--	.name		= "s3c-pl330",
--	.id		= 0,
--	.num_resources	= ARRAY_SIZE(s5pv210_pdma0_resource),
--	.resource	= s5pv210_pdma0_resource,
--	.dev		= {
-+struct amba_device s5pv210_device_pdma0 = {
-+	.dev = {
-+		.init_name = "dma-pl330.0",
- 		.dma_mask = &dma_dmamask,
- 		.coherent_dma_mask = DMA_BIT_MASK(32),
- 		.platform_data = &s5pv210_pdma0_pdata,
- 	},
--};
--
--static struct resource s5pv210_pdma1_resource[] = {
--	[0] = {
--		.start  = S5PV210_PA_PDMA1,
--		.end    = S5PV210_PA_PDMA1 + SZ_4K,
-+	.res = {
-+		.start = S5PV210_PA_PDMA0,
-+		.end = S5PV210_PA_PDMA0 + SZ_4K,
- 		.flags = IORESOURCE_MEM,
- 	},
--	[1] = {
--		.start	= IRQ_PDMA1,
--		.end	= IRQ_PDMA1,
--		.flags	= IORESOURCE_IRQ,
--	},
-+	.irq = {IRQ_PDMA0, NO_IRQ},
-+	.periphid = 0x00041330,
- };
- 
--static struct s3c_pl330_platdata s5pv210_pdma1_pdata = {
--	.peri = {
--		[0] = DMACH_UART0_RX,
--		[1] = DMACH_UART0_TX,
--		[2] = DMACH_UART1_RX,
--		[3] = DMACH_UART1_TX,
--		[4] = DMACH_UART2_RX,
--		[5] = DMACH_UART2_TX,
--		[6] = DMACH_UART3_RX,
--		[7] = DMACH_UART3_TX,
--		[8] = DMACH_MAX,
--		[9] = DMACH_I2S0_RX,
--		[10] = DMACH_I2S0_TX,
--		[11] = DMACH_I2S0S_TX,
--		[12] = DMACH_I2S1_RX,
--		[13] = DMACH_I2S1_TX,
--		[14] = DMACH_I2S2_RX,
--		[15] = DMACH_I2S2_TX,
--		[16] = DMACH_SPI0_RX,
--		[17] = DMACH_SPI0_TX,
--		[18] = DMACH_SPI1_RX,
--		[19] = DMACH_SPI1_TX,
--		[20] = DMACH_MAX,
--		[21] = DMACH_MAX,
--		[22] = DMACH_PCM0_RX,
--		[23] = DMACH_PCM0_TX,
--		[24] = DMACH_PCM1_RX,
--		[25] = DMACH_PCM1_TX,
--		[26] = DMACH_MSM_REQ0,
--		[27] = DMACH_MSM_REQ1,
--		[28] = DMACH_MSM_REQ2,
--		[29] = DMACH_MSM_REQ3,
--		[30] = DMACH_PCM2_RX,
--		[31] = DMACH_PCM2_TX,
-+struct dma_pl330_peri pdma1_peri[32] = {
-+	{
-+		.peri_id = (u8)DMACH_UART0_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_UART0_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_UART1_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_UART1_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_UART2_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_UART2_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_UART3_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_UART3_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S0_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S0_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S0S_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S1_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S1_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S2_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_I2S2_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_SPI0_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_SPI0_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_SPI1_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_SPI1_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_MAX,
-+	}, {
-+		.peri_id = (u8)DMACH_PCM0_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_PCM0_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_PCM1_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_PCM1_TX,
-+		.rqtype = MEMTODEV,
-+	}, {
-+		.peri_id = (u8)DMACH_MSM_REQ0,
-+	}, {
-+		.peri_id = (u8)DMACH_MSM_REQ1,
-+	}, {
-+		.peri_id = (u8)DMACH_MSM_REQ2,
-+	}, {
-+		.peri_id = (u8)DMACH_MSM_REQ3,
-+	}, {
-+		.peri_id = (u8)DMACH_PCM2_RX,
-+		.rqtype = DEVTOMEM,
-+	}, {
-+		.peri_id = (u8)DMACH_PCM2_TX,
-+		.rqtype = MEMTODEV,
- 	},
- };
- 
--static struct platform_device s5pv210_device_pdma1 = {
--	.name		= "s3c-pl330",
--	.id		= 1,
--	.num_resources	= ARRAY_SIZE(s5pv210_pdma1_resource),
--	.resource	= s5pv210_pdma1_resource,
--	.dev		= {
-+struct dma_pl330_platdata s5pv210_pdma1_pdata = {
-+	.nr_valid_peri = ARRAY_SIZE(pdma1_peri),
-+	.peri = pdma1_peri,
-+};
-+
-+struct amba_device s5pv210_device_pdma1 = {
-+	.dev = {
-+		.init_name = "dma-pl330.1",
- 		.dma_mask = &dma_dmamask,
- 		.coherent_dma_mask = DMA_BIT_MASK(32),
- 		.platform_data = &s5pv210_pdma1_pdata,
- 	},
--};
--
--static struct platform_device *s5pv210_dmacs[] __initdata = {
--	&s5pv210_device_pdma0,
--	&s5pv210_device_pdma1,
-+	.res = {
-+		.start = S5PV210_PA_PDMA1,
-+		.end = S5PV210_PA_PDMA1 + SZ_4K,
-+		.flags = IORESOURCE_MEM,
-+	},
-+	.irq = {IRQ_PDMA1, NO_IRQ},
-+	.periphid = 0x00041330,
- };
- 
- static int __init s5pv210_dma_init(void)
+ static inline bool samsung_dma_is_dmadev(void)
  {
--	platform_add_devices(s5pv210_dmacs, ARRAY_SIZE(s5pv210_dmacs));
-+	amba_device_register(&s5pv210_device_pdma0, &iomem_resource);
+ 	return false;
+@@ -202,9 +207,4 @@ struct s3c2410_dma_chan {
+ 
+ typedef unsigned long dma_device_t;
+ 
+-static inline bool s3c_dma_has_circular(void)
+-{
+-	return false;
+-}
+-
+ #endif /* __ASM_ARCH_DMA_H */
+diff --git a/arch/arm/mach-s3c64xx/include/mach/dma.h b/arch/arm/mach-s3c64xx/include/mach/dma.h
+index 49c3a53..74fdf25 100644
+--- a/arch/arm/mach-s3c64xx/include/mach/dma.h
++++ b/arch/arm/mach-s3c64xx/include/mach/dma.h
+@@ -58,7 +58,7 @@ enum dma_ch {
+ 	DMACH_MAX		/* the end */
+ };
+ 
+-static __inline__ bool s3c_dma_has_circular(void)
++static inline bool samsung_dma_has_circular(void)
+ {
+ 	return true;
+ }
+diff --git a/arch/arm/plat-samsung/include/plat/dma-pl330.h b/arch/arm/plat-samsung/include/plat/dma-pl330.h
+index 9a1dadb..2e55e59 100644
+--- a/arch/arm/plat-samsung/include/plat/dma-pl330.h
++++ b/arch/arm/plat-samsung/include/plat/dma-pl330.h
+@@ -89,7 +89,7 @@ struct s3c2410_dma_client {
+ 	char	*name;
+ };
+ 
+-static inline bool s3c_dma_has_circular(void)
++static inline bool samsung_dma_has_circular(void)
+ {
+ 	return true;
+ }
+diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
+index f97110e..b4f9b00 100644
+--- a/sound/soc/samsung/ac97.c
++++ b/sound/soc/samsung/ac97.c
+@@ -271,7 +271,10 @@ static int s3c_ac97_trigger(struct snd_pcm_substream *substream, int cmd,
+ 
+ 	writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GLBCTRL);
+ 
+-	s3c2410_dma_ctrl(dma_data->channel, S3C2410_DMAOP_STARTED);
++	if (!dma_data->ops)
++		dma_data->ops = samsung_dma_get_ops();
++
++	dma_data->ops->started(dma_data->channel);
  
  	return 0;
  }
-diff --git a/arch/arm/mach-s5pv210/include/mach/dma.h b/arch/arm/mach-s5pv210/include/mach/dma.h
-index 1beae2c..201842a 100644
---- a/arch/arm/mach-s5pv210/include/mach/dma.h
-+++ b/arch/arm/mach-s5pv210/include/mach/dma.h
-@@ -20,7 +20,7 @@
- #ifndef __MACH_DMA_H
- #define __MACH_DMA_H
+@@ -317,7 +320,10 @@ static int s3c_ac97_mic_trigger(struct snd_pcm_substream *substream,
  
--/* This platform uses the common S3C DMA API driver for PL330 */
-+/* This platform uses the common DMA API driver for PL330 */
- #include <plat/dma-pl330.h>
+ 	writel(ac_glbctrl, s3c_ac97.regs + S3C_AC97_GLBCTRL);
  
- #endif /* __MACH_DMA_H */
+-	s3c2410_dma_ctrl(dma_data->channel, S3C2410_DMAOP_STARTED);
++	if (!dma_data->ops)
++		dma_data->ops = samsung_dma_get_ops();
++
++	dma_data->ops->started(dma_data->channel);
+ 
+ 	return 0;
+ }
+diff --git a/sound/soc/samsung/dma.c b/sound/soc/samsung/dma.c
+index 5cb3b88..ceca331 100644
+--- a/sound/soc/samsung/dma.c
++++ b/sound/soc/samsung/dma.c
+@@ -62,77 +62,79 @@ struct runtime_data {
+ 	struct s3c_dma_params *params;
+ };
+ 
++static void audio_buffdone(void *data);
++
+ /* dma_enqueue
+  *
+  * place a dma buffer onto the queue for the dma system
+  * to handle.
+-*/
++ */
+ static void dma_enqueue(struct snd_pcm_substream *substream)
+ {
+ 	struct runtime_data *prtd = substream->runtime->private_data;
+ 	dma_addr_t pos = prtd->dma_pos;
+ 	unsigned int limit;
+-	int ret;
++	struct samsung_dma_prep_info dma_info;
+ 
+ 	pr_debug("Entered %s\n", __func__);
+ 
+-	if (s3c_dma_has_circular())
+-		limit = (prtd->dma_end - prtd->dma_start) / prtd->dma_period;
+-	else
+-		limit = prtd->dma_limit;
++	limit = (prtd->dma_end - prtd->dma_start) / prtd->dma_period;
+ 
+ 	pr_debug("%s: loaded %d, limit %d\n",
+ 				__func__, prtd->dma_loaded, limit);
+ 
+-	while (prtd->dma_loaded < limit) {
+-		unsigned long len = prtd->dma_period;
++	dma_info.cap = (samsung_dma_has_circular() ? DMA_CYCLIC : DMA_SLAVE);
++	dma_info.direction =
++		(substream->stream == SNDRV_PCM_STREAM_PLAYBACK
++		? DMA_TO_DEVICE : DMA_FROM_DEVICE);
++	dma_info.fp = audio_buffdone;
++	dma_info.fp_param = substream;
++	dma_info.period = prtd->dma_period;
++	dma_info.len = prtd->dma_period*limit;
+ 
++	while (prtd->dma_loaded < limit) {
+ 		pr_debug("dma_loaded: %d\n", prtd->dma_loaded);
+ 
+-		if ((pos + len) > prtd->dma_end) {
+-			len  = prtd->dma_end - pos;
+-			pr_debug("%s: corrected dma len %ld\n", __func__, len);
++		if ((pos + dma_info.period) > prtd->dma_end) {
++			dma_info.period  = prtd->dma_end - pos;
++			pr_debug("%s: corrected dma len %ld\n",
++					__func__, dma_info.period);
+ 		}
+ 
+-		ret = s3c2410_dma_enqueue(prtd->params->channel,
+-			substream, pos, len);
++		dma_info.buf = pos;
++		prtd->params->ops->prepare(prtd->params->ch, &dma_info);
+ 
+-		if (ret == 0) {
+-			prtd->dma_loaded++;
+-			pos += prtd->dma_period;
+-			if (pos >= prtd->dma_end)
+-				pos = prtd->dma_start;
+-		} else
+-			break;
++		prtd->dma_loaded++;
++		pos += prtd->dma_period;
++		if (pos >= prtd->dma_end)
++			pos = prtd->dma_start;
+ 	}
+ 
+ 	prtd->dma_pos = pos;
+ }
+ 
+-static void audio_buffdone(struct s3c2410_dma_chan *channel,
+-				void *dev_id, int size,
+-				enum s3c2410_dma_buffresult result)
++static void audio_buffdone(void *data)
+ {
+-	struct snd_pcm_substream *substream = dev_id;
+-	struct runtime_data *prtd;
++	struct snd_pcm_substream *substream = data;
++	struct runtime_data *prtd = substream->runtime->private_data;
+ 
+ 	pr_debug("Entered %s\n", __func__);
+ 
+-	if (result == S3C2410_RES_ABORT || result == S3C2410_RES_ERR)
+-		return;
+-
+-	prtd = substream->runtime->private_data;
++	if (prtd->state & ST_RUNNING) {
++		prtd->dma_pos += prtd->dma_period;
++		if (prtd->dma_pos >= prtd->dma_end)
++			prtd->dma_pos = prtd->dma_start;
+ 
+-	if (substream)
+-		snd_pcm_period_elapsed(substream);
++		if (substream)
++			snd_pcm_period_elapsed(substream);
+ 
+-	spin_lock(&prtd->lock);
+-	if (prtd->state & ST_RUNNING && !s3c_dma_has_circular()) {
+-		prtd->dma_loaded--;
+-		dma_enqueue(substream);
++		spin_lock(&prtd->lock);
++		if (!samsung_dma_has_circular()) {
++			prtd->dma_loaded--;
++			dma_enqueue(substream);
++		}
++		spin_unlock(&prtd->lock);
+ 	}
+-
+-	spin_unlock(&prtd->lock);
+ }
+ 
+ static int dma_hw_params(struct snd_pcm_substream *substream,
+@@ -144,8 +146,7 @@ static int dma_hw_params(struct snd_pcm_substream *substream,
+ 	unsigned long totbytes = params_buffer_bytes(params);
+ 	struct s3c_dma_params *dma =
+ 		snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
+-	int ret = 0;
+-
++	struct samsung_dma_info dma_info;
+ 
+ 	pr_debug("Entered %s\n", __func__);
+ 
+@@ -163,23 +164,20 @@ static int dma_hw_params(struct snd_pcm_substream *substream,
+ 		pr_debug("params %p, client %p, channel %d\n", prtd->params,
+ 			prtd->params->client, prtd->params->channel);
+ 
+-		ret = s3c2410_dma_request(prtd->params->channel,
+-					  prtd->params->client, NULL);
+-
+-		if (ret < 0) {
+-			printk(KERN_ERR "failed to get dma channel\n");
+-			return ret;
+-		}
+-
+-		/* use the circular buffering if we have it available. */
+-		if (s3c_dma_has_circular())
+-			s3c2410_dma_setflags(prtd->params->channel,
+-					     S3C2410_DMAF_CIRCULAR);
++		prtd->params->ops = samsung_dma_get_ops();
++
++		dma_info.cap = (samsung_dma_has_circular() ?
++			DMA_CYCLIC : DMA_SLAVE);
++		dma_info.client = prtd->params->client;
++		dma_info.direction =
++			(substream->stream == SNDRV_PCM_STREAM_PLAYBACK
++			? DMA_TO_DEVICE : DMA_FROM_DEVICE);
++		dma_info.width = prtd->params->dma_size;
++		dma_info.fifo = prtd->params->dma_addr;
++		prtd->params->ch = prtd->params->ops->request(
++				prtd->params->channel, &dma_info);
+ 	}
+ 
+-	s3c2410_dma_set_buffdone_fn(prtd->params->channel,
+-				    audio_buffdone);
+-
+ 	snd_pcm_set_runtime_buffer(substream, &substream->dma_buffer);
+ 
+ 	runtime->dma_bytes = totbytes;
+@@ -206,7 +204,8 @@ static int dma_hw_free(struct snd_pcm_substream *substream)
+ 	snd_pcm_set_runtime_buffer(substream, NULL);
+ 
+ 	if (prtd->params) {
+-		s3c2410_dma_free(prtd->params->channel, prtd->params->client);
++		prtd->params->ops->release(prtd->params->ch,
++					prtd->params->client);
+ 		prtd->params = NULL;
+ 	}
+ 
+@@ -225,23 +224,9 @@ static int dma_prepare(struct snd_pcm_substream *substream)
+ 	if (!prtd->params)
+ 		return 0;
+ 
+-	/* channel needs configuring for mem=>device, increment memory addr,
+-	 * sync to pclk, half-word transfers to the IIS-FIFO. */
+-	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {
+-		s3c2410_dma_devconfig(prtd->params->channel,
+-				      S3C2410_DMASRC_MEM,
+-				      prtd->params->dma_addr);
+-	} else {
+-		s3c2410_dma_devconfig(prtd->params->channel,
+-				      S3C2410_DMASRC_HW,
+-				      prtd->params->dma_addr);
+-	}
+-
+-	s3c2410_dma_config(prtd->params->channel,
+-			   prtd->params->dma_size);
+-
+ 	/* flush the DMA channel */
+-	s3c2410_dma_ctrl(prtd->params->channel, S3C2410_DMAOP_FLUSH);
++	prtd->params->ops->flush(prtd->params->ch);
++
+ 	prtd->dma_loaded = 0;
+ 	prtd->dma_pos = prtd->dma_start;
+ 
+@@ -265,14 +250,14 @@ static int dma_trigger(struct snd_pcm_substream *substream, int cmd)
+ 	case SNDRV_PCM_TRIGGER_RESUME:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
+ 		prtd->state |= ST_RUNNING;
+-		s3c2410_dma_ctrl(prtd->params->channel, S3C2410_DMAOP_START);
++		prtd->params->ops->trigger(prtd->params->ch);
+ 		break;
+ 
+ 	case SNDRV_PCM_TRIGGER_STOP:
+ 	case SNDRV_PCM_TRIGGER_SUSPEND:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
+ 		prtd->state &= ~ST_RUNNING;
+-		s3c2410_dma_ctrl(prtd->params->channel, S3C2410_DMAOP_STOP);
++		prtd->params->ops->stop(prtd->params->ch);
+ 		break;
+ 
+ 	default:
+@@ -291,21 +276,12 @@ dma_pointer(struct snd_pcm_substream *substream)
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	struct runtime_data *prtd = runtime->private_data;
+ 	unsigned long res;
+-	dma_addr_t src, dst;
+ 
+ 	pr_debug("Entered %s\n", __func__);
+ 
+-	spin_lock(&prtd->lock);
+-	s3c2410_dma_getposition(prtd->params->channel, &src, &dst);
+-
+-	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE)
+-		res = dst - prtd->dma_start;
+-	else
+-		res = src - prtd->dma_start;
+-
+-	spin_unlock(&prtd->lock);
++	res = prtd->dma_pos - prtd->dma_start;
+ 
+-	pr_debug("Pointer %x %x\n", src, dst);
++	pr_debug("Pointer offset: %lu\n", res);
+ 
+ 	/* we seem to be getting the odd error from the pcm library due
+ 	 * to out-of-bounds pointers. this is maybe due to the dma engine
+diff --git a/sound/soc/samsung/dma.h b/sound/soc/samsung/dma.h
+index c506592..7d1ead7 100644
+--- a/sound/soc/samsung/dma.h
++++ b/sound/soc/samsung/dma.h
+@@ -6,7 +6,7 @@
+  *  Free Software Foundation;  either version 2 of the  License, or (at your
+  *  option) any later version.
+  *
+- *  ALSA PCM interface for the Samsung S3C24xx CPU
++ *  ALSA PCM interface for the Samsung SoC
+  */
+ 
+ #ifndef _S3C_AUDIO_H
+@@ -17,6 +17,8 @@ struct s3c_dma_params {
+ 	int channel;				/* Channel ID */
+ 	dma_addr_t dma_addr;
+ 	int dma_size;			/* Size of the DMA transfer */
++	unsigned ch;
++	struct samsung_dma_ops *ops;
+ };
+ 
+ #endif
 -- 
 1.7.1
