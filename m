@@ -1,216 +1,126 @@
 From: Jassi Brar <jassisinghbrar@gmail.com>
 Subject: Re: [PATCH V4 06/14] ARM: SAMSUNG: Add common DMA operations
-Date: Wed, 27 Jul 2011 01:24:19 +0530
-Message-ID: <CABb+yY1ONj2YTyFi7281vCnCq_9B7DtXbE7-YnWUUPy6O0T54A@mail.gmail.com>
+Date: Wed, 27 Jul 2011 07:03:36 +0530
+Message-ID: <CABb+yY3shX+myCgO++rUQrFuT81cdhhf18398Wa-S=88UK3rkg@mail.gmail.com>
 References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com>
 	<1311557312-26107-7-git-send-email-boojin.kim@samsung.com>
 	<CABb+yY0nWLpdVGqTJPO2YwkGWiDw5tRjC2xn7Le0bO0ZNFHC_g@mail.gmail.com>
-	<20110726080233.GN9653@n2100.arm.linux.org.uk>
-	<CABb+yY2rQXxHGJuvhtJGgrCsoFZgsACHWUEV0L-kpqaDaCFAQA@mail.gmail.com>
-	<20110726181441.GE1655@n2100.arm.linux.org.uk>
+	<003801cc4b77$51e9f3e0$f5bddba0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f171.google.com ([209.85.215.171]:50484 "EHLO
-	mail-ey0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751459Ab1GZTyV convert rfc822-to-8bit (ORCPT
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:60287 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752014Ab1G0Bdh convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jul 2011 15:54:21 -0400
-Received: by eye22 with SMTP id 22so1093713eye.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Jul 2011 12:54:20 -0700 (PDT)
-In-Reply-To: <20110726181441.GE1655@n2100.arm.linux.org.uk>
+	Tue, 26 Jul 2011 21:33:37 -0400
+Received: by ewy4 with SMTP id 4so936268ewy.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Jul 2011 18:33:36 -0700 (PDT)
+In-Reply-To: <003801cc4b77$51e9f3e0$f5bddba0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Boojin Kim <boojin.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+To: Boojin Kim <boojin.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On Tue, Jul 26, 2011 at 11:44 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-
->
-> 1. Arrange for individual DMA engine drivers to provide a filter
-> =C2=A0 function - eg, pl08x_filter_id() for pl08x channels.
->
-> 2. Have the filter function check chan->device->dev->driver =3D=3D it=
+On Tue, Jul 26, 2011 at 3:05 PM, Boojin Kim <boojin.kim@samsung.com> wr=
+ote:
+> Jassi Brar Wrote:
+>> Sent: Monday, July 25, 2011 8:52 PM
+>> To: Boojin Kim
+>> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
+>> soc@vger.kernel.org; Vinod Koul; Dan Williams; Kukjin Kim; Grant
+>> Likely; Mark Brown
+>> Subject: Re: [PATCH V4 06/14] ARM: SAMSUNG: Add common DMA operation=
 s
-> =C2=A0 own struct driver as the very first thing, and reject on failu=
-re.
->
-> 3. Have its own matching algorithm using whatever data is appropriate
-> =C2=A0 for the DMA engine driver.
-IMHO it should be possible to have client drivers not use platform spec=
-ific
-details while choosing a channel. Otherwise, they are not really 'gener=
-ic'
-'platform-independent' client drivers.
-
-
->> I hope we agree, clients (esp 'generic' ones of the future)
->> should not ask for channels from a particular dmac.
->> They should simply tell DMA API, what capabilities they expect
->> from the allocated channel - of whatever index on whichever dmac.
->> And the platform should have specified capabilities of a channel
->> while introducing it to the DMA API. =C2=A0 Yes, imho, DMA API shoul=
-d
->> only work with a pool of channels and not dmacs - it shouldn't
->> matter from which dmac a channel comes.
->
-> You're quite clearly confused. =C2=A0"DMA API" has not very much to d=
-o with
-> the subject we're discussing. =C2=A0The "DMA API" is the API for mapp=
-ing and
-> unmapping buffers for DMA. =C2=A0It has not much to do with the DMA e=
-ngine
-> API. =C2=A0So I'm not going to bother trying to decode what you said =
-above
-> until you start using the right terminology. =C2=A0I'm a stickler for=
- that,
-> get used to it.
->
-> No point talking about how round bananas are when you're actually
-> discussing orange fruit.
-Sorry, my carelessness.
-I should have written DMAENGINE API, instead of DMA API.
-
-If you want I can repost with s/DMA API/DMAENGINE API/
-
->
->> So when a client asks for a channel, the dmaengine would return
->> the first free channel that has just as much the requested capabilit=
-y.
->
-> No. =C2=A0For slave DMA, peripheral drivers normally need a specific
-> channel on the DMA controller.
-Of course they do.
-And It is the responsibility of platform to encode such information as =
-a
-'capability' of the channel.  Capability to reach a particular peripher=
-al, say.
-
-> =C2=A0Peripheral drivers normally do not
-> know which channel they need, or even which DMA controller they
-> require. =C2=A0That information is specific to the platform and SoC.
-=46or that very reason I proposed, say, if MMC client driver is probed
-for 2nd instance
-of MMC controller, it should ask for the following capabilities
-    (MMC << TYPE_SHFT) | (2 << INST_SHFT)    //I don't show other
-fields for simplicity
-
-It is the job of _platform_ to set TYPE and INSTANCE fields to
-'MMC' and 2 resp _only_ for the channel(s) that can reach its MMC_2 con=
-troller.
-
-That way, when the client 'generically' asks for DMA_MMC_2, it will be =
-given
-only one of those channels that can talk to second instance of MMC cont=
-roller.
-
-
->> That is, the generic filter function would look equivalent of :-
 >>
->> =C2=A0 =C2=A0 =C2=A0 return is_free(chan) && (cap_requested =3D=3D c=
-ap_of(chan) & cap_requested)
+>> On Mon, Jul 25, 2011 at 6:58 AM, Boojin Kim <boojin.kim@samsung.com>
+>> wrote:
 >>
+>> > +
+>> > +static bool pl330_filter(struct dma_chan *chan, void *param)
+>> > +{
+>> > + =C2=A0 =C2=A0 =C2=A0 struct dma_pl330_peri *peri =3D (struct dma=
+_pl330_peri *)chan-
+>> >private;
+>> > + =C2=A0 =C2=A0 =C2=A0 unsigned dma_ch =3D (unsigned)param;
+>> > +
+>> > + =C2=A0 =C2=A0 =C2=A0 if (peri->peri_id !=3D dma_ch)
+>> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return false;
+>> > +
+>> > + =C2=A0 =C2=A0 =C2=A0 return true;
+>> > +}
+>> This is what I meant... if we keep chan_id for paltform assigned IDs=
+,
+>> these filter functions could simply become
 >>
->> Now it all boils down to defining the set of _practically_ possible =
-capabilities
->> and a method to exchange them between the API, Client and DMAC drive=
-rs.
->
-> What are these capabilities?
-I had mentioned the list below under 'Assuming'.  We may add more.
-
->
->> The above is the overall approach.
+>> static bool pl330_filter(struct dma_chan *chan, void *param)
+>> {
+>> =C2=A0 =C2=A0 =C2=A0 =C2=A0 return chan->chan_id =3D=3D param
+>> }
 >>
->> The following is my idea of implementing it as of now, I am open to =
-suggestions.
+>> And ideally in the long run, we could just drop the filter callback
+>> and add expected channel ID to the request_channel call.
+> The chan_id is set by dmaengine. So, We don't use it to hold the user=
+ specific
+> Id.
+Not for long.
+See  https://lkml.org/lkml/2011/7/26/245
+
+
+>> > +
+>> > +static inline int s3c_dma_trigger(unsigned ch)
+>> > +{
+>> > + =C2=A0 =C2=A0 =C2=A0 return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_S=
+TART);
+>> > +}
+>> > +
+>> > +static inline int s3c_dma_started(unsigned ch)
+>> > +{
+>> > + =C2=A0 =C2=A0 =C2=A0 return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_S=
+TARTED);
+>> > +}
+>> > +
+>> > +static inline int s3c_dma_flush(unsigned ch)
+>> > +{
+>> > + =C2=A0 =C2=A0 =C2=A0 return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_F=
+LUSH);
+>> > +}
+>> > +
+>> > +static inline int s3c_dma_stop(unsigned ch)
+>> > +{
+>> > + =C2=A0 =C2=A0 =C2=A0 return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_S=
+TOP);
+>> > +}
+>> > +
+>> > +static struct samsung_dma_ops s3c_dma_ops =3D {
+>> > + =C2=A0 =C2=A0 =C2=A0 .request =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s3c=
+_dma_request,
+>> > + =C2=A0 =C2=A0 =C2=A0 .release =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s3c=
+_dma_release,
+>> > + =C2=A0 =C2=A0 =C2=A0 .prepare =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s3c=
+_dma_prepare,
+>> > + =C2=A0 =C2=A0 =C2=A0 .trigger =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s3c=
+_dma_trigger,
+>> > + =C2=A0 =C2=A0 =C2=A0 .started =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D s3c=
+_dma_started,
+>> > + =C2=A0 =C2=A0 =C2=A0 .flush =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=3D=
+ s3c_dma_flush,
+>> > + =C2=A0 =C2=A0 =C2=A0 .stop =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =3D=
+ s3c_dma_stop,
 >>
->> Assuming :-
->> ***********
->> There are no more than 256 types of DMA'able devices
->> =C2=A0(MMC, USB, SPI etc) -- =C2=A0[8bits]
->>
->> A type of device never has more than 16 instances in a platform
->> =C2=A0(MMC-0, MMC-1, MMC-2 etc) -- =C2=A0[4bits]
->>
->> Mem->Mem, Mem->Dev, Dev->Mem, Dev->Dev capability in [4bits]
->
-> No. =C2=A0You're being far too specific to your own DMA controller. =C2=
-=A0Many
-> DMA controllers (eg, PL08x) have a number of physical channels, all o=
-f
-> which can be programmed for M2M, M2P, P2M and P2P. =C2=A0There is not=
-hing
-> in the design which restricts what a channel can do.
-I am not being specific, at least not on this point. Btw, I have worked=
- on pl080
-as well and I have tried to be not specific to not only pl330 but also =
-pl080.
+>> These last 4 should be gnereallized into one callback with OP argume=
+nt.
+> I don't have any idea about it. Can you explain it in more detail?
 
-If you notice I have assigned 4bits to the field. Each of the 4 bits ca=
-n be set
-independently.
-So, a capable pl08x channel can set all 4 bits to indicate that it can
-do all 4 types
- - M2M, M2P, P2M and P2P.
+static int s3c_dma_control(unsigned ch, enum s3c2410_chan_op/*or simila=
+r*/ op)
+ {
+        return s3c2410_dma_ctrl(ch, op);
+ }
 
-
->> Max_Burst_Len for any channel is less than 64KB, in power of two [4b=
-its]
->> Support programmable Max_Burst_Len(tunable in geometric steps of 2) =
-=C2=A0[1bit]
->>
->> Max_RW_width/fifo_width is less than 128, in power of two -- [3bits]
->> Support programmable Max_RW_Width(tunable in geometric steps of 2) =C2=
-=A0[1bit]
->>
->> Finally, No platform has more than 128 channels with identicial
->> capabilities [7bits]
->
-> There is absolutely no way that this will work in reality - are you o=
-n
-> a different planet? =C2=A0As has already been described to you, MMCI =
-can
-> use one DMA channel, and programs it according to the DMA direction,
-> and has in the past adjusted the burst size according to what's going
-> on with the driver.
->
-> With your model, it would have to claim N channels from the DMA
-> engine for all possible different configurations.
-I don't think so.
-What I proposed is only a list of capabilities and method to _select_ a=
- suitable
-channel in a platform independent way.
-
-=46or example, if MMCI driver wants to be able to change directions, it=
- should
-specify Mem->Dev and Dev->Mem capability while requesting a channel.
-And use slave_config call to switch directions. (and yes we have to mod=
-ify
-slave_config call and maybe some other parts too)
-
-=46or being able to change burst size, it could set some 'ignore' bit +
-default value
-to the 'fifo_width' field so that DMAENGINE ignores checking the fifo_w=
-idth
-capability and upon slave_config either set requested burst_size if sup=
-ported
-or return error if the requested burst size is not supported.
-That is implementation detail.
-
-Sincerely, I would to know other capabilities that are more flexible th=
-an I have
-assumed here or missed altogether.
-
-I have not yet written any code. I just wanted to share my belief that
-it is possible
-to have client drivers truly independent of the platform they run on.
-And by not using platform_data of DMA channels.
-
-Probably you don't, but if you do want, I can send rudimentary implemen=
-tation
-of what I propose, in a few days.
-
-Thanks
+static struct samsung_dma_ops s3c_dma_ops =3D {
+        .request        =3D s3c_dma_request,
+        .release        =3D s3c_dma_release,
+        .prepare        =3D s3c_dma_prepare,
+        .control        =3D s3c_dma_control,
