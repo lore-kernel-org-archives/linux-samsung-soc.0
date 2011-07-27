@@ -1,52 +1,55 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [RFC PATCH] DMA: PL330: Update PL330 DMAC to support runtime PM
-Date: Wed, 27 Jul 2011 09:53:48 +0100
-Message-ID: <20110727085348.GB21584@n2100.arm.linux.org.uk>
-References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
-	<1311744697-10264-2-git-send-email-boojin.kim@samsung.com>
-	<4E2FACC3.2010109@samsung.com>
+From: Banajit Goswami <banajit.goswami@gmail.com>
+Subject: Re: [PATCH 0/8] ARM: SAMSUNG: Add common PWM Backlight support
+Date: Wed, 27 Jul 2011 14:26:02 +0530
+Message-ID: <CABK8_vRJG16jkSXOmQuDycSb6gZMHwX9vzTccaWS1-JCH1q4_Q@mail.gmail.com>
+References: <1310740968-26722-1-git-send-email-banajit.g@samsung.com>
+	<j0logn$1bn$1@dough.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <4E2FACC3.2010109@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Boojin Kim <boojin.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-fx0-f52.google.com ([209.85.161.52]:38332 "EHLO
+	mail-fx0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752178Ab1G0I4E convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Jul 2011 04:56:04 -0400
+Received: by fxd18 with SMTP id 18so127185fxd.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Jul 2011 01:56:02 -0700 (PDT)
+In-Reply-To: <j0logn$1bn$1@dough.gmane.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Wed, Jul 27, 2011 at 03:14:27PM +0900, Chanwoo Choi wrote:
-> +#ifdef CONFIG_PM_RUNTIME
-> +	struct dma_pl330_chan *pch;
-> +	struct dma_pl330_dmac *pdmac;
-> +#endif
->  
->  	dma_cap_zero(mask);
->  	dma_cap_set(info->cap, mask);
->  
->  	chan = dma_request_channel(mask, pl330_filter, (void *)dma_ch);
->  
-> +#ifdef CONFIG_PM_RUNTIME
-> +	pch = container_of(chan, struct dma_pl330_chan, chan);
-> +	pdmac = pch->dmac;
-> +
-> +	pm_runtime_get_sync(pdmac->pif.dev);
-> +#endif
+Hi Dmitry,
 
-This is not the right way to do this.  The pm runtime stuff should be
-internal to the PL330 driver.  Take a moment to think about this:
-
-You need to wake it up just before a transfer starts.  You need to
-put it back to sleep just after the last transfer has finished.
-That gives you a hint where the calls need to be.
-
-That can only be done from within the PL330 driver.
+On Tue, Jul 26, 2011 at 12:27 PM, Dmitry Eremin-Solenikov
+<dbaryshkov@gmail.com> wrote:
+> Hello,
+>
+> On Fri, 15 Jul 2011 20:12:40 +0530, Banajit Goswami wrote:
+>
+>> The patches are created against "for-next" branch of Kukjin Kim's tr=
+ee
+>> at:
+>> =C2=A0git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-sams=
+ung.git
+>>
+>> =C2=A0Patch [1/8]
+>> =C2=A0 -- add a common infrastructure to support PWM backlight for v=
+arious
+>> =C2=A0 =C2=A0 =C2=A0Samsung boards.
+>
+> Why can't you use the drivers/video/backlight/pwm-bl.c ?
+These patches indeed use the drivers/video/backlight/pwm-bl.c driver (d=
+o not
+replace it), and provide board specific data from a common place.
+The patches are meant to avoid any duplicate code which might be needed
+for different Samsung boards.
+>
+> --
+> With best wishes
+> Dmitry
+>
+Thanks and Regards,
+Banajit
