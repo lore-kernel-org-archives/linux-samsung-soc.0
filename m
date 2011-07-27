@@ -1,55 +1,62 @@
-From: Banajit Goswami <banajit.goswami@gmail.com>
-Subject: Re: [PATCH 0/8] ARM: SAMSUNG: Add common PWM Backlight support
-Date: Wed, 27 Jul 2011 14:26:02 +0530
-Message-ID: <CABK8_vRJG16jkSXOmQuDycSb6gZMHwX9vzTccaWS1-JCH1q4_Q@mail.gmail.com>
-References: <1310740968-26722-1-git-send-email-banajit.g@samsung.com>
-	<j0logn$1bn$1@dough.gmane.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] Improve slave/cyclic DMA engine documentation (was:
+	[PATCH V4 04/14] DMA: PL330: Add DMA_CYCLIC capability)
+Date: Wed, 27 Jul 2011 10:01:07 +0100
+Message-ID: <20110727090107.GC21584@n2100.arm.linux.org.uk>
+References: <20110725092749.GB9653@n2100.arm.linux.org.uk> <002001cc4ab6$0d7cd590$287680b0$%kim@samsung.com> <20110725103629.GF9653@n2100.arm.linux.org.uk> <1311590884.29703.2.camel@vkoul-mobl4> <20110725105754.GG9653@n2100.arm.linux.org.uk> <1311591717.29703.7.camel@vkoul-mobl4> <20110725113926.GH9653@n2100.arm.linux.org.uk> <1311595303.29703.31.camel@vkoul-mobl4> <20110726075720.GL9653@n2100.arm.linux.org.uk> <1311672933.24316.1.camel@vkoul-mobl4>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f52.google.com ([209.85.161.52]:38332 "EHLO
-	mail-fx0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752178Ab1G0I4E convert rfc822-to-8bit (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:50163 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752484Ab1G0JBV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Jul 2011 04:56:04 -0400
-Received: by fxd18 with SMTP id 18so127185fxd.11
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Jul 2011 01:56:02 -0700 (PDT)
-In-Reply-To: <j0logn$1bn$1@dough.gmane.org>
+	Wed, 27 Jul 2011 05:01:21 -0400
+Content-Disposition: inline
+In-Reply-To: <1311672933.24316.1.camel@vkoul-mobl4>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Vinod Koul <vkoul@infradead.org>
+Cc: vinod.koul@intel.com, linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Dan Williams' <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 
-Hi Dmitry,
+On Tue, Jul 26, 2011 at 03:05:33PM +0530, Vinod Koul wrote:
+> On Tue, 2011-07-26 at 08:57 +0100, Russell King - ARM Linux wrote:
+> > Here's an updated patch.
+> > 
+> > 8<----------
+> > From: Russell King <rmk+kernel@arm.linux.org.uk>
+> > DMAEngine: Improve slave/cyclic documentation
+> > 
+> > Improve the documentation for the slave and cyclic DMA engine support
+> > reformatting it for easier reading, adding further APIs, splitting it
+> > into five steps, and including references to the documentation in
+> > dmaengine.h.
+> > 
+> > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> > ---
+> >  Documentation/dmaengine.txt |  211 ++++++++++++++++++++++++++++++-------------
+> >  1 files changed, 146 insertions(+), 65 deletions(-)
+> > 
+> > diff --git a/Documentation/dmaengine.txt b/Documentation/dmaengine.txt
+> > index 5a0cb1e..8c2e888 100644
+> > --- a/Documentation/dmaengine.txt
+> > +++ b/Documentation/dmaengine.txt
+> > @@ -10,87 +10,168 @@
+> >  Below is a guide to device driver writers on how to use the Slave-DMA API of the
+> >  DMA Engine. This is applicable only for slave DMA usage only.
+> >  
+> > -The slave DMA usage consists of following steps
+> > +The slave DMA usage consists of following steps:
+> >  1. Allocate a DMA slave channel
+> >  2. Set slave and controller specific parameters
+> >  3. Get a descriptor for transaction
+> >  4. Submit the transaction and wait for callback notification
+> > +5. Issue pending requests
+> Thanks Russell,
+> 
+> Applied with change to 4 above. Moved "and wait for callback
+> notification" to 5.
 
-On Tue, Jul 26, 2011 at 12:27 PM, Dmitry Eremin-Solenikov
-<dbaryshkov@gmail.com> wrote:
-> Hello,
->
-> On Fri, 15 Jul 2011 20:12:40 +0530, Banajit Goswami wrote:
->
->> The patches are created against "for-next" branch of Kukjin Kim's tr=
-ee
->> at:
->> =C2=A0git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-sams=
-ung.git
->>
->> =C2=A0Patch [1/8]
->> =C2=A0 -- add a common infrastructure to support PWM backlight for v=
-arious
->> =C2=A0 =C2=A0 =C2=A0Samsung boards.
->
-> Why can't you use the drivers/video/backlight/pwm-bl.c ?
-These patches indeed use the drivers/video/backlight/pwm-bl.c driver (d=
-o not
-replace it), and provide board specific data from a common place.
-The patches are meant to avoid any duplicate code which might be needed
-for different Samsung boards.
->
-> --
-> With best wishes
-> Dmitry
->
-Thanks and Regards,
-Banajit
+BTW, did you apply this one or the later one with the improved
+documentation for dma mapping and fixed interface for slave
+transfers etc. ?
