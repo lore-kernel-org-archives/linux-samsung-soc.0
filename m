@@ -1,85 +1,138 @@
-From: Vinod Koul <vkoul@infradead.org>
-Subject: Re: [PATCH] Improve slave/cyclic DMA engine documentation (was:
-	[PATCH V4 04/14] DMA: PL330: Add DMA_CYCLIC capability)
-Date: Wed, 27 Jul 2011 08:08:20 +0530
-Message-ID: <1311734300.1536.35.camel@vkoul-udesk3>
-References: <002001cc4ab6$0d7cd590$287680b0$%kim@samsung.com>
-	<20110725103629.GF9653@n2100.arm.linux.org.uk>
-	<1311590884.29703.2.camel@vkoul-mobl4>
-	<20110725105754.GG9653@n2100.arm.linux.org.uk>
-	<1311591717.29703.7.camel@vkoul-mobl4>
-	<20110725113926.GH9653@n2100.arm.linux.org.uk>
-	<1311595303.29703.31.camel@vkoul-mobl4>
-	<20110726075720.GL9653@n2100.arm.linux.org.uk>
-	<1311672933.24316.1.camel@vkoul-mobl4>
-	<CABb+yY1P21hbMD2mG_cCvW3N5WqWzc2ZVt-HTOrC1J3dc5RbhA@mail.gmail.com>
-	<20110726172027.GD1655@n2100.arm.linux.org.uk>
-	<CABb+yY31N6ubWcjQnMqze5hH66eoSxPQCaRVqf7=jZ3L_h+P6Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CABb+yY31N6ubWcjQnMqze5hH66eoSxPQCaRVqf7=jZ3L_h+P6Q@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Boojin Kim <boojin.kim@samsung.com>, vinod.koul@intel.com, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+From: Boojin Kim <boojin.kim@samsung.com>
+Subject: RE: [PATCH V4 12/14] spi/s3c64xx: Add support DMA engine API
+Date: Wed, 27 Jul 2011 14:05:39 +0900
+Message-ID: <000301cc4c1a$d494bd40$7dbe37c0$%kim@samsung.com>
+References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com>
+ <1311557312-26107-13-git-send-email-boojin.kim@samsung.com>
+ <1311592630.29703.13.camel@vkoul-mobl4>
+ <003701cc4b76$c52963f0$4f7c2bd0$%kim@samsung.com>
+ <1311675280.24316.3.camel@vkoul-mobl4>
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:58708 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751972Ab1G0FFn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Jul 2011 01:05:43 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LOZ00JB77HFRK00@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Jul 2011 14:05:40 +0900 (KST)
+Received: from DOBOOJINKIM03 (12-23-120-72.csky.net [12.23.120.72])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LOZ00ACF7HGP8@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Jul 2011 14:05:41 +0900 (KST)
+In-reply-to: <1311675280.24316.3.camel@vkoul-mobl4>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Vinod Koul' <vkoul@infradead.org>
+Cc: vinod.koul@intel.com, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Dan Williams' <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 
-On Tue, 2011-07-26 at 23:25 +0530, Jassi Brar wrote:
-> On Tue, Jul 26, 2011 at 10:50 PM, Russell King - ARM Linux
-> <linux@arm.linux.org.uk> wrote:
-> > On Tue, Jul 26, 2011 at 08:07:44PM +0530, Jassi Brar wrote:
-> >> Dear Vinod,
-> >>
-> >>  Since it came from the RMK, most probably it'll be the best.
-> >>
-> >> But applying patches upon personal timeout seems very dangerous.
-> >
-> > Ehh what?  Is there any contention over this documentation patch?
-> I haven't yet read it... even after reading I would object only if I found
-> your patch disturbing enough to disrupt my bowel movements. Which
-> I don't think would be the case.
-Jassi,
-Since this was a doc patch, I applied it soon enough, doesn't sound
-dangerous to me !
-If you have any updates you would like, pls feel free to send a patch.
-
-> 
-> I just observed it is second time that Vinod applied a patch without any
-> ack or prior alert.
-And you can't ignore the fact that you had almost _two_ weeks to ack the
-patch from Rob, but....
-You will get ample time to ack a patch, if you don't you can always
-point out and I will do the right thing, which in this case was to
-revert.
-> 
-> >
-> >> People not responding doesn't mean only either people agree completely
-> >> or they don't care. Some might be interested but too busy with current tasks
-> >> that they need time to check... please make some policy for such cases.
-> >>
-> >> It already happened with the patch from Rob, which you probably have to
-> >> revert.
-> >>
-> >> IMHO, if nobody replied, maybe you could first ack the patch and wait
-> >> for, say a week, before applying?
-> >> That way people will know they have to hurry if they care otherwise
-> >> the patch is going upstream as such.
-> >
-> > A week is far too long.  That's how patches get lost and missed.
-> >
-> He may decide to wait shorter, but imho a week after the first ack
-> isn't that long.
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
+Vinod Koul Wrote:
+> Sent: Tuesday, July 26, 2011 7:15 PM
+> To: Boojin Kim
+> Cc: vinod.koul@intel.com; 'Kukjin Kim'; 'Jassi Brar'; 'Grant Likely';
+> linux-samsung-soc@vger.kernel.org; 'Mark Brown'; 'Dan Williams';
 > linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> Subject: RE: [PATCH V4 12/14] spi/s3c64xx: Add support DMA engine API
+>
+> On Tue, 2011-07-26 at 18:31 +0900, Boojin Kim wrote:
+> > Vinod Koul Wrote:
+> > > Sent: Monday, July 25, 2011 8:17 PM
+> > > To: Boojin Kim
+> > > Cc: vinod.koul@intel.com; linux-arm-kernel@lists.infradead.org;
+> linux-
+> > > samsung-soc@vger.kernel.org; Kukjin Kim; Jassi Brar; Grant Likely;
+> > > Mark Brown; Dan Williams
+> > > Subject: Re: [PATCH V4 12/14] spi/s3c64xx: Add support DMA engine
+> API
+> > >
+> > > On Mon, 2011-07-25 at 10:28 +0900, Boojin Kim wrote:
+> > > > This patch adds to support DMA generic API to transfer raw
+> > > > SPI data. Basiclly the spi driver uses DMA generic API if
+> > > > architecture supports it. Otherwise, uses Samsung specific
+> > > > S3C-PL330 APIs.
+> > > >
+> > > > Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+> > > > Cc: Grant Likely <grant.likely@secretlab.ca>
+> > > > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > > > ---
+> > > >  drivers/spi/spi_s3c64xx.c |  141 ++++++++++++++++++++++---------
+> ----
+> > > ----------
+> > > >  1 files changed, 69 insertions(+), 72 deletions(-)
+> > > >
+> > > > diff --git a/drivers/spi/spi_s3c64xx.c
+> b/drivers/spi/spi_s3c64xx.c
+> > > > index 8945e20..a4cf76a 100644
+> > > > --- a/drivers/spi/spi_s3c64xx.c
+> > > > +++ b/drivers/spi/spi_s3c64xx.c
+> > > > @@ -172,6 +172,9 @@ struct s3c64xx_spi_driver_data {
+> > > >  	unsigned                        state;
+> > > >  	unsigned                        cur_mode, cur_bpw;
+> > > >  	unsigned                        cur_speed;
+> > > > +	unsigned			rx_ch;
+> > > > +	unsigned			tx_ch;
+> > > > +	struct samsung_dma_ops		*ops;
+> > > >  };
+> > > >
+> > > >  static struct s3c2410_dma_client s3c64xx_spi_dma_client = {
+> > > > @@ -227,6 +230,38 @@ static void flush_fifo(struct
+> > > s3c64xx_spi_driver_data *sdd)
+> > > >  	writel(val, regs + S3C64XX_SPI_CH_CFG);
+> > > >  }
+> > > >
+> > > > +static void s3c64xx_spi_dma_rxcb(void *data)
+> > > > +{
+> > > > +	struct s3c64xx_spi_driver_data *sdd
+> > > > +		= (struct s3c64xx_spi_driver_data *)data;
+> > > > +	unsigned long flags;
+> > > > +
+> > > > +	spin_lock_irqsave(&sdd->lock, flags);
+> > > > +
+> > > > +	sdd->state &= ~RXBUSY;
+> > > > +	/* If the other done */
+> > > > +	if (!(sdd->state & TXBUSY))
+> > > > +		complete(&sdd->xfer_completion);
+> > > > +
+> > > > +	spin_unlock_irqrestore(&sdd->lock, flags);
+> > > > +}
+> > > > +
+> > > > +static void s3c64xx_spi_dma_txcb(void *data)
+> > > > +{
+> > > > +	struct s3c64xx_spi_driver_data *sdd
+> > > > +		= (struct s3c64xx_spi_driver_data *)data;
+> > > > +	unsigned long flags;
+> > > > +
+> > > > +	spin_lock_irqsave(&sdd->lock, flags);
+> > > > +
+> > > > +	sdd->state &= ~TXBUSY;
+> > > > +	/* If the other done */
+> > > > +	if (!(sdd->state & RXBUSY))
+> > > > +		complete(&sdd->xfer_completion);
+> > > > +
+> > > > +	spin_unlock_irqrestore(&sdd->lock, flags);
+> > > > +}
+> > > I don't see much diff in these two functions and you should be
+> able to
+> > > use a generic one which takes care of both TX and RX, does your
+> > > callback
+> > > data know if the channel is for TX or RX? If not then a helper to
+> do
+> > > above should take care well and making code simpler
+> > I'm very agree with you.
+> > But, I think it isn't deeply related to this patch series. So, I
+> wish to make
+> > and submit it after this patch series is finished.
+> >
+> Since you are reworking this driver would make sense to do now, it
+> doesn't sound to be a big change.
+Ok. I will follow your request.
+I will make new patch for it and send it with V5 patchset.
+
+>
+> --
+> ~Vinod Koul
+> Intel Corp.
