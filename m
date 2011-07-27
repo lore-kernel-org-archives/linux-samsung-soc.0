@@ -1,79 +1,49 @@
-From: "Koul, Vinod" <vinod.koul@intel.com>
-Subject: Re: [PATCH] Improve slave/cyclic DMA engine documentation (was:
- [PATCH V4 04/14] DMA: PL330: Add DMA_CYCLIC capability)
-Date: Wed, 27 Jul 2011 14:36:47 +0530
-Message-ID: <1311757607.1536.107.camel@vkoul-udesk3>
-References: <20110725092749.GB9653@n2100.arm.linux.org.uk>
-	 <002001cc4ab6$0d7cd590$287680b0$%kim@samsung.com>
-	 <20110725103629.GF9653@n2100.arm.linux.org.uk>
-	 <1311590884.29703.2.camel@vkoul-mobl4>
-	 <20110725105754.GG9653@n2100.arm.linux.org.uk>
-	 <1311591717.29703.7.camel@vkoul-mobl4>
-	 <20110725113926.GH9653@n2100.arm.linux.org.uk>
-	 <1311595303.29703.31.camel@vkoul-mobl4>
-	 <20110726075720.GL9653@n2100.arm.linux.org.uk>
-	 <1311672933.24316.1.camel@vkoul-mobl4>
-	 <20110727090107.GC21584@n2100.arm.linux.org.uk>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 0/2] Chained irq fixes
+Date: Wed, 27 Jul 2011 12:13:19 +0200
+Message-ID: <1311761601-1570-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:16751 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753188Ab1G0Jt2 (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:59045 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754036Ab1G0KNj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Jul 2011 05:49:28 -0400
-In-Reply-To: <20110727090107.GC21584@n2100.arm.linux.org.uk>
+	Wed, 27 Jul 2011 06:13:39 -0400
+Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0LOZ002EMLQPV270@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Jul 2011 11:13:37 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LOZ00CO5LQO0F@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Jul 2011 11:13:37 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Dan Williams' <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Angus Ainslie <angus.ainslie@linaro.org>
 
-On Wed, 2011-07-27 at 10:01 +0100, Russell King - ARM Linux wrote:
-> On Tue, Jul 26, 2011 at 03:05:33PM +0530, Vinod Koul wrote:
-> > On Tue, 2011-07-26 at 08:57 +0100, Russell King - ARM Linux wrote:
-> > > Here's an updated patch.
-> > > 
-> > > 8<----------
-> > > From: Russell King <rmk+kernel@arm.linux.org.uk>
-> > > DMAEngine: Improve slave/cyclic documentation
-> > > 
-> > > Improve the documentation for the slave and cyclic DMA engine support
-> > > reformatting it for easier reading, adding further APIs, splitting it
-> > > into five steps, and including references to the documentation in
-> > > dmaengine.h.
-> > > 
-> > > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> > > ---
-> > >  Documentation/dmaengine.txt |  211 ++++++++++++++++++++++++++++++-------------
-> > >  1 files changed, 146 insertions(+), 65 deletions(-)
-> > > 
-> > > diff --git a/Documentation/dmaengine.txt b/Documentation/dmaengine.txt
-> > > index 5a0cb1e..8c2e888 100644
-> > > --- a/Documentation/dmaengine.txt
-> > > +++ b/Documentation/dmaengine.txt
-> > > @@ -10,87 +10,168 @@
-> > >  Below is a guide to device driver writers on how to use the Slave-DMA API of the
-> > >  DMA Engine. This is applicable only for slave DMA usage only.
-> > >  
-> > > -The slave DMA usage consists of following steps
-> > > +The slave DMA usage consists of following steps:
-> > >  1. Allocate a DMA slave channel
-> > >  2. Set slave and controller specific parameters
-> > >  3. Get a descriptor for transaction
-> > >  4. Submit the transaction and wait for callback notification
-> > > +5. Issue pending requests
-> > Thanks Russell,
-> > 
-> > Applied with change to 4 above. Moved "and wait for callback
-> > notification" to 5.
-> 
-> BTW, did you apply this one or the later one with the improved
-> documentation for dma mapping and fixed interface for slave
-> transfers etc. ?
-I changed it to second one, not pushed yet.
-I am rebasing the tree to 3.0. You should see updated version in tree
-later in the evening today
+Hello,
+
+It looks that the chained IRQ enter/exit functions are missing in more
+places. This short patch series fixes all chained irq usage on Exynos4
+platform. 
+
+Best regards
+Marek Szyprowski
+Samsung Poland R&D Center
+
+
+Summary:
+
+Marek Szyprowski (2):
+  ARM: Exynos4: add required chained_irq_enter/exit to eint code
+  ARM: S5P: add required chained_irq_enter/exit to gpio-int code
+
+ arch/arm/mach-exynos4/irq-eint.c |    7 +++++++
+ arch/arm/plat-s5p/irq-gpioint.c  |    6 ++++++
+ 2 files changed, 13 insertions(+), 0 deletions(-)
 
 -- 
-~Vinod
+1.7.1.569.g6f426
