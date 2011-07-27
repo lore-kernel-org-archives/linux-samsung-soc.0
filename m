@@ -1,137 +1,106 @@
 From: Boojin Kim <boojin.kim@samsung.com>
-Subject: RE: [PATCH V4 06/14] ARM: SAMSUNG: Add common DMA operations
-Date: Wed, 27 Jul 2011 14:17:13 +0900
-Message-ID: <000401cc4c1c$71d63240$558296c0$%kim@samsung.com>
-References: <1311557312-26107-1-git-send-email-boojin.kim@samsung.com>
- <1311557312-26107-7-git-send-email-boojin.kim@samsung.com>
- <CABb+yY0nWLpdVGqTJPO2YwkGWiDw5tRjC2xn7Le0bO0ZNFHC_g@mail.gmail.com>
- <003801cc4b77$51e9f3e0$f5bddba0$%kim@samsung.com>
- <CABb+yY3shX+myCgO++rUQrFuT81cdhhf18398Wa-S=88UK3rkg@mail.gmail.com>
-Content-Transfer-Encoding: 7BIT
+Subject: [PATCH 03/15] DMA: PL330: Support DMA_SLAVE_CONFIG command
+Date: Wed, 27 Jul 2011 14:31:25 +0900
+Message-ID: <1311744697-10264-4-git-send-email-boojin.kim@samsung.com>
+References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:64074 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751684Ab1G0FRQ (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:57775 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751389Ab1G0Fjk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Jul 2011 01:17:16 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LOZ00JQW80BRK00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 27 Jul 2011 14:17:14 +0900 (KST)
-Received: from DOBOOJINKIM03 (12-23-120-72.csky.net [12.23.120.72])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LOZ005WT80QIN@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 27 Jul 2011 14:17:14 +0900 (KST)
-In-reply-to: <CABb+yY3shX+myCgO++rUQrFuT81cdhhf18398Wa-S=88UK3rkg@mail.gmail.com>
-Content-language: ko
+	Wed, 27 Jul 2011 01:39:40 -0400
+In-Reply-To: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jassi Brar' <jassisinghbrar@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Vinod Koul' <vinod.koul@intel.com>, 'Dan Williams' <dan.j.williams@intel.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>, Boojin Kim <boojin.kim@samsung.com>
 
-Jassi Brar wrote:
-> Sent: Wednesday, July 27, 2011 10:34 AM
-> To: Boojin Kim
-> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
-> soc@vger.kernel.org; Vinod Koul; Dan Williams; Kukjin Kim; Grant
-> Likely; Mark Brown
-> Subject: Re: [PATCH V4 06/14] ARM: SAMSUNG: Add common DMA operations
->
-> On Tue, Jul 26, 2011 at 3:05 PM, Boojin Kim <boojin.kim@samsung.com>
-> wrote:
-> > Jassi Brar Wrote:
-> >> Sent: Monday, July 25, 2011 8:52 PM
-> >> To: Boojin Kim
-> >> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
-> >> soc@vger.kernel.org; Vinod Koul; Dan Williams; Kukjin Kim; Grant
-> >> Likely; Mark Brown
-> >> Subject: Re: [PATCH V4 06/14] ARM: SAMSUNG: Add common DMA
-> operations
-> >>
-> >> On Mon, Jul 25, 2011 at 6:58 AM, Boojin Kim
-> <boojin.kim@samsung.com>
-> >> wrote:
-> >>
-> >> > +
-> >> > +static bool pl330_filter(struct dma_chan *chan, void *param)
-> >> > +{
-> >> > +       struct dma_pl330_peri *peri = (struct dma_pl330_peri
-> *)chan-
-> >> >private;
-> >> > +       unsigned dma_ch = (unsigned)param;
-> >> > +
-> >> > +       if (peri->peri_id != dma_ch)
-> >> > +               return false;
-> >> > +
-> >> > +       return true;
-> >> > +}
-> >> This is what I meant... if we keep chan_id for paltform assigned
-> IDs,
-> >> these filter functions could simply become
-> >>
-> >> static bool pl330_filter(struct dma_chan *chan, void *param)
-> >> {
-> >>         return chan->chan_id == param
-> >> }
-> >>
-> >> And ideally in the long run, we could just drop the filter callback
-> >> and add expected channel ID to the request_channel call.
-> > The chan_id is set by dmaengine. So, We don't use it to hold the
-> user specific
-> > Id.
-> Not for long.
-> See  https://lkml.org/lkml/2011/7/26/245
->
->
-> >> > +
-> >> > +static inline int s3c_dma_trigger(unsigned ch)
-> >> > +{
-> >> > +       return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_START);
-> >> > +}
-> >> > +
-> >> > +static inline int s3c_dma_started(unsigned ch)
-> >> > +{
-> >> > +       return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_STARTED);
-> >> > +}
-> >> > +
-> >> > +static inline int s3c_dma_flush(unsigned ch)
-> >> > +{
-> >> > +       return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_FLUSH);
-> >> > +}
-> >> > +
-> >> > +static inline int s3c_dma_stop(unsigned ch)
-> >> > +{
-> >> > +       return s3c2410_dma_ctrl(ch, S3C2410_DMAOP_STOP);
-> >> > +}
-> >> > +
-> >> > +static struct samsung_dma_ops s3c_dma_ops = {
-> >> > +       .request        = s3c_dma_request,
-> >> > +       .release        = s3c_dma_release,
-> >> > +       .prepare        = s3c_dma_prepare,
-> >> > +       .trigger        = s3c_dma_trigger,
-> >> > +       .started        = s3c_dma_started,
-> >> > +       .flush          = s3c_dma_flush,
-> >> > +       .stop           = s3c_dma_stop,
-> >>
-> >> These last 4 should be gnereallized into one callback with OP
-> argument.
-> > I don't have any idea about it. Can you explain it in more detail?
->
-> static int s3c_dma_control(unsigned ch, enum s3c2410_chan_op/*or
-> similar*/ op)
->  {
->         return s3c2410_dma_ctrl(ch, op);
->  }
->
-> static struct samsung_dma_ops s3c_dma_ops = {
->         .request        = s3c_dma_request,
->         .release        = s3c_dma_release,
->         .prepare        = s3c_dma_prepare,
->         .control        = s3c_dma_control,
-'Struct samsung_dma_ops' is used for both 'S3C-DMA-OPS' for 's3c dma' and 
-'DMA-OPS' for 'dmaengine'.
-If I modify "Struct samsung_dma_ops" as your guide, It gives un-expectable 
-effect to DMA-OPS.
-Actually, We don't want the client with 'DMA-OPS' uses 'enum s3c2410_chan_op' 
-operation anymore.
+Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+Cc: Vinod Koul <vinod.koul@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ drivers/dma/pl330.c |   56 ++++++++++++++++++++++++++++++++++++++------------
+ 1 files changed, 42 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index 5a10df9..a4c4b62 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -72,6 +72,7 @@ struct dma_pl330_chan {
+ 
+ 	/* For D-to-M and M-to-D channels */
+ 	int burst_sz; /* the peripheral fifo width */
++	int burst_len; /* the number of burst */
+ 	dma_addr_t fifo_addr;
+ };
+ 
+@@ -260,25 +261,52 @@ static int pl330_alloc_chan_resources(struct dma_chan *chan)
+ static int pl330_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd, unsigned long arg)
+ {
+ 	struct dma_pl330_chan *pch = to_pchan(chan);
+-	struct dma_pl330_desc *desc;
++	struct dma_pl330_desc *desc, *_dt;
+ 	unsigned long flags;
++	struct dma_pl330_dmac *pdmac = pch->dmac;
++	struct dma_slave_config *slave_config;
++	LIST_HEAD(list);
+ 
+-	/* Only supports DMA_TERMINATE_ALL */
+-	if (cmd != DMA_TERMINATE_ALL)
+-		return -ENXIO;
+-
+-	spin_lock_irqsave(&pch->lock, flags);
+-
+-	/* FLUSH the PL330 Channel thread */
+-	pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
++	switch (cmd) {
++	case DMA_TERMINATE_ALL:
++		spin_lock_irqsave(&pch->lock, flags);
+ 
+-	/* Mark all desc done */
+-	list_for_each_entry(desc, &pch->work_list, node)
+-		desc->status = DONE;
++		/* FLUSH the PL330 Channel thread */
++		pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
+ 
+-	spin_unlock_irqrestore(&pch->lock, flags);
++		/* Mark all desc done */
++		list_for_each_entry_safe(desc, _dt, &pch->work_list , node) {
++			desc->status = DONE;
++			pch->completed = desc->txd.cookie;
++			list_move_tail(&desc->node, &list);
++		}
+ 
+-	pl330_tasklet((unsigned long) pch);
++		list_splice_tail_init(&list, &pdmac->desc_pool);
++		spin_unlock_irqrestore(&pch->lock, flags);
++		break;
++	case DMA_SLAVE_CONFIG:
++		slave_config = (struct dma_slave_config *)arg;
++
++		if (slave_config->direction == DMA_TO_DEVICE) {
++			if (slave_config->dst_addr)
++				pch->fifo_addr = slave_config->dst_addr;
++			if (slave_config->dst_addr_width)
++				pch->burst_sz = __ffs(slave_config->dst_addr_width);
++			if (slave_config->dst_maxburst)
++				pch->burst_len = slave_config->dst_maxburst;
++		} else if (slave_config->direction == DMA_FROM_DEVICE) {
++			if (slave_config->src_addr)
++				pch->fifo_addr = slave_config->src_addr;
++			if (slave_config->src_addr_width)
++				pch->burst_sz = __ffs(slave_config->src_addr_width);
++			if (slave_config->src_maxburst)
++				pch->burst_len = slave_config->src_maxburst;
++		}
++		break;
++	default:
++		dev_err(pch->dmac->pif.dev, "Not supported command.\n");
++		return -ENXIO;
++	}
+ 
+ 	return 0;
+ }
+-- 
+1.7.1
