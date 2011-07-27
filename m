@@ -1,46 +1,202 @@
 From: Boojin Kim <boojin.kim@samsung.com>
-Subject: [PATCH V5 00/15] To use DMA generic APIs for Samsung DMA
-Date: Wed, 27 Jul 2011 14:31:22 +0900
-Message-ID: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
+Subject: [PATCH 04/15] DMA: PL330: Add DMA_CYCLIC capability
+Date: Wed, 27 Jul 2011 14:31:26 +0900
+Message-ID: <1311744697-10264-5-git-send-email-boojin.kim@samsung.com>
+References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:57816 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:57808 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752667Ab1G0Fjk (ORCPT
+	with ESMTP id S1752347Ab1G0Fjk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 27 Jul 2011 01:39:40 -0400
+In-Reply-To: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>
+Cc: Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>, Boojin Kim <boojin.kim@samsung.com>
 
-This patchset adds support DMA generic APIs for Samsung DMA.
+This patch adds DMA_CYCLIC capability that is used for audio driver.
+DMA driver activated with it reuses the dma requests that were submitted
+through tx_submit().
 
-The changes from V4 are following:
-- Change DMA cyclic capability operation on '04 patch'
-	- Remove cyclic_task
-	- Initialize 'cyclic' variable on channel request.
-- Change pl330 data structure on '02, 07, 08, 09, 10 patches'
-	- Move 'fifo_addr' and 'burst_sz' variables from 'struct dma_pl330_peri'
-	  to 'struct dma_pl330_chan'
-- Change some names on '02, 05 patch'
-	- Change DMADEV_PL330 configuration to SAMSUNG_DMA_PL330
-	- Add comment for 'burst_sz' variable
-- Consider 'xxx_maxburst' on '03, 06 patch'
-- Modify pl330_filter() function on '06 patch'
-- Merge DMA control code on SPI driver on '13 patch'
+Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+Cc: Vinod Koul <vinod.koul@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ drivers/dma/pl330.c |   97 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 files changed, 95 insertions(+), 2 deletions(-)
 
-[PATCH V5 01/15] DMA: PL330: Add support runtime PM for PL330 DMAC
-[PATCH V5 02/15] DMA: PL330: Update PL330 DMA API driver
-[PATCH V5 03/15] DMA: PL330: Support DMA_SLAVE_CONFIG command
-[PATCH V5 04/15] DMA: PL330: Add DMA_CYCLIC capability
-[PATCH V5 05/15] ARM: SAMSUNG: Update to use PL330-DMA driver
-[PATCH V5 06/15] ARM: SAMSUNG: Add common DMA operations
-[PATCH V5 07/15] ARM: EXYNOS4: Use generic DMA PL330 driver
-[PATCH V5 08/15] ARM: S5PV210: Use generic DMA PL330 driver
-[PATCH V5 09/15] ARM: S5PC100: Use generic DMA PL330 driver
-[PATCH V5 10/15] ARM: S5P64X0: Use generic DMA PL330 driver
-[PATCH V5 11/15] ARM: SAMSUNG: Remove S3C-PL330-DMA driver
-[PATCH V5 12/15] spi/s3c64xx: Add support DMA engine API
-[PATCH V5 13/15] spi/s3c64xx: Merge dma control code
-[PATCH V5 14/15] ASoC: Samsung: Update DMA interface
-[PATCH V5 15/15] ARM: SAMSUNG: Remove Samsung specific enum type for dma direction
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index a4c4b62..996b2e9 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -42,6 +42,12 @@ enum desc_status {
+ 	DONE,
+ };
+ 
++enum cyclic_mode {
++	NO_CYCLIC,
++	CYCLIC_PREP,
++	CYCLIC_TRIGGER,
++};
++
+ struct dma_pl330_chan {
+ 	/* Schedule desc completion */
+ 	struct tasklet_struct task;
+@@ -74,6 +80,9 @@ struct dma_pl330_chan {
+ 	int burst_sz; /* the peripheral fifo width */
+ 	int burst_len; /* the number of burst */
+ 	dma_addr_t fifo_addr;
++
++	/* for cyclic capability */
++	enum cyclic_mode cyclic;
+ };
+ 
+ struct dma_pl330_dmac {
+@@ -160,6 +169,31 @@ static inline void free_desc_list(struct list_head *list)
+ 	spin_unlock_irqrestore(&pdmac->pool_lock, flags);
+ }
+ 
++static inline void handle_cyclic_desc_list(struct list_head *list)
++{
++	struct dma_pl330_desc *desc;
++	struct dma_pl330_chan *pch;
++	unsigned long flags;
++
++	if (list_empty(list))
++		return;
++
++	list_for_each_entry(desc, list, node) {
++		dma_async_tx_callback callback;
++
++		/* Change status to reload it */
++		desc->status = PREP;
++		pch = desc->pchan;
++		callback = desc->txd.callback;
++		if (callback)
++			callback(desc->txd.callback_param);
++	}
++
++	spin_lock_irqsave(&pch->lock, flags);
++	list_splice_tail_init(list, &pch->work_list);
++	spin_unlock_irqrestore(&pch->lock, flags);
++}
++
+ static inline void fill_queue(struct dma_pl330_chan *pch)
+ {
+ 	struct dma_pl330_desc *desc;
+@@ -213,7 +247,10 @@ static void pl330_tasklet(unsigned long data)
+ 
+ 	spin_unlock_irqrestore(&pch->lock, flags);
+ 
+-	free_desc_list(&list);
++	if (pch->cyclic == CYCLIC_TRIGGER)
++		handle_cyclic_desc_list(&list);
++	else
++		free_desc_list(&list);
+ }
+ 
+ static void dma_pl330_rqcb(void *token, enum pl330_op_err err)
+@@ -244,6 +281,7 @@ static int pl330_alloc_chan_resources(struct dma_chan *chan)
+ 	spin_lock_irqsave(&pch->lock, flags);
+ 
+ 	pch->completed = chan->cookie = 1;
++	pch->cyclic = NO_CYCLIC;
+ 
+ 	pch->pl330_chid = pl330_request_channel(&pdmac->pif);
+ 	if (!pch->pl330_chid) {
+@@ -323,6 +361,9 @@ static void pl330_free_chan_resources(struct dma_chan *chan)
+ 	pl330_release_channel(pch->pl330_chid);
+ 	pch->pl330_chid = NULL;
+ 
++	if (pch->cyclic)
++		list_splice_tail_init(&pch->work_list, &pch->dmac->desc_pool);
++
+ 	spin_unlock_irqrestore(&pch->lock, flags);
+ }
+ 
+@@ -346,7 +387,11 @@ pl330_tx_status(struct dma_chan *chan, dma_cookie_t cookie,
+ 
+ static void pl330_issue_pending(struct dma_chan *chan)
+ {
+-	pl330_tasklet((unsigned long) to_pchan(chan));
++	struct dma_pl330_chan *pch = to_pchan(chan);
++	pl330_tasklet((unsigned long) pch);
++
++	if (pch->cyclic == CYCLIC_PREP)
++		pch->cyclic = CYCLIC_TRIGGER;
+ }
+ 
+ /*
+@@ -554,6 +599,52 @@ static inline int get_burst_len(struct dma_pl330_desc *desc, size_t len)
+ 	return burst_len;
+ }
+ 
++static struct dma_async_tx_descriptor *pl330_prep_dma_cyclic(
++		struct dma_chan *chan, dma_addr_t dma_addr, size_t len,
++		size_t period_len, enum dma_data_direction direction)
++{
++	struct dma_pl330_desc *desc;
++	struct dma_pl330_chan *pch = to_pchan(chan);
++	dma_addr_t dst;
++	dma_addr_t src;
++
++	desc = pl330_get_desc(pch);
++	if (!desc) {
++		dev_err(pch->dmac->pif.dev, "%s:%d Unable to fetch desc\n",
++			__func__, __LINE__);
++		return NULL;
++	}
++
++	switch (direction) {
++	case DMA_TO_DEVICE:
++		desc->rqcfg.src_inc = 1;
++		desc->rqcfg.dst_inc = 0;
++		src = dma_addr;
++		dst = pch->fifo_addr;
++		break;
++	case DMA_FROM_DEVICE:
++		desc->rqcfg.src_inc = 0;
++		desc->rqcfg.dst_inc = 1;
++		src = pch->fifo_addr;
++		dst = dma_addr;
++		break;
++	default:
++		dev_err(pch->dmac->pif.dev, "%s:%d Invalid dma direction\n",
++		__func__, __LINE__);
++		return NULL;
++	}
++
++	desc->rqcfg.brst_size = pch->burst_sz;
++	desc->rqcfg.brst_len = 1;
++
++	if (!pch->cyclic)
++		pch->cyclic = CYCLIC_PREP;
++
++	fill_px(&desc->px, dst, src, period_len);
++
++	return &desc->txd;
++}
++
+ static struct dma_async_tx_descriptor *
+ pl330_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dst,
+ 		dma_addr_t src, size_t len, unsigned long flags)
+@@ -786,6 +877,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 		case MEMTODEV:
+ 		case DEVTOMEM:
+ 			dma_cap_set(DMA_SLAVE, pd->cap_mask);
++			dma_cap_set(DMA_CYCLIC, pd->cap_mask);
+ 			break;
+ 		default:
+ 			dev_err(&adev->dev, "DEVTODEV Not Supported\n");
+@@ -810,6 +902,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 	pd->device_alloc_chan_resources = pl330_alloc_chan_resources;
+ 	pd->device_free_chan_resources = pl330_free_chan_resources;
+ 	pd->device_prep_dma_memcpy = pl330_prep_dma_memcpy;
++	pd->device_prep_dma_cyclic = pl330_prep_dma_cyclic;
+ 	pd->device_tx_status = pl330_tx_status;
+ 	pd->device_prep_slave_sg = pl330_prep_slave_sg;
+ 	pd->device_control = pl330_control;
+-- 
+1.7.1
