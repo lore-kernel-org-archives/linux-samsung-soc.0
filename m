@@ -1,47 +1,32 @@
 From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: Question about "Inconsistent kallsyms data"
-Date: Fri, 29 Jul 2011 14:55:01 +0200
-Message-ID: <14922669.WYSjPzUBX6@wuerfel>
-References: <02ae01cc4d91$aed71670$0c854350$%kim@samsung.com>
+Date: Fri, 29 Jul 2011 15:00:03 +0200
+Message-ID: <1338073.oTaTOFP5NR@wuerfel>
+References: <02ae01cc4d91$aed71670$0c854350$%kim@samsung.com> <2563791.8cBqodrk1o@flatron> <1514384.7oMe1aulyC@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <02ae01cc4d91$aed71670$0c854350$%kim@samsung.com>
+In-Reply-To: <1514384.7oMe1aulyC@flatron>
 Sender: linux-kbuild-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <rmk@arm.linux.org.uk>, linux-kbuild@vger.kernel.org, Michal Marek <mmarek@suse.cz>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, linux-kernel@vger.kernel.org, Michal Marek <mmarek@suse.cz>, linux-kbuild@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Friday 29 July 2011 10:48:46 Kukjin Kim wrote:
-> Hi all,
+On Friday 29 July 2011 13:30:20 Tomasz Figa wrote:
 > 
-> When build with s5pc100_defconfig, happens following.
+> I have no idea why, but I cannot reproduce the issue anymore, even after make 
+> distclean or starting with a clean tree. A build system bug?
 > 
-> ...
-> KSYM    .tmp_kallsyms2.S
-> AS      .tmp_kallsyms2.o
-> LD      vmlinux
-> SYSMAP  System.map
-> SYSMAP  .tmp_System.map
-> Inconsistent kallsyms data
-> This is a bug - please report about it
-> Try make KALLSYMS_EXTRA_PASS=1 as a workaround
-> make[1]: *** [vmlinux] Error 1
-> make: *** [sub-make] Error 2
-> 
-> Its HEAD is following (current latest mainline)
-> (commit 55f9c40ff632d03c527d6a6ceddcda0a224587a6)
-> Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc
-> 
-> Please kindly let me know how it should be fixed...
+> I do not know much technical details about the kernel build system, but might 
+> it be a concurrency issue (I use make -j5 for building with 5 jobs)?
 
-[Taking Michal and linux-kbuild on cc]
+I could reproduce it on some systems, but it changes when you switch compiler
+versions or other flags, or the exact kernel version, so it's impossible
+to bisect if you have the same problem that I saw.
 
-I've seen this before with some of my ARM randconfig builds and
-spent some time debugging into it, without success.
-
-Can you build with KALLSYMS_EXTRA_PASS=1 and send the diff between
-.tmp_kallsyms2.S and .tmp_kallsyms3.S?
+I got all the way to the point where I could add a nop instruction in one
+file and it would go away because the code size grew across some magic
+number.
 
 	Arnd
