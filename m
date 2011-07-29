@@ -1,41 +1,48 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: SAMSUNG: Fix Section mismatch in samsung_bl_set()
-Date: Fri, 29 Jul 2011 10:31:32 +0900
-Message-ID: <1311903092-14308-1-git-send-email-kgene.kim@samsung.com>
+Subject: Question about "Inconsistent kallsyms data"
+Date: Fri, 29 Jul 2011 10:48:46 +0900
+Message-ID: <02ae01cc4d91$aed71670$0c854350$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:37621 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756215Ab1G2Bo4 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:16200 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756300Ab1G2BtA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Jul 2011 21:44:56 -0400
+	Thu, 28 Jul 2011 21:49:00 -0400
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <rmk@arm.linux.org.uk>
 
-WARNING: vmlinux.o(.text+0xf47c): Section mismatch in reference from the function samsung_bl_set() to the (unknown reference) .init.data:(unknown)
-The function samsung_bl_set() references
-the (unknown reference) __initdata (unknown).
-This is often because samsung_bl_set lacks a __initdata
-annotation or the annotation of (unknown) is wrong.
+Hi all,
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/plat-samsung/include/plat/backlight.h |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+When build with s5pc100_defconfig, happens following.
 
-diff --git a/arch/arm/plat-samsung/include/plat/backlight.h b/arch/arm/plat-samsung/include/plat/backlight.h
-index 51d8da8..ad530c7 100644
---- a/arch/arm/plat-samsung/include/plat/backlight.h
-+++ b/arch/arm/plat-samsung/include/plat/backlight.h
-@@ -20,7 +20,7 @@ struct samsung_bl_gpio_info {
- 	int func;
- };
- 
--extern void samsung_bl_set(struct samsung_bl_gpio_info *gpio_info,
-+extern void __init samsung_bl_set(struct samsung_bl_gpio_info *gpio_info,
- 	struct platform_pwm_backlight_data *bl_data);
- 
- #endif /* __ASM_PLAT_BACKLIGHT_H */
--- 
-1.7.1
+...
+KSYM    .tmp_kallsyms2.S
+AS      .tmp_kallsyms2.o
+LD      vmlinux
+SYSMAP  System.map
+SYSMAP  .tmp_System.map
+Inconsistent kallsyms data
+This is a bug - please report about it
+Try make KALLSYMS_EXTRA_PASS=1 as a workaround
+make[1]: *** [vmlinux] Error 1
+make: *** [sub-make] Error 2
+
+Its HEAD is following (current latest mainline)
+(commit 55f9c40ff632d03c527d6a6ceddcda0a224587a6)
+Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/sparc
+
+Please kindly let me know how it should be fixed...
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
