@@ -1,86 +1,168 @@
 From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH v2 1/3] i2c: s3c2410: Keep a copy of platform data and
- use it.
-Date: Sat, 30 Jul 2011 21:51:05 -0600
-Message-ID: <20110731035105.GG24334@ponder.secretlab.ca>
+Subject: Re: [PATCH v2 3/3] arm: dt: Add device tree support for i2c instance
+ 0 and 1 on exynos4 dt machine
+Date: Sat, 30 Jul 2011 21:55:36 -0600
+Message-ID: <20110731035536.GI24334@ponder.secretlab.ca>
 References: <1311329918-8105-1-git-send-email-thomas.abraham@linaro.org>
  <1311329918-8105-2-git-send-email-thomas.abraham@linaro.org>
+ <1311329918-8105-3-git-send-email-thomas.abraham@linaro.org>
+ <1311329918-8105-4-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mail-ww0-f44.google.com ([74.125.82.44]:41660 "EHLO
 	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750859Ab1GaO0Y (ORCPT
+	with ESMTP id S1750982Ab1GaO0c (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 31 Jul 2011 10:26:24 -0400
+	Sun, 31 Jul 2011 10:26:32 -0400
 Content-Disposition: inline
-In-Reply-To: <1311329918-8105-2-git-send-email-thomas.abraham@linaro.org>
+In-Reply-To: <1311329918-8105-4-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
 Cc: devicetree-discuss@lists.ozlabs.org, linux-i2c@vger.kernel.org, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org
 
-On Fri, Jul 22, 2011 at 03:48:36PM +0530, Thomas Abraham wrote:
-> The platform data is copied into driver's private data and the copy is
-> used for all access to the platform data. This simpifies the addition
-> of device tree support for the i2c-s3c2410 driver.
+On Fri, Jul 22, 2011 at 03:48:38PM +0530, Thomas Abraham wrote:
+> Add device node for i2c instance 0 and 1 and list all its connected slave
+> devices.
 > 
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> Signed-off-by: Thomas Abraham <thomas.abraham at linaro.org>
 > ---
->  drivers/i2c/busses/i2c-s3c2410.c |    7 +++++--
->  1 files changed, 5 insertions(+), 2 deletions(-)
+>  arch/arm/boot/dts/exynos4-smdkv310.dts  |   45 +++++++++++++++++++++++++++++++
+>  arch/arm/mach-exynos4/Kconfig           |    2 +
+>  arch/arm/mach-exynos4/mach-exynos4-dt.c |   23 ++++++++++++++++
+>  3 files changed, 70 insertions(+), 0 deletions(-)
 > 
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-> index 6c00c10..e132168 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -78,6 +78,7 @@ struct s3c24xx_i2c {
->  	struct resource		*ioarea;
->  	struct i2c_adapter	adap;
+> diff --git a/arch/arm/boot/dts/exynos4-smdkv310.dts b/arch/arm/boot/dts/exynos4-smdkv310.dts
+> index d65c18c..6fd2032 100644
+> --- a/arch/arm/boot/dts/exynos4-smdkv310.dts
+> +++ b/arch/arm/boot/dts/exynos4-smdkv310.dts
+> @@ -41,6 +41,12 @@
+>  			irq-start = <61>;
+>  		};
 >  
-> +	struct s3c2410_platform_i2c	pdata;
+> +		gpd1: gpio-controller@114000C0 {
+> +			compatible = "samsung,exynos4-gpio-gpd1","samsung,exynos4-gpio";
+> +			#gpio-cells = <2>;
+> +			gpio-controller;
+> +		};
+> +
+>  		watchdog@10060000 {
+>  			compatible = "samsung,s3c2410-wdt";
+>  			reg = <0x10060000 0x400>;
+> @@ -64,5 +70,44 @@
+>  			samsung,sdhci-cd-type = <0>;
+>  			samsung,sdhci-clkdiv-external;
+>  		};
+> +
+> +		i2c@13860000 {
+> +			compatible = "samsung,s3c2440-i2c";
+> +			reg = <0x13860000 0x100>;
+> +			interrupts = <344>;
+> +			samsung,i2c-sda-delay = <100>;
+> +			samsung,i2c-max-bus-freq = <20000>;
+> +			gpios = <&gpd1 0 0 /* SDA */
+> +				 &gpd1 1 0 /* SCL */>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			eeprom@50 {
+> +				compatible = "samsung,24ad0xd1";
+> +				reg = <0x50>;
+> +			};
+> +
+> +			eeprom@52 {
+> +				compatible = "samsung,24ad0xd1";
+> +				reg = <0x51>;
+> +			};
+> +		};
+> +
+> +		i2c@13870000 {
+> +			compatible = "samsung,s3c2440-i2c";
+> +			reg = <0x13870000 0x100>;
+> +			interrupts = <345>;
+> +			samsung,i2c-sda-delay = <100>;
+> +			samsung,i2c-max-bus-freq = <100000>;
+> +			gpios = <&gpd1 2 0 /* SDA */
+> +				 &gpd1 3 0 /* SCL */>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			wm8994@1a {
+> +				compatible = "wlf,wm8994";
+> +				reg = <0x1a>;
+> +			};
+> +		};
+>  	};
+>  };
+> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+> index bb97b7e..06b43ca 100644
+> --- a/arch/arm/mach-exynos4/Kconfig
+> +++ b/arch/arm/mach-exynos4/Kconfig
+> @@ -193,6 +193,8 @@ config MACH_EXYNOS4_DT
+>  	select S3C_DEV_HSMMC
+>  	select S3C_DEV_HSMMC2
+>  	select EXYNOS4_SETUP_SDHCI
+> +	select EXYNOS4_SETUP_I2C0
+> +	select EXYNOS4_SETUP_I2C1
 
-After looking at a bunch of patches, there is another way do do this
-I think.  Instead of copying pdata into the private data structure, it
-can remain as a pointer if the DT code uses devm_kzmalloc to allocate
-a s3c2410_platform_i2c structure when needed.
-
-I leave it up to you (and Ben) though as to which you prefer.  I'm
-okay either way, and you can add:
+Hmmm, there should be a better way do do this; but I don't have any
+objections.
 
 Acked-by: Grant Likely <grant.likely@secretlab.ca>
 
-
->  #ifdef CONFIG_CPU_FREQ
->  	struct notifier_block	freq_transition;
->  #endif
-> @@ -626,7 +627,7 @@ static int s3c24xx_i2c_calcdivisor(unsigned long clkin, unsigned int wanted,
+>  	help
+>  	  Machine support for Samsung Exynos4 machine with device tree enabled.
 >  
->  static int s3c24xx_i2c_clockrate(struct s3c24xx_i2c *i2c, unsigned int *got)
->  {
-> -	struct s3c2410_platform_i2c *pdata = i2c->dev->platform_data;
-> +	struct s3c2410_platform_i2c *pdata = &i2c->pdata;
->  	unsigned long clkin = clk_get_rate(i2c->clk);
->  	unsigned int divs, div1;
->  	unsigned long target_frequency;
-> @@ -755,7 +756,7 @@ static int s3c24xx_i2c_init(struct s3c24xx_i2c *i2c)
+> diff --git a/arch/arm/mach-exynos4/mach-exynos4-dt.c b/arch/arm/mach-exynos4/mach-exynos4-dt.c
+> index 120665a..8b0cf8f 100644
+> --- a/arch/arm/mach-exynos4/mach-exynos4-dt.c
+> +++ b/arch/arm/mach-exynos4/mach-exynos4-dt.c
+> @@ -23,7 +23,10 @@
+>  #include <plat/regs-serial.h>
+>  #include <plat/exynos4.h>
+>  #include <plat/cpu.h>
+> +#include <plat/devs.h>
+>  #include <plat/sdhci.h>
+> +#include <plat/iic.h>
+> +#include <plat/iic-core.h>
 >  
->  	/* get the plafrom data */
+>  #include <mach/map.h>
 >  
-> -	pdata = i2c->dev->platform_data;
-> +	pdata = &i2c->pdata;
+> @@ -63,6 +66,22 @@ static struct s3c2410_uartcfg smdkv310_uartcfgs[] __initdata = {
+>  };
 >  
->  	/* inititalise the gpio */
->  
-> @@ -810,6 +811,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  	}
->  
-> +	memcpy(&i2c->pdata, pdata, sizeof(*pdata));
+>  /*
+> + * The i2c driver does not handle the pinmux settings. Instead, the
+> + * platform specific callback function is passed through the platform
+> + * data that can handle the pinmux settings for the i2c module.
+> + * Eventually, when the new pinmux api is merged, the i2c driver can
+> + * be modified to handle the pinmux settings. This is temporary for
+> + * now.
+> + */
+> +static struct s3c2410_platform_i2c exynos4_dt_i2c_data0 __initdata = {
+> +	.cfg_gpio	= s3c_i2c0_cfg_gpio,
+> +};
 > +
->  	strlcpy(i2c->adap.name, "s3c2410-i2c", sizeof(i2c->adap.name));
->  	i2c->adap.owner   = THIS_MODULE;
->  	i2c->adap.algo    = &s3c24xx_i2c_algorithm;
+> +static struct s3c2410_platform_i2c exynos4_dt_i2c_data1 __initdata = {
+> +	.cfg_gpio	= s3c_i2c1_cfg_gpio,
+> +};
+> +
+> +/*
+>   * The following lookup table is used to override device names when devices
+>   * are registered from device tree. Optionally, the platform data can also
+>   * to supplied. The sdhci driver requires the device name to be overridden
+> @@ -75,6 +94,10 @@ static const struct of_dev_auxdata exynos4_auxdata_lookup[] __initconst = {
+>  				"s3c-sdhci.2", &s3c_hsmmc2_def_platdata),
+>  	OF_DEV_AUXDATA("samsung,s3c6410-sdhci", EXYNOS4_PA_HSMMC(0),
+>  				"s3c-sdhci.0", &s3c_hsmmc0_def_platdata),
+> +	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(0),
+> +				"s3c2440-i2c.0", &exynos4_dt_i2c_data0),
+> +	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(1),
+> +				"s3c2440-i2c.1", &exynos4_dt_i2c_data1),
+>  	{},
+>  };
+>  
 > -- 
 > 1.6.6.rc2
 > 
