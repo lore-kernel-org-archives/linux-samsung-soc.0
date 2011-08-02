@@ -1,206 +1,76 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH 1/2] arm: exynos4: Add a new Exynos4 device tree enabled
- machine
-Date: Mon, 1 Aug 2011 17:54:56 +0100
-Message-ID: <20110801165456.GB5306@ponder.secretlab.ca>
-References: <1312215637-716-1-git-send-email-thomas.abraham@linaro.org>
- <1312215637-716-2-git-send-email-thomas.abraham@linaro.org>
+From: Paulo Marques <pmarques@grupopie.com>
+Subject: Re: Question about "Inconsistent kallsyms data"
+Date: Tue, 02 Aug 2011 17:29:54 +0100
+Message-ID: <4E382602.6050308@grupopie.com>
+References: <02ae01cc4d91$aed71670$0c854350$%kim@samsung.com>
+	<20110729100241.GB25640@n2100.arm.linux.org.uk>
+	<2563791.8cBqodrk1o@flatron> <1514384.7oMe1aulyC@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f42.google.com ([74.125.82.42]:33878 "EHLO
-	mail-ww0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753036Ab1HAQzA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Aug 2011 12:55:00 -0400
-Received: by wwg11 with SMTP id 11so1749916wwg.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Aug 2011 09:54:59 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1312215637-716-2-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1514384.7oMe1aulyC@flatron>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-On Mon, Aug 01, 2011 at 05:20:36PM +0100, Thomas Abraham wrote:
-> Add a new basic Exynos4 machine with device tree support that can boot
-> on a Exynos4 processor based board and bring up the console. This acts
-> as a stating point to add device tree support for Exynos4 architecture.
+Tomasz Figa wrote:
+> On Friday 29 of July 2011 at 12:58:32, Tomasz Figa wrote:
+>>[...]
+>> I will try to bisect the case with s3c6400 defconfig.
 > 
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-
-Hi Thomas,
-
-As discussed f2f at Linaro Connect, we'll defer this board support
-patch to v3.2, and use this week to eliminate the 'special' uart
-handling code.
-
-g.
-
-> ---
->  arch/arm/mach-exynos4/Kconfig           |   10 +++
->  arch/arm/mach-exynos4/Makefile          |    1 +
->  arch/arm/mach-exynos4/mach-exynos4-dt.c |  118 +++++++++++++++++++++++++++++++
->  3 files changed, 129 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-exynos4/mach-exynos4-dt.c
+> I have no idea why, but I cannot reproduce the issue anymore, even after make 
+> distclean or starting with a clean tree. A build system bug?
 > 
-> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-> index 0c77ab9..c29de4e 100644
-> --- a/arch/arm/mach-exynos4/Kconfig
-> +++ b/arch/arm/mach-exynos4/Kconfig
-> @@ -218,6 +218,16 @@ config MACH_NURI
->  	help
->  	  Machine support for Samsung Mobile NURI Board.
->  
-> +config MACH_EXYNOS4_DT
-> +	bool "Samsung Exynos4 Machine using device tree"
-> +	select CPU_EXYNOS4210
-> +	select USE_OF
-> +	select S3C_DEV_HSMMC
-> +	select S3C_DEV_HSMMC2
-> +	select EXYNOS4_SETUP_SDHCI
-> +	help
-> +	  Machine support for Samsung Exynos4 machine with device tree enabled.
-> +
->  endmenu
->  
->  comment "Configuration for HSMMC bus width"
-> diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
-> index b7fe1d7..d2bf5bf 100644
-> --- a/arch/arm/mach-exynos4/Makefile
-> +++ b/arch/arm/mach-exynos4/Makefile
-> @@ -30,6 +30,7 @@ obj-$(CONFIG_MACH_SMDKV310)		+= mach-smdkv310.o
->  obj-$(CONFIG_MACH_ARMLEX4210)		+= mach-armlex4210.o
->  obj-$(CONFIG_MACH_UNIVERSAL_C210)	+= mach-universal_c210.o
->  obj-$(CONFIG_MACH_NURI)			+= mach-nuri.o
-> +obj-$(CONFIG_MACH_EXYNOS4_DT)		+= mach-exynos4-dt.o
->  
->  # device support
->  
-> diff --git a/arch/arm/mach-exynos4/mach-exynos4-dt.c b/arch/arm/mach-exynos4/mach-exynos4-dt.c
-> new file mode 100644
-> index 0000000..8e9d2d7
-> --- /dev/null
-> +++ b/arch/arm/mach-exynos4/mach-exynos4-dt.c
-> @@ -0,0 +1,118 @@
-> +/*
-> + * Samsung's Exynos4 device tree enabled machine.
-> + *
-> + * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + * Copyright (c) 2010-2011 Linaro Ltd.
-> + *		www.linaro.org
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#include <linux/serial_core.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/io.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/irq.h>
-> +#include <linux/irqdomain.h>
-> +
-> +#include <asm/mach/arch.h>
-> +#include <asm/mach-types.h>
-> +
-> +#include <plat/regs-serial.h>
-> +#include <plat/exynos4.h>
-> +#include <plat/cpu.h>
-> +#include <plat/sdhci.h>
-> +
-> +#include <mach/map.h>
-> +
-> +/* Following are default values for UCON, ULCON and UFCON UART registers */
-> +#define SMDKV310_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-> +				 S3C2410_UCON_RXILEVEL |	\
-> +				 S3C2410_UCON_TXIRQMODE |	\
-> +				 S3C2410_UCON_RXIRQMODE |	\
-> +				 S3C2410_UCON_RXFIFO_TOI |	\
-> +				 S3C2443_UCON_RXERR_IRQEN)
-> +
-> +#define SMDKV310_UFCON_DEFAULT	(S3C2410_UFCON_FIFOMODE |	\
-> +				 S5PV210_UFCON_TXTRIG4 |	\
-> +				 S5PV210_UFCON_RXTRIG4)
-> +
-> +static struct s3c2410_uartcfg smdkv310_uartcfgs[] __initdata = {
-> +	[0] = {
-> +		.hwport		= 0,
-> +		.ucon		= SMDKV310_UCON_DEFAULT,
-> +		.ufcon		= SMDKV310_UFCON_DEFAULT,
-> +	},
-> +	[1] = {
-> +		.hwport		= 1,
-> +		.ucon		= SMDKV310_UCON_DEFAULT,
-> +		.ufcon		= SMDKV310_UFCON_DEFAULT,
-> +	},
-> +	[2] = {
-> +		.hwport		= 2,
-> +		.ucon		= SMDKV310_UCON_DEFAULT,
-> +		.ufcon		= SMDKV310_UFCON_DEFAULT,
-> +	},
-> +	[3] = {
-> +		.hwport		= 3,
-> +		.ucon		= SMDKV310_UCON_DEFAULT,
-> +		.ufcon		= SMDKV310_UFCON_DEFAULT,
-> +	},
-> +};
-> +
-> +/*
-> + * The following lookup table is used to override device names when devices
-> + * are registered from device tree. This is temporarily added to enable
-> + * device tree support addition for the Exynos4 architecture.
-> + *
-> + * For drivers that require platform data to be provided from the machine
-> + * file, a platform data pointer can also be supplied along with the
-> + * devices names. Usually, the platform data elements that cannot be parsed
-> + * from the device tree by the drivers (example: function pointers) are
-> + * supplied. But it should be noted that this is a temporary mechanism and
-> + * at some point, the drivers should be capable of parsing all the platform
-> + * data from the device tree.
-> + */
-> +static const struct of_dev_auxdata exynos4_auxdata_lookup[] __initconst = {
-> +	OF_DEV_AUXDATA("samsung,s3c6410-sdhci", EXYNOS4_PA_HSMMC(2),
-> +				"s3c-sdhci.2", &s3c_hsmmc2_def_platdata),
-> +	OF_DEV_AUXDATA("samsung,s3c6410-sdhci", EXYNOS4_PA_HSMMC(0),
-> +				"s3c-sdhci.0", &s3c_hsmmc0_def_platdata),
-> +	{},
-> +};
-> +
-> +static void __init exynos4_dt_map_io(void)
-> +{
-> +	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
-> +	s3c24xx_init_clocks(24000000);
-> +	s3c24xx_init_uarts(smdkv310_uartcfgs, ARRAY_SIZE(smdkv310_uartcfgs));
-> +}
-> +
-> +static const struct of_device_id intc_of_match[] __initconst = {
-> +	{ .compatible = "samsung,exynos4-gic", },
-> +	{},
-> +};
-> +
-> +static void __init exynos4_dt_machine_init(void)
-> +{
-> +	irq_domain_generate_simple(intc_of_match, EXYNOS4_PA_GIC_DIST, 0);
-> +	of_platform_populate(NULL, of_default_bus_match_table,
-> +				exynos4_auxdata_lookup, NULL);
-> +}
-> +
-> +static char const *exynos4_dt_compat[] __initdata = {
-> +	"samsung,exynos4",
-> +	NULL
-> +};
-> +
-> +DT_MACHINE_START(SMDKV310, "Samsung Exynos4 DT")
-> +	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
-> +	.init_irq	= exynos4_init_irq,
-> +	.map_io		= exynos4_dt_map_io,
-> +	.init_machine	= exynos4_dt_machine_init,
-> +	.timer		= &exynos4_timer,
-> +	.dt_compat	= exynos4_dt_compat,
-> +MACHINE_END
-> -- 
-> 1.7.4.1
+> I do not know much technical details about the kernel build system, but might 
+> it be a concurrency issue (I use make -j5 for building with 5 jobs)?
+
+Usually this is caused by symbols moving slightly between kernel compiles.
+
+This is an explanation of the process I wrote a while ago in a different
+thread at LKML:
+
+> Now as for CONFIG_KALLSYMS_EXTRA_PASS: to build the kallsyms table, the
+> build process first links a kernel image with an empty kallsyms table
+> and use that to fetch information for all the symbols.
 > 
+> It then uses that information to build the table with the right size,
+> and links it again. If everything goes ok, this new version as all the
+> symbols in the correct places and the final table can be built with the
+> correct addresses.
+> 
+> The final linking should produce the same result as only the data on the
+> kallsyms table changed, but not its size.
+> 
+> However, there have been bugs in the past with section alignments and
+> symbol reordering for symbols with the same address, etc., etc. that
+> make this final table not have the exact same size, and the build fails
+> with an inconsistent kallsyms data message. At this point, the user can
+> turn on the CONFIG_KALLSYMS_EXTRA_PASS and temporarily solve the problem
+> while the developers find the correct fix. Without this option, in this
+> situation the kernel would simply fail the compilation.
+> 
+> All this has been stable for a while and this option hasn't been needed
+> recently (AFAIK), but if there is some bug in some new binutils or
+> something, the option might be needed again.
+
+To check inconsistencies, the Makefile compares ".tmp_System.map" and
+"System.map" for differences.
+
+On a normal build they should be identical, but if this fails with
+"Inconsistent kallsyms data" you could try comparing the two files to
+check which symbols are causing trouble.
+
+-- 
+Paulo Marques - www.grupopie.com
+
+"All generalizations are false."
