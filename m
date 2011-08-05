@@ -1,53 +1,39 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 Subject: Re: [PATCH] ARM: GIC: Add device tree interrupt specifier
 	translation support
-Date: Fri, 5 Aug 2011 10:53:18 +0100
-Message-ID: <20110805105318.5550e4b5@taxman.wild-wind.fr.eu.org>
+Date: Fri, 5 Aug 2011 11:08:59 +0100
+Message-ID: <20110805100859.GE20575@n2100.arm.linux.org.uk>
 References: <1312532353-8772-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1312532353-8772-1-git-send-email-thomas.abraham@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: grant.likely@secretlab.ca, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1312532353-8772-1-git-send-email-thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri,  5 Aug 2011 09:19:13 +0100
-Thomas Abraham <thomas.abraham@linaro.org> wrote:
-
+On Fri, Aug 05, 2011 at 09:19:13AM +0100, Thomas Abraham wrote:
 > Add support for translation of hardware interrupt numbers specified in device
 > tree nodes to linux irq number.
 > 
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 > ---
 > Notes:
 > 1. The translation of SGI/PPI interrupts is supported only for CPU0.
+> 2. The documentation is derived from the following patch submitted
+>    earlier by Rob Herring.
+>    [PATCH 2/3] ARM: gic: add OF based initialization
 
-This is a major problem. PPIs could be used differently on different
-CPUs, as each CPU basically has its own PPI controller. I don't know if
-this "feature" is used in the wild, but there is reason why it couldn't
-be used one of these days.
-
-I did have a go at this problem a while ago, as part of a much complex
-patch set:
-
-https://patchwork.kernel.org/patch/916362/
-
-Also note that at the moment, PPIs are not really usable as standard
-interrupts (because of the whole banking scheme).
-
-Cheers,
-
-	M.
--- 
-I'm the slime oozin' out from your TV set...
+Ignore SGIs for the purposes of DT.  SGIs aren't part of the hardware
+setup of a SoC or device, and are specific to the internals of SMP.
