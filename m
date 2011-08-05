@@ -1,34 +1,147 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V5 00/15] To use DMA generic APIs for Samsung DMA
-Date: Thu, 4 Aug 2011 18:53:51 +0200
-Message-ID: <CACRpkdZvbH1O608n_aa_nVi-Onhmt0Ay6X1yCgBVNES4o9hTrA@mail.gmail.com>
-References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH] ARM: GIC: Add device tree interrupt specifier translation support
+Date: Fri,  5 Aug 2011 09:19:13 +0100
+Message-ID: <1312532353-8772-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qy0-f174.google.com ([209.85.216.174]:41317 "EHLO
-	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753596Ab1HDQxw (ORCPT
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:37702 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754618Ab1HEITU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Aug 2011 12:53:52 -0400
-Received: by qyk38 with SMTP id 38so914555qyk.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Aug 2011 09:53:51 -0700 (PDT)
-In-Reply-To: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
+	Fri, 5 Aug 2011 04:19:20 -0400
+Received: by wyf22 with SMTP id 22so1048204wyf.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Aug 2011 01:19:18 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Boojin Kim <boojin.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Grant Likely <grant.likely@secretlab.ca>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Dan Williams <dan.j.williams@intel.com>
+To: devicetree-discuss@lists.ozlabs.org
+Cc: grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-On Wed, Jul 27, 2011 at 7:31 AM, Boojin Kim <boojin.kim@samsung.com> wrote:
+Add support for translation of hardware interrupt numbers specified in device
+tree nodes to linux irq number.
 
-> This patchset adds support DMA generic APIs for Samsung DMA.
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+Notes:
+1. The translation of SGI/PPI interrupts is supported only for CPU0.
+2. The documentation is derived from the following patch submitted
+   earlier by Rob Herring.
+   [PATCH 2/3] ARM: gic: add OF based initialization
 
-Patches look good to me,
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+ Documentation/devicetree/bindings/arm/gic.txt |   21 +++++++
+ arch/arm/common/gic.c                         |   70 +++++++++++++++++++++++++
+ 2 files changed, 91 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/gic.txt
 
-Are there any more users of the code in arch/arm/common/pl330.c?
-Else I think next step should be to move that file to drivers/dma/
-and optionally merge it with the other pl330.c file there.
-
-Thanks!
-Linus Walleij
+diff --git a/Documentation/devicetree/bindings/arm/gic.txt b/Documentation/devicetree/bindings/arm/gic.txt
+new file mode 100644
+index 0000000..3204ac5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/gic.txt
+@@ -0,0 +1,21 @@
++* ARM Generic Interrupt Controller
++
++Some ARM cores have an interrupt controller called GIC. The ARM GIC
++representation in the device tree should be done as under:
++
++Required properties:
++- compatible: should be "arm,cortex-a9-gic".
++- reg: Specifies base physical address(s) and size of the GIC registers. The
++  first two values are the GIC distributor register base and size. The second
++  two values are the GIC cpu interface register base and size.
++- interrupt-controller: Identifies the node as an interrupt controller
++- #interrupt-cells: Specifies the number of cells needed to encode a
++  interrupt source and the value shall be 1.
++
++Example:
++	GIC:interrupt-controller@10490000 {
++		compatible = "arm,cortex-a9-gic";
++		#interrupt-cells = <2>;
++		interrupt-controller;
++		reg = <0x10490000 0x1000>, <0x10480000 0x100>;
++	};
+diff --git a/arch/arm/common/gic.c b/arch/arm/common/gic.c
+index 3227ca9..c11d3a5 100644
+--- a/arch/arm/common/gic.c
++++ b/arch/arm/common/gic.c
+@@ -28,6 +28,11 @@
+ #include <linux/smp.h>
+ #include <linux/cpumask.h>
+ #include <linux/io.h>
++#ifdef CONFIG_OF_IRQ
++#include <linux/irqdomain.h>
++#include <linux/of.h>
++#include <linux/slab.h>
++#endif
+ 
+ #include <asm/irq.h>
+ #include <asm/mach/irq.h>
+@@ -394,3 +399,68 @@ void gic_raise_softirq(const struct cpumask *mask, unsigned int irq)
+ 	writel_relaxed(map << 16 | irq, gic_data[0].dist_base + GIC_DIST_SOFTINT);
+ }
+ #endif
++
++#ifdef CONFIG_OF_IRQ
++
++/* GIC interrupt types corresponding to the device tree interrupt specifier */
++enum gic_int_type {
++	GIC_INT_TYPE_SPI = 0,
++	GIC_INT_TYPE_SGI = 1,
++	GIC_INT_TYPE_PPI = 2,
++};
++
++/* Translate dt irq specifier to linux irq number */
++static int gic_irq_domain_translate_dt(struct irq_domain *d,
++			    struct device_node *controller,
++			    const u32 *intspec, unsigned int intsize,
++			    unsigned long *out_hwirq, unsigned int *out_type)
++{
++	if (d->of_node != controller)
++		return -EINVAL;
++	if (intsize < 2)
++		return -EINVAL;
++
++	switch (intspec[0]) {
++	case GIC_INT_TYPE_SPI:
++		*out_hwirq = intspec[1] + 32; /* +32, for start of SPI */
++		break;
++	case GIC_INT_TYPE_SGI:
++		*out_hwirq = intspec[1];
++		break;
++	case GIC_INT_TYPE_PPI:
++		*out_hwirq = intspec[1] + 16; /* +16, for start of PPI */
++		break;
++	default:
++		pr_info("gic_irq_domain_translate_dt: invalid gic intr type\n");
++		return -EINVAL;
++	}
++
++	*out_hwirq += d->irq_base;
++	*out_type = IRQ_TYPE_NONE;
++	return 0;
++}
++
++static struct irq_domain_ops gic_irq_domain_dt_ops = {
++	.dt_translate = gic_irq_domain_translate_dt,
++};
++
++int gic_add_irq_domain_dt(unsigned int irq_base)
++{
++	struct device_node *np;
++	struct irq_domain *domain;
++
++	np = of_find_compatible_node(NULL, NULL, "arm,cortex-a9-gic");
++	if (!np)
++		return -ENODEV;
++
++	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
++	if (!domain)
++		return -ENOMEM;
++
++	domain->irq_base = irq_base;
++	domain->of_node = np;
++	domain->ops = &gic_irq_domain_dt_ops;
++	irq_domain_add(domain);
++	return 0;
++}
++#endif
+-- 
+1.7.4.1
