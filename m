@@ -1,223 +1,259 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
 Subject: Re: [PATCH 12/15] spi/s3c64xx: Add support DMA engine API
-Date: Mon, 8 Aug 2011 23:17:58 +0530
-Message-ID: <CABb+yY3-d0xTO+s0cCPXPW8qGpTH5G2U+bp-0z4Se47eVvJ__w@mail.gmail.com>
-References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
-	<1311744697-10264-13-git-send-email-boojin.kim@samsung.com>
+Date: Mon, 8 Aug 2011 19:55:38 +0200
+Message-ID: <201108081955.39626.heiko@sntech.de>
+References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com> <1311744697-10264-13-git-send-email-boojin.kim@samsung.com> <CABb+yY3-d0xTO+s0cCPXPW8qGpTH5G2U+bp-0z4Se47eVvJ__w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1311744697-10264-13-git-send-email-boojin.kim@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Boojin Kim <boojin.kim@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:49287 "EHLO
+	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751423Ab1HHRzr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 8 Aug 2011 13:55:47 -0400
+In-Reply-To: <CABb+yY3-d0xTO+s0cCPXPW8qGpTH5G2U+bp-0z4Se47eVvJ__w@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Boojin Kim <boojin.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>
 
-T24gV2VkLCBKdWwgMjcsIDIwMTEgYXQgMTE6MDEgQU0sIEJvb2ppbiBLaW0gPGJvb2ppbi5raW1A
-c2Ftc3VuZy5jb20+IHdyb3RlOgo+IFRoaXMgcGF0Y2ggYWRkcyB0byBzdXBwb3J0IERNQSBnZW5l
-cmljIEFQSSB0byB0cmFuc2ZlciByYXcKPiBTUEkgZGF0YS4gQmFzaWNsbHkgdGhlIHNwaSBkcml2
-ZXIgdXNlcyBETUEgZ2VuZXJpYyBBUEkgaWYKPiBhcmNoaXRlY3R1cmUgc3VwcG9ydHMgaXQuIE90
-aGVyd2lzZSwgdXNlcyBTYW1zdW5nIHNwZWNpZmljCj4gUzNDLVBMMzMwIEFQSXMuCj4KPiBTaWdu
-ZWQtb2ZmLWJ5OiBCb29qaW4gS2ltIDxib29qaW4ua2ltQHNhbXN1bmcuY29tPgo+IEFja2VkLWJ5
-OiBHcmFudCBMaWtlbHkgPGdyYW50Lmxpa2VseUBzZWNyZXRsYWIuY2E+Cj4gU2lnbmVkLW9mZi1i
-eTogS3VramluIEtpbSA8a2dlbmUua2ltQHNhbXN1bmcuY29tPgo+IC0tLQo+IMKgZHJpdmVycy9z
-cGkvc3BpX3MzYzY0eHguYyB8IMKgMTQxICsrKysrKysrKysrKysrKysrKysrKystLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLQo+IMKgMSBmaWxlcyBjaGFuZ2VkLCA2OSBpbnNlcnRpb25zKCspLCA3MiBk
-ZWxldGlvbnMoLSkKPgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3NwaS9zcGlfczNjNjR4eC5jIGIv
-ZHJpdmVycy9zcGkvc3BpX3MzYzY0eHguYwo+IGluZGV4IDg5NDVlMjAuLmE0Y2Y3NmEgMTAwNjQ0
-Cj4gLS0tIGEvZHJpdmVycy9zcGkvc3BpX3MzYzY0eHguYwo+ICsrKyBiL2RyaXZlcnMvc3BpL3Nw
-aV9zM2M2NHh4LmMKPiBAQCAtMTcyLDYgKzE3Miw5IEBAIHN0cnVjdCBzM2M2NHh4X3NwaV9kcml2
-ZXJfZGF0YSB7Cj4gwqAgwqAgwqAgwqB1bnNpZ25lZCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoHN0YXRlOwo+IMKgIMKgIMKgIMKgdW5zaWduZWQgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqBjdXJfbW9kZSwgY3VyX2JwdzsKPiDCoCDCoCDCoCDCoHVuc2lnbmVk
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgY3VyX3NwZWVkOwo+ICsgwqAgwqAg
-wqAgdW5zaWduZWQgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqByeF9jaDsKPiAr
-IMKgIMKgIMKgIHVuc2lnbmVkIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgdHhf
-Y2g7Cj4gKyDCoCDCoCDCoCBzdHJ1Y3Qgc2Ftc3VuZ19kbWFfb3BzIMKgIMKgIMKgIMKgIMKgKm9w
-czsKPiDCoH07Cj4KPiDCoHN0YXRpYyBzdHJ1Y3QgczNjMjQxMF9kbWFfY2xpZW50IHMzYzY0eHhf
-c3BpX2RtYV9jbGllbnQgPSB7Cj4gQEAgLTIyNyw2ICsyMzAsMzggQEAgc3RhdGljIHZvaWQgZmx1
-c2hfZmlmbyhzdHJ1Y3QgczNjNjR4eF9zcGlfZHJpdmVyX2RhdGEgKnNkZCkKPiDCoCDCoCDCoCDC
-oHdyaXRlbCh2YWwsIHJlZ3MgKyBTM0M2NFhYX1NQSV9DSF9DRkcpOwo+IMKgfQo+Cj4gK3N0YXRp
-YyB2b2lkIHMzYzY0eHhfc3BpX2RtYV9yeGNiKHZvaWQgKmRhdGEpCj4gK3sKPiArIMKgIMKgIMKg
-IHN0cnVjdCBzM2M2NHh4X3NwaV9kcml2ZXJfZGF0YSAqc2RkCj4gKyDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCA9IChzdHJ1Y3QgczNjNjR4eF9zcGlfZHJpdmVyX2RhdGEgKilkYXRhOwp2b2lkKiBkb2Vz
-bid0IG5lZWQgdHlwZWNhc3RpbmcgKHNhbWUgZm9yIGFsbCBzdWNoIG9jY3VyYW5jZXMpCklJUkMg
-c29tZW9uZSBhbHJlYWR5IHBvaW50ZWQgaXQgb3V0PwoKCj4gKyDCoCDCoCDCoCB1bnNpZ25lZCBs
-b25nIGZsYWdzOwo+ICsKPiArIMKgIMKgIMKgIHNwaW5fbG9ja19pcnFzYXZlKCZzZGQtPmxvY2ss
-IGZsYWdzKTsKPiArCj4gKyDCoCDCoCDCoCBzZGQtPnN0YXRlICY9IH5SWEJVU1k7Cj4gKyDCoCDC
-oCDCoCAvKiBJZiB0aGUgb3RoZXIgZG9uZSAqLwo+ICsgwqAgwqAgwqAgaWYgKCEoc2RkLT5zdGF0
-ZSAmIFRYQlVTWSkpCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBjb21wbGV0ZSgmc2RkLT54ZmVy
-X2NvbXBsZXRpb24pOwo+ICsKPiArIMKgIMKgIMKgIHNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJnNk
-ZC0+bG9jaywgZmxhZ3MpOwo+ICt9Cj4gKwo+ICtzdGF0aWMgdm9pZCBzM2M2NHh4X3NwaV9kbWFf
-dHhjYih2b2lkICpkYXRhKQo+ICt7Cj4gKyDCoCDCoCDCoCBzdHJ1Y3QgczNjNjR4eF9zcGlfZHJp
-dmVyX2RhdGEgKnNkZAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgPSAoc3RydWN0IHMzYzY0eHhf
-c3BpX2RyaXZlcl9kYXRhICopZGF0YTsKPiArIMKgIMKgIMKgIHVuc2lnbmVkIGxvbmcgZmxhZ3M7
-Cj4gKwo+ICsgwqAgwqAgwqAgc3Bpbl9sb2NrX2lycXNhdmUoJnNkZC0+bG9jaywgZmxhZ3MpOwo+
-ICsKPiArIMKgIMKgIMKgIHNkZC0+c3RhdGUgJj0gflRYQlVTWTsKPiArIMKgIMKgIMKgIC8qIElm
-IHRoZSBvdGhlciBkb25lICovCj4gKyDCoCDCoCDCoCBpZiAoIShzZGQtPnN0YXRlICYgUlhCVVNZ
-KSkKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGNvbXBsZXRlKCZzZGQtPnhmZXJfY29tcGxldGlv
-bik7Cj4gKwo+ICsgwqAgwqAgwqAgc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmc2RkLT5sb2NrLCBm
-bGFncyk7Cj4gK30KPiArCj4gwqBzdGF0aWMgdm9pZCBlbmFibGVfZGF0YXBhdGgoc3RydWN0IHMz
-YzY0eHhfc3BpX2RyaXZlcl9kYXRhICpzZGQsCj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqBzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpLAo+IMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgc3RydWN0IHNwaV90cmFuc2ZlciAq
-eGZlciwgaW50IGRtYV9tb2RlKQo+IEBAIC0yMzQsNiArMjY5LDcgQEAgc3RhdGljIHZvaWQgZW5h
-YmxlX2RhdGFwYXRoKHN0cnVjdCBzM2M2NHh4X3NwaV9kcml2ZXJfZGF0YSAqc2RkLAo+IMKgIMKg
-IMKgIMKgc3RydWN0IHMzYzY0eHhfc3BpX2luZm8gKnNjaSA9IHNkZC0+Y250cmxyX2luZm87Cj4g
-wqAgwqAgwqAgwqB2b2lkIF9faW9tZW0gKnJlZ3MgPSBzZGQtPnJlZ3M7Cj4gwqAgwqAgwqAgwqB1
-MzIgbW9kZWNmZywgY2hjZmc7Cj4gKyDCoCDCoCDCoCBzdHJ1Y3Qgc2Ftc3VuZ19kbWFfcHJlcF9p
-bmZvIGluZm87Cj4KPiDCoCDCoCDCoCDCoG1vZGVjZmcgPSByZWFkbChyZWdzICsgUzNDNjRYWF9T
-UElfTU9ERV9DRkcpOwo+IMKgIMKgIMKgIMKgbW9kZWNmZyAmPSB+KFMzQzY0WFhfU1BJX01PREVf
-VFhETUFfT04gfCBTM0M2NFhYX1NQSV9NT0RFX1JYRE1BX09OKTsKPiBAQCAtMjU5LDEwICsyOTUs
-MTQgQEAgc3RhdGljIHZvaWQgZW5hYmxlX2RhdGFwYXRoKHN0cnVjdCBzM2M2NHh4X3NwaV9kcml2
-ZXJfZGF0YSAqc2RkLAo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgY2hjZmcgfD0gUzNDNjRYWF9T
-UElfQ0hfVFhDSF9PTjsKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoGlmIChkbWFfbW9kZSkgewo+
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgbW9kZWNmZyB8PSBTM0M2NFhYX1NQ
-SV9NT0RFX1RYRE1BX09OOwo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgczNj
-MjQxMF9kbWFfY29uZmlnKHNkZC0+dHhfZG1hY2gsIHNkZC0+Y3VyX2JwdyAvIDgpOwo+IC0gwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgczNjMjQxMF9kbWFfZW5xdWV1ZShzZGQtPnR4
-X2RtYWNoLCAodm9pZCAqKXNkZCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHhmZXItPnR4X2RtYSwgeGZlci0+
-bGVuKTsKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHMzYzI0MTBfZG1hX2N0
-cmwoc2RkLT50eF9kbWFjaCwgUzNDMjQxMF9ETUFPUF9TVEFSVCk7Cj4gKyDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCBpbmZvLmNhcCA9IERNQV9TTEFWRTsKPiArIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIGluZm8uZGlyZWN0aW9uID0gRE1BX1RPX0RFVklDRTsKPiAr
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGluZm8uYnVmID0geGZlci0+dHhfZG1h
-Owo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgaW5mby5sZW4gPSB4ZmVyLT5s
-ZW47Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBpbmZvLmZwID0gczNjNjR4
-eF9zcGlfZG1hX3R4Y2I7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBpbmZv
-LmZwX3BhcmFtID0gc2RkOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgc2Rk
-LT5vcHMtPnByZXBhcmUoc2RkLT50eF9jaCwgJmluZm8pOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgc2RkLT5vcHMtPnRyaWdnZXIoc2RkLT50eF9jaCk7Cj4gwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqB9IGVsc2Ugewo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgc3dpdGNoIChzZGQtPmN1cl9icHcpIHsKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoGNhc2UgMzI6Cj4gQEAgLTI5NCwxMCArMzM0LDE0IEBAIHN0YXRpYyB2b2lkIGVuYWJs
-ZV9kYXRhcGF0aChzdHJ1Y3QgczNjNjR4eF9zcGlfZHJpdmVyX2RhdGEgKnNkZCwKPiDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoHdyaXRlbCgoKHhmZXItPmxlbiAqIDggLyBzZGQt
-PmN1cl9icHcpICYgMHhmZmZmKQo+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgfCBTM0M2NFhYX1NQSV9QQUNLRVRfQ05UX0VOLAo+IMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-cmVncyArIFMzQzY0WFhfU1BJX1BBQ0tFVF9DTlQpOwo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgczNjMjQxMF9kbWFfY29uZmlnKHNkZC0+cnhfZG1hY2gsIHNkZC0+Y3VyX2Jw
-dyAvIDgpOwo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgczNjMjQxMF9kbWFf
-ZW5xdWV1ZShzZGQtPnJ4X2RtYWNoLCAodm9pZCAqKXNkZCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHhmZXIt
-PnJ4X2RtYSwgeGZlci0+bGVuKTsKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IHMzYzI0MTBfZG1hX2N0cmwoc2RkLT5yeF9kbWFjaCwgUzNDMjQxMF9ETUFPUF9TVEFSVCk7Cj4g
-KyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBpbmZvLmNhcCA9IERNQV9TTEFWRTsK
-PiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGluZm8uZGlyZWN0aW9uID0gRE1B
-X0ZST01fREVWSUNFOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgaW5mby5i
-dWYgPSB4ZmVyLT5yeF9kbWE7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBp
-bmZvLmxlbiA9IHhmZXItPmxlbjsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IGluZm8uZnAgPSBzM2M2NHh4X3NwaV9kbWFfcnhjYjsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIGluZm8uZnBfcGFyYW0gPSBzZGQ7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCBzZGQtPm9wcy0+cHJlcGFyZShzZGQtPnJ4X2NoLCAmaW5mbyk7Cj4gKyDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBzZGQtPm9wcy0+dHJpZ2dlcihzZGQtPnJ4
-X2NoKTsKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoH0KPiDCoCDCoCDCoCDCoH0KPgo+IEBAIC00
-ODMsNDYgKzUyNyw2IEBAIHN0YXRpYyB2b2lkIHMzYzY0eHhfc3BpX2NvbmZpZyhzdHJ1Y3QgczNj
-NjR4eF9zcGlfZHJpdmVyX2RhdGEgKnNkZCkKPiDCoCDCoCDCoCDCoH0KPiDCoH0KPgo+IC1zdGF0
-aWMgdm9pZCBzM2M2NHh4X3NwaV9kbWFfcnhjYihzdHJ1Y3QgczNjMjQxMF9kbWFfY2hhbiAqY2hh
-biwgdm9pZCAqYnVmX2lkLAo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqBpbnQgc2l6ZSwgZW51bSBzM2MyNDEwX2RtYV9idWZmcmVzdWx0IHJlcykKPiAt
-ewo+IC0gwqAgwqAgwqAgc3RydWN0IHMzYzY0eHhfc3BpX2RyaXZlcl9kYXRhICpzZGQgPSBidWZf
-aWQ7Cj4gLSDCoCDCoCDCoCB1bnNpZ25lZCBsb25nIGZsYWdzOwo+IC0KPiAtIMKgIMKgIMKgIHNw
-aW5fbG9ja19pcnFzYXZlKCZzZGQtPmxvY2ssIGZsYWdzKTsKPiAtCj4gLSDCoCDCoCDCoCBpZiAo
-cmVzID09IFMzQzI0MTBfUkVTX09LKQo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgc2RkLT5zdGF0
-ZSAmPSB+UlhCVVNZOwo+IC0gwqAgwqAgwqAgZWxzZQo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-ZGV2X2Vycigmc2RkLT5wZGV2LT5kZXYsICJEbWFBYnJ0UngtJWRcbiIsIHNpemUpOwo+IC0KPiAt
-IMKgIMKgIMKgIC8qIElmIHRoZSBvdGhlciBkb25lICovCj4gLSDCoCDCoCDCoCBpZiAoIShzZGQt
-PnN0YXRlICYgVFhCVVNZKSkKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGNvbXBsZXRlKCZzZGQt
-PnhmZXJfY29tcGxldGlvbik7Cj4gLQo+IC0gwqAgwqAgwqAgc3Bpbl91bmxvY2tfaXJxcmVzdG9y
-ZSgmc2RkLT5sb2NrLCBmbGFncyk7Cj4gLX0KPiAtCj4gLXN0YXRpYyB2b2lkIHMzYzY0eHhfc3Bp
-X2RtYV90eGNiKHN0cnVjdCBzM2MyNDEwX2RtYV9jaGFuICpjaGFuLCB2b2lkICpidWZfaWQsCj4g
-LSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoGludCBzaXpl
-LCBlbnVtIHMzYzI0MTBfZG1hX2J1ZmZyZXN1bHQgcmVzKQo+IC17Cj4gLSDCoCDCoCDCoCBzdHJ1
-Y3QgczNjNjR4eF9zcGlfZHJpdmVyX2RhdGEgKnNkZCA9IGJ1Zl9pZDsKPiAtIMKgIMKgIMKgIHVu
-c2lnbmVkIGxvbmcgZmxhZ3M7Cj4gLQo+IC0gwqAgwqAgwqAgc3Bpbl9sb2NrX2lycXNhdmUoJnNk
-ZC0+bG9jaywgZmxhZ3MpOwo+IC0KPiAtIMKgIMKgIMKgIGlmIChyZXMgPT0gUzNDMjQxMF9SRVNf
-T0spCj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCBzZGQtPnN0YXRlICY9IH5UWEJVU1k7Cj4gLSDC
-oCDCoCDCoCBlbHNlCj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCBkZXZfZXJyKCZzZGQtPnBkZXYt
-PmRldiwgIkRtYUFicnRUeC0lZCBcbiIsIHNpemUpOwo+IC0KPiAtIMKgIMKgIMKgIC8qIElmIHRo
-ZSBvdGhlciBkb25lICovCj4gLSDCoCDCoCDCoCBpZiAoIShzZGQtPnN0YXRlICYgUlhCVVNZKSkK
-PiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGNvbXBsZXRlKCZzZGQtPnhmZXJfY29tcGxldGlvbik7
-Cj4gLQo+IC0gwqAgwqAgwqAgc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmc2RkLT5sb2NrLCBmbGFn
-cyk7Cj4gLX0KPiAtCj4gwqAjZGVmaW5lIFhGRVJfRE1BQUREUl9JTlZBTElEIERNQV9CSVRfTUFT
-SygzMikKPgo+IMKgc3RhdGljIGludCBzM2M2NHh4X3NwaV9tYXBfbXNzZyhzdHJ1Y3QgczNjNjR4
-eF9zcGlfZHJpdmVyX2RhdGEgKnNkZCwKPiBAQCAtNjk3LDEyICs3MDEsMTAgQEAgc3RhdGljIHZv
-aWQgaGFuZGxlX21zZyhzdHJ1Y3QgczNjNjR4eF9zcGlfZHJpdmVyX2RhdGEgKnNkZCwKPiDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoGlmICh1c2VfZG1hKSB7Cj4gwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBpZiAoeGZlci0+dHhfYnVmICE9
-IE5VTEwKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCYmIChzZGQtPnN0YXRlICYgVFhCVVNZKSkKPiAtIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHMzYzI0
-MTBfZG1hX2N0cmwoc2RkLT50eF9kbWFjaCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIFMz
-QzI0MTBfRE1BT1BfRkxVU0gpOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgc2RkLT5vcHMtPnN0b3Aoc2RkLT50eF9jaCk7Cj4gwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBpZiAoeGZlci0+cnhf
-YnVmICE9IE5VTEwKPiDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCYmIChzZGQtPnN0YXRlICYgUlhCVVNZKSkKPiAt
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IHMzYzI0MTBfZG1hX2N0cmwoc2RkLT5yeF9kbWFjaCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIFMzQzI0MTBfRE1BT1BfRkxVU0gpOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgc2RkLT5vcHMtPnN0b3Aoc2RkLT5yeF9jaCk7
-Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqB9Cj4KPiDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoGdvdG8gb3V0Owo+IEBAIC03NDIsMjQgKzc0NCwxOSBAQCBv
-dXQ6Cj4KPiDCoHN0YXRpYyBpbnQgYWNxdWlyZV9kbWEoc3RydWN0IHMzYzY0eHhfc3BpX2RyaXZl
-cl9kYXRhICpzZGQpCj4gwqB7Cj4gLSDCoCDCoCDCoCBpZiAoczNjMjQxMF9kbWFfcmVxdWVzdChz
-ZGQtPnJ4X2RtYWNoLAo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgJnMzYzY0eHhfc3BpX2RtYV9jbGllbnQsIE5VTEwpIDwgMCkgewo+
-IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgZGV2X2Vycigmc2RkLT5wZGV2LT5kZXYsICJjYW5ub3Qg
-Z2V0IFJ4RE1BXG4iKTsKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHJldHVybiAwOwo+IC0gwqAg
-wqAgwqAgfQo+IC0gwqAgwqAgwqAgczNjMjQxMF9kbWFfc2V0X2J1ZmZkb25lX2ZuKHNkZC0+cnhf
-ZG1hY2gsIHMzYzY0eHhfc3BpX2RtYV9yeGNiKTsKPiAtIMKgIMKgIMKgIHMzYzI0MTBfZG1hX2Rl
-dmNvbmZpZyhzZGQtPnJ4X2RtYWNoLCBTM0MyNDEwX0RNQVNSQ19IVywKPiAtIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHNkZC0+c2ZyX3N0
-YXJ0ICsgUzNDNjRYWF9TUElfUlhfREFUQSk7Cj4gLQo+IC0gwqAgwqAgwqAgaWYgKHMzYzI0MTBf
-ZG1hX3JlcXVlc3Qoc2RkLT50eF9kbWFjaCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgICZzM2M2NHh4X3NwaV9kbWFfY2xpZW50LCBO
-VUxMKSA8IDApIHsKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGRldl9lcnIoJnNkZC0+cGRldi0+
-ZGV2LCAiY2Fubm90IGdldCBUeERNQVxuIik7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCBzM2My
-NDEwX2RtYV9mcmVlKHNkZC0+cnhfZG1hY2gsICZzM2M2NHh4X3NwaV9kbWFfY2xpZW50KTsKPiAt
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIHJldHVybiAwOwo+IC0gwqAgwqAgwqAgfQo+IC0gwqAgwqAg
-wqAgczNjMjQxMF9kbWFfc2V0X2J1ZmZkb25lX2ZuKHNkZC0+dHhfZG1hY2gsIHMzYzY0eHhfc3Bp
-X2RtYV90eGNiKTsKPiAtIMKgIMKgIMKgIHMzYzI0MTBfZG1hX2RldmNvbmZpZyhzZGQtPnR4X2Rt
-YWNoLCBTM0MyNDEwX0RNQVNSQ19NRU0sCj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBzZGQtPnNmcl9zdGFydCArIFMzQzY0WFhfU1BJ
-X1RYX0RBVEEpOwo+ICsKPiArIMKgIMKgIMKgIHN0cnVjdCBzYW1zdW5nX2RtYV9pbmZvIGluZm87
-Cj4gKyDCoCDCoCDCoCBzZGQtPm9wcyA9IHNhbXN1bmdfZG1hX2dldF9vcHMoKTsKPiArCj4gKyDC
-oCDCoCDCoCBpbmZvLmNhcCA9IERNQV9TTEFWRTsKPiArIMKgIMKgIMKgIGluZm8uY2xpZW50ID0g
-JnMzYzY0eHhfc3BpX2RtYV9jbGllbnQ7Cj4gKyDCoCDCoCDCoCBpbmZvLmRpcmVjdGlvbiA9IERN
-QV9GUk9NX0RFVklDRTsKPiArIMKgIMKgIMKgIGluZm8uZmlmbyA9IHNkZC0+c2ZyX3N0YXJ0ICsg
-UzNDNjRYWF9TUElfUlhfREFUQTsKPiArIMKgIMKgIMKgIGluZm8ud2lkdGggPSBzZGQtPmN1cl9i
-cHcgLyA4Owo+ICsgwqAgwqAgwqAgc2RkLT5yeF9jaCA9IHNkZC0+b3BzLT5yZXF1ZXN0KHNkZC0+
-cnhfZG1hY2gsICZpbmZvKTsKPiArIMKgIMKgIMKgIGluZm8uZGlyZWN0aW9uID0gRE1BX1RPX0RF
-VklDRTsKPiArIMKgIMKgIMKgIGluZm8uZmlmbyA9IHNkZC0+c2ZyX3N0YXJ0ICsgUzNDNjRYWF9T
-UElfVFhfREFUQTsKPiArIMKgIMKgIMKgIHNkZC0+dHhfY2ggPSBzZGQtPm9wcy0+cmVxdWVzdChz
-ZGQtPnR4X2RtYWNoLCAmaW5mbyk7Cj4KPiDCoCDCoCDCoCDCoHJldHVybiAxOwo+IMKgfQo+IEBA
-IC04MDAsOCArNzk3LDggQEAgc3RhdGljIHZvaWQgczNjNjR4eF9zcGlfd29yayhzdHJ1Y3Qgd29y
-a19zdHJ1Y3QgKndvcmspCj4gwqAgwqAgwqAgwqBzcGluX3VubG9ja19pcnFyZXN0b3JlKCZzZGQt
-PmxvY2ssIGZsYWdzKTsKPgo+IMKgIMKgIMKgIMKgLyogRnJlZSBETUEgY2hhbm5lbHMgKi8KPiAt
-IMKgIMKgIMKgIHMzYzI0MTBfZG1hX2ZyZWUoc2RkLT50eF9kbWFjaCwgJnMzYzY0eHhfc3BpX2Rt
-YV9jbGllbnQpOwo+IC0gwqAgwqAgwqAgczNjMjQxMF9kbWFfZnJlZShzZGQtPnJ4X2RtYWNoLCAm
-czNjNjR4eF9zcGlfZG1hX2NsaWVudCk7Cj4gKyDCoCDCoCDCoCBzZGQtPm9wcy0+cmVsZWFzZShz
-ZGQtPnJ4X2NoLCAmczNjNjR4eF9zcGlfZG1hX2NsaWVudCk7Cj4gKyDCoCDCoCDCoCBzZGQtPm9w
-cy0+cmVsZWFzZShzZGQtPnR4X2NoLCAmczNjNjR4eF9zcGlfZG1hX2NsaWVudCk7Cj4gwqB9CgpC
-dHcsIHRoaXMgc3BpIGRyaXZlciBpcyBmb3IgUzNDNjR4eCh3aXRoIHBsMDgwKSBhbmQgUzVQKHdp
-dGggcGwzMzApCnNlcmllcywgYm90aCBvZiB3aGljaApoYXZlIERNQUVOR0lORSBkcml2ZXJzLiBN
-YXkgYmUgaXQgY291bGQgYmUgZGlyZWN0bHkgc3dpdGNoZWQgdG8gdXNpbmcKdGhvc2UsIHJhdGhl
-ciB0aGFuCnZpYSBTYW1zdW5nJ3Mgd3JhcHBlciBkcml2ZXIuCk9yIGFtIEkgb3Zlcmxvb2tpbmcg
-c29tZXRoaW5nID8KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0cy5p
-bmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8v
-bGludXgtYXJtLWtlcm5lbAo=
+Am Montag 08 August 2011, 19:47:58 schrieb Jassi Brar:
+> On Wed, Jul 27, 2011 at 11:01 AM, Boojin Kim <boojin.kim@samsung.com> wrote:
+> > This patch adds to support DMA generic API to transfer raw
+> > SPI data. Basiclly the spi driver uses DMA generic API if
+> > architecture supports it. Otherwise, uses Samsung specific
+> > S3C-PL330 APIs.
+> > 
+> > Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+> > Acked-by: Grant Likely <grant.likely@secretlab.ca>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > ---
+> >  drivers/spi/spi_s3c64xx.c |  141
+> > ++++++++++++++++++++++----------------------- 1 files changed, 69
+> > insertions(+), 72 deletions(-)
+> > 
+> > diff --git a/drivers/spi/spi_s3c64xx.c b/drivers/spi/spi_s3c64xx.c
+> > index 8945e20..a4cf76a 100644
+> > --- a/drivers/spi/spi_s3c64xx.c
+> > +++ b/drivers/spi/spi_s3c64xx.c
+> > @@ -172,6 +172,9 @@ struct s3c64xx_spi_driver_data {
+> >        unsigned                        state;
+> >        unsigned                        cur_mode, cur_bpw;
+> >        unsigned                        cur_speed;
+> > +       unsigned                        rx_ch;
+> > +       unsigned                        tx_ch;
+> > +       struct samsung_dma_ops          *ops;
+> >  };
+> > 
+> >  static struct s3c2410_dma_client s3c64xx_spi_dma_client = {
+> > @@ -227,6 +230,38 @@ static void flush_fifo(struct
+> > s3c64xx_spi_driver_data *sdd) writel(val, regs + S3C64XX_SPI_CH_CFG);
+> >  }
+> > 
+> > +static void s3c64xx_spi_dma_rxcb(void *data)
+> > +{
+> > +       struct s3c64xx_spi_driver_data *sdd
+> > +               = (struct s3c64xx_spi_driver_data *)data;
+> 
+> void* doesn't need typecasting (same for all such occurances)
+> IIRC someone already pointed it out?
+> 
+> > +       unsigned long flags;
+> > +
+> > +       spin_lock_irqsave(&sdd->lock, flags);
+> > +
+> > +       sdd->state &= ~RXBUSY;
+> > +       /* If the other done */
+> > +       if (!(sdd->state & TXBUSY))
+> > +               complete(&sdd->xfer_completion);
+> > +
+> > +       spin_unlock_irqrestore(&sdd->lock, flags);
+> > +}
+> > +
+> > +static void s3c64xx_spi_dma_txcb(void *data)
+> > +{
+> > +       struct s3c64xx_spi_driver_data *sdd
+> > +               = (struct s3c64xx_spi_driver_data *)data;
+> > +       unsigned long flags;
+> > +
+> > +       spin_lock_irqsave(&sdd->lock, flags);
+> > +
+> > +       sdd->state &= ~TXBUSY;
+> > +       /* If the other done */
+> > +       if (!(sdd->state & RXBUSY))
+> > +               complete(&sdd->xfer_completion);
+> > +
+> > +       spin_unlock_irqrestore(&sdd->lock, flags);
+> > +}
+> > +
+> >  static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
+> >                                struct spi_device *spi,
+> >                                struct spi_transfer *xfer, int dma_mode)
+> > @@ -234,6 +269,7 @@ static void enable_datapath(struct
+> > s3c64xx_spi_driver_data *sdd, struct s3c64xx_spi_info *sci =
+> > sdd->cntrlr_info;
+> >        void __iomem *regs = sdd->regs;
+> >        u32 modecfg, chcfg;
+> > +       struct samsung_dma_prep_info info;
+> > 
+> >        modecfg = readl(regs + S3C64XX_SPI_MODE_CFG);
+> >        modecfg &= ~(S3C64XX_SPI_MODE_TXDMA_ON |
+> > S3C64XX_SPI_MODE_RXDMA_ON); @@ -259,10 +295,14 @@ static void
+> > enable_datapath(struct s3c64xx_spi_driver_data *sdd, chcfg |=
+> > S3C64XX_SPI_CH_TXCH_ON;
+> >                if (dma_mode) {
+> >                        modecfg |= S3C64XX_SPI_MODE_TXDMA_ON;
+> > -                       s3c2410_dma_config(sdd->tx_dmach, sdd->cur_bpw /
+> > 8); -                       s3c2410_dma_enqueue(sdd->tx_dmach, (void
+> > *)sdd, -                                               xfer->tx_dma,
+> > xfer->len); -                       s3c2410_dma_ctrl(sdd->tx_dmach,
+> > S3C2410_DMAOP_START); +                       info.cap = DMA_SLAVE;
+> > +                       info.direction = DMA_TO_DEVICE;
+> > +                       info.buf = xfer->tx_dma;
+> > +                       info.len = xfer->len;
+> > +                       info.fp = s3c64xx_spi_dma_txcb;
+> > +                       info.fp_param = sdd;
+> > +                       sdd->ops->prepare(sdd->tx_ch, &info);
+> > +                       sdd->ops->trigger(sdd->tx_ch);
+> >                } else {
+> >                        switch (sdd->cur_bpw) {
+> >                        case 32:
+> > @@ -294,10 +334,14 @@ static void enable_datapath(struct
+> > s3c64xx_spi_driver_data *sdd, writel(((xfer->len * 8 / sdd->cur_bpw) &
+> > 0xffff) | S3C64XX_SPI_PACKET_CNT_EN, regs + S3C64XX_SPI_PACKET_CNT); -  
+> >                     s3c2410_dma_config(sdd->rx_dmach, sdd->cur_bpw / 8);
+> > -                       s3c2410_dma_enqueue(sdd->rx_dmach, (void *)sdd,
+> > -                                               xfer->rx_dma,
+> > xfer->len); -                       s3c2410_dma_ctrl(sdd->rx_dmach,
+> > S3C2410_DMAOP_START); +                       info.cap = DMA_SLAVE;
+> > +                       info.direction = DMA_FROM_DEVICE;
+> > +                       info.buf = xfer->rx_dma;
+> > +                       info.len = xfer->len;
+> > +                       info.fp = s3c64xx_spi_dma_rxcb;
+> > +                       info.fp_param = sdd;
+> > +                       sdd->ops->prepare(sdd->rx_ch, &info);
+> > +                       sdd->ops->trigger(sdd->rx_ch);
+> >                }
+> >        }
+> > 
+> > @@ -483,46 +527,6 @@ static void s3c64xx_spi_config(struct
+> > s3c64xx_spi_driver_data *sdd) }
+> >  }
+> > 
+> > -static void s3c64xx_spi_dma_rxcb(struct s3c2410_dma_chan *chan, void
+> > *buf_id, -                                int size, enum
+> > s3c2410_dma_buffresult res) -{
+> > -       struct s3c64xx_spi_driver_data *sdd = buf_id;
+> > -       unsigned long flags;
+> > -
+> > -       spin_lock_irqsave(&sdd->lock, flags);
+> > -
+> > -       if (res == S3C2410_RES_OK)
+> > -               sdd->state &= ~RXBUSY;
+> > -       else
+> > -               dev_err(&sdd->pdev->dev, "DmaAbrtRx-%d\n", size);
+> > -
+> > -       /* If the other done */
+> > -       if (!(sdd->state & TXBUSY))
+> > -               complete(&sdd->xfer_completion);
+> > -
+> > -       spin_unlock_irqrestore(&sdd->lock, flags);
+> > -}
+> > -
+> > -static void s3c64xx_spi_dma_txcb(struct s3c2410_dma_chan *chan, void
+> > *buf_id, -                                int size, enum
+> > s3c2410_dma_buffresult res) -{
+> > -       struct s3c64xx_spi_driver_data *sdd = buf_id;
+> > -       unsigned long flags;
+> > -
+> > -       spin_lock_irqsave(&sdd->lock, flags);
+> > -
+> > -       if (res == S3C2410_RES_OK)
+> > -               sdd->state &= ~TXBUSY;
+> > -       else
+> > -               dev_err(&sdd->pdev->dev, "DmaAbrtTx-%d \n", size);
+> > -
+> > -       /* If the other done */
+> > -       if (!(sdd->state & RXBUSY))
+> > -               complete(&sdd->xfer_completion);
+> > -
+> > -       spin_unlock_irqrestore(&sdd->lock, flags);
+> > -}
+> > -
+> >  #define XFER_DMAADDR_INVALID DMA_BIT_MASK(32)
+> > 
+> >  static int s3c64xx_spi_map_mssg(struct s3c64xx_spi_driver_data *sdd,
+> > @@ -697,12 +701,10 @@ static void handle_msg(struct
+> > s3c64xx_spi_driver_data *sdd, if (use_dma) {
+> >                                if (xfer->tx_buf != NULL
+> >                                                && (sdd->state & TXBUSY))
+> > -                                       s3c2410_dma_ctrl(sdd->tx_dmach,
+> > -                                                      
+> > S3C2410_DMAOP_FLUSH); +                                      
+> > sdd->ops->stop(sdd->tx_ch); if (xfer->rx_buf != NULL
+> >                                                && (sdd->state & RXBUSY))
+> > -                                       s3c2410_dma_ctrl(sdd->rx_dmach,
+> > -                                                      
+> > S3C2410_DMAOP_FLUSH); +                                      
+> > sdd->ops->stop(sdd->rx_ch); }
+> > 
+> >                        goto out;
+> > @@ -742,24 +744,19 @@ out:
+> > 
+> >  static int acquire_dma(struct s3c64xx_spi_driver_data *sdd)
+> >  {
+> > -       if (s3c2410_dma_request(sdd->rx_dmach,
+> > -                                       &s3c64xx_spi_dma_client, NULL) <
+> > 0) { -               dev_err(&sdd->pdev->dev, "cannot get RxDMA\n");
+> > -               return 0;
+> > -       }
+> > -       s3c2410_dma_set_buffdone_fn(sdd->rx_dmach, s3c64xx_spi_dma_rxcb);
+> > -       s3c2410_dma_devconfig(sdd->rx_dmach, S3C2410_DMASRC_HW,
+> > -                                       sdd->sfr_start +
+> > S3C64XX_SPI_RX_DATA); -
+> > -       if (s3c2410_dma_request(sdd->tx_dmach,
+> > -                                       &s3c64xx_spi_dma_client, NULL) <
+> > 0) { -               dev_err(&sdd->pdev->dev, "cannot get TxDMA\n");
+> > -               s3c2410_dma_free(sdd->rx_dmach, &s3c64xx_spi_dma_client);
+> > -               return 0;
+> > -       }
+> > -       s3c2410_dma_set_buffdone_fn(sdd->tx_dmach, s3c64xx_spi_dma_txcb);
+> > -       s3c2410_dma_devconfig(sdd->tx_dmach, S3C2410_DMASRC_MEM,
+> > -                                       sdd->sfr_start +
+> > S3C64XX_SPI_TX_DATA); +
+> > +       struct samsung_dma_info info;
+> > +       sdd->ops = samsung_dma_get_ops();
+> > +
+> > +       info.cap = DMA_SLAVE;
+> > +       info.client = &s3c64xx_spi_dma_client;
+> > +       info.direction = DMA_FROM_DEVICE;
+> > +       info.fifo = sdd->sfr_start + S3C64XX_SPI_RX_DATA;
+> > +       info.width = sdd->cur_bpw / 8;
+> > +       sdd->rx_ch = sdd->ops->request(sdd->rx_dmach, &info);
+> > +       info.direction = DMA_TO_DEVICE;
+> > +       info.fifo = sdd->sfr_start + S3C64XX_SPI_TX_DATA;
+> > +       sdd->tx_ch = sdd->ops->request(sdd->tx_dmach, &info);
+> > 
+> >        return 1;
+> >  }
+> > @@ -800,8 +797,8 @@ static void s3c64xx_spi_work(struct work_struct
+> > *work) spin_unlock_irqrestore(&sdd->lock, flags);
+> > 
+> >        /* Free DMA channels */
+> > -       s3c2410_dma_free(sdd->tx_dmach, &s3c64xx_spi_dma_client);
+> > -       s3c2410_dma_free(sdd->rx_dmach, &s3c64xx_spi_dma_client);
+> > +       sdd->ops->release(sdd->rx_ch, &s3c64xx_spi_dma_client);
+> > +       sdd->ops->release(sdd->tx_ch, &s3c64xx_spi_dma_client);
+> >  }
+> 
+> Btw, this spi driver is for S3C64xx(with pl080) and S5P(with pl330)
+> series, both of which
+> have DMAENGINE drivers. May be it could be directly switched to using
+> those, rather than
+> via Samsung's wrapper driver.
+> Or am I overlooking something ?
+yep, at least the S3C2416/2450 HSSPI which should use this driver.
+
+Heiko
