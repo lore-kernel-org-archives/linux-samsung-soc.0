@@ -1,62 +1,38 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 12/15] spi/s3c64xx: Add support DMA engine API
-Date: Mon, 8 Aug 2011 20:26:44 +0200
-Message-ID: <201108082026.45456.heiko@sntech.de>
-References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com> <201108081955.39626.heiko@sntech.de> <CABb+yY08vGuvp4uVm3nd0FvFoXa04jmDOaQYcu324q7326a5Lw@mail.gmail.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH 13/15] spi/s3c64xx: Merge dma control code
+Date: Tue, 9 Aug 2011 00:02:37 +0530
+Message-ID: <CABb+yY0ZRNnkrTNWhYShBRpLFr8RB=eL6NqQHuv1aW=o2KfoSA@mail.gmail.com>
+References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
+	<1311744697-10264-14-git-send-email-boojin.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:53297 "EHLO
-	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750877Ab1HHS0x convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Aug 2011 14:26:53 -0400
-In-Reply-To: <CABb+yY08vGuvp4uVm3nd0FvFoXa04jmDOaQYcu324q7326a5Lw@mail.gmail.com>
+Received: from mail-ew0-f46.google.com ([209.85.215.46]:65020 "EHLO
+	mail-ew0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752056Ab1HHSci (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 8 Aug 2011 14:32:38 -0400
+Received: by ewy4 with SMTP id 4so756627ewy.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Aug 2011 11:32:37 -0700 (PDT)
+In-Reply-To: <1311744697-10264-14-git-send-email-boojin.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Boojin Kim <boojin.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>
+To: Boojin Kim <boojin.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Grant Likely <grant.likely@secretlab.ca>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Dan Williams <dan.j.williams@intel.com>
 
-Am Montag 08 August 2011, 20:16:58 schrieben Sie:
-> On Mon, Aug 8, 2011 at 11:25 PM, Heiko St=C3=BCbner <heiko@sntech.de>=
- wrote:
-> > Am Montag 08 August 2011, 19:47:58 schrieb Jassi Brar:
-> >> Btw, this spi driver is for S3C64xx(with pl080) and S5P(with pl330=
-)
-> >> series, both of which
-> >> have DMAENGINE drivers. May be it could be directly switched to us=
-ing
-> >> those, rather than
-> >> via Samsung's wrapper driver.
-> >> Or am I overlooking something ?
-> >=20
-> > yep, at least the S3C2416/2450 HSSPI which should use this driver.
->=20
-> Seems you keep some patches private ;)  the spi driver isn't enabled
-> for 2416 in mainline.
-It's not so private [1], but isn't working yet :-). I'm still new to th=
-e whole=20
-kernel development stuff and seem to be the only one working on this de=
-vice=20
-family.
+On Wed, Jul 27, 2011 at 11:01 AM, Boojin Kim <boojin.kim@samsung.com> wrote:
+> This patch modifies to merge the dma control code.
+> Original s3c64xx spi driver has each dma control code for rx and tx channel.
+> This patch merges these dma control codes into one.
+> With this patch, a dma setup function and callback function handle
+> for both rx and tx channel.
 
-I know from comparing s3c2416 and s3c64xx manuals that the hsspi part i=
-s the=20
-same but still have some learning to do to get it to work and also need=
-=20
-drivers for the other side of the spi connection.
+This is nothing really to do with underlying DMAENGINE API.
+And, apparently it actually bloats the driver ?   76 insertions(+), 64
+deletions(-)
+Yet, I am not very against the idea.
 
-The Asus eeeReader DR-900 uses a wlan chip supported by libertas. So ha=
-ving a=20
-"verified" driver on the other side might help me in getting the spi dr=
-iver to=20
-work.
-
-
-Heiko
-
-
-[1] https://gitorious.org/oyo-hack every e-book reader with Sipix displ=
-ay=20
-seems to be made from the same model line.
+If you must do it, maybe It would have been better to move it early in
+the patchset,
+which would have resulted in a smaller and cleaner  "spi/s3c64xx: Add
+support DMA engine API"
