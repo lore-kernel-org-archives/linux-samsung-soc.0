@@ -1,104 +1,78 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [RFC][PATCH 1/2] S5PV210: SPI: Add clkdev support
-Date: Tue, 09 Aug 2011 15:42:25 +0200
-Message-ID: <4E413941.10307@samsung.com>
-References: <1312898222-7165-1-git-send-email-padma.v@samsung.com>
+From: H Hartley Sweeten <hartleys@visionengravers.com>
+Subject: RE: [PATCH 11/13] ARM: gpio: consolidate trivial gpiolib
+ implementations
+Date: Tue, 9 Aug 2011 12:02:40 -0500
+Message-ID: <ADE657CA350FB648AAC2C43247A983F001F388389375__38389.651492662$1312909381$gmane$org@AUSP01VMBX24.collaborationhost.net>
+References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
+ <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:57716 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750695Ab1HINm2 (ORCPT
+Received: from mail132.messagelabs.com ([216.82.242.115]:38894 "EHLO
+	mail132.messagelabs.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754146Ab1HIRCu convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Aug 2011 09:42:28 -0400
-In-reply-to: <1312898222-7165-1-git-send-email-padma.v@samsung.com>
+	Tue, 9 Aug 2011 13:02:50 -0400
+In-Reply-To: <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
+Content-Language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, grant.likely@secretlab.ca, jassi Brar <jassisinghbrar@gmail.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>
 
-[corrected Jassi's email address]
-
-On 08/09/2011 03:57 PM, Padmavathi Venna wrote:
-> Create a clkdev alias for spi bus clock and modify the spi
-> driver to lookup the clock using the alias name instead of
-> passing clock name and clock number from SPI platform data.
-> 
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+On Tuesday, August 09, 2011 1:08 AM, Russell King wrote:
+>
+> Consolidate 24 trivial gpiolib implementions out of mach/gpio.h
+> into asm/gpio.h.  This is basically the include of asm-generic/gpio.h
+> and the definition of gpio_get_value, gpio_set_value, and gpio_cansleep
+> as described in Documentation/gpio.txt
+>
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 > ---
-> This patch is tested for S5PV210 platform and similar
-> changes can be adopted for rest of the Samsung's s3c
-> and s5p platforms, if this approach is accepted.
-
-It is a bit surprising to me how you do intend to use the clock aliases.
-Are we seriously going to be creating clock con_id aliases for most
-of the available devices ? It doesn't sound sane to me..
-
-Wouldn't it be possible to avoid the aliases by correcting the clock
-registration process ?
-
->  arch/arm/mach-s5pv210/dev-spi.c                  |   31 ++++++++++++++++++---
->  arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |    7 +----
->  2 files changed, 27 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s5pv210/dev-spi.c b/arch/arm/mach-s5pv210/dev-spi.c
-...
-> -void __init s5pv210_spi_set_info(int cntrlr, int src_clk_nr, int num_cs)
-> +void __init s5pv210_spi_set_info(int cntrlr, int num_cs)
->  {
->  	struct s3c64xx_spi_info *pd;
-> +	struct device *dev;
-> +	char devname[16], clk_alias_name[16];
-> +	int ret, i;
+>  arch/arm/include/asm/gpio.h                 |   10 ++++++++++
+>  arch/arm/mach-ep93xx/include/mach/gpio.h    |    7 +------
+>
+> diff --git a/arch/arm/include/asm/gpio.h b/arch/arm/include/asm/gpio.h
+> index 166a7a3..15e8970 100644
+> --- a/arch/arm/include/asm/gpio.h
+> +++ b/arch/arm/include/asm/gpio.h
+> @@ -4,4 +4,14 @@
+>  /* not all ARM platforms necessarily support this API ... */
+>  #include <mach/gpio.h>
 >  
->  	/* Reject invalid configuration */
-> -	if (!num_cs || src_clk_nr < 0
-> -			|| src_clk_nr > S5PV210_SPI_SRCCLK_SCLK) {
-> +	if (!num_cs) {
->  		printk(KERN_ERR "%s: Invalid SPI configuration\n", __func__);
->  		return;
->  	}
-> @@ -159,9 +162,11 @@ void __init s5pv210_spi_set_info(int cntrlr, int src_clk_nr, int num_cs)
->  	switch (cntrlr) {
->  	case 0:
->  		pd = &s5pv210_spi0_pdata;
-> +		dev = &s5pv210_device_spi0.dev;
->  		break;
->  	case 1:
->  		pd = &s5pv210_spi1_pdata;
-> +		dev = &s5pv210_device_spi1.dev;
->  		break;
->  	default:
->  		printk(KERN_ERR "%s: Invalid SPI controller(%d)\n",
-> @@ -169,7 +174,23 @@ void __init s5pv210_spi_set_info(int cntrlr, int src_clk_nr, int num_cs)
->  		return;
->  	}
+> +#ifdef __ARM_GPIOLIB_TRIVIAL
+> +/* Note: this may rely upon the value of ARCH_NR_GPIOS set in mach/gpio.h */
+> +#include <asm-generic/gpio.h>
+> +
+> +/* The trivial gpiolib dispatchers */
+> +#define gpio_get_value  __gpio_get_value
+> +#define gpio_set_value  __gpio_set_value
+> +#define gpio_cansleep   __gpio_cansleep
+> +#endif
+> +
+>  #endif /* _ARCH_ARM_GPIO_H */
+> diff --git a/arch/arm/mach-ep93xx/include/mach/gpio.h b/arch/arm/mach-ep93xx/include/mach/gpio.h
+> index c57152c..fbc770e 100644
+> --- a/arch/arm/mach-ep93xx/include/mach/gpio.h
+> +++ b/arch/arm/mach-ep93xx/include/mach/gpio.h
+> @@ -100,12 +100,7 @@
+>  #define EP93XX_GPIO_LINE_MAX_IRQ	EP93XX_GPIO_LINE_F(7)
 >  
-> +	sprintf(devname, "s3c64xx-spi.%d", cntrlr);
-> +
-> +	for (i = 0; i < ARRAY_SIZE(spi_src_clks); i++) {
-> +		sprintf(clk_alias_name, "clk_spi_bus%d", i);
-> +
-> +		if (!strcmp(spi_src_clks[i], "pclk"))
-> +			ret = clk_add_alias(clk_alias_name, devname,
-> +						spi_src_clks[i], NULL);
-> +		else
-> +			ret = clk_add_alias(clk_alias_name, devname,
-> +						spi_src_clks[i], dev);
-> +		if (ret) {
-> +			printk(KERN_ERR "failed to create alias for"
-> +				" SPI%d source clock%d\n", cntrlr, i);
-> +			continue;
-> +		}
-> +	}
-> +
->  	pd->num_cs = num_cs;
-> -	pd->src_clk_nr = src_clk_nr;
-> -	pd->src_clk_name = spi_src_clks[src_clk_nr];
->  }
-...
+>  /* new generic GPIO API - see Documentation/gpio.txt */
+> -
+> -#include <asm-generic/gpio.h>
+> -
+> -#define gpio_get_value	__gpio_get_value
+> -#define gpio_set_value	__gpio_set_value
+> -#define gpio_cansleep	__gpio_cansleep
+> +#define __ARM_GPIOLIB_TRIVIAL
+>  
+>  /*
+>   * Map GPIO A0..A7  (0..7)  to irq 64..71,
 
---
-Thanks,
-Sylwester
+For ep93xx:
+
+Acked-by: H Hartley Sweeten <hsweeten@visionengravers.com>
+
+Thanks!
