@@ -1,208 +1,139 @@
-From: Subash Patel <subashrp@gmail.com>
-Subject: Re: RFC[PATCH 6/6] ARM: S5P64X0: Add clkdev bus lookup support
-Date: Tue, 09 Aug 2011 11:33:12 +0530
-Message-ID: <4E40CDA0.9080805@gmail.com>
-References: <1312793277-18689-1-git-send-email-rajeshwari.s@samsung.com>	<1312793277-18689-7-git-send-email-rajeshwari.s@samsung.com> <4E3FB8B9.7050803@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [RFC][PATCH 1/2] S5PV210: SPI: Add clkdev support
+Date: Tue, 09 Aug 2011 09:57:02 -0400
+Message-ID: <1312898222-7165-1-git-send-email-padma.v@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f42.google.com ([209.85.210.42]:48285 "EHLO
-	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751081Ab1HIGDR (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:54761 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752474Ab1HIIC6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Aug 2011 02:03:17 -0400
-Received: by mail-pz0-f42.google.com with SMTP id 37so9540572pzk.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Aug 2011 23:03:17 -0700 (PDT)
-In-Reply-To: <4E3FB8B9.7050803@samsung.com>
+	Tue, 9 Aug 2011 04:02:58 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Rajeshwari Shinde <rajeshwari.s@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, cjb@laptop.org, linux-arm-kernel@lists.infradead.org
+To: kgene.kim@samsung.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, grant.likely@secretlab.ca, jassis
 
-Hello,
+Create a clkdev alias for spi bus clock and modify the spi
+driver to lookup the clock using the alias name instead of
+passing clock name and clock number from SPI platform data.
 
-On 08/08/2011 03:51 PM, Sylwester Nawrocki wrote:
-> Hello,
->
-> On 08/08/2011 10:47 AM, Rajeshwari Shinde wrote:
->> Bus clock alias names created and added to clkdev which will be used
->> by HSMMC driver.
->>
->> Signed-off-by: Rajeshwari Shinde<rajeshwari.s@samsung.com>
->> ---
->>   .../include/mach/s5p64x0-common-sdhci.h            |    2 +
->>   arch/arm/mach-s5p64x0/mach-smdk6440.c              |    5 ++
->>   arch/arm/mach-s5p64x0/mach-smdk6450.c              |    5 ++
->>   arch/arm/mach-s5p64x0/s5p64x0-common-sdhci.c       |    7 +++
->>   arch/arm/plat-samsung/Makefile                     |    1 +
->>   arch/arm/plat-samsung/clkdev-busalias.c            |   44 ++++++++++++++++++++
->>   arch/arm/plat-samsung/include/plat/sdhci.h         |    8 ++++
->>   7 files changed, 72 insertions(+), 0 deletions(-)
->>   create mode 100644 arch/arm/plat-samsung/clkdev-busalias.c
->>
->> diff --git a/arch/arm/mach-s5p64x0/include/mach/s5p64x0-common-sdhci.h b/arch/arm/mach-s5p64x0/include/mach/s5p64x0-common-sdhci.h
->> index a3381f0..b81e6dd 100644
->> --- a/arch/arm/mach-s5p64x0/include/mach/s5p64x0-common-sdhci.h
->> +++ b/arch/arm/mach-s5p64x0/include/mach/s5p64x0-common-sdhci.h
->> @@ -10,6 +10,8 @@
->>
->>   #include<plat/sdhci.h>
->>
->> +extern char *hsmmc_busclksrcs[4];
->> +
->>   extern struct s3c_sdhci_platdata smdk64x0_hsmmc0_pdata;
->>   extern struct s3c_sdhci_platdata smdk64x0_hsmmc1_pdata;
->>   extern struct s3c_sdhci_platdata smdk64x0_hsmmc2_pdata;
->> diff --git a/arch/arm/mach-s5p64x0/mach-smdk6440.c b/arch/arm/mach-s5p64x0/mach-smdk6440.c
->> index 065977f..ad1b49d 100644
->> --- a/arch/arm/mach-s5p64x0/mach-smdk6440.c
->> +++ b/arch/arm/mach-s5p64x0/mach-smdk6440.c
->> @@ -177,6 +177,11 @@ static void __init smdk6440_machine_init(void)
->>   	s3c_sdhci2_set_platdata(&smdk64x0_hsmmc2_pdata);
->>
->>   	platform_add_devices(smdk6440_devices, ARRAY_SIZE(smdk6440_devices));
->> +
->> +	/* create alias for clocks required by SDHCI */
->> +	s3c_sdhci_add_busclk_alias(&s3c_device_hsmmc0, hsmmc_busclksrcs);
->> +	s3c_sdhci_add_busclk_alias(&s3c_device_hsmmc1, hsmmc_busclksrcs);
->> +	s3c_sdhci_add_busclk_alias(&s3c_device_hsmmc2, hsmmc_busclksrcs);
->>   }
->>
->>   MACHINE_START(SMDK6440, "SMDK6440")
->> diff --git a/arch/arm/mach-s5p64x0/mach-smdk6450.c b/arch/arm/mach-s5p64x0/mach-smdk6450.c
->> index 9e6fcef..f3f656e 100644
->> --- a/arch/arm/mach-s5p64x0/mach-smdk6450.c
->> +++ b/arch/arm/mach-s5p64x0/mach-smdk6450.c
->> @@ -196,6 +196,11 @@ static void __init smdk6450_machine_init(void)
->>   	s3c_sdhci2_set_platdata(&smdk64x0_hsmmc2_pdata);
->>
->>   	platform_add_devices(smdk6450_devices, ARRAY_SIZE(smdk6450_devices));
->> +
->> +	/* create alias for clocks required by SDHCI */
->> +	s3c_sdhci_add_busclk_alias(&s3c_device_hsmmc0, hsmmc_busclksrcs);
->> +	s3c_sdhci_add_busclk_alias(&s3c_device_hsmmc1, hsmmc_busclksrcs);
->> +	s3c_sdhci_add_busclk_alias(&s3c_device_hsmmc2, hsmmc_busclksrcs);
->>   }
->>
->>   MACHINE_START(SMDK6450, "SMDK6450")
->> diff --git a/arch/arm/mach-s5p64x0/s5p64x0-common-sdhci.c b/arch/arm/mach-s5p64x0/s5p64x0-common-sdhci.c
->> index 03d89f6..9721b2d 100644
->> --- a/arch/arm/mach-s5p64x0/s5p64x0-common-sdhci.c
->> +++ b/arch/arm/mach-s5p64x0/s5p64x0-common-sdhci.c
->> @@ -14,6 +14,13 @@
->>
->>   #include<mach/s5p64x0-common-sdhci.h>
->>
->> +char *hsmmc_busclksrcs[4] = {
->> +	[0] = NULL,
->> +	[1] = NULL,
->> +	[2] = "sclk_mmc", /* mmc bus clock */
->> +	[3] = NULL,
->> +};
-Good to use MAX_BUS_CLK instead of 4.
->> +
->>   struct s3c_sdhci_platdata smdk64x0_hsmmc0_pdata __initdata = {
->>   	.cd_type        = S3C_SDHCI_CD_NONE,
->>   	.clk_type       = S3C_SDHCI_CLK_DIV_EXTERNAL,
->> diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
->> index 853764b..0aae4fa 100644
->> --- a/arch/arm/plat-samsung/Makefile
->> +++ b/arch/arm/plat-samsung/Makefile
->> @@ -31,6 +31,7 @@ obj-$(CONFIG_S3C_ADC)	+= adc.o
->>   # devices
->>
->>   obj-y				+= platformdata.o
->> +obj-y				+= clkdev-busalias.o
->>
->>   obj-$(CONFIG_S3C_DEV_HSMMC)	+= dev-hsmmc.o
->>   obj-$(CONFIG_S3C_DEV_HSMMC1)	+= dev-hsmmc1.o
->> diff --git a/arch/arm/plat-samsung/clkdev-busalias.c b/arch/arm/plat-samsung/clkdev-busalias.c
->> new file mode 100644
->> index 0000000..3e085a2
->> --- /dev/null
->> +++ b/arch/arm/plat-samsung/clkdev-busalias.c
->> @@ -0,0 +1,44 @@
->> +/* linux/arch/arm/plat-samsung/clkdev_busalias.c
->> + *
->> + * Copyright (c) 2011 Simtec Electronics
->> + *	http://www.samsung.com
->
-> Is this a correct copyright notice?
->
->> + *
->> + * Helper function to add clkdev bus clocks alias names.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> +*/
->> +
->> +#include<linux/clk.h>
->> +#include<linux/device.h>
->> +#include<linux/types.h>
->> +#include<linux/platform_device.h>
->> +
->> +#include<plat/sdhci.h>
->> +
->> +#define MAX_BUS_CLK (4)
-This macro is already defined in drivers/mmc/host/sdhci-s3c.c. Instead 
-of redefining it in different places, cant it be moved to some better 
-location?
->> +
->> +void s3c_sdhci_add_busclk_alias(struct platform_device *pdev,
->> +				char **mmc_busclks)
->> +{
->> +	int clk_cnt = 0, ptr;
->> +	char devname[14];
->> +
->> +	sprintf(devname, "s3c-sdhci.%d", pdev->id);
->> +
->> +	for (ptr = 0; ptr<  MAX_BUS_CLK; ptr++) {
->> +		char *bus_name = mmc_busclks[ptr];
->> +
->> +		if (bus_name != NULL) {
->> +			char name[14];
->> +			sprintf(name, "mmc_busclk.%d", ptr);
->> +			clk_add_alias(name, devname, bus_name,
->> +					&pdev->dev);
->> +			clk_cnt++;
->> +		}
->> +	}
->> +
->> +	if (clk_cnt == 0)
->> +		dev_err(&pdev->dev, "No MMC bus clocks!");
->> +}
->
->
-> Can you explain why these aliases are needed ?
-> That seems redundant to me, as the clock 'con_id's could be properly created
-> right away when registering the clock with clkdev.
->
-I think this aliased name is being used in other place (ref patch 1 in 
-this series).
+Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+---
+This patch is tested for S5PV210 platform and similar
+changes can be adopted for rest of the Samsung's s3c
+and s5p platforms, if this approach is accepted.
 
->
->> diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-samsung/include/plat/sdhci.h
->> index dde13aa..4933b6a 100644
->> --- a/arch/arm/plat-samsung/include/plat/sdhci.h
->> +++ b/arch/arm/plat-samsung/include/plat/sdhci.h
->> @@ -131,6 +131,14 @@ extern void s5p64x0_setup_sdhci1_cfg_gpio(struct platform_device *, int w);
->>   extern void s5p6440_setup_sdhci2_cfg_gpio(struct platform_device *, int w);
->>   extern void s5p6450_setup_sdhci2_cfg_gpio(struct platform_device *, int w);
->>
->> +/*
->> + * s3c_sdhci_set_busclk - Add alias to bus clocks supported, for clkdev support.
->> + * @pdev: platform device to which the busclks are to be initialised.
->> + * @mmc_busclks: Bus clocks suppored by SDHCI
->> +*/
->> +extern void s3c_sdhci_add_busclk_alias(struct platform_device *pdev,
->> +					char **mmc_busclks);
->> +
->>   /* S3C2416 SDHCI setup */
->>
->>   #ifdef CONFIG_S3C2416_SETUP_SDHCI
->
+ arch/arm/mach-s5pv210/dev-spi.c                  |   31 ++++++++++++++++++---
+ arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |    7 +----
+ 2 files changed, 27 insertions(+), 11 deletions(-)
 
-Regards,
-Subash
+diff --git a/arch/arm/mach-s5pv210/dev-spi.c b/arch/arm/mach-s5pv210/dev-spi.c
+index eaf9a7b..e81b67d 100644
+--- a/arch/arm/mach-s5pv210/dev-spi.c
++++ b/arch/arm/mach-s5pv210/dev-spi.c
+@@ -11,6 +11,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/gpio.h>
++#include <linux/clk.h>
+ 
+ #include <mach/dma.h>
+ #include <mach/map.h>
+@@ -145,13 +146,15 @@ struct platform_device s5pv210_device_spi1 = {
+ 	},
+ };
+ 
+-void __init s5pv210_spi_set_info(int cntrlr, int src_clk_nr, int num_cs)
++void __init s5pv210_spi_set_info(int cntrlr, int num_cs)
+ {
+ 	struct s3c64xx_spi_info *pd;
++	struct device *dev;
++	char devname[16], clk_alias_name[16];
++	int ret, i;
+ 
+ 	/* Reject invalid configuration */
+-	if (!num_cs || src_clk_nr < 0
+-			|| src_clk_nr > S5PV210_SPI_SRCCLK_SCLK) {
++	if (!num_cs) {
+ 		printk(KERN_ERR "%s: Invalid SPI configuration\n", __func__);
+ 		return;
+ 	}
+@@ -159,9 +162,11 @@ void __init s5pv210_spi_set_info(int cntrlr, int src_clk_nr, int num_cs)
+ 	switch (cntrlr) {
+ 	case 0:
+ 		pd = &s5pv210_spi0_pdata;
++		dev = &s5pv210_device_spi0.dev;
+ 		break;
+ 	case 1:
+ 		pd = &s5pv210_spi1_pdata;
++		dev = &s5pv210_device_spi1.dev;
+ 		break;
+ 	default:
+ 		printk(KERN_ERR "%s: Invalid SPI controller(%d)\n",
+@@ -169,7 +174,23 @@ void __init s5pv210_spi_set_info(int cntrlr, int src_clk_nr, int num_cs)
+ 		return;
+ 	}
+ 
++	sprintf(devname, "s3c64xx-spi.%d", cntrlr);
++
++	for (i = 0; i < ARRAY_SIZE(spi_src_clks); i++) {
++		sprintf(clk_alias_name, "clk_spi_bus%d", i);
++
++		if (!strcmp(spi_src_clks[i], "pclk"))
++			ret = clk_add_alias(clk_alias_name, devname,
++						spi_src_clks[i], NULL);
++		else
++			ret = clk_add_alias(clk_alias_name, devname,
++						spi_src_clks[i], dev);
++		if (ret) {
++			printk(KERN_ERR "failed to create alias for"
++				" SPI%d source clock%d\n", cntrlr, i);
++			continue;
++		}
++	}
++
+ 	pd->num_cs = num_cs;
+-	pd->src_clk_nr = src_clk_nr;
+-	pd->src_clk_name = spi_src_clks[src_clk_nr];
+ }
+diff --git a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
+index 4c16fa3..70ddd8c 100644
+--- a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
++++ b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
+@@ -30,8 +30,6 @@ struct s3c64xx_spi_csinfo {
+ 
+ /**
+  * struct s3c64xx_spi_info - SPI Controller defining structure
+- * @src_clk_nr: Clock source index for the CLK_CFG[SPI_CLKSEL] field.
+- * @src_clk_name: Platform name of the corresponding clock.
+  * @clk_from_cmu: If the SPI clock/prescalar control block is present
+  *     by the platform's clock-management-unit and not in SPI controller.
+  * @num_cs: Number of CS this controller emulates.
+@@ -42,8 +40,6 @@ struct s3c64xx_spi_csinfo {
+  * @tx_st_done: Depends on tx fifo_lvl field
+  */
+ struct s3c64xx_spi_info {
+-	int src_clk_nr;
+-	char *src_clk_name;
+ 	bool clk_from_cmu;
+ 
+ 	int num_cs;
+@@ -61,7 +57,6 @@ struct s3c64xx_spi_info {
+  * s3c64xx_spi_set_info - SPI Controller configure callback by the board
+  *				initialization code.
+  * @cntrlr: SPI controller number the configuration is for.
+- * @src_clk_nr: Clock the SPI controller is to use to generate SPI clocks.
+  * @num_cs: Number of elements in the 'cs' array.
+  *
+  * Call this from machine init code for each SPI Controller that
+@@ -69,7 +64,7 @@ struct s3c64xx_spi_info {
+  */
+ extern void s3c64xx_spi_set_info(int cntrlr, int src_clk_nr, int num_cs);
+ extern void s5pc100_spi_set_info(int cntrlr, int src_clk_nr, int num_cs);
+-extern void s5pv210_spi_set_info(int cntrlr, int src_clk_nr, int num_cs);
++extern void s5pv210_spi_set_info(int cntrlr, int num_cs);
+ extern void s5p64x0_spi_set_info(int cntrlr, int src_clk_nr, int num_cs);
+ 
+ #endif /* __S3C64XX_PLAT_SPI_H */
+-- 
+1.7.0.4
