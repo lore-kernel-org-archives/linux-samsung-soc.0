@@ -1,35 +1,55 @@
-From: David Brown <davidb@codeaurora.org>
-Subject: Re: [PATCH 11/13] ARM: gpio: consolidate trivial gpiolib
- implementations
-Date: Tue, 9 Aug 2011 10:59:53 -0700
-Message-ID: <20110809175953.GA22918@huya.qualcomm.com>
-References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
- <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 06/13] ARM: gpio: davinci: convert drivers to use
+	asm/gpio.h rather than mach/gpio.h
+Date: Tue, 9 Aug 2011 20:45:53 +0100
+Message-ID: <20110809194553.GA14281@n2100.arm.linux.org.uk>
+References: <20110809080411.GA1831@n2100.arm.linux.org.uk> <E1QqhKP-0003aK-9R@rmk-PC.arm.linux.org.uk> <4E4122B6.2070706@ru.mvista.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:42297 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752252Ab1HITqP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 9 Aug 2011 15:46:15 -0400
 Content-Disposition: inline
-In-Reply-To: <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
-Sender: linux-omap-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>
+In-Reply-To: <4E4122B6.2070706@ru.mvista.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sergei Shtylyov <sshtylyov@mvista.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>, linux-usb@vger.kernel.org, Felipe Balbi <balbi@ti.com>
 
-On Tue, Aug 09, 2011 at 09:08:01AM +0100, Russell King - ARM Linux wrote:
-> Consolidate 24 trivial gpiolib implementions out of mach/gpio.h
-> into asm/gpio.h.  This is basically the include of asm-generic/gpio.h
-> and the definition of gpio_get_value, gpio_set_value, and gpio_cansleep
-> as described in Documentation/gpio.txt
-> 
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> ---
->  arch/arm/mach-msm/include/mach/gpio.h       |    5 +----
+On Tue, Aug 09, 2011 at 04:06:14PM +0400, Sergei Shtylyov wrote:
+> Hello.
+>
+> On 09-08-2011 12:06, Russell King - ARM Linux wrote:
+>
+>    CCing linux-usb and Felipe...
+>
+>> Signed-off-by: Russell King<rmk+kernel@arm.linux.org.uk>
+>> ---
+>>   drivers/usb/musb/davinci.c |    2 +-
+>>   1 files changed, 1 insertions(+), 1 deletions(-)
+>
+>> diff --git a/drivers/usb/musb/davinci.c b/drivers/usb/musb/davinci.c
+>> index 8bdf25a..f9a3f62 100644
+>> --- a/drivers/usb/musb/davinci.c
+>> +++ b/drivers/usb/musb/davinci.c
+>> @@ -35,7 +35,7 @@
+>>
+>>   #include<mach/hardware.h>
+>>   #include<mach/memory.h>
+>> -#include<mach/gpio.h>
+>> +#include<asm/gpio.h>
+>
+>    Shouldn't this now be moved to the below #include group?
 
-For msm (msm8660):
+When doing this kind of work with sed -i, that doesn't happen.  There's
+too much of this crap (and I've been telling people about this for at
+least a year) that I don't think there's that luxury anymore.
 
-Tested-by: David Brown <davidb@codeaurora.org>
-Acked-by: David Brown <davidb@codeaurora.org>
-
--- 
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+If maintainers would have paid more attention, then most of these changes
+would not be necessary.  My view is that if maintainers do care about this
+stuff _they_ should have been the ones to pick up on it long ago.  In
+other words, they've lost the right to complain about petty crap like
+the ordering of includes through their own inaction on this point.
