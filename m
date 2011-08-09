@@ -1,55 +1,49 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 06/13] ARM: gpio: davinci: convert drivers to use
-	asm/gpio.h rather than mach/gpio.h
-Date: Tue, 9 Aug 2011 20:45:53 +0100
-Message-ID: <20110809194553.GA14281@n2100.arm.linux.org.uk>
-References: <20110809080411.GA1831@n2100.arm.linux.org.uk> <E1QqhKP-0003aK-9R@rmk-PC.arm.linux.org.uk> <4E4122B6.2070706@ru.mvista.com>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH 00/13] Clean up mach/gpio.h headers
+Date: Tue, 9 Aug 2011 15:00:55 -0600
+Message-ID: <20110809210055.GF11568@ponder.secretlab.ca>
+References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:42297 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752252Ab1HITqP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Aug 2011 15:46:15 -0400
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <4E4122B6.2070706@ru.mvista.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <20110809080411.GA1831-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nicolas Pitre <nico-vtqb6HGKxmzR7s880joybQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sergei Shtylyov <sshtylyov@mvista.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>, linux-usb@vger.kernel.org, Felipe Balbi <balbi@ti.com>
 
-On Tue, Aug 09, 2011 at 04:06:14PM +0400, Sergei Shtylyov wrote:
-> Hello.
->
-> On 09-08-2011 12:06, Russell King - ARM Linux wrote:
->
->    CCing linux-usb and Felipe...
->
->> Signed-off-by: Russell King<rmk+kernel@arm.linux.org.uk>
->> ---
->>   drivers/usb/musb/davinci.c |    2 +-
->>   1 files changed, 1 insertions(+), 1 deletions(-)
->
->> diff --git a/drivers/usb/musb/davinci.c b/drivers/usb/musb/davinci.c
->> index 8bdf25a..f9a3f62 100644
->> --- a/drivers/usb/musb/davinci.c
->> +++ b/drivers/usb/musb/davinci.c
->> @@ -35,7 +35,7 @@
->>
->>   #include<mach/hardware.h>
->>   #include<mach/memory.h>
->> -#include<mach/gpio.h>
->> +#include<asm/gpio.h>
->
->    Shouldn't this now be moved to the below #include group?
+On Tue, Aug 09, 2011 at 09:04:12AM +0100, Russell King - ARM Linux wrote:
+> This is a preliminary posting of my gpio patch set.
+> 
+> This patch series moves the trivial gpiolib implementations out of
+> mach/gpio.h and into asm/gpio.h.
+> 
+> As a side effect of that, most of this patch series is about fixing up
+> direct includes of mach/gpio.h - this is something I've been on at
+> people over the last year or more about ensuring that they use
+> linux/gpio.h in preference.  While I've blindly converted all arch/arm
+> to use linux/gpio.h (with the exception of mach/ includes which are
+> converted to asm/gpio.h), drivers were only converted to asm/gpio.h.
+> These should be reviewed and changed to linux/gpio.h.
+> 
+> As a result of this patch series, several mach/gpio.h end up being
+> empty.
+> 
+> Many others just contain platform private GPIO APIs and definitions.
+> 
+> The last thing which mach/gpio.h is used for is to provide a definition
+> for ARCH_GPIO_NR to asm-generic/gpio.h.  I've not attempted to solve
+> that issue yet.
+> 
+> A small number of platforms optimize the gpio accessors for on-SoC
+> GPIOs.  In the interests of consolidation, these will have to be killed
+> but this patch set does not do that yet.
+> 
+> Lastly, several {mach,plat}/gpio.h needs to be looked at with a view to
+> deleting the direct include of asm-generic/gpio.h.
 
-When doing this kind of work with sed -i, that doesn't happen.  There's
-too much of this crap (and I've been telling people about this for at
-least a year) that I don't think there's that luxury anymore.
+Looks good to me, though I haven't looked closely.  I imagine this
+should get merged via a branch in the arm-soc tree?
 
-If maintainers would have paid more attention, then most of these changes
-would not be necessary.  My view is that if maintainers do care about this
-stuff _they_ should have been the ones to pick up on it long ago.  In
-other words, they've lost the right to complain about petty crap like
-the ordering of includes through their own inaction on this point.
+g.
