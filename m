@@ -1,151 +1,460 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 14/15] ASoC: Samsung: Update DMA interface
-Date: Tue, 9 Aug 2011 00:57:44 +0530
-Message-ID: <CABb+yY0E9_asUdMQ3ayDuRDa_SVhEZGiTRmPspD+YsQ-y40m4g@mail.gmail.com>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH 12/15] spi/s3c64xx: Add support DMA engine API
+Date: Tue, 9 Aug 2011 09:43:32 +0530
+Message-ID: <CAGOxZ53BRa1=Bnb==jNg_dD0XT2pMSPo=QoHF++LnT6r5kO_Mw@mail.gmail.com>
 References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
-	<1311744697-10264-15-git-send-email-boojin.kim@samsung.com>
+ <1311744697-10264-13-git-send-email-boojin.kim@samsung.com> <CABb+yY3-d0xTO+s0cCPXPW8qGpTH5G2U+bp-0z4Se47eVvJ__w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:33139 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752066Ab1HHT1q (ORCPT
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:51049 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750761Ab1HIEON convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Aug 2011 15:27:46 -0400
-Received: by eyx24 with SMTP id 24so2958472eyx.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Aug 2011 12:27:44 -0700 (PDT)
-In-Reply-To: <1311744697-10264-15-git-send-email-boojin.kim@samsung.com>
+	Tue, 9 Aug 2011 00:14:13 -0400
+Received: by vws1 with SMTP id 1so3935186vws.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Aug 2011 21:14:12 -0700 (PDT)
+In-Reply-To: <CABb+yY3-d0xTO+s0cCPXPW8qGpTH5G2U+bp-0z4Se47eVvJ__w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Boojin Kim <boojin.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>, Liam Girdwood <lrg@ti.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Boojin Kim <boojin.kim@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, banajit.g@samsung.com
 
-T24gV2VkLCBKdWwgMjcsIDIwMTEgYXQgMTE6MDEgQU0sIEJvb2ppbiBLaW0gPGJvb2ppbi5raW1A
-c2Ftc3VuZy5jb20+IHdyb3RlOgoKPiDCoHN0YXRpYyB2b2lkIGRtYV9lbnF1ZXVlKHN0cnVjdCBz
-bmRfcGNtX3N1YnN0cmVhbSAqc3Vic3RyZWFtKQo+IMKgewo+IMKgIMKgIMKgIMKgc3RydWN0IHJ1
-bnRpbWVfZGF0YSAqcHJ0ZCA9IHN1YnN0cmVhbS0+cnVudGltZS0+cHJpdmF0ZV9kYXRhOwo+IMKg
-IMKgIMKgIMKgZG1hX2FkZHJfdCBwb3MgPSBwcnRkLT5kbWFfcG9zOwo+IMKgIMKgIMKgIMKgdW5z
-aWduZWQgaW50IGxpbWl0Owo+IC0gwqAgwqAgwqAgaW50IHJldDsKPiArIMKgIMKgIMKgIHN0cnVj
-dCBzYW1zdW5nX2RtYV9wcmVwX2luZm8gZG1hX2luZm87Cj4KPiDCoCDCoCDCoCDCoHByX2RlYnVn
-KCJFbnRlcmVkICVzXG4iLCBfX2Z1bmNfXyk7Cj4KPiAtIMKgIMKgIMKgIGlmIChzM2NfZG1hX2hh
-c19jaXJjdWxhcigpKQo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgbGltaXQgPSAocHJ0ZC0+ZG1h
-X2VuZCAtIHBydGQtPmRtYV9zdGFydCkgLyBwcnRkLT5kbWFfcGVyaW9kOwo+IC0gwqAgwqAgwqAg
-ZWxzZQo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgbGltaXQgPSBwcnRkLT5kbWFfbGltaXQ7Cj4g
-KyDCoCDCoCDCoCBsaW1pdCA9IChwcnRkLT5kbWFfZW5kIC0gcHJ0ZC0+ZG1hX3N0YXJ0KSAvIHBy
-dGQtPmRtYV9wZXJpb2Q7CgonZG1hX2xpbWl0JyBpcyByZW5kZXJlZCB1c2VsZXNzLCBzbyB5b3Ug
-bWlnaHQgd2FudCB0byByZW1vdmUgaXQgZnJvbQonc3RydWN0IHJ1bnRpbWVfZGF0YScKYXMgd2Vs
-bC4KCj4gwqAgwqAgwqAgwqBwcl9kZWJ1ZygiJXM6IGxvYWRlZCAlZCwgbGltaXQgJWRcbiIsCj4g
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBfX2Z1bmNfXywg
-cHJ0ZC0+ZG1hX2xvYWRlZCwgbGltaXQpOwo+Cj4gLSDCoCDCoCDCoCB3aGlsZSAocHJ0ZC0+ZG1h
-X2xvYWRlZCA8IGxpbWl0KSB7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCB1bnNpZ25lZCBsb25n
-IGxlbiA9IHBydGQtPmRtYV9wZXJpb2Q7Cj4gKyDCoCDCoCDCoCBkbWFfaW5mby5jYXAgPSAoc2Ft
-c3VuZ19kbWFfaGFzX2NpcmN1bGFyKCkgPyBETUFfQ1lDTElDIDogRE1BX1NMQVZFKTsKPiArIMKg
-IMKgIMKgIGRtYV9pbmZvLmRpcmVjdGlvbiA9Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCAoc3Vi
-c3RyZWFtLT5zdHJlYW0gPT0gU05EUlZfUENNX1NUUkVBTV9QTEFZQkFDSwo+ICsgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgPyBETUFfVE9fREVWSUNFIDogRE1BX0ZST01fREVWSUNFKTsKPiArIMKgIMKg
-IMKgIGRtYV9pbmZvLmZwID0gYXVkaW9fYnVmZmRvbmU7Cj4gKyDCoCDCoCDCoCBkbWFfaW5mby5m
-cF9wYXJhbSA9IHN1YnN0cmVhbTsKPiArIMKgIMKgIMKgIGRtYV9pbmZvLnBlcmlvZCA9IHBydGQt
-PmRtYV9wZXJpb2Q7Cj4gKyDCoCDCoCDCoCBkbWFfaW5mby5sZW4gPSBwcnRkLT5kbWFfcGVyaW9k
-KmxpbWl0Owo+Cj4gKyDCoCDCoCDCoCB3aGlsZSAocHJ0ZC0+ZG1hX2xvYWRlZCA8IGxpbWl0KSB7
-Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBwcl9kZWJ1ZygiZG1hX2xvYWRlZDogJWRcbiIsIHBy
-dGQtPmRtYV9sb2FkZWQpOwo+Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCBpZiAoKHBvcyArIGxl
-bikgPiBwcnRkLT5kbWFfZW5kKSB7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCBsZW4gwqA9IHBydGQtPmRtYV9lbmQgLSBwb3M7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCBwcl9kZWJ1ZygiJXM6IGNvcnJlY3RlZCBkbWEgbGVuICVsZFxuIiwgX19mdW5j
-X18sIGxlbik7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBpZiAoKHBvcyArIGRtYV9pbmZvLnBl
-cmlvZCkgPiBwcnRkLT5kbWFfZW5kKSB7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCBkbWFfaW5mby5wZXJpb2QgwqA9IHBydGQtPmRtYV9lbmQgLSBwb3M7Cj4gKyDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBwcl9kZWJ1ZygiJXM6IGNvcnJlY3RlZCBkbWEgbGVu
-ICVsZFxuIiwKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIF9fZnVuY19fLCBkbWFfaW5mby5wZXJpb2QpOwo+IMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgfQo+Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCByZXQgPSBzM2MyNDEwX2RtYV9l
-bnF1ZXVlKHBydGQtPnBhcmFtcy0+Y2hhbm5lbCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIHN1YnN0cmVhbSwgcG9zLCBsZW4pOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-ZG1hX2luZm8uYnVmID0gcG9zOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgcHJ0ZC0+cGFyYW1z
-LT5vcHMtPnByZXBhcmUocHJ0ZC0+cGFyYW1zLT5jaCwgJmRtYV9pbmZvKTsKPgo+IC0gwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgaWYgKHJldCA9PSAwKSB7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCBwcnRkLT5kbWFfbG9hZGVkKys7Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCBwb3MgKz0gcHJ0ZC0+ZG1hX3BlcmlvZDsKPiAtIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIGlmIChwb3MgPj0gcHJ0ZC0+ZG1hX2VuZCkKPiAtIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHBvcyA9IHBydGQtPmRtYV9zdGFydDsK
-PiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIH0gZWxzZQo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgYnJlYWs7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBwcnRkLT5kbWFfbG9h
-ZGVkKys7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBwb3MgKz0gcHJ0ZC0+ZG1hX3BlcmlvZDsK
-PiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGlmIChwb3MgPj0gcHJ0ZC0+ZG1hX2VuZCkKPiArIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHBvcyA9IHBydGQtPmRtYV9zdGFydDsKPiDC
-oCDCoCDCoCDCoH0KPgo+IMKgIMKgIMKgIMKgcHJ0ZC0+ZG1hX3BvcyA9IHBvczsKPiDCoH0KPgo+
-IC1zdGF0aWMgdm9pZCBhdWRpb19idWZmZG9uZShzdHJ1Y3QgczNjMjQxMF9kbWFfY2hhbiAqY2hh
-bm5lbCwKPiAtIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHZv
-aWQgKmRldl9pZCwgaW50IHNpemUsCj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCBlbnVtIHMzYzI0MTBfZG1hX2J1ZmZyZXN1bHQgcmVzdWx0KQo+ICtzdGF0
-aWMgdm9pZCBhdWRpb19idWZmZG9uZSh2b2lkICpkYXRhKQo+IMKgewo+IC0gwqAgwqAgwqAgc3Ry
-dWN0IHNuZF9wY21fc3Vic3RyZWFtICpzdWJzdHJlYW0gPSBkZXZfaWQ7Cj4gLSDCoCDCoCDCoCBz
-dHJ1Y3QgcnVudGltZV9kYXRhICpwcnRkOwo+ICsgwqAgwqAgwqAgc3RydWN0IHNuZF9wY21fc3Vi
-c3RyZWFtICpzdWJzdHJlYW0gPSBkYXRhOwo+ICsgwqAgwqAgwqAgc3RydWN0IHJ1bnRpbWVfZGF0
-YSAqcHJ0ZCA9IHN1YnN0cmVhbS0+cnVudGltZS0+cHJpdmF0ZV9kYXRhOwo+Cj4gwqAgwqAgwqAg
-wqBwcl9kZWJ1ZygiRW50ZXJlZCAlc1xuIiwgX19mdW5jX18pOwo+Cj4gLSDCoCDCoCDCoCBpZiAo
-cmVzdWx0ID09IFMzQzI0MTBfUkVTX0FCT1JUIHx8IHJlc3VsdCA9PSBTM0MyNDEwX1JFU19FUlIp
-Cj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCByZXR1cm47Cj4gLQo+IC0gwqAgwqAgwqAgcHJ0ZCA9
-IHN1YnN0cmVhbS0+cnVudGltZS0+cHJpdmF0ZV9kYXRhOwo+ICsgwqAgwqAgwqAgaWYgKHBydGQt
-PnN0YXRlICYgU1RfUlVOTklORykgewo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgcHJ0ZC0+ZG1h
-X3BvcyArPSBwcnRkLT5kbWFfcGVyaW9kOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgaWYgKHBy
-dGQtPmRtYV9wb3MgPj0gcHJ0ZC0+ZG1hX2VuZCkKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIHBydGQtPmRtYV9wb3MgPSBwcnRkLT5kbWFfc3RhcnQ7Cj4KPiAtIMKgIMKgIMKg
-IGlmIChzdWJzdHJlYW0pCj4gLSDCoCDCoCDCoCDCoCDCoCDCoCDCoCBzbmRfcGNtX3BlcmlvZF9l
-bGFwc2VkKHN1YnN0cmVhbSk7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBpZiAoc3Vic3RyZWFt
-KQo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgc25kX3BjbV9wZXJpb2RfZWxh
-cHNlZChzdWJzdHJlYW0pOwo+Cj4gLSDCoCDCoCDCoCBzcGluX2xvY2soJnBydGQtPmxvY2spOwo+
-IC0gwqAgwqAgwqAgaWYgKHBydGQtPnN0YXRlICYgU1RfUlVOTklORyAmJiAhczNjX2RtYV9oYXNf
-Y2lyY3VsYXIoKSkgewo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgcHJ0ZC0+ZG1hX2xvYWRlZC0t
-Owo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgZG1hX2VucXVldWUoc3Vic3RyZWFtKTsKPiArIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIHNwaW5fbG9jaygmcHJ0ZC0+bG9jayk7Cj4gKyDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCBpZiAoIXNhbXN1bmdfZG1hX2hhc19jaXJjdWxhcigpKSB7Cj4gKyDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBwcnRkLT5kbWFfbG9hZGVkLS07Cj4gKyDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBkbWFfZW5xdWV1ZShzdWJzdHJlYW0pOwo+ICsgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgfQo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgc3Bpbl91bmxvY2so
-JnBydGQtPmxvY2spOwo+IMKgIMKgIMKgIMKgfQo+IC0KPiAtIMKgIMKgIMKgIHNwaW5fdW5sb2Nr
-KCZwcnRkLT5sb2NrKTsKPiDCoH0KClNpbmNlIHdlIHNldCBpbnRlZ2VyLWNvbnN0cmFpbnQgb24g
-bnVtYmVyIG9mIHBlcmlvZHMsIHlvdSBjb3VsZCBhbHNvCmRpc2NhcmQgYm90aGVyaW5nIGZyYWN0
-aW9uYWwgYm91bmRhcmllcy4gVGhhdCB3b3VsZCBtYWtlIHRoaW5ncyBhIGxvdApzaW1wbGVyLgoK
-Cgo+IEBAIC0yNjUsMTQgKzI1MCwxNCBAQCBzdGF0aWMgaW50IGRtYV90cmlnZ2VyKHN0cnVjdCBz
-bmRfcGNtX3N1YnN0cmVhbSAqc3Vic3RyZWFtLCBpbnQgY21kKQo+IMKgIMKgIMKgIMKgY2FzZSBT
-TkRSVl9QQ01fVFJJR0dFUl9SRVNVTUU6Cj4gwqAgwqAgwqAgwqBjYXNlIFNORFJWX1BDTV9UUklH
-R0VSX1BBVVNFX1JFTEVBU0U6Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBwcnRkLT5zdGF0ZSB8
-PSBTVF9SVU5OSU5HOwo+IC0gwqAgwqAgwqAgwqAgwqAgwqAgwqAgczNjMjQxMF9kbWFfY3RybChw
-cnRkLT5wYXJhbXMtPmNoYW5uZWwsIFMzQzI0MTBfRE1BT1BfU1RBUlQpOwo+ICsgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgcHJ0ZC0+cGFyYW1zLT5vcHMtPnRyaWdnZXIocHJ0ZC0+cGFyYW1zLT5jaCk7
-Cj4gwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqBicmVhazsKPgo+IMKgIMKgIMKgIMKgY2FzZSBTTkRS
-Vl9QQ01fVFJJR0dFUl9TVE9QOgo+IMKgIMKgIMKgIMKgY2FzZSBTTkRSVl9QQ01fVFJJR0dFUl9T
-VVNQRU5EOgo+IMKgIMKgIMKgIMKgY2FzZSBTTkRSVl9QQ01fVFJJR0dFUl9QQVVTRV9QVVNIOgo+
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgcHJ0ZC0+c3RhdGUgJj0gflNUX1JVTk5JTkc7Cj4gLSDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCBzM2MyNDEwX2RtYV9jdHJsKHBydGQtPnBhcmFtcy0+Y2hhbm5l
-bCwgUzNDMjQxMF9ETUFPUF9TVE9QKTsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIHBydGQtPnBh
-cmFtcy0+b3BzLT5zdG9wKHBydGQtPnBhcmFtcy0+Y2gpOwo+IMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgYnJlYWs7CgpJIHdpc2ggeW91IGFncmVlZCBhbmQgdXNlZAogICAgICAgcHJ0ZC0+cGFyYW1z
-LT5vcHMtPmNtZChjaCwgZW51bSBzb21lX2NtZF9vcHRpb25zKQpyYXRoZXIgdGhhbiBoYXZpbmcg
-NCBzZXBhcmF0ZSBjYWxsYmFja3MKICAgICAgcHJ0ZC0+cGFyYW1zLT5vcHMtPnRyaWdnZXIocHJ0
-ZC0+cGFyYW1zLT5jaCkKICAgICAgcHJ0ZC0+cGFyYW1zLT5vcHMtPnN0b3AocHJ0ZC0+cGFyYW1z
-LT5jaCkKICAgICBwcnRkLT5wYXJhbXMtPm9wcy0+Zmx1c2gocHJ0ZC0+cGFyYW1zLT5jaCkKICAg
-ICBwcnRkLT5wYXJhbXMtPm9wcy0+c3RhcnRlZChwcnRkLT5wYXJhbXMtPmNoKQoKCj4gQEAgLTI5
-MSwyMSArMjc2LDEyIEBAIGRtYV9wb2ludGVyKHN0cnVjdCBzbmRfcGNtX3N1YnN0cmVhbSAqc3Vi
-c3RyZWFtKQo+IMKgIMKgIMKgIMKgc3RydWN0IHNuZF9wY21fcnVudGltZSAqcnVudGltZSA9IHN1
-YnN0cmVhbS0+cnVudGltZTsKPiDCoCDCoCDCoCDCoHN0cnVjdCBydW50aW1lX2RhdGEgKnBydGQg
-PSBydW50aW1lLT5wcml2YXRlX2RhdGE7Cj4gwqAgwqAgwqAgwqB1bnNpZ25lZCBsb25nIHJlczsK
-PiAtIMKgIMKgIMKgIGRtYV9hZGRyX3Qgc3JjLCBkc3Q7Cj4KPiDCoCDCoCDCoCDCoHByX2RlYnVn
-KCJFbnRlcmVkICVzXG4iLCBfX2Z1bmNfXyk7Cj4KPiAtIMKgIMKgIMKgIHNwaW5fbG9jaygmcHJ0
-ZC0+bG9jayk7Cj4gLSDCoCDCoCDCoCBzM2MyNDEwX2RtYV9nZXRwb3NpdGlvbihwcnRkLT5wYXJh
-bXMtPmNoYW5uZWwsICZzcmMsICZkc3QpOwo+IC0KPiAtIMKgIMKgIMKgIGlmIChzdWJzdHJlYW0t
-PnN0cmVhbSA9PSBTTkRSVl9QQ01fU1RSRUFNX0NBUFRVUkUpCj4gLSDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCByZXMgPSBkc3QgLSBwcnRkLT5kbWFfc3RhcnQ7Cj4gLSDCoCDCoCDCoCBlbHNlCj4gLSDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCByZXMgPSBzcmMgLSBwcnRkLT5kbWFfc3RhcnQ7Cj4gLQo+IC0g
-wqAgwqAgwqAgc3Bpbl91bmxvY2soJnBydGQtPmxvY2spOwo+ICsgwqAgwqAgwqAgcmVzID0gcHJ0
-ZC0+ZG1hX3BvcyAtIHBydGQtPmRtYV9zdGFydDsKPgo+IC0gwqAgwqAgwqAgcHJfZGVidWcoIlBv
-aW50ZXIgJXggJXhcbiIsIHNyYywgZHN0KTsKPiArIMKgIMKgIMKgIHByX2RlYnVnKCJQb2ludGVy
-IG9mZnNldDogJWx1XG4iLCByZXMpOwo+Cj4gwqAgwqAgwqAgwqAvKiB3ZSBzZWVtIHRvIGJlIGdl
-dHRpbmcgdGhlIG9kZCBlcnJvciBmcm9tIHRoZSBwY20gbGlicmFyeSBkdWUKPiDCoCDCoCDCoCDC
-oCAqIHRvIG91dC1vZi1ib3VuZHMgcG9pbnRlcnMuIHRoaXMgaXMgbWF5YmUgZHVlIHRvIHRoZSBk
-bWEgZW5naW5lCgpJc24ndCB0aGlzIGEgcmVncmVzc2lvbiA/CmRtYV9wb2ludGVyKCkgZG9lc24n
-dCByZWFsbHkgcmV0dXJuIGFjdHVhbCBsb2NhdGlvbiBvZiBETUEgYWN0aXZpdHkgYW55bW9yZS4K
-Tm93IGl0IHNpbXBseSB0ZWxscyB0aGUgbGFzdCBwZXJpb2QgZG9uZS4KVGhpcyB3b3VsZCBhZmZl
-Y3QgbGF0ZW5jaWVzIGluIGEgYmFkIHdheS4K
+On Mon, Aug 8, 2011 at 11:17 PM, Jassi Brar <jassisinghbrar@gmail.com> =
+wrote:
+> On Wed, Jul 27, 2011 at 11:01 AM, Boojin Kim <boojin.kim@samsung.com>=
+ wrote:
+>> This patch adds to support DMA generic API to transfer raw
+>> SPI data. Basiclly the spi driver uses DMA generic API if
+>> architecture supports it. Otherwise, uses Samsung specific
+>> S3C-PL330 APIs.
+>>
+>> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+>> Acked-by: Grant Likely <grant.likely@secretlab.ca>
+>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+>> ---
+>> =A0drivers/spi/spi_s3c64xx.c | =A0141 ++++++++++++++++++++++--------=
+---------------
+>> =A01 files changed, 69 insertions(+), 72 deletions(-)
+>>
+>> diff --git a/drivers/spi/spi_s3c64xx.c b/drivers/spi/spi_s3c64xx.c
+>> index 8945e20..a4cf76a 100644
+>> --- a/drivers/spi/spi_s3c64xx.c
+>> +++ b/drivers/spi/spi_s3c64xx.c
+>> @@ -172,6 +172,9 @@ struct s3c64xx_spi_driver_data {
+>> =A0 =A0 =A0 =A0unsigned =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0state;
+>> =A0 =A0 =A0 =A0unsigned =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0cur_mode, cur_bpw;
+>> =A0 =A0 =A0 =A0unsigned =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0cur_speed;
+>> + =A0 =A0 =A0 unsigned =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+rx_ch;
+>> + =A0 =A0 =A0 unsigned =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+tx_ch;
+>> + =A0 =A0 =A0 struct samsung_dma_ops =A0 =A0 =A0 =A0 =A0*ops;
+>> =A0};
+>>
+>> =A0static struct s3c2410_dma_client s3c64xx_spi_dma_client =3D {
+>> @@ -227,6 +230,38 @@ static void flush_fifo(struct s3c64xx_spi_drive=
+r_data *sdd)
+>> =A0 =A0 =A0 =A0writel(val, regs + S3C64XX_SPI_CH_CFG);
+>> =A0}
+>>
+>> +static void s3c64xx_spi_dma_rxcb(void *data)
+>> +{
+>> + =A0 =A0 =A0 struct s3c64xx_spi_driver_data *sdd
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =3D (struct s3c64xx_spi_driver_data *)=
+data;
+> void* doesn't need typecasting (same for all such occurances)
+> IIRC someone already pointed it out?
+>
+>
+>> + =A0 =A0 =A0 unsigned long flags;
+>> +
+>> + =A0 =A0 =A0 spin_lock_irqsave(&sdd->lock, flags);
+>> +
+>> + =A0 =A0 =A0 sdd->state &=3D ~RXBUSY;
+>> + =A0 =A0 =A0 /* If the other done */
+>> + =A0 =A0 =A0 if (!(sdd->state & TXBUSY))
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 complete(&sdd->xfer_completion);
+>> +
+>> + =A0 =A0 =A0 spin_unlock_irqrestore(&sdd->lock, flags);
+>> +}
+>> +
+>> +static void s3c64xx_spi_dma_txcb(void *data)
+>> +{
+>> + =A0 =A0 =A0 struct s3c64xx_spi_driver_data *sdd
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =3D (struct s3c64xx_spi_driver_data *)=
+data;
+>> + =A0 =A0 =A0 unsigned long flags;
+>> +
+>> + =A0 =A0 =A0 spin_lock_irqsave(&sdd->lock, flags);
+>> +
+>> + =A0 =A0 =A0 sdd->state &=3D ~TXBUSY;
+>> + =A0 =A0 =A0 /* If the other done */
+>> + =A0 =A0 =A0 if (!(sdd->state & RXBUSY))
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 complete(&sdd->xfer_completion);
+>> +
+>> + =A0 =A0 =A0 spin_unlock_irqrestore(&sdd->lock, flags);
+>> +}
+>> +
+>> =A0static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0struc=
+t spi_device *spi,
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0struc=
+t spi_transfer *xfer, int dma_mode)
+>> @@ -234,6 +269,7 @@ static void enable_datapath(struct s3c64xx_spi_d=
+river_data *sdd,
+>> =A0 =A0 =A0 =A0struct s3c64xx_spi_info *sci =3D sdd->cntrlr_info;
+>> =A0 =A0 =A0 =A0void __iomem *regs =3D sdd->regs;
+>> =A0 =A0 =A0 =A0u32 modecfg, chcfg;
+>> + =A0 =A0 =A0 struct samsung_dma_prep_info info;
+>>
+>> =A0 =A0 =A0 =A0modecfg =3D readl(regs + S3C64XX_SPI_MODE_CFG);
+>> =A0 =A0 =A0 =A0modecfg &=3D ~(S3C64XX_SPI_MODE_TXDMA_ON | S3C64XX_SP=
+I_MODE_RXDMA_ON);
+>> @@ -259,10 +295,14 @@ static void enable_datapath(struct s3c64xx_spi=
+_driver_data *sdd,
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0chcfg |=3D S3C64XX_SPI_CH_TXCH_ON;
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (dma_mode) {
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0modecfg |=3D S3C64XX_=
+SPI_MODE_TXDMA_ON;
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c2410_dma_config(sdd=
+->tx_dmach, sdd->cur_bpw / 8);
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c2410_dma_enqueue(sd=
+d->tx_dmach, (void *)sdd,
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 xfer->tx_dma, xfer->len);
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c2410_dma_ctrl(sdd->=
+tx_dmach, S3C2410_DMAOP_START);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 info.cap =3D DMA_SLAVE=
+;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 info.direction =3D DMA=
+_TO_DEVICE;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 info.buf =3D xfer->tx_=
+dma;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 info.len =3D xfer->len=
+;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 info.fp =3D s3c64xx_sp=
+i_dma_txcb;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 info.fp_param =3D sdd;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 sdd->ops->prepare(sdd-=
+>tx_ch, &info);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 sdd->ops->trigger(sdd-=
+>tx_ch);
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0} else {
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0switch (sdd->cur_bpw)=
+ {
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0case 32:
+>> @@ -294,10 +334,14 @@ static void enable_datapath(struct s3c64xx_spi=
+_driver_data *sdd,
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0writel(((xfer->len * =
+8 / sdd->cur_bpw) & 0xffff)
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0| S3C64XX_SPI_PACKET_CNT_EN,
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0regs + S3C64XX_SPI_PACKET_CNT);
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c2410_dma_config(sdd=
+->rx_dmach, sdd->cur_bpw / 8);
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c2410_dma_enqueue(sd=
+d->rx_dmach, (void *)sdd,
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 xfer->rx_dma, xfer->len);
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c2410_dma_ctrl(sdd->=
+rx_dmach, S3C2410_DMAOP_START);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 info.cap =3D DMA_SLAVE=
+;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 info.direction =3D DMA=
+_FROM_DEVICE;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 info.buf =3D xfer->rx_=
+dma;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 info.len =3D xfer->len=
+;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 info.fp =3D s3c64xx_sp=
+i_dma_rxcb;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 info.fp_param =3D sdd;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 sdd->ops->prepare(sdd-=
+>rx_ch, &info);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 sdd->ops->trigger(sdd-=
+>rx_ch);
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
+>> =A0 =A0 =A0 =A0}
+>>
+>> @@ -483,46 +527,6 @@ static void s3c64xx_spi_config(struct s3c64xx_s=
+pi_driver_data *sdd)
+>> =A0 =A0 =A0 =A0}
+>> =A0}
+>>
+>> -static void s3c64xx_spi_dma_rxcb(struct s3c2410_dma_chan *chan, voi=
+d *buf_id,
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0int=
+ size, enum s3c2410_dma_buffresult res)
+>> -{
+>> - =A0 =A0 =A0 struct s3c64xx_spi_driver_data *sdd =3D buf_id;
+>> - =A0 =A0 =A0 unsigned long flags;
+>> -
+>> - =A0 =A0 =A0 spin_lock_irqsave(&sdd->lock, flags);
+>> -
+>> - =A0 =A0 =A0 if (res =3D=3D S3C2410_RES_OK)
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 sdd->state &=3D ~RXBUSY;
+>> - =A0 =A0 =A0 else
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&sdd->pdev->dev, "DmaAbrtRx-%d=
+\n", size);
+>> -
+>> - =A0 =A0 =A0 /* If the other done */
+>> - =A0 =A0 =A0 if (!(sdd->state & TXBUSY))
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 complete(&sdd->xfer_completion);
+>> -
+>> - =A0 =A0 =A0 spin_unlock_irqrestore(&sdd->lock, flags);
+>> -}
+>> -
+>> -static void s3c64xx_spi_dma_txcb(struct s3c2410_dma_chan *chan, voi=
+d *buf_id,
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0int=
+ size, enum s3c2410_dma_buffresult res)
+>> -{
+>> - =A0 =A0 =A0 struct s3c64xx_spi_driver_data *sdd =3D buf_id;
+>> - =A0 =A0 =A0 unsigned long flags;
+>> -
+>> - =A0 =A0 =A0 spin_lock_irqsave(&sdd->lock, flags);
+>> -
+>> - =A0 =A0 =A0 if (res =3D=3D S3C2410_RES_OK)
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 sdd->state &=3D ~TXBUSY;
+>> - =A0 =A0 =A0 else
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&sdd->pdev->dev, "DmaAbrtTx-%d=
+ \n", size);
+>> -
+>> - =A0 =A0 =A0 /* If the other done */
+>> - =A0 =A0 =A0 if (!(sdd->state & RXBUSY))
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 complete(&sdd->xfer_completion);
+>> -
+>> - =A0 =A0 =A0 spin_unlock_irqrestore(&sdd->lock, flags);
+>> -}
+>> -
+>> =A0#define XFER_DMAADDR_INVALID DMA_BIT_MASK(32)
+>>
+>> =A0static int s3c64xx_spi_map_mssg(struct s3c64xx_spi_driver_data *s=
+dd,
+>> @@ -697,12 +701,10 @@ static void handle_msg(struct s3c64xx_spi_driv=
+er_data *sdd,
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (use_dma) {
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (x=
+fer->tx_buf !=3D NULL
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0 =A0 =A0&& (sdd->state & TXBUSY))
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 s3c2410_dma_ctrl(sdd->tx_dmach,
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S3C2410_DMAOP_FLUSH);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 sdd->ops->stop(sdd->tx_ch);
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (x=
+fer->rx_buf !=3D NULL
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0 =A0 =A0&& (sdd->state & RXBUSY))
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 s3c2410_dma_ctrl(sdd->rx_dmach,
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S3C2410_DMAOP_FLUSH);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 sdd->ops->stop(sdd->rx_ch);
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
+>>
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto out;
+>> @@ -742,24 +744,19 @@ out:
+>>
+>> =A0static int acquire_dma(struct s3c64xx_spi_driver_data *sdd)
+>> =A0{
+>> - =A0 =A0 =A0 if (s3c2410_dma_request(sdd->rx_dmach,
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 &s3c64xx_spi_dma_client, NULL) < 0) {
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&sdd->pdev->dev, "cannot get R=
+xDMA\n");
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 return 0;
+>> - =A0 =A0 =A0 }
+>> - =A0 =A0 =A0 s3c2410_dma_set_buffdone_fn(sdd->rx_dmach, s3c64xx_spi=
+_dma_rxcb);
+>> - =A0 =A0 =A0 s3c2410_dma_devconfig(sdd->rx_dmach, S3C2410_DMASRC_HW=
+,
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 sdd->sfr_start + S3C64XX_SPI_RX_DATA);
+>> -
+>> - =A0 =A0 =A0 if (s3c2410_dma_request(sdd->tx_dmach,
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 &s3c64xx_spi_dma_client, NULL) < 0) {
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&sdd->pdev->dev, "cannot get T=
+xDMA\n");
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c2410_dma_free(sdd->rx_dmach, &s3c64=
+xx_spi_dma_client);
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 return 0;
+>> - =A0 =A0 =A0 }
+>> - =A0 =A0 =A0 s3c2410_dma_set_buffdone_fn(sdd->tx_dmach, s3c64xx_spi=
+_dma_txcb);
+>> - =A0 =A0 =A0 s3c2410_dma_devconfig(sdd->tx_dmach, S3C2410_DMASRC_ME=
+M,
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 sdd->sfr_start + S3C64XX_SPI_TX_DATA);
+>> +
+>> + =A0 =A0 =A0 struct samsung_dma_info info;
+>> + =A0 =A0 =A0 sdd->ops =3D samsung_dma_get_ops();
+>> +
+>> + =A0 =A0 =A0 info.cap =3D DMA_SLAVE;
+>> + =A0 =A0 =A0 info.client =3D &s3c64xx_spi_dma_client;
+>> + =A0 =A0 =A0 info.direction =3D DMA_FROM_DEVICE;
+>> + =A0 =A0 =A0 info.fifo =3D sdd->sfr_start + S3C64XX_SPI_RX_DATA;
+>> + =A0 =A0 =A0 info.width =3D sdd->cur_bpw / 8;
+>> + =A0 =A0 =A0 sdd->rx_ch =3D sdd->ops->request(sdd->rx_dmach, &info)=
+;
+>> + =A0 =A0 =A0 info.direction =3D DMA_TO_DEVICE;
+>> + =A0 =A0 =A0 info.fifo =3D sdd->sfr_start + S3C64XX_SPI_TX_DATA;
+>> + =A0 =A0 =A0 sdd->tx_ch =3D sdd->ops->request(sdd->tx_dmach, &info)=
+;
+>>
+>> =A0 =A0 =A0 =A0return 1;
+>> =A0}
+>> @@ -800,8 +797,8 @@ static void s3c64xx_spi_work(struct work_struct =
+*work)
+>> =A0 =A0 =A0 =A0spin_unlock_irqrestore(&sdd->lock, flags);
+>>
+>> =A0 =A0 =A0 =A0/* Free DMA channels */
+>> - =A0 =A0 =A0 s3c2410_dma_free(sdd->tx_dmach, &s3c64xx_spi_dma_clien=
+t);
+>> - =A0 =A0 =A0 s3c2410_dma_free(sdd->rx_dmach, &s3c64xx_spi_dma_clien=
+t);
+>> + =A0 =A0 =A0 sdd->ops->release(sdd->rx_ch, &s3c64xx_spi_dma_client)=
+;
+>> + =A0 =A0 =A0 sdd->ops->release(sdd->tx_ch, &s3c64xx_spi_dma_client)=
+;
+>> =A0}
+>
+> Btw, this spi driver is for S3C64xx(with pl080) and S5P(with pl330)
+> series, both of which
+> have DMAENGINE drivers. May be it could be directly switched to using
+> those, rather than
+> via Samsung's wrapper driver.
+> Or am I overlooking something ?
+Exactly, spi_s3c64xx.c (including Sound driver) can not be used with
+pl080 and pl330 (DMAENGINE drivers) as it is.
+Recently I was trying to use PL080 DMAENGINE driver, and i was ended
+up using some #ifdef in the spi driver.
+something like
+#ifdef CONFIG_PL080
+sdd->tx_dmac.bus_id =3D dmatx_res->name;
+sdd->rx_dmac.bus_id =3D dmarx_res->name;
+#else
+sdd->tx_dmac.bus_id =3D dmatx_res->start;
+sdd->tx_dmac.bus_id =3D dmatx_res->start;
+#endif
+
+This is because, Pl080 handle the channel as a char *(name) and pl330
+expect the channel to be enum (a number).
+
+I think the solution could be changes in the either of these drivers
+to follow some symmetry or we will be ending up with
+two client driver for the same device or writing up some unnecessary
+warper code or finally using some #ifdef.
+
+Please suggest if you guys have any other idea/approach to handle such
+kind of situation.
+
+Below is the git diff of spi_s3c64xx driver using with PL080 DMAENGINE =
+driver.
+This patch is against kgene's next-samsung-dma-v4
+-----------------------------------------------------------------------=
+-------------------------------------------
+diff --git a/drivers/spi/spi_s3c64xx.c b/drivers/spi/spi_s3c64xx.c
+index a4cf76a..f7b9c37 100644
+--- a/drivers/spi/spi_s3c64xx.c
++++ b/drivers/spi/spi_s3c64xx.c
+@@ -24,6 +24,7 @@
+ #include <linux/delay.h>
+ #include <linux/clk.h>
+ #include <linux/dma-mapping.h>
++#include <linux/amba/pl08x.h>
+ #include <linux/platform_device.h>
+ #include <linux/spi/spi.h>
+
+@@ -165,8 +166,13 @@ struct s3c64xx_spi_driver_data {
+ 	struct work_struct              work;
+ 	struct list_head                queue;
+ 	spinlock_t                      lock;
++#ifdef CONFIG_DMADEV_PL080
++	struct pl08x_channel_data	rx_dmach;
++	struct pl08x_channel_data	tx_dmach;
++#else
+ 	enum dma_ch                     rx_dmach;
+ 	enum dma_ch                     tx_dmach;
++#endif
+ 	unsigned long                   sfr_start;
+ 	struct completion               xfer_completion;
+ 	unsigned                        state;
+@@ -753,10 +759,18 @@ static int acquire_dma(struct
+s3c64xx_spi_driver_data *sdd)
+ 	info.direction =3D DMA_FROM_DEVICE;
+ 	info.fifo =3D sdd->sfr_start + S3C64XX_SPI_RX_DATA;
+ 	info.width =3D sdd->cur_bpw / 8;
++#ifdef CONFIG_DMADEV_PL080
++	sdd->rx_ch =3D sdd->ops->request(sdd->rx_dmach.bus_id, &info);
++#else
+ 	sdd->rx_ch =3D sdd->ops->request(sdd->rx_dmach, &info);
++#endif
+ 	info.direction =3D DMA_TO_DEVICE;
+ 	info.fifo =3D sdd->sfr_start + S3C64XX_SPI_TX_DATA;
+-	sdd->tx_ch =3D sdd->ops->request(sdd->tx_dmach, &info);
++#ifdef CONFIG_DMADEV_PL080
++	sdd->tx_ch =3D sdd->ops->request(sdd->tx_dmach.bus_id, &info);
++#else
++		sdd->tx_ch =3D sdd->ops->request(sdd->tx_dmach, &info);
++#endif
+
+ 	return 1;
+ }
+@@ -982,7 +996,6 @@ static int __init s3c64xx_spi_probe(struct
+platform_device *pdev)
+ 	}
+
+ 	/* Check for availability of necessary resource */
+-
+ 	dmatx_res =3D platform_get_resource(pdev, IORESOURCE_DMA, 0);
+ 	if (dmatx_res =3D=3D NULL) {
+ 		dev_err(&pdev->dev, "Unable to get SPI-Tx dma resource\n");
+@@ -1015,9 +1028,13 @@ static int __init s3c64xx_spi_probe(struct
+platform_device *pdev)
+ 	sdd->cntrlr_info =3D sci;
+ 	sdd->pdev =3D pdev;
+ 	sdd->sfr_start =3D mem_res->start;
++#ifdef CONFIG_DMADEV_PL080
++	sdd->tx_dmach.bus_id =3D dmatx_res->name;
++	sdd->rx_dmach.bus_id =3D dmarx_res->name;
++#else
+ 	sdd->tx_dmach =3D dmatx_res->start;
+ 	sdd->rx_dmach =3D dmarx_res->start;
+-
++#endif
+ 	sdd->cur_bpw =3D 8;
+
+ 	master->bus_num =3D pdev->id;
+@@ -1105,7 +1122,6 @@ static int __init s3c64xx_spi_probe(struct
+platform_device *pdev)
+ 	dev_dbg(&pdev->dev, "\tIOmem=3D[0x%x-0x%x]\tDMA=3D[Rx-%d, Tx-%d]\n",
+ 					mem_res->end, mem_res->start,
+ 					sdd->rx_dmach, sdd->tx_dmach);
+-
+ 	return 0;
+
+ err8:
+-----------------------------------------------------------------------=
+-----------------------------------------------
+
+Regards,
+Alim
+
+
+
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
