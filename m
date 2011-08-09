@@ -1,39 +1,36 @@
-From: Jamie Iles <jamie@jamieiles.com>
-Subject: Re: [PATCH 00/13] Clean up mach/gpio.h headers
-Date: Tue, 9 Aug 2011 10:58:56 +0100
-Message-ID: <20110809095856.GF3210@pulham.picochip.com>
-References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
+From: Sergei Shtylyov <sshtylyov@mvista.com>
+Subject: Re: [PATCH] ARM: EXYNOS4: Fix the IRQ definitions for MIPI CSIS device
+Date: Tue, 09 Aug 2011 15:36:04 +0400
+Message-ID: <4E411BA4.2020909@ru.mvista.com>
+References: <1312809118-6181-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20110809080411.GA1831@n2100.arm.linux.org.uk>
-Sender: linux-sh-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:52799 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753254Ab1HILgs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 9 Aug 2011 07:36:48 -0400
+Received: by wyg24 with SMTP id 24so287821wyg.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Aug 2011 04:36:47 -0700 (PDT)
+In-Reply-To: <1312809118-6181-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, kgene.kim@samsung.com, m.szyprowski@samsung.com
 
-Hi Russell,
+Hello.
 
-On Tue, Aug 09, 2011 at 09:04:12AM +0100, Russell King - ARM Linux wrote:
-> This is a preliminary posting of my gpio patch set.
-> 
-> This patch series moves the trivial gpiolib implementations out of
-> mach/gpio.h and into asm/gpio.h.
-> 
-> As a side effect of that, most of this patch series is about fixing up
-> direct includes of mach/gpio.h - this is something I've been on at
-> people over the last year or more about ensuring that they use
-> linux/gpio.h in preference.  While I've blindly converted all arch/arm
-> to use linux/gpio.h (with the exception of mach/ includes which are
-> converted to asm/gpio.h), drivers were only converted to asm/gpio.h.
-> These should be reviewed and changed to linux/gpio.h.
-> 
-> As a result of this patch series, several mach/gpio.h end up being
-> empty.
+On 08-08-2011 17:11, Sylwester Nawrocki wrote:
 
-Nice series!  This gives me an empty gpio.h for picoxcell.
+> This is a regression fix after migration to the external GIC.
+> The breakage has been introduced in commit:
+> "ARM: EXYNOS4: modify interrupt mappings for external GIC"
 
-Tested-by: Jamie Iles <jamie@jamieiles.com>
+    Would be good to also cite that commit's ID for gitweb.
 
-Jamie
+> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
+> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+
+WBR, Sergei
