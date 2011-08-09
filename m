@@ -1,50 +1,59 @@
-From: Sergei Shtylyov <sshtylyov@mvista.com>
-Subject: Re: [PATCH 06/13] ARM: gpio: davinci: convert drivers to use asm/gpio.h
- rather than mach/gpio.h
-Date: Tue, 09 Aug 2011 16:06:14 +0400
-Message-ID: <4E4122B6.2070706@ru.mvista.com>
-References: <20110809080411.GA1831@n2100.arm.linux.org.uk> <E1QqhKP-0003aK-9R@rmk-PC.arm.linux.org.uk>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [RFC][PATCH 2/2] spi: s3c64xx: Use clkdev for bus clock lookup
+Date: Tue, 9 Aug 2011 18:13:18 +0530
+Message-ID: <CABb+yY1Be3q+5QVaLYnonOUq1VtjyCZMKp0S1yryjF2HRyqoSw@mail.gmail.com>
+References: <1312898301-7229-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:34786 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753173Ab1HIMG6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Aug 2011 08:06:58 -0400
-In-Reply-To: <E1QqhKP-0003aK-9R@rmk-PC.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1312898301-7229-1-git-send-email-padma.v@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, grant.likely@secretlab.ca
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>, linux-usb@vger.kernel.org, Felipe Balbi <balbi@ti.com>
 
-Hello.
+On Tue, Aug 9, 2011 at 7:28 PM, Padmavathi Venna <padma.v@samsung.com> =
+wrote:
+> SPI driver is modified to lookup the bus clock using the
+> alias name instead of getting clock name and clock
+> number from platform data.
+Cool.
 
-On 09-08-2011 12:06, Russell King - ARM Linux wrote:
+> Driver is modified to get the best source clock among the
+> available source clocks for the required frequency.
+I am not sure if this driver should be deciding which clock is 'best' f=
+or it.
+Because ...
+1) Usually it's the board designer who decides which clock to run at
+ what speed based upon target device. So ideally, based upon use-case
+the driver should simply get the 'best' clock from board via platform i=
+n a
+format that is compliant to the 'generic clock api'.
+2) We are not changing source clock rates(and we should not).
+ So the 'best' clock found, might still be way off in accuracy. And whe=
+n we
+can't anyway guarantee accuracy, why not leave the decision to
+the board designer who might, say, select the source clock good enough
+to be useful to more than one controller yet not absolutely accurate fo=
+r any ?
+3) It keeps enabled 3 unused clocks all the time.
 
-    CCing linux-usb and Felipe...
 
-> Signed-off-by: Russell King<rmk+kernel@arm.linux.org.uk>
-> ---
->   drivers/usb/musb/davinci.c |    2 +-
->   1 files changed, 1 insertions(+), 1 deletions(-)
-
-> diff --git a/drivers/usb/musb/davinci.c b/drivers/usb/musb/davinci.c
-> index 8bdf25a..f9a3f62 100644
-> --- a/drivers/usb/musb/davinci.c
-> +++ b/drivers/usb/musb/davinci.c
-> @@ -35,7 +35,7 @@
+> diff --git a/drivers/spi/spi_s3c64xx.c b/drivers/spi/spi_s3c64xx.c
+> index 8945e20..d7c979d 100644
+> --- a/drivers/spi/spi_s3c64xx.c
+> +++ b/drivers/spi/spi_s3c64xx.c
+> @@ -132,6 +132,9 @@
+> =C2=A0#define RXBUSY =C2=A0 =C2=A0(1<<2)
+> =C2=A0#define TXBUSY =C2=A0 =C2=A0(1<<3)
 >
->   #include<mach/hardware.h>
->   #include<mach/memory.h>
-> -#include<mach/gpio.h>
-> +#include<asm/gpio.h>
+> +#define MAX_SPI_BUS_CLK (4)
+> +#define MAX_PSR (256)
 
-    Shouldn't this now be moved to the below #include group?
+Btw,
 
->   #include<mach/cputype.h>
->
->   #include<asm/mach-types.h>
+ #define MAX_SPI_BUS_CLK 4
+ #define MAX_PSR 256
 
-WBR, Sergei
+is safe ... even safer than with two on!
