@@ -1,62 +1,66 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH 00/13] Clean up mach/gpio.h headers
-Date: Tue, 9 Aug 2011 15:50:22 -0600
-Message-ID: <20110809215022.GL11568@ponder.secretlab.ca>
+From: Linus Walleij <linus.ml.walleij@gmail.com>
+Subject: Re: [PATCH 11/13] ARM: gpio: consolidate trivial gpiolib implementations
+Date: Wed, 10 Aug 2011 09:54:52 +0200
+Message-ID: <CAKnu2Mofp+f7Khu1d0j9Pz3Pr03EawBgkRPWEqDy7mf4DzoETA@mail.gmail.com>
 References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
- <20110809210055.GF11568@ponder.secretlab.ca>
- <20110809213230.GC14281@n2100.arm.linux.org.uk>
+	<E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20110809213230.GC14281@n2100.arm.linux.org.uk>
+In-Reply-To: <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
 Sender: linux-sh-owner@vger.kernel.org
 To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Nicolas Pitre <nico@fluxnic.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Aug 09, 2011 at 10:32:30PM +0100, Russell King - ARM Linux wrote:
-> On Tue, Aug 09, 2011 at 03:00:55PM -0600, Grant Likely wrote:
-> > On Tue, Aug 09, 2011 at 09:04:12AM +0100, Russell King - ARM Linux wrote:
-> > > This is a preliminary posting of my gpio patch set.
-> > > 
-> > > This patch series moves the trivial gpiolib implementations out of
-> > > mach/gpio.h and into asm/gpio.h.
-> > > 
-> > > As a side effect of that, most of this patch series is about fixing up
-> > > direct includes of mach/gpio.h - this is something I've been on at
-> > > people over the last year or more about ensuring that they use
-> > > linux/gpio.h in preference.  While I've blindly converted all arch/arm
-> > > to use linux/gpio.h (with the exception of mach/ includes which are
-> > > converted to asm/gpio.h), drivers were only converted to asm/gpio.h.
-> > > These should be reviewed and changed to linux/gpio.h.
-> > > 
-> > > As a result of this patch series, several mach/gpio.h end up being
-> > > empty.
-> > > 
-> > > Many others just contain platform private GPIO APIs and definitions.
-> > > 
-> > > The last thing which mach/gpio.h is used for is to provide a definition
-> > > for ARCH_GPIO_NR to asm-generic/gpio.h.  I've not attempted to solve
-> > > that issue yet.
-> > > 
-> > > A small number of platforms optimize the gpio accessors for on-SoC
-> > > GPIOs.  In the interests of consolidation, these will have to be killed
-> > > but this patch set does not do that yet.
-> > > 
-> > > Lastly, several {mach,plat}/gpio.h needs to be looked at with a view to
-> > > deleting the direct include of asm-generic/gpio.h.
-> > 
-> > Looks good to me, though I haven't looked closely.  I imagine this
-> > should get merged via a branch in the arm-soc tree?
-> 
-> And this is where the existence of the arm-soc tree makes things more
-> difficult for me.  I'd normally just keep it as a separate branch in
-> my own tree.  What I do now, I've no idea.
+2011/8/9 Russell King - ARM Linux <linux@arm.linux.org.uk>:
 
-A separate branch in your tree works too.  It could even get pulled
-into the arm-soc tree so that it gets picked up by the daily
-integration test before going on to linux-next.
+> Consolidate 24 trivial gpiolib implementions out of mach/gpio.h
+> into asm/gpio.h. =A0This is basically the include of asm-generic/gpio=
+=2Eh
+> and the definition of gpio_get_value, gpio_set_value, and gpio_cansle=
+ep
+> as described in Documentation/gpio.txt
+>
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 
-g.
+reaks compile of plat-nomadik due to missing u32, feel free to fold in
+the below fix. With that it's
+Tested-by: Linus Walleij <linus.walleij@linaro.org>
+for Nomadik, U300 and Ux500.
 
+=46rom 2e4496fc7643d804ccf50a8efe1a0304210176d1 Mon Sep 17 00:00:00 200=
+1
+=46rom: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 10 Aug 2011 09:51:16 +0200
+Subject: [PATCH] plat-nomadik: small fixup for gpio.h
+
+Removing the generic gpio.h broke compilation of the Nomadik
+GPIO driver since it implicitly got u32 from it. Explicitly
+include <linux/kernel.h> so we get u32 defined.
+
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ arch/arm/plat-nomadik/include/plat/gpio.h |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/plat-nomadik/include/plat/gpio.h
+b/arch/arm/plat-nomadik/include/plat/gpio.h
+index cf0b78b..b894a53 100644
+--- a/arch/arm/plat-nomadik/include/plat/gpio.h
++++ b/arch/arm/plat-nomadik/include/plat/gpio.h
+@@ -12,6 +12,8 @@
+ #ifndef __ASM_PLAT_GPIO_H
+ #define __ASM_PLAT_GPIO_H
+
++#include <linux/kernel.h>
++
+ /*
+  * "nmk_gpio" and "NMK_GPIO" stand for "Nomadik GPIO", leaving
+  * the "gpio" namespace for generic and cross-machine functions
+--=20
+1.7.3.2
+
+Thanks,
+Linus Walleij
