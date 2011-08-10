@@ -1,56 +1,37 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH 2/2] Remove s3c24xx_dma_addr definition
-Date: Wed, 10 Aug 2011 12:30:19 +0200
-Message-ID: <201108101230.19931.heiko@sntech.de>
-References: <201108101227.32780.heiko@sntech.de>
+From: Alan Cox <alan@linux.intel.com>
+Subject: Re: [PATCH 1/2] serial: samsung: Add unified interrupt handler for
+ s3c64xx and later SoC's
+Date: Wed, 10 Aug 2011 12:55:31 +0100
+Message-ID: <20110810125531.38226d7a@bob.linux.org.uk>
+References: <1312971680-3898-1-git-send-email-thomas.abraham@linaro.org>
+	<1312971680-3898-2-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <201108101227.32780.heiko@sntech.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: heiko@sntech.de
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mga14.intel.com ([143.182.124.37]:33813 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753328Ab1HJLvy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 10 Aug 2011 07:51:54 -0400
+In-Reply-To: <1312971680-3898-2-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, grant.likely@secretlab.ca, ben-linux@fluff.org
 
-As all users of s3c24xx_dma_addr are gone now, remove it completely.
+On Wed, 10 Aug 2011 15:51:19 +0530
+Thomas Abraham <thomas.abraham@linaro.org> wrote:
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/plat-samsung/include/plat/dma-s3c24xx.h |    6 ------
- 1 files changed, 0 insertions(+), 6 deletions(-)
+> s3c64xx and later SoC's include the interrupt mask and pending
+> registers in the uart controller, unlike the s3c24xx SoC's which have
+> these registers in the interrupt controller. When the mask and
+> pending registers are part of the uart controller, a unified
+> interrupt handler can handle the tx/rx interrupt. With this, the
+> static reservation of interrupt numbers for the uart tx/rx/err
+> interrupts in the linux irq space is not required and simplifies
+> adding device tree support.
 
-diff --git a/arch/arm/plat-samsung/include/plat/dma-s3c24xx.h b/arch/arm/plat-samsung/include/plat/dma-s3c24xx.h
-index 336d5ac..ab9bce6 100644
---- a/arch/arm/plat-samsung/include/plat/dma-s3c24xx.h
-+++ b/arch/arm/plat-samsung/include/plat/dma-s3c24xx.h
-@@ -18,11 +18,6 @@ extern struct s3c2410_dma_chan s3c2410_chans[S3C_DMA_CHANNELS];
- #define DMA_CH_VALID		(1<<31)
- #define DMA_CH_NEVER		(1<<30)
- 
--struct s3c24xx_dma_addr {
--	unsigned long		from;
--	unsigned long		to;
--};
--
- /* struct s3c24xx_dma_map
-  *
-  * this holds the mapping information for the channel selected
-@@ -31,7 +26,6 @@ struct s3c24xx_dma_addr {
- 
- struct s3c24xx_dma_map {
- 	const char		*name;
--	struct s3c24xx_dma_addr  hw_addr;
- 
- 	unsigned long		 channels[S3C_DMA_CHANNELS];
- 	unsigned long		 channels_rx[S3C_DMA_CHANNELS];
--- 
-1.7.5.4
+Really only hardware changes so for the tty touching aspect of it
+
+Acked-by: Alan Cox <alan@linux.intel.com>
