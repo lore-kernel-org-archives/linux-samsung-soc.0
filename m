@@ -1,77 +1,60 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [RFC][PATCH 1/2] S5PV210: SPI: Add clkdev support
-Date: Wed, 10 Aug 2011 14:59:07 +0200
-Message-ID: <4E42809B.7070504@samsung.com>
-References: <1312898222-7165-1-git-send-email-padma.v@samsung.com>
- <4E413941.10307@samsung.com>
- <CAAgF-BftGYkZ6aaSZgxd8gk1Zy9-sJEroZcaijd6zN3Qr9MEhQ@mail.gmail.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [RFC][PATCH 2/2] spi: s3c64xx: Use clkdev for bus clock lookup
+Date: Wed, 10 Aug 2011 19:06:48 +0530
+Message-ID: <CABb+yY1tCBK3Hywi_7TuBCc830BP7+C2GRoQxeKWU5OHXenjRA@mail.gmail.com>
+References: <1312898301-7229-1-git-send-email-padma.v@samsung.com>
+	<CABb+yY1Be3q+5QVaLYnonOUq1VtjyCZMKp0S1yryjF2HRyqoSw@mail.gmail.com>
+	<CAAgF-Bf=K8M9Qp8EwFTuUY06H4SPNY5cW2Ct3K9FecMLvBHmuA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:48816 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753991Ab1HJM7L (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:34829 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750826Ab1HJNgu convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Aug 2011 08:59:11 -0400
-In-reply-to: <CAAgF-BftGYkZ6aaSZgxd8gk1Zy9-sJEroZcaijd6zN3Qr9MEhQ@mail.gmail.com>
+	Wed, 10 Aug 2011 09:36:50 -0400
+In-Reply-To: <CAAgF-Bf=K8M9Qp8EwFTuUY06H4SPNY5cW2Ct3K9FecMLvBHmuA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: padma venkat <padma.kvr@gmail.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, kgene.kim@samsung.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, grant.likely@secretlab.ca, jassi Brar <jassisinghbrar@gmail.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, kgene.kim@samsung.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, grant.likely@secretlab.ca
 
-Hi Padmavathi,
-
-On 08/10/2011 02:04 PM, padma venkat wrote:
-> Hi Sylwester,
-> 
-> On Tue, Aug 9, 2011 at 7:12 PM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
->> [corrected Jassi's email address]
->>
->> On 08/09/2011 03:57 PM, Padmavathi Venna wrote:
->>> Create a clkdev alias for spi bus clock and modify the spi
->>> driver to lookup the clock using the alias name instead of
->>> passing clock name and clock number from SPI platform data.
->>>
->>> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
->>> ---
->>> This patch is tested for S5PV210 platform and similar
->>> changes can be adopted for rest of the Samsung's s3c
->>> and s5p platforms, if this approach is accepted.
->>
->> It is a bit surprising to me how you do intend to use the clock aliases.
->> Are we seriously going to be creating clock con_id aliases for most
->> of the available devices ? It doesn't sound sane to me..
+On Wed, Aug 10, 2011 at 5:33 PM, padma venkat <padma.kvr@gmail.com> wro=
+te:
+> Hi Jassi,
 >
-> We don't need to create the alias names for all the devices. But we need
-> to create only for those which need clock information from platform data.
-> As far as I know we need to create for spi,hsmmc,uart and iis.
-
-That's already a lot. 
-Just to clarify, the clock names were originally passed in platform_data
-because they differ across SoCs the driver supports, right ?
-Or are there any other reasons ?
-
-The whole idea of the clkdev is not to require any information about 
-the clocks in platform_data. You just need to be registering the clock 
-identifiers *at the device*, not the clock names specific to the machine.
-The platform code takes care of the translation and the drivers only need
-to ask clkdev for the 'clock connection id', rather than the original
-machine clock name.
-You can do this by adding the aliases, but it's not optimal. You are adding
-the code which could well be avoided.
-
->
+> On Tue, Aug 9, 2011 at 6:13 PM, Jassi Brar <jassisinghbrar@gmail.com>=
+ wrote:
+>> On Tue, Aug 9, 2011 at 7:28 PM, Padmavathi Venna <padma.v@samsung.co=
+m> wrote:
+>>> SPI driver is modified to lookup the bus clock using the
+>>> alias name instead of getting clock name and clock
+>>> number from platform data.
+>> Cool.
 >>
->> Wouldn't it be possible to avoid the aliases by correcting the clock
->> registration process ?
->
-> Yes it is possible but we don't have the flexibility to create the alias names
-> only for the required clocks.
-
-By registering proper clock connection ids you would not need the aliases at all.
-
---
-Regards,
-Sylwester
+>>> Driver is modified to get the best source clock among the
+>>> available source clocks for the required frequency.
+>> I am not sure if this driver should be deciding which clock is 'best=
+' for it.
+>> Because ...
+>> 1) Usually it's the board designer who decides which clock to run at
+>> =C2=A0what speed based upon target device. So ideally, based upon us=
+e-case
+>> the driver should simply get the 'best' clock from board via platfor=
+m in a
+>> format that is compliant to the 'generic clock api'.
+> As per your comment I modified the code for board designer to supply =
+the
+> required list of source clocks. If this list is NULL then it =C2=A0us=
+es the
+> all available
+> clock sources. I will resubmit this patch.
+No dear. Not a list of clocks (that is property of the platform - not a=
+ board).
+But get just one 'generic clock api' compliant clock from the board and=
+ use
+it.
+That will keep the driver simple for sure and IIUIC, in future anyways =
+DT would
+specify source clock for each peripheral. Grant ?
