@@ -1,34 +1,54 @@
-From: David Brown <davidb@codeaurora.org>
-Subject: Re: [PATCH 11/13] ARM: gpio: consolidate trivial gpiolib
- implementations
-Date: Thu, 11 Aug 2011 09:24:08 -0700
-Message-ID: <20110811162408.GA8710@huya.qualcomm.com>
-References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
- <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
- <017101cc581c$6e277530$4a765f90$%kim@samsung.com>
- <20110811150807.GB4924@n2100.arm.linux.org.uk>
+From: "Koul, Vinod" <vinod.koul@intel.com>
+Subject: RE: [PATCH V5 00/15] To use DMA generic APIs for Samsung DMA
+Date: Fri, 12 Aug 2011 03:57:29 +0530
+Message-ID: <1313101649.1603.27.camel@vkoul-udesk3>
+References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
+	 <CACRpkdZvbH1O608n_aa_nVi-Onhmt0Ay6X1yCgBVNES4o9hTrA@mail.gmail.com>
+	 <1312821923.1539.37.camel@vkoul-udesk3>
+	 <015101cc57f8$0d7b1da0$287158e0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20110811150807.GB4924@n2100.arm.linux.org.uk>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Nicolas Pitre' <nico@fluxnic.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:24494 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751008Ab1HKQ5d (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Aug 2011 12:57:33 -0400
+In-Reply-To: <015101cc57f8$0d7b1da0$287158e0$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Boojin Kim' <boojin.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Dan Williams' <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 
-On Thu, Aug 11, 2011 at 04:08:07PM +0100, Russell King - ARM Linux wrote:
-
-> > As a note, there were duplicated e-mail address Grant and Nicolas in Cc ;)
-> > I just pushed 'reply all' :)
+On Thu, 2011-08-11 at 16:26 +0900, Kukjin Kim wrote:
+> Koul, Vinod wrote:
+> > 
+> > On Thu, 2011-08-04 at 18:53 +0200, Linus Walleij wrote:
+> > > On Wed, Jul 27, 2011 at 7:31 AM, Boojin Kim <boojin.kim@samsung.com> wrote:
+> > >
+> > > > This patchset adds support DMA generic APIs for Samsung DMA.
+> > >
+> > > Patches look good to me,
+> > > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> > 
+> > Acked-by: Vinod Koul <vinod.koul@intel.com>
+> > 
+> > Do you want these to go thru slave-dma tree or arm tree, I am okay with
+> > either...
 > 
-> That's not in the original email, and isn't in any one elses replies....
-
-The original patches have a doubled CC line.  I think most mailers
-eliminate the duplicates, though.
-
-David
+> Hi Vinod,
+> 
+> Thanks.
+> 
+> I'd like to keep its topic branch in my tree to avoid conflicts with other samsung stuff and I think, it should be merged into your slave-dma tree also for same reason.
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git #next/topic-dma-pl330
+> 
+> Or if you want to make some branch for it in your tree, please let me know so that I can merge it in my tree also.
+Okay can you update this branch with latest patchset (I think there were
+few comments on last patchset). Once you add all acks let me know the
+branch, I will merge it to my next
 
 -- 
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+~Vinod
