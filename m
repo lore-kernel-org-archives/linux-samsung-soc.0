@@ -1,162 +1,107 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 13/13] ARM: gpio: make trivial GPIOLIB implementation the
-	default
-Date: Thu, 11 Aug 2011 21:02:45 +0900
-Message-ID: <000501cc581e$95ecf7a0$c1c6e6e0$%kim@samsung.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH 11/13] ARM: gpio: consolidate trivial gpiolib
+ implementations
+Date: Thu, 11 Aug 2011 17:15:31 +0300
+Message-ID: <20110811141528.GL28500@legolas.emea.dhcp.ti.com>
 References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
-	<E1QqhMg-0003an-GW@rmk-PC.arm.linux.org.uk>
+ <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
+Reply-To: balbi@ti.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <E1QqhMg-0003an-GW@rmk-PC.arm.linux.org.uk>
-Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc: 'Grant Likely' <grant.likely@secretlab.ca>, 'Nicolas Pitre' <nico@fluxnic.net>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="oYAXToTM8kn9Ra/9"
+Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
+Sender: linux-sh-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Russell King - ARM Linux wrote:
-> 
-> Rather than marking the mach/gpio.h header files which want to use the
-> trivial GPIOLIB implementation, mark those which do not want to use it
-> instead.  This means that by default, you get the trivial implementation
-> and only have to do something extra if you need to.  This should
-> encourage the use of the trivial default implementation.
-> 
-> As an additional bonus, several gpio.h header files become empty.
-> 
+
+--oYAXToTM8kn9Ra/9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Aug 09, 2011 at 09:08:01AM +0100, Russell King - ARM Linux wrote:
+> Consolidate 24 trivial gpiolib implementions out of mach/gpio.h
+> into asm/gpio.h.  This is basically the include of asm-generic/gpio.h
+> and the definition of gpio_get_value, gpio_set_value, and gpio_cansleep
+> as described in Documentation/gpio.txt
+>=20
 > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-
-Looks good to me :)
-
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-
-on following Samsung stuff...
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
 > ---
->  arch/arm/include/asm/gpio.h                 |    2 +-
-
->  arch/arm/mach-exynos4/include/mach/gpio.h   |    2 --
-
->  arch/arm/mach-s3c2410/include/mach/gpio.h   |    2 --
->  arch/arm/mach-s3c64xx/include/mach/gpio.h   |    2 --
->  arch/arm/mach-s5p64x0/include/mach/gpio.h   |    2 --
->  arch/arm/mach-s5pc100/include/mach/gpio.h   |    2 --
->  arch/arm/mach-s5pv210/include/mach/gpio.h   |    2 --
-> 
+>  arch/arm/include/asm/gpio.h                 |   10 ++++++++++
+>  arch/arm/mach-at91/include/mach/gpio.h      |    5 +----
+>  arch/arm/mach-ep93xx/include/mach/gpio.h    |    7 +------
+>  arch/arm/mach-exynos4/include/mach/gpio.h   |    5 +----
+>  arch/arm/mach-gemini/include/mach/gpio.h    |    5 +----
+>  arch/arm/mach-ks8695/include/mach/gpio.h    |   11 ++---------
+>  arch/arm/mach-lpc32xx/include/mach/gpio.h   |   17 +----------------
+>  arch/arm/mach-msm/include/mach/gpio.h       |    5 +----
+>  arch/arm/mach-mxs/include/mach/gpio.h       |    6 +-----
+>  arch/arm/mach-realview/include/mach/gpio.h  |    6 +-----
+>  arch/arm/mach-s3c2410/include/mach/gpio.h   |    5 +----
+>  arch/arm/mach-s3c64xx/include/mach/gpio.h   |    6 +-----
+>  arch/arm/mach-s5p64x0/include/mach/gpio.h   |    6 +-----
+>  arch/arm/mach-s5pc100/include/mach/gpio.h   |    6 +-----
+>  arch/arm/mach-s5pv210/include/mach/gpio.h   |    6 +-----
+>  arch/arm/mach-shmobile/include/mach/gpio.h  |   15 +--------------
+>  arch/arm/mach-tegra/include/mach/gpio.h     |    6 +-----
+>  arch/arm/mach-versatile/include/mach/gpio.h |    6 +-----
+>  arch/arm/mach-vt8500/include/mach/gpio.h    |    6 +-----
+>  arch/arm/mach-w90x900/include/mach/gpio.h   |    5 +----
+>  arch/arm/plat-mxc/include/mach/gpio.h       |    5 +----
+>  arch/arm/plat-nomadik/include/plat/gpio.h   |   11 +----------
+>  arch/arm/plat-omap/include/plat/gpio.h      |   15 +--------------
+>  arch/arm/plat-orion/include/plat/gpio.h     |    6 ++----
+>  arch/arm/plat-spear/include/plat/gpio.h     |    6 +-----
+>  25 files changed, 36 insertions(+), 151 deletions(-)
+>=20
 > diff --git a/arch/arm/include/asm/gpio.h b/arch/arm/include/asm/gpio.h
-> index 5032224..11ad0bf 100644
+> index 166a7a3..15e8970 100644
 > --- a/arch/arm/include/asm/gpio.h
 > +++ b/arch/arm/include/asm/gpio.h
-> @@ -4,7 +4,7 @@
+> @@ -4,4 +4,14 @@
 >  /* not all ARM platforms necessarily support this API ... */
 >  #include <mach/gpio.h>
-> 
-> -#ifdef __ARM_GPIOLIB_TRIVIAL
-> +#ifndef __ARM_GPIOLIB_COMPLEX
->  /* Note: this may rely upon the value of ARCH_NR_GPIOS set in mach/gpio.h
-*/
->  #include <asm-generic/gpio.h>
-> 
+> =20
+> +#ifdef __ARM_GPIOLIB_TRIVIAL
+> +/* Note: this may rely upon the value of ARCH_NR_GPIOS set in mach/gpio.=
+h */
+> +#include <asm-generic/gpio.h>
+> +
+> +/* The trivial gpiolib dispatchers */
+> +#define gpio_get_value  __gpio_get_value
+> +#define gpio_set_value  __gpio_set_value
+> +#define gpio_cansleep   __gpio_cansleep
+> +#endif
 
-> diff --git a/arch/arm/mach-exynos4/include/mach/gpio.h b/arch/arm/mach-
-> exynos4/include/mach/gpio.h
-> index b91e8b2..80523ca 100644
-> --- a/arch/arm/mach-exynos4/include/mach/gpio.h
-> +++ b/arch/arm/mach-exynos4/include/mach/gpio.h
-> @@ -146,6 +146,4 @@ enum s5p_gpio_number {
->  #define ARCH_NR_GPIOS
-> 	(EXYNOS4_GPZ(EXYNOS4_GPIO_Z_NR) +	\
->  				 CONFIG_SAMSUNG_GPIO_EXTRA + 1)
-> 
-> -#define __ARM_GPIOLIB_TRIVIAL
-> -
->  #endif /* __ASM_ARCH_GPIO_H */
+could that be a selectable symbol ? Something like:
 
-> diff --git a/arch/arm/mach-s3c2410/include/mach/gpio.h b/arch/arm/mach-
-> s3c2410/include/mach/gpio.h
-> index d502d17..6fac70f 100644
-> --- a/arch/arm/mach-s3c2410/include/mach/gpio.h
-> +++ b/arch/arm/mach-s3c2410/include/mach/gpio.h
-> @@ -11,8 +11,6 @@
->   * published by the Free Software Foundation.
->  */
-> 
-> -#define __ARM_GPIOLIB_TRIVIAL
-> -
->  /* some boards require extra gpio capacity to support external
->   * devices that need GPIO.
->   */
-> diff --git a/arch/arm/mach-s3c64xx/include/mach/gpio.h b/arch/arm/mach-
-> s3c64xx/include/mach/gpio.h
-> index 3a8857c..6e34c2f 100644
-> --- a/arch/arm/mach-s3c64xx/include/mach/gpio.h
-> +++ b/arch/arm/mach-s3c64xx/include/mach/gpio.h
-> @@ -12,8 +12,6 @@
->   * published by the Free Software Foundation.
->  */
-> 
-> -#define __ARM_GPIOLIB_TRIVIAL
-> -
->  /* GPIO bank sizes */
->  #define S3C64XX_GPIO_A_NR	(8)
->  #define S3C64XX_GPIO_B_NR	(7)
-> diff --git a/arch/arm/mach-s5p64x0/include/mach/gpio.h b/arch/arm/mach-
-> s5p64x0/include/mach/gpio.h
-> index c3a6aa0..06cd3c9 100644
-> --- a/arch/arm/mach-s5p64x0/include/mach/gpio.h
-> +++ b/arch/arm/mach-s5p64x0/include/mach/gpio.h
-> @@ -13,8 +13,6 @@
->  #ifndef __ASM_ARCH_GPIO_H
->  #define __ASM_ARCH_GPIO_H __FILE__
-> 
-> -#define __ARM_GPIOLIB_TRIVIAL
-> -
->  /* GPIO bank sizes */
-> 
->  #define S5P6440_GPIO_A_NR	(6)
-> diff --git a/arch/arm/mach-s5pc100/include/mach/gpio.h b/arch/arm/mach-
-> s5pc100/include/mach/gpio.h
-> index 0e75641..5e1a924 100644
-> --- a/arch/arm/mach-s5pc100/include/mach/gpio.h
-> +++ b/arch/arm/mach-s5pc100/include/mach/gpio.h
-> @@ -15,8 +15,6 @@
->  #ifndef __ASM_ARCH_GPIO_H
->  #define __ASM_ARCH_GPIO_H __FILE__
-> 
-> -#define __ARM_GPIOLIB_TRIVIAL
-> -
->  /* GPIO bank sizes */
->  #define S5PC100_GPIO_A0_NR	(8)
->  #define S5PC100_GPIO_A1_NR	(5)
-> diff --git a/arch/arm/mach-s5pv210/include/mach/gpio.h b/arch/arm/mach-
-> s5pv210/include/mach/gpio.h
-> index d348ee2..6c8b903 100644
-> --- a/arch/arm/mach-s5pv210/include/mach/gpio.h
-> +++ b/arch/arm/mach-s5pv210/include/mach/gpio.h
-> @@ -13,8 +13,6 @@
->  #ifndef __ASM_ARCH_GPIO_H
->  #define __ASM_ARCH_GPIO_H __FILE__
-> 
-> -#define __ARM_GPIOLIB_TRIVIAL
-> -
->  /* Practically, GPIO banks up to MP03 are the configurable gpio banks */
-> 
->  /* GPIO bank sizes */
+CONFIG_HAS_ARM_TRIVIAL_GPIO
+
+then on Kconfig you just:
+
+select HAS_ARM_TIVIAL_GPIO or something ?
+
+--=20
+balbi
+
+--oYAXToTM8kn9Ra/9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQEcBAEBAgAGBQJOQ+QAAAoJEAv8Txj19kN1pnsH/jjIZ/l51eOlKP75j5KHaq/S
+GRTw4CVEa/c1kTf7oCmfV7gVqGb/NBM2/kI/zeVD/GfZobV29mq452AXuoLeDipd
+3g1suFowb0YSILWAdTXdzPoQbSvWDVdnsIcoJH4dJNcHE1w7MYLnp1brWV3G9g5/
+sAR3kah4pkPw9PO/XU4q2MPrgOW30i+bLST4RzTpL2Luai5dtJs+H+Bf5ORGLXFt
+g/yFIMLxXBDwtaQdxPFoeiheg+fX6d6YH32vjiKYOhnrq4vm7MeJpU0dDz+GinNJ
+gFlOU2imPOuA2tV1J+iVwNkc9G85yHSEe2pHl7CDqcwSRp9mB+HhNu3HqmIqJ9k=
+=GTxs
+-----END PGP SIGNATURE-----
+
+--oYAXToTM8kn9Ra/9--
