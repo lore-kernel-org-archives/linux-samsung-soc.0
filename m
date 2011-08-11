@@ -1,60 +1,208 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 11/13] ARM: gpio: consolidate trivial gpiolib
-	implementations
-Date: Thu, 11 Aug 2011 16:07:18 +0100
-Message-ID: <20110811150718.GA4924@n2100.arm.linux.org.uk>
-References: <20110809080411.GA1831@n2100.arm.linux.org.uk> <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk> <20110811141528.GL28500@legolas.emea.dhcp.ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Banajit Goswami <banajit.g@samsung.com>
+Subject: [PATCH] ARM: SAMSUNG: Consolidate common function to set SDHCI plat
+ data
+Date: Thu, 11 Aug 2011 21:08:13 +0530
+Message-ID: <1313077093-25157-1-git-send-email-banajit.g@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:38056 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752459Ab1HKPKr (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:63092 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752449Ab1HKPhj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Aug 2011 11:10:47 -0400
-Content-Disposition: inline
-In-Reply-To: <20110811141528.GL28500@legolas.emea.dhcp.ti.com>
+	Thu, 11 Aug 2011 11:37:39 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LPR006JRSQPRXA0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 12 Aug 2011 00:37:37 +0900 (KST)
+Received: from banajit.sisodomain.com ([107.108.83.226])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LPR00038SQL14@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 12 Aug 2011 00:37:37 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Nicolas Pitre <nico@fluxnic.net>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, Banajit Goswami <banajit.g@samsung.com>
 
-On Thu, Aug 11, 2011 at 05:15:31PM +0300, Felipe Balbi wrote:
-> On Tue, Aug 09, 2011 at 09:08:01AM +0100, Russell King - ARM Linux wrote:
-> > diff --git a/arch/arm/include/asm/gpio.h b/arch/arm/include/asm/gpio.h
-> > index 166a7a3..15e8970 100644
-> > --- a/arch/arm/include/asm/gpio.h
-> > +++ b/arch/arm/include/asm/gpio.h
-> > @@ -4,4 +4,14 @@
-> >  /* not all ARM platforms necessarily support this API ... */
-> >  #include <mach/gpio.h>
-> >  
-> > +#ifdef __ARM_GPIOLIB_TRIVIAL
-> > +/* Note: this may rely upon the value of ARCH_NR_GPIOS set in mach/gpio.h */
-> > +#include <asm-generic/gpio.h>
-> > +
-> > +/* The trivial gpiolib dispatchers */
-> > +#define gpio_get_value  __gpio_get_value
-> > +#define gpio_set_value  __gpio_set_value
-> > +#define gpio_cansleep   __gpio_cansleep
-> > +#endif
-> 
-> could that be a selectable symbol ? Something like:
-> 
-> CONFIG_HAS_ARM_TRIVIAL_GPIO
-> 
-> then on Kconfig you just:
-> 
-> select HAS_ARM_TIVIAL_GPIO or something ?
+Moves similar functions to set SDHCI platform data for all Samsung
+boards to a common location, thereby saves a few lines.
 
-That makes things more complicated, because that involves digging through
-a lot of platform code in a couple of places to work out exactly when we
-need this - and it crosses the boundary to arch/sh too.
+Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
+---
+ arch/arm/plat-samsung/dev-hsmmc.c          |   19 +------------------
+ arch/arm/plat-samsung/dev-hsmmc1.c         |   19 +------------------
+ arch/arm/plat-samsung/dev-hsmmc2.c         |   19 +------------------
+ arch/arm/plat-samsung/dev-hsmmc3.c         |   19 +------------------
+ arch/arm/plat-samsung/include/plat/sdhci.h |    7 +++++++
+ arch/arm/plat-samsung/platformdata.c       |   22 ++++++++++++++++++++++
+ 6 files changed, 33 insertions(+), 72 deletions(-)
 
-So I'd prefer to keep this simple.
-
-The long-term goal is to remove that symbol entirely, but in order to do
-that we need to kill of the "optimized" on-board SoC stuff in those (few)
-gpio.h which don't have the symbol selected.  This is rather necessary to
-progress towards the consolidated kernel.  (Re-inventing gpiolib by moving
-them out of line isn't a good idea...)
+diff --git a/arch/arm/plat-samsung/dev-hsmmc.c b/arch/arm/plat-samsung/dev-hsmmc.c
+index db7a65c..06825c4 100644
+--- a/arch/arm/plat-samsung/dev-hsmmc.c
++++ b/arch/arm/plat-samsung/dev-hsmmc.c
+@@ -58,22 +58,5 @@ struct platform_device s3c_device_hsmmc0 = {
+ 
+ void s3c_sdhci0_set_platdata(struct s3c_sdhci_platdata *pd)
+ {
+-	struct s3c_sdhci_platdata *set = &s3c_hsmmc0_def_platdata;
+-
+-	set->cd_type = pd->cd_type;
+-	set->ext_cd_init = pd->ext_cd_init;
+-	set->ext_cd_cleanup = pd->ext_cd_cleanup;
+-	set->ext_cd_gpio = pd->ext_cd_gpio;
+-	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
+-
+-	if (pd->max_width)
+-		set->max_width = pd->max_width;
+-	if (pd->cfg_gpio)
+-		set->cfg_gpio = pd->cfg_gpio;
+-	if (pd->cfg_card)
+-		set->cfg_card = pd->cfg_card;
+-	if (pd->host_caps)
+-		set->host_caps |= pd->host_caps;
+-	if (pd->clk_type)
+-		set->clk_type = pd->clk_type;
++	s3c_sdhci_set_platdata(pd, &s3c_hsmmc0_def_platdata);
+ }
+diff --git a/arch/arm/plat-samsung/dev-hsmmc1.c b/arch/arm/plat-samsung/dev-hsmmc1.c
+index 2497321..4524ef4 100644
+--- a/arch/arm/plat-samsung/dev-hsmmc1.c
++++ b/arch/arm/plat-samsung/dev-hsmmc1.c
+@@ -58,22 +58,5 @@ struct platform_device s3c_device_hsmmc1 = {
+ 
+ void s3c_sdhci1_set_platdata(struct s3c_sdhci_platdata *pd)
+ {
+-	struct s3c_sdhci_platdata *set = &s3c_hsmmc1_def_platdata;
+-
+-	set->cd_type = pd->cd_type;
+-	set->ext_cd_init = pd->ext_cd_init;
+-	set->ext_cd_cleanup = pd->ext_cd_cleanup;
+-	set->ext_cd_gpio = pd->ext_cd_gpio;
+-	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
+-
+-	if (pd->max_width)
+-		set->max_width = pd->max_width;
+-	if (pd->cfg_gpio)
+-		set->cfg_gpio = pd->cfg_gpio;
+-	if (pd->cfg_card)
+-		set->cfg_card = pd->cfg_card;
+-	if (pd->host_caps)
+-		set->host_caps |= pd->host_caps;
+-	if (pd->clk_type)
+-		set->clk_type = pd->clk_type;
++	s3c_sdhci_set_platdata(pd, &s3c_hsmmc1_def_platdata);
+ }
+diff --git a/arch/arm/plat-samsung/dev-hsmmc2.c b/arch/arm/plat-samsung/dev-hsmmc2.c
+index f60aedb..9cede96 100644
+--- a/arch/arm/plat-samsung/dev-hsmmc2.c
++++ b/arch/arm/plat-samsung/dev-hsmmc2.c
+@@ -59,22 +59,5 @@ struct platform_device s3c_device_hsmmc2 = {
+ 
+ void s3c_sdhci2_set_platdata(struct s3c_sdhci_platdata *pd)
+ {
+-	struct s3c_sdhci_platdata *set = &s3c_hsmmc2_def_platdata;
+-
+-	set->cd_type = pd->cd_type;
+-	set->ext_cd_init = pd->ext_cd_init;
+-	set->ext_cd_cleanup = pd->ext_cd_cleanup;
+-	set->ext_cd_gpio = pd->ext_cd_gpio;
+-	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
+-
+-	if (pd->max_width)
+-		set->max_width = pd->max_width;
+-	if (pd->cfg_gpio)
+-		set->cfg_gpio = pd->cfg_gpio;
+-	if (pd->cfg_card)
+-		set->cfg_card = pd->cfg_card;
+-	if (pd->host_caps)
+-		set->host_caps |= pd->host_caps;
+-	if (pd->clk_type)
+-		set->clk_type = pd->clk_type;
++	s3c_sdhci_set_platdata(pd, &s3c_hsmmc2_def_platdata);
+ }
+diff --git a/arch/arm/plat-samsung/dev-hsmmc3.c b/arch/arm/plat-samsung/dev-hsmmc3.c
+index ede776f..0358ef4 100644
+--- a/arch/arm/plat-samsung/dev-hsmmc3.c
++++ b/arch/arm/plat-samsung/dev-hsmmc3.c
+@@ -62,22 +62,5 @@ struct platform_device s3c_device_hsmmc3 = {
+ 
+ void s3c_sdhci3_set_platdata(struct s3c_sdhci_platdata *pd)
+ {
+-	struct s3c_sdhci_platdata *set = &s3c_hsmmc3_def_platdata;
+-
+-	set->cd_type = pd->cd_type;
+-	set->ext_cd_init = pd->ext_cd_init;
+-	set->ext_cd_cleanup = pd->ext_cd_cleanup;
+-	set->ext_cd_gpio = pd->ext_cd_gpio;
+-	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
+-
+-	if (pd->max_width)
+-		set->max_width = pd->max_width;
+-	if (pd->cfg_gpio)
+-		set->cfg_gpio = pd->cfg_gpio;
+-	if (pd->cfg_card)
+-		set->cfg_card = pd->cfg_card;
+-	if (pd->host_caps)
+-		set->host_caps |= pd->host_caps;
+-	if (pd->clk_type)
+-		set->clk_type = pd->clk_type;
++	s3c_sdhci_set_platdata(pd, &s3c_hsmmc3_def_platdata);
+ }
+diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-samsung/include/plat/sdhci.h
+index 058e096..20dc81c 100644
+--- a/arch/arm/plat-samsung/include/plat/sdhci.h
++++ b/arch/arm/plat-samsung/include/plat/sdhci.h
+@@ -86,6 +86,13 @@ struct s3c_sdhci_platdata {
+ 			    struct mmc_card *card);
+ };
+ 
++/* s3c_sdhci_set_platdata() - common helper for setting SDHCI platform data
++ * @pd: The default platform data for this device.
++ * @set: Pointer to the platform data to fill in.
++ */
++extern void s3c_sdhci_set_platdata(struct s3c_sdhci_platdata *pd,
++				struct s3c_sdhci_platdata *set);
++
+ /**
+  * s3c_sdhci0_set_platdata - Set platform data for S3C SDHCI device.
+  * @pd: Platform data to register to device.
+diff --git a/arch/arm/plat-samsung/platformdata.c b/arch/arm/plat-samsung/platformdata.c
+index 7cf2e1e..27bec0a 100644
+--- a/arch/arm/plat-samsung/platformdata.c
++++ b/arch/arm/plat-samsung/platformdata.c
+@@ -14,6 +14,7 @@
+ #include <linux/platform_device.h>
+ 
+ #include <plat/devs.h>
++#include <plat/sdhci.h>
+ 
+ void __init *s3c_set_platdata(void *pd, size_t pdsize,
+ 			      struct platform_device *pdev)
+@@ -35,3 +36,24 @@ void __init *s3c_set_platdata(void *pd, size_t pdsize,
+ 	pdev->dev.platform_data = npd;
+ 	return npd;
+ }
++
++void s3c_sdhci_set_platdata(struct s3c_sdhci_platdata *pd,
++			struct s3c_sdhci_platdata *set)
++{
++	set->cd_type = pd->cd_type;
++	set->ext_cd_init = pd->ext_cd_init;
++	set->ext_cd_cleanup = pd->ext_cd_cleanup;
++	set->ext_cd_gpio = pd->ext_cd_gpio;
++	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
++
++	if (pd->max_width)
++		set->max_width = pd->max_width;
++	if (pd->cfg_gpio)
++		set->cfg_gpio = pd->cfg_gpio;
++	if (pd->cfg_card)
++		set->cfg_card = pd->cfg_card;
++	if (pd->host_caps)
++		set->host_caps |= pd->host_caps;
++	if (pd->clk_type)
++		set->clk_type = pd->clk_type;
++}
+-- 
+1.7.2.3
