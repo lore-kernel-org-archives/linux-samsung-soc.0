@@ -1,211 +1,64 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 4/4] ARM: EXYNOS4: Add power domain to use generic Power domain
- Framework
-Date: Thu, 11 Aug 2011 13:55:22 +0900
-Message-ID: <4E4360BA.3020208@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH V5 00/15] To use DMA generic APIs for Samsung DMA
+Date: Thu, 11 Aug 2011 16:26:53 +0900
+Message-ID: <015101cc57f8$0d7b1da0$287158e0$%kim@samsung.com>
+References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
+ <CACRpkdZvbH1O608n_aa_nVi-Onhmt0Ay6X1yCgBVNES4o9hTrA@mail.gmail.com>
+ <1312821923.1539.37.camel@vkoul-udesk3>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:17682 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:57759 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751967Ab1HKEzq (ORCPT
+	with ESMTP id S1751036Ab1HKH07 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Aug 2011 00:55:46 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	Thu, 11 Aug 2011 03:26:59 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LPQ00HHYZ0OC820@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Aug 2011 13:55:45 +0900 (KST)
-Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ 2010)) with ESMTP id <0LPR00G715ZX3510@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Aug 2011 16:26:58 +0900 (KST)
+Received: from kgenekim ([12.23.119.139])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LPQ00C0KZ0XBG@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Aug 2011 13:55:45 +0900 (KST)
+ with ESMTPA id <0LPR00LSP60XM5@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Aug 2011 16:26:58 +0900 (KST)
+In-reply-to: <1312821923.1539.37.camel@vkoul-udesk3>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@lists.linux-foundation.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: "'Koul, Vinod'" <vinod.koul@intel.com>, 'Boojin Kim' <boojin.kim@samsung.com>
+Cc: 'Linus Walleij' <linus.walleij@linaro.org>, 'Russell King' <linux@arm.linux.org.uk>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Dan Williams' <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 
-This patch initializes the power domain of EXYNOS4210. The devices
-which suppot runtime-PM have to be added in specific power domain.
+Koul, Vinod wrote:
+> 
+> On Thu, 2011-08-04 at 18:53 +0200, Linus Walleij wrote:
+> > On Wed, Jul 27, 2011 at 7:31 AM, Boojin Kim <boojin.kim@samsung.com> wrote:
+> >
+> > > This patchset adds support DMA generic APIs for Samsung DMA.
+> >
+> > Patches look good to me,
+> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Acked-by: Vinod Koul <vinod.koul@intel.com>
+> 
+> Do you want these to go thru slave-dma tree or arm tree, I am okay with
+> either...
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos4/mach-nuri.c           |   18 ++++++++++++++++++
- arch/arm/mach-exynos4/mach-smdkc210.c       |   18 ++++++++++++++++++
- arch/arm/mach-exynos4/mach-smdkv310.c       |   15 +++++++++++++++
- arch/arm/mach-exynos4/mach-universal_c210.c |   18 ++++++++++++++++++
- 4 files changed, 69 insertions(+), 0 deletions(-)
+Hi Vinod,
 
-diff --git a/arch/arm/mach-exynos4/mach-nuri.c b/arch/arm/mach-exynos4/mach-nuri.c
-index 4c358cb..5844c55 100644
---- a/arch/arm/mach-exynos4/mach-nuri.c
-+++ b/arch/arm/mach-exynos4/mach-nuri.c
-@@ -44,6 +44,7 @@
- #include <plat/mfc.h>
- 
- #include <mach/map.h>
-+#include <mach/pm-exynos4210.h>
- 
- /* Following are default values for UCON, ULCON and UFCON UART registers */
- #define NURI_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-@@ -1125,6 +1126,21 @@ static void __init nuri_reserve(void)
- 	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
- }
- 
-+static void __init nuri_power_domain_init(void)
-+{
-+	/* Initialize Power domain */
-+	exynos4210_init_pm_domain(&exynos4210_pd_mfc);
-+	exynos4210_init_pm_domain(&exynos4210_pd_g3d);
-+	exynos4210_init_pm_domain(&exynos4210_pd_lcd0);
-+	exynos4210_init_pm_domain(&exynos4210_pd_lcd1);
-+	exynos4210_init_pm_domain(&exynos4210_pd_tv);
-+	exynos4210_init_pm_domain(&exynos4210_pd_cam);
-+	exynos4210_init_pm_domain(&exynos4210_pd_gps);
-+
-+	/* Add device to MFC power domain */
-+	exynos4210_add_device_to_domain(&exynos4210_pd_mfc, &s5p_device_mfc);
-+}
-+
- static void __init nuri_machine_init(void)
- {
- 	nuri_sdhci_init();
-@@ -1145,6 +1161,8 @@ static void __init nuri_machine_init(void)
- 
- 	/* Last */
- 	platform_add_devices(nuri_devices, ARRAY_SIZE(nuri_devices));
-+
-+	nuri_power_domain_init();
- }
- 
- MACHINE_START(NURI, "NURI")
-diff --git a/arch/arm/mach-exynos4/mach-smdkc210.c b/arch/arm/mach-exynos4/mach-smdkc210.c
-index 4d1976c..0a3b2a9 100644
---- a/arch/arm/mach-exynos4/mach-smdkc210.c
-+++ b/arch/arm/mach-exynos4/mach-smdkc210.c
-@@ -37,6 +37,7 @@
- #include <plat/backlight.h>
- 
- #include <mach/map.h>
-+#include <mach/pm-exynos4210.h>
- 
- /* Following are default values for UCON, ULCON and UFCON UART registers */
- #define SMDKC210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-@@ -273,6 +274,21 @@ static void __init smdkc210_map_io(void)
- 	s3c24xx_init_uarts(smdkc210_uartcfgs, ARRAY_SIZE(smdkc210_uartcfgs));
- }
- 
-+static void __init smdkc210_power_domain_init(void)
-+{
-+	/* Initialize Power domain */
-+	exynos4210_init_pm_domain(&exynos4210_pd_mfc);
-+	exynos4210_init_pm_domain(&exynos4210_pd_g3d);
-+	exynos4210_init_pm_domain(&exynos4210_pd_lcd0);
-+	exynos4210_init_pm_domain(&exynos4210_pd_lcd1);
-+	exynos4210_init_pm_domain(&exynos4210_pd_tv);
-+	exynos4210_init_pm_domain(&exynos4210_pd_cam);
-+	exynos4210_init_pm_domain(&exynos4210_pd_gps);
-+
-+	/* Add device to LCD0 power domain */
-+	exynos4210_add_device_to_domain(&exynos4210_pd_lcd0, &s5p_device_fimd0);
-+}
-+
- static void __init smdkc210_machine_init(void)
- {
- 	s3c_i2c1_set_platdata(NULL);
-@@ -289,6 +305,8 @@ static void __init smdkc210_machine_init(void)
- 	s5p_fimd0_set_platdata(&smdkc210_lcd0_pdata);
- 
- 	platform_add_devices(smdkc210_devices, ARRAY_SIZE(smdkc210_devices));
-+
-+	smdkc210_power_domain_init();
- }
- 
- MACHINE_START(SMDKC210, "SMDKC210")
-diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
-index 8c2819b..320c7f3 100644
---- a/arch/arm/mach-exynos4/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos4/mach-smdkv310.c
-@@ -33,6 +33,7 @@
- #include <plat/backlight.h>
- 
- #include <mach/map.h>
-+#include <mach/pm-exynos4210.h>
- 
- /* Following are default values for UCON, ULCON and UFCON UART registers */
- #define SMDKV310_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-@@ -225,6 +226,18 @@ static void __init smdkv310_map_io(void)
- 	s3c24xx_init_uarts(smdkv310_uartcfgs, ARRAY_SIZE(smdkv310_uartcfgs));
- }
- 
-+static void __init smdkv310_power_domain_init(void)
-+{
-+	/* Initialize Power domain */
-+	exynos4210_init_pm_domain(&exynos4210_pd_mfc);
-+	exynos4210_init_pm_domain(&exynos4210_pd_g3d);
-+	exynos4210_init_pm_domain(&exynos4210_pd_lcd0);
-+	exynos4210_init_pm_domain(&exynos4210_pd_lcd1);
-+	exynos4210_init_pm_domain(&exynos4210_pd_tv);
-+	exynos4210_init_pm_domain(&exynos4210_pd_cam);
-+	exynos4210_init_pm_domain(&exynos4210_pd_gps);
-+}
-+
- static void __init smdkv310_machine_init(void)
- {
- 	s3c_i2c1_set_platdata(NULL);
-@@ -242,6 +255,8 @@ static void __init smdkv310_machine_init(void)
- 	samsung_bl_set(&smdkv310_bl_gpio_info, &smdkv310_bl_data);
- 
- 	platform_add_devices(smdkv310_devices, ARRAY_SIZE(smdkv310_devices));
-+
-+	smdkv310_power_domain_init();
- }
- 
- MACHINE_START(SMDKV310, "SMDKV310")
-diff --git a/arch/arm/mach-exynos4/mach-universal_c210.c b/arch/arm/mach-exynos4/mach-universal_c210.c
-index 43998f0..1ebc907 100644
---- a/arch/arm/mach-exynos4/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos4/mach-universal_c210.c
-@@ -36,6 +36,7 @@
- #include <plat/s5p-time.h>
- 
- #include <mach/map.h>
-+#include <mach/pm-exynos4210.h>
- 
- /* Following are default values for UCON, ULCON and UFCON UART registers */
- #define UNIVERSAL_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-@@ -737,6 +738,21 @@ static void __init universal_reserve(void)
- 	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
- }
- 
-+static void __init universal_power_domain_init(void)
-+{
-+	/* Initialize Power domain */
-+	exynos4210_init_pm_domain(&exynos4210_pd_mfc);
-+	exynos4210_init_pm_domain(&exynos4210_pd_g3d);
-+	exynos4210_init_pm_domain(&exynos4210_pd_lcd0);
-+	exynos4210_init_pm_domain(&exynos4210_pd_lcd1);
-+	exynos4210_init_pm_domain(&exynos4210_pd_tv);
-+	exynos4210_init_pm_domain(&exynos4210_pd_cam);
-+	exynos4210_init_pm_domain(&exynos4210_pd_gps);
-+
-+	/* Add device to MFC power domain */
-+	exynos4210_add_device_to_domain(&exynos4210_pd_mfc, &s5p_device_mfc);
-+}
-+
- static void __init universal_machine_init(void)
- {
- 	universal_sdhci_init();
-@@ -757,6 +773,8 @@ static void __init universal_machine_init(void)
- 
- 	/* Last */
- 	platform_add_devices(universal_devices, ARRAY_SIZE(universal_devices));
-+
-+	universal_power_domain_init();
- }
- 
- MACHINE_START(UNIVERSAL_C210, "UNIVERSAL_C210")
--- 
-1.7.0.4
+Thanks.
+
+I'd like to keep its topic branch in my tree to avoid conflicts with other samsung stuff and I think, it should be merged into your slave-dma tree also for same reason.
+
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git #next/topic-dma-pl330
+
+Or if you want to make some branch for it in your tree, please let me know so that I can merge it in my tree also.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
