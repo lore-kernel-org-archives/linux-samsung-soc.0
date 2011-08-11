@@ -1,469 +1,59 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: [PATCH] ARM: EXYNOS4: Configure MAX8997 PMIC for Origen
-Date: Thu, 11 Aug 2011 09:26:05 +0530
-Message-ID: <1313034965-21286-1-git-send-email-inderpal.singh@linaro.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 0/4] ARM: EXYNOS4: Support generic Power domain framework for
+ EXYNOS4210
+Date: Thu, 11 Aug 2011 13:55:14 +0900
+Message-ID: <4E4360B2.2060508@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f42.google.com ([209.85.210.42]:51961 "EHLO
-	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752188Ab1HKD6R (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:17607 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751771Ab1HKEzi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Aug 2011 23:58:17 -0400
-Received: by pzk37 with SMTP id 37so2970186pzk.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Aug 2011 20:58:17 -0700 (PDT)
+	Thu, 11 Aug 2011 00:55:38 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LPQ00HHYZ0OC820@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Aug 2011 13:55:36 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LPQ00AZ7Z0PUI@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Aug 2011 13:55:37 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, myungjoo.ham@samsung.com, Inderpal Singh <inderpal.s@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@lists.linux-foundation.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-From: Inderpal Singh <inderpal.s@samsung.com>
+The following patch set use the generic Power domain Framework instead of
+power domain code depend of Samsung SoC.
 
-Configure MAX8997 PMIC and provide platform specific data
-for origen.
+Chanwoo Choi (4):
+  ARM: EXYNOS4: Support for generic I/O power domains on EXYNOS4210
+  ARM: EXYNOS4: Support for generic Clock manipulation PM callbacks
+  ARM: EXYNOS4: Delete the power-domain code depend on Samsung SoC
+  ARM: EXYNOS4: Add power domain to use generic Power domain Framework
 
-Signed-off-by: <inderpal.singh@linaro.org>
----
- arch/arm/mach-exynos4/mach-origen.c |  399 ++++++++++++++++++++++++++++++++++-
- 1 files changed, 398 insertions(+), 1 deletions(-)
-
-diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
-index ed59f86..82f1c19 100644
---- a/arch/arm/mach-exynos4/mach-origen.c
-+++ b/arch/arm/mach-exynos4/mach-origen.c
-@@ -14,6 +14,9 @@
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/input.h>
-+#include <linux/i2c.h>
-+#include <linux/regulator/machine.h>
-+#include <linux/mfd/max8997.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
-@@ -24,7 +27,7 @@
- #include <plat/devs.h>
- #include <plat/sdhci.h>
- #include <plat/iic.h>
--
-+#include <plat/gpio-cfg.h>
- #include <mach/map.h>
- 
- /* Following are default values for UCON, ULCON and UFCON UART registers */
-@@ -72,6 +75,382 @@ static struct s3c2410_uartcfg origen_uartcfgs[] __initdata = {
- 	},
- };
- 
-+static struct regulator_consumer_supply __initdata ldo3_consumer[] = {
-+	REGULATOR_SUPPLY("vdd11", "s5p-mipi-csis.0"), /* MIPI */
-+};
-+static struct regulator_consumer_supply __initdata ldo6_consumer[] = {
-+	REGULATOR_SUPPLY("vdd18", "s5p-mipi-csis.0"), /* MIPI */
-+};
-+static struct regulator_consumer_supply __initdata ldo7_consumer[] = {
-+	REGULATOR_SUPPLY("avdd", "soc-audio"), /* Reatek ALC5625*/
-+};
-+static struct regulator_consumer_supply __initdata ldo8_consumer[] = {
-+	REGULATOR_SUPPLY("vdd", "s5p-adc"), /* ADC */
-+};
-+static struct regulator_consumer_supply __initdata ldo9_consumer[] = {
-+	REGULATOR_SUPPLY("dvdd", "swb-a31"), /* AR6003 WLAN & CSR 8810 BT*/
-+};
-+static struct regulator_consumer_supply __initdata ldo11_consumer[] = {
-+	REGULATOR_SUPPLY("dvdd", "soc-audio"), /* Reatek ALC5625*/
-+};
-+static struct regulator_consumer_supply __initdata ldo14_consumer[] = {
-+	REGULATOR_SUPPLY("avdd18", "swb-a31"), /* AR6003 WLAN & CSR 8810 BT*/
-+};
-+static struct regulator_consumer_supply __initdata ldo17_consumer[] = {
-+	REGULATOR_SUPPLY("vdd33", "swb-a31"), /* AR6003 WLAN & CSR 8810 BT*/
-+};
-+static struct regulator_consumer_supply __initdata buck1_consumer[] = {
-+	REGULATOR_SUPPLY("vdd_arm", NULL), /* CPUFREQ */
-+};
-+static struct regulator_consumer_supply __initdata buck2_consumer[] = {
-+	REGULATOR_SUPPLY("vdd_int", NULL), /* CPUFREQ */
-+};
-+static struct regulator_consumer_supply __initdata buck3_consumer[] = {
-+	REGULATOR_SUPPLY("vdd_g3d", "mali_drm"), /* G3D */
-+};
-+static struct regulator_consumer_supply __initdata buck7_consumer[] = {
-+	REGULATOR_SUPPLY("vcc", "platform-lcd"), /* LCD */
-+};
-+
-+static struct regulator_init_data __initdata max8997_ldo1_data = {
-+	.constraints	= {
-+		.name		= "VDD_ABB_3.3V",
-+		.min_uV		= 3300000,
-+		.max_uV		= 3300000,
-+		.apply_uV	= 1,
-+		.state_mem	= {
-+			.disabled	= 1,
-+		},
-+	},
-+};
-+
-+static struct regulator_init_data __initdata max8997_ldo2_data	= {
-+	.constraints	= {
-+		.name		= "VDD_ALIVE_1.1V",
-+		.min_uV		= 1100000,
-+		.max_uV		= 1100000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+		.state_mem	= {
-+			.enabled	= 1,
-+		},
-+	},
-+};
-+
-+static struct regulator_init_data __initdata max8997_ldo3_data = {
-+	.constraints	= {
-+		.name		= "VMIPI_1.1V",
-+		.min_uV		= 1100000,
-+		.max_uV		= 1100000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
-+		.state_mem	= {
-+			.disabled	= 1,
-+		},
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(ldo3_consumer),
-+	.consumer_supplies	= ldo3_consumer,
-+};
-+
-+static struct regulator_init_data __initdata max8997_ldo4_data = {
-+	.constraints	= {
-+		.name		= "VDD_RTC_1.8V",
-+		.min_uV		= 1800000,
-+		.max_uV		= 1800000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+		.state_mem	= {
-+			.disabled	= 1,
-+		},
-+	},
-+};
-+
-+static struct regulator_init_data __initdata max8997_ldo6_data = {
-+	.constraints	= {
-+		.name		= "VMIPI_1.8V",
-+		.min_uV		= 1800000,
-+		.max_uV		= 1800000,
-+		.apply_uV	= 1,
-+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
-+		.state_mem	= {
-+			.disabled	= 1,
-+		},
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(ldo6_consumer),
-+	.consumer_supplies	= ldo6_consumer,
-+};
-+
-+static struct regulator_init_data __initdata max8997_ldo7_data = {
-+	.constraints	= {
-+		.name		= "VDD_AUD_1.8V",
-+		.min_uV		= 1800000,
-+		.max_uV		= 1800000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
-+		.state_mem	= {
-+			.disabled	= 1,
-+		},
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(ldo7_consumer),
-+	.consumer_supplies	= ldo7_consumer,
-+};
-+
-+static struct regulator_init_data __initdata max8997_ldo8_data = {
-+	.constraints	= {
-+		.name		= "VADC_3.3V",
-+		.min_uV		= 3300000,
-+		.max_uV		= 3300000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
-+		.state_mem	= {
-+			.disabled	= 1,
-+		},
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(ldo8_consumer),
-+	.consumer_supplies	= ldo8_consumer,
-+};
-+
-+static struct regulator_init_data __initdata max8997_ldo9_data = {
-+	.constraints	= {
-+		.name		= "DVDD_SWB_2.8V",
-+		.min_uV		= 2800000,
-+		.max_uV		= 2800000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+		.valid_ops_mask	= REGULATOR_CHANGE_VOLTAGE,
-+		.state_mem	= {
-+			.disabled	= 1,
-+		},
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(ldo9_consumer),
-+	.consumer_supplies	= ldo9_consumer,
-+};
-+
-+static struct regulator_init_data __initdata max8997_ldo10_data = {
-+	.constraints	= {
-+		.name		= "VDD_PLL_1.1V",
-+		.min_uV		= 1100000,
-+		.max_uV		= 1100000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+		.state_mem	= {
-+			.disabled	= 1,
-+		},
-+	},
-+};
-+
-+static struct regulator_init_data __initdata max8997_ldo11_data = {
-+	.constraints	= {
-+		.name		= "VDD_AUD_3V",
-+		.min_uV		= 3000000,
-+		.max_uV		= 3000000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
-+		.state_mem	= {
-+			.disabled	= 1,
-+		},
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(ldo11_consumer),
-+	.consumer_supplies	= ldo11_consumer,
-+};
-+
-+static struct regulator_init_data __initdata max8997_ldo14_data = {
-+	.constraints	= {
-+		.name		= "AVDD18_SWB_1.8V",
-+		.min_uV		= 1800000,
-+		.max_uV		= 1800000,
-+		.apply_uV	= 1,
-+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
-+		.state_mem	= {
-+			.disabled	= 1,
-+		},
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(ldo14_consumer),
-+	.consumer_supplies	= ldo14_consumer,
-+};
-+
-+static struct regulator_init_data __initdata max8997_ldo17_data = {
-+	.constraints	= {
-+		.name		= "VDD_SWB_3.3V",
-+		.min_uV		= 3300000,
-+		.max_uV		= 3300000,
-+		.apply_uV	= 1,
-+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
-+		.state_mem	= {
-+			.disabled	= 1,
-+		},
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(ldo17_consumer),
-+	.consumer_supplies	= ldo17_consumer,
-+};
-+
-+static struct regulator_init_data __initdata max8997_ldo21_data = {
-+	.constraints	= {
-+		.name		= "VDD_MIF_1.2V",
-+		.min_uV		= 1200000,
-+		.max_uV		= 1200000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+		.state_mem	= {
-+			.disabled	= 1,
-+		},
-+	},
-+};
-+
-+static struct regulator_init_data __initdata max8997_buck1_data = {
-+	.constraints	= {
-+		.name		= "VDD_ARM_1.2V",
-+		.min_uV		= 950000,
-+		.max_uV		= 1350000,
-+		.always_on	= 1,
-+		.boot_on	= 1,
-+		.valid_ops_mask	= REGULATOR_CHANGE_VOLTAGE,
-+		.state_mem	= {
-+			.disabled	= 1,
-+		},
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(buck1_consumer),
-+	.consumer_supplies	= buck1_consumer,
-+};
-+
-+static struct regulator_init_data __initdata max8997_buck2_data = {
-+	.constraints	= {
-+		.name		= "VDD_INT_1.1V",
-+		.min_uV		= 900000,
-+		.max_uV		= 1100000,
-+		.always_on	= 1,
-+		.boot_on	= 1,
-+		.valid_ops_mask	= REGULATOR_CHANGE_VOLTAGE,
-+		.state_mem	= {
-+			.disabled	= 1,
-+		},
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(buck2_consumer),
-+	.consumer_supplies	= buck2_consumer,
-+};
-+
-+static struct regulator_init_data __initdata max8997_buck3_data = {
-+	.constraints	= {
-+		.name		= "VDD_G3D_1.1V",
-+		.min_uV		= 900000,
-+		.max_uV		= 1100000,
-+		.valid_ops_mask	= REGULATOR_CHANGE_VOLTAGE |
-+					REGULATOR_CHANGE_STATUS,
-+		.state_mem	= {
-+			.disabled	= 1,
-+		},
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(buck3_consumer),
-+	.consumer_supplies	= buck3_consumer,
-+};
-+
-+static struct regulator_init_data __initdata max8997_buck5_data = {
-+	.constraints	= {
-+		.name		= "VDDQ_M1M2_1.2V",
-+		.min_uV		= 1200000,
-+		.max_uV		= 1200000,
-+		.apply_uV	= 1,
-+		.always_on	= 1,
-+		.state_mem	= {
-+			.disabled	= 1,
-+		},
-+	},
-+};
-+
-+static struct regulator_init_data __initdata max8997_buck7_data = {
-+	.constraints	= {
-+		.name		= "VDD_LCD_3.3V",
-+		.min_uV		= 3300000,
-+		.max_uV		= 3300000,
-+		.always_on	= 1,
-+		.apply_uV	= 1,
-+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
-+		.state_mem	= {
-+			.disabled	= 1
-+		},
-+	},
-+	.num_consumer_supplies	= ARRAY_SIZE(buck7_consumer),
-+	.consumer_supplies	= buck7_consumer,
-+};
-+
-+static struct max8997_regulator_data __initdata origen_max8997_regulators[] = {
-+	{ MAX8997_LDO1,		&max8997_ldo1_data },
-+	{ MAX8997_LDO2,		&max8997_ldo2_data },
-+	{ MAX8997_LDO3,		&max8997_ldo3_data },
-+	{ MAX8997_LDO4,		&max8997_ldo4_data },
-+	{ MAX8997_LDO6,		&max8997_ldo6_data },
-+	{ MAX8997_LDO7,		&max8997_ldo7_data },
-+	{ MAX8997_LDO8,		&max8997_ldo8_data },
-+	{ MAX8997_LDO9,		&max8997_ldo9_data },
-+	{ MAX8997_LDO10,	&max8997_ldo10_data },
-+	{ MAX8997_LDO11,	&max8997_ldo11_data },
-+	{ MAX8997_LDO14,	&max8997_ldo14_data },
-+	{ MAX8997_LDO17,	&max8997_ldo17_data },
-+	{ MAX8997_LDO21,	&max8997_ldo21_data },
-+	{ MAX8997_BUCK1,	&max8997_buck1_data },
-+	{ MAX8997_BUCK2,	&max8997_buck2_data },
-+	{ MAX8997_BUCK3,	&max8997_buck3_data },
-+	{ MAX8997_BUCK5,	&max8997_buck5_data },
-+	{ MAX8997_BUCK7,	&max8997_buck7_data },
-+};
-+
-+struct max8997_platform_data __initdata origen_max8997_pdata = {
-+	.num_regulators = ARRAY_SIZE(origen_max8997_regulators),
-+	.regulators	= origen_max8997_regulators,
-+
-+	.wakeup	= true,
-+	.buck1_gpiodvs	= false,
-+	.buck2_gpiodvs	= false,
-+	.buck5_gpiodvs	= false,
-+
-+	.ignore_gpiodvs_side_effect = true,
-+	.buck125_default_idx = 0x0,
-+
-+	.buck125_gpios[0]	= EXYNOS4_GPX0(0),
-+	.buck125_gpios[1]	= EXYNOS4_GPX0(1),
-+	.buck125_gpios[2]	= EXYNOS4_GPX0(2),
-+
-+	.buck1_voltage[0]	= 1350000,
-+	.buck1_voltage[1]	= 1300000,
-+	.buck1_voltage[2]	= 1250000,
-+	.buck1_voltage[3]	= 1200000,
-+	.buck1_voltage[4]	= 1150000,
-+	.buck1_voltage[5]	= 1100000,
-+	.buck1_voltage[6]	= 1000000,
-+	.buck1_voltage[7]	= 950000,
-+
-+	.buck2_voltage[0]	= 1100000,
-+	.buck2_voltage[1]	= 1100000,
-+	.buck2_voltage[2]	= 1100000,
-+	.buck2_voltage[3]	= 1100000,
-+	.buck2_voltage[4]	= 1000000,
-+	.buck2_voltage[5]	= 1000000,
-+	.buck2_voltage[6]	= 1000000,
-+	.buck2_voltage[7]	= 1000000,
-+
-+	.buck5_voltage[0]	= 1200000,
-+	.buck5_voltage[1]	= 1200000,
-+	.buck5_voltage[2]	= 1200000,
-+	.buck5_voltage[3]	= 1200000,
-+	.buck5_voltage[4]	= 1200000,
-+	.buck5_voltage[5]	= 1200000,
-+	.buck5_voltage[6]	= 1200000,
-+	.buck5_voltage[7]	= 1200000,
-+};
-+
-+/* I2C0 */
-+enum { I2C0_MAX8997 };
-+static struct i2c_board_info i2c0_devs[] __initdata = {
-+[I2C0_MAX8997] = {
-+	I2C_BOARD_INFO("max8997", (0xCC >> 1)),
-+	.platform_data = &origen_max8997_pdata,
-+	},
-+};
-+
- static struct s3c_sdhci_platdata origen_hsmmc2_pdata __initdata = {
- 	.cd_type		= S3C_SDHCI_CD_GPIO,
- 	.ext_cd_gpio		= EXYNOS4_GPK2(2),
-@@ -80,6 +459,7 @@ static struct s3c_sdhci_platdata origen_hsmmc2_pdata __initdata = {
- };
- 
- static struct platform_device *origen_devices[] __initdata = {
-+	&s3c_device_i2c0,
- 	&s3c_device_hsmmc2,
- 	&s3c_device_rtc,
- 	&s3c_device_wdt,
-@@ -92,8 +472,25 @@ static void __init origen_map_io(void)
- 	s3c24xx_init_uarts(origen_uartcfgs, ARRAY_SIZE(origen_uartcfgs));
- }
- 
-+static void __init origen_power_init(void)
-+{
-+	int gpio;
-+	int irq_base = IRQ_GPIO_END + 1;
-+
-+	origen_max8997_pdata.irq_base = irq_base;
-+	gpio = EXYNOS4_GPX0(4);
-+	s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0xf));
-+	s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
-+}
-+
- static void __init origen_machine_init(void)
- {
-+	origen_power_init();
-+
-+	s3c_i2c0_set_platdata(NULL);
-+	i2c0_devs[I2C0_MAX8997].irq = gpio_to_irq(EXYNOS4_GPX0(4));
-+	i2c_register_board_info(0, i2c0_devs, ARRAY_SIZE(i2c0_devs));
-+
- 	s3c_sdhci2_set_platdata(&origen_hsmmc2_pdata);
- 	platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
- }
--- 
-1.7.4.1
+ arch/arm/mach-exynos4/Kconfig                      |   10 +-
+ arch/arm/mach-exynos4/Makefile                     |    4 +-
+ arch/arm/mach-exynos4/dev-pd.c                     |  139 --------------
+ arch/arm/mach-exynos4/include/mach/pm-exynos4210.h |   52 ++++++
+ arch/arm/mach-exynos4/include/mach/regs-clock.h    |    8 +
+ arch/arm/mach-exynos4/mach-nuri.c                  |   21 ++-
+ arch/arm/mach-exynos4/mach-smdkc210.c              |   26 ++-
+ arch/arm/mach-exynos4/mach-smdkv310.c              |   23 ++-
+ arch/arm/mach-exynos4/mach-universal_c210.c        |   21 ++-
+ arch/arm/mach-exynos4/pm-exynos4210.c              |  189 ++++++++++++++++++++
+ arch/arm/mach-exynos4/pm-runtime.c                 |   56 ++++++
+ arch/arm/plat-samsung/Kconfig                      |    8 -
+ arch/arm/plat-samsung/Makefile                     |    4 -
+ arch/arm/plat-samsung/include/plat/pd.h            |   30 ---
+ arch/arm/plat-samsung/pd.c                         |   95 ----------
+ 15 files changed, 377 insertions(+), 309 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos4/dev-pd.c
+ create mode 100644 arch/arm/mach-exynos4/include/mach/pm-exynos4210.h
+ create mode 100644 arch/arm/mach-exynos4/pm-exynos4210.c
+ create mode 100644 arch/arm/mach-exynos4/pm-runtime.c
+ delete mode 100644 arch/arm/plat-samsung/include/plat/pd.h
+ delete mode 100644 arch/arm/plat-samsung/pd.c
