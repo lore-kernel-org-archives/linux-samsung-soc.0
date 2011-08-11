@@ -1,208 +1,34 @@
-From: Banajit Goswami <banajit.g@samsung.com>
-Subject: [PATCH] ARM: SAMSUNG: Consolidate common function to set SDHCI plat
- data
-Date: Thu, 11 Aug 2011 21:08:13 +0530
-Message-ID: <1313077093-25157-1-git-send-email-banajit.g@samsung.com>
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:63092 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752449Ab1HKPhj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Aug 2011 11:37:39 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LPR006JRSQPRXA0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 12 Aug 2011 00:37:37 +0900 (KST)
-Received: from banajit.sisodomain.com ([107.108.83.226])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LPR00038SQL14@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 12 Aug 2011 00:37:37 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: David Brown <davidb@codeaurora.org>
+Subject: Re: [PATCH 11/13] ARM: gpio: consolidate trivial gpiolib
+ implementations
+Date: Thu, 11 Aug 2011 09:24:08 -0700
+Message-ID: <20110811162408.GA8710@huya.qualcomm.com>
+References: <20110809080411.GA1831@n2100.arm.linux.org.uk>
+ <E1QqhM1-0003af-U5@rmk-PC.arm.linux.org.uk>
+ <017101cc581c$6e277530$4a765f90$%kim@samsung.com>
+ <20110811150807.GB4924@n2100.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20110811150807.GB4924@n2100.arm.linux.org.uk>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Nicolas Pitre' <nico@fluxnic.net>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, Banajit Goswami <banajit.g@samsung.com>
 
-Moves similar functions to set SDHCI platform data for all Samsung
-boards to a common location, thereby saves a few lines.
+On Thu, Aug 11, 2011 at 04:08:07PM +0100, Russell King - ARM Linux wrote:
 
-Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
----
- arch/arm/plat-samsung/dev-hsmmc.c          |   19 +------------------
- arch/arm/plat-samsung/dev-hsmmc1.c         |   19 +------------------
- arch/arm/plat-samsung/dev-hsmmc2.c         |   19 +------------------
- arch/arm/plat-samsung/dev-hsmmc3.c         |   19 +------------------
- arch/arm/plat-samsung/include/plat/sdhci.h |    7 +++++++
- arch/arm/plat-samsung/platformdata.c       |   22 ++++++++++++++++++++++
- 6 files changed, 33 insertions(+), 72 deletions(-)
+> > As a note, there were duplicated e-mail address Grant and Nicolas in Cc ;)
+> > I just pushed 'reply all' :)
+> 
+> That's not in the original email, and isn't in any one elses replies....
 
-diff --git a/arch/arm/plat-samsung/dev-hsmmc.c b/arch/arm/plat-samsung/dev-hsmmc.c
-index db7a65c..06825c4 100644
---- a/arch/arm/plat-samsung/dev-hsmmc.c
-+++ b/arch/arm/plat-samsung/dev-hsmmc.c
-@@ -58,22 +58,5 @@ struct platform_device s3c_device_hsmmc0 = {
- 
- void s3c_sdhci0_set_platdata(struct s3c_sdhci_platdata *pd)
- {
--	struct s3c_sdhci_platdata *set = &s3c_hsmmc0_def_platdata;
--
--	set->cd_type = pd->cd_type;
--	set->ext_cd_init = pd->ext_cd_init;
--	set->ext_cd_cleanup = pd->ext_cd_cleanup;
--	set->ext_cd_gpio = pd->ext_cd_gpio;
--	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
--
--	if (pd->max_width)
--		set->max_width = pd->max_width;
--	if (pd->cfg_gpio)
--		set->cfg_gpio = pd->cfg_gpio;
--	if (pd->cfg_card)
--		set->cfg_card = pd->cfg_card;
--	if (pd->host_caps)
--		set->host_caps |= pd->host_caps;
--	if (pd->clk_type)
--		set->clk_type = pd->clk_type;
-+	s3c_sdhci_set_platdata(pd, &s3c_hsmmc0_def_platdata);
- }
-diff --git a/arch/arm/plat-samsung/dev-hsmmc1.c b/arch/arm/plat-samsung/dev-hsmmc1.c
-index 2497321..4524ef4 100644
---- a/arch/arm/plat-samsung/dev-hsmmc1.c
-+++ b/arch/arm/plat-samsung/dev-hsmmc1.c
-@@ -58,22 +58,5 @@ struct platform_device s3c_device_hsmmc1 = {
- 
- void s3c_sdhci1_set_platdata(struct s3c_sdhci_platdata *pd)
- {
--	struct s3c_sdhci_platdata *set = &s3c_hsmmc1_def_platdata;
--
--	set->cd_type = pd->cd_type;
--	set->ext_cd_init = pd->ext_cd_init;
--	set->ext_cd_cleanup = pd->ext_cd_cleanup;
--	set->ext_cd_gpio = pd->ext_cd_gpio;
--	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
--
--	if (pd->max_width)
--		set->max_width = pd->max_width;
--	if (pd->cfg_gpio)
--		set->cfg_gpio = pd->cfg_gpio;
--	if (pd->cfg_card)
--		set->cfg_card = pd->cfg_card;
--	if (pd->host_caps)
--		set->host_caps |= pd->host_caps;
--	if (pd->clk_type)
--		set->clk_type = pd->clk_type;
-+	s3c_sdhci_set_platdata(pd, &s3c_hsmmc1_def_platdata);
- }
-diff --git a/arch/arm/plat-samsung/dev-hsmmc2.c b/arch/arm/plat-samsung/dev-hsmmc2.c
-index f60aedb..9cede96 100644
---- a/arch/arm/plat-samsung/dev-hsmmc2.c
-+++ b/arch/arm/plat-samsung/dev-hsmmc2.c
-@@ -59,22 +59,5 @@ struct platform_device s3c_device_hsmmc2 = {
- 
- void s3c_sdhci2_set_platdata(struct s3c_sdhci_platdata *pd)
- {
--	struct s3c_sdhci_platdata *set = &s3c_hsmmc2_def_platdata;
--
--	set->cd_type = pd->cd_type;
--	set->ext_cd_init = pd->ext_cd_init;
--	set->ext_cd_cleanup = pd->ext_cd_cleanup;
--	set->ext_cd_gpio = pd->ext_cd_gpio;
--	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
--
--	if (pd->max_width)
--		set->max_width = pd->max_width;
--	if (pd->cfg_gpio)
--		set->cfg_gpio = pd->cfg_gpio;
--	if (pd->cfg_card)
--		set->cfg_card = pd->cfg_card;
--	if (pd->host_caps)
--		set->host_caps |= pd->host_caps;
--	if (pd->clk_type)
--		set->clk_type = pd->clk_type;
-+	s3c_sdhci_set_platdata(pd, &s3c_hsmmc2_def_platdata);
- }
-diff --git a/arch/arm/plat-samsung/dev-hsmmc3.c b/arch/arm/plat-samsung/dev-hsmmc3.c
-index ede776f..0358ef4 100644
---- a/arch/arm/plat-samsung/dev-hsmmc3.c
-+++ b/arch/arm/plat-samsung/dev-hsmmc3.c
-@@ -62,22 +62,5 @@ struct platform_device s3c_device_hsmmc3 = {
- 
- void s3c_sdhci3_set_platdata(struct s3c_sdhci_platdata *pd)
- {
--	struct s3c_sdhci_platdata *set = &s3c_hsmmc3_def_platdata;
--
--	set->cd_type = pd->cd_type;
--	set->ext_cd_init = pd->ext_cd_init;
--	set->ext_cd_cleanup = pd->ext_cd_cleanup;
--	set->ext_cd_gpio = pd->ext_cd_gpio;
--	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
--
--	if (pd->max_width)
--		set->max_width = pd->max_width;
--	if (pd->cfg_gpio)
--		set->cfg_gpio = pd->cfg_gpio;
--	if (pd->cfg_card)
--		set->cfg_card = pd->cfg_card;
--	if (pd->host_caps)
--		set->host_caps |= pd->host_caps;
--	if (pd->clk_type)
--		set->clk_type = pd->clk_type;
-+	s3c_sdhci_set_platdata(pd, &s3c_hsmmc3_def_platdata);
- }
-diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-samsung/include/plat/sdhci.h
-index 058e096..20dc81c 100644
---- a/arch/arm/plat-samsung/include/plat/sdhci.h
-+++ b/arch/arm/plat-samsung/include/plat/sdhci.h
-@@ -86,6 +86,13 @@ struct s3c_sdhci_platdata {
- 			    struct mmc_card *card);
- };
- 
-+/* s3c_sdhci_set_platdata() - common helper for setting SDHCI platform data
-+ * @pd: The default platform data for this device.
-+ * @set: Pointer to the platform data to fill in.
-+ */
-+extern void s3c_sdhci_set_platdata(struct s3c_sdhci_platdata *pd,
-+				struct s3c_sdhci_platdata *set);
-+
- /**
-  * s3c_sdhci0_set_platdata - Set platform data for S3C SDHCI device.
-  * @pd: Platform data to register to device.
-diff --git a/arch/arm/plat-samsung/platformdata.c b/arch/arm/plat-samsung/platformdata.c
-index 7cf2e1e..27bec0a 100644
---- a/arch/arm/plat-samsung/platformdata.c
-+++ b/arch/arm/plat-samsung/platformdata.c
-@@ -14,6 +14,7 @@
- #include <linux/platform_device.h>
- 
- #include <plat/devs.h>
-+#include <plat/sdhci.h>
- 
- void __init *s3c_set_platdata(void *pd, size_t pdsize,
- 			      struct platform_device *pdev)
-@@ -35,3 +36,24 @@ void __init *s3c_set_platdata(void *pd, size_t pdsize,
- 	pdev->dev.platform_data = npd;
- 	return npd;
- }
-+
-+void s3c_sdhci_set_platdata(struct s3c_sdhci_platdata *pd,
-+			struct s3c_sdhci_platdata *set)
-+{
-+	set->cd_type = pd->cd_type;
-+	set->ext_cd_init = pd->ext_cd_init;
-+	set->ext_cd_cleanup = pd->ext_cd_cleanup;
-+	set->ext_cd_gpio = pd->ext_cd_gpio;
-+	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
-+
-+	if (pd->max_width)
-+		set->max_width = pd->max_width;
-+	if (pd->cfg_gpio)
-+		set->cfg_gpio = pd->cfg_gpio;
-+	if (pd->cfg_card)
-+		set->cfg_card = pd->cfg_card;
-+	if (pd->host_caps)
-+		set->host_caps |= pd->host_caps;
-+	if (pd->clk_type)
-+		set->clk_type = pd->clk_type;
-+}
+The original patches have a doubled CC line.  I think most mailers
+eliminate the duplicates, though.
+
+David
+
 -- 
-1.7.2.3
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
