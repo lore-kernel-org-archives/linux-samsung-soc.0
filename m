@@ -1,116 +1,94 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS4: Enable MFC on Samsung SMDKV310
-Date: Fri, 12 Aug 2011 18:33:51 +0900
-Message-ID: <007901cc58d2$f34566d0$d9d03470$%kim@samsung.com>
-References: <1311592942-6195-1-git-send-email-sachin.kamat@linaro.org>
+From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Subject: [PATCH 4/4] ARM: S5PV210: enable TV support on GONI board
+Date: Fri, 12 Aug 2011 11:45:42 +0200
+Message-ID: <1313142342-22403-5-git-send-email-t.stanislaws@samsung.com>
+References: <1313142342-22403-1-git-send-email-t.stanislaws@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:45543 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751343Ab1HLJdz (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:13810 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751951Ab1HLJpu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Aug 2011 05:33:55 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LPT0057F6K49BQ0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 12 Aug 2011 18:33:53 +0900 (KST)
-Received: from kgenekim ([12.23.119.139])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LPT0096W6KH2Q@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 12 Aug 2011 18:33:54 +0900 (KST)
-In-reply-to: <1311592942-6195-1-git-send-email-sachin.kamat@linaro.org>
-Content-language: ko
+	Fri, 12 Aug 2011 05:45:50 -0400
+Received: from eu_spt1 ([210.118.77.14]) by mailout4.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0LPT00B2374CSJ50@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 12 Aug 2011 10:45:48 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LPT006VP74BQL@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 12 Aug 2011 10:45:47 +0100 (BST)
+In-reply-to: <1313142342-22403-1-git-send-email-t.stanislaws@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: linaro-dev@lists.linaro.org, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, t.stanislaws@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com
 
-Sachin Kamat wrote:
-> 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
-> 
-> This patch is based on Kukjin's for-arm-soc branch.
-> 
->  arch/arm/mach-exynos4/Kconfig         |    1 +
->  arch/arm/mach-exynos4/mach-smdkv310.c |   11 +++++++++++
->  2 files changed, 12 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-> index 9d62e13..8da2960 100644
-> --- a/arch/arm/mach-exynos4/Kconfig
-> +++ b/arch/arm/mach-exynos4/Kconfig
-> @@ -139,6 +139,7 @@ config MACH_SMDKV310
->  	select S3C_DEV_RTC
->  	select S3C_DEV_WDT
->  	select S3C_DEV_I2C1
-> +	select S5P_DEV_MFC
->  	select S3C_DEV_HSMMC
->  	select S3C_DEV_HSMMC1
->  	select S3C_DEV_HSMMC2
-> diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-
-> exynos4/mach-smdkv310.c
-> index ea41495..2a128f4 100644
-> --- a/arch/arm/mach-exynos4/mach-smdkv310.c
-> +++ b/arch/arm/mach-exynos4/mach-smdkv310.c
-> @@ -32,6 +32,7 @@
->  #include <plat/pd.h>
->  #include <plat/gpio-cfg.h>
->  #include <plat/backlight.h>
-> +#include <plat/mfc.h>
-> 
->  #include <mach/map.h>
-> 
-> @@ -177,6 +178,9 @@ static struct platform_device *smdkv310_devices[]
-> __initdata = {
->  	&exynos4_device_ac97,
->  	&exynos4_device_i2s0,
->  	&samsung_device_keypad,
-> +	&s5p_device_mfc,
-> +	&s5p_device_mfc_l,
-> +	&s5p_device_mfc_r,
->  	&exynos4_device_pd[PD_MFC],
->  	&exynos4_device_pd[PD_G3D],
->  	&exynos4_device_pd[PD_LCD0],
-> @@ -233,6 +237,11 @@ static void __init smdkv310_map_io(void)
->  	s3c24xx_init_uarts(smdkv310_uartcfgs,
-> ARRAY_SIZE(smdkv310_uartcfgs));
->  }
-> 
-> +static void __init smdkv310_reserve(void)
-> +{
-> +	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
-> +}
-> +
->  static void __init smdkv310_machine_init(void)
->  {
->  	s3c_i2c1_set_platdata(NULL);
-> @@ -250,6 +259,7 @@ static void __init smdkv310_machine_init(void)
->  	samsung_bl_set(&smdkv310_bl_gpio_info, &smdkv310_bl_data);
-> 
->  	platform_add_devices(smdkv310_devices,
-> ARRAY_SIZE(smdkv310_devices));
-> +	s5p_device_mfc.dev.parent = &exynos4_device_pd[PD_MFC].dev;
->  }
-> 
->  MACHINE_START(SMDKV310, "SMDKV310")
-> @@ -260,4 +270,5 @@ MACHINE_START(SMDKV310, "SMDKV310")
->  	.map_io		= smdkv310_map_io,
->  	.init_machine	= smdkv310_machine_init,
->  	.timer		= &exynos4_timer,
-> +	.reserve	= &smdkv310_reserve,
->  MACHINE_END
-> --
-> 1.7.4.1
+This patch adds platform devices and regulators for TV devices on
+Samsung Goni board.
 
-OK, applied.
-Thanks.
+Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/mach-s5pv210/Kconfig     |    1 +
+ arch/arm/mach-s5pv210/mach-goni.c |    9 +++++++++
+ 2 files changed, 10 insertions(+), 0 deletions(-)
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index 69dd87c..ab6a87c 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -94,6 +94,7 @@ config MACH_GONI
+ 	select S3C_DEV_USB_HSOTG
+ 	select S5P_DEV_ONENAND
+ 	select SAMSUNG_DEV_KEYPAD
++	select S5P_DEV_TV
+ 	select S5PV210_SETUP_FB_24BPP
+ 	select S5PV210_SETUP_I2C1
+ 	select S5PV210_SETUP_I2C2
+diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
+index 85c2d51..14578f5 100644
+--- a/arch/arm/mach-s5pv210/mach-goni.c
++++ b/arch/arm/mach-s5pv210/mach-goni.c
+@@ -285,6 +285,7 @@ static struct regulator_consumer_supply goni_ldo5_consumers[] = {
+ 
+ static struct regulator_consumer_supply goni_ldo8_consumers[] = {
+ 	REGULATOR_SUPPLY("vusb_d", "s3c-hsotg"),
++	REGULATOR_SUPPLY("vdd33a_dac", "s5p-sdo"),
+ };
+ 
+ static struct regulator_consumer_supply goni_ldo11_consumers[] = {
+@@ -475,6 +476,10 @@ static struct regulator_consumer_supply buck1_consumer =
+ static struct regulator_consumer_supply buck2_consumer =
+ 	REGULATOR_SUPPLY("vddint", NULL);
+ 
++static struct regulator_consumer_supply buck3_consumer =
++	REGULATOR_SUPPLY("vdet", "s5p-sdo");
++
++
+ static struct regulator_init_data goni_buck1_data = {
+ 	.constraints	= {
+ 		.name		= "VARM_1.2V",
+@@ -511,6 +516,8 @@ static struct regulator_init_data goni_buck3_data = {
+ 			.enabled = 1,
+ 		},
+ 	},
++	.num_consumer_supplies	= 1,
++	.consumer_supplies	= &buck3_consumer,
+ };
+ 
+ static struct regulator_init_data goni_buck4_data = {
+@@ -812,6 +819,8 @@ static struct platform_device *goni_devices[] __initdata = {
+ 	&s5p_device_mfc,
+ 	&s5p_device_mfc_l,
+ 	&s5p_device_mfc_r,
++	&s5p_device_mixer,
++	&s5p_device_sdo,
+ 	&s3c_device_i2c0,
+ 	&s5p_device_fimc0,
+ 	&s5p_device_fimc1,
+-- 
+1.7.6
