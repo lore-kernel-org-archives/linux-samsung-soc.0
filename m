@@ -1,52 +1,61 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 0/2] Update uart irq handling for s3c64xx and later SoC's
-Date: Sat, 13 Aug 2011 13:26:17 +0200
-Message-ID: <2617144.DJZiU5lFpE@flatron>
-References: <1312971680-3898-1-git-send-email-thomas.abraham@linaro.org>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH 0/4] ARM: EXYNOS4: Support generic Power domain framework for EXYNOS4210
+Date: Sat, 13 Aug 2011 23:24:07 +0200
+Message-ID: <201108132324.08137.rjw@sisk.pl>
+References: <4E4360B2.2060508@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:53215 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751135Ab1HML0Y (ORCPT
+Received: from ogre.sisk.pl ([217.79.144.158]:39335 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751066Ab1HMVW3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 13 Aug 2011 07:26:24 -0400
-In-Reply-To: <1312971680-3898-1-git-send-email-thomas.abraham@linaro.org>
+	Sat, 13 Aug 2011 17:22:29 -0400
+In-Reply-To: <4E4360B2.2060508@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-serial@vger.kernel.org, kgene.kim@samsung.com, grant.likely@secretlab.ca, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, alan@linux.intel.com
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@lists.linux-foundation.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Hi Thomas,
-
-On Wednesday 10 of August 2011 at 15:51:18, Thomas Abraham wrote:
-> s3c64xx and later SoC's include the uart interrupt mask and pending 
-registers
-> in the uart controller, unlike their s3c24xx predecessor. This allows the
-> uart irq handling to be moved from the platform code to the driver. This
-> patchset does this change and removes all the macros that will not be
-> required with this update.
+On Thursday, August 11, 2011, Chanwoo Choi wrote:
+> The following patch set use the generic Power domain Framework instead of
+> power domain code depend of Samsung SoC.
 > 
-
-Your patches should solve the issue of system hanging on wake up because of 
-unacked (and unackable due to disabled UART bus clock) UART interrupts. So one 
-more reason to merge them.
-
-My earlier description of the issue:
-
-> I am experiencing a strange issue with UART ports on a Tiny6410 board, based
-> on the S3C6410 SoC (hardware wise same as the Mini6410 supported by Linux),
-> after enabling CONFIG_PM and suspending the SoC.
+> Chanwoo Choi (4):
+>   ARM: EXYNOS4: Support for generic I/O power domains on EXYNOS4210
+>   ARM: EXYNOS4: Support for generic Clock manipulation PM callbacks
+>   ARM: EXYNOS4: Delete the power-domain code depend on Samsung SoC
+>   ARM: EXYNOS4: Add power domain to use generic Power domain Framework
 > 
-> After triggering a wakeup event, it resumes till arch_suspend_enable_irqs()
-> called by suspend_enter() and starts to get hammered by infinite amounts of
-> UART interrupts.
-> 
-> I have tracked this down to disabling UART PCLK clock on suspend and the
-> bootloader/reset/power down/whatever leaving the UART in an undefined state
-> with interrupt bits set (specifically Tx interrupt), with the masked clock
-> making it impossible to ack them by plat-samsung/irq-uart.c. 
+>  arch/arm/mach-exynos4/Kconfig                      |   10 +-
+>  arch/arm/mach-exynos4/Makefile                     |    4 +-
+>  arch/arm/mach-exynos4/dev-pd.c                     |  139 --------------
+>  arch/arm/mach-exynos4/include/mach/pm-exynos4210.h |   52 ++++++
+>  arch/arm/mach-exynos4/include/mach/regs-clock.h    |    8 +
+>  arch/arm/mach-exynos4/mach-nuri.c                  |   21 ++-
+>  arch/arm/mach-exynos4/mach-smdkc210.c              |   26 ++-
+>  arch/arm/mach-exynos4/mach-smdkv310.c              |   23 ++-
+>  arch/arm/mach-exynos4/mach-universal_c210.c        |   21 ++-
+>  arch/arm/mach-exynos4/pm-exynos4210.c              |  189 ++++++++++++++++++++
+>  arch/arm/mach-exynos4/pm-runtime.c                 |   56 ++++++
+>  arch/arm/plat-samsung/Kconfig                      |    8 -
+>  arch/arm/plat-samsung/Makefile                     |    4 -
+>  arch/arm/plat-samsung/include/plat/pd.h            |   30 ---
+>  arch/arm/plat-samsung/pd.c                         |   95 ----------
+>  15 files changed, 377 insertions(+), 309 deletions(-)
+>  delete mode 100644 arch/arm/mach-exynos4/dev-pd.c
+>  create mode 100644 arch/arm/mach-exynos4/include/mach/pm-exynos4210.h
+>  create mode 100644 arch/arm/mach-exynos4/pm-exynos4210.c
+>  create mode 100644 arch/arm/mach-exynos4/pm-runtime.c
+>  delete mode 100644 arch/arm/plat-samsung/include/plat/pd.h
+>  delete mode 100644 arch/arm/plat-samsung/pd.c
 
-Best regards,
-Tom
+The patchset looks good to me, but please note that some code it
+is based on will most likely change in 3.2 due to this patchset:
+
+https://lkml.org/lkml/2011/8/8/420
+
+Thanks,
+Rafael
