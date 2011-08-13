@@ -1,84 +1,52 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V5 00/15] To use DMA generic APIs for Samsung DMA
-Date: Sat, 13 Aug 2011 13:11:08 +0900
-Message-ID: <000701cc596f$08811160$19833420$%kim@samsung.com>
-References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
- <CACRpkdZvbH1O608n_aa_nVi-Onhmt0Ay6X1yCgBVNES4o9hTrA@mail.gmail.com>
- <1312821923.1539.37.camel@vkoul-udesk3>
- <015101cc57f8$0d7b1da0$287158e0$%kim@samsung.com>
- <1313101649.1603.27.camel@vkoul-udesk3>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 0/2] Update uart irq handling for s3c64xx and later SoC's
+Date: Sat, 13 Aug 2011 13:26:17 +0200
+Message-ID: <2617144.DJZiU5lFpE@flatron>
+References: <1312971680-3898-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:60409 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750820Ab1HMELN (ORCPT
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:53215 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751135Ab1HML0Y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 13 Aug 2011 00:11:13 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LPU00CKDMAH6OA0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 13 Aug 2011 13:11:11 +0900 (KST)
-Received: from kgenekim ([12.23.119.139])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LPU00G55MAM9H@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 13 Aug 2011 13:11:11 +0900 (KST)
-In-reply-to: <1313101649.1603.27.camel@vkoul-udesk3>
-Content-language: ko
+	Sat, 13 Aug 2011 07:26:24 -0400
+In-Reply-To: <1312971680-3898-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "'Koul, Vinod'" <vinod.koul@intel.com>
-Cc: 'Boojin Kim' <boojin.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Dan Williams' <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-serial@vger.kernel.org, kgene.kim@samsung.com, grant.likely@secretlab.ca, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, alan@linux.intel.com
 
-Koul, Vinod wrote:
+Hi Thomas,
+
+On Wednesday 10 of August 2011 at 15:51:18, Thomas Abraham wrote:
+> s3c64xx and later SoC's include the uart interrupt mask and pending 
+registers
+> in the uart controller, unlike their s3c24xx predecessor. This allows the
+> uart irq handling to be moved from the platform code to the driver. This
+> patchset does this change and removes all the macros that will not be
+> required with this update.
 > 
-> On Thu, 2011-08-11 at 16:26 +0900, Kukjin Kim wrote:
-> > Koul, Vinod wrote:
-> > >
-> > > On Thu, 2011-08-04 at 18:53 +0200, Linus Walleij wrote:
-> > > > On Wed, Jul 27, 2011 at 7:31 AM, Boojin Kim <boojin.kim@samsung.com>
-> wrote:
-> > > >
-> > > > > This patchset adds support DMA generic APIs for Samsung DMA.
-> > > >
-> > > > Patches look good to me,
-> > > > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > >
-> > > Acked-by: Vinod Koul <vinod.koul@intel.com>
-> > >
-> > > Do you want these to go thru slave-dma tree or arm tree, I am okay with
-> > > either...
-> >
-> > Hi Vinod,
-> >
-> > Thanks.
-> >
-> > I'd like to keep its topic branch in my tree to avoid conflicts with other samsung
-> stuff and I think, it should be merged into your slave-dma tree also for same
-> reason.
-> >
-> > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git #next/topic-
-> dma-pl330
-> >
-> > Or if you want to make some branch for it in your tree, please let me know so
-> that I can merge it in my tree also.
-> Okay can you update this branch with latest patchset (I think there were
-> few comments on last patchset). Once you add all acks let me know the
-> branch, I will merge it to my next
 
-Hi,
+Your patches should solve the issue of system hanging on wake up because of 
+unacked (and unackable due to disabled UART bus clock) UART interrupts. So one 
+more reason to merge them.
 
-I updated it so that you can merge it to yours.
-I think, if any fixing is required on that, it should be small so can be fixed easily after this merging.
+My earlier description of the issue:
 
-If any problems, please let me know :)
-
-Thanks.
+> I am experiencing a strange issue with UART ports on a Tiny6410 board, based
+> on the S3C6410 SoC (hardware wise same as the Mini6410 supported by Linux),
+> after enabling CONFIG_PM and suspending the SoC.
+> 
+> After triggering a wakeup event, it resumes till arch_suspend_enable_irqs()
+> called by suspend_enter() and starts to get hammered by infinite amounts of
+> UART interrupts.
+> 
+> I have tracked this down to disabling UART PCLK clock on suspend and the
+> bootloader/reset/power down/whatever leaving the UART in an undefined state
+> with interrupt bits set (specifically Tx interrupt), with the masked clock
+> making it impossible to ack them by plat-samsung/irq-uart.c. 
 
 Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Tom
