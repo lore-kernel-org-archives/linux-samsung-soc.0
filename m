@@ -1,81 +1,78 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 0/4] ARM: EXYNOS4: Support generic Power domain framework
-	for EXYNOS4210
-Date: Sun, 14 Aug 2011 01:39:46 +0200
-Message-ID: <201108140139.46434.rjw@sisk.pl>
-References: <4E4360B2.2060508@samsung.com> <201108132324.08137.rjw@sisk.pl>
-	<20110813213601.GA25866@n2100.arm.linux.org.uk>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] ARM: EXYNOS4: Configure MAX8997 PMIC for Origen
+Date: Sun, 14 Aug 2011 16:01:48 +0100
+Message-ID: <20110814150148.GB25504@sirena.org.uk>
+References: <1313034965-21286-1-git-send-email-inderpal.singh@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20110813213601.GA25866@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-pm@lists.linux-foundation.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:57361 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752655Ab1HNPBv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 14 Aug 2011 11:01:51 -0400
+Content-Disposition: inline
+In-Reply-To: <1313034965-21286-1-git-send-email-inderpal.singh@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inderpal Singh <inderpal.singh@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, myungjoo.ham@samsung.com, Inderpal Singh <inderpal.s@samsung.com>
 
-On Saturday, August 13, 2011, Russell King - ARM Linux wrote:
-> On Sat, Aug 13, 2011 at 11:24:07PM +0200, Rafael J. Wysocki wrote:
-> > On Thursday, August 11, 2011, Chanwoo Choi wrote:
-> > > The following patch set use the generic Power domain Framework instead of
-> > > power domain code depend of Samsung SoC.
-> > > 
-> > > Chanwoo Choi (4):
-> > >   ARM: EXYNOS4: Support for generic I/O power domains on EXYNOS4210
-> > >   ARM: EXYNOS4: Support for generic Clock manipulation PM callbacks
-> > >   ARM: EXYNOS4: Delete the power-domain code depend on Samsung SoC
-> > >   ARM: EXYNOS4: Add power domain to use generic Power domain Framework
-> > > 
-> > >  arch/arm/mach-exynos4/Kconfig                      |   10 +-
-> > >  arch/arm/mach-exynos4/Makefile                     |    4 +-
-> > >  arch/arm/mach-exynos4/dev-pd.c                     |  139 --------------
-> > >  arch/arm/mach-exynos4/include/mach/pm-exynos4210.h |   52 ++++++
-> > >  arch/arm/mach-exynos4/include/mach/regs-clock.h    |    8 +
-> > >  arch/arm/mach-exynos4/mach-nuri.c                  |   21 ++-
-> > >  arch/arm/mach-exynos4/mach-smdkc210.c              |   26 ++-
-> > >  arch/arm/mach-exynos4/mach-smdkv310.c              |   23 ++-
-> > >  arch/arm/mach-exynos4/mach-universal_c210.c        |   21 ++-
-> > >  arch/arm/mach-exynos4/pm-exynos4210.c              |  189 ++++++++++++++++++++
-> > >  arch/arm/mach-exynos4/pm-runtime.c                 |   56 ++++++
-> > >  arch/arm/plat-samsung/Kconfig                      |    8 -
-> > >  arch/arm/plat-samsung/Makefile                     |    4 -
-> > >  arch/arm/plat-samsung/include/plat/pd.h            |   30 ---
-> > >  arch/arm/plat-samsung/pd.c                         |   95 ----------
-> > >  15 files changed, 377 insertions(+), 309 deletions(-)
-> > >  delete mode 100644 arch/arm/mach-exynos4/dev-pd.c
-> > >  create mode 100644 arch/arm/mach-exynos4/include/mach/pm-exynos4210.h
-> > >  create mode 100644 arch/arm/mach-exynos4/pm-exynos4210.c
-> > >  create mode 100644 arch/arm/mach-exynos4/pm-runtime.c
-> > >  delete mode 100644 arch/arm/plat-samsung/include/plat/pd.h
-> > >  delete mode 100644 arch/arm/plat-samsung/pd.c
-> > 
-> > The patchset looks good to me, but please note that some code it
-> > is based on will most likely change in 3.2 due to this patchset:
-> > 
-> > https://lkml.org/lkml/2011/8/8/420
-> 
-> Err, isn't all that pm_clk stuff just duplicating what the clk API does?
+On Thu, Aug 11, 2011 at 09:26:05AM +0530, Inderpal Singh wrote:
 
-I'm not sure it's duplicating anything.  Maybe it does, but it came into
-being by moving some code that were duplicated in a few places throughout
-the ARM and sh trees into one place.
+> +static struct regulator_consumer_supply __initdata ldo7_consumer[] = {
+> +	REGULATOR_SUPPLY("avdd", "soc-audio"), /* Reatek ALC5625*/
+> +};
 
-> IOW, drivers _can_ (and should be) calling clk_disable() when they don't
-> need the clock running.
+Ick, no.  The soc-audio device is a virtual device within Linux and is
+being phased out, any driver adding new soc-audio devices will be
+rejected.  The CODEC driver should deal with its own power.
 
-Drivers may not know about what to do in a given situation.  For example,
-if the system has power domains, it may be better to switch a power domain
-off instead of or in addition to disabling the clock and the driver usually
-doesn't know about that.
+> +static struct regulator_init_data __initdata max8997_ldo3_data = {
+> +	.constraints	= {
+> +		.name		= "VMIPI_1.1V",
+> +		.min_uV		= 1100000,
+> +		.max_uV		= 1100000,
+> +		.apply_uV	= 1,
+> +		.always_on	= 1,
+> +		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
 
-Thanks,
-Rafael
+The regulator is always enabled but the consumers can change its status?
+
+> +		.name		= "DVDD_SWB_2.8V",
+> +		.min_uV		= 2800000,
+> +		.max_uV		= 2800000,
+> +		.apply_uV	= 1,
+> +		.always_on	= 1,
+> +		.valid_ops_mask	= REGULATOR_CHANGE_VOLTAGE,
+
+The regulator has a fixed voltage but the consumers can change it?
+
+> +static struct i2c_board_info i2c0_devs[] __initdata = {
+> +[I2C0_MAX8997] = {
+> +	I2C_BOARD_INFO("max8997", (0xCC >> 1)),
+> +	.platform_data = &origen_max8997_pdata,
+> +	},
+> +};
+
+Why are you assigning the array index?  That's very unusual.
+
+> +static void __init origen_power_init(void)
+> +{
+> +	int gpio;
+> +	int irq_base = IRQ_GPIO_END + 1;
+> +
+> +	origen_max8997_pdata.irq_base = irq_base;
+
+Why is this not just set statically in the pdata?
+
+> +	gpio = EXYNOS4_GPX0(4);
+> +	s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0xf));
+> +	s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
+
+A define for the GPIO would be a bit more common.
+
+> +	s3c_i2c0_set_platdata(NULL);
+> +	i2c0_devs[I2C0_MAX8997].irq = gpio_to_irq(EXYNOS4_GPX0(4));
+
+There should be defines to do this statically.
