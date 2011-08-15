@@ -1,20 +1,20 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
 Subject: Re: [PATCH 07/15] ARM: EXYNOS4: Use generic DMA PL330 driver
-Date: Mon, 15 Aug 2011 15:06:50 +0530
-Message-ID: <CAJuYYwT9k2+D-VrrdeF2qW1f7CV9wvq3vgPYobNmP680Jnr3yQ@mail.gmail.com>
+Date: Mon, 15 Aug 2011 19:45:48 +0530
+Message-ID: <CAJuYYwT0R+VXWvWuV6KK=m_knoxBnBf=GLVimPoe002mcvqqeA@mail.gmail.com>
 References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
 	<1311744697-10264-8-git-send-email-boojin.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:60460 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752729Ab1HOJgv convert rfc822-to-8bit (ORCPT
+Received: from mail-gw0-f46.google.com ([74.125.83.46]:62153 "EHLO
+	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753141Ab1HOOPt convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Aug 2011 05:36:51 -0400
-Received: by ywf7 with SMTP id 7so3032142ywf.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Aug 2011 02:36:51 -0700 (PDT)
+	Mon, 15 Aug 2011 10:15:49 -0400
+Received: by gwaa12 with SMTP id a12so3174518gwa.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Aug 2011 07:15:49 -0700 (PDT)
 In-Reply-To: <1311744697-10264-8-git-send-email-boojin.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -46,60 +46,16 @@ c
 
 [...]
 
-> +struct amba_device exynos4_device_pdma0 =3D {
-> + =A0 =A0 =A0 .dev =3D {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .init_name =3D "dma-pl330.0",
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.dma_mask =3D &dma_dmamask,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.coherent_dma_mask =3D DMA_BIT_MASK(32=
-),
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.platform_data =3D &exynos4_pdma0_pdat=
-a,
-> =A0 =A0 =A0 =A0},
-> + =A0 =A0 =A0 .res =3D {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =3D EXYNOS4_PA_PDMA0,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =3D EXYNOS4_PA_PDMA0 + SZ_4K,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =3D IORESOURCE_MEM,
-> + =A0 =A0 =A0 },
-> + =A0 =A0 =A0 .irq =3D {IRQ_PDMA0, NO_IRQ},
-> + =A0 =A0 =A0 .periphid =3D 0x00041330,
-> =A0};
->
+> +struct dma_pl330_peri pdma0_peri[28] =3D {
+> + =A0 =A0 =A0 {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_PCM0_RX,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D DEVTOMEM,
+> + =A0 =A0 =A0 }, {
 
-[...]
-
-> +struct amba_device exynos4_device_pdma1 =3D {
-> + =A0 =A0 =A0 .dev =3D {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .init_name =3D "dma-pl330.1",
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.dma_mask =3D &dma_dmamask,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.coherent_dma_mask =3D DMA_BIT_MASK(32=
-),
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.platform_data =3D &exynos4_pdma1_pdat=
-a,
-> =A0 =A0 =A0 =A0},
-> -};
-> -
-> -static struct platform_device *exynos4_dmacs[] __initdata =3D {
-> - =A0 =A0 =A0 &exynos4_device_pdma0,
-> - =A0 =A0 =A0 &exynos4_device_pdma1,
-> + =A0 =A0 =A0 .res =3D {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =3D EXYNOS4_PA_PDMA1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =3D EXYNOS4_PA_PDMA1 + SZ_4K,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =3D IORESOURCE_MEM,
-> + =A0 =A0 =A0 },
-> + =A0 =A0 =A0 .irq =3D {IRQ_PDMA1, NO_IRQ},
-> + =A0 =A0 =A0 .periphid =3D 0x00041330,
-> =A0};
->
-> =A0static int __init exynos4_dma_init(void)
-> =A0{
-> - =A0 =A0 =A0 platform_add_devices(exynos4_dmacs, ARRAY_SIZE(exynos4_=
-dmacs));
-> + =A0 =A0 =A0 amba_device_register(&exynos4_device_pdma0, &iomem_reso=
-urce);
-
-How would the 'exynos4_device_pdma1' instance get registered? Should
-there be a amba_device_register call for 'exynos4_device_pdma1'
-instance as well?
+The client driver specifies the direction of the transfer
+(DMA_TO_DEVICE or DMA_FROM_DEVICE) when requesting for a dma channel.
+So, is the rqtype parameter required in the platform data for the dma
+driver?
 
 Thanks,
 Thomas.
