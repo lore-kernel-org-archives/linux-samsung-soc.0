@@ -1,80 +1,84 @@
-From: "Koul, Vinod" <vinod.koul@intel.com>
-Subject: RE: [PATCH V5 00/15] To use DMA generic APIs for Samsung DMA
-Date: Tue, 16 Aug 2011 16:31:16 +0530
-Message-ID: <1313492476.1603.39.camel@vkoul-udesk3>
-References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
-	 <CACRpkdZvbH1O608n_aa_nVi-Onhmt0Ay6X1yCgBVNES4o9hTrA@mail.gmail.com>
-	 <1312821923.1539.37.camel@vkoul-udesk3>
-	 <015101cc57f8$0d7b1da0$287158e0$%kim@samsung.com>
-	 <1313101649.1603.27.camel@vkoul-udesk3>
-	 <000701cc596f$08811160$19833420$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Banajit Goswami <banajit.g@samsung.com>
+Subject: [PATCH] ARM: S3C64XX: Remove un-used code
+Date: Tue, 16 Aug 2011 18:11:28 +0530
+Message-ID: <1313498488-4296-1-git-send-email-banajit.g@samsung.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:43281 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751587Ab1HPLBn (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:65320 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751550Ab1HPMlA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Aug 2011 07:01:43 -0400
-In-Reply-To: <000701cc596f$08811160$19833420$%kim@samsung.com>
+	Tue, 16 Aug 2011 08:41:00 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LQ0002KSTVZEI70@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 16 Aug 2011 21:40:58 +0900 (KST)
+Received: from banajit.sisodomain.com ([107.108.83.226])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LQ000BTOTW754@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 16 Aug 2011 21:40:59 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, 'Boojin Kim' <boojin.kim@samsung.com>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Dan Williams' <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, Banajit Goswami <banajit.g@samsung.com>
 
-On Sat, 2011-08-13 at 13:11 +0900, Kukjin Kim wrote:
-> Koul, Vinod wrote:
-> > 
-> > On Thu, 2011-08-11 at 16:26 +0900, Kukjin Kim wrote:
-> > > Koul, Vinod wrote:
-> > > >
-> > > > On Thu, 2011-08-04 at 18:53 +0200, Linus Walleij wrote:
-> > > > > On Wed, Jul 27, 2011 at 7:31 AM, Boojin Kim <boojin.kim@samsung.com>
-> > wrote:
-> > > > >
-> > > > > > This patchset adds support DMA generic APIs for Samsung DMA.
-> > > > >
-> > > > > Patches look good to me,
-> > > > > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> > > >
-> > > > Acked-by: Vinod Koul <vinod.koul@intel.com>
-> > > >
-> > > > Do you want these to go thru slave-dma tree or arm tree, I am okay with
-> > > > either...
-> > >
-> > > Hi Vinod,
-> > >
-> > > Thanks.
-> > >
-> > > I'd like to keep its topic branch in my tree to avoid conflicts with other samsung
-> > stuff and I think, it should be merged into your slave-dma tree also for same
-> > reason.
-> > >
-> > > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git #next/topic-
-> > dma-pl330
-> > >
-> > > Or if you want to make some branch for it in your tree, please let me know so
-> > that I can merge it in my tree also.
-> > Okay can you update this branch with latest patchset (I think there were
-> > few comments on last patchset). Once you add all acks let me know the
-> > branch, I will merge it to my next
-> 
-> Hi,
-> 
-> I updated it so that you can merge it to yours.
-> I think, if any fixing is required on that, it should be small so can be fixed easily after this merging.
-> 
-> If any problems, please let me know :)
-> 
-Well, that not how things are supposed to be done. Fixing an error
-introduced is not recommended, rather original patch set should be
-fixed.
-Since you have already done 5 posting of your patch series, I am okay if
-you split things up, send me the parts that have already been reviewed
-and acked. I will host them on a branch for you. Once rest is reviewed
-and acked, I will merge this entire branch to my next.
+Remove un-used backlight code for SMDK6410 board
 
+Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
+---
+ arch/arm/mach-s3c64xx/mach-smdk6410.c |   39 ---------------------------------
+ 1 files changed, 0 insertions(+), 39 deletions(-)
 
+diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+index ecbea92..a9f3183 100644
+--- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
++++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+@@ -262,45 +262,6 @@ static struct samsung_keypad_platdata smdk6410_keypad_data __initdata = {
+ 	.cols		= 8,
+ };
+ 
+-static int smdk6410_backlight_init(struct device *dev)
+-{
+-	int ret;
+-
+-	ret = gpio_request(S3C64XX_GPF(15), "Backlight");
+-	if (ret) {
+-		printk(KERN_ERR "failed to request GPF for PWM-OUT1\n");
+-		return ret;
+-	}
+-
+-	/* Configure GPIO pin with S3C64XX_GPF15_PWM_TOUT1 */
+-	s3c_gpio_cfgpin(S3C64XX_GPF(15), S3C_GPIO_SFN(2));
+-
+-	return 0;
+-}
+-
+-static void smdk6410_backlight_exit(struct device *dev)
+-{
+-	s3c_gpio_cfgpin(S3C64XX_GPF(15), S3C_GPIO_OUTPUT);
+-	gpio_free(S3C64XX_GPF(15));
+-}
+-
+-static struct platform_pwm_backlight_data smdk6410_backlight_data = {
+-	.pwm_id		= 1,
+-	.max_brightness	= 255,
+-	.dft_brightness	= 255,
+-	.pwm_period_ns	= 78770,
+-	.init		= smdk6410_backlight_init,
+-	.exit		= smdk6410_backlight_exit,
+-};
+-
+-static struct platform_device smdk6410_backlight_device = {
+-	.name		= "pwm-backlight",
+-	.dev		= {
+-		.parent		= &s3c_device_timer[1].dev,
+-		.platform_data	= &smdk6410_backlight_data,
+-	},
+-};
+-
+ static struct map_desc smdk6410_iodesc[] = {};
+ 
+ static struct platform_device *smdk6410_devices[] __initdata = {
 -- 
-~Vinod
+1.7.2.3
