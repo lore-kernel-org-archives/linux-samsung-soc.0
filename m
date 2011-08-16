@@ -1,64 +1,58 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ARM: EXYNOS4: Configure MAX8997 PMIC for Origen
-Date: Wed, 17 Aug 2011 00:19:18 +0900
-Message-ID: <20110816151916.GA15484@opensource.wolfsonmicro.com>
-References: <1313034965-21286-1-git-send-email-inderpal.singh@linaro.org>
- <20110814150148.GB25504@sirena.org.uk>
- <CAG17yqTP+Amg_UhWNjwZ0x8bH+VzV82k3La5Y0fep9WRArbe+g@mail.gmail.com>
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: [PATCH 1/3] ARM: EXYNOS4: use dma-pl330 device name for clock
+Date: Wed, 17 Aug 2011 00:31:04 +0300
+Message-ID: <1313530266-14939-2-git-send-email-vz@mleia.com>
+References: <1313530266-14939-1-git-send-email-vz@mleia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:44145 "EHLO
-	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751991Ab1HPPT1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Aug 2011 11:19:27 -0400
-Content-Disposition: inline
-In-Reply-To: <CAG17yqTP+Amg_UhWNjwZ0x8bH+VzV82k3La5Y0fep9WRArbe+g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1313530266-14939-1-git-send-email-vz@mleia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Boojin Kim <boojin.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vladimir Zapolskiy <vz@mleia.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inderpal Singh <inderpal.singh@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, myungjoo.ham@samsung.com, Inderpal Singh <inderpal.s@samsung.com>
 
-On Tue, Aug 16, 2011 at 04:38:46PM +0530, Inderpal Singh wrote:
-> On 14 August 2011 20:31, Mark Brown <broonie@opensource.wolfsonmicro.com>wrote:
-> > On Thu, Aug 11, 2011 at 09:26:05AM +0530, Inderpal Singh wrote:
+This change replaces s3c-pl330.x clock device names with dma-pl330.x,
+otherwise there won't be a correspondence between clock device name
+and amba device name, thus clocks can't be enabled.
 
-> > > +static struct regulator_consumer_supply __initdata ldo7_consumer[] = {
-> > > +     REGULATOR_SUPPLY("avdd", "soc-audio"), /* Reatek ALC5625*/
-> > > +};
+Fixes runtime errors on clk_get() from drivers/dma/pl330.c:
+  dma-pl330 dma-pl330.0: Cannot get operation clock.
+  dma-pl330: probe of dma-pl330.0 failed with error -22
 
-> > Ick, no.  The soc-audio device is a virtual device within Linux and is
-> > being phased out, any driver adding new soc-audio devices will be
-> > rejected.  The CODEC driver should deal with its own power.
+Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
+Cc: Boojin Kim <boojin.kim@samsung.com>
+---
+ arch/arm/mach-exynos4/clock.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-> Ok. So does it mean that sound cards will have their own devices? And those
-> device names should be listed as consumers?
-
-As I said above "The CODEC driver should deal with its own power."
-
-> > > +static struct i2c_board_info i2c0_devs[] __initdata = {
-> > > +[I2C0_MAX8997] = {
-> > > +     I2C_BOARD_INFO("max8997", (0xCC >> 1)),
-> > > +     .platform_data = &origen_max8997_pdata,
-> > > +     },
-> > > +};
-
-> > Why are you assigning the array index?  That's very unusual.
-
-> Have seen this kind of initialisation at few places. It looked more
-> readable.
-> If its not preferred, I will remove it.
-
-You shouldn't need to be looking up individual members in a board info
-array in the first place.
-
-> > > +     s3c_i2c0_set_platdata(NULL);
-> > > +     i2c0_devs[I2C0_MAX8997].irq = gpio_to_irq(EXYNOS4_GPX0(4));
-
-> > There should be defines to do this statically.
-
-> What advantages do you see in using defines?
-
-It's non-idiomatic to modify the I2C board info at runtime, all the
-numbers are known at compile time anyway.
+diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
+index fee2dd8..04c997a 100644
+--- a/arch/arm/mach-exynos4/clock.c
++++ b/arch/arm/mach-exynos4/clock.c
+@@ -460,12 +460,12 @@ static struct clk init_clocks_off[] = {
+ 		.ctrlbit	= (1 << 10),
+ 	}, {
+ 		.name		= "dma",
+-		.devname	= "s3c-pl330.0",
++		.devname	= "dma-pl330.0",
+ 		.enable		= exynos4_clk_ip_fsys_ctrl,
+ 		.ctrlbit	= (1 << 0),
+ 	}, {
+ 		.name		= "dma",
+-		.devname	= "s3c-pl330.1",
++		.devname	= "dma-pl330.1",
+ 		.enable		= exynos4_clk_ip_fsys_ctrl,
+ 		.ctrlbit	= (1 << 1),
+ 	}, {
+-- 
+1.7.5.1
