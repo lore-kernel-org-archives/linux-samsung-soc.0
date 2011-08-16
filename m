@@ -1,61 +1,225 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 07/15] ARM: EXYNOS4: Use generic DMA PL330 driver
-Date: Mon, 15 Aug 2011 19:45:48 +0530
-Message-ID: <CAJuYYwT0R+VXWvWuV6KK=m_knoxBnBf=GLVimPoe002mcvqqeA@mail.gmail.com>
-References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
-	<1311744697-10264-8-git-send-email-boojin.kim@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2] ARM: Samsung: fix watchdog reset issue with clk_get()
+Date: Tue, 16 Aug 2011 07:58:58 +0200
+Message-ID: <1313474338-18038-1-git-send-email-m.szyprowski@samsung.com>
+References: <017001cc581a$32b44250$981cc6f0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gw0-f46.google.com ([74.125.83.46]:62153 "EHLO
-	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753141Ab1HOOPt convert rfc822-to-8bit (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:15008 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751262Ab1HPF7X (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Aug 2011 10:15:49 -0400
-Received: by gwaa12 with SMTP id a12so3174518gwa.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Aug 2011 07:15:49 -0700 (PDT)
-In-Reply-To: <1311744697-10264-8-git-send-email-boojin.kim@samsung.com>
+	Tue, 16 Aug 2011 01:59:23 -0400
+Received: from eu_spt1 (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0LQ000901BAXVK@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 16 Aug 2011 06:59:21 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LQ0006R4BAWOE@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 16 Aug 2011 06:59:20 +0100 (BST)
+In-reply-to: <017001cc581a$32b44250$981cc6f0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Boojin Kim <boojin.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Angus Ainslie <angus.ainslie@linaro.org>
 
-Hi Boojin,
+clkdev framework uses global mutex to protect clock tree, so it is not
+possible to call clk_get() in interrupt context. This patch fixes this
+issue and makes system reset by watchdog call working again.
 
-On 27 July 2011 11:01, Boojin Kim <boojin.kim@samsung.com> wrote:
-> This patch makes Samsung EXYNOS4 to use DMA PL330 driver
-> on DMADEVICE. The EXYNOS4 uses DMA generic APIs instead of
-> SAMSUNG specific S3C-PL330 APIs.
->
-> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
-> =A0arch/arm/mach-exynos4/Kconfig | =A0 =A02 +-
-> =A0arch/arm/mach-exynos4/clock.c | =A0 16 ++-
-> =A0arch/arm/mach-exynos4/dma.c =A0 | =A0299 +++++++++++++++++++++++++=
-+---------------
-> =A03 files changed, 198 insertions(+), 119 deletions(-)
->
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos4/clock.c                      |    1 +
+ arch/arm/mach-s3c2412/clock.c                      |    1 +
+ arch/arm/mach-s3c2416/clock.c                      |    2 +-
+ arch/arm/mach-s3c2443/clock.c                      |    1 +
+ arch/arm/mach-s3c64xx/clock.c                      |    1 +
+ arch/arm/mach-s5p64x0/cpu.c                        |    2 ++
+ arch/arm/mach-s5pc100/clock.c                      |    1 +
+ arch/arm/mach-s5pv210/clock.c                      |    1 +
+ arch/arm/plat-s3c24xx/s3c2410-clock.c              |    1 +
+ arch/arm/plat-samsung/clock.c                      |    9 +++++++++
+ arch/arm/plat-samsung/include/plat/clock.h         |    2 ++
+ .../arm/plat-samsung/include/plat/watchdog-reset.h |   10 +++-------
+ 12 files changed, 24 insertions(+), 8 deletions(-)
 
-[...]
-
-> diff --git a/arch/arm/mach-exynos4/dma.c b/arch/arm/mach-exynos4/dma.=
-c
-> index 564bb53..d57d662 100644
-
-[...]
-
-> +struct dma_pl330_peri pdma0_peri[28] =3D {
-> + =A0 =A0 =A0 {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_PCM0_RX,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D DEVTOMEM,
-> + =A0 =A0 =A0 }, {
-
-The client driver specifies the direction of the transfer
-(DMA_TO_DEVICE or DMA_FROM_DEVICE) when requesting for a dma channel.
-So, is the rqtype parameter required in the platform data for the dma
-driver?
-
-Thanks,
-Thomas.
+diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
+index 851dea0..9dd4315 100644
+--- a/arch/arm/mach-exynos4/clock.c
++++ b/arch/arm/mach-exynos4/clock.c
+@@ -1211,4 +1211,5 @@ void __init exynos4_register_clocks(void)
+ 	s3c_disable_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
+ 
+ 	s3c_pwmclk_init();
++	s3c_wdt_reset_init();
+ }
+diff --git a/arch/arm/mach-s3c2412/clock.c b/arch/arm/mach-s3c2412/clock.c
+index 140711d..1445bf6 100644
+--- a/arch/arm/mach-s3c2412/clock.c
++++ b/arch/arm/mach-s3c2412/clock.c
+@@ -752,5 +752,6 @@ int __init s3c2412_baseclk_add(void)
+ 	}
+ 
+ 	s3c_pwmclk_init();
++	s3c_wdt_reset_init();
+ 	return 0;
+ }
+diff --git a/arch/arm/mach-s3c2416/clock.c b/arch/arm/mach-s3c2416/clock.c
+index 21a5e81..529e2a0 100644
+--- a/arch/arm/mach-s3c2416/clock.c
++++ b/arch/arm/mach-s3c2416/clock.c
+@@ -139,5 +139,5 @@ void __init s3c2416_init_clocks(int xtal)
+ 	s3c24xx_register_clock(&hsmmc0_clk);
+ 
+ 	s3c_pwmclk_init();
+-
++	s3c_wdt_reset_init();
+ }
+diff --git a/arch/arm/mach-s3c2443/clock.c b/arch/arm/mach-s3c2443/clock.c
+index a1a7176..78ae013 100644
+--- a/arch/arm/mach-s3c2443/clock.c
++++ b/arch/arm/mach-s3c2443/clock.c
+@@ -365,4 +365,5 @@ void __init s3c2443_init_clocks(int xtal)
+ 	s3c_disable_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
+ 
+ 	s3c_pwmclk_init();
++	s3c_wdt_reset_init();
+ }
+diff --git a/arch/arm/mach-s3c64xx/clock.c b/arch/arm/mach-s3c64xx/clock.c
+index 8cf39e3..86977d0 100644
+--- a/arch/arm/mach-s3c64xx/clock.c
++++ b/arch/arm/mach-s3c64xx/clock.c
+@@ -817,4 +817,5 @@ void __init s3c64xx_register_clocks(unsigned long xtal,
+ 	s3c24xx_register_clocks(clks1, ARRAY_SIZE(clks1));
+ 	s3c_register_clksrc(clksrcs, ARRAY_SIZE(clksrcs));
+ 	s3c_pwmclk_init();
++	s3c_wdt_reset_init();
+ }
+diff --git a/arch/arm/mach-s5p64x0/cpu.c b/arch/arm/mach-s5p64x0/cpu.c
+index a5c0095..876e0c7 100644
+--- a/arch/arm/mach-s5p64x0/cpu.c
++++ b/arch/arm/mach-s5p64x0/cpu.c
+@@ -136,6 +136,7 @@ void __init s5p6440_init_clocks(int xtal)
+ 	s5p_register_clocks(xtal);
+ 	s5p6440_register_clocks();
+ 	s5p6440_setup_clocks();
++	s3c_wdt_reset_init();
+ }
+ 
+ void __init s5p6450_init_clocks(int xtal)
+@@ -146,6 +147,7 @@ void __init s5p6450_init_clocks(int xtal)
+ 	s5p_register_clocks(xtal);
+ 	s5p6450_register_clocks();
+ 	s5p6450_setup_clocks();
++	s3c_wdt_reset_init();
+ }
+ 
+ /*
+diff --git a/arch/arm/mach-s5pc100/clock.c b/arch/arm/mach-s5pc100/clock.c
+index ff5cbb3..bb60904 100644
+--- a/arch/arm/mach-s5pc100/clock.c
++++ b/arch/arm/mach-s5pc100/clock.c
+@@ -1277,4 +1277,5 @@ void __init s5pc100_register_clocks(void)
+ 	s3c_disable_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
+ 
+ 	s3c_pwmclk_init();
++	s3c_wdt_reset_init();
+ }
+diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
+index 52a8e60..48a3963 100644
+--- a/arch/arm/mach-s5pv210/clock.c
++++ b/arch/arm/mach-s5pv210/clock.c
+@@ -1162,4 +1162,5 @@ void __init s5pv210_register_clocks(void)
+ 	s3c_disable_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
+ 
+ 	s3c_pwmclk_init();
++	s3c_wdt_reset_init();
+ }
+diff --git a/arch/arm/plat-s3c24xx/s3c2410-clock.c b/arch/arm/plat-s3c24xx/s3c2410-clock.c
+index def76aa..18bcf6a 100644
+--- a/arch/arm/plat-s3c24xx/s3c2410-clock.c
++++ b/arch/arm/plat-s3c24xx/s3c2410-clock.c
+@@ -249,5 +249,6 @@ int __init s3c2410_baseclk_add(void)
+ 	       (clkslow & S3C2410_CLKSLOW_UCLK_OFF) ? "off" : "on");
+ 
+ 	s3c_pwmclk_init();
++	s3c_wdt_reset_init();
+ 	return 0;
+ }
+diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
+index 302c426..141bd2e 100644
+--- a/arch/arm/plat-samsung/clock.c
++++ b/arch/arm/plat-samsung/clock.c
+@@ -64,6 +64,15 @@ static LIST_HEAD(clocks);
+  */
+ DEFINE_SPINLOCK(clocks_lock);
+ 
++/* Global watchdog clock used by arch_wtd_reset() callback */
++struct clk *s3c2410_wdtclk;
++void __init s3c_wdt_reset_init(void)
++{
++	s3c2410_wdtclk = clk_get(NULL, "watchdog");
++	if (IS_ERR(s3c2410_wdtclk))
++		printk(KERN_WARNING "%s: warning: cannot get watchdog clock\n", __func__);
++}
++
+ /* enable and disable calls for use with the clk struct */
+ 
+ static int clk_null_enable(struct clk *clk, int enable)
+diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-samsung/include/plat/clock.h
+index 87d5b38..5e625b4 100644
+--- a/arch/arm/plat-samsung/include/plat/clock.h
++++ b/arch/arm/plat-samsung/include/plat/clock.h
+@@ -81,6 +81,7 @@ extern struct clk clk_h2;
+ extern struct clk clk_27m;
+ extern struct clk clk_48m;
+ extern struct clk clk_xusbxti;
++extern struct clk *s3c2410_wdtclk;
+ 
+ extern int clk_default_setrate(struct clk *clk, unsigned long rate);
+ extern struct clk_ops clk_ops_def_setrate;
+@@ -120,4 +121,5 @@ extern int s3c64xx_sclk_ctrl(struct clk *clk, int enable);
+ /* Init for pwm clock code */
+ 
+ extern void s3c_pwmclk_init(void);
++extern void __init s3c_wdt_reset_init(void);
+ 
+diff --git a/arch/arm/plat-samsung/include/plat/watchdog-reset.h b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
+index 54b762a..4fbbe5d 100644
+--- a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
++++ b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
+@@ -12,6 +12,7 @@
+ 
+ #include <plat/regs-watchdog.h>
+ #include <mach/map.h>
++#include <plat/clock.h>
+ 
+ #include <linux/clk.h>
+ #include <linux/err.h>
+@@ -19,17 +20,12 @@
+ 
+ static inline void arch_wdt_reset(void)
+ {
+-	struct clk *wdtclk;
+-
+ 	printk("arch_reset: attempting watchdog reset\n");
+ 
+ 	__raw_writel(0, S3C2410_WTCON);	  /* disable watchdog, to be safe  */
+ 
+-	wdtclk = clk_get(NULL, "watchdog");
+-	if (!IS_ERR(wdtclk)) {
+-		clk_enable(wdtclk);
+-	} else
+-		printk(KERN_WARNING "%s: warning: cannot get watchdog clock\n", __func__);
++	if (s3c2410_wdtclk)
++		clk_enable(s3c2410_wdtclk);
+ 
+ 	/* put initial values into count and data */
+ 	__raw_writel(0x80, S3C2410_WTCNT);
+-- 
+1.7.1.569.g6f426
