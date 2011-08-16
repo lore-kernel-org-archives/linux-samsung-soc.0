@@ -1,84 +1,64 @@
-From: Banajit Goswami <banajit.g@samsung.com>
-Subject: [PATCH] ARM: S3C64XX: Remove un-used code
-Date: Tue, 16 Aug 2011 18:11:28 +0530
-Message-ID: <1313498488-4296-1-git-send-email-banajit.g@samsung.com>
-Content-Transfer-Encoding: 7BIT
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] ARM: EXYNOS4: Configure MAX8997 PMIC for Origen
+Date: Wed, 17 Aug 2011 00:19:18 +0900
+Message-ID: <20110816151916.GA15484@opensource.wolfsonmicro.com>
+References: <1313034965-21286-1-git-send-email-inderpal.singh@linaro.org>
+ <20110814150148.GB25504@sirena.org.uk>
+ <CAG17yqTP+Amg_UhWNjwZ0x8bH+VzV82k3La5Y0fep9WRArbe+g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:65320 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751550Ab1HPMlA (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:44145 "EHLO
+	opensource2.wolfsonmicro.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751991Ab1HPPT1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Aug 2011 08:41:00 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LQ0002KSTVZEI70@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 16 Aug 2011 21:40:58 +0900 (KST)
-Received: from banajit.sisodomain.com ([107.108.83.226])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LQ000BTOTW754@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 16 Aug 2011 21:40:59 +0900 (KST)
+	Tue, 16 Aug 2011 11:19:27 -0400
+Content-Disposition: inline
+In-Reply-To: <CAG17yqTP+Amg_UhWNjwZ0x8bH+VzV82k3La5Y0fep9WRArbe+g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, Banajit Goswami <banajit.g@samsung.com>
+To: Inderpal Singh <inderpal.singh@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, myungjoo.ham@samsung.com, Inderpal Singh <inderpal.s@samsung.com>
 
-Remove un-used backlight code for SMDK6410 board
+On Tue, Aug 16, 2011 at 04:38:46PM +0530, Inderpal Singh wrote:
+> On 14 August 2011 20:31, Mark Brown <broonie@opensource.wolfsonmicro.com>wrote:
+> > On Thu, Aug 11, 2011 at 09:26:05AM +0530, Inderpal Singh wrote:
 
-Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
----
- arch/arm/mach-s3c64xx/mach-smdk6410.c |   39 ---------------------------------
- 1 files changed, 0 insertions(+), 39 deletions(-)
+> > > +static struct regulator_consumer_supply __initdata ldo7_consumer[] = {
+> > > +     REGULATOR_SUPPLY("avdd", "soc-audio"), /* Reatek ALC5625*/
+> > > +};
 
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-index ecbea92..a9f3183 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-@@ -262,45 +262,6 @@ static struct samsung_keypad_platdata smdk6410_keypad_data __initdata = {
- 	.cols		= 8,
- };
- 
--static int smdk6410_backlight_init(struct device *dev)
--{
--	int ret;
--
--	ret = gpio_request(S3C64XX_GPF(15), "Backlight");
--	if (ret) {
--		printk(KERN_ERR "failed to request GPF for PWM-OUT1\n");
--		return ret;
--	}
--
--	/* Configure GPIO pin with S3C64XX_GPF15_PWM_TOUT1 */
--	s3c_gpio_cfgpin(S3C64XX_GPF(15), S3C_GPIO_SFN(2));
--
--	return 0;
--}
--
--static void smdk6410_backlight_exit(struct device *dev)
--{
--	s3c_gpio_cfgpin(S3C64XX_GPF(15), S3C_GPIO_OUTPUT);
--	gpio_free(S3C64XX_GPF(15));
--}
--
--static struct platform_pwm_backlight_data smdk6410_backlight_data = {
--	.pwm_id		= 1,
--	.max_brightness	= 255,
--	.dft_brightness	= 255,
--	.pwm_period_ns	= 78770,
--	.init		= smdk6410_backlight_init,
--	.exit		= smdk6410_backlight_exit,
--};
--
--static struct platform_device smdk6410_backlight_device = {
--	.name		= "pwm-backlight",
--	.dev		= {
--		.parent		= &s3c_device_timer[1].dev,
--		.platform_data	= &smdk6410_backlight_data,
--	},
--};
--
- static struct map_desc smdk6410_iodesc[] = {};
- 
- static struct platform_device *smdk6410_devices[] __initdata = {
--- 
-1.7.2.3
+> > Ick, no.  The soc-audio device is a virtual device within Linux and is
+> > being phased out, any driver adding new soc-audio devices will be
+> > rejected.  The CODEC driver should deal with its own power.
+
+> Ok. So does it mean that sound cards will have their own devices? And those
+> device names should be listed as consumers?
+
+As I said above "The CODEC driver should deal with its own power."
+
+> > > +static struct i2c_board_info i2c0_devs[] __initdata = {
+> > > +[I2C0_MAX8997] = {
+> > > +     I2C_BOARD_INFO("max8997", (0xCC >> 1)),
+> > > +     .platform_data = &origen_max8997_pdata,
+> > > +     },
+> > > +};
+
+> > Why are you assigning the array index?  That's very unusual.
+
+> Have seen this kind of initialisation at few places. It looked more
+> readable.
+> If its not preferred, I will remove it.
+
+You shouldn't need to be looking up individual members in a board info
+array in the first place.
+
+> > > +     s3c_i2c0_set_platdata(NULL);
+> > > +     i2c0_devs[I2C0_MAX8997].irq = gpio_to_irq(EXYNOS4_GPX0(4));
+
+> > There should be defines to do this statically.
+
+> What advantages do you see in using defines?
+
+It's non-idiomatic to modify the I2C board info at runtime, all the
+numbers are known at compile time anyway.
