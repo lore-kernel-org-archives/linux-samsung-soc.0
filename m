@@ -1,95 +1,87 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH] ARM: EXYNOS4: ADD USB EHCI device to SMDKV310
-Date: Wed, 17 Aug 2011 12:29:17 +0530
-Message-ID: <1313564357-32331-1-git-send-email-sachin.kamat@linaro.org>
+Subject: [PATCH] ARM: EXYNOS4: Add USB EHCI device to Origen
+Date: Wed, 17 Aug 2011 12:30:20 +0530
+Message-ID: <1313564420-862-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f42.google.com ([209.85.210.42]:57713 "EHLO
-	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750813Ab1HQHBs (ORCPT
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:60165 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750813Ab1HQHCs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Aug 2011 03:01:48 -0400
-Received: by pzk37 with SMTP id 37so573544pzk.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Aug 2011 00:01:48 -0700 (PDT)
+	Wed, 17 Aug 2011 03:02:48 -0400
+Received: by qwk3 with SMTP id 3so414887qwk.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Aug 2011 00:02:47 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org, sachin.kamat@linaro.org
 
-Signed-off-by: Bhuvana Kakunoori <bhuvana.kakunoori@linaro.org>
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 ---
- arch/arm/mach-exynos4/Kconfig         |    2 ++
- arch/arm/mach-exynos4/mach-smdkv310.c |   16 ++++++++++++++++
- 2 files changed, 18 insertions(+), 0 deletions(-)
+ arch/arm/mach-exynos4/Kconfig       |    2 ++
+ arch/arm/mach-exynos4/mach-origen.c |   17 +++++++++++++++++
+ 2 files changed, 19 insertions(+), 0 deletions(-)
 
 diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index bb29d51..cc97d23 100644
+index 3ab0f18..fba97a4 100644
 --- a/arch/arm/mach-exynos4/Kconfig
 +++ b/arch/arm/mach-exynos4/Kconfig
-@@ -136,6 +136,7 @@ config MACH_SMDKV310
- 	bool "SMDKV310"
+@@ -189,8 +189,10 @@ config MACH_NURI
+ config MACH_ORIGEN
+ 	bool "ORIGEN"
  	select CPU_EXYNOS4210
- 	select S5P_DEV_FIMD0
 +	select S5P_DEV_USB_EHCI
  	select S3C_DEV_RTC
  	select S3C_DEV_WDT
- 	select S3C_DEV_I2C1
-@@ -151,6 +152,7 @@ config MACH_SMDKV310
- 	select SAMSUNG_DEV_PWM
- 	select EXYNOS4_DEV_SYSMMU
- 	select EXYNOS4_SETUP_FIMD0
 +	select EXYNOS4_SETUP_USB_PHY
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_KEYPAD
+ 	select S3C_DEV_HSMMC2
  	select EXYNOS4_SETUP_SDHCI
-diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
-index 5f62b2b..b6c28ea 100644
---- a/arch/arm/mach-exynos4/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos4/mach-smdkv310.c
-@@ -33,6 +33,8 @@
- #include <plat/gpio-cfg.h>
- #include <plat/backlight.h>
- #include <plat/mfc.h>
+ 	help
+diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
+index ed59f86..d101756 100644
+--- a/arch/arm/mach-exynos4/mach-origen.c
++++ b/arch/arm/mach-exynos4/mach-origen.c
+@@ -24,6 +24,8 @@
+ #include <plat/devs.h>
+ #include <plat/sdhci.h>
+ #include <plat/iic.h>
 +#include <plat/ehci.h>
 +#include <plat/clock.h>
  
  #include <mach/map.h>
  
-@@ -167,6 +169,16 @@ static struct i2c_board_info i2c_devs1[] __initdata = {
- 	{I2C_BOARD_INFO("wm8994", 0x1a),},
+@@ -79,10 +81,21 @@ static struct s3c_sdhci_platdata origen_hsmmc2_pdata __initdata = {
+ 	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
  };
  
 +/* USB EHCI */
-+static struct s5p_ehci_platdata smdkv310_ehci_pdata;
++static struct s5p_ehci_platdata origen_ehci_pdata;
 +
-+static void __init smdkv310_ehci_init(void)
++static void __init origen_ehci_init(void)
 +{
-+	struct s5p_ehci_platdata *pdata = &smdkv310_ehci_pdata;
++	struct s5p_ehci_platdata *pdata = &origen_ehci_pdata;
 +
 +	s5p_ehci_set_platdata(pdata);
 +}
 +
- static struct platform_device *smdkv310_devices[] __initdata = {
- 	&s3c_device_hsmmc0,
- 	&s3c_device_hsmmc1,
-@@ -175,6 +187,7 @@ static struct platform_device *smdkv310_devices[] __initdata = {
- 	&s3c_device_i2c1,
+ static struct platform_device *origen_devices[] __initdata = {
+ 	&s3c_device_hsmmc2,
  	&s3c_device_rtc,
  	&s3c_device_wdt,
 +	&s5p_device_ehci,
- 	&exynos4_device_ac97,
- 	&exynos4_device_i2s0,
- 	&samsung_device_keypad,
-@@ -258,6 +271,9 @@ static void __init smdkv310_machine_init(void)
+ };
  
- 	samsung_bl_set(&smdkv310_bl_gpio_info, &smdkv310_bl_data);
- 
-+	smdkv310_ehci_init();
+ static void __init origen_map_io(void)
+@@ -95,6 +108,10 @@ static void __init origen_map_io(void)
+ static void __init origen_machine_init(void)
+ {
+ 	s3c_sdhci2_set_platdata(&origen_hsmmc2_pdata);
++
++	origen_ehci_init();
 +	clk_xusbxti.rate = 24000000;
 +
- 	platform_add_devices(smdkv310_devices, ARRAY_SIZE(smdkv310_devices));
- 	s5p_device_mfc.dev.parent = &exynos4_device_pd[PD_MFC].dev;
+ 	platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
  }
+ 
 -- 
 1.7.4.1
