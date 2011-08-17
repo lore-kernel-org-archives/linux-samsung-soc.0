@@ -1,125 +1,95 @@
-From: Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [PATCH] ARM: SAMSUNG: Modify the devname for pl330 clock
-Date: Wed, 17 Aug 2011 09:16:57 +0300
-Message-ID: <4E4B5CD9.7060703@mleia.com>
-References: <1313540801-12054-1-git-send-email-boojin.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH] ARM: EXYNOS4: ADD USB EHCI device to SMDKV310
+Date: Wed, 17 Aug 2011 12:29:17 +0530
+Message-ID: <1313564357-32331-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from li271-223.members.linode.com ([178.79.152.223]:40422 "EHLO
-	mail.mleia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752120Ab1HQGRA (ORCPT
+Received: from mail-pz0-f42.google.com ([209.85.210.42]:57713 "EHLO
+	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750813Ab1HQHBs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Aug 2011 02:17:00 -0400
-In-Reply-To: <1313540801-12054-1-git-send-email-boojin.kim@samsung.com>
+	Wed, 17 Aug 2011 03:01:48 -0400
+Received: by pzk37 with SMTP id 37so573544pzk.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Aug 2011 00:01:48 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Boojin Kim <boojin.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org, sachin.kamat@linaro.org
 
-Hi,
+Signed-off-by: Bhuvana Kakunoori <bhuvana.kakunoori@linaro.org>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-exynos4/Kconfig         |    2 ++
+ arch/arm/mach-exynos4/mach-smdkv310.c |   16 ++++++++++++++++
+ 2 files changed, 18 insertions(+), 0 deletions(-)
 
-looks like it contains my series as a subset.
-
---
-With best wishes,
-Vladimir
-
-On 17.08.2011 03:26, Boojin Kim wrote:
-> This patch modified the devname for pl330 clock from 's3c-pl330' to 'dma-pl330'
-> to support new pl330 driver on dmaengine.
-> NOTE: This patch sould be added after merging new pl330 driver on dmaengine.
->
-> Signed-off-by: Boojin Kim<boojin.kim@samsung.com>
-> ---
->   arch/arm/mach-exynos4/clock.c         |    4 ++--
->   arch/arm/mach-s5p64x0/clock-s5p6440.c |    1 +
->   arch/arm/mach-s5p64x0/clock-s5p6450.c |    1 +
->   arch/arm/mach-s5pc100/clock.c         |    4 ++--
->   arch/arm/mach-s5pv210/clock.c         |    4 ++--
->   5 files changed, 8 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
-> index fee2dd8..04c997a 100644
-> --- a/arch/arm/mach-exynos4/clock.c
-> +++ b/arch/arm/mach-exynos4/clock.c
-> @@ -460,12 +460,12 @@ static struct clk init_clocks_off[] = {
->   		.ctrlbit	= (1<<  10),
->   	}, {
->   		.name		= "dma",
-> -		.devname	= "s3c-pl330.0",
-> +		.devname	= "dma-pl330.0",
->   		.enable		= exynos4_clk_ip_fsys_ctrl,
->   		.ctrlbit	= (1<<  0),
->   	}, {
->   		.name		= "dma",
-> -		.devname	= "s3c-pl330.1",
-> +		.devname	= "dma-pl330.1",
->   		.enable		= exynos4_clk_ip_fsys_ctrl,
->   		.ctrlbit	= (1<<  1),
->   	}, {
-> diff --git a/arch/arm/mach-s5p64x0/clock-s5p6440.c b/arch/arm/mach-s5p64x0/clock-s5p6440.c
-> index c1f548f..c54c65d 100644
-> --- a/arch/arm/mach-s5p64x0/clock-s5p6440.c
-> +++ b/arch/arm/mach-s5p64x0/clock-s5p6440.c
-> @@ -147,6 +147,7 @@ static struct clk init_clocks_off[] = {
->   		.ctrlbit	= (1<<  8),
->   	}, {
->   		.name		= "dma",
-> +		.devname	= "dma-pl330",
->   		.parent		=&clk_hclk_low.clk,
->   		.enable		= s5p64x0_hclk0_ctrl,
->   		.ctrlbit	= (1<<  12),
-> diff --git a/arch/arm/mach-s5p64x0/clock-s5p6450.c b/arch/arm/mach-s5p64x0/clock-s5p6450.c
-> index 3d9b609..2d04abf 100644
-> --- a/arch/arm/mach-s5p64x0/clock-s5p6450.c
-> +++ b/arch/arm/mach-s5p64x0/clock-s5p6450.c
-> @@ -180,6 +180,7 @@ static struct clk init_clocks_off[] = {
->   		.ctrlbit	= (1<<  3),
->   	}, {
->   		.name		= "dma",
-> +		.devname	= "dma-pl330",
->   		.parent		=&clk_hclk_low.clk,
->   		.enable		= s5p64x0_hclk0_ctrl,
->   		.ctrlbit	= (1<<  12),
-> diff --git a/arch/arm/mach-s5pc100/clock.c b/arch/arm/mach-s5pc100/clock.c
-> index 6527c05..8d47709 100644
-> --- a/arch/arm/mach-s5pc100/clock.c
-> +++ b/arch/arm/mach-s5pc100/clock.c
-> @@ -460,13 +460,13 @@ static struct clk init_clocks_off[] = {
->   		.ctrlbit	= (1<<  2),
->   	}, {
->   		.name		= "dma",
-> -		.devname	= "s3c-pl330.1",
-> +		.devname	= "dma-pl330.1",
->   		.parent		=&clk_div_d1_bus.clk,
->   		.enable		= s5pc100_d1_0_ctrl,
->   		.ctrlbit	= (1<<  1),
->   	}, {
->   		.name		= "dma",
-> -		.devname	= "s3c-pl330.0",
-> +		.devname	= "dma-pl330.0",
->   		.parent		=&clk_div_d1_bus.clk,
->   		.enable		= s5pc100_d1_0_ctrl,
->   		.ctrlbit	= (1<<  0),
-> diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-> index d35726a..239aaad 100644
-> --- a/arch/arm/mach-s5pv210/clock.c
-> +++ b/arch/arm/mach-s5pv210/clock.c
-> @@ -295,13 +295,13 @@ static struct clk_ops clk_fout_apll_ops = {
->   static struct clk init_clocks_off[] = {
->   	{
->   		.name		= "dma",
-> -		.devname	= "s3c-pl330.0",
-> +		.devname	= "dma-pl330.0",
->   		.parent		=&clk_hclk_psys.clk,
->   		.enable		= s5pv210_clk_ip0_ctrl,
->   		.ctrlbit	= (1<<  3),
->   	}, {
->   		.name		= "dma",
-> -		.devname	= "s3c-pl330.1",
-> +		.devname	= "dma-pl330.1",
->   		.parent		=&clk_hclk_psys.clk,
->   		.enable		= s5pv210_clk_ip0_ctrl,
->   		.ctrlbit	= (1<<  4),
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index bb29d51..cc97d23 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -136,6 +136,7 @@ config MACH_SMDKV310
+ 	bool "SMDKV310"
+ 	select CPU_EXYNOS4210
+ 	select S5P_DEV_FIMD0
++	select S5P_DEV_USB_EHCI
+ 	select S3C_DEV_RTC
+ 	select S3C_DEV_WDT
+ 	select S3C_DEV_I2C1
+@@ -151,6 +152,7 @@ config MACH_SMDKV310
+ 	select SAMSUNG_DEV_PWM
+ 	select EXYNOS4_DEV_SYSMMU
+ 	select EXYNOS4_SETUP_FIMD0
++	select EXYNOS4_SETUP_USB_PHY
+ 	select EXYNOS4_SETUP_I2C1
+ 	select EXYNOS4_SETUP_KEYPAD
+ 	select EXYNOS4_SETUP_SDHCI
+diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
+index 5f62b2b..b6c28ea 100644
+--- a/arch/arm/mach-exynos4/mach-smdkv310.c
++++ b/arch/arm/mach-exynos4/mach-smdkv310.c
+@@ -33,6 +33,8 @@
+ #include <plat/gpio-cfg.h>
+ #include <plat/backlight.h>
+ #include <plat/mfc.h>
++#include <plat/ehci.h>
++#include <plat/clock.h>
+ 
+ #include <mach/map.h>
+ 
+@@ -167,6 +169,16 @@ static struct i2c_board_info i2c_devs1[] __initdata = {
+ 	{I2C_BOARD_INFO("wm8994", 0x1a),},
+ };
+ 
++/* USB EHCI */
++static struct s5p_ehci_platdata smdkv310_ehci_pdata;
++
++static void __init smdkv310_ehci_init(void)
++{
++	struct s5p_ehci_platdata *pdata = &smdkv310_ehci_pdata;
++
++	s5p_ehci_set_platdata(pdata);
++}
++
+ static struct platform_device *smdkv310_devices[] __initdata = {
+ 	&s3c_device_hsmmc0,
+ 	&s3c_device_hsmmc1,
+@@ -175,6 +187,7 @@ static struct platform_device *smdkv310_devices[] __initdata = {
+ 	&s3c_device_i2c1,
+ 	&s3c_device_rtc,
+ 	&s3c_device_wdt,
++	&s5p_device_ehci,
+ 	&exynos4_device_ac97,
+ 	&exynos4_device_i2s0,
+ 	&samsung_device_keypad,
+@@ -258,6 +271,9 @@ static void __init smdkv310_machine_init(void)
+ 
+ 	samsung_bl_set(&smdkv310_bl_gpio_info, &smdkv310_bl_data);
+ 
++	smdkv310_ehci_init();
++	clk_xusbxti.rate = 24000000;
++
+ 	platform_add_devices(smdkv310_devices, ARRAY_SIZE(smdkv310_devices));
+ 	s5p_device_mfc.dev.parent = &exynos4_device_pd[PD_MFC].dev;
+ }
+-- 
+1.7.4.1
