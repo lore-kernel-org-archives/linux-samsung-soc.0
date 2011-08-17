@@ -1,49 +1,83 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH] ARM: EXYNOS4: Enable system MMU support on Origen
-Date: Wed, 17 Aug 2011 12:32:31 +0530
-Message-ID: <1313564551-1196-1-git-send-email-sachin.kamat@linaro.org>
+From: JinGoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS4: ADD USB EHCI device to SMDKV310
+Date: Wed, 17 Aug 2011 07:15:49 +0000 (GMT)
+Message-ID: <16228662.138191313565348967.JavaMail.weblogic@epml23>
+Reply-To: jg1.han@samsung.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f42.google.com ([209.85.210.42]:46374 "EHLO
-	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750813Ab1HQHEy (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:29396 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751160Ab1HQHQN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Aug 2011 03:04:54 -0400
-Received: by pzk37 with SMTP id 37so577472pzk.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Aug 2011 00:04:54 -0700 (PDT)
+	Wed, 17 Aug 2011 03:16:13 -0400
+Received: from epcpsbge2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LQ200HXB9I4ZNF0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 17 Aug 2011 16:15:55 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org, sachin.kamat@linaro.org
+To: Sachin Kamat <sachin.kamat@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "linaro-dev@lists.linaro.org" <linaro-dev@lists.linaro.org>, "patches@linaro.org" <patches@linaro.org>
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-exynos4/Kconfig       |    1 +
- arch/arm/mach-exynos4/mach-origen.c |    1 +
- 2 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index 3ab0f18..bdb76e2 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -192,6 +192,7 @@ config MACH_ORIGEN
- 	select S3C_DEV_RTC
- 	select S3C_DEV_WDT
- 	select S3C_DEV_HSMMC2
-+	select EXYNOS4_DEV_SYSMMU
- 	select EXYNOS4_SETUP_SDHCI
- 	help
- 	  Machine support for ORIGEN based on Samsung EXYNOS4210
-diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
-index ed59f86..d04f7ee 100644
---- a/arch/arm/mach-exynos4/mach-origen.c
-+++ b/arch/arm/mach-exynos4/mach-origen.c
-@@ -83,6 +83,7 @@ static struct platform_device *origen_devices[] __initdata = {
- 	&s3c_device_hsmmc2,
- 	&s3c_device_rtc,
- 	&s3c_device_wdt,
-+	&exynos4_device_sysmmu,
- };
- 
- static void __init origen_map_io(void)
--- 
-1.7.4.1
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1zYW1zdW5nLXNvYy1v
+d25lckB2Z2VyLmtlcm5lbC5vcmcgW21haWx0bzpsaW51eC1zYW1zdW5nLXNvYy0NCj4gb3duZXJA
+dmdlci5rZXJuZWwub3JnXSBPbiBCZWhhbGYgT2YgU2FjaGluIEthbWF0DQo+IFNlbnQ6IFdlZG5l
+c2RheSwgQXVndXN0IDE3LCAyMDExIDM6NTkgUE0NCj4gVG86IGxpbnV4LXNhbXN1bmctc29jQHZn
+ZXIua2VybmVsLm9yZw0KPiBDYzoga2dlbmUua2ltQHNhbXN1bmcuY29tOyBsaW5hcm8tZGV2QGxp
+c3RzLmxpbmFyby5vcmc7IHBhdGNoZXNAbGluYXJvLm9yZzsNCj4gc2FjaGluLmthbWF0QGxpbmFy
+by5vcmcNCj4gU3ViamVjdDogW1BBVENIXSBBUk06IEVYWU5PUzQ6IEFERCBVU0IgRUhDSSBkZXZp
+Y2UgdG8gU01ES1YzMTANCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEJodXZhbmEgS2FrdW5vb3JpIDxi
+aHV2YW5hLmtha3Vub29yaUBsaW5hcm8ub3JnPg0KPiBTaWduZWQtb2ZmLWJ5OiBQYW5rYWogRHVi
+ZXkgPHBhbmthai5kdWJleUBzYW1zdW5nLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogU2FjaGluIEth
+bWF0IDxzYWNoaW4ua2FtYXRAbGluYXJvLm9yZz4NCg0KQWNrZWQtYnk6IEppbmdvbyBIYW4gPGpn
+MS5oYW5Ac2Ftc3VuZy5jb20+DQoNCj4gLS0tDQo+ICBhcmNoL2FybS9tYWNoLWV4eW5vczQvS2Nv
+bmZpZyAgICAgICAgIHwgICAgMiArKw0KPiAgYXJjaC9hcm0vbWFjaC1leHlub3M0L21hY2gtc21k
+a3YzMTAuYyB8ICAgMTYgKysrKysrKysrKysrKysrKw0KPiAgMiBmaWxlcyBjaGFuZ2VkLCAxOCBp
+bnNlcnRpb25zKCspLCAwIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJt
+L21hY2gtZXh5bm9zNC9LY29uZmlnIGIvYXJjaC9hcm0vbWFjaC1leHlub3M0L0tjb25maWcNCj4g
+aW5kZXggYmIyOWQ1MS4uY2M5N2QyMyAxMDA2NDQNCj4gLS0tIGEvYXJjaC9hcm0vbWFjaC1leHlu
+b3M0L0tjb25maWcNCj4gKysrIGIvYXJjaC9hcm0vbWFjaC1leHlub3M0L0tjb25maWcNCj4gQEAg
+LTEzNiw2ICsxMzYsNyBAQCBjb25maWcgTUFDSF9TTURLVjMxMA0KPiAgCWJvb2wgIlNNREtWMzEw
+Ig0KPiAgCXNlbGVjdCBDUFVfRVhZTk9TNDIxMA0KPiAgCXNlbGVjdCBTNVBfREVWX0ZJTUQwDQo+
+ICsJc2VsZWN0IFM1UF9ERVZfVVNCX0VIQ0kNCj4gIAlzZWxlY3QgUzNDX0RFVl9SVEMNCj4gIAlz
+ZWxlY3QgUzNDX0RFVl9XRFQNCj4gIAlzZWxlY3QgUzNDX0RFVl9JMkMxDQo+IEBAIC0xNTEsNiAr
+MTUyLDcgQEAgY29uZmlnIE1BQ0hfU01ES1YzMTANCj4gIAlzZWxlY3QgU0FNU1VOR19ERVZfUFdN
+DQo+ICAJc2VsZWN0IEVYWU5PUzRfREVWX1NZU01NVQ0KPiAgCXNlbGVjdCBFWFlOT1M0X1NFVFVQ
+X0ZJTUQwDQo+ICsJc2VsZWN0IEVYWU5PUzRfU0VUVVBfVVNCX1BIWQ0KPiAgCXNlbGVjdCBFWFlO
+T1M0X1NFVFVQX0kyQzENCj4gIAlzZWxlY3QgRVhZTk9TNF9TRVRVUF9LRVlQQUQNCj4gIAlzZWxl
+Y3QgRVhZTk9TNF9TRVRVUF9TREhDSQ0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1leHlu
+b3M0L21hY2gtc21ka3YzMTAuYyBiL2FyY2gvYXJtL21hY2gtDQo+IGV4eW5vczQvbWFjaC1zbWRr
+djMxMC5jDQo+IGluZGV4IDVmNjJiMmIuLmI2YzI4ZWEgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJt
+L21hY2gtZXh5bm9zNC9tYWNoLXNtZGt2MzEwLmMNCj4gKysrIGIvYXJjaC9hcm0vbWFjaC1leHlu
+b3M0L21hY2gtc21ka3YzMTAuYw0KPiBAQCAtMzMsNiArMzMsOCBAQA0KPiAgI2luY2x1ZGUgPHBs
+YXQvZ3Bpby1jZmcuaD4NCj4gICNpbmNsdWRlIDxwbGF0L2JhY2tsaWdodC5oPg0KPiAgI2luY2x1
+ZGUgPHBsYXQvbWZjLmg+DQo+ICsjaW5jbHVkZSA8cGxhdC9laGNpLmg+DQo+ICsjaW5jbHVkZSA8
+cGxhdC9jbG9jay5oPg0KPiANCj4gICNpbmNsdWRlIDxtYWNoL21hcC5oPg0KPiANCj4gQEAgLTE2
+Nyw2ICsxNjksMTYgQEAgc3RhdGljIHN0cnVjdCBpMmNfYm9hcmRfaW5mbyBpMmNfZGV2czFbXSBf
+X2luaXRkYXRhID0NCj4gew0KPiAgCXtJMkNfQk9BUkRfSU5GTygid204OTk0IiwgMHgxYSksfSwN
+Cj4gIH07DQo+IA0KPiArLyogVVNCIEVIQ0kgKi8NCj4gK3N0YXRpYyBzdHJ1Y3QgczVwX2VoY2lf
+cGxhdGRhdGEgc21ka3YzMTBfZWhjaV9wZGF0YTsNCj4gKw0KPiArc3RhdGljIHZvaWQgX19pbml0
+IHNtZGt2MzEwX2VoY2lfaW5pdCh2b2lkKQ0KPiArew0KPiArCXN0cnVjdCBzNXBfZWhjaV9wbGF0
+ZGF0YSAqcGRhdGEgPSAmc21ka3YzMTBfZWhjaV9wZGF0YTsNCj4gKw0KPiArCXM1cF9laGNpX3Nl
+dF9wbGF0ZGF0YShwZGF0YSk7DQo+ICt9DQo+ICsNCj4gIHN0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1f
+ZGV2aWNlICpzbWRrdjMxMF9kZXZpY2VzW10gX19pbml0ZGF0YSA9IHsNCj4gIAkmczNjX2Rldmlj
+ZV9oc21tYzAsDQo+ICAJJnMzY19kZXZpY2VfaHNtbWMxLA0KPiBAQCAtMTc1LDYgKzE4Nyw3IEBA
+IHN0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpzbWRrdjMxMF9kZXZpY2VzW10NCj4gX19p
+bml0ZGF0YSA9IHsNCj4gIAkmczNjX2RldmljZV9pMmMxLA0KPiAgCSZzM2NfZGV2aWNlX3J0YywN
+Cj4gIAkmczNjX2RldmljZV93ZHQsDQo+ICsJJnM1cF9kZXZpY2VfZWhjaSwNCj4gIAkmZXh5bm9z
+NF9kZXZpY2VfYWM5NywNCj4gIAkmZXh5bm9zNF9kZXZpY2VfaTJzMCwNCj4gIAkmc2Ftc3VuZ19k
+ZXZpY2Vfa2V5cGFkLA0KPiBAQCAtMjU4LDYgKzI3MSw5IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBz
+bWRrdjMxMF9tYWNoaW5lX2luaXQodm9pZCkNCj4gDQo+ICAJc2Ftc3VuZ19ibF9zZXQoJnNtZGt2
+MzEwX2JsX2dwaW9faW5mbywgJnNtZGt2MzEwX2JsX2RhdGEpOw0KPiANCj4gKwlzbWRrdjMxMF9l
+aGNpX2luaXQoKTsNCj4gKwljbGtfeHVzYnh0aS5yYXRlID0gMjQwMDAwMDA7DQo+ICsNCj4gIAlw
+bGF0Zm9ybV9hZGRfZGV2aWNlcyhzbWRrdjMxMF9kZXZpY2VzLA0KPiBBUlJBWV9TSVpFKHNtZGt2
+MzEwX2RldmljZXMpKTsNCj4gIAlzNXBfZGV2aWNlX21mYy5kZXYucGFyZW50ID0gJmV4eW5vczRf
+ZGV2aWNlX3BkW1BEX01GQ10uZGV2Ow0KPiAgfQ0KPiAtLQ0KPiAxLjcuNC4xDQo+IA0KPiAtLQ0K
+PiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3Jp
+YmUgbGludXgtc2Ftc3VuZy0NCj4gc29jIiBpbg0KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8g
+bWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZw0KPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRw
+Oi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwNCg0KDQo=
