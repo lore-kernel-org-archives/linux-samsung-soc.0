@@ -1,52 +1,56 @@
-From: alim akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH 1/3] ARM: EXYNOS4: register the second instance of pl330 DMAC
-Date: Wed, 17 Aug 2011 09:36:07 +0530
-Message-ID: <1313553969-14639-2-git-send-email-alim.akhtar@samsung.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH 0/3] ARM: SAMSUNG: register the second instance of PL330 DMAC
+Date: Wed, 17 Aug 2011 14:37:01 +0900
+Message-ID: <CAH9JG2XPA3zAT9A6-2N0CqYC__ac4krW5gTM271qfxJD8DHETQ@mail.gmail.com>
 References: <1313553969-14639-1-git-send-email-alim.akhtar@samsung.com>
-Content-Transfer-Encoding: 7BIT
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:55981 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750776Ab1HQEF0 (ORCPT
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:35876 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750813Ab1HQFhE convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Aug 2011 00:05:26 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LQ2000UW0OUH790@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 17 Aug 2011 13:05:25 +0900 (KST)
-Received: from alim.sisodomain.com ([107.108.73.28])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LQ200DNO0OF9I@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 17 Aug 2011 13:05:26 +0900 (KST)
-In-reply-to: <1313553969-14639-1-git-send-email-alim.akhtar@samsung.com>
+	Wed, 17 Aug 2011 01:37:04 -0400
+Received: by qwk3 with SMTP id 3so392250qwk.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Aug 2011 22:37:02 -0700 (PDT)
+In-Reply-To: <1313553969-14639-1-git-send-email-alim.akhtar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: boojin.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Alim Akhtar <alim.akhtar@samsung.com>
+To: alim akhtar <alim.akhtar@samsung.com>
+Cc: kgene.kim@samsung.com, boojin.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-From: Alim Akhtar <alim.akhtar@samsung.com>
+Does it also need to provide the mdma?
 
-Platform data is provided for two instance of pl330 DMAC,
-but only one DMAC is register with amba_device.
-This patch register the second instance.
-
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- arch/arm/mach-exynos4/dma.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-exynos4/dma.c b/arch/arm/mach-exynos4/dma.c
-index d57d662..9667c61 100644
---- a/arch/arm/mach-exynos4/dma.c
-+++ b/arch/arm/mach-exynos4/dma.c
-@@ -243,6 +243,7 @@ struct amba_device exynos4_device_pdma1 = {
- static int __init exynos4_dma_init(void)
- {
- 	amba_device_register(&exynos4_device_pdma0, &iomem_resource);
-+	amba_device_register(&exynos4_device_pdma1, &iomem_resource);
- 
- 	return 0;
- }
--- 
-1.7.2.3
+On Wed, Aug 17, 2011 at 1:06 PM, alim akhtar <alim.akhtar@samsung.com> =
+wrote:
+> From: Alim Akhtar <alim.akhtar@samsung.com>
+>
+> Two instance of platform data is provided for PL330 but only one PL33=
+0 DMAC
+> instance is registered with amba_device.
+> These patch sets registers the second instance with amba_device.
+>
+> These patches are based on kgene's tree next/topic-dma-pl330 branch.
+> http://git.kernel.org/?p=3Dlinux/kernel/git/kgene/linux-samsung.git;;=
+a=3Dsummary
+>
+> Alim Akhtar (3):
+> =A0ARM: EXYNOS4: register the second instance of pl330 DMAC
+> =A0ARM: S5PV210: register the second instance of pl330 DMAC
+> =A0ARM: S5PC100: register the second instance of pl330 DMAC
+>
+> =A0arch/arm/mach-exynos4/dma.c | =A0 =A01 +
+> =A0arch/arm/mach-s5pc100/dma.c | =A0 =A01 +
+> =A0arch/arm/mach-s5pv210/dma.c | =A0 =A01 +
+> =A03 files changed, 3 insertions(+), 0 deletions(-)
+>
+> --
+> 1.7.2.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
