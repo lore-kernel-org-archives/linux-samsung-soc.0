@@ -1,52 +1,125 @@
-From: ALIM AKHTAR <alim.akhtar@samsung.com>
-Subject: Re: Re: [PATCH 0/3] ARM: SAMSUNG: register the second instance of
- PL330 DMAC
-Date: Wed, 17 Aug 2011 06:09:48 +0000 (GMT)
-Message-ID: <23523225.129141313561387658.JavaMail.weblogic@epml12>
-Reply-To: alim.akhtar@samsung.com
+From: Vladimir Zapolskiy <vz@mleia.com>
+Subject: Re: [PATCH] ARM: SAMSUNG: Modify the devname for pl330 clock
+Date: Wed, 17 Aug 2011 09:16:57 +0300
+Message-ID: <4E4B5CD9.7060703@mleia.com>
+References: <1313540801-12054-1-git-send-email-boojin.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:50384 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750813Ab1HQGKQ (ORCPT
+Received: from li271-223.members.linode.com ([178.79.152.223]:40422 "EHLO
+	mail.mleia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752120Ab1HQGRA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Aug 2011 02:10:16 -0400
-Received: from epcpsbge2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LQ200D2A6EVT4E0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 17 Aug 2011 15:09:48 +0900 (KST)
-MIME-version: 1.0
+	Wed, 17 Aug 2011 02:17:00 -0400
+In-Reply-To: <1313540801-12054-1-git-send-email-boojin.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, BooJin Kim <boojin.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Boojin Kim <boojin.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
-WWVzLCBtZG1hIG5lZWQgdG8gYmUgcHJvdmlkZWQuCkV4eW5vczQgaGFzIHR3byBETUEgdG9wczog
-b25lIGZvciBNMk0gYW5kIGFub3RoZXIgZm9yIHBlcmlwaGVyYWwtdG8tbWVtb3J5LgpQZXJpcGhl
-cmFsLXRvLW1lbW9yeSBjb25zaXN0cyBvZiB0d28gUEwzMzBzIChwZGFtMCBhbmQgcGRtYTEpLCBj
-dXJyZW50IG1haW5saW5lIGNvZGUgc3VwcG9ydHMgdGhpcy4KCi0tLS0tLS0gT3JpZ2luYWwgTWVz
-c2FnZSAtLS0tLS0tClNlbmRlciA6IEt5dW5nbWluIFBhcms8a21wYXJrQGluZnJhZGVhZC5vcmc+
-CkRhdGUgOiBBdWcgMTcsIDIwMTEgMTQ6MzcgKEdNVCswOTowMCkKVGl0bGUgOiBSZTogW1BBVENI
-IDAvM10gQVJNOiBTQU1TVU5HOiByZWdpc3RlciB0aGUgc2Vjb25kIGluc3RhbmNlIG9mIFBMMzMw
-IERNQUMKoApEb2VzIGl0IGFsc28gbmVlZCB0byBwcm92aWRlIHRoZSBtZG1hPwoKT24gV2VkLCBB
-dWcgMTcsIDIwMTEgYXQgMTowNiBQTSwgYWxpbSBha2h0YXIgd3JvdGU6Cj4gRnJvbTogQWxpbSBB
-a2h0YXIgCj4KPiBUd28gaW5zdGFuY2Ugb2YgcGxhdGZvcm0gZGF0YSBpcyBwcm92aWRlZCBmb3Ig
-UEwzMzAgYnV0IG9ubHkgb25lIFBMMzMwIERNQUMKPiBpbnN0YW5jZSBpcyByZWdpc3RlcmVkIHdp
-dGggYW1iYV9kZXZpY2UuCj4gVGhlc2UgcGF0Y2ggc2V0cyByZWdpc3RlcnMgdGhlIHNlY29uZCBp
-bnN0YW5jZSB3aXRoIGFtYmFfZGV2aWNlLgo+Cj4gVGhlc2UgcGF0Y2hlcyBhcmUgYmFzZWQgb24g
-a2dlbmUncyB0cmVlIG5leHQvdG9waWMtZG1hLXBsMzMwIGJyYW5jaC4KPiBodHRwOi8vZ2l0Lmtl
-cm5lbC5vcmcvP3A9bGludXgva2VybmVsL2dpdC9rZ2VuZS9saW51eC1zYW1zdW5nLmdpdDs7YT1z
-dW1tYXJ5Cj4KPiBBbGltIEFraHRhciAoMyk6Cj4goEFSTTogRVhZTk9TNDogcmVnaXN0ZXIgdGhl
-IHNlY29uZCBpbnN0YW5jZSBvZiBwbDMzMCBETUFDCj4goEFSTTogUzVQVjIxMDogcmVnaXN0ZXIg
-dGhlIHNlY29uZCBpbnN0YW5jZSBvZiBwbDMzMCBETUFDCj4goEFSTTogUzVQQzEwMDogcmVnaXN0
-ZXIgdGhlIHNlY29uZCBpbnN0YW5jZSBvZiBwbDMzMCBETUFDCj4KPiCgYXJjaC9hcm0vbWFjaC1l
-eHlub3M0L2RtYS5jIHwgoCCgMSArCj4goGFyY2gvYXJtL21hY2gtczVwYzEwMC9kbWEuYyB8IKAg
-oDEgKwo+IKBhcmNoL2FybS9tYWNoLXM1cHYyMTAvZG1hLmMgfCCgIKAxICsKPiCgMyBmaWxlcyBj
-aGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDAgZGVsZXRpb25zKC0pCj4KPiAtLQo+IDEuNy4yLjMK
-Pgo+IC0tCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVu
-c3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0
-byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCCgaHR0
-cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1sCj4=
+Hi,
+
+looks like it contains my series as a subset.
+
+--
+With best wishes,
+Vladimir
+
+On 17.08.2011 03:26, Boojin Kim wrote:
+> This patch modified the devname for pl330 clock from 's3c-pl330' to 'dma-pl330'
+> to support new pl330 driver on dmaengine.
+> NOTE: This patch sould be added after merging new pl330 driver on dmaengine.
+>
+> Signed-off-by: Boojin Kim<boojin.kim@samsung.com>
+> ---
+>   arch/arm/mach-exynos4/clock.c         |    4 ++--
+>   arch/arm/mach-s5p64x0/clock-s5p6440.c |    1 +
+>   arch/arm/mach-s5p64x0/clock-s5p6450.c |    1 +
+>   arch/arm/mach-s5pc100/clock.c         |    4 ++--
+>   arch/arm/mach-s5pv210/clock.c         |    4 ++--
+>   5 files changed, 8 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
+> index fee2dd8..04c997a 100644
+> --- a/arch/arm/mach-exynos4/clock.c
+> +++ b/arch/arm/mach-exynos4/clock.c
+> @@ -460,12 +460,12 @@ static struct clk init_clocks_off[] = {
+>   		.ctrlbit	= (1<<  10),
+>   	}, {
+>   		.name		= "dma",
+> -		.devname	= "s3c-pl330.0",
+> +		.devname	= "dma-pl330.0",
+>   		.enable		= exynos4_clk_ip_fsys_ctrl,
+>   		.ctrlbit	= (1<<  0),
+>   	}, {
+>   		.name		= "dma",
+> -		.devname	= "s3c-pl330.1",
+> +		.devname	= "dma-pl330.1",
+>   		.enable		= exynos4_clk_ip_fsys_ctrl,
+>   		.ctrlbit	= (1<<  1),
+>   	}, {
+> diff --git a/arch/arm/mach-s5p64x0/clock-s5p6440.c b/arch/arm/mach-s5p64x0/clock-s5p6440.c
+> index c1f548f..c54c65d 100644
+> --- a/arch/arm/mach-s5p64x0/clock-s5p6440.c
+> +++ b/arch/arm/mach-s5p64x0/clock-s5p6440.c
+> @@ -147,6 +147,7 @@ static struct clk init_clocks_off[] = {
+>   		.ctrlbit	= (1<<  8),
+>   	}, {
+>   		.name		= "dma",
+> +		.devname	= "dma-pl330",
+>   		.parent		=&clk_hclk_low.clk,
+>   		.enable		= s5p64x0_hclk0_ctrl,
+>   		.ctrlbit	= (1<<  12),
+> diff --git a/arch/arm/mach-s5p64x0/clock-s5p6450.c b/arch/arm/mach-s5p64x0/clock-s5p6450.c
+> index 3d9b609..2d04abf 100644
+> --- a/arch/arm/mach-s5p64x0/clock-s5p6450.c
+> +++ b/arch/arm/mach-s5p64x0/clock-s5p6450.c
+> @@ -180,6 +180,7 @@ static struct clk init_clocks_off[] = {
+>   		.ctrlbit	= (1<<  3),
+>   	}, {
+>   		.name		= "dma",
+> +		.devname	= "dma-pl330",
+>   		.parent		=&clk_hclk_low.clk,
+>   		.enable		= s5p64x0_hclk0_ctrl,
+>   		.ctrlbit	= (1<<  12),
+> diff --git a/arch/arm/mach-s5pc100/clock.c b/arch/arm/mach-s5pc100/clock.c
+> index 6527c05..8d47709 100644
+> --- a/arch/arm/mach-s5pc100/clock.c
+> +++ b/arch/arm/mach-s5pc100/clock.c
+> @@ -460,13 +460,13 @@ static struct clk init_clocks_off[] = {
+>   		.ctrlbit	= (1<<  2),
+>   	}, {
+>   		.name		= "dma",
+> -		.devname	= "s3c-pl330.1",
+> +		.devname	= "dma-pl330.1",
+>   		.parent		=&clk_div_d1_bus.clk,
+>   		.enable		= s5pc100_d1_0_ctrl,
+>   		.ctrlbit	= (1<<  1),
+>   	}, {
+>   		.name		= "dma",
+> -		.devname	= "s3c-pl330.0",
+> +		.devname	= "dma-pl330.0",
+>   		.parent		=&clk_div_d1_bus.clk,
+>   		.enable		= s5pc100_d1_0_ctrl,
+>   		.ctrlbit	= (1<<  0),
+> diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
+> index d35726a..239aaad 100644
+> --- a/arch/arm/mach-s5pv210/clock.c
+> +++ b/arch/arm/mach-s5pv210/clock.c
+> @@ -295,13 +295,13 @@ static struct clk_ops clk_fout_apll_ops = {
+>   static struct clk init_clocks_off[] = {
+>   	{
+>   		.name		= "dma",
+> -		.devname	= "s3c-pl330.0",
+> +		.devname	= "dma-pl330.0",
+>   		.parent		=&clk_hclk_psys.clk,
+>   		.enable		= s5pv210_clk_ip0_ctrl,
+>   		.ctrlbit	= (1<<  3),
+>   	}, {
+>   		.name		= "dma",
+> -		.devname	= "s3c-pl330.1",
+> +		.devname	= "dma-pl330.1",
+>   		.parent		=&clk_hclk_psys.clk,
+>   		.enable		= s5pv210_clk_ip0_ctrl,
+>   		.ctrlbit	= (1<<  4),
