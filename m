@@ -1,83 +1,152 @@
-From: JinGoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS4: ADD USB EHCI device to SMDKV310
-Date: Wed, 17 Aug 2011 07:15:49 +0000 (GMT)
-Message-ID: <16228662.138191313565348967.JavaMail.weblogic@epml23>
-Reply-To: jg1.han@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
+From: Boojin Kim <boojin.kim@samsung.com>
+Subject: RE: [PATCH] ARM: SAMSUNG: Modify the devname for pl330 clock
+Date: Wed, 17 Aug 2011 17:46:28 +0900
+Message-ID: <001601cc5cba$27b49400$771dbc00$%kim@samsung.com>
+References: <1313540801-12054-1-git-send-email-boojin.kim@samsung.com>
+ <4E4B5CD9.7060703@mleia.com>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:29396 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751160Ab1HQHQN (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:33331 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751119Ab1HQIqa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Aug 2011 03:16:13 -0400
-Received: from epcpsbge2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Wed, 17 Aug 2011 04:46:30 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LQ200HXB9I4ZNF0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 17 Aug 2011 16:15:55 +0900 (KST)
-MIME-version: 1.0
+ 2010)) with ESMTP id <0LQ20019TDPAMEM0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 17 Aug 2011 17:46:28 +0900 (KST)
+Received: from DOBOOJINKIM03 (12-23-120-72.csky.net [12.23.120.72])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LQ2003SLDPH2J@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 17 Aug 2011 17:46:29 +0900 (KST)
+In-reply-to: <4E4B5CD9.7060703@mleia.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "linaro-dev@lists.linaro.org" <linaro-dev@lists.linaro.org>, "patches@linaro.org" <patches@linaro.org>
+To: 'Vladimir Zapolskiy' <vz@mleia.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBsaW51eC1zYW1zdW5nLXNvYy1v
-d25lckB2Z2VyLmtlcm5lbC5vcmcgW21haWx0bzpsaW51eC1zYW1zdW5nLXNvYy0NCj4gb3duZXJA
-dmdlci5rZXJuZWwub3JnXSBPbiBCZWhhbGYgT2YgU2FjaGluIEthbWF0DQo+IFNlbnQ6IFdlZG5l
-c2RheSwgQXVndXN0IDE3LCAyMDExIDM6NTkgUE0NCj4gVG86IGxpbnV4LXNhbXN1bmctc29jQHZn
-ZXIua2VybmVsLm9yZw0KPiBDYzoga2dlbmUua2ltQHNhbXN1bmcuY29tOyBsaW5hcm8tZGV2QGxp
-c3RzLmxpbmFyby5vcmc7IHBhdGNoZXNAbGluYXJvLm9yZzsNCj4gc2FjaGluLmthbWF0QGxpbmFy
-by5vcmcNCj4gU3ViamVjdDogW1BBVENIXSBBUk06IEVYWU5PUzQ6IEFERCBVU0IgRUhDSSBkZXZp
-Y2UgdG8gU01ES1YzMTANCj4gDQo+IFNpZ25lZC1vZmYtYnk6IEJodXZhbmEgS2FrdW5vb3JpIDxi
-aHV2YW5hLmtha3Vub29yaUBsaW5hcm8ub3JnPg0KPiBTaWduZWQtb2ZmLWJ5OiBQYW5rYWogRHVi
-ZXkgPHBhbmthai5kdWJleUBzYW1zdW5nLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogU2FjaGluIEth
-bWF0IDxzYWNoaW4ua2FtYXRAbGluYXJvLm9yZz4NCg0KQWNrZWQtYnk6IEppbmdvbyBIYW4gPGpn
-MS5oYW5Ac2Ftc3VuZy5jb20+DQoNCj4gLS0tDQo+ICBhcmNoL2FybS9tYWNoLWV4eW5vczQvS2Nv
-bmZpZyAgICAgICAgIHwgICAgMiArKw0KPiAgYXJjaC9hcm0vbWFjaC1leHlub3M0L21hY2gtc21k
-a3YzMTAuYyB8ICAgMTYgKysrKysrKysrKysrKysrKw0KPiAgMiBmaWxlcyBjaGFuZ2VkLCAxOCBp
-bnNlcnRpb25zKCspLCAwIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJt
-L21hY2gtZXh5bm9zNC9LY29uZmlnIGIvYXJjaC9hcm0vbWFjaC1leHlub3M0L0tjb25maWcNCj4g
-aW5kZXggYmIyOWQ1MS4uY2M5N2QyMyAxMDA2NDQNCj4gLS0tIGEvYXJjaC9hcm0vbWFjaC1leHlu
-b3M0L0tjb25maWcNCj4gKysrIGIvYXJjaC9hcm0vbWFjaC1leHlub3M0L0tjb25maWcNCj4gQEAg
-LTEzNiw2ICsxMzYsNyBAQCBjb25maWcgTUFDSF9TTURLVjMxMA0KPiAgCWJvb2wgIlNNREtWMzEw
-Ig0KPiAgCXNlbGVjdCBDUFVfRVhZTk9TNDIxMA0KPiAgCXNlbGVjdCBTNVBfREVWX0ZJTUQwDQo+
-ICsJc2VsZWN0IFM1UF9ERVZfVVNCX0VIQ0kNCj4gIAlzZWxlY3QgUzNDX0RFVl9SVEMNCj4gIAlz
-ZWxlY3QgUzNDX0RFVl9XRFQNCj4gIAlzZWxlY3QgUzNDX0RFVl9JMkMxDQo+IEBAIC0xNTEsNiAr
-MTUyLDcgQEAgY29uZmlnIE1BQ0hfU01ES1YzMTANCj4gIAlzZWxlY3QgU0FNU1VOR19ERVZfUFdN
-DQo+ICAJc2VsZWN0IEVYWU5PUzRfREVWX1NZU01NVQ0KPiAgCXNlbGVjdCBFWFlOT1M0X1NFVFVQ
-X0ZJTUQwDQo+ICsJc2VsZWN0IEVYWU5PUzRfU0VUVVBfVVNCX1BIWQ0KPiAgCXNlbGVjdCBFWFlO
-T1M0X1NFVFVQX0kyQzENCj4gIAlzZWxlY3QgRVhZTk9TNF9TRVRVUF9LRVlQQUQNCj4gIAlzZWxl
-Y3QgRVhZTk9TNF9TRVRVUF9TREhDSQ0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1leHlu
-b3M0L21hY2gtc21ka3YzMTAuYyBiL2FyY2gvYXJtL21hY2gtDQo+IGV4eW5vczQvbWFjaC1zbWRr
-djMxMC5jDQo+IGluZGV4IDVmNjJiMmIuLmI2YzI4ZWEgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJt
-L21hY2gtZXh5bm9zNC9tYWNoLXNtZGt2MzEwLmMNCj4gKysrIGIvYXJjaC9hcm0vbWFjaC1leHlu
-b3M0L21hY2gtc21ka3YzMTAuYw0KPiBAQCAtMzMsNiArMzMsOCBAQA0KPiAgI2luY2x1ZGUgPHBs
-YXQvZ3Bpby1jZmcuaD4NCj4gICNpbmNsdWRlIDxwbGF0L2JhY2tsaWdodC5oPg0KPiAgI2luY2x1
-ZGUgPHBsYXQvbWZjLmg+DQo+ICsjaW5jbHVkZSA8cGxhdC9laGNpLmg+DQo+ICsjaW5jbHVkZSA8
-cGxhdC9jbG9jay5oPg0KPiANCj4gICNpbmNsdWRlIDxtYWNoL21hcC5oPg0KPiANCj4gQEAgLTE2
-Nyw2ICsxNjksMTYgQEAgc3RhdGljIHN0cnVjdCBpMmNfYm9hcmRfaW5mbyBpMmNfZGV2czFbXSBf
-X2luaXRkYXRhID0NCj4gew0KPiAgCXtJMkNfQk9BUkRfSU5GTygid204OTk0IiwgMHgxYSksfSwN
-Cj4gIH07DQo+IA0KPiArLyogVVNCIEVIQ0kgKi8NCj4gK3N0YXRpYyBzdHJ1Y3QgczVwX2VoY2lf
-cGxhdGRhdGEgc21ka3YzMTBfZWhjaV9wZGF0YTsNCj4gKw0KPiArc3RhdGljIHZvaWQgX19pbml0
-IHNtZGt2MzEwX2VoY2lfaW5pdCh2b2lkKQ0KPiArew0KPiArCXN0cnVjdCBzNXBfZWhjaV9wbGF0
-ZGF0YSAqcGRhdGEgPSAmc21ka3YzMTBfZWhjaV9wZGF0YTsNCj4gKw0KPiArCXM1cF9laGNpX3Nl
-dF9wbGF0ZGF0YShwZGF0YSk7DQo+ICt9DQo+ICsNCj4gIHN0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1f
-ZGV2aWNlICpzbWRrdjMxMF9kZXZpY2VzW10gX19pbml0ZGF0YSA9IHsNCj4gIAkmczNjX2Rldmlj
-ZV9oc21tYzAsDQo+ICAJJnMzY19kZXZpY2VfaHNtbWMxLA0KPiBAQCAtMTc1LDYgKzE4Nyw3IEBA
-IHN0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpzbWRrdjMxMF9kZXZpY2VzW10NCj4gX19p
-bml0ZGF0YSA9IHsNCj4gIAkmczNjX2RldmljZV9pMmMxLA0KPiAgCSZzM2NfZGV2aWNlX3J0YywN
-Cj4gIAkmczNjX2RldmljZV93ZHQsDQo+ICsJJnM1cF9kZXZpY2VfZWhjaSwNCj4gIAkmZXh5bm9z
-NF9kZXZpY2VfYWM5NywNCj4gIAkmZXh5bm9zNF9kZXZpY2VfaTJzMCwNCj4gIAkmc2Ftc3VuZ19k
-ZXZpY2Vfa2V5cGFkLA0KPiBAQCAtMjU4LDYgKzI3MSw5IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBz
-bWRrdjMxMF9tYWNoaW5lX2luaXQodm9pZCkNCj4gDQo+ICAJc2Ftc3VuZ19ibF9zZXQoJnNtZGt2
-MzEwX2JsX2dwaW9faW5mbywgJnNtZGt2MzEwX2JsX2RhdGEpOw0KPiANCj4gKwlzbWRrdjMxMF9l
-aGNpX2luaXQoKTsNCj4gKwljbGtfeHVzYnh0aS5yYXRlID0gMjQwMDAwMDA7DQo+ICsNCj4gIAlw
-bGF0Zm9ybV9hZGRfZGV2aWNlcyhzbWRrdjMxMF9kZXZpY2VzLA0KPiBBUlJBWV9TSVpFKHNtZGt2
-MzEwX2RldmljZXMpKTsNCj4gIAlzNXBfZGV2aWNlX21mYy5kZXYucGFyZW50ID0gJmV4eW5vczRf
-ZGV2aWNlX3BkW1BEX01GQ10uZGV2Ow0KPiAgfQ0KPiAtLQ0KPiAxLjcuNC4xDQo+IA0KPiAtLQ0K
-PiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3Jp
-YmUgbGludXgtc2Ftc3VuZy0NCj4gc29jIiBpbg0KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8g
-bWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZw0KPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRw
-Oi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwNCg0KDQo=
+Vladimir Zapolskiy wrote:
+> Hi,
+>
+> looks like it contains my series as a subset.
+
+As I replied on your patches, yes, I know that. I sent it before see your
+patch.
+Do you add the missing about s5p64x0 in your patch?
+If not, I will split up this patch to get missing about s5p64x0 in your
+patch.
+
+Thanks
+Boojin Kim.
+
+>
+> --
+> With best wishes,
+> Vladimir
+>
+> On 17.08.2011 03:26, Boojin Kim wrote:
+> > This patch modified the devname for pl330 clock from 's3c-pl330' to
+> 'dma-pl330'
+> > to support new pl330 driver on dmaengine.
+> > NOTE: This patch sould be added after merging new pl330 driver on
+> dmaengine.
+> >
+> > Signed-off-by: Boojin Kim<boojin.kim@samsung.com>
+> > ---
+> >   arch/arm/mach-exynos4/clock.c         |    4 ++--
+> >   arch/arm/mach-s5p64x0/clock-s5p6440.c |    1 +
+> >   arch/arm/mach-s5p64x0/clock-s5p6450.c |    1 +
+> >   arch/arm/mach-s5pc100/clock.c         |    4 ++--
+> >   arch/arm/mach-s5pv210/clock.c         |    4 ++--
+> >   5 files changed, 8 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-
+> exynos4/clock.c
+> > index fee2dd8..04c997a 100644
+> > --- a/arch/arm/mach-exynos4/clock.c
+> > +++ b/arch/arm/mach-exynos4/clock.c
+> > @@ -460,12 +460,12 @@ static struct clk init_clocks_off[] = {
+> >   		.ctrlbit	= (1<<  10),
+> >   	}, {
+> >   		.name		= "dma",
+> > -		.devname	= "s3c-pl330.0",
+> > +		.devname	= "dma-pl330.0",
+> >   		.enable		= exynos4_clk_ip_fsys_ctrl,
+> >   		.ctrlbit	= (1<<  0),
+> >   	}, {
+> >   		.name		= "dma",
+> > -		.devname	= "s3c-pl330.1",
+> > +		.devname	= "dma-pl330.1",
+> >   		.enable		= exynos4_clk_ip_fsys_ctrl,
+> >   		.ctrlbit	= (1<<  1),
+> >   	}, {
+> > diff --git a/arch/arm/mach-s5p64x0/clock-s5p6440.c b/arch/arm/mach-
+> s5p64x0/clock-s5p6440.c
+> > index c1f548f..c54c65d 100644
+> > --- a/arch/arm/mach-s5p64x0/clock-s5p6440.c
+> > +++ b/arch/arm/mach-s5p64x0/clock-s5p6440.c
+> > @@ -147,6 +147,7 @@ static struct clk init_clocks_off[] = {
+> >   		.ctrlbit	= (1<<  8),
+> >   	}, {
+> >   		.name		= "dma",
+> > +		.devname	= "dma-pl330",
+> >   		.parent		=&clk_hclk_low.clk,
+> >   		.enable		= s5p64x0_hclk0_ctrl,
+> >   		.ctrlbit	= (1<<  12),
+> > diff --git a/arch/arm/mach-s5p64x0/clock-s5p6450.c b/arch/arm/mach-
+> s5p64x0/clock-s5p6450.c
+> > index 3d9b609..2d04abf 100644
+> > --- a/arch/arm/mach-s5p64x0/clock-s5p6450.c
+> > +++ b/arch/arm/mach-s5p64x0/clock-s5p6450.c
+> > @@ -180,6 +180,7 @@ static struct clk init_clocks_off[] = {
+> >   		.ctrlbit	= (1<<  3),
+> >   	}, {
+> >   		.name		= "dma",
+> > +		.devname	= "dma-pl330",
+> >   		.parent		=&clk_hclk_low.clk,
+> >   		.enable		= s5p64x0_hclk0_ctrl,
+> >   		.ctrlbit	= (1<<  12),
+> > diff --git a/arch/arm/mach-s5pc100/clock.c b/arch/arm/mach-
+> s5pc100/clock.c
+> > index 6527c05..8d47709 100644
+> > --- a/arch/arm/mach-s5pc100/clock.c
+> > +++ b/arch/arm/mach-s5pc100/clock.c
+> > @@ -460,13 +460,13 @@ static struct clk init_clocks_off[] = {
+> >   		.ctrlbit	= (1<<  2),
+> >   	}, {
+> >   		.name		= "dma",
+> > -		.devname	= "s3c-pl330.1",
+> > +		.devname	= "dma-pl330.1",
+> >   		.parent		=&clk_div_d1_bus.clk,
+> >   		.enable		= s5pc100_d1_0_ctrl,
+> >   		.ctrlbit	= (1<<  1),
+> >   	}, {
+> >   		.name		= "dma",
+> > -		.devname	= "s3c-pl330.0",
+> > +		.devname	= "dma-pl330.0",
+> >   		.parent		=&clk_div_d1_bus.clk,
+> >   		.enable		= s5pc100_d1_0_ctrl,
+> >   		.ctrlbit	= (1<<  0),
+> > diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-
+> s5pv210/clock.c
+> > index d35726a..239aaad 100644
+> > --- a/arch/arm/mach-s5pv210/clock.c
+> > +++ b/arch/arm/mach-s5pv210/clock.c
+> > @@ -295,13 +295,13 @@ static struct clk_ops clk_fout_apll_ops = {
+> >   static struct clk init_clocks_off[] = {
+> >   	{
+> >   		.name		= "dma",
+> > -		.devname	= "s3c-pl330.0",
+> > +		.devname	= "dma-pl330.0",
+> >   		.parent		=&clk_hclk_psys.clk,
+> >   		.enable		= s5pv210_clk_ip0_ctrl,
+> >   		.ctrlbit	= (1<<  3),
+> >   	}, {
+> >   		.name		= "dma",
+> > -		.devname	= "s3c-pl330.1",
+> > +		.devname	= "dma-pl330.1",
+> >   		.parent		=&clk_hclk_psys.clk,
+> >   		.enable		= s5pv210_clk_ip0_ctrl,
+> >   		.ctrlbit	= (1<<  4),
