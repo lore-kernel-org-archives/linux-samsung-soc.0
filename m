@@ -1,24 +1,24 @@
 From: alim akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH 2/3] ARM: S5PV210: register the second instance of pl330 DMAC
-Date: Wed, 17 Aug 2011 09:36:08 +0530
-Message-ID: <1313553969-14639-3-git-send-email-alim.akhtar@samsung.com>
+Subject: [PATCH 1/3] ARM: EXYNOS4: register the second instance of pl330 DMAC
+Date: Wed, 17 Aug 2011 09:36:07 +0530
+Message-ID: <1313553969-14639-2-git-send-email-alim.akhtar@samsung.com>
 References: <1313553969-14639-1-git-send-email-alim.akhtar@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.samsung.com ([203.254.224.33]:55981 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750756Ab1HQEF1 (ORCPT
+	with ESMTP id S1750776Ab1HQEF0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Aug 2011 00:05:27 -0400
+	Wed, 17 Aug 2011 00:05:26 -0400
 Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
  by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
  2010)) with ESMTP id <0LQ2000UW0OUH790@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 17 Aug 2011 13:05:26 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Wed, 17 Aug 2011 13:05:25 +0900 (KST)
 Received: from alim.sisodomain.com ([107.108.73.28])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0LQ200DNO0OF9I@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 17 Aug 2011 13:05:27 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Wed, 17 Aug 2011 13:05:26 +0900 (KST)
 In-reply-to: <1313553969-14639-1-git-send-email-alim.akhtar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -33,18 +33,18 @@ This patch register the second instance.
 
 Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- arch/arm/mach-s5pv210/dma.c |    1 +
+ arch/arm/mach-exynos4/dma.c |    1 +
  1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv210/dma.c b/arch/arm/mach-s5pv210/dma.c
-index f79d0b0..86b749c 100644
---- a/arch/arm/mach-s5pv210/dma.c
-+++ b/arch/arm/mach-s5pv210/dma.c
-@@ -254,6 +254,7 @@ struct amba_device s5pv210_device_pdma1 = {
- static int __init s5pv210_dma_init(void)
+diff --git a/arch/arm/mach-exynos4/dma.c b/arch/arm/mach-exynos4/dma.c
+index d57d662..9667c61 100644
+--- a/arch/arm/mach-exynos4/dma.c
++++ b/arch/arm/mach-exynos4/dma.c
+@@ -243,6 +243,7 @@ struct amba_device exynos4_device_pdma1 = {
+ static int __init exynos4_dma_init(void)
  {
- 	amba_device_register(&s5pv210_device_pdma0, &iomem_resource);
-+	amba_device_register(&s5pv210_device_pdma1, &iomem_resource);
+ 	amba_device_register(&exynos4_device_pdma0, &iomem_resource);
++	amba_device_register(&exynos4_device_pdma1, &iomem_resource);
  
  	return 0;
  }
