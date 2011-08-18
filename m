@@ -1,114 +1,211 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3] ARM: Samsung: fix watchdog reset issue with clk_get()
-Date: Thu, 18 Aug 2011 12:25:17 +0200
-Message-ID: <1313663117-29191-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH] CPUFREQ: ARM Exynos4210 PM/Suspend Compatibility with
+ Different Bootloaders
+Date: Thu, 18 Aug 2011 19:45:16 +0900
+Message-ID: <1313664316-15440-1-git-send-email-myungjoo.ham@samsung.com>
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:61952 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755432Ab1HRKZZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Aug 2011 06:25:25 -0400
-Received: from eu_spt1 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LQ400HUGCYB1N@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 18 Aug 2011 11:25:23 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LQ400HY0CYAX1@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 18 Aug 2011 11:25:23 +0100 (BST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <cpufreq-owner@vger.kernel.org>
+Sender: cpufreq-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, cpufreq@vger.kernel.org
+Cc: Dave Jones <davej@redhat.com>, Jaecheol Lee <jc.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, myungjoo.ham@gmail.com, dg77.kim@samsung.com, Axel Lin <axel.lin@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Angus Ainslie <angus.ainslie@linaro.org>
 
-clkdev framework uses global mutex to protect clock tree, so it is not
-possible to call clk_get() in interrupt context. This patch fixes this
-issue and makes system reset by watchdog call working again.
+We have various bootloaders for Exynos4210 machines. Some of they
+set the ARM core frequency at boot time even when the boot is a resume
+from suspend-to-RAM. Such changes may create inconsistency in the
+data of CPUFREQ driver and have incurred hang issues with suspend-to-RAM.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+This patch enables to save and restore CPU frequencies with pm-notifier and
+sets the frequency at the initial (boot-time) value so that there wouldn't
+be any inconsistency between bootloader and kernel. This patch does not
+use CPUFREQ's suspend/resume callbacks because they are syscore-ops, which
+do not allow to use mutex that is being used by regulators that are used by
+the target function.
+
+This also prevents any CPUFREQ transitions during suspend-resume context,
+which could be dangerous at noirq-context along with regulator framework.
+
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/plat-samsung/clock.c                      |   11 +++++++++++
- arch/arm/plat-samsung/include/plat/clock.h         |    3 +++
- .../arm/plat-samsung/include/plat/watchdog-reset.h |   10 +++-------
- 3 files changed, 17 insertions(+), 7 deletions(-)
+ drivers/cpufreq/exynos4210-cpufreq.c |  106 ++++++++++++++++++++++++++++++++-
+ 1 files changed, 102 insertions(+), 4 deletions(-)
 
-
-history:
-v3:
-- moved initialization to arch_initcall, cleaned the code
-
-v2:
-- added missing '__init' section modifiers
-
-diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
-index 302c426..3b44519 100644
---- a/arch/arm/plat-samsung/clock.c
-+++ b/arch/arm/plat-samsung/clock.c
-@@ -64,6 +64,17 @@ static LIST_HEAD(clocks);
-  */
- DEFINE_SPINLOCK(clocks_lock);
+diff --git a/drivers/cpufreq/exynos4210-cpufreq.c b/drivers/cpufreq/exynos4210-cpufreq.c
+index b7c3a84..101898a 100644
+--- a/drivers/cpufreq/exynos4210-cpufreq.c
++++ b/drivers/cpufreq/exynos4210-cpufreq.c
+@@ -17,6 +17,8 @@
+ #include <linux/slab.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/cpufreq.h>
++#include <linux/notifier.h>
++#include <linux/suspend.h>
  
-+/* Global watchdog clock used by arch_wtd_reset() callback */
-+struct clk *s3c2410_wdtclk;
-+static int __init s3c_wdt_reset_init(void)
-+{
-+	s3c2410_wdtclk = clk_get(NULL, "watchdog");
-+	if (IS_ERR(s3c2410_wdtclk))
-+		printk(KERN_WARNING "%s: warning: cannot get watchdog clock\n", __func__);
-+	return 0;
-+}
-+arch_initcall(s3c_wdt_reset_init);
-+
- /* enable and disable calls for use with the clk struct */
- 
- static int clk_null_enable(struct clk *clk, int enable)
-diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-samsung/include/plat/clock.h
-index 87d5b38..8f95700 100644
---- a/arch/arm/plat-samsung/include/plat/clock.h
-+++ b/arch/arm/plat-samsung/include/plat/clock.h
-@@ -121,3 +121,6 @@ extern int s3c64xx_sclk_ctrl(struct clk *clk, int enable);
- 
- extern void s3c_pwmclk_init(void);
- 
-+/* Global watchdog clock used by arch_wtd_reset() callback */
-+
-+extern struct clk *s3c2410_wdtclk;
-diff --git a/arch/arm/plat-samsung/include/plat/watchdog-reset.h b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-index 54b762a..40dbb2b 100644
---- a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-+++ b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-@@ -10,6 +10,7 @@
-  * published by the Free Software Foundation.
- */
- 
-+#include <plat/clock.h>
- #include <plat/regs-watchdog.h>
  #include <mach/map.h>
+ #include <mach/regs-clock.h>
+@@ -36,6 +38,10 @@ static struct regulator *int_regulator;
+ static struct cpufreq_freqs freqs;
+ static unsigned int memtype;
  
-@@ -19,17 +20,12 @@
- 
- static inline void arch_wdt_reset(void)
++static unsigned int locking_frequency;
++static bool frequency_locked;
++static DEFINE_MUTEX(cpufreq_lock);
++
+ enum exynos4_memory_type {
+ 	DDR2 = 4,
+ 	LPDDR2,
+@@ -405,22 +411,32 @@ static int exynos4_target(struct cpufreq_policy *policy,
  {
--	struct clk *wdtclk;
--
- 	printk("arch_reset: attempting watchdog reset\n");
+ 	unsigned int index, old_index;
+ 	unsigned int arm_volt, int_volt;
++	int err = -EINVAL;
  
- 	__raw_writel(0, S3C2410_WTCON);	  /* disable watchdog, to be safe  */
+ 	freqs.old = exynos4_getspeed(policy->cpu);
  
--	wdtclk = clk_get(NULL, "watchdog");
--	if (!IS_ERR(wdtclk)) {
--		clk_enable(wdtclk);
--	} else
--		printk(KERN_WARNING "%s: warning: cannot get watchdog clock\n", __func__);
-+	if (s3c2410_wdtclk)
-+		clk_enable(s3c2410_wdtclk);
++	mutex_lock(&cpufreq_lock);
++
++	if (frequency_locked && target_freq != locking_frequency) {
++		err = -EAGAIN;
++		goto out;
++	}
++
+ 	if (cpufreq_frequency_table_target(policy, exynos4_freq_table,
+ 					   freqs.old, relation, &old_index))
+-		return -EINVAL;
++		goto out;
  
- 	/* put initial values into count and data */
- 	__raw_writel(0x80, S3C2410_WTCNT);
+ 	if (cpufreq_frequency_table_target(policy, exynos4_freq_table,
+ 					   target_freq, relation, &index))
+-		return -EINVAL;
++		goto out;
++
++	err = 0;
+ 
+ 	freqs.new = exynos4_freq_table[index].frequency;
+ 	freqs.cpu = policy->cpu;
+ 
+ 	if (freqs.new == freqs.old)
+-		return 0;
++		goto out;
+ 
+ 	/* get the voltage value */
+ 	arm_volt = exynos4_volt_table[index].arm_volt;
+@@ -447,10 +463,16 @@ static int exynos4_target(struct cpufreq_policy *policy,
+ 
+ 	cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
+ 
+-	return 0;
++out:
++	mutex_unlock(&cpufreq_lock);
++	return err;
+ }
+ 
+ #ifdef CONFIG_PM
++/*
++ * These suspend/resume are used as syscore_ops, it is already too
++ * late to set regulator voltages at this stage.
++ */
+ static int exynos4_cpufreq_suspend(struct cpufreq_policy *policy)
+ {
+ 	return 0;
+@@ -462,6 +484,78 @@ static int exynos4_cpufreq_resume(struct cpufreq_policy *policy)
+ }
+ #endif
+ 
++/**
++ * exynos4_cpufreq_pm_notifier - block CPUFREQ's activities in suspend-resume
++ *			context
++ * @notifier
++ * @pm_event
++ * @v
++ *
++ * While frequency_locked == true, target() ignores every frequency but
++ * locking_frequency. The locking_frequency value is the initial frequency,
++ * which is set by the bootloader. In order to eliminate possible
++ * inconsistency in clock values, we save and restore frequencies during
++ * suspend and resume and block CPUFREQ activities. Note that the standard
++ * suspend/resume cannot be used as they are too deep (syscore_ops) for
++ * regulator actions.
++ */
++static int exynos4_cpufreq_pm_notifier(struct notifier_block *notifier,
++				       unsigned long pm_event, void *v)
++{
++	struct cpufreq_policy *policy = cpufreq_cpu_get(0); /* boot CPU */
++	static unsigned int saved_frequency;
++	unsigned int temp;
++
++	mutex_lock(&cpufreq_lock);
++	switch (pm_event) {
++	case PM_SUSPEND_PREPARE:
++		if (frequency_locked)
++			goto out;
++		frequency_locked = true;
++
++		if (locking_frequency) {
++			saved_frequency = exynos4_getspeed(0);
++
++			mutex_unlock(&cpufreq_lock);
++			exynos4_target(policy, locking_frequency,
++				       CPUFREQ_RELATION_H);
++			mutex_lock(&cpufreq_lock);
++		}
++
++		break;
++	case PM_POST_SUSPEND:
++
++		if (saved_frequency) {
++			/*
++			 * While frequency_locked, only locking_frequency
++			 * is valid for target(). In order to use
++			 * saved_frequency while keeping frequency_locked,
++			 * we temporarly overwrite locking_frequency.
++			 */
++			temp = locking_frequency;
++			locking_frequency = saved_frequency;
++
++			mutex_unlock(&cpufreq_lock);
++			exynos4_target(policy, locking_frequency,
++				       CPUFREQ_RELATION_H);
++			mutex_lock(&cpufreq_lock);
++
++			locking_frequency = temp;
++		}
++
++		frequency_locked = false;
++		break;
++	}
++out:
++	mutex_unlock(&cpufreq_lock);
++
++	return NOTIFY_OK;
++}
++
++static struct notifier_block exynos4_cpufreq_nb = {
++	.notifier_call = exynos4_cpufreq_pm_notifier,
++};
++
+ static int exynos4_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ {
+ 	policy->cur = policy->min = policy->max = exynos4_getspeed(policy->cpu);
+@@ -501,6 +595,8 @@ static int __init exynos4_cpufreq_init(void)
+ 	if (IS_ERR(cpu_clk))
+ 		return PTR_ERR(cpu_clk);
+ 
++	locking_frequency = exynos4_getspeed(0);
++
+ 	moutcore = clk_get(NULL, "moutcore");
+ 	if (IS_ERR(moutcore))
+ 		goto out;
+@@ -540,6 +636,8 @@ static int __init exynos4_cpufreq_init(void)
+ 		printk(KERN_DEBUG "%s: memtype= 0x%x\n", __func__, memtype);
+ 	}
+ 
++	register_pm_notifier(&exynos4_cpufreq_nb);
++
+ 	return cpufreq_register_driver(&exynos4_driver);
+ 
+ out:
 -- 
-1.7.1.569.g6f426
+1.7.4.1
+
