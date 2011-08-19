@@ -1,59 +1,61 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/3] ARM: Samsung: use dma-pl330 device name for clock
-Date: Fri, 19 Aug 2011 14:24:09 +0900
-Message-ID: <000701cc5e30$3a4e1a60$aeea4f20$%kim@samsung.com>
-References: <1313530266-14939-1-git-send-email-vz@mleia.com>
+Subject: RE: [PATCH] ARM: S3C64XX: Remove un-used code
+Date: Fri, 19 Aug 2011 14:29:44 +0900
+Message-ID: <001d01cc5e31$00c9dee0$025d9ca0$%kim@samsung.com>
+References: <1313498488-4296-1-git-send-email-banajit.g@samsung.com>
+ <20110819015955.GA1212@sirena.org.uk>
+ <CABK8_vR6bB_0TfQtbA7F9+w9dSXajMdd1SS5o+LscMrDcCY1tg@mail.gmail.com>
+ <20110819045346.GA26979@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:63948 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752432Ab1HSFYP (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:29611 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750859Ab1HSF34 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Aug 2011 01:24:15 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Fri, 19 Aug 2011 01:29:56 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LQ500BV0TOB23L0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 14:24:12 +0900 (KST)
+ 2010)) with ESMTP id <0LQ50041FTWWHPO0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 14:29:44 +0900 (KST)
 Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LQ500KA7TOA6V@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 14:24:12 +0900 (KST)
-In-reply-to: <1313530266-14939-1-git-send-email-vz@mleia.com>
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LQ500N1QTXL2B@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 14:29:45 +0900 (KST)
+In-reply-to: <20110819045346.GA26979@opensource.wolfsonmicro.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Vladimir Zapolskiy' <vz@mleia.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Banajit Goswami' <banajit.goswami@gmail.com>
+Cc: 'Banajit Goswami' <banajit.g@samsung.com>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-Vladimir Zapolskiy wrote:
-> 
-> This changeset replaces s3c-pl330.x clock device names with
-> dma-pl330.x, otherwise there won't be a correspondence between clock
-> device name and amba device name, thus clocks can't be enabled.
-> 
-> Fixes runtime errors on clk_get() from drivers/dma/pl330.c:
->   dma-pl330 dma-pl330.0: Cannot get operation clock.
->   dma-pl330: probe of dma-pl330.0 failed with error -22
-> 
-> The changes are based on linux-samsung/next/topic-dma-pl330 branch.
-> 
-> Vladimir Zapolskiy (3):
->   ARM: EXYNOS4: use dma-pl330 device name for clock
->   ARM: S5PC100: use dma-pl330 device name for clock
->   ARM: S5PV210: use dma-pl330 device name for clock
-> 
->  arch/arm/mach-exynos4/clock.c |    4 ++--
->  arch/arm/mach-s5pc100/clock.c |    4 ++--
->  arch/arm/mach-s5pv210/clock.c |    4 ++--
->  3 files changed, 6 insertions(+), 6 deletions(-)
-> 
-> --
-> 1.7.5.1
+Mark Brown wrote:
+>=20
+> On Fri, Aug 19, 2011 at 09:40:29AM +0530, Banajit Goswami wrote:
+> > On Fri, Aug 19, 2011 at 7:29 AM, Mark Brown
+> > <broonie@opensource.wolfsonmicro.com> wrote:
+> > > On Tue, Aug 16, 2011 at 06:11:28PM +0530, Banajit Goswami wrote:
+> > >> Remove un-used backlight code for SMDK6410 board
+>=20
+> > > Is the data actually wrong? =A0If not it'd seem better to finish =
+hooking
+> > > it up properly than to remove it.
+>=20
+> > No, this code is no longer needed, as we are having a common backli=
+ght
+> > infrastructure , which serves the same purpose.
+>=20
+> Ideally your commit log should make this clear - it looks like you're
+> just deleting unreferenced code.
 
-OK, will apply.
+Yes, I agree with your opinion...It was difficult to know why it is un-=
+used
+code when I applied that.
+
+OK, I will amend its commit log in my tree to clear.
+
 Thanks.
 
 Best regards,
