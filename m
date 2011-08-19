@@ -1,62 +1,50 @@
-From: Banajit Goswami <banajit.goswami@gmail.com>
-Subject: Re: [PATCH] ARM: S3C64XX: Remove un-used code
-Date: Fri, 19 Aug 2011 11:09:14 +0530
-Message-ID: <CABK8_vTt+9LSTpoGieYRdC07+O9CRYuzi3E0NHpi8DuNkiPY3g@mail.gmail.com>
-References: <1313498488-4296-1-git-send-email-banajit.g@samsung.com>
-	<20110819015955.GA1212@sirena.org.uk>
-	<CABK8_vR6bB_0TfQtbA7F9+w9dSXajMdd1SS5o+LscMrDcCY1tg@mail.gmail.com>
-	<20110819045346.GA26979@opensource.wolfsonmicro.com>
-	<001d01cc5e31$00c9dee0$025d9ca0$%kim@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [GIT PULL] Samsung S5P for v3.1 merge window
+Date: Fri, 19 Aug 2011 11:50:06 +0530
+Message-ID: <4E4E0096.2060907@linaro.org>
+References: <001101cc478b$d48983f0$7d9c8bd0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:59893 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751755Ab1HSFjP convert rfc822-to-8bit (ORCPT
+Received: from mail-iy0-f170.google.com ([209.85.210.170]:39819 "EHLO
+	mail-iy0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752473Ab1HSGUF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Aug 2011 01:39:15 -0400
-Received: by fxh19 with SMTP id 19so1728464fxh.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Aug 2011 22:39:14 -0700 (PDT)
-In-Reply-To: <001d01cc5e31$00c9dee0$025d9ca0$%kim@samsung.com>
+	Fri, 19 Aug 2011 02:20:05 -0400
+Received: by iye16 with SMTP id 16so5262172iye.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Aug 2011 23:20:04 -0700 (PDT)
+In-Reply-To: <001101cc478b$d48983f0$7d9c8bd0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Banajit Goswami <banajit.g@samsung.com>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+To: 'Arnd Bergmann' <arnd@arndb.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Russell King' <rmk@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>
 
-Hi Mr. Kim,
+Hi Arnd,
 
-On Fri, Aug 19, 2011 at 10:59 AM, Kukjin Kim <kgene.kim@samsung.com> wr=
-ote:
-> Mark Brown wrote:
->>
->> On Fri, Aug 19, 2011 at 09:40:29AM +0530, Banajit Goswami wrote:
->> > On Fri, Aug 19, 2011 at 7:29 AM, Mark Brown
->> > <broonie@opensource.wolfsonmicro.com> wrote:
->> > > On Tue, Aug 16, 2011 at 06:11:28PM +0530, Banajit Goswami wrote:
->> > >> Remove un-used backlight code for SMDK6410 board
->>
->> > > Is the data actually wrong? =C2=A0If not it'd seem better to fin=
-ish hooking
->> > > it up properly than to remove it.
->>
->> > No, this code is no longer needed, as we are having a common backl=
-ight
->> > infrastructure , which serves the same purpose.
->>
->> Ideally your commit log should make this clear - it looks like you'r=
-e
->> just deleting unreferenced code.
+On Thursday 21 July 2011 03:21 PM, Kukjin Kim wrote:
+> Hi Arnd
 >
-> Yes, I agree with your opinion...It was difficult to know why it is u=
-n-used
-> code when I applied that.
+> Please pull Samsung S5P updates from:
 >
-Yes, I will explain more in comments in future!
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> for-arm-soc
+>
+> Or if you want to merge each branch into arm-soc, please use following.
+> As per your suggestion, I made following branches in my tree...
+>
+> - next-samsung-cleanup for arm-soc/next/cleanup
+> - next-samsung-devel for arm-soc/next/devel
+> - next-samsung-soc for arm-soc/next/soc (nothing)
+> - next-samsung-board for arm-soc/next/board
+> - and so on...
+>
+(snip)
+>
+> JeongHyeon Kim (1):
+>        ARM: EXYNOS4: Add support for ORIGEN board
+>
+I can't find this patch in the 3.1-rc1 release. Does it need some rework?
 
-> OK, I will amend its commit log in my tree to clear.
-Thank you!
-
-
-Thanks and Regards,
-Banajit Goswami
+-- 
+Tushar Behera
