@@ -1,91 +1,126 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [RFC PATCH 2/4] ARM: EXYNOS4: Fix to work with origen boards.
-Date: Fri, 19 Aug 2011 22:59:34 +0900
-Message-ID: <CAH9JG2XbTub+TR_Pbi8ZqedD78HsDzMAY581XQbcWYF6aP82aQ@mail.gmail.com>
-References: <1313759340-31319-1-git-send-email-amit.kachhap@linaro.org>
-	<1313759400-31347-2-git-send-email-amit.kachhap@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: EXYNOS4: Add usb ehci device to the SMDKC210
+Date: Fri, 19 Aug 2011 23:00:58 +0900
+Message-ID: <004301cc5e78$6bbee1e0$433ca5a0$%kim@samsung.com>
+References: <1313142848-14468-1-git-send-email-jg1.han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qy0-f181.google.com ([209.85.216.181]:52870 "EHLO
-	mail-qy0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751685Ab1HSN7f convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:57829 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753783Ab1HSOBA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Aug 2011 09:59:35 -0400
-Received: by qyk34 with SMTP id 34so1119325qyk.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Aug 2011 06:59:34 -0700 (PDT)
-In-Reply-To: <1313759400-31347-2-git-send-email-amit.kachhap@linaro.org>
+	Fri, 19 Aug 2011 10:01:00 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LQ600F8JHLMI3G0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 23:00:58 +0900 (KST)
+Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LQ6004OMHLMYP@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 23:00:58 +0900 (KST)
+In-reply-to: <1313142848-14468-1-git-send-email-jg1.han@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org
+To: 'Jingoo Han' <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: 'Yulgon Kim' <yulgon.kim@samsung.com>, 'Joonyoung Shim' <jy0922.shim@samsung.com>
 
-On Fri, Aug 19, 2011 at 10:09 PM, Amit Daniel Kachhap
-<amit.kachhap@linaro.org> wrote:
-> This adds a function to get the revision id.
->
-> Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
-> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+Jingoo Han wrote:
+> 
+> This patch is to support usb ehci device to the SMDKC210 board.
+> 
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 > ---
-> =A0arch/arm/mach-exynos4/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 10 ++=
-++++++++
-> =A0arch/arm/plat-s5p/include/plat/exynos4.h | =A0 =A01 +
-> =A02 files changed, 11 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.=
-c
-> index 2d8a40c..8b106b8 100644
-> --- a/arch/arm/mach-exynos4/cpu.c
-> +++ b/arch/arm/mach-exynos4/cpu.c
-> @@ -234,6 +234,16 @@ static int __init exynos4_l2x0_cache_init(void)
-> =A0early_initcall(exynos4_l2x0_cache_init);
-> =A0#endif
->
-> +int exynos4_subrev(void)
+>  arch/arm/mach-exynos4/Kconfig         |    2 ++
+>  arch/arm/mach-exynos4/mach-smdkc210.c |   16 ++++++++++++++++
+>  2 files changed, 18 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+> index 3ceefdb..12a0481 100644
+> --- a/arch/arm/mach-exynos4/Kconfig
+> +++ b/arch/arm/mach-exynos4/Kconfig
+> @@ -115,6 +115,7 @@ config MACH_SMDKC210
+>  	bool "SMDKC210"
+>  	select CPU_EXYNOS4210
+>  	select S5P_DEV_FIMD0
+> +	select S5P_DEV_USB_EHCI
+>  	select S3C_DEV_RTC
+>  	select S3C_DEV_WDT
+>  	select S3C_DEV_I2C1
+> @@ -127,6 +128,7 @@ config MACH_SMDKC210
+>  	select EXYNOS4_DEV_PD
+>  	select EXYNOS4_DEV_SYSMMU
+>  	select EXYNOS4_SETUP_FIMD0
+> +	select EXYNOS4_SETUP_USB_PHY
+>  	select EXYNOS4_SETUP_I2C1
+>  	select EXYNOS4_SETUP_SDHCI
+>  	help
+> diff --git a/arch/arm/mach-exynos4/mach-smdkc210.c b/arch/arm/mach-
+> exynos4/mach-smdkc210.c
+> index a7c65e0..2cd2eb4 100644
+> --- a/arch/arm/mach-exynos4/mach-smdkc210.c
+> +++ b/arch/arm/mach-exynos4/mach-smdkc210.c
+> @@ -36,6 +36,8 @@
+>  #include <plat/pd.h>
+>  #include <plat/gpio-cfg.h>
+>  #include <plat/backlight.h>
+> +#include <plat/ehci.h>
+> +#include <plat/clock.h>
+> 
+>  #include <mach/map.h>
+> 
+> @@ -216,6 +218,16 @@ static struct i2c_board_info i2c_devs1[] __initdata =
+{
+>  	{I2C_BOARD_INFO("wm8994", 0x1a),},
+>  };
+> 
+> +/* USB EHCI */
+> +static struct s5p_ehci_platdata smdkc210_ehci_pdata;
+> +
+> +static void __init smdkc210_ehci_init(void)
 > +{
-> + =A0 =A0 =A0 static int subrev =3D -1;
+> +	struct s5p_ehci_platdata *pdata = &smdkc210_ehci_pdata;
 > +
-> + =A0 =A0 =A0 if (unlikely(subrev < 0))
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 subrev =3D readl(S5P_VA_CHIPID) & 0xf;
-How about to add the clock control here?
-1. Register chipid clk
-2. Get the chipid clk
-3. Read CHPIID,
-4. Put tht chipid clk.
-
-Then you can save some power.
-
-Thank you,
-Kyungmin Park
-> +
-> + =A0 =A0 =A0 return subrev;
+> +	s5p_ehci_set_platdata(pdata);
 > +}
 > +
-> =A0int __init exynos4_init(void)
-> =A0{
-> =A0 =A0 =A0 =A0printk(KERN_INFO "EXYNOS4: Initializing architecture\n=
-");
-> diff --git a/arch/arm/plat-s5p/include/plat/exynos4.h b/arch/arm/plat=
--s5p/include/plat/exynos4.h
-> index 907caab..d62f7f7 100644
-> --- a/arch/arm/plat-s5p/include/plat/exynos4.h
-> +++ b/arch/arm/plat-s5p/include/plat/exynos4.h
-> @@ -15,6 +15,7 @@
-> =A0extern void exynos4_common_init_uarts(struct s3c2410_uartcfg *cfg,=
- int no);
-> =A0extern void exynos4_register_clocks(void);
-> =A0extern void exynos4_setup_clocks(void);
-> +extern int exynos4_subrev(void);
->
-> =A0#ifdef CONFIG_CPU_EXYNOS4210
->
+>  static struct platform_device *smdkc210_devices[] __initdata = {
+>  	&s3c_device_hsmmc0,
+>  	&s3c_device_hsmmc1,
+> @@ -224,6 +236,7 @@ static struct platform_device *smdkc210_devices[]
+> __initdata = {
+>  	&s3c_device_i2c1,
+>  	&s3c_device_rtc,
+>  	&s3c_device_wdt,
+> +	&s5p_device_ehci,
+>  	&exynos4_device_ac97,
+>  	&exynos4_device_i2s0,
+>  	&exynos4_device_pd[PD_MFC],
+> @@ -296,6 +309,9 @@ static void __init smdkc210_machine_init(void)
+>  	samsung_bl_set(&smdkc210_bl_gpio_info, &smdkc210_bl_data);
+>  	s5p_fimd0_set_platdata(&smdkc210_lcd0_pdata);
+> 
+> +	smdkc210_ehci_init();
+> +	clk_xusbxti.rate = 24000000;
+> +
+>  	platform_add_devices(smdkc210_devices,
+> ARRAY_SIZE(smdkc210_devices));
+>  }
+> 
 > --
 > 1.7.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+
+Hi Jingoo,
+
+If there is no problem, could you please re-work/test on smdkv310?
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
