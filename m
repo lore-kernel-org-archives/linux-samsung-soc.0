@@ -1,102 +1,125 @@
-From: Amit Kucheria <amit.kucheria@linaro.org>
-Subject: Re: [RFC PATCH 1/4] ARM: kernel: Small fixes in save/restore common
- code.
-Date: Fri, 19 Aug 2011 17:33:45 +0300
-Message-ID: <20110819143345.GE2455@matterhorn1>
-References: <1313759340-31319-1-git-send-email-amit.kachhap@linaro.org>
- <1313759400-31347-1-git-send-email-amit.kachhap@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung Fixes for v3.1-rc3
+Date: Sat, 20 Aug 2011 00:01:09 +0900
+Message-ID: <005401cc5e80$d494d410$7dbe7c30$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:42870 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754880Ab1HSOdv (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:31412 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755821Ab1HSPBM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Aug 2011 10:33:51 -0400
-Received: by bke11 with SMTP id 11so2261492bke.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Aug 2011 07:33:50 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1313759400-31347-1-git-send-email-amit.kachhap@linaro.org>
+	Fri, 19 Aug 2011 11:01:12 -0400
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LQ600073KDXGX80@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 20 Aug 2011 00:01:10 +0900 (KST)
+Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LQ600CEFKDY79@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 20 Aug 2011 00:01:10 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org, lorenzo.pieralisi@arm.com
+To: 'Arnd Bergmann' <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>
 
-This patch is redundant with Lorenzo's new series[1]. Adding him to cc. I
-suggest you rebase on top of his latest series.
+Hi Arnd,
 
-On 11 Aug 19, Amit Daniel Kachhap wrote:
-> These changes are necessary to make the retention cpuidle state work. This adds 
-> support for saving more L2 registers.
-> 
-> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-> ---
->  arch/arm/common/gic.c        |    1 -
->  arch/arm/kernel/sr_helpers.h |    2 +-
->  arch/arm/mm/cache-l2x0.c     |   10 +++++++++-
->  3 files changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/common/gic.c b/arch/arm/common/gic.c
-> index d845b75..124e122 100644
-> --- a/arch/arm/common/gic.c
-> +++ b/arch/arm/common/gic.c
-> @@ -385,7 +385,6 @@ static void gic_dist_save(unsigned int gic_nr)
->  		gic_data[gic_nr].saved_spi_enable[i] =
->  			readl_relaxed(dist_base + GIC_DIST_ENABLE_SET + i * 4);
->  
-> -	writel_relaxed(0, dist_base + GIC_DIST_CTRL);
->  }
+This is pull request for Samsung fixes for v3.1-rc3.
 
-He already has this bit in his tree[1]
+Please pull Samsung fixes from:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+samsung-fixes
 
->  /*
-> diff --git a/arch/arm/kernel/sr_helpers.h b/arch/arm/kernel/sr_helpers.h
-> index 1ae3a9a..5a30461 100644
-> --- a/arch/arm/kernel/sr_helpers.h
-> +++ b/arch/arm/kernel/sr_helpers.h
-> @@ -44,7 +44,7 @@ static inline void exit_coherency(void)
->  		"mcr	p15, 0, %0, c1, c0, 1\n"
->  		 : "=&r" (v)
->  		 : "Ir" (0x40)
-> -		 : );
-> +		 : "cc");
+These things are for _real_ fixing.
 
-He has a different fix for this.
+And as a note, following is only for v3.1:
 
->  }
->  #else
->  static inline void exit_coherency(void) { }
-> diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
-> index 4c99d41..f23696b 100644
-> --- a/arch/arm/mm/cache-l2x0.c
-> +++ b/arch/arm/mm/cache-l2x0.c
-> @@ -285,7 +285,11 @@ static void l2x0_save_context(void *data, bool dormant, unsigned long end)
->  	*l2x0_regs =  readl_relaxed(l2x0_base + L2X0_TAG_LATENCY_CTRL);
->  	l2x0_regs++;
->  	*l2x0_regs =  readl_relaxed(l2x0_base + L2X0_DATA_LATENCY_CTRL);
-> -
-> +	l2x0_regs++;
-> +	*l2x0_regs =  readl_relaxed(l2x0_base + L2X0_PREFETCH_CTRL);
-> +	l2x0_regs++;
-> +	*l2x0_regs =  readl_relaxed(l2x0_base + L2X0_POWER_CTRL);
-> +	dormant = 0;
->  	if (!dormant) {
->  		/* clean entire L2 before disabling it*/
->  		writel_relaxed(l2x0_way_mask, l2x0_base + L2X0_CLEAN_WAY);
-> @@ -325,6 +329,10 @@ static void l2x0_restore_context(void *data, bool dormant)
->  		writel_relaxed(*l2x0_regs, l2x0_base + L2X0_TAG_LATENCY_CTRL);
->  		l2x0_regs++;
->  		writel_relaxed(*l2x0_regs, l2x0_base + L2X0_DATA_LATENCY_CTRL);
-> +		l2x0_regs++;
-> +		writel_relaxed(*l2x0_regs, l2x0_base + L2X0_PREFETCH_CTRL);
-> +		l2x0_regs++;
-> +		writel_relaxed(*l2x0_regs, l2x0_base + L2X0_POWER_CTRL);
->  		/*
->  		 * If L2 is retained do not invalidate
->  		 */
-> -- 
-> 1.7.1
+5d747c6 ARM: S5P: fix bug in spdif_clk_get_rate
+3f6065d ARM: S5P: add required chained_irq_enter/exit to gpio-int code
+70b0e82 ARM: EXYNOS4: add required chained_irq_enter/exit to eint code
+995b528 ARM: SAMSUNG: Add chained enrty/exit call to timer interrupt handler
+7e1291d ARM: S5PV210: Fix build warning
+5a1993f ARM: EXYNOS4: Fix the IRQ definitions for MIPI CSIS device
+6b875cb ARM: EXYNOS4: remove duplicated inclusion
+af8a9f6 ARM: EXYNOS4: Fix wrong devname to support clkdev
+b8a297d ARM: SAMSUNG: Fix Section mismatch in samsung_bl_set()
+ac0d151 ARM: S5P64X0: Replace irq_gc_ack() with irq_gc_ack_set_bit()
 
-Already fixed in his tree.
+Of course, others should be fixed on stable kernel.
 
-[1] git://linux-arm.org/linux-2.6-lp.git sr-test-for-linaro
+f98d429 ARM: S3C64XX: Fix build break in PM debug
+d2edddf ARM: EXYNOS4: Add restart hook for proper reboot
+2b431ff ARM: EXYNOS4: Increase reset delay for USB HOST PHY
+c1a238a ARM: EXYNOS4: Use the correct regulator names on universal_c210
+
+So will send above to stable@kernel.org soon.
+
+If any problems, please let me know.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+The following changes since commit 93ee7a9340d64f20295aacc3fb6a22b759323280:
+
+  Linux 3.1-rc2 (2011-08-14 15:09:08 -0700)
+
+are available in the git repository at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+samsung-fixes
+
+Abhilash Kesavan (2):
+      ARM: S5PV210: Fix build warning
+      ARM: S3C64XX: Fix build break in PM debug
+
+Huang Weiyi (1):
+      ARM: EXYNOS4: remove duplicated inclusion
+
+Jonghwan Choi (1):
+      ARM: EXYNOS4: Fix wrong devname to support clkdev
+
+Kukjin Kim (2):
+      ARM: S5P64X0: Replace irq_gc_ack() with irq_gc_ack_set_bit()
+      ARM: SAMSUNG: Fix Section mismatch in samsung_bl_set()
+
+Kyungmin Park (2):
+      ARM: EXYNOS4: Use the correct regulator names on universal_c210
+      ARM: EXYNOS4: Add restart hook for proper reboot
+
+Marek Szyprowski (3):
+      ARM: SAMSUNG: Add chained enrty/exit call to timer interrupt handler
+      ARM: EXYNOS4: add required chained_irq_enter/exit to eint code
+      ARM: S5P: add required chained_irq_enter/exit to gpio-int code
+
+Naveen Krishna Chatradhi (1):
+      ARM: S5P: fix bug in spdif_clk_get_rate
+
+Sylwester Nawrocki (1):
+      ARM: EXYNOS4: Fix the IRQ definitions for MIPI CSIS device
+
+Yulgon Kim (1):
+      ARM: EXYNOS4: Increase reset delay for USB HOST PHY
+
+ arch/arm/mach-exynos4/clock.c                  |    2 +-
+ arch/arm/mach-exynos4/cpu.c                    |   11 ++++++++++-
+ arch/arm/mach-exynos4/include/mach/irqs.h      |    5 ++---
+ arch/arm/mach-exynos4/include/mach/regs-pmu.h  |    2 ++
+ arch/arm/mach-exynos4/irq-eint.c               |    7 +++++++
+ arch/arm/mach-exynos4/mach-universal_c210.c    |    4 ++--
+ arch/arm/mach-exynos4/setup-usb-phy.c          |    2 +-
+ arch/arm/mach-s3c64xx/pm.c                     |    1 +
+ arch/arm/mach-s5p64x0/irq-eint.c               |    2 +-
+ arch/arm/mach-s5pv210/pm.c                     |    2 +-
+ arch/arm/plat-s5p/clock.c                      |    2 +-
+ arch/arm/plat-s5p/irq-gpioint.c                |    6 ++++++
+ arch/arm/plat-samsung/include/plat/backlight.h |    2 +-
+ arch/arm/plat-samsung/irq-vic-timer.c          |    5 +++++
+ 14 files changed, 41 insertions(+), 12 deletions(-)
