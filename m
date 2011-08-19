@@ -1,513 +1,239 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: EXYNOS4: Turn the mach-smdkc210.c into mach-smdv310.c
-Date: Fri, 19 Aug 2011 22:11:56 +0900
-Message-ID: <1313759516-13803-1-git-send-email-kgene.kim@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH v3] ARM: Samsung: fix watchdog reset issue with clk_get()
+Date: Fri, 19 Aug 2011 15:41:54 +0200
+Message-ID: <000001cc5e75$c201e370$4605aa50$%szyprowski@samsung.com>
+References: <1313663117-29191-1-git-send-email-m.szyprowski@samsung.com>
+ <002a01cc5e70$ce51d7c0$6af58740$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:34042 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751378Ab1HSN0V (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:61668 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754847Ab1HSNmG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Aug 2011 09:26:21 -0400
+	Fri, 19 Aug 2011 09:42:06 -0400
+Received: from spt2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0LQ600DQ1GQ5UJ@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 14:42:05 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LQ6008OHGQ4RY@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 14:42:04 +0100 (BST)
+In-reply-to: <002a01cc5e70$ce51d7c0$6af58740$%kim@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Angus Ainslie' <angus.ainslie@linaro.org>
 
-Since the components on SMDKC210 are similar with SMDKV310
-even though its memory is different. So we can support the
-SMDKC210 and SMDKV310 on mach-smdkv310.c, one machine file.
+Hello,
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-exynos4/Kconfig         |   17 +--
- arch/arm/mach-exynos4/Makefile        |    2 +-
- arch/arm/mach-exynos4/mach-smdkc210.c |  309 ---------------------------------
- arch/arm/mach-exynos4/mach-smdkv310.c |   78 +++++++++
- 4 files changed, 80 insertions(+), 326 deletions(-)
- delete mode 100644 arch/arm/mach-exynos4/mach-smdkc210.c
+On Friday, August 19, 2011 3:06 PM Kukjin Kim wrote:
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index 0c77ab9..bee8f77 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -113,22 +113,7 @@ menu "EXYNOS4 Machines"
+> Marek Szyprowski wrote:
+> >
+> > clkdev framework uses global mutex to protect clock tree, so it is not
+> > possible to call clk_get() in interrupt context. This patch fixes this
+> > issue and makes system reset by watchdog call working again.
+> >
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
+> >  arch/arm/plat-samsung/clock.c                      |   11 +++++++++++
+> >  arch/arm/plat-samsung/include/plat/clock.h         |    3 +++
+> >  .../arm/plat-samsung/include/plat/watchdog-reset.h |   10 +++-------
+> >  3 files changed, 17 insertions(+), 7 deletions(-)
+> >
+> >
+> > history:
+> > v3:
+> > - moved initialization to arch_initcall, cleaned the code
+> >
+> > v2:
+> > - added missing '__init' section modifiers
+> >
+> > diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
+> > index 302c426..3b44519 100644
+> > --- a/arch/arm/plat-samsung/clock.c
+> > +++ b/arch/arm/plat-samsung/clock.c
+> > @@ -64,6 +64,17 @@ static LIST_HEAD(clocks);
+> >   */
+> >  DEFINE_SPINLOCK(clocks_lock);
+> >
+> > +/* Global watchdog clock used by arch_wtd_reset() callback */
+> > +struct clk *s3c2410_wdtclk;
+> > +static int __init s3c_wdt_reset_init(void)
+> > +{
+> > +	s3c2410_wdtclk = clk_get(NULL, "watchdog");
+> > +	if (IS_ERR(s3c2410_wdtclk))
+> > +		printk(KERN_WARNING "%s: warning: cannot get watchdog
+> > clock\n", __func__);
+> > +	return 0;
+> > +}
+> > +arch_initcall(s3c_wdt_reset_init);
+> > +
+> >  /* enable and disable calls for use with the clk struct */
+> >
+> >  static int clk_null_enable(struct clk *clk, int enable)
+> > diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-
+> > samsung/include/plat/clock.h
+> > index 87d5b38..8f95700 100644
+> > --- a/arch/arm/plat-samsung/include/plat/clock.h
+> > +++ b/arch/arm/plat-samsung/include/plat/clock.h
+> > @@ -121,3 +121,6 @@ extern int s3c64xx_sclk_ctrl(struct clk *clk, int
+> enable);
+> >
+> >  extern void s3c_pwmclk_init(void);
+> >
+> > +/* Global watchdog clock used by arch_wtd_reset() callback */
+> > +
+> > +extern struct clk *s3c2410_wdtclk;
+> > diff --git a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
+> b/arch/arm/plat-
+> > samsung/include/plat/watchdog-reset.h
+> > index 54b762a..40dbb2b 100644
+> > --- a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
+> > +++ b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
+> > @@ -10,6 +10,7 @@
+> >   * published by the Free Software Foundation.
+> >  */
+> >
+> > +#include <plat/clock.h>
+> >  #include <plat/regs-watchdog.h>
+> >  #include <mach/map.h>
+> >
+> > @@ -19,17 +20,12 @@
+> >
+> >  static inline void arch_wdt_reset(void)
+> >  {
+> > -	struct clk *wdtclk;
+> > -
+> >  	printk("arch_reset: attempting watchdog reset\n");
+> >
+> >  	__raw_writel(0, S3C2410_WTCON);	  /* disable watchdog, to be safe
+> */
+> >
+> > -	wdtclk = clk_get(NULL, "watchdog");
+> > -	if (!IS_ERR(wdtclk)) {
+> > -		clk_enable(wdtclk);
+> > -	} else
+> > -		printk(KERN_WARNING "%s: warning: cannot get watchdog
+> > clock\n", __func__);
+> > +	if (s3c2410_wdtclk)
+> > +		clk_enable(s3c2410_wdtclk);
+> >
+> >  	/* put initial values into count and data */
+> >  	__raw_writel(0x80, S3C2410_WTCNT);
+> > --
+> > 1.7.1.569.g6f426
+> 
+> Looks good but happens following:
+> 
+> Hmm...
+> With s3c2410_defconfig:
+> 
+> In file included from arch/arm/plat-s3c24xx/cpu.c:48:
+> arch/arm/plat-samsung/include/plat/clock.h:32: error: redefinition of
+> 'struct clk_ops'
+> arch/arm/plat-samsung/include/plat/clock.h:39: error: redefinition of
+> 'struct clk'
+> arch/arm/plat-samsung/include/plat/clock.h:60: error: conflicting types for
+> 's3c24xx_dclk0'
+> arch/arm/plat-samsung/include/plat/clock.h:60: note: previous declaration of
+> 's3c24xx_dclk0' was here
+> arch/arm/plat-samsung/include/plat/clock.h:61: error: conflicting types for
+> 's3c24xx_dclk1'
+> arch/arm/plat-samsung/include/plat/clock.h:61: note: previous declaration of
+> 's3c24xx_dclk1' was here
+> arch/arm/plat-samsung/include/plat/clock.h:62: error: conflicting types for
+> 's3c24xx_clkout0'
+> arch/arm/plat-samsung/include/plat/clock.h:62: note: previous declaration of
+> 's3c24xx_clkout0' was here
+> 
+> (snip)
+> 
+> arch/arm/plat-samsung/include/plat/clock.h:101: error: conflicting types for
+> 's3c_disable_clocks'
+> arch/arm/plat-samsung/include/plat/clock.h:101: note: previous declaration
+> of 's3c_disable_clocks' was here
+> arch/arm/plat-samsung/include/plat/clock.h:118: error: conflicting types for
+> 's3c64xx_sclk_ctrl'
+> arch/arm/plat-samsung/include/plat/clock.h:118: note: previous declaration
+> of 's3c64xx_sclk_ctrl' was here
+> arch/arm/plat-samsung/include/plat/clock.h:126: error: conflicting types for
+> 's3c2410_wdtclk'
+> arch/arm/plat-samsung/include/plat/clock.h:126: note: previous declaration
+> of 's3c2410_wdtclk' was here
+> make[1]: *** [arch/arm/plat-s3c24xx/cpu.o] Error 1
+> make[1]: *** Waiting for unfinished jobs....
+> make: *** [arch/arm/plat-s3c24xx] Error 2
+> make: *** Waiting for unfinished jobs....
+> 
+> And, with s5p64x0_defconfig:
+> 
+>   CHK     include/linux/version.h
+>   CHK     include/generated/utsrelease.h
+> make[1]: `include/generated/mach-types.h' is up to date.
+>   CALL    scripts/checksyscalls.sh
+>   CHK     include/generated/compile.h
+>   KSYM    .tmp_kallsyms1.S
+>   AS      .tmp_kallsyms1.o
+>   LD      .tmp_vmlinux2
+>   KSYM    .tmp_kallsyms2.S
+>   AS      .tmp_kallsyms2.o
+>   LD      vmlinux
+>   SYSMAP  System.map
+>   SYSMAP  .tmp_System.map
+> Inconsistent kallsyms data
+> This is a bug - please report about it
+> Try make KALLSYMS_EXTRA_PASS=1 as a workaround
+> make: *** [vmlinux] Error 1
+> 
+> 
+> The building error of s3c2410_defconfig can be fixed with below.
+> ---
+> commit c5f80e2eb419437a7e4272d28bc7258b650b0934
+> Author: Kukjin Kim <kgene.kim@samsung.com>
+> Date:   Fri Aug 19 21:12:19 2011 +0900
+> 
+>     ARM: SAMSUNG: fix to prevent declaring duplicated
+> 
+>     The plat/clock.h revised to prevent declaring duplicated.
+> 
+>     Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> 
+> diff --git a/arch/arm/plat-samsung/include/plat/clock.h
+> b/arch/arm/plat-samsung/include/plat/clock.h
+> index 8f95700..092be14 100644
+> --- a/arch/arm/plat-samsung/include/plat/clock.h
+> +++ b/arch/arm/plat-samsung/include/plat/clock.h
+> @@ -9,6 +9,9 @@
+>   * published by the Free Software Foundation.
+>  */
+> 
+> +#ifndef __ASM_PLAT_CLOCK_H
+> +#define __ASM_PLAT_CLOCK_H __FILE__
+> +
+>  #include <linux/spinlock.h>
+>  #include <linux/clkdev.h>
+> 
+> @@ -124,3 +127,5 @@ extern void s3c_pwmclk_init(void);
+>  /* Global watchdog clock used by arch_wtd_reset() callback */
+> 
+>  extern struct clk *s3c2410_wdtclk;
+> +
+> +#endif /* __ASM_PLAT_CLOCK_H */
+> ---
+> 
+> But, the error of s5p64x0_defconfig happens still :(
+
+Well, this issue is definitely not related to my patch. The strange thing is
+the fact that it builds here correctly with s5p64x0_defconfig.
  
- config MACH_SMDKC210
- 	bool "SMDKC210"
--	select CPU_EXYNOS4210
--	select S5P_DEV_FIMD0
--	select S3C_DEV_RTC
--	select S3C_DEV_WDT
--	select S3C_DEV_I2C1
--	select S3C_DEV_HSMMC
--	select S3C_DEV_HSMMC1
--	select S3C_DEV_HSMMC2
--	select S3C_DEV_HSMMC3
--	select SAMSUNG_DEV_PWM
--	select SAMSUNG_DEV_BACKLIGHT
--	select EXYNOS4_DEV_PD
--	select EXYNOS4_DEV_SYSMMU
--	select EXYNOS4_SETUP_FIMD0
--	select EXYNOS4_SETUP_I2C1
--	select EXYNOS4_SETUP_SDHCI
-+	select MACH_SMDKV310
- 	help
- 	  Machine support for Samsung SMDKC210
- 
-diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
-index b7fe1d7..e3e93ea 100644
---- a/arch/arm/mach-exynos4/Makefile
-+++ b/arch/arm/mach-exynos4/Makefile
-@@ -25,7 +25,7 @@ obj-$(CONFIG_HOTPLUG_CPU)	+= hotplug.o
- 
- # machine support
- 
--obj-$(CONFIG_MACH_SMDKC210)		+= mach-smdkc210.o
-+obj-$(CONFIG_MACH_SMDKC210)		+= mach-smdkv310.o
- obj-$(CONFIG_MACH_SMDKV310)		+= mach-smdkv310.o
- obj-$(CONFIG_MACH_ARMLEX4210)		+= mach-armlex4210.o
- obj-$(CONFIG_MACH_UNIVERSAL_C210)	+= mach-universal_c210.o
-diff --git a/arch/arm/mach-exynos4/mach-smdkc210.c b/arch/arm/mach-exynos4/mach-smdkc210.c
-deleted file mode 100644
-index a7c65e0..0000000
---- a/arch/arm/mach-exynos4/mach-smdkc210.c
-+++ /dev/null
-@@ -1,309 +0,0 @@
--/* linux/arch/arm/mach-exynos4/mach-smdkc210.c
-- *
-- * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#include <linux/serial_core.h>
--#include <linux/delay.h>
--#include <linux/gpio.h>
--#include <linux/lcd.h>
--#include <linux/mmc/host.h>
--#include <linux/platform_device.h>
--#include <linux/smsc911x.h>
--#include <linux/io.h>
--#include <linux/i2c.h>
--#include <linux/pwm_backlight.h>
--
--#include <asm/mach/arch.h>
--#include <asm/mach-types.h>
--
--#include <video/platform_lcd.h>
--
--#include <plat/regs-serial.h>
--#include <plat/regs-srom.h>
--#include <plat/regs-fb-v4.h>
--#include <plat/exynos4.h>
--#include <plat/cpu.h>
--#include <plat/devs.h>
--#include <plat/fb.h>
--#include <plat/sdhci.h>
--#include <plat/iic.h>
--#include <plat/pd.h>
--#include <plat/gpio-cfg.h>
--#include <plat/backlight.h>
--
--#include <mach/map.h>
--
--/* Following are default values for UCON, ULCON and UFCON UART registers */
--#define SMDKC210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
--				 S3C2410_UCON_RXILEVEL |	\
--				 S3C2410_UCON_TXIRQMODE |	\
--				 S3C2410_UCON_RXIRQMODE |	\
--				 S3C2410_UCON_RXFIFO_TOI |	\
--				 S3C2443_UCON_RXERR_IRQEN)
--
--#define SMDKC210_ULCON_DEFAULT	S3C2410_LCON_CS8
--
--#define SMDKC210_UFCON_DEFAULT	(S3C2410_UFCON_FIFOMODE |	\
--				 S5PV210_UFCON_TXTRIG4 |	\
--				 S5PV210_UFCON_RXTRIG4)
--
--static struct s3c2410_uartcfg smdkc210_uartcfgs[] __initdata = {
--	[0] = {
--		.hwport		= 0,
--		.flags		= 0,
--		.ucon		= SMDKC210_UCON_DEFAULT,
--		.ulcon		= SMDKC210_ULCON_DEFAULT,
--		.ufcon		= SMDKC210_UFCON_DEFAULT,
--	},
--	[1] = {
--		.hwport		= 1,
--		.flags		= 0,
--		.ucon		= SMDKC210_UCON_DEFAULT,
--		.ulcon		= SMDKC210_ULCON_DEFAULT,
--		.ufcon		= SMDKC210_UFCON_DEFAULT,
--	},
--	[2] = {
--		.hwport		= 2,
--		.flags		= 0,
--		.ucon		= SMDKC210_UCON_DEFAULT,
--		.ulcon		= SMDKC210_ULCON_DEFAULT,
--		.ufcon		= SMDKC210_UFCON_DEFAULT,
--	},
--	[3] = {
--		.hwport		= 3,
--		.flags		= 0,
--		.ucon		= SMDKC210_UCON_DEFAULT,
--		.ulcon		= SMDKC210_ULCON_DEFAULT,
--		.ufcon		= SMDKC210_UFCON_DEFAULT,
--	},
--};
--
--static struct s3c_sdhci_platdata smdkc210_hsmmc0_pdata __initdata = {
--	.cd_type		= S3C_SDHCI_CD_GPIO,
--	.ext_cd_gpio		= EXYNOS4_GPK0(2),
--	.ext_cd_gpio_invert	= 1,
--	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
--#ifdef CONFIG_EXYNOS4_SDHCI_CH0_8BIT
--	.max_width		= 8,
--	.host_caps		= MMC_CAP_8_BIT_DATA,
--#endif
--};
--
--static struct s3c_sdhci_platdata smdkc210_hsmmc1_pdata __initdata = {
--	.cd_type		= S3C_SDHCI_CD_GPIO,
--	.ext_cd_gpio		= EXYNOS4_GPK0(2),
--	.ext_cd_gpio_invert	= 1,
--	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
--};
--
--static struct s3c_sdhci_platdata smdkc210_hsmmc2_pdata __initdata = {
--	.cd_type		= S3C_SDHCI_CD_GPIO,
--	.ext_cd_gpio		= EXYNOS4_GPK2(2),
--	.ext_cd_gpio_invert	= 1,
--	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
--#ifdef CONFIG_EXYNOS4_SDHCI_CH2_8BIT
--	.max_width		= 8,
--	.host_caps		= MMC_CAP_8_BIT_DATA,
--#endif
--};
--
--static struct s3c_sdhci_platdata smdkc210_hsmmc3_pdata __initdata = {
--	.cd_type		= S3C_SDHCI_CD_GPIO,
--	.ext_cd_gpio		= EXYNOS4_GPK2(2),
--	.ext_cd_gpio_invert	= 1,
--	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
--};
--
--static void lcd_lte480wv_set_power(struct plat_lcd_data *pd,
--				   unsigned int power)
--{
--	if (power) {
--#if !defined(CONFIG_BACKLIGHT_PWM)
--		gpio_request_one(EXYNOS4_GPD0(1), GPIOF_OUT_INIT_HIGH, "GPD0");
--		gpio_free(EXYNOS4_GPD0(1));
--#endif
--		/* fire nRESET on power up */
--		gpio_request(EXYNOS4_GPX0(6), "GPX0");
--
--		gpio_direction_output(EXYNOS4_GPX0(6), 1);
--		mdelay(100);
--
--		gpio_set_value(EXYNOS4_GPX0(6), 0);
--		mdelay(10);
--
--		gpio_set_value(EXYNOS4_GPX0(6), 1);
--		mdelay(10);
--
--		gpio_free(EXYNOS4_GPX0(6));
--	} else {
--#if !defined(CONFIG_BACKLIGHT_PWM)
--		gpio_request_one(EXYNOS4_GPD0(1), GPIOF_OUT_INIT_LOW, "GPD0");
--		gpio_free(EXYNOS4_GPD0(1));
--#endif
--	}
--}
--
--static struct plat_lcd_data smdkc210_lcd_lte480wv_data = {
--	.set_power		= lcd_lte480wv_set_power,
--};
--
--static struct platform_device smdkc210_lcd_lte480wv = {
--	.name			= "platform-lcd",
--	.dev.parent		= &s5p_device_fimd0.dev,
--	.dev.platform_data	= &smdkc210_lcd_lte480wv_data,
--};
--
--static struct s3c_fb_pd_win smdkc210_fb_win0 = {
--	.win_mode = {
--		.left_margin	= 13,
--		.right_margin	= 8,
--		.upper_margin	= 7,
--		.lower_margin	= 5,
--		.hsync_len	= 3,
--		.vsync_len	= 1,
--		.xres		= 800,
--		.yres		= 480,
--	},
--	.max_bpp		= 32,
--	.default_bpp		= 24,
--};
--
--static struct s3c_fb_platdata smdkc210_lcd0_pdata __initdata = {
--	.win[0]		= &smdkc210_fb_win0,
--	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
--	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
--	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
--};
--
--static struct resource smdkc210_smsc911x_resources[] = {
--	[0] = {
--		.start	= EXYNOS4_PA_SROM_BANK(1),
--		.end	= EXYNOS4_PA_SROM_BANK(1) + SZ_64K - 1,
--		.flags	= IORESOURCE_MEM,
--	},
--	[1] = {
--		.start	= IRQ_EINT(5),
--		.end	= IRQ_EINT(5),
--		.flags	= IORESOURCE_IRQ | IRQF_TRIGGER_LOW,
--	},
--};
--
--static struct smsc911x_platform_config smsc9215_config = {
--	.irq_polarity	= SMSC911X_IRQ_POLARITY_ACTIVE_LOW,
--	.irq_type	= SMSC911X_IRQ_TYPE_PUSH_PULL,
--	.flags		= SMSC911X_USE_16BIT | SMSC911X_FORCE_INTERNAL_PHY,
--	.phy_interface	= PHY_INTERFACE_MODE_MII,
--	.mac		= {0x00, 0x80, 0x00, 0x23, 0x45, 0x67},
--};
--
--static struct platform_device smdkc210_smsc911x = {
--	.name		= "smsc911x",
--	.id		= -1,
--	.num_resources	= ARRAY_SIZE(smdkc210_smsc911x_resources),
--	.resource	= smdkc210_smsc911x_resources,
--	.dev		= {
--		.platform_data	= &smsc9215_config,
--	},
--};
--
--static struct i2c_board_info i2c_devs1[] __initdata = {
--	{I2C_BOARD_INFO("wm8994", 0x1a),},
--};
--
--static struct platform_device *smdkc210_devices[] __initdata = {
--	&s3c_device_hsmmc0,
--	&s3c_device_hsmmc1,
--	&s3c_device_hsmmc2,
--	&s3c_device_hsmmc3,
--	&s3c_device_i2c1,
--	&s3c_device_rtc,
--	&s3c_device_wdt,
--	&exynos4_device_ac97,
--	&exynos4_device_i2s0,
--	&exynos4_device_pd[PD_MFC],
--	&exynos4_device_pd[PD_G3D],
--	&exynos4_device_pd[PD_LCD0],
--	&exynos4_device_pd[PD_LCD1],
--	&exynos4_device_pd[PD_CAM],
--	&exynos4_device_pd[PD_TV],
--	&exynos4_device_pd[PD_GPS],
--	&exynos4_device_sysmmu,
--	&samsung_asoc_dma,
--	&s5p_device_fimd0,
--	&smdkc210_lcd_lte480wv,
--	&smdkc210_smsc911x,
--};
--
--static void __init smdkc210_smsc911x_init(void)
--{
--	u32 cs1;
--
--	/* configure nCS1 width to 16 bits */
--	cs1 = __raw_readl(S5P_SROM_BW) &
--		~(S5P_SROM_BW__CS_MASK << S5P_SROM_BW__NCS1__SHIFT);
--	cs1 |= ((1 << S5P_SROM_BW__DATAWIDTH__SHIFT) |
--		(1 << S5P_SROM_BW__WAITENABLE__SHIFT) |
--		(1 << S5P_SROM_BW__BYTEENABLE__SHIFT)) <<
--		S5P_SROM_BW__NCS1__SHIFT;
--	__raw_writel(cs1, S5P_SROM_BW);
--
--	/* set timing for nCS1 suitable for ethernet chip */
--	__raw_writel((0x1 << S5P_SROM_BCX__PMC__SHIFT) |
--		     (0x9 << S5P_SROM_BCX__TACP__SHIFT) |
--		     (0xc << S5P_SROM_BCX__TCAH__SHIFT) |
--		     (0x1 << S5P_SROM_BCX__TCOH__SHIFT) |
--		     (0x6 << S5P_SROM_BCX__TACC__SHIFT) |
--		     (0x1 << S5P_SROM_BCX__TCOS__SHIFT) |
--		     (0x1 << S5P_SROM_BCX__TACS__SHIFT), S5P_SROM_BC1);
--}
--
--/* LCD Backlight data */
--static struct samsung_bl_gpio_info smdkc210_bl_gpio_info = {
--	.no = EXYNOS4_GPD0(1),
--	.func = S3C_GPIO_SFN(2),
--};
--
--static struct platform_pwm_backlight_data smdkc210_bl_data = {
--	.pwm_id = 1,
--	.pwm_period_ns  = 1000,
--};
--
--static void __init smdkc210_map_io(void)
--{
--	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
--	s3c24xx_init_clocks(24000000);
--	s3c24xx_init_uarts(smdkc210_uartcfgs, ARRAY_SIZE(smdkc210_uartcfgs));
--}
--
--static void __init smdkc210_machine_init(void)
--{
--	s3c_i2c1_set_platdata(NULL);
--	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
--
--	smdkc210_smsc911x_init();
--
--	s3c_sdhci0_set_platdata(&smdkc210_hsmmc0_pdata);
--	s3c_sdhci1_set_platdata(&smdkc210_hsmmc1_pdata);
--	s3c_sdhci2_set_platdata(&smdkc210_hsmmc2_pdata);
--	s3c_sdhci3_set_platdata(&smdkc210_hsmmc3_pdata);
--
--	samsung_bl_set(&smdkc210_bl_gpio_info, &smdkc210_bl_data);
--	s5p_fimd0_set_platdata(&smdkc210_lcd0_pdata);
--
--	platform_add_devices(smdkc210_devices, ARRAY_SIZE(smdkc210_devices));
--}
--
--MACHINE_START(SMDKC210, "SMDKC210")
--	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
--	.boot_params	= S5P_PA_SDRAM + 0x100,
--	.init_irq	= exynos4_init_irq,
--	.map_io		= smdkc210_map_io,
--	.init_machine	= smdkc210_machine_init,
--	.timer		= &exynos4_timer,
--MACHINE_END
-diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
-index ea41495..a16eb56 100644
---- a/arch/arm/mach-exynos4/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos4/mach-smdkv310.c
-@@ -9,7 +9,9 @@
- */
- 
- #include <linux/serial_core.h>
-+#include <linux/delay.h>
- #include <linux/gpio.h>
-+#include <linux/lcd.h>
- #include <linux/mmc/host.h>
- #include <linux/platform_device.h>
- #include <linux/smsc911x.h>
-@@ -21,11 +23,14 @@
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
- 
-+#include <video/platform_lcd.h>
- #include <plat/regs-serial.h>
- #include <plat/regs-srom.h>
-+#include <plat/regs-fb-v4.h>
- #include <plat/exynos4.h>
- #include <plat/cpu.h>
- #include <plat/devs.h>
-+#include <plat/fb.h>
- #include <plat/keypad.h>
- #include <plat/sdhci.h>
- #include <plat/iic.h>
-@@ -112,6 +117,67 @@ static struct s3c_sdhci_platdata smdkv310_hsmmc3_pdata __initdata = {
- 	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
- };
- 
-+static void lcd_lte480wv_set_power(struct plat_lcd_data *pd,
-+				   unsigned int power)
-+{
-+	if (power) {
-+#if !defined(CONFIG_BACKLIGHT_PWM)
-+		gpio_request_one(EXYNOS4_GPD0(1), GPIOF_OUT_INIT_HIGH, "GPD0");
-+		gpio_free(EXYNOS4_GPD0(1));
-+#endif
-+		/* fire nRESET on power up */
-+		gpio_request(EXYNOS4_GPX0(6), "GPX0");
-+
-+		gpio_direction_output(EXYNOS4_GPX0(6), 1);
-+		mdelay(100);
-+
-+		gpio_set_value(EXYNOS4_GPX0(6), 0);
-+		mdelay(10);
-+
-+		gpio_set_value(EXYNOS4_GPX0(6), 1);
-+		mdelay(10);
-+
-+		gpio_free(EXYNOS4_GPX0(6));
-+	} else {
-+#if !defined(CONFIG_BACKLIGHT_PWM)
-+		gpio_request_one(EXYNOS4_GPD0(1), GPIOF_OUT_INIT_LOW, "GPD0");
-+		gpio_free(EXYNOS4_GPD0(1));
-+#endif
-+	}
-+}
-+
-+static struct plat_lcd_data smdkv310_lcd_lte480wv_data = {
-+	.set_power		= lcd_lte480wv_set_power,
-+};
-+
-+static struct platform_device smdkv310_lcd_lte480wv = {
-+	.name			= "platform-lcd",
-+	.dev.parent		= &s5p_device_fimd0.dev,
-+	.dev.platform_data	= &smdkv310_lcd_lte480wv_data,
-+};
-+
-+static struct s3c_fb_pd_win smdkv310_fb_win0 = {
-+	.win_mode = {
-+		.left_margin	= 13,
-+		.right_margin	= 8,
-+		.upper_margin	= 7,
-+		.lower_margin	= 5,
-+		.hsync_len	= 3,
-+		.vsync_len	= 1,
-+		.xres		= 800,
-+		.yres		= 480,
-+	},
-+	.max_bpp		= 32,
-+	.default_bpp		= 24,
-+};
-+
-+static struct s3c_fb_platdata smdkv310_lcd0_pdata __initdata = {
-+	.win[0]		= &smdkv310_fb_win0,
-+	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
-+	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
-+	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
-+};
-+
- static struct resource smdkv310_smsc911x_resources[] = {
- 	[0] = {
- 		.start	= EXYNOS4_PA_SROM_BANK(1),
-@@ -188,6 +254,8 @@ static struct platform_device *smdkv310_devices[] __initdata = {
- 	&exynos4_device_sysmmu,
- 	&samsung_asoc_dma,
- 	&samsung_asoc_idma,
-+	&s5p_device_fimd0,
-+	&smdkv310_lcd_lte480wv,
- 	&smdkv310_smsc911x,
- 	&exynos4_device_ahci,
- };
-@@ -248,6 +316,7 @@ static void __init smdkv310_machine_init(void)
- 	samsung_keypad_set_platdata(&smdkv310_keypad_data);
- 
- 	samsung_bl_set(&smdkv310_bl_gpio_info, &smdkv310_bl_data);
-+	s5p_fimd0_set_platdata(&smdkv310_lcd0_pdata);
- 
- 	platform_add_devices(smdkv310_devices, ARRAY_SIZE(smdkv310_devices));
- }
-@@ -261,3 +330,12 @@ MACHINE_START(SMDKV310, "SMDKV310")
- 	.init_machine	= smdkv310_machine_init,
- 	.timer		= &exynos4_timer,
- MACHINE_END
-+
-+MACHINE_START(SMDKC210, "SMDKC210")
-+	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
-+	.boot_params	= S5P_PA_SDRAM + 0x100,
-+	.init_irq	= exynos4_init_irq,
-+	.map_io		= smdkv310_map_io,
-+	.init_machine	= smdkv310_machine_init,
-+	.timer		= &exynos4_timer,
-+MACHINE_END
+Best regards
 -- 
-1.7.1
+Marek Szyprowski
+Samsung Poland R&D Center
