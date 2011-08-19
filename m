@@ -1,17 +1,17 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S5P64X0: Add the devname for DMA clock
+Subject: RE: [PATCH 0/3] ARM: Samsung: use dma-pl330 device name for clock
 Date: Fri, 19 Aug 2011 14:24:09 +0900
-Message-ID: <000601cc5e30$3a38bda0$aeaa38e0$%kim@samsung.com>
-References: <1313649828-27642-1-git-send-email-boojin.kim@samsung.com>
+Message-ID: <000701cc5e30$3a4e1a60$aeea4f20$%kim@samsung.com>
+References: <1313530266-14939-1-git-send-email-vz@mleia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.samsung.com ([203.254.224.33]:63948 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752417Ab1HSFYO (ORCPT
+	with ESMTP id S1752432Ab1HSFYP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Aug 2011 01:24:14 -0400
+	Fri, 19 Aug 2011 01:24:15 -0400
 Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
  by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
@@ -20,53 +20,38 @@ Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
 Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0LQ500KA7TOA6V@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 14:24:11 +0900 (KST)
-In-reply-to: <1313649828-27642-1-git-send-email-boojin.kim@samsung.com>
+ linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 14:24:12 +0900 (KST)
+In-reply-to: <1313530266-14939-1-git-send-email-vz@mleia.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Boojin Kim' <boojin.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: 'Vladimir Zapolskiy' <vz@mleia.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Boojin Kim wrote:
+Vladimir Zapolskiy wrote:
 > 
-> This patch adds devname for DMA clock.
-> NOTE: This patch should be added after merging new pl330 driver on
-dmaengine.
+> This changeset replaces s3c-pl330.x clock device names with
+> dma-pl330.x, otherwise there won't be a correspondence between clock
+> device name and amba device name, thus clocks can't be enabled.
 > 
-> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-> ---
->  arch/arm/mach-s5p64x0/clock-s5p6440.c |    1 +
->  arch/arm/mach-s5p64x0/clock-s5p6450.c |    1 +
->  2 files changed, 2 insertions(+), 0 deletions(-)
+> Fixes runtime errors on clk_get() from drivers/dma/pl330.c:
+>   dma-pl330 dma-pl330.0: Cannot get operation clock.
+>   dma-pl330: probe of dma-pl330.0 failed with error -22
 > 
-> diff --git a/arch/arm/mach-s5p64x0/clock-s5p6440.c b/arch/arm/mach-
-> s5p64x0/clock-s5p6440.c
-> index c1f548f..c54c65d 100644
-> --- a/arch/arm/mach-s5p64x0/clock-s5p6440.c
-> +++ b/arch/arm/mach-s5p64x0/clock-s5p6440.c
-> @@ -147,6 +147,7 @@ static struct clk init_clocks_off[] = {
->  		.ctrlbit	= (1 << 8),
->  	}, {
->  		.name		= "dma",
-> +		.devname	= "dma-pl330",
->  		.parent		= &clk_hclk_low.clk,
->  		.enable		= s5p64x0_hclk0_ctrl,
->  		.ctrlbit	= (1 << 12),
-> diff --git a/arch/arm/mach-s5p64x0/clock-s5p6450.c b/arch/arm/mach-
-> s5p64x0/clock-s5p6450.c
-> index 3d9b609..2d04abf 100644
-> --- a/arch/arm/mach-s5p64x0/clock-s5p6450.c
-> +++ b/arch/arm/mach-s5p64x0/clock-s5p6450.c
-> @@ -180,6 +180,7 @@ static struct clk init_clocks_off[] = {
->  		.ctrlbit	= (1 << 3),
->  	}, {
->  		.name		= "dma",
-> +		.devname	= "dma-pl330",
->  		.parent		= &clk_hclk_low.clk,
->  		.enable		= s5p64x0_hclk0_ctrl,
->  		.ctrlbit	= (1 << 12),
+> The changes are based on linux-samsung/next/topic-dma-pl330 branch.
+> 
+> Vladimir Zapolskiy (3):
+>   ARM: EXYNOS4: use dma-pl330 device name for clock
+>   ARM: S5PC100: use dma-pl330 device name for clock
+>   ARM: S5PV210: use dma-pl330 device name for clock
+> 
+>  arch/arm/mach-exynos4/clock.c |    4 ++--
+>  arch/arm/mach-s5pc100/clock.c |    4 ++--
+>  arch/arm/mach-s5pv210/clock.c |    4 ++--
+>  3 files changed, 6 insertions(+), 6 deletions(-)
+> 
 > --
-> 1.7.1
+> 1.7.5.1
 
 OK, will apply.
 Thanks.
