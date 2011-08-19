@@ -1,12 +1,12 @@
 From: Boojin Kim <boojin.kim@samsung.com>
-Subject: [PATCH v6 03/15] DMA: PL330: Support DMA_SLAVE_CONFIG command
-Date: Fri, 19 Aug 2011 17:54:45 +0900
-Message-ID: <1313744097-27289-4-git-send-email-boojin.kim@samsung.com>
+Subject: [PATCH v6 05/15] ARM: SAMSUNG: Update to use PL330-DMA driver
+Date: Fri, 19 Aug 2011 17:54:47 +0900
+Message-ID: <1313744097-27289-6-git-send-email-boojin.kim@samsung.com>
 References: <1313744097-27289-1-git-send-email-boojin.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:57775 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:57735 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752054Ab1HSJLU (ORCPT
+	with ESMTP id S1751942Ab1HSJLU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 19 Aug 2011 05:11:20 -0400
 In-Reply-To: <1313744097-27289-1-git-send-email-boojin.kim@samsung.com>
@@ -15,93 +15,137 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>, Boojin Kim <boojin.kim@samsung.com>
 
+This patch adds to support PL330-DMA driver on DMADEVICE for S5P SoCs.
+
 Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
 Acked-by: Vinod Koul <vinod.koul@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- drivers/dma/pl330.c |   56 ++++++++++++++++++++++++++++++++++++++------------
- 1 files changed, 42 insertions(+), 14 deletions(-)
+ arch/arm/mach-exynos4/include/mach/dma.h           |    4 ++--
+ arch/arm/mach-s5p64x0/include/mach/dma.h           |    2 +-
+ arch/arm/mach-s5pc100/include/mach/dma.h           |    2 +-
+ arch/arm/mach-s5pv210/include/mach/dma.h           |    2 +-
+ arch/arm/plat-samsung/Kconfig                      |    8 ++++++++
+ .../include/plat/{s3c-dma-pl330.h => dma-pl330.h}  |    8 ++++----
+ .../plat-samsung/include/plat/s3c-pl330-pdata.h    |    2 +-
+ 7 files changed, 18 insertions(+), 10 deletions(-)
+ rename arch/arm/plat-samsung/include/plat/{s3c-dma-pl330.h => dma-pl330.h} (93%)
 
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index d5829c7..59943ec 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -73,6 +73,7 @@ struct dma_pl330_chan {
+diff --git a/arch/arm/mach-exynos4/include/mach/dma.h b/arch/arm/mach-exynos4/include/mach/dma.h
+index 81209eb..201842a 100644
+--- a/arch/arm/mach-exynos4/include/mach/dma.h
++++ b/arch/arm/mach-exynos4/include/mach/dma.h
+@@ -20,7 +20,7 @@
+ #ifndef __MACH_DMA_H
+ #define __MACH_DMA_H
  
- 	/* For D-to-M and M-to-D channels */
- 	int burst_sz; /* the peripheral fifo width */
-+	int burst_len; /* the number of burst */
- 	dma_addr_t fifo_addr;
- };
+-/* This platform uses the common S3C DMA API driver for PL330 */
+-#include <plat/s3c-dma-pl330.h>
++/* This platform uses the common DMA API driver for PL330 */
++#include <plat/dma-pl330.h>
  
-@@ -261,25 +262,52 @@ static int pl330_alloc_chan_resources(struct dma_chan *chan)
- static int pl330_control(struct dma_chan *chan, enum dma_ctrl_cmd cmd, unsigned long arg)
- {
- 	struct dma_pl330_chan *pch = to_pchan(chan);
--	struct dma_pl330_desc *desc;
-+	struct dma_pl330_desc *desc, *_dt;
- 	unsigned long flags;
-+	struct dma_pl330_dmac *pdmac = pch->dmac;
-+	struct dma_slave_config *slave_config;
-+	LIST_HEAD(list);
+ #endif /* __MACH_DMA_H */
+diff --git a/arch/arm/mach-s5p64x0/include/mach/dma.h b/arch/arm/mach-s5p64x0/include/mach/dma.h
+index 81209eb..1beae2c 100644
+--- a/arch/arm/mach-s5p64x0/include/mach/dma.h
++++ b/arch/arm/mach-s5p64x0/include/mach/dma.h
+@@ -21,6 +21,6 @@
+ #define __MACH_DMA_H
  
--	/* Only supports DMA_TERMINATE_ALL */
--	if (cmd != DMA_TERMINATE_ALL)
--		return -ENXIO;
--
--	spin_lock_irqsave(&pch->lock, flags);
--
--	/* FLUSH the PL330 Channel thread */
--	pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
-+	switch (cmd) {
-+	case DMA_TERMINATE_ALL:
-+		spin_lock_irqsave(&pch->lock, flags);
+ /* This platform uses the common S3C DMA API driver for PL330 */
+-#include <plat/s3c-dma-pl330.h>
++#include <plat/dma-pl330.h>
  
--	/* Mark all desc done */
--	list_for_each_entry(desc, &pch->work_list, node)
--		desc->status = DONE;
-+		/* FLUSH the PL330 Channel thread */
-+		pl330_chan_ctrl(pch->pl330_chid, PL330_OP_FLUSH);
+ #endif /* __MACH_DMA_H */
+diff --git a/arch/arm/mach-s5pc100/include/mach/dma.h b/arch/arm/mach-s5pc100/include/mach/dma.h
+index 81209eb..1beae2c 100644
+--- a/arch/arm/mach-s5pc100/include/mach/dma.h
++++ b/arch/arm/mach-s5pc100/include/mach/dma.h
+@@ -21,6 +21,6 @@
+ #define __MACH_DMA_H
  
--	spin_unlock_irqrestore(&pch->lock, flags);
-+		/* Mark all desc done */
-+		list_for_each_entry_safe(desc, _dt, &pch->work_list , node) {
-+			desc->status = DONE;
-+			pch->completed = desc->txd.cookie;
-+			list_move_tail(&desc->node, &list);
-+		}
+ /* This platform uses the common S3C DMA API driver for PL330 */
+-#include <plat/s3c-dma-pl330.h>
++#include <plat/dma-pl330.h>
  
--	pl330_tasklet((unsigned long) pch);
-+		list_splice_tail_init(&list, &pdmac->desc_pool);
-+		spin_unlock_irqrestore(&pch->lock, flags);
-+		break;
-+	case DMA_SLAVE_CONFIG:
-+		slave_config = (struct dma_slave_config *)arg;
+ #endif /* __MACH_DMA_H */
+diff --git a/arch/arm/mach-s5pv210/include/mach/dma.h b/arch/arm/mach-s5pv210/include/mach/dma.h
+index 81209eb..1beae2c 100644
+--- a/arch/arm/mach-s5pv210/include/mach/dma.h
++++ b/arch/arm/mach-s5pv210/include/mach/dma.h
+@@ -21,6 +21,6 @@
+ #define __MACH_DMA_H
+ 
+ /* This platform uses the common S3C DMA API driver for PL330 */
+-#include <plat/s3c-dma-pl330.h>
++#include <plat/dma-pl330.h>
+ 
+ #endif /* __MACH_DMA_H */
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index b3e1065..d38cef4 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -306,6 +306,14 @@ config S3C_PL330_DMA
+ 	help
+ 	  S3C DMA API Driver for PL330 DMAC.
+ 
++config SAMSUNG_DMA_PL330
++	bool
++	select DMADEVICES
++	select PL330_DMA
++	select ARM_AMBA
++	help
++	  Use DMA device engine for PL330 DMAC.
 +
-+		if (slave_config->direction == DMA_TO_DEVICE) {
-+			if (slave_config->dst_addr)
-+				pch->fifo_addr = slave_config->dst_addr;
-+			if (slave_config->dst_addr_width)
-+				pch->burst_sz = __ffs(slave_config->dst_addr_width);
-+			if (slave_config->dst_maxburst)
-+				pch->burst_len = slave_config->dst_maxburst;
-+		} else if (slave_config->direction == DMA_FROM_DEVICE) {
-+			if (slave_config->src_addr)
-+				pch->fifo_addr = slave_config->src_addr;
-+			if (slave_config->src_addr_width)
-+				pch->burst_sz = __ffs(slave_config->src_addr_width);
-+			if (slave_config->src_maxburst)
-+				pch->burst_len = slave_config->src_maxburst;
-+		}
-+		break;
-+	default:
-+		dev_err(pch->dmac->pif.dev, "Not supported command.\n");
-+		return -ENXIO;
-+	}
+ comment "Power management"
  
- 	return 0;
- }
+ config SAMSUNG_PM_DEBUG
+diff --git a/arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h b/arch/arm/plat-samsung/include/plat/dma-pl330.h
+similarity index 93%
+rename from arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h
+rename to arch/arm/plat-samsung/include/plat/dma-pl330.h
+index 8107442..0a5dade 100644
+--- a/arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h
++++ b/arch/arm/plat-samsung/include/plat/dma-pl330.h
+@@ -8,8 +8,8 @@
+  * (at your option) any later version.
+  */
+ 
+-#ifndef	__S3C_DMA_PL330_H_
+-#define	__S3C_DMA_PL330_H_
++#ifndef __DMA_PL330_H_
++#define __DMA_PL330_H_ __FILE__
+ 
+ #define S3C2410_DMAF_AUTOSTART		(1 << 0)
+ #define S3C2410_DMAF_CIRCULAR		(1 << 1)
+@@ -20,7 +20,7 @@
+  * For the sake of consistency across client drivers,
+  * We keep the channel names unchanged and only add
+  * missing peripherals are added.
+- * Order is not important since S3C PL330 API driver
++ * Order is not important since DMA PL330 API driver
+  * use these just as IDs.
+  */
+ enum dma_ch {
+@@ -95,4 +95,4 @@ static inline bool s3c_dma_has_circular(void)
+ 
+ #include <plat/dma.h>
+ 
+-#endif	/* __S3C_DMA_PL330_H_ */
++#endif	/* __DMA_PL330_H_ */
+diff --git a/arch/arm/plat-samsung/include/plat/s3c-pl330-pdata.h b/arch/arm/plat-samsung/include/plat/s3c-pl330-pdata.h
+index bf5e2a9..64fdf66 100644
+--- a/arch/arm/plat-samsung/include/plat/s3c-pl330-pdata.h
++++ b/arch/arm/plat-samsung/include/plat/s3c-pl330-pdata.h
+@@ -12,7 +12,7 @@
+ #ifndef __S3C_PL330_PDATA_H
+ #define __S3C_PL330_PDATA_H
+ 
+-#include <plat/s3c-dma-pl330.h>
++#include <plat/dma-pl330.h>
+ 
+ /*
+  * Every PL330 DMAC has max 32 peripheral interfaces,
 -- 
 1.7.1
