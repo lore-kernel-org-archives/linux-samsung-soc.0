@@ -1,233 +1,277 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3] ARM: Samsung: fix watchdog reset issue with clk_get()
-Date: Fri, 19 Aug 2011 22:06:26 +0900
-Message-ID: <002a01cc5e70$ce51d7c0$6af58740$%kim@samsung.com>
-References: <1313663117-29191-1-git-send-email-m.szyprowski@samsung.com>
+Subject: RE: [PATCH] ARM: SAMSUNG: TSADC: Remove unnecessary duplication of
+ plat_data
+Date: Fri, 19 Aug 2011 22:07:38 +0900
+Message-ID: <002b01cc5e70$f902f350$eb08d9f0$%kim@samsung.com>
+References: <1313754043-29398-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:34913 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751277Ab1HSNG3 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:15226 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751277Ab1HSNHl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Aug 2011 09:06:29 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Fri, 19 Aug 2011 09:07:41 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LQ600L4OF2O4DB0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 22:06:28 +0900 (KST)
+ 2010)) with ESMTP id <0LQ600A14F4PR5B0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 22:07:39 +0900 (KST)
 Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LQ600MLAF2SHM@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 22:06:28 +0900 (KST)
-In-reply-to: <1313663117-29191-1-git-send-email-m.szyprowski@samsung.com>
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LQ60040OF4RYP@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 22:07:39 +0900 (KST)
+In-reply-to: <1313754043-29398-1-git-send-email-ch.naveen@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Angus Ainslie' <angus.ainslie@linaro.org>
+To: 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Marek Szyprowski wrote:
+Naveen Krishna Chatradhi wrote:
 > 
-> clkdev framework uses global mutex to protect clock tree, so it is not
-> possible to call clk_get() in interrupt context. This patch fixes this
-> issue and makes system reset by watchdog call working again.
+> The default plat_data struct for TSADC is added in devs-ts
+> and duplication is removed from the following machines.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 > ---
->  arch/arm/plat-samsung/clock.c                      |   11 +++++++++++
->  arch/arm/plat-samsung/include/plat/clock.h         |    3 +++
->  .../arm/plat-samsung/include/plat/watchdog-reset.h |   10 +++-------
->  3 files changed, 17 insertions(+), 7 deletions(-)
 > 
+> Note: Only build tested on mini6410, real6410.
 > 
-> history:
-> v3:
-> - moved initialization to arch_initcall, cleaned the code
+>  arch/arm/mach-s3c64xx/mach-mini6410.c |    8 +-------
+>  arch/arm/mach-s3c64xx/mach-real6410.c |    8 +-------
+>  arch/arm/mach-s3c64xx/mach-smdk6410.c |    8 +-------
+>  arch/arm/mach-s5p64x0/mach-smdk6440.c |    8 +-------
+>  arch/arm/mach-s5p64x0/mach-smdk6450.c |    8 +-------
+>  arch/arm/mach-s5pc100/mach-smdkc100.c |    8 +-------
+>  arch/arm/mach-s5pv210/mach-smdkv210.c |    8 +-------
+>  arch/arm/plat-samsung/dev-ts.c        |    9 +++++++++
+>  8 files changed, 16 insertions(+), 49 deletions(-)
 > 
-> v2:
-> - added missing '__init' section modifiers
+> diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-
+> s3c64xx/mach-mini6410.c
+> index 527f49b..8f34a3c 100644
+> --- a/arch/arm/mach-s3c64xx/mach-mini6410.c
+> +++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
+> @@ -205,12 +205,6 @@ static struct platform_device mini6410_lcd_powerdev =
+{
+>  	.dev.platform_data	= &mini6410_lcd_power_data,
+>  };
 > 
-> diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
-> index 302c426..3b44519 100644
-> --- a/arch/arm/plat-samsung/clock.c
-> +++ b/arch/arm/plat-samsung/clock.c
-> @@ -64,6 +64,17 @@ static LIST_HEAD(clocks);
->   */
->  DEFINE_SPINLOCK(clocks_lock);
-> 
-> +/* Global watchdog clock used by arch_wtd_reset() callback */
-> +struct clk *s3c2410_wdtclk;
-> +static int __init s3c_wdt_reset_init(void)
-> +{
-> +	s3c2410_wdtclk = clk_get(NULL, "watchdog");
-> +	if (IS_ERR(s3c2410_wdtclk))
-> +		printk(KERN_WARNING "%s: warning: cannot get watchdog
-> clock\n", __func__);
-> +	return 0;
-> +}
-> +arch_initcall(s3c_wdt_reset_init);
-> +
->  /* enable and disable calls for use with the clk struct */
-> 
->  static int clk_null_enable(struct clk *clk, int enable)
-> diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-
-> samsung/include/plat/clock.h
-> index 87d5b38..8f95700 100644
-> --- a/arch/arm/plat-samsung/include/plat/clock.h
-> +++ b/arch/arm/plat-samsung/include/plat/clock.h
-> @@ -121,3 +121,6 @@ extern int s3c64xx_sclk_ctrl(struct clk *clk, int
-enable);
-> 
->  extern void s3c_pwmclk_init(void);
-> 
-> +/* Global watchdog clock used by arch_wtd_reset() callback */
-> +
-> +extern struct clk *s3c2410_wdtclk;
-> diff --git a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-b/arch/arm/plat-
-> samsung/include/plat/watchdog-reset.h
-> index 54b762a..40dbb2b 100644
-> --- a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-> +++ b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-> @@ -10,6 +10,7 @@
->   * published by the Free Software Foundation.
->  */
-> 
-> +#include <plat/clock.h>
->  #include <plat/regs-watchdog.h>
->  #include <mach/map.h>
-> 
-> @@ -19,17 +20,12 @@
-> 
->  static inline void arch_wdt_reset(void)
->  {
-> -	struct clk *wdtclk;
+> -static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
+> -	.delay			= 10000,
+> -	.presc			= 49,
+> -	.oversampling_shift	= 2,
+> -};
 > -
->  	printk("arch_reset: attempting watchdog reset\n");
+>  static struct platform_device *mini6410_devices[] __initdata = {
+>  	&mini6410_device_eth,
+>  	&s3c_device_hsmmc0,
+> @@ -319,7 +313,7 @@ static void __init mini6410_machine_init(void)
 > 
->  	__raw_writel(0, S3C2410_WTCON);	  /* disable watchdog, to be safe
-*/
+>  	s3c_nand_set_platdata(&mini6410_nand_info);
+>  	s3c_fb_set_platdata(&mini6410_lcd_pdata);
+> -	s3c24xx_ts_set_platdata(&s3c_ts_platform);
+> +	s3c24xx_ts_set_platdata(NULL);
 > 
-> -	wdtclk = clk_get(NULL, "watchdog");
-> -	if (!IS_ERR(wdtclk)) {
-> -		clk_enable(wdtclk);
-> -	} else
-> -		printk(KERN_WARNING "%s: warning: cannot get watchdog
-> clock\n", __func__);
-> +	if (s3c2410_wdtclk)
-> +		clk_enable(s3c2410_wdtclk);
+>  	/* configure nCS1 width to 16 bits */
 > 
->  	/* put initial values into count and data */
->  	__raw_writel(0x80, S3C2410_WTCNT);
+> diff --git a/arch/arm/mach-s3c64xx/mach-real6410.c b/arch/arm/mach-
+> s3c64xx/mach-real6410.c
+> index 95b04b1..1f5abfa 100644
+> --- a/arch/arm/mach-s3c64xx/mach-real6410.c
+> +++ b/arch/arm/mach-s3c64xx/mach-real6410.c
+> @@ -198,12 +198,6 @@ static struct platform_device *real6410_devices[]
+> __initdata = {
+>  	&s3c_device_ohci,
+>  };
+> 
+> -static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
+> -	.delay			= 10000,
+> -	.presc			= 49,
+> -	.oversampling_shift	= 2,
+> -};
+> -
+>  static void __init real6410_map_io(void)
+>  {
+>  	u32 tmp;
+> @@ -300,7 +294,7 @@ static void __init real6410_machine_init(void)
+> 
+>  	s3c_fb_set_platdata(&real6410_lcd_pdata);
+>  	s3c_nand_set_platdata(&real6410_nand_info);
+> -	s3c24xx_ts_set_platdata(&s3c_ts_platform);
+> +	s3c24xx_ts_set_platdata(NULL);
+> 
+>  	/* configure nCS1 width to 16 bits */
+> 
+> diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-
+> s3c64xx/mach-smdk6410.c
+> index ecbea92..c5190a5 100644
+> --- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
+> +++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+> @@ -658,12 +658,6 @@ static struct i2c_board_info i2c_devs1[] __initdata =
+{
+>  	{ I2C_BOARD_INFO("24c128", 0x57), },	/* Samsung S524AD0XD1 */
+>  };
+> 
+> -static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
+> -	.delay			= 10000,
+> -	.presc			= 49,
+> -	.oversampling_shift	= 2,
+> -};
+> -
+>  /* LCD Backlight data */
+>  static struct samsung_bl_gpio_info smdk6410_bl_gpio_info = {
+>  	.no = S3C64XX_GPF(15),
+> @@ -705,7 +699,7 @@ static void __init smdk6410_machine_init(void)
+> 
+>  	samsung_keypad_set_platdata(&smdk6410_keypad_data);
+> 
+> -	s3c24xx_ts_set_platdata(&s3c_ts_platform);
+> +	s3c24xx_ts_set_platdata(NULL);
+> 
+>  	/* configure nCS1 width to 16 bits */
+> 
+> diff --git a/arch/arm/mach-s5p64x0/mach-smdk6440.c b/arch/arm/mach-
+> s5p64x0/mach-smdk6440.c
+> index 346f8df..340f30f 100644
+> --- a/arch/arm/mach-s5p64x0/mach-smdk6440.c
+> +++ b/arch/arm/mach-s5p64x0/mach-smdk6440.c
+> @@ -129,12 +129,6 @@ static struct i2c_board_info smdk6440_i2c_devs1[]
+> __initdata = {
+>  	/* To be populated */
+>  };
+> 
+> -static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
+> -	.delay			= 10000,
+> -	.presc			= 49,
+> -	.oversampling_shift	= 2,
+> -};
+> -
+>  /* LCD Backlight data */
+>  static struct samsung_bl_gpio_info smdk6440_bl_gpio_info = {
+>  	.no = S5P6440_GPF(15),
+> @@ -155,7 +149,7 @@ static void __init smdk6440_map_io(void)
+> 
+>  static void __init smdk6440_machine_init(void)
+>  {
+> -	s3c24xx_ts_set_platdata(&s3c_ts_platform);
+> +	s3c24xx_ts_set_platdata(NULL);
+> 
+>  	s3c_i2c0_set_platdata(&s5p6440_i2c0_data);
+>  	s3c_i2c1_set_platdata(&s5p6440_i2c1_data);
+> diff --git a/arch/arm/mach-s5p64x0/mach-smdk6450.c b/arch/arm/mach-
+> s5p64x0/mach-smdk6450.c
+> index 33f2adf..ee0da14 100644
+> --- a/arch/arm/mach-s5p64x0/mach-smdk6450.c
+> +++ b/arch/arm/mach-s5p64x0/mach-smdk6450.c
+> @@ -148,12 +148,6 @@ static struct i2c_board_info smdk6450_i2c_devs1[]
+> __initdata = {
+>  	{ I2C_BOARD_INFO("24c128", 0x57), },/* Samsung S524AD0XD1
+> EEPROM */
+>  };
+> 
+> -static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
+> -	.delay			= 10000,
+> -	.presc			= 49,
+> -	.oversampling_shift	= 2,
+> -};
+> -
+>  /* LCD Backlight data */
+>  static struct samsung_bl_gpio_info smdk6450_bl_gpio_info = {
+>  	.no = S5P6450_GPF(15),
+> @@ -174,7 +168,7 @@ static void __init smdk6450_map_io(void)
+> 
+>  static void __init smdk6450_machine_init(void)
+>  {
+> -	s3c24xx_ts_set_platdata(&s3c_ts_platform);
+> +	s3c24xx_ts_set_platdata(NULL);
+> 
+>  	s3c_i2c0_set_platdata(&s5p6450_i2c0_data);
+>  	s3c_i2c1_set_platdata(&s5p6450_i2c1_data);
+> diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-
+> s5pc100/mach-smdkc100.c
+> index 227d890..0b70762 100644
+> --- a/arch/arm/mach-s5pc100/mach-smdkc100.c
+> +++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
+> @@ -203,12 +203,6 @@ static struct platform_device *smdkc100_devices[]
+> __initdata = {
+>  	&s5pc100_device_spdif,
+>  };
+> 
+> -static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
+> -	.delay			= 10000,
+> -	.presc			= 49,
+> -	.oversampling_shift	= 2,
+> -};
+> -
+>  /* LCD Backlight data */
+>  static struct samsung_bl_gpio_info smdkc100_bl_gpio_info = {
+>  	.no = S5PC100_GPD(0),
+> @@ -228,7 +222,7 @@ static void __init smdkc100_map_io(void)
+> 
+>  static void __init smdkc100_machine_init(void)
+>  {
+> -	s3c24xx_ts_set_platdata(&s3c_ts_platform);
+> +	s3c24xx_ts_set_platdata(NULL);
+> 
+>  	/* I2C */
+>  	s3c_i2c0_set_platdata(NULL);
+> diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-
+> s5pv210/mach-smdkv210.c
+> index 5e011fc..4b27bca 100644
+> --- a/arch/arm/mach-s5pv210/mach-smdkv210.c
+> +++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
+> @@ -265,12 +265,6 @@ static struct i2c_board_info smdkv210_i2c_devs2[]
+> __initdata = {
+>  	/* To Be Updated */
+>  };
+> 
+> -static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
+> -	.delay			= 10000,
+> -	.presc			= 49,
+> -	.oversampling_shift	= 2,
+> -};
+> -
+>  /* LCD Backlight data */
+>  static struct samsung_bl_gpio_info smdkv210_bl_gpio_info = {
+>  	.no = S5PV210_GPD0(3),
+> @@ -296,7 +290,7 @@ static void __init smdkv210_machine_init(void)
+>  	smdkv210_dm9000_init();
+> 
+>  	samsung_keypad_set_platdata(&smdkv210_keypad_data);
+> -	s3c24xx_ts_set_platdata(&s3c_ts_platform);
+> +	s3c24xx_ts_set_platdata(NULL);
+> 
+>  	s3c_i2c0_set_platdata(NULL);
+>  	s3c_i2c1_set_platdata(NULL);
+> diff --git a/arch/arm/plat-samsung/dev-ts.c
+b/arch/arm/plat-samsung/dev-ts.c
+> index 82543f0..5f3d46a 100644
+> --- a/arch/arm/plat-samsung/dev-ts.c
+> +++ b/arch/arm/plat-samsung/dev-ts.c
+> @@ -43,8 +43,17 @@ struct platform_device s3c_device_ts = {
+>  	.resource	= s3c_ts_resource,
+>  };
+> 
+> +static struct s3c2410_ts_mach_info default_ts_data __initdata = {
+> +	.delay			= 10000,
+> +	.presc			= 49,
+> +	.oversampling_shift	= 2,
+> +};
+> +
+>  void __init s3c24xx_ts_set_platdata(struct s3c2410_ts_mach_info *pd)
+>  {
+> +	if (!pd)
+> +		pd = &default_ts_data;
+> +
+>  	s3c_set_platdata(pd, sizeof(struct s3c2410_ts_mach_info),
+>  			 &s3c_device_ts);
+>  }
 > --
-> 1.7.1.569.g6f426
+> 1.7.2.3
 
-Looks good but happens following:
-
-Hmm...
-With s3c2410_defconfig:
-
-In file included from arch/arm/plat-s3c24xx/cpu.c:48:
-arch/arm/plat-samsung/include/plat/clock.h:32: error: redefinition of
-'struct clk_ops'
-arch/arm/plat-samsung/include/plat/clock.h:39: error: redefinition of
-'struct clk'
-arch/arm/plat-samsung/include/plat/clock.h:60: error: conflicting types for
-'s3c24xx_dclk0'
-arch/arm/plat-samsung/include/plat/clock.h:60: note: previous declaration of
-'s3c24xx_dclk0' was here
-arch/arm/plat-samsung/include/plat/clock.h:61: error: conflicting types for
-'s3c24xx_dclk1'
-arch/arm/plat-samsung/include/plat/clock.h:61: note: previous declaration of
-'s3c24xx_dclk1' was here
-arch/arm/plat-samsung/include/plat/clock.h:62: error: conflicting types for
-'s3c24xx_clkout0'
-arch/arm/plat-samsung/include/plat/clock.h:62: note: previous declaration of
-'s3c24xx_clkout0' was here
-
-(snip)
-
-arch/arm/plat-samsung/include/plat/clock.h:101: error: conflicting types for
-'s3c_disable_clocks'
-arch/arm/plat-samsung/include/plat/clock.h:101: note: previous declaration
-of 's3c_disable_clocks' was here
-arch/arm/plat-samsung/include/plat/clock.h:118: error: conflicting types for
-'s3c64xx_sclk_ctrl'
-arch/arm/plat-samsung/include/plat/clock.h:118: note: previous declaration
-of 's3c64xx_sclk_ctrl' was here
-arch/arm/plat-samsung/include/plat/clock.h:126: error: conflicting types for
-'s3c2410_wdtclk'
-arch/arm/plat-samsung/include/plat/clock.h:126: note: previous declaration
-of 's3c2410_wdtclk' was here
-make[1]: *** [arch/arm/plat-s3c24xx/cpu.o] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [arch/arm/plat-s3c24xx] Error 2
-make: *** Waiting for unfinished jobs....
-
-And, with s5p64x0_defconfig:
-
-  CHK     include/linux/version.h
-  CHK     include/generated/utsrelease.h
-make[1]: `include/generated/mach-types.h' is up to date.
-  CALL    scripts/checksyscalls.sh
-  CHK     include/generated/compile.h
-  KSYM    .tmp_kallsyms1.S
-  AS      .tmp_kallsyms1.o
-  LD      .tmp_vmlinux2
-  KSYM    .tmp_kallsyms2.S
-  AS      .tmp_kallsyms2.o
-  LD      vmlinux
-  SYSMAP  System.map
-  SYSMAP  .tmp_System.map
-Inconsistent kallsyms data
-This is a bug - please report about it
-Try make KALLSYMS_EXTRA_PASS=1 as a workaround
-make: *** [vmlinux] Error 1
-
-
-The building error of s3c2410_defconfig can be fixed with below.
----
-commit c5f80e2eb419437a7e4272d28bc7258b650b0934
-Author: Kukjin Kim <kgene.kim@samsung.com>
-Date:   Fri Aug 19 21:12:19 2011 +0900
-
-    ARM: SAMSUNG: fix to prevent declaring duplicated
-
-    The plat/clock.h revised to prevent declaring duplicated.
-
-    Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-
-diff --git a/arch/arm/plat-samsung/include/plat/clock.h
-b/arch/arm/plat-samsung/include/plat/clock.h
-index 8f95700..092be14 100644
---- a/arch/arm/plat-samsung/include/plat/clock.h
-+++ b/arch/arm/plat-samsung/include/plat/clock.h
-@@ -9,6 +9,9 @@
-  * published by the Free Software Foundation.
- */
-
-+#ifndef __ASM_PLAT_CLOCK_H
-+#define __ASM_PLAT_CLOCK_H __FILE__
-+
- #include <linux/spinlock.h>
- #include <linux/clkdev.h>
-
-@@ -124,3 +127,5 @@ extern void s3c_pwmclk_init(void);
- /* Global watchdog clock used by arch_wtd_reset() callback */
-
- extern struct clk *s3c2410_wdtclk;
-+
-+#endif /* __ASM_PLAT_CLOCK_H */
----
-
-But, the error of s5p64x0_defconfig happens still :(
-
-I know, the 'watchdog reset issue' should be fixed however, we need to sort
-this out again.
-
+Looks ok, applied.
 Thanks.
 
 Best regards,
