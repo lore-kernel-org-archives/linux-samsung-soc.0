@@ -1,56 +1,84 @@
 From: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Subject: [RFC PATCH 0/4] ARM: EXYNOS4: Use cpuidle common save/restore framework code
-Date: Fri, 19 Aug 2011 18:39:00 +0530
-Message-ID: <1313759340-31319-1-git-send-email-amit.kachhap@linaro.org>
+Subject: [RFC PATCH 1/4] ARM: kernel: Small fixes in save/restore common code.
+Date: Fri, 19 Aug 2011 18:39:57 +0530
+Message-ID: <1313759400-31347-1-git-send-email-amit.kachhap@linaro.org>
+References: <1313759340-31319-1-git-send-email-amit.kachhap@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f170.google.com ([209.85.210.170]:53634 "EHLO
+Received: from mail-iy0-f170.google.com ([209.85.210.170]:49880 "EHLO
 	mail-iy0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751277Ab1HSNJN (ORCPT
+	with ESMTP id S1751277Ab1HSNKM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Aug 2011 09:09:13 -0400
-Received: by iye16 with SMTP id 16so5569785iye.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Aug 2011 06:09:13 -0700 (PDT)
+	Fri, 19 Aug 2011 09:10:12 -0400
+Received: by iye16 with SMTP id 16so5571073iye.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 19 Aug 2011 06:10:11 -0700 (PDT)
+In-Reply-To: <1313759340-31319-1-git-send-email-amit.kachhap@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linaro-dev@lists.linaro.org, linux-arm-kernel@lists.infradead.org, amit.kachhap@linaro.org, patches@linaro.org
 
-These patch adds support for samsung exynos4 platform cpuidle driver to use
-the common cpuidle framework submitted earlier by Lorenzo Pieralisi. Basically
-a single interface cpu_enter_idle takes care of saving and restoring single 
-cpu or whole cluster information.  The link to the framework patchset is,
-http://www.spinics.net/lists/arm-kernel/msg132044.html
+These changes are necessary to make the retention cpuidle state work. This adds 
+support for saving more L2 registers.
 
-Description of patches in this list:
-1)Patch (ARM: kernel: Some fixes in save/restore common code) adds some
-essential fixes for the common save/restore to work on exynos4 platform.
+Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+---
+ arch/arm/common/gic.c        |    1 -
+ arch/arm/kernel/sr_helpers.h |    2 +-
+ arch/arm/mm/cache-l2x0.c     |   10 +++++++++-
+ 3 files changed, 10 insertions(+), 3 deletions(-)
 
-2)Patch (ARM: EXYNOS4: Fix to work with origen boards) adds a fix for 
-extracting chip revision number.
-
-3)Patch (ARM: EXYNOS4: Add support AFTR mode cpuidle state on EXYNOS4210) 
-rebases the L2 retention C state cpuidle driver submitted earlier by 
-Jaecheol Lee.
-
-4)Patch (Modify cpuidle code to adapt to save/restore common code) uses the
-generic infrastructure to enter and exit from the retention idle state. 
-
-All these codes have been tested on Samsung ORIGEN board against the tree
-git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git for-next.
-
-Amit Daniel Kachhap (4):
-  ARM: kernel: Some fixes in save/restore common code.
-  ARM: EXYNOS4: Fix to work with origen boards.
-  ARM: EXYNOS4: Add support AFTR mode cpuidle state on EXYNOS4210
-  ARM: EXYNOS4: Modify cpuidle code to adapt to save/restore common
-    code
-
- arch/arm/Kconfig                         |    1 +
- arch/arm/common/gic.c                    |    1 -
- arch/arm/kernel/sr_helpers.h             |    2 +-
- arch/arm/mach-exynos4/cpu.c              |   10 ++
- arch/arm/mach-exynos4/cpuidle.c          |  150 +++++++++++++++++++++++++++++-
- arch/arm/mach-exynos4/include/mach/pmu.h |    1 -
- arch/arm/mm/cache-l2x0.c                 |   10 ++-
- arch/arm/plat-s5p/include/plat/exynos4.h |    1 +
- 8 files changed, 169 insertions(+), 7 deletions(-)
+diff --git a/arch/arm/common/gic.c b/arch/arm/common/gic.c
+index d845b75..124e122 100644
+--- a/arch/arm/common/gic.c
++++ b/arch/arm/common/gic.c
+@@ -385,7 +385,6 @@ static void gic_dist_save(unsigned int gic_nr)
+ 		gic_data[gic_nr].saved_spi_enable[i] =
+ 			readl_relaxed(dist_base + GIC_DIST_ENABLE_SET + i * 4);
+ 
+-	writel_relaxed(0, dist_base + GIC_DIST_CTRL);
+ }
+ 
+ /*
+diff --git a/arch/arm/kernel/sr_helpers.h b/arch/arm/kernel/sr_helpers.h
+index 1ae3a9a..5a30461 100644
+--- a/arch/arm/kernel/sr_helpers.h
++++ b/arch/arm/kernel/sr_helpers.h
+@@ -44,7 +44,7 @@ static inline void exit_coherency(void)
+ 		"mcr	p15, 0, %0, c1, c0, 1\n"
+ 		 : "=&r" (v)
+ 		 : "Ir" (0x40)
+-		 : );
++		 : "cc");
+ }
+ #else
+ static inline void exit_coherency(void) { }
+diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
+index 4c99d41..f23696b 100644
+--- a/arch/arm/mm/cache-l2x0.c
++++ b/arch/arm/mm/cache-l2x0.c
+@@ -285,7 +285,11 @@ static void l2x0_save_context(void *data, bool dormant, unsigned long end)
+ 	*l2x0_regs =  readl_relaxed(l2x0_base + L2X0_TAG_LATENCY_CTRL);
+ 	l2x0_regs++;
+ 	*l2x0_regs =  readl_relaxed(l2x0_base + L2X0_DATA_LATENCY_CTRL);
+-
++	l2x0_regs++;
++	*l2x0_regs =  readl_relaxed(l2x0_base + L2X0_PREFETCH_CTRL);
++	l2x0_regs++;
++	*l2x0_regs =  readl_relaxed(l2x0_base + L2X0_POWER_CTRL);
++	dormant = 0;
+ 	if (!dormant) {
+ 		/* clean entire L2 before disabling it*/
+ 		writel_relaxed(l2x0_way_mask, l2x0_base + L2X0_CLEAN_WAY);
+@@ -325,6 +329,10 @@ static void l2x0_restore_context(void *data, bool dormant)
+ 		writel_relaxed(*l2x0_regs, l2x0_base + L2X0_TAG_LATENCY_CTRL);
+ 		l2x0_regs++;
+ 		writel_relaxed(*l2x0_regs, l2x0_base + L2X0_DATA_LATENCY_CTRL);
++		l2x0_regs++;
++		writel_relaxed(*l2x0_regs, l2x0_base + L2X0_PREFETCH_CTRL);
++		l2x0_regs++;
++		writel_relaxed(*l2x0_regs, l2x0_base + L2X0_POWER_CTRL);
+ 		/*
+ 		 * If L2 is retained do not invalidate
+ 		 */
+-- 
+1.7.1
