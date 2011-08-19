@@ -1,19 +1,23 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/2] ARM: Samsung: Add chained enrty/exit call to timer
- interrupt handler
+Subject: RE: [PATCH V5 00/15] To use DMA generic APIs for Samsung DMA
 Date: Fri, 19 Aug 2011 14:24:09 +0900
-Message-ID: <000c01cc5e30$3aab2e80$b0018b80$%kim@samsung.com>
-References: <1311659456-6659-1-git-send-email-m.szyprowski@samsung.com>
- <1311659456-6659-2-git-send-email-m.szyprowski@samsung.com>
+Message-ID: <000501cc5e30$3a1752f0$ae45f8d0$%kim@samsung.com>
+References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
+ <CACRpkdZvbH1O608n_aa_nVi-Onhmt0Ay6X1yCgBVNES4o9hTrA@mail.gmail.com>
+ <1312821923.1539.37.camel@vkoul-udesk3>
+ <015101cc57f8$0d7b1da0$287158e0$%kim@samsung.com>
+ <1313101649.1603.27.camel@vkoul-udesk3>
+ <000701cc596f$08811160$19833420$%kim@samsung.com>
+ <1313492476.1603.39.camel@vkoul-udesk3>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout4.samsung.com ([203.254.224.34]:26901 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752054Ab1HSFYO (ORCPT
+	with ESMTP id S1751623Ab1HSFYN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Aug 2011 01:24:14 -0400
+	Fri, 19 Aug 2011 01:24:13 -0400
 Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
  by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
@@ -22,52 +26,75 @@ Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
 Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0LQ500KA7TOA6V@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 14:24:12 +0900 (KST)
-In-reply-to: <1311659456-6659-2-git-send-email-m.szyprowski@samsung.com>
+ linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 14:24:11 +0900 (KST)
+In-reply-to: <1313492476.1603.39.camel@vkoul-udesk3>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Angus Ainslie' <angus.ainslie@linaro.org>
+To: "'Koul, Vinod'" <vinod.koul@intel.com>
+Cc: linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, 'Boojin Kim' <boojin.kim@samsung.com>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Dan Williams' <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 
-Marek Szyprowski wrote:
+Koul, Vinod wrote:
 > 
-> This patch adds chained IRQ enter/exit functions to timer
-> interrupt handler in order to function correctly on primary
-> controllers with different methods of flow control.
+> On Sat, 2011-08-13 at 13:11 +0900, Kukjin Kim wrote:
+> > Koul, Vinod wrote:
+> > >
+> > > On Thu, 2011-08-11 at 16:26 +0900, Kukjin Kim wrote:
+> > > > Koul, Vinod wrote:
+> > > > >
+> > > > > On Thu, 2011-08-04 at 18:53 +0200, Linus Walleij wrote:
+> > > > > > On Wed, Jul 27, 2011 at 7:31 AM, Boojin Kim
+> <boojin.kim@samsung.com>
+> > > wrote:
+> > > > > >
+> > > > > > > This patchset adds support DMA generic APIs for Samsung DMA.
+> > > > > >
+> > > > > > Patches look good to me,
+> > > > > > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> > > > >
+> > > > > Acked-by: Vinod Koul <vinod.koul@intel.com>
+> > > > >
+> > > > > Do you want these to go thru slave-dma tree or arm tree, I am okay with
+> > > > > either...
+> > > >
+> > > > Hi Vinod,
+> > > >
+> > > > Thanks.
+> > > >
+> > > > I'd like to keep its topic branch in my tree to avoid conflicts with other
+> samsung
+> > > stuff and I think, it should be merged into your slave-dma tree also for same
+> > > reason.
+> > > >
+> > > > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> #next/topic-
+> > > dma-pl330
+> > > >
+> > > > Or if you want to make some branch for it in your tree, please let me know so
+> > > that I can merge it in my tree also.
+> > > Okay can you update this branch with latest patchset (I think there were
+> > > few comments on last patchset). Once you add all acks let me know the
+> > > branch, I will merge it to my next
+> >
+> > Hi,
+> >
+> > I updated it so that you can merge it to yours.
+> > I think, if any fixing is required on that, it should be small so can be fixed easily
+> after this merging.
+> >
+> > If any problems, please let me know :)
+> >
+> Well, that not how things are supposed to be done. Fixing an error
+> introduced is not recommended, rather original patch set should be
+> fixed.
+> Since you have already done 5 posting of your patch series, I am okay if
+> you split things up, send me the parts that have already been reviewed
+> and acked. I will host them on a branch for you. Once rest is reviewed
+> and acked, I will merge this entire branch to my next.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/plat-samsung/irq-vic-timer.c |    5 +++++
->  1 files changed, 5 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/irq-vic-timer.c
-b/arch/arm/plat-samsung/irq-vic-
-> timer.c
-> index a607546..6df9e33 100644
-> --- a/arch/arm/plat-samsung/irq-vic-timer.c
-> +++ b/arch/arm/plat-samsung/irq-vic-timer.c
-> @@ -22,9 +22,14 @@
->  #include <plat/irq-vic-timer.h>
->  #include <plat/regs-timer.h>
-> 
-> +#include <asm/mach/irq.h>
-> +
->  static void s3c_irq_demux_vic_timer(unsigned int irq, struct irq_desc
-*desc)
->  {
-> +	struct irq_chip *chip = irq_get_chip(irq);
-> +	chained_irq_enter(chip, desc);
->  	generic_handle_irq((int)desc->irq_data.handler_data);
-> +	chained_irq_exit(chip, desc);
->  }
-> 
->  /* We assume the IRQ_TIMER0..IRQ_TIMER4 range is continuous. */
-> --
-> 1.7.1.569.g6f426
+OK, Boojin will send whole series soon.
+Then if you make a branch for me, I will merge it too.
 
-OK, applied.
 Thanks.
 
 Best regards,
