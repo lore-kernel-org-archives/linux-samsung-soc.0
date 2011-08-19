@@ -1,232 +1,73 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: SAMSUNG: Consolidate common function to set SDHCI
- plat data
+Subject: RE: [PATCH 1/2] ARM: Samsung: Add chained enrty/exit call to timer
+ interrupt handler
 Date: Fri, 19 Aug 2011 14:24:09 +0900
-Message-ID: <000201cc5e30$39de1a80$ad9a4f80$%kim@samsung.com>
-References: <1313077093-25157-1-git-send-email-banajit.g@samsung.com>
+Message-ID: <000c01cc5e30$3aab2e80$b0018b80$%kim@samsung.com>
+References: <1311659456-6659-1-git-send-email-m.szyprowski@samsung.com>
+ <1311659456-6659-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:63948 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752391Ab1HSFYN (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:26901 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752054Ab1HSFYO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Aug 2011 01:24:13 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Fri, 19 Aug 2011 01:24:14 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LQ500BV0TOB23L0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 14:24:11 +0900 (KST)
+ 2010)) with ESMTP id <0LQ50017HTOBSGL0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 14:24:12 +0900 (KST)
 Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0LQ500KA7TOA6V@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 14:24:11 +0900 (KST)
-In-reply-to: <1313077093-25157-1-git-send-email-banajit.g@samsung.com>
+ linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 14:24:12 +0900 (KST)
+In-reply-to: <1311659456-6659-2-git-send-email-m.szyprowski@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Banajit Goswami' <banajit.g@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Angus Ainslie' <angus.ainslie@linaro.org>
 
-Banajit Goswami wrote:
+Marek Szyprowski wrote:
 > 
-> Moves similar functions to set SDHCI platform data for all Samsung
-> boards to a common location, thereby saves a few lines.
+> This patch adds chained IRQ enter/exit functions to timer
+> interrupt handler in order to function correctly on primary
+> controllers with different methods of flow control.
 > 
-> Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  arch/arm/plat-samsung/dev-hsmmc.c          |   19 +------------------
->  arch/arm/plat-samsung/dev-hsmmc1.c         |   19 +------------------
->  arch/arm/plat-samsung/dev-hsmmc2.c         |   19 +------------------
->  arch/arm/plat-samsung/dev-hsmmc3.c         |   19 +------------------
->  arch/arm/plat-samsung/include/plat/sdhci.h |    7 +++++++
->  arch/arm/plat-samsung/platformdata.c       |   22
-> ++++++++++++++++++++++
->  6 files changed, 33 insertions(+), 72 deletions(-)
+>  arch/arm/plat-samsung/irq-vic-timer.c |    5 +++++
+>  1 files changed, 5 insertions(+), 0 deletions(-)
 > 
-> diff --git a/arch/arm/plat-samsung/dev-hsmmc.c
-b/arch/arm/plat-samsung/dev-
-> hsmmc.c
-> index db7a65c..06825c4 100644
-> --- a/arch/arm/plat-samsung/dev-hsmmc.c
-> +++ b/arch/arm/plat-samsung/dev-hsmmc.c
-> @@ -58,22 +58,5 @@ struct platform_device s3c_device_hsmmc0 = {
+> diff --git a/arch/arm/plat-samsung/irq-vic-timer.c
+b/arch/arm/plat-samsung/irq-vic-
+> timer.c
+> index a607546..6df9e33 100644
+> --- a/arch/arm/plat-samsung/irq-vic-timer.c
+> +++ b/arch/arm/plat-samsung/irq-vic-timer.c
+> @@ -22,9 +22,14 @@
+>  #include <plat/irq-vic-timer.h>
+>  #include <plat/regs-timer.h>
 > 
->  void s3c_sdhci0_set_platdata(struct s3c_sdhci_platdata *pd)
->  {
-> -	struct s3c_sdhci_platdata *set = &s3c_hsmmc0_def_platdata;
-> -
-> -	set->cd_type = pd->cd_type;
-> -	set->ext_cd_init = pd->ext_cd_init;
-> -	set->ext_cd_cleanup = pd->ext_cd_cleanup;
-> -	set->ext_cd_gpio = pd->ext_cd_gpio;
-> -	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
-> -
-> -	if (pd->max_width)
-> -		set->max_width = pd->max_width;
-> -	if (pd->cfg_gpio)
-> -		set->cfg_gpio = pd->cfg_gpio;
-> -	if (pd->cfg_card)
-> -		set->cfg_card = pd->cfg_card;
-> -	if (pd->host_caps)
-> -		set->host_caps |= pd->host_caps;
-> -	if (pd->clk_type)
-> -		set->clk_type = pd->clk_type;
-> +	s3c_sdhci_set_platdata(pd, &s3c_hsmmc0_def_platdata);
->  }
-> diff --git a/arch/arm/plat-samsung/dev-hsmmc1.c
-b/arch/arm/plat-samsung/dev-
-> hsmmc1.c
-> index 2497321..4524ef4 100644
-> --- a/arch/arm/plat-samsung/dev-hsmmc1.c
-> +++ b/arch/arm/plat-samsung/dev-hsmmc1.c
-> @@ -58,22 +58,5 @@ struct platform_device s3c_device_hsmmc1 = {
-> 
->  void s3c_sdhci1_set_platdata(struct s3c_sdhci_platdata *pd)
->  {
-> -	struct s3c_sdhci_platdata *set = &s3c_hsmmc1_def_platdata;
-> -
-> -	set->cd_type = pd->cd_type;
-> -	set->ext_cd_init = pd->ext_cd_init;
-> -	set->ext_cd_cleanup = pd->ext_cd_cleanup;
-> -	set->ext_cd_gpio = pd->ext_cd_gpio;
-> -	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
-> -
-> -	if (pd->max_width)
-> -		set->max_width = pd->max_width;
-> -	if (pd->cfg_gpio)
-> -		set->cfg_gpio = pd->cfg_gpio;
-> -	if (pd->cfg_card)
-> -		set->cfg_card = pd->cfg_card;
-> -	if (pd->host_caps)
-> -		set->host_caps |= pd->host_caps;
-> -	if (pd->clk_type)
-> -		set->clk_type = pd->clk_type;
-> +	s3c_sdhci_set_platdata(pd, &s3c_hsmmc1_def_platdata);
->  }
-> diff --git a/arch/arm/plat-samsung/dev-hsmmc2.c
-b/arch/arm/plat-samsung/dev-
-> hsmmc2.c
-> index f60aedb..9cede96 100644
-> --- a/arch/arm/plat-samsung/dev-hsmmc2.c
-> +++ b/arch/arm/plat-samsung/dev-hsmmc2.c
-> @@ -59,22 +59,5 @@ struct platform_device s3c_device_hsmmc2 = {
-> 
->  void s3c_sdhci2_set_platdata(struct s3c_sdhci_platdata *pd)
->  {
-> -	struct s3c_sdhci_platdata *set = &s3c_hsmmc2_def_platdata;
-> -
-> -	set->cd_type = pd->cd_type;
-> -	set->ext_cd_init = pd->ext_cd_init;
-> -	set->ext_cd_cleanup = pd->ext_cd_cleanup;
-> -	set->ext_cd_gpio = pd->ext_cd_gpio;
-> -	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
-> -
-> -	if (pd->max_width)
-> -		set->max_width = pd->max_width;
-> -	if (pd->cfg_gpio)
-> -		set->cfg_gpio = pd->cfg_gpio;
-> -	if (pd->cfg_card)
-> -		set->cfg_card = pd->cfg_card;
-> -	if (pd->host_caps)
-> -		set->host_caps |= pd->host_caps;
-> -	if (pd->clk_type)
-> -		set->clk_type = pd->clk_type;
-> +	s3c_sdhci_set_platdata(pd, &s3c_hsmmc2_def_platdata);
->  }
-> diff --git a/arch/arm/plat-samsung/dev-hsmmc3.c
-b/arch/arm/plat-samsung/dev-
-> hsmmc3.c
-> index ede776f..0358ef4 100644
-> --- a/arch/arm/plat-samsung/dev-hsmmc3.c
-> +++ b/arch/arm/plat-samsung/dev-hsmmc3.c
-> @@ -62,22 +62,5 @@ struct platform_device s3c_device_hsmmc3 = {
-> 
->  void s3c_sdhci3_set_platdata(struct s3c_sdhci_platdata *pd)
->  {
-> -	struct s3c_sdhci_platdata *set = &s3c_hsmmc3_def_platdata;
-> -
-> -	set->cd_type = pd->cd_type;
-> -	set->ext_cd_init = pd->ext_cd_init;
-> -	set->ext_cd_cleanup = pd->ext_cd_cleanup;
-> -	set->ext_cd_gpio = pd->ext_cd_gpio;
-> -	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
-> -
-> -	if (pd->max_width)
-> -		set->max_width = pd->max_width;
-> -	if (pd->cfg_gpio)
-> -		set->cfg_gpio = pd->cfg_gpio;
-> -	if (pd->cfg_card)
-> -		set->cfg_card = pd->cfg_card;
-> -	if (pd->host_caps)
-> -		set->host_caps |= pd->host_caps;
-> -	if (pd->clk_type)
-> -		set->clk_type = pd->clk_type;
-> +	s3c_sdhci_set_platdata(pd, &s3c_hsmmc3_def_platdata);
->  }
-> diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-
-> samsung/include/plat/sdhci.h
-> index 058e096..20dc81c 100644
-> --- a/arch/arm/plat-samsung/include/plat/sdhci.h
-> +++ b/arch/arm/plat-samsung/include/plat/sdhci.h
-> @@ -86,6 +86,13 @@ struct s3c_sdhci_platdata {
->  			    struct mmc_card *card);
->  };
-> 
-> +/* s3c_sdhci_set_platdata() - common helper for setting SDHCI platform
-data
-> + * @pd: The default platform data for this device.
-> + * @set: Pointer to the platform data to fill in.
-> + */
-> +extern void s3c_sdhci_set_platdata(struct s3c_sdhci_platdata *pd,
-> +				struct s3c_sdhci_platdata *set);
+> +#include <asm/mach/irq.h>
 > +
->  /**
->   * s3c_sdhci0_set_platdata - Set platform data for S3C SDHCI device.
->   * @pd: Platform data to register to device.
-> diff --git a/arch/arm/plat-samsung/platformdata.c b/arch/arm/plat-
-> samsung/platformdata.c
-> index 7cf2e1e..27bec0a 100644
-> --- a/arch/arm/plat-samsung/platformdata.c
-> +++ b/arch/arm/plat-samsung/platformdata.c
-> @@ -14,6 +14,7 @@
->  #include <linux/platform_device.h>
-> 
->  #include <plat/devs.h>
-> +#include <plat/sdhci.h>
-> 
->  void __init *s3c_set_platdata(void *pd, size_t pdsize,
->  			      struct platform_device *pdev)
-> @@ -35,3 +36,24 @@ void __init *s3c_set_platdata(void *pd, size_t pdsize,
->  	pdev->dev.platform_data = npd;
->  	return npd;
+>  static void s3c_irq_demux_vic_timer(unsigned int irq, struct irq_desc
+*desc)
+>  {
+> +	struct irq_chip *chip = irq_get_chip(irq);
+> +	chained_irq_enter(chip, desc);
+>  	generic_handle_irq((int)desc->irq_data.handler_data);
+> +	chained_irq_exit(chip, desc);
 >  }
-> +
-> +void s3c_sdhci_set_platdata(struct s3c_sdhci_platdata *pd,
-> +			struct s3c_sdhci_platdata *set)
-> +{
-> +	set->cd_type = pd->cd_type;
-> +	set->ext_cd_init = pd->ext_cd_init;
-> +	set->ext_cd_cleanup = pd->ext_cd_cleanup;
-> +	set->ext_cd_gpio = pd->ext_cd_gpio;
-> +	set->ext_cd_gpio_invert = pd->ext_cd_gpio_invert;
-> +
-> +	if (pd->max_width)
-> +		set->max_width = pd->max_width;
-> +	if (pd->cfg_gpio)
-> +		set->cfg_gpio = pd->cfg_gpio;
-> +	if (pd->cfg_card)
-> +		set->cfg_card = pd->cfg_card;
-> +	if (pd->host_caps)
-> +		set->host_caps |= pd->host_caps;
-> +	if (pd->clk_type)
-> +		set->clk_type = pd->clk_type;
-> +}
+> 
+>  /* We assume the IRQ_TIMER0..IRQ_TIMER4 range is continuous. */
 > --
-> 1.7.2.3
+> 1.7.1.569.g6f426
 
-Banajit, OK, applied.
+OK, applied.
 Thanks.
 
 Best regards,
