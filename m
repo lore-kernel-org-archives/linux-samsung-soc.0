@@ -1,249 +1,42 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH] ARM: SAMSUNG: TSADC: Remove unnecessary duplication of
- plat_data
-Date: Fri, 19 Aug 2011 17:10:43 +0530
-Message-ID: <1313754043-29398-1-git-send-email-ch.naveen@samsung.com>
-Content-Transfer-Encoding: 7BIT
+From: "Koul, Vinod" <vinod.koul@intel.com>
+Subject: RE: [PATCH V5 00/15] To use DMA generic APIs for Samsung DMA
+Date: Fri, 19 Aug 2011 18:34:33 +0530
+Message-ID: <1313759073.2336.7.camel@vkoul-udesk3>
+References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com>
+	 <CACRpkdZvbH1O608n_aa_nVi-Onhmt0Ay6X1yCgBVNES4o9hTrA@mail.gmail.com>
+	 <1312821923.1539.37.camel@vkoul-udesk3>
+	 <015101cc57f8$0d7b1da0$287158e0$%kim@samsung.com>
+	 <1313101649.1603.27.camel@vkoul-udesk3>
+	 <000701cc596f$08811160$19833420$%kim@samsung.com>
+	 <1313492476.1603.39.camel@vkoul-udesk3>
+	 <000501cc5e30$3a1752f0$ae45f8d0$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:32698 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752685Ab1HSLq0 (ORCPT
+Received: from mga11.intel.com ([192.55.52.93]:45812 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751279Ab1HSNFP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Aug 2011 07:46:26 -0400
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LQ600A0QBCU0O00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 20:46:09 +0900 (KST)
-Received: from Hawshines.sisodomain.com ([107.108.83.161])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LQ600K3OBCT0U@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 20:46:09 +0900 (KST)
+	Fri, 19 Aug 2011 09:05:15 -0400
+In-Reply-To: <000501cc5e30$3a1752f0$ae45f8d0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Russell King' <linux@arm.linux.org.uk>, 'Boojin Kim' <boojin.kim@samsung.com>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, "Williams, Dan J" <dan.j.williams@intel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-The default plat_data struct for TSADC is added in devs-ts
-and duplication is removed from the following machines.
+On Fri, 2011-08-19 at 10:54 +0530, Kukjin Kim wrote:
+> Koul, Vinod wrote:
+> > 
+> OK, Boojin will send whole series soon.
+> Then if you make a branch for me, I will merge it too.
+Sure, 
+I have created a branh for you off my next
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
----
+git://git.infradead.org/users/vkoul/slave-dma.git samsung_dma
 
-Note: Only build tested on mini6410, real6410.
+I will apply your series after reviewing and once its acked by other
+maintainers will merge to my next
 
- arch/arm/mach-s3c64xx/mach-mini6410.c |    8 +-------
- arch/arm/mach-s3c64xx/mach-real6410.c |    8 +-------
- arch/arm/mach-s3c64xx/mach-smdk6410.c |    8 +-------
- arch/arm/mach-s5p64x0/mach-smdk6440.c |    8 +-------
- arch/arm/mach-s5p64x0/mach-smdk6450.c |    8 +-------
- arch/arm/mach-s5pc100/mach-smdkc100.c |    8 +-------
- arch/arm/mach-s5pv210/mach-smdkv210.c |    8 +-------
- arch/arm/plat-samsung/dev-ts.c        |    9 +++++++++
- 8 files changed, 16 insertions(+), 49 deletions(-)
-
-diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
-index 527f49b..8f34a3c 100644
---- a/arch/arm/mach-s3c64xx/mach-mini6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
-@@ -205,12 +205,6 @@ static struct platform_device mini6410_lcd_powerdev = {
- 	.dev.platform_data	= &mini6410_lcd_power_data,
- };
- 
--static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
--	.delay			= 10000,
--	.presc			= 49,
--	.oversampling_shift	= 2,
--};
--
- static struct platform_device *mini6410_devices[] __initdata = {
- 	&mini6410_device_eth,
- 	&s3c_device_hsmmc0,
-@@ -319,7 +313,7 @@ static void __init mini6410_machine_init(void)
- 
- 	s3c_nand_set_platdata(&mini6410_nand_info);
- 	s3c_fb_set_platdata(&mini6410_lcd_pdata);
--	s3c24xx_ts_set_platdata(&s3c_ts_platform);
-+	s3c24xx_ts_set_platdata(NULL);
- 
- 	/* configure nCS1 width to 16 bits */
- 
-diff --git a/arch/arm/mach-s3c64xx/mach-real6410.c b/arch/arm/mach-s3c64xx/mach-real6410.c
-index 95b04b1..1f5abfa 100644
---- a/arch/arm/mach-s3c64xx/mach-real6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-real6410.c
-@@ -198,12 +198,6 @@ static struct platform_device *real6410_devices[] __initdata = {
- 	&s3c_device_ohci,
- };
- 
--static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
--	.delay			= 10000,
--	.presc			= 49,
--	.oversampling_shift	= 2,
--};
--
- static void __init real6410_map_io(void)
- {
- 	u32 tmp;
-@@ -300,7 +294,7 @@ static void __init real6410_machine_init(void)
- 
- 	s3c_fb_set_platdata(&real6410_lcd_pdata);
- 	s3c_nand_set_platdata(&real6410_nand_info);
--	s3c24xx_ts_set_platdata(&s3c_ts_platform);
-+	s3c24xx_ts_set_platdata(NULL);
- 
- 	/* configure nCS1 width to 16 bits */
- 
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-index ecbea92..c5190a5 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-@@ -658,12 +658,6 @@ static struct i2c_board_info i2c_devs1[] __initdata = {
- 	{ I2C_BOARD_INFO("24c128", 0x57), },	/* Samsung S524AD0XD1 */
- };
- 
--static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
--	.delay			= 10000,
--	.presc			= 49,
--	.oversampling_shift	= 2,
--};
--
- /* LCD Backlight data */
- static struct samsung_bl_gpio_info smdk6410_bl_gpio_info = {
- 	.no = S3C64XX_GPF(15),
-@@ -705,7 +699,7 @@ static void __init smdk6410_machine_init(void)
- 
- 	samsung_keypad_set_platdata(&smdk6410_keypad_data);
- 
--	s3c24xx_ts_set_platdata(&s3c_ts_platform);
-+	s3c24xx_ts_set_platdata(NULL);
- 
- 	/* configure nCS1 width to 16 bits */
- 
-diff --git a/arch/arm/mach-s5p64x0/mach-smdk6440.c b/arch/arm/mach-s5p64x0/mach-smdk6440.c
-index 346f8df..340f30f 100644
---- a/arch/arm/mach-s5p64x0/mach-smdk6440.c
-+++ b/arch/arm/mach-s5p64x0/mach-smdk6440.c
-@@ -129,12 +129,6 @@ static struct i2c_board_info smdk6440_i2c_devs1[] __initdata = {
- 	/* To be populated */
- };
- 
--static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
--	.delay			= 10000,
--	.presc			= 49,
--	.oversampling_shift	= 2,
--};
--
- /* LCD Backlight data */
- static struct samsung_bl_gpio_info smdk6440_bl_gpio_info = {
- 	.no = S5P6440_GPF(15),
-@@ -155,7 +149,7 @@ static void __init smdk6440_map_io(void)
- 
- static void __init smdk6440_machine_init(void)
- {
--	s3c24xx_ts_set_platdata(&s3c_ts_platform);
-+	s3c24xx_ts_set_platdata(NULL);
- 
- 	s3c_i2c0_set_platdata(&s5p6440_i2c0_data);
- 	s3c_i2c1_set_platdata(&s5p6440_i2c1_data);
-diff --git a/arch/arm/mach-s5p64x0/mach-smdk6450.c b/arch/arm/mach-s5p64x0/mach-smdk6450.c
-index 33f2adf..ee0da14 100644
---- a/arch/arm/mach-s5p64x0/mach-smdk6450.c
-+++ b/arch/arm/mach-s5p64x0/mach-smdk6450.c
-@@ -148,12 +148,6 @@ static struct i2c_board_info smdk6450_i2c_devs1[] __initdata = {
- 	{ I2C_BOARD_INFO("24c128", 0x57), },/* Samsung S524AD0XD1 EEPROM */
- };
- 
--static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
--	.delay			= 10000,
--	.presc			= 49,
--	.oversampling_shift	= 2,
--};
--
- /* LCD Backlight data */
- static struct samsung_bl_gpio_info smdk6450_bl_gpio_info = {
- 	.no = S5P6450_GPF(15),
-@@ -174,7 +168,7 @@ static void __init smdk6450_map_io(void)
- 
- static void __init smdk6450_machine_init(void)
- {
--	s3c24xx_ts_set_platdata(&s3c_ts_platform);
-+	s3c24xx_ts_set_platdata(NULL);
- 
- 	s3c_i2c0_set_platdata(&s5p6450_i2c0_data);
- 	s3c_i2c1_set_platdata(&s5p6450_i2c1_data);
-diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-s5pc100/mach-smdkc100.c
-index 227d890..0b70762 100644
---- a/arch/arm/mach-s5pc100/mach-smdkc100.c
-+++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
-@@ -203,12 +203,6 @@ static struct platform_device *smdkc100_devices[] __initdata = {
- 	&s5pc100_device_spdif,
- };
- 
--static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
--	.delay			= 10000,
--	.presc			= 49,
--	.oversampling_shift	= 2,
--};
--
- /* LCD Backlight data */
- static struct samsung_bl_gpio_info smdkc100_bl_gpio_info = {
- 	.no = S5PC100_GPD(0),
-@@ -228,7 +222,7 @@ static void __init smdkc100_map_io(void)
- 
- static void __init smdkc100_machine_init(void)
- {
--	s3c24xx_ts_set_platdata(&s3c_ts_platform);
-+	s3c24xx_ts_set_platdata(NULL);
- 
- 	/* I2C */
- 	s3c_i2c0_set_platdata(NULL);
-diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
-index 5e011fc..4b27bca 100644
---- a/arch/arm/mach-s5pv210/mach-smdkv210.c
-+++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
-@@ -265,12 +265,6 @@ static struct i2c_board_info smdkv210_i2c_devs2[] __initdata = {
- 	/* To Be Updated */
- };
- 
--static struct s3c2410_ts_mach_info s3c_ts_platform __initdata = {
--	.delay			= 10000,
--	.presc			= 49,
--	.oversampling_shift	= 2,
--};
--
- /* LCD Backlight data */
- static struct samsung_bl_gpio_info smdkv210_bl_gpio_info = {
- 	.no = S5PV210_GPD0(3),
-@@ -296,7 +290,7 @@ static void __init smdkv210_machine_init(void)
- 	smdkv210_dm9000_init();
- 
- 	samsung_keypad_set_platdata(&smdkv210_keypad_data);
--	s3c24xx_ts_set_platdata(&s3c_ts_platform);
-+	s3c24xx_ts_set_platdata(NULL);
- 
- 	s3c_i2c0_set_platdata(NULL);
- 	s3c_i2c1_set_platdata(NULL);
-diff --git a/arch/arm/plat-samsung/dev-ts.c b/arch/arm/plat-samsung/dev-ts.c
-index 82543f0..5f3d46a 100644
---- a/arch/arm/plat-samsung/dev-ts.c
-+++ b/arch/arm/plat-samsung/dev-ts.c
-@@ -43,8 +43,17 @@ struct platform_device s3c_device_ts = {
- 	.resource	= s3c_ts_resource,
- };
- 
-+static struct s3c2410_ts_mach_info default_ts_data __initdata = {
-+	.delay			= 10000,
-+	.presc			= 49,
-+	.oversampling_shift	= 2,
-+};
-+
- void __init s3c24xx_ts_set_platdata(struct s3c2410_ts_mach_info *pd)
- {
-+	if (!pd)
-+		pd = &default_ts_data;
-+
- 	s3c_set_platdata(pd, sizeof(struct s3c2410_ts_mach_info),
- 			 &s3c_device_ts);
- }
 -- 
-1.7.2.3
+~Vinod
