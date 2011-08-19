@@ -1,45 +1,50 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM:EXYNOS4: Add the missing clock of EXYNOS4210 to remove
- leakage power
-Date: Fri, 19 Aug 2011 15:51:11 +0900
-Message-ID: <002701cc5e3c$61a16e80$24e44b80$%kim@samsung.com>
-References: <4E425573.30408@samsung.com>
+From: Banajit Goswami <banajit.goswami@gmail.com>
+Subject: Re: [PATCH] ARM: S3C64XX: Remove un-used code
+Date: Fri, 19 Aug 2011 12:29:51 +0530
+Message-ID: <CABK8_vTSrcAc8Un-z_uDZkJWKeiVP9tPR2YPgkuQybG5gvqMgA@mail.gmail.com>
+References: <1313498488-4296-1-git-send-email-banajit.g@samsung.com>
+	<20110819015955.GA1212@sirena.org.uk>
+	<CABK8_vR6bB_0TfQtbA7F9+w9dSXajMdd1SS5o+LscMrDcCY1tg@mail.gmail.com>
+	<20110819045346.GA26979@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:55720 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750746Ab1HSGvN (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:56395 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751467Ab1HSG7x convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Aug 2011 02:51:13 -0400
-In-reply-to: <4E425573.30408@samsung.com>
-Content-language: ko
+	Fri, 19 Aug 2011 02:59:53 -0400
+Received: by fxh19 with SMTP id 19so1757631fxh.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Aug 2011 23:59:51 -0700 (PDT)
+In-Reply-To: <20110819045346.GA26979@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
-Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'linux-kernel' <linux-kernel@vger.kernel.org>, dg77.kim@samsung.com
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Banajit Goswami <banajit.g@samsung.com>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-Chanwoo Choi wrote:
-> 
-> Singed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Singed-off-by: Donggeun Kim <dg77.kim@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/mach-exynos4/clock.c                 |  295
-> +++++++++++++++++++++++++
->  arch/arm/mach-exynos4/include/mach/regs-pmu.h |    6 +
->  2 files changed, 301 insertions(+), 0 deletions(-)
->  mode change 100644 => 100755 arch/arm/mach-exynos4/clock.c
-> 
-NO. don't change the mode :(
+Hi Mark,
 
-And I don't think we _really_ need to add all clocks if they will not be used anywhere in kernel. If it is required, please turn off the clocks in boot loader.
-
+On Fri, Aug 19, 2011 at 10:23 AM, Mark Brown
+<broonie@opensource.wolfsonmicro.com> wrote:
+> On Fri, Aug 19, 2011 at 09:40:29AM +0530, Banajit Goswami wrote:
+>> On Fri, Aug 19, 2011 at 7:29 AM, Mark Brown
+>> <broonie@opensource.wolfsonmicro.com> wrote:
+>> > On Tue, Aug 16, 2011 at 06:11:28PM +0530, Banajit Goswami wrote:
+>> >> Remove un-used backlight code for SMDK6410 board
+>
+>> > Is the data actually wrong? =C2=A0If not it'd seem better to finis=
+h hooking
+>> > it up properly than to remove it.
+>
+>> No, this code is no longer needed, as we are having a common backlig=
+ht
+>> infrastructure , which serves the same purpose.
+>
+> Ideally your commit log should make this clear - it looks like you're
+> just deleting unreferenced code.
 Thanks.
+Will add more description now on.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Thanks and Regards,
+Banajit Goswami
