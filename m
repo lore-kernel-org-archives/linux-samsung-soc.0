@@ -1,74 +1,263 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/4] ARM: EXYNOS4: Support generic Power domain framework
- for EXYNOS4210
-Date: Fri, 19 Aug 2011 23:15:54 +0900
-Message-ID: <005101cc5e7a$81ffae60$85ff0b20$%kim@samsung.com>
-References: <4E4360B2.2060508@samsung.com>
+Subject: RE: [PATCH v3] ARM: Samsung: fix watchdog reset issue with clk_get()
+Date: Fri, 19 Aug 2011 23:25:29 +0900
+Message-ID: <005301cc5e7b$d8dafb80$8a90f280$%kim@samsung.com>
+References: <1313663117-29191-1-git-send-email-m.szyprowski@samsung.com>
+ <002a01cc5e70$ce51d7c0$6af58740$%kim@samsung.com>
+ <000001cc5e75$c201e370$4605aa50$%szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:59420 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751685Ab1HSOP4 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:47416 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753941Ab1HSOZc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Aug 2011 10:15:56 -0400
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Fri, 19 Aug 2011 10:25:32 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LQ600AIEIA30O20@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 23:15:55 +0900 (KST)
+ 2010)) with ESMTP id <0LQ600I2UIQI60D0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 23:25:30 +0900 (KST)
 Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LQ600241IAJX3@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 23:15:55 +0900 (KST)
-In-reply-to: <4E4360B2.2060508@samsung.com>
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LQ6004JSIQIYP@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 19 Aug 2011 23:25:30 +0900 (KST)
+In-reply-to: <000001cc5e75$c201e370$4605aa50$%szyprowski@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Chanwoo Choi' <cw00.choi@samsung.com>, "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
-Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-pm@lists.linux-foundation.org, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Angus Ainslie' <angus.ainslie@linaro.org>
 
-Chanwoo Choi wrote:
+Marek Szyprowski wrote:
 > 
-> The following patch set use the generic Power domain Framework instead of
-> power domain code depend of Samsung SoC.
+> Hello,
 > 
-> Chanwoo Choi (4):
->   ARM: EXYNOS4: Support for generic I/O power domains on EXYNOS4210
->   ARM: EXYNOS4: Support for generic Clock manipulation PM callbacks
->   ARM: EXYNOS4: Delete the power-domain code depend on Samsung SoC
->   ARM: EXYNOS4: Add power domain to use generic Power domain Framework
+> On Friday, August 19, 2011 3:06 PM Kukjin Kim wrote:
 > 
->  arch/arm/mach-exynos4/Kconfig                      |   10 +-
->  arch/arm/mach-exynos4/Makefile                     |    4 +-
->  arch/arm/mach-exynos4/dev-pd.c                     |  139 --------------
->  arch/arm/mach-exynos4/include/mach/pm-exynos4210.h |   52 ++++++
->  arch/arm/mach-exynos4/include/mach/regs-clock.h    |    8 +
->  arch/arm/mach-exynos4/mach-nuri.c                  |   21 ++-
->  arch/arm/mach-exynos4/mach-smdkc210.c              |   26 ++-
->  arch/arm/mach-exynos4/mach-smdkv310.c              |   23 ++-
->  arch/arm/mach-exynos4/mach-universal_c210.c        |   21 ++-
->  arch/arm/mach-exynos4/pm-exynos4210.c              |  189
-> ++++++++++++++++++++
->  arch/arm/mach-exynos4/pm-runtime.c                 |   56 ++++++
->  arch/arm/plat-samsung/Kconfig                      |    8 -
->  arch/arm/plat-samsung/Makefile                     |    4 -
->  arch/arm/plat-samsung/include/plat/pd.h            |   30 ---
->  arch/arm/plat-samsung/pd.c                         |   95 ----------
->  15 files changed, 377 insertions(+), 309 deletions(-)
->  delete mode 100644 arch/arm/mach-exynos4/dev-pd.c
->  create mode 100644 arch/arm/mach-exynos4/include/mach/pm-exynos4210.h
->  create mode 100644 arch/arm/mach-exynos4/pm-exynos4210.c
->  create mode 100644 arch/arm/mach-exynos4/pm-runtime.c
->  delete mode 100644 arch/arm/plat-samsung/include/plat/pd.h
->  delete mode 100644 arch/arm/plat-samsung/pd.c
+> > Marek Szyprowski wrote:
+> > >
+> > > clkdev framework uses global mutex to protect clock tree, so it is not
+> > > possible to call clk_get() in interrupt context. This patch fixes this
+> > > issue and makes system reset by watchdog call working again.
+> > >
+> > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > > ---
+> > >  arch/arm/plat-samsung/clock.c                      |   11
+> +++++++++++
+> > >  arch/arm/plat-samsung/include/plat/clock.h         |    3 +++
+> > >  .../arm/plat-samsung/include/plat/watchdog-reset.h |   10 +++-------
+> > >  3 files changed, 17 insertions(+), 7 deletions(-)
+> > >
+> > >
+> > > history:
+> > > v3:
+> > > - moved initialization to arch_initcall, cleaned the code
+> > >
+> > > v2:
+> > > - added missing '__init' section modifiers
+> > >
+> > > diff --git a/arch/arm/plat-samsung/clock.c
+b/arch/arm/plat-samsung/clock.c
+> > > index 302c426..3b44519 100644
+> > > --- a/arch/arm/plat-samsung/clock.c
+> > > +++ b/arch/arm/plat-samsung/clock.c
+> > > @@ -64,6 +64,17 @@ static LIST_HEAD(clocks);
+> > >   */
+> > >  DEFINE_SPINLOCK(clocks_lock);
+> > >
+> > > +/* Global watchdog clock used by arch_wtd_reset() callback */
+> > > +struct clk *s3c2410_wdtclk;
+> > > +static int __init s3c_wdt_reset_init(void)
+> > > +{
+> > > +	s3c2410_wdtclk = clk_get(NULL, "watchdog");
+> > > +	if (IS_ERR(s3c2410_wdtclk))
+> > > +		printk(KERN_WARNING "%s: warning: cannot get watchdog
+> > > clock\n", __func__);
+> > > +	return 0;
+> > > +}
+> > > +arch_initcall(s3c_wdt_reset_init);
+> > > +
+> > >  /* enable and disable calls for use with the clk struct */
+> > >
+> > >  static int clk_null_enable(struct clk *clk, int enable)
+> > > diff --git a/arch/arm/plat-samsung/include/plat/clock.h
+b/arch/arm/plat-
+> > > samsung/include/plat/clock.h
+> > > index 87d5b38..8f95700 100644
+> > > --- a/arch/arm/plat-samsung/include/plat/clock.h
+> > > +++ b/arch/arm/plat-samsung/include/plat/clock.h
+> > > @@ -121,3 +121,6 @@ extern int s3c64xx_sclk_ctrl(struct clk *clk, int
+> > enable);
+> > >
+> > >  extern void s3c_pwmclk_init(void);
+> > >
+> > > +/* Global watchdog clock used by arch_wtd_reset() callback */
+> > > +
+> > > +extern struct clk *s3c2410_wdtclk;
+> > > diff --git a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
+> > b/arch/arm/plat-
+> > > samsung/include/plat/watchdog-reset.h
+> > > index 54b762a..40dbb2b 100644
+> > > --- a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
+> > > +++ b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
+> > > @@ -10,6 +10,7 @@
+> > >   * published by the Free Software Foundation.
+> > >  */
+> > >
+> > > +#include <plat/clock.h>
+> > >  #include <plat/regs-watchdog.h>
+> > >  #include <mach/map.h>
+> > >
+> > > @@ -19,17 +20,12 @@
+> > >
+> > >  static inline void arch_wdt_reset(void)
+> > >  {
+> > > -	struct clk *wdtclk;
+> > > -
+> > >  	printk("arch_reset: attempting watchdog reset\n");
+> > >
+> > >  	__raw_writel(0, S3C2410_WTCON);	  /* disable watchdog, to be safe
+> > */
+> > >
+> > > -	wdtclk = clk_get(NULL, "watchdog");
+> > > -	if (!IS_ERR(wdtclk)) {
+> > > -		clk_enable(wdtclk);
+> > > -	} else
+> > > -		printk(KERN_WARNING "%s: warning: cannot get watchdog
+> > > clock\n", __func__);
+> > > +	if (s3c2410_wdtclk)
+> > > +		clk_enable(s3c2410_wdtclk);
+> > >
+> > >  	/* put initial values into count and data */
+> > >  	__raw_writel(0x80, S3C2410_WTCNT);
+> > > --
+> > > 1.7.1.569.g6f426
+> >
+> > Looks good but happens following:
+> >
+> > Hmm...
+> > With s3c2410_defconfig:
+> >
+> > In file included from arch/arm/plat-s3c24xx/cpu.c:48:
+> > arch/arm/plat-samsung/include/plat/clock.h:32: error: redefinition of
+> > 'struct clk_ops'
+> > arch/arm/plat-samsung/include/plat/clock.h:39: error: redefinition of
+> > 'struct clk'
+> > arch/arm/plat-samsung/include/plat/clock.h:60: error: conflicting types
+for
+> > 's3c24xx_dclk0'
+> > arch/arm/plat-samsung/include/plat/clock.h:60: note: previous
+declaration of
+> > 's3c24xx_dclk0' was here
+> > arch/arm/plat-samsung/include/plat/clock.h:61: error: conflicting types
+for
+> > 's3c24xx_dclk1'
+> > arch/arm/plat-samsung/include/plat/clock.h:61: note: previous
+declaration of
+> > 's3c24xx_dclk1' was here
+> > arch/arm/plat-samsung/include/plat/clock.h:62: error: conflicting types
+for
+> > 's3c24xx_clkout0'
+> > arch/arm/plat-samsung/include/plat/clock.h:62: note: previous
+declaration of
+> > 's3c24xx_clkout0' was here
+> >
+> > (snip)
+> >
+> > arch/arm/plat-samsung/include/plat/clock.h:101: error: conflicting types
+for
+> > 's3c_disable_clocks'
+> > arch/arm/plat-samsung/include/plat/clock.h:101: note: previous
+declaration
+> > of 's3c_disable_clocks' was here
+> > arch/arm/plat-samsung/include/plat/clock.h:118: error: conflicting types
+for
+> > 's3c64xx_sclk_ctrl'
+> > arch/arm/plat-samsung/include/plat/clock.h:118: note: previous
+declaration
+> > of 's3c64xx_sclk_ctrl' was here
+> > arch/arm/plat-samsung/include/plat/clock.h:126: error: conflicting types
+for
+> > 's3c2410_wdtclk'
+> > arch/arm/plat-samsung/include/plat/clock.h:126: note: previous
+declaration
+> > of 's3c2410_wdtclk' was here
+> > make[1]: *** [arch/arm/plat-s3c24xx/cpu.o] Error 1
+> > make[1]: *** Waiting for unfinished jobs....
+> > make: *** [arch/arm/plat-s3c24xx] Error 2
+> > make: *** Waiting for unfinished jobs....
+> >
+> > And, with s5p64x0_defconfig:
+> >
+> >   CHK     include/linux/version.h
+> >   CHK     include/generated/utsrelease.h
+> > make[1]: `include/generated/mach-types.h' is up to date.
+> >   CALL    scripts/checksyscalls.sh
+> >   CHK     include/generated/compile.h
+> >   KSYM    .tmp_kallsyms1.S
+> >   AS      .tmp_kallsyms1.o
+> >   LD      .tmp_vmlinux2
+> >   KSYM    .tmp_kallsyms2.S
+> >   AS      .tmp_kallsyms2.o
+> >   LD      vmlinux
+> >   SYSMAP  System.map
+> >   SYSMAP  .tmp_System.map
+> > Inconsistent kallsyms data
+> > This is a bug - please report about it
+> > Try make KALLSYMS_EXTRA_PASS=1 as a workaround
+> > make: *** [vmlinux] Error 1
+> >
+> >
+> > The building error of s3c2410_defconfig can be fixed with below.
+> > ---
+> > commit c5f80e2eb419437a7e4272d28bc7258b650b0934
+> > Author: Kukjin Kim <kgene.kim@samsung.com>
+> > Date:   Fri Aug 19 21:12:19 2011 +0900
+> >
+> >     ARM: SAMSUNG: fix to prevent declaring duplicated
+> >
+> >     The plat/clock.h revised to prevent declaring duplicated.
+> >
+> >     Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> >
+> > diff --git a/arch/arm/plat-samsung/include/plat/clock.h
+> > b/arch/arm/plat-samsung/include/plat/clock.h
+> > index 8f95700..092be14 100644
+> > --- a/arch/arm/plat-samsung/include/plat/clock.h
+> > +++ b/arch/arm/plat-samsung/include/plat/clock.h
+> > @@ -9,6 +9,9 @@
+> >   * published by the Free Software Foundation.
+> >  */
+> >
+> > +#ifndef __ASM_PLAT_CLOCK_H
+> > +#define __ASM_PLAT_CLOCK_H __FILE__
+> > +
+> >  #include <linux/spinlock.h>
+> >  #include <linux/clkdev.h>
+> >
+> > @@ -124,3 +127,5 @@ extern void s3c_pwmclk_init(void);
+> >  /* Global watchdog clock used by arch_wtd_reset() callback */
+> >
+> >  extern struct clk *s3c2410_wdtclk;
+> > +
+> > +#endif /* __ASM_PLAT_CLOCK_H */
+> > ---
+> >
+> > But, the error of s5p64x0_defconfig happens still :(
+> 
+> Well, this issue is definitely not related to my patch. The strange thing
+is
+> the fact that it builds here correctly with s5p64x0_defconfig.
+> 
+Hi Marek,
 
-Hi Chanwoo,
+Yes, the build error doesn't seem to be related to this.
+But happens only with this :(
 
-Basically looks ok.
-I will review this in detail in the next week.
-Then if no problems, will apply.
+I'd like to clear, debug it in the next week...Then will apply.
 
 Thanks.
 
