@@ -1,42 +1,74 @@
 From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH 2/4] S3C2443: Define constant for HSSPI pclk
-Date: Sat, 20 Aug 2011 18:02:15 +0200
-Message-ID: <201108201802.16171.heiko@sntech.de>
+Subject: [PATCH 3/4] S3C2416: Add HSSPI clock sourced from EPLL
+Date: Sat, 20 Aug 2011 18:03:08 +0200
+Message-ID: <201108201803.08715.heiko@sntech.de>
 References: <201108201757.56483.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:53340 "EHLO
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:53472 "EHLO
 	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753583Ab1HTQCW (ORCPT
+	by vger.kernel.org with ESMTP id S1752928Ab1HTQDS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 20 Aug 2011 12:02:22 -0400
+	Sat, 20 Aug 2011 12:03:18 -0400
 In-Reply-To: <201108201757.56483.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
 
-It's the same clock for 2443/2416/2450.
+This clock is special to the S3C2416/2450 SoCs.
 
 Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- .../mach-s3c2410/include/mach/regs-s3c2443-clock.h |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+ arch/arm/mach-s3c2416/clock.c |   26 ++++++++++++++++++++++++++
+ 1 files changed, 26 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-s3c2410/include/mach/regs-s3c2443-clock.h b/arch/arm/mach-s3c2410/include/mach/regs-s3c2443-clock.h
-index 5e06c72..df6434f 100644
---- a/arch/arm/mach-s3c2410/include/mach/regs-s3c2443-clock.h
-+++ b/arch/arm/mach-s3c2410/include/mach/regs-s3c2443-clock.h
-@@ -102,6 +102,7 @@
- #define S3C2443_PCLKCON_UART3		(1<<3)
- #define S3C2443_PCLKCON_IIC		(1<<4)
- #define S3C2443_PCLKCON_SDI		(1<<5)
-+#define S3C2443_PCLKCON_HSSPI		(1<<6)
- #define S3C2443_PCLKCON_ADC		(1<<7)
- #define S3C2443_PCLKCON_AC97		(1<<8)
- #define S3C2443_PCLKCON_IIS		(1<<9)
+diff --git a/arch/arm/mach-s3c2416/clock.c b/arch/arm/mach-s3c2416/clock.c
+index 21a5e81..5177d79 100644
+--- a/arch/arm/mach-s3c2416/clock.c
++++ b/arch/arm/mach-s3c2416/clock.c
+@@ -38,6 +38,30 @@ static unsigned int armdiv[8] = {
+ 	[7] = 8,
+ };
+ 
++static struct clksrc_clk hsspi_eplldiv = {
++	.clk = {
++		.name	= "hsspi-eplldiv",
++		.parent	= &clk_esysclk.clk,
++		.ctrlbit = (1 << 14),
++		.enable = s3c2443_clkcon_enable_s,
++	},
++	.reg_div = { .reg = S3C2443_CLKDIV1, .size = 2, .shift = 24 },
++};
++
++static struct clksrc_clk hsspi_mux = {
++	.clk	= {
++		.name	= "hsspi-if",
++	},
++	.sources = &(struct clksrc_sources) {
++		.nr_sources = 2,
++		.sources = (struct clk *[]) {
++			[0] = &hsspi_eplldiv.clk,
++			[1] = NULL, /* to fix */
++		},
++	},
++	.reg_src = { .reg = S3C2443_CLKSRC, .size = 1, .shift = 18 },
++};
++
+ static struct clksrc_clk hsmmc_div[] = {
+ 	[0] = {
+ 		.clk = {
+@@ -114,6 +138,8 @@ void __init_or_cpufreq s3c2416_setup_clocks(void)
+ 
+ 
+ static struct clksrc_clk *clksrcs[] __initdata = {
++	&hsspi_eplldiv,
++	&hsspi_mux,
+ 	&hsmmc_div[0],
+ 	&hsmmc_div[1],
+ 	&hsmmc_mux[0],
 -- 
 1.7.2.3
