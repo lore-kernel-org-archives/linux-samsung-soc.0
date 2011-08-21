@@ -1,46 +1,40 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH 4/4] S3C2443: Add hsspi-clock from pclk
-Date: Sat, 20 Aug 2011 18:03:59 +0200
-Message-ID: <201108201803.59832.heiko@sntech.de>
-References: <201108201757.56483.heiko@sntech.de>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 12/15] spi/s3c64xx: Add support DMA engine API
+Date: Sun, 21 Aug 2011 09:46:33 +0100
+Message-ID: <20110821084633.GD12028@n2100.arm.linux.org.uk>
+References: <1311744697-10264-1-git-send-email-boojin.kim@samsung.com> <1311744697-10264-13-git-send-email-boojin.kim@samsung.com> <CABb+yY3-d0xTO+s0cCPXPW8qGpTH5G2U+bp-0z4Se47eVvJ__w@mail.gmail.com> <CAGOxZ53BRa1=Bnb==jNg_dD0XT2pMSPo=QoHF++LnT6r5kO_Mw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:53496 "EHLO
-	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753452Ab1HTQEF (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:54094 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752070Ab1HUIq4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 20 Aug 2011 12:04:05 -0400
-In-Reply-To: <201108201757.56483.heiko@sntech.de>
+	Sun, 21 Aug 2011 04:46:56 -0400
+Content-Disposition: inline
+In-Reply-To: <CAGOxZ53BRa1=Bnb==jNg_dD0XT2pMSPo=QoHF++LnT6r5kO_Mw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+To: Alim Akhtar <alim.akhtar@gmail.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Boojin Kim <boojin.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, banajit.g@samsung.com
 
-This clock is common to S3C2443/2416/2450.
+On Tue, Aug 09, 2011 at 09:43:32AM +0530, Alim Akhtar wrote:
+> Exactly, spi_s3c64xx.c (including Sound driver) can not be used with
+> pl080 and pl330 (DMAENGINE drivers) as it is.
+> Recently I was trying to use PL080 DMAENGINE driver, and i was ended
+> up using some #ifdef in the spi driver.
+> something like
+> #ifdef CONFIG_PL080
+> sdd->tx_dmac.bus_id = dmatx_res->name;
+> sdd->rx_dmac.bus_id = dmarx_res->name;
+> #else
+> sdd->tx_dmac.bus_id = dmatx_res->start;
+> sdd->tx_dmac.bus_id = dmatx_res->start;
+> #endif
+> 
+> This is because, Pl080 handle the channel as a char *(name) and pl330
+> expect the channel to be enum (a number).
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/plat-s3c24xx/s3c2443-clock.c |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/plat-s3c24xx/s3c2443-clock.c b/arch/arm/plat-s3c24xx/s3c2443-clock.c
-index e2807d9..92fc25b 100644
---- a/arch/arm/plat-s3c24xx/s3c2443-clock.c
-+++ b/arch/arm/plat-s3c24xx/s3c2443-clock.c
-@@ -259,6 +259,11 @@ static struct clk init_clocks_off[] = {
- 		.enable		= s3c2443_clkcon_enable_p,
- 		.ctrlbit	= S3C2443_PCLKCON_IIS,
- 	}, {
-+		.name		= "hsspi",
-+		.parent		= &clk_p,
-+		.enable		= s3c2443_clkcon_enable_p,
-+		.ctrlbit	= S3C2443_PCLKCON_HSSPI,
-+	}, {
- 		.name		= "adc",
- 		.parent		= &clk_p,
- 		.enable		= s3c2443_clkcon_enable_p,
--- 
-1.7.2.3
+The alternative is that you do as the Primecell drivers do (which was
+designed from the outset to be independent of the specific dmaengine),
+and pass the DMA filter parameters as pointers via platform data.
