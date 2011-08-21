@@ -1,39 +1,49 @@
 From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 1/4] S3C2443: Move i2s clock definitions to common code
-Date: Sun, 21 Aug 2011 18:13:32 +0100
-Message-ID: <20110821171332.GF28546@n2100.arm.linux.org.uk>
-References: <201108201757.56483.heiko@sntech.de> <201108201801.29541.heiko@sntech.de>
+Subject: Re: [RFC PATCH 3/4] ARM: EXYNOS4: Add support AFTR mode cpuidle
+	state on EXYNOS4210
+Date: Sun, 21 Aug 2011 18:18:51 +0100
+Message-ID: <20110821171851.GG28546@n2100.arm.linux.org.uk>
+References: <1313759340-31319-1-git-send-email-amit.kachhap@linaro.org> <1313759400-31347-3-git-send-email-amit.kachhap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:39686 "EHLO
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:44150 "EHLO
 	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752092Ab1HURN4 (ORCPT
+	with ESMTP id S1752092Ab1HURTC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 21 Aug 2011 13:13:56 -0400
+	Sun, 21 Aug 2011 13:19:02 -0400
 Content-Disposition: inline
-In-Reply-To: <201108201801.29541.heiko@sntech.de>
+In-Reply-To: <1313759400-31347-3-git-send-email-amit.kachhap@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org
 
-On Sat, Aug 20, 2011 at 06:01:29PM +0200, Heiko St=FCbner wrote:
-> +/* i2s-ref
-> + *
-> + * i2s bus reference clock, selectable from external, esysclk or epl=
-lref
-> + *
-> + * Note, this used to be two clocks, but was compressed into one.
-> +*/
+On Fri, Aug 19, 2011 at 06:39:59PM +0530, Amit Daniel Kachhap wrote:
+> +ENTRY(exynos4_enter_lp)
+> +	stmfd	sp!, { r3 - r12, lr }
 > +
-> +struct clk *clk_i2s_srclist[] =3D {
-> +	[0] =3D &clk_i2s_eplldiv.clk,
-> +	[1] =3D &clk_i2s_ext,
-> +	[2] =3D &clk_epllref.clk,
-> +	[3] =3D &clk_epllref.clk,
-> +};
+> +	adr	r0, sleep_save_misc
+> +
+> +	mrc	p15, 0, r2, c15, c0, 0	@ read power control register
+> +	str	r2, [r0], #4
+> +
+> +	mrc	p15, 0, r2, c15, c0, 1	@ read diagnostic register
+> +	str	r2, [r0], #4
+> +
+> +	ldr	r3, =resume_with_mmu
+> +	bl	cpu_suspend
+> +
+> +	mov	r0, sp
+> +	bl	exynos4_cpu_lp
+> +
+> +	/* Restore original sp */
+> +	mov	r0, sp
+> +	add	r0, r0, #4
+> +	ldr	sp, [r0]
+> +
+> +	mov	r0, #0
+> +	b	early_wakeup
 
-Is there any reason not to make this static (have you run your patch
-through checkpatch.pl ?)
+This is based upon old kernel code.  Clearly hasn't been tested with
+anything later than 3.0.
