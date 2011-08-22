@@ -1,61 +1,38 @@
 From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH v6 04/15] DMA: PL330: Add DMA_CYCLIC capability
-Date: Mon, 22 Aug 2011 15:39:37 +0530
-Message-ID: <CABb+yY2CjmoDEmvC3S0ua3=B++jKz5g2JXGTwhNcAw5MQ06M9A@mail.gmail.com>
+Subject: Re: [PATCH v6 02/15] DMA: PL330: Update PL330 DMA API driver
+Date: Mon, 22 Aug 2011 15:40:35 +0530
+Message-ID: <CABb+yY2sHy4jp8bvno6MrOJsnp2EMAYbAN7PzsCbcS8OvjNkBw@mail.gmail.com>
 References: <1313744097-27289-1-git-send-email-boojin.kim@samsung.com>
-	<1313744097-27289-5-git-send-email-boojin.kim@samsung.com>
+	<1313744097-27289-3-git-send-email-boojin.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:38001 "EHLO
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:38129 "EHLO
 	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753084Ab1HVKJj (ORCPT
+	with ESMTP id S1753084Ab1HVKKh convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Aug 2011 06:09:39 -0400
-Received: by bke11 with SMTP id 11so3539235bke.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Aug 2011 03:09:37 -0700 (PDT)
-In-Reply-To: <1313744097-27289-5-git-send-email-boojin.kim@samsung.com>
+	Mon, 22 Aug 2011 06:10:37 -0400
+Received: by bke11 with SMTP id 11so3539810bke.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Aug 2011 03:10:36 -0700 (PDT)
+In-Reply-To: <1313744097-27289-3-git-send-email-boojin.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Boojin Kim <boojin.kim@samsung.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>
 
-T24gRnJpLCBBdWcgMTksIDIwMTEgYXQgMjoyNCBQTSwgQm9vamluIEtpbSA8Ym9vamluLmtpbUBz
-YW1zdW5nLmNvbT4gd3JvdGU6Cgo+IEBAIC0zMjQsNiArMzYyLDkgQEAgc3RhdGljIHZvaWQgcGwz
-MzBfZnJlZV9jaGFuX3Jlc291cmNlcyhzdHJ1Y3QgZG1hX2NoYW4gKmNoYW4pCj4gwqAgwqAgwqAg
-wqBwbDMzMF9yZWxlYXNlX2NoYW5uZWwocGNoLT5wbDMzMF9jaGlkKTsKPiDCoCDCoCDCoCDCoHBj
-aC0+cGwzMzBfY2hpZCA9IE5VTEw7Cj4KPiArIMKgIMKgIMKgIGlmIChwY2gtPmN5Y2xpYykKPiAr
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIGxpc3Rfc3BsaWNlX3RhaWxfaW5pdCgmcGNoLT53b3JrX2xp
-c3QsICZwY2gtPmRtYWMtPmRlc2NfcG9vbCk7CidjeWNsaWMnIG1lbWJlciBpcyAnZW51bSBjeWNs
-aWNfbW9kZScsIHBsZWFzZSBvYnNlcnZlIHRoZSBydWxlIGFuZCBjb21wYXJlCml0IG9ubHkgYWdh
-aW5zdCB0aGUgZW51bSB2YWx1ZXMuCgoKPiArc3RhdGljIHN0cnVjdCBkbWFfYXN5bmNfdHhfZGVz
-Y3JpcHRvciAqcGwzMzBfcHJlcF9kbWFfY3ljbGljKAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-c3RydWN0IGRtYV9jaGFuICpjaGFuLCBkbWFfYWRkcl90IGRtYV9hZGRyLCBzaXplX3QgbGVuLAo+
-ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgc2l6ZV90IHBlcmlvZF9sZW4sIGVudW0gZG1hX2RhdGFf
-ZGlyZWN0aW9uIGRpcmVjdGlvbikKPiArewo+ICsgwqAgwqAgwqAgc3RydWN0IGRtYV9wbDMzMF9k
-ZXNjICpkZXNjOwo+ICsgwqAgwqAgwqAgc3RydWN0IGRtYV9wbDMzMF9jaGFuICpwY2ggPSB0b19w
-Y2hhbihjaGFuKTsKPiArIMKgIMKgIMKgIGRtYV9hZGRyX3QgZHN0Owo+ICsgwqAgwqAgwqAgZG1h
-X2FkZHJfdCBzcmM7Cj4gKwo+ICsgwqAgwqAgwqAgZGVzYyA9IHBsMzMwX2dldF9kZXNjKHBjaCk7
-Cj4gKyDCoCDCoCDCoCBpZiAoIWRlc2MpIHsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGRldl9l
-cnIocGNoLT5kbWFjLT5waWYuZGV2LCAiJXM6JWQgVW5hYmxlIHRvIGZldGNoIGRlc2NcbiIsCj4g
-KyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBfX2Z1bmNfXywgX19MSU5FX18pOwo+
-ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgcmV0dXJuIE5VTEw7Cj4gKyDCoCDCoCDCoCB9Cj4gKwo+
-ICsgwqAgwqAgwqAgc3dpdGNoIChkaXJlY3Rpb24pIHsKPiArIMKgIMKgIMKgIGNhc2UgRE1BX1RP
-X0RFVklDRToKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGRlc2MtPnJxY2ZnLnNyY19pbmMgPSAx
-Owo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgZGVzYy0+cnFjZmcuZHN0X2luYyA9IDA7Cj4gKyDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCBzcmMgPSBkbWFfYWRkcjsKPiArIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIGRzdCA9IHBjaC0+Zmlmb19hZGRyOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgYnJlYWs7
-Cj4gKyDCoCDCoCDCoCBjYXNlIERNQV9GUk9NX0RFVklDRToKPiArIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIGRlc2MtPnJxY2ZnLnNyY19pbmMgPSAwOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgZGVz
-Yy0+cnFjZmcuZHN0X2luYyA9IDE7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBzcmMgPSBwY2gt
-PmZpZm9fYWRkcjsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGRzdCA9IGRtYV9hZGRyOwo+ICsg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgYnJlYWs7Cj4gKyDCoCDCoCDCoCBkZWZhdWx0Ogo+ICsgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgZGV2X2VycihwY2gtPmRtYWMtPnBpZi5kZXYsICIlczolZCBJbnZh
-bGlkIGRtYSBkaXJlY3Rpb25cbiIsCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBfX2Z1bmNfXywg
-X19MSU5FX18pOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgcmV0dXJuIE5VTEw7Cj4gKyDCoCDC
-oCDCoCB9Cj4gKwo+ICsgwqAgwqAgwqAgZGVzYy0+cnFjZmcuYnJzdF9zaXplID0gcGNoLT5idXJz
-dF9zejsKPiArIMKgIMKgIMKgIGRlc2MtPnJxY2ZnLmJyc3RfbGVuID0gMTsKPiArCj4gKyDCoCDC
-oCDCoCBpZiAoIXBjaC0+Y3ljbGljKQo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgcGNoLT5jeWNs
-aWMgPSBDWUNMSUNfUFJFUDsKVGhlIG5lZWQgZm9yIGNoZWNrIGhlcmUgc2VlbXMgc3VzcGljaW91
-cy4KSXMgaXQgcmVhbGx5IG5lZWRlZD8gSWYgbm90LCBwbGVhc2UgcmVtb3ZlIGl0Lgo=
+On Fri, Aug 19, 2011 at 2:24 PM, Boojin Kim <boojin.kim@samsung.com> wr=
+ote:
+> This patch updates following 3 items.
+> 1. Removes unneccessary code.
+> 2. Add AMBA, PL330 configuration
+> 3. Change the meaning of 'peri_id' variable
+> =C2=A0 from PL330 event number to specific dma id by user.
+>
+> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Acked-by: Vinod Koul <vinod.koul@intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+
+Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
