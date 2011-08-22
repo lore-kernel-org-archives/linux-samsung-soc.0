@@ -1,63 +1,103 @@
 From: Amit Kachhap <amit.kachhap@linaro.org>
-Subject: Re: [RFC PATCH 3/4] ARM: EXYNOS4: Add support AFTR mode cpuidle state
- on EXYNOS4210
-Date: Mon, 22 Aug 2011 22:25:03 +0530
-Message-ID: <CAK44p21rEqj=JL5PLmFQe0L62UUUJb_ogRpp-vdA3HjwK_+XHQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/4] ARM: EXYNOS4: Fix to work with origen boards.
+Date: Mon, 22 Aug 2011 22:31:46 +0530
+Message-ID: <CAK44p23_GkR8RSSiKk7K6eMX802HMUj5outzL5+=MjujpQ+7RA@mail.gmail.com>
 References: <1313759340-31319-1-git-send-email-amit.kachhap@linaro.org>
-	<1313759400-31347-3-git-send-email-amit.kachhap@linaro.org>
-	<20110821171851.GG28546@n2100.arm.linux.org.uk>
+	<1313759400-31347-2-git-send-email-amit.kachhap@linaro.org>
+	<CAH9JG2XbTub+TR_Pbi8ZqedD78HsDzMAY581XQbcWYF6aP82aQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yi0-f46.google.com ([209.85.218.46]:38078 "EHLO
-	mail-yi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751636Ab1HVQzE convert rfc822-to-8bit (ORCPT
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:62563 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751592Ab1HVRBq convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Aug 2011 12:55:04 -0400
-Received: by yie30 with SMTP id 30so3711906yie.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Aug 2011 09:55:03 -0700 (PDT)
-In-Reply-To: <20110821171851.GG28546@n2100.arm.linux.org.uk>
+	Mon, 22 Aug 2011 13:01:46 -0400
+Received: by yxj19 with SMTP id 19so3654094yxj.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Aug 2011 10:01:46 -0700 (PDT)
+In-Reply-To: <CAH9JG2XbTub+TR_Pbi8ZqedD78HsDzMAY581XQbcWYF6aP82aQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+To: Kyungmin Park <kmpark@infradead.org>
 Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org
 
-On 21 August 2011 22:48, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Fri, Aug 19, 2011 at 06:39:59PM +0530, Amit Daniel Kachhap wrote:
->> +ENTRY(exynos4_enter_lp)
->> + =A0 =A0 stmfd =A0 sp!, { r3 - r12, lr }
+On 19 August 2011 19:29, Kyungmin Park <kmpark@infradead.org> wrote:
+> On Fri, Aug 19, 2011 at 10:09 PM, Amit Daniel Kachhap
+> <amit.kachhap@linaro.org> wrote:
+>> This adds a function to get the revision id.
+>>
+>> Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
+>> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+>> ---
+>> =A0arch/arm/mach-exynos4/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 10 +=
++++++++++
+>> =A0arch/arm/plat-s5p/include/plat/exynos4.h | =A0 =A01 +
+>> =A02 files changed, 11 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu=
+=2Ec
+>> index 2d8a40c..8b106b8 100644
+>> --- a/arch/arm/mach-exynos4/cpu.c
+>> +++ b/arch/arm/mach-exynos4/cpu.c
+>> @@ -234,6 +234,16 @@ static int __init exynos4_l2x0_cache_init(void)
+>> =A0early_initcall(exynos4_l2x0_cache_init);
+>> =A0#endif
+>>
+>> +int exynos4_subrev(void)
+>> +{
+>> + =A0 =A0 =A0 static int subrev =3D -1;
 >> +
->> + =A0 =A0 adr =A0 =A0 r0, sleep_save_misc
->> +
->> + =A0 =A0 mrc =A0 =A0 p15, 0, r2, c15, c0, 0 =A0@ read power control=
- register
->> + =A0 =A0 str =A0 =A0 r2, [r0], #4
->> +
->> + =A0 =A0 mrc =A0 =A0 p15, 0, r2, c15, c0, 1 =A0@ read diagnostic re=
-gister
->> + =A0 =A0 str =A0 =A0 r2, [r0], #4
->> +
->> + =A0 =A0 ldr =A0 =A0 r3, =3Dresume_with_mmu
->> + =A0 =A0 bl =A0 =A0 =A0cpu_suspend
->> +
->> + =A0 =A0 mov =A0 =A0 r0, sp
->> + =A0 =A0 bl =A0 =A0 =A0exynos4_cpu_lp
->> +
->> + =A0 =A0 /* Restore original sp */
->> + =A0 =A0 mov =A0 =A0 r0, sp
->> + =A0 =A0 add =A0 =A0 r0, r0, #4
->> + =A0 =A0 ldr =A0 =A0 sp, [r0]
->> +
->> + =A0 =A0 mov =A0 =A0 r0, #0
->> + =A0 =A0 b =A0 =A0 =A0 early_wakeup
+>> + =A0 =A0 =A0 if (unlikely(subrev < 0))
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 subrev =3D readl(S5P_VA_CHIPID) & 0xf;
+> How about to add the clock control here?
+> 1. Register chipid clk
+> 2. Get the chipid clk
+> 3. Read CHPIID,
+> 4. Put tht chipid clk.
+
+Nice suggestion. Will do it in the next patch version.  Actually the
+main focus of this
+patch series was to have a proof of concept of the new cpuidle common c=
+ode.
+
+Thanks,
+Amit Daniel
+
 >
-> This is based upon old kernel code. =A0Clearly hasn't been tested wit=
-h
-> anything later than 3.0.
+> Then you can save some power.
 >
-You are right. I will rebase it to the latest tree in the next
-version. The main intention of the patch series (mostly patch 4) is to
-collect information or issues on samsung platform with the new common
-cpuidle framework.
+> Thank you,
+> Kyungmin Park
+>> +
+>> + =A0 =A0 =A0 return subrev;
+>> +}
+>> +
+>> =A0int __init exynos4_init(void)
+>> =A0{
+>> =A0 =A0 =A0 =A0printk(KERN_INFO "EXYNOS4: Initializing architecture\=
+n");
+>> diff --git a/arch/arm/plat-s5p/include/plat/exynos4.h b/arch/arm/pla=
+t-s5p/include/plat/exynos4.h
+>> index 907caab..d62f7f7 100644
+>> --- a/arch/arm/plat-s5p/include/plat/exynos4.h
+>> +++ b/arch/arm/plat-s5p/include/plat/exynos4.h
+>> @@ -15,6 +15,7 @@
+>> =A0extern void exynos4_common_init_uarts(struct s3c2410_uartcfg *cfg=
+, int no);
+>> =A0extern void exynos4_register_clocks(void);
+>> =A0extern void exynos4_setup_clocks(void);
+>> +extern int exynos4_subrev(void);
+>>
+>> =A0#ifdef CONFIG_CPU_EXYNOS4210
+>>
+>> --
+>> 1.7.1
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-sams=
+ung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>>
+>
