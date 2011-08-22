@@ -1,97 +1,58 @@
-From: Boojin Kim <boojin.kim@samsung.com>
-Subject: RE: [PATCH v6 04/15] DMA: PL330: Add DMA_CYCLIC capability
-Date: Mon, 22 Aug 2011 21:03:13 +0900
-Message-ID: <002c01cc60c3$77d18210$67748630$%kim@samsung.com>
-References: <1313744097-27289-1-git-send-email-boojin.kim@samsung.com>
- <1313744097-27289-5-git-send-email-boojin.kim@samsung.com>
- <CABb+yY2CjmoDEmvC3S0ua3=B++jKz5g2JXGTwhNcAw5MQ06M9A@mail.gmail.com>
-Content-Transfer-Encoding: 7BIT
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH] ARM: EXYNOS4: Add FIMC device on SMDKV310 board
+Date: Mon, 22 Aug 2011 17:31:29 +0530
+Message-ID: <1314014489-10479-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:57594 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751491Ab1HVMDP (ORCPT
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:64964 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751726Ab1HVMEI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Aug 2011 08:03:15 -0400
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LQB009RYW5DSSR0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 22 Aug 2011 21:03:13 +0900 (KST)
-Received: from DOBOOJINKIM03 (12-23-120-72.csky.net [12.23.120.72])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LQB00GZVW5D7C@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 22 Aug 2011 21:03:13 +0900 (KST)
-In-reply-to: <CABb+yY2CjmoDEmvC3S0ua3=B++jKz5g2JXGTwhNcAw5MQ06M9A@mail.gmail.com>
-Content-language: ko
+	Mon, 22 Aug 2011 08:04:08 -0400
+Received: by gya6 with SMTP id 6so3494532gya.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Aug 2011 05:04:08 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jassi Brar' <jassisinghbrar@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Vinod Koul' <vinod.koul@intel.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Dan Williams' <dan.j.williams@intel.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Russell King' <linux@arm.linux.org.uk>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org, sachin.kamat@linaro.org
 
-Jassi Brar wrote:
+This patch adds definitions to enable support for s5p-fimc driver on
+SMDKV310 board.
 
->
-> > @@ -324,6 +362,9 @@ static void pl330_free_chan_resources(struct
-> dma_chan *chan)
-> >        pl330_release_channel(pch->pl330_chid);
-> >        pch->pl330_chid = NULL;
-> >
-> > +       if (pch->cyclic)
-> > +               list_splice_tail_init(&pch->work_list, &pch->dmac-
-> >desc_pool);
-> 'cyclic' member is 'enum cyclic_mode', please observe the rule and
-> compare
-> it only against the enum values.
-I will address your comment.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-exynos4/Kconfig         |    4 ++++
+ arch/arm/mach-exynos4/mach-smdkv310.c |    4 ++++
+ 2 files changed, 8 insertions(+), 0 deletions(-)
 
->
->
-> > +static struct dma_async_tx_descriptor *pl330_prep_dma_cyclic(
-> > +               struct dma_chan *chan, dma_addr_t dma_addr, size_t len,
-> > +               size_t period_len, enum dma_data_direction direction)
-> > +{
-> > +       struct dma_pl330_desc *desc;
-> > +       struct dma_pl330_chan *pch = to_pchan(chan);
-> > +       dma_addr_t dst;
-> > +       dma_addr_t src;
-> > +
-> > +       desc = pl330_get_desc(pch);
-> > +       if (!desc) {
-> > +               dev_err(pch->dmac->pif.dev, "%s:%d Unable to fetch
-> desc\n",
-> > +                       __func__, __LINE__);
-> > +               return NULL;
-> > +       }
-> > +
-> > +       switch (direction) {
-> > +       case DMA_TO_DEVICE:
-> > +               desc->rqcfg.src_inc = 1;
-> > +               desc->rqcfg.dst_inc = 0;
-> > +               src = dma_addr;
-> > +               dst = pch->fifo_addr;
-> > +               break;
-> > +       case DMA_FROM_DEVICE:
-> > +               desc->rqcfg.src_inc = 0;
-> > +               desc->rqcfg.dst_inc = 1;
-> > +               src = pch->fifo_addr;
-> > +               dst = dma_addr;
-> > +               break;
-> > +       default:
-> > +               dev_err(pch->dmac->pif.dev, "%s:%d Invalid dma
-> direction\n",
-> > +               __func__, __LINE__);
-> > +               return NULL;
-> > +       }
-> > +
-> > +       desc->rqcfg.brst_size = pch->burst_sz;
-> > +       desc->rqcfg.brst_len = 1;
-> > +
-> > +       if (!pch->cyclic)
-> > +               pch->cyclic = CYCLIC_PREP;
-> The need for check here seems suspicious.
-> Is it really needed? If not, please remove it.
-It's required because Cyclic operation is passed from CYCLIC_PREP to 
-CYCLIC_TRIGGER.
-
-Thanks
-Boojin
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index e6925de..95f778e 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -135,6 +135,10 @@ config MACH_SMDKC210
+ config MACH_SMDKV310
+ 	bool "SMDKV310"
+ 	select CPU_EXYNOS4210
++	select S5P_DEV_FIMC0
++	select S5P_DEV_FIMC1
++	select S5P_DEV_FIMC2
++	select S5P_DEV_FIMC3
+ 	select S5P_DEV_FIMD0
+ 	select S3C_DEV_RTC
+ 	select S3C_DEV_WDT
+diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
+index 5f62b2b..4380b02 100644
+--- a/arch/arm/mach-exynos4/mach-smdkv310.c
++++ b/arch/arm/mach-exynos4/mach-smdkv310.c
+@@ -168,6 +168,10 @@ static struct i2c_board_info i2c_devs1[] __initdata = {
+ };
+ 
+ static struct platform_device *smdkv310_devices[] __initdata = {
++	&s5p_device_fimc0,
++	&s5p_device_fimc1,
++	&s5p_device_fimc2,
++	&s5p_device_fimc3,
+ 	&s3c_device_hsmmc0,
+ 	&s3c_device_hsmmc1,
+ 	&s3c_device_hsmmc2,
+-- 
+1.7.4.1
