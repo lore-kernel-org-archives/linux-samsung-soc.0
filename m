@@ -1,45 +1,283 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 0/3] dma: pl330: Simplify platform data for pl330 driver
-Date: Tue, 23 Aug 2011 03:20:27 +0530
-Message-ID: <1314049830-9453-1-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH 3/3] ARM: EXYNOS4: Modify platform data for pl330 driver
+Date: Tue, 23 Aug 2011 03:20:30 +0530
+Message-ID: <1314049830-9453-4-git-send-email-thomas.abraham@linaro.org>
+References: <1314049830-9453-1-git-send-email-thomas.abraham@linaro.org>
+ <1314049830-9453-2-git-send-email-thomas.abraham@linaro.org>
+ <1314049830-9453-3-git-send-email-thomas.abraham@linaro.org>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:30444 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751668Ab1HVVeC (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:17355 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753905Ab1HVVeE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Aug 2011 17:34:02 -0400
+	Mon, 22 Aug 2011 17:34:04 -0400
+In-reply-to: <1314049830-9453-3-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@vger.kernel.org
 Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, vinod.koul@intel.com
 
-The rqtype parameter specified in platform data as part of the
-'struct dma_pl330_peri' can be inferred from the direction of the transfer
-specified with transfer requests. So the rqtype parameter can be removed
-and 'struct dma_pl330_peri' is then left with only one field 'peri_id'
-which itself can be moved into 'struct dma_pl330_platdata' and the
-entire 'struct dma_pl330_peri' can be eliminated.
+With the 'struct dma_pl330_peri' removed, the platfrom data for dma
+driver can be simplified to a simple list of peripheral request ids.
 
-This is first step towards adding device tree support for pl330 dma driver.
-With rqtype information inferred from transfer requests, it need not be
-included in device tree to describe each hardware dma request.
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ arch/arm/mach-exynos4/dma.c |  220 ++++++++++++-------------------------------
+ 1 files changed, 59 insertions(+), 161 deletions(-)
 
-This patchset is based on following tree.
-http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-and branch 'kgene/next/topic-dma-pl330'.
-
-This patchset has been implemented and tested only for Exynos4. If this
-patchset is acceptable, then pl330 driver platform data for other samsung
-platforms will also be modfied.
-
-Thomas Abraham (3):
-  DMA: PL330: Infer transfer direction from transfer request instead of platform data
-  ARM: SAMSUNG: Modify pl330 channel filter function
-  ARM: EXYNOS4: Modify platform data for pl330 driver
-
- arch/arm/mach-exynos4/dma.c     |  220 +++++++++++----------------------------
- arch/arm/plat-samsung/dma-ops.c |    4 +-
- drivers/dma/pl330.c             |   56 ++--------
- include/linux/amba/pl330.h      |   14 +--
- 4 files changed, 75 insertions(+), 219 deletions(-)
+diff --git a/arch/arm/mach-exynos4/dma.c b/arch/arm/mach-exynos4/dma.c
+index d57d662..f905114 100644
+--- a/arch/arm/mach-exynos4/dma.c
++++ b/arch/arm/mach-exynos4/dma.c
+@@ -35,95 +35,40 @@
+ 
+ static u64 dma_dmamask = DMA_BIT_MASK(32);
+ 
+-struct dma_pl330_peri pdma0_peri[28] = {
+-	{
+-		.peri_id = (u8)DMACH_PCM0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM2_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM2_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_MSM_REQ0,
+-	}, {
+-		.peri_id = (u8)DMACH_MSM_REQ2,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI2_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI2_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S0S_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART2_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART2_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART4_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART4_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS2_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS2_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS4_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS4_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_AC97_MICIN,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_AC97_PCMIN,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_AC97_PCMOUT,
+-		.rqtype = MEMTODEV,
+-	},
++u8 pdma0_peri[] = {
++	DMACH_PCM0_RX,
++	DMACH_PCM0_TX,
++	DMACH_PCM2_RX,
++	DMACH_PCM2_TX,
++	DMACH_MSM_REQ0,
++	DMACH_MSM_REQ2,
++	DMACH_SPI0_RX,
++	DMACH_SPI0_TX,
++	DMACH_SPI2_RX,
++	DMACH_SPI2_TX,
++	DMACH_I2S0S_TX,
++	DMACH_I2S0_RX,
++	DMACH_I2S0_TX,
++	DMACH_UART0_RX,
++	DMACH_UART0_TX,
++	DMACH_UART2_RX,
++	DMACH_UART2_TX,
++	DMACH_UART4_RX,
++	DMACH_UART4_TX,
++	DMACH_SLIMBUS0_RX,
++	DMACH_SLIMBUS0_TX,
++	DMACH_SLIMBUS2_RX,
++	DMACH_SLIMBUS2_TX,
++	DMACH_SLIMBUS4_RX,
++	DMACH_SLIMBUS4_TX,
++	DMACH_AC97_MICIN,
++	DMACH_AC97_PCMIN,
++	DMACH_AC97_PCMOUT,
+ };
+ 
+ struct dma_pl330_platdata exynos4_pdma0_pdata = {
+ 	.nr_valid_peri = ARRAY_SIZE(pdma0_peri),
+-	.peri = pdma0_peri,
++	.peri_id = pdma0_peri,
+ };
+ 
+ struct amba_device exynos4_device_pdma0 = {
+@@ -142,86 +87,37 @@ struct amba_device exynos4_device_pdma0 = {
+ 	.periphid = 0x00041330,
+ };
+ 
+-struct dma_pl330_peri pdma1_peri[25] = {
+-	{
+-		.peri_id = (u8)DMACH_PCM0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM1_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM1_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_MSM_REQ1,
+-	}, {
+-		.peri_id = (u8)DMACH_MSM_REQ3,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI1_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI1_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S0S_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S1_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S1_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART1_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART1_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART3_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART3_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS1_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS1_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS3_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS3_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS5_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS5_TX,
+-		.rqtype = MEMTODEV,
+-	},
++u8 pdma1_peri[] = {
++	DMACH_PCM0_RX,
++	DMACH_PCM0_TX,
++	DMACH_PCM1_RX,
++	DMACH_PCM1_TX,
++	DMACH_MSM_REQ1,
++	DMACH_MSM_REQ3,
++	DMACH_SPI1_RX,
++	DMACH_SPI1_TX,
++	DMACH_I2S0S_TX,
++	DMACH_I2S0_RX,
++	DMACH_I2S0_TX,
++	DMACH_I2S1_RX,
++	DMACH_I2S1_TX,
++	DMACH_UART0_RX,
++	DMACH_UART0_TX,
++	DMACH_UART1_RX,
++	DMACH_UART1_TX,
++	DMACH_UART3_RX,
++	DMACH_UART3_TX,
++	DMACH_SLIMBUS1_RX,
++	DMACH_SLIMBUS1_TX,
++	DMACH_SLIMBUS3_RX,
++	DMACH_SLIMBUS3_TX,
++	DMACH_SLIMBUS5_RX,
++	DMACH_SLIMBUS5_TX,
+ };
+ 
+ struct dma_pl330_platdata exynos4_pdma1_pdata = {
+ 	.nr_valid_peri = ARRAY_SIZE(pdma1_peri),
+-	.peri = pdma1_peri,
++	.peri_id = pdma1_peri,
+ };
+ 
+ struct amba_device exynos4_device_pdma1 = {
+@@ -242,6 +138,8 @@ struct amba_device exynos4_device_pdma1 = {
+ 
+ static int __init exynos4_dma_init(void)
+ {
++	dma_cap_set(DMA_SLAVE, exynos4_pdma0_pdata.cap_mask);
++	dma_cap_set(DMA_CYCLIC, exynos4_pdma0_pdata.cap_mask);
+ 	amba_device_register(&exynos4_device_pdma0, &iomem_resource);
+ 
+ 	return 0;
+-- 
+1.6.6.rc2
