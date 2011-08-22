@@ -1,103 +1,45 @@
-From: Amit Kachhap <amit.kachhap@linaro.org>
-Subject: Re: [RFC PATCH 2/4] ARM: EXYNOS4: Fix to work with origen boards.
-Date: Mon, 22 Aug 2011 22:31:46 +0530
-Message-ID: <CAK44p23_GkR8RSSiKk7K6eMX802HMUj5outzL5+=MjujpQ+7RA@mail.gmail.com>
-References: <1313759340-31319-1-git-send-email-amit.kachhap@linaro.org>
-	<1313759400-31347-2-git-send-email-amit.kachhap@linaro.org>
-	<CAH9JG2XbTub+TR_Pbi8ZqedD78HsDzMAY581XQbcWYF6aP82aQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH 0/3] dma: pl330: Simplify platform data for pl330 driver
+Date: Tue, 23 Aug 2011 03:20:27 +0530
+Message-ID: <1314049830-9453-1-git-send-email-thomas.abraham@linaro.org>
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:62563 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751592Ab1HVRBq convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:30444 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751668Ab1HVVeC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Aug 2011 13:01:46 -0400
-Received: by yxj19 with SMTP id 19so3654094yxj.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Aug 2011 10:01:46 -0700 (PDT)
-In-Reply-To: <CAH9JG2XbTub+TR_Pbi8ZqedD78HsDzMAY581XQbcWYF6aP82aQ@mail.gmail.com>
+	Mon, 22 Aug 2011 17:34:02 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>
-Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org
+To: linux-arm-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, vinod.koul@intel.com
 
-On 19 August 2011 19:29, Kyungmin Park <kmpark@infradead.org> wrote:
-> On Fri, Aug 19, 2011 at 10:09 PM, Amit Daniel Kachhap
-> <amit.kachhap@linaro.org> wrote:
->> This adds a function to get the revision id.
->>
->> Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
->> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
->> ---
->> =A0arch/arm/mach-exynos4/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 10 +=
-+++++++++
->> =A0arch/arm/plat-s5p/include/plat/exynos4.h | =A0 =A01 +
->> =A02 files changed, 11 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu=
-=2Ec
->> index 2d8a40c..8b106b8 100644
->> --- a/arch/arm/mach-exynos4/cpu.c
->> +++ b/arch/arm/mach-exynos4/cpu.c
->> @@ -234,6 +234,16 @@ static int __init exynos4_l2x0_cache_init(void)
->> =A0early_initcall(exynos4_l2x0_cache_init);
->> =A0#endif
->>
->> +int exynos4_subrev(void)
->> +{
->> + =A0 =A0 =A0 static int subrev =3D -1;
->> +
->> + =A0 =A0 =A0 if (unlikely(subrev < 0))
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 subrev =3D readl(S5P_VA_CHIPID) & 0xf;
-> How about to add the clock control here?
-> 1. Register chipid clk
-> 2. Get the chipid clk
-> 3. Read CHPIID,
-> 4. Put tht chipid clk.
+The rqtype parameter specified in platform data as part of the
+'struct dma_pl330_peri' can be inferred from the direction of the transfer
+specified with transfer requests. So the rqtype parameter can be removed
+and 'struct dma_pl330_peri' is then left with only one field 'peri_id'
+which itself can be moved into 'struct dma_pl330_platdata' and the
+entire 'struct dma_pl330_peri' can be eliminated.
 
-Nice suggestion. Will do it in the next patch version.  Actually the
-main focus of this
-patch series was to have a proof of concept of the new cpuidle common c=
-ode.
+This is first step towards adding device tree support for pl330 dma driver.
+With rqtype information inferred from transfer requests, it need not be
+included in device tree to describe each hardware dma request.
 
-Thanks,
-Amit Daniel
+This patchset is based on following tree.
+http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+and branch 'kgene/next/topic-dma-pl330'.
 
->
-> Then you can save some power.
->
-> Thank you,
-> Kyungmin Park
->> +
->> + =A0 =A0 =A0 return subrev;
->> +}
->> +
->> =A0int __init exynos4_init(void)
->> =A0{
->> =A0 =A0 =A0 =A0printk(KERN_INFO "EXYNOS4: Initializing architecture\=
-n");
->> diff --git a/arch/arm/plat-s5p/include/plat/exynos4.h b/arch/arm/pla=
-t-s5p/include/plat/exynos4.h
->> index 907caab..d62f7f7 100644
->> --- a/arch/arm/plat-s5p/include/plat/exynos4.h
->> +++ b/arch/arm/plat-s5p/include/plat/exynos4.h
->> @@ -15,6 +15,7 @@
->> =A0extern void exynos4_common_init_uarts(struct s3c2410_uartcfg *cfg=
-, int no);
->> =A0extern void exynos4_register_clocks(void);
->> =A0extern void exynos4_setup_clocks(void);
->> +extern int exynos4_subrev(void);
->>
->> =A0#ifdef CONFIG_CPU_EXYNOS4210
->>
->> --
->> 1.7.1
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-sams=
-ung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->>
->
+This patchset has been implemented and tested only for Exynos4. If this
+patchset is acceptable, then pl330 driver platform data for other samsung
+platforms will also be modfied.
+
+Thomas Abraham (3):
+  DMA: PL330: Infer transfer direction from transfer request instead of platform data
+  ARM: SAMSUNG: Modify pl330 channel filter function
+  ARM: EXYNOS4: Modify platform data for pl330 driver
+
+ arch/arm/mach-exynos4/dma.c     |  220 +++++++++++----------------------------
+ arch/arm/plat-samsung/dma-ops.c |    4 +-
+ drivers/dma/pl330.c             |   56 ++--------
+ include/linux/amba/pl330.h      |   14 +--
+ 4 files changed, 75 insertions(+), 219 deletions(-)
