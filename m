@@ -1,40 +1,61 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH v3] ARM: Samsung: fix watchdog reset issue with clk_get()
-Date: Mon, 22 Aug 2011 12:27:19 +0530
-Message-ID: <4E51FDCF.3070305@linaro.org>
-References: <1313663117-29191-1-git-send-email-m.szyprowski@samsung.com>	<4E4E2EE6.70503@linaro.org>	<002601cc5e5a$5f3f3ff0$1dbdbfd0$%szyprowski@samsung.com> <CAH9JG2XW1OaK=_cYHsKpXBfFCpmGMAFg=pC5HsK=-z6D-W6bqg@mail.gmail.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH v6 04/15] DMA: PL330: Add DMA_CYCLIC capability
+Date: Mon, 22 Aug 2011 15:39:37 +0530
+Message-ID: <CABb+yY2CjmoDEmvC3S0ua3=B++jKz5g2JXGTwhNcAw5MQ06M9A@mail.gmail.com>
+References: <1313744097-27289-1-git-send-email-boojin.kim@samsung.com>
+	<1313744097-27289-5-git-send-email-boojin.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f170.google.com ([209.85.210.170]:47123 "EHLO
-	mail-iy0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750806Ab1HVG5Q (ORCPT
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:38001 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753084Ab1HVKJj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Aug 2011 02:57:16 -0400
-Received: by iye16 with SMTP id 16so9807070iye.1
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Aug 2011 23:57:15 -0700 (PDT)
-In-Reply-To: <CAH9JG2XW1OaK=_cYHsKpXBfFCpmGMAFg=pC5HsK=-z6D-W6bqg@mail.gmail.com>
+	Mon, 22 Aug 2011 06:09:39 -0400
+Received: by bke11 with SMTP id 11so3539235bke.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Aug 2011 03:09:37 -0700 (PDT)
+In-Reply-To: <1313744097-27289-5-git-send-email-boojin.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Angus Ainslie <angus.ainslie@linaro.org>
+To: Boojin Kim <boojin.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>
 
-Hi Kyungmin,
-
-On Friday 19 August 2011 04:14 PM, Kyungmin Park wrote:
-> Interesting. there's no s5p_reset_hook at exynos4.
-> Anyway, after implement the s5p_reset_hook, it's working without
-> hacking of v7-fin.
->
-Thanks for the pointer. After adding s5p_reset_hook, tested soft-reboot 
-successfully on ORIGEN.
-
-> Send it another mail.
->
-> Thank you,
-> Kyungmin Park
->
-
--- 
-Tushar Behera
+T24gRnJpLCBBdWcgMTksIDIwMTEgYXQgMjoyNCBQTSwgQm9vamluIEtpbSA8Ym9vamluLmtpbUBz
+YW1zdW5nLmNvbT4gd3JvdGU6Cgo+IEBAIC0zMjQsNiArMzYyLDkgQEAgc3RhdGljIHZvaWQgcGwz
+MzBfZnJlZV9jaGFuX3Jlc291cmNlcyhzdHJ1Y3QgZG1hX2NoYW4gKmNoYW4pCj4gwqAgwqAgwqAg
+wqBwbDMzMF9yZWxlYXNlX2NoYW5uZWwocGNoLT5wbDMzMF9jaGlkKTsKPiDCoCDCoCDCoCDCoHBj
+aC0+cGwzMzBfY2hpZCA9IE5VTEw7Cj4KPiArIMKgIMKgIMKgIGlmIChwY2gtPmN5Y2xpYykKPiAr
+IMKgIMKgIMKgIMKgIMKgIMKgIMKgIGxpc3Rfc3BsaWNlX3RhaWxfaW5pdCgmcGNoLT53b3JrX2xp
+c3QsICZwY2gtPmRtYWMtPmRlc2NfcG9vbCk7CidjeWNsaWMnIG1lbWJlciBpcyAnZW51bSBjeWNs
+aWNfbW9kZScsIHBsZWFzZSBvYnNlcnZlIHRoZSBydWxlIGFuZCBjb21wYXJlCml0IG9ubHkgYWdh
+aW5zdCB0aGUgZW51bSB2YWx1ZXMuCgoKPiArc3RhdGljIHN0cnVjdCBkbWFfYXN5bmNfdHhfZGVz
+Y3JpcHRvciAqcGwzMzBfcHJlcF9kbWFfY3ljbGljKAo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
+c3RydWN0IGRtYV9jaGFuICpjaGFuLCBkbWFfYWRkcl90IGRtYV9hZGRyLCBzaXplX3QgbGVuLAo+
+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgc2l6ZV90IHBlcmlvZF9sZW4sIGVudW0gZG1hX2RhdGFf
+ZGlyZWN0aW9uIGRpcmVjdGlvbikKPiArewo+ICsgwqAgwqAgwqAgc3RydWN0IGRtYV9wbDMzMF9k
+ZXNjICpkZXNjOwo+ICsgwqAgwqAgwqAgc3RydWN0IGRtYV9wbDMzMF9jaGFuICpwY2ggPSB0b19w
+Y2hhbihjaGFuKTsKPiArIMKgIMKgIMKgIGRtYV9hZGRyX3QgZHN0Owo+ICsgwqAgwqAgwqAgZG1h
+X2FkZHJfdCBzcmM7Cj4gKwo+ICsgwqAgwqAgwqAgZGVzYyA9IHBsMzMwX2dldF9kZXNjKHBjaCk7
+Cj4gKyDCoCDCoCDCoCBpZiAoIWRlc2MpIHsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGRldl9l
+cnIocGNoLT5kbWFjLT5waWYuZGV2LCAiJXM6JWQgVW5hYmxlIHRvIGZldGNoIGRlc2NcbiIsCj4g
+KyDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCBfX2Z1bmNfXywgX19MSU5FX18pOwo+
+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgcmV0dXJuIE5VTEw7Cj4gKyDCoCDCoCDCoCB9Cj4gKwo+
+ICsgwqAgwqAgwqAgc3dpdGNoIChkaXJlY3Rpb24pIHsKPiArIMKgIMKgIMKgIGNhc2UgRE1BX1RP
+X0RFVklDRToKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGRlc2MtPnJxY2ZnLnNyY19pbmMgPSAx
+Owo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgZGVzYy0+cnFjZmcuZHN0X2luYyA9IDA7Cj4gKyDC
+oCDCoCDCoCDCoCDCoCDCoCDCoCBzcmMgPSBkbWFfYWRkcjsKPiArIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIGRzdCA9IHBjaC0+Zmlmb19hZGRyOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgYnJlYWs7
+Cj4gKyDCoCDCoCDCoCBjYXNlIERNQV9GUk9NX0RFVklDRToKPiArIMKgIMKgIMKgIMKgIMKgIMKg
+IMKgIGRlc2MtPnJxY2ZnLnNyY19pbmMgPSAwOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgZGVz
+Yy0+cnFjZmcuZHN0X2luYyA9IDE7Cj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBzcmMgPSBwY2gt
+PmZpZm9fYWRkcjsKPiArIMKgIMKgIMKgIMKgIMKgIMKgIMKgIGRzdCA9IGRtYV9hZGRyOwo+ICsg
+wqAgwqAgwqAgwqAgwqAgwqAgwqAgYnJlYWs7Cj4gKyDCoCDCoCDCoCBkZWZhdWx0Ogo+ICsgwqAg
+wqAgwqAgwqAgwqAgwqAgwqAgZGV2X2VycihwY2gtPmRtYWMtPnBpZi5kZXYsICIlczolZCBJbnZh
+bGlkIGRtYSBkaXJlY3Rpb25cbiIsCj4gKyDCoCDCoCDCoCDCoCDCoCDCoCDCoCBfX2Z1bmNfXywg
+X19MSU5FX18pOwo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgcmV0dXJuIE5VTEw7Cj4gKyDCoCDC
+oCDCoCB9Cj4gKwo+ICsgwqAgwqAgwqAgZGVzYy0+cnFjZmcuYnJzdF9zaXplID0gcGNoLT5idXJz
+dF9zejsKPiArIMKgIMKgIMKgIGRlc2MtPnJxY2ZnLmJyc3RfbGVuID0gMTsKPiArCj4gKyDCoCDC
+oCDCoCBpZiAoIXBjaC0+Y3ljbGljKQo+ICsgwqAgwqAgwqAgwqAgwqAgwqAgwqAgcGNoLT5jeWNs
+aWMgPSBDWUNMSUNfUFJFUDsKVGhlIG5lZWQgZm9yIGNoZWNrIGhlcmUgc2VlbXMgc3VzcGljaW91
+cy4KSXMgaXQgcmVhbGx5IG5lZWRlZD8gSWYgbm90LCBwbGVhc2UgcmVtb3ZlIGl0Lgo=
