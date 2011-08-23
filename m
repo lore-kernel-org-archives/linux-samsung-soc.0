@@ -1,304 +1,96 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V2 1/4] ARM: SAMSUNG: Add support for detecting CPU at runtime
-Date: Tue, 23 Aug 2011 10:39:11 +0900
-Message-ID: <1314063552-27416-1-git-send-email-kgene.kim@samsung.com>
+Subject: RE: [PATCH 1/4] S3C2443: Move i2s clock definitions to common code
+Date: Tue, 23 Aug 2011 12:42:47 +0900
+Message-ID: <06c001cc6146$b9f30be0$2dd923a0$%kim@samsung.com>
+References: <201108201757.56483.heiko@sntech.de>
+ <201108201801.29541.heiko@sntech.de>
+ <20110821171332.GF28546@n2100.arm.linux.org.uk>
+ <201108211925.05300.heiko@sntech.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:53660 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752888Ab1HWBwW (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:65427 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750863Ab1HWDmu convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Aug 2011 21:52:22 -0400
+	Mon, 22 Aug 2011 23:42:50 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LQD001ZS3NCGO80@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 23 Aug 2011 12:42:48 +0900 (KST)
+Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LQD00AQV3NCQD@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 23 Aug 2011 12:42:48 +0900 (KST)
+In-reply-to: <201108211925.05300.heiko@sntech.de>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
+To: =?iso-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
+Cc: 'Ben Dooks' <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-The soc_is_[name]() can be used to distinguish cpu at runtime.
+Heiko St=FCbner wrote:
+>=20
+> Am Sonntag 21 August 2011, 19:13:32 schrieb Russell King - ARM Linux:
+> > On Sat, Aug 20, 2011 at 06:01:29PM +0200, Heiko St=FCbner wrote:
+> > > +/* i2s-ref
+> > > + *
+> > > + * i2s bus reference clock, selectable from external, esysclk or
+epllref
+> > > + *
+> > > + * Note, this used to be two clocks, but was compressed into one=
+=2E
+> > > +*/
+> > > +
+> > > +struct clk *clk_i2s_srclist[] =3D {
+> > > +	[0] =3D &clk_i2s_eplldiv.clk,
+> > > +	[1] =3D &clk_i2s_ext,
+> > > +	[2] =3D &clk_epllref.clk,
+> > > +	[3] =3D &clk_epllref.clk,
+> > > +};
+> >
+> > Is there any reason not to make this static (have you run your patc=
+h
+> > through checkpatch.pl ?)
+> Yep I did run all of them through checkpatch (after beeing scolded la=
+st
+time)
+> and it didn't report anything.
+>=20
 
-This patch was originally from Changhwan Youn <chaos.youn@samsung.com>
+Hmm...as a note, happened following with checkpatch.pl :(
 
-Acked-by: Changhwan Youn <chaos.youn@samsung.com>
-Cc: Ben Dooks <ben-linux@fluff.org>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
-Changes since v1:
-- soc_is_xxx() is used instead of cpu_is_xxx()
+ERROR: need consistent spacing around '*' (ctx:WxV)
+#35: FILE: arch/arm/mach-s3c2416/clock.c:57:
++               .sources =3D (struct clk *[]) {
+                                       ^
 
- arch/arm/mach-s3c64xx/cpu.c              |   18 +++----
- arch/arm/plat-s3c24xx/cpu.c              |    8 +--
- arch/arm/plat-s5p/cpu.c                  |   26 ++++-----
- arch/arm/plat-samsung/include/plat/cpu.h |   87 +++++++++++++++++++++++++++++-
- arch/arm/plat-samsung/init.c             |    1 +
- 5 files changed, 110 insertions(+), 30 deletions(-)
+total: 1 errors, 0 warnings, 38 lines checked
 
-diff --git a/arch/arm/mach-s3c64xx/cpu.c b/arch/arm/mach-s3c64xx/cpu.c
-index 374e45e..7b665f3 100644
---- a/arch/arm/mach-s3c64xx/cpu.c
-+++ b/arch/arm/mach-s3c64xx/cpu.c
-@@ -43,16 +43,16 @@ static const char name_s3c6410[] = "S3C6410";
- 
- static struct cpu_table cpu_ids[] __initdata = {
- 	{
--		.idcode		= 0x36400000,
--		.idmask		= 0xfffff000,
-+		.idcode		= S3C6400_CPU_ID,
-+		.idmask		= S3C64XX_CPU_MASK,
- 		.map_io		= s3c6400_map_io,
- 		.init_clocks	= s3c6400_init_clocks,
- 		.init_uarts	= s3c6400_init_uarts,
- 		.init		= s3c6400_init,
- 		.name		= name_s3c6400,
- 	}, {
--		.idcode		= 0x36410100,
--		.idmask		= 0xffffff00,
-+		.idcode		= S3C6410_CPU_ID,
-+		.idmask		= S3C64XX_CPU_MASK,
- 		.map_io		= s3c6410_map_io,
- 		.init_clocks	= s3c6410_init_clocks,
- 		.init_uarts	= s3c6410_init_uarts,
-@@ -140,22 +140,20 @@ void __init s3c6400_common_init_uarts(struct s3c2410_uartcfg *cfg, int no)
- 
- void __init s3c64xx_init_io(struct map_desc *mach_desc, int size)
- {
--	unsigned long idcode;
--
- 	/* initialise the io descriptors we need for initialisation */
- 	iotable_init(s3c_iodesc, ARRAY_SIZE(s3c_iodesc));
- 	iotable_init(mach_desc, size);
- 
--	idcode = __raw_readl(S3C_VA_SYS + 0x118);
--	if (!idcode) {
-+	samsung_cpu_id = __raw_readl(S3C_VA_SYS + 0x118);
-+	if (!samsung_cpu_id) {
- 		/* S3C6400 has the ID register in a different place,
- 		 * and needs a write before it can be read. */
- 
- 		__raw_writel(0x0, S3C_VA_SYS + 0xA1C);
--		idcode = __raw_readl(S3C_VA_SYS + 0xA1C);
-+		samsung_cpu_id = __raw_readl(S3C_VA_SYS + 0xA1C);
- 	}
- 
--	s3c_init_cpu(idcode, cpu_ids, ARRAY_SIZE(cpu_ids));
-+	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
- }
- 
- static __init int s3c64xx_sysdev_init(void)
-diff --git a/arch/arm/plat-s3c24xx/cpu.c b/arch/arm/plat-s3c24xx/cpu.c
-index c1fc6c6..ead21a4 100644
---- a/arch/arm/plat-s3c24xx/cpu.c
-+++ b/arch/arm/plat-s3c24xx/cpu.c
-@@ -215,19 +215,17 @@ static void s3c24xx_pm_restart(char mode, const char *cmd)
- 
- void __init s3c24xx_init_io(struct map_desc *mach_desc, int size)
- {
--	unsigned long idcode = 0x0;
--
- 	/* initialise the io descriptors we need for initialisation */
- 	iotable_init(mach_desc, size);
- 	iotable_init(s3c_iodesc, ARRAY_SIZE(s3c_iodesc));
- 
- 	if (cpu_architecture() >= CPU_ARCH_ARMv5) {
--		idcode = s3c24xx_read_idcode_v5();
-+		samsung_cpu_id = s3c24xx_read_idcode_v5();
- 	} else {
--		idcode = s3c24xx_read_idcode_v4();
-+		samsung_cpu_id = s3c24xx_read_idcode_v4();
- 	}
- 
- 	arm_pm_restart = s3c24xx_pm_restart;
- 
--	s3c_init_cpu(idcode, cpu_ids, ARRAY_SIZE(cpu_ids));
-+	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
- }
-diff --git a/arch/arm/plat-s5p/cpu.c b/arch/arm/plat-s5p/cpu.c
-index bbc2aa7..3ef6734 100644
---- a/arch/arm/plat-s5p/cpu.c
-+++ b/arch/arm/plat-s5p/cpu.c
-@@ -36,40 +36,40 @@ static const char name_exynos4210[] = "EXYNOS4210";
- 
- static struct cpu_table cpu_ids[] __initdata = {
- 	{
--		.idcode		= 0x56440100,
--		.idmask		= 0xfffff000,
-+		.idcode		= S5P6440_CPU_ID,
-+		.idmask		= S5P64XX_CPU_MASK,
- 		.map_io		= s5p6440_map_io,
- 		.init_clocks	= s5p6440_init_clocks,
- 		.init_uarts	= s5p6440_init_uarts,
- 		.init		= s5p64x0_init,
- 		.name		= name_s5p6440,
- 	}, {
--		.idcode		= 0x36450000,
--		.idmask		= 0xfffff000,
-+		.idcode		= S5P6450_CPU_ID,
-+		.idmask		= S5P64XX_CPU_MASK,
- 		.map_io		= s5p6450_map_io,
- 		.init_clocks	= s5p6450_init_clocks,
- 		.init_uarts	= s5p6450_init_uarts,
- 		.init		= s5p64x0_init,
- 		.name		= name_s5p6450,
- 	}, {
--		.idcode		= 0x43100000,
--		.idmask		= 0xfffff000,
-+		.idcode		= S5PC100_CPU_ID,
-+		.idmask		= S5PC100_CPU_MASK,
- 		.map_io		= s5pc100_map_io,
- 		.init_clocks	= s5pc100_init_clocks,
- 		.init_uarts	= s5pc100_init_uarts,
- 		.init		= s5pc100_init,
- 		.name		= name_s5pc100,
- 	}, {
--		.idcode		= 0x43110000,
--		.idmask		= 0xfffff000,
-+		.idcode		= S5PV210_CPU_ID,
-+		.idmask		= S5PV210_CPU_MASK,
- 		.map_io		= s5pv210_map_io,
- 		.init_clocks	= s5pv210_init_clocks,
- 		.init_uarts	= s5pv210_init_uarts,
- 		.init		= s5pv210_init,
- 		.name		= name_s5pv210,
- 	}, {
--		.idcode		= 0x43210000,
--		.idmask		= 0xfffe0000,
-+		.idcode		= EXYNOS4210_CPU_ID,
-+		.idmask		= EXYNOS4_CPU_MASK,
- 		.map_io		= exynos4_map_io,
- 		.init_clocks	= exynos4_init_clocks,
- 		.init_uarts	= exynos4_init_uarts,
-@@ -114,13 +114,11 @@ static struct map_desc s5p_iodesc[] __initdata = {
- void __init s5p_init_io(struct map_desc *mach_desc,
- 			int size, void __iomem *cpuid_addr)
- {
--	unsigned long idcode;
--
- 	/* initialize the io descriptors we need for initialization */
- 	iotable_init(s5p_iodesc, ARRAY_SIZE(s5p_iodesc));
- 	if (mach_desc)
- 		iotable_init(mach_desc, size);
- 
--	idcode = __raw_readl(cpuid_addr);
--	s3c_init_cpu(idcode, cpu_ids, ARRAY_SIZE(cpu_ids));
-+	samsung_cpu_id = __raw_readl(cpuid_addr);
-+	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
- }
-diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
-index c0a5741..bdf43ad 100644
---- a/arch/arm/plat-samsung/include/plat/cpu.h
-+++ b/arch/arm/plat-samsung/include/plat/cpu.h
-@@ -1,9 +1,12 @@
- /* linux/arch/arm/plat-samsung/include/plat/cpu.h
-  *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com/
-+ *
-  * Copyright (c) 2004-2005 Simtec Electronics
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-- * Header file for S3C24XX CPU support
-+ * Header file for Samsung CPU support
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -15,6 +18,88 @@
- #ifndef __SAMSUNG_PLAT_CPU_H
- #define __SAMSUNG_PLAT_CPU_H
- 
-+extern unsigned long samsung_cpu_id;
-+
-+#define S3C24XX_CPU_ID		0x32400000
-+#define S3C24XX_CPU_MASK	0xFFF00000
-+
-+#define S3C6400_CPU_ID		0x36400000
-+#define S3C6410_CPU_ID		0x36410000
-+#define S3C64XX_CPU_ID		(S3C6400_CPU_ID & S3C6410_CPU_ID)
-+#define S3C64XX_CPU_MASK	0x1FF40000
-+
-+#define S5P6440_CPU_ID		0x56440000
-+#define S5P6450_CPU_ID		0x36450000
-+#define S5P64XX_CPU_MASK	0x1FF40000
-+
-+#define S5PC100_CPU_ID		0x43100000
-+#define S5PC100_CPU_MASK	0xFFFFF000
-+
-+#define S5PV210_CPU_ID		0x43110000
-+#define S5PV210_CPU_MASK	0xFFFFF000
-+
-+#define EXYNOS4210_CPU_ID	0x43210000
-+#define EXYNOS4_CPU_MASK	0xFFFE0000
-+
-+#define IS_SAMSUNG_CPU(name, id, mask)		\
-+static inline int is_samsung_##name(void)	\
-+{						\
-+	return ((samsung_cpu_id & mask) == (id & mask));	\
-+}
-+
-+IS_SAMSUNG_CPU(s3c24xx, S3C24XX_CPU_ID, S3C24XX_CPU_MASK)
-+IS_SAMSUNG_CPU(s3c64xx, S3C64XX_CPU_ID, S3C64XX_CPU_MASK)
-+IS_SAMSUNG_CPU(s5p6440, S5P6440_CPU_ID, S5P64XX_CPU_MASK)
-+IS_SAMSUNG_CPU(s5p6450, S5P6450_CPU_ID, S5P64XX_CPU_MASK)
-+IS_SAMSUNG_CPU(s5pc100, S5PC100_CPU_ID, S5PC100_CPU_MASK)
-+IS_SAMSUNG_CPU(s5pv210, S5PV210_CPU_ID, S5PV210_CPU_MASK)
-+IS_SAMSUNG_CPU(exynos4210, EXYNOS4210_CPU_ID, EXYNOS4_CPU_MASK)
-+
-+#if defined(CONFIG_CPU_S3C2410) || defined(CONFIG_CPU_S3C2412) || \
-+    defined(CONFIG_CPU_S3C2416) || defined(CONFIG_CPU_S3C2440) || \
-+    defined(CONFIG_CPU_S3C2442) || defined(CONFIG_CPU_S3C244X) || \
-+    defined(CONFIG_CPU_S3C2443)
-+# define soc_is_s3c24xx()	is_samsung_s3c24xx()
-+#else
-+# define soc_is_s3c24xx()	0
-+#endif
-+
-+#if defined(CONFIG_CPU_S3C6400) || defined(CONFIG_CPU_S3C6410)
-+# define soc_is_s3c64xx()	is_samsung_s3c64xx()
-+#else
-+# define soc_is_s3c64xx()	0
-+#endif
-+
-+#if defined(CONFIG_CPU_S5P6440)
-+# define soc_is_s5p6440()	is_samsung_s5p6440()
-+#else
-+# define soc_is_s5p6440()	0
-+#endif
-+
-+#if defined(CONFIG_CPU_S5P6450)
-+# define soc_is_s5p6450()	is_samsung_s5p6450()
-+#else
-+# define soc_is_s5p6450()	0
-+#endif
-+
-+#if defined(CONFIG_CPU_S5PC100)
-+# define soc_is_s5pc100()	is_samsung_s5pc100()
-+#else
-+# define soc_is_s5pc100()	0
-+#endif
-+
-+#if defined(CONFIG_CPU_S5PV210)
-+# define soc_is_s5pv210()	is_samsung_s5pv210()
-+#else
-+# define soc_is_s5pv210()	0
-+#endif
-+
-+#if defined(CONFIG_CPU_EXYNOS4210)
-+# define soc_is_exynos4210()	is_samsung_exynos4210()
-+#else
-+# define soc_is_exynos4210()	0
-+#endif
-+
- #define IODESC_ENT(x) { (unsigned long)S3C24XX_VA_##x, __phys_to_pfn(S3C24XX_PA_##x), S3C24XX_SZ_##x, MT_DEVICE }
- 
- #ifndef MHZ
-diff --git a/arch/arm/plat-samsung/init.c b/arch/arm/plat-samsung/init.c
-index 79d10fc..40b1228 100644
---- a/arch/arm/plat-samsung/init.c
-+++ b/arch/arm/plat-samsung/init.c
-@@ -30,6 +30,7 @@
- #include <plat/regs-serial.h>
- 
- static struct cpu_table *cpu;
-+unsigned long samsung_cpu_id;
- 
- static struct cpu_table * __init s3c_lookup_cpu(unsigned long idcode,
- 						struct cpu_table *tab,
--- 
-1.7.1
+PATCH 34 S3C2416 Add HSSPI clock sourced from EPLL.txt has style proble=
+ms,
+please review.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+
+> But for this move of code I simply grabbed the code fragments and put=
+ them
+> into their new location (i.e. it was this way in mach-s3c2443/clock.c=
+) and
+> should have probably taken a closer look at what I'm moving.
+>=20
+> So it seems you are right, it should probably be static as everything=
+ else
+is
+> also static.
+>=20
+> Heiko
