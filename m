@@ -1,31 +1,25 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S5P: Remove duplicate kdiv calculation
-Date: Tue, 23 Aug 2011 16:19:19 +0900
-Message-ID: <06c601cc6164$f9554280$ebffc780$%kim@samsung.com>
-References: <1313803641-32169-1-git-send-email-jhbird.choi@samsung.com>
+Subject: RE: [PATCH] ARM: EXYNOS4: Fix wrong pll type for vpll
+Date: Tue, 23 Aug 2011 16:39:24 +0900
+Message-ID: <06c801cc6167$c7c739f0$5755add0$%kim@samsung.com>
+References: <1313803628-32050-1-git-send-email-jhbird.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:56962 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750748Ab1HWHTV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Aug 2011 03:19:21 -0400
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LQD001UKDNFGOI0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 23 Aug 2011 16:19:19 +0900 (KST)
-Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LQD002AUDO7ZC@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 23 Aug 2011 16:19:19 +0900 (KST)
-In-reply-to: <1313803641-32169-1-git-send-email-jhbird.choi@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1313803628-32050-1-git-send-email-jhbird.choi@samsung.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: jhbird.choi@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 jhbird.choi@samsung.com wrote:
 > 
@@ -33,29 +27,35 @@ jhbird.choi@samsung.com wrote:
 > 
 > Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
 > ---
->  arch/arm/plat-s5p/include/plat/pll.h |    1 -
->  1 files changed, 0 insertions(+), 1 deletions(-)
+>  arch/arm/mach-exynos4/clock.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
 > 
-> diff --git a/arch/arm/plat-s5p/include/plat/pll.h
-b/arch/arm/plat-s5p/include/plat/pll.h
-> index bf28fad..ebc142c 100644
-> --- a/arch/arm/plat-s5p/include/plat/pll.h
-> +++ b/arch/arm/plat-s5p/include/plat/pll.h
-> @@ -72,7 +72,6 @@ static inline unsigned long s5p_get_pll46xx(unsigned
-long
-> baseclk,
->  	mdiv = (pll_con0 >> PLL46XX_MDIV_SHIFT) & PLL46XX_MDIV_MASK;
->  	pdiv = (pll_con0 >> PLL46XX_PDIV_SHIFT) & PLL46XX_PDIV_MASK;
->  	sdiv = (pll_con0 >> PLL46XX_SDIV_SHIFT) & PLL46XX_SDIV_MASK;
-> -	kdiv = pll_con1 & PLL46XX_KDIV_MASK;
+> diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
+> index 851dea0..0b39860 100644
+> --- a/arch/arm/mach-exynos4/clock.c
+> +++ b/arch/arm/mach-exynos4/clock.c
+> @@ -1160,7 +1160,7 @@ void __init_or_cpufreq exynos4_setup_clocks(void)
 > 
->  	if (pll_type == pll_4650c)
->  		kdiv = pll_con1 & PLL4650C_KDIV_MASK;
+>  	vpllsrc = clk_get_rate(&clk_vpllsrc.clk);
+>  	vpll = s5p_get_pll46xx(vpllsrc, __raw_readl(S5P_VPLL_CON0),
+> -				__raw_readl(S5P_VPLL_CON1), pll_4650);
+> +				__raw_readl(S5P_VPLL_CON1), pll_4650c);
+> 
+>  	clk_fout_apll.ops = &exynos4_fout_apll_ops;
+>  	clk_fout_mpll.rate = mpll;
 > --
 > 1.7.0
 
-Yes, OK.
-Applied, thanks.
+Hi,
+
+OK, will apply.
+
+But would be helpful understanding if you could add git message in detail
+like following...
+"The PLL4650C is used for VPLL on EXYNOS4 so should be fixed"...I will add
+this when apply.
+
+Thanks.
 
 Best regards,
 Kgene.
