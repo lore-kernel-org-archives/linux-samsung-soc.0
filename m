@@ -1,80 +1,79 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 2/3] ARM: SAMSUNG: Modify pl330 channel filter function
-Date: Tue, 23 Aug 2011 21:29:43 +0530
-Message-ID: <CAJuYYwRL0LGA_TAQtfxAZhz4kYgvFnXfb=81s7ohH03dDTK8Mw@mail.gmail.com>
-References: <1314050385-9617-1-git-send-email-thomas.abraham@linaro.org>
-	<1314050385-9617-2-git-send-email-thomas.abraham@linaro.org>
-	<1314050385-9617-3-git-send-email-thomas.abraham@linaro.org>
-	<20110822215255.GB3895@n2100.arm.linux.org.uk>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 1/4] S3C2443: Move i2s clock definitions to common code
+Date: Tue, 23 Aug 2011 22:28:49 +0200
+Message-ID: <201108232228.49647.heiko@sntech.de>
+References: <201108201757.56483.heiko@sntech.de> <201108211925.05300.heiko@sntech.de> <06c001cc6146$b9f30be0$2dd923a0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gw0-f46.google.com ([74.125.83.46]:52582 "EHLO
-	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751959Ab1HWP7o convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Aug 2011 11:59:44 -0400
-Received: by gwaa12 with SMTP id a12so196335gwa.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Aug 2011 08:59:43 -0700 (PDT)
-In-Reply-To: <20110822215255.GB3895@n2100.arm.linux.org.uk>
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:49650 "EHLO
+	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752130Ab1HWU25 convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 23 Aug 2011 16:28:57 -0400
+In-Reply-To: <06c001cc6146$b9f30be0$2dd923a0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, vinod.koul@intel.com, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Ben Dooks' <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Russell,
+Am Dienstag 23 August 2011, 05:42:47 schrieb Kukjin Kim:
+> Heiko St=FCbner wrote:
+> > Am Sonntag 21 August 2011, 19:13:32 schrieb Russell King - ARM Linu=
+x:
+> > > On Sat, Aug 20, 2011 at 06:01:29PM +0200, Heiko St=FCbner wrote:
+> > > > +/* i2s-ref
+> > > > + *
+> > > > + * i2s bus reference clock, selectable from external, esysclk =
+or
+>=20
+> epllref
+>=20
+> > > > + *
+> > > > + * Note, this used to be two clocks, but was compressed into o=
+ne.
+> > > > +*/
+> > > > +
+> > > > +struct clk *clk_i2s_srclist[] =3D {
+> > > > +	[0] =3D &clk_i2s_eplldiv.clk,
+> > > > +	[1] =3D &clk_i2s_ext,
+> > > > +	[2] =3D &clk_epllref.clk,
+> > > > +	[3] =3D &clk_epllref.clk,
+> > > > +};
+> > >=20
+> > > Is there any reason not to make this static (have you run your pa=
+tch
+> > > through checkpatch.pl ?)
+> >=20
+> > Yep I did run all of them through checkpatch (after beeing scolded =
+last
+>=20
+> time)
+>=20
+> > and it didn't report anything.
+>=20
+> Hmm...as a note, happened following with checkpatch.pl :(
+>=20
+> ERROR: need consistent spacing around '*' (ctx:WxV)
+> #35: FILE: arch/arm/mach-s3c2416/clock.c:57:
+> +               .sources =3D (struct clk *[]) {
+>                                        ^
+>=20
+> total: 1 errors, 0 warnings, 38 lines checked
+>=20
+> PATCH 34 S3C2416 Add HSSPI clock sourced from EPLL.txt has style prob=
+lems,
+> please review.
+will do.
 
-On 23 August 2011 03:22, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Tue, Aug 23, 2011 at 03:29:44AM +0530, Thomas Abraham wrote:
->> With the change in dma channels private data information, the pl330
->> channel filter function is modified to look for a simple u8 value
->> instead of the now unused 'struct dma_pl330_peri' value.
->>
->> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->> ---
->> =A0arch/arm/plat-samsung/dma-ops.c | =A0 =A04 ++--
->> =A01 files changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung=
-/dma-ops.c
->> index 6e3d9ab..4f1430b 100644
->> --- a/arch/arm/plat-samsung/dma-ops.c
->> +++ b/arch/arm/plat-samsung/dma-ops.c
->> @@ -19,8 +19,8 @@
->>
->> =A0static inline bool pl330_filter(struct dma_chan *chan, void *para=
-m)
->> =A0{
->> - =A0 =A0 struct dma_pl330_peri *peri =3D chan->private;
->> - =A0 =A0 return peri->peri_id =3D=3D (unsigned)param;
->> + =A0 =A0 u8 *peri_id =3D chan->private;
->> + =A0 =A0 return *peri_id =3D=3D (unsigned)param;
->> =A0}
->
-> As a word of warning - this will fail horribly if you have mixed DMA
-> engines in the system. =A0While we wait for a better scheme, we reall=
-y
-> need to sort out these filter functions properly and stop poking
-> about in data which may not be what we expect.
->
-> One solution to that is to move pl330_filter() into drivers/dma/pl330=
-=2Ec
-> and have it check chan->device->dev->driver =3D=3D &pl330_driver.driv=
-er
-> _before_ we start accessing chan->private.
->
-> That's not a comment against your patch - you're not really changing
-> the brokenness of this function. =A0It would be good to see a follow =
-up
-> patch fixing it properly though.
->
+Today I also saw, that my definition of the hsspi pclk would have cause=
+d a=20
+conflict with the hsspi sclk definition of s3c2443.
 
-Ok. I will prepare a patch to move the pl330_filter function into
-drivers/dma/pl330.c and also add the check that you have proposed.
+So, as nobody uses the s3c2443's hsspi controller yet, I would also ren=
+ame it=20
+to hsspi-if with the next patch iteration.
 
-Thanks for your help.
 
-Regards,
-Thomas.
+Heiko
