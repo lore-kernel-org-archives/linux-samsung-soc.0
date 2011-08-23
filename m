@@ -1,93 +1,92 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH v6 04/15] DMA: PL330: Add DMA_CYCLIC capability
-Date: Tue, 23 Aug 2011 11:11:38 +0530
-Message-ID: <CABb+yY0oQwBTc1zmow+ng+TEJTzRsjB-i1xZdLVwtT+RR6J5RQ@mail.gmail.com>
-References: <1313744097-27289-1-git-send-email-boojin.kim@samsung.com>
-	<1313744097-27289-5-git-send-email-boojin.kim@samsung.com>
-	<CABb+yY2CjmoDEmvC3S0ua3=B++jKz5g2JXGTwhNcAw5MQ06M9A@mail.gmail.com>
-	<002c01cc60c3$77d18210$67748630$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ARM: EXYNOS4: Add PWM backlight support on Origen
+Date: Tue, 23 Aug 2011 11:15:44 +0530
+Message-ID: <1314078344-5354-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:36924 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751094Ab1HWFlj convert rfc822-to-8bit (ORCPT
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:35847 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751094Ab1HWFsb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Aug 2011 01:41:39 -0400
-Received: by bke11 with SMTP id 11so4171225bke.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Aug 2011 22:41:38 -0700 (PDT)
-In-Reply-To: <002c01cc60c3$77d18210$67748630$%kim@samsung.com>
+	Tue, 23 Aug 2011 01:48:31 -0400
+Received: by yxj19 with SMTP id 19so4032828yxj.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Aug 2011 22:48:30 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Boojin Kim <boojin.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org, sachin.kamat@linaro.org, giridhar.maruthy@linaro.org
 
-On Mon, Aug 22, 2011 at 5:33 PM, Boojin Kim <boojin.kim@samsung.com> wr=
-ote:
->>
->> > +static struct dma_async_tx_descriptor *pl330_prep_dma_cyclic(
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct dma_chan=
- *chan, dma_addr_t dma_addr, size_t len,
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 size_t period_l=
-en, enum dma_data_direction direction)
->> > +{
->> > + =C2=A0 =C2=A0 =C2=A0 struct dma_pl330_desc *desc;
->> > + =C2=A0 =C2=A0 =C2=A0 struct dma_pl330_chan *pch =3D to_pchan(cha=
-n);
->> > + =C2=A0 =C2=A0 =C2=A0 dma_addr_t dst;
->> > + =C2=A0 =C2=A0 =C2=A0 dma_addr_t src;
->> > +
->> > + =C2=A0 =C2=A0 =C2=A0 desc =3D pl330_get_desc(pch);
->> > + =C2=A0 =C2=A0 =C2=A0 if (!desc) {
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dev_err(pch->dm=
-ac->pif.dev, "%s:%d Unable to fetch
->> desc\n",
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 __func__, __LINE__);
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return NULL;
->> > + =C2=A0 =C2=A0 =C2=A0 }
->> > +
->> > + =C2=A0 =C2=A0 =C2=A0 switch (direction) {
->> > + =C2=A0 =C2=A0 =C2=A0 case DMA_TO_DEVICE:
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 desc->rqcfg.src=
-_inc =3D 1;
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 desc->rqcfg.dst=
-_inc =3D 0;
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 src =3D dma_add=
-r;
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dst =3D pch->fi=
-fo_addr;
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break;
->> > + =C2=A0 =C2=A0 =C2=A0 case DMA_FROM_DEVICE:
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 desc->rqcfg.src=
-_inc =3D 0;
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 desc->rqcfg.dst=
-_inc =3D 1;
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 src =3D pch->fi=
-fo_addr;
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dst =3D dma_add=
-r;
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break;
->> > + =C2=A0 =C2=A0 =C2=A0 default:
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 dev_err(pch->dm=
-ac->pif.dev, "%s:%d Invalid dma
->> direction\n",
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 __func__, __LIN=
-E__);
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return NULL;
->> > + =C2=A0 =C2=A0 =C2=A0 }
->> > +
->> > + =C2=A0 =C2=A0 =C2=A0 desc->rqcfg.brst_size =3D pch->burst_sz;
->> > + =C2=A0 =C2=A0 =C2=A0 desc->rqcfg.brst_len =3D 1;
->> > +
->> > + =C2=A0 =C2=A0 =C2=A0 if (!pch->cyclic)
->> > + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pch->cyclic =3D=
- CYCLIC_PREP;
->> The need for check here seems suspicious.
->> Is it really needed? If not, please remove it.
-> It's required because Cyclic operation is passed from CYCLIC_PREP to
-> CYCLIC_TRIGGER.
-I don't see why you need to differentiate between PREP and TRIGGER in
-cyclic mode. I think, you should simply have 'bool cyclic' instead of e=
-num.
+From: Giridhar Maruthy <giridhar.maruthy@linaro.org>
+
+This patch adds support for LCD backlight using PWM timer on
+Origen board.
+
+Signed-off-by: Giridhar Maruthy <giridhar.maruthy@linaro.org>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-exynos4/Kconfig       |    2 ++
+ arch/arm/mach-exynos4/mach-origen.c |   16 ++++++++++++++++
+ 2 files changed, 18 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index e6925de..3e9138e 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -230,6 +230,8 @@ config MACH_ORIGEN
+ 	select S3C_DEV_RTC
+ 	select S3C_DEV_WDT
+ 	select S3C_DEV_HSMMC2
++	select SAMSUNG_DEV_BACKLIGHT
++	select SAMSUNG_DEV_PWM
+ 	select EXYNOS4_SETUP_SDHCI
+ 	help
+ 	  Machine support for ORIGEN based on Samsung EXYNOS4210
+diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
+index ed59f86..b871815 100644
+--- a/arch/arm/mach-exynos4/mach-origen.c
++++ b/arch/arm/mach-exynos4/mach-origen.c
+@@ -14,6 +14,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/input.h>
++#include <linux/pwm_backlight.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach-types.h>
+@@ -24,6 +25,8 @@
+ #include <plat/devs.h>
+ #include <plat/sdhci.h>
+ #include <plat/iic.h>
++#include <plat/gpio-cfg.h>
++#include <plat/backlight.h>
+ 
+ #include <mach/map.h>
+ 
+@@ -85,6 +88,17 @@ static struct platform_device *origen_devices[] __initdata = {
+ 	&s3c_device_wdt,
+ };
+ 
++/* LCD Backlight data */
++static struct samsung_bl_gpio_info origen_bl_gpio_info = {
++	.no = EXYNOS4_GPD0(0),
++	.func = S3C_GPIO_SFN(2),
++};
++
++static struct platform_pwm_backlight_data origen_bl_data = {
++	.pwm_id = 0,
++	.pwm_period_ns = 1000,
++};
++
+ static void __init origen_map_io(void)
+ {
+ 	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
+@@ -96,6 +110,8 @@ static void __init origen_machine_init(void)
+ {
+ 	s3c_sdhci2_set_platdata(&origen_hsmmc2_pdata);
+ 	platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
++
++	samsung_bl_set(&origen_bl_gpio_info, &origen_bl_data);
+ }
+ 
+ MACHINE_START(ORIGEN, "ORIGEN")
+-- 
+1.7.4.1
