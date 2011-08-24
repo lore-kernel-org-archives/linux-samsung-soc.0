@@ -1,128 +1,258 @@
 From: Boojin Kim <boojin.kim@samsung.com>
-Subject: RE: [PATCH v6 04/15] DMA: PL330: Add DMA_CYCLIC capability
-Date: Wed, 24 Aug 2011 08:28:59 +0900
-Message-ID: <000201cc61ec$7028f410$507adc30$%kim@samsung.com>
-References: <1313744097-27289-1-git-send-email-boojin.kim@samsung.com>
-	<1313744097-27289-5-git-send-email-boojin.kim@samsung.com>
-	<CABb+yY2CjmoDEmvC3S0ua3=B++jKz5g2JXGTwhNcAw5MQ06M9A@mail.gmail.com>
-	<002c01cc60c3$77d18210$67748630$%kim@samsung.com>
-	<CABb+yY0oQwBTc1zmow+ng+TEJTzRsjB-i1xZdLVwtT+RR6J5RQ@mail.gmail.com>
-	<001001cc6163$74cc62b0$5e652810$%kim@samsung.com>
-	<CABb+yY1N0d3t6WP=0Lu02znAcd_sTv5idSei3BWcn7PJJm7yAQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <CABb+yY1N0d3t6WP=0Lu02znAcd_sTv5idSei3BWcn7PJJm7yAQ@mail.gmail.com>
+Subject: RE: [PATCH 1/3] DMA: PL330: Infer transfer direction from transfer
+ request instead of platform data
+Date: Wed, 24 Aug 2011 10:21:18 +0900
+Message-ID: <000601cc61fc$201ac560$60505020$%kim@samsung.com>
+References: <1314050385-9617-1-git-send-email-thomas.abraham@linaro.org>
+ <1314050385-9617-2-git-send-email-thomas.abraham@linaro.org>
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:63382 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753515Ab1HXBVU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 23 Aug 2011 21:21:20 -0400
+Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LQE00A2ERREM3C0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 24 Aug 2011 10:21:18 +0900 (KST)
+Received: from DOBOOJINKIM03 (12-23-120-72.csky.net [12.23.120.72])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LQE005WTRRI5Q@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 24 Aug 2011 10:21:18 +0900 (KST)
+In-reply-to: <1314050385-9617-2-git-send-email-thomas.abraham@linaro.org>
 Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Jassi Brar' <jassisinghbrar@gmail.com>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Russell King' <linux@arm.linux.org.uk>, 'Vinod Koul' <vinod.koul@intel.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Grant Likely' <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, 'Dan Williams' <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, vinod.koul@intel.com, 'Jassi Brar' <jassisinghbrar@gmail.com>
 
-Jassi Brar wrote:
-> On Tue, Aug 23, 2011 at 12:38 PM, Boojin Kim <boojin.kim@samsung.com>
-> wrote:
-> > Jassi Brar [mailto:jassisinghbrar@gmail.com]
-> >> Sent: Tuesday, August 23, 2011 2:42 PM
-> >> To: Boojin Kim
-> >> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-
-> >> soc@vger.kernel.org; Vinod Koul; Kukjin Kim; Dan Williams; Mark
-> Brown;
-> >> Grant Likely; Russell King
-> >> Subject: Re: [PATCH v6 04/15] DMA: PL330: Add DMA_CYCLIC capability
-> >>
-> >> On Mon, Aug 22, 2011 at 5:33 PM, Boojin Kim
-> <boojin.kim@samsung.com>
-> >> wrote:
-> >> >>
-> >> >> > +static struct dma_async_tx_descriptor *pl330_prep_dma_cyclic(
-> >> >> > +               struct dma_chan *chan, dma_addr_t dma_addr,
-> size_t
-> >> len,
-> >> >> > +               size_t period_len, enum dma_data_direction
-> >> direction)
-> >> >> > +{
-> >> >> > +       struct dma_pl330_desc *desc;
-> >> >> > +       struct dma_pl330_chan *pch = to_pchan(chan);
-> >> >> > +       dma_addr_t dst;
-> >> >> > +       dma_addr_t src;
-> >> >> > +
-> >> >> > +       desc = pl330_get_desc(pch);
-> >> >> > +       if (!desc) {
-> >> >> > +               dev_err(pch->dmac->pif.dev, "%s:%d Unable to
-> fetch
-> >> >> desc\n",
-> >> >> > +                       __func__, __LINE__);
-> >> >> > +               return NULL;
-> >> >> > +       }
-> >> >> > +
-> >> >> > +       switch (direction) {
-> >> >> > +       case DMA_TO_DEVICE:
-> >> >> > +               desc->rqcfg.src_inc = 1;
-> >> >> > +               desc->rqcfg.dst_inc = 0;
-> >> >> > +               src = dma_addr;
-> >> >> > +               dst = pch->fifo_addr;
-> >> >> > +               break;
-> >> >> > +       case DMA_FROM_DEVICE:
-> >> >> > +               desc->rqcfg.src_inc = 0;
-> >> >> > +               desc->rqcfg.dst_inc = 1;
-> >> >> > +               src = pch->fifo_addr;
-> >> >> > +               dst = dma_addr;
-> >> >> > +               break;
-> >> >> > +       default:
-> >> >> > +               dev_err(pch->dmac->pif.dev, "%s:%d Invalid dma
-> >> >> direction\n",
-> >> >> > +               __func__, __LINE__);
-> >> >> > +               return NULL;
-> >> >> > +       }
-> >> >> > +
-> >> >> > +       desc->rqcfg.brst_size = pch->burst_sz;
-> >> >> > +       desc->rqcfg.brst_len = 1;
-> >> >> > +
-> >> >> > +       if (!pch->cyclic)
-> >> >> > +               pch->cyclic = CYCLIC_PREP;
-> >> >> The need for check here seems suspicious.
-> >> >> Is it really needed? If not, please remove it.
-> >> > It's required because Cyclic operation is passed from CYCLIC_PREP
-> to
-> >> > CYCLIC_TRIGGER.
-> >> I don't see why you need to differentiate between PREP and TRIGGER
-> in
-> >> cyclic mode. I think, you should simply have 'bool cyclic' instead
-> of
-> >> enum.
-> > On cyclic mode, Pl330_tasklet() operation is changed according to
-> the value of
-> > 'cyclic'.
-> > In case of CYCLIC_PREP, Pl330_tasklet()operation is same with normal
-> > operation.
-> By 'normal' you mean non-cyclic, right?  That doesn't seem correct to
-> do.
-> Once the desc has been marked cyclic by device_prep_dma_cyclic(), you
-> shouldn't treat it like a non-cyclic anymore.
+Thomas Abraham wrote:
+> Sent: Tuesday, August 23, 2011 7:00 AM
+> To: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org; kgene.kim@samsung.com;
+> vinod.koul@intel.com; Jassi Brar; Boojin Kim
+> Subject: [PATCH 1/3] DMA: PL330: Infer transfer direction from
+> transfer request instead of platform data
 >
+> The transfer direction for a channel can be inferred from the transfer
+> request and the need for specifying transfer direction in platfrom
+> data
+> can be eliminated. So the structure definition 'struct dma_pl330_peri'
+> is no longer required.
 >
-> > The sequence is following.
-> > device_prep_dma_cyclic() -> set CYCLIC_PREP -> device_issue_pending()
-> ->
-> > Pl330_tasklet() with CYCLIC_PREP -> set CYCLIC_TRIGGER -> PL330 IRQ
-> ->
-> > Pl330_tasklet() with CYCLIC_TRIGGER.
-> "device_issue_pending() ->Pl330_tasklet() with CYCLIC_PREP" is no
-> different
-> from "device_issue_pending() ->Pl330_tasklet() with CYCLIC_TRIGGER"
-> because the list of 'done' xfers would be null yet.
-Okay, You're right. CYCLIC_PREP is a redundancy status.
-I will address your comment.
+> With the 'struct dma_pl330_peri' removed, the dma controller transfer
+> capabilities cannot be inferred any longer. Hence, the dma controller
+> capabilities is specified using platforme data.
+>
+> Cc: Jassi Brar <jassisinghbrar@gmail.com>
+> Cc: Boojin Kim <boojin.kim@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+>  drivers/dma/pl330.c        |   56 ++++++++------------------------------
+> ------
+>  include/linux/amba/pl330.h |   14 +++--------
+>  2 files changed, 14 insertions(+), 56 deletions(-)
+>
+> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+> index 3a0baac..6592b9a 100644
+> --- a/drivers/dma/pl330.c
+> +++ b/drivers/dma/pl330.c
+> @@ -507,7 +507,7 @@ pluck_desc(struct dma_pl330_dmac *pdmac)
+>  static struct dma_pl330_desc *pl330_get_desc(struct dma_pl330_chan
+> *pch)
+>  {
+>  	struct dma_pl330_dmac *pdmac = pch->dmac;
+> -	struct dma_pl330_peri *peri = pch->chan.private;
+> +	u8 *peri_id = pch->chan.private;
+>  	struct dma_pl330_desc *desc;
+>
+>  	/* Pluck one desc from the pool of DMAC */
+> @@ -531,14 +531,7 @@ static struct dma_pl330_desc
+> *pl330_get_desc(struct dma_pl330_chan *pch)
+>  	desc->pchan = pch;
+>  	desc->txd.cookie = 0;
+>  	async_tx_ack(&desc->txd);
+> -
+> -	if (peri) {
+> -		desc->req.rqtype = peri->rqtype;
+> -		desc->req.peri = pch->chan.chan_id;
+> -	} else {
+> -		desc->req.rqtype = MEMTOMEM;
+> -		desc->req.peri = 0;
+> -	}
+> +	desc->req.peri = (peri_id) ? pch->chan.chan_id : 0;
+>
+>  	dma_async_tx_descriptor_init(&desc->txd, &pch->chan);
+>
+> @@ -625,12 +618,14 @@ static struct dma_async_tx_descriptor
+> *pl330_prep_dma_cyclic(
+>  	case DMA_TO_DEVICE:
+>  		desc->rqcfg.src_inc = 1;
+>  		desc->rqcfg.dst_inc = 0;
+> +		desc->req.rqtype = MEMTODEV;
+>  		src = dma_addr;
+>  		dst = pch->fifo_addr;
+>  		break;
+>  	case DMA_FROM_DEVICE:
+>  		desc->rqcfg.src_inc = 0;
+>  		desc->rqcfg.dst_inc = 1;
+> +		desc->req.rqtype = DEVTOMEM;
+>  		src = pch->fifo_addr;
+>  		dst = dma_addr;
+>  		break;
+> @@ -657,16 +652,12 @@ pl330_prep_dma_memcpy(struct dma_chan *chan,
+> dma_addr_t dst,
+>  {
+>  	struct dma_pl330_desc *desc;
+>  	struct dma_pl330_chan *pch = to_pchan(chan);
+> -	struct dma_pl330_peri *peri = chan->private;
+>  	struct pl330_info *pi;
+>  	int burst;
+>
+>  	if (unlikely(!pch || !len))
+>  		return NULL;
+>
+> -	if (peri && peri->rqtype != MEMTOMEM)
+> -		return NULL;
+> -
+>  	pi = &pch->dmac->pif;
+>
+>  	desc = __pl330_prep_dma_memcpy(pch, dst, src, len);
+> @@ -675,6 +666,7 @@ pl330_prep_dma_memcpy(struct dma_chan *chan,
+> dma_addr_t dst,
+>
+>  	desc->rqcfg.src_inc = 1;
+>  	desc->rqcfg.dst_inc = 1;
+> +	desc->req.rqtype = MEMTOMEM;
+>
+>  	/* Select max possible burst size */
+>  	burst = pi->pcfg.data_bus_width / 8;
+> @@ -703,25 +695,14 @@ pl330_prep_slave_sg(struct dma_chan *chan,
+> struct scatterlist *sgl,
+>  {
+>  	struct dma_pl330_desc *first, *desc = NULL;
+>  	struct dma_pl330_chan *pch = to_pchan(chan);
+> -	struct dma_pl330_peri *peri = chan->private;
+>  	struct scatterlist *sg;
+>  	unsigned long flags;
+>  	int i;
+>  	dma_addr_t addr;
+>
+> -	if (unlikely(!pch || !sgl || !sg_len || !peri))
+> +	if (unlikely(!pch || !sgl || !sg_len))
+>  		return NULL;
+>
+> -	/* Make sure the direction is consistent */
+> -	if ((direction == DMA_TO_DEVICE &&
+> -				peri->rqtype != MEMTODEV) ||
+> -			(direction == DMA_FROM_DEVICE &&
+> -				peri->rqtype != DEVTOMEM)) {
+> -		dev_err(pch->dmac->pif.dev, "%s:%d Invalid Direction\n",
+> -				__func__, __LINE__);
+> -		return NULL;
+> -	}
+> -
+>  	addr = pch->fifo_addr;
+>
+>  	first = NULL;
+> @@ -761,11 +742,13 @@ pl330_prep_slave_sg(struct dma_chan *chan,
+> struct scatterlist *sgl,
+>  		if (direction == DMA_TO_DEVICE) {
+>  			desc->rqcfg.src_inc = 1;
+>  			desc->rqcfg.dst_inc = 0;
+> +			desc->req.rqtype = MEMTODEV;
+>  			fill_px(&desc->px,
+>  				addr, sg_dma_address(sg), sg_dma_len(sg));
+>  		} else {
+>  			desc->rqcfg.src_inc = 0;
+>  			desc->rqcfg.dst_inc = 1;
+> +			desc->req.rqtype = DEVTOMEM;
+>  			fill_px(&desc->px,
+>  				sg_dma_address(sg), addr, sg_dma_len(sg));
+>  		}
+> @@ -872,27 +855,7 @@ pl330_probe(struct amba_device *adev, const
+> struct amba_id *id)
+>
+>  	for (i = 0; i < num_chan; i++) {
+>  		pch = &pdmac->peripherals[i];
+> -		if (pdat) {
+> -			struct dma_pl330_peri *peri = &pdat->peri[i];
+> -
+> -			switch (peri->rqtype) {
+> -			case MEMTOMEM:
+> -				dma_cap_set(DMA_MEMCPY, pd->cap_mask);
+> -				break;
+> -			case MEMTODEV:
+> -			case DEVTOMEM:
+> -				dma_cap_set(DMA_SLAVE, pd->cap_mask);
+> -				dma_cap_set(DMA_CYCLIC, pd->cap_mask);
+> -				break;
+If remove capabilities setting, dmaengine() doesn't search the channel that
+client requests with specific capability.
+So, I think dma_request_channel() would fail.
 
-Thanks
-Boojin Kim
+> -			default:
+> -				dev_err(&adev->dev, "DEVTODEV Not
+> Supported\n");
+> -				continue;
+> -			}
+> -			pch->chan.private = peri;
+> -		} else {
+> -			dma_cap_set(DMA_MEMCPY, pd->cap_mask);
+> -			pch->chan.private = NULL;
+> -		}
+> +		pch->chan.private = (pdat) ? &pdat->peri_id[i] : NULL;
+>
+>  		INIT_LIST_HEAD(&pch->work_list);
+>  		spin_lock_init(&pch->lock);
+> @@ -907,6 +870,7 @@ pl330_probe(struct amba_device *adev, const struct
+> amba_id *id)
+>  	}
+>
+>  	pd->dev = &adev->dev;
+> +	pd->cap_mask = pdat->cap_mask;
+>
+>  	pd->device_alloc_chan_resources = pl330_alloc_chan_resources;
+>  	pd->device_free_chan_resources = pl330_free_chan_resources;
+> diff --git a/include/linux/amba/pl330.h b/include/linux/amba/pl330.h
+> index d12f077..0b87300 100644
+> --- a/include/linux/amba/pl330.h
+> +++ b/include/linux/amba/pl330.h
+> @@ -13,15 +13,7 @@
+>  #define	__AMBA_PL330_H_
+>
+>  #include <asm/hardware/pl330.h>
+> -
+> -struct dma_pl330_peri {
+> -	/*
+> -	 * Peri_Req i/f of the DMAC that is
+> -	 * peripheral could be reached from.
+> -	 */
+> -	u8 peri_id; /* specific dma id */
+> -	enum pl330_reqtype rqtype;
+> -};
+> +#include <linux/dmaengine.h>
+>
+>  struct dma_pl330_platdata {
+>  	/*
+> @@ -33,7 +25,9 @@ struct dma_pl330_platdata {
+>  	 */
+>  	u8 nr_valid_peri;
+>  	/* Array of valid peripherals */
+> -	struct dma_pl330_peri *peri;
+> +	u8 *peri_id;
+> +	/* Operational capabilities */
+> +	dma_cap_mask_t cap_mask;
+>  	/* Bytes to allocate for MC buffer */
+>  	unsigned mcbuf_sz;
+>  };
+> --
+> 1.6.6.rc2
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-
+> samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
