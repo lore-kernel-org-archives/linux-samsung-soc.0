@@ -1,60 +1,237 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 4/4] ARM: EXYNOS4: Use samsung_rev() to distinguish silicon
- revision
-Date: Wed, 24 Aug 2011 20:13:56 +0900
-Message-ID: <06f401cc624e$eaa67390$bff35ab0$%kim@samsung.com>
-References: <1313816759-14564-1-git-send-email-kgene.kim@samsung.com>
- <1313816759-14564-5-git-send-email-kgene.kim@samsung.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH 1/3] DMA: PL330: Infer transfer direction from transfer
+ request instead of platform data
+Date: Wed, 24 Aug 2011 06:44:45 -0500
+Message-ID: <4E54E42D.9060905@gmail.com>
+References: <1314050385-9617-1-git-send-email-thomas.abraham@linaro.org> <1314050385-9617-2-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:26673 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751433Ab1HXLN6 (ORCPT
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:37078 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752544Ab1HXLot (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Aug 2011 07:13:58 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LQF00BPOJ72SGC0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 24 Aug 2011 20:13:57 +0900 (KST)
-Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
- by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LQF001S0J79J3@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 24 Aug 2011 20:13:57 +0900 (KST)
-In-reply-to: <1313816759-14564-5-git-send-email-kgene.kim@samsung.com>
-Content-language: ko
+	Wed, 24 Aug 2011 07:44:49 -0400
+Received: by gya6 with SMTP id 6so780537gya.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Aug 2011 04:44:49 -0700 (PDT)
+In-Reply-To: <1314050385-9617-2-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, vinod.koul@intel.com, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>, Boojin Kim <boojin.kim@samsung.com>
 
-Kukjin Kim wrote:
+Thomas,
+
+On 08/22/2011 04:59 PM, Thomas Abraham wrote:
+> The transfer direction for a channel can be inferred from the transfer
+> request and the need for specifying transfer direction in platfrom data
+> can be eliminated. So the structure definition 'struct dma_pl330_peri'
+> is no longer required.
 > 
-> This patch uses samsung_rev() to support variable silicon revision of
-> EXYNOS4210 so that can support for EXYNOS4210 REV0, REV1.0 and REV1.1.
+> With the 'struct dma_pl330_peri' removed, the dma controller transfer
+> capabilities cannot be inferred any longer. Hence, the dma controller
+> capabilities is specified using platforme data.
 > 
-> Note: Need to change timer setting on REV0.
-> 
-> Acked-by: Changhwan Youn <chaos.youn@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Jassi Brar <jassisinghbrar@gmail.com>
+> Cc: Boojin Kim <boojin.kim@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 > ---
+>  drivers/dma/pl330.c        |   56 ++++++++------------------------------------
+>  include/linux/amba/pl330.h |   14 +++--------
+>  2 files changed, 14 insertions(+), 56 deletions(-)
+> 
+> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+> index 3a0baac..6592b9a 100644
+> --- a/drivers/dma/pl330.c
+> +++ b/drivers/dma/pl330.c
+> @@ -507,7 +507,7 @@ pluck_desc(struct dma_pl330_dmac *pdmac)
+>  static struct dma_pl330_desc *pl330_get_desc(struct dma_pl330_chan *pch)
+>  {
+>  	struct dma_pl330_dmac *pdmac = pch->dmac;
+> -	struct dma_pl330_peri *peri = pch->chan.private;
+> +	u8 *peri_id = pch->chan.private;
+>  	struct dma_pl330_desc *desc;
+>  
+>  	/* Pluck one desc from the pool of DMAC */
+> @@ -531,14 +531,7 @@ static struct dma_pl330_desc *pl330_get_desc(struct dma_pl330_chan *pch)
+>  	desc->pchan = pch;
+>  	desc->txd.cookie = 0;
+>  	async_tx_ack(&desc->txd);
+> -
+> -	if (peri) {
+> -		desc->req.rqtype = peri->rqtype;
+> -		desc->req.peri = pch->chan.chan_id;
+> -	} else {
+> -		desc->req.rqtype = MEMTOMEM;
+> -		desc->req.peri = 0;
+> -	}
+> +	desc->req.peri = (peri_id) ? pch->chan.chan_id : 0;
+>  
+>  	dma_async_tx_descriptor_init(&desc->txd, &pch->chan);
+>  
+> @@ -625,12 +618,14 @@ static struct dma_async_tx_descriptor *pl330_prep_dma_cyclic(
+>  	case DMA_TO_DEVICE:
+>  		desc->rqcfg.src_inc = 1;
+>  		desc->rqcfg.dst_inc = 0;
+> +		desc->req.rqtype = MEMTODEV;
+>  		src = dma_addr;
+>  		dst = pch->fifo_addr;
+>  		break;
+>  	case DMA_FROM_DEVICE:
+>  		desc->rqcfg.src_inc = 0;
+>  		desc->rqcfg.dst_inc = 1;
+> +		desc->req.rqtype = DEVTOMEM;
+>  		src = pch->fifo_addr;
+>  		dst = dma_addr;
+>  		break;
+> @@ -657,16 +652,12 @@ pl330_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dst,
+>  {
+>  	struct dma_pl330_desc *desc;
+>  	struct dma_pl330_chan *pch = to_pchan(chan);
+> -	struct dma_pl330_peri *peri = chan->private;
+>  	struct pl330_info *pi;
+>  	int burst;
+>  
+>  	if (unlikely(!pch || !len))
+>  		return NULL;
+>  
+> -	if (peri && peri->rqtype != MEMTOMEM)
+> -		return NULL;
+> -
+>  	pi = &pch->dmac->pif;
+>  
+>  	desc = __pl330_prep_dma_memcpy(pch, dst, src, len);
+> @@ -675,6 +666,7 @@ pl330_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dst,
+>  
+>  	desc->rqcfg.src_inc = 1;
+>  	desc->rqcfg.dst_inc = 1;
+> +	desc->req.rqtype = MEMTOMEM;
+>  
+>  	/* Select max possible burst size */
+>  	burst = pi->pcfg.data_bus_width / 8;
+> @@ -703,25 +695,14 @@ pl330_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+>  {
+>  	struct dma_pl330_desc *first, *desc = NULL;
+>  	struct dma_pl330_chan *pch = to_pchan(chan);
+> -	struct dma_pl330_peri *peri = chan->private;
+>  	struct scatterlist *sg;
+>  	unsigned long flags;
+>  	int i;
+>  	dma_addr_t addr;
+>  
+> -	if (unlikely(!pch || !sgl || !sg_len || !peri))
+> +	if (unlikely(!pch || !sgl || !sg_len))
+>  		return NULL;
+>  
+> -	/* Make sure the direction is consistent */
+> -	if ((direction == DMA_TO_DEVICE &&
+> -				peri->rqtype != MEMTODEV) ||
+> -			(direction == DMA_FROM_DEVICE &&
+> -				peri->rqtype != DEVTOMEM)) {
+> -		dev_err(pch->dmac->pif.dev, "%s:%d Invalid Direction\n",
+> -				__func__, __LINE__);
+> -		return NULL;
+> -	}
+> -
+>  	addr = pch->fifo_addr;
+>  
+>  	first = NULL;
+> @@ -761,11 +742,13 @@ pl330_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+>  		if (direction == DMA_TO_DEVICE) {
+>  			desc->rqcfg.src_inc = 1;
+>  			desc->rqcfg.dst_inc = 0;
+> +			desc->req.rqtype = MEMTODEV;
+>  			fill_px(&desc->px,
+>  				addr, sg_dma_address(sg), sg_dma_len(sg));
+>  		} else {
+>  			desc->rqcfg.src_inc = 0;
+>  			desc->rqcfg.dst_inc = 1;
+> +			desc->req.rqtype = DEVTOMEM;
+>  			fill_px(&desc->px,
+>  				sg_dma_address(sg), addr, sg_dma_len(sg));
+>  		}
+> @@ -872,27 +855,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>  
+>  	for (i = 0; i < num_chan; i++) {
+>  		pch = &pdmac->peripherals[i];
+> -		if (pdat) {
+> -			struct dma_pl330_peri *peri = &pdat->peri[i];
+> -
+> -			switch (peri->rqtype) {
+> -			case MEMTOMEM:
+> -				dma_cap_set(DMA_MEMCPY, pd->cap_mask);
+> -				break;
+> -			case MEMTODEV:
+> -			case DEVTOMEM:
+> -				dma_cap_set(DMA_SLAVE, pd->cap_mask);
+> -				dma_cap_set(DMA_CYCLIC, pd->cap_mask);
+> -				break;
+> -			default:
+> -				dev_err(&adev->dev, "DEVTODEV Not Supported\n");
+> -				continue;
+> -			}
+> -			pch->chan.private = peri;
+> -		} else {
+> -			dma_cap_set(DMA_MEMCPY, pd->cap_mask);
+> -			pch->chan.private = NULL;
+> -		}
+> +		pch->chan.private = (pdat) ? &pdat->peri_id[i] : NULL;
 
-(snip)
+Don't need parentheses here.
 
-> +#define EXYNOS4210_REV_1_0	(0x2)
-> +#define EXYNOS4210_REV_1_1	(0x3)
+>  
+>  		INIT_LIST_HEAD(&pch->work_list);
+>  		spin_lock_init(&pch->lock);
+> @@ -907,6 +870,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>  	}
+>  
+>  	pd->dev = &adev->dev;
+> +	pd->cap_mask = pdat->cap_mask;
 
-Should be following...
+You are re-introducing the requirement to have platform data which I
+just made optional. For mem to mem transfers, there is no reason to have
+platform data. In my case, we only support mem to mem transfers.
 
-+#define EXYNOS4210_REV_1_0	(0x10)
-+#define EXYNOS4210_REV_1_1	(0x11)
+How about:
+pd->cap_mask = pdat ? pdat->cap_mask : DMA_MEMCPY;
 
-Thanks.
+Also, should you be using dma_cap_set here?
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Rob
+
+>  
+>  	pd->device_alloc_chan_resources = pl330_alloc_chan_resources;
+>  	pd->device_free_chan_resources = pl330_free_chan_resources;
+> diff --git a/include/linux/amba/pl330.h b/include/linux/amba/pl330.h
+> index d12f077..0b87300 100644
+> --- a/include/linux/amba/pl330.h
+> +++ b/include/linux/amba/pl330.h
+> @@ -13,15 +13,7 @@
+>  #define	__AMBA_PL330_H_
+>  
+>  #include <asm/hardware/pl330.h>
+> -
+> -struct dma_pl330_peri {
+> -	/*
+> -	 * Peri_Req i/f of the DMAC that is
+> -	 * peripheral could be reached from.
+> -	 */
+> -	u8 peri_id; /* specific dma id */
+> -	enum pl330_reqtype rqtype;
+> -};
+> +#include <linux/dmaengine.h>
+>  
+>  struct dma_pl330_platdata {
+>  	/*
+> @@ -33,7 +25,9 @@ struct dma_pl330_platdata {
+>  	 */
+>  	u8 nr_valid_peri;
+>  	/* Array of valid peripherals */
+> -	struct dma_pl330_peri *peri;
+> +	u8 *peri_id;
+> +	/* Operational capabilities */
+> +	dma_cap_mask_t cap_mask;
+>  	/* Bytes to allocate for MC buffer */
+>  	unsigned mcbuf_sz;
+>  };
