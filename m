@@ -1,156 +1,44 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 1/5] ARM: EXYNOS4: Add support new EXYNOS4212 SoC
-Date: Wed, 24 Aug 2011 22:25:48 +0900
-Message-ID: <1314192352-14911-2-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 5/5] tty: Add support serial for EXYNOS4212 SoC
+Date: Wed, 24 Aug 2011 22:25:52 +0900
+Message-ID: <1314192352-14911-6-git-send-email-kgene.kim@samsung.com>
 References: <1314192352-14911-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:45399 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:45403 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751194Ab1HXNmu (ORCPT
+	with ESMTP id S1751055Ab1HXNmu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 24 Aug 2011 09:42:50 -0400
 In-Reply-To: <1314192352-14911-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, Alan Cox <alan@lxorguk.ukuu.org.uk>, Greg Kroah-Hartman <gregkh@suse.de>
 
-This patch adds Samsung EXYNOS4212 SoC support.
-The EXYNOS4212 integrates a ARM Cortex A9 multi-core.
+According to add support EXYNOS4212 SoC, we need to enable
+SERIAL_S5PV210 on EXYNOS4212.
 
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-exynos4/Kconfig            |    5 +++++
- arch/arm/mach-exynos4/Makefile           |    6 ++++--
- arch/arm/mach-exynos4/cpu.c              |    6 +++++-
- arch/arm/plat-s5p/cpu.c                  |    9 +++++++++
- arch/arm/plat-s5p/include/plat/exynos4.h |    3 +--
- arch/arm/plat-samsung/include/plat/cpu.h |    8 ++++++++
- 6 files changed, 32 insertions(+), 5 deletions(-)
+ drivers/tty/serial/Kconfig |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index bee8f77..0b40289 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -15,6 +15,11 @@ config CPU_EXYNOS4210
- 	help
- 	  Enable EXYNOS4210 CPU support
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 4dcb37b..bff6943 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -522,8 +522,8 @@ config SERIAL_S3C6400
  
-+config SOC_EXYNOS4212
-+	bool
-+	help
-+	  Enable EXYNOS4212 SoC support
-+
- config EXYNOS4_MCT
- 	bool
+ config SERIAL_S5PV210
+ 	tristate "Samsung S5PV210 Serial port support"
+-	depends on SERIAL_SAMSUNG && (CPU_S5PV210 || CPU_EXYNOS4210)
+-	select SERIAL_SAMSUNG_UARTS_4 if (CPU_S5PV210 || CPU_EXYNOS4210)
++	depends on SERIAL_SAMSUNG && (CPU_S5PV210 || CPU_EXYNOS4210 || SOC_EXYNOS4212)
++	select SERIAL_SAMSUNG_UARTS_4 if (CPU_S5PV210 || CPU_EXYNOS4210 || SOC_EXYNOS4212)
  	default y
-diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
-index e3e93ea..4624457 100644
---- a/arch/arm/mach-exynos4/Makefile
-+++ b/arch/arm/mach-exynos4/Makefile
-@@ -12,8 +12,10 @@ obj-				:=
- 
- # Core support for EXYNOS4 system
- 
--obj-$(CONFIG_CPU_EXYNOS4210)	+= cpu.o init.o clock.o irq-combiner.o
--obj-$(CONFIG_CPU_EXYNOS4210)	+= setup-i2c0.o irq-eint.o dma.o pmu.o
-+obj-$(CONFIG_ARCH_EXYNOS4)	+= cpu.o init.o clock.o irq-combiner.o
-+obj-$(CONFIG_ARCH_EXYNOS4)	+= setup-i2c0.o irq-eint.o dma.o pmu.o
-+obj-$(CONFIG_CPU_EXYNOS4210)	+= clock-exynos4210.o
-+obj-$(CONFIG_SOC_EXYNOS4212)	+= clock-exynos4212.o
- obj-$(CONFIG_PM)		+= pm.o sleep.o
- obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
- 
-diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
-index 0d281bb..1e1a7a9 100644
---- a/arch/arm/mach-exynos4/cpu.c
-+++ b/arch/arm/mach-exynos4/cpu.c
-@@ -241,7 +241,11 @@ static int __init exynos4_l2x0_cache_init(void)
- {
- 	/* TAG, Data Latency Control: 2cycle */
- 	__raw_writel(0x110, S5P_VA_L2CC + L2X0_TAG_LATENCY_CTRL);
--	__raw_writel(0x110, S5P_VA_L2CC + L2X0_DATA_LATENCY_CTRL);
-+
-+	if (soc_is_exynos4210())
-+		__raw_writel(0x110, S5P_VA_L2CC + L2X0_DATA_LATENCY_CTRL);
-+	else if (soc_is_exynos4212())
-+		__raw_writel(0x120, S5P_VA_L2CC + L2X0_DATA_LATENCY_CTRL);
- 
- 	/* L2X0 Prefetch Control */
- 	__raw_writel(0x30000007, S5P_VA_L2CC + L2X0_PREFETCH_CTRL);
-diff --git a/arch/arm/plat-s5p/cpu.c b/arch/arm/plat-s5p/cpu.c
-index 04392c7..909507b 100644
---- a/arch/arm/plat-s5p/cpu.c
-+++ b/arch/arm/plat-s5p/cpu.c
-@@ -33,6 +33,7 @@ static const char name_s5p6450[] = "S5P6450";
- static const char name_s5pc100[] = "S5PC100";
- static const char name_s5pv210[] = "S5PV210/S5PC110";
- static const char name_exynos4210[] = "EXYNOS4210";
-+static const char name_exynos4212[] = "EXYNOS4212";
- 
- static struct cpu_table cpu_ids[] __initdata = {
- 	{
-@@ -75,6 +76,14 @@ static struct cpu_table cpu_ids[] __initdata = {
- 		.init_uarts	= exynos4_init_uarts,
- 		.init		= exynos4_init,
- 		.name		= name_exynos4210,
-+	}, {
-+		.idcode		= EXYNOS4212_CPU_ID,
-+		.idmask		= EXYNOS4_CPU_MASK,
-+		.map_io		= exynos4_map_io,
-+		.init_clocks	= exynos4_init_clocks,
-+		.init_uarts	= exynos4_init_uarts,
-+		.init		= exynos4_init,
-+		.name		= name_exynos4212,
- 	},
- };
- 
-diff --git a/arch/arm/plat-s5p/include/plat/exynos4.h b/arch/arm/plat-s5p/include/plat/exynos4.h
-index 907caab..4aed130 100644
---- a/arch/arm/plat-s5p/include/plat/exynos4.h
-+++ b/arch/arm/plat-s5p/include/plat/exynos4.h
-@@ -16,8 +16,7 @@ extern void exynos4_common_init_uarts(struct s3c2410_uartcfg *cfg, int no);
- extern void exynos4_register_clocks(void);
- extern void exynos4_setup_clocks(void);
- 
--#ifdef CONFIG_CPU_EXYNOS4210
--
-+#ifdef CONFIG_ARCH_EXYNOS4
- extern  int exynos4_init(void);
- extern void exynos4_init_irq(void);
- extern void exynos4_map_io(void);
-diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
-index 6fdd5ef..aa1f69b 100644
---- a/arch/arm/plat-samsung/include/plat/cpu.h
-+++ b/arch/arm/plat-samsung/include/plat/cpu.h
-@@ -39,6 +39,7 @@ extern unsigned long samsung_cpu_id;
- #define S5PV210_CPU_MASK	0xFFFFF000
- 
- #define EXYNOS4210_CPU_ID	0x43210000
-+#define EXYNOS4212_CPU_ID	0x43220000
- #define EXYNOS4_CPU_MASK	0xFFFE0000
- 
- #define IS_SAMSUNG_CPU(name, id, mask)		\
-@@ -54,6 +55,7 @@ IS_SAMSUNG_CPU(s5p6450, S5P6450_CPU_ID, S5P64XX_CPU_MASK)
- IS_SAMSUNG_CPU(s5pc100, S5PC100_CPU_ID, S5PC100_CPU_MASK)
- IS_SAMSUNG_CPU(s5pv210, S5PV210_CPU_ID, S5PV210_CPU_MASK)
- IS_SAMSUNG_CPU(exynos4210, EXYNOS4210_CPU_ID, EXYNOS4_CPU_MASK)
-+IS_SAMSUNG_CPU(exynos4212, EXYNOS4212_CPU_ID, EXYNOS4_CPU_MASK)
- 
- #if defined(CONFIG_CPU_S3C2410) || defined(CONFIG_CPU_S3C2412) || \
-     defined(CONFIG_CPU_S3C2416) || defined(CONFIG_CPU_S3C2440) || \
-@@ -100,6 +102,12 @@ IS_SAMSUNG_CPU(exynos4210, EXYNOS4210_CPU_ID, EXYNOS4_CPU_MASK)
- # define soc_is_exynos4210()	0
- #endif
- 
-+#if defined(CONFIG_SOC_EXYNOS4212)
-+# define soc_is_exynos4212()	is_samsung_exynos4212()
-+#else
-+# define soc_is_exynos4212()	0
-+#endif
-+
- #define EXYNOS4210_REV_0	(0x0)
- #define EXYNOS4210_REV_1_0	(0x10)
- #define EXYNOS4210_REV_1_1	(0x11)
+ 	help
+ 	  Serial port support for Samsung's S5P Family of SoC's
 -- 
 1.7.1
