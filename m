@@ -1,171 +1,63 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH 2/2] video: s3c-fb: Modify s3c-fb driver to support window positioning
-Date: Fri, 26 Aug 2011 10:51:50 +0530
-Message-ID: <CAEC9eQMuqEO1uRnQOjZBFAxtH0qRnKu+Jvjo_xo2P5TJK=UpYg@mail.gmail.com>
-References: <14401983.184721314319448396.JavaMail.weblogic@epv6ml01>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: RE: [PATCH 1/2] ARM: SAMSUNG: Add Window Positioning Support for
+ s3c-fb driver
+Date: Fri, 26 Aug 2011 05:56:44 +0000 (GMT)
+Message-ID: <21291097.203481314338204818.JavaMail.weblogic@epml27>
+Reply-To: jg1.han@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:45762 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751714Ab1HZFVw convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:57289 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751249Ab1HZF47 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Aug 2011 01:21:52 -0400
-In-Reply-To: <14401983.184721314319448396.JavaMail.weblogic@epv6ml01>
+	Fri, 26 Aug 2011 01:56:59 -0400
+Received: from epcpsbge8.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LQI00BLBTUKK640@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 26 Aug 2011 14:56:45 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jg1.han@samsung.com
-Cc: AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "FlorianSchandinat@gmx.de" <FlorianSchandinat@gmx.de>, "lethal@linux-sh.org" <lethal@linux-sh.org>, Marek Szyprowski <m.szyprowski@samsung.com>, "ben-linux@fluff.org" <ben-linux@fluff.org>, BANAJIT GOSWAMI <banajit.g@samsung.com>
+To: AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "FlorianSchandinat@gmx.de" <FlorianSchandinat@gmx.de>, "lethal@linux-sh.org" <lethal@linux-sh.org>, Jingoo Han <jg1.han@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "ben-linux@fluff.org" <ben-linux@fluff.org>, BANAJIT GOSWAMI <banajit.g@samsung.com>
 
-Hi Jingoo,
-
-2011/8/26 JinGoo Han <jg1.han@samsung.com>:
-> Hi, Ajay.
->> -----Original Message-----
->> From: Ajay Kumar [mailto:ajaykumar.rs@samsung.com]
->> Sent: Friday, August 26, 2011 4:52 AM
->> To: linux-samsung-soc@vger.kernel.org; linux-fbdev@vger.kernel.org; =
-linux-
->> arm-kernel@lists.infradead.org
->> Cc: FlorianSchandinat@gmx.de; lethal@linux-sh.org; jg1.han@samsung.c=
-om;
->> m.szyprowski@samsung.com; ben-linux@fluff.org; banajit.g@samsung.com
->> Subject: [PATCH 2/2] video: s3c-fb: Modify s3c-fb driver to support =
-window
->> positioning
->>
->> This patch modifies the existing s3c-fb driver to provide
->> flexibility to the user to reposition the framebuffer windows.
->>
->> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
->> Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
->> ---
->> =A0drivers/video/s3c-fb.c | =A0 37 ++++++++++++++++++++++++++++++++-=
-----
->> =A01 files changed, 32 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
->> index 0fda252..41179d7 100644
->> --- a/drivers/video/s3c-fb.c
->> +++ b/drivers/video/s3c-fb.c
->> @@ -442,6 +442,7 @@ static int s3c_fb_set_par(struct fb_info *info)
->> =A0 =A0 =A0 struct fb_var_screeninfo *var =3D &info->var;
->> =A0 =A0 =A0 struct s3c_fb_win *win =3D info->par;
->> =A0 =A0 =A0 struct s3c_fb *sfb =3D win->parent;
->> + =A0 =A0 struct s3cfb_window_pos *winpos =3D &win->windata->winpos;
->> =A0 =A0 =A0 void __iomem *regs =3D sfb->regs;
->> =A0 =A0 =A0 void __iomem *buf =3D regs;
->> =A0 =A0 =A0 int win_no =3D win->index;
->> @@ -539,12 +540,13 @@ static int s3c_fb_set_par(struct fb_info *info=
-)
->>
->> =A0 =A0 =A0 /* write 'OSD' registers to control position of framebuf=
-fer */
->>
->> - =A0 =A0 data =3D VIDOSDxA_TOPLEFT_X(0) | VIDOSDxA_TOPLEFT_Y(0);
->> + =A0 =A0 data =3D VIDOSDxA_TOPLEFT_X(winpos->win_pos_x) |
->> + =A0 =A0 =A0 =A0 =A0 =A0VIDOSDxA_TOPLEFT_Y(winpos->win_pos_y);
->> =A0 =A0 =A0 writel(data, regs + VIDOSD_A(win_no, sfb->variant));
->>
->> - =A0 =A0 data =3D VIDOSDxB_BOTRIGHT_X(s3c_fb_align_word(var->bits_p=
-er_pixel,
->> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0var->xres - 1)) |
->> - =A0 =A0 =A0 =A0 =A0 =A0VIDOSDxB_BOTRIGHT_Y(var->yres - 1);
->> + =A0 =A0 data =3D VIDOSDxB_BOTRIGHT_X((s3c_fb_align_word(var->bits_=
-per_pixel,
->> + =A0 =A0 =A0 =A0 =A0 =A0(winpos->win_pos_x + var->xres - 1)))) |
->> + =A0 =A0 =A0 =A0 =A0 =A0VIDOSDxB_BOTRIGHT_Y((winpos->win_pos_y + va=
-r->yres - 1));
->>
->> =A0 =A0 =A0 writel(data, regs + VIDOSD_B(win_no, sfb->variant));
->>
->> @@ -999,8 +1001,10 @@ static int s3c_fb_ioctl(struct fb_info *info,
->> unsigned int cmd,
->> =A0{
->> =A0 =A0 =A0 struct s3c_fb_win *win =3D info->par;
->> =A0 =A0 =A0 struct s3c_fb *sfb =3D win->parent;
->> - =A0 =A0 int ret;
->> + =A0 =A0 struct s3cfb_window_pos *winpos =3D &win->windata->winpos;
->> + =A0 =A0 int ret =3D 0;
->> =A0 =A0 =A0 u32 crtc;
->> + =A0 =A0 u32 data;
->>
->> =A0 =A0 =A0 switch (cmd) {
->> =A0 =A0 =A0 case FBIO_WAITFORVSYNC:
->> @@ -1011,6 +1015,29 @@ static int s3c_fb_ioctl(struct fb_info *info,
->> unsigned int cmd,
->>
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D s3c_fb_wait_for_vsync(sfb, crtc)=
-;
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->> + =A0 =A0 case S3CFB_WIN_POSITION:
->> + =A0 =A0 =A0 =A0 =A0 =A0 if (copy_from_user(winpos, (u32 __user *)a=
-rg,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 sizeof(struct s3cfb_window_pos))) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -EFAULT;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->> + =A0 =A0 =A0 =A0 =A0 =A0 }
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 shadow_protect_win(win, 1);
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 /* write 'OSD' registers to set position o=
-f the window */
->> + =A0 =A0 =A0 =A0 =A0 =A0 data =3D VIDOSDxA_TOPLEFT_X(winpos->win_po=
-s_x) |
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0VIDOSDxA_TOPLEFT_Y(winpos->=
-win_pos_y);
->> + =A0 =A0 =A0 =A0 =A0 =A0 writel(data, sfb->regs + VIDOSD_A(win->ind=
-ex, sfb->variant));
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 data =3D VIDOSDxB_BOTRIGHT_X(
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_fb_ali=
-gn_word(info->var.bits_per_pixel,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (winpos->w=
-in_pos_x + info->var.xres - 1)));
->> + =A0 =A0 =A0 =A0 =A0 =A0 data |=3D VIDOSDxB_BOTRIGHT_Y(winpos->win_=
-pos_y +
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 info->var.=
-yres - 1);
->> + =A0 =A0 =A0 =A0 =A0 =A0 writel(data, sfb->regs + VIDOSD_B(win->ind=
-ex, sfb->variant));
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 shadow_protect_win(win, 0);
->> + =A0 =A0 =A0 =A0 =A0 =A0 break;
-> Can you move this to separate function?
-> In my opinion, it would be better for readability and consistency.
-> Also, FBIO_WAITFORVSYNC has been implemented in this way.
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0ret =3D s3c_fb_wait_for_vsync(sfb, crt=
-c);
-> How about adding a function 's3c_fb_set_window_position' for this as =
-belows?
-> +int s3c_fb_set_window_position(struct fb_info *info,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 struct =
-s3cfb_window_pos winpos)
-
-Thanks for your suggestion.
-I have considered it, and now I have written a separate function for th=
-is.
-I will be sending it in V2 version.
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0........
-> + =A0 =A0 =A0 case S3CFB_WIN_POSITION:
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (copy_from_user(winpos, (u32 __user =
-*)arg,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 sizeof(struct s3cfb_window_pos))) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -EFAULT;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D s3c_fb_set_window_position(info=
-, winpos);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->> =A0 =A0 =A0 default:
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -ENOTTY;
->> =A0 =A0 =A0 }
->> --
->> 1.7.0.4
->
->
->
+DQpIaSwgQWpheS4NCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQWpheSBL
+dW1hciBbbWFpbHRvOmFqYXlrdW1hci5yc0BzYW1zdW5nLmNvbV0NCj4gU2VudDogRnJpZGF5LCBB
+dWd1c3QgMjYsIDIwMTEgNDo1MiBBTQ0KPiBUbzogbGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJu
+ZWwub3JnOyBsaW51eC1mYmRldkB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBhcm0ta2VybmVs
+QGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gQ2M6IEZsb3JpYW5TY2hhbmRpbmF0QGdteC5kZTsgbGV0
+aGFsQGxpbnV4LXNoLm9yZzsgamcxLmhhbkBzYW1zdW5nLmNvbTsNCj4gbS5zenlwcm93c2tpQHNh
+bXN1bmcuY29tOyBiZW4tbGludXhAZmx1ZmYub3JnOyBiYW5haml0LmdAc2Ftc3VuZy5jb20NCj4g
+U3ViamVjdDogW1BBVENIIDEvMl0gQVJNOiBTQU1TVU5HOiBBZGQgV2luZG93IFBvc2l0aW9uaW5n
+IFN1cHBvcnQgZm9yIHMzYy0NCj4gZmIgZHJpdmVyDQo+IA0KPiBUaGlzIHBhdGNoOg0KPiAJLS1h
+ZGRzIGEgZGF0YS1zdHJ1Y3R1cmUgdG8gaG9sZCB0aGUgY3VycmVudCBwb3NpdGlvbiBvZiB3aW5k
+b3dzLg0KPiAJLS1hZGRzIGFuIGlvY3RsIG51bWJlciB0byBzdXBwb3J0IGR5bmFtaWMgcG9zaXRp
+b25pbmcgdGhlIHdpbmRvd3MuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBBamF5IEt1bWFyIDxhamF5
+a3VtYXIucnNAc2Ftc3VuZy5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IEJhbmFqaXQgR29zd2FtaSA8
+YmFuYWppdC5nQHNhbXN1bmcuY29tPg0KPiAtLS0NCj4gIGFyY2gvYXJtL3BsYXQtc2Ftc3VuZy9p
+bmNsdWRlL3BsYXQvZmIuaCB8ICAgMTQgKysrKysrKysrKysrKysNCj4gIDEgZmlsZXMgY2hhbmdl
+ZCwgMTQgaW5zZXJ0aW9ucygrKSwgMCBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9h
+cmNoL2FybS9wbGF0LXNhbXN1bmcvaW5jbHVkZS9wbGF0L2ZiLmggYi9hcmNoL2FybS9wbGF0LQ0K
+PiBzYW1zdW5nL2luY2x1ZGUvcGxhdC9mYi5oDQo+IGluZGV4IGJkNzljMGEuLjc3ZWQ3NWMgMTAw
+NjQ0DQo+IC0tLSBhL2FyY2gvYXJtL3BsYXQtc2Ftc3VuZy9pbmNsdWRlL3BsYXQvZmIuaA0KPiAr
+KysgYi9hcmNoL2FybS9wbGF0LXNhbXN1bmcvaW5jbHVkZS9wbGF0L2ZiLmgNCj4gQEAgLTIyLDYg
+KzIyLDE4IEBADQo+ICAgKi8NCj4gICNkZWZpbmUgUzNDX0ZCX01BWF9XSU4JKDUpDQo+IA0KPiAr
+Lyogc3RydWN0IHMzY2ZiX3dpbmRvd19wb3MNCj4gKyAqIEB3aW5fcG9zX3g6IFgtY29vcmRpbmF0
+ZSBvZiB3aW5kb3cgZnJvbSB0aGUgbGVmdC4NCj4gKyAqIEB3aW5fcG9zX3k6IFktY29vcmRpbmF0
+ZSBvZiB3aW5kb3cgZnJvbSB0aGUgdG9wLg0KPiArICovDQo+ICtzdHJ1Y3QgczNjZmJfd2luZG93
+X3BvcyB7DQo+ICsJaW50CXdpbl9wb3NfeDsNCj4gKwlpbnQJd2luX3Bvc195Ow0KPiArfTsNCj4g
+Kw0KPiArLyogQ3VzdG9tIGlvY3RsICovDQo+ICsjZGVmaW5lIFMzQ0ZCX1dJTl9QT1NJVElPTglf
+SU9XKCdGJywgMSwgc3RydWN0IHMzY2ZiX3dpbmRvd19wb3MpDQpDYW4geW91IGNoYW5nZSB0aGUg
+bnVtYmVyIGZyb20gMSB0byAyMDMgYXMgZm9sbG93cz8NCisjZGVmaW5lIFMzQ0ZCX1dJTl9QT1NJ
+VElPTglfSU9XKCdGJywgMjAzLCBzdHJ1Y3QgczNjZmJfd2luZG93X3BvcykNCldlIGFscmVhZHkg
+dXNlIHRoaXMgbnVtYmVyIGFzIFMzQ0ZCX1dJTl9QT1NJVElPTi4NCj4gKw0KPiAgLyoqDQo+ICAg
+KiBzdHJ1Y3QgczNjX2ZiX3BkX3dpbiAtIHBlciB3aW5kb3cgc2V0dXAgZGF0YQ0KPiAgICogQHdp
+bl9tb2RlOiBUaGUgZGlzcGxheSBwYXJhbWV0ZXJzIHRvIGluaXRpYWxpc2UgKG5vdCBmb3Igd2lu
+ZG93IDApDQo+IEBAIC0zNSw2ICs0Nyw4IEBAIHN0cnVjdCBzM2NfZmJfcGRfd2luIHsNCj4gIAl1
+bnNpZ25lZCBzaG9ydAkJbWF4X2JwcDsNCj4gIAl1bnNpZ25lZCBzaG9ydAkJdmlydHVhbF94Ow0K
+PiAgCXVuc2lnbmVkIHNob3J0CQl2aXJ0dWFsX3k7DQo+ICsNCj4gKwlzdHJ1Y3QgczNjZmJfd2lu
+ZG93X3BvcwkJd2lucG9zOw0KPiAgfTsNCj4gDQo+ICAvKioNCj4gLS0NCj4gMS43LjAuNA0KDQoN
+Cg==
