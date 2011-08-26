@@ -1,100 +1,152 @@
-From: JinGoo Han <jg1.han@samsung.com>
-Subject: RE: [PATCH 2/2] video: s3c-fb: Modify s3c-fb driver to support window
- positioning
-Date: Fri, 26 Aug 2011 00:44:08 +0000 (GMT)
-Message-ID: <14401983.184721314319448396.JavaMail.weblogic@epv6ml01>
-Reply-To: jg1.han@samsung.com
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [GIT PULL] Samsung Fixes for v3.1-rc3
+Date: Fri, 26 Aug 2011 10:14:47 +0900
+Message-ID: <073301cc638d$8c95ae20$a5c10a60$%kim@samsung.com>
+References: <005401cc5e80$d494d410$7dbe7c30$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:49477 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752318Ab1HZAoK (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:30062 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753954Ab1HZBOv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Aug 2011 20:44:10 -0400
-Received: from epcpsbge3.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Thu, 25 Aug 2011 21:14:51 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LQI00MMIFC9AVH0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 26 Aug 2011 09:44:08 +0900 (KST)
-MIME-version: 1.0
+ 2010)) with ESMTP id <0LQI00FIEGSDTP80@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 26 Aug 2011 10:14:48 +0900 (KST)
+Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
+ by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LQI005CJGSO0J@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 26 Aug 2011 10:14:48 +0900 (KST)
+In-reply-to: <005401cc5e80$d494d410$7dbe7c30$%kim@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger>
-Cc: "FlorianSchandinat@gmx.de" <FlorianSchandinat@gmx.de>, "lethal@linux-sh.org" <lethal@linux-sh.org>, Marek Szyprowski <m.szyprowski@samsung.com>, "ben-linux@fluff.org" <ben-linux@fluff.org>, BANAJIT GOSWAMI <banajit.g@samsung.com>
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>
 
-SGksIEFqYXkuDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEFqYXkgS3Vt
-YXIgW21haWx0bzphamF5a3VtYXIucnNAc2Ftc3VuZy5jb21dDQo+IFNlbnQ6IEZyaWRheSwgQXVn
-dXN0IDI2LCAyMDExIDQ6NTIgQU0NCj4gVG86IGxpbnV4LXNhbXN1bmctc29jQHZnZXIua2VybmVs
-Lm9yZzsgbGludXgtZmJkZXZAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gYXJtLWtlcm5lbEBs
-aXN0cy5pbmZyYWRlYWQub3JnDQo+IENjOiBGbG9yaWFuU2NoYW5kaW5hdEBnbXguZGU7IGxldGhh
-bEBsaW51eC1zaC5vcmc7IGpnMS5oYW5Ac2Ftc3VuZy5jb207DQo+IG0uc3p5cHJvd3NraUBzYW1z
-dW5nLmNvbTsgYmVuLWxpbnV4QGZsdWZmLm9yZzsgYmFuYWppdC5nQHNhbXN1bmcuY29tDQo+IFN1
-YmplY3Q6IFtQQVRDSCAyLzJdIHZpZGVvOiBzM2MtZmI6IE1vZGlmeSBzM2MtZmIgZHJpdmVyIHRv
-IHN1cHBvcnQgd2luZG93DQo+IHBvc2l0aW9uaW5nDQo+IA0KPiBUaGlzIHBhdGNoIG1vZGlmaWVz
-IHRoZSBleGlzdGluZyBzM2MtZmIgZHJpdmVyIHRvIHByb3ZpZGUNCj4gZmxleGliaWxpdHkgdG8g
-dGhlIHVzZXIgdG8gcmVwb3NpdGlvbiB0aGUgZnJhbWVidWZmZXIgd2luZG93cy4NCj4gDQo+IFNp
-Z25lZC1vZmYtYnk6IEFqYXkgS3VtYXIgPGFqYXlrdW1hci5yc0BzYW1zdW5nLmNvbT4NCj4gU2ln
-bmVkLW9mZi1ieTogQmFuYWppdCBHb3N3YW1pIDxiYW5haml0LmdAc2Ftc3VuZy5jb20+DQo+IC0t
-LQ0KPiAgZHJpdmVycy92aWRlby9zM2MtZmIuYyB8ICAgMzcgKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKystLS0tLQ0KPiAgMSBmaWxlcyBjaGFuZ2VkLCAzMiBpbnNlcnRpb25zKCspLCA1
-IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdmlkZW8vczNjLWZiLmMg
-Yi9kcml2ZXJzL3ZpZGVvL3MzYy1mYi5jDQo+IGluZGV4IDBmZGEyNTIuLjQxMTc5ZDcgMTAwNjQ0
-DQo+IC0tLSBhL2RyaXZlcnMvdmlkZW8vczNjLWZiLmMNCj4gKysrIGIvZHJpdmVycy92aWRlby9z
-M2MtZmIuYw0KPiBAQCAtNDQyLDYgKzQ0Miw3IEBAIHN0YXRpYyBpbnQgczNjX2ZiX3NldF9wYXIo
-c3RydWN0IGZiX2luZm8gKmluZm8pDQo+ICAJc3RydWN0IGZiX3Zhcl9zY3JlZW5pbmZvICp2YXIg
-PSAmaW5mby0+dmFyOw0KPiAgCXN0cnVjdCBzM2NfZmJfd2luICp3aW4gPSBpbmZvLT5wYXI7DQo+
-ICAJc3RydWN0IHMzY19mYiAqc2ZiID0gd2luLT5wYXJlbnQ7DQo+ICsJc3RydWN0IHMzY2ZiX3dp
-bmRvd19wb3MgKndpbnBvcyA9ICZ3aW4tPndpbmRhdGEtPndpbnBvczsNCj4gIAl2b2lkIF9faW9t
-ZW0gKnJlZ3MgPSBzZmItPnJlZ3M7DQo+ICAJdm9pZCBfX2lvbWVtICpidWYgPSByZWdzOw0KPiAg
-CWludCB3aW5fbm8gPSB3aW4tPmluZGV4Ow0KPiBAQCAtNTM5LDEyICs1NDAsMTMgQEAgc3RhdGlj
-IGludCBzM2NfZmJfc2V0X3BhcihzdHJ1Y3QgZmJfaW5mbyAqaW5mbykNCj4gDQo+ICAJLyogd3Jp
-dGUgJ09TRCcgcmVnaXN0ZXJzIHRvIGNvbnRyb2wgcG9zaXRpb24gb2YgZnJhbWVidWZmZXIgKi8N
-Cj4gDQo+IC0JZGF0YSA9IFZJRE9TRHhBX1RPUExFRlRfWCgwKSB8IFZJRE9TRHhBX1RPUExFRlRf
-WSgwKTsNCj4gKwlkYXRhID0gVklET1NEeEFfVE9QTEVGVF9YKHdpbnBvcy0+d2luX3Bvc194KSB8
-DQo+ICsJICAgICAgIFZJRE9TRHhBX1RPUExFRlRfWSh3aW5wb3MtPndpbl9wb3NfeSk7DQo+ICAJ
-d3JpdGVsKGRhdGEsIHJlZ3MgKyBWSURPU0RfQSh3aW5fbm8sIHNmYi0+dmFyaWFudCkpOw0KPiAN
-Cj4gLQlkYXRhID0gVklET1NEeEJfQk9UUklHSFRfWChzM2NfZmJfYWxpZ25fd29yZCh2YXItPmJp
-dHNfcGVyX3BpeGVsLA0KPiAtCQkJCQkJICAgICB2YXItPnhyZXMgLSAxKSkgfA0KPiAtCSAgICAg
-ICBWSURPU0R4Ql9CT1RSSUdIVF9ZKHZhci0+eXJlcyAtIDEpOw0KPiArCWRhdGEgPSBWSURPU0R4
-Ql9CT1RSSUdIVF9YKChzM2NfZmJfYWxpZ25fd29yZCh2YXItPmJpdHNfcGVyX3BpeGVsLA0KPiAr
-CSAgICAgICAod2lucG9zLT53aW5fcG9zX3ggKyB2YXItPnhyZXMgLSAxKSkpKSB8DQo+ICsJICAg
-ICAgIFZJRE9TRHhCX0JPVFJJR0hUX1koKHdpbnBvcy0+d2luX3Bvc195ICsgdmFyLT55cmVzIC0g
-MSkpOw0KPiANCj4gIAl3cml0ZWwoZGF0YSwgcmVncyArIFZJRE9TRF9CKHdpbl9ubywgc2ZiLT52
-YXJpYW50KSk7DQo+IA0KPiBAQCAtOTk5LDggKzEwMDEsMTAgQEAgc3RhdGljIGludCBzM2NfZmJf
-aW9jdGwoc3RydWN0IGZiX2luZm8gKmluZm8sDQo+IHVuc2lnbmVkIGludCBjbWQsDQo+ICB7DQo+
-ICAJc3RydWN0IHMzY19mYl93aW4gKndpbiA9IGluZm8tPnBhcjsNCj4gIAlzdHJ1Y3QgczNjX2Zi
-ICpzZmIgPSB3aW4tPnBhcmVudDsNCj4gLQlpbnQgcmV0Ow0KPiArCXN0cnVjdCBzM2NmYl93aW5k
-b3dfcG9zICp3aW5wb3MgPSAmd2luLT53aW5kYXRhLT53aW5wb3M7DQo+ICsJaW50IHJldCA9IDA7
-DQo+ICAJdTMyIGNydGM7DQo+ICsJdTMyIGRhdGE7DQo+IA0KPiAgCXN3aXRjaCAoY21kKSB7DQo+
-ICAJY2FzZSBGQklPX1dBSVRGT1JWU1lOQzoNCj4gQEAgLTEwMTEsNiArMTAxNSwyOSBAQCBzdGF0
-aWMgaW50IHMzY19mYl9pb2N0bChzdHJ1Y3QgZmJfaW5mbyAqaW5mbywNCj4gdW5zaWduZWQgaW50
-IGNtZCwNCj4gDQo+ICAJCXJldCA9IHMzY19mYl93YWl0X2Zvcl92c3luYyhzZmIsIGNydGMpOw0K
-PiAgCQlicmVhazsNCj4gKwljYXNlIFMzQ0ZCX1dJTl9QT1NJVElPTjoNCj4gKwkJaWYgKGNvcHlf
-ZnJvbV91c2VyKHdpbnBvcywgKHUzMiBfX3VzZXIgKilhcmcsDQo+ICsJCQkJCXNpemVvZihzdHJ1
-Y3QgczNjZmJfd2luZG93X3BvcykpKSB7DQo+ICsJCQlyZXQgPSAtRUZBVUxUOw0KPiArCQkJYnJl
-YWs7DQo+ICsJCX0NCj4gKw0KPiArCQlzaGFkb3dfcHJvdGVjdF93aW4od2luLCAxKTsNCj4gKw0K
-PiArCQkvKiB3cml0ZSAnT1NEJyByZWdpc3RlcnMgdG8gc2V0IHBvc2l0aW9uIG9mIHRoZSB3aW5k
-b3cgKi8NCj4gKwkJZGF0YSA9IFZJRE9TRHhBX1RPUExFRlRfWCh3aW5wb3MtPndpbl9wb3NfeCkg
-fA0KPiArCQkgICAgICAgVklET1NEeEFfVE9QTEVGVF9ZKHdpbnBvcy0+d2luX3Bvc195KTsNCj4g
-KwkJd3JpdGVsKGRhdGEsIHNmYi0+cmVncyArIFZJRE9TRF9BKHdpbi0+aW5kZXgsIHNmYi0+dmFy
-aWFudCkpOw0KPiArDQo+ICsJCWRhdGEgPSBWSURPU0R4Ql9CT1RSSUdIVF9YKA0KPiArCQkJCXMz
-Y19mYl9hbGlnbl93b3JkKGluZm8tPnZhci5iaXRzX3Blcl9waXhlbCwNCj4gKwkJCQkod2lucG9z
-LT53aW5fcG9zX3ggKyBpbmZvLT52YXIueHJlcyAtIDEpKSk7DQo+ICsJCWRhdGEgfD0JVklET1NE
-eEJfQk9UUklHSFRfWSh3aW5wb3MtPndpbl9wb3NfeSArDQo+ICsJCQkJaW5mby0+dmFyLnlyZXMg
-LSAxKTsNCj4gKwkJd3JpdGVsKGRhdGEsIHNmYi0+cmVncyArIFZJRE9TRF9CKHdpbi0+aW5kZXgs
-IHNmYi0+dmFyaWFudCkpOw0KPiArDQo+ICsJCXNoYWRvd19wcm90ZWN0X3dpbih3aW4sIDApOw0K
-PiArCQlicmVhazsNCkNhbiB5b3UgbW92ZSB0aGlzIHRvIHNlcGFyYXRlIGZ1bmN0aW9uPw0KSW4g
-bXkgb3BpbmlvbiwgaXQgd291bGQgYmUgYmV0dGVyIGZvciByZWFkYWJpbGl0eSBhbmQgY29uc2lz
-dGVuY3kuDQpBbHNvLCBGQklPX1dBSVRGT1JWU1lOQyBoYXMgYmVlbiBpbXBsZW1lbnRlZCBpbiB0
-aGlzIHdheS4NCgkJcmV0ID0gczNjX2ZiX3dhaXRfZm9yX3ZzeW5jKHNmYiwgY3J0Yyk7DQpIb3cg
-YWJvdXQgYWRkaW5nIGEgZnVuY3Rpb24gJ3MzY19mYl9zZXRfd2luZG93X3Bvc2l0aW9uJyBmb3Ig
-dGhpcyBhcyBiZWxvd3M/DQoraW50IHMzY19mYl9zZXRfd2luZG93X3Bvc2l0aW9uKHN0cnVjdCBm
-Yl9pbmZvICppbmZvLA0KKwkJCQlzdHJ1Y3QgczNjZmJfd2luZG93X3BvcyB3aW5wb3MpDQoJCS4u
-Li4uLi4uDQorCWNhc2UgUzNDRkJfV0lOX1BPU0lUSU9OOg0KKwkJaWYgKGNvcHlfZnJvbV91c2Vy
-KHdpbnBvcywgKHUzMiBfX3VzZXIgKilhcmcsDQorCQkJCQlzaXplb2Yoc3RydWN0IHMzY2ZiX3dp
-bmRvd19wb3MpKSkgew0KKwkJCXJldCA9IC1FRkFVTFQ7DQorCQkJYnJlYWs7DQorCQl9DQorCQly
-ZXQgPSBzM2NfZmJfc2V0X3dpbmRvd19wb3NpdGlvbihpbmZvLCB3aW5wb3MpOw0KKwkJYnJlYWs7
-DQo+ICAJZGVmYXVsdDoNCj4gIAkJcmV0ID0gLUVOT1RUWTsNCj4gIAl9DQo+IC0tDQo+IDEuNy4w
-LjQNCg0KDQo=
+Kukjin Kim wrote:
+> 
+> Hi Arnd,
+> 
+> This is pull request for Samsung fixes for v3.1-rc3.
+> 
+> Please pull Samsung fixes from:
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> samsung-fixes
+> 
+> These things are for _real_ fixing.
+> 
+> And as a note, following is only for v3.1:
+> 
+> 5d747c6 ARM: S5P: fix bug in spdif_clk_get_rate
+> 3f6065d ARM: S5P: add required chained_irq_enter/exit to gpio-int code
+> 70b0e82 ARM: EXYNOS4: add required chained_irq_enter/exit to eint code
+> 995b528 ARM: SAMSUNG: Add chained enrty/exit call to timer interrupt
+handler
+> 7e1291d ARM: S5PV210: Fix build warning
+> 5a1993f ARM: EXYNOS4: Fix the IRQ definitions for MIPI CSIS device
+> 6b875cb ARM: EXYNOS4: remove duplicated inclusion
+> af8a9f6 ARM: EXYNOS4: Fix wrong devname to support clkdev
+> b8a297d ARM: SAMSUNG: Fix Section mismatch in samsung_bl_set()
+> ac0d151 ARM: S5P64X0: Replace irq_gc_ack() with irq_gc_ack_set_bit()
+> 
+> Of course, others should be fixed on stable kernel.
+> 
+> f98d429 ARM: S3C64XX: Fix build break in PM debug
+> d2edddf ARM: EXYNOS4: Add restart hook for proper reboot
+> 2b431ff ARM: EXYNOS4: Increase reset delay for USB HOST PHY
+> c1a238a ARM: EXYNOS4: Use the correct regulator names on universal_c210
+> 
+> So will send above to stable@kernel.org soon.
+> 
+> If any problems, please let me know.
+> 
+
+Hi Arnd, any problem?
+I can't find this yet in your -fixes branch.
+
+As you said before, if there are fixes in -fixes branch, it should be
+handled faster than others.
+Maybe missed? Or should I need to send this to Linus directly?...
+I think, that should be fixed now and there is no dependency with other ARM
+stuff.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+
+> Thanks.
+> 
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+> 
+> The following changes since commit
+> 93ee7a9340d64f20295aacc3fb6a22b759323280:
+> 
+>   Linux 3.1-rc2 (2011-08-14 15:09:08 -0700)
+> 
+> are available in the git repository at:
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> samsung-fixes
+> 
+> Abhilash Kesavan (2):
+>       ARM: S5PV210: Fix build warning
+>       ARM: S3C64XX: Fix build break in PM debug
+> 
+> Huang Weiyi (1):
+>       ARM: EXYNOS4: remove duplicated inclusion
+> 
+> Jonghwan Choi (1):
+>       ARM: EXYNOS4: Fix wrong devname to support clkdev
+> 
+> Kukjin Kim (2):
+>       ARM: S5P64X0: Replace irq_gc_ack() with irq_gc_ack_set_bit()
+>       ARM: SAMSUNG: Fix Section mismatch in samsung_bl_set()
+> 
+> Kyungmin Park (2):
+>       ARM: EXYNOS4: Use the correct regulator names on universal_c210
+>       ARM: EXYNOS4: Add restart hook for proper reboot
+> 
+> Marek Szyprowski (3):
+>       ARM: SAMSUNG: Add chained enrty/exit call to timer interrupt handler
+>       ARM: EXYNOS4: add required chained_irq_enter/exit to eint code
+>       ARM: S5P: add required chained_irq_enter/exit to gpio-int code
+> 
+> Naveen Krishna Chatradhi (1):
+>       ARM: S5P: fix bug in spdif_clk_get_rate
+> 
+> Sylwester Nawrocki (1):
+>       ARM: EXYNOS4: Fix the IRQ definitions for MIPI CSIS device
+> 
+> Yulgon Kim (1):
+>       ARM: EXYNOS4: Increase reset delay for USB HOST PHY
+> 
+>  arch/arm/mach-exynos4/clock.c                  |    2 +-
+>  arch/arm/mach-exynos4/cpu.c                    |   11 ++++++++++-
+>  arch/arm/mach-exynos4/include/mach/irqs.h      |    5 ++---
+>  arch/arm/mach-exynos4/include/mach/regs-pmu.h  |    2 ++
+>  arch/arm/mach-exynos4/irq-eint.c               |    7 +++++++
+>  arch/arm/mach-exynos4/mach-universal_c210.c    |    4 ++--
+>  arch/arm/mach-exynos4/setup-usb-phy.c          |    2 +-
+>  arch/arm/mach-s3c64xx/pm.c                     |    1 +
+>  arch/arm/mach-s5p64x0/irq-eint.c               |    2 +-
+>  arch/arm/mach-s5pv210/pm.c                     |    2 +-
+>  arch/arm/plat-s5p/clock.c                      |    2 +-
+>  arch/arm/plat-s5p/irq-gpioint.c                |    6 ++++++
+>  arch/arm/plat-samsung/include/plat/backlight.h |    2 +-
+>  arch/arm/plat-samsung/irq-vic-timer.c          |    5 +++++
+>  14 files changed, 41 insertions(+), 12 deletions(-)
+> 
+> --
