@@ -1,63 +1,35 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: RE: [PATCH 1/2] ARM: SAMSUNG: Add Window Positioning Support for
- s3c-fb driver
-Date: Fri, 26 Aug 2011 05:56:44 +0000 (GMT)
-Message-ID: <21291097.203481314338204818.JavaMail.weblogic@epml27>
-Reply-To: jg1.han@samsung.com
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] Samsung Fixes for v3.1-rc3
+Date: Fri, 26 Aug 2011 08:00:53 +0200
+Message-ID: <23495754.V4KN876AQp@wuerfel>
+References: <005401cc5e80$d494d410$7dbe7c30$%kim@samsung.com> <073301cc638d$8c95ae20$a5c10a60$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:57289 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751249Ab1HZF47 (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.9]:49705 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752850Ab1HZGBi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Aug 2011 01:56:59 -0400
-Received: from epcpsbge8.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LQI00BLBTUKK640@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 26 Aug 2011 14:56:45 +0900 (KST)
-MIME-version: 1.0
+	Fri, 26 Aug 2011 02:01:38 -0400
+In-Reply-To: <073301cc638d$8c95ae20$a5c10a60$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "FlorianSchandinat@gmx.de" <FlorianSchandinat@gmx.de>, "lethal@linux-sh.org" <lethal@linux-sh.org>, Jingoo Han <jg1.han@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "ben-linux@fluff.org" <ben-linux@fluff.org>, BANAJIT GOSWAMI <banajit.g@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Russell King' <rmk+kernel@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>
 
-DQpIaSwgQWpheS4NCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQWpheSBL
-dW1hciBbbWFpbHRvOmFqYXlrdW1hci5yc0BzYW1zdW5nLmNvbV0NCj4gU2VudDogRnJpZGF5LCBB
-dWd1c3QgMjYsIDIwMTEgNDo1MiBBTQ0KPiBUbzogbGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJu
-ZWwub3JnOyBsaW51eC1mYmRldkB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBhcm0ta2VybmVs
-QGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gQ2M6IEZsb3JpYW5TY2hhbmRpbmF0QGdteC5kZTsgbGV0
-aGFsQGxpbnV4LXNoLm9yZzsgamcxLmhhbkBzYW1zdW5nLmNvbTsNCj4gbS5zenlwcm93c2tpQHNh
-bXN1bmcuY29tOyBiZW4tbGludXhAZmx1ZmYub3JnOyBiYW5haml0LmdAc2Ftc3VuZy5jb20NCj4g
-U3ViamVjdDogW1BBVENIIDEvMl0gQVJNOiBTQU1TVU5HOiBBZGQgV2luZG93IFBvc2l0aW9uaW5n
-IFN1cHBvcnQgZm9yIHMzYy0NCj4gZmIgZHJpdmVyDQo+IA0KPiBUaGlzIHBhdGNoOg0KPiAJLS1h
-ZGRzIGEgZGF0YS1zdHJ1Y3R1cmUgdG8gaG9sZCB0aGUgY3VycmVudCBwb3NpdGlvbiBvZiB3aW5k
-b3dzLg0KPiAJLS1hZGRzIGFuIGlvY3RsIG51bWJlciB0byBzdXBwb3J0IGR5bmFtaWMgcG9zaXRp
-b25pbmcgdGhlIHdpbmRvd3MuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBBamF5IEt1bWFyIDxhamF5
-a3VtYXIucnNAc2Ftc3VuZy5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IEJhbmFqaXQgR29zd2FtaSA8
-YmFuYWppdC5nQHNhbXN1bmcuY29tPg0KPiAtLS0NCj4gIGFyY2gvYXJtL3BsYXQtc2Ftc3VuZy9p
-bmNsdWRlL3BsYXQvZmIuaCB8ICAgMTQgKysrKysrKysrKysrKysNCj4gIDEgZmlsZXMgY2hhbmdl
-ZCwgMTQgaW5zZXJ0aW9ucygrKSwgMCBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9h
-cmNoL2FybS9wbGF0LXNhbXN1bmcvaW5jbHVkZS9wbGF0L2ZiLmggYi9hcmNoL2FybS9wbGF0LQ0K
-PiBzYW1zdW5nL2luY2x1ZGUvcGxhdC9mYi5oDQo+IGluZGV4IGJkNzljMGEuLjc3ZWQ3NWMgMTAw
-NjQ0DQo+IC0tLSBhL2FyY2gvYXJtL3BsYXQtc2Ftc3VuZy9pbmNsdWRlL3BsYXQvZmIuaA0KPiAr
-KysgYi9hcmNoL2FybS9wbGF0LXNhbXN1bmcvaW5jbHVkZS9wbGF0L2ZiLmgNCj4gQEAgLTIyLDYg
-KzIyLDE4IEBADQo+ICAgKi8NCj4gICNkZWZpbmUgUzNDX0ZCX01BWF9XSU4JKDUpDQo+IA0KPiAr
-Lyogc3RydWN0IHMzY2ZiX3dpbmRvd19wb3MNCj4gKyAqIEB3aW5fcG9zX3g6IFgtY29vcmRpbmF0
-ZSBvZiB3aW5kb3cgZnJvbSB0aGUgbGVmdC4NCj4gKyAqIEB3aW5fcG9zX3k6IFktY29vcmRpbmF0
-ZSBvZiB3aW5kb3cgZnJvbSB0aGUgdG9wLg0KPiArICovDQo+ICtzdHJ1Y3QgczNjZmJfd2luZG93
-X3BvcyB7DQo+ICsJaW50CXdpbl9wb3NfeDsNCj4gKwlpbnQJd2luX3Bvc195Ow0KPiArfTsNCj4g
-Kw0KPiArLyogQ3VzdG9tIGlvY3RsICovDQo+ICsjZGVmaW5lIFMzQ0ZCX1dJTl9QT1NJVElPTglf
-SU9XKCdGJywgMSwgc3RydWN0IHMzY2ZiX3dpbmRvd19wb3MpDQpDYW4geW91IGNoYW5nZSB0aGUg
-bnVtYmVyIGZyb20gMSB0byAyMDMgYXMgZm9sbG93cz8NCisjZGVmaW5lIFMzQ0ZCX1dJTl9QT1NJ
-VElPTglfSU9XKCdGJywgMjAzLCBzdHJ1Y3QgczNjZmJfd2luZG93X3BvcykNCldlIGFscmVhZHkg
-dXNlIHRoaXMgbnVtYmVyIGFzIFMzQ0ZCX1dJTl9QT1NJVElPTi4NCj4gKw0KPiAgLyoqDQo+ICAg
-KiBzdHJ1Y3QgczNjX2ZiX3BkX3dpbiAtIHBlciB3aW5kb3cgc2V0dXAgZGF0YQ0KPiAgICogQHdp
-bl9tb2RlOiBUaGUgZGlzcGxheSBwYXJhbWV0ZXJzIHRvIGluaXRpYWxpc2UgKG5vdCBmb3Igd2lu
-ZG93IDApDQo+IEBAIC0zNSw2ICs0Nyw4IEBAIHN0cnVjdCBzM2NfZmJfcGRfd2luIHsNCj4gIAl1
-bnNpZ25lZCBzaG9ydAkJbWF4X2JwcDsNCj4gIAl1bnNpZ25lZCBzaG9ydAkJdmlydHVhbF94Ow0K
-PiAgCXVuc2lnbmVkIHNob3J0CQl2aXJ0dWFsX3k7DQo+ICsNCj4gKwlzdHJ1Y3QgczNjZmJfd2lu
-ZG93X3BvcwkJd2lucG9zOw0KPiAgfTsNCj4gDQo+ICAvKioNCj4gLS0NCj4gMS43LjAuNA0KDQoN
-Cg==
+On Friday 26 August 2011 10:14:47 Kukjin Kim wrote:
+> 
+> Hi Arnd, any problem?
+> I can't find this yet in your -fixes branch.
+> 
+> As you said before, if there are fixes in -fixes branch, it should be
+> handled faster than others.
+> Maybe missed? Or should I need to send this to Linus directly?...
+> I think, that should be fixed now and there is no dependency with other ARM
+> stuff.
+
+Everything is right on your side, I apologize for being slow here.
+I'll try to handle it today.
+
+	Arnd
