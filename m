@@ -1,48 +1,100 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: EXYNOS4: Fix routing timer interrupt to offline CPU
-Date: Fri, 26 Aug 2011 09:00:39 +0900
-Message-ID: <1314316839-1242-1-git-send-email-kgene.kim@samsung.com>
+From: JinGoo Han <jg1.han@samsung.com>
+Subject: RE: [PATCH 2/2] video: s3c-fb: Modify s3c-fb driver to support window
+ positioning
+Date: Fri, 26 Aug 2011 00:44:08 +0000 (GMT)
+Message-ID: <14401983.184721314319448396.JavaMail.weblogic@epv6ml01>
+Reply-To: jg1.han@samsung.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:37342 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752318Ab1HZASO (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:49477 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752318Ab1HZAoK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Aug 2011 20:18:14 -0400
+	Thu, 25 Aug 2011 20:44:10 -0400
+Received: from epcpsbge3.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LQI00MMIFC9AVH0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 26 Aug 2011 09:44:08 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
+To: AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger>
+Cc: "FlorianSchandinat@gmx.de" <FlorianSchandinat@gmx.de>, "lethal@linux-sh.org" <lethal@linux-sh.org>, Marek Szyprowski <m.szyprowski@samsung.com>, "ben-linux@fluff.org" <ben-linux@fluff.org>, BANAJIT GOSWAMI <banajit.g@samsung.com>
 
-The commit 5dfc54e087c15f823ee9b6541d2f0f314e69cbed
-("ARM: GIC: avoid routing interrupts to offline CPUs")
-prevents routing interrupts to offline CPUs. But in
-case of timer on EXYNOS4, the irq_set_affinity() method
-is called in percpu_timer_setup() before CPU1 becomes
-online. So this patch fixes routing timer interrupt to
-offline CPU.
-
-Reported-by: Changhwan Youn <chaos.youn@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
-Hi Russell and all,
-
-I'm not sure it's safe to call set_cpu_online() here...
-
- arch/arm/mach-exynos4/platsmp.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-exynos4/platsmp.c b/arch/arm/mach-exynos4/platsmp.c
-index 96cc651..a3346e3 100644
---- a/arch/arm/mach-exynos4/platsmp.c
-+++ b/arch/arm/mach-exynos4/platsmp.c
-@@ -109,6 +109,8 @@ void __cpuinit platform_secondary_init(unsigned int cpu)
- 	 */
- 	spin_lock(&boot_lock);
- 	spin_unlock(&boot_lock);
-+
-+	set_cpu_online(cpu, true);
- }
- 
- int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
--- 
-1.7.1
+SGksIEFqYXkuDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IEFqYXkgS3Vt
+YXIgW21haWx0bzphamF5a3VtYXIucnNAc2Ftc3VuZy5jb21dDQo+IFNlbnQ6IEZyaWRheSwgQXVn
+dXN0IDI2LCAyMDExIDQ6NTIgQU0NCj4gVG86IGxpbnV4LXNhbXN1bmctc29jQHZnZXIua2VybmVs
+Lm9yZzsgbGludXgtZmJkZXZAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gYXJtLWtlcm5lbEBs
+aXN0cy5pbmZyYWRlYWQub3JnDQo+IENjOiBGbG9yaWFuU2NoYW5kaW5hdEBnbXguZGU7IGxldGhh
+bEBsaW51eC1zaC5vcmc7IGpnMS5oYW5Ac2Ftc3VuZy5jb207DQo+IG0uc3p5cHJvd3NraUBzYW1z
+dW5nLmNvbTsgYmVuLWxpbnV4QGZsdWZmLm9yZzsgYmFuYWppdC5nQHNhbXN1bmcuY29tDQo+IFN1
+YmplY3Q6IFtQQVRDSCAyLzJdIHZpZGVvOiBzM2MtZmI6IE1vZGlmeSBzM2MtZmIgZHJpdmVyIHRv
+IHN1cHBvcnQgd2luZG93DQo+IHBvc2l0aW9uaW5nDQo+IA0KPiBUaGlzIHBhdGNoIG1vZGlmaWVz
+IHRoZSBleGlzdGluZyBzM2MtZmIgZHJpdmVyIHRvIHByb3ZpZGUNCj4gZmxleGliaWxpdHkgdG8g
+dGhlIHVzZXIgdG8gcmVwb3NpdGlvbiB0aGUgZnJhbWVidWZmZXIgd2luZG93cy4NCj4gDQo+IFNp
+Z25lZC1vZmYtYnk6IEFqYXkgS3VtYXIgPGFqYXlrdW1hci5yc0BzYW1zdW5nLmNvbT4NCj4gU2ln
+bmVkLW9mZi1ieTogQmFuYWppdCBHb3N3YW1pIDxiYW5haml0LmdAc2Ftc3VuZy5jb20+DQo+IC0t
+LQ0KPiAgZHJpdmVycy92aWRlby9zM2MtZmIuYyB8ICAgMzcgKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKystLS0tLQ0KPiAgMSBmaWxlcyBjaGFuZ2VkLCAzMiBpbnNlcnRpb25zKCspLCA1
+IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdmlkZW8vczNjLWZiLmMg
+Yi9kcml2ZXJzL3ZpZGVvL3MzYy1mYi5jDQo+IGluZGV4IDBmZGEyNTIuLjQxMTc5ZDcgMTAwNjQ0
+DQo+IC0tLSBhL2RyaXZlcnMvdmlkZW8vczNjLWZiLmMNCj4gKysrIGIvZHJpdmVycy92aWRlby9z
+M2MtZmIuYw0KPiBAQCAtNDQyLDYgKzQ0Miw3IEBAIHN0YXRpYyBpbnQgczNjX2ZiX3NldF9wYXIo
+c3RydWN0IGZiX2luZm8gKmluZm8pDQo+ICAJc3RydWN0IGZiX3Zhcl9zY3JlZW5pbmZvICp2YXIg
+PSAmaW5mby0+dmFyOw0KPiAgCXN0cnVjdCBzM2NfZmJfd2luICp3aW4gPSBpbmZvLT5wYXI7DQo+
+ICAJc3RydWN0IHMzY19mYiAqc2ZiID0gd2luLT5wYXJlbnQ7DQo+ICsJc3RydWN0IHMzY2ZiX3dp
+bmRvd19wb3MgKndpbnBvcyA9ICZ3aW4tPndpbmRhdGEtPndpbnBvczsNCj4gIAl2b2lkIF9faW9t
+ZW0gKnJlZ3MgPSBzZmItPnJlZ3M7DQo+ICAJdm9pZCBfX2lvbWVtICpidWYgPSByZWdzOw0KPiAg
+CWludCB3aW5fbm8gPSB3aW4tPmluZGV4Ow0KPiBAQCAtNTM5LDEyICs1NDAsMTMgQEAgc3RhdGlj
+IGludCBzM2NfZmJfc2V0X3BhcihzdHJ1Y3QgZmJfaW5mbyAqaW5mbykNCj4gDQo+ICAJLyogd3Jp
+dGUgJ09TRCcgcmVnaXN0ZXJzIHRvIGNvbnRyb2wgcG9zaXRpb24gb2YgZnJhbWVidWZmZXIgKi8N
+Cj4gDQo+IC0JZGF0YSA9IFZJRE9TRHhBX1RPUExFRlRfWCgwKSB8IFZJRE9TRHhBX1RPUExFRlRf
+WSgwKTsNCj4gKwlkYXRhID0gVklET1NEeEFfVE9QTEVGVF9YKHdpbnBvcy0+d2luX3Bvc194KSB8
+DQo+ICsJICAgICAgIFZJRE9TRHhBX1RPUExFRlRfWSh3aW5wb3MtPndpbl9wb3NfeSk7DQo+ICAJ
+d3JpdGVsKGRhdGEsIHJlZ3MgKyBWSURPU0RfQSh3aW5fbm8sIHNmYi0+dmFyaWFudCkpOw0KPiAN
+Cj4gLQlkYXRhID0gVklET1NEeEJfQk9UUklHSFRfWChzM2NfZmJfYWxpZ25fd29yZCh2YXItPmJp
+dHNfcGVyX3BpeGVsLA0KPiAtCQkJCQkJICAgICB2YXItPnhyZXMgLSAxKSkgfA0KPiAtCSAgICAg
+ICBWSURPU0R4Ql9CT1RSSUdIVF9ZKHZhci0+eXJlcyAtIDEpOw0KPiArCWRhdGEgPSBWSURPU0R4
+Ql9CT1RSSUdIVF9YKChzM2NfZmJfYWxpZ25fd29yZCh2YXItPmJpdHNfcGVyX3BpeGVsLA0KPiAr
+CSAgICAgICAod2lucG9zLT53aW5fcG9zX3ggKyB2YXItPnhyZXMgLSAxKSkpKSB8DQo+ICsJICAg
+ICAgIFZJRE9TRHhCX0JPVFJJR0hUX1koKHdpbnBvcy0+d2luX3Bvc195ICsgdmFyLT55cmVzIC0g
+MSkpOw0KPiANCj4gIAl3cml0ZWwoZGF0YSwgcmVncyArIFZJRE9TRF9CKHdpbl9ubywgc2ZiLT52
+YXJpYW50KSk7DQo+IA0KPiBAQCAtOTk5LDggKzEwMDEsMTAgQEAgc3RhdGljIGludCBzM2NfZmJf
+aW9jdGwoc3RydWN0IGZiX2luZm8gKmluZm8sDQo+IHVuc2lnbmVkIGludCBjbWQsDQo+ICB7DQo+
+ICAJc3RydWN0IHMzY19mYl93aW4gKndpbiA9IGluZm8tPnBhcjsNCj4gIAlzdHJ1Y3QgczNjX2Zi
+ICpzZmIgPSB3aW4tPnBhcmVudDsNCj4gLQlpbnQgcmV0Ow0KPiArCXN0cnVjdCBzM2NmYl93aW5k
+b3dfcG9zICp3aW5wb3MgPSAmd2luLT53aW5kYXRhLT53aW5wb3M7DQo+ICsJaW50IHJldCA9IDA7
+DQo+ICAJdTMyIGNydGM7DQo+ICsJdTMyIGRhdGE7DQo+IA0KPiAgCXN3aXRjaCAoY21kKSB7DQo+
+ICAJY2FzZSBGQklPX1dBSVRGT1JWU1lOQzoNCj4gQEAgLTEwMTEsNiArMTAxNSwyOSBAQCBzdGF0
+aWMgaW50IHMzY19mYl9pb2N0bChzdHJ1Y3QgZmJfaW5mbyAqaW5mbywNCj4gdW5zaWduZWQgaW50
+IGNtZCwNCj4gDQo+ICAJCXJldCA9IHMzY19mYl93YWl0X2Zvcl92c3luYyhzZmIsIGNydGMpOw0K
+PiAgCQlicmVhazsNCj4gKwljYXNlIFMzQ0ZCX1dJTl9QT1NJVElPTjoNCj4gKwkJaWYgKGNvcHlf
+ZnJvbV91c2VyKHdpbnBvcywgKHUzMiBfX3VzZXIgKilhcmcsDQo+ICsJCQkJCXNpemVvZihzdHJ1
+Y3QgczNjZmJfd2luZG93X3BvcykpKSB7DQo+ICsJCQlyZXQgPSAtRUZBVUxUOw0KPiArCQkJYnJl
+YWs7DQo+ICsJCX0NCj4gKw0KPiArCQlzaGFkb3dfcHJvdGVjdF93aW4od2luLCAxKTsNCj4gKw0K
+PiArCQkvKiB3cml0ZSAnT1NEJyByZWdpc3RlcnMgdG8gc2V0IHBvc2l0aW9uIG9mIHRoZSB3aW5k
+b3cgKi8NCj4gKwkJZGF0YSA9IFZJRE9TRHhBX1RPUExFRlRfWCh3aW5wb3MtPndpbl9wb3NfeCkg
+fA0KPiArCQkgICAgICAgVklET1NEeEFfVE9QTEVGVF9ZKHdpbnBvcy0+d2luX3Bvc195KTsNCj4g
+KwkJd3JpdGVsKGRhdGEsIHNmYi0+cmVncyArIFZJRE9TRF9BKHdpbi0+aW5kZXgsIHNmYi0+dmFy
+aWFudCkpOw0KPiArDQo+ICsJCWRhdGEgPSBWSURPU0R4Ql9CT1RSSUdIVF9YKA0KPiArCQkJCXMz
+Y19mYl9hbGlnbl93b3JkKGluZm8tPnZhci5iaXRzX3Blcl9waXhlbCwNCj4gKwkJCQkod2lucG9z
+LT53aW5fcG9zX3ggKyBpbmZvLT52YXIueHJlcyAtIDEpKSk7DQo+ICsJCWRhdGEgfD0JVklET1NE
+eEJfQk9UUklHSFRfWSh3aW5wb3MtPndpbl9wb3NfeSArDQo+ICsJCQkJaW5mby0+dmFyLnlyZXMg
+LSAxKTsNCj4gKwkJd3JpdGVsKGRhdGEsIHNmYi0+cmVncyArIFZJRE9TRF9CKHdpbi0+aW5kZXgs
+IHNmYi0+dmFyaWFudCkpOw0KPiArDQo+ICsJCXNoYWRvd19wcm90ZWN0X3dpbih3aW4sIDApOw0K
+PiArCQlicmVhazsNCkNhbiB5b3UgbW92ZSB0aGlzIHRvIHNlcGFyYXRlIGZ1bmN0aW9uPw0KSW4g
+bXkgb3BpbmlvbiwgaXQgd291bGQgYmUgYmV0dGVyIGZvciByZWFkYWJpbGl0eSBhbmQgY29uc2lz
+dGVuY3kuDQpBbHNvLCBGQklPX1dBSVRGT1JWU1lOQyBoYXMgYmVlbiBpbXBsZW1lbnRlZCBpbiB0
+aGlzIHdheS4NCgkJcmV0ID0gczNjX2ZiX3dhaXRfZm9yX3ZzeW5jKHNmYiwgY3J0Yyk7DQpIb3cg
+YWJvdXQgYWRkaW5nIGEgZnVuY3Rpb24gJ3MzY19mYl9zZXRfd2luZG93X3Bvc2l0aW9uJyBmb3Ig
+dGhpcyBhcyBiZWxvd3M/DQoraW50IHMzY19mYl9zZXRfd2luZG93X3Bvc2l0aW9uKHN0cnVjdCBm
+Yl9pbmZvICppbmZvLA0KKwkJCQlzdHJ1Y3QgczNjZmJfd2luZG93X3BvcyB3aW5wb3MpDQoJCS4u
+Li4uLi4uDQorCWNhc2UgUzNDRkJfV0lOX1BPU0lUSU9OOg0KKwkJaWYgKGNvcHlfZnJvbV91c2Vy
+KHdpbnBvcywgKHUzMiBfX3VzZXIgKilhcmcsDQorCQkJCQlzaXplb2Yoc3RydWN0IHMzY2ZiX3dp
+bmRvd19wb3MpKSkgew0KKwkJCXJldCA9IC1FRkFVTFQ7DQorCQkJYnJlYWs7DQorCQl9DQorCQly
+ZXQgPSBzM2NfZmJfc2V0X3dpbmRvd19wb3NpdGlvbihpbmZvLCB3aW5wb3MpOw0KKwkJYnJlYWs7
+DQo+ICAJZGVmYXVsdDoNCj4gIAkJcmV0ID0gLUVOT1RUWTsNCj4gIAl9DQo+IC0tDQo+IDEuNy4w
+LjQNCg0KDQo=
