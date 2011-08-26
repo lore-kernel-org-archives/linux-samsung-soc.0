@@ -1,80 +1,250 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 0/6] Add device tree support for PL330 dma controller driver
-Date: Fri, 26 Aug 2011 14:10:08 +0530
-Message-ID: <1314348014-2481-1-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH 2/6] DMA: PL330: Infer transfer direction from transfer request
+ instead of platform data
+Date: Fri, 26 Aug 2011 14:10:10 +0530
+Message-ID: <1314348014-2481-3-git-send-email-thomas.abraham@linaro.org>
+References: <1314348014-2481-1-git-send-email-thomas.abraham@linaro.org>
+ <1314348014-2481-2-git-send-email-thomas.abraham@linaro.org>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:13672 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:13741 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753197Ab1HZIkb (ORCPT
+	with ESMTP id S1753532Ab1HZIkg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Aug 2011 04:40:31 -0400
+	Fri, 26 Aug 2011 04:40:36 -0400
 Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
  by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
  2010)) with ESMTP id <0LQJ00EOH1EQ9WF0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 26 Aug 2011 17:40:29 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Fri, 26 Aug 2011 17:40:35 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.37])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0LQJ005J71FB2H@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 26 Aug 2011 17:40:29 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Fri, 26 Aug 2011 17:40:35 +0900 (KST)
+In-reply-to: <1314348014-2481-2-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: devicetree-discuss@lists.ozlabs.org
 Cc: grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, jassisinghbrar@gmail.com, boojin.kim@samsung.com
 
-This patchset adds device tree support for PL330 driver and uses it
-to add device tree support for Samsung platforms, specifically Exynos4.
+The transfer direction for a channel can be inferred from the transfer
+request and the need for specifying transfer direction in platfrom data
+can be eliminated. So the structure definition 'struct dma_pl330_peri'
+is no longer required.
 
-First patch moves the pl330_filter function from Samsung specific wrappers
-to pl330 dma driver and also adds a check to ensure that the filter function
-proceeds only if it the dma channel being investigated belongs to pl330
-dma controller instance.
+The channel's private data is set to point to a channel id specified in
+the platform data (instead of an instance of type 'struct dma_pl330_peri').
+The filter function is correspondingly modified to match the channel id.
 
-Second patch adds support to infer the direction of the dma transfer
-using the direction specified with the transfer request instead of
-including this information in the platform data. This simlifies the
-addition of device tree support. Third patch simplifies the platform
-data for Exynos4 pl330 dma controllers. Similar patches simplifying
-the platform data for other Samsung platforms is under development.
+With the 'struct dma_pl330_peri' removed from platform data, the dma
+controller transfer capabilities cannot be inferred any more. Hence,
+the dma controller capabilities is specified using platform data.
 
-Fourth patch adds device tree support for pl330 dma controller driver.
-A dma channel is represented using a phandle of the dma controller
-node and the channel id within that controller. Client driver request
-a dma channel using the phandle and channel id pair. Correspondingly,
-the pl330 filter function has been modified to lookup a channel based
-on this value.
+Cc: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Boojin Kim <boojin.kim@samsung.com>
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
+---
+ drivers/dma/pl330.c        |   65 +++++++++++---------------------------------
+ include/linux/amba/pl330.h |   13 ++-------
+ 2 files changed, 19 insertions(+), 59 deletions(-)
 
-Fifth patch adds device tree support for Samsung's DMA engine wrappers.
-Client drivers retrive the channel property from their device node and
-pass it to the wrappers. The wrapper functions use the property value
-as the filter function parameter. Sixth patch restricts the usage of
-pl330 device and platform data instances to non-dt platforms.
-
-This patchset is based on Linux 3.1-rc3 with following patch sets
-applied.
-
-* To use DMA generic APIs for Samsung DMA - v7 - (15 patches)
-* ARM: Samsung: use dma-pl330 device name for clock (3 patches)
-* ARM: S5P64X0: Add the devname for DMA clock.
-* ARM: SAMSUNG: register the second instance of PL330 DMAC (3 patches)
-
-Thomas Abraham (6):
-  DMA: PL330: move filter function into driver
-  DMA: PL330: Infer transfer direction from transfer request instead of platform data
-  ARM: EXYNOS4: Modify platform data for pl330 driver
-  DMA: PL330: Add device tree support
-  ARM: SAMSUNG: Add device tree support for pl330 dma engine wrappers
-  ARM: EXYNOS4: Limit usage of pl330 device instance to non-dt build
-
- .../devicetree/bindings/dma/arm-pl330.txt          |   42 ++++
- arch/arm/mach-exynos4/Kconfig                      |    7 +
- arch/arm/mach-exynos4/Makefile                     |    3 +-
- arch/arm/mach-exynos4/dma.c                        |  223 ++++++--------------
- arch/arm/plat-samsung/dma-ops.c                    |   15 +-
- arch/arm/plat-samsung/include/plat/dma-ops.h       |    1 +
- arch/arm/plat-samsung/include/plat/dma-pl330.h     |    3 +-
- drivers/dma/pl330.c                                |  133 ++++++++----
- include/linux/amba/pl330.h                         |   15 +-
- 9 files changed, 216 insertions(+), 226 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/dma/arm-pl330.txt
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index 7df2516..9732995 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -272,13 +272,13 @@ static void dma_pl330_rqcb(void *token, enum pl330_op_err err)
+ 
+ bool pl330_filter(struct dma_chan *chan, void *param)
+ {
+-	struct dma_pl330_peri *peri;
++	u8 *peri_id;
+ 
+ 	if (chan->device->dev->driver != &pl330_driver.drv)
+ 		return false;
+ 
+-	peri = chan->private;
+-	return peri->peri_id == (unsigned)param;
++	peri_id = chan->private;
++	return *peri_id == (unsigned)param;
+ }
+ EXPORT_SYMBOL(pl330_filter);
+ 
+@@ -514,7 +514,7 @@ pluck_desc(struct dma_pl330_dmac *pdmac)
+ static struct dma_pl330_desc *pl330_get_desc(struct dma_pl330_chan *pch)
+ {
+ 	struct dma_pl330_dmac *pdmac = pch->dmac;
+-	struct dma_pl330_peri *peri = pch->chan.private;
++	u8 *peri_id = pch->chan.private;
+ 	struct dma_pl330_desc *desc;
+ 
+ 	/* Pluck one desc from the pool of DMAC */
+@@ -539,13 +539,7 @@ static struct dma_pl330_desc *pl330_get_desc(struct dma_pl330_chan *pch)
+ 	desc->txd.cookie = 0;
+ 	async_tx_ack(&desc->txd);
+ 
+-	if (peri) {
+-		desc->req.rqtype = peri->rqtype;
+-		desc->req.peri = pch->chan.chan_id;
+-	} else {
+-		desc->req.rqtype = MEMTOMEM;
+-		desc->req.peri = 0;
+-	}
++	desc->req.peri = peri_id ? pch->chan.chan_id : 0;
+ 
+ 	dma_async_tx_descriptor_init(&desc->txd, &pch->chan);
+ 
+@@ -632,12 +626,14 @@ static struct dma_async_tx_descriptor *pl330_prep_dma_cyclic(
+ 	case DMA_TO_DEVICE:
+ 		desc->rqcfg.src_inc = 1;
+ 		desc->rqcfg.dst_inc = 0;
++		desc->req.rqtype = MEMTODEV;
+ 		src = dma_addr;
+ 		dst = pch->fifo_addr;
+ 		break;
+ 	case DMA_FROM_DEVICE:
+ 		desc->rqcfg.src_inc = 0;
+ 		desc->rqcfg.dst_inc = 1;
++		desc->req.rqtype = DEVTOMEM;
+ 		src = pch->fifo_addr;
+ 		dst = dma_addr;
+ 		break;
+@@ -663,16 +659,12 @@ pl330_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dst,
+ {
+ 	struct dma_pl330_desc *desc;
+ 	struct dma_pl330_chan *pch = to_pchan(chan);
+-	struct dma_pl330_peri *peri = chan->private;
+ 	struct pl330_info *pi;
+ 	int burst;
+ 
+ 	if (unlikely(!pch || !len))
+ 		return NULL;
+ 
+-	if (peri && peri->rqtype != MEMTOMEM)
+-		return NULL;
+-
+ 	pi = &pch->dmac->pif;
+ 
+ 	desc = __pl330_prep_dma_memcpy(pch, dst, src, len);
+@@ -681,6 +673,7 @@ pl330_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dst,
+ 
+ 	desc->rqcfg.src_inc = 1;
+ 	desc->rqcfg.dst_inc = 1;
++	desc->req.rqtype = MEMTOMEM;
+ 
+ 	/* Select max possible burst size */
+ 	burst = pi->pcfg.data_bus_width / 8;
+@@ -709,24 +702,13 @@ pl330_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+ {
+ 	struct dma_pl330_desc *first, *desc = NULL;
+ 	struct dma_pl330_chan *pch = to_pchan(chan);
+-	struct dma_pl330_peri *peri = chan->private;
+ 	struct scatterlist *sg;
+ 	unsigned long flags;
+ 	int i;
+ 	dma_addr_t addr;
+ 
+-	if (unlikely(!pch || !sgl || !sg_len || !peri))
+-		return NULL;
+-
+-	/* Make sure the direction is consistent */
+-	if ((direction == DMA_TO_DEVICE &&
+-				peri->rqtype != MEMTODEV) ||
+-			(direction == DMA_FROM_DEVICE &&
+-				peri->rqtype != DEVTOMEM)) {
+-		dev_err(pch->dmac->pif.dev, "%s:%d Invalid Direction\n",
+-				__func__, __LINE__);
++	if (unlikely(!pch || !sgl || !sg_len))
+ 		return NULL;
+-	}
+ 
+ 	addr = pch->fifo_addr;
+ 
+@@ -767,11 +749,13 @@ pl330_prep_slave_sg(struct dma_chan *chan, struct scatterlist *sgl,
+ 		if (direction == DMA_TO_DEVICE) {
+ 			desc->rqcfg.src_inc = 1;
+ 			desc->rqcfg.dst_inc = 0;
++			desc->req.rqtype = MEMTODEV;
+ 			fill_px(&desc->px,
+ 				addr, sg_dma_address(sg), sg_dma_len(sg));
+ 		} else {
+ 			desc->rqcfg.src_inc = 0;
+ 			desc->rqcfg.dst_inc = 1;
++			desc->req.rqtype = DEVTOMEM;
+ 			fill_px(&desc->px,
+ 				sg_dma_address(sg), addr, sg_dma_len(sg));
+ 		}
+@@ -878,28 +862,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 
+ 	for (i = 0; i < num_chan; i++) {
+ 		pch = &pdmac->peripherals[i];
+-		if (pdat) {
+-			struct dma_pl330_peri *peri = &pdat->peri[i];
+-
+-			switch (peri->rqtype) {
+-			case MEMTOMEM:
+-				dma_cap_set(DMA_MEMCPY, pd->cap_mask);
+-				break;
+-			case MEMTODEV:
+-			case DEVTOMEM:
+-				dma_cap_set(DMA_SLAVE, pd->cap_mask);
+-				dma_cap_set(DMA_CYCLIC, pd->cap_mask);
+-				break;
+-			default:
+-				dev_err(&adev->dev, "DEVTODEV Not Supported\n");
+-				continue;
+-			}
+-			pch->chan.private = peri;
+-		} else {
+-			dma_cap_set(DMA_MEMCPY, pd->cap_mask);
+-			pch->chan.private = NULL;
+-		}
+-
++		pch->chan.private = pdat ? &pdat->peri_id[i] : NULL;
+ 		INIT_LIST_HEAD(&pch->work_list);
+ 		spin_lock_init(&pch->lock);
+ 		pch->pl330_chid = NULL;
+@@ -913,6 +876,10 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 	}
+ 
+ 	pd->dev = &adev->dev;
++	if (pdat)
++		pd->cap_mask = pdat->cap_mask;
++	else
++		dma_cap_set(DMA_MEMCPY, pd->cap_mask);
+ 
+ 	pd->device_alloc_chan_resources = pl330_alloc_chan_resources;
+ 	pd->device_free_chan_resources = pl330_free_chan_resources;
+diff --git a/include/linux/amba/pl330.h b/include/linux/amba/pl330.h
+index 6db72da..12e023c 100644
+--- a/include/linux/amba/pl330.h
++++ b/include/linux/amba/pl330.h
+@@ -15,15 +15,6 @@
+ #include <linux/dmaengine.h>
+ #include <asm/hardware/pl330.h>
+ 
+-struct dma_pl330_peri {
+-	/*
+-	 * Peri_Req i/f of the DMAC that is
+-	 * peripheral could be reached from.
+-	 */
+-	u8 peri_id; /* specific dma id */
+-	enum pl330_reqtype rqtype;
+-};
+-
+ struct dma_pl330_platdata {
+ 	/*
+ 	 * Number of valid peripherals connected to DMAC.
+@@ -34,7 +25,9 @@ struct dma_pl330_platdata {
+ 	 */
+ 	u8 nr_valid_peri;
+ 	/* Array of valid peripherals */
+-	struct dma_pl330_peri *peri;
++	u8 *peri_id;
++	/* Operational capabilities */
++	dma_cap_mask_t cap_mask;
+ 	/* Bytes to allocate for MC buffer */
+ 	unsigned mcbuf_sz;
+ };
+-- 
+1.6.6.rc2
