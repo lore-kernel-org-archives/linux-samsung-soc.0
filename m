@@ -1,118 +1,116 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [RFC PATCH 1/4] ARM: kernel: Small fixes in save/restore common
- code.
-Date: Fri, 26 Aug 2011 16:56:14 +0100
-Message-ID: <20110826155614.GB31546@e102568-lin.cambridge.arm.com>
-References: <1313759340-31319-1-git-send-email-amit.kachhap@linaro.org>
- <1313759400-31347-1-git-send-email-amit.kachhap@linaro.org>
- <20110819143345.GE2455@matterhorn1>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH 3/5] ARM: EXYNOS4: Add support PM for EXYNOS4212
+Date: Fri, 26 Aug 2011 22:36:57 +0200
+Message-ID: <201108262236.57830.rjw@sisk.pl>
+References: <1314192352-14911-1-git-send-email-kgene.kim@samsung.com>
+	<CAJ0PZbT1YsiXT9k1FJfOCoU8h_XAYqAX6ECJ_=Q0RjR-D_9yyA@mail.gmail.com>
+	<072b01cc637f$558a1190$009e34b0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([94.185.240.25]:52374 "HELO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1754376Ab1HZP4W convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Aug 2011 11:56:22 -0400
-In-Reply-To: <20110819143345.GE2455@matterhorn1>
-Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <072b01cc637f$558a1190$009e34b0$%kim@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, 'MyungJoo Ham' <myungjoo.ham@gmail.com>, 'Jonghwan Choi' <jhbird.choi@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Kucheria <amit.kucheria@linaro.org>
-Cc: Amit Daniel Kachhap <amit.kachhap@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linaro-dev@lists.linaro.org" <linaro-dev@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "patches@linaro.org" <patches@linaro.org>
 
-On Fri, Aug 19, 2011 at 03:33:45PM +0100, Amit Kucheria wrote:
-> This patch is redundant with Lorenzo's new series[1]. Adding him to cc. I
-> suggest you rebase on top of his latest series.
-> 
-
-Yes, thanks for pointing that out.
-
-> On 11 Aug 19, Amit Daniel Kachhap wrote:
-> > These changes are necessary to make the retention cpuidle state work. This adds 
-> > support for saving more L2 registers.
+On Friday, August 26, 2011, Kukjin Kim wrote:
+> MyungJoo Ham wrote:
 > > 
-> > Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-> > ---
-> >  arch/arm/common/gic.c        |    1 -
-> >  arch/arm/kernel/sr_helpers.h |    2 +-
-> >  arch/arm/mm/cache-l2x0.c     |   10 +++++++++-
-> >  3 files changed, 10 insertions(+), 3 deletions(-)
+> > On Wed, Aug 24, 2011 at 10:25 PM, Kukjin Kim <kgene.kim@samsung.com>
+> wrote:
+> > > From: Jonghwan Choi <jhbird.choi@samsung.com>
+> > >
+> > > This patch moves regarding clock stuff of PM into clock
+> > > file to support PM on EXYNOS4210 and EXYNOS4212 with one
+> > > single kernel image. Because some clock registers are
+> > > different on each SoCs.
+> > >
+> > > Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
+> > > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > > ---
+> > >  arch/arm/mach-exynos4/clock-exynos4210.c        |   38 ++++++++++
+> > >  arch/arm/mach-exynos4/clock-exynos4212.c        |   34 +++++++++
+> > >  arch/arm/mach-exynos4/clock.c                   |   89
+> > +++++++++++++++++++++++
+> > >  arch/arm/mach-exynos4/include/mach/regs-clock.h |    4 +
+> > >  arch/arm/mach-exynos4/pm.c                      |   79
+> ++------------------
+> > >  5 files changed, 172 insertions(+), 72 deletions(-)
+> > >
+> > > diff --git a/arch/arm/mach-exynos4/clock-exynos4210.c b/arch/arm/mach-
+> > exynos4/clock-exynos4210.c
+> > > index fe74b91..a4b00b7 100644
+> > > --- a/arch/arm/mach-exynos4/clock-exynos4210.c
+> > > +++ b/arch/arm/mach-exynos4/clock-exynos4210.c
+> > > +static struct sleep_save exynos4210_clock_save[] = {
+> > > +       SAVE_ITEM(S5P_CLKSRC_IMAGE),
+> > > +       SAVE_ITEM(S5P_CLKSRC_LCD1),
+> > > +       SAVE_ITEM(S5P_CLKDIV_IMAGE),
+> > > +       SAVE_ITEM(S5P_CLKDIV_LCD1),
+> > > +       SAVE_ITEM(S5P_CLKSRC_MASK_LCD1),
+> > > +       SAVE_ITEM(S5P_CLKGATE_IP_IMAGE_4210),
+> > > +       SAVE_ITEM(S5P_CLKGATE_IP_LCD1),
+> > > +       SAVE_ITEM(S5P_CLKGATE_IP_PERIR_4210),
+> > > +};
+> > > +
+> > > --- a/arch/arm/mach-exynos4/clock-exynos4212.c
+> > > +++ b/arch/arm/mach-exynos4/clock-exynos4212.c
+> > > +static struct sleep_save exynos4212_clock_save[] = {
+> > > +       SAVE_ITEM(S5P_CLKSRC_IMAGE),
+> > > +       SAVE_ITEM(S5P_CLKDIV_IMAGE),
+> > > +       SAVE_ITEM(S5P_CLKGATE_IP_IMAGE_4212),
+> > > +       SAVE_ITEM(S5P_CLKGATE_IP_PERIR_4212),
+> > > +};
+> > > +
+> > > --- a/arch/arm/mach-exynos4/clock.c
+> > > +++ b/arch/arm/mach-exynos4/clock.c
+> > > +static struct sleep_save exynos4_clock_save[] = {
 > > 
-> > diff --git a/arch/arm/common/gic.c b/arch/arm/common/gic.c
-> > index d845b75..124e122 100644
-> > --- a/arch/arm/common/gic.c
-> > +++ b/arch/arm/common/gic.c
-> > @@ -385,7 +385,6 @@ static void gic_dist_save(unsigned int gic_nr)
-> >  		gic_data[gic_nr].saved_spi_enable[i] =
-> >  			readl_relaxed(dist_base + GIC_DIST_ENABLE_SET + i * 4);
-> >  
-> > -	writel_relaxed(0, dist_base + GIC_DIST_CTRL);
-> >  }
+> > Hello,
+> > 
+> Hi,
 > 
-> He already has this bit in his tree[1]
+> > Is there any reason to have the following two
+> > SAVE_ITEM(S5P_CLKSRC_IMAGE),
+> > SAVE_ITEM(S5P_CLKDIV_IMAGE
+> > defined at both clock-exynos4210.c and clock-exynos4212.c, not defined
+> > at clock.c once?
+> > 
+> Yes, I know. I just wanted to keep in mind there is a different
+> value(CLKGATE_IP_IMAGE) in regarding IMAGE clocks on each SoCs, and I think
+> need it now. Anyway thanks for your pointing out.
 > 
-> >  /*
-> > diff --git a/arch/arm/kernel/sr_helpers.h b/arch/arm/kernel/sr_helpers.h
-> > index 1ae3a9a..5a30461 100644
-> > --- a/arch/arm/kernel/sr_helpers.h
-> > +++ b/arch/arm/kernel/sr_helpers.h
-> > @@ -44,7 +44,7 @@ static inline void exit_coherency(void)
-> >  		"mcr	p15, 0, %0, c1, c0, 1\n"
-> >  		 : "=&r" (v)
-> >  		 : "Ir" (0x40)
-> > -		 : );
-> > +		 : "cc");
+> > Also, consider using CONFIG_PM_SLEEP rather than CONFIG_PM for
+> > suspend/resume ops.
+> > 
+> (Cc'ed Rafael)
 > 
-> He has a different fix for this.
+> Well, even though CONFIG_PM_SLEEP is used in regarding syscore_ops, in this
+> case, using CONFIG_PM looks better.
 > 
+> If ARCH_SUSPEND_POSSIBLE will be selected, then CONFIG_SUSPEND is selected
+> and CONFIG_PM_SLEEP is selected in kernel/power/Kconfig and of course,
+> ARCH_SUSPEND_POSSIBLE is selected in arch/arm/Kconfig. However above
+> everything depends on CONFIG_PM. So I think to use CONFIG_PM is more
+> reasonable. In addition, it is more popular in other mainline codes now.
+> 
+> Hi Rafael,
+> How do you think about this?
 
-We have to rework it anyway it since it does not belong in generic code.
-
-> >  }
-> >  #else
-> >  static inline void exit_coherency(void) { }
-> > diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
-> > index 4c99d41..f23696b 100644
-> > --- a/arch/arm/mm/cache-l2x0.c
-> > +++ b/arch/arm/mm/cache-l2x0.c
-> > @@ -285,7 +285,11 @@ static void l2x0_save_context(void *data, bool dormant, unsigned long end)
-> >  	*l2x0_regs =  readl_relaxed(l2x0_base + L2X0_TAG_LATENCY_CTRL);
-> >  	l2x0_regs++;
-> >  	*l2x0_regs =  readl_relaxed(l2x0_base + L2X0_DATA_LATENCY_CTRL);
-> > -
-> > +	l2x0_regs++;
-> > +	*l2x0_regs =  readl_relaxed(l2x0_base + L2X0_PREFETCH_CTRL);
-> > +	l2x0_regs++;
-> > +	*l2x0_regs =  readl_relaxed(l2x0_base + L2X0_POWER_CTRL);
-> > +	dormant = 0;
-
-This is not right, dormant mode depends on cluster state and L2
-retention capabilities, it must not be forced. I fixed L2 stack cleaning
-when L2 is in retention, please fetch [1] below.
-
-> >  	if (!dormant) {
-> >  		/* clean entire L2 before disabling it*/
-> >  		writel_relaxed(l2x0_way_mask, l2x0_base + L2X0_CLEAN_WAY);
-> > @@ -325,6 +329,10 @@ static void l2x0_restore_context(void *data, bool dormant)
-> >  		writel_relaxed(*l2x0_regs, l2x0_base + L2X0_TAG_LATENCY_CTRL);
-> >  		l2x0_regs++;
-> >  		writel_relaxed(*l2x0_regs, l2x0_base + L2X0_DATA_LATENCY_CTRL);
-> > +		l2x0_regs++;
-> > +		writel_relaxed(*l2x0_regs, l2x0_base + L2X0_PREFETCH_CTRL);
-> > +		l2x0_regs++;
-> > +		writel_relaxed(*l2x0_regs, l2x0_base + L2X0_POWER_CTRL);
-> >  		/*
-> >  		 * If L2 is retained do not invalidate
-> >  		 */
-> > -- 
-> > 1.7.1
-> 
-> Already fixed in his tree.
-> 
-> [1] git://linux-arm.org/linux-2.6-lp.git sr-test-for-linaro
+If you make syscore_ops depend on CONFIG_PM, they will be built but not
+used when CONFIG_PM_RUNTIME is set and CONFIG_PM_SLEEP is unset.  If you
+think that's acceptable, I guess you can do it (although you may get a
+few "defined but not used" warnings in that case, which don't look nice).
 
 Thanks,
-Lorenzo
-> 
+Rafael
