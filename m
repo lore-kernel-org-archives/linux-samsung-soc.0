@@ -1,31 +1,118 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] Samsung Fixes for v3.1-rc3
-Date: Fri, 26 Aug 2011 17:53:15 +0200
-Message-ID: <201108261753.16070.arnd@arndb.de>
-References: <005401cc5e80$d494d410$7dbe7c30$%kim@samsung.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [RFC PATCH 1/4] ARM: kernel: Small fixes in save/restore common
+ code.
+Date: Fri, 26 Aug 2011 16:56:14 +0100
+Message-ID: <20110826155614.GB31546@e102568-lin.cambridge.arm.com>
+References: <1313759340-31319-1-git-send-email-amit.kachhap@linaro.org>
+ <1313759400-31347-1-git-send-email-amit.kachhap@linaro.org>
+ <20110819143345.GE2455@matterhorn1>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:64230 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754348Ab1HZPxg (ORCPT
+Received: from service87.mimecast.com ([94.185.240.25]:52374 "HELO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754376Ab1HZP4W convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Aug 2011 11:53:36 -0400
-In-Reply-To: <005401cc5e80$d494d410$7dbe7c30$%kim@samsung.com>
+	Fri, 26 Aug 2011 11:56:22 -0400
+In-Reply-To: <20110819143345.GE2455@matterhorn1>
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>
+To: Amit Kucheria <amit.kucheria@linaro.org>
+Cc: Amit Daniel Kachhap <amit.kachhap@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linaro-dev@lists.linaro.org" <linaro-dev@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "patches@linaro.org" <patches@linaro.org>
 
-On Friday 19 August 2011, Kukjin Kim wrote:
->
-> This is pull request for Samsung fixes for v3.1-rc3.
+On Fri, Aug 19, 2011 at 03:33:45PM +0100, Amit Kucheria wrote:
+> This patch is redundant with Lorenzo's new series[1]. Adding him to cc. I
+> suggest you rebase on top of his latest series.
 > 
-> Please pull Samsung fixes from:
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
 
-Pulled finally, sorry for the delay on my side.
+Yes, thanks for pointing that out.
 
-	Arnd
+> On 11 Aug 19, Amit Daniel Kachhap wrote:
+> > These changes are necessary to make the retention cpuidle state work. This adds 
+> > support for saving more L2 registers.
+> > 
+> > Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+> > ---
+> >  arch/arm/common/gic.c        |    1 -
+> >  arch/arm/kernel/sr_helpers.h |    2 +-
+> >  arch/arm/mm/cache-l2x0.c     |   10 +++++++++-
+> >  3 files changed, 10 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/arm/common/gic.c b/arch/arm/common/gic.c
+> > index d845b75..124e122 100644
+> > --- a/arch/arm/common/gic.c
+> > +++ b/arch/arm/common/gic.c
+> > @@ -385,7 +385,6 @@ static void gic_dist_save(unsigned int gic_nr)
+> >  		gic_data[gic_nr].saved_spi_enable[i] =
+> >  			readl_relaxed(dist_base + GIC_DIST_ENABLE_SET + i * 4);
+> >  
+> > -	writel_relaxed(0, dist_base + GIC_DIST_CTRL);
+> >  }
+> 
+> He already has this bit in his tree[1]
+> 
+> >  /*
+> > diff --git a/arch/arm/kernel/sr_helpers.h b/arch/arm/kernel/sr_helpers.h
+> > index 1ae3a9a..5a30461 100644
+> > --- a/arch/arm/kernel/sr_helpers.h
+> > +++ b/arch/arm/kernel/sr_helpers.h
+> > @@ -44,7 +44,7 @@ static inline void exit_coherency(void)
+> >  		"mcr	p15, 0, %0, c1, c0, 1\n"
+> >  		 : "=&r" (v)
+> >  		 : "Ir" (0x40)
+> > -		 : );
+> > +		 : "cc");
+> 
+> He has a different fix for this.
+> 
+
+We have to rework it anyway it since it does not belong in generic code.
+
+> >  }
+> >  #else
+> >  static inline void exit_coherency(void) { }
+> > diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
+> > index 4c99d41..f23696b 100644
+> > --- a/arch/arm/mm/cache-l2x0.c
+> > +++ b/arch/arm/mm/cache-l2x0.c
+> > @@ -285,7 +285,11 @@ static void l2x0_save_context(void *data, bool dormant, unsigned long end)
+> >  	*l2x0_regs =  readl_relaxed(l2x0_base + L2X0_TAG_LATENCY_CTRL);
+> >  	l2x0_regs++;
+> >  	*l2x0_regs =  readl_relaxed(l2x0_base + L2X0_DATA_LATENCY_CTRL);
+> > -
+> > +	l2x0_regs++;
+> > +	*l2x0_regs =  readl_relaxed(l2x0_base + L2X0_PREFETCH_CTRL);
+> > +	l2x0_regs++;
+> > +	*l2x0_regs =  readl_relaxed(l2x0_base + L2X0_POWER_CTRL);
+> > +	dormant = 0;
+
+This is not right, dormant mode depends on cluster state and L2
+retention capabilities, it must not be forced. I fixed L2 stack cleaning
+when L2 is in retention, please fetch [1] below.
+
+> >  	if (!dormant) {
+> >  		/* clean entire L2 before disabling it*/
+> >  		writel_relaxed(l2x0_way_mask, l2x0_base + L2X0_CLEAN_WAY);
+> > @@ -325,6 +329,10 @@ static void l2x0_restore_context(void *data, bool dormant)
+> >  		writel_relaxed(*l2x0_regs, l2x0_base + L2X0_TAG_LATENCY_CTRL);
+> >  		l2x0_regs++;
+> >  		writel_relaxed(*l2x0_regs, l2x0_base + L2X0_DATA_LATENCY_CTRL);
+> > +		l2x0_regs++;
+> > +		writel_relaxed(*l2x0_regs, l2x0_base + L2X0_PREFETCH_CTRL);
+> > +		l2x0_regs++;
+> > +		writel_relaxed(*l2x0_regs, l2x0_base + L2X0_POWER_CTRL);
+> >  		/*
+> >  		 * If L2 is retained do not invalidate
+> >  		 */
+> > -- 
+> > 1.7.1
+> 
+> Already fixed in his tree.
+> 
+> [1] git://linux-arm.org/linux-2.6-lp.git sr-test-for-linaro
+
+Thanks,
+Lorenzo
+> 
