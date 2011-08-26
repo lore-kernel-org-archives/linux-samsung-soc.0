@@ -1,48 +1,35 @@
-From: Girish K S <girish.shivananjappa@linaro.org>
-Subject: [PATCH] mmc: sdhci-s3c: Fix mmc card I/O problem
-Date: Fri, 26 Aug 2011 14:58:18 +0530
-Message-ID: <1314350898-26372-1-git-send-email-girish.shivananjappa@linaro.org>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH 0/3] Extend SDHCI support for Origen board
+Date: Fri, 26 Aug 2011 15:08:41 +0530
+Message-ID: <1314351524-10942-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f42.google.com ([209.85.210.42]:41157 "EHLO
+Received: from mail-pz0-f42.google.com ([209.85.210.42]:58318 "EHLO
 	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753892Ab1HZJ2r (ORCPT
+	with ESMTP id S1752803Ab1HZJlg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Aug 2011 05:28:47 -0400
+	Fri, 26 Aug 2011 05:41:36 -0400
+Received: by pzk37 with SMTP id 37so3982659pzk.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Aug 2011 02:41:35 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, cjb@laptop.org, ben-linux@fluff.org, kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linaro-dev@lists.linaro.org, kgene.kim@samsung.com, patches@linaro.org
 
-This patch fixes the problem in sdhci-s3c host driver for
-Samsung Soc's. During the card identification stage the
-mmc core driver enumerates for the best bus width in combination
-with the highest available data rate. It starts enumerating from
-the highest bus width (8) to lowest bus width (1).
+Patch 1: It fixes the incorrect card detection type.
+Patch 2: It enables secondary MMC port.
+Patch 3: It extends support of 8-bit bus width
 
-In case of few MMC cards the 4-bit bus enumeration fails and tries
-the 1-bit bus enumeration. When switched to 1-bit bus mode the host driver
-has to clear the previous bus width setting and apply the new setting.
+The patches are rebased to for-next branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
 
-The current patch will clear the previous bus mode and apply the new
-mode setting.
+Tushar Behera (3):
+  ARM: EXYNOS4: Fix sdhci card detection for ORIGEN
+  ARM: EXYNOS4: Add support for secondary MMC port on ORIGEN
+  ARM: EXYNOS4: Add support for 8-bit bus width in SDHCI for ORIGEN
 
-Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
----
- drivers/mmc/host/sdhci-s3c.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+ arch/arm/mach-exynos4/Kconfig       |    1 +
+ arch/arm/mach-exynos4/mach-origen.c |   19 ++++++++++++++++---
+ 2 files changed, 17 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index 2bd7bf4..fe886d6 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -302,6 +302,8 @@ static int sdhci_s3c_platform_8bit_width(struct sdhci_host *host, int width)
- 		ctrl &= ~SDHCI_CTRL_8BITBUS;
- 		break;
- 	default:
-+		ctrl &= ~SDHCI_CTRL_4BITBUS;
-+		ctrl &= ~SDHCI_CTRL_8BITBUS;
- 		break;
- 	}
- 
 -- 
-1.7.1
+1.7.4.1
