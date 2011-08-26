@@ -1,42 +1,38 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 4/6] DMA: PL330: Add device tree support
-Date: Fri, 26 Aug 2011 15:23:05 +0100
-Message-ID: <20110826142305.GA23469@n2100.arm.linux.org.uk>
-References: <1314348014-2481-1-git-send-email-thomas.abraham@linaro.org> <1314348014-2481-2-git-send-email-thomas.abraham@linaro.org> <1314348014-2481-3-git-send-email-thomas.abraham@linaro.org> <1314348014-2481-4-git-send-email-thomas.abraham@linaro.org> <1314348014-2481-5-git-send-email-thomas.abraham@linaro.org> <4E579C9B.7030807@gmail.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH v7 02/15] DMA: PL330: Update PL330 DMA API driver
+Date: Fri, 26 Aug 2011 20:18:18 +0530
+Message-ID: <CABb+yY36HyU7KrHww5B=R6AptkEcZmZ7UrNd-hg6zu4cNbzuqw@mail.gmail.com>
+References: <1314238425-6480-1-git-send-email-boojin.kim@samsung.com>
+	<1314238425-6480-3-git-send-email-boojin.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:53481 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752917Ab1HZOXw (ORCPT
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:36353 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752544Ab1HZOsT convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Aug 2011 10:23:52 -0400
-Content-Disposition: inline
-In-Reply-To: <4E579C9B.7030807@gmail.com>
+	Fri, 26 Aug 2011 10:48:19 -0400
+Received: by bke11 with SMTP id 11so2589825bke.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Aug 2011 07:48:18 -0700 (PDT)
+In-Reply-To: <1314238425-6480-3-git-send-email-boojin.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, boojin.kim@samsung.com, kgene.kim@samsung.com, patches@linaro.org, vinod.koul@intel.com, devicetree-discuss@lists.ozlabs.org, jassisinghbrar@gmail.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Boojin Kim <boojin.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>
 
-On Fri, Aug 26, 2011 at 08:16:11AM -0500, Rob Herring wrote:
-> Thomas,
-> 
-> On 08/26/2011 03:40 AM, Thomas Abraham wrote:
-> > +  - arm,pl330-peri-reqs: number of actual peripheral requests connected to the
-> > +    dma controller. Maximum value is 32.
-> 
-> Perhaps could be a bitmask for sparsely populated requests. May not
-> matter since phandles will define the connections.
-> 
-> Can be optional and not present means 00 requests (mem-to-mem only).
+On Thu, Aug 25, 2011 at 7:43 AM, Boojin Kim <boojin.kim@samsung.com> wr=
+ote:
+> This patch updates following 3 items.
+> 1. Removes unneccessary code.
+> 2. Add AMBA, PL330 configuration
+> 3. Change the meaning of 'peri_id' variable
+> =C2=A0 from PL330 event number to specific dma id by user.
+>
+> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Acked-by: Vinod Koul <vinod.koul@intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 
-The number of peripheral requests is readable from configuration register
-zero, so this is discoverable.  Why should we put this information into
-DT if its provided by the hardware?
-
-The number of DMA channels available is also configurable by the SoC
-designer, yet you don't specify that in DT.  And there's a whole bunch
-of other configuration options available to the SoC designer, most of
-which are discoverable from the configuration registers.
-
-So, I don't think you should be specifying the number of requests.
+Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
