@@ -1,116 +1,55 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 3/5] ARM: EXYNOS4: Add support PM for EXYNOS4212
-Date: Fri, 26 Aug 2011 22:36:57 +0200
-Message-ID: <201108262236.57830.rjw@sisk.pl>
-References: <1314192352-14911-1-git-send-email-kgene.kim@samsung.com>
-	<CAJ0PZbT1YsiXT9k1FJfOCoU8h_XAYqAX6ECJ_=Q0RjR-D_9yyA@mail.gmail.com>
-	<072b01cc637f$558a1190$009e34b0$%kim@samsung.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH v2 0/4] S3C2416: Enable IIS and HSSPI clocks
+Date: Sun, 28 Aug 2011 20:06:31 +0200
+Message-ID: <201108282006.31667.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <072b01cc637f$558a1190$009e34b0$%kim@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'MyungJoo Ham' <myungjoo.ham@gmail.com>, 'Jonghwan Choi' <jhbird.choi@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:34574 "EHLO
+	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751653Ab1H1SGu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 28 Aug 2011 14:06:50 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
 
-On Friday, August 26, 2011, Kukjin Kim wrote:
-> MyungJoo Ham wrote:
-> > 
-> > On Wed, Aug 24, 2011 at 10:25 PM, Kukjin Kim <kgene.kim@samsung.com>
-> wrote:
-> > > From: Jonghwan Choi <jhbird.choi@samsung.com>
-> > >
-> > > This patch moves regarding clock stuff of PM into clock
-> > > file to support PM on EXYNOS4210 and EXYNOS4212 with one
-> > > single kernel image. Because some clock registers are
-> > > different on each SoCs.
-> > >
-> > > Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
-> > > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> > > ---
-> > >  arch/arm/mach-exynos4/clock-exynos4210.c        |   38 ++++++++++
-> > >  arch/arm/mach-exynos4/clock-exynos4212.c        |   34 +++++++++
-> > >  arch/arm/mach-exynos4/clock.c                   |   89
-> > +++++++++++++++++++++++
-> > >  arch/arm/mach-exynos4/include/mach/regs-clock.h |    4 +
-> > >  arch/arm/mach-exynos4/pm.c                      |   79
-> ++------------------
-> > >  5 files changed, 172 insertions(+), 72 deletions(-)
-> > >
-> > > diff --git a/arch/arm/mach-exynos4/clock-exynos4210.c b/arch/arm/mach-
-> > exynos4/clock-exynos4210.c
-> > > index fe74b91..a4b00b7 100644
-> > > --- a/arch/arm/mach-exynos4/clock-exynos4210.c
-> > > +++ b/arch/arm/mach-exynos4/clock-exynos4210.c
-> > > +static struct sleep_save exynos4210_clock_save[] = {
-> > > +       SAVE_ITEM(S5P_CLKSRC_IMAGE),
-> > > +       SAVE_ITEM(S5P_CLKSRC_LCD1),
-> > > +       SAVE_ITEM(S5P_CLKDIV_IMAGE),
-> > > +       SAVE_ITEM(S5P_CLKDIV_LCD1),
-> > > +       SAVE_ITEM(S5P_CLKSRC_MASK_LCD1),
-> > > +       SAVE_ITEM(S5P_CLKGATE_IP_IMAGE_4210),
-> > > +       SAVE_ITEM(S5P_CLKGATE_IP_LCD1),
-> > > +       SAVE_ITEM(S5P_CLKGATE_IP_PERIR_4210),
-> > > +};
-> > > +
-> > > --- a/arch/arm/mach-exynos4/clock-exynos4212.c
-> > > +++ b/arch/arm/mach-exynos4/clock-exynos4212.c
-> > > +static struct sleep_save exynos4212_clock_save[] = {
-> > > +       SAVE_ITEM(S5P_CLKSRC_IMAGE),
-> > > +       SAVE_ITEM(S5P_CLKDIV_IMAGE),
-> > > +       SAVE_ITEM(S5P_CLKGATE_IP_IMAGE_4212),
-> > > +       SAVE_ITEM(S5P_CLKGATE_IP_PERIR_4212),
-> > > +};
-> > > +
-> > > --- a/arch/arm/mach-exynos4/clock.c
-> > > +++ b/arch/arm/mach-exynos4/clock.c
-> > > +static struct sleep_save exynos4_clock_save[] = {
-> > 
-> > Hello,
-> > 
-> Hi,
-> 
-> > Is there any reason to have the following two
-> > SAVE_ITEM(S5P_CLKSRC_IMAGE),
-> > SAVE_ITEM(S5P_CLKDIV_IMAGE
-> > defined at both clock-exynos4210.c and clock-exynos4212.c, not defined
-> > at clock.c once?
-> > 
-> Yes, I know. I just wanted to keep in mind there is a different
-> value(CLKGATE_IP_IMAGE) in regarding IMAGE clocks on each SoCs, and I think
-> need it now. Anyway thanks for your pointing out.
-> 
-> > Also, consider using CONFIG_PM_SLEEP rather than CONFIG_PM for
-> > suspend/resume ops.
-> > 
-> (Cc'ed Rafael)
-> 
-> Well, even though CONFIG_PM_SLEEP is used in regarding syscore_ops, in this
-> case, using CONFIG_PM looks better.
-> 
-> If ARCH_SUSPEND_POSSIBLE will be selected, then CONFIG_SUSPEND is selected
-> and CONFIG_PM_SLEEP is selected in kernel/power/Kconfig and of course,
-> ARCH_SUSPEND_POSSIBLE is selected in arch/arm/Kconfig. However above
-> everything depends on CONFIG_PM. So I think to use CONFIG_PM is more
-> reasonable. In addition, it is more popular in other mainline codes now.
-> 
-> Hi Rafael,
-> How do you think about this?
+S3C2416/2450 (probably S3C2443 too) can use the newer style
+kernel-drivers made for S3C64xx and above for their I2S and
+HS-SPI controllers.
 
-If you make syscore_ops depend on CONFIG_PM, they will be built but not
-used when CONFIG_PM_RUNTIME is set and CONFIG_PM_SLEEP is unset.  If you
-think that's acceptable, I guess you can do it (although you may get a
-few "defined but not used" warnings in that case, which don't look nice).
+So as a first step in this direction, these patches add their
+respective clocks.
 
-Thanks,
-Rafael
+The I2S clocks were simply moved from S3C2443 to s3c2443-clock.c
+as they are identical on all 3 platforms.
+
+The same is true for the HSSPI pclk which is added to s3c2443-clock.c,
+as it was not defined at all yet.
+
+The HSSPI sclk is different between 2443 and 2416 and is therefore
+added to mach-s3c2416/clock.c
+
+Changes since v1:
+ fix missing static
+ cleanup hsspi clk-sources
+ remove collision between hsspi pclk and sclk on s3c2443
+
+Heiko Stuebner (4):
+  S3C2443: Move i2s clock definitions to common code
+  S3C2443: Define constant for HSSPI pclk
+  S3C2416: Add HSSPI clock sourced from EPLL
+  S3C2443: Add hsspi-clock from pclk and rename unused S3C2443 hsspi
+    sclk
+
+ .../mach-s3c2410/include/mach/regs-s3c2443-clock.h |    1 +
+ arch/arm/mach-s3c2416/clock.c                      |   28 ++++++++++
+ arch/arm/mach-s3c2443/clock.c                      |   55 +------------------
+ arch/arm/plat-s3c24xx/s3c2443-clock.c              |   58 ++++++++++++++++++++
+ 4 files changed, 88 insertions(+), 54 deletions(-)
+
+-- 
+1.7.2.3
