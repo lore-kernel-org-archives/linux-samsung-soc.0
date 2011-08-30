@@ -1,168 +1,100 @@
-From: xf liu <7inchpalace@gmail.com>
-Subject: Re: kgdb on S5PV210
-Date: Tue, 30 Aug 2011 14:46:49 +0800
-Message-ID: <CAK6dbMT0H9p3qpFhmUkRNeZXreuBFuW-86ar9aVqvQ-DAHTCFw@mail.gmail.com>
-References: <CAK6dbMS6DXxez6ehAGZgi5yu9kgjg5QQr-UGYmxNR4frPGGe+A@mail.gmail.com>
-	<CAJuYYwTrQdLYAPa1Uf9aFWHyNHfufff35-_unRNJ3mVmYdZ3BA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f42.google.com ([209.85.210.42]:47108 "EHLO
-	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750842Ab1H3Gqu convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Aug 2011 02:46:50 -0400
-Received: by pzk37 with SMTP id 37so9791135pzk.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Aug 2011 23:46:50 -0700 (PDT)
-In-Reply-To: <CAJuYYwTrQdLYAPa1Uf9aFWHyNHfufff35-_unRNJ3mVmYdZ3BA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: [PATCH] mmc: core: eMMC4.5 Add the timeout for switch
+Date: Tue, 30 Aug 2011 15:52:50 +0530
+Message-ID: <1314699770-17120-1-git-send-email-girish.shivananjappa@linaro.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: cjb@laptop.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org
 
-Hi Thomas,
+This patch adds the code to handle the default timeout
+for switch command.
+For eMMC 4.5 devices if timeout is not specified for the switch
+command while accessing a specific field,then the default timeout
+shall be used to timeout. Specification says there is no timeout
+defined while accessing BKOPS_START, SANITIZE_START, FLUSH_CACHE
+field(so these fields are excluded).
 
-Thanks for your reply.
-I tried this patch, but the result is the same. :(
-I use minicom in host PC as console terminal to display the kernel trac=
-e.
-Is there still anything wrong?
-Thanks.
+Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+---
+ drivers/mmc/core/mmc.c     |    5 +++++
+ drivers/mmc/core/mmc_ops.c |    8 ++++++++
+ include/linux/mmc/card.h   |    1 +
+ include/linux/mmc/mmc.h    |    4 ++++
+ 4 files changed, 18 insertions(+), 0 deletions(-)
 
-Regards,
-Ryan
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 5700b1c..5b9fb6a 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -405,6 +405,11 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
+ 	if (card->ext_csd.rev >= 5)
+ 		card->ext_csd.rel_param = ext_csd[EXT_CSD_WR_REL_PARAM];
+ 
++	if (card->ext_csd.rev > 5) {
++		/* (eMMC 4.5)timeout is expressed in units of 10 ms*/
++		card->ext_csd.cmd6_timeout = ext_csd[EXT_CSD_CMD6_TIME]*10;
++	}
++
+ 	if (ext_csd[EXT_CSD_ERASED_MEM_CONT])
+ 		card->erased_byte = 0xFF;
+ 	else
+diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
+index 770c3d0..c4d82f4 100644
+--- a/drivers/mmc/core/mmc_ops.c
++++ b/drivers/mmc/core/mmc_ops.c
+@@ -394,6 +394,14 @@ int mmc_switch(struct mmc_card *card, u8 set, u8 index, u8 value,
+ 	cmd.flags = MMC_RSP_SPI_R1B | MMC_RSP_R1B | MMC_CMD_AC;
+ 	cmd.cmd_timeout_ms = timeout_ms;
+ 
++	/* timeout is not defined for below command indexes (eMMC 4.5) */
++	if ((timeout_ms == 0)					&&
++		(card->ext_csd->rev > 5)			&&
++		(index != EXT_CSD_BKOPS_START)		&&
++		(index != EXT_CSD_SANITIZE_START)	&&
++		(index != EXT_CSD_FLUSH_CACHE))
++			cmd.cmd_timeout_ms = card->ext_csd->cmd6_timeout;
++
+ 	err = mmc_wait_for_cmd(card->host, &cmd, MMC_CMD_RETRIES);
+ 	if (err)
+ 		return err;
+diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+index b460fc2..ef88412 100644
+--- a/include/linux/mmc/card.h
++++ b/include/linux/mmc/card.h
+@@ -50,6 +50,7 @@ struct mmc_ext_csd {
+ 	u8			rel_sectors;
+ 	u8			rel_param;
+ 	u8			part_config;
++	u8			cmd6_timeout;	/* timeout in ms */
+ 	unsigned int		part_time;		/* Units: ms */
+ 	unsigned int		sa_timeout;		/* Units: 100ns */
+ 	unsigned int		hs_max_dtr;
+diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
+index 5a794cb..a23f836 100644
+--- a/include/linux/mmc/mmc.h
++++ b/include/linux/mmc/mmc.h
+@@ -270,8 +270,11 @@ struct _mmc_csd {
+  * EXT_CSD fields
+  */
+ 
++#define EXT_CSD_FLUSH_CACHE		32	/* R/W */
+ #define EXT_CSD_PARTITION_ATTRIBUTE	156	/* R/W */
+ #define EXT_CSD_PARTITION_SUPPORT	160	/* RO */
++#define EXT_CSD_BKOPS_START		164	/* R/W */
++#define EXT_CSD_SANITIZE_START		165	/* R/W */
+ #define EXT_CSD_WR_REL_PARAM		166	/* RO */
+ #define EXT_CSD_ERASE_GROUP_DEF		175	/* R/W */
+ #define EXT_CSD_PART_CONFIG		179	/* R/W */
+@@ -293,6 +296,7 @@ struct _mmc_csd {
+ #define EXT_CSD_SEC_ERASE_MULT		230	/* RO */
+ #define EXT_CSD_SEC_FEATURE_SUPPORT	231	/* RO */
+ #define EXT_CSD_TRIM_MULT		232	/* RO */
++#define EXT_CSD_CMD6_TIME		248	/* RO */
+ 
+ /*
+  * EXT_CSD field definitions
+-- 
+1.7.1
 
-2011/8/30 Thomas Abraham <thomas.abraham@linaro.org>:
-> Hi Ryan,
->
-> On 29 August 2011 12:33, xf liu <7inchpalace@gmail.com> wrote:
->>
->> Hi list,
->>
->>
->> I try to enable kgdb on S5PV210 using the same serial port (UART 0)
->> with the console, but after adding "kgdboc=3DttySAC0,115200 kgdbwait=
-" I
->> found tty_find_polling_driver returns NULL.
->> The cause is that the poll_get_char and poll_put_char handlers are n=
-ot
->> set in static struct uart_ops s3c24xx_serial_ops.
->>
->> I tried google but do net found any patch for this, but maybe I lost
->> something.
->> Is there any patch I can get from anywhere or should I implement the
->> functions by myself?
->
-> This has not been supported in the mainline yet. Following diff can b=
-e used
-> for this but please note that this is not been compile and run tested=
-=2E
->
-> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsun=
-g.c
-> index ae7a302..5664ec0 100644
-> --- a/drivers/tty/serial/samsung.c
-> +++ b/drivers/tty/serial/samsung.c
-> @@ -66,6 +66,9 @@
-> =C2=A0/* flag to ignore all characters coming in */
-> =C2=A0#define RXSTAT_DUMMY_READ (0x10000000)
->
-> +static char s3c24xx_serial_console_putchar(struct uart_port *port);
-> +static char s3c24xx_serial_console_getchar(struct uart_port *port);
-> +
-> =C2=A0static inline struct s3c24xx_uart_port *to_ourport(struct uart_=
-port *port)
-> =C2=A0{
-> =C2=A0=C2=A0=C2=A0=C2=A0 return container_of(port, struct s3c24xx_uar=
-t_port, port);
-> @@ -957,6 +960,10 @@ static struct uart_ops s3c24xx_serial_ops =3D {
-> =C2=A0=C2=A0=C2=A0=C2=A0 .request_port=C2=A0=C2=A0=C2=A0 =3D s3c24xx_=
-serial_request_port,
-> =C2=A0=C2=A0=C2=A0=C2=A0 .config_port=C2=A0=C2=A0=C2=A0 =3D s3c24xx_s=
-erial_config_port,
-> =C2=A0=C2=A0=C2=A0=C2=A0 .verify_port=C2=A0=C2=A0=C2=A0 =3D s3c24xx_s=
-erial_verify_port,
-> +#ifdef CONFIG_CONSOLE_POLL
-> +=C2=A0=C2=A0=C2=A0 .poll_put_char=C2=A0=C2=A0=C2=A0 =3D s3c24xx_seri=
-al_console_putchar,
-> +=C2=A0=C2=A0=C2=A0 .poll_get_char=C2=A0=C2=A0=C2=A0 =3D s3c24xx_seri=
-al_console_getchar,
-> +#endif
-> =C2=A0};
->
-> =C2=A0static struct uart_driver s3c24xx_uart_drv =3D {
-> @@ -1382,6 +1389,25 @@ s3c24xx_serial_console_txrdy(struct uart_port =
-*port,
-> unsigned int ufcon)
-> =C2=A0=C2=A0=C2=A0=C2=A0 return (utrstat & S3C2410_UTRSTAT_TXE) ? 1 :=
- 0;
-> =C2=A0}
->
-> +static int
-> +s3c24xx_serial_console_rxrdy(struct uart_port *port, unsigned int uf=
-con)
-> +{
-> +=C2=A0=C2=A0=C2=A0 struct s3c24xx_uart_info *info =3D s3c24xx_port_t=
-o_info(port);
-> +=C2=A0=C2=A0=C2=A0 unsigned long ufstat, utrstat;
-> +
-> +=C2=A0=C2=A0=C2=A0 if (ufcon & S3C2410_UFCON_FIFOMODE) {
-> +=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 /* fifo mode - check amount of=
- data in fifo registers... */
-> +
-> +=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 ufstat =3D rd_regl(port, S3C24=
-10_UFSTAT);
-> +=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 return (ufstat & info->rx_fifo=
-full) ? 1 : 0;
-> +=C2=A0=C2=A0=C2=A0 }
-> +
-> +=C2=A0=C2=A0=C2=A0 /* in non-fifo mode, we go and use the rx buffer =
-full */
-> +
-> +=C2=A0=C2=A0=C2=A0 utrstat =3D rd_regl(port, S3C2410_UTRSTAT);
-> +=C2=A0=C2=A0=C2=A0 return (utrstat & S3C2410_UTRSTAT_RXDR) ? 1 : 0;
-> +}
-> +
-> =C2=A0static void
-> =C2=A0s3c24xx_serial_console_putchar(struct uart_port *port, int ch)
-> =C2=A0{
-> @@ -1391,6 +1417,15 @@ s3c24xx_serial_console_putchar(struct uart_por=
-t
-> *port, int ch)
-> =C2=A0=C2=A0=C2=A0=C2=A0 wr_regb(cons_uart, S3C2410_UTXH, ch);
-> =C2=A0}
->
-> +static char
-> +s3c24xx_serial_console_getchar(struct uart_port *port)
-> +{
-> +=C2=A0=C2=A0=C2=A0 unsigned int ufcon =3D rd_regl(cons_uart, S3C2410=
-_UFCON);
-> +=C2=A0=C2=A0=C2=A0 while (!s3c24xx_serial_console_rxrdy(port, ufcon)=
-)
-> +=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 barrier();
-> +=C2=A0=C2=A0=C2=A0 rd_regb(cons_uart, S3C2410_URXH);
-> +}
-> +
-> =C2=A0static void
-> =C2=A0s3c24xx_serial_console_write(struct console *co, const char *s,
-> =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=
-=C2=A0=C2=A0=C2=A0 unsigned int count)
->
-> Regards,
-> Thomas.
->
->
->>
->> Thanks in advance.
->>
->> Regards,
->> Ryan
->> --
->> To unsubscribe from this list: send the line "unsubscribe
->> linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.h=
-tml
->
->
