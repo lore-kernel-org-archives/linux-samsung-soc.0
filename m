@@ -1,287 +1,168 @@
-From: MyungJoo Ham <myungjoo.ham@gmail.com>
-Subject: Re: [PATCH] CPUFREQ: ARM Exynos4210 PM/Suspend Compatibility with
- Different Bootloaders
-Date: Tue, 30 Aug 2011 13:40:43 +0900
-Message-ID: <CAJ0PZbRKEF4uELY_VVbisx9oKc1JePp8HQ2n+081iXGAx0_qQQ@mail.gmail.com>
-References: <1313664316-15440-1-git-send-email-myungjoo.ham@samsung.com>
+From: xf liu <7inchpalace@gmail.com>
+Subject: Re: kgdb on S5PV210
+Date: Tue, 30 Aug 2011 14:46:49 +0800
+Message-ID: <CAK6dbMT0H9p3qpFhmUkRNeZXreuBFuW-86ar9aVqvQ-DAHTCFw@mail.gmail.com>
+References: <CAK6dbMS6DXxez6ehAGZgi5yu9kgjg5QQr-UGYmxNR4frPGGe+A@mail.gmail.com>
+	<CAJuYYwTrQdLYAPa1Uf9aFWHyNHfufff35-_unRNJ3mVmYdZ3BA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1313664316-15440-1-git-send-email-myungjoo.ham@samsung.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, cpufreq@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Dave Jones <davej@redhat.com>, Jaecheol Lee <jc.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, myungjoo.ham@gmail.com, dg77.kim@samsung.com, Axel Lin <axel.lin@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pz0-f42.google.com ([209.85.210.42]:47108 "EHLO
+	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750842Ab1H3Gqu convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 30 Aug 2011 02:46:50 -0400
+Received: by pzk37 with SMTP id 37so9791135pzk.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Aug 2011 23:46:50 -0700 (PDT)
+In-Reply-To: <CAJuYYwTrQdLYAPa1Uf9aFWHyNHfufff35-_unRNJ3mVmYdZ3BA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org
 
-Adding Kgene to the recipient list.
+Hi Thomas,
 
+Thanks for your reply.
+I tried this patch, but the result is the same. :(
+I use minicom in host PC as console terminal to display the kernel trac=
+e.
+Is there still anything wrong?
+Thanks.
 
-Please note that even without the cases using different bootloader, we
-might have cases where CPUFREQ calling the target function right
-before syscore suspend or right after syscore resume where we might
-fail at the target function.
+Regards,
+Ryan
 
-Anyway, I guess CPUFREQ'd be better use suspend callbacks that are
-earlier than syscore (preferably somewhere before dpm_suspend or at
-dpm_suspend) because CPUFREQ's target callback uses other device
-drivers, but this could be just a case of S5PV210 and Exynos4210.
-
-
-Cheers,
-MyungJoo
-
-On Thu, Aug 18, 2011 at 7:45 PM, MyungJoo Ham <myungjoo.ham@samsung.com=
-> wrote:
-> We have various bootloaders for Exynos4210 machines. Some of they
-> set the ARM core frequency at boot time even when the boot is a resum=
-e
-> from suspend-to-RAM. Such changes may create inconsistency in the
-> data of CPUFREQ driver and have incurred hang issues with suspend-to-=
-RAM.
+2011/8/30 Thomas Abraham <thomas.abraham@linaro.org>:
+> Hi Ryan,
 >
-> This patch enables to save and restore CPU frequencies with pm-notifi=
-er and
-> sets the frequency at the initial (boot-time) value so that there wou=
-ldn't
-> be any inconsistency between bootloader and kernel. This patch does n=
+> On 29 August 2011 12:33, xf liu <7inchpalace@gmail.com> wrote:
+>>
+>> Hi list,
+>>
+>>
+>> I try to enable kgdb on S5PV210 using the same serial port (UART 0)
+>> with the console, but after adding "kgdboc=3DttySAC0,115200 kgdbwait=
+" I
+>> found tty_find_polling_driver returns NULL.
+>> The cause is that the poll_get_char and poll_put_char handlers are n=
 ot
-> use CPUFREQ's suspend/resume callbacks because they are syscore-ops, =
-which
-> do not allow to use mutex that is being used by regulators that are u=
-sed by
-> the target function.
+>> set in static struct uart_ops s3c24xx_serial_ops.
+>>
+>> I tried google but do net found any patch for this, but maybe I lost
+>> something.
+>> Is there any patch I can get from anywhere or should I implement the
+>> functions by myself?
 >
-> This also prevents any CPUFREQ transitions during suspend-resume cont=
-ext,
-> which could be dangerous at noirq-context along with regulator framew=
-ork.
+> This has not been supported in the mainline yet. Following diff can b=
+e used
+> for this but please note that this is not been compile and run tested=
+=2E
 >
-> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
-> =A0drivers/cpufreq/exynos4210-cpufreq.c | =A0106 ++++++++++++++++++++=
-++++++++++++-
-> =A01 files changed, 102 insertions(+), 4 deletions(-)
+> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsun=
+g.c
+> index ae7a302..5664ec0 100644
+> --- a/drivers/tty/serial/samsung.c
+> +++ b/drivers/tty/serial/samsung.c
+> @@ -66,6 +66,9 @@
+> =C2=A0/* flag to ignore all characters coming in */
+> =C2=A0#define RXSTAT_DUMMY_READ (0x10000000)
 >
-> diff --git a/drivers/cpufreq/exynos4210-cpufreq.c b/drivers/cpufreq/e=
-xynos4210-cpufreq.c
-> index b7c3a84..101898a 100644
-> --- a/drivers/cpufreq/exynos4210-cpufreq.c
-> +++ b/drivers/cpufreq/exynos4210-cpufreq.c
-> @@ -17,6 +17,8 @@
-> =A0#include <linux/slab.h>
-> =A0#include <linux/regulator/consumer.h>
-> =A0#include <linux/cpufreq.h>
-> +#include <linux/notifier.h>
-> +#include <linux/suspend.h>
->
-> =A0#include <mach/map.h>
-> =A0#include <mach/regs-clock.h>
-> @@ -36,6 +38,10 @@ static struct regulator *int_regulator;
-> =A0static struct cpufreq_freqs freqs;
-> =A0static unsigned int memtype;
->
-> +static unsigned int locking_frequency;
-> +static bool frequency_locked;
-> +static DEFINE_MUTEX(cpufreq_lock);
+> +static char s3c24xx_serial_console_putchar(struct uart_port *port);
+> +static char s3c24xx_serial_console_getchar(struct uart_port *port);
 > +
-> =A0enum exynos4_memory_type {
-> =A0 =A0 =A0 =A0DDR2 =3D 4,
-> =A0 =A0 =A0 =A0LPDDR2,
-> @@ -405,22 +411,32 @@ static int exynos4_target(struct cpufreq_policy=
- *policy,
-> =A0{
-> =A0 =A0 =A0 =A0unsigned int index, old_index;
-> =A0 =A0 =A0 =A0unsigned int arm_volt, int_volt;
-> + =A0 =A0 =A0 int err =3D -EINVAL;
+> =C2=A0static inline struct s3c24xx_uart_port *to_ourport(struct uart_=
+port *port)
+> =C2=A0{
+> =C2=A0=C2=A0=C2=A0=C2=A0 return container_of(port, struct s3c24xx_uar=
+t_port, port);
+> @@ -957,6 +960,10 @@ static struct uart_ops s3c24xx_serial_ops =3D {
+> =C2=A0=C2=A0=C2=A0=C2=A0 .request_port=C2=A0=C2=A0=C2=A0 =3D s3c24xx_=
+serial_request_port,
+> =C2=A0=C2=A0=C2=A0=C2=A0 .config_port=C2=A0=C2=A0=C2=A0 =3D s3c24xx_s=
+erial_config_port,
+> =C2=A0=C2=A0=C2=A0=C2=A0 .verify_port=C2=A0=C2=A0=C2=A0 =3D s3c24xx_s=
+erial_verify_port,
+> +#ifdef CONFIG_CONSOLE_POLL
+> +=C2=A0=C2=A0=C2=A0 .poll_put_char=C2=A0=C2=A0=C2=A0 =3D s3c24xx_seri=
+al_console_putchar,
+> +=C2=A0=C2=A0=C2=A0 .poll_get_char=C2=A0=C2=A0=C2=A0 =3D s3c24xx_seri=
+al_console_getchar,
+> +#endif
+> =C2=A0};
 >
-> =A0 =A0 =A0 =A0freqs.old =3D exynos4_getspeed(policy->cpu);
+> =C2=A0static struct uart_driver s3c24xx_uart_drv =3D {
+> @@ -1382,6 +1389,25 @@ s3c24xx_serial_console_txrdy(struct uart_port =
+*port,
+> unsigned int ufcon)
+> =C2=A0=C2=A0=C2=A0=C2=A0 return (utrstat & S3C2410_UTRSTAT_TXE) ? 1 :=
+ 0;
+> =C2=A0}
 >
-> + =A0 =A0 =A0 mutex_lock(&cpufreq_lock);
-> +
-> + =A0 =A0 =A0 if (frequency_locked && target_freq !=3D locking_freque=
-ncy) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D -EAGAIN;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto out;
-> + =A0 =A0 =A0 }
-> +
-> =A0 =A0 =A0 =A0if (cpufreq_frequency_table_target(policy, exynos4_fre=
-q_table,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 freqs.old, relation, &old_index))
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto out;
->
-> =A0 =A0 =A0 =A0if (cpufreq_frequency_table_target(policy, exynos4_fre=
-q_table,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 target_freq, relation, &index))
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto out;
-> +
-> + =A0 =A0 =A0 err =3D 0;
->
-> =A0 =A0 =A0 =A0freqs.new =3D exynos4_freq_table[index].frequency;
-> =A0 =A0 =A0 =A0freqs.cpu =3D policy->cpu;
->
-> =A0 =A0 =A0 =A0if (freqs.new =3D=3D freqs.old)
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 return 0;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto out;
->
-> =A0 =A0 =A0 =A0/* get the voltage value */
-> =A0 =A0 =A0 =A0arm_volt =3D exynos4_volt_table[index].arm_volt;
-> @@ -447,10 +463,16 @@ static int exynos4_target(struct cpufreq_policy=
- *policy,
->
-> =A0 =A0 =A0 =A0cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
->
-> - =A0 =A0 =A0 return 0;
-> +out:
-> + =A0 =A0 =A0 mutex_unlock(&cpufreq_lock);
-> + =A0 =A0 =A0 return err;
-> =A0}
->
-> =A0#ifdef CONFIG_PM
-> +/*
-> + * These suspend/resume are used as syscore_ops, it is already too
-> + * late to set regulator voltages at this stage.
-> + */
-> =A0static int exynos4_cpufreq_suspend(struct cpufreq_policy *policy)
-> =A0{
-> =A0 =A0 =A0 =A0return 0;
-> @@ -462,6 +484,78 @@ static int exynos4_cpufreq_resume(struct cpufreq=
-_policy *policy)
-> =A0}
-> =A0#endif
->
-> +/**
-> + * exynos4_cpufreq_pm_notifier - block CPUFREQ's activities in suspe=
-nd-resume
-> + * =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 context
-> + * @notifier
-> + * @pm_event
-> + * @v
-> + *
-> + * While frequency_locked =3D=3D true, target() ignores every freque=
-ncy but
-> + * locking_frequency. The locking_frequency value is the initial fre=
-quency,
-> + * which is set by the bootloader. In order to eliminate possible
-> + * inconsistency in clock values, we save and restore frequencies du=
-ring
-> + * suspend and resume and block CPUFREQ activities. Note that the st=
-andard
-> + * suspend/resume cannot be used as they are too deep (syscore_ops) =
-for
-> + * regulator actions.
-> + */
-> +static int exynos4_cpufreq_pm_notifier(struct notifier_block *notifi=
-er,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0unsigned long pm_event, void *v)
+> +static int
+> +s3c24xx_serial_console_rxrdy(struct uart_port *port, unsigned int uf=
+con)
 > +{
-> + =A0 =A0 =A0 struct cpufreq_policy *policy =3D cpufreq_cpu_get(0); /=
-* boot CPU */
-> + =A0 =A0 =A0 static unsigned int saved_frequency;
-> + =A0 =A0 =A0 unsigned int temp;
+> +=C2=A0=C2=A0=C2=A0 struct s3c24xx_uart_info *info =3D s3c24xx_port_t=
+o_info(port);
+> +=C2=A0=C2=A0=C2=A0 unsigned long ufstat, utrstat;
 > +
-> + =A0 =A0 =A0 mutex_lock(&cpufreq_lock);
-> + =A0 =A0 =A0 switch (pm_event) {
-> + =A0 =A0 =A0 case PM_SUSPEND_PREPARE:
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (frequency_locked)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto out;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 frequency_locked =3D true;
+> +=C2=A0=C2=A0=C2=A0 if (ufcon & S3C2410_UFCON_FIFOMODE) {
+> +=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 /* fifo mode - check amount of=
+ data in fifo registers... */
 > +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (locking_frequency) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 saved_frequency =3D exy=
-nos4_getspeed(0);
+> +=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 ufstat =3D rd_regl(port, S3C24=
+10_UFSTAT);
+> +=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 return (ufstat & info->rx_fifo=
+full) ? 1 : 0;
+> +=C2=A0=C2=A0=C2=A0 }
 > +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mutex_unlock(&cpufreq_l=
-ock);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 exynos4_target(policy, =
-locking_frequency,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0CPUFREQ_RELATION_H);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mutex_lock(&cpufreq_loc=
-k);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
+> +=C2=A0=C2=A0=C2=A0 /* in non-fifo mode, we go and use the rx buffer =
+full */
 > +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
-> + =A0 =A0 =A0 case PM_POST_SUSPEND:
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (saved_frequency) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 /*
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* While frequency_lo=
-cked, only locking_frequency
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* is valid for targe=
-t(). In order to use
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* saved_frequency wh=
-ile keeping frequency_locked,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* we temporarly over=
-write locking_frequency.
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0*/
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 temp =3D locking_freque=
-ncy;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 locking_frequency =3D s=
-aved_frequency;
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mutex_unlock(&cpufreq_l=
-ock);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 exynos4_target(policy, =
-locking_frequency,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0CPUFREQ_RELATION_H);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mutex_lock(&cpufreq_loc=
-k);
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 locking_frequency =3D t=
-emp;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 frequency_locked =3D false;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
-> + =A0 =A0 =A0 }
-> +out:
-> + =A0 =A0 =A0 mutex_unlock(&cpufreq_lock);
-> +
-> + =A0 =A0 =A0 return NOTIFY_OK;
+> +=C2=A0=C2=A0=C2=A0 utrstat =3D rd_regl(port, S3C2410_UTRSTAT);
+> +=C2=A0=C2=A0=C2=A0 return (utrstat & S3C2410_UTRSTAT_RXDR) ? 1 : 0;
 > +}
 > +
-> +static struct notifier_block exynos4_cpufreq_nb =3D {
-> + =A0 =A0 =A0 .notifier_call =3D exynos4_cpufreq_pm_notifier,
-> +};
+> =C2=A0static void
+> =C2=A0s3c24xx_serial_console_putchar(struct uart_port *port, int ch)
+> =C2=A0{
+> @@ -1391,6 +1417,15 @@ s3c24xx_serial_console_putchar(struct uart_por=
+t
+> *port, int ch)
+> =C2=A0=C2=A0=C2=A0=C2=A0 wr_regb(cons_uart, S3C2410_UTXH, ch);
+> =C2=A0}
+>
+> +static char
+> +s3c24xx_serial_console_getchar(struct uart_port *port)
+> +{
+> +=C2=A0=C2=A0=C2=A0 unsigned int ufcon =3D rd_regl(cons_uart, S3C2410=
+_UFCON);
+> +=C2=A0=C2=A0=C2=A0 while (!s3c24xx_serial_console_rxrdy(port, ufcon)=
+)
+> +=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 barrier();
+> +=C2=A0=C2=A0=C2=A0 rd_regb(cons_uart, S3C2410_URXH);
+> +}
 > +
-> =A0static int exynos4_cpufreq_cpu_init(struct cpufreq_policy *policy)
-> =A0{
-> =A0 =A0 =A0 =A0policy->cur =3D policy->min =3D policy->max =3D exynos=
-4_getspeed(policy->cpu);
-> @@ -501,6 +595,8 @@ static int __init exynos4_cpufreq_init(void)
-> =A0 =A0 =A0 =A0if (IS_ERR(cpu_clk))
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return PTR_ERR(cpu_clk);
+> =C2=A0static void
+> =C2=A0s3c24xx_serial_console_write(struct console *co, const char *s,
+> =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=
+=C2=A0=C2=A0=C2=A0 unsigned int count)
 >
-> + =A0 =A0 =A0 locking_frequency =3D exynos4_getspeed(0);
-> +
-> =A0 =A0 =A0 =A0moutcore =3D clk_get(NULL, "moutcore");
-> =A0 =A0 =A0 =A0if (IS_ERR(moutcore))
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto out;
-> @@ -540,6 +636,8 @@ static int __init exynos4_cpufreq_init(void)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_DEBUG "%s: memtype=3D 0x%x=
-\n", __func__, memtype);
-> =A0 =A0 =A0 =A0}
->
-> + =A0 =A0 =A0 register_pm_notifier(&exynos4_cpufreq_nb);
-> +
-> =A0 =A0 =A0 =A0return cpufreq_register_driver(&exynos4_driver);
->
-> =A0out:
-> --
-> 1.7.4.1
+> Regards,
+> Thomas.
 >
 >
-
-
-
---=20
-MyungJoo Ham, Ph.D.
-Mobile Software Platform Lab, DMC Business, Samsung Electronics
+>>
+>> Thanks in advance.
+>>
+>> Regards,
+>> Ryan
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe
+>> linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.h=
+tml
+>
+>
