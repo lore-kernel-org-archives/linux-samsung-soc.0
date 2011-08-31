@@ -1,309 +1,49 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/2] ARM: EXYNOS4: Add USB PHY initialization for device
-Date: Wed, 31 Aug 2011 15:05:57 +0900
-Message-ID: <001a01cc67a4$0dd349b0$2979dd10$%kim@samsung.com>
-References: <1314098937-4727-1-git-send-email-sachin.kamat@linaro.org>
- <1314098937-4727-3-git-send-email-sachin.kamat@linaro.org>
+Subject: RE: [PATCH] ARM: S3C24XX: remove unused gpio codes
+Date: Wed, 31 Aug 2011 15:13:09 +0900
+Message-ID: <001c01cc67a5$0e2ee1c0$2a8ca540$%kim@samsung.com>
+References: <1309172936-10729-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:41476 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753241Ab1HaGGB convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:41128 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753518Ab1HaGNK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 31 Aug 2011 02:06:01 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Wed, 31 Aug 2011 02:13:10 -0400
+Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LQS008OV3KFJI80@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 31 Aug 2011 15:05:59 +0900 (KST)
+ 2010)) with ESMTP id <0LQS00GGL3X9ZL70@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 31 Aug 2011 15:13:09 +0900 (KST)
 Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
  by mmp1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LQS00K573LZS6@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 31 Aug 2011 15:05:59 +0900 (KST)
-In-reply-to: <1314098937-4727-3-git-send-email-sachin.kamat@linaro.org>
+ with ESMTPA id <0LQS00LIQ3XX0E@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 31 Aug 2011 15:13:09 +0900 (KST)
+In-reply-to: <1309172936-10729-1-git-send-email-kgene.kim@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: linaro-dev@lists.linaro.org, patches@linaro.org, 'Pankaj Dubey' <pankaj.dubey@samsung.com>, 'Yulgon Kim' <yulgon.kim@samsung.com>, =?ks_c_5601-1987?B?J7HosObAzyc=?= <ki0351.kim@samsung.com>
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org
 
-Sachin Kamat wrote:
->=20
-> From: Pankaj Dubey <pankaj.dubey@samsung.com>
->=20
-> This patch modifies USB PHY initialization code so that USB host
-> and device can be initialized with the same function.
->=20
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Kukjin Kim wrote:
+> 
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > ---
->  arch/arm/mach-exynos4/include/mach/regs-pmu.h |    2 +-
->  arch/arm/mach-exynos4/setup-usb-phy.c         |  159 +++++++++++++++=
-+---
-> -----
->  2 files changed, 107 insertions(+), 54 deletions(-)
->=20
-> diff --git a/arch/arm/mach-exynos4/include/mach/regs-pmu.h
-b/arch/arm/mach-
-> exynos4/include/mach/regs-pmu.h
-> index cdf9b47..c4709f2 100644
-> --- a/arch/arm/mach-exynos4/include/mach/regs-pmu.h
-> +++ b/arch/arm/mach-exynos4/include/mach/regs-pmu.h
-> @@ -34,7 +34,7 @@
->  #define S5P_WAKEUP_STAT
-> 	S5P_PMUREG(0x0600)
->  #define S5P_EINT_WAKEUP_MASK
-> 	S5P_PMUREG(0x0604)
->  #define S5P_WAKEUP_MASK
-> 	S5P_PMUREG(0x0608)
-> -
-> +#define S5P_USBDEVICE_PHY_CONTROL
-> 	S5P_PMUREG(0x0704)
->  #define S5P_USBHOST_PHY_CONTROL
-> 	S5P_PMUREG(0x0708)
->  #define S5P_USBHOST_PHY_ENABLE			(1 << 0)
->=20
-> diff --git a/arch/arm/mach-exynos4/setup-usb-phy.c b/arch/arm/mach-
-> exynos4/setup-usb-phy.c
-> index f4c944a..69878a1 100644
-> --- a/arch/arm/mach-exynos4/setup-usb-phy.c
-> +++ b/arch/arm/mach-exynos4/setup-usb-phy.c
-> @@ -21,51 +21,65 @@
->=20
->  int s5p_usb_phy_init(struct platform_device *pdev, int type)
->  {
-> +	struct clk *otg_clk, *usbhost_clk;
-> +	struct clk *xusbxti_clk;
-> +	u32 phyclk;
-> +	u32 rstcon;
-> +	int err;
-> +	if ((type !=3D S5P_USB_PHY_HOST) && (type !=3D S5P_USB_PHY_DEVICE))
-> +		return -EINVAL;
-> +
-> +	otg_clk =3D clk_get(&pdev->dev, "otg");
-> +	if (IS_ERR(otg_clk)) {
-> +		dev_err(&pdev->dev, "Failed to get otg clock\n");
-> +		return PTR_ERR(otg_clk);
-> +	}
-> +
-> +	err =3D clk_enable(otg_clk);
-> +	if (err) {
-> +		clk_put(otg_clk);
-> +		return err;
-> +	}
-> +
-> +	/* set clock frequency for PLL */
-> +	phyclk =3D readl(EXYNOS4_PHYCLK) & ~CLKSEL_MASK;
-> +
-> +	xusbxti_clk =3D clk_get(&pdev->dev, "xusbxti");
-> +	if (xusbxti_clk && !IS_ERR(xusbxti_clk)) {
-> +		switch (clk_get_rate(xusbxti_clk)) {
-> +		case 12 * MHZ:
-> +			phyclk |=3D CLKSEL_12M;
-> +			break;
-> +		case 24 * MHZ:
-> +			phyclk |=3D CLKSEL_24M;
-> +			break;
-> +		default:
-> +		case 48 * MHZ:
-> +			/* default reference clock */
-> +			break;
-> +		}
-> +	clk_put(xusbxti_clk);
-> +	}
-> +
-> +	writel(phyclk, EXYNOS4_PHYCLK);
-> +
->  	if (type =3D=3D S5P_USB_PHY_HOST) {
-> -		struct clk *otg_clk;
-> -		struct clk *xusbxti_clk;
-> -		u32 phyclk;
-> -		u32 rstcon;
-> -		int err;
-> -
-> -		otg_clk =3D clk_get(&pdev->dev, "otg");
-> -		if (IS_ERR(otg_clk)) {
-> -			dev_err(&pdev->dev, "Failed to get otg clock\n");
-> -			return PTR_ERR(otg_clk);
-> +		usbhost_clk =3D clk_get(&pdev->dev, "usbhost");
-> +
-> +		if (IS_ERR(usbhost_clk)) {
-> +			dev_err(&pdev->dev, "Failed to get usbhost
-clock\n");
-> +			return PTR_ERR(usbhost_clk);
-
-(Cc'ed Yulgon Kim and Kyoungil Kim)
-
-Hmm...I know, since the USB Host PHY Controller is included in the 'otg=
-'
-clock domain the 'otg' clock is controlled here. But the USB Host clock=
- is
-controlled in ehci-s5p driver now so we don't need to add this here.
-
->  		}
->=20
-> -		err =3D clk_enable(otg_clk);
-> +		err =3D clk_enable(usbhost_clk);
->  		if (err) {
-> -			clk_put(otg_clk);
-> +			clk_put(usbhost_clk);
->  			return err;
->  		}
->=20
->  		writel(readl(S5P_USBHOST_PHY_CONTROL) |
-> S5P_USBHOST_PHY_ENABLE,
->  			S5P_USBHOST_PHY_CONTROL);
->=20
-> -		/* set clock frequency for PLL */
-> -		phyclk =3D readl(EXYNOS4_PHYCLK) & ~CLKSEL_MASK;
-> -
-> -		xusbxti_clk =3D clk_get(&pdev->dev, "xusbxti");
-> -		if (xusbxti_clk && !IS_ERR(xusbxti_clk)) {
-> -			switch (clk_get_rate(xusbxti_clk)) {
-> -			case 12 * MHZ:
-> -				phyclk |=3D CLKSEL_12M;
-> -				break;
-> -			case 24 * MHZ:
-> -				phyclk |=3D CLKSEL_24M;
-> -				break;
-> -			default:
-> -			case 48 * MHZ:
-> -				/* default reference clock */
-> -				break;
-> -			}
-> -		clk_put(xusbxti_clk);
-> -		}
-> -
-> -		writel(phyclk, EXYNOS4_PHYCLK);
-> -
-> -		/* floating prevention logic: disable */
->  		writel((readl(EXYNOS4_PHY1CON) | FPENABLEN),
-> EXYNOS4_PHY1CON);
->=20
->  		/* set to normal HSIC 0 and 1 of PHY1 */
-> @@ -84,30 +98,61 @@ int s5p_usb_phy_init(struct platform_device *pdev=
-,
-int type)
->=20
->  		rstcon &=3D ~(HOST_LINK_PORT_SWRST_MASK |
-> PHY1_SWRST_MASK);
->  		writel(rstcon, EXYNOS4_RSTCON);
-> -		udelay(80);
-> +	} else if (type =3D=3D S5P_USB_PHY_DEVICE) {
-> +		writel(readl(S5P_USBDEVICE_PHY_CONTROL) | (0x1<<0),
-> +				S5P_USBDEVICE_PHY_CONTROL);
-> +		writel((readl(EXYNOS4_PHYPWR) & ~(0x7<<3)&~(0x1<<0)),
-> +				EXYNOS4_PHYPWR);
-> +		writel((readl(EXYNOS4_PHYCLK) & ~(0x5<<2))|(0x3<<0),
-> +				EXYNOS4_PHYCLK);
-> +		writel((readl(EXYNOS4_RSTCON) & ~(0x3<<1))|(0x1<<0),
-> +				EXYNOS4_RSTCON);
-> +		udelay(10);
-> +		writel(readl(EXYNOS4_RSTCON) & ~(0x7<<0),
-> +				EXYNOS4_RSTCON);
-> +	}
-> +	udelay(80);
->=20
-> -		clk_disable(otg_clk);
-> -		clk_put(otg_clk);
-> +	clk_disable(otg_clk);
-> +	clk_put(otg_clk);
-> +	if (type =3D=3D S5P_USB_PHY_HOST)
-> +		clk_put(usbhost_clk);
->=20
-> -		return 0;
-> -	}
-> -	return -EINVAL;
-> +	return 0;
->  }
->=20
->  int s5p_usb_phy_exit(struct platform_device *pdev, int type)
->  {
-> +	struct clk *otg_clk, *usbhost_clk;
-> +	int err;
-> +
-> +	if ((type !=3D S5P_USB_PHY_HOST) && (type !=3D S5P_USB_PHY_DEVICE))
-> +		return -EINVAL;
-> +
-> +	otg_clk =3D clk_get(&pdev->dev, "otg");
-> +	if (IS_ERR(otg_clk)) {
-> +		dev_err(&pdev->dev, "Failed to get otg clock\n");
-> +		return PTR_ERR(otg_clk);
-> +	}
-> +
-> +	err =3D clk_enable(otg_clk);
-> +	if (err) {
-> +		clk_put(otg_clk);
-> +		return err;
-> +	}
-> +
->  	if (type =3D=3D S5P_USB_PHY_HOST) {
-> -		struct clk *otg_clk;
-> -		int err;
-> -		otg_clk =3D clk_get(&pdev->dev, "otg");
-> -		if (IS_ERR(otg_clk)) {
-> -			dev_err(&pdev->dev, "Failed to get otg clock\n");
-> -			return PTR_ERR(otg_clk);
-> +
-> +		usbhost_clk =3D clk_get(&pdev->dev, "usbhost");
-> +
-> +		if (IS_ERR(usbhost_clk)) {
-> +			dev_err(&pdev->dev, "Failed to get usbhost
-clock\n");
-> +			return PTR_ERR(usbhost_clk);
->  		}
->=20
-> -		err =3D clk_enable(otg_clk);
-> +		err =3D clk_enable(usbhost_clk);
-
-Wrong, do you _really_ want to enable usbhost_clk here, in usb_phy_exit=
-()?
-
-
->  		if (err) {
-> -			clk_put(otg_clk);
-> +			clk_put(usbhost_clk);
->  			return err;
->  		}
->=20
-> @@ -117,10 +162,18 @@ int s5p_usb_phy_exit(struct platform_device *pd=
-ev,
-int
-> type)
->  		writel(readl(S5P_USBHOST_PHY_CONTROL) &
-> ~S5P_USBHOST_PHY_ENABLE,
->  			S5P_USBHOST_PHY_CONTROL);
->=20
-> -		clk_disable(otg_clk);
-> -		clk_put(otg_clk);
-> +	} else if (type =3D=3D S5P_USB_PHY_DEVICE) {
-> +		writel(readl(EXYNOS4_PHYPWR) | (0x3<<3),
-> +				EXYNOS4_PHYPWR);
->=20
-> -		return 0;
-> +		writel(readl(S5P_USBDEVICE_PHY_CONTROL) & ~(1<<0),
-> +				S5P_USBDEVICE_PHY_CONTROL);
->  	}
-> -	return -EINVAL;
-> +
-> +	clk_disable(otg_clk);
-> +	clk_put(otg_clk);
-> +	if (type =3D=3D S5P_USB_PHY_HOST)
-> +		clk_put(usbhost_clk);
-> +
-> +	return 0;
->  }
-> --
-> 1.7.4.1
-
-I can't agree this patch. I think you need to check about whole USB PHY
-structure on EXYNOS4 again.
-
-In addition, I don=A1=AFt have idea we need to control USB Host clock f=
-or
-handling USB PHY enable/disable.
+>  arch/arm/mach-s3c2400/gpio.c |   42 ------------------------
+>  arch/arm/mach-s3c2410/gpio.c |   72
+------------------------------------------
+>  arch/arm/mach-s3c2412/gpio.c |   62 ------------------------------------
+>  3 files changed, 0 insertions(+), 176 deletions(-)
+>  delete mode 100644 arch/arm/mach-s3c2400/gpio.c
+>  delete mode 100644 arch/arm/mach-s3c2410/gpio.c
+>  delete mode 100644 arch/arm/mach-s3c2412/gpio.c
+> 
+As a note, I applied this into my -cleanup branch except s3c2400 stuff
+because it has been already removed before.
 
 Thanks.
 
@@ -312,3 +52,202 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> diff --git a/arch/arm/mach-s3c2400/gpio.c b/arch/arm/mach-s3c2400/gpio.c
+> deleted file mode 100644
+> index 6c68e78..0000000
+> --- a/arch/arm/mach-s3c2400/gpio.c
+> +++ /dev/null
+> @@ -1,42 +0,0 @@
+> -/* linux/arch/arm/mach-s3c2400/gpio.c
+> - *
+> - * Copyright (c) 2006 Lucas Correia Villa Real <lucasvr@gobolinux.org>
+> - *
+> - * S3C2400 GPIO support
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License as published by
+> - * the Free Software Foundation; either version 2 of the License, or
+> - * (at your option) any later version.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - * GNU General Public License for more details.
+> - *
+> - * You should have received a copy of the GNU General Public License
+> - * along with this program; if not, write to the Free Software
+> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+USA
+> -*/
+> -
+> -#include <linux/kernel.h>
+> -#include <linux/init.h>
+> -#include <linux/module.h>
+> -#include <linux/interrupt.h>
+> -#include <linux/ioport.h>
+> -#include <linux/io.h>
+> -
+> -#include <mach/hardware.h>
+> -#include <asm/irq.h>
+> -
+> -#include <mach/regs-gpio.h>
+> -
+> -int s3c2400_gpio_getirq(unsigned int pin)
+> -{
+> -	if (pin < S3C2410_GPE(0) || pin > S3C2400_GPE(7))
+> -		return -EINVAL;  /* not valid interrupts */
+> -
+> -	return (pin - S3C2410_GPE(0)) + IRQ_EINT0;
+> -}
+> -
+> -EXPORT_SYMBOL(s3c2400_gpio_getirq);
+> diff --git a/arch/arm/mach-s3c2410/gpio.c b/arch/arm/mach-s3c2410/gpio.c
+> deleted file mode 100644
+> index 9664e01..0000000
+> --- a/arch/arm/mach-s3c2410/gpio.c
+> +++ /dev/null
+> @@ -1,72 +0,0 @@
+> -/* linux/arch/arm/mach-s3c2410/gpio.c
+> - *
+> - * Copyright (c) 2004-2006 Simtec Electronics
+> - *	Ben Dooks <ben@simtec.co.uk>
+> - *
+> - * S3C2410 GPIO support
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License as published by
+> - * the Free Software Foundation; either version 2 of the License, or
+> - * (at your option) any later version.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> - * GNU General Public License for more details.
+> - *
+> - * You should have received a copy of the GNU General Public License
+> - * along with this program; if not, write to the Free Software
+> - * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+USA
+> - */
+> -
+> -#include <linux/kernel.h>
+> -#include <linux/init.h>
+> -#include <linux/module.h>
+> -#include <linux/interrupt.h>
+> -#include <linux/ioport.h>
+> -#include <linux/io.h>
+> -
+> -#include <mach/hardware.h>
+> -#include <mach/gpio-fns.h>
+> -#include <asm/irq.h>
+> -
+> -#include <mach/regs-gpio.h>
+> -
+> -int s3c2410_gpio_irqfilter(unsigned int pin, unsigned int on,
+> -			   unsigned int config)
+> -{
+> -	void __iomem *reg = S3C24XX_EINFLT0;
+> -	unsigned long flags;
+> -	unsigned long val;
+> -
+> -	if (pin < S3C2410_GPG(8) || pin > S3C2410_GPG(15))
+> -		return -EINVAL;
+> -
+> -	config &= 0xff;
+> -
+> -	pin -= S3C2410_GPG(8);
+> -	reg += pin & ~3;
+> -
+> -	local_irq_save(flags);
+> -
+> -	/* update filter width and clock source */
+> -
+> -	val = __raw_readl(reg);
+> -	val &= ~(0xff << ((pin & 3) * 8));
+> -	val |= config << ((pin & 3) * 8);
+> -	__raw_writel(val, reg);
+> -
+> -	/* update filter enable */
+> -
+> -	val = __raw_readl(S3C24XX_EXTINT2);
+> -	val &= ~(1 << ((pin * 4) + 3));
+> -	val |= on << ((pin * 4) + 3);
+> -	__raw_writel(val, S3C24XX_EXTINT2);
+> -
+> -	local_irq_restore(flags);
+> -
+> -	return 0;
+> -}
+> -
+> -EXPORT_SYMBOL(s3c2410_gpio_irqfilter);
+> diff --git a/arch/arm/mach-s3c2412/gpio.c b/arch/arm/mach-s3c2412/gpio.c
+> deleted file mode 100644
+> index 3404a87..0000000
+> --- a/arch/arm/mach-s3c2412/gpio.c
+> +++ /dev/null
+> @@ -1,62 +0,0 @@
+> -/* linux/arch/arm/mach-s3c2412/gpio.c
+> - *
+> - * Copyright (c) 2007 Simtec Electronics
+> - *	Ben Dooks <ben@simtec.co.uk>
+> - *
+> - * http://armlinux.simtec.co.uk/.
+> - *
+> - * S3C2412/S3C2413 specific GPIO support
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> -*/
+> -
+> -#include <linux/kernel.h>
+> -#include <linux/types.h>
+> -#include <linux/module.h>
+> -#include <linux/interrupt.h>
+> -#include <linux/gpio.h>
+> -
+> -#include <asm/mach/arch.h>
+> -#include <asm/mach/map.h>
+> -
+> -#include <mach/regs-gpio.h>
+> -#include <mach/hardware.h>
+> -
+> -#include <plat/gpio-core.h>
+> -
+> -int s3c2412_gpio_set_sleepcfg(unsigned int pin, unsigned int state)
+> -{
+> -	struct s3c_gpio_chip *chip = s3c_gpiolib_getchip(pin);
+> -	unsigned long offs = pin - chip->chip.base;
+> -	unsigned long flags;
+> -	unsigned long slpcon;
+> -
+> -	offs *= 2;
+> -
+> -	if (pin < S3C2410_GPB(0))
+> -		return -EINVAL;
+> -
+> -	if (pin >= S3C2410_GPF(0) &&
+> -	    pin <= S3C2410_GPG(16))
+> -		return -EINVAL;
+> -
+> -	if (pin > S3C2410_GPH(16))
+> -		return -EINVAL;
+> -
+> -	local_irq_save(flags);
+> -
+> -	slpcon = __raw_readl(chip->base + 0x0C);
+> -
+> -	slpcon &= ~(3 << offs);
+> -	slpcon |= state << offs;
+> -
+> -	__raw_writel(slpcon, chip->base + 0x0C);
+> -
+> -	local_irq_restore(flags);
+> -
+> -	return 0;
+> -}
+> -
+> -EXPORT_SYMBOL(s3c2412_gpio_set_sleepcfg);
+> --
+> 1.7.1
