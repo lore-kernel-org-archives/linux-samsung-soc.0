@@ -1,373 +1,1262 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 14/19 v4] s5p-fimc: Add support for JPEG capture
-Date: Thu, 01 Sep 2011 17:30:18 +0200
-Message-ID: <1314891023-14227-15-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 06/19 v4] s5p-fimc: Add the media device driver
+Date: Thu, 01 Sep 2011 17:30:10 +0200
+Message-ID: <1314891023-14227-7-git-send-email-s.nawrocki@samsung.com>
 References: <1314891023-14227-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:37965 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932451Ab1IAPah (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 1 Sep 2011 11:30:37 -0400
 In-reply-to: <1314891023-14227-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: mchehab@redhat.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Add support for transparent DMA transfer of JPEG data with MIPI-CSI2
-USER1 format. In JPEG mode the color effect, scaling and cropping
-is not supported as well as image rotation and flipping thus these
-controls are marked as inactive if V4L2_PIX_FMT_JPEG pixel format
-was selected.
+Add a top level media device driver aggregating FIMC video devnodes,
+MIPI-CSIS and sensor subdevs. This driver gathers all media entities
+and creates the possible links between them during initialization. By
+default some links will be activated to enable access to all available
+sensors in the system. For example if there are sensors S0, S1 listed
+in the media device platform data definition they will be by default
+assigned to FIMC0, FIMC1 respectively, which in turn will corresponds
+to separate /dev/video?.
+There is enough FIMC H/W entities to cover all available physical camera
+interfaces in the system.
+
+The fimc media device driver is bound to the "s5p-fimc-md" platform device.
+Such platform device should be created by board initialization code
+and camera sensors description array need to be specified as its
+platform data.
+
+The media device driver also implements various video pipeline operations,
+for enabling subdevs power, streaming, etc., which will be used by the
+capture video node driver.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-capture.c |   17 ++++++-
- drivers/media/video/s5p-fimc/fimc-core.c    |   70 ++++++++++++++-------------
- drivers/media/video/s5p-fimc/fimc-core.h    |    7 ++-
- drivers/media/video/s5p-fimc/fimc-reg.c     |   31 ++++++++----
- drivers/media/video/s5p-fimc/regs-fimc.h    |    8 +--
- 5 files changed, 81 insertions(+), 52 deletions(-)
+ drivers/media/video/Kconfig                 |    5 +-
+ drivers/media/video/s5p-fimc/Makefile       |    2 +-
+ drivers/media/video/s5p-fimc/fimc-core.c    |   33 +-
+ drivers/media/video/s5p-fimc/fimc-core.h    |   16 +-
+ drivers/media/video/s5p-fimc/fimc-mdevice.c |  829 +++++++++++++++++++++++++++
+ drivers/media/video/s5p-fimc/fimc-mdevice.h |  118 ++++
+ include/media/s5p_fimc.h                    |    2 +
+ 7 files changed, 983 insertions(+), 22 deletions(-)
+ create mode 100644 drivers/media/video/s5p-fimc/fimc-mdevice.c
+ create mode 100644 drivers/media/video/s5p-fimc/fimc-mdevice.h
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index 62fd8a1..adbbb63 100644
---- a/drivers/media/video/s5p-fimc/fimc-capture.c
-+++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -60,7 +60,7 @@ static int fimc_init_capture(struct fimc_dev *fimc)
- 		fimc_hw_set_mainscaler(ctx);
- 		fimc_hw_set_target_format(ctx);
- 		fimc_hw_set_rotation(ctx);
--		fimc_hw_set_effect(ctx);
-+		fimc_hw_set_effect(ctx, false);
- 		fimc_hw_set_output_path(ctx);
- 		fimc_hw_set_out_dma(ctx);
- 		clear_bit(ST_CAPT_APPLY_CFG, &fimc->state);
-@@ -731,6 +731,17 @@ static int fimc_cap_try_fmt_mplane(struct file *file, void *fh,
- 	return 0;
- }
+diff --git a/drivers/media/video/Kconfig b/drivers/media/video/Kconfig
+index 14326d7..6279663 100644
+--- a/drivers/media/video/Kconfig
++++ b/drivers/media/video/Kconfig
+@@ -949,8 +949,9 @@ config VIDEO_MX2
+ 	  Interface
  
-+static void fimc_capture_mark_jpeg_xfer(struct fimc_ctx *ctx, bool jpeg)
-+{
-+	ctx->scaler.enabled = !jpeg;
-+	fimc_ctrls_activate(ctx, !jpeg);
-+
-+	if (jpeg)
-+		set_bit(ST_CAPT_JPEG, &ctx->fimc_dev->state);
-+	else
-+		clear_bit(ST_CAPT_JPEG, &ctx->fimc_dev->state);
-+}
-+
- static int fimc_capture_set_format(struct fimc_dev *fimc, struct v4l2_format *f)
- {
- 	struct fimc_ctx *ctx = fimc->vid_cap.ctx;
-@@ -783,6 +794,8 @@ static int fimc_capture_set_format(struct fimc_dev *fimc, struct v4l2_format *f)
- 	if (!(ctx->state & FIMC_DST_CROP))
- 		set_frame_crop(ff, 0, 0, pix->width, pix->height);
+ config  VIDEO_SAMSUNG_S5P_FIMC
+-	tristate "Samsung S5P and EXYNOS4 camera host interface driver"
+-	depends on VIDEO_V4L2 && PLAT_S5P && PM_RUNTIME
++	tristate "Samsung S5P and EXYNOS4 camera interface driver (EXPERIMENTAL)"
++	depends on VIDEO_V4L2 && I2C && PLAT_S5P && PM_RUNTIME && \
++		VIDEO_V4L2_SUBDEV_API && EXPERIMENTAL
+ 	select VIDEOBUF2_DMA_CONTIG
+ 	select V4L2_MEM2MEM_DEV
+ 	---help---
+diff --git a/drivers/media/video/s5p-fimc/Makefile b/drivers/media/video/s5p-fimc/Makefile
+index df6954a..33dec7f 100644
+--- a/drivers/media/video/s5p-fimc/Makefile
++++ b/drivers/media/video/s5p-fimc/Makefile
+@@ -1,4 +1,4 @@
+-s5p-fimc-objs := fimc-core.o fimc-reg.o fimc-capture.o
++s5p-fimc-objs := fimc-core.o fimc-reg.o fimc-capture.o fimc-mdevice.o
+ s5p-csis-objs := mipi-csis.o
  
-+	fimc_capture_mark_jpeg_xfer(ctx, fimc_fmt_is_jpeg(ff->fmt->color));
-+
- 	/* Reset cropping and set format at the camera interface input */
- 	if (!fimc->vid_cap.user_subdev_api) {
- 		ctx->s_frame.fmt = s_fmt;
-@@ -1133,6 +1146,8 @@ static int fimc_subdev_set_fmt(struct v4l2_subdev *sd,
- 		*mf = fmt->format;
- 		return 0;
- 	}
-+	fimc_capture_mark_jpeg_xfer(ctx, fimc_fmt_is_jpeg(ffmt->color));
-+
- 	ff = fmt->pad == FIMC_SD_PAD_SINK ?
- 		&ctx->s_frame : &ctx->d_frame;
- 
+ obj-$(CONFIG_VIDEO_S5P_MIPI_CSIS)	+= s5p-csis.o
 diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index ffcccb2..52f0862 100644
+index ba3af3a..7bb701b 100644
 --- a/drivers/media/video/s5p-fimc/fimc-core.c
 +++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -159,22 +159,28 @@ static struct fimc_fmt fimc_formats[] = {
- 		.memplanes	= 2,
- 		.colplanes	= 2,
- 		.flags		= FMT_FLAGS_M2M,
-+	}, {
-+		.name		= "JPEG encoded data",
-+		.fourcc		= V4L2_PIX_FMT_JPEG,
-+		.color		= S5P_FIMC_JPEG,
-+		.depth		= { 8 },
-+		.memplanes	= 1,
-+		.colplanes	= 1,
-+		.mbus_code	= V4L2_MBUS_FMT_JPEG_1X8,
-+		.flags		= FMT_FLAGS_CAM,
- 	},
+@@ -28,6 +28,7 @@
+ #include <media/videobuf2-dma-contig.h>
+ 
+ #include "fimc-core.h"
++#include "fimc-mdevice.h"
+ 
+ static char *fimc_clocks[MAX_FIMC_CLOCKS] = {
+ 	"sclk_fimc", "fimc"
+@@ -1867,6 +1868,7 @@ static struct fimc_pix_limit s5p_pix_limit[4] = {
+ static struct samsung_fimc_variant fimc0_variant_s5p = {
+ 	.has_inp_rot	 = 1,
+ 	.has_out_rot	 = 1,
++	.has_cam_if	 = 1,
+ 	.min_inp_pixsize = 16,
+ 	.min_out_pixsize = 16,
+ 	.hor_offs_align	 = 8,
+@@ -1875,6 +1877,7 @@ static struct samsung_fimc_variant fimc0_variant_s5p = {
  };
  
--int fimc_check_scaler_ratio(int sw, int sh, int dw, int dh, int rot)
-+int fimc_check_scaler_ratio(struct fimc_ctx *ctx, int sw, int sh,
-+			    int dw, int dh, int rotation)
+ static struct samsung_fimc_variant fimc2_variant_s5p = {
++	.has_cam_if	 = 1,
+ 	.min_inp_pixsize = 16,
+ 	.min_out_pixsize = 16,
+ 	.hor_offs_align	 = 8,
+@@ -1886,6 +1889,7 @@ static struct samsung_fimc_variant fimc0_variant_s5pv210 = {
+ 	.pix_hoff	 = 1,
+ 	.has_inp_rot	 = 1,
+ 	.has_out_rot	 = 1,
++	.has_cam_if	 = 1,
+ 	.min_inp_pixsize = 16,
+ 	.min_out_pixsize = 16,
+ 	.hor_offs_align	 = 8,
+@@ -1897,6 +1901,7 @@ static struct samsung_fimc_variant fimc1_variant_s5pv210 = {
+ 	.pix_hoff	 = 1,
+ 	.has_inp_rot	 = 1,
+ 	.has_out_rot	 = 1,
++	.has_cam_if	 = 1,
+ 	.has_mainscaler_ext = 1,
+ 	.min_inp_pixsize = 16,
+ 	.min_out_pixsize = 16,
+@@ -1906,6 +1911,7 @@ static struct samsung_fimc_variant fimc1_variant_s5pv210 = {
+ };
+ 
+ static struct samsung_fimc_variant fimc2_variant_s5pv210 = {
++	.has_cam_if	 = 1,
+ 	.pix_hoff	 = 1,
+ 	.min_inp_pixsize = 16,
+ 	.min_out_pixsize = 16,
+@@ -1918,6 +1924,7 @@ static struct samsung_fimc_variant fimc0_variant_exynos4 = {
+ 	.pix_hoff	 = 1,
+ 	.has_inp_rot	 = 1,
+ 	.has_out_rot	 = 1,
++	.has_cam_if	 = 1,
+ 	.has_cistatus2	 = 1,
+ 	.has_mainscaler_ext = 1,
+ 	.min_inp_pixsize = 16,
+@@ -1927,8 +1934,9 @@ static struct samsung_fimc_variant fimc0_variant_exynos4 = {
+ 	.pix_limit	 = &s5p_pix_limit[1],
+ };
+ 
+-static struct samsung_fimc_variant fimc2_variant_exynos4 = {
++static struct samsung_fimc_variant fimc3_variant_exynos4 = {
+ 	.pix_hoff	 = 1,
++	.has_cam_if	 = 1,
+ 	.has_cistatus2	 = 1,
+ 	.has_mainscaler_ext = 1,
+ 	.min_inp_pixsize = 16,
+@@ -1966,7 +1974,7 @@ static struct samsung_fimc_driverdata fimc_drvdata_exynos4 = {
+ 		[0] = &fimc0_variant_exynos4,
+ 		[1] = &fimc0_variant_exynos4,
+ 		[2] = &fimc0_variant_exynos4,
+-		[3] = &fimc2_variant_exynos4,
++		[3] = &fimc3_variant_exynos4,
+ 	},
+ 	.num_entities = 4,
+ 	.lclk_frequency = 166000000UL,
+@@ -1994,32 +2002,21 @@ static const struct dev_pm_ops fimc_pm_ops = {
+ 
+ static struct platform_driver fimc_driver = {
+ 	.probe		= fimc_probe,
+-	.remove	= __devexit_p(fimc_remove),
++	.remove		= __devexit_p(fimc_remove),
+ 	.id_table	= fimc_driver_ids,
+ 	.driver = {
+-		.name	= MODULE_NAME,
++		.name	= FIMC_MODULE_NAME,
+ 		.owner	= THIS_MODULE,
+ 		.pm     = &fimc_pm_ops,
+ 	}
+ };
+ 
+-static int __init fimc_init(void)
++int __init fimc_register_driver(void)
  {
--	int tx, ty;
-+	if (rotation == 90 || rotation == 270)
-+		swap(dw, dh);
- 
--	if (rot == 90 || rot == 270) {
--		ty = dw;
--		tx = dh;
--	} else {
--		tx = dw;
--		ty = dh;
--	}
-+	if (!ctx->scaler.enabled)
-+		return (sw == dw && sh == dh) ? 0 : -EINVAL;
- 
--	if ((sw >= SCALER_MAX_HRATIO * tx) || (sh >= SCALER_MAX_VRATIO * ty))
-+	if ((sw >= SCALER_MAX_HRATIO * dw) || (sh >= SCALER_MAX_VRATIO * dh))
- 		return -EINVAL;
- 
- 	return 0;
-@@ -321,7 +327,7 @@ static int stop_streaming(struct vb2_queue *q)
- 	return 0;
+-	int ret = platform_driver_register(&fimc_driver);
+-	if (ret)
+-		err("platform_driver_register failed: %d\n", ret);
+-	return ret;
++	return platform_driver_probe(&fimc_driver, fimc_probe);
  }
  
--static void fimc_capture_irq_handler(struct fimc_dev *fimc)
-+void fimc_capture_irq_handler(struct fimc_dev *fimc, bool final)
+-static void __exit fimc_exit(void)
++void __exit fimc_unregister_driver(void)
  {
- 	struct fimc_vid_cap *cap = &fimc->vid_cap;
- 	struct fimc_vid_buffer *v_buf;
-@@ -329,7 +335,7 @@ static void fimc_capture_irq_handler(struct fimc_dev *fimc)
- 	struct timespec ts;
- 
- 	if (!list_empty(&cap->active_buf_q) &&
--	    test_bit(ST_CAPT_RUN, &fimc->state)) {
-+	    test_bit(ST_CAPT_RUN, &fimc->state) && final) {
- 		ktime_get_real_ts(&ts);
- 
- 		v_buf = active_queue_pop(cap);
-@@ -364,7 +370,8 @@ static void fimc_capture_irq_handler(struct fimc_dev *fimc)
- 	}
- 
- 	if (cap->active_buf_cnt == 0) {
--		clear_bit(ST_CAPT_RUN, &fimc->state);
-+		if (final)
-+			clear_bit(ST_CAPT_RUN, &fimc->state);
- 
- 		if (++cap->buf_index >= FIMC_MAX_OUT_BUFS)
- 			cap->buf_index = 0;
-@@ -407,14 +414,12 @@ static irqreturn_t fimc_irq_handler(int irq, void *priv)
- 			spin_unlock(&ctx->slock);
- 		}
- 		return IRQ_HANDLED;
--	} else {
--		if (test_bit(ST_CAPT_PEND, &fimc->state)) {
--			fimc_capture_irq_handler(fimc);
+ 	platform_driver_unregister(&fimc_driver);
+ }
 -
--			if (cap->active_buf_cnt == 1) {
--				fimc_deactivate_capture(fimc);
--				clear_bit(ST_CAPT_STREAM, &fimc->state);
--			}
-+	} else if (test_bit(ST_CAPT_PEND, &fimc->state)) {
-+		fimc_capture_irq_handler(fimc,
-+				 !test_bit(ST_CAPT_JPEG, &fimc->state));
-+		if (cap->active_buf_cnt == 1) {
-+			fimc_deactivate_capture(fimc);
-+			clear_bit(ST_CAPT_STREAM, &fimc->state);
- 		}
- 	}
- out:
-@@ -586,9 +591,6 @@ int fimc_prepare_config(struct fimc_ctx *ctx, u32 flags)
- 		fimc_set_yuv_order(ctx);
- 	}
- 
--	/* Input DMA mode is not allowed when the scaler is disabled. */
--	ctx->scaler.enabled = 1;
+-module_init(fimc_init);
+-module_exit(fimc_exit);
 -
- 	if (flags & FIMC_SRC_ADDR) {
- 		vb = v4l2_m2m_next_src_buf(ctx->m2m_ctx);
- 		ret = fimc_prepare_addr(ctx, vb, s_frame, &s_frame->paddr);
-@@ -643,7 +645,7 @@ static void fimc_dma_run(void *priv)
- 		fimc_hw_set_mainscaler(ctx);
- 		fimc_hw_set_target_format(ctx);
- 		fimc_hw_set_rotation(ctx);
--		fimc_hw_set_effect(ctx);
-+		fimc_hw_set_effect(ctx, false);
- 	}
- 
- 	fimc_hw_set_output_path(ctx);
-@@ -773,7 +775,7 @@ static int fimc_s_ctrl(struct v4l2_ctrl *ctrl)
- 	case V4L2_CID_ROTATE:
- 		if (fimc_capture_pending(fimc) ||
- 		    fimc_ctx_state_is_set(FIMC_DST_FMT | FIMC_SRC_FMT, ctx)) {
--			ret = fimc_check_scaler_ratio(ctx->s_frame.width,
-+			ret = fimc_check_scaler_ratio(ctx, ctx->s_frame.width,
- 					ctx->s_frame.height, ctx->d_frame.width,
- 					ctx->d_frame.height, ctrl->val);
- 		}
-@@ -1098,6 +1100,8 @@ static int fimc_m2m_s_fmt_mplane(struct file *file, void *fh,
- 
- 	fimc_fill_frame(frame, f);
- 
-+	ctx->scaler.enabled = 1;
-+
- 	if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
- 		fimc_ctx_state_lock_set(FIMC_PARAMS | FIMC_DST_FMT, ctx);
- 	else
-@@ -1269,15 +1273,13 @@ static int fimc_m2m_s_crop(struct file *file, void *fh, struct v4l2_crop *cr)
- 	/* Check to see if scaling ratio is within supported range */
- 	if (fimc_ctx_state_is_set(FIMC_DST_FMT | FIMC_SRC_FMT, ctx)) {
- 		if (cr->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
--			ret = fimc_check_scaler_ratio(cr->c.width, cr->c.height,
--						      ctx->d_frame.width,
--						      ctx->d_frame.height,
--						      ctx->rotation);
-+			ret = fimc_check_scaler_ratio(ctx, cr->c.width,
-+					cr->c.height, ctx->d_frame.width,
-+					ctx->d_frame.height, ctx->rotation);
- 		} else {
--			ret = fimc_check_scaler_ratio(ctx->s_frame.width,
--						      ctx->s_frame.height,
--						      cr->c.width, cr->c.height,
--						      ctx->rotation);
-+			ret = fimc_check_scaler_ratio(ctx, ctx->s_frame.width,
-+					ctx->s_frame.height, cr->c.width,
-+					cr->c.height, ctx->rotation);
- 		}
- 		if (ret) {
- 			v4l2_err(fimc->m2m.vfd, "Out of scaler range\n");
+-MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
+-MODULE_DESCRIPTION("S5P FIMC camera host interface/video postprocessor driver");
+-MODULE_LICENSE("GPL");
+-MODULE_VERSION("1.0.1");
 diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-index e4520b2..9b44875 100644
+index ec2e83b..5a62349 100644
 --- a/drivers/media/video/s5p-fimc/fimc-core.h
 +++ b/drivers/media/video/s5p-fimc/fimc-core.h
-@@ -66,6 +66,7 @@ enum fimc_dev_flags {
- 	ST_CAPT_SHUT,
- 	ST_CAPT_BUSY,
- 	ST_CAPT_APPLY_CFG,
-+	ST_CAPT_JPEG,
+@@ -36,7 +36,7 @@
+ /* Time to wait for next frame VSYNC interrupt while stopping operation. */
+ #define FIMC_SHUTDOWN_TIMEOUT	((100*HZ)/1000)
+ #define MAX_FIMC_CLOCKS		2
+-#define MODULE_NAME		"s5p-fimc"
++#define FIMC_MODULE_NAME	"s5p-fimc"
+ #define FIMC_MAX_DEVS		4
+ #define FIMC_MAX_OUT_BUFS	4
+ #define SCALER_MAX_HRATIO	64
+@@ -308,6 +308,7 @@ struct fimc_m2m_device {
+  * @reqbufs_count: the number of buffers requested in REQBUFS ioctl
+  * @input_index: input (camera sensor) index
+  * @refcnt: driver's private reference counter
++ * @user_subdev_api: true if subdevs are not configured by the host driver
+  */
+ struct fimc_vid_cap {
+ 	struct fimc_ctx			*ctx;
+@@ -325,6 +326,7 @@ struct fimc_vid_cap {
+ 	unsigned int			reqbufs_count;
+ 	int				input_index;
+ 	int				refcnt;
++	bool				user_subdev_api;
  };
  
- #define fimc_m2m_active(dev) test_bit(ST_M2M_RUN, &(dev)->state)
-@@ -669,7 +670,7 @@ void fimc_hw_en_irq(struct fimc_dev *fimc, int enable);
- void fimc_hw_set_prescaler(struct fimc_ctx *ctx);
- void fimc_hw_set_mainscaler(struct fimc_ctx *ctx);
- void fimc_hw_en_capture(struct fimc_ctx *ctx);
--void fimc_hw_set_effect(struct fimc_ctx *ctx);
-+void fimc_hw_set_effect(struct fimc_ctx *ctx, bool active);
- void fimc_hw_set_in_dma(struct fimc_ctx *ctx);
- void fimc_hw_set_input_path(struct fimc_ctx *ctx);
- void fimc_hw_set_output_path(struct fimc_ctx *ctx);
-@@ -697,7 +698,8 @@ void fimc_adjust_mplane_format(struct fimc_fmt *fmt, u32 width, u32 height,
- struct fimc_fmt *fimc_find_format(u32 *pixelformat, u32 *mbus_code,
- 				  unsigned int mask, int index);
+ /**
+@@ -355,6 +357,7 @@ struct fimc_pix_limit {
+  * @has_cistatus2: 1 if CISTATUS2 register is present in this IP revision
+  * @has_mainscaler_ext: 1 if extended mainscaler ratios in CIEXTEN register
+  *			 are present in this IP revision
++ * @has_cam_if: set if this instance has a camera input interface
+  * @pix_limit: pixel size constraints for the scaler
+  * @min_inp_pixsize: minimum input pixel size
+  * @min_out_pixsize: minimum output pixel size
+@@ -367,6 +370,7 @@ struct samsung_fimc_variant {
+ 	unsigned int	has_out_rot:1;
+ 	unsigned int	has_cistatus2:1;
+ 	unsigned int	has_mainscaler_ext:1;
++	unsigned int	has_cam_if:1;
+ 	struct fimc_pix_limit *pix_limit;
+ 	u16		min_inp_pixsize;
+ 	u16		min_out_pixsize;
+@@ -387,6 +391,12 @@ struct samsung_fimc_driverdata {
+ 	int		num_entities;
+ };
  
--int fimc_check_scaler_ratio(int sw, int sh, int dw, int dh, int rot);
-+int fimc_check_scaler_ratio(struct fimc_ctx *ctx, int sw, int sh,
-+			    int dw, int dh, int rotation);
- int fimc_set_scaler_info(struct fimc_ctx *ctx);
- int fimc_prepare_config(struct fimc_ctx *ctx, u32 flags);
- int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
-@@ -705,6 +707,7 @@ int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
- void fimc_prepare_dma_offset(struct fimc_ctx *ctx, struct fimc_frame *f);
- void fimc_set_yuv_order(struct fimc_ctx *ctx);
- void fimc_fill_frame(struct fimc_frame *frame, struct v4l2_format *f);
-+void fimc_capture_irq_handler(struct fimc_dev *fimc, bool done);
++struct fimc_pipeline {
++	struct media_pipeline *pipe;
++	struct v4l2_subdev *sensor;
++	struct v4l2_subdev *csis;
++};
++
+ struct fimc_ctx;
  
+ /**
+@@ -408,6 +418,7 @@ struct fimc_ctx;
+  * @vid_cap:	camera capture device information
+  * @state:	flags used to synchronize m2m and capture mode operation
+  * @alloc_ctx:	videobuf2 memory allocator context
++ * @pipeline:	fimc video capture pipeline data structure
+  */
+ struct fimc_dev {
+ 	spinlock_t			slock;
+@@ -427,6 +438,7 @@ struct fimc_dev {
+ 	struct fimc_vid_cap		vid_cap;
+ 	unsigned long			state;
+ 	struct vb2_alloc_ctx		*alloc_ctx;
++	struct fimc_pipeline		pipeline;
+ };
+ 
+ /**
+@@ -645,6 +657,8 @@ int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
  int fimc_register_m2m_device(struct fimc_dev *fimc,
  			     struct v4l2_device *v4l2_dev);
-diff --git a/drivers/media/video/s5p-fimc/fimc-reg.c b/drivers/media/video/s5p-fimc/fimc-reg.c
-index a1fff02..2a1ae51 100644
---- a/drivers/media/video/s5p-fimc/fimc-reg.c
-+++ b/drivers/media/video/s5p-fimc/fimc-reg.c
-@@ -352,17 +352,19 @@ void fimc_hw_en_capture(struct fimc_ctx *ctx)
- 	writel(cfg | S5P_CIIMGCPT_IMGCPTEN, dev->regs + S5P_CIIMGCPT);
- }
+ void fimc_unregister_m2m_device(struct fimc_dev *fimc);
++int fimc_register_driver(void);
++void fimc_unregister_driver(void);
  
--void fimc_hw_set_effect(struct fimc_ctx *ctx)
-+void fimc_hw_set_effect(struct fimc_ctx *ctx, bool active)
- {
- 	struct fimc_dev *dev = ctx->fimc_dev;
- 	struct fimc_effect *effect = &ctx->effect;
--	u32 cfg = (S5P_CIIMGEFF_IE_ENABLE | S5P_CIIMGEFF_IE_SC_AFTER);
--
--	cfg |= effect->type;
-+	u32 cfg = 0;
- 
--	if (effect->type == S5P_FIMC_EFFECT_ARBITRARY) {
--		cfg |= S5P_CIIMGEFF_PAT_CB(effect->pat_cb);
--		cfg |= S5P_CIIMGEFF_PAT_CR(effect->pat_cr);
-+	if (active) {
-+		cfg |= S5P_CIIMGEFF_IE_SC_AFTER | S5P_CIIMGEFF_IE_ENABLE;
-+		cfg |= effect->type;
-+		if (effect->type == S5P_FIMC_EFFECT_ARBITRARY) {
-+			cfg |= S5P_CIIMGEFF_PAT_CB(effect->pat_cb);
-+			cfg |= S5P_CIIMGEFF_PAT_CR(effect->pat_cr);
+ /* -----------------------------------------------------*/
+ /* fimc-capture.c					*/
+diff --git a/drivers/media/video/s5p-fimc/fimc-mdevice.c b/drivers/media/video/s5p-fimc/fimc-mdevice.c
+new file mode 100644
+index 0000000..50f3fca
+--- /dev/null
++++ b/drivers/media/video/s5p-fimc/fimc-mdevice.c
+@@ -0,0 +1,829 @@
++/*
++ * S5P/EXYNOS4 SoC series camera host interface media device driver
++ *
++ * Copyright (C) 2011 Samsung Electronics Co., Ltd.
++ * Contact: Sylwester Nawrocki, <s.nawrocki@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published
++ * by the Free Software Foundation, either version 2 of the License,
++ * or (at your option) any later version.
++ */
++
++#include <linux/bug.h>
++#include <linux/device.h>
++#include <linux/errno.h>
++#include <linux/i2c.h>
++#include <linux/kernel.h>
++#include <linux/list.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/types.h>
++#include <linux/slab.h>
++#include <linux/version.h>
++#include <media/media-device.h>
++
++#include "fimc-core.h"
++#include "fimc-mdevice.h"
++#include "mipi-csis.h"
++
++static int __fimc_md_set_camclk(struct fimc_md *fmd,
++				struct fimc_sensor_info *s_info,
++				bool on);
++/**
++ * fimc_pipeline_prepare - update pipeline information with subdevice pointers
++ * @fimc: fimc device terminating the pipeline
++ *
++ * Caller holds the graph mutex.
++ */
++void fimc_pipeline_prepare(struct fimc_dev *fimc, struct media_entity *me)
++{
++	struct media_entity_graph graph;
++	struct v4l2_subdev *sd;
++
++	media_entity_graph_walk_start(&graph, me);
++
++	while ((me = media_entity_graph_walk_next(&graph))) {
++		if (media_entity_type(me) != MEDIA_ENT_T_V4L2_SUBDEV)
++			continue;
++		sd = media_entity_to_v4l2_subdev(me);
++
++		if (sd->grp_id == SENSOR_GROUP_ID)
++			fimc->pipeline.sensor = sd;
++		else if (sd->grp_id == CSIS_GROUP_ID)
++			fimc->pipeline.csis = sd;
++	}
++}
++
++/**
++ * __subdev_set_power - change power state of a single subdev
++ * @sd: subdevice to change power state for
++ * @on: 1 to enable power or 0 to disable
++ *
++ * Return result of s_power subdev operation or -ENXIO if sd argument
++ * is NULL. Return 0 if the subdevice does not implement s_power.
++ */
++static int __subdev_set_power(struct v4l2_subdev *sd, int on)
++{
++	int *use_count;
++	int ret;
++
++	if (sd == NULL)
++		return -ENXIO;
++
++	use_count = &sd->entity.use_count;
++	if (on && (*use_count)++ > 0)
++		return 0;
++	else if (!on && (*use_count == 0 || --(*use_count) > 0))
++		return 0;
++	ret = v4l2_subdev_call(sd, core, s_power, on);
++
++	return ret != -ENOIOCTLCMD ? ret : 0;
++}
++
++/**
++ * fimc_pipeline_s_power - change power state of all pipeline subdevs
++ * @fimc: fimc device terminating the pipeline
++ * @state: 1 to enable power or 0 for power down
++ *
++ * Need to be called with the graph mutex held.
++ */
++int fimc_pipeline_s_power(struct fimc_dev *fimc, int state)
++{
++	int ret = 0;
++
++	if (fimc->pipeline.sensor == NULL)
++		return -ENXIO;
++
++	if (state) {
++		ret = __subdev_set_power(fimc->pipeline.csis, 1);
++		if (ret && ret != -ENXIO)
++			return ret;
++		return __subdev_set_power(fimc->pipeline.sensor, 1);
++	}
++
++	ret = __subdev_set_power(fimc->pipeline.sensor, 0);
++	if (ret)
++		return ret;
++	ret = __subdev_set_power(fimc->pipeline.csis, 0);
++
++	return ret == -ENXIO ? 0 : ret;
++}
++
++/**
++ * __fimc_pipeline_initialize - update the pipeline information, enable power
++ *                              of all pipeline subdevs and the sensor clock
++ * @me: media entity to start graph walk with
++ * @prep: true to acquire sensor (and csis) subdevs
++ *
++ * This function must be called with the graph mutex held.
++ */
++static int __fimc_pipeline_initialize(struct fimc_dev *fimc,
++				      struct media_entity *me, bool prep)
++{
++	int ret;
++
++	if (prep)
++		fimc_pipeline_prepare(fimc, me);
++	if (fimc->pipeline.sensor == NULL)
++		return -EINVAL;
++	ret = fimc_md_set_camclk(fimc->pipeline.sensor, true);
++	if (ret)
++		return ret;
++	return fimc_pipeline_s_power(fimc, 1);
++}
++
++int fimc_pipeline_initialize(struct fimc_dev *fimc, struct media_entity *me,
++			     bool prep)
++{
++	int ret;
++
++	mutex_lock(&me->parent->graph_mutex);
++	ret =  __fimc_pipeline_initialize(fimc, me, prep);
++	mutex_unlock(&me->parent->graph_mutex);
++
++	return ret;
++}
++
++/**
++ * __fimc_pipeline_shutdown - disable the sensor clock and pipeline power
++ * @fimc: fimc device terminating the pipeline
++ *
++ * Disable power of all subdevs in the pipeline and turn off the external
++ * sensor clock.
++ * Called with the graph mutex held.
++ */
++int __fimc_pipeline_shutdown(struct fimc_dev *fimc)
++{
++	int ret = 0;
++
++	if (fimc->pipeline.sensor) {
++		ret = fimc_pipeline_s_power(fimc, 0);
++		fimc_md_set_camclk(fimc->pipeline.sensor, false);
++	}
++	return ret == -ENXIO ? 0 : ret;
++}
++
++int fimc_pipeline_shutdown(struct fimc_dev *fimc)
++{
++	struct media_entity *me = &fimc->vid_cap.vfd->entity;
++	int ret;
++
++	mutex_lock(&me->parent->graph_mutex);
++	ret = __fimc_pipeline_shutdown(fimc);
++	mutex_unlock(&me->parent->graph_mutex);
++
++	return ret;
++}
++
++/**
++ * fimc_pipeline_s_stream - invoke s_stream on pipeline subdevs
++ * @fimc: fimc device terminating the pipeline
++ * @on: passed as the s_stream call argument
++ */
++int fimc_pipeline_s_stream(struct fimc_dev *fimc, int on)
++{
++	struct fimc_pipeline *p = &fimc->pipeline;
++	int ret = 0;
++
++	if (p->sensor == NULL)
++		return -ENODEV;
++
++	if ((on && p->csis) || !on)
++		ret = v4l2_subdev_call(on ? p->csis : p->sensor,
++				       video, s_stream, on);
++	if (ret && ret != -ENOIOCTLCMD)
++		return ret;
++	if ((!on && p->csis) || on)
++		ret = v4l2_subdev_call(on ? p->sensor : p->csis,
++				       video, s_stream, on);
++	return ret == -ENOIOCTLCMD ? 0 : ret;
++}
++
++/*
++ * Sensor subdevice helper functions
++ */
++static struct v4l2_subdev *fimc_md_register_sensor(struct fimc_md *fmd,
++				   struct fimc_sensor_info *s_info)
++{
++	struct i2c_adapter *adapter;
++	struct v4l2_subdev *sd = NULL;
++
++	if (!s_info || !fmd)
++		return NULL;
++
++	adapter = i2c_get_adapter(s_info->pdata->i2c_bus_num);
++	if (!adapter)
++		return NULL;
++	sd = v4l2_i2c_new_subdev_board(&fmd->v4l2_dev, adapter,
++				       s_info->pdata->board_info, NULL);
++	if (IS_ERR_OR_NULL(sd)) {
++		v4l2_err(&fmd->v4l2_dev, "Failed to acquire subdev\n");
++		return NULL;
++	}
++	v4l2_set_subdev_hostdata(sd, s_info);
++	sd->grp_id = SENSOR_GROUP_ID;
++
++	v4l2_info(&fmd->v4l2_dev, "Registered sensor subdevice %s\n",
++		  s_info->pdata->board_info->type);
++	return sd;
++}
++
++static void fimc_md_unregister_sensor(struct v4l2_subdev *sd)
++{
++	struct i2c_client *client = v4l2_get_subdevdata(sd);
++
++	if (!client)
++		return;
++	v4l2_device_unregister_subdev(sd);
++	i2c_unregister_device(client);
++	i2c_put_adapter(client->adapter);
++}
++
++static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
++{
++	struct s5p_platform_fimc *pdata = fmd->pdev->dev.platform_data;
++	struct fimc_dev *fd = NULL;
++	int num_clients, ret, i;
++
++	/*
++	 * Runtime resume one of the FIMC entities to make sure
++	 * the sclk_cam clocks are not globally disabled.
++	 */
++	for (i = 0; !fd && i < ARRAY_SIZE(fmd->fimc); i++)
++		if (fmd->fimc[i])
++			fd = fmd->fimc[i];
++	if (!fd)
++		return -ENXIO;
++	ret = pm_runtime_get_sync(&fd->pdev->dev);
++	if (ret < 0)
++		return ret;
++
++	WARN_ON(pdata->num_clients > ARRAY_SIZE(fmd->sensor));
++	num_clients = min_t(u32, pdata->num_clients, ARRAY_SIZE(fmd->sensor));
++
++	fmd->num_sensors = num_clients;
++	for (i = 0; i < num_clients; i++) {
++		fmd->sensor[i].pdata = &pdata->isp_info[i];
++		ret = __fimc_md_set_camclk(fmd, &fmd->sensor[i], true);
++		if (ret)
++			break;
++		fmd->sensor[i].subdev =
++			fimc_md_register_sensor(fmd, &fmd->sensor[i]);
++		ret = __fimc_md_set_camclk(fmd, &fmd->sensor[i], false);
++		if (ret)
++			break;
++	}
++	pm_runtime_put(&fd->pdev->dev);
++	return ret;
++}
++
++/*
++ * MIPI CSIS and FIMC platform devices registration.
++ */
++static int fimc_register_callback(struct device *dev, void *p)
++{
++	struct fimc_dev *fimc = dev_get_drvdata(dev);
++	struct fimc_md *fmd = p;
++	int ret;
++
++	if (!fimc || !fimc->pdev)
++		return 0;
++	if (fimc->pdev->id < 0 || fimc->pdev->id >= FIMC_MAX_DEVS)
++		return 0;
++
++	fmd->fimc[fimc->pdev->id] = fimc;
++	ret = fimc_register_m2m_device(fimc, &fmd->v4l2_dev);
++	if (ret)
++		return ret;
++	ret = fimc_register_capture_device(fimc, &fmd->v4l2_dev);
++	if (!ret)
++		fimc->vid_cap.user_subdev_api = fmd->user_subdev_api;
++	return ret;
++}
++
++static int csis_register_callback(struct device *dev, void *p)
++{
++	struct v4l2_subdev *sd = dev_get_drvdata(dev);
++	struct platform_device *pdev;
++	struct fimc_md *fmd = p;
++	int id, ret;
++
++	if (!sd)
++		return 0;
++	pdev = v4l2_get_subdevdata(sd);
++	if (!pdev || pdev->id < 0 || pdev->id >= CSIS_MAX_ENTITIES)
++		return 0;
++	v4l2_info(sd, "csis%d sd: %s\n", pdev->id, sd->name);
++
++	id = pdev->id < 0 ? 0 : pdev->id;
++	fmd->csis[id].sd = sd;
++	sd->grp_id = CSIS_GROUP_ID;
++	ret = v4l2_device_register_subdev(&fmd->v4l2_dev, sd);
++	if (ret)
++		v4l2_err(&fmd->v4l2_dev,
++			 "Failed to register CSIS subdevice: %d\n", ret);
++	return ret;
++}
++
++/**
++ * fimc_md_register_platform_entities - register FIMC and CSIS media entities
++ */
++static int fimc_md_register_platform_entities(struct fimc_md *fmd)
++{
++	struct device_driver *driver;
++	int ret;
++
++	driver = driver_find(FIMC_MODULE_NAME, &platform_bus_type);
++	if (!driver)
++		return -ENODEV;
++	ret = driver_for_each_device(driver, NULL, fmd,
++				     fimc_register_callback);
++	put_driver(driver);
++	if (ret)
++		return ret;
++
++	driver = driver_find(CSIS_DRIVER_NAME, &platform_bus_type);
++	if (driver) {
++		ret = driver_for_each_device(driver, NULL, fmd,
++					     csis_register_callback);
++		put_driver(driver);
++	}
++	return ret;
++}
++
++static void fimc_md_unregister_entities(struct fimc_md *fmd)
++{
++	int i;
++
++	for (i = 0; i < FIMC_MAX_DEVS; i++) {
++		if (fmd->fimc[i] == NULL)
++			continue;
++		fimc_unregister_m2m_device(fmd->fimc[i]);
++		fimc_unregister_capture_device(fmd->fimc[i]);
++		fmd->fimc[i] = NULL;
++	}
++	for (i = 0; i < CSIS_MAX_ENTITIES; i++) {
++		if (fmd->csis[i].sd == NULL)
++			continue;
++		v4l2_device_unregister_subdev(fmd->csis[i].sd);
++		fmd->csis[i].sd = NULL;
++	}
++	for (i = 0; i < fmd->num_sensors; i++) {
++		if (fmd->sensor[i].subdev == NULL)
++			continue;
++		fimc_md_unregister_sensor(fmd->sensor[i].subdev);
++		fmd->sensor[i].subdev = NULL;
++	}
++}
++
++static int fimc_md_register_video_nodes(struct fimc_md *fmd)
++{
++	int i, ret = 0;
++
++	for (i = 0; i < FIMC_MAX_DEVS && !ret; i++) {
++		if (!fmd->fimc[i])
++			continue;
++
++		if (fmd->fimc[i]->m2m.vfd)
++			ret = video_register_device(fmd->fimc[i]->m2m.vfd,
++						    VFL_TYPE_GRABBER, -1);
++		if (ret)
++			break;
++		if (fmd->fimc[i]->vid_cap.vfd)
++			ret = video_register_device(fmd->fimc[i]->vid_cap.vfd,
++						    VFL_TYPE_GRABBER, -1);
++	}
++
++	return ret;
++}
++
++/**
++ * __fimc_md_create_fimc_links - create links to all FIMC entities
++ * @fmd: fimc media device
++ * @source: the source entity to create links to all fimc entities from
++ * @sensor: sensor subdev linked to FIMC[fimc_id] entity, may be null
++ * @pad: the source entity pad index
++ * @fimc_id: index of the fimc device for which link should be enabled
++ */
++static int __fimc_md_create_fimc_links(struct fimc_md *fmd,
++				       struct media_entity *source,
++				       struct v4l2_subdev *sensor,
++				       int pad, int fimc_id)
++{
++	struct fimc_sensor_info *s_info;
++	struct media_entity *sink;
++	unsigned int flags;
++	int ret, i, src_pad;
++
++	for (i = 0; i < FIMC_MAX_DEVS; i++) {
++		if (!fmd->fimc[i])
++			break;
++		/*
++		 * Some FIMC variants are not fitted with camera capture
++		 * interface. Skip creating a link from sensor for those.
++		 */
++		if (sensor && sensor->grp_id == SENSOR_GROUP_ID &&
++		    !fmd->fimc[i]->variant->has_cam_if)
++			continue;
++
++		flags = (i == fimc_id) ? MEDIA_LNK_FL_ENABLED : 0;
++		sink = &fmd->fimc[i]->vid_cap.vfd->entity;
++		ret = media_entity_create_link(source, 0, sink, 0, flags);
++		if (ret)
++			return ret;
++
++		v4l2_info(&fmd->v4l2_dev, "created link [%s] %c> [%s]",
++			  source->name, flags ? '=' : '-', sink->name);
++
++		if (flags == 0 || sensor == NULL)
++			continue;
++		s_info = v4l2_get_subdev_hostdata(sensor);
++		if (!WARN_ON(s_info == NULL)) {
++			unsigned long irq_flags;
++			spin_lock_irqsave(&fmd->slock, irq_flags);
++			s_info->host = fmd->fimc[i];
++			spin_unlock_irqrestore(&fmd->slock, irq_flags);
 +		}
- 	}
- 
- 	writel(cfg, dev->regs + S5P_CIIMGEFF);
-@@ -592,6 +594,9 @@ int fimc_hw_set_camera_source(struct fimc_dev *fimc,
- 			else if (bus_width == 16)
- 				cfg |= S5P_CISRCFMT_ITU601_16BIT;
- 		} /* else defaults to ITU-R BT.656 8-bit */
-+	} else if (cam->bus_type == FIMC_MIPI_CSI2) {
-+		if (fimc_fmt_is_jpeg(f->fmt->color))
-+			cfg |= S5P_CISRCFMT_ITU601_8BIT;
- 	}
- 
- 	cfg |= S5P_CISRCFMT_HSIZE(f->o_width) | S5P_CISRCFMT_VSIZE(f->o_height);
-@@ -633,7 +638,7 @@ int fimc_hw_set_camera_type(struct fimc_dev *fimc,
- 	/* Select ITU B interface, disable Writeback path and test pattern. */
- 	cfg &= ~(S5P_CIGCTRL_TESTPAT_MASK | S5P_CIGCTRL_SELCAM_ITU_A |
- 		S5P_CIGCTRL_SELCAM_MIPI | S5P_CIGCTRL_CAMIF_SELWB |
--		S5P_CIGCTRL_SELCAM_MIPI_A);
-+		S5P_CIGCTRL_SELCAM_MIPI_A | S5P_CIGCTRL_CAM_JPEG);
- 
- 	if (cam->bus_type == FIMC_MIPI_CSI2) {
- 		cfg |= S5P_CIGCTRL_SELCAM_MIPI;
-@@ -642,9 +647,15 @@ int fimc_hw_set_camera_type(struct fimc_dev *fimc,
- 			cfg |= S5P_CIGCTRL_SELCAM_MIPI_A;
- 
- 		/* TODO: add remaining supported formats. */
--		if (vid_cap->mf.code == V4L2_MBUS_FMT_VYUY8_2X8) {
-+		switch (vid_cap->mf.code) {
-+		case V4L2_MBUS_FMT_VYUY8_2X8:
- 			tmp = S5P_CSIIMGFMT_YCBCR422_8BIT;
--		} else {
++	}
++	return 0;
++}
++
++/**
++ * fimc_md_create_links - create default links between registered entities
++ *
++ * Parallel interface sensor entities are connected directly to FIMC capture
++ * entities. The sensors using MIPI CSIS bus are connected through immutable
++ * link with CSI receiver entity specified by mux_id. Any registered CSIS
++ * entity has a link to each registered FIMC capture entity. Enabled links
++ * are created by default between each subsequent registered sensor and
++ * subsequent FIMC capture entity. The number of default active links is
++ * determined by the number of available sensors or FIMC entities,
++ * whichever is less.
++ */
++static int fimc_md_create_links(struct fimc_md *fmd)
++{
++	struct v4l2_subdev *sensor, *csis;
++	struct s5p_fimc_isp_info *pdata;
++	struct fimc_sensor_info *s_info;
++	struct media_entity *source;
++	int fimc_id = 0;
++	int i, pad;
++	int ret = 0;
++
++	for (i = 0; i < fmd->num_sensors; i++) {
++		if (fmd->sensor[i].subdev == NULL)
++			continue;
++
++		sensor = fmd->sensor[i].subdev;
++		s_info = v4l2_get_subdev_hostdata(sensor);
++		if (!s_info || !s_info->pdata)
++			continue;
++
++		source = NULL;
++		pdata = s_info->pdata;
++
++		switch (pdata->bus_type) {
++		case FIMC_MIPI_CSI2:
++			if (WARN(pdata->mux_id >= CSIS_MAX_ENTITIES,
++				"Wrong CSI channel id: %d\n", pdata->mux_id))
++				return -EINVAL;
++
++			csis = fmd->csis[pdata->mux_id].sd;
++			if (WARN(csis == NULL,
++				 "MIPI-CSI interface specified "
++				 "but s5p-csis module is not loaded!\n"))
++				continue;
++
++			ret = media_entity_create_link(&sensor->entity, 0,
++					      &csis->entity, CSIS_PAD_SINK,
++					      MEDIA_LNK_FL_IMMUTABLE |
++					      MEDIA_LNK_FL_ENABLED);
++			if (ret)
++				return ret;
++
++			v4l2_info(&fmd->v4l2_dev, "created link [%s] => [%s]",
++				  sensor->entity.name, csis->entity.name);
++
++			sensor = NULL;
++			source = &csis->entity;
++			pad = CSIS_PAD_SOURCE;
 +			break;
-+		case V4L2_MBUS_FMT_JPEG_1X8:
-+			tmp = S5P_CSIIMGFMT_USER(1);
-+			cfg |= S5P_CIGCTRL_CAM_JPEG;
++
++		case FIMC_ITU_601...FIMC_ITU_656:
++			source = &sensor->entity;
++			pad = 0;
 +			break;
++
 +		default:
- 			v4l2_err(fimc->vid_cap.vfd,
- 				 "Not supported camera pixel format: %d",
- 				 vid_cap->mf.code);
-diff --git a/drivers/media/video/s5p-fimc/regs-fimc.h b/drivers/media/video/s5p-fimc/regs-fimc.h
-index 0fea3e6..94d2302 100644
---- a/drivers/media/video/s5p-fimc/regs-fimc.h
-+++ b/drivers/media/video/s5p-fimc/regs-fimc.h
-@@ -54,6 +54,7 @@
- #define S5P_CIGCTRL_IRQ_CLR		(1 << 19)
- #define S5P_CIGCTRL_IRQ_ENABLE		(1 << 16)
- #define S5P_CIGCTRL_SHDW_DISABLE	(1 << 12)
-+#define S5P_CIGCTRL_CAM_JPEG		(1 << 8)
- #define S5P_CIGCTRL_SELCAM_MIPI_A	(1 << 7)
- #define S5P_CIGCTRL_CAMIF_SELWB		(1 << 6)
- /* 0 - ITU601; 1 - ITU709 */
-@@ -184,7 +185,6 @@
++			v4l2_err(&fmd->v4l2_dev, "Wrong bus_type: %x\n",
++				 pdata->bus_type);
++			return -EINVAL;
++		}
++		if (source == NULL)
++			continue;
++
++		ret = __fimc_md_create_fimc_links(fmd, source, sensor, pad,
++						 fimc_id++);
++	}
++	return ret;
++}
++
++/*
++ * The peripheral sensor clock management.
++ */
++static int fimc_md_get_clocks(struct fimc_md *fmd)
++{
++	char clk_name[32];
++	struct clk *clock;
++	int i;
++
++	for (i = 0; i < FIMC_MAX_CAMCLKS; i++) {
++		snprintf(clk_name, sizeof(clk_name), "sclk_cam%u", i);
++		clock = clk_get(NULL, clk_name);
++		if (IS_ERR_OR_NULL(clock)) {
++			v4l2_err(&fmd->v4l2_dev, "Failed to get clock: %s",
++				  clk_name);
++			return -ENXIO;
++		}
++		fmd->camclk[i].clock = clock;
++	}
++	return 0;
++}
++
++static void fimc_md_put_clocks(struct fimc_md *fmd)
++{
++	int i = FIMC_MAX_CAMCLKS;
++
++	while (--i >= 0) {
++		if (IS_ERR_OR_NULL(fmd->camclk[i].clock))
++			continue;
++		clk_put(fmd->camclk[i].clock);
++		fmd->camclk[i].clock = NULL;
++	}
++}
++
++static int __fimc_md_set_camclk(struct fimc_md *fmd,
++					 struct fimc_sensor_info *s_info,
++					 bool on)
++{
++	struct s5p_fimc_isp_info *pdata = s_info->pdata;
++	struct fimc_camclk_info *camclk;
++	int ret = 0;
++
++	if (WARN_ON(pdata->clk_id >= FIMC_MAX_CAMCLKS) || fmd == NULL)
++		return -EINVAL;
++
++	if (s_info->clk_on == on)
++		return 0;
++	camclk = &fmd->camclk[pdata->clk_id];
++
++	dbg("camclk %d, f: %lu, clk: %p, on: %d",
++	    pdata->clk_id, pdata->clk_frequency, camclk, on);
++
++	if (on) {
++		if (camclk->use_count > 0 &&
++		    camclk->frequency != pdata->clk_frequency)
++			return -EINVAL;
++
++		if (camclk->use_count++ == 0) {
++			clk_set_rate(camclk->clock, pdata->clk_frequency);
++			camclk->frequency = pdata->clk_frequency;
++			ret = clk_enable(camclk->clock);
++		}
++		s_info->clk_on = 1;
++		dbg("Enabled camclk %d: f: %lu", pdata->clk_id,
++		    clk_get_rate(camclk->clock));
++
++		return ret;
++	}
++
++	if (WARN_ON(camclk->use_count == 0))
++		return 0;
++
++	if (--camclk->use_count == 0) {
++		clk_disable(camclk->clock);
++		s_info->clk_on = 0;
++		dbg("Disabled camclk %d", pdata->clk_id);
++	}
++	return ret;
++}
++
++/**
++ * fimc_md_set_camclk - peripheral sensor clock setup
++ * @sd: sensor subdev to configure sclk_cam clock for
++ * @on: 1 to enable or 0 to disable the clock
++ *
++ * There are 2 separate clock outputs available in the SoC for external
++ * image processors. These clocks are shared between all registered FIMC
++ * devices to which sensors can be attached, either directly or through
++ * the MIPI CSI receiver. The clock is allowed here to be used by
++ * multiple sensors concurrently if they use same frequency.
++ * The per sensor subdev clk_on attribute helps to synchronize accesses
++ * to the sclk_cam clocks from the video and media device nodes.
++ * This function should only be called when the graph mutex is held.
++ */
++int fimc_md_set_camclk(struct v4l2_subdev *sd, bool on)
++{
++	struct fimc_sensor_info *s_info = v4l2_get_subdev_hostdata(sd);
++	struct fimc_md *fmd = entity_to_fimc_mdev(&sd->entity);
++
++	return __fimc_md_set_camclk(fmd, s_info, on);
++}
++
++static int fimc_md_link_notify(struct media_pad *source,
++			       struct media_pad *sink, u32 flags)
++{
++	struct video_device *vid_dev;
++	struct fimc_dev *fimc;
++	int ret = 0;
++
++	if (WARN_ON(media_entity_type(sink->entity) != MEDIA_ENT_T_DEVNODE))
++		return 0;
++
++	vid_dev = media_entity_to_video_device(sink->entity);
++	fimc = video_get_drvdata(vid_dev);
++
++	if (!(flags & MEDIA_LNK_FL_ENABLED)) {
++		ret = __fimc_pipeline_shutdown(fimc);
++		fimc->pipeline.sensor = NULL;
++		fimc->pipeline.csis = NULL;
++		return ret;
++	}
++	/*
++	 * Link activation. Enable power of pipeline elements only if the
++	 * pipeline is already in use, i.e. its video node is opened.
++	 */
++	mutex_lock(&fimc->lock);
++	if (fimc->vid_cap.refcnt > 0)
++		ret = __fimc_pipeline_initialize(fimc, source->entity, true);
++	mutex_unlock(&fimc->lock);
++
++	return ret ? -EPIPE : ret;
++}
++
++static ssize_t fimc_md_sysfs_show(struct device *dev,
++				  struct device_attribute *attr, char *buf)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct fimc_md *fmd = platform_get_drvdata(pdev);
++
++	if (fmd->user_subdev_api)
++		return strlcpy(buf, "Sub-device API (sub-dev)\n", PAGE_SIZE);
++
++	return strlcpy(buf, "V4L2 video node only API (vid-dev)\n", PAGE_SIZE);
++}
++
++static ssize_t fimc_md_sysfs_store(struct device *dev,
++				   struct device_attribute *attr,
++				   const char *buf, size_t count)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct fimc_md *fmd = platform_get_drvdata(pdev);
++	bool subdev_api;
++	int i;
++
++	if (!strcmp(buf, "vid-dev\n"))
++		subdev_api = false;
++	else if (!strcmp(buf, "sub-dev\n"))
++		subdev_api = true;
++	else
++		return count;
++
++	fmd->user_subdev_api = subdev_api;
++	for (i = 0; i < FIMC_MAX_DEVS; i++)
++		if (fmd->fimc[i])
++			fmd->fimc[i]->vid_cap.user_subdev_api = subdev_api;
++	return count;
++}
++/*
++ * This device attribute is to select video pipeline configuration method.
++ * There are following valid values:
++ *  vid-dev - for V4L2 video node API only, subdevice will be configured
++ *  by the host driver.
++ *  sub-dev - for media controller API, subdevs must be configured in user
++ *  space before starting streaming.
++ */
++static DEVICE_ATTR(subdev_conf_mode, S_IWUSR | S_IRUGO,
++		   fimc_md_sysfs_show, fimc_md_sysfs_store);
++
++static int __devinit fimc_md_probe(struct platform_device *pdev)
++{
++	struct v4l2_device *v4l2_dev;
++	struct fimc_md *fmd;
++	int ret;
++
++	if (WARN(!pdev->dev.platform_data, "Platform data not specified!\n"))
++		return -EINVAL;
++
++	fmd = kzalloc(sizeof(struct fimc_md), GFP_KERNEL);
++	if (!fmd)
++		return -ENOMEM;
++
++	spin_lock_init(&fmd->slock);
++	fmd->pdev = pdev;
++
++	strlcpy(fmd->media_dev.model, "SAMSUNG S5P FIMC",
++		sizeof(fmd->media_dev.model));
++	fmd->media_dev.link_notify = fimc_md_link_notify;
++	fmd->media_dev.dev = &pdev->dev;
++
++	v4l2_dev = &fmd->v4l2_dev;
++	v4l2_dev->mdev = &fmd->media_dev;
++	snprintf(v4l2_dev->name, sizeof(v4l2_dev->name), "%s",
++		 dev_name(&pdev->dev));
++
++	ret = v4l2_device_register(&pdev->dev, &fmd->v4l2_dev);
++	if (ret < 0) {
++		v4l2_err(v4l2_dev, "Failed to register v4l2_device: %d\n", ret);
++		goto err1;
++	}
++	ret = media_device_register(&fmd->media_dev);
++	if (ret < 0) {
++		v4l2_err(v4l2_dev, "Failed to register media device: %d\n", ret);
++		goto err2;
++	}
++	ret = fimc_md_get_clocks(fmd);
++	if (ret)
++		goto err3;
++
++	fmd->user_subdev_api = false;
++	ret = fimc_md_register_platform_entities(fmd);
++	if (ret)
++		goto err3;
++
++	ret = fimc_md_register_sensor_entities(fmd);
++	if (ret)
++		goto err3;
++	ret = fimc_md_create_links(fmd);
++	if (ret)
++		goto err3;
++	ret = v4l2_device_register_subdev_nodes(&fmd->v4l2_dev);
++	if (ret)
++		goto err3;
++	ret = fimc_md_register_video_nodes(fmd);
++	if (ret)
++		goto err3;
++
++	ret = device_create_file(&pdev->dev, &dev_attr_subdev_conf_mode);
++	if (!ret) {
++		platform_set_drvdata(pdev, fmd);
++		return 0;
++	}
++err3:
++	media_device_unregister(&fmd->media_dev);
++	fimc_md_put_clocks(fmd);
++	fimc_md_unregister_entities(fmd);
++err2:
++	v4l2_device_unregister(&fmd->v4l2_dev);
++err1:
++	kfree(fmd);
++	return ret;
++}
++
++static int __devexit fimc_md_remove(struct platform_device *pdev)
++{
++	struct fimc_md *fmd = platform_get_drvdata(pdev);
++
++	if (!fmd)
++		return 0;
++	device_remove_file(&pdev->dev, &dev_attr_subdev_conf_mode);
++	fimc_md_unregister_entities(fmd);
++	media_device_unregister(&fmd->media_dev);
++	fimc_md_put_clocks(fmd);
++	kfree(fmd);
++	return 0;
++}
++
++static struct platform_driver fimc_md_driver = {
++	.probe		= fimc_md_probe,
++	.remove		= __devexit_p(fimc_md_remove),
++	.driver = {
++		.name	= "s5p-fimc-md",
++		.owner	= THIS_MODULE,
++	}
++};
++
++int __init fimc_md_init(void)
++{
++	int ret;
++	request_module("s5p-csis");
++	ret = fimc_register_driver();
++	if (ret)
++		return ret;
++	return platform_driver_register(&fimc_md_driver);
++}
++void __exit fimc_md_exit(void)
++{
++	platform_driver_unregister(&fimc_md_driver);
++	fimc_unregister_driver();
++}
++
++module_init(fimc_md_init);
++module_exit(fimc_md_exit);
++
++MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
++MODULE_DESCRIPTION("S5P FIMC camera host interface/video postprocessor driver");
++MODULE_LICENSE("GPL");
++MODULE_VERSION("2.0.1");
+diff --git a/drivers/media/video/s5p-fimc/fimc-mdevice.h b/drivers/media/video/s5p-fimc/fimc-mdevice.h
+new file mode 100644
+index 0000000..da37808
+--- /dev/null
++++ b/drivers/media/video/s5p-fimc/fimc-mdevice.h
+@@ -0,0 +1,118 @@
++/*
++ * Copyright (C) 2011 Samsung Electronics Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef FIMC_MDEVICE_H_
++#define FIMC_MDEVICE_H_
++
++#include <linux/clk.h>
++#include <linux/platform_device.h>
++#include <linux/mutex.h>
++#include <media/media-device.h>
++#include <media/media-entity.h>
++#include <media/v4l2-device.h>
++#include <media/v4l2-subdev.h>
++
++#include "fimc-core.h"
++#include "mipi-csis.h"
++
++/* Group IDs of sensor, MIPI CSIS and the writeback subdevs. */
++#define SENSOR_GROUP_ID		(1 << 8)
++#define CSIS_GROUP_ID		(1 << 9)
++#define WRITEBACK_GROUP_ID	(1 << 10)
++
++#define FIMC_MAX_SENSORS	8
++#define FIMC_MAX_CAMCLKS	2
++
++struct fimc_csis_info {
++	struct v4l2_subdev *sd;
++	int id;
++};
++
++struct fimc_camclk_info {
++	struct clk *clock;
++	int use_count;
++	unsigned long frequency;
++};
++
++/**
++ * struct fimc_sensor_info - image data source subdev information
++ * @pdata: sensor's atrributes passed as media device's platform data
++ * @subdev: image sensor v4l2 subdev
++ * @host: fimc device the sensor is currently linked to
++ * @clk_on: sclk_cam clock's state associated with this subdev
++ *
++ * This data structure applies to image sensor and the writeback subdevs.
++ */
++struct fimc_sensor_info {
++	struct s5p_fimc_isp_info *pdata;
++	struct v4l2_subdev *subdev;
++	struct fimc_dev *host;
++	bool clk_on;
++};
++
++/**
++ * struct fimc_md - fimc media device information
++ * @csis: MIPI CSIS subdevs data
++ * @sensor: array of registered sensor subdevs
++ * @num_sensors: actual number of registered sensors
++ * @camclk: external sensor clock information
++ * @fimc: array of registered fimc devices
++ * @media_dev: top level media device
++ * @v4l2_dev: top level v4l2_device holding up the subdevs
++ * @pdev: platform device this media device is hooked up into
++ * @user_subdev_api: true if subdevs are not configured by the host driver
++ * @slock: spinlock protecting @sensor array
++ */
++struct fimc_md {
++	struct fimc_csis_info csis[CSIS_MAX_ENTITIES];
++	struct fimc_sensor_info sensor[FIMC_MAX_SENSORS];
++	int num_sensors;
++	struct fimc_camclk_info camclk[FIMC_MAX_CAMCLKS];
++	struct fimc_dev *fimc[FIMC_MAX_DEVS];
++	struct media_device media_dev;
++	struct v4l2_device v4l2_dev;
++	struct platform_device *pdev;
++	bool user_subdev_api;
++	spinlock_t slock;
++};
++
++#define is_subdev_pad(pad) (pad == NULL || \
++	media_entity_type(pad->entity) == MEDIA_ENT_T_V4L2_SUBDEV)
++
++#define me_subtype(me) \
++	((me->type) & (MEDIA_ENT_TYPE_MASK | MEDIA_ENT_SUBTYPE_MASK))
++
++#define subdev_has_devnode(__sd) (__sd->flags & V4L2_SUBDEV_FL_HAS_DEVNODE)
++
++static inline struct fimc_md *entity_to_fimc_mdev(struct media_entity *me)
++{
++	return me->parent == NULL ? NULL :
++		container_of(me->parent, struct fimc_md, media_dev);
++}
++
++static inline void fimc_md_graph_lock(struct fimc_dev *fimc)
++{
++	BUG_ON(fimc->vid_cap.vfd == NULL);
++	mutex_lock(&fimc->vid_cap.vfd->entity.parent->graph_mutex);
++}
++
++static inline void fimc_md_graph_unlock(struct fimc_dev *fimc)
++{
++	BUG_ON(fimc->vid_cap.vfd == NULL);
++	mutex_unlock(&fimc->vid_cap.vfd->entity.parent->graph_mutex);
++}
++
++int fimc_md_set_camclk(struct v4l2_subdev *sd, bool on);
++void fimc_pipeline_prepare(struct fimc_dev *fimc, struct media_entity *me);
++int fimc_pipeline_initialize(struct fimc_dev *fimc, struct media_entity *me,
++			     bool resume);
++int fimc_pipeline_shutdown(struct fimc_dev *fimc);
++int fimc_pipeline_s_power(struct fimc_dev *fimc, int state);
++int fimc_pipeline_s_stream(struct fimc_dev *fimc, int state);
++
++#endif
+diff --git a/include/media/s5p_fimc.h b/include/media/s5p_fimc.h
+index 9fdff8a..086a7aa 100644
+--- a/include/media/s5p_fimc.h
++++ b/include/media/s5p_fimc.h
+@@ -36,6 +36,7 @@ struct i2c_board_info;
+  * @csi_data_align: MIPI-CSI interface data alignment in bits
+  * @i2c_bus_num: i2c control bus id the sensor is attached to
+  * @mux_id: FIMC camera interface multiplexer index (separate for MIPI and ITU)
++ * @clk_id: index of the SoC peripheral clock for sensors
+  * @flags: flags defining bus signals polarity inversion (High by default)
+  */
+ struct s5p_fimc_isp_info {
+@@ -46,6 +47,7 @@ struct s5p_fimc_isp_info {
+ 	u16 i2c_bus_num;
+ 	u16 mux_id;
+ 	u16 flags;
++	u8 clk_id;
+ };
  
- /* Image effect */
- #define S5P_CIIMGEFF			0xd0
--#define S5P_CIIMGEFF_IE_DISABLE		(0 << 30)
- #define S5P_CIIMGEFF_IE_ENABLE		(1 << 30)
- #define S5P_CIIMGEFF_IE_SC_BEFORE	(0 << 29)
- #define S5P_CIIMGEFF_IE_SC_AFTER	(1 << 29)
-@@ -286,10 +286,8 @@
- #define S5P_CSIIMGFMT_RAW8		0x2a
- #define S5P_CSIIMGFMT_RAW10		0x2b
- #define S5P_CSIIMGFMT_RAW12		0x2c
--#define S5P_CSIIMGFMT_USER1		0x30
--#define S5P_CSIIMGFMT_USER2		0x31
--#define S5P_CSIIMGFMT_USER3		0x32
--#define S5P_CSIIMGFMT_USER4		0x33
-+/* User defined formats. x = 0...16. */
-+#define S5P_CSIIMGFMT_USER(x)		(0x30 + x - 1)
- 
- /* Output frame buffer sequence mask */
- #define S5P_CIFCNTSEQ			0x1FC
+ /**
 -- 
 1.7.6
