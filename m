@@ -1,167 +1,94 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH] gpio: exynos4: Add device tree support
-Date: Thu, 01 Sep 2011 21:31:37 +0530
-Message-ID: <1314892897-18803-1-git-send-email-thomas.abraham@linaro.org>
+From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Subject: Re: [PATCH 0/2] video: s3c-fb: Add window positioning support
+Date: Thu, 01 Sep 2011 16:45:18 +0000
+Message-ID: <4E5FB69E.2060907@gmx.de>
+References: <1314301917-9938-1-git-send-email-ajaykumar.rs@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:8220 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932478Ab1IAQBs (ORCPT
+Received: from mailout-de.gmx.net ([213.165.64.23]:54751 "HELO
+	mailout-de.gmx.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1750900Ab1IAQp3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Sep 2011 12:01:48 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LQU00BFWPUXS5D0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 02 Sep 2011 01:01:45 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LQU00GX3PUSSH00@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Fri, 02 Sep 2011 01:01:45 +0900 (KST)
+	Thu, 1 Sep 2011 12:45:29 -0400
+In-Reply-To: <1314301917-9938-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree-discuss@lists.ozlabs.org
-Cc: grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lethal@linux-sh.org, jg1.han@samsung.com, m.szyprowski@samsung.com, ben-linux@fluff.org, banajit.g@samsung.com, Manuel Lauss <manuel.lauss@googlemail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-As gpio chips get registered, a device tree node which represents the
-gpio chip is searched and attached to it. A translate function is also
-provided to convert the gpio specifier into actual platform settings
-for pin function selection, pull up/down and drive strength settings.
+Hi all,
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
-This patch addes device tree support for exynos4 with minimal changes to
-existing code. All the gpio chips that are registered find a corresponding
-gpio-controller in the device tree. An example of such a node is:
+On 08/25/2011 07:51 PM, Ajay Kumar wrote:
+> Just as a note, there are many drivers like mx3fb.c, au1200fb.c and OMAP
+> seem to be doing window/plane positioning in their driver code.
+> Is it possible to have this window positioning support at a common place?
 
-	gpd1: gpio-controller@114000C0 {
-		compatible = "samsung,exynos4-gpio-gpd1", "samsung,exynos4-gpio";
-		#gpio-cells = <4>;
-		gpio-controller;
-	};
+Good point. Congratulations for figuring out that I like to standardize things.
+But I think your suggestion is far from being enough to be useful for userspace
+(which is our goal so that applications can be reused along drivers and don't
+need to know about individual drivers).
 
-Four cells are required to describe a gpio and all its properties. The pin
-function selection, pull up/down and drive strength settings are considered
-the properties of the gpio pin. This fits well with the hardware organization
-of gpio, pinmux, pull up/down and drive strength for exynos4.
+So let me at first summarize how I understand you implemented those things after
+having a brief look at some of the drivers:
+Windows are rectangular screen areas whose pixel data come from other locations.
+The other locations are accessible via other framebuffer devices (e.g. fb1). So
+in this area the data of fb1 is shown and not the data of fb0 that would be
+normally shown.
 
-The format of the gpio specifier is
-<[phandle] [gpio_pin] [function] [pull] [drive_strength]>;
+So in addition to your proposed positioning I think we should also have the
+following to give userspace a useful set of functionality:
 
-- gpio_pin: Pin number within a gpio-controller.
-- function: Pinmux function number (as per the SoC spec).
-- pull: Pull up/down setting value (as per the SoC spec).
-- drive_strength: Pin Driver strength setting (as per the SoC spec).
+- a way to discover how the screen is composited (how many windows are there,
+how they are stacked and how to access those)
 
-Example: A i2c device node which uses two gpio lines is listed below.
+- a way to enable/disable windows (make them (in)visible)
 
-	i2c@13860000 {
-		compatible = "samsung,s3c2440-i2c";
-		reg = <0x13860000 0x100>;
-		interrupts = <122>;
-		gpios = <&gpd1 0 2 3 0
-			 &gpd1 1 2 3 0>;
-	};
+- reporting and selecting how the window content can be mixed with the root
+screen (overwrite, source or destination color keying)
 
-A driver or any other portion of the code that is looking up a gpio number
-from a device tree node would first get the gpio number using the of_get_gpio()
-function. And then use the gpio_request() function on that gpio number.
+- things like window size and color format could be handled by the usual fb API
+used on the window. However there might be restrictions which cause them to be
+not 100% API compatible (for example when changing the color format if the
+windows are required to have the same format as the root screen)
 
-This approach has been tested with i2c driver for exynos4.
+- do we need to worry about hardware (up/down) scaling of the window content?
 
- drivers/gpio/gpio-exynos4.c |   53 +++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 53 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/gpio/gpio-exynos4.c b/drivers/gpio/gpio-exynos4.c
-index d24b337..aa2d9fb 100644
---- a/drivers/gpio/gpio-exynos4.c
-+++ b/drivers/gpio/gpio-exynos4.c
-@@ -13,6 +13,10 @@
- #include <linux/irq.h>
- #include <linux/io.h>
- #include <linux/gpio.h>
-+#ifdef CONFIG_OF
-+#include <linux/of.h>
-+#include <linux/slab.h>
-+#endif
- 
- #include <mach/map.h>
- 
-@@ -320,6 +324,52 @@ static struct s3c_gpio_chip exynos4_gpio_part3_4bit[] = {
- 	},
- };
- 
-+#ifdef CONFIG_OF
-+int exynos4_gpio_xlate(struct gpio_chip *gc, struct device_node *np,
-+			 const void *gpio_spec, u32 *flags)
-+{
-+	const __be32 *gpio = gpio_spec;
-+	const u32 n = be32_to_cpup(gpio);
-+	unsigned int pin = gc->base + be32_to_cpu(gpio[0]);
-+
-+	if (gc->of_gpio_n_cells < 4) {
-+		WARN_ON(1);
-+		return -EINVAL;
-+	}
-+
-+	if (n > gc->ngpio)
-+		return -EINVAL;
-+
-+	s3c_gpio_cfgpin(pin, S3C_GPIO_SFN(be32_to_cpu(gpio[1])));
-+	s3c_gpio_setpull(pin, be32_to_cpu(gpio[2]));
-+	s5p_gpio_set_drvstr(pin, be32_to_cpu(gpio[3]));
-+	return n;
-+}
-+
-+static __init void exynos4_gpiolib_attach_ofnode(struct gpio_chip *gc)
-+{
-+	const char exynos4_gpio_compat_base[] = "samsung,exynos4-gpio-";
-+	char *exynos4_gpio_compat;
-+
-+	exynos4_gpio_compat = kzalloc(strlen(exynos4_gpio_compat_base) +
-+				strlen(gc->label), GFP_KERNEL);
-+	if (!exynos4_gpio_compat)
-+		return;
-+
-+	strcpy(exynos4_gpio_compat, exynos4_gpio_compat_base);
-+	strcat(exynos4_gpio_compat, gc->label);
-+	gc->of_node = of_find_compatible_node(NULL, NULL, exynos4_gpio_compat);
-+	gc->of_gpio_n_cells = 4;
-+	gc->of_xlate = exynos4_gpio_xlate;
-+	kfree(exynos4_gpio_compat);
-+}
-+#else
-+static __init void exynos4_gpiolib_attach_ofnode(struct gpio_chip *chip)
-+{
-+	return;
-+}
-+#endif
-+
- static __init int exynos4_gpiolib_init(void)
- {
- 	struct s3c_gpio_chip *chip;
-@@ -340,6 +390,7 @@ static __init int exynos4_gpiolib_init(void)
- 		}
- 		if (chip->base == NULL)
- 			chip->base = S5P_VA_GPIO1 + (i) * 0x20;
-+		exynos4_gpiolib_attach_ofnode(&chip->chip);
- 	}
- 
- 	samsung_gpiolib_add_4bit_chips(exynos4_gpio_part1_4bit, nr_chips);
-@@ -357,6 +408,7 @@ static __init int exynos4_gpiolib_init(void)
- 		}
- 		if (chip->base == NULL)
- 			chip->base = S5P_VA_GPIO2 + (i) * 0x20;
-+		exynos4_gpiolib_attach_ofnode(&chip->chip);
- 	}
- 
- 	samsung_gpiolib_add_4bit_chips(exynos4_gpio_part2_4bit, nr_chips);
-@@ -374,6 +426,7 @@ static __init int exynos4_gpiolib_init(void)
- 		}
- 		if (chip->base == NULL)
- 			chip->base = S5P_VA_GPIO3 + (i) * 0x20;
-+		exynos4_gpiolib_attach_ofnode(&chip->chip);
- 	}
- 
- 	samsung_gpiolib_add_4bit_chips(exynos4_gpio_part3_4bit, nr_chips);
--- 
-1.6.6.rc2
+So is that what you need for a standardized window implementation?
+Any additional things that were useful/needed in this context?
+Would you consider adding support for this API in your drivers? (as
+standardizing wouldn't be useful if nobody would implement it)
+
+
+Best regards,
+
+Florian Tobias Schandinat
+
+
+> 
+> For instance, we can have a common struture and ioctl number in 
+> include/linux/fb.h as below:
+> 
+> 	#define FBIOPOS_OVERLAY_WIN    _IOW('F', 0x21, struct fb_overlay_win_pos)
+> 
+> 	struct fb_overlay_win_pos {
+> 		__u32 win_pos_x;  /* x-offset of window from LCD(0,0) */
+> 		__u32 win_pos_y;  /* y-offset of window from LCD(0,0) */
+> 	};
+> 
+> where LCD(0,0) means the first pixel of the LCD screen.
+> Individual drivers can have implementation for this ioctl.
+> 
+> To Kukjin Kim,
+>   [PATCH 1/2] ARM: SAMSUNG: Add Window Positioning Support for s3c-fb driver
+> 
+> To Paul Mundt, Florian Tobias Schandinat
+>   [PATCH 2/2] video: s3c-fb: Modify s3c-fb driver to support window positioning
+> 
+>  arch/arm/plat-samsung/include/plat/fb.h |   14 +++++++++++
+>  drivers/video/s3c-fb.c                  |   37 ++++++++++++++++++++++++++----
+>  2 files changed, 46 insertions(+), 5 deletions(-)
+> 
+> 
