@@ -1,8 +1,8 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 04/19 v4] s5p-fimc: Remove sensor management code from FIMC
- capture driver
-Date: Thu, 01 Sep 2011 17:30:08 +0200
-Message-ID: <1314891023-14227-5-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 01/19 v4] s5p-fimc: Remove registration of video nodes from
+ probe()
+Date: Thu, 01 Sep 2011 17:30:05 +0200
+Message-ID: <1314891023-14227-2-git-send-email-s.nawrocki@samsung.com>
 References: <1314891023-14227-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -14,210 +14,177 @@ To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: mchehab@redhat.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The sensor subdevs need to be shared between all available FIMC instances.
-Remove their registration from FIMC capture driver so they can then be
-registered to the media device driver.
+Do not register video nodes during FIMC device probe. Also make
+fimc_register_m2m_device() public for use by the media device driver.
+The video nodes are to be registered during the media device driver
+initialization, altogether with the subdev devnodes. The video
+capture nodes need to be registered as last ones when the remaining
+pipeline elements are already initialized.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-capture.c |  139 +--------------------------
- drivers/media/video/s5p-fimc/fimc-core.h    |    2 +-
- 2 files changed, 2 insertions(+), 139 deletions(-)
+ drivers/media/video/s5p-fimc/fimc-capture.c |   14 +-----
+ drivers/media/video/s5p-fimc/fimc-core.c    |   55 ++++++--------------------
+ drivers/media/video/s5p-fimc/fimc-core.h    |    1 +
+ 3 files changed, 17 insertions(+), 53 deletions(-)
 
 diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index b786c2c..40f3330 100644
+index 19d398b..6efd952 100644
 --- a/drivers/media/video/s5p-fimc/fimc-capture.c
 +++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -16,12 +16,9 @@
- #include <linux/bug.h>
- #include <linux/interrupt.h>
- #include <linux/device.h>
--#include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
- #include <linux/list.h>
- #include <linux/slab.h>
--#include <linux/clk.h>
--#include <linux/i2c.h>
- 
- #include <linux/videodev2.h>
- #include <media/v4l2-device.h>
-@@ -32,126 +29,6 @@
- 
- #include "fimc-core.h"
- 
--static struct v4l2_subdev *fimc_subdev_register(struct fimc_dev *fimc,
--					    struct s5p_fimc_isp_info *isp_info)
--{
--	struct i2c_adapter *i2c_adap;
--	struct fimc_vid_cap *vid_cap = &fimc->vid_cap;
--	struct v4l2_subdev *sd = NULL;
--
--	i2c_adap = i2c_get_adapter(isp_info->i2c_bus_num);
--	if (!i2c_adap)
--		return ERR_PTR(-ENOMEM);
--
--	sd = v4l2_i2c_new_subdev_board(&vid_cap->v4l2_dev, i2c_adap,
--				       isp_info->board_info, NULL);
--	if (!sd) {
--		v4l2_err(&vid_cap->v4l2_dev, "failed to acquire subdev\n");
--		return NULL;
--	}
--
--	v4l2_info(&vid_cap->v4l2_dev, "subdevice %s registered successfuly\n",
--		isp_info->board_info->type);
--
--	return sd;
--}
--
--static void fimc_subdev_unregister(struct fimc_dev *fimc)
--{
--	struct fimc_vid_cap *vid_cap = &fimc->vid_cap;
--	struct i2c_client *client;
--
--	if (vid_cap->input_index < 0)
--		return;	/* Subdevice already released or not registered. */
--
--	if (vid_cap->sd) {
--		v4l2_device_unregister_subdev(vid_cap->sd);
--		client = v4l2_get_subdevdata(vid_cap->sd);
--		i2c_unregister_device(client);
--		i2c_put_adapter(client->adapter);
--		vid_cap->sd = NULL;
--	}
--
--	vid_cap->input_index = -1;
--}
--
--/**
-- * fimc_subdev_attach - attach v4l2_subdev to camera host interface
-- *
-- * @fimc: FIMC device information
-- * @index: index to the array of available subdevices,
-- *	   -1 for full array search or non negative value
-- *	   to select specific subdevice
-- */
--static int fimc_subdev_attach(struct fimc_dev *fimc, int index)
--{
--	struct fimc_vid_cap *vid_cap = &fimc->vid_cap;
--	struct s5p_platform_fimc *pdata = fimc->pdata;
--	struct s5p_fimc_isp_info *isp_info;
--	struct v4l2_subdev *sd;
--	int i;
--
--	for (i = 0; i < pdata->num_clients; ++i) {
--		isp_info = &pdata->isp_info[i];
--
--		if (index >= 0 && i != index)
--			continue;
--
--		sd = fimc_subdev_register(fimc, isp_info);
--		if (!IS_ERR_OR_NULL(sd)) {
--			vid_cap->sd = sd;
--			vid_cap->input_index = i;
--
--			return 0;
--		}
--	}
--
--	vid_cap->input_index = -1;
--	vid_cap->sd = NULL;
--	v4l2_err(&vid_cap->v4l2_dev, "fimc%d: sensor attach failed\n",
--		 fimc->id);
--	return -ENODEV;
--}
--
--static int fimc_isp_subdev_init(struct fimc_dev *fimc, unsigned int index)
--{
--	struct s5p_fimc_isp_info *isp_info;
--	struct s5p_platform_fimc *pdata = fimc->pdata;
--	int ret;
--
--	if (index >= pdata->num_clients)
--		return -EINVAL;
--
--	isp_info = &pdata->isp_info[index];
--
--	if (isp_info->clk_frequency)
--		clk_set_rate(fimc->clock[CLK_CAM], isp_info->clk_frequency);
--
--	ret = clk_enable(fimc->clock[CLK_CAM]);
--	if (ret)
--		return ret;
--
--	ret = fimc_subdev_attach(fimc, index);
--	if (ret)
--		return ret;
--
--	ret = fimc_hw_set_camera_polarity(fimc, isp_info);
--	if (ret)
--		return ret;
--
--	ret = v4l2_subdev_call(fimc->vid_cap.sd, core, s_power, 1);
--	if (!ret)
--		return ret;
--
--	/* enabling power failed so unregister subdev */
--	fimc_subdev_unregister(fimc);
--
--	v4l2_err(&fimc->vid_cap.v4l2_dev, "ISP initialization failed: %d\n",
--		 ret);
--
--	return ret;
--}
--
- static void fimc_capture_state_cleanup(struct fimc_dev *fimc)
- {
- 	struct fimc_vid_cap *cap = &fimc->vid_cap;
-@@ -411,15 +288,7 @@ static int fimc_capture_open(struct file *file)
+@@ -905,19 +905,8 @@ int fimc_register_capture_device(struct fimc_dev *fimc)
  	if (ret)
- 		return ret;
+ 		goto err_ent;
  
--	if (++fimc->vid_cap.refcnt == 1) {
--		ret = fimc_isp_subdev_init(fimc, 0);
--		if (ret) {
--			pm_runtime_put_sync(&fimc->pdev->dev);
--			fimc->vid_cap.refcnt--;
--			return -EIO;
--		}
+-	ret = video_register_device(vfd, VFL_TYPE_GRABBER, -1);
+-	if (ret) {
+-		v4l2_err(v4l2_dev, "Failed to register video device\n");
+-		goto err_vd_reg;
 -	}
 -
-+	++fimc->vid_cap.refcnt;
- 	file->private_data = fimc->vid_cap.ctx;
- 
+-	v4l2_info(v4l2_dev,
+-		  "FIMC capture driver registered as /dev/video%d\n",
+-		  vfd->num);
  	return 0;
-@@ -434,12 +303,6 @@ static int fimc_capture_close(struct file *file)
- 	if (--fimc->vid_cap.refcnt == 0) {
- 		fimc_stop_capture(fimc);
- 		vb2_queue_release(&fimc->vid_cap.vbq);
--
--		v4l2_err(&fimc->vid_cap.v4l2_dev, "releasing ISP\n");
--
--		v4l2_subdev_call(fimc->vid_cap.sd, core, s_power, 0);
--		clk_disable(fimc->clock[CLK_CAM]);
--		fimc_subdev_unregister(fimc);
+ 
+-err_vd_reg:
+-	media_entity_cleanup(&vfd->entity);
+ err_ent:
+ 	video_device_release(vfd);
+ err_v4l2_reg:
+@@ -934,7 +923,10 @@ void fimc_unregister_capture_device(struct fimc_dev *fimc)
+ 
+ 	if (vfd) {
+ 		media_entity_cleanup(&vfd->entity);
++		/* Can also be called if video device was
++		   not registered */
+ 		video_unregister_device(vfd);
+ 	}
+ 	kfree(fimc->vid_cap.ctx);
++	fimc->vid_cap.ctx = NULL;
+ }
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
+index fdc1d75..e042fdc 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.c
++++ b/drivers/media/video/s5p-fimc/fimc-core.c
+@@ -1494,7 +1494,7 @@ static struct v4l2_m2m_ops m2m_ops = {
+ 	.job_abort	= fimc_job_abort,
+ };
+ 
+-static int fimc_register_m2m_device(struct fimc_dev *fimc)
++int fimc_register_m2m_device(struct fimc_dev *fimc)
+ {
+ 	struct video_device *vfd;
+ 	struct platform_device *pdev;
+@@ -1541,22 +1541,9 @@ static int fimc_register_m2m_device(struct fimc_dev *fimc)
  	}
  
- 	pm_runtime_put(&fimc->pdev->dev);
+ 	ret = media_entity_init(&vfd->entity, 0, NULL, 0);
+-	if (ret)
+-		goto err_m2m_r3;
+-
+-	ret = video_register_device(vfd, VFL_TYPE_GRABBER, -1);
+-	if (ret) {
+-		v4l2_err(v4l2_dev,
+-			 "%s(): failed to register video device\n", __func__);
+-		goto err_m2m_r4;
+-	}
+-	v4l2_info(v4l2_dev,
+-		  "FIMC m2m driver registered as /dev/video%d\n", vfd->num);
++	if (!ret)
++		return 0;
+ 
+-	return 0;
+-err_m2m_r4:
+-	media_entity_cleanup(&vfd->entity);
+-err_m2m_r3:
+ 	v4l2_m2m_release(fimc->m2m.m2m_dev);
+ err_m2m_r2:
+ 	video_device_release(fimc->m2m.vfd);
+@@ -1566,15 +1553,19 @@ err_m2m_r1:
+ 	return ret;
+ }
+ 
+-static void fimc_unregister_m2m_device(struct fimc_dev *fimc)
++void fimc_unregister_m2m_device(struct fimc_dev *fimc)
+ {
+-	if (fimc == NULL)
++	if (!fimc)
+ 		return;
+ 
+-	v4l2_m2m_release(fimc->m2m.m2m_dev);
++	if (fimc->m2m.m2m_dev)
++		v4l2_m2m_release(fimc->m2m.m2m_dev);
+ 	v4l2_device_unregister(&fimc->m2m.v4l2_dev);
+-	media_entity_cleanup(&fimc->m2m.vfd->entity);
+-	video_unregister_device(fimc->m2m.vfd);
++	if (fimc->m2m.vfd) {
++		media_entity_cleanup(&fimc->m2m.vfd->entity);
++		/* Can also be called if video device wasn't registered */
++		video_unregister_device(fimc->m2m.vfd);
++	}
+ }
+ 
+ static void fimc_clk_put(struct fimc_dev *fimc)
+@@ -1739,27 +1730,11 @@ static int fimc_probe(struct platform_device *pdev)
+ 		goto err_pm;
+ 	}
+ 
+-	ret = fimc_register_m2m_device(fimc);
+-	if (ret)
+-		goto err_alloc;
+-
+-	/* At least one camera sensor is required to register capture node */
+-	if (cap_input_index >= 0) {
+-		ret = fimc_register_capture_device(fimc);
+-		if (ret)
+-			goto err_m2m;
+-	}
+-
+-	dev_dbg(&pdev->dev, "%s(): fimc-%d registered successfully\n",
+-		__func__, fimc->id);
++	dev_dbg(&pdev->dev, "FIMC.%d registered successfully\n", fimc->id);
+ 
+ 	pm_runtime_put(&pdev->dev);
+ 	return 0;
+ 
+-err_m2m:
+-	fimc_unregister_m2m_device(fimc);
+-err_alloc:
+-	vb2_dma_contig_cleanup_ctx(fimc->alloc_ctx);
+ err_pm:
+ 	pm_runtime_put(&pdev->dev);
+ err_irq:
+@@ -1773,7 +1748,6 @@ err_req_region:
+ 	kfree(fimc->regs_res);
+ err_info:
+ 	kfree(fimc);
+-
+ 	return ret;
+ }
+ 
+@@ -1862,9 +1836,6 @@ static int __devexit fimc_remove(struct platform_device *pdev)
+ 	fimc_runtime_suspend(&pdev->dev);
+ 	pm_runtime_set_suspended(&pdev->dev);
+ 
+-	fimc_unregister_m2m_device(fimc);
+-	fimc_unregister_capture_device(fimc);
+-
+ 	vb2_dma_contig_cleanup_ctx(fimc->alloc_ctx);
+ 
+ 	clk_disable(fimc->clock[CLK_BUS]);
 diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-index d82bff8..a0d6f81 100644
+index fc99824f..c8a2bab 100644
 --- a/drivers/media/video/s5p-fimc/fimc-core.h
 +++ b/drivers/media/video/s5p-fimc/fimc-core.h
-@@ -11,6 +11,7 @@
+@@ -644,6 +644,7 @@ int fimc_set_scaler_info(struct fimc_ctx *ctx);
+ int fimc_prepare_config(struct fimc_ctx *ctx, u32 flags);
+ int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
+ 		      struct fimc_frame *frame, struct fimc_addr *paddr);
++int fimc_register_m2m_device(struct fimc_dev *fimc);
  
- /*#define DEBUG*/
- 
-+#include <linux/platform_device.h>
- #include <linux/sched.h>
- #include <linux/spinlock.h>
- #include <linux/types.h>
-@@ -649,7 +650,6 @@ int fimc_register_m2m_device(struct fimc_dev *fimc);
+ /* -----------------------------------------------------*/
  /* fimc-capture.c					*/
- int fimc_register_capture_device(struct fimc_dev *fimc);
- void fimc_unregister_capture_device(struct fimc_dev *fimc);
--int fimc_sensor_sd_init(struct fimc_dev *fimc, int index);
- int fimc_vid_cap_buf_queue(struct fimc_dev *fimc,
- 			     struct fimc_vid_buffer *fimc_vb);
- int fimc_capture_suspend(struct fimc_dev *fimc);
 -- 
 1.7.6
