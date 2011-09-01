@@ -1,20 +1,21 @@
 From: Girish K S <girish.shivananjappa@linaro.org>
 Subject: [PATCH V2] mmc: core: eMMC4.5 Add the timeout for switch
-Date: Thu,  1 Sep 2011 10:57:41 +0530
-Message-ID: <1314854861-2430-1-git-send-email-girish.shivananjappa@linaro.org>
+Date: Thu,  1 Sep 2011 11:31:14 +0530
+Message-ID: <1314856874-5385-1-git-send-email-girish.shivananjappa@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f42.google.com ([209.85.210.42]:65172 "EHLO
+Received: from mail-pz0-f42.google.com ([209.85.210.42]:47250 "EHLO
 	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751313Ab1IAF1z (ORCPT
+	with ESMTP id S1750820Ab1IAGB2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Sep 2011 01:27:55 -0400
+	Thu, 1 Sep 2011 02:01:28 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-mmc@vger.kernel.org
 Cc: cjb@laptop.org, kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
 
 V2- The datatype of the cmd6_timeout is changed from u8 to unsigned int,
-as it can hold a value upto 255*10=2550.
+as it can hold a value upto 255*10=2550 and the data assignment in
+mmc_switch function.
 	This patch adds the code to handle the default timeout
 for switch command.
 For eMMC 4.5 devices if timeout is not specified for the switch
@@ -57,11 +58,11 @@ index 770c3d0..c4d82f4 100644
  
 +	/* timeout is not defined for below command indexes (eMMC 4.5) */
 +	if ((timeout_ms == 0)					&&
-+		(card->ext_csd->rev > 5)			&&
++		(card->ext_csd.rev > 5)			&&
 +		(index != EXT_CSD_BKOPS_START)		&&
 +		(index != EXT_CSD_SANITIZE_START)	&&
 +		(index != EXT_CSD_FLUSH_CACHE))
-+			cmd.cmd_timeout_ms = card->ext_csd->cmd6_timeout;
++			cmd.cmd_timeout_ms = card->ext_csd.cmd6_timeout;
 +
  	err = mmc_wait_for_cmd(card->host, &cmd, MMC_CMD_RETRIES);
  	if (err)
