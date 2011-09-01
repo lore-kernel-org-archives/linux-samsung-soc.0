@@ -1,190 +1,167 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 01/19 v4] s5p-fimc: Remove registration of video nodes from
- probe()
-Date: Thu, 01 Sep 2011 17:30:05 +0200
-Message-ID: <1314891023-14227-2-git-send-email-s.nawrocki@samsung.com>
-References: <1314891023-14227-1-git-send-email-s.nawrocki@samsung.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1314891023-14227-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: mchehab@redhat.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH] gpio: exynos4: Add device tree support
+Date: Thu, 01 Sep 2011 21:31:37 +0530
+Message-ID: <1314892897-18803-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:8220 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932478Ab1IAQBs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 1 Sep 2011 12:01:48 -0400
+Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LQU00BFWPUXS5D0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 02 Sep 2011 01:01:45 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LQU00GX3PUSSH00@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Fri, 02 Sep 2011 01:01:45 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: devicetree-discuss@lists.ozlabs.org
+Cc: grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-Do not register video nodes during FIMC device probe. Also make
-fimc_register_m2m_device() public for use by the media device driver.
-The video nodes are to be registered during the media device driver
-initialization, altogether with the subdev devnodes. The video
-capture nodes need to be registered as last ones when the remaining
-pipeline elements are already initialized.
+As gpio chips get registered, a device tree node which represents the
+gpio chip is searched and attached to it. A translate function is also
+provided to convert the gpio specifier into actual platform settings
+for pin function selection, pull up/down and drive strength settings.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- drivers/media/video/s5p-fimc/fimc-capture.c |   14 +-----
- drivers/media/video/s5p-fimc/fimc-core.c    |   55 ++++++--------------------
- drivers/media/video/s5p-fimc/fimc-core.h    |    1 +
- 3 files changed, 17 insertions(+), 53 deletions(-)
+This patch addes device tree support for exynos4 with minimal changes to
+existing code. All the gpio chips that are registered find a corresponding
+gpio-controller in the device tree. An example of such a node is:
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index 19d398b..6efd952 100644
---- a/drivers/media/video/s5p-fimc/fimc-capture.c
-+++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -905,19 +905,8 @@ int fimc_register_capture_device(struct fimc_dev *fimc)
- 	if (ret)
- 		goto err_ent;
+	gpd1: gpio-controller@114000C0 {
+		compatible = "samsung,exynos4-gpio-gpd1", "samsung,exynos4-gpio";
+		#gpio-cells = <4>;
+		gpio-controller;
+	};
+
+Four cells are required to describe a gpio and all its properties. The pin
+function selection, pull up/down and drive strength settings are considered
+the properties of the gpio pin. This fits well with the hardware organization
+of gpio, pinmux, pull up/down and drive strength for exynos4.
+
+The format of the gpio specifier is
+<[phandle] [gpio_pin] [function] [pull] [drive_strength]>;
+
+- gpio_pin: Pin number within a gpio-controller.
+- function: Pinmux function number (as per the SoC spec).
+- pull: Pull up/down setting value (as per the SoC spec).
+- drive_strength: Pin Driver strength setting (as per the SoC spec).
+
+Example: A i2c device node which uses two gpio lines is listed below.
+
+	i2c@13860000 {
+		compatible = "samsung,s3c2440-i2c";
+		reg = <0x13860000 0x100>;
+		interrupts = <122>;
+		gpios = <&gpd1 0 2 3 0
+			 &gpd1 1 2 3 0>;
+	};
+
+A driver or any other portion of the code that is looking up a gpio number
+from a device tree node would first get the gpio number using the of_get_gpio()
+function. And then use the gpio_request() function on that gpio number.
+
+This approach has been tested with i2c driver for exynos4.
+
+ drivers/gpio/gpio-exynos4.c |   53 +++++++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 53 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/gpio/gpio-exynos4.c b/drivers/gpio/gpio-exynos4.c
+index d24b337..aa2d9fb 100644
+--- a/drivers/gpio/gpio-exynos4.c
++++ b/drivers/gpio/gpio-exynos4.c
+@@ -13,6 +13,10 @@
+ #include <linux/irq.h>
+ #include <linux/io.h>
+ #include <linux/gpio.h>
++#ifdef CONFIG_OF
++#include <linux/of.h>
++#include <linux/slab.h>
++#endif
  
--	ret = video_register_device(vfd, VFL_TYPE_GRABBER, -1);
--	if (ret) {
--		v4l2_err(v4l2_dev, "Failed to register video device\n");
--		goto err_vd_reg;
--	}
--
--	v4l2_info(v4l2_dev,
--		  "FIMC capture driver registered as /dev/video%d\n",
--		  vfd->num);
- 	return 0;
+ #include <mach/map.h>
  
--err_vd_reg:
--	media_entity_cleanup(&vfd->entity);
- err_ent:
- 	video_device_release(vfd);
- err_v4l2_reg:
-@@ -934,7 +923,10 @@ void fimc_unregister_capture_device(struct fimc_dev *fimc)
- 
- 	if (vfd) {
- 		media_entity_cleanup(&vfd->entity);
-+		/* Can also be called if video device was
-+		   not registered */
- 		video_unregister_device(vfd);
- 	}
- 	kfree(fimc->vid_cap.ctx);
-+	fimc->vid_cap.ctx = NULL;
- }
-diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index fdc1d75..e042fdc 100644
---- a/drivers/media/video/s5p-fimc/fimc-core.c
-+++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -1494,7 +1494,7 @@ static struct v4l2_m2m_ops m2m_ops = {
- 	.job_abort	= fimc_job_abort,
+@@ -320,6 +324,52 @@ static struct s3c_gpio_chip exynos4_gpio_part3_4bit[] = {
+ 	},
  };
  
--static int fimc_register_m2m_device(struct fimc_dev *fimc)
-+int fimc_register_m2m_device(struct fimc_dev *fimc)
- {
- 	struct video_device *vfd;
- 	struct platform_device *pdev;
-@@ -1541,22 +1541,9 @@ static int fimc_register_m2m_device(struct fimc_dev *fimc)
- 	}
- 
- 	ret = media_entity_init(&vfd->entity, 0, NULL, 0);
--	if (ret)
--		goto err_m2m_r3;
--
--	ret = video_register_device(vfd, VFL_TYPE_GRABBER, -1);
--	if (ret) {
--		v4l2_err(v4l2_dev,
--			 "%s(): failed to register video device\n", __func__);
--		goto err_m2m_r4;
--	}
--	v4l2_info(v4l2_dev,
--		  "FIMC m2m driver registered as /dev/video%d\n", vfd->num);
-+	if (!ret)
-+		return 0;
- 
--	return 0;
--err_m2m_r4:
--	media_entity_cleanup(&vfd->entity);
--err_m2m_r3:
- 	v4l2_m2m_release(fimc->m2m.m2m_dev);
- err_m2m_r2:
- 	video_device_release(fimc->m2m.vfd);
-@@ -1566,15 +1553,19 @@ err_m2m_r1:
- 	return ret;
- }
- 
--static void fimc_unregister_m2m_device(struct fimc_dev *fimc)
-+void fimc_unregister_m2m_device(struct fimc_dev *fimc)
- {
--	if (fimc == NULL)
-+	if (!fimc)
- 		return;
- 
--	v4l2_m2m_release(fimc->m2m.m2m_dev);
-+	if (fimc->m2m.m2m_dev)
-+		v4l2_m2m_release(fimc->m2m.m2m_dev);
- 	v4l2_device_unregister(&fimc->m2m.v4l2_dev);
--	media_entity_cleanup(&fimc->m2m.vfd->entity);
--	video_unregister_device(fimc->m2m.vfd);
-+	if (fimc->m2m.vfd) {
-+		media_entity_cleanup(&fimc->m2m.vfd->entity);
-+		/* Can also be called if video device wasn't registered */
-+		video_unregister_device(fimc->m2m.vfd);
++#ifdef CONFIG_OF
++int exynos4_gpio_xlate(struct gpio_chip *gc, struct device_node *np,
++			 const void *gpio_spec, u32 *flags)
++{
++	const __be32 *gpio = gpio_spec;
++	const u32 n = be32_to_cpup(gpio);
++	unsigned int pin = gc->base + be32_to_cpu(gpio[0]);
++
++	if (gc->of_gpio_n_cells < 4) {
++		WARN_ON(1);
++		return -EINVAL;
 +	}
- }
- 
- static void fimc_clk_put(struct fimc_dev *fimc)
-@@ -1739,27 +1730,11 @@ static int fimc_probe(struct platform_device *pdev)
- 		goto err_pm;
++
++	if (n > gc->ngpio)
++		return -EINVAL;
++
++	s3c_gpio_cfgpin(pin, S3C_GPIO_SFN(be32_to_cpu(gpio[1])));
++	s3c_gpio_setpull(pin, be32_to_cpu(gpio[2]));
++	s5p_gpio_set_drvstr(pin, be32_to_cpu(gpio[3]));
++	return n;
++}
++
++static __init void exynos4_gpiolib_attach_ofnode(struct gpio_chip *gc)
++{
++	const char exynos4_gpio_compat_base[] = "samsung,exynos4-gpio-";
++	char *exynos4_gpio_compat;
++
++	exynos4_gpio_compat = kzalloc(strlen(exynos4_gpio_compat_base) +
++				strlen(gc->label), GFP_KERNEL);
++	if (!exynos4_gpio_compat)
++		return;
++
++	strcpy(exynos4_gpio_compat, exynos4_gpio_compat_base);
++	strcat(exynos4_gpio_compat, gc->label);
++	gc->of_node = of_find_compatible_node(NULL, NULL, exynos4_gpio_compat);
++	gc->of_gpio_n_cells = 4;
++	gc->of_xlate = exynos4_gpio_xlate;
++	kfree(exynos4_gpio_compat);
++}
++#else
++static __init void exynos4_gpiolib_attach_ofnode(struct gpio_chip *chip)
++{
++	return;
++}
++#endif
++
+ static __init int exynos4_gpiolib_init(void)
+ {
+ 	struct s3c_gpio_chip *chip;
+@@ -340,6 +390,7 @@ static __init int exynos4_gpiolib_init(void)
+ 		}
+ 		if (chip->base == NULL)
+ 			chip->base = S5P_VA_GPIO1 + (i) * 0x20;
++		exynos4_gpiolib_attach_ofnode(&chip->chip);
  	}
  
--	ret = fimc_register_m2m_device(fimc);
--	if (ret)
--		goto err_alloc;
--
--	/* At least one camera sensor is required to register capture node */
--	if (cap_input_index >= 0) {
--		ret = fimc_register_capture_device(fimc);
--		if (ret)
--			goto err_m2m;
--	}
--
--	dev_dbg(&pdev->dev, "%s(): fimc-%d registered successfully\n",
--		__func__, fimc->id);
-+	dev_dbg(&pdev->dev, "FIMC.%d registered successfully\n", fimc->id);
+ 	samsung_gpiolib_add_4bit_chips(exynos4_gpio_part1_4bit, nr_chips);
+@@ -357,6 +408,7 @@ static __init int exynos4_gpiolib_init(void)
+ 		}
+ 		if (chip->base == NULL)
+ 			chip->base = S5P_VA_GPIO2 + (i) * 0x20;
++		exynos4_gpiolib_attach_ofnode(&chip->chip);
+ 	}
  
- 	pm_runtime_put(&pdev->dev);
- 	return 0;
+ 	samsung_gpiolib_add_4bit_chips(exynos4_gpio_part2_4bit, nr_chips);
+@@ -374,6 +426,7 @@ static __init int exynos4_gpiolib_init(void)
+ 		}
+ 		if (chip->base == NULL)
+ 			chip->base = S5P_VA_GPIO3 + (i) * 0x20;
++		exynos4_gpiolib_attach_ofnode(&chip->chip);
+ 	}
  
--err_m2m:
--	fimc_unregister_m2m_device(fimc);
--err_alloc:
--	vb2_dma_contig_cleanup_ctx(fimc->alloc_ctx);
- err_pm:
- 	pm_runtime_put(&pdev->dev);
- err_irq:
-@@ -1773,7 +1748,6 @@ err_req_region:
- 	kfree(fimc->regs_res);
- err_info:
- 	kfree(fimc);
--
- 	return ret;
- }
- 
-@@ -1862,9 +1836,6 @@ static int __devexit fimc_remove(struct platform_device *pdev)
- 	fimc_runtime_suspend(&pdev->dev);
- 	pm_runtime_set_suspended(&pdev->dev);
- 
--	fimc_unregister_m2m_device(fimc);
--	fimc_unregister_capture_device(fimc);
--
- 	vb2_dma_contig_cleanup_ctx(fimc->alloc_ctx);
- 
- 	clk_disable(fimc->clock[CLK_BUS]);
-diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-index fc99824f..c8a2bab 100644
---- a/drivers/media/video/s5p-fimc/fimc-core.h
-+++ b/drivers/media/video/s5p-fimc/fimc-core.h
-@@ -644,6 +644,7 @@ int fimc_set_scaler_info(struct fimc_ctx *ctx);
- int fimc_prepare_config(struct fimc_ctx *ctx, u32 flags);
- int fimc_prepare_addr(struct fimc_ctx *ctx, struct vb2_buffer *vb,
- 		      struct fimc_frame *frame, struct fimc_addr *paddr);
-+int fimc_register_m2m_device(struct fimc_dev *fimc);
- 
- /* -----------------------------------------------------*/
- /* fimc-capture.c					*/
+ 	samsung_gpiolib_add_4bit_chips(exynos4_gpio_part3_4bit, nr_chips);
 -- 
-1.7.6
+1.6.6.rc2
