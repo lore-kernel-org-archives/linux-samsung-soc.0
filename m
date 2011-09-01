@@ -1,102 +1,100 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 02/19 v4] s5p-fimc: Remove sclk_cam clock handling
-Date: Thu, 01 Sep 2011 17:30:06 +0200
-Message-ID: <1314891023-14227-3-git-send-email-s.nawrocki@samsung.com>
-References: <1314891023-14227-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 0/19 v4] s5p-fimc driver conversion to media controller and
+ control framework
+Date: Thu, 01 Sep 2011 17:30:04 +0200
+Message-ID: <1314891023-14227-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:26841 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932397Ab1IAPa3 (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:37965 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932396Ab1IAPa3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Thu, 1 Sep 2011 11:30:29 -0400
-In-reply-to: <1314891023-14227-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: mchehab@redhat.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
 
-There are 2 separate clock outputs available in the SoC for external sensors.
-These two clocks can be shared among all FIMC entities and there is
-currently no any arbitration of the clocks in the driver.
+Hello,
 
-So make the capture driver not touching these clocks and let them be
-be properly handled at the media device driver level, enabling proper
-arbitration between FIMC entities.
+following is a fourth version of the patchset converting s5p-fimc driver
+to the media controller API and the new control framework.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/media/video/s5p-fimc/fimc-core.c |   12 ++----------
- drivers/media/video/s5p-fimc/fimc-core.h |    3 +--
- 2 files changed, 3 insertions(+), 12 deletions(-)
+Mauro, could you please have a look at the patches and let me know of any doubts?
+I tried to provide possibly detailed description of what each patch does and why.
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-core.c b/drivers/media/video/s5p-fimc/fimc-core.c
-index e042fdc..1d8d655 100644
---- a/drivers/media/video/s5p-fimc/fimc-core.c
-+++ b/drivers/media/video/s5p-fimc/fimc-core.c
-@@ -30,7 +30,7 @@
- #include "fimc-core.h"
- 
- static char *fimc_clocks[MAX_FIMC_CLOCKS] = {
--	"sclk_fimc", "fimc", "sclk_cam"
-+	"sclk_fimc", "fimc"
- };
- 
- static struct fimc_fmt fimc_formats[] = {
-@@ -1636,7 +1636,6 @@ static int fimc_probe(struct platform_device *pdev)
- 	struct samsung_fimc_driverdata *drv_data;
- 	struct s5p_platform_fimc *pdata;
- 	int ret = 0;
--	int cap_input_index = -1;
- 
- 	dev_dbg(&pdev->dev, "%s():\n", __func__);
- 
-@@ -1689,14 +1688,6 @@ static int fimc_probe(struct platform_device *pdev)
- 		goto err_req_region;
- 	}
- 
--	fimc->num_clocks = MAX_FIMC_CLOCKS - 1;
--
--	/* Check if a video capture node needs to be registered. */
--	if (pdata && pdata->num_clients > 0) {
--		cap_input_index = 0;
--		fimc->num_clocks++;
--	}
--
- 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 	if (!res) {
- 		dev_err(&pdev->dev, "failed to get IRQ resource\n");
-@@ -1705,6 +1696,7 @@ static int fimc_probe(struct platform_device *pdev)
- 	}
- 	fimc->irq = res->start;
- 
-+	fimc->num_clocks = MAX_FIMC_CLOCKS;
- 	ret = fimc_clk_get(fimc);
- 	if (ret)
- 		goto err_regs_unmap;
-diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
-index c8a2bab..d82bff8 100644
---- a/drivers/media/video/s5p-fimc/fimc-core.h
-+++ b/drivers/media/video/s5p-fimc/fimc-core.h
-@@ -34,7 +34,7 @@
- 
- /* Time to wait for next frame VSYNC interrupt while stopping operation. */
- #define FIMC_SHUTDOWN_TIMEOUT	((100*HZ)/1000)
--#define MAX_FIMC_CLOCKS		3
-+#define MAX_FIMC_CLOCKS		2
- #define MODULE_NAME		"s5p-fimc"
- #define FIMC_MAX_DEVS		4
- #define FIMC_MAX_OUT_BUFS	4
-@@ -46,7 +46,6 @@
- enum {
- 	CLK_BUS,
- 	CLK_GATE,
--	CLK_CAM,
- };
- 
- enum fimc_dev_flags {
--- 
-1.7.6
+The changeset is available at:
+  http://git.infradead.org/users/kmpark/linux-2.6-samsung
+  branch: v4l_fimc_for_mauro
+
+on top of patches from Marek's 'Videobuf2 & FIMC fixes" pull request
+which this series depends on.
+
+Changes since v3:
+ - more detailed commit descriptions
+ - add missing dependency on EXPERIMENTAL and mark the driver as experimental
+   in the config menu
+ - removed the first patch as of v3 series, it has been posted separately
+ - added 2 new patches: 18/19, 19/19
+ - moved the link_setup capture video node media entity operation to the capture
+   subdev entity; the link_setup op prevented having 2 active source attached to
+   single data sink, there is no need for this at the video node entity as it
+   has only an immutable link; Instead we guard the number of sources being 
+   connected to the FIMC capture subdev
+ - rebased onto recent vb2 modifications changing the queue initialization order
+ - s/fimc_start_capture/fimc_init_capture, 
+   s/fimc_capture_apply_cfg/fimc_capture_config_update
+ - slightly improved the comments and fixed typos 
+
+Changes since v2:
+- reworked (runtime) power management;
+- added pm_runtime_get_sync/pm_runtime_put around sensor registration
+  code so the clock for sensors is enabled during host driver's probe();
+- reworked try_crop operation handler to support multiple of the prescaler
+  ratio relationship constraint for format at the sink pad;
+- corrected fimc_md_unregister_entities() function
+
+
+Sylwester Nawrocki (19):
+  s5p-fimc: Remove registration of video nodes from probe()
+  s5p-fimc: Remove sclk_cam clock handling
+  s5p-fimc: Limit number of available inputs to one
+  s5p-fimc: Remove sensor management code from FIMC capture driver
+  s5p-fimc: Remove v4l2_device from video capture and m2m driver
+  s5p-fimc: Add the media device driver
+  s5p-fimc: Conversion to use struct v4l2_fh
+  s5p-fimc: Convert to the new control framework
+  s5p-fimc: Add media operations in the capture entity driver
+  s5p-fimc: Add PM helper function for streaming control
+  s5p-fimc: Correct color format enumeration
+  s5p-fimc: Convert to use media pipeline operations
+  s5p-fimc: Add subdev for the FIMC processing block
+  s5p-fimc: Add support for JPEG capture
+  s5p-fimc: Add v4l2_device notification support for single frame
+    capture
+  s5p-fimc: Use consistent names for the buffer list functions
+  s5p-fimc: Add runtime PM support in the camera capture driver
+  s5p-fimc: Correct crop offset alignment on exynos4
+  s5p-fimc: Remove single-planar capability flags
+
+ drivers/media/video/Kconfig                 |    5 +-
+ drivers/media/video/s5p-fimc/Makefile       |    2 +-
+ drivers/media/video/s5p-fimc/fimc-capture.c | 1416 ++++++++++++++++++--------
+ drivers/media/video/s5p-fimc/fimc-core.c    |  884 ++++++++---------
+ drivers/media/video/s5p-fimc/fimc-core.h    |  201 +++--
+ drivers/media/video/s5p-fimc/fimc-mdevice.c |  857 ++++++++++++++++
+ drivers/media/video/s5p-fimc/fimc-mdevice.h |  118 +++
+ drivers/media/video/s5p-fimc/fimc-reg.c     |   74 +-
+ drivers/media/video/s5p-fimc/regs-fimc.h    |    8 +-
+ include/media/s5p_fimc.h                    |   11 +
+ 10 files changed, 2551 insertions(+), 1025 deletions(-)
+ create mode 100644 drivers/media/video/s5p-fimc/fimc-mdevice.c
+ create mode 100644 drivers/media/video/s5p-fimc/fimc-mdevice.h
+
+
+Regards,
+--
+Sylwester Nawrocki
+Samsung Poland R&D Center
