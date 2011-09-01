@@ -1,145 +1,135 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 4/6] DMA: PL330: Add device tree support
-Date: Wed, 31 Aug 2011 11:04:03 -0500
-Message-ID: <4E5E5B73.20603@gmail.com>
-References: <1314348014-2481-1-git-send-email-thomas.abraham@linaro.org>	<1314348014-2481-2-git-send-email-thomas.abraham@linaro.org>	<1314348014-2481-3-git-send-email-thomas.abraham@linaro.org>	<1314348014-2481-4-git-send-email-thomas.abraham@linaro.org>	<1314348014-2481-5-git-send-email-thomas.abraham@linaro.org>	<4E579C9B.7030807@gmail.com>	<CAJuYYwR5GqqKjbMngQqorLuka4XN0jin5s6O66orTtSQg5eKRw@mail.gmail.com>	<4E5CE37E.1050104@gmail.com>	<CAJuYYwT5HGy9b06AyrLJv5hFCFf_YRA4md9N=m+cwcJNTqRDWg@mail.gmail.com>	<4E5E2E36.1070006@gmail.com> <CAJuYYwQ17MPD=hTYUxES5touFfd73W1unbtWfu_XqPR48t3P0w@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] mmc: core: eMMC4.5 Add the timeout for switch
+Date: Thu, 01 Sep 2011 11:13:55 +0900
+Message-ID: <001601cc684c$ce571b00$6b055100$%kim@samsung.com>
+References: <1314699770-17120-1-git-send-email-girish.shivananjappa@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:35873 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932069Ab1HaQEH (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:51115 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755378Ab1IACOG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 31 Aug 2011 12:04:07 -0400
-Received: by qwk3 with SMTP id 3so522058qwk.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Aug 2011 09:04:07 -0700 (PDT)
-In-Reply-To: <CAJuYYwQ17MPD=hTYUxES5touFfd73W1unbtWfu_XqPR48t3P0w@mail.gmail.com>
+	Wed, 31 Aug 2011 22:14:06 -0400
+In-reply-to: <1314699770-17120-1-git-send-email-girish.shivananjappa@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: devicetree-discuss@lists.ozlabs.org, boojin.kim@samsung.com, kgene.kim@samsung.com, patches@linaro.org, vinod.koul@intel.com, jassisinghbrar@gmail.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Girish K S' <girish.shivananjappa@linaro.org>, linux-mmc@vger.kernel.org
+Cc: cjb@laptop.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, 'Seungwon Jeon' <tgih.jun@samsung.com>
 
-Thomas,
+Girish K S wrote:
+> 
+> This patch adds the code to handle the default timeout
+> for switch command.
+> For eMMC 4.5 devices if timeout is not specified for the switch
+> command while accessing a specific field,then the default timeout
+> shall be used to timeout. Specification says there is no timeout
+> defined while accessing BKOPS_START, SANITIZE_START, FLUSH_CACHE
+> field(so these fields are excluded).
+> 
+> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+> ---
+>  drivers/mmc/core/mmc.c     |    5 +++++
+>  drivers/mmc/core/mmc_ops.c |    8 ++++++++
+>  include/linux/mmc/card.h   |    1 +
+>  include/linux/mmc/mmc.h    |    4 ++++
+>  4 files changed, 18 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index 5700b1c..5b9fb6a 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -405,6 +405,11 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8
+> *ext_csd)
+>  	if (card->ext_csd.rev >= 5)
+>  		card->ext_csd.rel_param =
+> ext_csd[EXT_CSD_WR_REL_PARAM];
+> 
+> +	if (card->ext_csd.rev > 5) {
+> +		/* (eMMC 4.5)timeout is expressed in units of 10 ms*/
+> +		card->ext_csd.cmd6_timeout =
+> ext_csd[EXT_CSD_CMD6_TIME]*10;
+> +	}
+> +
+>  	if (ext_csd[EXT_CSD_ERASED_MEM_CONT])
+>  		card->erased_byte = 0xFF;
+>  	else
+> diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
+> index 770c3d0..c4d82f4 100644
+> --- a/drivers/mmc/core/mmc_ops.c
+> +++ b/drivers/mmc/core/mmc_ops.c
+> @@ -394,6 +394,14 @@ int mmc_switch(struct mmc_card *card, u8 set, u8
+index,
+> u8 value,
+>  	cmd.flags = MMC_RSP_SPI_R1B | MMC_RSP_R1B | MMC_CMD_AC;
+>  	cmd.cmd_timeout_ms = timeout_ms;
+> 
+> +	/* timeout is not defined for below command indexes (eMMC 4.5) */
+> +	if ((timeout_ms == 0)					&&
+> +		(card->ext_csd->rev > 5)			&&
+> +		(index != EXT_CSD_BKOPS_START)		&&
+> +		(index != EXT_CSD_SANITIZE_START)	&&
+> +		(index != EXT_CSD_FLUSH_CACHE))
+> +			cmd.cmd_timeout_ms = card->ext_csd->cmd6_timeout;
+> +
+>  	err = mmc_wait_for_cmd(card->host, &cmd, MMC_CMD_RETRIES);
+>  	if (err)
+>  		return err;
+> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+> index b460fc2..ef88412 100644
+> --- a/include/linux/mmc/card.h
+> +++ b/include/linux/mmc/card.h
+> @@ -50,6 +50,7 @@ struct mmc_ext_csd {
+>  	u8			rel_sectors;
+>  	u8			rel_param;
+>  	u8			part_config;
+> +	u8			cmd6_timeout;	/* timeout in ms */
+>  	unsigned int		part_time;		/* Units: ms */
+>  	unsigned int		sa_timeout;		/* Units: 100ns */
+>  	unsigned int		hs_max_dtr;
+> diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
+> index 5a794cb..a23f836 100644
+> --- a/include/linux/mmc/mmc.h
+> +++ b/include/linux/mmc/mmc.h
+> @@ -270,8 +270,11 @@ struct _mmc_csd {
+>   * EXT_CSD fields
+>   */
+> 
+> +#define EXT_CSD_FLUSH_CACHE		32	/* R/W */
+>  #define EXT_CSD_PARTITION_ATTRIBUTE	156	/* R/W */
+>  #define EXT_CSD_PARTITION_SUPPORT	160	/* RO */
+> +#define EXT_CSD_BKOPS_START		164	/* R/W */
+> +#define EXT_CSD_SANITIZE_START		165	/* R/W */
+>  #define EXT_CSD_WR_REL_PARAM		166	/* RO */
+>  #define EXT_CSD_ERASE_GROUP_DEF		175	/* R/W */
+>  #define EXT_CSD_PART_CONFIG		179	/* R/W */
+> @@ -293,6 +296,7 @@ struct _mmc_csd {
+>  #define EXT_CSD_SEC_ERASE_MULT		230	/* RO */
+>  #define EXT_CSD_SEC_FEATURE_SUPPORT	231	/* RO */
+>  #define EXT_CSD_TRIM_MULT		232	/* RO */
+> +#define EXT_CSD_CMD6_TIME		248	/* RO */
+> 
+>  /*
+>   * EXT_CSD field definitions
+> --
+> 1.7.1
 
-On 08/31/2011 10:46 AM, Thomas Abraham wrote:
-> Hi Rob,
-> 
-> On 31 August 2011 18:21, Rob Herring <robherring2@gmail.com> wrote:
->> Thomas,
-> 
-> [...]
-> 
->>> For PL330 dma controllers instantiated from device tree, the channel
->>> lookup is based on phandle of the dma controller and dma request id
->>> specified by the client node. During probe, the private data of each
->>> channel of the controller is set to point to the device node of the
->>> dma controller. The 'chan_id' of the each channel is used as the
->>> dma request id.
->>>
->>> Client driver requesting dma channels specify the phandle of the
->>> dma controller and the request id. The pl330 filter function
->>> converts the phandle to the device node pointer and matches that
->>> with channel's private data. If a match is found, the request id
->>> from the client node and the 'chan_id' of the channel is matched.
->>> A channel is found if both the values match.
->>>
->>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->>> ---
->>>  .../devicetree/bindings/dma/arm-pl330.txt          |   29 ++++++++++++++++
->>>  drivers/dma/pl330.c                                |   35 +++++++++++++++++---
->>>  2 files changed, 59 insertions(+), 5 deletions(-)
->>>  create mode 100644 Documentation/devicetree/bindings/dma/arm-pl330.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/dma/arm-pl330.txt
->>> b/Documentation/devicetree/bindings/dma/arm-pl330.txt
->>> new file mode 100644
->>> index 0000000..89f4b9c
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/dma/arm-pl330.txt
->>> @@ -0,0 +1,29 @@
->>> +* ARM PrimeCell PL330 DMA Controller
->>> +
->>> +The ARM PrimeCell PL330 DMA controller can move blocks of memory contents
->>> +between memory and peripherals or memory to memory.
->>> +
->>> +Required properties:
->>> +  - compatible: should be "arm,primecell".
->>
->> Sorry, I guess I wasn't clear. This has to be "arm,primecell" plus
->> something else. In this case, "arm,pl330". If the IP is modified from
->> standard ARM version (like ST likes to do), then something like
->> "samsung,pl330" would be appropriate.
->>
->> This is not actually used by the kernel at the moment, but could if
->> modified versions of pl330 show up.
-> 
-> of_platform_bus_create() checks for  "arm,primecell" compatible value
-> to instantiate a amba device from device tree. The peripheral_id is
-> also noted in the amba device instance. The amba drivers register with
-> a with a peripheral_id and peripheral_id is used match amba device
-> with a driver.
-> 
-> In cases of modified version of the same IP, the peripheral_id would
-> be different. So, "arm,primecell" would just be enough for now. Any
-> other compatible value would anyway go unused. I did use
-> "arm,primecell-pdma" and "arm-primecell-mdma" to derive the dma_cap
-> value. But, as per your comments, I dropped it.
-> 
-> So, for now, I will just list "arm,primecell" as required compatible
-> value. Please let me know if "arm,pl330" would be required here.
-> 
->>
->>> +  - reg: physical base address of the controller and length of memory mapped
->>> +    region.
->>> +  - interrupts: interrupt number to the cpu.
->>> +
->>> +Example: (from Samsung's Exynos4 processor dtsi file)
->>> +
->>> +     pdma0: pdma@12680000 {
->>> +             compatible = "arm,primecell";
->>> +             reg = <0x12680000 0x1000>;
->>> +             interrupts = <99>;
->>> +     };
->>> +
->>> +Client drivers (device nodes requiring dma transfers from dev-to-mem or
->>> +mem-to-dev) should specify the DMA channel numbers using a two-value pair
->>> +as shown below.
->>> +
->>> +  [property name]  = <[phandle of the dma controller] [dma request id]>;
->>
->> At least fix the "-dma-channel" part of the name. It not clear if that's
->> the case or just an example.
->>
->> [name]-dma-channel = <[phandle of the dma controller] [dma request id]>;
-> 
-> The name of the property that specifies the dma channel to use is
-> decided by the client device node. It is not enforced by the dma
-> device node. So, there will be no specific requirement stated in the
-> documentation for pl330 device node.
-> 
+Hi Girish,
 
-As it says in Documentation/devicetree/bindings/arm/primecell.txt, you
-should have "arm,primecell" and a value for the specific peripheral. It
-should be in order of most specific to least specific.
+(Cc'ed Seungwon Jeon)
 
-What Linux uses currently from the binding is a bit irrelevant. The
-binding is supposed to be future proof. An OS could choose to not use
-the primecell ID at all and only match with compatible string.
+As I know, Seungwon Jeon has been submitted same/similar patch before this.
+http://www.spinics.net/lists/linux-mmc/msg09770.html
 
-Rob
+Chris,
+I cannot find your review on that...
 
->>
->>
->> The rest looks good.
-> 
-> Thanks for your review and comments.
-> 
-> Regards,
-> Thomas.
-> 
->>
->> Rob
->>
-> 
-> [...]
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
