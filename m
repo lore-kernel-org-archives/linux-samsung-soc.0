@@ -1,117 +1,223 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 03/19 v4] s5p-fimc: Limit number of available inputs to one
-Date: Thu, 01 Sep 2011 17:30:07 +0200
-Message-ID: <1314891023-14227-4-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 04/19 v4] s5p-fimc: Remove sensor management code from FIMC
+ capture driver
+Date: Thu, 01 Sep 2011 17:30:08 +0200
+Message-ID: <1314891023-14227-5-git-send-email-s.nawrocki@samsung.com>
 References: <1314891023-14227-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:37965 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932475Ab1IAPac (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Sep 2011 11:30:32 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1314891023-14227-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: mchehab@redhat.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The current driver allowed camera sensors to be used only with single
-FIMC H/W instance, FIMC0..FIMC2/3, designated at compile time. Remaining FIMC
-entities could be used for video processing only, as mem-to-mem devices.
-Required camera could be selected with S_INPUT ioctl at one devnode only.
-
-However in that case it was not possible to use both cameras independently
-at the same time, as all sensors were registered to single FIMC capture
-driver. In most recent S5P SoC version there is enough FIMC H/W instances
-to cover all physical camera interfaces.
-Each FIMC instance exports its own video devnode. Thus we distribute
-the camera sensors one per each /dev/video? by default. It will allow to
-use both camera simultaneously by opening different video node.
-
-The camera sensors at FIMC are now not selected with S_INPUT ioctl, there
-is one input only available per /dev/video?.
-
-By default a single sensor is connected at FIMC input as specified by the
-media device platform data subdev description table. This assignment
-can be changed at runtime through the pipeline reconfiguration at the media
-device level.
+The sensor subdevs need to be shared between all available FIMC instances.
+Remove their registration from FIMC capture driver so they can then be
+registered to the media device driver.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-capture.c |   43 ++++-----------------------
- 1 files changed, 6 insertions(+), 37 deletions(-)
+ drivers/media/video/s5p-fimc/fimc-capture.c |  139 +--------------------------
+ drivers/media/video/s5p-fimc/fimc-core.h    |    2 +-
+ 2 files changed, 2 insertions(+), 139 deletions(-)
 
 diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index 6efd952..b786c2c 100644
+index b786c2c..40f3330 100644
 --- a/drivers/media/video/s5p-fimc/fimc-capture.c
 +++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -577,57 +577,26 @@ static int fimc_cap_s_fmt_mplane(struct file *file, void *priv,
- }
+@@ -16,12 +16,9 @@
+ #include <linux/bug.h>
+ #include <linux/interrupt.h>
+ #include <linux/device.h>
+-#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/list.h>
+ #include <linux/slab.h>
+-#include <linux/clk.h>
+-#include <linux/i2c.h>
  
- static int fimc_cap_enum_input(struct file *file, void *priv,
--				     struct v4l2_input *i)
-+			       struct v4l2_input *i)
- {
- 	struct fimc_ctx *ctx = priv;
--	struct s5p_platform_fimc *pldata = ctx->fimc_dev->pdata;
--	struct s5p_fimc_isp_info *isp_info;
+ #include <linux/videodev2.h>
+ #include <media/v4l2-device.h>
+@@ -32,126 +29,6 @@
  
--	if (i->index >= pldata->num_clients)
-+	if (i->index != 0)
- 		return -EINVAL;
+ #include "fimc-core.h"
  
--	isp_info = &pldata->isp_info[i->index];
- 
- 	i->type = V4L2_INPUT_TYPE_CAMERA;
--	strncpy(i->name, isp_info->board_info->type, 32);
- 	return 0;
- }
- 
--static int fimc_cap_s_input(struct file *file, void *priv,
--				  unsigned int i)
-+static int fimc_cap_s_input(struct file *file, void *priv, unsigned int i)
- {
--	struct fimc_ctx *ctx = priv;
--	struct fimc_dev *fimc = ctx->fimc_dev;
--	struct s5p_platform_fimc *pdata = fimc->pdata;
+-static struct v4l2_subdev *fimc_subdev_register(struct fimc_dev *fimc,
+-					    struct s5p_fimc_isp_info *isp_info)
+-{
+-	struct i2c_adapter *i2c_adap;
+-	struct fimc_vid_cap *vid_cap = &fimc->vid_cap;
+-	struct v4l2_subdev *sd = NULL;
 -
--	if (fimc_capture_active(ctx->fimc_dev))
--		return -EBUSY;
+-	i2c_adap = i2c_get_adapter(isp_info->i2c_bus_num);
+-	if (!i2c_adap)
+-		return ERR_PTR(-ENOMEM);
 -
--	if (i >= pdata->num_clients)
--		return -EINVAL;
--
--
--	if (fimc->vid_cap.sd) {
--		int ret = v4l2_subdev_call(fimc->vid_cap.sd, core, s_power, 0);
--		if (ret)
--			err("s_power failed: %d", ret);
--
--		clk_disable(fimc->clock[CLK_CAM]);
+-	sd = v4l2_i2c_new_subdev_board(&vid_cap->v4l2_dev, i2c_adap,
+-				       isp_info->board_info, NULL);
+-	if (!sd) {
+-		v4l2_err(&vid_cap->v4l2_dev, "failed to acquire subdev\n");
+-		return NULL;
 -	}
 -
--	/* Release the attached sensor subdevice. */
+-	v4l2_info(&vid_cap->v4l2_dev, "subdevice %s registered successfuly\n",
+-		isp_info->board_info->type);
+-
+-	return sd;
+-}
+-
+-static void fimc_subdev_unregister(struct fimc_dev *fimc)
+-{
+-	struct fimc_vid_cap *vid_cap = &fimc->vid_cap;
+-	struct i2c_client *client;
+-
+-	if (vid_cap->input_index < 0)
+-		return;	/* Subdevice already released or not registered. */
+-
+-	if (vid_cap->sd) {
+-		v4l2_device_unregister_subdev(vid_cap->sd);
+-		client = v4l2_get_subdevdata(vid_cap->sd);
+-		i2c_unregister_device(client);
+-		i2c_put_adapter(client->adapter);
+-		vid_cap->sd = NULL;
+-	}
+-
+-	vid_cap->input_index = -1;
+-}
+-
+-/**
+- * fimc_subdev_attach - attach v4l2_subdev to camera host interface
+- *
+- * @fimc: FIMC device information
+- * @index: index to the array of available subdevices,
+- *	   -1 for full array search or non negative value
+- *	   to select specific subdevice
+- */
+-static int fimc_subdev_attach(struct fimc_dev *fimc, int index)
+-{
+-	struct fimc_vid_cap *vid_cap = &fimc->vid_cap;
+-	struct s5p_platform_fimc *pdata = fimc->pdata;
+-	struct s5p_fimc_isp_info *isp_info;
+-	struct v4l2_subdev *sd;
+-	int i;
+-
+-	for (i = 0; i < pdata->num_clients; ++i) {
+-		isp_info = &pdata->isp_info[i];
+-
+-		if (index >= 0 && i != index)
+-			continue;
+-
+-		sd = fimc_subdev_register(fimc, isp_info);
+-		if (!IS_ERR_OR_NULL(sd)) {
+-			vid_cap->sd = sd;
+-			vid_cap->input_index = i;
+-
+-			return 0;
+-		}
+-	}
+-
+-	vid_cap->input_index = -1;
+-	vid_cap->sd = NULL;
+-	v4l2_err(&vid_cap->v4l2_dev, "fimc%d: sensor attach failed\n",
+-		 fimc->id);
+-	return -ENODEV;
+-}
+-
+-static int fimc_isp_subdev_init(struct fimc_dev *fimc, unsigned int index)
+-{
+-	struct s5p_fimc_isp_info *isp_info;
+-	struct s5p_platform_fimc *pdata = fimc->pdata;
+-	int ret;
+-
+-	if (index >= pdata->num_clients)
+-		return -EINVAL;
+-
+-	isp_info = &pdata->isp_info[index];
+-
+-	if (isp_info->clk_frequency)
+-		clk_set_rate(fimc->clock[CLK_CAM], isp_info->clk_frequency);
+-
+-	ret = clk_enable(fimc->clock[CLK_CAM]);
+-	if (ret)
+-		return ret;
+-
+-	ret = fimc_subdev_attach(fimc, index);
+-	if (ret)
+-		return ret;
+-
+-	ret = fimc_hw_set_camera_polarity(fimc, isp_info);
+-	if (ret)
+-		return ret;
+-
+-	ret = v4l2_subdev_call(fimc->vid_cap.sd, core, s_power, 1);
+-	if (!ret)
+-		return ret;
+-
+-	/* enabling power failed so unregister subdev */
 -	fimc_subdev_unregister(fimc);
 -
--	return fimc_isp_subdev_init(fimc, i);
-+	return i == 0 ? i : -EINVAL;
- }
- 
--static int fimc_cap_g_input(struct file *file, void *priv,
--				       unsigned int *i)
-+static int fimc_cap_g_input(struct file *file, void *priv, unsigned int *i)
- {
--	struct fimc_ctx *ctx = priv;
--	struct fimc_vid_cap *cap = &ctx->fimc_dev->vid_cap;
+-	v4l2_err(&fimc->vid_cap.v4l2_dev, "ISP initialization failed: %d\n",
+-		 ret);
 -
--	*i = cap->input_index;
-+	*i = 0;
- 	return 0;
- }
+-	return ret;
+-}
+-
+ static void fimc_capture_state_cleanup(struct fimc_dev *fimc)
+ {
+ 	struct fimc_vid_cap *cap = &fimc->vid_cap;
+@@ -411,15 +288,7 @@ static int fimc_capture_open(struct file *file)
+ 	if (ret)
+ 		return ret;
  
+-	if (++fimc->vid_cap.refcnt == 1) {
+-		ret = fimc_isp_subdev_init(fimc, 0);
+-		if (ret) {
+-			pm_runtime_put_sync(&fimc->pdev->dev);
+-			fimc->vid_cap.refcnt--;
+-			return -EIO;
+-		}
+-	}
+-
++	++fimc->vid_cap.refcnt;
+ 	file->private_data = fimc->vid_cap.ctx;
+ 
+ 	return 0;
+@@ -434,12 +303,6 @@ static int fimc_capture_close(struct file *file)
+ 	if (--fimc->vid_cap.refcnt == 0) {
+ 		fimc_stop_capture(fimc);
+ 		vb2_queue_release(&fimc->vid_cap.vbq);
+-
+-		v4l2_err(&fimc->vid_cap.v4l2_dev, "releasing ISP\n");
+-
+-		v4l2_subdev_call(fimc->vid_cap.sd, core, s_power, 0);
+-		clk_disable(fimc->clock[CLK_CAM]);
+-		fimc_subdev_unregister(fimc);
+ 	}
+ 
+ 	pm_runtime_put(&fimc->pdev->dev);
+diff --git a/drivers/media/video/s5p-fimc/fimc-core.h b/drivers/media/video/s5p-fimc/fimc-core.h
+index d82bff8..a0d6f81 100644
+--- a/drivers/media/video/s5p-fimc/fimc-core.h
++++ b/drivers/media/video/s5p-fimc/fimc-core.h
+@@ -11,6 +11,7 @@
+ 
+ /*#define DEBUG*/
+ 
++#include <linux/platform_device.h>
+ #include <linux/sched.h>
+ #include <linux/spinlock.h>
+ #include <linux/types.h>
+@@ -649,7 +650,6 @@ int fimc_register_m2m_device(struct fimc_dev *fimc);
+ /* fimc-capture.c					*/
+ int fimc_register_capture_device(struct fimc_dev *fimc);
+ void fimc_unregister_capture_device(struct fimc_dev *fimc);
+-int fimc_sensor_sd_init(struct fimc_dev *fimc, int index);
+ int fimc_vid_cap_buf_queue(struct fimc_dev *fimc,
+ 			     struct fimc_vid_buffer *fimc_vb);
+ int fimc_capture_suspend(struct fimc_dev *fimc);
 -- 
 1.7.6
