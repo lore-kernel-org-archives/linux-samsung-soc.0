@@ -1,253 +1,192 @@
-From: Boojin Kim <boojin.kim@samsung.com>
-Subject: [PATCH v8 16/16] ARM: SAMSUNG: Remove Samsung specific enum type for dma direction
-Date: Fri,  2 Sep 2011 09:44:44 +0900
-Message-ID: <1314924284-25554-17-git-send-email-boojin.kim@samsung.com>
-References: <1314924284-25554-1-git-send-email-boojin.kim@samsung.com>
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: Re: [PATCH] mmc: core: Add power off notify feature(eMMC 4.5)
+Date: Fri, 2 Sep 2011 14:38:45 +0530
+Message-ID: <CAGxe1ZHKXEL6RYETypnEdmmEEEUMWdXawTOhhQuAxkeJiDnOBg@mail.gmail.com>
+References: <1314948349-15856-1-git-send-email-girish.shivananjappa@linaro.org>
+	<CAH9JG2XA7xa2vH8w9r00NWECir4Dye_fki1w0aGQpcrhvW7CgQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:42079 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932672Ab1IBIag (ORCPT
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:59030 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932813Ab1IBJIp convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Sep 2011 04:30:36 -0400
-In-Reply-To: <1314924284-25554-1-git-send-email-boojin.kim@samsung.com>
+	Fri, 2 Sep 2011 05:08:45 -0400
+In-Reply-To: <CAH9JG2XA7xa2vH8w9r00NWECir4Dye_fki1w0aGQpcrhvW7CgQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Boojin Kim <boojin.kim@samsung.com>
+To: Kyungmin Park <kmpark@infradead.org>
+Cc: =?UTF-8?B?7KCV7J6s7ZuI?= <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, linux-mmc@vger.kernel.org, cjb@laptop.org, kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org
 
-This patch removes the samsung specific enum type 's3c2410_dmasrc'
-and uses 'dma_data_direction' instead.
+dear mr park,
+I will consider it and update the poweroff handling.
+thanks a lot
+girish
 
-Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Vinod Koul <vinod.koul@intel.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s3c2410/include/mach/dma.h         |    2 +-
- arch/arm/mach-s3c2412/dma.c                      |    4 ++--
- arch/arm/mach-s3c64xx/dma.c                      |   10 +++++-----
- arch/arm/mach-s3c64xx/include/mach/dma.h         |    2 +-
- arch/arm/plat-s3c24xx/dma.c                      |   10 +++++-----
- arch/arm/plat-samsung/include/plat/dma-s3c24xx.h |    2 +-
- arch/arm/plat-samsung/include/plat/dma.h         |    9 +++------
- arch/arm/plat-samsung/s3c-dma-ops.c              |    5 +----
- drivers/mmc/host/s3cmci.c                        |    6 +++---
- 9 files changed, 22 insertions(+), 28 deletions(-)
 
-diff --git a/arch/arm/mach-s3c2410/include/mach/dma.h b/arch/arm/mach-s3c2410/include/mach/dma.h
-index 4e485ba..ae8e482 100644
---- a/arch/arm/mach-s3c2410/include/mach/dma.h
-+++ b/arch/arm/mach-s3c2410/include/mach/dma.h
-@@ -174,7 +174,7 @@ struct s3c2410_dma_chan {
- 	struct s3c2410_dma_client *client;
- 
- 	/* channel configuration */
--	enum s3c2410_dmasrc	 source;
-+	enum dma_data_direction	 source;
- 	enum dma_ch		 req_ch;
- 	unsigned long		 dev_addr;
- 	unsigned long		 load_timeout;
-diff --git a/arch/arm/mach-s3c2412/dma.c b/arch/arm/mach-s3c2412/dma.c
-index 7abecfc..b4fc3ba 100644
---- a/arch/arm/mach-s3c2412/dma.c
-+++ b/arch/arm/mach-s3c2412/dma.c
-@@ -148,11 +148,11 @@ static struct s3c24xx_dma_map __initdata s3c2412_dma_mappings[] = {
- 
- static void s3c2412_dma_direction(struct s3c2410_dma_chan *chan,
- 				  struct s3c24xx_dma_map *map,
--				  enum s3c2410_dmasrc dir)
-+				  enum dma_data_direction dir)
- {
- 	unsigned long chsel;
- 
--	if (dir == S3C2410_DMASRC_HW)
-+	if (dir == DMA_FROM_DEVICE)
- 		chsel = map->channels_rx[0];
- 	else
- 		chsel = map->channels[0];
-diff --git a/arch/arm/mach-s3c64xx/dma.c b/arch/arm/mach-s3c64xx/dma.c
-index 204bfaf..67c97fa 100644
---- a/arch/arm/mach-s3c64xx/dma.c
-+++ b/arch/arm/mach-s3c64xx/dma.c
-@@ -147,14 +147,14 @@ static void s3c64xx_dma_fill_lli(struct s3c2410_dma_chan *chan,
- 	u32 control0, control1;
- 
- 	switch (chan->source) {
--	case S3C2410_DMASRC_HW:
-+	case DMA_FROM_DEVICE:
- 		src = chan->dev_addr;
- 		dst = data;
- 		control0 = PL080_CONTROL_SRC_AHB2;
- 		control0 |= PL080_CONTROL_DST_INCR;
- 		break;
- 
--	case S3C2410_DMASRC_MEM:
-+	case DMA_TO_DEVICE:
- 		src = data;
- 		dst = chan->dev_addr;
- 		control0 = PL080_CONTROL_DST_AHB2;
-@@ -416,7 +416,7 @@ EXPORT_SYMBOL(s3c2410_dma_enqueue);
- 
- 
- int s3c2410_dma_devconfig(enum dma_ch channel,
--			  enum s3c2410_dmasrc source,
-+			  enum dma_data_direction source,
- 			  unsigned long devaddr)
- {
- 	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
-@@ -437,11 +437,11 @@ int s3c2410_dma_devconfig(enum dma_ch channel,
- 	pr_debug("%s: peripheral %d\n", __func__, peripheral);
- 
- 	switch (source) {
--	case S3C2410_DMASRC_HW:
-+	case DMA_FROM_DEVICE:
- 		config = 2 << PL080_CONFIG_FLOW_CONTROL_SHIFT;
- 		config |= peripheral << PL080_CONFIG_SRC_SEL_SHIFT;
- 		break;
--	case S3C2410_DMASRC_MEM:
-+	case DMA_TO_DEVICE:
- 		config = 1 << PL080_CONFIG_FLOW_CONTROL_SHIFT;
- 		config |= peripheral << PL080_CONFIG_DST_SEL_SHIFT;
- 		break;
-diff --git a/arch/arm/mach-s3c64xx/include/mach/dma.h b/arch/arm/mach-s3c64xx/include/mach/dma.h
-index 74fdf25..fe1a98c 100644
---- a/arch/arm/mach-s3c64xx/include/mach/dma.h
-+++ b/arch/arm/mach-s3c64xx/include/mach/dma.h
-@@ -99,7 +99,7 @@ struct s3c2410_dma_chan {
- 	unsigned char		 peripheral;
- 
- 	unsigned int		 flags;
--	enum s3c2410_dmasrc	 source;
-+	enum dma_data_direction	 source;
- 
- 
- 	dma_addr_t		dev_addr;
-diff --git a/arch/arm/plat-s3c24xx/dma.c b/arch/arm/plat-s3c24xx/dma.c
-index 539bd0e..53754bc 100644
---- a/arch/arm/plat-s3c24xx/dma.c
-+++ b/arch/arm/plat-s3c24xx/dma.c
-@@ -1094,14 +1094,14 @@ EXPORT_SYMBOL(s3c2410_dma_config);
-  *
-  * configure the dma source/destination hardware type and address
-  *
-- * source:    S3C2410_DMASRC_HW: source is hardware
-- *            S3C2410_DMASRC_MEM: source is memory
-+ * source:    DMA_FROM_DEVICE: source is hardware
-+ *            DMA_TO_DEVICE: source is memory
-  *
-  * devaddr:   physical address of the source
- */
- 
- int s3c2410_dma_devconfig(enum dma_ch channel,
--			  enum s3c2410_dmasrc source,
-+			  enum dma_data_direction source,
- 			  unsigned long devaddr)
- {
- 	struct s3c2410_dma_chan *chan = s3c_dma_lookup_channel(channel);
-@@ -1131,7 +1131,7 @@ int s3c2410_dma_devconfig(enum dma_ch channel,
- 	 hwcfg |= S3C2410_DISRCC_INC;
- 
- 	switch (source) {
--	case S3C2410_DMASRC_HW:
-+	case DMA_FROM_DEVICE:
- 		/* source is hardware */
- 		pr_debug("%s: hw source, devaddr=%08lx, hwcfg=%d\n",
- 			 __func__, devaddr, hwcfg);
-@@ -1142,7 +1142,7 @@ int s3c2410_dma_devconfig(enum dma_ch channel,
- 		chan->addr_reg = dma_regaddr(chan, S3C2410_DMA_DIDST);
- 		break;
- 
--	case S3C2410_DMASRC_MEM:
-+	case DMA_TO_DEVICE:
- 		/* source is memory */
- 		pr_debug("%s: mem source, devaddr=%08lx, hwcfg=%d\n",
- 			 __func__, devaddr, hwcfg);
-diff --git a/arch/arm/plat-samsung/include/plat/dma-s3c24xx.h b/arch/arm/plat-samsung/include/plat/dma-s3c24xx.h
-index 336d5ac..1982829 100644
---- a/arch/arm/plat-samsung/include/plat/dma-s3c24xx.h
-+++ b/arch/arm/plat-samsung/include/plat/dma-s3c24xx.h
-@@ -47,7 +47,7 @@ struct s3c24xx_dma_selection {
- 
- 	void	(*direction)(struct s3c2410_dma_chan *chan,
- 			     struct s3c24xx_dma_map *map,
--			     enum s3c2410_dmasrc dir);
-+			     enum dma_data_direction dir);
- };
- 
- extern int s3c24xx_dma_init_map(struct s3c24xx_dma_selection *sel);
-diff --git a/arch/arm/plat-samsung/include/plat/dma.h b/arch/arm/plat-samsung/include/plat/dma.h
-index 3610760..b906112 100644
---- a/arch/arm/plat-samsung/include/plat/dma.h
-+++ b/arch/arm/plat-samsung/include/plat/dma.h
-@@ -10,17 +10,14 @@
-  * published by the Free Software Foundation.
- */
- 
-+#include <linux/dma-mapping.h>
-+
- enum s3c2410_dma_buffresult {
- 	S3C2410_RES_OK,
- 	S3C2410_RES_ERR,
- 	S3C2410_RES_ABORT
- };
- 
--enum s3c2410_dmasrc {
--	S3C2410_DMASRC_HW,		/* source is memory */
--	S3C2410_DMASRC_MEM		/* source is hardware */
--};
--
- /* enum s3c2410_chan_op
-  *
-  * operation codes passed to the DMA code by the user, and also used
-@@ -112,7 +109,7 @@ extern int s3c2410_dma_config(enum dma_ch channel, int xferunit);
- */
- 
- extern int s3c2410_dma_devconfig(enum dma_ch channel,
--		enum s3c2410_dmasrc source, unsigned long devaddr);
-+		enum dma_data_direction source, unsigned long devaddr);
- 
- /* s3c2410_dma_getposition
-  *
-diff --git a/arch/arm/plat-samsung/s3c-dma-ops.c b/arch/arm/plat-samsung/s3c-dma-ops.c
-index 33ab324..582333c 100644
---- a/arch/arm/plat-samsung/s3c-dma-ops.c
-+++ b/arch/arm/plat-samsung/s3c-dma-ops.c
-@@ -48,10 +48,7 @@ static unsigned s3c_dma_request(enum dma_ch dma_ch,
- 	data->ch = dma_ch;
- 	list_add_tail(&data->node, &dma_list);
- 
--	if (info->direction == DMA_FROM_DEVICE)
--		s3c2410_dma_devconfig(dma_ch, S3C2410_DMASRC_HW, info->fifo);
--	else
--		s3c2410_dma_devconfig(dma_ch, S3C2410_DMASRC_MEM, info->fifo);
-+	s3c2410_dma_devconfig(dma_ch, info->direction, info->fifo);
- 
- 	if (info->cap == DMA_CYCLIC)
- 		s3c2410_dma_setflags(dma_ch, S3C2410_DMAF_CIRCULAR);
-diff --git a/drivers/mmc/host/s3cmci.c b/drivers/mmc/host/s3cmci.c
-index a04f87d..03cfdab 100644
---- a/drivers/mmc/host/s3cmci.c
-+++ b/drivers/mmc/host/s3cmci.c
-@@ -913,9 +913,9 @@ request_done:
- }
- 
- static void s3cmci_dma_setup(struct s3cmci_host *host,
--			     enum s3c2410_dmasrc source)
-+			     enum dma_data_direction source)
- {
--	static enum s3c2410_dmasrc last_source = -1;
-+	static enum dma_data_direction last_source = -1;
- 	static int setup_ok;
- 
- 	if (last_source == source)
-@@ -1087,7 +1087,7 @@ static int s3cmci_prepare_dma(struct s3cmci_host *host, struct mmc_data *data)
- 
- 	BUG_ON((data->flags & BOTH_DIR) == BOTH_DIR);
- 
--	s3cmci_dma_setup(host, rw ? S3C2410_DMASRC_MEM : S3C2410_DMASRC_HW);
-+	s3cmci_dma_setup(host, rw ? DMA_TO_DEVICE : DMA_FROM_DEVICE);
- 	s3c2410_dma_ctrl(host->dma, S3C2410_DMAOP_FLUSH);
- 
- 	dma_len = dma_map_sg(mmc_dev(host->mmc), data->sg, data->sg_len,
--- 
-1.7.1
+On 2 September 2011 13:48, Kyungmin Park <kmpark@infradead.org> wrote:
+> Hi,
+>
+> Good job on eMMC v4.5. but this patch is incomplete for power off
+> notification feature.
+> Now you just enable the Power off notification, and don't handle the
+> reaming one.
+> As you read the spec, it takes more time the sleep & wake-up and next
+> booting time if no proper power off notification
+>
+> Please also consider it.
+>
+> Thank you,
+> Kyungmin Park
+>
+> On Fri, Sep 2, 2011 at 4:25 PM, Girish K S
+> <girish.shivananjappa@linaro.org> wrote:
+>> This patch adds the support for power off notify feature
+>> available in eMMC 4.5 devices.
+>> =A0 =A0 =A0 =A0If the the host has support for this feature, then th=
+e
+>> mmc core will notify it to the device by setting the
+>> POWER_OFF_NOTIFICATION byte in the extended csd register
+>> with a value 1(POWER_ON).
+>> =A0 =A0 =A0 =A0This patch should be applied after Seungwon Jeon's
+>> patch for cmd6 timeout.
+>>
+>> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+>> ---
+>> =A0drivers/mmc/core/mmc.c =A0 | =A0 19 +++++++++++++++++--
+>> =A0include/linux/mmc/card.h | =A0 =A01 +
+>> =A0include/linux/mmc/host.h | =A0 =A01 +
+>> =A0include/linux/mmc/mmc.h =A0| =A0 =A08 +++++++-
+>> =A04 files changed, 26 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+>> index 68eb368..2f06b37 100644
+>> --- a/drivers/mmc/core/mmc.c
+>> +++ b/drivers/mmc/core/mmc.c
+>> @@ -410,10 +410,12 @@ static int mmc_read_ext_csd(struct mmc_card *c=
+ard, u8 *ext_csd)
+>> =A0 =A0 =A0 =A0else
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0card->erased_byte =3D 0x0;
+>>
+>> - =A0 =A0 =A0 if (card->ext_csd.rev >=3D 6)
+>> + =A0 =A0 =A0 if (card->ext_csd.rev >=3D 6) {
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0card->ext_csd.generic_cmd6_time =3D 1=
+0 *
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0ext_csd[EXT_CSD_GENER=
+IC_CMD6_TIME];
+>> -
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 card->ext_csd.power_off_longtime =3D 1=
+0 *
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ext_csd[EXT_CSD_POWER_=
+OFF_LONG_TIME];
+>> + =A0 =A0 =A0 }
+>> =A0out:
+>> =A0 =A0 =A0 =A0return err;
+>> =A0}
+>> @@ -710,6 +712,19 @@ static int mmc_init_card(struct mmc_host *host,=
+ u32 ocr,
+>> =A0 =A0 =A0 =A0}
+>>
+>> =A0 =A0 =A0 =A0/*
+>> + =A0 =A0 =A0 =A0* If the host supports the power_off_notify capabil=
+ity then
+>> + =A0 =A0 =A0 =A0* set the notification byte in the ext_csd register=
+ of device
+>> + =A0 =A0 =A0 =A0*/
+>> + =A0 =A0 =A0 if (host->caps & MMC_CAP_POWER_OFF_NOTIFY) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D mmc_switch(card, EXT_CSD_CMD_S=
+ET_NORMAL,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXT_CS=
+D_POWER_OFF_NOTIFICATION,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXT_CS=
+D_POWER_ON,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 card->=
+ext_csd.generic_cmd6_time);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (err && err !=3D -EBADMSG)
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto free_card;
+>> + =A0 =A0 =A0 }
+>> +
+>> + =A0 =A0 =A0 /*
+>> =A0 =A0 =A0 =A0 * Activate high speed (if supported)
+>> =A0 =A0 =A0 =A0 */
+>> =A0 =A0 =A0 =A0if ((card->ext_csd.hs_max_dtr !=3D 0) &&
+>> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+>> index e992fe3..2bf2843 100644
+>> --- a/include/linux/mmc/card.h
+>> +++ b/include/linux/mmc/card.h
+>> @@ -53,6 +53,7 @@ struct mmc_ext_csd {
+>> =A0 =A0 =A0 =A0unsigned int =A0 =A0 =A0 =A0 =A0 =A0part_time; =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0/* Units: ms */
+>> =A0 =A0 =A0 =A0unsigned int =A0 =A0 =A0 =A0 =A0 =A0sa_timeout; =A0 =A0=
+ =A0 =A0 =A0 =A0 /* Units: 100ns */
+>> =A0 =A0 =A0 =A0unsigned int =A0 =A0 =A0 =A0 =A0 =A0generic_cmd6_time=
+; =A0 =A0 =A0/* Units: ms */
+>> + =A0 =A0 =A0 unsigned int =A0 =A0 =A0 =A0 =A0 =A0power_off_longtime=
+; =A0 =A0 /* Units: ms */
+>> =A0 =A0 =A0 =A0unsigned int =A0 =A0 =A0 =A0 =A0 =A0hs_max_dtr;
+>> =A0 =A0 =A0 =A0unsigned int =A0 =A0 =A0 =A0 =A0 =A0sectors;
+>> =A0 =A0 =A0 =A0unsigned int =A0 =A0 =A0 =A0 =A0 =A0card_type;
+>> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+>> index 1d09562..21c85e1 100644
+>> --- a/include/linux/mmc/host.h
+>> +++ b/include/linux/mmc/host.h
+>> @@ -229,6 +229,7 @@ struct mmc_host {
+>> =A0#define MMC_CAP_MAX_CURRENT_600 =A0 =A0 =A0 =A0(1 << 28) =A0 =A0 =
+=A0 /* Host max current limit is 600mA */
+>> =A0#define MMC_CAP_MAX_CURRENT_800 =A0 =A0 =A0 =A0(1 << 29) =A0 =A0 =
+=A0 /* Host max current limit is 800mA */
+>> =A0#define MMC_CAP_CMD23 =A0 =A0 =A0 =A0 =A0(1 << 30) =A0 =A0 =A0 /*=
+ CMD23 supported. */
+>> +#define MMC_CAP_POWER_OFF_NOTIFY =A0 =A0(1 << 31)/*NOtify poweroff =
+supported */
+>>
+>> =A0 =A0 =A0 =A0mmc_pm_flag_t =A0 =A0 =A0 =A0 =A0 pm_caps; =A0 =A0 =A0=
+ =A0/* supported pm features */
+>>
+>> diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
+>> index e869f00..8e86d77 100644
+>> --- a/include/linux/mmc/mmc.h
+>> +++ b/include/linux/mmc/mmc.h
+>> @@ -269,7 +269,7 @@ struct _mmc_csd {
+>> =A0/*
+>> =A0* EXT_CSD fields
+>> =A0*/
+>> -
+>> +#define EXT_CSD_POWER_OFF_NOTIFICATION 34 /* R/W */
+>> =A0#define EXT_CSD_PARTITION_ATTRIBUTE =A0 =A0156 =A0 =A0 /* R/W */
+>> =A0#define EXT_CSD_PARTITION_SUPPORT =A0 =A0 =A0160 =A0 =A0 /* RO */
+>> =A0#define EXT_CSD_WR_REL_PARAM =A0 =A0 =A0 =A0 =A0 166 =A0 =A0 /* R=
+O */
+>> @@ -293,6 +293,7 @@ struct _mmc_csd {
+>> =A0#define EXT_CSD_SEC_ERASE_MULT =A0 =A0 =A0 =A0 230 =A0 =A0 /* RO =
+*/
+>> =A0#define EXT_CSD_SEC_FEATURE_SUPPORT =A0 =A0231 =A0 =A0 /* RO */
+>> =A0#define EXT_CSD_TRIM_MULT =A0 =A0 =A0 =A0 =A0 =A0 =A0232 =A0 =A0 =
+/* RO */
+>> +#define EXT_CSD_POWER_OFF_LONG_TIME =A0 =A0247 /*RO*/
+>> =A0#define EXT_CSD_GENERIC_CMD6_TIME =A0 =A0 =A0248 =A0 =A0 /* RO */
+>>
+>> =A0/*
+>> @@ -329,6 +330,11 @@ struct _mmc_csd {
+>> =A0#define EXT_CSD_SEC_BD_BLK_EN =A0BIT(2)
+>> =A0#define EXT_CSD_SEC_GB_CL_EN =A0 BIT(4)
+>>
+>> +#define EXT_CSD_NO_POWER_NOTIFICATION =A00
+>> +#define EXT_CSD_POWER_ON =A0 =A0 =A0 1
+>> +#define EXT_CSD_POWER_OFF_SHORT =A0 =A0 =A0 =A02
+>> +#define EXT_CSD_POWER_OFF_LONG 3
+>> +
+>> =A0/*
+>> =A0* MMC_SWITCH access modes
+>> =A0*/
+>> --
+>> 1.7.1
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-sams=
+ung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>>
+>
