@@ -1,238 +1,130 @@
-From: PANKAJ KUMAR DUBEY <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: RE: [PATCH 2/2] ARM: EXYNOS4: Add USB PHY initialization for
-	device
-Date: Fri, 02 Sep 2011 04:59:50 +0000 (GMT)
-Message-ID: <0LQV00DSDPVQR460@mailout2.samsung.com>
-Reply-To: pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8381374405175660718=="
-Return-path: <linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
-MIME-version: 1.0
-List-Unsubscribe: <http://lists.linaro.org/mailman/options/linaro-dev>,
-	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/linaro-dev>
-List-Post: <mailto:linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
-List-Help: <mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.linaro.org/mailman/listinfo/linaro-dev>,
-	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=subscribe>
-Sender: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-Errors-To: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Sachin Kamat' <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Yulgon Kim <yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, Kyoungil Kim <ki0351.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: [PATCH] mmc: core: Add power off notify feature(eMMC 4.5)
+Date: Fri,  2 Sep 2011 12:55:49 +0530
+Message-ID: <1314948349-15856-1-git-send-email-girish.shivananjappa@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:45514 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752498Ab1IBH0C (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 2 Sep 2011 03:26:02 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: cjb@laptop.org, kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
 
---===============8381374405175660718==
-Content-type: text/html; charset=windows-1252
-Content-transfer-encoding: base64
+This patch adds the support for power off notify feature
+available in eMMC 4.5 devices.
+	If the the host has support for this feature, then the
+mmc core will notify it to the device by setting the
+POWER_OFF_NOTIFICATION byte in the extended csd register
+with a value 1(POWER_ON).
+	This patch should be applied after Seungwon Jeon's
+patch for cmd6 timeout.
 
-PEhUTUw+PEhFQUQ+PFRJVExFPlNhbXN1bmcgRW50ZXJwcmlzZSBQb3J0YWwgbXlTaW5nbGU8L1RJ
-VExFPg0KPE1FVEEgY29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PXdpbmRvd3MtMTI1MiIgaHR0
-cC1lcXVpdj1Db250ZW50LVR5cGU+DQo8U1RZTEUgaWQ9bXlzaW5nbGVfc3R5bGUgdHlwZT10ZXh0
-L2Nzcz5QIHsNCglNQVJHSU4tVE9QOiA1cHg7IEZPTlQtRkFNSUxZOiBUaW1lcyBOZXcgUm9tYW4s
-IGFyaWFsOyBNQVJHSU4tQk9UVE9NOiA1cHg7IEZPTlQtU0laRTogMTJwdA0KfQ0KVEQgew0KCU1B
-UkdJTi1UT1A6IDVweDsgRk9OVC1GQU1JTFk6IFRpbWVzIE5ldyBSb21hbiwgYXJpYWw7IE1BUkdJ
-Ti1CT1RUT006IDVweDsgRk9OVC1TSVpFOiAxMnB0DQp9DQpMSSB7DQoJTUFSR0lOLVRPUDogNXB4
-OyBGT05ULUZBTUlMWTogVGltZXMgTmV3IFJvbWFuLCBhcmlhbDsgTUFSR0lOLUJPVFRPTTogNXB4
-OyBGT05ULVNJWkU6IDEycHQNCn0NCkJPRFkgew0KCUxJTkUtSEVJR0hUOiAxLjQ7IE1BUkdJTjog
-MTBweDsgRk9OVC1GQU1JTFk6IFRpbWVzIE5ldyBSb21hbiwgYXJpYWw7IEZPTlQtU0laRTogMTJw
-dA0KfQ0KPC9TVFlMRT4NCg0KPE1FVEEgbmFtZT1HRU5FUkFUT1IgY29udGVudD1BY3RpdmVTcXVh
-cmU+PC9IRUFEPg0KPEJPRFk+DQo8TUVUQSBuYW1lPUdFTkVSQVRPUiBjb250ZW50PUFjdGl2ZVNx
-dWFyZT4NCjxQPkhpIEt1a2ppbiw8L1A+DQo8UD4mbmJzcDs8L1A+DQo8UD4mbmJzcDs8L1A+DQo8
-UD4tLS0tLS0tIDxCPk9yaWdpbmFsIE1lc3NhZ2U8L0I+IC0tLS0tLS08L1A+DQo8UD48Qj5TZW5k
-ZXI8L0I+IDogS3VramluIEtpbSZsdDtrZ2VuZS5raW1Ac2Ftc3VuZy5jb20mZ3Q7IEU1L1Nlbmlv
-ciBFbmdpbmVlci9TVyBTb2x1dGlvbiBEZXZlbG9wbWVudCBUZWFtL1NhbXN1bmcgRWxlY3Ryb25p
-Y3M8L1A+DQo8UD48Qj5EYXRlPC9CPiA6IEF1ZyAzMSwgMjAxMSAxMTowNSAoR01UKzA1OjAwKTwv
-UD4NCjxQPjxCPlRpdGxlPC9CPiA6IFJFOiBbUEFUQ0ggMi8yXSBBUk06IEVYWU5PUzQ6IEFkZCBV
-U0IgUEhZIGluaXRpYWxpemF0aW9uIGZvciBkZXZpY2U8L1A+DQo8UD4mbmJzcDs8L1A+DQo8UD5T
-YWNoaW4gS2FtYXQgd3JvdGU6PEJSPiZndDsgPEJSPiZndDsgRnJvbTogUGFua2FqIER1YmV5IDxQ
-QU5LQUouRFVCRVlAU0FNU1VORy5DT00+PEJSPiZndDsgPEJSPiZndDsgVGhpcyBwYXRjaCBtb2Rp
-ZmllcyBVU0IgUEhZIGluaXRpYWxpemF0aW9uIGNvZGUgc28gdGhhdCBVU0IgaG9zdDxCUj4mZ3Q7
-IGFuZCBkZXZpY2UgY2FuIGJlIGluaXRpYWxpemVkIHdpdGggdGhlIHNhbWUgZnVuY3Rpb24uPEJS
-PiZndDsgPEJSPiZndDsgU2lnbmVkLW9mZi1ieTogUGFua2FqIER1YmV5IDxQQU5LQUouRFVCRVlA
-U0FNU1VORy5DT00+PEJSPiZndDsgU2lnbmVkLW9mZi1ieTogU2FjaGluIEthbWF0IDxTQUNISU4u
-S0FNQVRATElOQVJPLk9SRz48QlI+Jmd0OyAtLS08QlI+Jmd0OyZuYnNwOyZuYnNwO2FyY2gvYXJt
-L21hY2gtZXh5bm9zNC9pbmNsdWRlL21hY2gvcmVncy1wbXUuaCB8Jm5ic3A7Jm5ic3A7Jm5ic3A7
-Jm5ic3A7MiArLTxCUj4mZ3Q7Jm5ic3A7Jm5ic3A7YXJjaC9hcm0vbWFjaC1leHlub3M0L3NldHVw
-LXVzYi1waHkuYyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
-OyB8Jm5ic3A7Jm5ic3A7MTU5ICsrKysrKysrKysrKysrKystLS08QlI+Jmd0OyAtLS0tLTxCUj4m
-Z3Q7Jm5ic3A7Jm5ic3A7MiBmaWxlcyBjaGFuZ2VkLCAxMDcgaW5zZXJ0aW9ucygrKSwgNTQgZGVs
-ZXRpb25zKC0pPEJSPiZndDsgPEJSPiZndDsgZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21hY2gtZXh5
-bm9zNC9pbmNsdWRlL21hY2gvcmVncy1wbXUuaDxCUj5iL2FyY2gvYXJtL21hY2gtPEJSPiZndDsg
-ZXh5bm9zNC9pbmNsdWRlL21hY2gvcmVncy1wbXUuaDxCUj4mZ3Q7IGluZGV4IGNkZjliNDcuLmM0
-NzA5ZjIgMTAwNjQ0PEJSPiZndDsgLS0tIGEvYXJjaC9hcm0vbWFjaC1leHlub3M0L2luY2x1ZGUv
-bWFjaC9yZWdzLXBtdS5oPEJSPiZndDsgKysrIGIvYXJjaC9hcm0vbWFjaC1leHlub3M0L2luY2x1
-ZGUvbWFjaC9yZWdzLXBtdS5oPEJSPiZndDsgQEAgLTM0LDcgKzM0LDcgQEA8QlI+Jmd0OyZuYnNw
-OyZuYnNwOyNkZWZpbmUgUzVQX1dBS0VVUF9TVEFUPEJSPiZndDsgUzVQX1BNVVJFRygweDA2MDAp
-PEJSPiZndDsmbmJzcDsmbmJzcDsjZGVmaW5lIFM1UF9FSU5UX1dBS0VVUF9NQVNLPEJSPiZndDsg
-UzVQX1BNVVJFRygweDA2MDQpPEJSPiZndDsmbmJzcDsmbmJzcDsjZGVmaW5lIFM1UF9XQUtFVVBf
-TUFTSzxCUj4mZ3Q7IFM1UF9QTVVSRUcoMHgwNjA4KTxCUj4mZ3Q7IC08QlI+Jmd0OyArI2RlZmlu
-ZSBTNVBfVVNCREVWSUNFX1BIWV9DT05UUk9MPEJSPiZndDsgUzVQX1BNVVJFRygweDA3MDQpPEJS
-PiZndDsmbmJzcDsmbmJzcDsjZGVmaW5lIFM1UF9VU0JIT1NUX1BIWV9DT05UUk9MPEJSPiZndDsg
-UzVQX1BNVVJFRygweDA3MDgpPEJSPiZndDsmbmJzcDsmbmJzcDsjZGVmaW5lIFM1UF9VU0JIT1NU
-X1BIWV9FTkFCTEUgKDEgJmx0OyZsdDsgMCk8QlI+Jmd0OyA8QlI+Jmd0OyBkaWZmIC0tZ2l0IGEv
-YXJjaC9hcm0vbWFjaC1leHlub3M0L3NldHVwLXVzYi1waHkuYyBiL2FyY2gvYXJtL21hY2gtPEJS
-PiZndDsgZXh5bm9zNC9zZXR1cC11c2ItcGh5LmM8QlI+Jmd0OyBpbmRleCBmNGM5NDRhLi42OTg3
-OGExIDEwMDY0NDxCUj4mZ3Q7IC0tLSBhL2FyY2gvYXJtL21hY2gtZXh5bm9zNC9zZXR1cC11c2It
-cGh5LmM8QlI+Jmd0OyArKysgYi9hcmNoL2FybS9tYWNoLWV4eW5vczQvc2V0dXAtdXNiLXBoeS5j
-PEJSPiZndDsgQEAgLTIxLDUxICsyMSw2NSBAQDxCUj4mZ3Q7IDxCUj4mZ3Q7Jm5ic3A7Jm5ic3A7
-aW50IHM1cF91c2JfcGh5X2luaXQoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiwgaW50IHR5
-cGUpPEJSPiZndDsmbmJzcDsmbmJzcDt7PEJSPiZndDsgKyBzdHJ1Y3QgY2xrICpvdGdfY2xrLCAq
-dXNiaG9zdF9jbGs7PEJSPiZndDsgKyBzdHJ1Y3QgY2xrICp4dXNieHRpX2Nsazs8QlI+Jmd0OyAr
-IHUzMiBwaHljbGs7PEJSPiZndDsgKyB1MzIgcnN0Y29uOzxCUj4mZ3Q7ICsgaW50IGVycjs8QlI+
-Jmd0OyArIGlmICgodHlwZSAhPSBTNVBfVVNCX1BIWV9IT1NUKSAmYW1wOyZhbXA7ICh0eXBlICE9
-IFM1UF9VU0JfUEhZX0RFVklDRSkpPEJSPiZndDsgKyByZXR1cm4gLUVJTlZBTDs8QlI+Jmd0OyAr
-PEJSPiZndDsgKyBvdGdfY2xrID0gY2xrX2dldCgmYW1wO3BkZXYtJmd0O2RldiwgIm90ZyIpOzxC
-Uj4mZ3Q7ICsgaWYgKElTX0VSUihvdGdfY2xrKSkgezxCUj4mZ3Q7ICsgZGV2X2VycigmYW1wO3Bk
-ZXYtJmd0O2RldiwgIkZhaWxlZCB0byBnZXQgb3RnIGNsb2NrICIpOzxCUj4mZ3Q7ICsgcmV0dXJu
-IFBUUl9FUlIob3RnX2Nsayk7PEJSPiZndDsgKyB9PEJSPiZndDsgKzxCUj4mZ3Q7ICsgZXJyID0g
-Y2xrX2VuYWJsZShvdGdfY2xrKTs8QlI+Jmd0OyArIGlmIChlcnIpIHs8QlI+Jmd0OyArIGNsa19w
-dXQob3RnX2Nsayk7PEJSPiZndDsgKyByZXR1cm4gZXJyOzxCUj4mZ3Q7ICsgfTxCUj4mZ3Q7ICs8
-QlI+Jmd0OyArIC8qIHNldCBjbG9jayBmcmVxdWVuY3kgZm9yIFBMTCAqLzxCUj4mZ3Q7ICsgcGh5
-Y2xrID0gcmVhZGwoRVhZTk9TNF9QSFlDTEspICZhbXA7IH5DTEtTRUxfTUFTSzs8QlI+Jmd0OyAr
-PEJSPiZndDsgKyB4dXNieHRpX2NsayA9IGNsa19nZXQoJmFtcDtwZGV2LSZndDtkZXYsICJ4dXNi
-eHRpIik7PEJSPiZndDsgKyBpZiAoeHVzYnh0aV9jbGsgJmFtcDsmYW1wOyAhSVNfRVJSKHh1c2J4
-dGlfY2xrKSkgezxCUj4mZ3Q7ICsgc3dpdGNoIChjbGtfZ2V0X3JhdGUoeHVzYnh0aV9jbGspKSB7
-PEJSPiZndDsgKyBjYXNlIDEyICogTUhaOjxCUj4mZ3Q7ICsgcGh5Y2xrIHw9IENMS1NFTF8xMk07
-PEJSPiZndDsgKyBicmVhazs8QlI+Jmd0OyArIGNhc2UgMjQgKiBNSFo6PEJSPiZndDsgKyBwaHlj
-bGsgfD0gQ0xLU0VMXzI0TTs8QlI+Jmd0OyArIGJyZWFrOzxCUj4mZ3Q7ICsgZGVmYXVsdDo8QlI+
-Jmd0OyArIGNhc2UgNDggKiBNSFo6PEJSPiZndDsgKyAvKiBkZWZhdWx0IHJlZmVyZW5jZSBjbG9j
-ayAqLzxCUj4mZ3Q7ICsgYnJlYWs7PEJSPiZndDsgKyB9PEJSPiZndDsgKyBjbGtfcHV0KHh1c2J4
-dGlfY2xrKTs8QlI+Jmd0OyArIH08QlI+Jmd0OyArPEJSPiZndDsgKyB3cml0ZWwocGh5Y2xrLCBF
-WFlOT1M0X1BIWUNMSyk7PEJSPiZndDsgKzxCUj4mZ3Q7Jm5ic3A7Jm5ic3A7IGlmICh0eXBlID09
-IFM1UF9VU0JfUEhZX0hPU1QpIHs8QlI+Jmd0OyAtIHN0cnVjdCBjbGsgKm90Z19jbGs7PEJSPiZn
-dDsgLSBzdHJ1Y3QgY2xrICp4dXNieHRpX2Nsazs8QlI+Jmd0OyAtIHUzMiBwaHljbGs7PEJSPiZn
-dDsgLSB1MzIgcnN0Y29uOzxCUj4mZ3Q7IC0gaW50IGVycjs8QlI+Jmd0OyAtPEJSPiZndDsgLSBv
-dGdfY2xrID0gY2xrX2dldCgmYW1wO3BkZXYtJmd0O2RldiwgIm90ZyIpOzxCUj4mZ3Q7IC0gaWYg
-KElTX0VSUihvdGdfY2xrKSkgezxCUj4mZ3Q7IC0gZGV2X2VycigmYW1wO3BkZXYtJmd0O2Rldiwg
-IkZhaWxlZCB0byBnZXQgb3RnIGNsb2NrICIpOzxCUj4mZ3Q7IC0gcmV0dXJuIFBUUl9FUlIob3Rn
-X2Nsayk7PEJSPiZndDsgKyB1c2Job3N0X2NsayA9IGNsa19nZXQoJmFtcDtwZGV2LSZndDtkZXYs
-ICJ1c2Job3N0Iik7PEJSPiZndDsgKzxCUj4mZ3Q7ICsgaWYgKElTX0VSUih1c2Job3N0X2Nsaykp
-IHs8QlI+Jmd0OyArIGRldl9lcnIoJmFtcDtwZGV2LSZndDtkZXYsICJGYWlsZWQgdG8gZ2V0IHVz
-Ymhvc3Q8QlI+Y2xvY2sgIik7PEJSPiZndDsgKyByZXR1cm4gUFRSX0VSUih1c2Job3N0X2Nsayk7
-PEJSPjxCUj4oQ2MnZWQgWXVsZ29uIEtpbSBhbmQgS3lvdW5naWwgS2ltKTxCUj48QlI+SG1tLi4u
-SSBrbm93LCBzaW5jZSB0aGUgVVNCIEhvc3QgUEhZIENvbnRyb2xsZXIgaXMgaW5jbHVkZWQgaW4g
-dGhlICdvdGcnPEJSPmNsb2NrIGRvbWFpbiB0aGUgJ290ZycgY2xvY2sgaXMgY29udHJvbGxlZCBo
-ZXJlLiBCdXQgdGhlIFVTQiBIb3N0IGNsb2NrIGlzPEJSPmNvbnRyb2xsZWQgaW4gZWhjaS1zNXAg
-ZHJpdmVyIG5vdyBzbyB3ZSBkb24ndCBuZWVkIHRvIGFkZCB0aGlzIGhlcmUuPEJSPjwvUD4NCjxQ
-Pi0tLTwvUD4NCjxQPlllcywgeW91IGFyZSBjb3JyZWN0LCB1c2JfaG9zdCBjbG9jayBpcyBub3Qg
-c3VwcG9zZWQgdG8gYmUgaGFuZGxlIGhlcmUuIEkgd2lsbCByZS1zdWJtaXQgdGhpcyBwYXRjaCBh
-ZnRlciBjb3JyZWN0aW9uLjwvUD4NCjxQPi0tLTxCUj4mZ3Q7Jm5ic3A7Jm5ic3A7IH08QlI+Jmd0
-OyA8QlI+Jmd0OyAtIGVyciA9IGNsa19lbmFibGUob3RnX2Nsayk7PEJSPiZndDsgKyBlcnIgPSBj
-bGtfZW5hYmxlKHVzYmhvc3RfY2xrKTs8QlI+Jmd0OyZuYnNwOyZuYnNwOyBpZiAoZXJyKSB7PEJS
-PiZndDsgLSBjbGtfcHV0KG90Z19jbGspOzxCUj4mZ3Q7ICsgY2xrX3B1dCh1c2Job3N0X2Nsayk7
-PEJSPiZndDsmbmJzcDsmbmJzcDsgcmV0dXJuIGVycjs8QlI+Jmd0OyZuYnNwOyZuYnNwOyB9PEJS
-PiZndDsgPEJSPiZndDsmbmJzcDsmbmJzcDsgd3JpdGVsKHJlYWRsKFM1UF9VU0JIT1NUX1BIWV9D
-T05UUk9MKSB8PEJSPiZndDsgUzVQX1VTQkhPU1RfUEhZX0VOQUJMRSw8QlI+Jmd0OyZuYnNwOyZu
-YnNwOyBTNVBfVVNCSE9TVF9QSFlfQ09OVFJPTCk7PEJSPiZndDsgPEJSPiZndDsgLSAvKiBzZXQg
-Y2xvY2sgZnJlcXVlbmN5IGZvciBQTEwgKi88QlI+Jmd0OyAtIHBoeWNsayA9IHJlYWRsKEVYWU5P
-UzRfUEhZQ0xLKSAmYW1wOyB+Q0xLU0VMX01BU0s7PEJSPiZndDsgLTxCUj4mZ3Q7IC0geHVzYnh0
-aV9jbGsgPSBjbGtfZ2V0KCZhbXA7cGRldi0mZ3Q7ZGV2LCAieHVzYnh0aSIpOzxCUj4mZ3Q7IC0g
-aWYgKHh1c2J4dGlfY2xrICZhbXA7JmFtcDsgIUlTX0VSUih4dXNieHRpX2NsaykpIHs8QlI+Jmd0
-OyAtIHN3aXRjaCAoY2xrX2dldF9yYXRlKHh1c2J4dGlfY2xrKSkgezxCUj4mZ3Q7IC0gY2FzZSAx
-MiAqIE1IWjo8QlI+Jmd0OyAtIHBoeWNsayB8PSBDTEtTRUxfMTJNOzxCUj4mZ3Q7IC0gYnJlYWs7
-PEJSPiZndDsgLSBjYXNlIDI0ICogTUhaOjxCUj4mZ3Q7IC0gcGh5Y2xrIHw9IENMS1NFTF8yNE07
-PEJSPiZndDsgLSBicmVhazs8QlI+Jmd0OyAtIGRlZmF1bHQ6PEJSPiZndDsgLSBjYXNlIDQ4ICog
-TUhaOjxCUj4mZ3Q7IC0gLyogZGVmYXVsdCByZWZlcmVuY2UgY2xvY2sgKi88QlI+Jmd0OyAtIGJy
-ZWFrOzxCUj4mZ3Q7IC0gfTxCUj4mZ3Q7IC0gY2xrX3B1dCh4dXNieHRpX2Nsayk7PEJSPiZndDsg
-LSB9PEJSPiZndDsgLTxCUj4mZ3Q7IC0gd3JpdGVsKHBoeWNsaywgRVhZTk9TNF9QSFlDTEspOzxC
-Uj4mZ3Q7IC08QlI+Jmd0OyAtIC8qIGZsb2F0aW5nIHByZXZlbnRpb24gbG9naWM6IGRpc2FibGUg
-Ki88QlI+Jmd0OyZuYnNwOyZuYnNwOyB3cml0ZWwoKHJlYWRsKEVYWU5PUzRfUEhZMUNPTikgfCBG
-UEVOQUJMRU4pLDxCUj4mZ3Q7IEVYWU5PUzRfUEhZMUNPTik7PEJSPiZndDsgPEJSPiZndDsmbmJz
-cDsmbmJzcDsgLyogc2V0IHRvIG5vcm1hbCBIU0lDIDAgYW5kIDEgb2YgUEhZMSAqLzxCUj4mZ3Q7
-IEBAIC04NCwzMCArOTgsNjEgQEAgaW50IHM1cF91c2JfcGh5X2luaXQoc3RydWN0IHBsYXRmb3Jt
-X2RldmljZSAqcGRldiw8QlI+aW50IHR5cGUpPEJSPiZndDsgPEJSPiZndDsmbmJzcDsmbmJzcDsg
-cnN0Y29uICZhbXA7PSB+KEhPU1RfTElOS19QT1JUX1NXUlNUX01BU0sgfDxCUj4mZ3Q7IFBIWTFf
-U1dSU1RfTUFTSyk7PEJSPiZndDsmbmJzcDsmbmJzcDsgd3JpdGVsKHJzdGNvbiwgRVhZTk9TNF9S
-U1RDT04pOzxCUj4mZ3Q7IC0gdWRlbGF5KDgwKTs8QlI+Jmd0OyArIH0gZWxzZSBpZiAodHlwZSA9
-PSBTNVBfVVNCX1BIWV9ERVZJQ0UpIHs8QlI+Jmd0OyArIHdyaXRlbChyZWFkbChTNVBfVVNCREVW
-SUNFX1BIWV9DT05UUk9MKSB8ICgweDEmbHQ7Jmx0OzApLDxCUj4mZ3Q7ICsgUzVQX1VTQkRFVklD
-RV9QSFlfQ09OVFJPTCk7PEJSPiZndDsgKyB3cml0ZWwoKHJlYWRsKEVYWU5PUzRfUEhZUFdSKSAm
-YW1wOyB+KDB4NyZsdDsmbHQ7MykmYW1wO34oMHgxJmx0OyZsdDswKSksPEJSPiZndDsgKyBFWFlO
-T1M0X1BIWVBXUik7PEJSPiZndDsgKyB3cml0ZWwoKHJlYWRsKEVYWU5PUzRfUEhZQ0xLKSAmYW1w
-OyB+KDB4NSZsdDsmbHQ7MikpfCgweDMmbHQ7Jmx0OzApLDxCUj4mZ3Q7ICsgRVhZTk9TNF9QSFlD
-TEspOzxCUj4mZ3Q7ICsgd3JpdGVsKChyZWFkbChFWFlOT1M0X1JTVENPTikgJmFtcDsgfigweDMm
-bHQ7Jmx0OzEpKXwoMHgxJmx0OyZsdDswKSw8QlI+Jmd0OyArIEVYWU5PUzRfUlNUQ09OKTs8QlI+
-Jmd0OyArIHVkZWxheSgxMCk7PEJSPiZndDsgKyB3cml0ZWwocmVhZGwoRVhZTk9TNF9SU1RDT04p
-ICZhbXA7IH4oMHg3Jmx0OyZsdDswKSw8QlI+Jmd0OyArIEVYWU5PUzRfUlNUQ09OKTs8QlI+Jmd0
-OyArIH08QlI+Jmd0OyArIHVkZWxheSg4MCk7PEJSPiZndDsgPEJSPiZndDsgLSBjbGtfZGlzYWJs
-ZShvdGdfY2xrKTs8QlI+Jmd0OyAtIGNsa19wdXQob3RnX2Nsayk7PEJSPiZndDsgKyBjbGtfZGlz
-YWJsZShvdGdfY2xrKTs8QlI+Jmd0OyArIGNsa19wdXQob3RnX2Nsayk7PEJSPiZndDsgKyBpZiAo
-dHlwZSA9PSBTNVBfVVNCX1BIWV9IT1NUKTxCUj4mZ3Q7ICsgY2xrX3B1dCh1c2Job3N0X2Nsayk7
-PEJSPiZndDsgPEJSPiZndDsgLSByZXR1cm4gMDs8QlI+Jmd0OyAtIH08QlI+Jmd0OyAtIHJldHVy
-biAtRUlOVkFMOzxCUj4mZ3Q7ICsgcmV0dXJuIDA7PEJSPiZndDsmbmJzcDsmbmJzcDt9PEJSPiZn
-dDsgPEJSPiZndDsmbmJzcDsmbmJzcDtpbnQgczVwX3VzYl9waHlfZXhpdChzdHJ1Y3QgcGxhdGZv
-cm1fZGV2aWNlICpwZGV2LCBpbnQgdHlwZSk8QlI+Jmd0OyZuYnNwOyZuYnNwO3s8QlI+Jmd0OyAr
-IHN0cnVjdCBjbGsgKm90Z19jbGssICp1c2Job3N0X2Nsazs8QlI+Jmd0OyArIGludCBlcnI7PEJS
-PiZndDsgKzxCUj4mZ3Q7ICsgaWYgKCh0eXBlICE9IFM1UF9VU0JfUEhZX0hPU1QpICZhbXA7JmFt
-cDsgKHR5cGUgIT0gUzVQX1VTQl9QSFlfREVWSUNFKSk8QlI+Jmd0OyArIHJldHVybiAtRUlOVkFM
-OzxCUj4mZ3Q7ICs8QlI+Jmd0OyArIG90Z19jbGsgPSBjbGtfZ2V0KCZhbXA7cGRldi0mZ3Q7ZGV2
-LCAib3RnIik7PEJSPiZndDsgKyBpZiAoSVNfRVJSKG90Z19jbGspKSB7PEJSPiZndDsgKyBkZXZf
-ZXJyKCZhbXA7cGRldi0mZ3Q7ZGV2LCAiRmFpbGVkIHRvIGdldCBvdGcgY2xvY2sgIik7PEJSPiZn
-dDsgKyByZXR1cm4gUFRSX0VSUihvdGdfY2xrKTs8QlI+Jmd0OyArIH08QlI+Jmd0OyArPEJSPiZn
-dDsgKyBlcnIgPSBjbGtfZW5hYmxlKG90Z19jbGspOzxCUj4mZ3Q7ICsgaWYgKGVycikgezxCUj4m
-Z3Q7ICsgY2xrX3B1dChvdGdfY2xrKTs8QlI+Jmd0OyArIHJldHVybiBlcnI7PEJSPiZndDsgKyB9
-PEJSPiZndDsgKzxCUj4mZ3Q7Jm5ic3A7Jm5ic3A7IGlmICh0eXBlID09IFM1UF9VU0JfUEhZX0hP
-U1QpIHs8QlI+Jmd0OyAtIHN0cnVjdCBjbGsgKm90Z19jbGs7PEJSPiZndDsgLSBpbnQgZXJyOzxC
-Uj4mZ3Q7IC0gb3RnX2NsayA9IGNsa19nZXQoJmFtcDtwZGV2LSZndDtkZXYsICJvdGciKTs8QlI+
-Jmd0OyAtIGlmIChJU19FUlIob3RnX2NsaykpIHs8QlI+Jmd0OyAtIGRldl9lcnIoJmFtcDtwZGV2
-LSZndDtkZXYsICJGYWlsZWQgdG8gZ2V0IG90ZyBjbG9jayAiKTs8QlI+Jmd0OyAtIHJldHVybiBQ
-VFJfRVJSKG90Z19jbGspOzxCUj4mZ3Q7ICs8QlI+Jmd0OyArIHVzYmhvc3RfY2xrID0gY2xrX2dl
-dCgmYW1wO3BkZXYtJmd0O2RldiwgInVzYmhvc3QiKTs8QlI+Jmd0OyArPEJSPiZndDsgKyBpZiAo
-SVNfRVJSKHVzYmhvc3RfY2xrKSkgezxCUj4mZ3Q7ICsgZGV2X2VycigmYW1wO3BkZXYtJmd0O2Rl
-diwgIkZhaWxlZCB0byBnZXQgdXNiaG9zdDxCUj5jbG9jayAiKTs8QlI+Jmd0OyArIHJldHVybiBQ
-VFJfRVJSKHVzYmhvc3RfY2xrKTs8QlI+Jmd0OyZuYnNwOyZuYnNwOyB9PEJSPiZndDsgPEJSPiZn
-dDsgLSBlcnIgPSBjbGtfZW5hYmxlKG90Z19jbGspOzxCUj4mZ3Q7ICsgZXJyID0gY2xrX2VuYWJs
-ZSh1c2Job3N0X2Nsayk7PEJSPjxCUj5Xcm9uZywgZG8geW91IF9yZWFsbHlfIHdhbnQgdG8gZW5h
-YmxlIHVzYmhvc3RfY2xrIGhlcmUsIGluIHVzYl9waHlfZXhpdCgpPzxCUj48L1A+DQo8UD4tLTwv
-UD4NCjxQPkFjY2VwdGVkLiBXaWxsIHJlLXN1Ym1pdCB0aGUgcGF0Y2guPC9QPg0KPFA+LS0tPEJS
-PjxCUj4mZ3Q7Jm5ic3A7Jm5ic3A7IGlmIChlcnIpIHs8QlI+Jmd0OyAtIGNsa19wdXQob3RnX2Ns
-ayk7PEJSPiZndDsgKyBjbGtfcHV0KHVzYmhvc3RfY2xrKTs8QlI+Jmd0OyZuYnNwOyZuYnNwOyBy
-ZXR1cm4gZXJyOzxCUj4mZ3Q7Jm5ic3A7Jm5ic3A7IH08QlI+Jmd0OyA8QlI+Jmd0OyBAQCAtMTE3
-LDEwICsxNjIsMTggQEAgaW50IHM1cF91c2JfcGh5X2V4aXQoc3RydWN0IHBsYXRmb3JtX2Rldmlj
-ZSAqcGRldiw8QlI+aW50PEJSPiZndDsgdHlwZSk8QlI+Jmd0OyZuYnNwOyZuYnNwOyB3cml0ZWwo
-cmVhZGwoUzVQX1VTQkhPU1RfUEhZX0NPTlRST0wpICZhbXA7PEJSPiZndDsgflM1UF9VU0JIT1NU
-X1BIWV9FTkFCTEUsPEJSPiZndDsmbmJzcDsmbmJzcDsgUzVQX1VTQkhPU1RfUEhZX0NPTlRST0wp
-OzxCUj4mZ3Q7IDxCUj4mZ3Q7IC0gY2xrX2Rpc2FibGUob3RnX2Nsayk7PEJSPiZndDsgLSBjbGtf
-cHV0KG90Z19jbGspOzxCUj4mZ3Q7ICsgfSBlbHNlIGlmICh0eXBlID09IFM1UF9VU0JfUEhZX0RF
-VklDRSkgezxCUj4mZ3Q7ICsgd3JpdGVsKHJlYWRsKEVYWU5PUzRfUEhZUFdSKSB8ICgweDMmbHQ7
-Jmx0OzMpLDxCUj4mZ3Q7ICsgRVhZTk9TNF9QSFlQV1IpOzxCUj4mZ3Q7IDxCUj4mZ3Q7IC0gcmV0
-dXJuIDA7PEJSPiZndDsgKyB3cml0ZWwocmVhZGwoUzVQX1VTQkRFVklDRV9QSFlfQ09OVFJPTCkg
-JmFtcDsgfigxJmx0OyZsdDswKSw8QlI+Jmd0OyArIFM1UF9VU0JERVZJQ0VfUEhZX0NPTlRST0wp
-OzxCUj4mZ3Q7Jm5ic3A7Jm5ic3A7IH08QlI+Jmd0OyAtIHJldHVybiAtRUlOVkFMOzxCUj4mZ3Q7
-ICs8QlI+Jmd0OyArIGNsa19kaXNhYmxlKG90Z19jbGspOzxCUj4mZ3Q7ICsgY2xrX3B1dChvdGdf
-Y2xrKTs8QlI+Jmd0OyArIGlmICh0eXBlID09IFM1UF9VU0JfUEhZX0hPU1QpPEJSPiZndDsgKyBj
-bGtfcHV0KHVzYmhvc3RfY2xrKTs8QlI+Jmd0OyArPEJSPiZndDsgKyByZXR1cm4gMDs8QlI+Jmd0
-OyZuYnNwOyZuYnNwO308QlI+Jmd0OyAtLTxCUj4mZ3Q7IDEuNy40LjE8QlI+PEJSPkkgY2FuJ3Qg
-YWdyZWUgdGhpcyBwYXRjaC4gSSB0aGluayB5b3UgbmVlZCB0byBjaGVjayBhYm91dCB3aG9sZSBV
-U0IgUEhZPEJSPnN0cnVjdHVyZSBvbiBFWFlOT1M0IGFnYWluLjxCUj48QlI+SW4gYWRkaXRpb24s
-IEkgZG9uknQgaGF2ZSBpZGVhIHdlIG5lZWQgdG8gY29udHJvbCBVU0IgSG9zdCBjbG9jayBmb3I8
-QlI+aGFuZGxpbmcgVVNCIFBIWSBlbmFibGUvZGlzYWJsZS48QlI+PC9QPg0KPFA+LS0tPC9QPg0K
-PFA+V2lsbCByZS1zdWJtaXQgdGhlIHBhdGNoIGFmdGVyIHJlbW92aW5nIGhvc3QgY2xvY2sgZW5h
-YmxlL2Rpc2FibGUgY29kZS48L1A+DQo8UD4mbmJzcDs8L1A+DQo8UD5UaGFua3MsPC9QPg0KPFA+
-UGFua2FqIER1YmV5PC9QPg0KPFA+LS0tLS08L1A+DQo8UD48QlI+VGhhbmtzLjxCUj48QlI+QmVz
-dCByZWdhcmRzLDxCUj5LZ2VuZS48QlI+LS08QlI+S3VramluIEtpbSA8S0dFTkUuS0lNQFNBTVNV
-TkcuQ09NPiwgU2VuaW9yIEVuZ2luZWVyLDxCUj5TVyBTb2x1dGlvbiBEZXZlbG9wbWVudCBUZWFt
-LCBTYW1zdW5nIEVsZWN0cm9uaWNzIENvLiwgTHRkLjxCUj48QlI+PC9QPg0KPFA+Jm5ic3A7PC9Q
-PjwvQk9EWT48L0hUTUw+PGltZyBzcmM9J2h0dHA6Ly9leHQuc2Ftc3VuZy5uZXQvbWFpbGNoZWNr
-L1NlZW5UaW1lQ2hlY2tlcj9kbz1lYmRkM2U0NDI5NGYwNmIxNzEwNDM4NGI3NDFhYWJkMDJlOWY3
-YTkzYmM0ZjA4ZDY0MGQyNzAwMWIyNjIzOTQ5ZGNmN2NjYmFjZTNiYjM0NTNjNDBmNzg3ZDMzZjM1
-N2RhNmViZDIzZDgyNTczNjA5NjJlMWFjNzViNTIyNzk1YTA3ODA1NDQ3YTE1NGE0NmZjZjg3OGY5
-YTI2Y2UxNWEwJyBib3JkZXI9MCB3aWR0aD0wIGhlaWdodD0wIHN0eWxlPSdkaXNwbGF5Om5vbmUn
-Pg==
+Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+---
+ drivers/mmc/core/mmc.c   |   19 +++++++++++++++++--
+ include/linux/mmc/card.h |    1 +
+ include/linux/mmc/host.h |    1 +
+ include/linux/mmc/mmc.h  |    8 +++++++-
+ 4 files changed, 26 insertions(+), 3 deletions(-)
 
-
-
-
-
---===============8381374405175660718==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linaro-dev mailing list
-linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-http://lists.linaro.org/mailman/listinfo/linaro-dev
-
---===============8381374405175660718==--
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 68eb368..2f06b37 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -410,10 +410,12 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
+ 	else
+ 		card->erased_byte = 0x0;
+ 
+-	if (card->ext_csd.rev >= 6)
++	if (card->ext_csd.rev >= 6) {
+ 		card->ext_csd.generic_cmd6_time = 10 *
+ 			ext_csd[EXT_CSD_GENERIC_CMD6_TIME];
+-
++		card->ext_csd.power_off_longtime = 10 *
++			ext_csd[EXT_CSD_POWER_OFF_LONG_TIME];
++	}
+ out:
+ 	return err;
+ }
+@@ -710,6 +712,19 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+ 	}
+ 
+ 	/*
++	 * If the host supports the power_off_notify capability then
++	 * set the notification byte in the ext_csd register of device
++	 */
++	if (host->caps & MMC_CAP_POWER_OFF_NOTIFY) {
++		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
++				EXT_CSD_POWER_OFF_NOTIFICATION,
++				EXT_CSD_POWER_ON,
++				card->ext_csd.generic_cmd6_time);
++		if (err && err != -EBADMSG)
++			goto free_card;
++	}
++
++	/*
+ 	 * Activate high speed (if supported)
+ 	 */
+ 	if ((card->ext_csd.hs_max_dtr != 0) &&
+diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+index e992fe3..2bf2843 100644
+--- a/include/linux/mmc/card.h
++++ b/include/linux/mmc/card.h
+@@ -53,6 +53,7 @@ struct mmc_ext_csd {
+ 	unsigned int		part_time;		/* Units: ms */
+ 	unsigned int		sa_timeout;		/* Units: 100ns */
+ 	unsigned int		generic_cmd6_time;	/* Units: ms */
++	unsigned int		power_off_longtime;	/* Units: ms */
+ 	unsigned int		hs_max_dtr;
+ 	unsigned int		sectors;
+ 	unsigned int		card_type;
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index 1d09562..21c85e1 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -229,6 +229,7 @@ struct mmc_host {
+ #define MMC_CAP_MAX_CURRENT_600	(1 << 28)	/* Host max current limit is 600mA */
+ #define MMC_CAP_MAX_CURRENT_800	(1 << 29)	/* Host max current limit is 800mA */
+ #define MMC_CAP_CMD23		(1 << 30)	/* CMD23 supported. */
++#define MMC_CAP_POWER_OFF_NOTIFY    (1 << 31)/*NOtify poweroff supported */
+ 
+ 	mmc_pm_flag_t		pm_caps;	/* supported pm features */
+ 
+diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
+index e869f00..8e86d77 100644
+--- a/include/linux/mmc/mmc.h
++++ b/include/linux/mmc/mmc.h
+@@ -269,7 +269,7 @@ struct _mmc_csd {
+ /*
+  * EXT_CSD fields
+  */
+-
++#define EXT_CSD_POWER_OFF_NOTIFICATION	34 /* R/W */
+ #define EXT_CSD_PARTITION_ATTRIBUTE	156	/* R/W */
+ #define EXT_CSD_PARTITION_SUPPORT	160	/* RO */
+ #define EXT_CSD_WR_REL_PARAM		166	/* RO */
+@@ -293,6 +293,7 @@ struct _mmc_csd {
+ #define EXT_CSD_SEC_ERASE_MULT		230	/* RO */
+ #define EXT_CSD_SEC_FEATURE_SUPPORT	231	/* RO */
+ #define EXT_CSD_TRIM_MULT		232	/* RO */
++#define EXT_CSD_POWER_OFF_LONG_TIME	247 /*RO*/
+ #define EXT_CSD_GENERIC_CMD6_TIME	248	/* RO */
+ 
+ /*
+@@ -329,6 +330,11 @@ struct _mmc_csd {
+ #define EXT_CSD_SEC_BD_BLK_EN	BIT(2)
+ #define EXT_CSD_SEC_GB_CL_EN	BIT(4)
+ 
++#define EXT_CSD_NO_POWER_NOTIFICATION	0
++#define EXT_CSD_POWER_ON	1
++#define EXT_CSD_POWER_OFF_SHORT	2
++#define EXT_CSD_POWER_OFF_LONG	3
++
+ /*
+  * MMC_SWITCH access modes
+  */
+-- 
+1.7.1
