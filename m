@@ -1,87 +1,215 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 3/3] ARM: EXYNOS4: Add support for 8-bit bus width in
- SDHCI for ORIGEN
-Date: Fri, 02 Sep 2011 08:52:35 +0530
-Message-ID: <4E604BFB.2050307@linaro.org>
-References: <1314351524-10942-1-git-send-email-tushar.behera@linaro.org> <1314351524-10942-4-git-send-email-tushar.behera@linaro.org> <000601cc6779$7fe130b0$7fa39210$%kim@samsung.com>
+From: PANKAJ KUMAR DUBEY <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: RE: [PATCH 1/2] ARM: EXYNOS4: Code cleanup and remove extra
+	functions.
+Date: Fri, 02 Sep 2011 04:53:21 +0000 (GMT)
+Message-ID: <0LQV00ER1PKYCOD0@mailout2.samsung.com>
+Reply-To: pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f42.google.com ([209.85.210.42]:58365 "EHLO
-	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933111Ab1IBDWs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Sep 2011 23:22:48 -0400
-Received: by pzk37 with SMTP id 37so3934505pzk.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Sep 2011 20:22:48 -0700 (PDT)
-In-Reply-To: <000601cc6779$7fe130b0$7fa39210$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============8942229689560661108=="
+Return-path: <linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
+MIME-version: 1.0
+List-Unsubscribe: <http://lists.linaro.org/mailman/options/linaro-dev>,
+	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linaro.org/pipermail/linaro-dev>
+List-Post: <mailto:linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
+List-Help: <mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.linaro.org/mailman/listinfo/linaro-dev>,
+	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=subscribe>
+Sender: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+Errors-To: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Sachin Kamat' <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Yulgon Kim <yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, Kyoungil Kim <ki0351.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, patches@linaro.org
 
-Hi Kukjin,
+--===============8942229689560661108==
+Content-type: text/html; charset=windows-1252
+Content-transfer-encoding: base64
 
-On Wednesday 31 August 2011 06:31 AM, Kukjin Kim wrote:
-> Tushar Behera wrote:
->>
->> Platform data for SDHCI controller on ORIGEN board is missing the
->> support for 8-bit bus width. The platform data is extended in sync
->> with other EXYNOS4 machines.
->>
->> Signed-off-by: Tushar Behera<tushar.behera@linaro.org>
->> ---
->>   arch/arm/mach-exynos4/mach-origen.c |    8 ++++++++
->>   1 files changed, 8 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos4/mach-origen.c
-> b/arch/arm/mach-exynos4/mach-
->> origen.c
->> index ae18812..6b6cd77 100644
->> --- a/arch/arm/mach-exynos4/mach-origen.c
->> +++ b/arch/arm/mach-exynos4/mach-origen.c
->> @@ -75,11 +75,19 @@ static struct s3c2410_uartcfg origen_uartcfgs[]
-> __initdata =
->> {
->>   static struct s3c_sdhci_platdata origen_hsmmc0_pdata __initdata = {
->>   	.cd_type		= S3C_SDHCI_CD_INTERNAL,
->>   	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
->> +#ifdef CONFIG_EXYNOS4_SDHCI_CH0_8BIT
->> +	.max_width		= 8,
->> +	.host_caps		= MMC_CAP_8_BIT_DATA,
->> +#endif
->>   };
->>
->>   static struct s3c_sdhci_platdata origen_hsmmc2_pdata __initdata = {
->>   	.cd_type		= S3C_SDHCI_CD_INTERNAL,
->>   	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
->> +#ifdef CONFIG_EXYNOS4_SDHCI_CH2_8BIT
->> +	.max_width		= 8,
->> +	.host_caps		= MMC_CAP_8_BIT_DATA,
->> +#endif
->>   };
->>
->>   static struct platform_device *origen_devices[] __initdata = {
->> --
->> 1.7.4.1
->
-> Hi Tushar,
->
-> I wonder the bus width of SDHCI controller can be changed manually on ORIGEN
-> like SMDK board.
->
-I will do further test and update you about the results.
+PEhUTUw+PEhFQUQ+PFRJVExFPlNhbXN1bmcgRW50ZXJwcmlzZSBQb3J0YWwgbXlTaW5nbGU8L1RJ
+VExFPg0KPE1FVEEgY29udGVudD0idGV4dC9odG1sOyBjaGFyc2V0PXdpbmRvd3MtMTI1MiIgaHR0
+cC1lcXVpdj1Db250ZW50LVR5cGU+DQo8U1RZTEUgaWQ9bXlzaW5nbGVfc3R5bGUgdHlwZT10ZXh0
+L2Nzcz5QIHsNCglNQVJHSU4tVE9QOiA1cHg7IEZPTlQtRkFNSUxZOiBUaW1lcyBOZXcgUm9tYW4s
+IGFyaWFsOyBNQVJHSU4tQk9UVE9NOiA1cHg7IEZPTlQtU0laRTogMTJwdA0KfQ0KVEQgew0KCU1B
+UkdJTi1UT1A6IDVweDsgRk9OVC1GQU1JTFk6IFRpbWVzIE5ldyBSb21hbiwgYXJpYWw7IE1BUkdJ
+Ti1CT1RUT006IDVweDsgRk9OVC1TSVpFOiAxMnB0DQp9DQpMSSB7DQoJTUFSR0lOLVRPUDogNXB4
+OyBGT05ULUZBTUlMWTogVGltZXMgTmV3IFJvbWFuLCBhcmlhbDsgTUFSR0lOLUJPVFRPTTogNXB4
+OyBGT05ULVNJWkU6IDEycHQNCn0NCkJPRFkgew0KCUxJTkUtSEVJR0hUOiAxLjQ7IE1BUkdJTjog
+MTBweDsgRk9OVC1GQU1JTFk6IFRpbWVzIE5ldyBSb21hbiwgYXJpYWw7IEZPTlQtU0laRTogMTJw
+dA0KfQ0KPC9TVFlMRT4NCg0KPE1FVEEgbmFtZT1HRU5FUkFUT1IgY29udGVudD1BY3RpdmVTcXVh
+cmU+PC9IRUFEPg0KPEJPRFk+DQo8TUVUQSBuYW1lPUdFTkVSQVRPUiBjb250ZW50PUFjdGl2ZVNx
+dWFyZT4NCjxQPkhpIEt1a2ppbiw8L1A+DQo8UD4mbmJzcDs8L1A+DQo8UD4tLS0tLS0tIDxCPk9y
+aWdpbmFsIE1lc3NhZ2U8L0I+IC0tLS0tLS08L1A+DQo8UD48Qj5TZW5kZXI8L0I+IDogS3Vramlu
+IEtpbSZsdDtrZ2VuZS5raW1Ac2Ftc3VuZy5jb20mZ3Q7IEU1L1NlbmlvciBFbmdpbmVlci9TVyBT
+b2x1dGlvbiBEZXZlbG9wbWVudCBUZWFtL1NhbXN1bmcgRWxlY3Ryb25pY3M8L1A+DQo8UD48Qj5E
+YXRlPC9CPiA6IEF1ZyAzMSwgMjAxMSAxMDo0MiAoR01UKzA1OjAwKTwvUD4NCjxQPjxCPlRpdGxl
+PC9CPiA6IFJFOiBbUEFUQ0ggMS8yXSBBUk06IEVYWU5PUzQ6IENvZGUgY2xlYW51cCBhbmQgcmVt
+b3ZlIGV4dHJhIGZ1bmN0aW9ucy48L1A+DQo8UD4mbmJzcDs8L1A+DQo8UD5TYWNoaW4gS2FtYXQg
+d3JvdGU6PEJSPiZndDsgPEJSPiZndDsgRnJvbTogUGFua2FqIER1YmV5IDxQQU5LQUouRFVCRVlA
+U0FNU1VORy5DT00+PEJSPiZndDsgPEJSPiZndDsgVGhpcyBwYXRjaCByZW1vdmVzIHRoZSBpbnRl
+cm1lZGlhdGUgZXh5bm9zNF91c2JfcGh5MV9pbml0IGFuZDxCUj4mZ3Q7IGV4eW5vczRfdXNiX3Bo
+eTFfZXhpdCBmdW5jdGlvbiBjYWxscy48QlI+Jmd0OyA8QlI+Jmd0OyBTaWduZWQtb2ZmLWJ5OiBQ
+YW5rYWogRHViZXkgPFBBTktBSi5EVUJFWUBTQU1TVU5HLkNPTT48QlI+Jmd0OyBTaWduZWQtb2Zm
+LWJ5OiBTYWNoaW4gS2FtYXQgPFNBQ0hJTi5LQU1BVEBMSU5BUk8uT1JHPjxCUj4mZ3Q7IC0tLTxC
+Uj4mZ3Q7Jm5ic3A7Jm5ic3A7YXJjaC9hcm0vbWFjaC1leHlub3M0L3NldHVwLXVzYi1waHkuYyB8
+Jm5ic3A7Jm5ic3A7MTY2ICsrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS08QlI+LS0tLTxCUj4m
+Z3Q7Jm5ic3A7Jm5ic3A7MSBmaWxlcyBjaGFuZ2VkLCA3OCBpbnNlcnRpb25zKCspLCA4OCBkZWxl
+dGlvbnMoLSk8QlI+Jmd0OyA8QlI+Jmd0OyBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1leHlu
+b3M0L3NldHVwLXVzYi1waHkuYyBiL2FyY2gvYXJtL21hY2gtPEJSPiZndDsgZXh5bm9zNC9zZXR1
+cC11c2ItcGh5LmM8QlI+Jmd0OyBpbmRleCAzOWFjYTA0Li5mNGM5NDRhIDEwMDY0NDxCUj4mZ3Q7
+IC0tLSBhL2FyY2gvYXJtL21hY2gtZXh5bm9zNC9zZXR1cC11c2ItcGh5LmM8QlI+Jmd0OyArKysg
+Yi9hcmNoL2FybS9tYWNoLWV4eW5vczQvc2V0dXAtdXNiLXBoeS5jPEJSPiZndDsgQEAgLTE5LDEx
+OCArMTksMTA4IEBAPEJSPiZndDsmbmJzcDsmbmJzcDsjaW5jbHVkZSA8UExBVCBjcHUuaD48QlI+
+Jmd0OyZuYnNwOyZuYnNwOyNpbmNsdWRlIDxQTEFUIHVzYi1waHkuaD48QlI+Jmd0OyA8QlI+Jmd0
+OyAtc3RhdGljIGludCBleHlub3M0X3VzYl9waHkxX2luaXQoc3RydWN0IHBsYXRmb3JtX2Rldmlj
+ZSAqcGRldik8QlI+Jmd0OyAraW50IHM1cF91c2JfcGh5X2luaXQoc3RydWN0IHBsYXRmb3JtX2Rl
+dmljZSAqcGRldiwgaW50IHR5cGUpPEJSPiZndDsmbmJzcDsmbmJzcDt7PEJSPiZndDsgLSBzdHJ1
+Y3QgY2xrICpvdGdfY2xrOzxCUj4mZ3Q7IC0gc3RydWN0IGNsayAqeHVzYnh0aV9jbGs7PEJSPiZn
+dDsgLSB1MzIgcGh5Y2xrOzxCUj4mZ3Q7IC0gdTMyIHJzdGNvbjs8QlI+Jmd0OyAtIGludCBlcnI7
+PEJSPiZndDsgLTxCUj4mZ3Q7IC0gb3RnX2NsayA9IGNsa19nZXQoJmFtcDtwZGV2LSZndDtkZXYs
+ICJvdGciKTs8QlI+Jmd0OyAtIGlmIChJU19FUlIob3RnX2NsaykpIHs8QlI+Jmd0OyAtIGRldl9l
+cnIoJmFtcDtwZGV2LSZndDtkZXYsICJGYWlsZWQgdG8gZ2V0IG90ZyBjbG9jayAiKTs8QlI+Jmd0
+OyAtIHJldHVybiBQVFJfRVJSKG90Z19jbGspOzxCUj4mZ3Q7IC0gfTxCUj4mZ3Q7ICsgaWYgKHR5
+cGUgPT0gUzVQX1VTQl9QSFlfSE9TVCkgezxCUj4mZ3Q7ICsgc3RydWN0IGNsayAqb3RnX2Nsazs8
+QlI+Jmd0OyArIHN0cnVjdCBjbGsgKnh1c2J4dGlfY2xrOzxCUj4mZ3Q7ICsgdTMyIHBoeWNsazs8
+QlI+Jmd0OyArIHUzMiByc3Rjb247PEJSPiZndDsgKyBpbnQgZXJyOzxCUj4mZ3Q7ICs8QlI+Jmd0
+OyArIG90Z19jbGsgPSBjbGtfZ2V0KCZhbXA7cGRldi0mZ3Q7ZGV2LCAib3RnIik7PEJSPiZndDsg
+KyBpZiAoSVNfRVJSKG90Z19jbGspKSB7PEJSPiZndDsgKyBkZXZfZXJyKCZhbXA7cGRldi0mZ3Q7
+ZGV2LCAiRmFpbGVkIHRvIGdldCBvdGcgY2xvY2sgIik7PEJSPiZndDsgKyByZXR1cm4gUFRSX0VS
+UihvdGdfY2xrKTs8QlI+Jmd0OyArIH08QlI+Jmd0OyA8QlI+Jmd0OyAtIGVyciA9IGNsa19lbmFi
+bGUob3RnX2Nsayk7PEJSPiZndDsgLSBpZiAoZXJyKSB7PEJSPiZndDsgLSBjbGtfcHV0KG90Z19j
+bGspOzxCUj4mZ3Q7IC0gcmV0dXJuIGVycjs8QlI+Jmd0OyAtIH08QlI+Jmd0OyArIGVyciA9IGNs
+a19lbmFibGUob3RnX2Nsayk7PEJSPiZndDsgKyBpZiAoZXJyKSB7PEJSPiZndDsgKyBjbGtfcHV0
+KG90Z19jbGspOzxCUj4mZ3Q7ICsgcmV0dXJuIGVycjs8QlI+Jmd0OyArIH08QlI+Jmd0OyA8QlI+
+Jmd0OyAtIHdyaXRlbChyZWFkbChTNVBfVVNCSE9TVF9QSFlfQ09OVFJPTCkgfDxCUj4mZ3Q7IFM1
+UF9VU0JIT1NUX1BIWV9FTkFCTEUsPEJSPiZndDsgKyB3cml0ZWwocmVhZGwoUzVQX1VTQkhPU1Rf
+UEhZX0NPTlRST0wpIHw8QlI+Jmd0OyBTNVBfVVNCSE9TVF9QSFlfRU5BQkxFLDxCUj4mZ3Q7Jm5i
+c3A7Jm5ic3A7IFM1UF9VU0JIT1NUX1BIWV9DT05UUk9MKTs8QlI+Jmd0OyA8QlI+Jmd0OyAtIC8q
+IHNldCBjbG9jayBmcmVxdWVuY3kgZm9yIFBMTCAqLzxCUj4mZ3Q7IC0gcGh5Y2xrID0gcmVhZGwo
+RVhZTk9TNF9QSFlDTEspICZhbXA7IH5DTEtTRUxfTUFTSzs8QlI+Jmd0OyAtPEJSPiZndDsgLSB4
+dXNieHRpX2NsayA9IGNsa19nZXQoJmFtcDtwZGV2LSZndDtkZXYsICJ4dXNieHRpIik7PEJSPiZn
+dDsgLSBpZiAoeHVzYnh0aV9jbGsgJmFtcDsmYW1wOyAhSVNfRVJSKHh1c2J4dGlfY2xrKSkgezxC
+Uj4mZ3Q7IC0gc3dpdGNoIChjbGtfZ2V0X3JhdGUoeHVzYnh0aV9jbGspKSB7PEJSPiZndDsgLSBj
+YXNlIDEyICogTUhaOjxCUj4mZ3Q7IC0gcGh5Y2xrIHw9IENMS1NFTF8xMk07PEJSPiZndDsgLSBi
+cmVhazs8QlI+Jmd0OyAtIGNhc2UgMjQgKiBNSFo6PEJSPiZndDsgLSBwaHljbGsgfD0gQ0xLU0VM
+XzI0TTs8QlI+Jmd0OyAtIGJyZWFrOzxCUj4mZ3Q7IC0gZGVmYXVsdDo8QlI+Jmd0OyAtIGNhc2Ug
+NDggKiBNSFo6PEJSPiZndDsgLSAvKiBkZWZhdWx0IHJlZmVyZW5jZSBjbG9jayAqLzxCUj4mZ3Q7
+IC0gYnJlYWs7PEJSPiZndDsgLSB9PEJSPiZndDsgKyAvKiBzZXQgY2xvY2sgZnJlcXVlbmN5IGZv
+ciBQTEwgKi88QlI+Jmd0OyArIHBoeWNsayA9IHJlYWRsKEVYWU5PUzRfUEhZQ0xLKSAmYW1wOyB+
+Q0xLU0VMX01BU0s7PEJSPiZndDsgKzxCUj4mZ3Q7ICsgeHVzYnh0aV9jbGsgPSBjbGtfZ2V0KCZh
+bXA7cGRldi0mZ3Q7ZGV2LCAieHVzYnh0aSIpOzxCUj4mZ3Q7ICsgaWYgKHh1c2J4dGlfY2xrICZh
+bXA7JmFtcDsgIUlTX0VSUih4dXNieHRpX2NsaykpIHs8QlI+Jmd0OyArIHN3aXRjaCAoY2xrX2dl
+dF9yYXRlKHh1c2J4dGlfY2xrKSkgezxCUj4mZ3Q7ICsgY2FzZSAxMiAqIE1IWjo8QlI+Jmd0OyAr
+IHBoeWNsayB8PSBDTEtTRUxfMTJNOzxCUj4mZ3Q7ICsgYnJlYWs7PEJSPiZndDsgKyBjYXNlIDI0
+ICogTUhaOjxCUj4mZ3Q7ICsgcGh5Y2xrIHw9IENMS1NFTF8yNE07PEJSPiZndDsgKyBicmVhazs8
+QlI+Jmd0OyArIGRlZmF1bHQ6PEJSPiZndDsgKyBjYXNlIDQ4ICogTUhaOjxCUj4mZ3Q7ICsgLyog
+ZGVmYXVsdCByZWZlcmVuY2UgY2xvY2sgKi88QlI+Jmd0OyArIGJyZWFrOzxCUj4mZ3Q7ICsgfTxC
+Uj4mZ3Q7Jm5ic3A7Jm5ic3A7IGNsa19wdXQoeHVzYnh0aV9jbGspOzxCUj4mZ3Q7IC0gfTxCUj4m
+Z3Q7ICsgfTxCUj4mZ3Q7IDxCUj4mZ3Q7IC0gd3JpdGVsKHBoeWNsaywgRVhZTk9TNF9QSFlDTEsp
+OzxCUj4mZ3Q7ICsgd3JpdGVsKHBoeWNsaywgRVhZTk9TNF9QSFlDTEspOzxCUj4mZ3Q7IDxCUj4m
+Z3Q7IC0gLyogZmxvYXRpbmcgcHJldmVudGlvbiBsb2dpYzogZGlzYWJsZSAqLzxCUj4mZ3Q7IC0g
+d3JpdGVsKChyZWFkbChFWFlOT1M0X1BIWTFDT04pIHwgRlBFTkFCTEVOKSw8QlI+Jmd0OyBFWFlO
+T1M0X1BIWTFDT04pOzxCUj4mZ3Q7ICsgLyogZmxvYXRpbmcgcHJldmVudGlvbiBsb2dpYzogZGlz
+YWJsZSAqLzxCUj4mZ3Q7ICsgd3JpdGVsKChyZWFkbChFWFlOT1M0X1BIWTFDT04pIHwgRlBFTkFC
+TEVOKSw8QlI+Jmd0OyBFWFlOT1M0X1BIWTFDT04pOzxCUj4mZ3Q7IDxCUj4mZ3Q7IC0gLyogc2V0
+IHRvIG5vcm1hbCBIU0lDIDAgYW5kIDEgb2YgUEhZMSAqLzxCUj4mZ3Q7IC0gd3JpdGVsKChyZWFk
+bChFWFlOT1M0X1BIWVBXUikgJmFtcDsgflBIWTFfSFNJQ19OT1JNQUxfTUFTSyksPEJSPiZndDsg
+KyAvKiBzZXQgdG8gbm9ybWFsIEhTSUMgMCBhbmQgMSBvZiBQSFkxICovPEJSPiZndDsgKyB3cml0
+ZWwoKHJlYWRsKEVYWU5PUzRfUEhZUFdSKSAmYW1wOzxCUj4mZ3Q7IH5QSFkxX0hTSUNfTk9STUFM
+X01BU0spLDxCUj4mZ3Q7Jm5ic3A7Jm5ic3A7IEVYWU5PUzRfUEhZUFdSKTs8QlI+Jmd0OyA8QlI+
+Jmd0OyAtIC8qIHNldCB0byBub3JtYWwgc3RhbmRhcmQgVVNCIG9mIFBIWTEgKi88QlI+Jmd0OyAt
+IHdyaXRlbCgocmVhZGwoRVhZTk9TNF9QSFlQV1IpICZhbXA7IH5QSFkxX1NURF9OT1JNQUxfTUFT
+SyksPEJSPiZndDsgRVhZTk9TNF9QSFlQV1IpOzxCUj4mZ3Q7ICsgLyogc2V0IHRvIG5vcm1hbCBz
+dGFuZGFyZCBVU0Igb2YgUEhZMSAqLzxCUj4mZ3Q7ICsgd3JpdGVsKChyZWFkbChFWFlOT1M0X1BI
+WVBXUikgJmFtcDs8QlI+Jmd0OyB+UEhZMV9TVERfTk9STUFMX01BU0spLDxCUj4mZ3Q7ICsgRVhZ
+Tk9TNF9QSFlQV1IpOzxCUj4mZ3Q7IDxCUj4mZ3Q7IC0gLyogcmVzZXQgYWxsIHBvcnRzIG9mIGJv
+dGggUEhZIGFuZCBMaW5rICovPEJSPiZndDsgLSByc3Rjb24gPSByZWFkbChFWFlOT1M0X1JTVENP
+TikgfCBIT1NUX0xJTktfUE9SVF9TV1JTVF9NQVNLIHw8QlI+Jmd0OyAtIFBIWTFfU1dSU1RfTUFT
+Szs8QlI+Jmd0OyAtIHdyaXRlbChyc3Rjb24sIEVYWU5PUzRfUlNUQ09OKTs8QlI+Jmd0OyAtIHVk
+ZWxheSgxMCk7PEJSPiZndDsgKyAvKiByZXNldCBhbGwgcG9ydHMgb2YgYm90aCBQSFkgYW5kIExp
+bmsgKi88QlI+Jmd0OyArIHJzdGNvbiA9IHJlYWRsKEVYWU5PUzRfUlNUQ09OKSB8PEJSPiZndDsg
+SE9TVF9MSU5LX1BPUlRfU1dSU1RfTUFTSyB8PEJSPiZndDsgKyBQSFkxX1NXUlNUX01BU0s7PEJS
+PiZndDsgKyB3cml0ZWwocnN0Y29uLCBFWFlOT1M0X1JTVENPTik7PEJSPiZndDsgKyB1ZGVsYXko
+MTApOzxCUj4mZ3Q7IDxCUj4mZ3Q7IC0gcnN0Y29uICZhbXA7PSB+KEhPU1RfTElOS19QT1JUX1NX
+UlNUX01BU0sgfCBQSFkxX1NXUlNUX01BU0spOzxCUj4mZ3Q7IC0gd3JpdGVsKHJzdGNvbiwgRVhZ
+Tk9TNF9SU1RDT04pOzxCUj4mZ3Q7IC0gdWRlbGF5KDgwKTs8QlI+Jmd0OyArIHJzdGNvbiAmYW1w
+Oz0gfihIT1NUX0xJTktfUE9SVF9TV1JTVF9NQVNLIHw8QlI+Jmd0OyBQSFkxX1NXUlNUX01BU0sp
+OzxCUj4mZ3Q7ICsgd3JpdGVsKHJzdGNvbiwgRVhZTk9TNF9SU1RDT04pOzxCUj4mZ3Q7ICsgdWRl
+bGF5KDgwKTs8QlI+Jmd0OyA8QlI+Jmd0OyAtIGNsa19kaXNhYmxlKG90Z19jbGspOzxCUj4mZ3Q7
+IC0gY2xrX3B1dChvdGdfY2xrKTs8QlI+Jmd0OyArIGNsa19kaXNhYmxlKG90Z19jbGspOzxCUj4m
+Z3Q7ICsgY2xrX3B1dChvdGdfY2xrKTs8QlI+Jmd0OyA8QlI+Jmd0OyAtIHJldHVybiAwOzxCUj4m
+Z3Q7ICsgcmV0dXJuIDA7PEJSPiZndDsgKyB9PEJSPiZndDsgKyByZXR1cm4gLUVJTlZBTDs8QlI+
+Jmd0OyZuYnNwOyZuYnNwO308QlI+Jmd0OyA8QlI+Jmd0OyAtc3RhdGljIGludCBleHlub3M0X3Vz
+Yl9waHkxX2V4aXQoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldik8QlI+Jmd0OyAraW50IHM1
+cF91c2JfcGh5X2V4aXQoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiwgaW50IHR5cGUpPEJS
+PiZndDsmbmJzcDsmbmJzcDt7PEJSPiZndDsgLSBzdHJ1Y3QgY2xrICpvdGdfY2xrOzxCUj4mZ3Q7
+IC0gaW50IGVycjs8QlI+Jmd0OyAtPEJSPiZndDsgLSBvdGdfY2xrID0gY2xrX2dldCgmYW1wO3Bk
+ZXYtJmd0O2RldiwgIm90ZyIpOzxCUj4mZ3Q7IC0gaWYgKElTX0VSUihvdGdfY2xrKSkgezxCUj4m
+Z3Q7IC0gZGV2X2VycigmYW1wO3BkZXYtJmd0O2RldiwgIkZhaWxlZCB0byBnZXQgb3RnIGNsb2Nr
+ICIpOzxCUj4mZ3Q7IC0gcmV0dXJuIFBUUl9FUlIob3RnX2Nsayk7PEJSPiZndDsgLSB9PEJSPiZn
+dDsgKyBpZiAodHlwZSA9PSBTNVBfVVNCX1BIWV9IT1NUKSB7PEJSPiZndDsgKyBzdHJ1Y3QgY2xr
+ICpvdGdfY2xrOzxCUj4mZ3Q7ICsgaW50IGVycjs8QlI+Jmd0OyArIG90Z19jbGsgPSBjbGtfZ2V0
+KCZhbXA7cGRldi0mZ3Q7ZGV2LCAib3RnIik7PEJSPiZndDsgKyBpZiAoSVNfRVJSKG90Z19jbGsp
+KSB7PEJSPiZndDsgKyBkZXZfZXJyKCZhbXA7cGRldi0mZ3Q7ZGV2LCAiRmFpbGVkIHRvIGdldCBv
+dGcgY2xvY2sgIik7PEJSPiZndDsgKyByZXR1cm4gUFRSX0VSUihvdGdfY2xrKTs8QlI+Jmd0OyAr
+IH08QlI+Jmd0OyA8QlI+Jmd0OyAtIGVyciA9IGNsa19lbmFibGUob3RnX2Nsayk7PEJSPiZndDsg
+LSBpZiAoZXJyKSB7PEJSPiZndDsgLSBjbGtfcHV0KG90Z19jbGspOzxCUj4mZ3Q7IC0gcmV0dXJu
+IGVycjs8QlI+Jmd0OyAtIH08QlI+Jmd0OyArIGVyciA9IGNsa19lbmFibGUob3RnX2Nsayk7PEJS
+PiZndDsgKyBpZiAoZXJyKSB7PEJSPiZndDsgKyBjbGtfcHV0KG90Z19jbGspOzxCUj4mZ3Q7ICsg
+cmV0dXJuIGVycjs8QlI+Jmd0OyArIH08QlI+Jmd0OyA8QlI+Jmd0OyAtIHdyaXRlbCgocmVhZGwo
+RVhZTk9TNF9QSFlQV1IpIHw8QlI+Jmd0OyBQSFkxX1NURF9BTkFMT0dfUE9XRVJET1dOKSw8QlI+
+Jmd0OyArIHdyaXRlbCgocmVhZGwoRVhZTk9TNF9QSFlQV1IpIHw8QlI+Jmd0OyBQSFkxX1NURF9B
+TkFMT0dfUE9XRVJET1dOKSw8QlI+Jmd0OyZuYnNwOyZuYnNwOyBFWFlOT1M0X1BIWVBXUik7PEJS
+PiZndDsgPEJSPiZndDsgLSB3cml0ZWwocmVhZGwoUzVQX1VTQkhPU1RfUEhZX0NPTlRST0wpICZh
+bXA7PEJSPiZndDsgflM1UF9VU0JIT1NUX1BIWV9FTkFCTEUsPEJSPiZndDsgKyB3cml0ZWwocmVh
+ZGwoUzVQX1VTQkhPU1RfUEhZX0NPTlRST0wpICZhbXA7PEJSPiZndDsgflM1UF9VU0JIT1NUX1BI
+WV9FTkFCTEUsPEJSPiZndDsmbmJzcDsmbmJzcDsgUzVQX1VTQkhPU1RfUEhZX0NPTlRST0wpOzxC
+Uj4mZ3Q7IDxCUj4mZ3Q7IC0gY2xrX2Rpc2FibGUob3RnX2Nsayk7PEJSPiZndDsgLSBjbGtfcHV0
+KG90Z19jbGspOzxCUj4mZ3Q7IC08QlI+Jmd0OyAtIHJldHVybiAwOzxCUj4mZ3Q7IC19PEJSPiZn
+dDsgLTxCUj4mZ3Q7IC1pbnQgczVwX3VzYl9waHlfaW5pdChzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
+ICpwZGV2LCBpbnQgdHlwZSk8QlI+Jmd0OyAtezxCUj4mZ3Q7IC0gaWYgKHR5cGUgPT0gUzVQX1VT
+Ql9QSFlfSE9TVCk8QlI+Jmd0OyAtIHJldHVybiBleHlub3M0X3VzYl9waHkxX2luaXQocGRldik7
+PEJSPiZndDsgLTxCUj4mZ3Q7IC0gcmV0dXJuIC1FSU5WQUw7PEJSPiZndDsgLX08QlI+Jmd0OyAt
+PEJSPiZndDsgLWludCBzNXBfdXNiX3BoeV9leGl0KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBk
+ZXYsIGludCB0eXBlKTxCUj4mZ3Q7IC17PEJSPiZndDsgLSBpZiAodHlwZSA9PSBTNVBfVVNCX1BI
+WV9IT1NUKTxCUj4mZ3Q7IC0gcmV0dXJuIGV4eW5vczRfdXNiX3BoeTFfZXhpdChwZGV2KTs8QlI+
+Jmd0OyArIGNsa19kaXNhYmxlKG90Z19jbGspOzxCUj4mZ3Q7ICsgY2xrX3B1dChvdGdfY2xrKTs8
+QlI+Jmd0OyA8QlI+Jmd0OyArIHJldHVybiAwOzxCUj4mZ3Q7ICsgfTxCUj4mZ3Q7Jm5ic3A7Jm5i
+c3A7IHJldHVybiAtRUlOVkFMOzxCUj4mZ3Q7Jm5ic3A7Jm5ic3A7fTxCUj4mZ3Q7IC0tPEJSPiZn
+dDsgMS43LjQuMTxCUj48QlI+KENjJ2VkIFl1bGdvbiBLaW0gYW5kIEt5b3VuZ2lsIEtpbSk8QlI+
+PEJSPkhpIFNhY2hpbiw8QlI+PEJSPkkgZG9uJ3Qga25vdyB3aHkgdGhpcyBpcyByZXF1aXJlZCBv
+biB1c2ItcGh5IGNvbnRyb2wgZm9yIEVYWU5PUzQgbm93LjxCUj48QlI+QWN0dWFsbHksIG90aGVy
+IHVwY29taW5nIEVYWU5PUyBTb0NzIGhhdmUgbW9yZSB1c2IgcGh5cyB0aGFuIEVYWU5PUzQyMTAs
+IHNvPEJSPnRoaXMgY2FuIG1ha2UgaXQgbW9yZSBkaWZmaWN1bHQgdG8gY29udHJvbC48QlI+PC9Q
+Pg0KPFA+LS0tLS08L1A+DQo8UD5JIHRoaW5rIHdoZW4gbW9yZSB0aGVuIG9uZSBVU0IgUEhZIHdp
+bGwgY29tZSB3ZSBjYW4gaGFuZGxlIHRoZW0gdXNpbmcgc2FtZSBmaWxlIGFuZCBmdW5jdGlvbnMs
+IG9ubHkgdGhpbmcgZGV2aWNlL2hvc3QgaGFzIHRvIHRha2UgY2FyZSBpcyB0aGV5IG5lZWQgdG8g
+c2VuZCBwcm9wZXIgInR5cGUiIHZhbHVlIHRvIHBoeV9pbml0L3BoeV9leGl0IGZ1bmN0aW9uLiBB
+bmQgZGVwZW5kaW5nIHVwb24gdmFsdWUgb2YgInR5cGUiIHdlIGNhbiBhZGQgaW5pdGlsaXphdGlv
+bi9leGl0IGNvZGUgaW4gcGh5X2luaXQvcGh5X2V4aXQuPC9QPg0KPFA+Jm5ic3A7PC9QPg0KPFA+
+VGhhbmtzLDwvUD4NCjxQPlBhbmthaiBEdWJleTwvUD4NCjxQPi0tLTwvUD4NCjxQPjxCUj5UaGFu
+a3MuPEJSPjxCUj5CZXN0IHJlZ2FyZHMsPEJSPktnZW5lLjxCUj4tLTxCUj5LdWtqaW4gS2ltIDxL
+R0VORS5LSU1AU0FNU1VORy5DT00+LCBTZW5pb3IgRW5naW5lZXIsPEJSPlNXIFNvbHV0aW9uIERl
+dmVsb3BtZW50IFRlYW0sIFNhbXN1bmcgRWxlY3Ryb25pY3MgQ28uLCBMdGQuPEJSPjxCUj48QlI+
+PC9QPg0KPFA+Jm5ic3A7PC9QPjwvQk9EWT48L0hUTUw+PGltZyBzcmM9J2h0dHA6Ly9leHQuc2Ft
+c3VuZy5uZXQvbWFpbGNoZWNrL1NlZW5UaW1lQ2hlY2tlcj9kbz1lYmRkM2U0NDI5NGYwNmIxYzdm
+MDA2YWVlMTQ3N2Q2ZGU4ZjM2ZjAyZDFiODU0ZjA0MGQyNzAwMWIyNjIzOTQ5ZGNmN2NjYmFjZTNi
+YjM0NTNjNDBmNzg3ZDMzZjM1N2RhNmViZDIzZDgyNTczNjA5NjJlMWFjNzViNTIyNzk1YTA3ODA1
+NDQ3YTE1NGE0NmZjZjg3OGY5YTI2Y2UxNWEwJyBib3JkZXI9MCB3aWR0aD0wIGhlaWdodD0wIHN0
+eWxlPSdkaXNwbGF5Om5vbmUnPg==
 
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim<kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
 
 
--- 
-Tushar Behera
+
+
+--===============8942229689560661108==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linaro-dev mailing list
+linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+http://lists.linaro.org/mailman/listinfo/linaro-dev
+
+--===============8942229689560661108==--
