@@ -1,152 +1,41 @@
 From: Boojin Kim <boojin.kim@samsung.com>
-Subject: [PATCH v8 06/16] ARM: SAMSUNG: Update to use PL330-DMA driver
-Date: Fri,  2 Sep 2011 09:44:34 +0900
-Message-ID: <1314924284-25554-7-git-send-email-boojin.kim@samsung.com>
-References: <1314924284-25554-1-git-send-email-boojin.kim@samsung.com>
+Subject: [PATCH v8 00/16] To use DMA generic APIs for Samsung DMA
+Date: Fri,  2 Sep 2011 09:44:28 +0900
+Message-ID: <1314924284-25554-1-git-send-email-boojin.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:42075 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:42074 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932680Ab1IBIag (ORCPT
+	with ESMTP id S932669Ab1IBIag (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 2 Sep 2011 04:30:36 -0400
-In-Reply-To: <1314924284-25554-1-git-send-email-boojin.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Boojin Kim <boojin.kim@samsung.com>
+Cc: Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>
 
-This patch adds to support PL330-DMA driver on DMADEVICE for S5P SoCs.
+This patchset adds support DMA generic APIs for samsung DMA.
 
-Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Vinod Koul <vinod.koul@intel.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-exynos4/include/mach/dma.h           |    4 ++--
- arch/arm/mach-s5p64x0/include/mach/dma.h           |    2 +-
- arch/arm/mach-s5pc100/include/mach/dma.h           |    2 +-
- arch/arm/mach-s5pv210/include/mach/dma.h           |    2 +-
- arch/arm/plat-samsung/Kconfig                      |    9 +++++++++
- .../include/plat/{s3c-dma-pl330.h => dma-pl330.h}  |    8 ++++----
- .../plat-samsung/include/plat/s3c-pl330-pdata.h    |    2 +-
- 7 files changed, 19 insertions(+), 10 deletions(-)
- rename arch/arm/plat-samsung/include/plat/{s3c-dma-pl330.h => dma-pl330.h} (93%)
+The changes from V7 is following:
+- Divides patch file.
+  : The 03 patch on V7 patchset is divided into the 03 and 04 patch on V8 patchset.
+    The O3 patch is only for DMA_SLAVE_CONFIG command.
+    The 04 patch is only for DMA_TERMINATE_ALL command.
+- Code clean-up
+  : Remove unnecessary code on 05 patch.
 
-diff --git a/arch/arm/mach-exynos4/include/mach/dma.h b/arch/arm/mach-exynos4/include/mach/dma.h
-index 81209eb..201842a 100644
---- a/arch/arm/mach-exynos4/include/mach/dma.h
-+++ b/arch/arm/mach-exynos4/include/mach/dma.h
-@@ -20,7 +20,7 @@
- #ifndef __MACH_DMA_H
- #define __MACH_DMA_H
- 
--/* This platform uses the common S3C DMA API driver for PL330 */
--#include <plat/s3c-dma-pl330.h>
-+/* This platform uses the common DMA API driver for PL330 */
-+#include <plat/dma-pl330.h>
- 
- #endif /* __MACH_DMA_H */
-diff --git a/arch/arm/mach-s5p64x0/include/mach/dma.h b/arch/arm/mach-s5p64x0/include/mach/dma.h
-index 81209eb..1beae2c 100644
---- a/arch/arm/mach-s5p64x0/include/mach/dma.h
-+++ b/arch/arm/mach-s5p64x0/include/mach/dma.h
-@@ -21,6 +21,6 @@
- #define __MACH_DMA_H
- 
- /* This platform uses the common S3C DMA API driver for PL330 */
--#include <plat/s3c-dma-pl330.h>
-+#include <plat/dma-pl330.h>
- 
- #endif /* __MACH_DMA_H */
-diff --git a/arch/arm/mach-s5pc100/include/mach/dma.h b/arch/arm/mach-s5pc100/include/mach/dma.h
-index 81209eb..1beae2c 100644
---- a/arch/arm/mach-s5pc100/include/mach/dma.h
-+++ b/arch/arm/mach-s5pc100/include/mach/dma.h
-@@ -21,6 +21,6 @@
- #define __MACH_DMA_H
- 
- /* This platform uses the common S3C DMA API driver for PL330 */
--#include <plat/s3c-dma-pl330.h>
-+#include <plat/dma-pl330.h>
- 
- #endif /* __MACH_DMA_H */
-diff --git a/arch/arm/mach-s5pv210/include/mach/dma.h b/arch/arm/mach-s5pv210/include/mach/dma.h
-index 81209eb..1beae2c 100644
---- a/arch/arm/mach-s5pv210/include/mach/dma.h
-+++ b/arch/arm/mach-s5pv210/include/mach/dma.h
-@@ -21,6 +21,6 @@
- #define __MACH_DMA_H
- 
- /* This platform uses the common S3C DMA API driver for PL330 */
--#include <plat/s3c-dma-pl330.h>
-+#include <plat/dma-pl330.h>
- 
- #endif /* __MACH_DMA_H */
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index b3e1065..e6f01ab 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -306,6 +306,15 @@ config S3C_PL330_DMA
- 	help
- 	  S3C DMA API Driver for PL330 DMAC.
- 
-+config SAMSUNG_DMADEV
-+	bool
-+	select DMADEVICES
-+	select PL330_DMA if (CPU_EXYNOS4210 || CPU_S5PV210 || CPU_S5PC100 || \
-+					CPU_S5P6450 || CPU_S5P6440)
-+	select ARM_AMBA
-+	help
-+	  Use DMA device engine for PL330 DMAC.
-+
- comment "Power management"
- 
- config SAMSUNG_PM_DEBUG
-diff --git a/arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h b/arch/arm/plat-samsung/include/plat/dma-pl330.h
-similarity index 93%
-rename from arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h
-rename to arch/arm/plat-samsung/include/plat/dma-pl330.h
-index 8107442..0a5dade 100644
---- a/arch/arm/plat-samsung/include/plat/s3c-dma-pl330.h
-+++ b/arch/arm/plat-samsung/include/plat/dma-pl330.h
-@@ -8,8 +8,8 @@
-  * (at your option) any later version.
-  */
- 
--#ifndef	__S3C_DMA_PL330_H_
--#define	__S3C_DMA_PL330_H_
-+#ifndef __DMA_PL330_H_
-+#define __DMA_PL330_H_ __FILE__
- 
- #define S3C2410_DMAF_AUTOSTART		(1 << 0)
- #define S3C2410_DMAF_CIRCULAR		(1 << 1)
-@@ -20,7 +20,7 @@
-  * For the sake of consistency across client drivers,
-  * We keep the channel names unchanged and only add
-  * missing peripherals are added.
-- * Order is not important since S3C PL330 API driver
-+ * Order is not important since DMA PL330 API driver
-  * use these just as IDs.
-  */
- enum dma_ch {
-@@ -95,4 +95,4 @@ static inline bool s3c_dma_has_circular(void)
- 
- #include <plat/dma.h>
- 
--#endif	/* __S3C_DMA_PL330_H_ */
-+#endif	/* __DMA_PL330_H_ */
-diff --git a/arch/arm/plat-samsung/include/plat/s3c-pl330-pdata.h b/arch/arm/plat-samsung/include/plat/s3c-pl330-pdata.h
-index bf5e2a9..64fdf66 100644
---- a/arch/arm/plat-samsung/include/plat/s3c-pl330-pdata.h
-+++ b/arch/arm/plat-samsung/include/plat/s3c-pl330-pdata.h
-@@ -12,7 +12,7 @@
- #ifndef __S3C_PL330_PDATA_H
- #define __S3C_PL330_PDATA_H
- 
--#include <plat/s3c-dma-pl330.h>
-+#include <plat/dma-pl330.h>
- 
- /*
-  * Every PL330 DMAC has max 32 peripheral interfaces,
--- 
-1.7.1
+[PATCH v8 01/16] DMA: PL330: Add support runtime PM for PL330 DMAC
+[PATCH v8 02/16] DMA: PL330: Update PL330 DMA API driver
+[PATCH v8 03/16] DMA: PL330: Support DMA_SLAVE_CONFIG command
+[PATCH v8 04/16] DMA: PL330: Remove the start operation for handling DMA_TERMINATE_ALL command
+[PATCH v8 05/16] DMA: PL330: Add DMA_CYCLIC capability
+[PATCH v8 06/16] ARM: SAMSUNG: Update to use PL330-DMA driver
+[PATCH v8 07/16] ARM: SAMSUNG: Add common DMA operations
+[PATCH v8 08/16] ARM: EXYNOS4: Use generic DMA PL330 driver
+[PATCH v8 09/16] ARM: S5PV210: Use generic DMA PL330 driver
+[PATCH v8 10/16] ARM: S5PC100: Use generic DMA PL330 driver
+[PATCH v8 11/16] ARM: S5P64X0: Use generic DMA PL330 driver
+[PATCH v8 12/16] ARM: SAMSUNG: Remove S3C-PL330-DMA driver
+[PATCH v8 13/16] spi/s3c64xx: Add support DMA engine API
+[PATCH v8 14/16] spi/s3c64xx: Merge dma control code
+[PATCH v8 15/16] ASoC: Samsung: Update DMA interface
+[PATCH v8 16/16] ARM: SAMSUNG: Remove Samsung specific enum type for dma direction
