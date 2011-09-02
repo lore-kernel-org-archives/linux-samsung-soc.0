@@ -1,197 +1,91 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH 0/2] video: s3c-fb: Add window positioning support
-Date: Fri, 02 Sep 2011 12:58:52 +0300
-Message-ID: <1314957532.3374.51.camel@deskari>
-References: <1314301917-9938-1-git-send-email-ajaykumar.rs@samsung.com>
-	<4E5FB69E.2060907@gmx.de>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH 3/3] ARM: EXYNOS4: Add support for 8-bit bus width in
+ SDHCI for ORIGEN
+Date: Fri, 02 Sep 2011 16:29:33 +0530
+Message-ID: <4E60B715.6090801@linaro.org>
+References: <1314351524-10942-1-git-send-email-tushar.behera@linaro.org> <1314351524-10942-4-git-send-email-tushar.behera@linaro.org> <000601cc6779$7fe130b0$7fa39210$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <4E5FB69E.2060907@gmx.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, banajit.g@samsung.com, jg1.han@samsung.com, Manuel Lauss <manuel.lauss@googlemail.com>, lethal@linux-sh.org, ben-linux@fluff.org, Ajay Kumar <ajaykumar.rs@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pz0-f42.google.com ([209.85.210.42]:34978 "EHLO
+	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933366Ab1IBK7k (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 2 Sep 2011 06:59:40 -0400
+Received: by pzk37 with SMTP id 37so4403129pzk.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 02 Sep 2011 03:59:40 -0700 (PDT)
+In-Reply-To: <000601cc6779$7fe130b0$7fa39210$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, patches@linaro.org
 
-Hi,
+On Wednesday 31 August 2011 06:31 AM, Kukjin Kim wrote:
+> Tushar Behera wrote:
+>>
+>> Platform data for SDHCI controller on ORIGEN board is missing the
+>> support for 8-bit bus width. The platform data is extended in sync
+>> with other EXYNOS4 machines.
+>>
+>> Signed-off-by: Tushar Behera<tushar.behera@linaro.org>
+>> ---
+>>   arch/arm/mach-exynos4/mach-origen.c |    8 ++++++++
+>>   1 files changed, 8 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos4/mach-origen.c
+> b/arch/arm/mach-exynos4/mach-
+>> origen.c
+>> index ae18812..6b6cd77 100644
+>> --- a/arch/arm/mach-exynos4/mach-origen.c
+>> +++ b/arch/arm/mach-exynos4/mach-origen.c
+>> @@ -75,11 +75,19 @@ static struct s3c2410_uartcfg origen_uartcfgs[]
+> __initdata =
+>> {
+>>   static struct s3c_sdhci_platdata origen_hsmmc0_pdata __initdata = {
+>>   	.cd_type		= S3C_SDHCI_CD_INTERNAL,
+>>   	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
+>> +#ifdef CONFIG_EXYNOS4_SDHCI_CH0_8BIT
+>> +	.max_width		= 8,
+>> +	.host_caps		= MMC_CAP_8_BIT_DATA,
+>> +#endif
+>>   };
+>>
+>>   static struct s3c_sdhci_platdata origen_hsmmc2_pdata __initdata = {
+>>   	.cd_type		= S3C_SDHCI_CD_INTERNAL,
+>>   	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
+>> +#ifdef CONFIG_EXYNOS4_SDHCI_CH2_8BIT
+>> +	.max_width		= 8,
+>> +	.host_caps		= MMC_CAP_8_BIT_DATA,
+>> +#endif
+>>   };
+>>
+>>   static struct platform_device *origen_devices[] __initdata = {
+>> --
+>> 1.7.4.1
+>
+> Hi Tushar,
+>
+> I wonder the bus width of SDHCI controller can be changed manually on ORIGEN
+> like SMDK board.
+>
+Thanks for your review.
 
-On Thu, 2011-09-01 at 16:45 +0000, Florian Tobias Schandinat wrote:
-> Hi all,
-> 
-> On 08/25/2011 07:51 PM, Ajay Kumar wrote:
-> > Just as a note, there are many drivers like mx3fb.c, au1200fb.c and OMAP
-> > seem to be doing window/plane positioning in their driver code.
-> > Is it possible to have this window positioning support at a common place?
-> 
-> Good point. Congratulations for figuring out that I like to standardize things.
-> But I think your suggestion is far from being enough to be useful for userspace
-> (which is our goal so that applications can be reused along drivers and don't
-> need to know about individual drivers).
-> 
-> So let me at first summarize how I understand you implemented those things after
-> having a brief look at some of the drivers:
-> Windows are rectangular screen areas whose pixel data come from other locations.
-> The other locations are accessible via other framebuffer devices (e.g. fb1). So
-> in this area the data of fb1 is shown and not the data of fb0 that would be
-> normally shown.
+On ORIGEN board, we have wire connections for HSMMC-0/2/3 between the 
+MMC port and the SoC. Hence ideally we can work with HSMMC2 in both 
+4-bit and 8-bit mode. However HSMMC0 can only work in 4-bit mode.
 
-Here's what we have on OMAP:
+Also IIRC WLAN would be using HSMMC-3 controller for its operations. So 
+we would have conflict when HSMMC2 is working in 8-bit mode and WLAN is 
+also enabled. Hence it appears better to drop this patch now.
 
-We have a bunch of hardware overlays, each of which can go to one
-output. When using fbdev, the pixel data for overlays comes from the
-framebuffers. One fb can be used as a  pixel source for multiple
-overlays.
-
-So, for example, the "connections" can be like these:
-
-           Initial configuration
-
- .-----.         .------.           .------.
- | fb0 |-------->| ovl0 |-----.---->| LCD  |
- '-----'         '------'     |     '------'
- .-----.         .------.     |
- | fb1 |-------->| ovl1 |-----|
- '-----'         '------'     |
- .-----.         .------.     |     .------.
- | fb2 |-------->| ovl2 |-----'     |  TV  |
- '-----'         '------'           '------'
-
-
-      Video on fb1, shown on LCD and TV
-
- .-----.         .------.           .------.
- | fb0 |-------->| ovl0 |-----.---->| LCD  |
- '-----'         '------'     |     '------'
- .-----.         .------.     |
- | fb1 |----.--->| ovl1 |-----'
- '-----'    |    '------'
- .-----.    |    .------.           .------.
- | fb2 |    '--->| ovl2 |---------->|  TV  |
- '-----'         '------'           '------'
-
-
-And how the actual image is composited on the display, we have first the
-fb side (no news there):
-
- .---------------------fb-vxres---------------------.
- |                                                  |
- |                                                  |
- |   (xoffset,yoffset)                              |
- |           .-------fb-xres------------.           |
- f           |                          |           |
- b           f                          |           |
- |           b                          |           |
- v           |                          |           |
- y           y                          |           |
- r           r                          |           |
- e           e                          |           |
- s           s                          |           |
- |           |                          |           |
- |           '--------------------------'           |
- |                                                  |
- |                                                  |
- '--------------------------------------------------'
-
-The area marked by x/yoffset and x/yres is used as the pixel source for
-the overlay.
-
-On the display we have something like this:
-
- .----------------disp-xres----------------.
- |                                         |
- | (xpos,ypos)                             |
- |      .-----ovl-xres-----.               |
- d      |                  |               |
- i      o                  |               |
- s      v                  |               |
- p      l                  |               |
- |      |                  |               |
- y      y                  |               |
- r      r                  |               |
- e      e                  |               |
- s      s                  |               |
- |      |                  |               |
- |      '------------------'               |
- |                                         |
- '-----------------------------------------'
-
-The x/ypos of the overlay does not have any relation to the x/yoffset of
-the framebuffer. The overlay's x/yres is the same as the fb's x/yres in
-case the overlay doesn't support scaling (OMAP's case this is true for
-overlay0). Otherwise the overlay's x/yres is only limited by the HW's
-scaling capabilities.
-
-The overlays have a priority order, and where there's no overlay, a
-background color is used. So like this:
-
- .-----------------------------------------.
- |            background color             |
- | .-----------------------.               |
- | |         ovl0          |               |
- | |                       |               |
- | | .--------------.      |               |
- | | |     ovl1     |      |               |
- | | |              |      |               |
- | | |        .-------------------.        |
- | | |        |       ovl2        |        |
- | | '--------|                   |        |
- | '----------|                   |        |
- |            |                   |        |
- |            |                   |        |
- |            |                   |        |
- |            '-------------------'        |
- '-----------------------------------------'
-
-As you may have noticed, this raises in annoying problem: the
-framebuffer does not represent the display, and thus the display related
-information in the fb, like video timings, are difficult or impossible
-to use. I haven't found any solution to this.
-
-> So in addition to your proposed positioning I think we should also have the
-> following to give userspace a useful set of functionality:
-> 
-> - a way to discover how the screen is composited (how many windows are there,
-> how they are stacked and how to access those)
-> 
-> - a way to enable/disable windows (make them (in)visible)
-> 
-> - reporting and selecting how the window content can be mixed with the root
-> screen (overwrite, source or destination color keying)
-
-Right, and there may not be a root screen at all, like on OMAP. (if the
-background color doesn't count as a root screen).
-
-> - things like window size and color format could be handled by the usual fb API
-> used on the window. However there might be restrictions which cause them to be
-> not 100% API compatible (for example when changing the color format if the
-> windows are required to have the same format as the root screen)
-> 
-> - do we need to worry about hardware (up/down) scaling of the window content?
-> 
-> 
-> So is that what you need for a standardized window implementation?
-> Any additional things that were useful/needed in this context?
-> Would you consider adding support for this API in your drivers? (as
-> standardizing wouldn't be useful if nobody would implement it)
-
-We already have the current implementation in omapfb, so while a
-standard API would be nice, we still need to keep the old custom API for
-compatibility.
-
-Another thing is that I'm not sure how much features we should try to
-add to fbdev. The fbdev model is a bit limited (for example, the timings
-problem above, or double/triple buffering), and at least we are
-currently looking at using DRM. There will still be a framebuffer, but
-that's mostly for fbconsole and such, and doesn't need to support
-overlays, scaling, and other more complex features.
-
- Tomi
+> Thanks.
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim<kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+-- 
+Tushar Behera
