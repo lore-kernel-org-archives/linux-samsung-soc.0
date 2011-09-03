@@ -1,622 +1,163 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 2/2] arm: samsung: remove sdhci default configuration setup
- platform helper
-Date: Fri, 02 Sep 2011 20:48:22 +0530
-Message-ID: <1314976702-19284-3-git-send-email-thomas.abraham@linaro.org>
-References: <1314976702-19284-1-git-send-email-thomas.abraham@linaro.org>
- <1314976702-19284-2-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH] arm: exynos4: add support for dt irq specifier to linux virq
+ conversion
+Date: Sat, 03 Sep 2011 18:55:51 +0530
+Message-ID: <1315056351-26486-1-git-send-email-thomas.abraham@linaro.org>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:45474 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752509Ab1IBPSl (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:44565 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751435Ab1ICN0J (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Sep 2011 11:18:41 -0400
-In-reply-to: <1314976702-19284-2-git-send-email-thomas.abraham@linaro.org>
+	Sat, 3 Sep 2011 09:26:09 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LQY00M107ZJ8450@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 03 Sep 2011 22:26:07 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LQY00IO27ZFEW@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 03 Sep 2011 22:26:07 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: cjb@laptop.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
+To: devicetree-discuss@lists.ozlabs.org
+Cc: grant.likely@secretlab.ca, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-The sdhci platform helper function that sets up the default controller
-configuration is removed for all Samsung platforms since such default
-controller configuration can be handled by the driver.
+Add support for conversion of device tree interrupt specifier to linux
+virq domain for GIC and Interrupt combiner controllers.
 
-Cc: Ben Dooks <ben-linux@fluff.org>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- arch/arm/mach-exynos4/setup-sdhci.c        |   47 -----------------------
- arch/arm/mach-s3c2416/setup-sdhci.c        |   37 ------------------
- arch/arm/mach-s3c64xx/setup-sdhci.c        |   48 -----------------------
- arch/arm/mach-s5pc100/setup-sdhci.c        |   42 --------------------
- arch/arm/mach-s5pv210/setup-sdhci.c        |   41 --------------------
- arch/arm/plat-samsung/dev-hsmmc.c          |    2 -
- arch/arm/plat-samsung/dev-hsmmc1.c         |    2 -
- arch/arm/plat-samsung/dev-hsmmc2.c         |    2 -
- arch/arm/plat-samsung/dev-hsmmc3.c         |    2 -
- arch/arm/plat-samsung/include/plat/sdhci.h |   57 ----------------------------
- 10 files changed, 0 insertions(+), 280 deletions(-)
+For GIC controller, this patch is based on Rob Herring's
+"[RFC PATCH 0/3] Yet another GIC OF binding series" patchset
+with v2 of the third patch in that series.
 
-diff --git a/arch/arm/mach-exynos4/setup-sdhci.c b/arch/arm/mach-exynos4/setup-sdhci.c
-index 1e83f8c..92937b4 100644
---- a/arch/arm/mach-exynos4/setup-sdhci.c
-+++ b/arch/arm/mach-exynos4/setup-sdhci.c
-@@ -10,16 +10,7 @@
-  * published by the Free Software Foundation.
- */
+The concept of irq domain for interrupt combiner controller
+is based on Grant's 'simple' irq converter.
+
+ .../devicetree/bindings/irq/samsung-combiner.txt   |   24 ++++++++
+ arch/arm/mach-exynos4/cpu.c                        |   56 +++++++++++++++++++-
+ 2 files changed, 79 insertions(+), 1 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/irq/samsung-combiner.txt
+
+diff --git a/Documentation/devicetree/bindings/irq/samsung-combiner.txt b/Documentation/devicetree/bindings/irq/samsung-combiner.txt
+new file mode 100644
+index 0000000..b020f79
+--- /dev/null
++++ b/Documentation/devicetree/bindings/irq/samsung-combiner.txt
+@@ -0,0 +1,24 @@
++* Exynos4 Interrupt Combiner Controller
++
++Samsung's Exynos4 architecture includes a interrupt combiner which
++can combine interrupt sources as a group and provide a single
++interrupt request for the group. The interrupt request from each
++group are connected to a parent interrupt controller, which is GIC
++in case of Exynos4.
++
++Required properties:
++- compatible: should be "samsung,exynos4-combiner".
++- interrupt-cells: should be <2>. The meaning of the cells are
++    * First Cell: Combiner Group Number.
++    * Second Cell: Interrupt within the group.
++- reg: Base address and size of interrupt combiner registers.
++- interrupt-controller: Identifies the node as an interrupt controller.
++
++Example:
++
++	combiner: interrupt-controller@10440000 {
++		compatible = "samsung,exynos4-combiner";
++		#interrupt-cells = <2>;
++		interrupt-controller;
++		reg = <0x10440000 0x200>;
++	};
+diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
+index 746d6fc..de3d6e4 100644
+--- a/arch/arm/mach-exynos4/cpu.c
++++ b/arch/arm/mach-exynos4/cpu.c
+@@ -10,6 +10,10 @@
  
--#include <linux/kernel.h>
- #include <linux/types.h>
--#include <linux/interrupt.h>
--#include <linux/platform_device.h>
--#include <linux/io.h>
--
--#include <linux/mmc/card.h>
--#include <linux/mmc/host.h>
--
--#include <plat/regs-sdhci.h>
+ #include <linux/sched.h>
+ #include <linux/sysdev.h>
++#include <linux/of_irq.h>
++#include <linux/of.h>
++#include <linux/irqdomain.h>
++#include <linux/slab.h>
  
- /* clock sources for the mmc bus clock, order as for the ctrl2[5..4] */
+ #include <asm/mach/map.h>
+ #include <asm/mach/irq.h>
+@@ -31,6 +35,7 @@
  
-@@ -29,41 +20,3 @@ char *exynos4_hsmmc_clksrcs[4] = {
- 	[2] = "sclk_mmc",	/* mmc_bus */
- 	[3] = NULL,
- };
--
--void exynos4_setup_sdhci_cfg_card(struct platform_device *dev, void __iomem *r,
--				  struct mmc_ios *ios, struct mmc_card *card)
--{
--	u32 ctrl2, ctrl3;
--
--	/* don't need to alter anything according to card-type */
--
--	ctrl2 = readl(r + S3C_SDHCI_CONTROL2);
--
--	/* select base clock source to HCLK */
--
--	ctrl2 &= S3C_SDHCI_CTRL2_SELBASECLK_MASK;
--
--	/*
--	 * clear async mode, enable conflict mask, rx feedback ctrl, SD
--	 * clk hold and no use debounce count
--	 */
--
--	ctrl2 |= (S3C64XX_SDHCI_CTRL2_ENSTAASYNCCLR |
--		  S3C64XX_SDHCI_CTRL2_ENCMDCNFMSK |
--		  S3C_SDHCI_CTRL2_ENFBCLKRX |
--		  S3C_SDHCI_CTRL2_DFCNT_NONE |
--		  S3C_SDHCI_CTRL2_ENCLKOUTHOLD);
--
--	/* Tx and Rx feedback clock delay control */
--
--	if (ios->clock < 25 * 1000000)
--		ctrl3 = (S3C_SDHCI_CTRL3_FCSEL3 |
--			 S3C_SDHCI_CTRL3_FCSEL2 |
--			 S3C_SDHCI_CTRL3_FCSEL1 |
--			 S3C_SDHCI_CTRL3_FCSEL0);
--	else
--		ctrl3 = (S3C_SDHCI_CTRL3_FCSEL1 | S3C_SDHCI_CTRL3_FCSEL0);
--
--	writel(ctrl2, r + S3C_SDHCI_CONTROL2);
--	writel(ctrl3, r + S3C_SDHCI_CONTROL3);
--}
-diff --git a/arch/arm/mach-s3c2416/setup-sdhci.c b/arch/arm/mach-s3c2416/setup-sdhci.c
-index ed34fad..cee5395 100644
---- a/arch/arm/mach-s3c2416/setup-sdhci.c
-+++ b/arch/arm/mach-s3c2416/setup-sdhci.c
-@@ -12,17 +12,7 @@
-  * published by the Free Software Foundation.
- */
+ #include <mach/regs-irq.h>
+ #include <mach/regs-pmu.h>
++#include <mach/irqs.h>
  
--#include <linux/kernel.h>
- #include <linux/types.h>
--#include <linux/interrupt.h>
--#include <linux/platform_device.h>
--#include <linux/io.h>
--
--#include <linux/mmc/card.h>
--#include <linux/mmc/host.h>
--
--#include <plat/regs-sdhci.h>
--#include <plat/sdhci.h>
+ extern int combiner_init(unsigned int combiner_nr, void __iomem *base,
+ 			 unsigned int irq_start);
+@@ -182,13 +187,62 @@ static void exynos4_gic_irq_eoi(struct irq_data *d)
+ 			    (EXYNOS4_GIC_BANK_OFFSET * smp_processor_id());
+ }
  
- /* clock sources for the mmc bus clock, order as for the ctrl2[5..4] */
- 
-@@ -32,30 +22,3 @@ char *s3c2416_hsmmc_clksrcs[4] = {
- 	[2] = "hsmmc-if",
- 	/* [3] = "48m", - note not successfully used yet */
- };
--
--void s3c2416_setup_sdhci_cfg_card(struct platform_device *dev,
--				  void __iomem *r,
--				  struct mmc_ios *ios,
--				  struct mmc_card *card)
--{
--	u32 ctrl2, ctrl3;
--
--	ctrl2 = __raw_readl(r + S3C_SDHCI_CONTROL2);
--	ctrl2 &= S3C_SDHCI_CTRL2_SELBASECLK_MASK;
--	ctrl2 |= (S3C64XX_SDHCI_CTRL2_ENSTAASYNCCLR |
--		  S3C64XX_SDHCI_CTRL2_ENCMDCNFMSK |
--		  S3C_SDHCI_CTRL2_ENFBCLKRX |
--		  S3C_SDHCI_CTRL2_DFCNT_NONE |
--		  S3C_SDHCI_CTRL2_ENCLKOUTHOLD);
--
--	if (ios->clock < 25 * 1000000)
--		ctrl3 = (S3C_SDHCI_CTRL3_FCSEL3 |
--			 S3C_SDHCI_CTRL3_FCSEL2 |
--			 S3C_SDHCI_CTRL3_FCSEL1 |
--			 S3C_SDHCI_CTRL3_FCSEL0);
--	else
--		ctrl3 = (S3C_SDHCI_CTRL3_FCSEL1 | S3C_SDHCI_CTRL3_FCSEL0);
--
--	__raw_writel(ctrl2, r + S3C_SDHCI_CONTROL2);
--	__raw_writel(ctrl3, r + S3C_SDHCI_CONTROL3);
--}
-diff --git a/arch/arm/mach-s3c64xx/setup-sdhci.c b/arch/arm/mach-s3c64xx/setup-sdhci.c
-index f344a22..c75a71b 100644
---- a/arch/arm/mach-s3c64xx/setup-sdhci.c
-+++ b/arch/arm/mach-s3c64xx/setup-sdhci.c
-@@ -12,17 +12,7 @@
-  * published by the Free Software Foundation.
- */
- 
--#include <linux/kernel.h>
- #include <linux/types.h>
--#include <linux/interrupt.h>
--#include <linux/platform_device.h>
--#include <linux/io.h>
--
--#include <linux/mmc/card.h>
--#include <linux/mmc/host.h>
--
--#include <plat/regs-sdhci.h>
--#include <plat/sdhci.h>
- 
- /* clock sources for the mmc bus clock, order as for the ctrl2[5..4] */
- 
-@@ -32,41 +22,3 @@ char *s3c64xx_hsmmc_clksrcs[4] = {
- 	[2] = "mmc_bus",
- 	/* [3] = "48m", - note not successfully used yet */
- };
--
--void s3c6400_setup_sdhci_cfg_card(struct platform_device *dev,
--				  void __iomem *r,
--				  struct mmc_ios *ios,
--				  struct mmc_card *card)
--{
--	u32 ctrl2, ctrl3;
--
--	ctrl2 = readl(r + S3C_SDHCI_CONTROL2);
--	ctrl2 &= S3C_SDHCI_CTRL2_SELBASECLK_MASK;
--	ctrl2 |= (S3C64XX_SDHCI_CTRL2_ENSTAASYNCCLR |
--		  S3C64XX_SDHCI_CTRL2_ENCMDCNFMSK |
--		  S3C_SDHCI_CTRL2_ENFBCLKRX |
--		  S3C_SDHCI_CTRL2_DFCNT_NONE |
--		  S3C_SDHCI_CTRL2_ENCLKOUTHOLD);
--
--	if (ios->clock < 25 * 1000000)
--		ctrl3 = (S3C_SDHCI_CTRL3_FCSEL3 |
--			 S3C_SDHCI_CTRL3_FCSEL2 |
--			 S3C_SDHCI_CTRL3_FCSEL1 |
--			 S3C_SDHCI_CTRL3_FCSEL0);
--	else
--		ctrl3 = (S3C_SDHCI_CTRL3_FCSEL1 | S3C_SDHCI_CTRL3_FCSEL0);
--
--	pr_debug("%s: CTRL 2=%08x, 3=%08x\n", __func__, ctrl2, ctrl3);
--	writel(ctrl2, r + S3C_SDHCI_CONTROL2);
--	writel(ctrl3, r + S3C_SDHCI_CONTROL3);
--}
--
--void s3c6410_setup_sdhci_cfg_card(struct platform_device *dev,
--				  void __iomem *r,
--				  struct mmc_ios *ios,
--				  struct mmc_card *card)
--{
--	writel(S3C64XX_SDHCI_CONTROL4_DRIVE_9mA, r + S3C64XX_SDHCI_CONTROL4);
--
--	s3c6400_setup_sdhci_cfg_card(dev, r, ios, card);
--}
-diff --git a/arch/arm/mach-s5pc100/setup-sdhci.c b/arch/arm/mach-s5pc100/setup-sdhci.c
-index be25879..6418c6e 100644
---- a/arch/arm/mach-s5pc100/setup-sdhci.c
-+++ b/arch/arm/mach-s5pc100/setup-sdhci.c
-@@ -11,17 +11,7 @@
-  * published by the Free Software Foundation.
- */
- 
--#include <linux/kernel.h>
- #include <linux/types.h>
--#include <linux/interrupt.h>
--#include <linux/platform_device.h>
--#include <linux/io.h>
--
--#include <linux/mmc/card.h>
--#include <linux/mmc/host.h>
--
--#include <plat/regs-sdhci.h>
--#include <plat/sdhci.h>
- 
- /* clock sources for the mmc bus clock, order as for the ctrl2[5..4] */
- 
-@@ -31,35 +21,3 @@ char *s5pc100_hsmmc_clksrcs[4] = {
- 	[2] = "sclk_mmc",	/* mmc_bus */
- 	/* [3] = "48m",		- note not successfully used yet */
- };
--
--
--void s5pc100_setup_sdhci0_cfg_card(struct platform_device *dev,
--				    void __iomem *r,
--				    struct mmc_ios *ios,
--				    struct mmc_card *card)
--{
--	u32 ctrl2, ctrl3;
--
--	/* don't need to alter anything according to card-type */
--
--	writel(S3C64XX_SDHCI_CONTROL4_DRIVE_9mA, r + S3C64XX_SDHCI_CONTROL4);
--
--	ctrl2 = readl(r + S3C_SDHCI_CONTROL2);
--	ctrl2 &= S3C_SDHCI_CTRL2_SELBASECLK_MASK;
--	ctrl2 |= (S3C64XX_SDHCI_CTRL2_ENSTAASYNCCLR |
--		  S3C64XX_SDHCI_CTRL2_ENCMDCNFMSK |
--		  S3C_SDHCI_CTRL2_ENFBCLKRX |
--		  S3C_SDHCI_CTRL2_DFCNT_NONE |
--		  S3C_SDHCI_CTRL2_ENCLKOUTHOLD);
--
--	if (ios->clock < 25 * 1000000)
--		ctrl3 = (S3C_SDHCI_CTRL3_FCSEL3 |
--			 S3C_SDHCI_CTRL3_FCSEL2 |
--			 S3C_SDHCI_CTRL3_FCSEL1 |
--			 S3C_SDHCI_CTRL3_FCSEL0);
--	else
--		ctrl3 = (S3C_SDHCI_CTRL3_FCSEL1 | S3C_SDHCI_CTRL3_FCSEL0);
--
--	writel(ctrl2, r + S3C_SDHCI_CONTROL2);
--	writel(ctrl3, r + S3C_SDHCI_CONTROL3);
--}
-diff --git a/arch/arm/mach-s5pv210/setup-sdhci.c b/arch/arm/mach-s5pv210/setup-sdhci.c
-index a83b6c9..6b8ccc4 100644
---- a/arch/arm/mach-s5pv210/setup-sdhci.c
-+++ b/arch/arm/mach-s5pv210/setup-sdhci.c
-@@ -10,17 +10,7 @@
-  * published by the Free Software Foundation.
- */
- 
--#include <linux/kernel.h>
- #include <linux/types.h>
--#include <linux/interrupt.h>
--#include <linux/platform_device.h>
--#include <linux/io.h>
--
--#include <linux/mmc/card.h>
--#include <linux/mmc/host.h>
--
--#include <plat/regs-sdhci.h>
--#include <plat/sdhci.h>
- 
- /* clock sources for the mmc bus clock, order as for the ctrl2[5..4] */
- 
-@@ -30,34 +20,3 @@ char *s5pv210_hsmmc_clksrcs[4] = {
- 	[2] = "sclk_mmc",	/* mmc_bus */
- 	/* [3] = NULL,		- reserved */
- };
--
--void s5pv210_setup_sdhci_cfg_card(struct platform_device *dev,
--				    void __iomem *r,
--				    struct mmc_ios *ios,
--				    struct mmc_card *card)
--{
--	u32 ctrl2, ctrl3;
--
--	/* don't need to alter anything according to card-type */
--
--	writel(S3C64XX_SDHCI_CONTROL4_DRIVE_9mA, r + S3C64XX_SDHCI_CONTROL4);
--
--	ctrl2 = readl(r + S3C_SDHCI_CONTROL2);
--	ctrl2 &= S3C_SDHCI_CTRL2_SELBASECLK_MASK;
--	ctrl2 |= (S3C64XX_SDHCI_CTRL2_ENSTAASYNCCLR |
--		  S3C64XX_SDHCI_CTRL2_ENCMDCNFMSK |
--		  S3C_SDHCI_CTRL2_ENFBCLKRX |
--		  S3C_SDHCI_CTRL2_DFCNT_NONE |
--		  S3C_SDHCI_CTRL2_ENCLKOUTHOLD);
--
--	if (ios->clock < 25 * 1000000)
--		ctrl3 = (S3C_SDHCI_CTRL3_FCSEL3 |
--			 S3C_SDHCI_CTRL3_FCSEL2 |
--			 S3C_SDHCI_CTRL3_FCSEL1 |
--			 S3C_SDHCI_CTRL3_FCSEL0);
--	else
--		ctrl3 = (S3C_SDHCI_CTRL3_FCSEL1 | S3C_SDHCI_CTRL3_FCSEL0);
--
--	writel(ctrl2, r + S3C_SDHCI_CONTROL2);
--	writel(ctrl3, r + S3C_SDHCI_CONTROL3);
--}
-diff --git a/arch/arm/plat-samsung/dev-hsmmc.c b/arch/arm/plat-samsung/dev-hsmmc.c
-index db7a65c..5f15bf7 100644
---- a/arch/arm/plat-samsung/dev-hsmmc.c
-+++ b/arch/arm/plat-samsung/dev-hsmmc.c
-@@ -70,8 +70,6 @@ void s3c_sdhci0_set_platdata(struct s3c_sdhci_platdata *pd)
- 		set->max_width = pd->max_width;
- 	if (pd->cfg_gpio)
- 		set->cfg_gpio = pd->cfg_gpio;
--	if (pd->cfg_card)
--		set->cfg_card = pd->cfg_card;
- 	if (pd->host_caps)
- 		set->host_caps |= pd->host_caps;
- 	if (pd->clk_type)
-diff --git a/arch/arm/plat-samsung/dev-hsmmc1.c b/arch/arm/plat-samsung/dev-hsmmc1.c
-index 2497321..2249794 100644
---- a/arch/arm/plat-samsung/dev-hsmmc1.c
-+++ b/arch/arm/plat-samsung/dev-hsmmc1.c
-@@ -70,8 +70,6 @@ void s3c_sdhci1_set_platdata(struct s3c_sdhci_platdata *pd)
- 		set->max_width = pd->max_width;
- 	if (pd->cfg_gpio)
- 		set->cfg_gpio = pd->cfg_gpio;
--	if (pd->cfg_card)
--		set->cfg_card = pd->cfg_card;
- 	if (pd->host_caps)
- 		set->host_caps |= pd->host_caps;
- 	if (pd->clk_type)
-diff --git a/arch/arm/plat-samsung/dev-hsmmc2.c b/arch/arm/plat-samsung/dev-hsmmc2.c
-index f60aedb..58af1eb 100644
---- a/arch/arm/plat-samsung/dev-hsmmc2.c
-+++ b/arch/arm/plat-samsung/dev-hsmmc2.c
-@@ -71,8 +71,6 @@ void s3c_sdhci2_set_platdata(struct s3c_sdhci_platdata *pd)
- 		set->max_width = pd->max_width;
- 	if (pd->cfg_gpio)
- 		set->cfg_gpio = pd->cfg_gpio;
--	if (pd->cfg_card)
--		set->cfg_card = pd->cfg_card;
- 	if (pd->host_caps)
- 		set->host_caps |= pd->host_caps;
- 	if (pd->clk_type)
-diff --git a/arch/arm/plat-samsung/dev-hsmmc3.c b/arch/arm/plat-samsung/dev-hsmmc3.c
-index ede776f..bb44271 100644
---- a/arch/arm/plat-samsung/dev-hsmmc3.c
-+++ b/arch/arm/plat-samsung/dev-hsmmc3.c
-@@ -74,8 +74,6 @@ void s3c_sdhci3_set_platdata(struct s3c_sdhci_platdata *pd)
- 		set->max_width = pd->max_width;
- 	if (pd->cfg_gpio)
- 		set->cfg_gpio = pd->cfg_gpio;
--	if (pd->cfg_card)
--		set->cfg_card = pd->cfg_card;
- 	if (pd->host_caps)
- 		set->host_caps |= pd->host_caps;
- 	if (pd->clk_type)
-diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-samsung/include/plat/sdhci.h
-index 058e096..7f57173 100644
---- a/arch/arm/plat-samsung/include/plat/sdhci.h
-+++ b/arch/arm/plat-samsung/include/plat/sdhci.h
-@@ -55,10 +55,6 @@ enum clk_types {
-  *		 cd_type == S3C_SDHCI_CD_GPIO
-  * @ext_cd_gpio_invert: invert values for external CD gpio line
-  * @cfg_gpio: Configure the GPIO for a specific card bit-width
-- * @cfg_card: Configure the interface for a specific card and speed. This
-- *            is necessary the controllers and/or GPIO blocks require the
-- *	      changing of driver-strength and other controls dependent on
-- *	      the card and speed of operation.
-  *
-  * Initialisation data specific to either the machine or the platform
-  * for the device driver to use or call-back when configuring gpio or
-@@ -80,10 +76,6 @@ struct s3c_sdhci_platdata {
- 						      int state));
- 
- 	void	(*cfg_gpio)(struct platform_device *dev, int width);
--	void	(*cfg_card)(struct platform_device *dev,
--			    void __iomem *regbase,
--			    struct mmc_ios *ios,
--			    struct mmc_card *card);
- };
- 
- /**
-@@ -132,17 +124,11 @@ extern void exynos4_setup_sdhci3_cfg_gpio(struct platform_device *, int w);
- #ifdef CONFIG_S3C2416_SETUP_SDHCI
- extern char *s3c2416_hsmmc_clksrcs[4];
- 
--extern void s3c2416_setup_sdhci_cfg_card(struct platform_device *dev,
--					   void __iomem *r,
--					   struct mmc_ios *ios,
--					   struct mmc_card *card);
--
- static inline void s3c2416_default_sdhci0(void)
++#ifdef CONFIG_OF
++/* Translate dt irq specifier to linux virq for interrupt combiner controller */
++static int exynos4_irq_domain_combiner_dt_translate(struct irq_domain *d,
++			struct device_node *controller,
++			const u32 *intspec, unsigned int intsize,
++			unsigned long *out_hwirq, unsigned int *out_type)
++{
++	if (d->of_node != controller)
++		return -EINVAL;
++	if (intsize < 2)
++		return -EINVAL;
++
++	*out_hwirq = COMBINER_IRQ(intspec[0], intspec[1]);
++	*out_type = IRQ_TYPE_NONE;
++	return 0;
++}
++
++static struct irq_domain_ops exynos4_irq_domain_combiner_ops = {
++	.dt_translate = exynos4_irq_domain_combiner_dt_translate,
++};
++#endif
++
+ void __init exynos4_init_irq(void)
  {
- #ifdef CONFIG_S3C_DEV_HSMMC
- 	s3c_hsmmc0_def_platdata.clocks = s3c2416_hsmmc_clksrcs;
- 	s3c_hsmmc0_def_platdata.cfg_gpio = s3c2416_setup_sdhci0_cfg_gpio;
--	s3c_hsmmc0_def_platdata.cfg_card = s3c2416_setup_sdhci_cfg_card;
- #endif /* CONFIG_S3C_DEV_HSMMC */
- }
- 
-@@ -151,7 +137,6 @@ static inline void s3c2416_default_sdhci1(void)
- #ifdef CONFIG_S3C_DEV_HSMMC1
- 	s3c_hsmmc1_def_platdata.clocks = s3c2416_hsmmc_clksrcs;
- 	s3c_hsmmc1_def_platdata.cfg_gpio = s3c2416_setup_sdhci1_cfg_gpio;
--	s3c_hsmmc1_def_platdata.cfg_card = s3c2416_setup_sdhci_cfg_card;
- #endif /* CONFIG_S3C_DEV_HSMMC1 */
- }
- 
-@@ -165,17 +150,11 @@ static inline void s3c2416_default_sdhci1(void) { }
- #ifdef CONFIG_S3C64XX_SETUP_SDHCI
- extern char *s3c64xx_hsmmc_clksrcs[4];
- 
--extern void s3c6400_setup_sdhci_cfg_card(struct platform_device *dev,
--					 void __iomem *r,
--					 struct mmc_ios *ios,
--					 struct mmc_card *card);
+ 	int irq;
 -
- static inline void s3c6400_default_sdhci0(void)
- {
- #ifdef CONFIG_S3C_DEV_HSMMC
- 	s3c_hsmmc0_def_platdata.clocks = s3c64xx_hsmmc_clksrcs;
- 	s3c_hsmmc0_def_platdata.cfg_gpio = s3c64xx_setup_sdhci0_cfg_gpio;
--	s3c_hsmmc0_def_platdata.cfg_card = s3c6400_setup_sdhci_cfg_card;
- #endif
- }
+-	gic_init(0, IRQ_SPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU);
++#ifdef CONFIG_OF
++	struct of_intc_desc desc;
++	struct irq_domain *domain;
++	struct device_node *node;
++
++	memset(&desc, 0, sizeof(desc));
++	desc.irq_base = IRQ_SPI(0);
++	desc.controller = of_find_compatible_node(NULL, NULL,
++				"arm,cortex-a9-gic");
++	if (desc.controller)
++		gic_of_init(&desc);
++	else
++#endif
++		gic_init(0, IRQ_SPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU);
+ 	gic_arch_extn.irq_eoi = exynos4_gic_irq_eoi;
  
-@@ -184,7 +163,6 @@ static inline void s3c6400_default_sdhci1(void)
- #ifdef CONFIG_S3C_DEV_HSMMC1
- 	s3c_hsmmc1_def_platdata.clocks = s3c64xx_hsmmc_clksrcs;
- 	s3c_hsmmc1_def_platdata.cfg_gpio = s3c64xx_setup_sdhci1_cfg_gpio;
--	s3c_hsmmc1_def_platdata.cfg_card = s3c6400_setup_sdhci_cfg_card;
- #endif
- }
++#ifdef CONFIG_OF
++	node = of_find_compatible_node(NULL, NULL,
++			"samsung,exynos4-combiner");
++	if (node) {
++		domain = kzalloc(sizeof(*domain), GFP_KERNEL);
++		if (domain) {
++			domain->of_node = node;
++			domain->ops = &exynos4_irq_domain_combiner_ops;
++			irq_domain_add(domain);
++		} else {
++			WARN_ON(1);
++		}
++	}
++#endif
++
+ 	for (irq = 0; irq < MAX_COMBINER_NR; irq++) {
  
-@@ -193,21 +171,14 @@ static inline void s3c6400_default_sdhci2(void)
- #ifdef CONFIG_S3C_DEV_HSMMC2
- 	s3c_hsmmc2_def_platdata.clocks = s3c64xx_hsmmc_clksrcs;
- 	s3c_hsmmc2_def_platdata.cfg_gpio = s3c64xx_setup_sdhci2_cfg_gpio;
--	s3c_hsmmc2_def_platdata.cfg_card = s3c6400_setup_sdhci_cfg_card;
- #endif
- }
- 
--extern void s3c6410_setup_sdhci_cfg_card(struct platform_device *dev,
--					 void __iomem *r,
--					 struct mmc_ios *ios,
--					 struct mmc_card *card);
--
- static inline void s3c6410_default_sdhci0(void)
- {
- #ifdef CONFIG_S3C_DEV_HSMMC
- 	s3c_hsmmc0_def_platdata.clocks = s3c64xx_hsmmc_clksrcs;
- 	s3c_hsmmc0_def_platdata.cfg_gpio = s3c64xx_setup_sdhci0_cfg_gpio;
--	s3c_hsmmc0_def_platdata.cfg_card = s3c6410_setup_sdhci_cfg_card;
- #endif
- }
- 
-@@ -216,7 +187,6 @@ static inline void s3c6410_default_sdhci1(void)
- #ifdef CONFIG_S3C_DEV_HSMMC1
- 	s3c_hsmmc1_def_platdata.clocks = s3c64xx_hsmmc_clksrcs;
- 	s3c_hsmmc1_def_platdata.cfg_gpio = s3c64xx_setup_sdhci1_cfg_gpio;
--	s3c_hsmmc1_def_platdata.cfg_card = s3c6410_setup_sdhci_cfg_card;
- #endif
- }
- 
-@@ -225,7 +195,6 @@ static inline void s3c6410_default_sdhci2(void)
- #ifdef CONFIG_S3C_DEV_HSMMC2
- 	s3c_hsmmc2_def_platdata.clocks = s3c64xx_hsmmc_clksrcs;
- 	s3c_hsmmc2_def_platdata.cfg_gpio = s3c64xx_setup_sdhci2_cfg_gpio;
--	s3c_hsmmc2_def_platdata.cfg_card = s3c6410_setup_sdhci_cfg_card;
- #endif
- }
- 
-@@ -244,17 +213,11 @@ static inline void s3c6400_default_sdhci2(void) { }
- #ifdef CONFIG_S5PC100_SETUP_SDHCI
- extern char *s5pc100_hsmmc_clksrcs[4];
- 
--extern void s5pc100_setup_sdhci0_cfg_card(struct platform_device *dev,
--					   void __iomem *r,
--					   struct mmc_ios *ios,
--					   struct mmc_card *card);
--
- static inline void s5pc100_default_sdhci0(void)
- {
- #ifdef CONFIG_S3C_DEV_HSMMC
- 	s3c_hsmmc0_def_platdata.clocks = s5pc100_hsmmc_clksrcs;
- 	s3c_hsmmc0_def_platdata.cfg_gpio = s5pc100_setup_sdhci0_cfg_gpio;
--	s3c_hsmmc0_def_platdata.cfg_card = s5pc100_setup_sdhci0_cfg_card;
- #endif
- }
- 
-@@ -263,7 +226,6 @@ static inline void s5pc100_default_sdhci1(void)
- #ifdef CONFIG_S3C_DEV_HSMMC1
- 	s3c_hsmmc1_def_platdata.clocks = s5pc100_hsmmc_clksrcs;
- 	s3c_hsmmc1_def_platdata.cfg_gpio = s5pc100_setup_sdhci1_cfg_gpio;
--	s3c_hsmmc1_def_platdata.cfg_card = s5pc100_setup_sdhci0_cfg_card;
- #endif
- }
- 
-@@ -272,7 +234,6 @@ static inline void s5pc100_default_sdhci2(void)
- #ifdef CONFIG_S3C_DEV_HSMMC2
- 	s3c_hsmmc2_def_platdata.clocks = s5pc100_hsmmc_clksrcs;
- 	s3c_hsmmc2_def_platdata.cfg_gpio = s5pc100_setup_sdhci2_cfg_gpio;
--	s3c_hsmmc2_def_platdata.cfg_card = s5pc100_setup_sdhci0_cfg_card;
- #endif
- }
- 
-@@ -288,17 +249,11 @@ static inline void s5pc100_default_sdhci2(void) { }
- #ifdef CONFIG_S5PV210_SETUP_SDHCI
- extern char *s5pv210_hsmmc_clksrcs[4];
- 
--extern void s5pv210_setup_sdhci_cfg_card(struct platform_device *dev,
--					   void __iomem *r,
--					   struct mmc_ios *ios,
--					   struct mmc_card *card);
--
- static inline void s5pv210_default_sdhci0(void)
- {
- #ifdef CONFIG_S3C_DEV_HSMMC
- 	s3c_hsmmc0_def_platdata.clocks = s5pv210_hsmmc_clksrcs;
- 	s3c_hsmmc0_def_platdata.cfg_gpio = s5pv210_setup_sdhci0_cfg_gpio;
--	s3c_hsmmc0_def_platdata.cfg_card = s5pv210_setup_sdhci_cfg_card;
- #endif
- }
- 
-@@ -307,7 +262,6 @@ static inline void s5pv210_default_sdhci1(void)
- #ifdef CONFIG_S3C_DEV_HSMMC1
- 	s3c_hsmmc1_def_platdata.clocks = s5pv210_hsmmc_clksrcs;
- 	s3c_hsmmc1_def_platdata.cfg_gpio = s5pv210_setup_sdhci1_cfg_gpio;
--	s3c_hsmmc1_def_platdata.cfg_card = s5pv210_setup_sdhci_cfg_card;
- #endif
- }
- 
-@@ -316,7 +270,6 @@ static inline void s5pv210_default_sdhci2(void)
- #ifdef CONFIG_S3C_DEV_HSMMC2
- 	s3c_hsmmc2_def_platdata.clocks = s5pv210_hsmmc_clksrcs;
- 	s3c_hsmmc2_def_platdata.cfg_gpio = s5pv210_setup_sdhci2_cfg_gpio;
--	s3c_hsmmc2_def_platdata.cfg_card = s5pv210_setup_sdhci_cfg_card;
- #endif
- }
- 
-@@ -325,7 +278,6 @@ static inline void s5pv210_default_sdhci3(void)
- #ifdef CONFIG_S3C_DEV_HSMMC3
- 	s3c_hsmmc3_def_platdata.clocks = s5pv210_hsmmc_clksrcs;
- 	s3c_hsmmc3_def_platdata.cfg_gpio = s5pv210_setup_sdhci3_cfg_gpio;
--	s3c_hsmmc3_def_platdata.cfg_card = s5pv210_setup_sdhci_cfg_card;
- #endif
- }
- 
-@@ -341,17 +293,11 @@ static inline void s5pv210_default_sdhci3(void) { }
- #ifdef CONFIG_EXYNOS4_SETUP_SDHCI
- extern char *exynos4_hsmmc_clksrcs[4];
- 
--extern void exynos4_setup_sdhci_cfg_card(struct platform_device *dev,
--					   void __iomem *r,
--					   struct mmc_ios *ios,
--					   struct mmc_card *card);
--
- static inline void exynos4_default_sdhci0(void)
- {
- #ifdef CONFIG_S3C_DEV_HSMMC
- 	s3c_hsmmc0_def_platdata.clocks = exynos4_hsmmc_clksrcs;
- 	s3c_hsmmc0_def_platdata.cfg_gpio = exynos4_setup_sdhci0_cfg_gpio;
--	s3c_hsmmc0_def_platdata.cfg_card = exynos4_setup_sdhci_cfg_card;
- #endif
- }
- 
-@@ -360,7 +306,6 @@ static inline void exynos4_default_sdhci1(void)
- #ifdef CONFIG_S3C_DEV_HSMMC1
- 	s3c_hsmmc1_def_platdata.clocks = exynos4_hsmmc_clksrcs;
- 	s3c_hsmmc1_def_platdata.cfg_gpio = exynos4_setup_sdhci1_cfg_gpio;
--	s3c_hsmmc1_def_platdata.cfg_card = exynos4_setup_sdhci_cfg_card;
- #endif
- }
- 
-@@ -369,7 +314,6 @@ static inline void exynos4_default_sdhci2(void)
- #ifdef CONFIG_S3C_DEV_HSMMC2
- 	s3c_hsmmc2_def_platdata.clocks = exynos4_hsmmc_clksrcs;
- 	s3c_hsmmc2_def_platdata.cfg_gpio = exynos4_setup_sdhci2_cfg_gpio;
--	s3c_hsmmc2_def_platdata.cfg_card = exynos4_setup_sdhci_cfg_card;
- #endif
- }
- 
-@@ -378,7 +322,6 @@ static inline void exynos4_default_sdhci3(void)
- #ifdef CONFIG_S3C_DEV_HSMMC3
- 	s3c_hsmmc3_def_platdata.clocks = exynos4_hsmmc_clksrcs;
- 	s3c_hsmmc3_def_platdata.cfg_gpio = exynos4_setup_sdhci3_cfg_gpio;
--	s3c_hsmmc3_def_platdata.cfg_card = exynos4_setup_sdhci_cfg_card;
- #endif
- }
- 
+ 		combiner_init(irq, (void __iomem *)S5P_VA_COMBINER(irq),
 -- 
 1.6.6.rc2
