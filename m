@@ -1,64 +1,64 @@
-From: Sylwester Nawrocki <snjw23@gmail.com>
-Subject: Re: [PATCH 0/19 v4] s5p-fimc driver conversion to media controller
- and control framework
-Date: Sat, 03 Sep 2011 18:32:50 +0200
-Message-ID: <4E6256B2.7010407@gmail.com>
-References: <1314891023-14227-1-git-send-email-s.nawrocki@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1314891023-14227-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, mchehab@redhat.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH] arm: exynos4: fix incorrect pad configuration for keypad row
+ lines
+Date: Sun, 04 Sep 2011 15:10:44 +0530
+Message-ID: <1315129244-26489-1-git-send-email-thomas.abraham@linaro.org>
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-input-owner@vger.kernel.org>
+Sender: linux-input-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 09/01/2011 05:30 PM, Sylwester Nawrocki wrote:
-> Hello,
->
-> following is a fourth version of the patchset converting s5p-fimc driver
-> to the media controller API and the new control framework.
->
-> Mauro, could you please have a look at the patches and let me know of any doubts?
-> I tried to provide possibly detailed description of what each patch does and why.
->
-> The changeset is available at:
->    http://git.infradead.org/users/kmpark/linux-2.6-samsung
->    branch: v4l_fimc_for_mauro
->
-> on top of patches from Marek's 'Videobuf2&  FIMC fixes" pull request
-> which this series depends on.
-...
->
-> Sylwester Nawrocki (19):
->    s5p-fimc: Remove registration of video nodes from probe()
->    s5p-fimc: Remove sclk_cam clock handling
->    s5p-fimc: Limit number of available inputs to one
->    s5p-fimc: Remove sensor management code from FIMC capture driver
->    s5p-fimc: Remove v4l2_device from video capture and m2m driver
->    s5p-fimc: Add the media device driver
->    s5p-fimc: Conversion to use struct v4l2_fh
->    s5p-fimc: Convert to the new control framework
->    s5p-fimc: Add media operations in the capture entity driver
->    s5p-fimc: Add PM helper function for streaming control
->    s5p-fimc: Correct color format enumeration
->    s5p-fimc: Convert to use media pipeline operations
->    s5p-fimc: Add subdev for the FIMC processing block
->    s5p-fimc: Add support for JPEG capture
->    s5p-fimc: Add v4l2_device notification support for single frame
->      capture
->    s5p-fimc: Use consistent names for the buffer list functions
->    s5p-fimc: Add runtime PM support in the camera capture driver
->    s5p-fimc: Correct crop offset alignment on exynos4
->    s5p-fimc: Remove single-planar capability flags
+The keypad controller requires a external pull-up for all the keypad
+row lines. Fix the incorrect pad configuration for keypad controller
+row lines by enabling the pad pull-up for the all row lines of the
+keypad controller.
 
-oops, I've done this posting wrong, the first patch is missing here :(
--> s5p-fimc: Add media entity initialization
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+SMDKV310 board does not have pull-up resistors populated for the keypad
+row lines (unlike the smdk boards for the previous Samsung SoC's). So
+the pad pull-up for all keypad row lines should be enabled for
+smdkv310 board.
 
-Still the patch set is complete at git repository as indicated above.
-I'm sorry for the confusion.
+The default requirement for the keypad controller is to enable the
+pull-up for all the keypad row lines. If a exynos4 based board has
+on-board pull-up's populated for keypad row lines, this patch would
+cause no harm. And in such cases, if internal pad pull-up is to be
+disabled (to reduce some power consumption), an alternative gpio
+configuration function can be supplied that does not enable the
+internal pad pull-up.
+---
+ arch/arm/mach-exynos4/setup-keypad.c |   11 ++++++-----
+ 1 files changed, 6 insertions(+), 5 deletions(-)
 
---
-Regards,
-Sylwester
+diff --git a/arch/arm/mach-exynos4/setup-keypad.c b/arch/arm/mach-exynos4/setup-keypad.c
+index 1ee0ebf..7862bfb 100644
+--- a/arch/arm/mach-exynos4/setup-keypad.c
++++ b/arch/arm/mach-exynos4/setup-keypad.c
+@@ -19,15 +19,16 @@ void samsung_keypad_cfg_gpio(unsigned int rows, unsigned int cols)
+ 
+ 	if (rows > 8) {
+ 		/* Set all the necessary GPX2 pins: KP_ROW[0~7] */
+-		s3c_gpio_cfgrange_nopull(EXYNOS4_GPX2(0), 8, S3C_GPIO_SFN(3));
++		s3c_gpio_cfgall_range(EXYNOS4_GPX2(0), 8, S3C_GPIO_SFN(3),
++					S3C_GPIO_PULL_UP);
+ 
+ 		/* Set all the necessary GPX3 pins: KP_ROW[8~] */
+-		s3c_gpio_cfgrange_nopull(EXYNOS4_GPX3(0), (rows - 8),
+-					 S3C_GPIO_SFN(3));
++		s3c_gpio_cfgall_range(EXYNOS4_GPX3(0), (rows - 8),
++					 S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
+ 	} else {
+ 		/* Set all the necessary GPX2 pins: KP_ROW[x] */
+-		s3c_gpio_cfgrange_nopull(EXYNOS4_GPX2(0), rows,
+-					 S3C_GPIO_SFN(3));
++		s3c_gpio_cfgall_range(EXYNOS4_GPX2(0), rows, S3C_GPIO_SFN(3),
++					S3C_GPIO_PULL_UP);
+ 	}
+ 
+ 	/* Set all the necessary GPX1 pins to special-function 3: KP_COL[x] */
+-- 
+1.6.6.rc2
+
