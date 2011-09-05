@@ -1,135 +1,132 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3] ARM: Samsung: fix watchdog reset issue with clk_get()
-Date: Mon, 05 Sep 2011 20:32:09 +0900
-Message-ID: <002f01cc6bbf$730e8a00$592b9e00$%kim@samsung.com>
-References: <1313663117-29191-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: [PATCH 1/2] mmc: core: Add power off notify feature(eMMC 4.5)
+Date: Mon,  5 Sep 2011 17:19:58 +0530
+Message-ID: <1315223399-21599-2-git-send-email-girish.shivananjappa@linaro.org>
+References: <1315223399-21599-1-git-send-email-girish.shivananjappa@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:23370 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752162Ab1IELcM (ORCPT
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:62909 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752765Ab1IELuZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Sep 2011 07:32:12 -0400
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LR100EIPS1MY9P0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 05 Sep 2011 20:32:10 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LR1008M9S1L1K20@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Mon, 05 Sep 2011 20:32:10 +0900 (KST)
-In-reply-to: <1313663117-29191-1-git-send-email-m.szyprowski@samsung.com>
-Content-language: ko
+	Mon, 5 Sep 2011 07:50:25 -0400
+In-Reply-To: <1315223399-21599-1-git-send-email-girish.shivananjappa@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Angus Ainslie' <angus.ainslie@linaro.org>
+To: linux-mmc@vger.kernel.org
+Cc: cjb@laptop.org, kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
 
-Marek Szyprowski wrote:
-> 
-> clkdev framework uses global mutex to protect clock tree, so it is not
-> possible to call clk_get() in interrupt context. This patch fixes this
-> issue and makes system reset by watchdog call working again.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/plat-samsung/clock.c                      |   11 +++++++++++
->  arch/arm/plat-samsung/include/plat/clock.h         |    3 +++
->  .../arm/plat-samsung/include/plat/watchdog-reset.h |   10 +++-------
->  3 files changed, 17 insertions(+), 7 deletions(-)
-> 
-> 
-> history:
-> v3:
-> - moved initialization to arch_initcall, cleaned the code
-> 
-> v2:
-> - added missing '__init' section modifiers
-> 
-> diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
-> index 302c426..3b44519 100644
-> --- a/arch/arm/plat-samsung/clock.c
-> +++ b/arch/arm/plat-samsung/clock.c
-> @@ -64,6 +64,17 @@ static LIST_HEAD(clocks);
->   */
->  DEFINE_SPINLOCK(clocks_lock);
-> 
-> +/* Global watchdog clock used by arch_wtd_reset() callback */
-> +struct clk *s3c2410_wdtclk;
-> +static int __init s3c_wdt_reset_init(void)
-> +{
-> +	s3c2410_wdtclk = clk_get(NULL, "watchdog");
-> +	if (IS_ERR(s3c2410_wdtclk))
-> +		printk(KERN_WARNING "%s: warning: cannot get watchdog
-> clock\n", __func__);
-> +	return 0;
-> +}
-> +arch_initcall(s3c_wdt_reset_init);
-> +
->  /* enable and disable calls for use with the clk struct */
-> 
->  static int clk_null_enable(struct clk *clk, int enable)
-> diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-
-> samsung/include/plat/clock.h
-> index 87d5b38..8f95700 100644
-> --- a/arch/arm/plat-samsung/include/plat/clock.h
-> +++ b/arch/arm/plat-samsung/include/plat/clock.h
-> @@ -121,3 +121,6 @@ extern int s3c64xx_sclk_ctrl(struct clk *clk, int
-enable);
-> 
->  extern void s3c_pwmclk_init(void);
-> 
-> +/* Global watchdog clock used by arch_wtd_reset() callback */
-> +
-> +extern struct clk *s3c2410_wdtclk;
-> diff --git a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-b/arch/arm/plat-
-> samsung/include/plat/watchdog-reset.h
-> index 54b762a..40dbb2b 100644
-> --- a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-> +++ b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-> @@ -10,6 +10,7 @@
->   * published by the Free Software Foundation.
->  */
-> 
-> +#include <plat/clock.h>
->  #include <plat/regs-watchdog.h>
->  #include <mach/map.h>
-> 
-> @@ -19,17 +20,12 @@
-> 
->  static inline void arch_wdt_reset(void)
->  {
-> -	struct clk *wdtclk;
-> -
->  	printk("arch_reset: attempting watchdog reset\n");
-> 
->  	__raw_writel(0, S3C2410_WTCON);	  /* disable watchdog, to be safe
-*/
-> 
-> -	wdtclk = clk_get(NULL, "watchdog");
-> -	if (!IS_ERR(wdtclk)) {
-> -		clk_enable(wdtclk);
-> -	} else
-> -		printk(KERN_WARNING "%s: warning: cannot get watchdog
-> clock\n", __func__);
-> +	if (s3c2410_wdtclk)
-> +		clk_enable(s3c2410_wdtclk);
-> 
->  	/* put initial values into count and data */
->  	__raw_writel(0x80, S3C2410_WTCNT);
-> --
-> 1.7.1.569.g6f426
+This patch adds the support for power off notify feature
+available in eMMC 4.5 devices.
+	If the the host has support for this feature, then the
+mmc core will notify it to the device by setting the
+POWER_OFF_NOTIFICATION byte in the extended csd register
+with a value 1(POWER_ON).
+	This patch should be applied after Seungwon Jeon's
+patch for cmd6 timeout.
 
-Looks ok to me, applied.
-Thanks.
+Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+---
+ drivers/mmc/core/mmc.c   |   19 +++++++++++++++++--
+ include/linux/mmc/card.h |    1 +
+ include/linux/mmc/host.h |    1 +
+ include/linux/mmc/mmc.h  |    8 +++++++-
+ 4 files changed, 26 insertions(+), 3 deletions(-)
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 68eb368..2f06b37 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -410,10 +410,12 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
+ 	else
+ 		card->erased_byte = 0x0;
+ 
+-	if (card->ext_csd.rev >= 6)
++	if (card->ext_csd.rev >= 6) {
+ 		card->ext_csd.generic_cmd6_time = 10 *
+ 			ext_csd[EXT_CSD_GENERIC_CMD6_TIME];
+-
++		card->ext_csd.power_off_longtime = 10 *
++			ext_csd[EXT_CSD_POWER_OFF_LONG_TIME];
++	}
+ out:
+ 	return err;
+ }
+@@ -710,6 +712,19 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+ 	}
+ 
+ 	/*
++	 * If the host supports the power_off_notify capability then
++	 * set the notification byte in the ext_csd register of device
++	 */
++	if (host->caps & MMC_CAP_POWER_OFF_NOTIFY) {
++		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
++				EXT_CSD_POWER_OFF_NOTIFICATION,
++				EXT_CSD_POWER_ON,
++				card->ext_csd.generic_cmd6_time);
++		if (err && err != -EBADMSG)
++			goto free_card;
++	}
++
++	/*
+ 	 * Activate high speed (if supported)
+ 	 */
+ 	if ((card->ext_csd.hs_max_dtr != 0) &&
+diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+index e992fe3..2bf2843 100644
+--- a/include/linux/mmc/card.h
++++ b/include/linux/mmc/card.h
+@@ -53,6 +53,7 @@ struct mmc_ext_csd {
+ 	unsigned int		part_time;		/* Units: ms */
+ 	unsigned int		sa_timeout;		/* Units: 100ns */
+ 	unsigned int		generic_cmd6_time;	/* Units: ms */
++	unsigned int		power_off_longtime;	/* Units: ms */
+ 	unsigned int		hs_max_dtr;
+ 	unsigned int		sectors;
+ 	unsigned int		card_type;
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index 1d09562..21c85e1 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -229,6 +229,7 @@ struct mmc_host {
+ #define MMC_CAP_MAX_CURRENT_600	(1 << 28)	/* Host max current limit is 600mA */
+ #define MMC_CAP_MAX_CURRENT_800	(1 << 29)	/* Host max current limit is 800mA */
+ #define MMC_CAP_CMD23		(1 << 30)	/* CMD23 supported. */
++#define MMC_CAP_POWER_OFF_NOTIFY    (1 << 31)/*NOtify poweroff supported */
+ 
+ 	mmc_pm_flag_t		pm_caps;	/* supported pm features */
+ 
+diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
+index e869f00..8e86d77 100644
+--- a/include/linux/mmc/mmc.h
++++ b/include/linux/mmc/mmc.h
+@@ -269,7 +269,7 @@ struct _mmc_csd {
+ /*
+  * EXT_CSD fields
+  */
+-
++#define EXT_CSD_POWER_OFF_NOTIFICATION	34 /* R/W */
+ #define EXT_CSD_PARTITION_ATTRIBUTE	156	/* R/W */
+ #define EXT_CSD_PARTITION_SUPPORT	160	/* RO */
+ #define EXT_CSD_WR_REL_PARAM		166	/* RO */
+@@ -293,6 +293,7 @@ struct _mmc_csd {
+ #define EXT_CSD_SEC_ERASE_MULT		230	/* RO */
+ #define EXT_CSD_SEC_FEATURE_SUPPORT	231	/* RO */
+ #define EXT_CSD_TRIM_MULT		232	/* RO */
++#define EXT_CSD_POWER_OFF_LONG_TIME	247 /*RO*/
+ #define EXT_CSD_GENERIC_CMD6_TIME	248	/* RO */
+ 
+ /*
+@@ -329,6 +330,11 @@ struct _mmc_csd {
+ #define EXT_CSD_SEC_BD_BLK_EN	BIT(2)
+ #define EXT_CSD_SEC_GB_CL_EN	BIT(4)
+ 
++#define EXT_CSD_NO_POWER_NOTIFICATION	0
++#define EXT_CSD_POWER_ON	1
++#define EXT_CSD_POWER_OFF_SHORT	2
++#define EXT_CSD_POWER_OFF_LONG	3
++
+ /*
+  * MMC_SWITCH access modes
+  */
+-- 
+1.7.1
