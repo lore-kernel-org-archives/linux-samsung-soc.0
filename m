@@ -1,56 +1,77 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH] arm: exynos4: fix incorrect pad configuration for keypad
- row lines
-Date: Sun, 4 Sep 2011 16:07:47 +0530
-Message-ID: <CAJuYYwT1jXs4pYHnww=T5G_92=OU=08ef8UnJWjvz33Ted9wnQ@mail.gmail.com>
-References: <1315129244-26489-1-git-send-email-thomas.abraham@linaro.org>
-	<20110904105301.01b82323@lxorguk.ukuu.org.uk>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH 1/2] mmc: sdhci-s3c: add default controller configuration
+Date: Mon, 05 Sep 2011 10:31:09 +0900
+Message-ID: <4E64265D.9090206@samsung.com>
+References: <1314976702-19284-1-git-send-email-thomas.abraham@linaro.org>
+ <1314976702-19284-2-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:63969 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753696Ab1IDKhs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 4 Sep 2011 06:37:48 -0400
-In-Reply-To: <20110904105301.01b82323@lxorguk.ukuu.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <1314976702-19284-2-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Alan,
+Hi Thomas.
 
-On 4 September 2011 15:23, Alan Cox <alan@lxorguk.ukuu.org.uk> wrote:
->> SMDKV310 board does not have pull-up resistors populated for the keypad
->> row lines (unlike the smdk boards for the previous Samsung SoC's). So
->> the pad pull-up for all keypad row lines should be enabled for
->> smdkv310 board.
->
-> So does this change the behaviour of existing boards, and if so isn't it
-> the SMDKV310 that hould be providing the alternate gpio configuration
-> function ?
-
-Among the boards based on the Exynos4 SoC, only the smdk boards use
-the keypad controller for connecting the keys on the board. All other
-boards either use gpio keys or use some other mechanism for keyboard
-input. So this patch is applicable to only the existing exynos4 soc
-based smdk boards.
-
-A pull-up for all the row lines is the default requirement of the
-keypad controller. So, in this patch, the default gpio and pad
-configuration function for keypad controller enables the internal pad
-pull-up. If a upcoming board based on exynos4 does populate pull-up
-for row lines on the board of the keypad, this patch would still not
-break anything. If required, such boards could provide another gpio
-and pad configuration function that disables the internal pull-up.
-
-This patch modifies only the exynos4 keypad gpio/pad configuration
-setup function. All previous Samsung SoC's are not affected by this
-patch.
+I have some question. This patch looks good.
+Some names are used S3C_SDHCI_xxxx. but some names are used S3C64XX_SDHCI_xxxx.
+Do you know what differ them?
 
 Thanks,
-Thomas.
+Jaehoon Chung
 
->
->
+Thomas Abraham wrote:
+
+> The default controller configuration which was previously setup by
+> platform helper functions is moved into the driver.
+> 
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+>  drivers/mmc/host/sdhci-s3c.c |   28 +++++++++++++++++-----------
+>  1 files changed, 17 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> index 2bd7bf4..d891682 100644
+> --- a/drivers/mmc/host/sdhci-s3c.c
+> +++ b/drivers/mmc/host/sdhci-s3c.c
+> @@ -203,17 +203,23 @@ static void sdhci_s3c_set_clock(struct sdhci_host *host, unsigned int clock)
+>  		writel(ctrl, host->ioaddr + S3C_SDHCI_CONTROL2);
+>  	}
+>  
+> -	/* reconfigure the hardware for new clock rate */
+> -
+> -	{
+> -		struct mmc_ios ios;
+> -
+> -		ios.clock = clock;
+> -
+> -		if (ourhost->pdata->cfg_card)
+> -			(ourhost->pdata->cfg_card)(ourhost->pdev, host->ioaddr,
+> -						   &ios, NULL);
+> -	}
+> +	/* reprogram default hardware configuration */
+> +	writel(S3C64XX_SDHCI_CONTROL4_DRIVE_9mA,
+> +		host->ioaddr + S3C64XX_SDHCI_CONTROL4);
+> +
+> +	ctrl = readl(host->ioaddr + S3C_SDHCI_CONTROL2);
+> +	ctrl |= (S3C64XX_SDHCI_CTRL2_ENSTAASYNCCLR |
+> +		  S3C64XX_SDHCI_CTRL2_ENCMDCNFMSK |
+> +		  S3C_SDHCI_CTRL2_ENFBCLKRX |
+> +		  S3C_SDHCI_CTRL2_DFCNT_NONE |
+> +		  S3C_SDHCI_CTRL2_ENCLKOUTHOLD);
+> +	writel(ctrl, host->ioaddr + S3C_SDHCI_CONTROL2);
+> +
+> +	/* reconfigure the controller for new clock rate */
+> +	ctrl = (S3C_SDHCI_CTRL3_FCSEL1 | S3C_SDHCI_CTRL3_FCSEL0);
+> +	if (clock < 25 * 1000000)
+> +		ctrl |= (S3C_SDHCI_CTRL3_FCSEL3 | S3C_SDHCI_CTRL3_FCSEL2);
+> +	writel(ctrl, host->ioaddr + S3C_SDHCI_CONTROL3);
+>  }
+>  
+>  /**
+
+
