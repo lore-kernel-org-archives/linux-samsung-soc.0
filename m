@@ -1,99 +1,131 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 3/3] ARM: EXYNOS4: Add support for 8-bit bus width in SDHCI
- for ORIGEN
-Date: Mon, 05 Sep 2011 19:27:54 +0900
-Message-ID: <002801cc6bb6$79ea9b60$6dbfd220$%kim@samsung.com>
-References: <1314351524-10942-1-git-send-email-tushar.behera@linaro.org>
- <1314351524-10942-4-git-send-email-tushar.behera@linaro.org>
- <000601cc6779$7fe130b0$7fa39210$%kim@samsung.com> <4E60B715.6090801@linaro.org>
+Subject: RE: [PATCH v3] ARM: Samsung: fix watchdog reset issue with clk_get()
+Date: Mon, 05 Sep 2011 20:32:09 +0900
+Message-ID: <002f01cc6bbf$730e8a00$592b9e00$%kim@samsung.com>
+References: <1313663117-29191-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:56375 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752448Ab1IEK15 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:23370 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752162Ab1IELcM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Sep 2011 06:27:57 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Mon, 5 Sep 2011 07:32:12 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LR1004U1P1SYTF0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 05 Sep 2011 19:27:56 +0900 (KST)
-Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LR100K56P2JHS@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 05 Sep 2011 19:27:56 +0900 (KST)
-In-reply-to: <4E60B715.6090801@linaro.org>
+ 2010)) with ESMTP id <0LR100EIPS1MY9P0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 05 Sep 2011 20:32:10 +0900 (KST)
+Received: from kgenekim ([12.23.120.114])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LR1008M9S1L1K20@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Mon, 05 Sep 2011 20:32:10 +0900 (KST)
+In-reply-to: <1313663117-29191-1-git-send-email-m.szyprowski@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, patches@linaro.org
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Angus Ainslie' <angus.ainslie@linaro.org>
 
-Tushar Behera wrote:
+Marek Szyprowski wrote:
+> 
+> clkdev framework uses global mutex to protect clock tree, so it is not
+> possible to call clk_get() in interrupt context. This patch fixes this
+> issue and makes system reset by watchdog call working again.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/plat-samsung/clock.c                      |   11 +++++++++++
+>  arch/arm/plat-samsung/include/plat/clock.h         |    3 +++
+>  .../arm/plat-samsung/include/plat/watchdog-reset.h |   10 +++-------
+>  3 files changed, 17 insertions(+), 7 deletions(-)
+> 
+> 
+> history:
+> v3:
+> - moved initialization to arch_initcall, cleaned the code
+> 
+> v2:
+> - added missing '__init' section modifiers
+> 
+> diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
+> index 302c426..3b44519 100644
+> --- a/arch/arm/plat-samsung/clock.c
+> +++ b/arch/arm/plat-samsung/clock.c
+> @@ -64,6 +64,17 @@ static LIST_HEAD(clocks);
+>   */
+>  DEFINE_SPINLOCK(clocks_lock);
+> 
+> +/* Global watchdog clock used by arch_wtd_reset() callback */
+> +struct clk *s3c2410_wdtclk;
+> +static int __init s3c_wdt_reset_init(void)
+> +{
+> +	s3c2410_wdtclk = clk_get(NULL, "watchdog");
+> +	if (IS_ERR(s3c2410_wdtclk))
+> +		printk(KERN_WARNING "%s: warning: cannot get watchdog
+> clock\n", __func__);
+> +	return 0;
+> +}
+> +arch_initcall(s3c_wdt_reset_init);
+> +
+>  /* enable and disable calls for use with the clk struct */
+> 
+>  static int clk_null_enable(struct clk *clk, int enable)
+> diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-
+> samsung/include/plat/clock.h
+> index 87d5b38..8f95700 100644
+> --- a/arch/arm/plat-samsung/include/plat/clock.h
+> +++ b/arch/arm/plat-samsung/include/plat/clock.h
+> @@ -121,3 +121,6 @@ extern int s3c64xx_sclk_ctrl(struct clk *clk, int
+enable);
+> 
+>  extern void s3c_pwmclk_init(void);
+> 
+> +/* Global watchdog clock used by arch_wtd_reset() callback */
+> +
+> +extern struct clk *s3c2410_wdtclk;
+> diff --git a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
+b/arch/arm/plat-
+> samsung/include/plat/watchdog-reset.h
+> index 54b762a..40dbb2b 100644
+> --- a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
+> +++ b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
+> @@ -10,6 +10,7 @@
+>   * published by the Free Software Foundation.
+>  */
+> 
+> +#include <plat/clock.h>
+>  #include <plat/regs-watchdog.h>
+>  #include <mach/map.h>
+> 
+> @@ -19,17 +20,12 @@
+> 
+>  static inline void arch_wdt_reset(void)
+>  {
+> -	struct clk *wdtclk;
+> -
+>  	printk("arch_reset: attempting watchdog reset\n");
+> 
+>  	__raw_writel(0, S3C2410_WTCON);	  /* disable watchdog, to be safe
+*/
+> 
+> -	wdtclk = clk_get(NULL, "watchdog");
+> -	if (!IS_ERR(wdtclk)) {
+> -		clk_enable(wdtclk);
+> -	} else
+> -		printk(KERN_WARNING "%s: warning: cannot get watchdog
+> clock\n", __func__);
+> +	if (s3c2410_wdtclk)
+> +		clk_enable(s3c2410_wdtclk);
+> 
+>  	/* put initial values into count and data */
+>  	__raw_writel(0x80, S3C2410_WTCNT);
+> --
+> 1.7.1.569.g6f426
 
-> 
-> On Wednesday 31 August 2011 06:31 AM, Kukjin Kim wrote:
-> > Tushar Behera wrote:
-> >>
-> >> Platform data for SDHCI controller on ORIGEN board is missing the
-> >> support for 8-bit bus width. The platform data is extended in sync
-> >> with other EXYNOS4 machines.
-> >>
-> >> Signed-off-by: Tushar Behera<tushar.behera@linaro.org>
-> >> ---
-> >>   arch/arm/mach-exynos4/mach-origen.c |    8 ++++++++
-> >>   1 files changed, 8 insertions(+), 0 deletions(-)
-> >>
-> >> diff --git a/arch/arm/mach-exynos4/mach-origen.c
-> > b/arch/arm/mach-exynos4/mach-
-> >> origen.c
-> >> index ae18812..6b6cd77 100644
-> >> --- a/arch/arm/mach-exynos4/mach-origen.c
-> >> +++ b/arch/arm/mach-exynos4/mach-origen.c
-> >> @@ -75,11 +75,19 @@ static struct s3c2410_uartcfg origen_uartcfgs[]
-> > __initdata =
-> >> {
-> >>   static struct s3c_sdhci_platdata origen_hsmmc0_pdata __initdata = {
-> >>   	.cd_type		= S3C_SDHCI_CD_INTERNAL,
-> >>   	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
-> >> +#ifdef CONFIG_EXYNOS4_SDHCI_CH0_8BIT
-> >> +	.max_width		= 8,
-> >> +	.host_caps		= MMC_CAP_8_BIT_DATA,
-> >> +#endif
-> >>   };
-> >>
-> >>   static struct s3c_sdhci_platdata origen_hsmmc2_pdata __initdata = {
-> >>   	.cd_type		= S3C_SDHCI_CD_INTERNAL,
-> >>   	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
-> >> +#ifdef CONFIG_EXYNOS4_SDHCI_CH2_8BIT
-> >> +	.max_width		= 8,
-> >> +	.host_caps		= MMC_CAP_8_BIT_DATA,
-> >> +#endif
-> >>   };
-> >>
-> >>   static struct platform_device *origen_devices[] __initdata = {
-> >> --
-> >> 1.7.4.1
-> >
-> > Hi Tushar,
-> >
-> > I wonder the bus width of SDHCI controller can be changed manually on
-ORIGEN
-> > like SMDK board.
-> >
-> Thanks for your review.
-> 
-> On ORIGEN board, we have wire connections for HSMMC-0/2/3 between the
-> MMC port and the SoC. Hence ideally we can work with HSMMC2 in both
-> 4-bit and 8-bit mode. However HSMMC0 can only work in 4-bit mode.
-> 
-> Also IIRC WLAN would be using HSMMC-3 controller for its operations. So
-> we would have conflict when HSMMC2 is working in 8-bit mode and WLAN is
-> also enabled. Hence it appears better to drop this patch now.
-> 
-OK.
+Looks ok to me, applied.
 Thanks.
 
 Best regards,
