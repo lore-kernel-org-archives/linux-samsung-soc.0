@@ -1,62 +1,25 @@
-From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: Samsung: update/rewrite Samsung SYSMMU (IOMMU) driver
-Date: Tue, 6 Sep 2011 19:27:59 +0900
-Message-ID: <CAHQjnONHr-Ao_KLjdRKgVQQUKtOmmoyqFwdkSZCDsE6hx1q-Ug@mail.gmail.com>
-References: <1314971786-15140-1-git-send-email-m.szyprowski@samsung.com>
-	<1314971786-15140-3-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:53730 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753552Ab1IFK2B convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Sep 2011 06:28:01 -0400
-In-Reply-To: <1314971786-15140-3-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: [PATCH v2 0/2] PowerOff Notify/handle feature eMMC 4.5
+Date: Tue,  6 Sep 2011 16:29:25 +0530
+Message-ID: <1315306767-9549-1-git-send-email-girish.shivananjappa@linaro.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: cjb@laptop.org, kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Joerg Roedel <joro@8bytes.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Shariq Hasnain <shariq.hasnain@linaro.org>, Chunsang Jeong <chunsang.jeong@linaro.org>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>
 
-Hi.
+This set of patch implements the PowerOff notification feature
+for eMMC 4.5 devices.
 
-On Fri, Sep 2, 2011 at 10:56 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> + *
-> + * iova must be aligned on a 4kB, 64kB, 1MB and 16MB boundaries, res=
-pectively.
-> + */
+Girish K S (2):
+  mmc: core: Add power off notify feature(eMMC 4.5)
+  mmc: core: Add Poweroff Notify handling
 
-Actually, iova is just needed to be aligned by 4KiB because it is
-minimum requirement.
-I think IOMMU driver is capable of mapping a group of page frames that
-is aligned
-by 1MiB with an iova that is aligned by 4KB
-if the iova is large enough to map the given page frames.
+ drivers/mmc/core/core.c  |   33 +++++++++++++++++++++++++++++++++
+ drivers/mmc/core/mmc.c   |   21 +++++++++++++++++++--
+ drivers/mmc/host/sdhci.c |   10 ++++++++++
+ include/linux/mmc/card.h |   20 ++++++++++++++++++++
+ include/linux/mmc/host.h |    5 +++++
+ include/linux/mmc/mmc.h  |    7 +++++++
+ 6 files changed, 94 insertions(+), 2 deletions(-)
 
-> +static int s5p_sysmmu_map(struct iommu_domain *domain, unsigned long=
- iova,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 phys_addr_t paddr, =
-int gfp_order, int prot)
-> +{
-> + =A0 =A0 =A0 struct s5p_sysmmu_domain *s5p_domain =3D domain->priv;
-> + =A0 =A0 =A0 int flpt_idx =3D flpt_index(iova);
-> + =A0 =A0 =A0 size_t len =3D 0x1000UL << gfp_order;
-> + =A0 =A0 =A0 void *flpt_va, *slpt_va;
-> +
-> + =A0 =A0 =A0 if (len !=3D SZ_16M && len !=3D SZ_1M && len !=3D SZ_64=
-K && len !=3D SZ_4K) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 sysmmu_debug(3, "bad order: %d\n", gfp_=
-order);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
-> + =A0 =A0 =A0 }
-
-Likewise, I think this driver need to support mapping 128KiB aligned,
-128KiB physical memory, for example.
-
-Otherwise, it is somewhat restrictive than we expect.
-
-Thank you.
-
-Cho KyongHo.
