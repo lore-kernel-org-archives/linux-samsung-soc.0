@@ -1,56 +1,65 @@
-From: Ohad Ben-Cohen <ohad@wizery.com>
-Subject: Re: [Linaro-mm-sig] [PATCH 2/2] ARM: Samsung: update/rewrite Samsung
- SYSMMU (IOMMU) driver
-Date: Tue, 6 Sep 2011 15:35:48 +0300
-Message-ID: <CADMYwHzTe7WcqjCOSdgnbFsHm6gtV7Bf1154WHXiTnffGSAYRA@mail.gmail.com>
-References: <1314971786-15140-1-git-send-email-m.szyprowski@samsung.com>
- <1314971786-15140-3-git-send-email-m.szyprowski@samsung.com> <CAHQjnONHr-Ao_KLjdRKgVQQUKtOmmoyqFwdkSZCDsE6hx1q-Ug@mail.gmail.com>
+From: Jassi Brar <jaswinder.singh@linaro.org>
+Subject: Re: [PATCH v8 04/16] DMA: PL330: Remove the start operation for
+ handling DMA_TERMINATE_ALL command
+Date: Tue, 6 Sep 2011 18:10:05 +0530
+Message-ID: <CAJe_ZhfaYmgPFhU-KJ3Oj6jdPN0i584yzziSzQzd_6uNSXodHQ@mail.gmail.com>
+References: <1314924284-25554-1-git-send-email-boojin.kim@samsung.com>
+	<1314924284-25554-5-git-send-email-boojin.kim@samsung.com>
+	<CABb+yY1QN9CzT=CGJ1n-pk8_QyeEK1Sx=HT2n8SMB9O-XrsXDg@mail.gmail.com>
+	<20110906122718.GP6619@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <CAHQjnONHr-Ao_KLjdRKgVQQUKtOmmoyqFwdkSZCDsE6hx1q-Ug@mail.gmail.com>
-Sender: owner-linux-mm@kvack.org
-To: KyongHo Cho <pullip.cho@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arch@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Joerg Roedel <joro@8bytes.org>, linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, Kyungmin Park <kyungmin.park@samsung.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Chunsang Jeong <chunsang.jeong@linaro.org>, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:36283 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751956Ab1IFMkH convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 6 Sep 2011 08:40:07 -0400
+Received: by iabu26 with SMTP id u26so7528669iab.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Sep 2011 05:40:06 -0700 (PDT)
+In-Reply-To: <20110906122718.GP6619@n2100.arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Boojin Kim <boojin.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 
-On Tue, Sep 6, 2011 at 1:27 PM, KyongHo Cho <pullip.cho@samsung.com> wrote:
-> On Fri, Sep 2, 2011 at 10:56 PM, Marek Szyprowski
->> +static int s5p_sysmmu_map(struct iommu_domain *domain, unsigned long io=
-va,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 phys_addr_t paddr, int=
- gfp_order, int prot)
->> +{
->> + =A0 =A0 =A0 struct s5p_sysmmu_domain *s5p_domain =3D domain->priv;
->> + =A0 =A0 =A0 int flpt_idx =3D flpt_index(iova);
->> + =A0 =A0 =A0 size_t len =3D 0x1000UL << gfp_order;
->> + =A0 =A0 =A0 void *flpt_va, *slpt_va;
->> +
->> + =A0 =A0 =A0 if (len !=3D SZ_16M && len !=3D SZ_1M && len !=3D SZ_64K &=
-& len !=3D SZ_4K) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 sysmmu_debug(3, "bad order: %d\n", gfp_ord=
-er);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
->> + =A0 =A0 =A0 }
+On 6 September 2011 17:57, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> On Tue, Sep 06, 2011 at 05:52:19PM +0530, Jassi Brar wrote:
+>> On Fri, Sep 2, 2011 at 6:14 AM, Boojin Kim <boojin.kim@samsung.com> =
+wrote:
+>> > Origianl code carries out the start operation after flush operatio=
+n.
+>> > But start operation is not required for DMA_TERMINATE_ALL command.
+>> > So, This patch removes the unnecessary start operation and only ca=
+rries out
+>> > the flush oeration for handling DMA_TERMINATE_ALL command.
+>>
+>> Not exactly. The 'start' is impotent when called from this path beca=
+use there
+>> is nothing left queued after the call to 'flush'.
+>> pl330_tasklet() is called because that is a common function that doe=
+s the
+>> house-keeping acc to what's presently in 'work' and 'done' lists.
+>>
+>> Though as a side-effect, your patch does avoid doing callbacks on su=
+bmitted
+>> xfers during DMA_TERMINATE_ALL - which may or may not be the right t=
+hing
+>> to do.
 >
-> Likewise, I think this driver need to support mapping 128KiB aligned,
-> 128KiB physical memory, for example.
+> It is defined that DMA_TERMINATE_ALL does not call the callbacks:
 >
-> Otherwise, it is somewhat restrictive than we expect.
+> 1. int dmaengine_terminate_all(struct dma_chan *chan)
+>
+> =A0 This causes all activity for the DMA channel to be stopped, and m=
+ay
+> =A0 discard data in the DMA FIFO which hasn't been fully transferred.
+> =A0 No callback functions will be called for any incomplete transfers=
+=2E
+>
+Ok, thanks for the info.
 
-That's actually OK, because the IOMMU core will split physically
-contiguous memory regions to pages on behalf of its drivers (drivers
-will just have to advertise the page sizes their hardware supports);
-this way you don't duplicate the logic in every IOMMU driver.
-
-Take a look:
-
-http://www.spinics.net/lists/linux-omap/msg56660.html
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Boojin Kim, please re-write the changelog to state only preventing
+callbacks during DMA_TERMINATE_ALL as the reason.
