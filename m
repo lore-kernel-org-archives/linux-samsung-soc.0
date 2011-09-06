@@ -1,106 +1,81 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH 0/2] video: s3c-fb: Add window positioning support
-Date: Tue, 6 Sep 2011 19:46:28 +0530
-Message-ID: <CAEC9eQP5xnWAtNxRa=gpOiLVwENHdT0J5-iJ8ZQRVmKxVOgE7g@mail.gmail.com>
-References: <1314301917-9938-1-git-send-email-ajaykumar.rs@samsung.com>
-	<4E5FB69E.2060907@gmx.de>
+From: Mauro Carvalho Chehab <mchehab@redhat.com>
+Subject: Re: [PATCH 0/19 v4] s5p-fimc driver conversion to media controller
+ and control framework
+Date: Tue, 06 Sep 2011 17:52:14 -0300
+Message-ID: <4E6687FE.5030607@redhat.com>
+References: <1314891023-14227-1-git-send-email-s.nawrocki@samsung.com> <4E6256B2.7010407@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:56259 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752322Ab1IFOTo (ORCPT
+Received: from mx1.redhat.com ([209.132.183.28]:19530 "EHLO mx1.redhat.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754921Ab1IFUwV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Sep 2011 10:19:44 -0400
-In-Reply-To: <4E5FB69E.2060907@gmx.de>
+	Tue, 6 Sep 2011 16:52:21 -0400
+In-Reply-To: <4E6256B2.7010407@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lethal@linux-sh.org, jg1.han@samsung.com, m.szyprowski@samsung.com, ben-linux@fluff.org, banajit.g@samsung.com, Manuel Lauss <manuel.lauss@googlemail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+To: Sylwester Nawrocki <snjw23@gmail.com>
+Cc: linux-media@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
 
-Hi Florian,
+Em 03-09-2011 13:32, Sylwester Nawrocki escreveu:
+> On 09/01/2011 05:30 PM, Sylwester Nawrocki wrote:
+>> Hello,
+>>
+>> following is a fourth version of the patchset converting s5p-fimc driver
+>> to the media controller API and the new control framework.
+>>
+>> Mauro, could you please have a look at the patches and let me know of any doubts?
+>> I tried to provide possibly detailed description of what each patch does and why.
+>>
+>> The changeset is available at:
+>>    http://git.infradead.org/users/kmpark/linux-2.6-samsung
+>>    branch: v4l_fimc_for_mauro
+>>
+>> on top of patches from Marek's 'Videobuf2&  FIMC fixes" pull request
+>> which this series depends on.
+> ...
+>>
+>> Sylwester Nawrocki (19):
+>>    s5p-fimc: Remove registration of video nodes from probe()
+>>    s5p-fimc: Remove sclk_cam clock handling
+>>    s5p-fimc: Limit number of available inputs to one
+>>    s5p-fimc: Remove sensor management code from FIMC capture driver
+>>    s5p-fimc: Remove v4l2_device from video capture and m2m driver
+>>    s5p-fimc: Add the media device driver
+>>    s5p-fimc: Conversion to use struct v4l2_fh
+>>    s5p-fimc: Convert to the new control framework
+>>    s5p-fimc: Add media operations in the capture entity driver
+>>    s5p-fimc: Add PM helper function for streaming control
+>>    s5p-fimc: Correct color format enumeration
+>>    s5p-fimc: Convert to use media pipeline operations
+>>    s5p-fimc: Add subdev for the FIMC processing block
+>>    s5p-fimc: Add support for JPEG capture
+>>    s5p-fimc: Add v4l2_device notification support for single frame
+>>      capture
+>>    s5p-fimc: Use consistent names for the buffer list functions
+>>    s5p-fimc: Add runtime PM support in the camera capture driver
+>>    s5p-fimc: Correct crop offset alignment on exynos4
+>>    s5p-fimc: Remove single-planar capability flags
+> 
+> oops, I've done this posting wrong, the first patch is missing here :(
+> -> s5p-fimc: Add media entity initialization
+> 
+> Still the patch set is complete at git repository as indicated above.
+> I'm sorry for the confusion.
 
-On Thu, Sep 1, 2011 at 10:15 PM, Florian Tobias Schandinat
-<FlorianSchandinat@gmx.de> wrote:
-> Hi all,
->
-> On 08/25/2011 07:51 PM, Ajay Kumar wrote:
->> Just as a note, there are many drivers like mx3fb.c, au1200fb.c and OMAP
->> seem to be doing window/plane positioning in their driver code.
->> Is it possible to have this window positioning support at a common place?
->
-> Good point. Congratulations for figuring out that I like to standardize things.
-> But I think your suggestion is far from being enough to be useful for userspace
-> (which is our goal so that applications can be reused along drivers and don't
-> need to know about individual drivers).
+No problem. I always check from git.
 
-Thanks for considering the scenerio. Yes, you are right and we need to
-start somewhere.
+Patches applied, thanks!
+Mauro
 
-> So let me at first summarize how I understand you implemented those things after
-> having a brief look at some of the drivers:
-> Windows are rectangular screen areas whose pixel data come from other locations.
-> The other locations are accessible via other framebuffer devices (e.g. fb1). So
-> in this area the data of fb1 is shown and not the data of fb0 that would be
-> normally shown.
-
-Yes, thats right! The area not covered by the other framebuffer
-device/window (e.g. fb1) will be transparent and the framebuffer
-device/window below (e.g. fb0) will be visible.
-
-> So in addition to your proposed positioning I think we should also have the
-> following to give userspace a useful set of functionality:
->
-> - a way to discover how the screen is composited (how many windows are there,
-> how they are stacked and how to access those)
-
-This will need more discussions, as the amount of information to be
-exposed to the user-space might vary from controller-to-controller.
-
-> - a way to enable/disable windows (make them (in)visible)
-
-This is already present. Switching on/off any particular framebuffer
-device/window can be done by calling ioctl with FBIOBLANK, from user
-space.
-
-> - reporting and selecting how the window content can be mixed with the root
-> screen (overwrite, source or destination color keying)
-
-Yes, thats a good point. This can be achieved by implementing ioctl call
-
-> - things like window size and color format could be handled by the usual fb API
-> used on the window. However there might be restrictions which cause them to be
-> not 100% API compatible (for example when changing the color format if the
-> windows are required to have the same format as the root screen)
-
-This seems to be more to do with the property of the FB controller.
-Moreover, the driver can always enforce checks on such hardware
-restrictions.
-
-> - do we need to worry about hardware (up/down) scaling of the window content?
-
-The user application should take care of these functions, as this is
-directly related to the window size. (Usually these operations are
-handled by some separate hardware modules (post-processors) )
-
->
-> So is that what you need for a standardized window implementation?
-> Any additional things that were useful/needed in this context?
-> Would you consider adding support for this API in your drivers? (as
-> standardizing wouldn't be useful if nobody would implement it)
-
-Yes, having these missing features will definitely give the user much
-more control over the various available framebuffer devices/windows.
-We would like to start with the fb window re-positioning feature and
-add more features in coming days.
-
->
-> Best regards,
->
-> Florian Tobias Schandinat
->
-
-Thanks for your review and suggestions. It was very helpful.
-
-Best Regards,
-Ajay Kumar
+> 
+> -- 
+> Regards,
+> Sylwester
+> 
+> 
+> 
+> 
+> 
