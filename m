@@ -1,361 +1,106 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 2/2] input: samsung-keypad: Add device tree support
-Date: Tue, 06 Sep 2011 19:25:17 +0530
-Message-ID: <1315317317-21873-3-git-send-email-thomas.abraham@linaro.org>
-References: <1315317317-21873-1-git-send-email-thomas.abraham@linaro.org>
- <1315317317-21873-2-git-send-email-thomas.abraham@linaro.org>
-Content-Transfer-Encoding: 7BIT
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH 0/2] video: s3c-fb: Add window positioning support
+Date: Tue, 6 Sep 2011 19:46:28 +0530
+Message-ID: <CAEC9eQP5xnWAtNxRa=gpOiLVwENHdT0J5-iJ8ZQRVmKxVOgE7g@mail.gmail.com>
+References: <1314301917-9938-1-git-send-email-ajaykumar.rs@samsung.com>
+	<4E5FB69E.2060907@gmx.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:26999 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754530Ab1IFN4M (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:56259 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752322Ab1IFOTo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Sep 2011 09:56:12 -0400
-In-reply-to: <1315317317-21873-2-git-send-email-thomas.abraham@linaro.org>
+	Tue, 6 Sep 2011 10:19:44 -0400
+In-Reply-To: <4E5FB69E.2060907@gmx.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree-discuss@lists.ozlabs.org
-Cc: grant.likely@secretlab.ca, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jy0922.shim@samsung.com, dh09.lee@samsung.com
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lethal@linux-sh.org, jg1.han@samsung.com, m.szyprowski@samsung.com, ben-linux@fluff.org, banajit.g@samsung.com, Manuel Lauss <manuel.lauss@googlemail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-Add device tree based discovery support for Samsung's keypad controller.
+Hi Florian,
 
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Donghwa Lee <dh09.lee@samsung.com>
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- .../devicetree/bindings/input/samsung-keypad.txt   |   88 +++++++++++
- drivers/input/keyboard/samsung-keypad.c            |  161 +++++++++++++++++++-
- 2 files changed, 246 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/input/samsung-keypad.txt
+On Thu, Sep 1, 2011 at 10:15 PM, Florian Tobias Schandinat
+<FlorianSchandinat@gmx.de> wrote:
+> Hi all,
+>
+> On 08/25/2011 07:51 PM, Ajay Kumar wrote:
+>> Just as a note, there are many drivers like mx3fb.c, au1200fb.c and OMAP
+>> seem to be doing window/plane positioning in their driver code.
+>> Is it possible to have this window positioning support at a common place?
+>
+> Good point. Congratulations for figuring out that I like to standardize things.
+> But I think your suggestion is far from being enough to be useful for userspace
+> (which is our goal so that applications can be reused along drivers and don't
+> need to know about individual drivers).
 
-diff --git a/Documentation/devicetree/bindings/input/samsung-keypad.txt b/Documentation/devicetree/bindings/input/samsung-keypad.txt
-new file mode 100644
-index 0000000..e1c7237
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/samsung-keypad.txt
-@@ -0,0 +1,88 @@
-+* Samsung's Keypad Controller device tree bindings
-+
-+Samsung's Keypad controller is used to interface a SoC with a matrix-type
-+keypad device. The keypad controller supports multiple row and column lines.
-+A key can be placed at each intersection of a unique row and a unique column.
-+The keypad controller can sense a key-press and key-release and report the
-+event using a interrupt to the cpu.
-+
-+Required SoC Specific Properties:
-+- compatible: should be one of the following
-+  - "samsung,s3c6410-keypad": For controllers compatible with s3c6410 keypad
-+    controller.
-+  - "samsung,s5pv210-keypad": For controllers compatible with s5pv210 keypad
-+    controller.
-+
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+
-+- interrupts: The interrupt number to the cpu.
-+
-+Required Board Specific Properties:
-+- samsung,keypad-num-rows: Number of row lines connected to the keypad
-+  controller.
-+
-+- samsung,keypad-num-columns: Number of column lines connected to the
-+  keypad controller.
-+
-+- row-gpios: List of gpios used as row lines. The gpio specifier for
-+  this property depends on the gpio controller to which these row lines
-+  are connected.
-+
-+- col-gpios: List of gpios used as column lines. The gpio specifier for
-+  this property depends on the gpio controller to which these column
-+  lines are connected.
-+
-+- Keys represented as child nodes: Each key connected to the keypad
-+  controller is represented as a child node to the keypad controller
-+  device node and should include the following properties.
-+  - keypad,row: the row number to which the key is connected.
-+  - keypad,column: the column number to which the key is connected.
-+  - keypad,key-code: the key-code to be reported when the key is pressed
-+    and released.
-+
-+Optional Properties specific to linux:
-+- linux,keypad-no-autorepeat: do no enable autorepeat feature.
-+- linux,keypad-wakeup: use any event on keypad as wakeup event.
-+
-+
-+Example:
-+	keypad@100A0000 {
-+		compatible = "samsung,s5pv210-keypad";
-+		reg = <0x100A0000 0x100>;
-+		interrupts = <173>;
-+		samsung,keypad-num-rows = <2>;
-+		samsung,keypad-num-columns = <8>;
-+		linux,input-no-autorepeat;
-+		linux,input-wakeup;
-+
-+		row-gpios = <&gpx2 0 3 3 0
-+			     &gpx2 1 3 3 0>;
-+
-+		col-gpios = <&gpx1 0 3 0 0
-+			     &gpx1 1 3 0 0
-+			     &gpx1 2 3 0 0
-+			     &gpx1 3 3 0 0
-+			     &gpx1 4 3 0 0
-+			     &gpx1 5 3 0 0
-+			     &gpx1 6 3 0 0
-+			     &gpx1 7 3 0 0>;
-+
-+		key_1 {
-+			keypad,row = <0>;
-+			keypad,column = <3>;
-+			keypad,key-code = <2>;
-+		};
-+
-+		key_2 {
-+			keypad,row = <0>;
-+			keypad,column = <4>;
-+			keypad,key-code = <3>;
-+		};
-+
-+		key_3 {
-+			keypad,row = <0>;
-+			keypad,column = <5>;
-+			keypad,key-code = <4>;
-+		};
-+	};
-diff --git a/drivers/input/keyboard/samsung-keypad.c b/drivers/input/keyboard/samsung-keypad.c
-index f689f49..29f0a23 100644
---- a/drivers/input/keyboard/samsung-keypad.c
-+++ b/drivers/input/keyboard/samsung-keypad.c
-@@ -21,6 +21,8 @@
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-+#include <linux/of.h>
-+#include <linux/of_gpio.h>
- #include <linux/sched.h>
- #include <plat/keypad.h>
- 
-@@ -72,15 +74,24 @@ struct samsung_keypad {
- 	unsigned int rows;
- 	unsigned int cols;
- 	unsigned int row_state[SAMSUNG_MAX_COLS];
-+#ifdef CONFIG_OF
-+	int row_gpios[SAMSUNG_MAX_ROWS];
-+	int col_gpios[SAMSUNG_MAX_COLS];
-+#endif
- 	unsigned short keycodes[];
- };
- 
- static int samsung_keypad_is_s5pv210(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
--	enum samsung_keypad_type type =
--		platform_get_device_id(pdev)->driver_data;
-+	enum samsung_keypad_type type;
- 
-+#ifdef CONFIG_OF
-+	if (dev->of_node)
-+		return of_device_is_compatible(dev->of_node,
-+				"samsung,s5pv210-keypad");
-+#endif
-+	type = platform_get_device_id(pdev)->driver_data;
- 	return type == KEYPAD_TYPE_S5PV210;
- }
- 
-@@ -235,6 +246,130 @@ static void samsung_keypad_close(struct input_dev *input_dev)
- 	samsung_keypad_stop(keypad);
- }
- 
-+#ifdef CONFIG_OF
-+static
-+struct samsung_keypad_platdata *samsung_keypad_parse_dt(struct device *dev)
-+{
-+	struct samsung_keypad_platdata *pdata;
-+	struct matrix_keymap_data *keymap_data;
-+	uint32_t *keymap;
-+	struct device_node *np = dev->of_node, *key_np;
-+	unsigned int key_count = 0;
-+
-+	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-+	if (!pdata) {
-+		dev_err(dev, "could not allocate memory for platform data\n");
-+		return NULL;
-+	}
-+
-+	of_property_read_u32(np, "samsung,keypad-num-rows", &pdata->rows);
-+	of_property_read_u32(np, "samsung,keypad-num-columns", &pdata->cols);
-+	if (!pdata->rows || !pdata->cols) {
-+		dev_err(dev, "number of keypad rows/columns not specified\n");
-+		return NULL;
-+	}
-+
-+	keymap_data = devm_kzalloc(dev, sizeof(*keymap_data), GFP_KERNEL);
-+	if (!keymap_data) {
-+		dev_err(dev, "could not allocate memory for keymap data\n");
-+		return NULL;
-+	}
-+	pdata->keymap_data = keymap_data;
-+
-+	for_each_child_of_node(np, key_np)
-+		key_count++;
-+
-+	keymap_data->keymap_size = key_count;
-+	keymap = devm_kzalloc(dev, sizeof(uint32_t) * key_count, GFP_KERNEL);
-+	if (!keymap) {
-+		dev_err(dev, "could not allocate memory for keymap\n");
-+		return NULL;
-+	}
-+	keymap_data->keymap = keymap;
-+
-+	for_each_child_of_node(np, key_np) {
-+		unsigned int row, col, key_code;
-+		of_property_read_u32(key_np, "keypad,row", &row);
-+		of_property_read_u32(key_np, "keypad,column", &col);
-+		of_property_read_u32(key_np, "keypad,key-code", &key_code);
-+		*keymap++ = KEY(row, col, key_code);
-+	}
-+
-+	if (of_get_property(np, "linux,input-no-autorepeat", NULL))
-+		pdata->no_autorepeat = true;
-+	if (of_get_property(np, "linux,input-wakeup", NULL))
-+		pdata->wakeup = true;
-+
-+	return pdata;
-+}
-+
-+static void samsung_keypad_parse_dt_gpio(struct device *dev,
-+				struct samsung_keypad *keypad)
-+{
-+	struct device_node *np = dev->of_node;
-+	int gpio, ret, row, col;
-+
-+	for (row = 0; row < keypad->rows; row++) {
-+		gpio = of_get_named_gpio(np, "row-gpios", row);
-+		keypad->row_gpios[row] = gpio;
-+		if (!gpio_is_valid(gpio)) {
-+			dev_err(dev, "keypad row[%d]: invalid gpio %d\n",
-+					row, gpio);
-+			continue;
-+		}
-+
-+		ret = gpio_request(gpio, "keypad-row");
-+		if (ret)
-+			dev_err(dev, "keypad row[%d] gpio request failed\n",
-+					row);
-+	}
-+
-+	for (col = 0; col < keypad->cols; col++) {
-+		gpio = of_get_named_gpio(np, "col-gpios", col);
-+		keypad->col_gpios[col] = gpio;
-+		if (!gpio_is_valid(gpio)) {
-+			dev_err(dev, "keypad column[%d]: invalid gpio %d\n",
-+					col, gpio);
-+			continue;
-+		}
-+
-+		ret = gpio_request(col, "keypad-col");
-+		if (ret)
-+			dev_err(dev, "keypad column[%d] gpio request failed\n",
-+					col);
-+	}
-+}
-+
-+static void samsung_keypad_dt_gpio_free(struct samsung_keypad *keypad)
-+{
-+	int cnt;
-+
-+	for (cnt = 0; cnt < keypad->rows; cnt++)
-+		if (gpio_is_valid(keypad->row_gpios[cnt]))
-+			gpio_free(keypad->row_gpios[cnt]);
-+
-+	for (cnt = 0; cnt < keypad->cols; cnt++)
-+		if (gpio_is_valid(keypad->col_gpios[cnt]))
-+			gpio_free(keypad->col_gpios[cnt]);
-+}
-+#else
-+static
-+struct samsung_keypad_platdata *samsung_keypad_parse_dt(struct device *dev)
-+{
-+	return NULL;
-+}
-+
-+static void samsung_keypad_parse_dt_gpio(struct device_node *np,
-+		struct samsung_keypad *keypad, unsigned int rows,
-+		unsigned int cols)
-+{
-+}
-+
-+static void samsung_keypad_dt_gpio_free(struct samsung_keypad *keypad)
-+{
-+}
-+#endif
-+
- static int __devinit samsung_keypad_probe(struct platform_device *pdev)
- {
- 	const struct samsung_keypad_platdata *pdata;
-@@ -246,7 +381,10 @@ static int __devinit samsung_keypad_probe(struct platform_device *pdev)
- 	unsigned int keymap_size;
- 	int error;
- 
--	pdata = pdev->dev.platform_data;
-+	if (pdev->dev.of_node)
-+		pdata = samsung_keypad_parse_dt(&pdev->dev);
-+	else
-+		pdata = pdev->dev.platform_data;
- 	if (!pdata) {
- 		dev_err(&pdev->dev, "no platform data defined\n");
- 		return -EINVAL;
-@@ -303,6 +441,9 @@ static int __devinit samsung_keypad_probe(struct platform_device *pdev)
- 	keypad->cols = pdata->cols;
- 	init_waitqueue_head(&keypad->wait);
- 
-+	if (pdev->dev.of_node)
-+		samsung_keypad_parse_dt_gpio(&pdev->dev, keypad);
-+
- 	input_dev->name = pdev->name;
- 	input_dev->id.bustype = BUS_HOST;
- 	input_dev->dev.parent = &pdev->dev;
-@@ -349,6 +490,7 @@ err_free_irq:
- 	free_irq(keypad->irq, keypad);
- err_put_clk:
- 	clk_put(keypad->clk);
-+	samsung_keypad_dt_gpio_free(keypad);
- err_unmap_base:
- 	iounmap(keypad->base);
- err_free_mem:
-@@ -374,6 +516,7 @@ static int __devexit samsung_keypad_remove(struct platform_device *pdev)
- 	free_irq(keypad->irq, keypad);
- 
- 	clk_put(keypad->clk);
-+	samsung_keypad_dt_gpio_free(keypad);
- 
- 	iounmap(keypad->base);
- 	kfree(keypad);
-@@ -447,6 +590,17 @@ static const struct dev_pm_ops samsung_keypad_pm_ops = {
- };
- #endif
- 
-+#ifdef CONFIG_OF
-+static const struct of_device_id samsung_keypad_dt_match[] = {
-+	{ .compatible = "samsung,s3c6410-keypad" },
-+	{ .compatible = "samsung,s5pv210-keypad" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, samsung_keypad_dt_match);
-+#else
-+#define samsung_keypad_dt_match NULL
-+#endif
-+
- static struct platform_device_id samsung_keypad_driver_ids[] = {
- 	{
- 		.name		= "samsung-keypad",
-@@ -465,6 +619,7 @@ static struct platform_driver samsung_keypad_driver = {
- 	.driver		= {
- 		.name	= "samsung-keypad",
- 		.owner	= THIS_MODULE,
-+		.of_match_table = samsung_keypad_dt_match,
- #ifdef CONFIG_PM
- 		.pm	= &samsung_keypad_pm_ops,
- #endif
--- 
-1.6.6.rc2
+Thanks for considering the scenerio. Yes, you are right and we need to
+start somewhere.
+
+> So let me at first summarize how I understand you implemented those things after
+> having a brief look at some of the drivers:
+> Windows are rectangular screen areas whose pixel data come from other locations.
+> The other locations are accessible via other framebuffer devices (e.g. fb1). So
+> in this area the data of fb1 is shown and not the data of fb0 that would be
+> normally shown.
+
+Yes, thats right! The area not covered by the other framebuffer
+device/window (e.g. fb1) will be transparent and the framebuffer
+device/window below (e.g. fb0) will be visible.
+
+> So in addition to your proposed positioning I think we should also have the
+> following to give userspace a useful set of functionality:
+>
+> - a way to discover how the screen is composited (how many windows are there,
+> how they are stacked and how to access those)
+
+This will need more discussions, as the amount of information to be
+exposed to the user-space might vary from controller-to-controller.
+
+> - a way to enable/disable windows (make them (in)visible)
+
+This is already present. Switching on/off any particular framebuffer
+device/window can be done by calling ioctl with FBIOBLANK, from user
+space.
+
+> - reporting and selecting how the window content can be mixed with the root
+> screen (overwrite, source or destination color keying)
+
+Yes, thats a good point. This can be achieved by implementing ioctl call
+
+> - things like window size and color format could be handled by the usual fb API
+> used on the window. However there might be restrictions which cause them to be
+> not 100% API compatible (for example when changing the color format if the
+> windows are required to have the same format as the root screen)
+
+This seems to be more to do with the property of the FB controller.
+Moreover, the driver can always enforce checks on such hardware
+restrictions.
+
+> - do we need to worry about hardware (up/down) scaling of the window content?
+
+The user application should take care of these functions, as this is
+directly related to the window size. (Usually these operations are
+handled by some separate hardware modules (post-processors) )
+
+>
+> So is that what you need for a standardized window implementation?
+> Any additional things that were useful/needed in this context?
+> Would you consider adding support for this API in your drivers? (as
+> standardizing wouldn't be useful if nobody would implement it)
+
+Yes, having these missing features will definitely give the user much
+more control over the various available framebuffer devices/windows.
+We would like to start with the fb window re-positioning feature and
+add more features in coming days.
+
+>
+> Best regards,
+>
+> Florian Tobias Schandinat
+>
+
+Thanks for your review and suggestions. It was very helpful.
+
+Best Regards,
+Ajay Kumar
