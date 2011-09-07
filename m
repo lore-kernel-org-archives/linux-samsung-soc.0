@@ -1,66 +1,145 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 2/5] ARM: SAMSUNG: Make the sleep code common for
-	S3C64XX and newer SoCs
-Date: Wed, 7 Sep 2011 10:55:13 +0100
-Message-ID: <20110907095513.GQ6619@n2100.arm.linux.org.uk>
-References: <1313144787-30666-1-git-send-email-a.kesavan@samsung.com>
-	<1313144787-30666-3-git-send-email-a.kesavan@samsung.com>
+From: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH] ARM: EXYNOS4: Add machine support for 7" LCD on ORIGEN
+Date: Wed,  7 Sep 2011 16:17:36 +0530
+Message-ID: <1315392456-29293-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1313144787-30666-3-git-send-email-a.kesavan@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Abhilash Kesavan <a.kesavan@samsung.com>
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
+List-Unsubscribe: <http://lists.linaro.org/mailman/options/linaro-dev>,
+	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linaro.org/pipermail/linaro-dev>
+List-Post: <mailto:linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
+List-Help: <mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.linaro.org/mailman/listinfo/linaro-dev>,
+	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=subscribe>
+Sender: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+Errors-To: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Aug 12, 2011 at 03:56:24PM +0530, Abhilash Kesavan wrote:
-> +ENTRY(s3c_cpu_resume)
-> +#if defined(CONFIG_S3C_PM_DEBUG_LED_SMDK)
-> +
-> +#undef S3C64XX_VA_GPIO
-> +#define S3C64XX_VA_GPIO (0x0)
-> +#define S3C64XX_GPNCON			(S3C64XX_GPN_BASE + 0x00)
-> +#define S3C64XX_GPNDAT			(S3C64XX_GPN_BASE + 0x04)
-> +
-> +#define S3C64XX_GPN_CONMASK(__gpio)	(0x3 << ((__gpio) * 2))
-> +#define S3C64XX_GPN_OUTPUT(__gpio)	(0x1 << ((__gpio) * 2))
-> +
-> +	/* Initialise the GPIO state if we are debugging via the SMDK LEDs,
-> +	 * as the uboot version supplied resets these to inputs during the
-> +	 * resume checks.
-> +	*/
-> +
-> +	ldr	r3, =S3C64XX_PA_GPIO
-> +	ldr	r0, [ r3, #S3C64XX_GPNCON ]
-> +	bic	r0, r0, #(S3C64XX_GPN_CONMASK(12) | S3C64XX_GPN_CONMASK(13) | \
-> +			  S3C64XX_GPN_CONMASK(14) | S3C64XX_GPN_CONMASK(15))
-> +	orr	r0, r0, #(S3C64XX_GPN_OUTPUT(12) | S3C64XX_GPN_OUTPUT(13) | \
-> +			  S3C64XX_GPN_OUTPUT(14) | S3C64XX_GPN_OUTPUT(15))
-> +	str	r0, [ r3, #S3C64XX_GPNCON ]
-> +
-> +	ldr	r0, [ r3, #S3C64XX_GPNDAT ]
-> +	bic	r0, r0, #0xf << 12			@ GPN12..15
-> +	orr	r0, r0, #1 << 15			@ GPN15
-> +	str	r0, [ r3, #S3C64XX_GPNDAT ]
-> +#endif
+ORIGEN board is fitted with 7" LCD panel HV070WSA. The pixel
+resolution of the LCD panel is 1024x600.
 
-This is incompatible with the aim of a single kernel booting on many ARM
-platforms.
+Signed-off-by: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+---
+The patch is rebased on [1]. But for proper working of LCD on ORIGEN,
+following patches are needed.
 
-Rather than consolidating down to just one implementation, how about
-consolidating to two - one for everything but SMDK, and one for the SMDK
-with the LED stuff.  You can then chose which you want - either the
-s3c_generic_resume (which is just the magic code plus the branch)
-or s3c_smdk_leds_resume (which would be the magic code plus the LEDS
-stuff plus the branch.)
+a. ARM: EXYNOS4: Add PWM backlight support on Origen
+http://www.spinics.net/lists/linux-samsung-soc/msg06309.html
+
+b. ARM: EXYNOS4: Configure MAX8997 PMIC for Origen
+http://www.spinics.net/lists/linux-samsung-soc/msg06282.html
+
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+
+ arch/arm/mach-exynos4/Kconfig       |    2 +
+ arch/arm/mach-exynos4/mach-origen.c |   50 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 52 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index 48f18f7..8656f49 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -222,6 +222,8 @@ config MACH_ORIGEN
+ 	select S3C_DEV_RTC
+ 	select S3C_DEV_WDT
+ 	select S3C_DEV_HSMMC2
++	select S5P_DEV_FIMD0
++	select EXYNOS4_SETUP_FIMD0
+ 	select EXYNOS4_SETUP_SDHCI
+ 	help
+ 	  Machine support for ORIGEN based on Samsung EXYNOS4210
+diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
+index ed59f86..f2cea78 100644
+--- a/arch/arm/mach-exynos4/mach-origen.c
++++ b/arch/arm/mach-exynos4/mach-origen.c
+@@ -14,16 +14,21 @@
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/input.h>
++#include <linux/lcd.h>
++
++#include <video/platform_lcd.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach-types.h>
+ 
+ #include <plat/regs-serial.h>
++#include <plat/regs-fb-v4.h>
+ #include <plat/exynos4.h>
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+ #include <plat/sdhci.h>
+ #include <plat/iic.h>
++#include <plat/fb.h>
+ 
+ #include <mach/map.h>
+ 
+@@ -79,10 +84,54 @@ static struct s3c_sdhci_platdata origen_hsmmc2_pdata __initdata = {
+ 	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
+ };
+ 
++static void lcd_hv070wsa_set_power(struct plat_lcd_data *pd, unsigned int power)
++{
++	int gpio = EXYNOS4_GPE3(4);
++
++	gpio_request(gpio, "GPE3_4");
++	gpio_direction_output(gpio, power);
++	gpio_free(gpio);
++}
++
++static struct plat_lcd_data origen_lcd_hv070wsa_data = {
++	.set_power = lcd_hv070wsa_set_power,
++};
++
++static struct platform_device origen_lcd_hv070wsa = {
++	.name			= "platform-lcd",
++	.dev.parent		= &s5p_device_fimd0.dev,
++	.dev.platform_data	= &origen_lcd_hv070wsa_data,
++};
++
++static struct s3c_fb_pd_win origen_fb_win0 = {
++	.win_mode = {
++		.left_margin	= 64,
++		.right_margin	= 16,
++		.upper_margin	= 64,
++		.lower_margin	= 16,
++		.hsync_len	= 48,
++		.vsync_len	= 3,
++		.xres		= 1024,
++		.yres		= 600,
++		.refresh	= 60,
++	},
++	.max_bpp		= 32,
++	.default_bpp		= 24,
++};
++
++static struct s3c_fb_platdata origen_lcd_pdata __initdata = {
++	.win[0]		= &origen_fb_win0,
++	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
++	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
++	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
++};
++
+ static struct platform_device *origen_devices[] __initdata = {
+ 	&s3c_device_hsmmc2,
+ 	&s3c_device_rtc,
+ 	&s3c_device_wdt,
++	&s5p_device_fimd0,
++	&origen_lcd_hv070wsa,
+ };
+ 
+ static void __init origen_map_io(void)
+@@ -95,6 +144,7 @@ static void __init origen_map_io(void)
+ static void __init origen_machine_init(void)
+ {
+ 	s3c_sdhci2_set_platdata(&origen_hsmmc2_pdata);
++	s5p_fimd0_set_platdata(&origen_lcd_pdata);
+ 	platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
+ }
+ 
+-- 
+1.7.4.1
