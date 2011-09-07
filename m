@@ -1,15 +1,14 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/3] ARM: SAMSUNG: register the second instance of PL330
-	DMAC
-Date: Wed, 07 Sep 2011 16:25:30 +0900
-Message-ID: <000d01cc6d2f$52bc1490$f8343db0$%kim@samsung.com>
-References: <1313553969-14639-1-git-send-email-alim.akhtar@samsung.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 0/2] video: s3c-fb: Add window positioning support
+Date: Wed, 7 Sep 2011 17:31:00 +0200
+Message-ID: <201109071731.02293.laurent.pinchart@ideasonboard.com>
+References: <1314301917-9938-1-git-send-email-ajaykumar.rs@samsung.com>
+	<4E5FB69E.2060907@gmx.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1313553969-14639-1-git-send-email-alim.akhtar@samsung.com>
-Content-language: ko
+In-Reply-To: <4E5FB69E.2060907@gmx.de>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
 	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,41 +18,78 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: linux-arm-kernel-bounces@lists.infradead.org
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'alim akhtar' <alim.akhtar@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, boojin.kim@samsung.com
+To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, banajit.g@samsung.com, Tomi Valkeinen <tomi.valkeinen@ti.com>, jg1.han@samsung.com, Manuel Lauss <manuel.lauss@googlemail.com>, lethal@linux-sh.org, ben-linux@fluff.org, Sakari Ailus <sakari.ailus@maxwell.research.nokia.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, Ajay Kumar <ajaykumar.rs@samsung.com>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-alim akhtar wrote:
-> 
-> From: Alim Akhtar <alim.akhtar@samsung.com>
-> 
-> Two instance of platform data is provided for PL330 but only one PL330
-DMAC
-> instance is registered with amba_device.
-> These patch sets registers the second instance with amba_device.
-> 
-> These patches are based on kgene's tree next/topic-dma-pl330 branch.
->
-http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git;;a=summary
-> 
-> Alim Akhtar (3):
->   ARM: EXYNOS4: register the second instance of pl330 DMAC
->   ARM: S5PV210: register the second instance of pl330 DMAC
->   ARM: S5PC100: register the second instance of pl330 DMAC
-> 
->  arch/arm/mach-exynos4/dma.c |    1 +
->  arch/arm/mach-s5pc100/dma.c |    1 +
->  arch/arm/mach-s5pv210/dma.c |    1 +
->  3 files changed, 3 insertions(+), 0 deletions(-)
-> 
-> --
-> 1.7.2.3
+Hi Florian,
 
-Looks ok to me, will apply whole series.
-Thanks.
+On Thursday 01 September 2011 18:45:18 Florian Tobias Schandinat wrote:
+> Hi all,
+> 
+> On 08/25/2011 07:51 PM, Ajay Kumar wrote:
+> > Just as a note, there are many drivers like mx3fb.c, au1200fb.c and OMAP
+> > seem to be doing window/plane positioning in their driver code.
+> > Is it possible to have this window positioning support at a common place?
+> 
+> Good point. Congratulations for figuring out that I like to standardize
+> things. But I think your suggestion is far from being enough to be useful
+> for userspace (which is our goal so that applications can be reused along
+> drivers and don't need to know about individual drivers).
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Beside standardizing things, do you also like to take them one level higher to 
+solve challenging issues ? I know the answer must be yes :-)
+
+The problem at hand here is something we have solved in V4L2 (theoretically 
+only for part of it) with the media controller API, the V4L2 subdevs and their 
+pad-level format API.
+
+In a nutshell, the media controller lets drivers model hardware as a graph of 
+buliding blocks connected through their pads and expose that description to 
+userspace applications. In V4L2 most of those blocks are V4L2 subdevs, which 
+are abstract building blocks that implement sets of standard operations. Those 
+operations are exposed to userspace through the V4L2 subdevs pad-level format 
+API, allowing application to configure sizes and selection rectangles at all 
+pads in the graph. Selection rectangles can be used to configure cropping and 
+composing, which is exactly what the window positioning API needs to do.
+
+Instead of creating a new fbdev-specific API to do the same, shouldn't we try 
+to join forces ?
+
+> So let me at first summarize how I understand you implemented those things
+> after having a brief look at some of the drivers:
+> Windows are rectangular screen areas whose pixel data come from other
+> locations. The other locations are accessible via other framebuffer
+> devices (e.g. fb1). So in this area the data of fb1 is shown and not the
+> data of fb0 that would be normally shown.
+> 
+> So in addition to your proposed positioning I think we should also have the
+> following to give userspace a useful set of functionality:
+> 
+> - a way to discover how the screen is composited (how many windows are
+> there, how they are stacked and how to access those)
+> 
+> - a way to enable/disable windows (make them (in)visible)
+> 
+> - reporting and selecting how the window content can be mixed with the root
+> screen (overwrite, source or destination color keying)
+> 
+> - things like window size and color format could be handled by the usual fb
+> API used on the window. However there might be restrictions which cause
+> them to be not 100% API compatible (for example when changing the color
+> format if the windows are required to have the same format as the root
+> screen)
+> 
+> - do we need to worry about hardware (up/down) scaling of the window
+> content?
+> 
+> 
+> So is that what you need for a standardized window implementation?
+> Any additional things that were useful/needed in this context?
+> Would you consider adding support for this API in your drivers? (as
+> standardizing wouldn't be useful if nobody would implement it)
+
+-- 
+Regards,
+
+Laurent Pinchart
