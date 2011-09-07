@@ -1,74 +1,198 @@
-From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH] ARM: EXYNOS4: Add HDMI support for Origen
-Date: Wed,  7 Sep 2011 16:24:38 +0530
-Message-ID: <1315392878-4267-1-git-send-email-sachin.kamat@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH V3 4/7] ARM: S5P64X0: Add GPIO and SPCON settings for LCD
+Date: Wed, 07 Sep 2011 16:06:50 +0900
+Message-ID: <000901cc6d2c$b723d830$256b8890$%kim@samsung.com>
+References: <1311787878-16193-1-git-send-email-ajaykumar.rs@samsung.com>
+	<1311787878-16193-5-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
-List-Unsubscribe: <http://lists.linaro.org/mailman/options/linaro-dev>,
-	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/linaro-dev>
-List-Post: <mailto:linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
-List-Help: <mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.linaro.org/mailman/listinfo/linaro-dev>,
-	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=subscribe>
-Sender: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-Errors-To: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1311787878-16193-5-git-send-email-ajaykumar.rs@samsung.com>
+Content-language: ko
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Ajay Kumar' <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds HDMI (TVout) support for Origen board.
+Ajay Kumar wrote:
+> 
+> This patch adds:
+> 	-- GPIO lines settings(HSYNC, VSYNC, VCLK and VD) for LCD.
+> 	-- Function to select LCD interface (RGB/i80)
+> 
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+>  arch/arm/mach-s5p64x0/Kconfig                  |    6 +++
+>  arch/arm/mach-s5p64x0/Makefile                 |    1 +
+>  arch/arm/mach-s5p64x0/include/mach/regs-gpio.h |    4 ++
+>  arch/arm/mach-s5p64x0/setup-fb.c               |   48
+> ++++++++++++++++++++++++
+>  arch/arm/plat-samsung/include/plat/fb.h        |   14 +++++++
+>  5 files changed, 73 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm/mach-s5p64x0/setup-fb.c
+> 
+> diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
+> index 65c7518..4fee745 100644
+> --- a/arch/arm/mach-s5p64x0/Kconfig
+> +++ b/arch/arm/mach-s5p64x0/Kconfig
+> @@ -21,6 +21,12 @@ config CPU_S5P6450
+>  	help
+>  	  Enable S5P6450 CPU support
+> 
+> +config S5P64X0_SETUP_FB
 
-This patch is based on for-next branch of Kukjin Kim's tree: 
-http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git;a=summary
+How about to use S5P64X0_SETUP_FB_24BPP like others?
 
-This patch is tested using Hatim's patch: 
-http://www.spinics.net/lists/linux-samsung-soc/msg06367.html
+> +	bool
+> +	help
+> +	  Common setup code for S5P64X0 based boards with a LCD display
+> +	  through RGB interface.
+> +
+>  config S5P64X0_SETUP_I2C1
+>  	bool
+>  	help
+> diff --git a/arch/arm/mach-s5p64x0/Makefile
+b/arch/arm/mach-s5p64x0/Makefile
+> index 5f6afdf..487d179 100644
+> --- a/arch/arm/mach-s5p64x0/Makefile
+> +++ b/arch/arm/mach-s5p64x0/Makefile
+> @@ -28,3 +28,4 @@ obj-y				+= dev-audio.o
+>  obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
+> 
+>  obj-$(CONFIG_S5P64X0_SETUP_I2C1)	+= setup-i2c1.o
+> +obj-$(CONFIG_S5P64X0_SETUP_FB)		+= setup-fb.o
+> diff --git a/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
+b/arch/arm/mach-
+> s5p64x0/include/mach/regs-gpio.h
+> index 6ce2547..34d4412 100644
+> --- a/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
+> +++ b/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
+> @@ -44,4 +44,8 @@
+>  #define S5P64X0_EINT0MASK		(S5P_VA_GPIO +
+> EINT0MASK_OFFSET)
+>  #define S5P64X0_EINT0PEND		(S5P_VA_GPIO +
+> EINT0PEND_OFFSET)
+> 
+> +#define S5P64X0_SPCON0			(S5P_VA_GPIO + 0x1A0)
+> +#define S5P64X0_SPCON0_LCD_SEL_MASK	(0x3 << 0)
+> +#define S5P64X0_SPCON0_LCD_SEL_RGB	(0x1 << 0)
 
-Signed-off-by: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
- arch/arm/mach-exynos4/Kconfig       |    2 ++
- arch/arm/mach-exynos4/mach-origen.c |    4 ++++
- 2 files changed, 6 insertions(+), 0 deletions(-)
+I can't find where 'xxx_LCD_SEL_RGB' is used...of course, it can be used
+later.
+But please don't add definition which is not used now.
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index 181fb04..4f908f7 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -225,6 +225,8 @@ config MACH_ORIGEN
- 	select S3C_DEV_WDT
- 	select S3C_DEV_HSMMC2
- 	select EXYNOS4_SETUP_SDHCI
-+	select S5P_DEV_I2C_HDMIPHY
-+	select S5P_DEV_TV
- 	help
- 	  Machine support for ORIGEN based on Samsung EXYNOS4210
- 
-diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
-index ed59f86..6ec68ee 100644
---- a/arch/arm/mach-exynos4/mach-origen.c
-+++ b/arch/arm/mach-exynos4/mach-origen.c
-@@ -81,8 +81,11 @@ static struct s3c_sdhci_platdata origen_hsmmc2_pdata __initdata = {
- 
- static struct platform_device *origen_devices[] __initdata = {
- 	&s3c_device_hsmmc2,
-+	&s5p_device_i2c_hdmiphy,
- 	&s3c_device_rtc,
- 	&s3c_device_wdt,
-+	&s5p_device_hdmi,
-+	&s5p_device_mixer,
- };
- 
- static void __init origen_map_io(void)
-@@ -95,6 +98,7 @@ static void __init origen_map_io(void)
- static void __init origen_machine_init(void)
- {
- 	s3c_sdhci2_set_platdata(&origen_hsmmc2_pdata);
-+	s5p_i2c_hdmiphy_set_platdata(NULL);
- 	platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
- }
- 
--- 
-1.7.4.1
+> +
+>  #endif /* __ASM_ARCH_REGS_GPIO_H */
+> diff --git a/arch/arm/mach-s5p64x0/setup-fb.c
+b/arch/arm/mach-s5p64x0/setup-fb.c
+> new file mode 100644
+> index 0000000..0d9903a
+> --- /dev/null
+> +++ b/arch/arm/mach-s5p64x0/setup-fb.c
+
+arch/arm/mach-s5p64x0/setup-fb-24bpp.c?
+
+And if required, we can change it later with others next time...
+
+> @@ -0,0 +1,48 @@
+> +/* linux/arch/arm/mach-s5p64x0/setup-fb.c
+> + *
+> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+> + *         http://www.samsung.com/
+> + *
+> + * Base S5P64X0 GPIO setup information for LCD framebuffer
+> + *
+> + * GPIO settings for LCD on any other board based on s5p64x0
+> + * should go in this file.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#include <linux/fb.h>
+> +#include <linux/gpio.h>
+> +
+> +#include <plat/fb.h>
+> +#include <plat/gpio-cfg.h>
+> +
+> +#include <mach/regs-clock.h>
+> +#include <mach/regs-gpio.h>
+> +
+> +void s5p64x0_fb_init(int lcd_interface_type)
+> +{
+> +	unsigned int cfg;
+> +
+> +	/* select TFT LCD type (RGB I/F) */
+> +	cfg = __raw_readl(S5P64X0_SPCON0);
+> +	cfg &= ~S5P64X0_SPCON0_LCD_SEL_MASK;
+> +	cfg |= lcd_interface_type;
+> +	__raw_writel(cfg, S5P64X0_SPCON0);
+
+Hmm...how about to move above into its board file? So we don't need to get
+the argument, lcd_interface_type...
+
+> +}
+> +
+> +void s5p64x0_fb_gpio_setup_24bpp(void)
+> +{
+> +	unsigned int chipid;
+> +
+> +	chipid = __raw_readl(S5P64X0_SYS_ID) & 0xf0000;
+
+You can use soc_is_xxx() here instead of checking of CPUID directly.
+
+> +	if (chipid == 0x40000) {
+> +		s3c_gpio_cfgrange_nopull(S5P6440_GPI(0), 16,
+> S3C_GPIO_SFN(2));
+> +		s3c_gpio_cfgrange_nopull(S5P6440_GPJ(0), 12,
+> S3C_GPIO_SFN(2));
+> +	} else if (chipid == 0x50000) {
+> +		s3c_gpio_cfgrange_nopull(S5P6450_GPI(0), 16,
+> S3C_GPIO_SFN(2));
+> +		s3c_gpio_cfgrange_nopull(S5P6450_GPJ(0), 12,
+> S3C_GPIO_SFN(2));
+> +	}
+> +}
+> diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/plat-
+> samsung/include/plat/fb.h
+> index 01f10e4..bd79c0a 100644
+> --- a/arch/arm/plat-samsung/include/plat/fb.h
+> +++ b/arch/arm/plat-samsung/include/plat/fb.h
+> @@ -109,4 +109,18 @@ extern void s5pv210_fb_gpio_setup_24bpp(void);
+>   */
+>  extern void exynos4_fimd0_gpio_setup_24bpp(void);
+> 
+> +/**
+> + * s5p64x0_fb_init() - Common setup function for LCD
+> + *
+> + * Select LCD I/F configuration-RGB style or i80 style
+> + */
+> +extern void s5p64x0_fb_init(int lcd_interface_type);
+> +
+> +/**
+> + * s5p64x0_fb_gpio_setup_24bpp() - Common GPIO setup function for LCD
+> + *
+> + * Initialise the GPIO for a LCD display on the RGB interface.
+> + */
+> +extern void s5p64x0_fb_gpio_setup_24bpp(void);
+> +
+>  #endif /* __PLAT_S3C_FB_H */
+> --
+> 1.7.0.4
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
