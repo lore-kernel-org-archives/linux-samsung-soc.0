@@ -1,7 +1,7 @@
-From: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH] ARM: EXYNOS4: Add machine support for 7" LCD on ORIGEN
-Date: Wed,  7 Sep 2011 16:17:36 +0530
-Message-ID: <1315392456-29293-1-git-send-email-tushar.behera@linaro.org>
+From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH] ARM: EXYNOS4: Add HDMI support for Origen
+Date: Wed,  7 Sep 2011 16:24:38 +0530
+Message-ID: <1315392878-4267-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -19,125 +19,54 @@ To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-ORIGEN board is fitted with 7" LCD panel HV070WSA. The pixel
-resolution of the LCD panel is 1024x600.
+This patch adds HDMI (TVout) support for Origen board.
 
-Signed-off-by: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+This patch is based on for-next branch of Kukjin Kim's tree: 
+http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git;a=summary
+
+This patch is tested using Hatim's patch: 
+http://www.spinics.net/lists/linux-samsung-soc/msg06367.html
+
+Signed-off-by: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 ---
-The patch is rebased on [1]. But for proper working of LCD on ORIGEN,
-following patches are needed.
-
-a. ARM: EXYNOS4: Add PWM backlight support on Origen
-http://www.spinics.net/lists/linux-samsung-soc/msg06309.html
-
-b. ARM: EXYNOS4: Configure MAX8997 PMIC for Origen
-http://www.spinics.net/lists/linux-samsung-soc/msg06282.html
-
-[1] git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-
- arch/arm/mach-exynos4/Kconfig       |    2 +
- arch/arm/mach-exynos4/mach-origen.c |   50 +++++++++++++++++++++++++++++++++++
- 2 files changed, 52 insertions(+), 0 deletions(-)
+ arch/arm/mach-exynos4/Kconfig       |    2 ++
+ arch/arm/mach-exynos4/mach-origen.c |    4 ++++
+ 2 files changed, 6 insertions(+), 0 deletions(-)
 
 diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index 48f18f7..8656f49 100644
+index 181fb04..4f908f7 100644
 --- a/arch/arm/mach-exynos4/Kconfig
 +++ b/arch/arm/mach-exynos4/Kconfig
-@@ -222,6 +222,8 @@ config MACH_ORIGEN
- 	select S3C_DEV_RTC
+@@ -225,6 +225,8 @@ config MACH_ORIGEN
  	select S3C_DEV_WDT
  	select S3C_DEV_HSMMC2
-+	select S5P_DEV_FIMD0
-+	select EXYNOS4_SETUP_FIMD0
  	select EXYNOS4_SETUP_SDHCI
++	select S5P_DEV_I2C_HDMIPHY
++	select S5P_DEV_TV
  	help
  	  Machine support for ORIGEN based on Samsung EXYNOS4210
+ 
 diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
-index ed59f86..f2cea78 100644
+index ed59f86..6ec68ee 100644
 --- a/arch/arm/mach-exynos4/mach-origen.c
 +++ b/arch/arm/mach-exynos4/mach-origen.c
-@@ -14,16 +14,21 @@
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/input.h>
-+#include <linux/lcd.h>
-+
-+#include <video/platform_lcd.h>
+@@ -81,8 +81,11 @@ static struct s3c_sdhci_platdata origen_hsmmc2_pdata __initdata = {
  
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
- 
- #include <plat/regs-serial.h>
-+#include <plat/regs-fb-v4.h>
- #include <plat/exynos4.h>
- #include <plat/cpu.h>
- #include <plat/devs.h>
- #include <plat/sdhci.h>
- #include <plat/iic.h>
-+#include <plat/fb.h>
- 
- #include <mach/map.h>
- 
-@@ -79,10 +84,54 @@ static struct s3c_sdhci_platdata origen_hsmmc2_pdata __initdata = {
- 	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
- };
- 
-+static void lcd_hv070wsa_set_power(struct plat_lcd_data *pd, unsigned int power)
-+{
-+	int gpio = EXYNOS4_GPE3(4);
-+
-+	gpio_request(gpio, "GPE3_4");
-+	gpio_direction_output(gpio, power);
-+	gpio_free(gpio);
-+}
-+
-+static struct plat_lcd_data origen_lcd_hv070wsa_data = {
-+	.set_power = lcd_hv070wsa_set_power,
-+};
-+
-+static struct platform_device origen_lcd_hv070wsa = {
-+	.name			= "platform-lcd",
-+	.dev.parent		= &s5p_device_fimd0.dev,
-+	.dev.platform_data	= &origen_lcd_hv070wsa_data,
-+};
-+
-+static struct s3c_fb_pd_win origen_fb_win0 = {
-+	.win_mode = {
-+		.left_margin	= 64,
-+		.right_margin	= 16,
-+		.upper_margin	= 64,
-+		.lower_margin	= 16,
-+		.hsync_len	= 48,
-+		.vsync_len	= 3,
-+		.xres		= 1024,
-+		.yres		= 600,
-+		.refresh	= 60,
-+	},
-+	.max_bpp		= 32,
-+	.default_bpp		= 24,
-+};
-+
-+static struct s3c_fb_platdata origen_lcd_pdata __initdata = {
-+	.win[0]		= &origen_fb_win0,
-+	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
-+	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
-+	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
-+};
-+
  static struct platform_device *origen_devices[] __initdata = {
  	&s3c_device_hsmmc2,
++	&s5p_device_i2c_hdmiphy,
  	&s3c_device_rtc,
  	&s3c_device_wdt,
-+	&s5p_device_fimd0,
-+	&origen_lcd_hv070wsa,
++	&s5p_device_hdmi,
++	&s5p_device_mixer,
  };
  
  static void __init origen_map_io(void)
-@@ -95,6 +144,7 @@ static void __init origen_map_io(void)
+@@ -95,6 +98,7 @@ static void __init origen_map_io(void)
  static void __init origen_machine_init(void)
  {
  	s3c_sdhci2_set_platdata(&origen_hsmmc2_pdata);
-+	s5p_fimd0_set_platdata(&origen_lcd_pdata);
++	s5p_i2c_hdmiphy_set_platdata(NULL);
  	platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
  }
  
