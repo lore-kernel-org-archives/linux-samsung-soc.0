@@ -1,164 +1,80 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH v2] mmc: core: Add default timeout value for CMD6.
-Date: Thu, 8 Sep 2011 15:46:01 +0900
-Message-ID: <CAH9JG2XcE2En3wrBaJPuDycs4b-rvcCQv=8L7+9y8rQ_aUa1Mw@mail.gmail.com>
-References: <1315462202-28032-1-git-send-email-tgih.jun@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 0/19 v4] s5p-fimc driver conversion to media controller and
+ control framework
+Date: Thu, 08 Sep 2011 08:48:23 +0200
+Message-ID: <4E686537.9050604@samsung.com>
+References: <1314891023-14227-1-git-send-email-s.nawrocki@samsung.com>
+ <4E6256B2.7010407@gmail.com> <4E6687FE.5030607@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1315462202-28032-1-git-send-email-tgih.jun@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: linux-mmc@vger.kernel.org, cjb@laptop.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:54598 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754171Ab1IHGs0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 8 Sep 2011 02:48:26 -0400
+In-reply-to: <4E6687FE.5030607@redhat.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: Sylwester Nawrocki <snjw23@gmail.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, sw0312.kim@samsung.com, riverful.kim@samsung.com
 
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+On 09/06/2011 10:52 PM, Mauro Carvalho Chehab wrote:
+> Em 03-09-2011 13:32, Sylwester Nawrocki escreveu:
+>> On 09/01/2011 05:30 PM, Sylwester Nawrocki wrote:
+>>> Hello,
+>>>
+>>> following is a fourth version of the patchset converting s5p-fimc driver
+>>> to the media controller API and the new control framework.
+>>>
+>>> Mauro, could you please have a look at the patches and let me know of any doubts?
+>>> I tried to provide possibly detailed description of what each patch does and why.
+>>>
+>>> The changeset is available at:
+>>>    http://git.infradead.org/users/kmpark/linux-2.6-samsung
+>>>    branch: v4l_fimc_for_mauro
+>>>
+>>> on top of patches from Marek's 'Videobuf2&  FIMC fixes" pull request
+>>> which this series depends on.
+>> ...
+>>>
+>>> Sylwester Nawrocki (19):
+>>>    s5p-fimc: Remove registration of video nodes from probe()
+>>>    s5p-fimc: Remove sclk_cam clock handling
+>>>    s5p-fimc: Limit number of available inputs to one
+>>>    s5p-fimc: Remove sensor management code from FIMC capture driver
+>>>    s5p-fimc: Remove v4l2_device from video capture and m2m driver
+>>>    s5p-fimc: Add the media device driver
+>>>    s5p-fimc: Conversion to use struct v4l2_fh
+>>>    s5p-fimc: Convert to the new control framework
+>>>    s5p-fimc: Add media operations in the capture entity driver
+>>>    s5p-fimc: Add PM helper function for streaming control
+>>>    s5p-fimc: Correct color format enumeration
+>>>    s5p-fimc: Convert to use media pipeline operations
+>>>    s5p-fimc: Add subdev for the FIMC processing block
+>>>    s5p-fimc: Add support for JPEG capture
+>>>    s5p-fimc: Add v4l2_device notification support for single frame
+>>>      capture
+>>>    s5p-fimc: Use consistent names for the buffer list functions
+>>>    s5p-fimc: Add runtime PM support in the camera capture driver
+>>>    s5p-fimc: Correct crop offset alignment on exynos4
+>>>    s5p-fimc: Remove single-planar capability flags
+>>
+>> oops, I've done this posting wrong, the first patch is missing here :(
+>> -> s5p-fimc: Add media entity initialization
+>>
+>> Still the patch set is complete at git repository as indicated above.
+>> I'm sorry for the confusion.
+> 
+> No problem. I always check from git.
+> 
+> Patches applied, thanks!
 
-Nitpick: see below comments and typo.
+Thank you! I've received the notice about patches from Marek's pull request,
+but the other 20 patches from this thread are not in staging/for_v3.2 branch.
+Are you planning to handle that later?
 
-On Thu, Sep 8, 2011 at 3:10 PM, Seungwon Jeon <tgih.jun@samsung.com> wr=
-ote:
-> EXT_CSD[248] includes the default maximum timeout for CMD6.
-> This field is added at eMMC4.5 Spec. And it can be used for default
-> timeout except for some operations which don't define the timeout(i.e=
-=2E
-> background operation, sanitize, flush cache) in eMMC4.5 Spec.
->
-> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
-> ---
-> v2 : apply default maximum timeout of CMD6 which specific timeout is =
-not defined.
->
-> =A0drivers/mmc/core/mmc.c =A0 | =A0 14 ++++++++++----
-> =A0include/linux/mmc/card.h | =A0 =A01 +
-> =A0include/linux/mmc/mmc.h =A0| =A0 =A01 +
-> =A03 files changed, 12 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-> index 5700b1c..b148bb1 100644
-> --- a/drivers/mmc/core/mmc.c
-> +++ b/drivers/mmc/core/mmc.c
-> @@ -410,6 +410,10 @@ static int mmc_read_ext_csd(struct mmc_card *car=
-d, u8 *ext_csd)
-> =A0 =A0 =A0 =A0else
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0card->erased_byte =3D 0x0;
->
-> + =A0 =A0 =A0 if (card->ext_csd.rev >=3D 6)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 card->ext_csd.generic_cmd6_time =3D 10 =
-*
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ext_csd[EXT_CSD_GENERIC=
-_CMD6_TIME];
-Even though generic_cmd6_time is cleared at card initialization. Make
-sure set the 0 when not eMMC v4.5 to make consistent with previous
-version and codes.
-             else
-                   card->ext_csd.generic_cmd6_time =3D 0;
-> +
-> =A0out:
-> =A0 =A0 =A0 =A0return err;
-> =A0}
-> @@ -668,7 +672,8 @@ static int mmc_init_card(struct mmc_host *host, u=
-32 ocr,
-> =A0 =A0 =A0 =A0 */
-> =A0 =A0 =A0 =A0if (card->ext_csd.enhanced_area_en) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0err =3D mmc_switch(card, EXT_CSD_CMD_S=
-ET_NORMAL,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXT_=
-CSD_ERASE_GROUP_DEF, 1, 0);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXT_=
-CSD_ERASE_GROUP_DEF, 1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0card=
-->ext_csd.generic_cmd6_time);
->
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (err && err !=3D -EBADMSG)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto free_card;
-> @@ -711,7 +716,8 @@ static int mmc_init_card(struct mmc_host *host, u=
-32 ocr,
-> =A0 =A0 =A0 =A0if ((card->ext_csd.hs_max_dtr !=3D 0) &&
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(host->caps & MMC_CAP_MMC_HIGHSPEED)) =
-{
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0err =3D mmc_switch(card, EXT_CSD_CMD_S=
-ET_NORMAL,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXT_=
-CSD_HS_TIMING, 1, 0);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXT_=
-CSD_HS_TIMING, 1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0card=
-->ext_csd.generic_cmd6_time);
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (err && err !=3D -EBADMSG)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto free_card;
->
-> @@ -783,7 +789,7 @@ static int mmc_init_card(struct mmc_host *host, u=
-32 ocr,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0err =3D mmc_switch(car=
-d, EXT_CSD_CMD_SET_NORMAL,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 EXT_CSD_BUS_WIDTH,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 ext_csd_bits[idx][0],
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A00);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0card->ext_csd.generic_cmd6_time);
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (!err) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0mmc_se=
-t_bus_width(card->host, bus_width);
->
-> @@ -806,7 +812,7 @@ static int mmc_init_card(struct mmc_host *host, u=
-32 ocr,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0err =3D mmc_switch(car=
-d, EXT_CSD_CMD_SET_NORMAL,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 EXT_CSD_BUS_WIDTH,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 ext_csd_bits[idx][1],
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A00);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0card->ext_csd.generic_cmd6_time);
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (err) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_WARNING "%=
-s: switch to bus width %d ddr %d "
-> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
-> index b460fc2..e992fe3 100644
-> --- a/include/linux/mmc/card.h
-> +++ b/include/linux/mmc/card.h
-> @@ -52,6 +52,7 @@ struct mmc_ext_csd {
-> =A0 =A0 =A0 =A0u8 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0part_con=
-fig;
-> =A0 =A0 =A0 =A0unsigned int =A0 =A0 =A0 =A0 =A0 =A0part_time; =A0 =A0=
- =A0 =A0 =A0 =A0 =A0/* Units: ms */
-> =A0 =A0 =A0 =A0unsigned int =A0 =A0 =A0 =A0 =A0 =A0sa_timeout; =A0 =A0=
- =A0 =A0 =A0 =A0 /* Units: 100ns */
-> + =A0 =A0 =A0 unsigned int =A0 =A0 =A0 =A0 =A0 =A0generic_cmd6_time; =
-=A0 =A0 =A0/* Units: ms */
-The correct unit is 10ms
-
-> =A0 =A0 =A0 =A0unsigned int =A0 =A0 =A0 =A0 =A0 =A0hs_max_dtr;
-> =A0 =A0 =A0 =A0unsigned int =A0 =A0 =A0 =A0 =A0 =A0sectors;
-> =A0 =A0 =A0 =A0unsigned int =A0 =A0 =A0 =A0 =A0 =A0card_type;
-> diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
-> index 5a794cb..e869f00 100644
-> --- a/include/linux/mmc/mmc.h
-> +++ b/include/linux/mmc/mmc.h
-> @@ -293,6 +293,7 @@ struct _mmc_csd {
-> =A0#define EXT_CSD_SEC_ERASE_MULT =A0 =A0 =A0 =A0 230 =A0 =A0 /* RO *=
-/
-> =A0#define EXT_CSD_SEC_FEATURE_SUPPORT =A0 =A0231 =A0 =A0 /* RO */
-> =A0#define EXT_CSD_TRIM_MULT =A0 =A0 =A0 =A0 =A0 =A0 =A0232 =A0 =A0 /=
-* RO */
-> +#define EXT_CSD_GENERIC_CMD6_TIME =A0 =A0 =A0248 =A0 =A0 /* RO */
->
-> =A0/*
-> =A0* EXT_CSD field definitions
-> --
-> 1.7.0.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+-- 
+Cheers.
+Sylwester
