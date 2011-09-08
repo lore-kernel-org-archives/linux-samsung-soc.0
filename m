@@ -1,144 +1,127 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [RESEND PATCH] ARM: EXYNOS4: Add machine support for 7" LCD on ORIGEN
-Date: Thu,  8 Sep 2011 09:35:11 +0530
-Message-ID: <1315454711-17821-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f42.google.com ([209.85.210.42]:34572 "EHLO
-	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750902Ab1IHEIn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Sep 2011 00:08:43 -0400
-Received: by pzk37 with SMTP id 37so580628pzk.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Sep 2011 21:08:42 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: [PATCH v3 1/2] mmc: core: Add power off notify feature(eMMC 4.5)
+Date: Thu,  8 Sep 2011 09:58:36 +0530
+Message-ID: <1315456117-26730-2-git-send-email-girish.shivananjappa@linaro.org>
+References: <1315456117-26730-1-git-send-email-girish.shivananjappa@linaro.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1315456117-26730-1-git-send-email-girish.shivananjappa@linaro.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: cjb@laptop.org, kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org
 
-ORIGEN board is fitted with 7" LCD panel HV070WSA. The pixel
-resolution of the LCD panel is 1024x600.
+This patch adds the support for power off notify feature
+available in eMMC 4.5 devices.
+	If the the host has support for this feature, then the
+mmc core will notify it to the device by setting the
+POWER_OFF_NOTIFICATION byte in the extended csd register
+with a value 1(POWER_ON).
+	This patch should be applied after Seungwon Jeon's
+patch for cmd6 timeout.
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
 ---
-The original patch-mail bounced back from linux-samsung-soc@vger.kernel.org,
-hence resending the patch again.
+ drivers/mmc/core/mmc.c   |   19 +++++++++++++++++--
+ include/linux/mmc/card.h |    1 +
+ include/linux/mmc/host.h |    1 +
+ include/linux/mmc/mmc.h  |    7 +++++++
+ 4 files changed, 26 insertions(+), 2 deletions(-)
 
-The patch is rebased on [1]. For proper working of LCD on ORIGEN,
-following patches are needed. These patches are already submitted to
-the mailing list.
-
-a. ARM: EXYNOS4: Add PWM backlight support on Origen
-	Author: Giridhar Maruthy
-b. ARM: EXYNOS4: Configure MAX8997 PMIC for Origen
-	Author: Inderpal Singh
-
-[1] git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-
- arch/arm/mach-exynos4/Kconfig       |    2 +
- arch/arm/mach-exynos4/mach-origen.c |   50 +++++++++++++++++++++++++++++++++++
- 2 files changed, 52 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index 48f18f7..8656f49 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -222,6 +222,8 @@ config MACH_ORIGEN
- 	select S3C_DEV_RTC
- 	select S3C_DEV_WDT
- 	select S3C_DEV_HSMMC2
-+	select S5P_DEV_FIMD0
-+	select EXYNOS4_SETUP_FIMD0
- 	select EXYNOS4_SETUP_SDHCI
- 	help
- 	  Machine support for ORIGEN based on Samsung EXYNOS4210
-diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
-index ed59f86..f2cea78 100644
---- a/arch/arm/mach-exynos4/mach-origen.c
-+++ b/arch/arm/mach-exynos4/mach-origen.c
-@@ -14,16 +14,21 @@
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/input.h>
-+#include <linux/lcd.h>
-+
-+#include <video/platform_lcd.h>
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 68eb368..2f06b37 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -410,10 +410,12 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
+ 	else
+ 		card->erased_byte = 0x0;
  
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
- 
- #include <plat/regs-serial.h>
-+#include <plat/regs-fb-v4.h>
- #include <plat/exynos4.h>
- #include <plat/cpu.h>
- #include <plat/devs.h>
- #include <plat/sdhci.h>
- #include <plat/iic.h>
-+#include <plat/fb.h>
- 
- #include <mach/map.h>
- 
-@@ -79,10 +84,54 @@ static struct s3c_sdhci_platdata origen_hsmmc2_pdata __initdata = {
- 	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
- };
- 
-+static void lcd_hv070wsa_set_power(struct plat_lcd_data *pd, unsigned int power)
-+{
-+	int gpio = EXYNOS4_GPE3(4);
-+
-+	gpio_request(gpio, "GPE3_4");
-+	gpio_direction_output(gpio, power);
-+	gpio_free(gpio);
-+}
-+
-+static struct plat_lcd_data origen_lcd_hv070wsa_data = {
-+	.set_power = lcd_hv070wsa_set_power,
-+};
-+
-+static struct platform_device origen_lcd_hv070wsa = {
-+	.name			= "platform-lcd",
-+	.dev.parent		= &s5p_device_fimd0.dev,
-+	.dev.platform_data	= &origen_lcd_hv070wsa_data,
-+};
-+
-+static struct s3c_fb_pd_win origen_fb_win0 = {
-+	.win_mode = {
-+		.left_margin	= 64,
-+		.right_margin	= 16,
-+		.upper_margin	= 64,
-+		.lower_margin	= 16,
-+		.hsync_len	= 48,
-+		.vsync_len	= 3,
-+		.xres		= 1024,
-+		.yres		= 600,
-+		.refresh	= 60,
-+	},
-+	.max_bpp		= 32,
-+	.default_bpp		= 24,
-+};
-+
-+static struct s3c_fb_platdata origen_lcd_pdata __initdata = {
-+	.win[0]		= &origen_fb_win0,
-+	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
-+	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
-+	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
-+};
-+
- static struct platform_device *origen_devices[] __initdata = {
- 	&s3c_device_hsmmc2,
- 	&s3c_device_rtc,
- 	&s3c_device_wdt,
-+	&s5p_device_fimd0,
-+	&origen_lcd_hv070wsa,
- };
- 
- static void __init origen_map_io(void)
-@@ -95,6 +144,7 @@ static void __init origen_map_io(void)
- static void __init origen_machine_init(void)
- {
- 	s3c_sdhci2_set_platdata(&origen_hsmmc2_pdata);
-+	s5p_fimd0_set_platdata(&origen_lcd_pdata);
- 	platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
+-	if (card->ext_csd.rev >= 6)
++	if (card->ext_csd.rev >= 6) {
+ 		card->ext_csd.generic_cmd6_time = 10 *
+ 			ext_csd[EXT_CSD_GENERIC_CMD6_TIME];
+-
++		card->ext_csd.power_off_longtime = 10 *
++			ext_csd[EXT_CSD_POWER_OFF_LONG_TIME];
++	}
+ out:
+ 	return err;
  }
+@@ -710,6 +712,19 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+ 	}
  
+ 	/*
++	 * If the host supports the power_off_notify capability then
++	 * set the notification byte in the ext_csd register of device
++	 */
++	if (host->caps & MMC_CAP_POWER_OFF_NOTIFY) {
++		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
++				EXT_CSD_POWER_OFF_NOTIFICATION,
++				EXT_CSD_POWER_ON,
++				card->ext_csd.generic_cmd6_time);
++		if (err && err != -EBADMSG)
++			goto free_card;
++	}
++
++	/*
+ 	 * Activate high speed (if supported)
+ 	 */
+ 	if ((card->ext_csd.hs_max_dtr != 0) &&
+diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+index e992fe3..2bf2843 100644
+--- a/include/linux/mmc/card.h
++++ b/include/linux/mmc/card.h
+@@ -53,6 +53,7 @@ struct mmc_ext_csd {
+ 	unsigned int		part_time;		/* Units: ms */
+ 	unsigned int		sa_timeout;		/* Units: 100ns */
+ 	unsigned int		generic_cmd6_time;	/* Units: ms */
++	unsigned int		power_off_longtime;	/* Units: ms */
+ 	unsigned int		hs_max_dtr;
+ 	unsigned int		sectors;
+ 	unsigned int		card_type;
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index 1d09562..cf2dadc 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -229,6 +229,7 @@ struct mmc_host {
+ #define MMC_CAP_MAX_CURRENT_600	(1 << 28)	/* Host max current limit is 600mA */
+ #define MMC_CAP_MAX_CURRENT_800	(1 << 29)	/* Host max current limit is 800mA */
+ #define MMC_CAP_CMD23		(1 << 30)	/* CMD23 supported. */
++#define MMC_CAP_POWER_OFF_NOTIFY    (1 << 31)/*Notify poweroff supported */
+ 
+ 	mmc_pm_flag_t		pm_caps;	/* supported pm features */
+ 
+diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
+index e869f00..a788e01 100644
+--- a/include/linux/mmc/mmc.h
++++ b/include/linux/mmc/mmc.h
+@@ -270,6 +270,7 @@ struct _mmc_csd {
+  * EXT_CSD fields
+  */
+ 
++#define EXT_CSD_POWER_OFF_NOTIFICATION	34 /* R/W */
+ #define EXT_CSD_PARTITION_ATTRIBUTE	156	/* R/W */
+ #define EXT_CSD_PARTITION_SUPPORT	160	/* RO */
+ #define EXT_CSD_WR_REL_PARAM		166	/* RO */
+@@ -293,6 +294,7 @@ struct _mmc_csd {
+ #define EXT_CSD_SEC_ERASE_MULT		230	/* RO */
+ #define EXT_CSD_SEC_FEATURE_SUPPORT	231	/* RO */
+ #define EXT_CSD_TRIM_MULT		232	/* RO */
++#define EXT_CSD_POWER_OFF_LONG_TIME	247 /*RO*/
+ #define EXT_CSD_GENERIC_CMD6_TIME	248	/* RO */
+ 
+ /*
+@@ -329,6 +331,11 @@ struct _mmc_csd {
+ #define EXT_CSD_SEC_BD_BLK_EN	BIT(2)
+ #define EXT_CSD_SEC_GB_CL_EN	BIT(4)
+ 
++#define EXT_CSD_NO_POWER_NOTIFICATION	0
++#define EXT_CSD_POWER_ON	1
++#define EXT_CSD_POWER_OFF_SHORT	2
++#define EXT_CSD_POWER_OFF_LONG	3
++
+ /*
+  * MMC_SWITCH access modes
+  */
 -- 
-1.7.4.1
+1.7.1
+
