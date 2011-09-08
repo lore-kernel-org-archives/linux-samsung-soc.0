@@ -1,210 +1,144 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 1/2] input: samsung-keypad: Add HAVE_SAMSUNG_KEYPAD config option
-Date: Thu, 8 Sep 2011 09:28:50 +0530
-Message-ID: <CAJuYYwSMLOZD9b2F=yYQnUQ2BgB69smaeQJmopk3izR7gEjNyg@mail.gmail.com>
-References: <1315317317-21873-1-git-send-email-thomas.abraham@linaro.org>
-	<1315317317-21873-2-git-send-email-thomas.abraham@linaro.org>
-	<20110907182248.GA2874@core.coreip.homeip.net>
-	<20110907214954.GA32235@core.coreip.homeip.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [RESEND PATCH] ARM: EXYNOS4: Add machine support for 7" LCD on ORIGEN
+Date: Thu,  8 Sep 2011 09:35:11 +0530
+Message-ID: <1315454711-17821-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yi0-f46.google.com ([209.85.218.46]:37033 "EHLO
-	mail-yi0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932166Ab1IHD6v convert rfc822-to-8bit (ORCPT
+Received: from mail-pz0-f42.google.com ([209.85.210.42]:34572 "EHLO
+	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750902Ab1IHEIn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Sep 2011 23:58:51 -0400
-In-Reply-To: <20110907214954.GA32235@core.coreip.homeip.net>
+	Thu, 8 Sep 2011 00:08:43 -0400
+Received: by pzk37 with SMTP id 37so580628pzk.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Sep 2011 21:08:42 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: devicetree-discuss@lists.ozlabs.org, grant.likely@secretlab.ca, linux-input@vger.kernel.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jy0922.shim@samsung.com, dh09.lee@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org
 
-Hi Dmitry,
+ORIGEN board is fitted with 7" LCD panel HV070WSA. The pixel
+resolution of the LCD panel is 1024x600.
 
-On 8 September 2011 03:19, Dmitry Torokhov <dmitry.torokhov@gmail.com> =
-wrote:
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+The original patch-mail bounced back from linux-samsung-soc@vger.kernel.org,
+hence resending the patch again.
 
-[...]
+The patch is rebased on [1]. For proper working of LCD on ORIGEN,
+following patches are needed. These patches are already submitted to
+the mailing list.
 
-> BTW, should we do something like below?
->
-> Thanks.
->
-> --
-> Dmitry
->
-> Input: samsung-keypad - enable compiling on other platforms
->
-> From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
->
-> There is nothing in keypad platform definitions that requires
-> the driver be complied on Samsung platform only, so let's move them
-> out of the platform subdirectory and relax the dependencies.
->
-> Signed-off-by: Dmitry Torokhov <dtor@mail.ru>
-> ---
->
-> =A0arch/arm/plat-samsung/include/plat/keypad.h | =A0 27 +------------=
-----
-> =A0drivers/input/keyboard/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A0=
-5 ++-
-> =A0drivers/input/keyboard/samsung-keypad.c =A0 =A0 | =A0 =A02 +
-> =A0include/linux/input/samsung-keypad.h =A0 =A0 =A0 =A0| =A0 43 +++++=
-++++++++++++++++++++++
-> =A04 files changed, 48 insertions(+), 29 deletions(-)
-> =A0create mode 100644 include/linux/input/samsung-keypad.h
->
->
-> diff --git a/arch/arm/plat-samsung/include/plat/keypad.h b/arch/arm/p=
-lat-samsung/include/plat/keypad.h
-> index b59a648..8fddee3 100644
-> --- a/arch/arm/plat-samsung/include/plat/keypad.h
-> +++ b/arch/arm/plat-samsung/include/plat/keypad.h
-> @@ -13,32 +13,7 @@
-> =A0#ifndef __PLAT_SAMSUNG_KEYPAD_H
-> =A0#define __PLAT_SAMSUNG_KEYPAD_H
->
-> -#include <linux/input/matrix_keypad.h>
-> -
-> -#define SAMSUNG_MAX_ROWS =A0 =A0 =A0 8
-> -#define SAMSUNG_MAX_COLS =A0 =A0 =A0 8
-> -
-> -/**
-> - * struct samsung_keypad_platdata - Platform device data for Samsung=
- Keypad.
-> - * @keymap_data: pointer to &matrix_keymap_data.
-> - * @rows: number of keypad row supported.
-> - * @cols: number of keypad col supported.
-> - * @no_autorepeat: disable key autorepeat.
-> - * @wakeup: controls whether the device should be set up as wakeup s=
-ource.
-> - * @cfg_gpio: configure the GPIO.
-> - *
-> - * Initialisation data specific to either the machine or the platfor=
-m
-> - * for the device driver to use or call-back when configuring gpio.
-> - */
-> -struct samsung_keypad_platdata {
-> - =A0 =A0 =A0 const struct matrix_keymap_data *keymap_data;
-> - =A0 =A0 =A0 unsigned int rows;
-> - =A0 =A0 =A0 unsigned int cols;
-> - =A0 =A0 =A0 bool no_autorepeat;
-> - =A0 =A0 =A0 bool wakeup;
-> -
-> - =A0 =A0 =A0 void (*cfg_gpio)(unsigned int rows, unsigned int cols);
-> -};
-> +#include <linux/input/samsung_keypad.h>
->
-> =A0/**
-> =A0* samsung_keypad_set_platdata - Set platform data for Samsung Keyp=
-ad device.
-> diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/=
-Kconfig
-> index de846f8..db1b221 100644
-> --- a/drivers/input/keyboard/Kconfig
-> +++ b/drivers/input/keyboard/Kconfig
-> @@ -434,9 +434,10 @@ config KEYBOARD_PMIC8XXX
->
-> =A0config KEYBOARD_SAMSUNG
-> =A0 =A0 =A0 =A0tristate "Samsung keypad support"
-> - =A0 =A0 =A0 depends on SAMSUNG_DEV_KEYPAD
-> + =A0 =A0 =A0 depends on HAVE_CLK
-> =A0 =A0 =A0 =A0help
-> - =A0 =A0 =A0 =A0 Say Y here if you want to use the Samsung keypad.
-> + =A0 =A0 =A0 =A0 Say Y here if you want to use the keypad on your Sa=
-msung mobile
-> + =A0 =A0 =A0 =A0 device.
+a. ARM: EXYNOS4: Add PWM backlight support on Origen
+	Author: Giridhar Maruthy
+b. ARM: EXYNOS4: Configure MAX8997 PMIC for Origen
+	Author: Inderpal Singh
 
-In this case, Samsung Keyboad option would be listed in the available
-keyboard list in menuconfig for non-samsung platforms as well. Knowing
-that Samsung keypad controller has been used only in Samsung
-Application Processor SoC's only (and would be this way for quite
-sometime), should we not retain its selection to Samsung AP SoC's
-only?
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
 
->
-> =A0 =A0 =A0 =A0 =A0To compile this driver as a module, choose M here:=
- the
-> =A0 =A0 =A0 =A0 =A0module will be called samsung-keypad.
-> diff --git a/drivers/input/keyboard/samsung-keypad.c b/drivers/input/=
-keyboard/samsung-keypad.c
-> index d244fdf..1a2b755 100644
-> --- a/drivers/input/keyboard/samsung-keypad.c
-> +++ b/drivers/input/keyboard/samsung-keypad.c
-> @@ -22,7 +22,7 @@
-> =A0#include <linux/platform_device.h>
-> =A0#include <linux/slab.h>
-> =A0#include <linux/sched.h>
-> -#include <plat/keypad.h>
-> +#include <linux/input/samsung-keypad.h>
->
-> =A0#define SAMSUNG_KEYIFCON =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- 0x00
-> =A0#define SAMSUNG_KEYIFSTSCLR =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-0x04
-> diff --git a/include/linux/input/samsung-keypad.h b/include/linux/inp=
-ut/samsung-keypad.h
-> new file mode 100644
-> index 0000000..f25619b
-> --- /dev/null
-> +++ b/include/linux/input/samsung-keypad.h
-> @@ -0,0 +1,43 @@
-> +/*
-> + * Samsung Keypad platform data definitions
-> + *
-> + * Copyright (C) 2010 Samsung Electronics Co.Ltd
-> + * Author: Joonyoung Shim <jy0922.shim@samsung.com>
-> + *
-> + * This program is free software; you can redistribute =A0it and/or =
-modify it
-> + * under =A0the terms of =A0the GNU General =A0Public License as pub=
-lished by the
-> + * Free Software Foundation; =A0either version 2 of the =A0License, =
-or (at your
-> + * option) any later version.
-> + */
-> +
-> +#ifndef __SAMSUNG_KEYPAD_H
-> +#define __SAMSUNG_KEYPAD_H
-> +
-> +#include <linux/input/matrix_keypad.h>
-> +
-> +#define SAMSUNG_MAX_ROWS =A0 =A0 =A0 8
-> +#define SAMSUNG_MAX_COLS =A0 =A0 =A0 8
-> +
-> +/**
-> + * struct samsung_keypad_platdata - Platform device data for Samsung=
- Keypad.
-> + * @keymap_data: pointer to &matrix_keymap_data.
-> + * @rows: number of keypad row supported.
-> + * @cols: number of keypad col supported.
-> + * @no_autorepeat: disable key autorepeat.
-> + * @wakeup: controls whether the device should be set up as wakeup s=
-ource.
-> + * @cfg_gpio: configure the GPIO.
-> + *
-> + * Initialisation data specific to either the machine or the platfor=
-m
-> + * for the device driver to use or call-back when configuring gpio.
-> + */
-> +struct samsung_keypad_platdata {
-> + =A0 =A0 =A0 const struct matrix_keymap_data *keymap_data;
-> + =A0 =A0 =A0 unsigned int rows;
-> + =A0 =A0 =A0 unsigned int cols;
-> + =A0 =A0 =A0 bool no_autorepeat;
-> + =A0 =A0 =A0 bool wakeup;
-> +
-> + =A0 =A0 =A0 void (*cfg_gpio)(unsigned int rows, unsigned int cols);
-> +};
-> +
-> +#endif /* __SAMSUNG_KEYPAD_H */
->
+ arch/arm/mach-exynos4/Kconfig       |    2 +
+ arch/arm/mach-exynos4/mach-origen.c |   50 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 52 insertions(+), 0 deletions(-)
 
-The movement of samsung-keypad.h to include/linux/input would be
-helpful if it is decided to make samsung-keypad driver available to
-non-samsung platforms as well.
-
-Thanks,
-Thomas.
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index 48f18f7..8656f49 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -222,6 +222,8 @@ config MACH_ORIGEN
+ 	select S3C_DEV_RTC
+ 	select S3C_DEV_WDT
+ 	select S3C_DEV_HSMMC2
++	select S5P_DEV_FIMD0
++	select EXYNOS4_SETUP_FIMD0
+ 	select EXYNOS4_SETUP_SDHCI
+ 	help
+ 	  Machine support for ORIGEN based on Samsung EXYNOS4210
+diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
+index ed59f86..f2cea78 100644
+--- a/arch/arm/mach-exynos4/mach-origen.c
++++ b/arch/arm/mach-exynos4/mach-origen.c
+@@ -14,16 +14,21 @@
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/input.h>
++#include <linux/lcd.h>
++
++#include <video/platform_lcd.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach-types.h>
+ 
+ #include <plat/regs-serial.h>
++#include <plat/regs-fb-v4.h>
+ #include <plat/exynos4.h>
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+ #include <plat/sdhci.h>
+ #include <plat/iic.h>
++#include <plat/fb.h>
+ 
+ #include <mach/map.h>
+ 
+@@ -79,10 +84,54 @@ static struct s3c_sdhci_platdata origen_hsmmc2_pdata __initdata = {
+ 	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
+ };
+ 
++static void lcd_hv070wsa_set_power(struct plat_lcd_data *pd, unsigned int power)
++{
++	int gpio = EXYNOS4_GPE3(4);
++
++	gpio_request(gpio, "GPE3_4");
++	gpio_direction_output(gpio, power);
++	gpio_free(gpio);
++}
++
++static struct plat_lcd_data origen_lcd_hv070wsa_data = {
++	.set_power = lcd_hv070wsa_set_power,
++};
++
++static struct platform_device origen_lcd_hv070wsa = {
++	.name			= "platform-lcd",
++	.dev.parent		= &s5p_device_fimd0.dev,
++	.dev.platform_data	= &origen_lcd_hv070wsa_data,
++};
++
++static struct s3c_fb_pd_win origen_fb_win0 = {
++	.win_mode = {
++		.left_margin	= 64,
++		.right_margin	= 16,
++		.upper_margin	= 64,
++		.lower_margin	= 16,
++		.hsync_len	= 48,
++		.vsync_len	= 3,
++		.xres		= 1024,
++		.yres		= 600,
++		.refresh	= 60,
++	},
++	.max_bpp		= 32,
++	.default_bpp		= 24,
++};
++
++static struct s3c_fb_platdata origen_lcd_pdata __initdata = {
++	.win[0]		= &origen_fb_win0,
++	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
++	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
++	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
++};
++
+ static struct platform_device *origen_devices[] __initdata = {
+ 	&s3c_device_hsmmc2,
+ 	&s3c_device_rtc,
+ 	&s3c_device_wdt,
++	&s5p_device_fimd0,
++	&origen_lcd_hv070wsa,
+ };
+ 
+ static void __init origen_map_io(void)
+@@ -95,6 +144,7 @@ static void __init origen_map_io(void)
+ static void __init origen_machine_init(void)
+ {
+ 	s3c_sdhci2_set_platdata(&origen_hsmmc2_pdata);
++	s5p_fimd0_set_platdata(&origen_lcd_pdata);
+ 	platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
+ }
+ 
+-- 
+1.7.4.1
