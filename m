@@ -1,119 +1,60 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH 7/7] s3c-adc: Add support for S3C2416/S3C2450
-Date: Thu, 8 Sep 2011 21:57:25 +0200
-Message-ID: <201109082157.25585.heiko@sntech.de>
-References: <201109082151.29076.heiko@sntech.de>
+From: J Freyensee <james_p_freyensee@linux.intel.com>
+Subject: Re: [PATCH] mmc: core: Fix the incorrect calculation for erase unit
+ size.
+Date: Thu, 08 Sep 2011 13:27:49 -0700
+Message-ID: <4E692545.9050707@linux.intel.com>
+References: <1315461565-16009-1-git-send-email-tgih.jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <201109082151.29076.heiko@sntech.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>
-Cc: linux-samsung-soc@vger.kernel.org, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mga01.intel.com ([192.55.52.88]:17271 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752812Ab1IHXFf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 8 Sep 2011 19:05:35 -0400
+In-Reply-To: <1315461565-16009-1-git-send-email-tgih.jun@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: linux-mmc@vger.kernel.org, cjb@laptop.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
 
-The ADC of the S3C2416/2450 SoC is 10 or 12 bit wide, has its
-source selection in the register base+0x18 and its width
-selection in bit 03 of the ADCCON register.
+On 09/07/2011 10:59 PM, Seungwon Jeon wrote:
+> Erase unit size of high capacity is multiple of 512KiB not 1024KiB.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/mach-s3c2416/mach-smdk2416.c |    3 +++
- arch/arm/plat-samsung/adc.c           |   24 +++++++++++++++++++-----
- 2 files changed, 22 insertions(+), 5 deletions(-)
+I'm just wondering, what are these patches based off of?  I have not 
+been able to connect to anything hosted by kernel.org since I came back 
+from vacation due to the security breach on kernel.org.
 
-diff --git a/arch/arm/mach-s3c2416/mach-smdk2416.c b/arch/arm/mach-s3c2416/mach-smdk2416.c
-index a9eee53..deddeb3 100644
---- a/arch/arm/mach-s3c2416/mach-smdk2416.c
-+++ b/arch/arm/mach-s3c2416/mach-smdk2416.c
-@@ -50,6 +50,7 @@
- #include <plat/nand.h>
- #include <plat/sdhci.h>
- #include <plat/udc.h>
-+#include <plat/adc-core.h>
- 
- #include <plat/regs-fb-v4.h>
- #include <plat/fb.h>
-@@ -225,6 +226,8 @@ static void __init smdk2416_machine_init(void)
- 	s3c_i2c0_set_platdata(NULL);
- 	s3c_fb_set_platdata(&smdk2416_fb_platdata);
- 
-+	s3c_adc_setname("s3c2416-adc");
-+
- 	s3c_sdhci0_set_platdata(&smdk2416_hsmmc0_pdata);
- 	s3c_sdhci1_set_platdata(&smdk2416_hsmmc1_pdata);
- 
-diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.c
-index 4fb26c6..a5a73a4 100644
---- a/arch/arm/plat-samsung/adc.c
-+++ b/arch/arm/plat-samsung/adc.c
-@@ -357,6 +357,7 @@ static int s3c_adc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct adc_device *adc;
-+	int cpu = platform_get_device_id(pdev)->driver_data;
- 	struct resource *regs;
- 	int ret;
- 	unsigned tmp;
-@@ -420,9 +421,12 @@ static int s3c_adc_probe(struct platform_device *pdev)
- 	clk_enable(adc->clk);
- 
- 	tmp = adc->prescale | S3C2410_ADCCON_PRSCEN;
--	if (platform_get_device_id(pdev)->driver_data & S3C_ADC_QUIRK_12BIT) {
--		/* Enable 12-bit ADC resolution */
--		tmp |= S3C64XX_ADCCON_RESSEL;
-+	/* Enable 12-bit ADC resolution */
-+	if (cpu & S3C_ADC_QUIRK_12BIT) {
-+		if (cpu & S3C_ADC_QUIRK_RESSEL03)
-+			tmp |= S3C2416_ADCCON_RESSEL;
-+		else
-+			tmp |= S3C64XX_ADCCON_RESSEL;
- 	}
- 	writel(tmp, adc->regs + S3C2410_ADCCON);
- 
-@@ -490,6 +494,7 @@ static int s3c_adc_resume(struct device *dev)
- 	struct platform_device *pdev = container_of(dev,
- 			struct platform_device, dev);
- 	struct adc_device *adc = platform_get_drvdata(pdev);
-+	int cpu = platform_get_device_id(pdev)->driver_data;
- 	int ret;
- 	unsigned long tmp;
- 
-@@ -501,8 +506,12 @@ static int s3c_adc_resume(struct device *dev)
- 
- 	tmp = adc->prescale | S3C2410_ADCCON_PRSCEN;
- 	/* Enable 12-bit ADC resolution */
--	if (platform_get_device_id(pdev)->driver_data & S3C_ADC_QUIRK_12BIT)
--		tmp |= S3C64XX_ADCCON_RESSEL;
-+	if (cpu & S3C_ADC_QUIRK_12BIT) {
-+		if (cpu & S3C_ADC_QUIRK_RESSEL03)
-+			tmp |= S3C2416_ADCCON_RESSEL;
-+		else
-+			tmp |= S3C64XX_ADCCON_RESSEL;
-+	}
- 	writel(tmp, adc->regs + S3C2410_ADCCON);
- 
- 	return 0;
-@@ -523,6 +532,11 @@ static struct platform_device_id s3c_adc_driver_ids[] = {
- 		.driver_data    = S3C_ADC_QUIRK_10BIT |
- 					S3C_ADC_QUIRK_MUX18,
- 	}, {
-+		.name           = "s3c2416-adc",
-+		.driver_data    = S3C_ADC_QUIRK_12BIT |
-+					S3C_ADC_QUIRK_MUX18 |
-+					S3C_ADC_QUIRK_RESSEL03,
-+	}, {
- 		.name           = "s3c64xx-adc",
- 		.driver_data    = S3C_ADC_QUIRK_12BIT |
- 					S3C_ADC_QUIRK_MUXADCCON |
+>
+> Signed-off-by: Seungwon Jeon<tgih.jun@samsung.com>
+> ---
+>   drivers/mmc/core/mmc.c |    2 +-
+>   1 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index b148bb1..7991ecf 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -332,7 +332,7 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
+>   		card->ext_csd.hc_erase_timeout = 300 *
+>   			ext_csd[EXT_CSD_ERASE_TIMEOUT_MULT];
+>   		card->ext_csd.hc_erase_size =
+> -			ext_csd[EXT_CSD_HC_ERASE_GRP_SIZE]<<  10;
+> +			ext_csd[EXT_CSD_HC_ERASE_GRP_SIZE]<<  9;
+>
+>   		card->ext_csd.rel_sectors = ext_csd[EXT_CSD_REL_WR_SEC_C];
+>
+> --
+> 1.7.0.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
 -- 
-1.7.2.3
+J (James/Jay) Freyensee
+Storage Technology Group
+Intel Corporation
