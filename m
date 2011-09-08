@@ -1,73 +1,55 @@
-From: Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] input: samsung-keypad: Add HAVE_SAMSUNG_KEYPAD
-	config option
-Date: Thu, 8 Sep 2011 09:33:22 -0700
-Message-ID: <20110908163322.GB17503@core.coreip.homeip.net>
-References: <1315317317-21873-1-git-send-email-thomas.abraham@linaro.org>
-	<1315317317-21873-2-git-send-email-thomas.abraham@linaro.org>
-	<20110907182248.GA2874@core.coreip.homeip.net>
-	<CAJuYYwQg8pMaM7Y-AQD5eDqw32rMOHggL2gWOtJH_ri8gsH-yg@mail.gmail.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH 0/7] S3C2443/S3C2416: Implement support for ADC
+Date: Thu, 8 Sep 2011 21:51:28 +0200
+Message-ID: <201109082151.29076.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAJuYYwQg8pMaM7Y-AQD5eDqw32rMOHggL2gWOtJH_ri8gsH-yg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
-	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dh09.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>
+Cc: linux-samsung-soc@vger.kernel.org, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Sep 08, 2011 at 09:16:46AM +0530, Thomas Abraham wrote:
-> Hi Dmitry,
-> 
-> On 7 September 2011 23:52, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> > Hi Thomas,
-> >
-> > On Tue, Sep 06, 2011 at 07:25:16PM +0530, Thomas Abraham wrote:
-> >> Samsung keyboard driver could be used with platforms using device tree.
-> >> So the inclusion of samsung keyboard driver cannot be based on
-> >> SAMSUNG_DEV_KEYPAD. A new config option HAVE_SAMSUNG_KEYPAD is added
-> >> which device tree based platforms should use to include samsung keyboard
-> >> driver.
-> >
-> > I am sorry, I do not follow... What is the difference between
-> > SAMSUNG_DEV_KEYPAD and HAVE_SAMSUNG_KEYPAD? They look exactly the same.
-> 
-> The inclusion of platform device instance for keypad (in
-> arch/arm/plat-samsung/dev-keypad.c) in the build depends on
-> SAMSUNG_DEV_KEYPAD. The samsung-keypad driver is also dependent on
-> SAMSUNG_DEV_KEYPAD.
-> 
-> In case of device tree based instantiation of keypad, compilation of
-> dev-keypad.c file is not required. So SAMSUNG_DEV_KEYPAD config option
-> will not be selected.In that case, the compilation of the keypad
-> driver cannot be dependent on SAMSUNG_DEV_KEYPAD. There should be
-> another option to select the keypad driver and so HAVE_SAMSUNG_KEYPAD
-> was introduced. HAVE_SAMSUNG_KEYPAD can be selected on platforms that
-> need the samsung-keypad driver but do no need the keypad platform
-> device.
+The adc blocks of S3C2443 and S3C2416/2450 differ in some regards
+from previous (S3C2410, etc) and later (S3C64XX, S5P) SoCs.
 
-I still think that it is an extra option... What about the following
-dependencies:
+Defining more TYPE_ADCVx types for these SoCs would complicate the
+necessary checks a lot. Therefore I opted for the use of quirk
+constants which can describe the features of the respective adc
+block and can be tested directly against.
 
-	depends on SAMSUNG_DEV_KEYPAD || OF
-	depends on HAVE_CLK
+This patch series replaces the type checks with checks for specific
+quirks and adds support for S3C2443 and S3C2416/2450 on top of this.
 
-although I think we should relax dependencies like I did in my other
-patch. This will extend compile coverage of the driver and lessen the
-chances that API changes will cause unintended breakage because noone
-but Samsung platform users compile it.
+Each patch was compile tested, and I tried to only do "equivalent
+transforms" for the stuff on lower levels. But as I have only
+access to S3C2416 hardware, real life testing happened only there.
 
-Thanks.
+
+Heiko Stuebner (7):
+  S3C2443/S3C2416: Add adc registers
+  s3c-adc: describe features via quirk constants
+  s3c-adc: Replace TYPE_ADCVx conditionals with quirks
+  s3c-adc: Fix mux bit modification in s3c_adc_select
+  S3C24XX: Allow overriding of adc device name
+  s3c-adc: Add support for S3C2443
+  s3c-adc: Add support for S3C2416/S3C2450
+
+ arch/arm/mach-s3c2416/mach-smdk2416.c         |    3 +
+ arch/arm/mach-s3c2443/mach-smdk2443.c         |    3 +
+ arch/arm/plat-samsung/adc.c                   |   89 +++++++++++++++++++-----
+ arch/arm/plat-samsung/include/plat/adc-core.h |    2 +-
+ arch/arm/plat-samsung/include/plat/regs-adc.h |    3 +
+ 5 files changed, 80 insertions(+), 20 deletions(-)
 
 -- 
-Dmitry
+1.7.2.3
