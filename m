@@ -1,63 +1,49 @@
 From: Nick Bowler <nbowler@elliptictech.com>
-Subject: [PATCH 2/5] ARM: exynos4: Use wfi macro in platform_do_lowpower.
-Date: Fri,  9 Sep 2011 11:26:49 -0400
-Message-ID: <1315582012-23507-3-git-send-email-nbowler@elliptictech.com>
+Subject: Re: [PATCH 0/5] Convert ARM subarchitectures to generic wfi macro.
+Date: Fri, 9 Sep 2011 11:42:54 -0400
+Message-ID: <20110909154254.GA23810@elliptictech.com>
 References: <1315582012-23507-1-git-send-email-nbowler@elliptictech.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from dsl-67-204-24-19.acanac.net ([67.204.24.19]:41388 "EHLO
+	mail.ellipticsemi.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751729Ab1IIPn2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 9 Sep 2011 11:43:28 -0400
+Content-Disposition: inline
 In-Reply-To: <1315582012-23507-1-git-send-email-nbowler@elliptictech.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>, Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org, Colin Cross <ccross@android.com>, Erik Gilling <konkers@android.com>, Olof Johansson <olof@lixom.net>, linux-tegra@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Kevin Hilman <khilman@ti.com>, linux-omap@vger.kernel.org
 
-Current Exynos4 CPU hotplug code includes a hardcoded WFI instruction,
-in ARM encoding.  The hardcoded instruction is both hard to understand
-and doomed to failure when building the kernel in Thumb-2 mode.
+And after all that, I forgot to CC Russell on these patches.  Oops.
 
-Signed-off-by: Nick Bowler <nbowler@elliptictech.com>
----
-Compile tested in both ARM and Thumb-2 mode.
----
- arch/arm/mach-exynos4/hotplug.c |    9 ++-------
- 1 files changed, 2 insertions(+), 7 deletions(-)
+On 2011-09-09 11:26 -0400, Nick Bowler wrote:
+> This series cleans up all remaining ARM subarchitectures that I could
+> find to use the generic wfi macro.  As I don't have any of the boards in
+> question, I've only compile-tested these patches to the extent that I
+> was able.
+> 
+> See the previous discussion in https://lkml.org/lkml/2011/8/19/433 for
+> more background.
+> 
+> Nick Bowler (5):
+>   ARM: realview: Use wfi macro in platform_do_lowpower.
+>   ARM: exynos4: Use wfi macro in platform_do_lowpower.
+>   ARM: shmobile: Use wfi macro in platform_cpu_die.
+>   ARM: tegra: Use wfi macro in platform_do_lowpower.
+>   ARM: omap4: Kill private do_wfi macro.
+> 
+>  arch/arm/mach-exynos4/hotplug.c                 |    9 ++-------
+>  arch/arm/mach-omap2/include/mach/omap4-common.h |   11 -----------
+>  arch/arm/mach-omap2/omap-hotplug.c              |    7 +++----
+>  arch/arm/mach-omap2/pm44xx.c                    |    4 +++-
+>  arch/arm/mach-realview/hotplug.c                |    9 ++-------
+>  arch/arm/mach-shmobile/hotplug.c                |   10 +++-------
+>  arch/arm/mach-tegra/hotplug.c                   |    9 ++-------
+>  7 files changed, 15 insertions(+), 44 deletions(-)
 
-diff --git a/arch/arm/mach-exynos4/hotplug.c b/arch/arm/mach-exynos4/hotplug.c
-index 7490789..8724227 100644
---- a/arch/arm/mach-exynos4/hotplug.c
-+++ b/arch/arm/mach-exynos4/hotplug.c
-@@ -16,6 +16,7 @@
- #include <linux/io.h>
- 
- #include <asm/cacheflush.h>
-+#include <asm/system.h>
- 
- #include <mach/regs-pmu.h>
- 
-@@ -67,13 +68,7 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
- 		if (cpu == 1)
- 			__raw_writel(0, S5P_ARM_CORE1_CONFIGURATION);
- 
--		/*
--		 * here's the WFI
--		 */
--		asm(".word	0xe320f003\n"
--		    :
--		    :
--		    : "memory", "cc");
-+		wfi();
- 
- 		if (pen_release == cpu) {
- 			/*
 -- 
-1.7.3.4
+Nick Bowler, Elliptic Technologies (http://www.elliptictech.com/)
