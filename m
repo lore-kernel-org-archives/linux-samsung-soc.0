@@ -1,24 +1,29 @@
 From: Ajay Kumar <ajaykumar.rs@samsung.com>
 Subject: [PATCH V4 RESEND 1/6] video: s3c-fb: Add S5P64X0 specific
-	s3c_fb_driverdata
-Date: Fri, 09 Sep 2011 14:00:51 -0400
-Message-ID: <1315591251-17071-1-git-send-email-ajaykumar.rs@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: jg1.han@samsung.com, lethal@linux-sh.org, ben-linux@fluff.org, FlorianSchandinat@gmx.de
+ s3c_fb_driverdata
+Date: Fri, 09 Sep 2011 14:01:36 -0400
+Message-ID: <1315591301-17166-2-git-send-email-ajaykumar.rs@samsung.com>
+References: <1315591301-17166-1-git-send-email-ajaykumar.rs@samsung.com>
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:12708 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933731Ab1IIMBv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 9 Sep 2011 08:01:51 -0400
+Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LR900NCX82W4DS0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 09 Sep 2011 21:01:50 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.106])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LR900IDU82TO1@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 09 Sep 2011 21:01:50 +0900 (KST)
+In-reply-to: <1315591301-17166-1-git-send-email-ajaykumar.rs@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jg1.han@samsung.com, m.szyprowski@samsung.com
 
 This patch:
 	-- Adds s3c_fb_driverdata for S5P64X0, which supports 3 windows.
