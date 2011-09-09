@@ -1,60 +1,24 @@
-From: J Freyensee <james_p_freyensee@linux.intel.com>
-Subject: Re: [PATCH] mmc: core: Fix the incorrect calculation for erase unit
- size.
-Date: Thu, 08 Sep 2011 13:27:49 -0700
-Message-ID: <4E692545.9050707@linux.intel.com>
-References: <1315461565-16009-1-git-send-email-tgih.jun@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:17271 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752812Ab1IHXFf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Sep 2011 19:05:35 -0400
-In-Reply-To: <1315461565-16009-1-git-send-email-tgih.jun@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: [PATCH v4 0/2] mmc: core: Add Poweroff Notify handling eMMC 4.5
+Date: Fri,  9 Sep 2011 10:04:12 +0530
+Message-ID: <1315542854-3752-1-git-send-email-girish.shivananjappa@linaro.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: cjb@laptop.org, kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: linux-mmc@vger.kernel.org, cjb@laptop.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
 
-On 09/07/2011 10:59 PM, Seungwon Jeon wrote:
-> Erase unit size of high capacity is multiple of 512KiB not 1024KiB.
+This version adds the changes suggested by Jeon 
 
-I'm just wondering, what are these patches based off of?  I have not 
-been able to connect to anything hosted by kernel.org since I came back 
-from vacation due to the security breach on kernel.org.
+Girish K S (2):
+  mmc: core: Add power off notify feature(eMMC 4.5)
+  mmc: core: Add Poweroff Notify handling eMMC 4.5
 
->
-> Signed-off-by: Seungwon Jeon<tgih.jun@samsung.com>
-> ---
->   drivers/mmc/core/mmc.c |    2 +-
->   1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-> index b148bb1..7991ecf 100644
-> --- a/drivers/mmc/core/mmc.c
-> +++ b/drivers/mmc/core/mmc.c
-> @@ -332,7 +332,7 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
->   		card->ext_csd.hc_erase_timeout = 300 *
->   			ext_csd[EXT_CSD_ERASE_TIMEOUT_MULT];
->   		card->ext_csd.hc_erase_size =
-> -			ext_csd[EXT_CSD_HC_ERASE_GRP_SIZE]<<  10;
-> +			ext_csd[EXT_CSD_HC_ERASE_GRP_SIZE]<<  9;
->
->   		card->ext_csd.rel_sectors = ext_csd[EXT_CSD_REL_WR_SEC_C];
->
-> --
-> 1.7.0.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ drivers/mmc/core/core.c  |   33 +++++++++++++++++++++++++++++++++
+ drivers/mmc/core/mmc.c   |   22 ++++++++++++++++++++--
+ drivers/mmc/host/sdhci.c |   10 ++++++++++
+ include/linux/mmc/card.h |   20 ++++++++++++++++++++
+ include/linux/mmc/host.h |    5 +++++
+ include/linux/mmc/mmc.h  |    7 +++++++
+ 6 files changed, 95 insertions(+), 2 deletions(-)
 
-
--- 
-J (James/Jay) Freyensee
-Storage Technology Group
-Intel Corporation
