@@ -1,198 +1,36 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V4 5/6] ARM: S5P6440: Add LCD-LTE480 and enable Framebuffer
- support
-Date: Fri, 09 Sep 2011 14:01:40 -0400
-Message-ID: <1315591301-17166-6-git-send-email-ajaykumar.rs@samsung.com>
-References: <1315591301-17166-1-git-send-email-ajaykumar.rs@samsung.com>
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:64326 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933743Ab1IIMB5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Sep 2011 08:01:57 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LR9008NT831ABY0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 09 Sep 2011 21:01:56 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LR900IDU82TO1@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 09 Sep 2011 21:01:56 +0900 (KST)
-In-reply-to: <1315591301-17166-1-git-send-email-ajaykumar.rs@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Nick Bowler <nbowler-7BP4RkwGw0uXmMXjJBpWqg@public.gmane.org>
+Subject: [PATCH 0/5] Convert ARM subarchitectures to generic wfi macro.
+Date: Fri,  9 Sep 2011 11:26:47 -0400
+Message-ID: <1315582012-23507-1-git-send-email-nbowler@elliptictech.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Paul Mundt <lethal-M7jkjyW5wf5g9hUCZPvPmw@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Colin Cross <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Erik Gilling <konkers-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Kevin Hilman <khilman-l0cyMroinI0@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jg1.han@samsung.com, m.szyprowski@samsung.com
 
-This patch:
-	-- Adds platform device support for LCD-LTE480.
-	-- Adds platform data for FB with win_mode and default_bpp.
-	-- Enables FB device support and platform-lcd support.
-	-- Adds SPCON settings for LCD.
+This series cleans up all remaining ARM subarchitectures that I could
+find to use the generic wfi macro.  As I don't have any of the boards in
+question, I've only compile-tested these patches to the extent that I
+was able.
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
----
- arch/arm/mach-s5p64x0/Kconfig                  |    2 +
- arch/arm/mach-s5p64x0/include/mach/regs-gpio.h |    4 +
- arch/arm/mach-s5p64x0/mach-smdk6440.c          |   75 ++++++++++++++++++++++++
- 3 files changed, 81 insertions(+), 0 deletions(-)
+See the previous discussion in https://lkml.org/lkml/2011/8/19/433 for
+more background.
 
-diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
-index 7bec400..3adc4b8 100644
---- a/arch/arm/mach-s5p64x0/Kconfig
-+++ b/arch/arm/mach-s5p64x0/Kconfig
-@@ -37,6 +37,7 @@ config S5P64X0_SETUP_I2C1
- config MACH_SMDK6440
- 	bool "SMDK6440"
- 	select CPU_S5P6440
-+	select S3C_DEV_FB
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_RTC
- 	select S3C_DEV_WDT
-@@ -45,6 +46,7 @@ config MACH_SMDK6440
- 	select SAMSUNG_DEV_BACKLIGHT
- 	select SAMSUNG_DEV_PWM
- 	select SAMSUNG_DEV_TS
-+	select S5P64X0_SETUP_FB_24BPP
- 	select S5P64X0_SETUP_I2C1
- 	help
- 	  Machine support for the Samsung SMDK6440
-diff --git a/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h b/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
-index 6ce2547..88269ec 100644
---- a/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
-+++ b/arch/arm/mach-s5p64x0/include/mach/regs-gpio.h
-@@ -34,6 +34,10 @@
- #define S5P6450_GPQ_BASE		(S5P_VA_GPIO + 0x0180)
- #define S5P6450_GPS_BASE		(S5P_VA_GPIO + 0x0300)
- 
-+#define S5P64X0_SPCON0			(S5P_VA_GPIO + 0x1A0)
-+#define S5P64X0_SPCON0_LCD_SEL_MASK	(0x3 << 0)
-+#define S5P64X0_SPCON0_LCD_SEL_RGB	(0x1 << 0)
-+
- /* External interrupt control registers for group0 */
- 
- #define EINT0CON0_OFFSET		(0x900)
-diff --git a/arch/arm/mach-s5p64x0/mach-smdk6440.c b/arch/arm/mach-s5p64x0/mach-smdk6440.c
-index 340f30f..03933d7 100644
---- a/arch/arm/mach-s5p64x0/mach-smdk6440.c
-+++ b/arch/arm/mach-s5p64x0/mach-smdk6440.c
-@@ -23,6 +23,9 @@
- #include <linux/clk.h>
- #include <linux/gpio.h>
- #include <linux/pwm_backlight.h>
-+#include <linux/fb.h>
-+
-+#include <video/platform_lcd.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
-@@ -47,6 +50,8 @@
- #include <plat/ts.h>
- #include <plat/s5p-time.h>
- #include <plat/backlight.h>
-+#include <plat/fb.h>
-+#include <plat/regs-fb.h>
- 
- #define SMDK6440_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
- 				S3C2410_UCON_RXILEVEL |		\
-@@ -92,6 +97,60 @@ static struct s3c2410_uartcfg smdk6440_uartcfgs[] __initdata = {
- 	},
- };
- 
-+/* Frame Buffer */
-+static struct s3c_fb_pd_win smdk6440_fb_win0 = {
-+	.win_mode = {
-+		.left_margin	= 8,
-+		.right_margin	= 13,
-+		.upper_margin	= 7,
-+		.lower_margin	= 5,
-+		.hsync_len	= 3,
-+		.vsync_len	= 1,
-+		.xres		= 800,
-+		.yres		= 480,
-+		.refresh	= 60,
-+	},
-+	.max_bpp	= 32,
-+	.default_bpp	= 24,
-+};
-+
-+static struct s3c_fb_platdata smdk6440_lcd_pdata __initdata = {
-+	.win[0]		= &smdk6440_fb_win0,
-+	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
-+	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
-+	.setup_gpio	= s5p64x0_fb_gpio_setup_24bpp,
-+};
-+
-+/* LCD power controller */
-+static void smdk6440_lte480_reset_power(struct plat_lcd_data *pd,
-+					 unsigned int power)
-+{
-+	int err;
-+
-+	if (power) {
-+		err = gpio_request(S5P6440_GPN(5), "GPN");
-+		if (err) {
-+			printk(KERN_ERR "failed to request GPN for lcd reset\n");
-+			return;
-+		}
-+
-+		gpio_direction_output(S5P6440_GPN(5), 1);
-+		gpio_set_value(S5P6440_GPN(5), 0);
-+		gpio_set_value(S5P6440_GPN(5), 1);
-+		gpio_free(S5P6440_GPN(5));
-+	}
-+}
-+
-+static struct plat_lcd_data smdk6440_lcd_power_data = {
-+	.set_power	= smdk6440_lte480_reset_power,
-+};
-+
-+static struct platform_device smdk6440_lcd_lte480wv = {
-+	.name			= "platform-lcd",
-+	.dev.parent		= &s3c_device_fb.dev,
-+	.dev.platform_data	= &smdk6440_lcd_power_data,
-+};
-+
- static struct platform_device *smdk6440_devices[] __initdata = {
- 	&s3c_device_adc,
- 	&s3c_device_rtc,
-@@ -101,6 +160,8 @@ static struct platform_device *smdk6440_devices[] __initdata = {
- 	&s3c_device_wdt,
- 	&samsung_asoc_dma,
- 	&s5p6440_device_iis,
-+	&s3c_device_fb,
-+	&smdk6440_lcd_lte480wv,
- };
- 
- static struct s3c2410_platform_i2c s5p6440_i2c0_data __initdata = {
-@@ -147,6 +208,17 @@ static void __init smdk6440_map_io(void)
- 	s5p_set_timer_source(S5P_PWM3, S5P_PWM4);
- }
- 
-+static void s5p6440_set_lcd_interface()
-+{
-+	unsigned int cfg;
-+
-+	/* select TFT LCD type (RGB I/F) */
-+	cfg = __raw_readl(S5P64X0_SPCON0);
-+	cfg &= ~S5P64X0_SPCON0_LCD_SEL_MASK;
-+	cfg |= S5P64X0_SPCON0_LCD_SEL_RGB;
-+	__raw_writel(cfg, S5P64X0_SPCON0);
-+}
-+
- static void __init smdk6440_machine_init(void)
- {
- 	s3c24xx_ts_set_platdata(NULL);
-@@ -160,6 +232,9 @@ static void __init smdk6440_machine_init(void)
- 
- 	samsung_bl_set(&smdk6440_bl_gpio_info, &smdk6440_bl_data);
- 
-+	s5p6440_set_lcd_interface();
-+	s3c_fb_set_platdata(&smdk6440_lcd_pdata);
-+
- 	platform_add_devices(smdk6440_devices, ARRAY_SIZE(smdk6440_devices));
- }
- 
+Nick Bowler (5):
+  ARM: realview: Use wfi macro in platform_do_lowpower.
+  ARM: exynos4: Use wfi macro in platform_do_lowpower.
+  ARM: shmobile: Use wfi macro in platform_cpu_die.
+  ARM: tegra: Use wfi macro in platform_do_lowpower.
+  ARM: omap4: Kill private do_wfi macro.
+
+ arch/arm/mach-exynos4/hotplug.c                 |    9 ++-------
+ arch/arm/mach-omap2/include/mach/omap4-common.h |   11 -----------
+ arch/arm/mach-omap2/omap-hotplug.c              |    7 +++----
+ arch/arm/mach-omap2/pm44xx.c                    |    4 +++-
+ arch/arm/mach-realview/hotplug.c                |    9 ++-------
+ arch/arm/mach-shmobile/hotplug.c                |   10 +++-------
+ arch/arm/mach-tegra/hotplug.c                   |    9 ++-------
+ 7 files changed, 15 insertions(+), 44 deletions(-)
+
 -- 
-1.7.0.4
+1.7.3.4
