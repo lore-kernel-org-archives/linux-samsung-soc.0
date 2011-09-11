@@ -1,24 +1,53 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 0/5] Convert ARM subarchitectures to generic wfi macro.
-Date: Fri, 9 Sep 2011 20:02:17 +0100
-Message-ID: <20110909190217.GB14520@n2100.arm.linux.org.uk>
-References: <1315582012-23507-1-git-send-email-nbowler@elliptictech.com> <20110909154254.GA23810@elliptictech.com>
+From: ajh mls <ajhmls@gmail.com>
+Subject: Re: [PATCH] mmc: core: Fix the incorrect calculation for erase unit size.
+Date: Sun, 11 Sep 2011 20:32:05 +0300
+Message-ID: <CAN+dfcRYP2YktuDTUK5ARPEj87G3jO1nJoT_vCgATXFxFRizzA@mail.gmail.com>
+References: <1315461565-16009-1-git-send-email-tgih.jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:35864 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759403Ab1IITCm (ORCPT
+Received: from mail-qw0-f42.google.com ([209.85.216.42]:57022 "EHLO
+	mail-qw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752376Ab1IKRcH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Sep 2011 15:02:42 -0400
-Content-Disposition: inline
-In-Reply-To: <20110909154254.GA23810@elliptictech.com>
+	Sun, 11 Sep 2011 13:32:07 -0400
+In-Reply-To: <1315461565-16009-1-git-send-email-tgih.jun@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nick Bowler <nbowler@elliptictech.com>
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Paul Mundt <lethal@linux-sh.org>, Magnus Damm <magnus.damm@gmail.com>, linux-sh@vger.kernel.org, Colin Cross <ccross@android.com>, Erik Gilling <konkers@android.com>, Olof Johansson <olof@lixom.net>, linux-tegra@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Kevin Hilman <khilman@ti.com>, linux-omap@vger.kernel.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: linux-mmc@vger.kernel.org, cjb@laptop.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
 
-On Fri, Sep 09, 2011 at 11:42:54AM -0400, Nick Bowler wrote:
-> And after all that, I forgot to CC Russell on these patches.  Oops.
+On 08/09/2011, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> Erase unit size of high capacity is multiple of 512KiB not 1024KiB.
 
-Doesn't matter, I get them anyway (provided lakml is in the cc).
+Isn't hc_erase_size in sectors so 512 x 1024 / 512 = 1024 and so the
+code is correct.
+
+>
+> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+> ---
+>  drivers/mmc/core/mmc.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+>
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index b148bb1..7991ecf 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -332,7 +332,7 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8
+> *ext_csd)
+>  		card->ext_csd.hc_erase_timeout = 300 *
+>  			ext_csd[EXT_CSD_ERASE_TIMEOUT_MULT];
+>  		card->ext_csd.hc_erase_size =
+> -			ext_csd[EXT_CSD_HC_ERASE_GRP_SIZE] << 10;
+> +			ext_csd[EXT_CSD_HC_ERASE_GRP_SIZE] << 9;
+>
+>  		card->ext_csd.rel_sectors = ext_csd[EXT_CSD_REL_WR_SEC_C];
+>
+> --
+> 1.7.0.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
