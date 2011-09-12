@@ -1,53 +1,77 @@
-From: ajh mls <ajhmls@gmail.com>
-Subject: Re: [PATCH] mmc: core: Fix the incorrect calculation for erase unit size.
-Date: Sun, 11 Sep 2011 20:32:05 +0300
-Message-ID: <CAN+dfcRYP2YktuDTUK5ARPEj87G3jO1nJoT_vCgATXFxFRizzA@mail.gmail.com>
-References: <1315461565-16009-1-git-send-email-tgih.jun@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH] ARM: EXYNOS4: convert boot_params to atag_offset
+Date: Mon, 12 Sep 2011 10:09:09 +0530
+Message-ID: <1315802349-3892-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qw0-f42.google.com ([209.85.216.42]:57022 "EHLO
-	mail-qw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752376Ab1IKRcH (ORCPT
+Received: from mail-pz0-f42.google.com ([209.85.210.42]:48009 "EHLO
+	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751137Ab1ILEmv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 11 Sep 2011 13:32:07 -0400
-In-Reply-To: <1315461565-16009-1-git-send-email-tgih.jun@samsung.com>
+	Mon, 12 Sep 2011 00:42:51 -0400
+Received: by pzk37 with SMTP id 37so6244795pzk.1
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 11 Sep 2011 21:42:49 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: linux-mmc@vger.kernel.org, cjb@laptop.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org, Nicolas Pitre <nicolas.pitre@linaro.org>
 
-On 08/09/2011, Seungwon Jeon <tgih.jun@samsung.com> wrote:
-> Erase unit size of high capacity is multiple of 512KiB not 1024KiB.
+Based on "ARM: introduce atag_offset to replace boot_params"
+by Nicolas Pitre (2bb9839e312ed55a6d5824ffa6077ce3d7d63b1e).
 
-Isn't hc_erase_size in sectors so 512 x 1024 / 512 = 1024 and so the
-code is correct.
+Since boot_params variable is deleted from machine_desc, the variable
+is modified in the newer board files.
 
->
-> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
-> ---
->  drivers/mmc/core/mmc.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-> index b148bb1..7991ecf 100644
-> --- a/drivers/mmc/core/mmc.c
-> +++ b/drivers/mmc/core/mmc.c
-> @@ -332,7 +332,7 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8
-> *ext_csd)
->  		card->ext_csd.hc_erase_timeout = 300 *
->  			ext_csd[EXT_CSD_ERASE_TIMEOUT_MULT];
->  		card->ext_csd.hc_erase_size =
-> -			ext_csd[EXT_CSD_HC_ERASE_GRP_SIZE] << 10;
-> +			ext_csd[EXT_CSD_HC_ERASE_GRP_SIZE] << 9;
->
->  		card->ext_csd.rel_sectors = ext_csd[EXT_CSD_REL_WR_SEC_C];
->
-> --
-> 1.7.0.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+CC: Nicolas Pitre <nicolas.pitre@linaro.org>
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+This is required when Kukjin's for-next branch is merged with
+Russell's devel-stable branch.
+
+Nicolas's patchset already has changes for other EXYNSO4 based boards.
+
+ arch/arm/mach-exynos4/mach-origen.c   |    2 +-
+ arch/arm/mach-exynos4/mach-smdk4212.c |    2 +-
+ arch/arm/mach-exynos4/mach-smdkv310.c |    2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
+index ed59f86..b5f6f38 100644
+--- a/arch/arm/mach-exynos4/mach-origen.c
++++ b/arch/arm/mach-exynos4/mach-origen.c
+@@ -100,7 +100,7 @@ static void __init origen_machine_init(void)
+ 
+ MACHINE_START(ORIGEN, "ORIGEN")
+ 	/* Maintainer: JeongHyeon Kim <jhkim@insignal.co.kr> */
+-	.boot_params	= S5P_PA_SDRAM + 0x100,
++	.atag_offset	= 0x100,
+ 	.init_irq	= exynos4_init_irq,
+ 	.map_io		= origen_map_io,
+ 	.init_machine	= origen_machine_init,
+diff --git a/arch/arm/mach-exynos4/mach-smdk4212.c b/arch/arm/mach-exynos4/mach-smdk4212.c
+index 3479a93..8c41ae1 100644
+--- a/arch/arm/mach-exynos4/mach-smdk4212.c
++++ b/arch/arm/mach-exynos4/mach-smdk4212.c
+@@ -284,7 +284,7 @@ static void __init smdk4212_machine_init(void)
+ 
+ MACHINE_START(SMDK4212, "SMDK4212")
+ 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+-	.boot_params	= S5P_PA_SDRAM + 0x100,
++	.atag_offset	= 0x100,
+ 	.init_irq	= exynos4_init_irq,
+ 	.map_io		= smdk4212_map_io,
+ 	.init_machine	= smdk4212_machine_init,
+diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
+index 57cf632..7ce4d8b 100644
+--- a/arch/arm/mach-exynos4/mach-smdkv310.c
++++ b/arch/arm/mach-exynos4/mach-smdkv310.c
+@@ -344,7 +344,7 @@ MACHINE_END
+ 
+ MACHINE_START(SMDKC210, "SMDKC210")
+ 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+-	.boot_params	= S5P_PA_SDRAM + 0x100,
++	.atag_offset	= 0x100,
+ 	.init_irq	= exynos4_init_irq,
+ 	.map_io		= smdkv310_map_io,
+ 	.init_machine	= smdkv310_machine_init,
+-- 
+1.7.4.1
